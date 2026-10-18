@@ -1062,6 +1062,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
   brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
   pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **C1-E cont1: a complete fill (2026-10-18).** `FinNDTM.exists_exhaustiveDecider` proved (`C =
+  18·N.k + 41`, no `|z|` term); reviewed (`campaign/fills/c1/reviews/exhaustive-cont1/`). **Rulings
+  (user):** the route's deviation (heads left in place, translation invariance by
+  `xr_runWith_shift`, instead of obligation 4's return to `0`) is accepted; the 24 sketch-less
+  proofs over 20 lines get sketches in a docstring-only follow-up (the six main lemmas first).
+  Landing PR from `lean/c1-exhaustive-fill` (16 cherry-picked commits + the review's fix); its
+  4-module replay follows #132. BF's only open dependency is now UN.
 - **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
   cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
   held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):

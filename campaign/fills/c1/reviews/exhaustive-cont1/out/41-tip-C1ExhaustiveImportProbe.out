@@ -1,0 +1,465 @@
+@Turing.NDTM.haltsWithin_iff : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : Turing.NDTM k Symbol State}
+  {input : List Symbol} {t : ℕ},
+  tm.HaltsWithin input t ↔
+    ∀ (w : List Bool), w.length = t → (Turing.NDTM.runWith w (Turing.NDTM.initCfg input)).state = none
+@Turing.FinNDTM.acceptsWithin_iff : ∀ {N : Turing.FinNDTM Bool} {x : List Bool} {t : ℕ},
+  N.AcceptsWithin x t ↔
+    ∃ w,
+      w.length = t ∧
+        (Turing.NDTM.runWith w (Turing.NDTM.initCfg x)).state = none ∧
+          (Turing.NDTM.runWith w (Turing.NDTM.initCfg x)).output = [true]
+@Turing.NDTM.initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : Turing.NDTM k Symbol State}
+  (input : List Symbol), Turing.NDTM.initCfg input = Turing.Cfg.init tm.q₀ input
+@Turing.Cfg.init_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).state = some q₀
+@Turing.Cfg.init_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).inputPos = 1
+@Turing.Cfg.init_workTapes : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x : Fin k) (x_1 : ℤ), (Turing.Cfg.init q₀ input).workTapes x x_1 = none
+@Turing.Cfg.init_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol)
+  (x : Fin k), (Turing.Cfg.init q₀ input).workTapePos x = 0
+@Turing.Cfg.init_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Turing.Cfg.init q₀ input).output = []
+@Turing.NDTM.runWith_nil : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.NDTM k Symbol State} {cfg : Turing.Cfg k Symbol State input}, Turing.NDTM.runWith [] cfg = cfg
+@Turing.NDTM.runWith_cons : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.NDTM k Symbol State} {b : Bool} {w : List Bool} {cfg : Turing.Cfg k Symbol State input},
+  Turing.NDTM.runWith (b :: w) cfg = Turing.NDTM.runWith w (Turing.NDTM.stepWith b cfg)
+@Turing.NDTM.runWith_append : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.NDTM k Symbol State} (w w' : List Bool) (cfg : Turing.Cfg k Symbol State input),
+  Turing.NDTM.runWith (w ++ w') cfg = Turing.NDTM.runWith w' (Turing.NDTM.runWith w cfg)
+@Turing.NDTM.runWith_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.NDTM k Symbol State} (cfg : Turing.Cfg k Symbol State input),
+  cfg.state = none → ∀ {w : List Bool}, Turing.NDTM.runWith w cfg = cfg
+@Turing.NDTM.HaltsWithin.mono : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : Turing.NDTM k Symbol State}
+  {input : List Symbol} {t t' : ℕ}, tm.HaltsWithin input t → t ≤ t' → tm.HaltsWithin input t'
+@Turing.FinNDTM.AcceptsWithin.mono : ∀ {N : Turing.FinNDTM Bool} {x : List Bool} {t t' : ℕ},
+  N.AcceptsWithin x t → t ≤ t' → N.AcceptsWithin x t'
+@Turing.NDTM.replayTM_runFrom : ∀ {k : ℕ} {S : Type u_1} {x : List Bool} (N : Turing.NDTM k Bool S)
+  (c : Turing.Cfg k Bool S x) (s : List Bool),
+  ∀ t ≤ s.length,
+    ∃ p ≤ t,
+      ((Turing.NDTM.runWith (List.take t s) c).state ≠ none → p = t) ∧
+        Turing.MultiTapeTM.runFrom (Turing.NDTM.withChoiceTape c (Turing.FinTM.bufferTape s) 0) t =
+          Turing.NDTM.withChoiceTape (Turing.NDTM.runWith (List.take t s) c) (Turing.FinTM.bufferTape s) ↑p
+@Turing.NDTM.replayTM_q₀ : ∀ {k : ℕ} {S : Type u_1} (N : Turing.NDTM k Bool S), N.replayTM.q₀ = N.q₀
+@Turing.NDTM.replayTM_tr : ∀ {k : ℕ} {S : Type u_1} (N : Turing.NDTM k Bool S) (q : S) (inp : Option Bool)
+  (w : Fin (k + 1) → Option Bool),
+  N.replayTM.tr q inp w =
+    have a := N.tr ((w (Fin.last k)).getD false) q inp fun i => w i.castSucc;
+    { inputTape := a.inputTape, workTapes := fun i => Fin.lastCases (none, 1) a.workTapes i, output := a.output,
+      state := a.state }
+@Turing.NDTM.withChoiceTape_state : ∀ {k : ℕ} {S : Type u_1} {x : List Bool} (c : Turing.Cfg k Bool S x)
+  (ct : ℤ → Option Bool) (cp : ℤ), (Turing.NDTM.withChoiceTape c ct cp).state = c.state
+@Turing.NDTM.withChoiceTape_inputPos : ∀ {k : ℕ} {S : Type u_1} {x : List Bool} (c : Turing.Cfg k Bool S x)
+  (ct : ℤ → Option Bool) (cp : ℤ), (Turing.NDTM.withChoiceTape c ct cp).inputPos = c.inputPos
+@Turing.NDTM.withChoiceTape_workTapes : ∀ {k : ℕ} {S : Type u_1} {x : List Bool} (c : Turing.Cfg k Bool S x)
+  (ct : ℤ → Option Bool) (cp : ℤ) (i : Fin (k + 1)) (a : ℤ),
+  (Turing.NDTM.withChoiceTape c ct cp).workTapes i a =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) ct c.workTapes i a
+@Turing.NDTM.withChoiceTape_workTapePos : ∀ {k : ℕ} {S : Type u_1} {x : List Bool} (c : Turing.Cfg k Bool S x)
+  (ct : ℤ → Option Bool) (cp : ℤ) (i : Fin (k + 1)),
+  (Turing.NDTM.withChoiceTape c ct cp).workTapePos i = Fin.lastCases cp c.workTapePos i
+@Turing.NDTM.withChoiceTape_output : ∀ {k : ℕ} {S : Type u_1} {x : List Bool} (c : Turing.Cfg k Bool S x)
+  (ct : ℤ → Option Bool) (cp : ℤ), (Turing.NDTM.withChoiceTape c ct cp).output = c.output
+@Turing.exists_stepClockTMVia : ∀ {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S] [DecidableEq Γ] (e : Bool ↪ Γ)
+  (M : Turing.MultiTapeTM k Γ S) (stopAt : S → Bool),
+  ∃ Q x x H inj finish timeout,
+    Function.Injective finish ∧
+      Function.Injective timeout ∧
+        (∀ (a b : Option S), finish a ≠ timeout b) ∧
+          (∀ (s : S) (r : Option S), inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+            ∀ {x : List Γ} (c : Turing.Cfg k Γ S x) (q : S),
+              c.state = some q →
+                ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+                  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = Turing.FinTM.bufferTape (List.map (⇑e) w) p) →
+                    (∀ τ ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                        Turing.Cfg.Stopped stopAt (Turing.MultiTapeTM.runFrom c τ) →
+                          (∀ u < τ, ¬Turing.Cfg.Stopped stopAt (Turing.MultiTapeTM.runFrom c u)) →
+                            ∃ T ≤ 5 * τ + 2 * w.length + 2,
+                              ∃ w',
+                                w'.length = w.length ∧
+                                  Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp) T =
+                                      Turing.clockCfg (some (finish (Turing.MultiTapeTM.runFrom c τ).state))
+                                        (Turing.MultiTapeTM.runFrom c τ) (Turing.wordPatch ct cp (List.map (⇑e) w'))
+                                        cp ∧
+                                    (∀ u < T,
+                                        ∀ (r : Option S),
+                                          (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                  u).state ≠
+                                              some (finish r) ∧
+                                            (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                  u).state ≠
+                                              some (timeout r)) ∧
+                                      ∀ u ≤ T,
+                                        ∃ v ≤ τ,
+                                          (∀ (j : Fin k),
+                                              (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                        u).workTapes
+                                                    j.castSucc =
+                                                  (Turing.MultiTapeTM.runFrom c v).workTapes j ∧
+                                                (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                        u).workTapePos
+                                                    j.castSucc =
+                                                  (Turing.MultiTapeTM.runFrom c v).workTapePos j) ∧
+                                            (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                    u).inputPos =
+                                                (Turing.MultiTapeTM.runFrom c v).inputPos ∧
+                                              (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                      u).output =
+                                                  (Turing.MultiTapeTM.runFrom c v).output ∧
+                                                (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                        u).workTapePos
+                                                    (Fin.last k) ∈
+                                                  Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                      ((∀ u ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                          ¬Turing.Cfg.Stopped stopAt (Turing.MultiTapeTM.runFrom c u)) →
+                        ∃ T ≤ 5 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 2,
+                          ∃ w',
+                            w'.length = w.length ∧
+                              Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp) T =
+                                  Turing.clockCfg
+                                    (some
+                                      (timeout
+                                        (Turing.MultiTapeTM.runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w))).state))
+                                    (Turing.MultiTapeTM.runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w)))
+                                    (Turing.wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                (∀ u < T,
+                                    ∀ (r : Option S),
+                                      (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp) u).state ≠
+                                          some (finish r) ∧
+                                        (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp) u).state ≠
+                                          some (timeout r)) ∧
+                                  ∀ u ≤ T,
+                                    ∃ v ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                                      (∀ (j : Fin k),
+                                          (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                    u).workTapes
+                                                j.castSucc =
+                                              (Turing.MultiTapeTM.runFrom c v).workTapes j ∧
+                                            (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                    u).workTapePos
+                                                j.castSucc =
+                                              (Turing.MultiTapeTM.runFrom c v).workTapePos j) ∧
+                                        (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                u).inputPos =
+                                            (Turing.MultiTapeTM.runFrom c v).inputPos ∧
+                                          (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                  u).output =
+                                              (Turing.MultiTapeTM.runFrom c v).output ∧
+                                            (Turing.MultiTapeTM.runFrom (Turing.clockCfg (some (inj q)) c ct cp)
+                                                    u).workTapePos
+                                                (Fin.last k) ∈
+                                              Finset.Icc (cp - 1) (cp + ↑w.length))
+@Turing.clockCfg_state : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Turing.Cfg k Γ S x)
+  (ct : ℤ → Option Γ) (cp : ℤ), (Turing.clockCfg q c ct cp).state = q
+@Turing.clockCfg_inputPos : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Turing.Cfg k Γ S x)
+  (ct : ℤ → Option Γ) (cp : ℤ), (Turing.clockCfg q c ct cp).inputPos = c.inputPos
+@Turing.clockCfg_workTapes : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Turing.Cfg k Γ S x)
+  (ct : ℤ → Option Γ) (cp : ℤ) (i : Fin (k + 1)) (a : ℤ),
+  (Turing.clockCfg q c ct cp).workTapes i a = Fin.lastCases (motive := fun x => ℤ → Option Γ) ct c.workTapes i a
+@Turing.clockCfg_workTapePos : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Turing.Cfg k Γ S x)
+  (ct : ℤ → Option Γ) (cp : ℤ) (i : Fin (k + 1)),
+  (Turing.clockCfg q c ct cp).workTapePos i = Fin.lastCases cp c.workTapePos i
+@Turing.clockCfg_output : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Turing.Cfg k Γ S x)
+  (ct : ℤ → Option Γ) (cp : ℤ), (Turing.clockCfg q c ct cp).output = c.output
+@Turing.Cfg.stopped_iff : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {x : List Γ} {stopAt : S → Bool}
+  {c : Turing.Cfg k Γ S x}, Turing.Cfg.Stopped stopAt c ↔ c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true
+@Turing.embedSilentTM : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} → (Fin m ↪ Fin k) → Fin k → Turing.MultiTapeTM m Symbol S → Turing.MultiTapeTM k Symbol S
+@Turing.embedSilentTM_runFrom : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (M : Turing.MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+      (pre out₀ : List Symbol) (c : Turing.Cfg m Symbol S x) (t : ℕ),
+      Turing.MultiTapeTM.runFrom (Turing.embedSilentCfg ι cap tapes heads pre out₀ c) t =
+        Turing.embedSilentCfg ι cap tapes heads pre out₀ (Turing.MultiTapeTM.runFrom c t)
+@Turing.embedSilentTM_frame : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (M : Turing.MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+      (pre out₀ : List Symbol) (c : Turing.Cfg m Symbol S x) (t : ℕ),
+      (∀ j ∉ Set.range ⇑ι,
+          j ≠ cap →
+            (Turing.MultiTapeTM.runFrom (Turing.embedSilentCfg ι cap tapes heads pre out₀ c) t).workTapes j = tapes j ∧
+              (Turing.MultiTapeTM.runFrom (Turing.embedSilentCfg ι cap tapes heads pre out₀ c) t).workTapePos j =
+                heads j) ∧
+        (Turing.MultiTapeTM.runFrom (Turing.embedSilentCfg ι cap tapes heads pre out₀ c) t).inputPos =
+            (Turing.MultiTapeTM.runFrom c t).inputPos ∧
+          (Turing.MultiTapeTM.runFrom (Turing.embedSilentCfg ι cap tapes heads pre out₀ c) t).output = out₀
+@Turing.embedSilentCfg_selected_tape : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol}
+  (ι : Fin m ↪ Fin k) (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol)
+  (c : Turing.Cfg m Symbol S x) (i : Fin m),
+  (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapes (ι i) = c.workTapes i
+@Turing.embedSilentCfg_selected_pos : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol}
+  (ι : Fin m ↪ Fin k) (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol)
+  (c : Turing.Cfg m Symbol S x) (i : Fin m),
+  (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos (ι i) = c.workTapePos i
+@Turing.embedSilentCfg_cap : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Turing.Cfg m Symbol S x),
+      (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapes cap = Turing.FinTM.bufferTape (pre ++ c.output) ∧
+        (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap = ↑(pre ++ c.output).length
+@Turing.embedSilentCfg_unselected : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol)
+  (c : Turing.Cfg m Symbol S x),
+  ∀ j ∉ Set.range ⇑ι,
+    j ≠ cap →
+      (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapes j = tapes j ∧
+        (Turing.embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos j = heads j
+@Turing.phaseHostTM : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → Turing.MultiTapeTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → Turing.MultiTapeTM k Γ ((i : I) × Ph i)
+@Turing.phaseHostTM_run : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ}
+  (c c' : Turing.Cfg k Γ (Ph i) x) (T : ℕ),
+  Turing.MultiTapeTM.runFrom c T = c' →
+    ∀ (s' : Ph i),
+      c'.state = some s' →
+        ∀ (q' : (i : I) × Ph i),
+          red i s' = some q' →
+            (∀ u < T, ∀ (s : Ph i), (Turing.MultiTapeTM.runFrom c u).state = some s → red i s = none) →
+              (∀ u ≤ T,
+                  Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (Sigma.mk i) c) u =
+                    Turing.Cfg.mapState (Sigma.mk i) (Turing.MultiTapeTM.runFrom c u)) ∧
+                Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (Sigma.mk i) c) (T + 1) =
+                  Turing.Cfg.mapState (fun x => q') c'
+@Turing.seamCompTM_run_ofCfg : ∀ {k : ℕ} {S₁ : Type u_1} {S₂ : Type u_2} {Symbol : Type u_3} {x : List Symbol}
+  [inst : DecidableEq S₁] (M₁ : Turing.MultiTapeTM k Symbol S₁) (exit : S₁) (M₂ : Turing.MultiTapeTM k Symbol S₂)
+  (entry : S₂) {c₀ c₁ : Turing.Cfg k Symbol S₁ x} {c₃ : Turing.Cfg k Symbol S₂ x} {T₁ T₂ : ℕ},
+  Turing.MultiTapeTM.runFrom c₀ T₁ = c₁ →
+    c₁.state = some exit →
+      (∀ t < T₁, (Turing.MultiTapeTM.runFrom c₀ t).state ≠ some exit) →
+        Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (fun x => entry) c₁) T₂ = c₃ →
+          Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState Sum.inl c₀) (T₁ + 1 + T₂) = Turing.Cfg.mapState Sum.inr c₃
+@Turing.seamReleaseTM_firstReturn : ∀ {k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol}
+  (M : Turing.MultiTapeTM k Symbol S) (anchor : S) {c c' : Turing.Cfg k Symbol S x} {T : ℕ},
+  c.state = some anchor →
+    0 < T →
+      Turing.MultiTapeTM.runFrom c T = c' →
+        c'.state = some anchor →
+          (∀ (t : ℕ), 0 < t → t < T → (Turing.MultiTapeTM.runFrom c t).state ≠ some anchor) →
+            Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (fun x => Sum.inl ()) c) T =
+                Turing.Cfg.mapState Sum.inr c' ∧
+              ∀ t < T,
+                (Turing.MultiTapeTM.runFrom (Turing.Cfg.mapState (fun x => Sum.inl ()) c) t).state ≠
+                  some (Sum.inr anchor)
+@Turing.incrementTM_run_succ_ofCfg : ∀ {k : ℕ} {x : List Bool} (i : Fin k) (w v : List Bool),
+  Turing.incFixed w = some v →
+    ∀ (d : Turing.Cfg k Bool Turing.FlagPhase x),
+      d.state = some Turing.FlagPhase.run →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = Turing.FinTM.bufferTape w p) →
+          Turing.MultiTapeTM.runFrom d (2 * (List.takeWhile id w).length + 2) =
+              { state := some (Turing.FlagPhase.done true), inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    Turing.FinTM.bufferTape v (q - d.workTapePos j)
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * (List.takeWhile id w).length + 2,
+                ∀ (b : Bool), (Turing.MultiTapeTM.runFrom d t).state ≠ some (Turing.FlagPhase.done b)) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * (List.takeWhile id w).length + 2,
+                  if j = i then
+                    (Turing.MultiTapeTM.runFrom d t).workTapePos j ∈
+                      Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑(List.takeWhile id w).length)
+                  else (Turing.MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@Turing.incrementTM_run_overflow_ofCfg : ∀ {k : ℕ} {x : List Bool} (i : Fin k) (w : List Bool),
+  Turing.incFixed w = none →
+    ∀ (d : Turing.Cfg k Bool Turing.FlagPhase x),
+      d.state = some Turing.FlagPhase.run →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = Turing.FinTM.bufferTape w p) →
+          Turing.MultiTapeTM.runFrom d (2 * w.length + 2) =
+              { state := some (Turing.FlagPhase.done false), inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    Turing.FinTM.bufferTape (List.replicate w.length false) (q - d.workTapePos j)
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2,
+                ∀ (b : Bool), (Turing.MultiTapeTM.runFrom d t).state ≠ some (Turing.FlagPhase.done b)) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = i then
+                    (Turing.MultiTapeTM.runFrom d t).workTapePos j ∈
+                      Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (Turing.MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@Turing.counterLoopTM_run_done : ∀ {k : ℕ} {S : Type} [inst : DecidableEq S] {x : List Bool}
+  (M : Turing.MultiTapeTM k Bool S) (a : S) (exit : Option S) (τ : Turing.Cfg k Bool S x → ℕ)
+  (c : Turing.Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = Turing.FinTM.bufferTape w p) →
+    ∀ (d : ℕ),
+      Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+        (∀ r < d,
+            (Turing.counterLoopOrbit M τ c r).state = some a ∧
+              0 < τ (Turing.counterLoopOrbit M τ c r) ∧
+                (∀ (u : ℕ),
+                    0 < u →
+                      u < τ (Turing.counterLoopOrbit M τ c r) →
+                        ∃ s,
+                          (Turing.MultiTapeTM.runFrom (Turing.counterLoopOrbit M τ c r) u).state = some s ∧
+                            s ≠ a ∧ exit ≠ some s) ∧
+                  (Turing.counterLoopOrbit M τ c (r + 1)).state = some a) →
+          ∀ (T : ℕ),
+            T = ∑ r ∈ Finset.range d, τ (Turing.counterLoopOrbit M τ c r) + Turing.counterOverhead w (d + 1) →
+              Turing.MultiTapeTM.runFrom
+                    (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp) T =
+                  Turing.counterLoopCfg (some Turing.CounterLoopState.done) (Turing.counterLoopOrbit M τ c d)
+                    (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some true else ct q) cp ∧
+                (∀ t < T,
+                    (Turing.MultiTapeTM.runFrom
+                            (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp)
+                            t).state ≠
+                        some Turing.CounterLoopState.done ∧
+                      (Turing.MultiTapeTM.runFrom
+                            (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp)
+                            t).state ≠
+                        some Turing.CounterLoopState.escape) ∧
+                  (∀ t ≤ T,
+                      (Turing.MultiTapeTM.runFrom
+                              (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp)
+                              t).workTapePos
+                          (Fin.last k) ∈
+                        Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                    ∀ t ≤ T,
+                      ∃ r u,
+                        (r < d ∧ u ≤ τ (Turing.counterLoopOrbit M τ c r) ∨ r = d ∧ u = 0) ∧
+                          ∀ (j : Fin k),
+                            (Turing.MultiTapeTM.runFrom
+                                    (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c
+                                      ct cp)
+                                    t).workTapePos
+                                j.castSucc =
+                              (Turing.MultiTapeTM.runFrom (Turing.counterLoopOrbit M τ c r) u).workTapePos j
+@Turing.counterLoopTM_run_escape : ∀ {k : ℕ} {S : Type} [inst : DecidableEq S] {x : List Bool}
+  (M : Turing.MultiTapeTM k Bool S) (a e : S),
+  e ≠ a →
+    ∀ (τ : Turing.Cfg k Bool S x → ℕ) (c : Turing.Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+      (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = Turing.FinTM.bufferTape w p) →
+        ∀ r₀ < Nat.ofDigits 2 (List.map Bool.toNat w),
+          (∀ r ≤ r₀,
+              (Turing.counterLoopOrbit M τ c r).state = some a ∧
+                0 < τ (Turing.counterLoopOrbit M τ c r) ∧
+                  ∀ (u : ℕ),
+                    0 < u →
+                      u < τ (Turing.counterLoopOrbit M τ c r) →
+                        ∃ s,
+                          (Turing.MultiTapeTM.runFrom (Turing.counterLoopOrbit M τ c r) u).state = some s ∧
+                            s ≠ a ∧ s ≠ e) →
+            (Turing.counterLoopOrbit M τ c (r₀ + 1)).state = some e →
+              ∀ (T : ℕ),
+                T =
+                    ∑ r ∈ Finset.range (r₀ + 1), τ (Turing.counterLoopOrbit M τ c r) +
+                      Turing.counterOverhead w (r₀ + 1) →
+                  Turing.MultiTapeTM.runFrom
+                        (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct cp) T =
+                      Turing.counterLoopCfg (some Turing.CounterLoopState.escape)
+                        (Turing.counterLoopOrbit M τ c (r₀ + 1))
+                        (fun q =>
+                          if cp ≤ q ∧ q < cp + ↑w.length then
+                            Turing.FinTM.bufferTape (Turing.counterWord w (r₀ + 1)) (q - cp)
+                          else ct q)
+                        cp ∧
+                    (∀ t < T,
+                        (Turing.MultiTapeTM.runFrom
+                                (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct
+                                  cp)
+                                t).state ≠
+                            some Turing.CounterLoopState.done ∧
+                          (Turing.MultiTapeTM.runFrom
+                                (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct
+                                  cp)
+                                t).state ≠
+                            some Turing.CounterLoopState.escape) ∧
+                      (∀ t ≤ T,
+                          (Turing.MultiTapeTM.runFrom
+                                  (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run)) c ct
+                                    cp)
+                                  t).workTapePos
+                              (Fin.last k) ∈
+                            Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                        ∀ t ≤ T,
+                          ∃ r u,
+                            (r ≤ r₀ ∧ u ≤ τ (Turing.counterLoopOrbit M τ c r) ∨ r = r₀ + 1 ∧ u = 0) ∧
+                              ∀ (j : Fin k),
+                                (Turing.MultiTapeTM.runFrom
+                                        (Turing.counterLoopCfg (some (Turing.CounterLoopState.dec Turing.FlagPhase.run))
+                                          c ct cp)
+                                        t).workTapePos
+                                    j.castSucc =
+                                  (Turing.MultiTapeTM.runFrom (Turing.counterLoopOrbit M τ c r) u).workTapePos j
+Turing.counterOverhead_le : ∀ (w : List Bool),
+  Turing.counterOverhead w (Nat.ofDigits 2 (List.map Bool.toNat w) + 1) ≤
+    4 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 2
+@Turing.FinTM.computesInTime_iff : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (x w : List Symbol) (t : ℕ),
+  M.ComputesInTime x w t ↔
+    (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t).state = none ∧
+      (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg x) t).output = w
+@Turing.MultiTapeTM.initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2}
+  {tm : Turing.MultiTapeTM k Symbol State} (input : List Symbol),
+  Turing.MultiTapeTM.initCfg input = Turing.Cfg.init tm.q₀ input
+@Turing.MultiTapeTM.step_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input} {q : State},
+  cfg.state = some q → Turing.MultiTapeTM.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+@Turing.MultiTapeTM.step_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} {cfg : Turing.Cfg k Symbol State input},
+  cfg.state = none → Turing.MultiTapeTM.step cfg = cfg
+@Turing.MultiTapeTM.runFrom_add : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input) (a b : ℕ),
+  Turing.MultiTapeTM.runFrom cfg (a + b) = Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.runFrom cfg a) b
+@Turing.Action.apply_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).state = action.state
+@Turing.Action.apply_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).inputPos = Turing.moveInputPos cfg.inputPos action.inputTape
+@Turing.Action.apply_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input) (i : Fin k),
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+@Turing.Action.apply_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input),
+  (action.apply cfg).output = cfg.output ++ action.output.toList
+@Turing.Action.apply_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (a : Turing.Action k Symbol State) (c : Turing.Cfg k Symbol State input) (i : Fin k),
+  (a.apply c).workTapes i =
+    Function.update (c.workTapes i) (c.workTapePos i) ((a.workTapes i).1.getD (c.workTapeSymbols i))
+@Turing.Cfg.mapState_state : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Turing.Cfg k Symbol State input),
+  (Turing.Cfg.mapState f cfg).state = Option.map f cfg.state
+@Turing.Cfg.mapState_inputPos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input),
+  (Turing.Cfg.mapState f cfg).inputPos = cfg.inputPos
+@Turing.Cfg.mapState_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a : Fin k) (a_1 : ℤ),
+  (Turing.Cfg.mapState f cfg).workTapes a a_1 = cfg.workTapes a a_1
+@Turing.Cfg.mapState_workTapePos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3}
+  {input : List Symbol} (f : State → State') (cfg : Turing.Cfg k Symbol State input) (a : Fin k),
+  (Turing.Cfg.mapState f cfg).workTapePos a = cfg.workTapePos a
+@Turing.Cfg.mapState_output : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Turing.Cfg k Symbol State input), (Turing.Cfg.mapState f cfg).output = cfg.output
+@Turing.FinTM.timed_rewind : ∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S) (start scan : S)
+  (dest : Option S),
+  (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+      tm.tr start inp work = Turing.FinTM.controlAction SignType.neg (some scan)) →
+    (∀ (inp : Option Bool) (work : Fin k → Option Bool),
+        tm.tr scan inp work =
+          match inp with
+          | some val => Turing.FinTM.controlAction SignType.neg (some scan)
+          | none => Turing.FinTM.controlAction SignType.pos dest) →
+      ∀ (c : Turing.Cfg k Bool S x),
+        c.state = some start →
+          ∃ r ≤ ↑c.inputPos + 2,
+            Turing.MultiTapeTM.runFrom c r =
+              { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos,
+                output := c.output }
+@Turing.NDTM.stepWith_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.NDTM k Symbol State} {b : Bool} {cfg : Turing.Cfg k Symbol State input} {q : State},
+  cfg.state = some q → Turing.NDTM.stepWith b cfg = (tm.tr b q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+@Turing.NDTM.stepWith_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.NDTM k Symbol State} {b : Bool} {cfg : Turing.Cfg k Symbol State input},
+  cfg.state = none → Turing.NDTM.stepWith b cfg = cfg
+@Turing.workTapePos_apply_le : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Turing.Action k Symbol State) (cfg : Turing.Cfg k Symbol State input) (i : Fin k),
+  |(action.apply cfg).workTapePos i - cfg.workTapePos i| ≤ 1
+exit 0, 2 s, 2026-10-18 11:36:14, file /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/c1-exhaustive-cont1-fill/probe/C1ExhaustiveImportProbe.lean, oleans oleans-lseam2
