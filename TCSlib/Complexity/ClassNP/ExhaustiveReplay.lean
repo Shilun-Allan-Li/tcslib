@@ -506,7 +506,8 @@ private theorem xr_fwd_run {K : ℕ} {x : List Bool} (tm : MultiTapeTM K Bool xr
     ∀ (o : ℤ) (d : Cfg K Bool xr_St x), d.state = some .run → d.workTapePos r = o →
       (∀ i : ℕ, i < m → d.workTapes r (o + i) ≠ none) →
       tm.runFrom d m =
-        ⟨some .run, d.inputPos, d.workTapes, Function.update d.workTapePos r (o + m), d.output⟩ := by
+        ⟨some .run, d.inputPos, d.workTapes, Function.update d.workTapePos r (o + m),
+          d.output⟩ := by
   induction m with
   | zero =>
     intro o d hd hpos _
@@ -1608,7 +1609,8 @@ private theorem xr_firstArrival' {k : ℕ} {S : Type} {x : List Bool} (tm : Mult
   classical
   have hT' : ∃ a', (tm.runFrom c T).state = some a' ∧ A a' := ⟨a, by rw [h]; exact hc', ha⟩
   have hex : ∃ u, ∃ a', (tm.runFrom c u).state = some a' ∧ A a' := ⟨T, hT'⟩
-  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
+  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
+    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
   obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex
   have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
     rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
@@ -1655,7 +1657,8 @@ private theorem xr_ctr_ne_dep (k : ℕ) : xr_ctr k ≠ xr_dep k := by
   intro h; have := congrArg Fin.val h; rw [xr_ctr_val, xr_dep_val] at this; omega
 private theorem xr_cap_ne_dep (k : ℕ) : xr_cap k ≠ xr_dep k := by
   intro h; have := congrArg Fin.val h; rw [xr_cap_val, xr_dep_val] at this; omega
-private theorem xr_work_injective {k : ℕ} {j j' : Fin k} (h : xr_work k j = xr_work k j') : j = j' := by
+private theorem xr_work_injective {k : ℕ} {j j' : Fin k} (h : xr_work k j = xr_work k j') :
+    j = j' := by
   apply Fin.ext
   have := congrArg Fin.val h
   rwa [xr_work_val, xr_work_val] at this
@@ -1749,7 +1752,8 @@ private theorem xr_heads_upd_work {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp h
   · rw [Function.update_of_ne (Ne.symm (xr_work_ne_dep j)), xr_heads_dep, xr_heads_dep]
 
 private theorem xr_heads_upd_choice {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hdp : ℤ) (X : ℤ) :
-    Function.update (xr_heads hk hch hctr hcp hdp) (xr_choice k) X = xr_heads hk X hctr hcp hdp := by
+    Function.update (xr_heads hk hch hctr hcp hdp) (xr_choice k) X =
+      xr_heads hk X hctr hcp hdp := by
   apply xr_bank_ext
   · intro j; rw [Function.update_of_ne (xr_work_ne_choice j), xr_heads_work, xr_heads_work]
   · rw [Function.update_self, xr_heads_choice]
@@ -1787,7 +1791,8 @@ private theorem xr_heads_upd_dep {k : ℕ} (hk : Fin k → ℤ) (hch hctr hcp hd
 /-- **The catalog rows' result tape.** A row that rewrites the cells `[0, |w|)` of a bank holding
 the word `w` at the origin with a same-width word `v` leaves that bank holding `v`. -/
 private theorem xr_patch_eq {K : ℕ} (tp : Fin K → ℤ → Option Bool) (hd : Fin K → ℤ) (i : Fin K)
-    (hi : hd i = 0) (w v w₀ : List Bool) (hv : v.length = w.length) (hw : tp i = FinTM.bufferTape w₀)
+    (hi : hd i = 0) (w v w₀ : List Bool) (hv : v.length = w.length)
+    (hw : tp i = FinTM.bufferTape w₀)
     (hlen : w₀.length ≤ w.length) :
     (fun j q => if j = i ∧ hd j ≤ q ∧ q < hd j + (w.length : ℤ) then FinTM.bufferTape v (q - hd j)
       else tp j q) = Function.update tp i (FinTM.bufferTape v) := by
@@ -1809,7 +1814,8 @@ private def xr_val (w : List Bool) : ℕ := Nat.ofDigits 2 (w.map Bool.toNat)
 private theorem xr_val_nil : xr_val [] = 0 := by
   simp [xr_val]
 
-private theorem xr_val_cons (b : Bool) (w : List Bool) : xr_val (b :: w) = b.toNat + 2 * xr_val w := by
+private theorem xr_val_cons (b : Bool) (w : List Bool) :
+    xr_val (b :: w) = b.toNat + 2 * xr_val w := by
   simp [xr_val, Nat.ofDigits_cons]
 
 private theorem xr_val_lt (w : List Bool) : xr_val w < 2 ^ w.length := by
@@ -1817,7 +1823,8 @@ private theorem xr_val_lt (w : List Bool) : xr_val w < 2 ^ w.length := by
     (by intro x hx; obtain ⟨b, -, rfl⟩ := List.mem_map.mp hx; cases b <;> simp)
   simpa [xr_val] using this
 
-private theorem xr_val_inj : ∀ {w w' : List Bool}, w.length = w'.length → xr_val w = xr_val w' → w = w'
+private theorem xr_val_inj :
+    ∀ {w w' : List Bool}, w.length = w'.length → xr_val w = xr_val w' → w = w'
   | [], [], _, _ => rfl
   | [], _ :: _, h, _ => by simp at h
   | _ :: _, [], h, _ => by simp at h
@@ -2038,7 +2045,8 @@ private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
     (xr_E C).tm.runFrom ⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ (T + 1) =
       ⟨some q', c'.inputPos, c'.workTapes, c'.workTapePos, []⟩ := by
   have hstart : (⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) =
-      (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z).mapState (Sigma.mk i) := by
+      (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z).mapState
+        (Sigma.mk i) := by
     apply Cfg.ext
     · rw [Cfg.mapState_state]; rfl
     · rw [Cfg.mapState_inputPos]
@@ -2123,12 +2131,16 @@ private theorem xr_red_replay_none {N : FinNDTM Bool} (C : xr_Clock N) (a l : Bo
 
 /-- The phases run by a leaf row redirect only at a `done` anchor. -/
 private theorem xr_red_leaf_none {N : FinNDTM Bool} (C : xr_Clock N) (i : xr_I N.k)
-    (hi : (∃ a l, i = (.test, a, l)) ∨ (∃ a l, i = (.crewind, a, l)) ∨ (∃ a l, i = (.irewind, a, l)) ∨
-      (∃ j n a l, i = (.pass j n, a, l)) ∨ (∃ a l, i = (.extC, a, l)) ∨ (∃ a l, i = (.extD, a, l)))
-    (s : xr_St) (hs : ¬ ∃ b, s = .done b) : ∀ (e : xr_PhSt C i = xr_St), xr_red C i (e ▸ s) = none := by
+    (hi : (∃ a l, i = (.test, a, l)) ∨ (∃ a l, i = (.crewind, a, l)) ∨
+      (∃ a l, i = (.irewind, a, l)) ∨ (∃ j n a l, i = (.pass j n, a, l)) ∨
+      (∃ a l, i = (.extC, a, l)) ∨ (∃ a l, i = (.extD, a, l)))
+    (s : xr_St) (hs : ¬ ∃ b, s = .done b) :
+    ∀ (e : xr_PhSt C i = xr_St), xr_red C i (e ▸ s) = none := by
   intro e
-  rcases hi with ⟨a, l, rfl⟩ | ⟨a, l, rfl⟩ | ⟨a, l, rfl⟩ | ⟨j, n, a, l, rfl⟩ | ⟨a, l, rfl⟩ | ⟨a, l, rfl⟩ <;>
-    cases s <;> first | rfl | exact absurd ⟨_, rfl⟩ hs
+  rcases hi with h | h | h | h | h | h
+  all_goals first
+    | (obtain ⟨a, l, rfl⟩ := h; cases s <;> first | rfl | exact absurd ⟨_, rfl⟩ hs)
+    | (obtain ⟨j, n, a, l, rfl⟩ := h; cases s <;> first | rfl | exact absurd ⟨_, rfl⟩ hs)
 
 /-! ##### The copy phase -/
 
@@ -2239,7 +2251,8 @@ private theorem xr_test_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool)
   refine ⟨T' + 1, by omega, ?_⟩
   rw [xr_phase_step C (.test, a, l) xr_St.start ip _ _ T' _ hrun' _ rfl rfl
     ⟨(.crewind, a || decide (out = [true]), l), xr_St.start⟩ rfl
-    (fun u hu s hs => xr_red_leaf_none C (.test, a, l) (Or.inl ⟨a, l, rfl⟩) s (hguard u hu s hs) rfl)]
+    (fun u hu s hs =>
+      xr_red_leaf_none C (.test, a, l) (Or.inl ⟨a, l, rfl⟩) s (hguard u hu s hs) rfl)]
   dsimp only
   rw [xr_tapes_upd_cap, xr_heads_upd_cap, FinTM.bufferTape_nil]
 
@@ -2271,7 +2284,8 @@ private theorem xr_crewind_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bo
 /-- **The input rewind on the host.** Within `inputPos + 3` steps the host returns the input head
 to `1` and dispatches to the window clear (or to the increment when `N` has no work tape). -/
 private theorem xr_irewind_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
-    (ip : Fin (z.length + 2)) (tp : Fin (N.k + 2 + 2) → ℤ → Option Bool) (hd : Fin (N.k + 2 + 2) → ℤ) :
+    (ip : Fin (z.length + 2)) (tp : Fin (N.k + 2 + 2) → ℤ → Option Bool)
+    (hd : Fin (N.k + 2 + 2) → ℤ) :
     ∃ T ≤ ip.val + 3,
       (xr_E C).tm.runFrom ⟨some ⟨(.irewind, a, l), xr_St.start⟩, ip, tp, hd, []⟩ T =
         ⟨some (xr_firstPass C a l), 1, tp, hd, []⟩ := by
@@ -2338,8 +2352,9 @@ private theorem xr_inc_host_overflow {N : FinNDTM Bool} (C : xr_Clock N) (z : Li
       | run => rfl
       | rewind b => rfl)]
   dsimp only
-  rw [xr_patch_eq _ _ (xr_choice N.k) (xr_heads_choice _ _ _ _ _) s (List.replicate s.length false) s
-    List.length_replicate (xr_tapes_choice _ _ _ _ _) le_rfl, xr_tapes_upd_choice]
+  rw [xr_patch_eq _ _ (xr_choice N.k) (xr_heads_choice _ _ _ _ _) s
+    (List.replicate s.length false) s List.length_replicate (xr_tapes_choice _ _ _ _ _) le_rfl,
+    xr_tapes_upd_choice]
   rfl
 
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
