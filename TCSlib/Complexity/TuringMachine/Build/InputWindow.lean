@@ -25,7 +25,7 @@ No new definitions: the copier is the existential contract `Turing.exists_inputW
 
 ## Main results
 
-* `Turing.exists_inputWindowCopyTM` — the window copier's contract (sorried).
+* `Turing.exists_inputWindowCopyTM` — the window copier's contract (proved).
 
 ## References
 
@@ -35,8 +35,9 @@ No new definitions: the copier is the existential contract `Turing.exists_inputW
 
 namespace Turing
 
-/-- The one-cell copy body returns to `false` after copying a symbol and escapes to `true`
-at a blank. No catalog row provides this cyclic native-input copy with an end-marker escape. -/
+/-- The one-step copy body on one work tape. In state `false`, on an input symbol it writes the
+symbol, moves the tape head and the input head right and stays in `false`; at the input's right
+end it moves to `true` without writing or moving. -/
 private def iw_body : MultiTapeTM 1 Bool Bool where
   q₀ := false
   tr := fun q inp _ =>
@@ -45,7 +46,7 @@ private def iw_body : MultiTapeTM 1 Bool Bool where
       | none => FinTM.controlAction 0 (some true)
       | some b => ⟨1, fun _ => (some (some b), 1), none, some false⟩
 
-/-- One live step of a leaf is its selected action, expressed through the model's equations. -/
+/-- One step from a live state applies that state's transition at the scanned symbols. -/
 private theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)
     (c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :
     M.runFrom c 1 = (M.tr q c.inputSymbol c.workTapeSymbols).apply c := by
@@ -167,7 +168,7 @@ private theorem iw_prefix_step {z : List Bool} (c : Cfg 1 Bool Bool z) (p r : �
 
 /-- The one-step round orbit is the explicitly copied prefix while input cells remain.
 
-**Proof sketch.** Induct on the number of rounds using the public round-orbit equations and
+**Proof sketch.** Induct on the number of rounds using the round-orbit equations and
 the one-cell extension lemma. -/
 private theorem iw_orbit {z : List Bool} (c : Cfg 1 Bool Bool z) (p : ℕ)
     (hc : c.state = some false) (hi : c.inputPos.val = p + 1) (r : ℕ)
@@ -182,7 +183,7 @@ private theorem iw_orbit {z : List Bool} (c : Cfg 1 Bool Bool z) (p : ℕ)
       (iw_prefix_step c p r (by omega))
 
 /-- The counter loop's escape anchor takes one silent stationary step to its done anchor.
-Every other transition is delegated to the public counter loop. -/
+Every other transition is the counter loop's. -/
 private def iw_machine : MultiTapeTM 2 Bool (CounterLoopState Bool) where
   q₀ := .dec .run
   tr := fun q inp work => match q with
@@ -191,8 +192,8 @@ private def iw_machine : MultiTapeTM 2 Bool (CounterLoopState Bool) where
 
 /-- Before the escape anchor is visited, adding the exit join does not change the run.
 
-**Proof sketch.** The transition tables agree off the escape anchor. Apply the public
-agreement transport on that set of states. -/
+**Proof sketch.** The transition tables agree off the escape anchor, so the runs agree
+until it is first visited (`Turing.MultiTapeTM.runFrom_eq_of_agreeOn`). -/
 private theorem iw_join_prefix {z : List Bool} (c : Cfg 2 Bool (CounterLoopState Bool) z)
     (t : ℕ) (hcut : ∀ u < t,
       ((counterLoopTM iw_body false (some true)).runFrom c u).state ≠ some .escape) :
@@ -305,7 +306,7 @@ private theorem iw_local {z : List Bool} (c : Cfg 1 Bool Bool z) (p : ℕ)
       · have hut' : u = t := by omega
         subst u
         rw [hex]
-        decide
+        simp
 
 /-- Select the destination as tape zero and the distinct counter as tape one. -/
 private def iw_select {k : ℕ} (j dst : Fin k) (hjd : j ≠ dst) : Fin 2 ↪ Fin k :=
