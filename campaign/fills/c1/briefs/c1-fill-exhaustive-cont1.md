@@ -4,6 +4,12 @@
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
+- **Paths in this brief are those of your base** (the commit below). After your base the
+  campaign moved its process records: `audits/` and `briefs/` became `campaign/`, and
+  `campaign/MOVED.md` at the tip maps each old path to its new one. Read every cited file at
+  your base (`git show <base>:<path>`, or after the checkout below), not at the tip. The
+  environment addendum is attached to this dispatch; it is also
+  `briefs/fill-environment-addendum.md` at your base.
 - Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it
   fails, **stop**. That commit contains:
   - **your target as a gated statement** (the C1 host-contracts gate,
