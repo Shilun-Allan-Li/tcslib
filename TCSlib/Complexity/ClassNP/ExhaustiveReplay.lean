@@ -835,7 +835,13 @@ private theorem xr_pass_fwd {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j ≠
 
 /-- **The pass's contract.** From the origin of the ruler word `u`, `2|u| + 2` steps move head `j`
 by `|u|` cells along `dir`, blank the `|u| + 1` cells it visited, return the ruler head to `0`,
-change nothing else, and stop at `done true`. -/
+change nothing else, and stop at `done true`.
+
+**Proof sketch.** `xr_pass_fwd` gives the first `|u|` steps: head `j` moves `|u|` cells along
+`dir`, blanking each cell it leaves, while the ruler head walks over `u`. At the ruler's right
+blank one step blanks the last visited cell and turns the ruler head back, and `xr_back_run`
+returns it to `0` in `|u| + 1` steps. The visited cells are `pos + i·dir` for `i ≤ |u|`; every
+other cell keeps its symbol. -/
 private theorem xr_passTM_run {K : ℕ} {x : List Bool} (j r : Fin K) (hjr : j ≠ r) (dir : SignType)
     (u : List Bool) (d : Cfg K Bool xr_St x) (hd : d.state = some .run)
     (hr : d.workTapes r = FinTM.bufferTape u) (hpos : d.workTapePos r = 0) :
@@ -969,7 +975,14 @@ private theorem xr_test_tail {K : ℕ} {x : List Bool} (r : Fin K) (v : List Boo
 
 /-- **The capture test's contract.** With the output `out` stored at the origin and the head at
 its end, `|out| + 2` steps clear it, return the head to `0`, change nothing else, and stop at
-`done true` exactly when `out = [true]`. -/
+`done true` exactly when `out = [true]`.
+
+**Proof sketch.** One step left onto the output's last cell. If the output is empty, that cell
+is blank and one step right exits `done false` (two steps). Otherwise write it as `L ++ [b]`;
+blank `b` and step left. For `b = false`, the clearing tail `xr_test_tail` blanks `L`, returns
+the head to `0` and exits `done false`. For `b = true`, the next read decides: a blank (the
+output was `[true]`) exits `done true` one step right, and a symbol is blanked and the clearing
+tail exits `done false`. Every case takes `|out| + 2` steps. -/
 private theorem xr_testTM_run {K : ℕ} {x : List Bool} (r : Fin K) (out : List Bool)
     (d : Cfg K Bool xr_St x) (hd : d.state = some .start)
     (hr : d.workTapes r = FinTM.bufferTape out) (hpos : d.workTapePos r = out.length) :
@@ -2473,7 +2486,14 @@ private theorem xr_none_mono {f g : ℤ → Option Bool} (h : ∀ p, g p = none 
 /-- **The window clear of one tape on the host.** From the start of pass `0` of tape `j`, whose
 content lies within radius `2|wL|` of its head, within `6(2|wL| + 3)` steps the six passes blank
 the tape and move its head `2|wL|` cells right; the host dispatches to the next tape (or the
-increment). -/
+increment).
+
+**Proof sketch.** Six passes of the ruler word `wL` over tape `j` (`xr_pass_left` twice, then
+`xr_pass_right` four times), each blanking the `|wL| + 1` cells it visits: the head goes
+`2|wL|` cells left, then `4|wL|` right, ending `2|wL|` right of its start. The visited cells
+cover `[pos − 2|wL|, pos + 2|wL|]`, which contains the tape's content (`xr_Win`), and a blank
+cell stays blank under the later passes (`xr_Blank_mono`, `xr_none_mono`), so the tape ends
+blank. Each pass with its dispatch costs at most `2|wL| + 3` steps. -/
 private theorem xr_clearTape_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
     (ip : Fin (z.length + 2)) (wk : Fin N.k → ℤ → Option Bool) (ch ctr cp : ℤ → Option Bool)
     (wL : List Bool) (hk : Fin N.k → ℤ) (hch hctr hcp : ℤ) (j : Fin N.k)
@@ -2646,7 +2666,17 @@ private theorem xr_branch_win {N : FinNDTM Bool} (z s : List Bool) (h : Fin N.k 
 value `L` and width `L`, the counter width at most `L`), within `(18 N.k + 19)(L + 1)` steps the
 host replays the choice word `s`, folds its verdicts into the flags (the output `[true]` raises
 the accept flag, a live branch the live flag), restores the tapes, and either dispatches to the
-next cycle on `incFixed s`, or, at the overflow, to the depth's end. -/
+next cycle on `incFixed s`, or, at the overflow, to the depth's end.
+
+**Proof sketch.** The cycle's phases, joined by the host's dispatches: copy the depth word onto
+the counter (`xr_copy_host`, `2|wL| + 3` steps); replay the choice word `s` on `N`'s tapes from
+the represented start (`xr_replay_host`), recording the branch's liveness in the live flag; test
+the captured output, raising the accept flag on `[true]` (`xr_test_host`); rewind the choice word
+(`xr_crewind_host`) and the input head (`xr_irewind_host`); clear `N`'s tapes within radius
+`2|s|` of their translated heads (`xr_clear_host`, the radius by `xr_branch_win`); and increment
+the choice word, to the next cycle on `incFixed s = some s'` (`xr_inc_host_succ`) or to the
+depth's end at the overflow (`xr_inc_host_overflow`). The clear costs `N.k·6(2L + 3)`, and the
+phases together at most `(18 N.k + 19)(L + 1)`. -/
 private theorem xr_cycle_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (a l : Bool)
     (wL s u : List Bool) (h : Fin N.k → ℤ) (hval : xr_val wL = s.length)
     (hL : wL.length = s.length) (hu : u.length ≤ wL.length) :
@@ -2743,7 +2773,15 @@ private theorem xr_cycle_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool
 depth `L` left to replay, the host runs through them to the depth's end within
 `m·(18 N.k + 19)(L + 1)` steps; the accept flag ends up raised exactly when it was, or some word
 of value at least `val s` outputs `[true]`, and the live flag exactly when it was, or some such
-word is live after `L` steps. -/
+word is live after `L` steps.
+
+**Proof sketch.** Induction on `m`. At `m = 0` there is nothing to show, since `val s < 2^L`.
+Otherwise run one cycle (`xr_cycle_host`). If `s` is the depth's last word (`incFixed s = none`),
+the cycle ends at the depth's end, and `s` is the only word of length `L` with value at least
+`val s` (`xr_incFixed_none_max`, `xr_val_inj`), which gives both flags. Otherwise the cycle
+continues at `s' = incFixed s`, with `val s' = val s + 1`, and the induction hypothesis at `s'`
+with the updated flags gives the rest: a word of value at least `val s` is `s` itself or has
+value at least `val s'`. -/
 private theorem xr_depth_host {N : FinNDTM Bool} (C : xr_Clock N) (z wL : List Bool) (L : ℕ)
     (hL : wL.length = L) (hval : xr_val wL = L) :
     ∀ (m : ℕ) (a l : Bool) (s u : List Bool) (h : Fin N.k → ℤ), s.length = L → u.length ≤ L →
@@ -2979,7 +3017,15 @@ depth `L ≤ L*` (the depth word of width and value `L`, the choice word all `fa
 word of width at most `L`, both flags down), within `Σ_{i ≤ L* - L} 2^{L+i}·(18 N.k + 38)(L+i+1)`
 steps the host reaches the depth `L*`'s end, the live flag down and the accept flag
 `decide (N.AcceptsWithin z L*)`: every depth below `L*` has a live branch and deepens, and the
-depth `L*` answers. -/
+depth `L*` answers.
+
+**Proof sketch.** Induction on `m = L* − L`. At `L = L*`, one depth from the all-`false` word
+(`xr_depth_host`, `2^{L*}` cycles) ends with the live flag down, since every branch of length
+`L*` has halted, and the accept flag up exactly when some branch of length `L*` outputs `[true]`,
+that is `N.AcceptsWithin z L*` (`FinNDTM.acceptsWithin_iff`). Below `L*`, minimality gives a
+live branch of length `L`, so the depth ends with the live flag up; `xr_deepen_host` (at most
+`6L + 11` steps, inside the depth's `2^L·19(L + 1)` slack) starts depth `L + 1`, and the
+induction hypothesis finishes. -/
 private theorem xr_run_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (Ls : ℕ)
     (hLs : N.tm.HaltsWithin z Ls) (hmin : ∀ L' < Ls, ¬ N.tm.HaltsWithin z L') :
     ∀ (m L : ℕ) (wL u : List Bool) (h : Fin N.k → ℤ), L + m = Ls → wL.length = L →
