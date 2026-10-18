@@ -1,0 +1,97 @@
+/-- Either header projection halts at the suffix with its selected component. The common
+time is `16 |bits t| + 8 |α| + 25`; in particular it is independent of the suffix.
+
+**Proof sketch.** Apply the published prefix contract to the first or second pair extractor.
+Decode the inner pair with its round-trip lemma and expand only its published length formula. -/
+private theorem ic_header_result (first : Bool) (α x : List Bool) (t : ℕ) :
+    let F := if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true
+    let M := prefixCanonTM F
+    let z := pairEncode (pairEncode (Nat.bits t) α) x
+    let d := M.tm.runFrom (M.tm.initCfg z)
+      (16 * (Nat.bits t).length + 8 * α.length + 25)
+    d.state = none ∧ d.output = (if first then Nat.bits t else α) ∧
+      d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 := by
+  have duration : 3 * (pairEncode (Nat.bits t) α).length + 4 +
+      5 * ((pairEncode (Nat.bits t) α).length + 1) =
+      16 * (Nat.bits t).length + 8 * α.length + 25 := by
+    rw [length_pairEncode]
+    omega
+  have position : 2 * (pairEncode (Nat.bits t) α).length + 3 =
+      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+    rw [length_pairEncode]
+    omega
+  cases first
+  · have h := prefixCanon_complete _ _ _ FinTM.pairExtractTM_snd
+      (pairEncode (Nat.bits t) α) x
+    simpa only [duration, position, pairDecode_pairEncode, Option.map_some,
+      Option.getD_some, Bool.false_eq_true, ↓reduceIte] using h
+  · have h := prefixCanon_complete _ _ _ FinTM.pairExtractTM_fst
+      (pairEncode (Nat.bits t) α) x
+    simpa only [duration, position, pairDecode_pairEncode, Option.map_some,
+      Option.getD_some, ↓reduceIte] using h
+
+/-- A bounded native-input computation can be silently captured with a first live return.
+The completed transport contains the source's final output, even if it halted before the bound.
+
+**Proof sketch.** Choose the first halt using the public first-halt lemma. The returning
+embedding reaches its live anchor there, with exactly the configuration at the supplied bound. -/
+private theorem ic_capture_return {k : ℕ} (M : FinTM Bool) (x : List Bool)
+    (ι : Fin M.k ↪ Fin k) (cap : Fin k) (hcap : cap ∉ Set.range ι)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (out : List Bool)
+    (T : ℕ) (halt : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
+    ∃ u ≤ T,
+      (embedSilentRetTM ι cap M.tm).runFrom
+          ((embedSilentCfg ι cap tapes heads [] out (M.tm.initCfg x)).mapState Sum.inl) u =
+        { embedSilentCfg ι cap tapes heads [] out (M.tm.runFrom (M.tm.initCfg x) T) with
+          state := some (Sum.inr ()) } ∧
+      ∀ v < u,
+        ((embedSilentRetTM ι cap M.tm).runFrom
+          ((embedSilentCfg ι cap tapes heads [] out (M.tm.initCfg x)).mapState Sum.inl)
+          v).state ≠ some (Sum.inr ()) := by
+  obtain ⟨u, hu, before, same⟩ := M.tm.exists_first_halt (M.tm.initCfg x) halt
+  have live : (M.tm.initCfg x).state ≠ none := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_state]
+    exact Option.some_ne_none _
+  obtain ⟨_, result, cut⟩ := embedSilentRetTM_run ι cap hcap M.tm tapes heads [] out
+    (M.tm.initCfg x) u live before (by rw [same]; exact halt)
+  exact ⟨u, hu, by simpa only [same] using result, cut⟩
+
+/-- Replaying any prefix of the stream on the bounded window gives the original branch's
+control and output. The stream may be longer than the deadline.
+
+**Proof sketch.** The replay theorem removes the extra choice tape. Input locality then
+identifies the run on `x.take t` with the run on `x`, since the prefix has at most `t` bits. -/
+private theorem ic_replay_window {k : ℕ} {S : Type} (N : NDTM k Bool S)
+    (x s : List Bool) (t r : ℕ) (hs : t ≤ s.length) (hr : r ≤ t) :
+    let d := N.replayTM.runFrom
+      (NDTM.withChoiceTape (N.initCfg (x.take t)) (FinTM.bufferTape s) 0) r
+    let e := N.runWith (s.take r) (N.initCfg x)
+    d.state = e.state ∧ d.output = e.output := by
+  obtain ⟨p, _, _, replay⟩ := N.replayTM_runFrom (N.initCfg (x.take t)) s r
+    (hr.trans hs)
+  have locality := N.runWith_initCfg_take x t (s.take r) (by
+    rw [List.length_take]
+    omega)
+  dsimp only
+  rw [replay, NDTM.withChoiceTape_state, NDTM.withChoiceTape_output]
+  exact ⟨locality.1, locality.2.2.2.2⟩
+
+/-- The replay canonizer can be called through the clean installation interface, with a
+cost depending on the code alone. The installed word is the entire replay serialization.
+
+**Proof sketch.** Take the canonizer from its gated statement and feed its computation contract
+to the public install-call theorem. Both the argument and its result depend only on the code. -/
+private theorem ic_table_call (c : EffectiveNDMachineCode) :
+    ∃ (M : FinTM Bool) (entry done : M.State) (cost : List Bool → ℕ), 0 < M.k ∧
+      ∀ x α : List Bool, ∃ T ≤ cost α, 0 < T ∧
+        (∀ u, 0 < u → u < T →
+          (M.tm.runFrom
+            (Cfg.ofWords (input := x) entry (stateWord M.k α)) u).state ≠ some done) ∧
+        M.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord M.k α)) T =
+          Cfg.ofWords done (stateWord M.k (serializeK (c.decode α).tm.replayTM)) := by
+  obtain ⟨F, τ, computes⟩ := exists_replayCanonizer c
+  obtain ⟨M, entry, done, a, positive, installs⟩ :=
+    FinTM.exists_installCallTM F _ τ computes
+  exact ⟨M, entry, done,
+    fun α => a * (τ α.length + α.length + (serializeK (c.decode α).tm.replayTM).length + 1),
+    positive, installs⟩

@@ -1,0 +1,43 @@
+F3C1ConsumerProbeOnHead.lean:420:8: warning: declaration uses 'sorry'
+@clearTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SweepPhase x),
+  d.state = some SweepPhase.sweep →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (2 * w.length + 2) =
+          { state := some SweepPhase.done, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+exists_recordInitTM : ∀ (k : ℕ) {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T] [DecidableEq T] (q₀ : Q) (τ₀ : T),
+  ∃ K P x x R entry exit C,
+    ∀ {x : List Bool} (s : ℕ) (ws : List Bool),
+      Nat.ofDigits 2 (List.map Bool.toNat ws) = s →
+        ∀ (d : Cfg (K + 2) (RecSym Q T) P (List.map (⇑(RecSym.digitEmb Q T)) x)),
+          d.state = some entry →
+            d.inputPos = 1 →
+              (∀ (p : ℤ),
+                  -1 ≤ p →
+                    p ≤ ↑ws.length →
+                      d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (List.map RecSym.digit ws) p) →
+                (∀ (p : ℤ), -1 ≤ p → p ≤ ↑(recordLength k x.length s) → d.workTapes 0 (d.workTapePos 0 + p) = none) →
+                  (∀ (j : Fin (K + 2)), 2 ≤ ↑j → ∀ (p : ℤ), d.workTapes j p = none) →
+                    ∃ t ≤ C * (recordLength k x.length s + ws.length + s + x.length + 1),
+                      (∀ u < t, (MultiTapeTM.runFrom d u).state ≠ some exit) ∧
+                        (∀ u ≤ t,
+                            ∀ (j : Fin (K + 2)),
+                              |(MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤
+                                ↑(C * (recordLength k x.length s + ws.length + s + 1))) ∧
+                          MultiTapeTM.runFrom d t =
+                            { state := some exit, inputPos := d.inputPos,
+                              workTapes := fun j q =>
+                                if j = 0 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑(recordLength k x.length s) then
+                                  fieldsTape (cfgRecord s (Cfg.init q₀ x) τ₀) (q - d.workTapePos j)
+                                else d.workTapes j q,
+                              workTapePos := d.workTapePos, output := d.output }
+exit 0

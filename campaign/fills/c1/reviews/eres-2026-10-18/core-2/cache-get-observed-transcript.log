@@ -1,0 +1,16 @@
+RECONSTRUCTED FROM THE EXECUTION TOOL'S CAPTURED OUTPUT, NOT AN ORIGINAL SHELL LOG.
+Command: lake exe cache get 2>&1 | tee ../evidence/logs/cache-get.log
+Execution exit code: 1.
+
+info: PFR: cloning https://github.com/teorth/pfr.git
+info: PFR: checking out revision 'e1095d58b7c6f10734988816f7764f2103b9bf29'
+info: mathlib: cloning https://github.com/leanprover-community/mathlib4.git
+info: mathlib: checking out revision '029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e'
+Further dependencies were fetched at the manifest revisions; their independently measured URL and revision checks appear in packages-after-cache-attempt1.log.
+Cache executable compilation reached: Built cache:exe (984ms).
+The leantar-0.1.16.tar.gz download completed (1125k).
+
+installing leantar 0.1.16
+uncaught exception: failure in tar #[-xf, /root/.cache/mathlib/leantar-0.1.16.tar.gz, -C, /root/.cache/mathlib, --strip-components=1]:
+tar: leantar: Cannot change ownership to uid 1001, gid 1001: Invalid argument
+tar: Exiting with failure status due to previous errors
