@@ -159,9 +159,11 @@ private theorem xr_first_depth (N : FinNDTM Bool) (z : List Bool) (T : ℕ)
   · exact absurd (h0 ▸ Nat.find_spec hex) (xr_not_haltsWithin_zero N z)
   · exact h0
 
-/-- The ledger's shape: `Σ_{L ≤ T} 2^L · A(L + 1) ≤ (A + 3)·2^{(A + 3)(T + 1)}`. -/
+/-- The ledger's shape, with two steps of slack for the dispatch and the answer:
+`Σ_{L ≤ T} 2^L · A(L + 1) + 2 ≤ (A + 3)·2^{(A + 3)(T + 1)}`. -/
 private theorem xr_ledger (A T : ℕ) :
-    ∑ L ∈ Finset.range (T + 1), 2 ^ L * (A * (L + 1)) ≤ (A + 3) * 2 ^ ((A + 3) * (T + 1)) := by
+    ∑ L ∈ Finset.range (T + 1), 2 ^ L * (A * (L + 1)) + 2 ≤
+      (A + 3) * 2 ^ ((A + 3) * (T + 1)) := by
   have hterm : ∀ L ∈ Finset.range (T + 1), 2 ^ L * (A * (L + 1)) ≤ 2 ^ T * (A * (T + 1)) := by
     intro L hL
     rw [Finset.mem_range] at hL
@@ -175,12 +177,15 @@ private theorem xr_ledger (A T : ℕ) :
   have hpow : 2 ^ (T + 1) * 2 ^ (T + 1) * 2 ^ (T + 1) ≤ 2 ^ ((A + 3) * (T + 1)) := by
     rw [← pow_add, ← pow_add]
     exact Nat.pow_le_pow_right (by omega) (by nlinarith)
-  calc ∑ L ∈ Finset.range (T + 1), 2 ^ L * (A * (L + 1))
-      ≤ (T + 1) * (2 ^ T * (A * (T + 1))) := hsum
-    _ = A * ((T + 1) * 2 ^ T * (T + 1)) := by ring
-    _ ≤ A * (2 ^ (T + 1) * 2 ^ (T + 1) * 2 ^ (T + 1)) :=
-        Nat.mul_le_mul_left A (Nat.mul_le_mul (Nat.mul_le_mul hlin h2) hlin)
-    _ ≤ (A + 3) * 2 ^ ((A + 3) * (T + 1)) := Nat.mul_le_mul (by omega) hpow
+  have hone : 1 ≤ 2 ^ ((A + 3) * (T + 1)) := Nat.one_le_two_pow
+  calc ∑ L ∈ Finset.range (T + 1), 2 ^ L * (A * (L + 1)) + 2
+      ≤ (T + 1) * (2 ^ T * (A * (T + 1))) + 2 := Nat.add_le_add_right hsum 2
+    _ = A * ((T + 1) * 2 ^ T * (T + 1)) + 2 := by ring
+    _ ≤ A * (2 ^ (T + 1) * 2 ^ (T + 1) * 2 ^ (T + 1)) + 2 :=
+        Nat.add_le_add_right
+          (Nat.mul_le_mul_left A (Nat.mul_le_mul (Nat.mul_le_mul hlin h2) hlin)) 2
+    _ ≤ A * 2 ^ ((A + 3) * (T + 1)) + 2 := Nat.add_le_add_right (Nat.mul_le_mul_left A hpow) 2
+    _ ≤ (A + 3) * 2 ^ ((A + 3) * (T + 1)) := by nlinarith [hone]
 
 /-! #### Translation of work tapes -/
 
@@ -2761,6 +2766,7 @@ private theorem xr_depth_host {N : FinNDTM Bool} (C : xr_Clock N) (z wL : List B
       2 ^ L - xr_val s = m →
       ∃ T ≤ m * ((18 * N.k + 19) * (L + 1)), ∃ (a' l' : Bool) (u' : List Bool) (h' : Fin N.k → ℤ),
         (xr_host C).runFrom (xr_cycle C z a l wL s u h) T = xr_depthEnd C z a' l' L wL u' h' ∧
+        u'.length ≤ L ∧
         (a' = true ↔ a = true ∨ ∃ s', s'.length = L ∧ xr_val s ≤ xr_val s' ∧
           (N.tm.runWith s' (N.tm.initCfg z)).output = [true]) ∧
         (l' = true ↔ l = true ∨ ∃ s', s'.length = L ∧ xr_val s ≤ xr_val s' ∧
@@ -2785,7 +2791,8 @@ private theorem xr_depth_host {N : FinNDTM Bool} (C : xr_Clock N) (z wL : List B
           (le_antisymm (xr_incFixed_none_max hinc (hs'.trans hs.symm)) hle)
       refine ⟨T₁, hT₁.trans (Nat.le_mul_of_pos_left _ (by omega)),
         a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]),
-        l || (N.tm.runWith s (N.tm.initCfg z)).state.isSome, u₁, h₁, ?_, ?_, ?_⟩
+        l || (N.tm.runWith s (N.tm.initCfg z)).state.isSome, u₁, h₁, ?_, hu₁.trans hL.le, ?_,
+        ?_⟩
       · rw [hover hinc, hs]
       · rw [Bool.or_eq_true, decide_eq_true_eq]
         constructor
@@ -2810,13 +2817,13 @@ private theorem xr_depth_host {N : FinNDTM Bool} (C : xr_Clock N) (z wL : List B
       have hv' : xr_val s' = xr_val s + 1 := xr_incFixed_val hinc
       have hlt := xr_val_lt s'
       rw [hs'] at hlt
-      obtain ⟨T₂, hT₂, a', l', u', h', hrun₂, ha', hl'⟩ := ih
+      obtain ⟨T₂, hT₂, a', l', u', h', hrun₂, hu', ha', hl'⟩ := ih
         (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
         (l || (N.tm.runWith s (N.tm.initCfg z)).state.isSome) s' u₁ h₁ hs'
         (hu₁.trans hL.le) (by omega)
       have hmul : (m + 1) * ((18 * N.k + 19) * (L + 1)) =
           m * ((18 * N.k + 19) * (L + 1)) + (18 * N.k + 19) * (L + 1) := by ring
-      refine ⟨T₁ + T₂, by omega, a', l', u', h', ?_, ?_, ?_⟩
+      refine ⟨T₁ + T₂, by omega, a', l', u', h', ?_, hu', ?_, ?_⟩
       · rw [MultiTapeTM.runFrom_add, hsucc s' hinc, hrun₂]
       · rw [ha', Bool.or_eq_true, decide_eq_true_eq]
         constructor
@@ -2949,6 +2956,180 @@ private theorem xr_deepen_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Boo
       T₂) T₃ = _
   rw [h1, h2, h3, ← List.replicate_succ']
 
+/-! #### The whole run, the machine `E`, the answer -/
+
+/-- The halt phase's `start` is stationary on the host: the table redirects it to itself. -/
+private theorem xr_halt_fixed {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool}
+    (d : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) (a l : Bool)
+    (hd : d.state = some ⟨(.halt, a, l), xr_St.start⟩) : (xr_host C).step d = d := by
+  have hhost := (phaseHostTM_run (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)
+    (.halt, a, l) (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
+      Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z) _ 0 MultiTapeTM.runFrom_zero
+    xr_St.start rfl ⟨(.halt, a, l), xr_St.start⟩ rfl
+    (fun u hu => absurd hu (Nat.not_lt_zero u))).2
+  rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] at hhost
+  have hd' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
+      Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState (Sigma.mk (.halt, a, l)) =
+        d := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, hd]; rfl
+    · rw [Cfg.mapState_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output]
+  have hd'' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
+      Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState
+        (fun _ => (⟨(.halt, a, l), xr_St.start⟩ : Σ i, xr_PhSt C i)) = d := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, hd]; rfl
+    · rw [Cfg.mapState_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output]
+  rw [hd', hd''] at hhost
+  exact hhost
+
+open Classical in
+/-- **The depths on the host.** With `L*` the first all-halting depth, from the first cycle at a
+depth `L ≤ L*` (the depth word of width and value `L`, the choice word all `false`, the counter
+word of width at most `L`, both flags down), within `Σ_{i ≤ L* - L} 2^{L+i}·(18 N.k + 38)(L+i+1)`
+steps the host reaches the depth `L*`'s end, the live flag down and the accept flag
+`decide (N.AcceptsWithin z L*)`: every depth below `L*` has a live branch and deepens, and the
+depth `L*` answers. -/
+private theorem xr_run_host {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) (Ls : ℕ)
+    (hLs : N.tm.HaltsWithin z Ls) (hmin : ∀ L' < Ls, ¬ N.tm.HaltsWithin z L') :
+    ∀ (m L : ℕ) (wL u : List Bool) (h : Fin N.k → ℤ), L + m = Ls → wL.length = L →
+      xr_val wL = L → u.length ≤ L →
+      ∃ T ≤ ∑ i ∈ Finset.range (m + 1), 2 ^ (L + i) * ((18 * N.k + 38) * (L + i + 1)),
+        ∃ (wL' u' : List Bool) (h' : Fin N.k → ℤ),
+          (xr_host C).runFrom (xr_cycle C z false false wL (List.replicate L false) u h) T =
+            xr_depthEnd C z (decide (N.AcceptsWithin z Ls)) false Ls wL' u' h' := by
+  intro m
+  induction m with
+  | zero =>
+    intro L wL u h hLm hL hval hu
+    have hLm' : L = Ls := by omega
+    rw [hLm'] at hL hval hu
+    rw [hLm']
+    obtain ⟨T₁, hT₁, a', l', u', h', hrun, -, ha', hl'⟩ := xr_depth_host C z wL Ls hL hval
+      (2 ^ Ls) false false (List.replicate Ls false) u h (by simp) hu
+      (by rw [xr_val_replicate_false, Nat.sub_zero])
+    have hl'' : l' = false := by
+      cases l' with
+      | false => rfl
+      | true =>
+        exfalso
+        rcases hl'.mp rfl with h0 | ⟨s', hs', -, hlive⟩
+        · exact Bool.false_ne_true h0
+        · exact hlive (NDTM.haltsWithin_iff.mp hLs s' hs')
+    have ha'' : a' = decide (N.AcceptsWithin z Ls) := by
+      rw [Bool.eq_iff_iff, decide_eq_true_iff, ha']
+      constructor
+      · rintro (h0 | ⟨s', hs', -, hout⟩)
+        · exact absurd h0 Bool.false_ne_true
+        · exact FinNDTM.acceptsWithin_iff.mpr ⟨s', hs', NDTM.haltsWithin_iff.mp hLs s' hs', hout⟩
+      · intro hacc
+        obtain ⟨w, hw, -, hout⟩ := FinNDTM.acceptsWithin_iff.mp hacc
+        exact Or.inr ⟨w, hw, by rw [xr_val_replicate_false]; exact Nat.zero_le _, hout⟩
+    subst hl'' ha''
+    refine ⟨T₁, ?_, wL, u', h', hrun⟩
+    simp only [Nat.zero_add, Nat.add_zero, Finset.sum_range_one]
+    exact hT₁.trans (Nat.mul_le_mul_left _ (Nat.mul_le_mul_right _ (by omega)))
+  | succ m ih =>
+    intro L wL u h hLm hL hval hu
+    have hnot := hmin L (by omega)
+    rw [NDTM.haltsWithin_iff] at hnot
+    push_neg at hnot
+    obtain ⟨s₀, hs₀, hlive⟩ := hnot
+    obtain ⟨T₁, hT₁, a', l', u', h', hrun₁, hu', -, hl'⟩ := xr_depth_host C z wL L hL hval
+      (2 ^ L) false false (List.replicate L false) u h (by simp) hu
+      (by rw [xr_val_replicate_false, Nat.sub_zero])
+    have hl'' : l' = true :=
+      hl'.mpr (Or.inr ⟨s₀, hs₀, by rw [xr_val_replicate_false]; exact Nat.zero_le _, hlive⟩)
+    subst hl''
+    obtain ⟨T₂, hT₂, wL', hwL'len, hwL'val, hrun₂⟩ := xr_deepen_host C z a' L wL u' h' hL hval
+    obtain ⟨T₃, hT₃, wL'', u'', h'', hrun₃⟩ := ih (L + 1) wL' u' h' (by omega) hwL'len hwL'val
+      (hu'.trans (Nat.le_succ L))
+    refine ⟨T₁ + T₂ + T₃, ?_, wL'', u'', h'', ?_⟩
+    · rw [Finset.sum_range_succ']
+      have hshift : ∑ i ∈ Finset.range (m + 1),
+          2 ^ (L + (i + 1)) * ((18 * N.k + 38) * (L + (i + 1) + 1)) =
+          ∑ i ∈ Finset.range (m + 1), 2 ^ (L + 1 + i) * ((18 * N.k + 38) * (L + 1 + i + 1)) :=
+        Finset.sum_congr rfl (fun i _ => by rw [show L + (i + 1) = L + 1 + i by omega])
+      have hlast : 2 ^ (L + 0) * ((18 * N.k + 38) * (L + 0 + 1)) =
+          2 ^ L * ((18 * N.k + 38) * (L + 1)) := rfl
+      have h19 : 6 * L + 11 ≤ 2 ^ L * (19 * (L + 1)) := by
+        have := Nat.le_mul_of_pos_left (19 * (L + 1)) (Nat.two_pow_pos L)
+        omega
+      have hsplit : 2 ^ L * ((18 * N.k + 38) * (L + 1)) =
+          2 ^ L * ((18 * N.k + 19) * (L + 1)) + 2 ^ L * (19 * (L + 1)) := by ring
+      omega
+    · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hrun₁, hrun₂, hrun₃]
+
+/-- The blank tape bank. -/
+private theorem xr_tapes_blank (k : ℕ) :
+    xr_tapes (k := k) (fun _ _ => none) (fun _ => none) (fun _ => none) (fun _ => none)
+      (fun _ => none) = fun _ _ => none :=
+  xr_bank_ext _ _ (fun j => xr_tapes_work _ _ _ _ _ j) (xr_tapes_choice _ _ _ _ _)
+    (xr_tapes_ctr _ _ _ _ _) (xr_tapes_cap _ _ _ _ _) (xr_tapes_dep _ _ _ _ _)
+
+/-- The heads at the origin. -/
+private theorem xr_heads_zero (k : ℕ) : xr_heads (k := k) (fun _ => 0) 0 0 0 0 = fun _ => 0 :=
+  xr_bank_ext _ _ (fun j => xr_heads_work _ _ _ _ _ j) (xr_heads_choice _ _ _ _ _)
+    (xr_heads_ctr _ _ _ _ _) (xr_heads_cap _ _ _ _ _) (xr_heads_dep _ _ _ _ _)
+
+/-- The host's halt anchor with the accept flag `b`. -/
+private def xr_anchor {N : FinNDTM Bool} (C : xr_Clock N) (b : Bool) : Σ i, xr_PhSt C i :=
+  ⟨(.halt, b, false), xr_St.start⟩
+
+/-- The two-exit seam of the host onto the two one-step answers: at the anchor with the accept
+flag up, the answer `[true]`; at the anchor with it down, the answer `[false]`. -/
+private noncomputable def xr_seam {N : FinNDTM Bool} (C : xr_Clock N) :
+    MultiTapeTM (N.k + 2 + 2) Bool (((Σ i, xr_PhSt C i) ⊕ xr_St) ⊕ xr_St) :=
+  seamCompTM₂ (xr_host C) (xr_anchor C true) (xr_anchor C false)
+    (xr_answerTM (N.k + 2 + 2) true) xr_St.start (xr_answerTM (N.k + 2 + 2) false) xr_St.start
+
+/-- **The exhaustive replay's machine `E`**: the seam, started at the host's first cycle. -/
+private noncomputable def xr_E {N : FinNDTM Bool} (C : xr_Clock N) : FinTM Bool :=
+  ⟨N.k + 2 + 2, ((Σ i, xr_PhSt C i) ⊕ xr_St) ⊕ xr_St,
+    { xr_seam C with q₀ := Sum.inl (Sum.inl ⟨(.copy, false, false), SweepPhase.sweep⟩) }⟩
+
+/-- `E`'s initial configuration on `z` is the host's first cycle at depth `0`, in the seam's
+states. -/
+private theorem xr_E_initCfg {N : FinNDTM Bool} (C : xr_Clock N) (z : List Bool) :
+    (xr_E C).tm.initCfg z =
+      ((xr_cycle C z false false [] [] [] (fun _ => 0)).mapState Sum.inl).mapState Sum.inl := by
+  refine (MultiTapeTM.initCfg_with_q₀ (xr_seam C)
+    (Sum.inl (Sum.inl ⟨(.copy, false, false), SweepPhase.sweep⟩)) z).trans ?_
+  apply Cfg.ext
+  · rw [Cfg.init_state, Cfg.mapState_state, Cfg.mapState_state]; rfl
+  · rw [Cfg.init_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]; rfl
+  · funext j p
+    simp only [Cfg.init_workTapes, Cfg.mapState_workTapes]
+    show none = xr_tapes (fun _ _ => none) (FinTM.bufferTape []) (FinTM.bufferTape [])
+      (FinTM.bufferTape []) (FinTM.bufferTape []) j p
+    rw [FinTM.bufferTape_nil, xr_tapes_blank]
+  · funext j
+    simp only [Cfg.init_workTapePos, Cfg.mapState_workTapePos]
+    show (0 : ℤ) = xr_heads (fun _ => 0) 0 0 0 0 j
+    rw [xr_heads_zero]
+  · rw [Cfg.init_output, Cfg.mapState_output, Cfg.mapState_output]; rfl
+
+/-- **The answer's tail.** From a live configuration with empty output, one step of the answer
+row halts with the output `[b]`, read in any renaming of the states. -/
+private theorem xr_answer_tail {K : ℕ} {x : List Bool} {S S' : Type} (b : Bool)
+    (d : Cfg K Bool S x) (q : S) (hd : d.state = some q) (hout : d.output = [])
+    (f : xr_St → S') :
+    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).state = none ∧
+    (((xr_answerTM K b).runFrom (d.mapState fun _ => xr_St.start) 1).mapState f).output = [b] := by
+  rw [xr_answerTM_run b (d.mapState fun _ => xr_St.start) xr_St.start
+    (by rw [Cfg.mapState_state, hd]; rfl)]
+  refine ⟨?_, ?_⟩
+  · rw [Cfg.mapState_state]; rfl
+  · rw [Cfg.mapState_output]
+    show (d.mapState fun _ => xr_St.start).output ++ [b] = [b]
+    rw [Cfg.mapState_output, hout, List.nil_append]
+
 /-- **The exhaustive replay `E`.** For every bundled binary NDTM `N` there is a deterministic
 machine `E` and a constant `C` such that, on every input `z` on which every branch of `N` of
 length `T` has halted (any `T`, which nobody needs to compute), `E` outputs `[true]` if `N`
@@ -2971,7 +3152,68 @@ theorem FinNDTM.exists_exhaustiveDecider (N : FinNDTM Bool) :
     ∃ (E : FinTM Bool) (C : ℕ), ∀ (z : List Bool) (T : ℕ), N.tm.HaltsWithin z T →
       (N.AcceptsWithin z T → E.ComputesInTime z [true] (C * 2 ^ (C * (T + 1)))) ∧
       (¬N.AcceptsWithin z T → E.ComputesInTime z [false] (C * 2 ^ (C * (T + 1)))) := by
-  sorry
+  classical
+  obtain ⟨C⟩ := xr_Clock.exists N
+  refine ⟨xr_E C, 18 * N.k + 41, fun z T hT => ?_⟩
+  obtain ⟨Ls, -, hLsT, hLs, hmin, hiff⟩ := xr_first_depth N z T hT
+  obtain ⟨T₀, hT₀, wL', u', h', hrun⟩ := xr_run_host C z Ls hLs hmin Ls 0 [] [] (fun _ => 0)
+    (Nat.zero_add Ls) rfl xr_val_nil (Nat.zero_le 0)
+  rw [List.replicate_zero] at hrun
+  simp only [Nat.zero_add] at hT₀
+  -- the time: the ledger over the depths `0, …, L*`, then the dispatch and the answer
+  have hled := xr_ledger (18 * N.k + 38) Ls
+  rw [show 18 * N.k + 38 + 3 = 18 * N.k + 41 by omega] at hled
+  have hpow : (18 * N.k + 41) * 2 ^ ((18 * N.k + 41) * (Ls + 1)) ≤
+      (18 * N.k + 41) * 2 ^ ((18 * N.k + 41) * (T + 1)) :=
+    Nat.mul_le_mul_left _ (Nat.pow_le_pow_right (by omega) (Nat.mul_le_mul_left _ (by omega)))
+  -- `E`'s run, read through the seam
+  have hE : ∀ t, (xr_E C).tm.runFrom ((xr_E C).tm.initCfg z) t =
+      (seamCompTM₂ (xr_host C) (xr_anchor C true) (xr_anchor C false)
+        (xr_answerTM (N.k + 2 + 2) true) xr_St.start (xr_answerTM (N.k + 2 + 2) false)
+        xr_St.start).runFrom
+        (((xr_cycle C z false false [] [] [] (fun _ => 0)).mapState Sum.inl).mapState Sum.inl)
+        t :=
+    fun t => (congrArg (fun c => (xr_E C).tm.runFrom c t) (xr_E_initCfg C z)).trans
+      (MultiTapeTM.runFrom_with_q₀ (xr_seam C) _ _ t)
+  have hstat : ∀ (d : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) q, d.state = some q →
+      (q = xr_anchor C true ∨ q = xr_anchor C false) → (xr_host C).step d = d := by
+    rintro d q hd (rfl | rfl)
+    · exact xr_halt_fixed C d true false hd
+    · exact xr_halt_fixed C d false false hd
+  have he : xr_anchor C true ≠ xr_anchor C false := fun h =>
+    Bool.false_ne_true (congrArg (fun q : Σ i, xr_PhSt C i => q.1.2.1) h).symm
+  -- the answer, for either value of the accept flag
+  have key : ∀ b, decide (N.AcceptsWithin z Ls) = b →
+      (xr_E C).ComputesInTime z [b] ((18 * N.k + 41) * 2 ^ ((18 * N.k + 41) * (T + 1))) := by
+    intro b hb
+    rw [hb] at hrun
+    have hend : (xr_depthEnd C z b false Ls wL' u' h').state = some (xr_anchor C b) := rfl
+    have hA : xr_anchor C b = xr_anchor C true ∨ xr_anchor C b = xr_anchor C false := by
+      cases b
+      exacts [Or.inr rfl, Or.inl rfl]
+    obtain ⟨T₁, hT₁, hrun₁, hcut⟩ := xr_firstArrival' (xr_host C)
+      (fun q => q = xr_anchor C true ∨ q = xr_anchor C false) hstat hrun hend hA
+    have hcut' : ∀ t < T₁,
+        ((xr_host C).runFrom (xr_cycle C z false false [] [] [] (fun _ => 0)) t).state ≠
+          some (xr_anchor C true) ∧
+        ((xr_host C).runFrom (xr_cycle C z false false [] [] [] (fun _ => 0)) t).state ≠
+          some (xr_anchor C false) :=
+      fun t ht => ⟨fun h => hcut t ht _ h (Or.inl rfl), fun h => hcut t ht _ h (Or.inr rfl)⟩
+    have hseam := seamCompTM₂_run_ofCfg (xr_host C) (xr_anchor C true) (xr_anchor C false) he
+      (xr_answerTM (N.k + 2 + 2) true) xr_St.start (xr_answerTM (N.k + 2 + 2) false) xr_St.start
+      hrun₁ hcut'
+    have hcomp : (xr_E C).ComputesInTime z [b] (T₁ + 1 + 1) := by
+      rw [FinTM.computesInTime_iff, hE]
+      cases b
+      · rw [hseam.2 hend 1]
+        exact xr_answer_tail false _ _ hend rfl Sum.inr
+      · rw [hseam.1 hend 1]
+        obtain ⟨h1, h2⟩ := xr_answer_tail true _ _ hend rfl
+          (Sum.inr : xr_St → (Σ i, xr_PhSt C i) ⊕ xr_St)
+        exact ⟨by rw [Cfg.mapState_state, h1]; rfl, by rw [Cfg.mapState_output, h2]⟩
+    exact hcomp.mono (by omega)
+  exact ⟨fun hacc => key true (decide_eq_true (hiff.mpr hacc)),
+    fun hrej => key false (decide_eq_false fun h => hrej (hiff.mp h))⟩
 
 /-- **The exponential decider from the universal NDTM**, `BF := E(UN)`: if `UN` is a timed
 universal NDTM for the scheme `c` (the statement of `Turing.exists_timed_universal_NDTM`), then
