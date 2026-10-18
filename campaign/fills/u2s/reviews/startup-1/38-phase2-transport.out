@@ -1,0 +1,18 @@
+U2SPhase2Transport.lean:48:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (FinTM.bufferedSecondCfg ?M₁ ?M₂ ?c ?b ?p ?tapes ?heads).workTapes ?a✝ ?a✝
+in the target expression
+  (universalPrefixTM.bufferedSecondCfg F c b p tapes heads).workTapes i z =
+    FinTM.tapeBlocks tapes (FinTM.bufferTape y) c.workTapes (Fin.cast ⋯ i) z
+
+F : FinTM Bool
+x y : List Bool
+c : Cfg F.k Bool F.State y
+b : Bool
+p : Fin (x.length + 2)
+tapes : Fin universalPrefixTM.k → ℤ → Option Bool
+heads : Fin universalPrefixTM.k → ℤ
+i : Fin (universalPrefixTM.bufferedCompTM F).k
+z : ℤ
+⊢ (universalPrefixTM.bufferedSecondCfg F c b p tapes heads).workTapes i z =
+    FinTM.tapeBlocks tapes (FinTM.bufferTape y) c.workTapes (Fin.cast ⋯ i) z
+exit 1
