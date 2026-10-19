@@ -97,15 +97,17 @@ record schema.
 ```bash
 python3 scripts/dataset_pipeline.py --check-env           # toolchain on this machine
 python3 scripts/dataset_pipeline.py --estimate            # report, spend nothing
-python3 scripts/dataset_pipeline.py --build --yes --source AB09=texts/ch09.pdf
+cp texts/ch09.pdf blueprint/src/references/ && python3 scripts/dataset_pipeline.py --build --yes
 python3 scripts/dataset_pipeline.py --modules Complexity.Ch09 --yes
 python3 scripts/dataset_pipeline.py --backend codex --model gpt-5 --yes   # Codex instead of Claude
 ```
 
-The text a formalization came from is attached by whoever submits it (`--source
-TAG=path`, `TAG` being the docstring citation tag of policy.md §2); the builder does not
-search for sources.  `python3 scripts/sources.py` shows every text, tag and Lean file with
-what it still needs, and `sources.py add TAG=path` attaches and matches a text.  Uncited
+The text a formalization came from is attached by whoever submits it: dropped under
+`blueprint/src/references/` (or given as `--source TAG=path`, `TAG` being the docstring
+citation tag of policy.md §2).  The pipeline ingests it and matches every text the
+blueprint does not cite yet; it does not search for sources elsewhere.
+`python3 scripts/sources.py` shows every text, tag and Lean file with what it still
+needs, and `sources.py add TAG=path` attaches and matches a text at once.  Uncited
 theorems get informalized proof notes instead of citations.  The LLM stages run on the
 Claude Code CLI or the OpenAI Codex CLI (`--backend`, proofmatch/agents.py); the caches
 and outputs are identical either way.

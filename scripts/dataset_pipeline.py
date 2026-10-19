@@ -19,10 +19,11 @@ subset with --stages):
                          Reports Lean files newer than dep_graph.json, modules on disk that
                          the graph does not contain (not imported from TCSlib.lean, so never
                          built; their records are carried over, see `dataset`).
-  references   [LLM]     Each --source TAG=PATH text (PDF or validated .md) is placed under
-                         blueprint/src/references/, registered for its docstring TAG in
-                         references/sources.json and, for a PDF, run through
-                         `proofmatch extract` (OCR + model cleanup -> <name>.md).
+  references   [LLM]     Every text under blueprint/src/references/ that is not yet a
+                         validated <name>.md (a PDF dropped there, or given with
+                         --source TAG=PATH) is run through `proofmatch extract` (OCR +
+                         model cleanup -> <name>.md); a --source TAG is registered for
+                         it in references/sources.json.
   blueprint    [no LLM]  blueprint_enumerate -> blueprint_stub -> blueprint_assemble:
                          every documentable declaration gets a bound blueprint entry.
   statements   [LLM]     build_dataset --no-proof (pass 1) -> build_informal_statements
@@ -31,9 +32,11 @@ subset with --stages):
   difficulty   [LLM]     blueprint_difficulty_plan -> rate_difficulty -> blueprint_difficulty_apply.
   citations    [LLM]     pass 1 again (fresh prose) -> reference_coverage (which uncited
                          theorems cite which texts, and which texts are missing) ->
-                         `proofmatch match` of each new reference document against the
-                         dataset: \proofsource / \statementsource citations land in the
-                         chapter .tex files.
+                         `proofmatch match` of every reference document the blueprint
+                         does not cite yet (new texts, and older ones never matched)
+                         against the dataset: \proofsource / \statementsource citations
+                         land in the chapter .tex files; the tag registry is then
+                         re-derived from the citations.
   informalize  [LLM]     informalize_proofs: a prose account of every uncited, sorry-free
                          proof -> blueprint/src/references/informalized/<name>.md.  Refuses
                          to run while NEW theorems cite a text nobody attached (see
@@ -44,19 +47,25 @@ subset with --stages):
                          rows, optional sampled Lean compile), dataset_hygiene,
                          statement_quality, blueprint_validate --strict.
 
-Reference texts.  The builder does not search for sources.  A theorem is cited only when
-the text it was formalized from has been ingested and matched; otherwise it receives an
-informalized account of its Lean proof.  The contract is that whoever submits a
-formalization attaches the text in the same change:
+Reference texts.  The contract has two steps.  (1) After formalizing something, put the
+text it came from under blueprint/src/references/ if it is not there already: copy the
+PDF (or a validated .md) into that directory, or pass it as --source TAG=PATH with the
+[TAG] the new declarations' docstrings cite (policy.md §2).  (2) Run the pipeline.  It
+ingests every text that has no validated .md yet, works out which texts still have to
+be matched (the blueprint cites nothing from them), matches those against the whole
+dataset, and carries the new declarations through every other stage.  A theorem is
+cited only when a matched text proves or states it; otherwise it receives an
+informalized account of its Lean proof.  The builder never searches outside
+references/ for sources.
 
-    python3 scripts/dataset_pipeline.py --source AB09=~/texts/arora-barak-ch09.pdf --yes
+    cp ~/texts/arora-barak-ch09.pdf blueprint/src/references/
+    python3 scripts/dataset_pipeline.py --yes
 
-`AB09` is the [TAG] the new declarations' docstrings cite (policy.md §2).
-`python3 scripts/sources.py` is the short form: `status` shows every text, tag and Lean
-file with what it still needs; `add TAG=PATH` attaches and matches a text.  The
-`citations` stage prints, per tag, how many uncited theorems cite it and whether a
-document is registered for it; `informalize` stops when a new theorem's tag has no
-text.  --without-sources acknowledges that and lets the proof notes be written.
+`python3 scripts/sources.py` shows every text, tag and Lean file with what it still
+needs; `add TAG=PATH` attaches and matches one text right away.  The `citations` stage
+prints, per tag, how many uncited theorems cite it and whether a document is registered
+for it; `informalize` stops when a new theorem's tag has no text at all.
+--without-sources acknowledges that and lets the proof notes be written.
 
 Models and backends: every LLM stage runs on --model (default: $PROOFMATCH_MODEL, else
 claude-opus-4-8 on the Claude Code CLI or gpt-5 on the Codex CLI) or its per-stage
@@ -339,24 +348,48 @@ def stage_graph(r: Runner) -> None:
            gone=len(gone), carried_rows=sum(carried.values()))
 
 
+def ingested_documents() -> list[Path]:
+    """Validated reference documents (`<name>.md`, not the `.raw.md` intermediates)."""
+    return sorted(p for p in REFERENCES.glob("*.md") if not p.name.endswith(".raw.md"))
+
+
+def texts_to_ingest() -> tuple[list[Path], list[Path]]:
+    """Texts under references/ with no validated .md yet: (PDFs, raw-only extractions)."""
+    validated = {p.stem for p in ingested_documents()}
+    pdfs = sorted(p for p in REFERENCES.glob("*.pdf") if p.stem not in validated)
+    raw_only = sorted(p for p in REFERENCES.glob("*.raw.md")
+                      if p.name[:-7] not in validated
+                      and not (REFERENCES / (p.name[:-7] + ".pdf")).exists())
+    return pdfs, raw_only
+
+
+def extract_document(r: Runner, pdf: Path, model: str, env: dict) -> Path | None:
+    """`proofmatch extract` a PDF under references/ into its validated <name>.md."""
+    md = pdf.with_suffix(".md")
+    if md.exists():
+        print(f"  {md.name} already validated; skipping extraction")
+        return md
+    if not r.confirm("references", f"OCR + model cleanup of {pdf.name} on {model}"):
+        return None
+    cmd = [sys.executable, str(SCRIPTS / "proofmatch.py"), "extract", str(pdf)]
+    if r.args.max_cost:
+        cmd += ["--max-cost", str(r.args.max_cost)]
+    r.run("references", cmd, env=env)
+    if not md.exists() and not r.args.dry_run:
+        raise StageFailed(f"references: extraction produced no {md.name}")
+    return md
+
+
 def stage_references(r: Runner) -> list[Path]:
-    """Place each --source under references/, register its tag, make sure a validated .md exists."""
-    docs: list[Path] = []
-    if not r.sources:
-        print("  no --source given: nothing to ingest.")
-        print("  NOTE: new theorems get citations only from a text attached with "
-              "--source TAG=PATH (the TAG their docstrings cite, policy.md §2); without one "
-              "they fall through to `informalize`, which writes a prose account of the Lean "
-              "proof instead.  The `citations` stage lists which texts are missing.")
-        r.mark("references", "ok", docs=[])
-        return docs
-    model = r.stage_model("references")
-    verdict = check_model(model, LLM_STAGES["references"], allow_weak=r.args.allow_weak_models)
-    if verdict.startswith("WARNING"):
-        print(verdict)
+    """Ingest every text that needs it: the --source ones and any dropped under references/."""
     REFERENCES.mkdir(parents=True, exist_ok=True)
+    model = r.stage_model("references")
     env = dict(r.env, PROOFMATCH_MODEL=model, PROOFMATCH_COMPARE_MODEL=model)
+    docs: list[Path] = []
     registrations: list[str] = []
+    to_extract: list[Path] = []
+
+    # 1. Texts named on the command line are copied under references/ first.
     for tag, src in r.sources:
         src = src.resolve()
         if not src.exists():
@@ -367,27 +400,42 @@ def stage_references(r: Runner) -> list[Path]:
                 raise StageFailed(f"references: give the validated .md or the PDF, not {src.name}")
             if dest.resolve() != src and not r.args.dry_run:
                 shutil.copy2(src, dest)
+            docs.append(dest)
             md = dest
         else:
             if dest.resolve() != src and not dest.exists() and not r.args.dry_run:
                 shutil.copy2(src, dest)
             md = dest.with_suffix(".md")
-            if md.exists():
-                print(f"  {md.name} already validated; skipping extraction")
-            elif r.confirm("references", f"OCR + model cleanup of {dest.name} on {model}"):
-                cmd = [sys.executable, str(SCRIPTS / "proofmatch.py"), "extract", str(dest)]
-                if r.args.max_cost:
-                    cmd += ["--max-cost", str(r.args.max_cost)]
-                r.run("references", cmd, env=env)
-                if not md.exists() and not r.args.dry_run:
-                    raise StageFailed(f"references: extraction produced no {md.name}")
-        docs.append(md)
+            to_extract.append(dest)
         if tag:
             registrations.append(f"{tag}={md.stem}")
         else:
             print(f"  WARNING: {src.name} was given without a tag (--source TAG=PATH); the "
-                  f"coverage report cannot tie [TAG, ...] docstrings to it.  Register it later "
-                  f"with: python3 scripts/reference_coverage.py --register TAG={md.stem}")
+                  f"coverage report cannot tie [TAG, ...] docstrings to it until a match "
+                  f"derives the tag, or you register it: python3 scripts/sources.py "
+                  f"register TAG={md.stem}")
+
+    # 2. Texts someone dropped under references/ by hand are ingested the same way.
+    pdfs, raw_only = texts_to_ingest()
+    for pdf in pdfs:
+        if pdf not in to_extract:
+            print(f"  {pdf.name}: new text under references/ (no {pdf.stem}.md yet)")
+            to_extract.append(pdf)
+    for raw in raw_only:
+        print(f"  WARNING: {raw.name} is an unfinished extraction with no PDF beside it; "
+              f"put the PDF under references/ (or a validated {raw.name[:-7]}.md) and rerun")
+
+    if not to_extract and not docs:
+        print("  nothing to ingest: every text under references/ has a validated .md.")
+        print("  (Put a new PDF there, or give --source TAG=PATH, after formalizing from it.)")
+    if to_extract:
+        verdict = check_model(model, LLM_STAGES["references"], allow_weak=r.args.allow_weak_models)
+        if verdict.startswith("WARNING"):
+            print(verdict)
+        for pdf in to_extract:
+            md = extract_document(r, pdf, model, env)
+            if md is not None:
+                docs.append(md)
     if registrations:
         r.py("references", "reference_coverage.py", "--dataset", str(r.args.previous),
              *[a for reg in registrations for a in ("--register", reg)], check=False)
@@ -470,19 +518,46 @@ def stage_difficulty(r: Runner) -> None:
     r.mark("difficulty", "ok", model=model)
 
 
-def reference_documents(r: Runner, new_docs: list[Path]) -> list[Path]:
-    if r.args.cite_all:
-        return sorted(p for p in REFERENCES.glob("*.md") if not p.name.endswith(".raw.md"))
-    return new_docs
+def _sibling(name: str):
+    if str(SCRIPTS) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS))
+    import importlib
+    return importlib.import_module(name)
 
 
-def already_matched(doc: Path) -> bool:
+def cited_documents() -> set[str]:
+    """Stems of the reference documents the blueprint cites (\\proofsource / \\statementsource)."""
+    citations = _sibling("build_proof_notes").blueprint_citations()
+    return {row["document"] for cite in citations.values()
+            for group in ("proof_sources", "statement_sources") for row in cite.get(group, [])}
+
+
+def match_run_exists(doc: Path) -> bool:
+    """A `proofmatch match` of this document was reviewed on this machine (.proofmatch-work)."""
     try:
         from proofmatch.document import parse_validated_markdown
         run_id = parse_validated_markdown(doc).source_fingerprint[:12]
     except Exception:  # noqa: BLE001 - an unparsable doc is simply "not matched yet"
         return False
     return (WORK_ROOT / run_id / "chapter_review.json").exists()
+
+
+def documents_to_match(r: Runner, new_docs: list[Path]) -> tuple[list[Path], list[Path]]:
+    """(documents to match, documents skipped as already matched).
+
+    A document is matched when the blueprint cites nothing from it and no reviewed match
+    run exists for it on this machine; `--rematch` matches every ingested document.  The
+    --source documents of this run are always candidates."""
+    candidates = ingested_documents()
+    for doc in new_docs:
+        if doc.exists() and doc not in candidates:
+            candidates.append(doc)
+    if r.args.rematch:
+        return candidates, []
+    cited = cited_documents()
+    chosen = [d for d in candidates if d.stem not in cited and not match_run_exists(d)]
+    skipped = [d for d in candidates if d not in chosen]
+    return chosen, skipped
 
 
 def coverage(r: Runner, stage: str, *, strict: bool) -> int:
@@ -503,17 +578,20 @@ def stage_citations(r: Runner, new_docs: list[Path]) -> None:
     verdict = check_model(model, LLM_STAGES["citations"], allow_weak=r.args.allow_weak_models)
     if verdict.startswith("WARNING"):
         print(verdict)
-    docs = reference_documents(r, new_docs)
-    docs = [d for d in docs if r.args.rematch or not already_matched(d)]
+    docs, skipped = documents_to_match(r, new_docs)
     pass1(r, "citations")
     coverage(r, "citations", strict=False)
+    print(f"  reference documents: {len(docs) + len(skipped)} ingested, {len(skipped)} already "
+          f"cited by the blueprint or matched here, {len(docs)} to match")
+    for doc in docs:
+        print(f"    {doc.name}")
     if r.args.estimate:
-        print(f"  [estimate] citations: would match {len(docs)} document(s): "
-              f"{', '.join(d.name for d in docs) or 'none'}")
+        print(f"  [estimate] citations: would match {len(docs)} document(s) against the dataset")
         r.mark("citations", "estimated", docs=[d.name for d in docs])
         return
     if not docs:
-        print("  no reference documents to match (give --source TAG=PATH, or --cite-all / --rematch)")
+        print("  nothing to match: every ingested text is cited by the blueprint "
+              "(--rematch redoes them)")
         r.mark("citations", "ok", docs=[])
         return
     env = dict(r.env, PROOFMATCH_MODEL=model, PROOFMATCH_COMPARE_MODEL=model)
@@ -530,6 +608,10 @@ def stage_citations(r: Runner, new_docs: list[Path]) -> None:
                       f"{WORK_ROOT.relative_to(BASE)}")
             else:
                 done.append(doc.name)
+    if done and not r.args.dry_run:
+        # Tie docstring tags to the documents the new citations point at.
+        r.py("citations", "reference_coverage.py", "--dataset", str(PASS1),
+             "--rebuild-registry", check=False)
     r.mark("citations", "ok", docs=done, model=model)
 
 
@@ -693,8 +775,10 @@ def main() -> int:
     ap.add_argument("--to", dest="to_stage", choices=STAGES)
     ap.add_argument("--source", action="append", default=[], metavar="TAG=PATH",
                     help="a reference text (PDF or validated .md) the new statements come "
-                         "from, with the [TAG] their docstrings cite; repeatable. Ingested "
-                         "and registered in `references`, matched in `citations`.")
+                         "from, with the [TAG] their docstrings cite; repeatable. Copied "
+                         "under references/ and registered in `references`, matched in "
+                         "`citations`. (A PDF simply dropped under references/ is picked "
+                         "up the same way, without the tag.)")
     ap.add_argument("--without-sources", action="store_true",
                     help="informalize: write proof notes for new theorems even though their "
                          "docstrings cite a text that is not attached")
@@ -704,10 +788,9 @@ def main() -> int:
     ap.add_argument("--modules", nargs="+", metavar="MODULE",
                     help="restrict every stage to these modules (`TCSlib.A.B`, the suffix "
                          "`A.B`, or an area such as `Complexity`)")
-    ap.add_argument("--cite-all", action="store_true",
-                    help="citations: match every reference document, not just --source ones")
     ap.add_argument("--rematch", action="store_true",
-                    help="citations: match documents that already have a run")
+                    help="citations: match every ingested document again, including those "
+                         "the blueprint already cites (default: only texts never matched)")
     ap.add_argument("--build", action="store_true",
                     help="graph: run `lake build` and rebuild dep_graph.json first")
     ap.add_argument("--backend", choices=("auto", *BACKENDS), default="auto",

@@ -221,7 +221,8 @@ def print_status(data: dict, *, show_all: bool, selection: bool) -> None:
         print(f"  {t['document'][:46]:46s} {(', '.join(t['tags']) or '-')[:14]:14s} "
               f"{t['proof_citations']:6d} {t['statement_citations']:6d}  {t['status']}")
     if unmatched:
-        print("  never matched against the dataset; to look for citations in them:")
+        print("  never matched against the dataset: the next `dataset_pipeline.py` run matches "
+              "them; to do one now:")
         for t in unmatched[:6]:
             print(f"      python3 scripts/sources.py match {t['document']}")
         if len(unmatched) > 6:

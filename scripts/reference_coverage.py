@@ -294,7 +294,8 @@ def print_report(report: dict, only_new: bool) -> None:
     missing = [r for r in rows if r["status"] == "missing"]
     if missing:
         print("\nTo give these theorems citations instead of informalized proof notes, attach "
-              "the text they were formalized from:")
+              "the text they were formalized from: copy its PDF under "
+              f"{REFERENCES.relative_to(BASE)}/ and rerun the pipeline, or name it with its tag:")
         for r in missing:
             print(f"    python3 scripts/dataset_pipeline.py --source {r['tag']}=<path to the "
                   f"{r['tag']} text{' (' + r['locations'][0].split(' (')[0] + ' ...)' if r['locations'] else ''}>")

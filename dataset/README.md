@@ -56,11 +56,11 @@ interrupted run is resumed by running the same command again (or `--from <stage>
 | Stage | LLM | What it does | Scripts |
 |---|---|---|---|
 | `graph` | no | `lake build` (with `--build`) and the declaration dependency graph. Reports modules imported from `TCSlib.lean` that the graph predates (run `--build`), modules on disk that nothing imports (add the import, then `--build`), graph modules whose source moved, and the records of the current dataset a merge will carry over. | `build_dep_graph.py` |
-| `references` | yes | Each `--source TAG=PATH` text is placed under `blueprint/src/references/` and registered for its tag in `references/sources.json`; a PDF is OCR'd and cleaned into a validated `<name>.md` (block-anchored, so citations can point into it). | `proofmatch.py extract`, `reference_coverage.py --register` |
+| `references` | yes | Every text under `blueprint/src/references/` without a validated `<name>.md` (a PDF dropped there, or one given as `--source TAG=PATH`) is OCR'd and cleaned into one (block-anchored, so citations can point into it); a `--source` tag is registered in `references/sources.json`. | `proofmatch.py extract`, `reference_coverage.py --register` |
 | `blueprint` | no | Every documentable declaration without a blueprint entry gets one, with the binding `\lean{}`, `\leanok`, `\uses{}` and a marked placeholder body (an estimate only counts them). | `blueprint_enumerate.py`, `blueprint_stub.py`, `blueprint_assemble.py`, `blueprint_validate.py` |
 | `statements` | yes | Statement-only pass-1 build, then the informal statement of every record (and every stub definition) whose prose is not cached is written from the *formal* statement to handout standard, rubric-gated, cached under `references/statements/`, and applied into the blueprint. | `build_dataset.py --no-proof`, `build_informal_statements.py`, `blueprint_restate.py --apply-only` |
 | `difficulty` | yes | Unrated proofs get an intrinsic, tactic-only 1-7 rating written as `\difficulty{N}`. | `blueprint_difficulty_plan.py`, `rate_difficulty.py`, `blueprint_difficulty_apply.py` |
-| `citations` | yes | Pass 1 again, then the coverage report (below), then each new reference document is matched against the dataset; proofs the text proves get `\proofsource`, statements it only states get `\statementsource`. Add `--cite-all` to match every reference document, `--rematch` to redo matched ones. | `reference_coverage.py`, `proofmatch.py match` |
+| `citations` | yes | Pass 1 again, then the coverage report (below), then every reference document the blueprint does not cite yet (new texts, and older ones never matched) is matched against the dataset; proofs the text proves get `\proofsource`, statements it only states get `\statementsource`; the tag registry is re-derived from the citations. `--rematch` redoes matched documents too. | `reference_coverage.py`, `proofmatch.py match` |
 | `informalize` | yes | Every uncited, sorry-free proof without a note gets a prose account of its Lean proof under `references/informalized/<name>.md`. Stops first if a *new* theorem cites a text nobody attached (below). | `reference_coverage.py --strict`, `informalize_proofs.py` |
 | `dataset` | no | The full build with flattened proofs of the selected (or all built) records, `proof_notes` attached from the citations and notes, merged into the dataset as described above. | `build_dataset.py`, `build_proof_notes.py`, `dataset_splice.py --merge` |
 | `verify` | no | Structural checks (every column present, no leaked docstring lines in formal statements, no stub prose, row loss against the previous dataset, carried-over rows, optionally N sampled formal statements compiled with `scripts/lean_check.sh`), prose checks, blueprint integrity. | `dataset_check.py --strict`, `dataset_hygiene.py`, `statement_quality.py`, `blueprint_validate.py --strict --allow-orphans` |
@@ -69,46 +69,59 @@ State, logs, the pass-1 build, the merge and coverage reports live in `dataset/.
 (git-ignored); `state.json` records each stage's outcome and `logs/<stage>.log` its full
 output.
 
-### Reference texts: who attaches them
+### Reference texts: attach, then run
 
-The builder does not look for sources.  A theorem receives a citation only when the text
-it was formalized from has been ingested under `references/` and matched; every other
-theorem receives an informalized account of its Lean proof instead.  The contract is
-therefore:
+The builder never searches outside `blueprint/src/references/` for sources.  A theorem
+receives a citation only when the text it was formalized from is there and has been
+matched; every other theorem receives an informalized account of its Lean proof instead.
+The contract has two steps:
 
-> **Whoever submits a formalization attaches the text it came from, in the same change.**
-> `python3 scripts/dataset_pipeline.py --source TAG=path.pdf` where `TAG` is the `[TAG]` the
-> new declarations' docstrings cite (policy.md §2: every result carries `[AB09, Thm 9.3]`
-> or similar).
+1. **After formalizing something, attach the text it came from** to
+   `blueprint/src/references/` if it is not there already: copy the PDF (or a validated
+   `.md`) into the directory, or pass it as `--source TAG=PATH` where `TAG` is the `[TAG]`
+   the new declarations' docstrings cite (policy.md §2: every result carries
+   `[AB09, Thm 9.3]` or similar).
+2. **Run the pipeline.**  `python3 scripts/dataset_pipeline.py --yes` (with `--build` after
+   a `lake build` is needed).  It ingests every text that has no validated `.md` yet,
+   decides which texts still have to be matched (those the blueprint cites nothing from),
+   matches them against the whole dataset, and carries the new declarations through the
+   remaining stages into the dataset.
 
-`scripts/sources.py` is the short form of that contract:
+```bash
+cp ~/texts/cesa-bianchi-lugosi-ch07.pdf blueprint/src/references/
+python3 scripts/dataset_pipeline.py --estimate      # what it would ingest, match and write
+python3 scripts/dataset_pipeline.py --yes
+```
+
+`scripts/sources.py` is the status and the short form of the same contract:
 
 ```bash
 python3 scripts/sources.py                         # status: texts, tags, Lean files, what each needs
-python3 scripts/sources.py add CBL06=~/texts/cesa-bianchi-lugosi-ch07.pdf   # ingest, register, match
-python3 scripts/sources.py match vershynin-hdp-book                         # match a text already ingested
+python3 scripts/sources.py add CBL06=~/texts/cesa-bianchi-lugosi-ch07.pdf   # ingest, register, match now
+python3 scripts/sources.py match vershynin-hdp-book                         # match one ingested text now
 python3 scripts/sources.py register Ver18=vershynin-hdp-book                # tag -> document by hand
 ```
 
 `status` lists every ingested text with the tags it covers and how many theorems the
-blueprint cites it for (a text that was ingested but never matched says so, with the
-`match` command to run); every docstring tag with its theorem count, how many are cited,
-and whether its text is `attached`, attached but never matched, or `MISSING` (with the
-`add` command to run); and every Lean module of the dataset that is not fully cited,
-with what it waits for: a text to attach, a match to run, or docstring tags.  `add`
-runs the `references` and `citations` stages of the pipeline for that text and prints
-the status again; the citations land in the blueprint, and the next `dataset` stage
-carries them into the dataset.
+blueprint cites it for (a text that was ingested but never matched says so; the next
+pipeline run matches it); every docstring tag with its theorem count, how many are
+cited, and whether its text is attached, attached but never matched, or `MISSING`
+(with the `add` command to run); and every Lean module of the dataset that is not fully
+cited, with what it waits for: a text to attach, a match to run, or docstring tags.
 
 What the pipeline does to make that visible:
 
 - `references/sources.json` maps each docstring tag to the ingested documents that cover
-  it.  `--source TAG=PATH` registers the document; `reference_coverage.py --register
-  TAG=doc` does it by hand; `--rebuild-registry` derives pairs from existing citations.
-- The `citations` stage prints, per tag, how many uncited theorems cite it, at which
-  theorem numbers, and whether a document is registered (`registered`), was just attached
-  (`attached`) or is `missing`, with the exact `--source` command to run.  The report is
-  saved to `dataset/.pipeline/coverage.json`.
+  it.  `--source TAG=PATH` registers the document; after each match run the registry is
+  re-derived from the citations (`reference_coverage.py --rebuild-registry`), so a text
+  dropped in without a tag is tied to its tag once three or more of its cited theorems
+  agree; `reference_coverage.py --register TAG=doc` does it by hand.
+- The `citations` stage prints which ingested documents it will match and why the others
+  are skipped (the blueprint already cites them, or a reviewed match run exists under
+  `.proofmatch-work/`), then per tag how many uncited theorems cite it, at which theorem
+  numbers, and whether a document is `registered`, was just `attached`, or is `missing`,
+  with the exact `--source` command to run.  The report is saved to
+  `dataset/.pipeline/coverage.json`.
 - The `informalize` stage refuses to write proof notes while a *new* theorem (absent from
   the previous dataset) cites a `missing` tag.  Attach the text and rerun from
   `references`, or pass `--without-sources` to acknowledge that these theorems get
@@ -168,8 +181,9 @@ no-LLM stages (the merge as a dry run) and reports the rest.
 
 1. Register the new module(s) in `TCSlib.lean` (a module that is not imported from the root
    is never built, so it never enters the graph; its records, if any, are only carried over).
-2. `python3 scripts/dataset_pipeline.py --build --yes --source TAG=<text the statements came from>`,
-   or `--modules <the new module>` to touch nothing else.  (`python3 scripts/sources.py`
+2. Put the text the statements came from under `blueprint/src/references/` (or pass it as
+   `--source TAG=<text>`), then `python3 scripts/dataset_pipeline.py --build --yes`, or
+   `--modules <the new module>` to touch nothing else.  (`python3 scripts/sources.py`
    before and after shows what the text covered and what is still waiting.)
 3. Read `dataset/.pipeline/check.json` and `merge.json`; commit `dataset/tcslib_theorems.jsonl.gz`,
    the blueprint chapters, and the new files under `blueprint/src/references/`.
