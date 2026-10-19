@@ -7,6 +7,9 @@ informalized account of the Lean proof).  Only the `.gz` is tracked; the plain `
 is regenerated locally and git-ignored.  Every reader goes through
 `proofmatch/dataset_io.py`, which falls back to the `.gz` transparently.
 
+`INSTRUCTIONS.md` is the two-step guide for contributors; `DESIGN.md` records the
+intent, the rules the pipeline keeps, and the known gaps.
+
 ## Building it
 
 One command updates the dataset from the Lean sources (and the text the new statements

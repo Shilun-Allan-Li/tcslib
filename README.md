@@ -40,7 +40,8 @@ ingests new texts, matches every text the blueprint does not cite yet, and carri
 new declarations into the dataset incrementally, on the Claude Code or the OpenAI Codex
 CLI.  `python3 scripts/sources.py` shows which texts are attached, which theorems they
 cover and which texts are still missing.  See [`dataset/INSTRUCTIONS.md`](dataset/INSTRUCTIONS.md)
-for the short version and [`dataset/README.md`](dataset/README.md) for the whole builder.
+for the short version, [`dataset/DESIGN.md`](dataset/DESIGN.md) for the design and its rules,
+and [`dataset/README.md`](dataset/README.md) for the whole builder.
 
 ## Matching PDF proofs to TCSlib
 
