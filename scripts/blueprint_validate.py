@@ -7,6 +7,9 @@ has trustworthy formal references.
 
 Reports:
   * orphan \\lean        — label that names no declaration in dep_graph
+  * duplicate binding    — the same Lean name bound by \\lean{} in two entries (two
+                           chapter files documenting one declaration: the dataset and
+                           proofmatch cannot tell which prose is the declaration's)
   * dangling \\uses      — reference with no matching \\lean{...} anywhere
   * uncovered decls      — documentable declarations with no \\lean entry yet
   * per-area coverage    — covered / total documentable declarations
@@ -99,6 +102,21 @@ ENTRY_LEAN_RE = re.compile(r"^\s*\\lean\{([^}]*)\}")
 END_ENV_RE = re.compile(r"\\end\{\w+\}")
 
 
+def collect_entry_bindings(chapter_dir: Path = CHAPTER_DIR) -> dict[str, list[str]]:
+    """Lean name -> `file:line` of every entry whose own \\lean line binds it (a `\\lean{}`
+    mentioned inline in prose does not count)."""
+    where: dict[str, list[str]] = {}
+    for tex in sorted(chapter_dir.rglob("*.tex")):
+        for i, line in enumerate(tex.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            m = ENTRY_LEAN_RE.match(line)
+            if m:
+                for name in m.group(1).split(","):
+                    name = name.strip()
+                    if name and not name.startswith("["):
+                        where.setdefault(name, []).append(f"{tex.relative_to(chapter_dir)}:{i}")
+    return where
+
+
 def collect_entry_uses(chapter_dir: Path = CHAPTER_DIR) -> dict[str, set[str]]:
     """label -> the labels named in that entry's \\uses (statement and proof alike)."""
     edges: dict[str, set[str]] = {}
@@ -175,6 +193,10 @@ def find_cycles(edges: dict[str, set[str]]) -> list[list[str]]:
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--strict", action="store_true")
+    ap.add_argument("--allow-orphans", action="store_true",
+                    help="--strict: tolerate \\lean labels of declarations absent from "
+                         "dep_graph.json (modules not built; the dataset pipeline carries "
+                         "their records over), fail only on dangling \\uses and cycles")
     args = ap.parse_args()
 
     modules = load_modules()
@@ -223,6 +245,14 @@ def main():
     print()
     print(f"Remaining uncovered documentable decls: {len(uncovered)}")
 
+    duplicates = {n: w for n, w in collect_entry_bindings().items() if len(w) > 1}
+    print(f"Duplicate \\lean bindings (one declaration, several entries): {len(duplicates)}")
+    for n, w in sorted(duplicates.items())[:20]:
+        print(f"  {n}: " + ", ".join(w))
+    if len(duplicates) > 20:
+        print(f"  ... and {len(duplicates) - 20} more")
+    print()
+
     cycles = find_cycles(collect_entry_uses())
     print()
     print(f"\\uses cycles (crash the plasTeX web build): {len(cycles)}")
@@ -233,7 +263,7 @@ def main():
 
     if cycles:
         return 1
-    if args.strict and (orphans or dangling):
+    if args.strict and (dangling or duplicates or (orphans and not args.allow_orphans)):
         return 1
     return 0
 

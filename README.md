@@ -29,6 +29,18 @@ To add TCSlib as a dependency, add the following to your `lakefile.lean`:
 require TCSlib from git "https://github.com/Shilun-Allan-Li/tcslib" @ "main"
 ```
 
+## The theorem dataset
+
+`dataset/tcslib_theorems.jsonl.gz` pairs every blueprint-bound theorem with a
+self-contained informal statement, a standalone formal statement, a flattened proof file,
+a difficulty rating and its provenance (textbook citation or an informalized account of
+the proof).  `python3 scripts/dataset_pipeline.py --source TAG=<text>` updates it
+incrementally after new statements are formalized (the submitter attaches the text the
+statements came from; the builder never searches for sources), on the Claude Code or the
+OpenAI Codex CLI; `python3 scripts/sources.py` shows which texts are attached, which
+theorems they cover and which texts are still missing.  See
+[`dataset/README.md`](dataset/README.md).
+
 ## Matching PDF proofs to TCSlib
 
 The repository includes an auditable Claude Code workflow for comparing a local

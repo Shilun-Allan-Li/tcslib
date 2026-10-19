@@ -152,7 +152,13 @@ is part of the trusted surface.
 entries use `\statementsource{<ref>}{<anchor>}` and `\proofsource{<ref>}{<anchor>}` to cite
 it, subject to the existing rule that these are written only after an approved proofmatch
 run. When starting a new chapter or paper, ingest it as a reference pair
-(`<name>.raw.md` + `<name>.md`) so these citations are possible.
+(`<name>.raw.md` + `<name>.md`) so these citations are possible: attach the text to the
+change that formalizes it, `python3 scripts/sources.py add TAG=<pdf or md>` (or
+`dataset_pipeline.py --source TAG=...`) with the docstring tag above, which ingests and
+registers it and matches the new statements against it; `python3 scripts/sources.py`
+shows which texts are attached and which are still missing (see `dataset/README.md`,
+"Reference texts"). The dataset builder does not search for sources; an unattached text
+leaves the theorems with informalized proof notes instead of citations.
 
 **Vendored code.** Lean code adapted from another project keeps the original copyright
 header and license notice, and its file docstring names the source project, the commit it

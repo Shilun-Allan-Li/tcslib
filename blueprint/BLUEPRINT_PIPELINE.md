@@ -84,28 +84,56 @@ python3 scripts/blueprint_validate.py         # coverage + integrity report
 
 ## Building the dataset
 
-`scripts/build_dataset.py` (no LLM) emits `dataset/tcslib_theorems.jsonl`, one record per
-theorem/lemma:
+`scripts/dataset_pipeline.py` runs every step from the Lean sources (and the texts the
+statements came from) to a verified `dataset/tcslib_theorems.jsonl.gz` -- graph, reference
+ingestion, blueprint stubs, LLM-written statements, difficulty ratings, citations,
+informalized proofs, the full build, and the checks -- *incrementally*: every LLM product
+is cached per declaration, and the final build is merged into the shipped dataset (new and
+changed records replaced, records of unbuilt modules carried over, only deleted
+declarations dropped).  `--only` / `--modules` restrict every stage to chosen records.
+`dataset/README.md` documents the stages, the merge rules, the model policy and the
+record schema.
 
 ```bash
-python3 scripts/build_dataset.py            # -> dataset/tcslib_theorems.jsonl
-python3 scripts/build_dataset.py --limit 20 # quick sample
-python3 scripts/build_dataset.py --all-def-deps   # looser: seed from all def-deps
+python3 scripts/dataset_pipeline.py --check-env           # toolchain on this machine
+python3 scripts/dataset_pipeline.py --estimate            # report, spend nothing
+python3 scripts/dataset_pipeline.py --build --yes --source AB09=texts/ch09.pdf
+python3 scripts/dataset_pipeline.py --modules Complexity.Ch09 --yes
+python3 scripts/dataset_pipeline.py --backend codex --model gpt-5 --yes   # Codex instead of Claude
 ```
 
-Each record has `id`, `informal_statement` (the blueprint prose for the matching
-`\lean{}`), and `formal_statement` — a self-contained Lean snippet:
+The text a formalization came from is attached by whoever submits it (`--source
+TAG=path`, `TAG` being the docstring citation tag of policy.md §2); the builder does not
+search for sources.  `python3 scripts/sources.py` shows every text, tag and Lean file with
+what it still needs, and `sources.py add TAG=path` attaches and matches a text.  Uncited
+theorems get informalized proof notes instead of citations.  The LLM stages run on the
+Claude Code CLI or the OpenAI Codex CLI (`--backend`, proofmatch/agents.py); the caches
+and outputs are identical either way.
 
-- `import Mathlib`, then the **upstream definitions** the statement depends on (full,
-  topologically ordered, each in its namespace), then the theorem **statement with its
-  proof replaced by `sorry`**.
+The deterministic core is still `scripts/build_dataset.py` (no LLM), one record per
+theorem/lemma with `id`, `informal_statement` (the blueprint prose for the matching
+`\lean{}`), `formal_statement` and `proof`:
+
+```bash
+python3 scripts/build_dataset.py            # -> dataset/tcslib_theorems.jsonl (+ .gz)
+python3 scripts/build_dataset.py --limit 20 # quick sample
+python3 scripts/build_dataset.py --no-proof # statements only (fast)
+python3 scripts/build_dataset.py --only NAME ... --out patch.jsonl   # a few records,
+python3 scripts/dataset_splice.py patch.jsonl                        # spliced back in
+```
+
+- `formal_statement` is a self-contained Lean file: the external imports of the
+  declaration's module closure, the **upstream definitions** the statement depends on
+  (full, topologically ordered, each in its namespace, with the instances they need and
+  the `open ... in` prefixes written in front of them), then the theorem **statement with
+  its proof replaced by `sorry`**.
 - The dependency walk takes the transitive closure, over **definition-kind nodes only**,
-  of the definitions that appear **in the statement text** — so proofs are dropped and
-  proof-only lemmas/definitions are excluded.
+  of the definitions that appear **in the statement text** -- so proofs are dropped and
+  proof-only lemmas are excluded.
+- `proof` is the full dependency closure flattened in compile order with the original
+  proof bodies (the verified column).
 
-It is a best-effort standalone file (exact dependency content; exotic `open`/notation/
-`variable` context may occasionally need a manual touch-up to fully compile). The
-underlying graph is also queryable directly via
+The underlying graph is also queryable directly via
 `python3 scripts/query_deps.py upstream NAME --tcslib-only`.
 
 ## Work-unit schema (`blueprint/.work/<Module>.json`)
