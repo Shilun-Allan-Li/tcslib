@@ -235,6 +235,9 @@ def main() -> int:
                          "or every one (default: none)")
     ap.add_argument("--allow-weak-models", action="store_true",
                     help="run on a model below the prose floor (see proofmatch/model_policy.py)")
+    ap.add_argument("--generate", action="store_true",
+                    help="with --rekey: go on to generate the outstanding statements afterwards "
+                         "(without it, --rekey only migrates the cache and exits)")
     ap.add_argument("--rekey", nargs="+", metavar="DATASET",
                     help="before anything else, revalidate cache entries keyed against the "
                          "formal statements of these earlier datasets (same core -> rekeyed, "
@@ -289,6 +292,11 @@ def main() -> int:
             print(f"  statement changed since its prose was written: {name}")
         if len(changed) > 20:
             print(f"  ... and {len(changed) - 20} more")
+        if not (args.estimate or args.regrade or args.generate):
+            # --rekey is a migration, not a request to spend: stop here unless the
+            # caller asked for an estimate, a regrade, or generation (--generate).
+            print("rekey done; add --estimate to see what is outstanding, --generate to write it")
+            return 0
 
     if args.regrade:
         stale = []
