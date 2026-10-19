@@ -414,3 +414,78 @@ article > h1:first-child {
         padding: 3rem 1.5rem;
     }
 }
+
+/* Text pages (e.g. /dataset/): the theme hides the <h1>; .page-title stands in for it */
+.page-title {
+    max-width: 760px;
+    margin: 2.5rem auto 2rem;
+}
+
+.page-title > p:first-child {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+}
+
+.page-title > p:not(:first-child) {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+}
+
+article section,
+article > p,
+article > ul,
+article > ol,
+article > pre {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+article section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 2.5rem 0 0.75rem;
+}
+
+article section p,
+article > p {
+    margin: 0 0 1rem;
+}
+
+article section ul,
+article section ol {
+    padding-left: 1.4rem;
+    margin: 0 0 1rem;
+}
+
+article section li {
+    margin: 0.3rem 0;
+}
+
+article code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--color-code-bg);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+}
+
+article pre {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 0 0 1.25rem;
+}
+
+article pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+}

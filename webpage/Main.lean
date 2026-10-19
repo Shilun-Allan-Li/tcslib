@@ -19,12 +19,12 @@ def theme : Theme := { Theme.default with
           <meta name="author" content="TCSlib Contributors"/>
           <meta property="og:type" content="website"/>
           <meta property="og:title" content="TCSlib — TCS Formalization in Lean 4"/>
-          <meta property="og:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science: Boolean Function Analysis, Error-Correcting Codes, and more. Every theorem is machine-checked."/>
+          <meta property="og:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science: Boolean Function Analysis, Error-Correcting Codes, and more."/>
           <meta property="og:url" content="https://shilun-allan-li.github.io/tcslib/"/>
           <meta property="og:site_name" content="TCSlib"/>
           <meta name="twitter:card" content="summary"/>
           <meta name="twitter:title" content="TCSlib — TCS Formalization in Lean 4"/>
-          <meta name="twitter:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science. Every theorem is machine-checked."/>
+          <meta name="twitter:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science."/>
           <link rel="canonical" href="https://shilun-allan-li.github.io/tcslib/"/>
           <link rel="sitemap" type="application/xml" href="/tcslib/static/sitemap.xml"/>
           <link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg"/>
@@ -43,6 +43,7 @@ def theme : Theme := { Theme.default with
                 <a class="logo" href="/tcslib/">"TCSlib"</a>
                 <div class="nav-links">
                   <a href="/tcslib/theorems/">"Theorems"</a>
+                  <a href="/tcslib/dataset/">"Dataset"</a>
                   <span class="divider">" | "</span>
                   <a href="/tcslib/blueprint/">"Blueprint"</a>
                   <a href="/tcslib/docs/">"Docs"</a>
@@ -76,6 +77,7 @@ def theme : Theme := { Theme.default with
   }
 
 def tcsSite : Site := site Site.FrontPage /
+  "dataset" Site.Dataset
   static "static" ← "static_files"
   static "theorems" ← "theorems"
 
