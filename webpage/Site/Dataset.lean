@@ -8,9 +8,9 @@ open Site
 
 ::::htmlDiv (class := "page-title")
 
-The theorem dataset
+TCSlib theorem dataset
 
-A mixed and growing set of theorems of theoretical computer science formalized in
+A comprehensive set of theorems of theoretical computer science formalized in
 Lean 4, one record per theorem of the library, with the informal statement, the formal
 statement, the proof, and where the mathematics came from.
 
@@ -29,36 +29,54 @@ Every theorem and lemma of TCSlib that has a blueprint entry is one record. A re
 * provenance: a citation into the passage of the paper or textbook chapter the result was
   formalized from, or, when no such text was attached, an account written from the Lean proof.
 
-The set is **mixed**, and the records say how:
+The set is **mixed**:
 
 * **Some proofs are still open.** When the proof, or the proof of something it depends on,
-  still contains `sorry`, the record's `proof_complete` is false. At the October 2026 build
-  that is 61 of 4,179 records.
-* **Not every record cites a text.** 361 records cite a source document: either the passage
-  that proves the result (`proof_citation`) or one that states it while the Lean proof differs
-  (`statement_citation`). 496 carry only an informalized account of their Lean proof, because
-  the text they were formalized from was never attached. The remaining 3,322 have no proof
-  note yet.
+  still contains `sorry`, the record's `proof_complete` is false. In the deployed build
+  (%%build_date_text%%) that is %%n_sorry%% of %%n_records%% records.
+* **Not every record cites a text.** %%n_cited%% records cite a source document: either the
+  passage that proves the result (`proof_citation`) or one that states it while the Lean proof
+  differs (`statement_citation`). %%n_informalized_only%% carry only an informalized account of
+  their Lean proof, because the text they were formalized from was never attached. The
+  remaining %%n_no_notes%% have no proof note yet.
 * **Informal statements have two origins.** `statement_source` is `blueprint` when the prose
-  is the blueprint author's own and `regenerated` when it was written from the formal
-  statement by a language model and checked against a rubric.
+  is the blueprint author's own (%%n_blueprint%% records) and `regenerated` when it was
+  written from the formal statement by a language model and checked against a rubric
+  (%%n_regenerated%%).
 
-The set is **growing**: it is rebuilt incrementally from the library, so each build adds the
-newly formalized declarations and the counts above change. The
-[theorem viewer](/tcslib/theorems/) shows the live numbers of the build that is deployed,
-lets you filter by provenance, and draws the dependency graph of every statement and proof.
-By area at the October 2026 build: Boolean function analysis 1,602, complexity theory 1,433,
-communication complexity 726, learning theory 211, error-correcting codes 147, graph theory
-40, locally decodable codes 16, cryptography 4.
+The set is still growing. It is rebuilt incrementally from the library, so each build adds the
+newly formalized declarations and the counts above change. View a visualization of the
+repository at [theorem viewer](/tcslib/theorems/).
+
+By area in the deployed build: %%by_area%%.
+
+The numbers on this page are computed from the dataset file this site serves, each time
+the site is deployed.
 
 # How to download it
 
-The dataset is one gzipped JSON Lines file, about 30 MB, one JSON object per line:
+The dataset is one gzipped JSON Lines file, about %%size_mb%% MB, one JSON object per line.
 
-* [`tcslib_theorems.jsonl.gz`](/tcslib/theorems/tcslib_theorems.jsonl.gz) from this site, the
-  build that is deployed;
+:::::htmlDiv (class := "download-buttons")
+
+::::html a (class := "hero-btn primary") (href := "/tcslib/theorems/tcslib_theorems.jsonl.gz") (download := "tcslib_theorems.jsonl.gz")
+:::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")
+:::
+Download tcslib_theorems.jsonl.gz
+::::
+
+::::html a (class := "hero-btn secondary") (href := "https://huggingface.co/datasets/Hydroxyi/TCSlib")
+Hugging Face
+::::
+
+:::::
+
+The button serves the build that is deployed with this site. The same file is also:
+
 * [`dataset/tcslib_theorems.jsonl.gz`](https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/tcslib_theorems.jsonl.gz)
-  in the repository, where every build is a commit.
+  in the repository, where every build is a commit;
+* [`Hydroxyi/TCSlib`](https://huggingface.co/datasets/Hydroxyi/TCSlib) on Hugging Face,
+  for `datasets.load_dataset`.
 
 In Python:
 
@@ -78,7 +96,7 @@ Mathlib version as the library (`lake-manifest.json` in the repository pins it).
 `formal_statement` column reproduces the declaration's environment as faithfully as a
 flattener can; the builder measures the compile rate of a sample on every run.
 
-# The record
+# Columns
 
 * `id`, `lean_name`: the fully qualified Lean name, which is the record key.
 * `title`, `statement_informal`, `definitions`, `informal_statement`, `statement_source`:
