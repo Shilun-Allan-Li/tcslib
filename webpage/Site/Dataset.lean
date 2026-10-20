@@ -20,29 +20,35 @@ statement, the proof, and where the mathematics came from.
 
 Every theorem and lemma of TCSlib that has a blueprint entry is one record. A record pairs:
 
-* an informal statement in prose: the passage of the source text that states or proves the
-  result, or, when no text cites it, prose written from the Lean with the definitions it
-  relies on and an account of the proof;
+* an informal statement in prose: the passage of the source text that states the result,
+  or, when no text states it, prose written from the Lean with the definitions it relies on;
+* an informal proof in prose: the passage of the source text that proves the result, or,
+  when no text proves it, an account written from the Lean proof;
 * a standalone formal statement: a Lean 4 file that ends with the declaration, its proof
   replaced by `sorry`, carrying the definitions, instances and context the statement needs;
 * the proof: a second Lean 4 file with the declaration proved for real and its whole
   dependency closure within the library flattened into it, so it compiles with Mathlib alone;
 * a difficulty rating of the Lean proof script, from 1 to 7;
-* where the informal statement came from: the paper or textbook chapter the result was
-  formalized from, or, when no such text was attached, the Lean itself.
+* where the informal statement and the informal proof came from: the paper or textbook
+  chapter the result was formalized from, or, when no such text was attached, the Lean
+  itself.
 
 The set is **mixed**:
 
 * **Some proofs are still open.** When the proof, or the proof of something it depends on,
   still contains `sorry`, the record's `proof_complete` is false. In the deployed build
   (%%build\_date\_text%%) that is %%n\_sorry%% of %%n\_records%% records.
-* **Not every record cites a text.** `informal_source` is `citation` for the %%n\_cited%%
-  records whose informal statement is the passage of a source document that states or proves
-  the result, and `lean` for the %%n\_lean%% whose text was written from the Lean instead,
-  because the text they were formalized from was never attached: the statement by the
-  blueprint's author or by a language model checked against a rubric, followed for
-  %%n\_lean\_with\_proof%% of them by an informalized account of the Lean proof. The remaining
-  %%n\_lean\_without\_proof%% have no proof account yet.
+* **Not every record cites a text.** The statement and the proof are cited separately.
+  `statement_source` is `citation` for the %%n\_statement\_cited%% records whose informal
+  statement is the passage of a source document that states the result, and `lean` for the
+  %%n\_statement\_lean%% whose statement was written based on the Lean instead. `proof_source`
+  is `citation` for the %%n\_proof\_cited%% records whose informal proof is the passage that
+  proves the result, `lean` for the %%n\_proof\_lean%% whose proof is an account written
+  from the Lean proof, and `none` for the %%n\_proof\_none%% that have no informal proof yet.
+  Writing from the Lean may be due to a variety of reasons, from the statement's status as unwritten common
+  knowledge to too specific of a theorem to find in sources, or simply because the source was
+  not found.
+  
 
 The set is still growing. It is rebuilt incrementally from the library, so each build adds the
 newly formalized declarations and the counts above change. View a visualization of the
@@ -87,7 +93,8 @@ with gzip.open("tcslib_theorems.jsonl.gz", "rt") as f:
     records = [json.loads(line) for line in f]
 
 complete = [r for r in records if r["proof_complete"]]
-cited = [r for r in records if r["informal_source"] == "citation"]
+cited = [r for r in records if r["statement_source"] == "citation"]
+with_proof = [r for r in records if r["proof_source"] != "none"]
 ```
 
 The `proof` column of a complete record compiles in a project that depends on the same
@@ -98,8 +105,10 @@ flattener can; the builder measures the compile rate of a sample on every run.
 # Columns
 
 * `id`, `lean_name`: the fully qualified Lean name, which is the record key.
-* `informal_statement`, `informal_source`, `title`, `definitions`: the informal half;
-  `informal_source` is `citation` or `lean`.
+* `informal_statement`, `statement_source`, `title`, `definitions`: the statement in prose
+  and where it came from; `statement_source` is `citation` or `lean`.
+* `informal_proof`, `proof_source`: the proof in prose and where it came from;
+  `proof_source` is `citation`, `lean` or `none` (then `informal_proof` is empty).
 * `formal_statement`, `upstream_defs`, `n_upstream_defs`: the formal statement and the
   definitions it carries.
 * `source_module`, `kind`: the Lean module; `theorem` or `lemma`.

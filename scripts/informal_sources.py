@@ -1,33 +1,42 @@
 """
-The informal half of a dataset record: `informal_statement` and `informal_source`.
+The informal half of a dataset record: `informal_statement` / `statement_source` and
+`informal_proof` / `proof_source`.
 
-A record's informal statement comes from one of two places, in this order of
-preference:
+The statement and the proof are two columns, each with its own origin marker:
 
-    citation   the blueprint entry cites a reference document (`\\proofsource` or
-               `\\statementsource`): the informal statement IS the cited passage,
-               taken verbatim from the validated text under
-               blueprint/src/references/<doc>.md (statement blocks first, then
-               proof blocks, each block once);
-    lean       nothing cites it: the prose written from the Lean declaration (the
-               blueprint entry's statement, with the definitions it relies on),
-               followed by the informalized account of the Lean proof from
-               blueprint/src/references/informalized/<name>.md when one exists.
+    informal_statement   the result in prose.
+      statement_source   `citation`  the blueprint entry carries `\\statementsource`:
+                                     the passage of the reference document that states
+                                     the result, verbatim from the validated text under
+                                     blueprint/src/references/<doc>.md;
+                         `lean`      otherwise: prose written from the Lean declaration
+                                     (the blueprint entry's statement, with the
+                                     definitions it relies on).
+    informal_proof       the proof in prose, or "" when there is none.
+      proof_source       `citation`  the entry carries `\\proofsource`: the passage that
+                                     proves the result, verbatim;
+                         `lean`      otherwise, when blueprint/src/references/informalized/
+                                     <name>.md holds a note: the informalized account of
+                                     the Lean proof;
+                         `none`      neither.
 
-`informal_source` records which.  Nothing is generated here: this module only reads
-what the blueprint, the reference texts and the notes already hold.  It is used by
-build_dataset.py at build time and runnable on its own to rewrite the informal half of
-an existing dataset from those same files (a repair, or the migration from the older
-`statement_informal` / `proof_notes` columns):
+A citation wins in each column independently: a record whose only citation is a
+`\\proofsource` keeps its Lean-derived statement and takes the cited proof.  Nothing is
+generated here: this module only reads what the blueprint, the reference texts and the
+notes already hold.  It is used by build_dataset.py at build time and runnable on its own
+to rewrite the informal half of an existing dataset from those same files (a repair, or
+the migration from an older schema -- the one-column `informal_statement` /
+`informal_source` layout, or the older `statement_informal` / `proof_notes` one):
 
     python3 scripts/informal_sources.py                    # rewrite the dataset in place
     python3 scripts/informal_sources.py --out FILE         # write elsewhere
     python3 scripts/informal_sources.py --dry-run          # report only, write nothing
 
-A record whose citation can no longer be resolved to text (document or block missing
-from references/) falls back to `lean` and is reported.  On its own this script cannot
-rebuild the Lean-derived prose of a record that is currently `citation`; a record whose
-citation was removed keeps its text and is reported -- rebuild it with build_dataset.py.
+A citation that can no longer be resolved to text (document or block missing from
+references/) is reported and the column falls back to its Lean-derived value.  On its own
+this script cannot rebuild the Lean-derived statement of a record whose statement is
+currently a citation; such a record whose citation was removed keeps its text and is
+reported -- rebuild it with build_dataset.py.
 """
 
 from __future__ import annotations
@@ -40,6 +49,7 @@ import shutil
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import NamedTuple
 
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
@@ -54,14 +64,28 @@ DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 
 LEAN_ANY_RE = re.compile(r"\\lean\{([^}]*)\}")
 
-#: The two values of `informal_source`.
-SOURCES = ("citation", "lean")
-#: Separates the statement from the proof account in a `lean` informal statement.
-PROOF_SEP = "\n\nProof: "
+#: The values of `statement_source` and of `proof_source`.
+STATEMENT_SOURCES = ("citation", "lean")
+PROOF_SOURCES = ("citation", "lean", "none")
+#: The four informal columns, in the order they sit in a record (right after `id`).
+COLUMNS = ("informal_statement", "statement_source", "informal_proof", "proof_source")
+#: In a `lean` statement with a definitions block, the claim follows this label.
 STATEMENT_LABEL = "\n\nStatement: "
-#: Columns of the schema this module replaced; dropped when a record is rewritten.
-LEGACY_COLUMNS = ("statement_informal", "statement_source", "proof_sources",
+#: Columns of the schemas this module replaced; dropped when a record is rewritten.
+#: `informal_source` is the one-column schema (statement and proof account in one
+#: `informal_statement`, joined by `PROOF_SEP`); the others are the schema before that.
+PROOF_SEP = "\n\nProof: "
+LEGACY_COLUMNS = ("informal_source", "statement_informal", "proof_sources",
                   "proof_steps", "proof_notes")
+
+
+class Informal(NamedTuple):
+    statement: str
+    statement_source: str
+    proof: str
+    proof_source: str
+    #: (document, block) pairs cited by the entry but absent from references/<doc>.md.
+    unresolved: list[tuple[str, str]]
 
 
 # ---------------------------------------------------------------- the sources
@@ -104,9 +128,19 @@ def blueprint_citations() -> dict[str, dict[str, list[dict]]]:
     return out
 
 
+def cites_statement(lean_name: str, citations: dict) -> bool:
+    """The entry carries a `\\statementsource` (its statement column is the passage)."""
+    return bool((citations.get(lean_name) or {}).get("statement_sources"))
+
+
+def cites_proof(lean_name: str, citations: dict) -> bool:
+    """The entry carries a `\\proofsource` (its proof column is the passage)."""
+    return bool((citations.get(lean_name) or {}).get("proof_sources"))
+
+
 def is_cited(lean_name: str, citations: dict) -> bool:
-    cited = citations.get(lean_name) or {}
-    return bool(cited.get("proof_sources") or cited.get("statement_sources"))
+    """The entry carries a citation of either kind."""
+    return cites_statement(lean_name, citations) or cites_proof(lean_name, citations)
 
 
 def load_block_text() -> dict[str, dict[str, str]]:
@@ -161,42 +195,40 @@ def note_for(lean_name: str, notes: dict[str, tuple[Path, str]]):
     return None
 
 
-# ---------------------------------------------------------------- the column
+# ---------------------------------------------------------------- the columns
 
 def cited_texts(
-    lean_name: str, citations: dict, block_text: dict[str, dict[str, str]]
+    lean_name: str, citations: dict, block_text: dict[str, dict[str, str]], key: str
 ) -> tuple[list[str], list[tuple[str, str]]]:
-    """(text of every cited block, in order; (document, block) pairs with no text).
-
-    Statement citations come first (the passage that states the result), then proof
-    citations (the passage that proves it); a block cited twice appears once.
-    """
-    cited = citations.get(lean_name) or {}
-    rows = list(cited.get("statement_sources") or []) + list(cited.get("proof_sources") or [])
+    """(text of every block the entry cites under `key`, in order; (document, block)
+    pairs with no text).  `key` is `statement_sources` or `proof_sources`; a block cited
+    twice appears once."""
+    rows = (citations.get(lean_name) or {}).get(key) or []
     texts: list[str] = []
     unresolved: list[tuple[str, str]] = []
     seen: set[tuple[str, str]] = set()
     for row in rows:
         by_id = block_text.get(row["document"], {})
         for block in row["blocks"]:
-            key = (row["document"], block)
-            if key in seen:
+            pair = (row["document"], block)
+            if pair in seen:
                 continue
-            seen.add(key)
+            seen.add(pair)
             text = (by_id.get(block) or "").strip()
             if text:
                 texts.append(text)
             else:
-                unresolved.append(key)
+                unresolved.append(pair)
     return texts, unresolved
 
 
 def note_body(markdown: str) -> str:
-    """The proof account of an informalized note, ready to follow the statement.
+    """The proof account of an informalized note, as the `informal_proof` column.
 
     Drops the provenance comments and the title heading, and -- when the note has the
     generated `**Claim.** ... **Proof.** ...` shape -- the claim paragraph, since the
-    statement it restates immediately precedes it.  Everything else is kept verbatim.
+    statement it restates is the record's `informal_statement`.  Everything else is kept
+    verbatim.
     """
     body = re.sub(r"<!--.*?-->", "", markdown, flags=re.S).strip()
     body = re.sub(r"^#+ .*\n?", "", body, count=1).strip()
@@ -207,33 +239,42 @@ def note_body(markdown: str) -> str:
     return re.sub(r"\n{3,}", "\n\n", body).strip()
 
 
-def informal_column(
+def informal_columns(
     lean_name: str,
     lean_prose: str,
     citations: dict,
     block_text: dict[str, dict[str, str]],
     notes: dict[str, tuple[Path, str]],
-) -> tuple[str, str, list[tuple[str, str]]]:
-    """(informal_statement, informal_source, unresolved citation blocks) for one record.
+) -> Informal:
+    """The four informal columns of one record.
 
     `lean_prose` is the Lean-derived statement (build_dataset.py's composition of the
-    blueprint entry and its definitions); it is used only when nothing cites the record.
+    blueprint entry and its definitions); it is the statement when no `\\statementsource`
+    resolves to text.
     """
-    texts, unresolved = cited_texts(lean_name, citations, block_text)
-    if texts:
-        return "\n\n".join(texts), "citation", unresolved
-    found = note_for(lean_name, notes)
-    if found is not None:
-        body = note_body(found[1])
-        if body:
-            return lean_prose + PROOF_SEP + body, "lean", unresolved
-    return lean_prose, "lean", unresolved
+    stmt_texts, unresolved = cited_texts(lean_name, citations, block_text, "statement_sources")
+    proof_texts, missing = cited_texts(lean_name, citations, block_text, "proof_sources")
+    unresolved += missing
+    if stmt_texts:
+        statement, statement_source = "\n\n".join(stmt_texts), "citation"
+    else:
+        statement, statement_source = lean_prose, "lean"
+    if proof_texts:
+        proof, proof_source = "\n\n".join(proof_texts), "citation"
+    else:
+        proof, proof_source = "", "none"
+        found = note_for(lean_name, notes)
+        if found is not None:
+            body = note_body(found[1])
+            if body:
+                proof, proof_source = body, "lean"
+    return Informal(statement, statement_source, proof, proof_source, unresolved)
 
 
 def statement_part(informal: str) -> str:
-    """The claim alone of a `lean` informal statement: without the definitions block
-    before it and the proof account after it."""
-    text = informal.split(PROOF_SEP, 1)[0]
+    """The claim alone of a `lean` informal statement, without the definitions block
+    that may precede it."""
+    text = informal.split(PROOF_SEP, 1)[0]   # tolerate the one-column schema
     if text.startswith("Definitions:"):
         label = text.find(STATEMENT_LABEL)
         if label >= 0:
@@ -241,9 +282,15 @@ def statement_part(informal: str) -> str:
     return text
 
 
-def place_columns(record: dict, informal: str, source: str) -> dict:
+def place_columns(record: dict, informal: Informal) -> dict:
     """Rebuild `record` with the informal columns right after `id` and no legacy column."""
-    out: dict = {"id": record["id"], "informal_statement": informal, "informal_source": source}
+    out: dict = {
+        "id": record["id"],
+        "informal_statement": informal.statement,
+        "statement_source": informal.statement_source,
+        "informal_proof": informal.proof,
+        "proof_source": informal.proof_source,
+    }
     for key, value in record.items():
         if key in out or key in LEGACY_COLUMNS:
             continue
@@ -254,14 +301,27 @@ def place_columns(record: dict, informal: str, source: str) -> dict:
 # ---------------------------------------------------------------- standalone
 
 def lean_prose_of(record: dict) -> str | None:
-    """The Lean-derived prose an existing record holds, or None when it has been
+    """The Lean-derived statement an existing record holds, or None when it has been
     replaced by a citation and cannot be recovered without a rebuild."""
-    if any(key in record for key in LEGACY_COLUMNS):
-        # Older schema: `informal_statement` is the blueprint composition itself.
+    if "statement_informal" in record:
+        # Oldest schema: `informal_statement` is the blueprint composition itself.
         return record.get("informal_statement") or ""
-    if record.get("informal_source") == "lean":
-        return (record.get("informal_statement") or "").split(PROOF_SEP, 1)[0]
+    if "informal_source" in record:
+        # One-column schema: statement and proof account in one field; a `citation`
+        # record held the cited passage(s) only.
+        if record["informal_source"] == "lean":
+            return (record.get("informal_statement") or "").split(PROOF_SEP, 1)[0]
+        return None
+    if record.get("statement_source") == "lean":
+        return record.get("informal_statement") or ""
     return None
+
+
+def _display(path: Path) -> str:
+    try:
+        return path.relative_to(BASE).as_posix()
+    except ValueError:
+        return str(path)
 
 
 def main() -> int:
@@ -293,8 +353,8 @@ def main() -> int:
     ]
     print(f"  {len(records)} dataset records\n")
 
-    sources: Counter[str] = Counter()
-    with_note = 0
+    stmt_sources: Counter[str] = Counter()
+    proof_sources: Counter[str] = Counter()
     unresolved: list[tuple[str, str, str]] = []
     stuck: list[str] = []
     updated = []
@@ -302,25 +362,24 @@ def main() -> int:
         lean_name = str(record.get("lean_name") or record.get("id") or "")
         prose = lean_prose_of(record)
         if prose is None:
-            # A `citation` record: recompute the citation; keep the text if it is gone.
-            texts, missing = cited_texts(lean_name, citations, block_text)
-            unresolved += [(lean_name, d, b) for d, b in missing]
-            if texts:
-                informal, source = "\n\n".join(texts), "citation"
-            else:
+            # The statement is a citation and the Lean prose is gone: recompute the
+            # citation; if it no longer resolves, keep the text and report.
+            texts, _ = cited_texts(lean_name, citations, block_text, "statement_sources")
+            if not texts:
                 stuck.append(lean_name)
-                informal, source = record["informal_statement"], "citation"
-        else:
-            informal, source, missing = informal_column(lean_name, prose, citations, block_text, notes)
-            unresolved += [(lean_name, d, b) for d, b in missing]
-            with_note += source == "lean" and PROOF_SEP in informal
-        sources[source] += 1
-        updated.append(place_columns(record, informal, source))
+            prose = record.get("informal_statement") or ""
+        informal = informal_columns(lean_name, prose, citations, block_text, notes)
+        unresolved += [(lean_name, d, b) for d, b in informal.unresolved]
+        stmt_sources[informal.statement_source] += 1
+        proof_sources[informal.proof_source] += 1
+        updated.append(place_columns(record, informal))
 
-    print("informal_source:")
-    for source, count in sources.most_common():
+    print("statement_source:")
+    for source, count in stmt_sources.most_common():
         print(f"  {count:5d}  {source}")
-    print(f"  {with_note:5d}  of the `lean` records carry an informalized proof account")
+    print("proof_source:")
+    for source, count in proof_sources.most_common():
+        print(f"  {count:5d}  {source}")
     if unresolved:
         print(f"\nCitations whose blocks are missing from the reference .md: {len(unresolved)}")
         for lean_name, document, block in unresolved[:10]:
@@ -328,8 +387,8 @@ def main() -> int:
         if len(unresolved) > 10:
             print(f"  ... and {len(unresolved) - 10} more")
     if stuck:
-        print(f"\nRecords whose citation is gone but whose Lean prose cannot be recovered "
-              f"here (rebuild with build_dataset.py): {len(stuck)}")
+        print(f"\nRecords whose statement citation is gone but whose Lean prose cannot be "
+              f"recovered here (rebuild with build_dataset.py): {len(stuck)}")
         for lean_name in stuck[:10]:
             print(f"  {lean_name}")
 
@@ -337,11 +396,11 @@ def main() -> int:
         print("\n--dry-run: nothing written.")
         return 0
 
-    out_path = args.out or args.dataset
+    out_path = (args.out or args.dataset).resolve()
     with out_path.open("w", encoding="utf-8") as handle:
         for record in updated:
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-    print(f"\nWrote {len(updated)} records -> {out_path.relative_to(BASE)}")
+    print(f"\nWrote {len(updated)} records -> {_display(out_path)}")
 
     # The theorems viewer fetches the gzipped copy in preference to the .jsonl, so
     # rewriting only the .jsonl would leave the site serving the old columns.
@@ -350,7 +409,7 @@ def main() -> int:
     with open(out_path, "rb") as src, gzip.open(gz_tmp, "wb", compresslevel=9) as dst:
         shutil.copyfileobj(src, dst)
     gz_tmp.replace(gz_path)
-    print(f"Refreshed gzip copy -> {gz_path.relative_to(BASE)}")
+    print(f"Refreshed gzip copy -> {_display(gz_path)}")
     return 0
 
 

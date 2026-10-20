@@ -17,10 +17,11 @@ introduced, every hypothesis rendered, mathematics in mathematical notation, no
 reference to anything outside the sentence.  The blueprint is left alone -- it
 stays the book-cited document it is.
 
-It is the fallback for records nothing cites.  A record whose blueprint entry
-cites a reference document (`\proofsource` / `\statementsource`) takes the
-cited passage itself as its informal statement (scripts/informal_sources.py),
-so nothing is generated for it; `--include-cited` overrides that.
+It is the fallback for records whose statement nothing cites.  A record whose
+blueprint entry cites the passage that states the result (`\statementsource`)
+takes that passage as its `informal_statement` (scripts/informal_sources.py), so
+nothing is generated for it; `--include-cited` overrides that.  A `\proofsource`
+alone fills only the proof column, so such a record still gets its statement here.
 
 Output is cached per declaration under
 `blueprint/src/references/statements/<lean_name>.json`, keyed by a hash of the
@@ -128,7 +129,8 @@ def build_payload(record: dict) -> dict:
         "definitions": definitions,
         "current": {
             "title": record.get("title", ""),
-            "statement": isrc.statement_part(record.get("informal_statement", "")),
+            "statement": (isrc.statement_part(record.get("informal_statement", ""))
+                          if record.get("statement_source", "lean") == "lean" else ""),
         },
     }
 
@@ -242,8 +244,9 @@ def main() -> int:
     ap.add_argument("--allow-weak-models", action="store_true",
                     help="run on a model below the prose floor (see proofmatch/model_policy.py)")
     ap.add_argument("--include-cited", action="store_true",
-                    help="also generate for records whose blueprint entry cites a reference "
-                         "document (by default their informal statement is the cited passage)")
+                    help="also generate for records whose blueprint entry carries a "
+                         "\\statementsource (by default their informal statement is that "
+                         "passage; a \\proofsource alone does not exempt a record)")
     ap.add_argument("--generate", action="store_true",
                     help="with --rekey: go on to generate the outstanding statements afterwards "
                          "(without it, --rekey only migrates the cache and exits)")
@@ -282,10 +285,10 @@ def main() -> int:
                    if bd.module_matches(r.get("source_module", ""), args.modules)]
     if not args.include_cited:
         citations = isrc.blueprint_citations()
-        cited = [r for r in records if isrc.is_cited(r["id"], citations)]
-        records = [r for r in records if not isrc.is_cited(r["id"], citations)]
-        print(f"{len(cited)} cited records skipped: their informal statement is the cited "
-              f"passage (--include-cited to generate anyway)")
+        cited = [r for r in records if isrc.cites_statement(r["id"], citations)]
+        records = [r for r in records if not isrc.cites_statement(r["id"], citations)]
+        print(f"{len(cited)} statement-cited records skipped: their informal statement is "
+              f"the cited passage (--include-cited to generate anyway)")
 
     if args.rekey:
         historical: dict[str, list[str]] = {}

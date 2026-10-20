@@ -12,7 +12,7 @@ computes from the Lean sources, the blueprint and the reference texts without a 
 build:
 
     formal_statement, upstream_defs, n_upstream_defs, definitions,
-    informal_statement, informal_source, title, difficulty
+    informal_statement, statement_source, informal_proof, proof_source, title, difficulty
 
 Pass `--fields all` to replace every field the patch carries (a patch built with the
 proof enabled then also refreshes `proof`, `proof_complete`, ...).
@@ -74,7 +74,9 @@ STATEMENT_FIELDS = (
     "n_upstream_defs",
     "definitions",
     "informal_statement",
-    "informal_source",
+    "statement_source",
+    "informal_proof",
+    "proof_source",
     "title",
     "difficulty",
 )

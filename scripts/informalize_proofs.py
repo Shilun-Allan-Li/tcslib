@@ -1,12 +1,12 @@
 r"""Informalize uncited Lean proofs into blueprint/src/references/informalized/<name>.md.
 
-A dataset record's informal statement is the cited passage of a reference document
-when its blueprint entry carries a `\proofsource` or `\statementsource` citation,
-and otherwise prose written from the Lean (see informal_sources.py).  Citations come
+A dataset record's `informal_proof` is the cited passage of a reference document
+when its blueprint entry carries a `\proofsource` citation, and otherwise the
+informalized account of its Lean proof (see informal_sources.py).  Citations come
 from proofmatch runs against a reference document.  A theorem that no reference
 document proves -- too granular for the text, a bridging lemma, a bare exercise --
-gets a note instead: a human-readable account of its Lean proof, appended to its
-informal statement.  Those notes were written by interactive agents from
+gets a note instead: a human-readable account of its Lean proof, which becomes its
+`informal_proof`.  Those notes were written by interactive agents from
 proofmatch's `informalize_queue.md`; this script writes them headlessly through
 the model CLI (`claude -p` or `codex exec`; prompt: proofmatch/prompts/informalize_proof.md) so the pipeline can
 fill the gap for every uncited, sorry-free theorem.
@@ -14,7 +14,8 @@ fill the gap for every uncited, sorry-free theorem.
 Selection (what gets a note):
     * theorem / lemma records of the dataset (definitions are described by the
       blueprint entry, not by a proof note);
-    * no `\proofsource` or `\statementsource` on its blueprint entry;
+    * no `\proofsource` on its blueprint entry (a `\statementsource` alone covers only
+      the statement column, so the proof is still informalized);
     * no informalized note yet (by the same lookup informal_sources.py uses);
     * the proof is sorry-free.
 
@@ -106,7 +107,9 @@ def build_payload(record: dict, rec: dict, index: dict) -> dict:
     return {
         "lean_name": record["id"],
         "kind": record.get("kind", ""),
-        "informal_statement": bpn.statement_part(record.get("informal_statement", "")),
+        "informal_statement": (bpn.statement_part(record.get("informal_statement", ""))
+                               if record.get("statement_source", "lean") == "lean"
+                               else record.get("informal_statement", "")),
         "formal_statement": record["formal_statement"],
         "proof_source": "\n".join(rec["slice"]),
         "upstream": upstream,
@@ -149,7 +152,7 @@ def main() -> int:
     ap.add_argument("--allow-weak-models", action="store_true")
     ap.add_argument("--force", action="store_true", help="rewrite notes that already exist")
     ap.add_argument("--include-cited", action="store_true",
-                    help="also write notes for theorems that carry a citation")
+                    help="also write notes for theorems whose entry carries a \\proofsource")
     ap.add_argument("--estimate", action="store_true", help="report, call nothing")
     args = ap.parse_args()
 
@@ -190,8 +193,7 @@ def main() -> int:
         if rec is None:
             skipped["not-indexed"] += 1
             continue
-        cited = citations.get(record["id"]) or {}
-        if not args.include_cited and (cited.get("proof_sources") or cited.get("statement_sources")):
+        if not args.include_cited and bpn.cites_proof(record["id"], citations):
             skipped["cited"] += 1
             continue
         if not args.force and bpn.note_for(record["id"], notes) is not None:
@@ -252,7 +254,7 @@ def main() -> int:
     print(f"\nwritten {done['ok']}   low-confidence {done['low']}   failed {done['failed']}")
     print(f"spend: ${agent.spent_usd:.2f} for {len(todo)} proofs "
           f"(${agent.spent_usd / max(1, len(todo)):.3f} each)")
-    print("next: python3 scripts/build_dataset.py  (appends the notes to the informal statements)")
+    print("next: python3 scripts/build_dataset.py  (the notes become `informal_proof`)")
     return 1 if done["failed"] else 0
 
 

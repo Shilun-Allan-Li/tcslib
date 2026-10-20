@@ -5,16 +5,19 @@ For every theorem / lemma in dep_graph.json this emits one record:
 
     {
       "id":                 <fully-qualified Lean name>,
-      "informal_statement": <when the blueprint entry cites a reference document
-                             (\\proofsource / \\statementsource): the cited passage,
-                             verbatim from blueprint/src/references/<doc>.md.  Otherwise
-                             prose written from the Lean: first the informal definitions
-                             of every term the statement uses (pulled from the upstream
-                             blueprint entries, in dependency order), then the
-                             title-folded claim, then the informalized account of the
-                             proof when references/informalized/<name>.md holds one.
+      "informal_statement": <when the blueprint entry cites the passage that states the
+                             result (\\statementsource): that passage, verbatim from
+                             blueprint/src/references/<doc>.md.  Otherwise prose written
+                             from the Lean: first the informal definitions of every term
+                             the statement uses (pulled from the upstream blueprint
+                             entries, in dependency order), then the title-folded claim.
                              See scripts/informal_sources.py>,
-      "informal_source":    <"citation" or "lean": which of the two the above is>,
+      "statement_source":   <"citation" or "lean": which of the two the above is>,
+      "informal_proof":     <when the entry cites the passage that proves the result
+                             (\\proofsource): that passage, verbatim.  Otherwise the
+                             informalized account of the Lean proof when
+                             references/informalized/<name>.md holds one; else "">,
+      "proof_source":       <"citation", "lean" or "none": which of the three the above is>,
       "definitions":        <[{id,title,informal}] for each inlined term definition>,
       "formal_statement":   <a self-contained Lean snippet: `import Mathlib`, the upstream
                              DEFINITIONS the statement depends on (full, in dependency
@@ -1804,9 +1807,9 @@ def main():
 
     print("Parsing blueprint ...")
     informal = parse_blueprint()
-    # The informal half's two sources: a cited passage of a reference text when the
-    # entry cites one, else the Lean-derived prose composed below (plus the
-    # informalized proof account when a note exists).  No model call: everything is
+    # The informal half: statement and proof, each a cited passage of a reference text
+    # when the entry cites one, else the Lean-derived prose composed below for the
+    # statement and the informalized note for the proof.  No model call: everything is
     # read from the blueprint, references/<doc>.md and references/informalized/.
     isrc = _informal_sources()
     citations = isrc.blueprint_citations()
@@ -1905,7 +1908,8 @@ def main():
 
     n_written = n_missing = 0
     total_defs = 0
-    n_by_source = {"citation": 0, "lean": 0}
+    n_statement_source = {"citation": 0, "lean": 0}
+    n_proof_source = {"citation": 0, "lean": 0, "none": 0}
     unresolved_citations: list[tuple[str, str, str]] = []
     proof_lines_total = proof_lines_max = n_proof_unresolved = 0
     with open(out_path, "w", encoding="utf-8") as f:
@@ -1940,16 +1944,19 @@ def main():
                 lean_prose = f"Definitions:\n{defs_block}\n\nStatement: {stmt}"
             else:
                 lean_prose = stmt
-            informal_statement, informal_source, unresolved = isrc.informal_column(
-                name, lean_prose, citations, block_text, notes)
-            n_by_source[informal_source] += 1
-            for document, block in unresolved:
+            # (`informal` is the blueprint dict above; this is the record's informal half.)
+            columns = isrc.informal_columns(name, lean_prose, citations, block_text, notes)
+            n_statement_source[columns.statement_source] += 1
+            n_proof_source[columns.proof_source] += 1
+            for document, block in columns.unresolved:
                 unresolved_citations.append((name, document, block))
 
             record = {
                 "id": name,
-                "informal_statement": informal_statement,
-                "informal_source": informal_source,
+                "informal_statement": columns.statement,
+                "statement_source": columns.statement_source,
+                "informal_proof": columns.proof,
+                "proof_source": columns.proof_source,
                 "formal_statement": formal,
                 "lean_name": name,
                 "title": info["title"],
@@ -1991,14 +1998,17 @@ def main():
     print(f"Theorems without a blueprint informal statement (skipped): {n_missing}")
     if n_written:
         print(f"Avg upstream definitions per theorem: {total_defs / n_written:.1f}")
-        print(f"informal_source: {n_by_source['citation']} citation, {n_by_source['lean']} lean")
+        print(f"statement_source: {n_statement_source['citation']} citation, "
+              f"{n_statement_source['lean']} lean")
+        print(f"proof_source: {n_proof_source['citation']} citation, "
+              f"{n_proof_source['lean']} lean, {n_proof_source['none']} none")
     if n_written and proof_builder is not None:
         print(f"Proof files: avg {proof_lines_total / n_written:.0f} lines, "
               f"max {proof_lines_max} lines; "
               f"{n_proof_unresolved} records with unresolved deps")
     if unresolved_citations:
         print(f"Citations whose blocks are missing from the reference .md "
-              f"(the record fell back to `lean`): {len(unresolved_citations)}")
+              f"(the column fell back to its Lean-derived value): {len(unresolved_citations)}")
         for name, document, block in unresolved_citations[:10]:
             print(f"  {name} -> {document}: {block}")
         if len(unresolved_citations) > 10:

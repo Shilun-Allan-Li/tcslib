@@ -14,8 +14,9 @@ HARD (exit 1 with --strict)
                     `:= sorry`
     proof-flag      `proof_complete` disagrees with whether `proof` contains `sorry`
     stub-prose      the informal statement is a blueprint_stub.py placeholder
-    informal-source `informal_source` is not `citation` / `lean`, or `informal_statement`
-                    is empty
+    informal-source `statement_source` is not `citation` / `lean`, `proof_source` is not
+                    `citation` / `lean` / `none`, `informal_statement` is empty, or
+                    `informal_proof` is empty exactly when `proof_source` is not `none`
     row-loss        with --previous: a record of the previous dataset is gone (its
                     module dropped out of dep_graph.json, usually because the file is
                     no longer imported from TCSlib.lean)
@@ -25,13 +26,13 @@ ADVISORY (always reported)
     formal-leak-sorried  the same leak on a record whose proof is incomplete (its module
                     is often absent from dep_graph.json, so it cannot be regenerated)
     unrated         complete proof with null `difficulty`
-    no-account      a `lean` record has no informalized proof account appended (no
-                    citation and no note under references/informalized/)
+    no-proof        `proof_source` is `none`: no `\proofsource` citation and no note
+                    under references/informalized/, so `informal_proof` is empty
     stale-module    the record's module is not in dep_graph.json: the row was carried over
                     from the previous dataset by `dataset_splice.py --merge` because its
                     module is not built (not imported from TCSlib.lean), so it was not
                     regenerated and may lag behind the Lean source
-    coverage        `informal_source` values by area
+    coverage        `statement_source` / `proof_source` values by area
 
 Usage:
     python3 scripts/dataset_check.py                         # dataset/tcslib_theorems.jsonl(.gz)
@@ -60,11 +61,13 @@ DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 LEAN_CHECK = BASE / "scripts" / "lean_check.sh"
 DEP_GRAPH = BASE / "dep_graph.json"
 
-#: Column -> accepted JSON types (scripts/informal_sources.py owns the informal pair).
+#: Column -> accepted JSON types (scripts/informal_sources.py owns the informal four).
 SCHEMA: dict[str, tuple[type, ...]] = {
     "id": (str,),
     "informal_statement": (str,),
-    "informal_source": (str,),
+    "statement_source": (str,),
+    "informal_proof": (str,),
+    "proof_source": (str,),
     "formal_statement": (str,),
     "lean_name": (str,),
     "title": (str,),
@@ -83,8 +86,8 @@ SCHEMA: dict[str, tuple[type, ...]] = {
 
 HARD = {"schema", "duplicate-id", "formal-leak", "formal-shape", "proof-flag",
         "stub-prose", "informal-source", "row-loss", "lean-error"}
-INFORMAL_SOURCES = {"citation", "lean"}
-PROOF_SEP = "\n\nProof: "   # scripts/informal_sources.py: statement | proof account
+STATEMENT_SOURCES = {"citation", "lean"}
+PROOF_SOURCES = {"citation", "lean", "none"}
 
 import re  # noqa: E402
 
@@ -204,13 +207,20 @@ def main() -> int:
         informal = record.get("informal_statement", "")
         if STUB_RE.search(informal):
             findings["stub-prose"].append(rid)
-        origin = record.get("informal_source")
-        if origin not in INFORMAL_SOURCES or not informal.strip():
-            findings["informal-source"].append(f"{rid}: {origin!r}, {len(informal)} chars")
+        origin = record.get("statement_source")
+        if origin not in STATEMENT_SOURCES or not informal.strip():
+            findings["informal-source"].append(
+                f"{rid}: statement_source {origin!r}, {len(informal)} chars")
+        proof_origin = record.get("proof_source")
+        informal_proof = record.get("informal_proof", "")
+        if (proof_origin not in PROOF_SOURCES
+                or bool(informal_proof.strip()) != (proof_origin != "none")):
+            findings["informal-source"].append(
+                f"{rid}: proof_source {proof_origin!r}, {len(informal_proof)} chars")
         if record.get("proof_complete") and record.get("difficulty") is None:
             findings["unrated"].append(rid)
-        if origin == "lean" and PROOF_SEP not in informal:
-            findings["no-account"].append(rid)
+        if proof_origin == "none":
+            findings["no-proof"].append(rid)
 
     # carried-over rows (module not built)
     if DEP_GRAPH.exists():
@@ -245,15 +255,20 @@ def main() -> int:
     # coverage
     by_area_total = collections.Counter(area_of(r) for r in records)
     by_area_cited = collections.Counter(
-        area_of(r) for r in records if r.get("informal_source") == "citation")
+        area_of(r) for r in records if r.get("statement_source") == "citation")
+    by_area_proof_cited = collections.Counter(
+        area_of(r) for r in records if r.get("proof_source") == "citation")
     by_area_incomplete = collections.Counter(area_of(r) for r in records if not r.get("proof_complete"))
-    sources = collections.Counter(r.get("informal_source") for r in records)
+    statement_sources = collections.Counter(r.get("statement_source") for r in records)
+    proof_sources = collections.Counter(r.get("proof_source") for r in records)
 
     print(f"{len(records)} records from {source.name}")
-    print(f"columns: {len(SCHEMA)} expected; informal_source: {dict(sources)}")
-    print("\narea                      rows  incomplete  cited")
+    print(f"columns: {len(SCHEMA)} expected; statement_source: {dict(statement_sources)}; "
+          f"proof_source: {dict(proof_sources)}")
+    print("\narea                      rows  incomplete  stmt-cited  proof-cited")
     for area, total in by_area_total.most_common():
-        print(f"  {area:24s} {total:5d}  {by_area_incomplete[area]:9d}  {by_area_cited[area]:5d}")
+        print(f"  {area:24s} {total:5d}  {by_area_incomplete[area]:9d}  "
+              f"{by_area_cited[area]:10d}  {by_area_proof_cited[area]:11d}")
     print("\nfindings:")
     hard_total = 0
     for key in sorted(findings, key=lambda k: (k not in HARD, k)):
@@ -279,8 +294,10 @@ def main() -> int:
             "dataset": str(source),
             "records": len(records),
             "by_area": {a: {"rows": by_area_total[a], "incomplete": by_area_incomplete[a],
-                            "cited": by_area_cited[a]} for a in by_area_total},
-            "informal_source": {str(k): v for k, v in sources.items()},
+                            "statement_cited": by_area_cited[a],
+                            "proof_cited": by_area_proof_cited[a]} for a in by_area_total},
+            "statement_source": {str(k): v for k, v in statement_sources.items()},
+            "proof_source": {str(k): v for k, v in proof_sources.items()},
             "findings": {k: len(v) for k, v in findings.items()},
             "hard_failures": hard_total,
             "examples": {k: v[:50] for k, v in findings.items()},

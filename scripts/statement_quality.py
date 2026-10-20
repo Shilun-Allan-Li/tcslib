@@ -376,8 +376,8 @@ def _main() -> int:
     ap = argparse.ArgumentParser(description=_main.__doc__)
     ap.add_argument("--dataset", nargs="?", const=str(base / "dataset" / "tcslib_theorems.jsonl"),
                     help="grade the Lean-derived informal statements of a built dataset "
-                         "instead (records whose informal_source is `lean`; the claim "
-                         "alone, without its definitions block or proof account)")
+                         "instead (records whose statement_source is `lean`; the claim "
+                         "alone, without its definitions block)")
     ap.add_argument("--show", type=int, default=0)
     ap.add_argument("--strict", action="store_true",
                     help="apply the checks meant for freshly generated prose")
@@ -393,7 +393,7 @@ def _main() -> int:
             for line in handle:
                 if line.strip():
                     d = json.loads(line)
-                    if d.get("informal_source", "lean") != "lean":
+                    if d.get("statement_source", "lean") != "lean":
                         continue
                     rows.append((d["id"], statement_part(d.get("informal_statement", "")), ""))
     else:

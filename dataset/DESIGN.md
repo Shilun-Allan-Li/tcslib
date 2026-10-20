@@ -23,8 +23,9 @@ Two steps, performed by whoever formalized something:
 
 Everything the pipeline does follows from one rule: **the builder never searches for
 sources.**  A citation can only come from a text a person attached.  A theorem with no
-attached text gets an informalized account of its Lean proof, clearly labelled as such,
-never an invented reference.
+attached text gets prose written from the Lean -- its statement from the formal
+statement, its proof as an informalized account of the Lean proof -- clearly labelled
+as such, never an invented reference.
 
 ## What "in the dataset" means
 
@@ -42,14 +43,17 @@ then owned by one stage:
 | Column(s) | Owner | Persisted where |
 |---|---|---|
 | `formal_statement`, `proof`, `*_upstream_*`, `proof_complete` | `dataset` (deterministic build) | the dataset itself |
-| `informal_statement` when `informal_source` is `citation` | `citations` | `\proofsource` / `\statementsource` in the `.tex` entry; the text under `references/<doc>.md` |
-| `informal_statement` when `informal_source` is `lean`: the statement, `definitions`, `title` | blueprint entry; `statements` writes stub entries of *uncited* records | the `.tex` entry (prose cache under `references/statements/`) |
-| `informal_statement` when `informal_source` is `lean`: the proof account | `informalize` | `references/informalized/<name>.md` |
+| `informal_statement` when `statement_source` is `citation`; `informal_proof` when `proof_source` is `citation` | `citations` | `\statementsource` / `\proofsource` in the `.tex` entry; the text under `references/<doc>.md` |
+| `informal_statement` when `statement_source` is `lean`, `definitions`, `title` | blueprint entry; `statements` writes stub entries of records whose statement nothing cites | the `.tex` entry (prose cache under `references/statements/`) |
+| `informal_proof` when `proof_source` is `lean` | `informalize` | `references/informalized/<name>.md` |
 | `difficulty` | `difficulty` | `\difficulty{N}` in the `.tex` entry |
 
-A citation wins: where a text can be quoted, nothing is generated.  `citations` therefore
-runs before `statements`, and `statements` and `informalize` only ever spend on records
-nothing cites.
+A citation wins, column by column: where a text can be quoted, nothing is generated.
+`citations` therefore runs before `statements` and `informalize`; `statements` spends
+only on records whose statement nothing cites, `informalize` only on records whose proof
+nothing cites.  A record with a `\proofsource` alone keeps its Lean-derived statement
+and takes the cited proof; one with a `\statementsource` alone takes the cited
+statement and an informalized proof.
 
 Every model product therefore lives in the repository next to the thing it describes,
 is committed with it, and is never regenerated while its input is unchanged.
@@ -112,10 +116,11 @@ writes `dataset/.pipeline/state.json`.
   of every record whose statement is not in the cache, including entries whose prose a
   person wrote, and `blueprint_restate.py --apply-only` writes it into those entries.
   The fix is to restrict both to stub entries (and entries the pipeline wrote earlier).
-- **A cited record's blueprint entry may stay a stub.**  `statements` skips cited
-  records, so a stub entry the `blueprint` stage wrote for a declaration that `citations`
-  then matched keeps its placeholder body in the `.tex`; the dataset is unaffected (its
-  informal statement is the cited passage).  The blueprint should quote the passage too.
+- **A statement-cited record's blueprint entry may stay a stub.**  `statements` skips
+  records with a `\statementsource`, so a stub entry the `blueprint` stage wrote for a
+  declaration that `citations` then matched keeps its placeholder body in the `.tex`;
+  the dataset is unaffected (its informal statement is the cited passage).  The
+  blueprint should quote the passage too.
 - **The prose cache duplicates the blueprint.**  With rule 1 in force, "needs a
   statement" is simply "the entry is still a stub", and the cache's remaining job is
   change detection (rule 5).  Decision pending: keep it as the persistence layer, or

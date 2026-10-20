@@ -178,7 +178,7 @@ def from_dataset(path: Path):
         lines = [line for line in handle if line.strip()]
     for line in lines:
         d = json.loads(line)
-        if d.get("informal_source", "lean") != "lean":
+        if d.get("statement_source", "lean") != "lean":
             continue
         kind = d.get("kind", "")
         env = {"def": "definition", "abbrev": "definition", "structure": "definition",

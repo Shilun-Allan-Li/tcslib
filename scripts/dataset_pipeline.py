@@ -32,19 +32,23 @@ subset with --stages):
                          does not cite yet (new texts, and older ones never matched)
                          against the dataset: \proofsource / \statementsource citations
                          land in the chapter .tex files; the tag registry is then
-                         re-derived from the citations.  A cited record's informal
-                         statement is the cited passage itself, so this runs first.
-  statements   [LLM]     pass 1 again -> build_informal_statements for the UNCITED records
-                         (handout-standard prose from the formal statement, rubric-gated,
-                         definitions included) -> blueprint_restate --apply-only.
+                         re-derived from the citations.  A \statementsource is the
+                         record's informal statement and a \proofsource its informal
+                         proof, so this runs before anything is generated.
+  statements   [LLM]     pass 1 again -> build_informal_statements for the records whose
+                         STATEMENT nothing cites (handout-standard prose from the formal
+                         statement, rubric-gated, definitions included)
+                         -> blueprint_restate --apply-only.
   difficulty   [LLM]     blueprint_difficulty_plan -> rate_difficulty -> blueprint_difficulty_apply.
-  informalize  [LLM]     informalize_proofs: a prose account of every uncited, sorry-free
-                         proof -> blueprint/src/references/informalized/<name>.md.  Refuses
+  informalize  [LLM]     informalize_proofs: a prose account of every sorry-free proof
+                         that nothing cites -> blueprint/src/references/informalized/<name>.md.
+                         Refuses
                          to run while NEW theorems cite a text nobody attached (see
                          "Reference texts" below) unless --without-sources is given.
-  dataset      [no LLM]  build_dataset (full, with flattened proofs; the informal statement
-                         of each record from its citation, else from the Lean prose and
-                         note -- informal_sources.py) -> dataset_splice --merge into
+  dataset      [no LLM]  build_dataset (full, with flattened proofs; each record's informal
+                         statement from its \statementsource else the Lean prose, its
+                         informal proof from its \proofsource else the note --
+                         informal_sources.py) -> dataset_splice --merge into
                          dataset/tcslib_theorems.jsonl + .gz.
   verify       [no LLM]  dataset_check --strict (schema, leaks, stubs, row loss, carried-over
                          rows, optional sampled Lean compile), dataset_hygiene,
@@ -57,9 +61,10 @@ PDF (or a validated .md) into that directory, or pass it as --source TAG=PATH wi
 ingests every text that has no validated .md yet, works out which texts still have to
 be matched (the blueprint cites nothing from them), matches those against the whole
 dataset, and carries the new declarations through every other stage.  A theorem is
-cited only when a matched text proves or states it, and its informal statement is then
-that passage; otherwise its informal statement is written from the Lean, with an
-informalized account of its proof.  The builder never searches outside references/
+cited only when a matched text states or proves it: the passage that states it is then
+its informal statement and the passage that proves it its informal proof.  Whichever of
+the two no text covers is written from the Lean: the statement as prose from the formal
+statement, the proof as an informalized account.  The builder never searches outside references/
 for sources.
 
     cp ~/texts/arora-barak-ch09.pdf blueprint/src/references/
@@ -493,7 +498,7 @@ def stage_statements(r: Runner) -> None:
     if r.args.estimate:
         r.mark("statements", "estimated", model=model)
         return
-    if r.confirm("statements", f"write the outstanding informal statements of uncited records on {model}"):
+    if r.confirm("statements", f"write the outstanding informal statements of records whose statement nothing cites, on {model}"):
         extra = ["--limit", str(r.args.limit)] if r.args.limit else []
         rc = r.py("statements", "build_informal_statements.py", *common, *extra, check=False)
         if rc != 0:
@@ -639,7 +644,7 @@ def stage_informalize(r: Runner) -> None:
     if r.args.estimate:
         r.mark("informalize", "estimated", model=model)
         return
-    if r.confirm("informalize", f"write proof notes for the outstanding uncited proofs on {model}"):
+    if r.confirm("informalize", f"write proof notes for the outstanding proofs nothing cites, on {model}"):
         extra = ["--limit", str(r.args.limit)] if r.args.limit else []
         rc = r.py("informalize", "informalize_proofs.py", *common, *extra, check=False)
         if rc != 0:

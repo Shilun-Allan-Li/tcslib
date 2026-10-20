@@ -28,8 +28,9 @@ python3 scripts/dataset_pipeline.py --build --yes  # do it
 
 The run builds the library (`--build`), gives every new declaration a blueprint entry,
 matches every attached text the blueprint does not cite yet against the dataset, writes
-an informal statement and a proof note for every declaration no text covers (a cited
-declaration's informal statement is the cited passage itself), rates every proof, and
+an informal statement for every declaration whose statement no text states and a proof
+note for every one whose proof no text proves (a cited passage is used verbatim
+instead), rates every proof, and
 merges the new records into `dataset/tcslib_theorems.jsonl.gz`.  It only
 touches what changed, asks before each paid step unless `--yes`, and resumes if
 interrupted.  `--modules <YourModule>` limits it to your records.

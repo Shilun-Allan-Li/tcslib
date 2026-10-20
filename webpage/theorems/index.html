@@ -468,11 +468,12 @@
     <div class="search">
       <input id="q" placeholder="Search id, title, statement…" autocomplete="off" spellcheck="false" />
       <div class="note-filter" id="note-filter">
-        <button data-note="all" class="on" title="No restriction on where the informal statement came from">All</button>
-        <button data-note="citation" title="The informal statement is the passage of a source document that states or proves the result">Cited</button>
-        <button data-note="lean" title="The informal statement was written from the Lean, because no source document cites the result">From Lean</button>
-        <button data-note="lean-proof" title="Written from the Lean, with an informalized account of the proof">From Lean: with proof</button>
-        <button data-note="lean-only" title="Written from the Lean; no proof account yet">From Lean: statement only</button>
+        <button data-note="all" class="on" title="No restriction on where the informal statement and proof came from">All</button>
+        <button data-note="statement-citation" title="The informal statement is the passage of a source document that states the result">Statement: cited</button>
+        <button data-note="statement-lean" title="The informal statement was written from the Lean, because no source document states the result">Statement: from Lean</button>
+        <button data-note="proof-citation" title="The informal proof is the passage of a source document that proves the result">Proof: cited</button>
+        <button data-note="proof-lean" title="The informal proof is an informalized account of the Lean proof">Proof: from Lean</button>
+        <button data-note="proof-none" title="No informal proof yet: no source document proves the result and no account has been written">Proof: none</button>
       </div>
       <div class="count" id="count"></div>
     </div>
@@ -588,31 +589,26 @@ function ingest(items) {
   dagInvalidate();
 }
 
-// A `lean` informal statement carries the proof account after this separator
-// (scripts/informal_sources.py); a `citation` one is the cited passage itself.
-const PROOF_SEP = "\n\nProof: ";
-
-// Where a theorem's informal statement came from (`informal_source`): the cited
-// passage of a source document, or prose written from the Lean — with or without an
-// informalized account of the proof.  Returns every bucket that applies.
+// The informal half is two columns with an origin marker each
+// (scripts/informal_sources.py): `informal_statement` / `statement_source` (the cited
+// passage that states the result, or prose written from the Lean) and
+// `informal_proof` / `proof_source` (the cited passage that proves it, an informalized
+// account of the Lean proof, or none).  Returns the bucket of each column.
 function noteBuckets(it) {
-  if (it.informal_source === "citation") return ["citation"];
-  const withProof = (it.informal_statement || "").includes(PROOF_SEP);
-  return ["lean", withProof ? "lean-proof" : "lean-only"];
+  return ["statement-" + (it.statement_source || "lean"),
+          "proof-" + (it.proof_source || "none")];
 }
 
-// The parts of an informal statement the detail pane shows separately: the claim
-// (after the definitions block, which the pane renders from `definitions`), and the
-// proof account of a `lean` record.
+// The parts of the informal half the detail pane shows: the statement (for a `lean`
+// one, the claim after the definitions block, which the pane renders from
+// `definitions`) and the proof.
 function informalParts(it) {
-  const text = it.informal_statement || it.statement_informal || "";
-  if (it.informal_source === "citation") return { passage: text, statement: "", proof: "" };
-  const cut = text.indexOf(PROOF_SEP);
-  let statement = cut >= 0 ? text.slice(0, cut) : text;
-  const proof = cut >= 0 ? text.slice(cut + PROOF_SEP.length) : "";
-  const label = statement.indexOf("\n\nStatement: ");
-  if (statement.startsWith("Definitions:") && label >= 0) statement = statement.slice(label + 13);
-  return { passage: "", statement, proof };
+  let statement = it.informal_statement || it.statement_informal || "";
+  if ((it.statement_source || "lean") === "lean") {
+    const label = statement.indexOf("\n\nStatement: ");
+    if (statement.startsWith("Definitions:") && label >= 0) statement = statement.slice(label + 13);
+  }
+  return { statement, proof: it.informal_proof || "" };
 }
 
 // Counts are over the current text-search hits, so they say how many of *these*
@@ -631,12 +627,13 @@ function renderNoteFilterCounts(counts) {
 
 function applyFilter() {
   const q = state.query.trim().toLowerCase();
-  const counts = { all: 0, "citation": 0, "lean": 0, "lean-proof": 0, "lean-only": 0 };
+  const counts = { all: 0, "statement-citation": 0, "statement-lean": 0,
+                   "proof-citation": 0, "proof-lean": 0, "proof-none": 0 };
   state.filtered = [];
   for (let i = 0; i < state.items.length; i++) {
     const it = state.items[i];
     if (q) {
-      const hay = ((it.id || "") + " " + (it.title || "") + " " + (it.lean_name || "") + " " + (it.statement_informal || "") + " " + (it.informal_statement || "")).toLowerCase();
+      const hay = ((it.id || "") + " " + (it.title || "") + " " + (it.lean_name || "") + " " + (it.statement_informal || "") + " " + (it.informal_statement || "") + " " + (it.informal_proof || "")).toLowerCase();
       if (!hay.includes(q)) continue;
     }
     const buckets = noteBuckets(it);
@@ -924,14 +921,18 @@ function noteMarkdownToHtml(md) {
   return s.replace(/^(?:\s|(?:<br>))+/, "").replace(/(?:\s|(?:<br>))+$/, "");
 }
 
-// The informalized account of a `lean` record's proof. Sits above the formal proof
-// file so the reader meets the prose before the tactics.
-function proofAccountHtml(parts) {
+// The informal proof: the cited passage, or the informalized account of the Lean
+// proof. Sits above the formal proof file so the reader meets the prose before the
+// tactics.
+function proofAccountHtml(it, parts) {
   if (!parts.proof) return "";
+  const cited = it.proof_source === "citation";
   return (
-    '<h3>Proof <span class="note-kind">informalized from the Lean proof</span></h3>' +
+    '<h3>Informal proof <span class="note-kind">' +
+      (cited ? "cited — the passage of the source text" : "informalized from the Lean proof") +
+    '</span></h3>' +
     '<details class="section note-informal-details" open>' +
-      '<summary>prose account</summary>' +
+      '<summary>' + (cited ? "cited passage" : "prose account") + '</summary>' +
       '<div class="note-informal">' + noteMarkdownToHtml(parts.proof) + '</div>' +
     '</details>'
   );
@@ -939,11 +940,11 @@ function proofAccountHtml(parts) {
 
 function detailHtml(it) {
   const parts = informalParts(it);
-  const sourceLabel = it.informal_source === "citation"
+  const sourceLabel = it.statement_source === "citation"
     ? "cited — the passage of the source text"
     : "written from the Lean";
-  const informalHtml = it.informal_source === "citation"
-    ? '<div class="section informal note-informal">' + noteMarkdownToHtml(parts.passage) + '</div>'
+  const informalHtml = it.statement_source === "citation"
+    ? '<div class="section informal note-informal">' + noteMarkdownToHtml(parts.statement) + '</div>'
     : '<div class="section informal">' + latexTextToHtml(parts.statement) + '</div>';
   const formal = it.formal_statement || "";
   const proof = it.proof || "";
@@ -986,11 +987,10 @@ function detailHtml(it) {
         ? ' · breadth-adj: ' + it.difficulty_breadth : '') +
       (it.n_upstream_defs != null ? ' · ' + it.n_upstream_defs + ' statement defs' : '') +
       (it.n_proof_upstream_decls != null ? ' · ' + it.n_proof_upstream_decls + ' proof decls' : '') +
-      (it.informal_source === "citation"
-        ? ' · <span class="has-note">cited</span>'
-        : parts.proof
-          ? ' · <span class="has-note">from Lean, with proof</span>'
-          : ' · <span class="no-note">from Lean, no proof account</span>') +
+      ' · <span class="' + (it.statement_source === "citation" ? "has-note" : "no-note") + '">statement: ' +
+        (it.statement_source === "citation" ? "cited" : "from Lean") + '</span>' +
+      ' · <span class="' + (it.proof_source === "none" ? "no-note" : "has-note") + '">proof: ' +
+        (it.proof_source === "citation" ? "cited" : it.proof_source === "lean" ? "from Lean" : "none") + '</span>' +
     '</div>' +
 
     '<h3>Informal statement <span class="note-kind">' + escapeHtml(sourceLabel) + '</span></h3>' +
@@ -1001,7 +1001,7 @@ function detailHtml(it) {
     '<h3>Formal (Lean) statement</h3>' +
     '<pre class="code">' + highlightLean(escapeHtml(formal)) + '</pre>' +
 
-    proofAccountHtml(parts) +
+    proofAccountHtml(it, parts) +
 
     proofHtml
   );
