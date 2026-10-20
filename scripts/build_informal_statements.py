@@ -17,11 +17,16 @@ introduced, every hypothesis rendered, mathematics in mathematical notation, no
 reference to anything outside the sentence.  The blueprint is left alone -- it
 stays the book-cited document it is.
 
+It is the fallback for records nothing cites.  A record whose blueprint entry
+cites a reference document (`\proofsource` / `\statementsource`) takes the
+cited passage itself as its informal statement (scripts/informal_sources.py),
+so nothing is generated for it; `--include-cited` overrides that.
+
 Output is cached per declaration under
 `blueprint/src/references/statements/<lean_name>.json`, keyed by a hash of the
 formal statement, so a run is resumable and a re-run only revisits declarations
-whose Lean statement actually changed.  `apply_informal_statements.py` folds the
-cache into the dataset, in the same post-pass style as `build_proof_notes.py`.
+whose Lean statement actually changed.  `blueprint_restate.py --apply-only` folds
+the cache into the blueprint entries, from which build_dataset.py reads it.
 
 Usage
 -----
@@ -64,6 +69,7 @@ from proofmatch.agents import (  # noqa: E402
 from proofmatch.dataset_io import read_dataset_text  # noqa: E402
 from proofmatch import statements as cache  # noqa: E402
 from proofmatch.model_policy import check_model  # noqa: E402
+from scripts import informal_sources as isrc  # noqa: E402
 
 # `scripts/proofmatch.py` shadows the `proofmatch` package on sys.path, so the
 # sibling module is loaded by path rather than by putting scripts/ on the path.
@@ -122,7 +128,7 @@ def build_payload(record: dict) -> dict:
         "definitions": definitions,
         "current": {
             "title": record.get("title", ""),
-            "statement": record.get("statement_informal", ""),
+            "statement": isrc.statement_part(record.get("informal_statement", "")),
         },
     }
 
@@ -179,7 +185,7 @@ def definition_records(mode: str) -> list[dict]:
             "formal_statement": formal,
             "definitions": definitions,
             "title": entry.get("title", ""),
-            "statement_informal": body,
+            "informal_statement": body,
             "source_module": rec["module"],
         })
     return out
@@ -235,6 +241,9 @@ def main() -> int:
                          "or every one (default: none)")
     ap.add_argument("--allow-weak-models", action="store_true",
                     help="run on a model below the prose floor (see proofmatch/model_policy.py)")
+    ap.add_argument("--include-cited", action="store_true",
+                    help="also generate for records whose blueprint entry cites a reference "
+                         "document (by default their informal statement is the cited passage)")
     ap.add_argument("--generate", action="store_true",
                     help="with --rekey: go on to generate the outstanding statements afterwards "
                          "(without it, --rekey only migrates the cache and exits)")
@@ -271,6 +280,12 @@ def main() -> int:
     if args.modules:
         records = [r for r in records
                    if bd.module_matches(r.get("source_module", ""), args.modules)]
+    if not args.include_cited:
+        citations = isrc.blueprint_citations()
+        cited = [r for r in records if isrc.is_cited(r["id"], citations)]
+        records = [r for r in records if not isrc.is_cited(r["id"], citations)]
+        print(f"{len(cited)} cited records skipped: their informal statement is the cited "
+              f"passage (--include-cited to generate anyway)")
 
     if args.rekey:
         historical: dict[str, list[str]] = {}

@@ -5,7 +5,7 @@ reads it back into the blueprint.  The two need the same notion of "is this
 entry still valid", so it lives here rather than in either script.
 
 One JSON file per declaration under `blueprint/src/references/statements/`,
-alongside the `informalized/` notes that `build_proof_notes.py` consumes.  The
+alongside the `informalized/` notes that `scripts/informal_sources.py` consumes.  The
 key is a hash of the *formal* statement, so editing the Lean invalidates the
 prose written for it and a re-run regenerates exactly those declarations.
 """

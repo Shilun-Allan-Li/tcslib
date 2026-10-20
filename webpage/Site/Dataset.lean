@@ -20,29 +20,29 @@ statement, the proof, and where the mathematics came from.
 
 Every theorem and lemma of TCSlib that has a blueprint entry is one record. A record pairs:
 
-* an informal statement in prose, with the definitions it relies on;
+* an informal statement in prose: the passage of the source text that states or proves the
+  result, or, when no text cites it, prose written from the Lean with the definitions it
+  relies on and an account of the proof;
 * a standalone formal statement: a Lean 4 file that ends with the declaration, its proof
   replaced by `sorry`, carrying the definitions, instances and context the statement needs;
 * the proof: a second Lean 4 file with the declaration proved for real and its whole
   dependency closure within the library flattened into it, so it compiles with Mathlib alone;
 * a difficulty rating of the Lean proof script, from 1 to 7;
-* provenance: a citation into the passage of the paper or textbook chapter the result was
-  formalized from, or, when no such text was attached, an account written from the Lean proof.
+* where the informal statement came from: the paper or textbook chapter the result was
+  formalized from, or, when no such text was attached, the Lean itself.
 
 The set is **mixed**:
 
 * **Some proofs are still open.** When the proof, or the proof of something it depends on,
   still contains `sorry`, the record's `proof_complete` is false. In the deployed build
   (%%build_date_text%%) that is %%n_sorry%% of %%n_records%% records.
-* **Not every record cites a text.** %%n_cited%% records cite a source document: either the
-  passage that proves the result (`proof_citation`) or one that states it while the Lean proof
-  differs (`statement_citation`). %%n_informalized_only%% carry only an informalized account of
-  their Lean proof, because the text they were formalized from was never attached. The
-  remaining %%n_no_notes%% have no proof note yet.
-* **Informal statements have two origins.** `statement_source` is `blueprint` when the prose
-  is the blueprint author's own (%%n_blueprint%% records) and `regenerated` when it was
-  written from the formal statement by a language model and checked against a rubric
-  (%%n_regenerated%%).
+* **Not every record cites a text.** `informal_source` is `citation` for the %%n_cited%%
+  records whose informal statement is the passage of a source document that states or proves
+  the result, and `lean` for the %%n_lean%% whose text was written from the Lean instead,
+  because the text they were formalized from was never attached: the statement by the
+  blueprint's author or by a language model checked against a rubric, followed for
+  %%n_lean_with_proof%% of them by an informalized account of the Lean proof. The remaining
+  %%n_lean_without_proof%% have no proof account yet.
 
 The set is still growing. It is rebuilt incrementally from the library, so each build adds the
 newly formalized declarations and the counts above change. View a visualization of the
@@ -87,8 +87,7 @@ with gzip.open("tcslib_theorems.jsonl.gz", "rt") as f:
     records = [json.loads(line) for line in f]
 
 complete = [r for r in records if r["proof_complete"]]
-cited = [r for r in records
-         if r["proof_notes"] and "citation" in r["proof_notes"]["kind"]]
+cited = [r for r in records if r["informal_source"] == "citation"]
 ```
 
 The `proof` column of a complete record compiles in a project that depends on the same
@@ -99,14 +98,12 @@ flattener can; the builder measures the compile rate of a sample on every run.
 # Columns
 
 * `id`, `lean_name`: the fully qualified Lean name, which is the record key.
-* `title`, `statement_informal`, `definitions`, `informal_statement`, `statement_source`:
-  the informal half.
+* `informal_statement`, `informal_source`, `title`, `definitions`: the informal half;
+  `informal_source` is `citation` or `lean`.
 * `formal_statement`, `upstream_defs`, `n_upstream_defs`: the formal statement and the
   definitions it carries.
 * `source_module`, `kind`: the Lean module; `theorem` or `lemma`.
 * `difficulty`: integer 1 to 7, or null when unrated.
-* `proof_sources`, `proof_steps`, `proof_notes`: provenance; `proof_notes.kind` is
-  `proof_citation`, `statement_citation`, `informalized`, or a citation `+informalized`.
 * `proof`, `proof_upstream_decls`, `n_proof_upstream_decls`, `proof_unresolved_deps`,
   `proof_complete`: the proof file, what it carries, and whether it is finished.
 

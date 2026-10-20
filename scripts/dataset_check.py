@@ -14,6 +14,8 @@ HARD (exit 1 with --strict)
                     `:= sorry`
     proof-flag      `proof_complete` disagrees with whether `proof` contains `sorry`
     stub-prose      the informal statement is a blueprint_stub.py placeholder
+    informal-source `informal_source` is not `citation` / `lean`, or `informal_statement`
+                    is empty
     row-loss        with --previous: a record of the previous dataset is gone (its
                     module dropped out of dep_graph.json, usually because the file is
                     no longer imported from TCSlib.lean)
@@ -23,12 +25,13 @@ ADVISORY (always reported)
     formal-leak-sorried  the same leak on a record whose proof is incomplete (its module
                     is often absent from dep_graph.json, so it cannot be regenerated)
     unrated         complete proof with null `difficulty`
-    no-notes        `proof_notes` is null (no citation and no informalized note)
+    no-account      a `lean` record has no informalized proof account appended (no
+                    citation and no note under references/informalized/)
     stale-module    the record's module is not in dep_graph.json: the row was carried over
                     from the previous dataset by `dataset_splice.py --merge` because its
                     module is not built (not imported from TCSlib.lean), so it was not
                     regenerated and may lag behind the Lean source
-    coverage        citations by area, proof_notes kinds, statement_source values
+    coverage        `informal_source` values by area
 
 Usage:
     python3 scripts/dataset_check.py                         # dataset/tcslib_theorems.jsonl(.gz)
@@ -57,25 +60,20 @@ DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 LEAN_CHECK = BASE / "scripts" / "lean_check.sh"
 DEP_GRAPH = BASE / "dep_graph.json"
 
-#: Column -> accepted JSON types.  `proof_notes` is added by build_proof_notes.py and
-#: is null for records with no citation and no note.
+#: Column -> accepted JSON types (scripts/informal_sources.py owns the informal pair).
 SCHEMA: dict[str, tuple[type, ...]] = {
     "id": (str,),
     "informal_statement": (str,),
+    "informal_source": (str,),
     "formal_statement": (str,),
     "lean_name": (str,),
     "title": (str,),
-    "statement_informal": (str,),
     "definitions": (list,),
-    "statement_source": (str,),
     "source_module": (str,),
     "kind": (str,),
     "upstream_defs": (list,),
     "n_upstream_defs": (int,),
     "difficulty": (int, type(None)),
-    "proof_sources": (list,),
-    "proof_steps": (list,),
-    "proof_notes": (dict, type(None)),
     "proof": (str,),
     "proof_upstream_decls": (list,),
     "n_proof_upstream_decls": (int,),
@@ -84,7 +82,9 @@ SCHEMA: dict[str, tuple[type, ...]] = {
 }
 
 HARD = {"schema", "duplicate-id", "formal-leak", "formal-shape", "proof-flag",
-        "stub-prose", "row-loss", "lean-error"}
+        "stub-prose", "informal-source", "row-loss", "lean-error"}
+INFORMAL_SOURCES = {"citation", "lean"}
+PROOF_SEP = "\n\nProof: "   # scripts/informal_sources.py: statement | proof account
 
 import re  # noqa: E402
 
@@ -201,13 +201,16 @@ def main() -> int:
         proof = record.get("proof", "")
         if isinstance(proof, str) and record.get("proof_complete") != ("sorry" not in proof):
             findings["proof-flag"].append(rid)
-        if STUB_RE.search(record.get("statement_informal", "")) or \
-                STUB_RE.search(record.get("informal_statement", "")):
+        informal = record.get("informal_statement", "")
+        if STUB_RE.search(informal):
             findings["stub-prose"].append(rid)
+        origin = record.get("informal_source")
+        if origin not in INFORMAL_SOURCES or not informal.strip():
+            findings["informal-source"].append(f"{rid}: {origin!r}, {len(informal)} chars")
         if record.get("proof_complete") and record.get("difficulty") is None:
             findings["unrated"].append(rid)
-        if record.get("proof_notes") is None:
-            findings["no-notes"].append(rid)
+        if origin == "lean" and PROOF_SEP not in informal:
+            findings["no-account"].append(rid)
 
     # carried-over rows (module not built)
     if DEP_GRAPH.exists():
@@ -242,18 +245,15 @@ def main() -> int:
     # coverage
     by_area_total = collections.Counter(area_of(r) for r in records)
     by_area_cited = collections.Counter(
-        area_of(r) for r in records
-        if r.get("proof_sources") or (r.get("proof_notes") or {}).get("statement_sources"))
+        area_of(r) for r in records if r.get("informal_source") == "citation")
     by_area_incomplete = collections.Counter(area_of(r) for r in records if not r.get("proof_complete"))
-    notes_kinds = collections.Counter((r.get("proof_notes") or {}).get("kind") for r in records)
-    sources = collections.Counter(r.get("statement_source") for r in records)
+    sources = collections.Counter(r.get("informal_source") for r in records)
 
     print(f"{len(records)} records from {source.name}")
-    print(f"columns: {len(SCHEMA)} expected; statement_source: {dict(sources)}")
+    print(f"columns: {len(SCHEMA)} expected; informal_source: {dict(sources)}")
     print("\narea                      rows  incomplete  cited")
     for area, total in by_area_total.most_common():
         print(f"  {area:24s} {total:5d}  {by_area_incomplete[area]:9d}  {by_area_cited[area]:5d}")
-    print(f"\nproof_notes kinds: {dict(notes_kinds)}")
     print("\nfindings:")
     hard_total = 0
     for key in sorted(findings, key=lambda k: (k not in HARD, k)):
@@ -280,7 +280,7 @@ def main() -> int:
             "records": len(records),
             "by_area": {a: {"rows": by_area_total[a], "incomplete": by_area_incomplete[a],
                             "cited": by_area_cited[a]} for a in by_area_total},
-            "proof_notes_kinds": {str(k): v for k, v in notes_kinds.items()},
+            "informal_source": {str(k): v for k, v in sources.items()},
             "findings": {k: len(v) for k, v in findings.items()},
             "hard_failures": hard_total,
             "examples": {k: v[:50] for k, v in findings.items()},

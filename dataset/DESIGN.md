@@ -8,9 +8,9 @@ file states the intent and the "Known gaps" section says where the code still de
 ## Purpose
 
 `dataset/tcslib_theorems.jsonl.gz` pairs every theorem of the library with an informal
-statement, a standalone formal statement, a self-contained compiling proof, a difficulty
-rating, and the provenance of the mathematics (a citation into the text it was
-formalized from, or an account of the Lean proof).  The pipeline keeps that file in step
+statement (the passage of the text it was formalized from, when that text cites it;
+otherwise prose written from the Lean, with an account of the Lean proof), a standalone
+formal statement, a self-contained compiling proof, and a difficulty rating.  The pipeline keeps that file in step
 with the library as people formalize new things, without anyone rebuilding it by hand.
 
 ## The contract
@@ -42,10 +42,14 @@ then owned by one stage:
 | Column(s) | Owner | Persisted where |
 |---|---|---|
 | `formal_statement`, `proof`, `*_upstream_*`, `proof_complete` | `dataset` (deterministic build) | the dataset itself |
-| `statement_informal`, `definitions`, `title` | blueprint entry; `statements` writes stub entries | the `.tex` entry (prose cache under `references/statements/`) |
+| `informal_statement` when `informal_source` is `citation` | `citations` | `\proofsource` / `\statementsource` in the `.tex` entry; the text under `references/<doc>.md` |
+| `informal_statement` when `informal_source` is `lean`: the statement, `definitions`, `title` | blueprint entry; `statements` writes stub entries of *uncited* records | the `.tex` entry (prose cache under `references/statements/`) |
+| `informal_statement` when `informal_source` is `lean`: the proof account | `informalize` | `references/informalized/<name>.md` |
 | `difficulty` | `difficulty` | `\difficulty{N}` in the `.tex` entry |
-| `proof_sources`, `statement_citation` | `citations` | `\proofsource` / `\statementsource` in the `.tex` entry |
-| `proof_notes.informalized` | `informalize` | `references/informalized/<name>.md` |
+
+A citation wins: where a text can be quoted, nothing is generated.  `citations` therefore
+runs before `statements`, and `statements` and `informalize` only ever spend on records
+nothing cites.
 
 Every model product therefore lives in the repository next to the thing it describes,
 is committed with it, and is never regenerated while its input is unchanged.
@@ -107,8 +111,11 @@ writes `dataset/.pipeline/state.json`.
 - **Rule 1 is not yet enforced in code.**  The `statements` stage regenerates the prose
   of every record whose statement is not in the cache, including entries whose prose a
   person wrote, and `blueprint_restate.py --apply-only` writes it into those entries.
-  The fix is to restrict both to stub entries (and entries the pipeline wrote earlier),
-  and to derive `statement_source` from whether the entry was a pipeline stub.
+  The fix is to restrict both to stub entries (and entries the pipeline wrote earlier).
+- **A cited record's blueprint entry may stay a stub.**  `statements` skips cited
+  records, so a stub entry the `blueprint` stage wrote for a declaration that `citations`
+  then matched keeps its placeholder body in the `.tex`; the dataset is unaffected (its
+  informal statement is the cited passage).  The blueprint should quote the passage too.
 - **The prose cache duplicates the blueprint.**  With rule 1 in force, "needs a
   statement" is simply "the entry is still a stub", and the cache's remaining job is
   change detection (rule 5).  Decision pending: keep it as the persistence layer, or

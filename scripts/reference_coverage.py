@@ -56,7 +56,7 @@ def _load_sibling(name: str):
 
 
 bd = _load_sibling("build_dataset")
-bpn = _load_sibling("build_proof_notes")
+bpn = _load_sibling("informal_sources")
 be = _load_sibling("blueprint_enumerate")
 
 REFERENCES = BASE / "blueprint" / "src" / "references"

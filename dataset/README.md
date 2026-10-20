@@ -1,9 +1,9 @@
 # The TCSlib theorem dataset
 
 `tcslib_theorems.jsonl.gz` pairs every blueprint-bound theorem and lemma of the library
-with a self-contained informal statement, a self-contained formal statement, a
-flattened compiling proof file, and the provenance of each half (textbook citation or an
-informalized account of the Lean proof).  Only the `.gz` is tracked; the plain `.jsonl`
+with an informal statement (the cited passage of the text it was formalized from, or
+prose written from the Lean when no text cites it), a self-contained formal statement,
+and a flattened compiling proof file.  Only the `.gz` is tracked; the plain `.jsonl`
 is regenerated locally and git-ignored.  Every reader goes through
 `proofmatch/dataset_io.py`, which falls back to the `.gz` transparently.
 
@@ -36,7 +36,7 @@ of the formal statement; ratings and citations in the blueprint `.tex`; proof no
 
 | A record of the current dataset ... | becomes |
 |---|---|
-| is in the build | **replaced** (every column, `proof_notes` included) |
+| is in the build | **replaced** (every column) |
 | is not in the build, but the run was a selection (`--only` / `--modules`) | **kept** untouched |
 | belongs to a module that is not in `dep_graph.json` (not imported from `TCSlib.lean`, so never built) | **carried** over unchanged and reported; `dataset_check.py` lists it as `stale-module`; `--drop-unbuilt` drops it instead |
 | is still declared in its module but the builder left it out (stale graph, no blueprint entry) | **skipped**: kept and reported |
@@ -61,11 +61,11 @@ interrupted run is resumed by running the same command again (or `--from <stage>
 | `graph` | no | `lake build` (with `--build`) and the declaration dependency graph. Reports modules imported from `TCSlib.lean` that the graph predates (run `--build`), modules on disk that nothing imports (add the import, then `--build`), graph modules whose source moved, and the records of the current dataset a merge will carry over. | `build_dep_graph.py` |
 | `references` | yes | Every text under `blueprint/src/references/` without a validated `<name>.md` (a PDF dropped there, or one given as `--source TAG=PATH`) is OCR'd and cleaned into one (block-anchored, so citations can point into it); a `--source` tag is registered in `references/sources.json`. | `proofmatch.py extract`, `reference_coverage.py --register` |
 | `blueprint` | no | Every documentable declaration without a blueprint entry gets one, with the binding `\lean{}`, `\leanok`, `\uses{}` and a marked placeholder body (an estimate only counts them). | `blueprint_enumerate.py`, `blueprint_stub.py`, `blueprint_assemble.py`, `blueprint_validate.py` |
-| `statements` | yes | Statement-only pass-1 build, then the informal statement of every record (and every stub definition) whose prose is not cached is written from the *formal* statement to handout standard, rubric-gated, cached under `references/statements/`, and applied into the blueprint. | `build_dataset.py --no-proof`, `build_informal_statements.py`, `blueprint_restate.py --apply-only` |
+| `citations` | yes | Statement-only pass-1 build, then the coverage report (below), then every reference document the blueprint does not cite yet (new texts, and older ones never matched) is matched against the dataset; proofs the text proves get `\proofsource`, statements it only states get `\statementsource`; the tag registry is re-derived from the citations. `--rematch` redoes matched documents too. A cited record's informal statement is the cited passage itself, so it runs before `statements`. | `reference_coverage.py`, `proofmatch.py match` |
+| `statements` | yes | Pass 1 again, then the informal statement of every *uncited* record (and every stub definition) whose prose is not cached is written from the *formal* statement to handout standard, rubric-gated, cached under `references/statements/`, and applied into the blueprint. Cited records are skipped: nothing is generated where a text can be quoted. | `build_dataset.py --no-proof`, `build_informal_statements.py`, `blueprint_restate.py --apply-only` |
 | `difficulty` | yes | Unrated proofs get an intrinsic, tactic-only 1-7 rating written as `\difficulty{N}`. | `blueprint_difficulty_plan.py`, `rate_difficulty.py`, `blueprint_difficulty_apply.py` |
-| `citations` | yes | Pass 1 again, then the coverage report (below), then every reference document the blueprint does not cite yet (new texts, and older ones never matched) is matched against the dataset; proofs the text proves get `\proofsource`, statements it only states get `\statementsource`; the tag registry is re-derived from the citations. `--rematch` redoes matched documents too. | `reference_coverage.py`, `proofmatch.py match` |
-| `informalize` | yes | Every uncited, sorry-free proof without a note gets a prose account of its Lean proof under `references/informalized/<name>.md`. Stops first if a *new* theorem cites a text nobody attached (below). | `reference_coverage.py --strict`, `informalize_proofs.py` |
-| `dataset` | no | The full build with flattened proofs of the selected (or all built) records, `proof_notes` attached from the citations and notes, merged into the dataset as described above. | `build_dataset.py`, `build_proof_notes.py`, `dataset_splice.py --merge` |
+| `informalize` | yes | Every uncited, sorry-free proof without a note gets a prose account of its Lean proof under `references/informalized/<name>.md`, appended to its informal statement at build time. Stops first if a *new* theorem cites a text nobody attached (below). | `reference_coverage.py --strict`, `informalize_proofs.py` |
+| `dataset` | no | The full build with flattened proofs of the selected (or all built) records -- the informal statement of each taken from its citation or composed from the Lean prose and note (`informal_sources.py`) -- merged into the dataset as described above. | `build_dataset.py`, `dataset_splice.py --merge` |
 | `verify` | no | Structural checks (every column present, no leaked docstring lines in formal statements, no stub prose, row loss against the previous dataset, carried-over rows, optionally N sampled formal statements compiled with `scripts/lean_check.sh`), prose checks, blueprint integrity. | `dataset_check.py --strict`, `dataset_hygiene.py`, `statement_quality.py`, `blueprint_validate.py --strict --allow-orphans` |
 
 State, logs, the pass-1 build, the merge and coverage reports live in `dataset/.pipeline/`
@@ -76,7 +76,8 @@ output.
 
 The builder never searches outside `blueprint/src/references/` for sources.  A theorem
 receives a citation only when the text it was formalized from is there and has been
-matched; every other theorem receives an informalized account of its Lean proof instead.
+matched, and its informal statement is then the cited passage itself; every other
+theorem gets prose written from the Lean, with an informalized account of its proof.
 The contract has two steps:
 
 1. **After formalizing something, attach the text it came from** to
@@ -195,7 +196,7 @@ To repair a few records by hand without the pipeline (for example after a flatte
 
 ```bash
 python3 scripts/build_dataset.py --no-proof --only NAME... --out /tmp/patch.jsonl
-python3 scripts/dataset_splice.py /tmp/patch.jsonl        # statement fields only, proof_notes kept
+python3 scripts/dataset_splice.py /tmp/patch.jsonl        # statement fields only
 ```
 
 ## Record schema
@@ -205,18 +206,14 @@ One JSON object per line, in this column order.
 | Column | Type | Meaning |
 |---|---|---|
 | `id`, `lean_name` | string | Fully-qualified Lean name (identical). |
+| `informal_statement` | string | The result in prose. When the blueprint entry cites a reference document, the cited passage verbatim (statement blocks, then proof blocks, from `references/<doc>.md`). Otherwise prose written from the Lean: a "Definitions:" block rendering `definitions`, then `Statement: <the claim>` (handout standard, LaTeX math), then `Proof: <the informalized account of the Lean proof>` when `references/informalized/<name>.md` holds one. |
+| `informal_source` | string | `citation` or `lean`: which of the two the above is. |
 | `title` | string | Short name of the result. |
-| `statement_informal` | string | The claim in prose, self-contained, handout standard (LaTeX math). |
 | `definitions` | list of `{id, title, informal}` | Informal descriptions of the library definitions the statement uses, dependency order. |
-| `informal_statement` | string | `definitions` rendered as a "Definitions:" block followed by `Statement: <statement_informal>`. |
-| `statement_source` | string | `regenerated` when the prose came from `build_informal_statements.py`, `blueprint` when it is the document's own. |
 | `formal_statement` | string | A standalone Lean file: the imports of the declaration's own module closure, the library definitions (and instances) the statement needs, the instances of its environment whose types those definitions mention (as `:= sorry` stubs, since only an instance's type matters for resolution), any lemma a definition body cites as a `:= sorry` stub, then the declaration itself with `:= sorry` (always the last declaration). |
 | `upstream_defs`, `n_upstream_defs` | list, int | The definitions emitted in `formal_statement`. |
 | `source_module`, `kind` | string | Module of the declaration; `theorem` or `lemma`. |
 | `difficulty` | int or null | Intrinsic 1-7 rating of the proof script alone (null when unrated or the proof is a bare `sorry`). |
-| `proof_sources` | list of `{document, blocks}` | `\proofsource` citations: the reference document *proves* this result in those blocks. |
-| `proof_steps` | list | Approved `\proofstep` alignments between upstream declarations and document blocks. |
-| `proof_notes` | object or null | `kind` (`proof_citation`, `statement_citation`, `informalized`, or a `+informalized` combination), the cited blocks with their text, and the informalized note's markdown. Null when the proof has neither. |
 | `proof` | string | A standalone Lean file ending with the declaration proved for real: its full dependency closure flattened in compile order, with original proof bodies. |
 | `proof_upstream_decls`, `n_proof_upstream_decls` | list, int | Declarations emitted in `proof`. |
 | `proof_unresolved_deps` | list | Dependencies the flattener could not place (empty in a healthy build). |

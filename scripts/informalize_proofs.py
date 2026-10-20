@@ -1,11 +1,12 @@
 r"""Informalize uncited Lean proofs into blueprint/src/references/informalized/<name>.md.
 
-A dataset record's `proof_notes` comes from one of three places (see
-build_proof_notes.py): a `\proofsource` citation, a `\statementsource` citation,
-or an informalized note.  Citations come from proofmatch runs against a reference
-document.  A theorem that no reference document proves -- too granular for the
-text, a bridging lemma, a bare exercise -- gets a note instead: a human-readable
-account of its Lean proof.  Those notes were written by interactive agents from
+A dataset record's informal statement is the cited passage of a reference document
+when its blueprint entry carries a `\proofsource` or `\statementsource` citation,
+and otherwise prose written from the Lean (see informal_sources.py).  Citations come
+from proofmatch runs against a reference document.  A theorem that no reference
+document proves -- too granular for the text, a bridging lemma, a bare exercise --
+gets a note instead: a human-readable account of its Lean proof, appended to its
+informal statement.  Those notes were written by interactive agents from
 proofmatch's `informalize_queue.md`; this script writes them headlessly through
 the model CLI (`claude -p` or `codex exec`; prompt: proofmatch/prompts/informalize_proof.md) so the pipeline can
 fill the gap for every uncited, sorry-free theorem.
@@ -14,7 +15,7 @@ Selection (what gets a note):
     * theorem / lemma records of the dataset (definitions are described by the
       blueprint entry, not by a proof note);
     * no `\proofsource` or `\statementsource` on its blueprint entry;
-    * no informalized note yet (by the same lookup build_proof_notes.py uses);
+    * no informalized note yet (by the same lookup informal_sources.py uses);
     * the proof is sorry-free.
 
 Usage:
@@ -59,7 +60,7 @@ def _load_sibling(name: str):
 
 
 bd = _load_sibling("build_dataset")
-bpn = _load_sibling("build_proof_notes")
+bpn = _load_sibling("informal_sources")
 
 DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 INFORMALIZED_DIR = BASE / "blueprint" / "src" / "references" / "informalized"
@@ -75,7 +76,7 @@ LIMIT_RE = re.compile(
 
 
 def note_path(lean_name: str) -> Path:
-    # build_proof_notes.note_for finds a note by its stem, so the stem is the full
+    # informal_sources.note_for finds a note by its stem, so the stem is the full
     # Lean name whenever the filesystem can hold it.
     stem = lean_name
     if len(stem) > 180:
@@ -105,7 +106,7 @@ def build_payload(record: dict, rec: dict, index: dict) -> dict:
     return {
         "lean_name": record["id"],
         "kind": record.get("kind", ""),
-        "informal_statement": record.get("statement_informal", ""),
+        "informal_statement": bpn.statement_part(record.get("informal_statement", "")),
         "formal_statement": record["formal_statement"],
         "proof_source": "\n".join(rec["slice"]),
         "upstream": upstream,
@@ -251,7 +252,7 @@ def main() -> int:
     print(f"\nwritten {done['ok']}   low-confidence {done['low']}   failed {done['failed']}")
     print(f"spend: ${agent.spent_usd:.2f} for {len(todo)} proofs "
           f"(${agent.spent_usd / max(1, len(todo)):.3f} each)")
-    print("next: python3 scripts/build_proof_notes.py  (after build_dataset.py)")
+    print("next: python3 scripts/build_dataset.py  (appends the notes to the informal statements)")
     return 1 if done["failed"] else 0
 
 

@@ -3,23 +3,22 @@ Splice regenerated records into an existing dataset, field by field.
 
 `build_dataset.py --only NAME ...` regenerates a handful of records (for example after a
 flattener fix), but a full rebuild also changes every other record whose source moved
-since the last build, and drops the `proof_notes` column that `build_proof_notes.py`
-adds afterwards.  When the intent is "repair these records and nothing else", this
+since the last build.  When the intent is "repair these records and nothing else", this
 script copies the chosen fields of each regenerated record over the matching record of
 the shipped dataset and leaves everything else byte-identical.
 
 By default only the statement-derived fields are spliced -- the ones `build_dataset.py`
-computes from the Lean sources and the blueprint without a proof build:
+computes from the Lean sources, the blueprint and the reference texts without a proof
+build:
 
     formal_statement, upstream_defs, n_upstream_defs, definitions,
-    informal_statement, statement_informal, title, difficulty
+    informal_statement, informal_source, title, difficulty
 
 Pass `--fields all` to replace every field the patch carries (a patch built with the
-proof enabled then also refreshes `proof`, `proof_complete`, ...).  `proof_notes` is
-never touched by this script; rerun `build_proof_notes.py` for that.
+proof enabled then also refreshes `proof`, `proof_complete`, ...).
 
 `--merge` is the incremental-build mode used by scripts/dataset_pipeline.py: the patch
-is a complete build (every column, `proof_notes` included) of some or all records, and
+is a complete build (every column) of some or all records, and
 the result is the previous dataset with those records replaced or added.  Records of the
 previous dataset that the build does not contain are
 
@@ -75,7 +74,7 @@ STATEMENT_FIELDS = (
     "n_upstream_defs",
     "definitions",
     "informal_statement",
-    "statement_informal",
+    "informal_source",
     "title",
     "difficulty",
 )
@@ -316,7 +315,7 @@ def main() -> int:
             new = patch.get(record["id"])
             if new is not None:
                 changed = []
-                for key in (fields if fields is not None else [k for k in new if k != "proof_notes"]):
+                for key in (fields if fields is not None else list(new)):
                     if key in new and record.get(key) != new[key]:
                         record[key] = new[key]
                         changed.append(key)

@@ -74,11 +74,12 @@ def compute(path: Path = DATASET) -> dict:
         records = [json.loads(line) for line in f if line.strip()]
     n = len(records)
     complete = sum(1 for r in records if r.get("proof_complete"))
-    kinds = Counter((r.get("proof_notes") or {}).get("kind") or "none" for r in records)
-    cited = sum(c for k, c in kinds.items() if "citation" in k)
-    informalized_only = kinds.get("informalized", 0)
-    no_notes = kinds.get("none", 0)
-    sources = Counter(r.get("statement_source") or "unknown" for r in records)
+    sources = Counter(r.get("informal_source") or "unknown" for r in records)
+    # A `lean` informal statement carries the proof account after this separator
+    # (scripts/informal_sources.py) when references/informalized/ holds a note.
+    with_account = sum(1 for r in records
+                       if r.get("informal_source") == "lean"
+                       and "\n\nProof: " in r.get("informal_statement", ""))
     areas = Counter(r["source_module"].split(".")[1] for r in records)
     date = _file_date(path)
     size_mb = path.stat().st_size / 1e6
@@ -87,13 +88,10 @@ def compute(path: Path = DATASET) -> dict:
         "n_records": n,
         "n_complete": complete,
         "n_sorry": n - complete,
-        "n_cited": cited,
-        "n_proof_citation": sum(c for k, c in kinds.items() if k.startswith("proof_citation")),
-        "n_statement_citation": sum(c for k, c in kinds.items() if k.startswith("statement_citation")),
-        "n_informalized_only": informalized_only,
-        "n_no_notes": no_notes,
-        "n_blueprint": sources.get("blueprint", 0),
-        "n_regenerated": sources.get("regenerated", 0),
+        "n_cited": sources.get("citation", 0),
+        "n_lean": sources.get("lean", 0),
+        "n_lean_with_proof": with_account,
+        "n_lean_without_proof": sources.get("lean", 0) - with_account,
         "n_rated": sum(1 for r in records if r.get("difficulty") is not None),
         "by_area": by_area,
         "areas": dict(areas.most_common()),

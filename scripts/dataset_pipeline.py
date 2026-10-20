@@ -26,23 +26,26 @@ subset with --stages):
                          it in references/sources.json.
   blueprint    [no LLM]  blueprint_enumerate -> blueprint_stub -> blueprint_assemble:
                          every documentable declaration gets a bound blueprint entry.
-  statements   [LLM]     build_dataset --no-proof (pass 1) -> build_informal_statements
-                         (handout-standard prose from the formal statement, rubric-gated,
-                         definitions included) -> blueprint_restate --apply-only.
-  difficulty   [LLM]     blueprint_difficulty_plan -> rate_difficulty -> blueprint_difficulty_apply.
-  citations    [LLM]     pass 1 again (fresh prose) -> reference_coverage (which uncited
-                         theorems cite which texts, and which texts are missing) ->
-                         `proofmatch match` of every reference document the blueprint
+  citations    [LLM]     build_dataset --no-proof (pass 1) -> reference_coverage (which
+                         uncited theorems cite which texts, and which texts are missing)
+                         -> `proofmatch match` of every reference document the blueprint
                          does not cite yet (new texts, and older ones never matched)
                          against the dataset: \proofsource / \statementsource citations
                          land in the chapter .tex files; the tag registry is then
-                         re-derived from the citations.
+                         re-derived from the citations.  A cited record's informal
+                         statement is the cited passage itself, so this runs first.
+  statements   [LLM]     pass 1 again -> build_informal_statements for the UNCITED records
+                         (handout-standard prose from the formal statement, rubric-gated,
+                         definitions included) -> blueprint_restate --apply-only.
+  difficulty   [LLM]     blueprint_difficulty_plan -> rate_difficulty -> blueprint_difficulty_apply.
   informalize  [LLM]     informalize_proofs: a prose account of every uncited, sorry-free
                          proof -> blueprint/src/references/informalized/<name>.md.  Refuses
                          to run while NEW theorems cite a text nobody attached (see
                          "Reference texts" below) unless --without-sources is given.
-  dataset      [no LLM]  build_dataset (full, with flattened proofs) -> build_proof_notes
-                         -> dataset_splice --merge into dataset/tcslib_theorems.jsonl + .gz.
+  dataset      [no LLM]  build_dataset (full, with flattened proofs; the informal statement
+                         of each record from its citation, else from the Lean prose and
+                         note -- informal_sources.py) -> dataset_splice --merge into
+                         dataset/tcslib_theorems.jsonl + .gz.
   verify       [no LLM]  dataset_check --strict (schema, leaks, stubs, row loss, carried-over
                          rows, optional sampled Lean compile), dataset_hygiene,
                          statement_quality, blueprint_validate --strict.
@@ -54,9 +57,10 @@ PDF (or a validated .md) into that directory, or pass it as --source TAG=PATH wi
 ingests every text that has no validated .md yet, works out which texts still have to
 be matched (the blueprint cites nothing from them), matches those against the whole
 dataset, and carries the new declarations through every other stage.  A theorem is
-cited only when a matched text proves or states it; otherwise it receives an
-informalized account of its Lean proof.  The builder never searches outside
-references/ for sources.
+cited only when a matched text proves or states it, and its informal statement is then
+that passage; otherwise its informal statement is written from the Lean, with an
+informalized account of its proof.  The builder never searches outside references/
+for sources.
 
     cp ~/texts/arora-barak-ch09.pdf blueprint/src/references/
     python3 scripts/dataset_pipeline.py --yes
@@ -122,8 +126,8 @@ STATE_DIR = BASE / "dataset" / ".pipeline"
 PASS1 = STATE_DIR / "pass1.jsonl"
 BUILT = STATE_DIR / "built.jsonl"
 
-STAGES = ["graph", "references", "blueprint", "statements", "difficulty",
-          "citations", "informalize", "dataset", "verify"]
+STAGES = ["graph", "references", "blueprint", "citations", "statements", "difficulty",
+          "informalize", "dataset", "verify"]
 LLM_STAGES = {"references": "cleanup", "statements": "prose", "difficulty": "judgement",
               "citations": "judgement", "informalize": "prose"}
 
@@ -489,7 +493,7 @@ def stage_statements(r: Runner) -> None:
     if r.args.estimate:
         r.mark("statements", "estimated", model=model)
         return
-    if r.confirm("statements", f"regenerate the outstanding informal statements on {model}"):
+    if r.confirm("statements", f"write the outstanding informal statements of uncited records on {model}"):
         extra = ["--limit", str(r.args.limit)] if r.args.limit else []
         rc = r.py("statements", "build_informal_statements.py", *common, *extra, check=False)
         if rc != 0:
@@ -527,7 +531,7 @@ def _sibling(name: str):
 
 def cited_documents() -> set[str]:
     """Stems of the reference documents the blueprint cites (\\proofsource / \\statementsource)."""
-    citations = _sibling("build_proof_notes").blueprint_citations()
+    citations = _sibling("informal_sources").blueprint_citations()
     return {row["document"] for cite in citations.values()
             for group in ("proof_sources", "statement_sources") for row in cite.get(group, [])}
 
@@ -646,7 +650,6 @@ def stage_informalize(r: Runner) -> None:
 def stage_dataset(r: Runner) -> None:
     """Build the selected (or all built) records and merge them into the shipped dataset."""
     r.py("dataset", "build_dataset.py", "--out", str(BUILT), *r.selection())
-    r.py("dataset", "build_proof_notes.py", "--dataset", str(BUILT))
     argv = [str(BUILT), "--merge", "--dataset", str(DATASET),
             "--report", str(STATE_DIR / "merge.json")]
     if r.selected:
@@ -872,14 +875,14 @@ def main() -> int:
                 new_docs = stage_references(r)
             elif stage == "blueprint":
                 stage_blueprint(r)
-            elif stage == "statements":
-                stage_statements(r)
-            elif stage == "difficulty":
-                stage_difficulty(r)
             elif stage == "citations":
                 if not new_docs and r.sources:
                     new_docs = [REFERENCES / p.with_suffix(".md").name for _, p in r.sources]
                 stage_citations(r, new_docs)
+            elif stage == "statements":
+                stage_statements(r)
+            elif stage == "difficulty":
+                stage_difficulty(r)
             elif stage == "informalize":
                 stage_informalize(r)
             elif stage == "dataset":
