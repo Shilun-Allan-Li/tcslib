@@ -35,34 +35,34 @@ The set is **mixed**:
 
 * **Some proofs are still open.** When the proof, or the proof of something it depends on,
   still contains `sorry`, the record's `proof_complete` is false. In the deployed build
-  (%%build_date_text%%) that is %%n_sorry%% of %%n_records%% records.
-* **Not every record cites a text.** `informal_source` is `citation` for the %%n_cited%%
+  (%%build\_date\_text%%) that is %%n\_sorry%% of %%n\_records%% records.
+* **Not every record cites a text.** `informal_source` is `citation` for the %%n\_cited%%
   records whose informal statement is the passage of a source document that states or proves
-  the result, and `lean` for the %%n_lean%% whose text was written from the Lean instead,
+  the result, and `lean` for the %%n\_lean%% whose text was written from the Lean instead,
   because the text they were formalized from was never attached: the statement by the
   blueprint's author or by a language model checked against a rubric, followed for
-  %%n_lean_with_proof%% of them by an informalized account of the Lean proof. The remaining
-  %%n_lean_without_proof%% have no proof account yet.
+  %%n\_lean\_with\_proof%% of them by an informalized account of the Lean proof. The remaining
+  %%n\_lean\_without\_proof%% have no proof account yet.
 
 The set is still growing. It is rebuilt incrementally from the library, so each build adds the
 newly formalized declarations and the counts above change. View a visualization of the
 repository at [theorem viewer](/tcslib/theorems/).
 
-By area in the deployed build: %%by_area%%.
+By area in the deployed build: %%by\_area%%.
 
 The numbers on this page are computed from the dataset file this site serves, each time
 the site is deployed.
 
 # How to download it
 
-The dataset is one gzipped JSON Lines file, about %%size_mb%% MB, one JSON object per line.
+The dataset is one gzipped JSON Lines file, about %%size\_mb%% MB, one JSON object per line.
 
 :::::htmlDiv (class := "download-buttons")
 
 ::::html a (class := "hero-btn primary") (href := "/tcslib/theorems/tcslib_theorems.jsonl.gz") (download := "tcslib_theorems.jsonl.gz")
 :::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")
 :::
-Download tcslib_theorems.jsonl.gz
+Download tcslib\_theorems.jsonl.gz
 ::::
 
 ::::html a (class := "hero-btn secondary") (href := "https://huggingface.co/datasets/Hydroxyi/TCSlib")
