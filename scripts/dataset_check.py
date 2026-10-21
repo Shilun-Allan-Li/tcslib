@@ -32,6 +32,16 @@ ADVISORY (always reported)
                     from the previous dataset by `dataset_splice.py --merge` because its
                     module is not built (not imported from TCSlib.lean), so it was not
                     regenerated and may lag behind the Lean source
+    shared-statement  two or more records have the same informal statement (claim), so
+                    the prose does not describe either of them on its own: a cited passage
+                    that states several lemmas at once, or one blueprint entry binding
+                    several declarations
+    tactic-transcript  a `lean` proof account is mostly backticked code naming tactics: it
+                    narrates the proof script instead of the mathematics
+                    (informal_sources.is_tactic_transcript; informalize_proofs.py rejects
+                    these at generation time)
+    native-decide   the proof file uses `native_decide` outside comments (a kernel-bypassing
+                    evaluation some consumers forbid)
     coverage        `statement_source` / `proof_source` values by area
 
 Usage:
@@ -56,6 +66,7 @@ BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from proofmatch.dataset_io import open_dataset, resolve_dataset  # noqa: E402
+from scripts.informal_sources import is_tactic_transcript, statement_part  # noqa: E402
 
 DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 LEAN_CHECK = BASE / "scripts" / "lean_check.sh"
@@ -97,6 +108,11 @@ OK_NS = re.compile(r"^namespace\s+[A-Za-z_][\w.'«»]*\s*$")
 OK_END = re.compile(r"^end(\s+[A-Za-z_][\w.'«»]*)?\s*$")
 OK_SETOPT = re.compile(r"^set_option\s+[\w.]+\s+\S+(\s+in)?\s*$")
 STUB_RE = re.compile(r"Statement pending regeneration|dataset-pipeline: stub")
+
+
+def strip_comments(lean: str) -> str:
+    lean = re.sub(r"/-[\s\S]*?-/", "", lean)
+    return re.sub(r"--.*", "", lean)
 
 
 def leaked_line(line: str) -> bool:
@@ -221,6 +237,20 @@ def main() -> int:
             findings["unrated"].append(rid)
         if proof_origin == "none":
             findings["no-proof"].append(rid)
+        if proof_origin == "lean" and is_tactic_transcript(informal_proof):
+            findings["tactic-transcript"].append(rid)
+        if isinstance(proof, str) and "native_decide" in strip_comments(proof):
+            findings["native-decide"].append(rid)
+
+    # shared statements
+    by_claim: dict[str, list[str]] = {}
+    for record in records:
+        claim = statement_part(record.get("informal_statement", "")).strip()
+        if claim:
+            by_claim.setdefault(claim, []).append(record["id"])
+    for claim, ids in by_claim.items():
+        if len(ids) > 1:
+            findings["shared-statement"].append(f"{len(ids)} records: {', '.join(ids)}")
 
     # carried-over rows (module not built)
     if DEP_GRAPH.exists():

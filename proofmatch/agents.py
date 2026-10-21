@@ -160,6 +160,14 @@ def validate_against_schema(
         pattern = schema.get("pattern")
         if isinstance(pattern, str) and re.search(pattern, value) is None:
             raise AgentOutputError(f"{location} does not match pattern {pattern!r}")
+        # The Claude CLI accepted a `"proof": "placeholder"` against minLength 20
+        # (2026-10-20), so string lengths are re-checked here as the numeric bounds are.
+        min_length = schema.get("minLength")
+        if isinstance(min_length, int) and len(value) < min_length:
+            raise AgentOutputError(f"{location} is shorter than minLength {min_length}")
+        max_length = schema.get("maxLength")
+        if isinstance(max_length, int) and len(value) > max_length:
+            raise AgentOutputError(f"{location} is longer than maxLength {max_length}")
     if isinstance(value, dict):
         properties = schema.get("properties")
         properties = properties if isinstance(properties, dict) else {}

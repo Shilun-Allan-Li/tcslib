@@ -1,24 +1,16 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: numFree_update_free -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: SwitchingLemma.numFree_update_free -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# Fixing a free variable drops numFree by exactly one
+# Fixing a Free Variable Lowers the Free Count by One
 
-**Claim.** Let `ρ : Restriction n`, `v : Fin n`, `b : Bool`, and suppose `v` is free
-in `ρ` (`hv : ρ v = none`). Then
-`Restriction.numFree (Function.update ρ v (some b)) + 1 = ρ.numFree`.
+**Claim.** Let $\rho$ be a restriction on $n$ variables — a function assigning to each variable either a Boolean value or the symbol "free" ($\mathrm{none}$) — and let $v$ be a variable that is free under $\rho$. For any Boolean value $b$, form the restriction $\rho'$ by setting $v$ to $b$ and leaving every other variable as it was in $\rho$. Writing $f(\rho)$ for the number of free variables of $\rho$, we have $f(\rho') + 1 = f(\rho)$: fixing one free variable removes exactly one variable from the free set.
 
-**Proof.** Compute the free-variable set of the update.
+**Proof.** Recall that the free set $\mathrm{freeVars}(\rho)$ is the set of variables $i$ with $\rho(i) = \mathrm{none}$, and $f(\rho)$ is its cardinality. The entire argument is the observation that passing from $\rho$ to $\rho'$ deletes exactly the element $v$ from this set.
 
-1. `v ∈ ρ.freeVars`, by `simp [Restriction.freeVars, hv]`.
-2. `Restriction.freeVars (Function.update ρ v (some b)) = ρ.freeVars.erase v`: by
-   `ext i` and a case split on `i = v` — the `v` case uses `hv` and unfolds
-   `Function.update`, the other case is `simp [hi]`.
-3. Hence `numFree` of the update is `(ρ.freeVars.erase v).card`, and
-   `Finset.card_erase_of_mem hv_mem` turns this into `ρ.freeVars.card - 1`.
-4. `Finset.card_pos.mpr ⟨v, hv_mem⟩` gives `0 < ρ.freeVars.card`, so `omega`
-   converts the truncated subtraction into the stated `+ 1` equality.
+1. **$v$ lies in the free set of $\rho$.** By hypothesis $\rho(v) = \mathrm{none}$, which is precisely the membership condition for $\mathrm{freeVars}(\rho)$; hence $v \in \mathrm{freeVars}(\rho)$.
 
-**Used in.** `numFree_update_some_ge`, the `processClauseLits` accounting at line
-857, and line 1098 — the exact-decrement fact that keeps the encoder's path length
-in step with the number of remaining free variables.
+2. **The new free set is the old one with $v$ deleted:** $\mathrm{freeVars}(\rho') = \mathrm{freeVars}(\rho) \setminus \{v\}$. This is checked variable by variable. For $v$ itself, $\rho'(v) = b$ is a genuine Boolean, so $v$ is *not* free under $\rho'$ and belongs to neither side (the right-hand side excludes it by the deletion). For any other variable $i \neq v$, the update left $\rho$ untouched, so $\rho'(i) = \rho(i)$ and $i$ is free under $\rho'$ exactly when it is free under $\rho$; deleting $v$ does not affect the status of $i \neq v$. The two sides thus contain the same variables.
+
+3. **Count the deletion.** Since $v$ is an element of the finite set $\mathrm{freeVars}(\rho)$, removing it lowers the cardinality by one, $\lvert \mathrm{freeVars}(\rho) \setminus \{v\} \rvert = \lvert \mathrm{freeVars}(\rho)\rvert - 1$ (`Finset.card_erase_of_mem`). Because $v$ witnesses that $\mathrm{freeVars}(\rho)$ is nonempty, its cardinality $f(\rho)$ is strictly positive, so the subtraction of one on the natural numbers loses nothing. Rearranging $f(\rho') = f(\rho) - 1$ gives $f(\rho') + 1 = f(\rho)$, as claimed.

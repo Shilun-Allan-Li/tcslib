@@ -1,31 +1,22 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching/Circuit.lean :: DecisionTree.buildFull_depth -->
+<!-- lean-source: TCSlib/BooleanAnalysis/DecisionTree.lean :: DecisionTree.buildFull_depth -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The full decision tree built from level k has depth at most n − k
+# Depth bound for the full decision tree
 
-**Claim.** For any `f : (Fin n → Bool) → Bool`, any level `k ≤ n` and any partial
-assignment `acc : Fin n → Bool`, the complete tree
-`DecisionTree.buildFull f k acc` — which queries variables `k, k+1, …, n−1` in order —
-satisfies `(DecisionTree.buildFull f k acc).depth ≤ n - k`.
+**Claim.** Let $f\colon\{0,1\}^n \to \{0,1\}$ be a Boolean function on $n$ variables, let $k \le n$, and let $acc$ be a partial assignment of the variables. The full decision tree $\mathrm{buildFull}(f,k,acc)$, which queries the variables $k, k+1, \dots, n-1$ in order (starting from the stored assignment $acc$) and places the value of $f$ at each leaf, has depth at most $n - k$.
 
-**Proof.** Well-founded recursion on `n - k` (`termination_by n - k`), after
-`unfold DecisionTree.buildFull; split` on the guard `k < n`.
+**Proof.** The tree $\mathrm{buildFull}(f,k,acc)$ is defined by recursion on the quantity $n-k$: if $k < n$ it is a branch on variable $k$ whose two children are $\mathrm{buildFull}(f,k+1,acc')$ for the two ways $acc'$ of extending $acc$ at position $k$ (to $\mathrm{false}$ and to $\mathrm{true}$); if $k \ge n$ it is a leaf carrying the value $f(acc)$. The depth is $0$ at a leaf and $1 + \max(\text{left depth},\ \text{right depth})$ at a branch. The proof is the well-founded induction that mirrors this recursion exactly, so it splits on the same test $k < n$.
 
-1. **Branch case** (`h : k < n`). The tree is
-   `.branch ⟨k, h⟩ (… false) (… true)`, so `simp only [DecisionTree.depth]`
-   turns the goal into `1 + max (depth lo) (depth hi) ≤ n - k`.
-2. Two recursive applications of `DecisionTree.buildFull_depth` at level `k + 1` (side
-   goal `k + 1 ≤ n` by `omega`), one per updated accumulator
-   `Function.update acc ⟨k, h⟩ false / true`, bound each subtree by
-   `n - (k + 1)`.
-3. `max_le` merges them and `omega` closes the goal, using `k < n` to see
-   `1 + (n - (k+1)) ≤ n - k`.
-4. **Leaf case** (`¬ k < n`). The tree is `.leaf (f acc)`, whose depth is `0`;
-   `simp [DecisionTree.depth]`.
+1. **Leaf case ($k \ge n$).** Here the tree is a single leaf, which has depth $0$. Since $0 \le n - k$ trivially (and indeed $k \le n$ together with $k \ge n$ forces $k = n$, so $n - k = 0$), the bound holds.
 
-**Used in.** The termination/witness bundle of `dtDepth` (same file), where it
-supplies the `T.depth ≤ n` half of the `Nat.find` existence certificate for the
-minimum decision-tree depth; also re-used in
-`LMN/RestrictionMonotonicity.lean`. Note the `k ≤ n` hypothesis is bound as `_`
-and is never used — the branch case gets the stronger `k < n` from `split`.
+2. **Branch case ($k < n$).** The tree is a branch on variable $k$ with children $L = \mathrm{buildFull}(f,k+1,\ \mathrm{update}(acc,k,\mathrm{false}))$ and $R = \mathrm{buildFull}(f,k+1,\ \mathrm{update}(acc,k,\mathrm{true}))$, so its depth equals $1 + \max(\mathrm{depth}(L), \mathrm{depth}(R))$. Because $k < n$ we have $k+1 \le n$, so the inductive hypothesis applies to both children at the parameter $k+1$ (the recursive argument $n-(k+1)$ is strictly smaller, which is what justifies the recursion). It gives
+\[
+\mathrm{depth}(L) \le n - (k+1), \qquad \mathrm{depth}(R) \le n - (k+1).
+\]
+Taking the maximum of the two bounds, $\max(\mathrm{depth}(L),\mathrm{depth}(R)) \le n - (k+1)$. Therefore
+\[
+\mathrm{depth} \;=\; 1 + \max(\mathrm{depth}(L),\mathrm{depth}(R)) \;\le\; 1 + \big(n-(k+1)\big) \;=\; n - k,
+\]
+where the final equality is valid because $k < n$ makes the truncated subtraction behave like ordinary subtraction. This is the claimed bound, completing the induction.

@@ -1,48 +1,45 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: razborovEncode_go_numFree_invariant -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching.lean :: SwitchingLemma.razborovEncode_go_numFree_invariant -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The encoder loop fixes exactly one free variable per path step
+# Free-variable accounting for the Razborov encoder
 
-**Claim.** Let `f : DNF n` have, in every clause, `Nodup` literals with
-variable-injective literals. Let `path`, `ρ₀`, `σ` satisfy: `ρ₀` and `σ` have the
-same free variables (`∀ v, ρ₀ v = none ↔ σ v = none`), `IsCanonicalPath f ρ₀ path`
-(i.e. `path` is a prefix of `(canonicalDTree f ρ₀).deepPath`),
-`path.length ≤ (canonicalDTree f ρ₀).depth`, and `path.length < fuel`. Then
-`(razborovEncode.go f w fuel path ρ₀ σ []).1.numFree + path.length = σ.numFree`.
+**Claim.** Work with a DNF formula $f$ on $n$ Boolean variables in which, inside any single term, two literals on the same variable must be identical and no literal is repeated. Fix a width $w$. Let $\rho_0$ and $\sigma$ be restrictions on the $n$ variables that leave exactly the same set of variables free — for each variable $v$, $\rho_0(v)$ is unset iff $\sigma(v)$ is — and let $\mathrm{path}$ be a prefix of the deepest root-to-leaf path of the canonical decision tree of $f\!\restriction_{\rho_0}$, of length at most the depth of that tree. If the fuel budget strictly exceeds $\lvert\mathrm{path}\rvert$, then the restriction the Razborov encoder returns, run on $f$ with width $w$, this fuel, $\mathrm{path}$, $\rho_0$ and $\sigma$, has exactly $\lvert\mathrm{path}\rvert$ fewer free variables than $\sigma$: writing $\mathrm{numFree}$ for the number of unset variables of a restriction, $\mathrm{numFree}(\text{output}) + \lvert\mathrm{path}\rvert = \mathrm{numFree}(\sigma)$.
 
-**Proof.** `induction fuel generalizing path ρ₀ σ`.
+**Proof.** The encoder `razborovEncode.go` walks down the canonical decision tree of $f\!\restriction_{\rho_0}$ guided by $\mathrm{path}$. At each node it locates the first clause of $f$ still alive under the current restriction, and fixes the free literals of that clause in step with the path, simultaneously updating a shadow restriction derived from $\sigma$. The content of the lemma is that each path step costs the shadow restriction exactly one free variable, so a path of length $\lvert\mathrm{path}\rvert$ costs exactly $\lvert\mathrm{path}\rvert$ of them. The proof makes this precise by one induction, peeling off one *clause* (a block of path steps) at a time and letting the counts telescope.
 
-1. `fuel = 0`: contradicts `path.length < fuel` (`Nat.not_lt_zero`).
-2. `path = []`: the loop returns `σ` immediately — `simp [razborovEncode.go]`.
-3. `path = step :: rest`, so `0 < (canonicalDTree f ρ₀).depth`. Unfold the loop
-   and case on `f.find? (fun t => decide (¬Term.killedBy t ρ₀))`:
-   - `none`: every clause is killed, so `canonicalDTree_depth_zero_of_killed`
-     gives depth `0` — `omega`.
-   - `some t_clause` with free-literal list
-     `fli = t_clause.zipIdx.filter (fun p => decide (p.1.var ∈ ρ₀.freeVars))`:
-     - `fli = []`: no literal of `t_clause` is free, and `¬Term.killedBy` forces
-       each `ρ₀ l.var = some (!l.neg)`, i.e. `Term.fixedBy t_clause ρ₀`; then
-       `canonicalDTree_depth_zero_of_fixed` contradicts the positive depth
-       (`omega`).
-     - `fli = fl :: fls`: set `pcl := processClauseLits (fl :: fls) path ρ₀ σ`
-       and strip the accumulator with `encode_go_acc`, then combine:
-       * `processClauseLits_numFree_σ` (with the free-literal and
-         `processClauseLits_freeLits_pairwise_var` distinctness facts):
-         `pcl.2.2.1.numFree + min lits.length path.length = σ.numFree`.
-       * `processClauseLits_freeVars_agree`: the ρ/σ agreement carries to `pcl`.
-       * `canonicalDTree_deepPath_match_freeLits` plus `hcanon` and
-         `List.getElem_take` give the index-matching hypothesis
-         `lits[k].1.var = path[k].1`.
-       * `canonicalPath_preserve_processClauseLits` then yields both
-         `IsCanonicalPath f pcl.2.1 pcl.1` and the new depth bound.
-       * `processClauseLits_path_le` makes `fuel` suffice; the tight length
-         identity `pcl.1.length + min lits.length path.length = path.length`
-         is `processClauseLits_path_length_eq`.
-       * Applying the induction hypothesis to the recursive call and `omega`
-         finishes.
+Throughout, $\mathrm{numFree}(\rho)$ denotes the number of variables left unset by a restriction $\rho$, and $\mathrm{depth}(f,\rho)$ the depth of the canonical decision tree of $f\!\restriction_\rho$.
 
-**Used in.** `razborovEncode_fst_numFree_eq` (private, same file), where it is
-instantiated with `ρ₀ = σ = ρ` and `path.length = d` to conclude that the
-encoder's γ-output is an `(s − d)`-restriction — the counting step of the
-switching lemma.
+1. **Induction on the fuel**, generalising $\mathrm{path}$, $\rho_0$ and $\sigma$. The hypothesis that the fuel strictly exceeds $\lvert\mathrm{path}\rvert$ makes the zero-fuel case vacuous, since no length is negative. Assume the claim for fuel $m$ and prove it for $m+1$.
+
+2. **Empty path.** If $\mathrm{path}$ is empty the encoder does no work and returns $\sigma$ itself, so $\mathrm{numFree}(\sigma) + 0 = \mathrm{numFree}(\sigma)$ holds on the nose.
+
+3. **Nonempty path $s :: \mathrm{rest}$.** Now $\lvert\mathrm{path}\rvert \ge 1$, and since $\lvert\mathrm{path}\rvert \le \mathrm{depth}(f,\rho_0)$ the canonical tree has depth at least $1$ — it is a genuine branch, not a leaf. This positivity is what rules out the two degenerate exits of the encoder.
+
+4. **Finding an alive clause.** The encoder first searches for a clause of $f$ not killed by $\rho_0$ (a clause is *killed* when $\rho_0$ already falsifies one of its literals). If every clause is killed, the canonical tree is the constant-false leaf and has depth $0$ (*depth is zero when all terms are killed*, `canonicalDTree_depth_zero_of_killed`), contradicting step 3. So let $t$ be the first alive clause.
+
+5. **The clause has a free literal.** Collect the literals of $t$ whose variable is still free under $\rho_0$, each tagged with its position in $t$; call this list $\mathrm{fli}$. Suppose $\mathrm{fli}$ were empty. Then every literal of $t$ has its variable set by $\rho_0$. A set variable either falsifies its literal — impossible, since $t$ is alive and so unkilled — or satisfies it; hence every literal of $t$ is satisfied, i.e. $t$ is *fixed* (made true) by $\rho_0$. But a clause fixed by $\rho_0$ forces the canonical tree to be the constant-true leaf, again of depth $0$ (*depth is zero when some term is fixed*, `canonicalDTree_depth_zero_of_fixed`), contradicting step 3. Therefore $\mathrm{fli}$ is nonempty.
+
+6. **Processing the clause.** With $\mathrm{fli}$ nonempty, the encoder processes these free literals against $\mathrm{path}$ by `processClauseLits`, producing an updated restriction $\rho_0'$, an updated shadow restriction $\sigma'$, a shortened path $\mathrm{path}'$, and an output accumulator. The accumulator plays no part in the free-variable count: by *accumulator independence* (`encode_go_acc`), the restriction the encoder ultimately returns is the same whether the accumulator starts empty or seeded, so we may ignore it and work with the empty-accumulator run.
+
+7. **What one clause costs $\sigma$.** The processed free literals have genuinely unset variables under $\rho_0$, and their variables are pairwise distinct — this uses both hypotheses on $f$: no literal repeats within $t$, and two literals of $t$ on the same variable coincide (*distinct variables among free literals*, `processClauseLits_freeLits_pairwise_var`). Given distinctness, agreement of $\rho_0$ with $\sigma$, and the freeness of these variables, processing the clause removes exactly $\min(\lvert\mathrm{fli}\rvert,\lvert\mathrm{path}\rvert)$ variables from $\sigma$'s free set:
+\[ \mathrm{numFree}(\sigma') + \min\bigl(\lvert\mathrm{fli}\rvert,\lvert\mathrm{path}\rvert\bigr) = \mathrm{numFree}(\sigma) \]
+(*the $\sigma$ free-count after processing*, `processClauseLits_numFree_σ`). The updated $\rho_0'$ and $\sigma'$ still leave the same variables free (*agreement is preserved*, `processClauseLits_freeVars_agree`), so the induction hypothesis will apply to them.
+
+8. **Alignment with the canonical path.** To continue the induction we must know that $\mathrm{path}'$ is still a canonical prefix for $\rho_0'$. The key structural fact is that, for each $k$ below $\min(\lvert\mathrm{fli}\rvert,\lvert\mathrm{path}\rvert)$, the variable of the $k$-th free literal equals the variable the $k$-th path step branches on. This is assembled from two pieces: because $\mathrm{path}$ is a prefix of the deepest path, its $k$-th entry is the $k$-th entry of that deepest path (its length being $\mathrm{depth}(f,\rho_0)$, `DecisionTree.length_deepPath`, keeps $k$ in range); and the $k$-th node of the deepest path branches precisely on the variable of the $k$-th free literal of the first alive clause (*the deep path tracks the free literals*, `canonicalDTree_deepPath_match_freeLits`). Composing the two gives the alignment.
+
+9. **Canonical prefix is preserved.** Fed this alignment, `canonicalPath_preserve_processClauseLits` shows that $\mathrm{path}'$ is a canonical-path prefix for $\rho_0'$ and that $\lvert\mathrm{path}'\rvert \le \mathrm{depth}(f,\rho_0')$ — both hypotheses the induction hypothesis needs.
+
+10. **Fuel remains sufficient.** Because $\mathrm{fli}$ and $\mathrm{path}$ are both nonempty, at least one path step is consumed, so $\lvert\mathrm{path}'\rvert \le \lvert\mathrm{rest}\rvert$ (`processClauseLits_path_le` applied past the first step). As $\lvert\mathrm{path}\rvert = \lvert\mathrm{rest}\rvert + 1 < m+1$, we get $\lvert\mathrm{path}'\rvert < m$.
+
+11. **Induction hypothesis.** Steps 7, 9 and 10 supply exactly the hypotheses for fuel $m$ on $\mathrm{path}'$, $\rho_0'$, $\sigma'$:
+\[ \mathrm{numFree}(\text{output}) + \lvert\mathrm{path}'\rvert = \mathrm{numFree}(\sigma'). \]
+
+12. **Telescoping.** Finally, processing consumes *exactly* $\min(\lvert\mathrm{fli}\rvert,\lvert\mathrm{path}\rvert)$ steps, i.e. $\lvert\mathrm{path}'\rvert + \min(\lvert\mathrm{fli}\rvert,\lvert\mathrm{path}\rvert) = \lvert\mathrm{path}\rvert$ (*exact length split*, `processClauseLits_path_length_eq`). Chaining this with steps 11 and 7,
+\[ \mathrm{numFree}(\text{output}) + \lvert\mathrm{path}\rvert = \mathrm{numFree}(\text{output}) + \lvert\mathrm{path}'\rvert + \min(\cdots) = \mathrm{numFree}(\sigma') + \min(\cdots) = \mathrm{numFree}(\sigma), \]
+which is the claim. $\qquad\blacksquare$
+
+The route is worth noting: the natural statement is about one path step, but the proof advances one *clause* at a time, consuming a whole block of $\min(\lvert\mathrm{fli}\rvert,\lvert\mathrm{path}\rvert)$ steps per recursion. This is forced by the encoder's own structure — it processes a clause's free literals as a unit — and the two length lemmas of steps 10 and 12 are precisely what reconcile that block-wise descent with the per-step bookkeeping.
+
+**Key facts.** `SwitchingLemma.canonicalDTree_depth_zero_of_killed`, `SwitchingLemma.canonicalDTree_depth_zero_of_fixed`, `SwitchingLemma.encode_go_acc`, `SwitchingLemma.processClauseLits_freeLits_pairwise_var`, `SwitchingLemma.processClauseLits_numFree_σ`, `SwitchingLemma.processClauseLits_freeVars_agree`, `DecisionTree.length_deepPath`, `SwitchingLemma.canonicalDTree_deepPath_match_freeLits`, `SwitchingLemma.canonicalPath_preserve_processClauseLits`, `SwitchingLemma.processClauseLits_path_le`, `SwitchingLemma.processClauseLits_path_length_eq`.

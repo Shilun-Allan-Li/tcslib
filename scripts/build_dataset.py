@@ -317,9 +317,19 @@ def parse_blueprint(chapter_dir: Path = CHAPTER_DIR) -> dict[str, dict]:
                 informal = INLINE_LEAN_RE.sub(lambda m: " " + m.group(1), informal)
                 informal = re.sub(r"\n{3,}", "\n\n", informal).strip()
                 uses = [u.strip() for u in re.sub(r"[{}]", " ", uses_raw).split(",") if u.strip()]
-                for b in bindings:
-                    out.setdefault(b, {"env": env, "informal": informal, "title": title,
-                                       "uses": uses, "difficulty": difficulty})
+                # A grouped environment whose body has one paragraph per binding (the
+                # shape blueprint_restate.py writes: each declaration's own statement in
+                # binding order) documents each declaration by its paragraph.  Any other
+                # grouped body is shared by all of them (dataset_check.py reports those
+                # records as `shared-statement`).
+                paragraphs = [p.strip() for p in re.split(r"\n\s*\n", informal) if p.strip()]
+                per_binding = len(bindings) > 1 and len(paragraphs) == len(bindings)
+                for index, b in enumerate(bindings):
+                    out.setdefault(b, {"env": env,
+                                       "informal": paragraphs[index] if per_binding else informal,
+                                       "title": title if not per_binding else "",
+                                       "uses": uses, "difficulty": difficulty,
+                                       "group": list(bindings)})
             i += 1
     return out
 
@@ -1817,17 +1827,28 @@ def main():
     notes = isrc.load_notes()
     print(f"  {sum(1 for n in citations if isrc.is_cited(n, citations))} cited entries, "
           f"{len(block_text)} reference documents, {len(notes)} informalized notes.")
-    # Some pre-existing chapters reference declarations by short (unqualified) name; allow
-    # a short-name fallback when it is unambiguous.
+    # Some pre-existing chapters reference declarations by a short (partially qualified)
+    # name; allow a fallback when it is unambiguous AND the entry's name is a namespace
+    # suffix of the declaration's.  A bare last-component match is not enough: it once
+    # handed `BoolCircuit.DAGGate.decode_encode` the prose of
+    # `Turing.MachineCode.decode_encode`, an unrelated theorem that merely shares the
+    # final identifier (27 records of the 2026-10 build).
     short_counts: dict[str, int] = {}
     for k in informal:
         short_counts[k.split(".")[-1]] = short_counts.get(k.split(".")[-1], 0) + 1
-    informal_short = {k.split(".")[-1]: v for k, v in informal.items()
+    informal_short = {k.split(".")[-1]: (k, v) for k, v in informal.items()
                       if short_counts[k.split(".")[-1]] == 1}
     print(f"  {len(informal)} blueprint entries.")
 
     def lookup(name):
-        return informal.get(name) or informal_short.get(name.split(".")[-1])
+        entry = informal.get(name)
+        if entry is not None:
+            return entry
+        found = informal_short.get(name.split(".")[-1])
+        if found is None:
+            return None
+        key, entry = found
+        return entry if name.endswith("." + key) else None
 
     # Resolve a blueprint \uses name to an indexed definition (handles short names and the
     # notation case where the statement text hides the underlying def, e.g. χ_[…] -> chiS).

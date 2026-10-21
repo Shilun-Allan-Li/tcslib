@@ -121,6 +121,24 @@ writes `dataset/.pipeline/state.json`.
   declaration that `citations` then matched keeps its placeholder body in the `.tex`;
   the dataset is unaffected (its informal statement is the cited passage).  The
   blueprint should quote the passage too.
+- **Some records still share one informal statement** (`dataset_check.py` reports them as
+  `shared-statement`).  After the 2026-10-20 clean-up every remaining case is a
+  `\statementsource` whose passage states several lemmas at once (one proposition of the
+  text, formalized as a family of lemmas; 24 groups, 69 records).  The passage is the
+  statement by design, but it does not single out the lemma; whether such a record should
+  also carry the declaration's own claim is undecided.  (The clean-up fixed the other
+  causes: the builder's short-name fallback no longer hands a declaration the prose of an
+  unrelated entry that shares its last identifier -- 27 records were dropped and return
+  once the `blueprint` and `statements` stages give them entries -- and a grouped entry
+  whose body has one paragraph per binding is split per declaration.)
+- **Proof accounts can come back unusable.**  Two shapes have been seen: a tactic
+  transcript (mostly backticked code naming tactics) and a stub (`"proof": "placeholder"`
+  or "see the account field", which the model writes when it treats the structured
+  answer as a pointer to text it wrote before).  `informalize_proofs.py` rejects both
+  (`informal_sources.is_tactic_transcript`, `unusable_account`), retrying once, and the
+  agent wrapper now enforces the schema's string lengths.  The 126 transcripts on disk
+  were parked under `references/informalized/rejected/` on 2026-10-20 and the 95 of
+  them that back dataset records were regenerated.
 - **The prose cache duplicates the blueprint.**  With rule 1 in force, "needs a
   statement" is simply "the entry is still a stub", and the cache's remaining job is
   change detection (rule 5).  Decision pending: keep it as the persistence layer, or

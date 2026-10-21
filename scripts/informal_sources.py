@@ -172,6 +172,8 @@ def load_notes() -> dict[str, tuple[Path, str]]:
     out: dict[str, tuple[Path, str]] = {}
     if not INFORMALIZED_DIR.exists():
         return out
+    # Non-recursive on purpose: notes rejected as tactic transcripts are parked under
+    # INFORMALIZED_DIR/rejected/ (see informalize_proofs.py) and must not be picked up.
     for md in sorted(INFORMALIZED_DIR.glob("*.md")):
         if md.stem == "WORKLIST":
             continue
@@ -237,6 +239,47 @@ def note_body(markdown: str) -> str:
         if body.startswith("**Proof.**"):
             body = body[len("**Proof.**"):].lstrip()
     return re.sub(r"\n{3,}", "\n\n", body).strip()
+
+
+# ---------------------------------------------------------------- quality gates
+
+#: Tactic names whose appearance in a proof account marks a tactic transcript rather
+#: than a mathematical argument (the audit class "sketch quotes the formal proof").
+TACTIC_RE = re.compile(
+    r"\b(simp|simp_all|simpa|rw|rwa|exact|refine|intro|intros|obtain|rcases|rintro|"
+    r"omega|linarith|nlinarith|positivity|norm_num|ring|ring_nf|field_simp|apply|"
+    r"constructor|use|calc|cases|induction|unfold|subst|ext|funext|congr|aesop|decide|"
+    r"push_cast|norm_cast|gcongr|specialize|exact_mod_cast|by_cases|split|split_ifs|"
+    r"contradiction|exfalso|trivial|rfl|infer_instance|mono|bound)\b"
+)
+CODE_RE = re.compile(r"```[\s\S]*?```|`[^`\n]*`")
+#: A proof account is a transcript when more than this share of its proof section is
+#: backticked code and it names at least this many tactics.
+TRANSCRIPT_CODE_FRACTION = 0.5
+TRANSCRIPT_TACTICS = 3
+
+
+def proof_section(account: str) -> str:
+    """The argument itself: the account up to its `**Used in.**` / `**Key facts.**` /
+    `**Caveat.**` trailer."""
+    return re.split(r"\n\*\*(Used in|Key facts|Caveat)\.\*\*", account)[0]
+
+
+def transcript_score(account: str) -> tuple[float, int]:
+    """(share of the proof section inside backticks, number of tactic names in it)."""
+    body = proof_section(account)
+    code = CODE_RE.findall(body)
+    fraction = sum(len(c) for c in code) / max(1, len(body))
+    tactics = len(TACTIC_RE.findall(body))
+    return fraction, tactics
+
+
+def is_tactic_transcript(account: str) -> bool:
+    """A `lean` proof account that narrates the tactic script instead of the
+    mathematics: mostly code, with several tactic names.  Such an account is no
+    informal proof (it restates the `proof` column) and is rejected."""
+    fraction, tactics = transcript_score(account)
+    return fraction > TRANSCRIPT_CODE_FRACTION and tactics >= TRANSCRIPT_TACTICS
 
 
 def informal_columns(

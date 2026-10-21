@@ -1,27 +1,22 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean :: processClauseLits_rho_ne_none_of_mem -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean :: SwitchingLemma.processClauseLits_rho_ne_none_of_mem -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# A member literal's variable gets fixed, given enough path
+# A clause literal's variable is fixed by the processed restriction
 
-**Claim.** If some `p ∈ lits` has `p.1.var = v`, and there are at least as many
-path steps as literals (`lits.length ≤ path.length`), then
-`(processClauseLits lits path ρ₀ σ).2.1 v ≠ none` — the encoder's simulated
-restriction fixes `v`. The length hypothesis is essential: without it
-`processClauseLits` can stop before reaching `p`.
+**Claim.** Fix $n$, two restrictions $\rho_0,\sigma\colon \mathrm{Fin}\,n \to \mathrm{Option}\,\mathrm{Bool}$, a list of literals each tagged with its position index inside its clause, and a decision-tree path given as a list of variable–direction pairs, with at least as many path entries as literals. Run the processing routine on these data starting from $\rho_0$ and $\sigma$, and let $\rho_0'$ be the updated first restriction it returns. If some literal in the list has underlying variable $v$, then $\rho_0'(v) \neq \mathrm{none}$; that is, $v$ is no longer free — the output restriction assigns it a definite Boolean value.
 
-**Proof.** Induction on `lits`, generalizing `path`, `ρ₀`, `σ`.
+**Proof.** Recall how processing works. Given a nonempty literal list $(l,\mathit{idx})::\mathit{rest}$ and a nonempty path $(\_,\mathit{dir})::\mathit{restPath}$, the routine first records the direction $\mathit{dir}$ for variable $l.\mathrm{var}$: it replaces $\rho_0$ by $\rho_0$ updated at $l.\mathrm{var}$ to $\mathrm{some}\,\mathit{dir}$ (and $\sigma$ at $l.\mathrm{var}$ to $\mathrm{some}\,(\lnot\, l.\mathrm{neg})$), then recurses on $\mathit{rest}$ and $\mathit{restPath}$ with these updated restrictions. Crucially, updates only ever install a $\mathrm{some}$-value; nothing is ever set back to $\mathrm{none}$. The proof is an induction on the literal list, with the path and both restrictions generalised so that the updated restrictions may be fed to the inductive hypothesis.
 
-1. `lits = []`: `hp` is impossible — `simp at hp`.
-2. `lits = hd :: tl`, `path = []`: `hlen` reads `_ + 1 ≤ 0` — `simp at hlen`.
-3. `lits = hd :: tl`, `path = step :: rest`: `simp only [processClauseLits]`, then
-   `rcases List.mem_cons.mp hp`.
-   - `p = hd`: the recursive call starts from
-     `Function.update ρ₀ p.1.var (some step.2)`, which is `some step.2` at `v` by
-     `Function.update_apply`, `if_pos hpv.symm`, `Option.some_ne_none`; so
-     `processClauseLits_rho_ne_none` gives the conclusion.
-   - `p ∈ tl`: apply `ih` at `rest`, with the length bound shifted by
-     `simp [List.length_cons] … ; omega`.
+1. **Empty literal list.** If the list is empty, the hypothesis that some literal $p$ lies in it is vacuous, and the goal holds trivially.
 
-**Note.** No current consumers in the library; it is the positive counterpart of
-`processClauseLits_no_target_of_rho_none`.
+2. **Nonempty list, empty path.** If the list is $\mathit{hd}::\mathit{tl}$ but the path is empty, the length hypothesis $\mathrm{length}(\mathit{hd}::\mathit{tl}) \le \mathrm{length}(\,[\,]\,)$ is impossible ($1 \le 0$ fails), so this case cannot arise. This is exactly what the length side-condition buys us: it forbids the routine from ever reaching the empty-path branch — which would return $\rho_0$ untouched — before every literal has been processed.
+
+3. **Nonempty list and path: the literal is the head.** Write the list as $\mathit{hd}::\mathit{tl}$ and the path as $(\_,\mathit{dir})::\mathit{rest}$, and unfold one step of processing. The membership of $p$ splits into two cases. Suppose first that $p = \mathit{hd}$. Then the first processing step updates the restriction at $\mathit{hd}.\mathrm{var}$, and since $p = \mathit{hd}$ we have $\mathit{hd}.\mathrm{var} = v$. Evaluating the updated restriction at $v$ therefore returns the installed value $\mathrm{some}\,\mathit{dir}$, which is not $\mathrm{none}$. So entering the recursive call, $v$ is already fixed. It remains to see that the remaining recursion cannot un-fix it. This is supplied by the preservation lemma (`SwitchingLemma.processClauseLits_rho_ne_none`): if the incoming first restriction is non-$\mathrm{none}$ at $v$, so is the first restriction returned after any amount of further processing. Applying it with the updated restriction, which we have just checked is non-$\mathrm{none}$ at $v$, gives $\rho_0'(v) \neq \mathrm{none}$.
+
+4. **Nonempty list and path: the literal is deeper.** Suppose instead that $p$ lies in the tail $\mathit{tl}$. The recursive call runs the same routine on $\mathit{tl}$ and $\mathit{rest}$ with the updated restrictions, and its first-restriction output is exactly the $\rho_0'$ we must analyse. The inductive hypothesis applies to this call: $p$ still lies in $\mathit{tl}$, still has underlying variable $v$, and the length condition descends ($\mathrm{length}(\mathit{tl}) \le \mathrm{length}(\mathit{rest})$ follows from $\mathrm{length}(\mathit{hd}::\mathit{tl}) \le \mathrm{length}((\_,\mathit{dir})::\mathit{rest})$ by stripping one entry from each side). Hence $\rho_0'(v) \neq \mathrm{none}$.
+
+In both subcases the claim holds, completing the induction. Conceptually, the argument locates the recursion step at which $p$'s variable $v$ is first fixed — either immediately, if $p$ is the current head, or further down, handled by the inductive hypothesis — and then uses that processing never un-fixes an already-fixed variable to carry the fixing through to the final output.
+
+**Key facts.** `SwitchingLemma.processClauseLits_rho_ne_none`.

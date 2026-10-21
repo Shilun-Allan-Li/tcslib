@@ -48,12 +48,18 @@ to this repository, follow the argument and see why it is correct.
 
 ## Form
 
+Only the structured JSON object you return is read; any plain text you write
+before it is discarded.  So the whole account goes inside `proof` -- write the
+answer directly as the structured object, in one go.
+
 - `title`: a short noun phrase naming the result (under about ten words), no
   Lean identifier in it.
 - `claim`: one paragraph restating what is proved, in the vocabulary of
   `informal_statement` (it may be a light rewording of it).
-- `proof`: the account.  Markdown.  Short proofs are one paragraph; longer
-  proofs use a numbered list of steps, each a few sentences.  LaTeX for
+- `proof`: the complete written account of the proof, in this field.  There is
+  no other field for it: never a placeholder, a summary, or a pointer to text
+  elsewhere.  Markdown.  Short proofs are one paragraph; longer proofs use a
+  numbered list of steps, each a few sentences.  LaTeX for
   mathematics: `$...$` inline, `\[...\]` displayed.  Only standard LaTeX,
   amsmath and amssymb control words; an invented macro breaks the build.
 - `key_facts`: the upstream Lean names (from `upstream`) that the argument

@@ -11,6 +11,12 @@ proofmatch's `informalize_queue.md`; this script writes them headlessly through
 the model CLI (`claude -p` or `codex exec`; prompt: proofmatch/prompts/informalize_proof.md) so the pipeline can
 fill the gap for every uncited, sorry-free theorem.
 
+An account that comes back as a tactic transcript -- mostly backticked code naming
+tactics, which restates the Lean proof instead of explaining it -- is rejected
+(informal_sources.is_tactic_transcript): one retry, then the theorem is reported as
+failed.  Notes already on disk that fail the same test are parked under
+references/informalized/rejected/ by the dataset clean-up and regenerated here.
+
 Selection (what gets a note):
     * theorem / lemma records of the dataset (definitions are described by the
       blueprint entry, not by a proof note);
@@ -90,6 +96,23 @@ def proof_has_sorry(slice_lines: list[str]) -> bool:
     text = re.sub(r"/-[\s\S]*?-/", "", text)
     text = re.sub(r"--.*", "", text)
     return re.search(r"\bsorry\b", text) is not None
+
+
+#: Shortest proof account that can be a real argument rather than a stub.
+MIN_ACCOUNT_CHARS = 80
+STUB_RE = re.compile(r"(?i)placeholder|see (the|my) [a-z ]*(field|above|below)|"
+                     r"(account|argument|proof) (above|below) is the proof")
+
+
+def unusable_account(proof: str) -> str | None:
+    """Why `proof` cannot be shipped as an informal proof, or None when it can."""
+    text = proof.strip()
+    if len(text) < MIN_ACCOUNT_CHARS or STUB_RE.search(text):
+        return f"the account is a stub ({len(text)} chars: {text[:60]!r})"
+    if bpn.is_tactic_transcript(text):
+        return (f"the account is a tactic transcript (code fraction / tactic names "
+                f"{bpn.transcript_score(text)})")
+    return None
 
 
 def build_payload(record: dict, rec: dict, index: dict) -> dict:
@@ -223,7 +246,21 @@ def main() -> int:
         if halted.is_set():
             return
         try:
-            result = agent.run("informalize_proof", build_payload(record, rec, index))
+            payload = build_payload(record, rec, index)
+            # An unusable account -- a tactic transcript that restates the `proof`
+            # column, a stub ("placeholder", "see the account field"), or an answer
+            # the schema rejects -- gets one more attempt, then the theorem is given
+            # up for the run; a re-run tries again.
+            try:
+                result = agent.run("informalize_proof", payload)
+                problem = unusable_account(result.get("proof", ""))
+            except AgentOutputError as error:
+                problem = str(error)
+            if problem:
+                result = agent.run("informalize_proof", payload)
+                problem = unusable_account(result.get("proof", ""))
+                if problem:
+                    raise AgentOutputError(f"{record['id']}: {problem} (second attempt)")
         except (AgentOutputError, AgentInvocationError) as error:
             detail = str(error)
             with lock:
