@@ -1318,7 +1318,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     the status text and two `Implementation.` paragraphs); replay `replay-lf5c1.sh` (16 modules)
     and a fill gate pending. Optional private-docstring rewordings (its F2) are for the deferred
     public-facing pass; its O1 (two read exits keep moving after `2ℓ + 5`) goes to the F6/U2-E
-    briefs.
+    briefs (text: gate 60's resolutions, C60-1; the exit state also persists with displaced
+    heads).
   - **G4 cont3: partial** (checkpoint 1.1b; the session lost its workspace while on 1.2). Reviewed
     (`campaign/fills/s13d/reviews/g4-cont3/REVIEW.md`: land); **landed as #148** (`13e17589`, the
     worker's own commit only); replay `replay-lg4c3.sh` (16 modules) and a fill gate pending.
@@ -1327,9 +1328,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     needs `DecidableEq` for a 12-part state type that default instance search misses (raise
     `synthInstance.maxSize` to 256, or give the instance); the left pass by per-stage lemmas (an
     85% pair already); seal controls that close by `rfl` unsealed; gate 58's probe and duplication
-    points; region lines from the landed file.
-  - **For the addendum's next version:** both reviews found 967 of the 1,002 cache files already
-    on the host before the fetch; record where they came from.
+    points; region lines from the landed file. Also (gate 61): the real `link` and the proof of
+    `hlink` for the return home's seam (gate 61's probe checked types only); the probe at 446
+    checks of 435 names, its inventory taken from the whole module's elaborated constants; the
+    level-one and level-two instances as probe examples. **The consolidated list is gate 61's
+    resolutions, C61-1.**
+  - **For addendum v2.5:** both reviews found 967 of the 1,002 cache files already on the host
+    before the fetch; log the cache tool's archive store before the first fetch and report the
+    count (gate 60, note 16; the wording is in `campaign/gates/59-c1-seamlayout-fill/evidence/`
+    `round1-review/REVIEW.md`, V25-2). **Pending (user):** allow a pre-populated store, or
+    require an empty one.
 - **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
   (`campaign/fills/mig12/reports/mig12-cont1-eres-REPORT.md`): its host was given the **v2.1**
   addendum (`2563c8d2…`), whose re-check after the toolchain kept the 12 GiB floor; free disk was
@@ -1376,6 +1384,34 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   the facade, so **its replay runs once, after those merge**, on the merged tree. Then gate 62
   (an API gate). **Gate numbering:** #147's fill gate becomes gate 63. Optional cleanup:
   `wr_space` (`Build/WindowRun`, private) can re-point to `spaceUsed_le_of_abs_le`.
+- **Gates 59, 60 and 61 returned and closed (2026-10-22).** 59 (#145) PASS 0/0/3/14, 60 (#146)
+  PASS 0/0/0/16, 61 (#148) PASS 0/0/2/16: findings verbatim, resolutions in each gate folder,
+  verified by one review sub-agent (`campaign/gates/59-c1-seamlayout-fill/evidence/round1-review/`;
+  all true but gate 61's minor 10, partly true). No `.lean` change. Records: pack errata (59
+  line 36, 60 lines 13–14); report errata `campaign/fills/c1/reports/seamlayout-1-ERRATUM.md` and
+  `campaign/fills/s13d/reports/g4-cont3-ERRATUM.md`; gate 61's evidence note
+  `evidence/round1-review/10-outputs.txt`; the counting convention W1 (public declarations at
+  source; public constants, such as derived instances of private types, reported separately).
+  **#145, #146 and #148: clear to merge.** #147 after #145, then its merged-tree replay and gate
+  63; #149's replay after those.
+  - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
+    the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
+    SeamLayout and the facade.
+  - **For the dedup window (user):** `InputDevice`'s in-file 79% pair
+    `exists_rulerTestTM`/`rd_test_return` (target 1's last step can cite `rd_test_return`; a
+    frozen proof, so the user's call); F5's promotion candidates (the `Lockstep` frames
+    corollary, `rd_shift_move`, the "step plus bounded pause" block once U2-E fixes its shape).
+  - **For the shared-API window:** promote `zr_singletonContract` (`Build/ZoneRebalance`) beside
+    `Contract.ofSegment` or as a `Contract.seq` corollary, a `def` with non-`simp` field lemmas, by
+    an API PR with its gate (gate 61, note 3).
+  - **Optional (user):** a docstring sentence for `exists_rulerDeviceTM` saying its exits are return
+    points (gate 60's resolutions, C60-2), in the deferred public-facing pass or the first
+    consumer's PR.
+  - **Bundle-builder lesson:** gates 60 and 61's bundle lists kept only the first 60 entries of
+    each review's `out/` folder (gate 61's minor 10). Include every file a review cites, with no
+    per-folder cap, and check the review's citations against the list before staging.
+  - **Packs give the head's merge-base** (`git merge-base <head> <campaign tip>`) and the bundle's
+    records revision separately (gate 60, note 1).
 - **The seam layout: delivered complete (2026-10-22), reviewed: land**
   (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
   (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
@@ -1392,9 +1428,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   instances with public names, as landed code has), F4 (REPORT inaccuracies), F5 (applied by the
   squash). Dedup candidates: `sl_apply_eq` with `ExhaustiveReplay`'s `xr_act_apply`; a reversed
   read for `BufferWords`.
-  - **For the addendum's next version:** item 2's manifest check fails by construction under the
-    narrowed fetch (the four documentation packages are absent); it should check each package
-    present in `.lake/packages`.
+  - **For addendum v2.5:** item 2's manifest check fails by construction under the narrowed
+    fetch (the four documentation packages are absent); it should check each package present in
+    `.lake/packages` and list the others as absent (gate 59, note 16; wording V25-1 in the gates
+    59–61 review).
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.

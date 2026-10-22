@@ -1,0 +1,62 @@
+# 59-F3: the report's six inaccuracies (REPORT = campaign/fills/c1/reports/seamlayout-1-REPORT.md, blob ba3cb78bba9d0ffeaf6f0f21d4c6a3e32a563491)
+
+## (1) §5: 'the seal test with attribute [local irreducible] Turing.phaseHostTM would fail on it'
+194:`attribute [local irreducible] Turing.phaseHostTM` would fail on it). Instead the dispatch
+review probe/SLPhase8Route.lean.txt: phaseHostTM sealed at line 12; example (1) closes by 'simp only [phaseHostTM, hs]' (line 20); example (2) 'simp only [hs]' (line 27)
+out/21b-phase8-route.out:
+ReviewScratch/SLPhase8Route.lean:27:2: error: `simp` made no progress
+exit 1, 1 s, 2026-10-22 00:26:42, file ReviewScratch/SLPhase8Route.lean, oleans oleans-lbw2
+=> only (2) fails; (1) succeeds under the seal. TRUE.
+
+## (2) bufferTape_of_neg listed as cited (CP2 sl_reverse_read; §6)
+115:  `bufferTape_left`, `bufferTape_of_neg` and `bufferTape_eq_none_of_not_mem`, as the brief
+212:  `length_pairEncode`, `FinTM.bufferTape` with `_nat`, `_left`, `_of_neg`, `_drop`, `_take`,
+landed source: occurrences of bufferTape_of_neg: 1 (line 1451, the frozen target docstring; base line 57)
+review out/25: 'issued-probe names the proof does not reach' includes Turing.FinTM.bufferTape_of_neg; out/15 .tcslib-consts reaches bufferTape_left, not _of_neg (0 hits). TRUE.
+
+## (3) archive paths
+REPORT cites:   17 evidence/logs/    2 evidence/probe/ 
+zip members (review out/03b-files.txt): top-level dirs: REPORT.md fill-c1-seamlayout.bundle logs patches probes src 
+=> the zip has logs/ and probes/, no evidence/. TRUE. (REPORT §11 itself cites 'logs/screen-before.txt' correctly.)
+
+## (4) final-module-check.log
+308:   (`evidence/logs/final-module-check.log` via the sweep; also checked standalone).
+in zip: 0; module-check logs present: logs/module-check-cp1.log logs/module-check-cp2.log . TRUE.
+
+## (5) manifest check
+49:fetched by the narrowed cache and are **absent, not mismatched**; no later Lake command
+review out/37 (verbatim log):
+--- manifest check log (verbatim)
+«doc-gen4»: url MISMATCH  rev MISMATCH 
+PFR: url OK rev OK
+mathlib: url OK rev OK
+Cli: url OK rev OK
+UnicodeBasic: url MISMATCH  rev MISMATCH 
+BibtexQuery: url MISMATCH  rev MISMATCH 
+MD4Lean: url MISMATCH  rev MISMATCH 
+LeanAPAP: url OK rev OK
+plausible: url OK rev OK
+LeanSearchClient: url OK rev OK
+importGraph: url OK rev OK
+proofwidgets: url OK rev OK
+aesop: url OK rev OK
+Qq: url OK rev OK
+batteries: url OK rev OK
+MANIFEST CHECK: FAIL
+=> the log ends 'MANIFEST CHECK: FAIL' with four 'url MISMATCH rev MISMATCH' lines (empty values); REPORT does not quote the FAIL. TRUE.
+
+## (6) final sweep vs commit 6
+22:owned module START/END: ['02:19:16', '02:19:17'] ; first/last record: ['02:11:11', '02:11:14'] ['02:22:27', '02:22:29']
+45:owned module START/END: ['03:32:31', '03:32:39'] ; first/last record: ['03:24:13', '03:24:16'] ['03:36:09', '03:36:10']
+09773a665e5409a66ddc71a42f566efe74e690d8 56510600f210c6a6902af651fae13acc6800b5b9 | Fill agent <ragavanbsco@mit.edu> | Thu Oct 22 03:39:39 2
+56510600f210c6a6902af651fae13acc6800b5b9 e95148bc76cd8b13c9c604819b289489383b3e20 | Fill agent <ragavanbsco@mit.edu> | Thu Oct 22 03:25:52 2
+56510600f210c6a6902af651fae13acc6800b5b9: TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean   1 file changed, 22 insertions(+), 11 delet
+09773a665e5409a66ddc71a42f566efe74e690d8: TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean   1 file changed, 10 insertions(+), 8 deleti
+328:  facade re-check after the last commit (`exit=0`). Per-module sorry warnings: 34, exactly the
+=> SeamLayout was swept 03:32:31-03:32:39, between commit 5 (03:25:52) and commit 6 (03:39:39); only the facade was re-checked after commit 6. Commit 6 restates sl_apply_eq's proof (10+/8-). The head was elaborated by the review (out/13, oleans-lbw2) and the landing (evidence/land/elab-SeamLayout-lg4c2.out, exit 0). TRUE.
+
+## (7, from finding 1) §7 'No new public declaration (ground rule 3)' and §12 '1 public'
+251:- Every new private carries the `sl_` prefix. **No new public declaration** (ground rule 3);
+338:- `Build/SeamLayout.lean`: **1755 lines** (base 120; overlay 121). Declarations: **1 public**
+339:  (the frozen target, now proved), **35 private** (base: 1 public, 0 private):
+=> true of source declarations; the module also adds six public derived-instance constants (out/15 MODULE PUBLICS). Erratum item per gate 59 finding 1's resolution.
