@@ -1044,6 +1044,165 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     injection hcontra with h1
     injection h1 with h1a h1b
     exact Bool.noConfusion (Sum.inr.inj h1b)
+  intro α
+  refine ⟨(60 + 22 * α.length + costI α +
+      CL * ((serializeK (c.decode α).tm.replayTM).length + 1) + CW) + 43 + (CW + 2) +
+      50 * ((tableBitsK (c.decode α).tm.replayTM.tr).length + 1) + 10, ?_⟩
+  intro x t s hs
+  dsimp only
+  simp only [CodeNDTM.toFinNDTM_tm, CodeNDTM.toFinNDTM_k, CodeNDTM.toFinNDTM_State]
+  set tapes₀ : Fin K → ℤ → Option Bool :=
+    fun i => if i = js then FinTM.bufferTape s else fun _ => none with htapes₀
+  -- Ranges of the two header scratch selections, by value.
+  have hr₁ : ∀ j : Fin K, j ∈ Set.range ι₁ ↔ 11 ≤ j.val ∧ j.val < 11 + k₁ := by
+    intro j
+    constructor
+    · rintro ⟨i, rfl⟩
+      have h := hι₁ i
+      have h7 := i.isLt
+      omega
+    · rintro ⟨h1, h2⟩
+      exact ⟨⟨j.val - 11, by omega⟩, Fin.ext (by rw [hι₁]; show 11 + (j.val - 11) = j.val; omega)⟩
+  have hr₂ : ∀ j : Fin K, j ∈ Set.range ι₂ ↔ 11 + k₁ ≤ j.val ∧ j.val < 11 + k₁ + k₂ := by
+    intro j
+    constructor
+    · rintro ⟨i, rfl⟩
+      have h := hι₂ i
+      have h7 := i.isLt
+      omega
+    · rintro ⟨h1, h2⟩
+      exact ⟨⟨j.val - (11 + k₁), by omega⟩,
+        Fin.ext (by rw [hι₂]; show 11 + k₁ + (j.val - (11 + k₁)) = j.val; omega)⟩
+  -- Phase 1: the first header pass, capturing `bits t` on its tape.
+  have hdr1 := ic_header_capture true K α x t ι₁ jbt
+    (by rintro ⟨i, rfl⟩; have h := hι₁ i; omega) tapes₀ (fun _ => 0) []
+  simp only [↓reduceIte] at hdr1
+  obtain ⟨T₁, hT₁, h₁st, h₁pos, h₁bt, h₁bthd, h₁out, h₁frame, h₁cut⟩ := hdr1
+  set cfg₀ := (embedSilentCfg ι₁ jbt tapes₀ (fun _ => 0) [] []
+    ((prefixCanonTM (FinTM.pairExtractTM true false)).tm.initCfg
+      (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl with hcfg₀
+  set e₁ := (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm).runFrom
+    cfg₀ T₁ with he₁
+  -- Phase 2: the input rewind back to position 1, through the first seam.
+  have hd₂st : (e₁.mapState (fun _ => (0 : Fin 3))).state = some 0 := by
+    rw [Cfg.mapState_state, h₁st]
+    rfl
+  have hd₂pos : 1 ≤ (e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val := by
+    rw [Cfg.mapState_inputPos, h₁pos]
+    omega
+  obtain ⟨hL1, hL2⟩ := ic_rewind_leaf_run (e₁.mapState (fun _ => (0 : Fin 3))) hd₂st hd₂pos
+  obtain ⟨s2run, s2st, s2cut⟩ := ic_seam_step
+    (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm) (Sum.inr ())
+    (ic_rewindLeafTM K) (0 : Fin 3) (2 : Fin 3) he₁.symm h₁st h₁cut hL1 rfl hL2
+  set e₂ := ({ e₁.mapState (fun _ => (0 : Fin 3)) with
+    state := some (2 : Fin 3), inputPos := 1 } : Cfg K Bool (Fin 3) _) with he₂
+  have he₂out : e₂.output = [] := by
+    rw [he₂]
+    show (e₁.mapState (fun _ => (0 : Fin 3))).output = []
+    rw [Cfg.mapState_output]
+    exact h₁out
+  have htapes₀blank : ∀ j : Fin K, j ≠ js → tapes₀ j = fun _ => none := by
+    intro j hj
+    rw [htapes₀]
+    simp only [if_neg hj]
+  -- Phase 3: the second header pass, capturing `α` on its tape.
+  have hLHS₂t : ∀ j, ((e₂.mapState (Sum.inr : Fin 3 →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3)).mapState
+        (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
+          (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit))).workTapes j =
+      e₁.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₂]
+    exact Cfg.mapState_workTapes (fun _ => (0 : Fin 3)) e₁ j a
+  have hLHS₂p : ∀ j, ((e₂.mapState (Sum.inr : Fin 3 →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3)).mapState
+        (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
+          (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit))).workTapePos j =
+      e₁.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₂]
+    exact Cfg.mapState_workTapePos (fun _ => (0 : Fin 3)) e₁ j
+  have hjunc₂ : (e₂.mapState (Sum.inr : Fin 3 →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3)).mapState
+      (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
+        (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit)) =
+      (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+        ((prefixCanonTM (FinTM.pairExtractTM false true)).tm.initCfg
+          (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl := by
+    have hcap₂ : jal ∉ Set.range ι₂ := by
+      intro hmem
+      rw [hr₂] at hmem
+      omega
+    have hniota : jal ∉ Set.range ι₁ := by
+      intro hmem
+      rw [hr₁] at hmem
+      omega
+    have hnjbt : jal ≠ jbt := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    have hnjs : jal ≠ js := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, embedSilentCfg_state,
+        MultiTapeTM.initCfg_eq, Cfg.init_state, he₂]
+      rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos,
+        embedSilentCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, he₂]
+    · funext j
+      rw [hLHS₂t j]
+      funext p
+      rw [Cfg.mapState_workTapes]
+      by_cases hsel : j ∈ Set.range ι₂
+      · obtain ⟨i, rfl⟩ := hsel
+        have hni : ι₂ i ∉ Set.range ι₁ := by
+          intro hmem
+          rw [hr₁] at hmem
+          have := hι₂ i
+          omega
+        have hnb : ι₂ i ≠ jbt := by
+          intro hmem
+          have := congrArg Fin.val hmem
+          have := hι₂ i
+          omega
+        rw [embedSilentCfg_selected_tape, MultiTapeTM.initCfg_eq, Cfg.init_workTapes,
+          (h₁frame _ hni hnb).1,
+          htapes₀blank _ (by intro hmem; have := congrArg Fin.val hmem; have := hι₂ i; omega)]
+      · by_cases hcap : j = jal
+        · rw [hcap, (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).1,
+            (h₁frame jal hniota hnjbt).1, htapes₀blank jal hnjs,
+            MultiTapeTM.initCfg_eq, Cfg.init_output, List.append_nil, FinTM.bufferTape_nil]
+        · rw [(embedSilentCfg_unselected ι₂ jal e₁.workTapes e₁.workTapePos [] [] _ j
+            hsel hcap).1]
+    · funext j
+      rw [hLHS₂p j, Cfg.mapState_workTapePos]
+      by_cases hsel : j ∈ Set.range ι₂
+      · obtain ⟨i, rfl⟩ := hsel
+        have hni : ι₂ i ∉ Set.range ι₁ := by
+          intro hmem
+          rw [hr₁] at hmem
+          have := hι₂ i
+          omega
+        have hnb : ι₂ i ≠ jbt := by
+          intro hmem
+          have := congrArg Fin.val hmem
+          have := hι₂ i
+          omega
+        rw [embedSilentCfg_selected_pos, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+        exact (h₁frame _ hni hnb).2
+      · by_cases hcap : j = jal
+        · rw [hcap, (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).2,
+            (h₁frame jal hniota hnjbt).2, MultiTapeTM.initCfg_eq, Cfg.init_output,
+            List.append_nil]
+          rfl
+        · rw [(embedSilentCfg_unselected ι₂ jal e₁.workTapes e₁.workTapePos [] [] _ j
+            hsel hcap).2]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output,
+        embedSilentCfg_output]
+      exact h₁out
   sorry
 
 end Turing
