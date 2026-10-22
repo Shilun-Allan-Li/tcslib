@@ -1,0 +1,56 @@
+## note 5
+   xr_val                     line 1801  /-- The value of a binary word, little-endian. -/
+   xr_val_inj                 line 1815  
+   xr_incFixed_val            line 1842  /-- The increment adds one to the value. -/
+   xr_incFixed_none_max       line 1858  /-- At the overflow the word is all `true`, so every same-length word has a value at most its. -/
+   xr_first_depth             line 149  /-- The first all-halting depth exists below any all-halting bound, is positive, and answers as the bound does: the deepening terminates by depth `T`,
+   xr_accepts_iff_of_halts    line 134  /-- At an all-halting depth `L ≤ T`, acceptance within `L` and within `T` agree: one direction is monotonicity, the other truncates an accepting word 
+   xr_depth_host              line 2747  /-- **One depth on the host.** From the cycle at the word `s`, with `m = 2^L - val s` words of depth `L` left to replay, the host runs through them to
+   xr_run_host                line 2983  /-- **The depths on the host.** With `L*` the first all-halting depth, from the first cycle at a depth `L ≤ L*` (the depth word of width and value `L`
+   xr_not_haltsWithin_zero    line 57  /-- No branch of length `0` has halted: `Cfg.init` is live. -/
+## note 7
+   xr_shift                   line 194  /-- The configuration `c` with work tape `i` translated by `δ i`: cell `p` holds what cell `p - δ i` held, and the head moves by `δ i`; the state, inp
+   xr_Win                     line 2358  /-- Content within radius `R` of the cell `a`. -/
+   xr_Blank                   line 2362  /-- Blank on `[lo, hi]`. -/
+   xr_stepWith_shift          line 255  /-- One nondeterministic step commutes with translation. -/
+   xr_runWith_shift           line 268  /-- A branch commutes with translation: the branch along `w` from a translated configuration is the translated branch. -/
+   xr_branch_win              line 2630  /-- The branch along `s` keeps `N`'s tapes within radius `2|s|` of its translated heads. -/
+   xr_clearTape_host          line 2477  /-- **The window clear of one tape on the host.** From the start of pass `0` of tape `j`, whose content lies within radius `2|wL|` of its head, within
+   xr_clear_host              line 2559  /-- **The window clear on the host, from tape `N.k - m` on.** The tapes `N.k - m, …, N.k - 1`, each with its content within radius `2|wL|` of its head
+## note 8
+   xr_Clock                   line 1188  /-- **The step clock over the replay machine.** The control `Q`, the clocked machine `H` on `N.k + 2` tapes (the counter last), the injection of the r
+   xr_Clock.exists            line 1231  /-- The clock exists: `Turing.exists_stepClockTMVia` at `Γ = Bool`, the identity embedding and no stop state, with its two exits read. -/
+   xr_replayTM                line 1441  /-- **The replay phase**: the clocked replay, embedded silently with the capture tape. -/
+   xr_tapes                   line 1280  /-- `E`'s work tapes from their five banks. -/
+   xr_heads                   line 1286  /-- `E`'s work heads from their five banks. -/
+   xr_replayStart             line 1448  /-- `E` at the start of a replay of the choice word `s` under the budget word `w`: the clock at the replay's initial state, `N`'s tapes blank with the
+   xr_replayStart_eq          line 1457  /-- The replay's start is the embedded clocked configuration over the translated initial configuration of `N`. -/
+   xr_cycle                   line 2072  /-- `E` at the start of a cycle at depth `|s|`: the copy phase with the flags `a` and `l`, the depth word `wL` on the depth tape, the choice word `s`,
+   xr_depthEnd                line 2081  /-- `E` at the end of a depth, after the choice word's overflow: the deepening when some branch was live, else the answer; the choice tape holds the a
+   xr_Ph                      line 1881  /-- The phases of the exhaustive replay. -/
+   xr_I                       line 1907  /-- The phase index: a phase with the two flags "some branch accepted" and "some branch is live". -/
+   xr_PhSt                    line 1910  /-- Each phase's control. -/
+   xr_M                       line 1960  /-- The phase machines. -/
+   xr_red                     line 2000  /-- The redirect table. -/
+   xr_host                    line 2024  /-- **The host of the exhaustive replay**: the phase host over the phases above, starting at the copy with both flags down. The machine `E` is the two
+   xr_anchor                  line 3066  /-- The host's halt anchor with the accept flag `b`. -/
+   xr_seam                    line 3071  /-- The two-exit seam of the host onto the two one-step answers: at the anchor with the accept flag up, the answer `[true]`; at the anchor with it dow
+   xr_E                       line 3077  /-- **The exhaustive replay's machine `E`**: the seam, started at the host's first cycle. -/
+## note 9
+   xr_St                      line 319  /-- The control of the leaf rows. -/
+   xr_act                     line 328  /-- A silent action: no input move and no emission. -/
+   xr_mv1                     line 332  /-- Write `wr` and move `m` on tape `r` only. -/
+   xr_mv2                     line 337  /-- Write `wr` and move `m` on tape `j`, move `m'` on tape `r`. -/
+   xr_stay                    line 342  /-- The stationary action at `q`. -/
+   xr_rewindTM                line 562  /-- **The rewind**: one step left, then left while reading a symbol, then one step right at the blank. -/
+   xr_extendTM                line 608  /-- **The extension**: right while reading a symbol, write `false` at the blank and turn, return to the origin: the word grows by one `false`. -/
+   xr_testTM                  line 936  /-- **The capture test.** From the end of the captured output, step left and read the last symbol: blank (an empty output) exits `done false`; `true` 
+   xr_inRewindTM              line 1144  /-- **The input rewind**: a left step, then left while the input head reads a symbol, then one step right at the left blank. -/
+   xr_passTM                  line 746  /-- **The pass** (the window clear's engine). While the ruler tape `r` reads a symbol, blank the cell under head `j`, move `j` by `dir` and `r` right;
+   xr_dir                     line 1952  /-- The direction of pass `n`: the first two passes move left, the last four right. -/
+   xr_idleTM                  line 1955  /-- The idle row: stationary everywhere (the `halt` phase, which the host never steps). -/
+   xr_answerTM                line 1156  /-- **The answer**: emit `b` and halt. -/
+   xr_copy_host               line 2144  /-- **The copy phase on the host.** From the start of a cycle, `2|wL| + 3` steps copy the depth word onto the counter and dispatch to the replay. -/
+   xr_firstArrival            line 298  /-- **The first arrival at a stationary anchor.** If a run reaches `c'` in state `a` at time `T` and `a` is stationary, the first time the state is `a
+   xr_firstArrival'           line 1600  /-- **The first arrival at a stationary anchor, over a family of anchors.** If every state in `A` is stationary and a run reaches `c'` in a state of `
+   xr_phase_step              line 2032  /-- **One phase of the host.** If phase `i`, started at `s₀` over the tapes `tp` and heads `hd`, reaches `c'` in `T` steps, `c'` is in a state `s'` th

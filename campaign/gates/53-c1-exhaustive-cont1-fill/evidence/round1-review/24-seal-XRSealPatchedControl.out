@@ -1,0 +1,38 @@
+$S/review/gate53/probe/XRSealPatchedControl.lean:80:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+$S/review/gate53/probe/XRSealPatchedControl.lean:83:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+$S/review/gate53/probe/XRSealPatchedControl.lean:87:26: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+$S/review/gate53/probe/XRSealPatchedControl.lean:3318:29: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 0
+is not definitionally equal to the right-hand side
+  c
+
+k : ℕ
+S : Type
+x : List Bool
+tm : MultiTapeTM k Bool S
+c : Cfg k Bool S x
+⊢ MultiTapeTM.runFrom c 0 = c
+$S/review/gate53/probe/XRSealPatchedControl.lean:3322:40: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).output = c.output
+$S/review/gate53/probe/XRSealPatchedControl.lean:3325:87: error: `simp` made no progress
+$S/review/gate53/probe/XRSealPatchedControl.lean:3329:38: error: `simp` made no progress
+exit 1, 5 s, 2026-10-21 21:55:16, file probe/XRSealPatchedControl.lean (patched blob 0d09053e + the review's 31-definition seal and simp erasure, + 7 controls), oleans oleans-l136

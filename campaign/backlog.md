@@ -923,6 +923,49 @@ privates and re-points their uses (StepBlock's downstream is replayed then).
   correction adds no member, file or family to what the ruling chose: the module and its four
   restatements.
 
+### C1E-1: follow-ups from C1-E cont1, the exhaustive replay (gate 53, notes 10 and 12; 2026-10-21)
+
+*Origin: the maintainer's review of the fill (`campaign/fills/c1/reviews/exhaustive-cont1/REVIEW.md`,
+(d) and decision 4) and gate 53 (PR #136), notes 10 and 12. None is a copy needing
+acknowledgment: the screen's 122 new pairs are all in-file siblings (0 cross-file), and the public
+counterparts in (a) and (b) arrived after the fill's base (`9e77d2b2`). Each item is picked up in
+the user's dedup window, or when `ClassNP/ExhaustiveReplay` is next open.*
+
+- **(a) `xr_val` is `Turing.counterValue`** (`Build/CounterLoop`, already upstream of the
+  module): the same expression `Nat.ofDigits 2 (w.map Bool.toNat)`. Re-point `xr_val` and its
+  lemmas to `counterValue` through the public `counterValue_eq` (#122), rather than promote them
+  under a new name.
+- **(b) Buffer-tape facts.** `xr_bufferTape_neg` is `FinTM.bufferTape_of_neg`; `xr_bufferTape_ge`
+  and `xr_bufferTape_eq_none_iff` (a 93% pair) follow from `FinTM.bufferTape_eq` (both
+  `Simulation`, #122). Cite them and delete the privates.
+- **(c) The replay's two exits.** `xr_replay_finish` and `xr_replay_timeout` share a prelude
+  (`hq`, `hct`, the embedded-run identity `hE`; 992 characters, 92%/90%): one private helper.
+- **(d) The bank lemmas.** The twenty `xr_*_ne_*` one-liners (92-97%) as one lemma over
+  `Fin.val`; optionally the nine one-bank update lemmas (59 pairs) as one "update one bank"
+  lemma (REPORT §8).
+- **(e) `xr_runFrom_one` is `Turing.runFrom_one`** (`Build/EmitIterEmbed`, outside the module's
+  imports). Moving that lemma to `Deterministic` would serve this file and about 28 one-step
+  rewrites elsewhere (review `out/52`). The helper's body is under the screen's 60-character
+  floor, so the screen does not see this idiom; the floor is not evidence of no duplication.
+- **(f) `xr_rewindTM` re-points to the public rewind row** `Turing.rewindTM` (`Build/Rewind`,
+  PR #138, not yet merged), as C1-R round 3's ruling records (§2). As far as read, the phase host
+  takes one control type per phase, so no state embedding is needed: the `crewind` phase's control
+  becomes `RewindPhase`, its redirect reads `RewindPhase.done`, and `xr_crewind_host` cites
+  `rewindTM_run_ofCfg` (whose framed run carries the no-earlier cut). `xr_rewindTM`,
+  `xr_rewindTM_run` and the 94% `xr_testTM`/`xr_rewindTM` pair then go.
+- **(g) Promotion candidates** (REPORT §6, items 1-5, agreed by the review): the ruler-driven pass
+  and the six-pass window clear; `xr_firstArrival'` (the phase host's guard from an exact-time
+  run lemma with a stationary exit); `xr_runWith_shift` (branches commute with translating the
+  work tapes); `xr_window_runWith`; the rewind and extend leaves. Promote when a second consumer
+  is briefed.
+- **(h) A permanent sanity example for transient output** (gate 53, note 10): a binary NDTM with
+  no work tapes that outputs `true` while live and then `false` before halting is not accepted
+  within any bound (`¬ AcceptsWithin`), so the exhaustive decider answers `[false]` on it. Stated
+  from public declarations, it checks the statement's notion of acceptance (halted with output
+  exactly `[true]`), not the private flag handling, which the theorem itself covers. It needs a
+  concrete machine and its runs read through published step equations (rule 10), so it goes in a
+  later docstring/examples PR, not #136.
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
@@ -1143,10 +1186,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   proofs over 20 lines get sketches in a docstring-only follow-up (the six main lemmas first).
   Landing PR from `lean/c1-exhaustive-fill` (16 cherry-picked commits + the review's fix); its
   4-module replay follows #132. BF's only open dependency is now UN.
-  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's head:
+  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's review
+  head `b5629b91`, whose file is byte-equal to #136's merged head `75b2e94c`:
   `xr_passTM_run`, `xr_testTM_run`, `xr_clearTape_host`, `xr_cycle_host`, `xr_depth_host`,
   `xr_run_host`; 0 errors, lint unchanged). Its PR opens after #136 merges (rebased onto the
-  campaign branch, so it is not stacked); the other 18 stay for the docstring pass.
+  campaign branch, so it is not stacked); the other 18 stay for the docstring pass. Gate 53
+  (note 14): six written, 18 remaining, recounted (25 proofs over 20 lines, 7 with a sketch, the
+  target's included). The commit merges with gate 53's minor-1 fix of the target's sketch without
+  conflict (a three-way merge of the file: code identical, the census unchanged). The same PR
+  also rewords the two private texts that still call the accept flag "some branch accepted" (the
+  host section's header and `xr_I`): the flag records an output `[true]`, read as acceptance only
+  at an all-halting depth.
 - **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
   cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
   held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):

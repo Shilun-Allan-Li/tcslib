@@ -411,5 +411,15 @@ without fractions or spans):
 `StepBlock` is under one fifth, and #140 leaves it byte-unchanged. After the retirement, neither
 file has a member.
 
+**C1-E cont1, the exhaustive replay** (PR #136, `ClassNP/ExhaustiveReplay`, 2026-10-21): **no
+member.** The v3 screen's 122 new pairs are all in-file (0 cross-file, 0 gone; 297 → 428
+declarations, 106 → 228 pairs). 26 are at or above the brief's 90% copy threshold, between 17 of
+the module's 185 declarations (9.2%): the twenty `xr_*_ne_*` one-liners, two pairs of leaf tables,
+two buffer-tape facts and the replay's two exits. They are disclosed in-file siblings, listed and
+justified by family in the worker's report (§8) and qualified by its erratum
+(`campaign/fills/c1/reports/exhaustive-2-ERRATUM.md`); gate 53 (minor 2, note 12) found no copied
+material needing acknowledgment. Their consolidation, and the re-points to the public lemmas that
+arrived after the fill's base, are `backlog.md` §1 C1E-1, in the user's dedup window.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
