@@ -1,0 +1,31 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.BufferWords
+
+/-! Maintainer's read-only probe: the brief's phase-8 route (the agreement transport
+`Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` with the host `Turing.phaseHostTM`) needs the
+host's table on a non-redirected state, which has no published lemma. -/
+
+namespace Turing
+
+section Sealed
+attribute [local irreducible] phaseHostTM
+
+/-- (1) The table fact closes by `simp only [phaseHostTM, hs]` (an unfolding of another file's
+definition, barred by rule 10) even with `phaseHostTM` sealed: the seal does not catch it. -/
+example {k : ℕ} {I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Bool (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) (s : Ph i)
+    (hs : red i s = none) (inp : Option Bool) (w : Fin k → Option Bool) :
+    (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = ((M i).tr s inp w).mapState (Sigma.mk i) := by
+  simp only [phaseHostTM, hs]
+
+/-- (2) Without the unfolding it does not close (sealed): expected to fail. -/
+example {k : ℕ} {I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Bool (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) (s : Ph i)
+    (hs : red i s = none) (inp : Option Bool) (w : Fin k → Option Bool) :
+    (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = ((M i).tr s inp w).mapState (Sigma.mk i) := by
+  simp only [hs]
+
+end Sealed
+
+end Turing

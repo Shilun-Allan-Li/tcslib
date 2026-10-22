@@ -1,0 +1,46 @@
+added lines: 1636
+sorry: 0
+admit: 0
+axiom: 0
+unfold: 0
+delta: 0
+set_option: 0
+open: 0
+section: 0
+variable: 0
+attribute: 0
+native_decide: 0
+decide: 18
+      415: d.workTapes src (d.workTapePos src + p) = some (decide (p < q))) :
+      422: then some (decide (z < d.workTapePos sm + q)) else d.workTapes sm z)
+      480: some (decide (p < q)) := by
+      488: push_cast; ring, show decide (1 + p < q + 1) = decide (p < q) from by
+      554: d.workTapes src (d.workTapePos src + p) = some (decide (p < q))) :
+      561: then some (decide (z < d.workTapePos sm + 2 + q)) else d.workTapes sm z)
+      605: Cfg k Bool sl_SplitPhase x).workTapePos src + p) = some (decide (p < q)) := by
+      645: FinTM.bufferTape (List.replicate q true ++ [false]) z = some (decide (z < (q : ℕ))) := by
+      655: (if 2 ≤ z ∧ z ≤ 2 + (q : ℕ) then some (decide (z < 2 + (q : ℕ)))
+      694: ((2 * a.length + 2 + p : ℕ)) = some (decide (p < q)) := by
+      903: exact sl_tagged_ne_done .skipRest (by decide) _
+      960: exact sl_tagged_ne_done .rewindAll (by decide) _
+     1018: exact sl_tagged_ne_done .pairSkip (by decide) _
+     1047: some (decide (p < q)) := by
+     1111: exact sl_tagged_ne_done .unarySplit (by decide) _
+     1176: exact sl_tagged_ne_done .walkHome (by decide) _
+     1290: exact sl_tagged_ne_done .moveTable (by decide) _
+     1355: exact sl_tagged_ne_done .rewindHead (by decide) _
+implemented_by/extern: 0
+unsafe/partial: 0
+macro/elab/syntax: 0
+run_cmd/#eval: 0
+Lean.ofReduceBool/trustCompiler: 0
+show: 29
+change: 0
+rfl: 113
+simp/simpa (any): 138
+dsimp: 48
+nomatch: 0
+noncomputable: 0
+Classical: 0
+lines over 100 characters (whole file): []
+max added-line width: 97

@@ -1,0 +1,1828 @@
+import TCSlib.Complexity.TuringMachine.Configuration
+import TCSlib.Complexity.TuringMachine.Deterministic
+import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.Finite
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.NondeterministicSpace
+import TCSlib.Complexity.TuringMachine.ChoiceReplay
+import TCSlib.Complexity.TuringMachine.Oracle
+import TCSlib.Complexity.TuringMachine.OracleFinite
+import TCSlib.Complexity.TuringMachine.OracleNondeterministic
+import TCSlib.Complexity.TuringMachine.OracleAgreement
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Sweep
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.UnaryTape
+import TCSlib.Complexity.TuringMachine.CounterProg
+import TCSlib.Complexity.TuringMachine.CounterProgRun
+import TCSlib.Complexity.TuringMachine.CounterProgInput
+import TCSlib.Complexity.TuringMachine.Build.Convention
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Zone
+import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.OracleCall
+import TCSlib.Complexity.TuringMachine.SymbolLift
+import TCSlib.Complexity.TuringMachine.Build.CounterLoop
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.Build.Scan
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+import TCSlib.Complexity.TuringMachine.Build.InputLength
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.OracleSim
+import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.ChoiceWords
+import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSetup
+import TCSlib.Complexity.TuringMachine.Robustness.ObliviousLedger
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.CodeParser
+import TCSlib.Complexity.TuringMachine.CodeFormat
+import TCSlib.Complexity.TuringMachine.Codes2Tape
+import TCSlib.Complexity.TuringMachine.MathlibBridge
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.SelfUniversal
+import TCSlib.Complexity.TuringMachine.UniversalInterpreter
+import TCSlib.Complexity.TuringMachine.UniversalBlock
+import TCSlib.Complexity.TuringMachine.Universal
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+
+/-! Maintainer's read-only probe: the facade's environment (every import of the facade but
+`Build/SeamLayout`) with the head module inlined; a clash of any new name with the facade's
+other modules would be an error here. -/
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# The step block's seam layout from a captured serialization
+
+The startups of the step-block simulators (the `k`-generic universal machine's
+`Turing.exists_selfStartupTMK`, the record-table canonizer, and the nondeterministic interpreter
+core `Turing.exists_ndInterpreterCore`) capture a machine's canonical serialization
+`serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)` on a scratch tape. The step
+block's represented start (`Turing.StepBlock.Rep`) instead wants the bare table on the table tape
+and the unary initial state on the summary tape from cell `2`. This module states the one machine
+that redistributes the first into the second, so that every startup cites it.
+
+## Main results
+
+* `Turing.exists_seamLayoutTM` — the redistribution's contract (sorried).
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.4, the machine encoding.)
+-/
+
+namespace Turing
+
+/-! ### Private layer: the two leaves
+
+The eight-phase route of `Turing.exists_seamLayoutTM` composes six catalog rows and two leaves.
+The leaves live here, `private`, with framed contracts in the rows' style: an exact time, a
+first-visit cut at the exit anchor, an explicit endpoint over an arbitrary configuration, and
+silence. -/
+
+/-- Control states of the pair-skip leaf `Turing.sl_pairSkipTM`: `start` scans the first cell
+of an aligned pair, `after b` remembers it, and `done` is the live exit anchor. -/
+private inductive sl_PairPhase where
+  /-- at the first cell of an aligned pair -/
+  | start
+  /-- the pair's first cell held `b` -/
+  | after (b : Bool)
+  /-- the live exit anchor -/
+  | done
+  deriving DecidableEq, Fintype
+
+/-- **The pair-skip leaf.** Started on the first cell of a pair encoding, the machine reads
+aligned pairs of tape `src`, always moving right: a doubled bit returns to `start`, and the
+separator pair `false, true` enters `done` on the same step that crosses it, so the head ends
+one cell past the separator after exactly `2|a| + 2` steps on `pairEncode a w`. No catalog row
+serves this scan: the seek rows stop only at blank cells, and no row reads aligned pairs. -/
+private def sl_pairSkipTM (k : ℕ) (src : Fin k) : MultiTapeTM k Bool sl_PairPhase where
+  q₀ := .start
+  tr := fun s _ w =>
+    match s with
+    | .start =>
+      match w src with
+      | some b => ⟨0, fun j => (none, if j = src then .pos else 0), none, some (.after b)⟩
+      | none => ⟨0, fun _ => (none, 0), none, some .start⟩
+    | .after b =>
+      if b = false ∧ w src = some true then
+        ⟨0, fun j => (none, if j = src then .pos else 0), none, some .done⟩
+      else
+        ⟨0, fun j => (none, if j = src then .pos else 0), none, some .start⟩
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+
+/-- Control states of the unary-split leaf `Turing.sl_unarySplitTM`: two offset moves on the
+summary tape, the copying loop, and the live exit anchor. -/
+private inductive sl_SplitPhase where
+  /-- the first offset move on the summary tape -/
+  | mv1
+  /-- the second offset move on the summary tape -/
+  | mv2
+  /-- the copying loop -/
+  | copy
+  /-- the live exit anchor -/
+  | done
+  deriving DecidableEq, Fintype
+
+/-- **The unary-split leaf.** Move the head of `sm` right twice; then, while `src` reads `true`,
+write `true` on `sm` and move both heads right; at the first non-`true` cell write `false` on
+`sm` with that head staying, blank the scanned cell of `src`, and move the head of `src` right,
+into `done`. On a unary word `1^q 0` under the head of `src` this takes exactly `q + 3` steps,
+writes the word on `sm` two cells past that head's start, and does not restore the terminator
+on `src`. No catalog row serves it: the copy and transfer rows stop at a blank, not at a
+`false` terminator, and none blanks a single source cell while offsetting the destination. -/
+private def sl_unarySplitTM (k : ℕ) (src sm : Fin k) : MultiTapeTM k Bool sl_SplitPhase where
+  q₀ := .mv1
+  tr := fun s _ w =>
+    match s with
+    | .mv1 => ⟨0, fun j => (none, if j = sm then .pos else 0), none, some .mv2⟩
+    | .mv2 => ⟨0, fun j => (none, if j = sm then .pos else 0), none, some .copy⟩
+    | .copy =>
+      if w src = some true then
+        ⟨0, fun j => if j = src then (none, .pos) else if j = sm then (some (some true), .pos)
+          else (none, 0), none, some .copy⟩
+      else
+        ⟨0, fun j => if j = src then (some none, .pos) else if j = sm then (some (some false), 0)
+          else (none, 0), none, some .done⟩
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+
+/-- A silent action with a stationary input head changes only the control, the cells under the
+written heads, and the head positions, each by its explicit field. -/
+private lemma sl_apply_eq {k : ℕ} {x : List Bool} {S : Type} (a : Action k Bool S)
+    (c : Cfg k Bool S x) (h0 : a.inputTape = 0) (hout : a.output = none) :
+    a.apply c =
+      { c with
+        state := a.state
+        workTapes := fun j => Function.update (c.workTapes j) (c.workTapePos j)
+          ((a.workTapes j).1.getD (c.workTapes j (c.workTapePos j)))
+        workTapePos := fun j => c.workTapePos j + ((a.workTapes j).2 : ℤ) } := by
+  have hi : (a.apply c).inputPos = c.inputPos := by
+    rw [Action.apply_inputPos, h0, moveInputPos_zero]
+  have hwt : (a.apply c).workTapes = fun j => Function.update (c.workTapes j)
+      (c.workTapePos j) ((a.workTapes j).1.getD (c.workTapes j (c.workTapePos j))) :=
+    funext fun j => by rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+  have hwp : (a.apply c).workTapePos = fun j => c.workTapePos j + ((a.workTapes j).2 : ℤ) :=
+    funext fun j => Action.apply_workTapePos a c j
+  have ho : (a.apply c).output = c.output := by
+    rw [Action.apply_output, hout, Option.toList_none, List.append_nil]
+  exact Cfg.ext (Action.apply_state a c) hi hwt hwp ho
+
+/-- A leaf step that only moves the head of tape `i` one cell right: the control changes, the
+head advances, and everything else stays. -/
+private lemma sl_step_move {k : ℕ} {x : List Bool} {S : Type} (M : MultiTapeTM k Bool S)
+    (i : Fin k) {c : Cfg k Bool S x} {s : S} (hc : c.state = some s) (s' : S)
+    (htr : M.tr s c.inputSymbol c.workTapeSymbols =
+      ⟨0, fun j => (none, if j = i then .pos else 0), none, some s'⟩) :
+    M.step c =
+      { c with
+        state := some s'
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + 1) } := by
+  rw [MultiTapeTM.step_of_some hc, htr, sl_apply_eq _ _ rfl rfl]
+  apply Cfg.ext <;> dsimp only
+  · funext j
+    rw [Option.getD_none, Function.update_eq_self]
+  · funext j
+    rcases eq_or_ne j i with rfl | hj
+    · rw [Function.update_self, if_pos rfl]
+      simp
+    · rw [Function.update_of_ne hj, if_neg hj]
+      simp
+
+/-- Two aligned-pair steps of the pair-skip leaf, from any configuration: read the pair
+`(b₀, b₁)` under the head of `src`, advance that head twice, and land in `done` exactly when
+the pair is the separator `false, true`, else back in `start`. -/
+private lemma sl_pairSkip_two_steps {k : ℕ} {x : List Bool} (src : Fin k)
+    (d : Cfg k Bool sl_PairPhase x) (hstate : d.state = some .start) (b₀ b₁ : Bool)
+    (h0 : d.workTapes src (d.workTapePos src) = some b₀)
+    (h1 : d.workTapes src (d.workTapePos src + 1) = some b₁) :
+    (sl_pairSkipTM k src).runFrom d 1 =
+        { d with
+          state := some (.after b₀)
+          workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } ∧
+      (sl_pairSkipTM k src).runFrom d 2 =
+        { d with
+          state := some (if b₀ = false ∧ b₁ = true then .done else .start)
+          workTapePos := Function.update d.workTapePos src (d.workTapePos src + 2) } := by
+  have hs1 : (sl_pairSkipTM k src).step d =
+      { d with
+        state := some (.after b₀)
+        workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } := by
+    refine sl_step_move _ src hstate _ ?_
+    have hr : d.workTapeSymbols src = some b₀ := by rw [Cfg.workTapeSymbols_eq]; exact h0
+    simp only [sl_pairSkipTM]
+    rw [hr]
+  have hrun1 : (sl_pairSkipTM k src).runFrom d 1 =
+      { d with
+        state := some (.after b₀)
+        workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } := by
+    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+      MultiTapeTM.runFrom_zero, hs1]
+  refine ⟨hrun1, ?_⟩
+  have hr1 : ({ d with
+      state := some (sl_PairPhase.after b₀)
+      workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } :
+        Cfg k Bool sl_PairPhase x).workTapeSymbols src = some b₁ := by
+    rw [Cfg.workTapeSymbols_eq]
+    dsimp only
+    rw [Function.update_self]
+    exact h1
+  have hs2 : (sl_pairSkipTM k src).step { d with
+      state := some (.after b₀)
+      workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) } =
+      { d with
+        state := some (if b₀ = false ∧ b₁ = true then .done else .start)
+        workTapePos := Function.update d.workTapePos src (d.workTapePos src + 2) } := by
+    refine (sl_step_move (sl_pairSkipTM k src) src
+      (c := { d with
+        state := some (.after b₀)
+        workTapePos := Function.update d.workTapePos src (d.workTapePos src + 1) })
+      rfl (if b₀ = false ∧ b₁ = true then .done else .start) ?_).trans ?_
+    · simp only [sl_pairSkipTM]
+      rw [hr1]
+      cases b₀ <;> cases b₁ <;> simp
+    · apply Cfg.ext <;> dsimp only
+      rw [Function.update_idem, Function.update_self]
+      congr 1
+      ring
+  rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', hrun1, hs2]
+
+/-- **The pair-skip leaf, framed.** From any configuration in `start` whose tape `src` holds the
+first `2|a| + 2` cells of the pair encoding `pairEncode a tail` from its head, the leaf reaches
+`done` at exactly `2|a| + 2` and not earlier, with that head `2|a| + 2` cells right of its start
+and everything else — every cell of every tape, every other head, the input position and the
+output — unchanged. The output is unchanged at every time up to the exit. -/
+private theorem sl_pairSkipTM_run {k : ℕ} {x : List Bool} (src : Fin k) (a tail : List Bool)
+    (d : Cfg k Bool sl_PairPhase x) (hstate : d.state = some .start)
+    (hw : ∀ p : ℕ, p < 2 * a.length + 2 →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape (pairEncode a tail) p) :
+    (sl_pairSkipTM k src).runFrom d (2 * a.length + 2) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos src
+            (d.workTapePos src + (2 * a.length + 2 : ℕ)) } ∧
+      (∀ t < 2 * a.length + 2, ((sl_pairSkipTM k src).runFrom d t).state ≠ some .done) ∧
+      ∀ t ≤ 2 * a.length + 2, ((sl_pairSkipTM k src).runFrom d t).output = d.output := by
+  induction a generalizing d with
+  | nil =>
+    have hsplit : pairEncode ([] : List Bool) tail = false :: true :: tail := by
+      rw [pairEncode_eq]
+      simp
+    have h0 := hw 0 (by omega)
+    rw [FinTM.bufferTape_nat, Nat.cast_zero, add_zero, hsplit] at h0
+    simp only [List.getElem?_cons_zero] at h0
+    have h1 := hw 1 (by omega)
+    rw [FinTM.bufferTape_nat, Nat.cast_one, hsplit] at h1
+    simp only [List.getElem?_cons_succ, List.getElem?_cons_zero] at h1
+    obtain ⟨hrun1, hrun2⟩ := sl_pairSkip_two_steps src d hstate false true h0 h1
+    rw [if_pos ⟨rfl, rfl⟩] at hrun2
+    have hT : 2 * ([] : List Bool).length + 2 = 2 := by simp
+    refine ⟨?_, ?_, ?_⟩
+    · rw [hT, show ((2 : ℕ) : ℤ) = 2 from by norm_num, hrun2]
+    · intro t ht
+      rw [hT] at ht
+      rcases t with _ | _ | t
+      · rw [MultiTapeTM.runFrom_zero, hstate]
+        simp
+      · rw [hrun1]
+        simp
+      · omega
+    · intro t ht
+      rw [hT] at ht
+      rcases t with _ | _ | t
+      · rw [MultiTapeTM.runFrom_zero]
+      · rw [hrun1]
+      · rcases t with _ | t
+        · rw [hrun2]
+        · omega
+  | cons b a ih =>
+    have hsplit : pairEncode (b :: a) tail = b :: b :: pairEncode a tail := by
+      rw [pairEncode_eq, pairEncode_eq]
+      simp
+    have h0 := hw 0 (by omega)
+    rw [FinTM.bufferTape_nat, Nat.cast_zero, add_zero, hsplit] at h0
+    simp only [List.getElem?_cons_zero] at h0
+    have h1 := hw 1 (by omega)
+    rw [FinTM.bufferTape_nat, Nat.cast_one, hsplit] at h1
+    simp only [List.getElem?_cons_succ, List.getElem?_cons_zero] at h1
+    obtain ⟨hrun1, hrun2⟩ := sl_pairSkip_two_steps src d hstate b b h0 h1
+    rw [show (if b = false ∧ b = true then sl_PairPhase.done else .start) = .start from by
+      cases b <;> simp] at hrun2
+    have hw₂ : ∀ p : ℕ, p < 2 * a.length + 2 →
+        ({ d with
+            state := some sl_PairPhase.start
+            workTapePos := Function.update d.workTapePos src (d.workTapePos src + 2) } :
+          Cfg k Bool sl_PairPhase x).workTapes src
+          (({ d with
+              state := some sl_PairPhase.start
+              workTapePos := Function.update d.workTapePos src (d.workTapePos src + 2) } :
+            Cfg k Bool sl_PairPhase x).workTapePos src + p) =
+          FinTM.bufferTape (pairEncode a tail) p := by
+      intro p hp
+      dsimp only
+      rw [Function.update_self]
+      have h := hw (2 + p) (by simp only [List.length_cons]; omega)
+      rw [show (d.workTapePos src + ((2 + p : ℕ) : ℤ)) =
+          d.workTapePos src + 2 + (p : ℕ) from by
+        push_cast; ring] at h
+      rw [h, hsplit,
+        show b :: b :: pairEncode a tail = [b, b] ++ pairEncode a tail from by simp,
+        show ((2 + p : ℕ) : ℤ) = (([b, b] : List Bool).length : ℤ) + (p : ℕ) from by simp,
+        FinTM.bufferTape_append_shift _ _ (Int.natCast_nonneg p)]
+    obtain ⟨ihrun, ihcut, ihout⟩ := ih _ rfl hw₂
+    have hT : 2 * (b :: a).length + 2 = 2 + (2 * a.length + 2) := by
+      rw [List.length_cons]
+      ring
+    refine ⟨?_, ?_, ?_⟩
+    · rw [hT, MultiTapeTM.runFrom_add, hrun2, ihrun]
+      apply Cfg.ext <;> dsimp only
+      rw [Function.update_idem, Function.update_self]
+      congr 1
+      push_cast
+      ring
+    · intro t ht
+      rcases t with _ | _ | t
+      · rw [MultiTapeTM.runFrom_zero, hstate]
+        simp
+      · rw [hrun1]
+        simp
+      · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+        exact ihcut t (by omega)
+    · intro t ht
+      rcases t with _ | _ | t
+      · rw [MultiTapeTM.runFrom_zero]
+      · rw [hrun1]
+      · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+        exact ihout t (by omega)
+
+/-- The split leaf's copying step: at `copy` reading `true` on `src`, write `true` under the
+head of `sm` and advance both heads one cell right. -/
+private lemma sl_split_step_true {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
+    {c : Cfg k Bool sl_SplitPhase x} (hc : c.state = some .copy)
+    (hr : c.workTapeSymbols src = some true) :
+    (sl_unarySplitTM k src sm).step c =
+      { c with
+        state := some .copy
+        workTapes := Function.update c.workTapes sm
+          (Function.update (c.workTapes sm) (c.workTapePos sm) (some true))
+        workTapePos := Function.update
+          (Function.update c.workTapePos src (c.workTapePos src + 1)) sm
+          (c.workTapePos sm + 1) } := by
+  have htr : (sl_unarySplitTM k src sm).tr .copy c.inputSymbol c.workTapeSymbols =
+      ⟨0, fun j => if j = src then (none, .pos) else if j = sm then (some (some true), .pos)
+        else (none, 0), none, some .copy⟩ := by
+    simp only [sl_unarySplitTM]
+    rw [hr, if_pos rfl]
+  rw [MultiTapeTM.step_of_some hc, htr, sl_apply_eq _ _ rfl rfl]
+  apply Cfg.ext <;> dsimp only <;> try rfl
+  · funext j
+    rcases eq_or_ne j sm with rfl | hjsm
+    · rw [Function.update_self, if_neg (Ne.symm hne), if_pos rfl]
+      dsimp only
+      rw [Option.getD_some]
+    · rw [Function.update_of_ne hjsm]
+      rcases eq_or_ne j src with rfl | hjsrc
+      · rw [if_pos rfl]
+        dsimp only
+        rw [Option.getD_none, Function.update_eq_self]
+      · rw [if_neg hjsrc, if_neg hjsm]
+        dsimp only
+        rw [Option.getD_none, Function.update_eq_self]
+  · funext j
+    rcases eq_or_ne j sm with rfl | hjsm
+    · rw [Function.update_self, if_neg (Ne.symm hne), if_pos rfl]
+      simp
+    · rw [Function.update_of_ne hjsm]
+      rcases eq_or_ne j src with rfl | hjsrc
+      · rw [Function.update_self, if_pos rfl]
+        simp
+      · rw [Function.update_of_ne hjsrc, if_neg hjsrc, if_neg hjsm]
+        simp
+
+/-- The split leaf's exit step: at `copy` reading the terminator on `src`, write `false` under
+the head of `sm` (which stays), blank the scanned cell of `src`, advance the head of `src`, and
+enter `done`. -/
+private lemma sl_split_step_exit {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
+    {c : Cfg k Bool sl_SplitPhase x} (hc : c.state = some .copy)
+    (hr : c.workTapeSymbols src = some false) :
+    (sl_unarySplitTM k src sm).step c =
+      { c with
+        state := some .done
+        workTapes := Function.update (Function.update c.workTapes src
+            (Function.update (c.workTapes src) (c.workTapePos src) none)) sm
+          (Function.update (c.workTapes sm) (c.workTapePos sm) (some false))
+        workTapePos := Function.update c.workTapePos src (c.workTapePos src + 1) } := by
+  have htr : (sl_unarySplitTM k src sm).tr .copy c.inputSymbol c.workTapeSymbols =
+      ⟨0, fun j => if j = src then (some none, .pos) else if j = sm then (some (some false), 0)
+        else (none, 0), none, some .done⟩ := by
+    simp only [sl_unarySplitTM]
+    rw [hr]
+    simp
+  rw [MultiTapeTM.step_of_some hc, htr, sl_apply_eq _ _ rfl rfl]
+  apply Cfg.ext <;> dsimp only <;> try rfl
+  · funext j
+    rcases eq_or_ne j sm with rfl | hjsm
+    · rw [Function.update_self, if_neg (Ne.symm hne), if_pos rfl]
+      dsimp only
+      rw [Option.getD_some]
+    · rw [Function.update_of_ne hjsm]
+      rcases eq_or_ne j src with rfl | hjsrc
+      · rw [Function.update_self, if_pos rfl]
+        dsimp only
+        rw [Option.getD_some]
+      · rw [Function.update_of_ne hjsrc, if_neg hjsrc, if_neg hjsm]
+        dsimp only
+        rw [Option.getD_none, Function.update_eq_self]
+  · funext j
+    rcases eq_or_ne j src with rfl | hjsrc
+    · rw [Function.update_self, if_pos rfl]
+      simp
+    · rw [Function.update_of_ne hjsrc, if_neg hjsrc]
+      rcases eq_or_ne j sm with rfl | hjsm
+      · rw [if_pos rfl]
+        simp
+      · rw [if_neg hjsm]
+        simp
+
+/-- The copying loop of the unary-split leaf, framed: from `copy` with the unary word `1^q 0`
+under the head of `src`, the leaf exits in exactly `q + 1` steps and not earlier, having
+written `1^q 0` on `sm` from that head's cell on (that head ends on the terminator), blanked
+the terminator's cell on `src`, and moved the head of `src` one cell past it. The output and
+everything off the two heads' ranges are unchanged, at every time up to the exit. -/
+private theorem sl_unarySplit_copy {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
+    (q : ℕ) (d : Cfg k Bool sl_SplitPhase x) (hstate : d.state = some .copy)
+    (hw : ∀ p : ℕ, p ≤ q →
+      d.workTapes src (d.workTapePos src + p) = some (decide (p < q))) :
+    (sl_unarySplitTM k src sm).runFrom d (q + 1) =
+        { d with
+          state := some .done
+          workTapes := Function.update (Function.update d.workTapes src
+              (Function.update (d.workTapes src) (d.workTapePos src + q) none)) sm
+            (fun z => if d.workTapePos sm ≤ z ∧ z ≤ d.workTapePos sm + q
+              then some (decide (z < d.workTapePos sm + q)) else d.workTapes sm z)
+          workTapePos := Function.update (Function.update d.workTapePos src
+            (d.workTapePos src + q + 1)) sm (d.workTapePos sm + q) } ∧
+      (∀ t < q + 1, ((sl_unarySplitTM k src sm).runFrom d t).state ≠ some .done) ∧
+      ∀ t ≤ q + 1, ((sl_unarySplitTM k src sm).runFrom d t).output = d.output := by
+  induction q generalizing d with
+  | zero =>
+    have h0 := hw 0 le_rfl
+    rw [Nat.cast_zero, add_zero, decide_eq_false (Nat.lt_irrefl 0)] at h0
+    have hs := sl_split_step_exit src sm hne hstate
+      (by rw [Cfg.workTapeSymbols_eq]; exact h0)
+    have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 = (sl_unarySplitTM k src sm).step d := by
+      rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+        MultiTapeTM.runFrom_zero]
+    refine ⟨?_, ?_, ?_⟩
+    · rw [show ((0 : ℕ) : ℤ) = 0 from by norm_num, hrun1, hs]
+      apply Cfg.ext <;> dsimp only <;> try rfl
+      · funext j
+        rcases eq_or_ne j sm with rfl | hjsm
+        · simp only [Function.update_self]
+          funext z
+          rcases eq_or_ne z (d.workTapePos j) with rfl | hz
+          · rw [Function.update_self, if_pos (by omega)]
+            congr 1
+            symm
+            rw [decide_eq_false_iff_not]
+            omega
+          · rw [Function.update_of_ne hz, if_neg (by omega)]
+        · simp only [Function.update_of_ne hjsm]
+          rcases eq_or_ne j src with rfl | hjsrc
+          · simp only [Function.update_self, add_zero]
+          · simp only [Function.update_of_ne hjsrc]
+      · funext j
+        rcases eq_or_ne j sm with rfl | hjsm
+        · simp only [Function.update_self, Function.update_of_ne (Ne.symm hne), add_zero]
+        · simp only [Function.update_of_ne hjsm]
+          rcases eq_or_ne j src with rfl | hjsrc
+          · simp only [Function.update_self, add_zero]
+          · simp only [Function.update_of_ne hjsrc]
+    · intro t ht
+      rcases t with _ | t
+      · rw [MultiTapeTM.runFrom_zero, hstate]
+        simp
+      · omega
+    · intro t ht
+      rcases t with _ | t
+      · rw [MultiTapeTM.runFrom_zero]
+      · rcases t with _ | t
+        · rw [hrun1, hs]
+        · omega
+  | succ q ih =>
+    have h0 := hw 0 (by omega)
+    rw [Nat.cast_zero, add_zero, decide_eq_true (by omega : 0 < q + 1)] at h0
+    have hs := sl_split_step_true src sm hne hstate
+      (by rw [Cfg.workTapeSymbols_eq]; exact h0)
+    have hw₁ : ∀ p : ℕ, p ≤ q →
+        ((sl_unarySplitTM k src sm).step d).workTapes src
+          (((sl_unarySplitTM k src sm).step d).workTapePos src + p) =
+          some (decide (p < q)) := by
+      intro p hp
+      rw [hs]
+      dsimp only
+      rw [Function.update_of_ne hne, Function.update_of_ne hne, Function.update_self]
+      have h := hw (1 + p) (by omega)
+      rw [show (d.workTapePos src + ((1 + p : ℕ) : ℤ)) =
+          d.workTapePos src + 1 + (p : ℕ) from by
+        push_cast; ring, show decide (1 + p < q + 1) = decide (p < q) from by
+        rw [decide_eq_decide]; omega] at h
+      exact h
+    obtain ⟨ihrun, ihcut, ihout⟩ := ih ((sl_unarySplitTM k src sm).step d) (by rw [hs]) hw₁
+    have hstep1 : ∀ t : ℕ, (sl_unarySplitTM k src sm).runFrom d (t + 1) =
+        (sl_unarySplitTM k src sm).runFrom ((sl_unarySplitTM k src sm).step d) t := fun t =>
+      MultiTapeTM.runFrom_succ_eq_step
+    refine ⟨?_, ?_, ?_⟩
+    · rw [hstep1 (q + 1), ihrun, hs]
+      apply Cfg.ext <;> dsimp only <;> try rfl
+      · funext j
+        rcases eq_or_ne j sm with rfl | hjsm
+        · simp only [Function.update_self]
+          funext z
+          by_cases hz1 : d.workTapePos j + 1 ≤ z ∧ z ≤ d.workTapePos j + 1 + (q : ℕ)
+          · rw [if_pos hz1, if_pos (by omega)]
+            congr 1
+            rw [decide_eq_decide]
+            omega
+          · rw [if_neg hz1]
+            by_cases hz0 : z = d.workTapePos j
+            · subst hz0
+              rw [Function.update_self, if_pos (by omega)]
+              congr 1
+              symm
+              rw [decide_eq_true_eq]
+              omega
+            · rw [Function.update_of_ne hz0, if_neg (by omega)]
+        · simp only [Function.update_of_ne hjsm]
+          rcases eq_or_ne j src with rfl | hjsrc
+          · simp only [Function.update_self, Function.update_of_ne hjsm]
+            congr 1
+            push_cast
+            ring
+          · simp only [Function.update_of_ne hjsrc, Function.update_of_ne hjsm]
+      · funext j
+        rcases eq_or_ne j sm with rfl | hjsm
+        · simp only [Function.update_self]
+          push_cast
+          ring
+        · simp only [Function.update_of_ne hjsm]
+          rcases eq_or_ne j src with rfl | hjsrc
+          · simp only [Function.update_self, Function.update_of_ne hjsm]
+            push_cast
+            ring
+          · simp only [Function.update_of_ne hjsrc, Function.update_of_ne hjsm]
+    · intro t ht
+      rcases t with _ | t
+      · rw [MultiTapeTM.runFrom_zero, hstate]
+        simp
+      · rw [hstep1 t]
+        exact ihcut t (by omega)
+    · intro t ht
+      rcases t with _ | t
+      · rw [MultiTapeTM.runFrom_zero]
+      · rw [hstep1 t, ihout t (by omega), hs]
+
+/-- **The unary-split leaf, framed.** From any configuration in `mv1` whose tape `src` holds the
+unary word `1^q 0` from its head, the leaf reaches `done` at exactly `q + 3` and not earlier,
+with the word written on `sm` from two cells right of that tape's head (that head ends on the
+written terminator), the terminator's cell of `src` blanked and its head one cell past it, and
+everything else — every other cell, every other head, the input position and the output —
+unchanged. The output is unchanged at every time up to the exit. -/
+private theorem sl_unarySplitTM_run {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
+    (q : ℕ) (d : Cfg k Bool sl_SplitPhase x) (hstate : d.state = some .mv1)
+    (hw : ∀ p : ℕ, p ≤ q →
+      d.workTapes src (d.workTapePos src + p) = some (decide (p < q))) :
+    (sl_unarySplitTM k src sm).runFrom d (q + 3) =
+        { d with
+          state := some .done
+          workTapes := Function.update (Function.update d.workTapes src
+              (Function.update (d.workTapes src) (d.workTapePos src + q) none)) sm
+            (fun z => if d.workTapePos sm + 2 ≤ z ∧ z ≤ d.workTapePos sm + 2 + q
+              then some (decide (z < d.workTapePos sm + 2 + q)) else d.workTapes sm z)
+          workTapePos := Function.update (Function.update d.workTapePos src
+            (d.workTapePos src + q + 1)) sm (d.workTapePos sm + 2 + q) } ∧
+      (∀ t < q + 3, ((sl_unarySplitTM k src sm).runFrom d t).state ≠ some .done) ∧
+      ∀ t ≤ q + 3, ((sl_unarySplitTM k src sm).runFrom d t).output = d.output := by
+  have hs1 : (sl_unarySplitTM k src sm).step d =
+      { d with
+        state := some .mv2
+        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } :=
+    sl_step_move _ sm hstate _ (by simp only [sl_unarySplitTM])
+  have hs2 : (sl_unarySplitTM k src sm).step { d with
+      state := some sl_SplitPhase.mv2
+      workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } =
+      { d with
+        state := some .copy
+        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 2) } := by
+    refine (sl_step_move (sl_unarySplitTM k src sm) sm
+      (c := { d with
+        state := some sl_SplitPhase.mv2
+        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) })
+      rfl .copy (by simp only [sl_unarySplitTM])).trans ?_
+    apply Cfg.ext <;> dsimp only
+    rw [Function.update_idem, Function.update_self]
+    congr 1
+    ring
+  have hrun1 : (sl_unarySplitTM k src sm).runFrom d 1 =
+      { d with
+        state := some .mv2
+        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 1) } := by
+    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+      MultiTapeTM.runFrom_zero, hs1]
+  have hrun2 : (sl_unarySplitTM k src sm).runFrom d 2 =
+      { d with
+        state := some .copy
+        workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 2) } := by
+    rw [show (2 : ℕ) = 1 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', hrun1, hs2]
+  have hw₂ : ∀ p : ℕ, p ≤ q →
+      ({ d with
+          state := some sl_SplitPhase.copy
+          workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 2) } :
+        Cfg k Bool sl_SplitPhase x).workTapes src
+        (({ d with
+            state := some sl_SplitPhase.copy
+            workTapePos := Function.update d.workTapePos sm (d.workTapePos sm + 2) } :
+          Cfg k Bool sl_SplitPhase x).workTapePos src + p) = some (decide (p < q)) := by
+    intro p hp
+    dsimp only
+    rw [Function.update_of_ne hne]
+    exact hw p hp
+  obtain ⟨crun, ccut, cout⟩ := sl_unarySplit_copy src sm hne q _ rfl hw₂
+  refine ⟨?_, ?_, ?_⟩
+  · rw [show q + 3 = 2 + (q + 1) from by omega, MultiTapeTM.runFrom_add, hrun2, crun]
+    apply Cfg.ext <;> dsimp only <;> try rfl
+    · simp only [Function.update_self, Function.update_of_ne hne]
+    · funext j
+      rcases eq_or_ne j sm with rfl | hjsm
+      · simp only [Function.update_self, Function.update_of_ne hne]
+      · simp only [Function.update_of_ne hjsm]
+        rcases eq_or_ne j src with rfl | hjsrc
+        · simp only [Function.update_self, Function.update_of_ne hjsm]
+        · simp only [Function.update_of_ne hjsrc, Function.update_of_ne hjsm]
+  · intro t ht
+    rcases t with _ | _ | t
+    · rw [MultiTapeTM.runFrom_zero, hstate]
+      simp
+    · rw [hrun1]
+      simp
+    · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+      exact ccut t (by omega)
+  · intro t ht
+    rcases t with _ | _ | t
+    · rw [MultiTapeTM.runFrom_zero]
+    · rw [hrun1]
+    · rw [show t + 1 + 1 = 2 + t from by omega, MultiTapeTM.runFrom_add, hrun2]
+      exact cout t (by omega)
+
+/-! ### Private layer: the word identities
+
+The source word `s = pairEncode a (1^q 0 ++ v)` splits as the header `pairEncode a []`, the
+unary field and the table field; its cells are read through `Turing.pairEncode_eq` and the
+published `Turing.FinTM.bufferTape` identities only. -/
+
+/-- The unary word's cells at an integer index: `true` strictly below `q`, `false` at `q`. -/
+private lemma sl_bufferTape_unary_int (q : ℕ) {z : ℤ} (h0 : 0 ≤ z) (hq : z ≤ (q : ℕ)) :
+    FinTM.bufferTape (List.replicate q true ++ [false]) z = some (decide (z < (q : ℕ))) := by
+  obtain ⟨r, rfl⟩ : ∃ r : ℕ, z = (r : ℤ) := ⟨z.toNat, (Int.toNat_of_nonneg h0).symm⟩
+  rw [FinTM.bufferTape_unary q r (by exact_mod_cast hq)]
+  congr 1
+  rw [decide_eq_decide]
+  omega
+
+/-- The written summary cells, as the unary word's buffer two cells right: the interval
+`[2, 2 + q]` filled with `1^q 0` over a blank tape reads `bufferTape (1^q 0) (z - 2)`. -/
+private lemma sl_sm_word (q : ℕ) (z : ℤ) :
+    (if 2 ≤ z ∧ z ≤ 2 + (q : ℕ) then some (decide (z < 2 + (q : ℕ)))
+      else (none : Option Bool))
+      = FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2) := by
+  by_cases hz : 2 ≤ z ∧ z ≤ 2 + (q : ℕ)
+  · rw [if_pos hz, sl_bufferTape_unary_int q (by omega) (by omega)]
+    congr 1
+    rw [decide_eq_decide]
+    omega
+  · rw [if_neg hz, FinTM.bufferTape_eq_none_of_not_mem]
+    simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil]
+    push_cast
+    omega
+
+/-- The unary word read backward: cell `q - p` of `1^q 0` is cell `p` of its reversal, for
+every `p ≤ q + 1` (at `p = q + 1` both reads are the blanks off the word). -/
+private lemma sl_reverse_read (q : ℕ) (p : ℕ) (hp : p ≤ q + 1) :
+    FinTM.bufferTape (List.replicate q true ++ [false]) ((q : ℕ) - (p : ℕ) : ℤ)
+      = FinTM.bufferTape ((List.replicate q true ++ [false]).reverse) p := by
+  rcases Nat.lt_or_ge p (q + 1) with hlt | hge
+  · rw [show ((q : ℕ) : ℤ) - (p : ℕ) = ((q - p : ℕ) : ℤ) from by omega,
+      FinTM.bufferTape_nat,
+      FinTM.bufferTape_nat, List.getElem?_reverse (by simp; omega)]
+    congr 1
+    simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil]
+    omega
+  · obtain rfl : p = q + 1 := by omega
+    rw [show ((q : ℕ) : ℤ) - ((q + 1 : ℕ) : ℤ) = (-1 : ℤ) from by push_cast; ring,
+      FinTM.bufferTape_left]
+    symm
+    apply FinTM.bufferTape_eq_none_of_not_mem
+    simp only [List.length_reverse, List.length_append, List.length_replicate,
+      List.length_cons, List.length_nil]
+    push_cast
+    omega
+
+/-- The unary field's cells of the source word: in `pairEncode a (1^q 0 ++ v)`, the cell
+`2|a| + 2 + p` holds `true` for `p < q` and `false` for `p = q`. -/
+private lemma sl_read_unary (a v : List Bool) (q : ℕ) (p : ℕ) (hp : p ≤ q) :
+    FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v))
+      ((2 * a.length + 2 + p : ℕ)) = some (decide (p < q)) := by
+  rw [show pairEncode a ((List.replicate q true ++ [false]) ++ v) =
+      pairEncode a [] ++ ((List.replicate q true ++ [false]) ++ v) from by
+      rw [pairEncode_eq, pairEncode_eq]
+      simp,
+    show ((2 * a.length + 2 + p : ℕ) : ℤ) =
+        ((pairEncode a [] : List Bool).length : ℤ) + (p : ℕ) from by
+      rw [length_pairEncode, List.length_nil]
+      push_cast
+      ring,
+    FinTM.bufferTape_append_shift _ _ (Int.natCast_nonneg p), FinTM.bufferTape_nat,
+    List.getElem?_append_left (by simp; omega),
+    ← FinTM.bufferTape_nat, FinTM.bufferTape_unary q p hp]
+
+/-- The table field's cells of the source word: past the header and the unary field,
+`pairEncode a (1^q 0 ++ v)` reads the table word's buffer, its right blank and every cell
+beyond it included. -/
+private lemma sl_read_table (a v : List Bool) (q : ℕ) {p : ℤ} (h0 : 0 ≤ p) :
+    FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v))
+      (((2 * a.length + 2 + q + 1 : ℕ) : ℤ) + p) = FinTM.bufferTape v p := by
+  rw [show pairEncode a ((List.replicate q true ++ [false]) ++ v) =
+      (pairEncode a [] ++ (List.replicate q true ++ [false])) ++ v from by
+      rw [pairEncode_eq, pairEncode_eq]
+      simp,
+    show ((2 * a.length + 2 + q + 1 : ℕ) : ℤ) =
+        ((pairEncode a [] ++ (List.replicate q true ++ [false])).length : ℤ) from by
+      simp only [List.length_append, length_pairEncode, List.length_replicate,
+        List.length_cons, List.length_nil]
+      push_cast
+      ring,
+    FinTM.bufferTape_append_shift _ _ h0]
+
+/-! ### Private layer: the phase host
+
+Eight phases on `Turing.phaseHostTM`: six catalog rows through their `_run_ofCfg` contracts and
+the two leaves. The host's table is read only through `Turing.phaseHostTM_run`; the last
+phase's `done` redirects to itself, so the lemma's lockstep window covers the clear to its
+exact exit time, and the dispatch that the self-redirect would take lies strictly after the
+contract's horizon. -/
+
+/-- The eight phases of the seam layout, in route order. -/
+private inductive sl_Key where
+  /-- phase 1: skip over the suffix `s.drop r` on the source tape -/
+  | skipRest
+  /-- phase 2: skip back over the whole source word -/
+  | rewindAll
+  /-- phase 3: the pair-skip leaf over the header -/
+  | pairSkip
+  /-- phase 4: the unary-split leaf -/
+  | unarySplit
+  /-- phase 5: the walk home on the summary tape -/
+  | walkHome
+  /-- phase 6: the transfer of the table word -/
+  | moveTable
+  /-- phase 7: skip back over the remaining prefix -/
+  | rewindHead
+  /-- phase 8: clear the remaining prefix; its `done` is the exit -/
+  | clearHead
+  deriving DecidableEq, Fintype
+
+/-- Each phase's control carrier. -/
+private abbrev sl_Ph : sl_Key → Type
+  | .skipRest | .rewindAll | .walkHome | .rewindHead => SeekPhase
+  | .pairSkip => sl_PairPhase
+  | .unarySplit => sl_SplitPhase
+  | .moveTable | .clearHead => SweepPhase
+
+/-- Each phase's machine: four catalog seek/sweep rows, the transfer row and the two leaves. -/
+private def sl_part (k : ℕ) (src tbl sm : Fin k) : (i : sl_Key) → MultiTapeTM k Bool (sl_Ph i)
+  | .skipRest => skipTM k src
+  | .rewindAll => skipBackTM k src
+  | .pairSkip => sl_pairSkipTM k src
+  | .unarySplit => sl_unarySplitTM k src sm
+  | .walkHome => walkTM k sm (· = sm) .neg
+  | .moveTable => transferTM k src tbl
+  | .rewindHead => skipBackTM k src
+  | .clearHead => clearTM k src
+
+/-- The dispatch table: each phase's `done` redirects to the next phase's entry, and the last
+phase's `done` to itself (the redirect is never taken inside the contract's horizon). -/
+private def sl_red : (i : sl_Key) → sl_Ph i → Option ((j : sl_Key) × sl_Ph j)
+  | .skipRest, s => if s = .done then some ⟨.rewindAll, .run⟩ else none
+  | .rewindAll, s => if s = .done then some ⟨.pairSkip, .start⟩ else none
+  | .pairSkip, s => if s = .done then some ⟨.unarySplit, .mv1⟩ else none
+  | .unarySplit, s => if s = .done then some ⟨.walkHome, .run⟩ else none
+  | .walkHome, s => if s = .done then some ⟨.moveTable, .sweep⟩ else none
+  | .moveTable, s => if s = .done then some ⟨.rewindHead, .run⟩ else none
+  | .rewindHead, s => if s = .done then some ⟨.clearHead, .sweep⟩ else none
+  | .clearHead, s => if s = .done then some ⟨.clearHead, .done⟩ else none
+
+/-- Each phase carrier is finite. -/
+private instance sl_instFintypePh (i : sl_Key) : Fintype (sl_Ph i) := by
+  cases i <;> dsimp only [sl_Ph] <;> infer_instance
+
+/-- Each phase carrier has decidable equality. -/
+private instance sl_instDecEqPh (i : sl_Key) : DecidableEq (sl_Ph i) := by
+  cases i <;> dsimp only [sl_Ph] <;> infer_instance
+
+/-- The canonical mid-run configuration of the seam layout: a control state, the three owned
+tapes' contents and head positions, over an arbitrary frame `d` whose other tapes, input
+position and output ride along untouched. -/
+private def sl_cfg {k : ℕ} {x : List Bool} {S : Type} (src tbl sm : Fin k)
+    (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x) (st : S) (wsrc wtbl wsm : ℤ → Option Bool)
+    (psrc ptbl psm : ℤ) : Cfg k Bool S x where
+  state := some st
+  inputPos := d.inputPos
+  workTapes := Function.update (Function.update (Function.update d.workTapes src wsrc)
+    tbl wtbl) sm wsm
+  workTapePos := Function.update (Function.update (Function.update d.workTapePos src psrc)
+    tbl ptbl) sm psm
+  output := d.output
+
+/-- The dispatch's rewrap: a live configuration with its control replaced by the next phase's
+tagged entry is the next phase's configuration, tagged — provided the two agree on every field
+but the control. -/
+private lemma sl_rewrap {k : ℕ} {x : List Bool} {S : Type} {i' : sl_Key}
+    (c : Cfg k Bool S x) (c₂ : Cfg k Bool (sl_Ph i') x) (ent : sl_Ph i') (st₀ : S)
+    (hc : c.state = some st₀) (hstate : c₂.state = some ent) (hin : c.inputPos = c₂.inputPos)
+    (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
+    (ho : c.output = c₂.output) :
+    c.mapState (fun _ => (⟨i', ent⟩ : (j : sl_Key) × sl_Ph j)) =
+      c₂.mapState (Sigma.mk i') := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, Cfg.mapState_state, hc, hstate, Option.map_some, Option.map_some]
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
+  · funext j p
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
+  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
+
+/-- A phase guard from a row's first-visit cut: strictly before the exit, every live control
+state of the phase leaves the dispatch table silent. -/
+private lemma sl_guard {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (i : sl_Key)
+    {c : Cfg k Bool (sl_Ph i) x} {T : ℕ} (done' : sl_Ph i)
+    (hred : ∀ st : sl_Ph i, st ≠ done' → sl_red i st = none)
+    (hcut : ∀ t < T, ((sl_part k src tbl sm i).runFrom c t).state ≠ some done') :
+    ∀ u < T, ∀ st, ((sl_part k src tbl sm i).runFrom c u).state = some st →
+      sl_red i st = none :=
+  fun u hu st hst => hred st (fun hh => hcut u hu (hh ▸ hst))
+
+/-- A host state tagged by a phase other than the last is never the exit. -/
+private lemma sl_tagged_ne_done {k : ℕ} {x : List Bool} (i : sl_Key) (hi : i ≠ .clearHead)
+    (c : Cfg k Bool (sl_Ph i) x) :
+    (c.mapState (Sigma.mk i)).state ≠
+      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  rw [Cfg.mapState_state]
+  cases hc : c.state with
+  | none => simp
+  | some st =>
+    simp only [Option.map_some, ne_eq, Option.some.injEq]
+    intro hcon
+    exact hi (congrArg Sigma.fst hcon)
+
+/-- Phase 1, hosted: the skip over the suffix `s.drop r` of the source word, one dispatch into
+phase 2; no state of its window is the exit. -/
+private lemma sl_phase1 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s : List Bool) (r : ℕ) (hr : r ≤ s.length) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+          (r : ℤ) pt ps).mapState (Sigma.mk sl_Key.skipRest)) ((s.drop r).length + 1 + 1) =
+      (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+        ((s.length : ℤ) + 1) pt ps).mapState (Sigma.mk sl_Key.rewindAll) ∧
+    ∀ u ≤ (s.drop r).length + 1,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+          (r : ℤ) pt ps).mapState (Sigma.mk sl_Key.skipRest)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ ((s.drop r).length : ℤ) →
+      (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+          (r : ℤ) pt ps).workTapes src
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+          (r : ℤ) pt ps).workTapePos src + p) = FinTM.bufferTape (s.drop r) p := by
+    intro p h0 _
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    exact (FinTM.bufferTape_drop s r h0).symm
+  obtain ⟨row, cut, -⟩ := skipTM_run_ofCfg src (s.drop r)
+    (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws (r : ℤ) pt ps) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .skipRest
+    _ _ ((s.drop r).length + 1) row SeekPhase.done rfl ⟨.rewindAll, .run⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .skipRest SeekPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ SeekPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · rfl
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsrc : j = src
+      · rw [hjsrc, Function.update_self]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        rw [List.length_drop]
+        omega
+      · rw [Function.update_of_ne hjsrc]
+        by_cases hjsm : j = sm
+        · rw [hjsm]
+          simp only [Function.update_self]
+        · simp only [Function.update_of_ne hjsm]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc]
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .skipRest (by decide) _
+
+/-- Phase 2, hosted: the skip back over the whole source word, one dispatch into phase 3. -/
+private lemma sl_phase2 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s : List Bool) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+          ((s.length : ℤ) + 1) pt ps).mapState (Sigma.mk sl_Key.rewindAll)) (s.length + 3 + 1) =
+      (sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) wt ws 0 pt ps).mapState
+        (Sigma.mk sl_Key.pairSkip) ∧
+    ∀ u ≤ s.length + 3,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws
+          ((s.length : ℤ) + 1) pt ps).mapState (Sigma.mk sl_Key.rewindAll)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hw : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
+      (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws ((s.length : ℤ) + 1) pt
+          ps).workTapes src
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws ((s.length : ℤ) + 1) pt
+          ps).workTapePos src - (s.length : ℤ) - 1 + p) = FinTM.bufferTape s p := by
+    intro p _ _
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    congr 1
+    ring
+  obtain ⟨row, cut, -⟩ := skipBackTM_run_ofCfg src s
+    (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) wt ws ((s.length : ℤ) + 1) pt ps)
+    rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .rewindAll
+    _ _ (s.length + 3) row SeekPhase.done rfl ⟨.pairSkip, .start⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .rewindAll SeekPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ SeekPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · rfl
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsrc : j = src
+      · rw [hjsrc, Function.update_self]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        omega
+      · rw [Function.update_of_ne hjsrc]
+        by_cases hjsm : j = sm
+        · rw [hjsm]
+          simp only [Function.update_self]
+        · simp only [Function.update_of_ne hjsm]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc]
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .rewindAll (by decide) _
+
+/-- Phase 3, hosted: the pair-skip leaf over the header, one dispatch into phase 4. -/
+private lemma sl_phase3 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s a v : List Bool) (q : ℕ)
+    (hs : s = pairEncode a ((List.replicate q true ++ [false]) ++ v))
+    (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) wt ws 0 pt ps).mapState
+          (Sigma.mk sl_Key.pairSkip)) (2 * a.length + 2 + 1) =
+      (sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) wt ws
+        ((2 * a.length + 2 : ℕ) : ℤ) pt ps).mapState (Sigma.mk sl_Key.unarySplit) ∧
+    ∀ u ≤ 2 * a.length + 2,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) wt ws 0 pt ps).mapState
+          (Sigma.mk sl_Key.pairSkip)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hw : ∀ p : ℕ, p < 2 * a.length + 2 →
+      (sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) wt ws 0 pt
+          ps).workTapes src
+        ((sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) wt ws 0 pt
+          ps).workTapePos src + (p : ℕ)) =
+        FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v)) p := by
+    intro p _
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    rw [zero_add, hs]
+  obtain ⟨row, cut, -⟩ := sl_pairSkipTM_run src a ((List.replicate q true ++ [false]) ++ v)
+    (sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) wt ws 0 pt ps) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .pairSkip
+    _ _ (2 * a.length + 2) row sl_PairPhase.done rfl ⟨.unarySplit, .mv1⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .pairSkip sl_PairPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ sl_PairPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · rfl
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsrc : j = src
+      · rw [hjsrc, Function.update_self]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        omega
+      · rw [Function.update_of_ne hjsrc]
+        by_cases hjsm : j = sm
+        · rw [hjsm]
+          simp only [Function.update_self]
+        · simp only [Function.update_of_ne hjsm]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc]
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .pairSkip (by decide) _
+
+/-- Phase 4, hosted: the unary-split leaf, one dispatch into phase 5. The summary word lands
+two cells past the summary head's origin and the terminator's source cell is blanked. -/
+private lemma sl_phase4 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (hts : tbl ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s a v : List Bool) (q : ℕ)
+    (hs : s = pairEncode a ((List.replicate q true ++ [false]) ++ v))
+    (wt : ℤ → Option Bool) (pt : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) wt (fun _ => none)
+          ((2 * a.length + 2 : ℕ) : ℤ) pt 0).mapState (Sigma.mk sl_Key.unarySplit))
+        (q + 3 + 1) =
+      (sl_cfg src tbl sm d SeekPhase.run
+        (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none) wt
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) pt ((q : ℕ) + 2)).mapState
+        (Sigma.mk sl_Key.walkHome) ∧
+    ∀ u ≤ q + 3,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) wt (fun _ => none)
+          ((2 * a.length + 2 : ℕ) : ℤ) pt 0).mapState
+          (Sigma.mk sl_Key.unarySplit)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hw : ∀ p : ℕ, p ≤ q →
+      (sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) wt (fun _ => none)
+          ((2 * a.length + 2 : ℕ) : ℤ) pt 0).workTapes src
+        ((sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) wt (fun _ => none)
+          ((2 * a.length + 2 : ℕ) : ℤ) pt 0).workTapePos src + (p : ℕ)) =
+        some (decide (p < q)) := by
+    intro p hp
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    rw [hs, show (((2 * a.length + 2 : ℕ) : ℤ) + (p : ℕ)) =
+        ((2 * a.length + 2 + p : ℕ) : ℤ)
+      from by push_cast; ring]
+    exact sl_read_unary a v q p hp
+  obtain ⟨row, cut, -⟩ := sl_unarySplitTM_run src sm hss q
+    (sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) wt (fun _ => none)
+      ((2 * a.length + 2 : ℕ) : ℤ) pt 0) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .unarySplit
+    _ _ (q + 3) row sl_SplitPhase.done rfl ⟨.walkHome, .run⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .unarySplit sl_SplitPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ sl_SplitPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsm : j = sm
+      · rw [hjsm]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        funext z
+        simp only [zero_add]
+        exact sl_sm_word q z
+      · simp only [Function.update_of_ne hjsm]
+        by_cases hjsrc : j = src
+        · rw [hjsrc]
+          simp only [Function.update_self, Function.update_of_ne hss,
+            Function.update_of_ne hst]
+          rw [show (((2 * a.length + 2 : ℕ) : ℤ) + (q : ℕ)) =
+            ((2 * a.length + 2 + q : ℕ) : ℤ)
+            from by push_cast; ring]
+        · simp only [Function.update_of_ne hjsrc]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self, Function.update_of_ne hts]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc,
+              Function.update_of_ne hjsm]
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsm : j = sm
+      · rw [hjsm]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        omega
+      · simp only [Function.update_of_ne hjsm]
+        by_cases hjsrc : j = src
+        · rw [hjsrc]
+          simp only [Function.update_self, Function.update_of_ne hss,
+            Function.update_of_ne hst]
+          push_cast
+          ring
+        · simp only [Function.update_of_ne hjsrc]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self, Function.update_of_ne hts]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc,
+              Function.update_of_ne hjsm]
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .unarySplit (by decide) _
+
+/-- Phase 5, hosted: the walk home on the summary tape, one dispatch into phase 6. -/
+private lemma sl_phase5 {k : ℕ} {x : List Bool} (src tbl sm : Fin k)
+    (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (q : ℕ) (w1 : ℤ → Option Bool) (p1 : ℤ) (wt : ℤ → Option Bool) (pt : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run w1 wt
+          (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+          p1 pt ((q : ℕ) + 2)).mapState (Sigma.mk sl_Key.walkHome))
+        ((List.replicate q true ++ [false]).reverse.length + 1 + 1) =
+      (sl_cfg src tbl sm d SweepPhase.sweep w1 wt
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        p1 pt 0).mapState (Sigma.mk sl_Key.moveTable) ∧
+    ∀ u ≤ (List.replicate q true ++ [false]).reverse.length + 1,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run w1 wt
+          (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+          p1 pt ((q : ℕ) + 2)).mapState (Sigma.mk sl_Key.walkHome)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hw : ∀ p : ℕ, p ≤ (List.replicate q true ++ [false]).reverse.length →
+      (sl_cfg src tbl sm d SeekPhase.run w1 wt
+          (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+          p1 pt ((q : ℕ) + 2)).workTapes sm
+        ((sl_cfg src tbl sm d SeekPhase.run w1 wt
+          (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+          p1 pt ((q : ℕ) + 2)).workTapePos sm + ((SignType.neg : SignType) : ℤ) * (p : ℕ)) =
+        FinTM.bufferTape ((List.replicate q true ++ [false]).reverse) p := by
+    intro p hp
+    have hp' : p ≤ q + 1 := by
+      simpa using hp
+    dsimp only [sl_cfg]
+    simp only [Function.update_self]
+    rw [show ((q : ℕ) + 2 + ((SignType.neg : SignType) : ℤ) * (p : ℕ) - 2 : ℤ) =
+      ((q : ℕ) : ℤ) - (p : ℕ) from by
+      rw [SignType.neg_eq_neg_one, SignType.coe_neg_one]; ring]
+    exact sl_reverse_read q p hp'
+  obtain ⟨row, cut, -⟩ := walkTM_run_ofCfg sm (· = sm) rfl .neg
+    ((List.replicate q true ++ [false]).reverse)
+    (sl_cfg src tbl sm d SeekPhase.run w1 wt
+      (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+      p1 pt ((q : ℕ) + 2)) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .walkHome
+    _ _ ((List.replicate q true ++ [false]).reverse.length + 1) row SeekPhase.done rfl
+    ⟨.moveTable, .sweep⟩ (by simp [sl_red])
+    (sl_guard src tbl sm .walkHome SeekPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ SeekPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · rfl
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsm : j = sm
+      · rw [hjsm]
+        simp only [Function.update_self, List.length_reverse, List.length_append,
+          List.length_replicate, List.length_cons, List.length_nil, SignType.neg_eq_neg_one,
+          SignType.coe_neg_one]
+        push_cast
+        ring
+      · simp only [Function.update_of_ne hjsm, if_neg hjsm, add_zero]
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .walkHome (by decide) _
+
+/-- Phase 6, hosted: the transfer of the table word from the source to the table tape, one
+dispatch into phase 7; the source becomes the buffer of its remaining prefix. -/
+private lemma sl_phase6 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (hts : tbl ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s a v : List Bool) (q : ℕ)
+    (hs : s = pairEncode a ((List.replicate q true ++ [false]) ++ v))
+    (ws : ℤ → Option Bool) (ps : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SweepPhase.sweep
+          (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+          (fun _ => none) ws (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ps).mapState
+          (Sigma.mk sl_Key.moveTable)) (2 * v.length + 2 + 1) =
+      (sl_cfg src tbl sm d SeekPhase.run
+        (FinTM.bufferTape (s.take (2 * a.length + 2 + q))) (FinTM.bufferTape v) ws
+        (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ps).mapState (Sigma.mk sl_Key.rewindHead) ∧
+    ∀ u ≤ 2 * v.length + 2,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SweepPhase.sweep
+          (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+          (fun _ => none) ws (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ps).mapState
+          (Sigma.mk sl_Key.moveTable)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hslen : s.length = 2 * a.length + 2 + q + 1 + v.length := by
+    rw [hs, length_pairEncode, List.length_append, List.length_append, List.length_replicate,
+      List.length_cons, List.length_nil]
+    omega
+  have htake : (s.take (2 * a.length + 2 + q)).length = 2 * a.length + 2 + q := by
+    rw [List.length_take]
+    omega
+  have hc : ((s.take (2 * a.length + 2 + q)).length : ℤ) =
+      ((2 * a.length + 2 + q : ℕ) : ℤ) := by
+    exact_mod_cast htake
+  have hw : ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      (sl_cfg src tbl sm d SweepPhase.sweep
+          (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+          (fun _ => none) ws (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ps).workTapes src
+        ((sl_cfg src tbl sm d SweepPhase.sweep
+          (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+          (fun _ => none) ws (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ps).workTapePos src + p) =
+        FinTM.bufferTape v p := by
+    intro p hm1 hple
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    rcases eq_or_lt_of_le hm1 with heq | hpos
+    · rw [← heq, show ((2 * a.length + 2 + q : ℕ) : ℤ) + 1 + (-1) =
+        ((2 * a.length + 2 + q : ℕ) : ℤ) from by ring, Function.update_self,
+        FinTM.bufferTape_left]
+    · rw [Function.update_of_ne (by omega), hs,
+        show ((2 * a.length + 2 + q : ℕ) : ℤ) + 1 + p =
+          ((2 * a.length + 2 + q + 1 : ℕ) : ℤ) + p from by push_cast; ring]
+      exact sl_read_table a v q (by omega)
+  obtain ⟨row, cut, -⟩ := transferTM_run_ofCfg src tbl hst v
+    (sl_cfg src tbl sm d SweepPhase.sweep
+      (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+      (fun _ => none) ws (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ps) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .moveTable
+    _ _ (2 * v.length + 2) row SweepPhase.done rfl ⟨.rewindHead, .run⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .moveTable SweepPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ SweepPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · funext j z
+      dsimp only [sl_cfg]
+      by_cases hjsrc : j = src
+      · rw [hjsrc]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        by_cases hz : ((2 * a.length + 2 + q : ℕ) : ℤ) + 1 ≤ z ∧
+            z < ((2 * a.length + 2 + q : ℕ) : ℤ) + 1 + (v.length : ℤ)
+        · rw [if_pos ⟨trivial, hz.1, hz.2⟩]
+          symm
+          apply FinTM.bufferTape_eq_none_of_not_mem
+          rw [hc]
+          omega
+        · rw [if_neg (fun hcon => hz ⟨hcon.2.1, hcon.2.2⟩),
+            if_neg (fun hcon => hst hcon.1)]
+          by_cases hzq : z = ((2 * a.length + 2 + q : ℕ) : ℤ)
+          · rw [hzq, Function.update_self]
+            symm
+            apply FinTM.bufferTape_eq_none_of_not_mem
+            rw [hc]
+            omega
+          · rw [Function.update_of_ne hzq]
+            by_cases hzlt : z < ((2 * a.length + 2 + q : ℕ) : ℤ)
+            · rw [FinTM.bufferTape_take s (2 * a.length + 2 + q) hzlt]
+            · have h1 : FinTM.bufferTape s z = none :=
+                FinTM.bufferTape_eq_none_of_not_mem s (by omega)
+              have h2 : FinTM.bufferTape (s.take (2 * a.length + 2 + q)) z = none :=
+                FinTM.bufferTape_eq_none_of_not_mem _ (by rw [hc]; omega)
+              rw [h1, h2]
+      · rw [if_neg (fun hcon => hjsrc hcon.1)]
+        by_cases hjtbl : j = tbl
+        · rw [hjtbl]
+          simp only [Function.update_self, Function.update_of_ne hts]
+          by_cases hz : (0 : ℤ) ≤ z ∧ z < 0 + (v.length : ℤ)
+          · rw [if_pos ⟨trivial, hz.1, hz.2⟩, sub_zero]
+          · rw [if_neg (fun hcon => hz ⟨hcon.2.1, hcon.2.2⟩)]
+            have h2 : FinTM.bufferTape v z = none :=
+              FinTM.bufferTape_eq_none_of_not_mem v (by omega)
+            rw [h2]
+        · rw [if_neg (fun hcon => hjtbl hcon.1)]
+          by_cases hjsm : j = sm
+          · rw [hjsm]
+            simp only [Function.update_self]
+          · simp only [Function.update_of_ne hjsm, Function.update_of_ne hjtbl,
+              Function.update_of_ne hjsrc]
+    · rfl
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .moveTable (by decide) _
+
+/-- Phase 7, hosted: the skip back over the remaining prefix `s.take m`, one dispatch into
+phase 8. -/
+private lemma sl_phase7 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s : List Bool) (m : ℕ) (hm : m ≤ s.length) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape (s.take m)) wt ws
+          ((m : ℕ) + 1) pt ps).mapState (Sigma.mk sl_Key.rewindHead))
+        ((s.take m).length + 3 + 1) =
+      (sl_cfg src tbl sm d SweepPhase.sweep (FinTM.bufferTape (s.take m)) wt ws 0 pt
+        ps).mapState (Sigma.mk sl_Key.clearHead) ∧
+    ∀ u ≤ (s.take m).length + 3,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape (s.take m)) wt ws
+          ((m : ℕ) + 1) pt ps).mapState (Sigma.mk sl_Key.rewindHead)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have hc : (((s.take m).length : ℕ) : ℤ) = ((m : ℕ) : ℤ) := by
+    rw [List.length_take]
+    omega
+  have hw : ∀ p : ℤ, -1 ≤ p → p ≤ (((s.take m).length : ℕ) : ℤ) →
+      (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape (s.take m)) wt ws
+          ((m : ℕ) + 1) pt ps).workTapes src
+        ((sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape (s.take m)) wt ws
+          ((m : ℕ) + 1) pt ps).workTapePos src - (((s.take m).length : ℕ) : ℤ) - 1 + p) =
+        FinTM.bufferTape (s.take m) p := by
+    intro p _ _
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    rw [hc]
+    congr 1
+    ring
+  obtain ⟨row, cut, -⟩ := skipBackTM_run_ofCfg src (s.take m)
+    (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape (s.take m)) wt ws
+      ((m : ℕ) + 1) pt ps) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .rewindHead
+    _ _ ((s.take m).length + 3) row SeekPhase.done rfl ⟨.clearHead, .sweep⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .rewindHead SeekPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  refine ⟨H.2.trans ?_, fun u hu => ?_⟩
+  · refine sl_rewrap _ _ _ SeekPhase.done ?_ ?_ ?_ ?_ ?_ ?_
+    · rfl
+    · rfl
+    · rfl
+    · rfl
+    · funext j
+      dsimp only [sl_cfg]
+      by_cases hjsrc : j = src
+      · rw [hjsrc, Function.update_self]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        rw [hc]
+        ring
+      · rw [Function.update_of_ne hjsrc]
+        by_cases hjsm : j = sm
+        · rw [hjsm]
+          simp only [Function.update_self]
+        · simp only [Function.update_of_ne hjsm]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc]
+    · rfl
+  · rw [H.1 u hu]
+    exact sl_tagged_ne_done .rewindHead (by decide) _
+
+/-- Phase 8, hosted: the clear of the remaining prefix. The lockstep window of
+`Turing.phaseHostTM_run` covers the whole phase, to its exact exit time: the self-redirect at
+its `done` is never taken inside the horizon, so the exit is reached at `2|s.take m| + 2` and
+not before. -/
+private lemma sl_phase8 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
+    (s : List Bool) (m : ℕ) (hm : m ≤ s.length) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
+    (phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SweepPhase.sweep (FinTM.bufferTape (s.take m)) wt ws 0 pt
+          ps).mapState (Sigma.mk sl_Key.clearHead)) (2 * (s.take m).length + 2) =
+      (sl_cfg src tbl sm d SweepPhase.done (fun _ => none) wt ws 0 pt ps).mapState
+        (Sigma.mk sl_Key.clearHead) ∧
+    ∀ u < 2 * (s.take m).length + 2,
+      (((phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red).runFrom
+        ((sl_cfg src tbl sm d SweepPhase.sweep (FinTM.bufferTape (s.take m)) wt ws 0 pt
+          ps).mapState (Sigma.mk sl_Key.clearHead)) u).state) ≠
+        some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+  have htake : (s.take m).length = m := by
+    rw [List.length_take]
+    omega
+  have hw : ∀ p : ℤ, -1 ≤ p → p ≤ (((s.take m).length : ℕ) : ℤ) →
+      (sl_cfg src tbl sm d SweepPhase.sweep (FinTM.bufferTape (s.take m)) wt ws 0 pt
+          ps).workTapes src
+        ((sl_cfg src tbl sm d SweepPhase.sweep (FinTM.bufferTape (s.take m)) wt ws 0 pt
+          ps).workTapePos src + p) = FinTM.bufferTape (s.take m) p := by
+    intro p _ _
+    dsimp only [sl_cfg]
+    simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+    rw [zero_add]
+  obtain ⟨row, cut, -⟩ := clearTM_run_ofCfg src (s.take m)
+    (sl_cfg src tbl sm d SweepPhase.sweep (FinTM.bufferTape (s.take m)) wt ws 0 pt ps) rfl hw
+  have H := phaseHostTM_run (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red .clearHead
+    _ _ (2 * (s.take m).length + 2) row SweepPhase.done rfl ⟨.clearHead, .done⟩
+    (by simp [sl_red])
+    (sl_guard src tbl sm .clearHead SweepPhase.done
+      (fun st h => by simp only [sl_red]; rw [if_neg h]) cut)
+  constructor
+  · rw [H.1 (2 * (s.take m).length + 2) le_rfl, row]
+    refine congrArg (Cfg.mapState (Sigma.mk sl_Key.clearHead)) ?_
+    apply Cfg.ext
+    · rfl
+    · rfl
+    · funext j z
+      dsimp only [sl_cfg]
+      by_cases hjsrc : j = src
+      · rw [hjsrc]
+        simp only [Function.update_self, Function.update_of_ne hss, Function.update_of_ne hst]
+        by_cases hz : (0 : ℤ) ≤ z ∧ z < 0 + (((s.take m).length : ℕ) : ℤ)
+        · rw [if_pos ⟨trivial, hz.1, hz.2⟩]
+        · rw [if_neg (fun hcon => hz ⟨hcon.2.1, hcon.2.2⟩)]
+          exact FinTM.bufferTape_eq_none_of_not_mem _ (by omega)
+      · rw [if_neg (fun hcon => hjsrc hcon.1)]
+        by_cases hjsm : j = sm
+        · rw [hjsm]
+          simp only [Function.update_self]
+        · simp only [Function.update_of_ne hjsm]
+          by_cases hjtbl : j = tbl
+          · rw [hjtbl]
+            simp only [Function.update_self]
+          · simp only [Function.update_of_ne hjtbl, Function.update_of_ne hjsrc]
+    · rfl
+    · rfl
+  · intro u hu
+    rw [H.1 u (le_of_lt hu)]
+    intro hcon
+    rw [Cfg.mapState_state] at hcon
+    obtain ⟨st, hst', hinj⟩ := Option.map_eq_some_iff.mp hcon
+    have hd : st = SweepPhase.done := by
+      simpa using hinj
+    exact cut u hu (hd ▸ hst')
+
+/-- **The seam layout from a captured serialization.** For distinct work tapes `src`, `tbl` and
+`sm` there is a machine with an entry state `entry`, a live exit `done` and a constant `C` with
+the following property. Let `s = pairEncode a ((List.replicate q true ++ [false]) ++ v)` and let
+`r ≤ |s|`. There is **one time** `T ≤ C·(|s| + 1)`, depending on `a`, `v`, `q` and `r` only
+(chosen before the native input and every other tape), such that: started at `entry` with tape
+`src` holding exactly `s` from cell `0` (blank elsewhere), its head at `r`, and tapes `tbl` and
+`sm` blank with their heads at `0`, the machine reaches `done` at `T`, and not before, with
+* tape `tbl` holding exactly `v` from cell `0`;
+* tape `sm` holding exactly the unary word `List.replicate q true ++ [false]` from cell `2`
+  (cells `0` and `1` blank);
+* tape `src` blank;
+* the heads of the three tapes at `0`, and every other tape, head, the input position and the
+  output unchanged; it emits nothing.
+
+**Why `T` comes before the configuration.** The universal startup (`Turing.exists_selfStartupTMK`)
+must exit first at a time that does not depend on its input's suffix. Consumers that need only the
+bound use the corollary with `T` chosen per configuration.
+
+At `a = n.bits`, `q = M.q₀` and `v = tableBitsK M.tr`, the start word is `serializeK M`
+(`Turing.serializeK_eq`, `Turing.unaryFin_eq`), and the end is the step block's table and summary
+tapes for an empty output (`Turing.StepBlock.summaryCells_eq`,
+`Turing.StepBlock.outputSummary_nil`, `Turing.FinTM.bufferTape_of_neg`). (A row of the
+construction layer; [AB09, §1.4].)
+
+**Proof sketch.** Write `m = List.replicate q true ++ [false]` and `h = 2|a| + 2` for the length
+of the header `pairEncode a []`. So `s` is the header on `[0, h)`, `m` on `[h, h + q]` and `v`
+from `h + q + 1`, and `n = |s| = h + q + 1 + |v|`. Eight phases are composed by
+`Turing.phaseHostTM` (`Turing.phaseHostTM_run`: one silent stationary dispatch step between
+consecutive phases). Each is a catalog row through its `_run_ofCfg` contract, whose hypothesis
+the previous phase's endpoint meets, or one of two leaves:
+1. `Turing.skipTM_run_ofCfg` on `src` at `w = s.drop r`: the cells `r, …, n` are `s.drop r` and
+   its right blank. `n - r + 1` steps; the head ends at `n + 1`.
+2. `Turing.skipBackTM_run_ofCfg` on `src` at `u = s`: the cells `-1, …, n` are `s` between two
+   blanks, ending one blank before the head. `n + 3` steps; the head ends at `0`.
+3. **Leaf `pairSkip`** (read-only on `src`): from cell `0` of `pairEncode a _`, read aligned pairs.
+   An equal pair continues; `false, true` exits one cell past it. `h` steps; the head ends at `h`.
+   No row serves it: the seek rows stop at blanks and none reads pairs.
+4. **Leaf `unarySplit`** (on `src` and `sm`): move the head of `sm` right twice. Then, while `src`
+   reads `true`, write `true` on `sm` and move both heads right. At the `false`, write `false` on
+   `sm` (its head stays) and blank that cell of `src` (its head moves right). `q + 3` steps. Now
+   `src` has its head at `h + q + 1` and a blank at `h + q`, and `sm` holds `m` from cell `2`,
+   its head at `q + 2`. No row serves it: the copy row stops at a blank, not at a `false`.
+5. `Turing.walkTM_run_ofCfg` with ruler `sm`, `moved = (· = sm)` and `dir = .neg`, at
+   `w = m.reverse`: the cells `q + 2, …, 2` read leftward, then the blank cell `1`. `q + 2`
+   steps; the head of `sm` ends at `0`.
+6. `Turing.transferTM_run_ofCfg` from `src` to `tbl` at `w = v`: phase 4's blank at relative
+   `-1`, then `v`, then the right blank at relative `|v|`. `2|v| + 2` steps. `tbl` becomes
+   `bufferTape v` (it was blank), `v` is erased from `src`, and both heads return, to `h + q + 1`
+   and `0`.
+7. `Turing.skipBackTM_run_ofCfg` on `src` at `u = s.take (h + q)`: all that remains on `src`,
+   ending one blank before the head. `h + q + 3` steps; the head ends at `0`.
+8. `Turing.clearTM_run_ofCfg` on `src` at `w = s.take (h + q)`. `2(h + q) + 2` steps; `src` is
+   blank and the row returns its head to `0`. This row's `done` is the exit `done`.
+
+In all, with the seven dispatch steps, `T = 2n - r + 4h + 5q + 2|v| + 23 ≤ 7n + 18 ≤ 18(n + 1)`,
+a function of `a`, `v`, `q` and `r`: no phase reads the native input or a tape other than `src`,
+`tbl` and `sm`, so the run on those three tapes, and hence `T`, is the same for every frame.
+Fill obligations, named: the two leaves' framed contracts; the word identities for `s.drop r`,
+`s.take (h + q)` and the cells of `m` and `v` (from `Turing.pairEncode_eq`); the phase joins;
+and the endpoint's frame. -/
+theorem exists_seamLayoutTM (k : ℕ) (src tbl sm : Fin k) (hst : src ≠ tbl) (hss : src ≠ sm)
+    (hts : tbl ≠ sm) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM k Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ (a v : List Bool) (q r : ℕ),
+        let s := pairEncode a ((List.replicate q true ++ [false]) ++ v)
+        r ≤ s.length →
+        ∃ T ≤ C * (s.length + 1), ∀ {z : List Bool} (d : Cfg k Bool Q z),
+          d.state = some entry →
+          d.workTapes src = FinTM.bufferTape s → d.workTapePos src = r →
+          d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+          d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
+          (L.runFrom d T).state = some done ∧
+          (L.runFrom d T).inputPos = d.inputPos ∧
+          (L.runFrom d T).workTapes =
+            Function.update (Function.update (Function.update d.workTapes src (fun _ => none))
+              tbl (FinTM.bufferTape v))
+              sm (fun p => FinTM.bufferTape (List.replicate q true ++ [false]) (p - 2)) ∧
+          (L.runFrom d T).workTapePos =
+            Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0) sm 0 ∧
+          (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
+          ∀ u < T, (L.runFrom d u).state ≠ some done := by
+  refine ⟨(i : sl_Key) × sl_Ph i, inferInstance, inferInstance,
+    phaseHostTM (sl_part k src tbl sm) ⟨.skipRest, .run⟩ sl_red,
+    ⟨.skipRest, .run⟩, ⟨.clearHead, .done⟩, 18, ?_⟩
+  intro a v q r s hr
+  have hsdef : s = pairEncode a ((List.replicate q true ++ [false]) ++ v) := rfl
+  have hslen : s.length = 2 * a.length + 2 + q + 1 + v.length := by
+    rw [hsdef, length_pairEncode, List.length_append, List.length_append,
+      List.length_replicate, List.length_cons, List.length_nil]
+    omega
+  have hdrop : (s.drop r).length = s.length - r := by simp
+  have htake : (s.take (2 * a.length + 2 + q)).length = 2 * a.length + 2 + q := by
+    rw [List.length_take]
+    omega
+  have hrevlen : ((List.replicate q true ++ [false]).reverse).length = q + 1 := by simp
+  refine ⟨2 * s.length - r + 4 * (2 * a.length + 2) + 5 * q + 2 * v.length + 23,
+    by omega, ?_⟩
+  intro z d hstate hsrc hsrcpos htbl htblpos hsm hsmpos
+  set L := phaseHostTM (sl_part k src tbl sm)
+    (⟨sl_Key.skipRest, SeekPhase.run⟩ : (i : sl_Key) × sl_Ph i) sl_red with hLdef
+  -- the start configuration, phase 1's entry
+  have hstart : d = (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) (fun _ => none)
+      (fun _ => none) (r : ℤ) 0 0).mapState (Sigma.mk sl_Key.skipRest) := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, hstate]
+      dsimp only [sl_cfg]
+      rw [Option.map_some]
+    · rw [Cfg.mapState_inputPos]
+      dsimp only [sl_cfg]
+    · funext j p
+      rw [Cfg.mapState_workTapes]
+      dsimp only [sl_cfg]
+      by_cases hjsm : j = sm
+      · rw [hjsm, Function.update_self, hsm]
+      · rw [Function.update_of_ne hjsm]
+        by_cases hjtbl : j = tbl
+        · rw [hjtbl, Function.update_self, htbl]
+        · rw [Function.update_of_ne hjtbl]
+          by_cases hjsrc : j = src
+          · rw [hjsrc, Function.update_self, hsrc]
+          · rw [Function.update_of_ne hjsrc]
+    · funext j
+      rw [Cfg.mapState_workTapePos]
+      dsimp only [sl_cfg]
+      by_cases hjsm : j = sm
+      · rw [hjsm, Function.update_self, hsmpos]
+      · rw [Function.update_of_ne hjsm]
+        by_cases hjtbl : j = tbl
+        · rw [hjtbl, Function.update_self, htblpos]
+        · rw [Function.update_of_ne hjtbl]
+          by_cases hjsrc : j = src
+          · rw [hjsrc, Function.update_self, hsrcpos]
+          · rw [Function.update_of_ne hjsrc]
+    · rw [Cfg.mapState_output]
+      dsimp only [sl_cfg]
+  -- the eight hosted phases
+  have P1 := sl_phase1 src tbl sm hst hss d s r hr (fun _ => none) (fun _ => none) 0 0
+  have P2 := sl_phase2 src tbl sm hst hss d s (fun _ => none) (fun _ => none) 0 0
+  have P3 := sl_phase3 src tbl sm hst hss d s a v q hsdef (fun _ => none) (fun _ => none) 0 0
+  have P4 := sl_phase4 src tbl sm hst hss hts d s a v q hsdef (fun _ => none) 0
+  have P5 := sl_phase5 src tbl sm d q
+    (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+    (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) (fun _ => none) 0
+  have P6 := sl_phase6 src tbl sm hst hss hts d s a v q hsdef
+    (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2)) 0
+  have P7 := sl_phase7 src tbl sm hst hss d s (2 * a.length + 2 + q) (by omega)
+    (FinTM.bufferTape v)
+    (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2)) 0 0
+  have P8 := sl_phase8 src tbl sm hst hss d s (2 * a.length + 2 + q) (by omega)
+    (FinTM.bufferTape v)
+    (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2)) 0 0
+  -- the cumulative run equations
+  have hc1 : L.runFrom d ((s.drop r).length + 1 + 1) =
+      (sl_cfg src tbl sm d SeekPhase.run (FinTM.bufferTape s) (fun _ => none)
+        (fun _ => none) ((s.length : ℤ) + 1) 0 0).mapState (Sigma.mk sl_Key.rewindAll) := by
+    conv_lhs => rw [hstart]
+    exact P1.1
+  have hc2 : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1)) =
+      (sl_cfg src tbl sm d sl_PairPhase.start (FinTM.bufferTape s) (fun _ => none)
+        (fun _ => none) 0 0 0).mapState (Sigma.mk sl_Key.pairSkip) := by
+    rw [MultiTapeTM.runFrom_add, hc1]
+    exact P2.1
+  have hc3 : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+      (2 * a.length + 2 + 1)) =
+      (sl_cfg src tbl sm d sl_SplitPhase.mv1 (FinTM.bufferTape s) (fun _ => none)
+        (fun _ => none) ((2 * a.length + 2 : ℕ) : ℤ) 0 0).mapState
+        (Sigma.mk sl_Key.unarySplit) := by
+    rw [MultiTapeTM.runFrom_add, hc2]
+    exact P3.1
+  have hc4 : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+      (2 * a.length + 2 + 1) + (q + 3 + 1)) =
+      (sl_cfg src tbl sm d SeekPhase.run
+        (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+        (fun _ => none)
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 ((q : ℕ) + 2)).mapState
+        (Sigma.mk sl_Key.walkHome) := by
+    rw [MultiTapeTM.runFrom_add, hc3]
+    exact P4.1
+  have hc5 : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+      (2 * a.length + 2 + 1) + (q + 3 + 1) +
+      ((List.replicate q true ++ [false]).reverse.length + 1 + 1)) =
+      (sl_cfg src tbl sm d SweepPhase.sweep
+        (Function.update (FinTM.bufferTape s) ((2 * a.length + 2 + q : ℕ) : ℤ) none)
+        (fun _ => none)
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 0).mapState
+        (Sigma.mk sl_Key.moveTable) := by
+    rw [MultiTapeTM.runFrom_add, hc4]
+    exact P5.1
+  have hc6 : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+      (2 * a.length + 2 + 1) + (q + 3 + 1) +
+      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+      (2 * v.length + 2 + 1)) =
+      (sl_cfg src tbl sm d SeekPhase.run
+        (FinTM.bufferTape (s.take (2 * a.length + 2 + q))) (FinTM.bufferTape v)
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        (((2 * a.length + 2 + q : ℕ) : ℤ) + 1) 0 0).mapState
+        (Sigma.mk sl_Key.rewindHead) := by
+    rw [MultiTapeTM.runFrom_add, hc5]
+    exact P6.1
+  have hc7 : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+      (2 * a.length + 2 + 1) + (q + 3 + 1) +
+      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+      (2 * v.length + 2 + 1) + ((s.take (2 * a.length + 2 + q)).length + 3 + 1)) =
+      (sl_cfg src tbl sm d SweepPhase.sweep
+        (FinTM.bufferTape (s.take (2 * a.length + 2 + q))) (FinTM.bufferTape v)
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        0 0 0).mapState (Sigma.mk sl_Key.clearHead) := by
+    rw [MultiTapeTM.runFrom_add, hc6]
+    exact P7.1
+  have hfin : L.runFrom d ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+      (2 * a.length + 2 + 1) + (q + 3 + 1) +
+      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+      (2 * v.length + 2 + 1) + ((s.take (2 * a.length + 2 + q)).length + 3 + 1) +
+      (2 * (s.take (2 * a.length + 2 + q)).length + 2)) =
+      (sl_cfg src tbl sm d SweepPhase.done (fun _ => none) (FinTM.bufferTape v)
+        (fun z => FinTM.bufferTape (List.replicate q true ++ [false]) (z - 2))
+        0 0 0).mapState (Sigma.mk sl_Key.clearHead) := by
+    rw [MultiTapeTM.runFrom_add, hc7]
+    exact P8.1
+  have hTsplit : 2 * s.length - r + 4 * (2 * a.length + 2) + 5 * q + 2 * v.length + 23 =
+      (s.drop r).length + 1 + 1 + (s.length + 3 + 1) + (2 * a.length + 2 + 1) + (q + 3 + 1) +
+      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) + (2 * v.length + 2 + 1) +
+      ((s.take (2 * a.length + 2 + q)).length + 3 + 1) +
+      (2 * (s.take (2 * a.length + 2 + q)).length + 2) := by
+    rw [hdrop, htake, hrevlen]
+    omega
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hTsplit, hfin, Cfg.mapState_state]
+    dsimp only [sl_cfg]
+    rw [Option.map_some]
+  · rw [hTsplit, hfin, Cfg.mapState_inputPos]
+    dsimp only [sl_cfg]
+  · rw [hTsplit, hfin]
+    funext j zz
+    rw [Cfg.mapState_workTapes]
+    dsimp only [sl_cfg]
+  · rw [hTsplit, hfin]
+    funext j
+    rw [Cfg.mapState_workTapePos]
+    dsimp only [sl_cfg]
+  · intro u hu
+    rw [hTsplit] at hu
+    have h1 : d.output <+: (L.runFrom d u).output := by
+      have h := MultiTapeTM.output_prefix L d (Nat.zero_le u)
+      rwa [MultiTapeTM.runFrom_zero] at h
+    have h2 : (L.runFrom d u).output <+: d.output := by
+      have h := MultiTapeTM.output_prefix L d hu
+      rw [hfin, Cfg.mapState_output] at h
+      dsimp only [sl_cfg] at h
+      exact h
+    exact h2.eq_of_length (le_antisymm h2.length_le h1.length_le)
+  · intro u hu
+    rw [hTsplit] at hu
+    by_cases h1 : u ≤ (s.drop r).length + 1
+    · rw [hstart]
+      exact P1.2 u h1
+    · by_cases h2 : u ≤ (s.drop r).length + 1 + 1 + (s.length + 3)
+      · obtain ⟨u', rfl⟩ : ∃ u', u = (s.drop r).length + 1 + 1 + u' :=
+          ⟨u - ((s.drop r).length + 1 + 1), by omega⟩
+        rw [MultiTapeTM.runFrom_add, hc1]
+        exact P2.2 u' (by omega)
+      · by_cases h3 : u ≤ (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+            (2 * a.length + 2)
+        · obtain ⟨u', rfl⟩ : ∃ u',
+              u = (s.drop r).length + 1 + 1 + (s.length + 3 + 1) + u' :=
+            ⟨u - ((s.drop r).length + 1 + 1 + (s.length + 3 + 1)), by omega⟩
+          rw [MultiTapeTM.runFrom_add, hc2]
+          exact P3.2 u' (by omega)
+        · by_cases h4 : u ≤ (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+              (2 * a.length + 2 + 1) + (q + 3)
+          · obtain ⟨u', rfl⟩ : ∃ u', u = (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                (2 * a.length + 2 + 1) + u' :=
+              ⟨u - ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                (2 * a.length + 2 + 1)), by omega⟩
+            rw [MultiTapeTM.runFrom_add, hc3]
+            exact P4.2 u' (by omega)
+          · by_cases h5 : u ≤ (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                ((List.replicate q true ++ [false]).reverse.length + 1)
+            · obtain ⟨u', rfl⟩ : ∃ u', u = (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                  (2 * a.length + 2 + 1) + (q + 3 + 1) + u' :=
+                ⟨u - ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                  (2 * a.length + 2 + 1) + (q + 3 + 1)), by omega⟩
+              rw [MultiTapeTM.runFrom_add, hc4]
+              exact P5.2 u' (by omega)
+            · by_cases h6 : u ≤ (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                  (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                  ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+                  (2 * v.length + 2)
+              · obtain ⟨u', rfl⟩ : ∃ u', u = (s.drop r).length + 1 + 1 +
+                    (s.length + 3 + 1) + (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                    ((List.replicate q true ++ [false]).reverse.length + 1 + 1) + u' :=
+                  ⟨u - ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                    (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                    ((List.replicate q true ++ [false]).reverse.length + 1 + 1)), by omega⟩
+                rw [MultiTapeTM.runFrom_add, hc5]
+                exact P6.2 u' (by omega)
+              · by_cases h7 : u ≤ (s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                    (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                    ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+                    (2 * v.length + 2 + 1) + ((s.take (2 * a.length + 2 + q)).length + 3)
+                · obtain ⟨u', rfl⟩ : ∃ u', u = (s.drop r).length + 1 + 1 +
+                      (s.length + 3 + 1) + (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+                      (2 * v.length + 2 + 1) + u' :=
+                    ⟨u - ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                      (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+                      (2 * v.length + 2 + 1)), by omega⟩
+                  rw [MultiTapeTM.runFrom_add, hc6]
+                  exact P7.2 u' (by omega)
+                · obtain ⟨u', rfl⟩ : ∃ u', u = (s.drop r).length + 1 + 1 +
+                      (s.length + 3 + 1) + (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+                      (2 * v.length + 2 + 1) +
+                      ((s.take (2 * a.length + 2 + q)).length + 3 + 1) + u' :=
+                    ⟨u - ((s.drop r).length + 1 + 1 + (s.length + 3 + 1) +
+                      (2 * a.length + 2 + 1) + (q + 3 + 1) +
+                      ((List.replicate q true ++ [false]).reverse.length + 1 + 1) +
+                      (2 * v.length + 2 + 1) +
+                      ((s.take (2 * a.length + 2 + q)).length + 3 + 1)), by omega⟩
+                  rw [MultiTapeTM.runFrom_add, hc7]
+                  exact P8.2 u' (by omega)
+
+end Turing

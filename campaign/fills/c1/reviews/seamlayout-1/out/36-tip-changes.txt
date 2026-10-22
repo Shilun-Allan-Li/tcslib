@@ -1,0 +1,32 @@
+--- owned file blob: base d0af5ae631aa092dfaf4ebd099e7d8033d339359 tip d0af5ae631aa092dfaf4ebd099e7d8033d339359
+--- TCSlib tree: base 0fcc0e49379c761e306d4ccc51f89f35d196915d tip 268944d67aa872f3c6d05931a3f891e46789b270
+--- upstream closure of the head module (head tree)
+      17
+--- upstream closure at the tip with the patch's import (tip tree + BufferWords import): computed on wt-head's import of BufferWords; tip changes vs base among those modules:
+same TCSlib/Complexity/TuringMachine/Configuration
+same TCSlib/Complexity/TuringMachine/Deterministic
+same TCSlib/Complexity/TuringMachine/Finite
+same TCSlib/Complexity/TuringMachine/Simulation
+same TCSlib/Complexity/TuringMachine/BufferWords
+same TCSlib/Complexity/TuringMachine/Build/Convention
+same TCSlib/Complexity/TuringMachine/StateRenaming
+same TCSlib/Complexity/TuringMachine/Build/Embed
+same TCSlib/Complexity/TuringMachine/Composition
+same TCSlib/Complexity/TuringMachine/Build/Wrappers
+same TCSlib/Complexity/TuringMachine/Build/Loop
+same TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction
+same TCSlib/Complexity/TuringMachine/Sweep
+same TCSlib/Complexity/TuringMachine/Robustness/SingleTape
+same TCSlib/Complexity/TuringMachine/Encoding
+same TCSlib/Complexity/TuringMachine/Build/Catalog
+same TCSlib/Complexity/TuringMachine/Build/Seam
+--- TCSlib files changed base..tip
+ TCSlib/Complexity/ClassNP.lean                     |    3 +-
+ TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean    | 3187 +++++++++++++++++++-
+ .../Complexity/Diagonalization/NTimeHierarchy.lean |   11 +-
+ TCSlib/Complexity/SpaceComplexity/WindowClock.lean |  172 +-
+ TCSlib/Complexity/TuringMachine.lean               |    5 +-
+ .../TuringMachine/Build/InputDevice.lean           |  228 +-
+ .../TuringMachine/Build/InputWindow.lean           |  358 ++-
+ TCSlib/Complexity/TuringMachine/Build/Rewind.lean  |  223 ++
+ 8 files changed, 4130 insertions(+), 57 deletions(-)

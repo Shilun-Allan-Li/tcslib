@@ -1269,6 +1269,23 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
   pending. **For the user:** whether a docstring-only PR gets its own gate. The 18 other long
   private proofs without a sketch stay under C1E-1.
+- **The seam layout: delivered complete (2026-10-22), reviewed: land**
+  (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
+  (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
+  pushed; **its PR is not opened** until the user rules on:
+  - **F1:** phase 8 by a self-redirect, because the brief's agreement transport needs a table fact
+    about `phaseHostTM` that no lemma publishes (the machine is the same: the tables are equal);
+    with it, whether to publish a last-phase lemma for the phase host (promotion candidate 1);
+  - **F3:** 14 private proofs over 20 lines without a "Proof sketch" (now, or a follow-up as for
+    C1-E).
+  Gate 59's pack is drafted (`campaign/gates/59-c1-seamlayout-fill/pack.md`), not staged; replay
+  `replay-lsl.sh` (14 modules, the merged tree) ready. Minor, no ruling needed: F2 (six derived
+  instances with public names, as landed code has), F4 (REPORT inaccuracies), F5 (applied by the
+  squash). Dedup candidates: `sl_apply_eq` with `ExhaustiveReplay`'s `xr_act_apply`; a reversed
+  read for `BufferWords`.
+  - **For the addendum's next version:** item 2's manifest check fails by construction under the
+    narrowed fetch (the four documentation packages are absent); it should check each package
+    present in `.lake/packages`.
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
