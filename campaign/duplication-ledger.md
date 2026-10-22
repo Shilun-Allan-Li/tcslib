@@ -334,13 +334,57 @@ instance and re-check consumers. `CounterLoop`'s other new pair, `counterLoopTM_
 ↔ `_run_escape` at 83%/72%, is two Z5 re-derivations sharing transport setup. It is not a
 member (gate note F8).
 
-**RW-1, the rewind row's frame helper** (PR #138, `Build/Rewind`, 2026-10-18): the private
-`rw_cfg` reproduces `Build/Catalog`'s private `catalogSeekCfg` at 79/79 = 100%, both ways (one
-record update over a different phase type); no proof is copied. **ACKNOWLEDGED (user,
-2026-10-18)**, before gate 55. **Cleanup owner and window:** the user's dedup window, through
-backlog §1 RW-1: one public frame over any state type, cited from both files, with Catalog's next
-edit. `Build/Rewind`: 1 member of 5 declarations (20%, at one fifth and not past it; the §1
-item is opened anyway and answered), 79 copied characters.
+**RW-1, the rewind row's copies of Catalog's seek frame and skip-back table** (PR #138,
+`Build/Rewind`, 2026-10-18). Two like-kind cross-file pairs, both against `Build/Catalog`:
+- the private `rw_cfg` reproduces Catalog's private `catalogSeekCfg` at 79/79 = 100%, both ways:
+  one record update over a different phase type; no proof is copied;
+- `rewindTM` and `skipBackTM` share one contiguous 140-character block, 80% of `rewindTM`'s
+  175-character body and 69% of `skipBackTM`'s 202: `rewindTM`'s table is `skipBackTM`'s
+  without its first row, with `start` in the role of `gap`. Inside the same 140 characters,
+  `rewindTM` also pairs with the seek tables `seekStartTM` (98 characters, 56% of `rewindTM`),
+  `skipTM` (71, 55% of `skipTM`) and `seekEndTM` (92, 53% of `rewindTM`): the seek family's
+  table pattern.
+
+**Census** (the primary rule, each member counted once per file it inhabits; corrected at gate
+55, finding 1: the first version counted `rw_cfg` alone, 1 of 5, and called the table pairs
+design-parallel, an exception the rule does not make for cross-file pairs; the seek tables'
+resemblance among themselves, §12.8 statement layer above, is uncounted only because it is
+in-file):
+- `Build/Rewind`, the copy side: **2 of 5 declarations (40%)** (3 public, 2 private), **20**
+  lines in member blocks (`rewindTM` 14, `rw_cfg` 6), 219 characters reproduced. `RewindPhase`
+  (a 48-character body, below the floor) and `rw_step` (no pair at half) are not members.
+- `Build/Catalog`, the original side: **5 more members**, `catalogSeekCfg` (6 lines),
+  `skipBackTM` (16), `skipTM` (13), `seekEndTM` (18) and `seekStartTM` (19), 72 lines; 5 of its
+  505 declarations. The file's row is re-totalled at its next census.
+- The v3 screen of the module, `Build/Catalog` and the exhaustive replay at #136's head (563
+  declarations, 416 pairs) regenerates byte-identical at gate 55; screened against the whole
+  library, `rewindTM` and `rw_cfg` pair with nothing else.
+
+**Exclusion** (a screen hit that is not a member; an exception to the rule, approved by the user
+on 2026-10-21): `rewindTM_run_ofCfg` → Catalog's private `a2_mapSetup_run`, 84/163 = 52%. The shared
+text is two tiles, 50 and 34 characters, of the run-by-induction idiom
+(`| succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih (` and
+`, MultiTapeTM.runFrom_succ_eq_step'`); no setup argument is shared. Screened against the whole
+library, the same idiom reaches half of 12 short run proofs in 10 files: `a2_mapSetup_run`,
+`Universal`'s `timedFrame_run`, `Robustness/ObliviousSchedule`'s `maskedClock_lockstep`,
+`decorateTM_run` and `parallelTM_run`, `Nondeterminism`'s `b2_unary_run`, `CircuitEvalRun`'s
+`step_rej`, `Build/Seam`'s `seamCompTM_runFrom_left`, `TimeHierarchy/ClockMachine`'s
+`kCfg_run`, `SymbolLift`'s `MultiTapeTM.liftSymbols_runFrom`, `Composition`'s
+`controlCfg_run`, and `Build/NDHost`'s `wr_cfg_scan` (there the frame-read idiom). As with the
+B1 exclusion of the configuration-equality idiom (above), it is recorded, not counted. Counted,
+`Build/Rewind` would be 3/5 = 60%.
+
+**The one-fifth rule** (`workflow.md` §4): `Build/Rewind` is past one fifth. Its §1 item is
+`backlog.md` RW-1, opened and acknowledged on 2026-10-18, before gate 55's pack shipped, for the
+frame alone; gate 55 widens it to the table. `Build/Catalog` was past one fifth already (D-R2).
+
+**Acknowledgment.** The frame: **ACKNOWLEDGED (user, 2026-10-18)**, before gate 55. The table
+and the exclusion: **ACKNOWLEDGED (user, 2026-10-21)** (gate 55, finding 1: the census at 40%,
+the idiom hit excluded), with the retirement by unification below chosen over a frame-only one. **Cleanup owner
+and window:** the user's dedup window, through backlog §1 RW-1, with Catalog's next edit: one
+public frame over any state type, cited from both files; and one left-pass table, the rewind
+being skip back entered at `gap`, with both framed runs derived from one public back-pass run.
+After the retirement, neither file has a member from this family.
 
 **BW-1, the buffer-word identities** (PR #140, `TuringMachine/BufferWords`, 2026-10-18): four of the
 module's six public lemmas restate `Build/StepBlock`'s privates (`bufferTape_append_shift` ↔

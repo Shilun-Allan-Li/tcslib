@@ -1,0 +1,61 @@
+GateProbe/RewindSealFullControl.lean:62:2: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (tapeAction i 0 none 0 q).state = some q
+GateProbe/RewindSealFullControl.lean:64:90: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (inputMoveAction 0 q).state = some q
+GateProbe/RewindSealFullControl.lean:66:62: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape u (-1) = none
+GateProbe/RewindSealFullControl.lean:69:66: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+GateProbe/RewindSealFullControl.lean:71:91: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+GateProbe/RewindSealFullControl.lean:74:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+GateProbe/RewindSealFullControl.lean:77:74: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  { state := c.state, inputPos := 0, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output }.inputSymbol =
+    none
+GateProbe/RewindSealFullControl.lean:79:44: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  moveInputPos 0 0 = 0
+GateProbe/RewindSealFullControl.lean:82:2: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+GateProbe/RewindSealFullControl.lean:85:59: error: `simp` made no progress

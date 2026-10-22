@@ -871,22 +871,42 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
   with their families K1–K20.
 - **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
-### RW-1: the rewind row's frame helper, a copy of Catalog's seek frame (user, 2026-10-18)
+### RW-1: the rewind row's copies of Catalog's seek frame and table (user, 2026-10-18; gate 55)
 
 *Origin: the screen of PR #138 (the public rewind row, `Build/Rewind`), before gate 55.*
 
-`Build/Rewind`'s private `rw_cfg` reproduces `Build/Catalog`'s private `catalogSeekCfg` at 100%
-(79 characters, both ways): the three-line record update that sets the state and moves one head,
-over `RewindPhase` instead of `SeekPhase`. Catalog's helper is private and specific to
-`SeekPhase`, so the new module cannot cite it. The step lemmas over the two frames, `rw_step` and
-Catalog's private `catalog_seek_step`, state the same step; the screen pairs them below its
-half threshold.
-- **Acknowledged (user, 2026-10-18)**, before gate 55, on condition that the retirement stays on
-  this backlog.
-- **Retirement, in the user's dedup window:** publish one frame over any state type (with its
-  step lemma, through the public `step_of_tapeAction_move`) and cite it from both files. It
-  edits `Build/Catalog`, whose downstream is most of the library, so it goes with Catalog's next
-  edit (12.2c T3, Catalog core, or MIG-1).
+- **The frame.** `Build/Rewind`'s private `rw_cfg` reproduces `Build/Catalog`'s private
+  `catalogSeekCfg` at 100% (79 characters, both ways): the three-line record update that sets
+  the state and moves one head, over `RewindPhase` instead of `SeekPhase`. Catalog's helper is
+  private and specific to `SeekPhase`, so the new module cannot cite it. The step lemmas over
+  the two frames, `rw_step` and Catalog's private `catalog_seek_step`, state the same step; the
+  screen pairs them below its half threshold.
+- **The table.** `rewindTM`'s transition table is `skipBackTM`'s without its first row (`start`
+  in the role of `gap`): one 140-character block, 80% of `rewindTM` and 69% of `skipBackTM`.
+  Within it, `rewindTM` also meets `seekStartTM`, `skipTM` and `seekEndTM` (53–56%), the seek
+  family's table pattern. #138 cannot share the table: defining the rewind from `skipBackTM`
+  would read `skipBackTM`'s transitions, which Catalog does not publish, and
+  `skipBackTM_run_ofCfg` starts in `run`, so it does not yield the rewind's run.
+- **Not counted, as an exception (approved by the user, 2026-10-21):** `rewindTM_run_ofCfg` against
+  Catalog's private `a2_mapSetup_run` (52% of a 163-character proof), the run-by-induction idiom
+  that the same screen finds in 12 short run proofs across 10 files.
+- **Census** (gate 55, finding 1; `duplication-ledger.md`, RW-1): `Build/Rewind` 2 of 5
+  declarations (40%), 20 lines, 219 characters; `Build/Catalog` 5 more original-side members.
+  **`Build/Rewind` is past one fifth**; this item is the §1 item that `workflow.md` §4 requires
+  for it, widened from the frame to the table.
+- **Acknowledged (user, 2026-10-18)** for the frame, before gate 55, on condition that the
+  retirement stays on this backlog. **The table and the exception: acknowledged (user,
+  2026-10-21)** (gate 55, finding 1), with the retirement by unification (item 2 below) chosen
+  over a frame-only one.
+- **Retirement, in the user's dedup window**, with Catalog's next edit (12.2c T3, Catalog core,
+  or MIG-1), since it edits `Build/Catalog`, whose downstream is most of the library:
+  1. publish one frame over any state type, with its step lemma through the public
+     `step_of_tapeAction_move`, and cite it from both files;
+  2. publish one back-pass run, skip back entered at `gap` from a head anywhere in the word or
+     just past it; derive `skipBackTM_run_ofCfg` from it (one unconditional step, then the
+     back pass with `n = |u|`), and make the rewind skip back entered at `gap`. The rewind's
+     statement is kept up to its state type (`SeekPhase` for `RewindPhase`, or a state
+     renaming), and its consumers are re-checked in that window.
 
 ### BW-1: StepBlock's four buffer-word privates, restated publicly (user, 2026-10-18)
 
