@@ -24,8 +24,9 @@ the seal with its controls, the freeze and the lint at #136's head against `olea
 | 14 | note | The status text is accurate; the 24 deferred sketches remain a follow-up, and finding 1 applies to the frozen sketch. | **Confirmed; finding 1 is applied** (row 1). Recount: 25 proofs over 20 lines; on `lean/c1-exhaustive-sketches` (`85ac8d57`, on `b5629b91`, whose file is byte-equal to `75b2e94c`'s) six sketches written and 18 remaining (`40-sketch-census.txt`). That commit merges with row 1's fix without conflict (`41-sketches-branch.txt`). The backlog's line is clarified, and that PR also rewords the two private texts that still call the accept flag "some branch accepted". |
 | 3-9, 11, 15 | notes | Integrity and the freeze; the statement's faithfulness and [AB09, §3.2, proof of Theorem 3.2]; the first all-halting depth; the constant and the ledger; the accepted displaced-head deviation; the private definitions; the four per-replay obligations; rule 10 and rule 11; the notation. | No action. (Reproduced for the records: the bundle hash and `SHA256SUMS`, and the worker's source SHA-256 by reversing the review's fix (`50-note3-identity.txt`); the citation against the repository's own references only, by section, the finding's external link not followed or adopted (`52-note4-citation.txt`); the cycle sum and its slack (`53-note6-ledger.txt`); the seal re-run (row 1).) |
 
-**Re-replay for the fix:** pending (`evidence/replay-l136b.sh`: the same 4 modules from
-`oleans-l132b`, pin `ClassNP/ExhaustiveReplay.lean:0d09053ee9ea7d7387279c1229531feab7f6a8af`).
-#140's merge (`e2bc85eb`) and #138's are outside the four modules' upstream closure, so the chain
+**Re-replay for the fix: passed (user, 2026-10-21):** `evidence/replay-l136b.sh`, 4 of 4 at `f4f4f904`,
+0 failed, static-equal (2), from `oleans-l132b`, pin `ClassNP/ExhaustiveReplay.lean:0d09053e`
+(`evidence/replay-l136b.*`).
+The merges of #140, #138, #133 and #134 since are outside the four modules' upstream closure, so the chain
 stands. The verbatim `findings.md` keeps the auditor's text as received, including an external
 link and a stray rendering token in finding 4; neither is adopted.
