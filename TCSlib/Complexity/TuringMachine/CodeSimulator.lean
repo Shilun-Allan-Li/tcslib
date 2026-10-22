@@ -4950,6 +4950,104 @@ private lemma canonCounterRepeat {m : ℕ} {S : Type} [DecidableEq S] {x : List 
       rw [parsed] at impossible
       cases impossible
 
+/-- A successful record skip returns a suffix of its input. -/
+private lemma canonStageSkip_suffix (k n : ℕ) (xs ys : List Bool)
+    (h : codeSkipActionK k n xs = some ys) : ys.IsSuffix xs := by
+  have he := codeEraseActionK k n xs
+  rw [h] at he
+  cases hr : codeReadActionK k n xs with
+  | none => rw [hr, Option.map_none] at he; cases he
+  | some p =>
+    rw [hr, Option.map_some] at he
+    obtain ⟨a', rest⟩ := p
+    have hs := codeReadActionK_sound xs a' rest hr
+    have : rest = ys := by simpa using he
+    subst this
+    exact ⟨actionBitsK a', hs.symm⟩
+
+/-- Dropping to a suffix's start recovers it. -/
+private lemma canonStageSuffix_drop (x ys : List Bool) (h : ys.IsSuffix x) :
+    x.drop (x.length - ys.length) = ys := by
+  obtain ⟨pre, rfl⟩ := h
+  rw [List.length_append, Nat.add_sub_cancel, List.drop_left]
+
+/-- **The record round's loop specification** (checkpoint 1). The adapter-wrapped record
+validator, read as one round of the public counter loop: from any configuration carrying C2's
+bank (the binary bound on the bound tape, every other work tape blank, all work heads at the
+origin, empty output, the native head inside the input), one round costs a positive time at
+most linear in `|x| + |w| + 1`, avoids both ports strictly inside, exits at the anchor exactly
+when one more record skips (`codeSkipActionK` at the counter value of the bound word), and on
+success preserves the bank and moves the native head to the skipped suffix. This is the
+`spec` argument of the generic counter-loop link, discharged once. -/
+private lemma canonStageRoundSpec (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM m Bool H)
+      (anchor escape : H) (bound : Fin m) (B : ℕ), escape ≠ anchor ∧
+      ∀ (x w : List Bool), ∃ τ : Cfg m Bool H x → ℕ,
+        ∀ d : Cfg m Bool H x,
+          (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+            d.workTapes bound = FinTM.bufferTape w ∧ d.workTapePos bound = 0 ∧
+            (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0)) →
+          d.state = some anchor →
+          0 < τ d ∧ τ d ≤ B * (x.length + w.length + 1) ∧
+          (∀ u, 0 < u → u < τ d →
+            ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+          (N.runFrom d (τ d)).state = some
+            (if (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+              then anchor else escape) ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (((N.runFrom d (τ d)).output = [] ∧ 1 ≤ (N.runFrom d (τ d)).inputPos.val ∧
+              (N.runFrom d (τ d)).workTapes bound = FinTM.bufferTape w ∧
+              (N.runFrom d (τ d)).workTapePos bound = 0 ∧
+              (∀ j, j ≠ bound → (N.runFrom d (τ d)).workTapes j = FinTM.bufferTape [] ∧
+                (N.runFrom d (τ d)).workTapePos j = 0)) ∧
+            x.drop ((N.runFrom d (τ d)).inputPos.val - 1) = ys) := by
+  classical
+  obtain ⟨m, H, finiteH, eqH, N, anchor, escape, bound, a, different, record⟩ :=
+    exists_canonRecordRound k
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound, a, different, ?_⟩
+  intro x w
+  letI : Fintype H := finiteH
+  letI : DecidableEq H := eqH
+  refine ⟨fun d =>
+    if h : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound = FinTM.bufferTape w ∧ d.workTapePos bound = 0 ∧
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0)) ∧
+        d.state = some anchor then
+      (record x w d h.2 h.1.2.1 h.1.2.2.1 h.1.2.2.2.1 h.1.2.2.2.2).choose
+    else 0, ?_⟩
+  intro d hv hs
+  have hcond : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+      d.workTapes bound = FinTM.bufferTape w ∧ d.workTapePos bound = 0 ∧
+      (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0)) ∧
+      d.state = some anchor := ⟨hv, hs⟩
+  simp only [dif_pos hcond]
+  obtain ⟨cost, positive, verdict, output, interior, tapes, heads, suffix⟩ :=
+    (record x w d hcond.2 hcond.1.2.1 hcond.1.2.2.1 hcond.1.2.2.2.1
+      hcond.1.2.2.2.2).choose_spec
+  set t := (record x w d hcond.2 hcond.1.2.1 hcond.1.2.2.1 hcond.1.2.2.2.1
+      hcond.1.2.2.2.2).choose with ht
+  refine ⟨positive, cost, interior, verdict, ?_⟩
+  intro ys hy
+  have hsfx : ys.IsSuffix (x.drop (d.inputPos.val - 1)) :=
+    canonStageSkip_suffix k (counterValue w) _ ys hy
+  have hsfx' : ys.IsSuffix x := hsfx.trans (List.drop_suffix _ x)
+  have hylen : ys.length ≤ x.length := hsfx'.length_le
+  have hpos := suffix ys hy
+  constructor
+  · refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · rw [output, hv.1]
+    · rw [hpos]
+      omega
+    · rw [tapes, hv.2.2.1]
+    · rw [heads, hv.2.2.2.1]
+    · intro j hj
+      rw [tapes, heads]
+      exact hv.2.2.2.2 j hj
+  · rw [hpos]
+    have : x.length + 1 - ys.length - 1 = x.length - ys.length := by omega
+    rw [this]
+    exact canonStageSuffix_drop x ys hsfx'
+
 /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
 canonical binary header `bits` (head at the origin), every other tape blank, the native head
 at the remainder's first cell and the output empty, it decides the fixed grammar on the
