@@ -76,7 +76,10 @@ ruler device. Its first fill round landed the restoring boundary test `Turing.ex
   targets.
 - **Environment:** megafill B, under addendum v2.4 (one preflight and one narrowed cache fetch for
   the queue; Part 2's shim used, as authorized).
-- **Replay:** ⟨REPLAY⟩
+- **Replay:** `replay-lf5c1.sh`: the downstream closure, on the merged tree `8114e482`, of every
+  file changed since #132's merge (16 modules: `Build/InputDevice`, `UniversalK`, `SelfUniversal`
+  and the campaign's merges, the facade last), chained from `oleans-l132b`. **Passed (user,
+  2026-10-22):** 16 of 16, 0 failed, static-equal (8) (`evidence/replay-lf5c1.*`).
 
 ## Findings format
 

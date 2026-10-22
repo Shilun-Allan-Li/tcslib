@@ -1344,7 +1344,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
 - **#144 opened (2026-10-22): the exhaustive replay's proof sketches**, docstrings only (the six
   main lemmas' sketches, and the accept flag described as the proof uses it; gate 53, note 14).
   Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
-  pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** The 18 other long
+  pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** After #139 merged,
+  `replay-lsk2.sh` (16 modules, the merged tree) passed: **#144 clear to merge.** The 18 other long
   private proofs without a sketch stay under C1E-1.
 - **The seam layout: delivered complete (2026-10-22), reviewed: land**
   (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`

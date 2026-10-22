@@ -64,7 +64,10 @@ status paragraphs are already public-facing and accurate.
 - **Lint** (the landed head): `TuringMachine/Build` 0 FAIL, 31 WARN over 39 files
   (`evidence/land/lint-build.txt`).
 - **Integrity** (the review): the zip and its 70 internal sums; the session's recovery record.
-- **Replay:** ⟨REPLAY⟩
+- **Replay:** `replay-lg4c3.sh`: the downstream closure, on the merged tree `13e17589`, of every
+  file changed since #132's merge (16 modules: `Build/ZoneRebalance` and the campaign's merges,
+  the facade last), chained from `oleans-l132b`. **Passed (user, 2026-10-22):** 16 of 16, 0 failed,
+  static-equal (10) (`evidence/replay-lg4c3.*`).
 
 ## Findings format
 
