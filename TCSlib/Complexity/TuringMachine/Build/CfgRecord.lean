@@ -25,10 +25,11 @@ configuration-graph searches of chapter 4 (the reachability simulation of
 keep on their tapes, and the record rows are the machines that read, step and
 compare them.
 
-**Status: proved §12.8 fill C (continuation 3 status update).** The pure decoding
-facts and all three record rows are proved. The catalog, scan and input-seek rows
-cited by their proofs are also proved. No public result or private helper in
-this module is admitted.
+**Status.** Everything here is proved: the pure decoding facts and all three record rows.
+The rows compose the framed catalog and counter rows through their contracts
+(`Turing.Contract.segment` and each row's field equations) inside one phase host, and
+join the phases by `Turing.Segment.trans`. No public result or private helper in this
+module is admitted.
 
 ## Design
 
@@ -531,8 +532,9 @@ private theorem recordStep_orbit_one_step {K : ℕ} {Γ S : Type} {x : List Γ}
 
 /-- **Offset congruence**: the `j`-th field offset reads only the lengths of the first `j`
 fields, so two field lists whose first `j` fields have equal lengths share it. Assembled
-from the published `fieldOffset_zero` and `fieldOffset_cons_succ`; no retrace of the
-layout sum. -/
+from the published `fieldOffset_zero` and `fieldOffset_cons_succ`.
+**Proof sketch.** Induct on the first list; each step is `fieldOffset_cons_succ` with the heads'
+equal lengths. -/
 private theorem recordStep_fieldOffset_congr {Γ : Type*} (as : List (List Γ)) :
     ∀ (bs : List (List Γ)) (j : ℕ),
       (as.take j).map List.length = (bs.take j).map List.length →
@@ -758,7 +760,8 @@ private theorem recordStep_embed_update {K m : ℕ} {Γ S : Type} [DecidableEq �
       obtain ⟨b, rfl⟩ := hdig i p γ hp
       simp [decodeBool_apply]
 
-/-- Reconstruct the selected digit bank through the public R1 reconstruction lemma.
+/-- Reconstruct the selected digit bank from the embed-and-update equation
+(`recordStep_embed_update`).
 **Proof sketch.** The control-and-position update at the configuration's own state and
 position; both sides are the configuration itself. -/
 private theorem recordStep_restrict {K m : ℕ} {Γ S : Type} [DecidableEq Γ]
@@ -1311,11 +1314,14 @@ private theorem recordStep_cell_write {k : ℕ} {Q T : Type} {x : List Bool}
     recordStepWriteCell (Q := Q) (T := T) (a.workTapes i).1
         (.cell (c.workTapes i z) (decide (c.workTapePos i = z))) =
       .cell ((a.apply c).workTapes i z) (decide (c.workTapePos i = z)) := by
+  rw [Action.apply_workTapes]
   by_cases hz : c.workTapePos i = z
   · subst z
-    cases hw : (a.workTapes i).1 <;> simp [recordStepWriteCell, hw]
+    rw [Function.update_self, Cfg.workTapeSymbols_eq]
+    cases (a.workTapes i).1 <;> simp [recordStepWriteCell]
   · have hz' : z ≠ c.workTapePos i := Ne.symm hz
-    cases hw : (a.workTapes i).1 <;> simp [recordStepWriteCell, hz, hz', hw]
+    rw [Function.update_of_ne hz']
+    cases (a.workTapes i).1 <;> simp [recordStepWriteCell, hz]
 
 /-- The public delay transducers move the mark by the source move and preserve every
 content cell, including when a mark would leave the displayed window.
@@ -1740,7 +1746,7 @@ private theorem recordStep_phase_run {k : ℕ} {Q T S : Type}
 
 /-- A scan whose pure result retains its word changes only the accumulator state.
 This removes the identity rewrite in the public scan endpoint once for all read phases.
-**Proof sketch.** Read the public scan contract through its field equations; inside its
+**Proof sketch.** Read the scan row's contract through its field equations; inside its
 write interval use the entry word hypothesis, and outside use the unchanged frame. Keep
 its cut and head bounds. -/
 private theorem recordStep_scan_preserves {A Γ : Type} {x : List Γ}
@@ -2461,7 +2467,7 @@ private theorem recordStep_read_all {k : ℕ} {Q T S : Type}
 
 /-- Clearing B or D in a normalized snapshot erases that entire scratch word, preserves
 all other components, and retains the framed clear row's first exit and trajectory.
-**Proof sketch.** Read the public clear contract at the selected globally buffered word.
+**Proof sketch.** Read the clear row's contract at the selected globally buffered word.
 Outside the erased interval the old buffer is already blank, so the endpoint is the empty
 buffer. -/
 private theorem recordStep_clear_snapshot {Γ P : Type} {x : List Γ}
@@ -4678,16 +4684,15 @@ The Probe/Save/Read contracts, digit and field arithmetic, and first tagged read
 are proved privately. The remaining admission is the complete composition of these
 segments, including the seek/restore, scratch cleanup and final time/radius ledger.
 
-**Fill-C continuation 2 sketch appendix (partial).** The full R1--R6 read now has a
-`RecordRun` ending at the source observations and both canonical digit copies. The target's
-halted branch is complete, including both clears, the unchanged record, first verdict and
-common bounds. Shared snapshot specializations support clear and map rows; rich R1 seek
-and Save transports preserve every frame cell and output prefix. Fuel/probe/Save (I1--I3)
-and seek/Read (I4--I5) are each composed in the existing host with their full cuts and
-head bounds. Empty-input cleanup and rejection cleanup are also proved segments.
-The remaining live-source admission still needs their concatenation with complement,
-normal-branch decrement, restore and cleanup (I6--I9), the A0--A5 rewrite, and its final
-endpoint and time/radius ledger. No private helper is admitted.
+**Fill-C continuation 2 sketch appendix (partial).** The full R1--R6 read now has a head-bounded
+segment (`Turing.Segment`) ending at the source observations and both canonical digit copies. The
+target's halted branch is complete, including both clears, the unchanged record, first verdict and
+common bounds. Shared snapshot specializations support clear and map rows; rich R1 seek and Save
+transports preserve every frame cell and output prefix. Fuel/probe/Save (I1--I3) and seek/Read
+(I4--I5) are each composed in the existing host with their full cuts and head bounds. Empty-input
+cleanup and rejection cleanup are also proved segments. The remaining live-source admission still
+needs their concatenation with complement, normal-branch decrement, restore and cleanup (I6--I9),
+the A0--A5 rewrite, and its final endpoint and time/radius ledger. No private helper is admitted.
 
 **Fill-C continuation 3 sketch appendix (complete).** The native cycle now composes
 I0--I9, including complement, normal-branch borrow, restoration and D cleanup, with
@@ -4697,7 +4702,7 @@ the processed prefix of the final record while the untouched suffix retains the 
 record, using the public field layout and framed rows. The clamped position uses the same
 R1 arithmetic transport as restoration; two scans per work field write and shift its mark.
 The tag map and inverse skips complete the update with all scratch globally blank and all
-heads restored. `RecordRun` composes the full cuts and radii; the unchanged coefficient
+heads restored. `Turing.Segment.trans` composes the full cuts and radii; the unchanged coefficient
 `200 * (k + 3) * (Cseek + 1)` covers the time and head-radius ledgers. -/
 theorem exists_recordStepTM {k : ℕ} {Q T : Type} [Fintype Q] [DecidableEq Q] [Fintype T]
     [DecidableEq T] (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T)
@@ -4935,15 +4940,14 @@ verdict both heads stay within that many cells of their entry positions,
 however long `gs` is. The input is arbitrary and not read.
 
 **Proof sketch.** For each of the `k + 3` fields, run `compareTM` framed
-(`compareTM_run_ofCfg`) on the two current fields; on `false`, return `no`, and
-on `true`, `skipTM` both tapes to the next field. After the last field, return
-`yes`. Before the verdict, `skipBackTM` both heads over the fields crossed,
-which have the same lengths on both tapes. Every phase is linear in the cells
-of `fs` crossed.
+(`Turing.compareTM_contract`, whose time is exact) on the two current fields; on `false`, return
+`no`, and on `true`, `skipTM` both tapes to the next field. After the last field, return `yes`.
+Before the verdict, `skipBackTM` both heads over the fields crossed, which have the same lengths on
+both tapes. Every phase is linear in the cells of `fs` crossed.
 
 **Fill-C sketch appendix.** One `phaseHostTM` carries the field counter and tape
 selector. `phaseHostTM_run` supplies each tagged prefix and stationary dispatch;
-`recordRun_trans` only concatenates these established runs. A failed comparison
+`Turing.Segment.trans` only concatenates these established runs. A failed comparison
 restores exactly the equal prefix. The bound uses only the first layout, including
 when fields are empty or the second field is longer. -/
 theorem exists_recordEqTM (k : ℕ) (Q T : Type) [Fintype Q] [DecidableEq Q] [Fintype T]
@@ -5703,7 +5707,8 @@ namespace Turing
 tapes are blank. It is the windowed runner's precondition at the start of a simulation from
 an initial configuration (H3; `Complexity.space_hierarchy`'s diagonalizer). [AB09, §4.1.1]
 
-**Proof sketch.** Unfold `Turing.Cfg.init`. -/
+**Proof sketch.** Read the fields of `Turing.Cfg.init` (`Turing.Cfg.init_workTapePos`,
+`Turing.Cfg.init_workTapes`): every head is at `0` and every cell is blank. -/
 theorem Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
     (x : List Symbol) (s : ℕ) : (Cfg.init q₀ x : Cfg k Symbol State x).InWindow s :=
   ⟨fun i => by rw [Cfg.init_workTapePos]; simp,
