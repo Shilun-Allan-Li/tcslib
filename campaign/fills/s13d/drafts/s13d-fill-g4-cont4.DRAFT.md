@@ -4,7 +4,7 @@
 Pre-ship measured at the campaign tip `97299639` against `oleans-lu2sc1` (the tip's tree for this
 file's closure): `campaign/fills/s13d/drafts/s13d-fill-g4-cont4/preship-97299639/`. Issue-time
 items: ⟨ANCESTOR⟩, ⟨BASE⟩, ⟨IN-FLIGHT⟩, ⟨SNAPSHOT⟩, ⟨SORRIES⟩ (30 at `97299639`; it moves as #147,
-#150 and megafill A land), ⟨SCREEN⟩ (queued at `97299639`), the megafill banner, and re-running
+#150 and megafill A land), ⟨SCREEN⟩ (846/477 at `97299639`), the megafill banner, and re-running
 the pre-ship at the issue commit. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the
@@ -499,8 +499,9 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
 - **The screen** is the declaration-keyed `scripts/copy-text-screen-v3.py`, on the repository
   paths.
 - **The base**, at the issue tree, is
-  `campaign/fills/s13d/logs/s13d-fill-g4-cont4-screen-base.txt`: ⟨SCREEN⟩ (MEASURED; about 5
-  minutes).
+  `campaign/fills/s13d/logs/s13d-fill-g4-cont4-screen-base.txt`: ⟨SCREEN: 846 declarations, 477
+  pairs, 136,473 characters at `97299639`, continuation 3's after-screen exactly⟩ (MEASURED; about
+  5 minutes).
 
 ```sh
 P=campaign/fills/s13d/inputs/s13d-fill-g4-cont4

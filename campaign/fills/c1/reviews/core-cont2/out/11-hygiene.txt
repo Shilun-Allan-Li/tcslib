@@ -1,0 +1,22 @@
+added lines 1651 code lines 1588
+decide: 26
+norm_num: 8
+dsimp: 3
+show: 60
+rfl: 70
+simpa: 2
+omega: 210
+cases: 3
+induction: 1
+unrestricted simp/simpa/dsimp: 10
+    rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
+    simp
+    simp
+    simp
+    simp
+    fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+    fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+    have hieq0 : ιI ⟨0, hkI⟩ = jal := Fin.ext (by rw [hιI, hjal]; simp)
+    simp
+    have hmin : (x.take t).length = min t x.length := by simp
+max width of added lines (chars): 96 | over 100: 0

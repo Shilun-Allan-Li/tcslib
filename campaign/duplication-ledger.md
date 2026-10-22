@@ -493,5 +493,29 @@ justified by family in the worker's report (§8) and qualified by its erratum
 material needing acknowledgment. Their consolidation, and the re-points to the public lemmas that
 arrived after the fill's base, are `backlog.md` §1 C1E-1, in the user's dedup window.
 
+**IR-1, the input rewind family** (megafill A, 2026-10-22). Four private input rewinds, each
+with its own exact-time run proof:
+- `ClassNP/ExhaustiveReplay`'s `xr_inRewindTM` (#136) and UN cont1's `un_inRewTM`
+  (`Diagonalization/NTimeHierarchy`, 61% and 59% on the v3 screen): a cross-file pair, which the
+  UN brief forbids;
+- U2-S cont1's `ss_inputRewind` (`UniversalK`, #147);
+- R cont2's `ic_rewind_scan` (`TuringMachine/NDCodeSimulator`), which re-proves the public
+  `Turing.FinTM.rewind_scan` (51%; `Simulation` was outside that brief's screen population, so the
+  worker's screen could not see it).
+
+With them, UN's `un_mapState_comp` restates `ExhaustiveReplay`'s `xr_E_initCfg` (54%).
+**Acknowledgment and disposition (user, 2026-10-22):** UN's two pairs are resolved by **an API PR
+first**: a public input rewind with an exact time and a first-visit cut, and a `mapState`
+collapse lemma. UN's landing re-points to them. R's copy lands ledgered and re-points when that
+API lands. U2-S's and `ExhaustiveReplay`'s are re-pointed in the user's dedup window.
+
+**CC7-1, the canonizer cont7's in-file families** (megafill A item 3, `TuringMachine/CodeSimulator`,
+2026-10-22). 59 new in-file pairs, none cross-file. Four are at or above 90%:
+`canonGramCut_leg`/`canonStageCut_leg` (97% each way), `canonStageLeg4` → `canonStageLeg1` (94%)
+and `canonStageLeg5` → `canonStageLeg1` (91%). Three families: the cut leg, the leg template and
+the per-record bound. **Acknowledged (user, 2026-10-22): recorded as debt**, for the user's dedup
+window, together with the retirement of the now-unused `canonCounterRepeat` link (the user,
+2026-10-22).
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

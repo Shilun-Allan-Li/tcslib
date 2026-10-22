@@ -1457,6 +1457,28 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     (F1), a `simp [Bool.toNat]` fix (F2), the four ≥ 90% pairs (F3), 13 sketches (F4), the status
     wording and the Codes2Tape/EXPCOM text (F8), the order against #149, the next cover brief's
     environment logging (F7).
+- **R cont2 reviewed: complete; land with a rule-10 fix** (`campaign/fills/c1/reviews/core-cont2/`).
+  `Turing.exists_ndInterpreterCore` proved modulo exactly `exists_replayCanonizer`. The worker ran
+  no seal; sealing 46 definitions, six steps closed only by unfolding `MultiTapeTM.runFrom` (4) or
+  `CodeNDTM.toFinNDTM` (2): the reviewer's checked proof-only fix (4 hunks; 50 controls).
+  **Megafill A rulings (user, 2026-10-22):**
+  - **R cont2:** land with the fix (a maintainer commit), the two status edits and the
+    `Implementation.` paragraph; `ic_rewind_scan`'s re-proof ledgered (IR-1), re-pointed when the
+    input-rewind API lands; the 69% `iw_one` pair accepted as an idiom pair; `git am -3` restricted
+    to the owned file, the worker's authorship and subjects kept.
+  - **UN cont1:** its two cross-file pairs by **an API PR first** (a public input rewind with an
+    exact time and a first-visit cut; a `mapState` collapse lemma; IR-1), then its landing
+    re-points to them; F4's two refinements accepted; F2's repair, F1/F5's docstrings and F6's
+    lint cleanup applied at landing (the owned file squashed, the author kept).
+  - **The canonizer's cont7:** the re-derived loops accepted and `canonCounterRepeat` retired in the
+    dedup window; the four ≥ 90% pairs recorded as debt (CC7-1); the maintainer adds the
+    `Bool.toNat` fix, the status wording (L1–L4), the 13 sketches, and the Codes2Tape/EXPCOM
+    text; the 8 commits kept as delivered.
+  - **Order:** every landing merges after #149 (as for #150), each replaying its closure from the
+    latest merged-tree snapshot.
+  - **For the next cover brief** (the canonizer's F7, R's process notes): the shared environment
+    logs in every item zip; per-module memory; `Simulation` in the screen population of any fill
+    that writes an input rewind; "seal not run" a checklist failure.
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's
