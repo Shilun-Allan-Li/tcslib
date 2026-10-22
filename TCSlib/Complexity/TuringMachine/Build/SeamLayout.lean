@@ -19,12 +19,14 @@ The startups of the step-block simulators (the `k`-generic universal machine's
 core `Turing.exists_ndInterpreterCore`) capture a machine's canonical serialization
 `serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)` on a scratch tape. The step
 block's represented start (`Turing.StepBlock.Rep`) instead wants the bare table on the table tape
-and the unary initial state on the summary tape from cell `2`. This module states the one machine
+and the unary initial state on the summary tape from cell `2`. This module builds the one machine
 that redistributes the first into the second, so that every startup cites it.
 
 ## Main results
 
-* `Turing.exists_seamLayoutTM` — the redistribution's contract (sorried).
+* `Turing.exists_seamLayoutTM` — the redistribution's contract, proved: eight phases on one phase
+  host (six catalog rows and two private leaves), at one time `T ≤ 18·(|s| + 1)` fixed before the
+  configuration.
 
 ## References
 
