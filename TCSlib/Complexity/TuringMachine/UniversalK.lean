@@ -26,9 +26,9 @@ on the code only. At `k = 2` it is the two-tape universal machine of the time hi
 `Turing.universal` (the U-1 re-derivation, deferred). Design: `audits/evidence/u2/U2-design.md`;
 the user's decisions of 2026-10-14 (`backlog.md` RD-5).
 
-**Status: statement gate pending** (`audits/u2-statements-pack.md`). The scheme interface and its
-two instances are defined and proved; the three machine contracts are sorried with their proof
-sketches. Their fill builds on H2's step block and its forwarding round loop
+**Status.** The scheme interface and its two instances are defined and proved, and so is the
+startup `Turing.exists_selfStartupTMK`; the other two machine contracts are sorried with their
+proof sketches. Their fill builds on H2's step block and its forwarding round loop
 `Turing.StepBlock.exists_forwardLoopTM` (H2-F, `Build/StepBlockForward.lean`).
 
 ## Design
@@ -60,7 +60,7 @@ sketches. Their fill builds on H2's step block and its forwarding round loop
 * `Turing.EffectiveMachineCode.toK_toFinTM`, `Turing.EffectiveMachineCode2.toK_toFinTM`,
   `Turing.EffectiveMachineCode.toK_machine`, `Turing.EffectiveMachineCode2.toK_machine` — the
   decoded machines agree, by definition.
-* `Turing.exists_selfStartupTMK` — U2-S, the startup, ending at the step block's seam (sorried).
+* `Turing.exists_selfStartupTMK` — the startup, ending at the step block's seam (proved).
 * `Turing.exists_selfUniversalK` — U2-U, the self-application universal machine, with time
   `C · (t + 1)`, space `C · (s + 1)` and the converse (sorried).
 * `Turing.universalK` — U2-E, the code-first evaluator with time `C · (t + 1)` and the converse
