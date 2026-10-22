@@ -1,4 +1,10 @@
-# Fill-agent environment addendum (v2.3): resources, the dependency cache, and starting Lean
+# Fill-agent environment addendum (v2.4): resources, the dependency cache, starting Lean, and megafills
+
+**Version 2.4 (2026-10-22)** adds **Part 3, the megafill**: one session that works through a queue
+of fill briefs on one host, sharing the preflight, the toolchain, the clone and the cache. Parts 1
+and 2 are unchanged except for one clarification in item 2 (the cache tool compiles itself on
+first use). Version 2.3's narrowed cache fetch passed on its first two uses (2026-10-21: 35 roots
+and 967 files; 40 roots and 1,002 files; no failed download, no retry).
 
 **Version 2.3 (2026-10-18).** Part 1, the resource and cache rules, applies on **every** host
 (the user's authorization of 2026-10-17). **Version 2.3** changes one rule: **the dependency cache
@@ -94,7 +100,9 @@ cleanly.
    - Never put the clone, `.lake`, the cache, an olean tree (`TCSLIB_OLEANS`) or `TMPDIR` on a
      memory-backed filesystem (`/dev/shm`, any tmpfs).
    - The cache tool's own internal validation (`lake build --no-build proofwidgets:release`) is
-     expected and allowed; it is not a `lake build` under your brief's ban.
+     expected and allowed; it is not a `lake build` under your brief's ban. On its first use,
+     `lake exe cache` also compiles the cache executable itself; that, too, is expected and is not
+     a `lake build` of the project.
    - **Packages match the manifest.** A fresh clone's first `lake exe cache get …` fetches the
      packages that `lake-manifest.json` names. Afterwards, and before every later Lake command,
      check each one: `git -C .lake/packages/<name> remote get-url origin` and `rev-parse HEAD`
@@ -230,3 +238,49 @@ lean --version   # must now print the pinned version
 4. **If Lean still cannot start** with the shim, stop and report. Do not try anything further.
 5. A standard host, where Lean starts normally, needs none of this. Do not preload the shim
    there.
+
+## Part 3: the megafill (v2.4)
+
+A **megafill** is one session that works through a queue of fill briefs, one after another, on one
+host. Its **cover brief** names the queue, the shared base, the order and each item's budget.
+**Each item stays its own fill:** its own brief (binding for that item), branch, checks, screens,
+`REPORT.md` and zip, exactly as if it had been dispatched alone. Only the environment work is
+shared.
+
+1. **Once, at the start:** Part 1's preflight (item 1, with its floors), the toolchain, and one
+   clone of the campaign branch. Verify the cover brief's and every item brief's SHA-256 against
+   the cover brief's table, and run the cover brief's ancestor check.
+2. **One cache for the queue.** The roots are the union over the queue: run item 2's command with
+   every item's order list concatenated, from the clone's root at the shared base:
+
+   ```sh
+   cat <every item's order list> | sort -u | sed 's|$|.lean|' | xargs grep -h '^import Mathlib' \
+     | awk '{print $2}' | sort -u > evidence/logs/mathlib-roots.txt
+   ```
+
+   then `TAR_OPTIONS=--no-same-owner lake exe cache get $(cat evidence/logs/mathlib-roots.txt)`.
+   The cover brief gives the expected count. Items 3 and 4 apply once, to this fetch. Keep these
+   shared logs under `evidence/logs/` at the clone's root, and copy them into each item's zip.
+3. **Per item, in the queue's order:**
+   1. Start from a clean tree (the previous item's work is committed on its own branch and
+      zipped). `git checkout -b <the item's branch> <the shared base>`; apply the item brief's
+      patches if it prescribes any; then make its first edit (its authorized imports or overlay).
+   2. **Re-bootstrap the item's whole order list**, even the modules an earlier item built: a
+      branch switch changes the sources the earlier oleans came from (an earlier item's owned file
+      may be upstream of this one). Log it as the item's bootstrap. About 10–20 minutes.
+   3. Do the item as its brief says, through its delivery zip, and **deliver that zip at once**.
+      The session may end at any time; finished items must survive it.
+   4. **Budget.** Each item has a wall-clock budget, counted from its branch's creation. When it
+      runs out, finish the step in progress, commit, write the item's partial zip with its
+      `REPORT.md` (the checkpoints reached; every open declaration with its literal "Proof
+      sketch"; the axiom walk), and start the next item. Time an item does not use passes to the
+      later ones. The last item has the rest of the session. **Never return to an earlier item.**
+   5. **Escalations stay per item** (each brief's ground rules). An item with nothing left that
+      its escalations allow ends early, with its zip.
+4. **Disk between items.** Before each item after the first, record `df -B1` of the clone. Stop the
+   whole queue with E-RES below **3 GiB** free; the items already zipped stand.
+5. **One Lean process at a time** across the whole queue, and one screen at a time.
+6. **At the end** (or when the session must stop), deliver `megafill-<name>-REPORT.md`: the queue;
+   each item's outcome (complete; partial, with its checkpoints; or not started), with its
+   branch's start and end times and its zip's SHA-256; the shared preflight and cache numbers. An
+   item never started is simply listed as such: it is not a failure.

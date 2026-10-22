@@ -1248,6 +1248,22 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
 - **Drafted, not issued** (`campaign/fills/*/drafts/`): the seam-layout fill (waits on its
   word-identity ruling; its pre-ship is measured), canonizer cont7 (after #131 merges; gate 49's
   deferred status text rides its landing), F5 cont1 (phases 2-3, after #133 merges).
+  **Superseded 2026-10-22:** all three were issued (the seam layout on 2026-10-21; the other two
+  in the megafills below).
+- **The seam-layout fill issued (2026-10-21)**, ancestor `1c06ea94`; delivered complete on
+  2026-10-22 (its review is running). **MIG-12 cont1 dispatched** (2026-10-21; still out). **G4
+  cont2 delivered** a partial (1 checkpoint), landed as #143 (gate 58).
+- **Two megafills issued (2026-10-22; the user: "pack multiple fills into one megafill task",
+  overnight, one host each)**, under the addendum's new Part 3 (v2.4: one preflight, one cache for
+  the queue's roots, a re-bootstrap per item, a budget per item, a zip per item). Cover briefs
+  `campaign/fills/megafill/briefs/megafill-{A,B}.md`; base TCSlib `2ff214c5` (after #137); every
+  pre-ship against `oleans-lg4c2`.
+  - **A:** R cont2 (4 h), UN cont1 (3 h; `Build/Rewind` authorized as its sixth import), the
+    canonizer's cont7 (the rest).
+  - **B:** U2-S cont1 (4 h), F5 cont1 (3 h), G4 cont3 (the rest; applies #143's two commits by
+    `git am`; checkpoint 1.1b, the right pass's endpoint and envelope, first).
+  - **Next when they return:** UN's and R's landings feed C1's assembly; F3 cont2 waits on #139;
+    the seam layout's landing on its review.
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
