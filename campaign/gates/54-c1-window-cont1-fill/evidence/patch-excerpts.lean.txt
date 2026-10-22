@@ -1,0 +1,96 @@
+-- Excerpts of TCSlib/Complexity/TuringMachine/Build/InputWindow.lean at 9d8ab646 (#137): 3 declarations, each with its docstring, verbatim.
+
+-- TCSlib/Complexity/TuringMachine/Build/InputWindow.lean at 9d8ab646 (#137), lines 85-89: iw_patch
+/-- Overwrite a finite interval of a tape, leaving its exterior intact. -/
+private def iw_patch (tape : ℤ → Option Bool) (head : ℤ) (v : List Bool) :
+    ℤ → Option Bool := fun q =>
+  if head ≤ q ∧ q < head + (v.length : ℤ)
+    then FinTM.bufferTape v (q - head) else tape q
+
+-- TCSlib/Complexity/TuringMachine/Build/InputWindow.lean at 9d8ab646 (#137), lines 91-114: iw_patch_append
+/-- Appending a bit to the copied interval changes exactly its next cell.
+
+**Proof sketch.** At the next cell use the buffer's append equation. Inside the old interval
+that equation preserves the old symbol; outside the enlarged interval both tapes are framed. -/
+private theorem iw_patch_append (tape : ℤ → Option Bool) (head : ℤ)
+    (v : List Bool) (b : Bool) :
+    iw_patch tape head (v ++ [b]) =
+      Function.update (iw_patch tape head v) (head + (v.length : ℤ)) (some b) := by
+  funext q
+  by_cases he : q = head + (v.length : ℤ)
+  · subst q
+    rw [Function.update_self]
+    simp only [iw_patch, List.length_append, List.length_singleton, Nat.cast_add,
+      Nat.cast_one]
+    rw [if_pos (by omega), FinTM.bufferTape_append, add_sub_cancel_left, Function.update_self]
+  · rw [Function.update_of_ne he]
+    by_cases hi : head ≤ q ∧ q < head + (v.length : ℤ)
+    · simp only [iw_patch, List.length_append, List.length_singleton, Nat.cast_add,
+        Nat.cast_one]
+      rw [if_pos hi, if_pos (by omega), FinTM.bufferTape_append,
+        Function.update_of_ne (by omega)]
+    · simp only [iw_patch, List.length_append, List.length_singleton, Nat.cast_add,
+        Nat.cast_one]
+      rw [if_neg hi, if_neg (by omega)]
+
+-- TCSlib/Complexity/TuringMachine/Build/InputWindow.lean at 9d8ab646 (#137), lines 219-227: iw_patch_true
+/-- The all-true underflow word has exactly the counter loop's reported tape contents. -/
+private theorem iw_patch_true (ct : ℤ → Option Bool) (cp : ℤ) (width : ℕ) :
+    iw_patch ct cp (List.replicate width true) =
+      fun q => if cp ≤ q ∧ q < cp + (width : ℤ) then some true else ct q := by
+  funext q
+  simp only [iw_patch, List.length_replicate]
+  split_ifs with h
+  · rw [FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_replicate_of_lt (by omega)]
+  · rfl
+
+-- Excerpts of TCSlib/Complexity/TuringMachine/Build/StepClock.lean at 4fcb1a7f (#139): 4 declarations, each with its docstring, verbatim.
+
+-- TCSlib/Complexity/TuringMachine/Build/StepClock.lean at 4fcb1a7f (#139), lines 86-89: wordPatch
+/-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
+cell is `ct`'s. -/
+def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
+  fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
+
+-- TCSlib/Complexity/TuringMachine/Build/StepClock.lean at 4fcb1a7f (#139), lines 91-97: wordPatch_of_mem
+/-- A cell inside the patched interval holds the word's letter at its offset:
+`wordPatch ct cp u q = FinTM.bufferTape u (q - cp)` when `cp ≤ q < cp + u.length`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h₁ : cp ≤ q) (h₂ : q < cp + (u.length : ℤ)) :
+    wordPatch ct cp u q = FinTM.bufferTape u (q - cp) := by
+  simp [wordPatch, h₁, h₂]
+
+-- TCSlib/Complexity/TuringMachine/Build/StepClock.lean at 4fcb1a7f (#139), lines 99-103: wordPatch_of_not_mem
+/-- A cell outside the patched interval is the original tape's: `wordPatch ct cp u q = ct q`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
+  simp only [wordPatch, if_neg h]
+
+-- TCSlib/Complexity/TuringMachine/Build/StepClock.lean at 4fcb1a7f (#139), lines 105-129: wordPatch_append
+/-- **Adjacent patches join**: patching `u` at `cp` and then `v` at `cp + |u|`, right after it,
+is patching `u ++ v` at `cp`.
+
+**Proof sketch.** Split on the cell. Inside `u`'s interval both sides read `u`'s letter, since
+`u ++ v` begins with `u`; inside `v`'s interval both read `v`'s letter at the offset past `u`;
+outside both intervals both read the original tape. -/
+theorem wordPatch_append {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ) :
+    wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v) := by
+  funext q
+  have hlen : ((u ++ v).length : ℤ) = u.length + v.length := by simp
+  by_cases h₁ : cp ≤ q ∧ q < cp + (u.length : ℤ)
+  · have hn : 0 ≤ q - cp := by omega
+    rw [wordPatch_of_not_mem _ _ _ (by omega), wordPatch_of_mem _ _ _ h₁.1 h₁.2,
+      wordPatch_of_mem _ _ _ h₁.1 (by omega), ← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat,
+      FinTM.bufferTape_nat, List.getElem?_append_left (by omega)]
+  · by_cases h₂ : cp + (u.length : ℤ) ≤ q ∧ q < cp + u.length + (v.length : ℤ)
+    · have hn : 0 ≤ q - (cp + u.length) := by omega
+      have hm : 0 ≤ q - cp := by omega
+      rw [wordPatch_of_mem _ _ _ h₂.1 h₂.2, wordPatch_of_mem _ _ _ (by omega) (by omega),
+        ← Int.toNat_of_nonneg hn, ← Int.toNat_of_nonneg hm, FinTM.bufferTape_nat,
+        FinTM.bufferTape_nat, List.getElem?_append_right (by omega)]
+      congr 1
+      omega
+    · rw [wordPatch_of_not_mem _ _ _ h₂, wordPatch_of_not_mem _ _ _ h₁,
+        wordPatch_of_not_mem _ _ _ (by omega)]
