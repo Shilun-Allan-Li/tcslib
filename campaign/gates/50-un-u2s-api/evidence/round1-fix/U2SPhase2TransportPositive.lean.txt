@@ -1,0 +1,43 @@
+import TCSlib.Complexity.TuringMachine.Codes2Tape
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.SpaceComplexity.Machines.Clean
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-! Positive-only sealed run (gate 50, note 8): the U2-S phase-2 goals at the composite's own index
+type, rewritten by the published cast-indexed pair of PR #132 (`Simulation`), with the other
+files' definitions sealed. No draft lemma is declared here: both rewrites cite the published
+`FinTM.bufferedSecondCfg_workTapes_cast` and `_workTapePos_cast`. Expected: exit 0. -/
+
+namespace Turing
+
+section U2SPhase2Seal
+attribute [local irreducible] Turing.FinTM.bufferedCompTM Turing.prefixCanonTM Turing.universalPrefixTM Turing.FinTM.bufferedSecondCfg Turing.FinTM.tapeBlocks
+
+/-- The tape field, pointwise (the review's goal (C), now citing the published lemma). -/
+example (F : FinTM Bool) {x y : List Bool} (c : Cfg F.k Bool F.State y) (b : Bool)
+    (p : Fin (x.length + 2)) (tapes : Fin universalPrefixTM.k → ℤ → Option Bool)
+    (heads : Fin universalPrefixTM.k → ℤ)
+    (i : Fin (FinTM.bufferedCompTM universalPrefixTM F).k) (z : ℤ) :
+    (FinTM.bufferedSecondCfg universalPrefixTM F c b p tapes heads).workTapes i z =
+      FinTM.tapeBlocks tapes (FinTM.bufferTape y) c.workTapes
+        (Fin.cast (FinTM.bufferedCompTM_k _ _) i) z := by
+  rw [FinTM.bufferedSecondCfg_workTapes_cast]
+
+/-- The head field. -/
+example (F : FinTM Bool) {x y : List Bool} (c : Cfg F.k Bool F.State y) (b : Bool)
+    (p : Fin (x.length + 2)) (tapes : Fin universalPrefixTM.k → ℤ → Option Bool)
+    (heads : Fin universalPrefixTM.k → ℤ)
+    (i : Fin (FinTM.bufferedCompTM universalPrefixTM F).k) :
+    (FinTM.bufferedSecondCfg universalPrefixTM F c b p tapes heads).workTapePos i =
+      FinTM.tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
+        (Fin.cast (FinTM.bufferedCompTM_k _ _) i) := by
+  rw [FinTM.bufferedSecondCfg_workTapePos_cast]
+
+end U2SPhase2Seal
+
+end Turing
