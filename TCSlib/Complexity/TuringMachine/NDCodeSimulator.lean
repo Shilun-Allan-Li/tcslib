@@ -1881,10 +1881,12 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   obtain ⟨s11run, s11st, s11cut⟩ := ic_seam_step _ (Sum.inr doneL)
     (rewindTM K jwin) RewindPhase.start RewindPhase.done
     s10run s10st s10cut hr11run rfl hr11cut
-  set e₁₁ := ({ (e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start) with
+  set e₁₁ := ({ (e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start) with
     state := some RewindPhase.done
     workTapePos := Function.update
-      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).workTapePos jwin
+      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jwin
       (((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
         (fun _ => RewindPhase.start)).workTapePos jwin - (x.take t).length) } :
     Cfg K Bool RewindPhase _) with he₁₁
@@ -1942,12 +1944,14 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       embedSilentCfg_inputPos, Cfg.ofWords_inputPos]
   have he₁₁in : e₁₁.inputPos = 1 := by
     rw [he₁₁]
-    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).inputPos = 1
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).inputPos = 1
     rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₁₀, hLin]
     exact hd₁₀in
   have he₁₁out : e₁₁.output = [] := by
     rw [he₁₁]
-    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).output = []
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).output = []
     rw [Cfg.mapState_output, Cfg.mapState_output, he₁₀, hLout TL le_rfl,
       Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, he₉, embedSilentCfg_output]
   -- Named-tape values at the threshold.
@@ -1963,7 +1967,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         Function.update_of_ne h1]
     · rw [he₁₁pos j h4, he₁₀, hLheads, Function.update_of_ne h3, Function.update_of_ne h2,
         Function.update_of_ne h1]
-  have hth' : ∀ j : Fin K, j ∉ Set.range ιI → j ≠ capI → j ≠ jtbl → j ≠ jsm → j ≠ jwin →
+  have hth' : ∀ j : Fin K,
+      j ∉ Set.range ιI → j ≠ capI → j ≠ jtbl → j ≠ jsm → j ≠ jwin →
       e₁₁.workTapes j = e₈.workTapes j ∧ e₁₁.workTapePos j = e₈.workTapePos j := by
     intro j h0 hc h2 h3 h4
     have h1 : j ≠ jal := by
@@ -2041,7 +2046,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     constructor
     · funext q
       rw [he₁₁tapes jtbl, he₁₀, hLtapes, Function.update_of_ne h2, Function.update_self]
-    · rw [he₁₁pos jtbl (by intro hmem; have := congrArg Fin.val hmem; omega), he₁₀, hLheads,
+    · rw [he₁₁pos jtbl (by intro hmem; have := congrArg Fin.val hmem; omega), he₁₀,
+        hLheads,
         Function.update_of_ne h2, Function.update_self]
   have hsm₁₁ : e₁₁.workTapes jsm =
       StepBlock.summaryCells none (unaryFin (c.decode α).tm.replayTM.q₀) ∧
@@ -2100,7 +2106,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         ((vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep
           (FinTM.bufferTape (Nat.bits t)) 0) true e₁₁.inputPos []).mapState
           (Sigma.mk false)) := by
-    have hnotr : ∀ j : Fin K, j ≠ jwin → j ≠ jb0 → j ≠ jb1 → j ≠ js → j ≠ jtbl → j ≠ jsm →
+    have hnotr : ∀ j : Fin K,
+        j ≠ jwin → j ≠ jb0 → j ≠ jb1 → j ≠ js → j ≠ jtbl → j ≠ jsm →
         j ≠ jctr → j ∉ Set.range ι₇ := by
       intro j n0 n1 n2 n3 n4 n5 n6
       rintro ⟨i, rfl⟩
@@ -2137,7 +2144,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
             Fin.lastCases_castSucc, hdstep]
           norm_num
         · by_cases h2 : j = jb1
-          · rw [h2, (hblank jb1 (Or.inr (Or.inl hjb1))).1, ← hι₇2, embedSilentCfg_selected_tape,
+          · rw [h2, (hblank jb1 (Or.inr (Or.inl hjb1))).1, ← hι₇2,
+              embedSilentCfg_selected_tape,
               Cfg.mapState_workTapes, vhostCfg_workTapes,
               show (2 : Fin 7) = Fin.natAdd 1 (1 : Fin 6) from by decide, Fin.addCases_right,
               hcl_tapes, show (1 : Fin 6) = Fin.castSucc (1 : Fin 5) from by decide,
@@ -2159,7 +2167,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
                   Fin.lastCases_castSucc, hdstep]
                 norm_num
               · by_cases h5 : j = jsm
-                · rw [h5, hsm₁₁.1, NDTM.replayTM_q₀, ← hι₇5, embedSilentCfg_selected_tape,
+                · rw [h5, hsm₁₁.1, NDTM.replayTM_q₀, ← hι₇5,
+                    embedSilentCfg_selected_tape,
                     Cfg.mapState_workTapes, vhostCfg_workTapes,
                     show (5 : Fin 7) = Fin.natAdd 1 (4 : Fin 6) from by decide,
                     Fin.addCases_right, hcl_tapes,
@@ -2177,7 +2186,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
                         (embedSilentCfg_cap ι₇ capL hcapL7 e₁₁.workTapes e₁₁.workTapePos
                           [] [] _).1, Cfg.mapState_output, vhostCfg_output, hcl_out, hdstep]
                       simp only [List.nil_append, FinTM.bufferTape_nil]
-                    · rw [(embedSilentCfg_unselected ι₇ capL e₁₁.workTapes e₁₁.workTapePos
+                    · rw [(embedSilentCfg_unselected ι₇ capL e₁₁.workTapes
+                        e₁₁.workTapePos
                         [] [] _ j (hnotr j h0 h1 h2 h3 h4 h5 h6) hcap).1]
     · funext j
       rw [hlhs12p j]
@@ -2195,7 +2205,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
             hcl_pos, show (0 : Fin 6) = Fin.castSucc (0 : Fin 5) from by decide,
             Fin.lastCases_castSucc, hdstep]
         · by_cases h2 : j = jb1
-          · rw [h2, (hblank jb1 (Or.inr (Or.inl hjb1))).2, ← hι₇2, embedSilentCfg_selected_pos,
+          · rw [h2, (hblank jb1 (Or.inr (Or.inl hjb1))).2, ← hι₇2,
+              embedSilentCfg_selected_pos,
               Cfg.mapState_workTapePos, vhostCfg_workTapePos,
               show (2 : Fin 7) = Fin.natAdd 1 (1 : Fin 6) from by decide, Fin.addCases_right,
               hcl_pos, show (1 : Fin 6) = Fin.castSucc (1 : Fin 5) from by decide,
@@ -2231,12 +2242,14 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
                         (embedSilentCfg_cap ι₇ capL hcapL7 e₁₁.workTapes e₁₁.workTapePos
                           [] [] _).2, Cfg.mapState_output, vhostCfg_output, hcl_out, hdstep]
                       simp only [List.nil_append, List.length_nil, Nat.cast_zero]
-                    · rw [(embedSilentCfg_unselected ι₇ capL e₁₁.workTapes e₁₁.workTapePos
+                    · rw [(embedSilentCfg_unselected ι₇ capL e₁₁.workTapes
+                        e₁₁.workTapePos
                         [] [] _ j (hnotr j h0 h1 h2 h3 h4 h5 h6) hcap).2]
     · rw [Cfg.mapState_output, Cfg.mapState_output, embedSilentCfg_output]
       exact he₁₁out
   -- The final seam: the embedded hosted loop, its verdict, and its first arrival.
-  have hA12 := embedSilentTM_runFrom ι₇ capL hcapL7 ic_loopHost e₁₁.workTapes e₁₁.workTapePos
+  have hA12 := embedSilentTM_runFrom ι₇ capL hcapL7 ic_loopHost e₁₁.workTapes
+    e₁₁.workTapePos
     [] [] ((vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep
       (FinTM.bufferTape (Nat.bits t)) 0) true e₁₁.inputPos []).mapState (Sigma.mk false))
   have h₂12 : (embedSilentTM ι₇ capL ic_loopHost).runFrom
@@ -2299,7 +2312,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     · simp only [Cfg.mapState_output, hcfg₀, embedSilentCfg_output]
   set TPRE := T₁ + 1 + ((e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val + 1) + 1 + T₃ + 1 +
     ((Nat.bits t).length + 2) + 1 + (2 * (Nat.bits t).length + 2) + 1 + T₆ + 1 +
-    (((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).inputPos.val + 1) + 1 +
+    (((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => (0 : Fin 3))).inputPos.val + 1) + 1 +
     (α.length + 2) + 1 + TI + 1 + TL + 1 + ((x.take t).length + 2) with hTPRE
   have hl1 : (e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val =
       4 * (Nat.bits t).length + 2 * α.length + 7 := by
