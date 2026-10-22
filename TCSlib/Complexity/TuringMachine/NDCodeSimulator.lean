@@ -782,10 +782,10 @@ private theorem ic_rewind_scan {k : ℕ} {x : List Bool} :
       rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
       simp
     refine ⟨?_, ?_⟩
-    · show (ic_rewindLeafTM k).step cfg = _
-      rw [hstep, hm]
+    · rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep, hm]
     · intro u hu
       obtain rfl : u = 0 := by omega
+      rw [MultiTapeTM.runFrom_zero]
       exact hs
   | succ j ih =>
     intro cfg hs hj hlen
@@ -805,7 +805,9 @@ private theorem ic_rewind_scan {k : ℕ} {x : List Bool} :
     · rw [MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
     · intro u hu
       cases u with
-      | zero => exact hs
+      | zero =>
+        rw [MultiTapeTM.runFrom_zero]
+        exact hs
       | succ u =>
         rw [MultiTapeTM.runFrom_succ_eq_step]
         exact hstay u (by omega)
@@ -835,11 +837,9 @@ private theorem ic_rewind_leaf_run {k : ℕ} {x : List Bool} (cfg : Cfg k Bool (
     omega
   obtain ⟨hrun, hstay⟩ := ic_rewind_scan (cfg.inputPos.val - 1) ((ic_rewindLeafTM k).step cfg)
     (by rw [hstep]) (by rw [hstep]; exact hval) hlen
-  have htime : cfg.inputPos.val + 1 = 1 + (cfg.inputPos.val - 1 + 1) := by omega
+  have htime : cfg.inputPos.val + 1 = cfg.inputPos.val - 1 + 1 + 1 := by omega
   refine ⟨?_, ?_⟩
-  · rw [htime, MultiTapeTM.runFrom_add]
-    show (ic_rewindLeafTM k).runFrom ((ic_rewindLeafTM k).step cfg) _ = _
-    rw [hrun, hstep]
+  · rw [htime, MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
   · intro u hu
     cases u with
     | zero =>
@@ -2362,8 +2362,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [hstart, sRrun, Cfg.mapState_state, embedSilentCfg_state, hLoopSt, Option.map_some]
     by_cases hP : ((c.decode α).tm.runWith (s.take t) ((c.decode α).tm.initCfg x)).state =
         none ∧ ((c.decode α).tm.runWith (s.take t) ((c.decode α).tm.initCfg x)).output = [true]
-    · rw [if_pos hP, decide_eq_true hP]
-    · rw [if_neg hP, decide_eq_false hP]
+    · simp only [hP, and_self, decide_true, if_true]
+    · simp only [hP, decide_false, if_false]
   · -- no earlier verdict, for either verdict state
     intro u hu
     have hno : ∀ v : Bool,
