@@ -3,7 +3,13 @@
 <!-- DRAFT (maintainer). Issue-time items, resolved before issue: ⟨BASE⟩ (the campaign tip after
 #138), ⟨IN-FLIGHT⟩ (what merged before the base), ⟨WC⟩ (whether the window copier is proved at
 the base, #137), ⟨SL⟩ (the seam-layout fill's state), ⟨ORDER⟩, ⟨ROOTS⟩, ⟨SORRIES⟩, ⟨SCREEN⟩,
-⟨PROBE⟩, ⟨LINT⟩ and the pre-ship log. -->
+⟨LINT⟩ and the pre-ship log.
+Dry run of 2026-10-21 at #138's merged head `518769e9` against `oleans-lrw2`
+(`drafts/c1-fill-core-cont2/dryrun-2026-10-21/`): the overlay has exactly the sorry warnings 95
+and 750; the 220-check probe resolves; the review's seal passes and its eight controls fail; the
+axioms reach `sorryAx` only through the replay canonizer, the seam layout and the window copier;
+the order list has 117 modules (NTimeHierarchy and the Diagonalization facade are downstream
+since #129) and 41 Mathlib roots. -->
 
 ## Repository and branch — read this before anything else
 
@@ -180,10 +186,12 @@ rewind:
 **Pre-ship check** (maintainer, at the base, against `oleans-lrw`;
 `campaign/fills/c1/logs/c1-fill-core-cont2-preship.log`):
 - **The overlay** elaborates with exactly your file's two sorry warnings (lines 95 and 750) and
-  nothing else. ⟨PROBE: the 20 privates' axioms⟩. No import cycle: none of the four imports'
+  nothing else. The 20 privates' axioms: within `[propext, Classical.choice, Quot.sound]`, with
+  `sorryAx` reaching only `ic_table_call`, `ic_layout_call` and `ic_window_call`, through the cited
+  stubs. No import cycle: none of the four imports'
   closures contains your file.
 - **The seal** of the last round's review, re-run on the overlay: 0 errors; its controls fail.
-- **The import probe** (`C1CoreCont2ImportProbe.lean.txt`, ⟨PROBE: N⟩ `#check`s: the review's
+- **The import probe** (`C1CoreCont2ImportProbe.lean.txt`, 220 `#check`s: the review's
   211, and the rewind row, the input rewind's lemmas and `controlAction`, and the counter copy):
   0 errors, 0 warnings. Re-run it after your delivery.
 
