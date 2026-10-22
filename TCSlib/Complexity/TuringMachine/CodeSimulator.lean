@@ -5522,6 +5522,478 @@ private lemma canonStageInnerSpec (k : ℕ) :
   simp only [dif_pos hcond]
   exact (hmain d hcond.1 hcond.2).choose_spec
 
+/-- One successful inner block consumes at least one input cell: every record it skips has at
+least `4k + 5` bits (`codeActionK_length`) and the block skips `3^(k+1)` of them. -/
+private lemma canonStageBlock_consumes (k n : ℕ) (xs ys : List Bool)
+    (h : codeSkipRepeat (codeSkipActionK k n) (3 ^ (k + 1)) xs = some ys) :
+    1 + ys.length ≤ xs.length := by
+  have ha : ∀ u v : List Bool, codeSkipActionK k n u = some v →
+      4 * k + 5 + v.length ≤ u.length := by
+    intro u v hu
+    rw [← codeEraseActionK] at hu
+    obtain ⟨⟨a, rest⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hu
+    rw [codeReadActionK_sound u a rest hread, List.length_append]
+    exact Nat.add_le_add_right (codeActionK_length a) _
+  have hb := skipRepeat_consumes _ (4 * k + 5) ha (3 ^ (k + 1)) xs ys h
+  have hp : 1 ≤ 3 ^ (k + 1) := Nat.one_le_pow _ _ (by omega)
+  have h1 : 1 * 1 ≤ (4 * k + 5) * 3 ^ (k + 1) := Nat.mul_le_mul (by omega) hp
+  omega
+
+/-- **The table block** (checkpoint 3): the outer counter loop over checkpoint 2's inner
+block, wrapped once more by the fresh-anchor adapter. From a configuration carrying C2's bank,
+the closed inner-counter window, and an outer counter holding any word `u` of value
+`counterValue w + 1` (the incremented header copy), one block decides the whole fixed table
+grammar `codeSkipTableK` (`canonSkipTable_eq`), in a time **independent of the counter value**:
+each round that returns consumes at least one input cell (`canonStageBlock_consumes`), so at
+most `|x| + 1` rounds ever run, each charged checkpoint 2's linear budget, and the counter
+overhead is settled by `counterOverhead_le` and `counterOverhead_le_of_le`. The block avoids
+both fresh ports strictly inside, exits by the table verdict on the native suffix, and on
+success has empty output and the native head at the surviving suffix. -/
+private lemma canonStageOuterSpec (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (P : MultiTapeTM (m + 2) Bool H)
+      (anchor escape : H) (bound : Fin m) (A : ℕ), escape ≠ anchor ∧
+      ∀ (x w u : List Bool), Nat.ofDigits 2 (u.map Bool.toNat) = counterValue w + 1 →
+        ∃ τ : Cfg (m + 2) Bool H x → ℕ,
+          ∀ d : Cfg (m + 2) Bool H x,
+            (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+              d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+              d.workTapePos bound.castSucc.castSucc = 0 ∧
+              (∀ j : Fin m, j ≠ bound →
+                d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+                d.workTapePos j.castSucc.castSucc = 0) ∧
+              (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+                d.workTapes (Fin.last m).castSucc q = none) ∧
+              d.workTapePos (Fin.last m).castSucc = 0 ∧
+              d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+              d.workTapePos (Fin.last (m + 1)) = 0) →
+            d.state = some anchor →
+            0 < τ d ∧ τ d ≤ A * (x.length + w.length + u.length + 1) ^ 2 ∧
+            (∀ v, 0 < v → v < τ d →
+              ∃ q, (P.runFrom d v).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+            (P.runFrom d (τ d)).state = some
+              (if (codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+                then anchor else escape) ∧
+            ∀ ys, codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+              (P.runFrom d (τ d)).output = [] ∧ 1 ≤ (P.runFrom d (τ d)).inputPos.val ∧
+              x.drop ((P.runFrom d (τ d)).inputPos.val - 1) = ys := by
+  classical
+  obtain ⟨m, H₂, finiteH₂, eqH₂, N₂, anchor₂, escape₂, bound, B₂, different₂, spec₂⟩ :=
+    canonStageInnerSpec k
+  letI : Fintype H₂ := finiteH₂
+  letI : DecidableEq H₂ := eqH₂
+  let L : MultiTapeTM (m + 2) Bool (CounterLoopState H₂) :=
+    counterLoopTM N₂ anchor₂ (some escape₂)
+  let exitF : Bool → CounterLoopState H₂ := fun b =>
+    if b then CounterLoopState.done else CounterLoopState.escape
+  have hinj : Function.Injective exitF := by
+    intro a b h
+    cases a <;> cases b <;> simp [exitF] at h ⊢
+  obtain ⟨H, finiteH, eqH, N, anchor, escape, different, adapt⟩ :=
+    canonReturnAdapter L (CounterLoopState.dec FlagPhase.run) exitF hinj
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound, B₂ + 20, different, ?_⟩
+  intro x w u hu
+  obtain ⟨τ₂, hτ₂⟩ := spec₂ x w
+  -- the loop's run, from its own entry, at the loop's state type
+  have hloopblock : ∀ e : Cfg (m + 2) Bool (CounterLoopState H₂) x,
+      (e.output = [] ∧ 1 ≤ e.inputPos.val ∧
+        e.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        e.workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          e.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          e.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          e.workTapes (Fin.last m).castSucc q = none) ∧
+        e.workTapePos (Fin.last m).castSucc = 0 ∧
+        e.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        e.workTapePos (Fin.last (m + 1)) = 0) →
+      e.state = some (CounterLoopState.dec FlagPhase.run) →
+      ∃ t, t ≤ (x.length + 1) * (B₂ * (x.length + w.length + 1)) +
+          4 * x.length + 2 * u.length + 10 ∧
+        (L.runFrom e t).state = some (exitF
+          (codeSkipTableK k (counterValue w) (x.drop (e.inputPos.val - 1))).isSome) ∧
+        (∀ v < t, ∀ b : Bool, (L.runFrom e v).state ≠ some (exitF b)) ∧
+        ∀ ys, codeSkipTableK k (counterValue w) (x.drop (e.inputPos.val - 1)) = some ys →
+          (L.runFrom e t).output = [] ∧ 1 ≤ (L.runFrom e t).inputPos.val ∧
+          x.drop ((L.runFrom e t).inputPos.val - 1) = ys := by
+    intro e hv hes
+    obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := hv
+    set c₂ : Cfg (m + 1) Bool H₂ x :=
+      ⟨some anchor₂, e.inputPos, fun j => e.workTapes j.castSucc,
+        fun j => e.workTapePos j.castSucc, e.output⟩ with hc₂
+    have hc₂ip : c₂.inputPos = e.inputPos := rfl
+    have hc₂v : c₂.output = [] ∧ 1 ≤ c₂.inputPos.val ∧
+        c₂.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        c₂.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → c₂.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          c₂.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          c₂.workTapes (Fin.last m) q = none) ∧
+        c₂.workTapePos (Fin.last m) = 0 :=
+      ⟨h1, h2, h3, h4, h5, h6, h7⟩
+    -- the junction into the loop's layout
+    have hJ : e = counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c₂
+        (e.workTapes (Fin.last (m + 1))) 0 := by
+      rw [counter_cfg_eq]
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+      · exact hes
+      · exact hc₂ip.symm
+      · funext jj
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) jj
+        · rw [Fin.lastCases_last]
+        · rw [Fin.lastCases_castSucc]
+      · funext jj
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) jj
+        · rw [Fin.lastCases_last]
+          exact h9
+        · rw [Fin.lastCases_castSucc]
+      · rfl
+    have he' : ∀ v : ℕ, L.runFrom e v =
+        L.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c₂
+          (e.workTapes (Fin.last (m + 1))) 0) v :=
+      fun v => congrArg (fun z => L.runFrom z v) hJ
+    have hword : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+        (e.workTapes (Fin.last (m + 1))) (0 + p) = FinTM.bufferTape u p := by
+      intro p _ _
+      rw [h8, zero_add]
+    -- the orbit's dichotomy
+    obtain ⟨j, hj, chain, hdich⟩ := canonRepeat_orbit N₂ anchor₂ escape₂ τ₂
+      (fun c => c.output = [] ∧ 1 ≤ c.inputPos.val ∧
+        c.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        c.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → c.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          c.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          c.workTapes (Fin.last m) q = none) ∧
+        c.workTapePos (Fin.last m) = 0)
+      (fun c => x.drop (c.inputPos.val - 1))
+      (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1)))
+      (fun c hvc hsc => ⟨(hτ₂ c hvc hsc).2.2.2.1, fun ys hy =>
+        ⟨((hτ₂ c hvc hsc).2.2.2.2 ys hy).1, ((hτ₂ c hvc hsc).2.2.2.2 ys hy).2⟩⟩)
+      c₂ hc₂v rfl (counterValue w + 1)
+    have hbase : (x.drop (e.inputPos.val - 1)).length ≤ x.length := by
+      rw [List.length_drop]
+      omega
+    rcases hdich with ⟨hjN, hgood, hanch, hparsed⟩ | ⟨hjpos, hesc, hparsed⟩
+    · -- every round returns: the loop runs to the done port
+      subst hjN
+      rw [hc₂ip, ← canonSkipTable_eq] at hparsed
+      have hcons : ∀ i < counterValue w + 1,
+          codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)) =
+          some (x.drop ((roundOrbit N₂ τ₂ c₂ (i + 1)).inputPos.val - 1)) := by
+        intro i hi
+        obtain ⟨hvi, hsi⟩ := chain i hi
+        have hver := (hτ₂ _ hvi hsi).2.2.2.1
+        have hnext : (roundOrbit N₂ τ₂ c₂ (i + 1)).state = some anchor₂ := by
+          by_cases hlt : i + 1 < counterValue w + 1
+          · exact (chain (i + 1) hlt).2
+          · have hieq : i + 1 = counterValue w + 1 := by omega
+            rw [hieq]
+            exact hanch
+        rw [roundOrbit_succ] at hnext
+        have hifeq := Option.some.inj (hver.symm.trans hnext)
+        by_cases hC : (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1))).isSome = true
+        · obtain ⟨ys, hys⟩ := Option.isSome_iff_exists.mp hC
+          have htl := ((hτ₂ _ hvi hsi).2.2.2.2 ys hys).2
+          rw [hys, roundOrbit_succ]
+          exact congrArg some htl.symm
+        · rw [if_neg hC] at hifeq
+          exact absurd hifeq different₂
+      have htele : ∀ i, i ≤ counterValue w + 1 →
+          i + (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)).length ≤
+            (x.drop (e.inputPos.val - 1)).length := by
+        intro i
+        induction i with
+        | zero =>
+          intro _
+          rw [roundOrbit_zero, hc₂ip]
+          omega
+        | succ i ih =>
+          intro hi
+          have hstep := hcons i (by omega)
+          have hcl := canonStageBlock_consumes k (counterValue w) _ _ hstep
+          have hprev := ih (by omega)
+          omega
+      have hNNx : counterValue w + 1 ≤ x.length := by
+        have := htele (counterValue w + 1) le_rfl
+        omega
+      have hsum : (∑ r ∈ Finset.range (counterValue w + 1), τ₂ (roundOrbit N₂ τ₂ c₂ r)) ≤
+          (counterValue w + 1) * (B₂ * (x.length + w.length + 1)) := by
+        calc (∑ r ∈ Finset.range (counterValue w + 1), τ₂ (roundOrbit N₂ τ₂ c₂ r))
+            ≤ ∑ _r ∈ Finset.range (counterValue w + 1), B₂ * (x.length + w.length + 1) :=
+              Finset.sum_le_sum fun r hr =>
+                (hτ₂ _ (chain r (Finset.mem_range.mp hr)).1
+                  (chain r (Finset.mem_range.mp hr)).2).2.1
+          _ = (counterValue w + 1) * (B₂ * (x.length + w.length + 1)) := by
+              rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+      have hov : counterOverhead u (counterValue w + 1 + 1) ≤
+          4 * (counterValue w + 1) + 2 * u.length + 2 := by
+        have hle := counterOverhead_le u
+        rw [hu] at hle
+        exact hle
+      set T : ℕ := (∑ r ∈ Finset.range (counterValue w + 1), τ₂ (roundOrbit N₂ τ₂ c₂ r)) +
+        counterOverhead u (counterValue w + 1 + 1) with hT
+      obtain ⟨hrun, hcutT, -, -⟩ := counterLoopTM_run_done N₂ anchor₂ (some escape₂) τ₂ c₂
+        u (e.workTapes (Fin.last (m + 1))) 0 hword (counterValue w + 1) hu
+        (by
+          intro r hr
+          obtain ⟨hvr, hsr⟩ := chain r hr
+          obtain ⟨hpos, -, hint, -, -⟩ := hτ₂ _ hvr hsr
+          refine ⟨hsr, hpos, ?_, ?_⟩
+          · intro uu huu htu
+            obtain ⟨q, hq, hqa, hqe⟩ := hint uu huu htu
+            exact ⟨q, hq, hqa, fun eq => hqe (Option.some.inj eq).symm⟩
+          · by_cases hlt : r + 1 < counterValue w + 1
+            · exact (chain (r + 1) hlt).2
+            · have hre : r + 1 = counterValue w + 1 := by omega
+              rw [hre]
+              exact hanch)
+        T hT
+      refine ⟨T, ?_, ?_, ?_, ?_⟩
+      · have h5 : (counterValue w + 1) * (B₂ * (x.length + w.length + 1)) ≤
+            (x.length + 1) * (B₂ * (x.length + w.length + 1)) :=
+          Nat.mul_le_mul_right _ (by omega)
+        omega
+      · rw [he', hrun, counter_cfg_eq, hparsed]
+        rfl
+      · intro v hvt b
+        rw [he']
+        have hc := hcutT v hvt
+        cases b
+        · exact hc.2
+        · exact hc.1
+      · intro ys hy
+        rw [hparsed] at hy
+        have hyse := Option.some.inj hy
+        refine ⟨?_, ?_, ?_⟩
+        · rw [he', hrun, counter_cfg_eq]
+          exact hgood.1
+        · rw [he', hrun, counter_cfg_eq]
+          exact hgood.2.1
+        · rw [he', hrun, counter_cfg_eq]
+          exact hyse
+    · -- some round fails: the loop escapes early
+      rw [hc₂ip, ← canonSkipTable_eq] at hparsed
+      have hcons : ∀ i, i + 1 < j →
+          codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)) =
+          some (x.drop ((roundOrbit N₂ τ₂ c₂ (i + 1)).inputPos.val - 1)) := by
+        intro i hi
+        obtain ⟨hvi, hsi⟩ := chain i (by omega)
+        have hver := (hτ₂ _ hvi hsi).2.2.2.1
+        have hnext : (roundOrbit N₂ τ₂ c₂ (i + 1)).state = some anchor₂ :=
+          (chain (i + 1) hi).2
+        rw [roundOrbit_succ] at hnext
+        have hifeq := Option.some.inj (hver.symm.trans hnext)
+        by_cases hC : (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1))).isSome = true
+        · obtain ⟨ys, hys⟩ := Option.isSome_iff_exists.mp hC
+          have htl := ((hτ₂ _ hvi hsi).2.2.2.2 ys hys).2
+          rw [hys, roundOrbit_succ]
+          exact congrArg some htl.symm
+        · rw [if_neg hC] at hifeq
+          exact absurd hifeq different₂
+      have htele : ∀ i, i < j →
+          i + (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)).length ≤
+            (x.drop (e.inputPos.val - 1)).length := by
+        intro i
+        induction i with
+        | zero =>
+          intro _
+          rw [roundOrbit_zero, hc₂ip]
+          omega
+        | succ i ih =>
+          intro hi
+          have hstep := hcons i (by omega)
+          have hcl := canonStageBlock_consumes k (counterValue w) _ _ hstep
+          have hprev := ih (by omega)
+          omega
+      have hjx : j ≤ x.length + 1 := by
+        have := htele (j - 1) (by omega)
+        omega
+      have hsum : (∑ r ∈ Finset.range j, τ₂ (roundOrbit N₂ τ₂ c₂ r)) ≤
+          j * (B₂ * (x.length + w.length + 1)) := by
+        calc (∑ r ∈ Finset.range j, τ₂ (roundOrbit N₂ τ₂ c₂ r))
+            ≤ ∑ _r ∈ Finset.range j, B₂ * (x.length + w.length + 1) :=
+              Finset.sum_le_sum fun r hr =>
+                (hτ₂ _ (chain r (Finset.mem_range.mp hr)).1
+                  (chain r (Finset.mem_range.mp hr)).2).2.1
+          _ = j * (B₂ * (x.length + w.length + 1)) := by
+              rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+      have hov : counterOverhead u j ≤ 4 * j + 2 * u.length :=
+        counterOverhead_le_of_le u j (by rw [hu]; omega)
+      have hj1 : j - 1 + 1 = j := by omega
+      set T : ℕ := (∑ r ∈ Finset.range j, τ₂ (roundOrbit N₂ τ₂ c₂ r)) +
+        counterOverhead u j with hT
+      obtain ⟨hrun, hcutT, -, -⟩ := counterLoopTM_run_escape N₂ anchor₂ escape₂ different₂
+        τ₂ c₂ u (e.workTapes (Fin.last (m + 1))) 0 hword (j - 1)
+        (by rw [hu]; omega)
+        (by
+          intro r hr
+          obtain ⟨hvr, hsr⟩ := chain r (by omega)
+          obtain ⟨hpos, -, hint, -, -⟩ := hτ₂ _ hvr hsr
+          exact ⟨hsr, hpos, hint⟩)
+        (by rw [hj1]; exact hesc)
+        T (by rw [hT, hj1])
+      rw [hj1] at hrun
+      refine ⟨T, ?_, ?_, ?_, ?_⟩
+      · have h5 : j * (B₂ * (x.length + w.length + 1)) ≤
+            (x.length + 1) * (B₂ * (x.length + w.length + 1)) :=
+          Nat.mul_le_mul_right _ (by omega)
+        omega
+      · rw [he', hrun, counter_cfg_eq, hparsed]
+        rfl
+      · intro v hvt b
+        rw [he']
+        have hc := hcutT v hvt
+        cases b
+        · exact hc.2
+        · exact hc.1
+      · intro ys hy
+        rw [hparsed] at hy
+        exact Option.noConfusion hy
+  -- the adapter wrap and the chosen time
+  have hmain : ∀ d : Cfg (m + 2) Bool H x,
+      (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          d.workTapes (Fin.last m).castSucc q = none) ∧
+        d.workTapePos (Fin.last m).castSucc = 0 ∧
+        d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        d.workTapePos (Fin.last (m + 1)) = 0) →
+      d.state = some anchor →
+      ∃ s, 0 < s ∧ s ≤ (B₂ + 20) * (x.length + w.length + u.length + 1) ^ 2 ∧
+        (∀ v, 0 < v → v < s →
+          ∃ q, (N.runFrom d v).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+        (N.runFrom d s).state = some
+          (if (codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+            then anchor else escape) ∧
+        ∀ ys, codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+          (N.runFrom d s).output = [] ∧ 1 ≤ (N.runFrom d s).inputPos.val ∧
+          x.drop ((N.runFrom d s).inputPos.val - 1) = ys := by
+    intro d hv hs
+    have hcs : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).state = some (CounterLoopState.dec FlagPhase.run) := by
+      rw [Cfg.mapState_state, hs, Option.map_some]
+    have hrestored : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).mapState (fun _ => anchor) = d := by
+      refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ ?_
+      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+      · funext j q
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hip : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).inputPos = d.inputPos :=
+      Cfg.mapState_inputPos _ _
+    have hcv : ((d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).output = [] ∧
+        1 ≤ (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).inputPos.val ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+            CounterLoopState H₂)).workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+            CounterLoopState H₂)).workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+            CounterLoopState H₂)).workTapes (Fin.last m).castSucc q = none) ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapePos (Fin.last m).castSucc = 0 ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapePos (Fin.last (m + 1)) = 0) := by
+      obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := hv
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [Cfg.mapState_output]; exact h1
+      · rw [hip]; exact h2
+      · funext q
+        rw [Cfg.mapState_workTapes]
+        exact congrFun h3 q
+      · rw [Cfg.mapState_workTapePos]; exact h4
+      · intro j hj
+        refine ⟨?_, ?_⟩
+        · funext q
+          rw [Cfg.mapState_workTapes]
+          exact congrFun (h5 j hj).1 q
+        · rw [Cfg.mapState_workTapePos]; exact (h5 j hj).2
+      · intro q hq
+        rw [Cfg.mapState_workTapes]
+        exact h6 q hq
+      · rw [Cfg.mapState_workTapePos]; exact h7
+      · funext q
+        rw [Cfg.mapState_workTapes]
+        exact congrFun h8 q
+      · rw [Cfg.mapState_workTapePos]; exact h9
+    obtain ⟨t, ht, hstate, hcut, hysb⟩ := hloopblock _ hcv hcs
+    rw [hip] at hstate hysb
+    obtain ⟨hpos2, hrunN, hint⟩ := adapt x _ hcs t _ hstate hcut
+    rw [hrestored] at hrunN hint
+    refine ⟨t + 2, hpos2, ?_, hint, ?_, ?_⟩
+    · have hX1 : x.length + 1 ≤ x.length + w.length + u.length + 1 := by omega
+      have hX2 : x.length + w.length + 1 ≤ x.length + w.length + u.length + 1 := by omega
+      have h2 : (x.length + 1) * (B₂ * (x.length + w.length + 1)) ≤
+          (x.length + w.length + u.length + 1) *
+            (B₂ * (x.length + w.length + u.length + 1)) :=
+        Nat.mul_le_mul hX1 (Nat.mul_le_mul_left _ hX2)
+      have h3 : x.length + w.length + u.length + 1 ≤
+          (x.length + w.length + u.length + 1) * (x.length + w.length + u.length + 1) :=
+        Nat.le_mul_of_pos_left _ (by omega)
+      have h4 : x.length ≤ x.length + w.length + u.length + 1 := by omega
+      have h6 : u.length ≤ x.length + w.length + u.length + 1 := by omega
+      have h7 : 1 ≤ x.length + w.length + u.length + 1 := by omega
+      rw [pow_two]
+      nlinarith
+    · rw [hrunN, Cfg.mapState_state, hstate, Option.map_some]
+    · intro ys hy
+      obtain ⟨g1, g2, g3⟩ := hysb ys hy
+      refine ⟨?_, ?_, ?_⟩
+      · rw [hrunN, Cfg.mapState_output]; exact g1
+      · rw [hrunN, Cfg.mapState_inputPos]; exact g2
+      · rw [hrunN, Cfg.mapState_inputPos]; exact g3
+  -- package the chosen time
+  refine ⟨fun d =>
+    if h : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          d.workTapes (Fin.last m).castSucc q = none) ∧
+        d.workTapePos (Fin.last m).castSucc = 0 ∧
+        d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        d.workTapePos (Fin.last (m + 1)) = 0) ∧ d.state = some anchor then
+      (hmain d h.1 h.2).choose
+    else 0, ?_⟩
+  intro d hv hs
+  have hcond : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+      d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+      d.workTapePos bound.castSucc.castSucc = 0 ∧
+      (∀ j : Fin m, j ≠ bound →
+        d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+        d.workTapePos j.castSucc.castSucc = 0) ∧
+      (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+        d.workTapes (Fin.last m).castSucc q = none) ∧
+      d.workTapePos (Fin.last m).castSucc = 0 ∧
+      d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+      d.workTapePos (Fin.last (m + 1)) = 0) ∧ d.state = some anchor := ⟨hv, hs⟩
+  simp only [dif_pos hcond]
+  exact (hmain d hcond.1 hcond.2).choose_spec
+
 /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
 canonical binary header `bits` (head at the origin), every other tape blank, the native head
 at the remainder's first cell and the output empty, it decides the fixed grammar on the
