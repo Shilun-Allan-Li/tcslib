@@ -72,7 +72,12 @@ before the brief is dispatched.
 - **Screen (v3):** `Build/StepClock`, `Build/RecordTable`, `SpaceComplexity/WindowClock`,
   `Build/WindowRun`: 176 declarations, 19 pairs; `wordPatch_append` is in none
   (`evidence/screen.txt`).
-- **Replay:** ⟨REPLAY⟩
+- **Replay:** `replay-lwpa.sh`: the downstream closure, on the merged tree `1cd66f1b`, of every
+  file changed since #132's merge (14 modules: `Build/StepClock` and its downstream, which since
+  #136 includes `ClassNP/ExhaustiveReplay`, together with the campaign's merges of #133, #134,
+  #136, #138 and #140, the facade last), chained from `oleans-l132b` (#132's replay at its merged
+  state). **Passed (user, 2026-10-22):** 14 of 14, 0 failed, static-equal (8)
+  (`evidence/replay-lwpa.*`, `evidence/down-lwpa.txt`).
 
 ## Findings format
 

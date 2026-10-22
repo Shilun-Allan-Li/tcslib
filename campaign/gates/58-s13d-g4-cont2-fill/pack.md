@@ -83,7 +83,11 @@ intact and in scope.
   to the base set by name (`out/sweep-check.txt`).
 - **Environment:** the first delivery under addendum v2.3; the narrowed cache fetch (35 Mathlib
   roots, 967 files) succeeded with no retry (`out/environment-v23.txt`).
-- **Replay:** ⟨REPLAY⟩
+- **Replay:** `replay-lg4c2.sh`: the downstream closure, on the merged tree `c60ed898`, of every
+  file changed since #132's merge (13 modules: `Build/ZoneRebalance` and the campaign's merges of
+  #133, #134, #136, #138 and #140, the facade last), chained from `oleans-l132b` (#132's replay
+  at its merged state). **Passed (user, 2026-10-22):** 13 of 13, 0 failed, static-equal (10)
+  (`evidence/replay-lg4c2.*`, `evidence/down-lg4c2.txt`).
 
 ## Findings format
 
