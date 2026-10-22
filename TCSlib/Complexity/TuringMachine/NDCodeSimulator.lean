@@ -2246,6 +2246,30 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
                         [] [] _ j (hnotr j h0 h1 h2 h3 h4 h5 h6) hcap).2]
     · rw [Cfg.mapState_output, Cfg.mapState_output, embedSilentCfg_output]
       exact he₁₁out
+  -- The final seam: the embedded hosted loop, its verdict, and its first arrival.
+  have hA12 := embedSilentTM_runFrom ι₇ capL hcapL7 ic_loopHost e₁₁.workTapes e₁₁.workTapePos
+    [] [] ((vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep
+      (FinTM.bufferTape (Nat.bits t)) 0) true e₁₁.inputPos []).mapState (Sigma.mk false))
+  have h₂12 : (embedSilentTM ι₇ capL ic_loopHost).runFrom
+      ((e₁₁.mapState (Sum.inr : _ → St₁₁)).mapState
+        (fun _ => (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ : Σ i, ic_loopPh i)))
+      TLoop =
+      embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+        (ic_loopHost.runFrom ((vhostCfg (counterLoopCfg
+          (some (CounterLoopState.dec FlagPhase.run)) dstep
+          (FinTM.bufferTape (Nat.bits t)) 0) true e₁₁.inputPos []).mapState (Sigma.mk false))
+          TLoop) := by
+    rw [hjunc₁₂]
+    exact hA12 TLoop
+  obtain ⟨sRrun, sRst, sRcut⟩ := ic_seam_step _ (Sum.inr RewindPhase.done)
+    (embedSilentTM ι₇ capL ic_loopHost)
+    (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ : Σ i, ic_loopPh i) _
+    s11run s11st s11cut h₂12
+    (by rw [embedSilentCfg_state]; exact hLoopSt)
+    (by
+      intro u hu
+      rw [hjunc₁₂, hA12 u, embedSilentCfg_state]
+      exact hLoopCut u hu _)
   sorry
 
 end Turing
