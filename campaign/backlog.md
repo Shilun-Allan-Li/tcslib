@@ -966,6 +966,32 @@ the user's dedup window, or when `ClassNP/ExhaustiveReplay` is next open.*
   concrete machine and its runs read through published step equations (rule 10), so it goes in a
   later docstring/examples PR, not #136.
 
+### IW-1: the window copier's interval patch, a copy of `wordPatch` (user, 2026-10-21)
+
+*Origin: gate 54 (PR #137, `Build/InputWindow`), finding 1; the maintainer disclosed it in the
+pack.*
+
+`Build/InputWindow`'s private `iw_patch` is `Build/StepClock`'s public `wordPatch` at `Γ = Bool`
+(token for token after renaming its binders, and equal by `rfl`). The brief authorized no import,
+so the worker could not cite it, and the screen pairs neither. The same definition is
+`Build/CounterLoop`'s private `counterPatch` and `Build/Catalog`'s private `catalogTape`: one
+definition in four files, `wordPatch` the public one.
+- **Acknowledged (user, 2026-10-21)**, at gate 54, for the whole family, on condition that the
+  retirement stays on this backlog.
+- **Retirement, in the user's dedup window,** in one move. `CounterLoop` cannot import
+  `StepClock`, which imports it, and `Catalog` lies below both. So `wordPatch` and its cell
+  lemmas move below `Build/Catalog`, beside `FinTM.bufferTape` (`Simulation`, or
+  `TuringMachine/BufferWords`, merged with #140), with #139's `wordPatch_append` and an
+  explicit-form lemma. `counterPatch`, `catalogTape` and `iw_patch` are then deleted and their
+  uses re-pointed. `InputWindow` needs no new import, and its re-proofs are gate 54's option B
+  (`iw_patch_append` and `iw_patch_true` through `wordPatch_of_mem`/`_of_not_mem`, with a private
+  explicit-form reading; verified: 0 errors and 0 warnings, a seal of 19 definitions with 5
+  controls, the statement unchanged). The move edits `Build/Catalog`, so it goes with Catalog's
+  next edit (12.2c T3 or MIG-1), as RW-1 does. If `InputWindow` is wanted earlier, option B
+  lands it alone, importing `StepClock` (acyclic; the closure gains that one module).
+- **Census** (`duplication-ledger.md`, IW-1): `InputWindow` 1 of 17 declarations (5.9%),
+  `StepClock` 1 of 41, `CounterLoop` 1 of 79, `Catalog` 1 of 505; none is past one fifth.
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)

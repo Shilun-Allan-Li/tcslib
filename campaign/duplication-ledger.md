@@ -411,6 +411,40 @@ without fractions or spans):
 `StepBlock` is under one fifth, and #140 leaves it byte-unchanged. After the retirement, neither
 file has a member.
 
+**IW-1, the window copier's interval patch** (PR #137, `Build/InputWindow`, 2026-10-21): the
+private `iw_patch` is `Build/StepClock`'s public `wordPatch` at `Γ = Bool`: token for token after
+renaming its binders (`tape`, `head`, `v` for `ct`, `cp`, `u`), and equal by `rfl`
+(`@iw_patch = @wordPatch Bool`). One definition; no proof is copied. The same definition is also
+`Build/CounterLoop`'s private `counterPatch` and `Build/Catalog`'s private `catalogTape` (written
+pointwise), both from 2026-10-10; `wordPatch` (2026-10-14) is the public one. These four are the
+**interval-patch family**: the tree and the open branches hold no other. The B6 F1 record named
+`counterPatch` for the dedup window; `catalogTape` was not recorded before. The worker reported
+"new copies: none" (`StepClock` was outside its screen population and its import context). The
+maintainer disclosed the copy in gate 54's pack (question 6), and gate 54's finding 1 made it a
+debt major. **Not members:** `iw_patch_append` appends one cell (Catalog's public
+`catalog_write_take` states the same fact in take form, with its own proof), and `iw_patch_true`
+reads the patch at the all-true word (the `Bool` case of a step inside `CounterLoop`'s proof, not
+a declaration). **ACKNOWLEDGED (user, 2026-10-21)**, at gate 54, for the whole family. **Cleanup
+owner and window:** the user's dedup window, through backlog §1 IW-1: `wordPatch` moves below
+`Build/Catalog` with Catalog's next edit, and the three private copies re-point to it
+(`InputWindow`'s re-proofs are verified at gate 54's review). **Census** (the primary rule, each
+member counted once per file it inhabits; declarations as the style lint counts them; lines by
+the span rule):
+- `Build/InputWindow`, a copy: **1 of 17 declarations (5.9%)** (1 public, 16 private), **5**
+  lines (`iw_patch`).
+- `Build/StepClock`, the public one: **1 of 41 (2.4%)** (8 public, 33 private), **4** lines
+  (`wordPatch`).
+- `Build/CounterLoop`: **1 of 79 (1.3%)** (59 public, 20 private), **4** lines (`counterPatch`).
+- `Build/Catalog`: **1 of 505 (0.2%)** (113 public, 392 private), **5** lines (`catalogTape`). It
+  is in none of the correspondences behind Catalog's row above, so it adds one member there.
+- Copied characters: none by the v3 screen, which pairs none of the four. After renaming, each
+  is the same definition of 175 to 199 characters.
+
+**The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
+`InputWindow` had no earlier copies. `Catalog` had, but #137 adds no copy to it, since
+`catalogTape` predates the delivery. The §1 item IW-1 is opened anyway, as for RW-1, and
+answered. After the retirement only `wordPatch` remains, in its new home.
+
 **C1-E cont1, the exhaustive replay** (PR #136, `ClassNP/ExhaustiveReplay`, 2026-10-21): **no
 member.** The v3 screen's 122 new pairs are all in-file (0 cross-file, 0 gone; 297 → 428
 declarations, 106 → 228 pairs). 26 are at or above the brief's 90% copy threshold, between 17 of
