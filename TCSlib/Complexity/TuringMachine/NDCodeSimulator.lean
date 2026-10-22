@@ -1698,6 +1698,105 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     s8run s8st s8cut h₂9
     (by rw [Cfg.mapState_state, embedSilentCfg_state, Cfg.ofWords_state, Option.map_some])
     (by intro u hu; rw [hjunc₉]; exact hIcut u hu)
+  -- Phase 10: the seam layout redistributes the installed serialization.
+  set e₉ := embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+    (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) doneI
+      (stateWord CI.k (serializeK (c.decode α).tm.replayTM))) with he₉
+  have hieq0 : ιI ⟨0, hkI⟩ = jal := Fin.ext (by rw [hιI, hjal]; simp)
+  have hlhs10t : ∀ j, ((((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes j : ℤ → Option Bool) =
+      e₉.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have hlhs10p : ∀ j, (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos j =
+      e₉.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have hd₁₀st : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).state = some entryL := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, he₉, embedSilentCfg_state,
+      Cfg.ofWords_state]
+    rfl
+  have hd₁₀src : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes jal =
+      FinTM.bufferTape (serializeK (c.decode α).tm.replayTM) := by
+    rw [hlhs10t jal, he₉, ← hieq0, embedSilentCfg_selected_tape, Cfg.ofWords_workTapes,
+      stateWord_eq, if_pos rfl]
+  have hd₁₀srcp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jal = 0 := by
+    rw [hlhs10p jal, he₉, ← hieq0, embedSilentCfg_selected_pos, Cfg.ofWords_workTapePos]
+  have hinst_unsel : ∀ j : Fin K, j.val ≠ 2 → ¬(11 + k₁ + k₂ ≤ j.val ∧ j.val < 10 + k₁ + k₂ + CI.k) →
+      j ∉ Set.range ιI := by
+    intro j h2 hrange
+    rintro ⟨i, rfl⟩
+    have hv := hιI i
+    by_cases h0 : i.val = 0
+    · rw [if_pos h0] at hv
+      omega
+    · rw [if_neg h0] at hv
+      have := i.isLt
+      exact hrange (by omega)
+  have hd₁₀tbl : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes jtbl = fun _ => none := by
+    funext a
+    rw [hlhs10t jtbl, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jtbl
+        (hinst_unsel jtbl (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      (hclean₈ jtbl (by intro hmem; rw [hr₁] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; rw [hr₂] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      htapes₀blank jtbl (by intro hmem; have := congrArg Fin.val hmem; omega)]
+  have hd₁₀tblp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jtbl = 0 := by
+    rw [hlhs10p jtbl, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jtbl
+        (hinst_unsel jtbl (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).2]
+    exact (hclean₈ jtbl (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  have hd₁₀sm : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes jsm = fun _ => none := by
+    funext a
+    rw [hlhs10t jsm, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jsm
+        (hinst_unsel jsm (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      (hclean₈ jsm (by intro hmem; rw [hr₁] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; rw [hr₂] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      htapes₀blank jsm (by intro hmem; have := congrArg Fin.val hmem; omega)]
+  have hd₁₀smp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jsm = 0 := by
+    rw [hlhs10p jsm, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jsm
+        (hinst_unsel jsm (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).2]
+    exact (hclean₈ jsm (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  obtain ⟨TL, hTL, hLspec⟩ := layouts ((c.decode α).tm.replayTM)
+  obtain ⟨hLst, hLin, hLtapes, hLheads, hLout, hLcut⟩ := hLspec
+    (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL))
+    hd₁₀st hd₁₀src hd₁₀srcp hd₁₀tbl hd₁₀tblp hd₁₀sm hd₁₀smp
+  obtain ⟨s10run, s10st, s10cut⟩ := ic_seam_step _ (Sum.inr (Sum.inr doneI))
+    L entryL doneL s9run s9st s9cut rfl hLst hLcut
   sorry
 
 end Turing
