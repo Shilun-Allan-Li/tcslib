@@ -925,7 +925,18 @@ within `t'·50·(|table| + 1) + 4t' + 2|bits t|` (the contract's early-escape bo
 the prefix clause. The verdict reads H2's output summary at the live exits
 (`Turing.StepBlock.hostedLoop_read`). The replay lemma `Turing.NDTM.replayTM_runFrom` identifies
 the simulated run with the branch along `s.take t` on the window, and input locality
-(`Turing.NDTM.runWith_initCfg_take`) with the branch on `x`. -/
+(`Turing.NDTM.runWith_initCfg_take`) with the branch on `x`.
+
+**Implementation status.** The interpreter is assembled and its startup is verified: one seam
+composite of twelve phases (the two header passes with their captures, two native-input rewinds,
+the counter rewind and copy, the bounded window copy, the serialization install through the
+release adapter, the seam layout, the window rewind, and the hosted loop with its verdict read).
+The run of the first eleven phases from the initial configuration is proved, with the first
+arrival at each phase's exit and the complete tape inventory at the loop's threshold: the stream
+on its tape at the origin, the window `x.take t` and the counter `bits t` at their origins, the
+decoded machine's replay table and its empty-output summary installed, and the native head at
+the input's first cell. Open are the final phase's entry (the represented replay start at the
+loop's seam), the interpreter's endpoint semantics, and the two time clauses. -/
 theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     ∃ (K : ℕ) (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (R : MultiTapeTM K Bool Q)
       (j : Fin K) (entry accept reject : Q), accept ≠ reject ∧
@@ -1797,6 +1808,58 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     hd₁₀st hd₁₀src hd₁₀srcp hd₁₀tbl hd₁₀tblp hd₁₀sm hd₁₀smp
   obtain ⟨s10run, s10st, s10cut⟩ := ic_seam_step _ (Sum.inr (Sum.inr doneI))
     L entryL doneL s9run s9st s9cut rfl hLst hLcut
+  set e₁₀ := L.runFrom (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+    (Sum.inr : _ → St₉)).mapState (fun _ => entryL)) TL with he₁₀
+  -- Phase 11: rewind the window to its origin.
+  have hjwinal : jwin ≠ jal := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjwintbl : jwin ≠ jtbl := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjwinsm : jwin ≠ jsm := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have h₁₀win : e₁₀.workTapes jwin = FinTM.bufferTape (x.take t) ∧
+      e₁₀.workTapePos jwin = ((x.take t).length : ℤ) := by
+    constructor
+    · funext a
+      rw [he₁₀, hLtapes, Function.update_of_ne hjwinsm, Function.update_of_ne hjwintbl,
+        Function.update_of_ne hjwinal, hlhs10t jwin, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jwin
+          (hinst_unsel jwin (by omega) (by omega))
+          (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+        he₈tapes jwin, h₆win]
+    · rw [he₁₀, hLheads, Function.update_of_ne hjwinsm, Function.update_of_ne hjwintbl,
+        Function.update_of_ne hjwinal, hlhs10p jwin, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jwin
+          (hinst_unsel jwin (by omega) (by omega))
+          (by intro hmem; have := congrArg Fin.val hmem; omega)).2,
+        he₈pos jwin hjwinal]
+      exact h₆winhd
+  -- The rewind of the window.
+  have hd₁₁st : ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).state = some RewindPhase.start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₁₀, hLst]
+    rfl
+  have hd₁₁u : ∀ p : ℤ, -1 ≤ p → p < ((x.take t).length : ℤ) →
+      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).workTapes jwin
+        (((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jwin - (x.take t).length + p) =
+      FinTM.bufferTape (x.take t) p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₁₀win.2]
+    have harith : ((x.take t).length : ℤ) - (x.take t).length + p = p := by ring
+    rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₁₀win.1]
+  obtain ⟨hr11run, hr11cut, hr11heads⟩ := rewindTM_run_ofCfg jwin (x.take t)
+    (x.take t).length le_rfl
+    ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)) hd₁₁st hd₁₁u
+  obtain ⟨s11run, s11st, s11cut⟩ := ic_seam_step _ (Sum.inr doneL)
+    (rewindTM K jwin) RewindPhase.start RewindPhase.done
+    s10run s10st s10cut hr11run rfl hr11cut
   sorry
 
 end Turing
