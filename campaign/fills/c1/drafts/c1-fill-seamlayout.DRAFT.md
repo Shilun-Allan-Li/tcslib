@@ -6,6 +6,10 @@ public module, PR #140). Before issue, after #140 merges: refresh the base and t
 one import), and re-measure on it against the then-current snapshot: the regions' lines, the
 order list (BufferWords joins the closure), the Mathlib roots, the base sorries, the screen base
 (add `TuringMachine/BufferWords` to the population) and the import probe (add the six lemmas).
+Dry run of 2026-10-21 at #140's merged head `7c963897` against `oleans-lbw2`
+(`drafts/c1-fill-seamlayout/dryrun-2026-10-21/`): the overlay (the one import added) elaborates
+with exactly the target's sorry warning (line 97); the probe, the 39 names plus the six lemmas,
+resolves (45 checks, 0 errors).
 -->
 
 ## Repository and branch — read this before anything else
