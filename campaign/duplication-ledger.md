@@ -350,8 +350,22 @@ different proofs (the new ones read `bufferTape` only through its published equa
 copy-text screen pairs none of them, so this is a restated-fact family, not a text copy.
 **ACKNOWLEDGED (user, 2026-10-18)**, in the ruling that chose the public module. **Cleanup owner
 and window:** the user's dedup window: `StepBlock` imports the module and its four privates are
-deleted, their uses re-pointed. Members: 4 in `StepBlock` (the copy side; the public lemmas are
-the original side from then on).
+deleted, their uses re-pointed. **Census** (the primary rule, each member counted once per file it
+inhabits; corrected at gate 57, finding 1: the first version counted `StepBlock`'s side only,
+without fractions or spans):
+- `TuringMachine/BufferWords`, the original side: **4 of 6 declarations (66.7%)** (6 public,
+  0 private; `_drop` and `_take` have no counterpart), **45** lines in member blocks
+  (`_append_shift` 10, `_append_mid` 9, `_eq_none_of_not_mem` 10, `_unary` 16).
+- `Build/StepBlock`, the copy side: **4 of 135 declarations (3.0%)** (64 public, 71 private),
+  **42** lines (`bufferTape_unary` 11, `_outside` 7, `_reads` 16, `_suffix` 8).
+- No copied characters: the v3 screen of the module, `Simulation`, `Build/StepBlock` and
+  `Build/SeamLayout` (140 declarations, 32 pairs) pairs none of the eight, before and after
+  #140's merge of the campaign branch (`7c963897`).
+
+**The one-fifth rule** (`workflow.md` §4): `BufferWords` is past one fifth, and its §1 item is
+`backlog.md` BW-1, opened and acknowledged on 2026-10-18, before gate 57's pack shipped.
+`StepBlock` is under one fifth, and #140 leaves it byte-unchanged. After the retirement, neither
+file has a member.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

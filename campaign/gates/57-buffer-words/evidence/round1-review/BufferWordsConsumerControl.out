@@ -1,0 +1,24 @@
+BufferWordsConsumerControl.lean:10:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape w (-1) = none
+BufferWordsConsumerControl.lean:12:2: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  pairEncode a v = List.flatMap (fun b => [b, b]) a ++ [false, true] ++ v
+@FinTM.bufferTape_append_shift : ∀ {Symbol : Type u_1} (u w : List Symbol) {z : ℤ},
+  0 ≤ z → FinTM.bufferTape (u ++ w) (↑u.length + z) = FinTM.bufferTape w z
+@FinTM.bufferTape_append_mid : ∀ {Symbol : Type u_1} (u w v : List Symbol) (r : ℕ) (hr : r < w.length),
+  FinTM.bufferTape (u ++ w ++ v) (↑u.length + ↑r) = some w[r]
+@FinTM.bufferTape_drop : ∀ {Symbol : Type u_1} (w : List Symbol) (r : ℕ) {z : ℤ},
+  0 ≤ z → FinTM.bufferTape (List.drop r w) z = FinTM.bufferTape w (↑r + z)
+@FinTM.bufferTape_take : ∀ {Symbol : Type u_1} (w : List Symbol) (n : ℕ) {z : ℤ},
+  z < ↑n → FinTM.bufferTape (List.take n w) z = FinTM.bufferTape w z
+@FinTM.bufferTape_eq_none_of_not_mem : ∀ {Symbol : Type u_1} (w : List Symbol) {z : ℤ},
+  ¬(0 ≤ z ∧ z < ↑w.length) → FinTM.bufferTape w z = none
+FinTM.bufferTape_unary : ∀ (q r : ℕ),
+  r ≤ q → FinTM.bufferTape (List.replicate q true ++ [false]) ↑r = some (decide (r < q))

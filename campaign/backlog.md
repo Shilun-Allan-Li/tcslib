@@ -897,6 +897,11 @@ half threshold.
 statements, different proofs; no screen pair). **Acknowledged (user, 2026-10-18).**
 **Retirement, in the user's dedup window:** `StepBlock` imports `BufferWords`, deletes the four
 privates and re-points their uses (StepBlock's downstream is replayed then).
+- **Census** (gate 57, finding 1; `duplication-ledger.md`, BW-1): `BufferWords` 4 of 6
+  declarations (66.7%), `StepBlock` 4 of 135 (3.0%), no copied characters. **`BufferWords` is
+  past one fifth**; this item is the §1 item that `workflow.md` §4 requires for it. The
+  correction adds no member, file or family to what the ruling chose: the module and its four
+  restatements.
 
 ## 2. Campaign work queued or on hold
 
