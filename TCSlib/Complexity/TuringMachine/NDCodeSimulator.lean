@@ -1023,6 +1023,16 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   let A₉ := seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI
   let A₁₁ : MultiTapeTM K Bool RewindPhase := rewindTM K jwin
   let A₁₂ := embedSilentTM ι₇ capL ic_loopHost
+  let St₂ : Type := ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3
+  let St₃ : Type := St₂ ⊕ ((prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit)
+  let St₄ : Type := St₃ ⊕ RewindPhase
+  let St₅ : Type := St₄ ⊕ SweepPhase
+  let St₆ : Type := St₅ ⊕ QW
+  let St₇ : Type := St₆ ⊕ Fin 3
+  let St₈ : Type := St₇ ⊕ RewindPhase
+  let St₉ : Type := St₈ ⊕ (Unit ⊕ CI.State)
+  let St₁₀ : Type := St₉ ⊕ QL
+  let St₁₁ : Type := St₁₀ ⊕ RewindPhase
   -- The assembled interpreter.
   let S₂ := seamCompTM A₁ (Sum.inr ()) A₂ 0
   let S₃ := seamCompTM S₂ (Sum.inr 2) A₃
@@ -1244,6 +1254,147 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       omega
     obtain ⟨ht, hp⟩ := h₃frame jbt hn₂ hnal
     exact ⟨ht.trans h₁bt, hp.trans h₁bthd⟩
+  -- Phase 4: rewind the counter capture to its origin.
+  have hd₄st : ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+      (fun _ => RewindPhase.start)).state = some RewindPhase.start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, h₃st]
+    rfl
+  have hd₄u : ∀ p : ℤ, -1 ≤ p → p < ((Nat.bits t).length : ℤ) →
+      ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).workTapes jbt
+        (((e₃.mapState (Sum.inr : _ → St₃)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jbt - (Nat.bits t).length + p) =
+      FinTM.bufferTape (Nat.bits t) p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₃bt.2]
+    have harith : ((Nat.bits t).length : ℤ) - (Nat.bits t).length + p = p := by ring
+    rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₃bt.1]
+  obtain ⟨hr4run, hr4cut, hr4heads⟩ := rewindTM_run_ofCfg jbt (Nat.bits t)
+    (Nat.bits t).length le_rfl
+    ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)) hd₄st hd₄u
+  obtain ⟨s4run, s4st, s4cut⟩ := ic_seam_step _ (Sum.inr (Sum.inr ()))
+    (rewindTM K jbt) RewindPhase.start RewindPhase.done
+    s3run s3st s3cut hr4run rfl hr4cut
+  set e₄ := ({ (e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start) with
+    state := some RewindPhase.done
+    workTapePos := Function.update
+      ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).workTapePos jbt
+      (((e₃.mapState (Sum.inr : _ → St₃)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jbt - (Nat.bits t).length) } :
+    Cfg K Bool RewindPhase _) with he₄
+  have he₄tapes : ∀ j, e₄.workTapes j = e₃.workTapes j := by
+    intro j
+    funext q
+    rw [he₄]
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+      (fun _ => RewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have he₄posbt : e₄.workTapePos jbt = 0 := by
+    rw [he₄]
+    show Function.update _ jbt _ jbt = 0
+    rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₃bt.2]
+    ring
+  have he₄pos : ∀ j, j ≠ jbt → e₄.workTapePos j = e₃.workTapePos j := by
+    intro j hj
+    rw [he₄]
+    show Function.update _ jbt _ j = _
+    rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have he₄in : e₄.inputPos = e₃.inputPos := by
+    rw [he₄]
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).inputPos = _
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  have he₄out : e₄.output = e₃.output := by
+    rw [he₄]
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).output = _
+    rw [Cfg.mapState_output, Cfg.mapState_output]
+  -- Phase 5: copy the counter onto its loop tape.
+  have hjbtctr : jbt ≠ jctr := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hd₅st : ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).state = some SweepPhase.sweep := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₄]
+    rfl
+  have hd₅w : ∀ p : ℤ, -1 ≤ p → p ≤ ((Nat.bits t).length : ℤ) →
+      ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).workTapes jbt
+        (((e₄.mapState (Sum.inr : _ → St₄)).mapState
+          (fun _ => SweepPhase.sweep)).workTapePos jbt + p) =
+      FinTM.bufferTape (Nat.bits t) p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₄posbt, zero_add,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₄tapes, h₃bt.1]
+  obtain ⟨hc5run, hc5cut, hc5heads⟩ := copyTM_run_ofCfg jbt jctr hjbtctr (Nat.bits t)
+    ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)) hd₅st hd₅w
+  obtain ⟨s5run, s5st, s5cut⟩ := ic_seam_step _ (Sum.inr RewindPhase.done)
+    (copyTM K jbt jctr) SweepPhase.sweep SweepPhase.done
+    s4run s4st s4cut hc5run rfl hc5cut
+  set e₅ := ({ (e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep) with
+    state := some SweepPhase.done
+    workTapes := fun j q =>
+      if j = jctr ∧ ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+            (fun _ => SweepPhase.sweep)).workTapePos j ≤ q ∧
+          q < ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+            (fun _ => SweepPhase.sweep)).workTapePos j + ((Nat.bits t).length : ℤ)
+        then FinTM.bufferTape (Nat.bits t) (q - ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+          (fun _ => SweepPhase.sweep)).workTapePos j)
+      else ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+        (fun _ => SweepPhase.sweep)).workTapes j q } : Cfg K Bool SweepPhase _) with he₅
+  have he₅pos : ∀ j, j ≠ jbt → e₅.workTapePos j = e₃.workTapePos j := by
+    intro j hj
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).workTapePos j = _
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    exact he₄pos j hj
+  have he₅posbt : e₅.workTapePos jbt = 0 := by
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).workTapePos jbt = 0
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    exact he₄posbt
+  have hd₅ctrpos : ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).workTapePos jctr = 0 := by
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos,
+      he₄pos jctr (by intro hmem; have := congrArg Fin.val hmem; omega)]
+    exact (hbyval jctr (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  have he₅ctr : e₅.workTapes jctr = FinTM.bufferTape (Nat.bits t) := by
+    funext q
+    rw [he₅]
+    show (if jctr = jctr ∧ _ ∧ _ then _ else _) = _
+    rw [hd₅ctrpos]
+    by_cases hq : (0 : ℤ) ≤ q ∧ q < ((Nat.bits t).length : ℤ)
+    · rw [if_pos ⟨rfl, by omega, by omega⟩, sub_zero]
+    · rw [if_neg (by
+        intro hcontra
+        exact hq ⟨by omega, by have := hcontra.2.2; omega⟩)]
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₄tapes,
+        (hbyval jctr (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+          (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+        htapes₀blank jctr (by intro hmem; have := congrArg Fin.val hmem; omega),
+        FinTM.bufferTape_eq]
+      by_cases hq0 : (0 : ℤ) ≤ q
+      · rw [if_pos hq0, List.getElem?_eq_none (by omega)]
+      · rw [if_neg hq0]
+  have he₅frame : ∀ j, j ≠ jctr → e₅.workTapes j = e₃.workTapes j := by
+    intro j hj
+    funext q
+    rw [he₅]
+    show (if j = jctr ∧ _ ∧ _ then _ else _) = _
+    rw [if_neg (by intro hcontra; exact hj hcontra.1), Cfg.mapState_workTapes,
+      Cfg.mapState_workTapes]
+    rw [he₄tapes]
+  have he₅bt : e₅.workTapes jbt = FinTM.bufferTape (Nat.bits t) := by
+    rw [he₅frame jbt hjbtctr]
+    exact h₃bt.1
+  have he₅in : e₅.inputPos = e₃.inputPos := by
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).inputPos = _
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    exact he₄in
+  have he₅out : e₅.output = e₃.output := by
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).output = _
+    rw [Cfg.mapState_output, Cfg.mapState_output]
+    exact he₄out
   sorry
 
 end Turing
