@@ -23,7 +23,7 @@ mkdir -p $F; cp $W/$B $W/BUNDLE-FILES.txt $F/
   echo "  campaign commit \`$O\`."
   echo "- **Checked by** its \`--verify\` rebuild, and by \`verifybundle.py\` against a \`git archive\` export of"
   echo "  the two: \`$N segments, 0 problems\`."
-  echo "- **Findings go to** \`audits/$FIND\`."
+  echo "- **Findings:** the auditor delivers \`$FIND\`; committed as \`campaign/gates/${NAME%-gate}/findings.md\`."
   echo "- **Not yet dispatched.** The prompt to paste is given in chat (no PROMPT.txt)."; } > $F/README.md
 ( cd $F && shasum -a 256 $B README.md > SHA256SUMS )
 echo "STAGED $NAME $SHA $N $SZ"

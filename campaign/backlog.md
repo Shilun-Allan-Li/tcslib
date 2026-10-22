@@ -1398,6 +1398,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `campaign/standards/fill-environment-addendum.md`, SHA-256
     `90851511cf164dfa84ac9264cb5ba7acd54b7f551c823ae5d1000e43e233abf0`; outbox copy updated). Fills
     issued from now on cite v2.5; megafill A and MIG-12 cont1, already out, run under v2.4.
+- **#147 and #149 replayed on the merged tree (2026-10-22).** #147 merged the campaign branch in
+  (`28150fc1`); `replay-lu2sc1.sh` (6 modules, from `oleans-lsk2`) **passed (user): 6 of 6**,
+  static-equal (4). On the merged tree `exists_selfStartupTMK`, `exists_selfStartupTM` and
+  `exists_seamLayoutTM` are on the standard three axioms. #149 merged it in (`097f3e04`);
+  `replay-lspapi.sh` (324 modules, from `oleans-lsk2`) **passed (user): 324 of 324**,
+  static-equal (87); the radius lemma re-checked sealed against its own snapshot, and against F3's
+  space clause. Packs: gate 62 (#149, API) and gate 63 (#147, fill); bundles staged in
+  `exchange/outbox/gates/`. **Merge order: #149 first**, then #147 re-replays its six modules.
+  Gate 63's bundle carries the delivery's cited logs (`evidence/delivery/`), per the bundle lesson.
+- **MIG-12 cont1 delivered (2026-10-22, `fill-mig12-cfgrecord-cont1.zip`).** Its review sub-agent is
+  running.
   - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
     the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
     SeamLayout and the facade.
