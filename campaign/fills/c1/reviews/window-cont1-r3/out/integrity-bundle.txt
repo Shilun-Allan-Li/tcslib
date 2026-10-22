@@ -1,0 +1,45 @@
+== bundle verify
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/incoming/c1-window-cont1-r3/fill-c1-window-cont1.bundle is okay
+The bundle contains this ref:
+e71921d76ab6aad55e0a6b0480bccc3bb17cab89 refs/heads/fill/c1-window-cont1
+The bundle requires this ref:
+96d60278e4fde29b986ec1d0e59cd07f768fe28a 
+The bundle uses this hash algorithm: sha1
+== fetch refs/heads/fill/c1-window-cont1 into refs/review/c1-window-cont1-r3
+From /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/incoming/c1-window-cont1-r3/fill-c1-window-cont1.bundle
+ * [new branch]        fill/c1-window-cont1 -> refs/review/c1-window-cont1-r3
+e71921d76ab6aad55e0a6b0480bccc3bb17cab89
+== commit
+tree 5196b5e36fb4dc5b20958d7ca1e3d29eac6c96cd
+parent 96d60278e4fde29b986ec1d0e59cd07f768fe28a
+author Codex <codex@openai.com> 1792339282 +0100
+committer Codex <codex@openai.com> 1792339282 +0100
+
+Record open bounded-window copier implementation obligations
+== parent == base?
+YES
+== rev-list base..head
+e71921d76ab6aad55e0a6b0480bccc3bb17cab89
+== files changed
+ TCSlib/Complexity/TuringMachine/Build/InputWindow.lean | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+== bundle file blob vs delivered source
+5fd404d74c6f0b673e61cb43ebf4c4d3ae7159ab
+5fd404d74c6f0b673e61cb43ebf4c4d3ae7159ab
+== patch vs bundle diff
+10c10
+< index 5fd86b03..5fd404d7 100644
+---
+> index 5fd86b0392924e50a45df0b373de37f65ebac781..5fd404d74c6f0b673e61cb43ebf4c4d3ae7159ab 100644
+== patch applies to base (scratch index check)
+== patch vs regenerated (--full-index)
+patch body identical to regenerated (From-line and signature trailer excluded)
+== git apply onto base worktree
+5fd404d74c6f0b673e61cb43ebf4c4d3ae7159ab
+(expected 5fd404d74c6f0b673e61cb43ebf4c4d3ae7159ab = bundle = delivered)
+== worktrees
+96d60278e4fde29b986ec1d0e59cd07f768fe28a
+total 0
+drwxr-xr-x@  3 seyoonr  wheel    96 Oct 18 12:11 .
+drwxr-xr-x@ 41 seyoonr  wheel  1312 Oct 18 12:11 ..
+lrwxr-xr-x@  1 seyoonr  wheel    52 Oct 18 12:11 packages -> /Users/seyoonr/phd_experiments/tcslib/.lake/packages

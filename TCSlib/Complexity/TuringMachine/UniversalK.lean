@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.SpaceComplexity.Machines.Clean
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -155,6 +156,316 @@ theorem EffectiveMachineCode2.toK_machine (c : EffectiveMachineCode2) (α : List
     c.toK.machine α = (c.decode α).tm := rfl
 
 /-! ## U2-S: the startup -/
+
+/-- The canonizer, with the public cleanup machine restarted in its cleaning state. -/
+private def ss_cleanCanonizer (F : FinTM Bool) : FinTM Bool where
+  k := F.k + F.k
+  State := Complexity.LogProg.CleanSt F.State F.k
+  tm := { Complexity.LogProg.cleanTM F.tm F.tm.q₀ with q₀ := .init F.tm.q₀ }
+
+/-- The bundled cleanup run is the run from the public cleaning entry. -/
+private theorem ss_cleanCanonizer_run (F : FinTM Bool) (α : List Bool) (t : ℕ) :
+    (ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t =
+      (Complexity.LogProg.cleanTM F.tm F.tm.q₀).runFrom
+        (Cfg.init (.init F.tm.q₀) α) t := by
+  change ({ Complexity.LogProg.cleanTM F.tm F.tm.q₀ with q₀ := .init F.tm.q₀ } :
+    MultiTapeTM (F.k + F.k) Bool (Complexity.LogProg.CleanSt F.State F.k)).runFrom _ _ = _
+  rw [MultiTapeTM.initCfg_with_q₀, MultiTapeTM.runFrom_with_q₀]
+
+/-- Cleanup preserves a completed computation and blanks every work tape.
+
+**Proof sketch.** Bound the original run's visited set on each tape by their finite
+maximum. Apply the public cleanup theorem, then use the restart equations. -/
+private theorem ss_cleanCanonizer_halts (F : FinTM Bool) (α out : List Bool) (t : ℕ)
+    (h : F.ComputesInTime α out t) :
+    ∃ u, ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) u).state =
+        none ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) u).output =
+        out ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) u).workTapes =
+        (fun _ _ => none) ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) u).workTapePos =
+        (fun _ => 0) := by
+  classical
+  have hc := (FinTM.computesInTime_iff F α out t).mp h
+  rw [MultiTapeTM.initCfg_eq] at hc
+  let s := Finset.univ.sup fun i : Fin F.k =>
+    (F.tm.visitedByTapeHead (Cfg.init F.tm.q₀ α) t i).card
+  obtain ⟨u, hu, hout, hblank, hpos, _⟩ :=
+    Complexity.LogProg.cleanTM_run F.tm F.tm.q₀ F.tm.q₀ α t hc.1 s
+      (fun i => Finset.le_sup
+        (f := fun j : Fin F.k => (F.tm.visitedByTapeHead (Cfg.init F.tm.q₀ α) t j).card)
+        (Finset.mem_univ i))
+  refine ⟨u, ?_⟩
+  simpa only [ss_cleanCanonizer_run] using ⟨hu, hout.trans hc.2, hblank, hpos⟩
+
+/-- A string-dependent time is bounded by a function of string length. -/
+private theorem ss_lengthBound (time : List Bool → ℕ) :
+    ∃ bound : ℕ → ℕ, ∀ α, time α ≤ bound α.length := by
+  classical
+  refine ⟨fun n => Finset.univ.sup (fun f : Fin n → Bool => time (List.ofFn f)), ?_⟩
+  intro α
+  simpa only [List.ofFn_get] using
+    (Finset.le_sup (f := fun f : Fin α.length → Bool => time (List.ofFn f))
+      (Finset.mem_univ α.get))
+
+/-- A total canonizer remains total after cleanup, at a bound depending only on length;
+the same bound leaves every work tape blank and every work head at zero.
+
+**Proof sketch.** Choose each input's cleaned halting time and take a finite maximum
+at each input length. Absorbing halting preserves the output and cleanup at the maximum. -/
+private theorem ss_cleanCanonizer_computes (F : FinTM Bool) (f : List Bool → List Bool)
+    (τ : ℕ → ℕ) (hF : F.ComputesFunInTime f τ) :
+    ∃ bound, (ss_cleanCanonizer F).ComputesFunInTime f bound ∧ ∀ α,
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α)
+        (bound α.length)).workTapes = (fun _ _ => none) ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α)
+        (bound α.length)).workTapePos = (fun _ => 0) := by
+  classical
+  have hex := fun α => ss_cleanCanonizer_halts F α (f α) (τ α.length)
+    ((FinTM.computesFunInTime_iff F f τ).mp hF α)
+  choose time htime using hex
+  obtain ⟨bound, hbound⟩ := ss_lengthBound time
+  have hfreeze (α : List Bool) :
+      (ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) (bound α.length) =
+        (ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) (time α) := by
+    obtain ⟨extra, heq⟩ := Nat.exists_eq_add_of_le (hbound α)
+    calc
+      _ = (ss_cleanCanonizer F).tm.runFrom
+          ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α)
+            (time α)) extra := by rw [heq, MultiTapeTM.runFrom_add]
+      _ = _ := MultiTapeTM.runFrom_of_halt _ (htime α).1
+  refine ⟨bound, (FinTM.computesFunInTime_iff _ _ _).mpr ?_, ?_⟩
+  · intro α
+    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+    rw [hfreeze α]
+    exact ⟨(htime α).1, (htime α).2.1⟩
+  · intro α
+    rw [hfreeze α]
+    exact (htime α).2.2
+
+/-- A buffered second-phase configuration halts exactly when its source does. -/
+private theorem ss_bufferedHalt_iff (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin M₁.k → ℤ → Option Bool) (heads : Fin M₁.k → ℤ) :
+    (FinTM.bufferedSecondCfg M₁ M₂ c b p tapes heads).state = none ↔ c.state = none := by
+  rw [FinTM.bufferedSecondCfg_state]
+  simp only [FinTM.bufferedCompTM_State, Option.map_eq_none_iff]
+
+/-- A first halt of the virtual canonizer is a first halt of the prefix canonizer,
+after the fixed prefix phase, uniformly over all suffixes.
+
+**Proof sketch.** The exact prefix formula identifies the state after the prefix phase.
+Before that phase ends, absorbing halting and its live final state exclude a halt. -/
+private theorem ss_prefix_first_halt (F : FinTM Bool) (α : List Bool) (t : ℕ)
+    (hhalt : (F.tm.runFrom (F.tm.initCfg α) t).state = none)
+    (hlive : ∀ u < t, (F.tm.runFrom (F.tm.initCfg α) u).state ≠ none) (w : List Bool) :
+    ((prefixCanonTM F).tm.runFrom ((prefixCanonTM F).tm.initCfg (pairEncode α w))
+      (3 * α.length + 4 + t)).state = none ∧
+    ∀ u < 3 * α.length + 4 + t,
+      ((prefixCanonTM F).tm.runFrom ((prefixCanonTM F).tm.initCfg (pairEncode α w)) u).state ≠
+        none := by
+  rw [prefixCanonTM_eq]
+  constructor
+  · obtain ⟨b, hb⟩ := prefixCanon_run F α w t
+    simp only [prefixCanonTM_eq] at hb
+    rw [hb, ss_bufferedHalt_iff]
+    exact hhalt
+  · intro u hu
+    by_cases hpre : u < 3 * α.length + 4
+    · have hs := prefixCanon_start F α w
+      simp only [prefixCanonTM_eq] at hs
+      have hstart :
+          ((FinTM.bufferedCompTM universalPrefixTM F).tm.runFrom
+            ((FinTM.bufferedCompTM universalPrefixTM F).tm.initCfg (pairEncode α w))
+            (3 * α.length + 4)).state ≠ none := by
+        intro h
+        rw [hs, ss_bufferedHalt_iff, MultiTapeTM.initCfg_eq, Cfg.init_state] at h
+        exact Option.some_ne_none F.tm.q₀ h
+      exact MultiTapeTM.runFrom_state_ne_none_of_le _ _ _ hstart u (by omega)
+    · obtain ⟨b, hb⟩ := prefixCanon_run F α w (u - (3 * α.length + 4))
+      simp only [prefixCanonTM_eq] at hb
+      rw [Nat.add_sub_of_le (by omega : 3 * α.length + 4 ≤ u)] at hb
+      intro h
+      rw [hb, ss_bufferedHalt_iff] at h
+      exact hlive (u - (3 * α.length + 4)) (by omega) h
+
+/-- The cleaned canonizer's first halt has the completed output and clean scratch.
+
+**Proof sketch.** The public first-halt theorem identifies its configuration with the
+one at the cleaned length bound, including all fields of that configuration. -/
+private theorem ss_cleanCanonizer_first_halt (F : FinTM Bool) (f : List Bool → List Bool)
+    (τ : ℕ → ℕ) (hF : F.ComputesFunInTime f τ) (α : List Bool) :
+    ∃ t, ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).state =
+        none ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).output =
+        f α ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).workTapes =
+        (fun _ _ => none) ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).workTapePos =
+        (fun _ => 0) ∧
+      ∀ u < t, ((ss_cleanCanonizer F).tm.runFrom
+        ((ss_cleanCanonizer F).tm.initCfg α) u).state ≠ none := by
+  obtain ⟨bound, hfun, hclean⟩ := ss_cleanCanonizer_computes F f τ hF
+  have hc := (FinTM.computesInTime_iff _ _ _ _).mp
+    ((FinTM.computesFunInTime_iff _ _ _).mp hfun α)
+  obtain ⟨t, _, hbefore, hsame⟩ := MultiTapeTM.exists_first_halt _ _ hc.1
+  refine ⟨t, ?_, ?_, ?_, ?_, hbefore⟩
+  · rw [hsame]
+    exact hc.1
+  · rw [hsame]
+    exact hc.2
+  · rw [hsame]
+    exact (hclean α).1
+  · rw [hsame]
+    exact (hclean α).2
+
+/-- Capturing a fresh run starts with blank host tapes and zero work heads. -/
+private theorem ss_captureInitial {m n : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+    (ι : Fin m ↪ Fin n) (cap : Fin n) (hcap : cap ∉ Set.range ι) (x : List Bool) :
+    (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+      (M.initCfg x)).mapState Sum.inl =
+      Cfg.init (Sum.inl M.q₀ : S ⊕ Unit) x := by
+  classical
+  have hfields (j : Fin n) :
+      (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+        (M.initCfg x)).workTapes j = (fun _ => none) ∧
+      (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+        (M.initCfg x)).workTapePos j = 0 := by
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedSilentCfg_selected_tape, embedSilentCfg_selected_pos,
+        MultiTapeTM.initCfg_eq]
+      exact ⟨funext fun z => Cfg.init_workTapes _ _ i z, Cfg.init_workTapePos _ _ i⟩
+    · by_cases he : j = cap
+      · subst j
+        have hh := embedSilentCfg_cap ι cap hcap (fun _ _ => none) (fun _ => 0)
+          [] [] (M.initCfg x)
+        simpa only [MultiTapeTM.initCfg_eq, Cfg.init_output, List.nil_append,
+          FinTM.bufferTape_nil, List.length_nil, Nat.cast_zero] using hh
+      · exact embedSilentCfg_unselected ι cap (fun _ _ => none) (fun _ => 0)
+          [] [] (M.initCfg x) j hj he
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, embedSilentCfg_state, MultiTapeTM.initCfg_eq,
+      Cfg.init_state, Option.map_some, Cfg.init_state]
+  · rw [Cfg.mapState_inputPos, embedSilentCfg_inputPos, MultiTapeTM.initCfg_eq,
+      Cfg.init_inputPos, Cfg.init_inputPos]
+  · funext j z
+    rw [Cfg.mapState_workTapes, Cfg.init_workTapes, (hfields j).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, (hfields j).2]
+  · rw [Cfg.mapState_output, embedSilentCfg_output, Cfg.init_output]
+
+/-- The returning capture host, restarted in the source's initial state. -/
+private def ss_captureTM (F : FinTM Bool) {n : ℕ} (ι : Fin F.k ↪ Fin n) (cap : Fin n) :
+    MultiTapeTM n Bool (F.State ⊕ Unit) :=
+  { embedSilentRetTM ι cap F.tm with q₀ := Sum.inl F.tm.q₀ }
+
+/-- The returning capture reaches its anchor exactly at the source's first halt and
+is silent throughout. Its final tapes are the public silent embedding's exact tapes.
+
+**Proof sketch.** Identify the blank initial configuration, use the returning embedding's
+through-halt contract, and project its output field before and at the return. -/
+private theorem ss_capture_run (F : FinTM Bool) {n : ℕ} (ι : Fin F.k ↪ Fin n)
+    (cap : Fin n) (hcap : cap ∉ Set.range ι) (x : List Bool) (t : ℕ)
+    (hlive : ∀ u < t, (F.tm.runFrom (F.tm.initCfg x) u).state ≠ none)
+    (hhalt : (F.tm.runFrom (F.tm.initCfg x) t).state = none) :
+    (ss_captureTM F ι cap).runFrom ((ss_captureTM F ι cap).initCfg x) t =
+      { embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+          (F.tm.runFrom (F.tm.initCfg x) t) with state := some (Sum.inr ()) } ∧
+    (∀ u < t, ((ss_captureTM F ι cap).runFrom
+      ((ss_captureTM F ι cap).initCfg x) u).state ≠ some (Sum.inr ())) ∧
+    (∀ u ≤ t, ((ss_captureTM F ι cap).runFrom
+      ((ss_captureTM F ι cap).initCfg x) u).output = []) := by
+  have hinit : (F.tm.initCfg x).state ≠ none := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_state]
+    exact Option.some_ne_none _
+  have hr := embedSilentRetTM_run ι cap hcap F.tm (fun _ _ => none) (fun _ => 0)
+    [] [] (F.tm.initCfg x) t hinit hlive hhalt
+  simp only [MultiTapeTM.initCfg_eq] at hr
+  simp only [ss_captureTM, MultiTapeTM.initCfg_with_q₀, MultiTapeTM.runFrom_with_q₀,
+    ← ss_captureInitial F.tm ι cap hcap x]
+  refine ⟨hr.2.1, hr.2.2, ?_⟩
+  intro u hu
+  rcases lt_or_eq_of_le hu with hlt | rfl
+  · rw [hr.1 u hlt, Cfg.mapState_output, embedSilentCfg_output]
+  · simp only [hr.2.1, embedSilentCfg_output]
+
+/-- Capturing the cleaned prefix has a code-dependent first return, silence, and a
+uniform space bound. The final configuration is expressed through the prefix run;
+normalizing that configuration to the redistribution layout remains separate work.
+
+**Proof sketch.** Select the cleaned canonizer's first halt before quantifying the suffix.
+The prefix first-halt lemma and the returning capture contract give the claimed run. -/
+private theorem ss_capturedPrefix_run (F : FinTM Bool) (f : List Bool → List Bool)
+    (τ : ℕ → ℕ) (hF : F.ComputesFunInTime f τ) {n : ℕ}
+    (ι : Fin (prefixCanonTM (ss_cleanCanonizer F)).k ↪ Fin n)
+    (cap : Fin n) (hcap : cap ∉ Set.range ι) (α : List Bool) :
+    ∃ t : ℕ, ∀ w : List Bool,
+      (ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).runFrom
+        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
+          (pairEncode α w)) (3 * α.length + 4 + t) =
+        { embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+            ((prefixCanonTM (ss_cleanCanonizer F)).tm.runFrom
+              ((prefixCanonTM (ss_cleanCanonizer F)).tm.initCfg (pairEncode α w))
+              (3 * α.length + 4 + t)) with state := some (Sum.inr ()) } ∧
+      (∀ u < 3 * α.length + 4 + t,
+        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).runFrom
+          ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
+            (pairEncode α w)) u).state ≠ some (Sum.inr ())) ∧
+      (∀ u ≤ 3 * α.length + 4 + t,
+        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).runFrom
+          ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
+            (pairEncode α w)) u).output = []) ∧
+      (ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).spaceUsed
+        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
+          (pairEncode α w)) (3 * α.length + 4 + t) ≤
+        n * (3 * α.length + 4 + t + 1) := by
+  obtain ⟨t, ht, _, _, _, hlive⟩ := ss_cleanCanonizer_first_halt F f τ hF α
+  refine ⟨t, fun w => ?_⟩
+  have hp := ss_prefix_first_halt (ss_cleanCanonizer F) α t ht hlive w
+  have hr := ss_capture_run (prefixCanonTM (ss_cleanCanonizer F)) ι cap hcap
+    (pairEncode α w) (3 * α.length + 4 + t) hp.2 hp.1
+  exact ⟨hr.1, hr.2.1, hr.2.2, MultiTapeTM.spaceUsed_le_mul_succ _ _ _⟩
+
+/-- The source block sits after the simulated tapes, table, and summary. -/
+private def ss_sourceSlot (m k : ℕ) : Fin m ↪ Fin ((m + 1) + (k + 2)) where
+  toFun i := ⟨k + 2 + i.val, by omega⟩
+  inj' := by
+    intro i j h
+    apply Fin.ext
+    have hv := congrArg Fin.val h
+    change k + 2 + i.val = k + 2 + j.val at hv
+    omega
+
+/-- The capture tape is last, beyond the source block. -/
+private def ss_captureTape (m k : ℕ) : Fin ((m + 1) + (k + 2)) :=
+  ⟨k + 2 + m, by omega⟩
+
+/-- The capture tape is separate, and all first `k + 2` tapes lie outside both blocks. -/
+private theorem ss_capture_indices (m k : ℕ) :
+    ss_captureTape m k ∉ Set.range (ss_sourceSlot m k) ∧
+    ∀ j : Fin ((m + 1) + (k + 2)), j.val < k + 2 →
+      j ∉ Set.range (ss_sourceSlot m k) ∧ j ≠ ss_captureTape m k := by
+  have hs (i : Fin m) : k + 2 ≤ (ss_sourceSlot m k i).val ∧
+      (ss_sourceSlot m k i).val < (ss_captureTape m k).val := by
+    change k + 2 ≤ k + 2 + i.val ∧ k + 2 + i.val < k + 2 + m
+    omega
+  constructor
+  · rintro ⟨i, hi⟩
+    have := (hs i).2
+    rw [hi] at this
+    exact (lt_irrefl _ this)
+  · intro j hj
+    refine ⟨?_, ?_⟩
+    · rintro ⟨i, hi⟩
+      have := (hs i).1
+      rw [hi] at this
+      omega
+    · intro h
+      have hv := congrArg Fin.val h
+      change j.val = k + 2 + m at hv
+      omega
 
 /-- **U2-S, the `k`-generic startup** (the startup of `Turing.exists_selfStartupTM`, generic in
 the work-tape count). For a `k`-tape scheme `E` there is a binary machine with `K + (k + 2)` work

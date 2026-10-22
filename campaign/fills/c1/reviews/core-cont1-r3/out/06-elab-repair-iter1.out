@@ -1,0 +1,136 @@
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:94:8: warning: declaration uses 'sorry'
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:588:39: error: unsolved goals
+case workTapes
+z : List Bool
+d : Cfg 7 Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph 3 key) × Bool) z
+T : ℕ
+halted tag : Bool
+out : List Bool
+exit :
+  (MultiTapeTM.runFrom d T).state = some (if halted = true then CounterLoopState.escape else CounterLoopState.done, tag)
+read :
+  (MultiTapeTM.runFrom d T).workTapeSymbols (vhostBank (StepBlock.summaryTape 3).castSucc) = StepBlock.outputSummary out
+cut :
+  ∀ u < T,
+    ∀ (b : Bool),
+      (MultiTapeTM.runFrom d u).state ≠ some (CounterLoopState.done, b) ∧
+        (MultiTapeTM.runFrom d u).state ≠ some (CounterLoopState.escape, b)
+e : Cfg (1 + (3 + 2 + 1)) Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph 3 key) × Bool) z :=
+  MultiTapeTM.runFrom d T
+guard : ∀ u < T, ∀ (q : ic_loopPh false), (MultiTapeTM.runFrom d u).state = some q → ic_loopRedirect false q = none
+redirect :
+  ic_loopRedirect false (if halted = true then CounterLoopState.escape else CounterLoopState.done, tag) =
+    some ⟨true, Sum.inl halted⟩
+hpre :
+  ∀ u ≤ T,
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) u = Cfg.mapState (Sigma.mk false) (MultiTapeTM.runFrom d u)
+dispatch :
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) (T + 1) = Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e
+leaf : Cfg 7 Bool (Bool ⊕ Bool) z := Cfg.mapState (fun x => Sum.inl halted) e
+entry : leaf.state = some (Sum.inl halted)
+cell : leaf.workTapeSymbols (vhostBank (StepBlock.summaryTape 3).castSucc) = StepBlock.outputSummary out
+verdict : (MultiTapeTM.runFrom leaf 1).state = some (Sum.inr (decide (halted = true ∧ out = [true])))
+right✝ : ∀ u < 1, ∀ (verdict : Bool), (MultiTapeTM.runFrom leaf u).state ≠ some (Sum.inr verdict)
+leafGuard : ∀ u < 1, ∀ (q : ic_loopPh true), (MultiTapeTM.runFrom leaf u).state = some q → ic_loopRedirect true q = none
+leafRun :
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk true) leaf) 1 = Cfg.mapState (Sigma.mk true) (MultiTapeTM.runFrom leaf 1)
+⊢ (Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e).workTapes =
+    (Cfg.mapState (Sigma.mk true) (Cfg.mapState (fun x => Sum.inl halted) e)).workTapes
+
+case workTapePos
+z : List Bool
+d : Cfg 7 Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph 3 key) × Bool) z
+T : ℕ
+halted tag : Bool
+out : List Bool
+exit :
+  (MultiTapeTM.runFrom d T).state = some (if halted = true then CounterLoopState.escape else CounterLoopState.done, tag)
+read :
+  (MultiTapeTM.runFrom d T).workTapeSymbols (vhostBank (StepBlock.summaryTape 3).castSucc) = StepBlock.outputSummary out
+cut :
+  ∀ u < T,
+    ∀ (b : Bool),
+      (MultiTapeTM.runFrom d u).state ≠ some (CounterLoopState.done, b) ∧
+        (MultiTapeTM.runFrom d u).state ≠ some (CounterLoopState.escape, b)
+e : Cfg (1 + (3 + 2 + 1)) Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph 3 key) × Bool) z :=
+  MultiTapeTM.runFrom d T
+guard : ∀ u < T, ∀ (q : ic_loopPh false), (MultiTapeTM.runFrom d u).state = some q → ic_loopRedirect false q = none
+redirect :
+  ic_loopRedirect false (if halted = true then CounterLoopState.escape else CounterLoopState.done, tag) =
+    some ⟨true, Sum.inl halted⟩
+hpre :
+  ∀ u ≤ T,
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) u = Cfg.mapState (Sigma.mk false) (MultiTapeTM.runFrom d u)
+dispatch :
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) (T + 1) = Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e
+leaf : Cfg 7 Bool (Bool ⊕ Bool) z := Cfg.mapState (fun x => Sum.inl halted) e
+entry : leaf.state = some (Sum.inl halted)
+cell : leaf.workTapeSymbols (vhostBank (StepBlock.summaryTape 3).castSucc) = StepBlock.outputSummary out
+verdict : (MultiTapeTM.runFrom leaf 1).state = some (Sum.inr (decide (halted = true ∧ out = [true])))
+right✝ : ∀ u < 1, ∀ (verdict : Bool), (MultiTapeTM.runFrom leaf u).state ≠ some (Sum.inr verdict)
+leafGuard : ∀ u < 1, ∀ (q : ic_loopPh true), (MultiTapeTM.runFrom leaf u).state = some q → ic_loopRedirect true q = none
+leafRun :
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk true) leaf) 1 = Cfg.mapState (Sigma.mk true) (MultiTapeTM.runFrom leaf 1)
+⊢ (Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e).workTapePos =
+    (Cfg.mapState (Sigma.mk true) (Cfg.mapState (fun x => Sum.inl halted) e)).workTapePos
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:596:16: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e
+in the target expression
+  (MultiTapeTM.runFrom (Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e) 1).state =
+    some ⟨true, Sum.inr (decide (halted = true ∧ out = [true]))⟩
+
+case left
+z : List Bool
+d : Cfg 7 Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph 3 key) × Bool) z
+T : ℕ
+halted tag : Bool
+out : List Bool
+exit :
+  (MultiTapeTM.runFrom d T).state = some (if halted = true then CounterLoopState.escape else CounterLoopState.done, tag)
+read :
+  (MultiTapeTM.runFrom d T).workTapeSymbols (vhostBank (StepBlock.summaryTape 3).castSucc) = StepBlock.outputSummary out
+cut :
+  ∀ u < T,
+    ∀ (b : Bool),
+      (MultiTapeTM.runFrom d u).state ≠ some (CounterLoopState.done, b) ∧
+        (MultiTapeTM.runFrom d u).state ≠ some (CounterLoopState.escape, b)
+e : Cfg (1 + (3 + 2 + 1)) Bool (CounterLoopState ((key : StepBlock.Key) × StepBlock.Ph 3 key) × Bool) z :=
+  MultiTapeTM.runFrom d T
+guard : ∀ u < T, ∀ (q : ic_loopPh false), (MultiTapeTM.runFrom d u).state = some q → ic_loopRedirect false q = none
+redirect :
+  ic_loopRedirect false (if halted = true then CounterLoopState.escape else CounterLoopState.done, tag) =
+    some ⟨true, Sum.inl halted⟩
+hpre :
+  ∀ u ≤ T,
+    MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) u = Cfg.mapState (Sigma.mk false) (MultiTapeTM.runFrom d u)
+dispatch :
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk false) d) (T + 1) = Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e
+leaf : Cfg 7 Bool (Bool ⊕ Bool) z := Cfg.mapState (fun x => Sum.inl halted) e
+entry : leaf.state = some (Sum.inl halted)
+cell : leaf.workTapeSymbols (vhostBank (StepBlock.summaryTape 3).castSucc) = StepBlock.outputSummary out
+verdict : (MultiTapeTM.runFrom leaf 1).state = some (Sum.inr (decide (halted = true ∧ out = [true])))
+right✝ : ∀ u < 1, ∀ (verdict : Bool), (MultiTapeTM.runFrom leaf u).state ≠ some (Sum.inr verdict)
+leafGuard : ∀ u < 1, ∀ (q : ic_loopPh true), (MultiTapeTM.runFrom leaf u).state = some q → ic_loopRedirect true q = none
+leafRun :
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk true) leaf) 1 = Cfg.mapState (Sigma.mk true) (MultiTapeTM.runFrom leaf 1)
+seam : Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e = Cfg.mapState (Sigma.mk true) leaf
+⊢ (MultiTapeTM.runFrom (Cfg.mapState (fun x => ⟨true, Sum.inl halted⟩) e) 1).state =
+    some ⟨true, Sum.inr (decide (halted = true ∧ out = [true]))⟩
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:590:6: warning: This simp argument is unused:
+  Cfg.mapState_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp only [leaf, Cfg.mapState_state, Cfg.mapState_inputPos,
+        C̵f̵g̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵Cfg.mapState_workTapePos, Cfg.mapState_output, Option.map_map, Function.comp_def]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:590:30: warning: This simp argument is unused:
+  Cfg.mapState_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [leaf, Cfg.mapState_state, Cfg.mapState_inputPos,
+        Cfg.mapState_workTapes, C̵f̵g̵.̵m̵a̵p̵S̵t̵a̵t̵e̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵Cfg.mapState_output, Option.map_map, Function.comp_def]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:740:8: warning: declaration uses 'sorry'
+exit 1, 2 s, 2026-10-18 12:29:31, file TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean, oleans oleans-lseam2

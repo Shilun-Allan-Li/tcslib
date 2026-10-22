@@ -1,0 +1,12 @@
+ReviewProbe/ICSeal.lean:94:8: warning: declaration uses 'sorry'
+ReviewProbe/ICSeal.lean:360:4: error: Type mismatch: After simplification, term
+  hbank i
+ has type
+  d.workTapes (Fin.castAdd 2 i) =
+      Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape s) (fun x x_1 => none) i ∧
+    d.workTapePos (Fin.castAdd 2 i) = Fin.lastCases 0 (fun x => 0) i
+but is expected to have type
+  d.workTapes (Fin.castAdd 2 i) = (NDTM.withChoiceTape (Cfg.init N.q₀ x) (FinTM.bufferTape s) 0).workTapes i ∧
+    d.workTapePos (Fin.castAdd 2 i) = Fin.lastCases 0 (Cfg.init N.q₀ x).workTapePos i
+ReviewProbe/ICSeal.lean:783:8: warning: declaration uses 'sorry'
+exit 1, 2 s, 2026-10-18 12:38:19, file ReviewProbe/ICSeal.lean, oleans oleans-lseam2

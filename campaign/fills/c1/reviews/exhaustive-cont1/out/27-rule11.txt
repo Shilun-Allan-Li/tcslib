@@ -1,0 +1,61 @@
+$ rule11.py (added lines vs the six R3 rows and every other-file private name)
+other-file private names collected: 5093 (unique short names)
+3136 added lines; R3-row hits: none
+other-file private-name token hits: ['S', 'T', 'empty', 'mapState_state', 'one', 'refl', 'test', 'trans']
+    S: private in ['TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean']; occurrence(s): ['private theorem xr_window_stepWith {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S)', '(b : Bool) (c : Cfg k Bool S x) (s : ℕ)']
+    T: private in ['TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean']; occurrence(s): ['radius-`|w|` window; at an all-halting depth `L ≤ T` acceptance within `L` and within `T`', '/-- At an all-halting depth `L ≤ T`, acceptance within `L` and within `T` agree: one direction']
+    empty: private in ['TCSlib/Complexity/CookLevin/Hardness.lean']; occurrence(s): ['blank (an empty output) exits `done false`; `true` steps left once more and exits `done true` at', '· -- the empty output: two steps']
+    mapState_state: private in ['TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean']; occurrence(s): ['· rw [Cfg.mapState_state]; rfl', "· rw [Cfg.mapState_state, hs']; rfl"]
+    one: private in ['TCSlib/Programs/WordRAM/Steps.lean']; occurrence(s): ['growing by at most one symbol. -/', '/-- At an all-halting depth `L ≤ T`, acceptance within `L` and within `T` agree: one direction']
+    refl: private in ['TCSlib/Complexity/CookLevin/Hardness.lean']; occurrence(s): ['exists_stepClockTMVia (Function.Embedding.refl Bool) N.tm.replayTM (fun _ => false)', 'have hmap : ∀ w : List Bool, w.map ⇑(Function.Embedding.refl Bool) = w := fun w => by']
+    test: private in ['TCSlib/Programs/Light/Compiler/Simulation.lean']; occurrence(s): ['of a word by one `false`, the capture test (which also clears the captured output), the input', '/-! #### The pass, the capture test, the input rewind and the answer -/']
+    trans: private in ['TCSlib/CommunicationComplexity/DeterministicCC/Trees.lean']; occurrence(s): ['refine ⟨fun i => (hpos i).trans (by push_cast; omega), fun i p hp => hblank i p ?_, by omega⟩', 'exact hsplit.symm.trans h']
+
+$ R3 rows among the TCSlib constants reached (EXTLIST)
+none
+framed rows reached:
+Turing.copyTM_run_ofCfg
+Turing.incrementTM_run_overflow_ofCfg
+Turing.incrementTM_run_succ_ofCfg
+Turing.seamCompTM₂_run_ofCfg
+
+$ other-file privates reached (EXT walk):
+EXT lines: 185 ; external privates reached: none
+
+$ worker's rule11-greps.log
+# rule 11 greps over the added lines of the owned file's diff against 9e77d2b2 (final tip 041c82ab)
+## the six R3 canonical rows (whole-word); the `_ofCfg` framed rows are allowed and counted separately
+transferTM_run: 0 hit(s)
+copyTM_run: 0 hit(s)
+clearTM_run: 0 hit(s)
+compareTM_run: 0 hit(s)
+incrementTM_run_succ: 0 hit(s)
+incrementTM_run_overflow: 0 hit(s)
+transferTM_run_ofCfg: 0 line(s)
+copyTM_run_ofCfg: 1 line(s)
+clearTM_run_ofCfg: 0 line(s)
+compareTM_run_ofCfg: 0 line(s)
+incrementTM_run_succ_ofCfg: 2 line(s)
+incrementTM_run_overflow_ofCfg: 1 line(s)
+## private declarations of other files
+private names collected from the other 246 files: 5088
+tokens of the added lines equal to a private declaration's full name (longer than two characters): []
+loose suffix matches: 17 (generic names such as `.trans`, `test`, `one`, `empty`, `refl`, `S`, `T`, and `Cfg.mapState_state`,
+  which is StateRenaming's public simps lemma, not Contract/Seam's private `mapState_state`):
+    Start.test <- test
+    Steps.one <- one
+    TreeIsSubtree.trans <- h.trans
+    TreeIsSubtree.trans <- hL.trans
+    TreeIsSubtree.trans <- hT₁.trans
+    TreeIsSubtree.trans <- hp.trans
+    TreeIsSubtree.trans <- hs''.trans
+    TreeIsSubtree.trans <- hs'.trans
+    TreeIsSubtree.trans <- hsplit.symm.trans
+    TreeIsSubtree.trans <- hu'.trans
+    TreeIsSubtree.trans <- hu.trans
+    TreeIsSubtree.trans <- hu₁.trans
+    TreeIsSubtree.trans <- hval.trans
+    TreeIsSubtree.trans <- trans
+    clPlacement.empty <- empty
+    clPlacement.refl <- Function.Embedding.refl
+    mapState_state <- Cfg.mapState_state

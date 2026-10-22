@@ -1,0 +1,74 @@
+ReviewProbe/B6F5Ax.lean:462:8: warning: declaration uses 'sorry'
+ReviewProbe/B6F5Ax.lean:532:8: warning: declaration uses 'sorry'
+'Turing.exists_rulerTestTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_rulerDeviceTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.exists_rulerHostTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+Turing.exists_rulerTestTM: direct sorryAx users in closure: []
+Turing.exists_rulerDeviceTM: direct sorryAx users in closure: [Turing.exists_rulerDeviceTM]
+Turing.exists_rulerHostTM: direct sorryAx users in closure: [Turing.exists_rulerHostTM]
+'Turing.exists_rulerTestTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_State' does not depend on any axioms
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_move' does not depend on any axioms
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_move_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_test' depends on axioms: [propext]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_cfg' depends on axioms: [propext, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_verdict' does not depend on any axioms
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_trace' depends on axioms: [propext, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_read_nat' depends on axioms: [propext, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_cfg_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_trace_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.ReviewProbe.B6F5Ax.0.Turing.rd_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+EXT Turing.exists_rulerTestTM: external 338 (TCSlib 40); external privates []; external eqn/unfold lemmas [Bool.eq_iff_iff]
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_State: external 4 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_move: external 11 (TCSlib 2); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_move_apply: external 67 (TCSlib 19); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_test: external 43 (TCSlib 4); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_cfg: external 91 (TCSlib 6); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_verdict: external 18 (TCSlib 2); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_trace: external 102 (TCSlib 6); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_read_nat: external 89 (TCSlib 5); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_cfg_step: external 165 (TCSlib 26); external privates []; external eqn/unfold lemmas []
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_trace_step: external 272 (TCSlib 37); external privates []; external eqn/unfold lemmas [Bool.eq_iff_iff]
+EXT _private.ReviewProbe.B6F5Ax.0.Turing.rd_run: external 281 (TCSlib 40); external privates []; external eqn/unfold lemmas [Bool.eq_iff_iff]
+EXTLIST total 338; TCSlib 40: [Turing.Action,
+ Turing.Action.apply,
+ Turing.Action.apply_inputPos,
+ Turing.Action.apply_output,
+ Turing.Action.apply_state,
+ Turing.Action.apply_workTapePos,
+ Turing.Action.apply_workTapes,
+ Turing.Action.mk,
+ Turing.Action.output,
+ Turing.Action.workTapes,
+ Turing.Cfg,
+ Turing.Cfg.ext,
+ Turing.Cfg.inputPos,
+ Turing.Cfg.inputSymbol,
+ Turing.Cfg.inputSymbol._proof_2,
+ Turing.Cfg.mk,
+ Turing.Cfg.output,
+ Turing.Cfg.state,
+ Turing.Cfg.workTapePos,
+ Turing.Cfg.workTapeSymbols,
+ Turing.Cfg.workTapes,
+ Turing.FinTM.bufferTape,
+ Turing.FinTM.bufferTape_left,
+ Turing.FinTM.bufferTape_nat,
+ Turing.MultiTapeTM,
+ Turing.MultiTapeTM.mk,
+ Turing.MultiTapeTM.runFrom,
+ Turing.MultiTapeTM.runFrom_succ_eq_step',
+ Turing.MultiTapeTM.runFrom_zero,
+ Turing.MultiTapeTM.step,
+ Turing.MultiTapeTM.step_of_some,
+ Turing.MultiTapeTM.tr,
+ Turing.inputSymbolInner,
+ Turing.instInhabitedCfg.default._proof_1,
+ Turing.moveInputPos,
+ Turing.moveInputPos_neg_of_ne_left,
+ Turing.moveInputPos_neg_of_ne_left._proof_1,
+ Turing.moveInputPos_pos_of_ne_right,
+ Turing.moveInputPos_pos_of_ne_right._proof_1,
+ Turing.moveInputPos_zero]
+bash $S/tools/leanelab.sh $R/wt-head $S/oleans-lbapi4 ReviewProbe/B6F5Ax.lean  2.52s user 0.64s system 134% cpu 2.344 total
+exit 0

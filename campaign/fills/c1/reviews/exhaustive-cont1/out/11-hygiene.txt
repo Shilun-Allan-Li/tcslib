@@ -1,0 +1,65 @@
+added lines: 3136
+sorry: 0
+admit: 0
+axiom: 0
+unfold: 4
+     2367: unfold xr_dir
+     2380: unfold xr_afterPass xr_passStart
+     2577: unfold xr_passStart
+     2589: unfold xr_passStart
+delta: 0
+set_option: 0
+open: 3
+      284: open MultiTapeTM in
+     1998: open Classical in
+     2976: open Classical in
+section: 0
+variable: 0
+attribute: 1
+     1221: attribute [instance] xr_Clock.fintypeQ xr_Clock.decEqQ
+native_decide: 0
+decide: 21
+      977: ⟨some (.done (decide (out = [true]))), d.inputPos,
+      987: have hdec : decide (([] : List Bool) = [true]) = false := rfl
+     1040: have hdec : decide (L ++ [false] = [true]) = false := by
+     1072: have hdec : decide (([] : List Bool) ++ [true] = [true]) = true := rfl
+     1127: have hdec : decide (L' ++ [b'] ++ [true] = [true]) = false := by
+     2238: ⟨some ⟨(.crewind, a || decide (out = [true]), l), xr_St.start⟩, ip,
+     2248: ⟨(.crewind, a || decide (out = [true]), l), xr_St.start⟩ rfl
+     2381: rw [dif_neg (by decide)]
+     2657: xr_cycle C z (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2661: xr_depthEnd C z (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2674: (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2681: (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2689: (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2704: a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]),
+     2724: (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2732: (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2777: a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]),
+     2805: (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+     2990: xr_depthEnd C z (decide (N.AcceptsWithin z Ls)) false Ls wL' u' h' := by
+     3009: have ha'' : a' = decide (N.AcceptsWithin z Ls) := by
+     3170: have key : ∀ b, decide (N.AcceptsWithin z Ls) = b →
+implemented_by/extern: 0
+unsafe/partial: 0
+macro/elab/syntax: 0
+run_cmd/#eval: 0
+Lean.ofReduceBool/trustCompiler: 0
+show: 65
+change: 3
+rfl: 186
+simp/simpa (any): 117
+dsimp: 57
+nomatch: 2
+     2728: (fun s' hs' => nomatch hs'), fun _ => ?_⟩
+     2735: fun s'' hs'' => ?_, (fun h0 => nomatch h0)⟩
+noncomputable: 4
+     2000: private noncomputable def xr_red {N : FinNDTM Bool} (C : xr_Clock N) :
+     2024: private noncomputable def xr_host {N : FinNDTM Bool} (C : xr_Clock N) :
+     3071: private noncomputable def xr_seam {N : FinNDTM Bool} (C : xr_Clock N) :
+     3077: private noncomputable def xr_E {N : FinNDTM Bool} (C : xr_Clock N) : FinTM Bool :=
+Classical: 2
+     1998: open Classical in
+     2976: open Classical in
+lines over 100 characters (whole file): []
+max added-line width: 100
