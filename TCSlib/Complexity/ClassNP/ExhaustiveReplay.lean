@@ -1604,8 +1604,11 @@ private theorem xr_replay_timeout {N : FinNDTM Bool} (C : xr_Clock N) (z s w wD 
 The exhaustive replay is `Turing.phaseHostTM` over the phases of one depth (copy the depth word
 to the clock's counter; one replay; the capture test; the choice and input rewinds; the window
 clear, six passes per work tape; the increment of the choice word) and of a depth change (extend
-the choice word and the depth word, increment the depth word), with the two flags "some branch
-accepted" and "some branch is live" in the phase index, and the answer phases. -/
+the choice word and the depth word, increment the depth word), with two flags in the phase index,
+and the answer phases. The accept flag is raised when a replay of the current depth captures the
+output exactly `[true]`, whether or not that branch has halted; the live flag, when a branch is
+still live after the depth's steps. A depth change lowers both, so the accept flag is read only at
+the first depth at which every branch has halted. -/
 
 /-- **The first arrival at a stationary anchor, over a family of anchors.** If every state in `A`
 is stationary and a run reaches `c'` in a state of `A` at time `T`, the first time the state is in
@@ -1916,7 +1919,8 @@ private inductive xr_Ph (k : ℕ) where
   | halt
   deriving DecidableEq, Fintype
 
-/-- The phase index: a phase with the two flags "some branch accepted" and "some branch is live". -/
+/-- The phase index: a phase with the accept flag (a replay of this depth captured the output
+`[true]`) and the live flag (a branch is still live). -/
 private abbrev xr_I (k : ℕ) := xr_Ph k × Bool × Bool
 
 /-- Each phase's control. -/
