@@ -1428,8 +1428,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `Action.apply`'s `@[simp]` (a 3-line re-proof is tested); F3 five stale docstring passages and
   the module status; F4 cosmetic; F5 records (report errata). Landing: the six commits, one
   maintainer commit, a replay of `CfgRecord`'s 52-module downstream (it overlaps #149 beyond the
-  facade). **Decisions pending (user):** the order against #149, the edits, the size, the
-  authorship of the delivered commits.
+  facade). **Ruled (user, 2026-10-22):** #149 merges first; the maintainer commit takes F2 (the
+  re-proof), all five F3 passages and F4; the size is closed with a compression item (below); the
+  delivered commits keep their authorship. **Landed as #150** (`79de6551`: the six commits and the
+  maintainer's); its replay (the 52, from #149's merged-tree snapshot) and a fill gate (gate 64)
+  after #149 merges.
+  - **MIG-12-C (compression, scheduled):** `CfgRecord` grew 5,310 → 5,717 lines against the
+    design's −1.6k to −2.1k: its readers convert contract segments back to the old endpoint shape.
+    Compress them, e.g. through a generic contract-segment reader in `Build/Contract/Basic`, by an
+    API PR and a fill (the user's ruling of 2026-10-22).
   - **Promotion candidates (shared-API window):** a generic contract-segment reader for
     `Build/Contract/Basic`; `MultiTapeTM.runFrom_one` (three copies in the tree).
 - **Megafill A delivered (2026-10-22): three items, each reported complete** (`megafill-a-REPORT.md`;
