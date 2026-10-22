@@ -1926,7 +1926,8 @@ private theorem recordStep_read_prefix {k : ℕ} {Q T S : Type}
           rw [heq]
           simp [a, recordStepSnapshot]
           omega)
-    simpa only [a, recordStep_mapState_snapshot, recordStep_mapState_mk, Option.map_some] using phase
+    simpa only [a, recordStep_mapState_snapshot, recordStep_mapState_mk,
+      Option.map_some] using phase
   have h2 : RecordSeg (recordStepMachine M upd seek start finish)
       (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
       (cfg (⟨⟨.position, {state := c.state}⟩, .fwd (0, true)⟩ : RecordStepControl k Q T S) 2 [] [])
@@ -1977,7 +1978,8 @@ private theorem recordStep_read_prefix {k : ℕ} {Q T S : Type}
           rw [h]
           simp [a, recordStepSnapshot, hj]
           omega)
-    simpa only [a, recordStep_mapState_snapshot, recordStep_mapState_mk, Option.map_some] using phase
+    simpa only [a, recordStep_mapState_snapshot, recordStep_mapState_mk,
+      Option.map_some] using phase
   have copying (dst : Fin 4) (hdst : dst = 1 ∨ dst = 3)
       (b e : List (RecSym Q T)) (hb : dst = 1 → b = []) (he : dst = 3 → e = []) :
       let a := recordStepSnapshot d SweepPhase.sweep 2 b e
@@ -2038,7 +2040,8 @@ private theorem recordStep_read_prefix {k : ℕ} {Q T S : Type}
       (cfg (⟨⟨.copyD, data⟩, .sweep⟩ : RecordStepControl k Q T S) 2 w []) (2 * w.length + 3) := by
     obtain ⟨he, ht, hh⟩ := copying 1 (Or.inl rfl) [] [] (by simp) (by simp)
     simp only [↓reduceIte, show (1 : Fin 4) ≠ 3 by decide] at he
-    have phase := recordStep_phase_run M upd seek start finish ⟨.copyB, data⟩ (by intro b h; cases h)
+    have phase := recordStep_phase_run M upd seek start finish ⟨.copyB, data⟩
+      (by intro b h; cases h)
       (recordStepSnapshot d SweepPhase.sweep 2 [] [])
       (recordStepSnapshot d SweepPhase.done 2 w []) (2 * w.length + 2) he .done rfl
       (⟨⟨.copyD, data⟩, .sweep⟩ : RecordStepControl k Q T S) rfl
@@ -2054,7 +2057,8 @@ private theorem recordStep_read_prefix {k : ℕ} {Q T S : Type}
       (cfg (⟨⟨.positionSkip, data⟩, .run⟩ : RecordStepControl k Q T S) 2 w w) (2 * w.length + 3) := by
     obtain ⟨he, ht, hh⟩ := copying 3 (Or.inr rfl) w [] (by simp) (by simp)
     simp only [show (3 : Fin 4) ≠ 1 by decide, ↓reduceIte] at he
-    have phase := recordStep_phase_run M upd seek start finish ⟨.copyD, data⟩ (by intro b h; cases h)
+    have phase := recordStep_phase_run M upd seek start finish ⟨.copyD, data⟩
+      (by intro b h; cases h)
       (recordStepSnapshot d SweepPhase.sweep 2 w [])
       (recordStepSnapshot d SweepPhase.done 2 w w) (2 * w.length + 2) he .done rfl
       (⟨⟨.positionSkip, data⟩, .run⟩ : RecordStepControl k Q T S) rfl
@@ -2219,7 +2223,8 @@ private theorem recordStep_read_fields {k : ℕ} {Q T S : Type}
           | gap => rfl
           | back => rfl)
       d.workTapePos (L + 1) hh
-    simpa only [cfg, recordStep_mapState_snapshot, recordStep_mapState_mk, Option.map_some] using phase
+    simpa only [cfg, recordStep_mapState_snapshot, recordStep_mapState_mk,
+      Option.map_some] using phase
   have round (r : ℕ) (hr : r < k) :
       RecordSeg (recordStepMachine M upd seek start finish)
         (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (L + 1)
@@ -2406,7 +2411,8 @@ private theorem recordStep_read_fields {k : ℕ} {Q T S : Type}
     have off1 : fieldOffset (cfgRecord s c τ) 1 = 2 := by
       rw [fieldOffset_succ _ 0 (by simp [cfgRecord_length]), fieldOffset_zero]
       rfl
-    simpa only [cfg, fs, off1, fieldOffset_cons_succ, fieldOffset_zero, List.take_zero, List.map_nil,
+    simpa only [cfg, fs, off1, fieldOffset_cons_succ, fieldOffset_zero, List.take_zero,
+      List.map_nil,
       List.sum_nil, List.length_cons, List.length_nil, zero_add, Nat.cast_ofNat,
       Nat.cast_zero, backState, Nat.lt_irrefl, ↓reduceDIte] using total
 
@@ -3372,7 +3378,8 @@ private theorem recordStep_restore_digits {k : ℕ} {Q T S : Type}
   | true =>
     have hp' : p = q + 1 := by simpa [flag] using hp
     refine ⟨2 * W + 2 + 1, by omega, ?_⟩
-    simpa [next, flag, hp', successor, residual, fuel, e, recordStep_mapState_mk, recordStepSnapshot] using pm
+    simpa [next, flag, hp', successor, residual, fuel, e, recordStep_mapState_mk,
+      recordStepSnapshot] using pm
   | false =>
     have hp' : p = q := by simpa [flag] using hp
     let a := recordStepSnapshot d FlagPhase.run 0 b successor
@@ -3402,7 +3409,8 @@ private theorem recordStep_restore_digits {k : ℕ} {Q T S : Type}
     refine ⟨(2 * W + 2 + 1) + (td + 1), ?_, ?_⟩
     · simp only [binDigits, List.length_map, List.length_range] at htd
       omega
-    · simpa [hp', residual, fuel, e, recordStep_mapState_mk, recordStepSnapshot] using Segment.trans pm' pd
+    · simpa [hp', residual, fuel, e, recordStep_mapState_mk,
+        recordStepSnapshot] using Segment.trans pm' pd
 
 
 /-- The public input-seek witness's contract, retained verbatim as a private parameter
