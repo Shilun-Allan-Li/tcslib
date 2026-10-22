@@ -173,7 +173,7 @@ for the local modifications.
 * `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
   work tape, for the nondeterministic time hierarchy [AB09, Theorem 3.2]. Proved.
 * `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
-  the one redistribution the step-block startups cite. Sorried.
+  the one redistribution the step-block startups cite. Proved.
 * `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
   word or just past it, the empty word included. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
