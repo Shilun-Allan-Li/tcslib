@@ -73,6 +73,8 @@ sites.
 * `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an integer interval
   visits at most its cardinality (moved from `Build/Catalog` at MIG-0b's layering split, for
   the contract core, 2026-10-13).
+* `Turing.MultiTapeTM.spaceUsed_le_of_abs_le` — if every work head stays within `r` cells of
+  its start, the run uses at most `k · (2r + 1)` cells.
 * `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc` — after `u` steps every work head lies
   within `u` cells of its start (MIG-0b, 2026-10-13).
 * `Turing.MultiTapeTM.runFrom_with_q₀`, `Turing.MultiTapeTM.initCfg_with_q₀` — a machine
@@ -427,6 +429,30 @@ theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
       obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
       exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
     _ = _ := Int.card_Icc lo hi
+
+/-- **A common head radius bounds the space**: if up to time `t` every work head stays within `r`
+cells of its starting position, the run visits at most `2r + 1` cells on each work tape, hence
+at most `k · (2r + 1)` cells in all.
+
+**Proof sketch.** Each head stays in the integer interval of radius `r` around its start, which
+has `2r + 1` cells (`Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc`); sum over the tapes
+(`Turing.MultiTapeTM.spaceUsed_eq_sum`). -/
+theorem MultiTapeTM.spaceUsed_le_of_abs_le {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (d : Cfg k Symbol State input) (t r : ℕ)
+    (h : ∀ u ≤ t, ∀ j, |(tm.runFrom d u).workTapePos j - d.workTapePos j| ≤ (r : ℤ)) :
+    tm.spaceUsed d t ≤ k * (2 * r + 1) := by
+  rw [MultiTapeTM.spaceUsed_eq_sum]
+  calc
+    ∑ j, tm.spaceUsedByTape d t j ≤ ∑ _j : Fin k, (2 * r + 1) := by
+      refine Finset.sum_le_sum fun j _ => ?_
+      have hb := tm.spaceUsedByTape_le_card_Icc d t j (d.workTapePos j - r)
+        (d.workTapePos j + r) fun u hu => by
+          have he := abs_le.mp (h u hu j)
+          rw [Finset.mem_Icc]
+          constructor <;> omega
+      omega
+    _ = k * (2 * r + 1) := by simp
 
 end Turing
 
