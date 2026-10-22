@@ -396,9 +396,69 @@ private theorem ss_capture_run (F : FinTM Bool) {n : ℕ} (ι : Fin F.k ↪ Fin 
   · rw [hr.1 u hlt, Cfg.mapState_output, embedSilentCfg_output]
   · simp only [hr.2.1, embedSilentCfg_output]
 
+/-- With the prefix parser's empty left block, index zero is the buffer and every other
+index belongs to the constant right block.
+
+**Proof sketch.** Cast the composite index to the public block partition. Its value is either
+zero, the buffer index, or one plus an index of the right block; apply the corresponding
+published projection equation. -/
+private theorem ss_tapeBlocks_zeroLeft {A : Type} (F : FinTM Bool)
+    (left : Fin universalPrefixTM.k → A) (buffer right : A)
+    (i : Fin (FinTM.bufferedCompTM universalPrefixTM F).k) :
+    FinTM.tapeBlocks left buffer (fun _ : Fin F.k => right)
+        (Fin.cast (FinTM.bufferedCompTM_k universalPrefixTM F) i) =
+      if i.val = 0 then buffer else right := by
+  have hp := universalPrefixTM_k
+  have hk := FinTM.bufferedCompTM_k universalPrefixTM F
+  have hi := i.isLt
+  by_cases hz : i.val = 0
+  · have he : Fin.cast (FinTM.bufferedCompTM_k universalPrefixTM F) i =
+        Fin.natAdd universalPrefixTM.k (Fin.castAdd F.k (0 : Fin 1)) := by
+      apply Fin.ext
+      simp only [Fin.coe_cast, Fin.coe_natAdd, Fin.coe_castAdd, Fin.val_zero]
+      omega
+    rw [he, FinTM.tapeBlocks_buffer, if_pos hz]
+  · let j : Fin F.k := ⟨i.val - 1, by omega⟩
+    have he : Fin.cast (FinTM.bufferedCompTM_k universalPrefixTM F) i =
+        Fin.natAdd universalPrefixTM.k (Fin.natAdd 1 j) := by
+      apply Fin.ext
+      simp only [Fin.coe_cast, Fin.coe_natAdd]
+      dsimp only [j]
+      omega
+    rw [he, FinTM.tapeBlocks_right, if_neg hz]
+
+/-- After the canonizer's work tapes have been cleared, the prefix composite keeps only
+the original code buffer, whose head is the virtual input position minus one.
+
+**Proof sketch.** Read the exact prefix run through the published composite fields at its own
+index type. The empty parser block leaves index zero for the code buffer; the cleaned right
+block contributes blank tapes and zero heads. -/
+private theorem ss_prefix_return_fields (F : FinTM Bool) (α w : List Bool) (t : ℕ)
+    (hblank : (F.tm.runFrom (F.tm.initCfg α) t).workTapes = (fun _ _ => none))
+    (hheads : (F.tm.runFrom (F.tm.initCfg α) t).workTapePos = (fun _ => 0)) :
+    let c := F.tm.runFrom (F.tm.initCfg α) t
+    let G := FinTM.bufferedCompTM universalPrefixTM F
+    let d := G.tm.runFrom (G.tm.initCfg (pairEncode α w)) (3 * α.length + 4 + t)
+    d.inputPos.val = 2 * α.length + 3 ∧ d.output = c.output ∧
+      (∀ i, d.workTapes i = if i.val = 0 then FinTM.bufferTape α else (fun _ => none)) ∧
+      ∀ i, d.workTapePos i = if i.val = 0 then (c.inputPos.val : ℤ) - 1 else 0 := by
+  dsimp only
+  obtain ⟨b, hb⟩ := prefixCanon_run F α w t
+  simp only [prefixCanonTM_eq] at hb
+  rw [hb]
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [FinTM.bufferedSecondCfg_inputPos]
+  · rw [FinTM.bufferedSecondCfg_output]
+  · intro i
+    rw [FinTM.bufferedSecondCfg_workTapes_cast, hblank]
+    exact ss_tapeBlocks_zeroLeft F _ _ _ i
+  · intro i
+    rw [FinTM.bufferedSecondCfg_workTapePos_cast, hheads]
+    exact ss_tapeBlocks_zeroLeft F _ _ _ i
+
 /-- Capturing the cleaned prefix has a code-dependent first return, silence, and a
 uniform space bound. The final configuration is expressed through the prefix run;
-normalizing that configuration to the redistribution layout remains separate work.
+its cleaned source data are retained for the layout normalization below.
 
 **Proof sketch.** Select the cleaned canonizer's first halt before quantifying the suffix.
 The prefix first-halt lemma and the returning capture contract give the claimed run. -/
@@ -408,7 +468,13 @@ private theorem ss_capturedPrefix_run (F : FinTM Bool) (f : List Bool → List B
     (cap : Fin n) (hcap : cap ∉ Set.range ι) (α : List Bool) :
     let G := FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)
     let R := ss_captureTM G ι cap
-    ∃ t : ℕ, ∀ w : List Bool,
+    ∃ t : ℕ,
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).output =
+        f α ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).workTapes =
+        (fun _ _ => none) ∧
+      ((ss_cleanCanonizer F).tm.runFrom ((ss_cleanCanonizer F).tm.initCfg α) t).workTapePos =
+        (fun _ => 0) ∧ ∀ w : List Bool,
       R.runFrom (R.initCfg (pairEncode α w)) (3 * α.length + 4 + t) =
         { embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
             (G.tm.runFrom (G.tm.initCfg (pairEncode α w))
@@ -420,14 +486,74 @@ private theorem ss_capturedPrefix_run (F : FinTM Bool) (f : List Bool → List B
       R.spaceUsed (R.initCfg (pairEncode α w)) (3 * α.length + 4 + t) ≤
         n * (3 * α.length + 4 + t + 1) := by
   dsimp only
-  obtain ⟨t, ht, _, _, _, hlive⟩ := ss_cleanCanonizer_first_halt F f τ hF α
-  refine ⟨t, fun w => ?_⟩
+  obtain ⟨t, ht, hout, hblank, hheads, hlive⟩ := ss_cleanCanonizer_first_halt F f τ hF α
+  refine ⟨t, hout, hblank, hheads, fun w => ?_⟩
   have hp := ss_prefix_first_halt (ss_cleanCanonizer F) α t ht hlive w
   simp only [prefixCanonTM_eq] at hp
   have hr := ss_capture_run
     (FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)) ι cap hcap
     (pairEncode α w) (3 * α.length + 4 + t) hp.2 hp.1
   exact ⟨hr.1, hr.2.1, hr.2.2, MultiTapeTM.spaceUsed_le_mul_succ _ _ _⟩
+
+/-- The returned capture has exactly the code buffer, the captured result, and blank scratch.
+Its code-buffer head is a code-dependent position between minus one and the code length.
+
+**Proof sketch.** Retain the cleaned source's output and blankness at the first halt chosen
+before the suffix. Project the exact captured return through the selected, capture, and frame
+equations, and normalize the source fields with the cast-indexed composite equations. The
+source input position determines the buffer head independently of the suffix. -/
+private theorem ss_capturedPrefix_fields (F : FinTM Bool) (f : List Bool → List Bool)
+    (τ : ℕ → ℕ) (hF : F.ComputesFunInTime f τ) {n : ℕ}
+    (ι : Fin (FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)).k ↪ Fin n)
+    (cap : Fin n) (hcap : cap ∉ Set.range ι) (α : List Bool) :
+    let G := FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)
+    let R := ss_captureTM G ι cap
+    ∃ t p : ℕ, p ≤ α.length + 1 ∧ ∀ w : List Bool,
+      let d := R.runFrom (R.initCfg (pairEncode α w)) (3 * α.length + 4 + t)
+      d.state = some (Sum.inr ()) ∧ d.inputPos.val = 2 * α.length + 3 ∧
+      (∀ i, d.workTapes (ι i) =
+        if i.val = 0 then FinTM.bufferTape α else (fun _ => none)) ∧
+      (∀ i, d.workTapePos (ι i) = if i.val = 0 then (p : ℤ) - 1 else 0) ∧
+      (d.workTapes cap = FinTM.bufferTape (f α) ∧ d.workTapePos cap = (f α).length) ∧
+      (∀ j, j ∉ Set.range ι → j ≠ cap →
+        d.workTapes j = (fun _ => none) ∧ d.workTapePos j = 0) ∧
+      (∀ u < 3 * α.length + 4 + t,
+        (R.runFrom (R.initCfg (pairEncode α w)) u).state ≠ some (Sum.inr ())) ∧
+      (∀ u ≤ 3 * α.length + 4 + t,
+        (R.runFrom (R.initCfg (pairEncode α w)) u).output = []) ∧
+      R.spaceUsed (R.initCfg (pairEncode α w)) (3 * α.length + 4 + t) ≤
+        n * (3 * α.length + 4 + t + 1) := by
+  dsimp only
+  obtain ⟨t, hout, hblank, hheads, hret⟩ := ss_capturedPrefix_run F f τ hF ι cap hcap α
+  refine ⟨t, ((ss_cleanCanonizer F).tm.runFrom
+    ((ss_cleanCanonizer F).tm.initCfg α) t).inputPos.val, ?_, fun w => ?_⟩
+  · have h := ((ss_cleanCanonizer F).tm.runFrom
+      ((ss_cleanCanonizer F).tm.initCfg α) t).inputPos.isLt
+    omega
+  · obtain ⟨hr, hcut, hsilent, hspace⟩ := hret w
+    have hf := ss_prefix_return_fields (ss_cleanCanonizer F) α w t hblank hheads
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, hcut, hsilent, hspace⟩
+    · rw [hr]
+    · rw [hr]
+      rw [embedSilentCfg_inputPos]
+      exact hf.1
+    · intro i
+      rw [hr]
+      rw [embedSilentCfg_selected_tape]
+      exact hf.2.2.1 i
+    · intro i
+      rw [hr]
+      rw [embedSilentCfg_selected_pos]
+      exact hf.2.2.2 i
+    · rw [hr]
+      have hc := embedSilentCfg_cap ι cap hcap (fun _ _ => none) (fun _ => 0)
+        [] [] ((FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)).tm.runFrom
+          ((FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)).tm.initCfg
+            (pairEncode α w)) (3 * α.length + 4 + t))
+      simpa only [List.nil_append, hf.2.1, hout] using hc
+    · intro j hj hjc
+      rw [hr]
+      exact embedSilentCfg_unselected ι cap (fun _ _ => none) (fun _ => 0) [] [] _ j hj hjc
 
 /-- The source block sits after the simulated tapes, table, and summary. -/
 private def ss_sourceSlot (m k : ℕ) : Fin m ↪ Fin ((m + 1) + (k + 2)) where
@@ -501,10 +627,11 @@ input head to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Eve
 on `α` only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's
 halting time bounds its cells).
 
-**Implementation status.** The cleaned canonizer and returning capture have a first return
-independent of the suffix, silence, and a time-implied space bound. The capture is stated
-directly over buffered composition. Its endpoint normalization, redistribution, buffer cleanup,
-input rewind, and final assembly remain open. -/
+**Implementation status.** The returning capture has a suffix-independent first return,
+silence, a time-implied space bound, and normalized tape contents: the code buffer, the captured
+serialization, and blank remaining tapes. Its buffer head is the cleaned source's virtual input
+position minus one, chosen before the suffix. Redistribution, buffer cleanup, input rewind,
+and final assembly remain open. -/
 theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P),
