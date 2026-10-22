@@ -50,7 +50,7 @@ No new definitions: the replay canonizer and the interpreter core are existentia
 
 * `Turing.CodeNDTM.serialize_eq_tableBitsK` — the bridge (proved).
 * `Turing.exists_replayCanonizer` — the per-code replay canonizer (sorried).
-* `Turing.exists_ndInterpreterCore` — the interpreter core `R` (sorried).
+* `Turing.exists_ndInterpreterCore` — the interpreter core `R` (proved, modulo the canonizer).
 
 ## References
 
@@ -928,7 +928,15 @@ within `t'·50·(|table| + 1) + 4t' + 2|bits t|` (the contract's early-escape bo
 the prefix clause. The verdict reads H2's output summary at the live exits
 (`Turing.StepBlock.hostedLoop_read`). The replay lemma `Turing.NDTM.replayTM_runFrom` identifies
 the simulated run with the branch along `s.take t` on the window, and input locality
-(`Turing.NDTM.runWith_initCfg_take`) with the branch on `x`. -/
+(`Turing.NDTM.runWith_initCfg_take`) with the branch on `x`.
+
+**Implementation.** `R` is one left-nested seam composite of twelve phases: the header pass
+capturing `bits t`, an input rewind, the header pass capturing `α`, the rewind and the copy of the
+counter (`Turing.rewindTM`, `Turing.copyTM`), the window copy, a second input rewind, the rewind of
+`α`, the installation behind a release adapter, the seam layout (`Turing.exists_seamLayoutTM`), the
+rewind of the window, and the hosted loop, embedded silently. The window is copied before the
+installation, whose seam fixes the input head at its first cell. Each join is
+`Turing.seamCompTM_run_ofCfg` with its inherited first-return cut. -/
 theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     ∃ (K : ℕ) (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (R : MultiTapeTM K Bool Q)
       (j : Fin K) (entry accept reject : Q), accept ≠ reject ∧
