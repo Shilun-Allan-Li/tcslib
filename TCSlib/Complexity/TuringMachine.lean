@@ -224,8 +224,7 @@ for the local modifications.
   run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
   passed 2026-10-14; the specification is proved, the machine contracts are sorried.
 * `Build/InputDevice` — host H5: the input-device interface, the native device, and the
-  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
-  devices' facts are proved, the machine contracts are sorried.
+  bounded-prefix ruler device with its boundary test, call rows and host. Proved.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
