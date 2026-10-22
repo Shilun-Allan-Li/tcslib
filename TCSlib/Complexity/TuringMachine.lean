@@ -15,6 +15,7 @@ import TCSlib.Complexity.TuringMachine.OracleFinite
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
 import TCSlib.Complexity.TuringMachine.OracleAgreement
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.BufferWords
 import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.UnaryTape
@@ -132,6 +133,9 @@ for the local modifications.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
+* `BufferWords` — the cells of a buffer tape holding a composite word: a suffix at an offset, a
+  middle word's letters, prefixes and suffixes, the blank cells off the word, and a unary word
+  with its terminator. Proved.
 * `Sweep` — the generic zipper/transduction layer for sweep-based tape
   simulations, with the initialized-run head/support bound.
 * `Composition` — identity/constant machines and closure of time-bounded computability
