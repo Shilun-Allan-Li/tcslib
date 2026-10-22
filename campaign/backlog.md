@@ -1306,6 +1306,22 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `git am`; checkpoint 1.1b, the right pass's endpoint and envelope, first).
   - **Next when they return:** UN's and R's landings feed C1's assembly; F3 cont2 waits on #139;
     the seam layout's landing on its review.
+- **Megafill B delivered (2026-10-22)** (`campaign/fills/megafill/reports/megafill-b-REPORT.md`):
+  - **U2-S cont1: complete** (`Turing.exists_selfStartupTMK`, modulo only the seam layout; reviewed
+    `campaign/fills/u2s/reviews/startup-cont1/REVIEW.md`: land after #145, which makes it
+    admission-free). Landing branch `lean/u2s-startup-cont1` (`c6733db3`) pushed; **its PR waits on
+    the user's ruling on F1**: a second private one-step leaf (the code buffer's cleanup) beyond the
+    brief's one allowed leaf, with the empty code's position as a fixed parameter of `E`.
+  - **F5 cont1: complete** (the call rows and the host, no admission; reviewed
+    `campaign/fills/b6/reviews/rulerdevice-cont1/REVIEW.md`). **Landed as #146** (`8114e482`, with
+    the status text and two `Implementation.` paragraphs); replay `replay-lf5c1.sh` (16 modules)
+    and a fill gate pending. Optional private-docstring rewordings (its F2) are for the deferred
+    public-facing pass; its O1 (two read exits keep moving after `2ℓ + 5`) goes to the F6/U2-E
+    briefs.
+  - **G4 cont3: partial** (checkpoint 1.1b; the session lost its workspace while on 1.2); its
+    review is running.
+  - **For the addendum's next version:** both reviews found 967 of the 1,002 cache files already
+    on the host before the fetch; record where they came from.
 - **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
   (`campaign/fills/mig12/reports/mig12-cont1-eres-REPORT.md`): its host was given the **v2.1**
   addendum (`2563c8d2…`), whose re-check after the toolchain kept the 12 GiB floor; free disk was
