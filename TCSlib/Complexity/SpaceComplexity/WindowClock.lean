@@ -267,7 +267,7 @@ private def cw_leftTM {Γ : Type} (k : ℕ) (i : Fin k) : MultiTapeTM k Γ Bool 
   q₀ := false
   tr := fun _ _ _ => tapeAction i 0 none .neg true
 
-/-- The delimiter move takes one silent step, restores the native input position,
+/-- The delimiter move takes one silent step, keeps the native input position,
 and changes only the selected head and control state. -/
 private lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
     (d : Cfg k Γ Bool x) (hd : d.state = some false) :
@@ -409,6 +409,12 @@ halt-test round included (`C` is the runner's constant). The one-cell left move 
 `cw_left_run`), the constant mapped copy of one field (`cw_copy_constant`) and the clear of the
 clock after the runner (`cw_clear_patch`, which leaves the clock tape blank) are proved. The
 clock writer is not yet assembled, and this target remains open.
+The clock these lemmas prepare is Route A's over field cells, of width `W = c · F ≤ c · L`,
+where `F` counts the field cells. The fields are separated by blank cells and a mapped copy
+reads one blank-delimited word, so the clock is copied one field at a time and the separators
+are skipped, not written. The construction over the whole layout sketched above
+(`W := c_M · L`, by `Turing.copyTM` and `Turing.scanTM`, which also read one blank-delimited
+word) is an alternative that is not implemented; it would also have to handle the separators.
 **Proof sketch (remaining).** Write the clock field by field: a constant mapped copy, a skip
 past the field on each tape and a one-cell move back onto the clock's delimiter, joining
 adjacent constant writes into one interval. Repeat for the `c` passes and rewind both heads.
