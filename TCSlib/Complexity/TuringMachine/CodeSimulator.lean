@@ -5048,6 +5048,480 @@ private lemma canonStageRoundSpec (k : ℕ) :
     rw [this]
     exact canonStageSuffix_drop x ys hsfx'
 
+/-- A buffered word is blank at and beyond its length. -/
+private lemma canonStageBuffer_none (w : List Bool) (q : ℤ) (h : (w.length : ℤ) ≤ q) :
+    FinTM.bufferTape w q = none := by
+  rw [FinTM.bufferTape_eq, if_pos (by omega : (0 : ℤ) ≤ q)]
+  exact List.getElem?_eq_none (by omega)
+
+/-- **The inner block's loop specification** (checkpoint 2). The write-then-loop seam —
+`writeConstTM` writing the inner counter word for `3 ^ (k + 1)` rounds, then checkpoint 1's
+record loop — wrapped by the fresh-anchor adapter, read as one round of the outer counter
+loop: from any configuration carrying C2's bank on the embedded coordinates, a counter tape
+blank outside the fixed inner window with its head at the origin, and empty output, one outer
+round costs a positive time at most linear in `|x| + |w| + 1` (the coefficient depending only
+on `k`), avoids both fresh ports strictly inside, exits at the anchor exactly when one inner
+block of records skips (`codeSkipRepeat` of the record skipper, `3 ^ (k + 1)` times), and on
+success re-establishes the bank and the closed counter window and moves the native head to the
+surviving suffix. -/
+private lemma canonStageInnerSpec (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM (m + 1) Bool H)
+      (anchor escape : H) (bound : Fin m) (B : ℕ), escape ≠ anchor ∧
+      ∀ (x w : List Bool), ∃ τ : Cfg (m + 1) Bool H x → ℕ,
+        ∀ d : Cfg (m + 1) Bool H x,
+          (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+            d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+            d.workTapePos bound.castSucc = 0 ∧
+            (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+              d.workTapePos j.castSucc = 0) ∧
+            (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+              d.workTapes (Fin.last m) q = none) ∧
+            d.workTapePos (Fin.last m) = 0) →
+          d.state = some anchor →
+          0 < τ d ∧ τ d ≤ B * (x.length + w.length + 1) ∧
+          (∀ u, 0 < u → u < τ d →
+            ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+          (N.runFrom d (τ d)).state = some
+            (if (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+                (x.drop (d.inputPos.val - 1))).isSome
+              then anchor else escape) ∧
+          ∀ ys, codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+              (x.drop (d.inputPos.val - 1)) = some ys →
+            (((N.runFrom d (τ d)).output = [] ∧ 1 ≤ (N.runFrom d (τ d)).inputPos.val ∧
+              (N.runFrom d (τ d)).workTapes bound.castSucc = FinTM.bufferTape w ∧
+              (N.runFrom d (τ d)).workTapePos bound.castSucc = 0 ∧
+              (∀ j : Fin m, j ≠ bound →
+                (N.runFrom d (τ d)).workTapes j.castSucc = FinTM.bufferTape [] ∧
+                (N.runFrom d (τ d)).workTapePos j.castSucc = 0) ∧
+              (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+                (N.runFrom d (τ d)).workTapes (Fin.last m) q = none) ∧
+              (N.runFrom d (τ d)).workTapePos (Fin.last m) = 0) ∧
+            x.drop ((N.runFrom d (τ d)).inputPos.val - 1) = ys) := by
+  classical
+  obtain ⟨m, H₀, finiteH₀, eqH₀, N₀, anchor₀, escape₀, bound, B₀, different₀, spec₀⟩ :=
+    canonStageRoundSpec k
+  letI : Fintype H₀ := finiteH₀
+  letI : DecidableEq H₀ := eqH₀
+  set w₀ : List Bool := (3 ^ (k + 1) : ℕ).bits with hw₀
+  let W : MultiTapeTM (m + 1) Bool (WritePhase w₀.length) :=
+    writeConstTM (m + 1) (Fin.last m) w₀
+  let L : MultiTapeTM (m + 1) Bool (CounterLoopState H₀) :=
+    counterLoopTM N₀ anchor₀ (some escape₀)
+  let Rin : MultiTapeTM (m + 1) Bool (WritePhase w₀.length ⊕ CounterLoopState H₀) :=
+    seamCompTM W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+  let exitF : Bool → WritePhase w₀.length ⊕ CounterLoopState H₀ := fun b =>
+    Sum.inr (if b then CounterLoopState.done else CounterLoopState.escape)
+  have hinj : Function.Injective exitF := by
+    intro a b h
+    cases a <;> cases b <;> simp [exitF] at h ⊢
+  obtain ⟨H, finiteH, eqH, N, anchor, escape, different, adapt⟩ :=
+    canonReturnAdapter Rin (Sum.inl (WritePhase.wr 0)) exitF hinj
+  have hval : Nat.ofDigits 2 (w₀.map Bool.toNat) = 3 ^ (k + 1) :=
+    (counterValue_eq w₀).symm.trans (counterValue_bits (3 ^ (k + 1)))
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound,
+    3 ^ (k + 1) * (B₀ + 4) + 6 * w₀.length + 12, different, ?_⟩
+  intro x w
+  obtain ⟨τ₀, hτ₀⟩ := spec₀ x w
+  -- the inner block's run, from the seam's entry, at the seam's own state type
+  have hblock : ∀ d : Cfg (m + 1) Bool (WritePhase w₀.length ⊕ CounterLoopState H₀) x,
+      (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+        d.workTapePos (Fin.last m) = 0) →
+      d.state = some (Sum.inl (WritePhase.wr 0)) →
+      ∃ t ≤ 3 ^ (k + 1) * (B₀ * (x.length + w.length + 1) + 4) + 4 * w₀.length + 7,
+        (Rin.runFrom d t).state = some (exitF
+          (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop (d.inputPos.val - 1))).isSome) ∧
+        (∀ u < t, ∀ b, (Rin.runFrom d u).state ≠ some (exitF b)) ∧
+        (∀ ys, codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop (d.inputPos.val - 1)) = some ys →
+          ((Rin.runFrom d t).output = [] ∧ 1 ≤ (Rin.runFrom d t).inputPos.val ∧
+            (Rin.runFrom d t).workTapes bound.castSucc = FinTM.bufferTape w ∧
+            (Rin.runFrom d t).workTapePos bound.castSucc = 0 ∧
+            (∀ j : Fin m, j ≠ bound →
+              (Rin.runFrom d t).workTapes j.castSucc = FinTM.bufferTape [] ∧
+              (Rin.runFrom d t).workTapePos j.castSucc = 0) ∧
+            (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+              (Rin.runFrom d t).workTapes (Fin.last m) q = none) ∧
+            (Rin.runFrom d t).workTapePos (Fin.last m) = 0) ∧
+          x.drop ((Rin.runFrom d t).inputPos.val - 1) = ys) := by
+    intro d hv hs
+    obtain ⟨hout, hpos, hbank, hbhead, hblank, hctr, hctrh⟩ := hv
+    have hcs_last : ∀ j : Fin m, j.castSucc ≠ Fin.last m := by
+      intro j h
+      have hvj := congrArg Fin.val h
+      rw [Fin.coe_castSucc, Fin.val_last] at hvj
+      have := j.isLt
+      omega
+    -- phase 1: the write row, at the write machine's own state type
+    obtain ⟨hwrun, hwcut, -⟩ := writeConstTM_run_ofCfg (Fin.last m) w₀
+      (d.mapState fun _ => WritePhase.wr 0)
+      (by rw [Cfg.mapState_state, hs, Option.map_some])
+    have hc₀d : (d.mapState fun _ => WritePhase.wr 0).mapState Sum.inl = d := by
+      refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ ?_
+      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+      · funext j q
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hctrpos : (d.mapState fun _ =>
+        (WritePhase.wr 0 : WritePhase w₀.length)).workTapePos (Fin.last m) = 0 := by
+      rw [Cfg.mapState_workTapePos]
+      exact hctrh
+    set Ew : Cfg (m + 1) Bool (WritePhase w₀.length) x :=
+      { (d.mapState fun _ => WritePhase.wr 0) with
+        state := some WritePhase.done
+        workTapes := fun j q =>
+          if j = Fin.last m ∧ (d.mapState fun _ => WritePhase.wr 0).workTapePos j ≤ q ∧
+              q < (d.mapState fun _ => WritePhase.wr 0).workTapePos j + (w₀.length : ℤ)
+            then FinTM.bufferTape w₀ (q - (d.mapState fun _ => WritePhase.wr 0).workTapePos j)
+          else (d.mapState fun _ => WritePhase.wr 0).workTapes j q } with hEw
+    have hEwstate : Ew.state = some WritePhase.done := rfl
+    have hct : ∀ z : ℤ, -1 ≤ z → z ≤ (w₀.length : ℤ) →
+        Ew.workTapes (Fin.last m) (0 + z) = FinTM.bufferTape w₀ z := by
+      intro z hz1 hz2
+      show (if Fin.last m = Fin.last m ∧
+          (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m) ≤ 0 + z ∧
+          0 + z < (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m) +
+            (w₀.length : ℤ)
+        then FinTM.bufferTape w₀
+          (0 + z - (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m))
+        else (d.mapState fun _ => WritePhase.wr 0).workTapes (Fin.last m) (0 + z)) =
+        FinTM.bufferTape w₀ z
+      rw [hctrpos]
+      by_cases hzin : (0 : ℤ) ≤ z ∧ z < (w₀.length : ℤ)
+      · rw [if_pos ⟨rfl, by omega, by omega⟩]
+        congr 1
+        omega
+      · rw [if_neg (fun hcon => hzin ⟨by omega, by omega⟩), Cfg.mapState_workTapes,
+          hctr (0 + z) (by omega), eq_comm]
+        rcases lt_or_ge z 0 with h0 | h0
+        · exact FinTM.bufferTape_of_neg _ h0
+        · exact canonStageBuffer_none _ _ (by omega)
+    have hEwtape : ∀ j : Fin m, Ew.workTapes j.castSucc = d.workTapes j.castSucc := by
+      intro j
+      funext q
+      show (if j.castSucc = Fin.last m ∧ _ ∧ _ then _ else
+        (d.mapState fun _ => WritePhase.wr 0).workTapes j.castSucc q) = _
+      rw [if_neg (fun hcon => hcs_last j hcon.1), Cfg.mapState_workTapes]
+    have hEwctr : ∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+        Ew.workTapes (Fin.last m) q = none := by
+      intro q hq
+      show (if Fin.last m = Fin.last m ∧
+          (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m) ≤ q ∧ _
+        then _ else (d.mapState fun _ => WritePhase.wr 0).workTapes (Fin.last m) q) = none
+      rw [hctrpos, if_neg (fun hcon => by omega), Cfg.mapState_workTapes]
+      exact hctr q hq
+    have hEwpos : ∀ j : Fin (m + 1), Ew.workTapePos j = d.workTapePos j := by
+      intro j
+      show (d.mapState fun _ =>
+        (WritePhase.wr 0 : WritePhase w₀.length)).workTapePos j = d.workTapePos j
+      rw [Cfg.mapState_workTapePos]
+    have hEwip : Ew.inputPos = d.inputPos :=
+      Cfg.mapState_inputPos (fun _ => (WritePhase.wr 0 : WritePhase w₀.length)) d
+    have hEwout : Ew.output = d.output :=
+      Cfg.mapState_output (fun _ => (WritePhase.wr 0 : WritePhase w₀.length)) d
+    -- phase 2: the loop, through the counter host's layout
+    have hJ : (Ew.mapState fun _ => CounterLoopState.dec FlagPhase.run) =
+        counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+          (Ew.workTapes (Fin.last m)) 0 := by
+      rw [counter_cfg_eq]
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+      · rw [Cfg.mapState_state]
+        rfl
+      · exact (Cfg.mapState_inputPos _ _).trans hEwip
+      · funext j
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) j
+        · rw [Fin.lastCases_last]
+          funext q
+          rw [Cfg.mapState_workTapes]
+        · rw [Fin.lastCases_castSucc]
+          funext q
+          rw [Cfg.mapState_workTapes]
+      · funext j
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) j
+        · rw [Fin.lastCases_last, Cfg.mapState_workTapePos, hEwpos, hctrh]
+        · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]
+      · exact (Cfg.mapState_output _ _).trans hEwout
+    have hbody : (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+        fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).output = [] ∧
+        1 ≤ (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).inputPos.val ∧
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapes bound =
+          FinTM.bufferTape w ∧
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapePos bound =
+          0 ∧
+        ∀ j, j ≠ bound →
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapes j =
+            FinTM.bufferTape [] ∧
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapePos j =
+            0 := by
+      refine ⟨hout, hpos, ?_, ?_, ?_⟩
+      · show Ew.workTapes bound.castSucc = FinTM.bufferTape w
+        rw [hEwtape, hbank]
+      · show Ew.workTapePos bound.castSucc = 0
+        rw [hEwpos, hbhead]
+      · intro j hj
+        exact ⟨by rw [show (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapes j =
+            Ew.workTapes j.castSucc from rfl, hEwtape]; exact (hblank j hj).1,
+          by rw [show (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapePos j =
+            Ew.workTapePos j.castSucc from rfl, hEwpos]; exact (hblank j hj).2⟩
+    obtain ⟨T, hTle, jr, hjn, hTeq, hloop, hloopcut, hys, hnone⟩ :=
+      canonCounterRepeat N₀ anchor₀ escape₀ different₀ τ₀
+        (fun c => c.output = [] ∧ 1 ≤ c.inputPos.val ∧
+          c.workTapes bound = FinTM.bufferTape w ∧ c.workTapePos bound = 0 ∧
+          ∀ j, j ≠ bound → c.workTapes j = FinTM.bufferTape [] ∧ c.workTapePos j = 0)
+        (fun c => x.drop (c.inputPos.val - 1))
+        (codeSkipActionK k (counterValue w)) (B₀ * (x.length + w.length + 1))
+        (fun c hc ha => hτ₀ c hc ha)
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+        hbody rfl w₀ (Ew.workTapes (Fin.last m)) 0 hct (3 ^ (k + 1)) hval
+    have hloop' := hJ ▸ hloop
+    -- the seam's composed run
+    have hseam : Rin.runFrom d (2 * w₀.length + 2 + 1 + T) =
+        (counterLoopCfg
+          (some (if (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+              (x.drop (d.inputPos.val - 1))).isSome
+            then CounterLoopState.done else CounterLoopState.escape))
+          (roundOrbit N₀ τ₀
+            (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+              fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) jr)
+          (fun z => if 0 ≤ z ∧ z < 0 + (w₀.length : ℤ) then
+            if (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+                (x.drop (d.inputPos.val - 1))).isSome then some true
+            else FinTM.bufferTape (counterWord w₀ jr) (z - 0)
+          else Ew.workTapes (Fin.last m) z) 0).mapState Sum.inr := by
+      conv_lhs => rw [← hc₀d]
+      rw [seamCompTM_runFrom_right W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+        hwrun hEwstate hwcut T, hJ, hloop]
+    rw [counter_cfg_eq] at hseam
+    refine ⟨2 * w₀.length + 2 + 1 + T, by omega, ?_, ?_, ?_⟩
+    · rw [hseam, Cfg.mapState_state]
+      cases (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+        (x.drop (d.inputPos.val - 1))).isSome <;> rfl
+    · intro u hu b
+      by_cases hu1 : u ≤ 2 * w₀.length + 2
+      · conv_lhs => rw [← hc₀d]
+        rw [seamCompTM_runFrom_left W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+          hwcut u hu1, Cfg.mapState_state]
+        cases hws : ((writeConstTM (m + 1) (Fin.last m) w₀).runFrom
+            (d.mapState fun _ => WritePhase.wr 0) u).state <;> simp [exitF]
+      · intro hcon
+        conv_lhs at hcon => rw [← hc₀d]
+        rw [show u = 2 * w₀.length + 2 + 1 + (u - (2 * w₀.length + 2 + 1)) by omega,
+          seamCompTM_runFrom_right W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+            hwrun hEwstate hwcut (u - (2 * w₀.length + 2 + 1)), hJ,
+          Cfg.mapState_state] at hcon
+        obtain ⟨y, hy, hyz⟩ := Option.map_eq_some_iff.mp hcon
+        have hcl := hloopcut (u - (2 * w₀.length + 2 + 1)) (by omega)
+        cases b
+        · have hy' : y = CounterLoopState.escape := by simpa [exitF] using hyz
+          exact hcl.2 (by rw [hy, hy'])
+        · have hy' : y = CounterLoopState.done := by simpa [exitF] using hyz
+          exact hcl.1 (by rw [hy, hy'])
+    · intro ys hy
+      obtain ⟨hjeq, hvorb, htail⟩ := hys ys hy
+      have hsome : (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+          (x.drop (d.inputPos.val - 1))).isSome = true := by rw [hy]; rfl
+      obtain ⟨horb_out, horb_pos, horb_bank, horb_bh, horb_blank⟩ := hvorb
+      constructor
+      · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [hseam, Cfg.mapState_output]
+          exact horb_out
+        · rw [hseam, Cfg.mapState_inputPos]
+          exact horb_pos
+        · rw [hseam]
+          funext q
+          rw [Cfg.mapState_workTapes]
+          dsimp only
+          rw [Fin.lastCases_castSucc]
+          exact congrFun horb_bank q
+        · rw [hseam, Cfg.mapState_workTapePos]
+          show Fin.lastCases _ _ bound.castSucc = (0 : ℤ)
+          rw [Fin.lastCases_castSucc]
+          exact horb_bh
+        · intro j hj
+          constructor
+          · rw [hseam]
+            funext q
+            rw [Cfg.mapState_workTapes]
+            dsimp only
+            rw [Fin.lastCases_castSucc]
+            exact congrFun (horb_blank j hj).1 q
+          · rw [hseam, Cfg.mapState_workTapePos]
+            show Fin.lastCases _ _ j.castSucc = (0 : ℤ)
+            rw [Fin.lastCases_castSucc]
+            exact (horb_blank j hj).2
+        · intro q hq
+          rw [hseam]
+          rw [Cfg.mapState_workTapes]
+          show Fin.lastCases _ _ (Fin.last m) q = none
+          rw [Fin.lastCases_last]
+          rw [if_neg (by omega)]
+          exact hEwctr q hq
+        · rw [hseam, Cfg.mapState_workTapePos]
+          show Fin.lastCases _ _ (Fin.last m) = (0 : ℤ)
+          rw [Fin.lastCases_last]
+      · rw [hseam, Cfg.mapState_inputPos]
+        exact htail
+  -- the adapter turns the block into the outer round, with the time chosen
+  have hmain : ∀ d : Cfg (m + 1) Bool H x,
+      (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+        d.workTapePos (Fin.last m) = 0) →
+      d.state = some anchor →
+      ∃ s, 0 < s ∧
+        s ≤ (3 ^ (k + 1) * (B₀ + 4) + 6 * w₀.length + 12) * (x.length + w.length + 1) ∧
+        (∀ u, 0 < u → u < s →
+          ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+        (N.runFrom d s).state = some
+          (if (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+              (x.drop (d.inputPos.val - 1))).isSome
+            then anchor else escape) ∧
+        ∀ ys, codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop (d.inputPos.val - 1)) = some ys →
+          (((N.runFrom d s).output = [] ∧ 1 ≤ (N.runFrom d s).inputPos.val ∧
+            (N.runFrom d s).workTapes bound.castSucc = FinTM.bufferTape w ∧
+            (N.runFrom d s).workTapePos bound.castSucc = 0 ∧
+            (∀ j : Fin m, j ≠ bound →
+              (N.runFrom d s).workTapes j.castSucc = FinTM.bufferTape [] ∧
+              (N.runFrom d s).workTapePos j.castSucc = 0) ∧
+            (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+              (N.runFrom d s).workTapes (Fin.last m) q = none) ∧
+            (N.runFrom d s).workTapePos (Fin.last m) = 0) ∧
+          x.drop ((N.runFrom d s).inputPos.val - 1) = ys) := by
+    intro d hv hs
+    have hcs : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).state =
+        some (Sum.inl (WritePhase.wr 0)) := by
+      rw [Cfg.mapState_state, hs, Option.map_some]
+    have hrestored : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).mapState (fun _ => anchor) = d := by
+      refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ ?_
+      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+      · funext j q
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hip : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).inputPos = d.inputPos :=
+      Cfg.mapState_inputPos _ _
+    have hcv : ((d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).output = [] ∧
+        1 ≤ (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).inputPos.val ∧
+        (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapes bound.castSucc =
+          FinTM.bufferTape w ∧
+        (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+            WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapes j.castSucc =
+            FinTM.bufferTape [] ∧
+          (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+            WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+          (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+            WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapes (Fin.last m) q = none) ∧
+        (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapePos (Fin.last m) = 0) := by
+      obtain ⟨h1, h2, h3, h4, h5, h6, h7⟩ := hv
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [Cfg.mapState_output]; exact h1
+      · rw [hip]; exact h2
+      · funext q
+        rw [Cfg.mapState_workTapes]
+        exact congrFun h3 q
+      · rw [Cfg.mapState_workTapePos]; exact h4
+      · intro j hj
+        refine ⟨?_, ?_⟩
+        · funext q
+          rw [Cfg.mapState_workTapes]
+          exact congrFun (h5 j hj).1 q
+        · rw [Cfg.mapState_workTapePos]; exact (h5 j hj).2
+      · intro q hq
+        rw [Cfg.mapState_workTapes]
+        exact h6 q hq
+      · rw [Cfg.mapState_workTapePos]; exact h7
+    obtain ⟨t, ht, hstate, hcut, hysb⟩ := hblock _ hcv hcs
+    rw [hip] at hstate hysb
+    obtain ⟨hpos2, hrunN, hint⟩ := adapt x _ hcs t _ hstate hcut
+    rw [hrestored] at hrunN hint
+    refine ⟨t + 2, hpos2, ?_, hint, ?_, ?_⟩
+    · have hX : 1 ≤ x.length + w.length + 1 := by omega
+      have h1 := Nat.mul_le_mul_left (4 * 3 ^ (k + 1)) hX
+      have h2 := Nat.mul_le_mul_left (6 * w₀.length) hX
+      have h3 := Nat.mul_le_mul_left 12 hX
+      nlinarith
+    · rw [hrunN, Cfg.mapState_state, hstate, Option.map_some]
+    · intro ys hy
+      obtain ⟨⟨g1, g2, g3, g4, g5, g6, g7⟩, gtail⟩ := hysb ys hy
+      constructor
+      · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [hrunN, Cfg.mapState_output]; exact g1
+        · rw [hrunN, Cfg.mapState_inputPos]; exact g2
+        · rw [hrunN]
+          funext q
+          rw [Cfg.mapState_workTapes]
+          exact congrFun g3 q
+        · rw [hrunN, Cfg.mapState_workTapePos]; exact g4
+        · intro j hj
+          refine ⟨?_, ?_⟩
+          · rw [hrunN]
+            funext q
+            rw [Cfg.mapState_workTapes]
+            exact congrFun (g5 j hj).1 q
+          · rw [hrunN, Cfg.mapState_workTapePos]; exact (g5 j hj).2
+        · intro q hq
+          rw [hrunN, Cfg.mapState_workTapes]
+          exact g6 q hq
+        · rw [hrunN, Cfg.mapState_workTapePos]; exact g7
+      · rw [hrunN, Cfg.mapState_inputPos]
+        exact gtail
+  -- package the chosen time
+  refine ⟨fun d =>
+    if h : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+        d.workTapePos (Fin.last m) = 0) ∧ d.state = some anchor then
+      (hmain d h.1 h.2).choose
+    else 0, ?_⟩
+  intro d hv hs
+  have hcond : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+      d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+      d.workTapePos bound.castSucc = 0 ∧
+      (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+        d.workTapePos j.castSucc = 0) ∧
+      (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+      d.workTapePos (Fin.last m) = 0) ∧ d.state = some anchor := ⟨hv, hs⟩
+  simp only [dif_pos hcond]
+  exact (hmain d hcond.1 hcond.2).choose_spec
+
 /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
 canonical binary header `bits` (head at the origin), every other tape blank, the native head
 at the remainder's first cell and the output empty, it decides the fixed grammar on the
