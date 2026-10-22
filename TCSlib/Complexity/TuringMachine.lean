@@ -39,6 +39,7 @@ import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.Rewind
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -173,6 +174,8 @@ for the local modifications.
   work tape (C1; user decision 5 of 2026-10-13). Sorried.
 * `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
   the one redistribution the step-block startups cite. Sorried.
+* `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
+  word or just past it, the empty word included. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
