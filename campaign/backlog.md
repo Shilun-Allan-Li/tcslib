@@ -1008,7 +1008,7 @@ pair.
 - **Acknowledged in the ruling (user, 2026-10-18)** that chose B: the decision put to the user
   named the re-point, and the ruling's record (§2, F3 cont1) names `rt_adjacentWrites` and its
   re-point in the user's dedup window. Gate 56's review (finding 2) reads that as acknowledging the
-  pair; **the user to confirm** (asked 2026-10-22).
+  pair; **confirmed (user, 2026-10-22).**
 - **Retirement, in the user's dedup window, with IW-1's move** (Catalog's next edit: 12.2c T3 or
   MIG-1). `RecordTable` imports `Build/Catalog` and `Build/CounterLoop` (transitively) but not
   `StepClock`. Once `wordPatch`, its cell lemmas, `wordPatch_append` and the explicit-form lemma
@@ -1286,8 +1286,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   cont2 delivered** a partial (1 checkpoint), landed as #143. Gate 58: PASS 0/0/0/20, closed
   (round 1; two pack errata, no `.lean` change; gate 44's appendix minor discharged by the
   landing). #137 merged after #139's and #143's replays; each meets #137's closure only at the
-  facade (the standing rule: no re-replay). Both reviews proposed a 2-module re-replay instead,
-  **for the user to choose**.
+  facade (the standing rule: no re-replay). **#139 and #143 merged** (2026-10-22, `3732776e`,
+  `b7447492`) under that rule.
   - **For megafill B item 3's review (G4 cont3), from gate 58's review:** its brief's region (a)
     is 127–1149, not 127–1147; its probe `G4C3ImportProbe.lean.txt` is an in-module copy of the
     worker's head with the checks appended, so it prints the two targets' sorry warnings (at 1191
@@ -1306,15 +1306,28 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `git am`; checkpoint 1.1b, the right pass's endpoint and envelope, first).
   - **Next when they return:** UN's and R's landings feed C1's assembly; F3 cont2 waits on #139;
     the seam layout's landing on its review.
+- **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
+  (`campaign/fills/mig12/reports/mig12-cont1-eres-REPORT.md`): its host was given the **v2.1**
+  addendum (`2563c8d2…`), whose re-check after the toolchain kept the 12 GiB floor; free disk was
+  10.48 GiB there. Under v2.2 and later the re-check floor is 8 GiB, so the run would have gone on.
+  The archive carries only the two supplied phase-1 commits. **Re-dispatch** with the same brief
+  and addendum v2.4 (alone, or in the next megafill).
+- **The phase host's last phase (user, 2026-10-22, with the seam layout's F1):** publish, in
+  `Build/Seam`, a table equation for `phaseHostTM` on a non-redirected state, or a live-exit form
+  of `phaseHostTM_run` (the lockstep window up to and including `T`, the guard before `T` only, no
+  `hred`). A small API PR with its own gate; after it, briefs may prescribe the agreement
+  transport for a last phase again.
 - **#144 opened (2026-10-22): the exhaustive replay's proof sketches**, docstrings only (the six
   main lemmas' sketches, and the accept flag described as the proof uses it; gate 53, note 14).
   Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
-  pending. **For the user:** whether a docstring-only PR gets its own gate. The 18 other long
+  pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** The 18 other long
   private proofs without a sketch stay under C1E-1.
 - **The seam layout: delivered complete (2026-10-22), reviewed: land**
   (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
   (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
-  pushed; **its PR is not opened** until the user rules on:
+  pushed. **Ruled (user, 2026-10-22):** F1 accepted, with a published last-phase lemma for the
+  phase host to follow in a small API PR with its own gate; F3 by a docstring-only follow-up PR
+  after the landing (as for C1-E's sketches, #144). The questions were:
   - **F1:** phase 8 by a self-redirect, because the brief's agreement transport needs a table fact
     about `phaseHostTM` that no lemma publishes (the machine is the same: the tables are equal);
     with it, whether to publish a last-phase lemma for the phase host (promotion candidate 1);

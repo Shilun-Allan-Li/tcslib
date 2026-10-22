@@ -461,8 +461,8 @@ cont1: "E2 ruled (user, 2026-10-18): B"), but it was not ledgered until gate 56.
 the user named the re-point ("which also opens the `rt_adjacentWrites` re-point"), and the
 ruling's record names `rt_adjacentWrites` as the lemma's private form, to re-point in the user's
 dedup window. The record does not call the pair a copy family, as the same day's BW-1 ruling
-does; gate 56's review (finding 2) reads the ruling as acknowledging it. **The user to confirm**
-(asked 2026-10-22). **Cleanup owner and window:**
+does; gate 56's review (finding 2) reads the ruling as acknowledging it. **Confirmed (user,
+2026-10-22):** the ruling acknowledges the pair. **Cleanup owner and window:**
 the user's dedup window, through backlog §1 WA-1, with IW-1's move: once `wordPatch`, its cell
 lemmas, `wordPatch_append` and the explicit-form lemma are below `Build/Catalog`, they are in
 `RecordTable`'s closure; `rt_adjacentWrites` is deleted, and its one use (`rt_advanceCfg_append`)

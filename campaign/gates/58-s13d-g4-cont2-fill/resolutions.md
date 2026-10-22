@@ -62,3 +62,4 @@ the facade's line). Its closure meets #143's only at the `TuringMachine` facade,
 needed under the campaign's standing rule for facade-only overlaps. The review proposed a 2-module
 re-replay of the merged tree (`Build/InputWindow`, the facade) from `oleans-lg4c2`; it stays
 available if the user prefers it.
+**#143 merged** (2026-10-22, `b7447492`), under the facade rule.
