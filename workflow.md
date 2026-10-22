@@ -150,6 +150,24 @@ human-review item before the epoch's audit pack ships — no discretion. Integra
 is `git am -3` from the patch series, preserving the agent's authorship. Large fills that exhaust one agent's budget
 continue via a continuation brief to a fresh agent (the `universal` B2 precedent).
 
+**Counting public names** (user, 2026-10-22; gate 59). Public-declaration drift, the statement
+freeze and a brief's "no new public declaration" rule count **public declarations**: the
+declarations the source introduces without `private` (`theorem`, `lemma`, `def`, `abbrev`,
+`instance`, `structure`, `inductive`, `class`), counted by the comment-aware source census
+(`devtools/seyoon/declfreeze.py`). Packs say so ("N → N public declarations, at source"). A
+**public constant** is a non-private name in the module's elaborated environment (the axiom
+probe's walk of the module's publics). Packs and reviews report a module's new public constants
+separately, by kind:
+- a declaration's compiler auxiliaries (`_proof_N`, `_simp_N`, `match_N`, `eq_N`, `eq_def`,
+  `congr_simp`);
+- the instances that `deriving` generates for a **private** type, which Lean 4.25 names publicly
+  (e.g. `instDecidableEqSl_Key`).
+
+Neither kind is a public declaration. A derived instance of a private type needs no finding when
+its type is private to its file and a name check over the tree and the open PRs finds no clash;
+where a derived name would clash, write an explicit `private instance`. Any other new public
+constant is reported as a finding.
+
 **Epoch boundaries**: the maintainer re-runs the full sweep, produces a **drift
 attestation** (§6), and prepares the epoch's audit pack with elaboration evidence
 and the epoch's **duplication ledger**, which the auditor verifies independently

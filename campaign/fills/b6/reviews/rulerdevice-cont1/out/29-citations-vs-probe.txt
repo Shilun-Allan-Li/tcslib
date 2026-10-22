@@ -1,0 +1,47 @@
+issued probe names 62 ; worker probe names 148 ; issued subset of worker: True
+reached TCSlib constants: 82 ; outside the worker probe: 36
+   Turing.Action - inductive
+   Turing.Action.apply - def
+   Turing.Action.inputTape - def (projection)
+   Turing.Action.mapState - def
+   Turing.Action.mk - ctor
+   Turing.Action.output - def (projection)
+   Turing.Action.state - def (projection)
+   Turing.Action.workTapes - def (projection)
+   Turing.Cfg - inductive
+   Turing.Cfg.init - def
+   Turing.Cfg.inputPos - def (projection)
+   Turing.Cfg.inputSymbol - def
+   Turing.Cfg.inputSymbol._proof_2 - theorem
+   Turing.Cfg.mk - ctor
+   Turing.Cfg.output - def (projection)
+   Turing.Cfg.state - def (projection)
+   Turing.Cfg.workTapePos - def (projection)
+   Turing.Cfg.workTapeSymbols - def
+   Turing.Cfg.workTapes - def (projection)
+   Turing.FinTM.bufferTape_left - theorem
+   Turing.FinTM.bufferTape_nat - theorem
+   Turing.Lockstep.mk - ctor
+   Turing.MultiTapeTM - inductive
+   Turing.MultiTapeTM.mk - ctor
+   Turing.MultiTapeTM.q₀ - def (projection)
+   Turing.MultiTapeTM.runFrom - def
+   Turing.MultiTapeTM.step - def
+   Turing.MultiTapeTM.tr - def (projection)
+   Turing.inputSymbolInner - theorem
+   Turing.instInhabitedCfg.default._proof_1 - theorem
+   Turing.moveInputPos_neg_of_ne_left - theorem
+   Turing.moveInputPos_neg_of_ne_left._proof_1 - theorem
+   Turing.moveInputPos_pos_of_ne_right._proof_1 - theorem
+   Turing.moveInputPos_rightBoundary._proof_1 - theorem
+   Turing.pairEncode - def
+   Turing.universal_pair_length - theorem
+reached TCSlib theorems outside the issued 62: 23
+    Turing.Action.apply_workTapes Turing.Cfg.ext Turing.Cfg.workTapeSymbols_eq Turing.FinTM.bufferTape_left Turing.FinTM.bufferTape_nat Turing.FinTM.moveInputPos_neg_val Turing.MultiTapeTM.mem_visitedByTapeHead_iff Turing.MultiTapeTM.runFrom_of_halt Turing.MultiTapeTM.runFrom_succ_eq_step Turing.MultiTapeTM.runFrom_zero Turing.MultiTapeTM.step_of_halt Turing.embedEmitCfg_mapState_eq Turing.embedEmitCfg_output Turing.embedEmitCfg_selected_pos Turing.embedEmitCfg_selected_tape Turing.embedEmitCfg_state Turing.embedEmitCfg_unselected Turing.inputSymbolInner Turing.moveInputPos_neg_of_ne_left Turing.moveInputPos_pos_of_ne_right Turing.moveInputPos_rightBoundary Turing.moveInputPos_zero Turing.universal_pair_length
+issued names not reached by the module: 32
+    Turing.Action.apply_output Turing.Action.apply_workTapePos Turing.Action.mapState_inputTape Turing.Action.mapState_output Turing.Action.mapState_state Turing.Action.mapState_workTapes Turing.Cfg.inputSymbol_eq_inputCell Turing.FinTM.VirtualTag_iff Turing.MultiTapeTM.outputSymbol_of_some Turing.NativeAt Turing.RulerAt Turing.embedEmitCfg_eq Turing.embedEmitTM_frame Turing.embedSilentTM Turing.embedSilentTM_frame Turing.embedSilentTM_runFrom Turing.inputCell Turing.inputCell_of_drop Turing.inputCell_sub_eq_none_iff Turing.rulerHostCfg Turing.seamCompTM Turing.seamCompTM_firstReturn_ofCfg Turing.seamCompTM_run_ofCfg Turing.seamCompTM₂ Turing.seamReleaseTM Turing.seamReleaseTM_runFrom_pos Turing.vhostBank_eq Turing.vhostBuffer_eq Turing.vhostEmitTM Turing.vhostEmitTM_runFrom Turing.vhostEmitTM_visitedByTapeHead_bank Turing.vhostEmitTM_visitedByTapeHead_buffer
+worker external-citations.txt entries: 148 ; = worker probe names? True ; diff: []
+
+== TCSlib constants used directly by the 32 new declarations (and their auxiliaries): 66
+   outside the worker probe: ['Turing.Action', 'Turing.Action.apply', 'Turing.Action.inputTape', 'Turing.Action.mapState', 'Turing.Action.mk', 'Turing.Action.output', 'Turing.Action.state', 'Turing.Action.workTapes', 'Turing.Cfg', 'Turing.Cfg.inputPos', 'Turing.Cfg.inputSymbol', 'Turing.Cfg.mk', 'Turing.Cfg.output', 'Turing.Cfg.state', 'Turing.Cfg.workTapePos', 'Turing.Cfg.workTapeSymbols', 'Turing.Cfg.workTapes', 'Turing.MultiTapeTM', 'Turing.MultiTapeTM.mk', 'Turing.MultiTapeTM.q₀', 'Turing.MultiTapeTM.runFrom', 'Turing.MultiTapeTM.step', 'Turing.MultiTapeTM.tr', 'Turing.moveInputPos_pos_of_ne_right._proof_1', 'Turing.moveInputPos_rightBoundary._proof_1']
+   theorems outside the issued 62: ['Turing.Action.apply_workTapes', 'Turing.Cfg.ext', 'Turing.Cfg.workTapeSymbols_eq', 'Turing.FinTM.moveInputPos_neg_val', 'Turing.MultiTapeTM.runFrom_of_halt', 'Turing.MultiTapeTM.runFrom_succ_eq_step', 'Turing.MultiTapeTM.runFrom_zero', 'Turing.MultiTapeTM.step_of_halt', 'Turing.embedEmitCfg_mapState_eq', 'Turing.embedEmitCfg_output', 'Turing.embedEmitCfg_selected_pos', 'Turing.embedEmitCfg_selected_tape', 'Turing.embedEmitCfg_state', 'Turing.embedEmitCfg_unselected', 'Turing.moveInputPos_pos_of_ne_right', 'Turing.moveInputPos_pos_of_ne_right._proof_1', 'Turing.moveInputPos_rightBoundary', 'Turing.moveInputPos_rightBoundary._proof_1', 'Turing.moveInputPos_zero']

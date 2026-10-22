@@ -1,0 +1,30 @@
+== citations of the three targets and of the InputDevice API at the tip (outside InputDevice)
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:45:  (`Turing.exists_rulerHostTM`), a unary ruler of the header's length, which
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:131:`Turing.exists_rulerHostTM` on the virtual input `x`. The host is a positive
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:134:(`Turing.exists_rulerTestTM`), so `SU` halts exactly when the round loop does,
+TCSlib/Complexity/TuringMachine/UniversalK.lean:576:bounded-prefix ruler host (`Turing.exists_rulerHostTM`, `Turing.RulerAt`): a block simulation
+TCSlib/Complexity/TuringMachine/SelfUniversal.lean:34:  (`Turing.NativeAt`: its left boundary is a real blank) and no input position is stored or
+
+== in U2-S's UniversalK (8e1aee0f)
+1739:bounded-prefix ruler host (`Turing.exists_rulerHostTM`, `Turing.RulerAt`): a block simulation
+
+== facade lines for InputDevice at the tip
+51-import TCSlib.Complexity.TuringMachine.Build.StepClock
+52-import TCSlib.Complexity.TuringMachine.Build.WindowRun
+53:import TCSlib.Complexity.TuringMachine.Build.InputDevice
+54-import TCSlib.Complexity.TuringMachine.Build.StepBlock
+55-import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+56-import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+57-import TCSlib.Complexity.TuringMachine.CodeSimulator
+58-import TCSlib.Complexity.TuringMachine.ChoiceWords
+59-import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+--
+224-  run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
+225-  passed 2026-10-14; the specification is proved, the machine contracts are sorried.
+226:* `Build/InputDevice` — host H5: the input-device interface, the native device, and the
+227-  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
+228-  devices' facts are proved, the machine contracts are sorried.
+229-* `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
+230-  machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
+231-  discipline, the capture/silence and halt-redirect wrappers with the timed branch,
+232-  the bounded-loop combinator, and the primitive catalog of timed string functions.

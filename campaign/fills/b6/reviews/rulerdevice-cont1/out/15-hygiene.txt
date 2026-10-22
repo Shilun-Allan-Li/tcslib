@@ -1,0 +1,163 @@
+added lines: 759 code lines: 684 comment/docstring-touching lines: 44
+== sorry: 0
+== admit: 0
+== axiom: 0
+== unfold: 4
+  430: unfold rd_trace
+  965: unfold rd_hostCost
+  1034: unfold rd_hostCost
+  1078: unfold rd_hostCost
+== delta: 0
+== set_option: 0
+== open: 0
+== section: 0
+== variable: 0
+== attribute: 0
+== native_decide: 0
+== decide(tactic): 13
+  498: let b := decide (d.inputPos.val = ℓ)
+  710: have hb : decide (d.inputPos.val = ℓ) = true ↔ i.val = 0 := by
+  796: { d with state := some (.inl (q, decide (d.inputPos.val = ℓ))) } ∧
+  926: (if m = 1 then false else b) = decide ((moveInputPos i m).val = 0) := by
+  952: rulerHostCfg ℓ hz (c.state.map (fun q => .inl (q, decide (c.inputPos.val = 0)))) c rt rp
+  959: if a.state.isSome = true ∧ decide (c.inputPos.val = 0) = false ∧ a.inputTape = -1
+  1015: let b := decide (c.inputPos.val = 0)
+  1053: · have tag : decide (d.inputPos.val = ℓ) =
+  1054: decide ((M.step c).inputPos.val = 0) := by
+  1058: change some (Sum.inl (q', decide (d.inputPos.val = ℓ)) : rd_HostState S) =
+  1060: (Sum.inl (r, decide ((M.step c).inputPos.val = 0)) : rd_HostState S))
+  1226: have hb' : b = decide (c.inputPos.val = 0) := by
+  1256: ⟨decide ((M.runFrom c t).inputPos.val = 0), by simp only [decide_eq_true_eq], ?_⟩,
+== implemented_by/extern: 0
+== unsafe/partial: 0
+== #cmd: 0
+== noncomputable: 0
+== Classical: 0
+== change: 12
+  633: apply Fin.ext; change p.val = z.length + 1; omega
+  649: change d.inputSymbol = inputCell y i.val
+  889: change (rd_hostTM M).step d = _
+  891: change (rd_hostAction (M.tr q (if b then none else d.inputSymbol)
+  894: change (rd_hostAction a b).apply d = rulerHostCfg ℓ hz (rd_hostAction a b).state
+  900: change (moveInputPos d.inputPos (rd_direction a.inputTape b)).val =
+  1047: change ℓ ≤ ℓ + (M.step c).inputPos.val; omega) (by
+  1056: change (ℓ + (M.step c).inputPos.val = ℓ) ↔ (M.step c).inputPos.val = 0
+  1058: change some (Sum.inl (q', decide (d.inputPos.val = ℓ)) : rd_HostState S) =
+  1083: change (rd_hostAction a b).state = (M.step c).state.map _
+  1085: change a.state.map _ = a.state.map _
+  1272: change ((rd_hostTM M).runFrom (rd_hostEnc ℓ hz rt rp c)
+== show: 7
+  449: simp only [rd_trace, if_neg (show ¬2 * ℓ + 2 ≤ ℓ by omega),
+  450: if_neg (show ¬2 * ℓ + 2 ≤ 2 * ℓ + 1 by omega), rd_cfg, Nat.sub_zero, add_zero]
+  561: rw [show 2 * ℓ + 5 = (2 * ℓ + 3) + 2 by omega, MultiTapeTM.runFrom_add, hjoin]
+  854: · rw [← show (rd_slot m) 0 = Fin.last m from rfl, embedEmitCfg_selected_tape, hw.1]
+  863: · rw [Cfg.mapState_workTapePos, ← show (rd_slot m) 0 = Fin.last m from rfl,
+  1110: · rw [show u = (u - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, first]
+  1116: · rw [show u = (u - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, first]
+== rfl: 35
+  517: have hc : c.state = some (.inl ()) := rfl
+  527: (.inr (b, true)) rfl ⟨i, .inl ()⟩ rfl (by
+  531: | inl q => rfl
+  535: · rfl
+  547: exact step_of_inputMoveAction (rd_callLeaf op b) c (rd_leafMove op b) hc rfl
+  549: hleaf (.inr a) rfl ⟨.inr (.inr ()), .inr a⟩ rfl (by
+  555: rfl)
+  652: have hi := hb.mp rfl
+  725: refine ⟨rfl, ?_, rfl, rfl, rfl⟩
+  756: · rfl
+  757: · cases flag <;> rfl
+  808: have hc : c.state = some (.inl ()) := rfl
+  813: · rfl
+  815: · intro j; exact ⟨rfl, rfl⟩
+  816: · intro j _; exact ⟨rfl, rfl⟩
+  827: · rfl
+  829: · rfl
+  830: · exact False.elim (good b rfl)
+  841: · rfl
+  843: · intro j; exact ⟨rfl, rfl⟩
+  844: · intro j _; exact ⟨rfl, rfl⟩
+  854: · rw [← show (rd_slot m) 0 = Fin.last m from rfl, embedEmitCfg_selected_tape, hw.1]
+  855: rfl
+  863: · rw [Cfg.mapState_workTapePos, ← show (rd_slot m) 0 = Fin.last m from rfl,
+  881: have hs : d.state = some (.inl (q, b)) := rfl
+  884: exact rd_tagged_read ℓ hdrop d c.inputPos rfl b hb
+  897: · rw [Action.apply_state]; rfl
+  903: exact rd_shift_move ℓ hz d.inputPos c.inputPos rfl b hb a.inputTape
+  1009: refine ⟨?_, fun h => False.elim (h rfl), ?_⟩
+  1062: · rfl
+  1063: · rfl
+  1064: · rfl
+  1065: · rfl
+  1092: exact ⟨by rw [ha]; rfl, h⟩
+  1158: rcases hw with rfl | ⟨_, hw⟩
+== conv: 0
+== dsimp: 2
+  1162: have ha : u = a + (u - a) := by dsimp only [a]; omega
+  1165: dsimp only [a]; omega
+== simp_all: 3
+  701: cases v <;> cases w <;> simp_all [rd_answer]
+  703: cases v <;> simp_all [rd_answer]
+  933: have hbt : b = true := by cases b <;> simp_all
+== simp(no only): 11
+  433: exact ⟨by omega, by omega, by simp⟩
+  620: have hm : rd_direction .neg b = 0 := by simp [rd_direction, hbt]
+  624: have hm : rd_direction .neg b = .neg := by simp [rd_direction, hbf]
+  628: have hm : rd_direction .pos b = .pos := by simp [rd_direction]
+  1156: · obtain ⟨v, hv, w, hw, he⟩ := L.locate c t (by simp) u hp
+  1166: · conv_lhs => rw [ha, MultiTapeTM.runFrom_add, L.runFrom c t (by simp)]
+  1232: ⟨fun c _ => (blocks c).1, by simp, by simp⟩
+  1248: t = ∑ _v ∈ Finset.range t, (1 : ℕ) := by simp
+  1253: _ = 3 * (ℓ + 1) * t := by simp [Nat.mul_comm]
+  1258: · exact L.runFrom c t (by simp)
+  1274: rw [L.runFrom c v (by simp)]
+== decide := : 13
+  498: let b := decide (d.inputPos.val = ℓ)
+  710: have hb : decide (d.inputPos.val = ℓ) = true ↔ i.val = 0 := by
+  796: { d with state := some (.inl (q, decide (d.inputPos.val = ℓ))) } ∧
+  926: (if m = 1 then false else b) = decide ((moveInputPos i m).val = 0) := by
+  952: rulerHostCfg ℓ hz (c.state.map (fun q => .inl (q, decide (c.inputPos.val = 0)))) c rt rp
+  959: if a.state.isSome = true ∧ decide (c.inputPos.val = 0) = false ∧ a.inputTape = -1
+  1015: let b := decide (c.inputPos.val = 0)
+  1053: · have tag : decide (d.inputPos.val = ℓ) =
+  1054: decide ((M.step c).inputPos.val = 0) := by
+  1058: change some (Sum.inl (q', decide (d.inputPos.val = ℓ)) : rd_HostState S) =
+  1060: (Sum.inl (r, decide ((M.step c).inputPos.val = 0)) : rd_HostState S))
+  1226: have hb' : b = decide (c.inputPos.val = 0) := by
+  1256: ⟨decide ((M.runFrom c t).inputPos.val = 0), by simp only [decide_eq_true_eq], ?_⟩,
+== macro/elab/syntax: 0
+== instance: 0
+== deriving: 0
+== public decl: 0
+== private: 32
+  418: private theorem rd_test_window {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+  442: private theorem rd_test_return {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+  453: private def rd_answer : Option Bool → Bool × Bool
+  458: private def rd_direction (m : SignType) (b : Bool) : SignType :=
+  462: private def rd_leafMove (op : Option SignType) (b : Bool) : SignType :=
+  465: private def rd_leafAnswer (op : Option SignType) (b : Bool) (inp : Option Bool) : Bool × Bool :=
+  469: private def rd_callLeaf (op : Option SignType) (b : Bool) : MultiTapeTM 1 Bool rd_State where
+  474: private abbrev rd_Phase := Option SignType ⊕ (Option SignType × Bool ⊕ Unit)
+  475: private abbrev rd_CallState := Σ _ : rd_Phase, rd_State
+  477: private def rd_family : rd_Phase → MultiTapeTM 1 Bool rd_State
+  481: private def rd_redirect : (i : rd_Phase) → rd_State → Option rd_CallState
+  486: private def rd_callTM : MultiTapeTM 1 Bool rd_CallState :=
+  493: private theorem rd_call_run {z : List Bool} (op : Option SignType) (ℓ : ℕ)
+  610: private theorem rd_shift_move {y z : List Bool} (ℓ : ℕ)
+  642: private theorem rd_tagged_read {k : ℕ} {S : Type} {y z : List Bool} (ℓ : ℕ)
+  739: private abbrev rd_HostState (S : Type) := (S × Bool) ⊕ (S × rd_State)
+  742: private def rd_resume {S : Type} (q : S) : rd_State → rd_HostState S
+  747: private def rd_pauseEmb {S : Type} (q : S) : rd_State ↪ rd_HostState S where
+  761: private def rd_slot (m : ℕ) : Fin 1 ↪ Fin (m + 1) :=
+  764: private theorem rd_slot_bank {m : ℕ} (i : Fin m) : i.castSucc ∉ Set.range (rd_slot m) := by
+  770: private def rd_hostAction {m : ℕ} {S : Type} (a : Action m Bool S) (b : Bool) :
+  776: private def rd_hostTM {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S) :
+  788: private theorem rd_pause_run {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+  871: private theorem rd_host_source_step {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+  924: private theorem rd_next_tag {n : ℕ} (i : Fin (n + 2)) (b : Bool)
+  949: private def rd_hostEnc {m : ℕ} {S : Type} {y z : List Bool} (ℓ : ℕ)
+  955: private def rd_hostCost {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S) (ℓ : ℕ)
+  962: private theorem rd_hostCost_bounds {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+  971: private def rd_hostFrame {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ)
+  978: private theorem rd_hostFrame_layout {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ)
+  990: private theorem rd_host_block {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+  1123: private theorem rd_host_frames {m : ℕ} {S : Type} (M : MultiTapeTM m Bool S)

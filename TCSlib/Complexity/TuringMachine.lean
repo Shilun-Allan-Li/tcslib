@@ -173,7 +173,7 @@ for the local modifications.
 * `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
   work tape, for the nondeterministic time hierarchy [AB09, Theorem 3.2]. Proved.
 * `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
-  the one redistribution the step-block startups cite. Sorried.
+  the one redistribution the step-block startups cite. Proved.
 * `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
   word or just past it, the empty word included. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
@@ -224,8 +224,7 @@ for the local modifications.
   run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
   passed 2026-10-14; the specification is proved, the machine contracts are sorried.
 * `Build/InputDevice` — host H5: the input-device interface, the native device, and the
-  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
-  devices' facts are proved, the machine contracts are sorried.
+  bounded-prefix ruler device with its boundary test, call rows and host. Proved.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,

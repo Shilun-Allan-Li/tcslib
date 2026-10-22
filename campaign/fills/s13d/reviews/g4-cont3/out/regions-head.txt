@@ -1,0 +1,38 @@
+1351:/-! ### The rows -/
+1391:**Implementation status.** The slot guards, scan-index facts, short identity, tape mirror,
+1396:theorem exists_zoneRebalanceTM (k : ℕ) :
+1408:  sorry
+1431:**Implementation status.** A positive-level right-pass contract composes the seek, skip,
+1439:theorem exists_zoneExtendTM (k : ℕ) :
+1449:  sorry
+1451:/-! ### What the rows' endpoints say (proved from the definitions) -/
+1344: /-- The characterized right pass with its nested image exit normalized to one live exit.
+1345: The normalization changes no endpoint, time or envelope. -/
+1346: private abbrev zr_rightPassRow {k : ℕ} (x : List (ZoneSym k)) :=
+1347:   zr_singletonContract (zr_rightPassContract x)
+1348:     (Sum.inr (Sum.inr (Sum.inr SweepPhase.done)))
+1349:     (by simp only [Set.image_singleton, Option.map_some])
+1350: 
+1351: /-! ### The rows -/
+1428: half as all-`⊠` cells; return through home and do the same on the left, through a ruler of the
+1429: distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
+1430: 
+1431: **Implementation status.** A positive-level right-pass contract composes the seek, skip,
+1432: ruler copy, half-zone writes, adjusted walk and scratch rewind, with its exact precondition and
+1433: time (the right-layout extent plus ten half-capacities and twenty-three control steps). Its
+1434: endpoint writes the new right zone, preserves the nonpositive half-line, and restores the
+1435: scratch head; both head envelopes are bounded. The left displacement, an unadjusted walk
+1436: followed by an adjusted walk across the separating blank, is proved as arithmetic. The
+1437: return-home rounds, the left pass, the zero-level branch, ruler cleanup and the assembly of the
+1438: complete extension remain open. Only this target's body is admitted. -/
+1439: theorem exists_zoneExtendTM (k : ℕ) :
+1440:     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+1389: (`Turing.zoneCascade_cost_le`).
+1390: 
+1391: **Implementation status.** The slot guards, scan-index facts, short identity, tape mirror,
+1392: and one-cell leaf are proved. The pure cascade has a checked side-pass reordering valid for
+1393: every guard and without a fullness assumption. The scan with both exits, guarded column-move
+1394: machines, machine passes, home move, and cleanup remain open. Only this target's body is
+1395: admitted. -/
+1396: theorem exists_zoneRebalanceTM (k : ℕ) :
+1397:     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),

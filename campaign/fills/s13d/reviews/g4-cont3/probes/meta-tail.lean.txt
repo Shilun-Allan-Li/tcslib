@@ -1,0 +1,132 @@
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value mentions
+`sorryAx` (maintainer's read-only admission walk). -/
+def g4c2SorrySourcesOf (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"{n}: direct sorryAx users in closure: {g4c2SorrySourcesOf (← getEnv) n}"
+
+open Lean in
+/-- Is `c` an equation/unfolding lemma (`X.eq_N`, `X.eq_def`, `X.eq_unfold`, `X._unfold`,
+`X.match_N`) of a constant `X` defined in another module? -/
+def g4c2ExtEqn? (env : Environment) (c : Name) : Option Name :=
+  match c with
+  | .str p s =>
+    if (s.startsWith "eq_" || s == "_unfold" || s.startsWith "match_" || s.startsWith "proof_")
+        && (env.getModuleIdxFor? p).isSome then some p else none
+  | _ => none
+
+open Lean in
+/-- External constants reached from `root` through this module's own constants, the external
+private names among them, and equation/unfolding lemmas of other modules' constants. -/
+def g4c2ExtDeps (env : Environment) (root : Name) : NameSet × Array Name × Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut ext : NameSet := {}
+  let mut privs : Array Name := #[]
+  let mut eqns : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some _ := g4c2ExtEqn? env c then eqns := eqns.push c
+    if let some ci := env.find? c then
+      for d in ci.getUsedConstantsAsSet.toList do
+        if (env.getModuleIdxFor? d).isSome then
+          unless ext.contains d do
+            ext := ext.insert d
+            if isPrivateName d then privs := privs.push d
+            if let some _ := g4c2ExtEqn? env d then eqns := eqns.push d
+        else unless visited.contains d do stack := stack.push d
+  return (ext, privs, eqns)
+
+open Lean Elab Command in
+elab "#ext_check " id:ident : command => do
+  let env ← getEnv
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  let (ext, privs, eqns) := g4c2ExtDeps env n
+  let tcs := ext.toList.filter fun d =>
+    match env.getModuleIdxFor? d with
+    | some i => (env.header.moduleNames[i]?.map (·.getRoot == `TCSlib)).getD false
+    | none => false
+  logInfo m!"EXT {n}: external {ext.size} (TCSlib {tcs.length}); external privates {privs}; external eqn/unfold lemmas {eqns}"
+
+open Lean Elab Command in
+elab "#ext_list " ids:ident* : command => do
+  let env ← getEnv
+  let mut all : NameSet := {}
+  for id in ids do
+    let n ← liftCoreM <| realizeGlobalConstNoOverload id
+    let (ext, _, _) := g4c2ExtDeps env n
+    for d in ext.toList do all := all.insert d
+  let tcs := all.toList.filter fun d =>
+    match env.getModuleIdxFor? d with
+    | some i => (env.header.moduleNames[i]?.map (·.getRoot == `TCSlib)).getD false
+    | none => false
+  let s := (tcs.map toString).toArray.qsort (· < ·)
+  logInfo m!"EXTLIST total {all.size}; TCSlib {s.size}: {s}"
+
+
+open Lean Elab Command in
+elab "#kinds " ids:ident* : command => do
+  let env ← getEnv
+  for id in ids do
+    let raw := id.getId
+    let cands := [raw, `Turing ++ raw]
+    let mut found := false
+    for c in cands do
+      if found then continue
+      let n? ← liftCoreM <| (do return some (← realizeGlobalConstNoOverload (mkIdent c))) <|> (pure none)
+      if let some n := n? then
+        found := true
+        let some ci := env.find? n | logInfo m!"KIND {n}: missing"
+        let k := match ci with
+          | .thmInfo _ => "theorem" | .defnInfo _ => "DEF" | .axiomInfo _ => "AXIOM"
+          | .opaqueInfo _ => "opaque" | .ctorInfo _ => "ctor" | .recInfo _ => "rec"
+          | .inductInfo _ => "inductive" | .quotInfo _ => "quot"
+        let m := match env.getModuleIdxFor? n with
+          | some i => (env.header.moduleNames[i]?.map toString).getD "?" | none => "this module"
+        logInfo m!"KIND {raw} -> {n}: {k} [{m}]"
+    unless found do logInfo m!"KIND {raw}: unresolved (local hypothesis or term)"
+
+open Lean Elab Command in
+elab "#seal_auto " ids:ident* : command => do
+  let env ← getEnv
+  let mut all : NameSet := {}
+  for id in ids do
+    let n ← liftCoreM <| realizeGlobalConstNoOverload id
+    let (ext, _, _) := g4c2ExtDeps env n
+    for d in ext.toList do all := all.insert d
+  let isTCS (d : Name) : Bool := match env.getModuleIdxFor? d with
+    | some i => (env.header.moduleNames[i]?.map (·.getRoot == `TCSlib)).getD false
+    | none => false
+  let s := ((all.toList.filter isTCS).map id).toArray.qsort (fun a b => a.toString < b.toString)
+  for d in s do
+    if let some (.defnInfo v) := env.find? d then
+      let isType := v.type.getForallBody.isSort
+      let st := match getReducibilityStatusCore env d with
+        | .reducible => "reducible" | .semireducible => "semireducible" | .irreducible => "irreducible"
+      let proj := (env.getProjectionFnInfo? d).isSome
+      let inst := Meta.isInstanceCore env d
+      let mat := Meta.isMatcherCore env d
+      let m := match env.getModuleIdxFor? d with
+        | some i => (env.header.moduleNames[i]?.map toString).getD "?" | none => "?"
+      logInfo m!"SEALCAND {d} type={isType} red={st} proj={proj} inst={inst} matcher={mat} [{m}]"
+

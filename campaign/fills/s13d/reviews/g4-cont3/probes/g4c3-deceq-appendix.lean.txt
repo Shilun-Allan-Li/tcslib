@@ -1,0 +1,22 @@
+
+/-! ## Reviewer probe (not for landing): the right pass's state type and `DecidableEq` -/
+
+-- V1: the right ruler prefix's state type (sequenced inside the file, works there)
+#synth DecidableEq ((SeekPhase ⊕ SeekPhase) ⊕ SweepPhase ⊕ SeekPhase)
+-- V2: the full right pass's state type, default limits
+#synth DecidableEq (((SeekPhase ⊕ SeekPhase) ⊕ SweepPhase ⊕ SeekPhase) ⊕
+  SweepPhase ⊕ ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase) ⊕ SweepPhase)
+-- V3: its pieces
+#synth DecidableEq (SweepPhase ⊕ ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase) ⊕ SweepPhase)
+#synth DecidableEq ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase)
+#synth DecidableEq (Option Bool)
+-- V4: raised synthesis limits
+set_option synthInstance.maxHeartbeats 400000 in
+set_option synthInstance.maxSize 4096 in
+#synth DecidableEq (((SeekPhase ⊕ SeekPhase) ⊕ SweepPhase ⊕ SeekPhase) ⊕
+  SweepPhase ⊕ ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase) ⊕ SweepPhase)
+-- V5: the explicit Sum instance, assembled by hand
+example : DecidableEq (((SeekPhase ⊕ SeekPhase) ⊕ SweepPhase ⊕ SeekPhase) ⊕
+    SweepPhase ⊕ ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase) ⊕ SweepPhase) :=
+  @instDecidableEqSum _ _ inferInstance (@instDecidableEqSum _ _ inferInstance
+    (@instDecidableEqSum _ _ inferInstance inferInstance))

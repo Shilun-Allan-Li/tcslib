@@ -1,0 +1,78 @@
+== bootstrap (base tree)
+runs 95 ; order list 95 ; same sequence as the order list: True
+nonzero exits: none ; error diagnostics: 0
+max RSS KiB 2935872 ; summed wall s 511.652
+sorry warnings 33 in 14 modules
+    ClassP/TimeConstructible : _root_.Turing.FinTM.lengthBitsTM_computes
+    ClassP/TimeConstructible : _root_.Turing.FinTM.lengthBitsTM_spaceUsed
+    TuringMachine/Build/InputDevice : ?      Function.Injective readExit ∧ (∀ v
+    TuringMachine/Build/InputDevice : ?      ∀ (c : Cfg m Bool S y) (b : Bool),
+    TuringMachine/Build/Loop : emitLoopTM_computes
+    TuringMachine/Build/Loop : loopHostTM_contracts
+    TuringMachine/Build/Loop : loopHostTM_decides
+    TuringMachine/Build/Loop : loopHostTM_finds
+    TuringMachine/Build/Loop : loopHostTM_spaceUsed_le_budget
+    TuringMachine/Build/Primitives : appendBitTM_computes
+    TuringMachine/Build/Primitives : polyUnaryTM_spaceUsed
+    TuringMachine/Build/Primitives : unaryTokenTM_computes
+    TuringMachine/Build/RecordTable : exists_recordNextTM
+    TuringMachine/Build/RecordTable : exists_recordValidTM
+    TuringMachine/Build/RecordTable : exists_tableAppendTM
+    TuringMachine/Build/RecordTable : exists_tableFindTM
+    TuringMachine/Build/SeamLayout : exists_seamLayoutTM
+    TuringMachine/Build/Wrappers : timedCondTM_computes
+    TuringMachine/Build/Wrappers : timedCondTM_spaceUsed
+    TuringMachine/Build/ZoneRebalance : exists_zoneExtendTM
+    TuringMachine/Build/ZoneRebalance : exists_zoneRebalanceTM
+    TuringMachine/CodeSimulator : exists_canonGrammarStage
+    TuringMachine/CodeSimulator : exists_uniformSimulator
+    TuringMachine/Composition : condTM_computes_iff
+    TuringMachine/Composition : idTM_computes
+    TuringMachine/Composition : ifEqTM_computes
+    TuringMachine/Encoding : pairDiagTM_computes
+    TuringMachine/NDCodeSimulator : exists_ndInterpreterCore
+    TuringMachine/NDCodeSimulator : exists_replayCanonizer
+    TuringMachine/Simulation : branchTM_spaceUsed
+    TuringMachine/UniversalK : exists_selfStartupTMK
+    TuringMachine/UniversalK : exists_selfUniversalK
+    TuringMachine/UniversalK : universalK
+
+== final sweep (head tree), compared with the bootstrap
+runs 95 ; order list 95 ; same sequence as the order list: True
+nonzero exits: none ; error diagnostics: 0
+max RSS KiB 2944700 ; summed wall s 539.971
+sorry warnings 31 in 13 modules
+    ClassP/TimeConstructible : _root_.Turing.FinTM.lengthBitsTM_computes
+    ClassP/TimeConstructible : _root_.Turing.FinTM.lengthBitsTM_spaceUsed
+    TuringMachine/Build/Loop : emitLoopTM_computes
+    TuringMachine/Build/Loop : loopHostTM_contracts
+    TuringMachine/Build/Loop : loopHostTM_decides
+    TuringMachine/Build/Loop : loopHostTM_finds
+    TuringMachine/Build/Loop : loopHostTM_spaceUsed_le_budget
+    TuringMachine/Build/Primitives : appendBitTM_computes
+    TuringMachine/Build/Primitives : polyUnaryTM_spaceUsed
+    TuringMachine/Build/Primitives : unaryTokenTM_computes
+    TuringMachine/Build/RecordTable : exists_recordNextTM
+    TuringMachine/Build/RecordTable : exists_recordValidTM
+    TuringMachine/Build/RecordTable : exists_tableAppendTM
+    TuringMachine/Build/RecordTable : exists_tableFindTM
+    TuringMachine/Build/SeamLayout : exists_seamLayoutTM
+    TuringMachine/Build/Wrappers : timedCondTM_computes
+    TuringMachine/Build/Wrappers : timedCondTM_spaceUsed
+    TuringMachine/Build/ZoneRebalance : exists_zoneExtendTM
+    TuringMachine/Build/ZoneRebalance : exists_zoneRebalanceTM
+    TuringMachine/CodeSimulator : exists_canonGrammarStage
+    TuringMachine/CodeSimulator : exists_uniformSimulator
+    TuringMachine/Composition : condTM_computes_iff
+    TuringMachine/Composition : idTM_computes
+    TuringMachine/Composition : ifEqTM_computes
+    TuringMachine/Encoding : pairDiagTM_computes
+    TuringMachine/NDCodeSimulator : exists_ndInterpreterCore
+    TuringMachine/NDCodeSimulator : exists_replayCanonizer
+    TuringMachine/Simulation : branchTM_spaceUsed
+    TuringMachine/UniversalK : exists_selfStartupTMK
+    TuringMachine/UniversalK : exists_selfUniversalK
+    TuringMachine/UniversalK : universalK
+diagnostics outside Build/InputDevice identical to the other log: True ( 404 vs 404 )
+Build/InputDevice diagnostics here: []
+Build/InputDevice diagnostics in the other log: [('TCSlib/Complexity/TuringMachine/Build/InputDevice.lean', 439, 8, 'warning', "declaration uses 'sorry'"), ('TCSlib/Complexity/TuringMachine/Build/InputDevice.lean', 507, 8, 'warning', "declaration uses 'sorry'")]

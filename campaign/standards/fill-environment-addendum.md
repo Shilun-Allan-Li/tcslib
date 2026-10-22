@@ -1,4 +1,16 @@
-# Fill-agent environment addendum (v2.4): resources, the dependency cache, starting Lean, and megafills
+# Fill-agent environment addendum (v2.5): resources, the dependency cache, starting Lean, and megafills
+
+**Version 2.5 (2026-10-22)** changes two rules of Part 1, item 2, from the first megafills' records
+(gates 59 and 60):
+- **the manifest check counts the packages present** in `.lake/packages`. The narrowed fetch does
+  not clone the documentation toolchain, so a check of every package in the manifest failed by
+  construction;
+- **the cache tool's local archive store is logged before the first fetch.** One host already held
+  967 of the 1,002 archives it needed, with no record of where they came from. Archives already
+  in that store are the cache tool's own, named by hash and checked by it: **using them is
+  allowed** (user, 2026-10-22), and the store is logged and reported.
+
+Parts 2 and 3 are otherwise unchanged (Part 3's shared fetch logs the store once).
 
 **Version 2.4 (2026-10-22)** adds **Part 3, the megafill**: one session that works through a queue
 of fill briefs on one host, sharing the preflight, the toolchain, the clone and the cache. Parts 1
@@ -31,7 +43,7 @@ re-check after the toolchain is installed needs only the cache step's share, 8 G
 
 Part 2, the shim for an unreadable `/proc/<pid>/exe`, is version 1's text, unchanged (authorized
 2026-10-14). Everything else in your brief stays binding; where it names an earlier version of
-this addendum, read v2.3.
+this addendum, read v2.5.
 
 ## Part 1: resources and the dependency cache
 
@@ -94,6 +106,15 @@ cleanly.
      an import later (only where your brief authorizes one), fetch for the new roots the same way.
      Alternatively, symlink `.lake/packages` to a populated tree at exactly the same pins,
      recorded in `REPORT.md`.
+   - **Log the cache tool's archive store first** (v2.5). Before the first `lake exe cache get`,
+     record in `evidence/logs/cache-store.log` whether the store exists
+     (`${XDG_CACHE_HOME:-$HOME/.cache}/mathlib` by default), how many files it holds and their
+     total size (`find … -type f | wc -l`, `du -sb …`). The fetch log's "Attempting to download N"
+     and "Decompressing M" then show that `M − N` archives were already in the store. Archives
+     already there are the cache tool's own, named by hash and checked by it: using them is
+     allowed, and the store is not "another session's object store" (below). In `REPORT.md`, give
+     their number and, if you know it, their origin (an earlier session on this host, the host
+     image); do not describe them as downloaded by this session.
    - Never copy, move, merge or deduplicate dependency trees between directories.
    - Never reuse another session's scratch tree, package builds, toolchain or object store, and
      never join `LEAN_PATH`s across trees.
@@ -103,11 +124,16 @@ cleanly.
      expected and allowed; it is not a `lake build` under your brief's ban. On its first use,
      `lake exe cache` also compiles the cache executable itself; that, too, is expected and is not
      a `lake build` of the project.
-   - **Packages match the manifest.** A fresh clone's first `lake exe cache get …` fetches the
-     packages that `lake-manifest.json` names. Afterwards, and before every later Lake command,
-     check each one: `git -C .lake/packages/<name> remote get-url origin` and `rev-parse HEAD`
-     must equal the manifest's URL and revision. If one differs, stop with E-RES. Never let Lake
-     re-clone or update a package that is already present.
+   - **Packages match the manifest** (v2.5: the packages present). A fresh clone's first
+     `lake exe cache get …` fetches the packages that `lake-manifest.json` names, except those the
+     narrowed fetch does not need. Afterwards, and before every later Lake command, check each
+     package **present in** `.lake/packages`: `git -C .lake/packages/<name> remote get-url origin`
+     and `rev-parse HEAD` must equal the manifest's URL and revision. If one differs, stop with
+     E-RES. List the manifest's packages that were not cloned as **ABSENT**, not as a mismatch (at
+     this pin `doc-gen4`, `UnicodeBasic`, `BibtexQuery` and `MD4Lean`, the documentation
+     toolchain). The check passes when every present package matches and no module of your order
+     list imports an absent package; quote its last line in `REPORT.md`. Never let Lake re-clone
+     or update a package that is already present.
 3. **Check the cache before the bootstrap.**
    - The narrowed `lake exe cache get` exited 0, with no failed download.
    - `find .lake/packages -name '*.olean' -size 0` prints nothing.
@@ -258,8 +284,9 @@ shared.
      | awk '{print $2}' | sort -u > evidence/logs/mathlib-roots.txt
    ```
 
-   then `TAR_OPTIONS=--no-same-owner lake exe cache get $(cat evidence/logs/mathlib-roots.txt)`.
-   The cover brief gives the expected count. Items 3 and 4 apply once, to this fetch. Keep these
+   then `TAR_OPTIONS=--no-same-owner lake exe cache get $(cat evidence/logs/mathlib-roots.txt)`,
+   after logging the archive store once (Part 1, item 2). The cover brief gives the expected
+   count. Items 3 and 4 apply once, to this fetch. Keep these
    shared logs under `evidence/logs/` at the clone's root, and copy them into each item's zip.
 3. **Per item, in the queue's order:**
    1. Start from a clean tree (the previous item's work is committed on its own branch and

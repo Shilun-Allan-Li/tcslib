@@ -1,0 +1,16 @@
+== pairdiff: after vs before (and the recorded base)
+head pairs 489; union of earlier 488; new at head 1; earlier-only 0
+  NEW   InputDevice.lean::exists_rulerTestTM  reproduces  InputDevice.lean::rd_test_return: 108/136 = 79%
+
+== after vs the worker's screen-final.txt
+IDENTICAL
+
+== every pair with an InputDevice declaration on one side, at the head
+   InputDevice.lean::rd_trace_step  reproduces  InputDevice.lean::rd_read_nat: 73/90 = 81%
+   InputDevice.lean::exists_rulerTestTM  reproduces  InputDevice.lean::rd_test_return: 108/136 = 79%
+
+== cross-file pairs touching InputDevice
+(end)
+
+== hazards by name (vhost*, universalInput_*, unary marker) paired with an rd_/InputDevice declaration
+none

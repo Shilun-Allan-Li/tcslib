@@ -1306,6 +1306,37 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `git am`; checkpoint 1.1b, the right pass's endpoint and envelope, first).
   - **Next when they return:** UN's and R's landings feed C1's assembly; F3 cont2 waits on #139;
     the seam layout's landing on its review.
+- **Megafill B delivered (2026-10-22)** (`campaign/fills/megafill/reports/megafill-b-REPORT.md`):
+  - **U2-S cont1: complete** (`Turing.exists_selfStartupTMK`, modulo only the seam layout; reviewed
+    `campaign/fills/u2s/reviews/startup-cont1/REVIEW.md`: land after #145, which makes it
+    admission-free). **F1 accepted (user, 2026-10-22):** a second private one-step leaf (the code
+    buffer's cleanup) beyond the brief's one allowed leaf, with the empty code's position as a fixed
+    parameter of `E`. **Landed as #147** (`c6733db3`); **merge after #145**, then its replay on the
+    merged tree and a fill gate. Lesson for later briefs: state the empty word's origin case.
+  - **F5 cont1: complete** (the call rows and the host, no admission; reviewed
+    `campaign/fills/b6/reviews/rulerdevice-cont1/REVIEW.md`). **Landed as #146** (`8114e482`, with
+    the status text and two `Implementation.` paragraphs); replay `replay-lf5c1.sh` (16 modules)
+    and a fill gate pending. Optional private-docstring rewordings (its F2) are for the deferred
+    public-facing pass; its O1 (two read exits keep moving after `2ℓ + 5`) goes to the F6/U2-E
+    briefs (text: gate 60's resolutions, C60-1; the exit state also persists with displaced
+    heads).
+  - **G4 cont3: partial** (checkpoint 1.1b; the session lost its workspace while on 1.2). Reviewed
+    (`campaign/fills/s13d/reviews/g4-cont3/REVIEW.md`: land); **landed as #148** (`13e17589`, the
+    worker's own commit only); replay `replay-lg4c3.sh` (16 modules) and a fill gate pending.
+    **For continuation 4:** 1.2 (the return home; its draft was lost with the workspace) and 1.3
+    onwards, from 1.1b's local agreement and scratch frame; `Contract.seq` on the re-wrapped pass
+    needs `DecidableEq` for a 12-part state type that default instance search misses (raise
+    `synthInstance.maxSize` to 256, or give the instance); the left pass by per-stage lemmas (an
+    85% pair already); seal controls that close by `rfl` unsealed; gate 58's probe and duplication
+    points; region lines from the landed file. Also (gate 61): the real `link` and the proof of
+    `hlink` for the return home's seam (gate 61's probe checked types only); the probe at 446
+    checks of 435 names, its inventory taken from the whole module's elaborated constants; the
+    level-one and level-two instances as probe examples. **The consolidated list is gate 61's
+    resolutions, C61-1.**
+  - **For addendum v2.5:** both reviews found 967 of the 1,002 cache files already on the host
+    before the fetch; log the cache tool's archive store before the first fetch and report the
+    count (gate 60, note 16). **Done: addendum v2.5** (2026-10-22; the user: a pre-populated store
+    is allowed and logged).
 - **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
   (`campaign/fills/mig12/reports/mig12-cont1-eres-REPORT.md`): its host was given the **v2.1**
   addendum (`2563c8d2…`), whose re-check after the toolchain kept the 12 GiB floor; free disk was
@@ -1320,8 +1351,71 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
 - **#144 opened (2026-10-22): the exhaustive replay's proof sketches**, docstrings only (the six
   main lemmas' sketches, and the accept flag described as the proof uses it; gate 53, note 14).
   Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
-  pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** The 18 other long
-  private proofs without a sketch stay under C1E-1.
+  pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** After #139 merged,
+  `replay-lsk2.sh` (16 modules, the merged tree) passed: **#144 clear to merge.** **Merged
+  (user, 2026-10-22, `0416ffea`).** The 18 other long private proofs without a sketch stay under
+  C1E-1.
+- **F3 cont2's pre-ship at the tip `0416ffea` (2026-10-22;
+  `campaign/fills/b6/drafts/b6-fill-configclock-cont2/preship-0416ffea/README.md`):** the order
+  list (176 modules, 54 roots) and the 28 base sorries are continuation 1's; the import probe (100
+  checks), the consumer probe and gate 56's published join probe pass; the screen base is 1,049
+  declarations and 510 pairs (continuation 1's after-screen plus `wordPatch_append`). A sealed
+  route probe discharges every prescribed step's premises from public lemmas (silence by
+  `output_prefix`; each field by `fieldsTape_field`; the source and clock rewinds; F2's clock
+  precondition; the seam's intermediate heads), with two route facts for the brief: the clock
+  rewind needs a `skipTM` over the empty word before `skipBackTM`, and the writer needs no
+  embedding. **The space clause had no published route** (`MultiTapeTM.spaceUsed` has no
+  equation; the sum closes only through its definition). **Ruled (user, 2026-10-22): an API PR
+  first, with the equation and a radius lemma** (#149, below); the brief issues after #149
+  merges, re-run against #149's snapshot, as a candidate for the next megafill. The draft carries
+  the results.
+- **#149 opened (2026-10-22): the space API** (`lean/spaceused-api`, `e172b914` on `0416ffea`):
+  `Turing.MultiTapeTM.spaceUsed_eq_sum` (`Deterministic`, beside the definition, by `rfl`) and
+  `Turing.MultiTapeTM.spaceUsed_le_of_abs_le` (`Finite`, beside `spaceUsedByTape_le_card_Icc`;
+  a common head radius `r` bounds the space by `k · (2r + 1)`, from the equation and the per-tape
+  bound only). Checks against `oleans-lsk2`: `Deterministic` 0 diagnostics (the equation on the
+  standard three); the radius proof verbatim, citing a stand-in for the equation, with the four
+  space and run definitions sealed: 0 diagnostics, its four controls failing sealed and passing
+  unsealed; the freeze (40 → 41, 25 → 26 public, nothing changed); lint `TuringMachine` 0 FAIL,
+  64 WARN over 82 files at base and head; the screen (5 files, 136 declarations, 30 pairs) pairs
+  neither lemma with anything, F2's private `wr_space` included. **Replay:** its closure is
+  `Deterministic`'s downstream (324 modules), which meets every PR in flight (#145–#148) beyond
+  the facade, so **its replay runs once, after those merge**, on the merged tree. Then gate 62
+  (an API gate). **Gate numbering:** #147's fill gate becomes gate 63. Optional cleanup:
+  `wr_space` (`Build/WindowRun`, private) can re-point to `spaceUsed_le_of_abs_le`.
+- **Gates 59, 60 and 61 returned and closed (2026-10-22).** 59 (#145) PASS 0/0/3/14, 60 (#146)
+  PASS 0/0/0/16, 61 (#148) PASS 0/0/2/16: findings verbatim, resolutions in each gate folder,
+  verified by one review sub-agent (`campaign/gates/59-c1-seamlayout-fill/evidence/round1-review/`;
+  all true but gate 61's minor 10, partly true). No `.lean` change. Records: pack errata (59
+  line 36, 60 lines 13–14); report errata `campaign/fills/c1/reports/seamlayout-1-ERRATUM.md` and
+  `campaign/fills/s13d/reports/g4-cont3-ERRATUM.md`; gate 61's evidence note
+  `evidence/round1-review/10-outputs.txt`; the counting convention W1 (public declarations at
+  source; public constants, such as derived instances of private types, reported separately).
+  **#145, #146 and #148: clear to merge. Merged (user, 2026-10-22: `aa326284`, `b5e5095a`,
+  `c38f0fed`).** #147 next (its merged-tree replay and gate 63); #149's replay on the merged tree.
+  - **Ruled (user, 2026-10-22):** the counting convention W1 goes into `workflow.md` §4 (done);
+    addendum v2.5 allows a pre-populated cache store, logged (done: v2.5,
+    `campaign/standards/fill-environment-addendum.md`, SHA-256
+    `90851511cf164dfa84ac9264cb5ba7acd54b7f551c823ae5d1000e43e233abf0`; outbox copy updated). Fills
+    issued from now on cite v2.5; megafill A and MIG-12 cont1, already out, run under v2.4.
+  - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
+    the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
+    SeamLayout and the facade.
+  - **For the dedup window (user):** `InputDevice`'s in-file 79% pair
+    `exists_rulerTestTM`/`rd_test_return` (target 1's last step can cite `rd_test_return`; a
+    frozen proof, so the user's call); F5's promotion candidates (the `Lockstep` frames
+    corollary, `rd_shift_move`, the "step plus bounded pause" block once U2-E fixes its shape).
+  - **For the shared-API window:** promote `zr_singletonContract` (`Build/ZoneRebalance`) beside
+    `Contract.ofSegment` or as a `Contract.seq` corollary, a `def` with non-`simp` field lemmas, by
+    an API PR with its gate (gate 61, note 3).
+  - **Optional (user):** a docstring sentence for `exists_rulerDeviceTM` saying its exits are return
+    points (gate 60's resolutions, C60-2), in the deferred public-facing pass or the first
+    consumer's PR.
+  - **Bundle-builder lesson:** gates 60 and 61's bundle lists kept only the first 60 entries of
+    each review's `out/` folder (gate 61's minor 10). Include every file a review cites, with no
+    per-folder cap, and check the review's citations against the list before staging.
+  - **Packs give the head's merge-base** (`git merge-base <head> <campaign tip>`) and the bundle's
+    records revision separately (gate 60, note 1).
 - **The seam layout: delivered complete (2026-10-22), reviewed: land**
   (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
   (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
@@ -1338,9 +1432,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   instances with public names, as landed code has), F4 (REPORT inaccuracies), F5 (applied by the
   squash). Dedup candidates: `sl_apply_eq` with `ExhaustiveReplay`'s `xr_act_apply`; a reversed
   read for `BufferWords`.
-  - **For the addendum's next version:** item 2's manifest check fails by construction under the
-    narrowed fetch (the four documentation packages are absent); it should check each package
-    present in `.lake/packages`.
+  - **For addendum v2.5:** item 2's manifest check fails by construction under the narrowed
+    fetch (the four documentation packages are absent); it should check each package present in
+    `.lake/packages` and list the others as absent (gate 59, note 16). **Done: addendum v2.5.**
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.

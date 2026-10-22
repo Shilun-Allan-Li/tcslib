@@ -1,0 +1,69 @@
+# 60-F13: the read exits after 2l+5 (Build/InputDevice.lean at 8114e482, blob c6b99e698126f4eb41abf24468ddd105d5dac8d2)
+## rd_test's table (lines 211-217)
+private def rd_test : MultiTapeTM 1 Bool rd_State where
+  q₀ := .inl ()
+  tr q v w := match q with
+    | .inl _ => if w 0 = some true then tapeAction 0 (-1) none 1 (.inl ())
+        else tapeAction 0 0 none (-1) (.inr (v.isNone, false))
+    | .inr (b, false) => if w 0 = some true then tapeAction 0 1 none (-1) (.inr (b, false))
+        else tapeAction 0 0 none 1 (.inr (b, true))
+## the call controller (lines 453-487)
+private def rd_answer : Option Bool → Bool × Bool
+  | none => (false, false)
+  | some b => (true, b)
+
+private abbrev rd_Phase := Option SignType ⊕ (Option SignType × Bool ⊕ Unit)
+private abbrev rd_CallState := Σ _ : rd_Phase, rd_State
+
+private def rd_family : rd_Phase → MultiTapeTM 1 Bool rd_State
+  | .inr (.inl (op, b)) => rd_callLeaf op b
+  | _ => rd_test
+
+private def rd_redirect : (i : rd_Phase) → rd_State → Option rd_CallState
+  | .inl op, .inr (b, true) => some ⟨.inr (.inl (op, b)), .inl ()⟩
+  | .inr (.inl _), .inr a => some ⟨.inr (.inr ()), .inr a⟩
+  | _, _ => none
+
+private def rd_callTM : MultiTapeTM 1 Bool rd_CallState :=
+  phaseHostTM rd_family ⟨.inl none, .inl ()⟩ rd_redirect
+## the witness (lines 712-715): readExit v = <.inr (.inr ()), .inr (rd_answer v)>, moveExit = <.inr (.inr ()), .inr (false, true)>
+      have := congrArg List.length hdrop
+      rw [List.length_drop] at this
+      omega
+    have hb : decide (d.inputPos.val = ℓ) = true ↔ i.val = 0 := by
+
+Reading: the final phase .inr (.inr ()) is not .inr (.inl _), so rd_family gives rd_test, and rd_redirect gives none (no dispatch).
+  readExit none        = .inr (false,false): return-leg row -> input +1, ruler -1 if the ruler cell is true; else ruler +1 (to .inr (false,true))
+  readExit (some false) = .inr (true,false):  the same return-leg row
+  readExit (some true)  = .inr (true,true):   verdict row, tapeAction 0 0 none 0 (stationary)
+  moveExit              = .inr (false,true):  verdict row, stationary
+=> two read exits move on the next step; true-read and move exits are stationary. CONFIRMED from source.
+
+## the statement (lines 680-697): every clause is at u < t, u <= t, or t; nothing after t
+      Function.Injective readExit ∧ (∀ v, readExit v ≠ moveExit) ∧
+      ∀ {y z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool P z) (i : Fin (y.length + 2)),
+        RulerAt ℓ 0 d i →
+        (d.state = some readEntry →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, ∀ v, (R.runFrom d u).state ≠ some (readExit v)) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            R.runFrom d t = { d with state := some (readExit (inputCell y i.val)) }) ∧
+        (∀ m : SignType, d.state = some (moveEntry m) →
+          ∃ t ≤ C * (ℓ + 1),
+            (∀ u < t, (R.runFrom d u).state ≠ some moveExit) ∧
+            (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+            (R.runFrom d t).state = some moveExit ∧
+            (R.runFrom d t).inputPos.val = ℓ + (moveInputPos i m).val ∧
+
+## the review's evaluation (out/30c-after-exit.out, bundled)
+"A1 read l=1 i=0, exit (false,false): (input head, ruler head, same state) at T, T+1, T+2: [(1, (5, true)), (2, (4, true)), (2, (5, false))]"
+"A2 read l=2 i=1, exit (true,true): (input head, ruler head, same state) at T, T+1, T+2: [(3, (5, true)), (3, (5, true)), (3, (5, true))]"
+"A3 move+ l=2 i=1, exit (false,true): (input head, ruler head, same state) at T, T+1, T+2: [(4, (5, true)), (4, (5, true)), (4, (5, true))]"
+exit 0, 4 s, 2026-10-22 13:17:06, file ReviewScratch/F5AfterExit.lean, oleans oleans-lg4c2, worktree wt-head @ 0f57ba49
+
+## consumers and their briefs
+F6: Complexity.space_universal (SpaceComplexity/Hierarchy.lean:150)
+U2-E: Turing.universalK (TuringMachine/UniversalK.lean:582)
+brief drafts under campaign/fills/*/drafts/ naming F6 or U2-E as their item: none (0)
+backlog (committed 0416ffea):
+1320:    public-facing pass; its O1 (two read exits keep moving after `2ℓ + 5`) goes to the F6/U2-E
