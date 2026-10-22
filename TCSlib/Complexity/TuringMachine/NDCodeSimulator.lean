@@ -721,13 +721,15 @@ endpoint, its control state, and the inherited first return of the phase's exit,
 **Proof sketch.** The general-configuration seam run and its inherited first-return cut,
 with the endpoint state projected through the state renaming. -/
 private theorem ic_seam_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : List Bool}
-    (A : MultiTapeTM k Bool S₁) (exit₁ : S₁) (B : MultiTapeTM k Bool S₂) (entry₂ exit₂ : S₂)
+    (A : MultiTapeTM k Bool S₁) (exit₁ : S₁) (B : MultiTapeTM k Bool S₂)
+    (entry₂ exit₂ : S₂)
     {c₀ c₁ : Cfg k Bool S₁ x} {c₂ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
     (h₁ : A.runFrom c₀ T₁ = c₁) (hx₁ : c₁.state = some exit₁)
     (hcut₁ : ∀ t < T₁, (A.runFrom c₀ t).state ≠ some exit₁)
     (h₂ : B.runFrom (c₁.mapState fun _ => entry₂) T₂ = c₂)
     (hx₂ : c₂.state = some exit₂)
-    (hcut₂ : ∀ t < T₂, (B.runFrom (c₁.mapState fun _ => entry₂) t).state ≠ some exit₂) :
+    (hcut₂ : ∀ t < T₂,
+      (B.runFrom (c₁.mapState fun _ => entry₂) t).state ≠ some exit₂) :
     (seamCompTM A exit₁ B entry₂).runFrom (c₀.mapState Sum.inl) (T₁ + 1 + T₂) =
         c₂.mapState (Sum.inr : S₂ → S₁ ⊕ S₂) ∧
       (c₂.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr exit₂) ∧
@@ -735,7 +737,8 @@ private theorem ic_seam_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x 
         ((seamCompTM A exit₁ B entry₂).runFrom (c₀.mapState Sum.inl) t).state ≠
           some (Sum.inr exit₂) := by
   refine ⟨seamCompTM_run_ofCfg A exit₁ B entry₂ h₁ hx₁ hcut₁ h₂, ?_,
-    seamCompTM_firstReturn_ofCfg A exit₁ B entry₂ exit₂ h₁ hx₁ hcut₁ h₂ hx₂ hcut₂⟩
+    seamCompTM_firstReturn_ofCfg A exit₁ B entry₂ exit₂ h₁ hx₁ hcut₁ h₂ hx₂
+      hcut₂⟩
   rw [Cfg.mapState_state, hx₂, Option.map_some]
 
 /-- The interpreter's native-input rewind leaf: one unconditional left move, a left scan to
@@ -1000,7 +1003,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       · rw [dif_neg h0, if_neg h0, Fin.val_mk]
   obtain ⟨ι₇, hι₇0, hι₇1, hι₇2, hι₇3, hι₇4, hι₇5, hι₇6⟩ :
       {f : Fin 7 ↪ Fin K //
-        f 0 = jwin ∧ f 1 = jb0 ∧ f 2 = jb1 ∧ f 3 = js ∧ f 4 = jtbl ∧ f 5 = jsm ∧ f 6 = jctr} := by
+        f 0 = jwin ∧ f 1 = jb0 ∧ f 2 = jb1 ∧ f 3 = js ∧ f 4 = jtbl ∧ f 5 = jsm ∧
+          f 6 = jctr} := by
     refine ⟨⟨fun i =>
       (⟨if i.val = 0 then 4 else if i.val = 1 then 7 else if i.val = 2 then 8
         else if i.val = 3 then 0 else if i.val = 4 then 5 else if i.val = 5 then 6
@@ -1083,8 +1087,10 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       have h7 := i.isLt
       omega
     · rintro ⟨h1, h2⟩
-      exact ⟨⟨j.val - 11, by omega⟩, Fin.ext (by rw [hι₁]; show 11 + (j.val - 11) = j.val; omega)⟩
-  have hr₂ : ∀ j : Fin K, j ∈ Set.range ι₂ ↔ 11 + k₁ ≤ j.val ∧ j.val < 11 + k₁ + k₂ := by
+      exact ⟨⟨j.val - 11, by omega⟩,
+        Fin.ext (by rw [hι₁]; show 11 + (j.val - 11) = j.val; omega)⟩
+  have hr₂ : ∀ j : Fin K,
+      j ∈ Set.range ι₂ ↔ 11 + k₁ ≤ j.val ∧ j.val < 11 + k₁ + k₂ := by
     intro j
     constructor
     · rintro ⟨i, rfl⟩
@@ -1102,8 +1108,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   set cfg₀ := (embedSilentCfg ι₁ jbt tapes₀ (fun _ => 0) [] []
     ((prefixCanonTM (FinTM.pairExtractTM true false)).tm.initCfg
       (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl with hcfg₀
-  set e₁ := (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm).runFrom
-    cfg₀ T₁ with he₁
+  set e₁ := (embedSilentRetTM ι₁ jbt
+    (prefixCanonTM (FinTM.pairExtractTM true false)).tm).runFrom cfg₀ T₁ with he₁
   -- Phase 2: the input rewind back to position 1, through the first seam.
   have hd₂st : (e₁.mapState (fun _ => (0 : Fin 3))).state = some 0 := by
     rw [Cfg.mapState_state, h₁st]
@@ -1111,7 +1117,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   have hd₂pos : 1 ≤ (e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val := by
     rw [Cfg.mapState_inputPos, h₁pos]
     omega
-  obtain ⟨hL1, hL2⟩ := ic_rewind_leaf_run (e₁.mapState (fun _ => (0 : Fin 3))) hd₂st hd₂pos
+  obtain ⟨hL1, hL2⟩ := ic_rewind_leaf_run (e₁.mapState (fun _ => (0 : Fin 3)))
+    hd₂st hd₂pos
   obtain ⟨s2run, s2st, s2cut⟩ := ic_seam_step
     (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm) (Sum.inr ())
     (ic_rewindLeafTM K) (0 : Fin 3) (2 : Fin 3) he₁.symm h₁st h₁cut hL1 rfl hL2
@@ -1193,7 +1200,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
           (h₁frame _ hni hnb).1,
           htapes₀blank _ (by intro hmem; have := congrArg Fin.val hmem; have := hι₂ i; omega)]
       · by_cases hcap : j = jal
-        · rw [hcap, (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).1,
+        · rw [hcap,
+            (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).1,
             (h₁frame jal hniota hnjbt).1, htapes₀blank jal hnjs,
             MultiTapeTM.initCfg_eq, Cfg.init_output, List.append_nil, FinTM.bufferTape_nil]
         · rw [(embedSilentCfg_unselected ι₂ jal e₁.workTapes e₁.workTapePos [] [] _ j
@@ -1215,7 +1223,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         rw [embedSilentCfg_selected_pos, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
         exact (h₁frame _ hni hnb).2
       · by_cases hcap : j = jal
-        · rw [hcap, (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).2,
+        · rw [hcap,
+            (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).2,
             (h₁frame jal hniota hnjbt).2, MultiTapeTM.initCfg_eq, Cfg.init_output,
             List.append_nil]
           rfl
@@ -1226,9 +1235,9 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       exact h₁out
   have hdr2 := ic_header_capture false K α x t ι₂ jal
     (by rintro ⟨i, rfl⟩; have h := hι₂ i; omega) e₁.workTapes e₁.workTapePos []
-  simp only [↓reduceIte] at hdr2
   obtain ⟨T₃, hT₃, h₃st, h₃pos, h₃al, h₃alhd, h₃out, h₃frame, h₃cut⟩ := hdr2
-  set e₃ := (embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm).runFrom
+  set e₃ := (embedSilentRetTM ι₂ jal
+    (prefixCanonTM (FinTM.pairExtractTM false true)).tm).runFrom
     ((embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
       ((prefixCanonTM (FinTM.pairExtractTM false true)).tm.initCfg
         (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl) T₃ with he₃
@@ -1241,7 +1250,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     s2run s2st s2cut (by rw [hjunc₂]) h₃st
     (by simp only [hjunc₂]; exact h₃cut)
   -- The clean ledger after the two header passes.
-  have hclean₃ : ∀ j : Fin K, j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
+  have hclean₃ : ∀ j : Fin K,
+      j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
       e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0 := by
     intro j h1 h2 h3 h4
     obtain ⟨ht, hp⟩ := h₃frame j h3 h4
@@ -1288,7 +1298,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   set e₄ := ({ (e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start) with
     state := some RewindPhase.done
     workTapePos := Function.update
-      ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).workTapePos jbt
+      ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jbt
       (((e₃.mapState (Sum.inr : _ → St₃)).mapState
         (fun _ => RewindPhase.start)).workTapePos jbt - (Nat.bits t).length) } :
     Cfg K Bool RewindPhase _) with he₄
@@ -1311,7 +1322,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
   have he₄in : e₄.inputPos = e₃.inputPos := by
     rw [he₄]
-    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).inputPos = _
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+      (fun _ => RewindPhase.start)).inputPos = _
     rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
   have he₄out : e₄.output = e₃.output := by
     rw [he₄]
@@ -1353,12 +1365,14 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   have he₅pos : ∀ j, j ≠ jbt → e₅.workTapePos j = e₃.workTapePos j := by
     intro j hj
     rw [he₅]
-    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).workTapePos j = _
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).workTapePos j = _
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
     exact he₄pos j hj
   have he₅posbt : e₅.workTapePos jbt = 0 := by
     rw [he₅]
-    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).workTapePos jbt = 0
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).workTapePos jbt = 0
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
     exact he₄posbt
   have hd₅ctrpos : ((e₄.mapState (Sum.inr : _ → St₄)).mapState
@@ -1411,7 +1425,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       some entryW := by
     rw [Cfg.mapState_state, Cfg.mapState_state, he₅]
     rfl
-  have hd₆pos : ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).inputPos.val =
+  have hd₆pos : ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+      (fun _ => entryW)).inputPos.val =
       4 * (Nat.bits t).length + 2 * α.length + 7 := by
     rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₅in]
     exact h₃pos
@@ -1423,7 +1438,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     intro q hq1 hq2
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₅posbt, zero_add,
       Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅bt]
-  have hd₆dst : ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).workTapes jwin =
+  have hd₆dst : ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+      (fun _ => entryW)).workTapes jwin =
       fun _ => none := by
     funext q
     rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes,
@@ -1437,10 +1453,12 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       he₅pos jwin (by intro hmem; have := congrArg Fin.val hmem; omega)]
     exact (hbyval jwin (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
       (by intro hmem; have := congrArg Fin.val hmem; omega)).2
-  obtain ⟨T₆, hT₆, h₆st, h₆pos, h₆win, h₆winhd, h₆jbthd, h₆frame, h₆out, h₆cut⟩ :=
+  obtain ⟨T₆, hT₆, h₆st, h₆pos, h₆win, h₆winhd, h₆jbthd, h₆frame, h₆out,
+    h₆cut⟩ :=
     windows α x t ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW))
       hd₆st hd₆pos hd₆ctr hd₆dst hd₆dstpos
-  set e₆ := W.runFrom ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)) T₆ with he₆
+  set e₆ := W.runFrom ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+    (fun _ => entryW)) T₆ with he₆
   obtain ⟨s6run, s6st, s6cut⟩ := ic_seam_step _ (Sum.inr SweepPhase.done)
     W entryW doneW s5run s5st s5cut he₆.symm h₆st h₆cut
   -- Phase 7: the second input rewind.
@@ -1476,7 +1494,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     have htap : e₇.workTapes jal = e₆.workTapes jal := by
       funext q
       rw [he₇]
-      show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapes jal q = _
+      show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+        (fun _ => (0 : Fin 3))).workTapes jal q = _
       rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
     have hpp : e₇.workTapePos jal = e₆.workTapePos jal := by
       rw [he₇]
@@ -1515,7 +1534,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   set e₈ := ({ (e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start) with
     state := some RewindPhase.done
     workTapePos := Function.update
-      ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).workTapePos jal
+      ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jal
       (((e₇.mapState (Sum.inr : _ → St₇)).mapState
         (fun _ => RewindPhase.start)).workTapePos jal - α.length) } :
     Cfg K Bool RewindPhase _) with he₈
@@ -1523,7 +1543,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     intro j
     funext q
     rw [he₈]
-    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).workTapes j q = _
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+      (fun _ => RewindPhase.start)).workTapes j q = _
     rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₇]
     show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapes j q = _
     rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
@@ -1548,7 +1569,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
   have he₈in : e₈.inputPos = 1 := by
     rw [he₈]
-    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).inputPos = 1
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+      (fun _ => RewindPhase.start)).inputPos = 1
     rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₇]
   have he₈out : e₈.output = [] := by
     rw [he₈]
@@ -1559,7 +1581,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       Cfg.mapState_output, he₅out]
     exact h₃out
   -- The comprehensive clean ledger at the install seam.
-  have hclean₈ : ∀ j : Fin K, j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
+  have hclean₈ : ∀ j : Fin K,
+      j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
       j ≠ jctr → j ≠ jwin → e₈.workTapes j = tapes₀ j ∧ e₈.workTapePos j = 0 := by
     intro j h1 h2 h3 h4 h5 h6
     obtain ⟨hft, hfp⟩ := h₆frame j h2 h6
@@ -1668,7 +1691,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
               omega),
             FinTM.bufferTape_nil]
       · by_cases hcap : j = capI
-        · rw [hcap, (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).1,
+        · rw [hcap,
+            (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).1,
             Cfg.ofWords_output, List.append_nil, FinTM.bufferTape_nil, hcapcl.1,
             htapes₀blank capI (by intro hmem; have := congrArg Fin.val hmem; omega)]
         · rw [(embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j
@@ -1683,7 +1707,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
           rw [hieq, he₈posjal]
         · exact (hscratch i h0).2
       · by_cases hcap : j = capI
-        · rw [hcap, (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).2,
+        · rw [hcap,
+            (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).2,
             Cfg.ofWords_output, List.append_nil, hcapcl.2]
           rfl
         · rw [(embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j
@@ -1694,7 +1719,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         exact he₈out
       rw [hlhs, Cfg.mapState_output, embedSilentCfg_output]
   obtain ⟨hIrun, hIcut⟩ := ic_install_phase CI entryI doneI ιI capI hcapInr
-    e₈.workTapes e₈.workTapePos α (serializeK (c.decode α).tm.replayTM) TI hTIpos hTIrun hTIcut
+    e₈.workTapes e₈.workTapePos α (serializeK (c.decode α).tm.replayTM) TI hTIpos
+    hTIrun hTIcut
   have h₂9 : (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI).runFrom
       ((e₈.mapState (Sum.inr : _ → St₈)).mapState
         (fun _ => (Sum.inl () : Unit ⊕ CI.State))) TI =
@@ -1738,7 +1764,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   have hd₁₀srcp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
       (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jal = 0 := by
     rw [hlhs10p jal, he₉, ← hieq0, embedSilentCfg_selected_pos, Cfg.ofWords_workTapePos]
-  have hinst_unsel : ∀ j : Fin K, j.val ≠ 2 → ¬(11 + k₁ + k₂ ≤ j.val ∧ j.val < 10 + k₁ + k₂ + CI.k) →
+  have hinst_unsel : ∀ j : Fin K, j.val ≠ 2 →
+      ¬(11 + k₁ + k₂ ≤ j.val ∧ j.val < 10 + k₁ + k₂ + CI.k) →
       j ∉ Set.range ιI := by
     intro j h2 hrange
     rintro ⟨i, rfl⟩
@@ -1846,7 +1873,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [Cfg.mapState_state, Cfg.mapState_state, he₁₀, hLst]
     rfl
   have hd₁₁u : ∀ p : ℤ, -1 ≤ p → p < ((x.take t).length : ℤ) →
-      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).workTapes jwin
+      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+          (fun _ => RewindPhase.start)).workTapes jwin
         (((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
           (fun _ => RewindPhase.start)).workTapePos jwin - (x.take t).length + p) =
       FinTM.bufferTape (x.take t) p := by
@@ -1856,7 +1884,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₁₀win.1]
   obtain ⟨hr11run, hr11cut, hr11heads⟩ := rewindTM_run_ofCfg jwin (x.take t)
     (x.take t).length le_rfl
-    ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)) hd₁₁st hd₁₁u
+    ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start))
+    hd₁₁st hd₁₁u
   obtain ⟨s11run, s11st, s11cut⟩ := ic_seam_step _ (Sum.inr doneL)
     (rewindTM K jwin) RewindPhase.start RewindPhase.done
     s10run s10st s10cut hr11run rfl hr11cut
