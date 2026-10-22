@@ -943,6 +943,107 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
             some (if e.state = none ∧ e.output = [true] then accept else reject) ∧
           ∀ u < T, (R.runFrom start u).state ≠ some accept ∧
             (R.runFrom start u).state ≠ some reject := by
+  classical
+  obtain ⟨CI, entryI, doneI, costI, hkI, installs⟩ := ic_table_call c
+  set k₁ := (prefixCanonTM (FinTM.pairExtractTM true false)).k with hk₁
+  set k₂ := (prefixCanonTM (FinTM.pairExtractTM false true)).k with hk₂
+  set K := 11 + k₁ + k₂ + CI.k with hK
+  obtain ⟨js, hjs⟩ : {j : Fin K // j.val = 0} := ⟨⟨0, by omega⟩, rfl⟩
+  obtain ⟨jbt, hjbt⟩ : {j : Fin K // j.val = 1} := ⟨⟨1, by omega⟩, rfl⟩
+  obtain ⟨jal, hjal⟩ : {j : Fin K // j.val = 2} := ⟨⟨2, by omega⟩, rfl⟩
+  obtain ⟨jctr, hjctr⟩ : {j : Fin K // j.val = 3} := ⟨⟨3, by omega⟩, rfl⟩
+  obtain ⟨jwin, hjwin⟩ : {j : Fin K // j.val = 4} := ⟨⟨4, by omega⟩, rfl⟩
+  obtain ⟨jtbl, hjtbl⟩ : {j : Fin K // j.val = 5} := ⟨⟨5, by omega⟩, rfl⟩
+  obtain ⟨jsm, hjsm⟩ : {j : Fin K // j.val = 6} := ⟨⟨6, by omega⟩, rfl⟩
+  obtain ⟨jb0, hjb0⟩ : {j : Fin K // j.val = 7} := ⟨⟨7, by omega⟩, rfl⟩
+  obtain ⟨jb1, hjb1⟩ : {j : Fin K // j.val = 8} := ⟨⟨8, by omega⟩, rfl⟩
+  obtain ⟨capI, hcapI⟩ : {j : Fin K // j.val = 9} := ⟨⟨9, by omega⟩, rfl⟩
+  obtain ⟨capL, hcapL⟩ : {j : Fin K // j.val = 10} := ⟨⟨10, by omega⟩, rfl⟩
+  obtain ⟨ι₁, hι₁⟩ : {f : Fin k₁ ↪ Fin K // ∀ i, (f i).val = 11 + i.val} :=
+    ⟨⟨fun i => ⟨11 + i.val, by omega⟩,
+      fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+  obtain ⟨ι₂, hι₂⟩ : {f : Fin k₂ ↪ Fin K // ∀ i, (f i).val = 11 + k₁ + i.val} :=
+    ⟨⟨fun i => ⟨11 + k₁ + i.val, by omega⟩,
+      fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+  obtain ⟨ιI, hιI⟩ :
+      {f : Fin CI.k ↪ Fin K //
+        ∀ i, (f i).val = if i.val = 0 then 2 else 10 + k₁ + k₂ + i.val} := by
+    refine ⟨⟨fun i => if h0 : i.val = 0 then jal else ⟨10 + k₁ + k₂ + i.val, by omega⟩,
+      fun a b h => ?_⟩, fun i => ?_⟩
+    · dsimp only at h
+      by_cases ha : a.val = 0 <;> by_cases hb : b.val = 0
+      · exact Fin.ext (by omega)
+      · rw [dif_pos ha, dif_neg hb] at h
+        have hv := congrArg Fin.val h
+        rw [hjal, Fin.val_mk] at hv
+        omega
+      · rw [dif_neg ha, dif_pos hb] at h
+        have hv := congrArg Fin.val h
+        rw [Fin.val_mk, hjal] at hv
+        omega
+      · rw [dif_neg ha, dif_neg hb, Fin.mk.injEq] at h
+        exact Fin.ext (by omega)
+    · simp only [Function.Embedding.coeFn_mk]
+      by_cases h0 : i.val = 0
+      · rw [dif_pos h0, if_pos h0, hjal]
+      · rw [dif_neg h0, if_neg h0, Fin.val_mk]
+  obtain ⟨ι₇, hι₇0, hι₇1, hι₇2, hι₇3, hι₇4, hι₇5, hι₇6⟩ :
+      {f : Fin 7 ↪ Fin K //
+        f 0 = jwin ∧ f 1 = jb0 ∧ f 2 = jb1 ∧ f 3 = js ∧ f 4 = jtbl ∧ f 5 = jsm ∧ f 6 = jctr} := by
+    refine ⟨⟨fun i =>
+      (⟨if i.val = 0 then 4 else if i.val = 1 then 7 else if i.val = 2 then 8
+        else if i.val = 3 then 0 else if i.val = 4 then 5 else if i.val = 5 then 6
+        else 3, by split_ifs <;> omega⟩ : Fin K),
+      fun a b h => ?_⟩, Fin.ext (by rw [hjwin]; rfl), Fin.ext (by rw [hjb0]; rfl),
+      Fin.ext (by rw [hjb1]; rfl), Fin.ext (by rw [hjs]; rfl), Fin.ext (by rw [hjtbl]; rfl),
+      Fin.ext (by rw [hjsm]; rfl), Fin.ext (by rw [hjctr]; rfl)⟩
+    rcases a with ⟨av, ha7⟩
+    rcases b with ⟨bv, hb7⟩
+    have hv := congrArg Fin.val h
+    apply Fin.ext
+    dsimp only at hv ⊢
+    split_ifs at hv <;> omega
+  obtain ⟨QW, instFW, instDW, W, entryW, doneW, CW, windows⟩ :=
+    ic_window_call K jbt jwin (by intro h; have := congrArg Fin.val h; omega)
+  haveI := instFW
+  haveI := instDW
+  obtain ⟨QL, instFL, instDL, L, entryL, doneL, CL, layouts⟩ :=
+    ic_layout_call K jal jtbl jsm (by intro h; have := congrArg Fin.val h; omega)
+      (by intro h; have := congrArg Fin.val h; omega)
+      (by intro h; have := congrArg Fin.val h; omega)
+  haveI := instFL
+  haveI := instDL
+  -- The twelve phases.
+  let A₁ := embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm
+  let A₂ := ic_rewindLeafTM K
+  let A₃ := embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm
+  let A₄ : MultiTapeTM K Bool RewindPhase := rewindTM K jbt
+  let A₅ : MultiTapeTM K Bool SweepPhase := copyTM K jbt jctr
+  let A₈ : MultiTapeTM K Bool RewindPhase := rewindTM K jal
+  let A₉ := seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI
+  let A₁₁ : MultiTapeTM K Bool RewindPhase := rewindTM K jwin
+  let A₁₂ := embedSilentTM ι₇ capL ic_loopHost
+  -- The assembled interpreter.
+  let S₂ := seamCompTM A₁ (Sum.inr ()) A₂ 0
+  let S₃ := seamCompTM S₂ (Sum.inr 2) A₃
+    (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀)
+  let S₄ := seamCompTM S₃ (Sum.inr (Sum.inr ())) A₄ RewindPhase.start
+  let S₅ := seamCompTM S₄ (Sum.inr RewindPhase.done) A₅ SweepPhase.sweep
+  let S₆ := seamCompTM S₅ (Sum.inr SweepPhase.done) W entryW
+  let S₇ := seamCompTM S₆ (Sum.inr doneW) A₂ 0
+  let S₈ := seamCompTM S₇ (Sum.inr 2) A₈ RewindPhase.start
+  let S₉ := seamCompTM S₈ (Sum.inr RewindPhase.done) A₉ (Sum.inl ())
+  let S₁₀ := seamCompTM S₉ (Sum.inr (Sum.inr doneI)) L entryL
+  let S₁₁ := seamCompTM S₁₀ (Sum.inr doneL) A₁₁ RewindPhase.start
+  let R := seamCompTM S₁₁ (Sum.inr RewindPhase.done) A₁₂ ⟨false, (.dec .run, true)⟩
+  refine ⟨K, _, inferInstance, inferInstance, R, js,
+    Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl
+      (Sum.inl (Sum.inl (prefixCanonTM (FinTM.pairExtractTM true false)).tm.q₀))))))))))),
+    Sum.inr ⟨true, Sum.inr true⟩, Sum.inr ⟨true, Sum.inr false⟩, ?_, ?_⟩
+  · intro hcontra
+    injection hcontra with h1
+    injection h1 with h1a h1b
+    exact Bool.noConfusion (Sum.inr.inj h1b)
   sorry
 
 end Turing
