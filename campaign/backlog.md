@@ -1335,9 +1335,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     resolutions, C61-1.**
   - **For addendum v2.5:** both reviews found 967 of the 1,002 cache files already on the host
     before the fetch; log the cache tool's archive store before the first fetch and report the
-    count (gate 60, note 16; the wording is in `campaign/gates/59-c1-seamlayout-fill/evidence/`
-    `round1-review/REVIEW.md`, V25-2). **Pending (user):** allow a pre-populated store, or
-    require an empty one.
+    count (gate 60, note 16). **Done: addendum v2.5** (2026-10-22; the user: a pre-populated store
+    is allowed and logged).
 - **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
   (`campaign/fills/mig12/reports/mig12-cont1-eres-REPORT.md`): its host was given the **v2.1**
   addendum (`2563c8d2…`), whose re-check after the toolchain kept the 12 GiB floor; free disk was
@@ -1392,8 +1391,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `campaign/fills/s13d/reports/g4-cont3-ERRATUM.md`; gate 61's evidence note
   `evidence/round1-review/10-outputs.txt`; the counting convention W1 (public declarations at
   source; public constants, such as derived instances of private types, reported separately).
-  **#145, #146 and #148: clear to merge.** #147 after #145, then its merged-tree replay and gate
-  63; #149's replay after those.
+  **#145, #146 and #148: clear to merge. Merged (user, 2026-10-22: `aa326284`, `b5e5095a`,
+  `c38f0fed`).** #147 next (its merged-tree replay and gate 63); #149's replay on the merged tree.
+  - **Ruled (user, 2026-10-22):** the counting convention W1 goes into `workflow.md` §4 (done);
+    addendum v2.5 allows a pre-populated cache store, logged (done: v2.5,
+    `campaign/standards/fill-environment-addendum.md`, SHA-256
+    `90851511cf164dfa84ac9264cb5ba7acd54b7f551c823ae5d1000e43e233abf0`; outbox copy updated). Fills
+    issued from now on cite v2.5; megafill A and MIG-12 cont1, already out, run under v2.4.
   - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
     the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
     SeamLayout and the facade.
@@ -1430,8 +1434,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   read for `BufferWords`.
   - **For addendum v2.5:** item 2's manifest check fails by construction under the narrowed
     fetch (the four documentation packages are absent); it should check each package present in
-    `.lake/packages` and list the others as absent (gate 59, note 16; wording V25-1 in the gates
-    59–61 review).
+    `.lake/packages` and list the others as absent (gate 59, note 16). **Done: addendum v2.5.**
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
