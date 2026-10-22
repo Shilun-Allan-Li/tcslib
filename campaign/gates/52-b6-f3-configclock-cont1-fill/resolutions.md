@@ -33,6 +33,7 @@ keeps a note of the construction used (minor 8); one constant, silence and space
 check of the silence route (note 9); the frozen bridge's `unfold` is outside the seal (note 7);
 the issue-time line numbers.
 
-**Re-replay for the fix:** pending (`evidence/replay-l134b.sh`: the same 2 modules from `oleans-l132b`,
-pin `WindowClock.lean:b50cdbb19b1ac9c6018c074d25a7358c8f95b826`). The PR body is replaced
+**Re-replay for the fix: passed (user, 2026-10-21):** `evidence/replay-l134b.sh`, 2 of 2 at `189b7115`,
+0 failed, static-equal (1), from `oleans-l132b`, pin `WindowClock.lean:b50cdbb1`
+(`evidence/replay-l134b.*`). The PR body is replaced
 (`evidence/round1-review/fix/pr-body-B-with-docstring-commit.md`, with `189b7115` filled in).

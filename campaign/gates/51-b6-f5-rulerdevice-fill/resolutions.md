@@ -18,5 +18,6 @@ it (`replay-l133b.sh`).
 | 8, 9 | notes | The call rows and the host remain explicitly admitted, with their binding sketches retained; the continuation must prove the call rows and keep the halting-left-move and right-clamp cases. | **Carried** to F5's continuation brief. |
 | 3–7, 10–12 | notes | Integrity and the freeze; the public definitions' meanings; the controller and its single induction; the test's correctness, restoration and time; the swap's fidelity, imports and rule 10 (beyond row 1); the elaboration, axiom, duplication, lint and replay records. | No action. (Reproduced for the records: the head elaborates against `oleans-l133` with the two warnings only; the swap `tapeAction 0 a none b q = rd_move (some q) a b` is machine-checked, `evidence/round1-fix/G51Swap.lean.txt`.) |
 
-**Re-replay for the fix:** pending (`evidence/replay-l133b.sh`: the same 4 modules from `oleans-l132b`,
-pin `InputDevice.lean:83e1e66af89bfd814982e99338d4f9d330515616`).
+**Re-replay for the fix: passed (user, 2026-10-21):** `evidence/replay-l133b.sh`, 4 of 4 at `3946c2b5`,
+0 failed, static-equal (5), from `oleans-l132b`, pin `InputDevice.lean:83e1e66a`
+(`evidence/replay-l133b.*`).
