@@ -433,7 +433,8 @@ the span rule):
 - `Build/InputWindow`, a copy: **1 of 17 declarations (5.9%)** (1 public, 16 private), **5**
   lines (`iw_patch`).
 - `Build/StepClock`, the public one: **1 of 41 (2.4%)** (8 public, 33 private), **4** lines
-  (`wordPatch`).
+  (`wordPatch`). From #139 on, **1 of 42 (2.4%)** (9 public): #139 adds `wordPatch_append`, a
+  member of WA-1 below.
 - `Build/CounterLoop`: **1 of 79 (1.3%)** (59 public, 20 private), **4** lines (`counterPatch`).
 - `Build/Catalog`: **1 of 505 (0.2%)** (113 public, 392 private), **5** lines (`catalogTape`). It
   is in none of the correspondences behind Catalog's row above, so it adds one member there.
@@ -444,6 +445,43 @@ the span rule):
 `InputWindow` had no earlier copies. `Catalog` had, but #137 adds no copy to it, since
 `catalogTape` predates the delivery. The §1 item IW-1 is opened anyway, as for RW-1, and
 answered. After the retirement only `wordPatch` remains, in its new home.
+
+**WA-1, the adjacent-patch law** (PR #139, `Build/StepClock`, 2026-10-18; ledgered at gate 56,
+finding 2): the public `wordPatch_append`,
+`wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v)`, restates
+`Build/RecordTable`'s private `rt_adjacentWrites` (2026-10-13). With `wordPatch` unfolded and
+beta-reduced, the two elaborated statements are alpha-equivalent: they differ only in binder
+names (`tape`, `o` for `ct`, `cp`), checked on the compiled declarations at #139's merged head
+(gate 56's review). The proofs differ (the new one reads `wordPatch` and `FinTM.bufferTape` only
+through their published equations; `rt_adjacentWrites` unfolds `FinTM.bufferTape`), and the v3
+screen pairs neither, so this is a restated-fact family, not a text copy, as BW-1 is. The F3 review
+that proposed the lemma disclosed the pair, and the ruling that chose it named it (backlog §2, F3
+cont1: "E2 ruled (user, 2026-10-18): B"), but it was not ledgered until gate 56.
+**Acknowledgment:** the ruling of 2026-10-18 that chose option B (F3's E2). The decision put to
+the user named the re-point ("which also opens the `rt_adjacentWrites` re-point"), and the
+ruling's record names `rt_adjacentWrites` as the lemma's private form, to re-point in the user's
+dedup window. The record does not call the pair a copy family, as the same day's BW-1 ruling
+does; gate 56's review (finding 2) reads the ruling as acknowledging it. **The user to confirm**
+(asked 2026-10-22). **Cleanup owner and window:**
+the user's dedup window, through backlog §1 WA-1, with IW-1's move: once `wordPatch`, its cell
+lemmas, `wordPatch_append` and the explicit-form lemma are below `Build/Catalog`, they are in
+`RecordTable`'s closure; `rt_adjacentWrites` is deleted, and its one use (`rt_advanceCfg_append`)
+cites `wordPatch_append`. **Census** (the primary rule, each member counted once per file it
+inhabits; declarations as the style lint counts them at #139's merged head `1cd66f1b`; lines by
+the span rule):
+- `Build/StepClock`, the public one: **1 of 42 declarations (2.4%)** (9 public, 33 private),
+  **25** lines (`wordPatch_append`). With IW-1's `wordPatch` (4 lines), the file has **2 members
+  of 42 (4.8%)**, **29** lines.
+- `Build/RecordTable`, the private one: **1 of 129 (0.8%)** (29 public, 100 private), **28** lines
+  (`rt_adjacentWrites`). It had no member before.
+- Copied characters: none. The v3 screen of `StepClock`, `RecordTable`, `WindowClock` and
+  `WindowRun` (176 declarations, 19 pairs) pairs neither.
+
+**The one-fifth rule** (`workflow.md` §4): neither file is past one fifth. #139 adds no copy to a
+file that received copies before: `StepClock`'s earlier member is IW-1's `wordPatch`, the public
+original, and #139 leaves `RecordTable` byte-unchanged. The §1 item WA-1 is opened anyway, as for
+RW-1 and IW-1, and answered. After the retirement only `wordPatch_append` remains, in
+`wordPatch`'s new home.
 
 **C1-E cont1, the exhaustive replay** (PR #136, `ClassNP/ExhaustiveReplay`, 2026-10-21): **no
 member.** The v3 screen's 122 new pairs are all in-file (0 cross-file, 0 gone; 297 → 428

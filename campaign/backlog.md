@@ -989,8 +989,39 @@ definition in four files, `wordPatch` the public one.
   controls, the statement unchanged). The move edits `Build/Catalog`, so it goes with Catalog's
   next edit (12.2c T3 or MIG-1), as RW-1 does. If `InputWindow` is wanted earlier, option B
   lands it alone, importing `StepClock` (acyclic; the closure gains that one module).
+  `RecordTable`'s private `rt_adjacentWrites` re-points to `wordPatch_append` in the same move
+  (WA-1).
 - **Census** (`duplication-ledger.md`, IW-1): `InputWindow` 1 of 17 declarations (5.9%),
-  `StepClock` 1 of 41, `CounterLoop` 1 of 79, `Catalog` 1 of 505; none is past one fifth.
+  `StepClock` 1 of 41 (1 of 42 from #139 on), `CounterLoop` 1 of 79, `Catalog` 1 of 505; none is
+  past one fifth.
+
+### WA-1: the adjacent-patch law, `rt_adjacentWrites` restated publicly (user, 2026-10-18; gate 56)
+
+*Origin: F3 cont1's escalation E2, option B
+(`campaign/fills/b6/reviews/configclock-cont1/REVIEW.md`, §(d)); PR #139; ledgered at gate 56,
+finding 2.*
+
+`Build/StepClock`'s public `wordPatch_append` (#139) is `Build/RecordTable`'s private
+`rt_adjacentWrites` (2026-10-13) stated through `wordPatch`: with `wordPatch` unfolded, the two
+statements are alpha-equivalent (binders `tape`, `o` for `ct`, `cp`). Different proofs; no screen
+pair.
+- **Acknowledged in the ruling (user, 2026-10-18)** that chose B: the decision put to the user
+  named the re-point, and the ruling's record (§2, F3 cont1) names `rt_adjacentWrites` and its
+  re-point in the user's dedup window. Gate 56's review (finding 2) reads that as acknowledging the
+  pair; **the user to confirm** (asked 2026-10-22).
+- **Retirement, in the user's dedup window, with IW-1's move** (Catalog's next edit: 12.2c T3 or
+  MIG-1). `RecordTable` imports `Build/Catalog` and `Build/CounterLoop` (transitively) but not
+  `StepClock`. Once `wordPatch`, its cell lemmas, `wordPatch_append` and the explicit-form lemma
+  are below `Build/Catalog`, they are in `RecordTable`'s closure with no new import, and the move's
+  replay (Catalog's downstream) already covers `RecordTable`. Then `rt_adjacentWrites` is deleted,
+  and its one use, `rt_advanceCfg_append` (`exact congrFun (rt_adjacentWrites …) p`, on the
+  unfolded form that `rt_advanceCfg`'s tapes are written in), cites `wordPatch_append` through the
+  explicit-form lemma; the deleted proof's unfolding of `FinTM.bufferTape`
+  (`simp only [FinTM.bufferTape, …]`) goes with it. Re-pointing earlier would need `RecordTable`
+  to import `StepClock` (acyclic) and a replay of `RecordTable`'s 50 downstream modules, and
+  `StepClock` publishes no explicit-form lemma, so it waits for the move.
+- **Census** (`duplication-ledger.md`, WA-1): `StepClock` 1 of 42 declarations (2.4%; 2 of 42,
+  4.8%, with IW-1's `wordPatch`), `RecordTable` 1 of 129 (0.8%); none is past one fifth.
 
 ## 2. Campaign work queued or on hold
 
@@ -1297,8 +1328,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   **E2 ruled (user, 2026-10-18): B**, a public `wordPatch_append` in `Build/StepClock` by a
   maintainer API PR, with its own replay (StepClock's downstream) and gate, before F3 cont2's
   brief issues. It is the public form of `RecordTable`'s private `rt_adjacentWrites`, which can
-  re-point to it in the user's dedup window. (Option A, a private `cw_fill_append`, was not
-  chosen.) Both were verified (`suggested-fix.diff`).
+  re-point to it in the user's dedup window (§1 WA-1, ledgered at gate 56). (Option A, a private
+  `cw_fill_append`, was not chosen.) Both were verified (`suggested-fix.diff`).
 - **The seam-layout standalone fill's word identities, ruled (user, 2026-10-18):** they exist only
   as `StepBlock`'s privates (`bufferTape_suffix`, `_reads`, `_outside`, `_unary`), outside the
   layout's closure. **A new small public module beside `Simulation`** publishes the four, by a

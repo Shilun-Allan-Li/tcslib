@@ -1,0 +1,30 @@
+# Gate 56, minor 2: the census under the ledger's convention (primary rule: each member counted once per file it inhabits; declarations as the style lint counts them; lines by the span rule: attached docstring through the last code line)
+# ledger read at wt-hk 25d0ffa7; sources at 1cd66f1b
+
+## Spans
+StepClock.lean 105-129 (wordPatch_append): 25 lines; line 104 blank: []; line 130 blank: []
+  first: /-- **Adjacent patches join**: patching `u` at `cp` and then `v` at `cp + |u|`, right after it,
+  last:          wordPatch_of_not_mem _ _ _ (by omega)]
+RecordTable.lean 3194-3221 (rt_adjacentWrites): 28 lines; line 3193 blank: []; line 3222 blank: []
+  first: /-- Two adjacent framed word writes are one write of their concatenation.
+  last:      · rw [if_neg second, if_neg (by omega)]
+StepClock.lean 86-89 (wordPatch, IW-1's member): 4 lines
+
+## Declarations (evidence/lint-build.txt, at the merged head 1cd66f1b)
+INFO  TCSlib/Complexity/TuringMachine/Build/RecordTable.lean       6140 lines; 29 public / 100 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/StepClock.lean         1205 lines; 9 public / 33 private declarations
+
+## Earlier ledger membership (wt-hk's duplication-ledger.md)
+lines naming RecordTable: 0
+415:private `iw_patch` is `Build/StepClock`'s public `wordPatch` at `Γ = Bool`: token for token after
+422:"new copies: none" (`StepClock` was outside its screen population and its import context). The
+435:- `Build/StepClock`, the public one: **1 of 41 (2.4%)** (8 public, 33 private), **4** lines
+
+## Census
+StepClock: this pair 1 of 42 (2.4%), 25 lines; cumulative with IW-1 (wordPatch, 4 lines): 2 of 42 (4.8%), 29 lines
+  IW-1 refreshed: wordPatch 1 of 42 (2.4%) (was 1 of 41, 2.4%: 8 public, 33 private before #139)
+RecordTable: 1 of 129 (0.8%), 28 lines; no earlier member
+one fifth: StepClock 0.048 < 0.2; RecordTable 0.0078 < 0.2
+
+## Copied characters
+screen v3 (evidence/screen.txt): pairs naming wordPatch_append or rt_adjacentWrites: 0

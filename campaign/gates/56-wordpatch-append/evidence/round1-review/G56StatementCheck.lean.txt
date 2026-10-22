@@ -1,0 +1,66 @@
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.RecordTable
+
+/-! Gate 56, minor 2 and note 5 (records only, nothing here lands).
+
+1. **The statement-level overlap.** `Build/RecordTable`'s private `rt_adjacentWrites`, read from
+   its compiled declaration, against `Turing.wordPatch_append` with `wordPatch` delta-expanded and
+   beta-reduced: alpha-equivalence of the two elaborated types (`Expr.eqv`, which ignores binder
+   names), and whether they are equal including binder names (`Expr.equal`).
+2. **Sufficiency through the public API** (under the seal of `FinTM.bufferTape` and `wordPatch`):
+   the constant fill of the copy endpoint is a `wordPatch` of a `List.replicate` word, and two
+   adjacent constant patches join into one, by `wordPatch_append` and list lemmas only. -/
+
+open Lean Meta Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let target := `Turing.rt_adjacentWrites
+  let hits := env.constants.fold (init := #[]) fun acc n _ =>
+    if privateToUserName? n == some target then acc.push n else acc
+  logInfo m!"G56 private declarations named {target}: {hits}"
+  let some rtName := hits[0]? | throwError "rt_adjacentWrites not found"
+  let some rt := env.find? rtName | throwError "missing"
+  let some wa := env.find? ``Turing.wordPatch_append | throwError "missing"
+  logInfo m!"G56 universe parameters: rt_adjacentWrites {rt.levelParams}, wordPatch_append {wa.levelParams}"
+  let waT ← liftCoreM <| Meta.deltaExpand wa.type (· == ``Turing.wordPatch)
+  let waT ← liftCoreM <| Core.betaReduce waT
+  let rtT := rt.type.instantiateLevelParams rt.levelParams (wa.levelParams.map mkLevelParam)
+  logInfo m!"G56 alpha-equivalent (wordPatch_append, wordPatch unfolded) vs rt_adjacentWrites: {waT == rtT}"
+  logInfo m!"G56 equal including binder names: {waT.equal rtT}"
+  let names (e : Expr) : List Name := Id.run do
+    let mut e := e
+    let mut acc := #[]
+    while e.isForall do
+      acc := acc.push e.bindingName!
+      e := e.bindingBody!
+    return acc.toList
+  logInfo m!"G56 binders: rt_adjacentWrites {names rtT}; wordPatch_append {names waT}"
+  logInfo m!"G56 rt_adjacentWrites's type: {rtT}"
+  logInfo m!"G56 wordPatch_append's type, wordPatch unfolded: {waT}"
+
+namespace Turing
+
+section G56Seal
+attribute [local irreducible] Turing.FinTM.bufferTape Turing.wordPatch
+
+/-- The constant fill (the shape of the copy endpoint's write) is a patch of a constant word. -/
+example {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (a : ℕ) (e : Γ) :
+    (fun q => if cp ≤ q ∧ q < cp + (a : ℤ) then some e else ct q) =
+      wordPatch ct cp (List.replicate a e) := by
+  funext q
+  by_cases h : cp ≤ q ∧ q < cp + (a : ℤ)
+  · have hn : 0 ≤ q - cp := by omega
+    rw [if_pos h, wordPatch_of_mem _ _ _ h.1 (by simpa using h.2), ← Int.toNat_of_nonneg hn,
+      FinTM.bufferTape_nat, List.getElem?_replicate_of_lt (by omega)]
+  · rw [if_neg h, wordPatch_of_not_mem _ _ _ (by simpa using h)]
+
+/-- Two adjacent constant patches join into one, by `wordPatch_append`. -/
+example {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (a b : ℕ) (e : Γ) :
+    wordPatch (wordPatch ct cp (List.replicate a e)) (cp + a) (List.replicate b e) =
+      wordPatch ct cp (List.replicate (a + b) e) := by
+  have h := wordPatch_append ct cp (List.replicate a e) (List.replicate b e)
+  rwa [List.length_replicate, List.replicate_append_replicate] at h
+
+end G56Seal
+
+end Turing
