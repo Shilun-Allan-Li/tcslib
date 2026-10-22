@@ -1,0 +1,60 @@
+9a10
+> import TCSlib.Complexity.TuringMachine.Build.Catalog
+204a206,208
+> section B6F5TapeSeal
+> attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Action.apply Turing.moveInputPos Turing.FinTM.bufferTape Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.tapeAction
+> 
+208,228d211
+< /-- A silent joint input/work-head move. No catalog row moves both heads together. -/
+< private def rd_move {S : Type} (q : Option S) (a b : SignType) : Action 1 Bool S :=
+<   ⟨a, fun _ => (none, b), none, q⟩
+< 
+< /-- The joint move preserves the tape contents and output. -/
+< private theorem rd_move_apply {S : Type} {z : List Bool} (d : Cfg 1 Bool S z)
+<     (q : Option S) (a b : SignType) :
+<     (rd_move q a b).apply d =
+<       { d with
+<         state := q
+<         inputPos := moveInputPos d.inputPos a
+<         workTapePos := fun i => d.workTapePos i + (b : ℤ) } := by
+<   refine Cfg.ext (Action.apply_state _ _) (Action.apply_inputPos _ _) ?_ ?_ ?_
+<   · funext i
+<     rw [Action.apply_workTapes]
+<     simp only [rd_move, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+<   · funext i
+<     exact Action.apply_workTapePos _ _ i
+<   · rw [Action.apply_output]
+<     simp only [rd_move, Option.toList_none, List.append_nil]
+< 
+234,238c217,221
+<     | .inl _ => if w 0 = some true then rd_move (some (.inl ())) (-1) 1
+<         else rd_move (some (.inr (v.isNone, false))) 0 (-1)
+<     | .inr (b, false) => if w 0 = some true then rd_move (some (.inr (b, false))) 1 (-1)
+<         else rd_move (some (.inr (b, true))) 0 1
+<     | .inr (b, true) => rd_move (some (.inr (b, true))) 0 0
+---
+>     | .inl _ => if w 0 = some true then tapeAction 0 (-1) none 1 (.inl ())
+>         else tapeAction 0 0 none (-1) (.inr (v.isNone, false))
+>     | .inr (b, false) => if w 0 = some true then tapeAction 0 1 none (-1) (.inr (b, false))
+>         else tapeAction 0 0 none 1 (.inr (b, true))
+>     | .inr (b, true) => tapeAction 0 0 none 0 (.inr (b, true))
+272c255
+<       (rd_cfg d q n e).workTapeSymbols = rd_move (some q') a b)
+---
+>       (rd_cfg d q n e).workTapeSymbols = tapeAction 0 a none b q')
+276,277c259
+<   rw [MultiTapeTM.step_of_some (show (rd_cfg d q n e).state = some q from rfl), ht,
+<     rd_move_apply]
+---
+>   rw [step_of_tapeAction_move rd_test (rd_cfg d q n e) 0 a b rfl ht]
+280c262,263
+<   simp only [rd_cfg, add_assoc, he]
+---
+>   rw [Subsingleton.elim i 0]
+>   simp only [Function.update_self, rd_cfg, add_assoc, he]
+435a419,420
+> end B6F5TapeSeal
+> 
+557a543,544
+> 
+> #print axioms Turing.exists_rulerTestTM

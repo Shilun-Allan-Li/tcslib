@@ -1,0 +1,11 @@
+/-- Two adjacent constant fills are one constant fill of their combined width.
+**Proof sketch.** Split on the cell: the two intervals partition the combined one, and
+outside it both sides read the original tape. -/
+private lemma cw_fill_append {Γ : Type} (tape : ℤ → Option Γ) (o : ℤ) (a b : ℕ) (e : Γ) :
+    (fun z => if o + (a : ℤ) ≤ z ∧ z < o + a + (b : ℤ) then some e
+      else if o ≤ z ∧ z < o + (a : ℤ) then some e else tape z) =
+    (fun z => if o ≤ z ∧ z < o + ((a + b : ℕ) : ℤ) then some e else tape z) := by
+  funext z
+  push_cast
+  split_ifs <;> first | rfl | omega
+

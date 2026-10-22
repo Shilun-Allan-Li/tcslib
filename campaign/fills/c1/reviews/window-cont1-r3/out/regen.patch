@@ -1,0 +1,29 @@
+From e71921d76ab6aad55e0a6b0480bccc3bb17cab89 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sun, 18 Oct 2026 17:01:22 +0100
+Subject: [PATCH] Record open bounded-window copier implementation obligations
+
+---
+ TCSlib/Complexity/TuringMachine/Build/InputWindow.lean | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean b/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
+index 5fd86b0392924e50a45df0b373de37f65ebac781..5fd404d74c6f0b673e61cb43ebf4c4d3ae7159ab 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
+@@ -55,7 +55,11 @@ underflow included, is at most `4d + 2|w| + 2` (`Turing.counterOverhead_le`, use
+ early input end (`|y| < d`), the loop escapes in round `r = |y| + 1 ≤ d`, after `r`
+ decrements, which cost at most `4r + 2|w|` (`Turing.counterOverhead_le_of_le`). Either way the
+ total is at most `C·(|y| + 1) + 2|w|`. The exit-time and endpoint clauses are those of
+-`Turing.counterLoopTM_run_done` and `Turing.counterLoopTM_run_escape`. -/
++`Turing.counterLoopTM_run_done` and `Turing.counterLoopTM_run_escape`.
++
++**Implementation status.** The contract remains unproved. Its copied-prefix invariant, the two
++counter-loop exit cases and the transport to the selected tapes remain open.
++-/
+ theorem exists_inputWindowCopyTM (k : ℕ) (j dst : Fin k) (hjd : j ≠ dst) :
+     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM k Bool Q)
+       (entry done : Q) (C : ℕ),
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,51 @@
+--- line 38: hits ['catalog', 'row']
+/-- The one-cell copy body returns to `false` after copying a symbol and escapes to `true`
+at a blank. No catalog row provides this cyclic native-input copy with an end-marker escape. -/
+--- line 48: hits ['leaf']
+/-- One live step of a leaf is its selected action, expressed through the model's equations. -/
+--- line 56: hits []
+/-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/
+--- line 76: hits []
+/-- On a blank input cell, the body escapes in one step without changing any data. -/
+--- line 84: hits []
+/-- Overwrite a finite interval of a tape, leaving its exterior intact. -/
+--- line 90: hits []
+/-- Appending a bit to the copied interval changes exactly its next cell.
+
+**Proof sketch.** At the next cell use the buffer's append equation. Inside the old interval
+that equation preserves the old symbol; outside the enlarged interval both tapes are framed. -/
+--- line 115: hits []
+/-- The body configuration after copying `r` input cells starting at input index `p`. -/
+--- line 124: hits []
+/-- The zero-length copied prefix is the initial configuration. -/
+--- line 141: hits ['leaf', 'round']
+/-- A successful body round extends the copied input prefix by exactly one cell.
+
+**Proof sketch.** The next input bit has index `p + r`. The one-step leaf writes it at the
+next free destination cell, which is exactly the interval append equation. -/
+--- line 168: hits ['public', 'round']
+/-- The one-step round orbit is the explicitly copied prefix while input cells remain.
+
+**Proof sketch.** Induct on the number of rounds using the public round-orbit equations and
+the one-cell extension lemma. -/
+--- line 184: hits ['public']
+/-- The counter loop's escape anchor takes one silent stationary step to its done anchor.
+Every other transition is delegated to the public counter loop. -/
+--- line 192: hits ['public']
+/-- Before the escape anchor is visited, adding the exit join does not change the run.
+
+**Proof sketch.** The transition tables agree off the escape anchor. Apply the public
+agreement transport on that set of states. -/
+--- line 211: hits []
+/-- The join changes only the control state at the escape anchor. -/
+--- line 218: hits []
+/-- The all-true underflow word has exactly the counter loop's reported tape contents. -/
+--- line 228: hits ['round']
+/-- The two-tape copier stops after the available window, with its counter width preserved.
+
+**Proof sketch.** If the counter value fits in the remaining input, use the returning loop
+contract and its whole-run underflow bound. Otherwise use the escape contract after one
+additional blank-reading round, then the stationary exit join. Both contracts exclude an
+earlier exit; their ledgers give the common coefficient six. -/
+--- line 310: hits []
+/-- Select the destination as tape zero and the distinct counter as tape one. -/

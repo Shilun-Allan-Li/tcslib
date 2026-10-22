@@ -1,0 +1,284 @@
+From f9810ddf411ebb40b07e287398787d0db4e160f6 Mon Sep 17 00:00:00 2001
+From: Codex <codex@openai.com>
+Date: Sat, 17 Oct 2026 21:22:01 -0700
+Subject: [PATCH] Prove bounded-prefix ruler test (B6 F5 phase 1)
+
+---
+ .../TuringMachine/Build/InputDevice.lean      | 226 +++++++++++++++++-
+ 1 file changed, 222 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+index 1cc06602..1785a92b 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+@@ -5,6 +5,8 @@ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+ import TCSlib.Complexity.TuringMachine.UniversalStartup
++import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
++import TCSlib.Complexity.TuringMachine.Build.Seam
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -200,6 +202,176 @@ theorem pairEncode_pairEncode_drop (u α x : List Bool) :
+   rw [show 2 * u.length + 2 * α.length + 4 = (2 * u.length + 2) + (2 * α.length + 2) by ring,
+     ← List.drop_drop, hd, hd]
+ 
++/-- The forward state, followed by return and verdict states carrying one Boolean. -/
++private abbrev rd_State := Unit ⊕ Bool × Bool
++
++/-- A silent joint input/work-head move. No catalog row moves both heads together. -/
++private def rd_move {S : Type} (q : Option S) (a b : SignType) : Action 1 Bool S :=
++  ⟨a, fun _ => (none, b), none, q⟩
++
++/-- The joint move preserves the tape contents and output. -/
++private theorem rd_move_apply {S : Type} {z : List Bool} (d : Cfg 1 Bool S z)
++    (q : Option S) (a b : SignType) :
++    (rd_move q a b).apply d =
++      { d with
++        state := q
++        inputPos := moveInputPos d.inputPos a
++        workTapePos := fun i => d.workTapePos i + (b : ℤ) } := by
++  refine Cfg.ext (Action.apply_state _ _) (Action.apply_inputPos _ _) ?_ ?_ ?_
++  · funext i
++    rw [Action.apply_workTapes]
++    simp only [rd_move, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
++  · funext i
++    exact Action.apply_workTapePos _ _ i
++  · rw [Action.apply_output]
++    simp only [rd_move, Option.toList_none, List.append_nil]
++
++/-- The ruler test is a leaf: scan jointly left/right, read once, and return jointly.
++No catalog row provides the joint input and work-head movement. -/
++private def rd_test : MultiTapeTM 1 Bool rd_State where
++  q₀ := .inl ()
++  tr q v w := match q with
++    | .inl _ => if w 0 = some true then rd_move (some (.inl ())) (-1) 1
++        else rd_move (some (.inr (v.isNone, false))) 0 (-1)
++    | .inr (b, false) => if w 0 = some true then rd_move (some (.inr (b, false))) 1 (-1)
++        else rd_move (some (.inr (b, true))) 0 1
++    | .inr (b, true) => rd_move (some (.inr (b, true))) 0 0
++
++/-- A point of the restoring trace, with distance from the original input head. -/
++private def rd_cfg {z : List Bool} (d : Cfg 1 Bool rd_State z) (q : rd_State)
++    (n : ℕ) (e : ℤ) : Cfg 1 Bool rd_State z :=
++  { d with
++    state := some q
++    inputPos := ⟨d.inputPos.val - n, by have := d.inputPos.isLt; omega⟩
++    workTapePos := fun i => d.workTapePos i + e }
++
++/-- The verdict says precisely whether the physical head equals the header length. -/
++private def rd_verdict {z : List Bool} (d : Cfg 1 Bool rd_State z) (ℓ : ℕ) : Bool :=
++  decide (d.inputPos.val = ℓ)
++
++/-- The whole finite trace has a forward leg, a return leg and one restored endpoint. -/
++private def rd_trace {z : List Bool} (d : Cfg 1 Bool rd_State z) (ℓ u : ℕ) :=
++  if u ≤ ℓ then rd_cfg d (.inl ()) u u
++  else if u ≤ 2 * ℓ + 1 then
++    let n := 2 * ℓ + 1 - u
++    rd_cfg d (.inr (rd_verdict d ℓ, false)) n ((n : ℤ) - 1)
++  else rd_cfg d (.inr (rd_verdict d ℓ, true)) 0 0
++
++/-- The ruler gives a true cell at each interior natural offset. -/
++private theorem rd_read_nat {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
++    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
++      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
++    (n : ℕ) (hn : n < ℓ) : d.workTapes 0 (d.workTapePos 0 + n) = some true := by
++  rw [hr n (by omega) (by omega), FinTM.bufferTape_nat]
++  simp only [List.getElem?_replicate, if_pos hn]
++
++/-- One table row moves between two trace points using the joint-move equation. -/
++private theorem rd_cfg_step {z : List Bool} (d : Cfg 1 Bool rd_State z)
++    (q q' : rd_State) (n n' : ℕ) (e e' : ℤ) (a b : SignType)
++    (ht : rd_test.tr q (rd_cfg d q n e).inputSymbol
++      (rd_cfg d q n e).workTapeSymbols = rd_move (some q') a b)
++    (hi : moveInputPos (rd_cfg d q n e).inputPos a = (rd_cfg d q' n' e').inputPos)
++    (he : e + (b : ℤ) = e') :
++    rd_test.step (rd_cfg d q n e) = rd_cfg d q' n' e' := by
++  rw [MultiTapeTM.step_of_some (show (rd_cfg d q n e).state = some q from rfl), ht,
++    rd_move_apply]
++  refine Cfg.ext rfl hi rfl ?_ rfl
++  funext i
++  simp only [rd_cfg, add_assoc, he]
++
++/-- Each successive point follows the table, including both delimiter turns.
++**Proof sketch.** Interior ruler cells move both heads; the right delimiter records the
++semantic boundary test, and the left delimiter restores the ruler head before the verdict. -/
++private theorem rd_trace_step {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
++    (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
++    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
++      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
++    (u : ℕ) (hu : u < 2 * ℓ + 2) :
++    rd_test.step (rd_trace d ℓ u) = rd_trace d ℓ (u + 1) := by
++  by_cases hf : u < ℓ
++  · simp only [rd_trace, if_pos (show u ≤ ℓ by omega),
++      if_pos (show u + 1 ≤ ℓ by omega)]
++    refine rd_cfg_step d _ _ _ _ _ _ (-1) 1 ?_ ?_ (by simp only [SignType.coe_one]; omega)
++    · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, rd_read_nat ℓ d hr u hf,
++        if_true]
++    · rw [← SignType.neg_eq_neg_one]
++      rw [moveInputPos_neg_of_ne_left (rd_cfg d (.inl ()) u u).inputPos (by
++        intro h; have hh := congrArg Fin.val h; simp only [rd_cfg, Fin.val_zero] at hh
++        omega)]
++      apply Fin.ext
++      simp only [rd_cfg]
++      omega
++  · by_cases ht : u = ℓ
++    · subst u
++      have hb : (inputCell z (d.inputPos.val - ℓ)).isNone = rd_verdict d ℓ := by
++        rw [Bool.eq_iff_iff]
++        simp only [Option.isNone_iff_eq_none, rd_verdict, decide_eq_true_eq]
++        exact inputCell_sub_eq_none_iff hℓ hp (by have := d.inputPos.isLt; omega)
++      have hend : d.workTapes 0 (d.workTapePos 0 + ℓ) = none := by
++        rw [hr ℓ (by omega) (by omega), FinTM.bufferTape_nat]
++        simp only [List.getElem?_replicate, lt_self_iff_false, if_false]
++      simp only [rd_trace, if_pos (show ℓ ≤ ℓ from le_rfl),
++        if_neg (show ¬ℓ + 1 ≤ ℓ by omega), if_pos (show ℓ + 1 ≤ 2 * ℓ + 1 by omega)]
++      have hn : 2 * ℓ + 1 - (ℓ + 1) = ℓ := by omega
++      rw [hn]
++      refine rd_cfg_step d _ _ _ _ _ _ 0 (-1) ?_ ?_ (by
++        simp only [SignType.coe_neg_one]; omega)
++      · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, hend, reduceCtorEq, if_false,
++          Cfg.inputSymbol_eq_inputCell, hb]
++      · exact moveInputPos_zero _
++    · have hf' : ¬u ≤ ℓ := by omega
++      have hf'' : ¬u + 1 ≤ ℓ := by omega
++      have hrange : u ≤ 2 * ℓ + 1 := by omega
++      by_cases he : u = 2 * ℓ + 1
++      · subst u
++        have hend : d.workTapes 0 (d.workTapePos 0 + (-1)) = none := by
++          rw [hr (-1) (by omega) (by omega), FinTM.bufferTape_left]
++        simp only [rd_trace, if_neg hf', if_neg hf'', if_pos (le_refl (2 * ℓ + 1)),
++          if_neg (show ¬2 * ℓ + 1 + 1 ≤ 2 * ℓ + 1 by omega), Nat.sub_self,
++          Nat.cast_zero, zero_sub]
++        refine rd_cfg_step d _ _ _ _ _ _ 0 1 ?_ ?_ (by simp)
++        · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, hend, reduceCtorEq, if_false]
++        · exact moveInputPos_zero _
++      · have hnext : u + 1 ≤ 2 * ℓ + 1 := by omega
++        let n := 2 * ℓ + 1 - u
++        have hn : 0 < n ∧ n ≤ ℓ := by dsimp [n]; omega
++        have hnextn : 2 * ℓ + 1 - (u + 1) = n - 1 := by dsimp [n]; omega
++        have hcast : ((n - 1 : ℕ) : ℤ) = (n : ℤ) - 1 := by omega
++        have hread : d.workTapes 0 (d.workTapePos 0 + ((n : ℤ) - 1)) = some true := by
++          rw [← hcast]
++          exact rd_read_nat ℓ d hr (n - 1) (by omega)
++        simp only [rd_trace, if_neg hf', if_neg hf'', if_pos hrange, if_pos hnext]
++        change rd_test.step (rd_cfg d (.inr (rd_verdict d ℓ, false)) n ((n : ℤ) - 1)) = _
++        rw [hnextn]
++        refine rd_cfg_step d _ _ _ _ _ _ 1 (-1) ?_ ?_ (by
++          simp only [SignType.coe_neg_one]; omega)
++        · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, hread, if_true]
++        · rw [← SignType.pos_eq_one]
++          rw [moveInputPos_pos_of_ne_right
++            (rd_cfg d (.inr (rd_verdict d ℓ, false)) n ((n : ℤ) - 1)).inputPos (by
++            change d.inputPos.val - n ≠ z.length + 1
++            have := d.inputPos.isLt; omega)]
++          apply Fin.ext
++          simp only [rd_cfg]
++          omega
++
++/-- The single induction that identifies every point of the finite restoring sweep. -/
++private theorem rd_run {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
++    (hd : d.state = some (.inl ())) (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
++    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
++      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
++    (u : ℕ) (hu : u ≤ 2 * ℓ + 2) : rd_test.runFrom d u = rd_trace d ℓ u := by
++  induction u with
++  | zero =>
++    rw [MultiTapeTM.runFrom_zero]
++    simp only [rd_trace, Nat.zero_le, if_true, rd_cfg, Nat.sub_zero, Nat.cast_zero, add_zero]
++    exact Cfg.ext hd rfl rfl rfl rfl
++  | succ u ih =>
++    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
++    exact rd_trace_step ℓ d hℓ hp hr u (by omega)
++
++
++
+ /-- **The restoring suffix-boundary test** (the ruler device's core; the RD-3 gate's suggested
+ sanity obligation). There is a one-tape binary module with an entry and two distinct verdicts
+ as follows. Start it at its entry with the delimited ruler `true^ℓ`, `ℓ > 0`, at its head and
+@@ -212,7 +384,13 @@ The input itself is arbitrary, so an empty payload is included. [AB09, §1.2]
+ head reads the blank after the ruler: `ℓ` moves, none clamped since `p ≥ ℓ`. Read the input cell
+ at `p - ℓ`: it is blank exactly when `p - ℓ = 0`, since `p - ℓ ≤ |z| + 1 - ℓ ≤ |z|`
+ (`Turing.inputCell_sub_eq_none_iff`). Move both heads back `ℓ` cells (the ruler head stops at
+-the blank before the ruler, then steps right). A finite control carries the verdict. -/
++the blank before the ruler, then steps right). A finite control carries the verdict.
++
++**Fill appendix (B6-F5).** The joint-head move is a leaf because no catalog row moves
++the input head together with a work head. One finite trajectory and one induction give
++the exact time `2 * ℓ + 2`, hence `C = 2`. The turn reads the published boundary fact;
++the return preserves the input, ruler, and output and restores both heads.
++ -/
+ theorem exists_rulerTestTM :
+     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+       (entry yes no : P) (C : ℕ), yes ≠ no ∧
+@@ -224,7 +402,36 @@ theorem exists_rulerTestTM :
+           (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
+           (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
+           R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) } := by
+-  sorry
++  refine ⟨rd_State, inferInstance, inferInstance, rd_test, .inl (), .inr (true, true),
++    .inr (false, true), 2, by decide, ?_⟩
++  intro z ℓ d hd hℓ hp hr
++  refine ⟨2 * ℓ + 2, by omega, ?_, ?_, ?_⟩
++  · intro u hu
++    rw [rd_run ℓ d hd hℓ hp hr u (by omega)]
++    by_cases hf : u ≤ ℓ
++    · simp only [rd_trace, if_pos hf, rd_cfg]
++      constructor <;> intro h <;> cases h
++    · have hu' : u ≤ 2 * ℓ + 1 := by omega
++      simp only [rd_trace, if_neg hf, if_pos hu', rd_cfg]
++      constructor <;> intro h
++      all_goals exact Bool.false_ne_true (congrArg Prod.snd (Sum.inr.inj (Option.some.inj h)))
++  · intro u hu
++    rw [rd_run ℓ d hd hℓ hp hr u hu]
++    by_cases hf : u ≤ ℓ
++    · simp only [rd_trace, if_pos hf, rd_cfg, add_sub_cancel_left, abs_le]
++      constructor <;> omega
++    · by_cases hb : u ≤ 2 * ℓ + 1
++      · simp only [rd_trace, if_neg hf, if_pos hb, rd_cfg, add_sub_cancel_left, abs_le]
++        constructor <;> omega
++      · simp only [rd_trace, if_neg hf, if_neg hb, rd_cfg, add_zero, sub_self, abs_zero]
++        omega
++  · rw [rd_run ℓ d hd hℓ hp hr (2 * ℓ + 2) (le_refl _)]
++    simp only [rd_trace, if_neg (show ¬2 * ℓ + 2 ≤ ℓ by omega),
++      if_neg (show ¬2 * ℓ + 2 ≤ 2 * ℓ + 1 by omega), rd_cfg, Nat.sub_zero, add_zero]
++    refine Cfg.ext ?_ rfl rfl rfl rfl
++    by_cases h : d.inputPos.val = ℓ
++    · simp only [rd_verdict, h, decide_true, if_true]
++    · simp only [rd_verdict, h, decide_false, if_false]
+ 
+ /-- **H5, the ruler device's call rows** ("read the virtual input cell", "move the virtual input
+ head"). There is a one-tape binary module with a read entry, three read verdicts
+@@ -245,7 +452,12 @@ on `yes` answer blank; on `no` answer the native symbol under the head, which is
+ `y[i - 1]` or the right blank (`Turing.inputCell_of_drop`). Move: a right move is the native
+ clamped move (at `i = |y| + 1` the physical head is at `|z| + 1` and clamps exactly as
+ `moveInputPos` does); a stationary move does nothing; a left move is suppressed on `yes` and is
+-the native left move on `no`. Rows are joined by R2 seams; the dispatch steps add a constant. -/
++the native left move on `no`. Rows are joined by R2 seams; the dispatch steps add a constant.
++
++**Fill appendix (B6-F5).** Open in this partial delivery. **Proof sketch.** Compose
++the proved boundary test with the read/move leaves through the public phase host;
++share the phase argument for both call modes and use the suffix-cell equation.
++ -/
+ theorem exists_rulerDeviceTM :
+     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+       (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+@@ -309,7 +521,13 @@ halting source transition halts the host in the same step, with no pause. The pa
+ `C · (ℓ + 1)` steps, moves no bank head, writes nothing and emits nothing, which gives the
+ frames and the cut. Induct on `t` as `Turing.vhostEmitTM_runFrom` does; the visited-set clauses
+ follow `Turing.vhostEmitTM_visitedByTapeHead_bank` and
+-`Turing.vhostEmitTM_visitedByTapeHead_buffer`. -/
++`Turing.vhostEmitTM_visitedByTapeHead_buffer`.
++
++**Fill appendix (B6-F5).** Open in this partial delivery. **Proof sketch.** Build
++the source-step transformer with a boundary tag and embed the test on the last tape
++by R1. Package a host step and its optional pause as a `Turing.Lockstep`, then use
++its endpoint, cut and locate theorems for the time and space clauses.
++ -/
+ theorem exists_rulerHostTM {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+     (M : MultiTapeTM m Bool S) :
+     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (m + 1) Bool Q)
+-- 
+2.50.1 (Apple Git-155)
+

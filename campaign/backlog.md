@@ -871,6 +871,33 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
   with their families K1–K20.
 - **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
+### RW-1: the rewind row's frame helper, a copy of Catalog's seek frame (user, 2026-10-18)
+
+*Origin: the screen of PR #138 (the public rewind row, `Build/Rewind`), before gate 55.*
+
+`Build/Rewind`'s private `rw_cfg` reproduces `Build/Catalog`'s private `catalogSeekCfg` at 100%
+(79 characters, both ways): the three-line record update that sets the state and moves one head,
+over `RewindPhase` instead of `SeekPhase`. Catalog's helper is private and specific to
+`SeekPhase`, so the new module cannot cite it. The step lemmas over the two frames, `rw_step` and
+Catalog's private `catalog_seek_step`, state the same step; the screen pairs them below its
+half threshold.
+- **Acknowledged (user, 2026-10-18)**, before gate 55, on condition that the retirement stays on
+  this backlog.
+- **Retirement, in the user's dedup window:** publish one frame over any state type (with its
+  step lemma, through the public `step_of_tapeAction_move`) and cite it from both files. It
+  edits `Build/Catalog`, whose downstream is most of the library, so it goes with Catalog's next
+  edit (12.2c T3, Catalog core, or MIG-1).
+
+### BW-1: StepBlock's four buffer-word privates, restated publicly (user, 2026-10-18)
+
+*Origin: the user's ruling on the seam-layout fill's word identities; PR #140.*
+
+`TuringMachine/BufferWords` publishes six `FinTM.bufferTape` identities; four restate
+`Build/StepBlock`'s privates `bufferTape_suffix`, `_reads`, `_outside` and `_unary` (same
+statements, different proofs; no screen pair). **Acknowledged (user, 2026-10-18).**
+**Retirement, in the user's dedup window:** `StepBlock` imports `BufferWords`, deletes the four
+privates and re-points their uses (StepBlock's downstream is replayed then).
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
@@ -1054,6 +1081,102 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `drafts/issue-inputs/r3/`): U2-S 655, F3 1,043, G4 795, MIG-12 870, cont6 2,411
       declarations. Each is one more than before (`scanResult_keep_keep`), with identical pair
       sets. The drafts take these counts at issue.
+- **Gates 46–49 closed (2026-10-18).** 46 (#124 round 2) PASS 0/0/1/11: the minor was the PR
+  description, replaced; **#124 merged** (`dac6b3b0`; `TCSlib/` tree = `45b79f5f`'s, replayed as
+  `lseam2`). 47 (#129) PASS 0/0/1/8, 48 (#130) PASS 0/0/1/12, 49 (#131) PASS 0/0/2/11: records in
+  `campaign/gates/4{7,8,9}-*/`. **Their docstring minors are deferred (user: "defer and merge
+  tonight")**: 47's stale "spec, fill pending" labels ride UN's continuation landing; 48's missing
+  `ss_captureInitial`/`ss_capture_indices` sketches are a required item of the U2-S continuation's
+  brief; 49's stale status prose rides cont7's landing (`CodeSimulator`) and the docstring-cleanup
+  pass (`Codes2Tape`, `EXPCOM`). #129 and #130 declared clear to merge; #131 after #130 (retarget).
+- **C1-R round 3 (2026-10-18):** E-RES (the proxy 403s), with 16 new unchecked `ic_` drafts; the
+  review made all 16 check with 8 small repairs (`campaign/fills/c1/reviews/core-cont1-r3/`); the
+  target stays open. **Rulings (user):** R's next round starts from the overlay with all 16
+  repaired drafts (`out/overlay-verified.lean.txt`); **a public rewind row is published first**
+  (an API PR with its gate), for R's three work-tape rewinds (a word's end back to cell 0, the
+  empty word included), which no published row serves; E's private `xr_rewindTM` re-points to it
+  later. R cont2's brief issues after that PR merges. Route notes for it: the install call starts
+  and ends with the input head at 1 (copy the window before the install, or move the head back);
+  read the decoded machine by `simp only [CodeNDTM.toFinNDTM_tm, _k, _State]`.
+- **C1-WC lands from the worker's repaired draft (2026-10-18; the user's ruling, as for C1-W).**
+  Round 3's unchecked Appendix C draft failed verbatim (7 errors); the review's 14 mechanical
+  repairs make `exists_inputWindowCopyTM` proved (0 errors, standard axioms, the brief's route,
+  `C = 6`; review `campaign/fills/c1/reviews/window-cont1-r3/`). Landing branch
+  `lean/c1-window-fill`: the repaired draft (author: the worker) and the maintainer's L1-L6. Its
+  2-module replay (InputWindow, the TuringMachine facade) follows #132. WC needs no further round.
+- **Addendum v2.3: the narrowed cache fetch (2026-10-18; the user's ruling).** R cont1 and WC cont1
+  (round 3) failed the cache fetch: the hosts' proxy refused ~1,900 of the full cache's 7,506 files
+  (CONNECT 403), 1,843 of them the same on both hosts; cont6's narrowed fetch (1,003 files)
+  succeeded on the same host class. v2.3 (`1ea7a376…`): `lake exe cache get <the order's Mathlib
+  roots>` only (35 roots for the 81-module briefs, 61 for MIG-12), two plain re-runs on failed
+  downloads, then the cleaned retry. Both deliveries carry unchecked drafts (WC: a complete
+  proof; R: 16 new privates), being checked here by review sub-agents (the user's ruling).
+- **C1-E cont1: a complete fill (2026-10-18).** `FinNDTM.exists_exhaustiveDecider` proved (`C =
+  18·N.k + 41`, no `|z|` term); reviewed (`campaign/fills/c1/reviews/exhaustive-cont1/`). **Rulings
+  (user):** the route's deviation (heads left in place, translation invariance by
+  `xr_runWith_shift`, instead of obligation 4's return to `0`) is accepted; the 24 sketch-less
+  proofs over 20 lines get sketches in a docstring-only follow-up (the six main lemmas first).
+  Landing PR from `lean/c1-exhaustive-fill` (16 cherry-picked commits + the review's fix); its
+  4-module replay follows #132. BF's only open dependency is now UN.
+  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's head:
+  `xr_passTM_run`, `xr_testTM_run`, `xr_clearTape_host`, `xr_cycle_host`, `xr_depth_host`,
+  `xr_run_host`; 0 errors, lint unchanged). Its PR opens after #136 merges (rebased onto the
+  campaign branch, so it is not stacked); the other 18 stay for the docstring pass.
+- **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
+  cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
+  held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):
+  12 GiB at the initial preflight, 8 GiB at a re-check before the cache, then only ENOSPC; the
+  measured Lean peak is 2.8 GiB. G4 and MIG-12 re-dispatch unchanged when R or WC delivers.
+- **#132's replay passed (2026-10-18):** 314/314 at `91154701`, static-equal (93); gate 50
+  staged (`exchange/outbox/gates/50-un-u2s-api-gate/`, bundle `288f662c…`).
+- **E-RES triage and addendum v2.1 (2026-10-18; the user's ruling).** R cont1 and WC cont1 stopped
+  with E-RES on 8 GiB hosts after their cache step: v2's `limit − memory.current` counted
+  reclaimable page cache (anon 0.08/0.2 GB, no OOM event); R's retry was also triggered by the
+  cache tool's `leantar` failing to chown. **v2.1** (`2563c8d2…`): headroom = limit − (anon +
+  kernel + shmem); OOM events or exit 137 are shortages, page cache and `max`/`high` reclaim are
+  not; the cache runs with `TAR_OPTIONS=--no-same-owner`. Same thresholds. Triage:
+  `campaign/fills/c1/reviews/eres-2026-10-18/TRIAGE.md`. Both briefs re-dispatch unchanged with
+  v2.1. **E cont1 delivered a complete fill** (`exists_exhaustiveDecider` proved, per its
+  report); its review is running.
+- **Four continuation briefs issued (2026-10-18)**, ancestor `96d60278` (TCSlib = `dac6b3b0`'s, after
+  #124), pre-ship against `oleans-lseam2`; dispatch files in `exchange/outbox/fills/`, with addendum
+  v2 (`2a80b0ef…`): WC cont1 `980f5b5d…`, G4 cont2 `3584091a…`, MIG-12 cont1 `0ee25ec5…` (the first
+  round's two commits as patches, the fold), R cont1 `5fefa735…` (G2 by `exists_seamLayoutTM`, E1 by
+  `counterValue_eq`, the four drafts in an overlay). Prompts given in chat; at most two C1 fills
+  at a time (E cont1 is out).
+- **Drafted, not issued** (`campaign/fills/*/drafts/`): the seam-layout fill (waits on its
+  word-identity ruling; its pre-ship is measured), canonizer cont7 (after #131 merges; gate 49's
+  deferred status text rides its landing), F5 cont1 (phases 2-3, after #133 merges).
+- **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
+  `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
+  merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
+- **B6 F3 cont1 reviewed (2026-10-18):** a clean partial: six private `cw_` helpers (phase 0, the
+  one-cell leaf, a field's constant copy, the clock clear); the target open. Lands as a partial
+  (`lean/b6-f3-cont1-partial`, with the review's public-facing appendix, headed "Implementation
+  status.", and the status line without the moved records path; the stale Route A sketch is left,
+  since it still describes a valid route). Review: `campaign/fills/b6/reviews/configclock-cont1/`.
+  **E2 ruled (user, 2026-10-18): B**, a public `wordPatch_append` in `Build/StepClock` by a
+  maintainer API PR, with its own replay (StepClock's downstream) and gate, before F3 cont2's
+  brief issues. It is the public form of `RecordTable`'s private `rt_adjacentWrites`, which can
+  re-point to it in the user's dedup window. (Option A, a private `cw_fill_append`, was not
+  chosen.) Both were verified (`suggested-fix.diff`).
+- **The seam-layout standalone fill's word identities, ruled (user, 2026-10-18):** they exist only
+  as `StepBlock`'s privates (`bufferTape_suffix`, `_reads`, `_outside`, `_unary`), outside the
+  layout's closure. **A new small public module beside `Simulation`** publishes the four, by a
+  maintainer API PR with its own replay (the module and the facade) and gate; the fill's brief
+  authorizes its import. `StepBlock`'s four privates become an acknowledged copy family, re-pointed
+  in the user's dedup window. (Not chosen: local private copies, which gate 46's review
+  recommended; promotion into `Simulation`, a 313-module replay.)
+- **Landing order (2026-10-18):** #129, #130, #131 (retargeted after #130), then #132 (its
+  313-module replay covers every module of #133's and F3 cont1's closures), then #133 (F5) and the
+  F3 cont1 landing, each replayed from #132's snapshot.
+- **B6 F5 reviewed (2026-10-18):** phase 1 (`exists_rulerTestTM`, `C = 2`) proved; the other two
+  targets open. **Rulings (user):** the landing imports `Build/Catalog` and cites
+  `Turing.tapeAction` / `step_of_tapeAction_move` instead of the private joint move (the review's
+  variant), and phase 2's brief authorizes the same import. The escalation E2 (`lake exe cache get`
+  runs `lake build --no-build proofwidgets:release` internally) is already answered by addendum v2,
+  Part 1 ("expected and allowed"); F5 was issued under v1, so no v2.1 is needed. Review:
+  `campaign/fills/b6/reviews/rulerdevice-1/`.
 - **Fill rulings (user, 2026-10-18):** UN-1 by an API PR (`FinTM.pairExtractTM_fst_run` in
   `Build/Primitives`) with the cast-indexed `bufferedSecondCfg` pair (`Simulation`); canonizer cont6
   lands as a partial with the review's F1 fix; MIG-12's phase 1 folds into its continuation (no

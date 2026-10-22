@@ -913,6 +913,29 @@ def bufferedSecondCfg (M₁ M₂ : FinTM Bool) {x y : List Bool}
 equations, without the `simp` attribute. -/
 attribute [simps (config := { isSimp := false })] bufferedSecondCfg
 
+/-- **The second phase's work tapes at a composite index**: at an index `i` of the buffered
+composite's own tape type, `bufferedSecondCfg`'s work tape is the block layout read at
+`Fin.cast (bufferedCompTM_k M₁ M₂) i`. -/
+theorem bufferedSecondCfg_workTapes_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin M₁.k → ℤ → Option Bool) (heads : Fin M₁.k → ℤ)
+    (i : Fin (bufferedCompTM M₁ M₂).k) :
+    (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapes i =
+      tapeBlocks tapes (bufferTape y) c.workTapes (Fin.cast (bufferedCompTM_k M₁ M₂) i) :=
+  rfl
+
+/-- **The second phase's heads at a composite index**: at an index `i` of the buffered
+composite's own tape type, `bufferedSecondCfg`'s head is the block layout read at
+`Fin.cast (bufferedCompTM_k M₁ M₂) i`. -/
+theorem bufferedSecondCfg_workTapePos_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin M₁.k → ℤ → Option Bool) (heads : Fin M₁.k → ℤ)
+    (i : Fin (bufferedCompTM M₁ M₂).k) :
+    (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapePos i =
+      tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
+        (Fin.cast (bufferedCompTM_k M₁ M₂) i) :=
+  rfl
+
 /-- One second-phase step simulates one native step, with a valid new arrival
 tag. The statement includes the absorbing halting case.
 
