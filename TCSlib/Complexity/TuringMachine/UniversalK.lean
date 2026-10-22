@@ -555,6 +555,624 @@ private theorem ss_capturedPrefix_fields (F : FinTM Bool) (f : List Bool → Lis
       rw [hr]
       exact embedSilentCfg_unselected ι cap (fun _ _ => none) (fun _ => 0) [] [] _ j hj hjc
 
+/-- The public seam-layout machine redistributes a canonical serialization from its right
+blank, at one time chosen before the input and the ambient configuration.
+
+**Proof sketch.** Instantiate the layout contract with the state-count bits, unary initial
+state, and transition table. The published serialization and unary-word equations identify
+its source word and its two output words. -/
+private theorem ss_serialized_layout (n : ℕ) (src tbl sm : Fin n)
+    (hst : src ≠ tbl) (hss : src ≠ sm) (hts : tbl ≠ sm) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM n Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {k m : ℕ} (M : MultiTapeTM k Bool (Fin (m + 1))),
+        ∃ T ≤ C * ((serializeK M).length + 1),
+          ∀ {z : List Bool} (d : Cfg n Bool Q z),
+            d.state = some entry →
+            d.workTapes src = FinTM.bufferTape (serializeK M) →
+            d.workTapePos src = (serializeK M).length →
+            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
+            (L.runFrom d T).state = some done ∧
+            (L.runFrom d T).inputPos = d.inputPos ∧
+            (L.runFrom d T).workTapes =
+              Function.update (Function.update (Function.update d.workTapes src
+                (fun _ => none)) tbl (FinTM.bufferTape (tableBitsK M.tr)))
+                sm (fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)) ∧
+            (L.runFrom d T).workTapePos =
+              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0)
+                sm 0 ∧
+            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
+            ∀ u < T, (L.runFrom d u).state ≠ some done := by
+  obtain ⟨Q, hQ, hD, L, entry, done, C, hL⟩ := exists_seamLayoutTM n src tbl sm hst hss hts
+  refine ⟨Q, hQ, hD, L, entry, done, C, ?_⟩
+  intro k m M
+  have hw := serializeK_eq M
+  rw [unaryFin_eq] at hw
+  have h := hL m.bits (tableBitsK M.tr) M.q₀.val (serializeK M).length (by rw [← hw])
+  rw [← hw] at h
+  simpa only [← unaryFin_eq M.q₀] using h
+
+/-- A one-step move of the tested head when its cell is blank. The catalog rows do not
+supply this conditional single step; it joins two skips and restores an empty buffer's head.
+The action itself is the public one-tape action. -/
+private def ss_bufferLeaf (n : ℕ) (i : Fin n) (emptyMove : SignType) :
+    MultiTapeTM n Bool Bool where
+  q₀ := false
+  tr := fun _ _ work =>
+    tapeAction i 0 none (if work i = none then emptyMove else 0)
+      true
+
+/-- The buffer leaf performs its conditional move in one silent step, with every other
+tape and head fixed; its exit is absent before that step.
+
+**Proof sketch.** Apply the public one-step tape-action equation. Before time one there is
+only the entry configuration, whose false state is distinct from the true exit. -/
+private theorem ss_bufferLeaf_run {n : ℕ} (i : Fin n) (emptyMove : SignType)
+    {z : List Bool} (d : Cfg n Bool Bool z) (hstate : d.state = some false) :
+    (ss_bufferLeaf n i emptyMove).runFrom d 1 =
+      { d with
+        state := some true
+        workTapePos := Function.update d.workTapePos i
+          (d.workTapePos i + if d.workTapeSymbols i = none then (emptyMove : ℤ) else 0) } ∧
+      ∀ u < 1, ((ss_bufferLeaf n i emptyMove).runFrom d u).state ≠ some true := by
+  constructor
+  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    have h := step_of_tapeAction_move (ss_bufferLeaf n i emptyMove) d i 0
+      (if d.workTapeSymbols i = none then emptyMove else 0) hstate rfl
+    simpa only [moveInputPos_zero, apply_ite, SignType.coe_zero] using h
+  · intro u hu
+    have hu0 : u = 0 := by omega
+    rw [hu0, MultiTapeTM.runFrom_zero, hstate]
+    simp only [ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true]
+
+/-- The first rightward skip starts at the source's virtual input position minus one.
+At the left blank it moves to zero; at a nonnegative position it skips the remaining suffix.
+
+**Proof sketch.** For virtual position zero, use the empty-word instance of the catalog
+skip at the left blank. Otherwise, use the dropped suffix and the public buffer equation.
+The catalog supplies both the framed endpoint and the first-return cut. -/
+private theorem ss_bufferSkip_run {n : ℕ} (i : Fin n) (α : List Bool) (p : ℕ)
+    (hp : p ≤ α.length + 1) {z : List Bool} (d : Cfg n Bool SeekPhase z)
+    (hstate : d.state = some .run) (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = (p : ℤ) - 1) :
+    let v := if p = 0 then [] else α.drop (p - 1)
+    (skipTM n i).runFrom d (v.length + 1) =
+      { d with
+        state := some .done
+        workTapePos := Function.update d.workTapePos i
+          (if p = 0 then 0 else (α.length : ℤ) + 1) } ∧
+      ∀ u < v.length + 1, ((skipTM n i).runFrom d u).state ≠ some .done := by
+  dsimp only
+  have hw : ∀ q : ℤ, 0 ≤ q → q ≤
+      ((if p = 0 then [] else α.drop (p - 1)).length : ℤ) →
+      d.workTapes i (d.workTapePos i + q) =
+        FinTM.bufferTape (if p = 0 then [] else α.drop (p - 1)) q := by
+    intro q hq hqv
+    rw [hbuf, hpos]
+    by_cases h : p = 0
+    · subst p
+      simp only [ite_true, List.length_nil, Nat.cast_zero] at hqv ⊢
+      have hq0 : q = 0 := by omega
+      rw [hq0]
+      simp only [Int.zero_sub, add_zero, FinTM.bufferTape_left, FinTM.bufferTape_nil]
+    · simp only [if_neg h] at hqv ⊢
+      rw [FinTM.bufferTape_eq, FinTM.bufferTape_eq, if_pos hq,
+        if_pos (by omega), List.getElem?_drop]
+      congr 1
+      omega
+  obtain ⟨hr, hc, _⟩ := skipTM_run_ofCfg i _ d hstate hw
+  have he : d.workTapePos i +
+      ((if p = 0 then [] else α.drop (p - 1)).length : ℤ) + 1 =
+      if p = 0 then 0 else (α.length : ℤ) + 1 := by
+    rw [hpos]
+    by_cases h : p = 0
+    · subst p
+      simp only [ite_true, List.length_nil, Nat.cast_zero]
+      omega
+    · simp only [if_neg h, List.length_drop]
+      omega
+  rw [he] at hr
+  exact ⟨hr, hc⟩
+
+/-- The second part of the rightward positioning pass: step left at a blank, then skip.
+It is the existing seam constructor applied to the one-step leaf and the catalog skip. -/
+private def ss_bufferAdvance (n : ℕ) (i : Fin n) :
+    MultiTapeTM n Bool (Bool ⊕ SeekPhase) :=
+  seamCompTM (ss_bufferLeaf n i .neg) true (skipTM n i) .run
+
+/-- After the first skip, the conditional left step and second skip reach one beyond the
+right delimiter of a nonempty word. For the empty word they preserve the virtual position.
+
+**Proof sketch.** Read blankness through the configuration and buffer equations. At position
+zero of a nonempty word the leaf stays put and the skip crosses the word; otherwise the leaf
+steps left and the empty-word skip steps right again. The public seam theorem supplies the
+joined run and its first-return cut, preserving every ambient field. -/
+private theorem ss_bufferAdvance_run {n : ℕ} (i : Fin n) (α : List Bool) (p : ℕ)
+    (hp : p ≤ α.length + 1) {z : List Bool} (d : Cfg n Bool Bool z)
+    (hstate : d.state = some false) (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = if p = 0 then 0 else (α.length : ℤ) + 1) :
+    let v := if p = 0 then α else []
+    (ss_bufferAdvance n i).runFrom (d.mapState Sum.inl) (v.length + 3) =
+      ⟨some (Sum.inr .done), d.inputPos, d.workTapes,
+        Function.update d.workTapePos i
+          (if α = [] then (p : ℤ) else (α.length : ℤ) + 1), d.output⟩ ∧
+      ∀ u < v.length + 3,
+        ((ss_bufferAdvance n i).runFrom (d.mapState Sum.inl) u).state ≠
+          some (Sum.inr .done) := by
+  dsimp only
+  let a : Cfg n Bool Bool z :=
+    { d with
+      state := some true
+      workTapePos := Function.update d.workTapePos i
+        (d.workTapePos i + if d.workTapeSymbols i = none then (-1 : ℤ) else 0) }
+  obtain ⟨hr, hc⟩ := ss_bufferLeaf_run i .neg d hstate
+  change (ss_bufferLeaf n i .neg).runFrom d 1 = a at hr
+  let b := a.mapState (fun _ => SeekPhase.run)
+  have hba : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  have hbp : b.workTapePos i =
+      if p = 0 then (if α = [] then -1 else 0) else (α.length : ℤ) := by
+    rw [Cfg.mapState_workTapePos]
+    dsimp only [a]
+    rw [Function.update_self, Cfg.workTapeSymbols_eq, hbuf, hpos]
+    by_cases h : p = 0
+    · simp only [if_pos h]
+      cases α with
+      | nil => simp only [FinTM.bufferTape_nil, ite_true]; omega
+      | cons x xs =>
+        rw [show (0 : ℤ) = (0 : ℕ) by rfl, FinTM.bufferTape_nat]
+        simp only [List.getElem?_cons_zero, reduceCtorEq, if_false, List.cons_ne_nil,
+          Nat.cast_zero, add_zero]
+    · rw [if_neg h]
+      have hn : FinTM.bufferTape α ((α.length : ℤ) + 1) = none := by
+        rw [show (α.length : ℤ) + 1 = ((α.length + 1 : ℕ) : ℤ) by omega,
+          FinTM.bufferTape_nat, List.getElem?_eq_none_iff]
+        omega
+      rw [hn, if_pos rfl]
+      omega
+  have hw : ∀ q : ℤ, 0 ≤ q →
+      q ≤ ((if p = 0 then α else []).length : ℤ) →
+      b.workTapes i (b.workTapePos i + q) =
+        FinTM.bufferTape (if p = 0 then α else []) q := by
+    intro q hq hqv
+    rw [hba, hbp]
+    by_cases h : p = 0
+    · simp only [if_pos h] at hqv ⊢
+      by_cases ha : α = []
+      · subst α
+        simp only [FinTM.bufferTape_nil]
+      · rw [if_neg ha, zero_add]
+    · simp only [if_neg h, List.length_nil, Nat.cast_zero] at hqv ⊢
+      have hq0 : q = 0 := by omega
+      rw [hq0, add_zero, FinTM.bufferTape_nat, List.getElem?_eq_none (by omega),
+        FinTM.bufferTape_nil]
+  have hbstate : b.state = some .run := by
+    rw [Cfg.mapState_state]
+    rfl
+  obtain ⟨hs, hscut, _⟩ := skipTM_run_ofCfg i _ b hbstate hw
+  have he : b.workTapePos i + ((if p = 0 then α else []).length : ℤ) + 1 =
+      if α = [] then (p : ℤ) else (α.length : ℤ) + 1 := by
+    rw [hbp]
+    by_cases h : p = 0
+    · simp only [if_pos h]
+      by_cases ha : α = []
+      · subst α
+        simp only [ite_true, List.length_nil, Nat.cast_zero]
+        omega
+      · simp only [if_neg ha]
+        omega
+    · simp only [if_neg h, List.length_nil, Nat.cast_zero]
+      by_cases ha : α = []
+      · subst α
+        simp only [ite_true, List.length_nil, Nat.cast_zero] at hp ⊢
+        omega
+      · simp only [if_neg ha, add_zero]
+  have hrun := seamCompTM_run_ofCfg (ss_bufferLeaf n i .neg) true (skipTM n i)
+    .run hr rfl hc hs
+  have hcut := seamCompTM_firstReturn_ofCfg (ss_bufferLeaf n i .neg) true (skipTM n i)
+    .run .done hr rfl hc hs rfl hscut
+  have ht : 1 + 1 + ((if p = 0 then α else []).length + 1) =
+      (if p = 0 then α else []).length + 3 := by omega
+  rw [ht] at hrun hcut
+  refine ⟨hrun.trans ?_, hcut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos, he]
+    change Function.update b.workTapePos i _ j = _
+    have hbheads : b.workTapePos = a.workTapePos := by
+      funext j
+      exact Cfg.mapState_workTapePos _ _ _
+    rw [hbheads]
+    simp only [a, Function.update_idem]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+
+/-- Position the code buffer for the backward catalog row, using three existing phases. -/
+private def ss_bufferSeek (n : ℕ) (i : Fin n) :
+    MultiTapeTM n Bool (SeekPhase ⊕ (Bool ⊕ SeekPhase)) :=
+  seamCompTM (skipTM n i) .done (ss_bufferAdvance n i) (Sum.inl false)
+
+/-- The two skips and their intervening conditional step find the right edge, with a time
+that depends only on the code and its chosen virtual position.
+
+**Proof sketch.** The first catalog skip has the dropped-suffix time. The proved advance
+then has the whole-word or empty-word time. Compose their framed contracts by the general
+seam equations and read the final head update through the state-map field equations. -/
+private theorem ss_bufferSeek_run {n : ℕ} (i : Fin n) (α : List Bool) (p : ℕ)
+    (hp : p ≤ α.length + 1) {z : List Bool} (d : Cfg n Bool SeekPhase z)
+    (hstate : d.state = some .run) (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = (p : ℤ) - 1) :
+    let v := if p = 0 then [] else α.drop (p - 1)
+    let w := if p = 0 then α else []
+    (ss_bufferSeek n i).runFrom (d.mapState Sum.inl) (v.length + w.length + 5) =
+      ⟨some (Sum.inr (Sum.inr .done)), d.inputPos, d.workTapes,
+        Function.update d.workTapePos i
+          (if α = [] then (p : ℤ) else (α.length : ℤ) + 1), d.output⟩ ∧
+      ∀ u < v.length + w.length + 5,
+        ((ss_bufferSeek n i).runFrom (d.mapState Sum.inl) u).state ≠
+          some (Sum.inr (Sum.inr .done)) := by
+  dsimp only
+  obtain ⟨hr, hc⟩ := ss_bufferSkip_run i α p hp d hstate hbuf hpos
+  let a : Cfg n Bool SeekPhase z :=
+    { d with
+      state := some .done
+      workTapePos := Function.update d.workTapePos i
+        (if p = 0 then 0 else (α.length : ℤ) + 1) }
+  let b := a.mapState (fun _ => false)
+  have hbstate : b.state = some false := by
+    rw [Cfg.mapState_state]
+    rfl
+  have hbpos : b.workTapePos i = if p = 0 then 0 else (α.length : ℤ) + 1 := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self _ _ _
+  have hbbuf : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  obtain ⟨ha, hacut⟩ := ss_bufferAdvance_run i α p hp b hbstate hbbuf hbpos
+  have hm : b.mapState (Sum.inl : Bool → Bool ⊕ SeekPhase) =
+      a.mapState (fun _ => Sum.inl false) := by
+    apply Cfg.ext
+    · simp only [b, Cfg.mapState_state, a, Option.map_some]
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j q
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+  rw [hm] at ha hacut
+  have hs := seamCompTM_run_ofCfg (skipTM n i) .done (ss_bufferAdvance n i)
+    (Sum.inl false) hr rfl hc ha
+  have hscut := seamCompTM_firstReturn_ofCfg (skipTM n i) .done (ss_bufferAdvance n i)
+    (Sum.inl false) (Sum.inr .done) hr rfl hc ha rfl hacut
+  have ht : (if p = 0 then [] else α.drop (p - 1)).length + 1 + 1 +
+      ((if p = 0 then α else []).length + 3) =
+      (if p = 0 then [] else α.drop (p - 1)).length +
+        (if p = 0 then α else []).length + 5 := by omega
+  rw [ht] at hs hscut
+  refine ⟨hs.trans ?_, hscut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos]
+    have hbheads : b.workTapePos = a.workTapePos := by
+      funext j
+      exact Cfg.mapState_workTapePos _ _ _
+    rw [hbheads]
+    simp only [a, Function.update_idem]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+
+/-- The backward catalog row restores the first cell of a nonempty buffer and the
+original position of an empty buffer, preserving the full surrounding configuration.
+
+**Proof sketch.** For a nonempty word the forward endpoint is one beyond its right blank,
+so the catalog precondition is the buffer itself. For an empty word all cells are blank.
+The resulting head formula is the catalog's subtraction of the word length and one. -/
+private theorem ss_bufferBack_run {n : ℕ} (i : Fin n) (α : List Bool) (p : ℕ)
+    {z : List Bool} (d : Cfg n Bool SeekPhase z) (hstate : d.state = some .run)
+    (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = if α = [] then (p : ℤ) else (α.length : ℤ) + 1) :
+    (skipBackTM n i).runFrom d (α.length + 3) =
+      { d with
+        state := some .done
+        workTapePos := Function.update d.workTapePos i
+          (if α = [] then (p : ℤ) - 1 else 0) } ∧
+      ∀ u < α.length + 3, ((skipBackTM n i).runFrom d u).state ≠ some .done := by
+  have he : d.workTapePos i - (α.length : ℤ) - 1 =
+      if α = [] then (p : ℤ) - 1 else 0 := by
+    rw [hpos]
+    by_cases ha : α = []
+    · subst α
+      simp only [ite_true, List.length_nil, Nat.cast_zero, sub_zero]
+    · simp only [if_neg ha]
+      omega
+  obtain ⟨hr, hc, _⟩ := skipBackTM_run_ofCfg i α d hstate (by
+    intro q _ _
+    rw [hbuf, he]
+    by_cases ha : α = []
+    · subst α
+      simp only [FinTM.bufferTape_nil]
+    · rw [if_neg ha, zero_add])
+  rw [he] at hr
+  exact ⟨hr, hc⟩
+
+/-- Restore the empty word's origin if necessary, then clear through the catalog row.
+The parameter is the virtual position chosen for the empty code, fixed for the machine. -/
+private def ss_bufferClear (n : ℕ) (i : Fin n) (emptyPos : ℕ) :
+    MultiTapeTM n Bool (Bool ⊕ SweepPhase) :=
+  seamCompTM (ss_bufferLeaf n i (if emptyPos = 0 then .pos else 0)) true
+    (clearTM n i) .sweep
+
+/-- The final buffer phases erase the code and put its head at zero. The empty code uses
+its one fixed virtual position, so the machine does not depend on the input suffix.
+
+**Proof sketch.** A nonempty buffer has a symbol at zero, so the leaf does not move. On an
+empty buffer, the fixed position is zero or one and the conditional step restores zero.
+The catalog clear then erases the word interval; outside that interval the public buffer
+formula is already blank. Compose by the framed seam and its first-return theorem. -/
+private theorem ss_bufferClear_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
+    (he : emptyPos ≤ 1) (α : List Bool) (p : ℕ) (hp : α = [] → p = emptyPos)
+    {z : List Bool} (d : Cfg n Bool Bool z) (hstate : d.state = some false)
+    (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = if α = [] then (p : ℤ) - 1 else 0) :
+    (ss_bufferClear n i emptyPos).runFrom (d.mapState Sum.inl) (2 * α.length + 4) =
+      ⟨some (Sum.inr .done), d.inputPos,
+        Function.update d.workTapes i (fun _ => none),
+        Function.update d.workTapePos i 0, d.output⟩ ∧
+      ∀ u < 2 * α.length + 4,
+        ((ss_bufferClear n i emptyPos).runFrom (d.mapState Sum.inl) u).state ≠
+          some (Sum.inr .done) := by
+  let mv : SignType := if emptyPos = 0 then .pos else 0
+  let a : Cfg n Bool Bool z :=
+    { d with
+      state := some true
+      workTapePos := Function.update d.workTapePos i
+        (d.workTapePos i + if d.workTapeSymbols i = none then (mv : ℤ) else 0) }
+  obtain ⟨hr, hc⟩ := ss_bufferLeaf_run i mv d hstate
+  change (ss_bufferLeaf n i mv).runFrom d 1 = a at hr
+  have haheads : a.workTapePos = Function.update d.workTapePos i 0 := by
+    have hm : d.workTapePos i +
+        (if d.workTapeSymbols i = none then (mv : ℤ) else 0) = 0 := by
+      rw [Cfg.workTapeSymbols_eq, hbuf, hpos]
+      by_cases ha : α = []
+      · rw [if_pos ha, hp ha]
+        subst α
+        simp only [FinTM.bufferTape_nil, ite_true]
+        by_cases h : emptyPos = 0
+        · simp only [mv, if_pos h, SignType.pos_eq_one, SignType.coe_one, h, Nat.cast_zero]
+          omega
+        · have h1 : emptyPos = 1 := by omega
+          simp only [mv, if_neg h, SignType.coe_zero, h1, Nat.cast_one]
+          omega
+      · rw [if_neg ha]
+        cases α with
+        | nil => exact False.elim (ha rfl)
+        | cons x xs =>
+          rw [show (0 : ℤ) = (0 : ℕ) by rfl, FinTM.bufferTape_nat]
+          simp only [List.getElem?_cons_zero, reduceCtorEq, if_false, Nat.cast_zero,
+            add_zero]
+    dsimp only [a]
+    rw [hm]
+  let b := a.mapState (fun _ => SweepPhase.sweep)
+  have hbstate : b.state = some .sweep := by
+    rw [Cfg.mapState_state]
+    rfl
+  have hbpos : b.workTapePos i = 0 := by
+    rw [Cfg.mapState_workTapePos, haheads, Function.update_self]
+  have hbbuf : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  obtain ⟨hs, hscut, _⟩ := clearTM_run_ofCfg i α b hbstate (by
+    intro q _ _
+    rw [hbbuf, hbpos, zero_add])
+  have hrun := seamCompTM_run_ofCfg (ss_bufferLeaf n i mv) true (clearTM n i)
+    .sweep hr rfl hc hs
+  have hcut := seamCompTM_firstReturn_ofCfg (ss_bufferLeaf n i mv) true (clearTM n i)
+    .sweep .done hr rfl hc hs rfl hscut
+  have ht : 1 + 1 + (2 * α.length + 2) = 2 * α.length + 4 := by omega
+  rw [ht] at hrun hcut
+  refine ⟨hrun.trans ?_, hcut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes]
+    by_cases hj : j = i
+    · subst j
+      simp only [hbpos, zero_add, Function.update_self, true_and]
+      by_cases hq : 0 ≤ q ∧ q < (α.length : ℤ)
+      · rw [if_pos hq]
+      · rw [if_neg hq, hbbuf, FinTM.bufferTape_eq]
+        by_cases hq0 : 0 ≤ q
+        · rw [if_pos hq0, List.getElem?_eq_none (by omega)]
+        · rw [if_neg hq0]
+    · simp only [hj, false_and, if_false, Function.update_of_ne hj]
+      rw [Cfg.mapState_workTapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, haheads]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+
+/-- Backward positioning followed by the fixed-origin clear, joined by the public seam. -/
+private def ss_bufferFinish (n : ℕ) (i : Fin n) (emptyPos : ℕ) :
+    MultiTapeTM n Bool (SeekPhase ⊕ (Bool ⊕ SweepPhase)) :=
+  seamCompTM (skipBackTM n i) .done (ss_bufferClear n i emptyPos) (Sum.inl false)
+
+/-- The backward pass and clear erase a buffer from the forward pass's endpoint.
+
+**Proof sketch.** Apply the backward catalog specialization, then the proved fixed-origin
+clear. The public seam transports their first-return cuts. Its state-map equations and
+idempotence of a head update identify the framed endpoint. -/
+private theorem ss_bufferFinish_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
+    (he : emptyPos ≤ 1) (α : List Bool) (p : ℕ) (hp : α = [] → p = emptyPos)
+    {z : List Bool} (d : Cfg n Bool SeekPhase z) (hstate : d.state = some .run)
+    (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = if α = [] then (p : ℤ) else (α.length : ℤ) + 1) :
+    (ss_bufferFinish n i emptyPos).runFrom (d.mapState Sum.inl) (3 * α.length + 8) =
+      ⟨some (Sum.inr (Sum.inr .done)), d.inputPos,
+        Function.update d.workTapes i (fun _ => none),
+        Function.update d.workTapePos i 0, d.output⟩ ∧
+      ∀ u < 3 * α.length + 8,
+        ((ss_bufferFinish n i emptyPos).runFrom (d.mapState Sum.inl) u).state ≠
+          some (Sum.inr (Sum.inr .done)) := by
+  obtain ⟨hr, hc⟩ := ss_bufferBack_run i α p d hstate hbuf hpos
+  let a : Cfg n Bool SeekPhase z :=
+    { d with
+      state := some .done
+      workTapePos := Function.update d.workTapePos i
+        (if α = [] then (p : ℤ) - 1 else 0) }
+  let b := a.mapState (fun _ => false)
+  have hbstate : b.state = some false := by
+    rw [Cfg.mapState_state]
+    rfl
+  have hbpos : b.workTapePos i = if α = [] then (p : ℤ) - 1 else 0 := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self _ _ _
+  have hbbuf : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  obtain ⟨ha, hacut⟩ := ss_bufferClear_run i emptyPos he α p hp b hbstate hbbuf hbpos
+  have hm : b.mapState (Sum.inl : Bool → Bool ⊕ SweepPhase) =
+      a.mapState (fun _ => Sum.inl false) := by
+    apply Cfg.ext
+    · simp only [b, Cfg.mapState_state, a, Option.map_some]
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j q
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+  rw [hm] at ha hacut
+  have hs := seamCompTM_run_ofCfg (skipBackTM n i) .done (ss_bufferClear n i emptyPos)
+    (Sum.inl false) hr rfl hc ha
+  have hscut := seamCompTM_firstReturn_ofCfg (skipBackTM n i) .done
+    (ss_bufferClear n i emptyPos) (Sum.inl false) (Sum.inr .done) hr rfl hc ha rfl hacut
+  have ht : α.length + 3 + 1 + (2 * α.length + 4) = 3 * α.length + 8 := by omega
+  rw [ht] at hs hscut
+  refine ⟨hs.trans ?_, hscut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes]
+    have hbtapes : b.workTapes = d.workTapes := by
+      funext j q
+      exact Cfg.mapState_workTapes _ _ _ _
+    rw [hbtapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos]
+    have hbheads : b.workTapePos = a.workTapePos := by
+      funext j
+      exact Cfg.mapState_workTapePos _ _ _
+    rw [hbheads]
+    simp only [a, Function.update_idem]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+
+/-- Clear the captured code buffer from any of its possible virtual input positions.
+All positioning and erasure phases are joined by existing seam constructors. -/
+private def ss_bufferCleanup (n : ℕ) (i : Fin n) (emptyPos : ℕ) :
+    MultiTapeTM n Bool
+      ((SeekPhase ⊕ (Bool ⊕ SeekPhase)) ⊕ (SeekPhase ⊕ (Bool ⊕ SweepPhase))) :=
+  seamCompTM (ss_bufferSeek n i) (Sum.inr (Sum.inr .done))
+    (ss_bufferFinish n i emptyPos) (Sum.inl .run)
+
+/-- The complete code-buffer cleanup is uniform in the suffix and ambient configuration.
+Its only fixed parameter is the virtual position assigned to the empty code.
+
+**Proof sketch.** The forward sequence positions the head for the backward pass. The
+backward and clear sequence restores zero and erases the buffer. Join the two proved
+contracts with the general seam theorem; sum their code-dependent times. The inherited
+first-return theorem makes the final right-tagged exit fresh until that time. -/
+private theorem ss_bufferCleanup_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
+    (he : emptyPos ≤ 1) (α : List Bool) (p : ℕ) (hp : p ≤ α.length + 1)
+    (hpe : α = [] → p = emptyPos) {z : List Bool} (d : Cfg n Bool SeekPhase z)
+    (hstate : d.state = some .run) (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = (p : ℤ) - 1) :
+    let v := if p = 0 then [] else α.drop (p - 1)
+    let w := if p = 0 then α else []
+    let T := v.length + w.length + 3 * α.length + 14
+    (ss_bufferCleanup n i emptyPos).runFrom
+      ((d.mapState (Sum.inl : SeekPhase → SeekPhase ⊕ (Bool ⊕ SeekPhase))).mapState
+        Sum.inl) T =
+      ⟨some (Sum.inr (Sum.inr (Sum.inr .done))), d.inputPos,
+        Function.update d.workTapes i (fun _ => none),
+        Function.update d.workTapePos i 0, d.output⟩ ∧
+      ∀ u < T, ((ss_bufferCleanup n i emptyPos).runFrom
+        ((d.mapState (Sum.inl : SeekPhase → SeekPhase ⊕ (Bool ⊕ SeekPhase))).mapState
+          Sum.inl) u).state ≠ some (Sum.inr (Sum.inr (Sum.inr .done))) := by
+  dsimp only
+  obtain ⟨hr, hc⟩ := ss_bufferSeek_run i α p hp d hstate hbuf hpos
+  let a : Cfg n Bool (SeekPhase ⊕ (Bool ⊕ SeekPhase)) z :=
+    ⟨some (Sum.inr (Sum.inr .done)), d.inputPos, d.workTapes,
+      Function.update d.workTapePos i
+        (if α = [] then (p : ℤ) else (α.length : ℤ) + 1), d.output⟩
+  let b := a.mapState (fun _ => SeekPhase.run)
+  have hbstate : b.state = some .run := by
+    rw [Cfg.mapState_state]
+    rfl
+  have hbpos : b.workTapePos i = if α = [] then (p : ℤ) else (α.length : ℤ) + 1 := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self _ _ _
+  have hbbuf : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  obtain ⟨ha, hacut⟩ := ss_bufferFinish_run i emptyPos he α p hpe b hbstate hbbuf hbpos
+  have hm : b.mapState (Sum.inl : SeekPhase → SeekPhase ⊕ (Bool ⊕ SweepPhase)) =
+      a.mapState (fun _ => Sum.inl .run) := by
+    apply Cfg.ext
+    · simp only [b, Cfg.mapState_state, a, Option.map_some]
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j q
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+  rw [hm] at ha hacut
+  have hs := seamCompTM_run_ofCfg (ss_bufferSeek n i) (Sum.inr (Sum.inr .done))
+    (ss_bufferFinish n i emptyPos) (Sum.inl .run) hr rfl hc ha
+  have hscut := seamCompTM_firstReturn_ofCfg (ss_bufferSeek n i) (Sum.inr (Sum.inr .done))
+    (ss_bufferFinish n i emptyPos) (Sum.inl .run) (Sum.inr (Sum.inr .done))
+    hr rfl hc ha rfl hacut
+  have ht : (if p = 0 then [] else α.drop (p - 1)).length +
+      (if p = 0 then α else []).length + 5 + 1 + (3 * α.length + 8) =
+      (if p = 0 then [] else α.drop (p - 1)).length +
+        (if p = 0 then α else []).length + 3 * α.length + 14 := by omega
+  rw [ht] at hs hscut
+  refine ⟨hs.trans ?_, hscut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes]
+    have hbtapes : b.workTapes = d.workTapes := by
+      funext j q
+      exact Cfg.mapState_workTapes _ _ _ _
+    rw [hbtapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos]
+    have hbheads : b.workTapePos = a.workTapePos := by
+      funext j
+      exact Cfg.mapState_workTapePos _ _ _
+    rw [hbheads]
+    simp only [a, Function.update_idem]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+
 /-- The source block sits after the simulated tapes, table, and summary. -/
 private def ss_sourceSlot (m k : ℕ) : Fin m ↪ Fin ((m + 1) + (k + 2)) where
   toFun i := ⟨k + 2 + i.val, by omega⟩
@@ -630,8 +1248,9 @@ halting time bounds its cells).
 **Implementation status.** The returning capture has a suffix-independent first return,
 silence, a time-implied space bound, and normalized tape contents: the code buffer, the captured
 serialization, and blank remaining tapes. Its buffer head is the cleaned source's virtual input
-position minus one, chosen before the suffix. Redistribution, buffer cleanup, input rewind,
-and final assembly remain open. -/
+position minus one, chosen before the suffix. The serialization is redistributed by the
+public layout contract. A composed buffer cleanup restores head zero and clears the code,
+including the left-blank and empty-code cases. Input rewind and final assembly remain open. -/
 theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P),
