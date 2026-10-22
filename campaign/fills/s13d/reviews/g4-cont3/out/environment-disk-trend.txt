@@ -1,0 +1,9 @@
+# scratch-filesystem 'Used' over the session (df of the clone's filesystem; bytes unless noted)
+preflight 05:10:08 (preflight.log): overlay        33770192896 8126078976 23909351424  26% /
+scratch-filesystems.log (1K blocks): overlay        overlay  32978704 12089652  19194948  39% /
+pre-cache (pre-cache-disk.log): overlay        33770192896 12379799552 19655630848  39% /
+b6/disk-before-item.log: overlay        33770192896 14481678336 17553752064  46% /
+g4/disk-before-item.log (07:00): overlay        33770192896 6504779776 25530650624  21% /
+preflight memory.current 7,087,595,520 (file 6,792,101,888); memory.events max=85641 already at 05:10 (before any session work), oom=0, oom_kill=0
+
+# Used (GB): preflight 8.13 -> pre-cache 12.38 -> F5 item start (06:15) 14.48 -> G4 item start (07:00) 6.50, although the clone, toolchain and Mathlib cache stayed in place (G4 bootstrap 95/95 at 07:00-07:09). The overlay counter is not the session's own files alone.

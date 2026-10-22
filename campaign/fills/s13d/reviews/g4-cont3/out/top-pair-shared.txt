@@ -1,0 +1,25 @@
+# The 85% pair: zr_rightPass_bounds reproduces 563/665 of zr_rightPass_time (screen units).
+zr_rightPass_time: its simp only list has 30 arguments; 929 chars in the declaration
+zr_rightPass_bounds: its longest simp only list has 60 arguments; 2118 chars
+shared arguments (23 of time's 30): zr_rightPassContract, zr_rightRulerContract, zr_rightSeekBackContract, zr_rightSeekContract, zr_rulerSkipContract, zr_rulerCopyContract, zr_writeHalvesContract, zr_innerCopyContract, zr_halfCopyContract, zr_outerHalfContract, zr_adjustedBackContract, zr_adjustedWalkContract, zr_rulerStepContract, zr_cellContract, zr_rightFields, zr_rightWord, zr_rulerWord, List.length_cons, List.length_ofFn, List.length_replicate, List.length_tail, zoneCells_length, zr_right_offset D.2 (D.1 + 1) le_rfl
+only in time: Contract.seq_time, Contract.ofSegment_time, seekEndTM_contract_time, skipBackTM_contract_time, copyMapTM_contract_time, skipTM_contract_time, walkTM_contract_time
+only in bounds: Contract.seq_lo, Contract.seq_hi, Contract.ofSegment_lo, Contract.ofSegment_hi, seekEndTM_contract_lo, seekEndTM_contract_hi, skipBackTM_contract_lo, skipBackTM_contract_hi, copyMapTM_contract_lo, copyMapTM_contract_hi, skipTM_contract_lo, skipTM_contract_hi, walkTM_contract_lo, walkTM_contract_hi, Contract.seq_post, Contract.ofSegment_post, seekEndTM_contract_post, skipBackTM_contract_post, copyMapTM_contract_post, skipTM_contract_post, walkTM_contract_post, zr_cellPost, Cfg.mapState_workTapePos, seekPost_workTapePos, sweepPost_workTapePos, Function.update_self, Function.update_of_ne (by decide : (0 : Fin 2) ≠ 1), Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0), show (0 : Fin 2) ≠ 1 by decide, show (1 : Fin 2) ≠ 0 by decide, if_true, if_false, or_true, true_or, hz.2.1, SignType.coe_one, one_mul
+character blocks >= 20 shared with bounds: 18 covering 775 of 929 chars of time
+  [27] 'private lemma zr_rightPass_'
+  [56] ' {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k) (d)'
+  [29] '    (zr_rightPassContract x).'
+  [20] 'zoneStart (D.1 + 1) '
+  [20] ' zoneCapacity D.1 + '
+  [23] ' := zr_capacity_pos D.1'
+  [49] '\n  simp only [zr_rightPassContract, Contract.seq_'
+  [23] ' zr_rightRulerContract,'
+  [20] ' Contract.ofSegment_'
+  [48] ' zr_rightSeekBackContract, zr_rightSeekContract,'
+  [24] '\n    seekEndTM_contract_'
+  [22] ', skipBackTM_contract_'
+  [22] ' zr_rulerSkipContract,'
+  [42] ' zr_rulerCopyContract, copyMapTM_contract_'
+  [208] ',\n    zr_writeHalvesContract, zr_innerCopyContract, zr_halfCopyContract,\n    zr_outerHalfContract, z'
+  [28] ' zr_rightWord, zr_rulerWord,'
+  [59] ' List.length_cons, List.length_ofFn, List.length_replicate,'
+  [55] ' zoneCells_length, zr_right_offset D.2 (D.1 + 1) le_rfl'

@@ -1,0 +1,50 @@
+G4C3Targets.lean:1396:8: warning: declaration uses 'sorry'
+G4C3Targets.lean:1439:8: warning: declaration uses 'sorry'
+G4C3Targets.lean:1693:17: warning: unused variable `x`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+@zr_rightPassRow : {k : ℕ} →
+  (x : List (ZoneSym k)) →
+    Contract
+      (seamCompTM
+        (seamCompTM (seamCompTM (seekEndTM 2 0) SeekPhase.done (skipBackTM 2 0) SeekPhase.run) (Sum.inr SeekPhase.done)
+          (seamCompTM (copyMapTM 2 0 1 (fun x => ()) fun x x_1 => Sum.inl false) SweepPhase.done (skipTM 2 0)
+            SeekPhase.run)
+          (Sum.inl SweepPhase.sweep))
+        (Sum.inr (Sum.inr SeekPhase.done))
+        (seamCompTM
+          (copyMapTM 2 1 0 (fun x => ()) fun x x_1 => Sum.inr fun x => if true = true then some none else none)
+          SweepPhase.done
+          (seamCompTM
+            (seamCompTM
+              (seamCompTM (zr_cellTM 1 (fun x => false) none 1) (some false) (walkTM 2 1 (fun x => True) 1)
+                SeekPhase.run)
+              (Sum.inr SeekPhase.done) (skipBackTM 2 1) SeekPhase.run)
+            (Sum.inr SeekPhase.done)
+            (copyMapTM 2 1 0 (fun x => ()) fun x x_1 => Sum.inr fun x => if false = true then some none else none)
+            SweepPhase.sweep)
+          (Sum.inl (Sum.inl (Sum.inl none))))
+        (Sum.inl SweepPhase.sweep))
+      (Sum.inl (Sum.inl (Sum.inl SeekPhase.run))) {some (Sum.inr (Sum.inr (Sum.inr SweepPhase.done)))} (zr_RightData k)
+      x
+@zr_rightPass_bounds : ∀ {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k)
+  (d :
+    Cfg 2 (ZoneSym k)
+      (((SeekPhase ⊕ SeekPhase) ⊕ SweepPhase ⊕ SeekPhase) ⊕
+        SweepPhase ⊕ ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase) ⊕ SweepPhase)
+      x),
+  (zr_rightPassContract x).pre D d →
+    0 ≤ (zr_rightPassContract x).lo D d 0 ∧
+      (zr_rightPassContract x).hi D d 0 ≤ ↑(zoneStart (D.fst + 1)) + ↑(zoneCapacity (D.fst + 1)) ∧
+        d.workTapePos 1 - 1 ≤ (zr_rightPassContract x).lo D d 1 ∧
+          (zr_rightPassContract x).hi D d 1 ≤ d.workTapePos 1 + ↑(zoneCapacity D.fst) + 1
+@zr_rightPass_tape : ∀ {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k)
+  (d :
+    Cfg 2 (ZoneSym k)
+      (((SeekPhase ⊕ SeekPhase) ⊕ SweepPhase ⊕ SeekPhase) ⊕
+        SweepPhase ⊕ ((Option Bool ⊕ SeekPhase) ⊕ SeekPhase) ⊕ SweepPhase)
+      x),
+  (zr_rightPassContract x).pre D d →
+    (∀ (q : ℤ), 0 ≤ q → ((zr_rightPassContract x).post D d).workTapes 0 q = zonedTape (fun t => (D.snd t).extend) q) ∧
+      ∀ q ≤ 0, ((zr_rightPassContract x).post D d).workTapes 0 q = zonedTape D.snd q
+exit 0 (5 s)

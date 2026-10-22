@@ -1309,17 +1309,25 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
 - **Megafill B delivered (2026-10-22)** (`campaign/fills/megafill/reports/megafill-b-REPORT.md`):
   - **U2-S cont1: complete** (`Turing.exists_selfStartupTMK`, modulo only the seam layout; reviewed
     `campaign/fills/u2s/reviews/startup-cont1/REVIEW.md`: land after #145, which makes it
-    admission-free). Landing branch `lean/u2s-startup-cont1` (`c6733db3`) pushed; **its PR waits on
-    the user's ruling on F1**: a second private one-step leaf (the code buffer's cleanup) beyond the
-    brief's one allowed leaf, with the empty code's position as a fixed parameter of `E`.
+    admission-free). **F1 accepted (user, 2026-10-22):** a second private one-step leaf (the code
+    buffer's cleanup) beyond the brief's one allowed leaf, with the empty code's position as a fixed
+    parameter of `E`. **Landed as #147** (`c6733db3`); **merge after #145**, then its replay on the
+    merged tree and a fill gate. Lesson for later briefs: state the empty word's origin case.
   - **F5 cont1: complete** (the call rows and the host, no admission; reviewed
     `campaign/fills/b6/reviews/rulerdevice-cont1/REVIEW.md`). **Landed as #146** (`8114e482`, with
     the status text and two `Implementation.` paragraphs); replay `replay-lf5c1.sh` (16 modules)
     and a fill gate pending. Optional private-docstring rewordings (its F2) are for the deferred
     public-facing pass; its O1 (two read exits keep moving after `2ℓ + 5`) goes to the F6/U2-E
     briefs.
-  - **G4 cont3: partial** (checkpoint 1.1b; the session lost its workspace while on 1.2); its
-    review is running.
+  - **G4 cont3: partial** (checkpoint 1.1b; the session lost its workspace while on 1.2). Reviewed
+    (`campaign/fills/s13d/reviews/g4-cont3/REVIEW.md`: land); **landed as #148** (`13e17589`, the
+    worker's own commit only); replay `replay-lg4c3.sh` (16 modules) and a fill gate pending.
+    **For continuation 4:** 1.2 (the return home; its draft was lost with the workspace) and 1.3
+    onwards, from 1.1b's local agreement and scratch frame; `Contract.seq` on the re-wrapped pass
+    needs `DecidableEq` for a 12-part state type that default instance search misses (raise
+    `synthInstance.maxSize` to 256, or give the instance); the left pass by per-stage lemmas (an
+    85% pair already); seal controls that close by `rfl` unsealed; gate 58's probe and duplication
+    points; region lines from the landed file.
   - **For the addendum's next version:** both reviews found 967 of the 1,002 cache files already
     on the host before the fetch; record where they came from.
 - **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
