@@ -1410,7 +1410,16 @@ head at `2|α| + 3`. Skip the doubled state count and the separator of
 tape `k + 1` at offset `2` and the table to tape `k`; clear the scratch and the buffer. Rewind the
 input head to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Every phase depends
 on `α` only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's
-halting time bounds its cells). -/
+halting time bounds its cells).
+
+**Implementation.** The scheme's canonizer runs behind the public cleaner, which blanks its work
+tapes and returns its heads, and the capture uses that machine's first halting time `t α`
+(`Turing.MultiTapeTM.exists_first_halt`): the capture ends after `3|α| + 4 + t α` steps rather
+than at the bound `E.canonizerTime |α|`. The code buffer is cleared by the catalog skip, skip back
+and clear around a one-step move that acts only on a blank cell; on the empty code the buffer is
+all blank, so the canonizer's final head position on the empty code is a fixed parameter of the
+machine, chosen from `E`. The input head is rewound by `Turing.FinTM.rewind_scan` and
+`Turing.FinTM.rewind_heads`, in `2|α| + 5` steps. -/
 theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P),
