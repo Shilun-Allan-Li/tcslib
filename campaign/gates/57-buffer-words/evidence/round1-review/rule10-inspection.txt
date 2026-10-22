@@ -1,0 +1,31 @@
+Gate 57 review: rule-10 inspection of TuringMachine/BufferWords.lean at 7c963897
+Tactics: by_cases, decide, exact, obtain, omega, rfl, rw, show, split_ifs
+simp / simpa / unfold / dsimp anywhere: False
+rw heads (all, nested included):
+   List.append_assoc
+   List.drop_eq_nil_of_le
+   List.getElem?_append_left
+   List.getElem?_append_right
+   List.getElem?_eq_getElem
+   List.getElem?_eq_none
+   List.getElem?_nil
+   List.getElem?_replicate_of_lt
+   List.getElem?_take
+   List.length_replicate
+   List.length_take
+   List.take_append_drop
+   Nat.add_sub_cancel_left
+   Nat.sub_self
+   bufferTape_append_shift
+   bufferTape_eq
+   bufferTape_nat
+   decide_eq_false
+   decide_eq_true
+   if_pos
+   min_eq_left
+   show
+Project names used (other than this module's own): ['bufferTape_eq', 'bufferTape_nat'] -- both published theorems of Simulation
+`bufferTape` itself named as a rewrite/simp argument: False
+Closing `rfl`s: `bufferTape_take` and `_eq_none_of_not_mem` close `none = none` in the negative branch;
+`bufferTape_unary` closes `[false][0]? = some false` (core List lookup on a literal). None reduces a project definition;
+the sealed re-run (BufferWordsSeal-7c963897.out, empty, exit 0) confirms.

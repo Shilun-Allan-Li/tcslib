@@ -871,22 +871,42 @@ rules (a PR plus its gate). Its input is the round-2 classified ledger of the AR
   with their families K1–K20.
 - **Later:** the run-composition kit is a candidate to unify with `Build/Contract` (MIG-0).
 
-### RW-1: the rewind row's frame helper, a copy of Catalog's seek frame (user, 2026-10-18)
+### RW-1: the rewind row's copies of Catalog's seek frame and table (user, 2026-10-18; gate 55)
 
 *Origin: the screen of PR #138 (the public rewind row, `Build/Rewind`), before gate 55.*
 
-`Build/Rewind`'s private `rw_cfg` reproduces `Build/Catalog`'s private `catalogSeekCfg` at 100%
-(79 characters, both ways): the three-line record update that sets the state and moves one head,
-over `RewindPhase` instead of `SeekPhase`. Catalog's helper is private and specific to
-`SeekPhase`, so the new module cannot cite it. The step lemmas over the two frames, `rw_step` and
-Catalog's private `catalog_seek_step`, state the same step; the screen pairs them below its
-half threshold.
-- **Acknowledged (user, 2026-10-18)**, before gate 55, on condition that the retirement stays on
-  this backlog.
-- **Retirement, in the user's dedup window:** publish one frame over any state type (with its
-  step lemma, through the public `step_of_tapeAction_move`) and cite it from both files. It
-  edits `Build/Catalog`, whose downstream is most of the library, so it goes with Catalog's next
-  edit (12.2c T3, Catalog core, or MIG-1).
+- **The frame.** `Build/Rewind`'s private `rw_cfg` reproduces `Build/Catalog`'s private
+  `catalogSeekCfg` at 100% (79 characters, both ways): the three-line record update that sets
+  the state and moves one head, over `RewindPhase` instead of `SeekPhase`. Catalog's helper is
+  private and specific to `SeekPhase`, so the new module cannot cite it. The step lemmas over
+  the two frames, `rw_step` and Catalog's private `catalog_seek_step`, state the same step; the
+  screen pairs them below its half threshold.
+- **The table.** `rewindTM`'s transition table is `skipBackTM`'s without its first row (`start`
+  in the role of `gap`): one 140-character block, 80% of `rewindTM` and 69% of `skipBackTM`.
+  Within it, `rewindTM` also meets `seekStartTM`, `skipTM` and `seekEndTM` (53–56%), the seek
+  family's table pattern. #138 cannot share the table: defining the rewind from `skipBackTM`
+  would read `skipBackTM`'s transitions, which Catalog does not publish, and
+  `skipBackTM_run_ofCfg` starts in `run`, so it does not yield the rewind's run.
+- **Not counted, as an exception (approved by the user, 2026-10-21):** `rewindTM_run_ofCfg` against
+  Catalog's private `a2_mapSetup_run` (52% of a 163-character proof), the run-by-induction idiom
+  that the same screen finds in 12 short run proofs across 10 files.
+- **Census** (gate 55, finding 1; `duplication-ledger.md`, RW-1): `Build/Rewind` 2 of 5
+  declarations (40%), 20 lines, 219 characters; `Build/Catalog` 5 more original-side members.
+  **`Build/Rewind` is past one fifth**; this item is the §1 item that `workflow.md` §4 requires
+  for it, widened from the frame to the table.
+- **Acknowledged (user, 2026-10-18)** for the frame, before gate 55, on condition that the
+  retirement stays on this backlog. **The table and the exception: acknowledged (user,
+  2026-10-21)** (gate 55, finding 1), with the retirement by unification (item 2 below) chosen
+  over a frame-only one.
+- **Retirement, in the user's dedup window**, with Catalog's next edit (12.2c T3, Catalog core,
+  or MIG-1), since it edits `Build/Catalog`, whose downstream is most of the library:
+  1. publish one frame over any state type, with its step lemma through the public
+     `step_of_tapeAction_move`, and cite it from both files;
+  2. publish one back-pass run, skip back entered at `gap` from a head anywhere in the word or
+     just past it; derive `skipBackTM_run_ofCfg` from it (one unconditional step, then the
+     back pass with `n = |u|`), and make the rewind skip back entered at `gap`. The rewind's
+     statement is kept up to its state type (`SeekPhase` for `RewindPhase`, or a state
+     renaming), and its consumers are re-checked in that window.
 
 ### BW-1: StepBlock's four buffer-word privates, restated publicly (user, 2026-10-18)
 
@@ -897,6 +917,80 @@ half threshold.
 statements, different proofs; no screen pair). **Acknowledged (user, 2026-10-18).**
 **Retirement, in the user's dedup window:** `StepBlock` imports `BufferWords`, deletes the four
 privates and re-points their uses (StepBlock's downstream is replayed then).
+- **Census** (gate 57, finding 1; `duplication-ledger.md`, BW-1): `BufferWords` 4 of 6
+  declarations (66.7%), `StepBlock` 4 of 135 (3.0%), no copied characters. **`BufferWords` is
+  past one fifth**; this item is the §1 item that `workflow.md` §4 requires for it. The
+  correction adds no member, file or family to what the ruling chose: the module and its four
+  restatements.
+
+### C1E-1: follow-ups from C1-E cont1, the exhaustive replay (gate 53, notes 10 and 12; 2026-10-21)
+
+*Origin: the maintainer's review of the fill (`campaign/fills/c1/reviews/exhaustive-cont1/REVIEW.md`,
+(d) and decision 4) and gate 53 (PR #136), notes 10 and 12. None is a copy needing
+acknowledgment: the screen's 122 new pairs are all in-file siblings (0 cross-file), and the public
+counterparts in (a) and (b) arrived after the fill's base (`9e77d2b2`). Each item is picked up in
+the user's dedup window, or when `ClassNP/ExhaustiveReplay` is next open.*
+
+- **(a) `xr_val` is `Turing.counterValue`** (`Build/CounterLoop`, already upstream of the
+  module): the same expression `Nat.ofDigits 2 (w.map Bool.toNat)`. Re-point `xr_val` and its
+  lemmas to `counterValue` through the public `counterValue_eq` (#122), rather than promote them
+  under a new name.
+- **(b) Buffer-tape facts.** `xr_bufferTape_neg` is `FinTM.bufferTape_of_neg`; `xr_bufferTape_ge`
+  and `xr_bufferTape_eq_none_iff` (a 93% pair) follow from `FinTM.bufferTape_eq` (both
+  `Simulation`, #122). Cite them and delete the privates.
+- **(c) The replay's two exits.** `xr_replay_finish` and `xr_replay_timeout` share a prelude
+  (`hq`, `hct`, the embedded-run identity `hE`; 992 characters, 92%/90%): one private helper.
+- **(d) The bank lemmas.** The twenty `xr_*_ne_*` one-liners (92-97%) as one lemma over
+  `Fin.val`; optionally the nine one-bank update lemmas (59 pairs) as one "update one bank"
+  lemma (REPORT §8).
+- **(e) `xr_runFrom_one` is `Turing.runFrom_one`** (`Build/EmitIterEmbed`, outside the module's
+  imports). Moving that lemma to `Deterministic` would serve this file and about 28 one-step
+  rewrites elsewhere (review `out/52`). The helper's body is under the screen's 60-character
+  floor, so the screen does not see this idiom; the floor is not evidence of no duplication.
+- **(f) `xr_rewindTM` re-points to the public rewind row** `Turing.rewindTM` (`Build/Rewind`,
+  PR #138, not yet merged), as C1-R round 3's ruling records (§2). As far as read, the phase host
+  takes one control type per phase, so no state embedding is needed: the `crewind` phase's control
+  becomes `RewindPhase`, its redirect reads `RewindPhase.done`, and `xr_crewind_host` cites
+  `rewindTM_run_ofCfg` (whose framed run carries the no-earlier cut). `xr_rewindTM`,
+  `xr_rewindTM_run` and the 94% `xr_testTM`/`xr_rewindTM` pair then go.
+- **(g) Promotion candidates** (REPORT §6, items 1-5, agreed by the review): the ruler-driven pass
+  and the six-pass window clear; `xr_firstArrival'` (the phase host's guard from an exact-time
+  run lemma with a stationary exit); `xr_runWith_shift` (branches commute with translating the
+  work tapes); `xr_window_runWith`; the rewind and extend leaves. Promote when a second consumer
+  is briefed.
+- **(h) A permanent sanity example for transient output** (gate 53, note 10): a binary NDTM with
+  no work tapes that outputs `true` while live and then `false` before halting is not accepted
+  within any bound (`¬ AcceptsWithin`), so the exhaustive decider answers `[false]` on it. Stated
+  from public declarations, it checks the statement's notion of acceptance (halted with output
+  exactly `[true]`), not the private flag handling, which the theorem itself covers. It needs a
+  concrete machine and its runs read through published step equations (rule 10), so it goes in a
+  later docstring/examples PR, not #136.
+
+### IW-1: the window copier's interval patch, a copy of `wordPatch` (user, 2026-10-21)
+
+*Origin: gate 54 (PR #137, `Build/InputWindow`), finding 1; the maintainer disclosed it in the
+pack.*
+
+`Build/InputWindow`'s private `iw_patch` is `Build/StepClock`'s public `wordPatch` at `Γ = Bool`
+(token for token after renaming its binders, and equal by `rfl`). The brief authorized no import,
+so the worker could not cite it, and the screen pairs neither. The same definition is
+`Build/CounterLoop`'s private `counterPatch` and `Build/Catalog`'s private `catalogTape`: one
+definition in four files, `wordPatch` the public one.
+- **Acknowledged (user, 2026-10-21)**, at gate 54, for the whole family, on condition that the
+  retirement stays on this backlog.
+- **Retirement, in the user's dedup window,** in one move. `CounterLoop` cannot import
+  `StepClock`, which imports it, and `Catalog` lies below both. So `wordPatch` and its cell
+  lemmas move below `Build/Catalog`, beside `FinTM.bufferTape` (`Simulation`, or
+  `TuringMachine/BufferWords`, merged with #140), with #139's `wordPatch_append` and an
+  explicit-form lemma. `counterPatch`, `catalogTape` and `iw_patch` are then deleted and their
+  uses re-pointed. `InputWindow` needs no new import, and its re-proofs are gate 54's option B
+  (`iw_patch_append` and `iw_patch_true` through `wordPatch_of_mem`/`_of_not_mem`, with a private
+  explicit-form reading; verified: 0 errors and 0 warnings, a seal of 19 definitions with 5
+  controls, the statement unchanged). The move edits `Build/Catalog`, so it goes with Catalog's
+  next edit (12.2c T3 or MIG-1), as RW-1 does. If `InputWindow` is wanted earlier, option B
+  lands it alone, importing `StepClock` (acyclic; the closure gains that one module).
+- **Census** (`duplication-ledger.md`, IW-1): `InputWindow` 1 of 17 declarations (5.9%),
+  `StepClock` 1 of 41, `CounterLoop` 1 of 79, `Catalog` 1 of 505; none is past one fifth.
 
 ## 2. Campaign work queued or on hold
 
@@ -1118,10 +1212,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   proofs over 20 lines get sketches in a docstring-only follow-up (the six main lemmas first).
   Landing PR from `lean/c1-exhaustive-fill` (16 cherry-picked commits + the review's fix); its
   4-module replay follows #132. BF's only open dependency is now UN.
-  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's head:
+  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's review
+  head `b5629b91`, whose file is byte-equal to #136's merged head `75b2e94c`:
   `xr_passTM_run`, `xr_testTM_run`, `xr_clearTape_host`, `xr_cycle_host`, `xr_depth_host`,
   `xr_run_host`; 0 errors, lint unchanged). Its PR opens after #136 merges (rebased onto the
-  campaign branch, so it is not stacked); the other 18 stay for the docstring pass.
+  campaign branch, so it is not stacked); the other 18 stay for the docstring pass. Gate 53
+  (note 14): six written, 18 remaining, recounted (25 proofs over 20 lines, 7 with a sketch, the
+  target's included). The commit merges with gate 53's minor-1 fix of the target's sketch without
+  conflict (a three-way merge of the file: code identical, the census unchanged). The same PR
+  also rewords the two private texts that still call the accept flag "some branch accepted" (the
+  host section's header and `xr_I`): the flag records an output `[true]`, read as acceptance only
+  at an all-halting depth.
 - **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
   cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
   held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):

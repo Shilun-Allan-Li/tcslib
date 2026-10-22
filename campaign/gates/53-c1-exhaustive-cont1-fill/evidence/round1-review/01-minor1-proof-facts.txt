@@ -1,0 +1,51 @@
+# minor 1: the frozen target's sketch (head 75b2e94c, blob 7e14a311) against the proof; line numbers of the head file
+
+## (a) the old sketch's claims
+3125:`L` on a counter tape (`Turing.incrementTM`); replay each through `N.tm.replayTM` for `L` steps
+3126:under the step-clocked runner (`Turing.exists_stepClockTMVia`, gated with the B6 hosts),
+3127:silently (`Turing.embedSilentTM`); record whether some branch accepted (halted with output
+3129:radius `L` (a counter-driven window clear) and rewind the native input head. Stop at the first
+
+## (b) the accept flag is raised on output = [true] at either clock exit (finish or timeout); the test runs on both
+1990:  | (.test, a, l) => some ⟨(.crewind, a || b, l), xr_St.start⟩
+2004:    if ∃ r, q = C.finish r then some ⟨(.test, a, l), xr_St.start⟩
+2005:    else if ∃ r, q = C.timeout r then some ⟨(.test, a, true), xr_St.start⟩ else none
+2229:host clears it, returns the capture head, raises the accept flag exactly when `out = [true]`, and
+2657:          xr_cycle C z (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+2661:          xr_depthEnd C z (a || decide ((N.tm.runWith s (N.tm.initCfg z)).output = [true]))
+
+## (c) the flags are lowered at the deepening; the answer reads the accept flag only when no branch was live
+2014:      some (if l then ⟨(.extC, false, false), xr_St.run⟩ else ⟨(.halt, a, false), xr_St.start⟩)
+2083:  ⟨some (if l then ⟨(.extC, false, false), xr_St.run⟩ else ⟨(.halt, a, false), xr_St.start⟩), 1,
+2754:        (a' = true ↔ a = true ∨ ∃ s', s'.length = L ∧ xr_val s ≤ xr_val s' ∧
+2990:            xr_depthEnd C z (decide (N.AcceptsWithin z Ls)) false Ls wL' u' h' := by
+3014:        · exact FinNDTM.acceptsWithin_iff.mpr ⟨s', hs', NDTM.haltsWithin_iff.mp hLs s' hs', hout⟩
+
+## (d) six ruler passes, two left and four right, radius 2|wL| around the head; the ruler is the depth word
+1893:  | pass (j : Fin k) (n : Fin 6)
+1952:private def xr_dir (n : Fin 6) : SignType := if n.val < 2 then SignType.neg else SignType.pos
+1967:  | (.pass j n, _, _) => xr_passTM (N.k + 2 + 2) (xr_work N.k j) (xr_dep N.k) (xr_dir n)
+2474:content lies within radius `2|wL|` of its head, within `6(2|wL| + 3)` steps the six passes blank
+2480:    (hwin : xr_Win (wk j) (hk j) (2 * wL.length)) :
+
+## (e) heads left in place: each cycle starts at heads h and ends at h'; translation invariance
+268:private theorem xr_runWith_shift {k : ℕ} {S : Type} {x : List Bool} (N : NDTM k Bool S)
+270:    N.runWith w (xr_shift δ c) = xr_shift δ (N.runWith w c) := by
+1453:    xr_heads h 0 0 0 0, []⟩
+1529:  rw [xr_runWith_shift] at hrep
+2077:    xr_heads h 0 0 0 0, []⟩
+2086:    xr_heads h 0 0 0 0, []⟩
+2150:        xr_heads h 0 0 0 0, []⟩ := by
+2153:      (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+2179:          (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ T =
+2630:private theorem xr_branch_win {N : FinNDTM Bool} (z s : List Bool) (h : Fin N.k → ℤ)
+2846:          (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ :
+2850:          (FinTM.bufferTape []) (FinTM.bufferTape wL), xr_heads h 0 0 0 0, []⟩ := by
+
+## (f) the ledger constants
+2653:    ∃ T ≤ (18 * N.k + 19) * (s.length + 1), ∃ u' : List Bool, u'.length ≤ wL.length ∧
+2925:    ∃ T ≤ 6 * L + 11, ∃ wL' : List Bool, wL'.length = L + 1 ∧ xr_val wL' = L + 1 ∧
+3141:  refine ⟨xr_E C, 18 * N.k + 41, fun z T hT => ?_⟩
+3148:  have hled := xr_ledger (18 * N.k + 38) Ls
+3189:    have hcomp : (xr_E C).ComputesInTime z [b] (T₁ + 1 + 1) := by
+3198:    exact hcomp.mono (by omega)

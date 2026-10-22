@@ -1,0 +1,30 @@
+# Gate 57 review: minor 1, the source-inclusive census at 7c963897
+## Denominators (scripts/campaign_style_lint.py TCSlib/Complexity/TuringMachine at 7c963897)
+INFO  TCSlib/Complexity/TuringMachine/BufferWords.lean                    118 lines; 6 public / 0 private declarations
+INFO  TCSlib/Complexity/TuringMachine/Build/StepBlock.lean                3526 lines; 64 public / 71 private declarations
+## Spans (attached docstring through last code line; tools/spans.py)
+bufferTape_append_shift: lines 42-51 (10)
+bufferTape_append_mid: lines 53-61 (9)
+bufferTape_eq_none_of_not_mem: lines 90-99 (10)
+bufferTape_unary: lines 101-116 (16)
+total 45
+(non-members: _drop 14, _take 11)
+bufferTape_suffix: lines 2761-2768 (8)
+bufferTape_reads: lines 2583-2598 (16)
+bufferTape_outside: lines 2061-2067 (7)
+bufferTape_unary: lines 2023-2033 (11)
+total 42
+## Fractions
+BufferWords 4/6 = 66.7%; StepBlock 4/135 = 2.96% (= 3.0%)
+## Correspondences (BufferWords <-> StepBlock private): append_shift<->suffix, append_mid<->reads, eq_none_of_not_mem<->outside, unary<->unary
+## Other bufferTape lemmas in the library (none restates the six; all special cases or update identities, outside any recorded correspondence):
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:348:@[simp] theorem bufferTape_length (w : List Bool) : bufferTape w (w.length : ℤ) = non
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:352:theorem bufferTape_write (w : List Bool) (b : Bool) :
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:208:theorem bufferTape_pred (w : List Bool) (j : ℕ) (hj : j < w.length) :
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:219:theorem bufferTape_at (w : List Bool) (i : ℕ) (hi : i < w.length) :
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:96:lemma bufferTape_erase_last (pre : List Bool) (b : Bool) :
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:49:lemma bufferTape_update_mid (l m : List Bool) (a b : Bool) :
+TCSlib/Complexity/TuringMachine/SymbolLift.lean:260:theorem FinTM.bufferTape_map {Γ : Type} (e : Bool ↪ Γ) (w : List Bool) (p : ℤ) :
+TCSlib/Complexity/TuringMachine/SymbolLift.lean:267:theorem FinTM.bufferTape_map_decode {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+## One-fifth rule (workflow.md §4): BufferWords past 1/5 (66.7%) -> its §1 item is backlog BW-1 (opened+acknowledged 2026-10-18). StepBlock 3.0% < 1/5; #140 leaves StepBlock byte-unchanged; StepBlock has no other ledger membership (grep: BW-1 is its only ledger entry).
+ledger mentions of StepBlock: 3 (all inside BW-1)

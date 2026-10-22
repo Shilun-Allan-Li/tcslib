@@ -26,9 +26,9 @@ The module is in `SpaceComplexity` because it uses `Turing.FinTM.configBound`
 (`SpaceComplexity/ConfigCount.lean`) and the summary tag (`SpaceComplexity/ConfigGraph.lean`),
 so that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`.
 
-**Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). The bridges are proved;
-`Turing.exists_configWindowRunnerTM` is sorried with its proof sketch.
+**Status.** The bridges are proved. `Turing.exists_configWindowRunnerTM` is sorried with its
+proof sketch; private lemmas toward it (the clock arithmetic at the actual record, the one-cell
+move, a field's constant copy and the clock's clear) are proved.
 
 ## Main definitions
 
@@ -222,6 +222,141 @@ private lemma cw_head_bound {c L W : ℕ} (C : ℕ) (hW : W ≤ c * L) :
       Nat.mul_le_mul_left C (by nlinarith)
     _ = C * (c + 1) * (L + 1) := by ring
 
+/-- The field cells of a configuration record exclude its `k + 2` separators.
+**Proof sketch.** Subtract the separator count from the published layout length. -/
+private lemma cw_field_total {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ)
+    (d : Cfg k Bool Q x) (τ : T) :
+    ((cfgRecord s d τ).map List.length).sum = k * (2 * s + 1) + posWidth x.length + 2 := by
+  have hcount := cfgRecord_length s d τ
+  have hne : cfgRecord s d τ ≠ [] := by
+    intro h
+    rw [h, List.length_nil] at hcount
+    omega
+  have hlen := joinFields_length (cfgRecord s d τ) hne
+  rw [joinFields_cfgRecord_length, recordLength_eq, hcount] at hlen
+  omega
+
+/-- The chosen all-true word fits linearly in the record and supplies the runner's
+budget for every round up to the configuration count plus one.
+**Proof sketch.** Apply the arithmetic budget to the public record-length and
+position-width equations, then use the exact all-true clock value. -/
+private lemma cw_record_clock (M : FinTM Bool) {T : Type} {x : List Bool} (s : ℕ)
+    (d : Cfg M.k Bool M.State x) (τ : T) (C : ℕ) :
+    let c := C + Fintype.card M.State + 8
+    let W := c * ((cfgRecord s d τ).map List.length).sum
+    W ≤ c * recordLength M.k x.length s ∧
+      ∀ N ≤ M.configBound x.length s + 1,
+        C * N * (recordLength M.k x.length s + x.length + 1) ≤
+          Nat.ofDigits 2 ((List.replicate W true).map Bool.toNat) := by
+  dsimp only
+  rw [cw_field_total]
+  constructor
+  · apply Nat.mul_le_mul_left
+    rw [recordLength_eq]
+    omega
+  · intro N hN
+    rw [cw_true_value]
+    have hn : x.length + 2 ≤ 2 ^ posWidth x.length := record_pos_lt x.length
+    exact (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left C hN)).trans
+      (cw_budget C (recordLength_eq M.k x.length s) hn
+        (M.configBound_le_two_pow x.length s))
+
+/-- The writer's one-step leaf moves the clock head left onto its delimiter.
+The catalog skips past a delimiter; no catalog row stops on that delimiter. -/
+private def cw_leftTM {Γ : Type} (k : ℕ) (i : Fin k) : MultiTapeTM k Γ Bool where
+  q₀ := false
+  tr := fun _ _ _ => tapeAction i 0 none .neg true
+
+/-- The delimiter move takes one silent step, keeps the native input position,
+and changes only the selected head and control state. -/
+private lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
+    (d : Cfg k Γ Bool x) (hd : d.state = some false) :
+    (cw_leftTM k i).runFrom d 1 =
+      { d with state := some true
+               workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧
+      (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true) := by
+  constructor
+  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl
+    simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h
+  · intro u hu
+    have hu0 : u = 0 := by omega
+    rw [hu0, MultiTapeTM.runFrom_zero, hd]
+    decide
+
+/-- A mapped copy of one field writes a constant symbol in the destination interval.
+It requires delimiters only on the source, so it also appends to an existing clock prefix.
+**Proof sketch.** Use the framed mapped copy. Every cell inside its write interval
+has a valid source index; the constant merge ignores the old destination value. -/
+private lemma cw_copy_constant {Γ : Type} {k : ℕ} {x : List Γ}
+    (src dst : Fin k) (hne : src ≠ dst) (e : Γ) (w : List Γ)
+    (d : Cfg k Γ SweepPhase x) (hd : d.state = some .sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
+    (copyMapTM k src dst (fun _ => ()) (fun _ _ => e)).runFrom d (2 * w.length + 2) =
+      { d with state := some .done
+               workTapes := fun j q =>
+                 if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+                   then some e else d.workTapes j q } := by
+  have h := (copyMapTM_run_ofCfg src dst hne (fun _ => ()) (fun _ _ => e) w d hd hw).1
+  rw [h]
+  congr 1
+  funext j q
+  split_ifs with hi
+  · have hn : 0 ≤ q - d.workTapePos j := by omega
+    have hk : (q - d.workTapePos j).toNat < w.length := by omega
+    rw [← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat, List.getElem?_eq_getElem hk]
+    rfl
+  · rfl
+
+/-- Clearing a word patch leaves its tape completely blank when the underlying tape
+is blank outside the patch interval. Every other tape, all heads, the native input
+position, and the output are preserved.
+**Proof sketch.** The patch supplies the clear row's delimited word. The row clears
+its interval; outside it, the patch preserves the assumed blank frame. -/
+private lemma cw_clear_patch {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
+    (w : List Γ) (d : Cfg k Γ SweepPhase x)
+    (hb : ∀ q, q < d.workTapePos i ∨ d.workTapePos i + (w.length : ℤ) ≤ q →
+      d.workTapes i q = none) :
+    let a : Cfg k Γ SweepPhase x :=
+      { d with state := some .sweep
+               workTapes := fun j q => if j = i then
+                 wordPatch (d.workTapes j) (d.workTapePos j) w q else d.workTapes j q }
+    (clearTM k i).runFrom a (2 * w.length + 2) =
+      { d with state := some .done
+               workTapes := fun j q => if j = i then none else d.workTapes j q } := by
+  dsimp only
+  let a : Cfg k Γ SweepPhase x :=
+    { d with state := some .sweep
+             workTapes := fun j q => if j = i then
+               wordPatch (d.workTapes j) (d.workTapePos j) w q else d.workTapes j q }
+  change (clearTM k i).runFrom a (2 * w.length + 2) = _
+  have hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      a.workTapes i (a.workTapePos i + p) = FinTM.bufferTape w p := by
+    intro p hp hlen
+    dsimp only [a]
+    rw [if_pos rfl]
+    by_cases hin : 0 ≤ p ∧ p < (w.length : ℤ)
+    · rw [wordPatch_of_mem _ _ _ (by omega) (by omega)]
+      congr 1
+      omega
+    · rw [wordPatch_of_not_mem _ _ _ (by omega), hb _ (by omega)]
+      rcases (show p = -1 ∨ p = (w.length : ℤ) by omega) with rfl | rfl
+      · rw [FinTM.bufferTape_left]
+      · rw [FinTM.bufferTape_nat, List.getElem?_length]
+  rw [(clearTM_run_ofCfg i w a rfl hw).1]
+  apply Cfg.ext <;> try rfl
+  funext j q
+  dsimp only [a]
+  by_cases hj : j = i
+  · subst j
+    simp only [ite_true, true_and]
+    by_cases hq : d.workTapePos i ≤ q ∧ q < d.workTapePos i + (w.length : ℤ)
+    · rw [if_pos hq]
+    · rw [if_neg hq, wordPatch_of_not_mem _ _ _ hq, hb q (by omega)]
+  · simp only [hj, false_and, ite_false]
+
+
 /-- **H3 with the configuration-count clock** (what `Complexity.space_hierarchy`'s
 diagonalizer cites). The windowed runner that builds its own clock. For a fixed binary machine
 `M` and a tag update `upd` that ignores silent steps, there is a module over the record alphabet
@@ -266,16 +401,27 @@ round's start and the halt and window exits merged into its one optional early e
 or more, so its value exceeds `configBound M |x| s`: rounds, not steps, are counted, and the
 time is at most the clock value times `C · (L + |x| + 1)` (`Turing.counterLoop_time_le`).
 
-**Fill appendix (B6-F3, partial).** The private `cw_` lemmas prove the all-true
-clock value, its numerical certification budget, and the time and head-envelope
-absorptions. The clock writer is not inserted, and this target remains open.
-The numerical helpers take the record-length formula and the position-width bound as
-explicit hypotheses. The specification API discharges them (`Turing.recordLength_eq`,
-`Turing.record_pos_lt`) and reads a `RecordAt` hypothesis's cells (`Turing.recordAt_iff`): the
-user's ruling on E1 (2026-10-16), superseding the 2026-10-15 permission to unfold.
-**Proof sketch (remaining).** Compose the mapped-copy writer, F2's runner and the framed
-clear by the prescribed seams or phase host, then apply the private arithmetic lemmas to
-their ledgers.
+**Implementation status.** The private `cw_` lemmas prove the clock arithmetic at the actual
+record. `cw_field_total` counts the record's field cells, `k(2s + 1) + posWidth |x| + 2`, and
+`cw_record_clock` shows that the all-true word over `c = C + |Q| + 8` passes of them has width
+at most `c · L` and a value large enough for every round up to `configBound + 1`, the extra
+halt-test round included (`C` is the runner's constant). The one-cell left move (`cw_leftTM`,
+`cw_left_run`), the constant mapped copy of one field (`cw_copy_constant`) and the clear of the
+clock after the runner (`cw_clear_patch`, which leaves the clock tape blank) are proved. The
+clock writer is not yet assembled, and this target remains open.
+The clock these lemmas prepare is Route A's over field cells, of width `W = c · F ≤ c · L`,
+where `F` counts the field cells. The fields are separated by blank cells and a mapped copy
+reads one blank-delimited word, so the clock is copied one field at a time and the separators
+are skipped, not written. The construction over the whole layout sketched above
+(`W := c_M · L`, by `Turing.copyTM` and `Turing.scanTM`, which also read one blank-delimited
+word) is an alternative that is not implemented; it would also have to handle the separators.
+**Proof sketch (remaining).** Write the clock field by field: a constant mapped copy, a skip
+past the field on each tape and a one-cell move back onto the clock's delimiter, joining
+adjacent constant writes into one interval. Repeat for the `c` passes and rewind both heads.
+Embed the writer on the record and clock tapes, run `Turing.exists_windowRunnerTM` on the word,
+clear the clock after a `halted` or `left` exit, and dispatch to the exits. The time and head
+bounds follow from the clock budget and the linear writer and clear costs, and
+`Turing.windowRun_stop_unique` moves the certification to the statement's `N`.
  -/
 theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :

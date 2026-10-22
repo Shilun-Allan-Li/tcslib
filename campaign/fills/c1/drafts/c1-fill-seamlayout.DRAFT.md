@@ -6,6 +6,10 @@ public module, PR #140). Before issue, after #140 merges: refresh the base and t
 one import), and re-measure on it against the then-current snapshot: the regions' lines, the
 order list (BufferWords joins the closure), the Mathlib roots, the base sorries, the screen base
 (add `TuringMachine/BufferWords` to the population) and the import probe (add the six lemmas).
+Dry run of 2026-10-21 at #140's merged head `7c963897` against `oleans-lbw2`
+(`drafts/c1-fill-seamlayout/dryrun-2026-10-21/`): the overlay (the one import added) elaborates
+with exactly the target's sorry warning (line 97); the probe, the 39 names plus the six lemmas,
+resolves (45 checks, 0 errors).
 -->
 
 ## Repository and branch — read this before anything else
@@ -174,6 +178,13 @@ Write `m = List.replicate q true ++ [false]`, `h = 2|a| + 2` and `n = |s| = h + 
   derives the unary state's cells (terminator included), the table's cells from its first cell,
   `s.drop r`, `s.take n`, the blanks past `s` and a separator cell from them alone, sealed: **a
   reference, not a citation** (its examples are probe-local).
+  - **Phase 5's read of `m.reverse` on `sm`:** no published reverse lemma exists. Derive it from
+    `bufferTape_nat`, `_left`, `_eq_none_of_not_mem` and core `List.getElem?_reverse`, as a small
+    private read (`ZoneTape`'s `zonedTape_left_word` derives such reads inline too).
+  - **`pairSkip`'s pair reads:** from `_append_shift` and `_append_mid`, by induction on `a`.
+  - Both were checked sealed, against the published module in your import context, with the
+    phases 7–8 window and the table tape's endpoint (gate 57's review,
+    `campaign/gates/57-buffer-words/evidence/round1-review/BufferWordsConsumerReal.lean.txt`).
 - **The frame.** Prove the full triple `Function.update` endpoint, not just the three tapes: R
   relies on it for the bank fields, including an installed choice tape. Prove `inputPos`
   unchanged.
@@ -208,8 +219,10 @@ Write `m = List.replicate q true ++ [false]`, `h = 2|a| + 2` and `n = |s| = h + 
 The probe's names: the target; the five rows' `_run_ofCfg` contracts; `phaseHostTM` and
 `phaseHostTM_run`; `MultiTapeTM.runFrom_mapState_of_agreeOn`, `MultiTapeTM.AgreeOn` and
 `agreeOn_iff`; `MultiTapeTM.output_prefix`; `pairEncode`, `pairEncode_eq`, `length_pairEncode`;
-`FinTM.bufferTape` with `_nil`, `_nat`, `_left`, `_eq`, `_of_neg`, `_append`; `Cfg.ext`; the model's
-step, run, action and `Cfg.mapState` lemmas; `Cfg.workTapeSymbols_eq`.
+`FinTM.bufferTape` with `_nil`, `_nat`, `_left`, `_eq`, `_of_neg`, `_append`; `BufferWords`'
+`FinTM.bufferTape_append_shift`, `_append_mid`, `_drop`, `_take`, `_eq_none_of_not_mem` and
+`_unary`; `Cfg.ext`; the model's step, run, action and `Cfg.mapState` lemmas;
+`Cfg.workTapeSymbols_eq`.
 
 ## Ground rules (binding)
 

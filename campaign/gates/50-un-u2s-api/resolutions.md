@@ -18,5 +18,9 @@ and the 314-module closure is replayed again for it (`replay-l132b.sh`).
 | 11 | note | The lint log was the API tree's, not the merged head's. | **Done.** Lint at `a8fc3aaa` (the merged head with the fix): `TuringMachine` 0 FAIL, 63 WARN over 80 files; `UniversalK` 590 lines, 12 public / 15 private (`evidence/round1-fix/lint-tm-a8fc3aaa.txt`). |
 | 2–6, 9, 10, 12 | notes | Integrity and the additions-only freeze; the extractor's exact run, budget corollary and adversarial instances; the cast pair's fields; public text and no new duplication; the elaboration and replay records, with the limits of a packet-based audit. | No action. |
 
-**Merge:** #132 is clear to merge once `replay-l132b.sh` passes (its base is the campaign branch).
-#133, #134, #136 and #137 then replay from its snapshot `oleans-l132b`.
+**Re-replay for the fix: passed (user, 2026-10-21):** 314 of 314 at `a8fc3aaa`, 0 failed,
+static-equal (93), the module list in the same order (`evidence/round1-fix/replay-l132b.*`).
+**#132 merged** (2026-10-22 00:50 UTC, `e9e97970`); the merge brings no change to `TCSlib/`
+beyond `a8fc3aaa`'s. The seven waiting PRs (#133, #134, #136–#140) had the campaign merged in
+(no conflict; their own files byte-unchanged) and replay from `oleans-l132b`; #139 after #134,
+since both closures contain `SpaceComplexity/WindowClock`.

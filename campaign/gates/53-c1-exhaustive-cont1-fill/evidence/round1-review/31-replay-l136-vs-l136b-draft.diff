@@ -1,0 +1,42 @@
+2,4c2,11
+< # Replay l136 (PR #136, the exhaustive replay (C1-E cont1); branch lean/c1-exhaustive-fill, stacked on the campaign tip after #132 (e9e97970)): its downstream closure (4 modules),
+< # fresh .oleans into oleans-l136, a copy of oleans-l132b, via scripts/lean_check_tree.sh. The root TCSlib
+< # module is not listed (replay rule). The precheck pins the changed files' blobs.
+---
+> # DRAFT (gate 53 review; not run). Replay l136b (PR #136 with gate 53's minor-1 docstring fix, the frozen target's
+> # proof sketch; branch lean/c1-exhaustive-fill, stacked on the campaign tip after #132 (e9e97970)): its downstream
+> # closure (4 modules, the same list as l136), fresh .oleans into oleans-l136b, a copy of oleans-l132b, via
+> # scripts/lean_check_tree.sh. The root TCSlib module is not listed (replay rule). The precheck pins the changed
+> # files' blobs; ExhaustiveReplay's pin is the patched blob (git hash-object of 75b2e94c's blob with
+> # review/gate53/fix-minor1-sketch.diff applied), the other two are l136's. Added to l136's prechecks: the head
+> # contains l136's head 75b2e94c, and its Lean diff from 75b2e94c is ExhaustiveReplay alone.
+> # The campaign tip moved after e9e97970 (#140, e2bc85eb: TuringMachine/BufferWords and the TuringMachine facade);
+> # neither is upstream of the four modules, so the chain from oleans-l132b still gives their merged state. If the
+> # campaign is merged into #136 again before this runs, the base hash, the diff set and the chain must be redone.
+8c15
+< LOG="$S/fills/replay/replay-l136.log"
+---
+> LOG="$S/fills/replay/replay-l136b.log"
+10c17
+< TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:7e14a311ccb3ca21d7b93a96792ccd34518d8535
+---
+> TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:0d09053ee9ea7d7387279c1229531feab7f6a8af
+16a24,25
+> git -C "$WT" merge-base --is-ancestor 75b2e94cff797b887b983a0fb70abcbe1fd49212 HEAD || { echo "precheck: the head must contain l136's head (75b2e94c); nothing copied" >&2; exit 2; }
+> [ "$(git -C "$WT" diff --name-only 75b2e94cff797b887b983a0fb70abcbe1fd49212 HEAD -- '*.lean')" = "TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean" ] || { echo "precheck: the Lean diff from l136's head (75b2e94c) must be ExhaustiveReplay alone; nothing copied" >&2; exit 2; }
+24c33
+< [ -d "$S/oleans-l136" ] && { echo "precheck: $S/oleans-l136 already exists; remove it for a fresh copy" >&2; exit 2; }
+---
+> [ -d "$S/oleans-l136b" ] && { echo "precheck: $S/oleans-l136b already exists; remove it for a fresh copy" >&2; exit 2; }
+26c35
+< cp -R "$S/oleans-l132b" "$S/oleans-l136" || exit 1
+---
+> cp -R "$S/oleans-l132b" "$S/oleans-l136b" || exit 1
+28c37
+< { echo "# replay-l136 at $(git rev-parse --short HEAD): PR #136, the exhaustive replay (C1-E cont1) ($(wc -l < "$LIST" | tr -d ' ') modules), fresh .oleans into oleans-l136"
+---
+> { echo "# replay-l136b at $(git rev-parse --short HEAD): PR #136 with gate 53's docstring fix ($(wc -l < "$LIST" | tr -d ' ') modules), fresh .oleans into oleans-l136b"
+32c41
+<     out=$(TCSLIB_OLEANS=$S/oleans-l136 nice -n 10 bash scripts/lean_check_tree.sh "$m" 2>&1); st=$?
+---
+>     out=$(TCSLIB_OLEANS=$S/oleans-l136b nice -n 10 bash scripts/lean_check_tree.sh "$m" 2>&1); st=$?

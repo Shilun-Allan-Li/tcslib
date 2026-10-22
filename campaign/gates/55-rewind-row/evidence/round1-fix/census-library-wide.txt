@@ -1,0 +1,65 @@
+# Rewind declarations (all, with extracted body length; screened iff >= 60)
+              inductive RewindPhase: kind=term body=48 screened=False
+                    def rewindTM: kind=term body=175 screened=True
+            private def rw_cfg: kind=term body=79 screened=True
+        private theorem rw_step: kind=proof body=233 screened=True
+                theorem rewindTM_run_ofCfg: kind=proof body=2938 screened=True
+
+# Pairs with a Rewind declaration on one side (target reproduces >= half of source, >= 60 chars); like-kind flag shown, unlike-kind pairs are not members
+   Rewind.lean::rw_cfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::catalogSeekCfg: 79/79 = 100%; longest contiguous 79; like-kind=True (term vs term); tiles=[79]
+      longest segment: {dwithstate:=someqworkTapePos:=Function.updated.workTapePosi(d.workTapePosi+z)}
+      tiles: ['{dwithstate:=someqworkTapePos:=Function.updated.workTapePosi(d.workTapePosi+z)}']
+   TCSlib/Complexity/TuringMachine/Build/Catalog.lean::catalogSeekCfg  reproduces  Rewind.lean::rw_cfg: 79/79 = 100%; longest contiguous 79; like-kind=True (term vs term); tiles=[79]
+      longest segment: {dwithstate:=someqworkTapePos:=Function.updated.workTapePosi(d.workTapePosi+z)}
+      tiles: ['{dwithstate:=someqworkTapePos:=Function.updated.workTapePosi(d.workTapePosi+z)}']
+   TCSlib/Complexity/TuringMachine/Build/Catalog.lean::skipBackTM  reproduces  Rewind.lean::rewindTM: 140/175 = 80%; longest contiguous 140; like-kind=True (term vs term); tiles=[140]
+      longest segment: =>tapeActioni0none.neg.back|.back=>matchwiwith|some_=>tapeActioni0none.neg.back|none=>tapeActioni0none.pos.done|.done=>inputMoveAction0.done
+      tiles: ['=>tapeActioni0none.neg.back|.back=>matchwiwith|some_=>tapeActioni0none.neg.back|none=>tapeActioni0none.pos.done|.done=>inputMoveAction0.done']
+   Rewind.lean::rewindTM  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::skipBackTM: 140/202 = 69%; longest contiguous 140; like-kind=True (term vs term); tiles=[140]
+      longest segment: =>tapeActioni0none.neg.back|.back=>matchwiwith|some_=>tapeActioni0none.neg.back|none=>tapeActioni0none.pos.done|.done=>inputMoveAction0.done
+      tiles: ['=>tapeActioni0none.neg.back|.back=>matchwiwith|some_=>tapeActioni0none.neg.back|none=>tapeActioni0none.pos.done|.done=>inputMoveAction0.done']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Universal.lean::timedFrame_run: 83/126 = 66%; longest contiguous 49; like-kind=True (proof vs proof); tiles=[49, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean::maskedClock_lockstep: 81/132 = 61%; longest contiguous 47; like-kind=True (proof vs proof); tiles=[47, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/NDHost.lean::wr_cfg_scan: 60/102 = 59%; longest contiguous 35; like-kind=True (proof vs proof); tiles=[35, 25]
+      longest segment: rw[Cfg.workTapeSymbols_eq]simponly[
+      tiles: ['rw[Cfg.workTapeSymbols_eq]simponly[', '_cfg,Function.update_self']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/ClassNP/Nondeterminism.lean::b2_unary_run: 78/135 = 58%; longest contiguous 45; like-kind=True (proof vs proof); tiles=[45, 33]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step
+      tiles: ['|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step', ',MultiTapeTM.runFrom_succ_eq_step']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/CircuitComplexity/CircuitEvalRun.lean::step_rej: 60/107 = 56%; longest contiguous 35; like-kind=True (proof vs proof); tiles=[35, 25]
+      longest segment: rw[MultiTapeTM.runFrom_succ_eq_step
+      tiles: ['rw[MultiTapeTM.runFrom_succ_eq_step', 'MultiTapeTM.runFrom_zero,']
+   TCSlib/Complexity/TuringMachine/Build/Catalog.lean::seekStartTM  reproduces  Rewind.lean::rewindTM: 98/175 = 56%; longest contiguous 56; like-kind=True (term vs term); tiles=[56, 42]
+      longest segment: =>tapeActioni0none.pos.done|.done=>inputMoveAction0.done
+      tiles: ['=>tapeActioni0none.pos.done|.done=>inputMoveAction0.done', '=>matchwiwith|some_=>tapeActioni0none.neg.']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Seam.lean::seamCompTM_runFrom_left: 93/168 = 55%; longest contiguous 59; like-kind=True (proof vs proof); tiles=[59, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(byomega),
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(byomega),", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   Rewind.lean::rewindTM  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::skipTM: 71/129 = 55%; longest contiguous 38; like-kind=True (term vs term); tiles=[38, 33]
+      longest segment: =>matchwiwith|some_=>tapeActioni0none.
+      tiles: ['=>matchwiwith|some_=>tapeActioni0none.', '|none=>tapeActioni0none.pos.done|']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean::decorateTM_run: 81/148 = 55%; longest contiguous 47; like-kind=True (proof vs proof); tiles=[47, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TimeHierarchy/ClockMachine.lean::kCfg_run: 84/157 = 54%; longest contiguous 50; like-kind=True (proof vs proof); tiles=[50, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule.lean::parallelTM_run: 83/156 = 53%; longest contiguous 49; like-kind=True (proof vs proof); tiles=[49, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   TCSlib/Complexity/TuringMachine/Build/Catalog.lean::seekEndTM  reproduces  Rewind.lean::rewindTM: 92/175 = 53%; longest contiguous 38; like-kind=True (term vs term); tiles=[38, 28, 26]
+      longest segment: =>matchwiwith|some_=>tapeActioni0none.
+      tiles: ['=>matchwiwith|some_=>tapeActioni0none.', '|none=>tapeActioni0none.pos.', 'one=>inputMoveAction0.done']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/SymbolLift.lean::MultiTapeTM.liftSymbols_runFrom: 78/150 = 52%; longest contiguous 45; like-kind=True (proof vs proof); tiles=[45, 33]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step
+      tiles: ['|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step', ',MultiTapeTM.runFrom_succ_eq_step']
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Build/Catalog.lean::a2_mapSetup_run: 84/163 = 52%; longest contiguous 50; like-kind=True (proof vs proof); tiles=[50, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(", ",MultiTapeTM.runFrom_succ_eq_step'"]
+   Rewind.lean::rewindTM_run_ofCfg  reproduces  TCSlib/Complexity/TuringMachine/Composition.lean::controlCfg_run: 84/166 = 51%; longest contiguous 50; like-kind=True (proof vs proof); tiles=[50, 34]
+      longest segment: |succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(
+      tiles: ["|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step',ih(", ",MultiTapeTM.runFrom_succ_eq_step'"]

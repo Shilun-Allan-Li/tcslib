@@ -1,0 +1,30 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputWindow.lean
+@@ -12,12 +12,12 @@
+ /-!
+ # The bounded input window copier
+ 
+-A counter-driven copy of a bounded window of the native input onto a work tape (user decision 5
+-of 2026-10-13; the C1 design note §2.2 step U7 and §3.4 device (i)). The universal NDTM cannot
+-copy its whole input `x`, since its time bound has no `|x|` term; it copies the window
+-`x.take t` instead, and the input-locality lemma `Turing.NDTM.runWith_initCfg_take` shows that
+-the window is enough for `t` simulated steps. The in-place suffix device stays with the
+-universal machine U-1, whose `universal` has no deadline to truncate by.
++A counter-driven copy of a bounded window of the native input onto a work tape, for the
++nondeterministic time hierarchy [AB09, Theorem 3.2]. The universal NDTM cannot copy its whole
++input `x`, since its time bound has no `|x|` term; it copies the window `x.take t` instead, and
++the input-locality lemma `Turing.NDTM.runWith_initCfg_take` shows that the window is enough for
++`t` simulated steps. The in-place suffix device belongs instead to the universal machine of
++`Turing.universal`, which has no deadline to truncate by.
+ 
+ ## Main definitions
+ 
+@@ -30,7 +30,7 @@
+ ## References
+ 
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+-  Cambridge University Press, 2009. (§1.2: the read-only input tape.)
++  Cambridge University Press, 2009. (§1.2: the read-only input tape; Theorem 3.2.)
+ -/
+ 
+ namespace Turing

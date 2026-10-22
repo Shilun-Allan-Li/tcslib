@@ -64,8 +64,7 @@ The classes and reduction notions of [AB09, ch. 2] (see
   `NEXP` [AB09, §2.6.2], and the padding theorem [AB09, Theorem 2.22].
 * `ExhaustiveReplay` — the exhaustive replay of a fixed NDTM: acceptance decided
   deterministically within `C·2^{C·(T + 1)}` wherever every branch halts within `T`
-  [AB09, §3.2, proof of Theorem 3.2], and `BF := E(UN)` for the hierarchy. The replay is
-  sorried.
+  [AB09, §3.2, proof of Theorem 3.2], and `BF := E(UN)` for the hierarchy.
 * `NDNormalForm` — the linear-overhead coded normal form: every bundled binary NDTM has a
   coded two-work-tape equivalent whose acceptance tracks its own, forward within a linear
   allowance and backward unboundedly [AB09, §3.2]; the time hierarchy diagonalizes over
