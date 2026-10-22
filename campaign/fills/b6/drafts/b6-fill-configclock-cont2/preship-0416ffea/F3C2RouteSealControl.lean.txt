@@ -1,0 +1,100 @@
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+
+/-! B6 F3, continuation 2: the controls for `F3C2RouteProbe`'s seal. Each of the twelve sealed
+definitions has one goal closing by `rfl`. Unsealed (the first section) every goal closes;
+sealed (the second, the route probe's seal) every goal is expected to FAIL, so that the route
+probe's success is not by reduction. -/
+
+namespace Turing
+
+section Unsealed
+
+-- bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+-- wordPatch
+example : wordPatch (fun _ => (none : Option Bool)) 0 [true] 0 = FinTM.bufferTape [true] (0 - 0) := rfl
+
+-- fieldsTape
+example : fieldsTape ([] : List (List Bool)) 0 = ((joinFields ([] : List (List Bool)))[(0 : ℤ).toNat]?).join := rfl
+
+-- fieldOffset
+example : fieldOffset [[true]] 0 = 0 := rfl
+
+-- joinFields
+example : joinFields ([] : List (List Bool)) = List.intercalate [none] [] := rfl
+
+-- RecordAt
+example {K : ℕ} {S : Type} {x : List Bool} (d : Cfg K Bool S x) (r : Fin K) (fs : List (List Bool)) :
+    RecordAt d r fs = ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+      d.workTapes r (d.workTapePos r + p) = fieldsTape fs p := rfl
+
+-- copyMapTM
+example : (copyMapTM 2 (0 : Fin 2) 1 (fun b : Bool => b) (fun _ b => b)).q₀ = .sweep := rfl
+
+-- skipTM
+example : (skipTM (Symbol := Bool) 1 0).q₀ = .run := rfl
+
+-- skipBackTM
+example : (skipBackTM (Symbol := Bool) 1 0).q₀ = .run := rfl
+
+-- clearTM
+example : (clearTM (Symbol := Bool) 1 0).q₀ = .sweep := rfl
+
+-- MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (d : Cfg k Bool S x) :
+    M.runFrom d 0 = d := rfl
+
+-- seamCompTM
+example (M₁ : MultiTapeTM 1 Bool Bool) (M₂ : MultiTapeTM 1 Bool Bool) :
+    (seamCompTM M₁ true M₂ false).q₀ = Sum.inl M₁.q₀ := rfl
+
+end Unsealed
+
+section Sealed
+attribute [local irreducible] FinTM.bufferTape wordPatch fieldsTape fieldOffset joinFields
+  RecordAt copyMapTM skipTM skipBackTM clearTM MultiTapeTM.runFrom seamCompTM
+
+-- bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+-- wordPatch
+example : wordPatch (fun _ => (none : Option Bool)) 0 [true] 0 = FinTM.bufferTape [true] (0 - 0) := rfl
+
+-- fieldsTape
+example : fieldsTape ([] : List (List Bool)) 0 = ((joinFields ([] : List (List Bool)))[(0 : ℤ).toNat]?).join := rfl
+
+-- fieldOffset
+example : fieldOffset [[true]] 0 = 0 := rfl
+
+-- joinFields
+example : joinFields ([] : List (List Bool)) = List.intercalate [none] [] := rfl
+
+-- RecordAt
+example {K : ℕ} {S : Type} {x : List Bool} (d : Cfg K Bool S x) (r : Fin K) (fs : List (List Bool)) :
+    RecordAt d r fs = ∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields fs).length : ℤ) →
+      d.workTapes r (d.workTapePos r + p) = fieldsTape fs p := rfl
+
+-- copyMapTM
+example : (copyMapTM 2 (0 : Fin 2) 1 (fun b : Bool => b) (fun _ b => b)).q₀ = .sweep := rfl
+
+-- skipTM
+example : (skipTM (Symbol := Bool) 1 0).q₀ = .run := rfl
+
+-- skipBackTM
+example : (skipBackTM (Symbol := Bool) 1 0).q₀ = .run := rfl
+
+-- clearTM
+example : (clearTM (Symbol := Bool) 1 0).q₀ = .sweep := rfl
+
+-- MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (d : Cfg k Bool S x) :
+    M.runFrom d 0 = d := rfl
+
+-- seamCompTM
+example (M₁ : MultiTapeTM 1 Bool Bool) (M₂ : MultiTapeTM 1 Bool Bool) :
+    (seamCompTM M₁ true M₂ false).q₀ = Sum.inl M₁.q₀ := rfl
+
+end Sealed
+
+end Turing

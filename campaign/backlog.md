@@ -1345,8 +1345,37 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   main lemmas' sketches, and the accept flag described as the proof uses it; gate 53, note 14).
   Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
   pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** After #139 merged,
-  `replay-lsk2.sh` (16 modules, the merged tree) passed: **#144 clear to merge.** The 18 other long
-  private proofs without a sketch stay under C1E-1.
+  `replay-lsk2.sh` (16 modules, the merged tree) passed: **#144 clear to merge.** **Merged
+  (user, 2026-10-22, `0416ffea`).** The 18 other long private proofs without a sketch stay under
+  C1E-1.
+- **F3 cont2's pre-ship at the tip `0416ffea` (2026-10-22;
+  `campaign/fills/b6/drafts/b6-fill-configclock-cont2/preship-0416ffea/README.md`):** the order
+  list (176 modules, 54 roots) and the 28 base sorries are continuation 1's; the import probe (100
+  checks), the consumer probe and gate 56's published join probe pass; the screen base is 1,049
+  declarations and 510 pairs (continuation 1's after-screen plus `wordPatch_append`). A sealed
+  route probe discharges every prescribed step's premises from public lemmas (silence by
+  `output_prefix`; each field by `fieldsTape_field`; the source and clock rewinds; F2's clock
+  precondition; the seam's intermediate heads), with two route facts for the brief: the clock
+  rewind needs a `skipTM` over the empty word before `skipBackTM`, and the writer needs no
+  embedding. **The space clause had no published route** (`MultiTapeTM.spaceUsed` has no
+  equation; the sum closes only through its definition). **Ruled (user, 2026-10-22): an API PR
+  first, with the equation and a radius lemma** (#149, below); the brief issues after #149
+  merges, re-run against #149's snapshot, as a candidate for the next megafill. The draft carries
+  the results.
+- **#149 opened (2026-10-22): the space API** (`lean/spaceused-api`, `e172b914` on `0416ffea`):
+  `Turing.MultiTapeTM.spaceUsed_eq_sum` (`Deterministic`, beside the definition, by `rfl`) and
+  `Turing.MultiTapeTM.spaceUsed_le_of_abs_le` (`Finite`, beside `spaceUsedByTape_le_card_Icc`;
+  a common head radius `r` bounds the space by `k · (2r + 1)`, from the equation and the per-tape
+  bound only). Checks against `oleans-lsk2`: `Deterministic` 0 diagnostics (the equation on the
+  standard three); the radius proof verbatim, citing a stand-in for the equation, with the four
+  space and run definitions sealed: 0 diagnostics, its four controls failing sealed and passing
+  unsealed; the freeze (40 → 41, 25 → 26 public, nothing changed); lint `TuringMachine` 0 FAIL,
+  64 WARN over 82 files at base and head; the screen (5 files, 136 declarations, 30 pairs) pairs
+  neither lemma with anything, F2's private `wr_space` included. **Replay:** its closure is
+  `Deterministic`'s downstream (324 modules), which meets every PR in flight (#145–#148) beyond
+  the facade, so **its replay runs once, after those merge**, on the merged tree. Then gate 62
+  (an API gate). **Gate numbering:** #147's fill gate becomes gate 63. Optional cleanup:
+  `wr_space` (`Build/WindowRun`, private) can re-point to `spaceUsed_le_of_abs_le`.
 - **The seam layout: delivered complete (2026-10-22), reviewed: land**
   (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
   (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
