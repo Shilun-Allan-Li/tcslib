@@ -1,0 +1,80 @@
+added head lines: 525; of which in comments/docstrings: 79
+      560: /-- An unadjusted half-capacity walk followed by an adjusted one reaches the new left
+      561: zone's outermost cell, including the separating blank.
+      563: **Proof sketch.** From the old outer end, the first walk covers `2^ℓ + 1` cells and the
+      564: second covers `2^ℓ`. Their sum is the new zone's capacity plus its separator. -/
+      638: /-- Positive-level data, indexed by the highest level already present. -/
+      641: /-- The home followed by the existing right-zone words. -/
+      645: /-- The final existing right zone, used to measure the next zone's half-capacity. -/
+      649: /-- Seeking the right end from a zoned input is a contract indexed by positive-level data.
+      650: The segment constructor retains the seek row's exact time, endpoint, and envelope. -/
+      663: /-- After seeking the right end, the last old zone satisfies the backward skip's premise.
+      664: The zone-start recurrence identifies its two delimiters. -/
+      685: /-- The first two phases reach the last old right zone through one stationary seam. -/
+      697: /-- The seek-and-back composite preserves all tapes and leaves the zoned head at the old
+      698: outermost zone's first cell. Its scratch head, input position, and output are unchanged.
+      699: 
+      700: **Proof sketch.** Read the two seek endpoints through the seam's endpoint equation. The
+      701: second displacement cancels the last field and its separator in the zone-start recurrence. -/
+      731: /-- Copying the old zone to scratch as a constant nonblank word makes the ruler. -/
+      736: /-- The mapped ruler copy leaves its source word and both heads unchanged, so the source
+      737: can immediately be skipped. -/
+      751: /-- Copy the source zone to scratch as a ruler, then skip the source zone.
+      752: The seam contributes one step beyond the two catalog rows. -/
+      757: /-- The seek-and-back endpoint supplies the delimited old zone for the ruler copy. -/
+      777: /-- Seek the right end, return to the previous zone, copy its length to scratch, and skip
+      778: back to the new zone's first cell. Every phase is a public row joined by stationary seams. -/
+      789: /-- The ruler prefix requires exactly the original zoned input. -/
+      796: /-- A constant mapped copy writes exactly its destination interval. This single formula
+      797: covers the scratch ruler and both half-zone writes. -/
+      813: /-- The ruler prefix preserves the zoned tape, writes one constant ruler on scratch, and
+      814: returns the zoned head to the new zone's first cell.
+      815: 
+      816: **Proof sketch.** Substitute the seek-and-back endpoint into the copy-and-skip endpoint.
+      817: The copy changes only scratch, and skipping the old zone cancels the backward displacement. -/
+      861: /-- Advance just the scratch head once along a nonempty rightward ruler. Restricting the
+      862: existing leaf's verdict to its constant choice introduces no transition or new leaf. -/
+      879: /-- After the scratch-only advance, the tail of the ruler is the walk row's directed word. -/
+      898: /-- Advancing the ruler alone and walking its tail moves the zoned head by exactly the
+      899: ruler length. The scratch head advances one cell farther, past the right delimiter. -/
+      913: /-- The adjusted walk preserves the tapes and has the two advertised head displacements.
+      914: 
+      915: **Proof sketch.** The leaf advances only scratch. The tail walk adds the ruler length to
+      916: each head, since a nonempty list's tail is one cell shorter. -/
+      950: /-- The adjusted walk stops scratch exactly one blank beyond its ruler, ready for skip-back. -/
+      968: /-- The adjusted walk followed by scratch rewind advances only the zoned head by one ruler
+      969: length, restoring scratch to the beginning of its delimited word. -/
+      980: /-- Rewinding scratch after the adjusted walk restores its head and keeps both tapes.
+HIT   981: Only the zoned head remains displaced, by the ruler length. -/
+     1012: /-- A half-zone copy reads the scratch ruler and writes either stored virtual blanks or
+     1013: empty slots on every track of tape zero. -/
+     1018: /-- The inner-half copy with a nonempty ruler, retaining the source word for the adjusted
+     1019: walk. Its fields and segment are those of the mapped-copy row. -/
+     1027: /-- The inner copy preserves the nonempty scratch ruler needed by the adjusted walk. -/
+     1046: /-- After the adjusted walk and scratch rewind, the original ruler is ready for the
+     1047: outer-half mapped copy. -/
+     1065: /-- Move from the inner to the outer half, rewind the ruler, and write the empty slots. -/
+     1070: /-- The two half-zone writes, separated by an adjusted walk and scratch rewind, as one
+     1071: contract. Scratch is preserved and its head is restored by the middle composite. -/
+     1080: /-- The constant scratch word has the old zone's capacity, half that of the new zone. -/
+     1084: /-- The ruler prefix establishes the entire nonempty-word premise of the half-zone writer.
+     1085: 
+     1086: **Proof sketch.** Its scratch footprint is exactly the ruler interval. Outside that interval
+     1087: scratch is still blank, including both delimiters; inside it every cell is the ruler marker. -/
+     1109: /-- The complete right pass at positive level: build the ruler and write the new zone's
+     1110: inner and outer halves, using the adjusted walk and restoring the scratch head. -/
+     1115: /-- The complete right pass has exactly the original zoned-input precondition. -/
+     1121: /-- The right pass's exact time includes all eight stationary seam transitions.
+     1122: It is the seek distance plus ten old-zone capacities and twenty-three control steps. -/
+     1137: /-- The right pass takes at most thirty-two times the new half-capacity plus one. -/
+HIT  1186: **Implementation status.** The slot guards, scan-index facts, short identity, tape mirror,
+     1187: and one-cell leaf are proved. The pure cascade has a checked side-pass reordering valid for
+     1188: every guard and without a fullness assumption. The scan with both exits, guarded column-move
+HIT  1189: machines, machine passes, home move, and cleanup remain open. Only this target's body is
+     1190: admitted. -/
+HIT  1226: **Implementation status.** A positive-level right-pass contract composes the seeks, ruler
+     1227: copy, half-zone writes, adjusted walk, and scratch rewind. Its time is the right-layout extent
+HIT  1228: plus ten half-capacities and twenty-three control steps. The corrected left displacement
+     1229: includes the separating blank. Return-home rounds, the left pass, the zero-level branch,
+HIT  1230: ruler cleanup, and assembly of the complete extension remain open. Only this target's body is
+     1231: admitted. -/
