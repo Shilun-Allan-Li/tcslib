@@ -162,8 +162,14 @@ A partial may leave only targets open. Insert a helper only once it is proved.
 - **The adversarial instances the gate checked must stay true of your proofs:**
   - `ℓ = 1`, `z = [true]`, `y = []` at both positions;
   - an empty payload at `p = |z| + 1`;
-  - the clamped right move at `i = |y| + 1`;
+  - the clamped right move at `i = |y| + 1`, including an empty payload at the right blank, where
+    the virtual and physical right clamps coincide;
   - a source that halts on a left move (no pause after a halting transition).
+
+  The first round's fill gate (gate 51, notes 8 and 9) checked the open rows' retained sketches
+  against these cases and carries them to this round: the call rows suppress the left move on
+  `yes` and use the native move otherwise; the host halts in the same step as a halting source
+  transition, with no boundary test.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `B6F5C1ImportProbe.lean.txt`)
 
