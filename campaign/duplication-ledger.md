@@ -342,5 +342,16 @@ backlog §1 RW-1: one public frame over any state type, cited from both files, w
 edit. `Build/Rewind`: 1 member of 5 declarations (20%, at one fifth and not past it; the §1
 item is opened anyway and answered), 79 copied characters.
 
+**BW-1, the buffer-word identities** (PR #140, `TuringMachine/BufferWords`, 2026-10-18): four of the
+module's six public lemmas restate `Build/StepBlock`'s privates (`bufferTape_append_shift` ↔
+`bufferTape_suffix`, `bufferTape_append_mid` ↔ `bufferTape_reads`, `bufferTape_eq_none_of_not_mem`
+↔ `bufferTape_outside`, `bufferTape_unary` ↔ `bufferTape_unary`): the same statements, with
+different proofs (the new ones read `bufferTape` only through its published equations). The
+copy-text screen pairs none of them, so this is a restated-fact family, not a text copy.
+**ACKNOWLEDGED (user, 2026-10-18)**, in the ruling that chose the public module. **Cleanup owner
+and window:** the user's dedup window: `StepBlock` imports the module and its four privates are
+deleted, their uses re-pointed. Members: 4 in `StepBlock` (the copy side; the public lemmas are
+the original side from then on).
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
