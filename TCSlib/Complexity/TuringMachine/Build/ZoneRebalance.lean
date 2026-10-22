@@ -557,16 +557,15 @@ private lemma zr_seekStart_pre {k ℓ : ℕ} {x : List (ZoneSym k)}
     simp only [List.length_ofFn] at he ⊢
     exact zr_zonedTape_left_fields z p hp he
 
-/-- Two half-capacity walks from the old left layout stop one cell right of the new outer end.
-This records the left-pass alignment obstruction in the continuation brief, without changing
-either machine row's statement or implementing an amended route.
+/-- An unadjusted half-capacity walk followed by an adjusted one reaches the new left
+zone's outermost cell, including the separating blank.
 
-**Proof sketch.** The old layout starts at `2 - zoneStart ℓ`. Subtracting the new capacity
-lands at `2 - zoneStart ℓ - zoneCapacity ℓ`; the new outermost cell is one cell farther left. -/
+**Proof sketch.** From the old outer end, the first walk covers `2^ℓ + 1` cells and the
+second covers `2^ℓ`. Their sum is the new zone's capacity plus its separator. -/
 private lemma zr_left_two_walks {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
     -(fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev).reverse) ℓ : ℤ) -
-        (2 ^ ℓ : ℕ) - (2 ^ ℓ : ℕ) =
-      -((zoneStart ℓ : ℤ) + zoneCapacity ℓ - 1) + 1 := by
+        (2 ^ ℓ + 1 : ℕ) - (2 ^ ℓ : ℕ) =
+      -((zoneStart ℓ : ℤ) + zoneCapacity ℓ - 1) := by
   have ht := zr_left_offset z ℓ le_rfl
   simp only [Nat.sub_self] at ht
   have hz : zoneStart 0 = 2 := by norm_num [zoneStart_eq]
@@ -574,7 +573,6 @@ private lemma zr_left_two_walks {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) :
   rw [zoneCapacity_eq]
   push_cast
   omega
-
 
 /-- A right inward shift commutes with a left outward shift, including their guards.
 
@@ -637,6 +635,514 @@ private lemma zr_cascade_passes {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) :
   simp only [zr_pair_pass]
 
 
+/-- Positive-level data, indexed by the highest level already present. -/
+private abbrev zr_RightData (k : ℕ) := Σ n : ℕ, Fin k → ZoneContents (n + 1)
+
+/-- The home followed by the existing right-zone words. -/
+private def zr_rightFields {k : ℕ} (D : zr_RightData k) : List (List (ZoneSym k)) :=
+  [.inr fun t => some (D.2 t).home] :: List.ofFn (zoneCells true D.2)
+
+/-- The final existing right zone, used to measure the next zone's half-capacity. -/
+private def zr_rightWord {k : ℕ} (D : zr_RightData k) : List (ZoneSym k) :=
+  zoneCells true D.2 ⟨D.1, Nat.lt_succ_self D.1⟩
+
+/-- Seeking the right end from a zoned input is a contract indexed by positive-level data.
+The segment constructor retains the seek row's exact time, endpoint, and envelope. -/
+private def zr_rightSeekContract {k : ℕ} (x : List (ZoneSym k)) :
+    Contract (seekEndTM 2 0) SeekPhase.run {some SeekPhase.done} (zr_RightData k) x :=
+  let R := seekEndTM_contract 0 x
+  Contract.ofSegment
+    (fun D d => zoneRowPre ⟨D.1 + 1, D.2⟩ d)
+    (fun D d => R.time (zr_rightFields D) d)
+    (fun D d => R.post (zr_rightFields D) d)
+    (fun D d => R.lo (zr_rightFields D) d)
+    (fun D d => R.hi (zr_rightFields D) d)
+    (fun D d hd hp => R.segment _ d hd (zr_seekEnd_pre D.2 d hp))
+    (fun D d hd hp => R.exit_mem _ d hd (zr_seekEnd_pre D.2 d hp))
+
+/-- After seeking the right end, the last old zone satisfies the backward skip's premise.
+The zone-start recurrence identifies its two delimiters. -/
+private lemma zr_rightSeek_back_pre {k : ℕ} {x : List (ZoneSym k)}
+    (D : zr_RightData k) (d : Cfg 2 (ZoneSym k) SeekPhase x)
+    (hp : (zr_rightSeekContract x).pre D d) :
+    (skipBackTM_contract 0 x).pre (zr_rightWord D)
+      (((zr_rightSeekContract x).post D d).mapState fun _ => SeekPhase.run) := by
+  have hz : zoneRowPre ⟨D.1 + 1, D.2⟩ d := by
+    simpa only [zr_rightSeekContract, Contract.ofSegment_pre] using hp
+  rw [skipBackTM_contract_pre]
+  intro p hleft hright
+  simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, zr_rightSeekContract,
+    Contract.ofSegment_post, seekEndTM_contract_post, seekPost_workTapes,
+    seekPost_workTapePos, Function.update_self, zr_rightFields, zr_rightWord,
+    List.length_cons, List.length_ofFn, zoneCells_length] at hright ⊢
+  rw [hz.1, hz.2.1, zero_add, zr_right_offset D.2 (D.1 + 1) le_rfl]
+  have hs := zoneStart_succ D.1
+  have hpos : (zoneStart (D.1 + 1) : ℤ) - zoneCapacity D.1 - 1 + p =
+      (zoneStart D.1 : ℤ) + p := by omega
+  rw [hpos]
+  exact zonedTape_right_word D.2 ⟨D.1, Nat.lt_succ_self D.1⟩ p hleft hright
+
+/-- The first two phases reach the last old right zone through one stationary seam. -/
+private def zr_rightSeekBackContract {k : ℕ} (x : List (ZoneSym k)) :
+    Contract (seamCompTM (seekEndTM 2 0) SeekPhase.done (skipBackTM 2 0) SeekPhase.run)
+      (Sum.inl SeekPhase.run) {some (Sum.inr SeekPhase.done)} (zr_RightData k) x :=
+  let R := (zr_rightSeekContract x).seq (skipBackTM_contract 0 x) zr_rightWord
+    (fun D d _ hp => zr_rightSeek_back_pre D d hp)
+  Contract.ofSegment R.pre R.time R.post R.lo R.hi
+    (fun D d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.segment D d hd hp)
+    (fun D d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.exit_mem D d hd hp)
+
+/-- The seek-and-back composite preserves all tapes and leaves the zoned head at the old
+outermost zone's first cell. Its scratch head, input position, and output are unchanged.
+
+**Proof sketch.** Read the two seek endpoints through the seam's endpoint equation. The
+second displacement cancels the last field and its separator in the zone-start recurrence. -/
+private lemma zr_rightSeekBack_post {k : ℕ} {x : List (ZoneSym k)}
+    (D : zr_RightData k) (d : Cfg 2 (ZoneSym k) (SeekPhase ⊕ SeekPhase) x)
+    (hp : (zr_rightSeekBackContract x).pre D d) :
+    (zr_rightSeekBackContract x).post D d =
+      seekPost (Sum.inr SeekPhase.done) 0 (zoneStart D.1) d := by
+  have hz : zoneRowPre ⟨D.1 + 1, D.2⟩ d := by
+    simpa only [zr_rightSeekBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+      zr_rightSeekContract,
+      Contract.ofSegment_pre, zoneRowPre, funext_iff, Cfg.mapState_workTapes,
+      Cfg.mapState_workTapePos] using hp
+  have hs := zoneStart_succ D.1
+  simp only [zr_rightSeekBackContract, Contract.ofSegment_post, Contract.seq_post,
+    zr_rightSeekContract, seekEndTM_contract_post, skipBackTM_contract_post,
+    zr_rightFields, zr_rightWord, List.length_cons, List.length_ofFn, zoneCells_length]
+  apply Cfg.ext
+  · simp only [Cfg.mapState_state, seekPost_state, Option.map_some]
+  · simp only [Cfg.mapState_inputPos, seekPost_inputPos]
+  · funext j q
+    simp only [Cfg.mapState_workTapes, seekPost_workTapes]
+  · funext j
+    simp only [Cfg.mapState_workTapePos, seekPost_workTapePos, Function.update_self]
+    by_cases hj : j = 0
+    · subst j
+      simp only [Function.update_self, hz.2.1, zero_add,
+        zr_right_offset D.2 (D.1 + 1) le_rfl]
+      omega
+    · simp only [Function.update_of_ne hj, Cfg.mapState_workTapePos, seekPost_workTapePos]
+  · simp only [Cfg.mapState_output, seekPost_output]
+
+/-- Copying the old zone to scratch as a constant nonblank word makes the ruler. -/
+private def zr_rulerCopyContract {k : ℕ} (x : List (ZoneSym k)) :=
+  copyMapTM_contract (Γ := ZoneSym k) (0 : Fin 2) 1 (by decide)
+    (fun _ => ()) (fun _ _ => Sum.inl false) x
+
+/-- The mapped ruler copy leaves its source word and both heads unchanged, so the source
+can immediately be skipped. -/
+private lemma zr_rulerCopy_skip_pre {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k)) (d : Cfg 2 (ZoneSym k) SweepPhase x)
+    (hp : (zr_rulerCopyContract x).pre w d) :
+    (skipTM_contract 0 x).pre w
+      (((zr_rulerCopyContract x).post w d).mapState fun _ => SeekPhase.run) := by
+  rw [zr_rulerCopyContract, copyMapTM_contract_pre] at hp
+  rw [skipTM_contract_pre]
+  intro p hp0 hp1
+  simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, zr_rulerCopyContract,
+    copyMapTM_contract_post, sweepPost_workTapePos]
+  simp only [sweepPost_workTapes, show (0 : Fin 2) ≠ 1 by decide, false_and, if_false]
+  exact hp p (by omega) hp1
+
+/-- Copy the source zone to scratch as a ruler, then skip the source zone.
+The seam contributes one step beyond the two catalog rows. -/
+private def zr_rulerSkipContract {k : ℕ} (x : List (ZoneSym k)) :=
+  (zr_rulerCopyContract x).seq (skipTM_contract 0 x) (fun w => w)
+    (fun w d _ hp => zr_rulerCopy_skip_pre w d hp)
+
+/-- The seek-and-back endpoint supplies the delimited old zone for the ruler copy. -/
+private lemma zr_rightSeekBack_ruler_pre {k : ℕ} {x : List (ZoneSym k)}
+    (D : zr_RightData k) (d : Cfg 2 (ZoneSym k) (SeekPhase ⊕ SeekPhase) x)
+    (hp : (zr_rightSeekBackContract x).pre D d) :
+    (zr_rulerSkipContract x).pre (zr_rightWord D)
+      (((zr_rightSeekBackContract x).post D d).mapState fun _ =>
+        Sum.inl SweepPhase.sweep) := by
+  have hz : zoneRowPre ⟨D.1 + 1, D.2⟩ d := by
+    simpa only [zr_rightSeekBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+      zr_rightSeekContract, zoneRowPre, funext_iff, Cfg.mapState_workTapes,
+      Cfg.mapState_workTapePos] using hp
+  rw [zr_rulerSkipContract, Contract.seq_pre, zr_rulerCopyContract,
+    copyMapTM_contract_pre]
+  intro p hleft hright
+  simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+    zr_rightSeekBack_post D d hp, seekPost_workTapes, seekPost_workTapePos,
+    Function.update_self, hz.1]
+  apply zonedTape_right_word D.2 ⟨D.1, Nat.lt_succ_self D.1⟩ p hleft
+  simpa only [zr_rightWord, zoneCells_length] using hright
+
+/-- Seek the right end, return to the previous zone, copy its length to scratch, and skip
+back to the new zone's first cell. Every phase is a public row joined by stationary seams. -/
+private def zr_rightRulerContract {k : ℕ} (x : List (ZoneSym k)) :=
+  let R := (zr_rightSeekBackContract x).seq (zr_rulerSkipContract x) zr_rightWord
+    (fun D d _ hp => zr_rightSeekBack_ruler_pre D d hp)
+  Contract.ofSegment (exits := {some (Sum.inr (Sum.inr SeekPhase.done))})
+    R.pre R.time R.post R.lo R.hi
+    (fun D d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.segment D d hd hp)
+    (fun D d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.exit_mem D d hd hp)
+
+/-- The ruler prefix requires exactly the original zoned input. -/
+private lemma zr_rightRuler_pre {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k) (d) :
+    (zr_rightRulerContract x).pre D d = zoneRowPre ⟨D.1 + 1, D.2⟩ d := by
+  simp only [zr_rightRulerContract, Contract.ofSegment_pre, Contract.seq_pre,
+    zr_rightSeekBackContract, zr_rightSeekContract, zoneRowPre, funext_iff,
+    Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+
+/-- A constant mapped copy writes exactly its destination interval. This single formula
+covers the scratch ruler and both half-zone writes. -/
+private lemma zr_constantCopy_cell {k : ℕ} {x : List (ZoneSym k)}
+    (src dst : Fin 2) (hne : src ≠ dst) (a : ZoneSym k) (w : List (ZoneSym k))
+    (d : Cfg 2 (ZoneSym k) SweepPhase x) (j : Fin 2) (q : ℤ) :
+    ((copyMapTM_contract src dst hne (fun _ => ()) (fun _ _ => a) x).post w d).workTapes
+        j q =
+      if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+      then some a else d.workTapes j q := by
+  rw [copyMapTM_contract_post_workTapes]
+  split_ifs with h
+  · obtain ⟨n, hn⟩ : ∃ n : ℕ, q - d.workTapePos j = n :=
+      ⟨(q - d.workTapePos j).toNat, by omega⟩
+    have hnlt : n < w.length := by omega
+    simp only [hn, FinTM.bufferTape_nat, List.getElem?_eq_getElem hnlt, Option.map_some]
+  · rfl
+
+/-- The ruler prefix preserves the zoned tape, writes one constant ruler on scratch, and
+returns the zoned head to the new zone's first cell.
+
+**Proof sketch.** Substitute the seek-and-back endpoint into the copy-and-skip endpoint.
+The copy changes only scratch, and skipping the old zone cancels the backward displacement. -/
+private lemma zr_rightRuler_post {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k)
+    (d : Cfg 2 (ZoneSym k) ((SeekPhase ⊕ SeekPhase) ⊕ (SweepPhase ⊕ SeekPhase)) x)
+    (hp : (zr_rightRulerContract x).pre D d) :
+    (zr_rightRulerContract x).post D d =
+      { d with
+        state := some (Sum.inr (Sum.inr SeekPhase.done))
+        workTapes := fun j q =>
+          if j = 1 ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (zoneCapacity D.1 : ℤ)
+          then some (Sum.inl false) else d.workTapes j q
+        workTapePos := Function.update d.workTapePos 0 (zoneStart (D.1 + 1)) } := by
+  have hp0 : (zr_rightSeekBackContract x).pre D
+      (d.mapState fun _ => Sum.inl SeekPhase.run) := by
+    simpa only [zr_rightRulerContract, Contract.ofSegment_pre, Contract.seq_pre] using hp
+  rw [zr_rightRulerContract, Contract.ofSegment_post, Contract.seq_post,
+    zr_rightSeekBack_post D _ hp0,
+    zr_rulerSkipContract, Contract.seq_post, skipTM_contract_post]
+  have hs := zoneStart_succ D.1
+  apply Cfg.ext
+  · simp only [Cfg.mapState_state, seekPost_state, Option.map_some]
+  · simp only [Cfg.mapState_inputPos, seekPost_inputPos, zr_rulerCopyContract,
+      copyMapTM_contract_post, sweepPost_inputPos]
+  · funext j q
+    simp only [Cfg.mapState_workTapes, seekPost_workTapes, zr_rulerCopyContract,
+      zr_constantCopy_cell, Cfg.mapState_workTapePos, seekPost_workTapePos,
+      zr_rightWord, zoneCells_length]
+    by_cases hj : j = 1
+    · subst j
+      simp only [Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0),
+        Cfg.mapState_workTapePos]
+    · simp only [hj, false_and, if_false]
+  · funext j
+    simp only [Cfg.mapState_workTapePos, seekPost_workTapePos, zr_rulerCopyContract,
+      copyMapTM_contract_post, sweepPost_workTapePos, zr_rightWord, zoneCells_length,
+      Function.update_self]
+    by_cases hj : j = 0
+    · subst j
+      simp only [Function.update_self]
+      omega
+    · simp only [Function.update_of_ne hj, Cfg.mapState_workTapePos, seekPost_workTapePos,
+        sweepPost_workTapePos]
+  · simp only [Cfg.mapState_output, seekPost_output, zr_rulerCopyContract,
+      copyMapTM_contract_post, sweepPost_output]
+
+/-- Advance just the scratch head once along a nonempty rightward ruler. Restricting the
+existing leaf's verdict to its constant choice introduces no transition or new leaf. -/
+private def zr_rulerStepContract {k : ℕ} (x : List (ZoneSym k)) :
+    Contract (zr_cellTM 1 (fun _ => false) none 1) none {some (some false)}
+      (List (ZoneSym k)) x :=
+  let C := zr_cellContract 1 (fun _ => false) none 1 x
+  Contract.ofSegment
+    (fun w d => w ≠ [] ∧ ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape w p)
+    (fun _ d => C.time () d) (fun _ d => C.post () d)
+    (fun _ d => C.lo () d) (fun _ d => C.hi () d)
+    (fun _ d hd _ => (C.segment () d hd trivial).mono
+      (fun q hq => by
+        obtain rfl := Set.mem_singleton_iff.mp hq
+        exact ⟨false, rfl⟩)
+      (fun _ h => h))
+    (fun _ _ _ _ => Set.mem_singleton_iff.mpr rfl)
+
+/-- After the scratch-only advance, the tail of the ruler is the walk row's directed word. -/
+private lemma zr_rulerStep_walk_pre {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k)) (d : Cfg 2 (ZoneSym k) (Option Bool) x)
+    (hp : (zr_rulerStepContract x).pre w d) :
+    (walkTM_contract 1 (fun _ : Fin 2 => True) trivial 1 x).pre w.tail
+      (((zr_rulerStepContract x).post w d).mapState fun _ => SeekPhase.run) := by
+  rw [zr_rulerStepContract, Contract.ofSegment_pre] at hp
+  rw [walkTM_contract_pre]
+  intro p hlen
+  have hword : ∀ n : ℕ, n ≤ w.length →
+      d.workTapes 1 (d.workTapePos 1 + ((1 : SignType) : ℤ) * n) =
+        FinTM.bufferTape w n := by
+    intro n hn
+    simpa only [SignType.coe_one, one_mul] using hp.2 n (by omega) (by omega)
+  have htail := zr_ruler_tail (d.workTapes 1) (d.workTapePos 1) 1 w hp.1 hword p hlen
+  simpa only [zr_rulerStepContract, Contract.ofSegment_post, zr_cellContract,
+    zr_cellPost, Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Function.update_self,
+    FinTM.bufferTape_nat, SignType.coe_one, one_mul] using htail
+
+/-- Advancing the ruler alone and walking its tail moves the zoned head by exactly the
+ruler length. The scratch head advances one cell farther, past the right delimiter. -/
+private def zr_adjustedWalkContract {k : ℕ} (x : List (ZoneSym k)) :
+    Contract (seamCompTM (zr_cellTM 1 (fun _ => false) none 1) (some false)
+      (walkTM 2 1 (fun _ => True) 1) SeekPhase.run)
+      (Sum.inl none) {some (Sum.inr SeekPhase.done)} (List (ZoneSym k)) x :=
+  let R := (zr_rulerStepContract x).seq
+    (walkTM_contract 1 (fun _ : Fin 2 => True) trivial 1 x) List.tail
+    (fun w d _ hp => zr_rulerStep_walk_pre w d hp)
+  Contract.ofSegment R.pre R.time R.post R.lo R.hi
+    (fun w d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.segment w d hd hp)
+    (fun w d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.exit_mem w d hd hp)
+
+/-- The adjusted walk preserves the tapes and has the two advertised head displacements.
+
+**Proof sketch.** The leaf advances only scratch. The tail walk adds the ruler length to
+each head, since a nonempty list's tail is one cell shorter. -/
+private lemma zr_adjustedWalk_post {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k)) (d : Cfg 2 (ZoneSym k) ((Option Bool) ⊕ SeekPhase) x)
+    (hp : (zr_adjustedWalkContract x).pre w d) :
+    (zr_adjustedWalkContract x).post w d =
+      { d with
+        state := some (Sum.inr SeekPhase.done)
+        workTapePos := fun j => d.workTapePos j + w.length + if j = 1 then 1 else 0 } := by
+  have hw : w ≠ [] := by
+    have h := hp
+    rw [zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+      zr_rulerStepContract, Contract.ofSegment_pre] at h
+    exact h.1
+  have hlen : w.tail.length + 1 = w.length := by
+    have hpos := List.length_pos_iff_ne_nil.mpr hw
+    rw [List.length_tail]
+    omega
+  simp only [zr_adjustedWalkContract, Contract.ofSegment_post, Contract.seq_post,
+    zr_rulerStepContract, walkTM_contract_post, zr_cellContract, zr_cellPost]
+  apply Cfg.ext
+  · simp only [Cfg.mapState_state, Option.map_some]
+  · simp only [Cfg.mapState_inputPos]
+  · funext j q
+    simp only [Cfg.mapState_workTapes]
+  · funext j
+    simp only [Cfg.mapState_workTapePos, SignType.coe_one, one_mul, if_true]
+    by_cases hj : j = 1
+    · subst j
+      simp only [Function.update_self, if_true]
+      omega
+    · simp only [Function.update_of_ne hj, Cfg.mapState_workTapePos, if_neg hj]
+      omega
+  · simp only [Cfg.mapState_output]
+
+/-- The adjusted walk stops scratch exactly one blank beyond its ruler, ready for skip-back. -/
+private lemma zr_adjustedWalk_back_pre {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k)) (d : Cfg 2 (ZoneSym k) ((Option Bool) ⊕ SeekPhase) x)
+    (hp : (zr_adjustedWalkContract x).pre w d) :
+    (skipBackTM_contract 1 x).pre w
+      (((zr_adjustedWalkContract x).post w d).mapState fun _ => SeekPhase.run) := by
+  have h := hp
+  rw [zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+    zr_rulerStepContract, Contract.ofSegment_pre] at h
+  rw [skipBackTM_contract_pre]
+  intro p hleft hright
+  simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+    zr_adjustedWalk_post w d hp, if_true]
+  have he : d.workTapePos 1 + (w.length : ℤ) + 1 - w.length - 1 + p =
+      d.workTapePos 1 + p := by omega
+  rw [he]
+  simpa only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using h.2 p hleft hright
+
+/-- The adjusted walk followed by scratch rewind advances only the zoned head by one ruler
+length, restoring scratch to the beginning of its delimited word. -/
+private def zr_adjustedBackContract {k : ℕ} (x : List (ZoneSym k)) :=
+  let R := (zr_adjustedWalkContract x).seq (skipBackTM_contract 1 x) (fun w => w)
+    (fun w d _ hp => zr_adjustedWalk_back_pre w d hp)
+  Contract.ofSegment (exits := {some (Sum.inr SeekPhase.done)})
+    R.pre R.time R.post R.lo R.hi
+    (fun w d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.segment w d hd hp)
+    (fun w d hd hp => by
+      simpa only [Set.image_singleton, Option.map_some] using R.exit_mem w d hd hp)
+
+/-- Rewinding scratch after the adjusted walk restores its head and keeps both tapes.
+Only the zoned head remains displaced, by the ruler length. -/
+private lemma zr_adjustedBack_post {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k))
+    (d : Cfg 2 (ZoneSym k) (((Option Bool) ⊕ SeekPhase) ⊕ SeekPhase) x)
+    (hp : (zr_adjustedBackContract x).pre w d) :
+    (zr_adjustedBackContract x).post w d =
+      { d with
+        state := some (Sum.inr SeekPhase.done)
+        workTapePos := fun j => d.workTapePos j + if j = 0 then w.length else 0 } := by
+  have hp0 : (zr_adjustedWalkContract x).pre w (d.mapState fun _ => Sum.inl none) := by
+    simpa only [zr_adjustedBackContract, Contract.ofSegment_pre, Contract.seq_pre] using hp
+  rw [zr_adjustedBackContract, Contract.ofSegment_post, Contract.seq_post,
+    zr_adjustedWalk_post w _ hp0, skipBackTM_contract_post]
+  apply Cfg.ext
+  · simp only [Cfg.mapState_state, seekPost_state, Option.map_some]
+  · simp only [Cfg.mapState_inputPos, seekPost_inputPos]
+  · funext j q
+    simp only [Cfg.mapState_workTapes, seekPost_workTapes]
+  · funext j
+    by_cases hj : j = 1
+    · subst j
+      simp only [Cfg.mapState_workTapePos, seekPost_workTapePos, Function.update_self,
+        show (1 : Fin 2) ≠ 0 by decide, if_false, if_true, Nat.cast_zero, add_zero]
+      omega
+    · have hj0 : j = 0 := by omega
+      subst j
+      simp only [Cfg.mapState_workTapePos, seekPost_workTapePos,
+        Function.update_of_ne (by decide : (0 : Fin 2) ≠ 1),
+        show (0 : Fin 2) ≠ 1 by decide, if_false, if_true, add_zero]
+  · simp only [Cfg.mapState_output, seekPost_output]
+
+/-- A half-zone copy reads the scratch ruler and writes either stored virtual blanks or
+empty slots on every track of tape zero. -/
+private def zr_halfCopyContract {k : ℕ} (inner : Bool) (x : List (ZoneSym k)) :=
+  copyMapTM_contract (Γ := ZoneSym k) (1 : Fin 2) 0 (by decide)
+    (fun _ => ()) (fun _ _ => Sum.inr fun _ => if inner then some none else none) x
+
+/-- The inner-half copy with a nonempty ruler, retaining the source word for the adjusted
+walk. Its fields and segment are those of the mapped-copy row. -/
+private def zr_innerCopyContract {k : ℕ} (x : List (ZoneSym k)) :=
+  let C := zr_halfCopyContract true x
+  Contract.ofSegment
+    (fun w d => w ≠ [] ∧ C.pre w d) C.time C.post C.lo C.hi
+    (fun w d hd hp => C.segment w d hd hp.2)
+    (fun w d hd hp => C.exit_mem w d hd hp.2)
+
+/-- The inner copy preserves the nonempty scratch ruler needed by the adjusted walk. -/
+private lemma zr_innerCopy_adjusted_pre {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k)) (d : Cfg 2 (ZoneSym k) SweepPhase x)
+    (hp : (zr_innerCopyContract x).pre w d) :
+    (zr_adjustedBackContract x).pre w
+      (((zr_innerCopyContract x).post w d).mapState fun _ => Sum.inl (Sum.inl none)) := by
+  rw [zr_innerCopyContract, Contract.ofSegment_pre, zr_halfCopyContract,
+    copyMapTM_contract_pre] at hp
+  rw [zr_adjustedBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+    zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+    zr_rulerStepContract, Contract.ofSegment_pre]
+  refine ⟨hp.1, ?_⟩
+  intro p hleft hright
+  simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, zr_innerCopyContract,
+    Contract.ofSegment_post, zr_halfCopyContract, copyMapTM_contract_post,
+    sweepPost_workTapePos, sweepPost_workTapes, show (1 : Fin 2) ≠ 0 by decide,
+    false_and, if_false]
+  exact hp.2 p hleft hright
+
+/-- After the adjusted walk and scratch rewind, the original ruler is ready for the
+outer-half mapped copy. -/
+private lemma zr_adjustedBack_copy_pre {k : ℕ} {x : List (ZoneSym k)}
+    (w : List (ZoneSym k))
+    (d : Cfg 2 (ZoneSym k) (((Option Bool) ⊕ SeekPhase) ⊕ SeekPhase) x)
+    (hp : (zr_adjustedBackContract x).pre w d) :
+    (zr_halfCopyContract false x).pre w
+      (((zr_adjustedBackContract x).post w d).mapState fun _ => SweepPhase.sweep) := by
+  have h := hp
+  rw [zr_adjustedBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+    zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+    zr_rulerStepContract, Contract.ofSegment_pre] at h
+  rw [zr_halfCopyContract, copyMapTM_contract_pre]
+  intro p hleft hright
+  simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+    zr_adjustedBack_post w d hp, show (1 : Fin 2) ≠ 0 by decide,
+    if_false, Nat.cast_zero, add_zero]
+  simpa only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using h.2 p hleft hright
+
+/-- Move from the inner to the outer half, rewind the ruler, and write the empty slots. -/
+private def zr_outerHalfContract {k : ℕ} (x : List (ZoneSym k)) :=
+  (zr_adjustedBackContract x).seq (zr_halfCopyContract false x) (fun w => w)
+    (fun w d _ hp => zr_adjustedBack_copy_pre w d hp)
+
+/-- The two half-zone writes, separated by an adjusted walk and scratch rewind, as one
+contract. Scratch is preserved and its head is restored by the middle composite. -/
+private def zr_writeHalvesContract {k : ℕ} (x : List (ZoneSym k)) :=
+  (zr_innerCopyContract x).seq (zr_outerHalfContract x) (fun w => w)
+    (fun w d _ hp => by
+      simpa only [zr_outerHalfContract, Contract.seq_pre, zr_adjustedBackContract,
+        Contract.ofSegment_pre, zr_adjustedWalkContract, zr_rulerStepContract,
+        Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using
+        zr_innerCopy_adjusted_pre w d hp)
+
+/-- The constant scratch word has the old zone's capacity, half that of the new zone. -/
+private def zr_rulerWord {k : ℕ} (D : zr_RightData k) : List (ZoneSym k) :=
+  List.replicate (zoneCapacity D.1) (Sum.inl false)
+
+/-- The ruler prefix establishes the entire nonempty-word premise of the half-zone writer.
+
+**Proof sketch.** Its scratch footprint is exactly the ruler interval. Outside that interval
+scratch is still blank, including both delimiters; inside it every cell is the ruler marker. -/
+private lemma zr_rightRuler_write_pre {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k)
+    (d : Cfg 2 (ZoneSym k) ((SeekPhase ⊕ SeekPhase) ⊕ (SweepPhase ⊕ SeekPhase)) x)
+    (hp : (zr_rightRulerContract x).pre D d) :
+    (zr_writeHalvesContract x).pre (zr_rulerWord D)
+      (((zr_rightRulerContract x).post D d).mapState fun _ => Sum.inl SweepPhase.sweep) := by
+  have hz : zoneRowPre ⟨D.1 + 1, D.2⟩ d := (zr_rightRuler_pre D d) ▸ hp
+  rw [zr_writeHalvesContract, Contract.seq_pre, zr_innerCopyContract,
+    Contract.ofSegment_pre, zr_halfCopyContract, copyMapTM_contract_pre]
+  constructor
+  · intro hempty
+    have hlen := congrArg List.length hempty
+    have hpos := zr_capacity_pos D.1
+    simp only [zr_rulerWord, List.length_replicate, List.length_nil] at hlen
+    omega
+  · intro p _ _
+    simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+      zr_rightRuler_post D d hp, Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0),
+      zr_rulerWord, hz.2.2, true_and, FinTM.bufferTape_eq,
+      List.getElem?_replicate]
+    split_ifs <;> first | rfl | omega
+
+/-- The complete right pass at positive level: build the ruler and write the new zone's
+inner and outer halves, using the adjusted walk and restoring the scratch head. -/
+private def zr_rightPassContract {k : ℕ} (x : List (ZoneSym k)) :=
+  (zr_rightRulerContract x).seq (zr_writeHalvesContract x) zr_rulerWord
+    (fun D d _ hp => zr_rightRuler_write_pre D d hp)
+
+/-- The complete right pass has exactly the original zoned-input precondition. -/
+private lemma zr_rightPass_pre {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k) (d) :
+    (zr_rightPassContract x).pre D d = zoneRowPre ⟨D.1 + 1, D.2⟩ d := by
+  rw [zr_rightPassContract, Contract.seq_pre, zr_rightRuler_pre]
+  simp only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+
+/-- The right pass's exact time includes all eight stationary seam transitions.
+It is the seek distance plus ten old-zone capacities and twenty-three control steps. -/
+private lemma zr_rightPass_time {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k) (d) :
+    (zr_rightPassContract x).time D d = zoneStart (D.1 + 1) + 10 * zoneCapacity D.1 + 23 := by
+  have hpos := zr_capacity_pos D.1
+  simp only [zr_rightPassContract, Contract.seq_time, zr_rightRulerContract,
+    Contract.ofSegment_time, zr_rightSeekBackContract, zr_rightSeekContract,
+    seekEndTM_contract_time, skipBackTM_contract_time, zr_rulerSkipContract,
+    zr_rulerCopyContract, copyMapTM_contract_time, skipTM_contract_time,
+    zr_writeHalvesContract, zr_innerCopyContract, zr_halfCopyContract,
+    zr_outerHalfContract, zr_adjustedBackContract, zr_adjustedWalkContract,
+    zr_rulerStepContract, zr_cellContract, walkTM_contract_time, zr_rightFields,
+    zr_rightWord, zr_rulerWord, List.length_cons, List.length_ofFn, List.length_replicate,
+    List.length_tail, zoneCells_length, zr_right_offset D.2 (D.1 + 1) le_rfl]
+  omega
+
+/-- The right pass takes at most thirty-two times the new half-capacity plus one. -/
+private lemma zr_rightPass_time_le {k : ℕ} {x : List (ZoneSym k)}
+    (D : zr_RightData k) (d) :
+    (zr_rightPassContract x).time D d ≤ 32 * (2 ^ (D.1 + 1) + 1) := by
+  have h := zr_extent_cost D.1
+  rw [zr_rightPass_time, zoneCapacity_eq, pow_succ]
+  omega
+
+
 /-! ### The rows -/
 
 /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
@@ -677,12 +1183,11 @@ mirror side is reached through a scratch ruler of the distance to home. The scra
 cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
 (`Turing.zoneCascade_cost_le`).
 
-**Fill appendix (§13d G4).** The guards, scan-index facts, short identity, tape mirror, and
-one-cell leaf are proved. The four inherited helpers now cite published equations. The pure
-cascade's descending and ascending pair lists have a shared, checked side-pass reordering
-(`zr_cascade_passes`), valid with every guard and no fullness assumption. The scan with both
-exits, guarded column-move machines, machine passes, home move, and cleanup remain open.
-Only this target's own body is admitted. -/
+**Implementation status.** The slot guards, scan-index facts, short identity, tape mirror,
+and one-cell leaf are proved. The pure cascade has a checked side-pass reordering valid for
+every guard and without a fullness assumption. The scan with both exits, guarded column-move
+machines, machine passes, home move, and cleanup remain open. Only this target's body is
+admitted. -/
 theorem exists_zoneRebalanceTM (k : ℕ) :
     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
@@ -718,13 +1223,12 @@ control writes the two cells); write the inner half as all-tracks virtual blanks
 half as all-`⊠` cells; return through home and do the same on the left, through a ruler of the
 distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
 
-**Fill appendix (§13d G4).** Both layout bridges, their offset formulas, and the complete
-seek-contract preconditions are proved, alongside the inherited ruler-tail and one-cell kit.
-The left route is stopped under ground rule 4: `zr_left_two_walks` proves that its prescribed
-two half-capacity walks stop one cell right of the new zone's outermost cell (continuation 1's
-escalation cont1-E1; `audits/evidence/s13d-g4-cont1-fill/REVIEW.md`, F2). The ruler builder,
-composed side passes, return-home rounds, and cleanup remain open. No route amendment is
-implemented, and only this target's own body is admitted. -/
+**Implementation status.** A positive-level right-pass contract composes the seeks, ruler
+copy, half-zone writes, adjusted walk, and scratch rewind. Its time is the right-layout extent
+plus ten half-capacities and twenty-three control steps. The corrected left displacement
+includes the separating blank. Return-home rounds, the left pass, the zero-level branch,
+ruler cleanup, and assembly of the complete extension remain open. Only this target's body is
+admitted. -/
 theorem exists_zoneExtendTM (k : ℕ) :
     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
       (M : MultiTapeTM 2 (ZoneSym k) S) (entry done : S),
