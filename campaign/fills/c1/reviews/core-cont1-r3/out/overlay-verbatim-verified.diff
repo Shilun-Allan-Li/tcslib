@@ -1,0 +1,184 @@
+--- /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/wt-hk/campaign/fills/c1/inputs/c1-fill-core-cont1/NDCodeSimulatorOverlay.lean.txt	2026-10-18 02:31:38
++++ out/overlay-verbatim-verified.lean.txt	2026-10-18 12:51:40
+@@ -194,6 +194,181 @@
+     fun α => a * (τ α.length + α.length + (serializeK (c.decode α).tm.replayTM).length + 1),
+     positive, installs⟩
+ 
++/-- A header projection has a silent first live return, with its selected word on the capture
++tape and the native head at the suffix. Unselected tapes other than the capture retain their
++contents and heads; no description of the projection's final scratch bank is needed.
++
++**Proof sketch.** Use the header's bounded halt and the returning capture lemma. Project the
++capture, input-position, output and unselected-tape equations at that return. -/
++private theorem ic_header_capture (first : Bool) (K : ℕ) (α x : List Bool) (t : ℕ)
++    (ι : Fin (prefixCanonTM
++      (if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true)).k ↪ Fin K)
++    (cap : Fin K) (hcap : cap ∉ Set.range ι)
++    (tapes : Fin K → ℤ → Option Bool) (heads : Fin K → ℤ) (out : List Bool) :
++    let M := prefixCanonTM
++      (if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true)
++    let z := pairEncode (pairEncode (Nat.bits t) α) x
++    let start := (embedSilentCfg ι cap tapes heads [] out (M.tm.initCfg z)).mapState Sum.inl
++    ∃ T ≤ 16 * (Nat.bits t).length + 8 * α.length + 25,
++      let e := (embedSilentRetTM ι cap M.tm).runFrom start T
++      e.state = some (Sum.inr ()) ∧
++      e.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 ∧
++      e.workTapes cap = FinTM.bufferTape (if first then Nat.bits t else α) ∧
++      e.workTapePos cap = ((if first then Nat.bits t else α).length : ℤ) ∧
++      e.output = out ∧
++      (∀ j : Fin K, j ∉ Set.range ι → j ≠ cap →
++        e.workTapes j = tapes j ∧ e.workTapePos j = heads j) ∧
++      ∀ u < T, ((embedSilentRetTM ι cap M.tm).runFrom start u).state ≠ some (Sum.inr ()) := by
++  dsimp only
++  let M := prefixCanonTM
++    (if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true)
++  let z := pairEncode (pairEncode (Nat.bits t) α) x
++  obtain ⟨halt, word, pos⟩ := ic_header_result first α x t
++  obtain ⟨T, bound, run, cut⟩ := ic_capture_return M z ι cap hcap tapes heads out
++    (16 * (Nat.bits t).length + 8 * α.length + 25) halt
++  refine ⟨T, bound, ?_⟩
++  rw [run]
++  obtain ⟨hword, hhead⟩ := embedSilentCfg_cap ι cap hcap tapes heads [] out
++    (M.tm.runFrom (M.tm.initCfg z) (16 * (Nat.bits t).length + 8 * α.length + 25))
++  rw [List.nil_append, word] at hword hhead
++  refine ⟨rfl, ?_, hword, hhead, ?_, ?_, cut⟩
++  · simpa only [embedSilentCfg_inputPos] using pos
++  · rw [embedSilentCfg_output]
++  · intro j hj hjc
++    exact embedSilentCfg_unselected ι cap tapes heads [] out _ j hj hjc
++
++/-- A serialization installed at cell zero can be redistributed into the interpreter's table
++and empty-output summary. The return time depends on the serialized machine alone; all other
++tapes, the native input head, and the physical output retain their frame.
++
++**Proof sketch.** Specialize the shared layout contract to the state-count header and the
++machine's unary initial state. Its shifted unary buffer is the empty-output summary, since
++its cell at zero reads the blank cell at offset minus two. -/
++private theorem ic_layout_call (K : ℕ) (src tbl sm : Fin K) (hst : src ≠ tbl)
++    (hss : src ≠ sm) (hts : tbl ≠ sm) :
++    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM K Bool Q)
++      (entry done : Q) (C : ℕ),
++      ∀ {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))),
++        ∃ T ≤ C * ((serializeK M).length + 1),
++          ∀ {z : List Bool} (d : Cfg K Bool Q z),
++            d.state = some entry →
++            d.workTapes src = FinTM.bufferTape (serializeK M) →
++            d.workTapePos src = 0 →
++            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
++            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
++            (L.runFrom d T).state = some done ∧
++            (L.runFrom d T).inputPos = d.inputPos ∧
++            (L.runFrom d T).workTapes =
++              Function.update (Function.update (Function.update d.workTapes src (fun _ => none))
++                tbl (FinTM.bufferTape (tableBitsK M.tr)))
++                sm (StepBlock.summaryCells none (unaryFin M.q₀)) ∧
++            (L.runFrom d T).workTapePos =
++              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0) sm 0 ∧
++            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
++            ∀ u < T, (L.runFrom d u).state ≠ some done := by
++  obtain ⟨Q, hQ, hQ', L, entry, done, C, layout⟩ :=
++    exists_seamLayoutTM K src tbl sm hst hss hts
++  refine ⟨Q, hQ, hQ', L, entry, done, C, ?_⟩
++  intro k n M
++  have word : serializeK M =
++      pairEncode n.bits ((List.replicate (M.q₀ : ℕ) true ++ [false]) ++ tableBitsK M.tr) := by
++    rw [serializeK_eq, unaryFin_eq]
++  have summary : (fun p =>
++      FinTM.bufferTape (List.replicate (M.q₀ : ℕ) true ++ [false]) (p - 2)) =
++      StepBlock.summaryCells none (unaryFin M.q₀) := by
++    funext p
++    rw [StepBlock.summaryCells_eq, unaryFin_eq]
++    by_cases hp : p = 0
++    · rw [if_pos hp, hp]
++      exact FinTM.bufferTape_of_neg _ (by omega)
++    · rw [if_neg hp]
++  obtain ⟨T, bound, run⟩ := layout n.bits (tableBitsK M.tr) M.q₀ 0 (Nat.zero_le _)
++  rw [← word] at bound run
++  refine ⟨T, bound, ?_⟩
++  intro z d hd hsrc hsrcp htbl htblp hsm hsmp
++  obtain ⟨hstate, hin, htapes, hheads, hout, hcut⟩ :=
++    run d hd hsrc hsrcp htbl htblp hsm hsmp
++  exact ⟨hstate, hin, by rw [htapes, summary], hheads, hout, hcut⟩
++
++/-- Removing the doubled header and its separator from a paired input leaves its suffix.
++
++**Proof sketch.** Express the pair as the empty-suffix header appended to the suffix. The
++published length formula gives exactly the number of symbols to drop. -/
++private theorem ic_input_suffix (u x : List Bool) :
++    (pairEncode u x).drop (2 * u.length + 2) = x := by
++  have split : pairEncode u x = pairEncode u [] ++ x := by
++    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
++  have width : (pairEncode u []).length = 2 * u.length + 2 := by
++    rw [length_pairEncode, List.length_nil, Nat.add_zero]
++  rw [split, ← width, List.drop_left]
++
++/-- The interpreter's final one-step read, with live verdict states. The entry bit records
++whether the simulated machine halted; the accepting verdict additionally requires the summary
++cell to contain `some true`. This consumer-specific leaf supplies the two live verdicts that
++the hosted loop leaves to its caller; it is not another loop or dispatch host. -/
++private def ic_verdictTM (K : ℕ) (summary : Fin K) : MultiTapeTM K Bool (Bool ⊕ Bool) where
++  q₀ := Sum.inl false
++  tr := fun q _ cells =>
++    let verdict := match q with
++      | Sum.inl halted => halted && decide (cells summary = some true)
++      | Sum.inr result => result
++    ⟨0, fun _ => (none, 0), none, some (Sum.inr verdict)⟩
++
++/-- The verdict leaf reaches the correct live verdict in exactly one step, before which
++neither verdict has been reached. The summary characterization recognizes precisely the
++singleton accepting output.
++
++**Proof sketch.** The only strict prefix of one step is the entry configuration, whose state
++is in the other sum constructor. For the endpoint use the live-step and action-state equations
++and the public characterization of an accepting summary. -/
++private theorem ic_verdictTM_run {K : ℕ} (summary : Fin K) {z : List Bool}
++    (d : Cfg K Bool (Bool ⊕ Bool) z) (halted : Bool) (out : List Bool)
++    (hd : d.state = some (Sum.inl halted))
++    (hsummary : d.workTapeSymbols summary = StepBlock.outputSummary out) :
++    ((ic_verdictTM K summary).runFrom d 1).state =
++      some (Sum.inr (decide (halted = true ∧ out = [true]))) ∧
++      ∀ u < 1, ∀ verdict : Bool,
++        ((ic_verdictTM K summary).runFrom d u).state ≠ some (Sum.inr verdict) := by
++  constructor
++  · rw [show 1 = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
++      MultiTapeTM.runFrom_zero, MultiTapeTM.step_of_some hd, Action.apply_state]
++    simp only [ic_verdictTM, hsummary]
++    congr 2
++    cases halted <;> simp only [Bool.false_and, Bool.true_and, Bool.false_eq_true,
++      false_and, decide_false, true_and, StepBlock.outputSummary_true]
++  · intro u hu verdict
++    have zero : u = 0 := by omega
++    rw [zero, MultiTapeTM.runFrom_zero, hd]
++    exact fun h => Sum.noConfusion (Option.some.inj h)
++
++/-- The two phases of the interpreter's loop and final verdict read. -/
++private def ic_loopPh : Bool → Type
++  | false => CounterLoopState (Σ key, StepBlock.Ph 3 key) × Bool
++  | true => Bool ⊕ Bool
++
++/-- Each of the interpreter's two final phases has a finite control type. -/
++private instance ic_loopPh_fintype (phase : Bool) : Fintype (ic_loopPh phase) := by
++  cases phase <;> dsimp only [ic_loopPh] <;> infer_instance
++
++/-- The existing hosted loop followed by the consumer's one-step verdict leaf. -/
++private def ic_loopPiece (phase : Bool) : MultiTapeTM 7 Bool (ic_loopPh phase) :=
++  match phase with
++  | false => StepBlock.hostedLoopTM 3
++  | true => ic_verdictTM 7 (vhostBank (StepBlock.summaryTape 3).castSucc)
++
++/-- The loop's two exits dispatch to the corresponding verdict entry, independently of their
++arrival tag. Verdict states stay live; all dispatch is performed by the shared phase host. -/
++private def ic_loopRedirect : (phase : Bool) → ic_loopPh phase → Option (Σ i, ic_loopPh i)
++  | false, (.done, _) => some ⟨true, Sum.inl false⟩
++  | false, (.escape, _) => some ⟨true, Sum.inl true⟩
++  | false, _ => none
++  | true, Sum.inl _ => none
++  | true, Sum.inr result => some ⟨true, Sum.inr result⟩
++
++/-- The interpreter's loop and verdict stages assembled by the public phase host. -/
++private def ic_loopHost : MultiTapeTM 7 Bool (Σ i, ic_loopPh i) :=
++  phaseHostTM ic_loopPiece ⟨false, (.dec .run, true)⟩ ic_loopRedirect
++
+ /-- **The interpreter core for nondeterministic codes** `R` (deterministic; shared by the
+ universal NDTM and the diagonalizer's mid-rung). For every effective nondeterministic scheme
+ `c` there is one finite machine `R`, uniform over codes, with `K` work tapes, a designated stream

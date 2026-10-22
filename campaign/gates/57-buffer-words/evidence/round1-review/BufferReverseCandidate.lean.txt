@@ -1,0 +1,28 @@
+import TCSlib.Complexity.TuringMachine.BufferWords
+
+/-! Gate 57 review: an OPTIONAL later candidate (not for #140), checked under the seal of
+`FinTM.bufferTape`: the buffer of a reversed word, at every cell. The seam layout's phase 5 (the
+walk on `sm` over `m.reverse`) and `ZoneTape.zonedTape_left_word` derive instances of it inline. -/
+
+namespace Turing.FinTM.Gate57Candidate
+section
+attribute [local irreducible] Turing.FinTM.bufferTape
+
+/-- **The buffer of a reversed word**: the cell `z` of the buffer of `w.reverse` is the cell
+`|w| - 1 - z` of the buffer of `w`, at every cell `z` (both are blank off the word).
+
+**Proof sketch.** On `0 ≤ z < |w|` both are list lookups, and reversal maps index `z` to
+`|w| - 1 - z`. Off that range, both cells lie off their words. -/
+theorem bufferTape_reverse {Symbol : Type*} (w : List Symbol) (z : ℤ) :
+    bufferTape w.reverse z = bufferTape w (w.length - 1 - z) := by
+  by_cases h : 0 ≤ z ∧ z < w.length
+  · rw [bufferTape_eq, bufferTape_eq, if_pos h.1, if_pos (by omega),
+      List.getElem?_reverse (by omega),
+      show ((w.length : ℤ) - 1 - z).toNat = w.length - 1 - z.toNat by omega]
+  · rw [bufferTape_eq_none_of_not_mem _ (by rw [List.length_reverse]; exact h),
+      bufferTape_eq_none_of_not_mem _ (by omega)]
+
+end
+end Turing.FinTM.Gate57Candidate
+
+#print axioms Turing.FinTM.Gate57Candidate.bufferTape_reverse

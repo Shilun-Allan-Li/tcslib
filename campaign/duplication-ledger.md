@@ -334,5 +334,126 @@ instance and re-check consumers. `CounterLoop`'s other new pair, `counterLoopTM_
 ↔ `_run_escape` at 83%/72%, is two Z5 re-derivations sharing transport setup. It is not a
 member (gate note F8).
 
+**RW-1, the rewind row's copies of Catalog's seek frame and skip-back table** (PR #138,
+`Build/Rewind`, 2026-10-18). Two like-kind cross-file pairs, both against `Build/Catalog`:
+- the private `rw_cfg` reproduces Catalog's private `catalogSeekCfg` at 79/79 = 100%, both ways:
+  one record update over a different phase type; no proof is copied;
+- `rewindTM` and `skipBackTM` share one contiguous 140-character block, 80% of `rewindTM`'s
+  175-character body and 69% of `skipBackTM`'s 202: `rewindTM`'s table is `skipBackTM`'s
+  without its first row, with `start` in the role of `gap`. Inside the same 140 characters,
+  `rewindTM` also pairs with the seek tables `seekStartTM` (98 characters, 56% of `rewindTM`),
+  `skipTM` (71, 55% of `skipTM`) and `seekEndTM` (92, 53% of `rewindTM`): the seek family's
+  table pattern.
+
+**Census** (the primary rule, each member counted once per file it inhabits; corrected at gate
+55, finding 1: the first version counted `rw_cfg` alone, 1 of 5, and called the table pairs
+design-parallel, an exception the rule does not make for cross-file pairs; the seek tables'
+resemblance among themselves, §12.8 statement layer above, is uncounted only because it is
+in-file):
+- `Build/Rewind`, the copy side: **2 of 5 declarations (40%)** (3 public, 2 private), **20**
+  lines in member blocks (`rewindTM` 14, `rw_cfg` 6), 219 characters reproduced. `RewindPhase`
+  (a 48-character body, below the floor) and `rw_step` (no pair at half) are not members.
+- `Build/Catalog`, the original side: **5 more members**, `catalogSeekCfg` (6 lines),
+  `skipBackTM` (16), `skipTM` (13), `seekEndTM` (18) and `seekStartTM` (19), 72 lines; 5 of its
+  505 declarations. The file's row is re-totalled at its next census.
+- The v3 screen of the module, `Build/Catalog` and the exhaustive replay at #136's head (563
+  declarations, 416 pairs) regenerates byte-identical at gate 55; screened against the whole
+  library, `rewindTM` and `rw_cfg` pair with nothing else.
+
+**Exclusion** (a screen hit that is not a member; an exception to the rule, approved by the user
+on 2026-10-21): `rewindTM_run_ofCfg` → Catalog's private `a2_mapSetup_run`, 84/163 = 52%. The shared
+text is two tiles, 50 and 34 characters, of the run-by-induction idiom
+(`| succ t ih => rw [MultiTapeTM.runFrom_succ_eq_step', ih (` and
+`, MultiTapeTM.runFrom_succ_eq_step'`); no setup argument is shared. Screened against the whole
+library, the same idiom reaches half of 12 short run proofs in 10 files: `a2_mapSetup_run`,
+`Universal`'s `timedFrame_run`, `Robustness/ObliviousSchedule`'s `maskedClock_lockstep`,
+`decorateTM_run` and `parallelTM_run`, `Nondeterminism`'s `b2_unary_run`, `CircuitEvalRun`'s
+`step_rej`, `Build/Seam`'s `seamCompTM_runFrom_left`, `TimeHierarchy/ClockMachine`'s
+`kCfg_run`, `SymbolLift`'s `MultiTapeTM.liftSymbols_runFrom`, `Composition`'s
+`controlCfg_run`, and `Build/NDHost`'s `wr_cfg_scan` (there the frame-read idiom). As with the
+B1 exclusion of the configuration-equality idiom (above), it is recorded, not counted. Counted,
+`Build/Rewind` would be 3/5 = 60%.
+
+**The one-fifth rule** (`workflow.md` §4): `Build/Rewind` is past one fifth. Its §1 item is
+`backlog.md` RW-1, opened and acknowledged on 2026-10-18, before gate 55's pack shipped, for the
+frame alone; gate 55 widens it to the table. `Build/Catalog` was past one fifth already (D-R2).
+
+**Acknowledgment.** The frame: **ACKNOWLEDGED (user, 2026-10-18)**, before gate 55. The table
+and the exclusion: **ACKNOWLEDGED (user, 2026-10-21)** (gate 55, finding 1: the census at 40%,
+the idiom hit excluded), with the retirement by unification below chosen over a frame-only one. **Cleanup owner
+and window:** the user's dedup window, through backlog §1 RW-1, with Catalog's next edit: one
+public frame over any state type, cited from both files; and one left-pass table, the rewind
+being skip back entered at `gap`, with both framed runs derived from one public back-pass run.
+After the retirement, neither file has a member from this family.
+
+**BW-1, the buffer-word identities** (PR #140, `TuringMachine/BufferWords`, 2026-10-18): four of the
+module's six public lemmas restate `Build/StepBlock`'s privates (`bufferTape_append_shift` ↔
+`bufferTape_suffix`, `bufferTape_append_mid` ↔ `bufferTape_reads`, `bufferTape_eq_none_of_not_mem`
+↔ `bufferTape_outside`, `bufferTape_unary` ↔ `bufferTape_unary`): the same statements, with
+different proofs (the new ones read `bufferTape` only through its published equations). The
+copy-text screen pairs none of them, so this is a restated-fact family, not a text copy.
+**ACKNOWLEDGED (user, 2026-10-18)**, in the ruling that chose the public module. **Cleanup owner
+and window:** the user's dedup window: `StepBlock` imports the module and its four privates are
+deleted, their uses re-pointed. **Census** (the primary rule, each member counted once per file it
+inhabits; corrected at gate 57, finding 1: the first version counted `StepBlock`'s side only,
+without fractions or spans):
+- `TuringMachine/BufferWords`, the original side: **4 of 6 declarations (66.7%)** (6 public,
+  0 private; `_drop` and `_take` have no counterpart), **45** lines in member blocks
+  (`_append_shift` 10, `_append_mid` 9, `_eq_none_of_not_mem` 10, `_unary` 16).
+- `Build/StepBlock`, the copy side: **4 of 135 declarations (3.0%)** (64 public, 71 private),
+  **42** lines (`bufferTape_unary` 11, `_outside` 7, `_reads` 16, `_suffix` 8).
+- No copied characters: the v3 screen of the module, `Simulation`, `Build/StepBlock` and
+  `Build/SeamLayout` (140 declarations, 32 pairs) pairs none of the eight, before and after
+  #140's merge of the campaign branch (`7c963897`).
+
+**The one-fifth rule** (`workflow.md` §4): `BufferWords` is past one fifth, and its §1 item is
+`backlog.md` BW-1, opened and acknowledged on 2026-10-18, before gate 57's pack shipped.
+`StepBlock` is under one fifth, and #140 leaves it byte-unchanged. After the retirement, neither
+file has a member.
+
+**IW-1, the window copier's interval patch** (PR #137, `Build/InputWindow`, 2026-10-21): the
+private `iw_patch` is `Build/StepClock`'s public `wordPatch` at `Γ = Bool`: token for token after
+renaming its binders (`tape`, `head`, `v` for `ct`, `cp`, `u`), and equal by `rfl`
+(`@iw_patch = @wordPatch Bool`). One definition; no proof is copied. The same definition is also
+`Build/CounterLoop`'s private `counterPatch` and `Build/Catalog`'s private `catalogTape` (written
+pointwise), both from 2026-10-10; `wordPatch` (2026-10-14) is the public one. These four are the
+**interval-patch family**: the tree and the open branches hold no other. The B6 F1 record named
+`counterPatch` for the dedup window; `catalogTape` was not recorded before. The worker reported
+"new copies: none" (`StepClock` was outside its screen population and its import context). The
+maintainer disclosed the copy in gate 54's pack (question 6), and gate 54's finding 1 made it a
+debt major. **Not members:** `iw_patch_append` appends one cell (Catalog's public
+`catalog_write_take` states the same fact in take form, with its own proof), and `iw_patch_true`
+reads the patch at the all-true word (the `Bool` case of a step inside `CounterLoop`'s proof, not
+a declaration). **ACKNOWLEDGED (user, 2026-10-21)**, at gate 54, for the whole family. **Cleanup
+owner and window:** the user's dedup window, through backlog §1 IW-1: `wordPatch` moves below
+`Build/Catalog` with Catalog's next edit, and the three private copies re-point to it
+(`InputWindow`'s re-proofs are verified at gate 54's review). **Census** (the primary rule, each
+member counted once per file it inhabits; declarations as the style lint counts them; lines by
+the span rule):
+- `Build/InputWindow`, a copy: **1 of 17 declarations (5.9%)** (1 public, 16 private), **5**
+  lines (`iw_patch`).
+- `Build/StepClock`, the public one: **1 of 41 (2.4%)** (8 public, 33 private), **4** lines
+  (`wordPatch`).
+- `Build/CounterLoop`: **1 of 79 (1.3%)** (59 public, 20 private), **4** lines (`counterPatch`).
+- `Build/Catalog`: **1 of 505 (0.2%)** (113 public, 392 private), **5** lines (`catalogTape`). It
+  is in none of the correspondences behind Catalog's row above, so it adds one member there.
+- Copied characters: none by the v3 screen, which pairs none of the four. After renaming, each
+  is the same definition of 175 to 199 characters.
+
+**The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
+`InputWindow` had no earlier copies. `Catalog` had, but #137 adds no copy to it, since
+`catalogTape` predates the delivery. The §1 item IW-1 is opened anyway, as for RW-1, and
+answered. After the retirement only `wordPatch` remains, in its new home.
+
+**C1-E cont1, the exhaustive replay** (PR #136, `ClassNP/ExhaustiveReplay`, 2026-10-21): **no
+member.** The v3 screen's 122 new pairs are all in-file (0 cross-file, 0 gone; 297 → 428
+declarations, 106 → 228 pairs). 26 are at or above the brief's 90% copy threshold, between 17 of
+the module's 185 declarations (9.2%): the twenty `xr_*_ne_*` one-liners, two pairs of leaf tables,
+two buffer-tape facts and the replay's two exits. They are disclosed in-file siblings, listed and
+justified by family in the worker's report (§8) and qualified by its erratum
+(`campaign/fills/c1/reports/exhaustive-2-ERRATUM.md`); gate 53 (minor 2, note 12) found no copied
+material needing acknowledgment. Their consolidation, and the re-points to the public lemmas that
+arrived after the fill's base, are `backlog.md` §1 C1E-1, in the user's dedup window.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

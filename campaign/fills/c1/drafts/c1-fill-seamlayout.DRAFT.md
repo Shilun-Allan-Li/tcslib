@@ -1,5 +1,17 @@
 # Ch3–4 fill campaign — C1, the seam layout: the step block's layout from a captured serialization (`Turing.exists_seamLayoutTM`, `Build/SeamLayout.lean`)
 
+<!-- DRAFT (maintainer), revised 2026-10-18 for the user's ruling (the word identities from a new
+public module, PR #140). Before issue, after #140 merges: refresh the base and the in-flight list
+(the base must contain #140; #132 and #138 may have merged), build the overlay (the file with the
+one import), and re-measure on it against the then-current snapshot: the regions' lines, the
+order list (BufferWords joins the closure), the Mathlib roots, the base sorries, the screen base
+(add `TuringMachine/BufferWords` to the population) and the import probe (add the six lemmas).
+Dry run of 2026-10-21 at #140's merged head `7c963897` against `oleans-lbw2`
+(`drafts/c1-fill-seamlayout/dryrun-2026-10-21/`): the overlay (the one import added) elaborates
+with exactly the target's sorry warning (line 97); the probe, the 39 names plus the six lemmas,
+resolves (45 checks, 0 errors).
+-->
+
 ## Repository and branch — read this before anything else
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
@@ -16,9 +28,13 @@
   - **the API PRs** (the user's "Everything" rule, 2026-10-16): the specification API (PR #112),
     the core API (PR #116), the brief-inventory API (PR #118), the ND inventory API (PR #119) and
     its round 2 (PR #122: `FinTM.bufferTape_of_neg`, `MultiTapeTM.agreeOn_iff`);
+  - **the buffer-word identities** (PR #140, the user's ruling of 2026-10-18 on this brief's word
+    identities): the module `TuringMachine/BufferWords`, six `FinTM.bufferTape` lemmas, and its
+    API gate `campaign/gates/57-buffer-words/`;
   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
-    (**v2**: Part 1, the resources and the cache, applies on every host), and the
-    declaration-keyed copy-text screen v3 `scripts/copy-text-screen-v3.py`;
+    (**v2.3**: Part 1, the resources and the cache, applies on every host; **the cache is fetched
+    for your brief's Mathlib roots only**), and the declaration-keyed copy-text screen v3
+    `scripts/copy-text-screen-v3.py`;
   - **this round's inputs** (`campaign/fills/c1/inputs/c1-fill-seamlayout/`): the import probe and
     the screen population. Also the order list `campaign/fills/c1/orders/c1-fill-seamlayout.txt`,
     the base sorry set, the screen base and the pre-ship log
@@ -102,7 +118,12 @@ target, frozen:
 |---|---|---|
 | 1 | `Build/SeamLayout.lean:96` | `Turing.exists_seamLayoutTM` |
 
+<!-- ⟨LINES⟩ at issue: the regions' line numbers are the overlay's (the file with the one import
+added, +1 below the imports); re-measure them and the pre-ship on the overlay. -->
 Your regions:
+- **(a0) the import**, as your first edit: exactly
+  `import TCSlib.Complexity.TuringMachine.BufferWords`, after the existing imports. No other
+  import.
 - **(a) one home**, for your `private` declarations: the blank line **35**, after
   `namespace Turing` and before the target's docstring. `private` only, and no `section`, `open` or
   `variable` that leaks past one.
@@ -114,8 +135,8 @@ Your regions:
   or escalation names), no dates and no session narrative. The same holds for the docstrings of
   your new declarations; provenance goes in `REPORT.md`.
 
-Frozen: the module header and docstring, the imports, the target's statement and its docstring
-before (c), and every other file. The maintainer updates the module's status text at integration.
+Frozen: the module header and docstring, the imports other than (a0), the target's statement and
+its docstring before (c), and every other file. The maintainer updates the module's status text at integration.
 
 ### Route (binding: the docstring's eight phases, with gate 46's carry-forward)
 
@@ -149,8 +170,21 @@ Write `m = List.replicate q true ++ [false]`, `h = 2|a| + 2` and `n = |s| = h + 
     moving right. The unary terminator is not restored on `src`.
   - Each leaf's docstring says why no row serves it (as the target's docstring does).
 - **The word identities** — `s.drop r`, `s.take (h + q)`, the cells of `m` and `v`, and the
-  blanks — through `Turing.pairEncode_eq` and the `FinTM.bufferTape` lemmas, not
-  `serializeK_eq` (outside your closure). ⟨WORD-IDENTITIES⟩
+  blanks — through `Turing.pairEncode_eq` and **`TuringMachine/BufferWords`** (the user's ruling,
+  PR #140): `FinTM.bufferTape_append_shift`, `_append_mid`, `_drop`, `_take`,
+  `_eq_none_of_not_mem` and `_unary`, with `Simulation`'s `bufferTape_nat`, `_left`, `_eq` and
+  `_of_neg`. Not `serializeK_eq` (outside your closure), and never `StepBlock`'s private copies.
+  The module's gate probe (`campaign/gates/57-buffer-words/evidence/BufferWordsProbe.lean.txt`)
+  derives the unary state's cells (terminator included), the table's cells from its first cell,
+  `s.drop r`, `s.take n`, the blanks past `s` and a separator cell from them alone, sealed: **a
+  reference, not a citation** (its examples are probe-local).
+  - **Phase 5's read of `m.reverse` on `sm`:** no published reverse lemma exists. Derive it from
+    `bufferTape_nat`, `_left`, `_eq_none_of_not_mem` and core `List.getElem?_reverse`, as a small
+    private read (`ZoneTape`'s `zonedTape_left_word` derives such reads inline too).
+  - **`pairSkip`'s pair reads:** from `_append_shift` and `_append_mid`, by induction on `a`.
+  - Both were checked sealed, against the published module in your import context, with the
+    phases 7–8 window and the table tape's endpoint (gate 57's review,
+    `campaign/gates/57-buffer-words/evidence/round1-review/BufferWordsConsumerReal.lean.txt`).
 - **The frame.** Prove the full triple `Function.update` endpoint, not just the three tapes: R
   relies on it for the bank fields, including an installed choice tape. Prove `inputPos`
   unchanged.
@@ -185,8 +219,10 @@ Write `m = List.replicate q true ++ [false]`, `h = 2|a| + 2` and `n = |s| = h + 
 The probe's names: the target; the five rows' `_run_ofCfg` contracts; `phaseHostTM` and
 `phaseHostTM_run`; `MultiTapeTM.runFrom_mapState_of_agreeOn`, `MultiTapeTM.AgreeOn` and
 `agreeOn_iff`; `MultiTapeTM.output_prefix`; `pairEncode`, `pairEncode_eq`, `length_pairEncode`;
-`FinTM.bufferTape` with `_nil`, `_nat`, `_left`, `_eq`, `_of_neg`, `_append`; `Cfg.ext`; the model's
-step, run, action and `Cfg.mapState` lemmas; `Cfg.workTapeSymbols_eq`.
+`FinTM.bufferTape` with `_nil`, `_nat`, `_left`, `_eq`, `_of_neg`, `_append`; `BufferWords`'
+`FinTM.bufferTape_append_shift`, `_append_mid`, `_drop`, `_take`, `_eq_none_of_not_mem` and
+`_unary`; `Cfg.ext`; the model's step, run, action and `Cfg.mapState` lemmas;
+`Cfg.workTapeSymbols_eq`.
 
 ## Ground rules (binding)
 
@@ -198,7 +234,8 @@ step, run, action and `Cfg.mapState` lemmas; `Cfg.workTapeSymbols_eq`.
 4. **Escalation, item by item:** on anything unprovable as stated, stop **on that item only**,
    record the obstruction mathematically, and continue with every item that does not depend on it.
 5. **No touching other sorries.** Cite proved material; never re-prove it.
-6. **Imports.** None added. Your closure must stay free of `Build/StepBlock`, `CodeSimulator`,
+6. **Imports.** Exactly one added, `TuringMachine/BufferWords` (region (a0); it imports
+   `Simulation` only). Your closure must stay free of `Build/StepBlock`, `CodeSimulator`,
    `UniversalK` and `NDCodeSimulator`, so that U2-S's continuation can import your module.
 7. **One proof per shared argument.** Never write a second seam, phase host, row or embedding.
    Compose the rows' contracts; never re-walk a row's trace.
@@ -251,18 +288,20 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   $(grep -v '^#' $P/screen-population.txt) > /tmp/screen-after.txt
 ```
 
-- **No new cross-file pair** with an owned-file declaration on one side, except as the word
-  identities' ruling above allows.
-- **Known hazards:** `StepBlock`'s word identities and phase-key instances (follow, never
-  transcribe, beyond what the ruling allows); `FinTM.pairExtractTM`'s pair reading
+- **No new cross-file pair** with an owned-file declaration on one side. Nothing is
+  pre-disclosed: the word identities are cited from `BufferWords`, not copied.
+- **Known hazards:** `StepBlock`'s word identities (now public in `BufferWords`: cite those) and
+  its phase-key instances (follow, never transcribe); `FinTM.pairExtractTM`'s pair reading
   (`Build/Primitives`) against `pairSkip`. A pair at 90% or more is a copy.
 - List every new in-file pair with a one-line justification. Quote both outputs in `REPORT.md`,
   which carries **"new copies: none"** (or lists each pair).
 
 ## Environment and verification
 
-- Lean 4 v4.25.0, mathlib pinned; `lake exe cache get`; **never `lake build`**. Use
-  `scripts/lean_check_tree.sh` for every check.
+- Lean 4 v4.25.0, mathlib pinned; the cache **for your roots only** (addendum v2.3, items 2–4);
+  **never `lake build`**, and never the unfiltered `lake exe cache get`. Use
+  `scripts/lean_check_tree.sh` for every check. ⟨ROOTS: the Mathlib roots' count at the
+  overlay⟩
 - **Bootstrap once** from `campaign/fills/c1/orders/c1-fill-seamlayout.txt` (**81 modules**: the
   upstream closure of your owned file and of every module downstream of it, without the root
   `TCSlib`; one module is downstream of it, the `TuringMachine` facade).

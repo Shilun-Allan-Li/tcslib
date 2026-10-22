@@ -1,0 +1,49 @@
+head 041c82ab05d5595e890e1d94cf375e435b2e50e4
+base 9e77d2b26a62c3ee0c418a1e0a031c867c0ac80a
+$ git log --format="%H %P %an <%ae> %s" base..head
+1eabca5ec008dfce8a0974d853d98be57b851dee parents=9e77d2b26a62c3ee0c418a1e0a031c867c0ac80a author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the three authorized imports (C1-E cont1, region (a))
+4dae0d2d97221d2e7dc5b552f5e381c9dc53cae1 parents=1eabca5ec008dfce8a0974d853d98be57b851dee author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: adopted review probes P1-P4 as xr_ privates, tape translation, first arrival at a stationary anchor
+e29ecc28f8b0923712de68f07be5f7528f5caa41 parents=4dae0d2d97221d2e7dc5b552f5e381c9dc53cae1 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: leaf-row scaffolding, the return pass and forward scan, the rewind and extend rows
+e6f0c8c3a43b227ddd2ef9383f2fadf6ace44338 parents=e29ecc28f8b0923712de68f07be5f7528f5caa41 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the pass, capture test, input rewind and answer rows with their run lemmas; buffer-tape facts
+14a27c158e6f2be07fd47a52137200ae3636a76f parents=e6f0c8c3a43b227ddd2ef9383f2fadf6ace44338 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the clock over the replay machine, the tape-bank layout, and one replay's two exits
+78f1eed7ef27736c6e5e746e491828d6451675b6 parents=14a27c158e6f2be07fd47a52137200ae3636a76f author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: host infrastructure (anchors, banks, counter values, phases, redirect table, E, one-phase step)
+807e6a64cc0fa0c6ac7fc13d3d4e6b2d902aaf92 parents=78f1eed7ef27736c6e5e746e491828d6451675b6 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the patch lemma over a shorter stored word
+3484eb38fca6bd2d450ef99aef63515c0a8b7c4f parents=807e6a64cc0fa0c6ac7fc13d3d4e6b2d902aaf92 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: one cycle's phases on the host (copy, replay, capture test, rewinds, increment)
+a45b88da68418546456a03f5618f29dd75a6451f parents=3484eb38fca6bd2d450ef99aef63515c0a8b7c4f author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: reflow lines over 100 characters
+4eecd8b38247e16078350e79b70a01cc87b339eb parents=a45b88da68418546456a03f5618f29dd75a6451f author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the window clear on the host (one pass, one tape, all tapes)
+2ac42a81ea5d61cc3504c2bb4cdf4f562922f10d parents=4eecd8b38247e16078350e79b70a01cc87b339eb author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the host's halt phase, and one cycle on the host
+a1aa022e3f4ceaa7ef70a3ed28c7f3bd84713347 parents=2ac42a81ea5d61cc3504c2bb4cdf4f562922f10d author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: one depth and the depth change on the host
+77c580eaf8d78856d66da2ad482e7b05089c6445 parents=a1aa022e3f4ceaa7ef70a3ed28c7f3bd84713347 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: the whole run, the machine E, and the exhaustive decider
+c86fc6a3cefef535e3b5de6e950c41d1b3800aaa parents=77c580eaf8d78856d66da2ad482e7b05089c6445 author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: drop three unused private lemmas
+81be5ca98dcdadca8438714f8155a5567752711c parents=c86fc6a3cefef535e3b5de6e950c41d1b3800aaa author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: read one and two steps of a run through two helpers (screen hygiene)
+041c82ab05d5595e890e1d94cf375e435b2e50e4 parents=81be5ca98dcdadca8438714f8155a5567752711c author=fill-agent <fill-agent@localhost> | ExhaustiveReplay: scope the one-step helper's proof under open MultiTapeTM
+
+commit count: 16
+$ merges:
+$ first-parent chain linear:
+      16
+$ files changed per commit
+1eabca5e: 3 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+4dae0d2d: 248 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+e29ecc28: 378 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+e6f0c8c3: 505 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+14a27c15: 413 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+78f1eed7: 470 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+807e6a64: 2 1 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+3484eb38: 284 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+a45b88da: 32 17 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+4eecd8b3: 272 0 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+2ac42a81: 147 28 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+a1aa022e: 205 4 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+77c580ea: 254 12 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+c86fc6a3: 0 26 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+81be5ca9: 23 14 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+041c82ab: 2 1 TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+$ diff --stat base..head
+ TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean | 3137 ++++++++++++++++++++++-
+ 1 file changed, 3136 insertions(+), 1 deletion(-)
+$ base TCSlib tree vs 6d18902f
+d066c4b6d5f065dfbddc16e977eff1a35bbb424f
+d066c4b6d5f065dfbddc16e977eff1a35bbb424f
+$ head tree
+b16d182820d2ecaec760a28ac4d5937c401e1be3

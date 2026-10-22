@@ -1,0 +1,15 @@
+# the worker's preflight (evidence/logs/preflight.log), recorded for the E-RES investigation
+time 2026-10-18T05:50:12Z, before the cache step; host "vm"; nproc 4; cgroup v1 (no memory.max/current/events)
+cgroup memory.limit_in_bytes       14343688192 (13.36 GiB)
+cgroup memory.usage_in_bytes          20934656 (0.019 GiB)  max_usage 50024448, failcnt 0
+free -b: total 16874930176 (15.72 GiB), used 638398464, free 11413610496, shared 15032320, buff/cache 5152583680 (4.80 GiB), available 16236531712 (15.12 GiB)
+verdict headroom 14322081792 (13.34 GiB; limit - usage would be 14322753536, a second usage sample of 21606400 at the verdict) >= 4 GiB: yes
+disk available 27612160000 (25.72 GiB) on ext4 /dev/vda >= 12 GiB: yes; no tmpfs used
+cache: lake exe cache get rc=0, 7506 files, unpacked in 39850 ms (05:54:10Z-05:56:32Z); zero-size oleans 0; Mathlib probe 1526 MiB
+toolchain: elan installed v4.25.0 after *.lean-lang.org was unblocked at the proxy; the Part 2 shim was not needed
+peak Lean RSS (from the logs): 2780 TCSlib/Complexity/TuringMachine/Build/Catalog; 2796 TCSlib/Complexity/TuringMachine/Build/Catalog; 2692 TCSlib/Complexity/CookLevin/Hardness (MiB; the final sweep, bootstrap stage 1 and bootstrap stage 2, in that order)
+owned module: 2143 MiB, 22.0 s wall (final sweep)
+# reading: this host passes v2 and v2.1 by a wide margin; its limit is 13.36 GiB (vs 8 GiB on the E-RES hosts),
+# and v2 was evaluated once, before the cache step (~5.5 GiB unpacked); the host-wide buff/cache of 4.80 GiB at
+# preflight was not charged to this cgroup (usage 0.02 GiB). No repeat preflight was needed (no retry). The peak Lean RSS, 2,796 MiB = 2.93 GB
+# (Build/Catalog), is above the addendum's quoted ~2.4 GB but far below the 4 GiB headroom floor.

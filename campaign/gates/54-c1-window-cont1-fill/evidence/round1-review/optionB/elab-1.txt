@@ -1,0 +1,68 @@
+TCSlib/Complexity/TuringMachine/Build/InputWindow.lean:437:2: error: unsolved goals
+case refine_3
+k : ℕ
+j dst : Fin k
+hjd : j ≠ dst
+ι : Fin 2 ↪ Fin k := iw_select j dst hjd
+z : List Bool
+c : Cfg k Bool (CounterLoopState Bool) z
+p : ℕ
+w : List Bool
+hc : c.state = some (CounterLoopState.dec FlagPhase.run)
+hi : ↑c.inputPos = p + 1
+hw : ∀ (q : ℤ), -1 ≤ q → q ≤ ↑w.length → c.workTapes j (c.workTapePos j + q) = FinTM.bufferTape w q
+body : Cfg 1 Bool Bool z :=
+  { state := some false, inputPos := c.inputPos, workTapes := fun x => c.workTapes dst,
+    workTapePos := fun x => c.workTapePos dst, output := c.output }
+y : List Bool := List.take (Nat.ofDigits 2 (List.map Bool.toNat w)) (List.drop p z)
+hp : p ≤ z.length
+hn : y.length = min (Nat.ofDigits 2 (List.map Bool.toNat w)) (z.length - p)
+hbound : p + y.length ≤ z.length
+htake : List.take y.length (List.drop p z) = y
+T : ℕ
+hT : T ≤ 6 * (y.length + 1) + 2 * w.length
+v : List Bool
+hv : v.length = w.length
+hrun :
+  MultiTapeTM.runFrom
+      (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) body (c.workTapes j) (c.workTapePos j)) T =
+    counterLoopCfg (some CounterLoopState.done) (iw_prefix body p y.length ⋯)
+      (wordPatch (c.workTapes j) (c.workTapePos j) v) (c.workTapePos j)
+hfirst :
+  ∀ u < T,
+    (MultiTapeTM.runFrom
+          (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) body (c.workTapes j) (c.workTapePos j)) u).state ≠
+      some CounterLoopState.done
+start : Cfg (1 + 1) Bool (CounterLoopState Bool) z :=
+  counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) body (c.workTapes j) (c.workTapePos j)
+finish : Cfg (1 + 1) Bool (CounterLoopState Bool) z :=
+  counterLoopCfg (some CounterLoopState.done) (iw_prefix body p y.length hbound)
+    (wordPatch (c.workTapes j) (c.workTapePos j) v) (c.workTapePos j)
+out : Cfg k Bool (CounterLoopState Bool) z :=
+  { state := some CounterLoopState.done, inputPos := (iw_prefix body p y.length hbound).inputPos,
+    workTapes :=
+      Function.update (Function.update c.workTapes dst (wordPatch (c.workTapes dst) (c.workTapePos dst) y)) j
+        (wordPatch (c.workTapes j) (c.workTapePos j) v),
+    workTapePos := Function.update c.workTapePos dst (c.workTapePos dst + ↑y.length), output := c.output }
+hstart : embedEmitCfg ι c.workTapes c.workTapePos [] start = c
+hend : embedEmitCfg ι c.workTapes c.workTapePos [] finish = out
+hlift : ∀ (u : ℕ), MultiTapeTM.runFrom c u = embedEmitCfg ι c.workTapes c.workTapePos [] (MultiTapeTM.runFrom start u)
+he : MultiTapeTM.runFrom c T = out
+⊢ (Function.update
+      (Function.update c.workTapes dst fun q =>
+        if c.workTapePos dst ≤ q ∧ q < c.workTapePos dst + ↑y.length then FinTM.bufferTape y (q - c.workTapePos dst)
+        else c.workTapes dst q)
+      j fun q =>
+      if c.workTapePos j ≤ q ∧ q < c.workTapePos j + ↑v.length then FinTM.bufferTape v (q - c.workTapePos j)
+      else c.workTapes j q) =
+    Function.update
+      (Function.update c.workTapes dst fun q =>
+        if
+            c.workTapePos dst ≤ q ∧
+              q < c.workTapePos dst + ↑(List.take (Nat.ofDigits 2 (List.map Bool.toNat w)) (List.drop p z)).length then
+          FinTM.bufferTape (List.take (Nat.ofDigits 2 (List.map Bool.toNat w)) (List.drop p z)) (q - c.workTapePos dst)
+        else c.workTapes dst q)
+      j fun q =>
+      if c.workTapePos j ≤ q ∧ q < c.workTapePos j + ↑v.length then FinTM.bufferTape v (q - c.workTapePos j)
+      else c.workTapes j q
+exit=1 secs=5

@@ -1,0 +1,14 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+/-! G51 note 7: at one work tape, `tapeAction 0 a none b q` is the delivery's
+`rd_move (some q) a b = ⟨a, fun _ => (none, b), none, some q⟩`, for every `a b q`. -/
+namespace Turing
+
+example {S : Type} (a b : SignType) (q : S) :
+    (tapeAction (0 : Fin 1) a none b q : Action 1 Bool S) = ⟨a, fun _ => (none, b), none, some q⟩ := by
+  unfold tapeAction
+  congr
+  funext j
+  rw [if_pos (Subsingleton.elim j 0)]
+
+end Turing

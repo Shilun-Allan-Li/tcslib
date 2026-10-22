@@ -1,0 +1,16 @@
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+
+/-! The control: under the same seal, two closures by definitional unfolding must fail. -/
+
+namespace Turing
+
+section WordPatchSeal
+attribute [local irreducible] Turing.FinTM.bufferTape Turing.wordPatch
+
+example (u : List Bool) : FinTM.bufferTape u (-1) = none := rfl
+
+example (ct : ℤ → Option Bool) (cp : ℤ) : wordPatch ct cp [] = ct := rfl
+
+end WordPatchSeal
+
+end Turing

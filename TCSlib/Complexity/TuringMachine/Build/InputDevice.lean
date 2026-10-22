@@ -5,6 +5,9 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.Catalog
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -27,22 +30,21 @@ Two devices are stated here.
   `ℓ > 0`, the physical cell `p - ℓ` is blank exactly at the virtual left boundary, so a
   restoring sweep of `ℓ` cells tests it without clamping. Its storage is the ruler's `ℓ + 2`
   cells. It is the device of the addend-free `Complexity.space_universal`, whose header length
-  is linear in the budget (the RD-3 statement gate, minor 1).
+  is linear in the budget.
 
 The buffered device is Z1 (`Build/VirtualInput.lean`). The binary-position device of the
 registry row is not stated here; no current consumer needs it.
 
-**The ruler host is a block simulation** (the H2-S gate, finding 2). `Turing.exists_rulerHostTM`
-turns any native-input machine into one on the suffix input: each source step is one host step,
-followed by a boundary test after a left move, so `t` source steps take between `t` and
-`C · (ℓ + 1) · t` host steps. At every host time the bank, the output and the ruler are those of
-the source at some source time (the intermediate frames), the host does not halt before the
-source does (the exit cut), and the time and space ledgers are separate clauses. Literal
-lockstep is the native special case.
+**The ruler host is a block simulation.** `Turing.exists_rulerHostTM` turns any native-input machine
+into one on the suffix input: each source step is one host step, followed by a boundary test after a
+left move, so `t` source steps take between `t` and `C · (ℓ + 1) · t` host steps. At every host time
+the bank, the output and the ruler are those of the source at some source time (the intermediate
+frames), the host does not halt before the source does (the exit cut), and the time and space
+ledgers are separate clauses. Literal lockstep is the native special case.
 
-**Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). The definitions and the devices' correctness facts
-are proved; the three machine contracts are sorried with their proof sketches.
+**Status.** The definitions, the devices' correctness facts and the restoring boundary test
+`Turing.exists_rulerTestTM` are proved; the call rows `Turing.exists_rulerDeviceTM` and the host
+`Turing.exists_rulerHostTM` are sorried with their proof sketches.
 
 ## Main definitions
 
@@ -59,8 +61,9 @@ are proved; the three machine contracts are sorried with their proof sketches.
   correctness facts, the empty payload included (proved).
 * `Turing.pairEncode_pairEncode_length`, `Turing.pairEncode_pairEncode_drop` — the header of
   `Complexity.space_universal`'s input (proved).
-* `Turing.exists_rulerTestTM`, `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the
-  restoring boundary test, the call rows and the host (sorried).
+* `Turing.exists_rulerTestTM` — the restoring boundary test (proved).
+* `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the call rows and the host
+  (sorried).
 
 ## References
 
@@ -200,19 +203,173 @@ theorem pairEncode_pairEncode_drop (u α x : List Bool) :
   rw [show 2 * u.length + 2 * α.length + 4 = (2 * u.length + 2) + (2 * α.length + 2) by ring,
     ← List.drop_drop, hd, hd]
 
-/-- **The restoring suffix-boundary test** (the ruler device's core; the RD-3 gate's suggested
-sanity obligation). There is a one-tape binary module with an entry and two distinct verdicts
-as follows. Start it at its entry with the delimited ruler `true^ℓ`, `ℓ > 0`, at its head and
-the physical input head at a position `p ≥ ℓ`. It reaches `yes` if `p = ℓ` and `no`
-otherwise, within `C · (ℓ + 1)` steps and no verdict earlier, with nothing else changed: the
-input head is back at `p` and the ruler head at its start, having stayed within `ℓ + 1` cells.
+/-- The forward state, followed by return and verdict states carrying one Boolean. -/
+private abbrev rd_State := Unit ⊕ Bool × Bool
+
+/-- The ruler test is a leaf: scan jointly left/right, read once, and return jointly.
+No catalog row moves the input head together with a work head. -/
+private def rd_test : MultiTapeTM 1 Bool rd_State where
+  q₀ := .inl ()
+  tr q v w := match q with
+    | .inl _ => if w 0 = some true then tapeAction 0 (-1) none 1 (.inl ())
+        else tapeAction 0 0 none (-1) (.inr (v.isNone, false))
+    | .inr (b, false) => if w 0 = some true then tapeAction 0 1 none (-1) (.inr (b, false))
+        else tapeAction 0 0 none 1 (.inr (b, true))
+    | .inr (b, true) => tapeAction 0 0 none 0 (.inr (b, true))
+
+/-- A point of the restoring trace, with distance from the original input head. -/
+private def rd_cfg {z : List Bool} (d : Cfg 1 Bool rd_State z) (q : rd_State)
+    (n : ℕ) (e : ℤ) : Cfg 1 Bool rd_State z :=
+  { d with
+    state := some q
+    inputPos := ⟨d.inputPos.val - n, by have := d.inputPos.isLt; omega⟩
+    workTapePos := fun i => d.workTapePos i + e }
+
+/-- The verdict says precisely whether the physical head equals the header length. -/
+private def rd_verdict {z : List Bool} (d : Cfg 1 Bool rd_State z) (ℓ : ℕ) : Bool :=
+  decide (d.inputPos.val = ℓ)
+
+/-- The whole finite trace has a forward leg, a return leg and one restored endpoint. -/
+private def rd_trace {z : List Bool} (d : Cfg 1 Bool rd_State z) (ℓ u : ℕ) :=
+  if u ≤ ℓ then rd_cfg d (.inl ()) u u
+  else if u ≤ 2 * ℓ + 1 then
+    let n := 2 * ℓ + 1 - u
+    rd_cfg d (.inr (rd_verdict d ℓ, false)) n ((n : ℤ) - 1)
+  else rd_cfg d (.inr (rd_verdict d ℓ, true)) 0 0
+
+/-- The ruler gives a true cell at each interior natural offset. -/
+private theorem rd_read_nat {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
+    (n : ℕ) (hn : n < ℓ) : d.workTapes 0 (d.workTapePos 0 + n) = some true := by
+  rw [hr n (by omega) (by omega), FinTM.bufferTape_nat]
+  simp only [List.getElem?_replicate, if_pos hn]
+
+/-- One table row moves between two trace points using `Turing.step_of_tapeAction_move`. -/
+private theorem rd_cfg_step {z : List Bool} (d : Cfg 1 Bool rd_State z)
+    (q q' : rd_State) (n n' : ℕ) (e e' : ℤ) (a b : SignType)
+    (ht : rd_test.tr q (rd_cfg d q n e).inputSymbol
+      (rd_cfg d q n e).workTapeSymbols = tapeAction 0 a none b q')
+    (hi : moveInputPos (rd_cfg d q n e).inputPos a = (rd_cfg d q' n' e').inputPos)
+    (he : e + (b : ℤ) = e') :
+    rd_test.step (rd_cfg d q n e) = rd_cfg d q' n' e' := by
+  rw [step_of_tapeAction_move rd_test (rd_cfg d q n e) 0 a b rfl ht]
+  refine Cfg.ext rfl hi rfl ?_ rfl
+  funext i
+  rw [Subsingleton.elim i 0]
+  simp only [Function.update_self, rd_cfg, add_assoc, he]
+
+/-- Each successive point follows the table, including both delimiter turns.
+
+**Proof sketch.** Interior ruler cells move both heads; the right delimiter records the
+semantic boundary test, and the left delimiter restores the ruler head before the verdict. -/
+private theorem rd_trace_step {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+    (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
+    (u : ℕ) (hu : u < 2 * ℓ + 2) :
+    rd_test.step (rd_trace d ℓ u) = rd_trace d ℓ (u + 1) := by
+  by_cases hf : u < ℓ
+  · simp only [rd_trace, if_pos (show u ≤ ℓ by omega),
+      if_pos (show u + 1 ≤ ℓ by omega)]
+    refine rd_cfg_step d _ _ _ _ _ _ (-1) 1 ?_ ?_ (by simp only [SignType.coe_one]; omega)
+    · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, rd_read_nat ℓ d hr u hf,
+        if_true]
+    · rw [← SignType.neg_eq_neg_one]
+      rw [moveInputPos_neg_of_ne_left (rd_cfg d (.inl ()) u u).inputPos (by
+        intro h; have hh := congrArg Fin.val h; simp only [rd_cfg, Fin.val_zero] at hh
+        omega)]
+      apply Fin.ext
+      simp only [rd_cfg]
+      omega
+  · by_cases ht : u = ℓ
+    · subst u
+      have hb : (inputCell z (d.inputPos.val - ℓ)).isNone = rd_verdict d ℓ := by
+        rw [Bool.eq_iff_iff]
+        simp only [Option.isNone_iff_eq_none, rd_verdict, decide_eq_true_eq]
+        exact inputCell_sub_eq_none_iff hℓ hp (by have := d.inputPos.isLt; omega)
+      have hend : d.workTapes 0 (d.workTapePos 0 + ℓ) = none := by
+        rw [hr ℓ (by omega) (by omega), FinTM.bufferTape_nat]
+        simp only [List.getElem?_replicate, lt_self_iff_false, if_false]
+      simp only [rd_trace, if_pos (show ℓ ≤ ℓ from le_rfl),
+        if_neg (show ¬ℓ + 1 ≤ ℓ by omega), if_pos (show ℓ + 1 ≤ 2 * ℓ + 1 by omega)]
+      have hn : 2 * ℓ + 1 - (ℓ + 1) = ℓ := by omega
+      rw [hn]
+      refine rd_cfg_step d _ _ _ _ _ _ 0 (-1) ?_ ?_ (by
+        simp only [SignType.coe_neg_one]; omega)
+      · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, hend, reduceCtorEq, if_false,
+          Cfg.inputSymbol_eq_inputCell, hb]
+      · exact moveInputPos_zero _
+    · have hf' : ¬u ≤ ℓ := by omega
+      have hf'' : ¬u + 1 ≤ ℓ := by omega
+      have hrange : u ≤ 2 * ℓ + 1 := by omega
+      by_cases he : u = 2 * ℓ + 1
+      · subst u
+        have hend : d.workTapes 0 (d.workTapePos 0 + (-1)) = none := by
+          rw [hr (-1) (by omega) (by omega), FinTM.bufferTape_left]
+        simp only [rd_trace, if_neg hf', if_neg hf'', if_pos (le_refl (2 * ℓ + 1)),
+          if_neg (show ¬2 * ℓ + 1 + 1 ≤ 2 * ℓ + 1 by omega), Nat.sub_self,
+          Nat.cast_zero, zero_sub]
+        refine rd_cfg_step d _ _ _ _ _ _ 0 1 ?_ ?_ (by simp)
+        · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, hend, reduceCtorEq, if_false]
+        · exact moveInputPos_zero _
+      · have hnext : u + 1 ≤ 2 * ℓ + 1 := by omega
+        let n := 2 * ℓ + 1 - u
+        have hn : 0 < n ∧ n ≤ ℓ := by dsimp [n]; omega
+        have hnextn : 2 * ℓ + 1 - (u + 1) = n - 1 := by dsimp [n]; omega
+        have hcast : ((n - 1 : ℕ) : ℤ) = (n : ℤ) - 1 := by omega
+        have hread : d.workTapes 0 (d.workTapePos 0 + ((n : ℤ) - 1)) = some true := by
+          rw [← hcast]
+          exact rd_read_nat ℓ d hr (n - 1) (by omega)
+        simp only [rd_trace, if_neg hf', if_neg hf'', if_pos hrange, if_pos hnext]
+        change rd_test.step (rd_cfg d (.inr (rd_verdict d ℓ, false)) n ((n : ℤ) - 1)) = _
+        rw [hnextn]
+        refine rd_cfg_step d _ _ _ _ _ _ 1 (-1) ?_ ?_ (by
+          simp only [SignType.coe_neg_one]; omega)
+        · simp only [rd_test, Cfg.workTapeSymbols_eq, rd_cfg, hread, if_true]
+        · rw [← SignType.pos_eq_one]
+          rw [moveInputPos_pos_of_ne_right
+            (rd_cfg d (.inr (rd_verdict d ℓ, false)) n ((n : ℤ) - 1)).inputPos (by
+            change d.inputPos.val - n ≠ z.length + 1
+            have := d.inputPos.isLt; omega)]
+          apply Fin.ext
+          simp only [rd_cfg]
+          omega
+
+/-- The single induction that identifies every point of the finite restoring sweep. -/
+private theorem rd_run {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+    (hd : d.state = some (.inl ())) (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p)
+    (u : ℕ) (hu : u ≤ 2 * ℓ + 2) : rd_test.runFrom d u = rd_trace d ℓ u := by
+  induction u with
+  | zero =>
+    rw [MultiTapeTM.runFrom_zero]
+    simp only [rd_trace, Nat.zero_le, if_true, rd_cfg, Nat.sub_zero, Nat.cast_zero, add_zero]
+    exact Cfg.ext hd rfl rfl rfl rfl
+  | succ u ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    exact rd_trace_step ℓ d hℓ hp hr u (by omega)
+
+/-- **The restoring suffix-boundary test** (the ruler device's core). There is a one-tape binary
+module with an entry and two distinct verdicts as follows. Start it at its entry with the
+delimited ruler `true^ℓ`, `ℓ > 0`, at its head and the physical input head at a position `p ≥ ℓ`.
+It reaches `yes` if `p = ℓ` and `no` otherwise, within `C · (ℓ + 1)` steps and no verdict
+earlier, with nothing else changed: the input head is back at `p` and the ruler head at its
+start, having stayed within `ℓ + 1` cells.
 The input itself is arbitrary, so an empty payload is included. [AB09, §1.2]
 
 **Proof sketch.** Move the input head left and the ruler head right in lockstep until the ruler
 head reads the blank after the ruler: `ℓ` moves, none clamped since `p ≥ ℓ`. Read the input cell
 at `p - ℓ`: it is blank exactly when `p - ℓ = 0`, since `p - ℓ ≤ |z| + 1 - ℓ ≤ |z|`
 (`Turing.inputCell_sub_eq_none_iff`). Move both heads back `ℓ` cells (the ruler head stops at
-the blank before the ruler, then steps right). A finite control carries the verdict. -/
+the blank before the ruler, then steps right). A finite control carries the verdict.
+
+**Implementation.** The test is a hand-built controller that moves the input head and the
+ruler head in the same step (a `Turing.tapeAction`); no catalog row does that. One
+forward-and-return trajectory, identified by a single induction, takes exactly `2ℓ + 2` steps, so
+`C = 2`. The turn reads the boundary through `Turing.inputCell_sub_eq_none_iff`; the return leg
+changes no tape and no output and restores both heads. -/
 theorem exists_rulerTestTM :
     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
       (entry yes no : P) (C : ℕ), yes ≠ no ∧
@@ -224,7 +381,36 @@ theorem exists_rulerTestTM :
           (∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no) ∧
           (∀ u ≤ t, |(R.runFrom d u).workTapePos 0 - d.workTapePos 0| ≤ ((ℓ + 1 : ℕ) : ℤ)) ∧
           R.runFrom d t = { d with state := some (if d.inputPos.val = ℓ then yes else no) } := by
-  sorry
+  refine ⟨rd_State, inferInstance, inferInstance, rd_test, .inl (), .inr (true, true),
+    .inr (false, true), 2, by decide, ?_⟩
+  intro z ℓ d hd hℓ hp hr
+  refine ⟨2 * ℓ + 2, by omega, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [rd_run ℓ d hd hℓ hp hr u (by omega)]
+    by_cases hf : u ≤ ℓ
+    · simp only [rd_trace, if_pos hf, rd_cfg]
+      constructor <;> intro h <;> cases h
+    · have hu' : u ≤ 2 * ℓ + 1 := by omega
+      simp only [rd_trace, if_neg hf, if_pos hu', rd_cfg]
+      constructor <;> intro h
+      all_goals exact Bool.false_ne_true (congrArg Prod.snd (Sum.inr.inj (Option.some.inj h)))
+  · intro u hu
+    rw [rd_run ℓ d hd hℓ hp hr u hu]
+    by_cases hf : u ≤ ℓ
+    · simp only [rd_trace, if_pos hf, rd_cfg, add_sub_cancel_left, abs_le]
+      constructor <;> omega
+    · by_cases hb : u ≤ 2 * ℓ + 1
+      · simp only [rd_trace, if_neg hf, if_pos hb, rd_cfg, add_sub_cancel_left, abs_le]
+        constructor <;> omega
+      · simp only [rd_trace, if_neg hf, if_neg hb, rd_cfg, add_zero, sub_self, abs_zero]
+        omega
+  · rw [rd_run ℓ d hd hℓ hp hr (2 * ℓ + 2) (le_refl _)]
+    simp only [rd_trace, if_neg (show ¬2 * ℓ + 2 ≤ ℓ by omega),
+      if_neg (show ¬2 * ℓ + 2 ≤ 2 * ℓ + 1 by omega), rd_cfg, Nat.sub_zero, add_zero]
+    refine Cfg.ext ?_ rfl rfl rfl rfl
+    by_cases h : d.inputPos.val = ℓ
+    · simp only [rd_verdict, h, decide_true, if_true]
+    · simp only [rd_verdict, h, decide_false, if_false]
 
 /-- **H5, the ruler device's call rows** ("read the virtual input cell", "move the virtual input
 head"). There is a one-tape binary module with a read entry, three read verdicts

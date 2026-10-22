@@ -1,0 +1,145 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Simulation
+
+/-! The module's declarations, verbatim (its olean is not in the snapshot). -/
+
+namespace Turing.FinTM
+
+/-- **A suffix at an offset**: at a cell `z ≥ 0` past the prefix `u`, the buffer of `u ++ w`
+reads the buffer of `w` at `z`, including `w`'s right blank and every cell beyond it.
+
+**Proof sketch.** Both cells are nonnegative, and list lookup in `u ++ w` at `|u| + z` is lookup
+in `w` at `z`. -/
+theorem bufferTape_append_shift {Symbol : Type*} (u w : List Symbol) {z : ℤ} (hz : 0 ≤ z) :
+    bufferTape (u ++ w) (u.length + z) = bufferTape w z := by
+  rw [bufferTape_eq, bufferTape_eq, if_pos (by omega), if_pos hz,
+    show ((u.length : ℤ) + z).toNat = u.length + z.toNat by omega,
+    List.getElem?_append_right (Nat.le_add_right _ _), Nat.add_sub_cancel_left]
+
+/-- **A middle word's letters**: in the buffer of `u ++ w ++ v`, the cell `|u| + r` holds `w`'s
+letter `r`, for `r < |w|`.
+
+**Proof sketch.** Past `u`, the buffer reads the buffer of `w ++ v`
+(`Turing.FinTM.bufferTape_append_shift`), whose cell `r < |w|` is `w`'s letter. -/
+theorem bufferTape_append_mid {Symbol : Type*} (u w v : List Symbol) (r : ℕ) (hr : r < w.length) :
+    bufferTape (u ++ w ++ v) (u.length + r) = some w[r] := by
+  rw [List.append_assoc, bufferTape_append_shift u (w ++ v) (Int.natCast_nonneg r), bufferTape_nat,
+    List.getElem?_append_left hr, List.getElem?_eq_getElem hr]
+
+/-- **The buffer of a suffix**: at a cell `z ≥ 0`, the buffer of `w.drop r` reads the buffer of
+`w` at `r + z`.
+
+**Proof sketch.** `w` is `w.take r ++ w.drop r`. If `r ≤ |w|`, the prefix has length `r` and
+`Turing.FinTM.bufferTape_append_shift` applies. Otherwise the suffix is empty, and the cell
+`r + z` is past `w`'s end, so both sides are blank. -/
+theorem bufferTape_drop {Symbol : Type*} (w : List Symbol) (r : ℕ) {z : ℤ} (hz : 0 ≤ z) :
+    bufferTape (w.drop r) z = bufferTape w (r + z) := by
+  by_cases hr : r ≤ w.length
+  · have h := bufferTape_append_shift (w.take r) (w.drop r) hz
+    rw [List.take_append_drop, List.length_take, min_eq_left hr] at h
+    exact h.symm
+  · rw [List.drop_eq_nil_of_le (by omega), bufferTape_eq, bufferTape_eq, if_pos hz,
+      if_pos (by omega), List.getElem?_nil, List.getElem?_eq_none (by omega)]
+
+/-- **The buffer of a prefix**: at a cell `z < n`, the buffer of `w.take n` reads the buffer of
+`w`.
+
+**Proof sketch.** Negative cells are blank on both sides. At `0 ≤ z < n`, list lookup in
+`w.take n` is lookup in `w`. -/
+theorem bufferTape_take {Symbol : Type*} (w : List Symbol) (n : ℕ) {z : ℤ} (hz : z < n) :
+    bufferTape (w.take n) z = bufferTape w z := by
+  rw [bufferTape_eq, bufferTape_eq]
+  split_ifs with h
+  · rw [List.getElem?_take, if_pos (by omega)]
+  · rfl
+
+/-- **Off the word, the buffer is blank**: every cell outside `[0, |w|)` reads `none`.
+
+**Proof sketch.** A negative cell is blank by the buffer's equation, and a cell at or past `|w|`
+is past the end of the list. -/
+theorem bufferTape_eq_none_of_not_mem {Symbol : Type*} (w : List Symbol) {z : ℤ}
+    (hz : ¬(0 ≤ z ∧ z < w.length)) : bufferTape w z = none := by
+  rw [bufferTape_eq]
+  split_ifs with h
+  · exact List.getElem?_eq_none (by omega)
+  · rfl
+
+/-- **A unary word's cells**: the buffer of `1^q 0` (`q` letters `true`, then the terminator
+`false`) reads `true` at the cells `r < q` and `false` at `r = q`, that is,
+`some (decide (r < q))` for every `r ≤ q`.
+
+**Proof sketch.** At `r < q` list lookup stays in the block of `true`s; at `r = q` it reads the
+terminator. -/
+theorem bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
+    bufferTape (List.replicate q true ++ [false]) r = some (decide (r < q)) := by
+  rw [bufferTape_nat]
+  by_cases hlt : r < q
+  · rw [List.getElem?_append_left (by rw [List.length_replicate]; exact hlt),
+      List.getElem?_replicate_of_lt hlt, decide_eq_true hlt]
+  · obtain rfl : r = q := by omega
+    rw [List.getElem?_append_right (by rw [List.length_replicate]), List.length_replicate,
+      Nat.sub_self, decide_eq_false (Nat.lt_irrefl r)]
+    rfl
+
+end Turing.FinTM
+
+/-! The seam layout's word identities, derived from the module's lemmas and `pairEncode_eq`
+alone, in the seam layout's import context plus the module. The serialization is
+`s = pairEncode a (m ++ v)` with `m = 1^q 0`; `P` is the pair encoding's prefix. Under the seal of
+`FinTM.bufferTape` and `pairEncode`. -/
+
+namespace Turing
+
+section BufferWordsConsumer
+attribute [local irreducible] Turing.FinTM.bufferTape Turing.pairEncode
+
+variable (a v : List Bool) (q : ℕ)
+
+/-- The unary state's cells, the terminator included. -/
+example (r : ℕ) (hr : r ≤ q) :
+    FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v))
+      (((a.flatMap fun b => [b, b]) ++ [false, true]).length + r) = some (decide (r < q)) := by
+  rw [pairEncode_eq, List.append_assoc ((a.flatMap fun b => [b, b])) [false, true],
+    ← List.append_assoc, FinTM.bufferTape_append_shift _ _ (Int.natCast_nonneg r),
+    ← FinTM.bufferTape_take _ (q + 1) (by omega : (r : ℤ) < (q + 1 : ℕ)),
+    List.take_left' (by simp), FinTM.bufferTape_unary q r hr]
+
+/-- The table's cells, from its first cell on (its right blank and beyond included). -/
+example (z : ℤ) (hz : 0 ≤ z) :
+    FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v))
+      (((a.flatMap fun b => [b, b]) ++ [false, true]).length + (q + 1 : ℕ) + z) =
+      FinTM.bufferTape v z := by
+  rw [pairEncode_eq, List.append_assoc ((a.flatMap fun b => [b, b])) [false, true],
+    ← List.append_assoc, add_assoc, FinTM.bufferTape_append_shift _ _ (by omega),
+    show ((q + 1 : ℕ) : ℤ) = (List.replicate q true ++ [false]).length by simp,
+    FinTM.bufferTape_append_shift _ _ hz]
+
+/-- A suffix of the serialization from cell `r`. -/
+example (r : ℕ) (z : ℤ) (hz : 0 ≤ z) :
+    FinTM.bufferTape ((pairEncode a ((List.replicate q true ++ [false]) ++ v)).drop r) z =
+      FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v)) (r + z) :=
+  FinTM.bufferTape_drop _ r hz
+
+/-- A prefix of the serialization, read below its length. -/
+example (n : ℕ) (z : ℤ) (hz : z < n) :
+    FinTM.bufferTape ((pairEncode a ((List.replicate q true ++ [false]) ++ v)).take n) z =
+      FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v)) z :=
+  FinTM.bufferTape_take _ n hz
+
+/-- Every cell past the serialization is blank. -/
+example (z : ℤ) (hz : 0 ≤ z) :
+    FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v))
+      ((pairEncode a ((List.replicate q true ++ [false]) ++ v)).length + z) = none :=
+  FinTM.bufferTape_eq_none_of_not_mem _ (by omega)
+
+/-- A middle word's letters, here the separator's second cell. -/
+example :
+    FinTM.bufferTape (pairEncode a ((List.replicate q true ++ [false]) ++ v))
+      ((a.flatMap fun b => [b, b]).length + 1) = some true := by
+  rw [pairEncode_eq]
+  exact FinTM.bufferTape_append_mid _ [false, true] _ 1 (by simp)
+
+end BufferWordsConsumer
+
+end Turing

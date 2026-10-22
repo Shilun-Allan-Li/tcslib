@@ -1,0 +1,22 @@
+added lines mentioning run/trace/step/host/iterate/Round/MultiTapeTM (rule 7: no second host, no re-walked trace):
+21:    Contract (seekEndTM 2 0) SeekPhase.run {some SeekPhase.done} (zr_RightData k) x :=
+38:      (((zr_rightSeekContract x).post D d).mapState fun _ => SeekPhase.run) := by
+56:    Contract (seamCompTM (seekEndTM 2 0) SeekPhase.done (skipBackTM 2 0) SeekPhase.run)
+57:      (Sum.inl SeekPhase.run) {some (Sum.inr SeekPhase.done)} (zr_RightData k) x :=
+111:      (((zr_rulerCopyContract x).post w d).mapState fun _ => SeekPhase.run) := by
+121:The seam contributes one step beyond the two catalog rows. -/
+198:      (d.mapState fun _ => Sum.inl SeekPhase.run) := by
+253:      (((zr_rulerStepContract x).post w d).mapState fun _ => SeekPhase.run) := by
+271:      (walkTM 2 1 (fun _ => True) 1) SeekPhase.run)
+324:      (((zr_adjustedWalkContract x).post w d).mapState fun _ => SeekPhase.run) := by
+491:It is the seek distance plus ten old-zone capacities and twenty-three control steps. -/
+522:plus ten half-capacities and twenty-three control steps. The corrected left displacement
+523:includes the separating blank. Return-home rounds, the left pass, the zero-level branch,
+machines in the composed type (from #check, out/levelone.out):
+   5 copyMapTM
+  12 seamCompTM
+   1 seekEndTM
+   3 skipBackTM
+   1 skipTM
+   2 walkTM
+   2 zr_cellTM

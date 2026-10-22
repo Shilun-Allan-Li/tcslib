@@ -1,0 +1,59 @@
+diff --git a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+index 7e14a311..0d09053e 100644
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -3121,17 +3121,43 @@ accepts `z` within `T`, and `[false]` otherwise, in either case within `C·2^{C
+ There is no `|z|` term. [AB09, §3.2, proof of Theorem 3.2: the trivial exponential simulation
+ of a nondeterministic machine]
+ 
+-**Proof sketch.** Iterative deepening. For `L = 0, 1, …`: enumerate the `2^L` words of length
+-`L` on a counter tape (`Turing.incrementTM`); replay each through `N.tm.replayTM` for `L` steps
+-under the step-clocked runner (`Turing.exists_stepClockTMVia`, gated with the B6 hosts),
+-silently (`Turing.embedSilentTM`); record whether some branch accepted (halted with output
+-`[true]`) and whether some branch is still live; between replays clear the work tapes within
+-radius `L` (a counter-driven window clear) and rewind the native input head. Stop at the first
+-`L` at which every branch has halted; it is at most `T`, and acceptance within `L` and within
+-`T` agree there (`Turing.FinNDTM.AcceptsWithin.mono` one way; the other by truncating an
+-accepting word of length `T` at `L`, `Turing.NDTM.runWith_of_halt`). Answer accordingly. Each
+-replay touches at most `L + 1` input cells, so there is no `|z|` term. Ledger:
+-`Σ_{L ≤ T} 2^L·O_N(L + 1) ≤ C·2^{C·(T + 1)}`. -/
++**Proof sketch.** Iterative deepening, on one phase host (`Turing.phaseHostTM`) whose control
++carries two flags, "accept" and "live", both down at the start. At depth `L = 0, 1, …` a depth
++tape holds a word of width `L` and binary value `L`, and the choice tape runs through the `2^L`
++words of length `L`, from all-`false` to overflow (`Turing.incrementTM`). One cycle per word
++`s`: copy the depth word onto the clock's counter (`Turing.copyTM`); replay `s` through
++`N.tm.replayTM` for `L` steps under the step clock (`Turing.exists_stepClockTMVia`), silently,
++with `N`'s output captured (`Turing.embedSilentTM`), raising the live flag if the branch is
++still live after `L` steps; test the captured output, raising the accept flag if it is exactly
++`[true]`, whether or not the branch has halted, and clear it; rewind the choice head and the
++input head; clear `N`'s work tapes; increment the choice word.
++
++The clear does not return the work heads to their origins. Branches commute with translating
++the work tapes, so a replay from blank tapes with displaced heads is the branch from
++`N.tm.initCfg z`, translated, and the replay lemma (`Turing.NDTM.replayTM_runFrom`) serves from
++wherever the last clear left the heads. After `L` steps a work tape's content and its head lie
++within `L` of the head's start, so the content lies within `2L` of the final head. Six passes,
++each moving the head `L` cells with the depth word as the ruler (two leftward, then four
++rightward), blank `[head - 2L, head + 2L]`, hence the whole tape, and leave the head `2L` cells
++to the right of where the replay left it.
++
++At the overflow, if the live flag is up, the host lowers both flags, extends the choice word to
++the all-`false` word of length `L + 1` and the depth word to width and value `L + 1`, and starts
++depth `L + 1`; otherwise it stops, and `E` outputs `[true]` or `[false]` as the accept flag is up
++or down (`Turing.seamCompTM₂` onto two one-step answer rows). So `E` stops at the first
++all-halting depth `L*`, without computing `T`: `L* ≤ T`, and `L* ≥ 1` since the branch of
++length `0` is live. Below `L*` some branch is live, so every such depth ends in a deepening,
++which discards both flags: an accept flag raised by a live branch never reaches the answer. At
++`L*` every branch has halted, so the accept flag is acceptance within `L*`, which agrees with
++acceptance within `T` (`Turing.FinNDTM.AcceptsWithin.mono` one way; the other by truncating an
++accepting word of length `T` at `L*`, `Turing.NDTM.runWith_of_halt`).
++
++Ledger. A replay moves the input head at most `L` cells from its start, so the input rewind
++costs at most `L + 4` steps and no phase has a `|z|` term. A cycle costs at most
++`(18·N.k + 19)(L + 1)` steps and the deepening at most `6L + 11 ≤ 2^L·19(L + 1)`, so depth `L`
++costs at most `2^L·(18·N.k + 38)(L + 1)`. With one step to dispatch to the answer row and one
++to answer, `Σ_{L ≤ L*} 2^L·(18·N.k + 38)(L + 1) + 2 ≤ C·2^{C·(L* + 1)} ≤ C·2^{C·(T + 1)}` for
++`C = 18·N.k + 41`. -/
+ theorem FinNDTM.exists_exhaustiveDecider (N : FinNDTM Bool) :
+     ∃ (E : FinTM Bool) (C : ℕ), ∀ (z : List Bool) (T : ℕ), N.tm.HaltsWithin z T →
+       (N.AcceptsWithin z T → E.ComputesInTime z [true] (C * 2 ^ (C * (T + 1)))) ∧

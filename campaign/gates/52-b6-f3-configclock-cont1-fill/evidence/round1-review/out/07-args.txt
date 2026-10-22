@@ -1,0 +1,83 @@
+# Finding 7: every rw/simp/simpa/dsimp/unfold/delta/change/show/decide/rfl line in the six new declarations (head lines 225-357)
+230:   have hcount := cfgRecord_length s d τ
+231:   have hne : cfgRecord s d τ ≠ [] := by
+233:     rw [h, List.length_nil] at hcount
+235:   have hlen := joinFields_length (cfgRecord s d τ) hne
+236:   rw [joinFields_cfgRecord_length, recordLength_eq, hcount] at hlen
+242: position-width equations, then use the exact all-true clock value. -/
+251:   dsimp only
+252:   rw [cw_field_total]
+254:   · apply Nat.mul_le_mul_left
+255:     rw [recordLength_eq]
+258:     rw [cw_true_value]
+259:     have hn : x.length + 2 ≤ 2 ^ posWidth x.length := record_pos_lt x.length
+260:     exact (Nat.mul_le_mul_right _ (Nat.mul_le_mul_left C hN)).trans
+279:   · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+280:     have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl
+281:     simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h
+283:     have hu0 : u = 0 := by omega
+284:     rw [hu0, MultiTapeTM.runFrom_zero, hd]
+285:     decide
+301:   have h := (copyMapTM_run_ofCfg src dst hne (fun _ => ()) (fun _ _ => e) w d hd hw).1
+302:   rw [h]
+306:   · have hn : 0 ≤ q - d.workTapePos j := by omega
+307:     have hk : (q - d.workTapePos j).toNat < w.length := by omega
+308:     rw [← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat, List.getElem?_eq_getElem hk]
+309:     rfl
+310:   · rfl
+328:   dsimp only
+333:   change (clearTM k i).runFrom a (2 * w.length + 2) = _
+337:     dsimp only [a]
+338:     rw [if_pos rfl]
+340:     · rw [wordPatch_of_mem _ _ _ (by omega) (by omega)]
+343:     · rw [wordPatch_of_not_mem _ _ _ (by omega), hb _ (by omega)]
+344:       rcases (show p = -1 ∨ p = (w.length : ℤ) by omega) with rfl | rfl
+345:       · rw [FinTM.bufferTape_left]
+346:       · rw [FinTM.bufferTape_nat, List.getElem?_length]
+347:   rw [(clearTM_run_ofCfg i w a rfl hw).1]
+348:   apply Cfg.ext <;> try rfl
+350:   dsimp only [a]
+353:     simp only [ite_true, true_and]
+355:     · rw [if_pos hq]
+356:     · rw [if_neg hq, wordPatch_of_not_mem _ _ _ hq, hb q (by omega)]
+357:   · simp only [hj, false_and, ite_false]
+
+# names inside rw/simp brackets
+(clearTM_run_ofCfg i w a rfl hw).1
+FinTM.bufferTape_left
+FinTM.bufferTape_nat
+Int.toNat_of_nonneg hn
+List.getElem?_eq_getElem hk
+List.getElem?_length
+List.length_nil
+MultiTapeTM.runFrom_succ_eq_step'
+MultiTapeTM.runFrom_zero
+SignType.coe_neg_one
+a
+cw_field_total
+cw_true_value
+false_and
+h
+hb _ (by omega)
+hb q (by omega)
+hcount
+hd
+hj
+hu0
+if_neg hq
+if_pos hq
+if_pos rfl
+ite_false
+ite_true
+joinFields_cfgRecord_length
+moveInputPos_zero
+recordLength_eq
+sub_eq_add_neg
+true_and
+wordPatch_of_mem _ _ _ (by omega) (by omega)
+wordPatch_of_not_mem _ _ _ (by omega)
+wordPatch_of_not_mem _ _ _ hq
+
+# unfold/delta in new code: 0
+# pre-existing unfold at head:
+139:  unfold FinTM.configBound

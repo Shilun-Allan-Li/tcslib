@@ -1,0 +1,6 @@
+R1: applied (ic_window_call: name the inner pair so the length rewrite avoids the input-position type)
+R2: applied (ic_loop_replay: rewrite the replayed state with `rw` (simp does not see through the local let `c₀`))
+R3a: applied (ic_loopHost_run: `prefix` is a keyword; rename the hypothesis)
+R3b: applied (ic_loopHost_run: the same rename at its use)
+R4: applied (ic_replay_tail: aim the layout equation at the loop's end configuration, not the start)
+R5: applied (ic_time_ledger: give gcongr the summand template (it otherwise splits the constant))

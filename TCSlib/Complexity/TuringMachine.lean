@@ -15,6 +15,7 @@ import TCSlib.Complexity.TuringMachine.OracleFinite
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
 import TCSlib.Complexity.TuringMachine.OracleAgreement
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.BufferWords
 import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.UnaryTape
@@ -38,6 +39,7 @@ import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.Rewind
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -132,6 +134,9 @@ for the local modifications.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
+* `BufferWords` — the cells of a buffer tape holding a composite word: a suffix at an offset, a
+  middle word's letters, prefixes and suffixes, the blank cells off the word, and a unary word
+  with its terminator. Proved.
 * `Sweep` — the generic zipper/transduction layer for sweep-based tape
   simulations, with the initialized-run head/support bound.
 * `Composition` — identity/constant machines and closure of time-bounded computability
@@ -166,9 +171,11 @@ for the local modifications.
 * `Build/CounterLoop` — the counter-driven loop (§12.7) and the pattern expansion
   `expandTM` (§12.8, R8.6).
 * `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
-  work tape (C1; user decision 5 of 2026-10-13). Sorried.
+  work tape, for the nondeterministic time hierarchy [AB09, Theorem 3.2]. Proved.
 * `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
   the one redistribution the step-block startups cite. Sorried.
+* `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
+  word or just past it, the empty word included. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;

@@ -1,0 +1,23 @@
+# B6 F5, the ruler device's boundary test (PR #133, a fill gate): resolutions (round 1; gate CLOSED)
+
+**Gate:** the fill gate of PR #133 (`lean/b6-f5-partial` at `9e7dd574`, the campaign merged in
+after #132): `Turing.exists_rulerTestTM` proved in `Build/InputDevice`; the call rows and the host
+stay `sorry` (a partial landing). Pack `pack.md`; bundle SHA-256
+`ab42e644ff68d578b261262e7a6d85e1504a3f8b20e733da0ab4b77827c341c6` (23 sections; folder
+`51-b6-f5-rulerdevice-fill-gate/`). Replay passed (user, 2026-10-21): 4 of 4, static-equal (5).
+
+**Round 1** (`findings.md`, verbatim; received 2026-10-21): **PASS, 0 blockers, 0 majors, 2 minors,
+10 notes. The gate is closed.** Minor 1 is resolved in the records (`evidence/round1-fix/`); minor 2
+is fixed on #133 before it merges (commit `3946c2b5`), and the 4-module closure is replayed again for
+it (`replay-l133b.sh`).
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | The landing seal covers the helpers but not the public theorem: the section ends after `rd_run`, before `exists_rulerTestTM`. | **True; resolved in the records** (`evidence/round1-fix/G51Seal.lean.txt`, `seal51.out`). The section now runs through the target (the same ten definitions `local irreducible`), against `oleans-l133`: exit 0, only the two open targets' `sorry` warnings, `exists_rulerTestTM` on `[propext, Classical.choice, Quot.sound]`. Ten controls inside the seal, one per sealed definition (`fail_if_success exact rfl`, then the published lemma), pass; the same goals close by `rfl` outside it; a bare control (`rfl` on a halted step) fails inside and succeeds outside (`G51SealControl.lean.txt`, `seal51-control.out`). The list is complete: a walk of the target's proof term through the private helpers, and of the statements of the other-file lemmas it uses, reaches seven other-file definitions, all among the ten. Every `rw`/`simp` argument naming another file is a published theorem; the only definitions named are this file's `rd_*` (`seal51-rw-simp-args.txt`). The review's sealed variant had covered the identical target text; the gap was the landing probe's only. No Lean change. |
+| 2 | minor | Changed docstrings keep campaign labels: the target's "RD-3 gate's suggested sanity obligation"; the module's "RD-3 statement gate, minor 1" and "H2-S gate, finding 2"; the host docstring's "H2-S gate's finding 2". | **True for the two docstrings #133 changed; fixed** in `3946c2b5` (`evidence/round1-fix/fix.diff`), docstrings only: the three labels removed and the two touched paragraphs reflowed (the review's diff left one short line in each); the sentences are otherwise unchanged. The host docstring is byte-identical to the base (`dac6b3b0`), so its label, like the module's other pre-existing labels (`nativeAt_init`, `inputCell_sub_eq_none_iff`, `RulerAt`), waits for the docstring cleanup pass. The newly written text (status, main results, the implementation note, the nine private docstrings) carries none. Checks (`evidence/round1-fix/`): the module elaborates against `oleans-l133` with the head's two `sorry` warnings only, one line earlier after the reflow (`elab-fix-3946c2b5.out`); code identical with comments stripped (`fix-codeonly.txt`); 15 → 15 public, 9 → 9 private (`fix-declfreeze.txt`); 525 lines, none over 100 characters (`fix-linewidth.txt`); lint 0 FAIL, 30 WARN over 38 files, as before (`lint-Build-3946c2b5.txt`); no gate or finding label left in a changed docstring (`doclabels-fix-vs-base.tsv`). |
+| 8, 9 | notes | The call rows and the host remain explicitly admitted, with their binding sketches retained; the continuation must prove the call rows and keep the halting-left-move and right-clamp cases. | **Carried** to F5's continuation brief. |
+| 3–7, 10–12 | notes | Integrity and the freeze; the public definitions' meanings; the controller and its single induction; the test's correctness, restoration and time; the swap's fidelity, imports and rule 10 (beyond row 1); the elaboration, axiom, duplication, lint and replay records. | No action. (Reproduced for the records: the head elaborates against `oleans-l133` with the two warnings only; the swap `tapeAction 0 a none b q = rd_move (some q) a b` is machine-checked, `evidence/round1-fix/G51Swap.lean.txt`.) |
+
+**Re-replay for the fix: passed (user, 2026-10-21):** `evidence/replay-l133b.sh`, 4 of 4 at `3946c2b5`,
+0 failed, static-equal (5), from `oleans-l132b`, pin `InputDevice.lean:83e1e66a`
+(`evidence/replay-l133b.*`).

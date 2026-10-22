@@ -1,0 +1,37 @@
+# Finding 10: the review's execution records (spot-check; compact)
+out/03 OK lines: 10, FAILED lines: 0
+out/17-elab-base-lbapi4.out: TCSlib/Complexity/SpaceComplexity/WindowClock.lean:280:8: warning: declaration uses 'sorry' exit 0 ; 3 s 
+out/18-elab-head-lbapi4.out: TCSlib/Complexity/SpaceComplexity/WindowClock.lean:420:8: warning: declaration uses 'sorry' exit 0 ; 2 s 
+out/42-elab-tipd-lx2b.out: TCSlib/Complexity/SpaceComplexity/WindowClock.lean:420:8: warning: declaration uses 'sorry' exit 0 
+out/24-importprobe-head.out: errors=0 warnings=F3C1ImportProbeOnHead.lean:420:8: warning: declaration uses 'sorry'  exit-line=exit 0 ; 3 s 
+out/25-consumerprobe-head.out: errors=0 warnings=F3C1ConsumerProbeOnHead.lean:420:8: warning: declaration uses 'sorry'  exit-line=exit 0 ; 3 s 
+out/43-tipd-F3C1ImportProbeOnHead.out: errors=0 warnings=F3C1ImportProbeOnHead.lean:420:8: warning: declaration uses 'sorry'  exit-line=exit 0 
+out/43-tipd-F3C1ConsumerProbeOnHead.out: errors=0 warnings=F3C1ConsumerProbeOnHead.lean:420:8: warning: declaration uses 'sorry'  exit-line=exit 0 
+out/43-tipd-F3C1SealHead.out: errors=0 warnings=F3C1SealHead.lean:425:8: warning: declaration uses 'sorry'  exit-line=exit 0 
+import probe #check count: 134
+## axiom prints (out/19)
+'Turing.exists_configWindowRunnerTM' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_true_value' depends on axioms: [propext, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_round_cost' depends on axioms: [propext, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_budget' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_time_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_head_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_field_total' depends on axioms: [propext, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_record_clock' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_leftTM' does not depend on any axioms
+'_private.F3C1AxHead.0.Turing.cw_left_run' depends on axioms: [propext, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_copy_constant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.F3C1AxHead.0.Turing.cw_clear_patch' depends on axioms: [propext, Classical.choice, Quot.sound]
+## out/53 summary lines
+CHECK lines 176 ; TCSlib modules 176 ; order list 176
+module CHECK sequence == order list: True | first divergence: None
+sorry warnings: 28 in 11 modules
+   SpaceComplexity/Hierarchy 4 [150, 267, 284, 314]
+   SpaceComplexity/WindowClock 1 [280]
+errors: []
+PASS lines 0 ; tail: ['BOOTSTRAP PASS: 176/176 modules; failures=0']
+CHECK lines 176 ; TCSlib modules 176 ; order list 176
+module CHECK sequence == order list: True | first divergence: None
+sorry warnings: 28 in 11 modules
+   SpaceComplexity/Hierarchy 4 [150, 267, 284, 314]
+errors: []

@@ -1,0 +1,92 @@
+Environment evidence extracted from logs/bootstrap.log (its ENVIRONMENT EVIDENCE sections), with REPORT.md's statements
+
+== section headers
+2053:===== ENVIRONMENT EVIDENCE: input-sha256.log =====
+2057:===== ENVIRONMENT EVIDENCE: base-and-ancestor.log =====
+2064:===== ENVIRONMENT EVIDENCE: preflight.log =====
+2166:===== ENVIRONMENT EVIDENCE: pre-cache-preflight.log =====
+2250:===== ENVIRONMENT EVIDENCE: lean-version.log =====
+2253:===== ENVIRONMENT EVIDENCE: lean-version-shim.log =====
+2256:===== ENVIRONMENT EVIDENCE: shim-sha256.log =====
+2259:===== ENVIRONMENT EVIDENCE: package-pins.log =====
+2277:===== ENVIRONMENT EVIDENCE: mathlib-roots.txt =====
+2314:===== ENVIRONMENT EVIDENCE: cache-get.log =====
+2401:===== ENVIRONMENT EVIDENCE: empty-oleans.log =====
+2403:===== ENVIRONMENT EVIDENCE: cache-probe.log =====
+
+== preflight (initial)
+UTC: 2026-10-22T00:40:05.355771+00:00
+nproc: 9
+8589934592
+227790848
+oom 0
+oom_kill 0
+oom_group_kill 0
+anon 135479296
+kernel 18190336
+shmem 0
+headroom=8589934592 - (anon 135479296 + kernel 18190336 + shmem 0) = 8436264960 bytes = 7.856884 GiB
+overlay        33770192896 69169152 31966261248   1% /
+overlay        overlay  32978704 67548  31217052   1% /
+overlay        33770192896 69169152 31966261248   1% /
+overlay        overlay  32978704 67548  31217052   1% /
+overlay        33770192896 69169152 31966261248   1% /
+overlay        overlay  32978704 67548  31217052   1% /
+Initial disk free=31966261248 bytes = 29.770901 GiB; required >= 12884901888
+Memory headroom=8436264960 bytes; required >= 4294967296
+RESULT: PASS
+
+== pre-cache re-check
+2026-10-22T00:42:05+00:00
+9
+8589934592
+4529614848
+oom 0
+oom_kill 0
+oom_group_kill 0
+anon 236257280
+kernel 195067904
+shmem 0
+Re-check: disk=27949293568 bytes (26.029808 GiB), floor=8 GiB
+Headroom=8589934592 - (241078272 + 194637824 + 0)=8154218496 bytes (7.594208 GiB)
+PASS
+
+== lean start
+===== ENVIRONMENT EVIDENCE: lean-version.log =====
+error: failed to locate application
+===== ENVIRONMENT EVIDENCE: lean-version-shim.log =====
+Lean (version 4.25.0, x86_64-unknown-linux-gnu, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release)
+===== ENVIRONMENT EVIDENCE: shim-sha256.log =====
+985924ad83d39e108c0a2107bab07e65cdeb88641453508ab5acda115534fba7  evidence/runtime/executable-path.c
+===== ENVIRONMENT EVIDENCE: package-pins.log =====
+
+== cache-get.log: download lines and outcome
+info: proofwidgets: cloning https://github.com/leanprover-community/ProofWidgets4
+✔ [20/20] Built cache:exe (327ms)
+installing leantar 0.1.16
+Fetching ProofWidgets cloud release... done!
+Using cache (Azure) from origin: leanprover-community/mathlib4
+Attempting to download 967 file(s) from leanprover-community/mathlib4 cache
+Downloaded: 967 file(s) [attempted 967/967 = 100%, 111 KB/s]
+Decompressing 967 file(s)
+Unpacked in 1809 ms
+Completed successfully!
+
+== cache-get.log: failure markers (fail|error|403|retry|ENOSPC|No space)
+0
+
+== cache-get.log: Lake jobs (the cache executable's own compilation)
+17
+✔ [2/20] Built Cache.Lean;✔ [3/20] Built Cache.Lean:c.o;✔ [4/20] Built Cache.IO;✔ [5/20] Built Cache.Hashing;✔ [8/20] Built Cache.Hashing:c.o;✔ [9/20] Built Batteries.Data.String.Basic;✔ [10/20] Built Batteries.Data.String.Basic:c.o;✔ [11/20] Built Batteries.Data.Array.Match;✔ [12/20] Built Cache.IO:c.o;✔ [13/20] Built Batteries.Data.String.Matcher;✔ [14/20] Built Batteries.Data.Array.Match:c.o;✔ [15/20] Built Batteries.Data.String.Matcher:c.o;✔ [16/20] Built Cache.Requests;✔ [17/20] Built Cache.Main;✔ [18/20] Built Cache.Main:c.o;✔ [19/20] Built Cache.Requests:c.o;✔ [20/20] Built cache:exe;
+
+== empty-oleans.log and cache probe
+===== ENVIRONMENT EVIDENCE: empty-oleans.log =====
+
+===== ENVIRONMENT EVIDENCE: cache-probe.log =====
+/bin/bash: line 24: /usr/bin/time: No such file or directory
+START G4CacheProbe 2026-10-22T00:44:39.199376+00:00
+END G4CacheProbe 2026-10-22T00:44:40.333377+00:00 status=0 elapsed=1.134s maximum_rss=1690748 KiB
+
+== occurrences of 'lake build' / unfiltered cache in all delivered logs and REPORT
+$S/inbox-g4c2/fill-s13d-g4-cont2/REPORT.md:87:TAR_OPTIONS=--no-same-owner lake exe cache get $(cat evidence/logs/
+$S/inbox-g4c2/fill-s13d-g4-cont2/REPORT.md:91:No unfiltered cache command and no `lake build` was run. Package pi

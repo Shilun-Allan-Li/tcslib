@@ -1,0 +1,22 @@
+$ rule11.py (added lines of base -> repaired vs the six R3 rows and every other-file private name)
+other-file private names collected: 5111 (unique short names)
+354 added lines; R3-row hits: none
+other-file private-name token hits: ['S', 'T', 'one', 'trans']
+    S: private in ['TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean']; occurrence(s): ['private theorem iw_one {k : ℕ} {S : Type} {z : List Bool} (M : MultiTapeTM k Bool S)', '(c : Cfg k Bool S z) (q : S) (hc : c.state = some q) :']
+    T: private in ['TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid.lean']; occurrence(s): ['∃ T ≤ 6 * (n + 1) + 2 * w.length, ∃ v : List Bool, v.length = w.length ∧', 'iw_machine.runFrom (counterLoopCfg (some (.dec .run)) c ct cp) T =']
+    one: private in ['TCSlib/Programs/WordRAM/Steps.lean']; occurrence(s): ['/-- The one-cell copy body returns to `false` after copying a symbol and escapes to `true`', '/-- On a blank input cell, the body escapes in one step without changing any data. -/']
+    trans: private in ['TCSlib/CommunicationComplexity/DeterministicCC/Trees.lean']; occurrence(s): ['exact (congrArg (fun x => iw_body.runFrom x 1) (ih (by omega))).trans', 'exact hcut u hu (hs.trans (congrArg some he))']
+
+$ the six R3 rows (and their _ofCfg framed forms) among the TCSlib constants reached by the target and the 16 privates
+copyTM_run: 0
+transferTM_run: 0
+clearTM_run: 0
+compareTM_run: 0
+incrementTM_run_succ: 0
+incrementTM_run_overflow: 0
+
+$ external privates reached (EXT walk, axioms-base.out)
+  17 external privates []
+
+$ private names in the TCSlib constants reached
+0

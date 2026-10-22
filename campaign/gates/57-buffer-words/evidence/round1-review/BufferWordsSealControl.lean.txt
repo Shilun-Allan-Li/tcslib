@@ -1,0 +1,49 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Simulation
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Buffer tapes of composite words
+
+Cell identities for the buffer tape `Turing.FinTM.bufferTape w`, which holds the word `w` from
+cell `0` and is blank everywhere else, when `w` is built from smaller words: a suffix read at an
+offset, a middle word's letters, a prefix or a suffix of the word, the blank cells off the word,
+and the cells of a unary word with its terminator. A machine's contract can then read the fields
+of a serialized layout, such as a pair encoding followed by a unary state and a table, cell by
+cell. Every proof reads `bufferTape` only through its published equations.
+
+## Main results
+
+* `Turing.FinTM.bufferTape_append_shift` — past a prefix `u`, the buffer of `u ++ w` reads `w`'s
+  buffer.
+* `Turing.FinTM.bufferTape_append_mid` — the letters of the middle word of `u ++ w ++ v`.
+* `Turing.FinTM.bufferTape_drop`, `Turing.FinTM.bufferTape_take` — the buffer of a suffix or a
+  prefix of a word.
+* `Turing.FinTM.bufferTape_eq_none_of_not_mem` — every cell off the word is blank.
+* `Turing.FinTM.bufferTape_unary` — the cells of the unary word `1^q 0`, its terminator
+  included.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2: tapes holding words; §1.4: encodings of machines as
+  strings, whose fields these identities read.)
+-/
+
+namespace Turing.FinTM
+section BufferWordsSeal
+attribute [local irreducible] Turing.FinTM.bufferTape
+
+example (w : List Bool) : bufferTape w (-1) = none := rfl
+
+example (w : List Bool) (z : ℤ) : bufferTape w z = if 0 ≤ z then w[z.toNat]? else none := rfl
+
+end BufferWordsSeal
+end Turing.FinTM
