@@ -21,5 +21,6 @@ cleanup. Review: `evidence/round1-review/REVIEW.md`.
 | 11 | note | Screens and lint hold as recorded; the screens do not establish the absence of semantic duplication. | **Done.** The pack's lint record is the tip's, before #132 was merged in (Primitives at 6,886 lines). Lint at the merged head `9d8ab646` gives the same 0 FAIL and 30 WARN over 38 files (`evidence/round1-review/lint-build-head-9d8ab646.txt`). Finding 1 covers the semantic duplication. |
 | 3–6, 8–10, 12 | notes | The bundle's integrity; the repairs; the definitions and route; the contract; the constant and first arrival; the seal; rule 11 and the probes; the elaboration and replay records. | No action. Each was re-checked (`evidence/round1-review/REVIEW.md`, table): the bundle hash, its 25 sections and the replay pins; `repairs.diff` reproducing `e4228201…` at fuzz 0; `C = 6`; the four seal controls; the 57- and 84-check probes. |
 
-**Re-replay for the minor:** pending (`evidence/replay-l137b.sh`: the same 2 modules as `l137`,
-`Build/InputWindow` and the facade, from `oleans-l132b`, pin `TuringMachine.lean:443b21f1`).
+**Re-replay for the minor: passed (user, 2026-10-22):** `evidence/replay-l137b.sh`, 2 of 2 at
+`fb6210b7` (`Build/InputWindow` and the facade), 0 failed, static-equal (0), from `oleans-l132b`
+(`evidence/replay-l137b.*`). The campaign's merges since meet this closure only at the facade.
