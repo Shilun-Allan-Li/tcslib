@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.SpaceComplexity.Machines.Clean
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -320,7 +321,11 @@ private theorem ss_cleanCanonizer_first_halt (F : FinTM Bool) (f : List Bool →
   · rw [hsame]
     exact (hclean α).2
 
-/-- Capturing a fresh run starts with blank host tapes and zero work heads. -/
+/-- Capturing a fresh run starts with blank host tapes and zero work heads.
+
+**Proof sketch.** Partition host tapes into selected tapes, the capture tape, and the frame.
+The selected tapes inherit the blank initial configuration; the empty captured output makes
+its tape blank; the frame is blank by construction. Compare all configuration fields. -/
 private theorem ss_captureInitial {m n : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
     (ι : Fin m ↪ Fin n) (cap : Fin n) (hcap : cap ∉ Set.range ι) (x : List Bool) :
     (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
@@ -399,32 +404,28 @@ normalizing that configuration to the redistribution layout remains separate wor
 The prefix first-halt lemma and the returning capture contract give the claimed run. -/
 private theorem ss_capturedPrefix_run (F : FinTM Bool) (f : List Bool → List Bool)
     (τ : ℕ → ℕ) (hF : F.ComputesFunInTime f τ) {n : ℕ}
-    (ι : Fin (prefixCanonTM (ss_cleanCanonizer F)).k ↪ Fin n)
+    (ι : Fin (FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)).k ↪ Fin n)
     (cap : Fin n) (hcap : cap ∉ Set.range ι) (α : List Bool) :
+    let G := FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)
+    let R := ss_captureTM G ι cap
     ∃ t : ℕ, ∀ w : List Bool,
-      (ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).runFrom
-        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
-          (pairEncode α w)) (3 * α.length + 4 + t) =
+      R.runFrom (R.initCfg (pairEncode α w)) (3 * α.length + 4 + t) =
         { embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
-            ((prefixCanonTM (ss_cleanCanonizer F)).tm.runFrom
-              ((prefixCanonTM (ss_cleanCanonizer F)).tm.initCfg (pairEncode α w))
+            (G.tm.runFrom (G.tm.initCfg (pairEncode α w))
               (3 * α.length + 4 + t)) with state := some (Sum.inr ()) } ∧
       (∀ u < 3 * α.length + 4 + t,
-        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).runFrom
-          ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
-            (pairEncode α w)) u).state ≠ some (Sum.inr ())) ∧
+        (R.runFrom (R.initCfg (pairEncode α w)) u).state ≠ some (Sum.inr ())) ∧
       (∀ u ≤ 3 * α.length + 4 + t,
-        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).runFrom
-          ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
-            (pairEncode α w)) u).output = []) ∧
-      (ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).spaceUsed
-        ((ss_captureTM (prefixCanonTM (ss_cleanCanonizer F)) ι cap).initCfg
-          (pairEncode α w)) (3 * α.length + 4 + t) ≤
+        (R.runFrom (R.initCfg (pairEncode α w)) u).output = []) ∧
+      R.spaceUsed (R.initCfg (pairEncode α w)) (3 * α.length + 4 + t) ≤
         n * (3 * α.length + 4 + t + 1) := by
+  dsimp only
   obtain ⟨t, ht, _, _, _, hlive⟩ := ss_cleanCanonizer_first_halt F f τ hF α
   refine ⟨t, fun w => ?_⟩
   have hp := ss_prefix_first_halt (ss_cleanCanonizer F) α t ht hlive w
-  have hr := ss_capture_run (prefixCanonTM (ss_cleanCanonizer F)) ι cap hcap
+  simp only [prefixCanonTM_eq] at hp
+  have hr := ss_capture_run
+    (FinTM.bufferedCompTM universalPrefixTM (ss_cleanCanonizer F)) ι cap hcap
     (pairEncode α w) (3 * α.length + 4 + t) hp.2 hp.1
   exact ⟨hr.1, hr.2.1, hr.2.2, MultiTapeTM.spaceUsed_le_mul_succ _ _ _⟩
 
@@ -442,7 +443,10 @@ private def ss_sourceSlot (m k : ℕ) : Fin m ↪ Fin ((m + 1) + (k + 2)) where
 private def ss_captureTape (m k : ℕ) : Fin ((m + 1) + (k + 2)) :=
   ⟨k + 2 + m, by omega⟩
 
-/-- The capture tape is separate, and all first `k + 2` tapes lie outside both blocks. -/
+/-- The capture tape is separate, and all first `k + 2` tapes lie outside both blocks.
+
+**Proof sketch.** Every selected index lies between `k + 2` and `k + 2 + m - 1`.
+The capture index is `k + 2 + m`, and each reserved index is smaller than `k + 2`. -/
 private theorem ss_capture_indices (m k : ℕ) :
     ss_captureTape m k ∉ Set.range (ss_sourceSlot m k) ∧
     ∀ j : Fin ((m + 1) + (k + 2)), j.val < k + 2 →
@@ -495,7 +499,12 @@ head at `2|α| + 3`. Skip the doubled state count and the separator of
 tape `k + 1` at offset `2` and the table to tape `k`; clear the scratch and the buffer. Rewind the
 input head to position `1` (`Turing.FinTM.timed_rewind`, `2|α| + 5` steps). Every phase depends
 on `α` only, so `T` and `B` do (`Turing.MultiTapeTM.spaceUsed_le_mul_succ` at the canonizer's
-halting time bounds its cells). -/
+halting time bounds its cells).
+
+**Implementation status.** The cleaned canonizer and returning capture have a first return
+independent of the suffix, silence, and a time-implied space bound. The capture is stated
+directly over buffered composition. Its endpoint normalization, redistribution, buffer cleanup,
+input rewind, and final assembly remain open. -/
 theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
       (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P),
