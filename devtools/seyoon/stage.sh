@@ -7,10 +7,10 @@ W=$S/stage/$NAME; F=${TCSLIB_REPO:-$HOME/tcslib}/exchange/outbox/gates/$NAME
 [ ! -e "$F" ] || { echo "exists: $F" >&2; exit 2; }
 mkdir -p $W; cp $LIST $W/BUNDLE-FILES.txt
 while read -r p; do r=$O; [ "${p#TCSlib/}" != "$p" ] && r=$L; git -C $H cat-file -e $r:$p 2>/dev/null || { echo "MISSING $p" >&2; exit 2; }; done < $W/BUNDLE-FILES.txt
-python3 -I $S/vtools/mkbundle-mixed.py $H $L $O $W/$B $W/BUNDLE-FILES.txt
-python3 -I $S/vtools/mkbundle-mixed.py $H $L $O $W/$B $W/BUNDLE-FILES.txt --verify
+python3 -I $H/devtools/seyoon/mkbundle-mixed.py $H $L $O $W/$B $W/BUNDLE-FILES.txt
+python3 -I $H/devtools/seyoon/mkbundle-mixed.py $H $L $O $W/$B $W/BUNDLE-FILES.txt --verify
 rm -rf $W/export; mkdir -p $W/export; git -C $H archive $O | tar -x -C $W/export; git -C $H archive $L TCSlib | tar -x -C $W/export
-V=$(python3 -I $S/gate-walk/scripts/verifybundle.py $W/export $W/$B $W/BUNDLE-FILES.txt | tail -1); echo "$V"
+V=$(python3 -I $H/devtools/seyoon/verifybundle.py $W/export $W/$B $W/BUNDLE-FILES.txt | tail -1); echo "$V"
 echo "$V" | grep -q "0 problems"
 N=$(wc -l < $W/BUNDLE-FILES.txt | tr -d ' '); SZ=$(wc -c < $W/$B | tr -d ' '); SHA=$(shasum -a 256 $W/$B | cut -d' ' -f1)
 mkdir -p $F; cp $W/$B $W/BUNDLE-FILES.txt $F/

@@ -1,6 +1,6 @@
 # Megafill B item 1 (U2-S cont1): the delivery files that the review cites
 
-Copied byte for byte from the delivered item zip `fill-u2s-startup-cont1.zip` (inside `megafill-b-delivery.zip`; its `SHA256SUMS`, here `SHA256SUMS.txt`, verified 122/122 on 2026-10-22). Paths are the zip's; each `.lean` file is stored here as `.lean.txt`. Not included: the git bundle, the module (in git as the worker's head `8e1aee0f`), and the worker's runtime helpers.
+Copied byte for byte (in the repository) from the delivered item zip `fill-u2s-startup-cont1.zip` (inside `megafill-b-delivery.zip`; its `SHA256SUMS`, here `SHA256SUMS.txt`, verified 122/122 on 2026-10-22). Paths are the zip's; each `.lean` file is stored here as `.lean.txt`. Not included: the git bundle, the module (in git as the worker's head `8e1aee0f`), and the worker's runtime helpers.
 
 | Path in the zip | SHA-256 |
 |---|---|
@@ -22,3 +22,9 @@ Copied byte for byte from the delivered item zip `fill-u2s-startup-cont1.zip` (i
 | `evidence/logs/u2s/phase4-final-check3.log` | `2920807ba6c00d15d93334e8fe87b0ae0a5a9e8204d4bddb2de05b7720e99364` |
 | `evidence/logs/u2s/screen-final-verified.txt` | `5c42f6ba0b5833c83af32b5d4d12811bc8cdc8c5dcd70067dfe9276617103d84` |
 | `evidence/logs/u2s/screen-final.txt` | `5c42f6ba0b5833c83af32b5d4d12811bc8cdc8c5dcd70067dfe9276617103d84` |
+
+**In the audit bundle** (gate 63, minor 3): the bundle builder of 2026-10-22 decoded files with
+newline translation, so the bundle's copy of `evidence/logs/cache-get.log` lost its four carriage
+returns (before each `Downloaded:`) and hashes to `bc15b416…`. The repository file keeps them and
+matches the table (`c33110c6…`). The builder now keeps carriage returns
+(`devtools/seyoon/mkbundle-mixed.py`, `verifybundle.py`).

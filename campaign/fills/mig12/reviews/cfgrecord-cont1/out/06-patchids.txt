@@ -1,0 +1,49 @@
+== patch-ids: first round's commits (61c25b24, 41d31d09), the brief's input patches, the bundle's commits 1-2, the delivered patches 0001-0002
+commit 61c25b247918bbccdc04e524a75c4836fbe1c4bd: 06b4d3d5e616d484c9e46970e961e25a79a055d7 61c25b247918bbccdc04e524a75c4836fbe1c4bd
+commit 41d31d09e4c8ff9fd645bfa338fbc34e2a4b818d: f2b9c71e4bc7ca29894189a2d041ce4ae6f2c568 41d31d09e4c8ff9fd645bfa338fbc34e2a4b818d
+commit 5d02122a07cc88fc7d14a143345eddfdac5a9f6a: 06b4d3d5e616d484c9e46970e961e25a79a055d7 5d02122a07cc88fc7d14a143345eddfdac5a9f6a
+commit e1ff1a57d6f4a719d6ad6eefd100c48571fbcd31: f2b9c71e4bc7ca29894189a2d041ce4ae6f2c568 e1ff1a57d6f4a719d6ad6eefd100c48571fbcd31
+input 0001-MIG-12-import-the-authorized-contract-facade.patch: 06b4d3d5e616d484c9e46970e961e25a79a055d7 61c25b247918bbccdc04e524a75c4836fbe1c4bd
+b6d69f6dece0adba7cfaeba253a95327ca583988a1fbf14c0b6c0c5971c086f4
+input 0002-MIG-12-retire-CfgRecord-bookkeeping-onto-Segment-pha.patch: f2b9c71e4bc7ca29894189a2d041ce4ae6f2c568 41d31d09e4c8ff9fd645bfa338fbc34e2a4b818d
+98fba4bb1d384fd92bb76f0c59a6adfe69e80226164614ce852b7a842e0ad87a
+delivered 0001-MIG-12-import-the-authorized-contract-facade.patch: 06b4d3d5e616d484c9e46970e961e25a79a055d7 5d02122a07cc88fc7d14a143345eddfdac5a9f6a
+delivered 0002-MIG-12-retire-CfgRecord-bookkeeping-onto-Segment-pha.patch: f2b9c71e4bc7ca29894189a2d041ce4ae6f2c568 e1ff1a57d6f4a719d6ad6eefd100c48571fbcd31
+delivered 0003-MIG-12-phase-2-read-the-scan-skip-skip-back-clear-an.patch: 62d2d63fa93bd1140c70c292f43951af28d6cd52 4a756f0bb17f3556b6209c203219ca66d3182311
+delivered 0004-MIG-12-phase-2-finish-the-row-reads-the-three-rows-c.patch: 4483326e7cc9f147bfbf7aa5dab7ab3d7ff0e1b6 8f90ee273bba0972de44b536d100f9fc483ac166
+delivered 0005-MIG-12-phase-4-seal-self-check-clean-ledger-unfold-s.patch: c89f68d096bed969b188d550fdc17fe11c1c8e74 90410caa3f13b8ed05644bb74df8af92153c8a4a
+delivered 0006-MIG-12-wrap-the-eight-over-long-proof-lines-introduc.patch: 19b4614020202ca9dcd19451033a71d0967f9d64 8b0b0bf4b7e97b4dbb611d91b67fe2b2b248dc34
+== input patch identity (brief's inputs at base vs tip)
+100644 blob 504e6e2638cc85205b8c5bdaef49b1375452b100	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/MIG12ImportProbe.lean.txt
+100644 blob c62c316fa9de1b9669c76478ae959db782fe4475	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/frozen-publics.txt
+100644 blob d563e443ed4e4708e6aac1e4891e957a55cd2391	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/patches/0001-MIG-12-import-the-authorized-contract-facade.patch
+100644 blob ca9c2c570411ecc189494fbc245dca5365256ef1	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/patches/0002-MIG-12-retire-CfgRecord-bookkeeping-onto-Segment-pha.patch
+100644 blob b69e4bed5de7c3e5eab034b609d7d7eb4cd05e5e	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/recordrun-uses.tsv
+100644 blob b6e805c5aae96c4056ee7581b09536945fe127b2	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/screen-population.txt
+100644 blob 3768b9f86adef0e6537c1eda85599f735fe7545e	campaign/fills/mig12/inputs/mig12-fill-cfgrecord-cont1/unfold-sites.tsv
+== the first round's head file blob after patches 1-2 (bundle commit e1ff1a57)
+1c9d198f7f1a1ed2c4bdd6ec0a98c1d9a2c88b6c
+1c9d198f7f1a1ed2c4bdd6ec0a98c1d9a2c88b6c
+== tree equality: e1ff1a57 vs 41d31d09 for the owned file; trees at the commits
+e9e4693a251c1578d39625b814f0982b06d5f485
+== base blob of the owned file
+08fb047fe2bd5fbf70c94402b5f09feda2b748ec
+== each commit's files
+-- 5d02122a07cc88fc7d14a143345eddfdac5a9f6a
+ TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean | 1 +
+ 1 file changed, 1 insertion(+)
+-- e1ff1a57d6f4a719d6ad6eefd100c48571fbcd31
+ .../Complexity/TuringMachine/Build/CfgRecord.lean  | 387 +++++++++++----------
+ 1 file changed, 197 insertions(+), 190 deletions(-)
+-- 4a756f0bb17f3556b6209c203219ca66d3182311
+ .../Complexity/TuringMachine/Build/CfgRecord.lean  | 218 +++++++++++++++++----
+ 1 file changed, 182 insertions(+), 36 deletions(-)
+-- 8f90ee273bba0972de44b536d100f9fc483ac166
+ .../Complexity/TuringMachine/Build/CfgRecord.lean  | 179 ++++++++++++++-------
+ 1 file changed, 122 insertions(+), 57 deletions(-)
+-- 90410caa3f13b8ed05644bb74df8af92153c8a4a
+ .../Complexity/TuringMachine/Build/CfgRecord.lean  | 531 ++++++++++++++-------
+ 1 file changed, 357 insertions(+), 174 deletions(-)
+-- 8b0b0bf4b7e97b4dbb611d91b67fe2b2b248dc34
+ .../Complexity/TuringMachine/Build/CfgRecord.lean  | 24 ++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)

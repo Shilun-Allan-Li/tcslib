@@ -1407,8 +1407,34 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   space clause. Packs: gate 62 (#149, API) and gate 63 (#147, fill); bundles staged in
   `exchange/outbox/gates/`. **Merge order: #149 first**, then #147 re-replays its six modules.
   Gate 63's bundle carries the delivery's cited logs (`evidence/delivery/`), per the bundle lesson.
-- **MIG-12 cont1 delivered (2026-10-22, `fill-mig12-cfgrecord-cont1.zip`).** Its review sub-agent is
-  running.
+- **Gate 62 (#149) round 1: FAIL 0/1/1/8** (`campaign/gates/62-spaceused-api/resolutions.md`). The
+  major: `Build/WindowRun`'s private `wr_space` duplicated the new radius lemma. **Ruled (user,
+  2026-10-22): fix it in #149** — `3d0f80b5`, its body is now the public lemma. The minor: F3
+  cont2's draft probe now checks both lemmas (102). Pending: `replay-lspapi2.sh` (4 modules, from
+  `oleans-lspapi`), the re-screen, then round 2 (`pack-r2.md`).
+- **Gate 63 (#147) closed: PASS 0/0/4/15** (`campaign/gates/63-u2s-startup-cont1-fill/resolutions.md`):
+  the startup's `Implementation.` paragraph (`741490ee`, docstrings only), the probe deduplicated
+  (122 checks of 122 names) with a report erratum (`campaign/fills/u2s/reports/startup-cont1-ERRATUM.md`),
+  the bundle builder's carriage-return fix, and a review erratum with the clash check redone.
+  **#147 merges after #149**, then re-replays its six modules.
+  - **The bundle builder keeps carriage returns now** (`devtools/seyoon/mkbundle-mixed.py`,
+    `verifybundle.py`; `stage.sh` runs these copies, not scratch copies).
+- **MIG-12 cont1 delivered and reviewed (2026-10-22): complete; land with edits**
+  (`campaign/fills/mig12/reviews/cfgrecord-cont1/REVIEW.md`). Phases 1–4; `Build/CfgRecord` with no
+  `sorry`, all 21 public statements byte-identical, 98 → 109 privates; 0 diagnostics at the base
+  and the tip; a 53-definition seal with 73 controls; the 227-check probe; screen 435 → 440 pairs,
+  all in-file, under 90%. Findings: F1 the route and size (+402 lines against the design's −1.6k to
+  −2.1k; the gate's fidelity criteria met); F2 `recordStep_cell_write` closes only through
+  `Action.apply`'s `@[simp]` (a 3-line re-proof is tested); F3 five stale docstring passages and
+  the module status; F4 cosmetic; F5 records (report errata). Landing: the six commits, one
+  maintainer commit, a replay of `CfgRecord`'s 52-module downstream (it overlaps #149 beyond the
+  facade). **Decisions pending (user):** the order against #149, the edits, the size, the
+  authorship of the delivered commits.
+  - **Promotion candidates (shared-API window):** a generic contract-segment reader for
+    `Build/Contract/Basic`; `MultiTapeTM.runFrom_one` (three copies in the tree).
+- **Megafill A delivered (2026-10-22): three items, each reported complete** (`megafill-a-REPORT.md`;
+  R cont2, UN cont1, the canonizer's cont7). Three review sub-agents are running (resumed after the
+  session restart; the canonizer's after-screen ran on).
   - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
     the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
     SeamLayout and the facade.

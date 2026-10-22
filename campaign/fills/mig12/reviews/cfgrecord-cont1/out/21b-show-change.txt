@@ -1,0 +1,15 @@
+749 show d.output ++ ([] : List Bool).map e = d.output
+754 show ((d.workTapes (ι i) p).bind (decodeBool e)).map e = d.workTapes (ι i) p
+880 rw [show counterLoopOrbit recordStepSave (fun _ => 1) c 0 = c from
+886 rw [show counterLoopOrbit recordStepSave (fun _ => 1) c (r + 1) =
+898 rw [show counterLoopOrbit recordStepSave (fun _ => 1) c (c.inputPos.val + 1) =
+974 rw [show a.inputPos = moveInputPos d.inputPos 1 from rfl,
+975 show moveInputPos d.inputPos 1 =
+987 rw [show a.inputPos = moveInputPos d.inputPos 1 from rfl,
+988 show moveInputPos d.inputPos 1 =
+2447 change 0 + ([RecSym.st (Q := Q) (T := T) c.state].length + 1) +
+2890 show d.output ++ ([] : List Bool).map e = _
+3294 show d.output ++ ([] : List Bool).map e = _
+4085 rw [show moveInputPos c.inputPos a.inputTape = (a.apply c).inputPos from
+4358 show [RecSym.st (Q := Q) (T := T) (a.apply c).state] = _
+4749 change 0 + ([RecSym.st (Q := Q) (T := T) c.state].length + 1) + w.length ≤ L at span
