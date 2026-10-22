@@ -1,0 +1,24 @@
+G56SealControl.lean:90:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape u (-1) = none
+G56SealControl.lean:92:63: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  wordPatch ct 0 [] 0 = ct 0
+'Turing.wordPatch_append_sealed' depends on axioms: [propext, Classical.choice, Quot.sound]
+G56 walk: Turing.wordPatch (def, TCSlib.Complexity.TuringMachine.Build.StepClock)
+G56 walk: Turing.wordPatch_of_not_mem (theorem, TCSlib.Complexity.TuringMachine.Build.StepClock)
+G56 walk: Turing.FinTM.bufferTape (def, TCSlib.Complexity.TuringMachine.Simulation)
+G56 walk: Turing.wordPatch_of_mem (theorem, TCSlib.Complexity.TuringMachine.Build.StepClock)
+G56 walk: Turing.FinTM.bufferTape_nat (theorem, TCSlib.Complexity.TuringMachine.Simulation)
+G56 level 2: the statement of Turing.wordPatch_of_not_mem names the TCSlib definitions [Turing.wordPatch]
+G56 level 2: the statement of Turing.wordPatch_of_mem names the TCSlib definitions [Turing.wordPatch,
+ Turing.FinTM.bufferTape]
+G56 level 2: the statement of Turing.FinTM.bufferTape_nat names the TCSlib definitions [Turing.FinTM.bufferTape]
+G56 walk: 5 TCSlib constants referenced; 12 declarations visited
+exit 1

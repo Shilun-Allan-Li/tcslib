@@ -1,0 +1,48 @@
+--- $S/review/gate56/out/08-pr139-body-live.md	2026-10-22 01:28:41
++++ $S/review/gate56/out/pr-body-r1.md	2026-10-22 01:31:17
+@@ -14,20 +14,26 @@
+ 
+ The lemma and its proof are the ones the F3 review verified (`campaign/fills/b6/reviews/configclock-cont1/suggested-fix.diff`, option B), applied verbatim.
+ 
+-### Checks (maintainer, against `oleans-lc6m`, #131's replay at the merged state)
++### Checks (maintainer, against `oleans-lc6m`, #131's replay at the merged state; the seal, its controls and the axioms re-run against `oleans-lwpa`, this PR's replay at its merged head `1cd66f1b`)
+ 
+ - **Elaboration:** `Build/StepClock` 0 errors, 0 warnings. `wordPatch_append` depends on
+   `[propext, Classical.choice, Quot.sound]`.
+ - **Rule 10:** the proof reads `FinTM.bufferTape` only through `FinTM.bufferTape_nat`, and
+-  `wordPatch` only through `wordPatch_of_mem`/`_of_not_mem`. With `FinTM.bufferTape` and
+-  `wordPatch` made `local irreducible`, the proof elaborates; two controls (`bufferTape u (-1) =
+-  none` and `wordPatch ct cp [] = ct`, both by `rfl`) fail under the same seal.
+-- **Lint:** `TuringMachine/Build` 0 FAIL, 30 WARN over 38 files (the tip's count; `StepClock`'s
+-  existing size warning, now 1,205 lines, 9 public / 33 private). No new line over 100
+-  characters.
++  `wordPatch` only through `wordPatch_of_mem`/`_of_not_mem` (no other TCSlib constant). With
++  `FinTM.bufferTape` and `wordPatch` made `local irreducible`, the proof elaborates. One control
++  per sealed definition, `FinTM.bufferTape u (-1) = none` and `wordPatch ct 0 [] 0 = ct 0`: each
++  closes by `rfl` with nothing sealed, fails under its own seal while the other still closes by
++  `rfl`, and fails under the joint seal, where the published lemma closes it. (The first record's
++  second control, `wordPatch ct cp [] = ct`, fails by `rfl` unsealed too, so it showed nothing
++  about the seal; it is replaced.)
++- **Lint** (at the merged head `1cd66f1b`): `TuringMachine/Build` 0 FAIL, 30 WARN over 39 files
++  (the campaign tip's count; `StepClock`'s existing size warning, now 1,205 lines, 9 public / 33
++  private). No new line over 100 characters.
+ - **Screen (v3):** `Build/StepClock`, `Build/RecordTable`, `SpaceComplexity/WindowClock` and
+   `Build/WindowRun`: 176 declarations, 19 pairs; `wordPatch_append` is in none (not even with
+-  `rt_adjacentWrites`).
++  `rt_adjacentWrites`). The statement-level overlap with `rt_adjacentWrites` (the same statement
++  with `wordPatch` unfolded) is recorded in `campaign/duplication-ledger.md` as WA-1, retired with
++  `wordPatch`'s move below `Build/Catalog` (backlog §1 WA-1, IW-1).
+ 
+ ### Replay
+ 
+@@ -40,7 +46,9 @@
+ 
+ ### Gate
+ 
+-Gate 56 (`campaign/gates/56-wordpatch-append/`), an API gate: pending.
++Gate 56 (`campaign/gates/56-wordpatch-append/`), an API gate: **PASS, 0 blockers, 0 majors,
++2 minors, 7 notes; closed** (round 1). Both minors are resolved in the records (the seal's
++controls; the ledger's WA-1); no commit to this PR.
+ 
+ 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+ 
