@@ -119,8 +119,10 @@ up to `configBound + 1`), and so are the writer's leaf and its two endpoint shap
   `wordPatch ct p (List.replicate |f| e)`, and two such writes at `p` and `p + |f|` join by
   `wordPatch_append` into `wordPatch ct p (List.replicate (|f| + |g|) e)`; from public lemmas
   only, sealed. (Built 2026-10-18 against `oleans-lc6m` with `wordPatch_append` inlined, 0
-  errors: `drafts/b6-fill-configclock-cont2/F3C2JoinProbe.lean.txt`; re-run at issue citing the
-  published lemma.)
+  errors: `drafts/b6-fill-configclock-cont2/F3C2JoinProbe.lean.txt`. Re-run 2026-10-22 citing the
+  published lemma, with gate 56's controls, against `oleans-lwpa` (#139's merged head): exactly the
+  two bare controls fail (`campaign/gates/56-wordpatch-append/evidence/round1-review/`
+  `F3C2JoinProbe-published.*`). Re-run that version at issue.)
 
 ## Owned regions and targets (modify these and nothing else)
 
@@ -268,7 +270,9 @@ brief-inventory API), the names continuation 1's six helpers cite (`copyMapTM_ru
       item and escalate** (ground rule 4), naming the lemma you need.
     - **Self-check:** a seal test (a scratch copy of your module with `attribute [local
       irreducible]` on every other-file definition your proofs mention, which must still
-      elaborate, with a control that fails under the seal) and an inspection of every
+      elaborate; and, for each sealed definition, a control goal that closes by `rfl` with nothing
+      sealed and fails under the seal, both outputs recorded, so that the failure is the seal's)
+      and an inspection of every
       `rw`/`simp`/`simpa`/`unfold` argument in your diff. Continuation 1's review lists its seal
       set (17 definitions); extend it. The frozen bridge `FinTM.configBound_le_two_pow` (before
       the home) unfolds `FinTM.configBound`; it predates rule 10, stays outside the seal and is

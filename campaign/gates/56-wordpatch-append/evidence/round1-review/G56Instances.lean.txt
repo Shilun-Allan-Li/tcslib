@@ -1,0 +1,56 @@
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+
+/-! Gate 56, notes 4 and 6 (records only, nothing here lands): the auditor's adversarial
+instances, executed (both sides of `wordPatch_append`, cell by cell, by `decide`, with nothing
+sealed: these are evaluations, not proofs of library facts), and the published lemma's axioms
+read from the merged head's replayed `.olean`. -/
+
+namespace Turing
+
+-- (1) `cp = -2`, `u = []`, `v = [true]`, over a nonblank tape: only cell `-2` is patched.
+example :
+    (([-3, -2, -1, 0] : List ℤ).map
+      (wordPatch (wordPatch (fun _ => some false) (-2) []) (-2 + ([] : List Bool).length) [true])) =
+      [some false, some true, some false, some false] := by decide
+
+example :
+    (([-3, -2, -1, 0] : List ℤ).map (wordPatch (fun _ => some false) (-2) ([] ++ [true]))) =
+      [some false, some true, some false, some false] := by decide
+
+-- (2) `cp = 0`, `u = [false]`, `v = []`: only cell `0` is patched.
+example :
+    (([-1, 0, 1] : List ℤ).map
+      (wordPatch (wordPatch (fun _ => some true) 0 [false]) (0 + ([false] : List Bool).length) [])) =
+      [some true, some false, some true] := by decide
+
+example :
+    (([-1, 0, 1] : List ℤ).map (wordPatch (fun _ => some true) 0 ([false] ++ []))) =
+      [some true, some false, some true] := by decide
+
+-- (3) `ct = fun _ => some true`, `cp = -2`, `u = [false, true]`, `v = [false]`: cells `-3 … 1`.
+example :
+    (([-3, -2, -1, 0, 1] : List ℤ).map
+      (wordPatch (wordPatch (fun _ => some true) (-2) [false, true])
+        (-2 + ([false, true] : List Bool).length) [false])) =
+      [some true, some false, some true, some false, some true] := by decide
+
+example :
+    (([-3, -2, -1, 0, 1] : List ℤ).map
+      (wordPatch (fun _ => some true) (-2) ([false, true] ++ [false]))) =
+      [some true, some false, some true, some false, some true] := by decide
+
+-- (4) Both words empty: both sides are the tape.
+example :
+    (([-1, 0, 1] : List ℤ).map
+      (wordPatch (wordPatch (fun z => if z = 0 then some true else none) 5 ([] : List Bool))
+        (5 + ([] : List Bool).length) [])) =
+      [none, some true, none] := by decide
+
+example :
+    (([-1, 0, 1] : List ℤ).map
+      (wordPatch (fun z => if z = 0 then some true else none) 5 (([] : List Bool) ++ []))) =
+      [none, some true, none] := by decide
+
+end Turing
+
+#print axioms Turing.wordPatch_append

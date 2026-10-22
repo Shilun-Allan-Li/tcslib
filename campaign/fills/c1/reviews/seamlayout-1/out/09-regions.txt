@@ -1,0 +1,37 @@
+--- hunks (base vs head, -U0)
+@@ -7,0 +8 @@ import TCSlib.Complexity.TuringMachine.Build.Seam
+@@ -35,0 +37,1391 @@ namespace Turing
+@@ -118 +1510,244 @@ theorem exists_seamLayoutTM (k : ℕ) (src tbl sm : Fin k) (hst : src ≠ tbl) (
+--- removed lines
+-  sorry
+--- reconstruct: remove hunks from head => base?
+insert base 8 - 7 head 8 - 8 removed: []
+insert base 35 - 34 head 36 - 1426 removed: []
+replace base 118 - 118 head 1510 - 1753 removed: ['  sorry']
+--- base lines 34-36 and 117-118 (sed l)
+namespace Turing$
+$
+/-- **The seam layout from a captured serialization.** For \
+distinct work tapes `src`, `tbl` and$
+          \342\210\200 u < T, (L.runFrom d u).state \342\
+\211\240 some done := by$
+  sorry$
+--- head lines 35-37, 1426-1428, 1509-1510, 1753-1755
+namespace Turing$
+$
+/-! ### Private layer: the two leaves$
+    exact cut u hu (hd \342\226\270 hst')$
+$
+/-- **The seam layout from a captured serialization.** For \
+distinct work tapes `src`, `tbl` and$
+          \342\210\200 u < T, (L.runFrom d u).state \342\
+\211\240 some done := by$
+  refine \342\237\250(i : sl_Key) \303\227 sl_Ph i, inferIn\
+stance, inferInstance,$
+                  exact P8.2 u' (by omega)$
+$
+end Turing$
+--- regions: (a0) +1 import after base line 7; (a) 1391 lines inserted after the blank base line 35 (overlay line 36), before the target's docstring; (b) base line 118 (overlay 119) '  sorry' -> 244 lines; (c) unused
+target docstring + statement (base 36-117 = head 1428-1509): byte-identical
+module header/docstring (base 1-35 = head 1-36 minus the import line 8): byte-identical
+closing lines identical

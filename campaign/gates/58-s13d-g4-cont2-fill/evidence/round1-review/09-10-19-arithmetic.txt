@@ -1,0 +1,8 @@
+# Findings 9, 10 and 19: arithmetic re-checked (zoneStart i = 2^(i+1) + i; zoneCapacity i = 2*2^i; zoneStart_succ: zs(i+1) = zs(i) + cap(i) + 1)
+zoneStart_succ holds for i < 40
+finding 9: (zs l + 1) + 2(2^l+3) + 3(2*2^l+2) + (2^l+1) + 1 + 2^l + 8 = zs l + 10*2^l + 23 = 12*2^l + l + 23 <= 13*2^l + 23 <= 32(2^l+1), l = 1..39: OK
+  level one: time 48 bound 96
+finding 10: 2 - zs l - (2^l+1) - 2^l = 1 - zs l - cap l = -zs(l+1) + 2 >= -zs(l+1), l = 1..39: OK
+  level one: stop -3 end -8 two adjusted walks -7 envelope -10 separator at -4
+finding 19: initial headroom 8436264960 7.856884002685547 ; pre-cache (arithmetic line) 8154218496 7.594207763671875 ; pre-cache (raw memory.stat sample beside it) 8158609408 7.598297119140625 ; floor 4294967296
+  disk: initial 29.77090072631836 GiB (floor 12); pre-cache 26.029808044433594 GiB (floor 8)

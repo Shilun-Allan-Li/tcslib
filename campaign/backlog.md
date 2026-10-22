@@ -989,8 +989,39 @@ definition in four files, `wordPatch` the public one.
   controls, the statement unchanged). The move edits `Build/Catalog`, so it goes with Catalog's
   next edit (12.2c T3 or MIG-1), as RW-1 does. If `InputWindow` is wanted earlier, option B
   lands it alone, importing `StepClock` (acyclic; the closure gains that one module).
+  `RecordTable`'s private `rt_adjacentWrites` re-points to `wordPatch_append` in the same move
+  (WA-1).
 - **Census** (`duplication-ledger.md`, IW-1): `InputWindow` 1 of 17 declarations (5.9%),
-  `StepClock` 1 of 41, `CounterLoop` 1 of 79, `Catalog` 1 of 505; none is past one fifth.
+  `StepClock` 1 of 41 (1 of 42 from #139 on), `CounterLoop` 1 of 79, `Catalog` 1 of 505; none is
+  past one fifth.
+
+### WA-1: the adjacent-patch law, `rt_adjacentWrites` restated publicly (user, 2026-10-18; gate 56)
+
+*Origin: F3 cont1's escalation E2, option B
+(`campaign/fills/b6/reviews/configclock-cont1/REVIEW.md`, §(d)); PR #139; ledgered at gate 56,
+finding 2.*
+
+`Build/StepClock`'s public `wordPatch_append` (#139) is `Build/RecordTable`'s private
+`rt_adjacentWrites` (2026-10-13) stated through `wordPatch`: with `wordPatch` unfolded, the two
+statements are alpha-equivalent (binders `tape`, `o` for `ct`, `cp`). Different proofs; no screen
+pair.
+- **Acknowledged in the ruling (user, 2026-10-18)** that chose B: the decision put to the user
+  named the re-point, and the ruling's record (§2, F3 cont1) names `rt_adjacentWrites` and its
+  re-point in the user's dedup window. Gate 56's review (finding 2) reads that as acknowledging the
+  pair; **confirmed (user, 2026-10-22).**
+- **Retirement, in the user's dedup window, with IW-1's move** (Catalog's next edit: 12.2c T3 or
+  MIG-1). `RecordTable` imports `Build/Catalog` and `Build/CounterLoop` (transitively) but not
+  `StepClock`. Once `wordPatch`, its cell lemmas, `wordPatch_append` and the explicit-form lemma
+  are below `Build/Catalog`, they are in `RecordTable`'s closure with no new import, and the move's
+  replay (Catalog's downstream) already covers `RecordTable`. Then `rt_adjacentWrites` is deleted,
+  and its one use, `rt_advanceCfg_append` (`exact congrFun (rt_adjacentWrites …) p`, on the
+  unfolded form that `rt_advanceCfg`'s tapes are written in), cites `wordPatch_append` through the
+  explicit-form lemma; the deleted proof's unfolding of `FinTM.bufferTape`
+  (`simp only [FinTM.bufferTape, …]`) goes with it. Re-pointing earlier would need `RecordTable`
+  to import `StepClock` (acyclic) and a replay of `RecordTable`'s 50 downstream modules, and
+  `StepClock` publishes no explicit-form lemma, so it waits for the move.
+- **Census** (`duplication-ledger.md`, WA-1): `StepClock` 1 of 42 declarations (2.4%; 2 of 42,
+  4.8%, with IW-1's `wordPatch`), `RecordTable` 1 of 129 (0.8%); none is past one fifth.
 
 ## 2. Campaign work queued or on hold
 
@@ -1252,7 +1283,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   in the megafills below).
 - **The seam-layout fill issued (2026-10-21)**, ancestor `1c06ea94`; delivered complete on
   2026-10-22 (its review is running). **MIG-12 cont1 dispatched** (2026-10-21; still out). **G4
-  cont2 delivered** a partial (1 checkpoint), landed as #143 (gate 58).
+  cont2 delivered** a partial (1 checkpoint), landed as #143. Gate 58: PASS 0/0/0/20, closed
+  (round 1; two pack errata, no `.lean` change; gate 44's appendix minor discharged by the
+  landing). #137 merged after #139's and #143's replays; each meets #137's closure only at the
+  facade (the standing rule: no re-replay). **#139 and #143 merged** (2026-10-22, `3732776e`,
+  `b7447492`) under that rule.
+  - **For megafill B item 3's review (G4 cont3), from gate 58's review:** its brief's region (a)
+    is 127–1149, not 127–1147; its probe `G4C3ImportProbe.lean.txt` is an in-module copy of the
+    worker's head with the checks appended, so it prints the two targets' sorry warnings (at 1191
+    and 1232) and counts 439 checks of 428 distinct names (90 beyond the 338, not 101); the
+    adapter helper must re-point all four existing instances; its landing replay chains from a
+    snapshot of #143's merged tree, not from `lg4c2`. Carry-forwards to a continuation-4 draft are
+    in gate 58's resolutions.
 - **Two megafills issued (2026-10-22; the user: "pack multiple fills into one megafill task",
   overnight, one host each)**, under the addendum's new Part 3 (v2.4: one preflight, one cache for
   the queue's roots, a re-bootstrap per item, a budget per item, a zip per item). Cover briefs
@@ -1264,11 +1306,41 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `git am`; checkpoint 1.1b, the right pass's endpoint and envelope, first).
   - **Next when they return:** UN's and R's landings feed C1's assembly; F3 cont2 waits on #139;
     the seam layout's landing on its review.
+- **MIG-12 cont1 came back E-RES (2026-10-22)**, before any Lean work
+  (`campaign/fills/mig12/reports/mig12-cont1-eres-REPORT.md`): its host was given the **v2.1**
+  addendum (`2563c8d2…`), whose re-check after the toolchain kept the 12 GiB floor; free disk was
+  10.48 GiB there. Under v2.2 and later the re-check floor is 8 GiB, so the run would have gone on.
+  The archive carries only the two supplied phase-1 commits. **Re-dispatch** with the same brief
+  and addendum v2.4 (alone, or in the next megafill).
+- **The phase host's last phase (user, 2026-10-22, with the seam layout's F1):** publish, in
+  `Build/Seam`, a table equation for `phaseHostTM` on a non-redirected state, or a live-exit form
+  of `phaseHostTM_run` (the lockstep window up to and including `T`, the guard before `T` only, no
+  `hred`). A small API PR with its own gate; after it, briefs may prescribe the agreement
+  transport for a last phase again.
 - **#144 opened (2026-10-22): the exhaustive replay's proof sketches**, docstrings only (the six
   main lemmas' sketches, and the accept flag described as the proof uses it; gate 53, note 14).
   Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
-  pending. **For the user:** whether a docstring-only PR gets its own gate. The 18 other long
+  pending. **Ruled (user, 2026-10-22): a docstring-only PR needs no gate.** The 18 other long
   private proofs without a sketch stay under C1E-1.
+- **The seam layout: delivered complete (2026-10-22), reviewed: land**
+  (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
+  (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
+  pushed. **Ruled (user, 2026-10-22):** F1 accepted, with a published last-phase lemma for the
+  phase host to follow in a small API PR with its own gate; F3 by a docstring-only follow-up PR
+  after the landing (as for C1-E's sketches, #144). The questions were:
+  - **F1:** phase 8 by a self-redirect, because the brief's agreement transport needs a table fact
+    about `phaseHostTM` that no lemma publishes (the machine is the same: the tables are equal);
+    with it, whether to publish a last-phase lemma for the phase host (promotion candidate 1);
+  - **F3:** 14 private proofs over 20 lines without a "Proof sketch" (now, or a follow-up as for
+    C1-E).
+  Gate 59's pack is drafted (`campaign/gates/59-c1-seamlayout-fill/pack.md`), not staged; replay
+  `replay-lsl.sh` (14 modules, the merged tree) ready. Minor, no ruling needed: F2 (six derived
+  instances with public names, as landed code has), F4 (REPORT inaccuracies), F5 (applied by the
+  squash). Dedup candidates: `sl_apply_eq` with `ExhaustiveReplay`'s `xr_act_apply`; a reversed
+  read for `BufferWords`.
+  - **For the addendum's next version:** item 2's manifest check fails by construction under the
+    narrowed fetch (the four documentation packages are absent); it should check each package
+    present in `.lake/packages`.
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
@@ -1280,8 +1352,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   **E2 ruled (user, 2026-10-18): B**, a public `wordPatch_append` in `Build/StepClock` by a
   maintainer API PR, with its own replay (StepClock's downstream) and gate, before F3 cont2's
   brief issues. It is the public form of `RecordTable`'s private `rt_adjacentWrites`, which can
-  re-point to it in the user's dedup window. (Option A, a private `cw_fill_append`, was not
-  chosen.) Both were verified (`suggested-fix.diff`).
+  re-point to it in the user's dedup window (§1 WA-1, ledgered at gate 56). (Option A, a private
+  `cw_fill_append`, was not chosen.) Both were verified (`suggested-fix.diff`).
 - **The seam-layout standalone fill's word identities, ruled (user, 2026-10-18):** they exist only
   as `StepBlock`'s privates (`bufferTape_suffix`, `_reads`, `_outside`, `_unary`), outside the
   layout's closure. **A new small public module beside `Simulation`** publishes the four, by a
