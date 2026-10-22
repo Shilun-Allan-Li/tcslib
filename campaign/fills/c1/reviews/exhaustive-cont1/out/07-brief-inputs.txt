@@ -1,0 +1,60 @@
+# brief and inputs: base copies vs records (tip) copies vs dispatch
+dispatch brief f03994c526c07540
+base briefs/c1-fill-exhaustive-cont1.md d7182891eab07f0d
+records campaign/fills/c1/briefs/c1-fill-exhaustive-cont1.md 25766576260e79dd
+$ diff base brief vs dispatch
+7c7,13
+< - Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it
+---
+> - **Paths in this brief are those of your base** (the commit below). After your base the
+>   campaign moved its process records: `audits/` and `briefs/` became `campaign/`, and
+>   `campaign/MOVED.md` at the tip maps each old path to its new one. Read every cited file at
+>   your base (`git show <base>:<path>`, or after the checkout below), not at the tip. The
+>   environment addendum is attached to this dispatch; it is also
+>   `briefs/fill-environment-addendum.md` at your base.
+> - Before you start, confirm that `git merge-base --is-ancestor 9e77d2b26a62c3ee0c418a1e0a031c867c0ac80a HEAD` succeeds. If it
+40,41c46,47
+<   git checkout -b fill/c1-exhaustive-cont1 @ANCESTOR@
+<   git rev-parse HEAD        # must print @ANCESTOR@
+---
+>   git checkout -b fill/c1-exhaustive-cont1 9e77d2b26a62c3ee0c418a1e0a031c867c0ac80a
+>   git rev-parse HEAD        # must print 9e77d2b26a62c3ee0c418a1e0a031c867c0ac80a
+$ diff base brief vs records brief
+6a7,12
+> - **Paths in this brief are those of your base** (the commit below). After your base the
+>   campaign moved its process records: `audits/` and `briefs/` became `campaign/`, and
+>   `campaign/MOVED.md` at the tip maps each old path to its new one. Read every cited file at
+>   your base (`git show <base>:<path>`, or after the checkout below), not at the tip. The
+>   environment addendum is attached to this dispatch; it is also
+>   `briefs/fill-environment-addendum.md` at your base.
+addendum dispatch 2a80b0ef8da202cc base 2a80b0ef8da202cc
+audits/evidence/c1-fill-exhaustive-cont1/ExhaustiveReplayOverlay.lean.txt base=2f80a5923b11906f records=2f80a5923b11906f SAME
+audits/evidence/c1-fill-exhaustive-cont1/C1ExhaustiveImportProbe.lean.txt base=1813ca89e497957a records=1813ca89e497957a SAME
+audits/evidence/c1-fill-exhaustive-cont1/screen-population.txt base=83817954a41936a4 records=83817954a41936a4 SAME
+briefs/orders/c1-fill-exhaustive-cont1.txt base=4d69a58106967239 records=4d69a58106967239 SAME
+audits/logs/c1-fill-exhaustive-cont1-base-sorries.txt base=e1b8a07b06106614 records=e1b8a07b06106614 SAME
+audits/logs/c1-fill-exhaustive-cont1-screen-base.txt base=7a3cc34bc4a8086c records=7a3cc34bc4a8086c SAME
+audits/logs/c1-fill-exhaustive-cont1-preship.log base=bdb6144a34ab1773 records=bdb6144a34ab1773 SAME
+audits/evidence/c1/fills/exhaustive-1/C1ReviewProbes.lean.txt base=23c292226eb8c3e1 records=23c292226eb8c3e1 SAME
+audits/evidence/c1/fills/exhaustive-1/REVIEW.md base=0373558c162e1ea0 records=0373558c162e1ea0 SAME
+order list modules: 77
+probe #check count: 64
+$ population
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+TCSlib/Complexity/TuringMachine/ChoiceReplay.lean
+TCSlib/Complexity/ClassNP/Nondeterminism.lean
+TCSlib/Complexity/TuringMachine/Build/StepClock.lean
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+TCSlib/Complexity/ClassNP/NTIME.lean
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
+$ base sorries
+TuringMachine/Simulation: 1: branchTM_spaceUsed
+TuringMachine/Composition: 3: idTM_computes, ifEqTM_computes, condTM_computes_iff
+TuringMachine/Build/Wrappers: 2: timedCondTM_computes, timedCondTM_spaceUsed
+TuringMachine/Build/Loop: 5: loopHostTM_contracts, loopHostTM_decides, loopHostTM_finds, loopHostTM_spaceUsed_le_budget, emitLoopTM_computes
+TuringMachine/Encoding: 1: pairDiagTM_computes
+ClassP/TimeConstructible: 2: _root_.Turing.FinTM.lengthBitsTM_computes, _root_.Turing.FinTM.lengthBitsTM_spaceUsed
+TuringMachine/Build/Primitives: 3: polyUnaryTM_spaceUsed, unaryTokenTM_computes, appendBitTM_computes
+ClassNP/NDNormalForm: 1: exists_codeNDTM_accepts_linear
+ClassNP/ExhaustiveReplay: 1: FinNDTM.exists_exhaustiveDecider
+TOTAL 19

@@ -1,7 +1,13 @@
-# Fill-agent environment addendum (v2.2): resources, the dependency cache, and starting Lean
+# Fill-agent environment addendum (v2.3): resources, the dependency cache, and starting Lean
 
-**Version 2.2 (2026-10-18).** Part 1, the resource and cache rules, applies on **every** host
-(the user's authorization of 2026-10-17). **Version 2.2** changes one rule, **when the free-disk
+**Version 2.3 (2026-10-18).** Part 1, the resource and cache rules, applies on **every** host
+(the user's authorization of 2026-10-17). **Version 2.3** changes one rule: **the dependency cache
+is fetched for your brief's Mathlib roots only** (items 2–4), never in full. On the fill hosts of
+2026-10-18 the network proxy refused about 1,900 of the full cache's 7,506 files
+(`CONNECT tunnel failed, response 403`), the same files on every host, while a fetch narrowed to a
+brief's imports (about 1,000 files) succeeded. The narrowed cache also needs far less disk.
+
+**Version 2.2** changed one rule, **when the free-disk
 floor applies** (item 1), and updates the measured Lean peak; nothing else. The 12 GiB floor is a
 start-of-run figure that includes installing the toolchain (about 4.2 GiB with its archive). A
 re-check after the toolchain is installed needs only the cache step's share, 8 GiB. Two hosts of
@@ -18,8 +24,8 @@ re-check after the toolchain is installed needs only the cache step's share, 8 G
   (`Cannot change ownership to uid 1001`).
 
 Part 2, the shim for an unreadable `/proc/<pid>/exe`, is version 1's text, unchanged (authorized
-2026-10-14). Everything else in your brief stays binding; where it names addendum v2 or v2.1,
-read v2.2.
+2026-10-14). Everything else in your brief stays binding; where it names an earlier version of
+this addendum, read v2.3.
 
 ## Part 1: resources and the dependency cache
 
@@ -63,11 +69,25 @@ cleanly.
      oleans. Lean's peak memory is about 2.8 GiB (`Build/Catalog`, at `-j4`; 2,796 MiB measured on a
      fill host); most modules need under 1.6 GB.
 2. **One checkout, one cache.** Do everything in a single clone.
-   - Run `lake exe cache get` once, into that clone's own `.lake/packages`, with
-     `TAR_OPTIONS=--no-same-owner` in its environment (extract the toolchain archive the same
-     way if it fails on ownership). Alternatively,
-     symlink `.lake/packages` to a populated tree at exactly the same pins, recorded in
-     `REPORT.md`.
+   - **Fetch the cache for your brief's Mathlib roots only**, into that clone's own
+     `.lake/packages`, with `TAR_OPTIONS=--no-same-owner` in its environment (extract the
+     toolchain archive the same way if it fails on ownership). The roots are the Mathlib modules
+     that the modules of your brief's order list import directly; from the clone's root, after
+     your brief's first edit (its imports or overlay, if any):
+
+     ```sh
+     ORDER=<your brief's order list>
+     sed 's|$|.lean|' "$ORDER" | xargs grep -h '^import Mathlib' | awk '{print $2}' | sort -u \
+       > evidence/logs/mathlib-roots.txt
+     TAR_OPTIONS=--no-same-owner lake exe cache get $(cat evidence/logs/mathlib-roots.txt) \
+       2>&1 | tee evidence/logs/cache-get.log
+     ```
+
+     The tool fetches those modules and everything they import. **Never run the unfiltered
+     `lake exe cache get`.** Record the roots' count and the number of files fetched. If you add
+     an import later (only where your brief authorizes one), fetch for the new roots the same way.
+     Alternatively, symlink `.lake/packages` to a populated tree at exactly the same pins,
+     recorded in `REPORT.md`.
    - Never copy, move, merge or deduplicate dependency trees between directories.
    - Never reuse another session's scratch tree, package builds, toolchain or object store, and
      never join `LEAN_PATH`s across trees.
@@ -75,17 +95,21 @@ cleanly.
      memory-backed filesystem (`/dev/shm`, any tmpfs).
    - The cache tool's own internal validation (`lake build --no-build proofwidgets:release`) is
      expected and allowed; it is not a `lake build` under your brief's ban.
-   - **Packages match the manifest.** A fresh clone's first `lake exe cache get` fetches the
+   - **Packages match the manifest.** A fresh clone's first `lake exe cache get …` fetches the
      packages that `lake-manifest.json` names. Afterwards, and before every later Lake command,
      check each one: `git -C .lake/packages/<name> remote get-url origin` and `rev-parse HEAD`
      must equal the manifest's URL and revision. If one differs, stop with E-RES. Never let Lake
      re-clone or update a package that is already present.
 3. **Check the cache before the bootstrap.**
-   - `lake exe cache get` exited 0.
+   - The narrowed `lake exe cache get` exited 0, with no failed download.
    - `find .lake/packages -name '*.olean' -size 0` prints nothing.
-   - A probe that imports Mathlib elaborates through `scripts/lean_check_tree.sh`, e.g. a file
-     containing only `import Mathlib.Algebra.BigOperators.Group.Finset.Basic`. A probe that
-     imports no Mathlib does not test the cache.
+   - A probe that imports one of your roots elaborates through `scripts/lean_check_tree.sh`, e.g.
+     a file containing only the first line of `mathlib-roots.txt` as an `import`. A probe that
+     imports no Mathlib does not test the cache, and a module outside your roots' closure is not
+     in your cache.
+   - **Failed downloads** (a network error such as a proxy `403`, or `N download(s) failed`):
+     re-run the same narrowed command up to twice; it fetches only what is missing. If files
+     still fail, that is a failed check of this item (item 4).
 4. **One cleaned retry, then stop.** Clean and retry once on any of these:
    - ENOSPC (`No space left on device`, `os error 28`);
    - `leantar` exit 101;
@@ -94,9 +118,11 @@ cleanly.
    - a failed check of item 3.
 
    To clean, delete the clone's `.lake/packages` and its compiled configurations
-   (`.lake/lakefile.olean*`), re-run the preflight, and run `lake exe cache get` once more. If
-   anything fails again, stop with E-RES and report. **Never** unpack or restore individual
-   archives or oleans by hand (`leantar`, the cache tool's `lookup`, copies from elsewhere).
+   (`.lake/lakefile.olean*`), re-run the preflight (a re-check: item 1's floor before the cache),
+   and run the narrowed `lake exe cache get` once more. If anything fails again, stop with E-RES
+   and report, naming the files that failed to download and the roots you fetched. **Never**
+   unpack or restore individual archives or oleans by hand (`leantar`, the cache tool's `lookup`,
+   copies from elsewhere).
 5. **Bootstrap order.** Your brief's order list is the bootstrap. You may build, first, only the
    modules of the list that your owned file imports (directly or not), in the list's order, and
    check your owned file against them. Build the list's remaining modules before the final

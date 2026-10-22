@@ -1,0 +1,11 @@
+-- The control section, inserted before pairExtractTM_fst_run in a copy of the repaired module:
+section RunSeal
+attribute [local irreducible] Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.MultiTapeTM.step Turing.Action.apply Turing.FinTM.bufferTape
+
+example (x : List Bool) : ((pairExtractTM true false).tm.initCfg x).output = [] := rfl
+
+example (x : List Bool) :
+    ((pairExtractTM true false).tm.initCfg x).state = some (.inl none) := by
+  simp [MultiTapeTM.initCfg, Cfg.init, pairExtractTM]
+
+end RunSeal

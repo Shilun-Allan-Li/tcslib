@@ -1,0 +1,8 @@
+Probe: probe/ICDecodeTransport.lean (examples U1, U2 unsealed; S1-S4 with CodeNDTM.toFinNDTM local irreducible).
+  /-- U1: rewrite with the published `tm` field equation, then close by   (example at line 16) -> passes
+  /-- U2: the output, likewise. -/  (example at line 21) -> passes
+  /-- S1: as U1, sealed. -/  (example at line 30) -> FAILS: ICDecodeTransport.lean:32:56: error
+  /-- S2: as U2, sealed. -/  (example at line 35) -> FAILS: ICDecodeTransport.lean:37:50: error
+  /-- S3: all three field equations by `simp only`, sealed. -/  (example at line 40) -> passes
+  /-- S4: a whole-structure equation (here a local hypothesis standing f  (example at line 45) -> passes
+Errors reported: ICDecodeTransport.lean:32:56: error ICDecodeTransport.lean:37:50: error 
