@@ -1104,7 +1104,13 @@ theorem pairExtractTM_fst_run (a b : List Bool) :
   have hinit : (pairExtractTM true false).tm.initCfg x =
       extractCfg x (some (.inl none)) ([] : List Bool).length (by simp)
         ([] : List Bool) ([] : List Bool).length [] := by
-    apply Cfg.ext <;> simp [pairExtractTM, extractCfg, MultiTapeTM.initCfg, Cfg.init]
+    rw [MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [Cfg.init_state]; rfl
+    · rw [Cfg.init_inputPos]; exact Fin.ext (by simp [extractCfg])
+    · funext j p; rw [Cfg.init_workTapes]; simp [extractCfg]
+    · funext j; rw [Cfg.init_workTapePos]; rfl
+    · rw [Cfg.init_output]; rfl
   have hscan := extract_scan true false x (false :: true :: b) a [] [] hx0
   have hsep := extract_block true false x (dbl a) b a false true
     (by simp [hxdef, pairEncode_eq_dbl])
@@ -1121,11 +1127,16 @@ theorem pairExtractTM_fst_run (a b : List Bool) :
       (extractCfg x (some (.inr 2)) ((dbl a).length + 2) (by omega)
         a a.length a) =
       extractCfg x none ((dbl a).length + 2) (by omega) a a.length a := by
-    unfold MultiTapeTM.step
-    simp only [pairExtractTM, extractCfg]
-    refine Cfg.ext rfl (moveInputPos_zero _) rfl ?_ ?_
-    · funext k; simp [Action.apply]
-    · simp [Action.apply]
+    rw [MultiTapeTM.step_of_some rfl]
+    simp only [pairExtractTM, ↓reduceIte, Bool.false_eq_true]
+    apply Cfg.ext
+    · rw [Action.apply_state]; rfl
+    · rw [Action.apply_inputPos]; exact moveInputPos_zero _
+    · funext k
+      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq, Function.update_eq_self]
+      rfl
+    · funext k; rw [Action.apply_workTapePos]; simp [extractCfg]
+    · rw [Action.apply_output, Option.toList_none, List.append_nil]; rfl
   have hmid : (pairExtractTM true false).tm.runFrom
       ((pairExtractTM true false).tm.initCfg x)
         (2 * a.length + 2 + ((a.length + 1) + (a.length + 1))) =
