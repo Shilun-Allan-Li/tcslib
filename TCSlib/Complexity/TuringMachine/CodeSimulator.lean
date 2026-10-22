@@ -6172,13 +6172,13 @@ private lemma canonStageInc_value : ∀ (w v : List Bool), incFixed w = some v �
   | false :: w, v, h => by
     obtain rfl : true :: w = v := Option.some.inj ((incFixed_false_cons w).symm.trans h)
     simp only [List.map_cons, Nat.ofDigits_cons]
-    simp [Bool.toNat]
+    simp only [Bool.toNat_true, Bool.toNat_false]
     omega
   | true :: w, v, h => by
     obtain ⟨z, hz, rfl⟩ :=
       Option.map_eq_some_iff.mp ((incFixed_true_cons w).symm.trans h)
     simp only [List.map_cons, Nat.ofDigits_cons, canonStageInc_value w z hz]
-    simp [Bool.toNat]
+    simp only [Bool.toNat_true, Bool.toNat_false]
     ring
 
 /-- A trailing `false` pad keeps the binary value. -/
