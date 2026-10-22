@@ -1395,6 +1395,112 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).output = _
     rw [Cfg.mapState_output, Cfg.mapState_output]
     exact he₄out
+  -- Phase 6: the bounded window copy.
+  have hd₆st : ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).state =
+      some entryW := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₅]
+    rfl
+  have hd₆pos : ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).inputPos.val =
+      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₅in]
+    exact h₃pos
+  have hd₆ctr : ∀ q : ℤ, -1 ≤ q → q ≤ ((Nat.bits t).length : ℤ) →
+      ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).workTapes jbt
+        (((e₅.mapState (Sum.inr : _ → St₅)).mapState
+          (fun _ => entryW)).workTapePos jbt + q) =
+      FinTM.bufferTape (Nat.bits t) q := by
+    intro q hq1 hq2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₅posbt, zero_add,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅bt]
+  have hd₆dst : ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).workTapes jwin =
+      fun _ => none := by
+    funext q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes,
+      he₅frame jwin (by intro hmem; have := congrArg Fin.val hmem; omega),
+      (hbyval jwin (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      htapes₀blank jwin (by intro hmem; have := congrArg Fin.val hmem; omega)]
+  have hd₆dstpos : ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+      (fun _ => entryW)).workTapePos jwin = 0 := by
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos,
+      he₅pos jwin (by intro hmem; have := congrArg Fin.val hmem; omega)]
+    exact (hbyval jwin (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  obtain ⟨T₆, hT₆, h₆st, h₆pos, h₆win, h₆winhd, h₆jbthd, h₆frame, h₆out, h₆cut⟩ :=
+    windows α x t ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW))
+      hd₆st hd₆pos hd₆ctr hd₆dst hd₆dstpos
+  set e₆ := W.runFrom ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)) T₆ with he₆
+  obtain ⟨s6run, s6st, s6cut⟩ := ic_seam_step _ (Sum.inr SweepPhase.done)
+    W entryW doneW s5run s5st s5cut he₆.symm h₆st h₆cut
+  -- Phase 7: the second input rewind.
+  have hd₇st : ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).state =
+      some 0 := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, h₆st]
+    rfl
+  have hd₇pos : 1 ≤ ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => (0 : Fin 3))).inputPos.val := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, h₆pos]
+    omega
+  obtain ⟨hL1', hL2'⟩ := ic_rewind_leaf_run
+    ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))) hd₇st hd₇pos
+  obtain ⟨s7run, s7st, s7cut⟩ := ic_seam_step _ (Sum.inr doneW)
+    (ic_rewindLeafTM K) (0 : Fin 3) (2 : Fin 3) s6run s6st s6cut hL1' rfl hL2'
+  set e₇ := ({ (e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3)) with
+    state := some (2 : Fin 3), inputPos := 1 } : Cfg K Bool (Fin 3) _) with he₇
+  -- The α capture survives the window, the rewinds and the copy.
+  have hjalnbt : jal ≠ jbt := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjalnwin : jal ≠ jwin := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjalnctr : jal ≠ jctr := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have h₇al : e₇.workTapes jal = FinTM.bufferTape α ∧
+      e₇.workTapePos jal = (α.length : ℤ) := by
+    have htap : e₇.workTapes jal = e₆.workTapes jal := by
+      funext q
+      rw [he₇]
+      show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapes jal q = _
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    have hpp : e₇.workTapePos jal = e₆.workTapePos jal := by
+      rw [he₇]
+      show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+        (fun _ => (0 : Fin 3))).workTapePos jal = _
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    obtain ⟨hft, hfp⟩ := h₆frame jal hjalnbt hjalnwin
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    have hft' : e₆.workTapes jal = e₅.workTapes jal := by
+      funext q
+      rw [hft, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    constructor
+    · rw [htap, hft', he₅frame jal hjalnctr]
+      exact h₃al
+    · rw [hpp, hfp, he₅pos jal hjalnbt]
+      exact h₃alhd
+  -- Phase 8: rewind the α capture to its origin.
+  have hd₈st : ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+      (fun _ => RewindPhase.start)).state = some RewindPhase.start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₇]
+    rfl
+  have hd₈u : ∀ p : ℤ, -1 ≤ p → p < (α.length : ℤ) →
+      ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).workTapes jal
+        (((e₇.mapState (Sum.inr : _ → St₇)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jal - α.length + p) =
+      FinTM.bufferTape α p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₇al.2]
+    have harith : (α.length : ℤ) - α.length + p = p := by ring
+    rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₇al.1]
+  obtain ⟨hr8run, hr8cut, hr8heads⟩ := rewindTM_run_ofCfg jal α α.length le_rfl
+    ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)) hd₈st hd₈u
+  obtain ⟨s8run, s8st, s8cut⟩ := ic_seam_step _ (Sum.inr (2 : Fin 3))
+    (rewindTM K jal) RewindPhase.start RewindPhase.done
+    s7run s7st s7cut hr8run rfl hr8cut
   sorry
 
 end Turing
