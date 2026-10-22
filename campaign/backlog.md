@@ -1283,7 +1283,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   in the megafills below).
 - **The seam-layout fill issued (2026-10-21)**, ancestor `1c06ea94`; delivered complete on
   2026-10-22 (its review is running). **MIG-12 cont1 dispatched** (2026-10-21; still out). **G4
-  cont2 delivered** a partial (1 checkpoint), landed as #143 (gate 58).
+  cont2 delivered** a partial (1 checkpoint), landed as #143. Gate 58: PASS 0/0/0/20, closed
+  (round 1; two pack errata, no `.lean` change; gate 44's appendix minor discharged by the
+  landing). #137 merged after #139's and #143's replays; each meets #137's closure only at the
+  facade (the standing rule: no re-replay). Both reviews proposed a 2-module re-replay instead,
+  **for the user to choose**.
+  - **For megafill B item 3's review (G4 cont3), from gate 58's review:** its brief's region (a)
+    is 127–1149, not 127–1147; its probe `G4C3ImportProbe.lean.txt` is an in-module copy of the
+    worker's head with the checks appended, so it prints the two targets' sorry warnings (at 1191
+    and 1232) and counts 439 checks of 428 distinct names (90 beyond the 338, not 101); the
+    adapter helper must re-point all four existing instances; its landing replay chains from a
+    snapshot of #143's merged tree, not from `lg4c2`. Carry-forwards to a continuation-4 draft are
+    in gate 58's resolutions.
 - **Two megafills issued (2026-10-22; the user: "pack multiple fills into one megafill task",
   overnight, one host each)**, under the addendum's new Part 3 (v2.4: one preflight, one cache for
   the queue's roots, a re-bootstrap per item, a budget per item, a zip per item). Cover briefs

@@ -1,0 +1,62 @@
+# Finding 8: route and ground rule 7 on the lines added base -> landed
+host/trace words in added lines (runFrom|Round|iterate|inPhase|trace|Traj|step_of|MultiTapeTM):
+  none
+R3 rows (copyTM_run|transferTM_run|clearTM_run|compareTM_run|incrementTM_run_succ|incrementTM_run_overflow):
+  none
+composition skeleton of zr_rightPassContract (definitions, landed lines):
+  650 zr_rightSeekContract: seekEndTM_contract  
+  685 zr_rightSeekBackContract: (zr_rightSeekContract x).seq  skipBackTM_contract  
+  731 zr_rulerCopyContract: copyMapTM_contract  
+  752 zr_rulerSkipContract: (zr_rulerCopyContract x).seq  skipTM_contract  
+  778 zr_rightRulerContract: (zr_rightSeekBackContract x).seq  (zr_rulerSkipContract x)  
+  862 zr_rulerStepContract: zr_cellContract  
+  899 zr_adjustedWalkContract: (zr_rulerStepContract x).seq  
+  969 zr_adjustedBackContract: (zr_adjustedWalkContract x).seq  skipBackTM_contract  
+  1019 zr_halfCopyContract: copyMapTM_contract  
+  1025 zr_innerCopyContract: 
+  1071 zr_outerHalfContract: (zr_adjustedBackContract x).seq  (zr_halfCopyContract false x)  
+  1077 zr_writeHalvesContract: (zr_innerCopyContract x).seq  (zr_outerHalfContract x)  
+  1116 zr_rightPassContract: (zr_rightRulerContract x).seq  (zr_writeHalvesContract x)  
+adapter instances (simpa only [Set.image_singleton, Option.map_some] using R.segment): 4
+692:      simpa only [Set.image_singleton, Option.map_some] using R.segment D d hd hp)
+784:      simpa only [Set.image_singleton, Option.map_some] using R.segment D d hd hp)
+908:      simpa only [Set.image_singleton, Option.map_some] using R.segment w d hd hp)
+975:      simpa only [Set.image_singleton, Option.map_some] using R.segment w d hd hp)
+seams (.seq) in the pass's definitions: 29
+688:  let R := (zr_rightSeekContract x).seq (skipBackTM_contract 0 x) zr_rightWord
+707:    simpa only [zr_rightSeekBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+712:  simp only [zr_rightSeekBackContract, Contract.ofSegment_post, Contract.seq_post,
+753:  (zr_rulerCopyContract x).seq (skipTM_contract 0 x) (fun w => w)
+764:    simpa only [zr_rightSeekBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+767:  rw [zr_rulerSkipContract, Contract.seq_pre, zr_rulerCopyContract,
+779:  let R := (zr_rightSeekBackContract x).seq (zr_rulerSkipContract x) zr_rightWord
+791:  simp only [zr_rightRulerContract, Contract.ofSegment_pre, Contract.seq_pre,
+829:    simpa only [zr_rightRulerContract, Contract.ofSegment_pre, Contract.seq_pre] using hp
+830:  rw [zr_rightRulerContract, Contract.ofSegment_post, Contract.seq_post,
+832:    zr_rulerSkipContract, Contract.seq_post, skipTM_contract_post]
+903:  let R := (zr_rulerStepContract x).seq
+925:    rw [zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+932:  simp only [zr_adjustedWalkContract, Contract.ofSegment_post, Contract.seq_post,
+956:  rw [zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+970:  let R := (zr_adjustedWalkContract x).seq (skipBackTM_contract 1 x) (fun w => w)
+996:    simpa only [zr_adjustedBackContract, Contract.ofSegment_pre, Contract.seq_pre] using hp
+997:  rw [zr_adjustedBackContract, Contract.ofSegment_post, Contract.seq_post,
+1040:  rw [zr_adjustedBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+1041:    zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+1060:  rw [zr_adjustedBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+1061:    zr_adjustedWalkContract, Contract.ofSegment_pre, Contract.seq_pre,
+1072:  (zr_adjustedBackContract x).seq (zr_halfCopyContract false x) (fun w => w)
+1078:  (zr_innerCopyContract x).seq (zr_outerHalfContract x) (fun w => w)
+1080:      simpa only [zr_outerHalfContract, Contract.seq_pre, zr_adjustedBackContract,
+1099:  rw [zr_writeHalvesContract, Contract.seq_pre, zr_innerCopyContract,
+1117:  (zr_rightRulerContract x).seq (zr_writeHalvesContract x) zr_rulerWord
+1123:  rw [zr_rightPassContract, Contract.seq_pre, zr_rightRuler_pre]
+1131:  simp only [zr_rightPassContract, Contract.seq_time, zr_rightRulerContract,
+(grep artifacts completed by reading the source: 899 zr_adjustedWalkContract = (zr_rulerStepContract x).seq (walkTM_contract 1 (fun _ => True) trivial 1 x) List.tail, re-wrapped by Contract.ofSegment;
+ 1025 zr_innerCopyContract = Contract.ofSegment over zr_halfCopyContract true x, adding `w ≠ []` to its pre.)
+The eight seams (definitions only): 688, 753, 779, 903, 970, 1072, 1078, 1117.
+Route: seekEnd -> skipBack(tape 0) -> copyMap 0->1 [inl false] -> skip(tape 0) -> copyMap 1->0 [inr some none] -> leaf (scratch +1) -> walk(tail, all heads) -> skipBack(tape 1) -> copyMap 1->0 [inr none].
+zr_rightPassContract itself is not re-wrapped: its exit set is the nested image (out/levelone.out's #check); 1.1b's "re-wrap before sequencing" stands.
+Level-one instance of the 1.1b endpoint statement (n = D.1 = 0; N = zoneStart 1 = 5; m = zoneCapacity 0 = 2; scratch head q):
+ ruler [q, q+2); inner 5, 6 := inr (some none); outer 7, 8 := inr none; tape-0 head 5 + 2 = 7; scratch head q; time 5 + 10*2 + 23 = 48 <= 32*(2+1) = 96.
+ This agrees with the auditor's finding 11 (with q = -7). It is a hand instance of an unproved statement.

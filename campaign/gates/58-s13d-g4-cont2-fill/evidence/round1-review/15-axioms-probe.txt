@@ -1,0 +1,31 @@
+# Finding 15: axiom probe summary (review's out/ax-head.out, worker head 6fe3bf88's code)
+axiom sets:
+   1 '_private.G4C2AxHead.0.Turing.zr_cellTM' does not depend on any axioms
+  47 [propext, Classical.choice, Quot.sound]
+   9 [propext, Quot.sound]
+   2 [propext, sorryAx, Classical.choice, Quot.sound]
+   8 [propext]
+sorryAx closures:
+Turing.exists_zoneRebalanceTM: direct sorryAx users in closure: [Turing.exists_zoneRebalanceTM]
+Turing.exists_zoneExtendTM: direct sorryAx users in closure: [Turing.exists_zoneExtendTM]
+EXT lines: 66; with non-empty private or eqn lists: 1
+EXTLIST total 556; TCSlib 134: [Turing.Action,
+import probe: see 15-probe-distinct.txt (439 #check lines, 428 distinct names; 11 names in both Expansion A and Expansion B)
+importprobe-head.out: errors 0, exit line: exit 0
+## landed c60ed898 against oleans-lg4c2 (out/15-ax-landed-lg4c2.out)
+probe/G58AxLanded.lean:1196:8: warning: declaration uses 'sorry'
+probe/G58AxLanded.lean:1238:8: warning: declaration uses 'sorry'
+   1 '_private.probe.G58AxLanded.0.Turing.zr_cellTM' does not depend on any axioms
+   7 [propext,   <- wrapped messages; counted with the 40 below after normalization
+  40 [propext, Classical.choice, Quot.sound]
+   9 [propext, Quot.sound]
+   2 [propext, sorryAx, Classical.choice, Quot.sound]
+   8 [propext]
+Turing.exists_zoneRebalanceTM: direct sorryAx users in closure: [Turing.exists_zoneRebalanceTM]
+Turing.exists_zoneExtendTM: direct sorryAx users in closure: [Turing.exists_zoneExtendTM]
+EXT private lines: 65, non-empty: 0
+name-by-name equal to the review's worker-head run (module prefix normalized)?
+  raw lines differ only by message wrapping (the longer module prefix); normalized comparison:
+landed: 67 axiom prints; {('Classical.choice', 'Quot.sound', 'propext', 'sorryAx'): 2, ('propext',): 8, ('Classical.choice', 'Quot.sound', 'propext'): 47, ('Quot.sound', 'propext'): 9, (): 1}
+review: 67 axiom prints
+same names and same axiom sets: True
