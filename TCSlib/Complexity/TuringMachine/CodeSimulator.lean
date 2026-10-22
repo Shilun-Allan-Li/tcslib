@@ -6166,32 +6166,20 @@ private def canonStageHaltTM (M : ℕ) : MultiTapeTM M Bool Bool where
   tr := fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩
 
 /-- The fixed-width increment adds one to the binary value. -/
-private lemma canonStageInc_value (w v : List Bool) (h : incFixed w = some v) :
-    Nat.ofDigits 2 (v.map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) + 1 := by
-  induction w generalizing v with
-  | nil =>
-    rw [incFixed_nil] at h
-    cases h
-  | cons b w ih =>
-    cases b with
-    | false =>
-      rw [incFixed_false_cons] at h
-      obtain rfl := Option.some.inj h
-      simp only [List.map_cons, Nat.ofDigits_cons]
-      simp [Bool.toNat]
-      omega
-    | true =>
-      rw [incFixed_true_cons] at h
-      cases he : incFixed w with
-      | none =>
-        rw [he] at h
-        cases h
-      | some z =>
-        rw [he, Option.map_some] at h
-        obtain rfl := Option.some.inj h
-        simp only [List.map_cons, Nat.ofDigits_cons, ih z he]
-        simp [Bool.toNat]
-        ring
+private lemma canonStageInc_value : ∀ (w v : List Bool), incFixed w = some v →
+    Nat.ofDigits 2 (v.map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) + 1
+  | [], v, h => Option.noConfusion (incFixed_nil.symm.trans h)
+  | false :: w, v, h => by
+    obtain rfl : true :: w = v := Option.some.inj ((incFixed_false_cons w).symm.trans h)
+    simp only [List.map_cons, Nat.ofDigits_cons]
+    simp [Bool.toNat]
+    omega
+  | true :: w, v, h => by
+    obtain ⟨z, hz, rfl⟩ :=
+      Option.map_eq_some_iff.mp ((incFixed_true_cons w).symm.trans h)
+    simp only [List.map_cons, Nat.ofDigits_cons, canonStageInc_value w z hz]
+    simp [Bool.toNat]
+    ring
 
 /-- A trailing `false` pad keeps the binary value. -/
 private lemma canonStagePad_value (w : List Bool) :
