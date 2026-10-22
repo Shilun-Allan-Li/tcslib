@@ -1001,17 +1001,20 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       by_cases h0 : i.val = 0
       · rw [dif_pos h0, if_pos h0, hjal]
       · rw [dif_neg h0, if_neg h0, Fin.val_mk]
-  obtain ⟨ι₇, hι₇0, hι₇1, hι₇2, hι₇3, hι₇4, hι₇5, hι₇6⟩ :
+  obtain ⟨ι₇, hι₇0, hι₇1, hι₇2, hι₇3, hι₇4, hι₇5, hι₇6, hι₇v⟩ :
       {f : Fin 7 ↪ Fin K //
         f 0 = jwin ∧ f 1 = jb0 ∧ f 2 = jb1 ∧ f 3 = js ∧ f 4 = jtbl ∧ f 5 = jsm ∧
-          f 6 = jctr} := by
+          f 6 = jctr ∧
+          ∀ i, (f i).val = if i.val = 0 then 4 else if i.val = 1 then 7
+            else if i.val = 2 then 8 else if i.val = 3 then 0 else if i.val = 4 then 5
+            else if i.val = 5 then 6 else 3} := by
     refine ⟨⟨fun i =>
       (⟨if i.val = 0 then 4 else if i.val = 1 then 7 else if i.val = 2 then 8
         else if i.val = 3 then 0 else if i.val = 4 then 5 else if i.val = 5 then 6
         else 3, by split_ifs <;> omega⟩ : Fin K),
       fun a b h => ?_⟩, Fin.ext (by rw [hjwin]; rfl), Fin.ext (by rw [hjb0]; rfl),
       Fin.ext (by rw [hjb1]; rfl), Fin.ext (by rw [hjs]; rfl), Fin.ext (by rw [hjtbl]; rfl),
-      Fin.ext (by rw [hjsm]; rfl), Fin.ext (by rw [hjctr]; rfl)⟩
+      Fin.ext (by rw [hjsm]; rfl), Fin.ext (by rw [hjctr]; rfl), fun i => rfl⟩
     rcases a with ⟨av, ha7⟩
     rcases b with ⟨bv, hb7⟩
     have hv := congrArg Fin.val h
@@ -1923,6 +1926,326 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       norm_num
     · simp only [hdstep, StepBlock.summaryTape_eq, Fin.coe_natAdd, Fin.val_one]
       norm_num
+  obtain ⟨TLoop, hTLoopFull, hTLoopEarly, hLoopSt, hLoopCut⟩ :=
+    ic_replay_tail ((c.decode α).tm) x s t hs dstep rfl hrel
+      (pairEncode (pairEncode (Nat.bits t) α) x) e₁₁.inputPos
+  -- The complete tape inventory at the loop's threshold.
+  have he₁₁tapes : ∀ j, e₁₁.workTapes j = e₁₀.workTapes j := by
+    intro j
+    funext q
+    rw [he₁₁]
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have he₁₁pos : ∀ j, j ≠ jwin → e₁₁.workTapePos j = e₁₀.workTapePos j := by
+    intro j hj
+    rw [he₁₁]
+    show Function.update _ jwin _ j = _
+    rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have he₁₁poswin : e₁₁.workTapePos jwin = 0 := by
+    rw [he₁₁]
+    show Function.update _ jwin _ jwin = 0
+    rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₁₀win.2]
+    ring
+  have hd₁₀in : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).inputPos = 1 := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₉,
+      embedSilentCfg_inputPos, Cfg.ofWords_inputPos]
+  have he₁₁in : e₁₁.inputPos = 1 := by
+    rw [he₁₁]
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).inputPos = 1
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₁₀, hLin]
+    exact hd₁₀in
+  have he₁₁out : e₁₁.output = [] := by
+    rw [he₁₁]
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).output = []
+    rw [Cfg.mapState_output, Cfg.mapState_output, he₁₀, hLout TL le_rfl,
+      Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, he₉, embedSilentCfg_output]
+  -- Named-tape values at the threshold.
+  have hth : ∀ j : Fin K, j ≠ jal → j ≠ jtbl → j ≠ jsm → j ≠ jwin →
+      e₁₁.workTapes j = (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+        (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes j ∧
+      e₁₁.workTapePos j = (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+        (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos j := by
+    intro j h1 h2 h3 h4
+    constructor
+    · funext q
+      rw [he₁₁tapes j, he₁₀, hLtapes, Function.update_of_ne h3, Function.update_of_ne h2,
+        Function.update_of_ne h1]
+    · rw [he₁₁pos j h4, he₁₀, hLheads, Function.update_of_ne h3, Function.update_of_ne h2,
+        Function.update_of_ne h1]
+  have hth' : ∀ j : Fin K, j ∉ Set.range ιI → j ≠ capI → j ≠ jtbl → j ≠ jsm → j ≠ jwin →
+      e₁₁.workTapes j = e₈.workTapes j ∧ e₁₁.workTapePos j = e₈.workTapePos j := by
+    intro j h0 hc h2 h3 h4
+    have h1 : j ≠ jal := by
+      intro hj
+      exact h0 ⟨⟨0, hkI⟩, by rw [hieq0, hj]⟩
+    obtain ⟨ht, hp⟩ := hth j h1 h2 h3 h4
+    constructor
+    · funext q
+      rw [ht, hlhs10t j, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j h0 hc).1]
+    · rw [hp, hlhs10p j, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j h0 hc).2]
+  -- The stream, the two loop banks and the loop capture, by the clean ledger.
+  have hstream : e₁₁.workTapes js = FinTM.bufferTape s ∧ e₁₁.workTapePos js = 0 := by
+    obtain ⟨ht, hp⟩ := hth' js
+      (hinst_unsel js (by omega) (by omega))
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    obtain ⟨ht8, hp8⟩ := hclean₈ js
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    refine ⟨?_, hp.trans hp8⟩
+    rw [ht, ht8, htapes₀]
+    simp
+  have hblank : ∀ j : Fin K, j.val = 7 ∨ j.val = 8 ∨ j.val = 10 →
+      e₁₁.workTapes j = (fun _ => none) ∧ e₁₁.workTapePos j = 0 := by
+    intro j hv
+    obtain ⟨ht, hp⟩ := hth' j
+      (hinst_unsel j (by omega) (by omega))
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    obtain ⟨ht8, hp8⟩ := hclean₈ j
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    exact ⟨ht.trans (ht8.trans (htapes₀blank j
+      (by intro hmem; have := congrArg Fin.val hmem; omega))), hp.trans hp8⟩
+  have hctr₁₁ : e₁₁.workTapes jctr = FinTM.bufferTape (Nat.bits t) ∧
+      e₁₁.workTapePos jctr = 0 := by
+    obtain ⟨ht, hp⟩ := hth' jctr
+      (hinst_unsel jctr (by omega) (by omega))
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    obtain ⟨hft, hfp⟩ := h₆frame jctr
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    constructor
+    · funext q
+      rw [ht, he₈tapes jctr, hft, Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅ctr]
+    · rw [hp, he₈pos jctr (by intro hmem; have := congrArg Fin.val hmem; omega), hfp,
+        he₅pos jctr hjbtctr.symm]
+      exact (hbyval jctr (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  have htbl₁₁ : e₁₁.workTapes jtbl =
+      FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr) ∧
+      e₁₁.workTapePos jtbl = 0 := by
+    have h2 : jtbl ≠ jsm := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    constructor
+    · funext q
+      rw [he₁₁tapes jtbl, he₁₀, hLtapes, Function.update_of_ne h2, Function.update_self]
+    · rw [he₁₁pos jtbl (by intro hmem; have := congrArg Fin.val hmem; omega), he₁₀, hLheads,
+        Function.update_of_ne h2, Function.update_self]
+  have hsm₁₁ : e₁₁.workTapes jsm =
+      StepBlock.summaryCells none (unaryFin (c.decode α).tm.replayTM.q₀) ∧
+      e₁₁.workTapePos jsm = 0 := by
+    constructor
+    · funext q
+      rw [he₁₁tapes jsm, he₁₀, hLtapes, Function.update_self]
+    · rw [he₁₁pos jsm (by intro hmem; have := congrArg Fin.val hmem; omega), he₁₀, hLheads,
+        Function.update_self]
+  have hwin₁₁ : e₁₁.workTapes jwin = FinTM.bufferTape (x.take t) := by
+    rw [he₁₁tapes jwin]
+    exact h₁₀win.1
+  -- The counter-loop configuration's fields, read through its public layout.
+  have hcl_tapes : ∀ i : Fin 6, (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+      dstep (FinTM.bufferTape (Nat.bits t)) 0).workTapes i =
+      Fin.lastCases (FinTM.bufferTape (Nat.bits t)) dstep.workTapes i := by
+    intro i
+    rw [counter_cfg_eq]
+  have hcl_pos : ∀ i : Fin 6, (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+      dstep (FinTM.bufferTape (Nat.bits t)) 0).workTapePos i =
+      Fin.lastCases 0 dstep.workTapePos i := by
+    intro i
+    rw [counter_cfg_eq]
+  have hcl_in : (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+      dstep (FinTM.bufferTape (Nat.bits t)) 0).inputPos = dstep.inputPos := by
+    rw [counter_cfg_eq]
+  have hcl_out : (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+      dstep (FinTM.bufferTape (Nat.bits t)) 0).output = dstep.output := by
+    rw [counter_cfg_eq]
+  have hcl_state : (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+      dstep (FinTM.bufferTape (Nat.bits t)) 0).state =
+      some (CounterLoopState.dec FlagPhase.run) := by
+    rw [counter_cfg_eq]
+  -- The hosted start, embedded: the loop junction.
+  have hlhs12t : ∀ j, ((e₁₁.mapState (Sum.inr : _ → St₁₁)).mapState
+      (fun _ => (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ :
+        Σ i, ic_loopPh i))).workTapes j = e₁₁.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have hlhs12p : ∀ j, ((e₁₁.mapState (Sum.inr : _ → St₁₁)).mapState
+      (fun _ => (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ :
+        Σ i, ic_loopPh i))).workTapePos j = e₁₁.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have hcapL7 : capL ∉ Set.range ι₇ := by
+    rintro ⟨i, rfl⟩
+    have hv := hι₇v i
+    split_ifs at hv <;> omega
+  have hfv2 : ((2 : Fin 5)).val = 2 := rfl
+  have hfv3 : ((3 : Fin 5)).val = 3 := rfl
+  have hfv4 : ((4 : Fin 5)).val = 4 := rfl
+  have hjunc₁₂ : (e₁₁.mapState (Sum.inr : _ → St₁₁)).mapState
+      (fun _ => (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ : Σ i, ic_loopPh i)) =
+      embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+        ((vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep
+          (FinTM.bufferTape (Nat.bits t)) 0) true e₁₁.inputPos []).mapState
+          (Sigma.mk false)) := by
+    have hnotr : ∀ j : Fin K, j ≠ jwin → j ≠ jb0 → j ≠ jb1 → j ≠ js → j ≠ jtbl → j ≠ jsm →
+        j ≠ jctr → j ∉ Set.range ι₇ := by
+      intro j n0 n1 n2 n3 n4 n5 n6
+      rintro ⟨i, rfl⟩
+      have hv := hι₇v i
+      split_ifs at hv
+      · exact n0 (Fin.ext (by omega))
+      · exact n1 (Fin.ext (by omega))
+      · exact n2 (Fin.ext (by omega))
+      · exact n3 (Fin.ext (by omega))
+      · exact n4 (Fin.ext (by omega))
+      · exact n5 (Fin.ext (by omega))
+      · exact n6 (Fin.ext (by omega))
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.mapState_state, embedSilentCfg_state, Cfg.mapState_state,
+        vhostCfg_state, hcl_state, he₁₁]
+      rfl
+    · have hl : ((e₁₁.mapState (Sum.inr : _ → St₁₁)).mapState
+          (fun _ => (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ :
+            Σ i, ic_loopPh i))).inputPos = e₁₁.inputPos := by
+        rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+      rw [hl]
+      conv_rhs => rw [embedSilentCfg_inputPos, Cfg.mapState_inputPos, vhostCfg_inputPos]
+    · funext j q
+      rw [hlhs12t j]
+      by_cases h0 : j = jwin
+      · rw [h0, hwin₁₁, ← hι₇0, embedSilentCfg_selected_tape, Cfg.mapState_workTapes,
+          vhostCfg_workTapes,
+          show (0 : Fin 7) = Fin.castAdd 6 (0 : Fin 1) from by decide, Fin.addCases_left]
+      · by_cases h1 : j = jb0
+        · rw [h1, (hblank jb0 (Or.inl hjb0)).1, ← hι₇1, embedSilentCfg_selected_tape,
+            Cfg.mapState_workTapes, vhostCfg_workTapes,
+            show (1 : Fin 7) = Fin.natAdd 1 (0 : Fin 6) from by decide, Fin.addCases_right,
+            hcl_tapes, show (0 : Fin 6) = Fin.castSucc (0 : Fin 5) from by decide,
+            Fin.lastCases_castSucc, hdstep]
+          norm_num
+        · by_cases h2 : j = jb1
+          · rw [h2, (hblank jb1 (Or.inr (Or.inl hjb1))).1, ← hι₇2, embedSilentCfg_selected_tape,
+              Cfg.mapState_workTapes, vhostCfg_workTapes,
+              show (2 : Fin 7) = Fin.natAdd 1 (1 : Fin 6) from by decide, Fin.addCases_right,
+              hcl_tapes, show (1 : Fin 6) = Fin.castSucc (1 : Fin 5) from by decide,
+              Fin.lastCases_castSucc, hdstep]
+            norm_num
+          · by_cases h3 : j = js
+            · rw [h3, hstream.1, ← hι₇3, embedSilentCfg_selected_tape,
+                Cfg.mapState_workTapes, vhostCfg_workTapes,
+                show (3 : Fin 7) = Fin.natAdd 1 (2 : Fin 6) from by decide, Fin.addCases_right,
+                hcl_tapes, show (2 : Fin 6) = Fin.castSucc (2 : Fin 5) from by decide,
+                Fin.lastCases_castSucc, hdstep]
+              norm_num
+            · by_cases h4 : j = jtbl
+              · rw [h4, htbl₁₁.1, ← hι₇4, embedSilentCfg_selected_tape,
+                  Cfg.mapState_workTapes, vhostCfg_workTapes,
+                  show (4 : Fin 7) = Fin.natAdd 1 (3 : Fin 6) from by decide,
+                  Fin.addCases_right, hcl_tapes,
+                  show (3 : Fin 6) = Fin.castSucc (3 : Fin 5) from by decide,
+                  Fin.lastCases_castSucc, hdstep]
+                norm_num
+              · by_cases h5 : j = jsm
+                · rw [h5, hsm₁₁.1, NDTM.replayTM_q₀, ← hι₇5, embedSilentCfg_selected_tape,
+                    Cfg.mapState_workTapes, vhostCfg_workTapes,
+                    show (5 : Fin 7) = Fin.natAdd 1 (4 : Fin 6) from by decide,
+                    Fin.addCases_right, hcl_tapes,
+                    show (4 : Fin 6) = Fin.castSucc (4 : Fin 5) from by decide,
+                    Fin.lastCases_castSucc, hdstep]
+                  norm_num
+                · by_cases h6 : j = jctr
+                  · rw [h6, hctr₁₁.1, ← hι₇6, embedSilentCfg_selected_tape,
+                      Cfg.mapState_workTapes, vhostCfg_workTapes,
+                      show (6 : Fin 7) = Fin.natAdd 1 (5 : Fin 6) from by decide,
+                      Fin.addCases_right, hcl_tapes,
+                      show (5 : Fin 6) = Fin.last 5 from by decide, Fin.lastCases_last]
+                  · by_cases hcap : j = capL
+                    · rw [hcap, (hblank capL (Or.inr (Or.inr hcapL))).1,
+                        (embedSilentCfg_cap ι₇ capL hcapL7 e₁₁.workTapes e₁₁.workTapePos
+                          [] [] _).1, Cfg.mapState_output, vhostCfg_output, hcl_out, hdstep]
+                      simp only [List.nil_append, FinTM.bufferTape_nil]
+                    · rw [(embedSilentCfg_unselected ι₇ capL e₁₁.workTapes e₁₁.workTapePos
+                        [] [] _ j (hnotr j h0 h1 h2 h3 h4 h5 h6) hcap).1]
+    · funext j
+      rw [hlhs12p j]
+      by_cases h0 : j = jwin
+      · rw [h0, he₁₁poswin, ← hι₇0, embedSilentCfg_selected_pos, Cfg.mapState_workTapePos,
+          vhostCfg_workTapePos,
+          show (0 : Fin 7) = Fin.castAdd 6 (0 : Fin 1) from by decide, Fin.addCases_left,
+          hcl_in, hdstep]
+        show (0 : ℤ) = 1 - 1
+        ring
+      · by_cases h1 : j = jb0
+        · rw [h1, (hblank jb0 (Or.inl hjb0)).2, ← hι₇1, embedSilentCfg_selected_pos,
+            Cfg.mapState_workTapePos, vhostCfg_workTapePos,
+            show (1 : Fin 7) = Fin.natAdd 1 (0 : Fin 6) from by decide, Fin.addCases_right,
+            hcl_pos, show (0 : Fin 6) = Fin.castSucc (0 : Fin 5) from by decide,
+            Fin.lastCases_castSucc, hdstep]
+        · by_cases h2 : j = jb1
+          · rw [h2, (hblank jb1 (Or.inr (Or.inl hjb1))).2, ← hι₇2, embedSilentCfg_selected_pos,
+              Cfg.mapState_workTapePos, vhostCfg_workTapePos,
+              show (2 : Fin 7) = Fin.natAdd 1 (1 : Fin 6) from by decide, Fin.addCases_right,
+              hcl_pos, show (1 : Fin 6) = Fin.castSucc (1 : Fin 5) from by decide,
+              Fin.lastCases_castSucc, hdstep]
+          · by_cases h3 : j = js
+            · rw [h3, hstream.2, ← hι₇3, embedSilentCfg_selected_pos,
+                Cfg.mapState_workTapePos, vhostCfg_workTapePos,
+                show (3 : Fin 7) = Fin.natAdd 1 (2 : Fin 6) from by decide, Fin.addCases_right,
+                hcl_pos, show (2 : Fin 6) = Fin.castSucc (2 : Fin 5) from by decide,
+                Fin.lastCases_castSucc, hdstep]
+            · by_cases h4 : j = jtbl
+              · rw [h4, htbl₁₁.2, ← hι₇4, embedSilentCfg_selected_pos,
+                  Cfg.mapState_workTapePos, vhostCfg_workTapePos,
+                  show (4 : Fin 7) = Fin.natAdd 1 (3 : Fin 6) from by decide,
+                  Fin.addCases_right, hcl_pos,
+                  show (3 : Fin 6) = Fin.castSucc (3 : Fin 5) from by decide,
+                  Fin.lastCases_castSucc, hdstep]
+              · by_cases h5 : j = jsm
+                · rw [h5, hsm₁₁.2, ← hι₇5, embedSilentCfg_selected_pos,
+                    Cfg.mapState_workTapePos, vhostCfg_workTapePos,
+                    show (5 : Fin 7) = Fin.natAdd 1 (4 : Fin 6) from by decide,
+                    Fin.addCases_right, hcl_pos,
+                    show (4 : Fin 6) = Fin.castSucc (4 : Fin 5) from by decide,
+                    Fin.lastCases_castSucc, hdstep]
+                · by_cases h6 : j = jctr
+                  · rw [h6, hctr₁₁.2, ← hι₇6, embedSilentCfg_selected_pos,
+                      Cfg.mapState_workTapePos, vhostCfg_workTapePos,
+                      show (6 : Fin 7) = Fin.natAdd 1 (5 : Fin 6) from by decide,
+                      Fin.addCases_right, hcl_pos,
+                      show (5 : Fin 6) = Fin.last 5 from by decide, Fin.lastCases_last]
+                  · by_cases hcap : j = capL
+                    · rw [hcap, (hblank capL (Or.inr (Or.inr hcapL))).2,
+                        (embedSilentCfg_cap ι₇ capL hcapL7 e₁₁.workTapes e₁₁.workTapePos
+                          [] [] _).2, Cfg.mapState_output, vhostCfg_output, hcl_out, hdstep]
+                      simp only [List.nil_append, List.length_nil, Nat.cast_zero]
+                    · rw [(embedSilentCfg_unselected ι₇ capL e₁₁.workTapes e₁₁.workTapePos
+                        [] [] _ j (hnotr j h0 h1 h2 h3 h4 h5 h6) hcap).2]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, embedSilentCfg_output]
+      exact he₁₁out
   sorry
 
 end Turing
