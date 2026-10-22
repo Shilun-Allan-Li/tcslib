@@ -1,6 +1,13 @@
 # O'Donnell Chapter 11: coverage and reuse ledger
 
-This is a **partial formalization**, not a claim that the whole chapter is covered.
+The **main-text Chapter 11 statement layer** is now laid out, with the precise
+interpretations and reuse decisions below. This is not a claim that the new
+statements have proofs. The 2026-10-18 extension adds 19 modules, 53 concrete
+definitions/structures, one decidability instance, and 110 theorem obligations;
+every new theorem body is exactly `sorry`. The earlier proved development is
+preserved. Exercises and historical notes are outside this main-text inventory.
+
+The following paragraph describes the previously completed proof slice only.
 The five rotation-sensitivity statements, their product-Gaussian rotation-law bridge,
 all three Boolean Bobkov inequalities, the Basic Invariance Principle, both
 invariance corollaries, smooth Gaussian Bobkov, and all six surface-area source
@@ -147,7 +154,13 @@ Remark 11.64, and Hypothesis 11.65 precede it; it should not be cited as Theorem
   `Rotation.lean` were checked with Lean LSP and use only `propext`,
   `Classical.choice`, and `Quot.sound`, with no `sorryAx`.
 
-## External duplication audit (2026-10-14)
+## Historical external duplication audit (2026-10-14)
+
+The exclusion decisions in this historical table are superseded for the new
+statement layer by the user's 2026-10-18 instruction: external overlap is allowed
+because those projects cannot be imported on this toolchain. **Internal**
+BooleanAnalysis overlap is still excluded. No code or design was copied from
+these projects; the new contracts follow the textbook and reuse local objects.
 
 This was source inspection, not installation or fresh upstream kernel checking.
 No external code or design was copied; the new statements and proof plans follow OD14.
@@ -183,28 +196,64 @@ OU, Borell, Bobkov, invariance, rotation sensitivity, Gaussian surface area, and
 was not comprehensively audited. No equivalent of the added statements was found in
 this bounded search. Global nonexistence across GitHub cannot be certified by search.
 
-## Chapter-wide omissions and next integration steps
+## Main-text structure added on 2026-10-18
 
-| Source range | Reuse / explicit remaining work |
+All the entries in this table are **statements with placeholder proofs** unless
+the reuse column names an already existing declaration. Source definitions have
+concrete bodies. Analytic definition modules are separated from theorem files;
+the geometric core is not made to import the new computational application layer.
+Every module is exported by `GaussianSpace.lean`, already imported by `TCSlib.lean`.
+
+| Source | Module / representation and reuse |
 | --- | --- |
-| §11.1, Notation 11.1–Fact 11.13 | Reuse local Gaussian laws and Mathlib Lp; upstream correlated/Mehler noise exists. Independent normalized Boolean blocks and their finite-dimensional Gaussian convergence are now proved using the existing cube API. |
-| §11.1, Props. 11.15–11.17; Thms. 11.22–11.23 | External contraction/smoothing/density/hypercontractivity overlap. Audit full Lp endpoints and negative correlations before proposing any genuinely missing bridge. |
-| §11.1, Def. 11.24–Prop. 11.28; Gaussian LogSob | Reuse external OU calculus/LogSob; operator domains and core-to-L2 closure need explicit integration. No vague-domain skeleton is added. |
-| §11.2, Def. 11.29–Prop. 11.40 | Mathlib Hermite polynomials and upstream Gaussian Hilbert/chaos/spectral theory. Normalization and coefficient/L2 transport remain future adapter work. |
-| §11.3, Borell; Cor. 11.20/Sheppard material | Existing local Sheppard and external Borell statements. Only the distinct rotation-sensitivity development is new. |
-| §11.4, Def. 11.48 relaxation/Minkowski equivalences | The rotation definition/right-limit assertion, the one-sided smooth gradient bound, and averaged-indicator approximation are proved. Full relaxation/attainment equalities and sufficiently regular boundary comparisons remain deferred until their exact function/set classes are fixed. |
-| §11.4, Example 11.50 | Convex upper bounds already external. Ball/PTF bounds and interval formulas are deferred for representation/overlap review, not silently counted as covered. |
-| §11.4, Claim 11.54 | A proof-internal stopped-walk claim; no new stochastic-process model is introduced in this starting skeleton. |
-| §11.5, Def. 11.57 and smoothing/scalar consequences | Reuse Mathlib distance/mollification APIs and external Berry–Esseen. Exact remaining scalar test-function adapters are deferred. |
-| §11.6, Def. 11.63; Hyp. 11.65; Eq. (11.29); Cors. 11.67–11.68 | Existing polynomial/variance/influence APIs plus the new moment bundle and three general-law invariance statements. |
-| §11.6, Remark 11.66; Cors. 11.69–11.70; Carbery–Wright; Thm. 11.71 | Existing C3 overlap is excluded. Smoothed/no-notables, Lévy/CDF bounds, and arbitrary-polynomial anticoncentration require their own representation/duplication review before addition. |
-| §11.7, Thms. 11.72–11.74; general-volume MIS (11.39) | Existing balanced MIS is excluded. Max-Cut/UG-hardness models and the exact quantitative general-volume/no-notables bound are deferred, not replaced by a weaker fresh MIS statement. |
-| Exercises and historical notes | Reference extraction retains them; they are outside this starting slice. |
+| Notation 11.1; Def. 11.2; notation preceding Def. 11.5 | Reuse `standardGaussianMeasure`, CDF/PDF/quantile, `Measure.pi`, `MemLp`, `Lp`, integrals and inner products; no new Gaussian measure or Lp construction. |
+| Def. 11.5, BitsToGaussians | Already represented by `NormalizedSums` and `NormalizedBlocks`; no duplicate simulation or convergence statement. |
+| Defs. 11.6, 11.9–11.12; Fact 11.7; Remarks 11.8, 11.11 | `NoiseDefinitions` gives the correlated pushforward, Mehler operator and stability; `Noise` gives marginals, unit-projection pair law, simultaneous orthogonal invariance, linearity and semigroup. The affine kernel is explicit in the definition, so no second scalar conditional-noise law is introduced. |
+| Fact 11.13; Props. 11.15–11.17 | `Noise`: existing multilinear evaluation adapter, full extended-exponent contraction, arbitrary-L1 C∞ smoothing, and L1 convergence at correlation one. The averaged-indicator adapter reuses the existing operation. |
+| Def. 11.18; Example 11.19; Cor. 11.20; Remark 11.21 | `Noise` connects the conditional and joint integrals; `Borell` transports the existing scalar `sheppard_formula` to signed homogeneous halfspaces. Existing `majority_stability_limit` is reused, including its current proof obligation. |
+| Thm. 11.22; Gaussian Hypercontractivity; Thm. 11.23 | `Noise`: ordinary multivariate-polynomial density, two-function inequality, and sharp Lp-to-Lq bound including extended exponent endpoints. |
+| Def. 11.24; Props. 11.26–11.28; Gaussian LogSob | `OrnsteinUhlenbeck`: strong L2 generator relation/domain, differential expression, all-correlation commutation, correlation/time differentiation, integration by parts and log-Sobolev, with entropy integrability. No unspecified operator domain. |
+| Defs. 11.29, 11.32, 11.34; Props. 11.30–11.40 | `HermiteDefinitions` normalizes Mathlib's existing `Polynomial.hermite`. `Hermite` gives the generating-function bridge, product degree/monomial adapters, genuine L2 classes, orthonormality/completeness, unique expansion, degree truncations, mean/variance, coefficient transport and noise/generator spectra. Parseval is the `f=g` specialization of Plancherel. |
+| §11.3, balanced and general-volume Borell | `Borell`: full measurable-function stability inequality, the balanced bounded-function form, and all-angle nonnegative-correlation rotation forms. The existing proved grid-angle bound remains independent. |
+| Def. 11.48, relaxation and attainment; (11.13)–(11.14) | `SurfaceRelaxation`: smooth [0,1] sequences with L2 partial derivatives, L1 indicator convergence, infimum of lower limiting Euclidean gradient integrals, equality with rotation perimeter, and attainment by the existing averaged indicators. |
+| §11.4, regular boundary comparison | `SurfaceRelaxation`: symmetric Euclidean frontier tubes via `EuclideanSpace` and extended distance (empty frontier handled correctly). The source's informal convex-union regularity is interpreted as **finite disjoint unions of closed full-dimensional convex sets**, explicitly approved by the user. Arbitrary infinite unions can violate the formula. |
+| Example 11.50 | `SurfaceExamples`: disjoint intervals, centered-ball chi-density formula, translated-ball bound, convex dimension upper/lower bounds, halfspace-count upper/lower bounds, convex cones and arbitrary-polynomial PTF upper/sharpness bounds. Cone means **convex cone**, explicitly approved by the user; unrestricted nonconvex cones violate the stated bound. PTF sharpness means arbitrary approach, not false exact attainment. |
+| §11.4, Gaussian Bobkov | `SurfaceRelaxation`: finite-L2-gradient smooth inequality extends the already proved bounded-Lipschitz-derivative form without replacing it. |
+| Claim 11.54 | `Bobkov/Walk`: a genuine Mathlib submartingale statement with the absorbed fair walk specified by adapted lattice paths and its conditional transition law for bounded continuous tests. This source-proof branch has a `sorry`; the existing Bobkov proofs do not depend on it. |
+| Def. 11.57 | Reuse Mathlib `Metric.infDist` for distance to a nonempty interval; no duplicate interval-distance definition. |
+| §11.5, sum invariance; Variant Berry–Esseen; Prop. 11.58; Cors. 11.59, 11.61–11.62 | `SumInvariance`: independent arbitrary-mean families on separate spaces, exact matching first/second moments and C3 constant 1/6, exact Gaussian third-moment factor, full single-approximator C∞ smoothing, Lipschitz, Lévy and Kolmogorov bounds. The classical stronger `berryEsseen` and `kolmogorovDistance` are reused from `ThresholdFunctions.Gaussian`. |
+| Remark 11.66; Cor. 11.69 | `InvarianceExtensions`: reuse `IsHypercontractive`, existing polynomial evaluation, truncations and noisy influence. Exact C3 estimate; **real** degree cutoff via natural floor; tail and no-notables consequences with the source's ε≤1 and δ≤1/20. |
+| Cor. 11.70; Carbery–Wright; Thm. 11.71 | `InvarianceExtensions`: both Lévy estimates. `Anticoncentration`: arbitrary `MvPolynomial` small-ball bound and multilinear CDF comparison with variance **equal** to one. No multilinear restriction on Carbery–Wright. |
+| §11.7, general-volume MIS (11.39) | `MajorityIsStablest`: quantitative no-notables and ordinary-influence forms with a correlation-independent universal constant. The asymptotic range is explicitly ε≤exp(-2); letting ε approach exp(-1) would make the displayed log-log error spuriously vanish. Existing qualitative balanced MIS is not duplicated. |
+| §11.7, (SDP), (11.34)–(11.36); Thm. 11.72; Ex. 11.73 | `MaxCutDefinitions` reuses `Hypercontractivity.WeightedDigraph`. `MaxCut` gives the analytic rounding and sharp threshold guarantees and exact five-cycle gap. `MaxCutAlgorithm` gives a **genuine polynomial-time binary transducer** with an explicit polynomial uniform seed schedule, retaining arbitrary fixed additive precision as required by the source's numerical-tolerance parenthesis. |
+| Thm. 11.74 | `UniqueGamesDefinitions` reuses the existing CNF binary codec, `CNF.numVars`, graph objective, machine-based `PolyTimeComputable` and class NP. Concrete permutation-table constraints, parsed nonempty inputs, disjoint promise hardness and UGC (0<ε<1/2). `UniqueGames` states proper-gap conditional hardness and the source's arbitrary-positive-loss version for **every separating language**. Overlapping thresholds admit no separator, not a vacuous constant-map hardness certificate. |
+| Final §11.7 Condorcet application | `Condorcet`: reuse `ArrowTheorem.Profile`, three vote projections and the uniform finite law; small-influence rationality upper bound and majority's attaining limit, without adding oddness or unbiasedness to the first statement. |
 
-External libraries are **reuse/integration targets**, not imports already available in
-this Lean 4.25.0 environment. Changing the toolchain or adding dependencies needs a
-separate request. Incompatible upstream availability is not a reason to copy a theorem
-into another `sorry` skeleton.
+### Internal duplication boundary
+
+The audit searched the current `TCSlib/BooleanAnalysis` sources and inspected the
+relevant contracts, not merely names. Reused statements remain in their existing
+files even when their proofs are `sorry`: classical Berry–Esseen, scalar Sheppard,
+majority stability limits and qualitative balanced MIS. The new quarter-power
+Berry–Esseen consequence and quantitative/general-volume MIS have distinct source
+contracts. Existing Fourier polynomial coefficients, evaluation, degree, norms,
+variance, influence, truncations, noisy influence, reasonability/hypercontractivity,
+Gaussian projections, indicator smoothing and voting models are consumed directly.
+No existing proof or theorem signature was replaced or filled.
+
+External source-inspection overlap is allowed here; external libraries remain
+**uninstalled reuse references**, not dependencies. There are no toolchain or
+package changes. The new code follows OD14 directly and does not incorporate
+external source code or proof architectures.
+
+### Remaining work
+
+The new statement layer has **110 intentionally unproved theorem obligations**.
+It is not proof certification of the whole chapter. Exercises/historical notes
+are not added as a separate problem collection. The two approved geometric
+interpretations and the explicit asymptotic/finite-precision/promise conventions
+above delimit the mathematical contracts. Approved proofmatch source certificates
+and blueprint `\leanok` markers have not been fabricated.
 
 ## Validation
 

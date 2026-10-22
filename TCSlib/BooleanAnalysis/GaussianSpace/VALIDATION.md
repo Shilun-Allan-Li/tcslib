@@ -1,5 +1,96 @@
 # Chapter 11 validation record
 
+## Main-text statement-layer extension (2026-10-18)
+
+This record supersedes the historical statement-scope descriptions below.
+The extension adds **19 modules, 53 definitions/structures, one decidability
+instance, and 110 theorem/lemma obligations**. Every new theorem body is exactly
+`sorry`; none of the earlier proof obligations was filled, and all existing
+theorem signatures and proof bodies are unchanged. Definitions have concrete
+bodies. `hermiteL2` uses the explicitly unproved L²-membership obligation to
+transport the already concrete polynomial to the existing Lp quotient.
+
+### Completed language-server checks
+
+All 19 new Lean files completed with `partial: false`, `timed_out: false`,
+`success: true`, zero errors and no failed dependencies. The only warnings
+are exactly the intended theorem-level `sorry` warnings:
+
+| File relative to GaussianSpace/ | Errors | Intended sorry warnings |
+| --- | ---: | ---: |
+| `NoiseDefinitions.lean` | 0 | 0 |
+| `Noise.lean` | 0 | 23 |
+| `OrnsteinUhlenbeck.lean` | 0 | 9 |
+| `HermiteDefinitions.lean` | 0 | 0 |
+| `Hermite.lean` | 0 | 21 |
+| `Borell.lean` | 0 | 6 |
+| `SurfaceRelaxation.lean` | 0 | 4 |
+| `SurfaceExamples.lean` | 0 | 10 |
+| `SumInvariance.lean` | 0 | 6 |
+| `InvarianceExtensions.lean` | 0 | 5 |
+| `Anticoncentration.lean` | 0 | 2 |
+| `MajorityIsStablest.lean` | 0 | 2 |
+| `MaxCutDefinitions.lean` | 0 | 0 |
+| `MaxCut.lean` | 0 | 9 |
+| `UniqueGamesDefinitions.lean` | 0 | 0 |
+| `UniqueGames.lean` | 0 | 8 |
+| `MaxCutAlgorithm.lean` | 0 | 2 |
+| `Condorcet.lean` | 0 | 2 |
+| `Bobkov/Walk.lean` | 0 | 1 |
+
+The GaussianSpace facade also completed with no errors or warnings and no
+failed dependencies. Every new file is explicitly imported by the facade;
+`TCSlib.lean` already imports that facade. The local module graph is acyclic.
+
+### Trust boundary
+
+Fresh language-server axiom checks report only `propext`,
+`Classical.choice` and `Quot.sound` for:
+
+- `gaussianNoise`;
+- `normalizedHermitePolynomial`;
+- `UniqueGames.UniqueGamesConjecture` (a definition of the conjecture, not an assertion);
+- the previously proved `gaussian_isoperimetric`.
+
+The new `borell` and `UniqueGames.maxCut_ug_hard` statements report those
+standard axioms **and intentional `sorryAx`**, as expected for this request.
+No new axioms, unsafe declarations, admissions, or temporary axiom-print
+commands were introduced. This is checked statement scaffolding, not kernel
+proof certification of the new results or a from-clean project build.
+
+### Independent semantic review and source coverage
+
+A separate read-only semantic reviewer compared the contracts and definitions
+with the main-text chapter and the current BooleanAnalysis library. Final review
+found no unresolved false statements, vacuous hypotheses, unintended weakening
+or internal duplication. This is model judgment, separate from Lean evidence.
+
+The review caught and corrected an invalid small-influence range near exp(-1)
+in the logarithmic MIS formula, and overlapping-promise triviality in an initial
+hardness contract. The final MIS range is ε≤exp(-2); promise hardness requires
+disjoint languages, while an unrestricted-positive-loss separating-language
+theorem preserves the full source formulation. The user explicitly approved
+convex cones and finite disjoint closed full-dimensional convex unions as the
+precise geometric interpretations. Finite-precision polynomial-time algorithms
+retain arbitrary fixed additive error rather than claiming exact real arithmetic
+in finite time. See `COVERAGE.md` for the complete theorem-to-module and reuse map.
+
+### Hygiene and preservation
+
+- `scripts/style_lint.py`: **0 findings in all 20 touched Lean files**.
+- `git diff --check` and direct whitespace checks of untracked files: passed.
+- Source audit: **110 new theorem declarations and exactly 110 `:= sorry` bodies**;
+  no theorem has a constructed proof.
+- All new declaration docstrings contain source attribution and matching proof plans.
+- Existing Gaussian laws, Hermites, Lp spaces, Fourier polynomials, evaluation,
+  variance, influence, truncations, noisy influence, graph model, voting model,
+  binary codec and polynomial-time computation definitions are reused.
+- No toolchain/dependency changes, shell Lean/build commands, source-reference
+  extraction changes, blueprint theorem certificates or proof-completion markers.
+
+## Historical validation records
+
+
 The opening sections record the original 2026-10-14 skeleton. The completion
 records below give the later proof and verification status.
 

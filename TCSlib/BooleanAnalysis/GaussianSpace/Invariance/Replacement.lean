@@ -22,7 +22,9 @@ The existing polynomial evaluation and moment hypotheses are reused.
 ## Main results
 
 * `independent_affine_integral`: integrate a scalar input separately from its background.
-* `independent_affine_replacement_bound`: integrate the scalar replacement error.
+* `independent_affine_comparison_bound`: integrate a pointwise affine comparison.
+* `independent_affine_replacement_bound`: integrate the fourth-order replacement error.
+* `independent_affine_replacement_bound_c3`: integrate the third-order replacement error.
 * `single_coordinate_replacement_bound`: the polynomial replacement estimate in terms of influence.
 
 ## References
@@ -84,6 +86,46 @@ theorem independent_affine_integral
         rw [integral_prod f hfint]
         exact integral_congr_ae (Filter.Eventually.of_forall hi)
 
+/-- A pointwise scalar comparison over an independent affine background can be
+integrated against the background law. This is technical Fubini glue.
+
+**Proof sketch.** Independence writes each expectation as an integral over the
+common background law. Apply the integral triangle inequality and integrate the
+scalar comparison, then pull the bound back to the original probability space. -/
+theorem independent_affine_comparison_bound
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (A D U V : Ω → ℝ)
+    (hAD : AEMeasurable (fun ω => (A ω, D ω)) μ)
+    (hU : AEMeasurable U μ) (hV : AEMeasurable V μ)
+    (hUAD : IndepFun U (fun ω => (A ω, D ω)) μ)
+    (hVAD : IndepFun V (fun ω => (A ω, D ω)) μ)
+    (ψ : ℝ → ℝ) (hψ : Continuous ψ)
+    (hψU : Integrable (fun ω => ψ (A ω + D ω * U ω)) μ)
+    (hψV : Integrable (fun ω => ψ (A ω + D ω * V ω)) μ)
+    (B : ℝ × ℝ → ℝ) (hB : Measurable B)
+    (hBAD : Integrable (fun ω => B (A ω, D ω)) μ)
+    (hscalar : ∀ z : ℝ × ℝ,
+      |(∫ ω, ψ (z.1 + z.2 * U ω) ∂μ) -
+        (∫ ω, ψ (z.1 + z.2 * V ω) ∂μ)| ≤ B z) :
+    |(∫ ω, ψ (A ω + D ω * U ω) ∂μ) -
+      (∫ ω, ψ (A ω + D ω * V ω) ∂μ)| ≤
+      ∫ ω, B (A ω, D ω) ∂μ := by
+  obtain ⟨hIU, eU⟩ :=
+    independent_affine_integral A D U hAD hU hUAD ψ hψ hψU
+  obtain ⟨hIV, eV⟩ :=
+    independent_affine_integral A D V hAD hV hVAD ψ hψ hψV
+  have hbound : Integrable B (μ.map (fun ω => (A ω, D ω))) :=
+    (integrable_map_measure hB.aestronglyMeasurable hAD).mpr hBAD
+  rw [eU, eV, ← integral_sub hIU hIV]
+  calc
+    _ ≤ ∫ z : ℝ × ℝ,
+        |(∫ ω, ψ (z.1 + z.2 * U ω) ∂μ) -
+          (∫ ω, ψ (z.1 + z.2 * V ω) ∂μ)|
+          ∂(μ.map (fun ω => (A ω, D ω))) := abs_integral_le_integral_abs
+    _ ≤ ∫ z : ℝ × ℝ, B z ∂(μ.map (fun ω => (A ω, D ω))) :=
+      integral_mono_ae (hIU.sub hIV).abs hbound (Filter.Eventually.of_forall hscalar)
+    _ = _ := integral_map hAD hB.aestronglyMeasurable
+
 /-- Replacing an input independent of a shared affine background changes the
 expected test by at most `3C/4` times the fourth moment of its random coefficient.
 [OD14, §11.6, proof of the Basic Invariance Principle (11.29)]
@@ -109,27 +151,52 @@ theorem independent_affine_replacement_bound
       (3 * C / 4) * (∫ ω, D ω ^ 4 ∂μ) := by
   have hAD :=
     hA.aestronglyMeasurable.aemeasurable.prodMk hD.aestronglyMeasurable.aemeasurable
-  obtain ⟨hIU, eU⟩ := independent_affine_integral A D U hAD
-    hU.reasonable.memLp.aestronglyMeasurable.aemeasurable hUAD ψ hψ.continuous hψU
-  obtain ⟨hIV, eV⟩ := independent_affine_integral A D V hAD
-    hV.reasonable.memLp.aestronglyMeasurable.aemeasurable hVAD ψ hψ.continuous hψV
   have hD4 : Integrable (fun ω => D ω ^ 4) μ := by
     simpa using Hypercontractivity.integrable_mul_pow_of_memLp
       (p := 4) (a := 4) (b := 0) hD hD (by omega)
-  have hbound : Integrable (fun z : ℝ × ℝ => (3 * C / 4) * z.2 ^ 4)
-      (μ.map (fun ω => (A ω, D ω))) :=
-    (integrable_map_measure (by fun_prop) hAD).mpr (hD4.const_mul (3 * C / 4))
-  rw [eU, eV, ← integral_sub hIU hIV]
-  calc
-    _ ≤ ∫ z : ℝ × ℝ,
-        |(∫ ω, ψ (z.1 + z.2 * U ω) ∂μ) - (∫ ω, ψ (z.1 + z.2 * V ω) ∂μ)|
-          ∂(μ.map (fun ω => (A ω, D ω))) := abs_integral_le_integral_abs
-    _ ≤ ∫ z : ℝ × ℝ, (3 * C / 4) * z.2 ^ 4
-          ∂(μ.map (fun ω => (A ω, D ω))) :=
-      integral_mono_ae (hIU.sub hIV).abs hbound (Filter.Eventually.of_forall fun z =>
-        affine_replacement_bound U V hU hV ψ hψ C hC0 hC z.1 z.2)
-    _ = _ := by
-      rw [integral_const_mul, integral_map hAD (by fun_prop)]
+  simpa only [integral_const_mul] using independent_affine_comparison_bound A D U V
+    hAD hU.reasonable.memLp.aestronglyMeasurable.aemeasurable
+    hV.reasonable.memLp.aestronglyMeasurable.aemeasurable hUAD hVAD
+    ψ hψ.continuous hψU hψV (fun z : ℝ × ℝ => (3 * C / 4) * z.2 ^ 4)
+    (by fun_prop) (hD4.const_mul (3 * C / 4))
+    (fun z => affine_replacement_bound U V hU hV ψ hψ C hC0 hC z.1 z.2)
+
+/-- Independent scalar inputs with matching first two moments satisfy a
+third-order comparison over a common affine background.
+[OD14, §11.5, Invariance Principle for Sums; Remark 11.66]
+
+**Proof sketch.** Factor out the background law and apply scalar quadratic
+Taylor replacement. Integrate the third absolute moment of the random coefficient. -/
+theorem independent_affine_replacement_bound_c3
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (A D U V : Ω → ℝ)
+    (hAD : AEMeasurable (fun ω => (A ω, D ω)) μ)
+    (hD : MemLp D 3 μ) (hU : MemLp U 3 μ) (hV : MemLp V 3 μ)
+    (hmean : (∫ ω, U ω ∂μ) = ∫ ω, V ω ∂μ)
+    (hsecond : (∫ ω, U ω ^ 2 ∂μ) = ∫ ω, V ω ^ 2 ∂μ)
+    (hUAD : IndepFun U (fun ω => (A ω, D ω)) μ)
+    (hVAD : IndepFun V (fun ω => (A ω, D ω)) μ)
+    (ψ : ℝ → ℝ) (hψ : ContDiff ℝ 3 ψ)
+    (C : ℝ) (hC : ∀ t, |iteratedDeriv 3 ψ t| ≤ C)
+    (hψU : Integrable (fun ω => ψ (A ω + D ω * U ω)) μ)
+    (hψV : Integrable (fun ω => ψ (A ω + D ω * V ω)) μ) :
+    |(∫ ω, ψ (A ω + D ω * U ω) ∂μ) -
+      (∫ ω, ψ (A ω + D ω * V ω) ∂μ)| ≤
+      (C / 6) * ((∫ ω, |U ω| ^ 3 ∂μ) + ∫ ω, |V ω| ^ 3 ∂μ) *
+        (∫ ω, |D ω| ^ 3 ∂μ) := by
+  let K := (C / 6) * ((∫ ω, |U ω| ^ 3 ∂μ) + ∫ ω, |V ω| ^ 3 ∂μ)
+  have hD3 : Integrable (fun ω => |D ω| ^ 3) μ := by
+    simpa only [Real.norm_eq_abs] using hD.integrable_norm_pow'
+  simpa only [integral_const_mul] using independent_affine_comparison_bound A D U V
+    hAD hU.aestronglyMeasurable.aemeasurable hV.aestronglyMeasurable.aemeasurable
+    hUAD hVAD ψ hψ.continuous hψU hψV
+    (fun z : ℝ × ℝ => K * |z.2| ^ 3) (by fun_prop) (hD3.const_mul K)
+    (fun z => by
+      calc
+        _ ≤ (C / 6) * |z.2| ^ 3 *
+            ((∫ ω, |U ω| ^ 3 ∂μ) + ∫ ω, |V ω| ^ 3 ∂μ) :=
+          affine_replacement_bound_c3 U V hU hV hmean hsecond ψ hψ C hC z.1 z.2
+        _ = _ := by dsimp [K]; ring)
 
 /-- Replacing one coordinate between independent input families that agree on
 the other coordinates changes the test expectation by at most
@@ -159,12 +226,9 @@ theorem single_coordinate_replacement_bound
   classical
   let A := evalMultilinearRV (Invariance.coordinateFree F i) X
   let D := evalMultilinearRV (Invariance.coordinateDerivative F i) X
-  have hAeq : A = evalMultilinearRV (Invariance.coordinateFree F i) Y :=
-    MultilinearMoments.eval_eq_of_off_coordinate _ i X Y
-      (fun S hi => by simp [Invariance.coordinateFree, hi]) hXY
-  have hDeq : D = evalMultilinearRV (Invariance.coordinateDerivative F i) Y :=
-    MultilinearMoments.eval_eq_of_off_coordinate _ i X Y
-      (fun S hi => by simp [Invariance.coordinateDerivative_coeff, hi]) hXY
+  obtain ⟨hAeq, hDeq⟩ := Invariance.coordinate_parts_eq_of_off_coordinate F i X Y hXY
+  change A = evalMultilinearRV (Invariance.coordinateFree F i) Y at hAeq
+  change D = evalMultilinearRV (Invariance.coordinateDerivative F i) Y at hDeq
   have hsplitX : evalMultilinearRV F X = fun ω => A ω + D ω * X i ω := by
     funext ω
     simpa only [A, D, mul_comm] using Invariance.eval_coordinate_split F i X ω

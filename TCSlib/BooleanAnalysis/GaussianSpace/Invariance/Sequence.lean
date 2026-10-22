@@ -25,7 +25,11 @@ set_option autoImplicit false
 * `Invariance.hybridInput_zero`: the initial hybrid is the left family.
 * `Invariance.hybridInput_all`: the terminal hybrid is the right family.
 * `Invariance.hybridInput_succ_off`: consecutive hybrids agree away from the replaced coordinate.
-* `Invariance.invariance_of_independent_pair`: the sum of the coordinate replacement bounds.
+* `Invariance.hybrid_expectation_bound`: sum arbitrary coordinate replacement bounds.
+* `Invariance.invariance_of_independent_pair`: the fourth-order replacement estimate.
+* `Invariance.independent_input_coupling`: mutually independent copies of marginal laws.
+* `Invariance.independent_polynomial_coupling`: copies preserving polynomial output laws.
+* `Invariance.identDistrib_evalMultilinearRV`: transport polynomial output laws.
 * `Invariance.identDistrib_of_independent_coordinates`: transport independent vectors by their laws.
 
 ## References
@@ -81,6 +85,30 @@ lemma hybridInput_succ_off {n : ℕ} {Ω : Type*}
   have hlt : j.val < i.val ↔ j.val < i.val + 1 := by omega
   simp only [hybridInput, hybridIndex, hlt]
 
+/-- Bounds for successive coordinate replacements sum to a bound for the two
+endpoint expectations. [OD14, §11.6, replacement argument]
+
+**Proof sketch.** Apply the triangle inequality along the finite hybrid sequence. -/
+theorem hybrid_expectation_bound
+    {n : ℕ} {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    (F : MultilinearPolynomial n) (Z : (Fin n ⊕ Fin n) → Ω → ℝ)
+    (ψ : ℝ → ℝ) (B : Fin n → ℝ)
+    (hstep : ∀ i : Fin n,
+      |(∫ ω, ψ (evalMultilinearRV F (hybridInput Z i.val) ω) ∂μ) -
+        ∫ ω, ψ (evalMultilinearRV F (hybridInput Z (i.val + 1)) ω) ∂μ| ≤ B i) :
+    |(∫ ω, ψ (evalMultilinearRV F (fun i => Z (Sum.inl i)) ω) ∂μ) -
+      ∫ ω, ψ (evalMultilinearRV F (fun i => Z (Sum.inr i)) ω) ∂μ| ≤ ∑ i, B i := by
+  let P : ℕ → ℝ := fun r => ∫ ω, ψ (evalMultilinearRV F (hybridInput Z r) ω) ∂μ
+  calc
+    _ = dist (P 0) (P n) := by
+      simp only [P, hybridInput_zero, hybridInput_all, Real.dist_eq]
+    _ ≤ ∑ r ∈ Finset.range n, dist (P r) (P (r + 1)) :=
+      dist_le_range_sum_dist P n
+    _ = ∑ i : Fin n, dist (P i.val) (P (i.val + 1)) :=
+      (Fin.sum_univ_eq_sum_range (fun r => dist (P r) (P (r + 1))) n).symm
+    _ ≤ ∑ i : Fin n, B i :=
+      Finset.sum_le_sum fun i _ => by simpa only [P, Real.dist_eq] using hstep i
+
 /-- The invariance estimate for two input families drawn from a single mutually
 independent family containing both copies of the coordinates.
 [OD14, §11.6, replacement argument proving (11.29)]
@@ -111,30 +139,51 @@ theorem invariance_of_independent_pair
       simp only [hconst, sub_self, abs_zero]
       positivity
   | succ k =>
-      let P : ℕ → ℝ := fun r => ∫ ω, ψ (evalMultilinearRV F (hybridInput Z r) ω) ∂μ
       have hI (r : ℕ) : iIndepFun (hybridInput Z r) μ :=
         iIndepFun.precomp (f := Z) (g := hybridIndex r) (hybridIndex_injective r) hIZ
-      have hstep (i : Fin n) :
-          dist (P i.val) (P (i.val + 1)) ≤
+      calc
+        _ ≤ ∑ i : Fin n,
             (C / 12) * (9 : ℝ) ^ (k + 1) * (influence i F.eval) ^ 2 := by
-        simpa only [P, Real.dist_eq] using
-          single_coordinate_replacement_bound F hdegree i
+          apply hybrid_expectation_bound
+          intro i
+          exact single_coordinate_replacement_bound F hdegree i
             (hybridInput Z i.val) (hybridInput Z (i.val + 1))
             (hI i.val) (hI (i.val + 1))
             (fun j => hZ (hybridIndex i.val j))
             (fun j => hZ (hybridIndex (i.val + 1) j))
             (fun j hji => hybridInput_succ_off Z i j hji) ψ hψ C hC0 hC
-      calc
-        _ = dist (P 0) (P n) := by
-          simp only [P, hybridInput_zero, hybridInput_all, Real.dist_eq]
-        _ ≤ ∑ r ∈ Finset.range n, dist (P r) (P (r + 1)) :=
-          dist_le_range_sum_dist P n
-        _ = ∑ i : Fin n, dist (P i.val) (P (i.val + 1)) :=
-          (Fin.sum_univ_eq_sum_range (fun r => dist (P r) (P (r + 1))) n).symm
-        _ ≤ ∑ i : Fin n,
-            (C / 12) * (9 : ℝ) ^ (k + 1) * (influence i F.eval) ^ 2 :=
-          Finset.sum_le_sum fun i _ => hstep i
         _ = _ := by rw [Finset.mul_sum]
+
+/-- Two finite real input families admit mutually independent copies preserving
+all coordinate laws. This is the independent coupling in [OD14, §11.6, proof of (11.29)].
+
+**Proof sketch.** Take the product of all coordinate marginal laws. Its evaluation
+maps are independent and each has its prescribed marginal distribution. -/
+theorem independent_input_coupling
+    {ι Ω Ξ : Type*} [Fintype ι]
+    [MeasurableSpace Ω] [MeasurableSpace Ξ]
+    {μ : Measure Ω} {ν : Measure Ξ}
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
+    (X : ι → Ω → ℝ) (Y : ι → Ξ → ℝ)
+    (hX : ∀ i, AEMeasurable (X i) μ) (hY : ∀ i, AEMeasurable (Y i) ν) :
+    ∃ (κ : Measure ((ι ⊕ ι) → ℝ)) (_ : IsProbabilityMeasure κ)
+      (Z : (ι ⊕ ι) → ((ι ⊕ ι) → ℝ) → ℝ),
+      iIndepFun Z κ ∧ (∀ i, IdentDistrib (X i) (Z (Sum.inl i)) μ κ) ∧
+        (∀ i, IdentDistrib (Y i) (Z (Sum.inr i)) ν κ) := by
+  let laws : ι ⊕ ι → Measure ℝ :=
+    Sum.elim (fun i => μ.map (X i)) (fun i => ν.map (Y i))
+  haveI (a : ι ⊕ ι) : IsProbabilityMeasure (laws a) := by
+    cases a with
+    | inl i => exact Measure.isProbabilityMeasure_map (hX i)
+    | inr i => exact Measure.isProbabilityMeasure_map (hY i)
+  refine ⟨Measure.pi laws, inferInstance, fun a z => z a, ?_, ?_, ?_⟩
+  · exact iIndepFun_pi (μ := laws) (X := fun _ => id) (fun _ => aemeasurable_id)
+  · intro i
+    exact ⟨hX i, (measurable_pi_apply _).aemeasurable,
+      (measurePreserving_eval laws (Sum.inl i)).map_eq.symm⟩
+  · intro i
+    exact ⟨hY i, (measurable_pi_apply _).aemeasurable,
+      (measurePreserving_eval laws (Sum.inr i)).map_eq.symm⟩
 
 /-- Independent finite real vectors with the same coordinate laws have the same
 joint law. This is the independent-coupling transport used in
@@ -160,5 +209,41 @@ theorem identDistrib_of_independent_coordinates
   congr 1
   funext i
   exact (hXY i).map_eq
+
+/-- Polynomial evaluations of independent input families with the same marginal
+laws have the same distribution. [OD14, §11.6, independent coupling argument] -/
+theorem identDistrib_evalMultilinearRV
+    {n : ℕ} {Ω Ξ : Type*} [MeasurableSpace Ω] [MeasurableSpace Ξ]
+    {μ : Measure Ω} {ν : Measure Ξ}
+    [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
+    (F : MultilinearPolynomial n) (X : Fin n → Ω → ℝ) (Y : Fin n → Ξ → ℝ)
+    (hIX : iIndepFun X μ) (hIY : iIndepFun Y ν)
+    (hXY : ∀ i, IdentDistrib (X i) (Y i) μ ν) :
+    IdentDistrib (evalMultilinearRV F X) (evalMultilinearRV F Y) μ ν := by
+  exact (identDistrib_of_independent_coordinates X Y hIX hIY hXY).comp
+    (show Measurable (fun z : Fin n → ℝ =>
+      ∑ S : Finset (Fin n), F S * ∏ i ∈ S, z i) by fun_prop)
+
+/-- Independent copies preserve both marginal input laws and the two polynomial
+output laws. [OD14, §11.6, coupling in the invariance proof] -/
+theorem independent_polynomial_coupling
+    {n : ℕ} {Ω Ξ : Type*} [MeasurableSpace Ω] [MeasurableSpace Ξ]
+    {μ : Measure Ω} {ν : Measure Ξ} [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
+    (F : MultilinearPolynomial n) (X : Fin n → Ω → ℝ) (Y : Fin n → Ξ → ℝ)
+    (hIX : iIndepFun X μ) (hIY : iIndepFun Y ν)
+    (hX : ∀ i, AEMeasurable (X i) μ) (hY : ∀ i, AEMeasurable (Y i) ν) :
+    ∃ (κ : Measure ((Fin n ⊕ Fin n) → ℝ)) (_ : IsProbabilityMeasure κ)
+      (Z : (Fin n ⊕ Fin n) → ((Fin n ⊕ Fin n) → ℝ) → ℝ),
+      iIndepFun Z κ ∧ (∀ i, IdentDistrib (X i) (Z (Sum.inl i)) μ κ) ∧
+        (∀ i, IdentDistrib (Y i) (Z (Sum.inr i)) ν κ) ∧
+        IdentDistrib (evalMultilinearRV F X) (evalMultilinearRV F (fun i => Z (Sum.inl i))) μ κ ∧
+        IdentDistrib (evalMultilinearRV F Y) (evalMultilinearRV F (fun i => Z (Sum.inr i))) ν κ := by
+  obtain ⟨κ, hκ, Z, hIZ, hL, hR⟩ := independent_input_coupling X Y hX hY
+  letI := hκ
+  refine ⟨κ, hκ, Z, hIZ, hL, hR, ?_, ?_⟩
+  · exact identDistrib_evalMultilinearRV F X (fun i => Z (Sum.inl i))
+      hIX (iIndepFun.precomp (f := Z) (g := Sum.inl) Sum.inl_injective hIZ) hL
+  · exact identDistrib_evalMultilinearRV F Y (fun i => Z (Sum.inr i))
+      hIY (iIndepFun.precomp (f := Z) (g := Sum.inr) Sum.inr_injective hIZ) hR
 
 end BooleanAnalysis.GaussianSpace.Invariance

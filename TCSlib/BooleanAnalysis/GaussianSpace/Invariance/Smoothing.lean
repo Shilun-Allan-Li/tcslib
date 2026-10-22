@@ -24,6 +24,7 @@ set_option autoImplicit false
 ## Main results
 
 * `Invariance.intervalSmooth_hasDerivAt`: averaging differentiates to an endpoint difference.
+* `Invariance.intervalSmooth_iterate_exists_value`: localization of averaged values.
 * `Invariance.intervalSmooth_iterate_bounds`: regularity and quantitative bounds for repeated
   averaging.
 * `Invariance.exists_contDiff_four_approx`: a Lipschitz test has a quantitative `C⁴`
@@ -93,6 +94,43 @@ theorem contDiff_intervalSmooth {η : ℝ} (hη : 0 < η) {ψ : ℝ → ℝ}
     funext fun x => (intervalSmooth_hasDerivAt hη hψ.continuous x).deriv
   rw [hderiv]
   exact ((hψ.comp (contDiff_id.add contDiff_const)).sub hψ).div_const η
+
+/-- Any finite number of positive-width interval averages preserves continuity.
+This is technical regularity glue for smooth cutoffs. -/
+theorem continuous_intervalSmooth_iterate {η : ℝ} (hη : 0 < η)
+    {ψ : ℝ → ℝ} (hψ : Continuous ψ) (m : ℕ) :
+    Continuous (((intervalSmooth η)^[m]) ψ) := by
+  induction m with
+  | zero => simpa using hψ
+  | succ m ih =>
+    rw [Function.iterate_succ_apply']
+    exact (contDiff_intervalSmooth hη 0 (contDiff_zero.mpr ih)).continuous
+
+/-- Repeated interval averaging of a continuous real function equals one of
+its values within the interval covered by the averaging steps.
+[OD14, Cor. 11.70 (proof), interval-average adaptation]
+
+**Proof sketch.** Each average equals a value at an interior point by the mean
+value theorem for integrals. Inductively combine the positions of these points. -/
+theorem intervalSmooth_iterate_exists_value
+    {η : ℝ} (hη : 0 < η) {ψ : ℝ → ℝ} (hψ : Continuous ψ)
+    (m : ℕ) (x : ℝ) :
+    ∃ y ∈ Set.Icc x (x + (m : ℝ) * η), (((intervalSmooth η)^[m]) ψ) x = ψ y := by
+  induction m generalizing x with
+  | zero => exact ⟨x, by simp, by simp⟩
+  | succ m ih =>
+    rw [Function.iterate_succ_apply']
+    obtain ⟨t, ht, he⟩ := exists_eq_interval_average
+      (f := fun s => (((intervalSmooth η)^[m]) ψ) (x + s)) (ne_of_lt hη)
+      ((continuous_intervalSmooth_iterate hη hψ m).comp
+        (continuous_const.add continuous_id)).continuousOn
+    rw [Set.uIoo_of_lt hη] at ht
+    obtain ⟨y, hy, hval⟩ := ih (x + t)
+    refine ⟨y, ⟨by linarith [hy.1, ht.1], ?_⟩, ?_⟩
+    · push_cast
+      nlinarith [hy.2, ht.2]
+    · change (⨍ s in 0..η, (((intervalSmooth η)^[m]) ψ) (x + s)) = ψ y
+      rw [← he, hval]
 
 /-- The `(m+1)`st derivative of an interval average is the normalized difference of
 the `m`th derivatives at its endpoints.

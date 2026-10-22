@@ -27,6 +27,7 @@ No new definitions are exported.
 
 * `MultilinearPolynomial.fourierCoeff_eval`: the Fourier coefficients of `p.eval` are the
   coefficients of `p`.
+* `MultilinearPolynomial.eval_fourierCoeff`: evaluating Fourier coefficients recovers a function.
 * `MultilinearPolynomial.has_degree_at_most_eval`: coefficient degree bounds imply Fourier
   degree bounds for the evaluation.
 * `MultilinearPolynomial.innerProduct_eval_self` and `MultilinearPolynomial.innerProduct_eval`:
@@ -55,6 +56,22 @@ variable {n : ℕ} (p : MultilinearPolynomial n)
 @[simp]
 lemma fourierCoeff_eval (S : Finset (Fin n)) : fourierCoeff p.eval S = p S :=
   DecisionTree.fourierCoeff_sum_chiS p S
+
+/-- Evaluating a function's Fourier coefficient polynomial recovers the function.
+[OD14, §1.4, Fourier inversion] -/
+@[simp]
+lemma eval_fourierCoeff (f : BooleanFunc n) :
+    MultilinearPolynomial.eval (fourierCoeff f : MultilinearPolynomial n) = f := by
+  funext x
+  exact (walsh_expansion f x).symm
+
+/-- Evaluation preserves subtraction of multilinear polynomials.
+[OD14, §1.4, linearity of Fourier expansion] -/
+@[simp]
+lemma eval_sub (F G : MultilinearPolynomial n) :
+    (F - G).eval = F.eval - G.eval := by
+  funext x
+  simp only [MultilinearPolynomial.eval, Pi.sub_apply, sub_mul, Finset.sum_sub_distrib]
 
 /-- A coefficient degree bound for a multilinear polynomial is also a Fourier degree
 bound for its evaluation. [OD14, §1.4, uniqueness of the Fourier expansion] -/

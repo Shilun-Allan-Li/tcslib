@@ -130,6 +130,20 @@ lemma coordinateDerivative_eval_sum {n : ℕ} {Ω : Type*}
   have hi : i ∉ T := (Finset.subset_erase.mp (Finset.mem_powerset.mp hT)).2
   simp [coordinateDerivative_coeff, hi]
 
+/-- Input families agreeing off a coordinate have identical coordinate-free and
+derivative evaluations at that coordinate. This is technical replacement glue. -/
+lemma coordinate_parts_eq_of_off_coordinate {n : ℕ} {Ω : Type*}
+    (F : MultilinearPolynomial n) (i : Fin n) (X Y : Fin n → Ω → ℝ)
+    (hXY : ∀ j, j ≠ i → X j = Y j) :
+    evalMultilinearRV (coordinateFree F i) X = evalMultilinearRV (coordinateFree F i) Y ∧
+      evalMultilinearRV (coordinateDerivative F i) X =
+        evalMultilinearRV (coordinateDerivative F i) Y := by
+  constructor
+  · exact MultilinearMoments.eval_eq_of_off_coordinate _ i X Y
+      (fun S hi => by simp [coordinateFree, hi]) hXY
+  · exact MultilinearMoments.eval_eq_of_off_coordinate _ i X Y
+      (fun S hi => by simp [coordinateDerivative_coeff, hi]) hXY
+
 /-- A multilinear polynomial is its coordinate-free part plus that input times
 its coordinate derivative, on arbitrary real inputs.
 [OD14, §11.6, proof of (11.29), coordinate decomposition] -/

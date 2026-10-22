@@ -8,10 +8,14 @@ import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 import TCSlib.BooleanAnalysis.GaussianSpace.Inputs
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Coordinates
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Moments
+import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Perturbation
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Replacement
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Sequence
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Smoothing
+import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Cutoff
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.Taylor
+import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.ThirdMoments
+import TCSlib.BooleanAnalysis.GaussianSpace.Invariance.ThirdOrder
 import TCSlib.BooleanAnalysis.Hypercontractivity.Cube.Basic
 
 set_option maxHeartbeats 0
@@ -25,10 +29,14 @@ set_option autoImplicit false
 
 * `Coordinates`: coordinate-free and derivative polynomial parts and their independence.
 * `Moments`: the polynomial and coordinate fourth-moment bounds from general-input Bonami.
+* `Perturbation`: Lipschitz expectation comparison from the polynomial L² distance.
 * `Taylor`: the cubic moment identities and scalar replacement estimate.
 * `Replacement`: the single-coordinate Taylor replacement bound.
 * `Sequence`: replacement telescoping and transport between independent input laws.
 * `Smoothing`: quantitative interval averaging and Lipschitz-test comparison.
+* `Cutoff`: smooth half-line cutoffs with explicit derivative bounds.
+* `ThirdMoments`: polynomial third-moment bounds for hypercontractive inputs.
+* `ThirdOrder`: single-coordinate and hybrid third-order replacement estimates.
 
 ## Main definitions
 
@@ -50,8 +58,8 @@ an irrelevant joint law on `X` and `Y`. The existing `IsBReasonable` and
 `evalMultilinearRV_memLp` infrastructure ensures finite fourth moments; a `C⁴` test with
 bounded fourth derivative has at most quartic growth, so the displayed expectations exist.
 
-This is the general-input `C⁴` theorem. The `C³` Boolean-to-Gaussian theorem already
-present in atlas-lean is recorded as an external dependency, not restated here.
+The third-order invariance principle and its extensions are stated in
+`GaussianSpace.InvarianceExtensions`, using the shared replacement infrastructure here.
 
 ## References
 
@@ -92,49 +100,18 @@ theorem basic_invariance_principle {n k : ℕ}
       (∫ ω, ψ (evalMultilinearRV F Y ω) ∂ν)| ≤
       (C / 12) * (9 : ℝ) ^ k * ∑ i : Fin n, (influence i F.eval) ^ 2 := by
   classical
-  let laws : Fin n ⊕ Fin n → Measure ℝ :=
-    Sum.elim (fun i => μ.map (X i)) (fun i => ν.map (Y i))
-  haveI (a : Fin n ⊕ Fin n) : IsProbabilityMeasure (laws a) := by
-    cases a with
-    | inl i =>
-        exact Measure.isProbabilityMeasure_map
-          (hX i).reasonable.memLp.aestronglyMeasurable.aemeasurable
-    | inr i =>
-        exact Measure.isProbabilityMeasure_map
-          (hY i).reasonable.memLp.aestronglyMeasurable.aemeasurable
-  let ρ := Measure.pi laws
-  let Z : (Fin n ⊕ Fin n) → ((Fin n ⊕ Fin n) → ℝ) → ℝ := fun a z => z a
-  have hIZ : iIndepFun Z ρ :=
-    iIndepFun_pi (μ := laws) (X := fun _ => id) (fun _ => aemeasurable_id)
-  have hL (i : Fin n) : IdentDistrib (X i) (Z (Sum.inl i)) μ ρ :=
-    { aemeasurable_fst := (hX i).reasonable.memLp.aestronglyMeasurable.aemeasurable
-      aemeasurable_snd := (measurable_pi_apply _).aemeasurable
-      map_eq := (measurePreserving_eval laws (Sum.inl i)).map_eq.symm }
-  have hR (i : Fin n) : IdentDistrib (Y i) (Z (Sum.inr i)) ν ρ :=
-    { aemeasurable_fst := (hY i).reasonable.memLp.aestronglyMeasurable.aemeasurable
-      aemeasurable_snd := (measurable_pi_apply _).aemeasurable
-      map_eq := (measurePreserving_eval laws (Sum.inr i)).map_eq.symm }
-  have hZ (a : Fin n ⊕ Fin n) : HasInvarianceMoments (Z a) ρ := by
+  obtain ⟨κ, hκ, Z, hIZ, hL, hR, hXL, hYR⟩ :=
+    Invariance.independent_polynomial_coupling F X Y hIX hIY
+    (fun i => (hX i).reasonable.memLp.aestronglyMeasurable.aemeasurable)
+    (fun i => (hY i).reasonable.memLp.aestronglyMeasurable.aemeasurable)
+  letI := hκ
+  have hZ (a : Fin n ⊕ Fin n) : HasInvarianceMoments (Z a) κ := by
     cases a with
     | inl i => exact (hX i).identDistrib (hL i)
     | inr i => exact (hY i).identDistrib (hR i)
-  have hXL := Invariance.identDistrib_of_independent_coordinates X (fun i => Z (Sum.inl i))
-    hIX (iIndepFun.precomp (f := Z) (g := Sum.inl) Sum.inl_injective hIZ) hL
-  have hYR := Invariance.identDistrib_of_independent_coordinates Y (fun i => Z (Sum.inr i))
-    hIY (iIndepFun.precomp (f := Z) (g := Sum.inr) Sum.inr_injective hIZ) hR
-  let f : (Fin n → ℝ) → ℝ := fun z =>
-    ψ (evalMultilinearRV F (fun i z => z i) z)
-  have hf : Measurable f := by
-    apply hψ.continuous.measurable.comp
-    change Measurable (fun z : Fin n → ℝ =>
-      ∑ S : Finset (Fin n), F S * ∏ i ∈ S, z i)
-    fun_prop
-  have eX : (∫ ω, ψ (evalMultilinearRV F X ω) ∂μ) =
-      ∫ z, ψ (evalMultilinearRV F (fun i => Z (Sum.inl i)) z) ∂ρ :=
-    (hXL.comp hf).integral_eq
-  have eY : (∫ ω, ψ (evalMultilinearRV F Y ω) ∂ν) =
-      ∫ z, ψ (evalMultilinearRV F (fun i => Z (Sum.inr i)) z) ∂ρ :=
-    (hYR.comp hf).integral_eq
+  have eX := (hXL.comp hψ.continuous.measurable).integral_eq
+  have eY := (hYR.comp hψ.continuous.measurable).integral_eq
+  simp only [Function.comp_def] at eX eY
   rw [eX, eY]
   exact Invariance.invariance_of_independent_pair F hdegree Z hIZ hZ ψ hψ C hC0 hC
 
@@ -173,7 +150,7 @@ theorem invariance_small_influences {n k : ℕ}
 
 **Proof sketch.** Check degrees zero and one directly. Starting at degree two,
 increasing the degree multiplies the factor by at most `16`. -/
-private theorem degree_mul_nine_pow_le_sixteen_pow (k : ℕ) :
+theorem degree_mul_nine_pow_le_sixteen_pow (k : ℕ) :
     (k : ℝ) * (9 : ℝ) ^ k ≤ (16 : ℝ) ^ k := by
   rcases k with _ | _ | k
   · norm_num

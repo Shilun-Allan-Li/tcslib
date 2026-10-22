@@ -26,6 +26,8 @@ fourth-order invariance moment predicate; it introduces no new input laws.
 * The standard Gaussian has second, third, and fourth moments one, zero, and three.
 * Standard Gaussian coordinates satisfy the fourth-order invariance hypotheses.
 * Mean-zero signs, including uniform Boolean signs, satisfy the same hypotheses.
+* Product-law coordinates preserve these hypotheses.
+* Uniform Boolean product integrals equal the existing cube expectation.
 
 These instances supply the input laws for the normalized-bit approximation in
 Gaussian Bobkov. Finite fourth moments are established separately from moment
@@ -127,6 +129,21 @@ lemma hasInvarianceMoments_standardGaussian :
       integral_second_standardGaussian]
   · simp [standardGaussianMeasure]
 
+/-- A measurable input satisfying the invariance moment assumptions retains
+them when evaluated at its coordinate under the product law.
+[OD14, Hyp. 11.65, independent input laws] -/
+lemma hasInvarianceMoments_pi_coordinate
+    {ι : Type*} [Fintype ι] {A : ι → Type*} [∀ i, MeasurableSpace (A i)]
+    (μ : ∀ i, Measure (A i)) [∀ i, IsProbabilityMeasure (μ i)]
+    (X : ∀ i, A i → ℝ) (hXm : ∀ i, Measurable (X i))
+    (hX : ∀ i, HasInvarianceMoments (X i) (μ i)) (i : ι) :
+    HasInvarianceMoments (fun x : ∀ i, A i => X i (x i)) (Measure.pi μ) := by
+  have hi : ProbabilityTheory.IdentDistrib (id : A i → A i)
+      (fun x : ∀ j, A j => x i) (μ i) (Measure.pi μ) :=
+    ⟨measurable_id.aemeasurable, (measurable_pi_apply i).aemeasurable,
+      by simpa only [Measure.map_id] using (measurePreserving_eval μ i).map_eq.symm⟩
+  exact (hX i).identDistrib (hi.comp (hXm i))
+
 /-- Any measurable, mean-zero random sign on a probability space satisfies the
 fourth-order invariance moment hypotheses. [OD14, Hyp. 11.65]
 
@@ -163,5 +180,46 @@ lemma hasInvarianceMoments_uniformBool :
       PMF.uniformOfFintype_apply, boolToSign]
   · intro b
     cases b <;> norm_num [boolToSign]
+
+/-- A standard Gaussian coordinate under its product law satisfies the
+invariance moment assumptions. [OD14, Hyp. 11.65] -/
+lemma hasInvarianceMoments_gaussianCoordinate {n : ℕ} (i : Fin n) :
+    HasInvarianceMoments (fun z : Fin n → ℝ => z i)
+      (Measure.pi fun _ : Fin n => standardGaussianMeasure) := by
+  letI : IsProbabilityMeasure standardGaussianMeasure :=
+    hasInvarianceMoments_standardGaussian.reasonable.probability
+  exact hasInvarianceMoments_pi_coordinate (fun _ : Fin n => standardGaussianMeasure)
+    (fun _ => id) (fun _ => measurable_id) (fun _ => hasInvarianceMoments_standardGaussian) i
+
+/-- A uniform Boolean coordinate sign under the product law satisfies the
+invariance moment assumptions. [OD14, Hyp. 11.65] -/
+lemma hasInvarianceMoments_uniformBoolCoordinate {n : ℕ} (i : Fin n) :
+    HasInvarianceMoments (fun x : BoolCube n => boolToSign (x i))
+      (Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure) :=
+  hasInvarianceMoments_pi_coordinate
+    (fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure) (fun _ => boolToSign)
+    (fun _ => measurable_of_finite _) (fun _ => hasInvarianceMoments_uniformBool) i
+
+/-- Integration under independent uniform Boolean coordinates equals the
+combinatorial cube expectation. [OD14, §9.1, uniform product-space specialization]
+
+**Proof sketch.** Each coordinate atom has mass one half, so every cube atom
+has the existing uniform weight. Apply the established moment-to-expectation
+identity at moment one. -/
+lemma integral_uniformBool_pi_eq_expect {n : ℕ} (f : BooleanFunc n) :
+    (∫ x : Fin n → Bool, f x
+      ∂(Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure)) = expect f := by
+  have hmass (b : Bool) : (PMF.uniformOfFintype Bool).toMeasure {b} = (2 : ℝ≥0∞)⁻¹ := by
+    rw [(PMF.uniformOfFintype Bool).toMeasure_apply_singleton b (measurableSet_singleton b)]
+    simp [PMF.uniformOfFintype_apply]
+  have hP (x : BoolCube n) :
+      ((Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure) {x}).toReal =
+        uniformWeight n := by
+    rw [← Set.univ_pi_singleton x, Measure.pi_pi]
+    simp [hmass, uniformWeight]
+  simpa only [ProbabilityTheory.moment, Pi.pow_apply, pow_one] using
+    moment_eq_expect f 1
+      (Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure) hP
+
 
 end BooleanAnalysis.GaussianSpace

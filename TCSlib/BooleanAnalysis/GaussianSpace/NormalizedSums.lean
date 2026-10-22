@@ -165,15 +165,7 @@ lemma normalizedSum_lipschitz_comparison :
   let ν : Measure (Fin n → ℝ) := Measure.pi fun _ : Fin n => standardGaussianMeasure
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   have hY (i : Fin n) : HasInvarianceMoments (fun z : Fin n → ℝ => z i) ν :=
-    hasInvarianceMoments_standardGaussian.identDistrib
-      { aemeasurable_fst := measurable_id.aemeasurable
-        aemeasurable_snd := (measurable_pi_apply i).aemeasurable
-        map_eq := by
-          change Measure.map id standardGaussianMeasure =
-            Measure.map (fun z : Fin n → ℝ => z i) ν
-          rw [Measure.map_id]
-          exact (measurePreserving_eval
-            (fun _ : Fin n => standardGaussianMeasure) i).map_eq.symm }
+    hasInvarianceMoments_gaussianCoordinate i
   have ha : (∑ _i : Fin n, (1 / Real.sqrt n) ^ 2) = 1 := by
     simp [Real.sq_sqrt (Nat.cast_nonneg n), hn']
   have hlaw : ν.map (fun z : Fin n → ℝ => (∑ i, z i) / Real.sqrt n) =
@@ -201,27 +193,6 @@ lemma normalizedSum_lipschitz_comparison :
   convert h using 1
   ring
 
-/-- Integration under independent uniform Boolean coordinates equals the
-combinatorial cube expectation. [OD14, §9.1, uniform product-space specialization]
-
-**Proof sketch.** Each coordinate atom has mass one half, so every cube atom
-has the existing uniform weight. Apply the established moment-to-expectation
-identity at moment one. -/
-lemma integral_uniformBool_pi_eq_expect {n : ℕ} (f : BooleanFunc n) :
-    (∫ x : Fin n → Bool, f x
-      ∂(Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure)) = expect f := by
-  have hmass (b : Bool) : (PMF.uniformOfFintype Bool).toMeasure {b} = (2 : ℝ≥0∞)⁻¹ := by
-    rw [(PMF.uniformOfFintype Bool).toMeasure_apply_singleton b (measurableSet_singleton b)]
-    simp [PMF.uniformOfFintype_apply]
-  have hP (x : BoolCube n) :
-      ((Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure) {x}).toReal =
-        uniformWeight n := by
-    rw [← Set.univ_pi_singleton x, Measure.pi_pi]
-    simp [hmass, uniformWeight]
-  simpa only [ProbabilityTheory.moment, Pi.pow_apply, pow_one] using
-    moment_eq_expect f 1
-      (Measure.pi fun _ : Fin n => (PMF.uniformOfFintype Bool).toMeasure) hP
-
 /-- Normalized sums of independent uniform Boolean signs approximate a standard
 Gaussian for Lipschitz tests, with a universal error constant times n^(-1/4).
 [OD14, §11.1, BitsToGaussians; Cor. 11.68]
@@ -242,15 +213,7 @@ lemma normalizedBoolSum_lipschitz_comparison :
   let μ : Measure Bool := (PMF.uniformOfFintype Bool).toMeasure
   have hX (i : Fin n) : HasInvarianceMoments
       (fun x : Fin n → Bool => boolToSign (x i)) (Measure.pi fun _ : Fin n => μ) := by
-    have hi : ProbabilityTheory.IdentDistrib (id : Bool → Bool)
-        (fun x : Fin n → Bool => x i) μ (Measure.pi fun _ : Fin n => μ) :=
-      { aemeasurable_fst := measurable_id.aemeasurable
-        aemeasurable_snd := (measurable_pi_apply i).aemeasurable
-        map_eq := by
-          rw [Measure.map_id]
-          exact (measurePreserving_eval (fun _ : Fin n => μ) i).map_eq.symm }
-    exact hasInvarianceMoments_uniformBool.identDistrib
-      (hi.comp (measurable_of_finite boolToSign))
+    exact hasInvarianceMoments_uniformBoolCoordinate i
   exact hbound hn (Measure.pi fun _ : Fin n => μ)
     (fun (i : Fin n) (x : Fin n → Bool) => boolToSign (x i))
     (ProbabilityTheory.iIndepFun_pi

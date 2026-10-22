@@ -36,7 +36,7 @@ The existing multilinear coefficient representation and random-input evaluation 
 -/
 
 open MeasureTheory ProbabilityTheory
-open scoped BigOperators
+open scoped BigOperators ENNReal NNReal
 
 namespace BooleanAnalysis.Hypercontractivity
 
@@ -89,24 +89,29 @@ theorem MultilinearMoments.integral_monomial_mul
         by_cases hiS : i ∈ S <;> by_cases hiT : i ∈ T <;>
           simp_all [f]
 
-/-- A multilinear monomial in independent inputs with finite fourth moments
-has a finite fourth moment. This specializes polynomial integrability from
-[OD14, Cor. 9.6 (proof)].
+/-- A monomial in independent inputs with finite natural-order moments has a
+finite moment of the same order. [OD14, Cor. 9.6 (proof)] -/
+theorem MultilinearMoments.monomial_memLp_nat
+    {n p : ℕ} {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] (hp : 0 < p)
+    (X : Fin n → Ω → ℝ) (hI : iIndepFun X μ)
+    (hX : ∀ i, MemLp (X i) (p : ℝ≥0∞) μ) (S : Finset (Fin n)) :
+    MemLp (fun ω => ∏ i ∈ S, X i ω) (p : ℝ≥0∞) μ := by
+  classical
+  have h := evalMultilinearRV_memLp_nat hp (fun T => if T = S then 1 else 0) X μ hI hX
+  change MemLp (fun ω =>
+    ∑ T : Finset (Fin n), (if T = S then 1 else 0) * ∏ i ∈ T, X i ω) (p : ℝ≥0∞) μ at h
+  simpa using h
 
-**Proof sketch.** Represent the monomial by the multilinear coefficient
-function supported at its index set, then apply fourth-moment integrability
-of multilinear polynomial evaluations. -/
+/-- A monomial in independent inputs with finite fourth moments has a finite
+fourth moment. [OD14, Cor. 9.6 (proof)] -/
 theorem MultilinearMoments.monomial_memLp
     {n : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ]
     (X : Fin n → Ω → ℝ) (hI : iIndepFun X μ)
     (hX : ∀ i, MemLp (X i) 4 μ) (S : Finset (Fin n)) :
-    MemLp (fun ω => ∏ i ∈ S, X i ω) 4 μ := by
-  classical
-  have h := evalMultilinearRV_memLp (fun T => if T = S then 1 else 0) X μ hI hX
-  change MemLp (fun ω =>
-    ∑ T : Finset (Fin n), (if T = S then 1 else 0) * ∏ i ∈ T, X i ω) 4 μ at h
-  simpa using h
+    MemLp (fun ω => ∏ i ∈ S, X i ω) 4 μ :=
+  MultilinearMoments.monomial_memLp_nat (by decide : 0 < 4) X hI hX S
 
 /-- The expected product of two multilinear polynomial evaluations in independent
 centered unit-second-moment inputs equals the inner product of their coefficient

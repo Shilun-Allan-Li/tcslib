@@ -21,11 +21,30 @@ import TCSlib.BooleanAnalysis.GaussianSpace.ProfileApproximation
 import TCSlib.BooleanAnalysis.GaussianSpace.SmoothVariation
 import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceArea
 import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov
+import TCSlib.BooleanAnalysis.GaussianSpace.Bobkov.Walk
 import TCSlib.BooleanAnalysis.GaussianSpace.BooleanBlocks
 import TCSlib.BooleanAnalysis.GaussianSpace.Invariance
 import TCSlib.BooleanAnalysis.GaussianSpace.NormalizedSums
 import TCSlib.BooleanAnalysis.GaussianSpace.NormalizedBlocks
 import TCSlib.BooleanAnalysis.GaussianSpace.GaussianBobkov
+import TCSlib.BooleanAnalysis.GaussianSpace.NoiseDefinitions
+import TCSlib.BooleanAnalysis.GaussianSpace.Noise
+import TCSlib.BooleanAnalysis.GaussianSpace.OrnsteinUhlenbeck
+import TCSlib.BooleanAnalysis.GaussianSpace.HermiteDefinitions
+import TCSlib.BooleanAnalysis.GaussianSpace.Hermite
+import TCSlib.BooleanAnalysis.GaussianSpace.Borell
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceRelaxation
+import TCSlib.BooleanAnalysis.GaussianSpace.SurfaceExamples
+import TCSlib.BooleanAnalysis.GaussianSpace.SumInvariance
+import TCSlib.BooleanAnalysis.GaussianSpace.InvarianceExtensions
+import TCSlib.BooleanAnalysis.GaussianSpace.Anticoncentration
+import TCSlib.BooleanAnalysis.GaussianSpace.MajorityIsStablest
+import TCSlib.BooleanAnalysis.GaussianSpace.MaxCutDefinitions
+import TCSlib.BooleanAnalysis.GaussianSpace.MaxCut
+import TCSlib.BooleanAnalysis.GaussianSpace.UniqueGamesDefinitions
+import TCSlib.BooleanAnalysis.GaussianSpace.UniqueGames
+import TCSlib.BooleanAnalysis.GaussianSpace.MaxCutAlgorithm
+import TCSlib.BooleanAnalysis.GaussianSpace.Condorcet
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -53,17 +72,36 @@ set_option autoImplicit false
 * `SmoothVariation`: directional rotation limits and nonnegative integral gradient bounds.
 * `SurfaceArea`: Definition 11.48, Proposition 11.49, and Theorems 11.51–11.52.
 * `Bobkov`: the Boolean two-point and full inequalities, and Theorem 11.55.
+* `Bobkov/Walk`: the optional stopped-walk Claim 11.54 as a submartingale statement.
 * `BooleanBlocks`: Boolean Bobkov under finite coordinate reindexing and currying.
 * `Invariance`: the general-input fourth-order Basic Invariance Principle and Corollaries 11.67–11.68.
 * `NormalizedSums`: quantitative Lipschitz approximation of normalized sums by a Gaussian.
 * `NormalizedBlocks`: finite-dimensional approximation by independent normalized Boolean blocks.
 * `GaussianBobkov`: the smooth Gaussian inequality for bounded Lipschitz derivatives.
+* `NoiseDefinitions`: the correlated Gaussian law, Mehler noise, and stability.
+* `Noise`: Gaussian noise analysis, polynomial density, and hypercontractivity statements.
+* `OrnsteinUhlenbeck`: strong generator domain, integration by parts, and log-Sobolev statements.
+* `HermiteDefinitions`: normalized Mathlib Hermites, product polynomials, and coefficients.
+* `Hermite`: orthonormal basis, expansions, and noise/generator spectral statements.
+* `Borell`: general-volume noise stability and all-angle balanced rotation statements.
+* `SurfaceRelaxation`: smooth relaxation, attainment, and regular Minkowski comparison statements.
+* `SurfaceExamples`: interval, ball, convex, polytope, cone, and polynomial-threshold statements.
+* `SumInvariance`: scalar sum invariance, full smooth approximation, and distributional statements.
+* `InvarianceExtensions`: third-order, no-notables, tail, and Lévy comparison statements.
+* `Anticoncentration`: arbitrary-polynomial Carbery–Wright and multilinear CDF statements.
+* `MajorityIsStablest`: quantitative general-volume and no-notables statements.
+* `MaxCutDefinitions`: the existing graph model's cut/SDP objectives and Gaussian rounding.
+* `MaxCut`: analytic Goemans–Williamson and five-cycle integrality-gap statements.
+* `UniqueGamesDefinitions`: concrete CSP encodings, promise reductions, and UGC.
+* `UniqueGames`: codec transport and genuine conditional Max-Cut hardness statements.
+* `MaxCutAlgorithm`: finite-precision polynomial-time randomized approximation statements.
+* `Condorcet`: the final small-influence voting-rationality application.
 
 ## Main definitions
 
 All new objects live in `BooleanAnalysis.GaussianSpace`; existing Gaussian, polynomial,
 Fourier, moment, and influence definitions are reused. See `GaussianSpace/COVERAGE.md`
-for the source inventory, external-library exclusions, and deferred integration work.
+for the source inventory, reuse decisions, precise domains, and proof obligations.
 
 ## Main results
 
@@ -72,8 +110,11 @@ the general-input fourth-order invariance principle, both quantitative invarianc
 corollaries, and smooth Gaussian Bobkov for bounded Lipschitz derivatives are proved.
 All six surface-area statements are proved, including the general-volume Gaussian
 isoperimetric inequality. See `GaussianSpace/COVERAGE.md` for the exact boundary.
-This partial chapter development omits existing local or external results, including Berry–Esseen,
-Hermite/Ornstein–Uhlenbeck theory, Gaussian hypercontractivity, and Majority Is Stablest.
+The remaining main-text chapter material now has a concrete definition and statement
+layer, whose theorem proofs intentionally remain `sorry`. Existing local Berry–Esseen,
+Sheppard, polynomial, Fourier, moment, influence and voting APIs are reused.
+External overlap does not exclude statements from this layer: those projects cannot
+be imported into this toolchain. Exercises are outside the main-text inventory.
 No dependency or toolchain changes are part of this development.
 
 ## References
