@@ -1501,6 +1501,203 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   obtain ⟨s8run, s8st, s8cut⟩ := ic_seam_step _ (Sum.inr (2 : Fin 3))
     (rewindTM K jal) RewindPhase.start RewindPhase.done
     s7run s7st s7cut hr8run rfl hr8cut
+  set e₈ := ({ (e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start) with
+    state := some RewindPhase.done
+    workTapePos := Function.update
+      ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).workTapePos jal
+      (((e₇.mapState (Sum.inr : _ → St₇)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jal - α.length) } :
+    Cfg K Bool RewindPhase _) with he₈
+  have he₈tapes : ∀ j, e₈.workTapes j = e₆.workTapes j := by
+    intro j
+    funext q
+    rw [he₈]
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have he₈posjal : e₈.workTapePos jal = 0 := by
+    rw [he₈]
+    show Function.update _ jal _ jal = 0
+    rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => (0 : Fin 3))).workTapePos jal - α.length = 0
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    obtain ⟨-, hfp⟩ := h₆frame jal hjalnbt hjalnwin
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    rw [hfp, he₅pos jal hjalnbt, h₃alhd]
+    show (α.length : ℤ) - α.length = 0
+    ring
+  have he₈pos : ∀ j, j ≠ jal → e₈.workTapePos j = e₆.workTapePos j := by
+    intro j hj
+    rw [he₈]
+    show Function.update _ jal _ j = _
+    rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapePos j = _
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have he₈in : e₈.inputPos = 1 := by
+    rw [he₈]
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).inputPos = 1
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₇]
+  have he₈out : e₈.output = [] := by
+    rw [he₈]
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).output = []
+    rw [Cfg.mapState_output, Cfg.mapState_output, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).output = []
+    rw [Cfg.mapState_output, Cfg.mapState_output, h₆out, Cfg.mapState_output,
+      Cfg.mapState_output, he₅out]
+    exact h₃out
+  -- The comprehensive clean ledger at the install seam.
+  have hclean₈ : ∀ j : Fin K, j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
+      j ≠ jctr → j ≠ jwin → e₈.workTapes j = tapes₀ j ∧ e₈.workTapePos j = 0 := by
+    intro j h1 h2 h3 h4 h5 h6
+    obtain ⟨hft, hfp⟩ := h₆frame j h2 h6
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    obtain ⟨hct, hcp⟩ := hclean₃ j h1 h2 h3 h4
+    constructor
+    · rw [he₈tapes j, hft]
+      funext q
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      rw [he₅frame j h5, hct]
+    · rw [he₈pos j h4, hfp, he₅pos j h2, hcp]
+  -- The α capture holds α at its origin.
+  have he₈al : e₈.workTapes jal = FinTM.bufferTape α := by
+    rw [he₈tapes jal]
+    obtain ⟨hft, -⟩ := h₆frame jal hjalnbt hjalnwin
+    rw [hft]
+    funext q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅frame jal hjalnctr, h₃al]
+    rfl
+  -- Phase 9: install the replay serialization through the clean call interface.
+  obtain ⟨TI, hTI, hTIpos, hTIcut, hTIrun⟩ :=
+    installs (pairEncode (pairEncode (Nat.bits t) α) x) α
+  have hcapInr : capI ∉ Set.range ιI := by
+    rintro ⟨i, rfl⟩
+    have h := hιI i
+    by_cases h0 : i.val = 0
+    · rw [if_pos h0] at h
+      omega
+    · rw [if_neg h0] at h
+      omega
+  have hscratch : ∀ i : Fin CI.k, i.val ≠ 0 →
+      e₈.workTapes (ιI i) = tapes₀ (ιI i) ∧ e₈.workTapePos (ιI i) = 0 := by
+    intro i h0
+    have hv := hιI i
+    rw [if_neg h0] at hv
+    exact hclean₈ (ιI i)
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+  have hlhs9t : ∀ j, ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+      (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapes j = e₈.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have hlhs9p : ∀ j, ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+      (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapePos j = e₈.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have hrhs9t : ((embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).mapState (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapes =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).workTapes := by
+    funext j a
+    rw [Cfg.mapState_workTapes]
+  have hrhs9p : ∀ j, ((embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).mapState (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapePos j =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos]
+  have hjunc₉ : (e₈.mapState (Sum.inr : _ → St₈)).mapState
+      (fun _ => (Sum.inl () : Unit ⊕ CI.State)) =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+        (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+          (stateWord CI.k α))).mapState (fun _ => (Sum.inl () : Unit ⊕ CI.State)) := by
+    have hcapcl := hclean₈ capI
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    apply Cfg.ext
+    · have hlhs : ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+          (fun _ => (Sum.inl () : Unit ⊕ CI.State))).state = some (Sum.inl ()) := by
+        rw [Cfg.mapState_state, Cfg.mapState_state, he₈]
+        rfl
+      rw [hlhs, Cfg.mapState_state, embedSilentCfg_state, Cfg.ofWords_state]
+      rfl
+    · have hlhs : ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+          (fun _ => (Sum.inl () : Unit ⊕ CI.State))).inputPos = 1 := by
+        rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+        exact he₈in
+      rw [hlhs, Cfg.mapState_inputPos, embedSilentCfg_inputPos, Cfg.ofWords_inputPos]
+    · funext j p
+      rw [hlhs9t j, hrhs9t]
+      by_cases hsel : j ∈ Set.range ιI
+      · obtain ⟨i, rfl⟩ := hsel
+        rw [embedSilentCfg_selected_tape, Cfg.ofWords_workTapes, stateWord_eq]
+        by_cases h0 : i.val = 0
+        · have hieq : ιI i = jal := Fin.ext (by rw [hιI, if_pos h0, hjal])
+          rw [if_pos h0, hieq, he₈al]
+        · rw [if_neg h0, (hscratch i h0).1,
+            htapes₀blank _ (by
+              intro hmem
+              have := congrArg Fin.val hmem
+              have hv := hιI i
+              rw [if_neg h0] at hv
+              omega),
+            FinTM.bufferTape_nil]
+      · by_cases hcap : j = capI
+        · rw [hcap, (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).1,
+            Cfg.ofWords_output, List.append_nil, FinTM.bufferTape_nil, hcapcl.1,
+            htapes₀blank capI (by intro hmem; have := congrArg Fin.val hmem; omega)]
+        · rw [(embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j
+            hsel hcap).1]
+    · funext j
+      rw [hlhs9p j, hrhs9p j]
+      by_cases hsel : j ∈ Set.range ιI
+      · obtain ⟨i, rfl⟩ := hsel
+        rw [embedSilentCfg_selected_pos, Cfg.ofWords_workTapePos]
+        by_cases h0 : i.val = 0
+        · have hieq : ιI i = jal := Fin.ext (by rw [hιI, if_pos h0, hjal])
+          rw [hieq, he₈posjal]
+        · exact (hscratch i h0).2
+      · by_cases hcap : j = capI
+        · rw [hcap, (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).2,
+            Cfg.ofWords_output, List.append_nil, hcapcl.2]
+          rfl
+        · rw [(embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j
+            hsel hcap).2]
+    · have hlhs : ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+          (fun _ => (Sum.inl () : Unit ⊕ CI.State))).output = [] := by
+        rw [Cfg.mapState_output, Cfg.mapState_output]
+        exact he₈out
+      rw [hlhs, Cfg.mapState_output, embedSilentCfg_output]
+  obtain ⟨hIrun, hIcut⟩ := ic_install_phase CI entryI doneI ιI capI hcapInr
+    e₈.workTapes e₈.workTapePos α (serializeK (c.decode α).tm.replayTM) TI hTIpos hTIrun hTIcut
+  have h₂9 : (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI).runFrom
+      ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+        (fun _ => (Sum.inl () : Unit ⊕ CI.State))) TI =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+        (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) doneI
+          (stateWord CI.k (serializeK (c.decode α).tm.replayTM)))).mapState
+        (Sum.inr : CI.State → Unit ⊕ CI.State) := by
+    rw [hjunc₉]
+    exact hIrun
+  obtain ⟨s9run, s9st, s9cut⟩ := ic_seam_step _ (Sum.inr RewindPhase.done)
+    (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI) (Sum.inl ()) (Sum.inr doneI)
+    s8run s8st s8cut h₂9
+    (by rw [Cfg.mapState_state, embedSilentCfg_state, Cfg.ofWords_state, Option.map_some])
+    (by intro u hu; rw [hjunc₉]; exact hIcut u hu)
   sorry
 
 end Turing
