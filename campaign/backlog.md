@@ -888,6 +888,16 @@ half threshold.
   edits `Build/Catalog`, whose downstream is most of the library, so it goes with Catalog's next
   edit (12.2c T3, Catalog core, or MIG-1).
 
+### BW-1: StepBlock's four buffer-word privates, restated publicly (user, 2026-10-18)
+
+*Origin: the user's ruling on the seam-layout fill's word identities; PR #140.*
+
+`TuringMachine/BufferWords` publishes six `FinTM.bufferTape` identities; four restate
+`Build/StepBlock`'s privates `bufferTape_suffix`, `_reads`, `_outside` and `_unary` (same
+statements, different proofs; no screen pair). **Acknowledged (user, 2026-10-18).**
+**Retirement, in the user's dedup window:** `StepBlock` imports `BufferWords`, deletes the four
+privates and re-points their uses (StepBlock's downstream is replayed then).
+
 ## 2. Campaign work queued or on hold
 
 ### MIG / RS: the foundation migration and the restyling backlog (user, 2026-10-12; design §16)
@@ -1108,6 +1118,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   proofs over 20 lines get sketches in a docstring-only follow-up (the six main lemmas first).
   Landing PR from `lean/c1-exhaustive-fill` (16 cherry-picked commits + the review's fix); its
   4-module replay follows #132. BF's only open dependency is now UN.
+  **The six sketches are written** (`lean/c1-exhaustive-sketches` at `85ac8d57`, on #136's head:
+  `xr_passTM_run`, `xr_testTM_run`, `xr_clearTape_host`, `xr_cycle_host`, `xr_depth_host`,
+  `xr_run_host`; 0 errors, lint unchanged). Its PR opens after #136 merges (rebased onto the
+  campaign branch, so it is not stacked); the other 18 stay for the docstring pass.
 - **Addendum v2.2 and two fills at a time (2026-10-18; the user's rulings).** G4 cont2 and MIG-12
   cont1 stopped on a 12 GiB disk re-check after the toolchain, on one shared 33.8 GB disk that also
   held R and WC: the host fits about two fills (11 GiB each from scratch). v2.2 (`45405074…`):

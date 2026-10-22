@@ -67,3 +67,22 @@ double-counts the toolchain: a lone fill at 11.2 GiB would have finished.
 initial preflight; a re-check before the cache, once the toolchain is installed, needs 8 GiB;
 after the cache step only ENOSPC (item 4). And **at most two fills at once**: G4 cont2 and MIG-12
 cont1 re-dispatch, with their briefs unchanged, when R cont1 or WC cont1 delivers.
+
+## The inbox of 2026-10-21 (nine files)
+
+- **Six are byte-identical duplicates of deliveries processed on 2026-10-18** (moved to
+  `exchange/archive/deliveries/duplicates-2026-10-21/`, nothing deleted):
+  `fill-c1-core-cont1.zip` (= `…-1308.zip`, R round 3, reviewed as `core-cont1-r3`) and
+  `fill-c1-core-cont1 (1).zip` (= R's earlier E-RES); `fill-c1-window-cont1.zip` (= `…-1257.zip`,
+  WC round 3, landing as #137) and `fill-c1-window-cont1 (1).zip` (= WC's earlier E-RES);
+  `fill-mig12-cfgrecord-cont1.zip` and `fill-s13d-g4-cont2.zip` (the two v2.1 stops above).
+- **Two are new but stale: C1-E cont1 E-RES reports** from 2026-10-18 05:31 and 05:43 UTC, under
+  addendum **v2** (brief `f03994c5…`), before any clone. Both measured the shared host at 4.0 GiB
+  free (33.8 GB overlay, 87% used) and the old headroom, `memory.max − memory.current` = 0.65 GiB:
+  the page-cache and shared-disk causes that v2.1 and v2.2 fixed. A later session of the same
+  brief delivered the complete fill (`fill-c1-exhaustive-cont1-1257.zip`), landing as #136, so
+  neither needs action. Archived as `fill-c1-exhaustive-cont1-eres-0531.zip` and `…-0543.zip`.
+- **One is new: gate 50's findings** (`un-u2s-api-findings.md`): PASS 0/0/1/11, recorded in
+  `campaign/gates/50-un-u2s-api/`.
+
+No delivery under addendum **v2.3** has arrived yet; the narrowed cache fetch is still untested.
