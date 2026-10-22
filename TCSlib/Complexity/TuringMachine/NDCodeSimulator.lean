@@ -715,6 +715,185 @@ private theorem ic_time_ledger (a b w L t x r : ℕ) :
         gcongr ?_ + ?_ * _ + ?_ * _ + ?_ * _ <;> omega
       _ = _ := by ring
 
+/-- Composing a verified segment with a verified next phase through the public seam: the
+endpoint, its control state, and the inherited first return of the phase's exit, in one step.
+
+**Proof sketch.** The general-configuration seam run and its inherited first-return cut,
+with the endpoint state projected through the state renaming. -/
+private theorem ic_seam_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : List Bool}
+    (A : MultiTapeTM k Bool S₁) (exit₁ : S₁) (B : MultiTapeTM k Bool S₂) (entry₂ exit₂ : S₂)
+    {c₀ c₁ : Cfg k Bool S₁ x} {c₂ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+    (h₁ : A.runFrom c₀ T₁ = c₁) (hx₁ : c₁.state = some exit₁)
+    (hcut₁ : ∀ t < T₁, (A.runFrom c₀ t).state ≠ some exit₁)
+    (h₂ : B.runFrom (c₁.mapState fun _ => entry₂) T₂ = c₂)
+    (hx₂ : c₂.state = some exit₂)
+    (hcut₂ : ∀ t < T₂, (B.runFrom (c₁.mapState fun _ => entry₂) t).state ≠ some exit₂) :
+    (seamCompTM A exit₁ B entry₂).runFrom (c₀.mapState Sum.inl) (T₁ + 1 + T₂) =
+        c₂.mapState (Sum.inr : S₂ → S₁ ⊕ S₂) ∧
+      (c₂.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr exit₂) ∧
+      ∀ t < T₁ + 1 + T₂,
+        ((seamCompTM A exit₁ B entry₂).runFrom (c₀.mapState Sum.inl) t).state ≠
+          some (Sum.inr exit₂) := by
+  refine ⟨seamCompTM_run_ofCfg A exit₁ B entry₂ h₁ hx₁ hcut₁ h₂, ?_,
+    seamCompTM_firstReturn_ofCfg A exit₁ B entry₂ exit₂ h₁ hx₁ hcut₁ h₂ hx₂ hcut₂⟩
+  rw [Cfg.mapState_state, hx₂, Option.map_some]
+
+/-- The interpreter's native-input rewind leaf: one unconditional left move, a left scan to
+the input's left blank, one right step, and a live parking state at which a seam can dispatch.
+It is the two-`controlAction`-state input-rewind discipline with an explicit live exit; it
+moves no work head and writes nothing. -/
+private def ic_rewindLeafTM (k : ℕ) : MultiTapeTM k Bool (Fin 3) where
+  q₀ := 0
+  tr := fun q inp _ =>
+    if q = 0 then FinTM.controlAction .neg (some 1)
+    else if q = 1 then
+      match inp with
+      | some _ => FinTM.controlAction .neg (some 1)
+      | none => FinTM.controlAction .pos (some 2)
+    else FinTM.controlAction .zero (some 2)
+
+/-- The leaf's scanning trajectory: from the scanning state at input position `j ≤ |x|`, the
+parking state is reached at exactly `j + 1`, with only the control and the input head changed,
+and the state stays the scanning one strictly before.
+
+**Proof sketch.** Induct on the position. At zero the input symbol is the left blank, so one
+right move parks. At a successor the symbol exists; one left move reduces the position. -/
+private theorem ic_rewind_scan {k : ℕ} {x : List Bool} :
+    ∀ (j : ℕ) (cfg : Cfg k Bool (Fin 3) x), cfg.state = some 1 →
+      cfg.inputPos.val = j → j ≤ x.length →
+      (ic_rewindLeafTM k).runFrom cfg (j + 1) =
+          { cfg with state := some 2, inputPos := 1 } ∧
+        ∀ u ≤ j, ((ic_rewindLeafTM k).runFrom cfg u).state = some 1 := by
+  intro j
+  induction j with
+  | zero =>
+    intro cfg hs hj _
+    have hz : cfg.inputPos = 0 := Fin.ext hj
+    have hstep : (ic_rewindLeafTM k).step cfg =
+        { cfg with state := some 2, inputPos := moveInputPos cfg.inputPos .pos } := by
+      rw [MultiTapeTM.step_of_some hs, Cfg.inputSymbol_of_zero hz]
+      simp only [ic_rewindLeafTM, Fin.reduceEq, ↓reduceIte]
+      exact FinTM.controlAction_apply cfg .pos (some 2)
+    have hm : moveInputPos cfg.inputPos .pos = 1 := by
+      apply Fin.ext
+      rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
+      simp
+    refine ⟨?_, ?_⟩
+    · show (ic_rewindLeafTM k).step cfg = _
+      rw [hstep, hm]
+    · intro u hu
+      obtain rfl : u = 0 := by omega
+      exact hs
+  | succ j ih =>
+    intro cfg hs hj hlen
+    have hsym : cfg.inputSymbol = some (x[j]'(by omega)) :=
+      inputSymbolInner j (by omega) (by omega)
+    have hstep : (ic_rewindLeafTM k).step cfg =
+        { cfg with state := some 1, inputPos := moveInputPos cfg.inputPos .neg } := by
+      rw [MultiTapeTM.step_of_some hs, hsym]
+      simp only [ic_rewindLeafTM, Fin.reduceEq, ↓reduceIte]
+      exact FinTM.controlAction_apply cfg .neg (some 1)
+    have hpos : (moveInputPos cfg.inputPos .neg).val = j := by
+      rw [FinTM.moveInputPos_neg_val]
+      omega
+    obtain ⟨hrun, hstay⟩ := ih ((ic_rewindLeafTM k).step cfg)
+      (by rw [hstep]) (by rw [hstep]; exact hpos) (by omega)
+    refine ⟨?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
+    · intro u hu
+      cases u with
+      | zero => exact hs
+      | succ u =>
+        rw [MultiTapeTM.runFrom_succ_eq_step]
+        exact hstay u (by omega)
+
+/-- The leaf's complete run: from its entry at any positive input position `p`, it parks at
+exactly `p + 1` with the input head at `1`, every work tape, work head and the output
+unchanged, and the parking state is not visited earlier.
+
+**Proof sketch.** The unconditional first left move lands the scan at `p − 1 ≤ |x|`; the
+scanning trajectory parks after `p` more steps. Strictly before, the state is the entry or the
+scanning one. -/
+private theorem ic_rewind_leaf_run {k : ℕ} {x : List Bool} (cfg : Cfg k Bool (Fin 3) x)
+    (hs : cfg.state = some 0) (hp : 1 ≤ cfg.inputPos.val) :
+    (ic_rewindLeafTM k).runFrom cfg (cfg.inputPos.val + 1) =
+        { cfg with state := some 2, inputPos := 1 } ∧
+      ∀ u < cfg.inputPos.val + 1,
+        ((ic_rewindLeafTM k).runFrom cfg u).state ≠ some 2 := by
+  have hstep : (ic_rewindLeafTM k).step cfg =
+      { cfg with state := some 1, inputPos := moveInputPos cfg.inputPos .neg } := by
+    rw [MultiTapeTM.step_of_some hs]
+    simp only [ic_rewindLeafTM, ↓reduceIte]
+    exact FinTM.controlAction_apply cfg .neg (some 1)
+  have hval : (moveInputPos cfg.inputPos .neg).val = cfg.inputPos.val - 1 :=
+    FinTM.moveInputPos_neg_val cfg.inputPos
+  have hlen : cfg.inputPos.val - 1 ≤ x.length := by
+    have := cfg.inputPos.isLt
+    omega
+  obtain ⟨hrun, hstay⟩ := ic_rewind_scan (cfg.inputPos.val - 1) ((ic_rewindLeafTM k).step cfg)
+    (by rw [hstep]) (by rw [hstep]; exact hval) hlen
+  have htime : cfg.inputPos.val + 1 = 1 + (cfg.inputPos.val - 1 + 1) := by omega
+  refine ⟨?_, ?_⟩
+  · rw [htime, MultiTapeTM.runFrom_add]
+    show (ic_rewindLeafTM k).runFrom ((ic_rewindLeafTM k).step cfg) _ = _
+    rw [hrun, hstep]
+  · intro u hu
+    cases u with
+    | zero =>
+      rw [MultiTapeTM.runFrom_zero, hs]
+      simp
+    | succ u =>
+      rw [MultiTapeTM.runFrom_succ_eq_step, hstay u (by omega)]
+      simp
+
+/-- The install call, embedded silently on selected host tapes and wrapped in the release
+adapter, so that its first re-arrival at the installed seam is a positive event even when the
+call's entry and exit controls coincide. The embedded run carries one clean seam to the other;
+unselected tapes hold their frame throughout.
+
+**Proof sketch.** The silent embedding transports the call's run between the transported
+seams; the release adapter's positive lockstep makes the first arrival at the exit control
+strictly positive, and the call's interior cut excludes it earlier. -/
+private theorem ic_install_phase {K : ℕ} (CI : FinTM Bool) (entryI doneI : CI.State)
+    (ι : Fin CI.k ↪ Fin K) (cap : Fin K) (hcap : cap ∉ Set.range ι) {z : List Bool}
+    (tapes : Fin K → ℤ → Option Bool) (heads : Fin K → ℤ) (α w' : List Bool) (T : ℕ)
+    (hT : 0 < T)
+    (hrun : CI.tm.runFrom (Cfg.ofWords (input := z) entryI (stateWord CI.k α)) T =
+      Cfg.ofWords doneI (stateWord CI.k w'))
+    (hcut : ∀ u, 0 < u → u < T →
+      (CI.tm.runFrom (Cfg.ofWords (input := z) entryI (stateWord CI.k α)) u).state ≠
+        some doneI) :
+    (seamReleaseTM (embedSilentTM ι cap CI.tm) entryI).runFrom
+        ((embedSilentCfg ι cap tapes heads [] []
+          (Cfg.ofWords (input := z) entryI (stateWord CI.k α))).mapState
+            (fun _ => Sum.inl ())) T =
+      (embedSilentCfg ι cap tapes heads [] []
+        (Cfg.ofWords (input := z) doneI (stateWord CI.k w'))).mapState
+          (Sum.inr : CI.State → Unit ⊕ CI.State) ∧
+    ∀ u < T,
+      ((seamReleaseTM (embedSilentTM ι cap CI.tm) entryI).runFrom
+        ((embedSilentCfg ι cap tapes heads [] []
+          (Cfg.ofWords (input := z) entryI (stateWord CI.k α))).mapState
+            (fun _ => Sum.inl ())) u).state ≠ some (Sum.inr doneI) := by
+  have hstate : (embedSilentCfg ι cap tapes heads [] []
+      (Cfg.ofWords (input := z) entryI (stateWord CI.k α))).state = some entryI := by
+    rw [embedSilentCfg_state, Cfg.ofWords_state]
+  have hlock := embedSilentTM_runFrom ι cap hcap CI.tm tapes heads [] []
+    (Cfg.ofWords (input := z) entryI (stateWord CI.k α))
+  constructor
+  · rw [seamReleaseTM_runFrom_pos _ entryI _ hstate T hT, hlock T, hrun]
+  · intro u hu
+    cases u with
+    | zero =>
+      rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hstate]
+      simp
+    | succ u =>
+      rw [seamReleaseTM_runFrom_pos _ entryI _ hstate (u + 1) (by omega), hlock (u + 1),
+        Cfg.mapState_state, embedSilentCfg_state]
+      intro hbad
+      obtain ⟨q, hq, heq⟩ := Option.map_eq_some_iff.mp hbad
+      exact hcut (u + 1) (by omega) hu (hq.trans (congrArg some (Sum.inr.inj heq)))
+
 /-- **The interpreter core for nondeterministic codes** `R` (deterministic; shared by the
 universal NDTM and the diagonalizer's mid-rung). For every effective nondeterministic scheme
 `c` there is one finite machine `R`, uniform over codes, with `K` work tapes, a designated stream
