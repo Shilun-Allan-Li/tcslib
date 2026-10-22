@@ -1203,6 +1203,47 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output,
         embedSilentCfg_output]
       exact h₁out
+  have hdr2 := ic_header_capture false K α x t ι₂ jal
+    (by rintro ⟨i, rfl⟩; have h := hι₂ i; omega) e₁.workTapes e₁.workTapePos []
+  simp only [↓reduceIte] at hdr2
+  obtain ⟨T₃, hT₃, h₃st, h₃pos, h₃al, h₃alhd, h₃out, h₃frame, h₃cut⟩ := hdr2
+  set e₃ := (embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm).runFrom
+    ((embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+      ((prefixCanonTM (FinTM.pairExtractTM false true)).tm.initCfg
+        (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl) T₃ with he₃
+  obtain ⟨s3run, s3st, s3cut⟩ := ic_seam_step
+    (seamCompTM (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm)
+      (Sum.inr ()) (ic_rewindLeafTM K) 0)
+    (Sum.inr (2 : Fin 3))
+    (embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm)
+    (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀) (Sum.inr ())
+    s2run s2st s2cut (by rw [hjunc₂]) h₃st
+    (by simp only [hjunc₂]; exact h₃cut)
+  -- The clean ledger after the two header passes.
+  have hclean₃ : ∀ j : Fin K, j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
+      e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0 := by
+    intro j h1 h2 h3 h4
+    obtain ⟨ht, hp⟩ := h₃frame j h3 h4
+    obtain ⟨ht', hp'⟩ := h₁frame j h1 h2
+    exact ⟨ht.trans ht', hp.trans hp'⟩
+  have hbyval : ∀ j : Fin K, j.val < 11 → j ≠ jbt → j ≠ jal →
+      e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0 := by
+    intro j hv h2 h4
+    exact hclean₃ j (by intro hmem; rw [hr₁] at hmem; omega) h2
+      (by intro hmem; rw [hr₂] at hmem; omega) h4
+  -- The second pass leaves the first capture intact.
+  have h₃bt : e₃.workTapes jbt = FinTM.bufferTape (Nat.bits t) ∧
+      e₃.workTapePos jbt = ((Nat.bits t).length : ℤ) := by
+    have hn₂ : jbt ∉ Set.range ι₂ := by
+      intro hmem
+      rw [hr₂] at hmem
+      omega
+    have hnal : jbt ≠ jal := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    obtain ⟨ht, hp⟩ := h₃frame jbt hn₂ hnal
+    exact ⟨ht.trans h₁bt, hp.trans h₁bthd⟩
   sorry
 
 end Turing
