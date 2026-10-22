@@ -171,7 +171,7 @@ for the local modifications.
 * `Build/CounterLoop` — the counter-driven loop (§12.7) and the pattern expansion
   `expandTM` (§12.8, R8.6).
 * `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
-  work tape (C1; user decision 5 of 2026-10-13). Sorried.
+  work tape, for the nondeterministic time hierarchy [AB09, Theorem 3.2]. Proved.
 * `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
   the one redistribution the step-block startups cite. Sorried.
 * `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
