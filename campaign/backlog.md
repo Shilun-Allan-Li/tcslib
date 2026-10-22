@@ -1442,6 +1442,27 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
 - **Megafill A delivered (2026-10-22): three items, each reported complete** (`megafill-a-REPORT.md`;
   R cont2, UN cont1, the canonizer's cont7). Three review sub-agents are running (resumed after the
   session restart; the canonizer's after-screen ran on).
+  - **UN cont1 reviewed: complete; land with edits** (`campaign/fills/c1/reviews/universal-cont1/`).
+    `Turing.exists_timed_universal_NDTM` proved modulo exactly `exists_ndInterpreterCore` (item 1's
+    target); 13 new `un_` privates; an 80-control seal; screen 450 → 454 pairs. Landing: squash the
+    owned file (the delivered series adds an `evidence/` tree to the library), then the maintainer's
+    edits (the overlay's reverted docstring, F1; a 3-line `simp only` repair, F2; three sketches
+    and the status text, F5). **Decisions pending (user):** two new cross-file pairs (F3), two route
+    refinements (F4), the repairs and an optional lint cleanup.
+  - **The canonizer's cont7 reviewed: complete; land with edits** (`campaign/fills/b5a/reviews/canon-cont7/`).
+    The stub `exists_canonGrammarStage` proved; `MachineFormat.exists_polyCanonizer` on the standard
+    three; 37 new privates; a 74-control seal; screen 2,633 → 2,692 pairs, 59 new, none cross-file,
+    four in-file at 90% or more. Landing: the 8 commits, then the maintainer's edits (gate 49's
+    deferred status text, drafted). **Decisions pending (user):** the unused counter-repeat link
+    (F1), a `simp [Bool.toNat]` fix (F2), the four ≥ 90% pairs (F3), 13 sketches (F4), the status
+    wording and the Codes2Tape/EXPCOM text (F8), the order against #149, the next cover brief's
+    environment logging (F7).
+- **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
+  `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
+  first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's
+  `DecidableEq`, `link` and `hlink`; the second seek's local facts; per-stage lemmas; the 448/437
+  probe; seal controls and raw outputs), regions from the landed file. Issues with the next
+  megafill, its pre-ship re-run at the issue commit.
   - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
     the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
     SeamLayout and the facade.

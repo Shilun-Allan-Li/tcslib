@@ -1,0 +1,493 @@
+ReviewScratch/UNSealS1.lean:156:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+ReviewScratch/UNSealS1.lean:159:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+ReviewScratch/UNSealS1.lean:163:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+ReviewScratch/UNSealS1.lean:166:76: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (clearTM k i).q₀ = SweepPhase.sweep
+ReviewScratch/UNSealS1.lean:169:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode [] [true]
+is not definitionally equal to the right-hand side
+  [false, true, true]
+
+⊢ pairEncode [] [true] = [false, true, true]
+ReviewScratch/UNSealS1.lean:173:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+ReviewScratch/UNSealS1.lean:177:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNSealS1.lean:181:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+ReviewScratch/UNSealS1.lean:185:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+ReviewScratch/UNSealS1.lean:188:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+ReviewScratch/UNSealS1.lean:193:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+ReviewScratch/UNSealS1.lean:197:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ReviewScratch/UNSealS1.lean:201:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+ReviewScratch/UNSealS1.lean:204:53: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ↑(moveInputPos 0 SignType.pos) = 1
+ReviewScratch/UNSealS1.lean:208:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+ReviewScratch/UNSealS1.lean:211:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+ReviewScratch/UNSealS1.lean:214:37: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  universalPrefixTM.k = 0
+ReviewScratch/UNSealS1.lean:218:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+ReviewScratch/UNSealS1.lean:223:64: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (M₁.bufferedSecondCfg M₂ c b p tp hd).inputPos = p
+ReviewScratch/UNSealS1.lean:227:77: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  FinTM.tapeBlocks a b c = fun i => Fin.addCases a (fun i => Fin.addCases (fun x => b) c i) i
+ReviewScratch/UNSealS1.lean:231:67: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ReviewScratch/UNSealS1.lean:234:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+ReviewScratch/UNSealS1.lean:237:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+ReviewScratch/UNSealS1.lean:241:68: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none
+ReviewScratch/UNSealS1.lean:245:78: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+ReviewScratch/UNSealS1.lean:248:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+ReviewScratch/UNSealS1.lean:252:95: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  counterOverhead w r = ∑ j ∈ Finset.range r, (2 * (List.takeWhile not (counterWord w j)).length + 2)
+ReviewScratch/UNSealS1.lean:258:53: error: Application type mismatch: The argument
+  P.q₀
+has type
+  SP
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre
+in the application
+  ⟨GuessRunPhase.pre, P.q₀⟩
+ReviewScratch/UNSealS1.lean:262:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+ReviewScratch/UNSealS1.lean:266:45: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (streamStartCfg z j q s).inputPos = 1
+ReviewScratch/UNSealS1.lean:270:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+ReviewScratch/UNSealS1.lean:274:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNSealS1.lean:279:59: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  N.AcceptsWithin x t =
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+ReviewScratch/UNSealS1.lean:283:82: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  tm.HaltsWithin x t = ∀ (w : List Bool), w.length = t → (NDTM.runWith w (NDTM.initCfg x)).state = none
+ReviewScratch/UNSealS1.lean:286:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+ReviewScratch/UNSealS1.lean:289:64: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre = SP
+ReviewScratch/UNSealS1.lean:650:30: warning: This simp argument is unused:
+  Fin.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [un_bankTM, F̵i̵n̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/UNSealS1.lean:665:54: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNSealS1.lean:805:31: warning: This simp argument is unused:
+  Fin.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [un_inRewTM, F̵i̵n̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/UNSealS1.lean:852:28: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/UNSealS1.lean:1376:37: warning: 'push_cast at hq ⊢' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNSealS1.lean:1590:6: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNSealS1.lean:1607:8: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNSealS1.lean:1678:23: warning: 'push_cast at hq ⊢' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNSealS1.lean:1681:37: warning: 'push_cast at hq ⊢' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNSealS1.lean:1929:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+ReviewScratch/UNSealS1.lean:1932:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+ReviewScratch/UNSealS1.lean:1936:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+ReviewScratch/UNSealS1.lean:1939:76: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (clearTM k i).q₀ = SweepPhase.sweep
+ReviewScratch/UNSealS1.lean:1942:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode [] [true]
+is not definitionally equal to the right-hand side
+  [false, true, true]
+
+⊢ pairEncode [] [true] = [false, true, true]
+ReviewScratch/UNSealS1.lean:1946:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+ReviewScratch/UNSealS1.lean:1950:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNSealS1.lean:1954:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+ReviewScratch/UNSealS1.lean:1958:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+ReviewScratch/UNSealS1.lean:1961:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+ReviewScratch/UNSealS1.lean:1966:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+ReviewScratch/UNSealS1.lean:1970:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ReviewScratch/UNSealS1.lean:1974:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+ReviewScratch/UNSealS1.lean:1977:53: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ↑(moveInputPos 0 SignType.pos) = 1
+ReviewScratch/UNSealS1.lean:1981:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+ReviewScratch/UNSealS1.lean:1984:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+ReviewScratch/UNSealS1.lean:1987:37: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  universalPrefixTM.k = 0
+ReviewScratch/UNSealS1.lean:1991:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+ReviewScratch/UNSealS1.lean:1996:64: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (M₁.bufferedSecondCfg M₂ c b p tp hd).inputPos = p
+ReviewScratch/UNSealS1.lean:2000:77: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  FinTM.tapeBlocks a b c = fun i => Fin.addCases a (fun i => Fin.addCases (fun x => b) c i) i
+ReviewScratch/UNSealS1.lean:2004:67: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ReviewScratch/UNSealS1.lean:2007:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+ReviewScratch/UNSealS1.lean:2010:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+ReviewScratch/UNSealS1.lean:2014:68: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none
+ReviewScratch/UNSealS1.lean:2018:78: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+ReviewScratch/UNSealS1.lean:2021:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+ReviewScratch/UNSealS1.lean:2025:95: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  counterOverhead w r = ∑ j ∈ Finset.range r, (2 * (List.takeWhile not (counterWord w j)).length + 2)
+ReviewScratch/UNSealS1.lean:2031:53: error: Application type mismatch: The argument
+  P.q₀
+has type
+  SP
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre
+in the application
+  ⟨GuessRunPhase.pre, P.q₀⟩
+ReviewScratch/UNSealS1.lean:2035:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+ReviewScratch/UNSealS1.lean:2039:45: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (streamStartCfg z j q s).inputPos = 1
+ReviewScratch/UNSealS1.lean:2043:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+ReviewScratch/UNSealS1.lean:2047:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNSealS1.lean:2052:59: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  N.AcceptsWithin x t =
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+ReviewScratch/UNSealS1.lean:2056:82: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  tm.HaltsWithin x t = ∀ (w : List Bool), w.length = t → (NDTM.runWith w (NDTM.initCfg x)).state = none
+ReviewScratch/UNSealS1.lean:2059:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+ReviewScratch/UNSealS1.lean:2062:64: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre = SP
+ReviewScratch/UNSealS1.lean:2180:8: warning: declaration uses 'sorry'
+# exit=1 wall=4s file=ReviewScratch/UNSealS1.lean olean=oleans-lg4c2 wt=wt-head head=d72ed65f

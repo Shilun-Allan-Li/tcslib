@@ -1,0 +1,15 @@
+== Environment records (addendum v2.4, Parts 1 and 3) for megafill A item 3
+-- shared logs present in item 3's zip: 0 (Part 3 item 2 asks for copies in each item's zip)
+-- found in item 1's zip (fill-c1-core-cont2.zip, sha256 4a2896a3...): item1/preflight.log, item1/cache-get.log, item1/cache-probe.log, item1/mathlib-roots.txt
+   preflight.log sha256 8356c8efc09f9b5b...; cache-get.log 3367d3abb4609454...
+-- preflight 05:11:11Z: nproc 4; cgroup v1, limit 9223372036854771712 (none) -> headroom = MemAvailable 15975212 kB = 15.24 GiB >= 4 GiB; oom_kill 0
+   df: 26,517,278,720 B free = 24.70 GiB (the session report's '26.5 GB') >= 12 GiB; ext4, not memory-backed; post-toolchain re-check 22.29 GiB >= 8 GiB
+-- cache: roots       41 = my union of the three order lists' roots at the base (      41; identical: yes); union order list      118 modules
+   cache-get: Attempting to download 1023 file(s); Downloaded: 1023 file(s) [attempted 1023/1023 = 100%; 1 'Completed successfully'; no failed download line: 0
+   cache-probe.log records only a timing ( real	0m9.922s user	0m3.563s sys	0m3.354s ); no import line, no exit status
+-- disk re-check before item 3 (session report: 21.8 GB at 10:58:05Z): no log in item 3's zip
+-- per-module maximum memory (Part 1 item 6): none recorded in item3-bootstrap.log or item3-final-sweep.log (grep: 0 hits)
+-- bootstrap: 71 modules completed (order 1-71), module 72 (OracleAgreement) started 11:15:26 with no end marker; the closing line says 'paused ... after CodeSimulator (module 65/118)' (out/30-sweep.txt)
+-- final sweep: modules 66-118, 53/53 OK, 19:43:20Z-19:51:52Z (after the head commit 7e6829dc at 19:39:55Z); census by name 37 = base 38 minus the stub (out/30b-sweep-names.txt)
+-- overlapping before-screen (disclosed): ~3 min of two screens (Part 3 item 5); the delivered before log is byte-equal to the recorded base, the after log byte-equal to my after-screen (out/23-screen-compare.txt): no effect on the results
+-- bans: lake build / unfiltered cache get in the delivered logs: 0

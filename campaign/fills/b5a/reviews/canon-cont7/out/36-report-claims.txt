@@ -1,0 +1,58 @@
+REPORT.md (item 3) and megafill-a-REPORT.md: claims checked (T = true, F = false or inaccurate, P = partly)
+
+T  base 6cfee544, branch from it; the bundle's only prerequisite is the base (out/01, out/02)
+T  the stub proved, statement untouched; CodeSimulator keeps exactly one sorry (exists_uniformSimulator,
+   head line 8672) (out/07, out/08, out/10, out/12)
+T  no new admission; every new private, the stub, exists_canonDecider and exists_polyCanonizer within
+   [propext, Classical.choice, Quot.sound] (out/14, out/14c)
+T  targets 3-8 and baker_gill_solovay keep sorryAx, and only through exists_uniformSimulator (out/28)
+T  five checkpoints as described (record round; inner block; table block; stage front; assembly)
+P  "all six checkpoints": the brief's steps 1-6 (step 6 = the stub and note 50); five worker checkpoints
+F  checkpoint 1/2 text: canonStageRoundSpec is "the spec argument of canonCounterRepeat" and the inner loop
+   is "canonCounterRepeat with canonStageRoundSpec's spec": canonCounterRepeat is cited nowhere in the
+   delivered file; both loops are composed from canonRepeat_orbit and counterLoopTM_run_done/_escape (F1)
+T  amendment pass 1: unconditional output clauses added to canonStageRoundSpec, canonStageInnerSpec,
+   canonStageOuterSpec only (commit 51d6bbc8; out/29)
+T  amendment pass 2 (seal hardening, 213816e0): proof-only (no statement change; 7 bodies) (out/29);
+   Cfg.select no longer occurs in the owned region
+T  amendment pass 3 (7e6829dc): canonStageInc_value restated as an equation-style recursion; the same
+   proposition (binders moved into a forall); no cross-file pair remains (out/23)
+F  "8,696 lines; +3,106; 3,107 insertions, 1 deletion": the delivered file has 8,684 lines, +3,095/-1
+   (the figures are commit 213816e0's, before the final commit) (out/02, out/03)
+F  lint "on the delivered tree": the delivered lint-tm log reports 8,689 lines, i.e. commit 7ef4a983;
+   at the head the result is the same (0 FAIL, 63 WARN over 82 files; Diagonalization 0 FAIL, 1 WARN)
+   (out/24)
+P  own check at the head: no log of CodeSimulator's own check at 7e6829dc (cp5-owncheck is 7ef4a983's,
+   line 8677); the delivered Cp5Ax/Cp7Seal logs are at head line numbers; my elaboration: 0 errors,
+   1 warning (out/10)
+P  bootstrap "modules 1-65 ... paused after CodeSimulator (module 65/118)": the log has modules 1-71
+   complete and 72 started without an end marker; "sweep 66-118 twice" (session report): one sweep log
+T  final sweep 53/53 OK on the delivered tree; census 37 = base 38 minus the stub, by name (out/30b)
+T  five probes, 0 errors (out: probes/*.out)
+F  "the import probe's list covers them": 29 public theorems/definitions cited by the new code are not
+   among the probe's 224 names (out/26); no extended probe was run (rule 10's last bullet). Mine
+   (253 checks) passes at the base (probes/C7P7ExtStandalone-base.out)
+F  rule-10 inventory lists skipTable_consumes, codeSkipRepeat_zero/_succ as cited: none is cited by the
+   new code (out/26b; grep counts 0)
+F  "every rw/simp/simpa argument ... is a published base lemma, a Mathlib lemma, own private, or a local":
+   simp [Bool.toNat] (twice, canonStageInc_value) passes core's definition Bool.toNat (out/16b; F2)
+T  the 35-definition seal elaborates; its control fails on its line (out/18-Cp7Seal.out,
+   out/18-Cp7SealControl.out); one control only, with no unsealed counterpart
+T  rule 11: canonPreserveInstall byte-identical; no R3 row cited anew (out/32)
+T  screens: before = the recorded base byte for byte; after 2,455 / 2,692 / 885,426 = my after-screen
+   byte for byte; 59 new pairs, none gone, all CodeSimulator <-> CodeSimulator (out/23)
+F  "New copies: none (no new pair reproduces a source at 90%+ outside the deliberately parallel in-file
+   host legs)": four new pairs are at 90% or more (97, 97, 94, 91); the brief has no such exception,
+   it asks for "new copies: none" or a list (F3)
+F  cut-leg justification ("a shared form would need a public abstraction ... rule 9 forbids"): a private
+   lemma generic over the phase family is allowed (F3)
+F  canonStageBlock_consumes / skipTable_consumes: "the base lemma is cited (not re-proved) where it
+   applies": skipTable_consumes is not cited; its per-record bound is re-proved (F3)
+T  note 50 copied unchanged; 0 errors; note50_cases standard axioms (out/34)
+P  escalations: none; but the prescribed link canonCounterRepeat did not compose (F1), which ground
+   rule 4 treats as an escalation
+F  promotion candidates: none listed (the brief asks for each with its contract)
+P  checkpoint zips cp1-cp5 "delivered along the way" (session report): not in exchange/inbox; not named in
+   item 3's REPORT
+T  shared preflight and cache numbers (session report) agree with item 1's logs (out/35); but item 3's
+   zip carries no copy of the shared logs and its REPORT does not quote them (F7)

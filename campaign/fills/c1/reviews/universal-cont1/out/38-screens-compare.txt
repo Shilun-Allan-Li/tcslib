@@ -1,0 +1,22 @@
+before vs recorded base (lines not starting with #):
+  equal
+before vs worker's screen-before:
+  equal
+after vs worker's screen-after:
+  equal
+
+## pairdiff (after vs before and the recorded base)
+head pairs 454; union of earlier 450; new at head 4; earlier-only 0
+  NEW   NTimeHierarchy.lean::un_setup  reproduces  NTimeHierarchy.lean::un_mapState_comp: 351/405 = 87%
+  NEW   ExhaustiveReplay.lean::xr_inRewindTM  reproduces  NTimeHierarchy.lean::un_inRewTM: 112/185 = 61%
+  NEW   NTimeHierarchy.lean::un_inRewTM  reproduces  ExhaustiveReplay.lean::xr_inRewindTM: 112/191 = 59%
+  NEW   ExhaustiveReplay.lean::xr_E_initCfg  reproduces  NTimeHierarchy.lean::un_mapState_comp: 219/405 = 54%
+
+## pairs with an NTimeHierarchy declaration at the head
+   NTimeHierarchy.lean::un_setup  reproduces  NTimeHierarchy.lean::un_mapState_comp: 351/405 = 87%
+   ExhaustiveReplay.lean::xr_inRewindTM  reproduces  NTimeHierarchy.lean::un_inRewTM: 112/185 = 61%
+   NTimeHierarchy.lean::un_inRewTM  reproduces  ExhaustiveReplay.lean::xr_inRewindTM: 112/191 = 59%
+   ExhaustiveReplay.lean::xr_E_initCfg  reproduces  NTimeHierarchy.lean::un_mapState_comp: 219/405 = 54%
+
+## pairs >= 90% at the head involving NTimeHierarchy:
+(end)
