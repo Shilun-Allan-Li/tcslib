@@ -1264,6 +1264,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `git am`; checkpoint 1.1b, the right pass's endpoint and envelope, first).
   - **Next when they return:** UN's and R's landings feed C1's assembly; F3 cont2 waits on #139;
     the seam layout's landing on its review.
+- **#144 opened (2026-10-22): the exhaustive replay's proof sketches**, docstrings only (the six
+  main lemmas' sketches, and the accept flag described as the proof uses it; gate 53, note 14).
+  Checks clean against `oleans-lg4c2`. Replay `replay-lsk.sh` (13 modules, the merged tree)
+  pending. **For the user:** whether a docstring-only PR gets its own gate. The 18 other long
+  private proofs without a sketch stay under C1E-1.
 - **Landing PRs opened overnight (the user's pre-authorization):** #133 (F5 phase 1, with the
   `tapeAction` swap) and #134 (F3 cont1). Their replays chain from #132's snapshot after #132
   merges; gate packs 51 (#133) and 52 (#134) are drafted, staged after the replays.
