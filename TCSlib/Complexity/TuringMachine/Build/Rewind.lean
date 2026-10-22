@@ -16,11 +16,14 @@ set_option autoImplicit false
 or just past: one unconditional step left, then left over the word's cells, and one step right at
 the blank before the word. It reads only tape `i` and writes nothing.
 
-`Turing.skipBackTM` does the same from the first cell of the next field, so it needs a blank
-between its head and the word, and a delimiter at the head's cell. The rewind needs neither: its
-head may stand anywhere from the word's first cell to the cell just past its end, and the word may
-be empty. So it returns the head of a tape holding `bufferTape u`, with the head at any `n ≤ |u|`,
-to cell `0`, in particular after a row that writes or crosses `u` and leaves its head at `|u|`.
+`Turing.skipBackTM` takes two unconditional left steps before the same left pass, where the
+rewind takes one. Its framed run, with `pos` the head of tape `i`, is for a word `u`, possibly
+empty, that ends one blank before the head: `u` starts at `pos − |u| − 1`. The rewind's word
+starts at `pos − n` for any `n ≤ |u|`, so its head may stand on any cell of the word or on the
+cell just past its end. In both, the head's own cell is arbitrary. Hence the rewind returns the
+head of a tape holding `bufferTape u`, with the head at any `n ≤ |u|`, to cell `0`, in
+particular after a row that writes or crosses `u` and leaves its head at `|u|`. There
+`Turing.skipBackTM_run_ofCfg` does not apply, and from cell `0` skip back stops at cell `-1`.
 
 ## Main definitions
 
