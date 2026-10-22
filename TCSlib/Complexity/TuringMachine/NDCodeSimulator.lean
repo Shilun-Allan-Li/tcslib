@@ -1889,6 +1889,40 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   obtain ⟨s11run, s11st, s11cut⟩ := ic_seam_step _ (Sum.inr doneL)
     (rewindTM K jwin) RewindPhase.start RewindPhase.done
     s10run s10st s10cut hr11run rfl hr11cut
+  set e₁₁ := ({ (e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start) with
+    state := some RewindPhase.done
+    workTapePos := Function.update
+      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start)).workTapePos jwin
+      (((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jwin - (x.take t).length) } :
+    Cfg K Bool RewindPhase _) with he₁₁
+  -- Phase 12: the loop entry. The virtual five-tape configuration of the represented start.
+  set dstep : Cfg 5 Bool (Σ key, StepBlock.Ph 3 key) (x.take t) :=
+    ⟨some (StepBlock.exit 3 true), 1,
+      fun i => if i.val = 2 then FinTM.bufferTape s
+        else if i.val = 3 then FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr)
+        else if i.val = 4 then StepBlock.summaryCells none (unaryFin (c.decode α).tm.q₀)
+        else fun _ => none,
+      fun _ => 0, []⟩ with hdstep
+  have hrel : StepBlock.Rep (c.decode α).tm.replayTM.tr
+      (NDTM.withChoiceTape ((c.decode α).tm.initCfg (x.take t)) (FinTM.bufferTape s) 0)
+      dstep := by
+    refine ic_replay_rep (c.decode α).tm (x.take t) s dstep (Fin.val_one _) ?_ ?_ ?_ rfl rfl
+    · intro i
+      refine Fin.lastCases ?_ (fun i' => ?_) i
+      · constructor
+        · simp only [hdstep, Fin.lastCases_last, Fin.coe_castAdd, Fin.val_last]
+          norm_num
+        · simp only [hdstep, Fin.lastCases_last]
+      · have hlt := i'.isLt
+        constructor
+        · simp only [hdstep, Fin.lastCases_castSucc, Fin.coe_castAdd, Fin.coe_castSucc]
+          rw [if_neg (by omega), if_neg (by omega), if_neg (by omega)]
+        · simp only [hdstep, Fin.lastCases_castSucc]
+    · simp only [hdstep, StepBlock.tableTape_eq, Fin.coe_natAdd, Fin.val_zero]
+      norm_num
+    · simp only [hdstep, StepBlock.summaryTape_eq, Fin.coe_natAdd, Fin.val_one]
+      norm_num
   sorry
 
 end Turing
