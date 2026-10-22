@@ -2,7 +2,9 @@
 
 <!-- DRAFT (maintainer), 2026-10-18. Issues after #134 (F3 cont1's landing) and #139
 (`wordPatch_append`) merge; #132 merges before #134. Issue-time items: ⟨BASE⟩, ⟨IN-FLIGHT⟩,
-⟨LINES⟩ (the file at the base: home, target, sorry, status paragraph), ⟨ORDER⟩, ⟨ROOTS⟩,
+⟨LINES⟩ (the file at the base: home, target, sorry, status paragraph; with gate 52's docstring
+commit on #134: 458 lines, target 426, sorry 456, status 404–424; without it 452, 420, 450,
+404–418), ⟨ORDER⟩, ⟨ROOTS⟩,
 ⟨SORRIES⟩ (28 expected), ⟨SCREEN⟩ (the review's out/30-screen-after.txt, re-screened at the
 base), ⟨PROBE⟩ (cont1's 60 + the six cont1 helpers' citations + `wordPatch_append`), ⟨LINT⟩ and
 the pre-ship log. -->
@@ -93,7 +95,10 @@ up to `configBound + 1`), and so are the writer's leaf and its two endpoint shap
 
 **Read first:**
 - the target's docstring: its Route A sketch and the **Implementation status** paragraph, whose
-  "Proof sketch (remaining)" is the route below;
+  "Proof sketch (remaining)" is the route below. The sketch's whole-layout writer
+  (`W := c_M · L` by `copyTM`/`skipTM`/`scanTM`) is an alternative not in use: the record's
+  fields are separated by blank cells and those rows read one blank-delimited word. This
+  brief's field-by-field writer (`W = c · F ≤ c · L`) refines the sketch and binds;
 - `exists_windowRunnerTM`'s statement and docstring (`Build/WindowRun.lean`);
 - `wordPatch`, `wordPatch_of_mem`, `wordPatch_of_not_mem` and **`wordPatch_append`**
   (`Build/StepClock.lean`);
@@ -104,6 +109,10 @@ up to `configBound + 1`), and so are the writer's leaf and its two endpoint shap
 - **The import probe** (`F3C2ImportProbe.lean.txt`, ⟨PROBE: N⟩ `#check`s: continuation 1's 60, the
   names its six helpers cite, and `wordPatch_append`): 0 errors, 0 warnings. Re-run it after your
   delivery.
+- **Silence** (maintainer, at pre-ship): the framed rows' lemmas (`copyMapTM_run_ofCfg`,
+  `skipTM_run_ofCfg`, `clearTM_run_ofCfg`) state the output only at their endpoints; confirm
+  the published route to the round's and the writer's intermediate output clause, and name it
+  here.
 - **The consumer probe** (`F3ConsumerProbe.lean.txt`, unchanged): row 18's endpoint, after the
   radius word is cleared, is this contract's precondition. 0 errors.
 - **The join** (`F3C2JoinProbe.lean.txt`): `cw_copy_constant`'s endpoint on the clock tape is
@@ -126,7 +135,9 @@ Your regions:
   change. `private` only, and no `section`, `open` or `variable` that leaks past it.
 - **(b) the target's body**, the `sorry` on line ⟨450⟩.
 - **(c) the target docstring's Implementation status paragraph** (lines ⟨404–418⟩): rewrite it
-  for the final state, or delete it when the target is proved. It is public-facing library text:
+  for the final state. When the target is proved, keep a short note of the construction used
+  (the clock over field cells, of width `c · F`, written field by field), since the frozen Route
+  A sketch still describes the whole-layout alternative. It is public-facing library text:
   what is proved and what is open, in mathematical terms, with no campaign labels (brief, gate,
   finding, escalation or batch names), no dates and no session narrative. The same holds for your
   new docstrings; provenance goes in `REPORT.md`.
@@ -164,6 +175,17 @@ nonempty, `Turing.cfgRecord_field_ne_nil`) and `F = (fs.map List.length).sum`.
    the clock, by `seamCompTM`. Its run: write `e^{|f|}` at the clock head, advance the clock head
    by `|f|` (onto the next write position, the new delimiter), and move the source head to the
    next field's first cell; nothing else changes; exact time, no earlier exit, silence.
+   - **The clock's blank suffix** is a hypothesis of the round, re-established at the new
+     write position `p + |f|`: every clock cell from the write position on is blank (initially by
+     the blank clock precondition; afterwards because the writes only append).
+     `cw_copy_constant` does not supply it: outside its interval it keeps the old cells, so a
+     nonblank cell at `p + |f|` stays nonblank, and `skipTM_run_ofCfg` on the clock needs the
+     blank right delimiter there. Carry it through the pass and the passes explicitly.
+   - **Cuts and envelopes.** `cw_copy_constant` (and `cw_clear_patch`) export only their row's
+     endpoint. The seams need each phase's first-return cut (`seamCompTM_run_ofCfg`'s `hcut`)
+     and its head envelope: take them from the second and third clauses of
+     `copyMapTM_run_ofCfg` (`clearTM_run_ofCfg`) under the same `hw`, or extend the helper to
+     export them (region (a) allows it).
 2. **One pass** over the `m` fields, by induction on the fields, joining the writes by
    `wordPatch_append`: the clock tape becomes `wordPatch ct p (List.replicate F e)`.
 3. **`c` passes**, with the source's rewind between passes by `skipBackTM` (back over the `m`
@@ -180,6 +202,15 @@ nonempty, `Turing.cfgRecord_field_ne_nil`) and `F = (fs.map List.length).sum`.
    the three exits; instantiate `cw_time_bound`'s `A`/`D` and `cw_head_bound`; move the
    certification by `Turing.windowRun_stop_unique`. The clock tape is the runner's last tape; the
    ledger is continuation 1's brief's, item 4 (unchanged).
+   - `cw_clear_patch`'s blank-exterior hypothesis at F2's `halted`/`left` endpoint comes from the
+     writer's blank clock exterior and F2's `w'.length = w.length`; no second
+     patch-normalization lemma is needed.
+   - **One constant** `C` for the whole statement: it must dominate the time constant
+     (`cw_time_bound`'s `A + 4c + D + 10`), the head constant (`cw_head_bound`'s `C_R · (c + 1)`)
+     and the space clause at once (take their sum or maximum).
+   - **Silence and space** are clauses of the target too (`∀ u ≤ t, output = d.output`, and the
+     `spaceUsed` bound): prove them for the composite, through the seams and the embedding, not
+     only at the endpoints.
 
 ### Phases (for a partial; ground rule 9)
 
@@ -239,7 +270,9 @@ brief-inventory API), the names continuation 1's six helpers cite (`copyMapTM_ru
       irreducible]` on every other-file definition your proofs mention, which must still
       elaborate, with a control that fails under the seal) and an inspection of every
       `rw`/`simp`/`simpa`/`unfold` argument in your diff. Continuation 1's review lists its seal
-      set (17 definitions); extend it.
+      set (17 definitions); extend it. The frozen bridge `FinTM.configBound_le_two_pow` (before
+      the home) unfolds `FinTM.configBound`; it predates rule 10, stays outside the seal and is
+      not yours to change.
     - List every declaration you cite outside your file. If you cite more than the probe's list,
       add them to a copy of the probe and run it.
 11. **MIG-1 compatibility.** Cite none of the six R3 canonical rows; use their framed `_ofCfg`

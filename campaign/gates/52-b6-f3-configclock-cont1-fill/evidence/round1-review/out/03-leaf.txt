@@ -1,0 +1,28 @@
+# Finding 3: the leaf
+/-- The writer's one-step leaf moves the clock head left onto its delimiter.
+The catalog skips past a delimiter; no catalog row stops on that delimiter. -/
+private def cw_leftTM {Γ : Type} (k : ℕ) (i : Fin k) : MultiTapeTM k Γ Bool where
+  q₀ := false
+  tr := fun _ _ _ => tapeAction i 0 none .neg true
+
+/-- The delimiter move takes one silent step, restores the native input position,
+and changes only the selected head and control state. -/
+private lemma cw_left_run {Γ : Type} {k : ℕ} {x : List Γ} (i : Fin k)
+    (d : Cfg k Γ Bool x) (hd : d.state = some false) :
+    (cw_leftTM k i).runFrom d 1 =
+      { d with state := some true
+               workTapePos := Function.update d.workTapePos i (d.workTapePos i - 1) } ∧
+      (∀ u < 1, ((cw_leftTM k i).runFrom d u).state ≠ some true) := by
+  constructor
+  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    have h := step_of_tapeAction_move (cw_leftTM k i) d i 0 .neg hd rfl
+    simpa only [moveInputPos_zero, SignType.coe_neg_one, sub_eq_add_neg] using h
+  · intro u hu
+    have hu0 : u = 0 := by omega
+    rw [hu0, MultiTapeTM.runFrom_zero, hd]
+    decide
+
+## tapeAction (Catalog.lean:11685): no output (third field none), next state some q; the leaf's table ignores state and symbol, so from true it moves left again (a live anchor, not a halt)
+def tapeAction {k : ℕ} {Symbol State : Type*} (i : Fin k) (inp : SignType)
+    (wr : Option (Option Symbol)) (m : SignType) (q : State) : Action k Symbol State :=
+  ⟨inp, fun j => if j = i then (wr, m) else (none, 0), none, some q⟩

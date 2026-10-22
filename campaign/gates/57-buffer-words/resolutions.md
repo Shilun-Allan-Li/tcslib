@@ -23,4 +23,4 @@ controls, the consumer examples, the lint and the screen at the merged head `7c9
 | 2–6, 10, 13, 14 | notes | Integrity and the code identity; the six statements' faithfulness at their boundaries; names, home and public text; the replay record; the finite checks. | No action. |
 
 **#140** is on the campaign branch's tip (no `.lean` change there since `e9e97970`), so its merge
-result is the replayed tree.
+result is the replayed tree. **#140 merged** (2026-10-22 01:41 UTC, `e2bc85eb`).
