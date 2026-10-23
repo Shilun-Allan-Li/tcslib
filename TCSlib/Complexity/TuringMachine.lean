@@ -130,8 +130,8 @@ for the local modifications.
   coded normal form, its fixed serialization, and the scheme laws with the effective
   (canonizer) form.
 * `NDCodeSimulator` — the interpreter core for nondeterministic codes (C1): the serialization
-  bridge, the per-code replay canonizer and the core `R` [AB09, Exercise 2.6]. The canonizer
-  and the core are sorried.
+  bridge, the per-code replay canonizer and the core `R` [AB09, Exercise 2.6]. The core is
+  proved; the canonizer is sorried.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
