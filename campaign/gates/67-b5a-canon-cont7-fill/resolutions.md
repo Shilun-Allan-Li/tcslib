@@ -32,6 +32,9 @@ docstring (`evidence/landing/diff-vs-audited-repoint.txt`). Against `oleans-lrc2
 elaborates with only `exists_uniformSimulator`'s sorry warning, and `exists_polyCanonizer` is on
 `[propext, Classical.choice, Quot.sound]` (`evidence/landing/`). Replay: `replay-lcanon7.sh`, the
 closure of every file changed since `oleans-lrc2` (#150's `CfgRecord` with this PR's: 61 modules),
-at `274bdae9`.
+at `274bdae9`. **Passed (user, 2026-10-23): 61 of 61**, 0 failed, static-equal (38)
+(`evidence/replay/`). The new snapshot `oleans-lcanon7` is the campaign's exact tree once this PR
+merges.
 
-**Merge state. #152: not yet clear to merge.** Its replay is pending.
+**Merge state. #152: clear to merge.** The gate is closed, the replay has passed, and the base is
+the campaign branch.

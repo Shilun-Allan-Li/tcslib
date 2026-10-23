@@ -1569,6 +1569,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **#151 merged (2026-10-23).** #152 at `274bdae9` (the campaign merged in, the re-point
     `2e115bf1`); `replay-lcanon7.sh`, 61 modules from `oleans-lrc2`. Then #154 from
     `oleans-lcanon7`.
+  - **`lcanon7` passed (61/61): #152 clear to merge.**
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
