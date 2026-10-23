@@ -41,6 +41,10 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
     `InputRewindConsumerSealed.lean.txt`/`.out`. They restate UN's `un_mapState_comp` and UN's
     phase-8 run (`hs8`, in its exact form over UN's phase-7 endpoint) and prove both from the
     public API alone;
+  - **the consumer itself:** UN continuation 1's landing re-pointed to this API (a local branch on
+    this head), with its elaboration, its seal (the review's 36 definitions plus `inputRewindTM`;
+    82/82 controls), its freeze and its screen, in
+    `campaign/fills/c1/evidence/c1-universal-cont1-landing/`;
   - `freeze-NDHost.txt`, `freeze-TuringMachine.txt`; `lint-build.txt`;
   - the v3 screen: `screen-population.txt` and `screen-population-base.txt`, `screen-head.txt` and
     `screen-base.txt`, the `.status` files, and `screen-pairdiff.txt`;
@@ -61,7 +65,8 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
    `p = 0` the first left step stays at `0`, and the park is reached at `p + 2`. Is it stated
    where a consumer can discharge it? Are the docstrings exact readings?
 2. **Sufficiency.** The consumer probe proves UN's two uses in their exact forms from the public
-   API. R continuation 2's `ic_rewind_leaf_run` (#151) is the same statement as
+   API, and UN's landing, re-pointed to it, elaborates with its seal holding (the evidence list).
+   R continuation 2's `ic_rewind_leaf_run` (#151) is the same statement as
    `inputRewindTM_run`'s first two clauses over `Fin 3`, with `0`, `1` and `2` for `start`,
    `scan` and `done`. Would a consumer need a different form: another entry state, an embedded
    or framed version, or the fixed fields stated as one configuration equality?
