@@ -20,5 +20,10 @@ after #153 merges). Pack `pack.md`; bundle SHA-256
 | 13 | note | The merged-tree replay remains mandatory before merge. | **Agreed.** After #149 and #153 merge, the landing's four commits go onto the campaign branch in a PR, and its closure (`Diagonalization/NTimeHierarchy`, the `Diagonalization` facade) replays from the latest merged-tree snapshot. |
 | 4–6, 8–12 | notes | Integrity and scope; the frozen contract and both budgets; boundary cases; rule 10; the exact re-point; the bank-erase refinement; the screen (the 88% pair is the accepted idiom); the verification records. | No action. |
 
-**Merge state. The UN landing: not yet clear to merge.** Its PR is not yet open: it opens after
-#149 and #153 merge, and then replays.
+**The PR: #154** (`lean/un-cont1-landing`, opened 2026-10-23 after #153 merged). The four
+commits rebased unchanged onto the campaign branch at `e2f08f53` (after #147, #149, #150 and #153):
+`bc933326`, `b9e4d908`, `7c65b4fb`, `1cd82e07` (were `9031f1cf`, `34568b28`, `3ed7b854`, `2d380224`;
+the worker's authorship kept on the first); the final file is `2d380224`'s blob.
+
+**Merge state. #154: not yet clear to merge.** Its closure overlaps #151's and #152's beyond the
+facade, so it replays after both merge, from #152's merged-tree snapshot.
