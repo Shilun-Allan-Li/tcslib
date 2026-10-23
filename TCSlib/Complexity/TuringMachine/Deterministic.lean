@@ -30,6 +30,8 @@ Local modifications (see policy.md §2, vendored code):
 * added `step_of_some` and `outputSymbol_of_some`, the live-state cases beside the upstream
   `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
   2026-10-17).
+* added `spaceUsed_eq_sum`, the space measure as the sum of the per-tape counts, so that
+  consumers read `spaceUsed` through an equation.
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -116,6 +118,9 @@ here from `Build/StepBlock`, design note O9).
 
 **The brief-inventory API, round 3** (user, 2026-10-17): `Turing.MultiTapeTM.step_of_some` and
 `Turing.MultiTapeTM.outputSymbol_of_some`, a live step and its emission as equations.
+
+**The space measure as a sum:** `Turing.MultiTapeTM.spaceUsed_eq_sum`, the cells visited on each
+work tape, summed over the tapes.
 
 ## References
 
@@ -313,6 +318,12 @@ lemma spaceUsed_zero_tapes_eq_zero (cfg : Cfg k Symbol State input) (t : ℕ) (h
 lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
     tm.spaceUsedByTape cfg t i ≤ tm.spaceUsed cfg t :=
   Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
+
+/-- **The space measure as a sum**: the space used up to step `t` is the sum, over the work
+tapes, of the number of cells each head visited up to step `t`. -/
+theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :
+    tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i :=
+  rfl
 
 /-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
 lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :

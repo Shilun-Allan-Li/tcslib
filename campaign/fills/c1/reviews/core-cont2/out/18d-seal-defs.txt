@@ -1,0 +1,302 @@
+==== Turing.Action.apply (TCSlib.Complexity.TuringMachine.Configuration) lines [244]
+    def Action.apply (action : Action k Symbol State) (cfg : Cfg k Symbol State input) :
+        Cfg k Symbol State input where
+      state := action.state
+      inputPos := moveInputPos cfg.inputPos action.inputTape
+      workTapes i := match (action.workTapes i).1 with
+        | none => cfg.workTapes i
+        | some s => Function.update (cfg.workTapes i) (cfg.workTapePos i) s
+      workTapePos i := cfg.workTapePos i + (action.workTapes i).2
+      output := cfg.output ++ action.output.toList
+    
+==== Turing.Cfg.init (TCSlib.Complexity.TuringMachine.Configuration) lines [230]
+    def Cfg.init (q₀ : State) (input : List Symbol) : Cfg k Symbol State input :=
+      ⟨some q₀, 1, fun _ _ => none, fun _ => 0, []⟩
+    
+==== Turing.Cfg.inputSymbol (TCSlib.Complexity.TuringMachine.Configuration) lines [178]
+    def Cfg.inputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
+      if h₁ : cfg.inputPos = 0 then none
+      else if h₂ : cfg.inputPos = input.length + 1 then none
+      else input[cfg.inputPos.val - 1]'(by
+        -- ported proof: `grind` at our pin does not bridge the `Fin` equality with `.val`
+        have h0 : (cfg.inputPos : ℕ) ≠ 0 := fun hv => h₁ (Fin.val_eq_zero_iff.mp hv)
+        have hlt := cfg.inputPos.isLt
+        omega)
+    
+==== Turing.Cfg.mapState (TCSlib.Complexity.TuringMachine.StateRenaming) lines [78, 87]
+    def Action.mapState {State' : Type*} (f : State → State') (a : Action k Symbol State) :
+        Action k Symbol State' where
+      inputTape := a.inputTape
+      workTapes := a.workTapes
+      output := a.output
+      state := a.state.map f
+    
+==== Turing.Cfg.ofWords (TCSlib.Complexity.TuringMachine.Build.Convention) lines [82]
+    def Cfg.ofWords {input : List Bool} (q : State) (w : Fin k → List Bool) :
+        Cfg k Bool State input :=
+      ⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩
+    
+==== Turing.Cfg.workTapeSymbols (TCSlib.Complexity.TuringMachine.Configuration) lines [202]
+    def Cfg.workTapeSymbols (cfg : Cfg k Symbol State input) (i : Fin k) : Option Symbol :=
+      cfg.workTapes i (cfg.workTapePos i)
+    
+==== Turing.CodeNDTM.toFinNDTM (TCSlib.Complexity.TuringMachine.NDCodes) lines [106]
+    def CodeNDTM.toFinNDTM (M : CodeNDTM) : FinNDTM Bool where
+      k := 2
+      State := Fin (M.numStates + 1)
+      tm := M.tm
+    
+==== Turing.FinTM.ComputesFunInTime (TCSlib.Complexity.TuringMachine.Finite) lines [279]
+    def ComputesFunInTime (M : FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ) : Prop :=
+      ∀ input : List Symbol, M.ComputesInTime input (f input) (T input.length)
+    
+==== Turing.FinTM.VirtualTag (TCSlib.Complexity.TuringMachine.Simulation) lines [682]
+    def VirtualTag {n : ℕ} (p : Fin (n + 2)) (b : Bool) : Prop :=
+      (p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true)
+    
+==== Turing.FinTM.bufferTape (TCSlib.Complexity.TuringMachine.Simulation) lines [630]
+    def bufferTape {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :=
+      if 0 ≤ z then w[z.toNat]? else none
+    
+==== Turing.FinTM.controlAction (TCSlib.Complexity.TuringMachine.Simulation) lines [158]
+    def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+        Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
+    
+==== Turing.FinTM.pairExtractTM (TCSlib.Complexity.TuringMachine.Build.Primitives) lines [690]
+    def pairExtractTM (first second : Bool) : FinTM Bool where
+      k := 1
+      State := Option Bool ⊕ Fin 3
+      tm :=
+        { q₀ := .inl none
+          tr := fun q inp work => match q with
+            | .inl none => match inp with
+              | some b => ⟨.pos, fun _ => (none, 0), none, some (.inl (some b))⟩
+              | none => ⟨0, fun _ => (none, 0), none, none⟩
+            | .inl (some b) => match inp with
+              | none => ⟨0, fun _ => (none, 0), none, none⟩
+              | some c =>
+                if b = c then
+                  ⟨.pos, fun _ => (some (some b), .pos), none, some (.inl none)⟩
+==== Turing.MultiTapeTM.initCfg (TCSlib.Complexity.TuringMachine.Deterministic) lines [176]
+    def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+    
+==== Turing.MultiTapeTM.runFrom (TCSlib.Complexity.TuringMachine.Deterministic) lines [200]
+    def runFrom (cfg : Cfg k Symbol State input) (t : ℕ) : Cfg k Symbol State input := tm.step^[t] cfg
+    
+==== Turing.MultiTapeTM.step (TCSlib.Complexity.TuringMachine.Deterministic) lines [162]
+    def step (cfg : Cfg k Symbol State input) : Cfg k Symbol State input :=
+      match cfg.state with
+      -- in the halting state, we stay at the configuration
+      | none => cfg
+      | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+    
+==== Turing.NDTM.initCfg (TCSlib.Complexity.TuringMachine.Nondeterministic) lines [145]
+    def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
+    
+==== Turing.NDTM.replayTM (TCSlib.Complexity.TuringMachine.ChoiceReplay) lines [63]
+    def replayTM (N : NDTM k Bool S) : MultiTapeTM (k + 1) Bool S where
+      q₀ := N.q₀
+      tr := fun q inp w =>
+        let a := N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)
+        ⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩
+    
+==== Turing.NDTM.runWith (TCSlib.Complexity.TuringMachine.Nondeterministic) lines [157]
+    def runWith : List Bool → Cfg k Symbol State input → Cfg k Symbol State input
+      | [], cfg => cfg
+      | b :: w, cfg => runWith w (tm.stepWith b cfg)
+    
+==== Turing.NDTM.withChoiceTape (TCSlib.Complexity.TuringMachine.ChoiceReplay) lines [77]
+    def withChoiceTape {x : List Bool} (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+        Cfg (k + 1) Bool S x :=
+      ⟨c.state, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+    
+==== Turing.StepBlock.Rep (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [3089]
+    def Rep {k n : ℕ} {x : List Bool}
+        (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+        (c : Cfg k Bool (Fin (n + 1)) x)
+        (d : Cfg (k + 2) Bool (Σ key, Ph k key) x) : Prop :=
+      d.inputPos = c.inputPos ∧
+      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
+        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+      d.workTapes (tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+      d.workTapes (summaryTape k) =
+        summaryCells (outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+      d.workTapePos (tableTape k) = 0 ∧ d.workTapePos (summaryTape k) = 0
+    
+==== Turing.StepBlock.exit (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [2239]
+    def exit (k : ℕ) (live : Bool) : Σ key, Ph k key :=
+      if live then ⟨.entry, ()⟩ else ⟨.halt, ()⟩
+    
+==== Turing.StepBlock.hostedLoopTM (TCSlib.Complexity.TuringMachine.Build.StepBlockLoop) lines [110]
+    def hostedLoopTM (k : ℕ) :
+        MultiTapeTM (1 + (k + 2 + 1)) Bool (CounterLoopState (Σ key, Ph k key) × Bool) :=
+      vhostEmitTM (loopTM k)
+    
+==== Turing.StepBlock.outputSummary (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [142]
+    def outputSummary : List Bool → Option Bool
+      | [] => none
+      | [true] => some true
+      | _ => some false
+    
+==== Turing.StepBlock.summaryCells (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [2037]
+    def summaryCells (summary : Option Bool) (word : List Bool) (z : ℤ) : Option Bool :=
+      if z = 0 then summary else FinTM.bufferTape word (z - 2)
+    
+==== Turing.StepBlock.summaryTape (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [222]
+    def summaryTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (1 : Fin 2)
+    
+==== Turing.StepBlock.tableTape (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [215]
+    def tableTape (k : ℕ) : Fin (k + 2) := Fin.natAdd k (0 : Fin 2)
+    
+==== Turing.copyTM (TCSlib.Complexity.TuringMachine.Build.Catalog) lines [283]
+    def copyTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase :=
+      copyMapTM k src dst id (fun _ s => s)
+    
+==== Turing.counterLoopCfg (TCSlib.Complexity.TuringMachine.Build.CounterLoop) lines [737]
+    def counterLoopCfg {k : ℕ} {Symbol S : Type} {x : List Symbol}
+        (q : Option (CounterLoopState S)) (c : Cfg k Symbol S x)
+        (ct : ℤ → Option Symbol) (cp : ℤ) : Cfg (k + 1) Symbol (CounterLoopState S) x :=
+      { (embedEmitCfg Fin.castSuccEmb (fun _ => ct) (fun _ => cp) [] c).mapState
+          CounterLoopState.body with state := q }
+    
+==== Turing.counterValue (TCSlib.Complexity.TuringMachine.Build.CounterLoop) lines [2040]
+    def counterValue (w : List Bool) : ℕ :=
+      Nat.ofDigits 2 (w.map Bool.toNat)
+    
+==== Turing.embedSilentCfg (TCSlib.Complexity.TuringMachine.Build.Embed) lines [208]
+    def embedSilentCfg (ι : Fin m ↪ Fin k) (cap : Fin k)
+        (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+        (pre out₀ : List Symbol) (c : Cfg m Symbol S x) : Cfg k Symbol S x where
+      state := c.state
+      inputPos := c.inputPos
+      workTapes := fun j =>
+        match embedSlot ι j with
+        | some i => c.workTapes i
+        | none =>
+          if j = cap then FinTM.bufferTape (pre ++ c.output) else tapes j
+      workTapePos := fun j =>
+        match embedSlot ι j with
+        | some i => c.workTapePos i
+        | none =>
+==== Turing.embedSilentRetTM (TCSlib.Complexity.TuringMachine.Build.Embed) lines [661]
+    def embedSilentRetTM (ι : Fin m ↪ Fin k) (cap : Fin k)
+        (M : MultiTapeTM m Symbol S) : MultiTapeTM k Symbol (S ⊕ Unit) where
+      q₀ := Sum.inl M.q₀
+      tr := fun q inp w =>
+        match q with
+        | Sum.inl s =>
+          let a := M.tr s inp fun i => w (ι i)
+          let h := embedActionCore ι (some cap) a
+          ⟨h.inputTape, h.workTapes, h.output,
+            some (a.state.elim (Sum.inr ()) Sum.inl)⟩
+        | Sum.inr _ => ⟨0, fun _ => (none, 0), none, some (Sum.inr ())⟩
+    
+==== Turing.embedSilentTM (TCSlib.Complexity.TuringMachine.Build.Embed) lines [253]
+    def embedSilentTM (ι : Fin m ↪ Fin k) (cap : Fin k)
+        (M : MultiTapeTM m Symbol S) : MultiTapeTM k Symbol S where
+      q₀ := M.q₀
+      tr := fun q inp w =>
+        embedActionCore ι (some cap) (M.tr q inp fun i => w (ι i))
+    
+==== Turing.moveInputPos (TCSlib.Complexity.TuringMachine.Configuration) lines [135]
+    def moveInputPos {n : ℕ} (pos : Fin (n + 2)) (m : SignType) : Fin (n + 2) :=
+      let p := ((pos.val : ℤ) + (m.cast : ℤ)).toNat
+      if h : p < n + 2 then ⟨p, h⟩ else ⟨n + 1, by omega⟩
+    
+==== Turing.pairDecode (TCSlib.Complexity.TuringMachine.Encoding) lines [145]
+    def pairDecode : List Bool → Option (List Bool × List Bool)
+      | false :: false :: rest => (pairDecode rest).map fun p => (false :: p.1, p.2)
+      | true :: true :: rest => (pairDecode rest).map fun p => (true :: p.1, p.2)
+      | false :: true :: rest => some ([], rest)
+      | _ => none
+    
+==== Turing.pairEncode (TCSlib.Complexity.TuringMachine.Encoding) lines [135]
+    def pairEncode (x α : List Bool) : List Bool :=
+      (x.flatMap fun b => [b, b]) ++ [false, true] ++ α
+    
+==== Turing.phaseHostTM (TCSlib.Complexity.TuringMachine.Build.Seam) lines [832]
+    def phaseHostTM {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+        (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+        (red : (i : I) → Ph i → Option (Σ i, Ph i)) : MultiTapeTM k Γ (Σ i, Ph i) where
+      q₀ := q0
+      tr := fun q inp w =>
+        match red q.1 q.2 with
+        | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
+        | none => ((M q.1).tr q.2 inp w).mapState (Sigma.mk q.1)
+    
+==== Turing.prefixCanonTM (TCSlib.Complexity.TuringMachine.UniversalStartup) lines [255]
+    def prefixCanonTM (F : FinTM Bool) : FinTM Bool :=
+      bufferedCompTM universalPrefixTM F
+    
+==== Turing.rewindTM (TCSlib.Complexity.TuringMachine.Build.Rewind) lines [61]
+    def rewindTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol RewindPhase where
+      q₀ := .start
+      tr := fun q _ w =>
+        match q with
+        | .start => tapeAction i 0 none .neg .back
+        | .back =>
+          match w i with
+          | some _ => tapeAction i 0 none .neg .back
+          | none => tapeAction i 0 none .pos .done
+        | .done => inputMoveAction 0 .done
+    
+==== Turing.seamCompTM (TCSlib.Complexity.TuringMachine.Build.Seam) lines [130]
+    def seamCompTM {Symbol : Type*} [DecidableEq S₁] (M₁ : MultiTapeTM k Symbol S₁) (exit : S₁)
+        (M₂ : MultiTapeTM k Symbol S₂) (entry : S₂) :
+        MultiTapeTM k Symbol (S₁ ⊕ S₂) where
+      q₀ := Sum.inl M₁.q₀
+      tr := fun q inp w =>
+        match q with
+        | Sum.inl s =>
+          if s = exit then ⟨0, fun _ => (none, 0), none, some (Sum.inr entry)⟩
+          else
+            let a := M₁.tr s inp w
+            ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inl⟩
+        | Sum.inr s =>
+          let a := M₂.tr s inp w
+          ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+==== Turing.seamReleaseTM (TCSlib.Complexity.TuringMachine.Build.Seam) lines [705]
+    def seamReleaseTM {Symbol : Type*} (M : MultiTapeTM k Symbol S) (anchor : S) :
+        MultiTapeTM k Symbol (Unit ⊕ S) where
+      q₀ := Sum.inl ()
+      tr := fun q inp w =>
+        match q with
+        | Sum.inl _ =>
+          let a := M.tr anchor inp w
+          ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+        | Sum.inr s =>
+          let a := M.tr s inp w
+          ⟨a.inputTape, a.workTapes, a.output, a.state.map Sum.inr⟩
+    
+==== Turing.serializeK (TCSlib.Complexity.TuringMachine.CodeSimulator) lines [108]
+    def serializeK {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) : List Bool :=
+      pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)
+    
+==== Turing.stateWord (TCSlib.Complexity.TuringMachine.Build.Loop) lines [135]
+    def stateWord (k : ℕ) (s : List Bool) : Fin k → List Bool :=
+      fun i => if (i : ℕ) = 0 then s else []
+    
+==== Turing.tableBitsK (TCSlib.Complexity.TuringMachine.Build.StepBlock) lines [106]
+    def tableBitsK {k n : ℕ}
+        (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+        List Bool :=
+      (List.finRange (n + 1)).flatMap fun q =>
+        ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+          (workReadsK k).flatMap fun w => actionBitsK (tr q inp w)
+    
+==== Turing.unaryFin (TCSlib.Complexity.TuringMachine.Encoding) lines [598]
+    def unaryFin {n : ℕ} (s : Fin n) : List Bool :=
+      List.replicate (s : ℕ) true ++ [false]
+    
+==== Turing.vhostBank (TCSlib.Complexity.TuringMachine.Build.VirtualInput) lines [120]
+    def vhostBank (i : Fin m) : Fin (1 + m) := Fin.natAdd 1 i
+    
+==== Turing.vhostCfg (TCSlib.Complexity.TuringMachine.Build.VirtualInput) lines [135]
+    def vhostCfg (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+        (pre : List Bool) : Cfg (1 + m) Bool (S × Bool) x where
+      state := c.state.map (fun q => (q, b))
+      inputPos := p
+      workTapes := Fin.addCases (fun _ => FinTM.bufferTape y) c.workTapes
+      workTapePos := Fin.addCases (fun _ => (c.inputPos.val : ℤ) - 1) c.workTapePos
+      output := pre ++ c.output
+    

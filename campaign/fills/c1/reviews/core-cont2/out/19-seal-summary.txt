@@ -1,0 +1,30 @@
+# Rule 10 seal (review), delivered file at the base against oleans-lg4c2
+Seal set: the 46 other-file, semireducible, non-projection, non-instance definitions that the target and the
+25 privates reach (out/18c-seal-set.txt; from the kinds probe out/18-kinds.out over the 189 reached TCSlib
+constants out/15b-extlist.txt). It contains the last round's 38 (core-cont1-r3 out/11-seal-set.txt) and 8 new:
+CodeNDTM.toFinNDTM, FinTM.controlAction, copyTM, embedSilentTM, moveInputPos, rewindTM, seamCompTM, seamReleaseTM.
+S2 also erases the four @[simp]-unfoldable definitions reached (Action.apply, Cfg.init, MultiTapeTM.initCfg,
+NDTM.initCfg). Controls: one rfl control per sealed definition (46), plus 4 simp controls; at the section's top
+and at its end (S2 on the repaired file: top only, to stay under Lean's 100-error cap).
+
+Run                                   body diagnostics                          controls
+U  unsealed, delivered body           1 warning (95, the replay canonizer)      100/100 pass   out/19-C2ControlUnsealed.out
+S1 sealed, delivered body             6 ERRORS (785, 789, 808, 841, 2365, 2366) 92/92 rfl fail; 8 simp pass (expected under S1)  out/19-C2SealControl.out, out/19b-control-map-S1.txt
+S2 sealed+erased, delivered body      the same 6 ERRORS, no other               95 fail before Lean's 100-error cap  out/19-C2SealSimpControl.out, out/19b-control-map-S2.txt
+S1 minus CodeNDTM.toFinNDTM           4 errors (785, 789, 808, 841): the verdict sites 2365/2366 pass  out/19d-seal-minus-toFinNDTM.out
+U  unsealed, repaired body            1 warning (95)                            100/100 pass   out/24c-repaired-ControlUnsealed.out
+S1 sealed, repaired body              0 errors, 1 warning (95)                  92/92 rfl fail; 8 simp pass   out/23-repaired-S1-SealControl.out, out/23b-*
+S2 sealed+erased, repaired body       0 errors, 1 warning (95)                  50/50 fail (46 rfl + 4 simp)  out/24-repaired-S2-SealSimpControl.out, out/24b-*
+
+The six sites (delivered line numbers):
+ 785  ic_rewind_scan (zero case)   `show (ic_rewindLeafTM k).step cfg = _` against `runFrom cfg (0 + 1)`: unfolds MultiTapeTM.runFrom
+ 789  ic_rewind_scan (zero case)   `exact hs` against `(runFrom cfg 0).state = some 1`: unfolds MultiTapeTM.runFrom
+ 808  ic_rewind_scan (succ case)   `| zero => exact hs`, the same
+ 841  ic_rewind_leaf_run           `show (ic_rewindLeafTM k).runFrom ((ic_rewindLeafTM k).step cfg) _ = _` against `runFrom (runFrom cfg 1) _`: unfolds runFrom
+ 2365 the target (verdict, pos)    `rw [if_pos hP, ...]`: the statement's `if` keeps the Decidable instance typed at
+ 2366 the target (verdict, neg)    `(c.decode α).toFinNDTM`'s fields after the sanctioned `simp only [toFinNDTM_tm, _k, _State]`
+                                    (out/19c-verdict-probe.out); matching it against hP needs CodeNDTM.toFinNDTM to unfold
+                                    (bisect out/19d). The worker's REPORT: "Seal test: not re-run this round".
+Repair (proof-only, out/21-repairs.diff, scripts/repairs.py with asserted edits): read runFrom through runFrom_zero /
+runFrom_succ_eq_step; close the verdict by `simp only [hP, and_self, decide_true, if_true]` /
+`simp only [hP, decide_false, if_false]` (candidates tested sealed: out/19e-verdict-candidates.out).

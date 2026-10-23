@@ -1428,13 +1428,132 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   `Action.apply`'s `@[simp]` (a 3-line re-proof is tested); F3 five stale docstring passages and
   the module status; F4 cosmetic; F5 records (report errata). Landing: the six commits, one
   maintainer commit, a replay of `CfgRecord`'s 52-module downstream (it overlaps #149 beyond the
-  facade). **Decisions pending (user):** the order against #149, the edits, the size, the
-  authorship of the delivered commits.
+  facade). **Ruled (user, 2026-10-22):** #149 merges first; the maintainer commit takes F2 (the
+  re-proof), all five F3 passages and F4; the size is closed with a compression item (below); the
+  delivered commits keep their authorship. **Landed as #150** (`79de6551`: the six commits and the
+  maintainer's); its replay (the 52, from #149's merged-tree snapshot) and a fill gate (gate 64)
+  after #149 merges.
+  - **MIG-12-C (compression, scheduled):** `CfgRecord` grew 5,310 → 5,717 lines against the
+    design's −1.6k to −2.1k: its readers convert contract segments back to the old endpoint shape.
+    Compress them, e.g. through a generic contract-segment reader in `Build/Contract/Basic`, by an
+    API PR and a fill (the user's ruling of 2026-10-22).
   - **Promotion candidates (shared-API window):** a generic contract-segment reader for
     `Build/Contract/Basic`; `MultiTapeTM.runFrom_one` (three copies in the tree).
 - **Megafill A delivered (2026-10-22): three items, each reported complete** (`megafill-a-REPORT.md`;
   R cont2, UN cont1, the canonizer's cont7). Three review sub-agents are running (resumed after the
   session restart; the canonizer's after-screen ran on).
+  - **UN cont1 reviewed: complete; land with edits** (`campaign/fills/c1/reviews/universal-cont1/`).
+    `Turing.exists_timed_universal_NDTM` proved modulo exactly `exists_ndInterpreterCore` (item 1's
+    target); 13 new `un_` privates; an 80-control seal; screen 450 → 454 pairs. Landing: squash the
+    owned file (the delivered series adds an `evidence/` tree to the library), then the maintainer's
+    edits (the overlay's reverted docstring, F1; a 3-line `simp only` repair, F2; three sketches
+    and the status text, F5). **Decisions pending (user):** two new cross-file pairs (F3), two route
+    refinements (F4), the repairs and an optional lint cleanup.
+  - **The canonizer's cont7 reviewed: complete; land with edits** (`campaign/fills/b5a/reviews/canon-cont7/`).
+    The stub `exists_canonGrammarStage` proved; `MachineFormat.exists_polyCanonizer` on the standard
+    three; 37 new privates; a 74-control seal; screen 2,633 → 2,692 pairs, 59 new, none cross-file,
+    four in-file at 90% or more. Landing: the 8 commits, then the maintainer's edits (gate 49's
+    deferred status text, drafted). **Decisions pending (user):** the unused counter-repeat link
+    (F1), a `simp [Bool.toNat]` fix (F2), the four ≥ 90% pairs (F3), 13 sketches (F4), the status
+    wording and the Codes2Tape/EXPCOM text (F8), the order against #149, the next cover brief's
+    environment logging (F7).
+- **R cont2 reviewed: complete; land with a rule-10 fix** (`campaign/fills/c1/reviews/core-cont2/`).
+  `Turing.exists_ndInterpreterCore` proved modulo exactly `exists_replayCanonizer`. The worker ran
+  no seal; sealing 46 definitions, six steps closed only by unfolding `MultiTapeTM.runFrom` (4) or
+  `CodeNDTM.toFinNDTM` (2): the reviewer's checked proof-only fix (4 hunks; 50 controls).
+  **Megafill A rulings (user, 2026-10-22):**
+  - **R cont2:** land with the fix (a maintainer commit), the two status edits and the
+    `Implementation.` paragraph; `ic_rewind_scan`'s re-proof ledgered (IR-1), re-pointed when the
+    input-rewind API lands; the 69% `iw_one` pair accepted as an idiom pair; `git am -3` restricted
+    to the owned file, the worker's authorship and subjects kept.
+  - **UN cont1:** its two cross-file pairs by **an API PR first** (a public input rewind with an
+    exact time and a first-visit cut; a `mapState` collapse lemma; IR-1), then its landing
+    re-points to them; F4's two refinements accepted; F2's repair, F1/F5's docstrings and F6's
+    lint cleanup applied at landing (the owned file squashed, the author kept).
+  - **The canonizer's cont7:** the re-derived loops accepted and `canonCounterRepeat` retired in the
+    dedup window; the four ≥ 90% pairs recorded as debt (CC7-1); the maintainer adds the
+    `Bool.toNat` fix, the status wording (L1–L4), the 13 sketches, and the Codes2Tape/EXPCOM
+    text; the 8 commits kept as delivered.
+  - **Order:** every landing merges after #149 (as for #150), each replaying its closure from the
+    latest merged-tree snapshot.
+  - **For the next cover brief** (the canonizer's F7, R's process notes): the shared environment
+    logs in every item zip; per-module memory; `Simulation` in the screen population of any fill
+    that writes an input rewind; "seal not run" a checklist failure.
+- **The input-rewind API opened as #153** (`lean/input-rewind-api`, `ac5ce7bc` on `86523ba5`; an
+  API gate, gate 65; the user's ruling "New small module", 2026-10-22). `Build/InputRewind`:
+  `Turing.inputRewindTM` (start, scan, park), `inputRewindTM_run` (exact time `p + 1`, the first
+  arrival at the park, the head at `1`, work tapes, heads and output fixed at every time),
+  `inputRewindTM_step_done`, and `Turing.Cfg.mapState_mapState`. `Build/NDHost`'s private
+  `guessRun_mapState_mapState`, the lemma's exact statement, is removed and its three uses
+  re-pointed (**ruled (user, 2026-10-22): in this PR**). Evidence
+  `campaign/gates/65-input-rewind-api/evidence/`. No snapshot has the base tree, so the replay
+  (5 modules: the new module, NDHost, `Diagonalization/NTimeHierarchy`, both facades) runs after
+  #149 merges, from #149's merged-tree snapshot; then gate 65. UN cont1's landing and #151's
+  `ic_rewind_scan` re-point follow it.
+  - **NDHost's rule-10 debt:** 11 simp-argument unfoldings of `Cfg.mapState` (`StateRenaming`'s
+    definition) remain in `Build/NDHost`; replace them with the field equations
+    (`Cfg.mapState_state`, …) and `Cfg.mapState_mapState`, in the user's dedup window or NDHost's
+    next PR.
+- **UN cont1's landing prepared** (local branch `lean/un-cont1-landing`, on #153's head `ac5ce7bc`;
+  unpushed until #153 merges): `9031f1cf` the delivery squashed to the owned file (author kept,
+  blob `8514e6db`); `34568b28` the review's edits A1–A7, B1–B3, C (blob `958751e1`); `3ed7b854` the
+  re-point to `Turing.inputRewindTM`/`inputRewindTM_run` and `Cfg.mapState_mapState`, removing
+  `un_inRewTM`, `un_inRew_run` (and A7's sketch with it) and `un_mapState_comp`. Checked as one
+  file after the new module's text, against `oleans-lu2sc1`: only `ntime_hierarchy`'s sorry
+  warning; the review's seal S2 plus `Turing.inputRewindTM` (37 definitions, the simp erasure):
+  the body has 0 errors and 82/82 controls fail; freeze 5 → 5 public, 14 → 11 private; lint as at
+  review; screen 617 declarations, 454 pairs, F3's pairs gone
+  (`campaign/fills/c1/evidence/c1-universal-cont1-landing/`, with the PR body drafted).
+  - `un_setup`'s `hstart` (the start configuration through seven nested relabelings, proved field
+    by field) reproduces 88% of `Cfg.mapState_mapState`'s text: a different statement in the same
+    rewrite idiom, the review's 87% in-file pair with `un_mapState_comp`, now cross-file. **Ruled
+    (user, 2026-10-23): accepted as an idiom pair** (as R's `iw_one` pair).
+- **Rulings for the post-#149 queue (user, 2026-10-23):**
+  - **Gates before replays:** the queued gates (64 #150, 65 #153, 66 #151, 67 #152, 68 the UN
+    landing) are dispatched before their post-#149 merged-tree replays; each pack lists its replay
+    as a pending attestation, recorded when it passes. A PR is clear to merge only when both its
+    gate and its replay have passed.
+  - **R's leaf at #151's landing:** if #153 has merged first, #151 re-points `ic_rewindLeafTM` and
+    `ic_rewind_leaf_run` to `inputRewindTM`/`inputRewindTM_run` in one more maintainer commit
+    (prepared and checked locally first; applied only after #153 merges).
+  - All five queued branches merge cleanly with #149's head (`git merge-tree`, 2026-10-23).
+- **Gates closed (2026-10-23):** 62 round 2 (#149, PASS 0/0/0/7), 65 (#153, PASS 0/0/3/10), 64
+  (#150, PASS 0/0/2/10), 68 (the UN landing, PASS 0/0/3/10); round 2's first dispatch of gate 62 was
+  void (round 1's bundle attached). **#149 is clear to merge.** The fixes:
+  - #153: `1148924f`, the overview's start hypothesis and the run sketch's first step (docstrings);
+  - the UN landing: a fourth local commit `2d380224`, the bank erase's guide condition and the
+    setup pieces' list (docstrings);
+  - errata and the ledger's IR-1 wording, in the gates' resolutions.
+  - **Process:** every dispatch prompt names the bundle's Lean and records revisions (gate 65,
+    minor 2: the pack pointed to the bundle's README, which is not attached).
+  - **Optional (gate 65, note 10):** a cross-reference to `Cfg.mapState_mapState` from
+    `StateRenaming`'s docstring, with that module's next change.
+- **Gates 66 and 67 closed (2026-10-23):** 66 (#151, PASS 0/0/2/14: report and review errata) and
+  67 (#152, PASS 0/0/3/15). All six queued gates are now closed; no PR but #149 is clear to merge,
+  each waiting on its post-#149 replay.
+  - **Rule 10's scope (ruled, user, 2026-10-23; gate 67 minor 1):** TCSlib's own definitions.
+    Core and Mathlib definitions may reduce in `rfl`/`decide`/`show`, never passed to
+    `simp`/`rw`/`unfold`. In `policy.md` and the two unissued briefs.
+  - Fixes: #150 `8d9e3b5e` (the frozen sketch sentence, ruled), #152 `aed162fd` (the adapter
+    sentence); CC7-1's census in the ledger.
+  - **Optional (gate 67, note 6):** permanent sanity lemmas for the minimal table and truncation
+    cases, with the canonizer's next change.
+  - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
+    (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
+    #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
+    `e4c5d015`). Gate 67's pack includes it. The screen matches the two at 99% each way;
+    the prepared re-point elaborates, the review's seal holds on it (74/74), and it removes 11
+    pairs with none new (`campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`).
+  - `exists_ndInterpreterCore` (#151) reproduces 85% of `Cfg.mapState_mapState`'s text (343 of
+    402 characters; the lemma covers about 0.4% of the 80 KB proof): field-by-field rewrites
+    through the relabeling's and the embedding's equations, the idiom of UN's `hstart`. **Ruled
+    (user, 2026-10-23): accepted as an idiom pair**, as gate 66's pack reads it.
+- **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
+  `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
+  first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's
+  `DecidableEq`, `link` and `hlink`; the second seek's local facts; per-stage lemmas; the 448/437
+  probe; seal controls and raw outputs), regions from the landed file. Issues with the next
+  megafill, its pre-ship re-run at the issue commit.
   - **The seam layout's sketches PR** (`lean/c1-seamlayout-sketches`, `ff8d5f10` on `126127b8`):
     the 14 named in gate 59's resolutions, row 2. Opens after #145 merges; no gate; replay
     SeamLayout and the facade.
