@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -544,13 +545,6 @@ other tape blank, every head `0`, output `[]`. -/
 attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
   streamStartCfg
 
-/-- Renaming a configuration's state twice is renaming it once, along the composite. -/
-private theorem guessRun_mapState_mapState {k : ℕ} {S S' S'' : Type} {x : List Bool}
-    (c : Cfg k Bool S x) (f : S → S') (g : S' → S'') :
-    (c.mapState f).mapState g = c.mapState (g ∘ f) := by
-  cases c
-  simp [Cfg.mapState, Option.map_map]
-
 /-- A word longer than `L` splits as its first `L` bits, one bit, and the rest. -/
 private theorem guessRun_split (L : ℕ) (w : List Bool) (h : L < w.length) :
     ∃ (a : List Bool) (b : Bool) (r : List Bool), w = a ++ [b] ++ r ∧ a.length = L := by
@@ -638,7 +632,7 @@ theorem guessRunTM_runWith_handoff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [De
   have hcW : cP.mapState (fun _ =>
       (⟨.guess, NDWriterState.run ()⟩ : Σ i, GuessRunPhase.State SP SQ i)) =
       cW.mapState (Sigma.mk GuessRunPhase.guess) := by
-    rw [guessRun_mapState_mapState]; rfl
+    rw [Cfg.mapState_mapState]; rfl
   have hWst : cW.state = some (NDWriterState.run ()) := by simp [cW, Cfg.mapState, hPexit]
   obtain ⟨hW1, hW2⟩ := ndWriterTM_run_block j cW hWst m hblock hend a₂ ha₂
   have h2 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.guess cW _ a₂ hW1
@@ -661,7 +655,7 @@ theorem guessRunTM_runWith_handoff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [De
   have hcS : cW'.mapState (fun _ =>
       (⟨.skip, SeekPhase.run⟩ : Σ i, GuessRunPhase.State SP SQ i)) =
       cS.mapState (Sigma.mk GuessRunPhase.skip) := by
-    rw [guessRun_mapState_mapState]; rfl
+    rw [Cfg.mapState_mapState]; rfl
   have hS := skipTM_run_ofCfg (x := z) j ([] : List Bool) cS rfl (by
     intro p h0 h1
     have hp : p = 0 := by simp at h1; omega
@@ -691,7 +685,7 @@ theorem guessRunTM_runWith_handoff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [De
   have hcB : cS'.mapState (fun _ =>
       (⟨.back, SeekPhase.run⟩ : Σ i, GuessRunPhase.State SP SQ i)) =
       cB.mapState (Sigma.mk GuessRunPhase.back) := by
-    rw [guessRun_mapState_mapState]; rfl
+    rw [Cfg.mapState_mapState]; rfl
   have hBpos : cB.workTapePos j = cP.workTapePos j + m + 1 := by
     simp [cB, cS', cS, cW', Cfg.mapState]
   have hB := skipBackTM_run_ofCfg (x := z) j s cB rfl (by
