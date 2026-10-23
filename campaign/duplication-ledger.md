@@ -508,6 +508,11 @@ With them, UN's `un_mapState_comp` restates `ExhaustiveReplay`'s `xr_E_initCfg` 
 first**: a public input rewind with an exact time and a first-visit cut, and a `mapState`
 collapse lemma. UN's landing re-points to them. R's copy lands ledgered and re-points when that
 API lands. U2-S's and `ExhaustiveReplay`'s are re-pointed in the user's dedup window.
+**The API: #153** (2026-10-22): `Build/InputRewind`'s `Turing.inputRewindTM` and
+`inputRewindTM_run`, and `Turing.Cfg.mapState_mapState`. Its v3 screen pairs the machine with
+`xr_inRewindTM` (82% and 73%) and the lemma with `xr_E_initCfg` (54%); both are in the dedup
+window, as above. A fifth copy found while building it, `Build/NDHost`'s private
+`guessRun_mapState_mapState` (the lemma's exact statement), is removed in #153 (the user's ruling).
 
 **CC7-1, the canonizer cont7's in-file families** (megafill A item 3, `TuringMachine/CodeSimulator`,
 2026-10-22). 59 new in-file pairs, none cross-file. Four are at or above 90%:

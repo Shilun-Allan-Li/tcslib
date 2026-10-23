@@ -1479,6 +1479,21 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **For the next cover brief** (the canonizer's F7, R's process notes): the shared environment
     logs in every item zip; per-module memory; `Simulation` in the screen population of any fill
     that writes an input rewind; "seal not run" a checklist failure.
+- **The input-rewind API opened as #153** (`lean/input-rewind-api`, `ac5ce7bc` on `86523ba5`; an
+  API gate, gate 65; the user's ruling "New small module", 2026-10-22). `Build/InputRewind`:
+  `Turing.inputRewindTM` (start, scan, park), `inputRewindTM_run` (exact time `p + 1`, the first
+  arrival at the park, the head at `1`, work tapes, heads and output fixed at every time),
+  `inputRewindTM_step_done`, and `Turing.Cfg.mapState_mapState`. `Build/NDHost`'s private
+  `guessRun_mapState_mapState`, the lemma's exact statement, is removed and its three uses
+  re-pointed (**ruled (user, 2026-10-22): in this PR**). Evidence
+  `campaign/gates/65-input-rewind-api/evidence/`. No snapshot has the base tree, so the replay
+  (5 modules: the new module, NDHost, `Diagonalization/NTimeHierarchy`, both facades) runs after
+  #149 merges, from #149's merged-tree snapshot; then gate 65. UN cont1's landing and #151's
+  `ic_rewind_scan` re-point follow it.
+  - **NDHost's rule-10 debt:** 11 simp-argument unfoldings of `Cfg.mapState` (`StateRenaming`'s
+    definition) remain in `Build/NDHost`; replace them with the field equations
+    (`Cfg.mapState_state`, …) and `Cfg.mapState_mapState`, in the user's dedup window or NDHost's
+    next PR.
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's
