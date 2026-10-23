@@ -16,7 +16,8 @@ sum step closes with nothing sealed and fails with `spaceUsed` sealed. **The use
 radius lemma (its envelope clause is exactly the lemma's hypothesis at `r = C * (L + 1)`). Re-pointing
 `wr_space` to it is a later dedup item.
 
-**Commit:** `e172b914`, on the campaign branch at `0416ffea` (after #144).
+**Commits:** `e172b914`, on the campaign branch at `0416ffea` (after #144); `097f3e04`, the
+campaign branch merged in after #145, #146 and #148 (no conflict; the two files unchanged).
 
 ### Checks (maintainer, against `oleans-lsk2`, the tip's tree)
 
@@ -33,12 +34,15 @@ radius lemma (its envelope clause is exactly the lemma's hypothesis at `r = C * 
 
 ### Replay
 
-The downstream closure of `Deterministic` is 324 modules, so this PR's closure overlaps every PR
-in flight beyond the facade (#145, #146, #147, #148). **Pending, to run once after those merge**
-(on the merged tree, chained from the last snapshot), so that it need not be repeated.
+`replay-lspapi.sh`, the merged tree `097f3e04`: the downstream closure of every file changed since
+#144's merge (324 modules: `Deterministic`'s downstream, which contains the merged #145, #146 and
+#148), chained from `oleans-lsk2`. **Pending.** #147 (U2-S) also overlaps this closure: merge this
+PR first; #147 then re-replays its six modules.
 
 ### Gate
 
 An API gate (gate 62). **Pending.**
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+

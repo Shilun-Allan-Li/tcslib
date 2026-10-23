@@ -1,0 +1,80 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Deterministic.lean b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+index efd291b1..48e33936 100644
+--- a/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -30,6 +30,8 @@ Local modifications (see policy.md §2, vendored code):
+ * added `step_of_some` and `outputSymbol_of_some`, the live-state cases beside the upstream
+   `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
+   2026-10-17).
++* added `spaceUsed_eq_sum`, the space measure as the sum of the per-tape counts, so that
++  consumers read `spaceUsed` through an equation.
+ The upstream definitions and theorems are otherwise unchanged.
+ -/
+ import Mathlib.Algebra.Order.Group.Abs
+@@ -117,6 +119,9 @@ here from `Build/StepBlock`, design note O9).
+ **The brief-inventory API, round 3** (user, 2026-10-17): `Turing.MultiTapeTM.step_of_some` and
+ `Turing.MultiTapeTM.outputSymbol_of_some`, a live step and its emission as equations.
+ 
++**The space measure as a sum:** `Turing.MultiTapeTM.spaceUsed_eq_sum`, the cells visited on each
++work tape, summed over the tapes.
++
+ ## References
+ 
+ * [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
+@@ -314,6 +319,12 @@ lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) (i
+     tm.spaceUsedByTape cfg t i ≤ tm.spaceUsed cfg t :=
+   Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
+ 
++/-- **The space measure as a sum**: the space used up to step `t` is the sum, over the work
++tapes, of the number of cells each head visited up to step `t`. -/
++theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :
++    tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i :=
++  rfl
++
+ /-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
+ lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
+     tm.spaceUsed cfg t = spaceUsedOfCfgs ((List.range (t + 1)).map (tm.runFrom cfg)) := by
+diff --git a/TCSlib/Complexity/TuringMachine/Finite.lean b/TCSlib/Complexity/TuringMachine/Finite.lean
+index c9234021..86af3005 100644
+--- a/TCSlib/Complexity/TuringMachine/Finite.lean
++++ b/TCSlib/Complexity/TuringMachine/Finite.lean
+@@ -73,6 +73,8 @@ sites.
+ * `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an integer interval
+   visits at most its cardinality (moved from `Build/Catalog` at MIG-0b's layering split, for
+   the contract core, 2026-10-13).
++* `Turing.MultiTapeTM.spaceUsed_le_of_abs_le` — if every work head stays within `r` cells of
++  its start, the run uses at most `k · (2r + 1)` cells.
+ * `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc` — after `u` steps every work head lies
+   within `u` cells of its start (MIG-0b, 2026-10-13).
+ * `Turing.MultiTapeTM.runFrom_with_q₀`, `Turing.MultiTapeTM.initCfg_with_q₀` — a machine
+@@ -428,6 +430,30 @@ theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
+       exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
+     _ = _ := Int.card_Icc lo hi
+ 
++/-- **A common head radius bounds the space**: if up to time `t` every work head stays within `r`
++cells of its starting position, the run visits at most `2r + 1` cells on each work tape, hence
++at most `k · (2r + 1)` cells in all.
++
++**Proof sketch.** Each head stays in the integer interval of radius `r` around its start, which
++has `2r + 1` cells (`Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc`); sum over the tapes
++(`Turing.MultiTapeTM.spaceUsed_eq_sum`). -/
++theorem MultiTapeTM.spaceUsed_le_of_abs_le {k : ℕ} {Symbol State : Type*}
++    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
++    (d : Cfg k Symbol State input) (t r : ℕ)
++    (h : ∀ u ≤ t, ∀ j, |(tm.runFrom d u).workTapePos j - d.workTapePos j| ≤ (r : ℤ)) :
++    tm.spaceUsed d t ≤ k * (2 * r + 1) := by
++  rw [MultiTapeTM.spaceUsed_eq_sum]
++  calc
++    ∑ j, tm.spaceUsedByTape d t j ≤ ∑ _j : Fin k, (2 * r + 1) := by
++      refine Finset.sum_le_sum fun j _ => ?_
++      have hb := tm.spaceUsedByTape_le_card_Icc d t j (d.workTapePos j - r)
++        (d.workTapePos j + r) fun u hu => by
++          have he := abs_le.mp (h u hu j)
++          rw [Finset.mem_Icc]
++          constructor <;> omega
++      omega
++    _ = k * (2 * r + 1) := by simp
++
+ end Turing
+ 
+ namespace Turing

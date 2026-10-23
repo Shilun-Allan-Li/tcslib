@@ -5,7 +5,8 @@ verify = '--verify' in sys.argv
 paths = [l.strip() for l in open(order) if l.strip()]
 def rev(p): return lrev if p.startswith('TCSlib/') else orev
 def read(p):
-    return subprocess.run(['git', 'show', f'{rev(p)}:{p}'], capture_output=True, text=True, cwd=root, check=True).stdout
+    # bytes, decoded without newline translation: carriage returns are kept
+    return subprocess.run(['git', 'show', f'{rev(p)}:{p}'], capture_output=True, cwd=root, check=True).stdout.decode('utf-8')
 def seg(p):
     c = read(p); c = c + ('' if c.endswith('\n') else '\n')
     if p.endswith('.lean') or p.endswith('.py'): c = '```\n' + c + '```\n'
@@ -13,9 +14,9 @@ def seg(p):
 parts = [seg(p) for p in paths]
 text = '\n'.join(parts)
 if not verify:
-    open(out, 'w', encoding='utf-8').write(text); print('wrote', len(paths), 'segments')
+    open(out, 'w', encoding='utf-8', newline='').write(text); print('wrote', len(paths), 'segments')
 else:
-    got = open(out, encoding='utf-8').read()
+    got = open(out, encoding='utf-8', newline='').read()
     assert got == text, 'bundle differs from a fresh rebuild'
     heads = [l[9:-6] for l in got.split('\n') if l.startswith('## ===== ') and l.endswith(' =====')]
     assert heads[:len(paths)] == paths or heads == paths, 'header order'

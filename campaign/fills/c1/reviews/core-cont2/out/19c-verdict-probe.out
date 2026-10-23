@@ -1,0 +1,1627 @@
+# leanelab: wt=/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/c1-core-cont2/wt-head oleans=/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-lg4c2 file=ReviewScratch/C2VerdictProbe.lean
+# file sha256 873c16a2aae0dac6e71f2299542b7117a788af4139f40739c6e812ec66bb6afb
+# start 2026-10-22T21:31:22Z
+ReviewScratch/C2VerdictProbe.lean:143:8: warning: declaration uses 'sorry'
+ReviewScratch/C2VerdictProbe.lean:833:6: error: 'show' tactic failed, pattern
+  MultiTapeTM.step cfg = ?m.159
+is not definitionally equal to target
+  MultiTapeTM.runFrom cfg (0 + 1) =
+    { state := some 2, inputPos := 1, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos, output := cfg.output }
+ReviewScratch/C2VerdictProbe.lean:837:6: error: Type mismatch
+  hs
+has type
+  cfg.state = some 1
+but is expected to have type
+  (MultiTapeTM.runFrom cfg 0).state = some 1
+ReviewScratch/C2VerdictProbe.lean:856:16: error: Type mismatch
+  hs
+has type
+  cfg.state = some 1
+but is expected to have type
+  (MultiTapeTM.runFrom cfg 0).state = some 1
+ReviewScratch/C2VerdictProbe.lean:889:4: error: 'show' tactic failed, pattern
+  MultiTapeTM.runFrom (MultiTapeTM.step cfg) ?m.264 = ?m.266
+is not definitionally equal to target
+  MultiTapeTM.runFrom (MultiTapeTM.runFrom cfg 1) (↑cfg.inputPos - 1 + 1) =
+    { state := some 2, inputPos := 1, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos, output := cfg.output }
+ReviewScratch/C2VerdictProbe.lean:2413:6: error(lean.unknownIdentifier): Unknown identifier `hP✝`
+GOAL some
+    (Sum.inr
+      ⟨true,
+        Sum.inr
+          (decide
+            ((NDTM.runWith (List.take _fvar.525129 _fvar.525132) (NDTM.initCfg _fvar.525126)).state = none ∧
+              (NDTM.runWith (List.take _fvar.525129 _fvar.525132) (NDTM.initCfg _fvar.525126)).output = [true]))⟩) =
+  some
+    (if
+        (NDTM.runWith (List.take _fvar.525129 _fvar.525132) (NDTM.initCfg _fvar.525126)).state = none ∧
+          (NDTM.runWith (List.take _fvar.525129 _fvar.525132) (NDTM.initCfg _fvar.525126)).output = [true] then
+      Sum.inr ⟨true, Sum.inr true⟩
+    else Sum.inr ⟨true, Sum.inr false⟩)
+GOALX @Eq
+  (Option
+    (Sum
+      (Sum
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                          (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                        (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                      RewindPhase)
+                    SweepPhase)
+                  _fvar.509142)
+                (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+              RewindPhase)
+            (Sum Unit (@FinTM.State Bool _fvar.16921)))
+          _fvar.509618)
+        RewindPhase)
+      (@Sigma Bool fun i => ic_loopPh i)))
+  (@some
+    (Sum
+      (Sum
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                          (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                        (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                      RewindPhase)
+                    SweepPhase)
+                  _fvar.509142)
+                (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+              RewindPhase)
+            (Sum Unit (@FinTM.State Bool _fvar.16921)))
+          _fvar.509618)
+        RewindPhase)
+      (@Sigma Bool fun i => ic_loopPh i))
+    (@Sum.inr
+      (Sum
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                          (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                        (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                      RewindPhase)
+                    SweepPhase)
+                  _fvar.509142)
+                (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+              RewindPhase)
+            (Sum Unit (@FinTM.State Bool _fvar.16921)))
+          _fvar.509618)
+        RewindPhase)
+      (@Sigma Bool fun i => ic_loopPh i)
+      (@Sigma.mk Bool (fun i => ic_loopPh i) true
+        (@Sum.inr Bool Bool
+          (@decide
+            (And
+              (@Eq
+                (Option
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+                (@Cfg.state (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                  _fvar.525126
+                  (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                    (Fin
+                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                    Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+                    (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                      (Fin
+                        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                      Bool (c.decode _fvar.524452).tm _fvar.525126)))
+                (@none
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))))
+              (@Eq (List Bool)
+                (@Cfg.output (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                  _fvar.525126
+                  (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                    (Fin
+                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                    Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+                    (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                      (Fin
+                        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                      Bool (c.decode _fvar.524452).tm _fvar.525126)))
+                (@List.cons Bool true (@List.nil Bool))))
+            (@instDecidableAnd
+              (@Eq
+                (Option
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+                (@Cfg.state (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                  _fvar.525126
+                  (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                    (Fin
+                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                    Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+                    (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                      (Fin
+                        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                      Bool (c.decode _fvar.524452).tm _fvar.525126)))
+                (@none
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))))
+              (@Eq (List Bool)
+                (@Cfg.output (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                  _fvar.525126
+                  (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                    (Fin
+                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                    Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+                    (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                      (Fin
+                        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                      Bool (c.decode _fvar.524452).tm _fvar.525126)))
+                (@List.cons Bool true (@List.nil Bool)))
+              (@Option.instDecidableEq
+                (Fin
+                  (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                    (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                (instDecidableEqFin
+                  (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                    (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                (@Cfg.state (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                  _fvar.525126
+                  (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                    (Fin
+                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                    Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+                    (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                      (Fin
+                        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                      Bool (c.decode _fvar.524452).tm _fvar.525126)))
+                (@none
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))))
+              (@instDecidableEqList Bool instDecidableEqBool
+                (@Cfg.output (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+                  (Fin
+                    (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                      (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                  _fvar.525126
+                  (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                    (Fin
+                      (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                        (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                    Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+                    (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                      (Fin
+                        (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                          (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                      Bool (c.decode _fvar.524452).tm _fvar.525126)))
+                (@List.cons Bool true (@List.nil Bool)))))))))
+  (@some
+    (Sum
+      (Sum
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                          (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                        (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                      RewindPhase)
+                    SweepPhase)
+                  _fvar.509142)
+                (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+              RewindPhase)
+            (Sum Unit (@FinTM.State Bool _fvar.16921)))
+          _fvar.509618)
+        RewindPhase)
+      (@Sigma Bool fun i => ic_loopPh i))
+    (@ite
+      (Sum
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum
+                          (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                            (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                          (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                        RewindPhase)
+                      SweepPhase)
+                    _fvar.509142)
+                  (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                RewindPhase)
+              (Sum Unit (@FinTM.State Bool _fvar.16921)))
+            _fvar.509618)
+          RewindPhase)
+        (@Sigma Bool fun i => ic_loopPh i))
+      (And
+        (@Eq
+          (Option
+            (Fin
+              (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1))))))
+          (@Cfg.state (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+            (Fin
+              (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+            _fvar.525126
+            (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+              (Fin
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+              Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+              (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                (Fin
+                  (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                    (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                Bool (c.decode _fvar.524452).tm _fvar.525126)))
+          (@none
+            (Fin
+              (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))))
+        (@Eq (List Bool)
+          (@Cfg.output (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2))) Bool
+            (Fin
+              (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+            _fvar.525126
+            (@NDTM.runWith (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+              (Fin
+                (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                  (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+              Bool _fvar.525126 (c.decode _fvar.524452).tm (@List.take Bool _fvar.525129 _fvar.525132)
+              (@NDTM.initCfg (@OfNat.ofNat Nat (nat_lit 2) (instOfNatNat (nat_lit 2)))
+                (Fin
+                  (@HAdd.hAdd Nat Nat Nat (@instHAdd Nat instAddNat) (c.decode _fvar.524452).numStates
+                    (@OfNat.ofNat Nat (nat_lit 1) (instOfNatNat (nat_lit 1)))))
+                Bool (c.decode _fvar.524452).tm _fvar.525126)))
+          (@List.cons Bool true (@List.nil Bool))))
+      (@instDecidableAnd
+        (@Eq (Option (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM))
+          (@Cfg.state (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM) Bool
+            (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126
+            (@NDTM.runWith (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+              (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool _fvar.525126
+              (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) (@List.take Bool _fvar.525129 _fvar.525132)
+              (@NDTM.initCfg (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+                (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool
+                (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126)))
+          (@none (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM)))
+        (@Eq (List Bool)
+          (@Cfg.output (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM) Bool
+            (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126
+            (@NDTM.runWith (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+              (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool _fvar.525126
+              (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) (@List.take Bool _fvar.525129 _fvar.525132)
+              (@NDTM.initCfg (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+                (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool
+                (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126)))
+          (@List.cons Bool true (@List.nil Bool)))
+        (@Option.instDecidableEq (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM)
+          (@FinNDTM.decEqState Bool (c.decode _fvar.524452).toFinNDTM)
+          (@Cfg.state (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM) Bool
+            (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126
+            (@NDTM.runWith (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+              (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool _fvar.525126
+              (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) (@List.take Bool _fvar.525129 _fvar.525132)
+              (@NDTM.initCfg (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+                (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool
+                (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126)))
+          (@none (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM)))
+        (@instDecidableEqList Bool instDecidableEqBool
+          (@Cfg.output (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM) Bool
+            (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126
+            (@NDTM.runWith (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+              (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool _fvar.525126
+              (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) (@List.take Bool _fvar.525129 _fvar.525132)
+              (@NDTM.initCfg (@FinNDTM.k Bool (c.decode _fvar.524452).toFinNDTM)
+                (@FinNDTM.State Bool (c.decode _fvar.524452).toFinNDTM) Bool
+                (@FinNDTM.tm Bool (c.decode _fvar.524452).toFinNDTM) _fvar.525126)))
+          (@List.cons Bool true (@List.nil Bool))))
+      (@Sum.inr
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum
+                          (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                            (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                          (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                        RewindPhase)
+                      SweepPhase)
+                    _fvar.509142)
+                  (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                RewindPhase)
+              (Sum Unit (@FinTM.State Bool _fvar.16921)))
+            _fvar.509618)
+          RewindPhase)
+        (@Sigma Bool fun i => ic_loopPh i) (@Sigma.mk Bool (fun i => ic_loopPh i) true (@Sum.inr Bool Bool true)))
+      (@Sum.inr
+        (Sum
+          (Sum
+            (Sum
+              (Sum
+                (Sum
+                  (Sum
+                    (Sum
+                      (Sum
+                        (Sum
+                          (Sum (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM true false))) Unit)
+                            (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                          (Sum (@FinTM.State Bool (prefixCanonTM (FinTM.pairExtractTM false true))) Unit))
+                        RewindPhase)
+                      SweepPhase)
+                    _fvar.509142)
+                  (Fin (@OfNat.ofNat Nat (nat_lit 3) (instOfNatNat (nat_lit 3)))))
+                RewindPhase)
+              (Sum Unit (@FinTM.State Bool _fvar.16921)))
+            _fvar.509618)
+          RewindPhase)
+        (@Sigma Bool fun i => ic_loopPh i) (@Sigma.mk Bool (fun i => ic_loopPh i) true (@Sum.inr Bool Bool false)))))
+HPX ?m.18096
+ReviewScratch/C2VerdictProbe.lean:2422:10: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  if
+      (NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+        (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true] then
+    ?m.18100
+  else ?m.18101
+in the target expression
+  some
+      (Sum.inr
+        ⟨true,
+          Sum.inr
+            (decide
+              ((NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+                (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true]))⟩) =
+    some
+      (if
+          (NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+            (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true] then
+        Sum.inr ⟨true, Sum.inr true⟩
+      else Sum.inr ⟨true, Sum.inr false⟩)
+
+case neg
+c : EffectiveNDMachineCode
+CI : FinTM Bool
+entryI doneI : CI.State
+costI : List Bool → ℕ
+hkI : 0 < CI.k
+installs :
+  ∀ (x α : List Bool),
+    ∃ T ≤ costI α,
+      0 < T ∧
+        (∀ (u : ℕ),
+            0 < u → u < T → (MultiTapeTM.runFrom (Cfg.ofWords entryI (stateWord CI.k α)) u).state ≠ some doneI) ∧
+          MultiTapeTM.runFrom (Cfg.ofWords entryI (stateWord CI.k α)) T =
+            Cfg.ofWords doneI (stateWord CI.k (serializeK (c.decode α).tm.replayTM))
+k₁ : ℕ := (prefixCanonTM (FinTM.pairExtractTM true false)).k
+hk₁ : k₁ = (prefixCanonTM (FinTM.pairExtractTM true false)).k
+k₂ : ℕ := (prefixCanonTM (FinTM.pairExtractTM false true)).k
+hk₂ : k₂ = (prefixCanonTM (FinTM.pairExtractTM false true)).k
+K : ℕ := 11 + k₁ + k₂ + CI.k
+hK : K = 11 + k₁ + k₂ + CI.k
+js : Fin K
+hjs : ↑js = 0
+jbt : Fin K
+hjbt : ↑jbt = 1
+jal : Fin K
+hjal : ↑jal = 2
+jctr : Fin K
+hjctr : ↑jctr = 3
+jwin : Fin K
+hjwin : ↑jwin = 4
+jtbl : Fin K
+hjtbl : ↑jtbl = 5
+jsm : Fin K
+hjsm : ↑jsm = 6
+jb0 : Fin K
+hjb0 : ↑jb0 = 7
+jb1 : Fin K
+hjb1 : ↑jb1 = 8
+capI : Fin K
+hcapI : ↑capI = 9
+capL : Fin K
+hcapL : ↑capL = 10
+ι₁ : Fin k₁ ↪ Fin K
+hι₁ : ∀ (i : Fin k₁), ↑(ι₁ i) = 11 + ↑i
+ι₂ : Fin k₂ ↪ Fin K
+hι₂ : ∀ (i : Fin k₂), ↑(ι₂ i) = 11 + k₁ + ↑i
+ιI : Fin CI.k ↪ Fin K
+hιI : ∀ (i : Fin CI.k), ↑(ιI i) = if ↑i = 0 then 2 else 10 + k₁ + k₂ + ↑i
+ι₇ : Fin 7 ↪ Fin K
+hι₇0 : ι₇ 0 = jwin
+hι₇1 : ι₇ 1 = jb0
+hι₇2 : ι₇ 2 = jb1
+hι₇3 : ι₇ 3 = js
+hι₇4 : ι₇ 4 = jtbl
+hι₇5 : ι₇ 5 = jsm
+hι₇6 : ι₇ 6 = jctr
+hι₇v :
+  ∀ (i : Fin 7),
+    ↑(ι₇ i) =
+      if ↑i = 0 then 4
+      else
+        if ↑i = 1 then 7 else if ↑i = 2 then 8 else if ↑i = 3 then 0 else if ↑i = 4 then 5 else if ↑i = 5 then 6 else 3
+QW : Type
+instFW : Fintype QW
+instDW : DecidableEq QW
+W : MultiTapeTM K Bool QW
+entryW doneW : QW
+CW : ℕ
+windows :
+  ∀ (α x : List Bool) (t : ℕ) (d : Cfg K Bool QW (pairEncode (pairEncode t.bits α) x)),
+    d.state = some entryW →
+      ↑d.inputPos = 4 * t.bits.length + 2 * α.length + 7 →
+        (∀ (q : ℤ), -1 ≤ q → q ≤ ↑t.bits.length → d.workTapes jbt (d.workTapePos jbt + q) = FinTM.bufferTape t.bits q) →
+          (d.workTapes jwin = fun x => none) →
+            d.workTapePos jwin = 0 →
+              ∃ T ≤ CW * (min t x.length + 1) + 2 * t.bits.length,
+                (MultiTapeTM.runFrom d T).state = some doneW ∧
+                  ↑(MultiTapeTM.runFrom d T).inputPos = 4 * t.bits.length + 2 * α.length + 7 + (List.take t x).length ∧
+                    (MultiTapeTM.runFrom d T).workTapes jwin = FinTM.bufferTape (List.take t x) ∧
+                      (MultiTapeTM.runFrom d T).workTapePos jwin = ↑(List.take t x).length ∧
+                        (MultiTapeTM.runFrom d T).workTapePos jbt = d.workTapePos jbt ∧
+                          (∀ (i : Fin K),
+                              i ≠ jbt →
+                                i ≠ jwin →
+                                  (MultiTapeTM.runFrom d T).workTapes i = d.workTapes i ∧
+                                    (MultiTapeTM.runFrom d T).workTapePos i = d.workTapePos i) ∧
+                            (MultiTapeTM.runFrom d T).output = d.output ∧
+                              ∀ u < T, (MultiTapeTM.runFrom d u).state ≠ some doneW
+this✝² : Fintype QW
+this✝¹ : DecidableEq QW
+QL : Type
+instFL : Fintype QL
+instDL : DecidableEq QL
+L : MultiTapeTM K Bool QL
+entryL doneL : QL
+CL : ℕ
+layouts :
+  ∀ {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))),
+    ∃ T ≤ CL * ((serializeK M).length + 1),
+      ∀ {z : List Bool} (d : Cfg K Bool QL z),
+        d.state = some entryL →
+          d.workTapes jal = FinTM.bufferTape (serializeK M) →
+            d.workTapePos jal = 0 →
+              (d.workTapes jtbl = fun x => none) →
+                d.workTapePos jtbl = 0 →
+                  (d.workTapes jsm = fun x => none) →
+                    d.workTapePos jsm = 0 →
+                      (MultiTapeTM.runFrom d T).state = some doneL ∧
+                        (MultiTapeTM.runFrom d T).inputPos = d.inputPos ∧
+                          (MultiTapeTM.runFrom d T).workTapes =
+                              Function.update
+                                (Function.update (Function.update d.workTapes jal fun x => none) jtbl
+                                  (FinTM.bufferTape (tableBitsK M.tr)))
+                                jsm (StepBlock.summaryCells none (unaryFin M.q₀)) ∧
+                            (MultiTapeTM.runFrom d T).workTapePos =
+                                Function.update (Function.update (Function.update d.workTapePos jal 0) jtbl 0) jsm 0 ∧
+                              (∀ u ≤ T, (MultiTapeTM.runFrom d u).output = d.output) ∧
+                                ∀ u < T, (MultiTapeTM.runFrom d u).state ≠ some doneL
+this✝ : Fintype QL
+this : DecidableEq QL
+A₁ : MultiTapeTM K Bool ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) :=
+  embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm
+A₂ : MultiTapeTM K Bool (Fin 3) := ic_rewindLeafTM K
+A₃ : MultiTapeTM K Bool ((prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) :=
+  embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm
+A₄ : MultiTapeTM K Bool RewindPhase := rewindTM K jbt
+A₅ : MultiTapeTM K Bool SweepPhase := copyTM K jbt jctr
+A₈ : MultiTapeTM K Bool RewindPhase := rewindTM K jal
+A₉ : MultiTapeTM K Bool (Unit ⊕ CI.State) := seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI
+A₁₁ : MultiTapeTM K Bool RewindPhase := rewindTM K jwin
+A₁₂ : MultiTapeTM K Bool ((i : Bool) × ic_loopPh i) := embedSilentTM ι₇ capL ic_loopHost
+St₂ : Type := ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3
+St₃ : Type := St₂ ⊕ (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit
+St₄ : Type := St₃ ⊕ RewindPhase
+St₅ : Type := St₄ ⊕ SweepPhase
+St₆ : Type := St₅ ⊕ QW
+St₇ : Type := St₆ ⊕ Fin 3
+St₈ : Type := St₇ ⊕ RewindPhase
+St₉ : Type := St₈ ⊕ Unit ⊕ CI.State
+St₁₀ : Type := St₉ ⊕ QL
+St₁₁ : Type := St₁₀ ⊕ RewindPhase
+S₂ : MultiTapeTM K Bool (((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) :=
+  seamCompTM A₁ (Sum.inr ()) A₂ 0
+S₃ : MultiTapeTM K Bool
+  ((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+    (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) :=
+  seamCompTM S₂ (Sum.inr 2) A₃ (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀)
+S₄ : MultiTapeTM K Bool
+  (((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+      (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+    RewindPhase) :=
+  seamCompTM S₃ (Sum.inr (Sum.inr ())) A₄ RewindPhase.start
+S₅ : MultiTapeTM K Bool
+  ((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+        (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+      RewindPhase) ⊕
+    SweepPhase) :=
+  seamCompTM S₄ (Sum.inr RewindPhase.done) A₅ SweepPhase.sweep
+S₆ : MultiTapeTM K Bool
+  (((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+          (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+        RewindPhase) ⊕
+      SweepPhase) ⊕
+    QW) :=
+  seamCompTM S₅ (Sum.inr SweepPhase.done) W entryW
+S₇ : MultiTapeTM K Bool
+  ((((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+            (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+          RewindPhase) ⊕
+        SweepPhase) ⊕
+      QW) ⊕
+    Fin 3) :=
+  seamCompTM S₆ (Sum.inr doneW) A₂ 0
+S₈ : MultiTapeTM K Bool
+  (((((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+              (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+            RewindPhase) ⊕
+          SweepPhase) ⊕
+        QW) ⊕
+      Fin 3) ⊕
+    RewindPhase) :=
+  seamCompTM S₇ (Sum.inr 2) A₈ RewindPhase.start
+S₉ : MultiTapeTM K Bool
+  ((((((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+                (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+              RewindPhase) ⊕
+            SweepPhase) ⊕
+          QW) ⊕
+        Fin 3) ⊕
+      RewindPhase) ⊕
+    Unit ⊕ CI.State) :=
+  seamCompTM S₈ (Sum.inr RewindPhase.done) A₉ (Sum.inl ())
+S₁₀ : MultiTapeTM K Bool
+  (((((((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+                  (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+                RewindPhase) ⊕
+              SweepPhase) ⊕
+            QW) ⊕
+          Fin 3) ⊕
+        RewindPhase) ⊕
+      Unit ⊕ CI.State) ⊕
+    QL) :=
+  seamCompTM S₉ (Sum.inr (Sum.inr doneI)) L entryL
+S₁₁ : MultiTapeTM K Bool
+  ((((((((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+                    (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+                  RewindPhase) ⊕
+                SweepPhase) ⊕
+              QW) ⊕
+            Fin 3) ⊕
+          RewindPhase) ⊕
+        Unit ⊕ CI.State) ⊕
+      QL) ⊕
+    RewindPhase) :=
+  seamCompTM S₁₀ (Sum.inr doneL) A₁₁ RewindPhase.start
+R : MultiTapeTM K Bool
+  (((((((((((((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3) ⊕
+                      (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) ⊕
+                    RewindPhase) ⊕
+                  SweepPhase) ⊕
+                QW) ⊕
+              Fin 3) ⊕
+            RewindPhase) ⊕
+          Unit ⊕ CI.State) ⊕
+        QL) ⊕
+      RewindPhase) ⊕
+    (i : Bool) × ic_loopPh i) :=
+  seamCompTM S₁₁ (Sum.inr RewindPhase.done) A₁₂ ⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩
+α x : List Bool
+t : ℕ
+s : List Bool
+hs : t ≤ s.length
+tapes₀ : Fin K → ℤ → Option Bool := fun i => if i = js then FinTM.bufferTape s else fun x => none
+htapes₀ : tapes₀ = fun i => if i = js then FinTM.bufferTape s else fun x => none
+hr₁ : ∀ (j : Fin K), j ∈ Set.range ⇑ι₁ ↔ 11 ≤ ↑j ∧ ↑j < 11 + k₁
+hr₂ : ∀ (j : Fin K), j ∈ Set.range ⇑ι₂ ↔ 11 + k₁ ≤ ↑j ∧ ↑j < 11 + k₁ + k₂
+T₁ : ℕ
+hT₁ : T₁ ≤ 16 * t.bits.length + 8 * α.length + 25
+cfg₀ : Cfg K Bool ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit)
+  (pairEncode (pairEncode t.bits α) x) :=
+  Cfg.mapState Sum.inl
+    (embedSilentCfg ι₁ jbt tapes₀ (fun x => 0) [] [] (MultiTapeTM.initCfg (pairEncode (pairEncode t.bits α) x)))
+h₁cut : ∀ u < T₁, (MultiTapeTM.runFrom cfg₀ u).state ≠ some (Sum.inr ())
+hcfg₀ :
+  cfg₀ =
+    Cfg.mapState Sum.inl
+      (embedSilentCfg ι₁ jbt tapes₀ (fun x => 0) [] [] (MultiTapeTM.initCfg (pairEncode (pairEncode t.bits α) x)))
+e₁ : Cfg K Bool ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) (pairEncode (pairEncode t.bits α) x) :=
+  MultiTapeTM.runFrom cfg₀ T₁
+h₁st : e₁.state = some (Sum.inr ())
+h₁pos : ↑e₁.inputPos = 4 * t.bits.length + 2 * α.length + 7
+h₁bt : e₁.workTapes jbt = FinTM.bufferTape t.bits
+h₁bthd : e₁.workTapePos jbt = ↑t.bits.length
+h₁out : e₁.output = []
+h₁frame : ∀ j ∉ Set.range ⇑ι₁, j ≠ jbt → e₁.workTapes j = tapes₀ j ∧ e₁.workTapePos j = 0
+he₁ : e₁ = MultiTapeTM.runFrom cfg₀ T₁
+hd₂st : (Cfg.mapState (fun x => 0) e₁).state = some 0
+hd₂pos : 1 ≤ ↑(Cfg.mapState (fun x => 0) e₁).inputPos
+hL2 :
+  ∀ u < ↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => 0) e₁) u).state ≠ some 2
+s2cut :
+  ∀ t_1 < T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1),
+    (MultiTapeTM.runFrom (Cfg.mapState Sum.inl cfg₀) t_1).state ≠ some (Sum.inr 2)
+e₂ : Cfg K Bool (Fin 3) (pairEncode (pairEncode t.bits α) x) :=
+  let __src := Cfg.mapState (fun x => 0) e₁;
+  { state := some 2, inputPos := 1, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+    output := __src.output }
+hL1 : MultiTapeTM.runFrom (Cfg.mapState (fun x => 0) e₁) (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) = e₂
+s2run :
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl cfg₀) (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1)) =
+    Cfg.mapState Sum.inr e₂
+s2st : (Cfg.mapState Sum.inr e₂).state = some (Sum.inr 2)
+he₂ :
+  e₂ =
+    let __src := Cfg.mapState (fun x => 0) e₁;
+    { state := some 2, inputPos := 1, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+      output := __src.output }
+he₂out : e₂.output = []
+htapes₀blank : ∀ (j : Fin K), j ≠ js → tapes₀ j = fun x => none
+hLHS₂t :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀)
+            (Cfg.mapState Sum.inr e₂)).workTapes
+        j =
+      e₁.workTapes j
+hLHS₂p :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀)
+            (Cfg.mapState Sum.inr e₂)).workTapePos
+        j =
+      e₁.workTapePos j
+hjunc₂ :
+  Cfg.mapState (fun x => Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀) (Cfg.mapState Sum.inr e₂) =
+    Cfg.mapState Sum.inl
+      (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+        (MultiTapeTM.initCfg (pairEncode (pairEncode t.bits α) x)))
+T₃ : ℕ
+hT₃ : T₃ ≤ 16 * t.bits.length + 8 * α.length + 25
+h₃cut :
+  ∀ u < T₃,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+              (MultiTapeTM.initCfg (pairEncode (pairEncode t.bits α) x))))
+          u).state ≠
+      some (Sum.inr ())
+e₃ : Cfg K Bool ((prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit) (pairEncode (pairEncode t.bits α) x) :=
+  MultiTapeTM.runFrom
+    (Cfg.mapState Sum.inl
+      (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+        (MultiTapeTM.initCfg (pairEncode (pairEncode t.bits α) x))))
+    T₃
+h₃st : e₃.state = some (Sum.inr ())
+h₃pos : ↑e₃.inputPos = 4 * t.bits.length + 2 * α.length + 7
+h₃al : e₃.workTapes jal = FinTM.bufferTape (if false = true then t.bits else α)
+h₃alhd : e₃.workTapePos jal = ↑(if false = true then t.bits else α).length
+h₃out : e₃.output = []
+h₃frame : ∀ j ∉ Set.range ⇑ι₂, j ≠ jal → e₃.workTapes j = e₁.workTapes j ∧ e₃.workTapePos j = e₁.workTapePos j
+he₃ :
+  e₃ =
+    MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+          (MultiTapeTM.initCfg (pairEncode (pairEncode t.bits α) x))))
+      T₃
+s3run :
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃) =
+    Cfg.mapState Sum.inr e₃
+s3st : (Cfg.mapState Sum.inr e₃).state = some (Sum.inr (Sum.inr ()))
+s3cut :
+  ∀ t_1 < T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃,
+    (MultiTapeTM.runFrom (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)) t_1).state ≠ some (Sum.inr (Sum.inr ()))
+hclean₃ : ∀ j ∉ Set.range ⇑ι₁, j ≠ jbt → j ∉ Set.range ⇑ι₂ → j ≠ jal → e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0
+hbyval : ∀ (j : Fin K), ↑j < 11 → j ≠ jbt → j ≠ jal → e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0
+h₃bt : e₃.workTapes jbt = FinTM.bufferTape t.bits ∧ e₃.workTapePos jbt = ↑t.bits.length
+hd₄st : (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).state = some RewindPhase.start
+hd₄u :
+  ∀ (p : ℤ),
+    -1 ≤ p →
+      p < ↑t.bits.length →
+        (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapes jbt
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos jbt - ↑t.bits.length +
+              p) =
+          FinTM.bufferTape t.bits p
+hr4cut :
+  ∀ t_1 < t.bits.length + 2,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)) t_1).state ≠
+      some RewindPhase.done
+hr4heads :
+  ∀ (j : Fin K),
+    ∀ t_1 ≤ t.bits.length + 2,
+      if j = jbt then
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)) t_1).workTapePos j ∈
+          Finset.Icc
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos j - ↑t.bits.length - 1)
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos j)
+      else
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)) t_1).workTapePos j =
+          (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos j
+s4cut :
+  ∀ t_1 < T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2),
+    (MultiTapeTM.runFrom (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))) t_1).state ≠
+      some (Sum.inr RewindPhase.done)
+e₄ : Cfg K Bool RewindPhase (pairEncode (pairEncode t.bits α) x) :=
+  let __src := Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃);
+  { state := some RewindPhase.done, inputPos := __src.inputPos, workTapes := __src.workTapes,
+    workTapePos :=
+      Function.update (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos jbt
+        ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos jbt - ↑t.bits.length),
+    output := __src.output }
+hr4run :
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)) (t.bits.length + 2) = e₄
+s4run :
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2)) =
+    Cfg.mapState Sum.inr e₄
+s4st : (Cfg.mapState Sum.inr e₄).state = some (Sum.inr RewindPhase.done)
+he₄ :
+  e₄ =
+    let __src := Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃);
+    { state := some RewindPhase.done, inputPos := __src.inputPos, workTapes := __src.workTapes,
+      workTapePos :=
+        Function.update (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos jbt
+          ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₃)).workTapePos jbt - ↑t.bits.length),
+      output := __src.output }
+he₄tapes : ∀ (j : Fin K), e₄.workTapes j = e₃.workTapes j
+he₄posbt : e₄.workTapePos jbt = 0
+he₄pos : ∀ (j : Fin K), j ≠ jbt → e₄.workTapePos j = e₃.workTapePos j
+he₄in : e₄.inputPos = e₃.inputPos
+he₄out : e₄.output = e₃.output
+hjbtctr : jbt ≠ jctr
+hd₅st : (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).state = some SweepPhase.sweep
+hd₅w :
+  ∀ (p : ℤ),
+    -1 ≤ p →
+      p ≤ ↑t.bits.length →
+        (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapes jbt
+            ((Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos jbt + p) =
+          FinTM.bufferTape t.bits p
+hc5cut :
+  ∀ t_1 < 2 * t.bits.length + 2,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)) t_1).state ≠
+      some SweepPhase.done
+hc5heads :
+  ∀ (j : Fin K),
+    ∀ t_1 ≤ 2 * t.bits.length + 2,
+      if j = jbt ∨ j = jctr then
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)) t_1).workTapePos j ∈
+          Finset.Icc ((Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j - 1)
+            ((Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j + ↑t.bits.length)
+      else
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)) t_1).workTapePos j =
+          (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j
+s5cut :
+  ∀
+    t_1 <
+      T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+        (2 * t.bits.length + 2),
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))) t_1).state ≠
+      some (Sum.inr SweepPhase.done)
+e₅ : Cfg K Bool SweepPhase (pairEncode (pairEncode t.bits α) x) :=
+  let __src := Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄);
+  { state := some SweepPhase.done, inputPos := __src.inputPos,
+    workTapes := fun j q =>
+      if
+          j = jctr ∧
+            (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j ≤ q ∧
+              q <
+                (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j + ↑t.bits.length then
+        FinTM.bufferTape t.bits (q - (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j)
+      else (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapes j q,
+    workTapePos := __src.workTapePos, output := __src.output }
+hc5run :
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)) (2 * t.bits.length + 2) = e₅
+s5run :
+  MultiTapeTM.runFrom (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+        (2 * t.bits.length + 2)) =
+    Cfg.mapState Sum.inr e₅
+s5st : (Cfg.mapState Sum.inr e₅).state = some (Sum.inr SweepPhase.done)
+he₅ :
+  e₅ =
+    let __src := Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄);
+    { state := some SweepPhase.done, inputPos := __src.inputPos,
+      workTapes := fun j q =>
+        if
+            j = jctr ∧
+              (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j ≤ q ∧
+                q <
+                  (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j +
+                    ↑t.bits.length then
+          FinTM.bufferTape t.bits
+            (q - (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos j)
+        else (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapes j q,
+      workTapePos := __src.workTapePos, output := __src.output }
+he₅pos : ∀ (j : Fin K), j ≠ jbt → e₅.workTapePos j = e₃.workTapePos j
+he₅posbt : e₅.workTapePos jbt = 0
+hd₅ctrpos : (Cfg.mapState (fun x => SweepPhase.sweep) (Cfg.mapState Sum.inr e₄)).workTapePos jctr = 0
+he₅ctr : e₅.workTapes jctr = FinTM.bufferTape t.bits
+he₅frame : ∀ (j : Fin K), j ≠ jctr → e₅.workTapes j = e₃.workTapes j
+he₅bt : e₅.workTapes jbt = FinTM.bufferTape t.bits
+he₅in : e₅.inputPos = e₃.inputPos
+he₅out : e₅.output = e₃.output
+hd₆st : (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).state = some entryW
+hd₆pos : ↑(Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).inputPos = 4 * t.bits.length + 2 * α.length + 7
+hd₆ctr :
+  ∀ (q : ℤ),
+    -1 ≤ q →
+      q ≤ ↑t.bits.length →
+        (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapes jbt
+            ((Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapePos jbt + q) =
+          FinTM.bufferTape t.bits q
+hd₆dst : (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapes jwin = fun x => none
+hd₆dstpos : (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapePos jwin = 0
+T₆ : ℕ
+hT₆ : T₆ ≤ CW * (min t x.length + 1) + 2 * t.bits.length
+h₆cut : ∀ u < T₆, (MultiTapeTM.runFrom (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)) u).state ≠ some doneW
+e₆ : Cfg K Bool QW (pairEncode (pairEncode t.bits α) x) :=
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)) T₆
+h₆st : e₆.state = some doneW
+h₆pos : ↑e₆.inputPos = 4 * t.bits.length + 2 * α.length + 7 + (List.take t x).length
+h₆win : e₆.workTapes jwin = FinTM.bufferTape (List.take t x)
+h₆winhd : e₆.workTapePos jwin = ↑(List.take t x).length
+h₆jbthd : e₆.workTapePos jbt = (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapePos jbt
+h₆frame :
+  ∀ (i : Fin K),
+    i ≠ jbt →
+      i ≠ jwin →
+        e₆.workTapes i = (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapes i ∧
+          e₆.workTapePos i = (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).workTapePos i
+h₆out : e₆.output = (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)).output
+he₆ : e₆ = MultiTapeTM.runFrom (Cfg.mapState (fun x => entryW) (Cfg.mapState Sum.inr e₅)) T₆
+s6run :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+            (2 * t.bits.length + 2) +
+          1 +
+        T₆) =
+    Cfg.mapState Sum.inr e₆
+s6st : (Cfg.mapState Sum.inr e₆).state = some (Sum.inr doneW)
+s6cut :
+  ∀
+    t_1 <
+      T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+            (2 * t.bits.length + 2) +
+          1 +
+        T₆,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))
+          t_1).state ≠
+      some (Sum.inr doneW)
+hd₇st : (Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).state = some 0
+hd₇pos : 1 ≤ ↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos
+hL2' :
+  ∀ u < ↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)) u).state ≠ some 2
+s7cut :
+  ∀
+    t_1 <
+      T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                (2 * t.bits.length + 2) +
+              1 +
+            T₆ +
+          1 +
+        (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1),
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))
+          t_1).state ≠
+      some (Sum.inr 2)
+e₇ : Cfg K Bool (Fin 3) (pairEncode (pairEncode t.bits α) x) :=
+  let __src := Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆);
+  { state := some 2, inputPos := 1, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+    output := __src.output }
+hL1' :
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆))
+      (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) =
+    e₇
+s7run :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                (2 * t.bits.length + 2) +
+              1 +
+            T₆ +
+          1 +
+        (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1)) =
+    Cfg.mapState Sum.inr e₇
+s7st : (Cfg.mapState Sum.inr e₇).state = some (Sum.inr 2)
+he₇ :
+  e₇ =
+    let __src := Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆);
+    { state := some 2, inputPos := 1, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+      output := __src.output }
+hjalnbt : jal ≠ jbt
+hjalnwin : jal ≠ jwin
+hjalnctr : jal ≠ jctr
+h₇al : e₇.workTapes jal = FinTM.bufferTape α ∧ e₇.workTapePos jal = ↑α.length
+hd₈st : (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).state = some RewindPhase.start
+hd₈u :
+  ∀ (p : ℤ),
+    -1 ≤ p →
+      p < ↑α.length →
+        (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapes jal
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos jal - ↑α.length + p) =
+          FinTM.bufferTape α p
+hr8cut :
+  ∀ t_1 < α.length + 2,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)) t_1).state ≠
+      some RewindPhase.done
+hr8heads :
+  ∀ (j : Fin K),
+    ∀ t_1 ≤ α.length + 2,
+      if j = jal then
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)) t_1).workTapePos j ∈
+          Finset.Icc
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos j - ↑α.length - 1)
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos j)
+      else
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)) t_1).workTapePos j =
+          (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos j
+s8cut :
+  ∀
+    t_1 <
+      T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                    (2 * t.bits.length + 2) +
+                  1 +
+                T₆ +
+              1 +
+            (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+          1 +
+        (α.length + 2),
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))))
+          t_1).state ≠
+      some (Sum.inr RewindPhase.done)
+e₈ : Cfg K Bool RewindPhase (pairEncode (pairEncode t.bits α) x) :=
+  let __src := Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇);
+  { state := some RewindPhase.done, inputPos := __src.inputPos, workTapes := __src.workTapes,
+    workTapePos :=
+      Function.update (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos jal
+        ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos jal - ↑α.length),
+    output := __src.output }
+hr8run : MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)) (α.length + 2) = e₈
+s8run :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                    (2 * t.bits.length + 2) +
+                  1 +
+                T₆ +
+              1 +
+            (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+          1 +
+        (α.length + 2)) =
+    Cfg.mapState Sum.inr e₈
+s8st : (Cfg.mapState Sum.inr e₈).state = some (Sum.inr RewindPhase.done)
+he₈ :
+  e₈ =
+    let __src := Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇);
+    { state := some RewindPhase.done, inputPos := __src.inputPos, workTapes := __src.workTapes,
+      workTapePos :=
+        Function.update (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos jal
+          ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₇)).workTapePos jal - ↑α.length),
+      output := __src.output }
+he₈tapes : ∀ (j : Fin K), e₈.workTapes j = e₆.workTapes j
+he₈posjal : e₈.workTapePos jal = 0
+he₈pos : ∀ (j : Fin K), j ≠ jal → e₈.workTapePos j = e₆.workTapePos j
+he₈in : e₈.inputPos = 1
+he₈out : e₈.output = []
+hclean₈ :
+  ∀ j ∉ Set.range ⇑ι₁,
+    j ≠ jbt → j ∉ Set.range ⇑ι₂ → j ≠ jal → j ≠ jctr → j ≠ jwin → e₈.workTapes j = tapes₀ j ∧ e₈.workTapePos j = 0
+he₈al : e₈.workTapes jal = FinTM.bufferTape α
+TI : ℕ
+hTI : TI ≤ costI α
+hTIpos : 0 < TI
+hTIcut : ∀ (u : ℕ), 0 < u → u < TI → (MultiTapeTM.runFrom (Cfg.ofWords entryI (stateWord CI.k α)) u).state ≠ some doneI
+hTIrun :
+  MultiTapeTM.runFrom (Cfg.ofWords entryI (stateWord CI.k α)) TI =
+    Cfg.ofWords doneI (stateWord CI.k (serializeK (c.decode α).tm.replayTM))
+hcapInr : capI ∉ Set.range ⇑ιI
+hscratch : ∀ (i : Fin CI.k), ↑i ≠ 0 → e₈.workTapes (ιI i) = tapes₀ (ιI i) ∧ e₈.workTapePos (ιI i) = 0
+hlhs9t : ∀ (j : Fin K), (Cfg.mapState (fun x => Sum.inl ()) (Cfg.mapState Sum.inr e₈)).workTapes j = e₈.workTapes j
+hlhs9p : ∀ (j : Fin K), (Cfg.mapState (fun x => Sum.inl ()) (Cfg.mapState Sum.inr e₈)).workTapePos j = e₈.workTapePos j
+hrhs9t :
+  (Cfg.mapState (fun x => Sum.inl ())
+        (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] [] (Cfg.ofWords entryI (stateWord CI.k α)))).workTapes =
+    (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] [] (Cfg.ofWords entryI (stateWord CI.k α))).workTapes
+hrhs9p :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => Sum.inl ())
+            (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+              (Cfg.ofWords entryI (stateWord CI.k α)))).workTapePos
+        j =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] [] (Cfg.ofWords entryI (stateWord CI.k α))).workTapePos j
+hjunc₉ :
+  Cfg.mapState (fun x => Sum.inl ()) (Cfg.mapState Sum.inr e₈) =
+    Cfg.mapState (fun x => Sum.inl ())
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] [] (Cfg.ofWords entryI (stateWord CI.k α)))
+hIcut :
+  ∀ u < TI,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState (fun x => Sum.inl ())
+            (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] [] (Cfg.ofWords entryI (stateWord CI.k α))))
+          u).state ≠
+      some (Sum.inr doneI)
+s9cut :
+  ∀
+    t_1 <
+      T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                        (2 * t.bits.length + 2) +
+                      1 +
+                    T₆ +
+                  1 +
+                (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+              1 +
+            (α.length + 2) +
+          1 +
+        TI,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))))
+          t_1).state ≠
+      some (Sum.inr (Sum.inr doneI))
+e₉ : Cfg K Bool CI.State (pairEncode (pairEncode t.bits α) x) :=
+  embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+    (Cfg.ofWords doneI (stateWord CI.k (serializeK (c.decode α).tm.replayTM)))
+hIrun :
+  MultiTapeTM.runFrom
+      (Cfg.mapState (fun x => Sum.inl ())
+        (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] [] (Cfg.ofWords entryI (stateWord CI.k α))))
+      TI =
+    Cfg.mapState Sum.inr e₉
+h₂9 : MultiTapeTM.runFrom (Cfg.mapState (fun x => Sum.inl ()) (Cfg.mapState Sum.inr e₈)) TI = Cfg.mapState Sum.inr e₉
+s9run :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                        (2 * t.bits.length + 2) +
+                      1 +
+                    T₆ +
+                  1 +
+                (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+              1 +
+            (α.length + 2) +
+          1 +
+        TI) =
+    Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉)
+s9st : (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉)).state = some (Sum.inr (Sum.inr doneI))
+he₉ :
+  e₉ =
+    embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords doneI (stateWord CI.k (serializeK (c.decode α).tm.replayTM)))
+hieq0 : ιI ⟨0, hkI⟩ = jal
+hlhs10t :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapes j = e₉.workTapes j
+hlhs10p :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapePos j = e₉.workTapePos j
+hd₁₀st : (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).state = some entryL
+hd₁₀src :
+  (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapes jal =
+    FinTM.bufferTape (serializeK (c.decode α).tm.replayTM)
+hd₁₀srcp : (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapePos jal = 0
+hinst_unsel : ∀ (j : Fin K), ↑j ≠ 2 → ¬(11 + k₁ + k₂ ≤ ↑j ∧ ↑j < 10 + k₁ + k₂ + CI.k) → j ∉ Set.range ⇑ιI
+hd₁₀tbl :
+  (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapes jtbl = fun x => none
+hd₁₀tblp : (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapePos jtbl = 0
+hd₁₀sm : (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapes jsm = fun x => none
+hd₁₀smp : (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapePos jsm = 0
+TL : ℕ
+hTL : TL ≤ CL * ((serializeK (c.decode α).tm.replayTM).length + 1)
+hLspec :
+  ∀ {z : List Bool} (d : Cfg K Bool QL z),
+    d.state = some entryL →
+      d.workTapes jal = FinTM.bufferTape (serializeK (c.decode α).tm.replayTM) →
+        d.workTapePos jal = 0 →
+          (d.workTapes jtbl = fun x => none) →
+            d.workTapePos jtbl = 0 →
+              (d.workTapes jsm = fun x => none) →
+                d.workTapePos jsm = 0 →
+                  (MultiTapeTM.runFrom d TL).state = some doneL ∧
+                    (MultiTapeTM.runFrom d TL).inputPos = d.inputPos ∧
+                      (MultiTapeTM.runFrom d TL).workTapes =
+                          Function.update
+                            (Function.update (Function.update d.workTapes jal fun x => none) jtbl
+                              (FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr)))
+                            jsm (StepBlock.summaryCells none (unaryFin (c.decode α).tm.replayTM.q₀)) ∧
+                        (MultiTapeTM.runFrom d TL).workTapePos =
+                            Function.update (Function.update (Function.update d.workTapePos jal 0) jtbl 0) jsm 0 ∧
+                          (∀ u ≤ TL, (MultiTapeTM.runFrom d u).output = d.output) ∧
+                            ∀ u < TL, (MultiTapeTM.runFrom d u).state ≠ some doneL
+hLout :
+  ∀ u ≤ TL,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))) u).output =
+      (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).output
+hLcut :
+  ∀ u < TL,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))) u).state ≠
+      some doneL
+s10cut :
+  ∀
+    t_1 <
+      T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                            (2 * t.bits.length + 2) +
+                          1 +
+                        T₆ +
+                      1 +
+                    (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+                  1 +
+                (α.length + 2) +
+              1 +
+            TI +
+          1 +
+        TL,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl
+                    (Cfg.mapState Sum.inl
+                      (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))))))
+          t_1).state ≠
+      some (Sum.inr doneL)
+e₁₀ : Cfg K Bool QL (pairEncode (pairEncode t.bits α) x) :=
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))) TL
+hLst : e₁₀.state = some doneL
+hLin : e₁₀.inputPos = (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).inputPos
+hLtapes :
+  e₁₀.workTapes =
+    Function.update
+      (Function.update
+        (Function.update (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapes jal
+          fun x => none)
+        jtbl (FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr)))
+      jsm (StepBlock.summaryCells none (unaryFin (c.decode α).tm.replayTM.q₀))
+hLheads :
+  e₁₀.workTapePos =
+    Function.update
+      (Function.update
+        (Function.update (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapePos
+          jal 0)
+        jtbl 0)
+      jsm 0
+s10run :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))))))
+      (T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                            (2 * t.bits.length + 2) +
+                          1 +
+                        T₆ +
+                      1 +
+                    (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+                  1 +
+                (α.length + 2) +
+              1 +
+            TI +
+          1 +
+        TL) =
+    Cfg.mapState Sum.inr e₁₀
+s10st : (Cfg.mapState Sum.inr e₁₀).state = some (Sum.inr doneL)
+he₁₀ : e₁₀ = MultiTapeTM.runFrom (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))) TL
+hjwinal : jwin ≠ jal
+hjwintbl : jwin ≠ jtbl
+hjwinsm : jwin ≠ jsm
+h₁₀win : e₁₀.workTapes jwin = FinTM.bufferTape (List.take t x) ∧ e₁₀.workTapePos jwin = ↑(List.take t x).length
+hd₁₁st : (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).state = some RewindPhase.start
+hd₁₁u :
+  ∀ (p : ℤ),
+    -1 ≤ p →
+      p < ↑(List.take t x).length →
+        (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapes jwin
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos jwin -
+                ↑(List.take t x).length +
+              p) =
+          FinTM.bufferTape (List.take t x) p
+hr11cut :
+  ∀ t_1 < (List.take t x).length + 2,
+    (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)) t_1).state ≠
+      some RewindPhase.done
+hr11heads :
+  ∀ (j : Fin K),
+    ∀ t_1 ≤ (List.take t x).length + 2,
+      if j = jwin then
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)) t_1).workTapePos j ∈
+          Finset.Icc
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos j -
+                ↑(List.take t x).length -
+              1)
+            ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos j)
+      else
+        (MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)) t_1).workTapePos j =
+          (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos j
+e₁₁ : Cfg K Bool RewindPhase (pairEncode (pairEncode t.bits α) x) :=
+  let __src := Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀);
+  { state := some RewindPhase.done, inputPos := __src.inputPos, workTapes := __src.workTapes,
+    workTapePos :=
+      Function.update (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos jwin
+        ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos jwin -
+          ↑(List.take t x).length),
+    output := __src.output }
+hr11run :
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀))
+      ((List.take t x).length + 2) =
+    e₁₁
+s11st : (Cfg.mapState Sum.inr e₁₁).state = some (Sum.inr RewindPhase.done)
+he₁₁ :
+  e₁₁ =
+    let __src := Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀);
+    { state := some RewindPhase.done, inputPos := __src.inputPos, workTapes := __src.workTapes,
+      workTapePos :=
+        Function.update (Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos jwin
+          ((Cfg.mapState (fun x => RewindPhase.start) (Cfg.mapState Sum.inr e₁₀)).workTapePos jwin -
+            ↑(List.take t x).length),
+      output := __src.output }
+dstep : Cfg 5 Bool ((key : StepBlock.Key) × StepBlock.Ph 3 key) (List.take t x) :=
+  { state := some (StepBlock.exit 3 true), inputPos := 1,
+    workTapes := fun i =>
+      if ↑i = 2 then FinTM.bufferTape s
+      else
+        if ↑i = 3 then FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr)
+        else if ↑i = 4 then StepBlock.summaryCells none (unaryFin (c.decode α).tm.q₀) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+hdstep :
+  dstep =
+    { state := some (StepBlock.exit 3 true), inputPos := 1,
+      workTapes := fun i =>
+        if ↑i = 2 then FinTM.bufferTape s
+        else
+          if ↑i = 3 then FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr)
+          else if ↑i = 4 then StepBlock.summaryCells none (unaryFin (c.decode α).tm.q₀) else fun x => none,
+      workTapePos := fun x => 0, output := [] }
+hrel :
+  StepBlock.Rep (c.decode α).tm.replayTM.tr (NDTM.withChoiceTape (NDTM.initCfg (List.take t x)) (FinTM.bufferTape s) 0)
+    dstep
+TLoop : ℕ
+hTLoopFull : TLoop ≤ t * (50 * ((tableBitsK (c.decode α).tm.replayTM.tr).length + 1)) + 4 * t + 2 * t.bits.length + 4
+hTLoopEarly :
+  ∀ r ≤ t,
+    (NDTM.runWith (List.take r s) (NDTM.initCfg x)).state = none →
+      TLoop ≤ r * (50 * ((tableBitsK (c.decode α).tm.replayTM.tr).length + 1)) + 4 * r + 2 * t.bits.length + 2
+hLoopSt :
+  (MultiTapeTM.runFrom
+        (Cfg.mapState (Sigma.mk false)
+          (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0) true
+            e₁₁.inputPos []))
+        TLoop).state =
+    some
+      ⟨true,
+        Sum.inr
+          (decide
+            ((NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+              (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true]))⟩
+hLoopCut :
+  ∀ u < TLoop,
+    ∀ (verdict : Bool),
+      (MultiTapeTM.runFrom
+            (Cfg.mapState (Sigma.mk false)
+              (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0)
+                true e₁₁.inputPos []))
+            u).state ≠
+        some ⟨true, Sum.inr verdict⟩
+he₁₁tapes : ∀ (j : Fin K), e₁₁.workTapes j = e₁₀.workTapes j
+he₁₁pos : ∀ (j : Fin K), j ≠ jwin → e₁₁.workTapePos j = e₁₀.workTapePos j
+he₁₁poswin : e₁₁.workTapePos jwin = 0
+hd₁₀in : (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).inputPos = 1
+he₁₁in : e₁₁.inputPos = 1
+he₁₁out : e₁₁.output = []
+hth :
+  ∀ (j : Fin K),
+    j ≠ jal →
+      j ≠ jtbl →
+        j ≠ jsm →
+          j ≠ jwin →
+            e₁₁.workTapes j =
+                (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapes j ∧
+              e₁₁.workTapePos j =
+                (Cfg.mapState (fun x => entryL) (Cfg.mapState Sum.inr (Cfg.mapState Sum.inr e₉))).workTapePos j
+hth' :
+  ∀ j ∉ Set.range ⇑ιI,
+    j ≠ capI → j ≠ jtbl → j ≠ jsm → j ≠ jwin → e₁₁.workTapes j = e₈.workTapes j ∧ e₁₁.workTapePos j = e₈.workTapePos j
+hstream : e₁₁.workTapes js = FinTM.bufferTape s ∧ e₁₁.workTapePos js = 0
+hblank : ∀ (j : Fin K), ↑j = 7 ∨ ↑j = 8 ∨ ↑j = 10 → (e₁₁.workTapes j = fun x => none) ∧ e₁₁.workTapePos j = 0
+hctr₁₁ : e₁₁.workTapes jctr = FinTM.bufferTape t.bits ∧ e₁₁.workTapePos jctr = 0
+htbl₁₁ : e₁₁.workTapes jtbl = FinTM.bufferTape (tableBitsK (c.decode α).tm.replayTM.tr) ∧ e₁₁.workTapePos jtbl = 0
+hsm₁₁ : e₁₁.workTapes jsm = StepBlock.summaryCells none (unaryFin (c.decode α).tm.replayTM.q₀) ∧ e₁₁.workTapePos jsm = 0
+hwin₁₁ : e₁₁.workTapes jwin = FinTM.bufferTape (List.take t x)
+hcl_tapes :
+  ∀ (i : Fin 6),
+    (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0).workTapes i =
+      Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape t.bits) dstep.workTapes i
+hcl_pos :
+  ∀ (i : Fin 6),
+    (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0).workTapePos i =
+      Fin.lastCases 0 dstep.workTapePos i
+hcl_in :
+  (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0).inputPos =
+    dstep.inputPos
+hcl_out :
+  (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0).output = dstep.output
+hcl_state :
+  (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0).state =
+    some (CounterLoopState.dec FlagPhase.run)
+hlhs12t :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => ⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩) (Cfg.mapState Sum.inr e₁₁)).workTapes
+        j =
+      e₁₁.workTapes j
+hlhs12p :
+  ∀ (j : Fin K),
+    (Cfg.mapState (fun x => ⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩) (Cfg.mapState Sum.inr e₁₁)).workTapePos
+        j =
+      e₁₁.workTapePos j
+hcapL7 : capL ∉ Set.range ⇑ι₇
+hfv2 : ↑2 = 2
+hfv3 : ↑3 = 3
+hfv4 : ↑4 = 4
+hjunc₁₂ :
+  Cfg.mapState (fun x => ⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩) (Cfg.mapState Sum.inr e₁₁) =
+    embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+      (Cfg.mapState (Sigma.mk false)
+        (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0) true
+          e₁₁.inputPos []))
+hA12 :
+  ∀ (t_1 : ℕ),
+    MultiTapeTM.runFrom
+        (embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+          (Cfg.mapState (Sigma.mk false)
+            (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0)
+              true e₁₁.inputPos [])))
+        t_1 =
+      embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+        (MultiTapeTM.runFrom
+          (Cfg.mapState (Sigma.mk false)
+            (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0)
+              true e₁₁.inputPos []))
+          t_1)
+h₂12 :
+  MultiTapeTM.runFrom
+      (Cfg.mapState (fun x => ⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩) (Cfg.mapState Sum.inr e₁₁)) TLoop =
+    embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+      (MultiTapeTM.runFrom
+        (Cfg.mapState (Sigma.mk false)
+          (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0) true
+            e₁₁.inputPos []))
+        TLoop)
+sRst :
+  (Cfg.mapState Sum.inr
+        (embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+          (MultiTapeTM.runFrom
+            (Cfg.mapState (Sigma.mk false)
+              (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0)
+                true e₁₁.inputPos []))
+            TLoop))).state =
+    some
+      (Sum.inr
+        ⟨true,
+          Sum.inr
+            (decide
+              ((NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+                (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true]))⟩)
+hstart :
+  {
+      state :=
+        some
+          (Sum.inl
+            (Sum.inl
+              (Sum.inl
+                (Sum.inl
+                  (Sum.inl
+                    (Sum.inl
+                      (Sum.inl
+                        (Sum.inl
+                          (Sum.inl
+                            (Sum.inl
+                              (Sum.inl (Sum.inl (prefixCanonTM (FinTM.pairExtractTM true false)).tm.q₀)))))))))))),
+      inputPos := 1, workTapes := tapes₀, workTapePos := fun x => 0, output := [] } =
+    Cfg.mapState Sum.inl
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))))))
+TPRE : ℕ :=
+  T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                            (2 * t.bits.length + 2) +
+                          1 +
+                        T₆ +
+                      1 +
+                    (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+                  1 +
+                (α.length + 2) +
+              1 +
+            TI +
+          1 +
+        TL +
+      1 +
+    ((List.take t x).length + 2)
+s11cut :
+  ∀ t_1 < TPRE,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl
+                    (Cfg.mapState Sum.inl
+                      (Cfg.mapState Sum.inl
+                        (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))))))
+          t_1).state ≠
+      some (Sum.inr RewindPhase.done)
+s11run :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀))))))))))
+      TPRE =
+    Cfg.mapState Sum.inr e₁₁
+sRrun :
+  MultiTapeTM.runFrom
+      (Cfg.mapState Sum.inl
+        (Cfg.mapState Sum.inl
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl
+                    (Cfg.mapState Sum.inl
+                      (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))))))))
+      (TPRE + 1 + TLoop) =
+    Cfg.mapState Sum.inr
+      (embedSilentCfg ι₇ capL e₁₁.workTapes e₁₁.workTapePos [] []
+        (MultiTapeTM.runFrom
+          (Cfg.mapState (Sigma.mk false)
+            (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) dstep (FinTM.bufferTape t.bits) 0)
+              true e₁₁.inputPos []))
+          TLoop))
+sRcut :
+  ∀ t_1 < TPRE + 1 + TLoop,
+    (MultiTapeTM.runFrom
+          (Cfg.mapState Sum.inl
+            (Cfg.mapState Sum.inl
+              (Cfg.mapState Sum.inl
+                (Cfg.mapState Sum.inl
+                  (Cfg.mapState Sum.inl
+                    (Cfg.mapState Sum.inl
+                      (Cfg.mapState Sum.inl
+                        (Cfg.mapState Sum.inl
+                          (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl (Cfg.mapState Sum.inl cfg₀)))))))))))
+          t_1).state ≠
+      some
+        (Sum.inr
+          ⟨true,
+            Sum.inr
+              (decide
+                ((NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+                  (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true]))⟩)
+hTPRE :
+  TPRE =
+    T₁ + 1 + (↑(Cfg.mapState (fun x => 0) e₁).inputPos + 1) + 1 + T₃ + 1 + (t.bits.length + 2) + 1 +
+                              (2 * t.bits.length + 2) +
+                            1 +
+                          T₆ +
+                        1 +
+                      (↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos + 1) +
+                    1 +
+                  (α.length + 2) +
+                1 +
+              TI +
+            1 +
+          TL +
+        1 +
+      ((List.take t x).length + 2)
+hl1 : ↑(Cfg.mapState (fun x => 0) e₁).inputPos = 4 * t.bits.length + 2 * α.length + 7
+hl2 :
+  ↑(Cfg.mapState (fun x => 0) (Cfg.mapState Sum.inr e₆)).inputPos =
+    4 * t.bits.length + 2 * α.length + 7 + (List.take t x).length
+hmin : (List.take t x).length = min t x.length
+hP :
+  ¬((NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+      (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true])
+⊢ some
+      (Sum.inr
+        ⟨true,
+          Sum.inr
+            (decide
+              ((NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+                (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true]))⟩) =
+    some
+      (if
+          (NDTM.runWith (List.take t s) (NDTM.initCfg x)).state = none ∧
+            (NDTM.runWith (List.take t s) (NDTM.initCfg x)).output = [true] then
+        Sum.inr ⟨true, Sum.inr true⟩
+      else Sum.inr ⟨true, Sum.inr false⟩)
+# end 2026-10-22T21:32:03Z exit=1
+# errors: 6 warnings: 1

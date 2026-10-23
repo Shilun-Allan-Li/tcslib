@@ -1,0 +1,92 @@
+Initial preflight UTC: 2026-10-22T05:10:08.491441+00:00
+$ nproc
+9
+$ df -B1 /workspace/scratch/f441fd79989b
+Filesystem       1B-blocks       Used   Available Use% Mounted on
+overlay        33770192896 8126078976 23909351424  26% /
+$ df -T /workspace/scratch/f441fd79989b
+Filesystem     Type    1K-blocks    Used Available Use% Mounted on
+overlay        overlay  32978704 7935624  23348976  26% /
+$ cat /proc/self/cgroup
+0::/
+--- /sys/fs/cgroup/memory.max ---
+8589934592
+
+--- /sys/fs/cgroup/memory.current ---
+7087595520
+
+--- /sys/fs/cgroup/memory.events ---
+low 0
+high 0
+max 85641
+oom 0
+oom_kill 0
+oom_group_kill 0
+
+--- /sys/fs/cgroup/memory.stat ---
+anon 100847616
+file 6792101888
+kernel 193372160
+kernel_stack 737280
+pagetables 3588096
+sec_pagetables 0
+percpu 17468
+sock 4096
+vmalloc 4096
+shmem 0
+file_mapped 36864
+file_dirty 1208320
+file_writeback 0
+swapcached 0
+anon_thp 0
+file_thp 1314914304
+shmem_thp 0
+inactive_anon 100507648
+active_anon 90112
+inactive_file 1342668800
+active_file 5449433088
+unevictable 0
+slab_reclaimable 187666224
+slab_unreclaimable 1305480
+slab 188971704
+workingset_refault_anon 0
+workingset_refault_file 4111781
+workingset_activate_anon 0
+workingset_activate_file 2648368
+workingset_restore_anon 0
+workingset_restore_file 1362206
+workingset_nodereclaim 0
+pgdemote_kswapd 0
+pgdemote_direct 0
+pgdemote_khugepaged 0
+pgdemote_proactive 0
+pgscan 5750113
+pgsteal 5478781
+pswpin 0
+pswpout 0
+pgscan_kswapd 50693
+pgscan_direct 5693365
+pgscan_khugepaged 6055
+pgscan_proactive 0
+pgsteal_kswapd 37022
+pgsteal_direct 5435747
+pgsteal_khugepaged 6012
+pgsteal_proactive 0
+pgfault 205922589
+pgmajfault 1699
+pgrefill 3330881
+pgactivate 3144409
+pgdeactivate 3309124
+pglazyfree 3498
+pglazyfreed 0
+swpin_zero 0
+swpout_zero 0
+thp_fault_alloc 123979
+thp_collapse_alloc 645
+thp_swpout 0
+thp_swpout_fallback 0
+
+Headroom = limit - (anon + kernel + shmem) = 8589934592 - 294219776 = 8295714816 bytes
+Disk free: 23909351424 bytes; 22.267318725585938 GiB
+Memory headroom: 7.725986480712891 GiB
+PREFLIGHT: PASS

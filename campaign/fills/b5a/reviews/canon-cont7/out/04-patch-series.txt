@@ -1,0 +1,40 @@
+== git apply --check then apply, in order, at the base (uncommitted)
+-- 0001-B5a-canon-cont7-checkpoint-1-the-record-round-s-loop.patch
+applied
+-- 0002-B5a-canon-cont7-checkpoint-2-the-inner-block-write-r.patch
+applied
+-- 0003-B5a-canon-cont7-checkpoint-3-the-table-block-outer-c.patch
+applied
+-- 0004-B5a-canon-cont7-checkpoint-4-the-stage-front-seven-f.patch
+applied
+-- 0005-B5a-canon-cont7-amendment-before-checkpoint-5-uncond.patch
+applied
+-- 0006-B5a-canon-cont7-checkpoint-5-the-assembly-four-phase.patch
+applied
+-- 0007-B5a-canon-cont7-seal-hardening-after-checkpoint-5-pr.patch
+applied
+-- 0008-B5a-canon-cont7-duplication-governance-canonStageInc.patch
+applied
+== result blob
+3acc87c1e1a94069d271cd18d60c3b75a4746ba6
+expected head blob: 3acc87c1e1a94069d271cd18d60c3b75a4746ba6
+== git status
+ M TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+== patch From lines vs bundle commits
+0b7c99d63907e29632a00aea0393b84df6622eb7
+aad5fbe8d78901a8f499ad6b2506a7bccde3acf9
+a6c90c60e25d200b5d4f2041a2646b247ca527b3
+4b8d053d90b3cd72c9649c5b147ad0203a2c45da
+213816e0ed4a12ee6905887916799892d1538725
+7e6829dc57a6fe8547d71b6cf379163c70278661
+51d6bbc819329bbd54a6a4f6e465d03b6f613c1b
+7ef4a98369d8a660d42e9a821cff5fdf9be7538a
+-- bundle (oldest first)
+0b7c99d63907e29632a00aea0393b84df6622eb7
+a6c90c60e25d200b5d4f2041a2646b247ca527b3
+aad5fbe8d78901a8f499ad6b2506a7bccde3acf9
+4b8d053d90b3cd72c9649c5b147ad0203a2c45da
+51d6bbc819329bbd54a6a4f6e465d03b6f613c1b
+7ef4a98369d8a660d42e9a821cff5fdf9be7538a
+213816e0ed4a12ee6905887916799892d1538725
+7e6829dc57a6fe8547d71b6cf379163c70278661

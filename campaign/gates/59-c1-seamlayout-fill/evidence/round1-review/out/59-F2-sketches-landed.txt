@@ -1,0 +1,46 @@
+theorems/lemmas with tactic proofs: 24; over 20 non-blank proof lines: 15; of them without 'Proof sketch' in the docstring: 14
+  exists_seamLayoutTM          theorem   245  docstring=True  sketch=True
+  sl_unarySplit_copy           theorem   117  docstring=True  sketch=False
+  sl_pairSkipTM_run            theorem    91  docstring=True  sketch=False
+  sl_phase6                    lemma      91  docstring=True  sketch=False
+  sl_unarySplitTM_run          theorem    74  docstring=True  sketch=False
+  sl_phase4                    lemma      70  docstring=True  sketch=False
+  sl_phase8                    lemma      53  docstring=True  sketch=False
+  sl_phase7                    lemma      48  docstring=True  sketch=False
+  sl_phase5                    lemma      46  docstring=True  sketch=False
+  sl_pairSkip_two_steps        lemma      42  docstring=True  sketch=False
+  sl_phase2                    lemma      42  docstring=True  sketch=False
+  sl_phase1                    lemma      41  docstring=True  sketch=False
+  sl_phase3                    lemma      41  docstring=True  sketch=False
+  sl_split_step_exit           lemma      31  docstring=True  sketch=False
+  sl_split_step_true           lemma      30  docstring=True  sketch=False
+
+## The auditor's 14 names vs this census
+sl_pairSkip_two_steps: 1
+sl_pairSkipTM_run: 1
+sl_split_step_true: 1
+sl_split_step_exit: 1
+sl_unarySplit_copy: 1
+sl_unarySplitTM_run: 1
+sl_phase1: 1
+sl_phase2: 1
+sl_phase3: 1
+sl_phase4: 1
+sl_phase5: 1
+sl_phase6: 1
+sl_phase7: 1
+sl_phase8: 1
+(1 = listed without a sketch; review out/49-sketches.txt lists the same 14 on the worker blob 483be51b)
+
+## Backlog (campaign/backlog.md, committed 0416ffea, lines 1350-1360)
+- **The seam layout: delivered complete (2026-10-22), reviewed: land**
+  (`campaign/fills/c1/reviews/seamlayout-1/REVIEW.md`). The landing branch `lean/c1-seamlayout-fill`
+  (`7cd01f84`: the worker's six commits squashed, the file byte-identical; the status lines) is
+  pushed. **Ruled (user, 2026-10-22):** F1 accepted, with a published last-phase lemma for the
+  phase host to follow in a small API PR with its own gate; F3 by a docstring-only follow-up PR
+  after the landing (as for C1-E's sketches, #144). The questions were:
+  - **F1:** phase 8 by a self-redirect, because the brief's agreement transport needs a table fact
+    about `phaseHostTM` that no lemma publishes (the machine is the same: the tables are equal);
+    with it, whether to publish a last-phase lemma for the phase host (promotion candidate 1);
+  - **F3:** 14 private proofs over 20 lines without a "Proof sketch" (now, or a follow-up as for
+    C1-E).

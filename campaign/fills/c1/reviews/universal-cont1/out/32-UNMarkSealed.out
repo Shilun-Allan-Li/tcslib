@@ -1,0 +1,1333 @@
+ReviewScratch/UNMarkSealed.lean:161:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+ReviewScratch/UNMarkSealed.lean:164:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+ReviewScratch/UNMarkSealed.lean:168:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+ReviewScratch/UNMarkSealed.lean:171:76: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (clearTM k i).q₀ = SweepPhase.sweep
+ReviewScratch/UNMarkSealed.lean:174:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode [] [true]
+is not definitionally equal to the right-hand side
+  [false, true, true]
+
+⊢ pairEncode [] [true] = [false, true, true]
+ReviewScratch/UNMarkSealed.lean:178:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+ReviewScratch/UNMarkSealed.lean:182:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNMarkSealed.lean:186:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+ReviewScratch/UNMarkSealed.lean:190:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+ReviewScratch/UNMarkSealed.lean:193:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+ReviewScratch/UNMarkSealed.lean:198:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+ReviewScratch/UNMarkSealed.lean:202:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ReviewScratch/UNMarkSealed.lean:206:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+ReviewScratch/UNMarkSealed.lean:209:53: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ↑(moveInputPos 0 SignType.pos) = 1
+ReviewScratch/UNMarkSealed.lean:213:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+ReviewScratch/UNMarkSealed.lean:216:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+ReviewScratch/UNMarkSealed.lean:219:37: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  universalPrefixTM.k = 0
+ReviewScratch/UNMarkSealed.lean:223:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+ReviewScratch/UNMarkSealed.lean:228:64: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (M₁.bufferedSecondCfg M₂ c b p tp hd).inputPos = p
+ReviewScratch/UNMarkSealed.lean:232:77: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  FinTM.tapeBlocks a b c = fun i => Fin.addCases a (fun i => Fin.addCases (fun x => b) c i) i
+ReviewScratch/UNMarkSealed.lean:236:67: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ReviewScratch/UNMarkSealed.lean:239:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+ReviewScratch/UNMarkSealed.lean:242:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+ReviewScratch/UNMarkSealed.lean:246:68: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none
+ReviewScratch/UNMarkSealed.lean:250:78: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+ReviewScratch/UNMarkSealed.lean:253:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+ReviewScratch/UNMarkSealed.lean:257:95: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  counterOverhead w r = ∑ j ∈ Finset.range r, (2 * (List.takeWhile not (counterWord w j)).length + 2)
+ReviewScratch/UNMarkSealed.lean:263:53: error: Application type mismatch: The argument
+  P.q₀
+has type
+  SP
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre
+in the application
+  ⟨GuessRunPhase.pre, P.q₀⟩
+ReviewScratch/UNMarkSealed.lean:267:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+ReviewScratch/UNMarkSealed.lean:271:45: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (streamStartCfg z j q s).inputPos = 1
+ReviewScratch/UNMarkSealed.lean:275:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+ReviewScratch/UNMarkSealed.lean:279:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNMarkSealed.lean:284:59: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  N.AcceptsWithin x t =
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+ReviewScratch/UNMarkSealed.lean:288:82: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  tm.HaltsWithin x t = ∀ (w : List Bool), w.length = t → (NDTM.runWith w (NDTM.initCfg x)).state = none
+ReviewScratch/UNMarkSealed.lean:291:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+ReviewScratch/UNMarkSealed.lean:294:64: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre = SP
+ReviewScratch/UNMarkSealed.lean:298:38: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:302:64: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:306:37: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:310:37: error: `simp` made no progress
+[Meta.Tactic.simp.rewrite] if_pos:1000:
+      if (NDTM.runWith s (NDTM.initCfg x)).state = none ∧ (NDTM.runWith s (NDTM.initCfg x)).output = [true] then acc
+      else rej
+    ==>
+      acc
+[Meta.Tactic.simp.rewrite] if_neg:1000:
+      if (NDTM.runWith s (NDTM.initCfg x)).state = none ∧ (NDTM.runWith s (NDTM.initCfg x)).output = [true] then acc
+      else rej
+    ==>
+      rej
+[Meta.Tactic.simp.rewrite] if_pos:1000:
+      if (NDTM.runWith s (NDTM.initCfg x)).state = none ∧ (NDTM.runWith s (NDTM.initCfg x)).output = [true] then acc
+      else rej
+    ==>
+      acc
+[Meta.Tactic.simp.rewrite] if_neg:1000:
+      if (NDTM.runWith s (NDTM.initCfg x)).state = none ∧ (NDTM.runWith s (NDTM.initCfg x)).output = [true] then acc
+      else rej
+    ==>
+      rej
+[Meta.Tactic.simp.rewrite] if_pos:1000:
+      if (NDTM.runWith s (NDTM.initCfg x)).state = none ∧ (NDTM.runWith s (NDTM.initCfg x)).output = [true] then acc
+      else rej
+    ==>
+      acc
+[Meta.Tactic.simp.rewrite] if_neg:1000:
+      if (NDTM.runWith s (NDTM.initCfg x)).state = none ∧ (NDTM.runWith s (NDTM.initCfg x)).output = [true] then acc
+      else rej
+    ==>
+      rej
+M242
+[Meta.Tactic.simp.rewrite] List.replicate_succ:1000:
+      List.replicate (t + 1) [true]
+    ==>
+      [true] :: List.replicate t [true]
+[Meta.Tactic.simp.rewrite] List.flatten_cons:1000:
+      ([true] :: List.replicate t [true]).flatten
+    ==>
+      [true] ++ (List.replicate t [true]).flatten
+[Meta.Tactic.simp.rewrite] ih:1000:
+      (List.replicate t [true]).flatten
+    ==>
+      List.replicate t true
+[Meta.Tactic.simp.rewrite] List.cons_append:1000:
+      [true] ++ List.replicate t true
+    ==>
+      true :: ([] ++ List.replicate t true)
+[Meta.Tactic.simp.rewrite] List.nil_append:1000:
+      [] ++ List.replicate t true
+    ==>
+      List.replicate t true
+[Meta.Tactic.simp.rewrite] List.replicate_succ:1000:
+      List.replicate (t + 1) true
+    ==>
+      true :: List.replicate t true
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      true :: List.replicate t true = true :: List.replicate t true
+    ==>
+      True
+ReviewScratch/UNMarkSealed.lean:437:30: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:437:17: warning: 'trace "M242"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+[Meta.Tactic.simp.rewrite] Nat.cast_le:1000:
+      ↑w.length ≤ ↑n
+    ==>
+      w.length ≤ n
+M290
+M296
+M303
+[Meta.Tactic.simp.rewrite] prefixCanonTM_eq:1000:
+      prefixCanonTM (FinTM.pairExtractTM true false)
+    ==>
+      universalPrefixTM.bufferedCompTM (FinTM.pairExtractTM true false)
+[Meta.Tactic.simp.rewrite] prefixCanonTM_eq:1000:
+      prefixCanonTM (FinTM.pairExtractTM true false)
+    ==>
+      universalPrefixTM.bufferedCompTM (FinTM.pairExtractTM true false)
+[Meta.Tactic.simp.rewrite] prefixCanonTM_eq:1000:
+      prefixCanonTM (FinTM.pairExtractTM true false)
+    ==>
+      universalPrefixTM.bufferedCompTM (FinTM.pairExtractTM true false)
+ReviewScratch/UNMarkSealed.lean:485:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:491:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:498:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:485:4: warning: 'trace "M290"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:491:6: warning: 'trace "M296"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:498:6: warning: 'trace "M303"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+M328
+M330
+M331
+[Meta.Tactic.simp.rewrite] unfold un_bankAct, un_bankAct k S g m
+      q' ==> { inputTape := 0,
+      workTapes := fun i => if i ∈ S then (some none, m) else if i = g then (none, m) else (none, 0), output := none,
+      state := some q' }
+[Meta.Tactic.simp.rewrite] hiS:1000:
+      i ∈ S
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      some none = some none
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] true_or:1000:
+      True ∨ i = g
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      ↑m = ↑m
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] and_self:1000:
+      True ∧ True
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] unfold un_bankAct, un_bankAct k S i m
+      q' ==> { inputTape := 0,
+      workTapes := fun i_1 => if i_1 ∈ S then (some none, m) else if i_1 = i then (none, m) else (none, 0),
+      output := none, state := some q' }
+[Meta.Tactic.simp.rewrite] hiS:1000:
+      i ∈ S
+    ==>
+      False
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      i = i
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      none = none
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] or_true:1000:
+      False ∨ True
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      ↑m = ↑m
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] and_self:1000:
+      True ∧ True
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] unfold un_bankAct, un_bankAct k S g m
+      q' ==> { inputTape := 0,
+      workTapes := fun i => if i ∈ S then (some none, m) else if i = g then (none, m) else (none, 0), output := none,
+      state := some q' }
+[Meta.Tactic.simp.rewrite] hiS:1000:
+      i ∈ S
+    ==>
+      False
+[Meta.Tactic.simp.rewrite] hig:1000:
+      i = g
+    ==>
+      False
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      none = none
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] SignType.coe_zero:1000:
+      ↑0
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] or_self:1000:
+      False ∨ False
+    ==>
+      False
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      0 = 0
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] and_self:1000:
+      True ∧ True
+    ==>
+      True
+ReviewScratch/UNMarkSealed.lean:523:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:525:30: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:526:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:523:4: warning: 'trace "M328"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:525:17: warning: 'trace "M330"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:526:6: warning: 'trace "M331"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+M422
+M460
+M478
+M510
+[Meta.Tactic.simp.rewrite] Nat.cast_zero:1000:
+      ↑0
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(r + 1)
+    ==>
+      ↑r + ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(r + 1)
+    ==>
+      ↑r + ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(r + 1)
+    ==>
+      ↑r + ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] unfold un_bankTM, un_bankTM k S
+      g ==> { q₀ := 0,
+      tr := fun q x w =>
+        if q = 0 then un_bankAct k S g SignType.neg 1
+        else
+          if q = 1 then
+            match w g with
+            | some val => un_bankAct k S g SignType.neg 1
+            | none => un_bankAct k S g SignType.pos 2
+          else { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some 2 } }
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      0 = 0
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      un_bankAct k S g SignType.neg 1 = un_bankAct k S g SignType.neg 1
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] unfold un_bankTM, un_bankTM k S
+      g ==> { q₀ := 0,
+      tr := fun q x w =>
+        if q = 0 then un_bankAct k S g SignType.neg 1
+        else
+          if q = 1 then
+            match w g with
+            | some val => un_bankAct k S g SignType.neg 1
+            | none => un_bankAct k S g SignType.pos 2
+          else { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some 2 } }
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      1 = 1
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(L + 1)
+    ==>
+      ↑L + ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] unfold un_bankTM, un_bankTM k S
+      g ==> { q₀ := 0,
+      tr := fun q x w =>
+        if q = 0 then un_bankAct k S g SignType.neg 1
+        else
+          if q = 1 then
+            match w g with
+            | some val => un_bankAct k S g SignType.neg 1
+            | none => un_bankAct k S g SignType.pos 2
+          else { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some 2 } }
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      1 = 1
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(L + 1)
+    ==>
+      ↑L + ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+ReviewScratch/UNMarkSealed.lean:655:47: warning: This simp argument is unused:
+  Fin.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [un_bankTM, F̵i̵n̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/UNMarkSealed.lean:617:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:655:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:673:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:705:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:730:25: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:617:8: warning: 'trace "M422"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:655:8: warning: 'trace "M460"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:670:54: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:673:8: warning: 'trace "M478"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:705:6: warning: 'trace "M510"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:730:12: warning: 'trace "M535"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:730:29: warning: 'dsimp only' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+M615
+M622
+M632
+M656
+M662
+[Meta.Tactic.simp.rewrite] unfold un_inRewTM, un_inRewTM
+      k ==> { q₀ := 0,
+      tr := fun q inp x =>
+        if q = 0 then FinTM.controlAction SignType.neg (some 1)
+        else
+          if q = 1 then
+            match inp with
+            | some val => FinTM.controlAction SignType.neg (some 1)
+            | none => FinTM.controlAction SignType.pos (some 2)
+          else FinTM.controlAction 0 (some 2) }
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      0 = 0
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      FinTM.controlAction SignType.neg (some 1) = FinTM.controlAction SignType.neg (some 1)
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] unfold un_inRewTM, un_inRewTM
+      k ==> { q₀ := 0,
+      tr := fun q inp x =>
+        if q = 0 then FinTM.controlAction SignType.neg (some 1)
+        else
+          if q = 1 then
+            match inp with
+            | some val => FinTM.controlAction SignType.neg (some 1)
+            | none => FinTM.controlAction SignType.pos (some 2)
+          else FinTM.controlAction 0 (some 2) }
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      1 = 1
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      FinTM.controlAction SignType.neg (some 1) = FinTM.controlAction SignType.neg (some 1)
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Fin.coe_ofNat_eq_mod:1000:
+      ↑0
+    ==>
+      0 % (z.length + 2)
+[Meta.Tactic.simp.rewrite] Nat.zero_mod:1000:
+      0 % (z.length + 2)
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] unfold un_inRewTM, un_inRewTM
+      k ==> { q₀ := 0,
+      tr := fun q inp x =>
+        if q = 0 then FinTM.controlAction SignType.neg (some 1)
+        else
+          if q = 1 then
+            match inp with
+            | some val => FinTM.controlAction SignType.neg (some 1)
+            | none => FinTM.controlAction SignType.pos (some 2)
+          else FinTM.controlAction 0 (some 2) }
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      1 = 1
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      FinTM.controlAction SignType.pos (some 2) = FinTM.controlAction SignType.pos (some 2)
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Fin.coe_ofNat_eq_mod:1000:
+      ↑0
+    ==>
+      0 % (z.length + 2)
+[Meta.Tactic.simp.rewrite] Nat.zero_mod:1000:
+      0 % (z.length + 2)
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] zero_add:1000:
+      0 + 1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] Fin.coe_ofNat_eq_mod:1000:
+      ↑1
+    ==>
+      1 % (z.length + 2)
+[Meta.Tactic.simp.rewrite] Nat.one_mod:1000:
+      1 % (z.length + 2)
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      1 = 1
+    ==>
+      True
+ReviewScratch/UNMarkSealed.lean:810:48: warning: This simp argument is unused:
+  Fin.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [un_inRewTM, F̵i̵n̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵↓reduceIte]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/UNMarkSealed.lean:857:45: warning: This simp argument is unused:
+  Fin.val_one
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵F̵i̵n̵.̵v̵a̵l̵_̵o̵n̵e̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+ReviewScratch/UNMarkSealed.lean:810:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:817:21: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:827:23: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:851:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:857:35: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:810:8: warning: 'trace "M615"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:817:8: warning: 'trace "M622"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:827:10: warning: 'trace "M632"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:851:6: warning: 'trace "M656"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:857:22: warning: 'trace "M662"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+M746
+M752
+M756
+M758
+M780
+M782
+M930
+M954
+M960
+M1265
+M1277
+M1294
+M1351
+M1403
+M1597
+[Meta.Tactic.simp.rewrite] Fin.coe_castSucc:1000:
+      ↑(Fin.castAdd MC.k a).castSucc
+    ==>
+      ↑(Fin.castAdd MC.k a)
+[Meta.Tactic.simp.rewrite] Fin.coe_castAdd:1000:
+      ↑(Fin.castAdd MC.k a)
+    ==>
+      ↑a
+[Meta.Tactic.simp.rewrite] Fin.coe_castSucc:1000:
+      ↑(Fin.castAdd MC.k b).castSucc
+    ==>
+      ↑(Fin.castAdd MC.k b)
+[Meta.Tactic.simp.rewrite] Fin.coe_castAdd:1000:
+      ↑(Fin.castAdd MC.k b)
+    ==>
+      ↑b
+[Meta.Tactic.simp.rewrite] Fin.coe_castSucc:1000:
+      ↑(Fin.natAdd K a).castSucc
+    ==>
+      ↑(Fin.natAdd K a)
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd K a)
+    ==>
+      K + ↑a
+[Meta.Tactic.simp.rewrite] Fin.coe_castSucc:1000:
+      ↑(Fin.natAdd K b).castSucc
+    ==>
+      ↑(Fin.natAdd K b)
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd K b)
+    ==>
+      K + ↑b
+[Meta.Tactic.simp.rewrite] Function.Embedding.coeFn_mk:1000:
+      ⇑{ toFun := fun j => (Fin.castAdd MC.k j).castSucc, inj' := ⋯ }
+    ==>
+      fun j => (Fin.castAdd MC.k j).castSucc
+[Meta.Tactic.simp.rewrite] Fin.coe_castSucc:1000:
+      ↑(Fin.castAdd MC.k j).castSucc
+    ==>
+      ↑(Fin.castAdd MC.k j)
+[Meta.Tactic.simp.rewrite] Fin.coe_castAdd:1000:
+      ↑(Fin.castAdd MC.k j)
+    ==>
+      ↑j
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      ↑j = ↑j
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Fin.castSucc_natAdd:1000:
+      (Fin.natAdd K j).castSucc
+    ==>
+      Fin.natAdd K j.castSucc
+[Meta.Tactic.simp.rewrite] Function.Embedding.coeFn_mk:1000:
+      ⇑{ toFun := fun j => Fin.natAdd K j.castSucc, inj' := ⋯ }
+    ==>
+      fun j => Fin.natAdd K j.castSucc
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd K j.castSucc)
+    ==>
+      K + ↑j.castSucc
+[Meta.Tactic.simp.rewrite] Fin.coe_castSucc:1000:
+      ↑j.castSucc
+    ==>
+      ↑j
+[Meta.Tactic.simp.rewrite] Nat.add_left_cancel_iff:10000:
+      K + ↑j = K + ↑j
+    ==>
+      ↑j = ↑j
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      ↑j = ↑j
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Fin.coe_cast:1000:
+      ↑(Fin.cast ⋯ (Fin.natAdd universalPrefixTM.k (Fin.castAdd F.k 0)))
+    ==>
+      ↑(Fin.natAdd universalPrefixTM.k (Fin.castAdd F.k 0))
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd universalPrefixTM.k (Fin.castAdd F.k 0))
+    ==>
+      universalPrefixTM.k + ↑(Fin.castAdd F.k 0)
+[Meta.Tactic.simp.rewrite] hup:1000:
+      universalPrefixTM.k
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] Fin.coe_castAdd:1000:
+      ↑(Fin.castAdd F.k 0)
+    ==>
+      ↑0
+[Meta.Tactic.simp.rewrite] Fin.val_eq_zero:1000:
+      ↑0
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] add_zero:1000:
+      0 + 0
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      0 = 0
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Fin.coe_cast:1000:
+      ↑(Fin.cast ⋯ (Fin.natAdd universalPrefixTM.k (Fin.natAdd 1 e)))
+    ==>
+      ↑(Fin.natAdd universalPrefixTM.k (Fin.natAdd 1 e))
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd universalPrefixTM.k (Fin.natAdd 1 e))
+    ==>
+      universalPrefixTM.k + ↑(Fin.natAdd 1 e)
+[Meta.Tactic.simp.rewrite] hup:1000:
+      universalPrefixTM.k
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd 1 e)
+    ==>
+      1 + ↑e
+[Meta.Tactic.simp.rewrite] zero_add:1000:
+      0 + (1 + ↑e)
+    ==>
+      1 + ↑e
+[Meta.Tactic.simp.rewrite] Nat.add_left_cancel_iff:10000:
+      1 + ↑e = 1 + ↑e
+    ==>
+      ↑e = ↑e
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      ↑e = ↑e
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] prefixCanonTM_eq:1000:
+      prefixCanonTM F
+    ==>
+      universalPrefixTM.bufferedCompTM F
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd universalPrefixTM.k (Fin.castAdd F.k 0))
+    ==>
+      universalPrefixTM.k + ↑(Fin.castAdd F.k 0)
+[Meta.Tactic.simp.rewrite] hup:1000:
+      universalPrefixTM.k
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] Fin.coe_castAdd:1000:
+      ↑(Fin.castAdd F.k 0)
+    ==>
+      ↑0
+[Meta.Tactic.simp.rewrite] Fin.val_eq_zero:1000:
+      ↑0
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] add_zero:1000:
+      0 + 0
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      0 = 0
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd universalPrefixTM.k (Fin.natAdd 1 e))
+    ==>
+      universalPrefixTM.k + ↑(Fin.natAdd 1 e)
+[Meta.Tactic.simp.rewrite] hup:1000:
+      universalPrefixTM.k
+    ==>
+      0
+[Meta.Tactic.simp.rewrite] Fin.coe_natAdd:1000:
+      ↑(Fin.natAdd 1 e)
+    ==>
+      1 + ↑e
+[Meta.Tactic.simp.rewrite] zero_add:1000:
+      0 + (1 + ↑e)
+    ==>
+      1 + ↑e
+[Meta.Tactic.simp.rewrite] Nat.add_left_cancel_iff:10000:
+      1 + ↑e = 1 + ↑e
+    ==>
+      ↑e = ↑e
+[Meta.Tactic.simp.rewrite] eq_self:1000:
+      ↑e = ↑e
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(2 * bt.length + 3)
+    ==>
+      ↑(2 * bt.length) + ↑3
+[Meta.Tactic.simp.rewrite] Nat.cast_mul:1000:
+      ↑(2 * bt.length)
+    ==>
+      ↑2 * ↑bt.length
+[Meta.Tactic.simp.rewrite] Nat.cast_ofNat:1000:
+      ↑2
+    ==>
+      2
+[Meta.Tactic.simp.rewrite] Nat.cast_ofNat:1000:
+      ↑3
+    ==>
+      3
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(2 * bt.length + 2)
+    ==>
+      ↑(2 * bt.length) + ↑2
+[Meta.Tactic.simp.rewrite] Nat.cast_mul:1000:
+      ↑(2 * bt.length)
+    ==>
+      ↑2 * ↑bt.length
+[Meta.Tactic.simp.rewrite] Nat.cast_ofNat:1000:
+      ↑2
+    ==>
+      2
+[Meta.Tactic.simp.rewrite] Nat.cast_ofNat:1000:
+      ↑2
+    ==>
+      2
+[Meta.Tactic.simp.rewrite] Nat.cast_add:1000:
+      ↑(2 * bt.length + 2)
+    ==>
+      ↑(2 * bt.length) + ↑2
+[Meta.Tactic.simp.rewrite] Nat.cast_mul:1000:
+      ↑(2 * bt.length)
+    ==>
+      ↑2 * ↑bt.length
+[Meta.Tactic.simp.rewrite] Nat.cast_ofNat:1000:
+      ↑2
+    ==>
+      2
+[Meta.Tactic.simp.rewrite] Nat.cast_ofNat:1000:
+      ↑2
+    ==>
+      2
+[Meta.Tactic.simp.rewrite] Nat.cast_mul:1000:
+      ↑(t * 1)
+    ==>
+      ↑t * ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] Nat.cast_mul:1000:
+      ↑(t * 1)
+    ==>
+      ↑t * ↑1
+[Meta.Tactic.simp.rewrite] Nat.cast_one:1000:
+      ↑1
+    ==>
+      1
+[Meta.Tactic.simp.rewrite] List.length_replicate:1000:
+      (List.replicate t true).length
+    ==>
+      t
+[Meta.Tactic.simp.rewrite] le_refl:1000:
+      t ≤ t
+    ==>
+      True
+[Meta.Tactic.simp.rewrite] Nat.cast_lt:1000:
+      ↑n < ↑bt.length
+    ==>
+      n < bt.length
+[Meta.Tactic.simp.rewrite] Nat.cast_lt:1000:
+      ↑n < ↑t
+    ==>
+      n < t
+[Meta.Tactic.simp.rewrite] List.getElem_replicate:1000:
+      (List.replicate t true)[n]
+    ==>
+      true
+[Meta.Tactic.simp.rewrite] ne_eq:1000:
+      some true ≠ none
+    ==>
+      ¬some true = none
+[Meta.Tactic.simp.rewrite] not_false_eq_true:1000:
+      ¬False
+    ==>
+      True
+ReviewScratch/UNMarkSealed.lean:941:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:947:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:951:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:953:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:975:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:977:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1125:17: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1149:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1155:19: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1460:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1472:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1489:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1546:22: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1598:24: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:1792:20: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+ReviewScratch/UNMarkSealed.lean:941:6: warning: 'trace "M746"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:947:6: warning: 'trace "M752"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:951:4: warning: 'trace "M756"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:953:4: warning: 'trace "M758"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:975:4: warning: 'trace "M780"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:977:4: warning: 'trace "M782"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1125:4: warning: 'trace "M930"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1149:6: warning: 'trace "M954"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1155:6: warning: 'trace "M960"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1381:37: warning: 'push_cast at hq ⊢' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1460:8: warning: 'trace "M1265"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1472:8: warning: 'trace "M1277"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1489:8: warning: 'trace "M1294"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1546:8: warning: 'trace "M1351"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1595:6: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1598:10: warning: 'trace "M1403"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1612:8: warning: 'push_cast' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1683:23: warning: 'push_cast at hq ⊢' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1686:37: warning: 'push_cast at hq ⊢' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1792:6: warning: 'trace "M1597"' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+ReviewScratch/UNMarkSealed.lean:1934:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+ReviewScratch/UNMarkSealed.lean:1937:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+ReviewScratch/UNMarkSealed.lean:1941:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+ReviewScratch/UNMarkSealed.lean:1944:76: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (clearTM k i).q₀ = SweepPhase.sweep
+ReviewScratch/UNMarkSealed.lean:1947:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode [] [true]
+is not definitionally equal to the right-hand side
+  [false, true, true]
+
+⊢ pairEncode [] [true] = [false, true, true]
+ReviewScratch/UNMarkSealed.lean:1951:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+ReviewScratch/UNMarkSealed.lean:1955:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNMarkSealed.lean:1959:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+ReviewScratch/UNMarkSealed.lean:1963:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+ReviewScratch/UNMarkSealed.lean:1966:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+ReviewScratch/UNMarkSealed.lean:1971:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+ReviewScratch/UNMarkSealed.lean:1975:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ReviewScratch/UNMarkSealed.lean:1979:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+ReviewScratch/UNMarkSealed.lean:1982:53: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ↑(moveInputPos 0 SignType.pos) = 1
+ReviewScratch/UNMarkSealed.lean:1986:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+ReviewScratch/UNMarkSealed.lean:1989:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+ReviewScratch/UNMarkSealed.lean:1992:37: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  universalPrefixTM.k = 0
+ReviewScratch/UNMarkSealed.lean:1996:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+ReviewScratch/UNMarkSealed.lean:2001:64: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (M₁.bufferedSecondCfg M₂ c b p tp hd).inputPos = p
+ReviewScratch/UNMarkSealed.lean:2005:77: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  FinTM.tapeBlocks a b c = fun i => Fin.addCases a (fun i => Fin.addCases (fun x => b) c i) i
+ReviewScratch/UNMarkSealed.lean:2009:67: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ReviewScratch/UNMarkSealed.lean:2012:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+ReviewScratch/UNMarkSealed.lean:2015:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+ReviewScratch/UNMarkSealed.lean:2019:68: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none
+ReviewScratch/UNMarkSealed.lean:2023:78: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+ReviewScratch/UNMarkSealed.lean:2026:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+ReviewScratch/UNMarkSealed.lean:2030:95: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  counterOverhead w r = ∑ j ∈ Finset.range r, (2 * (List.takeWhile not (counterWord w j)).length + 2)
+ReviewScratch/UNMarkSealed.lean:2036:53: error: Application type mismatch: The argument
+  P.q₀
+has type
+  SP
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre
+in the application
+  ⟨GuessRunPhase.pre, P.q₀⟩
+ReviewScratch/UNMarkSealed.lean:2040:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+ReviewScratch/UNMarkSealed.lean:2044:45: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (streamStartCfg z j q s).inputPos = 1
+ReviewScratch/UNMarkSealed.lean:2048:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+ReviewScratch/UNMarkSealed.lean:2052:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/UNMarkSealed.lean:2057:59: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  N.AcceptsWithin x t =
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+ReviewScratch/UNMarkSealed.lean:2061:82: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  tm.HaltsWithin x t = ∀ (w : List Bool), w.length = t → (NDTM.runWith w (NDTM.initCfg x)).state = none
+ReviewScratch/UNMarkSealed.lean:2064:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+ReviewScratch/UNMarkSealed.lean:2067:64: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre = SP
+ReviewScratch/UNMarkSealed.lean:2071:38: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:2075:64: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:2079:37: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:2083:37: error: `simp` made no progress
+ReviewScratch/UNMarkSealed.lean:2185:8: warning: declaration uses 'sorry'
+# exit=1 wall=4s file=ReviewScratch/UNMarkSealed.lean olean=oleans-lg4c2 wt=wt-head head=d72ed65f

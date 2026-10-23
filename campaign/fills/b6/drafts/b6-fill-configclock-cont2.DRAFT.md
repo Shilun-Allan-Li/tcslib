@@ -3,7 +3,8 @@
 <!-- DRAFT (maintainer), 2026-10-18; revised 2026-10-22 after the pre-ship at `0416ffea`
 (`drafts/b6-fill-configclock-cont2/preship-0416ffea/`). #134 and #139 have merged. **Issues
 after #149 (the space API, the user's ruling of 2026-10-22) merges**; re-run the pre-ship against
-#149's replay snapshot, with `spaceUsed_le_of_abs_le` added to the import probe (101 checks).
+#149's replay snapshot, with both `spaceUsed_eq_sum` and `spaceUsed_le_of_abs_le` added to the
+import probe (102 checks; gate 62, minor 2).
 Issue-time items: ⟨BASE⟩, ⟨IN-FLIGHT⟩,
 ⟨LINES⟩ (the file at the base: home, target, sorry, status paragraph; with gate 52's docstring
 commit on #134: 458 lines, target 426, sorry 456, status 404–424; without it 452, 420, 450,
@@ -115,10 +116,10 @@ up to `configBound + 1`), and so are the writer's leaf and its two endpoint shap
 
 **Pre-ship check** (maintainer, at the base; `campaign/fills/b6/logs/b6-fill-configclock-cont2-preship.log`):
 - **Your file** elaborates with exactly the target's sorry warning.
-- **The import probe** (`F3C2ImportProbe.lean.txt`, ⟨PROBE: 101⟩ `#check`s: continuation 1's 60,
+- **The import probe** (`F3C2ImportProbe.lean.txt`, ⟨PROBE: 102⟩ `#check`s: continuation 1's 60,
   the names its six helpers cite, the join, the record's per-field lemmas, the seam's lockstep
-  lemmas and `Cfg.mapState`'s fields, silence, and space with `spaceUsed_le_of_abs_le`): 0 errors,
-  0 warnings. Re-run it after your delivery.
+  lemmas and `Cfg.mapState`'s fields, silence, and space with `spaceUsed_eq_sum` and
+  `spaceUsed_le_of_abs_le`): 0 errors, 0 warnings. Re-run it after your delivery.
 - **The route probe** (`F3C2RouteProbe.lean.txt`, sealed over 12 other-file definitions, with its
   controls `F3C2RouteSealControl.lean.txt`): every prescribed step's premise follows from public
   lemmas, as derived there. In particular:
@@ -302,6 +303,9 @@ space API (`spaceUsed_eq_sum`, `spaceUsed_le_of_abs_le`).
     - **Never unfold a definition of another file**, and no definitional closure either. Read
       `wordPatch` only through `wordPatch_of_mem`, `_of_not_mem` and `wordPatch_append`, and
       `FinTM.bufferTape` only through its equations.
+    - **Scope (user, 2026-10-23):** this binds TCSlib's own definitions. Core and Mathlib
+      definitions may reduce in a `rfl`, `decide` or `show` step, but are never passed to `simp`,
+      `rw` or `unfold`; use their equation lemmas (`Bool.toNat_true`, not `simp [Bool.toNat]`).
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their lemmas. Unfold `step` and `Action.apply` only for a
       leaf defined in your own file. `phaseHostTM`'s table is read through `phaseHostTM_run`.

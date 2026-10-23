@@ -1,0 +1,25 @@
+## regions (overlay line numbers)
+overlay 1-716 == head 1-716: yes
+overlay 717 (blank) == head 851: yes
+overlay 718-766 (target docstring + statement) == head 900-948: yes
+overlay 768-769 == head 2418-2419: yes
+overlay 767: [  sorry] -> head 949-2417 (the body, 1469 lines)
+head 717-850: new privates ic_seam_step, ic_rewindLeafTM, ic_rewind_scan, ic_rewind_leaf_run (region (b)); head 852-899: ic_install_phase (region (b))
+
+(an earlier offset guess, discarded; the hunks below are authoritative)
+
+## base -> overlay (the first edit) hunks
+@@ -8,0 +9,4 @@
+@@ -94,0 +99,310 @@
+@@ -95,0 +410,308 @@
+base lines 95-99:
+
+/-- **The interpreter core for nondeterministic codes** `R` (deterministic; shared by the
+universal NDTM and the diagonalizer's mid-rung). For every effective nondeterministic scheme
+`c` there is one finite machine `R`, uniform over codes, with `K` work tapes, a designated stream
+tape `j`, an entry state and two distinct verdict states `accept ≠ reject`, such that for every
+
+## overlay -> head hunks
+@@ -716,0 +717,134 @@
+@@ -717,0 +852,48 @@
+@@ -767 +949,1469 @@

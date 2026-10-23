@@ -1,0 +1,17 @@
+overlay -> head, -U0 hunks:
+@@ -226,0 +227,1420 @@ private theorem un_universal_of_setup (c : EffectiveNDMachineCode)
+@@ -282 +1702 @@ theorem exists_timed_universal_NDTM (c : EffectiveNDMachineCode) :
+
+base -> overlay, full diff of non-home hunks:
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+index 5aad1203..adf117e1 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+@@ -14,2 +14,3 @@ import TCSlib.Complexity.ClassNP.ExhaustiveReplay
+ import TCSlib.Complexity.ClassNP.TMSAT
++import TCSlib.Complexity.TuringMachine.Build.Rewind
+ 
+@@ -115,2 +116,112 @@ namespace Turing
+ 
++/-- **The universal NDTM from a setup machine.** Given, for the interpreter core's tape count
++`K` and stream tape `jR`, a deterministic setup `P` that on `⟨⟨bits t, α⟩, x⟩` first reaches its
