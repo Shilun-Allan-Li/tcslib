@@ -19,3 +19,13 @@ sub-agents were all occupied): both true.
 | 3–9 | notes | Integrity and placement; the equation; the radius lemma and its edge cases (`k = 0`, `t = 0`, `r = 0`, the closed window); sufficiency for F3; rule 10; the axiom records; lint and screen. | No action. |
 
 **Round 2** (`pack-r2.md`, after the replay): a narrow re-audit of `3d0f80b5`.
+
+**Round 2, first dispatch: void** (`findings-r2-void.md`, verbatim; received 2026-10-23, SHA-256
+`b39057d57eeffd0ecb4c5f9b5b84bdcb749a614b036ecf10ee551e070239c334`). The auditor was attached
+round 1's bundle (`2dca34f9…`, 56 sections) instead of round 2's
+(`f753f518057b49e5711b00cacfc5d7be69ca53a1c9aaefdc972a9ad4d88d6995`, 69 sections), and reported
+exactly that: FAIL, 0 blockers, 1 major (the wrong bundle), 0 minors, 1 note (no substantive
+review). **True; no repository action.** The round-2 bundle in the outbox is unchanged and checks
+against its `SHA256SUMS`. It is re-dispatched with the same prompt, and the closed gates' outbox
+folders (59–63) are moved to `exchange/archive/gates/` so that only undispatched bundles remain in
+the outbox. Round 2's findings go to `findings-r2.md`.
