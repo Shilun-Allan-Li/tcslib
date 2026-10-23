@@ -1586,6 +1586,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `Build/Seam`. Seal, consumer probe, freeze, lint and the copy search clean; the screen running.
     An API gate, **gate 69** (pack drafted). `Seam`'s closure (88 modules) contains #155's: #155
     merges first and #156 replays from its snapshot.
+  - **#155 merged (2026-10-23).** #156 at `a4d9b024` (the campaign merged in), with `9f82de74`:
+    `phaseHostTM_run` re-proved through the new lemmas (the screen's 77% in-file pair, and its two
+    older rule-10 unfoldings). Seal of the three lemmas (8 controls), screen 125 → 125 pairs.
+    **Gate 69 staged** (bundle `87d56842…`, 150 sections); `replay-lphl.sh`, 88 modules from
+    `oleans-lslsk`.
+  - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
+    brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
+    28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
+    space step now through `spaceUsed_le_of_abs_le` (sealed), only the old sum-route control
+    failing; seal controls 12/12; lint as before; the screen base running.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
