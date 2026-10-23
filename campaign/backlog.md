@@ -1595,7 +1595,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
     space step now through `spaceUsed_le_of_abs_le` (sealed), only the old sum-route control
-    failing; seal controls 12/12; lint as before; the screen base running.
+    failing; seal controls 12/12; lint as before; screen base 1,058 declarations, 513 pairs (the
+    changes all #150's in `CfgRecord`).
+  - **F3 cont2's brief issued** (`campaign/fills/b6/briefs/b6-fill-configclock-cont2.md`; inputs
+    commit `968d7b2b`; the pre-ship record `drafts/b6-fill-configclock-cont2/preship-906a9d7b/`).
+    Dispatch copy `exchange/outbox/fills/b6-fill-configclock-cont2.md` (SHA-256 `f0294fba…`), with
+    addendum v2.5. **Suggested agent: Claude** (the user's rule of 2026-10-23: the first round and
+    continuation 1 were Codex, and the target is still open after two rounds; Codex remains the
+    cheaper option).
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
