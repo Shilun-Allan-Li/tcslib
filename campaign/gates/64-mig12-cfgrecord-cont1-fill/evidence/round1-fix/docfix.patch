@@ -1,0 +1,32 @@
+From 8d9e3b5ec72f9dc3d760dcbc74fa0c4e0b00da7d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 23 Oct 2026 15:54:11 -0500
+Subject: [PATCH] CfgRecord: exists_recordStepTM's sketch composes inside one
+ phase host
+
+The sketch's first sentence said the reads compose by seams; they run inside
+one phase host and the phases' segments are joined by Segment.trans, as the
+docstring's later paragraph says. Docstring only; the code is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+index 1ed88257..986ab6b2 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+@@ -4658,7 +4658,8 @@ It depends on `|x|` only through the `posWidth |x|` position digits. A halted
+ `c` steps to itself with its tag
+ unchanged, by `hupd`.
+ 
+-**Proof sketch.** Compose by R2 seams, with no private trace. Read: `scanTM`
++**Proof sketch.** Compose the reads inside one phase host (`phaseHostTM`), joining the phases'
++segments by `Turing.Segment.trans`, with no private trace. Read: `scanTM`
+ folds collect the state, the tag, and for each tape field the marked cell's
+ content and whether the mark is at an edge, moving between fields by `skipTM`.
+ Read the input symbol. The host's input position is arbitrary, so first save
+-- 
+2.50.1 (Apple Git-155)
+

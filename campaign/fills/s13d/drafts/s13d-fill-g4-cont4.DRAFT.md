@@ -458,6 +458,9 @@ equations, the catalog rows' contracts, the model's step lemmas), `Turing.two_le
     - **No definitional closure either:** a `rfl`, `exact`, `show`, `decide` or `simp` step that
       closes only because another file's definition reduces counts as unfolding (continuation 1's
       F1 was one).
+    - **Scope (user, 2026-10-23):** this binds TCSlib's own definitions. Core and Mathlib
+      definitions may reduce in a `rfl`, `decide` or `show` step, but are never passed to `simp`,
+      `rw` or `unfold`; use their equation lemmas (`Bool.toNat_true`, not `simp [Bool.toNat]`).
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their existing lemmas. Unfold `step` and `Action.apply`
       only for a leaf defined in your own file.

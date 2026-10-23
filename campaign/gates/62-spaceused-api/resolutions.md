@@ -1,4 +1,4 @@
-# The space measure as a sum, and a head-radius space bound (PR #149, an API gate): resolutions (round 1; FAIL, fixed; round 2 pending)
+# The space measure as a sum, and a head-radius space bound (PR #149, an API gate): resolutions (round 1 FAIL, fixed; round 2 PASS; gate CLOSED)
 
 **Gate:** the API gate of PR #149 (`lean/spaceused-api` at `097f3e04`: `e172b914` and a merge of
 the campaign branch after #145, #146 and #148). Pack `pack.md`; bundle SHA-256
@@ -18,4 +18,31 @@ sub-agents were all occupied): both true.
 | 10 | note | Refresh the PR's replay status; keep the merge order (#149, then #147's six-module re-replay). | **Done:** #149's description records the passed replay, the fix and round 2. The order stands. |
 | 3–9 | notes | Integrity and placement; the equation; the radius lemma and its edge cases (`k = 0`, `t = 0`, `r = 0`, the closed window); sufficiency for F3; rule 10; the axiom records; lint and screen. | No action. |
 
-**Round 2** (`pack-r2.md`, after the replay): a narrow re-audit of `3d0f80b5`.
+**Round 2** (`pack-r2.md`): a narrow re-audit of `3d0f80b5`, after `replay-lspapi2.sh` passed
+(user, 2026-10-23: 4 of 4, static-equal (1)).
+
+**Round 2, first dispatch: void** (`findings-r2-void.md`, verbatim; received 2026-10-23, SHA-256
+`b39057d57eeffd0ecb4c5f9b5b84bdcb749a614b036ecf10ee551e070239c334`). The auditor was attached
+round 1's bundle (`2dca34f9…`, 56 sections) instead of round 2's
+(`f753f518057b49e5711b00cacfc5d7be69ca53a1c9aaefdc972a9ad4d88d6995`, 69 sections), and reported
+exactly that: FAIL, 0 blockers, 1 major (the wrong bundle), 0 minors, 1 note (no substantive
+review). **True; no repository action.** The round-2 bundle in the outbox is unchanged and checks
+against its `SHA256SUMS`. It is re-dispatched with the same prompt, and the closed gates' outbox
+folders (59–63) are moved to `exchange/archive/gates/` so that only undispatched bundles remain in
+the outbox. Round 2's findings go to `findings-r2.md`.
+
+**Round 2** (`findings-r2.md`, verbatim; received 2026-10-23, SHA-256
+`6e73235670173f9f63fb0e5c1020fa4c10eb3c435806a280ca69b5bf0d4fc651`; bundle `f753f518…`, 69
+sections): **PASS, 0 blockers, 0 majors, 0 minors, 7 notes. The gate is closed.**
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1, 2 | notes | Integrity and freeze; round 1's major resolved: `wr_space`'s whole body is the public lemma, which applies exactly. | No action. |
+| 3, 5, 6 | notes | Elaboration, axioms and replay records support no regression; the screen reproduces byte for byte; lint unchanged but for the line count. | No action. |
+| 4 | note | Round 1's minor is fixed as a records correction; the 102-check probe is still to be run at F3 continuation 2's issue. | **Agreed.** It runs at the issue commit after #149 merges (the backlog). |
+| 7 | note | Refresh the live PR and these resolutions with the four-module replay, the screen and the round-2 verdict; keep the order (#149, then #147's re-replay). | **Done:** this section and the heading; #149's description updated (2026-10-23). |
+
+**Merge state. #149: clear to merge.** Both replays have passed (`replay-lspapi.sh`, 324 of 324;
+`replay-lspapi2.sh`, 4 of 4, at the head `3d0f80b5`), the gate is closed, and the PR's base is the
+campaign branch. After it merges, #147 re-replays its six modules and the other queued PRs replay
+from #149's merged-tree snapshot.

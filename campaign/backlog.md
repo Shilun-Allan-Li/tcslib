@@ -1479,6 +1479,75 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **For the next cover brief** (the canonizer's F7, R's process notes): the shared environment
     logs in every item zip; per-module memory; `Simulation` in the screen population of any fill
     that writes an input rewind; "seal not run" a checklist failure.
+- **The input-rewind API opened as #153** (`lean/input-rewind-api`, `ac5ce7bc` on `86523ba5`; an
+  API gate, gate 65; the user's ruling "New small module", 2026-10-22). `Build/InputRewind`:
+  `Turing.inputRewindTM` (start, scan, park), `inputRewindTM_run` (exact time `p + 1`, the first
+  arrival at the park, the head at `1`, work tapes, heads and output fixed at every time),
+  `inputRewindTM_step_done`, and `Turing.Cfg.mapState_mapState`. `Build/NDHost`'s private
+  `guessRun_mapState_mapState`, the lemma's exact statement, is removed and its three uses
+  re-pointed (**ruled (user, 2026-10-22): in this PR**). Evidence
+  `campaign/gates/65-input-rewind-api/evidence/`. No snapshot has the base tree, so the replay
+  (5 modules: the new module, NDHost, `Diagonalization/NTimeHierarchy`, both facades) runs after
+  #149 merges, from #149's merged-tree snapshot; then gate 65. UN cont1's landing and #151's
+  `ic_rewind_scan` re-point follow it.
+  - **NDHost's rule-10 debt:** 11 simp-argument unfoldings of `Cfg.mapState` (`StateRenaming`'s
+    definition) remain in `Build/NDHost`; replace them with the field equations
+    (`Cfg.mapState_state`, …) and `Cfg.mapState_mapState`, in the user's dedup window or NDHost's
+    next PR.
+- **UN cont1's landing prepared** (local branch `lean/un-cont1-landing`, on #153's head `ac5ce7bc`;
+  unpushed until #153 merges): `9031f1cf` the delivery squashed to the owned file (author kept,
+  blob `8514e6db`); `34568b28` the review's edits A1–A7, B1–B3, C (blob `958751e1`); `3ed7b854` the
+  re-point to `Turing.inputRewindTM`/`inputRewindTM_run` and `Cfg.mapState_mapState`, removing
+  `un_inRewTM`, `un_inRew_run` (and A7's sketch with it) and `un_mapState_comp`. Checked as one
+  file after the new module's text, against `oleans-lu2sc1`: only `ntime_hierarchy`'s sorry
+  warning; the review's seal S2 plus `Turing.inputRewindTM` (37 definitions, the simp erasure):
+  the body has 0 errors and 82/82 controls fail; freeze 5 → 5 public, 14 → 11 private; lint as at
+  review; screen 617 declarations, 454 pairs, F3's pairs gone
+  (`campaign/fills/c1/evidence/c1-universal-cont1-landing/`, with the PR body drafted).
+  - `un_setup`'s `hstart` (the start configuration through seven nested relabelings, proved field
+    by field) reproduces 88% of `Cfg.mapState_mapState`'s text: a different statement in the same
+    rewrite idiom, the review's 87% in-file pair with `un_mapState_comp`, now cross-file. **Ruled
+    (user, 2026-10-23): accepted as an idiom pair** (as R's `iw_one` pair).
+- **Rulings for the post-#149 queue (user, 2026-10-23):**
+  - **Gates before replays:** the queued gates (64 #150, 65 #153, 66 #151, 67 #152, 68 the UN
+    landing) are dispatched before their post-#149 merged-tree replays; each pack lists its replay
+    as a pending attestation, recorded when it passes. A PR is clear to merge only when both its
+    gate and its replay have passed.
+  - **R's leaf at #151's landing:** if #153 has merged first, #151 re-points `ic_rewindLeafTM` and
+    `ic_rewind_leaf_run` to `inputRewindTM`/`inputRewindTM_run` in one more maintainer commit
+    (prepared and checked locally first; applied only after #153 merges).
+  - All five queued branches merge cleanly with #149's head (`git merge-tree`, 2026-10-23).
+- **Gates closed (2026-10-23):** 62 round 2 (#149, PASS 0/0/0/7), 65 (#153, PASS 0/0/3/10), 64
+  (#150, PASS 0/0/2/10), 68 (the UN landing, PASS 0/0/3/10); round 2's first dispatch of gate 62 was
+  void (round 1's bundle attached). **#149 is clear to merge.** The fixes:
+  - #153: `1148924f`, the overview's start hypothesis and the run sketch's first step (docstrings);
+  - the UN landing: a fourth local commit `2d380224`, the bank erase's guide condition and the
+    setup pieces' list (docstrings);
+  - errata and the ledger's IR-1 wording, in the gates' resolutions.
+  - **Process:** every dispatch prompt names the bundle's Lean and records revisions (gate 65,
+    minor 2: the pack pointed to the bundle's README, which is not attached).
+  - **Optional (gate 65, note 10):** a cross-reference to `Cfg.mapState_mapState` from
+    `StateRenaming`'s docstring, with that module's next change.
+- **Gates 66 and 67 closed (2026-10-23):** 66 (#151, PASS 0/0/2/14: report and review errata) and
+  67 (#152, PASS 0/0/3/15). All six queued gates are now closed; no PR but #149 is clear to merge,
+  each waiting on its post-#149 replay.
+  - **Rule 10's scope (ruled, user, 2026-10-23; gate 67 minor 1):** TCSlib's own definitions.
+    Core and Mathlib definitions may reduce in `rfl`/`decide`/`show`, never passed to
+    `simp`/`rw`/`unfold`. In `policy.md` and the two unissued briefs.
+  - Fixes: #150 `8d9e3b5e` (the frozen sketch sentence, ruled), #152 `aed162fd` (the adapter
+    sentence); CC7-1's census in the ledger.
+  - **Optional (gate 67, note 6):** permanent sanity lemmas for the minimal table and truncation
+    cases, with the canonizer's next change.
+  - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
+    (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
+    #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
+    `e4c5d015`). Gate 67's pack includes it. The screen matches the two at 99% each way;
+    the prepared re-point elaborates, the review's seal holds on it (74/74), and it removes 11
+    pairs with none new (`campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`).
+  - `exists_ndInterpreterCore` (#151) reproduces 85% of `Cfg.mapState_mapState`'s text (343 of
+    402 characters; the lemma covers about 0.4% of the 80 KB proof): field-by-field rewrites
+    through the relabeling's and the embedding's equations, the idiom of UN's `hstart`. **Ruled
+    (user, 2026-10-23): accepted as an idiom pair**, as gate 66's pack reads it.
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's
