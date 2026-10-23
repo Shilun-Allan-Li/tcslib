@@ -1523,9 +1523,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `e4c5d015`). Gate 67's pack includes it. The screen matches the two at 99% each way;
     the prepared re-point elaborates, the review's seal holds on it (74/74), and it removes 11
     pairs with none new (`campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`).
-  - **To confirm (user):** `exists_ndInterpreterCore` (#151) reproduces 85% of
-    `Cfg.mapState_mapState`'s text: field-by-field relabeling rewrites, the idiom accepted for
-    UN's `hstart`. Gate 66's pack reads it as an idiom pair.
+  - `exists_ndInterpreterCore` (#151) reproduces 85% of `Cfg.mapState_mapState`'s text (343 of
+    402 characters; the lemma covers about 0.4% of the 80 KB proof): field-by-field rewrites
+    through the relabeling's and the embedding's equations, the idiom of UN's `hstart`. **Ruled
+    (user, 2026-10-23): accepted as an idiom pair**, as gate 66's pack reads it.
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's
