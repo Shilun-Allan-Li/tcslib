@@ -1,0 +1,72 @@
+added comment/docstring lines: 58
+  FLAG ['phase 1'] | -- Phase 1: the first header pass, capturing `bits t` on its tape.
+  FLAG ['phase 2'] | -- Phase 2: the input rewind back to position 1, through the first seam.
+  FLAG ['phase 3'] | -- Phase 3: the second header pass, capturing `α` on its tape.
+  FLAG ['phase 4'] | -- Phase 4: rewind the counter capture to its origin.
+  FLAG ['phase 5'] | -- Phase 5: copy the counter onto its loop tape.
+  FLAG ['phase 6'] | -- Phase 6: the bounded window copy.
+  FLAG ['phase 7'] | -- Phase 7: the second input rewind.
+  FLAG ['phase 8'] | -- Phase 8: rewind the α capture to its origin.
+  FLAG ['phase 9'] | -- Phase 9: install the replay serialization through the clean call interface.
+  FLAG ['phase 1'] | -- Phase 10: the seam layout redistributes the installed serialization.
+  FLAG ['phase 1'] | -- Phase 11: rewind the window to its origin.
+  FLAG ['phase 1'] | -- Phase 12: the loop entry. The virtual five-tape configuration of the represented start.
+--- all added comment lines ---
+   - Composing a verified segment with a verified next phase through the public seam: the
+   endpoint, its control state, and the inherited first return of the phase's exit, in one step.
+   **Proof sketch.** The general-configuration seam run and its inherited first-return cut,
+   with the endpoint state projected through the state renaming.
+   - The interpreter's native-input rewind leaf: one unconditional left move, a left scan to
+   the input's left blank, one right step, and a live parking state at which a seam can dispatch.
+   It is the two-`controlAction`-state input-rewind discipline with an explicit live exit; it
+   moves no work head and writes nothing.
+   - The leaf's scanning trajectory: from the scanning state at input position `j ≤ |x|`, the
+   parking state is reached at exactly `j + 1`, with only the control and the input head changed,
+   and the state stays the scanning one strictly before.
+   **Proof sketch.** Induct on the position. At zero the input symbol is the left blank, so one
+   right move parks. At a successor the symbol exists; one left move reduces the position.
+   - The leaf's complete run: from its entry at any positive input position `p`, it parks at
+   exactly `p + 1` with the input head at `1`, every work tape, work head and the output
+   unchanged, and the parking state is not visited earlier.
+   **Proof sketch.** The unconditional first left move lands the scan at `p − 1 ≤ |x|`; the
+   scanning trajectory parks after `p` more steps. Strictly before, the state is the entry or the
+   scanning one.
+   - The install call, embedded silently on selected host tapes and wrapped in the release
+   adapter, so that its first re-arrival at the installed seam is a positive event even when the
+   call's entry and exit controls coincide. The embedded run carries one clean seam to the other;
+   unselected tapes hold their frame throughout.
+   **Proof sketch.** The silent embedding transports the call's run between the transported
+   seams; the release adapter's positive lockstep makes the first arrival at the exit control
+   strictly positive, and the call's interior cut excludes it earlier.
+   -- The twelve phases.
+   -- The assembled interpreter.
+   -- Ranges of the two header scratch selections, by value.
+   -- Phase 1: the first header pass, capturing `bits t` on its tape.
+   -- Phase 2: the input rewind back to position 1, through the first seam.
+   -- Phase 3: the second header pass, capturing `α` on its tape.
+   -- The clean ledger after the two header passes.
+   -- The second pass leaves the first capture intact.
+   -- Phase 4: rewind the counter capture to its origin.
+   -- Phase 5: copy the counter onto its loop tape.
+   -- Phase 6: the bounded window copy.
+   -- Phase 7: the second input rewind.
+   -- The α capture survives the window, the rewinds and the copy.
+   -- Phase 8: rewind the α capture to its origin.
+   -- The comprehensive clean ledger at the install seam.
+   -- The α capture holds α at its origin.
+   -- Phase 9: install the replay serialization through the clean call interface.
+   -- Phase 10: the seam layout redistributes the installed serialization.
+   -- Phase 11: rewind the window to its origin.
+   -- The rewind of the window.
+   -- Phase 12: the loop entry. The virtual five-tape configuration of the represented start.
+   -- The complete tape inventory at the loop's threshold.
+   -- Named-tape values at the threshold.
+   -- The stream, the two loop banks and the loop capture, by the clean ledger.
+   -- The counter-loop configuration's fields, read through its public layout.
+   -- The hosted start, embedded: the loop junction.
+   -- The final seam: the embedded hosted loop, its verdict, and its first arrival.
+   -- The target's start is the composite's start.
+   -- the prefix clause
+   -- the total clause
+   -- the verdict
+   -- no earlier verdict, for either verdict state

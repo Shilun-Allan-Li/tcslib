@@ -1,0 +1,325 @@
+occurrences 554; distinct argument heads 216
+by tactic: dsimp only 6, rw 512, simp 9, simp only 18, simpa 9
+unfold/delta: 0
+non-only simp-family calls (default simp set): 18
+  4964: simpa []
+  5118: simp [exitF]
+  5382: simp [exitF]
+  5393: simpa [exitF]
+  5395: simpa [exitF]
+  5508: simp [exitF]
+  5519: simpa [exitF]
+  5521: simpa [exitF]
+  5737: simp [exitF]
+  6175: simp [Bool.toNat]
+  6181: simp [Bool.toNat]
+  6188: simp []
+  6541: simpa []
+  6590: simp []
+  6662: simpa []
+  6675: simpa []
+  6739: simpa []
+  7834: simp []
+show/change lines: 85
+  5191: show (if Fin.last m = Fin.last m ∧
+  5212: show (if j.castSucc = Fin.last m ∧ _ ∧ _ then _ else
+  5218: show (if Fin.last m = Fin.last m ∧
+  5225: show (d.mapState fun _ =>
+  5276: · show Ew.workTapes bound.castSucc = FinTM.bufferTape w
+  5278: · show Ew.workTapePos bound.castSucc = 0
+  5281: exact ⟨by rw [show (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+  5284: by rw [show (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+  5385: rw [show u = 2 * w₀.length + 2 + 1 + (u - (2 * w₀.length + 2 + 1)) by omega,
+  5417: show Fin.lastCases _ _ bound.castSucc = (0 : ℤ)
+  5429: show Fin.lastCases _ _ j.castSucc = (0 : ℤ)
+  5435: show Fin.lastCases _ _ (Fin.last m) q = none
+  5440: show Fin.lastCases _ _ (Fin.last m) = (0 : ℤ)
+  5511: rw [show u = 2 * w₀.length + 2 + 1 + (u - (2 * w₀.length + 2 + 1)) by omega,
+  6306: · show (if header = header then _ else _) = _
+  6308: · show (if header = ctrOuter then cp else 0) = 0
+  6310: · show (if ctrOuter = header then _ else _) = _
+  6312: · show (if ctrOuter = ctrOuter then cp else 0) = cp
+  6316: · show (if j = header then _ else _) = _
+  6318: · show (if j = ctrOuter then cp else 0) = 0
+  6333: rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
+  6379: show (if SweepPhase.done = SweepPhase.done
+  6388: · show (if s = SweepPhase.done then _ else none) = none
+  6400: show (if j = ctrOuter ∧ _ ∧ _ then _ else _) = _
+  6418: show (canonStageBank M header ctrOuter (some SweepPhase.sweep) ip
+  6464: show (if SeekPhase.done = SeekPhase.done
+  6473: · show (if s = SeekPhase.done then _ else none) = none
+  6485: show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6496: show Function.update (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6550: show (if SeekPhase.done = SeekPhase.done
+  6559: · show (if s = SeekPhase.done then _ else none) = none
+  6571: show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6582: show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6588: show (w.length : ℤ) + 1 +
+  6636: show (if (WritePhase.done : WritePhase 1) = WritePhase.done
+  6645: · show (if s = WritePhase.done then _ else none) = none
+  6657: show (if j = ctrOuter ∧ _ ∧ _ then _ else _) = _
+  6665: rw [show FinTM.bufferTape [false] 0 = some false by rw [FinTM.bufferTape_eq]; rfl,
+  6681: · rw [List.getElem?_eq_none (show w.length ≤ q.toNat by omega),
+  6683: (show (w ++ [false]).length ≤ q.toNat by rw [hlapp]; omega)]
+  6692: show (canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+  6742: · rw [add_zero, show FinTM.bufferTape [false] 0 = some false by rw [FinTM.bufferTape_eq]; rfl,
+  6747: show FinTM.bufferTape [false] 1 = none by rw [FinTM.bufferTape_eq]; rfl])
+  6753: show (if SeekPhase.done = SeekPhase.done
+  6762: · show (if s = SeekPhase.done then _ else none) = none
+  6774: show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6785: show Function.update (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6793: show (w.length : ℤ) + ((([false] : List Bool).length : ℕ) : ℤ) + 1 =
+  6850: show (if SeekPhase.done = SeekPhase.done
+  6859: · show (if s = SeekPhase.done then _ else none) = none
+  6871: show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6882: show Function.update (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+  6943: show (if FlagPhase.done true = FlagPhase.done true
+  6957: · show (if s = FlagPhase.done true then _
+  6970: show (if j = ctrOuter ∧ _ ∧ _ then _ else _) = _
+  6991: show (canonStageBank M header ctrOuter (some FlagPhase.run) ip
+  7226: show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7230: show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7236: · show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7239: · show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7253: · show (if ux false = ux true
+  7259: · show (if ux true = ux true
+  7275: · show (if s = ux true then _ else if s = ux false then _ else none) = none
+  7390: show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7405: show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7426: show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7435: show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+  7524: rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
+  7541: exact ⟨unaryFin q, by rw [← (show r = ys from hr), hword]⟩
+  7638: show (if uBound = uBound then _ else _) = _
+  7692: rw [show c₀.inputPos.val - 1 = 2 * bits.length + 2 by omega]
+  7710: show (if fexit false = fexit true
+  7718: show (if s = fexit true then _ else if s = fexit false then _ else none) = none
+  7737: show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
+  7766: show (if fexit true = fexit true
+  7774: show (if s = fexit true then _ else if s = fexit false then _ else none) = none
+  7832: show cF.workTapes (ι₃ ((Fin.last m₃).castSucc)) q = none
+  7888: show (if (Sum.inr anchor₃ : Unit ⊕ H₃) = Sum.inr anchor₃
+  7896: show (if s = Sum.inr anchor₃ then _
+  7966: show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
+  7971: show (codeSkipTableK F.k (codeBitsNat bits) ys₁).bind
+  8014: show (if (Sum.inr escape₃ : Unit ⊕ H₃) = Sum.inr anchor₃
+  8022: show (if s = Sum.inr anchor₃ then _
+  8054: show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
+  8058: show (codeSkipTableK F.k (codeBitsNat bits) ys₁).bind
+argument heads (first line of use):
+  <term> (embedEmitCfg_unselected σ _ _ _ _ ctrOuter (fun ⟨i, hi⟩ =>   x1  first 7416
+  <term> (embedEmitCfg_unselected σ _ _ _ _ j hjr).2  x1  first 7438
+  <term> (hA_o j hj1 hj2).1  x7  first 6415
+  <term> (hA_o j hj1 hj2).2  x7  first 6426
+  <term> (hB0o j hj1 hj2).1  x1  first 7103
+  <term> (hB0o j hj1 hj2).2  x1  first 7111
+  <term> (hB7o (σ i) hj1 hj2).1  x1  first 7428
+  <term> (hB7o (σ i) hj1 hj2).2  x1  first 7437
+  <term> (hB7o (σ j) (hσh j hj) (hσc j)).1  x1  first 7238
+  <term> (hB7o (σ j) (hσh j hj) (hσc j)).2  x1  first 7241
+  <term> (hB7o j hj1 hj2).1  x1  first 7429
+  <term> (hB7o j hj1 hj2).2  x1  first 7438
+  <term> (hB_o j hj1 hj2).1  x7  first 6415
+  <term> (hB_o j hj1 hj2).2  x7  first 6426
+  <term> (hFblank _ hne3 hne4).1  x1  first 7833
+  <term> (hblank ctrOuter (fun h => hhc h.symm)).1  x1  first 7102
+  <term> (hblank ctrOuter (fun h => hhc h.symm)).2  x1  first 7110
+  <term> (hblank j hj1).1  x1  first 7103
+  <term> (hblank j hj1).2  x1  first 7111
+  <term> ← (show r = ys from hr)  x1  first 7541
+  Bool.toNat  x2  first 6175
+  Cfg.mapState_inputPos  x27  first 5408
+  Cfg.mapState_output  x42  first 5174
+  Cfg.mapState_state  x52  first 5166
+  Cfg.mapState_workTapePos  x46  first 5173
+  Cfg.mapState_workTapes  x47  first 5171
+  Fin.coe_castSucc  x5  first 5160
+  Fin.lastCases_castSucc  x8  first 5249
+  Fin.lastCases_last  x6  first 5246
+  Fin.val_last  x4  first 5160
+  FinTM.bufferTape_eq  x6  first 5055
+  FinTM.bufferTape_nat  x2  first 6665
+  FinTM.bufferTape_nil  x2  first 6406
+  FinTM.bufferTape_of_neg  x3  first 6409
+  Finset.card_range  x4  first 5362
+  Finset.sum_const  x4  first 5362
+  Function.Embedding.coeFn_mk  x2  first 7648
+  Function.update_of_ne  x3  first 6504
+  Function.update_self  x3  first 6502
+  List.append_nil  x2  first 7978
+  List.drop_left  x1  first 4972
+  List.getElem?_append_left  x1  first 6680
+  List.getElem?_append_right  x2  first 6665
+  List.getElem?_eq_none  x2  first 6681
+  List.length_append  x7  first 4972
+  List.length_drop  x2  first 5824
+  List.length_singleton  x1  first 6795
+  List.map_append  x1  first 6187
+  List.map_cons  x2  first 6174
+  List.nil_append  x1  first 7844
+  MultiTapeTM.runFrom_add  x12  first 6333
+  MultiTapeTM.runFrom_zero  x6  first 7320
+  Nat.add_sub_cancel  x1  first 4972
+  Nat.cast_id  x4  first 5362
+  Nat.cast_zero  x1  first 6543
+  Nat.ofDigits_append  x1  first 6187
+  Nat.ofDigits_cons  x2  first 6174
+  Nat.sub_self  x2  first 6665
+  Option.isSome_iff_ne_none  x1  first 7066
+  Option.isSome_none  x1  first 7703
+  Option.isSome_some  x1  first 7752
+  Option.map_map  x1  first 7548
+  Option.map_none  x3  first 4959
+  Option.map_some  x27  first 4961
+  add_zero  x3  first 6543
+  canonGramMapComp  x4  first 7859
+  canonSkipTable_eq  x2  first 5829
+  canonStageBuffer_none  x4  first 6410
+  canonStageInc_value  x2  first 6180
+  canonStagePad_value  x1  first 7081
+  codeBitsNat_eq  x1  first 7670
+  codeEraseActionK  x1  first 5679
+  codeEraseFin  x1  first 7538
+  codeReadActionK_sound  x1  first 5681
+  congrFun  x7  first 7389
+  counterValue_eq  x2  first 7081
+  counter_cfg_eq  x11  first 5238
+  dif_pos  x3  first 5024
+  embedEmitCfg_inputPos  x2  first 7441
+  embedEmitCfg_output  x3  first 7313
+  embedEmitCfg_selected_pos  x1  first 7434
+  embedEmitCfg_selected_tape  x1  first 7425
+  embedEmitCfg_state  x11  first 7247
+  eq_comm  x1  first 5204
+  exitF  x8  first 5118
+  foldr_bit_eq_ofDigits  x1  first 7670
+  g1  x1  first 7978
+  h  x1  first 4957
+  h1  x2  first 7404
+  h2  x1  first 7691
+  h8  x1  first 5807
+  hA_c  x12  first 6406
+  hA_cp  x27  first 6404
+  hA_h  x8  first 6373
+  hA_hp  x8  first 6373
+  hB0c  x1  first 7102
+  hB0cp  x1  first 7110
+  hB0h  x1  first 7100
+  hB0hp  x1  first 7108
+  hB7c  x1  first 7412
+  hB7cp  x1  first 7416
+  hB7h  x2  first 7228
+  hB7hp  x2  first 7232
+  hB_c  x10  first 6404
+  hB_cp  x7  first 6422
+  hB_h  x7  first 6414
+  hB_hp  x7  first 6425
+  hErun  x4  first 7873
+  hEwpos  x3  first 5255
+  hEwtape  x2  first 5277
+  hFout  x1  first 7844
+  hFst  x2  first 7735
+  hJ  x4  first 5347
+  hSout  x1  first 7978
+  hSst  x1  first 7963
+  hT  x1  first 5990
+  hTF  x1  first 5463
+  hUout  x1  first 7313
+  hUst  x1  first 7311
+  hbank  x1  first 5277
+  hbhead  x1  first 5279
+  hc1  x4  first 7916
+  hc2  x2  first 7950
+  hcA  x8  first 7789
+  hcAst  x2  first 7900
+  hcT  x4  first 7926
+  hcTpos  x1  first 7934
+  hcg  x3  first 7742
+  hctr  x1  first 5204
+  hctrh  x1  first 5255
+  hctrpos  x2  first 5199
+  hc₀  x2  first 7728
+  hc₀d  x6  first 5346
+  hc₂ip  x4  first 5829
+  hd  x6  first 6386
+  hd0  x2  first 6955
+  hd1  x2  first 6952
+  hdrop0  x1  first 7697
+  hdropT  x1  first 7936
+  hdropsel  x1  first 7838
+  he'  x9  first 5908
+  heads  x2  first 5043
+  hembA  x1  first 7853
+  hfin  x11  first 7311
+  hhost  x2  first 6333
+  hhost1  x5  first 7131
+  hhost2  x5  first 7139
+  hhost3  x3  first 7149
+  hhost4  x1  first 7159
+  hhost5  x1  first 7170
+  hhost6  x1  first 7181
+  hhost7  x1  first 7288
+  hhp  x1  first 7108
+  hht  x1  first 7100
+  hieq  x1  first 5841
+  hip  x4  first 5597
+  hipb  x2  first 5317
+  hj1  x6  first 5462
+  hj2  x2  first 7102
+  hlapp  x8  first 6683
+  hn  x2  first 7697
+  hout  x1  first 7112
+  hout₃  x1  first 8064
+  hparsed  x7  first 5372
+  hpos  x2  first 5040
+  hpre  x2  first 6333
+  hq  x3  first 7875
+  hr  x2  first 4959
+  hre  x2  first 5337
+  hrep  x1  first 7070
+  hrestored  x2  first 5615
+  hrun  x23  first 5347
+  hrun7  x11  first 7267
+  hrunN  x16  first 5622
+  hs  x8  first 5166
+  hseam  x13  first 5372
+  hsel  x1  first 7217
+  hskf  x5  first 7702
+  hstA  x2  first 7885
+  hstE  x2  first 8011
+  hstart  x1  first 7125
+  hstate  x2  first 5622
+  hst₃  x2  first 7865
+  htab  x4  first 7865
+  hu  x3  first 5883
+  hv.1  x1  first 5039
+  hv.2.2.1  x1  first 5042
+  hv.2.2.2.1  x1  first 5043
+  hval  x3  first 5366
+  hvlen  x1  first 6981
+  hword  x1  first 7541
+  hx  x2  first 7673
+  hy  x4  first 5394
+  hy'  x4  first 5394
+  hys  x2  first 5849
+  hσb  x6  first 7228
+  if_neg  x50  first 5204
+  if_pos  x28  first 5055
+  length_pairEncode  x1  first 7673
+  mul_zero  x1  first 6543
+  nsmul_eq_mul  x4  first 5362
+  output  x1  first 5039
+  pairEncode_eq_dbl  x1  first 7675
+  pow_two  x1  first 6121
+  roundOrbit_succ  x6  first 5312
+  roundOrbit_zero  x4  first 5308
+  seamCompTM_runFrom_left  x2  first 5379
+  seamCompTM_runFrom_right  x4  first 5347
+  seamReleaseTM_runFrom_pos  x3  first 7905
+  show  x10  first 5281
+  sub_self  x1  first 6664
+  sub_zero  x2  first 6404
+  tapes  x2  first 5042
+  this  x1  first 5049
+  zero_add  x4  first 5807
+  σU  x2  first 7648

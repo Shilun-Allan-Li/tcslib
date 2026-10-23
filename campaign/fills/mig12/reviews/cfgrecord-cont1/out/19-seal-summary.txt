@@ -1,0 +1,42 @@
+== seal set:       53 other-file definitions (out/18-seal-list.txt): every semireducible, non-projection, non-instance, non-matcher TCSlib definition reached from the module's 130 declarations at the head or the patched base (out/17-kinds-summary.txt); it contains the ledger's 20 sealable definitions (counterLoopOrbit is a reducible abbreviation)
+== erasure (S2): attribute [-simp] Turing.Action.apply Turing.Cfg.init, the only @[simp] definitions among them, repeated in both namespace blocks
+-- M12C1CellWriteFix-unsealed: errors 0, warnings 0, meta controls closing 0, failing 0, concrete rfl controls failing 0, simp controls failing 0, exit 0 
+-- M12C1ControlSealed: errors 55, warnings 0, meta controls closing 0, failing 51, concrete rfl controls failing 2, simp controls failing 2, ReviewScratch/M12C1ControlSealed.lean:86:116: error: `simp` made no progress exit 1 
+-- M12C1ControlUnsealed: errors 0, warnings 0, meta controls closing 51, failing 0, concrete rfl controls failing 0, simp controls failing 0, CONTROL Turing.sweepPost: rfl closes exit 0 
+-- M12C1SealS1: errors 73, warnings 0, meta controls closing 0, failing 69, concrete rfl controls failing 4, simp controls failing 0, exit 1 wall 26 s 
+-- M12C1SealS1Base: errors 101, warnings 0, meta controls closing 0, failing 51, concrete rfl controls failing 17, simp controls failing 0, exit 1 wall 12 s 
+-- M12C1SealS2: errors 79, warnings 3, meta controls closing 0, failing 69, concrete rfl controls failing 4, simp controls failing 4, exit 1 wall 28 s 
+-- M12C1SealS2Fix: errors 77, warnings 0, meta controls closing 0, failing 69, concrete rfl controls failing 4, simp controls failing 4, ReviewScratch/M12C1SealS2Fix.lean:5813:116: error: `simp` made no progress exit 1 
+
+== body diagnostics mapped to declarations
+== M12C1SealS2
+BODY error original line 1315:2 in recordStep_cell_write: unsolved goals
+BODY error original line 1317:2 in recordStep_cell_write: unsolved goals
+BODY warning original line 1316:64 in recordStep_cell_write: This simp argument is unused:
+BODY warning original line 1318:68 in recordStep_cell_write: This simp argument is unused:
+BODY warning original line 1318:73 in recordStep_cell_write: This simp argument is unused:
+control diagnostics 77; body diagnostics 5
+== M12C1SealS1
+control diagnostics 73; body diagnostics 0
+-- patched base, S1 (capped at lean's 100 errors):
+control diagnostics 53; body diagnostics 48
+   6 recordStep_save_transport
+   6 recordStep_restrict
+   5 recordStep_arithmetic_transport
+   4 recordStep_save_orbit
+   4 recordStep_read_prefix
+   4 recordStep_read_fields
+   3 recordStep_probe_run
+   2 recordStep_window
+   2 recordStep_state_run
+   2 recordStep_seek_read
+   2 recordStep_halt_run
+   1 recordStep_tape_word
+   1 recordStep_seek_transport
+   1 recordStep_read_run
+   1 recordStep_read_all
+   1 recordStep_prepare_native
+   1 recordStep_native_frame
+   1 recordStep_digits_succ
+   1 recordStep_cell_shift
+-- S2 with the proposed recordStep_cell_write proof (probes/cell-write-fix.diff): 77 errors = the 77 controls, 0 warnings; unsealed: exit 0, no output

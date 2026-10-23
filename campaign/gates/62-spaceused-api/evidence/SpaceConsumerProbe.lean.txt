@@ -1,0 +1,15 @@
+import TCSlib.Complexity.TuringMachine.Finite
+
+/-! The space API's consumer: `Turing.exists_configWindowRunnerTM`'s space clause, in its exact
+form, from its head-envelope clause, by the radius lemma at `r = C * (L + 1)`. -/
+
+open Turing
+
+example {K : ℕ} {Γ P : Type} (R : MultiTapeTM (K + 1) Γ P) {x : List Γ}
+    (d : Cfg (K + 1) Γ P x) (t C L : ℕ)
+    (henv : ∀ u ≤ t, ∀ j : Fin (K + 1),
+      |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ ((C * (L + 1) : ℕ) : ℤ)) :
+    R.spaceUsed d t ≤ (K + 1) * (2 * C * (L + 1) + 1) := by
+  have h := MultiTapeTM.spaceUsed_le_of_abs_le R d t (C * (L + 1)) henv
+  rw [mul_assoc 2 C]
+  exact h

@@ -1,0 +1,598 @@
+RSealS2Cat.lean:318:51: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (inputRewindTM k).q₀ = InputRewindPhase.start
+RSealS2Cat.lean:322:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+RSealS2Cat.lean:326:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+RSealS2Cat.lean:330:73: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  { state := none, inputPos := 0, workTapes := t, workTapePos := p, output := [] }.inputSymbol = none
+RSealS2Cat.lean:334:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+RSealS2Cat.lean:338:51: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (Cfg.ofWords q w).inputPos = 1
+RSealS2Cat.lean:342:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+RSealS2Cat.lean:345:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+RSealS2Cat.lean:350:80: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.ComputesFunInTime f T = ∀ (input : List Bool), M.ComputesInTime input (f input) (T input.length)
+RSealS2Cat.lean:354:85: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  FinTM.VirtualTag p b = ((↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true))
+RSealS2Cat.lean:357:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+RSealS2Cat.lean:361:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+RSealS2Cat.lean:364:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+RSealS2Cat.lean:368:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+RSealS2Cat.lean:372:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+RSealS2Cat.lean:377:76: error: Type mismatch
+  rfl
+has type
+  ?m.28 = ?m.28
+but is expected to have type
+  MultiTapeTM.step { state := none, inputPos := p, workTapes := t, workTapePos := h, output := [] } =
+    { state := none, inputPos := p, workTapes := t, workTapePos := h, output := [] }
+RSealS2Cat.lean:381:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+RSealS2Cat.lean:384:73: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  N.replayTM.q₀ = N.q₀
+RSealS2Cat.lean:388:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+RSealS2Cat.lean:392:70: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (NDTM.withChoiceTape c ct cp).inputPos = c.inputPos
+RSealS2Cat.lean:405:2: error: Type mismatch
+  rfl
+has type
+  ?m.105 = ?m.105
+but is expected to have type
+  StepBlock.Rep tr c d =
+    (d.inputPos = c.inputPos ∧
+      (∀ (i : Fin k),
+          d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧ d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+        d.workTapes (StepBlock.tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+          d.workTapes (StepBlock.summaryTape k) =
+              StepBlock.summaryCells (StepBlock.outputSummary c.output) ((Option.map unaryFin c.state).getD []) ∧
+            d.workTapePos (StepBlock.tableTape k) = 0 ∧ d.workTapePos (StepBlock.summaryTape k) = 0)
+RSealS2Cat.lean:408:69: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  (StepBlock.exit k true).fst = StepBlock.Key.entry
+RSealS2Cat.lean:411:81: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.hostedLoopTM k = vhostEmitTM (StepBlock.loopTM k)
+RSealS2Cat.lean:414:47: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.outputSummary [] = none
+RSealS2Cat.lean:417:80: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.summaryCells s w 0 = s
+RSealS2Cat.lean:420:72: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  StepBlock.summaryTape k = Fin.natAdd k 1
+RSealS2Cat.lean:423:70: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  StepBlock.tableTape k = Fin.natAdd k 0
+RSealS2Cat.lean:426:87: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (copyTM k src dst).q₀ = SweepPhase.sweep
+RSealS2Cat.lean:431:44: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+RSealS2Cat.lean:434:33: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  counterValue [] = 0
+RSealS2Cat.lean:439:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+RSealS2Cat.lean:443:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+RSealS2Cat.lean:447:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+RSealS2Cat.lean:450:53: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  moveInputPos 0 0 = 0
+RSealS2Cat.lean:453:54: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  pairDecode [false, true] = some ([], [])
+RSealS2Cat.lean:456:56: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  pairEncode [] [true] = [false, true, true]
+RSealS2Cat.lean:461:38: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (phaseHostTM M q0 red).q₀ = q0
+RSealS2Cat.lean:464:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+RSealS2Cat.lean:467:88: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+RSealS2Cat.lean:471:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+RSealS2Cat.lean:475:43: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (seamReleaseTM M a).q₀ = Sum.inl ()
+RSealS2Cat.lean:479:75: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)
+RSealS2Cat.lean:483:70: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  stateWord k s = fun i => if ↑i = 0 then s else []
+RSealS2Cat.lean:490:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+RSealS2Cat.lean:493:56: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  unaryFin 2 = [true, true, false]
+RSealS2Cat.lean:496:62: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  vhostBank i = Fin.natAdd 1 i
+RSealS2Cat.lean:500:86: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (vhostCfg c b p pre).inputPos = p
+RSealS2Cat.lean:504:59: error: `simp` made no progress
+RSealS2Cat.lean:508:63: error: `simp` made no progress
+RSealS2Cat.lean:512:42: error: `simp` made no progress
+RSealS2Cat.lean:516:42: error: `simp` made no progress
+RSealS2Cat.lean:550:8: warning: declaration uses 'sorry'
+RSealS2Cat.lean:2780:51: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (inputRewindTM k).q₀ = InputRewindPhase.start
+RSealS2Cat.lean:2784:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+RSealS2Cat.lean:2788:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+RSealS2Cat.lean:2792:73: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  { state := none, inputPos := 0, workTapes := t, workTapePos := p, output := [] }.inputSymbol = none
+RSealS2Cat.lean:2796:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+RSealS2Cat.lean:2800:51: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (Cfg.ofWords q w).inputPos = 1
+RSealS2Cat.lean:2804:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+RSealS2Cat.lean:2807:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+RSealS2Cat.lean:2812:80: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.ComputesFunInTime f T = ∀ (input : List Bool), M.ComputesInTime input (f input) (T input.length)
+RSealS2Cat.lean:2816:85: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  FinTM.VirtualTag p b = ((↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true))
+RSealS2Cat.lean:2819:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+RSealS2Cat.lean:2823:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+RSealS2Cat.lean:2826:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+RSealS2Cat.lean:2830:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+RSealS2Cat.lean:2834:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+RSealS2Cat.lean:2839:76: error: Type mismatch
+  rfl
+has type
+  ?m.28 = ?m.28
+but is expected to have type
+  MultiTapeTM.step { state := none, inputPos := p, workTapes := t, workTapePos := h, output := [] } =
+    { state := none, inputPos := p, workTapes := t, workTapePos := h, output := [] }
+RSealS2Cat.lean:2843:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+RSealS2Cat.lean:2846:73: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  N.replayTM.q₀ = N.q₀
+RSealS2Cat.lean:2850:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+RSealS2Cat.lean:2854:70: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (NDTM.withChoiceTape c ct cp).inputPos = c.inputPos
+RSealS2Cat.lean:2867:2: error: Type mismatch
+  rfl
+has type
+  ?m.105 = ?m.105
+but is expected to have type
+  StepBlock.Rep tr c d =
+    (d.inputPos = c.inputPos ∧
+      (∀ (i : Fin k),
+          d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧ d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+        d.workTapes (StepBlock.tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+          d.workTapes (StepBlock.summaryTape k) =
+              StepBlock.summaryCells (StepBlock.outputSummary c.output) ((Option.map unaryFin c.state).getD []) ∧
+            d.workTapePos (StepBlock.tableTape k) = 0 ∧ d.workTapePos (StepBlock.summaryTape k) = 0)
+RSealS2Cat.lean:2870:69: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  (StepBlock.exit k true).fst = StepBlock.Key.entry
+RSealS2Cat.lean:2873:81: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.hostedLoopTM k = vhostEmitTM (StepBlock.loopTM k)
+RSealS2Cat.lean:2876:47: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.outputSummary [] = none
+RSealS2Cat.lean:2879:80: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.summaryCells s w 0 = s
+RSealS2Cat.lean:2882:72: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  StepBlock.summaryTape k = Fin.natAdd k 1
+RSealS2Cat.lean:2885:70: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  StepBlock.tableTape k = Fin.natAdd k 0
+RSealS2Cat.lean:2888:87: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (copyTM k src dst).q₀ = SweepPhase.sweep
+RSealS2Cat.lean:2893:44: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+RSealS2Cat.lean:2896:33: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  counterValue [] = 0
+RSealS2Cat.lean:2901:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+RSealS2Cat.lean:2905:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+RSealS2Cat.lean:2909:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+RSealS2Cat.lean:2912:53: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  moveInputPos 0 0 = 0
+RSealS2Cat.lean:2915:54: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  pairDecode [false, true] = some ([], [])
+RSealS2Cat.lean:2918:56: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  pairEncode [] [true] = [false, true, true]
+RSealS2Cat.lean:2923:38: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (phaseHostTM M q0 red).q₀ = q0
+RSealS2Cat.lean:2926:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+RSealS2Cat.lean:2929:88: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+RSealS2Cat.lean:2933:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+RSealS2Cat.lean:2937:43: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (seamReleaseTM M a).q₀ = Sum.inl ()
+RSealS2Cat.lean:2941:75: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)
+RSealS2Cat.lean:2945:70: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  stateWord k s = fun i => if ↑i = 0 then s else []
+RSealS2Cat.lean:2952:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+RSealS2Cat.lean:2955:56: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  unaryFin 2 = [true, true, false]
+RSealS2Cat.lean:2958:62: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  vhostBank i = Fin.natAdd 1 i
+RSealS2Cat.lean:2962:86: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (vhostCfg c b p pre).inputPos = p
+RSealS2Cat.lean:2966:59: error: `simp` made no progress
+RSealS2Cat.lean:2970:63: error: `simp` made no progress
+RSealS2Cat.lean:2974:42: error: maximum number of errors (100; from option `maxErrors`) reached, exiting

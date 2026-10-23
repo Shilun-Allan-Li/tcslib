@@ -1,0 +1,68 @@
+From e4c5d015d81d8d817f61ac1e49045306842c8b8f Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 23 Oct 2026 02:03:20 -0400
+Subject: [PATCH] CodeSimulator: the grammar stage's relabeling collapse is
+ Cfg.mapState_mapState
+
+The private canonGramMapComp had the public lemma's statement; it is removed,
+and its two rewrite sites use Cfg.mapState_mapState. No statement changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/CodeSimulator.lean          | 19 +++----------------
+ 1 file changed, 3 insertions(+), 16 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index b73362e0..9b1911e5 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -12,6 +12,7 @@ import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
+ -- B5a continuation: sanctioned imports for the physical binary-header loader.
+ import TCSlib.Complexity.TuringMachine.Build.Primitives
+ import TCSlib.Complexity.TuringMachine.Build.InputCall
++import TCSlib.Complexity.TuringMachine.Build.InputRewind
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -7592,20 +7593,6 @@ private lemma canonGramFin_suffix (n : ℕ) (xs ys : List Bool)
+   have hword := codeReadFin_sound xs q r hread
+   exact ⟨unaryFin q, by rw [← (show r = ys from hr), hword]⟩
+ 
+-/-- Renaming a configuration's control twice is renaming it once along the composite. -/
+-private lemma canonGramMapComp {M : ℕ} {x : List Bool} {S A B : Type}
+-    (c : Cfg M Bool S x) (f : S → A) (g : A → B) :
+-    (c.mapState f).mapState g = c.mapState (fun s => g (f s)) := by
+-  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+-  · rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, Option.map_map]
+-    rfl
+-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+-  · funext j z
+-    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+-  · funext j
+-    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+-  · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+-
+ /-- The grammar stage's ledger: a front leg, a table leg and a suffix leg, each with its
+ dispatch step, fit under one polynomial exponent.
+ 
+@@ -7923,7 +7910,7 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+         Σ j, canonGramPh HF H₃ j)) =
+         (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃))).mapState
+           (Sigma.mk (⟨1, by omega⟩ : Fin 4)) := by
+-      rw [hcA, canonGramMapComp, canonGramMapComp]
++      rw [hcA, Cfg.mapState_mapState, Cfg.mapState_mapState]; rfl
+     -- the table's verdict dichotomy
+     cases htab : codeSkipTableK F.k (codeBitsNat bits) ys₁ with
+     | some ys₂ =>
+@@ -7990,7 +7977,7 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+           (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
+           (fun _ => (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)) =
+           cT.mapState (Sigma.mk (⟨2, by omega⟩ : Fin 4)) := by
+-        rw [hcT, canonGramMapComp, canonGramMapComp]
++        rw [hcT, Cfg.mapState_mapState, Cfg.mapState_mapState]; rfl
+       have hcTst : cT.state = some none := by
+         rw [hcT, Cfg.mapState_state, embedEmitCfg_state, hstA, Option.map_some]
+       have hcTpos : cT.inputPos.val = (P.runFrom sel (τ₃ sel)).inputPos.val := by
+-- 
+2.50.1 (Apple Git-155)
+
