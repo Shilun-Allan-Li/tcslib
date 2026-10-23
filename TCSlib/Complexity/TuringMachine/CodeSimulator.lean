@@ -8372,9 +8372,10 @@ the header) followed by the grammar stage (`exists_canonGrammarStage`). On accep
 machine (`exists_canonStripTM`) erases the input's maximal trailing `true` suffix, which leaves
 the decoded machine's serialization (`canonStrip_of_scan`); on rejection the constant
 `F.serialize F.fallback` is emitted; `Turing.FinTM.computesFunInTime_cond` composes the three.
-The record validator's entry and success states coincide, so every record round is wrapped by
-a fresh-anchor return adapter (`canonReturnAdapter`) before it becomes a public counter loop's
-body. -/
+The record validator has an entry and two distinct verdict ports, while a public counter loop's
+body must return to its own anchor on success; so every record round is wrapped by a fresh-anchor
+return adapter (`canonReturnAdapter`), which makes it a positive first-return-or-escape round,
+before it becomes the loop's body. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
