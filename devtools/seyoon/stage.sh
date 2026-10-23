@@ -3,6 +3,9 @@
 set -euo pipefail
 S="${TCSLIB_SCRATCH:-$HOME/.tcslib-scratch}"
 H=$S/wt-hk; NAME=$1; B=$2; L=$(git -C $H rev-parse $3); O=$(git -C $H rev-parse $4); LIST=$5; INTRO=$6; FIND=$7
+# a round-N folder (<gate>-rN-gate) records its findings as <gate>/findings-rN.md
+GD=${NAME%-gate}; GR=""
+case "$GD" in *-r[0-9]*) GR="-${GD##*-}"; GD="${GD%-r[0-9]*}";; esac
 W=$S/stage/$NAME; F=${TCSLIB_REPO:-$HOME/tcslib}/exchange/outbox/gates/$NAME
 [ ! -e "$F" ] || { echo "exists: $F" >&2; exit 2; }
 mkdir -p $W; cp $LIST $W/BUNDLE-FILES.txt
@@ -23,7 +26,7 @@ mkdir -p $F; cp $W/$B $W/BUNDLE-FILES.txt $F/
   echo "  campaign commit \`$O\`."
   echo "- **Checked by** its \`--verify\` rebuild, and by \`verifybundle.py\` against a \`git archive\` export of"
   echo "  the two: \`$N segments, 0 problems\`."
-  echo "- **Findings:** the auditor delivers \`$FIND\`; committed as \`campaign/gates/${NAME%-gate}/findings.md\`."
+  echo "- **Findings:** the auditor delivers \`$FIND\`; committed as \`campaign/gates/$GD/findings$GR.md\`."
   echo "- **Not yet dispatched.** The prompt to paste is given in chat (no PROMPT.txt)."; } > $F/README.md
 ( cd $F && shasum -a 256 $B README.md > SHA256SUMS )
 echo "STAGED $NAME $SHA $N $SZ"

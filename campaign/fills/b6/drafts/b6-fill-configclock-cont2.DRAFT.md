@@ -303,6 +303,9 @@ space API (`spaceUsed_eq_sum`, `spaceUsed_le_of_abs_le`).
     - **Never unfold a definition of another file**, and no definitional closure either. Read
       `wordPatch` only through `wordPatch_of_mem`, `_of_not_mem` and `wordPatch_append`, and
       `FinTM.bufferTape` only through its equations.
+    - **Scope (user, 2026-10-23):** this binds TCSlib's own definitions. Core and Mathlib
+      definitions may reduce in a `rfl`, `decide` or `show` step, but are never passed to `simp`,
+      `rw` or `unfold`; use their equation lemmas (`Bool.toNat_true`, not `simp [Bool.toNat]`).
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their lemmas. Unfold `step` and `Action.apply` only for a
       leaf defined in your own file. `phaseHostTM`'s table is read through `phaseHostTM_run`.
