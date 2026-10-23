@@ -21,5 +21,14 @@ records: both true.
 | 16 | note | The fill gate is not merge readiness; the replay must pass on the combined tree, including #153 and the re-point where they are part of the landing. | **Agreed.** After #149 (and #153) merge, the campaign branch is merged into #151, the re-point is applied, and the closure replays from the latest merged-tree snapshot. |
 | 3–9, 11, 13–15 | notes | Integrity and freeze; faithfulness; the private glue; the time ledger; boundary cases; the admission boundary; rule 10; the re-point's evidence; probes, rule 11 and lint; the corrected records; the public-facing text. | No action. |
 
-**Merge state. #151: not yet clear to merge.** Its replay runs after #149 merges, with the
-re-point once #153 is in.
+**Landing and replay** (2026-10-23): with #147, #149 and #153 merged, the campaign branch
+merged into #151 cleanly (`9aa9a10d`), and the prepared re-point `89bf6acb` was cherry-picked as
+`dbf0ed2a`, giving the audited blob `e2cdab7b`. Against `oleans-lirapi` the core elaborates with
+only the canonizer's sorry warning, on `[propext, sorryAx, Classical.choice, Quot.sound]`.
+`replay-lrc2.sh`: the closure of every file changed since `oleans-lspapi2` (the merged #147 and
+#153 with this PR: 8 modules), at `dbf0ed2a`. **Passed (user, 2026-10-23): 8 of 8**, 0 failed,
+static-equal (5) (`evidence/replay/`). #150 merged after this replay's base; its closure meets
+this one only at the facade.
+
+**Merge state. #151: clear to merge.** The gate is closed, the replay has passed, and the base is
+the campaign branch.

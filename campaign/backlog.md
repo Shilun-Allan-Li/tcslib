@@ -1564,6 +1564,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `aed162fd`'s docstring. Pushed after #151 merges, with one more campaign merge.
   - **The UN landing opened as #154** (the four commits rebased onto `e2f08f53`); it replays after
     #152 merges.
+  - **`lrc2` passed (8/8): #151 clear to merge.** Next: #152 merges the campaign branch (with
+    #151), and replays from `oleans-lrc2` the closure of `CfgRecord` (#150) and its own files.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
