@@ -10,6 +10,7 @@ import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -741,114 +742,6 @@ private theorem ic_seam_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x 
       hcut₂⟩
   rw [Cfg.mapState_state, hx₂, Option.map_some]
 
-/-- The interpreter's native-input rewind leaf: one unconditional left move, a left scan to
-the input's left blank, one right step, and a live parking state at which a seam can dispatch.
-It is the two-`controlAction`-state input-rewind discipline with an explicit live exit; it
-moves no work head and writes nothing. -/
-private def ic_rewindLeafTM (k : ℕ) : MultiTapeTM k Bool (Fin 3) where
-  q₀ := 0
-  tr := fun q inp _ =>
-    if q = 0 then FinTM.controlAction .neg (some 1)
-    else if q = 1 then
-      match inp with
-      | some _ => FinTM.controlAction .neg (some 1)
-      | none => FinTM.controlAction .pos (some 2)
-    else FinTM.controlAction .zero (some 2)
-
-/-- The leaf's scanning trajectory: from the scanning state at input position `j ≤ |x|`, the
-parking state is reached at exactly `j + 1`, with only the control and the input head changed,
-and the state stays the scanning one strictly before.
-
-**Proof sketch.** Induct on the position. At zero the input symbol is the left blank, so one
-right move parks. At a successor the symbol exists; one left move reduces the position. -/
-private theorem ic_rewind_scan {k : ℕ} {x : List Bool} :
-    ∀ (j : ℕ) (cfg : Cfg k Bool (Fin 3) x), cfg.state = some 1 →
-      cfg.inputPos.val = j → j ≤ x.length →
-      (ic_rewindLeafTM k).runFrom cfg (j + 1) =
-          { cfg with state := some 2, inputPos := 1 } ∧
-        ∀ u ≤ j, ((ic_rewindLeafTM k).runFrom cfg u).state = some 1 := by
-  intro j
-  induction j with
-  | zero =>
-    intro cfg hs hj _
-    have hz : cfg.inputPos = 0 := Fin.ext hj
-    have hstep : (ic_rewindLeafTM k).step cfg =
-        { cfg with state := some 2, inputPos := moveInputPos cfg.inputPos .pos } := by
-      rw [MultiTapeTM.step_of_some hs, Cfg.inputSymbol_of_zero hz]
-      simp only [ic_rewindLeafTM, Fin.reduceEq, ↓reduceIte]
-      exact FinTM.controlAction_apply cfg .pos (some 2)
-    have hm : moveInputPos cfg.inputPos .pos = 1 := by
-      apply Fin.ext
-      rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
-      simp
-    refine ⟨?_, ?_⟩
-    · rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep, hm]
-    · intro u hu
-      obtain rfl : u = 0 := by omega
-      rw [MultiTapeTM.runFrom_zero]
-      exact hs
-  | succ j ih =>
-    intro cfg hs hj hlen
-    have hsym : cfg.inputSymbol = some (x[j]'(by omega)) :=
-      inputSymbolInner j (by omega) (by omega)
-    have hstep : (ic_rewindLeafTM k).step cfg =
-        { cfg with state := some 1, inputPos := moveInputPos cfg.inputPos .neg } := by
-      rw [MultiTapeTM.step_of_some hs, hsym]
-      simp only [ic_rewindLeafTM, Fin.reduceEq, ↓reduceIte]
-      exact FinTM.controlAction_apply cfg .neg (some 1)
-    have hpos : (moveInputPos cfg.inputPos .neg).val = j := by
-      rw [FinTM.moveInputPos_neg_val]
-      omega
-    obtain ⟨hrun, hstay⟩ := ih ((ic_rewindLeafTM k).step cfg)
-      (by rw [hstep]) (by rw [hstep]; exact hpos) (by omega)
-    refine ⟨?_, ?_⟩
-    · rw [MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
-    · intro u hu
-      cases u with
-      | zero =>
-        rw [MultiTapeTM.runFrom_zero]
-        exact hs
-      | succ u =>
-        rw [MultiTapeTM.runFrom_succ_eq_step]
-        exact hstay u (by omega)
-
-/-- The leaf's complete run: from its entry at any positive input position `p`, it parks at
-exactly `p + 1` with the input head at `1`, every work tape, work head and the output
-unchanged, and the parking state is not visited earlier.
-
-**Proof sketch.** The unconditional first left move lands the scan at `p − 1 ≤ |x|`; the
-scanning trajectory parks after `p` more steps. Strictly before, the state is the entry or the
-scanning one. -/
-private theorem ic_rewind_leaf_run {k : ℕ} {x : List Bool} (cfg : Cfg k Bool (Fin 3) x)
-    (hs : cfg.state = some 0) (hp : 1 ≤ cfg.inputPos.val) :
-    (ic_rewindLeafTM k).runFrom cfg (cfg.inputPos.val + 1) =
-        { cfg with state := some 2, inputPos := 1 } ∧
-      ∀ u < cfg.inputPos.val + 1,
-        ((ic_rewindLeafTM k).runFrom cfg u).state ≠ some 2 := by
-  have hstep : (ic_rewindLeafTM k).step cfg =
-      { cfg with state := some 1, inputPos := moveInputPos cfg.inputPos .neg } := by
-    rw [MultiTapeTM.step_of_some hs]
-    simp only [ic_rewindLeafTM, ↓reduceIte]
-    exact FinTM.controlAction_apply cfg .neg (some 1)
-  have hval : (moveInputPos cfg.inputPos .neg).val = cfg.inputPos.val - 1 :=
-    FinTM.moveInputPos_neg_val cfg.inputPos
-  have hlen : cfg.inputPos.val - 1 ≤ x.length := by
-    have := cfg.inputPos.isLt
-    omega
-  obtain ⟨hrun, hstay⟩ := ic_rewind_scan (cfg.inputPos.val - 1) ((ic_rewindLeafTM k).step cfg)
-    (by rw [hstep]) (by rw [hstep]; exact hval) hlen
-  have htime : cfg.inputPos.val + 1 = cfg.inputPos.val - 1 + 1 + 1 := by omega
-  refine ⟨?_, ?_⟩
-  · rw [htime, MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
-  · intro u hu
-    cases u with
-    | zero =>
-      rw [MultiTapeTM.runFrom_zero, hs]
-      simp
-    | succ u =>
-      rw [MultiTapeTM.runFrom_succ_eq_step, hstay u (by omega)]
-      simp
-
 /-- The install call, embedded silently on selected host tapes and wrapped in the release
 adapter, so that its first re-arrival at the installed seam is a positive event even when the
 call's entry and exit controls coincide. The embedded run carries one clean seam to the other;
@@ -1030,7 +923,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   haveI := instDL
   -- The twelve phases.
   let A₁ := embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm
-  let A₂ := ic_rewindLeafTM K
+  let A₂ := inputRewindTM K
   let A₃ := embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm
   let A₄ : MultiTapeTM K Bool RewindPhase := rewindTM K jbt
   let A₅ : MultiTapeTM K Bool SweepPhase := copyTM K jbt jctr
@@ -1038,25 +931,26 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   let A₉ := seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI
   let A₁₁ : MultiTapeTM K Bool RewindPhase := rewindTM K jwin
   let A₁₂ := embedSilentTM ι₇ capL ic_loopHost
-  let St₂ : Type := ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3
+  let St₂ : Type :=
+    ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase
   let St₃ : Type := St₂ ⊕ ((prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit)
   let St₄ : Type := St₃ ⊕ RewindPhase
   let St₅ : Type := St₄ ⊕ SweepPhase
   let St₆ : Type := St₅ ⊕ QW
-  let St₇ : Type := St₆ ⊕ Fin 3
+  let St₇ : Type := St₆ ⊕ InputRewindPhase
   let St₈ : Type := St₇ ⊕ RewindPhase
   let St₉ : Type := St₈ ⊕ (Unit ⊕ CI.State)
   let St₁₀ : Type := St₉ ⊕ QL
   let St₁₁ : Type := St₁₀ ⊕ RewindPhase
   -- The assembled interpreter.
-  let S₂ := seamCompTM A₁ (Sum.inr ()) A₂ 0
-  let S₃ := seamCompTM S₂ (Sum.inr 2) A₃
+  let S₂ := seamCompTM A₁ (Sum.inr ()) A₂ InputRewindPhase.start
+  let S₃ := seamCompTM S₂ (Sum.inr InputRewindPhase.done) A₃
     (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀)
   let S₄ := seamCompTM S₃ (Sum.inr (Sum.inr ())) A₄ RewindPhase.start
   let S₅ := seamCompTM S₄ (Sum.inr RewindPhase.done) A₅ SweepPhase.sweep
   let S₆ := seamCompTM S₅ (Sum.inr SweepPhase.done) W entryW
-  let S₇ := seamCompTM S₆ (Sum.inr doneW) A₂ 0
-  let S₈ := seamCompTM S₇ (Sum.inr 2) A₈ RewindPhase.start
+  let S₇ := seamCompTM S₆ (Sum.inr doneW) A₂ InputRewindPhase.start
+  let S₈ := seamCompTM S₇ (Sum.inr InputRewindPhase.done) A₈ RewindPhase.start
   let S₉ := seamCompTM S₈ (Sum.inr RewindPhase.done) A₉ (Sum.inl ())
   let S₁₀ := seamCompTM S₉ (Sum.inr (Sum.inr doneI)) L entryL
   let S₁₁ := seamCompTM S₁₀ (Sum.inr doneL) A₁₁ RewindPhase.start
@@ -1111,22 +1005,22 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   set e₁ := (embedSilentRetTM ι₁ jbt
     (prefixCanonTM (FinTM.pairExtractTM true false)).tm).runFrom cfg₀ T₁ with he₁
   -- Phase 2: the input rewind back to position 1, through the first seam.
-  have hd₂st : (e₁.mapState (fun _ => (0 : Fin 3))).state = some 0 := by
+  have hd₂st : (e₁.mapState (fun _ => InputRewindPhase.start)).state = some .start := by
     rw [Cfg.mapState_state, h₁st]
     rfl
-  have hd₂pos : 1 ≤ (e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val := by
+  have hd₂pos : 1 ≤ (e₁.mapState (fun _ => InputRewindPhase.start)).inputPos.val := by
     rw [Cfg.mapState_inputPos, h₁pos]
     omega
-  obtain ⟨hL1, hL2⟩ := ic_rewind_leaf_run (e₁.mapState (fun _ => (0 : Fin 3)))
+  obtain ⟨hL1, hL2, -⟩ := inputRewindTM_run (e₁.mapState (fun _ => InputRewindPhase.start))
     hd₂st hd₂pos
   obtain ⟨s2run, s2st, s2cut⟩ := ic_seam_step
     (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm) (Sum.inr ())
-    (ic_rewindLeafTM K) (0 : Fin 3) (2 : Fin 3) he₁.symm h₁st h₁cut hL1 rfl hL2
-  set e₂ := ({ e₁.mapState (fun _ => (0 : Fin 3)) with
-    state := some (2 : Fin 3), inputPos := 1 } : Cfg K Bool (Fin 3) _) with he₂
+    (inputRewindTM K) InputRewindPhase.start InputRewindPhase.done he₁.symm h₁st h₁cut hL1 rfl hL2
+  set e₂ := ({ e₁.mapState (fun _ => InputRewindPhase.start) with
+    state := some InputRewindPhase.done, inputPos := 1 } : Cfg K Bool (InputRewindPhase) _) with he₂
   have he₂out : e₂.output = [] := by
     rw [he₂]
-    show (e₁.mapState (fun _ => (0 : Fin 3))).output = []
+    show (e₁.mapState (fun _ => InputRewindPhase.start)).output = []
     rw [Cfg.mapState_output]
     exact h₁out
   have htapes₀blank : ∀ j : Fin K, j ≠ js → tapes₀ j = fun _ => none := by
@@ -1134,25 +1028,25 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [htapes₀]
     simp only [if_neg hj]
   -- Phase 3: the second header pass, capturing `α` on its tape.
-  have hLHS₂t : ∀ j, ((e₂.mapState (Sum.inr : Fin 3 →
-      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3)).mapState
+  have hLHS₂t : ∀ j, ((e₂.mapState (Sum.inr : InputRewindPhase →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase)).mapState
         (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
           (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit))).workTapes j =
       e₁.workTapes j := by
     intro j
     funext a
     rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₂]
-    exact Cfg.mapState_workTapes (fun _ => (0 : Fin 3)) e₁ j a
-  have hLHS₂p : ∀ j, ((e₂.mapState (Sum.inr : Fin 3 →
-      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3)).mapState
+    exact Cfg.mapState_workTapes (fun _ => InputRewindPhase.start) e₁ j a
+  have hLHS₂p : ∀ j, ((e₂.mapState (Sum.inr : InputRewindPhase →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase)).mapState
         (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
           (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit))).workTapePos j =
       e₁.workTapePos j := by
     intro j
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₂]
-    exact Cfg.mapState_workTapePos (fun _ => (0 : Fin 3)) e₁ j
-  have hjunc₂ : (e₂.mapState (Sum.inr : Fin 3 →
-      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ Fin 3)).mapState
+    exact Cfg.mapState_workTapePos (fun _ => InputRewindPhase.start) e₁ j
+  have hjunc₂ : (e₂.mapState (Sum.inr : InputRewindPhase →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase)).mapState
       (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
         (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit)) =
       (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
@@ -1243,8 +1137,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl) T₃ with he₃
   obtain ⟨s3run, s3st, s3cut⟩ := ic_seam_step
     (seamCompTM (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm)
-      (Sum.inr ()) (ic_rewindLeafTM K) 0)
-    (Sum.inr (2 : Fin 3))
+      (Sum.inr ()) (inputRewindTM K) InputRewindPhase.start)
+    (Sum.inr InputRewindPhase.done)
     (embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm)
     (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀) (Sum.inr ())
     s2run s2st s2cut (by rw [hjunc₂]) h₃st
@@ -1462,20 +1356,21 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   obtain ⟨s6run, s6st, s6cut⟩ := ic_seam_step _ (Sum.inr SweepPhase.done)
     W entryW doneW s5run s5st s5cut he₆.symm h₆st h₆cut
   -- Phase 7: the second input rewind.
-  have hd₇st : ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).state =
-      some 0 := by
+  have hd₇st :
+      ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)).state =
+        some .start := by
     rw [Cfg.mapState_state, Cfg.mapState_state, h₆st]
     rfl
   have hd₇pos : 1 ≤ ((e₆.mapState (Sum.inr : _ → St₆)).mapState
-      (fun _ => (0 : Fin 3))).inputPos.val := by
+      (fun _ => InputRewindPhase.start)).inputPos.val := by
     rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, h₆pos]
     omega
-  obtain ⟨hL1', hL2'⟩ := ic_rewind_leaf_run
-    ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))) hd₇st hd₇pos
+  obtain ⟨hL1', hL2', -⟩ := inputRewindTM_run
+    ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)) hd₇st hd₇pos
   obtain ⟨s7run, s7st, s7cut⟩ := ic_seam_step _ (Sum.inr doneW)
-    (ic_rewindLeafTM K) (0 : Fin 3) (2 : Fin 3) s6run s6st s6cut hL1' rfl hL2'
-  set e₇ := ({ (e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3)) with
-    state := some (2 : Fin 3), inputPos := 1 } : Cfg K Bool (Fin 3) _) with he₇
+    (inputRewindTM K) InputRewindPhase.start InputRewindPhase.done s6run s6st s6cut hL1' rfl hL2'
+  set e₇ := ({ (e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start) with
+    state := some InputRewindPhase.done, inputPos := 1 } : Cfg K Bool (InputRewindPhase) _) with he₇
   -- The α capture survives the window, the rewinds and the copy.
   have hjalnbt : jal ≠ jbt := by
     intro hmem
@@ -1495,12 +1390,12 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       funext q
       rw [he₇]
       show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
-        (fun _ => (0 : Fin 3))).workTapes jal q = _
+        (fun _ => InputRewindPhase.start)).workTapes jal q = _
       rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
     have hpp : e₇.workTapePos jal = e₆.workTapePos jal := by
       rw [he₇]
       show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
-        (fun _ => (0 : Fin 3))).workTapePos jal = _
+        (fun _ => InputRewindPhase.start)).workTapePos jal = _
       rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
     obtain ⟨hft, hfp⟩ := h₆frame jal hjalnbt hjalnwin
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
@@ -1528,7 +1423,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₇al.1]
   obtain ⟨hr8run, hr8cut, hr8heads⟩ := rewindTM_run_ofCfg jal α α.length le_rfl
     ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)) hd₈st hd₈u
-  obtain ⟨s8run, s8st, s8cut⟩ := ic_seam_step _ (Sum.inr (2 : Fin 3))
+  obtain ⟨s8run, s8st, s8cut⟩ := ic_seam_step _ (Sum.inr InputRewindPhase.done)
     (rewindTM K jal) RewindPhase.start RewindPhase.done
     s7run s7st s7cut hr8run rfl hr8cut
   set e₈ := ({ (e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start) with
@@ -1546,14 +1441,15 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     show ((e₇.mapState (Sum.inr : _ → St₇)).mapState
       (fun _ => RewindPhase.start)).workTapes j q = _
     rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₇]
-    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapes j q = _
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).workTapes j q = _
     rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
   have he₈posjal : e₈.workTapePos jal = 0 := by
     rw [he₈]
     show Function.update _ jal _ jal = 0
     rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₇]
     show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
-      (fun _ => (0 : Fin 3))).workTapePos jal - α.length = 0
+      (fun _ => InputRewindPhase.start)).workTapePos jal - α.length = 0
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
     obtain ⟨-, hfp⟩ := h₆frame jal hjalnbt hjalnwin
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
@@ -1565,7 +1461,8 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [he₈]
     show Function.update _ jal _ j = _
     rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₇]
-    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).workTapePos j = _
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).workTapePos j = _
     rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
   have he₈in : e₈.inputPos = 1 := by
     rw [he₈]
@@ -1576,7 +1473,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [he₈]
     show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).output = []
     rw [Cfg.mapState_output, Cfg.mapState_output, he₇]
-    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => (0 : Fin 3))).output = []
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)).output = []
     rw [Cfg.mapState_output, Cfg.mapState_output, h₆out, Cfg.mapState_output,
       Cfg.mapState_output, he₅out]
     exact h₃out
@@ -2318,17 +2215,18 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
           rfl
         · rw [(embedSilentCfg_unselected ι₁ jbt tapes₀ (fun _ => 0) [] [] _ j hsel hcap).2]
     · simp only [Cfg.mapState_output, hcfg₀, embedSilentCfg_output]
-  set TPRE := T₁ + 1 + ((e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val + 1) + 1 + T₃ + 1 +
+  set TPRE := T₁ + 1 + ((e₁.mapState (fun _ => InputRewindPhase.start)).inputPos.val + 1) + 1 +
+    T₃ + 1 +
     ((Nat.bits t).length + 2) + 1 + (2 * (Nat.bits t).length + 2) + 1 + T₆ + 1 +
     (((e₆.mapState (Sum.inr : _ → St₆)).mapState
-      (fun _ => (0 : Fin 3))).inputPos.val + 1) + 1 +
+      (fun _ => InputRewindPhase.start)).inputPos.val + 1) + 1 +
     (α.length + 2) + 1 + TI + 1 + TL + 1 + ((x.take t).length + 2) with hTPRE
-  have hl1 : (e₁.mapState (fun _ => (0 : Fin 3))).inputPos.val =
+  have hl1 : (e₁.mapState (fun _ => InputRewindPhase.start)).inputPos.val =
       4 * (Nat.bits t).length + 2 * α.length + 7 := by
     rw [Cfg.mapState_inputPos]
     exact h₁pos
   have hl2 : ((e₆.mapState (Sum.inr : _ → St₆)).mapState
-      (fun _ => (0 : Fin 3))).inputPos.val =
+      (fun _ => InputRewindPhase.start)).inputPos.val =
       4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length := by
     rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
     exact h₆pos
@@ -2378,15 +2276,15 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         ((seamCompTM (seamCompTM (seamCompTM (seamCompTM (seamCompTM (seamCompTM (seamCompTM
           (seamCompTM (seamCompTM (seamCompTM (seamCompTM
             (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm)
-            (Sum.inr ()) (ic_rewindLeafTM K) 0)
-          (Sum.inr (2 : Fin 3))
+            (Sum.inr ()) (inputRewindTM K) InputRewindPhase.start)
+          (Sum.inr InputRewindPhase.done)
           (embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm)
           (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀))
           (Sum.inr (Sum.inr ())) (rewindTM K jbt) RewindPhase.start)
           (Sum.inr RewindPhase.done) (copyTM K jbt jctr) SweepPhase.sweep)
           (Sum.inr SweepPhase.done) W entryW)
-          (Sum.inr doneW) (ic_rewindLeafTM K) 0)
-          (Sum.inr (2 : Fin 3)) (rewindTM K jal) RewindPhase.start)
+          (Sum.inr doneW) (inputRewindTM K) InputRewindPhase.start)
+          (Sum.inr InputRewindPhase.done) (rewindTM K jal) RewindPhase.start)
           (Sum.inr RewindPhase.done) (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI)
           (Sum.inl ()))
           (Sum.inr (Sum.inr doneI)) L entryL)
