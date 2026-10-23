@@ -8,6 +8,7 @@ import TCSlib.Complexity.ClassP.TimeConstructible
 import TCSlib.Complexity.ClassP.P
 import TCSlib.Complexity.ClassP.ModelInvariance
 import TCSlib.Complexity.ClassP.Examples
+import TCSlib.Complexity.ClassP.BinaryArith
 
 /-!
 # Complexity — DTIME and the class P
@@ -25,4 +26,7 @@ Deterministic time-bounded computation and the class `P`, following [AB09, §1.3
   [AB09, §1.3.1, §1.6.1]: the class-level corollaries of the robustness theorems.
 * `Examples` — the palindrome language is in `DTIME (n + 1)` and in `P`
   [AB09, Examples 1.1, 1.4].
+* `BinaryArith` — binary arithmetic on `Nat.bits` words in polynomial time (comparison,
+  addition, multiplication, division, modular powers, gcd, Jacobi symbol, determinants over
+  `ZMod p`), for [AB09, §7.2, Exercise 7.3].
 -/
