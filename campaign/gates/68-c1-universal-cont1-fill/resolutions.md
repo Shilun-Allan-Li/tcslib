@@ -31,5 +31,8 @@ finds exactly one direct `sorryAx` user, `Turing.exists_replayCanonizer`; the in
 now proved (#151). The target is on `[propext, sorryAx, Classical.choice, Quot.sound]`; the file's
 own sorry warning is `ntime_hierarchy`'s (`evidence/merged-tree/`). This answers note 7. Replay:
 `replay-lun2.sh`, the closure of the PR's file (2 modules), chained from `oleans-lcanon7`.
+**Passed (user, 2026-10-23): 2 of 2**, 0 failed, static-equal (1: `ntime_hierarchy`; the
+target's stub is gone) (`evidence/replay/`).
 
-**Merge state. #154: not yet clear to merge.** Its replay is pending.
+**Merge state. #154: clear to merge.** The gate is closed, the replay has passed on the merged
+tree, and the base is the campaign branch.
