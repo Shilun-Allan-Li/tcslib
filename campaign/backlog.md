@@ -1604,6 +1604,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     addendum v2.5. **Suggested agent: Claude** (the user's rule of 2026-10-23: the first round and
     continuation 1 were Codex, and the target is still open after two rounds; Codex remains the
     cheaper option).
+- **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
+  at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
+  three new briefs and the cover are handed to a drafting agent
+  (`campaign/fills/megafill/drafts/megafill-C-drafting-brief.md`, `1133762f`; staged at
+  `exchange/outbox/drafting/`), who pushes `drafts/megafill-c` with a drafting report. On
+  delivery: a review by a sub-agent, then issue.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
