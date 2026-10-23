@@ -42,7 +42,8 @@ commit (stated in the bundle's README).
 - **Replay:** `replay-lspapi2.sh`: `WindowRun`'s downstream closure (4 modules: `Build/WindowRun`,
   `SpaceComplexity/WindowClock`, the `SpaceComplexity` facade, the `TuringMachine` facade) at
   `3d0f80b5`, chained from `oleans-lspapi` (the tree of `097f3e04`).
-  ⟨REPLAY RESULT⟩ (`evidence/replay-lspapi2.*`).
+  **Passed (user, 2026-10-23): 4 of 4**, 0 failed, static-equal (1: `WindowClock`'s stub)
+  (`evidence/round1-fix/replay-lspapi2.*`, `evidence/round1-fix/down-lspapi2.txt`).
 
 ## Findings format
 
