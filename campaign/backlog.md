@@ -1517,6 +1517,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `ic_rewind_leaf_run` to `inputRewindTM`/`inputRewindTM_run` in one more maintainer commit
     (prepared and checked locally first; applied only after #153 merges).
   - All five queued branches merge cleanly with #149's head (`git merge-tree`, 2026-10-23).
+  - **Decision pending (user):** #152's private `canonGramMapComp` (`CodeSimulator`) has
+    `Cfg.mapState_mapState`'s statement (found 2026-10-23, after the canonizer's review). Re-point
+    it at #152's landing if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`), or
+    ledger it. Gate 67's pack waits on this ruling.
+  - **To confirm (user):** `exists_ndInterpreterCore` (#151) reproduces 85% of
+    `Cfg.mapState_mapState`'s text: field-by-field relabeling rewrites, the idiom accepted for
+    UN's `hstart`. Gate 66's pack reads it as an idiom pair.
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's

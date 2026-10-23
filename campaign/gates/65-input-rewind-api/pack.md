@@ -55,7 +55,8 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
   `FinTM.rewind_scan`); `StateRenaming` (`Cfg.mapState` and its field equations); `Configuration`;
   `Build/Rewind` (the work-tape rewind it is modelled on); the IR-1 members, namely
   `ClassNP/ExhaustiveReplay`, UN's re-pointed `NTimeHierarchy` (in its landing's evidence), and
-  #151's `ic_rewindLeafTM` and `ic_rewind_leaf_run` (an excerpt, `evidence/ic-rewind-leaf.lean.txt`);
+  #151's `ic_rewindLeafTM` and `ic_rewind_leaf_run` (an excerpt, `evidence/ic-rewind-leaf.lean.txt`)
+  and #152's `canonGramMapComp` (an excerpt, `evidence/canonGramMapComp.lean.txt`);
   UN's review; the duplication ledger and the backlog.
 
 ## Brief for the auditor
@@ -92,8 +93,12 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
    and the IR-1 files on this tree. Its 3 new pairs are all with `ExhaustiveReplay`'s IR-1 members (`xr_inRewindTM`
    82% and 73%, `xr_E_initCfg` 54%); the ledger assigns those to the user's dedup window. No pair
    disappears. UN's, R's and U2-S's copies are on other branches and are re-pointed by their
-   landings or in the dedup window, as the ledger records. Is that disposition adequate for an
-   API PR?
+   landings or in the dedup window, as the ledger records. One more copy was found on another
+   branch after the screen: #152's private `canonGramMapComp` (`CodeSimulator`), which has
+   `Cfg.mapState_mapState`'s statement with the composite written `fun s => g (f s)`, and is used
+   at two `rw` sites (`evidence/canonGramMapComp.lean.txt`). Its disposition is the user's
+   ruling, pending; a re-point at #152's landing is prepared. Is that disposition adequate for
+   an API PR?
 7. **No collateral change:** five new public declarations at source, plus two public constants
    (the derived `DecidableEq` and `Fintype` instances of `InputRewindPhase`; counted separately, as
    `workflow.md` §4 says), and no `@[simp]`; NDHost 25 → 25 public and
