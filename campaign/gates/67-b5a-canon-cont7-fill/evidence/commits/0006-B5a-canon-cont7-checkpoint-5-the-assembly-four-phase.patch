@@ -1,0 +1,617 @@
+From f7505b4787867ebbd5b3fb57727b3165e30b2411 Mon Sep 17 00:00:00 2001
+From: B5a fill agent <fill-agent@campaign>
+Date: Thu, 22 Oct 2026 17:52:33 +0000
+Subject: [PATCH] B5a canon cont7, checkpoint 5: the assembly (four-phase host:
+ the stage front, the release-wrapped embedded table, the native suffix test,
+ the park; the frozen grammar-stage stub proved with no new admission)
+
+(cherry picked from commit 7ef4a98369d8a660d42e9a821cff5fdf9be7538a)
+---
+ .../TuringMachine/CodeSimulator.lean          | 584 +++++++++++++++++-
+ 1 file changed, 583 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index 5285062a..a60ef85c 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -7467,6 +7467,134 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       (FinTM.bufferTape v) 0 w)).select σ) tU).inputPos.val = _
+     exact hUsfx ys hy
+ 
++/-- The grammar stage's phase types: the stage front's host, the release-adapter-wrapped
++embedded table block, the native suffix test, and the parking phase. -/
++private def canonGramPh (HF H₃ : Type) : Fin 4 → Type := fun i =>
++  match i with
++  | ⟨0, _⟩ => HF
++  | ⟨1, _⟩ => Unit ⊕ H₃
++  | ⟨2, _⟩ => Option Bool
++  | ⟨3, _⟩ => Bool
++  | ⟨_ + 4, h⟩ => absurd h (by omega)
++
++private def canonGramPh_fintype (HF H₃ : Type) [Fintype HF] [Fintype H₃] :
++    ∀ i, Fintype (canonGramPh HF H₃ i) := fun i =>
++  match i with
++  | ⟨0, _⟩ => inferInstanceAs (Fintype HF)
++  | ⟨1, _⟩ => inferInstanceAs (Fintype (Unit ⊕ H₃))
++  | ⟨2, _⟩ => inferInstanceAs (Fintype (Option Bool))
++  | ⟨3, _⟩ => inferInstanceAs (Fintype Bool)
++  | ⟨_ + 4, h⟩ => absurd h (by omega)
++
++private def canonGramPh_deceq (HF H₃ : Type) [DecidableEq HF] [DecidableEq H₃] :
++    ∀ i, DecidableEq (canonGramPh HF H₃ i) := fun i =>
++  match i with
++  | ⟨0, _⟩ => inferInstanceAs (DecidableEq HF)
++  | ⟨1, _⟩ => inferInstanceAs (DecidableEq (Unit ⊕ H₃))
++  | ⟨2, _⟩ => inferInstanceAs (DecidableEq (Option Bool))
++  | ⟨3, _⟩ => inferInstanceAs (DecidableEq Bool)
++  | ⟨_ + 4, h⟩ => absurd h (by omega)
++
++/-- The grammar stage's phase machines: the stage front, the release-adapter-wrapped
++embedded table block, the native suffix test, and the parking machine. -/
++private def canonGramFamily (M m₃ : ℕ) (HF H₃ : Type) (FrM : MultiTapeTM M Bool HF)
++    (P : MultiTapeTM (m₃ + 2) Bool H₃) (anchor₃ : H₃) (ι₃ : Fin (m₃ + 2) ↪ Fin M) :
++    (i : Fin 4) → MultiTapeTM M Bool (canonGramPh HF H₃ i) := fun i =>
++  match i with
++  | ⟨0, _⟩ => FrM
++  | ⟨1, _⟩ => seamReleaseTM (embedEmitTM ι₃ P) anchor₃
++  | ⟨2, _⟩ => canonSuffixTM M
++  | ⟨3, _⟩ => canonStageHaltTM M
++  | ⟨_ + 4, h⟩ => absurd h (by omega)
++
++/-- The grammar stage's dispatch table: the front's two ports to the table and the park,
++the table's return and escape ports, and the suffix test's verdict to the park. -/
++private def canonGramRed (HF H₃ : Type) [DecidableEq HF] [DecidableEq H₃]
++    (fexit : Bool → HF) (anchor₃ escape₃ : H₃) :
++    (i : Fin 4) → canonGramPh HF H₃ i → Option (Σ j, canonGramPh HF H₃ j) :=
++  letI : ∀ i, DecidableEq (canonGramPh HF H₃ i) := canonGramPh_deceq HF H₃
++  fun i =>
++  match i with
++  | ⟨0, _⟩ => fun s => if s = fexit true
++      then some ⟨⟨1, by omega⟩, Sum.inl ()⟩
++      else if s = fexit false then some ⟨⟨3, by omega⟩, false⟩ else none
++  | ⟨1, _⟩ => fun s => if s = Sum.inr anchor₃
++      then some ⟨⟨2, by omega⟩, (none : Option Bool)⟩
++      else if s = Sum.inr escape₃ then some ⟨⟨3, by omega⟩, false⟩ else none
++  | ⟨2, _⟩ => fun s => match s with
++      | some b => some ⟨⟨3, by omega⟩, b⟩
++      | none => none
++  | ⟨3, _⟩ => fun _ => none
++  | ⟨_ + 4, h⟩ => absurd h (by omega)
++
++/-- The grammar stage's host. -/
++private def canonGramG (M m₃ : ℕ) (HF H₃ : Type) [DecidableEq HF] [DecidableEq H₃]
++    (FrM : MultiTapeTM M Bool HF) (P : MultiTapeTM (m₃ + 2) Bool H₃)
++    (anchor₃ escape₃ : H₃) (ι₃ : Fin (m₃ + 2) ↪ Fin M) (fentry : HF)
++    (fexit : Bool → HF) : MultiTapeTM M Bool (Σ j, canonGramPh HF H₃ j) :=
++  phaseHostTM (canonGramFamily M m₃ HF H₃ FrM P anchor₃ ι₃)
++    ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
++
++/-- One leg of the grammar stage's strict cut: while the host replays phase `i`, its
++control carries phase `i`'s tag, which is not the parking tag. -/
++private lemma canonGramCut_leg {M : ℕ} {HF H₃ : Type} {x : List Bool}
++    (G : MultiTapeTM M Bool (Σ j, canonGramPh HF H₃ j))
++    (d : Cfg M Bool (Σ j, canonGramPh HF H₃ j) x) (A B : ℕ) (i : Fin 4) (hi : i.val ≠ 3)
++    (c : Cfg M Bool (canonGramPh HF H₃ i) x)
++    (Mach : MultiTapeTM M Bool (canonGramPh HF H₃ i))
++    (hhost : G.runFrom d A = c.mapState (Sigma.mk i))
++    (hpre : ∀ u ≤ B, G.runFrom (c.mapState (Sigma.mk i)) u =
++      (Mach.runFrom c u).mapState (Sigma.mk i))
++    (vt : ℕ) (h1 : A ≤ vt) (h2 : vt ≤ A + B) (b : Bool) :
++    (G.runFrom d vt).state ≠ some ⟨⟨3, by omega⟩, b⟩ := by
++  rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
++    hpre (vt - A) (by omega), Cfg.mapState_state]
++  cases hst : (Mach.runFrom c (vt - A)).state with
++  | none =>
++    rw [Option.map_none]
++    exact fun hcon => Option.noConfusion hcon
++  | some s =>
++    rw [Option.map_some]
++    intro hcon
++    exact hi (congrArg (fun z : Σ j, canonGramPh HF H₃ j => z.1.val) (Option.some.inj hcon))
++
++/-- A successful bounded unary skip returns a suffix of its input. -/
++private lemma canonGramFin_suffix (n : ℕ) (xs ys : List Bool)
++    (h : codeSkipFin n xs = some ys) : ys.IsSuffix xs := by
++  rw [← codeEraseFin] at h
++  obtain ⟨⟨q, r⟩, hread, hr⟩ := Option.map_eq_some_iff.mp h
++  have hword := codeReadFin_sound xs q r hread
++  exact ⟨unaryFin q, by rw [← (show r = ys from hr), hword]⟩
++
++/-- Renaming a configuration's control twice is renaming it once along the composite. -/
++private lemma canonGramMapComp {M : ℕ} {x : List Bool} {S A B : Type}
++    (c : Cfg M Bool S x) (f : S → A) (g : A → B) :
++    (c.mapState f).mapState g = c.mapState (fun s => g (f s)) := by
++  refine Cfg.ext ?_ rfl rfl rfl rfl
++  show (c.state.map f).map g = c.state.map (fun s => g (f s))
++  rw [Option.map_map]
++  rfl
++
++/-- The grammar stage's ledger: a front leg, a table leg and a suffix leg, each with its
++dispatch step, fit under one polynomial exponent. -/
++private lemma canonGramLedger (AF A₃ X t₁ t₂ t₃ : ℕ)
++    (h₁ : t₁ ≤ AF * (2 * (X + 1))) (h₂ : t₂ ≤ A₃ * (3 * (X + 1)) ^ 2)
++    (h₃ : t₃ ≤ X + 2) :
++    t₁ + 1 + (t₂ + 1) + (t₃ + 1) ≤
++      (2 * AF + 9 * A₃ + 8) * (X + 1) ^ (2 * AF + 9 * A₃ + 8) := by
++  have hX : 1 ≤ X + 1 := by omega
++  have hpow : (X + 1) ^ 2 ≤ (X + 1) ^ (2 * AF + 9 * A₃ + 8) :=
++    Nat.pow_le_pow_right hX (by omega)
++  have hstep : t₁ + 1 + (t₂ + 1) + (t₃ + 1) ≤ (2 * AF + 9 * A₃ + 8) * (X + 1) ^ 2 := by
++    have e1 : AF * (2 * (X + 1)) ≤ 2 * AF * (X + 1) ^ 2 := by nlinarith
++    have e2 : A₃ * (3 * (X + 1)) ^ 2 = 9 * A₃ * (X + 1) ^ 2 := by ring
++    have e3 : X + 5 ≤ 8 * (X + 1) ^ 2 := by nlinarith
++    have e4 : (2 * AF + 9 * A₃ + 8) * (X + 1) ^ 2 =
++        2 * AF * (X + 1) ^ 2 + 9 * A₃ * (X + 1) ^ 2 + 8 * (X + 1) ^ 2 := by ring
++    omega
++  exact hstep.trans (Nat.mul_le_mul_left _ hpow)
++
++
+ /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
+ canonical binary header `bits` (head at the origin), every other tape blank, the native head
+ at the remainder's first cell and the output empty, it decides the fixed grammar on the
+@@ -7494,7 +7622,461 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+               some (exit (canonGrammar F.k (codeBitsNat bits) rest).isSome) ∧
+             (G.runFrom d t).output = [] ∧
+             ∀ u < t, ∀ v, (G.runFrom d u).state ≠ some (exit v) := by
+-  sorry
++  classical
++  obtain ⟨mU, SU, fSU, dSU, Uu, ue, ux, uBound, ua, uinj, unary⟩ := exists_canonUnaryTM
++  letI : Fintype SU := fSU
++  letI : DecidableEq SU := dSU
++  obtain ⟨m₃, H₃, fH₃, dH₃, P, anchor₃, escape₃, bound₃, A₃, diff₃, spec₃⟩ :=
++    canonStageOuterSpec F.k
++  letI : Fintype H₃ := fH₃
++  letI : DecidableEq H₃ := dH₃
++  set ι₃ : Fin (m₃ + 2) ↪ Fin ((m₃ + 2) + mU) := Fin.castLEEmb (by omega) with hι₃
++  have hhc : ι₃ (bound₃.castSucc.castSucc) ≠ ι₃ (Fin.last (m₃ + 1)) := by
++    intro hcon
++    have v := congrArg Fin.val hcon
++    have h1 : (ι₃ (bound₃.castSucc.castSucc)).val = bound₃.val := rfl
++    have h2 : (ι₃ (Fin.last (m₃ + 1))).val = m₃ + 1 := rfl
++    have hb := bound₃.isLt
++    omega
++  set σU : Fin mU ↪ Fin ((m₃ + 2) + mU) := ⟨fun i =>
++    if i = uBound then ⟨bound₃.val, by have := bound₃.isLt; omega⟩
++    else ⟨(m₃ + 2) + i.val, by have := i.isLt; omega⟩, by
++    intro i j h
++    by_cases hi : i = uBound <;> by_cases hj : j = uBound
++    · exact hi.trans hj.symm
++    · have v := congrArg Fin.val h
++      simp only [if_pos hi, if_neg hj] at v
++      have hb := bound₃.isLt
++      omega
++    · have v := congrArg Fin.val h
++      simp only [if_neg hi, if_pos hj] at v
++      have hb := bound₃.isLt
++      omega
++    · have v := congrArg Fin.val h
++      simp only [if_neg hi, if_neg hj] at v
++      exact Fin.ext (by omega)⟩ with hσU
++  have hσb : σU uBound = ι₃ (bound₃.castSucc.castSucc) := by
++    show (if uBound = uBound then _ else _) = _
++    rw [if_pos rfl]
++    exact Fin.ext rfl
++  have hσc : ∀ i, σU i ≠ ι₃ (Fin.last (m₃ + 1)) := by
++    intro i hcon
++    have v := congrArg Fin.val hcon
++    have hlast : (ι₃ (Fin.last (m₃ + 1))).val = m₃ + 1 := rfl
++    have hb := bound₃.isLt
++    have hiu := i.isLt
++    by_cases hi : i = uBound
++    · simp only [σU, Function.Embedding.coeFn_mk, if_pos hi] at v
++      omega
++    · simp only [σU, Function.Embedding.coeFn_mk, if_neg hi] at v
++      omega
++  obtain ⟨HF, fHF, dHF, FrM, fentry, fexit, AF, finj, front⟩ :=
++    canonStageFrontSpec Uu ue ux uBound ua uinj unary
++      (ι₃ (bound₃.castSucc.castSucc)) (ι₃ (Fin.last (m₃ + 1))) σU hσb hσc hhc
++  letI : Fintype HF := fHF
++  letI : DecidableEq HF := dHF
++  letI : ∀ i, Fintype (canonGramPh HF H₃ i) := canonGramPh_fintype HF H₃
++  letI : ∀ i, DecidableEq (canonGramPh HF H₃ i) := canonGramPh_deceq HF H₃
++  refine ⟨(m₃ + 2) + mU, Σ j, canonGramPh HF H₃ j, inferInstance, inferInstance,
++    canonGramG ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ escape₃ ι₃ fentry fexit,
++    ⟨⟨0, by omega⟩, fentry⟩, fun b => ⟨⟨3, by omega⟩, b⟩, 2 * AF + 9 * A₃ + 8,
++    ι₃ (bound₃.castSucc.castSucc), ?_, ?_⟩
++  · intro a b h
++    exact eq_of_heq (Sigma.mk.inj_iff.mp h).2
++  intro x bits rest hp hcanon hguard d hs hout hpos hht hhp hblank
++  set G := canonGramG ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ escape₃ ι₃ fentry fexit
++    with hG
++  -- the decoded geometry and the value bridge
++  have hn : counterValue bits = codeBitsNat bits :=
++    (counterValue_eq bits).trans (foldr_bit_eq_ofDigits bits).symm
++  have hx : x = pairEncode bits rest := eq_pairEncode_of_pairDecode x bits rest hp
++  have hxlen : x.length = 2 * bits.length + 2 + rest.length := by
++    rw [hx, length_pairEncode]
++  have hsfx : rest.IsSuffix x := ⟨dbl bits ++ [false, true], by
++    rw [hx, pairEncode_eq_dbl]⟩
++  -- the front's leg, from the stub's entry bank
++  set c₀ : Cfg ((m₃ + 2) + mU) Bool HF x :=
++    ⟨some fentry, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ with hc₀def
++  have hc₀ : c₀.mapState (Sigma.mk (⟨0, by omega⟩ : Fin 4)) = d := by
++    refine Cfg.ext ?_ rfl rfl rfl rfl
++    rw [Cfg.mapState_state, hs]
++    rfl
++  have hc₀pos : c₀.inputPos.val = 2 * bits.length + 3 := hpos
++  have hdrop0 : x.drop (c₀.inputPos.val - 1) = rest := by
++    have h2 : x.length - rest.length = 2 * bits.length + 2 := by omega
++    have h3 := canonStageSuffix_drop x rest hsfx
++    rw [h2] at h3
++    rw [show c₀.inputPos.val - 1 = 2 * bits.length + 2 by omega]
++    exact h3
++  obtain ⟨tF, htF, u, huval, hulen, hFst, hFout, hFcut, hFht, hFhp, hFct, hFcp, hFblank,
++    hFsfx⟩ := front x bits c₀ rfl hout (by omega) hht hhp hblank
++  set cF : Cfg ((m₃ + 2) + mU) Bool HF x := FrM.runFrom c₀ tF with hcF
++  rw [hdrop0, hn] at hFst hFsfx
++  -- the front's verdict dichotomy
++  cases hskf : codeSkipFin (codeBitsNat bits + 1) rest with
++  | none =>
++    -- the unary range check fails: dispatch to the park with the reject verdict
++    rw [hskf] at hFst
++    simp only [Option.isSome_none] at hFst
++    obtain ⟨hpre0, hdisp0⟩ := phaseHostTM_run
++      (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
++      ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
++      ⟨0, by omega⟩ c₀ cF tF hcF.symm (fexit false) hFst
++      ⟨⟨3, by omega⟩, false⟩
++      (by
++        show (if fexit false = fexit true
++            then some (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)
++            else if fexit false = fexit false
++              then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
++          some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)
++        rw [if_neg (fun hcon => Bool.noConfusion (finj hcon)), if_pos rfl])
++      (by
++        intro uu huu s hsu
++        show (if s = fexit true then _ else if s = fexit false then _ else none) = none
++        by_cases h1 : s = fexit true
++        · subst h1
++          exact absurd hsu (hFcut uu huu true)
++        · by_cases h0 : s = fexit false
++          · subst h0
++            exact absurd hsu (hFcut uu huu false)
++          · rw [if_neg h1, if_neg h0])
++    have hfin : G.runFrom d (tF + 1) =
++        cF.mapState (fun _ => (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)) := by
++      conv_lhs => rw [← hc₀]
++      exact hdisp0
++    refine ⟨tF + 1, ?_, ?_, ?_, ?_⟩
++    · have hb1 : tF ≤ AF * (2 * (x.length + 1)) :=
++        htF.trans (Nat.mul_le_mul le_rfl (by omega))
++      have hled := canonGramLedger AF A₃ x.length tF 0 0 hb1 (Nat.zero_le _) (by omega)
++      exact le_trans (by omega) hled
++    · rw [hfin, Cfg.mapState_state, hFst, Option.map_some]
++      have hcg : canonGrammar F.k (codeBitsNat bits) rest = none := by
++        show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
++          (codeSkipTableK F.k (codeBitsNat bits))).bind
++          (fun tail => if tail.all id then some tail else none) = none
++        rw [hskf]
++        rfl
++      rw [hcg]
++      rfl
++    · rw [hfin, Cfg.mapState_output]
++      exact hFout
++    · intro vt hvt b
++      exact canonGramCut_leg G d 0 tF ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 3) _ _
++        (by rw [MultiTapeTM.runFrom_zero]; exact hc₀.symm) hpre0 vt (by omega) (by omega) b
++  | some ys₁ =>
++    -- the unary check passes: the front hands its bank to the embedded table
++    rw [hskf] at hFst
++    simp only [Option.isSome_some] at hFst
++    have hsfx1 : ys₁.IsSuffix x := (canonGramFin_suffix _ rest ys₁ hskf).trans hsfx
++    have hys1len : ys₁.length ≤ x.length := hsfx1.length_le
++    have hposF : cF.inputPos.val = x.length + 1 - ys₁.length := hFsfx ys₁ hskf
++    have hdropF : x.drop (cF.inputPos.val - 1) = ys₁ := by
++      have h1 : cF.inputPos.val - 1 = x.length - ys₁.length := by omega
++      rw [h1]
++      exact canonStageSuffix_drop x ys₁ hsfx1
++    obtain ⟨hpre0, hdisp0⟩ := phaseHostTM_run
++      (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
++      ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
++      ⟨0, by omega⟩ c₀ cF tF hcF.symm (fexit true) hFst
++      ⟨⟨1, by omega⟩, Sum.inl ()⟩
++      (by
++        show (if fexit true = fexit true
++            then some (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)
++            else if fexit true = fexit false
++              then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
++          some (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)
++        rw [if_pos rfl])
++      (by
++        intro uu huu s hsu
++        show (if s = fexit true then _ else if s = fexit false then _ else none) = none
++        by_cases h1 : s = fexit true
++        · subst h1
++          exact absurd hsu (hFcut uu huu true)
++        · by_cases h0 : s = fexit false
++          · subst h0
++            exact absurd hsu (hFcut uu huu false)
++          · rw [if_neg h1, if_neg h0])
++    have hhost1 : G.runFrom d (tF + 1) =
++        cF.mapState (fun _ => (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)) := by
++      conv_lhs => rw [← hc₀]
++      exact hdisp0
++    -- the table's bank, selected through the embedding
++    set cA : Cfg ((m₃ + 2) + mU) Bool H₃ x := cF.mapState (fun _ => anchor₃) with hcA
++    have hcAst : cA.state = some anchor₃ := by
++      rw [hcA, Cfg.mapState_state, hFst, Option.map_some]
++    set sel : Cfg (m₃ + 2) Bool H₃ x := cA.select ι₃ with hsel
++    have hselst : sel.state = some anchor₃ := hcAst
++    have hselpos : sel.inputPos.val = cF.inputPos.val := rfl
++    obtain ⟨τ₃, hτ₃⟩ := spec₃ x bits u huval
++    have hbank : sel.output = [] ∧ 1 ≤ sel.inputPos.val ∧
++        sel.workTapes bound₃.castSucc.castSucc = FinTM.bufferTape bits ∧
++        sel.workTapePos bound₃.castSucc.castSucc = 0 ∧
++        (∀ j : Fin m₃, j ≠ bound₃ →
++          sel.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
++          sel.workTapePos j.castSucc.castSucc = 0) ∧
++        (∀ q : ℤ, q < 0 ∨ ((3 ^ (F.k + 1) : ℕ).bits.length : ℤ) ≤ q →
++          sel.workTapes (Fin.last m₃).castSucc q = none) ∧
++        sel.workTapePos (Fin.last m₃).castSucc = 0 ∧
++        sel.workTapes (Fin.last (m₃ + 1)) = FinTM.bufferTape u ∧
++        sel.workTapePos (Fin.last (m₃ + 1)) = 0 := by
++      have hne3 : ι₃ ((Fin.last m₃).castSucc) ≠ ι₃ (bound₃.castSucc.castSucc) := by
++        intro hcon
++        have hv := congrArg Fin.val (ι₃.injective hcon)
++        simp only [Fin.coe_castSucc, Fin.val_last] at hv
++        have := bound₃.isLt
++        omega
++      have hne4 : ι₃ ((Fin.last m₃).castSucc) ≠ ι₃ (Fin.last (m₃ + 1)) := by
++        intro hcon
++        have hv := congrArg Fin.val (ι₃.injective hcon)
++        simp only [Fin.coe_castSucc, Fin.val_last] at hv
++        omega
++      refine ⟨rfl, by omega, hFht, hFhp, ?_, ?_, ?_, hFct, hFcp⟩
++      · intro j hj
++        have hne1 : ι₃ (j.castSucc.castSucc) ≠ ι₃ (bound₃.castSucc.castSucc) := by
++          intro hcon
++          have hv := congrArg Fin.val (ι₃.injective hcon)
++          simp only [Fin.coe_castSucc] at hv
++          exact hj (Fin.ext hv)
++        have hne2 : ι₃ (j.castSucc.castSucc) ≠ ι₃ (Fin.last (m₃ + 1)) := by
++          intro hcon
++          have hv := congrArg Fin.val (ι₃.injective hcon)
++          simp only [Fin.coe_castSucc, Fin.val_last] at hv
++          have := j.isLt
++          omega
++        exact ⟨(hFblank _ hne1 hne2).1, (hFblank _ hne1 hne2).2⟩
++      · intro q hq
++        show cF.workTapes (ι₃ ((Fin.last m₃).castSucc)) q = none
++        rw [(hFblank _ hne3 hne4).1]
++        simp
++      · exact (hFblank _ hne3 hne4).2
++    obtain ⟨hpos₃, hbound₃, hint₃, hst₃, hout₃, hys₃⟩ := hτ₃ sel hbank hselst
++    have hdropsel : x.drop (sel.inputPos.val - 1) = ys₁ := hdropF
++    rw [hdropsel, hn] at hst₃ hys₃
++    -- the embedded table's run and the release adapter's transport
++    have hembA : embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output sel = cA :=
++      embedEmitCfg_select ι₃ cA
++    have hErun : ∀ tt : ℕ, (embedEmitTM ι₃ P).runFrom cA tt =
++        embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output (P.runFrom sel tt) := by
++      intro tt
++      conv_lhs => rw [← hembA]
++      exact embedEmitTM_runFrom ι₃ P _ _ _ _ tt
++    have hc1 : cF.mapState (fun _ => (⟨⟨1, by omega⟩, Sum.inl ()⟩ :
++        Σ j, canonGramPh HF H₃ j)) =
++        (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃))).mapState
++          (Sigma.mk (⟨1, by omega⟩ : Fin 4)) := by
++      rw [hcA, canonGramMapComp, canonGramMapComp]
++    -- the table's verdict dichotomy
++    cases htab : codeSkipTableK F.k (codeBitsNat bits) ys₁ with
++    | some ys₂ =>
++      -- every record skips: the release returns and the suffix test decides
++      have hstA : (P.runFrom sel (τ₃ sel)).state = some anchor₃ := by
++        rw [hst₃, htab]
++        rfl
++      obtain ⟨g1, g2, g3⟩ := hys₃ ys₂ htab
++      obtain ⟨hrel, hrelcut⟩ := seamReleaseTM_firstReturn (embedEmitTM ι₃ P) anchor₃
++        hcAst hpos₃ (hErun (τ₃ sel))
++        (by rw [embedEmitCfg_state]; exact hstA)
++        (by
++          intro t ht1 ht2
++          rw [hErun t, embedEmitCfg_state]
++          obtain ⟨q, hq, hqa, hqe⟩ := hint₃ t ht1 ht2
++          rw [hq]
++          intro hcon
++          exact hqa (Option.some.inj hcon))
++      obtain ⟨hpre1, hdisp1⟩ := phaseHostTM_run
++        (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
++        ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
++        ⟨1, by omega⟩ (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃)))
++        ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++          (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)) (τ₃ sel) hrel
++        (Sum.inr anchor₃)
++        (by rw [Cfg.mapState_state, embedEmitCfg_state, hstA, Option.map_some])
++        ⟨⟨2, by omega⟩, (none : Option Bool)⟩
++        (by
++          show (if (Sum.inr anchor₃ : Unit ⊕ H₃) = Sum.inr anchor₃
++              then some (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)
++              else if (Sum.inr anchor₃ : Unit ⊕ H₃) = Sum.inr escape₃
++                then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
++            some (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)
++          rw [if_pos rfl])
++        (by
++          intro uu huu s hsu
++          show (if s = Sum.inr anchor₃ then _
++            else if s = Sum.inr escape₃ then _ else none) = none
++          rcases Nat.eq_zero_or_pos uu with huz | hupos
++          · subst huz
++            rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hcAst,
++              Option.map_some] at hsu
++            obtain rfl : s = Sum.inl () := (Option.some.inj hsu).symm
++            rw [if_neg (fun hcon => Sum.noConfusion hcon),
++              if_neg (fun hcon => Sum.noConfusion hcon)]
++          · rw [seamReleaseTM_runFrom_pos (embedEmitTM ι₃ P) anchor₃ cA hcAst uu hupos,
++              Cfg.mapState_state, hErun uu, embedEmitCfg_state] at hsu
++            obtain ⟨q, hq, hqa, hqe⟩ := hint₃ uu hupos huu
++            rw [hq, Option.map_some] at hsu
++            obtain rfl : s = Sum.inr q := (Option.some.inj hsu).symm
++            rw [if_neg (fun hcon => hqa (Sum.inr.inj hcon)),
++              if_neg (fun hcon => hqe (Sum.inr.inj hcon))])
++      have hhost2 : G.runFrom d ((tF + 1) + (τ₃ sel + 1)) =
++          ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++            (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
++            (fun _ => (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)) := by
++        rw [MultiTapeTM.runFrom_add d (tF + 1) (τ₃ sel + 1), hhost1, hc1]
++        exact hdisp1
++      -- the suffix test's leg
++      set cT : Cfg ((m₃ + 2) + mU) Bool (Option Bool) x :=
++        (embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++          (P.runFrom sel (τ₃ sel))).mapState (fun _ => (none : Option Bool)) with hcT
++      have hc2 : ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++          (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
++          (fun _ => (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)) =
++          cT.mapState (Sigma.mk (⟨2, by omega⟩ : Fin 4)) := by
++        rw [hcT, canonGramMapComp, canonGramMapComp]
++      have hcTst : cT.state = some none := by
++        rw [hcT, Cfg.mapState_state, embedEmitCfg_state, hstA, Option.map_some]
++      have hcTpos : cT.inputPos.val = (P.runFrom sel (τ₃ sel)).inputPos.val := rfl
++      obtain ⟨tS, htS, hSst, hSout, hStapes, hSheads, hScut⟩ := canonSuffix_run cT hcTst
++        (by omega)
++      have hdropT : x.drop (cT.inputPos.val - 1) = ys₂ := g3
++      rw [hdropT] at hSst htS
++      obtain ⟨hpre2, hdisp2⟩ := phaseHostTM_run
++        (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
++        ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
++        ⟨2, by omega⟩ cT ((canonSuffixTM ((m₃ + 2) + mU)).runFrom cT tS) tS rfl
++        (some (ys₂.all id)) hSst ⟨⟨3, by omega⟩, ys₂.all id⟩ rfl
++        (by
++          intro uu huu s hsu
++          cases s with
++          | none => rfl
++          | some bit => exact absurd hsu (hScut uu huu bit))
++      have hhost3 : G.runFrom d ((tF + 1) + (τ₃ sel + 1) + (tS + 1)) =
++          ((canonSuffixTM ((m₃ + 2) + mU)).runFrom cT tS).mapState
++            (fun _ => (⟨⟨3, by omega⟩, ys₂.all id⟩ : Σ j, canonGramPh HF H₃ j)) := by
++        rw [MultiTapeTM.runFrom_add d ((tF + 1) + (τ₃ sel + 1)) (tS + 1), hhost2, hc2]
++        exact hdisp2
++      have hys2len : ys₂.length ≤ x.length := by
++        have h := congrArg List.length g3
++        rw [List.length_drop] at h
++        omega
++      refine ⟨(tF + 1) + (τ₃ sel + 1) + (tS + 1), ?_, ?_, ?_, ?_⟩
++      · have hb1 : tF ≤ AF * (2 * (x.length + 1)) :=
++          htF.trans (Nat.mul_le_mul le_rfl (by omega))
++        have hb2 : τ₃ sel ≤ A₃ * (3 * (x.length + 1)) ^ 2 :=
++          hbound₃.trans (Nat.mul_le_mul le_rfl (Nat.pow_le_pow_left (by omega) 2))
++        have hb3 : tS ≤ x.length + 2 := by omega
++        exact canonGramLedger AF A₃ x.length tF (τ₃ sel) tS hb1 hb2 hb3
++      · rw [hhost3, Cfg.mapState_state, hSst, Option.map_some]
++        have hcg : canonGrammar F.k (codeBitsNat bits) rest =
++            if ys₂.all id then some ys₂ else none := by
++          show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
++            (codeSkipTableK F.k (codeBitsNat bits))).bind
++            (fun tail => if tail.all id then some tail else none) =
++            if ys₂.all id then some ys₂ else none
++          rw [hskf]
++          show (codeSkipTableK F.k (codeBitsNat bits) ys₁).bind
++            (fun tail => if tail.all id then some tail else none) =
++            if ys₂.all id then some ys₂ else none
++          rw [htab]
++          rfl
++        rw [hcg]
++        cases hall : ys₂.all id <;> rfl
++      · rw [hhost3, Cfg.mapState_output, hSout, hcT, Cfg.mapState_output,
++          embedEmitCfg_output, g1, List.append_nil, hcA, Cfg.mapState_output]
++        exact hFout
++      · intro vt hvt b
++        by_cases h1 : vt ≤ tF
++        · exact canonGramCut_leg G d 0 tF ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 3) _ _
++            (by rw [MultiTapeTM.runFrom_zero]; exact hc₀.symm) hpre0 vt (by omega)
++            (by omega) b
++        · by_cases h2 : vt ≤ (tF + 1) + τ₃ sel
++          · exact canonGramCut_leg G d (tF + 1) (τ₃ sel) ⟨1, by omega⟩
++              (by decide : (1 : ℕ) ≠ 3) _ _ (by rw [hhost1, hc1]) hpre1 vt (by omega)
++              (by omega) b
++          · exact canonGramCut_leg G d ((tF + 1) + (τ₃ sel + 1)) tS ⟨2, by omega⟩
++              (by decide : (2 : ℕ) ≠ 3) _ _ (by rw [hhost2, hc2]) hpre2 vt (by omega)
++              (by omega) b
++    | none =>
++      -- some record fails: the release escapes and the park holds the reject verdict
++      have hstE : (P.runFrom sel (τ₃ sel)).state = some escape₃ := by
++        rw [hst₃, htab]
++        rfl
++      have hrelE : (seamReleaseTM (embedEmitTM ι₃ P) anchor₃).runFrom
++          (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃))) (τ₃ sel) =
++          (embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++            (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃) := by
++        rw [seamReleaseTM_runFrom_pos (embedEmitTM ι₃ P) anchor₃ cA hcAst (τ₃ sel) hpos₃,
++          hErun (τ₃ sel)]
++      obtain ⟨hpre1, hdisp1⟩ := phaseHostTM_run
++        (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
++        ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
++        ⟨1, by omega⟩ (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃)))
++        ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++          (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)) (τ₃ sel) hrelE
++        (Sum.inr escape₃)
++        (by rw [Cfg.mapState_state, embedEmitCfg_state, hstE, Option.map_some])
++        ⟨⟨3, by omega⟩, false⟩
++        (by
++          show (if (Sum.inr escape₃ : Unit ⊕ H₃) = Sum.inr anchor₃
++              then some (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)
++              else if (Sum.inr escape₃ : Unit ⊕ H₃) = Sum.inr escape₃
++                then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
++            some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)
++          rw [if_neg (fun hcon => diff₃ (Sum.inr.inj hcon)), if_pos rfl])
++        (by
++          intro uu huu s hsu
++          show (if s = Sum.inr anchor₃ then _
++            else if s = Sum.inr escape₃ then _ else none) = none
++          rcases Nat.eq_zero_or_pos uu with huz | hupos
++          · subst huz
++            rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hcAst,
++              Option.map_some] at hsu
++            obtain rfl : s = Sum.inl () := (Option.some.inj hsu).symm
++            rw [if_neg (fun hcon => Sum.noConfusion hcon),
++              if_neg (fun hcon => Sum.noConfusion hcon)]
++          · rw [seamReleaseTM_runFrom_pos (embedEmitTM ι₃ P) anchor₃ cA hcAst uu hupos,
++              Cfg.mapState_state, hErun uu, embedEmitCfg_state] at hsu
++            obtain ⟨q, hq, hqa, hqe⟩ := hint₃ uu hupos huu
++            rw [hq, Option.map_some] at hsu
++            obtain rfl : s = Sum.inr q := (Option.some.inj hsu).symm
++            rw [if_neg (fun hcon => hqa (Sum.inr.inj hcon)),
++              if_neg (fun hcon => hqe (Sum.inr.inj hcon))])
++      have hhost2 : G.runFrom d ((tF + 1) + (τ₃ sel + 1)) =
++          ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
++            (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
++            (fun _ => (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)) := by
++        rw [MultiTapeTM.runFrom_add d (tF + 1) (τ₃ sel + 1), hhost1, hc1]
++        exact hdisp1
++      refine ⟨(tF + 1) + (τ₃ sel + 1), ?_, ?_, ?_, ?_⟩
++      · have hb1 : tF ≤ AF * (2 * (x.length + 1)) :=
++          htF.trans (Nat.mul_le_mul le_rfl (by omega))
++        have hb2 : τ₃ sel ≤ A₃ * (3 * (x.length + 1)) ^ 2 :=
++          hbound₃.trans (Nat.mul_le_mul le_rfl (Nat.pow_le_pow_left (by omega) 2))
++        have hled := canonGramLedger AF A₃ x.length tF (τ₃ sel) 0 hb1 hb2 (by omega)
++        exact le_trans (by omega) hled
++      · rw [hhost2, Cfg.mapState_state, Cfg.mapState_state, embedEmitCfg_state, hstE,
++          Option.map_some, Option.map_some]
++        have hcg : canonGrammar F.k (codeBitsNat bits) rest = none := by
++          show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
++            (codeSkipTableK F.k (codeBitsNat bits))).bind
++            (fun tail => if tail.all id then some tail else none) = none
++          rw [hskf]
++          show (codeSkipTableK F.k (codeBitsNat bits) ys₁).bind
++            (fun tail => if tail.all id then some tail else none) = none
++          rw [htab]
++          rfl
++        rw [hcg]
++        rfl
++      · rw [hhost2, Cfg.mapState_output, Cfg.mapState_output, embedEmitCfg_output, hout₃,
++          List.append_nil, hcA, Cfg.mapState_output]
++        exact hFout
++      · intro vt hvt b
++        by_cases h1 : vt ≤ tF
++        · exact canonGramCut_leg G d 0 tF ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 3) _ _
++            (by rw [MultiTapeTM.runFrom_zero]; exact hc₀.symm) hpre0 vt (by omega)
++            (by omega) b
++        · exact canonGramCut_leg G d (tF + 1) (τ₃ sel) ⟨1, by omega⟩
++            (by decide : (1 : ℕ) ≠ 3) _ _ (by rw [hhost1, hc1]) hpre1 vt (by omega)
++            (by omega) b
+ 
+ /-- **The physical validator.** One finite binary machine halts on every input within a
+ polynomial bound with a single verdict bit; a rejection decodes to the fallback, and an
+-- 
+2.50.1 (Apple Git-155)
+

@@ -503,11 +503,22 @@ with its own exact-time run proof:
   `Turing.FinTM.rewind_scan` (51%; `Simulation` was outside that brief's screen population, so the
   worker's screen could not see it).
 
-With them, UN's `un_mapState_comp` restates `ExhaustiveReplay`'s `xr_E_initCfg` (54%).
+With them, UN's `un_mapState_comp` shares field-equation proof text with `ExhaustiveReplay`'s
+`xr_E_initCfg` (54%; their statements differ: gate 65, minor 3).
 **Acknowledgment and disposition (user, 2026-10-22):** UN's two pairs are resolved by **an API PR
 first**: a public input rewind with an exact time and a first-visit cut, and a `mapState`
 collapse lemma. UN's landing re-points to them. R's copy lands ledgered and re-points when that
 API lands. U2-S's and `ExhaustiveReplay`'s are re-pointed in the user's dedup window.
+**The API: #153** (2026-10-22): `Build/InputRewind`'s `Turing.inputRewindTM` and
+`inputRewindTM_run`, and `Turing.Cfg.mapState_mapState`. Its v3 screen pairs the machine with
+`xr_inRewindTM` (82% and 73%), and the lemma's proof text with `xr_E_initCfg`'s (54%; a shared
+idiom, not a restatement: the composition lemma alone does not replace `xr_E_initCfg`); both are
+in the dedup window, as above. A fifth copy found while building it, `Build/NDHost`'s private
+`guessRun_mapState_mapState` (the lemma's exact statement), is removed in #153 (the user's ruling).
+A sixth, found 2026-10-23 on #152's branch: the canonizer's private `canonGramMapComp`
+(`TuringMachine/CodeSimulator`), the lemma's statement with the composite as `fun s => g (f s)`,
+used at two `rw` sites; 99% each way on the v3 screen. **Disposition (user, 2026-10-23): re-pointed
+at #152's landing** (prepared locally, `local/canon-mapcomp-repoint`), as for R's leaf.
 
 **CC7-1, the canonizer cont7's in-file families** (megafill A item 3, `TuringMachine/CodeSimulator`,
 2026-10-22). 59 new in-file pairs, none cross-file. Four are at or above 90%:
@@ -516,6 +527,24 @@ and `canonStageLeg5` → `canonStageLeg1` (91%). Three families: the cut leg, th
 the per-record bound. **Acknowledged (user, 2026-10-22): recorded as debt**, for the user's dedup
 window, together with the retirement of the now-unused `canonCounterRepeat` link (the user,
 2026-10-22).
+**Census** (gate 67, minor 3; the primary rule, each member counted once per file it inhabits;
+declarations as the style lint counts them; lines by the span rule, at #152's head `aed162fd`):
+- the members, by family (11):
+  - the cut leg (2): `canonGramCut_leg` (lines 7564–7585, 22), `canonStageCut_leg` (6332–6352,
+    21);
+  - the leg template (7): `canonStageLeg0`–`canonStageLeg6` (6354–7046: 90, 86, 91, 109, 106,
+    98 and 107 lines);
+  - the per-record bound (2): `canonStageBlock_consumes` (5669–5687, 19) and the base's frozen
+    private `skipTable_consumes` (233–245, 13), whose local per-record bound it re-proves (61%);
+- with IR-1's `canonGramMapComp` (7595–7607, 13), a cross-file member until #152's landing
+  re-points it.
+
+`TuringMachine/CodeSimulator`: **12 of 198 declarations (6.1%)** at the head (12 public, 186
+private), **775** lines in member blocks; after the re-point, **11 of 197 (5.6%)**, **762** lines.
+The file had no earlier ledger member: the item-8 entry's `tableBitsK` now lives in
+`Build/StepBlock`. The review's other new in-file pairs, those not between two members of these
+families, are screen matches, not members: all below 90%, between declarations with different
+statements. **The one-fifth rule** (`workflow.md` §4): not reached.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
