@@ -26,10 +26,15 @@ in `evidence/commits/`:
 - `8e74681a`, docstrings only (F8): `Codes2Tape` and `EXPCOM` no longer say both shared contracts
   remain admitted.
 
-⟨RULING: #152's private `canonGramMapComp` has the statement of #153's public
-`Cfg.mapState_mapState`, written with `fun s => g (f s)`. The user's ruling on its disposition
-goes here. If it is a re-point at landing, it is the prepared commit `e4c5d015` (local, on #152's
-head with #153 merged in): `campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`⟩
+**One more commit at landing (the user's ruling, 2026-10-23).** #152's private
+`canonGramMapComp` has the statement of #153's public `Turing.Cfg.mapState_mapState` (gate 65),
+with the composite written `fun s => g (f s)`; the v3 screen matches the two at 99% each way. If
+#153 merges first, #152 re-points it at landing. The re-point is `e4c5d015`, prepared on a local
+branch: #152's head, with #153 merged in locally to make the lemma available, then the re-point.
+It is checked and is part of this gate
+(`campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`, with a README). It removes the
+private, and its two `rw` sites use `Cfg.mapState_mapState`, each followed by `rfl`; the `rfl`
+closes `g ∘ f` against the lambda through core's `Function.comp`.
 
 ## What changed (verify)
 
@@ -40,6 +45,7 @@ head with #153 merged in): `campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-
 | **Frozen** | every public statement; 12 → 12 public declarations. `exists_polyCanonizer`'s flagged change is docstring-only: its code is identical with comments stripped (`evidence/polyCanonizer-code-identity.txt`) |
 | **Code after the delivery** | exactly the `Bool.toNat` fix (`evidence/code-diff-delivered-to-head.txt`) |
 | **Other files** | `Codes2Tape`, `EXPCOM`: docstrings only (`evidence/other-files-docstring-only.txt`) |
+| **At landing** (if #153 is in) | the re-point: 186 → 185 privates (`canonGramMapComp` removed); only `exists_canonGrammarStage`'s body changes; no statement changes |
 
 ## Brief for the auditor
 
@@ -55,13 +61,19 @@ head with #153 merged in): `campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-
 3. **Rule 10.** The review's 36-definition seal and its 74 controls (sealed, every control fails
    and the body is clean; unsealed, all close). No TCSlib definition is passed to `rw`/`simp`,
    and there is no `unfold`. The one core unfolding (`Bool.toNat`, F2) is fixed. Does any step
-   still close only because another file's definition reduces?
+   still close only because another file's definition reduces? On the re-pointed file, the same
+   seal gives the review's result exactly: the body has 0 errors, all 74 controls fail sealed, and
+   unsealed there are 64 "rfl closes" and 10 clean examples. Is the re-point's `rfl` (through
+   `Function.comp`) within the rule?
 4. **Admission.** The headline is admission-free. Targets 3–8 and `baker_gill_solovay` reach
    `sorryAx` only through `exists_uniformSimulator`.
 5. **Duplication (the review's F3, recorded as acknowledged debt CC7-1, the user's ruling).** The
    v3 screen: 2,419 → 2,455 declarations, 2,633 → 2,692 pairs; 59 new, all in-file. Four are
    ≥ 90%: the two cut legs at 97% each way, and `canonStageLeg4`/`Leg5` → `Leg1` at 94% and 91%.
-   Is "acknowledged debt" adequate? Separately, `canonGramMapComp` (the ruling above).
+   Is "acknowledged debt" adequate? Separately, `canonGramMapComp`: the re-point's screen
+   (`CodeSimulator` and `Build/InputRewind`, at the local merge and after the re-point) goes
+   172 → 171 declarations and 78 → 67 pairs, with 11 gone (the 99% pair among them) and none new.
+   Is the re-point exact, and does anything else change?
 6. **The text.** The status paragraph, the `Implementation.` paragraph, the 13 sketches, and the
    `Codes2Tape`/`EXPCOM` sentences: accurate and public-facing?
 7. **Records.** The review's F6 (REPORT inaccuracies) and F7 (environment logs): any correctness

@@ -1517,10 +1517,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `ic_rewind_leaf_run` to `inputRewindTM`/`inputRewindTM_run` in one more maintainer commit
     (prepared and checked locally first; applied only after #153 merges).
   - All five queued branches merge cleanly with #149's head (`git merge-tree`, 2026-10-23).
-  - **Decision pending (user):** #152's private `canonGramMapComp` (`CodeSimulator`) has
-    `Cfg.mapState_mapState`'s statement (found 2026-10-23, after the canonizer's review). Re-point
-    it at #152's landing if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`), or
-    ledger it. Gate 67's pack waits on this ruling. The screen matches the two at 99% each way;
+  - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
+    (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
+    #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
+    `e4c5d015`). Gate 67's pack includes it. The screen matches the two at 99% each way;
     the prepared re-point elaborates, the review's seal holds on it (74/74), and it removes 11
     pairs with none new (`campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`).
   - **To confirm (user):** `exists_ndInterpreterCore` (#151) reproduces 85% of
