@@ -14,10 +14,10 @@ set_option autoImplicit false
 
 A small machine that returns the native input head to the first input cell: one step left, then
 left while the head reads an input symbol, then one step right at the left blank, into a
-stationary live state. From any configuration whose input head is at position `p ≥ 1`, it reaches
-its last state at exactly time `p + 1`, not earlier, with the input head at `1`, and leaves every
-work tape, every work head and the output unchanged at every time. A machine that rewinds its
-input in one phase of a composite uses it as that phase.
+stationary live state. From any configuration in its start state whose input head is at position
+`p ≥ 1`, it reaches its last state at exactly time `p + 1`, not earlier, with the input head at
+`1`, and leaves every work tape, every work head and the output unchanged at every time. A
+machine that rewinds its input in one phase of a composite uses it as that phase.
 
 Also, the composition of two state relabelings of a configuration is one relabeling.
 
@@ -88,9 +88,10 @@ def inputRewindTM (k : ℕ) : MultiTapeTM k Bool InputRewindPhase where
 are the start's.
 
 **Proof sketch.** At time `r ≤ p` the configuration is the start's with the input head at
-`p - r` (in `scan` for `r ≥ 1`): each step reads an input symbol, since the head is at a positive
-position, and moves left (`Turing.FinTM.controlAction_apply`). At time `p` the head is on the left
-blank, and one step right enters `done` at position `1`. -/
+`p - r` (in `scan` for `r ≥ 1`): the first step moves left unconditionally, and each later step,
+at `1 ≤ r < p`, reads an input symbol, since then `1 ≤ p - r ≤ |x|`, and moves left
+(`Turing.FinTM.controlAction_apply`). At time `p` the head is on the left blank, and one step
+right enters `done` at position `1`. -/
 theorem inputRewindTM_run {k : ℕ} {x : List Bool} (d : Cfg k Bool InputRewindPhase x)
     (hstate : d.state = some .start) (hp : 1 ≤ d.inputPos.val) :
     (inputRewindTM k).runFrom d (d.inputPos.val + 1) =
