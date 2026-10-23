@@ -25,5 +25,13 @@ true as readings; minor 1 is answered by a ruling on rule 10's scope.
 | 18 | note | The replay must pass on the latest merged-tree snapshot before merge, including the re-point when applicable. | **Agreed.** After #149 (and #153) merge, the campaign branch is merged into #152, the re-point is applied, and the closure replays. |
 | 4, 5, 7–9, 12, 14–16 | notes | Integrity and freeze; the frozen statements; empty and huge inputs; the stage-front and grammar-host definitions; the elaboration and admission records; the acknowledged families; probes and lint; the text repairs. | No action. |
 
-**Merge state. #152: not yet clear to merge.** Its replay runs after #149 merges, with the
-re-point once #153 is in.
+**Landing** (2026-10-23): with #147, #149, #150, #151 and #153 merged, the campaign branch merged
+into #152 cleanly (`fe202202`, `274bdae9`) and the prepared re-point `e4c5d015` was cherry-picked
+as `2e115bf1`. Its code equals the audited re-point's; the only difference is `aed162fd`'s
+docstring (`evidence/landing/diff-vs-audited-repoint.txt`). Against `oleans-lrc2` the module
+elaborates with only `exists_uniformSimulator`'s sorry warning, and `exists_polyCanonizer` is on
+`[propext, Classical.choice, Quot.sound]` (`evidence/landing/`). Replay: `replay-lcanon7.sh`, the
+closure of every file changed since `oleans-lrc2` (#150's `CfgRecord` with this PR's: 61 modules),
+at `274bdae9`.
+
+**Merge state. #152: not yet clear to merge.** Its replay is pending.
