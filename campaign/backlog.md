@@ -1538,6 +1538,24 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     sentence); CC7-1's census in the ledger.
   - **Optional (gate 67, note 6):** permanent sanity lemmas for the minimal table and truncation
     cases, with the canonizer's next change.
+- **#149 merged (user, 2026-10-23; `0698ef11`).** The campaign's Lean tree is `oleans-lspapi2`'s
+  (`3d0f80b5`). The campaign branch merges cleanly into all five queued PRs. Closures on the merged
+  trees: #147 3, #150 52, #151 4, #152 10, #153 5 modules. Overlaps beyond the facade: #147–#152
+  (`UniversalK`, `SelfUniversal`), #151–#152 (`NDCodeSimulator`, `NTimeHierarchy`, the
+  `Diagonalization` facade), #151–#153 and #152–#153 (`NTimeHierarchy`, `Diagonalization`); the
+  others are disjoint.
+  - **Wave 1 (now), each from `oleans-lspapi2`:** `replay-lirapi.sh` (#153, at `3ba8a876`),
+    `replay-lu2sc2.sh` (#147, at `e038eebe`), `replay-lmig12.sh` (#150, at `fdaf7d42`). Disjoint
+    beyond the facade, so they merge in any order once each passes.
+  - **Wave 2, after wave 1 merges:** #151 merges the campaign branch, takes the leaf re-point
+    `89bf6acb`, and replays from `oleans-lspapi2` the closure of every file changed since it
+    (wave 1's and #151's: the merged-tree rule); then #152 (with its re-point `e4c5d015`) from
+    #151's snapshot; then the UN landing (four commits) from #152's.
+  - **Wave 1 done (2026-10-23):** `lirapi` 5/5 (#153 merged), `lu2sc2` 3/3 (#147 merged),
+    `lmig12` 52/52 (#150 clear to merge).
+  - **Wave 2 started:** #151 at `dbf0ed2a` (the campaign after #147, #149 and #153 merged in;
+    the leaf re-point cherry-picked, blob `e2cdab7b` as audited); `replay-lrc2.sh`, 8 modules from
+    `oleans-lspapi2`.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,

@@ -20,4 +20,13 @@ replay.
 | 12 | note | The pending replay is a separate merge prerequisite; the `git merge-tree` result is not saved. | **Agreed.** After #149 merges, the campaign branch is merged into #150 (its merge is recorded), and the 52-module closure replays from #149's merged-tree snapshot, with the head, the snapshot and the admission set recorded. |
 | 3–8, 10 | notes | Integrity; the public freeze and the authorized documentation; the swap's fidelity; the scalar conversion; rule 10 and rule 11; boundary cases; the elaboration, axiom, probe and lint records. | No action. |
 
-**Merge state. #150: not yet clear to merge.** Its replay runs after #149 merges.
+**Replay** (after #149 merged): the campaign branch (`0698ef11`) merged into #150 cleanly
+(`fdaf7d42`); `replay-lmig12.sh`, `CfgRecord`'s downstream closure (52 modules,
+`down-lmig12.txt`), chained from `oleans-lspapi2`. **Passed (user, 2026-10-23): 52 of 52**, 0
+failed, static-equal (32; none in `CfgRecord`) (`evidence/replay/`). #147 and #153 merged after
+this replay's base; their closures meet this one only at the facade, so the replay stands for
+the merged tree (the merged-tree rule's facade exception). The docstring fix `8d9e3b5e` is in the
+replayed head.
+
+**Merge state. #150: clear to merge.** The gate is closed, the replay has passed, and the base is
+the campaign branch.
