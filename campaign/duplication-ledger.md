@@ -527,6 +527,24 @@ and `canonStageLeg5` → `canonStageLeg1` (91%). Three families: the cut leg, th
 the per-record bound. **Acknowledged (user, 2026-10-22): recorded as debt**, for the user's dedup
 window, together with the retirement of the now-unused `canonCounterRepeat` link (the user,
 2026-10-22).
+**Census** (gate 67, minor 3; the primary rule, each member counted once per file it inhabits;
+declarations as the style lint counts them; lines by the span rule, at #152's head `aed162fd`):
+- the members, by family (11):
+  - the cut leg (2): `canonGramCut_leg` (lines 7564–7585, 22), `canonStageCut_leg` (6332–6352,
+    21);
+  - the leg template (7): `canonStageLeg0`–`canonStageLeg6` (6354–7046: 90, 86, 91, 109, 106,
+    98 and 107 lines);
+  - the per-record bound (2): `canonStageBlock_consumes` (5669–5687, 19) and the base's frozen
+    private `skipTable_consumes` (233–245, 13), whose local per-record bound it re-proves (61%);
+- with IR-1's `canonGramMapComp` (7595–7607, 13), a cross-file member until #152's landing
+  re-points it.
+
+`TuringMachine/CodeSimulator`: **12 of 198 declarations (6.1%)** at the head (12 public, 186
+private), **775** lines in member blocks; after the re-point, **11 of 197 (5.6%)**, **762** lines.
+The file had no earlier ledger member: the item-8 entry's `tableBitsK` now lives in
+`Build/StepBlock`. The review's other new in-file pairs, those not between two members of these
+families, are screen matches, not members: all below 90%, between declarations with different
+statements. **The one-fifth rule** (`workflow.md` §4): not reached.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

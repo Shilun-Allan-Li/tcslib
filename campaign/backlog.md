@@ -1528,6 +1528,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     minor 2: the pack pointed to the bundle's README, which is not attached).
   - **Optional (gate 65, note 10):** a cross-reference to `Cfg.mapState_mapState` from
     `StateRenaming`'s docstring, with that module's next change.
+- **Gates 66 and 67 closed (2026-10-23):** 66 (#151, PASS 0/0/2/14: report and review errata) and
+  67 (#152, PASS 0/0/3/15). All six queued gates are now closed; no PR but #149 is clear to merge,
+  each waiting on its post-#149 replay.
+  - **Rule 10's scope (ruled, user, 2026-10-23; gate 67 minor 1):** TCSlib's own definitions.
+    Core and Mathlib definitions may reduce in `rfl`/`decide`/`show`, never passed to
+    `simp`/`rw`/`unfold`. In `policy.md` and the two unissued briefs.
+  - Fixes: #150 `8d9e3b5e` (the frozen sketch sentence, ruled), #152 `aed162fd` (the adapter
+    sentence); CC7-1's census in the ledger.
+  - **Optional (gate 67, note 6):** permanent sanity lemmas for the minimal table and truncation
+    cases, with the canonizer's next change.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,

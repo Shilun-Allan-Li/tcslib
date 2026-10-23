@@ -65,7 +65,10 @@ unfolding:
 - a machine: its run or contract lemma, the only way consumers read a machine.
 
 None carries `@[simp]` unless a gate approves it, and each docstring states its formula. Consumers
-never unfold another file's definition (the no-unfolding rule of the briefs, user 2026-10-16).
+never unfold another file's definition (the no-unfolding rule of the briefs, user 2026-10-16). The
+rule binds TCSlib's own definitions: core and Mathlib definitions may reduce in a `rfl`, `decide`
+or `show` step, but are never passed to `simp`, `rw` or `unfold`; use their equation lemmas
+(`Bool.toNat_true`, not `simp [Bool.toNat]`) (user, 2026-10-23).
 They read the machine model's primitives (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
 `Cfg.mapState`) through the existing lemmas. The style lint's check 8 reports, per file, every
 public `def` with no lemma named after it and no `simps` attribute, so a head-against-base diff
