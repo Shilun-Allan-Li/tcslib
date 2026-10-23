@@ -40,6 +40,7 @@ import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -176,6 +177,9 @@ for the local modifications.
   the one redistribution the step-block startups cite. Proved.
 * `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
   word or just past it, the empty word included. Proved.
+* `Build/InputRewind` — the rewind of the native input head to the first input cell: its exact
+  time, its first arrival at the park, and its unchanged work tapes, heads and output; and the
+  composition of two state relabelings of a configuration. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
@@ -244,7 +248,7 @@ for the local modifications.
 * `UniversalK` — the `k`-generic universal machine (U2) [AB09, Theorem 1.9]: the `k`-tape
   scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
   the self-application universal machine with time and space ledgers, and the code-first
-  evaluator. Statement gate passed 2026-10-15; the three contracts are sorried.
+  evaluator. The startup is proved; the other two contracts are sorried.
 * `SelfUniversal` — the self-application universal machine `U₀` and its startup
   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
   Statement gate passed 2026-10-14; both are the `k = 1` cases of `UniversalK`'s statements.

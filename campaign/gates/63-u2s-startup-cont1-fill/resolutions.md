@@ -21,5 +21,12 @@ review sub-agents were all occupied): all true.
 | 19 | note | The replay supports `28150fc1`; it does not substitute for the re-replay after #149. | **True.** After #149 merges, the campaign branch is merged into #147 and its six modules re-replay on that tree (with `741490ee`). |
 | 5–18 | notes | Integrity and freeze; the quantifier order; the definitions; the buffer machines; the empty-code and one-cell cases; the capture; the rewind; the R2 assembly, silence and space; `k = 0` and `k = 1`; the admission evidence; rules 10 and 11; duplication, lint and status text; the sweep and environment. | No action. Note 18's cache inventory is addendum v2.5's (already issued). |
 
-**Merge state. #147: not yet clear to merge.** It merges after #149 (whose 324-module closure
-contains its six), then re-replays on the merged tree.
+**Re-replay** (after #149 merged): the campaign branch (`0698ef11`) merged into #147 cleanly
+(`e038eebe`); `replay-lu2sc2.sh`, the closure of the PR's two files (3 modules: `UniversalK`,
+`SelfUniversal`, the facade; `down-lu2sc2.txt`), chained from `oleans-lspapi2`. **Passed (user,
+2026-10-23): 3 of 3**, 0 failed, static-equal (2: `UniversalK`'s other two stubs). Against the
+new snapshot `oleans-lu2sc2`, `Turing.exists_selfStartupTMK` and `Turing.exists_selfStartupTM`
+are on `[propext, Classical.choice, Quot.sound]` (`evidence/re-replay/`).
+
+**Merge state. #147: clear to merge.** The gate is closed, the re-replay has passed on the merged
+tree, and the base is the campaign branch.
