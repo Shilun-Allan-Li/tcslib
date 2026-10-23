@@ -1508,6 +1508,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     by field) reproduces 88% of `Cfg.mapState_mapState`'s text: a different statement in the same
     rewrite idiom, the review's 87% in-file pair with `un_mapState_comp`, now cross-file. **Ruled
     (user, 2026-10-23): accepted as an idiom pair** (as R's `iw_one` pair).
+- **Rulings for the post-#149 queue (user, 2026-10-23):**
+  - **Gates before replays:** the queued gates (64 #150, 65 #153, 66 #151, 67 #152, 68 the UN
+    landing) are dispatched before their post-#149 merged-tree replays; each pack lists its replay
+    as a pending attestation, recorded when it passes. A PR is clear to merge only when both its
+    gate and its replay have passed.
+  - **R's leaf at #151's landing:** if #153 has merged first, #151 re-points `ic_rewindLeafTM` and
+    `ic_rewind_leaf_run` to `inputRewindTM`/`inputRewindTM_run` in one more maintainer commit
+    (prepared and checked locally first; applied only after #153 merges).
+  - All five queued branches merge cleanly with #149's head (`git merge-tree`, 2026-10-23).
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's

@@ -14,9 +14,11 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
 - **Found while building it:** `Build/NDHost`'s private `guessRun_mapState_mapState` had exactly
   the new lemma's statement, and its proof unfolded `Cfg.mapState` (`StateRenaming`'s
   definition). **The user ruled (2026-10-22): re-point it in this PR.**
-- **The head:** `lean/input-rewind-api` at ⟨HEAD⟩: the commit `ac5ce7bc` on the campaign branch
-  at `86523ba5`, then ⟨MERGE: a merge of the campaign branch after #149⟩. Its Lean diff from the
-  merge-base is exactly the three files below (`evidence/input-rewind-api.patch`). This bundle's
+- **The head:** `lean/input-rewind-api` at `ac5ce7bc`, one commit on the campaign branch at
+  `86523ba5`. Its Lean diff from there is exactly the three files below
+  (`evidence/input-rewind-api.patch`). After #149 merges, the campaign branch is merged in (with
+  #149's head the merge is clean, by `git merge-tree`) and the result is replayed; the merge does
+  not change this PR's own diff. This bundle's
   records are from a later records commit (stated in the bundle's README).
 
 | File | Change |
@@ -48,12 +50,13 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
   - `freeze-NDHost.txt`, `freeze-TuringMachine.txt`; `lint-build.txt`;
   - the v3 screen: `screen-population.txt` and `screen-population-base.txt`, `screen-head.txt` and
     `screen-base.txt`, the `.status` files, and `screen-pairdiff.txt`;
-  - the replay's script, list (`down-lirapi.txt`), log and static check.
+  - the replay's list (`down-lirapi.txt`); its script, log and static check follow it.
 - **The bundle** also contains the three files at the head; `Simulation` (`FinTM.controlAction`,
   `FinTM.rewind_scan`); `StateRenaming` (`Cfg.mapState` and its field equations); `Configuration`;
   `Build/Rewind` (the work-tape rewind it is modelled on); the IR-1 members, namely
-  `ClassNP/ExhaustiveReplay`, UN's delivered `NTimeHierarchy`, and #151's `NDCodeSimulator`
-  (`ic_rewindLeafTM`, `ic_rewind_leaf_run`); and UN's review.
+  `ClassNP/ExhaustiveReplay`, UN's re-pointed `NTimeHierarchy` (in its landing's evidence), and
+  #151's `ic_rewindLeafTM` and `ic_rewind_leaf_run` (an excerpt, `evidence/ic-rewind-leaf.lean.txt`);
+  UN's review; the duplication ledger and the backlog.
 
 ## Brief for the auditor
 
@@ -114,8 +117,11 @@ nondeterministic time hierarchy, [AB09, Theorem 3.2]).
   (`evidence/screen-pairdiff.txt`).
 - **Replay:** `replay-lirapi.sh`: the downstream closure of the PR's files (5 modules:
   `Build/InputRewind`, `Build/NDHost`, `Diagonalization/NTimeHierarchy`, the `Diagonalization`
-  and `TuringMachine` facades) at ⟨HEAD⟩, chained from ⟨SNAPSHOT: #149's merged-tree snapshot⟩.
-  ⟨REPLAY RESULT⟩ (`evidence/replay-lirapi.*`).
+  and `TuringMachine` facades) at the merge head, chained from #149's merged-tree snapshot.
+  **Pending:** by the user's ruling (2026-10-23) this gate is dispatched before the replay, which
+  is recorded when it passes. The PR is clear to merge only when both have passed. No snapshot
+  holds the base tree (`oleans-lspapi` and `oleans-lu2sc1` each carry an unmerged PR's files), so
+  the replay waits for #149.
 
 ## Findings format
 
