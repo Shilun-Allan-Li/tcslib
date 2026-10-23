@@ -20,6 +20,7 @@ Run Python tools with `python3 -I`.
 | `privstmt.py`, `stmtcheck.py`, `census.py`, `codeonly.py`, `imports.py`, `axprobe.py` | declaration statements, counts, comment-stripped code, imports, axiom-print probes |
 | `pairdiff.py <head screen> <earlier screen>…` | new and removed pairs between copy-text screens (`scripts/copy-text-screen-v3.py`) |
 | `mkdownmulti.py <repo> <graph dir> <out> <module>…` | the union of modules' downstream closures in topological order, without the root `TCSlib`; needs `graph.py` (its graph dir is this folder) |
+| `fillinputs.py <repo> <rev> <module path> <outdir>` | a fill's build inputs at a revision, read with `git show`: the order list (the upstream closure of the owned module and of every module downstream of it, without the root `TCSlib`, in topological order), its Mathlib roots, and the base sorried declarations per module (with a `TOTAL` line) |
 | `staticsorry.py <worktree> <replay log>` | compare a replay log's sorry counts with a static count |
 | `mkreplay.py …` | write a chained replay script: prechecks (the pushed head, a clean tree, pinned blobs, the previous replay's pass, the list count, no root, a fresh snapshot), then `lean_check_tree.sh` per module |
 | `mkbundle-mixed.py <root> <lean-rev> <other-rev> <out> <order> [--verify]` | build an audit bundle: `TCSlib/` files from one revision, the records from another |
