@@ -1579,7 +1579,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   tree is `oleans-lun2`'s.
   - **#155 opened: the seam layout's sketches** (`lean/c1-seamlayout-sketches` at `6efc5be0`;
     docstrings only, no gate): code identical, elaborates against `oleans-lun2` with no output;
-    `replay-lslsk.sh`, 7 modules from `oleans-lun2`. **Pending.**
+    `replay-lslsk.sh`, 7 modules from `oleans-lun2`. **Passed (user, 2026-10-23): 7/7: #155 clear
+    to merge** (`campaign/fills/c1/evidence/c1-seamlayout-sketches/`).
   - **#156 opened: the phase host's last phase** (`lean/phasehost-last` at `eed76e8e`; the
     user's ruling of 2026-10-22): `phaseHostTM_tr_of_red_none` and `phaseHostTM_run_le` in
     `Build/Seam`. Seal, consumer probe, freeze, lint and the copy search clean; the screen running.
