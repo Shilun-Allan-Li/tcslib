@@ -1591,6 +1591,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     older rule-10 unfoldings). Seal of the three lemmas (8 controls), screen 125 → 125 pairs.
     **Gate 69 staged** (bundle `87d56842…`, 150 sections); `replay-lphl.sh`, 88 modules from
     `oleans-lslsk`.
+    **Gate 69 dispatched; `lphl` passed (88/88, static-equal 53)**: #156 waits on the gate only.
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
