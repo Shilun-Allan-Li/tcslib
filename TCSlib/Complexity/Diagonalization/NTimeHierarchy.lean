@@ -229,13 +229,13 @@ private theorem un_universal_of_setup (c : EffectiveNDMachineCode)
 /-! ### The setup machine's pieces
 
 `un_universal_of_setup` above reduces `Turing.exists_timed_universal_NDTM` to its setup
-hypothesis. The setup built below
-is a seam chain over `K + kC + 1` tapes — the core's `K`, the embedded header composite's `kC`,
-and the capture/counter tape last — whose phases are the embedded header pass, the code buffer's
-rewind and clear, a guided erase of the extractor scratch bank, the expansion of the captured
-budget word into the unary block, the block rewind, the counter clear, and the input rewind.
-The pieces here are the two leaf machines with their framed runs, the seam-step composer, the
-header composite's exact first halt, and two small word facts. -/
+hypothesis. The setup built below is a seam chain over `K + kC + 1` tapes — the core's `K`, the
+embedded header composite's `kC`, and the capture/counter tape last — whose phases are the
+embedded header pass, the code buffer's rewind and clear, a guided erase of the extractor scratch
+bank, the expansion of the captured budget word into the unary block, the block rewind, the
+counter clear, and the input rewind (`Turing.inputRewindTM`, imported). The pieces here are the
+guided bank-erase leaf with its framed run, the seam-step composer, the header composite's exact
+first halt, and two small word facts. -/
 
 /-- Flattening `t` copies of the one-symbol pattern gives the length-`t` unary block. -/
 private lemma un_flatten (t : ℕ) :
@@ -340,8 +340,9 @@ private lemma un_bankAct_eq {k : ℕ} (S : Finset (Fin k)) (g : Fin k) (m : Sign
 
 /-- **The guided bank erase**: one unconditional left step, a left sweep that blanks every
 selected tape while the guide tape still shows a symbol under the travelling head, and one
-step right into the live park. The guide's head travels with the bank but its word is kept;
-every other tape, every other head, the input head and the output are untouched. -/
+step right into the live park. The guide's head travels with the bank, and when the guide is not
+one of the selected tapes its word is kept; every other tape, every other head, the input head and
+the output are untouched. -/
 private def un_bankTM (k : ℕ) (S : Finset (Fin k)) (g : Fin k) :
     MultiTapeTM k Bool (Fin 3) where
   q₀ := 0
@@ -353,10 +354,10 @@ private def un_bankTM (k : ℕ) (S : Finset (Fin k)) (g : Fin k) :
       | none => un_bankAct k S g .pos 2
     else ⟨0, fun _ => (none, 0), none, some 2⟩
 
-/-- **The guided bank erase, framed.** Start with every bank tape and the guide holding a
-length-`L` buffered word with its head at `L`. The erase parks at exactly `L + 2` and not
-earlier, with the bank blank, the bank and guide heads at the origin, the guide's word and
-everything else unchanged.
+/-- **The guided bank erase, framed.** Take a guide outside the selected bank, and start with
+every bank tape and the guide holding a length-`L` buffered word with its head at `L`. The erase
+parks at exactly `L + 2` and not earlier, with the bank blank, the bank and guide heads at the
+origin, the guide's word and everything else unchanged.
 
 **Proof sketch.** After `r ≤ L + 1` steps the selected cells right of `L − r` are blank and the
 bank and guide heads are at `L − r`, by induction on `r`: the first step is unconditional, and
