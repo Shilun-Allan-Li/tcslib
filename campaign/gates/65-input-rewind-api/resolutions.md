@@ -21,4 +21,12 @@ campaign branch at `86523ba5`). Pack `pack.md`; bundle SHA-256
 | 13 | note | The pending merged-tree replay is a separate merge prerequisite. | **Agreed.** After #149 merges: merge the campaign branch into #153, replay the closure (`down-lirapi.txt`) from #149's merged-tree snapshot, and record the merge head, the snapshot, the closure check and the replay. |
 | 4–7, 9, 12 | notes | Integrity; the definitions and contracts (adversarial cases included); the composition law; the API's sufficiency for the exhibited consumers; NDHost's exact re-point; lint. | No action. |
 
-**Merge state. #153: not yet clear to merge.** Its replay runs after #149 merges.
+**Replay** (after #149 merged): the campaign branch (`0698ef11`) merged into #153 cleanly
+(`3ba8a876`); `replay-lirapi.sh`, the closure of the PR's three files (5 modules,
+`down-lirapi.txt`), chained from `oleans-lspapi2` (the campaign's Lean tree). **Passed (user,
+2026-10-23): 5 of 5**, 0 failed, static-equal (2: `NTimeHierarchy`'s two existing stubs). Against
+the new snapshot `oleans-lirapi`, the three theorems are on `[propext, Quot.sound]`
+(`evidence/replay/`).
+
+**Merge state. #153: clear to merge.** The gate is closed, the replay has passed on the merged
+tree, and the base is the campaign branch.
