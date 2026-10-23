@@ -4658,7 +4658,8 @@ It depends on `|x|` only through the `posWidth |x|` position digits. A halted
 `c` steps to itself with its tag
 unchanged, by `hupd`.
 
-**Proof sketch.** Compose by R2 seams, with no private trace. Read: `scanTM`
+**Proof sketch.** Compose the reads inside one phase host (`phaseHostTM`), joining the phases'
+segments by `Turing.Segment.trans`, with no private trace. Read: `scanTM`
 folds collect the state, the tag, and for each tape field the marked cell's
 content and whether the mark is at an edge, moving between fields by `skipTM`.
 Read the input symbol. The host's input position is arbitrary, so first save
