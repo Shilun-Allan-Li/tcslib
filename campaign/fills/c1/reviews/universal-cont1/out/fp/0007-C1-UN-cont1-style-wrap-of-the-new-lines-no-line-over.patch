@@ -1,0 +1,122 @@
+From d72ed65fec4c920a37be91e88eb0aaad5729d0a1 Mon Sep 17 00:00:00 2001
+From: C1 fill agent <fill-agent@campaign>
+Date: Thu, 22 Oct 2026 10:58:17 +0000
+Subject: [PATCH 7/7] C1 UN cont1: style wrap of the new lines (no line over
+ 100)
+
+---
+ .../Diagonalization/NTimeHierarchy.lean       | 37 ++++++++++++-------
+ 1 file changed, 24 insertions(+), 13 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+index 9f3b4eab344c3b2f5bdbf932c1dc3f5ea85194bb..8514e6dbb24a1c1585fac6e8a44b384f1271bb21 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
+@@ -350,7 +350,8 @@ length-`L` buffered word with its head at `L`. The erase parks at exactly `L + 2
+ earlier, with the bank blank, the bank and guide heads at the origin, the guide's word and
+ everything else unchanged. -/
+ private theorem un_bank_run {k : ℕ} {z : List Bool} (S : Finset (Fin k)) (g : Fin k)
+-    (hg : g ∉ S) (L : ℕ) (w : Fin k → List Bool) (hw : ∀ i, i ∈ S ∨ i = g → (w i).length = L)
++    (hg : g ∉ S) (L : ℕ) (w : Fin k → List Bool)
++    (hw : ∀ i, i ∈ S ∨ i = g → (w i).length = L)
+     (d : Cfg k Bool (Fin 3) z) (hstate : d.state = some 0)
+     (htape : ∀ i, i ∈ S ∨ i = g → d.workTapes i = FinTM.bufferTape (w i))
+     (hpos : ∀ i, i ∈ S ∨ i = g → d.workTapePos i = (L : ℤ)) :
+@@ -424,7 +425,8 @@ private theorem un_bank_run {k : ℕ} {z : List Bool} (S : Finset (Fin k)) (g :
+             if_pos (show (L : ℤ) - (r + 1 : ℕ) < q by push_cast; omega)]
+         · rw [if_neg hq]
+           by_cases hql : (L : ℤ) - r < q
+-          · rw [if_pos hql, if_pos (show (L : ℤ) - (r + 1 : ℕ) < q by push_cast at hql ⊢; omega)]
++          · rw [if_pos hql,
++              if_pos (show (L : ℤ) - (r + 1 : ℕ) < q by push_cast at hql ⊢; omega)]
+           · rw [if_neg hql, if_neg (show ¬((L : ℤ) - (r + 1 : ℕ) < q) by
+               push_cast at hq hql ⊢; omega)]
+       · rw [if_neg hiS, Cfg.workTapeSymbols_eq, Option.getD_none, Function.update_eq_self]
+@@ -718,7 +720,8 @@ capture head; the expansion writes the `t`-cell block on `ι jR` (`Turing.expand
+ `Turing.counterValue_bits`); the block rewind, the counter clear and the input rewind reach
+ the exit configuration. Each seam inherits the first-visit cut, and the ledger is linear by
+ `Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+-private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K ↪ Fin k) (cap : Fin k),
++private theorem un_setup :
++    ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K ↪ Fin k) (cap : Fin k),
+     cap ∉ Set.range ι ∧ ∃ (SP : Type) (_ : Fintype SP) (_ : DecidableEq SP)
+       (P : MultiTapeTM k Bool SP) (pexit : SP),
+       ∀ α : List Bool, ∃ CP : ℕ, ∀ (x : List Bool) (t : ℕ),
+@@ -887,14 +890,17 @@ private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K
+   let tp7 : Fin (K + MC.k + 1) → ℤ → Option Bool := fun i =>
+     if i = ι jR then blk else fun _ => none
+   -- the junction configurations
+-  let E1 : Cfg (K + MC.k + 1) Bool (MC.State ⊕ Unit) z := ⟨some (Sum.inr ()), ip23, tp1, hd1, []⟩
++  let E1 : Cfg (K + MC.k + 1) Bool (MC.State ⊕ Unit) z :=
++    ⟨some (Sum.inr ()), ip23, tp1, hd1, []⟩
+   let E2 : Cfg (K + MC.k + 1) Bool RewindPhase z := ⟨some RewindPhase.done, ip23, tp1, hd2, []⟩
+   let E3 : Cfg (K + MC.k + 1) Bool SweepPhase z := ⟨some SweepPhase.done, ip23, tp3, hd2, []⟩
+   let E4 : Cfg (K + MC.k + 1) Bool (Fin 3) z := ⟨some 2, ip23, tp4, fun _ => 0, []⟩
+   let E5 : Cfg (K + MC.k + 1) Bool (CounterLoopState (Fin 2)) z :=
+     ⟨some CounterLoopState.done, ip23, tp5, hd5, []⟩
+-  let E6 : Cfg (K + MC.k + 1) Bool RewindPhase z := ⟨some RewindPhase.done, ip23, tp5, fun _ => 0, []⟩
+-  let E7 : Cfg (K + MC.k + 1) Bool SweepPhase z := ⟨some SweepPhase.done, ip23, tp7, fun _ => 0, []⟩
++  let E6 : Cfg (K + MC.k + 1) Bool RewindPhase z :=
++    ⟨some RewindPhase.done, ip23, tp5, fun _ => 0, []⟩
++  let E7 : Cfg (K + MC.k + 1) Bool SweepPhase z :=
++    ⟨some SweepPhase.done, ip23, tp7, fun _ => 0, []⟩
+   let E8 : Cfg (K + MC.k + 1) Bool (Fin 3) z := ⟨some 2, 1, tp7, fun _ => 0, []⟩
+   -- the phase times
+   let T1 : ℕ := 3 * u.length + 4 + (4 * bt.length + 5)
+@@ -1138,7 +1144,8 @@ private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K
+       rfl
+     have hps : (E2.mapState fun _ => SweepPhase.sweep).workTapePos iBuf = 0 := by
+       rw [Cfg.mapState_workTapePos]
+-      show (if iBuf = cap then (bt.length : ℤ) else if iBuf ∈ Sx then (bt.length : ℤ) else 0) = 0
++      show (if iBuf = cap then (bt.length : ℤ)
++        else if iBuf ∈ Sx then (bt.length : ℤ) else 0) = 0
+       rw [if_neg hBufcap, if_neg hBufSx]
+     have htp : ∀ q', (E2.mapState fun _ => SweepPhase.sweep).workTapes iBuf q' =
+         FinTM.bufferTape u q' := by
+@@ -1288,9 +1295,10 @@ private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K
+         refine Fin.lastCases ?_ (fun j' => ?_) j
+         · rw [Fin.lastCases_last]
+           funext q
+-          show (if 0 ≤ q ∧ q < 0 + (bt.length : ℤ) then some true else FinTM.bufferTape bt q) =
+-            tp5 (Fin.last (K + MC.k)) q
+-          show (if 0 ≤ q ∧ q < 0 + (bt.length : ℤ) then some true else FinTM.bufferTape bt q) =
++          show (if 0 ≤ q ∧ q < 0 + (bt.length : ℤ) then some true
++            else FinTM.bufferTape bt q) = tp5 (Fin.last (K + MC.k)) q
++          show (if 0 ≤ q ∧ q < 0 + (bt.length : ℤ) then some true
++            else FinTM.bufferTape bt q) =
+             (if cap = cap then capW else if cap = ι jR then blk else fun _ => none) q
+           rw [if_pos rfl, zero_add]
+         · rw [Fin.lastCases_castSucc]
+@@ -1306,7 +1314,8 @@ private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K
+             omega
+           by_cases hjb : j' = iBlkb
+           · rw [hjb]
+-            show (if iBlkb = iBlkb ∧ (0 : ℤ) ≤ q ∧ q < 0 + ((t * [true].length : ℕ) : ℤ) then
++            show (if iBlkb = iBlkb ∧ (0 : ℤ) ≤ q ∧
++                  q < 0 + ((t * [true].length : ℕ) : ℤ) then
+                 FinTM.bufferTape (List.replicate t [true]).flatten (q - 0)
+               else tp4 (Fin.castSucc iBlkb) q) = tp5 (Fin.castSucc iBlkb) q
+             have htp5v : tp5 (Fin.castSucc iBlkb) q = blk q := by
+@@ -1430,7 +1439,8 @@ private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K
+       show (if 0 ≤ p ∧ p < (bt.length : ℤ) then some true else FinTM.bufferTape bt p) = _
+       by_cases hp : 0 ≤ p ∧ p < (bt.length : ℤ)
+       · rw [if_pos hp]
+-        obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = (n : ℤ) := ⟨p.toNat, (Int.toNat_of_nonneg hp.1).symm⟩
++        obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = (n : ℤ) :=
++          ⟨p.toNat, (Int.toNat_of_nonneg hp.1).symm⟩
+         rw [FinTM.bufferTape_nat, List.getElem?_eq_getElem (by
+           rw [List.length_replicate]
+           exact_mod_cast hp.2)]
+@@ -1578,7 +1588,8 @@ private theorem un_setup : ∀ (K : ℕ) (jR : Fin K), ∃ (k : ℕ) (ι : Fin K
+         push_cast at hcon ⊢
+         omega
+     · rintro ⟨h0, hlt⟩
+-      obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = (n : ℤ) := ⟨p.toNat, (Int.toNat_of_nonneg h0).symm⟩
++      obtain ⟨n, rfl⟩ : ∃ n : ℕ, p = (n : ℤ) :=
++        ⟨p.toNat, (Int.toNat_of_nonneg h0).symm⟩
+       show FinTM.bufferTape (List.replicate t true) ((n : ℕ) : ℤ) ≠ none
+       rw [FinTM.bufferTape_nat, List.getElem?_eq_getElem (by
+         rw [List.length_replicate]
+-- 
+2.50.1 (Apple Git-155)
+

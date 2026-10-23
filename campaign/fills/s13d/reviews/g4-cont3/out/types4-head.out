@@ -1,0 +1,24 @@
+@zr_rightSeekBackContract : {k : ℕ} →
+  (x : List (ZoneSym k)) →
+    Contract (seamCompTM (seekEndTM 2 0) SeekPhase.done (skipBackTM 2 0) SeekPhase.run) (Sum.inl SeekPhase.run)
+      {some (Sum.inr SeekPhase.done)} (zr_RightData k) x
+@zr_rightRulerContract : {k : ℕ} →
+  (x : List (ZoneSym k)) →
+    Contract
+      (seamCompTM (seamCompTM (seekEndTM 2 0) SeekPhase.done (skipBackTM 2 0) SeekPhase.run) (Sum.inr SeekPhase.done)
+        (seamCompTM (copyMapTM 2 0 1 (fun x => ()) fun x x_1 => Sum.inl false) SweepPhase.done (skipTM 2 0)
+          SeekPhase.run)
+        (Sum.inl SweepPhase.sweep))
+      (Sum.inl (Sum.inl SeekPhase.run)) {some (Sum.inr (Sum.inr SeekPhase.done))} (zr_RightData k) x
+@zr_adjustedWalkContract : {k : ℕ} →
+  (x : List (ZoneSym k)) →
+    Contract
+      (seamCompTM (zr_cellTM 1 (fun x => false) none 1) (some false) (walkTM 2 1 (fun x => True) 1) SeekPhase.run)
+      (Sum.inl none) {some (Sum.inr SeekPhase.done)} (List (ZoneSym k)) x
+@zr_adjustedBackContract : {k : ℕ} →
+  (x : List (ZoneSym k)) →
+    Contract
+      (seamCompTM
+        (seamCompTM (zr_cellTM 1 (fun x => false) none 1) (some false) (walkTM 2 1 (fun x => True) 1) SeekPhase.run)
+        (Sum.inr SeekPhase.done) (skipBackTM 2 1) SeekPhase.run)
+      (Sum.inl (Sum.inl none)) {some (Sum.inr SeekPhase.done)} (List (ZoneSym k)) x

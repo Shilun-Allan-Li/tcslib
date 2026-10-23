@@ -1,7 +1,11 @@
 # Ch3–4 fill campaign — B6 fill, batch F3, continuation 2: the configuration-count runner (`Turing.exists_configWindowRunnerTM`, `SpaceComplexity/WindowClock.lean`)
 
-<!-- DRAFT (maintainer), 2026-10-18. Issues after #134 (F3 cont1's landing) and #139
-(`wordPatch_append`) merge; #132 merges before #134. Issue-time items: ⟨BASE⟩, ⟨IN-FLIGHT⟩,
+<!-- DRAFT (maintainer), 2026-10-18; revised 2026-10-22 after the pre-ship at `0416ffea`
+(`drafts/b6-fill-configclock-cont2/preship-0416ffea/`). #134 and #139 have merged. **Issues
+after #149 (the space API, the user's ruling of 2026-10-22) merges**; re-run the pre-ship against
+#149's replay snapshot, with both `spaceUsed_eq_sum` and `spaceUsed_le_of_abs_le` added to the
+import probe (102 checks; gate 62, minor 2).
+Issue-time items: ⟨BASE⟩, ⟨IN-FLIGHT⟩,
 ⟨LINES⟩ (the file at the base: home, target, sorry, status paragraph; with gate 52's docstring
 commit on #134: 458 lines, target 426, sorry 456, status 404–424; without it 452, 420, 450,
 404–418), ⟨ORDER⟩, ⟨ROOTS⟩,
@@ -23,6 +27,11 @@ the pre-ship log. -->
   - **`Turing.wordPatch_append`** (PR #139, `Build/StepClock`; its API gate
     `campaign/gates/56-wordpatch-append/`): adjacent word patches join. It is **the user's ruling
     of 2026-10-18 on continuation 1's escalation E2** (option B);
+  - **the space API** (PR #149; its API gate `campaign/gates/62-spaceused-api/`):
+    `Turing.MultiTapeTM.spaceUsed_eq_sum` (`Deterministic`) and
+    **`Turing.MultiTapeTM.spaceUsed_le_of_abs_le`** (`Finite`): a common head radius `r` bounds the
+    space by `k · (2r + 1)`. It is **the user's ruling of 2026-10-22** on this brief's pre-ship,
+    which found no published route to the target's space clause;
   - continuation 1's report and the maintainer's review
     (`campaign/fills/b6/reports/configclock-cont1-REPORT.md`,
     `campaign/fills/b6/reviews/configclock-cont1/REVIEW.md`), whose "Continuation 2" list this
@@ -32,8 +41,9 @@ the pre-ship log. -->
     (`campaign/fills/b6/evidence/b6-fill/B6-fill-plan.md`; F3 is §3 and §6,
     Route A);
   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
-    (**v2.3**: Part 1, the resources and the cache, applies on every host; **the cache is fetched
-    for your brief's Mathlib roots only**), and the copy-text screen v3
+    (**v2.4**: Part 1, the resources and the cache, applies on every host; **the cache is fetched
+    for your brief's Mathlib roots only**; Part 3 when this brief is a megafill item), and the
+    copy-text screen v3
     `scripts/copy-text-screen-v3.py`;
   - **this round's inputs** (`campaign/fills/b6/inputs/b6-fill-configclock-cont2/`): the import
     probe, the consumer probe and the screen population; the order list
@@ -61,7 +71,7 @@ the pre-ship log. -->
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign tip after #134 and #139** (⟨BASE⟩). Lines in this
+- **Your base's Lean content is the campaign tip after #134, #139 and #149** (⟨BASE⟩). Lines in this
   brief are that tree's. `WindowClock.lean` there is continuation 1's landing (⟨LINES: 452⟩
   lines; 4 public, 11 private). Every probe and measurement below was run there, against the
   olean snapshot of ⟨the replay at the base⟩.
@@ -106,13 +116,30 @@ up to `configBound + 1`), and so are the writer's leaf and its two endpoint shap
 
 **Pre-ship check** (maintainer, at the base; `campaign/fills/b6/logs/b6-fill-configclock-cont2-preship.log`):
 - **Your file** elaborates with exactly the target's sorry warning.
-- **The import probe** (`F3C2ImportProbe.lean.txt`, ⟨PROBE: N⟩ `#check`s: continuation 1's 60, the
-  names its six helpers cite, and `wordPatch_append`): 0 errors, 0 warnings. Re-run it after your
-  delivery.
-- **Silence** (maintainer, at pre-ship): the framed rows' lemmas (`copyMapTM_run_ofCfg`,
-  `skipTM_run_ofCfg`, `clearTM_run_ofCfg`) state the output only at their endpoints; confirm
-  the published route to the round's and the writer's intermediate output clause, and name it
-  here.
+- **The import probe** (`F3C2ImportProbe.lean.txt`, ⟨PROBE: 102⟩ `#check`s: continuation 1's 60,
+  the names its six helpers cite, the join, the record's per-field lemmas, the seam's lockstep
+  lemmas and `Cfg.mapState`'s fields, silence, and space with `spaceUsed_eq_sum` and
+  `spaceUsed_le_of_abs_le`): 0 errors, 0 warnings. Re-run it after your delivery.
+- **The route probe** (`F3C2RouteProbe.lean.txt`, sealed over 12 other-file definitions, with its
+  controls `F3C2RouteSealControl.lean.txt`): every prescribed step's premise follows from public
+  lemmas, as derived there. In particular:
+  - **Silence** needs only endpoints: the framed rows (`copyMapTM_run_ofCfg`, `skipTM_run_ofCfg`,
+    `skipBackTM_run_ofCfg`, `clearTM_run_ofCfg`) keep the output at their endpoints, and by
+    `Turing.MultiTapeTM.output_prefix` at `0 ≤ u` and at `u ≤ T` the output at any `u ≤ T` lies
+    between the two equal ends (`List.IsPrefix.eq_of_length`; `f3c2_silence`). The same holds for
+    any composite whose endpoint keeps the output.
+  - **Each field** of the record is a delimited word at its offset (`f3c2_field`: `recordAt_iff`,
+    `Turing.fieldsTape_field`, `Turing.fieldOffset_add_length_le`), the premise of the copy and of
+    the skip on the source; the next field starts at `Turing.fieldOffset_succ`, and the last ends
+    at `Turing.length_joinFields_add_one`. Read backwards, the same facts give `skipBackTM`'s
+    premise (`f3c2_field_back`).
+  - **A word patched onto a blank tape** is a delimited word at the patch's start
+    (`f3c2_patch_word`): F2's clock precondition, and the clock rewind's.
+  - **The head envelope through a seam:** `Turing.seamCompTM_runFrom_left` (every `u ≤ T₁`) and
+    `Turing.seamCompTM_runFrom_right` (every `T₁ + 1 + v`), with `Turing.Cfg.mapState_workTapePos`
+    pointwise (`f3c2_seam_heads`); in a phase host, `phaseHostTM_run`'s prefix clause.
+  - **Space:** with nothing published, the sum over the tapes closed only through
+    `MultiTapeTM.spaceUsed`'s definition (the probe's space control). #149 publishes it.
 - **The consumer probe** (`F3ConsumerProbe.lean.txt`, unchanged): row 18's endpoint, after the
   radius word is cleared, is this contract's precondition. 0 errors.
 - **The join** (`F3C2JoinProbe.lean.txt`): `cw_copy_constant`'s endpoint on the clock tape is
@@ -157,6 +184,11 @@ at integration.
 - **The rows:** the mapped copy `copyMapTM_run_ofCfg` (through `cw_copy_constant`); `skipTM_run_ofCfg`,
   `skipBackTM_run_ofCfg`, `clearTM_run_ofCfg` (through `cw_clear_patch`); F2's runner
   `exists_windowRunnerTM`; state transport `MultiTapeTM.runFrom_mapState_of_agreeOn`.
+- **Intermediate configurations** (the envelope and space clauses): `seamCompTM_runFrom_left`,
+  `seamCompTM_runFrom_right`, `phaseHostTM_run`'s prefix. **Silence** by
+  `MultiTapeTM.output_prefix` from the endpoints. **Space** by
+  **`MultiTapeTM.spaceUsed_le_of_abs_le`** from the envelope clause (its hypothesis is that
+  clause at `r = C · (L + 1)`); never read `MultiTapeTM.spaceUsed` by its definition.
 - **Leaves you may write:** `cw_leftTM` (landed) and a one-step exit dispatch if a phase host
   needs one. Nothing else.
 - **The join (E2, ruled B):** adjacent constant writes on the clock tape join by
@@ -194,12 +226,17 @@ nonempty, `Turing.cfgRecord_field_ne_nil`) and `F = (fs.map List.length).sum`.
    fields to the record's first cell): the clock tape becomes
    `wordPatch ct p (List.replicate (c · F) e)`.
 4. **The clock's rewind** to its start (back over the word to its first cell), so that the word
-   is at F2's clock head.
+   is at F2's clock head. After the last round `cw_leftTM` has left the clock head **on** the
+   word's right delimiter, but `skipBackTM_run_ofCfg` needs it one cell past: first a `skipTM`
+   over the empty word (one step right; its premise is the blank delimiter), then `skipBackTM`
+   over the word (both premises are in the route probe).
 5. **The writer's contract**: from the record at the head of tape `0` (`RecordAt d 0 fs`) and a
    blank clock tape, the all-`e` word of width `c · F` at the clock head, both heads returned,
    silently, within `C · ((joinFields fs).length + 1)` (continuation 1's recommended stub,
    `campaign/fills/b6/inputs/b6-fill-configclock/tools/home.lean.txt`, or your restatement).
-6. **Then phase 2**, the target: R1-embed the writer on `{0, clock}`; seam to
+6. **Then phase 2**, the target: build the writer directly on all of the runner's tapes (every row
+   takes the tape count and its tape indices as parameters; no embedding is needed), or R1-embed
+   it on `{0, clock}` by `embedEmitTM`; seam to
    `exists_windowRunnerTM` at its entry; at `halted` and `left`, clear by `cw_clear_patch`; dispatch
    the three exits; instantiate `cw_time_bound`'s `A`/`D` and `cw_head_bound`; move the
    certification by `Turing.windowRun_stop_unique`. The clock tape is the runner's last tape; the
@@ -211,8 +248,9 @@ nonempty, `Turing.cfgRecord_field_ne_nil`) and `F = (fs.map List.length).sum`.
      (`cw_time_bound`'s `A + 4c + D + 10`), the head constant (`cw_head_bound`'s `C_R · (c + 1)`)
      and the space clause at once (take their sum or maximum).
    - **Silence and space** are clauses of the target too (`∀ u ≤ t, output = d.output`, and the
-     `spaceUsed` bound): prove them for the composite, through the seams and the embedding, not
-     only at the endpoints.
+     `spaceUsed` bound): prove them for the composite. Silence from the composite's endpoint by
+     `output_prefix` (above); space by `spaceUsed_le_of_abs_le` from the composite's envelope,
+     which comes through the seams' lockstep lemmas.
 
 ### Phases (for a partial; ground rule 9)
 
@@ -234,7 +272,9 @@ Continuation 1's 60 names (the target, its runner and the window semantics; the 
 count and the record layout; the framed rows; composition; Route B; the record facts and the
 brief-inventory API), the names continuation 1's six helpers cite (`copyMapTM_run_ofCfg`,
 `tapeAction`, `step_of_tapeAction_move`, `cfgRecord_length`, `joinFields_cfgRecord_length`,
-`recordLength_eq`, `record_pos_lt`, `configBound_le_two_pow`, …), and `wordPatch_append`.
+`recordLength_eq`, `record_pos_lt`, `configBound_le_two_pow`, …), `wordPatch_append`, the
+record's per-field lemmas, the seam's lockstep lemmas, `MultiTapeTM.output_prefix`, and the
+space API (`spaceUsed_eq_sum`, `spaceUsed_le_of_abs_le`).
 
 **Proved modulo, exactly:** none. A complete delivery has no `sorryAx` in your target.
 
@@ -263,6 +303,9 @@ brief-inventory API), the names continuation 1's six helpers cite (`copyMapTM_ru
     - **Never unfold a definition of another file**, and no definitional closure either. Read
       `wordPatch` only through `wordPatch_of_mem`, `_of_not_mem` and `wordPatch_append`, and
       `FinTM.bufferTape` only through its equations.
+    - **Scope (user, 2026-10-23):** this binds TCSlib's own definitions. Core and Mathlib
+      definitions may reduce in a `rfl`, `decide` or `show` step, but are never passed to `simp`,
+      `rw` or `unfold`; use their equation lemmas (`Bool.toNat_true`, not `simp [Bool.toNat]`).
     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
       `Cfg.mapState`) are read through their lemmas. Unfold `step` and `Action.apply` only for a
       leaf defined in your own file. `phaseHostTM`'s table is read through `phaseHostTM_run`.
@@ -303,7 +346,7 @@ Run the text-level screen **before and after**, **one run at a time, under `nice
 
 ## Environment and verification
 
-- Lean 4 v4.25.0, mathlib pinned; the cache **for your roots only** (addendum v2.3, items 2–4;
+- Lean 4 v4.25.0, mathlib pinned; the cache **for your roots only** (addendum v2.4, items 2–4;
   ⟨ROOTS⟩ roots); **never `lake build`**, and never the unfiltered `lake exe cache get`. Use
   `scripts/lean_check_tree.sh` for every check.
 - **Bootstrap once** from `campaign/fills/b6/orders/b6-fill-configclock-cont2.txt` (⟨ORDER⟩
@@ -328,7 +371,7 @@ of these beyond a named citation, that is an escalation, not a license.
 
 ## REPORT.md checklist
 
-- [ ] The preflight's numbers, the roots' count and the cache fetch's (addendum v2.3).
+- [ ] The preflight's numbers, the roots' count and the cache fetch's (addendum v2.4).
 - [ ] 1/1, or the checkpoint reached; the base hash and the ancestor check; the checkpoint zips.
 - [ ] Every new declaration with its role; the writer's contract as recommended or restated; the
       status paragraph.

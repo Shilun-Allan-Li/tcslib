@@ -1,0 +1,209 @@
+From 57a4b90fe06f2dfbe0fcbeb2b64b391770c9800c Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 22 Oct 2026 19:32:00 -0400
+Subject: [PATCH] CodeSimulator: proof sketches for the grammar stage's 13 long
+ private proofs (docstrings only)
+
+The record round, the inner and outer blocks and the block's consumption bound, the stage front
+and its seven legs, and the ledger each gain a "Proof sketch" (the review's F4; the user's ruling).
+The code is unchanged with comments stripped.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/CodeSimulator.lean          | 96 ++++++++++++++++---
+ 1 file changed, 83 insertions(+), 13 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index 7f188afc..b73362e0 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -4963,7 +4963,12 @@ origin, empty output, the native head inside the input), one round costs a posit
+ most linear in `|x| + |w| + 1`, avoids both ports strictly inside, exits at the anchor exactly
+ when one more record skips (`codeSkipActionK` at the counter value of the bound word), and on
+ success preserves the bank and moves the native head to the skipped suffix. The inner
+-counter loop of the grammar stage iterates this round. -/
++counter loop of the grammar stage iterates this round.
++
++**Proof sketch.** The adapter-wrapped validator `exists_canonRecordRound` gives, for each such
++configuration, a time with all but the suffix clause; choose it per configuration (zero off the
++domain). On success the skipped word is a suffix of the input (`canonStageSkip_suffix`), so the
++reported head position gives it by dropping (`canonStageSuffix_drop`). -/
+ private lemma canonStageRoundSpec (k : ℕ) :
+     ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM m Bool H)
+       (anchor escape : H) (bound : Fin m) (B : ℕ), escape ≠ anchor ∧
+@@ -5049,7 +5054,15 @@ round costs a positive time at most linear in `|x| + |w| + 1` (the coefficient d
+ on `k`), avoids both fresh ports strictly inside, exits at the anchor exactly when one inner
+ block of records skips (`codeSkipRepeat` of the record skipper, `3 ^ (k + 1)` times), and on
+ success re-establishes the bank and the closed counter window and moves the native head to the
+-surviving suffix. -/
++surviving suffix.
++
++**Proof sketch.** Write the inner counter word `(3 ^ (k + 1)).bits` on the last tape
++(`writeConstTM_run_ofCfg`); its value is `3 ^ (k + 1)`. Then run the record round's counter loop
++(`counterLoopTM` over `canonStageRoundSpec`) through the seam. `canonRepeat_orbit` reads the loop's
++orbit off the round's specification: each round either skips one record and returns to the anchor
++or escapes, and the counter stops the loop after `3 ^ (k + 1)` returns, so the block succeeds
++exactly when `codeSkipRepeat` does. The fresh-anchor adapter (`canonReturnAdapter`) turns the seam
++into one outer round; its time, the write row's plus the rounds', is linear in `|x| + |w| + 1`. -/
+ private lemma canonStageInnerSpec (k : ℕ) :
+     ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM (m + 1) Bool H)
+       (anchor escape : H) (bound : Fin m) (B : ℕ), escape ≠ anchor ∧
+@@ -5654,7 +5667,10 @@ private lemma canonStageInnerSpec (k : ℕ) :
+   exact (hmain d hcond.1 hcond.2).choose_spec
+ 
+ /-- One successful inner block consumes at least one input cell: every record it skips has at
+-least `4k + 5` bits (`codeActionK_length`) and the block skips `3^(k+1)` of them. -/
++least `4k + 5` bits (`codeActionK_length`) and the block skips `3^(k+1)` of them.
++
++**Proof sketch.** Every successful record skip consumes at least `4k + 5` cells (its read action's
++bits), so `skipRepeat_consumes` bounds the consumed length below by `(4k + 5) · 3 ^ (k + 1) ≥ 1`. -/
+ private lemma canonStageBlock_consumes (k n : ℕ) (xs ys : List Bool)
+     (h : codeSkipRepeat (codeSkipActionK k n) (3 ^ (k + 1)) xs = some ys) :
+     1 + ys.length ≤ xs.length := by
+@@ -5679,7 +5695,16 @@ each round that returns consumes at least one input cell (`canonStageBlock_consu
+ most `|x| + 1` rounds ever run, each charged the inner block's linear budget, and the counter
+ overhead is settled by `counterOverhead_le` and `counterOverhead_le_of_le`. The block avoids
+ both fresh ports strictly inside, exits by the table verdict on the native suffix, and on
+-success has empty output and the native head at the surviving suffix. -/
++success has empty output and the native head at the surviving suffix.
++
++**Proof sketch.** Run the outer counter loop (`counterLoopTM`) over the inner block
++(`canonStageInnerSpec`) from the incremented copy. `canonRepeat_orbit` reads its orbit off the
++inner block's specification. Each returning round consumes an input cell
++(`canonStageBlock_consumes`), so at most `|x| + 1` rounds run, whatever the counter's value; each is
++charged the inner block's linear budget, and the counter's own steps are bounded by
++`counterOverhead_le` and `counterOverhead_le_of_le`. The verdict is the table grammar's
++(`canonSkipTable_eq`). The fresh-anchor adapter (`canonReturnAdapter`) wraps the loop as one
++block. -/
+ private lemma canonStageOuterSpec (k : ℕ) :
+     ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (P : MultiTapeTM (m + 2) Bool H)
+       (anchor escape : H) (bound : Fin m) (A : ℕ), escape ≠ anchor ∧
+@@ -6326,7 +6351,12 @@ private lemma canonStageCut_leg {M : ℕ} {SU : Type} {x : List Bool}
+     intro hcon
+     exact hi (congrArg (fun z : Σ j, canonStagePh SU j => z.1.val) (Option.some.inj hcon))
+ 
+-/-- Leg 0 of the stage front. -/
++/-- Leg 0 of the stage front: copy the header onto the outer counter (`Turing.copyTM`).
++
++**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
++`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
++gives the lockstep window and the dispatch, and the dispatched configuration is the next
++phase's bank configuration, field by field. -/
+ private lemma canonStageLeg0 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6412,7 +6442,12 @@ private lemma canonStageLeg0 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+   · rw [Cfg.mapState_output, Cfg.mapState_output]
+     rfl
+ 
+-/-- Leg 1 of the stage front. -/
++/-- Leg 1 of the stage front: skip past the copy on the outer counter (`Turing.skipTM`).
++
++**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
++`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
++gives the lockstep window and the dispatch, and the dispatched configuration is the next
++phase's bank configuration, field by field. -/
+ private lemma canonStageLeg1 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6494,7 +6529,12 @@ private lemma canonStageLeg1 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+   · rw [Cfg.mapState_output, Cfg.mapState_output]
+     rfl
+ 
+-/-- Leg 2 of the stage front. -/
++/-- Leg 2 of the stage front: one step back on the outer counter (`Turing.walkTM`).
++
++**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
++`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
++gives the lockstep window and the dispatch, and the dispatched configuration is the next
++phase's bank configuration, field by field. -/
+ private lemma canonStageLeg2 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6581,7 +6621,12 @@ private lemma canonStageLeg2 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+   · rw [Cfg.mapState_output, Cfg.mapState_output]
+     rfl
+ 
+-/-- Leg 3 of the stage front. -/
++/-- Leg 3 of the stage front: write the spare `false` pad (`Turing.writeConstTM`).
++
++**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
++`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
++gives the lockstep window and the dispatch, and the dispatched configuration is the next
++phase's bank configuration, field by field. -/
+ private lemma canonStageLeg3 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6686,7 +6731,12 @@ private lemma canonStageLeg3 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+   · rw [Cfg.mapState_output, Cfg.mapState_output]
+     rfl
+ 
+-/-- Leg 4 of the stage front. -/
++/-- Leg 4 of the stage front: skip past the pad (`Turing.skipTM`).
++
++**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
++`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
++gives the lockstep window and the dispatch, and the dispatched configuration is the next
++phase's bank configuration, field by field. -/
+ private lemma canonStageLeg4 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6788,7 +6838,12 @@ private lemma canonStageLeg4 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+   · rw [Cfg.mapState_output, Cfg.mapState_output]
+     rfl
+ 
+-/-- Leg 5 of the stage front. -/
++/-- Leg 5 of the stage front: skip back over the padded word (`Turing.skipBackTM`).
++
++**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
++`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
++gives the lockstep window and the dispatch, and the dispatched configuration is the next
++phase's bank configuration, field by field. -/
+ private lemma canonStageLeg5 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6882,7 +6937,12 @@ private lemma canonStageLeg5 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+   · rw [Cfg.mapState_output, Cfg.mapState_output]
+     rfl
+ 
+-/-- Leg 6 of the stage front. -/
++/-- Leg 6 of the stage front: increment the padded copy (`Turing.incrementTM`).
++
++**Proof sketch.** As for the other legs, with the increment row's success case
++(`incrementTM_run_succ_ofCfg`): the padded copy does not overflow, and its incremented word has
++the same length (`incFixed_length`). Then `phaseHostTM_run` and the field-by-field
++identification of the next phase's bank configuration. -/
+ private lemma canonStageLeg6 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+     (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+@@ -6996,7 +7056,14 @@ preserves the header, leaves every tape but the outer counter as it found it, pu
+ incremented header copy (of value `counterValue w + 1`) on the outer counter with its head
+ at the origin, exits by C1's verdict with a strict cut, and on success lands the native head
+ at the surviving suffix. C1's contract is a hypothesis, so the stage assembly can discharge
+-it at `exists_canonUnaryTM` within its own tape budget. -/
++it at `exists_canonUnaryTM` within its own tape budget.
++
++**Proof sketch.** The padded header copy increments without overflow (`incFixed` on it is `some v`,
++of length `|w| + 1` and value `counterValue w + 1`). The seven legs (`canonStageLeg0`–`Leg6`) carry
++the bank configuration from phase to phase, each with its lockstep window and dispatch. The
++eighth phase is C1 embedded by the forwarding transformer (`embedEmitCfg_eq` for its start, its
++contract for the run), and `phaseHostTM_run` dispatches both its ports to the parking phase. The
++strict cut is `canonStageCut_leg` on each phase's window; the endpoint is the last leg's. -/
+ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+     (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU) (uBound : Fin mU) (ua : ℕ)
+     (uinj : Function.Injective ux)
+@@ -7540,7 +7607,10 @@ private lemma canonGramMapComp {M : ℕ} {x : List Bool} {S A B : Type}
+   · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+ 
+ /-- The grammar stage's ledger: a front leg, a table leg and a suffix leg, each with its
+-dispatch step, fit under one polynomial exponent. -/
++dispatch step, fit under one polynomial exponent.
++
++**Proof sketch.** Bound the three legs with their dispatch steps by `(2·AF + 9·A₃ + 8)·(X + 1)²`,
++then raise the square to the common exponent (`pow_le_pow_right`, since `X + 1 ≥ 1`). -/
+ private lemma canonGramLedger (AF A₃ X t₁ t₂ t₃ : ℕ)
+     (h₁ : t₁ ≤ AF * (2 * (X + 1))) (h₂ : t₂ ≤ A₃ * (3 * (X + 1)) ^ 2)
+     (h₃ : t₃ ≤ X + 2) :
+-- 
+2.50.1 (Apple Git-155)
+

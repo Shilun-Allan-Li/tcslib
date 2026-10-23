@@ -1,0 +1,31 @@
+added lines:      227
+## forbidden/notable tokens in added lines
+36:    exact zr_constantCopy_cell 1 0 (by decide) _ w d j q
+72:      split_ifs <;> first | rfl | omega
+122:      rfl
+167:    Function.update_of_ne (by decide : (0 : Fin 2) ≠ 1),
+168:    Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0),
+169:    show (0 : Fin 2) ≠ 1 by decide, show (1 : Fin 2) ≠ 0 by decide,
+200:  simp only [show (0 : Fin 2) ≠ 1 by decide, false_and, if_false, true_and, hz.1]
+## imports pbase vs head
+imports identical:
+6:import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+7:import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+8:import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+9:import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+## sorry occurrences in head
+1408:  sorry
+1449:  sorry
+## R3 rows in added lines
+none
+## host/trace words in added lines
+none
+## new decl names
+4:private abbrev zr_singletonContract {n : ℕ} {Γ S I : Type} {x : List Γ}
+23:private lemma zr_halfCopy_post {k : ℕ} {x : List (ZoneSym k)} (inner : Bool)
+45:private lemma zr_writeHalves_post {k : ℕ} {x : List (ZoneSym k)} (w : List (ZoneSym k))
+87:private lemma zr_rightPass_post {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k) (d)
+138:private lemma zr_rightPass_bounds {k : ℕ} {x : List (ZoneSym k)} (D : zr_RightData k) (d)
+176:private lemma zr_rightPass_envelope {k : ℕ} {x : List (ZoneSym k)}
+191:private lemma zr_rightPass_tape {k : ℕ} {x : List (ZoneSym k)}
+219:private abbrev zr_rightPassRow {k : ℕ} (x : List (ZoneSym k)) :=

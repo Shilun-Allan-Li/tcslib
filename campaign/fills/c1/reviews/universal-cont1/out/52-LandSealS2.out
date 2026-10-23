@@ -1,0 +1,462 @@
+ReviewScratch/LandSealS2.lean:161:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+ReviewScratch/LandSealS2.lean:164:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+ReviewScratch/LandSealS2.lean:168:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+ReviewScratch/LandSealS2.lean:171:76: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (clearTM k i).q₀ = SweepPhase.sweep
+ReviewScratch/LandSealS2.lean:174:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode [] [true]
+is not definitionally equal to the right-hand side
+  [false, true, true]
+
+⊢ pairEncode [] [true] = [false, true, true]
+ReviewScratch/LandSealS2.lean:178:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+ReviewScratch/LandSealS2.lean:182:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/LandSealS2.lean:186:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+ReviewScratch/LandSealS2.lean:190:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+ReviewScratch/LandSealS2.lean:193:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+ReviewScratch/LandSealS2.lean:198:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+ReviewScratch/LandSealS2.lean:202:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ReviewScratch/LandSealS2.lean:206:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+ReviewScratch/LandSealS2.lean:209:53: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ↑(moveInputPos 0 SignType.pos) = 1
+ReviewScratch/LandSealS2.lean:213:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+ReviewScratch/LandSealS2.lean:216:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+ReviewScratch/LandSealS2.lean:219:37: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  universalPrefixTM.k = 0
+ReviewScratch/LandSealS2.lean:223:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+ReviewScratch/LandSealS2.lean:228:64: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (M₁.bufferedSecondCfg M₂ c b p tp hd).inputPos = p
+ReviewScratch/LandSealS2.lean:232:77: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  FinTM.tapeBlocks a b c = fun i => Fin.addCases a (fun i => Fin.addCases (fun x => b) c i) i
+ReviewScratch/LandSealS2.lean:236:67: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ReviewScratch/LandSealS2.lean:239:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+ReviewScratch/LandSealS2.lean:242:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+ReviewScratch/LandSealS2.lean:246:68: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none
+ReviewScratch/LandSealS2.lean:250:78: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+ReviewScratch/LandSealS2.lean:253:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+ReviewScratch/LandSealS2.lean:257:95: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  counterOverhead w r = ∑ j ∈ Finset.range r, (2 * (List.takeWhile not (counterWord w j)).length + 2)
+ReviewScratch/LandSealS2.lean:263:53: error: Application type mismatch: The argument
+  P.q₀
+has type
+  SP
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre
+in the application
+  ⟨GuessRunPhase.pre, P.q₀⟩
+ReviewScratch/LandSealS2.lean:267:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+ReviewScratch/LandSealS2.lean:271:45: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (streamStartCfg z j q s).inputPos = 1
+ReviewScratch/LandSealS2.lean:275:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+ReviewScratch/LandSealS2.lean:279:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/LandSealS2.lean:284:59: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  N.AcceptsWithin x t =
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+ReviewScratch/LandSealS2.lean:288:82: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  tm.HaltsWithin x t = ∀ (w : List Bool), w.length = t → (NDTM.runWith w (NDTM.initCfg x)).state = none
+ReviewScratch/LandSealS2.lean:291:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+ReviewScratch/LandSealS2.lean:294:64: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre = SP
+ReviewScratch/LandSealS2.lean:298:38: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:302:64: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:306:37: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:310:37: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:1956:26: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+ReviewScratch/LandSealS2.lean:1959:54: error: Tactic `rfl` failed: The left-hand side
+  FinTM.bufferTape [true] 0
+is not definitionally equal to the right-hand side
+  some true
+
+⊢ FinTM.bufferTape [true] 0 = some true
+ReviewScratch/LandSealS2.lean:1963:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+ReviewScratch/LandSealS2.lean:1966:76: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (clearTM k i).q₀ = SweepPhase.sweep
+ReviewScratch/LandSealS2.lean:1969:59: error: Tactic `rfl` failed: The left-hand side
+  pairEncode [] [true]
+is not definitionally equal to the right-hand side
+  [false, true, true]
+
+⊢ pairEncode [] [true] = [false, true, true]
+ReviewScratch/LandSealS2.lean:1973:89: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+ReviewScratch/LandSealS2.lean:1977:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/LandSealS2.lean:1981:63: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).state = some q
+ReviewScratch/LandSealS2.lean:1985:52: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (FinTM.controlAction m q).state = q
+ReviewScratch/LandSealS2.lean:1988:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+ReviewScratch/LandSealS2.lean:1993:85: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] c).state = c.state
+ReviewScratch/LandSealS2.lean:1997:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+ReviewScratch/LandSealS2.lean:2001:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply c).state = a.state
+ReviewScratch/LandSealS2.lean:2004:53: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ↑(moveInputPos 0 SignType.pos) = 1
+ReviewScratch/LandSealS2.lean:2008:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+ReviewScratch/LandSealS2.lean:2011:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+ReviewScratch/LandSealS2.lean:2014:37: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  universalPrefixTM.k = 0
+ReviewScratch/LandSealS2.lean:2018:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+ReviewScratch/LandSealS2.lean:2023:64: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (M₁.bufferedSecondCfg M₂ c b p tp hd).inputPos = p
+ReviewScratch/LandSealS2.lean:2027:77: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  FinTM.tapeBlocks a b c = fun i => Fin.addCases a (fun i => Fin.addCases (fun x => b) c i) i
+ReviewScratch/LandSealS2.lean:2031:67: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+        output := c.output } =
+    { state := none, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+ReviewScratch/LandSealS2.lean:2034:52: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM true false).k = 1
+ReviewScratch/LandSealS2.lean:2037:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+ReviewScratch/LandSealS2.lean:2041:68: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none
+ReviewScratch/LandSealS2.lean:2045:78: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (counterLoopCfg q c ct cp).state = q
+ReviewScratch/LandSealS2.lean:2048:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+ReviewScratch/LandSealS2.lean:2052:95: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  counterOverhead w r = ∑ j ∈ Finset.range r, (2 * (List.takeWhile not (counterWord w j)).length + 2)
+ReviewScratch/LandSealS2.lean:2058:53: error: Application type mismatch: The argument
+  P.q₀
+has type
+  SP
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre
+in the application
+  ⟨GuessRunPhase.pre, P.q₀⟩
+ReviewScratch/LandSealS2.lean:2062:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+ReviewScratch/LandSealS2.lean:2066:45: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (streamStartCfg z j q s).inputPos = 1
+ReviewScratch/LandSealS2.lean:2070:27: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  NDTM.runWith [] c = c
+ReviewScratch/LandSealS2.lean:2074:39: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  NDTM.initCfg x = Cfg.init tm.q₀ x
+ReviewScratch/LandSealS2.lean:2079:59: error: Type mismatch
+  rfl
+has type
+  ?m.37 = ?m.37
+but is expected to have type
+  N.AcceptsWithin x t =
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+ReviewScratch/LandSealS2.lean:2083:82: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  tm.HaltsWithin x t = ∀ (w : List Bool), w.length = t → (NDTM.runWith w (NDTM.initCfg x)).state = none
+ReviewScratch/LandSealS2.lean:2086:46: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.toFinNDTM.k = 2
+ReviewScratch/LandSealS2.lean:2089:64: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  GuessRunPhase.State SP SQ GuessRunPhase.pre = SP
+ReviewScratch/LandSealS2.lean:2093:38: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:2097:64: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:2101:37: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:2105:37: error: `simp` made no progress
+ReviewScratch/LandSealS2.lean:2207:8: warning: declaration uses 'sorry'
+# exit=1 wall=4s file=ReviewScratch/LandSealS2.lean olean=oleans-lg4c2 wt=wt-land head=d72ed65f

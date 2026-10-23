@@ -1,0 +1,10 @@
+'Turing.MultiTapeTM.spaceUsed_eq_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM.spaceUsed_le_of_abs_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Turing.MultiTapeTM.spaceUsed_eq_sum : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.spaceUsed cfg t = ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+@Turing.MultiTapeTM.spaceUsed_le_of_abs_le : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (d : Turing.Cfg k Symbol State input) (t r : ℕ),
+  (∀ u ≤ t, ∀ (j : Fin k), |(Turing.MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤ ↑r) →
+    Turing.MultiTapeTM.spaceUsed d t ≤ k * (2 * r + 1)
+exit 0

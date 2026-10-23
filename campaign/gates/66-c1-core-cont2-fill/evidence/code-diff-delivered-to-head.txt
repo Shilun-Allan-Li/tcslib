@@ -1,0 +1,35 @@
+--- delivered (code only)
++++ head (code only)
+@@ -573,6 +573,6 @@
+     refine ⟨?_, ?_⟩
+-    · show (ic_rewindLeafTM k).step cfg = _
+-      rw [hstep, hm]
++    · rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero, hstep, hm]
+     · intro u hu
+       obtain rfl : u = 0 := by omega
++      rw [MultiTapeTM.runFrom_zero]
+       exact hs
+@@ -596,3 +596,5 @@
+       cases u with
+-      | zero => exact hs
++      | zero =>
++        rw [MultiTapeTM.runFrom_zero]
++        exact hs
+       | succ u =>
+@@ -618,7 +620,5 @@
+     (by rw [hstep]) (by rw [hstep]; exact hval) hlen
+-  have htime : cfg.inputPos.val + 1 = 1 + (cfg.inputPos.val - 1 + 1) := by omega
++  have htime : cfg.inputPos.val + 1 = cfg.inputPos.val - 1 + 1 + 1 := by omega
+   refine ⟨?_, ?_⟩
+-  · rw [htime, MultiTapeTM.runFrom_add]
+-    show (ic_rewindLeafTM k).runFrom ((ic_rewindLeafTM k).step cfg) _ = _
+-    rw [hrun, hstep]
++  · rw [htime, MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
+   · intro u hu
+@@ -2075,4 +2075,4 @@
+         none ∧ ((c.decode α).tm.runWith (s.take t) ((c.decode α).tm.initCfg x)).output = [true]
+-    · rw [if_pos hP, decide_eq_true hP]
+-    · rw [if_neg hP, decide_eq_false hP]
++    · simp only [hP, and_self, decide_true, if_true]
++    · simp only [hP, decide_false, if_false]
+   ·

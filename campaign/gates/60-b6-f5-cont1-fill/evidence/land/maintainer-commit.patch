@@ -1,0 +1,80 @@
+commit 8114e482fcad1f1d07abdcc244ef74755b752b56
+Author: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date:   Thu Oct 22 13:28:33 2026 -0400
+
+    InputDevice: the module's and the facade's status, proved; implementation notes for the call rows and the host
+    
+    Docstrings only; the code is identical with comments stripped.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 9bda1ca2..9633aaa1 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -224,8 +224,7 @@ for the local modifications.
+   run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
+   passed 2026-10-14; the specification is proved, the machine contracts are sorried.
+ * `Build/InputDevice` — host H5: the input-device interface, the native device, and the
+-  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
+-  devices' facts are proved, the machine contracts are sorried.
++  bounded-prefix ruler device with its boundary test, call rows and host. Proved.
+ * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
+   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
+   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
+diff --git a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+index f8339572..c6b99e69 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+@@ -42,9 +42,9 @@ the bank, the output and the ruler are those of the source at some source time (
+ frames), the host does not halt before the source does (the exit cut), and the time and space
+ ledgers are separate clauses. Literal lockstep is the native special case.
+ 
+-**Status.** The definitions, the devices' correctness facts and the restoring boundary test
+-`Turing.exists_rulerTestTM` are proved; the call rows `Turing.exists_rulerDeviceTM` and the host
+-`Turing.exists_rulerHostTM` are sorried with their proof sketches.
++**Status.** Everything here is proved: the devices' correctness facts, the restoring boundary
++test `Turing.exists_rulerTestTM`, the call rows `Turing.exists_rulerDeviceTM` and the ruler host
++`Turing.exists_rulerHostTM`.
+ 
+ ## Main definitions
+ 
+@@ -63,7 +63,7 @@ ledgers are separate clauses. Literal lockstep is the native special case.
+   `Complexity.space_universal`'s input (proved).
+ * `Turing.exists_rulerTestTM` — the restoring boundary test (proved).
+ * `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the call rows and the host
+-  (sorried).
++  (proved).
+ 
+ ## References
+ 
+@@ -671,7 +671,12 @@ on `yes` answer blank; on `no` answer the native symbol under the head, which is
+ `y[i - 1]` or the right blank (`Turing.inputCell_of_drop`). Move: a right move is the native
+ clamped move (at `i = |y| + 1` the physical head is at `|z| + 1` and clamps exactly as
+ `moveInputPos` does); a stationary move does nothing; a left move is suppressed on `yes` and is
+-the native left move on `no`. Rows are joined by R2 seams; the dispatch steps add a constant. -/
++the native left move on `no`. Rows are joined by R2 seams; the dispatch steps add a constant.
++
++**Implementation.** One phase host (`Turing.phaseHostTM_run`) runs the boundary test, a one-step
++leaf built from `Turing.inputMoveAction` (stationary for a read; for a move the clamped move, with
++a left move suppressed on `yes`), and a final dispatch. Both rows take exactly `2ℓ + 5` steps, so
++`C = 4`; they are one argument with the operation as a parameter. -/
+ theorem exists_rulerDeviceTM :
+     ∃ (P : Type) (_ : Fintype P) (_ : DecidableEq P) (R : MultiTapeTM 1 Bool P)
+       (readEntry : P) (readExit : Option Bool → P) (moveEntry : SignType → P) (moveExit : P)
+@@ -1195,7 +1200,14 @@ halting source transition halts the host in the same step, with no pause. The pa
+ `C · (ℓ + 1)` steps, moves no bank head, writes nothing and emits nothing, which gives the
+ frames and the cut. Induct on `t` as `Turing.vhostEmitTM_runFrom` does; the visited-set clauses
+ follow `Turing.vhostEmitTM_visitedByTapeHead_bank` and
+-`Turing.vhostEmitTM_visitedByTapeHead_buffer`. -/
++`Turing.vhostEmitTM_visitedByTapeHead_buffer`.
++
++**Implementation.** The host is a `Turing.Lockstep` over `Turing.rulerHostCfg` with the tag
++`c.inputPos = 0`. A block costs one step, or `2ℓ + 3` after a live left move from a cleared tag:
++the test runs on the last tape through `Turing.embedEmitTM` and the guarded state transport, and
++its verdict resumes the source directly. Hence `C = 3`. The endpoint, the cut and the frames come
++from `Turing.Lockstep.runFrom`, `.cut` and `.locate`, and the bank's visited sets are equal by
++`Turing.MultiTapeTM.mem_visitedByTapeHead_iff`. -/
+ theorem exists_rulerHostTM {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+     (M : MultiTapeTM m Bool S) :
+     ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (m + 1) Bool Q)

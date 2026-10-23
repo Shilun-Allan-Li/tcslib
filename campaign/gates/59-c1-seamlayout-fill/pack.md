@@ -1,11 +1,8 @@
-<!-- DRAFT (maintainer, 2026-10-22). Not staged. Waiting on: the user's rulings on the review's
-F1 (phase 8's self-redirect) and F3 (the 14 long private proofs without a sketch), the landing
-PR's opening, and the replay `replay-lsl.sh`. Fill ⟨PR⟩, ⟨RULINGS⟩ and ⟨REPLAY⟩, then stage. -->
-
-# External audit pack — C1, the seam layout: the fill's landing (PR ⟨PR⟩, a fill gate)
+# External audit pack — C1, the seam layout: the fill's landing (PR #145, a fill gate)
 
 Campaign: the Arora-Barak chapters 3-4 plan, C1 (the nondeterministic time hierarchy, [AB09,
-Theorem 3.2]). **`Turing.exists_seamLayoutTM`** (`TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean`;
+Theorem 3.2]). **`Turing.exists_seamLayoutTM`**
+(`TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean`;
 statement gate 43, round 2 PASS): for distinct tapes `src`, `tbl`, `sm`, one machine takes `src`
 holding a captured serialization `s = pairEncode a ((1^q 0) ++ v)` with its head at `r ≤ |s|`, and
 `tbl`, `sm` blank, to `tbl` holding `v` and `sm` the unary word from cell `2`, `src` cleared, every
@@ -17,16 +14,21 @@ worker's report `campaign/fills/c1/reports/seamlayout-1-REPORT.md`; the maintain
 `campaign/fills/c1/reviews/seamlayout-1/REVIEW.md` ("complete; land, with the maintainer's landing
 edits").
 
-**The head:** `lean/c1-seamlayout-fill` at `7cd01f84`, on the campaign branch at `58583249`:
+**The head:** `lean/c1-seamlayout-fill` at `126127b8`:
 - `bfe3e023`: the worker's six commits (`d6dd89ab..09773a66`, on the base `1c06ea94`) squashed
   into one, with the worker's authorship; the file is byte-identical to the delivered one
   (`evidence/land/landing-checks.txt`). The squash drops the commits' campaign-labelled subjects
   and a private session trailer (the review's F5);
 - `7cd01f84`: the maintainer's, docstrings only: the module's main results and the
-  `TuringMachine` facade's line say "proved".
+  `TuringMachine` facade's line say "proved";
+- `126127b8`: the campaign branch merged in after #139 and #143 (no conflict; this PR's files
+  byte-unchanged).
 
-**The user's rulings:** ⟨RULINGS: F1 (the self-redirect in phase 8, accepted or not); F3 (the
-sketches: now or a follow-up)⟩.
+**The user's rulings (2026-10-22):**
+- **The route's one deviation is accepted** (the review's F1; question 2 below), with a published
+  last-phase lemma for the phase host to follow in its own API PR.
+- **Proof sketches follow up** (F3): the 14 long private proofs get their sketches in a
+  docstring-only PR after this one merges.
 
 ## Brief for the auditor
 
@@ -59,7 +61,8 @@ sketches: now or a follow-up)⟩.
    anything here copied material needing acknowledgment?
 6. **Public text and scope.** The new docstrings carry no campaign labels. `deriving` on the three
    private inductives generates six instances with public names (the review's F2), as landed code
-   already does. 14 private proofs over 20 lines have no "Proof sketch" (F3; ⟨RULINGS⟩).
+   already does. 14 private proofs over 20 lines have no "Proof sketch" (F3; a follow-up, by the
+   user's ruling).
 
 ## Repository-side attestations (verify or challenge)
 
@@ -75,7 +78,11 @@ sketches: now or a follow-up)⟩.
 - **The sweep** (the worker): 94 modules, 0 errors; 35 → 34 sorry warnings, every other unchanged
   by name.
 - **Environment:** addendum v2.3's narrowed fetch, 40 roots, 1,002 files, no retry.
-- **Replay:** ⟨REPLAY: `replay-lsl.sh`, the merged tree, 14 modules from `oleans-l132b`⟩
+- **Replay:** `replay-lsl.sh`: the downstream closure, on the merged tree `7cd01f84`, of every
+  file changed since #132's merge (14 modules: `Build/SeamLayout` and the campaign's merges of
+  #133, #134, #136-#138 and #140, the facade last), chained from `oleans-l132b`. **Passed (user,
+  2026-10-22):** 14 of 14, 0 failed, static-equal (8) (`evidence/replay-lsl.*`). #139 and #143,
+  merged since (`126127b8`), meet this PR's closure only at the facade.
 
 ## Findings format
 

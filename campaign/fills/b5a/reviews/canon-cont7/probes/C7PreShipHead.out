@@ -1,0 +1,157 @@
+# elab ReviewScratch/C7PreShipHead.lean in /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/b5a-canon-cont7/wt-head against /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-lg4c2; start 2026-10-22T21:34:15Z; file sha256 376a3d116c152461d5212d4fb984093649902565739b664cd6d12e9d146ae270
+ReviewScratch/C7PreShipHead.lean:8672:8: warning: declaration uses 'sorry'
+MachineFormat.exists_polyCanonizer : ∀ (F : MachineFormat),
+  ∃ C d, C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d
+MachineFormat.exists_uniformSimulator : ∀ (F : MachineFormat),
+  ∃ S d,
+    ∀ (α x : List Bool) (t : ℕ),
+      ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true] (d * (α.length + x.length + t + 1) ^ d)) ∧
+        (¬(F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false] (d * (α.length + x.length + t + 1) ^ d))
+FinTM.exists_installCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x arg : List Bool),
+          ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ),
+                  0 < t' →
+                    t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t').state ≠ some exit) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t = Cfg.ofWords exit (stateWord C.k (f arg))
+@vhostEmitTM_runFrom : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
+  (b : Bool),
+  FinTM.VirtualTag c.inputPos b →
+    ∀ (p : Fin (x.length + 2)) (pre : List Bool) (t : ℕ),
+      ∃ b',
+        FinTM.VirtualTag (MultiTapeTM.runFrom c t).inputPos b' ∧
+          MultiTapeTM.runFrom (vhostCfg c b p pre) t = vhostCfg (MultiTapeTM.runFrom c t) b' p pre
+@counterLoopTM_run_done : ∀ {k : ℕ} {S : Type} [inst : DecidableEq S] {x : List Bool} (M : MultiTapeTM k Bool S) (a : S)
+  (exit : Option S) (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = FinTM.bufferTape w p) →
+    ∀ (d : ℕ),
+      Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+        (∀ r < d,
+            (counterLoopOrbit M τ c r).state = some a ∧
+              0 < τ (counterLoopOrbit M τ c r) ∧
+                (∀ (u : ℕ),
+                    0 < u →
+                      u < τ (counterLoopOrbit M τ c r) →
+                        ∃ s,
+                          (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧ s ≠ a ∧ exit ≠ some s) ∧
+                  (counterLoopOrbit M τ c (r + 1)).state = some a) →
+          ∀ (T : ℕ),
+            T = ∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r) + counterOverhead w (d + 1) →
+              MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) T =
+                  counterLoopCfg (some CounterLoopState.done) (counterLoopOrbit M τ c d)
+                    (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some true else ct q) cp ∧
+                (∀ t < T,
+                    (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).state ≠
+                        some CounterLoopState.done ∧
+                      (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                            t).state ≠
+                        some CounterLoopState.escape) ∧
+                  (∀ t ≤ T,
+                      (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                              t).workTapePos
+                          (Fin.last k) ∈
+                        Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                    ∀ t ≤ T,
+                      ∃ r u,
+                        (r < d ∧ u ≤ τ (counterLoopOrbit M τ c r) ∨ r = d ∧ u = 0) ∧
+                          ∀ (j : Fin k),
+                            (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                    t).workTapePos
+                                j.castSucc =
+                              (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).workTapePos j
+@counterLoopTM_run_escape : ∀ {k : ℕ} {S : Type} [inst : DecidableEq S] {x : List Bool} (M : MultiTapeTM k Bool S)
+  (a e : S),
+  e ≠ a →
+    ∀ (τ : Cfg k Bool S x → ℕ) (c : Cfg k Bool S x) (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+      (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = FinTM.bufferTape w p) →
+        ∀ r₀ < Nat.ofDigits 2 (List.map Bool.toNat w),
+          (∀ r ≤ r₀,
+              (counterLoopOrbit M τ c r).state = some a ∧
+                0 < τ (counterLoopOrbit M τ c r) ∧
+                  ∀ (u : ℕ),
+                    0 < u →
+                      u < τ (counterLoopOrbit M τ c r) →
+                        ∃ s, (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧ s ≠ a ∧ s ≠ e) →
+            (counterLoopOrbit M τ c (r₀ + 1)).state = some e →
+              ∀ (T : ℕ),
+                T = ∑ r ∈ Finset.range (r₀ + 1), τ (counterLoopOrbit M τ c r) + counterOverhead w (r₀ + 1) →
+                  MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) T =
+                      counterLoopCfg (some CounterLoopState.escape) (counterLoopOrbit M τ c (r₀ + 1))
+                        (fun q =>
+                          if cp ≤ q ∧ q < cp + ↑w.length then FinTM.bufferTape (counterWord w (r₀ + 1)) (q - cp)
+                          else ct q)
+                        cp ∧
+                    (∀ t < T,
+                        (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                t).state ≠
+                            some CounterLoopState.done ∧
+                          (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                t).state ≠
+                            some CounterLoopState.escape) ∧
+                      (∀ t ≤ T,
+                          (MultiTapeTM.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                  t).workTapePos
+                              (Fin.last k) ∈
+                            Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                        ∀ t ≤ T,
+                          ∃ r u,
+                            (r ≤ r₀ ∧ u ≤ τ (counterLoopOrbit M τ c r) ∨ r = r₀ + 1 ∧ u = 0) ∧
+                              ∀ (j : Fin k),
+                                (MultiTapeTM.runFrom
+                                        (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                                        t).workTapePos
+                                    j.castSucc =
+                                  (MultiTapeTM.runFrom (counterLoopOrbit M τ c r) u).workTapePos j
+@counterLoop_time_le : ∀ {k : ℕ} {Symbol S : Type} {x : List Symbol} (M : MultiTapeTM k Symbol S)
+  (τ : Cfg k Symbol S x → ℕ) (c : Cfg k Symbol S x) (w : List Bool) (d : ℕ),
+  Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+    ∀ (B : ℕ),
+      (∀ r < d, τ (counterLoopOrbit M τ c r) ≤ B) →
+        ∑ r ∈ Finset.range d, τ (counterLoopOrbit M τ c r) + counterOverhead w (d + 1) ≤
+          d * B + 4 * d + 2 * w.length + 2
+@codeReadActionK_sound : ∀ {k n : ℕ} (xs : List Bool) (a : Action k Bool (Fin (n + 1))) (rest : List Bool),
+  codeReadActionK k n xs = some (a, rest) → xs = actionBitsK a ++ rest
+@codeReadActionK_append : ∀ {k n : ℕ} (a : Action k Bool (Fin (n + 1))) (xs : List Bool),
+  codeReadActionK k n (actionBitsK a ++ xs) = some (a, xs)
+@codeActionK_length : ∀ {k n : ℕ} (a : Action k Bool (Fin (n + 1))), 4 * k + 5 ≤ (actionBitsK a).length
+codeEraseActionK : ∀ (k n : ℕ) (xs : List Bool), Option.map Prod.snd (codeReadActionK k n xs) = codeSkipActionK k n xs
+FinTM.computesFunInTime_pairFst : ∃ M c,
+  M.ComputesFunInTime (fun x => (Option.map Prod.fst (pairDecode x)).getD []) fun n => c * (n + 1)
+FinTM.computesFunInTime_pairSnd : ∃ M c,
+  M.ComputesFunInTime (fun x => (Option.map Prod.snd (pairDecode x)).getD []) fun n => c * (n + 1)
+FinTM.exists_inputCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x : List Bool),
+          ∃ t ≤ c * (T x.length + x.length + (f x).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ),
+                  0 < t' → t' < t → (MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t').state ≠ some exit) ∧
+                MultiTapeTM.runFrom (Cfg.ofWords entry fun x => []) t = Cfg.ofWords exit (stateWord C.k (f x))
+exists_inputSeekTM : ∃ S x x R entry exit C,
+  ∀ {x : List Bool} (p : ℕ) (w : List Bool),
+    Nat.ofDigits 2 (List.map Bool.toNat w) = p →
+      p ≤ x.length + 1 →
+        ∀ (d : Cfg 2 Bool S x),
+          d.state = some entry →
+            (∀ (q : ℤ), -1 ≤ q → q ≤ ↑w.length → d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape w q) →
+              (∀ (q : ℤ), d.workTapes 1 q = none) →
+                ∃ t ≤ C * (w.length + ↑d.inputPos + p + 1),
+                  (∀ u < t, (MultiTapeTM.runFrom d u).state ≠ some exit) ∧
+                    (∀ u ≤ t,
+                        ∀ (j : Fin 2),
+                          |(MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤ ↑(C * (w.length + 1))) ∧
+                      (MultiTapeTM.runFrom d t).state = some exit ∧
+                        ↑(MultiTapeTM.runFrom d t).inputPos = p ∧
+                          (MultiTapeTM.runFrom d t).workTapes = d.workTapes ∧
+                            (MultiTapeTM.runFrom d t).workTapePos = d.workTapePos ∧
+                              (MultiTapeTM.runFrom d t).output = d.output
+# exit=0 elapsed=20s end 2026-10-22T21:34:35Z
+# errors=0 warnings=1

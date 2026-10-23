@@ -1,0 +1,36 @@
+## byte comparisons
+before == worker screen-before.txt
+before == campaign screen base (minus comments)
+after == worker screen-cp1.txt
+## pairdiff head vs before
+head pairs 477; union of earlier 478; new at head 5; earlier-only 6
+  NEW   ZoneRebalance.lean::zr_rightPass_bounds  reproduces  ZoneRebalance.lean::zr_rightPass_time: 563/665 = 85%
+  NEW   ZoneRebalance.lean::zr_rightPass_post  reproduces  ZoneRebalance.lean::zr_rightPass_pre: 85/140 = 61%
+  NEW   ZoneRebalance.lean::zr_rightPass_bounds  reproduces  ZoneRebalance.lean::zr_rightRuler_pre: 113/189 = 60%
+  NEW   ZoneRebalance.lean::zr_writeHalves_post  reproduces  ZoneRebalance.lean::zr_rightPass_pre: 75/140 = 54%
+  NEW   ZoneRebalance.lean::zr_writeHalves_post  reproduces  ZoneRebalance.lean::zr_rightRuler_pre: 101/189 = 53%
+  GONE  ZoneRebalance.lean::zr_adjustedBackContract  reproduces  ZoneRebalance.lean::zr_adjustedWalkContract: 216/329 = 66%
+  GONE  ZoneRebalance.lean::zr_adjustedWalkContract  reproduces  ZoneRebalance.lean::zr_rightSeekBackContract: 190/311 = 61%
+  GONE  ZoneRebalance.lean::zr_rightRulerContract  reproduces  ZoneRebalance.lean::zr_adjustedBackContract: 214/352 = 61%
+  GONE  ZoneRebalance.lean::zr_adjustedBackContract  reproduces  ZoneRebalance.lean::zr_rightRulerContract: 214/367 = 58%
+  GONE  ZoneRebalance.lean::zr_rightSeekBackContract  reproduces  ZoneRebalance.lean::zr_adjustedWalkContract: 190/329 = 58%
+  GONE  ZoneRebalance.lean::zr_rightRulerContract  reproduces  ZoneRebalance.lean::zr_adjustedWalkContract: 168/329 = 51%
+## pairs with a ZoneRebalance side at head, cross-file
+## max ZoneRebalance in-file pair at head
+   ZoneRebalance.lean::zr_rightPass_bounds  reproduces  ZoneRebalance.lean::zr_rightPass_time: 563/665 = 85%
+   ZoneRebalance.lean::zr_halfCopyContract  reproduces  ZoneRebalance.lean::zr_rulerCopyContract: 66/82 = 80%
+   ZoneRebalance.lean::zr_rightSeekBack_ruler_pre  reproduces  ZoneRebalance.lean::zr_rightRuler_pre: 140/189 = 74%
+## known hazards at head (RecordTable rt_copyMachine / exists_fieldsCopyTM, Zone cascade family) paired with ZoneRebalance
+none
+## the formerly 81% adapter pair
+$S/review/g4-cont3-fill/out/screen-after.txt:   ZoneRebalance.lean::zr_halfCopyContract  reproduces  ZoneRebalance.lean::zr_rulerCopyContract: 66/82 = 80%
+$S/review/g4-cont3-fill/out/screen-after.txt:   ZoneRebalance.lean::zr_rightRulerContract  reproduces  ZoneRebalance.lean::zr_rightSeekBackContract: 125/198 = 63%
+$S/review/g4-cont3-fill/out/screen-before.txt:   ZoneRebalance.lean::zr_rightRulerContract  reproduces  ZoneRebalance.lean::zr_rightSeekBackContract: 252/311 = 81%
+$S/review/g4-cont3-fill/out/screen-before.txt:   ZoneRebalance.lean::zr_halfCopyContract  reproduces  ZoneRebalance.lean::zr_rulerCopyContract: 66/82 = 80%
+## zr_singletonContract / zr_rightPassRow in any pair at head:
+none
+## accepted gate-44 pair zr_pair_pass/zr_inPass_out, before and after:
+   ZoneRebalance.lean::zr_pair_pass  reproduces  ZoneRebalance.lean::zr_inPass_out: 92/127 = 72%
+   ZoneRebalance.lean::zr_inPass_out  reproduces  ZoneRebalance.lean::zr_pair_pass: 92/149 = 62%
+   ZoneRebalance.lean::zr_pair_pass  reproduces  ZoneRebalance.lean::zr_inPass_out: 92/127 = 72%
+   ZoneRebalance.lean::zr_inPass_out  reproduces  ZoneRebalance.lean::zr_pair_pass: 92/149 = 62%

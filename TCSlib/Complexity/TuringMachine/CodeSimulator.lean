@@ -12,6 +12,7 @@ import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
 -- B5a continuation: sanctioned imports for the physical binary-header loader.
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -42,39 +43,24 @@ the uniform form required by Example 3.6(3), audited at phase P3.2 round 2]
   state-indexed work, so a huge declared count is never expanded in unary.
 * **The clock is §12.7's counter loop** (`Turing.counterLoopTM`) over the
   deadline's binary word; a simulated halt is a live body exit.
-* **Status update (fills-8, 2026-10-13; H2-M, 2026-10-14): partial.** The two
-  headline contracts retain their original admissions. Proved so far:
-  - for the canonizer: the native-input binary-header loader and the physical
-    fail-fast binary length guard; the canonical-header check, the
-    nonoverflowing successor counter and its specialized guard; the guard
-    front end, which prepares the header, the successor count and the native
-    remainder address from blank tapes, seeks there, runs the guard and seeks
-    back on success; and the total two-port parse front end
-    (`exists_canonParseFront`), which joins header validity to the guard with
-    a fallback rejection port and a ready-for-grammar port, in linear time;
-  - for the simulator: the complete generic step block `Turing.StepBlock.roundTM`,
-    one finite machine per work-tape count `k` whose control is independent of
-    the coded state count (record lookup, the selected record's payload,
-    successor installation and the round seam), with its exact time bound and
-    head envelope (`Turing.StepBlock.roundTM_effect`), promoted on 2026-10-14
-    (H2-M) to the public module `Build/StepBlock` (gate
-    `audits/h2-promotion-r2-findings.md`); and the binary deadline clock around
-    it, hosted on the virtual input, with its one-bit verdict
-    (`h1HostedVerdict_accepts`). The clock itself is the public loop of
-    `Build/StepBlockLoop` (`Turing.StepBlock.hostedLoopTM_run`; H1 harvest, gate
-    `audits/h1-harvest-statements-findings.md`).
-
-  Proved in the canonizer's continuation 4 (2026-10-15), as private components:
-  the restored binary bound (the bounded unary reader `exists_canonUnaryTM`) and
-  the generic action-record validator (`exists_canonRecordTM`).
-
-  Proved in the canonizer's continuation 5 (2026-10-16), modulo the grammar loop: the
-  validator composition `exists_canonDecider` (the front end seamed to the grammar
-  stage on one bank) and the emission (`canonEmitVerdict`, one public phase dispatch and
-  a one-step emitting halt).
-
-  Still open: the canonizer's grammar loop (`exists_canonGrammarStage`); the simulator's
-  nested-input startup, canonizer installation and joint ledger.
+* **Status.** The canonizer `Turing.MachineFormat.exists_polyCanonizer` is proved, with
+  no admission. A validator (`exists_canonDecider`) runs the two-port parse front end
+  (`exists_canonParseFront`: header validity, canonicality and the binary length guard) and
+  the grammar stage (`exists_canonGrammarStage`) on one bank and emits one verdict bit; the
+  strip machine (`exists_canonStripTM`) or the constant fallback follows. The grammar stage
+  checks the unary initial state against the header (the bounded unary reader
+  `exists_canonUnaryTM`), runs two nested public counter loops, over `n + 1` states and
+  `3^(k+1)` records each, on the fresh-anchor record round (`canonReturnAdapter` around the
+  record validator `exists_canonRecordTM`), and tests the all-`true` suffix; its time is
+  quadratic in the input length and independent of the header's value.
+  The uniform simulator `Turing.MachineFormat.exists_uniformSimulator` is still admitted.
+  Proved for it so far: the complete generic step block `Turing.StepBlock.roundTM` of
+  `Build/StepBlock`, one finite machine per work-tape count `k` whose control is independent
+  of the coded state count, with its exact time bound and head envelope
+  (`Turing.StepBlock.roundTM_effect`); and the binary deadline clock around it, hosted on the
+  virtual input, with its one-bit verdict (`h1HostedVerdict_accepts`), the clock being the
+  public loop `Turing.StepBlock.hostedLoopTM_run` of `Build/StepBlockLoop`. Open: the
+  simulator's nested-input startup, canonizer installation and joint ledger.
 
 ## Main definitions
 
@@ -4950,6 +4936,2686 @@ private lemma canonCounterRepeat {m : ℕ} {S : Type} [DecidableEq S] {x : List 
       rw [parsed] at impossible
       cases impossible
 
+/-- A successful record skip returns a suffix of its input. -/
+private lemma canonStageSkip_suffix (k n : ℕ) (xs ys : List Bool)
+    (h : codeSkipActionK k n xs = some ys) : ys.IsSuffix xs := by
+  have he := codeEraseActionK k n xs
+  rw [h] at he
+  cases hr : codeReadActionK k n xs with
+  | none => rw [hr, Option.map_none] at he; cases he
+  | some p =>
+    rw [hr, Option.map_some] at he
+    obtain ⟨a', rest⟩ := p
+    have hs := codeReadActionK_sound xs a' rest hr
+    have : rest = ys := by simpa using he
+    subst this
+    exact ⟨actionBitsK a', hs.symm⟩
+
+/-- Dropping to a suffix's start recovers it. -/
+private lemma canonStageSuffix_drop (x ys : List Bool) (h : ys.IsSuffix x) :
+    x.drop (x.length - ys.length) = ys := by
+  obtain ⟨pre, rfl⟩ := h
+  rw [List.length_append, Nat.add_sub_cancel, List.drop_left]
+
+/-- **The record round's loop specification.** The adapter-wrapped record
+validator, read as one round of the public counter loop: from any configuration carrying C2's
+bank (the binary bound on the bound tape, every other work tape blank, all work heads at the
+origin, empty output, the native head inside the input), one round costs a positive time at
+most linear in `|x| + |w| + 1`, avoids both ports strictly inside, exits at the anchor exactly
+when one more record skips (`codeSkipActionK` at the counter value of the bound word), and on
+success preserves the bank and moves the native head to the skipped suffix. The inner
+counter loop of the grammar stage iterates this round.
+
+**Proof sketch.** The adapter-wrapped validator `exists_canonRecordRound` gives, for each such
+configuration, a time with all but the suffix clause; choose it per configuration (zero off the
+domain). On success the skipped word is a suffix of the input (`canonStageSkip_suffix`), so the
+reported head position gives it by dropping (`canonStageSuffix_drop`). -/
+private lemma canonStageRoundSpec (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM m Bool H)
+      (anchor escape : H) (bound : Fin m) (B : ℕ), escape ≠ anchor ∧
+      ∀ (x w : List Bool), ∃ τ : Cfg m Bool H x → ℕ,
+        ∀ d : Cfg m Bool H x,
+          (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+            d.workTapes bound = FinTM.bufferTape w ∧ d.workTapePos bound = 0 ∧
+            (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0)) →
+          d.state = some anchor →
+          0 < τ d ∧ τ d ≤ B * (x.length + w.length + 1) ∧
+          (∀ u, 0 < u → u < τ d →
+            ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+          (N.runFrom d (τ d)).state = some
+            (if (codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+              then anchor else escape) ∧
+          (N.runFrom d (τ d)).output = [] ∧
+          ∀ ys, codeSkipActionK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+            (((N.runFrom d (τ d)).output = [] ∧ 1 ≤ (N.runFrom d (τ d)).inputPos.val ∧
+              (N.runFrom d (τ d)).workTapes bound = FinTM.bufferTape w ∧
+              (N.runFrom d (τ d)).workTapePos bound = 0 ∧
+              (∀ j, j ≠ bound → (N.runFrom d (τ d)).workTapes j = FinTM.bufferTape [] ∧
+                (N.runFrom d (τ d)).workTapePos j = 0)) ∧
+            x.drop ((N.runFrom d (τ d)).inputPos.val - 1) = ys) := by
+  classical
+  obtain ⟨m, H, finiteH, eqH, N, anchor, escape, bound, a, different, record⟩ :=
+    exists_canonRecordRound k
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound, a, different, ?_⟩
+  intro x w
+  letI : Fintype H := finiteH
+  letI : DecidableEq H := eqH
+  refine ⟨fun d =>
+    if h : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound = FinTM.bufferTape w ∧ d.workTapePos bound = 0 ∧
+        (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0)) ∧
+        d.state = some anchor then
+      (record x w d h.2 h.1.2.1 h.1.2.2.1 h.1.2.2.2.1 h.1.2.2.2.2).choose
+    else 0, ?_⟩
+  intro d hv hs
+  have hcond : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+      d.workTapes bound = FinTM.bufferTape w ∧ d.workTapePos bound = 0 ∧
+      (∀ j, j ≠ bound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0)) ∧
+      d.state = some anchor := ⟨hv, hs⟩
+  simp only [dif_pos hcond]
+  obtain ⟨cost, positive, verdict, output, interior, tapes, heads, suffix⟩ :=
+    (record x w d hcond.2 hcond.1.2.1 hcond.1.2.2.1 hcond.1.2.2.2.1
+      hcond.1.2.2.2.2).choose_spec
+  set t := (record x w d hcond.2 hcond.1.2.1 hcond.1.2.2.1 hcond.1.2.2.2.1
+      hcond.1.2.2.2.2).choose with ht
+  refine ⟨positive, cost, interior, verdict, output.trans hv.1, ?_⟩
+  intro ys hy
+  have hsfx : ys.IsSuffix (x.drop (d.inputPos.val - 1)) :=
+    canonStageSkip_suffix k (counterValue w) _ ys hy
+  have hsfx' : ys.IsSuffix x := hsfx.trans (List.drop_suffix _ x)
+  have hylen : ys.length ≤ x.length := hsfx'.length_le
+  have hpos := suffix ys hy
+  constructor
+  · refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · rw [output, hv.1]
+    · rw [hpos]
+      omega
+    · rw [tapes, hv.2.2.1]
+    · rw [heads, hv.2.2.2.1]
+    · intro j hj
+      rw [tapes, heads]
+      exact hv.2.2.2.2 j hj
+  · rw [hpos]
+    have : x.length + 1 - ys.length - 1 = x.length - ys.length := by omega
+    rw [this]
+    exact canonStageSuffix_drop x ys hsfx'
+
+/-- A buffered word is blank at and beyond its length. -/
+private lemma canonStageBuffer_none (w : List Bool) (q : ℤ) (h : (w.length : ℤ) ≤ q) :
+    FinTM.bufferTape w q = none := by
+  rw [FinTM.bufferTape_eq, if_pos (by omega : (0 : ℤ) ≤ q)]
+  exact List.getElem?_eq_none (by omega)
+
+/-- **The inner block's loop specification.** The write-then-loop seam —
+`writeConstTM` writing the inner counter word for `3 ^ (k + 1)` rounds, then the record
+round's counter loop — wrapped by the fresh-anchor adapter, read as one round of the outer counter
+loop: from any configuration carrying C2's bank on the embedded coordinates, a counter tape
+blank outside the fixed inner window with its head at the origin, and empty output, one outer
+round costs a positive time at most linear in `|x| + |w| + 1` (the coefficient depending only
+on `k`), avoids both fresh ports strictly inside, exits at the anchor exactly when one inner
+block of records skips (`codeSkipRepeat` of the record skipper, `3 ^ (k + 1)` times), and on
+success re-establishes the bank and the closed counter window and moves the native head to the
+surviving suffix.
+
+**Proof sketch.** Write the inner counter word `(3 ^ (k + 1)).bits` on the last tape
+(`writeConstTM_run_ofCfg`); its value is `3 ^ (k + 1)`. Then run the record round's counter loop
+(`counterLoopTM` over `canonStageRoundSpec`) through the seam. `canonRepeat_orbit` reads the loop's
+orbit off the round's specification: each round either skips one record and returns to the anchor
+or escapes, and the counter stops the loop after `3 ^ (k + 1)` returns, so the block succeeds
+exactly when `codeSkipRepeat` does. The fresh-anchor adapter (`canonReturnAdapter`) turns the seam
+into one outer round; its time, the write row's plus the rounds', is linear in `|x| + |w| + 1`. -/
+private lemma canonStageInnerSpec (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (N : MultiTapeTM (m + 1) Bool H)
+      (anchor escape : H) (bound : Fin m) (B : ℕ), escape ≠ anchor ∧
+      ∀ (x w : List Bool), ∃ τ : Cfg (m + 1) Bool H x → ℕ,
+        ∀ d : Cfg (m + 1) Bool H x,
+          (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+            d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+            d.workTapePos bound.castSucc = 0 ∧
+            (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+              d.workTapePos j.castSucc = 0) ∧
+            (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+              d.workTapes (Fin.last m) q = none) ∧
+            d.workTapePos (Fin.last m) = 0) →
+          d.state = some anchor →
+          0 < τ d ∧ τ d ≤ B * (x.length + w.length + 1) ∧
+          (∀ u, 0 < u → u < τ d →
+            ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+          (N.runFrom d (τ d)).state = some
+            (if (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+                (x.drop (d.inputPos.val - 1))).isSome
+              then anchor else escape) ∧
+          (N.runFrom d (τ d)).output = [] ∧
+          ∀ ys, codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+              (x.drop (d.inputPos.val - 1)) = some ys →
+            (((N.runFrom d (τ d)).output = [] ∧ 1 ≤ (N.runFrom d (τ d)).inputPos.val ∧
+              (N.runFrom d (τ d)).workTapes bound.castSucc = FinTM.bufferTape w ∧
+              (N.runFrom d (τ d)).workTapePos bound.castSucc = 0 ∧
+              (∀ j : Fin m, j ≠ bound →
+                (N.runFrom d (τ d)).workTapes j.castSucc = FinTM.bufferTape [] ∧
+                (N.runFrom d (τ d)).workTapePos j.castSucc = 0) ∧
+              (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+                (N.runFrom d (τ d)).workTapes (Fin.last m) q = none) ∧
+              (N.runFrom d (τ d)).workTapePos (Fin.last m) = 0) ∧
+            x.drop ((N.runFrom d (τ d)).inputPos.val - 1) = ys) := by
+  classical
+  obtain ⟨m, H₀, finiteH₀, eqH₀, N₀, anchor₀, escape₀, bound, B₀, different₀, spec₀⟩ :=
+    canonStageRoundSpec k
+  letI : Fintype H₀ := finiteH₀
+  letI : DecidableEq H₀ := eqH₀
+  set w₀ : List Bool := (3 ^ (k + 1) : ℕ).bits with hw₀
+  let W : MultiTapeTM (m + 1) Bool (WritePhase w₀.length) :=
+    writeConstTM (m + 1) (Fin.last m) w₀
+  let L : MultiTapeTM (m + 1) Bool (CounterLoopState H₀) :=
+    counterLoopTM N₀ anchor₀ (some escape₀)
+  let Rin : MultiTapeTM (m + 1) Bool (WritePhase w₀.length ⊕ CounterLoopState H₀) :=
+    seamCompTM W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+  let exitF : Bool → WritePhase w₀.length ⊕ CounterLoopState H₀ := fun b =>
+    Sum.inr (if b then CounterLoopState.done else CounterLoopState.escape)
+  have hinj : Function.Injective exitF := by
+    intro a b h
+    cases a <;> cases b <;> simp [exitF] at h ⊢
+  obtain ⟨H, finiteH, eqH, N, anchor, escape, different, adapt⟩ :=
+    canonReturnAdapter Rin (Sum.inl (WritePhase.wr 0)) exitF hinj
+  have hval : Nat.ofDigits 2 (w₀.map Bool.toNat) = 3 ^ (k + 1) :=
+    (counterValue_eq w₀).symm.trans (counterValue_bits (3 ^ (k + 1)))
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound,
+    3 ^ (k + 1) * (B₀ + 4) + 6 * w₀.length + 12, different, ?_⟩
+  intro x w
+  obtain ⟨τ₀, hτ₀⟩ := spec₀ x w
+  -- the inner block's run, from the seam's entry, at the seam's own state type
+  have hblock : ∀ d : Cfg (m + 1) Bool (WritePhase w₀.length ⊕ CounterLoopState H₀) x,
+      (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+        d.workTapePos (Fin.last m) = 0) →
+      d.state = some (Sum.inl (WritePhase.wr 0)) →
+      ∃ t ≤ 3 ^ (k + 1) * (B₀ * (x.length + w.length + 1) + 4) + 4 * w₀.length + 7,
+        (Rin.runFrom d t).state = some (exitF
+          (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop (d.inputPos.val - 1))).isSome) ∧
+        (Rin.runFrom d t).output = [] ∧
+        (∀ u < t, ∀ b, (Rin.runFrom d u).state ≠ some (exitF b)) ∧
+        (∀ ys, codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop (d.inputPos.val - 1)) = some ys →
+          ((Rin.runFrom d t).output = [] ∧ 1 ≤ (Rin.runFrom d t).inputPos.val ∧
+            (Rin.runFrom d t).workTapes bound.castSucc = FinTM.bufferTape w ∧
+            (Rin.runFrom d t).workTapePos bound.castSucc = 0 ∧
+            (∀ j : Fin m, j ≠ bound →
+              (Rin.runFrom d t).workTapes j.castSucc = FinTM.bufferTape [] ∧
+              (Rin.runFrom d t).workTapePos j.castSucc = 0) ∧
+            (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+              (Rin.runFrom d t).workTapes (Fin.last m) q = none) ∧
+            (Rin.runFrom d t).workTapePos (Fin.last m) = 0) ∧
+          x.drop ((Rin.runFrom d t).inputPos.val - 1) = ys) := by
+    intro d hv hs
+    obtain ⟨hout, hpos, hbank, hbhead, hblank, hctr, hctrh⟩ := hv
+    have hcs_last : ∀ j : Fin m, j.castSucc ≠ Fin.last m := by
+      intro j h
+      have hvj := congrArg Fin.val h
+      rw [Fin.coe_castSucc, Fin.val_last] at hvj
+      have := j.isLt
+      omega
+    -- phase 1: the write row, at the write machine's own state type
+    obtain ⟨hwrun, hwcut, -⟩ := writeConstTM_run_ofCfg (Fin.last m) w₀
+      (d.mapState fun _ => WritePhase.wr 0)
+      (by rw [Cfg.mapState_state, hs, Option.map_some])
+    have hc₀d : (d.mapState fun _ => WritePhase.wr 0).mapState Sum.inl = d := by
+      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
+      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+      · funext j q
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hctrpos : (d.mapState fun _ =>
+        (WritePhase.wr 0 : WritePhase w₀.length)).workTapePos (Fin.last m) = 0 := by
+      rw [Cfg.mapState_workTapePos]
+      exact hctrh
+    set Ew : Cfg (m + 1) Bool (WritePhase w₀.length) x :=
+      { (d.mapState fun _ => WritePhase.wr 0) with
+        state := some WritePhase.done
+        workTapes := fun j q =>
+          if j = Fin.last m ∧ (d.mapState fun _ => WritePhase.wr 0).workTapePos j ≤ q ∧
+              q < (d.mapState fun _ => WritePhase.wr 0).workTapePos j + (w₀.length : ℤ)
+            then FinTM.bufferTape w₀ (q - (d.mapState fun _ => WritePhase.wr 0).workTapePos j)
+          else (d.mapState fun _ => WritePhase.wr 0).workTapes j q } with hEw
+    have hEwstate : Ew.state = some WritePhase.done := rfl
+    have hct : ∀ z : ℤ, -1 ≤ z → z ≤ (w₀.length : ℤ) →
+        Ew.workTapes (Fin.last m) (0 + z) = FinTM.bufferTape w₀ z := by
+      intro z hz1 hz2
+      show (if Fin.last m = Fin.last m ∧
+          (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m) ≤ 0 + z ∧
+          0 + z < (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m) +
+            (w₀.length : ℤ)
+        then FinTM.bufferTape w₀
+          (0 + z - (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m))
+        else (d.mapState fun _ => WritePhase.wr 0).workTapes (Fin.last m) (0 + z)) =
+        FinTM.bufferTape w₀ z
+      rw [hctrpos]
+      by_cases hzin : (0 : ℤ) ≤ z ∧ z < (w₀.length : ℤ)
+      · rw [if_pos ⟨rfl, by omega, by omega⟩]
+        congr 1
+        omega
+      · rw [if_neg (fun hcon => hzin ⟨by omega, by omega⟩), Cfg.mapState_workTapes,
+          hctr (0 + z) (by omega), eq_comm]
+        rcases lt_or_ge z 0 with h0 | h0
+        · exact FinTM.bufferTape_of_neg _ h0
+        · exact canonStageBuffer_none _ _ (by omega)
+    have hEwtape : ∀ j : Fin m, Ew.workTapes j.castSucc = d.workTapes j.castSucc := by
+      intro j
+      funext q
+      show (if j.castSucc = Fin.last m ∧ _ ∧ _ then _ else
+        (d.mapState fun _ => WritePhase.wr 0).workTapes j.castSucc q) = _
+      rw [if_neg (fun hcon => hcs_last j hcon.1), Cfg.mapState_workTapes]
+    have hEwctr : ∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+        Ew.workTapes (Fin.last m) q = none := by
+      intro q hq
+      show (if Fin.last m = Fin.last m ∧
+          (d.mapState fun _ => WritePhase.wr 0).workTapePos (Fin.last m) ≤ q ∧ _
+        then _ else (d.mapState fun _ => WritePhase.wr 0).workTapes (Fin.last m) q) = none
+      rw [hctrpos, if_neg (fun hcon => by omega), Cfg.mapState_workTapes]
+      exact hctr q hq
+    have hEwpos : ∀ j : Fin (m + 1), Ew.workTapePos j = d.workTapePos j := by
+      intro j
+      show (d.mapState fun _ =>
+        (WritePhase.wr 0 : WritePhase w₀.length)).workTapePos j = d.workTapePos j
+      rw [Cfg.mapState_workTapePos]
+    have hEwip : Ew.inputPos = d.inputPos :=
+      Cfg.mapState_inputPos (fun _ => (WritePhase.wr 0 : WritePhase w₀.length)) d
+    have hEwout : Ew.output = d.output :=
+      Cfg.mapState_output (fun _ => (WritePhase.wr 0 : WritePhase w₀.length)) d
+    -- phase 2: the loop, through the counter host's layout
+    have hJ : (Ew.mapState fun _ => CounterLoopState.dec FlagPhase.run) =
+        counterLoopCfg (some (CounterLoopState.dec FlagPhase.run))
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+          (Ew.workTapes (Fin.last m)) 0 := by
+      rw [counter_cfg_eq]
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+      · rw [Cfg.mapState_state]
+        rfl
+      · exact (Cfg.mapState_inputPos _ _).trans hEwip
+      · funext j
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) j
+        · rw [Fin.lastCases_last]
+          funext q
+          rw [Cfg.mapState_workTapes]
+        · rw [Fin.lastCases_castSucc]
+          funext q
+          rw [Cfg.mapState_workTapes]
+      · funext j
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) j
+        · rw [Fin.lastCases_last, Cfg.mapState_workTapePos, hEwpos, hctrh]
+        · rw [Fin.lastCases_castSucc, Cfg.mapState_workTapePos]
+      · exact (Cfg.mapState_output _ _).trans hEwout
+    have hbody : (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+        fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).output = [] ∧
+        1 ≤ (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).inputPos.val ∧
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapes bound =
+          FinTM.bufferTape w ∧
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapePos bound =
+          0 ∧
+        ∀ j, j ≠ bound →
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapes j =
+            FinTM.bufferTape [] ∧
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapePos j =
+            0 := by
+      refine ⟨hout, hpos, ?_, ?_, ?_⟩
+      · show Ew.workTapes bound.castSucc = FinTM.bufferTape w
+        rw [hEwtape, hbank]
+      · show Ew.workTapePos bound.castSucc = 0
+        rw [hEwpos, hbhead]
+      · intro j hj
+        exact ⟨by rw [show (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapes j =
+            Ew.workTapes j.castSucc from rfl, hEwtape]; exact (hblank j hj).1,
+          by rw [show (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x).workTapePos j =
+            Ew.workTapePos j.castSucc from rfl, hEwpos]; exact (hblank j hj).2⟩
+    obtain ⟨jr, hjn, chain, hdich⟩ := canonRepeat_orbit N₀ anchor₀ escape₀ τ₀
+      (fun c => c.output = [] ∧ 1 ≤ c.inputPos.val ∧
+        c.workTapes bound = FinTM.bufferTape w ∧ c.workTapePos bound = 0 ∧
+        ∀ j, j ≠ bound → c.workTapes j = FinTM.bufferTape [] ∧ c.workTapePos j = 0)
+      (fun c => x.drop (c.inputPos.val - 1))
+      (codeSkipActionK k (counterValue w))
+      (fun c hc ha => ⟨(hτ₀ c hc ha).2.2.2.1, fun ys hy =>
+        ⟨((hτ₀ c hc ha).2.2.2.2.2 ys hy).1, ((hτ₀ c hc ha).2.2.2.2.2 ys hy).2⟩⟩)
+      (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+      hbody rfl (3 ^ (k + 1))
+    have hipb : ((⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ :
+            Cfg m Bool H₀ x)).inputPos = d.inputPos := rfl
+    have houtchain : ∀ i, i ≤ jr →
+        (roundOrbit N₀ τ₀ (⟨some anchor₀, d.inputPos,
+          fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i).output = [] := by
+      intro i hi
+      cases i with
+      | zero =>
+        rw [roundOrbit_zero]
+        exact hbody.1
+      | succ i =>
+        obtain ⟨hvi, hsi⟩ := chain i (by omega)
+        rw [roundOrbit_succ]
+        exact (hτ₀ _ hvi hsi).2.2.2.2.1
+    rcases hdich with ⟨hjN, hgood, hanch, hparsed⟩ | ⟨hjpos, hesc, hparsed⟩
+    · -- every round returns: the loop runs to the done port
+      subst hjN
+      rw [hipb] at hparsed
+      set TS : ℕ := (∑ i ∈ Finset.range (3 ^ (k + 1)), τ₀ (roundOrbit N₀ τ₀
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i)) +
+        counterOverhead w₀ (3 ^ (k + 1) + 1) with hTS
+      obtain ⟨hrun, hcutT, -, -⟩ := counterLoopTM_run_done N₀ anchor₀ (some escape₀) τ₀
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+        w₀ (Ew.workTapes (Fin.last m)) 0 hct (3 ^ (k + 1)) hval
+        (by
+          intro r hr
+          obtain ⟨hvr, hsr⟩ := chain r hr
+          obtain ⟨hpos', -, hint, -, -, -⟩ := hτ₀ _ hvr hsr
+          refine ⟨hsr, hpos', ?_, ?_⟩
+          · intro uu huu htu
+            obtain ⟨q, hq, hqa, hqe⟩ := hint uu huu htu
+            exact ⟨q, hq, hqa, fun eq => hqe (Option.some.inj eq).symm⟩
+          · by_cases hlt : r + 1 < 3 ^ (k + 1)
+            · exact (chain (r + 1) hlt).2
+            · have hre : r + 1 = 3 ^ (k + 1) := by omega
+              rw [hre]
+              exact hanch)
+        TS hTS
+      have hseam : Rin.runFrom d (2 * w₀.length + 2 + 1 + TS) =
+          (counterLoopCfg (some CounterLoopState.done)
+            (roundOrbit N₀ τ₀ (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) (3 ^ (k + 1)))
+            (fun q => if 0 ≤ q ∧ q < 0 + (w₀.length : ℤ) then some true
+              else Ew.workTapes (Fin.last m) q) 0).mapState Sum.inr := by
+        conv_lhs => rw [← hc₀d]
+        rw [seamCompTM_runFrom_right W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+          hwrun hEwstate hwcut TS, hJ, hrun]
+      rw [counter_cfg_eq] at hseam
+      have hsum : (∑ i ∈ Finset.range (3 ^ (k + 1)), τ₀ (roundOrbit N₀ τ₀
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i)) ≤
+          3 ^ (k + 1) * (B₀ * (x.length + w.length + 1)) := by
+        calc (∑ i ∈ Finset.range (3 ^ (k + 1)), τ₀ (roundOrbit N₀ τ₀
+            (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+              fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i))
+            ≤ ∑ _i ∈ Finset.range (3 ^ (k + 1)), B₀ * (x.length + w.length + 1) :=
+              Finset.sum_le_sum fun r hr =>
+                (hτ₀ _ (chain r (Finset.mem_range.mp hr)).1
+                  (chain r (Finset.mem_range.mp hr)).2).2.1
+          _ = 3 ^ (k + 1) * (B₀ * (x.length + w.length + 1)) := by
+              rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+      have hov : counterOverhead w₀ (3 ^ (k + 1) + 1) ≤
+          4 * 3 ^ (k + 1) + 2 * w₀.length + 2 := by
+        have hle := counterOverhead_le w₀
+        rw [hval] at hle
+        exact hle
+      refine ⟨2 * w₀.length + 2 + 1 + TS, ?_, ?_, ?_, ?_, ?_⟩
+      · have hprod : 3 ^ (k + 1) * (B₀ * (x.length + w.length + 1) + 4) =
+            3 ^ (k + 1) * (B₀ * (x.length + w.length + 1)) + 4 * 3 ^ (k + 1) := by ring
+        omega
+      · rw [hseam, Cfg.mapState_state, hparsed]
+        rfl
+      · rw [hseam, Cfg.mapState_output]
+        exact houtchain (3 ^ (k + 1)) le_rfl
+      · intro u hu b
+        by_cases hu1 : u ≤ 2 * w₀.length + 2
+        · conv_lhs => rw [← hc₀d]
+          rw [seamCompTM_runFrom_left W WritePhase.done L
+            (CounterLoopState.dec FlagPhase.run) hwcut u hu1, Cfg.mapState_state]
+          cases hws : ((writeConstTM (m + 1) (Fin.last m) w₀).runFrom
+              (d.mapState fun _ => WritePhase.wr 0) u).state <;> simp [exitF]
+        · intro hcon
+          conv_lhs at hcon => rw [← hc₀d]
+          rw [show u = 2 * w₀.length + 2 + 1 + (u - (2 * w₀.length + 2 + 1)) by omega,
+            seamCompTM_runFrom_right W WritePhase.done L
+              (CounterLoopState.dec FlagPhase.run)
+              hwrun hEwstate hwcut (u - (2 * w₀.length + 2 + 1)), hJ,
+            Cfg.mapState_state] at hcon
+          obtain ⟨y, hy, hyz⟩ := Option.map_eq_some_iff.mp hcon
+          have hcl := hcutT (u - (2 * w₀.length + 2 + 1)) (by omega)
+          cases b
+          · have hy' : y = CounterLoopState.escape := by simpa [exitF] using hyz
+            exact hcl.2 (by rw [hy, hy'])
+          · have hy' : y = CounterLoopState.done := by simpa [exitF] using hyz
+            exact hcl.1 (by rw [hy, hy'])
+      · intro ys hy
+        have htail : x.drop ((roundOrbit N₀ τ₀
+            (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+              fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+            (3 ^ (k + 1))).inputPos.val - 1) = ys :=
+          Option.some.inj (hparsed.symm.trans hy)
+        obtain ⟨horb_out, horb_pos, horb_bank, horb_bh, horb_blank⟩ := hgood
+        constructor
+        · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+          · rw [hseam, Cfg.mapState_output]
+            exact horb_out
+          · rw [hseam, Cfg.mapState_inputPos]
+            exact horb_pos
+          · rw [hseam]
+            funext q
+            rw [Cfg.mapState_workTapes]
+            dsimp only
+            rw [Fin.lastCases_castSucc]
+            exact congrFun horb_bank q
+          · rw [hseam, Cfg.mapState_workTapePos]
+            show Fin.lastCases _ _ bound.castSucc = (0 : ℤ)
+            rw [Fin.lastCases_castSucc]
+            exact horb_bh
+          · intro j hj
+            constructor
+            · rw [hseam]
+              funext q
+              rw [Cfg.mapState_workTapes]
+              dsimp only
+              rw [Fin.lastCases_castSucc]
+              exact congrFun (horb_blank j hj).1 q
+            · rw [hseam, Cfg.mapState_workTapePos]
+              show Fin.lastCases _ _ j.castSucc = (0 : ℤ)
+              rw [Fin.lastCases_castSucc]
+              exact (horb_blank j hj).2
+          · intro q hq
+            rw [hseam]
+            rw [Cfg.mapState_workTapes]
+            show Fin.lastCases _ _ (Fin.last m) q = none
+            rw [Fin.lastCases_last]
+            rw [if_neg (by omega)]
+            exact hEwctr q hq
+          · rw [hseam, Cfg.mapState_workTapePos]
+            show Fin.lastCases _ _ (Fin.last m) = (0 : ℤ)
+            rw [Fin.lastCases_last]
+        · rw [hseam, Cfg.mapState_inputPos]
+          exact htail
+    · -- some round fails: the loop escapes early
+      rw [hipb] at hparsed
+      have hj1 : jr - 1 + 1 = jr := by omega
+      set TF : ℕ := (∑ i ∈ Finset.range jr, τ₀ (roundOrbit N₀ τ₀
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i)) +
+        counterOverhead w₀ jr with hTF
+      obtain ⟨hrun, hcutT, -, -⟩ := counterLoopTM_run_escape N₀ anchor₀ escape₀ different₀
+        τ₀
+        (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x)
+        w₀ (Ew.workTapes (Fin.last m)) 0 hct (jr - 1)
+        (by rw [hval]; omega)
+        (by
+          intro r hr
+          obtain ⟨hvr, hsr⟩ := chain r (by omega)
+          obtain ⟨hpos', -, hint, -, -, -⟩ := hτ₀ _ hvr hsr
+          exact ⟨hsr, hpos', hint⟩)
+        (by rw [hj1]; exact hesc)
+        TF (by rw [hTF, hj1])
+      rw [hj1] at hrun
+      have hseam : Rin.runFrom d (2 * w₀.length + 2 + 1 + TF) =
+          (counterLoopCfg (some CounterLoopState.escape)
+            (roundOrbit N₀ τ₀ (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+          fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) jr)
+            (fun q => if 0 ≤ q ∧ q < 0 + (w₀.length : ℤ)
+              then FinTM.bufferTape (counterWord w₀ jr) (q - 0)
+              else Ew.workTapes (Fin.last m) q) 0).mapState Sum.inr := by
+        conv_lhs => rw [← hc₀d]
+        rw [seamCompTM_runFrom_right W WritePhase.done L (CounterLoopState.dec FlagPhase.run)
+          hwrun hEwstate hwcut TF, hJ, hrun]
+      rw [counter_cfg_eq] at hseam
+      have hsum : (∑ i ∈ Finset.range jr, τ₀ (roundOrbit N₀ τ₀
+          (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+            fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i)) ≤
+          jr * (B₀ * (x.length + w.length + 1)) := by
+        calc (∑ i ∈ Finset.range jr, τ₀ (roundOrbit N₀ τ₀
+            (⟨some anchor₀, d.inputPos, fun j => Ew.workTapes j.castSucc,
+              fun j => Ew.workTapePos j.castSucc, d.output⟩ : Cfg m Bool H₀ x) i))
+            ≤ ∑ _i ∈ Finset.range jr, B₀ * (x.length + w.length + 1) :=
+              Finset.sum_le_sum fun r hr =>
+                (hτ₀ _ (chain r (Finset.mem_range.mp hr)).1
+                  (chain r (Finset.mem_range.mp hr)).2).2.1
+          _ = jr * (B₀ * (x.length + w.length + 1)) := by
+              rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+      have hov : counterOverhead w₀ jr ≤ 4 * jr + 2 * w₀.length :=
+        counterOverhead_le_of_le w₀ jr (by rw [hval]; exact hjn)
+      refine ⟨2 * w₀.length + 2 + 1 + TF, ?_, ?_, ?_, ?_, ?_⟩
+      · have hprod : jr * (B₀ * (x.length + w.length + 1)) ≤
+            3 ^ (k + 1) * (B₀ * (x.length + w.length + 1)) :=
+          Nat.mul_le_mul_right _ hjn
+        have hprod2 : 3 ^ (k + 1) * (B₀ * (x.length + w.length + 1) + 4) =
+            3 ^ (k + 1) * (B₀ * (x.length + w.length + 1)) + 4 * 3 ^ (k + 1) := by ring
+        omega
+      · rw [hseam, Cfg.mapState_state, hparsed]
+        rfl
+      · rw [hseam, Cfg.mapState_output]
+        exact houtchain jr le_rfl
+      · intro u hu b
+        by_cases hu1 : u ≤ 2 * w₀.length + 2
+        · conv_lhs => rw [← hc₀d]
+          rw [seamCompTM_runFrom_left W WritePhase.done L
+            (CounterLoopState.dec FlagPhase.run) hwcut u hu1, Cfg.mapState_state]
+          cases hws : ((writeConstTM (m + 1) (Fin.last m) w₀).runFrom
+              (d.mapState fun _ => WritePhase.wr 0) u).state <;> simp [exitF]
+        · intro hcon
+          conv_lhs at hcon => rw [← hc₀d]
+          rw [show u = 2 * w₀.length + 2 + 1 + (u - (2 * w₀.length + 2 + 1)) by omega,
+            seamCompTM_runFrom_right W WritePhase.done L
+              (CounterLoopState.dec FlagPhase.run)
+              hwrun hEwstate hwcut (u - (2 * w₀.length + 2 + 1)), hJ,
+            Cfg.mapState_state] at hcon
+          obtain ⟨y, hy, hyz⟩ := Option.map_eq_some_iff.mp hcon
+          have hcl := hcutT (u - (2 * w₀.length + 2 + 1)) (by omega)
+          cases b
+          · have hy' : y = CounterLoopState.escape := by simpa [exitF] using hyz
+            exact hcl.2 (by rw [hy, hy'])
+          · have hy' : y = CounterLoopState.done := by simpa [exitF] using hyz
+            exact hcl.1 (by rw [hy, hy'])
+      · intro ys hy
+        rw [hparsed] at hy
+        exact Option.noConfusion hy
+  -- the adapter turns the block into the outer round, with the time chosen
+  have hmain : ∀ d : Cfg (m + 1) Bool H x,
+      (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+        d.workTapePos (Fin.last m) = 0) →
+      d.state = some anchor →
+      ∃ s, 0 < s ∧
+        s ≤ (3 ^ (k + 1) * (B₀ + 4) + 6 * w₀.length + 12) * (x.length + w.length + 1) ∧
+        (∀ u, 0 < u → u < s →
+          ∃ q, (N.runFrom d u).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+        (N.runFrom d s).state = some
+          (if (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+              (x.drop (d.inputPos.val - 1))).isSome
+            then anchor else escape) ∧
+        (N.runFrom d s).output = [] ∧
+        ∀ ys, codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop (d.inputPos.val - 1)) = some ys →
+          (((N.runFrom d s).output = [] ∧ 1 ≤ (N.runFrom d s).inputPos.val ∧
+            (N.runFrom d s).workTapes bound.castSucc = FinTM.bufferTape w ∧
+            (N.runFrom d s).workTapePos bound.castSucc = 0 ∧
+            (∀ j : Fin m, j ≠ bound →
+              (N.runFrom d s).workTapes j.castSucc = FinTM.bufferTape [] ∧
+              (N.runFrom d s).workTapePos j.castSucc = 0) ∧
+            (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+              (N.runFrom d s).workTapes (Fin.last m) q = none) ∧
+            (N.runFrom d s).workTapePos (Fin.last m) = 0) ∧
+          x.drop ((N.runFrom d s).inputPos.val - 1) = ys) := by
+    intro d hv hs
+    have hcs : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).state =
+        some (Sum.inl (WritePhase.wr 0)) := by
+      rw [Cfg.mapState_state, hs, Option.map_some]
+    have hrestored : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).mapState (fun _ => anchor) = d := by
+      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
+      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+      · funext j q
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hip : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).inputPos = d.inputPos :=
+      Cfg.mapState_inputPos _ _
+    have hcv : ((d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+        WritePhase w₀.length ⊕ CounterLoopState H₀)).output = [] ∧
+        1 ≤ (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).inputPos.val ∧
+        (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapes bound.castSucc =
+          FinTM.bufferTape w ∧
+        (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+            WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapes j.castSucc =
+            FinTM.bufferTape [] ∧
+          (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+            WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q →
+          (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+            WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapes (Fin.last m) q = none) ∧
+        (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+          WritePhase w₀.length ⊕ CounterLoopState H₀)).workTapePos (Fin.last m) = 0) := by
+      obtain ⟨h1, h2, h3, h4, h5, h6, h7⟩ := hv
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [Cfg.mapState_output]; exact h1
+      · rw [hip]; exact h2
+      · funext q
+        rw [Cfg.mapState_workTapes]
+        exact congrFun h3 q
+      · rw [Cfg.mapState_workTapePos]; exact h4
+      · intro j hj
+        refine ⟨?_, ?_⟩
+        · funext q
+          rw [Cfg.mapState_workTapes]
+          exact congrFun (h5 j hj).1 q
+        · rw [Cfg.mapState_workTapePos]; exact (h5 j hj).2
+      · intro q hq
+        rw [Cfg.mapState_workTapes]
+        exact h6 q hq
+      · rw [Cfg.mapState_workTapePos]; exact h7
+    obtain ⟨t, ht, hstate, houtB, hcut, hysb⟩ := hblock _ hcv hcs
+    rw [hip] at hstate hysb
+    obtain ⟨hpos2, hrunN, hint⟩ := adapt x _ hcs t _ hstate hcut
+    rw [hrestored] at hrunN hint
+    refine ⟨t + 2, hpos2, ?_, hint, ?_, ?_, ?_⟩
+    · have hX : 1 ≤ x.length + w.length + 1 := by omega
+      have h1 := Nat.mul_le_mul_left (4 * 3 ^ (k + 1)) hX
+      have h2 := Nat.mul_le_mul_left (6 * w₀.length) hX
+      have h3 := Nat.mul_le_mul_left 12 hX
+      nlinarith
+    · rw [hrunN, Cfg.mapState_state, hstate, Option.map_some]
+    · rw [hrunN, Cfg.mapState_output]
+      exact houtB
+    · intro ys hy
+      obtain ⟨⟨g1, g2, g3, g4, g5, g6, g7⟩, gtail⟩ := hysb ys hy
+      constructor
+      · refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [hrunN, Cfg.mapState_output]; exact g1
+        · rw [hrunN, Cfg.mapState_inputPos]; exact g2
+        · rw [hrunN]
+          funext q
+          rw [Cfg.mapState_workTapes]
+          exact congrFun g3 q
+        · rw [hrunN, Cfg.mapState_workTapePos]; exact g4
+        · intro j hj
+          refine ⟨?_, ?_⟩
+          · rw [hrunN]
+            funext q
+            rw [Cfg.mapState_workTapes]
+            exact congrFun (g5 j hj).1 q
+          · rw [hrunN, Cfg.mapState_workTapePos]; exact (g5 j hj).2
+        · intro q hq
+          rw [hrunN, Cfg.mapState_workTapes]
+          exact g6 q hq
+        · rw [hrunN, Cfg.mapState_workTapePos]; exact g7
+      · rw [hrunN, Cfg.mapState_inputPos]
+        exact gtail
+  -- package the chosen time
+  refine ⟨fun d =>
+    if h : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+        d.workTapePos (Fin.last m) = 0) ∧ d.state = some anchor then
+      (hmain d h.1 h.2).choose
+    else 0, ?_⟩
+  intro d hv hs
+  have hcond : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+      d.workTapes bound.castSucc = FinTM.bufferTape w ∧
+      d.workTapePos bound.castSucc = 0 ∧
+      (∀ j : Fin m, j ≠ bound → d.workTapes j.castSucc = FinTM.bufferTape [] ∧
+        d.workTapePos j.castSucc = 0) ∧
+      (∀ q : ℤ, q < 0 ∨ (w₀.length : ℤ) ≤ q → d.workTapes (Fin.last m) q = none) ∧
+      d.workTapePos (Fin.last m) = 0) ∧ d.state = some anchor := ⟨hv, hs⟩
+  simp only [dif_pos hcond]
+  exact (hmain d hcond.1 hcond.2).choose_spec
+
+/-- One successful inner block consumes at least one input cell: every record it skips has at
+least `4k + 5` bits (`codeActionK_length`) and the block skips `3^(k+1)` of them.
+
+**Proof sketch.** Every successful record skip consumes at least `4k + 5` cells (its read action's
+bits), so `skipRepeat_consumes` bounds the consumed length below by `(4k + 5) · 3 ^ (k + 1) ≥ 1`. -/
+private lemma canonStageBlock_consumes (k n : ℕ) (xs ys : List Bool)
+    (h : codeSkipRepeat (codeSkipActionK k n) (3 ^ (k + 1)) xs = some ys) :
+    1 + ys.length ≤ xs.length := by
+  have ha : ∀ u v : List Bool, codeSkipActionK k n u = some v →
+      4 * k + 5 + v.length ≤ u.length := by
+    intro u v hu
+    rw [← codeEraseActionK] at hu
+    obtain ⟨⟨a, rest⟩, hread, rfl⟩ := Option.map_eq_some_iff.mp hu
+    rw [codeReadActionK_sound u a rest hread, List.length_append]
+    exact Nat.add_le_add_right (codeActionK_length a) _
+  have hb := skipRepeat_consumes _ (4 * k + 5) ha (3 ^ (k + 1)) xs ys h
+  have hp : 1 ≤ 3 ^ (k + 1) := Nat.one_le_pow _ _ (by omega)
+  have h1 : 1 * 1 ≤ (4 * k + 5) * 3 ^ (k + 1) := Nat.mul_le_mul (by omega) hp
+  omega
+
+/-- **The table block**: the outer counter loop over the inner
+block, wrapped once more by the fresh-anchor adapter. From a configuration carrying C2's bank,
+the closed inner-counter window, and an outer counter holding any word `u` of value
+`counterValue w + 1` (the incremented header copy), one block decides the whole fixed table
+grammar `codeSkipTableK` (`canonSkipTable_eq`), in a time **independent of the counter value**:
+each round that returns consumes at least one input cell (`canonStageBlock_consumes`), so at
+most `|x| + 1` rounds ever run, each charged the inner block's linear budget, and the counter
+overhead is settled by `counterOverhead_le` and `counterOverhead_le_of_le`. The block avoids
+both fresh ports strictly inside, exits by the table verdict on the native suffix, and on
+success has empty output and the native head at the surviving suffix.
+
+**Proof sketch.** Run the outer counter loop (`counterLoopTM`) over the inner block
+(`canonStageInnerSpec`) from the incremented copy. `canonRepeat_orbit` reads its orbit off the
+inner block's specification. Each returning round consumes an input cell
+(`canonStageBlock_consumes`), so at most `|x| + 1` rounds run, whatever the counter's value; each is
+charged the inner block's linear budget, and the counter's own steps are bounded by
+`counterOverhead_le` and `counterOverhead_le_of_le`. The verdict is the table grammar's
+(`canonSkipTable_eq`). The fresh-anchor adapter (`canonReturnAdapter`) wraps the loop as one
+block. -/
+private lemma canonStageOuterSpec (k : ℕ) :
+    ∃ (m : ℕ) (H : Type) (_ : Fintype H) (_ : DecidableEq H) (P : MultiTapeTM (m + 2) Bool H)
+      (anchor escape : H) (bound : Fin m) (A : ℕ), escape ≠ anchor ∧
+      ∀ (x w u : List Bool), Nat.ofDigits 2 (u.map Bool.toNat) = counterValue w + 1 →
+        ∃ τ : Cfg (m + 2) Bool H x → ℕ,
+          ∀ d : Cfg (m + 2) Bool H x,
+            (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+              d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+              d.workTapePos bound.castSucc.castSucc = 0 ∧
+              (∀ j : Fin m, j ≠ bound →
+                d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+                d.workTapePos j.castSucc.castSucc = 0) ∧
+              (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+                d.workTapes (Fin.last m).castSucc q = none) ∧
+              d.workTapePos (Fin.last m).castSucc = 0 ∧
+              d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+              d.workTapePos (Fin.last (m + 1)) = 0) →
+            d.state = some anchor →
+            0 < τ d ∧ τ d ≤ A * (x.length + w.length + u.length + 1) ^ 2 ∧
+            (∀ v, 0 < v → v < τ d →
+              ∃ q, (P.runFrom d v).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+            (P.runFrom d (τ d)).state = some
+              (if (codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+                then anchor else escape) ∧
+            (P.runFrom d (τ d)).output = [] ∧
+            ∀ ys, codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+              (P.runFrom d (τ d)).output = [] ∧ 1 ≤ (P.runFrom d (τ d)).inputPos.val ∧
+              x.drop ((P.runFrom d (τ d)).inputPos.val - 1) = ys := by
+  classical
+  obtain ⟨m, H₂, finiteH₂, eqH₂, N₂, anchor₂, escape₂, bound, B₂, different₂, spec₂⟩ :=
+    canonStageInnerSpec k
+  letI : Fintype H₂ := finiteH₂
+  letI : DecidableEq H₂ := eqH₂
+  let L : MultiTapeTM (m + 2) Bool (CounterLoopState H₂) :=
+    counterLoopTM N₂ anchor₂ (some escape₂)
+  let exitF : Bool → CounterLoopState H₂ := fun b =>
+    if b then CounterLoopState.done else CounterLoopState.escape
+  have hinj : Function.Injective exitF := by
+    intro a b h
+    cases a <;> cases b <;> simp [exitF] at h ⊢
+  obtain ⟨H, finiteH, eqH, N, anchor, escape, different, adapt⟩ :=
+    canonReturnAdapter L (CounterLoopState.dec FlagPhase.run) exitF hinj
+  refine ⟨m, H, finiteH, eqH, N, anchor, escape, bound, B₂ + 20, different, ?_⟩
+  intro x w u hu
+  obtain ⟨τ₂, hτ₂⟩ := spec₂ x w
+  -- the loop's run, from its own entry, at the loop's state type
+  have hloopblock : ∀ e : Cfg (m + 2) Bool (CounterLoopState H₂) x,
+      (e.output = [] ∧ 1 ≤ e.inputPos.val ∧
+        e.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        e.workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          e.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          e.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          e.workTapes (Fin.last m).castSucc q = none) ∧
+        e.workTapePos (Fin.last m).castSucc = 0 ∧
+        e.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        e.workTapePos (Fin.last (m + 1)) = 0) →
+      e.state = some (CounterLoopState.dec FlagPhase.run) →
+      ∃ t, t ≤ (x.length + 1) * (B₂ * (x.length + w.length + 1)) +
+          4 * x.length + 2 * u.length + 10 ∧
+        (L.runFrom e t).state = some (exitF
+          (codeSkipTableK k (counterValue w) (x.drop (e.inputPos.val - 1))).isSome) ∧
+        (L.runFrom e t).output = [] ∧
+        (∀ v < t, ∀ b : Bool, (L.runFrom e v).state ≠ some (exitF b)) ∧
+        ∀ ys, codeSkipTableK k (counterValue w) (x.drop (e.inputPos.val - 1)) = some ys →
+          (L.runFrom e t).output = [] ∧ 1 ≤ (L.runFrom e t).inputPos.val ∧
+          x.drop ((L.runFrom e t).inputPos.val - 1) = ys := by
+    intro e hv hes
+    obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := hv
+    set c₂ : Cfg (m + 1) Bool H₂ x :=
+      ⟨some anchor₂, e.inputPos, fun j => e.workTapes j.castSucc,
+        fun j => e.workTapePos j.castSucc, e.output⟩ with hc₂
+    have hc₂ip : c₂.inputPos = e.inputPos := rfl
+    have hc₂v : c₂.output = [] ∧ 1 ≤ c₂.inputPos.val ∧
+        c₂.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        c₂.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → c₂.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          c₂.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          c₂.workTapes (Fin.last m) q = none) ∧
+        c₂.workTapePos (Fin.last m) = 0 :=
+      ⟨h1, h2, h3, h4, h5, h6, h7⟩
+    -- the junction into the loop's layout
+    have hJ : e = counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c₂
+        (e.workTapes (Fin.last (m + 1))) 0 := by
+      rw [counter_cfg_eq]
+      refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+      · exact hes
+      · exact hc₂ip.symm
+      · funext jj
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) jj
+        · rw [Fin.lastCases_last]
+        · rw [Fin.lastCases_castSucc]
+      · funext jj
+        dsimp only
+        refine Fin.lastCases ?_ (fun j' => ?_) jj
+        · rw [Fin.lastCases_last]
+          exact h9
+        · rw [Fin.lastCases_castSucc]
+      · rfl
+    have he' : ∀ v : ℕ, L.runFrom e v =
+        L.runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c₂
+          (e.workTapes (Fin.last (m + 1))) 0) v :=
+      fun v => congrArg (fun z => L.runFrom z v) hJ
+    have hword : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+        (e.workTapes (Fin.last (m + 1))) (0 + p) = FinTM.bufferTape u p := by
+      intro p _ _
+      rw [h8, zero_add]
+    -- the orbit's dichotomy
+    obtain ⟨j, hj, chain, hdich⟩ := canonRepeat_orbit N₂ anchor₂ escape₂ τ₂
+      (fun c => c.output = [] ∧ 1 ≤ c.inputPos.val ∧
+        c.workTapes bound.castSucc = FinTM.bufferTape w ∧
+        c.workTapePos bound.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound → c.workTapes j.castSucc = FinTM.bufferTape [] ∧
+          c.workTapePos j.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          c.workTapes (Fin.last m) q = none) ∧
+        c.workTapePos (Fin.last m) = 0)
+      (fun c => x.drop (c.inputPos.val - 1))
+      (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1)))
+      (fun c hvc hsc => ⟨(hτ₂ c hvc hsc).2.2.2.1, fun ys hy =>
+        ⟨((hτ₂ c hvc hsc).2.2.2.2.2 ys hy).1, ((hτ₂ c hvc hsc).2.2.2.2.2 ys hy).2⟩⟩)
+      c₂ hc₂v rfl (counterValue w + 1)
+    have hbase : (x.drop (e.inputPos.val - 1)).length ≤ x.length := by
+      rw [List.length_drop]
+      omega
+    rcases hdich with ⟨hjN, hgood, hanch, hparsed⟩ | ⟨hjpos, hesc, hparsed⟩
+    · -- every round returns: the loop runs to the done port
+      subst hjN
+      rw [hc₂ip, ← canonSkipTable_eq] at hparsed
+      have hcons : ∀ i < counterValue w + 1,
+          codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)) =
+          some (x.drop ((roundOrbit N₂ τ₂ c₂ (i + 1)).inputPos.val - 1)) := by
+        intro i hi
+        obtain ⟨hvi, hsi⟩ := chain i hi
+        have hver := (hτ₂ _ hvi hsi).2.2.2.1
+        have hnext : (roundOrbit N₂ τ₂ c₂ (i + 1)).state = some anchor₂ := by
+          by_cases hlt : i + 1 < counterValue w + 1
+          · exact (chain (i + 1) hlt).2
+          · have hieq : i + 1 = counterValue w + 1 := by omega
+            rw [hieq]
+            exact hanch
+        rw [roundOrbit_succ] at hnext
+        have hifeq := Option.some.inj (hver.symm.trans hnext)
+        by_cases hC : (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1))).isSome = true
+        · obtain ⟨ys, hys⟩ := Option.isSome_iff_exists.mp hC
+          have htl := ((hτ₂ _ hvi hsi).2.2.2.2.2 ys hys).2
+          rw [hys, roundOrbit_succ]
+          exact congrArg some htl.symm
+        · rw [if_neg hC] at hifeq
+          exact absurd hifeq different₂
+      have htele : ∀ i, i ≤ counterValue w + 1 →
+          i + (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)).length ≤
+            (x.drop (e.inputPos.val - 1)).length := by
+        intro i
+        induction i with
+        | zero =>
+          intro _
+          rw [roundOrbit_zero, hc₂ip]
+          omega
+        | succ i ih =>
+          intro hi
+          have hstep := hcons i (by omega)
+          have hcl := canonStageBlock_consumes k (counterValue w) _ _ hstep
+          have hprev := ih (by omega)
+          omega
+      have hNNx : counterValue w + 1 ≤ x.length := by
+        have := htele (counterValue w + 1) le_rfl
+        omega
+      have hsum : (∑ r ∈ Finset.range (counterValue w + 1), τ₂ (roundOrbit N₂ τ₂ c₂ r)) ≤
+          (counterValue w + 1) * (B₂ * (x.length + w.length + 1)) := by
+        calc (∑ r ∈ Finset.range (counterValue w + 1), τ₂ (roundOrbit N₂ τ₂ c₂ r))
+            ≤ ∑ _r ∈ Finset.range (counterValue w + 1), B₂ * (x.length + w.length + 1) :=
+              Finset.sum_le_sum fun r hr =>
+                (hτ₂ _ (chain r (Finset.mem_range.mp hr)).1
+                  (chain r (Finset.mem_range.mp hr)).2).2.1
+          _ = (counterValue w + 1) * (B₂ * (x.length + w.length + 1)) := by
+              rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+      have hov : counterOverhead u (counterValue w + 1 + 1) ≤
+          4 * (counterValue w + 1) + 2 * u.length + 2 := by
+        have hle := counterOverhead_le u
+        rw [hu] at hle
+        exact hle
+      set T : ℕ := (∑ r ∈ Finset.range (counterValue w + 1), τ₂ (roundOrbit N₂ τ₂ c₂ r)) +
+        counterOverhead u (counterValue w + 1 + 1) with hT
+      obtain ⟨hrun, hcutT, -, -⟩ := counterLoopTM_run_done N₂ anchor₂ (some escape₂) τ₂ c₂
+        u (e.workTapes (Fin.last (m + 1))) 0 hword (counterValue w + 1) hu
+        (by
+          intro r hr
+          obtain ⟨hvr, hsr⟩ := chain r hr
+          obtain ⟨hpos, -, hint, -, -, -⟩ := hτ₂ _ hvr hsr
+          refine ⟨hsr, hpos, ?_, ?_⟩
+          · intro uu huu htu
+            obtain ⟨q, hq, hqa, hqe⟩ := hint uu huu htu
+            exact ⟨q, hq, hqa, fun eq => hqe (Option.some.inj eq).symm⟩
+          · by_cases hlt : r + 1 < counterValue w + 1
+            · exact (chain (r + 1) hlt).2
+            · have hre : r + 1 = counterValue w + 1 := by omega
+              rw [hre]
+              exact hanch)
+        T hT
+      refine ⟨T, ?_, ?_, ?_, ?_, ?_⟩
+      · have h5 : (counterValue w + 1) * (B₂ * (x.length + w.length + 1)) ≤
+            (x.length + 1) * (B₂ * (x.length + w.length + 1)) :=
+          Nat.mul_le_mul_right _ (by omega)
+        omega
+      · rw [he', hrun, counter_cfg_eq, hparsed]
+        rfl
+      · rw [he', hrun, counter_cfg_eq]
+        exact hgood.1
+      · intro v hvt b
+        rw [he']
+        have hc := hcutT v hvt
+        cases b
+        · exact hc.2
+        · exact hc.1
+      · intro ys hy
+        rw [hparsed] at hy
+        have hyse := Option.some.inj hy
+        refine ⟨?_, ?_, ?_⟩
+        · rw [he', hrun, counter_cfg_eq]
+          exact hgood.1
+        · rw [he', hrun, counter_cfg_eq]
+          exact hgood.2.1
+        · rw [he', hrun, counter_cfg_eq]
+          exact hyse
+    · -- some round fails: the loop escapes early
+      rw [hc₂ip, ← canonSkipTable_eq] at hparsed
+      have hcons : ∀ i, i + 1 < j →
+          codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)) =
+          some (x.drop ((roundOrbit N₂ τ₂ c₂ (i + 1)).inputPos.val - 1)) := by
+        intro i hi
+        obtain ⟨hvi, hsi⟩ := chain i (by omega)
+        have hver := (hτ₂ _ hvi hsi).2.2.2.1
+        have hnext : (roundOrbit N₂ τ₂ c₂ (i + 1)).state = some anchor₂ :=
+          (chain (i + 1) hi).2
+        rw [roundOrbit_succ] at hnext
+        have hifeq := Option.some.inj (hver.symm.trans hnext)
+        by_cases hC : (codeSkipRepeat (codeSkipActionK k (counterValue w)) (3 ^ (k + 1))
+            (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1))).isSome = true
+        · obtain ⟨ys, hys⟩ := Option.isSome_iff_exists.mp hC
+          have htl := ((hτ₂ _ hvi hsi).2.2.2.2.2 ys hys).2
+          rw [hys, roundOrbit_succ]
+          exact congrArg some htl.symm
+        · rw [if_neg hC] at hifeq
+          exact absurd hifeq different₂
+      have htele : ∀ i, i < j →
+          i + (x.drop ((roundOrbit N₂ τ₂ c₂ i).inputPos.val - 1)).length ≤
+            (x.drop (e.inputPos.val - 1)).length := by
+        intro i
+        induction i with
+        | zero =>
+          intro _
+          rw [roundOrbit_zero, hc₂ip]
+          omega
+        | succ i ih =>
+          intro hi
+          have hstep := hcons i (by omega)
+          have hcl := canonStageBlock_consumes k (counterValue w) _ _ hstep
+          have hprev := ih (by omega)
+          omega
+      have hjx : j ≤ x.length + 1 := by
+        have := htele (j - 1) (by omega)
+        omega
+      have hsum : (∑ r ∈ Finset.range j, τ₂ (roundOrbit N₂ τ₂ c₂ r)) ≤
+          j * (B₂ * (x.length + w.length + 1)) := by
+        calc (∑ r ∈ Finset.range j, τ₂ (roundOrbit N₂ τ₂ c₂ r))
+            ≤ ∑ _r ∈ Finset.range j, B₂ * (x.length + w.length + 1) :=
+              Finset.sum_le_sum fun r hr =>
+                (hτ₂ _ (chain r (Finset.mem_range.mp hr)).1
+                  (chain r (Finset.mem_range.mp hr)).2).2.1
+          _ = j * (B₂ * (x.length + w.length + 1)) := by
+              rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id]
+      have hov : counterOverhead u j ≤ 4 * j + 2 * u.length :=
+        counterOverhead_le_of_le u j (by rw [hu]; omega)
+      have hj1 : j - 1 + 1 = j := by omega
+      set T : ℕ := (∑ r ∈ Finset.range j, τ₂ (roundOrbit N₂ τ₂ c₂ r)) +
+        counterOverhead u j with hT
+      obtain ⟨hrun, hcutT, -, -⟩ := counterLoopTM_run_escape N₂ anchor₂ escape₂ different₂
+        τ₂ c₂ u (e.workTapes (Fin.last (m + 1))) 0 hword (j - 1)
+        (by rw [hu]; omega)
+        (by
+          intro r hr
+          obtain ⟨hvr, hsr⟩ := chain r (by omega)
+          obtain ⟨hpos, -, hint, -, -, -⟩ := hτ₂ _ hvr hsr
+          exact ⟨hsr, hpos, hint⟩)
+        (by rw [hj1]; exact hesc)
+        T (by rw [hT, hj1])
+      rw [hj1] at hrun
+      have houtchain : ∀ i, i ≤ j → (roundOrbit N₂ τ₂ c₂ i).output = [] := by
+        intro i hi
+        cases i with
+        | zero =>
+          rw [roundOrbit_zero]
+          exact hc₂v.1
+        | succ i =>
+          obtain ⟨hvi, hsi⟩ := chain i (by omega)
+          rw [roundOrbit_succ]
+          exact (hτ₂ _ hvi hsi).2.2.2.2.1
+      refine ⟨T, ?_, ?_, ?_, ?_, ?_⟩
+      · have h5 : j * (B₂ * (x.length + w.length + 1)) ≤
+            (x.length + 1) * (B₂ * (x.length + w.length + 1)) :=
+          Nat.mul_le_mul_right _ (by omega)
+        omega
+      · rw [he', hrun, counter_cfg_eq, hparsed]
+        rfl
+      · rw [he', hrun, counter_cfg_eq]
+        exact houtchain j le_rfl
+      · intro v hvt b
+        rw [he']
+        have hc := hcutT v hvt
+        cases b
+        · exact hc.2
+        · exact hc.1
+      · intro ys hy
+        rw [hparsed] at hy
+        exact Option.noConfusion hy
+  -- the adapter wrap and the chosen time
+  have hmain : ∀ d : Cfg (m + 2) Bool H x,
+      (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          d.workTapes (Fin.last m).castSucc q = none) ∧
+        d.workTapePos (Fin.last m).castSucc = 0 ∧
+        d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        d.workTapePos (Fin.last (m + 1)) = 0) →
+      d.state = some anchor →
+      ∃ s, 0 < s ∧ s ≤ (B₂ + 20) * (x.length + w.length + u.length + 1) ^ 2 ∧
+        (∀ v, 0 < v → v < s →
+          ∃ q, (N.runFrom d v).state = some q ∧ q ≠ anchor ∧ q ≠ escape) ∧
+        (N.runFrom d s).state = some
+          (if (codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1))).isSome
+            then anchor else escape) ∧
+        (N.runFrom d s).output = [] ∧
+        ∀ ys, codeSkipTableK k (counterValue w) (x.drop (d.inputPos.val - 1)) = some ys →
+          (N.runFrom d s).output = [] ∧ 1 ≤ (N.runFrom d s).inputPos.val ∧
+          x.drop ((N.runFrom d s).inputPos.val - 1) = ys := by
+    intro d hv hs
+    have hcs : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).state = some (CounterLoopState.dec FlagPhase.run) := by
+      rw [Cfg.mapState_state, hs, Option.map_some]
+    have hrestored : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).mapState (fun _ => anchor) = d := by
+      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
+      · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+      · funext j q
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+    have hip : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).inputPos = d.inputPos :=
+      Cfg.mapState_inputPos _ _
+    have hcv : ((d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+        CounterLoopState H₂)).output = [] ∧
+        1 ≤ (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).inputPos.val ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+            CounterLoopState H₂)).workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+            CounterLoopState H₂)).workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+            CounterLoopState H₂)).workTapes (Fin.last m).castSucc q = none) ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapePos (Fin.last m).castSucc = 0 ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+          CounterLoopState H₂)).workTapePos (Fin.last (m + 1)) = 0) := by
+      obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8, h9⟩ := hv
+      refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [Cfg.mapState_output]; exact h1
+      · rw [hip]; exact h2
+      · funext q
+        rw [Cfg.mapState_workTapes]
+        exact congrFun h3 q
+      · rw [Cfg.mapState_workTapePos]; exact h4
+      · intro j hj
+        refine ⟨?_, ?_⟩
+        · funext q
+          rw [Cfg.mapState_workTapes]
+          exact congrFun (h5 j hj).1 q
+        · rw [Cfg.mapState_workTapePos]; exact (h5 j hj).2
+      · intro q hq
+        rw [Cfg.mapState_workTapes]
+        exact h6 q hq
+      · rw [Cfg.mapState_workTapePos]; exact h7
+      · funext q
+        rw [Cfg.mapState_workTapes]
+        exact congrFun h8 q
+      · rw [Cfg.mapState_workTapePos]; exact h9
+    obtain ⟨t, ht, hstate, houtB, hcut, hysb⟩ := hloopblock _ hcv hcs
+    rw [hip] at hstate hysb
+    obtain ⟨hpos2, hrunN, hint⟩ := adapt x _ hcs t _ hstate hcut
+    rw [hrestored] at hrunN hint
+    refine ⟨t + 2, hpos2, ?_, hint, ?_, ?_, ?_⟩
+    · have hX1 : x.length + 1 ≤ x.length + w.length + u.length + 1 := by omega
+      have hX2 : x.length + w.length + 1 ≤ x.length + w.length + u.length + 1 := by omega
+      have h2 : (x.length + 1) * (B₂ * (x.length + w.length + 1)) ≤
+          (x.length + w.length + u.length + 1) *
+            (B₂ * (x.length + w.length + u.length + 1)) :=
+        Nat.mul_le_mul hX1 (Nat.mul_le_mul_left _ hX2)
+      have h3 : x.length + w.length + u.length + 1 ≤
+          (x.length + w.length + u.length + 1) * (x.length + w.length + u.length + 1) :=
+        Nat.le_mul_of_pos_left _ (by omega)
+      have h4 : x.length ≤ x.length + w.length + u.length + 1 := by omega
+      have h6 : u.length ≤ x.length + w.length + u.length + 1 := by omega
+      have h7 : 1 ≤ x.length + w.length + u.length + 1 := by omega
+      rw [pow_two]
+      nlinarith
+    · rw [hrunN, Cfg.mapState_state, hstate, Option.map_some]
+    · rw [hrunN, Cfg.mapState_output]
+      exact houtB
+    · intro ys hy
+      obtain ⟨g1, g2, g3⟩ := hysb ys hy
+      refine ⟨?_, ?_, ?_⟩
+      · rw [hrunN, Cfg.mapState_output]; exact g1
+      · rw [hrunN, Cfg.mapState_inputPos]; exact g2
+      · rw [hrunN, Cfg.mapState_inputPos]; exact g3
+  -- package the chosen time
+  refine ⟨fun d =>
+    if h : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+        d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+        d.workTapePos bound.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m, j ≠ bound →
+          d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          d.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          d.workTapes (Fin.last m).castSucc q = none) ∧
+        d.workTapePos (Fin.last m).castSucc = 0 ∧
+        d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+        d.workTapePos (Fin.last (m + 1)) = 0) ∧ d.state = some anchor then
+      (hmain d h.1 h.2).choose
+    else 0, ?_⟩
+  intro d hv hs
+  have hcond : (d.output = [] ∧ 1 ≤ d.inputPos.val ∧
+      d.workTapes bound.castSucc.castSucc = FinTM.bufferTape w ∧
+      d.workTapePos bound.castSucc.castSucc = 0 ∧
+      (∀ j : Fin m, j ≠ bound →
+        d.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+        d.workTapePos j.castSucc.castSucc = 0) ∧
+      (∀ q : ℤ, q < 0 ∨ ((3 ^ (k + 1) : ℕ).bits.length : ℤ) ≤ q →
+        d.workTapes (Fin.last m).castSucc q = none) ∧
+      d.workTapePos (Fin.last m).castSucc = 0 ∧
+      d.workTapes (Fin.last (m + 1)) = FinTM.bufferTape u ∧
+      d.workTapePos (Fin.last (m + 1)) = 0) ∧ d.state = some anchor := ⟨hv, hs⟩
+  simp only [dif_pos hcond]
+  exact (hmain d hcond.1 hcond.2).choose_spec
+
+/-- The parking phase: a machine that halts at once, holding the verdict it was
+dispatched into. The stage's contract reads its state only at the dispatch instant. -/
+private def canonStageHaltTM (M : ℕ) : MultiTapeTM M Bool Bool where
+  q₀ := true
+  tr := fun _ _ _ => ⟨0, fun _ => (none, 0), none, none⟩
+
+/-- The fixed-width increment adds one to the binary value. -/
+private lemma canonStageInc_value : ∀ (w v : List Bool), incFixed w = some v →
+    Nat.ofDigits 2 (v.map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) + 1
+  | [], v, h => Option.noConfusion (incFixed_nil.symm.trans h)
+  | false :: w, v, h => by
+    obtain rfl : true :: w = v := Option.some.inj ((incFixed_false_cons w).symm.trans h)
+    simp only [List.map_cons, Nat.ofDigits_cons]
+    simp only [Bool.toNat_true, Bool.toNat_false]
+    omega
+  | true :: w, v, h => by
+    obtain ⟨z, hz, rfl⟩ :=
+      Option.map_eq_some_iff.mp ((incFixed_true_cons w).symm.trans h)
+    simp only [List.map_cons, Nat.ofDigits_cons, canonStageInc_value w z hz]
+    simp only [Bool.toNat_true, Bool.toNat_false]
+    ring
+
+/-- A trailing `false` pad keeps the binary value. -/
+private lemma canonStagePad_value (w : List Bool) :
+    Nat.ofDigits 2 ((w ++ [false]).map Bool.toNat) = Nat.ofDigits 2 (w.map Bool.toNat) := by
+  rw [List.map_append, Nat.ofDigits_append]
+  simp
+
+/-- The stage front's nine phases: seven counter-preparation rows, the embedded
+bounded unary reader, and the parking phase. -/
+private def canonStagePh (SU : Type) : Fin 9 → Type := fun i =>
+  match i with
+  | ⟨0, _⟩ => SweepPhase
+  | ⟨1, _⟩ => SeekPhase
+  | ⟨2, _⟩ => SeekPhase
+  | ⟨3, _⟩ => WritePhase 1
+  | ⟨4, _⟩ => SeekPhase
+  | ⟨5, _⟩ => SeekPhase
+  | ⟨6, _⟩ => FlagPhase
+  | ⟨7, _⟩ => SU
+  | ⟨8, _⟩ => Bool
+  | ⟨_ + 9, h⟩ => absurd h (by omega)
+
+private def canonStagePh_fintype (SU : Type) [Fintype SU] :
+    ∀ i, Fintype (canonStagePh SU i) := fun i =>
+  match i with
+  | ⟨0, _⟩ => inferInstanceAs (Fintype SweepPhase)
+  | ⟨1, _⟩ => inferInstanceAs (Fintype SeekPhase)
+  | ⟨2, _⟩ => inferInstanceAs (Fintype SeekPhase)
+  | ⟨3, _⟩ => inferInstanceAs (Fintype (WritePhase 1))
+  | ⟨4, _⟩ => inferInstanceAs (Fintype SeekPhase)
+  | ⟨5, _⟩ => inferInstanceAs (Fintype SeekPhase)
+  | ⟨6, _⟩ => inferInstanceAs (Fintype FlagPhase)
+  | ⟨7, _⟩ => inferInstanceAs (Fintype SU)
+  | ⟨8, _⟩ => inferInstanceAs (Fintype Bool)
+  | ⟨_ + 9, h⟩ => absurd h (by omega)
+
+private def canonStagePh_deceq (SU : Type) [DecidableEq SU] :
+    ∀ i, DecidableEq (canonStagePh SU i) := fun i =>
+  match i with
+  | ⟨0, _⟩ => inferInstanceAs (DecidableEq SweepPhase)
+  | ⟨1, _⟩ => inferInstanceAs (DecidableEq SeekPhase)
+  | ⟨2, _⟩ => inferInstanceAs (DecidableEq SeekPhase)
+  | ⟨3, _⟩ => inferInstanceAs (DecidableEq (WritePhase 1))
+  | ⟨4, _⟩ => inferInstanceAs (DecidableEq SeekPhase)
+  | ⟨5, _⟩ => inferInstanceAs (DecidableEq SeekPhase)
+  | ⟨6, _⟩ => inferInstanceAs (DecidableEq FlagPhase)
+  | ⟨7, _⟩ => inferInstanceAs (DecidableEq SU)
+  | ⟨8, _⟩ => inferInstanceAs (DecidableEq Bool)
+  | ⟨_ + 9, h⟩ => absurd h (by omega)
+
+/-- The stage front's phase machines: the copy, the three seeks and the step back, the pad
+write, the increment, the embedded bounded unary reader, and the parking machine. -/
+private def canonStageFamily (M mU : ℕ) (SU : Type) (U : MultiTapeTM mU Bool SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) :
+    (i : Fin 9) → MultiTapeTM M Bool (canonStagePh SU i) := fun i =>
+  match i with
+  | ⟨0, _⟩ => copyTM M header ctrOuter
+  | ⟨1, _⟩ => skipTM M ctrOuter
+  | ⟨2, _⟩ => walkTM M ctrOuter (· = ctrOuter) .neg
+  | ⟨3, _⟩ => writeConstTM M ctrOuter [false]
+  | ⟨4, _⟩ => skipTM M ctrOuter
+  | ⟨5, _⟩ => skipBackTM M ctrOuter
+  | ⟨6, _⟩ => incrementTM M ctrOuter
+  | ⟨7, _⟩ => embedEmitTM σ U
+  | ⟨8, _⟩ => canonStageHaltTM M
+  | ⟨_ + 9, h⟩ => absurd h (by omega)
+
+/-- The stage front's dispatch table: each row's exit to the next row, the increment's
+phantom overflow port and both reader ports to the parking phase. -/
+private def canonStageRed (SU : Type) [DecidableEq SU] (ue : SU) (ux : Bool → SU) :
+    (i : Fin 9) → canonStagePh SU i → Option (Σ j, canonStagePh SU j) :=
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  fun i =>
+  match i with
+  | ⟨0, _⟩ => fun s => if s = SweepPhase.done
+      then some ⟨⟨1, by omega⟩, SeekPhase.run⟩ else none
+  | ⟨1, _⟩ => fun s => if s = SeekPhase.done
+      then some ⟨⟨2, by omega⟩, SeekPhase.run⟩ else none
+  | ⟨2, _⟩ => fun s => if s = SeekPhase.done
+      then some ⟨⟨3, by omega⟩, WritePhase.wr 0⟩ else none
+  | ⟨3, _⟩ => fun s => if s = WritePhase.done
+      then some ⟨⟨4, by omega⟩, SeekPhase.run⟩ else none
+  | ⟨4, _⟩ => fun s => if s = SeekPhase.done
+      then some ⟨⟨5, by omega⟩, SeekPhase.run⟩ else none
+  | ⟨5, _⟩ => fun s => if s = SeekPhase.done
+      then some ⟨⟨6, by omega⟩, FlagPhase.run⟩ else none
+  | ⟨6, _⟩ => fun s => if s = FlagPhase.done true then some ⟨⟨7, by omega⟩, ue⟩
+      else if s = FlagPhase.done false then some ⟨⟨8, by omega⟩, false⟩ else none
+  | ⟨7, _⟩ => fun s => if s = ux true then some ⟨⟨8, by omega⟩, true⟩
+      else if s = ux false then some ⟨⟨8, by omega⟩, false⟩ else none
+  | ⟨8, _⟩ => fun _ => none
+  | ⟨_ + 9, h⟩ => absurd h (by omega)
+
+/-- The stage front's host. -/
+private def canonStageFr (M mU : ℕ) (SU : Type) [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) :
+    MultiTapeTM M Bool (Σ j, canonStagePh SU j) :=
+  phaseHostTM (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+
+/-- The stage front's bank shape: the header word, the outer-counter tape, every other
+tape blank, every head at the origin but the outer counter's, and empty output. -/
+private def canonStageBank {x : List Bool} (M : ℕ) (header ctrOuter : Fin M) {S' : Type}
+    (q : Option S') (ip : Fin (x.length + 2)) (ct : ℤ → Option Bool) (cp : ℤ)
+    (w : List Bool) : Cfg M Bool S' x :=
+  ⟨q, ip,
+    fun j => if j = header then FinTM.bufferTape w
+      else if j = ctrOuter then ct else FinTM.bufferTape [],
+    fun j => if j = ctrOuter then cp else 0, []⟩
+
+/-- The bank shape's fields. -/
+private lemma canonStageBank_fields {x : List Bool} (M : ℕ) (header ctrOuter : Fin M)
+    (hhc : header ≠ ctrOuter) {S' : Type} (q : Option S') (ip : Fin (x.length + 2))
+    (ct : ℤ → Option Bool) (cp : ℤ) (w : List Bool) :
+    (canonStageBank M header ctrOuter q ip ct cp w).workTapes header = FinTM.bufferTape w ∧
+    (canonStageBank M header ctrOuter q ip ct cp w).workTapePos header = 0 ∧
+    (canonStageBank M header ctrOuter q ip ct cp w).workTapes ctrOuter = ct ∧
+    (canonStageBank M header ctrOuter q ip ct cp w).workTapePos ctrOuter = cp ∧
+    ∀ j, j ≠ header → j ≠ ctrOuter →
+      (canonStageBank M header ctrOuter q ip ct cp w).workTapes j = FinTM.bufferTape [] ∧
+      (canonStageBank M header ctrOuter q ip ct cp w).workTapePos j = 0 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · show (if header = header then _ else _) = _
+    rw [if_pos rfl]
+  · show (if header = ctrOuter then cp else 0) = 0
+    rw [if_neg hhc]
+  · show (if ctrOuter = header then _ else _) = _
+    rw [if_neg (fun h => hhc h.symm), if_pos rfl]
+  · show (if ctrOuter = ctrOuter then cp else 0) = cp
+    rw [if_pos rfl]
+  · intro j hj1 hj2
+    constructor
+    · show (if j = header then _ else _) = _
+      rw [if_neg hj1, if_neg hj2]
+    · show (if j = ctrOuter then cp else 0) = 0
+      rw [if_neg hj2]
+
+
+/-- One leg of the stage front's strict cut: while the host replays phase `i`, its control
+carries phase `i`'s tag, which is not the parking tag. -/
+private lemma canonStageCut_leg {M : ℕ} {SU : Type} {x : List Bool}
+    (Fr : MultiTapeTM M Bool (Σ j, canonStagePh SU j))
+    (d : Cfg M Bool (Σ j, canonStagePh SU j) x) (A B : ℕ) (i : Fin 9) (hi : i.val ≠ 8)
+    (c : Cfg M Bool (canonStagePh SU i) x) (Mach : MultiTapeTM M Bool (canonStagePh SU i))
+    (hhost : Fr.runFrom d A = c.mapState (Sigma.mk i))
+    (hpre : ∀ u ≤ B, Fr.runFrom (c.mapState (Sigma.mk i)) u =
+      (Mach.runFrom c u).mapState (Sigma.mk i))
+    (vt : ℕ) (h1 : A ≤ vt) (h2 : vt ≤ A + B) (b : Bool) :
+    (Fr.runFrom d vt).state ≠ some ⟨⟨8, by omega⟩, b⟩ := by
+  rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
+    hpre (vt - A) (by omega), Cfg.mapState_state]
+  cases hst : (Mach.runFrom c (vt - A)).state with
+  | none =>
+    rw [Option.map_none]
+    exact fun hcon => Option.noConfusion hcon
+  | some s =>
+    rw [Option.map_some]
+    intro hcon
+    exact hi (congrArg (fun z : Σ j, canonStagePh SU j => z.1.val) (Option.some.inj hcon))
+
+/-- Leg 0 of the stage front: copy the header onto the outer counter (`Turing.copyTM`).
+
+**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
+`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
+gives the lockstep window and the dispatch, and the dispatched configuration is the next
+phase's bank configuration, field by field. -/
+private lemma canonStageLeg0 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2)) :
+    (∀ u ≤ 2 * w.length + 2,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some SweepPhase.sweep) ip
+      (FinTM.bufferTape []) 0 w)).mapState (Sigma.mk (⟨0, by omega⟩ : Fin 9))) u =
+      ((copyTM M header ctrOuter).runFrom
+        (canonStageBank M header ctrOuter (some SweepPhase.sweep) ip
+      (FinTM.bufferTape []) 0 w) u).mapState (Sigma.mk (⟨0, by omega⟩ : Fin 9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some SweepPhase.sweep) ip
+      (FinTM.bufferTape []) 0 w)).mapState (Sigma.mk (⟨0, by omega⟩ : Fin 9))) (2 * w.length + 2 +
+          1) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w)).mapState (Sigma.mk (⟨1, by omega⟩ : Fin 9)) := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SweepPhase.sweep) ip (FinTM.bufferTape []) 0 w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape w) 0 w
+  obtain ⟨hrun, hcut, -⟩ := copyTM_run_ofCfg header ctrOuter hhc w
+    (canonStageBank M header ctrOuter (some SweepPhase.sweep) ip
+      (FinTM.bufferTape []) 0 w)
+    rfl
+    (by
+      intro p _ _
+      rw [hA_h, hA_hp, zero_add])
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨0, by omega⟩ _ _ (2 * w.length + 2) hrun (SweepPhase.done) rfl
+    ⟨⟨1, by omega⟩, SeekPhase.run⟩
+    (by
+      show (if SweepPhase.done = SweepPhase.done
+        then some (⟨⟨1, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨1, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd : s = SweepPhase.done
+      · rw [hd] at hsu
+        exact absurd hsu (hcut u hu)
+      · show (if s = SweepPhase.done then _ else none) = none
+        rw [if_neg hd])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (if j = ctrOuter ∧ _ ∧ _ then _ else _) = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      by_cases hq : (0 : ℤ) ≤ q ∧ q < 0 + (w.length : ℤ)
+      · rw [if_pos ⟨rfl, (by rw [hA_cp]; exact hq.1), (by rw [hA_cp]; exact hq.2)⟩,
+          hB_c, hA_cp, sub_zero]
+      · rw [if_neg (fun hcon => hq ⟨(by rw [← hA_cp]; exact hcon.2.1),
+          (by rw [← hA_cp]; exact hcon.2.2)⟩), hA_c, hB_c, FinTM.bufferTape_nil]
+        rcases (by omega : q < 0 ∨ (w.length : ℤ) ≤ q) with hq' | hq'
+        · rw [FinTM.bufferTape_of_neg _ hq']
+        · rw [canonStageBuffer_none w q hq']
+    · rw [if_neg (fun hcon => hj2 hcon.1)]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_h, hB_h]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show (canonStageBank M header ctrOuter (some SweepPhase.sweep) ip
+      (FinTM.bufferTape []) 0 w).workTapePos j = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [hA_cp, hB_cp]
+    · by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+/-- Leg 1 of the stage front: skip past the copy on the outer counter (`Turing.skipTM`).
+
+**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
+`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
+gives the lockstep window and the dispatch, and the dispatched configuration is the next
+phase's bank configuration, field by field. -/
+private lemma canonStageLeg1 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2)) :
+    (∀ u ≤ w.length + 1,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w)).mapState (Sigma.mk (⟨1, by omega⟩ : Fin 9))) u =
+      ((skipTM M ctrOuter).runFrom
+        (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w) u).mapState (Sigma.mk (⟨1, by omega⟩ : Fin 9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w)).mapState (Sigma.mk (⟨1, by omega⟩ : Fin 9))) (w.length + 1 + 1) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) (w.length + 1) w)).mapState (Sigma.mk (⟨2, by omega⟩ : Fin 9)) := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape w) 0 w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape w) (w.length + 1) w
+  obtain ⟨hrun, hcut, -⟩ := skipTM_run_ofCfg ctrOuter w
+    (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w)
+    rfl
+    (by
+      intro p _ _
+      rw [hA_c, hA_cp, zero_add])
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨1, by omega⟩ _ _ (w.length + 1) hrun (SeekPhase.done) rfl
+    ⟨⟨2, by omega⟩, SeekPhase.run⟩
+    (by
+      show (if SeekPhase.done = SeekPhase.done
+        then some (⟨⟨2, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨2, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd : s = SeekPhase.done
+      · rw [hd] at hsu
+        exact absurd hsu (hcut u hu)
+      · show (if s = SeekPhase.done then _ else none) = none
+        rw [if_neg hd])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w).workTapes j q = _
+    by_cases hj1 : j = header
+    · subst hj1
+      rw [hA_h, hB_h]
+    · by_cases hj2 : j = ctrOuter
+      · subst hj2
+        rw [hA_c, hB_c]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show Function.update (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) 0 w).workTapePos ctrOuter
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+        (FinTM.bufferTape w) 0 w).workTapePos ctrOuter + w.length + 1) j = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [Function.update_self, hA_cp, hB_cp]
+      ring
+    · rw [Function.update_of_ne hj2]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+/-- Leg 2 of the stage front: one step back on the outer counter (`Turing.walkTM`).
+
+**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
+`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
+gives the lockstep window and the dispatch, and the dispatched configuration is the next
+phase's bank configuration, field by field. -/
+private lemma canonStageLeg2 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2)) :
+    (∀ u ≤ ([] : List Bool).length + 1,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) (w.length + 1) w)).mapState (Sigma.mk (⟨2, by omega⟩ : Fin 9))) u =
+      ((walkTM M ctrOuter (· = ctrOuter) .neg).runFrom
+        (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) (w.length + 1) w) u).mapState (Sigma.mk (⟨2, by omega⟩ : Fin 9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) (w.length + 1) w)).mapState (Sigma.mk (⟨2, by omega⟩ : Fin 9))) (([] :
+          List Bool).length + 1 + 1) =
+      ((canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+      (FinTM.bufferTape w) (w.length) w)).mapState (Sigma.mk (⟨3, by omega⟩ : Fin 9)) := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape w) (w.length + 1) w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some (WritePhase.wr 0) : Option (WritePhase 1)) ip (FinTM.bufferTape w) (w.length) w
+  obtain ⟨hrun, hcut, -⟩ := walkTM_run_ofCfg ctrOuter (· = ctrOuter) rfl .neg []
+    (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) (w.length + 1) w)
+    rfl
+    (by
+      intro p hp
+      obtain rfl : p = 0 := Nat.le_zero.mp (by simpa using hp)
+      rw [hA_c, hA_cp]
+      simp only [Nat.cast_zero, mul_zero, add_zero, FinTM.bufferTape_nil]
+      exact canonStageBuffer_none w _ (by omega))
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨2, by omega⟩ _ _ (([] : List Bool).length + 1) hrun (SeekPhase.done) rfl
+    ⟨⟨3, by omega⟩, WritePhase.wr 0⟩
+    (by
+      show (if SeekPhase.done = SeekPhase.done
+        then some (⟨⟨3, by omega⟩, WritePhase.wr 0⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨3, by omega⟩, WritePhase.wr 0⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd : s = SeekPhase.done
+      · rw [hd] at hsu
+        exact absurd hsu (hcut u hu)
+      · show (if s = SeekPhase.done then _ else none) = none
+        rw [if_neg hd])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape w) (w.length + 1) w).workTapes j q = _
+    by_cases hj1 : j = header
+    · subst hj1
+      rw [hA_h, hB_h]
+    · by_cases hj2 : j = ctrOuter
+      · subst hj2
+        rw [hA_c, hB_c]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+        (FinTM.bufferTape w) (w.length + 1) w).workTapePos j +
+        (if j = ctrOuter then _ else 0) = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [if_pos rfl, hA_cp, hB_cp]
+      show (w.length : ℤ) + 1 +
+        (SignType.neg : ℤ) * ((([] : List Bool).length + 1 : ℕ) : ℤ) = (w.length : ℤ)
+      simp
+    · rw [if_neg hj2, add_zero]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+/-- Leg 3 of the stage front: write the spare `false` pad (`Turing.writeConstTM`).
+
+**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
+`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
+gives the lockstep window and the dispatch, and the dispatched configuration is the next
+phase's bank configuration, field by field. -/
+private lemma canonStageLeg3 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2)) :
+    (∀ u ≤ 2 * ([false] : List Bool).length + 2,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+      (FinTM.bufferTape w) (w.length) w)).mapState (Sigma.mk (⟨3, by omega⟩ : Fin 9))) u =
+      ((writeConstTM M ctrOuter [false]).runFrom
+        (canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+      (FinTM.bufferTape w) (w.length) w) u).mapState (Sigma.mk (⟨3, by omega⟩ : Fin 9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+      (FinTM.bufferTape w) (w.length) w)).mapState (Sigma.mk (⟨3, by omega⟩ : Fin 9))) (2 * ([false]
+          : List Bool).length + 2 + 1) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w)).mapState (Sigma.mk (⟨4, by omega⟩ : Fin 9))
+          := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  have hlapp : (w ++ [false]).length = w.length + 1 := by
+    rw [List.length_append]
+    rfl
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some (WritePhase.wr 0) : Option (WritePhase 1)) ip (FinTM.bufferTape w) (w.length) w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape (w ++ [false])) (w.length) w
+  obtain ⟨hrun, hcut, -⟩ := writeConstTM_run_ofCfg ctrOuter [false]
+    (canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+      (FinTM.bufferTape w) (w.length) w)
+    rfl
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨3, by omega⟩ _ _ (2 * ([false] : List Bool).length + 2) hrun
+    (WritePhase.done : WritePhase 1) rfl
+    ⟨⟨4, by omega⟩, SeekPhase.run⟩
+    (by
+      show (if (WritePhase.done : WritePhase 1) = WritePhase.done
+        then some (⟨⟨4, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨4, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd : s = WritePhase.done
+      · rw [hd] at hsu
+        exact absurd hsu (hcut u hu)
+      · show (if s = WritePhase.done then _ else none) = none
+        rw [if_neg hd])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (if j = ctrOuter ∧ _ ∧ _ then _ else _) = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      by_cases hq : (w.length : ℤ) ≤ q ∧ q < (w.length : ℤ) + 1
+      · rw [if_pos ⟨rfl, (by rw [hA_cp]; exact hq.1),
+          (by rw [hA_cp]; simpa using hq.2)⟩, hB_c]
+        obtain rfl : q = (w.length : ℤ) := by omega
+        rw [hA_cp, sub_self]
+        rw [show FinTM.bufferTape [false] 0 = some false by rw [FinTM.bufferTape_eq]; rfl,
+          FinTM.bufferTape_nat, List.getElem?_append_right (le_refl w.length),
+          Nat.sub_self]
+        rfl
+      · rw [if_neg (fun hcon => hq ⟨(by
+            have h1 := hcon.2.1
+            rw [hA_cp] at h1
+            exact h1), (by
+            have h2 := hcon.2.2
+            rw [hA_cp] at h2
+            simpa using h2)⟩), hA_c, hB_c, FinTM.bufferTape_eq, FinTM.bufferTape_eq]
+        by_cases hq0 : (0 : ℤ) ≤ q
+        · rw [if_pos hq0, if_pos hq0]
+          push_cast at hq
+          rcases (by omega : q < (w.length : ℤ) ∨ (w.length : ℤ) + 1 ≤ q) with hq' | hq'
+          · rw [List.getElem?_append_left (by omega)]
+          · rw [List.getElem?_eq_none (show w.length ≤ q.toNat by omega),
+              List.getElem?_eq_none
+                (show (w ++ [false]).length ≤ q.toNat by rw [hlapp]; omega)]
+        · rw [if_neg hq0, if_neg hq0]
+    · rw [if_neg (fun hcon => hj2 hcon.1)]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_h, hB_h]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show (canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) ip
+      (FinTM.bufferTape w) (w.length) w).workTapePos j = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [hA_cp, hB_cp]
+    · by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+/-- Leg 4 of the stage front: skip past the pad (`Turing.skipTM`).
+
+**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
+`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
+gives the lockstep window and the dispatch, and the dispatched configuration is the next
+phase's bank configuration, field by field. -/
+private lemma canonStageLeg4 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2)) :
+    (∀ u ≤ ([false] : List Bool).length + 1,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w)).mapState (Sigma.mk (⟨4, by omega⟩ : Fin 9)))
+          u =
+      ((skipTM M ctrOuter).runFrom
+        (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w) u).mapState (Sigma.mk (⟨4, by omega⟩ : Fin
+          9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w)).mapState (Sigma.mk (⟨4, by omega⟩ : Fin 9)))
+          (([false] : List Bool).length + 1 + 1) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w)).mapState (Sigma.mk (⟨5, by omega⟩ : Fin
+          9)) := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  have hlapp : (w ++ [false]).length = w.length + 1 := by
+    rw [List.length_append]
+    rfl
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape (w ++ [false])) (w.length) w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape (w ++ [false])) (w.length + 2) w
+  obtain ⟨hrun, hcut, -⟩ := skipTM_run_ofCfg ctrOuter [false]
+    (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w)
+    rfl
+    (by
+      intro p hp0 hp1
+      have hp1' : p ≤ 1 := by simpa using hp1
+      rw [hA_c, hA_cp]
+      rcases (by omega : p = 0 ∨ p = 1) with rfl | rfl
+      · rw [add_zero, show FinTM.bufferTape [false] 0 = some false by rw [FinTM.bufferTape_eq]; rfl,
+          FinTM.bufferTape_nat, List.getElem?_append_right (le_refl w.length),
+          Nat.sub_self]
+        rfl
+      · rw [canonStageBuffer_none _ _ (by rw [hlapp]; omega),
+          show FinTM.bufferTape [false] 1 = none by rw [FinTM.bufferTape_eq]; rfl])
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨4, by omega⟩ _ _ (([false] : List Bool).length + 1) hrun (SeekPhase.done) rfl
+    ⟨⟨5, by omega⟩, SeekPhase.run⟩
+    (by
+      show (if SeekPhase.done = SeekPhase.done
+        then some (⟨⟨5, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨5, by omega⟩, SeekPhase.run⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd : s = SeekPhase.done
+      · rw [hd] at hsu
+        exact absurd hsu (hcut u hu)
+      · show (if s = SeekPhase.done then _ else none) = none
+        rw [if_neg hd])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w).workTapes j q = _
+    by_cases hj1 : j = header
+    · subst hj1
+      rw [hA_h, hB_h]
+    · by_cases hj2 : j = ctrOuter
+      · subst hj2
+        rw [hA_c, hB_c]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show Function.update (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length) w).workTapePos ctrOuter
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+        (FinTM.bufferTape (w ++ [false])) (w.length) w).workTapePos ctrOuter +
+        ([false] : List Bool).length + 1) j = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [Function.update_self, hA_cp, hB_cp]
+      show (w.length : ℤ) + ((([false] : List Bool).length : ℕ) : ℤ) + 1 =
+        (w.length : ℤ) + 2
+      simp only [List.length_singleton]
+      push_cast
+      ring
+    · rw [Function.update_of_ne hj2]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+/-- Leg 5 of the stage front: skip back over the padded word (`Turing.skipBackTM`).
+
+**Proof sketch.** The bank configuration meets the row's framed premise (its fields read by
+`canonStageBank_fields`). Then `phaseHostTM_run`, with its guard from the row's first-visit cut,
+gives the lockstep window and the dispatch, and the dispatched configuration is the next
+phase's bank configuration, field by field. -/
+private lemma canonStageLeg5 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2)) :
+    (∀ u ≤ (w ++ [false]).length + 3,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w)).mapState (Sigma.mk (⟨5, by omega⟩ : Fin
+          9))) u =
+      ((skipBackTM M ctrOuter).runFrom
+        (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w) u).mapState (Sigma.mk (⟨5, by omega⟩ : Fin
+          9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w)).mapState (Sigma.mk (⟨5, by omega⟩ : Fin
+          9))) ((w ++ [false]).length + 3 + 1) =
+      ((canonStageBank M header ctrOuter (some FlagPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) 0 w)).mapState (Sigma.mk (⟨6, by omega⟩ : Fin 9)) := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  have hlapp : (w ++ [false]).length = w.length + 1 := by
+    rw [List.length_append]
+    rfl
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some SeekPhase.run) ip (FinTM.bufferTape (w ++ [false])) (w.length + 2) w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some FlagPhase.run) ip (FinTM.bufferTape (w ++ [false])) 0 w
+  obtain ⟨hrun, hcut, -⟩ := skipBackTM_run_ofCfg ctrOuter (w ++ [false])
+    (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w)
+    rfl
+    (by
+      intro p _ _
+      rw [hA_c, hA_cp]
+      congr 1
+      rw [hlapp]
+      push_cast
+      ring)
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨5, by omega⟩ _ _ ((w ++ [false]).length + 3) hrun (SeekPhase.done) rfl
+    ⟨⟨6, by omega⟩, FlagPhase.run⟩
+    (by
+      show (if SeekPhase.done = SeekPhase.done
+        then some (⟨⟨6, by omega⟩, FlagPhase.run⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨6, by omega⟩, FlagPhase.run⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd : s = SeekPhase.done
+      · rw [hd] at hsu
+        exact absurd hsu (hcut u hu)
+      · show (if s = SeekPhase.done then _ else none) = none
+        rw [if_neg hd])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w).workTapes j q = _
+    by_cases hj1 : j = header
+    · subst hj1
+      rw [hA_h, hB_h]
+    · by_cases hj2 : j = ctrOuter
+      · subst hj2
+        rw [hA_c, hB_c]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show Function.update (canonStageBank M header ctrOuter (some SeekPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) (w.length + 2) w).workTapePos ctrOuter
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) ip
+        (FinTM.bufferTape (w ++ [false])) (w.length + 2) w).workTapePos ctrOuter -
+        (w ++ [false]).length - 1) j = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [Function.update_self, hA_cp, hB_cp, hlapp]
+      push_cast
+      ring
+    · rw [Function.update_of_ne hj2]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+/-- Leg 6 of the stage front: increment the padded copy (`Turing.incrementTM`).
+
+**Proof sketch.** As for the other legs, with the increment row's success case
+(`incrementTM_run_succ_ofCfg`): the padded copy does not overflow, and its incremented word has
+the same length (`incFixed_length`). Then `phaseHostTM_run` and the field-by-field
+identification of the next phase's bank configuration. -/
+private lemma canonStageLeg6 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hhc : header ≠ ctrOuter)
+    (x w : List Bool) (ip : Fin (x.length + 2))
+    (v : List Bool) (hv : incFixed (w ++ [false]) = some v) :
+    (∀ u ≤ 2 * ((w ++ [false]).takeWhile id).length + 2,
+      (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+        (((canonStageBank M header ctrOuter (some FlagPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) 0 w)).mapState (Sigma.mk (⟨6, by omega⟩ : Fin 9))) u =
+      ((incrementTM M ctrOuter).runFrom
+        (canonStageBank M header ctrOuter (some FlagPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) 0 w) u).mapState (Sigma.mk (⟨6, by omega⟩ : Fin 9))) ∧
+    (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom
+      (((canonStageBank M header ctrOuter (some FlagPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) 0 w)).mapState (Sigma.mk (⟨6, by omega⟩ : Fin 9))) (2 * ((w
+          ++ [false]).takeWhile id).length + 2 + 1) =
+      ((canonStageBank M header ctrOuter (some ue) ip
+      (FinTM.bufferTape v) 0 w)).mapState (Sigma.mk (⟨7, by omega⟩ : Fin 9)) := by
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  have hlapp : (w ++ [false]).length = w.length + 1 := by
+    rw [List.length_append]
+    rfl
+  have hvlen : v.length = w.length + 1 := by
+    have h1 := incFixed_length hv
+    rw [hlapp] at h1
+    exact h1
+  obtain ⟨hA_h, hA_hp, hA_c, hA_cp, hA_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some FlagPhase.run) ip (FinTM.bufferTape (w ++ [false])) 0 w
+  obtain ⟨hB_h, hB_hp, hB_c, hB_cp, hB_o⟩ := canonStageBank_fields M header ctrOuter hhc
+    (x := x) (some ue) ip (FinTM.bufferTape v) 0 w
+  obtain ⟨hrun, hcut, -⟩ := incrementTM_run_succ_ofCfg ctrOuter (w ++ [false]) v hv
+    (canonStageBank M header ctrOuter (some FlagPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) 0 w)
+    rfl
+    (by
+      intro p _ _
+      rw [hA_c, hA_cp, zero_add])
+  obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨6, by omega⟩ _ _ (2 * ((w ++ [false]).takeWhile id).length + 2) hrun (FlagPhase.done true) rfl
+    ⟨⟨7, by omega⟩, ue⟩
+    (by
+      show (if FlagPhase.done true = FlagPhase.done true
+        then some (⟨⟨7, by omega⟩, ue⟩ : Σ j, canonStagePh SU j) else if FlagPhase.done true =
+            FlagPhase.done false
+        then some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j) else none) =
+        some (⟨⟨7, by omega⟩, ue⟩ : Σ j, canonStagePh SU j)
+      rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      by_cases hd1 : s = FlagPhase.done true
+      · rw [hd1] at hsu
+        exact absurd hsu (hcut u hu true)
+      · by_cases hd0 : s = FlagPhase.done false
+        · rw [hd0] at hsu
+          exact absurd hsu (hcut u hu false)
+        · show (if s = FlagPhase.done true then _
+            else if s = FlagPhase.done false then _ else none) = none
+          rw [if_neg hd1, if_neg hd0])
+  rw [← hrun] at hdisp
+  refine ⟨hpre, hdisp.trans ?_⟩
+  rw [hrun]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    rfl
+  · funext j q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    show (if j = ctrOuter ∧ _ ∧ _ then _ else _) = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      by_cases hq : (0 : ℤ) ≤ q ∧ q < 0 + ((w ++ [false]).length : ℤ)
+      · rw [if_pos ⟨rfl, (by rw [hA_cp]; exact hq.1), (by rw [hA_cp]; exact hq.2)⟩,
+          hB_c, hA_cp, sub_zero]
+      · rw [if_neg (fun hcon => hq ⟨(by rw [← hA_cp]; exact hcon.2.1),
+          (by rw [← hA_cp]; exact hcon.2.2)⟩), hA_c, hB_c]
+        rcases (by omega : q < 0 ∨ ((w ++ [false]).length : ℤ) ≤ q) with hq' | hq'
+        · rw [FinTM.bufferTape_of_neg _ hq', FinTM.bufferTape_of_neg _ hq']
+        · rw [canonStageBuffer_none _ q hq', canonStageBuffer_none v q (by
+            rw [hvlen]
+            rw [hlapp] at hq'
+            exact hq')]
+    · rw [if_neg (fun hcon => hj2 hcon.1)]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_h, hB_h]
+      · rw [(hA_o j hj1 hj2).1, (hB_o j hj1 hj2).1]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    show (canonStageBank M header ctrOuter (some FlagPhase.run) ip
+      (FinTM.bufferTape (w ++ [false])) 0 w).workTapePos j = _
+    by_cases hj2 : j = ctrOuter
+    · subst hj2
+      rw [hA_cp, hB_cp]
+    · by_cases hj1 : j = header
+      · subst hj1
+        rw [hA_hp, hB_hp]
+      · rw [(hA_o j hj1 hj2).2, (hB_o j hj1 hj2).2]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+    rfl
+
+
+/-- **The stage front**: the counter preparation and the initial-state range
+check, as one block over the stage's bank. The host runs seven framed catalog rows — copy
+the header to the outer counter, skip past the copy, one step back, write the spare `false`
+pad, skip past the pad, skip back over the padded word, increment (`incFixed` on the padded
+copy never overflows) — and then the bounded unary reader C1, embedded by the forwarding
+transformer, with both its ports dispatched to the parking phase. The block is silent,
+preserves the header, leaves every tape but the outer counter as it found it, puts the
+incremented header copy (of value `counterValue w + 1`) on the outer counter with its head
+at the origin, exits by C1's verdict with a strict cut, and on success lands the native head
+at the surviving suffix. C1's contract is a hypothesis, so the stage assembly can discharge
+it at `exists_canonUnaryTM` within its own tape budget.
+
+**Proof sketch.** The padded header copy increments without overflow (`incFixed` on it is `some v`,
+of length `|w| + 1` and value `counterValue w + 1`). The seven legs (`canonStageLeg0`–`Leg6`) carry
+the bank configuration from phase to phase, each with its lockstep window and dispatch. The
+eighth phase is C1 embedded by the forwarding transformer (`embedEmitCfg_eq` for its start, its
+contract for the run), and `phaseHostTM_run` dispatches both its ports to the parking phase. The
+strict cut is `canonStageCut_leg` on each phase's window; the endpoint is the last leg's. -/
+private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU) (uBound : Fin mU) (ua : ℕ)
+    (uinj : Function.Injective ux)
+    (unary : ∀ (x w : List Bool) (d : Cfg mU Bool SU x), d.state = some ue →
+      1 ≤ d.inputPos.val →
+      d.workTapes uBound = FinTM.bufferTape w → d.workTapePos uBound = 0 →
+      (∀ j, j ≠ uBound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+      ∃ t ≤ ua * (x.length + w.length + 1),
+        (U.runFrom d t).state =
+          some (ux (codeSkipFin (counterValue w + 1)
+            (x.drop (d.inputPos.val - 1))).isSome) ∧
+        (U.runFrom d t).output = d.output ∧
+        (∀ u < t, ∀ v, (U.runFrom d u).state ≠ some (ux v)) ∧
+        (U.runFrom d t).workTapes = d.workTapes ∧
+        (U.runFrom d t).workTapePos = d.workTapePos ∧
+        ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+          (U.runFrom d t).inputPos.val = x.length + 1 - ys.length)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hσb : σ uBound = header)
+    (hσc : ∀ i, σ i ≠ ctrOuter) (hhc : header ≠ ctrOuter) :
+    ∃ (H : Type) (_ : Fintype H) (_ : DecidableEq H) (Fr : MultiTapeTM M Bool H)
+      (entry : H) (exit : Bool → H) (A : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg M Bool H x), d.state = some entry → d.output = [] →
+        1 ≤ d.inputPos.val →
+        d.workTapes header = FinTM.bufferTape w → d.workTapePos header = 0 →
+        (∀ j, j ≠ header → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ A * (x.length + w.length + 1), ∃ u : List Bool,
+          Nat.ofDigits 2 (u.map Bool.toNat) = counterValue w + 1 ∧
+          u.length = w.length + 1 ∧
+          (Fr.runFrom d t).state = some (exit (codeSkipFin (counterValue w + 1)
+            (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (Fr.runFrom d t).output = [] ∧
+          (∀ v < t, ∀ b, (Fr.runFrom d v).state ≠ some (exit b)) ∧
+          (Fr.runFrom d t).workTapes header = FinTM.bufferTape w ∧
+          (Fr.runFrom d t).workTapePos header = 0 ∧
+          (Fr.runFrom d t).workTapes ctrOuter = FinTM.bufferTape u ∧
+          (Fr.runFrom d t).workTapePos ctrOuter = 0 ∧
+          (∀ j, j ≠ header → j ≠ ctrOuter →
+            (Fr.runFrom d t).workTapes j = FinTM.bufferTape [] ∧
+            (Fr.runFrom d t).workTapePos j = 0) ∧
+          ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+            (Fr.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  classical
+  letI : ∀ i, Fintype (canonStagePh SU i) := canonStagePh_fintype SU
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  refine ⟨Σ j, canonStagePh SU j, inferInstance, inferInstance,
+    canonStageFr M mU SU U ue ux header ctrOuter σ,
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩, fun b => ⟨⟨8, by omega⟩, b⟩, ua + 33, ?_, ?_⟩
+  · intro a b h
+    exact eq_of_heq (Sigma.mk.inj_iff.mp h).2
+  intro x w d hs hout hpos hht hhp hblank
+  have hvsome : (incFixed (w ++ [false])).isSome = true := by
+    rw [Option.isSome_iff_ne_none]
+    intro hnone
+    have hrep := (incFixed_eq_none_iff_replicate _).mp hnone
+    have hmem : false ∈ w ++ [false] := List.mem_append_right _ (List.mem_singleton.mpr rfl)
+    rw [hrep] at hmem
+    exact Bool.noConfusion (List.eq_of_mem_replicate hmem)
+  obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hvsome
+  have hlapp : (w ++ [false]).length = w.length + 1 := by
+    rw [List.length_append]
+    rfl
+  have hvlen : v.length = w.length + 1 := by
+    have h1 := incFixed_length hv
+    rw [hlapp] at h1
+    exact h1
+  have hvval : Nat.ofDigits 2 (v.map Bool.toNat) = counterValue w + 1 := by
+    rw [canonStageInc_value _ v hv, canonStagePad_value, ← counterValue_eq]
+  obtain ⟨hB0h, hB0hp, hB0c, hB0cp, hB0o⟩ :=
+    canonStageBank_fields M header ctrOuter hhc (x := x)
+      (some SweepPhase.sweep) d.inputPos (FinTM.bufferTape []) 0 w
+  obtain ⟨hB7h, hB7hp, hB7c, hB7cp, hB7o⟩ :=
+    canonStageBank_fields M header ctrOuter hhc (x := x)
+      (some ue) d.inputPos (FinTM.bufferTape v) 0 w
+  have hstart : ((canonStageBank M header ctrOuter (some SweepPhase.sweep) d.inputPos
+      (FinTM.bufferTape []) 0 w)).mapState
+      (Sigma.mk (⟨0, by omega⟩ : Fin 9)) = d := by
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · rw [Cfg.mapState_state, hs]
+      rfl
+    · rw [Cfg.mapState_inputPos]
+      rfl
+    · funext j q
+      rw [Cfg.mapState_workTapes]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hB0h, hht]
+      · by_cases hj2 : j = ctrOuter
+        · rw [hj2, hB0c, (hblank ctrOuter (fun h => hhc h.symm)).1]
+        · rw [(hB0o j hj1 hj2).1, (hblank j hj1).1]
+    · funext j
+      rw [Cfg.mapState_workTapePos]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hB0hp, hhp]
+      · by_cases hj2 : j = ctrOuter
+        · rw [hj2, hB0cp, (hblank ctrOuter (fun h => hhc h.symm)).2]
+        · rw [(hB0o j hj1 hj2).2, (hblank j hj1).2]
+    · rw [Cfg.mapState_output, hout]
+      rfl
+  obtain ⟨hpre0, hop0⟩ := canonStageLeg0 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre1, hop1⟩ := canonStageLeg1 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre2, hop2⟩ := canonStageLeg2 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre3, hop3⟩ := canonStageLeg3 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre4, hop4⟩ := canonStageLeg4 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre5, hop5⟩ := canonStageLeg5 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre6, hop6⟩ := canonStageLeg6 U ue ux header ctrOuter σ hhc x w d.inputPos v hv
+  have hhost1 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape w) 0 w)).mapState (Sigma.mk (⟨1, by omega⟩ : Fin 9)) := by
+    conv_lhs => rw [← hstart]
+    exact hop0
+  have hhost2 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape w) (w.length + 1) w)).mapState (Sigma.mk (⟨2, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1))
+      ((w.length + 1) + 1), hhost1]
+    exact hop1
+  have hhost3 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)) =
+      ((canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) d.inputPos
+        (FinTM.bufferTape w) (w.length) w)).mapState (Sigma.mk (⟨3, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1))
+      ((([] : List Bool).length + 1) + 1), hhost2]
+    exact hop2
+  have hhost4 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape (w ++ [false])) (w.length) w)).mapState (Sigma.mk (⟨4, by omega⟩ : Fin 9))
+            := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1))
+      ((2 * ([false] : List Bool).length + 2) + 1), hhost3]
+    exact hop3
+  have hhost5 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape (w ++ [false])) (w.length + 2) w)).mapState (Sigma.mk (⟨5, by omega⟩ : Fin
+            9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1))
+      ((([false] : List Bool).length + 1) + 1), hhost4]
+    exact hop4
+  have hhost6 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1)) =
+      ((canonStageBank M header ctrOuter (some FlagPhase.run) d.inputPos
+        (FinTM.bufferTape (w ++ [false])) 0 w)).mapState (Sigma.mk (⟨6, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1))
+      (((w ++ [false]).length + 3) + 1), hhost5]
+    exact hop5
+  have hhost7 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1)) =
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+        (FinTM.bufferTape v) 0 w)).mapState (Sigma.mk (⟨7, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1))
+      ((2 * ((w ++ [false]).takeWhile id).length + 2) + 1), hhost6]
+    exact hop6
+  -- leg 7: the embedded bounded unary reader
+  set selU : Cfg mU Bool SU x := ⟨some ue, d.inputPos,
+    fun i => (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w).workTapes (σ i),
+    fun i => (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w).workTapePos (σ i), []⟩ with hselU
+  have hsel : embedEmitCfg σ
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+      (selU) =
+      (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w) :=
+    embedEmitCfg_eq σ _ _ _ _ _ rfl rfl (List.append_nil _)
+      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+  have hrun7 : ∀ tt : ℕ, (embedEmitTM σ U).runFrom
+      (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w) tt =
+      embedEmitCfg σ
+        ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+        ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+        ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+        (U.runFrom (selU) tt) := by
+    intro tt
+    conv_lhs => rw [← hsel]
+    exact embedEmitTM_runFrom σ U _ _ _ _ tt
+  have hσh : ∀ i, i ≠ uBound → σ i ≠ header := by
+    intro i hi hcon
+    exact hi (σ.injective (hcon.trans hσb.symm))
+  obtain ⟨tU, htU, hUst, hUout, hUcut, hUtapes, hUheads, hUsfx⟩ := unary x w
+    (selU)
+    rfl hpos
+    (by
+      show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ uBound) = _
+      rw [hσb, hB7h])
+    (by
+      show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ uBound) = _
+      rw [hσb, hB7hp])
+    (by
+      intro j hj
+      constructor
+      · show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ j) = _
+        rw [(hB7o (σ j) (hσh j hj) (hσc j)).1]
+      · show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ j) = _
+        rw [(hB7o (σ j) (hσh j hj) (hσc j)).2])
+  obtain ⟨hpre7, hdisp7⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨7, by omega⟩ _ _ tU (hrun7 tU)
+    (ux (codeSkipFin (counterValue w + 1)
+      (x.drop ((selU).inputPos.val - 1))).isSome)
+    (by rw [embedEmitCfg_state]; exact hUst)
+    ⟨⟨8, by omega⟩, (codeSkipFin (counterValue w + 1)
+      (x.drop ((selU).inputPos.val - 1))).isSome⟩
+    (by
+      cases (codeSkipFin (counterValue w + 1)
+        (x.drop ((selU).inputPos.val - 1))).isSome
+      · show (if ux false = ux true
+          then some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+          else if ux false = ux false
+            then some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j) else none) =
+          some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j)
+        rw [if_neg (fun hcon => Bool.noConfusion (uinj hcon)), if_pos rfl]
+      · show (if ux true = ux true
+          then some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+          else if ux true = ux false
+            then some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j) else none) =
+          some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+        rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      rw [hrun7 u, embedEmitCfg_state] at hsu
+      have hsu' : (U.runFrom (selU) u).state = some s := hsu
+      by_cases hd1 : s = ux true
+      · rw [hd1] at hsu'
+        exact absurd hsu' (hUcut u hu true)
+      · by_cases hd0 : s = ux false
+        · rw [hd0] at hsu'
+          exact absurd hsu' (hUcut u hu false)
+        · show (if s = ux true then _ else if s = ux false then _ else none) = none
+          rw [if_neg hd1, if_neg hd0])
+  rw [← hrun7 tU] at hdisp7
+  have hfin : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1) + (tU + 1))
+          =
+      ((embedEmitTM σ U).runFrom (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w) tU).mapState
+        (fun _ => (⟨⟨8, by omega⟩, (codeSkipFin (counterValue w + 1)
+          (x.drop ((selU).inputPos.val - 1))).isSome⟩ :
+          Σ j, canonStagePh SU j)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1))
+      (tU + 1), hhost7]
+    exact hdisp7
+  refine ⟨(2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+      ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+      [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1) + (tU + 1), ?_,
+      v, hvval, hvlen, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · -- the ledger
+    have hTW : ((w ++ [false]).takeWhile id).length ≤ w.length + 1 := by
+      have h1 := (List.takeWhile_sublist (l := w ++ [false]) id).length_le
+      rw [hlapp] at h1
+      exact h1
+    have hn0 : ([] : List Bool).length = 0 := rfl
+    have hn1 : ([false] : List Bool).length = 1 := rfl
+    have hsplit : (ua + 33) * (x.length + w.length + 1) =
+        ua * (x.length + w.length + 1) + 33 * (x.length + w.length + 1) := by ring
+    have hexp : 33 * (x.length + w.length + 1) =
+        33 * x.length + 33 * w.length + 33 := by ring
+    omega
+  · -- the exit state
+    rw [hfin, Cfg.mapState_state, hrun7 tU, embedEmitCfg_state, hUst, Option.map_some]
+  · -- the output
+    rw [hfin, Cfg.mapState_output, hrun7 tU, embedEmitCfg_output, hUout]
+    rfl
+  · -- the cut
+    intro vt hvt b
+    by_cases h1 : vt ≤ 2 * w.length + 2
+    · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+        (0) (2 * w.length + 2) ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 8) _ _
+        (by rw [MultiTapeTM.runFrom_zero]; exact hstart.symm) hpre0 vt (by omega)
+        (by omega) b
+    ·
+      by_cases h2 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1)
+      · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+          ((2 * w.length + 2 + 1)) (w.length + 1) ⟨1, by omega⟩ (by decide : (1 : ℕ) ≠ 8) _ _
+          hhost1 hpre1 vt (by omega) (by omega) b
+      ·
+        by_cases h3 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length +
+            1)
+        · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+            ((2 * w.length + 2 + 1) + (w.length + 1 + 1)) (([] : List Bool).length + 1) ⟨2, by
+                omega⟩ (by decide : (2 : ℕ) ≠ 8) _ _
+            hhost2 hpre2 vt (by omega) (by omega) b
+        ·
+          by_cases h4 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length
+              + 1 + 1) + (2 * ([false] : List Bool).length + 2)
+          · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+              ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)) (2 *
+                  ([false] : List Bool).length + 2) ⟨3, by omega⟩ (by decide : (3 : ℕ) ≠ 8) _ _
+              hhost3 hpre3 vt (by omega) (by omega) b
+          ·
+            by_cases h5 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List
+                Bool).length + 1 + 1) + (2 * ([false] : List Bool).length + 2 + 1) + (([false] :
+                List Bool).length + 1)
+            · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) +
+                    (2 * ([false] : List Bool).length + 2 + 1)) (([false] : List Bool).length + 1)
+                    ⟨4, by omega⟩ (by decide : (4 : ℕ) ≠ 8) _ _
+                hhost4 hpre4 vt (by omega) (by omega) b
+            ·
+              by_cases h6 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List
+                  Bool).length + 1 + 1) + (2 * ([false] : List Bool).length + 2 + 1) + (([false] :
+                  List Bool).length + 1 + 1) + ((w ++ [false]).length + 3)
+              · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                  ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) +
+                      (2 * ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1
+                      + 1)) ((w ++ [false]).length + 3) ⟨5, by omega⟩ (by decide : (5 : ℕ) ≠ 8) _ _
+                  hhost5 hpre5 vt (by omega) (by omega) b
+              ·
+                by_cases h7 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List
+                    Bool).length + 1 + 1) + (2 * ([false] : List Bool).length + 2 + 1) + (([false] :
+                    List Bool).length + 1 + 1) + ((w ++ [false]).length + 3 + 1) + (2 * ((w ++
+                    [false]).takeWhile id).length + 2)
+                · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                    ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)
+                        + (2 * ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length
+                        + 1 + 1) + ((w ++ [false]).length + 3 + 1)) (2 * ((w ++ [false]).takeWhile
+                        id).length + 2) ⟨6, by omega⟩ (by decide : (6 : ℕ) ≠ 8) _ _
+                    hhost6 hpre6 vt (by omega) (by omega) b
+                ·
+                  exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                    ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)
+                        + (2 * ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length
+                        + 1 + 1) + ((w ++ [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile
+                        id).length + 2 + 1)) tU ⟨7, by omega⟩ (by decide : (7 : ℕ) ≠ 8) _ _
+                    hhost7 hpre7 vt (by omega) (by omega) b
+  · -- the header tape
+    rw [hfin, hrun7 tU]
+    have h1 := embedEmitCfg_selected_tape σ
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+      (U.runFrom (selU) tU) uBound
+    rw [hσb] at h1
+    funext q
+    rw [Cfg.mapState_workTapes, congrFun h1 q, congrFun hUtapes uBound]
+    show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ uBound) q = _
+    rw [hσb, hB7h]
+  · -- the header head
+    rw [hfin, hrun7 tU, Cfg.mapState_workTapePos]
+    have h1 := embedEmitCfg_selected_pos σ
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+      (U.runFrom (selU) tU) uBound
+    rw [hσb] at h1
+    rw [h1, congrFun hUheads uBound]
+    show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ uBound) = _
+    rw [hσb, hB7hp]
+  · -- the outer counter tape
+    rw [hfin, hrun7 tU]
+    funext q
+    rw [Cfg.mapState_workTapes]
+    rw [congrFun (embedEmitCfg_unselected σ _ _ _ _ ctrOuter
+      (fun ⟨i, hi⟩ => hσc i hi)).1 q, hB7c]
+  · -- the outer counter head
+    rw [hfin, hrun7 tU, Cfg.mapState_workTapePos]
+    rw [(embedEmitCfg_unselected σ _ _ _ _ ctrOuter (fun ⟨i, hi⟩ => hσc i hi)).2, hB7cp]
+  · -- every other tape
+    intro j hj1 hj2
+    constructor
+    · rw [hfin, hrun7 tU]
+      funext q
+      rw [Cfg.mapState_workTapes]
+      by_cases hjr : j ∈ Set.range σ
+      · obtain ⟨i, rfl⟩ := hjr
+        rw [embedEmitCfg_selected_tape, congrFun hUtapes i]
+        show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ i) q = _
+        rw [(hB7o (σ i) hj1 hj2).1]
+      · rw [congrFun (embedEmitCfg_unselected σ _ _ _ _ j hjr).1 q,
+          (hB7o j hj1 hj2).1]
+    · rw [hfin, hrun7 tU, Cfg.mapState_workTapePos]
+      by_cases hjr : j ∈ Set.range σ
+      · obtain ⟨i, rfl⟩ := hjr
+        rw [embedEmitCfg_selected_pos, congrFun hUheads i]
+        show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ i) = _
+        rw [(hB7o (σ i) hj1 hj2).2]
+      · rw [(embedEmitCfg_unselected σ _ _ _ _ j hjr).2, (hB7o j hj1 hj2).2]
+  · -- the suffix clause
+    intro ys hy
+    rw [hfin, hrun7 tU, Cfg.mapState_inputPos, embedEmitCfg_inputPos]
+    exact hUsfx ys hy
+
+/-- The grammar stage's phase types: the stage front's host, the release-adapter-wrapped
+embedded table block, the native suffix test, and the parking phase. -/
+private def canonGramPh (HF H₃ : Type) : Fin 4 → Type := fun i =>
+  match i with
+  | ⟨0, _⟩ => HF
+  | ⟨1, _⟩ => Unit ⊕ H₃
+  | ⟨2, _⟩ => Option Bool
+  | ⟨3, _⟩ => Bool
+  | ⟨_ + 4, h⟩ => absurd h (by omega)
+
+private def canonGramPh_fintype (HF H₃ : Type) [Fintype HF] [Fintype H₃] :
+    ∀ i, Fintype (canonGramPh HF H₃ i) := fun i =>
+  match i with
+  | ⟨0, _⟩ => inferInstanceAs (Fintype HF)
+  | ⟨1, _⟩ => inferInstanceAs (Fintype (Unit ⊕ H₃))
+  | ⟨2, _⟩ => inferInstanceAs (Fintype (Option Bool))
+  | ⟨3, _⟩ => inferInstanceAs (Fintype Bool)
+  | ⟨_ + 4, h⟩ => absurd h (by omega)
+
+private def canonGramPh_deceq (HF H₃ : Type) [DecidableEq HF] [DecidableEq H₃] :
+    ∀ i, DecidableEq (canonGramPh HF H₃ i) := fun i =>
+  match i with
+  | ⟨0, _⟩ => inferInstanceAs (DecidableEq HF)
+  | ⟨1, _⟩ => inferInstanceAs (DecidableEq (Unit ⊕ H₃))
+  | ⟨2, _⟩ => inferInstanceAs (DecidableEq (Option Bool))
+  | ⟨3, _⟩ => inferInstanceAs (DecidableEq Bool)
+  | ⟨_ + 4, h⟩ => absurd h (by omega)
+
+/-- The grammar stage's phase machines: the stage front, the release-adapter-wrapped
+embedded table block, the native suffix test, and the parking machine. -/
+private def canonGramFamily (M m₃ : ℕ) (HF H₃ : Type) (FrM : MultiTapeTM M Bool HF)
+    (P : MultiTapeTM (m₃ + 2) Bool H₃) (anchor₃ : H₃) (ι₃ : Fin (m₃ + 2) ↪ Fin M) :
+    (i : Fin 4) → MultiTapeTM M Bool (canonGramPh HF H₃ i) := fun i =>
+  match i with
+  | ⟨0, _⟩ => FrM
+  | ⟨1, _⟩ => seamReleaseTM (embedEmitTM ι₃ P) anchor₃
+  | ⟨2, _⟩ => canonSuffixTM M
+  | ⟨3, _⟩ => canonStageHaltTM M
+  | ⟨_ + 4, h⟩ => absurd h (by omega)
+
+/-- The grammar stage's dispatch table: the front's two ports to the table and the park,
+the table's return and escape ports, and the suffix test's verdict to the park. -/
+private def canonGramRed (HF H₃ : Type) [DecidableEq HF] [DecidableEq H₃]
+    (fexit : Bool → HF) (anchor₃ escape₃ : H₃) :
+    (i : Fin 4) → canonGramPh HF H₃ i → Option (Σ j, canonGramPh HF H₃ j) :=
+  letI : ∀ i, DecidableEq (canonGramPh HF H₃ i) := canonGramPh_deceq HF H₃
+  fun i =>
+  match i with
+  | ⟨0, _⟩ => fun s => if s = fexit true
+      then some ⟨⟨1, by omega⟩, Sum.inl ()⟩
+      else if s = fexit false then some ⟨⟨3, by omega⟩, false⟩ else none
+  | ⟨1, _⟩ => fun s => if s = Sum.inr anchor₃
+      then some ⟨⟨2, by omega⟩, (none : Option Bool)⟩
+      else if s = Sum.inr escape₃ then some ⟨⟨3, by omega⟩, false⟩ else none
+  | ⟨2, _⟩ => fun s => match s with
+      | some b => some ⟨⟨3, by omega⟩, b⟩
+      | none => none
+  | ⟨3, _⟩ => fun _ => none
+  | ⟨_ + 4, h⟩ => absurd h (by omega)
+
+/-- The grammar stage's host. -/
+private def canonGramG (M m₃ : ℕ) (HF H₃ : Type) [DecidableEq HF] [DecidableEq H₃]
+    (FrM : MultiTapeTM M Bool HF) (P : MultiTapeTM (m₃ + 2) Bool H₃)
+    (anchor₃ escape₃ : H₃) (ι₃ : Fin (m₃ + 2) ↪ Fin M) (fentry : HF)
+    (fexit : Bool → HF) : MultiTapeTM M Bool (Σ j, canonGramPh HF H₃ j) :=
+  phaseHostTM (canonGramFamily M m₃ HF H₃ FrM P anchor₃ ι₃)
+    ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
+
+/-- One leg of the grammar stage's strict cut: while the host replays phase `i`, its
+control carries phase `i`'s tag, which is not the parking tag. -/
+private lemma canonGramCut_leg {M : ℕ} {HF H₃ : Type} {x : List Bool}
+    (G : MultiTapeTM M Bool (Σ j, canonGramPh HF H₃ j))
+    (d : Cfg M Bool (Σ j, canonGramPh HF H₃ j) x) (A B : ℕ) (i : Fin 4) (hi : i.val ≠ 3)
+    (c : Cfg M Bool (canonGramPh HF H₃ i) x)
+    (Mach : MultiTapeTM M Bool (canonGramPh HF H₃ i))
+    (hhost : G.runFrom d A = c.mapState (Sigma.mk i))
+    (hpre : ∀ u ≤ B, G.runFrom (c.mapState (Sigma.mk i)) u =
+      (Mach.runFrom c u).mapState (Sigma.mk i))
+    (vt : ℕ) (h1 : A ≤ vt) (h2 : vt ≤ A + B) (b : Bool) :
+    (G.runFrom d vt).state ≠ some ⟨⟨3, by omega⟩, b⟩ := by
+  rw [show vt = A + (vt - A) by omega, MultiTapeTM.runFrom_add, hhost,
+    hpre (vt - A) (by omega), Cfg.mapState_state]
+  cases hst : (Mach.runFrom c (vt - A)).state with
+  | none =>
+    rw [Option.map_none]
+    exact fun hcon => Option.noConfusion hcon
+  | some s =>
+    rw [Option.map_some]
+    intro hcon
+    exact hi (congrArg (fun z : Σ j, canonGramPh HF H₃ j => z.1.val) (Option.some.inj hcon))
+
+/-- A successful bounded unary skip returns a suffix of its input. -/
+private lemma canonGramFin_suffix (n : ℕ) (xs ys : List Bool)
+    (h : codeSkipFin n xs = some ys) : ys.IsSuffix xs := by
+  rw [← codeEraseFin] at h
+  obtain ⟨⟨q, r⟩, hread, hr⟩ := Option.map_eq_some_iff.mp h
+  have hword := codeReadFin_sound xs q r hread
+  exact ⟨unaryFin q, by rw [← (show r = ys from hr), hword]⟩
+
+/-- The grammar stage's ledger: a front leg, a table leg and a suffix leg, each with its
+dispatch step, fit under one polynomial exponent.
+
+**Proof sketch.** Bound the three legs with their dispatch steps by `(2·AF + 9·A₃ + 8)·(X + 1)²`,
+then raise the square to the common exponent (`pow_le_pow_right`, since `X + 1 ≥ 1`). -/
+private lemma canonGramLedger (AF A₃ X t₁ t₂ t₃ : ℕ)
+    (h₁ : t₁ ≤ AF * (2 * (X + 1))) (h₂ : t₂ ≤ A₃ * (3 * (X + 1)) ^ 2)
+    (h₃ : t₃ ≤ X + 2) :
+    t₁ + 1 + (t₂ + 1) + (t₃ + 1) ≤
+      (2 * AF + 9 * A₃ + 8) * (X + 1) ^ (2 * AF + 9 * A₃ + 8) := by
+  have hX : 1 ≤ X + 1 := by omega
+  have hpow : (X + 1) ^ 2 ≤ (X + 1) ^ (2 * AF + 9 * A₃ + 8) :=
+    Nat.pow_le_pow_right hX (by omega)
+  have hstep : t₁ + 1 + (t₂ + 1) + (t₃ + 1) ≤ (2 * AF + 9 * A₃ + 8) * (X + 1) ^ 2 := by
+    have e1 : AF * (2 * (X + 1)) ≤ 2 * AF * (X + 1) ^ 2 := by nlinarith
+    have e2 : A₃ * (3 * (X + 1)) ^ 2 = 9 * A₃ * (X + 1) ^ 2 := by ring
+    have e3 : X + 5 ≤ 8 * (X + 1) ^ 2 := by nlinarith
+    have e4 : (2 * AF + 9 * A₃ + 8) * (X + 1) ^ 2 =
+        2 * AF * (X + 1) ^ 2 + 9 * A₃ * (X + 1) ^ 2 + 8 * (X + 1) ^ 2 := by ring
+    omega
+  exact hstep.trans (Nat.mul_le_mul_left _ hpow)
+
+
 /-- **The physical grammar stage.** Started on one bank whose tape `header` holds the
 canonical binary header `bits` (head at the origin), every other tape blank, the native head
 at the remainder's first cell and the output empty, it decides the fixed grammar on the
@@ -4961,7 +7627,19 @@ depend on the header's numerical value.
 below `n + 1`; run one public counter loop over the `n + 1` states, each of `3^(k+1)`
 records, with the generic record validator as its body; check the all-`true` suffix to the
 right input blank. Every record consumes at least `4k + 5` cells and every round fails fast
-on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`. -/
+on input exhaustion, so at most `|x| + 1` rounds run, each charged `O(|x| + |bits|)`.
+
+**Implementation.** A four-phase host joins the stage front, the table block (embedded by the
+forwarding transformer and wrapped by the release adapter), the suffix test and a parking
+phase. The front copies the header to the outer counter, pads the copy with a spare `false`
+and increments it, so that the outer counter holds `n + 1` without overflow, and then runs the
+bounded unary reader on the header.
+The table block is an outer public counter loop over `n + 1` inner blocks; an inner block
+writes a fresh inner counter of `3^(k+1)` and runs an inner public counter loop of record
+rounds. Each loop's body is a first-return round (the fresh-anchor adapter), and the loop
+contracts are composed from the repetition orbit (`canonRepeat_orbit`) and the public done and
+escape contracts. Every completed inner block consumes input, so at most `|x| + 1` outer rounds
+run whatever the value of `n`. -/
 private lemma exists_canonGrammarStage (F : MachineFormat) :
     ∃ (m : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S) (G : MultiTapeTM m Bool S)
       (entry : S) (exit : Bool → S) (a : ℕ) (header : Fin m), Function.Injective exit ∧
@@ -4977,7 +7655,477 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
               some (exit (canonGrammar F.k (codeBitsNat bits) rest).isSome) ∧
             (G.runFrom d t).output = [] ∧
             ∀ u < t, ∀ v, (G.runFrom d u).state ≠ some (exit v) := by
-  sorry
+  classical
+  obtain ⟨mU, SU, fSU, dSU, Uu, ue, ux, uBound, ua, uinj, unary⟩ := exists_canonUnaryTM
+  letI : Fintype SU := fSU
+  letI : DecidableEq SU := dSU
+  obtain ⟨m₃, H₃, fH₃, dH₃, P, anchor₃, escape₃, bound₃, A₃, diff₃, spec₃⟩ :=
+    canonStageOuterSpec F.k
+  letI : Fintype H₃ := fH₃
+  letI : DecidableEq H₃ := dH₃
+  set ι₃ : Fin (m₃ + 2) ↪ Fin ((m₃ + 2) + mU) := Fin.castLEEmb (by omega) with hι₃
+  have hhc : ι₃ (bound₃.castSucc.castSucc) ≠ ι₃ (Fin.last (m₃ + 1)) := by
+    intro hcon
+    have v := congrArg Fin.val hcon
+    have h1 : (ι₃ (bound₃.castSucc.castSucc)).val = bound₃.val := rfl
+    have h2 : (ι₃ (Fin.last (m₃ + 1))).val = m₃ + 1 := rfl
+    have hb := bound₃.isLt
+    omega
+  set σU : Fin mU ↪ Fin ((m₃ + 2) + mU) := ⟨fun i =>
+    if i = uBound then ⟨bound₃.val, by have := bound₃.isLt; omega⟩
+    else ⟨(m₃ + 2) + i.val, by have := i.isLt; omega⟩, by
+    intro i j h
+    by_cases hi : i = uBound <;> by_cases hj : j = uBound
+    · exact hi.trans hj.symm
+    · have v := congrArg Fin.val h
+      simp only [if_pos hi, if_neg hj] at v
+      have hb := bound₃.isLt
+      omega
+    · have v := congrArg Fin.val h
+      simp only [if_neg hi, if_pos hj] at v
+      have hb := bound₃.isLt
+      omega
+    · have v := congrArg Fin.val h
+      simp only [if_neg hi, if_neg hj] at v
+      exact Fin.ext (by omega)⟩ with hσU
+  have hσb : σU uBound = ι₃ (bound₃.castSucc.castSucc) := by
+    show (if uBound = uBound then _ else _) = _
+    rw [if_pos rfl]
+    exact Fin.ext rfl
+  have hσc : ∀ i, σU i ≠ ι₃ (Fin.last (m₃ + 1)) := by
+    intro i hcon
+    have v := congrArg Fin.val hcon
+    have hlast : (ι₃ (Fin.last (m₃ + 1))).val = m₃ + 1 := rfl
+    have hb := bound₃.isLt
+    have hiu := i.isLt
+    by_cases hi : i = uBound
+    · simp only [σU, Function.Embedding.coeFn_mk, if_pos hi] at v
+      omega
+    · simp only [σU, Function.Embedding.coeFn_mk, if_neg hi] at v
+      omega
+  obtain ⟨HF, fHF, dHF, FrM, fentry, fexit, AF, finj, front⟩ :=
+    canonStageFrontSpec Uu ue ux uBound ua uinj unary
+      (ι₃ (bound₃.castSucc.castSucc)) (ι₃ (Fin.last (m₃ + 1))) σU hσb hσc hhc
+  letI : Fintype HF := fHF
+  letI : DecidableEq HF := dHF
+  letI : ∀ i, Fintype (canonGramPh HF H₃ i) := canonGramPh_fintype HF H₃
+  letI : ∀ i, DecidableEq (canonGramPh HF H₃ i) := canonGramPh_deceq HF H₃
+  refine ⟨(m₃ + 2) + mU, Σ j, canonGramPh HF H₃ j, inferInstance, inferInstance,
+    canonGramG ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ escape₃ ι₃ fentry fexit,
+    ⟨⟨0, by omega⟩, fentry⟩, fun b => ⟨⟨3, by omega⟩, b⟩, 2 * AF + 9 * A₃ + 8,
+    ι₃ (bound₃.castSucc.castSucc), ?_, ?_⟩
+  · intro a b h
+    exact eq_of_heq (Sigma.mk.inj_iff.mp h).2
+  intro x bits rest hp hcanon hguard d hs hout hpos hht hhp hblank
+  set G := canonGramG ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ escape₃ ι₃ fentry fexit
+    with hG
+  -- the decoded geometry and the value bridge
+  have hn : counterValue bits = codeBitsNat bits := by
+    rw [counterValue_eq, codeBitsNat_eq, ← foldr_bit_eq_ofDigits]
+  have hx : x = pairEncode bits rest := eq_pairEncode_of_pairDecode x bits rest hp
+  have hxlen : x.length = 2 * bits.length + 2 + rest.length := by
+    rw [hx, length_pairEncode]
+  have hsfx : rest.IsSuffix x := ⟨dbl bits ++ [false, true], by
+    rw [hx, pairEncode_eq_dbl]⟩
+  -- the front's leg, from the stub's entry bank
+  set c₀ : Cfg ((m₃ + 2) + mU) Bool HF x :=
+    ⟨some fentry, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ with hc₀def
+  have hc₀ : c₀.mapState (Sigma.mk (⟨0, by omega⟩ : Fin 4)) = d := by
+    refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ (Cfg.mapState_output _ _)
+    · rw [Cfg.mapState_state, hs]
+      rfl
+    · funext j z
+      rw [Cfg.mapState_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos]
+  have hc₀pos : c₀.inputPos.val = 2 * bits.length + 3 := hpos
+  have hdrop0 : x.drop (c₀.inputPos.val - 1) = rest := by
+    have h2 : x.length - rest.length = 2 * bits.length + 2 := by omega
+    have h3 := canonStageSuffix_drop x rest hsfx
+    rw [h2] at h3
+    rw [show c₀.inputPos.val - 1 = 2 * bits.length + 2 by omega]
+    exact h3
+  obtain ⟨tF, htF, u, huval, hulen, hFst, hFout, hFcut, hFht, hFhp, hFct, hFcp, hFblank,
+    hFsfx⟩ := front x bits c₀ rfl hout (by omega) hht hhp hblank
+  set cF : Cfg ((m₃ + 2) + mU) Bool HF x := FrM.runFrom c₀ tF with hcF
+  rw [hdrop0, hn] at hFst hFsfx
+  -- the front's verdict dichotomy
+  cases hskf : codeSkipFin (codeBitsNat bits + 1) rest with
+  | none =>
+    -- the unary range check fails: dispatch to the park with the reject verdict
+    rw [hskf] at hFst
+    simp only [Option.isSome_none] at hFst
+    obtain ⟨hpre0, hdisp0⟩ := phaseHostTM_run
+      (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
+      ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
+      ⟨0, by omega⟩ c₀ cF tF hcF.symm (fexit false) hFst
+      ⟨⟨3, by omega⟩, false⟩
+      (by
+        show (if fexit false = fexit true
+            then some (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)
+            else if fexit false = fexit false
+              then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
+          some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)
+        rw [if_neg (fun hcon => Bool.noConfusion (finj hcon)), if_pos rfl])
+      (by
+        intro uu huu s hsu
+        show (if s = fexit true then _ else if s = fexit false then _ else none) = none
+        by_cases h1 : s = fexit true
+        · subst h1
+          exact absurd hsu (hFcut uu huu true)
+        · by_cases h0 : s = fexit false
+          · subst h0
+            exact absurd hsu (hFcut uu huu false)
+          · rw [if_neg h1, if_neg h0])
+    have hfin : G.runFrom d (tF + 1) =
+        cF.mapState (fun _ => (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)) := by
+      conv_lhs => rw [← hc₀]
+      exact hdisp0
+    refine ⟨tF + 1, ?_, ?_, ?_, ?_⟩
+    · have hb1 : tF ≤ AF * (2 * (x.length + 1)) :=
+        htF.trans (Nat.mul_le_mul le_rfl (by omega))
+      have hled := canonGramLedger AF A₃ x.length tF 0 0 hb1 (Nat.zero_le _) (by omega)
+      exact le_trans (by omega) hled
+    · rw [hfin, Cfg.mapState_state, hFst, Option.map_some]
+      have hcg : canonGrammar F.k (codeBitsNat bits) rest = none := by
+        show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
+          (codeSkipTableK F.k (codeBitsNat bits))).bind
+          (fun tail => if tail.all id then some tail else none) = none
+        rw [hskf]
+        rfl
+      rw [hcg]
+      rfl
+    · rw [hfin, Cfg.mapState_output]
+      exact hFout
+    · intro vt hvt b
+      exact canonGramCut_leg G d 0 tF ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 3) _ _
+        (by rw [MultiTapeTM.runFrom_zero]; exact hc₀.symm) hpre0 vt (by omega) (by omega) b
+  | some ys₁ =>
+    -- the unary check passes: the front hands its bank to the embedded table
+    rw [hskf] at hFst
+    simp only [Option.isSome_some] at hFst
+    have hsfx1 : ys₁.IsSuffix x := (canonGramFin_suffix _ rest ys₁ hskf).trans hsfx
+    have hys1len : ys₁.length ≤ x.length := hsfx1.length_le
+    have hposF : cF.inputPos.val = x.length + 1 - ys₁.length := hFsfx ys₁ hskf
+    have hdropF : x.drop (cF.inputPos.val - 1) = ys₁ := by
+      have h1 : cF.inputPos.val - 1 = x.length - ys₁.length := by omega
+      rw [h1]
+      exact canonStageSuffix_drop x ys₁ hsfx1
+    obtain ⟨hpre0, hdisp0⟩ := phaseHostTM_run
+      (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
+      ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
+      ⟨0, by omega⟩ c₀ cF tF hcF.symm (fexit true) hFst
+      ⟨⟨1, by omega⟩, Sum.inl ()⟩
+      (by
+        show (if fexit true = fexit true
+            then some (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)
+            else if fexit true = fexit false
+              then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
+          some (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)
+        rw [if_pos rfl])
+      (by
+        intro uu huu s hsu
+        show (if s = fexit true then _ else if s = fexit false then _ else none) = none
+        by_cases h1 : s = fexit true
+        · subst h1
+          exact absurd hsu (hFcut uu huu true)
+        · by_cases h0 : s = fexit false
+          · subst h0
+            exact absurd hsu (hFcut uu huu false)
+          · rw [if_neg h1, if_neg h0])
+    have hhost1 : G.runFrom d (tF + 1) =
+        cF.mapState (fun _ => (⟨⟨1, by omega⟩, Sum.inl ()⟩ : Σ j, canonGramPh HF H₃ j)) := by
+      conv_lhs => rw [← hc₀]
+      exact hdisp0
+    -- the table's bank, selected through the embedding
+    set cA : Cfg ((m₃ + 2) + mU) Bool H₃ x := cF.mapState (fun _ => anchor₃) with hcA
+    have hcAst : cA.state = some anchor₃ := by
+      rw [hcA, Cfg.mapState_state, hFst, Option.map_some]
+    set sel : Cfg (m₃ + 2) Bool H₃ x := ⟨some anchor₃, cF.inputPos,
+      fun i => cF.workTapes (ι₃ i), fun i => cF.workTapePos (ι₃ i), []⟩ with hsel
+    have hselst : sel.state = some anchor₃ := rfl
+    have hselpos : sel.inputPos.val = cF.inputPos.val := rfl
+    obtain ⟨τ₃, hτ₃⟩ := spec₃ x bits u huval
+    have hbank : sel.output = [] ∧ 1 ≤ sel.inputPos.val ∧
+        sel.workTapes bound₃.castSucc.castSucc = FinTM.bufferTape bits ∧
+        sel.workTapePos bound₃.castSucc.castSucc = 0 ∧
+        (∀ j : Fin m₃, j ≠ bound₃ →
+          sel.workTapes j.castSucc.castSucc = FinTM.bufferTape [] ∧
+          sel.workTapePos j.castSucc.castSucc = 0) ∧
+        (∀ q : ℤ, q < 0 ∨ ((3 ^ (F.k + 1) : ℕ).bits.length : ℤ) ≤ q →
+          sel.workTapes (Fin.last m₃).castSucc q = none) ∧
+        sel.workTapePos (Fin.last m₃).castSucc = 0 ∧
+        sel.workTapes (Fin.last (m₃ + 1)) = FinTM.bufferTape u ∧
+        sel.workTapePos (Fin.last (m₃ + 1)) = 0 := by
+      have hne3 : ι₃ ((Fin.last m₃).castSucc) ≠ ι₃ (bound₃.castSucc.castSucc) := by
+        intro hcon
+        have hv := congrArg Fin.val (ι₃.injective hcon)
+        simp only [Fin.coe_castSucc, Fin.val_last] at hv
+        have := bound₃.isLt
+        omega
+      have hne4 : ι₃ ((Fin.last m₃).castSucc) ≠ ι₃ (Fin.last (m₃ + 1)) := by
+        intro hcon
+        have hv := congrArg Fin.val (ι₃.injective hcon)
+        simp only [Fin.coe_castSucc, Fin.val_last] at hv
+        omega
+      refine ⟨rfl, by omega, hFht, hFhp, ?_, ?_, ?_, hFct, hFcp⟩
+      · intro j hj
+        have hne1 : ι₃ (j.castSucc.castSucc) ≠ ι₃ (bound₃.castSucc.castSucc) := by
+          intro hcon
+          have hv := congrArg Fin.val (ι₃.injective hcon)
+          simp only [Fin.coe_castSucc] at hv
+          exact hj (Fin.ext hv)
+        have hne2 : ι₃ (j.castSucc.castSucc) ≠ ι₃ (Fin.last (m₃ + 1)) := by
+          intro hcon
+          have hv := congrArg Fin.val (ι₃.injective hcon)
+          simp only [Fin.coe_castSucc, Fin.val_last] at hv
+          have := j.isLt
+          omega
+        exact ⟨(hFblank _ hne1 hne2).1, (hFblank _ hne1 hne2).2⟩
+      · intro q hq
+        show cF.workTapes (ι₃ ((Fin.last m₃).castSucc)) q = none
+        rw [(hFblank _ hne3 hne4).1]
+        simp
+      · exact (hFblank _ hne3 hne4).2
+    obtain ⟨hpos₃, hbound₃, hint₃, hst₃, hout₃, hys₃⟩ := hτ₃ sel hbank hselst
+    have hdropsel : x.drop (sel.inputPos.val - 1) = ys₁ := hdropF
+    rw [hdropsel, hn] at hst₃ hys₃
+    -- the embedded table's run and the release adapter's transport
+    have hembA : embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output sel = cA := by
+      refine embedEmitCfg_eq ι₃ cA.workTapes cA.workTapePos cA.output sel cA
+        hcAst.symm ?_ ?_ ?_ (fun _ _ => ⟨rfl, rfl⟩)
+      · rw [hcA, Cfg.mapState_inputPos]
+      · rw [hcA, Cfg.mapState_output, hFout, List.nil_append]
+      · intro i
+        constructor
+        · funext z
+          rw [hcA, Cfg.mapState_workTapes]
+        · rw [hcA, Cfg.mapState_workTapePos]
+    have hErun : ∀ tt : ℕ, (embedEmitTM ι₃ P).runFrom cA tt =
+        embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output (P.runFrom sel tt) := by
+      intro tt
+      conv_lhs => rw [← hembA]
+      exact embedEmitTM_runFrom ι₃ P _ _ _ _ tt
+    have hc1 : cF.mapState (fun _ => (⟨⟨1, by omega⟩, Sum.inl ()⟩ :
+        Σ j, canonGramPh HF H₃ j)) =
+        (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃))).mapState
+          (Sigma.mk (⟨1, by omega⟩ : Fin 4)) := by
+      rw [hcA, Cfg.mapState_mapState, Cfg.mapState_mapState]; rfl
+    -- the table's verdict dichotomy
+    cases htab : codeSkipTableK F.k (codeBitsNat bits) ys₁ with
+    | some ys₂ =>
+      -- every record skips: the release returns and the suffix test decides
+      have hstA : (P.runFrom sel (τ₃ sel)).state = some anchor₃ := by
+        rw [hst₃, htab]
+        rfl
+      obtain ⟨g1, g2, g3⟩ := hys₃ ys₂ htab
+      obtain ⟨hrel, hrelcut⟩ := seamReleaseTM_firstReturn (embedEmitTM ι₃ P) anchor₃
+        hcAst hpos₃ (hErun (τ₃ sel))
+        (by rw [embedEmitCfg_state]; exact hstA)
+        (by
+          intro t ht1 ht2
+          rw [hErun t, embedEmitCfg_state]
+          obtain ⟨q, hq, hqa, hqe⟩ := hint₃ t ht1 ht2
+          rw [hq]
+          intro hcon
+          exact hqa (Option.some.inj hcon))
+      obtain ⟨hpre1, hdisp1⟩ := phaseHostTM_run
+        (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
+        ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
+        ⟨1, by omega⟩ (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃)))
+        ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+          (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)) (τ₃ sel) hrel
+        (Sum.inr anchor₃)
+        (by rw [Cfg.mapState_state, embedEmitCfg_state, hstA, Option.map_some])
+        ⟨⟨2, by omega⟩, (none : Option Bool)⟩
+        (by
+          show (if (Sum.inr anchor₃ : Unit ⊕ H₃) = Sum.inr anchor₃
+              then some (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)
+              else if (Sum.inr anchor₃ : Unit ⊕ H₃) = Sum.inr escape₃
+                then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
+            some (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)
+          rw [if_pos rfl])
+        (by
+          intro uu huu s hsu
+          show (if s = Sum.inr anchor₃ then _
+            else if s = Sum.inr escape₃ then _ else none) = none
+          rcases Nat.eq_zero_or_pos uu with huz | hupos
+          · subst huz
+            rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hcAst,
+              Option.map_some] at hsu
+            obtain rfl : s = Sum.inl () := (Option.some.inj hsu).symm
+            rw [if_neg (fun hcon => Sum.noConfusion hcon),
+              if_neg (fun hcon => Sum.noConfusion hcon)]
+          · rw [seamReleaseTM_runFrom_pos (embedEmitTM ι₃ P) anchor₃ cA hcAst uu hupos,
+              Cfg.mapState_state, hErun uu, embedEmitCfg_state] at hsu
+            obtain ⟨q, hq, hqa, hqe⟩ := hint₃ uu hupos huu
+            rw [hq, Option.map_some] at hsu
+            obtain rfl : s = Sum.inr q := (Option.some.inj hsu).symm
+            rw [if_neg (fun hcon => hqa (Sum.inr.inj hcon)),
+              if_neg (fun hcon => hqe (Sum.inr.inj hcon))])
+      have hhost2 : G.runFrom d ((tF + 1) + (τ₃ sel + 1)) =
+          ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+            (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
+            (fun _ => (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)) := by
+        rw [MultiTapeTM.runFrom_add d (tF + 1) (τ₃ sel + 1), hhost1, hc1]
+        exact hdisp1
+      -- the suffix test's leg
+      set cT : Cfg ((m₃ + 2) + mU) Bool (Option Bool) x :=
+        (embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+          (P.runFrom sel (τ₃ sel))).mapState (fun _ => (none : Option Bool)) with hcT
+      have hc2 : ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+          (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
+          (fun _ => (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)) =
+          cT.mapState (Sigma.mk (⟨2, by omega⟩ : Fin 4)) := by
+        rw [hcT, Cfg.mapState_mapState, Cfg.mapState_mapState]; rfl
+      have hcTst : cT.state = some none := by
+        rw [hcT, Cfg.mapState_state, embedEmitCfg_state, hstA, Option.map_some]
+      have hcTpos : cT.inputPos.val = (P.runFrom sel (τ₃ sel)).inputPos.val := by
+        rw [hcT, Cfg.mapState_inputPos, embedEmitCfg_inputPos]
+      obtain ⟨tS, htS, hSst, hSout, hStapes, hSheads, hScut⟩ := canonSuffix_run cT hcTst
+        (by omega)
+      have hdropT : x.drop (cT.inputPos.val - 1) = ys₂ := by
+        rw [hcTpos]
+        exact g3
+      rw [hdropT] at hSst htS
+      obtain ⟨hpre2, hdisp2⟩ := phaseHostTM_run
+        (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
+        ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
+        ⟨2, by omega⟩ cT ((canonSuffixTM ((m₃ + 2) + mU)).runFrom cT tS) tS rfl
+        (some (ys₂.all id)) hSst ⟨⟨3, by omega⟩, ys₂.all id⟩ rfl
+        (by
+          intro uu huu s hsu
+          cases s with
+          | none => rfl
+          | some bit => exact absurd hsu (hScut uu huu bit))
+      have hhost3 : G.runFrom d ((tF + 1) + (τ₃ sel + 1) + (tS + 1)) =
+          ((canonSuffixTM ((m₃ + 2) + mU)).runFrom cT tS).mapState
+            (fun _ => (⟨⟨3, by omega⟩, ys₂.all id⟩ : Σ j, canonGramPh HF H₃ j)) := by
+        rw [MultiTapeTM.runFrom_add d ((tF + 1) + (τ₃ sel + 1)) (tS + 1), hhost2, hc2]
+        exact hdisp2
+      have hys2len : ys₂.length ≤ x.length := by
+        have h := congrArg List.length g3
+        rw [List.length_drop] at h
+        omega
+      refine ⟨(tF + 1) + (τ₃ sel + 1) + (tS + 1), ?_, ?_, ?_, ?_⟩
+      · have hb1 : tF ≤ AF * (2 * (x.length + 1)) :=
+          htF.trans (Nat.mul_le_mul le_rfl (by omega))
+        have hb2 : τ₃ sel ≤ A₃ * (3 * (x.length + 1)) ^ 2 :=
+          hbound₃.trans (Nat.mul_le_mul le_rfl (Nat.pow_le_pow_left (by omega) 2))
+        have hb3 : tS ≤ x.length + 2 := by omega
+        exact canonGramLedger AF A₃ x.length tF (τ₃ sel) tS hb1 hb2 hb3
+      · rw [hhost3, Cfg.mapState_state, hSst, Option.map_some]
+        have hcg : canonGrammar F.k (codeBitsNat bits) rest =
+            if ys₂.all id then some ys₂ else none := by
+          show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
+            (codeSkipTableK F.k (codeBitsNat bits))).bind
+            (fun tail => if tail.all id then some tail else none) =
+            if ys₂.all id then some ys₂ else none
+          rw [hskf]
+          show (codeSkipTableK F.k (codeBitsNat bits) ys₁).bind
+            (fun tail => if tail.all id then some tail else none) =
+            if ys₂.all id then some ys₂ else none
+          rw [htab]
+          rfl
+        rw [hcg]
+        cases hall : ys₂.all id <;> rfl
+      · rw [hhost3, Cfg.mapState_output, hSout, hcT, Cfg.mapState_output,
+          embedEmitCfg_output, g1, List.append_nil, hcA, Cfg.mapState_output]
+        exact hFout
+      · intro vt hvt b
+        by_cases h1 : vt ≤ tF
+        · exact canonGramCut_leg G d 0 tF ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 3) _ _
+            (by rw [MultiTapeTM.runFrom_zero]; exact hc₀.symm) hpre0 vt (by omega)
+            (by omega) b
+        · by_cases h2 : vt ≤ (tF + 1) + τ₃ sel
+          · exact canonGramCut_leg G d (tF + 1) (τ₃ sel) ⟨1, by omega⟩
+              (by decide : (1 : ℕ) ≠ 3) _ _ (by rw [hhost1, hc1]) hpre1 vt (by omega)
+              (by omega) b
+          · exact canonGramCut_leg G d ((tF + 1) + (τ₃ sel + 1)) tS ⟨2, by omega⟩
+              (by decide : (2 : ℕ) ≠ 3) _ _ (by rw [hhost2, hc2]) hpre2 vt (by omega)
+              (by omega) b
+    | none =>
+      -- some record fails: the release escapes and the park holds the reject verdict
+      have hstE : (P.runFrom sel (τ₃ sel)).state = some escape₃ := by
+        rw [hst₃, htab]
+        rfl
+      have hrelE : (seamReleaseTM (embedEmitTM ι₃ P) anchor₃).runFrom
+          (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃))) (τ₃ sel) =
+          (embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+            (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃) := by
+        rw [seamReleaseTM_runFrom_pos (embedEmitTM ι₃ P) anchor₃ cA hcAst (τ₃ sel) hpos₃,
+          hErun (τ₃ sel)]
+      obtain ⟨hpre1, hdisp1⟩ := phaseHostTM_run
+        (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
+        ⟨⟨0, by omega⟩, fentry⟩ (canonGramRed HF H₃ fexit anchor₃ escape₃)
+        ⟨1, by omega⟩ (cA.mapState (fun _ => (Sum.inl () : Unit ⊕ H₃)))
+        ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+          (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)) (τ₃ sel) hrelE
+        (Sum.inr escape₃)
+        (by rw [Cfg.mapState_state, embedEmitCfg_state, hstE, Option.map_some])
+        ⟨⟨3, by omega⟩, false⟩
+        (by
+          show (if (Sum.inr escape₃ : Unit ⊕ H₃) = Sum.inr anchor₃
+              then some (⟨⟨2, by omega⟩, (none : Option Bool)⟩ : Σ j, canonGramPh HF H₃ j)
+              else if (Sum.inr escape₃ : Unit ⊕ H₃) = Sum.inr escape₃
+                then some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j) else none) =
+            some (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)
+          rw [if_neg (fun hcon => diff₃ (Sum.inr.inj hcon)), if_pos rfl])
+        (by
+          intro uu huu s hsu
+          show (if s = Sum.inr anchor₃ then _
+            else if s = Sum.inr escape₃ then _ else none) = none
+          rcases Nat.eq_zero_or_pos uu with huz | hupos
+          · subst huz
+            rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hcAst,
+              Option.map_some] at hsu
+            obtain rfl : s = Sum.inl () := (Option.some.inj hsu).symm
+            rw [if_neg (fun hcon => Sum.noConfusion hcon),
+              if_neg (fun hcon => Sum.noConfusion hcon)]
+          · rw [seamReleaseTM_runFrom_pos (embedEmitTM ι₃ P) anchor₃ cA hcAst uu hupos,
+              Cfg.mapState_state, hErun uu, embedEmitCfg_state] at hsu
+            obtain ⟨q, hq, hqa, hqe⟩ := hint₃ uu hupos huu
+            rw [hq, Option.map_some] at hsu
+            obtain rfl : s = Sum.inr q := (Option.some.inj hsu).symm
+            rw [if_neg (fun hcon => hqa (Sum.inr.inj hcon)),
+              if_neg (fun hcon => hqe (Sum.inr.inj hcon))])
+      have hhost2 : G.runFrom d ((tF + 1) + (τ₃ sel + 1)) =
+          ((embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output
+            (P.runFrom sel (τ₃ sel))).mapState (Sum.inr : H₃ → Unit ⊕ H₃)).mapState
+            (fun _ => (⟨⟨3, by omega⟩, false⟩ : Σ j, canonGramPh HF H₃ j)) := by
+        rw [MultiTapeTM.runFrom_add d (tF + 1) (τ₃ sel + 1), hhost1, hc1]
+        exact hdisp1
+      refine ⟨(tF + 1) + (τ₃ sel + 1), ?_, ?_, ?_, ?_⟩
+      · have hb1 : tF ≤ AF * (2 * (x.length + 1)) :=
+          htF.trans (Nat.mul_le_mul le_rfl (by omega))
+        have hb2 : τ₃ sel ≤ A₃ * (3 * (x.length + 1)) ^ 2 :=
+          hbound₃.trans (Nat.mul_le_mul le_rfl (Nat.pow_le_pow_left (by omega) 2))
+        have hled := canonGramLedger AF A₃ x.length tF (τ₃ sel) 0 hb1 hb2 (by omega)
+        exact le_trans (by omega) hled
+      · rw [hhost2, Cfg.mapState_state, Cfg.mapState_state, embedEmitCfg_state, hstE,
+          Option.map_some, Option.map_some]
+        have hcg : canonGrammar F.k (codeBitsNat bits) rest = none := by
+          show ((codeSkipFin (codeBitsNat bits + 1) rest).bind
+            (codeSkipTableK F.k (codeBitsNat bits))).bind
+            (fun tail => if tail.all id then some tail else none) = none
+          rw [hskf]
+          show (codeSkipTableK F.k (codeBitsNat bits) ys₁).bind
+            (fun tail => if tail.all id then some tail else none) = none
+          rw [htab]
+          rfl
+        rw [hcg]
+        rfl
+      · rw [hhost2, Cfg.mapState_output, Cfg.mapState_output, embedEmitCfg_output, hout₃,
+          List.append_nil, hcA, Cfg.mapState_output]
+        exact hFout
+      · intro vt hvt b
+        by_cases h1 : vt ≤ tF
+        · exact canonGramCut_leg G d 0 tF ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 3) _ _
+            (by rw [MultiTapeTM.runFrom_zero]; exact hc₀.symm) hpre0 vt (by omega)
+            (by omega) b
+        · exact canonGramCut_leg G d (tF + 1) (τ₃ sel) ⟨1, by omega⟩
+            (by decide : (1 : ℕ) ≠ 3) _ _ (by rw [hhost1, hc1]) hpre1 vt (by omega)
+            (by omega) b
 
 /-- **The physical validator.** One finite binary machine halts on every input within a
 polynomial bound with a single verdict bit; a rejection decodes to the fallback, and an
@@ -5176,7 +8324,7 @@ private lemma exists_canonDecider (F : MachineFormat) :
     rw [output] at computed
     exact computed.mono (budget s sb)
 
-/-- **A polynomial-time canonizer** (spec, fill pending — batch B5a): one finite
+/-- **A polynomial-time canonizer**: one finite
 binary machine computes the fixed serialization of the decoded machine within
 `d · (|α| + 1)^d` steps. [AB09, §1.4; the P3.2 round-2 construction]
 
@@ -5203,88 +8351,18 @@ Check the all-`true` suffix. On success copy the consumed prefix to the output;
 on failure emit the constant `F.serialize F.fallback`. Every phase is polynomial
 in `|α|`; take `d` at least the coefficient and the exponent.
 
-**Fill appendix (B5a partial).** The positive grammar bound, `guardedScan_eq`,
-and `decode_of_grammar_guard` are proved below the format layer, without a
-positivity premise on `F.guard`. The finite binary parser and its polynomial
-runtime proof remain open; this target retains its original admission.
-
-**Fill appendix (B5a continuation, partial).** `exists_canonHeaderCall` loads
-the undoubled header through the two public call/extraction rows in linear
-time. `binaryGuard_done` and `binaryGuard_escape` prove the physical positive
-block-length comparison from a preloaded binary counter, including the first
-exit, silence, native-input position and a linear bound independent of the
-counter's value. The host is the existing `counterLoopTM`. Loading and guard
-are not yet composed: header validity/canonicality, the `n + 1` setup, the
-format guard, record grammar and output/fallback phases remain open. No new
-private admission is introduced.
-
-**Fill appendix (B5a canonizer continuation, partial).** The inherited loader
-now composes with a physical canonical-bit scan, and `exists_canonHeaderOKTM`
-checks pair success separately from the empty-header fallback in linear time.
-`exists_canonCountTM` prepares a nonoverflowing binary `n + 1` counter.
-`canonGuard_run` specializes the inherited guard to the native post-header
-offset and this successor count, retaining its two strict exit cuts. A single
-positive block size, `max F.guard ((4 * F.k + 5) * 3^(F.k + 1))`, enforces both
-necessary guards; `decode_of_canonGuard` proves its rejection law. These new
-helpers are proved without admissions. The preloaded guard still needs to be
-connected to the loader with a preserved header bank and a native-input seek.
-The physical record parser, suffix check, prefix/fallback emission and complete
-polynomial ledger remain open; this target retains its original admission.
-Note 50's full-canonizer regression remains pending. Component regressions are
-reported separately in the delivery evidence.
-
-**Fill appendix (canonizer continuation).** The blank-tape preparation now
-preserves the original header and installs its successor count on a separate
-bank through the public install call. `canonOffset` supplies the binary native
-address; `exists_canonGuardFront` composes preparation, the public input seek,
-the inherited positive guard, and a second seek on success, with an explicit
-linear ledger and the non-counter frame preserved. Its contract assumes a
-successful pair decode and is only a guard verdict. The header-validity branch,
-strict cuts for both composite exits, generic record validation, grammar loop,
-suffix/prefix emission and final polynomial assembly remain pending. No new
-private admission is introduced, and this headline retains its original
-`sorry`; full physical note-50 regressions remain pending.
-
-
-**Fill appendix (canonizer continuation 2, partial).** The total header
-check now has a clean silent Boolean branch contract. A separate stronger
-guard front exposes strict cuts for both ports while preserving the header
-and saved native address. `exists_canonCheckedFront` composes the header
-check with this guard, keeping pair failure distinct from an encoded empty
-header and proving that either rejection decodes to the fixed fallback.
-`exists_canonParseFront` merges the failure causes through the public phase
-host into two strict live ports, preserving the successful ready bank and
-remainder position. All fourteen new private declarations are proved without
-admissions. The guard's destructive counter is not claimed to be restored.
-Recreating the parser bound, the generic physical action validator, the
-record loop, suffix/prefix emission and complete polynomial assembly remain
-open. This headline retains its original admission; the full physical
-note-50 cases remain pending.
-
-
-**Fill appendix (canonizer continuation 3).** Phase 1 is complete: the format-independent
-strip machine copies the native input, erases its maximal trailing `true` suffix, returns
-its work head to the origin, and emits the retained word through the public identity emit
-call. Its two-pass leaf uses the public catalog trace, and public seams compose the phases;
-the release adapter handles coincident emit-call anchors. The prescribed timed-conditional
-glue now proves this headline modulo `exists_canonDecider` and `exists_canonGrammarStage`,
-which remain the named admissions. This refines the earlier prefix-copy emission route to
-validation followed by stripping or the constant fallback. The grammar and validator, and
-therefore the complete physical canonizer's note-50 checks, remain pending.
-
-**Fill appendix (canonizer continuation 4).** Phase 2 is complete: the prescribed grammar
-bridges, the generic bounded unary reader `exists_canonUnaryTM`, and the generic record
-validator `exists_canonRecordTM` are proved. Both components are silent, restore their
-binary-bound bank, have strict Boolean exit cuts, and run in time linear in the native
-input length and binary width. Their contracts are the recommended statements unchanged.
-The physical grammar stage and validator remain the two frozen open stubs; the headline
-statement and conditional-composition proof are unchanged.
-
-**Fill appendix (canonizer continuation 5).** The prescribed buffer-patch factoring is
-applied unchanged. The validator composition is proved modulo `exists_canonGrammarStage`,
-which is now the only canonizer admission. Its direct-C2 counter-loop route is escalated
-for the distinct entry/success-anchor mismatch; the stage remains explicitly open. Note 50
-therefore remains pending on the complete canonizer. The headline glue is unchanged. -/
+**Implementation.** Validation and emission are separate phases. A validator
+(`exists_canonDecider`) decides whether `F.scan` succeeds, in polynomial time and with a
+single verdict bit, by the two-port parse front end (header validity and canonicality, and the
+positive guard `max F.guard ((4k + 5) · 3^(k+1))` checked in binary against the successor of
+the header) followed by the grammar stage (`exists_canonGrammarStage`). On acceptance the strip
+machine (`exists_canonStripTM`) erases the input's maximal trailing `true` suffix, which leaves
+the decoded machine's serialization (`canonStrip_of_scan`); on rejection the constant
+`F.serialize F.fallback` is emitted; `Turing.FinTM.computesFunInTime_cond` composes the three.
+The record validator has an entry and two distinct verdict ports, while a public counter loop's
+body must return to its own anchor on success; so every record round is wrapped by a fresh-anchor
+return adapter (`canonReturnAdapter`), which makes it a positive first-return-or-escape round,
+before it becomes the loop's body. -/
 theorem exists_polyCanonizer :
     ∃ (C : FinTM Bool) (d : ℕ),
       C.ComputesFunInTime (fun α => F.serialize (F.decode α)) fun n => d * (n + 1) ^ d := by
