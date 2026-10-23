@@ -1575,6 +1575,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `oleans-lcanon7`.
   - **`lun2` passed (2/2): #154 clear to merge.** With it the batch is done; `oleans-lun2` is the
     campaign's exact tree after #154, the base for the next replays.
+- **#154 merged (2026-10-23; `99d04262`).** The batch #147 and #149–#154 is in; the campaign's Lean
+  tree is `oleans-lun2`'s.
+  - **#155 opened: the seam layout's sketches** (`lean/c1-seamlayout-sketches` at `6efc5be0`;
+    docstrings only, no gate): code identical, elaborates against `oleans-lun2` with no output;
+    `replay-lslsk.sh`, 7 modules from `oleans-lun2`. **Pending.**
+  - **#156 opened: the phase host's last phase** (`lean/phasehost-last` at `eed76e8e`; the
+    user's ruling of 2026-10-22): `phaseHostTM_tr_of_red_none` and `phaseHostTM_run_le` in
+    `Build/Seam`. Seal, consumer probe, freeze, lint and the copy search clean; the screen running.
+    An API gate, **gate 69** (pack drafted). `Seam`'s closure (88 modules) contains #155's: #155
+    merges first and #156 replays from its snapshot.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
