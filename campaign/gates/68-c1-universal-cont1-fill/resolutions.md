@@ -25,5 +25,11 @@ commits rebased unchanged onto the campaign branch at `e2f08f53` (after #147, #1
 `bc933326`, `b9e4d908`, `7c65b4fb`, `1cd82e07` (were `9031f1cf`, `34568b28`, `3ed7b854`, `2d380224`;
 the worker's authorship kept on the first); the final file is `2d380224`'s blob.
 
-**Merge state. #154: not yet clear to merge.** Its closure overlaps #151's and #152's beyond the
-facade, so it replays after both merge, from #152's merged-tree snapshot.
+**On the merged tree** (after #147 and #149–#153; #154 at `8f628ece`, the campaign merged in
+cleanly): against `oleans-lcanon7`, a dependency walk of `Turing.exists_timed_universal_NDTM`
+finds exactly one direct `sorryAx` user, `Turing.exists_replayCanonizer`; the interpreter core is
+now proved (#151). The target is on `[propext, sorryAx, Classical.choice, Quot.sound]`; the file's
+own sorry warning is `ntime_hierarchy`'s (`evidence/merged-tree/`). This answers note 7. Replay:
+`replay-lun2.sh`, the closure of the PR's file (2 modules), chained from `oleans-lcanon7`.
+
+**Merge state. #154: not yet clear to merge.** Its replay is pending.

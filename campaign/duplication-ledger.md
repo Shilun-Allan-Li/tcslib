@@ -513,7 +513,12 @@ API lands. U2-S's and `ExhaustiveReplay`'s are re-pointed in the user's dedup wi
 `inputRewindTM_run`, and `Turing.Cfg.mapState_mapState`. Its v3 screen pairs the machine with
 `xr_inRewindTM` (82% and 73%), and the lemma's proof text with `xr_E_initCfg`'s (54%; a shared
 idiom, not a restatement: the composition lemma alone does not replace `xr_E_initCfg`); both are
-in the dedup window, as above. A fifth copy found while building it, `Build/NDHost`'s private
+in the dedup window, as above.
+**Retirements (2026-10-23):** NDHost's `guessRun_mapState_mapState` with #153; R's
+`ic_rewindLeafTM`, `ic_rewind_scan` and `ic_rewind_leaf_run` with #151; the canonizer's
+`canonGramMapComp` with #152; UN's `un_inRewTM`, `un_inRew_run` and `un_mapState_comp` with #154
+(its landing). Remaining in IR-1: `ExhaustiveReplay`'s `xr_inRewindTM` and `xr_E_initCfg` and U2-S's
+`ss_inputRewind` (`UniversalK`), in the user's dedup window. A fifth copy found while building it, `Build/NDHost`'s private
 `guessRun_mapState_mapState` (the lemma's exact statement), is removed in #153 (the user's ruling).
 A sixth, found 2026-10-23 on #152's branch: the canonizer's private `canonGramMapComp`
 (`TuringMachine/CodeSimulator`), the lemma's statement with the composite as `fun s => g (f s)`,
