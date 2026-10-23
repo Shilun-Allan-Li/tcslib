@@ -1504,11 +1504,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   the body has 0 errors and 82/82 controls fail; freeze 5 → 5 public, 14 → 11 private; lint as at
   review; screen 617 declarations, 454 pairs, F3's pairs gone
   (`campaign/fills/c1/evidence/c1-universal-cont1-landing/`, with the PR body drafted).
-  - **Decision pending (user):** `un_setup`'s `hstart` (the start configuration through seven
-    nested relabelings, proved field by field) reproduces 88% of `Cfg.mapState_mapState`'s text.
-    It is a different statement in the same rewrite idiom, and was the review's 87% in-file pair
-    with `un_mapState_comp`; it is now cross-file. Accept it as an idiom pair, or rewrite
-    `hstart` through `Cfg.mapState_mapState` at landing.
+  - `un_setup`'s `hstart` (the start configuration through seven nested relabelings, proved field
+    by field) reproduces 88% of `Cfg.mapState_mapState`'s text: a different statement in the same
+    rewrite idiom, the review's 87% in-file pair with `un_mapState_comp`, now cross-file. **Ruled
+    (user, 2026-10-23): accepted as an idiom pair** (as R's `iw_one` pair).
 - **G4 cont4 drafted** (`campaign/fills/s13d/drafts/s13d-fill-g4-cont4.DRAFT.md`, pre-ship at
   `97299639` in `drafts/s13d-fill-g4-cont4/preship-97299639/`): the return home first, with its
   first premise proved in-module (`g4c4_returnSkip_premise`), gate 61's carries (the seam's

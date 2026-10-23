@@ -46,7 +46,7 @@ module's text followed by this file, imports merged, against `oleans-lu2sc1`):
   - new: #153's three (gate 65);
   - new: `un_setup` → `Cfg.mapState_mapState` (88%). This is `hstart`'s field-by-field proof of the
     start configuration through seven nested relabelings, the review's 87% in-file pair now
-    pointing at the API. ⟨DECISION⟩
+    pointing at the API. **The user accepted it as an idiom pair (2026-10-23).**
 ⟨AFTER #153: re-check against its snapshot⟩
 
 **Order.** After #149 and #153. The closure is `Diagonalization/NTimeHierarchy` and the
