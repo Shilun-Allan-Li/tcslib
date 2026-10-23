@@ -1,0 +1,318 @@
+From 206d573765a9f646650a86ad12303baa237ad0b5 Mon Sep 17 00:00:00 2001
+From: B5a fill agent <fill-agent@campaign>
+Date: Thu, 22 Oct 2026 18:21:34 +0000
+Subject: [PATCH] B5a canon cont7, seal hardening after checkpoint 5
+ (proof-only): definitional reads through Cfg.select, Cfg.mapState,
+ embedEmitCfg and literal buffer cells replaced by their published equations;
+ the sealed scratch copy (35 foreign definitions locally irreducible)
+ elaborates clean
+
+(cherry picked from commit 213816e0ed4a12ee6905887916799892d1538725)
+---
+ .../TuringMachine/CodeSimulator.lean          | 125 +++++++++---------
+ 1 file changed, 66 insertions(+), 59 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index a60ef85c..f7160050 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -5165,7 +5165,7 @@ private lemma canonStageInnerSpec (k : ℕ) :
+       (d.mapState fun _ => WritePhase.wr 0)
+       (by rw [Cfg.mapState_state, hs, Option.map_some])
+     have hc₀d : (d.mapState fun _ => WritePhase.wr 0).mapState Sum.inl = d := by
+-      refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ ?_
++      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
+       · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+       · funext j q
+         rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+@@ -5561,7 +5561,7 @@ private lemma canonStageInnerSpec (k : ℕ) :
+       rw [Cfg.mapState_state, hs, Option.map_some]
+     have hrestored : (d.mapState fun _ => (Sum.inl (WritePhase.wr 0) :
+         WritePhase w₀.length ⊕ CounterLoopState H₀)).mapState (fun _ => anchor) = d := by
+-      refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ ?_
++      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
+       · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+       · funext j q
+         rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+@@ -6047,7 +6047,7 @@ private lemma canonStageOuterSpec (k : ℕ) :
+       rw [Cfg.mapState_state, hs, Option.map_some]
+     have hrestored : (d.mapState fun _ => (CounterLoopState.dec FlagPhase.run :
+         CounterLoopState H₂)).mapState (fun _ => anchor) = d := by
+-      refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ ?_
++      refine Cfg.ext ?_ ((Cfg.mapState_inputPos _ _).trans (Cfg.mapState_inputPos _ _)) ?_ ?_ ?_
+       · rw [Cfg.mapState_state, Cfg.mapState_state, hs, Option.map_some, Option.map_some]
+       · funext j q
+         rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+@@ -6674,7 +6674,7 @@ private lemma canonStageLeg3 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+           (by rw [hA_cp]; simpa using hq.2)⟩, hB_c]
+         obtain rfl : q = (w.length : ℤ) := by omega
+         rw [hA_cp, sub_self]
+-        rw [show FinTM.bufferTape [false] 0 = some false from rfl,
++        rw [show FinTM.bufferTape [false] 0 = some false by rw [FinTM.bufferTape_eq]; rfl,
+           FinTM.bufferTape_nat, List.getElem?_append_right (le_refl w.length),
+           Nat.sub_self]
+         rfl
+@@ -6751,12 +6751,12 @@ private lemma canonStageLeg4 {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq
+       have hp1' : p ≤ 1 := by simpa using hp1
+       rw [hA_c, hA_cp]
+       rcases (by omega : p = 0 ∨ p = 1) with rfl | rfl
+-      · rw [add_zero, show FinTM.bufferTape [false] 0 = some false from rfl,
++      · rw [add_zero, show FinTM.bufferTape [false] 0 = some false by rw [FinTM.bufferTape_eq]; rfl,
+           FinTM.bufferTape_nat, List.getElem?_append_right (le_refl w.length),
+           Nat.sub_self]
+         rfl
+       · rw [canonStageBuffer_none _ _ (by rw [hlapp]; omega),
+-          show FinTM.bufferTape [false] 1 = none from rfl])
++          show FinTM.bufferTape [false] 1 = none by rw [FinTM.bufferTape_eq]; rfl])
+   obtain ⟨hpre, hdisp⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+     ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+     ⟨4, by omega⟩ _ _ (([false] : List Bool).length + 1) hrun (SeekPhase.done) rfl
+@@ -7197,6 +7197,11 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       ((2 * ((w ++ [false]).takeWhile id).length + 2) + 1), hhost6]
+     exact hop6
+   -- leg 7: the embedded bounded unary reader
++  set selU : Cfg mU Bool SU x := ⟨some ue, d.inputPos,
++    fun i => (canonStageBank M header ctrOuter (some ue) d.inputPos
++      (FinTM.bufferTape v) 0 w).workTapes (σ i),
++    fun i => (canonStageBank M header ctrOuter (some ue) d.inputPos
++      (FinTM.bufferTape v) 0 w).workTapePos (σ i), []⟩ with hselU
+   have hsel : embedEmitCfg σ
+       ((canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w)).workTapes
+@@ -7204,11 +7209,11 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       (FinTM.bufferTape v) 0 w)).workTapePos
+       ((canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w)).output
+-      (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) =
++      (selU) =
+       (canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w) :=
+-    embedEmitCfg_select σ _
++    embedEmitCfg_eq σ _ _ _ _ _ rfl rfl (List.append_nil _)
++      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+   have hrun7 : ∀ tt : ℕ, (embedEmitTM σ U).runFrom
+       (canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w) tt =
+@@ -7219,8 +7224,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       (FinTM.bufferTape v) 0 w)).workTapePos
+         ((canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w)).output
+-        (U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) tt) := by
++        (U.runFrom (selU) tt) := by
+     intro tt
+     conv_lhs => rw [← hsel]
+     exact embedEmitTM_runFrom σ U _ _ _ _ tt
+@@ -7228,8 +7232,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+     intro i hi hcon
+     exact hi (σ.injective (hcon.trans hσb.symm))
+   obtain ⟨tU, htU, hUst, hUout, hUcut, hUtapes, hUheads, hUsfx⟩ := unary x w
+-    (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ)
++    (selU)
+     rfl hpos
+     (by
+       show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+@@ -7252,16 +7255,13 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+     ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+     ⟨7, by omega⟩ _ _ tU (hrun7 tU)
+     (ux (codeSkipFin (counterValue w + 1)
+-      (x.drop ((((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ).inputPos.val - 1))).isSome)
+-    hUst
++      (x.drop ((selU).inputPos.val - 1))).isSome)
++    (by rw [embedEmitCfg_state]; exact hUst)
+     ⟨⟨8, by omega⟩, (codeSkipFin (counterValue w + 1)
+-      (x.drop ((((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ).inputPos.val - 1))).isSome⟩
++      (x.drop ((selU).inputPos.val - 1))).isSome⟩
+     (by
+       cases (codeSkipFin (counterValue w + 1)
+-        (x.drop ((((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ).inputPos.val - 1))).isSome
++        (x.drop ((selU).inputPos.val - 1))).isSome
+       · show (if ux false = ux true
+           then some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+           else if ux false = ux false
+@@ -7276,9 +7276,8 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+         rw [if_pos rfl])
+     (by
+       intro u hu s hsu
+-      rw [hrun7 u] at hsu
+-      have hsu' : (U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) u).state = some s := hsu
++      rw [hrun7 u, embedEmitCfg_state] at hsu
++      have hsu' : (U.runFrom (selU) u).state = some s := hsu
+       by_cases hd1 : s = ux true
+       · rw [hd1] at hsu'
+         exact absurd hsu' (hUcut u hu true)
+@@ -7296,8 +7295,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       ((embedEmitTM σ U).runFrom (canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w) tU).mapState
+         (fun _ => (⟨⟨8, by omega⟩, (codeSkipFin (counterValue w + 1)
+-          (x.drop ((((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ).inputPos.val - 1))).isSome⟩ :
++          (x.drop ((selU).inputPos.val - 1))).isSome⟩ :
+           Σ j, canonStagePh SU j)) := by
+     rw [MultiTapeTM.runFrom_add d
+       ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+@@ -7322,25 +7320,17 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+         33 * x.length + 33 * w.length + 33 := by ring
+     omega
+   · -- the exit state
+-    rw [hfin, Cfg.mapState_state, hrun7 tU]
+-    show ((U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) tU).state).map _ = _
+-    rw [hUst, Option.map_some]
+-    rfl
++    rw [hfin, Cfg.mapState_state, hrun7 tU, embedEmitCfg_state, hUst, Option.map_some]
+   · -- the output
+-    rw [hfin, Cfg.mapState_output, hrun7 tU]
+-    show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).output ++
+-      (U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) tU).output = []
+-    rw [hUout]
++    rw [hfin, Cfg.mapState_output, hrun7 tU, embedEmitCfg_output, hUout]
+     rfl
+   · -- the cut
+     intro vt hvt b
+     by_cases h1 : vt ≤ 2 * w.length + 2
+     · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+         (0) (2 * w.length + 2) ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 8) _ _
+-        hstart.symm hpre0 vt (by omega) (by omega) b
++        (by rw [MultiTapeTM.runFrom_zero]; exact hstart.symm) hpre0 vt (by omega)
++        (by omega) b
+     ·
+       by_cases h2 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1)
+       · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+@@ -7405,8 +7395,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       (FinTM.bufferTape v) 0 w)).workTapePos
+       ((canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w)).output
+-      (U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) tU) uBound
++      (U.runFrom (selU) tU) uBound
+     rw [hσb] at h1
+     funext q
+     rw [Cfg.mapState_workTapes, congrFun h1 q, congrFun hUtapes uBound]
+@@ -7422,8 +7411,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       (FinTM.bufferTape v) 0 w)).workTapePos
+       ((canonStageBank M header ctrOuter (some ue) d.inputPos
+       (FinTM.bufferTape v) 0 w)).output
+-      (U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) tU) uBound
++      (U.runFrom (selU) tU) uBound
+     rw [hσb] at h1
+     rw [h1, congrFun hUheads uBound]
+     show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+@@ -7462,9 +7450,7 @@ private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [Decidab
+       · rw [(embedEmitCfg_unselected σ _ _ _ _ j hjr).2, (hB7o j hj1 hj2).2]
+   · -- the suffix clause
+     intro ys hy
+-    rw [hfin, hrun7 tU, Cfg.mapState_inputPos]
+-    show (U.runFrom (((canonStageBank M header ctrOuter (some ue) d.inputPos
+-      (FinTM.bufferTape v) 0 w)).select σ) tU).inputPos.val = _
++    rw [hfin, hrun7 tU, Cfg.mapState_inputPos, embedEmitCfg_inputPos]
+     exact hUsfx ys hy
+ 
+ /-- The grammar stage's phase types: the stage front's host, the release-adapter-wrapped
+@@ -7570,10 +7556,15 @@ private lemma canonGramFin_suffix (n : ℕ) (xs ys : List Bool)
+ private lemma canonGramMapComp {M : ℕ} {x : List Bool} {S A B : Type}
+     (c : Cfg M Bool S x) (f : S → A) (g : A → B) :
+     (c.mapState f).mapState g = c.mapState (fun s => g (f s)) := by
+-  refine Cfg.ext ?_ rfl rfl rfl rfl
+-  show (c.state.map f).map g = c.state.map (fun s => g (f s))
+-  rw [Option.map_map]
+-  rfl
++  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
++  · rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, Option.map_map]
++    rfl
++  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
++  · funext j z
++    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
++  · funext j
++    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
++  · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+ 
+ /-- The grammar stage's ledger: a front leg, a table leg and a suffix leg, each with its
+ dispatch step, fit under one polynomial exponent. -/
+@@ -7687,8 +7678,8 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+   set G := canonGramG ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ escape₃ ι₃ fentry fexit
+     with hG
+   -- the decoded geometry and the value bridge
+-  have hn : counterValue bits = codeBitsNat bits :=
+-    (counterValue_eq bits).trans (foldr_bit_eq_ofDigits bits).symm
++  have hn : counterValue bits = codeBitsNat bits := by
++    rw [counterValue_eq, codeBitsNat_eq, ← foldr_bit_eq_ofDigits]
+   have hx : x = pairEncode bits rest := eq_pairEncode_of_pairDecode x bits rest hp
+   have hxlen : x.length = 2 * bits.length + 2 + rest.length := by
+     rw [hx, length_pairEncode]
+@@ -7698,9 +7689,13 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+   set c₀ : Cfg ((m₃ + 2) + mU) Bool HF x :=
+     ⟨some fentry, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ with hc₀def
+   have hc₀ : c₀.mapState (Sigma.mk (⟨0, by omega⟩ : Fin 4)) = d := by
+-    refine Cfg.ext ?_ rfl rfl rfl rfl
+-    rw [Cfg.mapState_state, hs]
+-    rfl
++    refine Cfg.ext ?_ (Cfg.mapState_inputPos _ _) ?_ ?_ (Cfg.mapState_output _ _)
++    · rw [Cfg.mapState_state, hs]
++      rfl
++    · funext j z
++      rw [Cfg.mapState_workTapes]
++    · funext j
++      rw [Cfg.mapState_workTapePos]
+   have hc₀pos : c₀.inputPos.val = 2 * bits.length + 3 := hpos
+   have hdrop0 : x.drop (c₀.inputPos.val - 1) = rest := by
+     have h2 : x.length - rest.length = 2 * bits.length + 2 := by omega
+@@ -7804,8 +7799,9 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+     set cA : Cfg ((m₃ + 2) + mU) Bool H₃ x := cF.mapState (fun _ => anchor₃) with hcA
+     have hcAst : cA.state = some anchor₃ := by
+       rw [hcA, Cfg.mapState_state, hFst, Option.map_some]
+-    set sel : Cfg (m₃ + 2) Bool H₃ x := cA.select ι₃ with hsel
+-    have hselst : sel.state = some anchor₃ := hcAst
++    set sel : Cfg (m₃ + 2) Bool H₃ x := ⟨some anchor₃, cF.inputPos,
++      fun i => cF.workTapes (ι₃ i), fun i => cF.workTapePos (ι₃ i), []⟩ with hsel
++    have hselst : sel.state = some anchor₃ := rfl
+     have hselpos : sel.inputPos.val = cF.inputPos.val := rfl
+     obtain ⟨τ₃, hτ₃⟩ := spec₃ x bits u huval
+     have hbank : sel.output = [] ∧ 1 ≤ sel.inputPos.val ∧
+@@ -7853,8 +7849,16 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+     have hdropsel : x.drop (sel.inputPos.val - 1) = ys₁ := hdropF
+     rw [hdropsel, hn] at hst₃ hys₃
+     -- the embedded table's run and the release adapter's transport
+-    have hembA : embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output sel = cA :=
+-      embedEmitCfg_select ι₃ cA
++    have hembA : embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output sel = cA := by
++      refine embedEmitCfg_eq ι₃ cA.workTapes cA.workTapePos cA.output sel cA
++        hcAst.symm ?_ ?_ ?_ (fun _ _ => ⟨rfl, rfl⟩)
++      · rw [hcA, Cfg.mapState_inputPos]
++      · rw [hcA, Cfg.mapState_output, hFout, List.nil_append]
++      · intro i
++        constructor
++        · funext z
++          rw [hcA, Cfg.mapState_workTapes]
++        · rw [hcA, Cfg.mapState_workTapePos]
+     have hErun : ∀ tt : ℕ, (embedEmitTM ι₃ P).runFrom cA tt =
+         embedEmitCfg ι₃ cA.workTapes cA.workTapePos cA.output (P.runFrom sel tt) := by
+       intro tt
+@@ -7934,10 +7938,13 @@ private lemma exists_canonGrammarStage (F : MachineFormat) :
+         rw [hcT, canonGramMapComp, canonGramMapComp]
+       have hcTst : cT.state = some none := by
+         rw [hcT, Cfg.mapState_state, embedEmitCfg_state, hstA, Option.map_some]
+-      have hcTpos : cT.inputPos.val = (P.runFrom sel (τ₃ sel)).inputPos.val := rfl
++      have hcTpos : cT.inputPos.val = (P.runFrom sel (τ₃ sel)).inputPos.val := by
++        rw [hcT, Cfg.mapState_inputPos, embedEmitCfg_inputPos]
+       obtain ⟨tS, htS, hSst, hSout, hStapes, hSheads, hScut⟩ := canonSuffix_run cT hcTst
+         (by omega)
+-      have hdropT : x.drop (cT.inputPos.val - 1) = ys₂ := g3
++      have hdropT : x.drop (cT.inputPos.val - 1) = ys₂ := by
++        rw [hcTpos]
++        exact g3
+       rw [hdropT] at hSst htS
+       obtain ⟨hpre2, hdisp2⟩ := phaseHostTM_run
+         (canonGramFamily ((m₃ + 2) + mU) m₃ HF H₃ FrM P anchor₃ ι₃)
+-- 
+2.50.1 (Apple Git-155)
+

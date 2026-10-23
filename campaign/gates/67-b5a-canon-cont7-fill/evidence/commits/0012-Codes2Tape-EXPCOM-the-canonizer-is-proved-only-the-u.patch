@@ -1,0 +1,111 @@
+From 8e74681a31752524a62997ebde46ebbd2f3bf777 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 22 Oct 2026 19:32:55 -0400
+Subject: [PATCH] Codes2Tape, EXPCOM: the canonizer is proved; only the uniform
+ simulator remains admitted (docstrings only)
+
+With the grammar stage proved, `MachineFormat.exists_polyCanonizer` is admission-free; the
+passages that said both shared contracts remain admitted now name the uniform simulator alone
+(the canonizer review's F8; the user's ruling).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/Diagonalization/EXPCOM.lean   | 15 ++++++++-------
+ TCSlib/Complexity/TuringMachine/Codes2Tape.lean | 13 +++++++------
+ 2 files changed, 15 insertions(+), 13 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/EXPCOM.lean b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+index e7ce7e2a..fde06470 100644
+--- a/TCSlib/Complexity/Diagonalization/EXPCOM.lean
++++ b/TCSlib/Complexity/Diagonalization/EXPCOM.lean
+@@ -69,7 +69,7 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
+ * `Complexity.EXPCOM` — the oracle language, over `expCode`.
+   [AB09, Example 3.6(3)]
+ 
+-## Main results (the B5b summit is proved modulo the two §12.11 rows of B5a)
++## Main results (the B5b summit is proved modulo the uniform simulator of §12.11)
+ 
+ * `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
+ 
+@@ -118,7 +118,8 @@ structure UniformMachineCode extends EffectiveMachineCode where
+     simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
+       (simDegree * (α.length + x.length + t + 1) ^ simDegree)
+ 
+-/-- **A uniformly-timed scheme exists** (proved modulo §12.11; B5a partial): the chapter-1 concrete scheme, with its time analysis made uniform.
++/-- **A uniformly-timed scheme exists** (proved modulo the uniform simulator): the chapter-1
++concrete scheme, with its time analysis made uniform.
+ 
+ **Proof sketch.** The concrete grammar of the chapter-1 scheme
+ (`encode := CodeTM.serialize`, `decode := codeDecode`, the encoding law from
+@@ -150,7 +151,7 @@ certain.**
+ **Fill appendix (B5a, route Z).** Instantiate §12.11 at
+ `oneTapeMachineFormat`, as in the statement probe's `uniform_one`. The
+ polynomial canonizer and H1 supply the inherited canonizer and the two
+-simulator clauses. Both shared contracts remain admitted in this partial. -/
++simulator clauses. The canonizer is proved; the uniform simulator remains admitted. -/
+ theorem exists_uniformMachineCode : Nonempty UniformMachineCode := by
+   obtain ⟨C, dC, hC⟩ := oneTapeMachineFormat.exists_polyCanonizer
+   obtain ⟨S, d, hS⟩ := oneTapeMachineFormat.exists_uniformSimulator
+@@ -657,10 +658,10 @@ The private `expcom_decider` answers queries by parsing, rebuilding the canonica
+ simulator input, and composing `expCode.simulator` only on that front end's image;
+ malformed queries select a fixed rejecting zero-deadline input. The transcribed
+ `ExpPoly` ledger absorbs the simulator, shell and projection-enumerator budgets.
+-The result is proved modulo exactly W2-S (`FinOracleTM.exists_plain_simulation`)
+-and the two §12.11 rows (`MachineFormat.exists_polyCanonizer` and
+-`MachineFormat.exists_uniformSimulator`). (Maintainer note, 2026-10-12: W2-S
+-landed at the same fills-6 integration, so only the two §12.11 rows remain.) -/
++The result is proved modulo exactly the uniform simulator
++(`MachineFormat.exists_uniformSimulator`): the plain oracle simulation
++(`FinOracleTM.exists_plain_simulation`) and the canonizer (`MachineFormat.exists_polyCanonizer`)
++are proved. -/
+ theorem NPOracle_EXPCOM_subset_EXP : NPOracle EXPCOM ⊆ EXP := by
+   intro L hL
+   obtain ⟨k, a, N, hN⟩ := Set.mem_iUnion.mp hL
+diff --git a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+index 02e32c60..59b94de6 100644
+--- a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
++++ b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+@@ -40,8 +40,9 @@ decoding time), `UniformMachineCode` (`Diagonalization/EXPCOM.lean`) →
+ 
+ ## Status: B5a partial (flagged update)
+ 
+-The effective scheme is proved. The uniform scheme is proved modulo the two
+-remaining §12.11 contracts in `CodeSimulator`; its own admission is removed.
++The effective scheme is proved. The uniform scheme is proved modulo the uniform simulator
++`Turing.MachineFormat.exists_uniformSimulator` in `CodeSimulator` (whose canonizer is proved); its
++own admission is removed.
+ 
+ ## Main definitions and results
+ 
+@@ -56,7 +57,7 @@ remaining §12.11 contracts in `CodeSimulator`; its own admission is removed.
+   `k`-record one at two work tapes.
+ * `Turing.exists_effectiveMachineCode2`,
+   `Turing.exists_uniformMachineCode2` — proved existence statements (the latter
+-  modulo the two §12.11 contracts; B5a partial, flagged update).
++  modulo the uniform simulator).
+ 
+ ## References
+ 
+@@ -298,7 +299,7 @@ private def twoTapeMachineFormat : MachineFormat :=
+   MachineFormat.mk twoTapeFormat 2 Code2TM.tm
+     Code2TM.serialize_eq_serializeK codeSkipTable2_eq_codeSkipTableK
+ 
+-/-- **A uniformly timed two-tape scheme exists** (proved modulo §12.11; B5a partial).
++/-- **A uniformly timed two-tape scheme exists** (proved modulo the uniform simulator).
+ 
+ **Proof sketch.** The concrete scheme of
+ `Turing.exists_effectiveMachineCode2` with the uniform simulator built as
+@@ -316,8 +317,8 @@ virtual-input layer supplies the input discipline.
+ 
+ **Fill appendix (B5a).** This is the two-tape instance of the shared §12.11
+ canonizer and H1, as in the statement probe's `uniform_two`. The two-tape
+-writer and skipper bridges supply the format laws. The two shared contracts
+-remain admitted in this partial; no specialized interpreter is introduced. -/
++writer and skipper bridges supply the format laws. The canonizer is proved and the uniform
++simulator remains admitted; no specialized interpreter is introduced. -/
+ theorem exists_uniformMachineCode2 : Nonempty UniformMachineCode2 := by
+   obtain ⟨C, dC, hC⟩ := twoTapeMachineFormat.exists_polyCanonizer
+   obtain ⟨S, d, hS⟩ := twoTapeMachineFormat.exists_uniformSimulator
+-- 
+2.50.1 (Apple Git-155)
+
