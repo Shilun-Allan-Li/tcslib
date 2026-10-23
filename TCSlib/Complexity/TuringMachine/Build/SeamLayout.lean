@@ -153,7 +153,11 @@ private lemma sl_step_move {k : ℕ} {x : List Bool} {S : Type} (M : MultiTapeTM
 
 /-- Two aligned-pair steps of the pair-skip leaf, from any configuration: read the pair
 `(b₀, b₁)` under the head of `src`, advance that head twice, and land in `done` exactly when
-the pair is the separator `false, true`, else back in `start`. -/
+the pair is the separator `false, true`, else back in `start`.
+
+**Proof sketch.** Each step moves only the head of `src` one cell right (`sl_step_move`). The
+first reads `b₀` at `start` and enters `after b₀`; the second reads `b₁` and enters `done` exactly
+for the separator. Compose the two steps (`Turing.MultiTapeTM.runFrom_succ_eq_step'`). -/
 private lemma sl_pairSkip_two_steps {k : ℕ} {x : List Bool} (src : Fin k)
     (d : Cfg k Bool sl_PairPhase x) (hstate : d.state = some .start) (b₀ b₁ : Bool)
     (h0 : d.workTapes src (d.workTapePos src) = some b₀)
@@ -213,7 +217,14 @@ private lemma sl_pairSkip_two_steps {k : ℕ} {x : List Bool} (src : Fin k)
 first `2|a| + 2` cells of the pair encoding `pairEncode a tail` from its head, the leaf reaches
 `done` at exactly `2|a| + 2` and not earlier, with that head `2|a| + 2` cells right of its start
 and everything else — every cell of every tape, every other head, the input position and the
-output — unchanged. The output is unchanged at every time up to the exit. -/
+output — unchanged. The output is unchanged at every time up to the exit.
+
+**Proof sketch.** Induct on `a`. For `a = []` the encoding begins with the separator
+`false, true` (`Turing.pairEncode_eq`), and two steps reach `done` (`sl_pairSkip_two_steps`).
+For `b :: a` it begins with the doubled pair `b, b`, so two steps return to `start` two cells
+further right, where the tape holds `pairEncode a tail` (`Turing.FinTM.bufferTape_append_shift`),
+and the induction hypothesis gives the rest. The cut and silence follow by splitting the time at
+`2`. -/
 private theorem sl_pairSkipTM_run {k : ℕ} {x : List Bool} (src : Fin k) (a tail : List Bool)
     (d : Cfg k Bool sl_PairPhase x) (hstate : d.state = some .start)
     (hw : ∀ p : ℕ, p < 2 * a.length + 2 →
@@ -318,7 +329,10 @@ private theorem sl_pairSkipTM_run {k : ℕ} {x : List Bool} (src : Fin k) (a tai
         exact ihout t (by omega)
 
 /-- The split leaf's copying step: at `copy` reading `true` on `src`, write `true` under the
-head of `sm` and advance both heads one cell right. -/
+head of `sm` and advance both heads one cell right.
+
+**Proof sketch.** At `copy` reading `true` the table gives the write-and-advance action; apply it
+through `sl_apply_eq` and compare the fields tape by tape, using `src ≠ sm`. -/
 private lemma sl_split_step_true {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
     {c : Cfg k Bool sl_SplitPhase x} (hc : c.state = some .copy)
     (hr : c.workTapeSymbols src = some true) :
@@ -363,7 +377,10 @@ private lemma sl_split_step_true {k : ℕ} {x : List Bool} (src sm : Fin k) (hne
 
 /-- The split leaf's exit step: at `copy` reading the terminator on `src`, write `false` under
 the head of `sm` (which stays), blank the scanned cell of `src`, advance the head of `src`, and
-enter `done`. -/
+enter `done`.
+
+**Proof sketch.** At `copy` reading `false` the table gives the terminating action; apply it
+through `sl_apply_eq` and compare the fields tape by tape, using `src ≠ sm`. -/
 private lemma sl_split_step_exit {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
     {c : Cfg k Bool sl_SplitPhase x} (hc : c.state = some .copy)
     (hr : c.workTapeSymbols src = some false) :
@@ -410,7 +427,13 @@ private lemma sl_split_step_exit {k : ℕ} {x : List Bool} (src sm : Fin k) (hne
 under the head of `src`, the leaf exits in exactly `q + 1` steps and not earlier, having
 written `1^q 0` on `sm` from that head's cell on (that head ends on the terminator), blanked
 the terminator's cell on `src`, and moved the head of `src` one cell past it. The output and
-everything off the two heads' ranges are unchanged, at every time up to the exit. -/
+everything off the two heads' ranges are unchanged, at every time up to the exit.
+
+**Proof sketch.** Induct on `q`. At `q = 0` the source head reads the terminator, and one exit
+step (`sl_split_step_exit`) gives the endpoint. At `q + 1` one copying step
+(`sl_split_step_true`) writes `true` on `sm` and advances both heads, leaving `1^q 0` under the
+source head; the induction hypothesis gives the rest, and the written cells join the new one
+cell by cell. The cut and silence follow by splitting off the first step. -/
 private theorem sl_unarySplit_copy {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
     (q : ℕ) (d : Cfg k Bool sl_SplitPhase x) (hstate : d.state = some .copy)
     (hw : ∀ p : ℕ, p ≤ q →
@@ -549,7 +572,11 @@ unary word `1^q 0` from its head, the leaf reaches `done` at exactly `q + 3` and
 with the word written on `sm` from two cells right of that tape's head (that head ends on the
 written terminator), the terminator's cell of `src` blanked and its head one cell past it, and
 everything else — every other cell, every other head, the input position and the output —
-unchanged. The output is unchanged at every time up to the exit. -/
+unchanged. The output is unchanged at every time up to the exit.
+
+**Proof sketch.** Two offset moves of the head of `sm` (`sl_step_move`), which leave `src`
+untouched, then the copying loop (`sl_unarySplit_copy`) from the shifted summary head. Compose at
+time `2` and collect the fields. -/
 private theorem sl_unarySplitTM_run {k : ℕ} {x : List Bool} (src sm : Fin k) (hne : src ≠ sm)
     (q : ℕ) (d : Cfg k Bool sl_SplitPhase x) (hstate : d.state = some .mv1)
     (hw : ∀ p : ℕ, p ≤ q →
@@ -848,7 +875,14 @@ private lemma sl_tagged_ne_done {k : ℕ} {x : List Bool} (i : sl_Key) (hi : i �
     exact hi (congrArg Sigma.fst hcon)
 
 /-- Phase 1, hosted: the skip over the suffix `s.drop r` of the source word, one dispatch into
-phase 2; no state of its window is the exit. -/
+phase 2; no state of its window is the exit.
+
+**Proof sketch.** From the head, the source cells are `s.drop r` and its right blank
+(`Turing.FinTM.bufferTape_drop`), the premise of `Turing.skipTM_run_ofCfg`, which ends with the
+head at `|s| + 1`. Then `Turing.phaseHostTM_run`, with its guard from the row's first-visit
+cut (`sl_guard`), gives the lockstep window and the dispatch, and `sl_rewrap` identifies the
+dispatched configuration with the next phase's, field by field. Every state of the window
+carries this phase's tag, so none is the exit (`sl_tagged_ne_done`). -/
 private lemma sl_phase1 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s : List Bool) (r : ℕ) (hr : r ≤ s.length) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
@@ -904,7 +938,11 @@ private lemma sl_phase1 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : sr
   · rw [H.1 u hu]
     exact sl_tagged_ne_done .skipRest (by decide) _
 
-/-- Phase 2, hosted: the skip back over the whole source word, one dispatch into phase 3. -/
+/-- Phase 2, hosted: the skip back over the whole source word, one dispatch into phase 3.
+
+**Proof sketch.** With the head at `|s| + 1`, the word `s` ends one blank before it, the premise
+of `Turing.skipBackTM_run_ofCfg`, which returns the head to `0`. As for phase 1, the host lemma,
+the rewrap and the phase tag finish. -/
 private lemma sl_phase2 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s : List Bool) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
@@ -961,7 +999,11 @@ private lemma sl_phase2 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : sr
   · rw [H.1 u hu]
     exact sl_tagged_ne_done .rewindAll (by decide) _
 
-/-- Phase 3, hosted: the pair-skip leaf over the header, one dispatch into phase 4. -/
+/-- Phase 3, hosted: the pair-skip leaf over the header, one dispatch into phase 4.
+
+**Proof sketch.** The source holds `pairEncode a (1^q 0 ++ v)` from its head, the premise of
+`sl_pairSkipTM_run`, which ends with the head at `2|a| + 2`. As for phase 1, the host lemma, the
+rewrap and the phase tag finish. -/
 private lemma sl_phase3 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s a v : List Bool) (q : ℕ)
@@ -1020,7 +1062,12 @@ private lemma sl_phase3 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : sr
     exact sl_tagged_ne_done .pairSkip (by decide) _
 
 /-- Phase 4, hosted: the unary-split leaf, one dispatch into phase 5. The summary word lands
-two cells past the summary head's origin and the terminator's source cell is blanked. -/
+two cells past the summary head's origin and the terminator's source cell is blanked.
+
+**Proof sketch.** From `2|a| + 2` the source cells are `1^q 0` (`sl_read_unary`), the premise of
+`sl_unarySplitTM_run`. At its endpoint the summary tape is the buffer of `1^q 0` shifted by two
+cells (`sl_sm_word`), and the source has its terminator cell blanked and its head one cell past
+it. As for phase 1, the host lemma, the rewrap and the phase tag finish. -/
 private lemma sl_phase4 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (hts : tbl ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s a v : List Bool) (q : ℕ)
@@ -1112,7 +1159,12 @@ private lemma sl_phase4 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : sr
   · rw [H.1 u hu]
     exact sl_tagged_ne_done .unarySplit (by decide) _
 
-/-- Phase 5, hosted: the walk home on the summary tape, one dispatch into phase 6. -/
+/-- Phase 5, hosted: the walk home on the summary tape, one dispatch into phase 6.
+
+**Proof sketch.** Read leftward from `q + 2`, the summary tape is `(1^q 0).reverse` and then the
+blank cell `1` (`sl_reverse_read`), the premise of `Turing.walkTM_run_ofCfg` with `dir = .neg`,
+which returns the summary head to `0`. As for phase 1, the host lemma, the rewrap and the phase
+tag finish. -/
 private lemma sl_phase5 {k : ℕ} {x : List Bool} (src tbl sm : Fin k)
     (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (q : ℕ) (w1 : ℤ → Option Bool) (p1 : ℤ) (wt : ℤ → Option Bool) (pt : ℤ) :
@@ -1178,7 +1230,14 @@ private lemma sl_phase5 {k : ℕ} {x : List Bool} (src tbl sm : Fin k)
     exact sl_tagged_ne_done .walkHome (by decide) _
 
 /-- Phase 6, hosted: the transfer of the table word from the source to the table tape, one
-dispatch into phase 7; the source becomes the buffer of its remaining prefix. -/
+dispatch into phase 7; the source becomes the buffer of its remaining prefix.
+
+**Proof sketch.** Relative to the source head, cell `-1` is the blank phase 4 wrote and the cells
+`0, …, |v|` are `v` and its right blank (`sl_read_table`), the premise of
+`Turing.transferTM_run_ofCfg`. At its endpoint the table tape is the buffer of `v` and the source
+is the buffer of `s.take (2|a| + 2 + q)`, cell by cell (`Turing.FinTM.bufferTape_take`,
+`Turing.FinTM.bufferTape_eq_none_of_not_mem`). As for phase 1, the host lemma, the rewrap and the
+phase tag finish. -/
 private lemma sl_phase6 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (hts : tbl ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s a v : List Bool) (q : ℕ)
@@ -1292,7 +1351,11 @@ private lemma sl_phase6 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : sr
     exact sl_tagged_ne_done .moveTable (by decide) _
 
 /-- Phase 7, hosted: the skip back over the remaining prefix `s.take m`, one dispatch into
-phase 8. -/
+phase 8.
+
+**Proof sketch.** With the head at `m + 1`, the prefix `s.take m` ends one blank before it, the
+premise of `Turing.skipBackTM_run_ofCfg`, which returns the head to `0`. As for phase 1, the host
+lemma, the rewrap and the phase tag finish. -/
 private lemma sl_phase7 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s : List Bool) (m : ℕ) (hm : m ≤ s.length) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :
@@ -1359,7 +1422,13 @@ private lemma sl_phase7 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : sr
 /-- Phase 8, hosted: the clear of the remaining prefix. The lockstep window of
 `Turing.phaseHostTM_run` covers the whole phase, to its exact exit time: the self-redirect at
 its `done` is never taken inside the horizon, so the exit is reached at `2|s.take m| + 2` and
-not before. -/
+not before.
+
+**Proof sketch.** The source holds the buffer of `s.take m` from its head, the premise of
+`Turing.clearTM_run_ofCfg`. `Turing.phaseHostTM_run`'s window, which includes the clear's exit
+time, gives the endpoint directly: the cleared interval and the blank cells outside it make the
+source blank. Its dispatch clause, the self-redirect, lies one step later and is not used. Before
+the exit, the clear's first-visit cut excludes `done`. -/
 private lemma sl_phase8 {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (hst : src ≠ tbl)
     (hss : src ≠ sm) (d : Cfg k Bool ((i : sl_Key) × sl_Ph i) x)
     (s : List Bool) (m : ℕ) (hm : m ≤ s.length) (wt ws : ℤ → Option Bool) (pt ps : ℤ) :

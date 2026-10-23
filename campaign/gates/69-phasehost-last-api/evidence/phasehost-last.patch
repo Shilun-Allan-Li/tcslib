@@ -1,0 +1,70 @@
+From 0b671a282560be1eb4b906f94a387ef37abce77f Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 22 Oct 2026 14:45:35 -0400
+Subject: [PATCH] Seam: the phase host's table off the redirects, and a
+ last-phase run lemma
+
+`Turing.phaseHostTM_tr_of_red_none`: at a state its redirect table leaves alone, the host takes
+the phase's action, tagged. `Turing.phaseHostTM_run_le`: with no redirect strictly before `T`,
+the host runs the tagged phase up to and including `T`, with nothing assumed of the state at
+`T`, so a host's last phase can end at a live exit that is not redirected. The module header
+names both.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Complexity/TuringMachine/Build/Seam.lean  | 34 ++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Seam.lean b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+index 11c40f3a..f5f13fc1 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Seam.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Seam.lean
+@@ -38,7 +38,9 @@ every §12 contract is proved (§12 fill epoch F1, gate closed 2026-10-09). The
+ prefix `Turing.seamCompTM_runFrom_left` and the existing right lockstep.
+ The **phase host** `Turing.phaseHostTM`, with `Turing.phaseHostTM_run` (proved), is the
+ finite-dispatch generalization: many phases and a redirect table, one dispatch step per
+-redirect (landed before the §12.8 fill for the record rows).
++redirect (landed before the §12.8 fill for the record rows). Its table off the redirects is
++`Turing.phaseHostTM_tr_of_red_none`, and `Turing.phaseHostTM_run_le` runs a last phase up to its
++exit without a dispatch.
+ 
+ ## Design
+ 
+@@ -870,4 +872,34 @@ theorem phaseHostTM_run {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+   simp only [MultiTapeTM.step, hst, phaseHostTM, hred]
+   apply Cfg.ext <;> simp [Cfg.mapState, hs']
+ 
++/-- **The phase host's table off the redirects**: at a state `s` of phase `i` that `red` does
++not redirect, the host takes phase `i`'s action, with the successor state tagged by `i`. -/
++theorem phaseHostTM_tr_of_red_none {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
++    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
++    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) (s : Ph i) (hs : red i s = none)
++    (inp : Option Γ) (w : Fin k → Option Γ) :
++    (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = ((M i).tr s inp w).mapState (Sigma.mk i) := by
++  simp only [phaseHostTM, hs]
++
++/-- **The phase lemma for a last phase.** Run phase `i` from `c` for `T` steps, with no
++redirect strictly before `T`. Then, up to and including `T`, the host is the phase run with
++states tagged by `i`. Unlike `Turing.phaseHostTM_run`, nothing is assumed of the state at `T`:
++it may be a live exit that `red` does not redirect, so this serves a host's last phase.
++
++**Proof sketch.** On every state reached before `T` the host's table is the tagged phase table
++(`Turing.phaseHostTM_tr_of_red_none`), so the agreement transfer
++`Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` gives the run up to `T`. -/
++theorem phaseHostTM_run_le {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
++    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
++    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
++    (c : Cfg k Γ (Ph i) x) (T : ℕ)
++    (hguard : ∀ u < T, ∀ s, ((M i).runFrom c u).state = some s → red i s = none) :
++    ∀ u ≤ T, (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) u =
++        ((M i).runFrom c u).mapState (Sigma.mk i) := by
++  intro u hu
++  exact MultiTapeTM.runFrom_mapState_of_agreeOn (M i) (phaseHostTM M q0 red)
++    ⟨Sigma.mk i, sigma_mk_injective⟩ (fun s => red i s = none)
++    (fun s hs inp work => phaseHostTM_tr_of_red_none M q0 red i s hs inp work)
++    c u (fun v hv s hs => hguard v (by omega) s hs)
++
+ end Turing
+-- 
+2.50.1 (Apple Git-155)
+
