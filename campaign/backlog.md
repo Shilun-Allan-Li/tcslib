@@ -1556,6 +1556,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **Wave 2 started:** #151 at `dbf0ed2a` (the campaign after #147, #149 and #153 merged in;
     the leaf re-point cherry-picked, blob `e2cdab7b` as audited); `replay-lrc2.sh`, 8 modules from
     `oleans-lspapi2`.
+  - **#150 merged (2026-10-23).** `lrc2` (#151) runs on #151's tree without #150 (disjoint beyond
+    the facade); #152's replay, from `oleans-lrc2`, therefore also covers `CfgRecord`'s closure (the
+    merged-tree rule), so its snapshot is the exact campaign tree.
+  - **#152 prepared locally** (`2e115bf1`): the campaign after #150 merged in, the re-point
+    cherry-picked; its code equals the audited re-point's, the only other difference being
+    `aed162fd`'s docstring. Pushed after #151 merges, with one more campaign merge.
+  - **The UN landing opened as #154** (the four commits rebased onto `e2f08f53`); it replays after
+    #152 merges.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
