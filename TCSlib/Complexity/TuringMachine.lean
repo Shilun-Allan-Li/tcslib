@@ -248,7 +248,7 @@ for the local modifications.
 * `UniversalK` — the `k`-generic universal machine (U2) [AB09, Theorem 1.9]: the `k`-tape
   scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
   the self-application universal machine with time and space ledgers, and the code-first
-  evaluator. Statement gate passed 2026-10-15; the three contracts are sorried.
+  evaluator. The startup is proved; the other two contracts are sorried.
 * `SelfUniversal` — the self-application universal machine `U₀` and its startup
   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
   Statement gate passed 2026-10-14; both are the `k = 1` cases of `UniversalK`'s statements.
