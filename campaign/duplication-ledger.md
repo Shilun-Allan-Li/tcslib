@@ -503,15 +503,17 @@ with its own exact-time run proof:
   `Turing.FinTM.rewind_scan` (51%; `Simulation` was outside that brief's screen population, so the
   worker's screen could not see it).
 
-With them, UN's `un_mapState_comp` restates `ExhaustiveReplay`'s `xr_E_initCfg` (54%).
+With them, UN's `un_mapState_comp` shares field-equation proof text with `ExhaustiveReplay`'s
+`xr_E_initCfg` (54%; their statements differ: gate 65, minor 3).
 **Acknowledgment and disposition (user, 2026-10-22):** UN's two pairs are resolved by **an API PR
 first**: a public input rewind with an exact time and a first-visit cut, and a `mapState`
 collapse lemma. UN's landing re-points to them. R's copy lands ledgered and re-points when that
 API lands. U2-S's and `ExhaustiveReplay`'s are re-pointed in the user's dedup window.
 **The API: #153** (2026-10-22): `Build/InputRewind`'s `Turing.inputRewindTM` and
 `inputRewindTM_run`, and `Turing.Cfg.mapState_mapState`. Its v3 screen pairs the machine with
-`xr_inRewindTM` (82% and 73%) and the lemma with `xr_E_initCfg` (54%); both are in the dedup
-window, as above. A fifth copy found while building it, `Build/NDHost`'s private
+`xr_inRewindTM` (82% and 73%), and the lemma's proof text with `xr_E_initCfg`'s (54%; a shared
+idiom, not a restatement: the composition lemma alone does not replace `xr_E_initCfg`); both are
+in the dedup window, as above. A fifth copy found while building it, `Build/NDHost`'s private
 `guessRun_mapState_mapState` (the lemma's exact statement), is removed in #153 (the user's ruling).
 A sixth, found 2026-10-23 on #152's branch: the canonizer's private `canonGramMapComp`
 (`TuringMachine/CodeSimulator`), the lemma's statement with the composite as `fun s => g (f s)`,

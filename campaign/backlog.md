@@ -1517,6 +1517,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `ic_rewind_leaf_run` to `inputRewindTM`/`inputRewindTM_run` in one more maintainer commit
     (prepared and checked locally first; applied only after #153 merges).
   - All five queued branches merge cleanly with #149's head (`git merge-tree`, 2026-10-23).
+- **Gates closed (2026-10-23):** 62 round 2 (#149, PASS 0/0/0/7), 65 (#153, PASS 0/0/3/10), 64
+  (#150, PASS 0/0/2/10), 68 (the UN landing, PASS 0/0/3/10); round 2's first dispatch of gate 62 was
+  void (round 1's bundle attached). **#149 is clear to merge.** The fixes:
+  - #153: `1148924f`, the overview's start hypothesis and the run sketch's first step (docstrings);
+  - the UN landing: a fourth local commit `2d380224`, the bank erase's guide condition and the
+    setup pieces' list (docstrings);
+  - errata and the ledger's IR-1 wording, in the gates' resolutions.
+  - **Process:** every dispatch prompt names the bundle's Lean and records revisions (gate 65,
+    minor 2: the pack pointed to the bundle's README, which is not attached).
+  - **Optional (gate 65, note 10):** a cross-reference to `Cfg.mapState_mapState` from
+    `StateRenaming`'s docstring, with that module's next change.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
