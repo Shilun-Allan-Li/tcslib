@@ -69,7 +69,7 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
 * `Complexity.EXPCOM` — the oracle language, over `expCode`.
   [AB09, Example 3.6(3)]
 
-## Main results (the B5b summit is proved modulo the two §12.11 rows of B5a)
+## Main results (the B5b summit is proved modulo the uniform simulator of §12.11)
 
 * `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
 
@@ -118,7 +118,8 @@ structure UniformMachineCode extends EffectiveMachineCode where
     simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
       (simDegree * (α.length + x.length + t + 1) ^ simDegree)
 
-/-- **A uniformly-timed scheme exists** (proved modulo §12.11; B5a partial): the chapter-1 concrete scheme, with its time analysis made uniform.
+/-- **A uniformly-timed scheme exists** (proved modulo the uniform simulator): the chapter-1
+concrete scheme, with its time analysis made uniform.
 
 **Proof sketch.** The concrete grammar of the chapter-1 scheme
 (`encode := CodeTM.serialize`, `decode := codeDecode`, the encoding law from
@@ -150,7 +151,7 @@ certain.**
 **Fill appendix (B5a, route Z).** Instantiate §12.11 at
 `oneTapeMachineFormat`, as in the statement probe's `uniform_one`. The
 polynomial canonizer and H1 supply the inherited canonizer and the two
-simulator clauses. Both shared contracts remain admitted in this partial. -/
+simulator clauses. The canonizer is proved; the uniform simulator remains admitted. -/
 theorem exists_uniformMachineCode : Nonempty UniformMachineCode := by
   obtain ⟨C, dC, hC⟩ := oneTapeMachineFormat.exists_polyCanonizer
   obtain ⟨S, d, hS⟩ := oneTapeMachineFormat.exists_uniformSimulator
@@ -657,10 +658,10 @@ The private `expcom_decider` answers queries by parsing, rebuilding the canonica
 simulator input, and composing `expCode.simulator` only on that front end's image;
 malformed queries select a fixed rejecting zero-deadline input. The transcribed
 `ExpPoly` ledger absorbs the simulator, shell and projection-enumerator budgets.
-The result is proved modulo exactly W2-S (`FinOracleTM.exists_plain_simulation`)
-and the two §12.11 rows (`MachineFormat.exists_polyCanonizer` and
-`MachineFormat.exists_uniformSimulator`). (Maintainer note, 2026-10-12: W2-S
-landed at the same fills-6 integration, so only the two §12.11 rows remain.) -/
+The result is proved modulo exactly the uniform simulator
+(`MachineFormat.exists_uniformSimulator`): the plain oracle simulation
+(`FinOracleTM.exists_plain_simulation`) and the canonizer (`MachineFormat.exists_polyCanonizer`)
+are proved. -/
 theorem NPOracle_EXPCOM_subset_EXP : NPOracle EXPCOM ⊆ EXP := by
   intro L hL
   obtain ⟨k, a, N, hN⟩ := Set.mem_iUnion.mp hL
