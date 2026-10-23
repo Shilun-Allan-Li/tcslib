@@ -27,6 +27,8 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
 ## Main results
 
 * `Complexity.LogProg.bitsVal_bits`, `Complexity.LogProg.bits_injective`.
+* `Complexity.LogProg.bitsVal_lt_two_pow`, `Complexity.LogProg.eq_of_bitsVal_eq` — a word's
+  value is below `2^{length}` and determines the word among words of its length.
 * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
 * `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
   `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`.
@@ -79,6 +81,24 @@ lemma bitsVal_bits (n : ℕ) : bitsVal (Nat.bits n) = n := by
 /-- `Nat.bits` is injective. -/
 lemma bits_injective : Function.Injective Nat.bits := fun a b h => by
   rw [← bitsVal_bits a, ← bitsVal_bits b, h]
+
+/-- A word of `L` letters has value below `2 ^ L`. -/
+lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+  induction w with
+  | nil => simp [bitsVal]
+  | cons b w ih => cases b <;> simp [bitsVal, pow_succ] <;> omega
+
+/-- Words of equal length and equal value are equal. -/
+lemma eq_of_bitsVal_eq : ∀ {a b : List Bool}, a.length = b.length →
+    bitsVal a = bitsVal b → a = b
+  | [], [], _, _ => rfl
+  | x :: a, y :: b, hl, hv => by
+    simp only [bitsVal] at hv
+    have hx : x = y := by
+      have := congrArg (· % 2) hv
+      cases x <;> cases y <;> simp_all <;> omega
+    subst hx
+    exact congrArg _ (eq_of_bitsVal_eq (by simpa using hl) (by omega))
 
 /-- **The carry rule**: the binary word of `n + 1` is the increment of that of `n`. -/
 lemma bits_succ (n : ℕ) : Nat.bits (n + 1) = incW (Nat.bits n) := by
