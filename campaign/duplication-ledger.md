@@ -515,8 +515,8 @@ window, as above. A fifth copy found while building it, `Build/NDHost`'s private
 `guessRun_mapState_mapState` (the lemma's exact statement), is removed in #153 (the user's ruling).
 A sixth, found 2026-10-23 on #152's branch: the canonizer's private `canonGramMapComp`
 (`TuringMachine/CodeSimulator`), the lemma's statement with the composite as `fun s => g (f s)`,
-used at two `rw` sites. **Disposition pending (user):** a re-point at #152's landing is prepared
-locally (`local/canon-mapcomp-repoint`), as for R's leaf.
+used at two `rw` sites; 99% each way on the v3 screen. **Disposition pending (user):** a re-point
+at #152's landing is prepared locally (`local/canon-mapcomp-repoint`), as for R's leaf.
 
 **CC7-1, the canonizer cont7's in-file families** (megafill A item 3, `TuringMachine/CodeSimulator`,
 2026-10-22). 59 new in-file pairs, none cross-file. Four are at or above 90%:

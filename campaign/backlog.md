@@ -1520,7 +1520,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **Decision pending (user):** #152's private `canonGramMapComp` (`CodeSimulator`) has
     `Cfg.mapState_mapState`'s statement (found 2026-10-23, after the canonizer's review). Re-point
     it at #152's landing if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`), or
-    ledger it. Gate 67's pack waits on this ruling.
+    ledger it. Gate 67's pack waits on this ruling. The screen matches the two at 99% each way;
+    the prepared re-point elaborates, the review's seal holds on it (74/74), and it removes 11
+    pairs with none new (`campaign/fills/b5a/evidence/b5a-canon-cont7-mapcomp-repoint/`).
   - **To confirm (user):** `exists_ndInterpreterCore` (#151) reproduces 85% of
     `Cfg.mapState_mapState`'s text: field-by-field relabeling rewrites, the idiom accepted for
     UN's `hstart`. Gate 66's pack reads it as an idiom pair.
