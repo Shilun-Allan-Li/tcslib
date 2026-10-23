@@ -1,0 +1,71 @@
+SeamSeal2.lean:381:5: warning: unused variable `h₂`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+SeamSeal2.lean:421:5: warning: unused variable `h₂`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+SeamSeal2.lean:577:5: warning: unused variable `h₂`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+SeamSeal2.lean:578:5: warning: unused variable `hq`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+SeamSeal2.lean:778:5: warning: unused variable `hc'`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+SeamSeal2.lean:1003:25: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom d 0 = d
+SeamSeal2.lean:1005:66: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+        output := d.output } =
+    { state := none, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+SeamSeal2.lean:1007:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f d).inputPos = d.inputPos
+SeamSeal2.lean:1009:40: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (Action.mapState f a).output = a.output
+SeamSeal2.lean:1011:35: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (a.apply d).state = a.state
+SeamSeal2.lean:1013:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  d.workTapeSymbols i = d.workTapes i (d.workTapePos i)
+SeamSeal2.lean:1014:68: error: Type mismatch
+  rfl
+has type
+  ?m.30 = ?m.30
+but is expected to have type
+  moveInputPos ⟨1, ⋯⟩ 0 = ⟨1, ⋯⟩
+SeamSeal2.lean:1016:49: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  { state := some 0, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+'Turing.phaseHostTM_run'' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.phaseHostTM_run_le'' depends on axioms: [propext, Classical.choice, Quot.sound]
