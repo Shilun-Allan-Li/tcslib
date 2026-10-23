@@ -1551,6 +1551,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `89bf6acb`, and replays from `oleans-lspapi2` the closure of every file changed since it
     (wave 1's and #151's: the merged-tree rule); then #152 (with its re-point `e4c5d015`) from
     #151's snapshot; then the UN landing (four commits) from #152's.
+  - **Wave 1 done (2026-10-23):** `lirapi` 5/5 (#153 merged), `lu2sc2` 3/3 (#147 merged),
+    `lmig12` 52/52 (#150 clear to merge).
+  - **Wave 2 started:** #151 at `dbf0ed2a` (the campaign after #147, #149 and #153 merged in;
+    the leaf re-point cherry-picked, blob `e2cdab7b` as audited); `replay-lrc2.sh`, 8 modules from
+    `oleans-lspapi2`.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
