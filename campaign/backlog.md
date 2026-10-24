@@ -1675,6 +1675,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       #156**, then replay `WindowClock` and the facade from #156's snapshot.
     - **G4 cont4: issue now, alone** (Codex), its pre-ship re-run at the issue commit; megafill C
       becomes B5a and U2, issued when #156, the phase-host follow-up and the two API PRs are in.
+      **Issued** (`campaign/fills/s13d/briefs/s13d-fill-g4-cont4.md`), the pre-ship re-run after
+      #156 (`drafts/s13d-fill-g4-cont4/preship-21d53053/`: order 96, roots 40, base sorries 27,
+      the probes unchanged, screen base 847/477); a single fill, addendum v2.5.
     - Maintainer's calls (the drafting report's Q-M1, Q-M2): B5a before U2; B5a's budget counts up
       to the start of its after-screen, which runs on a frozen worktree.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
