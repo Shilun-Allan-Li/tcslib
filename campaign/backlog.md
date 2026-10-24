@@ -1651,6 +1651,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     delivered). Gate closed; #158 clear to merge.** **#158 merged (2026-10-24; `2ac2f34a`); the
     campaign's Lean tree is `oleans-lf3c2`'s.** #160's closure is disjoint from #158's, so its
     replay stands.
+- **Megafill D, a second fill track (user, 2026-10-24).** The fills wait on a chain of small API
+  PRs, so a second track runs on targets that touch none of the in-flight work. A drafting agent
+  triages the candidates (the NTime diagonalizer's E-Q and E-D, NF, the space hierarchy, Savitch,
+  the RAM simulation, TQBF and the formula kit, MIG-1 stage S's specifications) against the plan
+  and the backlog's rulings, then drafts briefs for up to four ready ones and the cover
+  (`campaign/fills/megafill/drafts/megafill-D-drafting-brief.md`). New in it: a required semantic
+  duplication check (gates 69 and 72 failed round 1 on re-derived published lemmas), and screens
+  on unmoving worktrees.
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
