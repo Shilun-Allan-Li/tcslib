@@ -1,0 +1,142 @@
+From a8c45ad7f176f0ba833fe5feee0fb5d96fecb76b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 24 Oct 2026 01:27:41 -0500
+Subject: [PATCH] The field equations of forwardLoopCfg and rulerHostCfg;
+ pairEncode_drop; spaceUsedByTape_eq_card
+
+For U2's universal machines (megafill C's review of the U2 brief, Q-U1, F1, F2):
+- Build/StepBlockForward, Build/InputDevice: simps field equations (not
+  simp lemmas) for Turing.StepBlock.forwardLoopCfg and Turing.rulerHostCfg;
+- Build/InputDevice: Turing.pairEncode_drop, the payload after one pairing's
+  header, with pairEncode_pairEncode_drop re-proved through it (its local copy
+  had unfolded pairEncode);
+- Deterministic: Turing.MultiTapeTM.spaceUsedByTape_eq_card, a tape's space as
+  the count of the cells its head visited.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/InputDevice.lean      | 35 +++++++++++++------
+ .../TuringMachine/Build/StepBlockForward.lean |  9 ++++-
+ .../TuringMachine/Deterministic.lean          |  6 ++++
+ 3 files changed, 39 insertions(+), 11 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+index c6b99e69..ae350de2 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/InputDevice.lean
+@@ -51,7 +51,8 @@ test `Turing.exists_rulerTestTM`, the call rows `Turing.exists_rulerDeviceTM` an
+ * `Turing.inputCell` — the virtual input cell.
+ * `Turing.NativeAt` — the native presentation.
+ * `Turing.RulerAt` — the bounded-prefix ruler presentation.
+-* `Turing.rulerHostCfg` — the ruler host's layout.
++* `Turing.rulerHostCfg` — the ruler host's layout, with its field equations
++  (`Turing.rulerHostCfg_state` and the like).
+ 
+ ## Main results
+ 
+@@ -59,7 +60,8 @@ test `Turing.exists_rulerTestTM`, the call rows `Turing.exists_rulerDeviceTM` an
+   `Turing.NativeAt.move`, `Turing.nativeAt_init` — the native device (proved).
+ * `Turing.inputCell_sub_eq_none_iff`, `Turing.inputCell_of_drop` — the ruler device's
+   correctness facts, the empty payload included (proved).
+-* `Turing.pairEncode_pairEncode_length`, `Turing.pairEncode_pairEncode_drop` — the header of
++* `Turing.pairEncode_drop`, `Turing.pairEncode_pairEncode_length`,
++  `Turing.pairEncode_pairEncode_drop` — the payload after one pairing's header, and the header of
+   `Complexity.space_universal`'s input (proved).
+ * `Turing.exists_rulerTestTM` — the restoring boundary test (proved).
+ * `Turing.exists_rulerDeviceTM`, `Turing.exists_rulerHostTM` — the call rows and the host
+@@ -188,20 +190,27 @@ theorem pairEncode_pairEncode_length (u α x : List Bool) :
+   rw [universal_pair_length, universal_pair_length]
+   omega
+ 
++/-- **The payload after the header.** Dropping the header of length `2|u| + 2` from
++`pairEncode u x` leaves `x`: the ruler device's `z.drop ℓ = y` for the code-first input.
++
++**Proof sketch.** The pairing is the header `pairEncode u []` followed by `x`, and that header
++has length `2|u| + 2` (`Turing.length_pairEncode`). -/
++theorem pairEncode_drop (u x : List Bool) : (pairEncode u x).drop (2 * u.length + 2) = x := by
++  have split : pairEncode u x = pairEncode u [] ++ x := by
++    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
++  have width : (pairEncode u []).length = 2 * u.length + 2 := by
++    rw [length_pairEncode, List.length_nil, Nat.add_zero]
++  rw [split, ← width, List.drop_left]
++
+ /-- **The payload after the header.** Dropping the header of length `2|u| + 2|α| + 4` from
+ `pairEncode u (pairEncode α x)` leaves `x`: the ruler device's `z.drop ℓ = y`.
+ 
+-**Proof sketch.** Drop the two pairings' prefixes one after the other. -/
++**Proof sketch.** Drop the two pairings' prefixes one after the other
++(`Turing.pairEncode_drop`). -/
+ theorem pairEncode_pairEncode_drop (u α x : List Bool) :
+     (pairEncode u (pairEncode α x)).drop (2 * u.length + 2 * α.length + 4) = x := by
+-  have hd (v z : List Bool) : (pairEncode v z).drop (2 * v.length + 2) = z := by
+-    have hl : ((v.flatMap fun b => [b, b]) ++ [false, true]).length = 2 * v.length + 2 := by
+-      have h := universal_pair_length v []
+-      simpa [pairEncode] using h
+-    rw [show pairEncode v z = ((v.flatMap fun b => [b, b]) ++ [false, true]) ++ z from rfl]
+-    exact List.drop_left' hl
+   rw [show 2 * u.length + 2 * α.length + 4 = (2 * u.length + 2) + (2 * α.length + 2) by ring,
+-    ← List.drop_drop, hd, hd]
++    ← List.drop_drop, pairEncode_drop, pairEncode_drop]
+ 
+ /-- The forward state, followed by return and verdict states carrying one Boolean. -/
+ private abbrev rd_State := Unit ⊕ Bool × Bool
+@@ -740,6 +749,12 @@ def rulerHostCfg {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ)
+   ⟨q, ⟨ℓ + c.inputPos.val, by have := c.inputPos.isLt; omega⟩, Fin.lastCases rt c.workTapes,
+     Fin.lastCases rp c.workTapePos, c.output⟩
+ 
++/-! The ruler host layout's fields as equations, generated by `simps` without the `simp`
++attribute: `Turing.rulerHostCfg_state`, `_inputPos`, `_workTapes` (pointwise in the tape and the
++cell), `_workTapePos` and `_output`. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  rulerHostCfg
++
+ /-- Ordinary source controls and paused test controls carrying the source successor. -/
+ private abbrev rd_HostState (S : Type) := (S × Bool) ⊕ (S × rd_State)
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean b/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean
+index 60e29249..e74d976e 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean
+@@ -36,7 +36,8 @@ on it.
+ 
+ ## Main definitions
+ 
+-* `Turing.StepBlock.forwardLoopCfg` — H2-F's encoding of a source configuration.
++* `Turing.StepBlock.forwardLoopCfg` — H2-F's encoding of a source configuration, with its field
++  equations (`Turing.StepBlock.forwardLoopCfg_state` and the like).
+ 
+ ## Main results
+ 
+@@ -77,6 +78,12 @@ def forwardLoopCfg {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+   workTapePos := Fin.addCases (motive := fun _ => ℤ) c.workTapePos fun _ => 0
+   output := c.output
+ 
++/-! The forwarding configuration's fields as equations, generated by `simps` without the `simp`
++attribute: `Turing.StepBlock.forwardLoopCfg_state`, `_inputPos`, `_workTapes` (pointwise in the
++tape and the cell), `_workTapePos` and `_output`. -/
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  forwardLoopCfg
++
+ /-- Erasing only the simulated output gives the block's reset invariant; the physical
+ output prefix of the forwarding configuration is retained. -/
+ private lemma fl_reset {k n : ℕ} {x : List Bool}
+diff --git a/TCSlib/Complexity/TuringMachine/Deterministic.lean b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+index 48e33936..7e3fcbe7 100644
+--- a/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -325,6 +325,12 @@ theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :
+     tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i :=
+   rfl
+ 
++/-- **A tape's space as a count**: the space tape `i` uses up to step `t` is the number of cells
++its head visited up to step `t`. -/
++theorem spaceUsedByTape_eq_card (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
++    tm.spaceUsedByTape cfg t i = (tm.visitedByTapeHead cfg t i).card :=
++  rfl
++
+ /-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
+ lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
+     tm.spaceUsed cfg t = spaceUsedOfCfgs ((List.range (t + 1)).map (tm.runFrom cfg)) := by
+-- 
+2.50.1 (Apple Git-155)
+

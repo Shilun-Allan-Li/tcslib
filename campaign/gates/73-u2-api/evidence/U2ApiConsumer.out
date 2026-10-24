@@ -1,0 +1,118 @@
+@Turing.StepBlock.forwardLoopCfg_state : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x),
+  (Turing.StepBlock.forwardLoopCfg entry M c).state = Option.map (fun x => entry) c.state
+@Turing.StepBlock.forwardLoopCfg_inputPos : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x),
+  (Turing.StepBlock.forwardLoopCfg entry M c).inputPos = c.inputPos
+@Turing.StepBlock.forwardLoopCfg_workTapes : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x) (i : Fin (k + 2)) (a : ℤ),
+  (Turing.StepBlock.forwardLoopCfg entry M c).workTapes i a =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes
+      (fun j =>
+        if j = 0 then Turing.FinTM.bufferTape (Turing.tableBitsK M.tr)
+        else Turing.StepBlock.summaryCells none ((Option.map Turing.unaryFin c.state).getD []))
+      i a
+@Turing.StepBlock.forwardLoopCfg_workTapePos : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x) (i : Fin (k + 2)),
+  (Turing.StepBlock.forwardLoopCfg entry M c).workTapePos i = Fin.addCases c.workTapePos (fun x => 0) i
+@Turing.StepBlock.forwardLoopCfg_output : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x),
+  (Turing.StepBlock.forwardLoopCfg entry M c).output = c.output
+@Turing.rulerHostCfg_state : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).state = q
+@Turing.rulerHostCfg_inputPos : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).inputPos = ⟨ℓ + ↑c.inputPos, ⋯⟩
+@Turing.rulerHostCfg_workTapes : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) (i : Fin (m + 1)) (a : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).workTapes i a =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) rt c.workTapes i a
+@Turing.rulerHostCfg_workTapePos : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) (i : Fin (m + 1)),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).workTapePos i = Fin.lastCases rp c.workTapePos i
+@Turing.rulerHostCfg_output : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).output = c.output
+U2ApiConsumer.lean:2154:2: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  (StepBlock.forwardLoopCfg entry M c).output = c.output
+U2ApiConsumer.lean:2157:55: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (rulerHostCfg ℓ hz q c rt rp).output = c.output
+U2ApiConsumer.lean:2159:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x
+U2ApiConsumer.lean:2161:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).output = []
+U2ApiConsumer.lean:2162:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+U2ApiConsumer.lean:2163:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  StepBlock.summaryCells none w 0 = none
+U2ApiConsumer.lean:2168:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+U2ApiConsumer.lean:2169:44: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  unaryFin 0 = [false]
+U2ApiConsumer.lean:2171:84: error: Type mismatch
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  (embedEmitCfg ι (fun x x_1 => none) (fun x => 0) [] c).output = [] ++ c.output
+U2ApiConsumer.lean:2173:50: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  (Cfg.mapState (fun x => ()) c).output = c.output
+'Turing.r_encode_init_tapes' depends on axioms: [propext, Quot.sound]
+'Turing.r_encode_init_fields' depends on axioms: [propext, Quot.sound]
+'Turing.r_encode_halt' depends on axioms: [propext, Quot.sound]
+'Turing.r_ruler_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.r_seam_phase1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.r_seam_phase2' depends on axioms: [propext, Classical.choice, Quot.sound]
+Turing.pairEncode_drop : ∀ (u x : List Bool), List.drop (2 * u.length + 2) (Turing.pairEncode u x) = x
+Turing.pairEncode_pairEncode_drop : ∀ (u α x : List Bool),
+  List.drop (2 * u.length + 2 * α.length + 4) (Turing.pairEncode u (Turing.pairEncode α x)) = x
+U2ApiConsumer.lean:2201:46: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  pairEncode [] [] = [false, true]
+'Turing.pairEncode_drop' depends on axioms: [propext, Quot.sound]
+'Turing.pairEncode_pairEncode_drop' depends on axioms: [propext, Quot.sound]

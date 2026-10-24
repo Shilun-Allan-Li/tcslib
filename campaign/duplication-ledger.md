@@ -551,5 +551,32 @@ The file had no earlier ledger member: the item-8 entry's `tableBitsK` now lives
 families, are screen matches, not members: all below 90%, between declarations with different
 statements. **The one-fifth rule** (`workflow.md` §4): not reached.
 
+**SD-1, the suffix drop** (PR #161, U2's API, 2026-10-24). One fact,
+`(pairEncode u x).drop (2 * u.length + 2) = x`, in four files:
+- `Turing.pairEncode_drop` (public, `Build/InputDevice`, line 198, new in #161), the one U2 cites;
+- `NDCodeSimulator`'s private `ic_input_suffix` (line 340): the same statement and proof, 100% each
+  way on the v3 screen (#161's evidence);
+- `Complexity.Codec.pe_drop` (public, `SpaceComplexity/Codec/Parse`, line 69) and `PathWalk`'s
+  private `drop_pairEncode` (line 225): the same statement through `pairEncode_eq_dbl`, different
+  proofs (no screen pair).
+
+None of the four files can cite another's without a new import (`InputDevice` is upstream of none
+of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`). **Acknowledged (user, 2026-10-24)**: the U2
+review's F2 recommendation (publish `pairEncode_drop` with the API PR, ledger the family) was the
+ruling's content. **Disposition:** the startup-kit API PR re-points `ic_input_suffix` to
+`Turing.pairEncode_drop` if its new module imports `Build/InputDevice` (acyclic); the rest go to
+the user's dedup window, one home beside `pairEncode_eq` in `Encoding` (a large replay, hence the
+window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1.8%),
+`NDCodeSimulator` 1 of 25 (4.0%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); the
+one-fifth rule is not reached.
+
+**SK-1, U2-S's capture start** (the startup-kit API PR, 2026-10-24, prepared). The kit's public
+`Turing.embedSilentCfg_initCfg` (`Build/InterpreterStartup`) is U2-S's private
+`ss_captureInitial` (`UniversalK`, line 329), harvested verbatim: 100% each way on the v3 screen.
+`UniversalK` cannot cite the kit until `CodeSimulator` imports it (B5a's landing). U2-S's other
+`ss_` startup pieces are the kit's constructions under other contracts (no screen pair). **By the
+ruling (2026-10-24, the B5a review's recommendation)** they go to the user's dedup window, or to
+U2's fill once `UniversalK` sees the kit. Census: `UniversalK` 1 member.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

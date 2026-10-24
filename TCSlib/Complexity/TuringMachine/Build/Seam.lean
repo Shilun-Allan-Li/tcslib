@@ -38,9 +38,10 @@ every §12 contract is proved (§12 fill epoch F1, gate closed 2026-10-09). The
 prefix `Turing.seamCompTM_runFrom_left` and the existing right lockstep.
 The **phase host** `Turing.phaseHostTM`, with `Turing.phaseHostTM_run` (proved), is the
 finite-dispatch generalization: many phases and a redirect table, one dispatch step per
-redirect (landed before the §12.8 fill for the record rows). Its table off the redirects is
-`Turing.phaseHostTM_tr_of_red_none`, and `Turing.phaseHostTM_run_le` runs a last phase up to its
-exit without a dispatch.
+redirect (landed before the §12.8 fill for the record rows). Its start state is
+`Turing.phaseHostTM_q₀`, its table off the redirects `Turing.phaseHostTM_tr_of_red_none` and at a
+redirect `Turing.phaseHostTM_tr_of_red_some`, and `Turing.phaseHostTM_run_le` runs a last phase up
+to its exit without a dispatch.
 
 ## Design
 
@@ -847,6 +848,21 @@ theorem phaseHostTM_tr_of_red_none {k : ℕ} {Γ : Type} {I : Type} {Ph : I → 
     (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) (s : Ph i) (hs : red i s = none)
     (inp : Option Γ) (w : Fin k → Option Γ) :
     (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = ((M i).tr s inp w).mapState (Sigma.mk i) := by
+  simp only [phaseHostTM, hs]
+
+/-- **The phase host's start state** is the given `q0`. -/
+theorem phaseHostTM_q₀ {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) : (phaseHostTM M q0 red).q₀ = q0 :=
+  rfl
+
+/-- **The phase host's table at a redirect**: at a state `s` of phase `i` that `red` redirects to
+`q'`, the host takes one silent step to `q'`, moving no head and writing nothing. -/
+theorem phaseHostTM_tr_of_red_some {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) (s : Ph i) {q' : Σ i, Ph i}
+    (hs : red i s = some q') (inp : Option Γ) (w : Fin k → Option Γ) :
+    (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = ⟨0, fun _ => (none, 0), none, some q'⟩ := by
   simp only [phaseHostTM, hs]
 
 /-- **The phase lemma for a last phase.** Run phase `i` from `c` for `T` steps, with no

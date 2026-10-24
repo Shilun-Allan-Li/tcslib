@@ -33,9 +33,9 @@ the linear-overhead coded normal form ([BGW70]-style guess-then-verify).
 Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
 `TCSlib.Complexity.TuringMachine.NDCodes`.
 
-**Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` is proved from the
-interpreter core `Turing.exists_ndInterpreterCore` (sorried in
-`TCSlib.Complexity.TuringMachine.NDCodeSimulator`); the hierarchy `Complexity.ntime_hierarchy`
+**Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` is proved, from the
+interpreter core `Turing.exists_ndInterpreterCore`
+(`TCSlib.Complexity.TuringMachine.NDCodeSimulator`); the hierarchy `Complexity.ntime_hierarchy`
 is sorried; the exponential decider and the two corollaries are proved from them.
 
 ## Design (declared deviations, each for the audit)

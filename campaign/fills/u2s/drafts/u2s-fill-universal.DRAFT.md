@@ -10,8 +10,16 @@ presentation `Turing.rulerHostCfg` are public definitions with no published lemm
 lint's check 8 lists both), and both phases' seams read their fields. This draft cites the
 equations under the names `simps` generates beside them (`StepBlock.forwardLoopCfg_state`, …,
 `rulerHostCfg_output`); at issue, replace them by the landed names if they differ, and re-run the
-pre-ship against the API's head. Other issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩,
-the megafill banner. -->
+pre-ship against the API's head. The generated tape equations are pointwise in the cell
+(`… .workTapes i a = … i a`), unlike the route probe's stand-ins: re-run the probe with `funext`
+before each tape rewrite (the review's API probe does, against the generated lemmas).
+**The same API PR also carries** (review F1, F2): `Turing.MultiTapeTM.spaceUsedByTape_eq_card`
+beside the definition in the vendored `Deterministic.lean` (U2-U's space ledger has no other
+published card step; replay: `Deterministic`'s closure, 325 modules, as #149's) and
+`Turing.pairEncode_drop` in `Build/InputDevice` (the suffix after one header; no extra replay).
+Other issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩ (#156's head moved during review; if it
+is in the issue base, its two lemmas become citable: add them to the probe), ⟨its PR⟩, the megafill
+banner. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -39,7 +47,10 @@ the megafill banner. -->
     through `Turing.rulerHostCfg`;
   - **the field-equation API (Q-U1, ⟨its PR⟩)**: `StepBlock.forwardLoopCfg_state`, `_inputPos`,
     `_workTapes`, `_workTapePos`, `_output` and `rulerHostCfg_state`, `_inputPos`, `_workTapes`,
-    `_workTapePos`, `_output`;
+    `_workTapePos`, `_output` (the tape equations pointwise: `… .workTapes i a = … i a`); with
+    them `MultiTapeTM.spaceUsedByTape_eq_card` (`Deterministic`: a tape's space is the card of its
+    visited set) and `pairEncode_drop` (`Build/InputDevice`: `(pairEncode u x).drop (2|u| + 2) =
+    x`);
   - the lockstep API (`Build/Contract/Basic`): `Lockstep.runFrom`, `Lockstep.cut`,
     `Lockstep.locate` and the structure's fields;
   - the space API (PR #149): `MultiTapeTM.spaceUsed_eq_sum`, `MultiTapeTM.spaceUsed_le_of_abs_le`;
@@ -229,6 +240,8 @@ docstrings before (e), and every other file.
 - **Leaves you may write: one, phase 2's header-ruler scan** (below), with a docstring saying no
   public row writes a ruler of the header's length. It is a leaf (a finite-state scan), not a
   host. Any further leaf is an escalation.
+- **No input rewind is needed** (the scan ends where the host starts). If your route needs one,
+  cite `Turing.inputRewindTM` (`Build/InputRewind`, in your closure); never write one.
 - **Promotion candidates** (notes only, in `REPORT.md`): the seam into H2-F
   (`exists_selfUniversal`'s `k = 1` case and `Complexity.space_universal` reuse it), and the
   header-ruler scan (whose second consumer is `Complexity.space_universal`'s startup).
@@ -241,10 +254,13 @@ Write `M := E.machine α`, `c₀ := M.initCfg z` (`z` the simulated input), `L`,
 **Phase 1, U2-U** (checkpoints 1.1–1.5).
 1. **The seam into H2-F** (checkpoint 1.1). `U` is the startup `R`, seamed at its `exit`
    (`seamCompTM`) into the embedded `L` (R1 on the first `k + 2` of `R`'s `K + (k + 2)` tapes: tape
-   `j` of `L` is tape `⟨j, _⟩` of `R`). At `R`'s exit, the embedded part of the configuration is
-   **`forwardLoopCfg entry M c₀`**: `uk_encode_init_tapes`/`uk_encode_init_fields` (the probe's
-   `u2_encode_init_*`, through the API's `forwardLoopCfg_workTapes`, `_workTapePos`, `_state`,
-   `_inputPos`, `_output`, `MultiTapeTM.initCfg_eq`, `Cfg.init_*`, `Fin.addCases_left`/`_right`,
+   `j` of `L` is tape `⟨j, _⟩` of `R`). No published equation states a seam's (or a phase host's)
+   initial state: build `U` as `{ seamCompTM R exit _ _ with q₀ := Sum.inl R.q₀ }`, as the startup
+   built its own, and read it through `MultiTapeTM.initCfg_with_q₀` and `runFrom_with_q₀`. At `R`'s
+   exit, the embedded part of the configuration is **`forwardLoopCfg entry M c₀`**:
+   `uk_encode_init_tapes`/`uk_encode_init_fields` (the probe's `u2_encode_init_*`, through the API's
+   `forwardLoopCfg_workTapes`, `_workTapePos`, `_state`, `_inputPos`, `_output`,
+   `MultiTapeTM.initCfg_eq`, `Cfg.init_*`, `Fin.addCases_left`/`_right`,
    `StepBlock.summaryCells_eq`, `FinTM.bufferTape_of_neg`). The other `K` tapes are blank, every
    head at `0`, by the startup's endpoint.
 2. **The forward ledger** (checkpoint 1.2). If the coded machine halts on `z` with `output` within
@@ -254,31 +270,49 @@ Write `M := E.machine α`, `c₀ := M.initCfg z` (`z` the simulated input), `L`,
    halted, with `output`. Each cost is at most `50 (|tableBitsK M.tr| + 1) + C_L`. So `U` halts with
    `output` by `T + 1 + t₀ · (50 (|tableBitsK M.tr| + 1) + C_L) ≤ C · (t + 1)` with
    `C := T + 1 + 50 (|tableBitsK M.tr| + 1) + C_L` (per code), and `ComputesInTime.mono`.
-3. **The space ledger** (checkpoint 1.3). `U`'s space to `C · (t + 1)` is its space to its halt
-   (a halted run is frozen: `MultiTapeTM.runFrom_of_halt`), the startup's at most `B`, plus the
+3. **The space ledger** (checkpoint 1.3). `U`'s space to `C · (t + 1)` is its space to its halt (a
+   halted run is frozen: `MultiTapeTM.runFrom_of_halt`), the startup's at most `B`, plus the
    embedded `L`'s by tape (`spaceUsed_eq_sum`, `seamCompTM_visitedByTapeHead_ofCfg`,
    `embedEmitTM_visitedByTapeHead` and `_frame`): H2-F's ledger puts each mirrored tape's visits
    inside `M`'s (at most `s` in all) and each auxiliary head within
-   `50 (|tableBitsK M.tr| + 1) + C_L` of home. The total is at most `C · (s + 1)` after enlarging
-   `C` by those per-code terms.
-4. **The converse** (checkpoint 1.4). If `U` halts with `output` at some `t'`, `L` halted by then
-   (`R` and the seam are live before the embedded halt); if `M` were live before every time, the
-   lockstep's cut (`Lockstep.cut`) and `cost ≥ 1` on live configurations would keep `L` live past
-   every bound. So `M` halts at some `t₀`, and `L`'s halted configuration, by determinism, is
-   `forwardLoopCfg entry M (M.runFrom c₀ t₀)`, whose output is `M`'s (`uk_encode_halt`).
+   `50 (|tableBitsK M.tr| + 1) + C_L` of home. Every count goes through the API's
+   `MultiTapeTM.spaceUsedByTape_eq_card` (`Finset.card_le_card`, `Finset.card_union_le`;
+   `MultiTapeTM.visitedByTapeHead_mono` for `t₀ ≤ t`); the auxiliary tapes also by
+   `spaceUsedByTape_le_card_Icc`. The seam's card corollaries (`seamCompTM_spaceUsedByTape_le_add`,
+   `_le_max`) are stated over `Cfg.ofWords` seams only, and the startup's endpoint is not one. The
+   total is at most `C · (s + 1)` after enlarging `C` by those per-code terms.
+4. **The converse** (checkpoint 1.4; state its `L`-level part, and step 2's run of `L` to the
+   encoded first halt, as input-generic `uk_` lemmas: phase 2 cites both at `x`). If `U` halts with
+   `output` at some `t'`, `L` halted by then (`R` and the seam are live before the embedded halt);
+   if `M` were live before every time, the lockstep's cut (`Lockstep.cut`) and `cost ≥ 1` on live
+   configurations would keep `L` live past every bound. So `M` halts at some `t₀`, and `L`'s halted
+   configuration, by determinism, is `forwardLoopCfg entry M (M.runFrom c₀ t₀)`, whose output is
+   `M`'s (`uk_encode_halt`).
 5. **U2-U proved** (checkpoint 1.5), with `0 < C`.
 
 **Phase 2, U2-E** (checkpoints 2.1–2.5), on `z := pairEncode α x`, with `ℓ := 2|α| + 2`, the
-header's length (`length_pairEncode`, `universal_pair_length`), and `z.drop ℓ = x`.
-1. **The header ruler** (checkpoint 2.1): the startup on `z` (its endpoint is uniform in the
-   suffix, so `w := x`), then **the authorized leaf**: from input position `1`, read the header in
-   aligned pairs, writing `true` on a blank ruler tape for each header cell, and stop at the
-   separator pair `[false, true]` with the native head at `ℓ + 1` (virtual position `1`). Its run
-   lemma: exact time `ℓ + O(1)`, the ruler `FinTM.bufferTape (List.replicate ℓ true)` from its
-   start, every other tape and head unchanged, silent. **`α = []` is allowed** (`ℓ = 2`). Then
-   the ruler's **rewind** by `rewindTM_run_ofCfg` at `n = ℓ`: its head at the ruler's first cell,
-   which is `exists_rulerHostTM`'s ruler hypothesis (`rt (rp + p) = bufferTape (replicate ℓ true) p`
-   for `-1 ≤ p ≤ ℓ`).
+header's length (`length_pairEncode`, `universal_pair_length`), and `z.drop ℓ = x`
+(`pairEncode_drop`; never a `uk_` copy of it). **U2-E's machine has one more tape than the
+startup's `K + (k + 2)`, the ruler, last.** Run the startup there by R1 (`embedEmitTM` on the first
+`K + (k + 2)` tapes; it is silent), started from `U`'s initial configuration through
+`embedEmitCfg_eq` (or `_mapState_eq`); embed `H` by R1 along `σ` with `σ j.castSucc = ⟨j, _⟩` and
+`σ (Fin.last _)` the ruler.
+1. **The header ruler** (checkpoint 2.1): the startup on `z` (its endpoint is uniform in the suffix,
+   so `w := x`), then **the authorized leaf**: from input position `1`, read the header in aligned
+   pairs, writing `true` on a blank ruler tape for each header cell, and stop at the separator pair
+   `[false, true]` with the native head at `ℓ + 1` (virtual position `1`). Its run lemma: exact time
+   `ℓ + O(1)`, the ruler `FinTM.bufferTape (List.replicate ℓ true)` from its start, every other tape
+   and head unchanged, silent. State it for one header read from any input position `1 + p` with
+   `z.drop p = pairEncode u v`, writing `2|u| + 2` cells from the ruler head over blank cells, so
+   that two runs serve the promotion's second consumer (a two-pairing header); U2-E is `p = 0`. Read
+   the cells through `inputSymbolInner` and the suffix (`List.getElem_drop`, `pairEncode_eq`), not
+   by index lemmas: `UniversalStartup`'s private `universal_pair_get`, `universal_pair_separator`
+   and `universalPrefix_bits` read the same cells. Each step writes `true` and moves both heads
+   right: `step_of_tapeAction_write` (the probe lists only the non-writing
+   `step_of_tapeAction_move`), `moveInputPos_pos_of_ne_right`. **`α = []` is allowed** (`ℓ = 2`).
+   Then the ruler's **rewind** by `rewindTM_run_ofCfg` at `n = ℓ`: its head at the ruler's first
+   cell, which is `exists_rulerHostTM`'s ruler hypothesis
+   (`rt (rp + p) = bufferTape (replicate ℓ true) p` for `-1 ≤ p ≤ ℓ`).
 2. **The host's start** (checkpoint 2.2): `H` from `exists_rulerHostTM L` (on `(k + 2) + 1` tapes,
    the ruler last, `inj`, `C_R`). The configuration after step 1, on `L`'s tapes and the ruler, is
    `rulerHostCfg ℓ hz (c.state.map fun q => inj q false) c rt rp` with `c := forwardLoopCfg entry M
@@ -306,8 +340,12 @@ suffix `w = []` or `x = []`; `α = []`; a canonizer with no work tapes; an arbit
   preserved).
 - **Gate 63** (the startup's landing): cite the startup's statement as it is; its
   `**Implementation.**` paragraph describes the construction.
-- **Gate 60** (H5's landing) and its resolutions' C60-1/C60-2: the ruler host's exits are return
-  points; cite `exists_rulerHostTM` as stated.
+- **Gate 60** (H5's landing), its resolution C60-1, carried: the ruler **device**'s exits
+  (`exists_rulerDeviceTM`) are return points, not stationary anchors: consume each at its first
+  occurrence (a seam or a phase-host redirect), never cite its configuration after the return time,
+  and escalate if a stationary exit is needed. In `exists_rulerHostTM` the ruler's space clause is
+  an upper bound (`⊆ Finset.Icc (rp - 1) (rp + ℓ)`) and `inj` is a state map, not an injection.
+  Cite `exists_rulerHostTM` as stated.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `U2UEImportProbe.lean.txt`)
 
@@ -323,7 +361,8 @@ sets; runs, outputs and space), and the API's ten field equations.
 3. **No new public declaration.**
 4. **Escalation, item by item:** on anything unprovable as stated, stop **on that item only**,
    record the obstruction mathematically, and **continue with every item that does not depend on
-   it**. Phase 2 does not depend on phase 1's ledgers or converse, only on its seam (1.1).
+   it**. Phase 2 depends on phase 1's seam (1.1) and on the two `L`-level lemmas of 1.2 and 1.4
+   (`L`'s run to the encoded first halt, its divergence when `M` diverges), not on U2-U's ledgers.
 5. **No touching other sorries.** Cite proved material; never re-prove it.
 6. **Imports.** Exactly the one in region (a).
 7. **One proof per shared argument.** Never write a second host, loop, seam, embedding, prefix
@@ -339,7 +378,9 @@ sets; runs, outputs and space), and the API's ten field equations.
     - **Never unfold a definition of another file**, and no definitional closure either. Read
       `forwardLoopCfg` and `rulerHostCfg` only through the API's field equations; `Lockstep`
       through its fields and `runFrom`/`cut`/`locate`; the startup through its statement;
-      `MultiTapeTM.spaceUsed` through `spaceUsed_eq_sum` (never by its definition).
+      `MultiTapeTM.spaceUsed` through `spaceUsed_eq_sum` and `spaceUsedByTape` through
+      `spaceUsedByTape_eq_card` (never by their definitions); a machine's initial state through
+      the `with q₀` override's two equations; `pairEncode` through `pairEncode_eq`.
     - **Scope (user, 2026-10-23):** this binds TCSlib's own definitions. Core and Mathlib
       definitions may reduce in a `rfl`, `decide` or `show` step, but are never passed to `simp`,
       `rw` or `unfold`; use their equation lemmas (`Bool.toNat_true`, not `simp [Bool.toNat]`;
@@ -354,8 +395,10 @@ sets; runs, outputs and space), and the API's ten field equations.
     - **Self-check by both methods** (neither alone is complete):
       - a **seal test**: a scratch copy of your module with `attribute [local irreducible]` on
         every other-file TCSlib definition your proofs mention (start from the pre-ship's 8 and
-        extend: at least `Lockstep`'s consumers' definitions you reach, `seamCompTM`,
-        `embedEmitTM`, `MultiTapeTM.runFrom`, `MultiTapeTM.spaceUsed`, `rewindTM`), and
+        extend: at least `seamCompTM`, `embedEmitTM`, `embedEmitCfg`, `Cfg.mapState`,
+        `MultiTapeTM.runFrom`, `MultiTapeTM.spaceUsed`, `MultiTapeTM.spaceUsedByTape`,
+        `MultiTapeTM.visitedByTapeHead`, `FinTM.ComputesInTime`, `pairEncode`, `rewindTM`,
+        `Cfg.inputSymbol`), and
         `attribute [-simp]` on the `@[simp]` definitions among them, which must still elaborate,
         **with controls**: for each sealed definition, a goal that closes by `rfl` with nothing
         sealed and fails under the seal;
@@ -412,7 +455,11 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
 
 - **No new cross-file pair** with an owned-file declaration on one side. Nothing is
   pre-disclosed.
-- **Known hazards:** H2-F's and H5's private proofs (`fl_*`, `rd_*`: cite their contracts);
+- **Known hazards:** H2-F's and H5's private proofs (`fl_*`, `rd_*`: cite their contracts); the
+  header's cells and its suffix: `UniversalStartup`'s `universal_pair_get`,
+  `universal_pair_separator`, `universalPrefix_bits` (the prefix parser reads the same pairs),
+  `NDCodeSimulator`'s `ic_input_suffix` and the drop inside `pairEncode_pairEncode_drop` (cite
+  `pairEncode_drop`);
   the chapter-1 universal machine's code-first startup and its boundary marker
   (`UniversalInterpreter`); `SelfUniversal`'s corollary; the lockstep-transport family
   (`Contract.lockstep`, Z1's `vhostEmitTM_runFrom`: cite `Lockstep.runFrom`); the
@@ -467,7 +514,9 @@ proof seems to *need* one of these beyond a named citation, that is an escalatio
 - [ ] Every new declaration with its role; the tapes of each machine (the embedding of `L`, the
       ruler tape); the header-ruler leaf and its run; the status paragraphs, if partial.
 - [ ] `C` for each target, term by term; the space ledger's terms.
-- [ ] Promotion candidates and escalations (each stated mathematically), or "none".
+- [ ] Promotion candidates and escalations (each stated mathematically), or "none"; for each
+      proved target whose construction departs from its frozen sketch (U2-E: the startup first,
+      then the scan), a proposed `**Implementation.**` paragraph for the maintainer.
 - [ ] Rule 10: the declarations cited outside your file (from an elaborated-constant walk), the
       probe re-run as "N checks of M names", **the seal test with its controls and both raw
       outputs**, and the inspection table. Rule 11: a grep of your diff for the six R3 rows and for
@@ -479,8 +528,12 @@ proof seems to *need* one of these beyond a named citation, that is an escalatio
 ## Known pitfalls at this pin (hard-won)
 
 - **The simps field equations are pointwise** (`Cfg.init_workTapes`, `Cfg.mapState_*`,
-  `embedEmitCfg_*`, and the API's): `funext` before `rw`, or the step closes by unfolding and the
-  seal rejects it (the route probe needed it at `Cfg.init_workTapes`).
+  `embedEmitCfg_*`, and the API's tape equations, which take the cell: `… .workTapes i a`):
+  `funext` before `rw`, or the step closes by unfolding and the seal rejects it (the route probe
+  needed it at `Cfg.init_workTapes`). `rulerHostCfg_inputPos` is a `Fin.mk`: compare by
+  `Fin.ext`.
+- **A seam's initial state has no equation**: the `with q₀ := Sum.inl R.q₀` override and
+  `MultiTapeTM.initCfg_with_q₀`/`runFrom_with_q₀`, as the startup's own `R`.
 - **The startup's summary tape is `fun p => bufferTape (unaryFin q₀) (p - 2)`**, the encoding's is
   `StepBlock.summaryCells none (unaryFin q₀)`; they agree at every cell, cell `0` by
   `FinTM.bufferTape_of_neg` (`StepBlock.summaryCells_eq`; the probe's `u2_encode_init_tapes`).
