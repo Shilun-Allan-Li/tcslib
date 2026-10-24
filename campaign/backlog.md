@@ -1642,6 +1642,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       issue after edits (0 blockers, 0 majors, 9 minors, 2 notes; `suggested-fix.diff`). **The
       reviewer proved the target** (`probe/C1RCReviewFeasibility.lean.txt`, about 300 lines, sealed,
       standard axioms): decision D1 pending (user).
+    - **U2 reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/u2/`): not issuable until
+      Q-U1's API PR lands. The PR needs, beside the two `simps` lines (verified in copies: ten
+      field lemmas), `Turing.MultiTapeTM.spaceUsedByTape_eq_card` in `Deterministic` (F1, a
+      blocker: U2-U's space ledger has no rule-10 route; replay 325 modules) and
+      `Turing.pairEncode_drop` in `Build/InputDevice` (F2, a major: the suffix drop would copy
+      `NDCodeSimulator`'s `ic_input_suffix`); then the brief's edits (`suggested-fix.diff`) and a
+      pre-ship re-run. Decisions pending (user): F1's placement; F2; the API details.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,

@@ -1,0 +1,22 @@
+import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+/-! Q-U1 review probe 1: does `simps` apply to the two definitions from a downstream module, and
+what does it generate? (A review probe; the API PR would put the attribute beside each definition.) -/
+
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.StepBlock.forwardLoopCfg
+
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  Turing.rulerHostCfg
+
+#check @Turing.StepBlock.forwardLoopCfg_state
+#check @Turing.StepBlock.forwardLoopCfg_inputPos
+#check @Turing.StepBlock.forwardLoopCfg_workTapes
+#check @Turing.StepBlock.forwardLoopCfg_workTapePos
+#check @Turing.StepBlock.forwardLoopCfg_output
+#check @Turing.rulerHostCfg_state
+#check @Turing.rulerHostCfg_inputPos
+#check @Turing.rulerHostCfg_workTapes
+#check @Turing.rulerHostCfg_workTapePos
+#check @Turing.rulerHostCfg_output

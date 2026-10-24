@@ -1,0 +1,22 @@
+# 15 — placeholders, hashes, text
+## placeholders (grep -n '@[A-Z]+@|⟨…⟩'; ⟨j, _⟩ on 244 is Lean, not a placeholder)
+13:@ANCESTOR@
+13:⟨BASE⟩
+13:⟨IN-FLIGHT⟩
+16:⟨Megafill C, item N⟩
+16:⟨…⟩
+26:@ANCESTOR@
+40:⟨its PR⟩
+62:@ANCESTOR@
+63:@ANCESTOR@
+86:⟨BASE⟩
+92:⟨IN-FLIGHT⟩
+To fill at issue: @ANCESTOR@ (4×), ⟨BASE⟩ (2×), ⟨IN-FLIGHT⟩ (2×), the banner ⟨Megafill C, item N⟩ (item 3 in the cover's order) and ⟨…⟩ (the cover's path), ⟨its PR⟩ (line 40: the API PR's number) — the HTML comment's list omits ⟨its PR⟩. Also at issue: the API names (if they differ), the blob (re-check), the line numbers (re-check), the staged inputs (inputs/, orders/, logs/ paths do not exist yet: the README's staging list), the probe counts (77 → 77 + the API's names + 04's additions).
+## full hashes (git cat-file -t)
+line 4 77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532 commit
+line 65 4de5324eee700c701b0199f509084b26f77d5802 blob
+line 4/6: 77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532 is the drafting base (commit 'Backlog: megafill C's briefs handed to a drafting agent'), an ancestor of the tip; line 65: 4de5324eee700c701b0199f509084b26f77d5802 = git rev-parse <base>:TCSlib/Complexity/TuringMachine/UniversalK.lean at 77f1eb4f, 906a9d7b and 6e8db28f (01). Both mean what the text says.
+## 100-column reflow (characters, not bytes)
+line 1 146 chars: # Ch3–4 fill campaign — U2, the `k`-tape universal machine:
+(only the title line, as in both models)
+## public-facing rules for prescribed Lean text: the leaf's docstring sentence (no public row writes a ruler of the header's length) and region (e) carry no campaign labels, paths or dates; the draft's rule restates them. The review's proposed Lean text (API PR, 07/09) also carries none.

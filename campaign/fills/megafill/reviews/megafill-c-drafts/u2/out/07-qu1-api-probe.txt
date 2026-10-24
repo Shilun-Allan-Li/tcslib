@@ -1,0 +1,73 @@
+# 07 — Q-U1's API tested in place (probe/QU1ApiProbe.lean, assembled by scripts/mk_api_probe.py; output probe/QU1ApiProbe.out)
+
+## simps from a downstream file is refused (probe/QU1SimpsDownstream.out)
+.lake/probes/QU1SimpsDownstream.lean:7:11: error: Cannot add attribute `[simps]` to declaration `Turing.StepBlock.forwardLoopCfg` because it is in an imported module
+.lake/probes/QU1SimpsDownstream.lean:10:11: error: Cannot add attribute `[simps]` to declaration `Turing.rulerHostCfg` because it is in an imported module
+
+## In-module (copies of Build/StepBlockForward and Build/InputDevice with the attribute inserted right after each definition; the modules themselves untouched)
+The probe file: the two module bodies (imports hoisted: import TCSlib.Complexity.TuringMachine.Build.StepBlock ...), then probe/QU1ApiTail.lean.txt.
+Inserted after forwardLoopCfg:
+84:/-! The encoding's fields as equations (review probe of the proposed API). -/
+85-attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+86-  forwardLoopCfg
+--
+1316:/-! The layout's fields as equations (review probe of the proposed API). -/
+1317-attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+1318-  rulerHostCfg
+
+## What simps generates (#check output, verbatim)
+@Turing.StepBlock.forwardLoopCfg_state : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x),
+  (Turing.StepBlock.forwardLoopCfg entry M c).state = Option.map (fun x => entry) c.state
+@Turing.StepBlock.forwardLoopCfg_inputPos : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x),
+  (Turing.StepBlock.forwardLoopCfg entry M c).inputPos = c.inputPos
+@Turing.StepBlock.forwardLoopCfg_workTapes : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x) (i : Fin (k + 2)) (a : ℤ),
+  (Turing.StepBlock.forwardLoopCfg entry M c).workTapes i a =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes
+      (fun j =>
+        if j = 0 then Turing.FinTM.bufferTape (Turing.tableBitsK M.tr)
+        else Turing.StepBlock.summaryCells none ((Option.map Turing.unaryFin c.state).getD []))
+      i a
+@Turing.StepBlock.forwardLoopCfg_workTapePos : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x) (i : Fin (k + 2)),
+  (Turing.StepBlock.forwardLoopCfg entry M c).workTapePos i = Fin.addCases c.workTapePos (fun x => 0) i
+@Turing.StepBlock.forwardLoopCfg_output : ∀ {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+  (M : Turing.MultiTapeTM k Bool (Fin (n + 1))) (c : Turing.Cfg k Bool (Fin (n + 1)) x),
+  (Turing.StepBlock.forwardLoopCfg entry M c).output = c.output
+@Turing.rulerHostCfg_state : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).state = q
+@Turing.rulerHostCfg_inputPos : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).inputPos = ⟨ℓ + ↑c.inputPos, ⋯⟩
+@Turing.rulerHostCfg_workTapes : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) (i : Fin (m + 1)) (a : ℤ),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).workTapes i a =
+    Fin.lastCases (motive := fun x => ℤ → Option Bool) rt c.workTapes i a
+@Turing.rulerHostCfg_workTapePos : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) (i : Fin (m + 1)),
+  (Turing.rulerHostCfg ℓ hz q c rt rp).workTapePos i = Fin.lastCases rp c.workTapePos i
+@Turing.rulerHostCfg_output : ∀ {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+  (q : Option Q) (c : Turing.Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ),
+
+## Diagnostics of the whole probe
+error lines: 2154 2157 2159 2161 2162 2163 2168 2169 2171 2173 
+sections: 2119:section Unsealed 2146:section Sealed 2175:end Sealed 
+=> exactly the 10 sealed controls fail (forwardLoopCfg, rulerHostCfg, MultiTapeTM.initCfg, Cfg.init, FinTM.bufferTape, StepBlock.summaryCells, tableBitsK, unaryFin, embedEmitCfg, Cfg.mapState); the same 10 close unsealed; the two module copies with the attributes, the StandIns section (each drafted stand-in derived from the generated lemma, with funext p first for the tape fields), the drafted route lemmas re-proved against the generated names under a 10-definition seal (r_encode_init_tapes/_fields, r_encode_halt, r_ruler_fields), the full seam configurations of both phases (r_seam_phase1, r_seam_phase2: embedEmitCfg_eq with the API, sealed), and the optional extras (pairEncode_drop with pairEncode_pairEncode_drop re-pointed to it, rulerAt_iff, a simps inputPos_val test) all elaborate.
+'Turing.r_encode_init_tapes' depends on axioms: [propext, Quot.sound]
+'Turing.r_encode_init_fields' depends on axioms: [propext, Quot.sound]
+'Turing.r_encode_halt' depends on axioms: [propext, Quot.sound]
+'Turing.r_ruler_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.r_seam_phase1' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.r_seam_phase2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.pairEncode_drop' depends on axioms: [propext, Quot.sound]
+
+## Differences from the draft's statements
+- workTapes: generated pointwise in the cell, (i : Fin (k + 2)) (a : ℤ) : … .workTapes i a = Fin.addCases … i a (likewise rulerHostCfg_workTapes … i a = Fin.lastCases … i a); the draft and its stand-ins state them at i only. Consumers need funext p before rw (the route probe's u2_encode_init_tapes and u2_ruler_fields, as written, rewrite without it).
+- rulerHostCfg_inputPos: generated as (…).inputPos = ⟨ℓ + ↑c.inputPos, ⋯⟩ (a Fin.mk with a proof term). The nested projection simps … inputPos_val also works (rulerHostCfgCopy_inputPos_val : ↑(…).inputPos = ℓ + ↑c.inputPos), which is the stand-in's .val form; either is fine, inputPos_val is the one consumers read.
+- forwardLoopCfg_state: Option.map (fun x => entry) c.state, as the stand-in.
+
+## Lint effect (out/13-lint-api-applied.txt)
+Applying the two attributes and rulerAt_iff to a copy of TuringMachine/: check 8 no longer lists forwardLoopCfg, rulerHostCfg or RulerAt; 0 FAIL, 66 WARN (base 68).

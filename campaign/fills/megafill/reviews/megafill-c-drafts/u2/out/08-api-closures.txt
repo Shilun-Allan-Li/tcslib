@@ -1,0 +1,18 @@
+# 08 — the API PR's size and replay closures (python3 -I devtools/seyoon/mkdownmulti.py <worktree> devtools/seyoon <out> <modules>; root TCSlib never appended)
+## Q-U1 as drafted (Build/StepBlockForward + Build/InputDevice):        5 modules
+  TCSlib/Complexity/TuringMachine/Build/InputDevice
+  TCSlib/Complexity/TuringMachine/Build/StepBlockForward
+  TCSlib/Complexity/TuringMachine/UniversalK
+  TCSlib/Complexity/TuringMachine/SelfUniversal
+  TCSlib/Complexity/TuringMachine
+  each alone: StepBlockForward        4, InputDevice        4
+## with F1's equation (Deterministic + the two):      325 modules (= Deterministic's closure,      325; #149's replay of the same closure was 324 of 324, gate 62)
+## other homes considered: UniversalStartup's closure      103 modules, Encoding's      257 (why pairEncode_drop goes to InputDevice, already in the 5)
+
+## Size (lines added, as tested in 07 / 13)
+- StepBlockForward: +4 (a one-line module comment, the attribute on two lines, a blank line)
+- InputDevice: +4 for the attribute; optional rulerAt_iff +8; optional pairEncode_drop +12 with pairEncode_pairEncode_drop shortened by 7 (its local hd removed)
+- Deterministic (F1): +6 (a docstring, the theorem by rfl) and one line in the vendored header's list of local modifications
+Total ≈ 10–35 lines in two or three files; no statement changes; module docstrings' Main results lists gain the names.
+
+## Interplay with #156 (head now 0e5f210b, out/01): it touches Build/Seam and Build/StepBlock (both upstream of the two modules), Build/WindowRun, Build/OracleSim, CodeSimulator, SpaceComplexity/Inclusions; no statement of a cited declaration changes (only two new theorems in Seam). Whichever of #156 and the API PR merges second replays on the merged tree (the merged-tree replay rule).

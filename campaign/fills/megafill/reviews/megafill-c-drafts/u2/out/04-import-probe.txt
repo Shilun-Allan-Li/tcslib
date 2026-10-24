@@ -1,0 +1,22 @@
+# 04 — the import probe, re-run as is and extended (leanelab.sh, oleans-lslsk, worktree at 6e8db28f)
+## as drafted: probe/rerun-U2UEImportProbe.out
+#check lines: 77 (unique: 77); errors: 0; warnings: 0; output identical to the draft's U2UEImportProbe.out modulo MEM/exit lines
+'Turing.exists_selfStartupTMK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.StepBlock.exists_forwardLoopTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_rulerHostTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.Lockstep.runFrom' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.rewindTM_run_ofCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+
+## extended: probe/U2UEImportProbeExt.lean / .out (26 more #check; errors listed)
+.lake/probes/U2UEImportProbeExt.lean:109:8: error(lean.unknownIdentifier): Unknown identifier `Turing.timedFrame_run`
+.lake/probes/U2UEImportProbeExt.lean:110:8: error(lean.unknownIdentifier): Unknown identifier `Turing.exists_selfUniversal`
+.lake/probes/U2UEImportProbeExt.lean:124:8: error(lean.unknownIdentifier): Unknown identifier `Turing.moveInputPos_val`
+.lake/probes/U2UEImportProbeExt.lean:129:8: error(lean.unknownIdentifier): Unknown identifier `Complexity.Codec.pe_drop`
+.lake/probes/U2UEImportProbeExt.lean:130:8: error(lean.unknownIdentifier): Unknown identifier `Complexity.pairEncode_getD`
+.lake/probes/U2UEImportProbeExt.lean:131:8: error(lean.unknownIdentifier): Unknown constant `Turing.MultiTapeTM.spaceUsedByTape_eq_card`
+Reading: the 6 unknowns are expected — timedFrame_run is Universal's private (a screen label, not a citation); exists_selfUniversal is downstream (SelfUniversal); moveInputPos_val is not a Turing-root name (unused by the route); Complexity.Codec.pe_drop and Complexity.pairEncode_getD are public but outside UniversalK's closure; MultiTapeTM.spaceUsedByTape_eq_card does not exist (F1).
+Present and needed by the route but not in the drafted probe: Turing.MultiTapeTM.initCfg_with_q₀, runFrom_with_q₀ (F4), embedEmitTM_frame, embedEmitCfg_mapState_eq, embedEmitCfg_selected_tape/_pos, embedEmitCfg_unselected (F5), inputSymbolInner, Cfg.inputSymbol_eq_inputCell, Cfg.workTapeSymbols_eq, FinTM.bufferTape_nat (the leaf), MultiTapeTM.spaceUsedByTape_le_spaceUsed, runFrom_succ_eq_step', List.drop_left, pairEncode_pairEncode_drop, inputCell_of_drop, Fin.coe_castAdd, Fin.coe_natAdd, Cfg.mapState_mapState, vhostEmitTM_runFrom.
+
+## axioms of every cited declaration (probe/U2AxiomsAll.lean / .out)
+printed: 95; any sorryAx: 0; all within [propext, Classical.choice, Quot.sound]
+- also present: Turing.MultiTapeTM.visitedByTapeHead_mono (SpaceComplexity/ConfigCount, in the closure), probe/U2Mono.lean; Turing.step_of_tapeAction_write, moveInputPos_pos_of_ne_right, Action.apply_workTapes, inputRewindTM(_run): probe/U2LeafNames.* (0 errors)

@@ -1,0 +1,73 @@
+import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+/-! Review probe 3: U2-U's space ledger (checkpoint 1.3) needs per-tape space as a card.
+
+The route bounds `U`'s space through visited-set inclusions (`seamCompTM_visitedByTapeHead_ofCfg`,
+H2-F's mirrored ledger `⊆ M.visitedByTapeHead c t i`, `embedEmitTM_visitedByTapeHead`), and the
+statement through `spaceUsed_eq_sum`, a sum of `spaceUsedByTape`. The step between them is
+`spaceUsedByTape = (visitedByTapeHead).card`, which has no published lemma: the only public
+`spaceUsedByTape` bounds are `spaceUsedByTape_le_card_Icc` (an interval), `_le_spaceUsed`, the
+R1 equalities and the `Cfg.ofWords` seam corollaries. Below: the two ledger steps close unsealed,
+fail sealed, and close sealed against a stand-in equation proved before the seal. -/
+
+namespace Turing
+
+-- the stand-in for the missing equation (proposed home: `Deterministic.lean`, beside the def)
+theorem rv_spaceUsedByTape_eq_card {k : ℕ} {Γ S : Type} {x : List Γ} (tm : MultiTapeTM k Γ S)
+    (d : Cfg k Γ S x) (t : ℕ) (i : Fin k) :
+    tm.spaceUsedByTape d t i = (tm.visitedByTapeHead d t i).card := rfl
+
+section Unsealed
+
+-- inclusion to bound (the mirrored tapes against `M`'s visits)
+example {k k' : ℕ} {S S' : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (tm' : MultiTapeTM k' Bool S') (d : Cfg k Bool S x) (d' : Cfg k' Bool S' x) (t t' : ℕ)
+    (i : Fin k) (i' : Fin k') (h : tm.visitedByTapeHead d t i ⊆ tm'.visitedByTapeHead d' t' i') :
+    tm.spaceUsedByTape d t i ≤ tm'.spaceUsedByTape d' t' i' :=
+  Finset.card_le_card h
+
+-- union to sum (the seam's two phases)
+example {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (d : Cfg k Bool S x)
+    (t : ℕ) (i : Fin k) (A B : Finset ℤ) (h : tm.visitedByTapeHead d t i ⊆ A ∪ B) :
+    tm.spaceUsedByTape d t i ≤ A.card + B.card :=
+  (Finset.card_le_card h).trans (Finset.card_union_le _ _)
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+  MultiTapeTM.spaceUsed
+
+-- control: each FAILS under the seal
+example {k k' : ℕ} {S S' : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (tm' : MultiTapeTM k' Bool S') (d : Cfg k Bool S x) (d' : Cfg k' Bool S' x) (t t' : ℕ)
+    (i : Fin k) (i' : Fin k') (h : tm.visitedByTapeHead d t i ⊆ tm'.visitedByTapeHead d' t' i') :
+    tm.spaceUsedByTape d t i ≤ tm'.spaceUsedByTape d' t' i' :=
+  Finset.card_le_card h
+
+example {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (d : Cfg k Bool S x)
+    (t : ℕ) (i : Fin k) (A B : Finset ℤ) (h : tm.visitedByTapeHead d t i ⊆ A ∪ B) :
+    tm.spaceUsedByTape d t i ≤ A.card + B.card :=
+  (Finset.card_le_card h).trans (Finset.card_union_le _ _)
+
+-- with the equation: both CLOSE under the seal
+theorem rv_space_le_of_subset {k k' : ℕ} {S S' : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (tm' : MultiTapeTM k' Bool S') (d : Cfg k Bool S x)
+    (d' : Cfg k' Bool S' x) (t t' : ℕ) (i : Fin k) (i' : Fin k')
+    (h : tm.visitedByTapeHead d t i ⊆ tm'.visitedByTapeHead d' t' i') :
+    tm.spaceUsedByTape d t i ≤ tm'.spaceUsedByTape d' t' i' := by
+  rw [rv_spaceUsedByTape_eq_card, rv_spaceUsedByTape_eq_card]
+  exact Finset.card_le_card h
+
+theorem rv_space_le_union {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (d : Cfg k Bool S x) (t : ℕ) (i : Fin k) (A B : Finset ℤ)
+    (h : tm.visitedByTapeHead d t i ⊆ A ∪ B) :
+    tm.spaceUsedByTape d t i ≤ A.card + B.card := by
+  rw [rv_spaceUsedByTape_eq_card]
+  exact (Finset.card_le_card h).trans (Finset.card_union_le _ _)
+
+end Sealed
+
+end Turing

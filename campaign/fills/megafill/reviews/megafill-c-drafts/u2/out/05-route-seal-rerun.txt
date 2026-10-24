@@ -1,0 +1,10 @@
+# 05 — the drafted route probe and seal controls, re-run as is
+U2UERouteProbe: errors 0, warnings 0; output identical to the draft's (axiom prints only):
+'Turing.u2_encode_init_tapes' depends on axioms: [propext, Quot.sound]
+'Turing.u2_encode_init_fields' depends on axioms: [propext, Quot.sound]
+'Turing.u2_encode_halt' depends on axioms: [propext, Quot.sound]
+'Turing.u2_ruler_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+U2UESealControl: error lines 59 64 68 72 75 78 85 88 — all 8 after 'section Sealed' (line 50), none in the unsealed section: each control closes unsealed and fails sealed.
+
+Coverage reading (not a re-run): the drafted seal is 8 definitions (forwardLoopCfg, rulerHostCfg, MultiTapeTM.initCfg, Cfg.init, FinTM.bufferTape, StepBlock.summaryCells, tableBitsK, unaryFin) and covers what its four lemmas touch. The probe derives only the field-level seam premises; it does not derive (i) the full seam configurations through embedEmitCfg_eq (R1 reconstruction) or (ii) any ledger step. The review's probe 07 adds (i) for both phases, sealed also over embedEmitCfg and Cfg.mapState; probe 09 shows that (ii)'s space step has no published lemma (F1).
+The stand-ins state workTapes at one argument; the generated lemmas are pointwise in the cell (07): the probe's proofs as written do not run against the landed names without a funext first (F3).
