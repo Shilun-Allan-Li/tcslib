@@ -1597,6 +1597,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `OracleSim`'s table agreement (seven sites); round 2 staged (`pack-r2.md`);
     `replay-lphl2.sh`, the five files' closure (23 modules) from `oleans-lphl`. **Round 2
     dispatched; `lphl2` passed (23/23, static-equal 27)**: #156 waits on round 2 only.
+    **Gate 69 round 2: PASS (0/0/1/10; the minor a census erratum). Gate closed; #156 clear to
+    merge.**
     - **The phase host's remaining field equations, a follow-up API PR (user, 2026-10-24).** The
       round-1 seal sweep found 12 older one-field or one-step reads of `phaseHostTM` in seven files
       (the start state, the redirect branch's dispatch, single table reads,

@@ -1,4 +1,4 @@
-# The phase host's last phase (PR #156, an API gate): resolutions (round 1 FAIL, fixed; round 2 pending)
+# The phase host's last phase (PR #156, an API gate): resolutions (round 1 FAIL, fixed; round 2 PASS; gate CLOSED)
 
 **Gate:** the API gate of PR #156 (`lean/phasehost-last` at `a4d9b024`: `0b671a28`, the
 maintainer's rewrite of `phaseHostTM_run` `9f82de74`, and two merges of the campaign branch, after
@@ -18,3 +18,25 @@ static-equal (53). By the user's ruling of 2026-10-23 the gate was dispatched be
 | 2 | minor | The PR body says "Seam and the six files" where the population has seven; the lint log is of the 905-line first head, not the final 919-line `Seam`. | **True; records.** The PR body now says seven files. The lint records are re-run at the round-2 head (`evidence/round1-fix/lint-*.txt`, which list `Seam` at 919 lines); `lint-build.txt` stays as the first head's record. |
 | 10 | note | The replay is a separate merge condition. | **Agreed.** The round-2 head's replay is `replay-lphl2.sh`: the five changed files' downstream closure (23 modules), chained from `oleans-lphl`. **Passed (user, 2026-10-24): 23 of 23**, 0 failed, static-equal (27) (`evidence/round1-fix/replay/`). |
 | 3–9 | notes | Integrity and the freeze; the table equation; the run lemma's boundary cases; sufficiency (no dispatch form needed); the rewrite of `phaseHostTM_run`; the elaboration, axiom and seal records; the screen. | No action. Note 9's distinction between text-screen results and semantic duplication review is kept in the round-2 pack. |
+
+**Round 2** (`pack-r2.md`; bundle SHA-256
+`2ca0c3c6660f6dc6663a558e17dd7913734c75317c1a0863577f8c7d32bf05a6`, 100 sections; folder
+`69-phasehost-last-api-r2-gate/`, built from the Lean files at `0e5f210b` and the records at
+`1b02da22`): a re-audit of `0e5f210b`, dispatched before its replay.
+
+**Round 2** (`findings-r2.md`, verbatim; received 2026-10-24, SHA-256
+`91e6fe20688b2b4763d6e106ed52848c8ec8ebbfdf7fc3074fc91e8b7cee42a3`): **PASS, 0 blockers, 0 majors,
+1 minor, 10 notes. The gate is closed.** The maintainer checked the minor directly: true.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | `Inclusions`' private census omits six unchanged anonymous instances (the `Fintype` and `DecidableEq` instances of the test, body and host phase families): 4 public / 70 private, 74 in all, at the base and the head. | **True; erratum.** `declfreeze.py` counts named declarations only; the six instances (lines 520–621) are byte-identical at the base and the head. The pack's and the freeze record's 4/64 (68) read as named-declaration counts; the full census is 4/70 (74), unchanged. |
+| 6 | note | The seal certifies the replacements, not `hprefix`'s older conversion of `d` to the tagged `c`. | **Agreed;** as disclosed. |
+| 7 | note | Four of the twelve remaining reads already have the published table lemma available; all twelve stay in the follow-up. | **Agreed;** the inventory says so, and the follow-up (prepared locally, `local/phasehost-fields`) uses `phaseHostTM_tr_of_red_none` for them. |
+| 10 | note | Keep the screen claim distinct from semantic completeness; the PR body's all-branches absence claim is not independently established. | **Agreed;** #156's description now qualifies it by the searches made (the campaign branch and the open PR heads at the time) and points to the semantic inventory. |
+| 11 | note | Record the round-2 replay before merging. | **Done:** `replay-lphl2.sh` passed (user, 2026-10-24): 23 of 23, 0 failed, static-equal (27) (`evidence/round1-fix/replay/`). |
+| 2–5, 8, 9 | notes | Integrity and the freeze; the unchanged API; the six prefix re-points; OracleSim's table equation; the elaboration and axiom records; the records minor's repair and lint. | No action. |
+
+**Merge state. #156: clear to merge.** Both rounds are audited and the gate is closed, the round-2
+replay has passed (the round-1 replay too, 88 of 88), and the base is the campaign branch (whose
+Lean content is unchanged since #156's last merge of it).
