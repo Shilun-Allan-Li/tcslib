@@ -1,12 +1,22 @@
 import re, sys
 KW = r'(theorem|lemma|def|abbrev|instance|structure|inductive|class)'
 DECL = re.compile(r'^(@\[[^\]]*\]\s*)*((private|protected|noncomputable|nonrec|partial|unsafe)\s+)*' + KW + r'\s+([^\s(:{\[]+)')
+# v3 (gate 69 round 2 and gate 71, minor 1): anonymous instances are declarations too; they
+# were skipped and their text absorbed into the previous chunk. Each is keyed by its statement.
+ANON = re.compile(r'^(@\[[^\]]*\]\s*)*((private|protected|noncomputable|nonrec|partial|unsafe)\s+)*instance(?=\s*[(:{\[]|\s*$)')
 STOP = re.compile(r'^(end\b|namespace\b|section\b|/-!|open\b|variable\b|set_option\b|#|attribute\b|universe\b)')
 def chunks(text):
     lines = text.split('\n'); out = []; pend = None; cur = None; depth = 0
     def close(i):
         nonlocal cur
-        if cur: out.append((cur[0], cur[1], '\n'.join(lines[cur[2]:i]).rstrip()))
+        if cur:
+            text = '\n'.join(lines[cur[2]:i]).rstrip()
+            name = cur[0]
+            if name is None:
+                body = text.split('-/', 1)[1] if text.startswith('/--') else text
+                name = 'instance⟨' + ' '.join(re.split(r':=', body, maxsplit=1)[0].split()) + '⟩'
+                while any(n == name for n, _, _ in out): name += "'"
+            out.append((name, cur[1], text))
         cur = None
     for i, l in enumerate(lines):
         # v2 (B5b gate, minor 5): a line that starts inside a block comment or docstring is never
@@ -25,6 +35,12 @@ def chunks(text):
             if pend is None: close(i)
             start = pend if pend is not None else i; pend = None
             cur = (m.group(5), l.lstrip().startswith('private') or ' private ' in l.split(m.group(4))[0], start)
+            continue
+        m = ANON.match(l)
+        if m:
+            if pend is None: close(i)
+            start = pend if pend is not None else i; pend = None
+            cur = (None, l.lstrip().startswith('private'), start)
             continue
         if STOP.match(l):
             close(i); pend = None

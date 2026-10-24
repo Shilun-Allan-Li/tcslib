@@ -1610,6 +1610,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       with the new lemmas stood in, plain and with `phaseHostTM` sealed, 0 errors; no explicit
       unfolding left. **PR #159** (`lean/phasehost-fields` at `5e881c42`, rebased on #156's merge);
       **gate 71** (an API gate) staged; `replay-lphf.sh`, 88 modules from `oleans-lphl2`.
+      **Gate 71: PASS (0/0/3/13). Gate closed;** the minors: the census erratum (the freeze tools
+      now count anonymous instances), `NDHost`'s header and sketch (`26fd5afe`, docstrings only),
+      the records hash. The replay waits for #158 and #160 (merged-tree).
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
@@ -1634,7 +1637,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     landing: `lean/f3c2-landing` at `1911b1ca` (the six commits as delivered and the status
     edits A1, A2), PR opened; **gate 70** (a fill gate) staged; `replay-lf3c2.sh`, 2 modules from
     `oleans-lphl2`. **#158; `lf3c2` passed (user, 2026-10-24: 2/2, static-equal 0); gate 70
-    dispatched.**
+    dispatched.** **Gate 70: PASS (0/0/1/13; the minor: the checkpoint zips were never
+    delivered). Gate closed; #158 clear to merge.**
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
