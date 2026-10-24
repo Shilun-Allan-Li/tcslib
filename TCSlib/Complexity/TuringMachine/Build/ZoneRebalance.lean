@@ -13406,8 +13406,17 @@ cascade are proved as machine segments with their guards enabled: the right inwa
 the left outward shift at level `i`, each from the zoned tape to the zoned tape of the shifted
 track with the heads and the scratch restored, in `76 · 2^(i-1) + 77` and `76 · 2^(i-1) + 107`
 steps; their one-slot guard tests are characterized, and a disabled guard leaves the tape
-unchanged. The leftward scan, the mirrored moves, the guarded rounds and the machine passes,
-the home move, the cleanup and the assembly remain open. Only this target's body is
+unchanged. The rightward cascade's passes are proved: the descending inward pass on the right
+and outward pass on the left, the walk out between them, the guarded home move (a column
+operation on the two zones `0` and the home through scratch, guarded by left zone `0`'s outer
+slot), a single pop, the ascending inward and outward passes and their two returns, each a
+pinned segment on a loop host whose rounds keep a count stack on scratch. Their composition,
+the found path, runs from the scanned zone's field and the scan's count to the home and the
+count's end, with track `t` cascaded to the right at the scanned index (`zoneCascadeRight`,
+through the side-pass reordering), every other track and the count kept, and the zoned head
+within `zoneStart (i₀ + 1)` of home. The found path's time bound, its composition with the scan
+and the count's clear, the leftward row (planned as the mirrored machine through
+`Turing.Contract.lockstep`) and the assembly remain open. Only this target's body is
 admitted. -/
 theorem exists_zoneRebalanceTM (k : ℕ) :
     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
