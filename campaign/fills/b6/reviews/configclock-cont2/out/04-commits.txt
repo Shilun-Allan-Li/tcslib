@@ -1,0 +1,29 @@
+head: ebca0bc53382464f7ff674909e8ac3aa5fb673e6
+== commits (base..head), oldest first: hash parents author date subject
+475ecdd0bf118a9eed92d2051ff18b31d21f6cbf 968d7b2bfbcd9635d8a763673731c89f1a125eda | fill-agent <ragavanbsco@mit.edu> | 2026-10-24T00:42:25Z | 2026-10-24T00:42:25Z | WindowClock: the writer's host and one field's round (F3 cont2, checkpoint 1)
+4619561316f94dd9c62c8179ef369549a7e33957 475ecdd0bf118a9eed92d2051ff18b31d21f6cbf | fill-agent <ragavanbsco@mit.edu> | 2026-10-24T00:42:34Z | 2026-10-24T00:42:34Z | WindowClock: one pass over the record's fields (F3 cont2, checkpoint 2)
+0ea338d0671254867ef8132c4235302efbe64e1b 4619561316f94dd9c62c8179ef369549a7e33957 | fill-agent <ragavanbsco@mit.edu> | 2026-10-24T00:42:44Z | 2026-10-24T00:42:44Z | WindowClock: the c passes with the record's rewind (F3 cont2, checkpoint 3)
+a468d65d9c7c19a050472a5b2a94be5829369b70 0ea338d0671254867ef8132c4235302efbe64e1b | fill-agent <ragavanbsco@mit.edu> | 2026-10-24T00:42:55Z | 2026-10-24T00:42:55Z | WindowClock: the clock head's rewind (F3 cont2, checkpoint 4)
+aaf09900e3016a6b88d0846be79019972ea41cb8 a468d65d9c7c19a050472a5b2a94be5829369b70 | fill-agent <ragavanbsco@mit.edu> | 2026-10-24T00:43:06Z | 2026-10-24T00:43:06Z | WindowClock: the clock writer's contract (F3 cont2, checkpoint 5)
+ebca0bc53382464f7ff674909e8ac3aa5fb673e6 aaf09900e3016a6b88d0846be79019972ea41cb8 | fill-agent <ragavanbsco@mit.edu> | 2026-10-24T00:43:19Z | 2026-10-24T00:43:19Z | WindowClock: prove exists_configWindowRunnerTM (F3 cont2, checkpoint 6)
+== linear? merges:
+       0
+== first parent of first commit:
+968d7b2bfbcd9635d8a763673731c89f1a125eda
+== files touched per commit
+475ecdd0bf118a9eed92d2051ff18b31d21f6cbf: TCSlib/Complexity/SpaceComplexity/WindowClock.lean  +708/-36
+4619561316f94dd9c62c8179ef369549a7e33957: TCSlib/Complexity/SpaceComplexity/WindowClock.lean  +61/-8
+0ea338d0671254867ef8132c4235302efbe64e1b: TCSlib/Complexity/SpaceComplexity/WindowClock.lean  +162/-8
+a468d65d9c7c19a050472a5b2a94be5829369b70: TCSlib/Complexity/SpaceComplexity/WindowClock.lean  +36/-7
+aaf09900e3016a6b88d0846be79019972ea41cb8: TCSlib/Complexity/SpaceComplexity/WindowClock.lean  +54/-1
+ebca0bc53382464f7ff674909e8ac3aa5fb673e6: TCSlib/Complexity/SpaceComplexity/WindowClock.lean  +288/-27
+== total
+ TCSlib/Complexity/SpaceComplexity/WindowClock.lean | 1304 +++++++++++++++++++-
+ 1 file changed, 1263 insertions(+), 41 deletions(-)
+== head blob of owned file
+71327d9d6f8e7ef1957b5dd7779b847d90588151
+316fcd6993ae0598b1e501b055b2d2fa3575ec3d0abe43f5f58277788f4bf53d  -
+316fcd6993ae0598b1e501b055b2d2fa3575ec3d0abe43f5f58277788f4bf53d  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/delivery/fill-b6-configclock-cont2/source/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+delivered source == head blob: byte-equal
+== git diff --check
+clean

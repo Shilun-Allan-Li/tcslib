@@ -1,0 +1,66 @@
+== imports, base vs head
+identical:
+import TCSlib.Complexity.TuringMachine.Build.WindowRun
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+== addendum (base, tip)
+90851511cf164dfa84ac9264cb5ba7acd54b7f551c823ae5d1000e43e233abf0  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-base/campaign/standards/fill-environment-addendum.md
+90851511cf164dfa84ac9264cb5ba7acd54b7f551c823ae5d1000e43e233abf0  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/wt-hk/campaign/standards/fill-environment-addendum.md
+== brief dispatch copy and zip
+f0294fbab53706f8328cef63e057603744365716d8316face3d0f1ce0d96c66d  /Users/seyoonr/phd_experiments/tcslib/exchange/outbox/fills/b6-fill-configclock-cont2.md
+076cea1a8f2b0bd2858ac22c1cd818f27e771c783d3c00c3186a2c81d19732e5  /Users/seyoonr/phd_experiments/tcslib/exchange/inbox/fill-b6-configclock-cont2.zip
+== repository brief copy vs dispatch copy
+7c7
+< - Before you start, confirm that `git merge-base --is-ancestor 968d7b2bfbcd9635d8a763673731c89f1a125eda HEAD` succeeds. If it
+---
+> - Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it
+46,47c46,47
+<   git checkout -b fill/b6-configclock-cont2 968d7b2bfbcd9635d8a763673731c89f1a125eda
+<   git rev-parse HEAD        # must print 968d7b2bfbcd9635d8a763673731c89f1a125eda
+---
+>   git checkout -b fill/b6-configclock-cont2 @ANCESTOR@
+>   git rev-parse HEAD        # must print @ANCESTOR@
+== screen and lint scripts (wt-head, wt-tip)
+f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-head/scripts/copy-text-screen-v3.py
+f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-tip/scripts/copy-text-screen-v3.py
+65c420ea2f33165c674c13bf181995543133cd4b63290631655e31a4b3b29e2e  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-head/scripts/campaign_style_lint.py
+65c420ea2f33165c674c13bf181995543133cd4b63290631655e31a4b3b29e2e  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-tip/scripts/campaign_style_lint.py
+== delivered file
+316fcd6993ae0598b1e501b055b2d2fa3575ec3d0abe43f5f58277788f4bf53d  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/delivery/fill-b6-configclock-cont2/source/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+== review scripts and probes
+shasum: /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/__pycache__: Is a directory
+5435ce95194d954204f74463e24893fc721b2dc233d3dba65c4f909cab13643e  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/axcmp.py
+c71826671f4e1c4a1388ee431eacc59378234c511ad6a8859680c63872c3e09d  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/decls.py
+df0dbbafa4a20fa55b8d63d40aa5d9e41bbd12ada04cfdefa43098decc64f764  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/elab.sh
+eaa7794939f3e0807b2365a8467dc8671d56eb4ab24bb360dd9b7f45c7842847  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/landedits.py
+f7d7f95183ce84b2f798e7121540a9fb4679d1ed7467a203bd89bdb41824d339  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/mkax.py
+c8f2a5f091d2b05558c04a802289af29e19c4e8766e1bef9f4860e26bf3c0dee  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/mkseal.py
+80446909fe02fe76da93325b6cc9d51677f54d1d5c8930b74034fb9a1e22d513  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/probecmp.py
+0b39cd5201643f7743f09706a9f1f2ab6eab3070538e92f0cbbe1fe7d975c7fb  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/regions.py
+bcb5739d18d9e5497bd32c19606609b97d290d20adab6ed09d9e0280e3b04758  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/rule11.py
+4a095e1fe6666ff77d6d1ff321f560927c5328497b61449d7d9d0be8bc066335  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/rwargs.py
+9b87839096368e9390f4503eac1df953dd9637090d56e51e552fd3c553a5c9ba  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/rwheads.py
+162c946d87bccd1c613c04098d3524ac2f6dcf0d8509ee092d646ce7f6231dda  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/rwreport.py
+a849acc698d284034af36f27fe9ccf7b444dd242f8db94a782894a57782f7174  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/screen.sh
+23dc8d3b29a5ecd425948aed1c1c79ace9794c9fe863421d21b62f2aba86815f  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/sealcheck.py
+b3be80897a90c9018843067f0f2252f7decc7b12aad474244042d5259084d0dc  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/sketches.py
+3adafe7be54cc847c83bf21216303c7a5a271abc8ebb6a7e68f786026d360fb8  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/stages.py
+65dc9ecd7a4f21c90e0142ab2df3583dca092b80ce2f4ca829b23d58320fd567  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/sums.py
+7f3942eb6f5cb7aec1ab540d5ab67c1c1945f41b545cff7b32f9b748c8624998  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/scripts/sweep.py
+383090fd506998a968d68d6eddcf13db5378be52d051a8aa1e06ce28d7088c2c  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevAxBase.lean.txt
+b5c038ba28aea79cd6b416ed762ae98971fa9800bcb5c190611c5631ff6bc478  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevAxHead.lean.txt
+523ead938550b8537b2cf700a6094d92ab6903b0a8e04b46c1282030c84af726  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevBriefConsumer.lean.txt
+54c1d42d00cc9630be7379615197134f0c55f1b93b51cea0932a42362a758169  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevBriefImport.lean.txt
+c8285df64c931aa08c4a20f4c723368c2b3db33b59a2dc5ed96cd9397b67a987  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevClassify.lean.txt
+12bd3e8902db1a123d5212b5553f92aa92f4afa147b3f09bb4535acb18d97868  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevConsumerOnHead.lean.txt
+02747c7eb836c8e2df70516258840f60632b6adfe26a17d60b3fc7880eec325a  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevCtlSealed.lean.txt
+df886831139e6445512774d96dc970058fada17397fb3e9de8c831cea12b107e  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevCtlUnsealed.lean.txt
+25440cf393247722240f8b2a9f1ff957645360512d7116fef47661847500abc9  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevImportOnHead.lean.txt
+af6fe04b23c6f0c348afcb27460c81a87a563fc8e83f5a8dd0743cd246b109a9  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevSanity.lean.txt
+de989264024c1077b48c3582e7b5b3972e1006d19ec1a3056f38f24d55b29ad4  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevSeal.lean.txt
+97e4b20dea42277da179acf07f637543a83197febe2b1cbd56992b083eb7162c  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevSealBody.lean.txt
+d49737599d3ae8f7eaecd1de897dcdf998f3ab7cc5bfb416fb0480922ce9c79d  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevW_F3C2ImportProbe.lean.txt
+7f67fc8dbbe0867a395a13d49d2dec4be25cf0ea9fd695ea6a43b33de1f7183e  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevW_F3C2JoinProbePublished.lean.txt
+53384bbf6dbfb2d9fb4c79e329fe129d25d375943c3839d3c4042d8ee2fe1430  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevW_MathlibProbe.lean.txt
+e18de441ca60c752254289f46d7dc0a98399f145511d12bc24a8029e60efcce1  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevW_SealControls.lean.txt
+422b2167ad573fd765a28445fe617f45dff04a29a175f55235dd0b02cf2caf38  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevW_WindowClockAxioms.lean.txt
+5d8c34b8c99b6e54a2008ece0857f45ac994b09628c783a1c6243b5c40fa2876  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/probe/F3C2RevW_WindowClockSeal.lean.txt

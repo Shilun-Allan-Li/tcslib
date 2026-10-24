@@ -1,0 +1,22 @@
+== roots: mine       54, worker's 54, pre-ship's 54
+mine == worker's (byte-equal)
+mine == pre-ship's (byte-equal)
+== cache-get.log (key lines)
+49:Attempting to download 1025 file(s) from leanprover-community/mathlib4 cache
+51:Decompressing 1025 file(s)
+53:Completed successfully!
+54:exit: 0
+== manifest check (last 4 lines)
+OK aesop url=https://github.com/leanprover-community/aesop rev=26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349 (manifest https://github.com/leanprover-community/aesop 26e4c7c0e63eb3e6cce3cf7faba27b8526ea8349)
+OK Qq url=https://github.com/leanprover-community/quote4 rev=2781d8ad404303b2fe03710ac7db946ddfe3539f (manifest https://github.com/leanprover-community/quote4 2781d8ad404303b2fe03710ac7db946ddfe3539f)
+OK batteries url=https://github.com/leanprover-community/batteries rev=39260e31b7b3f7f05643da95242463b462dc05f1 (manifest https://github.com/leanprover-community/batteries 39260e31b7b3f7f05643da95242463b462dc05f1)
+present packages match the manifest: PASS; absent: «doc-gen4», UnicodeBasic, BibtexQuery, MD4Lean
+== bans: unfiltered cache get / lake build in any log or tool
+== per-module memory logging
+bootstrap-stage1.log: 60 end lines with maxrss; peak 2890 MiB; max wall 110.8 s
+bootstrap-stage2.log: 122 end lines with maxrss; peak 2591 MiB; max wall 103.2 s
+final-sweep.log: 182 end lines with maxrss; peak 2813 MiB; max wall 125.5 s
+manifest packages: 15 ['BibtexQuery', 'Cli', 'LeanAPAP', 'LeanSearchClient', 'MD4Lean', 'PFR', 'Qq', 'UnicodeBasic', 'aesop', 'batteries', 'importGraph', 'mathlib', 'plausible', 'proofwidgets', '«doc-gen4»']
+worker OK lines: 11 ; each equal to the base manifest: True
+absent (not in OK lines): ['BibtexQuery', 'MD4Lean', 'UnicodeBasic', '«doc-gen4»']
+cache-get command line(s): []

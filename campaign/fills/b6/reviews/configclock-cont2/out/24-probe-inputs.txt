@@ -1,0 +1,20 @@
+== input copies: base worktree vs records worktree (tip)
+F3C2ImportProbe.lean.txt: base == tip
+F3C2JoinProbe.lean.txt: base == tip
+F3C2RouteProbe.lean.txt: base == tip
+F3C2RouteSealControl.lean.txt: base == tip
+F3ConsumerProbe.lean.txt: base == tip
+screen-population.txt: base == tip
+inputs import probe == preship-906a9d7b import probe
+inputs population == preship population
+logs/b6-fill-configclock-cont2-base-sorries.txt: base == tip
+logs/b6-fill-configclock-cont2-screen-base.txt: base == tip
+logs/b6-fill-configclock-cont2-preship.log: base == tip
+order list base == tip
+
+== worker's probes vs the inputs
+consumer probe: identical to the input
+join probe: identical to inputs/F3C2JoinProbe.lean.txt
+import probe: brief 102 #checks; worker 145 #checks
+brief checks kept in the worker probe (as a set): True ; missing: []
+worker additions: 43

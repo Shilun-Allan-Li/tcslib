@@ -1,0 +1,516 @@
+# leanelab.sh /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-head /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-lslsk TCSlib/Complexity/SpaceComplexity/F3C2RevAxHead.lean
+# start 2026-10-24T04:42:38Z
+'Turing.FinTM.inWindow_of_spaceUsed_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.windowRun_summary_of_halts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.configBound_le_two_pow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_true_value' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_round_cost' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_budget' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_time_bound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_head_bound' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_field_total' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_record_clock' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_leftTM' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_left_run' depends on axioms: [propext, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_patch_rep' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_buffer_rep' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_join' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_copy_constant' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_clear_patch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Idx' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl_fintype' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl_decidableEq' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_rows' depends on axioms: [propext]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_next' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_prev' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_afterSkip' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_red' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_hostTM' depends on axioms: [propext]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg' depends on axioms: [propext]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_zero_ne_last' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_clockTape' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_clock' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_tape' depends on axioms: [propext]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos₀' depends on axioms: [propext]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_posL' depends on axioms: [propext, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos' depends on axioms: [propext]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_pos' depends on axioms: [Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_tapes' depends on axioms: [Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_io' does not depend on any axioms
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_mapState' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos_zero' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_zero' depends on axioms: [propext, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_move₀' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_moveL' depends on axioms: [propext,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box_of' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box_row' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_box' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_guard' depends on axioms: [propext, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_row' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_copy' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_skipS' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_skip_word' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_skipC' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_left' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_time' depends on axioms: [propext, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_field' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_round' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_pass' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_back' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_rewind' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_pass_rewind' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_passes' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_clockBack' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_silence' depends on axioms: [propext, Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_writer' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_run' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_clear' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_finish' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'Turing.exists_configWindowRunnerTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+SORRYSRC Turing.FinTM.inWindow_of_spaceUsed_le: []
+SORRYSRC Turing.windowRun_summary_of_halts: []
+SORRYSRC Turing.FinTM.configBound_le_two_pow: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_true_value: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_round_cost: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_budget: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_time_bound: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_head_bound: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_field_total: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_record_clock: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_leftTM: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_left_run: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_patch_rep: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_buffer_rep: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_join: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_copy_constant: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_clear_patch: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl_fintype: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl_decidableEq: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_rows: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_next: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_prev: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_afterSkip: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_red: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_hostTM: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_zero_ne_last: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_clockTape: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_clock: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_tape: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos₀: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_posL: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_pos: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_tapes: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_io: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_mapState: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos_zero: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_zero: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_move₀: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_moveL: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box_of: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box_row: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_box: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_guard: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_row: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_copy: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_skipS: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_skip_word: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_skipC: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_left: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_time: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_field: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_round: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_pass: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_back: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_rewind: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_pass_rewind: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_passes: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_clockBack: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_silence: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_writer: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_run: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_clear: []
+SORRYSRC _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_finish: []
+SORRYSRC Turing.exists_configWindowRunnerTM: []
+EXT Turing.FinTM.inWindow_of_spaceUsed_le: external 126 (TCSlib 16); external privates []; external eqn/unfold lemmas []
+EXT Turing.windowRun_summary_of_halts: external 146 (TCSlib 29); external privates []; external eqn/unfold lemmas []
+EXT Turing.FinTM.configBound_le_two_pow: external 114 (TCSlib 6); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_true_value: external 127 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_round_cost: external 99 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_budget: external 259 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_time_bound: external 254 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_head_bound: external 148 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_field_total: external 106 (TCSlib 10); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_record_clock: external 339 (TCSlib 16); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_leftTM: external 15 (TCSlib 3); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_left_run: external 126 (TCSlib 21); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_patch_rep: external 101 (TCSlib 5); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_buffer_rep: external 101 (TCSlib 3); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_join: external 23 (TCSlib 2); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_copy_constant: external 147 (TCSlib 18); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_clear_patch: external 143 (TCSlib 20); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Idx: external 5 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl: external 10 (TCSlib 3); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl_fintype: external 50 (TCSlib 11); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_Ctrl_decidableEq: external 21 (TCSlib 6); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_rows: external 39 (TCSlib 12); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_next: external 26 (TCSlib 5); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_prev: external 37 (TCSlib 5); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_afterSkip: external 19 (TCSlib 4); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_red: external 59 (TCSlib 13); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_hostTM: external 78 (TCSlib 22); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg: external 29 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_zero_ne_last: external 64 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_clockTape: external 32 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_clock: external 118 (TCSlib 11); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_tape: external 31 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos₀: external 35 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_posL: external 83 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos: external 35 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_pos: external 10 (TCSlib 4); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_tapes: external 11 (TCSlib 4); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_mapState_io: external 18 (TCSlib 6); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_mapState: external 48 (TCSlib 15); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_pos_zero: external 94 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_zero: external 140 (TCSlib 13); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_move₀: external 47 (TCSlib 9); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_moveL: external 93 (TCSlib 9); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box: external 13 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box_of: external 110 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_box_row: external 109 (TCSlib 0); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_cfg_box: external 115 (TCSlib 7); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_guard: external 83 (TCSlib 24); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg: external 162 (TCSlib 32); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_row: external 243 (TCSlib 41); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_copy: external 268 (TCSlib 47); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_skipS: external 258 (TCSlib 43); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_skip_word: external 132 (TCSlib 12); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_skipC: external 277 (TCSlib 47); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_left: external 258 (TCSlib 51); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_time: external 11 (TCSlib 3); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_field: external 92 (TCSlib 11); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_round: external 395 (TCSlib 68); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_pass: external 411 (TCSlib 69); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_back: external 259 (TCSlib 43); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_rewind: external 298 (TCSlib 54); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_pass_rewind: external 417 (TCSlib 71); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_passes: external 475 (TCSlib 71); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_clockBack: external 347 (TCSlib 47); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_silence: external 22 (TCSlib 6); external privates []; external eqn/unfold lemmas [List.IsPrefix.eq_of_length]
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_writer: external 496 (TCSlib 73); external privates []; external eqn/unfold lemmas [List.IsPrefix.eq_of_length]
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_run: external 170 (TCSlib 32); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_seg_clear: external 289 (TCSlib 47); external privates []; external eqn/unfold lemmas []
+EXT _private.TCSlib.Complexity.SpaceComplexity.F3C2RevAxHead.0.Turing.cw_finish: external 59 (TCSlib 12); external privates []; external eqn/unfold lemmas [List.IsPrefix.eq_of_length]
+EXT Turing.exists_configWindowRunnerTM: external 651 (TCSlib 99); external privates []; external eqn/unfold lemmas [List.IsPrefix.eq_of_length]
+EXTK Turing.Action | TCSlib.Complexity.TuringMachine.Configuration | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Action.mk | TCSlib.Complexity.TuringMachine.Configuration | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg | TCSlib.Complexity.TuringMachine.Configuration | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.InWindow | TCSlib.Complexity.TuringMachine.Build.CfgRecord | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.ext | TCSlib.Complexity.TuringMachine.Configuration | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.inputPos | TCSlib.Complexity.TuringMachine.Configuration | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.inputSymbol | TCSlib.Complexity.TuringMachine.Configuration | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mapState | TCSlib.Complexity.TuringMachine.StateRenaming | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mapState_inputPos | TCSlib.Complexity.TuringMachine.StateRenaming | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mapState_output | TCSlib.Complexity.TuringMachine.StateRenaming | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mapState_state | TCSlib.Complexity.TuringMachine.StateRenaming | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mapState_workTapePos | TCSlib.Complexity.TuringMachine.StateRenaming | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mapState_workTapes | TCSlib.Complexity.TuringMachine.StateRenaming | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.mk | TCSlib.Complexity.TuringMachine.Configuration | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.output | TCSlib.Complexity.TuringMachine.Configuration | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.state | TCSlib.Complexity.TuringMachine.Configuration | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.workTapePos | TCSlib.Complexity.TuringMachine.Configuration | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.workTapeSymbols | TCSlib.Complexity.TuringMachine.Configuration | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Cfg.workTapes | TCSlib.Complexity.TuringMachine.Configuration | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM | TCSlib.Complexity.TuringMachine.Finite | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.State | TCSlib.Complexity.TuringMachine.Finite | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.bufferTape | TCSlib.Complexity.TuringMachine.Simulation | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.bufferTape_left | TCSlib.Complexity.TuringMachine.Simulation | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=true
+EXTK Turing.FinTM.bufferTape_nat | TCSlib.Complexity.TuringMachine.Simulation | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=true
+EXTK Turing.FinTM.bufferTape_of_neg | TCSlib.Complexity.TuringMachine.Simulation | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.configBound | TCSlib.Complexity.SpaceComplexity.ConfigCount | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.fintypeState | TCSlib.Complexity.TuringMachine.Finite | def | reducible | inst=true | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.k | TCSlib.Complexity.TuringMachine.Finite | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.FinTM.tm | TCSlib.Complexity.TuringMachine.Finite | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM | TCSlib.Complexity.TuringMachine.Deterministic | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.mk | TCSlib.Complexity.TuringMachine.Deterministic | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.output_prefix | TCSlib.Complexity.TuringMachine.Finite | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.runFrom | TCSlib.Complexity.TuringMachine.Deterministic | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.runFrom_succ_eq_step' | TCSlib.Complexity.TuringMachine.Deterministic | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.runFrom_zero | TCSlib.Complexity.TuringMachine.Deterministic | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=true
+EXTK Turing.MultiTapeTM.spaceUsed | TCSlib.Complexity.TuringMachine.Deterministic | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.spaceUsed_le_of_abs_le | TCSlib.Complexity.TuringMachine.Finite | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.step | TCSlib.Complexity.TuringMachine.Deterministic | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.MultiTapeTM.tr | TCSlib.Complexity.TuringMachine.Deterministic | def | reducible | inst=false | proj=true | simpUnfold=false | simpLemma=false
+EXTK Turing.RecSym | TCSlib.Complexity.TuringMachine.Build.CfgRecord | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.RecSym.digitEmb | TCSlib.Complexity.TuringMachine.Build.CfgRecord | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.RecordAt | TCSlib.Complexity.TuringMachine.Build.CfgRecord | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.SeekPhase | TCSlib.Complexity.TuringMachine.Build.Catalog | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.SeekPhase.done | TCSlib.Complexity.TuringMachine.Build.Catalog | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.SeekPhase.run | TCSlib.Complexity.TuringMachine.Build.Catalog | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Segment | TCSlib.Complexity.TuringMachine.Build.Contract.Basic | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.Segment.trans | TCSlib.Complexity.TuringMachine.Build.Contract.Basic | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.SweepPhase | TCSlib.Complexity.TuringMachine.Build.Catalog | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.SweepPhase.done | TCSlib.Complexity.TuringMachine.Build.Catalog | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.SweepPhase.sweep | TCSlib.Complexity.TuringMachine.Build.Catalog | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.WindowExit | TCSlib.Complexity.TuringMachine.Build.WindowRun | induct | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.WindowExit.casesOn | TCSlib.Complexity.TuringMachine.Build.WindowRun | def | reducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.WindowExit.ctorIdx | TCSlib.Complexity.TuringMachine.Build.WindowRun | def | reducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.WindowExit.exhausted | TCSlib.Complexity.TuringMachine.Build.WindowRun | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.WindowExit.halted | TCSlib.Complexity.TuringMachine.Build.WindowRun | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.WindowExit.left | TCSlib.Complexity.TuringMachine.Build.WindowRun | ctor | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.cfgRecord | TCSlib.Complexity.TuringMachine.Build.CfgRecord | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.cfgRecord_length | TCSlib.Complexity.TuringMachine.Build.CfgRecord | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.clearTM | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.clearTM_run_ofCfg | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.copyMapTM | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.copyMapTM_run_ofCfg | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.exists_windowRunnerTM | TCSlib.Complexity.TuringMachine.Build.WindowRun | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.fieldOffset | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.fieldOffset_add_length_le | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.fieldOffset_succ | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.fieldOffset_zero | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.fieldsTape | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.fieldsTape_field | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.instDecidableEqSeekPhase | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=true | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.instDecidableEqSweepPhase | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=true | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.instDecidableEqWindowExit | TCSlib.Complexity.TuringMachine.Build.WindowRun | def | semireducible | inst=true | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.instFintypeSeekPhase | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=true | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.instFintypeSweepPhase | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=true | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.joinFields | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.joinFields_cfgRecord_length | TCSlib.Complexity.TuringMachine.Build.RecordTable | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.joinFields_length | TCSlib.Complexity.TuringMachine.Build.RecordTable | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.length_joinFields_add_one | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.moveInputPos | TCSlib.Complexity.TuringMachine.Configuration | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.moveInputPos_zero | TCSlib.Complexity.TuringMachine.Configuration | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=true
+EXTK Turing.phaseHostTM | TCSlib.Complexity.TuringMachine.Build.Seam | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.phaseHostTM_run | TCSlib.Complexity.TuringMachine.Build.Seam | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.posWidth | TCSlib.Complexity.TuringMachine.Build.CfgRecord | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.recordAt_iff | TCSlib.Complexity.TuringMachine.Build.CfgRecord | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.recordLength | TCSlib.Complexity.TuringMachine.Build.RecordTable | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.recordLength_eq | TCSlib.Complexity.TuringMachine.Build.RecordTable | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.record_pos_lt | TCSlib.Complexity.TuringMachine.Build.CfgRecord | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.segment_iff | TCSlib.Complexity.TuringMachine.Build.Contract.Basic | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.skipBackTM | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.skipBackTM_run_ofCfg | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.skipTM | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.skipTM_run_ofCfg | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.step_of_tapeAction_move | TCSlib.Complexity.TuringMachine.Build.Catalog | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.tapeAction | TCSlib.Complexity.TuringMachine.Build.Catalog | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.windowRun | TCSlib.Complexity.TuringMachine.Build.WindowRun | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.wordPatch | TCSlib.Complexity.TuringMachine.Build.StepClock | def | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.wordPatch_append | TCSlib.Complexity.TuringMachine.Build.StepClock | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.wordPatch_of_mem | TCSlib.Complexity.TuringMachine.Build.StepClock | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTK Turing.wordPatch_of_not_mem | TCSlib.Complexity.TuringMachine.Build.StepClock | thm | semireducible | inst=false | proj=false | simpUnfold=false | simpLemma=false
+EXTLIST total 651; TCSlib 99
+PUBCONSTS 129 (private constants 276): [Turing.FinTM.configBound_le_two_pow,
+ Turing.FinTM.inWindow_of_spaceUsed_le,
+ Turing.FinTM.inWindow_of_spaceUsed_le._proof_1_3,
+ Turing.FinTM.inWindow_of_spaceUsed_le._proof_1_4,
+ Turing.FinTM.inWindow_of_spaceUsed_le._simp_1_1,
+ Turing.FinTM.inWindow_of_spaceUsed_le._simp_1_2,
+ Turing.exists_configWindowRunnerTM,
+ Turing.exists_configWindowRunnerTM._proof_1_1,
+ Turing.exists_configWindowRunnerTM._proof_1_2,
+ Turing.exists_configWindowRunnerTM._proof_1_20,
+ Turing.exists_configWindowRunnerTM._proof_1_21,
+ Turing.exists_configWindowRunnerTM._proof_1_22,
+ Turing.exists_configWindowRunnerTM._proof_1_23,
+ Turing.exists_configWindowRunnerTM._proof_1_3,
+ Turing.exists_configWindowRunnerTM._proof_1_4,
+ Turing.exists_configWindowRunnerTM._proof_1_5,
+ Turing.exists_configWindowRunnerTM._proof_1_6,
+ Turing.exists_configWindowRunnerTM._proof_1_7,
+ Turing.exists_configWindowRunnerTM._proof_1_8,
+ Turing.exists_configWindowRunnerTM._proof_1_9,
+ Turing.instDecidableEqCw_Idx,
+ Turing.instDecidableEqCw_Idx.decEq,
+ Turing.instDecidableEqCw_Idx.decEq._proof_1,
+ Turing.instDecidableEqCw_Idx.decEq._proof_10,
+ Turing.instDecidableEqCw_Idx.decEq._proof_11,
+ Turing.instDecidableEqCw_Idx.decEq._proof_12,
+ Turing.instDecidableEqCw_Idx.decEq._proof_13,
+ Turing.instDecidableEqCw_Idx.decEq._proof_14,
+ Turing.instDecidableEqCw_Idx.decEq._proof_15,
+ Turing.instDecidableEqCw_Idx.decEq._proof_16,
+ Turing.instDecidableEqCw_Idx.decEq._proof_17,
+ Turing.instDecidableEqCw_Idx.decEq._proof_18,
+ Turing.instDecidableEqCw_Idx.decEq._proof_19,
+ Turing.instDecidableEqCw_Idx.decEq._proof_2,
+ Turing.instDecidableEqCw_Idx.decEq._proof_20,
+ Turing.instDecidableEqCw_Idx.decEq._proof_21,
+ Turing.instDecidableEqCw_Idx.decEq._proof_22,
+ Turing.instDecidableEqCw_Idx.decEq._proof_23,
+ Turing.instDecidableEqCw_Idx.decEq._proof_24,
+ Turing.instDecidableEqCw_Idx.decEq._proof_25,
+ Turing.instDecidableEqCw_Idx.decEq._proof_26,
+ Turing.instDecidableEqCw_Idx.decEq._proof_27,
+ Turing.instDecidableEqCw_Idx.decEq._proof_28,
+ Turing.instDecidableEqCw_Idx.decEq._proof_29,
+ Turing.instDecidableEqCw_Idx.decEq._proof_3,
+ Turing.instDecidableEqCw_Idx.decEq._proof_30,
+ Turing.instDecidableEqCw_Idx.decEq._proof_31,
+ Turing.instDecidableEqCw_Idx.decEq._proof_32,
+ Turing.instDecidableEqCw_Idx.decEq._proof_33,
+ Turing.instDecidableEqCw_Idx.decEq._proof_34,
+ Turing.instDecidableEqCw_Idx.decEq._proof_35,
+ Turing.instDecidableEqCw_Idx.decEq._proof_36,
+ Turing.instDecidableEqCw_Idx.decEq._proof_37,
+ Turing.instDecidableEqCw_Idx.decEq._proof_38,
+ Turing.instDecidableEqCw_Idx.decEq._proof_39,
+ Turing.instDecidableEqCw_Idx.decEq._proof_4,
+ Turing.instDecidableEqCw_Idx.decEq._proof_40,
+ Turing.instDecidableEqCw_Idx.decEq._proof_41,
+ Turing.instDecidableEqCw_Idx.decEq._proof_42,
+ Turing.instDecidableEqCw_Idx.decEq._proof_43,
+ Turing.instDecidableEqCw_Idx.decEq._proof_44,
+ Turing.instDecidableEqCw_Idx.decEq._proof_45,
+ Turing.instDecidableEqCw_Idx.decEq._proof_46,
+ Turing.instDecidableEqCw_Idx.decEq._proof_47,
+ Turing.instDecidableEqCw_Idx.decEq._proof_48,
+ Turing.instDecidableEqCw_Idx.decEq._proof_49,
+ Turing.instDecidableEqCw_Idx.decEq._proof_5,
+ Turing.instDecidableEqCw_Idx.decEq._proof_50,
+ Turing.instDecidableEqCw_Idx.decEq._proof_51,
+ Turing.instDecidableEqCw_Idx.decEq._proof_52,
+ Turing.instDecidableEqCw_Idx.decEq._proof_53,
+ Turing.instDecidableEqCw_Idx.decEq._proof_54,
+ Turing.instDecidableEqCw_Idx.decEq._proof_55,
+ Turing.instDecidableEqCw_Idx.decEq._proof_56,
+ Turing.instDecidableEqCw_Idx.decEq._proof_57,
+ Turing.instDecidableEqCw_Idx.decEq._proof_58,
+ Turing.instDecidableEqCw_Idx.decEq._proof_59,
+ Turing.instDecidableEqCw_Idx.decEq._proof_6,
+ Turing.instDecidableEqCw_Idx.decEq._proof_60,
+ Turing.instDecidableEqCw_Idx.decEq._proof_61,
+ Turing.instDecidableEqCw_Idx.decEq._proof_62,
+ Turing.instDecidableEqCw_Idx.decEq._proof_63,
+ Turing.instDecidableEqCw_Idx.decEq._proof_64,
+ Turing.instDecidableEqCw_Idx.decEq._proof_65,
+ Turing.instDecidableEqCw_Idx.decEq._proof_66,
+ Turing.instDecidableEqCw_Idx.decEq._proof_67,
+ Turing.instDecidableEqCw_Idx.decEq._proof_68,
+ Turing.instDecidableEqCw_Idx.decEq._proof_69,
+ Turing.instDecidableEqCw_Idx.decEq._proof_7,
+ Turing.instDecidableEqCw_Idx.decEq._proof_70,
+ Turing.instDecidableEqCw_Idx.decEq._proof_71,
+ Turing.instDecidableEqCw_Idx.decEq._proof_72,
+ Turing.instDecidableEqCw_Idx.decEq._proof_73,
+ Turing.instDecidableEqCw_Idx.decEq._proof_74,
+ Turing.instDecidableEqCw_Idx.decEq._proof_75,
+ Turing.instDecidableEqCw_Idx.decEq._proof_76,
+ Turing.instDecidableEqCw_Idx.decEq._proof_77,
+ Turing.instDecidableEqCw_Idx.decEq._proof_78,
+ Turing.instDecidableEqCw_Idx.decEq._proof_79,
+ Turing.instDecidableEqCw_Idx.decEq._proof_8,
+ Turing.instDecidableEqCw_Idx.decEq._proof_80,
+ Turing.instDecidableEqCw_Idx.decEq._proof_81,
+ Turing.instDecidableEqCw_Idx.decEq._proof_82,
+ Turing.instDecidableEqCw_Idx.decEq._proof_83,
+ Turing.instDecidableEqCw_Idx.decEq._proof_84,
+ Turing.instDecidableEqCw_Idx.decEq._proof_85,
+ Turing.instDecidableEqCw_Idx.decEq._proof_86,
+ Turing.instDecidableEqCw_Idx.decEq._proof_87,
+ Turing.instDecidableEqCw_Idx.decEq._proof_88,
+ Turing.instDecidableEqCw_Idx.decEq._proof_89,
+ Turing.instDecidableEqCw_Idx.decEq._proof_9,
+ Turing.instDecidableEqCw_Idx.decEq._proof_90,
+ Turing.instDecidableEqCw_Idx.decEq._proof_91,
+ Turing.instDecidableEqCw_Idx.decEq.match_1,
+ Turing.instFintypeCw_Idx,
+ Turing.instFintypeCw_Idx.match_3,
+ Turing.instFintypeCw_Idx.match_5,
+ Turing.windowRun_summary_of_halts,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_ext_check__1»,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_ext_check__1».match_1,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_ext_list__1»,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_ext_list__1».match_1,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_ext_list__1».match_3,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_pub_consts_1»,
+ «_aux_TCSlib_Complexity_SpaceComplexity_F3C2RevAxHead___elabRules_command#rv_sorry_sources__1»,
+ «command#rv_ext_check_»,
+ «command#rv_ext_list_»,
+ «command#rv_pub_consts»,
+ «command#rv_sorry_sources_»]
+# end 2026-10-24T04:42:56Z exit=0

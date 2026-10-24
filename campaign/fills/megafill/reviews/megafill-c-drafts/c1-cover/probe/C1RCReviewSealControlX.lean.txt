@@ -1,0 +1,46 @@
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+
+/-! Review probe: controls for the seven definitions `C1RCReviewFeasibility.lean` seals beyond the
+route probe's fourteen. Each goal closes by `rfl` unsealed (first section) and must FAIL sealed
+(second section, the feasibility probe's 21-definition seal). -/
+
+namespace Turing
+
+section Unsealed
+
+example : optBoolBits (some true) = [true, true] := rfl
+example : optStateBits (none : Option (Fin 1)) = [false] := rfl
+example : codeSkipRepeat (fun xs => some xs) 1 [true] = some [true] := rfl
+example : codeReadUnary [false, true] = some (0, [true]) := rfl
+example : pairDecode [false, true, true] = some ([], [true]) := rfl
+example : codeBitsNat [] = 0 := rfl
+example (xs : List Bool) : codeSkipActionK 2 0 xs = (do
+    let xs ← codeSkipPair (fun a b => a || !b) xs
+    let xs ← codeSkipRepeat codeSkipWork 2 xs
+    let xs ← codeSkipPair (fun a b => a || !b) xs
+    codeSkipState (0 + 1) xs) := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
+  MultiTapeTM.ComputesInTimeAndSpace serializeK NDTM.replayTM NDTM.fixChoice CodeNDTM.serialize
+  tableBitsK workReadsK actionBitsK signBits optOptBoolBits pairEncode unaryFin
+  optBoolBits optStateBits codeSkipActionK codeSkipRepeat codeReadUnary pairDecode codeBitsNat
+
+example : optBoolBits (some true) = [true, true] := rfl
+example : optStateBits (none : Option (Fin 1)) = [false] := rfl
+example : codeSkipRepeat (fun xs => some xs) 1 [true] = some [true] := rfl
+example : codeReadUnary [false, true] = some (0, [true]) := rfl
+example : pairDecode [false, true, true] = some ([], [true]) := rfl
+example : codeBitsNat [] = 0 := rfl
+example (xs : List Bool) : codeSkipActionK 2 0 xs = (do
+    let xs ← codeSkipPair (fun a b => a || !b) xs
+    let xs ← codeSkipRepeat codeSkipWork 2 xs
+    let xs ← codeSkipPair (fun a b => a || !b) xs
+    codeSkipState (0 + 1) xs) := rfl
+
+end Sealed
+
+end Turing

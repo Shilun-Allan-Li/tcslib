@@ -1,0 +1,123 @@
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from decls import decls
+# usage: mkax.py <module .lean> <out .lean> : the module + an admission / dependency / public-constant toolkit + prints
+src = open(sys.argv[1], encoding='utf-8').read()
+assert src.rstrip().endswith('end Turing'), src.rstrip()[-40:]
+lines = src.split('\n')
+last = max(k for k, l in enumerate(lines) if l.startswith('import '))
+assert 'import Lean.Util.FoldConsts' not in src
+lines.insert(last + 1, 'import Lean.Util.FoldConsts')
+src2 = '\n'.join(lines).rstrip('\n') + '\n'
+ds = decls(src)
+names = ['Turing.' + n for _, n, _, _ in ds]
+kit = r'''
+open Lean Elab Command in
+/-- Every constant in the dependency closure of `root` whose own type or value mentions `sorryAx`. -/
+def rvSorrySources (env : Environment) (root : Name) : Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut srcs : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      let used := ci.getUsedConstantsAsSet
+      if used.contains ``sorryAx then srcs := srcs.push c
+      for d in used.toList do
+        unless visited.contains d do stack := stack.push d
+  return srcs
+
+open Lean Elab Command in
+elab "#rv_sorry_sources " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  logInfo m!"SORRYSRC {n}: {rvSorrySources (← getEnv) n}"
+
+open Lean in
+def rvExtEqn? (env : Environment) (c : Name) : Option Name :=
+  match c with
+  | .str p s =>
+    if (s.startsWith "eq_" || s == "_unfold" || s.startsWith "match_" || s.startsWith "proof_")
+        && (env.getModuleIdxFor? p).isSome then some p else none
+  | _ => none
+
+open Lean in
+/-- External constants reached from `root` through this module's own constants. -/
+def rvExtDeps (env : Environment) (root : Name) : NameSet × Array Name × Array Name := Id.run do
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut ext : NameSet := {}
+  let mut privs : Array Name := #[]
+  let mut eqns : Array Name := #[]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some _ := rvExtEqn? env c then eqns := eqns.push c
+    if let some ci := env.find? c then
+      for d in ci.getUsedConstantsAsSet.toList do
+        if (env.getModuleIdxFor? d).isSome then
+          unless ext.contains d do
+            ext := ext.insert d
+            if isPrivateName d then privs := privs.push d
+            if let some _ := rvExtEqn? env d then eqns := eqns.push d
+        else unless visited.contains d do stack := stack.push d
+  return (ext, privs, eqns)
+
+open Lean in
+def rvModOf (env : Environment) (d : Name) : Name :=
+  match env.getModuleIdxFor? d with
+  | some i => (env.header.moduleNames[i]?).getD `none
+  | none => `this
+
+open Lean Elab Command in
+elab "#rv_ext_check " id:ident : command => do
+  let env ← getEnv
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  let (ext, privs, eqns) := rvExtDeps env n
+  let tcs := ext.toList.filter fun d => (rvModOf env d).getRoot == `TCSlib
+  logInfo m!"EXT {n}: external {ext.size} (TCSlib {tcs.length}); external privates {privs}; external eqn/unfold lemmas {eqns}"
+
+open Lean Meta Elab Command in
+elab "#rv_ext_list " ids:ident* : command => do
+  let env ← getEnv
+  let mut all : NameSet := {}
+  for id in ids do
+    let n ← liftCoreM <| realizeGlobalConstNoOverload id
+    let (ext, _, _) := rvExtDeps env n
+    for d in ext.toList do all := all.insert d
+  let tcs := (all.toList.filter fun d => (rvModOf env d).getRoot == `TCSlib).toArray.qsort
+    (fun a b => a.toString < b.toString)
+  let simps ← liftCoreM Meta.getSimpTheorems
+  for d in tcs do
+    let kind := match env.find? d with
+      | some (.thmInfo _) => "thm" | some (.defnInfo _) => "def" | some (.inductInfo _) => "induct"
+      | some (.ctorInfo _) => "ctor" | some (.recInfo _) => "rec" | some (.axiomInfo _) => "axiom"
+      | some (.opaqueInfo _) => "opaque" | some (.quotInfo _) => "quot" | none => "?"
+    let red := match getReducibilityStatusCore env d with
+      | .reducible => "reducible" | .semireducible => "semireducible" | .irreducible => "irreducible"
+    let inst := Meta.isInstanceCore env d
+    let proj := env.isProjectionFn d
+    let su := simps.isDeclToUnfold d
+    let sl := simps.isLemma (.decl d)
+    logInfo m!"EXTK {d} | {rvModOf env d} | {kind} | {red} | inst={inst} | proj={proj} | simpUnfold={su} | simpLemma={sl}"
+  logInfo m!"EXTLIST total {all.size}; TCSlib {tcs.size}"
+
+open Lean Elab Command in
+elab "#rv_pub_consts" : command => do
+  let env ← getEnv
+  let ns := env.constants.foldStage2 (fun acc n _ => acc.push n) (#[] : Array Name)
+  let pub := ((ns.filter fun n => !isPrivateName n && !(n.toString.startsWith "rv")).map toString).qsort (· < ·)
+  let priv := ns.filter fun n => isPrivateName n
+  logInfo m!"PUBCONSTS {pub.size} (private constants {priv.size}): {pub}"
+'''
+body = ''.join(f'#print axioms {n}\n' for n in names)
+body += ''.join(f'#rv_sorry_sources {n}\n' for n in names if not n.endswith(('cw_Idx',)))
+body += ''.join(f'#rv_ext_check {n}\n' for n in names)
+body += '#rv_ext_list ' + ' '.join(n for n in names if '.cw_' in n or n.endswith('exists_configWindowRunnerTM')) + '\n'
+body += '#rv_pub_consts\n'
+open(sys.argv[2], 'w', encoding='utf-8').write(src2 + kit + '\n' + body)
+print('declarations', len(names))

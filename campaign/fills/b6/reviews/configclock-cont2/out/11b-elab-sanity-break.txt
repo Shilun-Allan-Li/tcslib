@@ -1,0 +1,190 @@
+# leanelab.sh /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-head /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-lslsk TCSlib/Complexity/SpaceComplexity/F3C2RevSanity.lean
+# start 2026-10-24T05:01:41Z
+Try this:
+  [apply] ring_nf
+  
+  The `ring` tactic failed to close the goal. Use `ring_nf` to obtain a normal form.
+    
+  Note that `ring` works primarily in *commutative* rings. If you have a noncommutative ring, abelian group or module, consider using `noncomm_ring`, `abel` or `module` instead.
+TCSlib/Complexity/SpaceComplexity/F3C2RevSanity.lean:1659:66: error: unsolved goals
+M : FinTM Bool
+T : Type
+inst✝¹ : Fintype T
+inst✝ : DecidableEq T
+upd : T → Option Bool → T
+hupd : ∀ (τ : T), upd τ none = τ
+K : ℕ
+P : Type
+hP : Fintype P
+dP : DecidableEq P
+R₂ : MultiTapeTM (K + 2) (RecSym M.State T) P
+en : P
+ex : WindowExit → P
+C₂ : ℕ
+hinj : Function.Injective ex
+hrun :
+  ∀ {x : List Bool} (s : ℕ) (c : Cfg M.k Bool M.State x) (τ : T),
+    Cfg.InWindow s c →
+      ∀ (w : List Bool) (d : Cfg (K + 2) (RecSym M.State T) P (List.map (⇑(RecSym.digitEmb M.State T)) x)),
+        d.state = some en →
+          RecordAt d 0 (cfgRecord s c τ) →
+            (∀ (p : ℤ),
+                -1 ≤ p →
+                  p ≤ ↑w.length →
+                    d.workTapes (Fin.last (K + 1)) (d.workTapePos (Fin.last (K + 1)) + p) =
+                      FinTM.bufferTape (List.map (⇑(RecSym.digitEmb M.State T)) w) p) →
+              (∀ (j : Fin (K + 2)), j ≠ 0 → j ≠ Fin.last (K + 1) → ∀ (p : ℤ), d.workTapes j p = none) →
+                ∃ t out,
+                  t ≤ 5 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 3 ∧
+                    (MultiTapeTM.runFrom d t).state = some (ex out) ∧
+                      (∀ u < t, ∀ (e : WindowExit), (MultiTapeTM.runFrom d u).state ≠ some (ex e)) ∧
+                        (∀ u ≤ t,
+                            ∀ (j : Fin (K + 2)),
+                              |(MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤
+                                ↑(C₂ * (recordLength M.k x.length s + w.length + 1))) ∧
+                          (∀ u ≤ t, (MultiTapeTM.runFrom d u).output = d.output) ∧
+                            MultiTapeTM.spaceUsed d t ≤
+                                (K + 2) * (2 * C₂ * (recordLength M.k x.length s + w.length + 1) + 1) ∧
+                              (∀ (N : ℕ),
+                                  (windowRun M.tm s upd N c τ).1 ≠ WindowExit.exhausted →
+                                    C₂ * N * (recordLength M.k x.length s + x.length + 1) ≤
+                                        Nat.ofDigits 2 (List.map Bool.toNat w) →
+                                      out = (windowRun M.tm s upd N c τ).1) ∧
+                                (out ≠ WindowExit.exhausted →
+                                  ∃ N,
+                                    (windowRun M.tm s upd N c τ).1 = out ∧
+                                      ∃ w',
+                                        w'.length = w.length ∧
+                                          MultiTapeTM.runFrom d t =
+                                            { state := some (ex out), inputPos := d.inputPos,
+                                              workTapes := fun j q =>
+                                                if
+                                                    j = 0 ∧
+                                                      d.workTapePos 0 ≤ q ∧
+                                                        q < d.workTapePos 0 + ↑(recordLength M.k x.length s) then
+                                                  fieldsTape
+                                                    (cfgRecord s (windowRun M.tm s upd N c τ).2.1
+                                                      (windowRun M.tm s upd N c τ).2.2)
+                                                    (q - d.workTapePos 0)
+                                                else
+                                                  if j = Fin.last (K + 1) then
+                                                    wordPatch (d.workTapes j) (d.workTapePos j)
+                                                      (List.map (⇑(RecSym.digitEmb M.State T)) w') q
+                                                  else d.workTapes j q,
+                                              workTapePos := d.workTapePos, output := d.output })
+this✝ : Fintype P := hP
+this : DecidableEq P := dP
+e : RecSym M.State T
+he : e = (RecSym.digitEmb M.State T) true
+nc : ℕ
+hnc : nc = C₂ + Fintype.card M.State + 8
+A : ℕ
+hA : A = nc
+C : ℕ
+hC : C = A + 4 * nc + 0 + 10 + C₂ * (nc + 1) + nc + 2
+hnc₀ : 0 < nc
+hm₀ : 0 < M.k + 3
+hexne : ∀ (y y' : WindowExit), y ≠ y' → ex y ≠ ex y'
+x : List Bool
+s : ℕ
+c : Cfg M.k Bool M.State x
+τ : T
+hwin : Cfg.InWindow s c
+d :
+  Cfg (K + 1 + 1) (RecSym M.State T) ((i : cw_Idx nc (M.k + 3)) × cw_Ctrl P i)
+    (List.map (⇑(RecSym.digitEmb M.State T)) x)
+hd : d.state = some ⟨cw_Idx.copy ⟨0, hnc₀⟩ ⟨0, hm₀⟩, SweepPhase.sweep⟩
+hrec : RecordAt d 0 (cfgRecord s c τ)
+hblank : ∀ (j : Fin (K + 1 + 1)), j ≠ 0 → ∀ (p : ℤ), d.workTapes j p = none
+hfs : (cfgRecord s c τ).length = M.k + 3
+hne : cfgRecord s c τ ≠ []
+W : ℕ
+hclock :
+  ∀ N ≤ M.configBound x.length s + 1,
+    C₂ * N * (recordLength M.k x.length s + x.length + 1) ≤ Nat.ofDigits 2 (List.map Bool.toNat (List.replicate W true))
+hW : W = nc * (List.map List.length (cfgRecord s c τ)).sum
+L : ℕ
+hoff : fieldOffset (cfgRecord s c τ) (cfgRecord s c τ).length = L + 1
+hWL : W ≤ nc * L
+hL : L = recordLength M.k x.length s
+hclk : ∀ (z : ℤ), d.workTapes (Fin.last (K + 1)) z = none
+hCnc : nc + 2 ≤ C
+hCr : C₂ * (nc + 1) ≤ C
+hCL : (nc + 2) * (L + 1) ≤ C * (L + 1)
+hCL' : (nc + 2) * (L + 1) = nc * (L + 1) + 2 * L + 2
+hncL : nc * L ≤ nc * (L + 1)
+hWr : W + 1 ≤ C * (L + 1)
+Tw : ℕ
+hTw : Tw ≤ 13 * nc * (L + 1) + W + 6
+sw :
+  Segment (cw_hostTM e R₂ en ex nc (M.k + 3)) {z | ∃ y, z = some ⟨cw_Idx.stop, y⟩} (cw_box d.workTapePos (C * (L + 1)))
+    d (cw_cfg e d ⟨cw_Idx.run, en⟩ 0 W 0) Tw
+t₂ : ℕ
+out : WindowExit
+ht₂ : t₂ ≤ 5 * (2 ^ W - 1) + 2 * W + 3
+hst : (MultiTapeTM.runFrom (cw_cfg e d en 0 W 0) t₂).state = some (ex out)
+hcut : ∀ u < t₂, ∀ (e_1 : WindowExit), (MultiTapeTM.runFrom (cw_cfg e d en 0 W 0) u).state ≠ some (ex e_1)
+henv :
+  ∀ u ≤ t₂,
+    ∀ (j : Fin (K + 2)),
+      |(MultiTapeTM.runFrom (cw_cfg e d en 0 W 0) u).workTapePos j - (cw_cfg e d en 0 W 0).workTapePos j| ≤
+        ↑(C₂ * (recordLength M.k x.length s + W + 1))
+hsil : ∀ u ≤ t₂, (MultiTapeTM.runFrom (cw_cfg e d en 0 W 0) u).output = (cw_cfg e d en 0 W 0).output
+hcert :
+  ∀ (N : ℕ),
+    (windowRun M.tm s upd N c τ).1 ≠ WindowExit.exhausted →
+      C₂ * N * (recordLength M.k x.length s + x.length + 1) ≤
+          Nat.ofDigits 2 (List.map Bool.toNat (List.replicate W true)) →
+        out = (windowRun M.tm s upd N c τ).1
+hfin :
+  out ≠ WindowExit.exhausted →
+    ∃ N,
+      (windowRun M.tm s upd N c τ).1 = out ∧
+        ∃ w',
+          w'.length = (List.replicate W true).length ∧
+            MultiTapeTM.runFrom (cw_cfg e d en 0 W 0) t₂ =
+              { state := some (ex out), inputPos := (cw_cfg e d en 0 W 0).inputPos,
+                workTapes := fun j q =>
+                  if
+                      j = 0 ∧
+                        (cw_cfg e d en 0 W 0).workTapePos 0 ≤ q ∧
+                          q < (cw_cfg e d en 0 W 0).workTapePos 0 + ↑(recordLength M.k x.length s) then
+                    fieldsTape (cfgRecord s (windowRun M.tm s upd N c τ).2.1 (windowRun M.tm s upd N c τ).2.2)
+                      (q - (cw_cfg e d en 0 W 0).workTapePos 0)
+                  else
+                    if j = Fin.last (K + 1) then
+                      wordPatch ((cw_cfg e d en 0 W 0).workTapes j) ((cw_cfg e d en 0 W 0).workTapePos j)
+                        (List.map (⇑(RecSym.digitEmb M.State T)) w') q
+                    else (cw_cfg e d en 0 W 0).workTapes j q,
+                workTapePos := (cw_cfg e d en 0 W 0).workTapePos, output := (cw_cfg e d en 0 W 0).output }
+hB : ∀ u ≤ t₂, cw_box d.workTapePos (C * (L + 1)) (MultiTapeTM.runFrom (cw_cfg e d en 0 W 0) u).workTapePos
+t : ℕ
+b : Cfg (K + 2) (RecSym M.State T) ((i : cw_Idx nc (M.k + 3)) × cw_Ctrl P i) (List.map (⇑(RecSym.digitEmb M.State T)) x)
+ht : t ≤ Tw + (t₂ + 1) + (2 * W + 3)
+hseg :
+  Segment (cw_hostTM e R₂ en ex nc (M.k + 3)) {z | ∃ y, z = some ⟨cw_Idx.stop, y⟩} (cw_box d.workTapePos (C * (L + 1)))
+    d b t
+hbst : b.state = some ⟨cw_Idx.stop, out⟩
+hbout : b.output = d.output
+hbfin :
+  out ≠ WindowExit.exhausted →
+    ∃ N,
+      (windowRun M.tm s upd N c τ).1 = out ∧
+        b =
+          { state := some ⟨cw_Idx.stop, out⟩, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = 0 ∧ d.workTapePos 0 ≤ q ∧ q < d.workTapePos 0 + ↑L then
+                fieldsTape (cfgRecord s (windowRun M.tm s upd N c τ).2.1 (windowRun M.tm s upd N c τ).2.2)
+                  (q - d.workTapePos 0)
+              else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output }
+hF : ∀ u < t, (MultiTapeTM.runFrom d u).state ∉ {z | ∃ y, z = some ⟨cw_Idx.stop, y⟩}
+hE : ∀ u ≤ t, ∀ (j : Fin (K + 1 + 1)), |(MultiTapeTM.runFrom d u).workTapePos j - d.workTapePos j| ≤ ↑(C * (L + 1))
+hS : ∀ u ≤ t, (MultiTapeTM.runFrom d u).output = d.output
+hSp : MultiTapeTM.spaceUsed d t ≤ (K + 1 + 1) * (2 * (C * (L + 1)) + 1)
+hrunb : MultiTapeTM.runFrom d t = b
+h₁ :
+  A * (L + 1) + (5 * (2 ^ W - 1) + 2 * W + 3) + (2 * W + 2) + 0 ≤
+    (A + 4 * nc + 0 + 10) * 2 ^ ((A + 4 * nc + 0 + 10) * (L + 1))
+⊢ nc + nc * L = 13 + nc * 14 + nc * L * 14 + L * 13
+# end 2026-10-24T05:01:47Z exit=1

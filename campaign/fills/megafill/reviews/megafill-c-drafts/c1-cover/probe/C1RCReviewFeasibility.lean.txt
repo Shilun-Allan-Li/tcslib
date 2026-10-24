@@ -1,0 +1,344 @@
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+
+/-! Review probe (megafill C, C1 draft): can the brief's correctness lemma `rc_g_serialize` and
+`rc_g_primrec` be proved from the published equations, under the route probe's 14-definition seal
+extended by the seven further TCSlib definitions the brief names (`codeSkipActionK`,
+`codeSkipRepeat`, `codeReadUnary`, `pairDecode`, `codeBitsNat`) and the two record encoders the
+route touches (`optBoolBits`, `optStateBits`)? Reviewer's scratch, not a deliverable. -/
+
+namespace Turing
+
+section C1RCReview
+
+attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
+  MultiTapeTM.ComputesInTimeAndSpace serializeK NDTM.replayTM NDTM.fixChoice CodeNDTM.serialize
+  tableBitsK workReadsK actionBitsK signBits optOptBoolBits pairEncode unaryFin
+  optBoolBits optStateBits codeSkipActionK codeSkipRepeat codeReadUnary pairDecode codeBitsNat
+
+def rvc_widen (r : List Bool) : List Bool :=
+  r.take 10 ++ [false, false, true, false] ++ r.drop 10
+
+def rvc_round (n : ℕ) (p : List Bool × List Bool × List Bool) :
+    List Bool × List Bool × List Bool :=
+  match codeSkipActionK 2 n p.2.1, codeSkipActionK 2 n p.2.2 with
+  | some f, some t =>
+    let rf := p.2.1.take (p.2.1.length - f.length)
+    let rt := p.2.2.take (p.2.2.length - t.length)
+    (p.1 ++ (rvc_widen rf ++ rvc_widen rf ++ rvc_widen rt), f, t)
+  | _, _ => p
+
+def rvc_table (n : ℕ) (body : List Bool) : List Bool :=
+  match codeSkipRepeat (codeSkipActionK 2 n) (27 * (n + 1)) body with
+  | none => []
+  | some tT => ((rvc_round n)^[27 * (n + 1)] ([], body, tT)).1
+
+def rvc_g (xs : List Bool) : List Bool :=
+  match pairDecode xs with
+  | none => []
+  | some (u, v) =>
+    match codeReadUnary v with
+    | none => []
+    | some (_, body) => xs.take (xs.length - body.length) ++ rvc_table (codeBitsNat u) body
+
+/-! ### The skip and the rounds -/
+
+theorem rvc_skip {κ : Type} {n : ℕ} (f : κ → Action 2 Bool (Fin (n + 1))) (E : List κ)
+    (rest : List Bool) :
+    codeSkipRepeat (codeSkipActionK 2 n) E.length (E.flatMap (fun e => actionBitsK (f e)) ++ rest)
+      = some rest := by
+  induction E with
+  | nil => rw [List.length_nil, codeSkipRepeat_zero, List.flatMap_nil, List.nil_append]
+  | cons e E ih =>
+    rw [List.length_cons, codeSkipRepeat_succ, List.flatMap_cons, List.append_assoc,
+      codeSkipActionK_append, Option.bind_some, ih]
+
+theorem rvc_round_step {n : ℕ} (a b : Action 2 Bool (Fin (n + 1))) (acc rF rT : List Bool) :
+    rvc_round n (acc, actionBitsK a ++ rF, actionBitsK b ++ rT) =
+      (acc ++ (rvc_widen (actionBitsK a) ++ rvc_widen (actionBitsK a) ++
+        rvc_widen (actionBitsK b)), rF, rT) := by
+  unfold rvc_round
+  rw [codeSkipActionK_append, codeSkipActionK_append]
+  simp only [List.length_append, Nat.add_sub_cancel, List.take_left]
+
+theorem rvc_rounds {κ : Type} {n : ℕ} (fF fT : κ → Action 2 Bool (Fin (n + 1))) (E : List κ)
+    (acc restF restT : List Bool) :
+    (rvc_round n)^[E.length] (acc, E.flatMap (fun e => actionBitsK (fF e)) ++ restF,
+        E.flatMap (fun e => actionBitsK (fT e)) ++ restT) =
+      (acc ++ E.flatMap (fun e => rvc_widen (actionBitsK (fF e)) ++
+        rvc_widen (actionBitsK (fF e)) ++ rvc_widen (actionBitsK (fT e))), restF, restT) := by
+  induction E generalizing acc with
+  | nil =>
+    rw [List.length_nil, Function.iterate_zero_apply, List.flatMap_nil, List.flatMap_nil,
+      List.flatMap_nil, List.nil_append, List.nil_append, List.append_nil]
+  | cons e E ih =>
+    rw [List.length_cons, Function.iterate_succ_apply, List.flatMap_cons, List.flatMap_cons,
+      List.append_assoc, List.append_assoc, rvc_round_step, ih, List.flatMap_cons,
+      List.append_assoc]
+
+/-! ### The record level (the route probe's lemmas, copied under `rvc_` names) -/
+
+theorem rvc_choiceField :
+    optOptBoolBits (none : Option (Option Bool)) ++ signBits (1 : SignType) =
+      [false, false, true, false] := by
+  rw [optOptBoolBits_none, ← SignType.pos_eq_one, signBits_pos]
+  rfl
+
+theorem rvc_signBits_length (s : SignType) : (signBits s).length = 2 := by
+  cases s
+  · rw [signBits_zero]; rfl
+  · rw [signBits_neg]; rfl
+  · rw [signBits_pos]; rfl
+
+theorem rvc_optOptBoolBits_length (o : Option (Option Bool)) :
+    (optOptBoolBits o).length = 2 := by
+  rcases o with _ | (_ | b)
+  · rw [optOptBoolBits_none]; rfl
+  · rw [optOptBoolBits_some_none]; rfl
+  · cases b
+    · rw [optOptBoolBits_some_false]; rfl
+    · rw [optOptBoolBits_some_true]; rfl
+
+theorem rvc_widen_record {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+    actionBitsK (⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩ :
+        Action 3 Bool (Fin (n + 1))) = rvc_widen (actionBitsK a) := by
+  have head : (signBits a.inputTape ++ (List.finRange 2).flatMap fun i =>
+      optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2).length = 10 := by
+    simp only [List.finRange_succ, List.finRange_zero, List.map_cons, List.map_nil,
+      List.flatMap_cons, List.flatMap_nil, List.length_append, rvc_signBits_length,
+      rvc_optOptBoolBits_length, List.length_nil]
+  unfold rvc_widen
+  rw [actionBitsK_eq, actionBitsK_eq, List.finRange_succ_last, List.flatMap_append,
+    List.flatMap_map]
+  simp only [Fin.lastCases_castSucc, Fin.lastCases_last, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil]
+  rw [List.append_assoc (signBits a.inputTape ++ _), List.append_assoc (signBits a.inputTape ++ _),
+    List.take_left' head, List.drop_left' head, ← rvc_choiceField]
+  simp only [List.append_assoc]
+
+theorem rvc_cons_elim0 (a : Option Bool) :
+    (Fin.cons a Fin.elim0 : Fin 1 → Option Bool) = Fin.snoc (Fin.elim0 : Fin 0 → Option Bool) a := by
+  funext i
+  rw [Fin.fin_one_eq_zero i]
+  exact (Fin.snoc_last (α := fun _ => Option Bool) a Fin.elim0).symm
+
+theorem rvc_workReads_snoc (k : ℕ) : workReadsK (k + 1) =
+    (workReadsK k).flatMap fun w =>
+      ([none, some false, some true] : List (Option Bool)).map (Fin.snoc w) := by
+  induction k with
+  | zero =>
+    rw [workReadsK_succ, workReadsK_zero]
+    simp only [List.flatMap_cons, List.flatMap_nil, List.map_cons, List.map_nil,
+      List.append_nil, List.cons_append, List.nil_append, rvc_cons_elim0]
+  | succ k ih =>
+    have lhs := workReadsK_succ (k + 1)
+    rw [ih] at lhs
+    rw [lhs, workReadsK_succ k]
+    simp only [List.map_flatMap, List.map_map, List.flatMap_assoc, List.flatMap_map,
+      Function.comp_def, Fin.cons_snoc_eq_snoc_cons]
+
+theorem rvc_replay_record {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) (q : Fin (n + 1))
+    (inp : Option Bool) (w : Fin 2 → Option Bool) (wc : Option Bool) :
+    actionBitsK (N.replayTM.tr q inp (Fin.snoc w wc)) =
+      rvc_widen (actionBitsK (N.tr (wc.getD false) q inp w)) := by
+  rw [NDTM.replayTM_tr]
+  have hw : (fun i : Fin 2 => (Fin.snoc w wc : Fin 3 → Option Bool) i.castSucc) = w := by
+    funext i
+    exact Fin.snoc_castSucc (α := fun _ => Option Bool) wc w i
+  simp only [Fin.snoc_last, hw]
+  exact rvc_widen_record _
+
+theorem rvc_replay_table {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) :
+    tableBitsK N.replayTM.tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).flatMap fun w =>
+          rvc_widen (actionBitsK (N.tr false q inp w)) ++
+            rvc_widen (actionBitsK (N.tr false q inp w)) ++
+            rvc_widen (actionBitsK (N.tr true q inp w)) := by
+  rw [tableBitsK_eq, rvc_workReads_snoc 2]
+  simp only [List.flatMap_assoc, List.flatMap_map, rvc_replay_record, List.flatMap_cons,
+    List.flatMap_nil, List.append_nil, Option.getD_none, Option.getD_some, List.append_assoc]
+
+/-! ### The tables over one key list -/
+
+theorem rvc_workReads2_length : (workReadsK 2).length = 9 := by
+  rw [workReadsK_succ, workReadsK_succ, workReadsK_zero]
+  rfl
+
+theorem rvc_flat {n : ℕ} {β : Type} (h : Fin (n + 1) → Option Bool → (Fin 2 → Option Bool) → List β) :
+    ((List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).flatMap fun w => h q inp w) =
+    ((List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).map fun w => (q, inp, w)).flatMap (fun e => h e.1 e.2.1 e.2.2) := by
+  simp only [List.flatMap_assoc, List.flatMap_map]
+
+theorem rvc_keys_length (n : ℕ) :
+    ((List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).map fun w => (q, inp, w)).length = 27 * (n + 1) := by
+  simp only [List.length_flatMap, List.flatMap_cons, List.flatMap_nil, List.length_append,
+    List.length_map, rvc_workReads2_length, List.length_nil, List.map_const', List.length_finRange,
+    List.sum_replicate_nat]
+  omega
+
+theorem rvc_table_eq {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) :
+    rvc_table n (tableBitsK (N.fixChoice false).tr ++ tableBitsK (N.fixChoice true).tr) =
+      tableBitsK N.replayTM.tr := by
+  have hsrc (b : Bool) : tableBitsK (N.fixChoice b).tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).flatMap fun w => actionBitsK (N.tr b q inp w) := by
+    rw [tableBitsK_eq]
+    simp only [NDTM.fixChoice_tr]
+  have hrep : tableBitsK N.replayTM.tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).flatMap fun w =>
+          rvc_widen (actionBitsK (N.tr false q inp w)) ++
+            rvc_widen (actionBitsK (N.tr false q inp w)) ++
+            rvc_widen (actionBitsK (N.tr true q inp w)) := by
+    exact rvc_replay_table N
+  rw [hsrc, hsrc, hrep, rvc_flat, rvc_flat, rvc_flat]
+  generalize hE : ((List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).map fun w => (q, inp, w)) = E
+  have hlen : E.length = 27 * (n + 1) := hE ▸ rvc_keys_length n
+  unfold rvc_table
+  rw [← hlen, rvc_skip]
+  simp only
+  have h0 := rvc_rounds (fun e => N.tr false e.1 e.2.1 e.2.2) (fun e => N.tr true e.1 e.2.1 e.2.2) E
+    [] (E.flatMap fun e => actionBitsK (N.tr true e.1 e.2.1 e.2.2)) []
+  rw [List.append_nil, List.nil_append] at h0
+  rw [h0]
+
+/-! ### The header -/
+
+theorem rvc_g_serialize (M : CodeNDTM) : rvc_g M.serialize = serializeK M.tm.replayTM := by
+  rw [CodeNDTM.serialize_eq_tableBitsK, serializeK_eq, NDTM.replayTM_q₀, ← rvc_table_eq]
+  generalize tableBitsK (M.tm.fixChoice false).tr ++ tableBitsK (M.tm.fixChoice true).tr = body
+  unfold rvc_g
+  rw [pairDecode_pairEncode]
+  simp only
+  rw [unaryFin_eq, List.append_assoc, List.singleton_append, codeReadUnary_append]
+  simp only
+  rw [codeBitsNat_bits, pairEncode_eq, pairEncode_eq]
+  have hsplit : (M.numStates.bits.flatMap fun b => [b, b]) ++ [false, true] ++
+      (List.replicate (↑M.tm.q₀) true ++ false :: body) =
+      ((M.numStates.bits.flatMap fun b => [b, b]) ++ [false, true] ++
+        (List.replicate (↑M.tm.q₀) true ++ [false])) ++ body := by
+    simp only [List.append_assoc, List.singleton_append]
+  rw [hsplit, List.length_append, Nat.add_sub_cancel, List.take_left]
+  simp only [List.append_assoc, List.singleton_append]
+
+/-! ### Primitive recursiveness -/
+
+theorem rvc_widen_primrec : Primrec rvc_widen := by
+  have ht : Primrec fun r : List Bool => r.take (r.length - (r.length - 10)) :=
+    codePrimPrefix.comp Primrec.id (Primrec.nat_sub.comp Primrec.list_length (Primrec.const 10))
+  have h := Primrec.list_append.comp (Primrec.list_append.comp ht
+    (Primrec.const [false, false, true, false])) (codePrimDrop.comp Primrec.id (Primrec.const 10))
+  refine h.of_eq fun r => ?_
+  unfold rvc_widen
+  congr 2
+  by_cases hr : 10 ≤ r.length
+  · rw [Nat.sub_sub_self hr]
+  · have h0 : r.length - 10 = 0 := by omega
+    rw [h0, Nat.sub_zero, List.take_length, List.take_of_length_le (by omega)]
+
+abbrev RvcT := List Bool × List Bool × List Bool
+
+/-- The round's body once both skips succeed, on `((n, p), f)` and `t`. -/
+def rvc_body (q : ((ℕ × RvcT) × List Bool) × List Bool) : RvcT :=
+  (q.1.1.2.1 ++ (rvc_widen (q.1.1.2.2.1.take (q.1.1.2.2.1.length - q.1.2.length)) ++
+    rvc_widen (q.1.1.2.2.1.take (q.1.1.2.2.1.length - q.1.2.length)) ++
+    rvc_widen (q.1.1.2.2.2.take (q.1.1.2.2.2.length - q.2.length))), q.1.2, q.2)
+
+theorem rvc_body_primrec : Primrec rvc_body := by
+  have hrf : Primrec fun q : ((ℕ × RvcT) × List Bool) × List Bool =>
+      rvc_widen (q.1.1.2.2.1.take (q.1.1.2.2.1.length - q.1.2.length)) :=
+    rvc_widen_primrec.comp (codePrimPrefix.comp
+      (Primrec.fst.comp (Primrec.snd.comp (Primrec.snd.comp (Primrec.fst.comp Primrec.fst))))
+      (Primrec.list_length.comp (Primrec.snd.comp Primrec.fst)))
+  have hrt : Primrec fun q : ((ℕ × RvcT) × List Bool) × List Bool =>
+      rvc_widen (q.1.1.2.2.2.take (q.1.1.2.2.2.length - q.2.length)) :=
+    rvc_widen_primrec.comp (codePrimPrefix.comp
+      (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp (Primrec.fst.comp Primrec.fst))))
+      (Primrec.list_length.comp Primrec.snd))
+  exact Primrec.pair (Primrec.list_append.comp
+      (Primrec.fst.comp (Primrec.snd.comp (Primrec.fst.comp Primrec.fst)))
+      (Primrec.list_append.comp (Primrec.list_append.comp hrf hrf) hrt))
+    (Primrec.pair (Primrec.snd.comp Primrec.fst) Primrec.snd)
+
+theorem rvc_round_primrec : Primrec₂ rvc_round := by
+  have hin := Primrec.option_casesOn (α := (ℕ × RvcT) × List Bool) (σ := RvcT) ((codePrimSkipActionK 2).comp (Primrec.fst.comp Primrec.fst)
+      (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.fst))))
+      (Primrec.snd.comp Primrec.fst) rvc_body_primrec.to₂
+  have hout := Primrec.option_casesOn (α := ℕ × RvcT) (σ := RvcT) ((codePrimSkipActionK 2).comp Primrec.fst
+      (Primrec.fst.comp (Primrec.snd.comp Primrec.snd))) Primrec.snd hin.to₂
+  refine hout.of_eq ?_
+  rintro ⟨n, acc, F, T⟩
+  unfold rvc_round
+  dsimp only
+  rcases codeSkipActionK 2 n F with _ | f <;> rcases codeSkipActionK 2 n T with _ | t <;> rfl
+
+theorem rvc_table_primrec : Primrec₂ rvc_table := by
+  have hcount : Primrec fun n : ℕ => 27 * (n + 1) :=
+    Primrec.nat_mul.comp (Primrec.const 27) Primrec.succ
+  have hskip := (codePrimRepeat (fun n => codeSkipActionK 2 n) (codePrimSkipActionK 2)
+    (fun n => 27 * (n + 1)) hcount).comp (Primrec.fst (α := ℕ) (β := List Bool)) Primrec.snd
+  have hiter : Primrec fun q : (ℕ × List Bool) × List Bool =>
+      (rvc_round q.1.1)^[27 * (q.1.1 + 1)] (([] : List Bool), q.1.2, q.2) :=
+    Primrec.nat_iterate (hcount.comp (Primrec.fst.comp Primrec.fst))
+      (Primrec.pair (Primrec.const []) (Primrec.pair (Primrec.snd.comp Primrec.fst) Primrec.snd))
+      (rvc_round_primrec.comp (Primrec.fst.comp (Primrec.fst.comp Primrec.fst)) Primrec.snd)
+  have h := Primrec.option_casesOn hskip (Primrec.const ([] : List Bool))
+    (Primrec.fst.comp hiter).to₂
+  refine h.of_eq ?_
+  rintro ⟨n, body⟩
+  unfold rvc_table
+  dsimp only
+  rcases codeSkipRepeat (codeSkipActionK 2 n) (27 * (n + 1)) body with _ | tT <;> rfl
+
+theorem rvc_g_primrec : Primrec rvc_g := by
+  have hin := Primrec.option_casesOn (α := List Bool × (List Bool × List Bool)) (σ := List Bool) (codePrimUnary.comp (Primrec.snd.comp Primrec.snd))
+      (Primrec.const []) (Primrec.list_append.comp
+        (codePrimPrefix.comp (Primrec.fst.comp Primrec.fst)
+          (Primrec.list_length.comp (Primrec.snd.comp Primrec.snd)))
+        (rvc_table_primrec.comp (codePrimBitsNat.comp
+          (Primrec.fst.comp (Primrec.snd.comp Primrec.fst))) (Primrec.snd.comp Primrec.snd))).to₂
+  have h := Primrec.option_casesOn codePrimPair (Primrec.const ([] : List Bool)) hin.to₂
+  refine h.of_eq ?_
+  intro xs
+  unfold rvc_g
+  rcases pairDecode xs with _ | ⟨u, v⟩
+  · rfl
+  · dsimp only
+    rcases codeReadUnary v with _ | ⟨m, body⟩ <;> rfl
+
+/-! ### The target -/
+
+theorem rvc_target (c : EffectiveNDMachineCode) :
+    ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+      M.ComputesFunInTime (fun α => serializeK (c.decode α).tm.replayTM) T := by
+  obtain ⟨G, TG, hG⟩ := codePrim_machine rvc_g rvc_g_primrec
+  have hmono : Monotone fun n => (Finset.range (n + 1)).sup TG := fun a b hab =>
+    Finset.sup_mono (Finset.range_subset_range.mpr (by omega))
+  have hG' : G.ComputesFunInTime rvc_g fun n => (Finset.range (n + 1)).sup TG := by
+    rw [FinTM.computesFunInTime_iff] at hG ⊢
+    intro x
+    exact (hG x).mono (Finset.le_sup (Finset.mem_range.mpr (by omega)))
+  obtain ⟨M, k, hM⟩ := FinTM.computesFunInTime_comp c.canonizer_computes hG' hmono
+  have e : (rvc_g ∘ fun α => (c.decode α).serialize) =
+      fun α => serializeK (c.decode α).tm.replayTM := by
+    funext α
+    rw [Function.comp_apply, rvc_g_serialize]
+  exact ⟨M, _, e ▸ hM⟩
+
+end C1RCReview
+
+#print axioms rvc_target
+#print axioms rvc_g_serialize
+#print axioms rvc_widen_primrec
+#print axioms rvc_g_primrec
+#print axioms rvc_table_eq
+
+end Turing

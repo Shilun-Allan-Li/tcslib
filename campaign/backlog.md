@@ -1603,7 +1603,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `phaseHostND_fixChoice`; `phasehost-reads-inventory.md` in gate 69's `evidence/round1-fix/`).
       After #156 merges: a start-state and a redirect-branch equation beside `phaseHostTM`, the
       re-points, a gate and a replay. It lands before megafill C is issued (it changes
-      `CodeSimulator`).
+      `CodeSimulator`). **Prepared locally** (`local/phasehost-fields`, `31747bec` and `88306c22`
+      on `0e5f210b`): `phaseHostTM_q₀` and `phaseHostTM_tr_of_red_some`; the seven files elaborate
+      with the new lemmas stood in, plain and with `phaseHostTM` sealed, 0 errors; no explicit
+      unfolding left.
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
@@ -1619,6 +1622,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **F3 cont2 delivered (2026-10-23):** `fill-b6-configclock-cont2.zip`, the target claimed proved
     (six checkpoints). Under review (a sub-agent). `WindowClock` is in #156's round-2 closure, so
     its landing replays after #156's.
+    **Reviewed** (`campaign/fills/b6/reviews/configclock-cont2/REVIEW.md`): complete (1/1), no
+    `sorryAx`; integrity, scope, rule 10 (34-definition seal), probes, sweep (28 → 27) and screen
+    (8 new in-file pairs, none cross-file) pass. Decisions pending (user): F2, the three route
+    refinements (accept recommended); F1, the status wording; the commit form; the order against
+    #156 (#156 first recommended, then `WindowClock` and the facade from `oleans-lphl2`).
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
@@ -1630,6 +1638,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     re-prove them) and Q-U1 (U2: field equations for `forwardLoopCfg` and `rulerHostCfg` by an
     API PR first); Q-M1 and Q-M2 (the queue order; B5a's 87-minute screen) are the maintainer's.
     Under review: three sub-agents (C1 with the cover, B5a, U2).
+    - **C1 and the cover reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/c1-cover/`):
+      issue after edits (0 blockers, 0 majors, 9 minors, 2 notes; `suggested-fix.diff`). **The
+      reviewer proved the target** (`probe/C1RCReviewFeasibility.lean.txt`, about 300 lines, sealed,
+      standard axioms): decision D1 pending (user).
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,

@@ -1,0 +1,169 @@
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+
+/-! C1, the replay canonizer: the pre-ship discharge of the route's key steps, from public lemmas
+only, with every other-file TCSlib definition they touch sealed (`attribute [local irreducible]`;
+none of them carries `@[simp]`). Core and Mathlib definitions are read through their equation
+lemmas only. `C1RCSealControl.lean.txt` shows that the seal bites.
+
+* `c1rc_compose`: **the composition step, with `g` abstract.** From any primitive recursive `g`
+  that maps every fixed ND serialization to the replay serialization, the target's statement:
+  compile `g` (`Turing.codePrim_machine`), make its bound monotone by a running maximum
+  (`Turing.FinTM.ComputesInTime.mono`), compose with the scheme's canonizer
+  (`Turing.FinTM.computesFunInTime_comp`).
+* `c1rc_choiceField`, `c1rc_signBits_length`, `c1rc_optOptBoolBits_length`: the choice tape's
+  field (no write, a right move) is four bits; the sign and write fields are two each, by their
+  case lemmas.
+* `c1rc_widen_record`: a replay record is the two-tape record with that field inserted after its
+  first ten bits (the input move and the two work-tape fields).
+* `c1rc_cons_elim0`, `c1rc_workReads_snoc`: the `k + 1`-tape read order lists each `k`-tape read
+  with the last tape's three reads innermost.
+* `c1rc_source_table`: each slice table of the source, through `tableBitsK_eq` and
+  `NDTM.fixChoice_tr`.
+* `c1rc_replay_record`, `c1rc_replay_table`: the replay table is the two slice tables' records
+  re-emitted three per key (choice read blank, `false`, `true`), each widened.
+* `c1rc_widen_primrec`: the widening is primitive recursive, with `take` through
+  `Turing.codePrimPrefix` (Mathlib has no `Primrec.list_take` at this pin).
+
+`c1rc_widen` is a probe-local definition (the brief's `rc_widen`). -/
+
+namespace Turing
+
+section C1RCRoute
+
+attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
+  MultiTapeTM.ComputesInTimeAndSpace serializeK NDTM.replayTM NDTM.fixChoice CodeNDTM.serialize
+  tableBitsK workReadsK actionBitsK signBits optOptBoolBits pairEncode unaryFin
+
+theorem c1rc_compose (c : EffectiveNDMachineCode) (g : List Bool → List Bool) (hg : Primrec g)
+    (hgs : ∀ M : CodeNDTM, g M.serialize = serializeK M.tm.replayTM) :
+    ∃ (M : FinTM Bool) (T : ℕ → ℕ),
+      M.ComputesFunInTime (fun α => serializeK (c.decode α).tm.replayTM) T := by
+  obtain ⟨G, TG, hG⟩ := codePrim_machine g hg
+  have hmono : Monotone fun n => (Finset.range (n + 1)).sup TG := fun a b hab =>
+    Finset.sup_mono (Finset.range_subset_range.mpr (by omega))
+  have hG' : G.ComputesFunInTime g fun n => (Finset.range (n + 1)).sup TG := by
+    rw [FinTM.computesFunInTime_iff] at hG ⊢
+    intro x
+    exact (hG x).mono (Finset.le_sup (Finset.mem_range.mpr (by omega)))
+  obtain ⟨M, k, hM⟩ := FinTM.computesFunInTime_comp c.canonizer_computes hG' hmono
+  have e : (g ∘ fun α => (c.decode α).serialize) =
+      fun α => serializeK (c.decode α).tm.replayTM := by
+    funext α
+    rw [Function.comp_apply, hgs]
+  exact ⟨M, _, e ▸ hM⟩
+
+theorem c1rc_choiceField :
+    optOptBoolBits (none : Option (Option Bool)) ++ signBits (1 : SignType) =
+      [false, false, true, false] := by
+  rw [optOptBoolBits_none, ← SignType.pos_eq_one, signBits_pos]
+  rfl
+
+theorem c1rc_signBits_length (s : SignType) : (signBits s).length = 2 := by
+  cases s
+  · rw [signBits_zero]; rfl
+  · rw [signBits_neg]; rfl
+  · rw [signBits_pos]; rfl
+
+theorem c1rc_optOptBoolBits_length (o : Option (Option Bool)) :
+    (optOptBoolBits o).length = 2 := by
+  rcases o with _ | (_ | b)
+  · rw [optOptBoolBits_none]; rfl
+  · rw [optOptBoolBits_some_none]; rfl
+  · cases b
+    · rw [optOptBoolBits_some_false]; rfl
+    · rw [optOptBoolBits_some_true]; rfl
+
+theorem c1rc_widen_record {n : ℕ} (a : Action 2 Bool (Fin (n + 1))) :
+    actionBitsK (⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩ :
+        Action 3 Bool (Fin (n + 1))) =
+      (actionBitsK a).take 10 ++ [false, false, true, false] ++ (actionBitsK a).drop 10 := by
+  have head : (signBits a.inputTape ++ (List.finRange 2).flatMap fun i =>
+      optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2).length = 10 := by
+    simp only [List.finRange_succ, List.finRange_zero, List.map_cons, List.map_nil,
+      List.flatMap_cons, List.flatMap_nil, List.length_append, c1rc_signBits_length,
+      c1rc_optOptBoolBits_length, List.length_nil]
+  rw [actionBitsK_eq, actionBitsK_eq, List.finRange_succ_last, List.flatMap_append,
+    List.flatMap_map]
+  simp only [Fin.lastCases_castSucc, Fin.lastCases_last, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil]
+  rw [List.append_assoc (signBits a.inputTape ++ _), List.append_assoc (signBits a.inputTape ++ _),
+    List.take_left' head, List.drop_left' head, ← c1rc_choiceField]
+  simp only [List.append_assoc]
+
+theorem c1rc_cons_elim0 (a : Option Bool) :
+    (Fin.cons a Fin.elim0 : Fin 1 → Option Bool) = Fin.snoc (Fin.elim0 : Fin 0 → Option Bool) a := by
+  funext i
+  rw [Fin.fin_one_eq_zero i]
+  exact (Fin.snoc_last (α := fun _ => Option Bool) a Fin.elim0).symm
+
+theorem c1rc_workReads_snoc (k : ℕ) : workReadsK (k + 1) =
+    (workReadsK k).flatMap fun w =>
+      ([none, some false, some true] : List (Option Bool)).map (Fin.snoc w) := by
+  induction k with
+  | zero =>
+    rw [workReadsK_succ, workReadsK_zero]
+    simp only [List.flatMap_cons, List.flatMap_nil, List.map_cons, List.map_nil,
+      List.append_nil, List.cons_append, List.nil_append, c1rc_cons_elim0]
+  | succ k ih =>
+    have lhs := workReadsK_succ (k + 1)
+    rw [ih] at lhs
+    rw [lhs, workReadsK_succ k]
+    simp only [List.map_flatMap, List.map_map, List.flatMap_assoc, List.flatMap_map,
+      Function.comp_def, Fin.cons_snoc_eq_snoc_cons]
+
+theorem c1rc_source_table {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) (b : Bool) :
+    tableBitsK (N.fixChoice b).tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).flatMap fun w => actionBitsK (N.tr b q inp w) := by
+  rw [tableBitsK_eq]
+  simp only [NDTM.fixChoice_tr]
+
+/-- The per-record widening (a probe-local name for the brief's `rc_widen`). -/
+def c1rc_widen (r : List Bool) : List Bool := r.take 10 ++ [false, false, true, false] ++ r.drop 10
+
+theorem c1rc_replay_record {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) (q : Fin (n + 1))
+    (inp : Option Bool) (w : Fin 2 → Option Bool) (wc : Option Bool) :
+    actionBitsK (N.replayTM.tr q inp (Fin.snoc w wc)) =
+      c1rc_widen (actionBitsK (N.tr (wc.getD false) q inp w)) := by
+  rw [NDTM.replayTM_tr]
+  have hw : (fun i : Fin 2 => (Fin.snoc w wc : Fin 3 → Option Bool) i.castSucc) = w := by
+    funext i
+    exact Fin.snoc_castSucc (α := fun _ => Option Bool) wc w i
+  simp only [Fin.snoc_last, hw]
+  exact c1rc_widen_record _
+
+theorem c1rc_replay_table {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) :
+    tableBitsK N.replayTM.tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK 2).flatMap fun w =>
+          c1rc_widen (actionBitsK (N.tr false q inp w)) ++
+            c1rc_widen (actionBitsK (N.tr false q inp w)) ++
+            c1rc_widen (actionBitsK (N.tr true q inp w)) := by
+  rw [tableBitsK_eq, c1rc_workReads_snoc 2]
+  simp only [List.flatMap_assoc, List.flatMap_map, c1rc_replay_record, List.flatMap_cons,
+    List.flatMap_nil, List.append_nil, Option.getD_none, Option.getD_some, List.append_assoc]
+
+theorem c1rc_widen_primrec : Primrec c1rc_widen := by
+  have ht : Primrec fun r : List Bool => r.take (r.length - (r.length - 10)) :=
+    codePrimPrefix.comp Primrec.id (Primrec.nat_sub.comp Primrec.list_length (Primrec.const 10))
+  have h := Primrec.list_append.comp (Primrec.list_append.comp ht
+    (Primrec.const [false, false, true, false])) (codePrimDrop.comp Primrec.id (Primrec.const 10))
+  refine h.of_eq fun r => ?_
+  unfold c1rc_widen
+  congr 2
+  by_cases hr : 10 ≤ r.length
+  · rw [Nat.sub_sub_self hr]
+  · have h0 : r.length - 10 = 0 := by omega
+    rw [h0, Nat.sub_zero, List.take_length, List.take_of_length_le (by omega)]
+
+end C1RCRoute
+
+#print axioms c1rc_compose
+#print axioms c1rc_choiceField
+#print axioms c1rc_widen_record
+#print axioms c1rc_workReads_snoc
+#print axioms c1rc_source_table
+#print axioms c1rc_replay_table
+#print axioms c1rc_widen_primrec
+
+end Turing

@@ -1,0 +1,39 @@
+== my screen at the delivered head (wt-head):
+declarations screened: 1102; copy pairs (target reproduces >= half of source): 521; reproduced text: 150,388 chars
+waiting for the lock from 2026-10-24T04:54:28Z
+lock acquired 2026-10-24T04:58:59Z
+exit 0 root /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/f3-cont2/wt-head (HEAD 968d7b2bfbcd9635d8a763673731c89f1a125eda; tracked changes:  M TCSlib/Complexity/SpaceComplexity/WindowClock.lean ) wall 716 s, finished 2026-10-24T05:10:55Z
+
+== worker's before vs the recorded base (timestamp line dropped):
+DIFFERS
+== mine vs the worker's after (timestamp line dropped):
+DIFFERS
+0a1
+> commit: ebca0bc53382464f7ff674909e8ac3aa5fb673e6
+522a524
+> exit: 0
+
+== pairdiff: mine vs the recorded base
+head pairs 521; union of earlier 513; new at head 8; earlier-only 0
+  NEW   WindowClock.lean::cw_seg_back  reproduces  WindowClock.lean::cw_seg_skipS: 308/350 = 88%
+  NEW   WindowClock.lean::cw_seg_clockBack  reproduces  WindowClock.lean::cw_seg_skipC: 285/363 = 79%
+  NEW   WindowClock.lean::cw_seg_skipS  reproduces  WindowClock.lean::cw_seg_back: 308/424 = 73%
+  NEW   WindowClock.lean::cw_cfg_moveL  reproduces  WindowClock.lean::cw_cfg_move₀: 118/172 = 69%
+  NEW   WindowClock.lean::cw_cfg_box  reproduces  WindowClock.lean::cw_cfg_pos_zero: 96/141 = 68%
+  NEW   WindowClock.lean::cw_prev  reproduces  WindowClock.lean::cw_next: 65/105 = 62%
+  NEW   WindowClock.lean::cw_red  reproduces  WindowClock.lean::cw_next: 64/105 = 61%
+  NEW   WindowClock.lean::cw_cfg_moveL  reproduces  WindowClock.lean::cw_cfg_pos_zero: 74/141 = 52%
+
+== pairdiff: mine vs the worker's before
+head pairs 521; union of earlier 513; new at head 8; earlier-only 0
+
+== cross-file pairs involving WindowClock (all, at head):
+   ConfigCount.lean::ComputesInTime.of_spaceUsed_le  reproduces  WindowClock.lean::FinTM.inWindow_of_spaceUsed_le: 336/505 = 67%
+== in-file WindowClock pairs >= 90%:
+== known hazards: pairs naming rt_copyMachine, rt_adjacentWrites, exists_fieldsCopyTM, rt_copy, wr_, wl_, embedEmit, phaseHost, sc_wordPatch with a cw_ declaration:
+none
+
+== comparisons with metadata lines (timestamp, commit:, exit:, #) dropped
+worker's before vs the recorded base: identical
+mine vs the worker's after: identical
+worker's screen-diff.txt new pairs == my pairdiff new pairs: identical

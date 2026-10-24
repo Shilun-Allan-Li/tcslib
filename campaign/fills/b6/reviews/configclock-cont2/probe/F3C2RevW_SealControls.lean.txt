@@ -1,0 +1,104 @@
+import TCSlib.Complexity.SpaceComplexity.WindowClock
+
+/-! Rule-10 seal controls: each sealed definition unfolds to its body by `rfl`-level
+definitional unfolding (`isDefEq` at default transparency) with nothing sealed, and does not
+under the seal. -/
+
+open Lean Meta Elab Command
+
+elab "#cw_control " id:ident : command => do
+  let n ← liftCoreM <| realizeGlobalConstNoOverload id
+  liftTermElabM do
+    let ci ← getConstInfo n
+    let some v := ci.value? | throwError "no value"
+    let ok ← withTransparency .default <| isDefEq (mkConst n (ci.levelParams.map mkLevelParam)) v
+    logInfo m!"control {n}: {if ok then "unfolds (rfl closes)" else "sealed (rfl fails)"}"
+
+namespace Turing
+
+section Unsealed
+
+#cw_control Cfg.InWindow
+#cw_control Cfg.inputSymbol
+#cw_control Cfg.mapState
+#cw_control Cfg.workTapeSymbols
+#cw_control FinTM.bufferTape
+#cw_control FinTM.configBound
+#cw_control MultiTapeTM.runFrom
+#cw_control MultiTapeTM.spaceUsed
+#cw_control MultiTapeTM.step
+#cw_control MultiTapeTM.spaceUsedByTape
+#cw_control MultiTapeTM.visitedByTapeHead
+#cw_control RecSym.digitEmb
+#cw_control RecordAt
+#cw_control Segment
+#cw_control cfgRecord
+#cw_control clearTM
+#cw_control copyMapTM
+#cw_control fieldOffset
+#cw_control fieldsTape
+#cw_control joinFields
+#cw_control moveInputPos
+#cw_control phaseHostTM
+#cw_control posWidth
+#cw_control recordLength
+#cw_control skipBackTM
+#cw_control skipTM
+#cw_control tapeAction
+#cw_control wordPatch
+#cw_control instDecidableEqSeekPhase
+#cw_control instDecidableEqSweepPhase
+#cw_control instDecidableEqWindowExit
+
+example (w : List Bool) : FinTM.bufferTape w (-1) = none := rfl
+example {k : ℕ} {Q T : Type} {x : List Bool} (M : MultiTapeTM k Bool Q) (s : ℕ)
+    (upd : T → Option Bool → T) (c : Cfg k Bool Q x) (τ : T) :
+    windowRun M s upd 0 c τ = (.exhausted, c, τ) := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Cfg.InWindow Cfg.inputSymbol Cfg.mapState Cfg.workTapeSymbols FinTM.bufferTape FinTM.configBound MultiTapeTM.runFrom MultiTapeTM.spaceUsed MultiTapeTM.step MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead RecSym.digitEmb RecordAt Segment cfgRecord clearTM copyMapTM fieldOffset fieldsTape joinFields moveInputPos phaseHostTM posWidth recordLength skipBackTM skipTM tapeAction windowRun wordPatch instDecidableEqSeekPhase instDecidableEqSweepPhase instDecidableEqWindowExit
+
+#cw_control Cfg.InWindow
+#cw_control Cfg.inputSymbol
+#cw_control Cfg.mapState
+#cw_control Cfg.workTapeSymbols
+#cw_control FinTM.bufferTape
+#cw_control FinTM.configBound
+#cw_control MultiTapeTM.runFrom
+#cw_control MultiTapeTM.spaceUsed
+#cw_control MultiTapeTM.step
+#cw_control MultiTapeTM.spaceUsedByTape
+#cw_control MultiTapeTM.visitedByTapeHead
+#cw_control RecSym.digitEmb
+#cw_control RecordAt
+#cw_control Segment
+#cw_control cfgRecord
+#cw_control clearTM
+#cw_control copyMapTM
+#cw_control fieldOffset
+#cw_control fieldsTape
+#cw_control joinFields
+#cw_control moveInputPos
+#cw_control phaseHostTM
+#cw_control posWidth
+#cw_control recordLength
+#cw_control skipBackTM
+#cw_control skipTM
+#cw_control tapeAction
+#cw_control wordPatch
+#cw_control instDecidableEqSeekPhase
+#cw_control instDecidableEqSweepPhase
+#cw_control instDecidableEqWindowExit
+
+-- expected to fail under the seal (two errors):
+example (w : List Bool) : FinTM.bufferTape w (-1) = none := rfl
+example {k : ℕ} {Q T : Type} {x : List Bool} (M : MultiTapeTM k Bool Q) (s : ℕ)
+    (upd : T → Option Bool → T) (c : Cfg k Bool Q x) (τ : T) :
+    windowRun M s upd 0 c τ = (.exhausted, c, τ) := rfl
+
+end Sealed
+
+end Turing

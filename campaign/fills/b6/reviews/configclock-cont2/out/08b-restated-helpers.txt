@@ -1,0 +1,36 @@
+== cw_copy_constant: statement (header to `:= by`), base -> head
+--- base
++++ head
+@@ -7,4 +7,13 @@
+       { d with state := some .done
+-               workTapes := fun j q =>
+-                 if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+-                   then some e else d.workTapes j q } := by
++               workTapes := fun j q => if j = dst then
++                 wordPatch (d.workTapes j) (d.workTapePos j) (List.replicate w.length e) q
++                 else d.workTapes j q } ∧
++      (∀ t < 2 * w.length + 2,
++        ((copyMapTM k src dst (fun _ => ()) (fun _ _ => e)).runFrom d t).state ≠
++          some .done) ∧
++      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
++        if j = src ∨ j = dst then
++          ((copyMapTM k src dst (fun _ => ()) (fun _ _ => e)).runFrom d t).workTapePos j ∈
++            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
++        else ((copyMapTM k src dst (fun _ => ()) (fun _ _ => e)).runFrom d t).workTapePos j =
++          d.workTapePos j) := by
+
+== cw_clear_patch: statement (header to `:= by`), base -> head
+--- base
++++ head
+@@ -10,2 +10,7 @@
+       { d with state := some .done
+-               workTapes := fun j q => if j = i then none else d.workTapes j q } := by
++               workTapes := fun j q => if j = i then none else d.workTapes j q } ∧
++      (∀ t < 2 * w.length + 2, ((clearTM k i).runFrom a t).state ≠ some .done) ∧
++      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
++        if j = i then ((clearTM k i).runFrom a t).workTapePos j ∈
++            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
++        else ((clearTM k i).runFrom a t).workTapePos j = d.workTapePos j) := by
+
+Both changes: the first clause is unchanged for cw_clear_patch and restated as a constant wordPatch for
+cw_copy_constant; each gains the framed row's second (cut) and third (head range) clauses verbatim.

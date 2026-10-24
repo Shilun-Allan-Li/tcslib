@@ -1,0 +1,43 @@
+Check 2: every cited declaration exists at the base, is public, and has the route's signature
+
+(a) The draft's probe, re-run unchanged (probe/C1RCImportProbe.lean = the .lean.txt byte for byte,
+    cmp): 102 #check, 5 #print axioms; 0 errors, 0 warnings, exit 0 (probe/C1RCImportProbe.out).
+    Its output is identical to the pre-ship's C1RCImportProbe.out except the MEM/exit lines.
+
+(b) Names the brief cites that the probe does not check (scripts/cited_spans.py over every code
+    span of the brief, minus the probe's #check names, minus prose/local names), added in
+    probe/C1RCImportProbeX.lean (125 #check; it also imports Diagonalization/NTimeHierarchy):
+      Turing.EffectiveNDMachineCode            (repository section, line 27)
+      Turing.exists_effectiveNDMachineCode     (Read first, line 143)
+      Turing.CodeFormat.exists_canonizer       (Read first, line 144)
+      Turing.CodeFormat.primrec_scan           (Read first, line 141; Known hazards, line 424)
+      Turing.FinTM.exists_comp_on_image        (route 1, line 208: "Do not use")
+      Turing.FinTM.ComputesInTime              (seal list, line 154)
+      Turing.MultiTapeTM.ComputesInTimeAndSpace (seal list, line 154; lives in Deterministic.lean)
+      Turing.exists_ndInterpreterCore          (lines 24, 131, 464)
+      Turing.exists_timed_universal_NDTM       (lines 25, 131, 464)
+      Primrec.nat_sub                          (route 4, line 282; the brief says it is not listed)
+      Fin.fin_one_eq_zero                      (pitfalls, line 508)
+      Function.iterate_succ_apply              (route 3, line 271)
+      List.append_assoc                        (route 3, line 275)
+      Nat.bits                                 (route 3 and the target's statement)
+    plus, for the seal (finding F3): Turing.optBoolBits, Turing.optStateBits; and, as a control,
+    the six R3 rows the brief forbids and MachineFormat.exists_uniformSimulator (out of scope).
+    Result: 0 errors, 0 warnings, exit 0 (probe/C1RCImportProbeX.out). All public.
+    Axioms: exists_ndInterpreterCore and exists_timed_universal_NDTM on
+    [propext, sorryAx, Classical.choice, Quot.sound] (the sorryAx is the target's: check 4).
+
+(c) Signatures as the route uses them: every cited lemma is applied in the review's complete
+    proof (probe/C1RCReviewFeasibility.lean, check 3), which elaborates with 0 diagnostics; in
+    particular canonizer_computes (a structure field), codePrim_machine (T arbitrary),
+    computesFunInTime_iff + ComputesInTime.mono, computesFunInTime_comp (needs Monotone T₂, no
+    length hypothesis), codePrimPrefix : Primrec₂ (fun xs n => xs.take (xs.length - n)),
+    codePrimDrop, codePrimSkipActionK k : Primrec₂ (codeSkipActionK k), codePrimRepeat (count
+    and reader both parameterised by A), codePrimPair, codePrimUnary, codePrimBitsNat,
+    codeReadUnary_append (stated on `List.replicate n true ++ false :: xs`).
+
+(d) `Primrec.list_take` / `list_drop`: absent from Mathlib at the pin (029db123; grep of
+    Mathlib/Computability/Primrec.lean and the whole Mathlib tree): the draft is right.
+
+RESULT: PASS for existence; the brief's claim "102 checks of 102 names: every declaration this
+brief cites" is not exact (14 cited names unchecked): finding F2.
