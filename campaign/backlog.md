@@ -1655,6 +1655,21 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       seven lemmas from `NDCodeSimulator` and `embedSilentCfg_initCfg` from U2-S, probed with
       corrected imports, sealed over 22 definitions; about +405/−291 lines; 5-module replay). Then
       a pre-ship re-run and `suggested-fix.diff`. Q-B2 and Q-B3 approved by the review.
+  - **Rulings on the reviews (user, 2026-10-24):**
+    - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
+      replay); C1 leaves megafill C.
+    - **Q-B1 = A: the startup-kit API PR first** (`Build/InterpreterStartup`, `NDCodeSimulator`
+      re-pointed in it). Maintainer's choices within A: `seamCompTM_step` goes in the new module
+      (the PR then depends on nothing in flight); UN's `un_step` and the three suffix-drop copies go
+      to the dedup window; B5a pre-discloses any startup-assembly pair below 90%.
+    - **Q-U1: one API PR** with the two `simps` lines, `spaceUsedByTape_eq_card` (`Deterministic`)
+      and `pairEncode_drop` (`Build/InputDevice`); a 325-module replay.
+    - **F3 cont2: accept the three route refinements; land the six commits as delivered, after
+      #156**, then replay `WindowClock` and the facade from #156's snapshot.
+    - **G4 cont4: issue now, alone** (Codex), its pre-ship re-run at the issue commit; megafill C
+      becomes B5a and U2, issued when #156, the phase-host follow-up and the two API PRs are in.
+    - Maintainer's calls (the drafting report's Q-M1, Q-M2): B5a before U2; B5a's budget counts up
+      to the start of its after-screen, which runs on a frozen worktree.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,
