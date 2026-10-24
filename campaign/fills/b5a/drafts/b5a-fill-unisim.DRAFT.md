@@ -11,11 +11,11 @@ below are the two outcomes; keep one at issue. Other issue-time items: @ANCESTOR
 ⟨IN-FLIGHT⟩, ⟨SCREEN⟩ (measured at the drafting base below), the megafill banner, and re-running
 the pre-ship at the issue commit. -->
 
-> **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the
-> toolchain, the clone and the cache are done once for the whole queue. For this item: create its
-> branch from the shared base (below), make your first edit, **re-bootstrap your order list**,
-> then follow this brief. **Budget:** ⟨…⟩ from your branch's creation. Deliver a checkpoint zip
-> after each checkpoint: the session may end at any time.
+> **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
+> the clone and the cache are done once for the whole queue. For this item: create its branch from
+> the shared base (below), make your first edit, **re-bootstrap your order list**, then follow this
+> brief. **Budget:** 5 hours (the cover's proposal) from your branch's creation. Deliver a
+> checkpoint zip after each checkpoint: the session may end at any time.
 
 ## Repository and branch — read this before anything else
 

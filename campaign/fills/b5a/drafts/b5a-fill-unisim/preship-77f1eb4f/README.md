@@ -19,7 +19,7 @@ with the brief's five imports after line 15; the order list is computed on it.
 | Route probe | sealed over 12 TCSlib definitions (the `@[simp]` `MultiTapeTM.initCfg`, `NDTM.initCfg` also erased): `b5a_install`, `b5a_locality`, `b5a_accepts_take`, `b5a_verdict`, `b5a_table_le`. 0 diagnostics; all on the standard three | `B5aUSRouteProbe.*` |
 | Verdict probe | in-module: the overlay with the 48-line block of `B5aUSVerdictProbe.append.lean.txt` before its final `end`s, sealed over 4 more definitions: `b5a_window_verdict` (the file's private `h1HostedVerdict_accepts` on the window `x.take t` decides acceptance on `x`). Only the stub's warning; the standard three. The assembled file's SHA-256 is in `B5aUSVerdictProbe.assembled.sha256` | `B5aUSVerdictProbe.*` |
 | Seal controls | 16 goals, one per sealed definition: unsealed, all close; sealed, all 16 fail, each at its own goal | `B5aUSSealControl.*` |
-| Screen base | ⟨B5A-SCREEN⟩ | `screen-base.*`, `screen-population.txt` |
+| Screen base | **not measured at this push**: running since 2026-10-24T00:30:35Z (`screen-base.status`) | `screen-base.*`, `screen-population.txt` |
 | Lint | `TuringMachine`: 0 FAIL, 68 WARN over 83 files; `CodeSimulator`'s are its size and check 8 (`MachineFormat.toFinTM`, `codeSkipTableK`, `oneTapeMachineFormat`) | `lint-turingmachine.txt` |
 
 **The copy-hazard search.** The would-be copies of this route are already in the tree, privately:

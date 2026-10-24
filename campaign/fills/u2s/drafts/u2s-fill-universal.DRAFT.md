@@ -13,11 +13,11 @@ equations under the names `simps` generates beside them (`StepBlock.forwardLoopC
 pre-ship against the API's head. Other issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩,
 ⟨SCREEN⟩ (measured at the drafting base below), the megafill banner. -->
 
-> **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the
-> toolchain, the clone and the cache are done once for the whole queue. For this item: create its
-> branch from the shared base (below), make your first edit, **re-bootstrap your order list**,
-> then follow this brief. **Budget:** ⟨…⟩ from your branch's creation. Deliver a checkpoint zip
-> after each checkpoint: the session may end at any time.
+> **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
+> the clone and the cache are done once for the whole queue. For this item: create its branch from
+> the shared base (below), make your first edit, **re-bootstrap your order list**, then follow this
+> brief. **Budget:** 4 hours (the cover's proposal) from your branch's creation. Deliver a
+> checkpoint zip after each checkpoint: the session may end at any time.
 
 ## Repository and branch — read this before anything else
 
@@ -240,8 +240,8 @@ Write `M := E.machine α`, `c₀ := M.initCfg z` (`z` the simulated input), `L`,
 
 **Phase 1, U2-U** (checkpoints 1.1–1.5).
 1. **The seam into H2-F** (checkpoint 1.1). `U` is the startup `R`, seamed at its `exit`
-   (`seamCompTM`) into the embedded `L` (R1 on the first `k + 2` of `R`'s `K + (k + 2)` tapes:
-   tape `j` of `L` is tape `⟨j, _⟩` of `R`). At `R`'s exit, the embedded part of the configuration is
+   (`seamCompTM`) into the embedded `L` (R1 on the first `k + 2` of `R`'s `K + (k + 2)` tapes: tape
+   `j` of `L` is tape `⟨j, _⟩` of `R`). At `R`'s exit, the embedded part of the configuration is
    **`forwardLoopCfg entry M c₀`**: `uk_encode_init_tapes`/`uk_encode_init_fields` (the probe's
    `u2_encode_init_*`, through the API's `forwardLoopCfg_workTapes`, `_workTapePos`, `_state`,
    `_inputPos`, `_output`, `MultiTapeTM.initCfg_eq`, `Cfg.init_*`, `Fin.addCases_left`/`_right`,

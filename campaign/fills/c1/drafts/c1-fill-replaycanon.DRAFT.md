@@ -6,11 +6,11 @@
 `campaign/fills/c1/drafts/c1-fill-replaycanon/preship-77f1eb4f/`. Issue-time items: @ANCESTOR@,
 ⟨BASE⟩, ⟨IN-FLIGHT⟩, the megafill banner, and re-running the pre-ship at the issue commit. -->
 
-> **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the
-> toolchain, the clone and the cache are done once for the whole queue. For this item: create its
-> branch from the shared base (below), **re-bootstrap your order list**, then follow this brief.
-> **Budget:** ⟨…⟩ from your branch's creation. Deliver a checkpoint zip after each checkpoint: the
-> session may end at any time.
+> **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
+> the clone and the cache are done once for the whole queue. For this item: create its branch from
+> the shared base (below), **re-bootstrap your order list**, then follow this brief. **Budget:** 3
+> hours (the cover's proposal) from your branch's creation. Deliver a checkpoint zip after each
+> checkpoint: the session may end at any time.
 
 ## Repository and branch — read this before anything else
 

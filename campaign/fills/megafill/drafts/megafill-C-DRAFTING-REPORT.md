@@ -15,6 +15,9 @@ here). Every line number and measurement in the drafts is this tree's.
 
 **The branch:** `drafts/megafill-c`, from the drafting base; it adds files under `campaign/` only.
 
+Items are numbered as in the drafting brief's §3 (G4 1, C1 2, B5a 3, U2 4); the cover's queue
+order differs (C1, B5a, U2, G4: Q-M1, under "The cover" below).
+
 ## The environment (addendum v2.5, Part 1; shared by the three pre-ships)
 
 Logs: `campaign/fills/megafill/drafts/megafill-C-env-77f1eb4f/logs/`.
@@ -125,7 +128,7 @@ probe; the split and rounds 150; the header 60; `Primrec` 120; the composition 2
 | Route probe | sealed over 12 TCSlib definitions: `b5a_install`, `b5a_locality`, `b5a_accepts_take`, `b5a_verdict`, `b5a_table_le`: 0 diagnostics |
 | Verdict probe | in-module (appended to the overlay), sealed over 4 more: `b5a_window_verdict`, `h1HostedVerdict_accepts` on the window deciding acceptance on `x`: the target's warning only |
 | Seal controls | 16 goals: all close unsealed, all fail sealed |
-| Screen base | ⟨B5A-SCREEN⟩ |
+| Screen base | **not measured at this push**: running (see "Not complete" below) |
 | Lint | `TuringMachine` 0 FAIL, 68 WARN over 83 files |
 
 **Dependencies.** `CodeSimulator` is upstream of C1's and U2's files; neither cites this target.
@@ -212,7 +215,7 @@ the seam into H2-F, which phase 2 reuses; one brief keeps that seam one private 
 | Import probe | 77 checks of 77 names, 0 errors, 0 warnings; startup, H2-F, H5, `Lockstep.runFrom`, rewind on the standard three |
 | Route probe | sealed over 8 TCSlib definitions, **with the proposed API's equations as `rfl` stand-ins**: `u2_encode_init_tapes`, `u2_encode_init_fields`, `u2_encode_halt`, `u2_ruler_fields`: 0 diagnostics |
 | Seal controls | 8 goals: all close unsealed, all fail sealed; the `forwardLoopCfg` and `rulerHostCfg` controls are the API gap |
-| Screen base | ⟨U2-SCREEN⟩ |
+| Screen base | **not measured at this push**: queued after B5a's (see "Not complete" below) |
 | Lint | `TuringMachine` 0 FAIL, 68 WARN over 83 files; check 8 lists `forwardLoopCfg`, `RulerAt` and `rulerHostCfg` |
 
 **Dependencies.** `UniversalK` is downstream of `CodeSimulator` (through `Codes2Tape`) and cites
@@ -271,6 +274,43 @@ shared base are dropped at issue, and the queue renumbered.
   statement of `NDCodeSimulator`'s private `ic_input_suffix` and `Logspace/PathWalk`'s private
   `drop_pairEncode`; a home beside `pairEncode_eq` in `Encoding` would serve all three.
 
+## Not complete at this push
+
+- **B5a's screen base** (54 files, about 5.0 MB of Lean; started 2026-10-24T00:30:35Z under
+  `nice -n 10`; C1's 16-file, 1.1 MB screen took 12.7 minutes on this host, so several hours are
+  expected), and **U2's** (20 files, 1.8 MB), run after it (one screen at a time). Their figures
+  go into each pre-ship README, each draft's "The base" line and the two tables above.
+
 ## Files (all new, under `campaign/`)
 
-⟨FILES⟩
+75 files.
+
+- `campaign/fills/b5a/drafts/` (1): `b5a-fill-unisim.DRAFT.md`
+- `campaign/fills/b5a/drafts/b5a-fill-unisim/preship-77f1eb4f/` (22): `B5aUSImportProbe.lean.txt`,
+  `B5aUSImportProbe.out`, `B5aUSRouteProbe.lean.txt`, `B5aUSRouteProbe.out`,
+  `B5aUSSealControl.lean.txt`, `B5aUSSealControl.out`, `B5aUSVerdictProbe.append.lean.txt`,
+  `B5aUSVerdictProbe.assembled.sha256`, `B5aUSVerdictProbe.out`, `CodeSimulatorOverlay.lean.txt`,
+  `README.md`, `base-sorries.txt`, `elab-CodeSimulator.out`, `elab-CodeSimulatorOverlay.out`,
+  `fillinputs-overlay.py`, `lint-turingmachine.txt`, `order.txt`, `roots.txt`, `screen-base.status`,
+  `screen-base.stderr`, `screen-base.txt`, `screen-population.txt`
+- `campaign/fills/c1/drafts/` (1): `c1-fill-replaycanon.DRAFT.md`
+- `campaign/fills/c1/drafts/c1-fill-replaycanon/preship-77f1eb4f/` (18): `C1RCDefsProbe.lean.txt`,
+  `C1RCDefsProbe.out`, `C1RCImportProbe.lean.txt`, `C1RCImportProbe.out`, `C1RCRouteProbe.lean.txt`,
+  `C1RCRouteProbe.out`, `C1RCSealControl.lean.txt`, `C1RCSealControl.out`, `README.md`,
+  `base-sorries.txt`, `elab-NDCodeSimulator.out`, `lint-turingmachine.txt`, `order.txt`,
+  `roots.txt`, `screen-base.status`, `screen-base.stderr`, `screen-base.txt`,
+  `screen-population.txt`
+- `campaign/fills/megafill/drafts/` (2): `megafill-C-DRAFTING-REPORT.md`, `megafill-C.DRAFT.md`
+- `campaign/fills/megafill/drafts/megafill-C-env-77f1eb4f/` (1): `README.md`
+- `campaign/fills/megafill/drafts/megafill-C-env-77f1eb4f/logs/` (11): `bootstrap-order.txt`,
+  `bootstrap.log`, `cache-check.log`, `cache-get.log`, `cache-get.time`, `cache-store.log`,
+  `manifest-check.log`, `mathlib-roots.txt`, `preflight.log`, `recheck.log`, `toolchain.log`
+- `campaign/fills/megafill/drafts/megafill-C-env-77f1eb4f/tools/` (2): `runmem.py`,
+  `subst_hashes.py`
+- `campaign/fills/u2s/drafts/` (1): `u2s-fill-universal.DRAFT.md`
+- `campaign/fills/u2s/drafts/u2s-fill-universal/preship-77f1eb4f/` (16): `README.md`,
+  `U2UEImportProbe.lean.txt`, `U2UEImportProbe.out`, `U2UERouteProbe.lean.txt`,
+  `U2UERouteProbe.out`, `U2UESealControl.lean.txt`, `U2UESealControl.out`,
+  `UniversalKOverlay.lean.txt`, `base-sorries.txt`, `elab-UniversalK.out`,
+  `elab-UniversalKOverlay.out`, `fillinputs-overlay.py`, `lint-turingmachine.txt`, `order.txt`,
+  `roots.txt`, `screen-population.txt`
