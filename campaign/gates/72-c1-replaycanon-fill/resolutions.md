@@ -28,4 +28,6 @@ errors are the 22 controls (lines 89–166), the home from line 168 elaborating 
 canonizer, the core and the bridge on the standard three; against round 1's head: 3 → 3 public,
 49 → 49 private (`RcT` removed, `rc_State` added; `rc_body`'s statement renamed only;
 `rc_workReads2_length`'s body changed); lint 0 FAIL, 68 WARN. Replay `replay-lrcan3.sh`, the 4
-modules from `oleans-lphf`; round 2 audits the fix.
+modules from `oleans-lphf`: **passed (user, 2026-10-24): 4 of 4**, static-equal (1); the universal
+NDTM on the standard three on `oleans-lrcan3`. Screen: the tip 541/173, the head 565/176; against
+round 1's head no pair new or gone. Round 2 (`pack-r2.md`) audits the fix.
