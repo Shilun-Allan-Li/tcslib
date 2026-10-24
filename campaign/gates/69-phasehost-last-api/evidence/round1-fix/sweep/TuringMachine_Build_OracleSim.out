@@ -1,0 +1,8 @@
+TuringMachine_Build_OracleSim.lean:854:49: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TuringMachine_Build_OracleSim.lean:1907:2: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk OraclePhase.dispatch) d) 2 = ?m.814
+is not definitionally equal to target
+  MultiTapeTM.runFrom (Cfg.ofWords (oracleHost M C hc en ex).tm.q₀ (FinTM.prefixWords (oracleHostTapes M.k C.k) w)) 2 =
+    oracleStableCfg M C (Cfg.ofWords M.tm.q₀ w) true

@@ -1,0 +1,20 @@
+# The phase host's last phase (PR #156, an API gate): resolutions (round 1 FAIL, fixed; round 2 pending)
+
+**Gate:** the API gate of PR #156 (`lean/phasehost-last` at `a4d9b024`: `0b671a28`, the
+maintainer's rewrite of `phaseHostTM_run` `9f82de74`, and two merges of the campaign branch, after
+#154 and #155). Pack `pack.md`; bundle SHA-256
+`87d56842f52d8b021e6fe7a92b3a75f6c72dcccdf8123e32dfc2249c57993b83` (150 sections; folder
+`69-phasehost-last-api-gate/`), built from the Lean files at `a4d9b024` and the records at
+`4fc5a7b5`. Replay `replay-lphl.sh` passed (user, 2026-10-23): 88 of 88 at `a4d9b024`,
+static-equal (53). By the user's ruling of 2026-10-23 the gate was dispatched before the replay.
+
+**Round 1** (`findings.md`, verbatim; received 2026-10-23, SHA-256
+`a1ef694a44531ee0291fd3e42efc6701a9fbce3c779ccc818ceb0d99387c4d0a`): **FAIL, 0 blockers, 1 major,
+1 minor, 8 notes.** The maintainer checked both actionable findings directly: both true.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | major | Six older proofs in four files re-derive the newly published prefix argument (`wr_prefix`; `recordSkipTM_tail`; `b2b_trial_run`'s `hpz`, `b2b_round_run`'s `hprefix`, `b2b_finish_answer`'s `hp`; `canonEmitVerdict`'s `leaf`); the text screen does not establish semantic reuse. | **True.** Each site proves the tagged-run prefix through `MultiTapeTM.runFrom_mapState_of_agreeOn`, its table agreement closed by unfolding `phaseHostTM` in another file (`simp [… phaseHostTM …]` in `wr_prefix` and the three `Inclusions` sites, a definitional `rfl` in the other two). All six predate #156. The pack's search (files using both `phaseHostTM` and the transfer) found the files but read only for restated statements. **Ruled (user, 2026-10-23): fix it in #156.** Commit `0e5f210b`: each site is now an application of `Turing.phaseHostTM_run_le` with its local guard conversion. A wider search for other-file `phaseHostTM` unfoldings found a seventh site of the same kind, `OracleSim`'s `oracleHost_offQuery`, whose table agreement off the query state re-derived `Turing.phaseHostTM_tr_of_red_none`; it is now that lemma. Statements unchanged; proofs and the sketches of `wr_prefix`, `recordSkipTM_tail` and `oracleHost_offQuery` only (`evidence/round1-fix/`). A seal sweep of all 16 other files that use the host (`phaseHostTM` irreducible) and the search for explicit unfoldings find 12 older one-field or one-step reads in seven files: the start state, the redirect branch's dispatch, single table reads, and `phaseHostND_fixChoice` (`evidence/round1-fix/phasehost-reads-inventory.md`). None is a prefix or a table agreement for a run; most need equations that are not published. **Ruled (user, 2026-10-24): a follow-up API PR after #156** (a start-state and a redirect-branch equation in `Build/Seam`, and the re-points, with their own gate and replay), landing before megafill C is issued. `hprefix`'s start configuration `d` is the tagged `c` by definition, as before. Round 2 audits `0e5f210b`. |
+| 2 | minor | The PR body says "Seam and the six files" where the population has seven; the lint log is of the 905-line first head, not the final 919-line `Seam`. | **True; records.** The PR body now says seven files. The lint records are re-run at the round-2 head (`evidence/round1-fix/lint-*.txt`, which list `Seam` at 919 lines); `lint-build.txt` stays as the first head's record. |
+| 10 | note | The replay is a separate merge condition. | **Agreed.** The round-2 head's replay is `replay-lphl2.sh`: the five changed files' downstream closure (23 modules), chained from `oleans-lphl`. |
+| 3–9 | notes | Integrity and the freeze; the table equation; the run lemma's boundary cases; sufficiency (no dispatch form needed); the rewrite of `phaseHostTM_run`; the elaboration, axiom and seal records; the screen. | No action. Note 9's distinction between text-screen results and semantic duplication review is kept in the round-2 pack. |

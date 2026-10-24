@@ -1,0 +1,40 @@
+# Residue search at 0e5f210b (git grep over TCSlib/*.lean; Build/Seam.lean excluded, where phaseHostTM is defined)
+
+## 1. Tactic lines naming phaseHostTM: git grep -n -P '(simp|simp only|simpa|rw|unfold|dsimp|delta|simp_rw|erw|change|show).*phaseHostTM'
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2071:  show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:926:    change |((phaseHostTM (b2b_hostPhases MV MI MP)
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1265:    apply Cfg.ext <;> simp [seekCfg, Cfg.mapState, hq, start, key, recordSkipTM, phaseHostTM]
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:1453:    simp [MultiTapeTM.step, seekTM, seekCfg, Cfg.mapState, phaseHostTM,
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:533:    simp only [MultiTapeTM.step, hd, wl_loopTM, phaseHostTM, wl_red, wl_rows]
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:2602:    change ((phaseHostTM family base red).runFrom (d.mapState (Sigma.mk false)) u).state ≠ _
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:3601:    change (phaseHostTM canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext).runFrom d _ = _
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:605:  · change ((phaseHostTM ic_loopPiece ⟨false, (.dec .run, true)⟩ ic_loopRedirect).runFrom
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:616:    · change ((phaseHostTM ic_loopPiece ⟨false, (.dec .run, true)⟩ ic_loopRedirect).runFrom
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:626:      change ((phaseHostTM ic_loopPiece ⟨false, (.dec .run, true)⟩ ic_loopRedirect).runFrom
+
+## 2. Agreement-transfer calls in files that use phaseHostTM
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1179:so `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` transports every prefix. -/
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1194:  have H := MultiTapeTM.runFrom_mapState_of_agreeOn M N emb good hagree _ u
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1198:/-- **State renaming along an embedding** (`Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`): a
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:827:    rw [MultiTapeTM.runFrom_mapState_of_agreeOn (embedEmitTM (rd_slot m) rd_test)
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:518:  have htransfer := MultiTapeTM.runFrom_mapState_of_agreeOn
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:910:  have hpre := MultiTapeTM.runFrom_mapState_of_agreeOn
+
+## 3. Uses of the two new lemmas
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:1904:    phaseHostTM_run_le (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩ (b2b_testRedirect MV MI)
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2241:    phaseHostTM_run_le (b2b_bodyPhases MV MI MP) ⟨.test, ⟨.anchor, ()⟩⟩
+TCSlib/Complexity/SpaceComplexity/Inclusions.lean:2312:    phaseHostTM_run_le (b2b_hostPhases MV MI MP) _ (b2b_hostRedirect MV MI MP)
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1230:the host's table is the source phase's (`Turing.phaseHostTM_tr_of_red_none`),
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:1247:    exact phaseHostTM_tr_of_red_none (oraclePhases M C hc en) _ (oracleRedirect M C ex)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:42:`Turing.phaseHostTM_tr_of_red_none`, and `Turing.phaseHostTM_run_le` runs a last phase up to its
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:845:theorem phaseHostTM_tr_of_red_none {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:858:(`Turing.phaseHostTM_tr_of_red_none`), so the agreement transfer
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:860:theorem phaseHostTM_run_le {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:870:    (fun s hs inp work => phaseHostTM_tr_of_red_none M q0 red i s hs inp work)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:878:**Proof sketch.** The prefix up to `T` is `Turing.phaseHostTM_run_le`. The dispatch is one step,
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:892:  have hpre := phaseHostTM_run_le M q0 red i c T hguard
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:912:`Turing.phaseHostTM_run_le`, not another host trace. -/
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:918:  exact phaseHostTM_run_le (skipPart k) _ (skipRed k) true d t (fun _ _ _ _ => rfl) t le_rfl
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:970:one, so the phase host's last-phase lemma `Turing.phaseHostTM_run_le` gives the prefix. -/
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:977:  refine phaseHostTM_run_le (Ph := wr_Ctrl Q) _ _ _ true a t ?_
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:4598:    phaseHostTM_run_le family start red true z 1 (fun _ _ _ _ => rfl) 1 le_rfl

@@ -1,0 +1,193 @@
+From 0e5f210b3481a87374e3f6e193a44791673062a4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Fri, 23 Oct 2026 23:53:36 -0500
+Subject: [PATCH] Phase-host prefixes through the new last-phase lemmas (gate
+ 69's major)
+
+Six older proofs rebuilt the tagged-run prefix of a phase host by hand, through
+the agreement transfer with the host's table read by unfolding phaseHostTM in
+another file: WindowRun's wr_prefix, StepBlock's recordSkipTM_tail, three
+haves in Inclusions (b2b_trial_run, b2b_round_run, b2b_finish_answer) and
+CodeSimulator's canonEmitVerdict. Each is now an application of
+phaseHostTM_run_le with its local guard conversion. OracleSim's
+oracleHost_offQuery read the host's table off the redirects the same way; it
+is now phaseHostTM_tr_of_red_none. Statements are unchanged; proofs and two
+sketches only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../SpaceComplexity/Inclusions.lean           | 33 +++++--------------
+ .../TuringMachine/Build/OracleSim.lean        | 10 +++---
+ .../TuringMachine/Build/StepBlock.lean        |  9 ++---
+ .../TuringMachine/Build/WindowRun.lean        | 18 ++++------
+ .../TuringMachine/CodeSimulator.lean          |  8 ++---
+ 5 files changed, 27 insertions(+), 51 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Inclusions.lean b/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
+index f6958339..aeb0a683 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
+@@ -1900,13 +1900,9 @@ private theorem b2b_trial_run (MV MI MP : FinTM Bool) (x u : List Bool)
+       | inr q => exact False.elim (hvCut t ht (by simpa using hq)))
+   have hpz (t : ℕ) : H.runFrom (z.mapState (Sigma.mk B2bTestPhase.verdict)) t =
+       ((b2b_testPhases MV MI MP .verdict).runFrom z t).mapState
+-        (Sigma.mk B2bTestPhase.verdict) := by
+-    apply MultiTapeTM.runFrom_mapState_of_agreeOn
+-      (b2b_testPhases MV MI MP .verdict) H
+-      ⟨Sigma.mk B2bTestPhase.verdict, sigma_mk_injective⟩ (fun _ => True)
+-    · intro q _ inp work
+-      simp [H, b2b_testTM, phaseHostTM, b2b_testRedirect]
+-    · intros; trivial
++        (Sigma.mk B2bTestPhase.verdict) :=
++    phaseHostTM_run_le (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩ (b2b_testRedirect MV MI)
++      .verdict z t (fun _ _ _ _ => rfl) t le_rfl
+   let A := 1 + (I + 1)
+   let B := A + (R + 1)
+   let C := B + (2 * u.length + 2 + 1)
+@@ -2241,15 +2237,9 @@ private theorem b2b_round_run (MV MI MP : FinTM Bool) (x u v : List Bool)
+     | done b' =>
+       exact False.elim ((htCut t htt).2 b' hq)
+   have hprefix (t : ℕ) (htt : t ≤ T) : H.runFrom d t =
+-      ((b2b_testTM MV MI MP).runFrom c t).mapState (Sigma.mk B2bBodyPhase.test) := by
+-    refine MultiTapeTM.runFrom_mapState_of_agreeOn (b2b_testTM MV MI MP) H
+-      ⟨(fun q => (⟨B2bBodyPhase.test, q⟩ : Σ j, b2b_bodyState MV MI j)),
+-        by intro q q' h; simpa using h⟩
+-      (fun q => b2b_bodyRedirect MV MI .test q = none) ?_ c t ?_
+-    · intro q hq inp work
+-      simp [H, b2b_bodyTM, phaseHostTM, hq, b2b_bodyPhases]
+-    · intro r hr q hq
+-      exact hguard r (by omega) q hq
++      ((b2b_testTM MV MI MP).runFrom c t).mapState (Sigma.mk B2bBodyPhase.test) :=
++    phaseHostTM_run_le (b2b_bodyPhases MV MI MP) ⟨.test, ⟨.anchor, ()⟩⟩
++      (b2b_bodyRedirect MV MI) .test c T hguard t htt
+   cases b with
+   | true =>
+     refine ⟨T, hT, ?_, ?_, ?_⟩
+@@ -2318,14 +2308,9 @@ private theorem b2b_finish_answer (MV MI MP : FinTM Bool) {x : List Bool} (b : B
+   let H := (b2b_host MV MI MP).tm
+   let M := b2b_answerTM (b2b_tapeCount MV.k MI.k MP.k + 1) b
+   have hp (t : ℕ) : H.runFrom (c.mapState (Sigma.mk (B2bHostPhase.answer b))) t =
+-      (M.runFrom c t).mapState (Sigma.mk (B2bHostPhase.answer b)) := by
+-    refine MultiTapeTM.runFrom_mapState_of_agreeOn M H
+-      ⟨(fun q => (⟨B2bHostPhase.answer b, q⟩ : Σ j, b2b_hostState MV MI MP j)),
+-        by intro q q' h
+-           exact @sigma_mk_injective B2bHostPhase (b2b_hostState MV MI MP)
+-             (B2bHostPhase.answer b) q q' h⟩ (fun _ => True) ?_ c t (by intros; trivial)
+-    intro q _ inp work
+-    rfl
++      (M.runFrom c t).mapState (Sigma.mk (B2bHostPhase.answer b)) :=
++    phaseHostTM_run_le (b2b_hostPhases MV MI MP) _ (b2b_hostRedirect MV MI MP)
++      (.answer b) c t (fun _ _ _ _ => rfl) t le_rfl
+   obtain ⟨hh, ho⟩ := b2b_answer_run b c hc
+   refine ⟨?_, ?_, ?_⟩
+   · rw [hp]
+diff --git a/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean b/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
+index 644dad55..ed59e7e6 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
+@@ -1226,9 +1226,10 @@ private noncomputable def oracleStableCfg (M : FinOracleTM Bool) (C : FinTM Bool
+ /-- Off-query segments of the candidate host are the inherited source/shadow
+ transport, with all auxiliary tapes clean at their boundaries.
+ 
+-**Proof sketch.** The source redirect is absent off the query state. Its
+-phase table is exactly the R1 shadow placement, so `oracleOffQuery` supplies
+-the whole segment and the side witness; no lockstep is repeated. -/
++**Proof sketch.** The source redirect is absent off the query state, so there
++the host's table is the source phase's (`Turing.phaseHostTM_tr_of_red_none`),
++the R1 shadow placement, and `oracleOffQuery` supplies the whole segment and
++the side witness; no lockstep is repeated. -/
+ private theorem oracleHost_offQuery (M : FinOracleTM Bool) (C : FinTM Bool)
+     (hc : 0 < C.k) (en ex : C.State) (O : Language Bool) {x : List Bool}
+     (c : Cfg (M.k + 1) Bool M.State x) (side : Bool)
+@@ -1243,7 +1244,8 @@ private theorem oracleHost_offQuery (M : FinOracleTM Bool) (C : FinTM Bool)
+     (oracleSourceBank M.k C.k) ⟨Sigma.mk (β := oraclePhaseState M C) OraclePhase.source, sigma_mk_injective⟩
+     (fun _ _ => none) (fun _ => 0)
+   · intro qb hq inp work
+-    simp [oracleHost, phaseHostTM, oracleRedirect, oraclePhases, hq]
++    exact phaseHostTM_tr_of_red_none (oraclePhases M C hc en) _ (oracleRedirect M C ex)
++      .source qb (by simp [oracleRedirect, hq]) inp work
+   · exact hb
+   · exact hvisit
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+index 4f77af36..1f063406 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/StepBlock.lean
+@@ -908,17 +908,14 @@ private lemma recordSkipTM_fixed {k : ℕ} {x : List Bool}
+   exact congrArg (Cfg.mapState (Sigma.mk false)) (recordTM_read d bits hq hw u hu)
+ 
+ /-- Once dispatched, the host follows the successor walker literally.
+-This is an application of public state transport, not another host trace. -/
++The walker's phase redirects nothing, so this is the phase host's last-phase lemma
++`Turing.phaseHostTM_run_le`, not another host trace. -/
+ private lemma recordSkipTM_tail {k : ℕ} {x : List Bool}
+     (d : Cfg (k + 2) Bool SuccPhase x) (t : ℕ) :
+     (recordSkipTM k).runFrom (d.mapState (Sigma.mk true)) t =
+       ((succFieldTM (tableTape k) (summaryTape k) false).runFrom d t).mapState
+         (Sigma.mk true) := by
+-  exact MultiTapeTM.runFrom_mapState_of_agreeOn
+-    (succFieldTM (tableTape k) (summaryTape k) false) (recordSkipTM k)
+-    ⟨(fun q => (⟨true, q⟩ : Σ b, SkipPh k b)), by
+-      intro a b h; cases h; rfl⟩ (fun _ => True)
+-    (fun _ _ _ _ => rfl) d t (fun _ _ _ _ => trivial)
++  exact phaseHostTM_run_le (skipPart k) _ (skipRed k) true d t (fun _ _ _ _ => rfl) t le_rfl
+ 
+ /-- A trusted action record splits at exactly the inherited fixed width.
+ Only this elementary serialization identity is missing from the public
+diff --git a/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean b/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean
+index 79639fa9..91d4f963 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/WindowRun.lean
+@@ -966,24 +966,18 @@ private theorem wr_clockCfg_eta {K : ℕ} {Γ P Q : Type} {x : List Γ}
+   · rfl
+ 
+ /-- Before any timeout, the runner follows the clock with its phase tag.
+-Proof sketch: the phase table agrees with the clock on every non-timeout state, so the
+-public state-transport theorem gives the prefix without another simulation induction. -/
++Proof sketch: the runner redirects only the timeouts, and no state reached before `t` is
++one, so the phase host's last-phase lemma `Turing.phaseHostTM_run_le` gives the prefix. -/
+ private theorem wr_prefix {k : ℕ} {Γ Q S : Type} [DecidableEq Q] [Fintype S]
+     (H : MultiTapeTM k Γ Q) (timeout : Option S → Q) {x : List Γ}
+     (a : Cfg k Γ Q x) (t : ℕ)
+     (hcut : ∀ u < t, ∀ r, (H.runFrom a u).state ≠ some (timeout r)) :
+     ∀ u ≤ t, (wr_runnerTM H timeout).runFrom (a.mapState (Sigma.mk true)) u =
+       (H.runFrom a u).mapState (Sigma.mk true) := by
+-  intro u hu
+-  refine MultiTapeTM.runFrom_mapState_of_agreeOn H (wr_runnerTM H timeout)
+-    ⟨(fun q : Q => (⟨true, q⟩ : Σ b, wr_Ctrl Q b)),
+-      fun _ _ h => eq_of_heq (Sigma.mk.inj h).2⟩
+-    (fun q => ∀ r, q ≠ timeout r) ?_ a u ?_
+-  · intro q hq inp work
+-    have hnot : ¬∃ r, q = timeout r := by simpa using hq
+-    simp only [wr_runnerTM, phaseHostTM, Function.Embedding.coeFn_mk, if_neg hnot]
+-  · intro v hv q hq r he
+-    exact hcut v (by omega) r (hq.trans (congrArg some he))
++  refine phaseHostTM_run_le (Ph := wr_Ctrl Q) _ _ _ true a t ?_
++  intro u hu q hq
++  have hnot : ¬∃ r, q = timeout r := fun ⟨r, he⟩ => hcut u hu r (hq.trans (congrArg some he))
++  exact if_neg hnot
+ 
+ /-- At a timeout the runner makes exactly one stationary dispatch to exhaustion. -/
+ private theorem wr_timeout_dispatch {k : ℕ} {Γ Q S : Type}
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index c64567f0..1d4721de 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -4593,11 +4593,9 @@ private lemma canonEmitVerdict {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+   have joined : e.mapState (fun _ => (⟨true, bit⟩ : Sigma Ph)) =
+       z.mapState (Sigma.mk true) := by
+     simp [z, Cfg.mapState, Option.map_map, Function.comp_def]
+-  have leaf := MultiTapeTM.runFrom_mapState_of_agreeOn (canonHaltTM k) N
+-    (⟨fun q => ⟨true, q⟩, fun _ _ h => eq_of_heq (Sigma.mk.inj_iff.mp h).2⟩ :
+-      Bool ↪ Sigma Ph) (fun _ => True)
+-    (by intro q _ inp work; rfl) z 1 (by intros; trivial)
+-  simp only [Function.Embedding.coeFn_mk] at leaf
++  have leaf : N.runFrom (z.mapState (Sigma.mk true)) 1 =
++      ((canonHaltTM k).runFrom z 1).mapState (Sigma.mk true) :=
++    phaseHostTM_run_le family start red true z 1 (fun _ _ _ _ => rfl) 1 le_rfl
+   have halted := canonHalt_run z bit live
+   apply (FinTM.computesInTime_iff D _ _ _).mpr
+   rw [initCfg_ofWords]
+-- 
+2.50.1 (Apple Git-155)
+

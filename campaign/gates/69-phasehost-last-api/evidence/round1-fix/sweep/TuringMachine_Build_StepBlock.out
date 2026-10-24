@@ -1,0 +1,109 @@
+TuringMachine_Build_StepBlock.lean:1267:44: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.324 = ?m.324
+but is expected to have type
+  (seekTM k).tr ⟨none, SeekCtrl.request rank rest last⟩ (seekCfg d (SeekCtrl.request rank rest last)).inputSymbol
+      (seekCfg d (SeekCtrl.request rank rest last)).workTapeSymbols =
+    inputMoveAction 0 ⟨key, (recordSkipTM k).q₀⟩
+in the application
+  step_of_inputMoveAction (seekTM k) (seekCfg d (SeekCtrl.request rank rest last)) 0
+    (of_eq_true
+      (Eq.trans
+        (congrArg
+          (fun x_1 =>
+            { state := Option.map (fun x => ⟨none, SeekCtrl.request rank rest last⟩) x_1, inputPos := d.inputPos,
+                  workTapes := d.workTapes, workTapePos := d.workTapePos, output := d.output }.state =
+              some ⟨none, SeekCtrl.request rank rest last⟩)
+          hq)
+        (eq_self (some ⟨none, SeekCtrl.request rank rest last⟩))))
+    rfl
+TuringMachine_Build_StepBlock.lean:1721:48: error: Tactic `rfl` failed: The left-hand side
+  (seekTM k).tr ⟨none, SeekCtrl.observe⟩ (seekCfg d SeekCtrl.observe).inputSymbol
+    (seekCfg d SeekCtrl.observe).workTapeSymbols
+is not definitionally equal to the right-hand side
+  tapeAction (summaryTape k) 0 none SignType.pos ⟨none, SeekCtrl.advance rank⟩
+
+k : ℕ
+x : List Bool
+d : Cfg (k + 2) Bool (RecordState k) x
+hq : d.state = some (recordTM k).q₀
+rank : Fin (3 ^ (k + 1)) := readRank d.inputSymbol fun i => d.workTapeSymbols (Fin.castAdd 2 i)
+next : Cfg (k + 2) Bool (RecordState k) x :=
+  { state := d.state, inputPos := d.inputPos, workTapes := d.workTapes,
+    workTapePos := Function.update d.workTapePos (summaryTape k) (d.workTapePos (summaryTape k) + 1),
+    output := d.output }
+⊢ (seekTM k).tr ⟨none, SeekCtrl.observe⟩ (seekCfg d SeekCtrl.observe).inputSymbol
+      (seekCfg d SeekCtrl.observe).workTapeSymbols =
+    tapeAction (summaryTape k) 0 none SignType.pos ⟨none, SeekCtrl.advance rank⟩
+TuringMachine_Build_StepBlock.lean:1727:54: error: Tactic `rfl` failed: The left-hand side
+  (seekTM k).tr ⟨none, SeekCtrl.advance rank⟩ (seekCfg next (SeekCtrl.advance rank)).inputSymbol
+    (seekCfg next (SeekCtrl.advance rank)).workTapeSymbols
+is not definitionally equal to the right-hand side
+  tapeAction (summaryTape k) 0 none SignType.pos ⟨none, SeekCtrl.state rank⟩
+
+k : ℕ
+x : List Bool
+d : Cfg (k + 2) Bool (RecordState k) x
+hq : d.state = some (recordTM k).q₀
+rank : Fin (3 ^ (k + 1)) := readRank d.inputSymbol fun i => d.workTapeSymbols (Fin.castAdd 2 i)
+next : Cfg (k + 2) Bool (RecordState k) x :=
+  { state := d.state, inputPos := d.inputPos, workTapes := d.workTapes,
+    workTapePos := Function.update d.workTapePos (summaryTape k) (d.workTapePos (summaryTape k) + 1),
+    output := d.output }
+first : MultiTapeTM.step (seekCfg d SeekCtrl.observe) = seekCfg next (SeekCtrl.advance rank)
+⊢ (seekTM k).tr ⟨none, SeekCtrl.advance rank⟩ (seekCfg next (SeekCtrl.advance rank)).inputSymbol
+      (seekCfg next (SeekCtrl.advance rank)).workTapeSymbols =
+    tapeAction (summaryTape k) 0 none SignType.pos ⟨none, SeekCtrl.state rank⟩
+TuringMachine_Build_StepBlock.lean:2992:4: error: Type mismatch: After simplification, term
+  lifted
+ has type
+  RoundSpan c a
+    { state := Option.map (Sigma.mk Key.lookup) (Option.map (fun x => ⟨none, SeekCtrl.observe⟩) (some (recordTM k).q₀)),
+      inputPos := c.inputPos,
+      workTapes := fun i =>
+        Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes
+          (fun i =>
+            if i = 0 then FinTM.bufferTape (tableBitsK tr) else summaryCells (outputSummary c.output) (unaryFin q))
+          i,
+      workTapePos := fun i => Fin.addCases c.workTapePos (fun i => if i = 0 then 0 else 0) i, output := pre }
+    {
+      state :=
+        Option.map (fun x => ⟨Key.stateTail, SeekPhase.run⟩)
+          (Option.map (fun x => ⟨none, SeekCtrl.done⟩) (some (recordTM k).q₀)),
+      inputPos := c.inputPos,
+      workTapes := fun i =>
+        Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes
+          (fun i =>
+            if i = 0 then FinTM.bufferTape (tableBitsK tr) else summaryCells (outputSummary c.output) (unaryFin q))
+          i,
+      workTapePos := fun i => Fin.addCases c.workTapePos (fun i => if i = 0 then ↑before.length else ↑↑q + 2) i,
+      output := pre }
+    (T + 1)
+but is expected to have type
+  RoundSpan c (tr q c.inputSymbol c.workTapeSymbols)
+    { state := Option.map (fun x => ⟨Key.lookup, (seekTM k).q₀⟩) (some (recordTM k).q₀), inputPos := c.inputPos,
+      workTapes := fun i =>
+        Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes
+          (fun i =>
+            if i = 0 then FinTM.bufferTape (tableBitsK tr) else summaryCells (outputSummary c.output) (unaryFin q))
+          i,
+      workTapePos := fun i => Fin.addCases c.workTapePos (fun i => if i = 0 then 0 else 0) i, output := pre }
+    { state := Option.map (fun x => ⟨Key.stateTail, SeekPhase.run⟩) (some (recordTM k).q₀), inputPos := c.inputPos,
+      workTapes := fun i =>
+        Fin.addCases (motive := fun x => ℤ → Option Bool) c.workTapes
+          (fun i =>
+            if i = 0 then FinTM.bufferTape (tableBitsK tr) else summaryCells (outputSummary c.output) (unaryFin q))
+          i,
+      workTapePos := fun i => Fin.addCases c.workTapePos (fun i => if i = 0 then ↑before.length else ↑↑q + 2) i,
+      output := pre }
+    (T + 1)
+TuringMachine_Build_StepBlock.lean:3032:65: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.457 = ?m.457
+but is expected to have type
+  (roundTM k).tr ⟨Key.entry, ()⟩ (atKey d Key.entry ()).inputSymbol (atKey d Key.entry ()).workTapeSymbols =
+    inputMoveAction 0 ⟨Key.lookup, (seekTM k).q₀⟩
+in the application
+  step_of_inputMoveAction (roundTM k) (atKey d Key.entry ()) 0 rfl rfl

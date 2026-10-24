@@ -1,0 +1,60 @@
+--- head/TCSlib/Complexity/SpaceComplexity/Inclusions.lean
++++ sealed/InclusionsSeal.lean
+@@ -2329,6 +2329,57 @@
+     · rw [MultiTapeTM.runFrom_succ_eq_step', h1]
+       simp [M, b2b_answerTM, MultiTapeTM.step, FinTM.emitAction, Action.apply]
+ 
++section PHLSeal
++attribute [local irreducible] Turing.phaseHostTM Turing.MultiTapeTM.runFrom
++  Turing.MultiTapeTM.step Turing.Cfg.mapState Turing.Action.mapState Turing.Action.apply
++  Turing.embedEmitTM
++attribute [-simp] Turing.Action.apply
++-- Controls: each closes unsealed (PHLSealControl.lean) and must fail here.
++example {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
++    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
++    (Turing.phaseHostTM M q0 red).q₀ = q0 := rfl
++example {k : ℕ} {S : Type} {x : List Bool} (M : Turing.MultiTapeTM k Bool S)
++    (d : Turing.Cfg k Bool S x) : M.runFrom d 0 = d := rfl
++example {k : ℕ} {S : Type} {x : List Bool} (M : Turing.MultiTapeTM k Bool S)
++    (d : Turing.Cfg k Bool S x) : M.step { d with state := none } = { d with state := none } := rfl
++example {k : ℕ} {S T : Type} {x : List Bool} (d : Turing.Cfg k Bool S x) (f : S → T) :
++    (d.mapState f).inputPos = d.inputPos := rfl
++example {k : ℕ} {S T : Type} (a : Turing.Action k Bool S) (f : S → T) :
++    (a.mapState f).output = a.output := rfl
++example {k : ℕ} {S : Type} {x : List Bool} (a : Turing.Action k Bool S)
++    (d : Turing.Cfg k Bool S x) : (a.apply d).state = a.state := rfl
++example {m k : ℕ} {S : Type} (ι : Fin m ↪ Fin k) (M : Turing.MultiTapeTM m Bool S) :
++    (Turing.embedEmitTM ι M).q₀ = M.q₀ := rfl
++-- `b2b_trial_run`'s `hpz`, the test host's last (verdict) phase.
++example (MV MI MP : FinTM Bool) {x : List Bool}
++    (z : Cfg (b2b_tapeCount MV.k MI.k MP.k) Bool (b2b_testState MV MI .verdict) x) (t : ℕ) :
++    (b2b_testTM MV MI MP).runFrom (z.mapState (Sigma.mk B2bTestPhase.verdict)) t =
++      ((b2b_testPhases MV MI MP .verdict).runFrom z t).mapState
++        (Sigma.mk B2bTestPhase.verdict) :=
++  phaseHostTM_run_le (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩ (b2b_testRedirect MV MI)
++    .verdict z t (fun _ _ _ _ => rfl) t le_rfl
++-- `b2b_round_run`'s `hprefix`, with the start written as the tagged `c`.
++example (MV MI MP : FinTM Bool) {x : List Bool}
++    (c : Cfg (b2b_tapeCount MV.k MI.k MP.k) Bool (Σ j, b2b_testState MV MI j) x) (T : ℕ)
++    (hguard : ∀ t < T, ∀ q : Σ j, b2b_testState MV MI j,
++      ((b2b_testTM MV MI MP).runFrom c t).state = some q →
++        b2b_bodyRedirect MV MI .test q = none)
++    (t : ℕ) (htt : t ≤ T) :
++    (b2b_bodyTM MV MI MP).runFrom (c.mapState (Sigma.mk B2bBodyPhase.test)) t =
++      ((b2b_testTM MV MI MP).runFrom c t).mapState (Sigma.mk B2bBodyPhase.test) :=
++  phaseHostTM_run_le (b2b_bodyPhases MV MI MP) ⟨.test, ⟨.anchor, ()⟩⟩
++    (b2b_bodyRedirect MV MI) .test c T hguard t htt
++-- `b2b_finish_answer`'s `hp`, the host's answer phase.
++example (MV MI MP : FinTM Bool) {x : List Bool} (b : Bool)
++    (c : Cfg (b2b_tapeCount MV.k MI.k MP.k + 1) Bool (Fin 2) x) (t : ℕ) :
++    (b2b_host MV MI MP).tm.runFrom
++        (c.mapState (Sigma.mk (β := b2b_hostState MV MI MP) (B2bHostPhase.answer b))) t =
++      ((b2b_answerTM (b2b_tapeCount MV.k MI.k MP.k + 1) b).runFrom c t).mapState
++        (Sigma.mk (β := b2b_hostState MV MI MP) (B2bHostPhase.answer b)) :=
++  phaseHostTM_run_le (b2b_hostPhases MV MI MP) _ (b2b_hostRedirect MV MI MP)
++    (.answer b) c t (fun _ _ _ _ => rfl) t le_rfl
++end PHLSeal
++
+ /-- After counter exhaustion the host reuses the shared trial and emits its
+ answer. The counter tape is arbitrary and stays at its fixed origin.
+ 

@@ -1592,6 +1592,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Gate 69 staged** (bundle `87d56842…`, 150 sections); `replay-lphl.sh`, 88 modules from
     `oleans-lslsk`.
     **Gate 69 dispatched; `lphl` passed (88/88, static-equal 53)**: #156 waits on the gate only.
+    **Gate 69 round 1: FAIL** (1 major: six older proofs in four files re-derived the prefix
+    lemma). **Ruled (user, 2026-10-23): fix it in #156.** `0e5f210b` re-points them, with
+    `OracleSim`'s table agreement (seven sites); round 2 staged (`pack-r2.md`);
+    `replay-lphl2.sh`, the five files' closure (23 modules) from `oleans-lphl`.
+    - **The phase host's remaining field equations, a follow-up API PR (user, 2026-10-24).** The
+      round-1 seal sweep found 12 older one-field or one-step reads of `phaseHostTM` in seven files
+      (the start state, the redirect branch's dispatch, single table reads,
+      `phaseHostND_fixChoice`; `phasehost-reads-inventory.md` in gate 69's `evidence/round1-fix/`).
+      After #156 merges: a start-state and a redirect-branch equation beside `phaseHostTM`, the
+      re-points, a gate and a replay. It lands before megafill C is issued (it changes
+      `CodeSimulator`).
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
@@ -1604,12 +1615,20 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     addendum v2.5. **Suggested agent: Claude** (the user's rule of 2026-10-23: the first round and
     continuation 1 were Codex, and the target is still open after two rounds; Codex remains the
     cheaper option).
+  - **F3 cont2 delivered (2026-10-23):** `fill-b6-configclock-cont2.zip`, the target claimed proved
+    (six checkpoints). Under review (a sub-agent). `WindowClock` is in #156's round-2 closure, so
+    its landing replays after #156's.
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
   (`campaign/fills/megafill/drafts/megafill-C-drafting-brief.md`, `1133762f`; staged at
   `exchange/outbox/drafting/`), who pushes `drafts/megafill-c` with a drafting report. On
   delivery: a review by a sub-agent, then issue.
+  - **Delivered (#157, merged 2026-10-23; drafting base `77f1eb4f`).** The report's blocking
+    questions: Q-B1 (B5a: harvest `NDCodeSimulator`'s startup privates by an API PR first, or
+    re-prove them) and Q-U1 (U2: field equations for `forwardLoopCfg` and `rulerHostCfg` by an
+    API PR first); Q-M1 and Q-M2 (the queue order; B5a's 87-minute screen) are the maintainer's.
+    Under review: three sub-agents (C1 with the cover, B5a, U2).
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,

@@ -1,0 +1,45 @@
+--- head/TCSlib/Complexity/TuringMachine/Build/OracleSim.lean
++++ sealed/OracleSimSeal.lean
+@@ -1248,6 +1248,42 @@
+       .source qb (by simp [oracleRedirect, hq]) inp work
+   · exact hb
+   · exact hvisit
++
++section PHLSeal
++attribute [local irreducible] Turing.phaseHostTM Turing.MultiTapeTM.runFrom
++  Turing.MultiTapeTM.step Turing.Cfg.mapState Turing.Action.mapState Turing.Action.apply
++  Turing.embedEmitTM
++attribute [-simp] Turing.Action.apply
++-- Controls: each closes unsealed (PHLSealControl.lean) and must fail here.
++example {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
++    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
++    (Turing.phaseHostTM M q0 red).q₀ = q0 := rfl
++example {k : ℕ} {S : Type} {x : List Bool} (M : Turing.MultiTapeTM k Bool S)
++    (d : Turing.Cfg k Bool S x) : M.runFrom d 0 = d := rfl
++example {k : ℕ} {S : Type} {x : List Bool} (M : Turing.MultiTapeTM k Bool S)
++    (d : Turing.Cfg k Bool S x) : M.step { d with state := none } = { d with state := none } := rfl
++example {k : ℕ} {S T : Type} {x : List Bool} (d : Turing.Cfg k Bool S x) (f : S → T) :
++    (d.mapState f).inputPos = d.inputPos := rfl
++example {k : ℕ} {S T : Type} (a : Turing.Action k Bool S) (f : S → T) :
++    (a.mapState f).output = a.output := rfl
++example {k : ℕ} {S : Type} {x : List Bool} (a : Turing.Action k Bool S)
++    (d : Turing.Cfg k Bool S x) : (a.apply d).state = a.state := rfl
++example {m k : ℕ} {S : Type} (ι : Fin m ↪ Fin k) (M : Turing.MultiTapeTM m Bool S) :
++    (Turing.embedEmitTM ι M).q₀ = M.q₀ := rfl
++-- `oracleHost_offQuery`'s table agreement off the query state.
++example (M : FinOracleTM Bool) (C : FinTM Bool) (hc : 0 < C.k) (en ex : C.State) :
++    ∀ qb : M.State × Bool, qb.1 ≠ M.tm.qQuery → ∀ inp work,
++      (oracleHost M C hc en ex).tm.tr
++          ((⟨Sigma.mk (β := oraclePhaseState M C) OraclePhase.source, sigma_mk_injective⟩ :
++            (M.State × Bool) ↪ Σ i, oraclePhaseState M C i) qb) inp work =
++        ((embedEmitTM (oracleSourceBank M.k C.k) (oracleShadowTM (OracleTM.queryTapeIdx M.k)
++          M.tm.plainEmptyOracle)).tr qb inp work).mapState
++          (⟨Sigma.mk (β := oraclePhaseState M C) OraclePhase.source, sigma_mk_injective⟩ :
++            (M.State × Bool) ↪ Σ i, oraclePhaseState M C i) := by
++  intro qb hq inp work
++  exact phaseHostTM_tr_of_red_none (oraclePhases M C hc en) _ (oracleRedirect M C ex)
++    .source qb (by simp [oracleRedirect, hq]) inp work
++end PHLSeal
+ 
+ /-- A local administration segment and its one redirect step inside the full
+ host. Arbitrary ambient tapes, heads and accumulated output cross the seam.
