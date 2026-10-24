@@ -1,0 +1,75 @@
+From 4cb0c6704f3ef6a28bf7d9688efa4d69d2871cea Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 24 Oct 2026 17:19:55 -0500
+Subject: [PATCH] NDCodeSimulator: the replay canonizer's read count through
+ StepBlock.length_workReadsK; rc_State (gate 72, round 1)
+
+rc_workReads2_length re-derived the k = 2 case of the published
+Turing.StepBlock.length_workReadsK; it now cites it. The private abbreviation
+RcT is renamed rc_State, under the file's rc_ prefix.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/NDCodeSimulator.lean           | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean b/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean
+index 07e7dfa1..33ba1a4b 100644
+--- a/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean
+@@ -243,9 +243,9 @@ private theorem rc_replay_table {n : ℕ} (N : NDTM 2 Bool (Fin (n + 1))) :
+   simp only [List.flatMap_assoc, List.flatMap_map, rc_replay_record, List.flatMap_cons,
+     List.flatMap_nil, List.append_nil, Option.getD_none, Option.getD_some, List.append_assoc]
+ 
+-/-- Two work tapes have nine reads. -/
++/-- Two work tapes have nine reads (`Turing.StepBlock.length_workReadsK` at `k = 2`). -/
+ private theorem rc_workReads2_length : (workReadsK 2).length = 9 := by
+-  rw [workReadsK_succ, workReadsK_succ, workReadsK_zero]
++  rw [StepBlock.length_workReadsK]
+   rfl
+ 
+ /-- A table indexed by state, input read and two-tape read is one `flatMap` over the key list. -/
+@@ -338,22 +338,22 @@ private theorem rc_widen_primrec : Primrec rc_widen := by
+     rw [h0, Nat.sub_zero, List.take_length, List.take_of_length_le (by omega)]
+ 
+ /-- The rounds' state: the emitted prefix and the two remaining tables. -/
+-private abbrev RcT := List Bool × List Bool × List Bool
++private abbrev rc_State := List Bool × List Bool × List Bool
+ 
+ /-- The round's body once both skips succeed, on `((n, p), f)` and `t`. -/
+-private def rc_body (q : ((ℕ × RcT) × List Bool) × List Bool) : RcT :=
++private def rc_body (q : ((ℕ × rc_State) × List Bool) × List Bool) : rc_State :=
+   (q.1.1.2.1 ++ (rc_widen (q.1.1.2.2.1.take (q.1.1.2.2.1.length - q.1.2.length)) ++
+     rc_widen (q.1.1.2.2.1.take (q.1.1.2.2.1.length - q.1.2.length)) ++
+     rc_widen (q.1.1.2.2.2.take (q.1.1.2.2.2.length - q.2.length))), q.1.2, q.2)
+ 
+ /-- The round's body is primitive recursive. -/
+ private theorem rc_body_primrec : Primrec rc_body := by
+-  have hrf : Primrec fun q : ((ℕ × RcT) × List Bool) × List Bool =>
++  have hrf : Primrec fun q : ((ℕ × rc_State) × List Bool) × List Bool =>
+       rc_widen (q.1.1.2.2.1.take (q.1.1.2.2.1.length - q.1.2.length)) :=
+     rc_widen_primrec.comp (codePrimPrefix.comp
+       (Primrec.fst.comp (Primrec.snd.comp (Primrec.snd.comp (Primrec.fst.comp Primrec.fst))))
+       (Primrec.list_length.comp (Primrec.snd.comp Primrec.fst)))
+-  have hrt : Primrec fun q : ((ℕ × RcT) × List Bool) × List Bool =>
++  have hrt : Primrec fun q : ((ℕ × rc_State) × List Bool) × List Bool =>
+       rc_widen (q.1.1.2.2.2.take (q.1.1.2.2.2.length - q.2.length)) :=
+     rc_widen_primrec.comp (codePrimPrefix.comp
+       (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp (Primrec.fst.comp Primrec.fst))))
+@@ -365,11 +365,11 @@ private theorem rc_body_primrec : Primrec rc_body := by
+ 
+ /-- One round is primitive recursive (two record skips, then the body). -/
+ private theorem rc_round_primrec : Primrec₂ rc_round := by
+-  have hin := Primrec.option_casesOn (α := (ℕ × RcT) × List Bool) (σ := RcT)
++  have hin := Primrec.option_casesOn (α := (ℕ × rc_State) × List Bool) (σ := rc_State)
+       ((codePrimSkipActionK 2).comp (Primrec.fst.comp Primrec.fst)
+         (Primrec.snd.comp (Primrec.snd.comp (Primrec.snd.comp Primrec.fst))))
+       (Primrec.snd.comp Primrec.fst) rc_body_primrec.to₂
+-  have hout := Primrec.option_casesOn (α := ℕ × RcT) (σ := RcT)
++  have hout := Primrec.option_casesOn (α := ℕ × rc_State) (σ := rc_State)
+       ((codePrimSkipActionK 2).comp Primrec.fst (Primrec.fst.comp (Primrec.snd.comp Primrec.snd)))
+       Primrec.snd hin.to₂
+   refine hout.of_eq ?_
+-- 
+2.50.1 (Apple Git-155)
+

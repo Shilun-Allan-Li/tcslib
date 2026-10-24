@@ -1,0 +1,29 @@
+From 4e9a46becb8eeac97c27849e7d70d9dc7b73f41f Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sat, 24 Oct 2026 18:11:40 -0500
+Subject: [PATCH] Deterministic: the vendored header lists
+ spaceUsedByTape_eq_card (comments only; gate 73, minor 1)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/TuringMachine/Deterministic.lean | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Deterministic.lean b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+index 7e3fcbe7..13d5c294 100644
+--- a/TCSlib/Complexity/TuringMachine/Deterministic.lean
++++ b/TCSlib/Complexity/TuringMachine/Deterministic.lean
+@@ -31,7 +31,9 @@ Local modifications (see policy.md §2, vendored code):
+   `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
+   2026-10-17).
+ * added `spaceUsed_eq_sum`, the space measure as the sum of the per-tape counts, so that
+-  consumers read `spaceUsed` through an equation.
++  consumers read `spaceUsed` through an equation;
++* added `spaceUsedByTape_eq_card`, a tape's space as the number of cells its head visited, so
++  that consumers read `spaceUsedByTape` through an equation.
+ The upstream definitions and theorems are otherwise unchanged.
+ -/
+ import Mathlib.Algebra.Order.Group.Abs
+-- 
+2.50.1 (Apple Git-155)
+
