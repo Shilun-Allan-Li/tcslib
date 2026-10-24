@@ -1,0 +1,58 @@
+.lake/probes/U2UESealControl.lean:59:2: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  (StepBlock.forwardLoopCfg entry M c).output = c.output
+.lake/probes/U2UESealControl.lean:64:55: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (rulerHostCfg ℓ hz q c rt rp).output = c.output
+.lake/probes/U2UESealControl.lean:68:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x
+.lake/probes/U2UESealControl.lean:72:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).output = []
+.lake/probes/U2UESealControl.lean:75:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+.lake/probes/U2UESealControl.lean:78:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  StepBlock.summaryCells none w 0 = none
+.lake/probes/U2UESealControl.lean:85:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+.lake/probes/U2UESealControl.lean:88:44: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  unaryFin 0 = [false]
+FAIL(.lake/probes/U2UESealControl): lean exited with status 1
+FAIL(.lake/probes/U2UESealControl): error diagnostics reported
+FAIL(.lake/probes/U2UESealControl): no fresh .olean produced
+MEM U2UESealControl start=2026-10-24T00:39:27Z end=2026-10-24T00:39:28Z secs=1.9 exit=1 maxrss_kib=1982184
+exit 1
