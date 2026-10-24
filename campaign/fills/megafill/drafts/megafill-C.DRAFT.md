@@ -65,7 +65,9 @@ Each item is its own fill: its brief binds it, and it has its own branch, checks
 | 4 | §13d G4, continuation 4: `Turing.exists_zoneExtendTM`, `Turing.exists_zoneRebalanceTM` (`Build/ZoneRebalance`), from the return home | `s13d/s13d-fill-g4-cont4.md` | `fill/s13d-g4-cont4` | `fill-s13d-g4-cont4.zip` | the rest |
 
 Each budget is wall-clock from the item's branch creation (Part 3, item 3.4). Time an item does not
-use passes to the later ones; the last item has the rest of the session.
+use passes to the later ones; the last item has the rest of the session. **B5a's screen is long**
+(54 files; 87 minutes a run on the drafting host, against C1's 13 and U2's 10): ⟨Q-M2: whether
+B5a's budget ends when its after run starts⟩. Never switch branches while a screen runs.
 
 **Why this order.**
 - **C1 first:** the smallest item (one primitive recursive list function and a composition), with

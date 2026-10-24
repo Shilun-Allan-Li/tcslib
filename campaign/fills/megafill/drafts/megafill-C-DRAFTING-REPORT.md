@@ -215,7 +215,7 @@ the seam into H2-F, which phase 2 reuses; one brief keeps that seam one private 
 | Import probe | 77 checks of 77 names, 0 errors, 0 warnings; startup, H2-F, H5, `Lockstep.runFrom`, rewind on the standard three |
 | Route probe | sealed over 8 TCSlib definitions, **with the proposed API's equations as `rfl` stand-ins**: `u2_encode_init_tapes`, `u2_encode_init_fields`, `u2_encode_halt`, `u2_ruler_fields`: 0 diagnostics |
 | Seal controls | 8 goals: all close unsealed, all fail sealed; the `forwardLoopCfg` and `rulerHostCfg` controls are the API gap |
-| Screen base | **not measured at this push**: queued after B5a's (see "Not complete" below) |
+| Screen base | 20 files: 1,039 declarations, 785 pairs, 213,552 characters; on the owned file 13 in-file pairs (none at 90% or more) and one cross-file (56%); 10 minutes |
 | Lint | `TuringMachine` 0 FAIL, 68 WARN over 83 files; check 8 lists `forwardLoopCfg`, `RulerAt` and `rulerHostCfg` |
 
 **Dependencies.** `UniversalK` is downstream of `CodeSimulator` (through `Codes2Tape`) and cites
@@ -262,6 +262,15 @@ valuable and largest item second; U2's two checkpointed phases third; G4, a long
 whose rounds have each ended partial, last. Items whose prerequisite (Q-B1, Q-U1) is not in the
 shared base are dropped at issue, and the queue renumbered.
 
+- **Q-M2 (the maintainer's call): B5a's screen time and its budget.** On the drafting host one
+  run of B5a's 54-file screen took **87 minutes** (C1's 13, U2's 10, under `nice -n 10`, about
+  100 MB resident), so its before and after runs cost about three hours of a 5-hour budget. The
+  brief has the before run started in the background right after the first edit, beside the one
+  Lean process (the addendum limits Lean processes and screens to one each, not their sum), which
+  hides most of it; the after run cannot be hidden. **Recommendation:** the cover counts B5a's
+  budget up to the start of its after run, and the next item's branch is created only after that
+  run ends (the screen reads the working tree); otherwise raise B5a's budget to 6 hours.
+
 ## Records
 
 - **Hashes:** every commit and blob hash in these files was inserted by `git rev-parse`
@@ -274,15 +283,13 @@ shared base are dropped at issue, and the queue renumbered.
   statement of `NDCodeSimulator`'s private `ic_input_suffix` and `Logspace/PathWalk`'s private
   `drop_pairEncode`; a home beside `pairEncode_eq` in `Encoding` would serve all three.
 
-## Not complete at this push
+## Not complete
 
-- **U2's screen base** (20 files, 1.8 MB of Lean), started 2026-10-24T01:57:13Z under
-  `nice -n 10`, after B5a's had finished (one screen at a time). Its figures go into its pre-ship
-  README, its draft's "The base" line and its table above.
+Nothing: every deliverable of the drafting brief's §9 is on the branch.
 
 ## Files (all new, under `campaign/`)
 
-75 files.
+78 files.
 
 - `campaign/fills/b5a/drafts/` (1): `b5a-fill-unisim.DRAFT.md`
 - `campaign/fills/b5a/drafts/b5a-fill-unisim/preship-77f1eb4f/` (22): `B5aUSImportProbe.lean.txt`,
@@ -307,9 +314,10 @@ shared base are dropped at issue, and the queue renumbered.
 - `campaign/fills/megafill/drafts/megafill-C-env-77f1eb4f/tools/` (2): `runmem.py`,
   `subst_hashes.py`
 - `campaign/fills/u2s/drafts/` (1): `u2s-fill-universal.DRAFT.md`
-- `campaign/fills/u2s/drafts/u2s-fill-universal/preship-77f1eb4f/` (16): `README.md`,
+- `campaign/fills/u2s/drafts/u2s-fill-universal/preship-77f1eb4f/` (19): `README.md`,
   `U2UEImportProbe.lean.txt`, `U2UEImportProbe.out`, `U2UERouteProbe.lean.txt`,
   `U2UERouteProbe.out`, `U2UESealControl.lean.txt`, `U2UESealControl.out`,
   `UniversalKOverlay.lean.txt`, `base-sorries.txt`, `elab-UniversalK.out`,
   `elab-UniversalKOverlay.out`, `fillinputs-overlay.py`, `lint-turingmachine.txt`, `order.txt`,
-  `roots.txt`, `screen-population.txt`
+  `roots.txt`, `screen-base.status`, `screen-base.stderr`, `screen-base.txt`,
+  `screen-population.txt`

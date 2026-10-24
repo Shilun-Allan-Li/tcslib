@@ -11,7 +11,7 @@ lint's check 8 lists both), and both phases' seams read their fields. This draft
 equations under the names `simps` generates beside them (`StepBlock.forwardLoopCfg_state`, …,
 `rulerHostCfg_output`); at issue, replace them by the landed names if they differ, and re-run the
 pre-ship against the API's head. Other issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩,
-⟨SCREEN⟩ (measured at the drafting base below), the megafill banner. -->
+the megafill banner. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -396,8 +396,10 @@ screen after your first edit: it must equal the screen base (the overlay changes
     (`Build/VirtualInput`), H2's clocked form (`Build/StepBlockLoop`), and `Simulation` (the input
     rewind family; this item writes none, but its startup sits beside U2-S's `ss_inputRewind`).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/u2s/logs/u2s-fill-universal-screen-base.txt`: ⟨SCREEN⟩
-  (MEASURED at the drafting base).
+- **The base** is `campaign/fills/u2s/logs/u2s-fill-universal-screen-base.txt`: **1,039
+  declarations, 785 pairs, 213,552 characters** (MEASURED at the drafting base; about 10 minutes).
+  14 pairs have a declaration of your file on one side: 13 within it (none at 90% or more), and
+  one across files (`ss_inputRewind_run` of `Universal`'s `timedFrame_run`, 56%).
 
 ```sh
 P=campaign/fills/u2s/inputs/u2s-fill-universal
