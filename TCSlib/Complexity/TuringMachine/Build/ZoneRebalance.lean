@@ -5332,6 +5332,134 @@ private lemma zr_scr_clear {k : ℕ} (A σ : ℤ → Option (ZoneSym k)) (s : �
         · rw [if_neg hlt, zr_fieldsTape_end pre _ (by omega), FinTM.bufferTape_eq,
             if_pos (by omega), List.getElem?_eq_none (by omega)]
 
+/-- **Each field of the scratch layout is a delimited word**, the cell before the layout blank. -/
+private lemma zr_scr_word {k : ℕ} (σ : ℤ → Option (ZoneSym k)) (s : ℤ) (hσ : σ s = none)
+    (ws : List (List (ZoneSym k))) (m : ℕ) (hm : m < ws.length) :
+    ∀ q : ℤ, -1 ≤ q → q ≤ (ws[m].length : ℤ) →
+      zr_scr σ s ws (s + 1 + fieldOffset ws m + q) = FinTM.bufferTape ws[m] q := by
+  intro q h1 h2
+  simp only [zr_scr]
+  split_ifs with h
+  · have hq : q = -1 := by omega
+    rw [show s + 1 + (fieldOffset ws m : ℤ) + q = s by omega, hσ, hq, FinTM.bufferTape_left]
+  · rw [show s + 1 + (fieldOffset ws m : ℤ) + q - (s + 1) = fieldOffset ws m + q by ring]
+    exact fieldsTape_field ws m hm q h1 h2
+
+/-- The donor's column: zone `i`'s track-`t` slots, as scratch cells. -/
+private lemma zr_col_zone {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
+    (hi : i < ℓ) (p : ℕ) :
+    (zr_col t (zr_rfield z (i + 1)))[p]? =
+      if p < zoneCapacity i then some (zr_enc ((z t).right ⟨i, hi⟩)[p]?) else none := by
+  have hf : zr_rfield z (i + 1) = zoneCells true z ⟨i, hi⟩ := by
+    rw [zr_rfield, if_neg (by omega), dif_pos (by simpa using hi)]
+    rfl
+  rw [hf, zr_col, zoneCells_eq, List.getElem?_map, List.getElem?_map]
+  by_cases hp : p < zoneCapacity i
+  · rw [List.getElem?_range hp, if_pos hp, Option.map_some, Option.map_some, zoneSlotOf_inr,
+      ZoneContents.words_true]
+  · rw [List.getElem?_eq_none (by rw [List.length_range]; exact Nat.le_of_not_lt hp), if_neg hp]
+    rfl
+
+/-- The zoned tape after the receiver's write: zone `i - 1`'s first `2^(i-1)` track-`t` slots
+set to zone `i`'s first slots. -/
+private abbrev zr_recvTape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
+    (hiℓ : i < ℓ) : ℤ → Option (ZoneSym k) := fun q =>
+  if (zoneStart (i - 1) : ℤ) ≤ q ∧ q < zoneStart (i - 1) + ((2 ^ (i - 1) : ℕ) : ℤ) then
+    some (zoneSlotSet t (zonedTape z q) ((z t).right ⟨i, hiℓ⟩)[(q - zoneStart (i - 1)).toNat]?)
+  else zonedTape z q
+
+/-- **Writing the receiver**: the mapped copy of the donor column's first `2^(i-1)` cells onto
+zone `i - 1` sets those cells' track-`t` slots to the donor's first slots. -/
+private lemma zr_writeRecv {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
+    (hi : 1 ≤ i) (hiℓ : i < ℓ) (B : ℤ → Option (ZoneSym k)) (b : ℤ) :
+    zr_copyTapes 0 (zoneSlotOf t) (zoneSlotSet t)
+        ((zr_col t (zr_rfield z (i + 1))).take (2 ^ (i - 1))) (zr_tapes (zonedTape z) B)
+        (zr_heads (zoneStart (i - 1)) b) =
+      zr_tapes (zr_recvTape z t i hiℓ) B := by
+  have hcapi : zoneCapacity i = 4 * 2 ^ (i - 1) := by
+    rw [zoneCapacity_eq, show i = (i - 1) + 1 by omega, pow_succ]
+    simp only [Nat.add_sub_cancel]
+    ring
+  have hlen : ((zr_col t (zr_rfield z (i + 1))).take (2 ^ (i - 1))).length = 2 ^ (i - 1) := by
+    rw [List.length_take, List.length_map, zr_rfield_length z (i + 1) (by omega)]
+    rw [show (2 : ℕ) ^ (i + 1) = 4 * 2 ^ (i - 1) by
+      rw [show i + 1 = (i - 1) + 2 by omega, pow_add]; ring]
+    omega
+  funext j q
+  by_cases hj : j = 0
+  · subst hj
+    simp only [zr_copyTapes, zr_tapes, zr_heads, true_and, if_true, hlen, zr_recvTape]
+    split_ifs with h
+    · obtain ⟨p, hp⟩ : ∃ p : ℕ, q - zoneStart (i - 1) = p := ⟨(q - zoneStart (i - 1)).toNat, by omega⟩
+      rw [hp, FinTM.bufferTape_nat, List.getElem?_take, if_pos (by omega),
+        zr_col_zone z t i hiℓ p, if_pos (by omega), Option.map_some, zoneSlotOf_inr,
+        Int.toNat_natCast]
+    · rfl
+  · have hj1 : j = 1 := by omega
+    subst hj1
+    simp only [zr_copyTapes, zr_tapes, zr_heads, show (1 : Fin 2) ≠ 0 by decide, false_and,
+      if_false]
+
+/-- **Writing the donor**: after the receiver's write, the mapped copy onto zone `i` of the
+donor column from offset `2^(i-1)` on, followed by `2^(i-1)` cells holding `⊠`, gives the zoned
+tape of the shifted track. -/
+private lemma zr_writeDonor {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
+    (hi : 1 ≤ i) (hiℓ : i < ℓ) (he : (z t).right ⟨i - 1, by omega⟩ = [])
+    (B : ℤ → Option (ZoneSym k)) (b : ℤ) :
+    zr_copyTapes 0 (zoneSlotOf t) (zoneSlotSet t)
+        ((zr_col t (zr_rfield z (i + 1))).drop (2 ^ (i - 1)) ++
+          (zr_rfield z (i - 1)).map fun _ => zr_enc none)
+        (zr_tapes (zr_recvTape z t i hiℓ) B) (zr_heads (zoneStart i) b) =
+      zr_tapes (zonedTape (Function.update z t (zoneShiftIn true i (z t)))) B := by
+  have hcapi : zoneCapacity i = 4 * 2 ^ (i - 1) := by
+    rw [zoneCapacity_eq, show i = (i - 1) + 1 by omega, pow_succ]
+    simp only [Nat.add_sub_cancel]
+    ring
+  have hl1 := zr_rfield_length z (i + 1) (by omega)
+  have hl2 := zr_rfield_length z (i - 1) (by omega)
+  have hp1 : (2 : ℕ) ^ (i + 1) = 4 * 2 ^ (i - 1) := by
+    rw [show i + 1 = (i - 1) + 2 by omega, pow_add]
+    ring
+  have hlenD : ((z t).right ⟨i, hiℓ⟩).length ≤ zoneCapacity i := (z t).right_le ⟨i, hiℓ⟩
+  have hS := zoneStart_succ (i - 1)
+  rw [show i - 1 + 1 = i by omega] at hS
+  have hcap1 : zoneCapacity (i - 1) = 2 * 2 ^ (i - 1) := zoneCapacity_eq (i - 1)
+  have hpos : 0 < 2 ^ (i - 1) := Nat.two_pow_pos _
+  have hW : ((zr_col t (zr_rfield z (i + 1))).drop (2 ^ (i - 1)) ++
+      (zr_rfield z (i - 1)).map fun _ => zr_enc none).length = zoneCapacity i := by
+    simp only [List.length_append, List.length_drop, List.length_map, hl1, hl2]
+    omega
+  funext j q
+  by_cases hj : j = 0
+  · subst hj
+    have hT := zr_shiftIn_tape z t i hi hiℓ he q
+    simp only [zr_tapes, if_true] at hT ⊢
+    rw [hT]
+    simp only [zr_copyTapes, zr_heads, true_and, if_true, zr_tapes, zr_recvTape, hW]
+    by_cases hd : (zoneStart i : ℤ) ≤ q ∧ q < zoneStart i + zoneCapacity i
+    · have hnr : ¬ ((zoneStart (i - 1) : ℤ) ≤ q ∧
+          q < zoneStart (i - 1) + ((2 ^ (i - 1) : ℕ) : ℤ)) := by
+        omega
+      simp only [if_pos hd, if_neg hnr]
+      obtain ⟨p, hp⟩ : ∃ p : ℕ, q - zoneStart i = p := ⟨(q - zoneStart i).toNat, by omega⟩
+      rw [hp, FinTM.bufferTape_nat, Int.toNat_natCast]
+      have hdl : ((zr_col t (zr_rfield z (i + 1))).drop (2 ^ (i - 1))).length =
+          4 * 2 ^ (i - 1) - 2 ^ (i - 1) := by
+        simp only [List.length_drop, List.length_map, hl1, hp1]
+      by_cases hp3 : p < 4 * 2 ^ (i - 1) - 2 ^ (i - 1)
+      · rw [List.getElem?_append_left (by omega), List.getElem?_drop, zr_col_zone z t i hiℓ _,
+          if_pos (by omega), Option.map_some, zoneSlotOf_inr]
+      · have hlt : p - (4 * 2 ^ (i - 1) - 2 ^ (i - 1)) < (zr_rfield z (i - 1)).length := by
+          rw [hl2]
+          omega
+        rw [List.getElem?_append_right (by omega), hdl, List.getElem?_map,
+          List.getElem?_eq_getElem hlt, Option.map_some, Option.map_some, zoneSlotOf_inr,
+          List.getElem?_eq_none (by omega)]
+    · simp only [if_neg hd]
+  · have hj1 : j = 1 := by omega
+    subst hj1
+    simp only [zr_copyTapes, zr_tapes, show (1 : Fin 2) ≠ 0 by decide, false_and, if_false]
+
 /-! ### The rows -/
 
 /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
