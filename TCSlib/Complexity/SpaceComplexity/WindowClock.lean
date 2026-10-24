@@ -1263,6 +1263,56 @@ private lemma cw_seg_clockBack {K : ℕ} {Γ P : Type} [DecidableEq P] (e : Γ)
     0 _ r _ _ _ _ h₁ (cw_cfg_moveL e d _ _ 0 W _ _ 0 (by rw [cw_cfg_posL]; omega)) h₂ h₃
     (by rw [cw_cfg_posL]; omega) (by simp) (by rw [abs_of_nonneg (by positivity)]; omega)
 
+/-- A run whose endpoint keeps the output has kept it at every earlier time. -/
+private lemma cw_silence {k : ℕ} {Γ S : Type} {x : List Γ} (M : MultiTapeTM k Γ S)
+    (d : Cfg k Γ S x) (t : ℕ) (ht : (M.runFrom d t).output = d.output) :
+    ∀ u ≤ t, (M.runFrom d u).output = d.output := by
+  intro u hu
+  have h₀ := MultiTapeTM.output_prefix M d (Nat.zero_le u)
+  have h₁ := MultiTapeTM.output_prefix M d hu
+  rw [MultiTapeTM.runFrom_zero] at h₀
+  rw [ht] at h₁
+  exact h₁.eq_of_length (le_antisymm h₁.length_le h₀.length_le)
+
+/-- **The clock writer's contract.** From the record `fs` at the head of tape `0`, a blank clock
+tape and the first copy's control, the host writes the all-`e` word of width `c · F` at the
+clock head, `F` the record's field cells, returns both heads, and reaches the windowed runner's
+entry. It is a segment avoiding the exits, within `r` cells of the start on every tape, and
+silent.
+**Proof sketch.** The passes, then the step past the clock's right delimiter and the skip back
+over the clock word. -/
+private lemma cw_writer {K : ℕ} {Γ P : Type} [DecidableEq P] (e : Γ)
+    (R : MultiTapeTM (K + 2) Γ P) (en : P) (ex : WindowExit → P) {c m : ℕ} (hc : 0 < c)
+    (hm : 0 < m) {x : List Γ} (fs : List (List Γ)) (hfs : fs.length = m)
+    (d : Cfg (K + 2) Γ (Σ i : cw_Idx c m, cw_Ctrl P i) x)
+    (hd : d.state = some ⟨.copy ⟨0, hc⟩ ⟨0, hm⟩, (SweepPhase.sweep : SweepPhase)⟩)
+    (hrec : RecordAt d 0 fs) (hclk : ∀ z, d.workTapes (Fin.last (K + 1)) z = none) (r : ℕ)
+    (hr : c * fieldOffset fs fs.length + 2 ≤ r) :
+    ∃ t ≤ 13 * c * fieldOffset fs fs.length + c * (fs.map List.length).sum + 6,
+      Segment (cw_hostTM e R en ex c m) {z | ∃ y : WindowExit, z = some ⟨.stop, y⟩}
+        (cw_box d.workTapePos r) d
+        (cw_cfg e d (⟨.run, en⟩ : Σ i, cw_Ctrl P i) 0 (c * (fs.map List.length).sum) 0) t ∧
+      ∀ u ≤ t, ((cw_hostTM e R en ex c m).runFrom d u).output = d.output := by
+  have hne : fs ≠ [] := List.ne_nil_of_length_pos (by omega)
+  have hF : fieldOffset fs fs.length = (fs.map List.length).sum + fs.length := by
+    have h₁ := joinFields_length fs hne
+    have h₂ := length_joinFields_add_one fs hne
+    have h₃ : 1 ≤ fs.length := List.length_pos_of_ne_nil hne
+    omega
+  have hcm : c * (fs.map List.length).sum ≤ c * fieldOffset fs fs.length :=
+    Nat.mul_le_mul_left c (by omega)
+  obtain ⟨t₁, ht₁, s₁⟩ := cw_passes e R en ex hm fs hfs d hrec hclk
+    (fs.map List.length).sum r hF (by omega) (c - 1) 0 hc (by omega)
+  rw [Nat.zero_mul, Nat.cast_zero, cw_cfg_zero e d _ hd] at s₁
+  have s₂ := cw_seg_skipC e R en ex none d hclk 0 (c * (fs.map List.length).sum)
+    (c * (fs.map List.length).sum) 0 rfl ((c * (fs.map List.length).sum : ℕ) + 1) (by ring) r
+    (by simp) (by omega)
+  have s₃ := cw_seg_clockBack e R en ex d hclk (c * (fs.map List.length).sum) r (by omega)
+  have s := s₁.trans (s₂.trans s₃)
+  refine ⟨_, by omega, s, cw_silence _ d _ ?_⟩
+  rw [((segment_iff _ _ _ _ _ _).1 s).1]
+  rfl
+
 /-- **H3 with the configuration-count clock** (what `Complexity.space_hierarchy`'s
 diagonalizer cites). The windowed runner that builds its own clock. For a fixed binary machine
 `M` and a tag update `upd` that ignores silent steps, there is a module over the record alphabet
@@ -1324,7 +1374,10 @@ one-cell move back onto the clock's right delimiter, the new cells joining the c
 `Turing.wordPatch_append`; one pass over the fields (`cw_pass`), whose writes form one constant
 word; the `c` passes, the record head returning to the record's first cell after each
 (`cw_rewind`, `cw_passes`); the clock head's return to the clock's first cell (`cw_seg_skipC`,
-`cw_seg_clockBack`). This target remains open.
+`cw_seg_clockBack`); the writer's contract (`cw_writer`): from the record at the head of tape
+`0` and a blank clock tape, the host writes the all-`e` word of width `c · F` at the clock head
+and returns both heads, silently, within `13c(L + 1) + c · F + 6` steps and `c(L + 1) + 2` cells
+of the start, and enters the windowed runner. This target remains open.
 **Proof sketch (remaining).** Run `Turing.exists_windowRunnerTM` on the word, clear the clock
 after a `halted` or `left` exit (`cw_clear_patch`), and dispatch to the exits. The time and head
 bounds follow from the clock budget and the linear writer and clear costs (`cw_time_bound`,
