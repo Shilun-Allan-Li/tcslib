@@ -1261,8 +1261,11 @@ private lemma seekTM_request {k n : ℕ} {x : List Bool}
       start.mapState (Sigma.mk key) := by
     rw [step_of_inputMoveAction (seekTM k) (seekCfg d (.request rank rest last))
       (q := ⟨none, .request rank rest last⟩) (q' := ⟨key, (recordSkipTM k).q₀⟩) 0
-      (by simp [seekCfg, Cfg.mapState, hq]) rfl]
-    apply Cfg.ext <;> simp [seekCfg, Cfg.mapState, hq, start, key, recordSkipTM, phaseHostTM]
+      (by simp [seekCfg, Cfg.mapState, hq]) (by
+        rw [seekTM, phaseHostTM_tr_of_red_some (seekPart k) _ (seekRed k) none
+          (.request rank rest last) rfl]
+        rfl)]
+    apply Cfg.ext <;> simp [seekCfg, Cfg.mapState, hq, start, key, recordSkipTM, phaseHostTM_q₀]
   have advance (u : ℕ) := MultiTapeTM.runFrom_succ_eq_step (tm := seekTM k)
     (cfg := seekCfg d (.request rank rest last)) (t := u)
   rw [hfirst] at advance
@@ -1450,7 +1453,7 @@ private lemma seekTM_stateStep {k : ℕ} {x : List Bool}
   simp only [Cfg.workTapeSymbols] at hs
   cases b <;>
     apply Cfg.ext <;>
-    simp [MultiTapeTM.step, seekTM, seekCfg, Cfg.mapState, phaseHostTM,
+    simp [MultiTapeTM.step, seekTM, seekCfg, Cfg.mapState, phaseHostTM_tr_of_red_none,
       seekRed, seekPart, seekRouterTM, hq, Cfg.workTapeSymbols, hs, tapeAction,
         inputMoveAction, Action.mapState]
   all_goals
@@ -1715,13 +1718,17 @@ private lemma seekTM_observe {k : ℕ} {x : List Bool}
   have first : (seekTM k).step (seekCfg d .observe) = seekCfg next (.advance rank) := by
     rw [step_of_tapeAction_move (seekTM k) (seekCfg d .observe)
       (q := ⟨none, .observe⟩) (q' := ⟨none, .advance rank⟩) (summaryTape k) 0 .pos
-      (by simp [seekCfg, Cfg.mapState, hq]) (by rfl)]
+      (by simp [seekCfg, Cfg.mapState, hq]) (by
+        rw [seekTM, phaseHostTM_tr_of_red_none (seekPart k) _ (seekRed k) none .observe rfl]
+        rfl)]
     apply Cfg.ext <;> simp [seekCfg, Cfg.mapState, next, hq]
   have second : (seekTM k).step (seekCfg next (.advance rank)) =
       seekCfg (seekShift d 0 2) (.state rank) := by
     rw [step_of_tapeAction_move (seekTM k) (seekCfg next (.advance rank))
       (q := ⟨none, .advance rank⟩) (q' := ⟨none, .state rank⟩) (summaryTape k) 0 .pos
-      (by simp [seekCfg, Cfg.mapState, next, hq]) (by rfl)]
+      (by simp [seekCfg, Cfg.mapState, next, hq]) (by
+        rw [seekTM, phaseHostTM_tr_of_red_none (seekPart k) _ (seekRed k) none (.advance rank) rfl]
+        rfl)]
     apply Cfg.ext <;> try simp [seekCfg, Cfg.mapState, next, hq, seekShift]
     funext j
     by_cases hj : j = summaryTape k
@@ -2986,7 +2993,8 @@ private lemma roundTM_lookup {k n : ℕ} {x : List Bool}
         roundData_shift c (tableBitsK tr) (outputSummary c.output) (unaryFin q) 0 0 pre
           before.length (q.val + 2)
     rw [shifted] at lifted
-    simpa only [atKey, seekCfg, d, Cfg.mapState, roundData] using lifted
+    have hq0 : (seekTM k).q₀ = ⟨none, .observe⟩ := phaseHostTM_q₀ _ _ _
+    simpa only [atKey, seekCfg, d, Cfg.mapState, roundData, hq0] using lifted
 
 /-- Exact complete-round execution from a canonical data frame. The cost
 is bounded by fifty times the table length plus one, uniformly in the state
@@ -3026,7 +3034,9 @@ private lemma roundTM_canonical {k n : ℕ} {x : List Bool}
     (tail.length + (tableBitsK tr).length + word.length + 15)
   have entry : (roundTM k).step (atKey d .entry ()) = atKey d .lookup (seekTM k).q₀ := by
     have one := step_of_inputMoveAction (roundTM k) (atKey d .entry ())
-      (q := ⟨.entry, ()⟩) (q' := ⟨.lookup, (seekTM k).q₀⟩) 0 rfl rfl
+      (q := ⟨.entry, ()⟩) (q' := ⟨.lookup, (seekTM k).q₀⟩) 0 rfl (by
+        rw [roundTM, phaseHostTM_tr_of_red_some (part k) _ (red k) .entry () rfl]
+        rfl)
     simpa only [moveInputPos_zero, atKey, d, roundData, Cfg.mapState] using one
   have advance (u : ℕ) := MultiTapeTM.runFrom_succ_eq_step (tm := roundTM k) (cfg := atKey d
     .entry ()) (t := u)

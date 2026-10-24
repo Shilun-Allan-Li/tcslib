@@ -1608,7 +1608,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `CodeSimulator`). **Prepared locally** (`local/phasehost-fields`, `31747bec` and `88306c22`
       on `0e5f210b`): `phaseHostTM_q₀` and `phaseHostTM_tr_of_red_some`; the seven files elaborate
       with the new lemmas stood in, plain and with `phaseHostTM` sealed, 0 errors; no explicit
-      unfolding left.
+      unfolding left. **PR #159** (`lean/phasehost-fields` at `5e881c42`, rebased on #156's merge);
+      **gate 71** (an API gate) staged; `replay-lphf.sh`, 88 modules from `oleans-lphl2`.
+      **Gate 71: PASS (0/0/3/13). Gate closed;** the minors: the census erratum (the freeze tools
+      now count anonymous instances), `NDHost`'s header and sketch (`26fd5afe`, docstrings only),
+      the records hash. After #158 merged, the campaign was merged into #159 (`e3767525`, clean);
+      `replay-lphf.sh`, the eight files' closure (88 modules), chained from `oleans-lf3c2`. If #160
+      merges first, its two files' closure (4 modules) replays on #159's merged tree from
+      `oleans-lphf`.
+      **`lphf` passed (user, 2026-10-24: 88/88, static-equal 52). #159 clear to merge.** Whichever
+      of #159 and #160 merges second replays #160's 4-module closure on the merged tree.
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
@@ -1632,7 +1641,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **#156 merged (2026-10-24; `21d53053`); the campaign's Lean tree is `oleans-lphl2`'s.** The
     landing: `lean/f3c2-landing` at `1911b1ca` (the six commits as delivered and the status
     edits A1, A2), PR opened; **gate 70** (a fill gate) staged; `replay-lf3c2.sh`, 2 modules from
-    `oleans-lphl2`.
+    `oleans-lphl2`. **#158; `lf3c2` passed (user, 2026-10-24: 2/2, static-equal 0); gate 70
+    dispatched.** **Gate 70: PASS (0/0/1/13; the minor: the checkpoint zips were never
+    delivered). Gate closed; #158 clear to merge.** **#158 merged (2026-10-24; `2ac2f34a`); the
+    campaign's Lean tree is `oleans-lf3c2`'s.** #160's closure is disjoint from #158's, so its
+    replay stands.
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
@@ -1647,7 +1660,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - **C1 and the cover reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/c1-cover/`):
       issue after edits (0 blockers, 0 majors, 9 minors, 2 notes; `suggested-fix.diff`). **The
       reviewer proved the target** (`probe/C1RCReviewFeasibility.lean.txt`, about 300 lines, sealed,
-      standard axioms): decision D1 pending (user).
+      standard axioms): decision D1 pending (user). **Landed directly (the user's ruling): #160**
+      (`lean/c1-replaycanon` at `73c99430`); `lrcan` passed (user, 2026-10-24: 4/4, static-equal 1,
+      `ntime_hierarchy`); gate 72 (a fill gate) drafted, its screens running.
     - **U2 reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/u2/`): not issuable until
       Q-U1's API PR lands. The PR needs, beside the two `simps` lines (verified in copies: ten
       field lemmas), `Turing.MultiTapeTM.spaceUsedByTape_eq_card` in `Deterministic` (F1, a
@@ -1666,14 +1681,31 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       replay); C1 leaves megafill C.
     - **Q-B1 = A: the startup-kit API PR first** (`Build/InterpreterStartup`, `NDCodeSimulator`
       re-pointed in it). Maintainer's choices within A: `seamCompTM_step` goes in the new module
-      (the PR then depends on nothing in flight); UN's `un_step` and the three suffix-drop copies go
-      to the dedup window; B5a pre-discloses any startup-assembly pair below 90%.
+      (the PR then depends on nothing in flight); the suffix drop stays a private helper in the
+      kit (SD-1, the dedup window); B5a pre-discloses any startup-assembly pair below 90%.
+      **Revised (2026-10-24):** UN's `un_step` is re-pointed in the kit PR after all (no extra
+      replay; otherwise the new public lemma would pair 100% with it).
+      **Prepared locally** (`local/startup-kit`, `91a0f1c9` on #160's head): the kit (8 public,
+      1 private; the probe's statements plus `embedSilentCfg_initCfg`), `NDCodeSimulator`'s eight
+      privates and `un_step` re-pointed; every file elaborates (the kit's text stood in before the
+      two consumers); the review's 22-definition seal holds with its 22 controls; screen 743 → 743
+      declarations, 438 → 440 pairs, the new pair `embedSilentCfg_initCfg` ⇄ `UniversalK`'s
+      `ss_captureInitial` (100%; ledgered). Opens as a PR (gate 74, pack drafted) once #160 merges.
     - **Q-U1: one API PR** with the two `simps` lines, `spaceUsedByTape_eq_card` (`Deterministic`)
-      and `pairEncode_drop` (`Build/InputDevice`); a 325-module replay.
+      and `pairEncode_drop` (`Build/InputDevice`); a 325-module replay. **PR #161**
+      (`lean/u2-api` at `a8c45ad7`); **gate 73** staged; `replay-lu2api.sh` (325 modules) runs
+      after #158–#160 merge. The suffix-drop family is ledgered as **SD-1**. Open (user, at
+      leisure): `rulerHostCfg_inputPos` as the `Fin` literal (as built) or a nested
+      `inputPos_val`; `rulerAt_iff` (optional, not built).
     - **F3 cont2: accept the three route refinements; land the six commits as delivered, after
       #156**, then replay `WindowClock` and the facade from #156's snapshot.
     - **G4 cont4: issue now, alone** (Codex), its pre-ship re-run at the issue commit; megafill C
       becomes B5a and U2, issued when #156, the phase-host follow-up and the two API PRs are in.
+      **Issued** (`campaign/fills/s13d/briefs/s13d-fill-g4-cont4.md`), the pre-ship re-run after
+      #156 (`drafts/s13d-fill-g4-cont4/preship-21d53053/`: order 96, roots 40, base sorries 27,
+      the probes unchanged, screen base 847/477); a single fill, addendum v2.5. **Dispatched to
+      Claude (user, 2026-10-24)**: the maintainer's Codex suggestion was a mistake (G4's earlier
+      rounds were Codex, each partial: the slow-progress case).
     - Maintainer's calls (the drafting report's Q-M1, Q-M2): B5a before U2; B5a's budget counts up
       to the start of its after-screen, which runs on a frozen worktree.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement

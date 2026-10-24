@@ -1,0 +1,16 @@
+import TCSlib.Complexity.TuringMachine.Build.Seam
+
+section Unsealed
+-- Closes unsealed.
+example {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (Turing.phaseHostTM M q0 red).q₀ = q0 := rfl
+end Unsealed
+
+section Sealed
+attribute [local irreducible] Turing.phaseHostTM
+-- Must fail sealed: the sweep's seal bites.
+example {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → Turing.MultiTapeTM k Γ (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (Turing.phaseHostTM M q0 red).q₀ = q0 := rfl
+end Sealed
