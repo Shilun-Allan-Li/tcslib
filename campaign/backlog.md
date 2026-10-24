@@ -1618,6 +1618,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `oleans-lphf`.
       **`lphf` passed (user, 2026-10-24: 88/88, static-equal 52). #159 clear to merge.** Whichever
       of #159 and #160 merges second replays #160's 4-module closure on the merged tree.
+      **#159 merged (2026-10-24; `bcd4e8e9`); the campaign's Lean tree is `oleans-lphf`'s.** The
+      campaign merged into #160 cleanly (`dd7b126a`); `replay-lrcan2.sh`, #160's closure (4
+      modules) from `oleans-lphf`.
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
