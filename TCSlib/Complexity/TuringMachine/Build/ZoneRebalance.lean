@@ -5122,7 +5122,8 @@ private lemma zr_rfield_length {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m
   · omega
 
 /-- The next field starts one separator after field `m` ends. -/
-private lemma zr_rstart_succ (m : ℕ) : zr_rstart (m + 1) = zr_rstart m + 2 ^ m + 1 := by
+private lemma zr_rstart_succ (m : ℕ) :
+    zr_rstart (m + 1) = zr_rstart m + ((2 ^ m : ℕ) : ℤ) + 1 := by
   rw [zr_rstart, zr_rstart, if_neg (by omega), Nat.add_sub_cancel]
   split_ifs with h
   · subst h
