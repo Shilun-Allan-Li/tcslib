@@ -966,24 +966,18 @@ private theorem wr_clockCfg_eta {K : ℕ} {Γ P Q : Type} {x : List Γ}
   · rfl
 
 /-- Before any timeout, the runner follows the clock with its phase tag.
-Proof sketch: the phase table agrees with the clock on every non-timeout state, so the
-public state-transport theorem gives the prefix without another simulation induction. -/
+Proof sketch: the runner redirects only the timeouts, and no state reached before `t` is
+one, so the phase host's last-phase lemma `Turing.phaseHostTM_run_le` gives the prefix. -/
 private theorem wr_prefix {k : ℕ} {Γ Q S : Type} [DecidableEq Q] [Fintype S]
     (H : MultiTapeTM k Γ Q) (timeout : Option S → Q) {x : List Γ}
     (a : Cfg k Γ Q x) (t : ℕ)
     (hcut : ∀ u < t, ∀ r, (H.runFrom a u).state ≠ some (timeout r)) :
     ∀ u ≤ t, (wr_runnerTM H timeout).runFrom (a.mapState (Sigma.mk true)) u =
       (H.runFrom a u).mapState (Sigma.mk true) := by
-  intro u hu
-  refine MultiTapeTM.runFrom_mapState_of_agreeOn H (wr_runnerTM H timeout)
-    ⟨(fun q : Q => (⟨true, q⟩ : Σ b, wr_Ctrl Q b)),
-      fun _ _ h => eq_of_heq (Sigma.mk.inj h).2⟩
-    (fun q => ∀ r, q ≠ timeout r) ?_ a u ?_
-  · intro q hq inp work
-    have hnot : ¬∃ r, q = timeout r := by simpa using hq
-    simp only [wr_runnerTM, phaseHostTM, Function.Embedding.coeFn_mk, if_neg hnot]
-  · intro v hv q hq r he
-    exact hcut v (by omega) r (hq.trans (congrArg some he))
+  refine phaseHostTM_run_le (Ph := wr_Ctrl Q) _ _ _ true a t ?_
+  intro u hu q hq
+  have hnot : ¬∃ r, q = timeout r := fun ⟨r, he⟩ => hcut u hu r (hq.trans (congrArg some he))
+  exact if_neg hnot
 
 /-- At a timeout the runner makes exactly one stationary dispatch to exhaustion. -/
 private theorem wr_timeout_dispatch {k : ℕ} {Γ Q S : Type}

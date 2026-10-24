@@ -4593,11 +4593,9 @@ private lemma canonEmitVerdict {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
   have joined : e.mapState (fun _ => (⟨true, bit⟩ : Sigma Ph)) =
       z.mapState (Sigma.mk true) := by
     simp [z, Cfg.mapState, Option.map_map, Function.comp_def]
-  have leaf := MultiTapeTM.runFrom_mapState_of_agreeOn (canonHaltTM k) N
-    (⟨fun q => ⟨true, q⟩, fun _ _ h => eq_of_heq (Sigma.mk.inj_iff.mp h).2⟩ :
-      Bool ↪ Sigma Ph) (fun _ => True)
-    (by intro q _ inp work; rfl) z 1 (by intros; trivial)
-  simp only [Function.Embedding.coeFn_mk] at leaf
+  have leaf : N.runFrom (z.mapState (Sigma.mk true)) 1 =
+      ((canonHaltTM k).runFrom z 1).mapState (Sigma.mk true) :=
+    phaseHostTM_run_le family start red true z 1 (fun _ _ _ _ => rfl) 1 le_rfl
   have halted := canonHalt_run z bit live
   apply (FinTM.computesInTime_iff D _ _ _).mpr
   rw [initCfg_ofWords]
