@@ -5390,7 +5390,8 @@ private lemma zr_writeRecv {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : F
   · subst hj
     simp only [zr_copyTapes, zr_tapes, zr_heads, true_and, if_true, hlen, zr_recvTape]
     split_ifs with h
-    · obtain ⟨p, hp⟩ : ∃ p : ℕ, q - zoneStart (i - 1) = p := ⟨(q - zoneStart (i - 1)).toNat, by omega⟩
+    · obtain ⟨p, hp⟩ : ∃ p : ℕ, q - zoneStart (i - 1) = p :=
+        ⟨(q - zoneStart (i - 1)).toNat, by omega⟩
       rw [hp, FinTM.bufferTape_nat, List.getElem?_take, if_pos (by omega),
         zr_col_zone z t i hiℓ p, if_pos (by omega), Option.map_some, zoneSlotOf_inr,
         Int.toNat_natCast]
