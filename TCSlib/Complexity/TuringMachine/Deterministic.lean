@@ -31,7 +31,9 @@ Local modifications (see policy.md §2, vendored code):
   `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
   2026-10-17).
 * added `spaceUsed_eq_sum`, the space measure as the sum of the per-tape counts, so that
-  consumers read `spaceUsed` through an equation.
+  consumers read `spaceUsed` through an equation;
+* added `spaceUsedByTape_eq_card`, a tape's space as the number of cells its head visited, so
+  that consumers read `spaceUsedByTape` through an equation.
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
