@@ -5000,7 +5000,8 @@ private def zr_pinWalkContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : 
     (fun j d => V j ∧ zr_pinned (T j) (p j) d) fun j d hd => by
       rw [walkTM_contract_pre, hd.2.1, hd.2.2]
       intro q hq
-      simpa only [SignType.coe_one, one_mul] using hw j hd.1 q hq
+      rw [SignType.coe_one, one_mul]
+      exact (hw j hd.1 q hq).trans (FinTM.bufferTape_nat (w j) q)
 
 /-- The pinned walk moves both heads `|w j| + 1` cells right. -/
 private lemma zr_pinWalk_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
@@ -5446,7 +5447,7 @@ private def zr_inV {k : ℕ} (t : Fin k) (J : zr_Ix k) : Prop :=
 private lemma zr_inV_empty {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_inV t J) :
     (J.D.2 t).right ⟨J.i - 1, by have := hV.2.1; omega⟩ = [] := by
   have h := (zr_inner_empty_iff true J.D.2 ⟨J.i - 1, by have := hV.2.1; omega⟩ t).mp
-  rw [zr_zonePos, if_pos rfl, Nat.add_zero] at h
+  rw [zr_zonePos, if_pos rfl, Nat.add_zero, ZoneContents.words_true] at h
   exact h hV.2.2.1
 
 /-- The half-capacity `2^(i-1)` of the receiving zone. -/
@@ -6546,6 +6547,7 @@ private lemma zr_slotSet_self {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t 
     some (zoneSlotSet t (zonedTape z (-((zoneStart i + o : ℕ) : ℤ)))
         ((z t).left i)[o]?) = zonedTape z (-((zoneStart i + o : ℕ) : ℤ)) := by
   rw [zonedTape_left z i o ho, zoneSlotSet_eq, zoneCellOfCell_inr]
+  simp only [ZoneContents.words_false]
   congr 2
   exact Function.update_eq_self t _
 
@@ -7459,7 +7461,7 @@ private lemma zr_inGuard_iff {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t :
     (zonedTape z (zr_rstart i)).map (zoneSlotOf t) = some none ↔
       (z t).right ⟨i - 1, by omega⟩ = [] := by
   have h := zr_inner_empty_iff true z ⟨i - 1, by omega⟩ t
-  rw [zr_zonePos, if_pos rfl, Nat.add_zero] at h
+  rw [zr_zonePos, if_pos rfl, Nat.add_zero, ZoneContents.words_true] at h
   rw [zr_rstart, if_neg (by omega)]
   exact h
 
