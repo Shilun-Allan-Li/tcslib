@@ -530,7 +530,8 @@ private theorem wl_stop_fixed {K : ℕ} {Q T Pt Ps : Type}
     (hd : d.state = some ⟨.stop, e⟩) (t : ℕ) :
     (wl_loopTM Rt Rs te ty tn se sy sn).runFrom d t = d := by
   have hs : (wl_loopTM Rt Rs te ty tn se sy sn).step d = d := by
-    simp only [MultiTapeTM.step, hd, wl_loopTM, phaseHostTM, wl_red, wl_rows]
+    simp only [MultiTapeTM.step, hd, wl_loopTM,
+      phaseHostTM_tr_of_red_none (wl_rows Rt Rs) _ (wl_red te ty tn se sy sn) .stop e rfl, wl_rows]
     apply Cfg.ext <;> simp [Action.mapState, Action.apply, hd]
   exact Function.iterate_fixed hs t
 

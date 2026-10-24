@@ -221,6 +221,7 @@ private lemma fl_hosted_leaf {k : ℕ} {S : Type} {x : List Bool}
   have lifted : (fl_TM k).step (d.mapState fun _ => ⟨true, some live⟩) =
       ((fl_leafTM k).step (d.mapState fun _ => some live)).mapState (Sigma.mk true) := by
     simp only [MultiTapeTM.step, Cfg.mapState, hq, Option.map_some]
+    rw [fl_TM, phaseHostTM_tr_of_red_none (fl_part k) (fl_entry k) (fl_red k) true (some live) rfl]
     rfl
   rw [lifted, fl_leaf_step _ live (by simp [Cfg.mapState, hq])]
   cases live <;> rfl
@@ -229,7 +230,9 @@ private lemma fl_hosted_leaf {k : ℕ} {S : Type} {x : List Bool}
 private lemma fl_return {k : ℕ} {S : Type} {x : List Bool} (d : Cfg (k + 2) Bool S x) :
     (fl_TM k).step (fl_flush (some ⟨true, none⟩) d) =
       fl_flush (some (fl_entry k)) d := by
-  rw [step_of_inputMoveAction (fl_TM k) _ 0 rfl (by rfl)]
+  rw [step_of_inputMoveAction (fl_TM k) _ 0 rfl (by
+    rw [fl_TM, phaseHostTM_tr_of_red_some (fl_part k) (fl_entry k) (fl_red k) true none rfl]
+    rfl)]
   simp only [fl_flush, moveInputPos_zero]
 
 /-- Clearing a represented summary recovers the forwarding encoding, with exactly the

@@ -103,8 +103,28 @@ def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
 in `Turing.NDTM.phaseHostND` gives `Turing.phaseHostTM` over the phases' slices at `b`. -/
 theorem phaseHostND_fixChoice {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
     (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (b : Bool) :
-    (phaseHostND M q0 red).fixChoice b = phaseHostTM (fun i => (M i).fixChoice b) q0 red :=
-  rfl
+    (phaseHostND M q0 red).fixChoice b = phaseHostTM (fun i => (M i).fixChoice b) q0 red := by
+  have hq : ((phaseHostND M q0 red).fixChoice b).q₀ =
+      (phaseHostTM (fun i => (M i).fixChoice b) q0 red).q₀ := by
+    rw [NDTM.fixChoice_q₀, phaseHostTM_q₀]
+    rfl
+  have ht : ((phaseHostND M q0 red).fixChoice b).tr =
+      (phaseHostTM (fun i => (M i).fixChoice b) q0 red).tr := by
+    funext q inp w
+    obtain ⟨i, s⟩ := q
+    rw [NDTM.fixChoice_tr]
+    cases h : red i s with
+    | none =>
+      rw [phaseHostTM_tr_of_red_none _ _ _ i s h, NDTM.fixChoice_tr]
+      simp only [phaseHostND, h]
+    | some q' =>
+      rw [phaseHostTM_tr_of_red_some _ _ _ i s h]
+      simp only [phaseHostND, h]
+  calc (phaseHostND M q0 red).fixChoice b
+      = ⟨((phaseHostND M q0 red).fixChoice b).q₀, ((phaseHostND M q0 red).fixChoice b).tr⟩ := rfl
+    _ = ⟨(phaseHostTM (fun i => (M i).fixChoice b) q0 red).q₀,
+          (phaseHostTM (fun i => (M i).fixChoice b) q0 red).tr⟩ := by rw [hq, ht]
+    _ = phaseHostTM (fun i => (M i).fixChoice b) q0 red := rfl
 
 /-- **The ND phase lemma** (the nondeterministic counterpart of `Turing.phaseHostTM_run`). Let
 phase `i` run under the word `w` from `c` to `c'`, ending at a state `s'` that `red` redirects
