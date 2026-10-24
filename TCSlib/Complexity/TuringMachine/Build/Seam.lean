@@ -38,7 +38,9 @@ every §12 contract is proved (§12 fill epoch F1, gate closed 2026-10-09). The
 prefix `Turing.seamCompTM_runFrom_left` and the existing right lockstep.
 The **phase host** `Turing.phaseHostTM`, with `Turing.phaseHostTM_run` (proved), is the
 finite-dispatch generalization: many phases and a redirect table, one dispatch step per
-redirect (landed before the §12.8 fill for the record rows).
+redirect (landed before the §12.8 fill for the record rows). Its table off the redirects is
+`Turing.phaseHostTM_tr_of_red_none`, and `Turing.phaseHostTM_run_le` runs a last phase up to its
+exit without a dispatch.
 
 ## Design
 
@@ -838,14 +840,45 @@ def phaseHostTM {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
     | some q' => ⟨0, fun _ => (none, 0), none, some q'⟩
     | none => ((M q.1).tr q.2 inp w).mapState (Sigma.mk q.1)
 
+/-- **The phase host's table off the redirects**: at a state `s` of phase `i` that `red` does
+not redirect, the host takes phase `i`'s action, with the successor state tagged by `i`. -/
+theorem phaseHostTM_tr_of_red_none {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) (s : Ph i) (hs : red i s = none)
+    (inp : Option Γ) (w : Fin k → Option Γ) :
+    (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = ((M i).tr s inp w).mapState (Sigma.mk i) := by
+  simp only [phaseHostTM, hs]
+
+/-- **The phase lemma for a last phase.** Run phase `i` from `c` for `T` steps, with no
+redirect strictly before `T`. Then, up to and including `T`, the host is the phase run with
+states tagged by `i`. Unlike `Turing.phaseHostTM_run`, nothing is assumed of the state at `T`:
+it may be a live exit that `red` does not redirect, so this serves a host's last phase.
+
+**Proof sketch.** On every state reached before `T` the host's table is the tagged phase table
+(`Turing.phaseHostTM_tr_of_red_none`), so the agreement transfer
+`Turing.MultiTapeTM.runFrom_mapState_of_agreeOn` gives the run up to `T`. -/
+theorem phaseHostTM_run_le {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
+    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
+    (c : Cfg k Γ (Ph i) x) (T : ℕ)
+    (hguard : ∀ u < T, ∀ s, ((M i).runFrom c u).state = some s → red i s = none) :
+    ∀ u ≤ T, (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) u =
+        ((M i).runFrom c u).mapState (Sigma.mk i) := by
+  intro u hu
+  exact MultiTapeTM.runFrom_mapState_of_agreeOn (M i) (phaseHostTM M q0 red)
+    ⟨Sigma.mk i, sigma_mk_injective⟩ (fun s => red i s = none)
+    (fun s hs inp work => phaseHostTM_tr_of_red_none M q0 red i s hs inp work)
+    c u (fun v hv s hs => hguard v (by omega) s hs)
+
 /-- **The phase lemma** (§12.8 fill). Run phase `i` from `c` for `T` steps to `c'`, ending in
 a state that `red` redirects to `q'`, with no redirect earlier. Then, up to `T`, the host is
 the phase run with states tagged by `i`; one dispatch step later it is `c'` with only its
 control replaced by `q'`.
 
-**Proof sketch.** Before the exit the host's table agrees with the tagged phase table on every
-reached state, so the agreement transfer `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`
-gives the prefix; the dispatch is one explicit step. No seam induction is repeated. -/
+**Proof sketch.** The prefix up to `T` is `Turing.phaseHostTM_run_le`. The dispatch is one step,
+read through `Turing.MultiTapeTM.step_of_some`, the host's table at the redirected exit, and the
+field equations of `Turing.Action.apply` and `Turing.Cfg.mapState`. No seam induction is
+repeated. -/
 theorem phaseHostTM_run {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
     (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : Σ i, Ph i)
     (red : (i : I) → Ph i → Option (Σ i, Ph i)) (i : I) {x : List Γ}
@@ -856,18 +889,31 @@ theorem phaseHostTM_run {k : ℕ} {Γ : Type} {I : Type} {Ph : I → Type}
         ((M i).runFrom c u).mapState (Sigma.mk i)) ∧
       (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) (T + 1) =
         c'.mapState (fun _ => q') := by
-  have hpre : ∀ u ≤ T, (phaseHostTM M q0 red).runFrom (c.mapState (Sigma.mk i)) u =
-      ((M i).runFrom c u).mapState (Sigma.mk i) := by
-    intro u hu
-    exact MultiTapeTM.runFrom_mapState_of_agreeOn (M i) (phaseHostTM M q0 red)
-      ⟨Sigma.mk i, sigma_mk_injective⟩ (fun s => red i s = none)
-      (fun s hs inp work => by simp only [phaseHostTM, Function.Embedding.coeFn_mk, hs])
-      c u (fun v hv s hs => hguard v (by omega) s hs)
+  have hpre := phaseHostTM_run_le M q0 red i c T hguard
   refine ⟨hpre, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', hpre T le_rfl, h]
   have hst : (c'.mapState (Sigma.mk i)).state = some ⟨i, s'⟩ := by
-    simp [Cfg.mapState, hs']
-  simp only [MultiTapeTM.step, hst, phaseHostTM, hred]
-  apply Cfg.ext <;> simp [Cfg.mapState, hs']
+    rw [Cfg.mapState_state, hs']
+    rfl
+  have htr : (phaseHostTM M q0 red).tr ⟨i, s'⟩ (c'.mapState (Sigma.mk i)).inputSymbol
+      (c'.mapState (Sigma.mk i)).workTapeSymbols = ⟨0, fun _ => (none, 0), none, some q'⟩ := by
+    simp only [phaseHostTM, hred]
+  rw [MultiTapeTM.step_of_some hst, htr]
+  refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+  · rw [Action.apply_state, Cfg.mapState_state, hs']
+    rfl
+  · rw [Action.apply_inputPos, moveInputPos_zero, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    show Function.update ((c'.mapState (Sigma.mk i)).workTapes j)
+      ((c'.mapState (Sigma.mk i)).workTapePos j)
+      ((c'.mapState (Sigma.mk i)).workTapes j ((c'.mapState (Sigma.mk i)).workTapePos j)) q = _
+    rw [Function.update_eq_self, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  · funext j
+    rw [Action.apply_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    exact add_zero _
+  · rw [Action.apply_output, Cfg.mapState_output, Cfg.mapState_output]
+    exact List.append_nil _
+
 
 end Turing

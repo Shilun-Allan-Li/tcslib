@@ -908,17 +908,14 @@ private lemma recordSkipTM_fixed {k : ℕ} {x : List Bool}
   exact congrArg (Cfg.mapState (Sigma.mk false)) (recordTM_read d bits hq hw u hu)
 
 /-- Once dispatched, the host follows the successor walker literally.
-This is an application of public state transport, not another host trace. -/
+The walker's phase redirects nothing, so this is the phase host's last-phase lemma
+`Turing.phaseHostTM_run_le`, not another host trace. -/
 private lemma recordSkipTM_tail {k : ℕ} {x : List Bool}
     (d : Cfg (k + 2) Bool SuccPhase x) (t : ℕ) :
     (recordSkipTM k).runFrom (d.mapState (Sigma.mk true)) t =
       ((succFieldTM (tableTape k) (summaryTape k) false).runFrom d t).mapState
         (Sigma.mk true) := by
-  exact MultiTapeTM.runFrom_mapState_of_agreeOn
-    (succFieldTM (tableTape k) (summaryTape k) false) (recordSkipTM k)
-    ⟨(fun q => (⟨true, q⟩ : Σ b, SkipPh k b)), by
-      intro a b h; cases h; rfl⟩ (fun _ => True)
-    (fun _ _ _ _ => rfl) d t (fun _ _ _ _ => trivial)
+  exact phaseHostTM_run_le (skipPart k) _ (skipRed k) true d t (fun _ _ _ _ => rfl) t le_rfl
 
 /-- A trusted action record splits at exactly the inherited fixed width.
 Only this elementary serialization identity is missing from the public
