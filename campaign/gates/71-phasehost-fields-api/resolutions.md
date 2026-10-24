@@ -22,11 +22,19 @@ true.
 | 14 | note | The unchanged text screen is not a proof of semantic duplication-freedom. | **Agreed.** |
 | 4–10, 13, 15 | notes | Integrity and the freeze; the equations' faithfulness and completeness; boundary cases; the start-state, dispatch and table re-points; `NDHost`; axioms; lint. | No action. |
 
-**Merge state. #159: not yet clear to merge.** The gate is closed; the merged-tree replay is
-pending (after #158 and #160 merge).
+**Merge state. #159: clear to merge.** The gate is closed, the replay on the tree after #158 has
+passed (below), and the base is the campaign branch.
 
 **Replay plan, revised after #158 merged (2026-10-24):** the campaign branch merged into #159
 cleanly (`e3767525`); `replay-lphf.sh` replays the eight files' downstream closure (88 modules,
 `WindowClock` included) from `oleans-lf3c2`, the tree after #158. If #160 merges before #159, its
 closure (`NDCodeSimulator`, `NTimeHierarchy`, two facades) replays on #159's merged tree from
 `oleans-lphf`.
+
+**Replay** (2026-10-24): `replay-lphf.sh` at `e3767525`, 88 modules from `oleans-lf3c2`. **Passed
+(user): 88 of 88**, 0 failed, static-equal (52; `WindowClock`'s sorry gone with #158)
+(`evidence/replay/`). On the new snapshot `oleans-lphf` (notes 12 and 16, the real tree):
+`phaseHostTM_q₀` on no axioms, `phaseHostTM_tr_of_red_some` on `[propext]`,
+`phaseHostND_fixChoice` on `[propext, Quot.sound]`, `exists_forwardLoopTM` and
+`exists_polyCanonizer` on the standard three; `exists_uniformSimulator` keeps its `sorryAx`
+(`PHFRealAx.*`).
