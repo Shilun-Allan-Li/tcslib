@@ -325,6 +325,12 @@ theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :
     tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i :=
   rfl
 
+/-- **A tape's space as a count**: the space tape `i` uses up to step `t` is the number of cells
+its head visited up to step `t`. -/
+theorem spaceUsedByTape_eq_card (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
+    tm.spaceUsedByTape cfg t i = (tm.visitedByTapeHead cfg t i).card :=
+  rfl
+
 /-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
 lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
     tm.spaceUsed cfg t = spaceUsedOfCfgs ((List.range (t + 1)).map (tm.runFrom cfg)) := by
