@@ -3025,7 +3025,9 @@ private def zr_finalSeekContract {k : ℕ} (x : List (ZoneSym k)) :=
 private def zr_finalLoopContract {k : ℕ} (x : List (ZoneSym k)) :=
   zr_reindexContract (zr_loopContract x) zoneExtendData
     (fun (D : ZoneData k) d => zr_loopPre (zoneExtendData D) d ∧ zr_scratchAt 0 (2 ^ D.1) d)
-    fun _ _ hp => hp.1
+    fun _ _ hp => by
+      rw [zr_loopContract, Contract.ofSegment_pre]
+      exact hp.1
 
 /-- With the ruler at the scratch head, its word is the clear row's premise. -/
 private lemma zr_rulerClear_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
@@ -3242,8 +3244,18 @@ private lemma zr_rightLeft_post {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k
         rfl
     · have hj1 : j = 1 := by omega
       subst hj1
-      simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, hj, false_and, if_false,
-        zr_rightReturn_post D _ hr, zr_rulerTape, Nat.cast_pow, Nat.cast_ofNat]
+      simp only [Cfg.mapState_workTapes, hj, false_and, if_false, zr_rightReturn_post D _ hr,
+        zr_rulerTape]
+      rw [Cfg.mapState_workTapePos]
+      by_cases hc : d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + 2 ^ D.1
+      · have hc' : d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + ((2 ^ D.1 : ℕ) : ℤ) := by
+          rw [hcast]
+          exact hc
+        rw [if_pos hc, if_pos hc']
+      · have hc' : ¬ (d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + ((2 ^ D.1 : ℕ) : ℤ)) := by
+          rw [hcast]
+          exact hc
+        rw [if_neg hc, if_neg hc']
   · funext j
     by_cases hj : j = 0
     · subst hj
