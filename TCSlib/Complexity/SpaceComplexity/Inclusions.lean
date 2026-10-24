@@ -918,9 +918,13 @@ private theorem b2b_setup_capture (MV MI MP : FinTM Bool) (x y : List Bool)
       | inl a => rfl
       | inr a => exact False.elim (hcut u hu (by simpa using hq)))
   have hinit : d₀.mapState (Sigma.mk B2bHostPhase.setup) =
-      (b2b_host MV MI MP).tm.initCfg x := rfl
+      (b2b_host MV MI MP).tm.initCfg x := by
+    rw [MultiTapeTM.initCfg_eq, show (b2b_host MV MI MP).tm.q₀ =
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ from phaseHostTM_q₀ _ _ _]
+    rfl
+  rw [← hinit]
   refine ⟨T + 1, p, ?_, ?_⟩
-  · simpa only [hinit, b2b_host, b2b_dispatch_retag, d₁, Cfg.mapState, Cfg.init,
+  · simpa only [b2b_host, b2b_dispatch_retag, d₁, Cfg.mapState, Cfg.init,
       Option.map_some] using hp.2
   · intro u hu j
     change |((phaseHostTM (b2b_hostPhases MV MI MP)

@@ -4598,7 +4598,7 @@ private lemma canonEmitVerdict {k : ℕ} {S : Type} [Fintype S] [DecidableEq S]
     phaseHostTM_run_le family start red true z 1 (fun _ _ _ _ => rfl) 1 le_rfl
   have halted := canonHalt_run z bit live
   apply (FinTM.computesInTime_iff D _ _ _).mpr
-  rw [initCfg_ofWords]
+  rw [initCfg_ofWords, show D.tm.q₀ = start from phaseHostTM_q₀ family start red]
   change (N.runFrom (d.mapState (Sigma.mk false)) (t + 2)).state = none ∧
     (N.runFrom (d.mapState (Sigma.mk false)) (t + 2)).output = [bit]
   rw [show t + 2 = (t + 1) + 1 by omega, MultiTapeTM.runFrom_add,

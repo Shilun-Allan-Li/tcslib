@@ -1901,6 +1901,8 @@ private theorem oracleHost_initial (M : FinOracleTM Bool) (C : FinTM Bool)
       at mapped
     rw [mapped]
     rfl
+  rw [show (oracleHost M C hc en ex).tm.q₀ =
+    (⟨.dispatch, .boot⟩ : Σ i, oraclePhaseState M C i) from phaseHostTM_q₀ _ _ _]
   change (oracleHost M C hc en ex).tm.runFrom (d.mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch)) 2 = _
   rw [← placement, admin, bootView]
   unfold oracleStableCfg
