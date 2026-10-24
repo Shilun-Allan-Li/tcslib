@@ -5006,8 +5006,8 @@ private abbrev zr_copyTapes {k : ℕ} {Δ : Type} (dst : Fin 2) (extract : ZoneS
   else T j q
 
 /-- A mapped copy from `src` onto `dst` as a pinned step, the copied word `w j` at `src`. -/
-private def zr_pinCopyContract {k : ℕ} {J Δ : Type} (x : List (ZoneSym k)) (V : J → Prop) (src dst : Fin 2)
-    (hne : src ≠ dst) (extract : ZoneSym k → Δ) (merge : Option (ZoneSym k) → Δ → ZoneSym k)
+private def zr_pinCopyContract {k : ℕ} {J Δ : Type} (x : List (ZoneSym k)) (V : J → Prop)
+    (src dst : Fin 2) (hne : src ≠ dst) (extract : ZoneSym k → Δ) (merge : Option (ZoneSym k) → Δ → ZoneSym k)
     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
     (hw : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
       T j src (p j src + q) = FinTM.bufferTape (w j) q) :=
@@ -5017,8 +5017,8 @@ private def zr_pinCopyContract {k : ℕ} {J Δ : Type} (x : List (ZoneSym k)) (V
       exact hw j hd.1
 
 /-- The pinned mapped copy writes `dst`'s interval and keeps the heads. -/
-private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (V : J → Prop) (src dst : Fin 2)
-    (hne : src ≠ dst) (extract : ZoneSym k → Δ) (merge : Option (ZoneSym k) → Δ → ZoneSym k)
+private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (V : J → Prop)
+    (src dst : Fin 2) (hne : src ≠ dst) (extract : ZoneSym k → Δ) (merge : Option (ZoneSym k) → Δ → ZoneSym k)
     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
     (hw : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
       T j src (p j src + q) = FinTM.bufferTape (w j) q) :
