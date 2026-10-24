@@ -128,7 +128,7 @@ probe; the split and rounds 150; the header 60; `Primrec` 120; the composition 2
 | Route probe | sealed over 12 TCSlib definitions: `b5a_install`, `b5a_locality`, `b5a_accepts_take`, `b5a_verdict`, `b5a_table_le`: 0 diagnostics |
 | Verdict probe | in-module (appended to the overlay), sealed over 4 more: `b5a_window_verdict`, `h1HostedVerdict_accepts` on the window deciding acceptance on `x`: the target's warning only |
 | Seal controls | 16 goals: all close unsealed, all fail sealed |
-| Screen base | **not measured at this push**: running (see "Not complete" below) |
+| Screen base | 54 files: 2,756 declarations, 3,005 pairs, 973,130 characters; on the owned file 58 in-file pairs (4 at 90% or more, CC7-1) and 41 cross-file; 87 minutes |
 | Lint | `TuringMachine` 0 FAIL, 68 WARN over 83 files |
 
 **Dependencies.** `CodeSimulator` is upstream of C1's and U2's files; neither cites this target.
@@ -276,10 +276,9 @@ shared base are dropped at issue, and the queue renumbered.
 
 ## Not complete at this push
 
-- **B5a's screen base** (54 files, about 5.0 MB of Lean; started 2026-10-24T00:30:35Z under
-  `nice -n 10`; C1's 16-file, 1.1 MB screen took 12.7 minutes on this host, so several hours are
-  expected), and **U2's** (20 files, 1.8 MB), run after it (one screen at a time). Their figures
-  go into each pre-ship README, each draft's "The base" line and the two tables above.
+- **U2's screen base** (20 files, 1.8 MB of Lean), started 2026-10-24T01:57:13Z under
+  `nice -n 10`, after B5a's had finished (one screen at a time). Its figures go into its pre-ship
+  README, its draft's "The base" line and its table above.
 
 ## Files (all new, under `campaign/`)
 

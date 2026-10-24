@@ -8,8 +8,7 @@ there, against a fresh bootstrap of the order list:
 megafill-C-DRAFTING-REPORT.md`): whether R's startup kit is first published (the recommendation)
 or this fill writes its own private startup. The two paragraphs marked ⟨Q-B1: A⟩ and ⟨Q-B1: B⟩
 below are the two outcomes; keep one at issue. Other issue-time items: @ANCESTOR@, ⟨BASE⟩,
-⟨IN-FLIGHT⟩, ⟨SCREEN⟩ (measured at the drafting base below), the megafill banner, and re-running
-the pre-ship at the issue commit. -->
+⟨IN-FLIGHT⟩, the megafill banner, and re-running the pre-ship at the issue commit. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -450,8 +449,13 @@ screen after your first edit: it must equal the screen base (the overlay changes
   `ClassNP/ExhaustiveReplay` (IR-1's remaining input rewind). It contains `Simulation` and
   `Build/InputRewind` (the megafill A lesson for any item near an input rewind).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/b5a/logs/b5a-fill-unisim-screen-base.txt`: ⟨SCREEN⟩
-  (MEASURED at the drafting base).
+- **The base** is `campaign/fills/b5a/logs/b5a-fill-unisim-screen-base.txt`: **2,756
+  declarations, 3,005 pairs, 973,130 characters** (MEASURED at the drafting base; 87 minutes under
+  `nice -n 10`). 99 pairs have a declaration of your file on one side: 58 within it (four at 90%
+  or more, all CC7-1's: the cut-leg pair and two leg-template pairs), 41 across files.
+- **The screen is long:** start the before run in the background right after your first edit (it
+  may run beside the one Lean process, never beside another screen), and the after run as soon as
+  the owned file is final.
 
 ```sh
 P=campaign/fills/b5a/inputs/b5a-fill-unisim
