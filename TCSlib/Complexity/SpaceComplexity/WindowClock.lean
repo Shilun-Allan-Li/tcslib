@@ -1028,6 +1028,58 @@ private lemma cw_round {K : ℕ} {Γ P : Type} [DecidableEq P] (e : Γ)
     (by push_cast; ring) r habs (by omega) (by omega)
   exact cw_seg_time (s₁.trans (s₂.trans (s₃.trans s₄))) (by ring)
 
+/-- **One pass**: the rounds of fields `j`, `j + 1`, …, up to the last field `jl`. Their writes
+join into one constant patch: with `n + j` equal to `N₀ + fieldOffset fs j` at field `j`, the
+pass ends with `n'` cells, `n' + |fs|` equal to `N₀ + fieldOffset fs |fs|`, at the start of the
+record's rewind.
+**Proof sketch.** Induct on the number of fields left, concatenating rounds; the last round's
+next phase is the rewind. -/
+private lemma cw_pass {K : ℕ} {Γ P : Type} [DecidableEq P] (e : Γ)
+    (R : MultiTapeTM (K + 2) Γ P) (en : P) (ex : WindowExit → P) {c m : ℕ} (p : Fin c)
+    {x : List Γ} (fs : List (List Γ)) (hfs : fs.length = m)
+    (d : Cfg (K + 2) Γ (Σ i : cw_Idx c m, cw_Ctrl P i) x) (hrec : RecordAt d 0 fs)
+    (hclk : ∀ z, d.workTapes (Fin.last (K + 1)) z = none) (N₀ r : ℕ)
+    (hr : N₀ + fieldOffset fs fs.length + 1 ≤ r) (jl : Fin m) (hjl : jl.val + 1 = fs.length) :
+    ∀ (i j : ℕ) (hj : j < fs.length), j + i + 1 = fs.length → ∀ n n' : ℕ,
+      n + j = N₀ + fieldOffset fs j → n' + fs.length = N₀ + fieldOffset fs fs.length →
+      ∃ t, t + 9 * fieldOffset fs j ≤ 9 * fieldOffset fs fs.length ∧
+        Segment (cw_hostTM e R en ex c m) {z | ∃ y : WindowExit, z = some ⟨.stop, y⟩}
+          (cw_box d.workTapePos r)
+          (cw_cfg e d (⟨.copy p ⟨j, hfs ▸ hj⟩, (SweepPhase.sweep : SweepPhase)⟩ :
+            Σ i, cw_Ctrl P i) (fieldOffset fs j) n n)
+          (cw_cfg e d (⟨.back p jl, (SeekPhase.run : SeekPhase)⟩ : Σ i, cw_Ctrl P i)
+            (fieldOffset fs fs.length) n' n') t := by
+  intro i
+  induction i with
+  | zero =>
+    intro j hj hji n n' hn hn'
+    have hoff := fieldOffset_succ fs j hj
+    have hj₁ : j + 1 = fs.length := by omega
+    have hoffm : fieldOffset fs fs.length = fieldOffset fs (j + 1) := by rw [hj₁]
+    have s := cw_round e R en ex p fs hfs d hrec hclk j hj n r (by omega) (by omega)
+    have hjl' : jl = ⟨j, hfs ▸ hj⟩ := Fin.ext (by show jl.val = j; omega)
+    subst hjl'
+    have hnext : (cw_next p ⟨j, hfs ▸ hj⟩ : Σ i : cw_Idx c m, cw_Ctrl P i) =
+        ⟨.back p ⟨j, hfs ▸ hj⟩, (SeekPhase.run : SeekPhase)⟩ := by
+      unfold cw_next
+      rw [dif_neg (show ¬(j + 1 < m) by omega)]
+    rw [hnext, hj₁, show n + fs[j].length = n' by omega] at s
+    exact ⟨_, by omega, s⟩
+  | succ i ih =>
+    intro j hj hji n n' hn hn'
+    have hoff := fieldOffset_succ fs j hj
+    have hle := fieldOffset_add_length_le fs (j + 1) (by omega)
+    have hend := length_joinFields_add_one fs (List.ne_nil_of_length_pos (by omega))
+    have hoff' := fieldOffset_succ fs (j + 1) (by omega)
+    have s := cw_round e R en ex p fs hfs d hrec hclk j hj n r (by omega) (by omega)
+    have hnext : (cw_next p ⟨j, hfs ▸ hj⟩ : Σ i : cw_Idx c m, cw_Ctrl P i) =
+        ⟨.copy p ⟨j + 1, by omega⟩, (SweepPhase.sweep : SweepPhase)⟩ := by
+      unfold cw_next
+      rw [dif_pos (show j + 1 < m by omega)]
+    rw [hnext] at s
+    obtain ⟨t, ht, s'⟩ := ih (j + 1) (by omega) (by omega) (n + fs[j].length) n' (by omega) hn'
+    exact ⟨_, by omega, s.trans s'⟩
+
 /-- **H3 with the configuration-count clock** (what `Complexity.space_hierarchy`'s
 diagonalizer cites). The windowed runner that builds its own clock. For a fixed binary machine
 `M` and a tag update `upd` that ignores silent steps, there is a module over the record alphabet
@@ -1086,14 +1138,15 @@ writer's rows, the windowed runner, the clear of the clock and the exits. Proved
 field's round (`cw_round`): the constant copy of the field onto the clock at the clock head, the
 skips past the field on the record tape and past the written cells on the clock, and the
 one-cell move back onto the clock's right delimiter, the new cells joining the clock word by
-`Turing.wordPatch_append`. This target remains open.
-**Proof sketch (remaining).** Concatenate the rounds over the fields into a pass and the `c`
-passes, the record head returning by skips back over the fields after each pass, and return the
-clock head to the clock's first cell. Then run `Turing.exists_windowRunnerTM` on the word, clear
-the clock after a `halted` or `left` exit (`cw_clear_patch`), and dispatch to the exits. The
-time and head bounds follow from the clock budget and the linear writer and clear costs
-(`cw_time_bound`, `cw_head_bound`), the silence from the endpoint, and the space bound from the
-head bound (`Turing.MultiTapeTM.spaceUsed_le_of_abs_le`).
+`Turing.wordPatch_append`; one pass over the fields (`cw_pass`), whose writes form one constant
+word. This target remains open.
+**Proof sketch (remaining).** Concatenate the passes, the record head returning by skips back
+over the fields after each pass, and return the clock head to the clock's first cell. Then run
+`Turing.exists_windowRunnerTM` on the word, clear the clock after a `halted` or `left` exit
+(`cw_clear_patch`), and dispatch to the exits. The time and head bounds follow from the clock
+budget and the linear writer and clear costs (`cw_time_bound`, `cw_head_bound`), the silence
+from the endpoint, and the space bound from the head bound
+(`Turing.MultiTapeTM.spaceUsed_le_of_abs_le`).
  -/
 theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
