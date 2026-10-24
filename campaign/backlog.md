@@ -1633,7 +1633,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **#156 merged (2026-10-24; `21d53053`); the campaign's Lean tree is `oleans-lphl2`'s.** The
     landing: `lean/f3c2-landing` at `1911b1ca` (the six commits as delivered and the status
     edits A1, A2), PR opened; **gate 70** (a fill gate) staged; `replay-lf3c2.sh`, 2 modules from
-    `oleans-lphl2`.
+    `oleans-lphl2`. **#158; `lf3c2` passed (user, 2026-10-24: 2/2, static-equal 0); gate 70
+    dispatched.**
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
@@ -1648,7 +1649,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - **C1 and the cover reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/c1-cover/`):
       issue after edits (0 blockers, 0 majors, 9 minors, 2 notes; `suggested-fix.diff`). **The
       reviewer proved the target** (`probe/C1RCReviewFeasibility.lean.txt`, about 300 lines, sealed,
-      standard axioms): decision D1 pending (user).
+      standard axioms): decision D1 pending (user). **Landed directly (the user's ruling): #160**
+      (`lean/c1-replaycanon` at `73c99430`); `lrcan` passed (user, 2026-10-24: 4/4, static-equal 1,
+      `ntime_hierarchy`); gate 72 (a fill gate) drafted, its screens running.
     - **U2 reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/u2/`): not issuable until
       Q-U1's API PR lands. The PR needs, beside the two `simps` lines (verified in copies: ten
       field lemmas), `Turing.MultiTapeTM.spaceUsedByTape_eq_card` in `Deterministic` (F1, a
