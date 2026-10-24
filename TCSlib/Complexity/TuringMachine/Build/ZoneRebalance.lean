@@ -3093,17 +3093,16 @@ private def zr_finalLoopContract {k : ℕ} (x : List (ZoneSym k)) :=
       exact hp.1
 
 /-- With the ruler at the scratch head, its word is the clear row's premise. -/
-private lemma zr_rulerClear_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
-    (d : Cfg 2 (ZoneSym k) SweepPhase x) (hp : zr_scratchAt 0 (2 ^ D.1) d) :
-    (clearTM_contract 1 x).pre (List.replicate (2 ^ D.1) (Sum.inl false)) d := by
+private lemma zr_rulerClear_pre {k : ℕ} {x : List (ZoneSym k)} (n : ℕ)
+    (d : Cfg 2 (ZoneSym k) SweepPhase x) (hp : zr_scratchAt 0 n d) :
+    (clearTM_contract 1 x).pre (List.replicate n (Sum.inl false)) d := by
   rw [clearTM_contract_pre]
   exact fun p _ _ => zr_scratchAt_word hp p
 
-/-- Clear the scratch ruler. -/
-private def zr_rulerClearContract {k : ℕ} (x : List (ZoneSym k)) :=
-  zr_reindexContract (clearTM_contract 1 x)
-    (fun D : ZoneData k => List.replicate (2 ^ D.1) (Sum.inl false))
-    (fun (D : ZoneData k) d => zr_scratchAt 0 (2 ^ D.1) d) zr_rulerClear_pre
+/-- Clear the scratch ruler, of length `len j` at the index `j`. -/
+private def zr_rulerClearContract {k : ℕ} {J : Type} (len : J → ℕ) (x : List (ZoneSym k)) :=
+  zr_reindexContract (clearTM_contract 1 x) (fun j => List.replicate (len j) (Sum.inl false))
+    (fun j d => zr_scratchAt 0 (len j) d) fun j => zr_rulerClear_pre (len j)
 
 set_option synthInstance.maxSize 256 in
 /-- Decidable equality of the return loop's phases, by cases on the phase index. -/
@@ -3116,7 +3115,8 @@ clear the ruler. -/
 private def zr_finalContract {k : ℕ} (x : List (ZoneSym k)) :=
   letI := zr_decEqLoopPh
   (zr_finalSeekContract x).seq
-    ((zr_finalLoopContract x).seq (zr_rulerClearContract x) (fun D => D) fun D d _ hp => by
+    ((zr_finalLoopContract x).seq (zr_rulerClearContract (fun D : ZoneData k => 2 ^ D.1) x)
+      (fun D => D) fun D d _ hp => by
       rw [zr_finalLoopContract, zr_reindexContract, Contract.ofSegment_pre] at hp
       rw [zr_rulerClearContract, zr_reindexContract, Contract.ofSegment_pre,
         zr_finalLoopContract, zr_reindexContract, Contract.ofSegment_post, zr_loopContract,
