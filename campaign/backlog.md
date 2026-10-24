@@ -1670,8 +1670,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       replay); C1 leaves megafill C.
     - **Q-B1 = A: the startup-kit API PR first** (`Build/InterpreterStartup`, `NDCodeSimulator`
       re-pointed in it). Maintainer's choices within A: `seamCompTM_step` goes in the new module
-      (the PR then depends on nothing in flight); UN's `un_step` and the three suffix-drop copies go
-      to the dedup window; B5a pre-discloses any startup-assembly pair below 90%.
+      (the PR then depends on nothing in flight); the suffix drop stays a private helper in the
+      kit (SD-1, the dedup window); B5a pre-discloses any startup-assembly pair below 90%.
+      **Revised (2026-10-24):** UN's `un_step` is re-pointed in the kit PR after all (no extra
+      replay; otherwise the new public lemma would pair 100% with it).
+      **Prepared locally** (`local/startup-kit`, `91a0f1c9` on #160's head): the kit (8 public,
+      1 private; the probe's statements plus `embedSilentCfg_initCfg`), `NDCodeSimulator`'s eight
+      privates and `un_step` re-pointed; every file elaborates (the kit's text stood in before the
+      two consumers); the review's 22-definition seal holds with its 22 controls; screen 743 → 743
+      declarations, 438 → 440 pairs, the new pair `embedSilentCfg_initCfg` ⇄ `UniversalK`'s
+      `ss_captureInitial` (100%; ledgered). Opens as a PR (gate 74, pack drafted) once #160 merges.
     - **Q-U1: one API PR** with the two `simps` lines, `spaceUsedByTape_eq_card` (`Deterministic`)
       and `pairEncode_drop` (`Build/InputDevice`); a 325-module replay. **PR #161**
       (`lean/u2-api` at `a8c45ad7`); **gate 73** staged; `replay-lu2api.sh` (325 modules) runs

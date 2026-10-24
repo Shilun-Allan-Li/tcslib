@@ -570,5 +570,13 @@ window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1
 `NDCodeSimulator` 1 of 25 (4.0%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); the
 one-fifth rule is not reached.
 
+**SK-1, U2-S's capture start** (the startup-kit API PR, 2026-10-24, prepared). The kit's public
+`Turing.embedSilentCfg_initCfg` (`Build/InterpreterStartup`) is U2-S's private
+`ss_captureInitial` (`UniversalK`, line 329), harvested verbatim: 100% each way on the v3 screen.
+`UniversalK` cannot cite the kit until `CodeSimulator` imports it (B5a's landing). U2-S's other
+`ss_` startup pieces are the kit's constructions under other contracts (no screen pair). **By the
+ruling (2026-10-24, the B5a review's recommendation)** they go to the user's dedup window, or to
+U2's fill once `UniversalK` sees the kit. Census: `UniversalK` 1 member.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
