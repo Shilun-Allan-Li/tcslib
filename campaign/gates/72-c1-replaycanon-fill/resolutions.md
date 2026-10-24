@@ -1,4 +1,4 @@
-# C1, the replay canonizer (PR #160, a fill gate): resolutions (round 1 FAIL, fixed; round 2 pending)
+# C1, the replay canonizer (PR #160, a fill gate): resolutions (round 1 FAIL, fixed; round 2 PASS; gate CLOSED)
 
 **Gate:** the fill gate of PR #160 (`lean/c1-replaycanon` at `73c99430`: the review's proof landed
 directly, by the user's ruling of 2026-10-24). Pack `pack.md`; bundle SHA-256
@@ -31,3 +31,23 @@ canonizer, the core and the bridge on the standard three; against round 1's head
 modules from `oleans-lphf`: **passed (user, 2026-10-24): 4 of 4**, static-equal (1); the universal
 NDTM on the standard three on `oleans-lrcan3`. Screen: the tip 541/173, the head 565/176; against
 round 1's head no pair new or gone. Round 2 (`pack-r2.md`) audits the fix.
+
+**Round 2** (`pack-r2.md`; bundle SHA-256
+`bfbee60b142d80b8106b338c7de9784e43f9aa5a8ac25c2b0bd0e9df1675ee96`, 73 sections; folder
+`72-c1-replaycanon-fill-r2-gate/`, built from the Lean files at
+`1cc8ab3964d63694915297f855dc758458f2d37d` and the records at
+`3b0950f00d19a84bbf7e1f63ccacf3d94c4331af`).
+
+**Round 2** (`findings-r2.md`, verbatim; received 2026-10-24, SHA-256
+`96f4b9093f927a796962f5b72c461db915670f3d1f0923ba7eaa2c377621967e`): **PASS, 0 blockers, 0 majors,
+0 minors, 10 notes. The gate is closed.**
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 2, 3 | notes | Round 1's major and minor are resolved. | No action. |
+| 10 | note | Record the promised idiom-pair disposition when closing. | **Done:** ruled (user, 2026-10-24), accepted as idiom pairs (round 1's row for notes 6 and 10, `fcb259c5`, after this round's records commit). |
+| 1, 4–9 | notes | Integrity; the freeze; the seal; elaboration and axioms; the replay; the screen; lint. | No action. |
+
+**Merge state. #160: clear to merge.** Both rounds are audited and the gate is closed, the replay
+on the tree after #159 has passed (`lrcan3`, 4 of 4), and the base is the campaign branch (whose
+Lean content is unchanged since #160's last merge of it).

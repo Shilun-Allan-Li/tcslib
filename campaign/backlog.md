@@ -1623,6 +1623,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       modules) from `oleans-lphf`.
       **`lrcan2` passed (user, 2026-10-24: 4/4, static-equal 1)**; on `oleans-lrcan2` the universal
       NDTM is on the standard three. #160 waits on gate 72 only.
+      **Gate 72: round 1 FAIL (1 major: `rc_workReads2_length` re-derived the published
+      `StepBlock.length_workReadsK`; 1 minor: `RcT`), fixed by `4cb0c670`; round 2 PASS
+      (0/0/0/10), gate closed; `lrcan3` 4/4. #160 clear to merge.**
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
