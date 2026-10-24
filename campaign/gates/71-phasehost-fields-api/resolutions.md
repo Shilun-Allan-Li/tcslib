@@ -24,3 +24,9 @@ true.
 
 **Merge state. #159: not yet clear to merge.** The gate is closed; the merged-tree replay is
 pending (after #158 and #160 merge).
+
+**Replay plan, revised after #158 merged (2026-10-24):** the campaign branch merged into #159
+cleanly (`e3767525`); `replay-lphf.sh` replays the eight files' downstream closure (88 modules,
+`WindowClock` included) from `oleans-lf3c2`, the tree after #158. If #160 merges before #159, its
+closure (`NDCodeSimulator`, `NTimeHierarchy`, two facades) replays on #159's merged tree from
+`oleans-lphf`.
