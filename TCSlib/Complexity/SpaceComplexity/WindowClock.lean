@@ -26,9 +26,8 @@ The module is in `SpaceComplexity` because it uses `Turing.FinTM.configBound`
 (`SpaceComplexity/ConfigCount.lean`) and the summary tag (`SpaceComplexity/ConfigGraph.lean`),
 so that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`.
 
-**Status.** The bridges are proved. `Turing.exists_configWindowRunnerTM` is sorried with its
-proof sketch; private lemmas toward it (the clock arithmetic at the actual record, the one-cell
-move, a field's constant copy and the clock's clear) are proved.
+**Status.** Everything here is proved: the bridges, and `Turing.exists_configWindowRunnerTM`,
+whose clock writer, phase host and clear are private to this module.
 
 ## Main definitions
 
@@ -42,7 +41,7 @@ None: the module uses existing definitions.
 * `Turing.FinTM.configBound_le_two_pow` — the configuration count is at most a power of two
   (proved).
 * `Turing.exists_configWindowRunnerTM` — the windowed runner with its configuration-count
-  clock (sorried).
+  clock (proved).
 
 ## References
 
