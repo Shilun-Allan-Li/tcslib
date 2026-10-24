@@ -1,0 +1,166 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+
+/-! B5a, the uniform simulator: the controls for the seals of `B5aUSRouteProbe` (the first twelve
+definitions) and `B5aUSVerdictProbe` (the last four). Each of the sixteen sealed definitions has
+one goal closing by `rfl` through it. Unsealed (the first section) every goal closes; sealed (the
+second, the union of the two probes' seals) every goal is expected to FAIL, so that the probes'
+success is not by reduction. -/
+
+namespace Turing
+
+section Unsealed
+
+-- FinTM.ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x, M.ComputesInTime x (f x) (T x.length) := rfl
+
+-- FinTM.ComputesInTime
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := rfl
+
+-- MultiTapeTM.ComputesInTimeAndSpace
+example (M : FinTM Bool) (x y : List Bool) (t s : ℕ) :
+    M.tm.ComputesInTimeAndSpace x y t s =
+      ((M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+        (M.tm.runFrom (M.tm.initCfg x) t).output = y ∧
+        M.tm.spaceUsed (M.tm.initCfg x) t = s) := rfl
+
+-- serializeK
+example {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) := rfl
+
+-- Cfg.ofWords
+example {k : ℕ} {S : Type} (x : List Bool) (q : S) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := x) q w).inputPos = 1 := rfl
+
+-- stateWord
+example (s : List Bool) : stateWord 2 s 1 = [] := rfl
+
+-- MultiTapeTM.toNDTM
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) : M.toNDTM.q₀ = M.q₀ := rfl
+
+-- NDTM.runWith
+example {k : ℕ} {S : Type} {x : List Bool} (N : NDTM k Bool S) (c : Cfg k Bool S x) :
+    N.runWith [] c = c := rfl
+
+-- MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.runFrom c 0 = c := rfl
+
+-- MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+
+-- NDTM.initCfg
+example {k : ℕ} {S : Type} (N : NDTM k Bool S) (x : List Bool) :
+    N.initCfg x = Cfg.init N.q₀ x := rfl
+
+-- CodeFormat.decode
+example (F : CodeFormat) (xs : List Bool) :
+    F.decode xs = ((F.parseFull xs).map Prod.fst).getD F.fallback := rfl
+
+-- vhostCfg
+example {m : ℕ} {S : Type} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool)
+    (p : Fin (x.length + 2)) (pre : List Bool) : (vhostCfg c b p pre).inputPos = p := rfl
+
+-- counterLoopCfg
+example {k : ℕ} {S : Type} {x : List Bool} (q : Option (CounterLoopState S))
+    (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+    (counterLoopCfg q c ct cp).state = q := rfl
+
+-- FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+-- tableBitsK
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
+  MultiTapeTM.ComputesInTimeAndSpace serializeK Cfg.ofWords stateWord MultiTapeTM.toNDTM
+  NDTM.runWith MultiTapeTM.runFrom MultiTapeTM.initCfg NDTM.initCfg CodeFormat.decode vhostCfg
+  counterLoopCfg FinTM.bufferTape tableBitsK
+attribute [-simp] MultiTapeTM.initCfg NDTM.initCfg
+
+-- FinTM.ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x, M.ComputesInTime x (f x) (T x.length) := rfl
+
+-- FinTM.ComputesInTime
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := rfl
+
+-- MultiTapeTM.ComputesInTimeAndSpace
+example (M : FinTM Bool) (x y : List Bool) (t s : ℕ) :
+    M.tm.ComputesInTimeAndSpace x y t s =
+      ((M.tm.runFrom (M.tm.initCfg x) t).state = none ∧
+        (M.tm.runFrom (M.tm.initCfg x) t).output = y ∧
+        M.tm.spaceUsed (M.tm.initCfg x) t = s) := rfl
+
+-- serializeK
+example {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) := rfl
+
+-- Cfg.ofWords
+example {k : ℕ} {S : Type} (x : List Bool) (q : S) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := x) q w).inputPos = 1 := rfl
+
+-- stateWord
+example (s : List Bool) : stateWord 2 s 1 = [] := rfl
+
+-- MultiTapeTM.toNDTM
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) : M.toNDTM.q₀ = M.q₀ := rfl
+
+-- NDTM.runWith
+example {k : ℕ} {S : Type} {x : List Bool} (N : NDTM k Bool S) (c : Cfg k Bool S x) :
+    N.runWith [] c = c := rfl
+
+-- MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.runFrom c 0 = c := rfl
+
+-- MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+
+-- NDTM.initCfg
+example {k : ℕ} {S : Type} (N : NDTM k Bool S) (x : List Bool) :
+    N.initCfg x = Cfg.init N.q₀ x := rfl
+
+-- CodeFormat.decode
+example (F : CodeFormat) (xs : List Bool) :
+    F.decode xs = ((F.parseFull xs).map Prod.fst).getD F.fallback := rfl
+
+-- vhostCfg
+example {m : ℕ} {S : Type} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool)
+    (p : Fin (x.length + 2)) (pre : List Bool) : (vhostCfg c b p pre).inputPos = p := rfl
+
+-- counterLoopCfg
+example {k : ℕ} {S : Type} {x : List Bool} (q : Option (CounterLoopState S))
+    (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+    (counterLoopCfg q c ct cp).state = q := rfl
+
+-- FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+-- tableBitsK
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+
+end Sealed
+
+end Turing

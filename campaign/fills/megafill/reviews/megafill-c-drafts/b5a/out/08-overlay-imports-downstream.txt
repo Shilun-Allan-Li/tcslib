@@ -1,0 +1,40 @@
+# 08 The overlay, Q-B2's five imports, and the downstream modules
+
+## Overlay elaboration (probe/CodeSimulatorOverlay.lean = the draft's .lean.txt, byte-identical)
+diff against the base file: exactly the five import lines inserted at 16-20 (scripted check).
+Result: 0 errors; line 8661: declaration uses 'sorry' (the target); max RSS 2512502784 bytes.
+
+## No cycle (scripts/closure.py, upstream closures at 6e8db28f)
+  UniversalStartup: closure 9 modules; contains CodeSimulator/NDCodeSimulator: 0
+  Build/Rewind: closure 15 modules; contains CodeSimulator/NDCodeSimulator: 0
+  Build/SeamLayout: closure 17 modules; contains CodeSimulator/NDCodeSimulator: 0
+  Build/InputWindow: closure 20 modules; contains CodeSimulator/NDCodeSimulator: 0
+  Nondeterministic: closure 5 modules; contains CodeSimulator/NDCodeSimulator: 0
+
+## Each import needed (the route's use)
+  UniversalStartup: prefixCanonTM, prefixCanon_complete (the header passes)
+  Build/Rewind: rewindTM_run_ofCfg (rewinds of bits t's, α's and the window's tapes); not upstream of CodeSimulator at the base
+  Build/SeamLayout: exists_seamLayoutTM
+  Build/InputWindow: exists_inputWindowCopyTM
+  Nondeterministic: MultiTapeTM.toNDTM, toNDTM_runWith, toNDTM_initCfg, NDTM.runWith_initCfg_take
+    (no deterministic locality lemma exists: grep for *initCfg_take*/locality finds only the ND one)
+Under Q-B1 = A the kit module brings UniversalStartup, SeamLayout and InputWindow transitively;
+Build/Rewind and Nondeterministic are still needed directly.
+
+## No declaration clash (probe/ImportClashProbe.lean)
+CodeSimulator + the five + all nine downstream modules (Codes2Tape, NDCodeSimulator,
+SelfUniversal, UniversalK, EXPCOM, NTimeHierarchy, Relativization and both facades) imported
+together: 0 errors (exit 0). A duplicate public name would fail at import.
+
+## Downstream modules under the overlay's environment (not checked by the pre-ship)
+The five modules that gain names (EXPCOM, Relativization, Codes2Tape, UniversalK, SelfUniversal)
+were elaborated from source with the five imports added after their own (probe/downstream/*),
+which reproduces the environment they would have after the overlay (new names, new simp lemmas,
+new instances):
+  Codes2Tape: 0 errors; warnings: 
+  SelfUniversal: 0 errors; warnings: 
+  EXPCOM: 0 errors; warnings: 
+  Relativization: 0 errors; warnings: 
+  UniversalK: 0 errors; warnings: line 1721: declaration uses 'sorry';line 1759: declaration uses 'sorry';
+UniversalK's two are its base sorries (1716, 1754, shifted by the 5 inserted lines). So the five
+imports break no downstream module. The other four downstream modules gain nothing.

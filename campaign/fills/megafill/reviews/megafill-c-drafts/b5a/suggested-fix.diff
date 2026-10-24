@@ -1,0 +1,288 @@
+--- a/campaign/fills/b5a/drafts/b5a-fill-unisim.DRAFT.md
++++ b/campaign/fills/b5a/drafts/b5a-fill-unisim.DRAFT.md
+@@ -8,7 +8,12 @@
+ megafill-C-DRAFTING-REPORT.md`): whether R's startup kit is first published (the recommendation)
+ or this fill writes its own private startup. The two paragraphs marked ⟨Q-B1: A⟩ and ⟨Q-B1: B⟩
+ below are the two outcomes; keep one at issue. Other issue-time items: @ANCESTOR@, ⟨BASE⟩,
+-⟨IN-FLIGHT⟩, the megafill banner, and re-running the pre-ship at the issue commit. -->
++⟨IN-FLIGHT⟩, the megafill banner, and re-running the pre-ship at the issue commit.
++**Issue base (review, 2026-10-24):** after #156 (whose round-2 head `0e5f210b` edits this file's
++`canonEmitVerdict`, 4593–4603) and the follow-up phase-host API PR (user, 2026-10-24; it edits
++`canonEmitVerdict` again), and, under ⟨Q-B1: A⟩, the startup kit's API PR. Regenerate the overlay
++and every line number, count, blob and screen figure there; the numbers below are the drafting
++base's. -->
+ 
+ > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
+ > the clone and the cache are done once for the whole queue. For this item: create its branch from
+@@ -44,9 +49,16 @@
+   - **the model for your startup:** C1's interpreter core `Turing.exists_ndInterpreterCore`
+     (`NDCodeSimulator`, PR #151, gate 66), the same twelve-phase startup over these rows for the
+     replay machine; and its review (`campaign/fills/c1/reviews/core-cont2/REVIEW.md`);
+-  - ⟨Q-B1: A⟩ **the startup kit, published** (⟨its PR⟩): the header passes, the returning
+-    capture, the seam step, the install phase, the window call and the layout call, harvested
+-    from `NDCodeSimulator`'s privates into ⟨its module⟩;
++  - ⟨Q-B1: A⟩ **the startup kit, published** (⟨its PR⟩, ⟨its module⟩): `Turing.seamCompTM_step`,
++    `Turing.prefixCanon_pairExtract_halt`, `Turing.embedSilentRetTM_firstReturn`,
++    `Turing.headerCapture_run`, `Turing.exists_windowCall`, `Turing.installCall_releasePhase`,
++    `Turing.exists_layoutCall` (stated over `pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)`)
++    and `Turing.embedSilentCfg_initCfg`, harvested from `NDCodeSimulator`'s startup privates and
++    `UniversalK`'s `ss_captureInitial`;
++  - **the phase host's last phase** (PR #156, gate 69) and its start-state and redirect-branch
++    equations (the follow-up API PR): `Turing.phaseHostTM_tr_of_red_none`,
++    `Turing.phaseHostTM_run_le`, ⟨the follow-up's two equations⟩. Both PRs edit your file's
++    `canonEmitVerdict` (not yours);
+   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
+     (**v2.5**: Part 1, the resources and the cache for the Mathlib roots only, with the cache
+     store logged first; **Part 3, the megafill**, under which this session runs), and the
+@@ -94,11 +106,11 @@
+   five imports of region (a) after line 15. **Line numbers below are the base's, and the
+   overlay's are 5 more** (the stub at 8656, overlay 8661). Every probe and measurement below was
+   run on the overlay or at the base, as marked.
+-- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩ (at drafting: #156,
+-  `Build/Seam`'s last-phase lemmas `phaseHostTM_tr_of_red_none` and `phaseHostTM_run_le`, gate 69
+-  pending: **not citable**; #135, chapter 7 onto `main`); on their own branches in this session,
+-  the other megafill items, among them **C1** (`NDCodeSimulator`, downstream of your file) and
+-  **U2** (`UniversalK`, downstream of your file). Cite nothing they add.
++- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩ (at drafting: #135,
++  chapter 7 onto `main`; #156 and the follow-up phase-host API PR are in your base, above); on
++  their own branches in this session, the other megafill items, among them **C1**
++  (`NDCodeSimulator`, downstream of your file) and **U2** (`UniversalK`, downstream of your file).
++  Cite nothing they add.
+ 
+ ## Parallel batches this round
+ 
+@@ -114,8 +126,8 @@
+ `[false]` otherwise, within `d · (|α| + |x| + t + 1)^d` steps. **`S` and `d` are uniform in the
+ code**: no per-code constant (note 34).
+ 
+-**The statement and the docstring's statement and sketch, frozen verbatim** (lines 8554–8580 and
+-8656–8664; the fill appendices 8582–8654 and the `-/` at 8655 are frozen byte for byte too):
++**The statement and the docstring's statement and sketch, frozen verbatim** (lines 8554–8582 and
++8656–8664; the fill appendices 8584–8653 and the `-/` alone on 8655 are frozen byte for byte too):
+ 
+ ```lean
+ /-- **The uniform bounded-acceptance simulator** (spec, fill pending — batch
+@@ -195,15 +207,20 @@
+   `Codes2Tape`, `UniversalK`, `SelfUniversal`) share no declaration name with the gained modules.
+ - **The import probe** (`B5aUSImportProbe.lean.txt`, a standalone import of your module and the
+   five, **109 checks of 109 names**, and eight axiom prints): 0 errors, 0 warnings. Every row the
+-  route composes is on the standard three axioms (the input rewind on two). **Re-run it after
+-  your delivery**, extended by every further name you cite.
++  route composes is on the standard three axioms (the input rewind on two). The review's
++  extension (137 names: the start's `MultiTapeTM.initCfg_with_q₀` and `runFrom_with_q₀`, the
++  `Cfg.init` fields, `stateWord_eq`, `seamReleaseTM_runFrom_pos`, R1's frame and field
++  equations, and the definitions the route names) is the probe at issue ⟨Q-B1: A⟩ (with the
++  kit's eight names). **Re-run it after your delivery**, extended by every further name you cite.
+ - **The route probe** (`B5aUSRouteProbe.lean.txt`), sealed over 12 TCSlib definitions (the two
+   `@[simp]` ones, `MultiTapeTM.initCfg` and `NDTM.initCfg`, also erased): 0 diagnostics. It proves
+   `b5a_install` (the polynomial canonizer through the install call: one module, a first return
+   at `t ≤ a · ((|α| + 1)^d + |α| + max |α| |F.serialize F.fallback| + 1)` with
+   `serializeK (F.machine (F.decode α))` installed), `b5a_locality` and `b5a_accepts_take` (input
+   locality for a deterministic machine), `b5a_verdict` (a halt with output `[answer]` gives both
+-  clauses) and `b5a_table_le` (`|tableBitsK| ≤ max |α| |F.serialize F.fallback|`).
++  clauses) and `b5a_table_le` (`|tableBitsK| ≤ max |α| |F.serialize F.fallback|`). The review
++  re-ran all five as `us_` privates at your home (region (b)), also sealing `tableBitsK`,
++  `pairEncode` and `unaryFin`, which `b5a_table_le` touches: still clean.
+ - **The verdict probe** (`B5aUSVerdictProbe.append.lean.txt`, appended to the overlay, sealed over
+   4 more): `h1HostedVerdict_accepts` on the window decides bounded acceptance on `x`
+   (`b5a_window_verdict`): only the target's sorry warning; the standard three axioms.
+@@ -235,7 +252,7 @@
+   past one (`open … in` on one declaration is fine).
+ - **(c) the body**, the `sorry` on line 8664.
+ - **(d) for a partial only, a paragraph headed `**Implementation status.**`** at the end of the
+-  target's docstring, before its closing ` -/` (line 8655). It is public-facing library text: what
++  target's docstring, before its `-/` (alone on 8655). It is public-facing library text: what
+   is proved and what is open, in mathematical terms, with no campaign labels (brief, gate, finding,
+   continuation or escalation names), no dates and no session narrative. The same holds for the
+   docstrings of your new declarations; provenance goes in `REPORT.md`. **Every new declaration has a
+@@ -255,15 +272,21 @@
+   counter loop, virtual-input host or verdict.**
+ - **Compose by the public combinators:** R2 seams (`seamCompTM`, `seamCompTM_run_ofCfg`,
+   `seamCompTM_firstReturn_ofCfg`, `seamCompTM_runFrom_left`/`_right`, `seamReleaseTM`,
+-  `seamReleaseTM_firstReturn`), the phase host (`phaseHostTM`, `phaseHostTM_run`), R1 and R1′
+-  embeddings (`embedEmitTM`, `embedEmitTM_runFrom`, `embedEmitCfg_eq` for the emitting verdict;
+-  `embedSilentTM`, `embedSilentRetTM`, `embedSilentRetTM_run` for the silent phases).
++  `seamReleaseTM_firstReturn`, `seamReleaseTM_runFrom_pos`; ⟨Q-B1: A⟩ `seamCompTM_step`), R1 and
++  R1′ embeddings (`embedEmitTM`, `embedEmitTM_runFrom`, `embedEmitCfg_eq` for the emitting
++  verdict; `embedSilentTM`, `embedSilentRetTM`, `embedSilentRetTM_run` for the silent phases).
++- **The phase host** is not needed: seams join every phase. If you host a phase in
++  `phaseHostTM`, read it only through `phaseHostTM_run`, `phaseHostTM_run_le`,
++  `phaseHostTM_tr_of_red_none` and the follow-up API PR's two equations.
+ - **The rows:** the prefix canonizer with the pair extractors (`prefixCanonTM`,
+   `prefixCanonTM_eq`, `prefixCanon_complete`, `FinTM.pairExtractTM_fst`/`_snd`); the input rewind
+   `Turing.inputRewindTM`/`inputRewindTM_run`; the work-tape rewind `rewindTM_run_ofCfg`; the
+   counter copy `copyTM_run_ofCfg`; the window `exists_inputWindowCopyTM`; the install
+   `FinTM.exists_installCallTM`; the layout `exists_seamLayoutTM`. **Never write a private input
+-  rewind** (IR-1 is being retired; `Turing.inputRewindTM` is the published one).
++  rewind** (IR-1 is being retired; `Turing.inputRewindTM` is the published one). ⟨Q-B1: A⟩ Through
++  the published kit: `headerCapture_run` (both passes), `exists_windowCall`,
++  `installCall_releasePhase`, `exists_layoutCall`, `embedSilentCfg_initCfg`: cite them, never
++  re-prove them.
+ - **Leaves you may write:** none is expected. A further leaf is an escalation.
+ - **Promotion candidates** (notes only, in `REPORT.md`): the deterministic input-locality lemma
+   (`us_locality`; a candidate beside `MultiTapeTM.toNDTM_runWith`), and ⟨Q-B1: B⟩ every startup
+@@ -275,6 +298,14 @@
+ machine is chosen before `α`, `x`, `t`; so is `d`.
+ 
+ 0. **The first edit**: the five imports (region (a)).
++   **The start.** `S.tm` is your seam composite `W` restarted at its first phase's initial
++   state (`{ W with q₀ := q }`, `q` the nested `Sum.inl` of the first pass's `q₀`), read only
++   through `MultiTapeTM.initCfg_with_q₀` and `MultiTapeTM.runFrom_with_q₀`: no lemma publishes
++   `seamCompTM`'s or `embedSilentRetTM`'s `q₀`, so never read them by `rfl`, `show` or `simp`.
++   `Cfg.init` at the nested state is the first phase's transported start by ⟨Q-B1: A⟩
++   `embedSilentCfg_initCfg` ⟨Q-B1: B⟩ a `us_` copy of `UniversalK`'s `ss_captureInitial` (a
++   pre-disclosed pair), and a relabelling of `Cfg.init` from the `Cfg.init_*` and
++   `Cfg.mapState_*` field equations (U2-S's `ss_capture_run` is the pattern).
+ 1. **The header** (checkpoint 1). As in the core's phases 1–5:
+    - **pass 1**, `prefixCanonTM (FinTM.pairExtractTM true false)` embedded silently with a first
+      live return (`embedSilentRetTM`, `embedSilentRetTM_run`, `MultiTapeTM.exists_first_halt`):
+@@ -290,8 +321,9 @@
+    ⟨Q-B1: A⟩ Cite the published header passes, capture and seam step for these. ⟨Q-B1: B⟩ Write
+    them as `us_` privates over the rows above, in your own proof text (see Duplication).
+ 2. **The window and the locality bridge** (checkpoint 2):
+-   - **the window** by `exists_inputWindowCopyTM` from the suffix: `x.take t` on a blank tape,
+-     the counter consumed, cost `C · (min t |x| + 1) + 2 |bits t|`;
++   - **the window** by `exists_inputWindowCopyTM` from the suffix (⟨Q-B1: A⟩ through
++     `exists_windowCall`): `x.take t` on a blank tape, the counter consumed, cost
++     `C · (min t |x| + 1) + 2 |bits t|`;
+    - **the input rewind** to `1`;
+    - **`us_locality`** and **`us_accepts_take`** (the route probe's `b5a_locality`,
+      `b5a_accepts_take`; copy them): `(F.toFinTM (F.decode α)).ComputesInTime (x.take t) [true] t
+@@ -304,9 +336,11 @@
+      return at `t ≤ a · ((|α| + 1)^d + |α| + max |α| |F.serialize F.fallback| + 1)` and
+      `serializeK M` installed (`F.serialize_eq`). Embed `C`'s bank so that its tape `0` is `α`'s
+      tape and the rest blank, which is exactly `Cfg.ofWords … (stateWord C.k α)`, behind
+-     `seamReleaseTM` for the positive first return (the core's install phase is the pattern);
+-   - **the layout** by `exists_seamLayoutTM` (`src` the installed tape, three distinct tapes):
+-     the table tape `FinTM.bufferTape (tableBitsK M.tr)`, the summary tape
++     `seamReleaseTM` for the positive first return (⟨Q-B1: A⟩ `installCall_releasePhase`
++     ⟨Q-B1: B⟩ the core's install phase is the pattern);
++   - **the layout** by `exists_seamLayoutTM` (⟨Q-B1: A⟩ through `exists_layoutCall`, its source
++     word rewritten by `simp only [← serializeK_eq]`; `src` the installed tape, three distinct
++     tapes): the table tape `FinTM.bufferTape (tableBitsK M.tr)`, the summary tape
+      `StepBlock.summaryCells none (unaryFin M.q₀)` (`serializeK_eq`, `unaryFin_eq`,
+      `StepBlock.summaryCells_eq`, `FinTM.bufferTape_of_neg`), its time `C · (|serializeK M| + 1)`.
+ 4. **The loop and the assembly** (checkpoint 4):
+@@ -345,8 +379,10 @@
+    - `α = []`, `x = []`: the rewinds of empty words take `2` steps.
+ 
+ **Do not run the canonizer through `prefixCanonTM`'s time bound**; the canonizer runs inside the
+-install call, whose bound is polynomial (`b5a_install`). **Do not copy** `NDCodeSimulator`'s
+-privates, `UniversalK`'s `ss_` startup or `Diagonalization/NTimeHierarchy`'s `un_` setup.
++install call, whose bound is polynomial (`b5a_install`). **Do not copy** `UniversalK`'s `ss_`
++startup or `Diagonalization/NTimeHierarchy`'s `un_` setup; ⟨Q-B1: A⟩ nor `NDCodeSimulator`'s
++privates (they are the published kit) ⟨Q-B1: B⟩ re-prove the eight startup facts as `us_`
++privates, their pairs pre-disclosed (Duplication).
+ 
+ ## Gate guidance (binding)
+ 
+@@ -355,8 +391,8 @@
+   halt at step `t` is accepted at deadline `t` (`summaryClock_accepts`).
+ - **The H1 harvest gate** (`campaign/gates/20-h1-harvest-statements/`): cite the hosted loop and
+   its reading lemma as stated.
+-- **The seam layout's gate** (46): its time is chosen before the configuration; cite it as
+-  stated.
++- **The seam layout's gate** (gate 46: `campaign/gates/43-seam-layout-statements/`, round 2):
++  its time is chosen before the configuration; cite it as stated.
+ 
+ ## Cited infrastructure (public and proved at the issue commit; all in `B5aUSImportProbe.lean.txt`)
+ 
+@@ -441,11 +477,12 @@
+ Run the text-level screen **before and after**, **one run at a time, under `nice -n 10`**
+ (`campaign/standards/TEMPLATE.md` failure mode 5; `policy.md`, **Duplication**). Run the before
+ screen after your first edit: it must equal the screen base (the overlay changes only imports).
+-- **The population** is 54 files
++- **The population** is 56 files (⟨Q-B1: A⟩ 57)
+   (`campaign/fills/b5a/inputs/b5a-fill-unisim/screen-population.txt`): continuation 7's 45, the
+   route's new imports (`Build/InputRewind`, `Build/Rewind`, `Build/InputWindow`,
+-  `Build/SeamLayout`, `BufferWords`, `Nondeterministic`), and the remaining hazards:
+-  `Diagonalization/NTimeHierarchy` (UN's setup), `UniversalK` (U2-S's startup) and
++  `Build/SeamLayout`, `BufferWords`, `Nondeterministic`), the two model files whose lemmas the
++  route reads (`Configuration`, `StateRenaming`), ⟨Q-B1: A⟩ the kit's module, and the remaining
++  hazards: `Diagonalization/NTimeHierarchy` (UN's setup), `UniversalK` (U2-S's startup) and
+   `ClassNP/ExhaustiveReplay` (IR-1's remaining input rewind). It contains `Simulation` and
+   `Build/InputRewind` (the megafill A lesson for any item near an input rewind).
+ - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
+@@ -455,7 +492,10 @@
+   or more, all CC7-1's: the cut-leg pair and two leg-template pairs), 41 across files.
+ - **The screen is long:** start the before run in the background right after your first edit (it
+   may run beside the one Lean process, never beside another screen), and the after run as soon as
+-  the owned file is final.
++  the owned file is final. Run each on a frozen copy of its commit (`git worktree add <dir> HEAD`,
++  the screen's root `<dir>`), so that later edits cannot race its reads. Expect the after run to
++  be longer than the before run: your target's body, `sorry` at the base and so not screened,
++  becomes one of the largest screened declarations.
+ 
+ ```sh
+ P=campaign/fills/b5a/inputs/b5a-fill-unisim
+@@ -467,16 +507,25 @@
+ ```
+ 
+ - **No new cross-file pair** with an owned-file declaration on one side ⟨Q-B1: B⟩ **except the
+-  startup pieces' pairs with `NDCodeSimulator`, pre-disclosed by the user's ruling Q-B1**: list
+-  each with its shared text; at 90% or more it is a copy, ledgered under the ruling.
++  startup pieces' pairs with `NDCodeSimulator` and the start identity's with `UniversalK`,
++  pre-disclosed by the user's ruling Q-B1**: list each with its shared text; at 90% or more it is
++  a copy, ledgered under the ruling.
+ - **Recorded, add nothing to them:** CC7-1 (the canonizer's cut-leg, leg-template and per-record
+   families), the earlier canonizer in-file pairs, and the uniform-code mirror pair.
+-- **Known hazards** (a proof reproducing one at 90% or more must be factored):
++- **Known hazards** (a proof reproducing one at 90% or more must be factored if both sides are
++  yours; if the other side is another file's, stop on that item and escalate):
+   - **`NDCodeSimulator`'s startup** (`ic_header_result`, `ic_capture_return`, `ic_header_capture`,
+     `ic_input_suffix`, `ic_window_call`, `ic_layout_call`, `ic_seam_step`, `ic_install_phase`,
+     `ic_time_ledger`, and the core's twelve-phase assembly): the same mathematics;
+-  - UN's setup (`un_step`, `un_step'`, `un_canon_halt`, `un_setup`) and U2-S's startup
+-    (`ss_capturedPrefix_run`, `ss_capture_run`, `ss_serialized_layout`), the other header passes;
++  - UN's setup (`un_step`, which is `ic_seam_step`'s statement, `un_step'`, `un_canon_halt`,
++    `un_setup`) and U2-S's startup (`ss_capturedPrefix_run`, `ss_capture_run`,
++    `ss_serialized_layout`), the other header passes;
++  - the start identity: `UniversalK`'s `ss_captureInitial` and `ExhaustiveReplay`'s `xr_E_initCfg`
++    (the `initCfg_with_q₀` idiom);
++  - **the core's startup assembly** (`exists_ndInterpreterCore`'s body, lines 924–1990 at the
++    drafting base): your target's body will be compared with it. ⟨D-3: the user's ruling⟩ A pair
++    below 90% is pre-disclosed: list it with its shared fragments; at 90% or more stop and
++    escalate;
+   - the input rewinds of IR-1 (`xr_inRewindTM`, `ss_inputRewind`): cite `Turing.inputRewindTM`;
+   - the first-halt captures (`Build/CertShell`'s `certCore_run`); the R1 reconstruction family
+     (cite `embedEmitCfg_eq`); `Cfg.mapState_mapState`'s field-equation idiom (two idiom pairs
+@@ -510,12 +559,14 @@
+      whose `note50_cases` is admission-free since the canonizer's landing): 0 errors.
+ - **Axiom prints**, within `[propext, Classical.choice, Quot.sound]`, for the target, every new
+   private (in an in-module probe), `exists_polyCanonizer`, targets 3–8 and
+-  `Complexity.baker_gill_solovay`. For a complete delivery none has `sorryAx` from your file.
++  `Complexity.baker_gill_solovay`. At the base the target is the only admission of targets 3–8
++  and Baker–Gill–Solovay (the review's admission walk), so for a complete delivery all of them
++  print within the standard three.
+ - **Lint:** `python3 -I scripts/campaign_style_lint.py` over `TCSlib/Complexity/TuringMachine`
+   (base: 0 FAIL, 68 WARN over 83 files; `CodeSimulator`'s are its size and three public
+   definitions without a lemma, `MachineFormat.toFinTM`, `codeSkipTableK`, `oneTapeMachineFormat`)
+-  and `TCSlib/Complexity/Diagonalization`, 0 FAIL. Add no line over 100 characters and no Lean
+-  linter warning in your region.
++  and `TCSlib/Complexity/Diagonalization` (base: 0 FAIL, 2 WARN over 5 files), 0 FAIL. Add no
++  line over 100 characters and no Lean linter warning in your region.
+ 
+ ## Out-of-scope sorries you will see (leave every one untouched)
+ 
+@@ -534,7 +585,8 @@
+ - [ ] The overlay as the first edit, byte for byte; nothing else outside regions (b)–(d).
+ - [ ] The checkpoints reached (1–5); the base hash and the ancestor check; the checkpoint zips.
+ - [ ] Every new declaration with its role; the tapes chosen for each phase; the status paragraph,
+-      if a partial.
++      if a partial; for a complete delivery, a proposed `**Implementation.**` paragraph for the
++      target's docstring (public-facing; the maintainer edits it in at integration).
+ - [ ] The ledger, phase by phase, and the final `d`.
+ - [ ] Promotion candidates, requested shared lemmas and escalations (each stated
+       mathematically), or "none".
+@@ -569,6 +621,11 @@
+ - **Locality is for the run, not the machine**: `NDTM.runWith_initCfg_take` is stated with
+   `let`s; `simp only [MultiTapeTM.toNDTM_runWith, MultiTapeTM.toNDTM_initCfg,
+   List.length_replicate] at h` exposes the two runs (the route probe).
++- **`S` starts from `S.tm.initCfg`**, unlike the core's explicit start: see the route's start
++  (`initCfg_with_q₀`, `runFrom_with_q₀`); the composite's `q₀` has no other published equation.
++- **H1's proofs predate rule 10**: `h1HostedVerdict_effect` passes `MultiTapeTM.initCfg`,
++  `Cfg.init`, `FinTM.VirtualTag`, `Action.apply` and `vhostCfg` to `simp` and unfolds
++  `MultiTapeTM.step` (8499–8528). Cite it; do not imitate its proof text.
+ - **`prefix` is a reserved keyword**; do not name a hypothesis `prefix`.
+ - **Phase-indexed configurations do not match by `rw`**: close by `exact`.
+ - **`counterLoopOrbit` is an `abbrev`:** `rw` may not fire on it; `exact` and `simp only` do.

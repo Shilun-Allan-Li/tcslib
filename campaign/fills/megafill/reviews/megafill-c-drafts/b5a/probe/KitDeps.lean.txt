@@ -1,0 +1,27 @@
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalK
+
+/-! Review probe: the TCSlib constants each startup private uses directly (type and value), with
+their home modules; the private names are read from the compiled modules. -/
+open Lean in
+#eval show CoreM Unit from do
+  let env ← getEnv
+  let pre := "_private.TCSlib.Complexity.TuringMachine.NDCodeSimulator.0.Turing."
+  let preU := "_private.TCSlib.Complexity.TuringMachine.UniversalK.0.Turing."
+  for (p, s) in [(pre, "ic_header_result"), (pre, "ic_capture_return"), (pre, "ic_header_capture"),
+      (pre, "ic_input_suffix"), (pre, "ic_seam_step"), (pre, "ic_install_phase"),
+      (pre, "ic_window_call"), (pre, "ic_layout_call"), (preU, "ss_captureInitial")] do
+    let n := (p ++ s).toName
+    match env.find? n with
+    | none => IO.println s!"{s} NOT FOUND"
+    | some ci =>
+      let cs := (ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[])
+      let mut out : Array String := #[]
+      for c in cs do
+        match env.getModuleIdxFor? c with
+        | some i =>
+          let m := env.header.moduleNames[i.toNat]!
+          if (`TCSlib).isPrefixOf m && !out.contains s!"{c}" then
+            out := out.push s!"{c}"
+        | none => pure ()
+      IO.println s!"{s}: {out.toList}"

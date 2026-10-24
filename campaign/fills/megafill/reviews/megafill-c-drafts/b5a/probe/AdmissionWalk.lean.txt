@@ -1,0 +1,34 @@
+import TCSlib.Complexity.TuringMachine.Codes2Tape
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import TCSlib.Complexity.Diagonalization.Relativization
+
+/-! Review probe: the admission walk of targets 3–8 and `Complexity.baker_gill_solovay` at the
+base: every constant reachable from each whose own value or type mentions `sorryAx`. -/
+open Lean in
+partial def directSorries (root : Name) : CoreM (Array Name) := do
+  let env ← getEnv
+  let mut seen : NameSet := {}
+  let mut todo : Array Name := #[root]
+  let mut hits : Array Name := #[]
+  while h : todo.size > 0 do
+    let n := todo.back
+    todo := todo.pop
+    if seen.contains n then continue
+    seen := seen.insert n
+    match env.find? n with
+    | none => pure ()
+    | some ci =>
+      let cs := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+      if cs.contains ``sorryAx then hits := hits.push n
+      for c in cs do
+        if !seen.contains c then todo := todo.push c
+  return hits
+
+open Lean in
+#eval show CoreM Unit from do
+  for t in [``Turing.exists_uniformMachineCode2, ``Turing.exists_uniformMachineCode,
+      ``Complexity.EXP_subset_POracle_EXPCOM, ``Complexity.POracle_EXPCOM_eq_EXP,
+      ``Complexity.NPOracle_EXPCOM_eq_EXP, ``Complexity.POracle_EXPCOM_eq_NPOracle_EXPCOM,
+      ``Complexity.baker_gill_solovay] do
+    let hs ← directSorries t
+    IO.println s!"{t}: {hs.toList}"

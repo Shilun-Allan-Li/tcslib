@@ -1,0 +1,100 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+
+/-! Review probe: the restated layout call (`exists_layoutCall`, over the serialization's
+equation) gives `NDCodeSimulator`'s `ic_layout_call` verbatim by `Turing.serializeK_eq`, with
+`serializeK` sealed. -/
+
+namespace Turing
+
+/-- A serialization installed at cell zero can be redistributed into the interpreter's table
+and empty-output summary. The return time depends on the serialized machine alone; all other
+tapes, the native input head, and the physical output retain their frame.
+
+**Proof sketch.** Specialize the shared layout contract to the state-count header and the
+machine's unary initial state. Its shifted unary buffer is the empty-output summary, since
+its cell at zero reads the blank cell at offset minus two. -/
+theorem exists_layoutCall (K : ℕ) (src tbl sm : Fin K) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (hts : tbl ≠ sm) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM K Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))),
+        ∃ T ≤ C * ((pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)).length + 1),
+          ∀ {z : List Bool} (d : Cfg K Bool Q z),
+            d.state = some entry →
+            d.workTapes src = FinTM.bufferTape (pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)) →
+            d.workTapePos src = 0 →
+            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
+            (L.runFrom d T).state = some done ∧
+            (L.runFrom d T).inputPos = d.inputPos ∧
+            (L.runFrom d T).workTapes =
+              Function.update (Function.update (Function.update d.workTapes src (fun _ => none))
+                tbl (FinTM.bufferTape (tableBitsK M.tr)))
+                sm (StepBlock.summaryCells none (unaryFin M.q₀)) ∧
+            (L.runFrom d T).workTapePos =
+              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0) sm 0 ∧
+            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
+            ∀ u < T, (L.runFrom d u).state ≠ some done := by
+  obtain ⟨Q, hQ, hQ', L, entry, done, C, layout⟩ :=
+    exists_seamLayoutTM K src tbl sm hst hss hts
+  refine ⟨Q, hQ, hQ', L, entry, done, C, ?_⟩
+  intro k n M
+  have word : pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) =
+      pairEncode n.bits ((List.replicate (M.q₀ : ℕ) true ++ [false]) ++ tableBitsK M.tr) := by
+    rw [unaryFin_eq]
+  have summary : (fun p =>
+      FinTM.bufferTape (List.replicate (M.q₀ : ℕ) true ++ [false]) (p - 2)) =
+      StepBlock.summaryCells none (unaryFin M.q₀) := by
+    funext p
+    rw [StepBlock.summaryCells_eq, unaryFin_eq]
+    by_cases hp : p = 0
+    · rw [if_pos hp, hp]
+      exact FinTM.bufferTape_of_neg _ (by omega)
+    · rw [if_neg hp]
+  obtain ⟨T, bound, run⟩ := layout n.bits (tableBitsK M.tr) M.q₀ 0 (Nat.zero_le _)
+  rw [← word] at bound run
+  refine ⟨T, bound, ?_⟩
+  intro z d hd hsrc hsrcp htbl htblp hsm hsmp
+  obtain ⟨hstate, hin, htapes, hheads, hout, hcut⟩ :=
+    run d hd hsrc hsrcp htbl htblp hsm hsmp
+  exact ⟨hstate, hin, by rw [htapes, summary], hheads, hout, hcut⟩
+
+section Bridge
+
+attribute [local irreducible] serializeK
+
+theorem ic_layout_call_of_kit (K : ℕ) (src tbl sm : Fin K) (hst : src ≠ tbl)
+    (hss : src ≠ sm) (hts : tbl ≠ sm) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM K Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))),
+        ∃ T ≤ C * ((serializeK M).length + 1),
+          ∀ {z : List Bool} (d : Cfg K Bool Q z),
+            d.state = some entry →
+            d.workTapes src = FinTM.bufferTape (serializeK M) →
+            d.workTapePos src = 0 →
+            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
+            (L.runFrom d T).state = some done ∧
+            (L.runFrom d T).inputPos = d.inputPos ∧
+            (L.runFrom d T).workTapes =
+              Function.update (Function.update (Function.update d.workTapes src (fun _ => none))
+                tbl (FinTM.bufferTape (tableBitsK M.tr)))
+                sm (StepBlock.summaryCells none (unaryFin M.q₀)) ∧
+            (L.runFrom d T).workTapePos =
+              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0) sm 0 ∧
+            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
+            ∀ u < T, (L.runFrom d u).state ≠ some done := by
+  obtain ⟨Q, hQ, hQ', L, entry, done, C, h⟩ := exists_layoutCall K src tbl sm hst hss hts
+  refine ⟨Q, hQ, hQ', L, entry, done, C, fun {k n} M => ?_⟩
+  rw [serializeK_eq]
+  exact h M
+
+end Bridge
+
+#print axioms ic_layout_call_of_kit
+
+end Turing

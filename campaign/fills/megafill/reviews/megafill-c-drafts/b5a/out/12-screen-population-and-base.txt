@@ -1,0 +1,52 @@
+# 12 The screen population and base (no screen was run: the review's instructions)
+
+## Population (screen-population.txt): 54 files = cont7's 45 unchanged + 6 new imports + 3 hazards
+Covers: the owned file (CodeSimulator) yes; Simulation and Build/InputRewind yes (megafill A's
+lesson); the hazard files NDCodeSimulator, Diagonalization/NTimeHierarchy, UniversalK,
+ClassNP/ExhaustiveReplay, Build/CertShell yes.
+Missing: two files of cited declarations (out/05): Configuration (Cfg.ext, Cfg.init and its five
+field equations, Action.apply) and StateRenaming (Cfg.mapState and its five field equations). The
+issued B6 brief lists both. Under Q-B1 = A: the kit module (its public lemmas are the copy hazard
+then). Not needed: Codec/Parse and Logspace/PathWalk (pe_drop, drop_pairEncode) only if the fill
+must not write a suffix drop; under B it writes one (a fourth copy, invisible to the screen).
+Declarations (the screen's own extraction step, scripts/screen_decls_only.py = the v3 script up
+to its pairing loop): 54 files 2756; with Configuration and StateRenaming 2,776.
+
+## screen-base.status
+  start 2026-10-24T00:30:35Z exit 0 end 2026-10-24T01:57:10Z 
+It records start, exit and end only: no root and no revision. The model
+(b6-fill-configclock-cont2/preship-906a9d7b/screen-base.status) records "exit 0 root <path> (root
+HEAD <hash>; tracked changes 0) <date>". The tree the 87-minute run read is not attested.
+
+## screen-base.txt internal consistency (scripts/screen_consistency.py)
+header decls 2756 pairs 3005 chars 973130
+rows 3005 sum numerators 973130 consistent: True
+rows violating the >=60 and >=half rule: 0
+rows whose percent does not match: 1
+sorted descending: True
+CodeSimulator.lean: 99 pairs, within 58 (>=90%: 4), across 41 (>=90%: 1), max across 100
+  in>=90 ('CodeSimulator.lean', 'canonGramCut_leg', 'CodeSimulator.lean', 'canonStageCut_leg', '298', '307', '97')
+  in>=90 ('CodeSimulator.lean', 'canonStageCut_leg', 'CodeSimulator.lean', 'canonGramCut_leg', '298', '308', '97')
+  in>=90 ('CodeSimulator.lean', 'canonStageLeg4', 'CodeSimulator.lean', 'canonStageLeg1', '1820', '1928', '94')
+  in>=90 ('CodeSimulator.lean', 'canonStageLeg5', 'CodeSimulator.lean', 'canonStageLeg1', '1763', '1928', '91')
+  across>=87 ('CodeSimulator.lean', 'canonOffset_spec', 'Encoding.lean', 'length_bits_le_self', '65', '65', '100')
+files appearing in pairs: 49
+(The one "percent mismatch" is the script's own rounding: 69/120 = 57.5% printed as 57%.)
+The header's 2,756 equals the review's recount at 6e8db28f (same TCSlib tree as 77f1eb4f).
+The README's numbers (99 owned-file pairs: 58 in-file with 4 ≥ 90%, all CC7-1; 41 cross-file with
+one ≥ 90%, canonOffset_spec/length_bits_le_self 65/65) are reproduced from the file.
+
+## Time
+87 minutes at the base, where the target's body is `sorry` (under 60 characters, so not screened).
+After the fill the body is one of the largest screened declarations (the core's comparable body is
+about 1,490 lines), compared against 2,756; the C1 core's own landing screen went 76 s -> 131 s on a
+12-file population for the same kind of change. Expect the after run to take longer than the before
+run. A narrower population (cited + hazards + the two model files: 30 files, 1,749 declarations)
+would cut the pairing work to about 40%, but drops the Universal* family (older header and
+serialization proofs): the user's call, not recommended without a hazard check of those files.
+
+## Race
+The script reads every file before pairing, so a run started "right after your first edit" is safe
+only once its reads finish; the draft does not say so. Running each screen on a frozen worktree of
+the commit (git worktree add <dir> HEAD; root = <dir>) removes the race and lets the after run
+proceed in the background while the next item starts.

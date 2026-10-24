@@ -1649,6 +1649,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `Turing.pairEncode_drop` in `Build/InputDevice` (F2, a major: the suffix drop would copy
       `NDCodeSimulator`'s `ic_input_suffix`); then the brief's edits (`suggested-fix.diff`) and a
       pre-ship re-run. Decisions pending (user): F1's placement; F2; the API details.
+    - **B5a reviewed** (`campaign/fills/megafill/reviews/megafill-c-drafts/b5a/`): not issuable
+      until its owned file settles: #156 (`0e5f210b` edits `canonEmitVerdict`), the phase-host
+      follow-up, and under Q-B1 (A, recommended) the startup-kit API PR (`Build/InterpreterStartup`:
+      seven lemmas from `NDCodeSimulator` and `embedSilentCfg_initCfg` from U2-S, probed with
+      corrected imports, sealed over 22 definitions; about +405/−291 lines; 5-module replay). Then
+      a pre-ship re-run and `suggested-fix.diff`. Q-B2 and Q-B3 approved by the review.
   - #152's private `canonGramMapComp` (`CodeSimulator`) has `Cfg.mapState_mapState`'s statement
     (found 2026-10-23, after the canonizer's review). **Ruled (user, 2026-10-23): re-point it at
     #152's landing** if #153 is in first (prepared locally, `local/canon-mapcomp-repoint`,

@@ -1,0 +1,41 @@
+# 06 Route probe, seal controls, and the route lemmas at the prescribed home
+
+## B5aUSRouteProbe (byte-identical copy of the draft's; sealed over 12 TCSlib definitions, the two
+## @[simp] initCfg definitions erased)
+errors: 0; warnings: 0; exit 0
+'Turing.b5a_install' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.b5a_locality' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.b5a_accepts_take' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.b5a_verdict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.b5a_table_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+Output equal to the recorded .out modulo the MEM/exit lines: yes.
+
+Soundness of the five probed steps: b5a_install (polynomial canonizer -> install call; time
+a·((|α|+1)^d + |α| + max |α| L₀ + 1), uniform in the code), b5a_locality / b5a_accepts_take (the
+deterministic machine viewed as an NDTM; NDTM.runWith_initCfg_take at the all-false word of
+length t), b5a_verdict (halt with output [answer] at T ≤ B gives both clauses through
+ComputesInTime.mono), b5a_table_le (|tableBitsK| ≤ max |α| |F.serialize F.fallback| through
+serialize_eq, serializeK_eq, length_pairEncode). Correct and sufficient for their roles.
+
+Seal coverage gap: b5a_table_le's rewrite chain exposes pairEncode, unaryFin and tableBitsK
+(serializeK_eq's right side); none is sealed in the route probe (tableBitsK only in the verdict
+probe's set). Adding them changes nothing (below: HomeProbeSealed, 18 definitions).
+
+## B5aUSSealControl (16 goals)
+unsealed section (lines 16-86): 0 errors. sealed section: 16 errors, at lines
+98 102 109 113 117 120 123 127 131 135 139 143 147 152 155 162 
+= one inside each of the 16 sealed examples (starting at 97 101 105 112 116 120 123 126 130 134 138 142 146 150 155 158).
+Positions identical to the recorded .out (only lean_check_tree.sh's three FAIL wrapper lines differ).
+Every control closes unsealed and fails sealed, each at its own goal.
+
+## The review's controls for 3 more definitions (pairEncode, unaryFin; tableBitsK has one above)
+probe/KitSealControl.lean (22 goals, see out/09): pairEncode and unaryFin close unsealed, fail sealed.
+
+## HomeProbe: the route lemmas and the window verdict as us_ privates at the prescribed home
+The overlay with the six lemmas (us_install, us_locality, us_accepts_take, us_verdict,
+us_table_le, us_window_verdict) inserted at overlay line 8556 (= base 8551), inside
+section StepBlockClients with open StepBlock and the section variable F in force:
+  unsealed (probe/HomeProbe.lean): 0 errors; warnings: line 8749: declaration uses 'sorry'; all six on the standard three axioms.
+  sealed over 18 (the 16 + pairEncode, unaryFin) (probe/HomeProbeSealed.lean): 0 errors; warnings: line 8759: declaration uses 'sorry'.
+(The only sorry is the target's, shifted by the inserted block.) The drafting agent probed these
+lemmas standalone and the verdict after the target, not at the home the brief prescribes.
