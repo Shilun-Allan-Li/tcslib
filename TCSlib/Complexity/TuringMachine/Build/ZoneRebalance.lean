@@ -3588,7 +3588,7 @@ private def zr_blankBranchContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) 
 /-- **The scan's body**: mark one scratch cell, then stop on a blank zoned cell, stop on a
 nonempty track-`t` slot, or skip the zone. -/
 private def zr_scanBodyContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
-  (zr_stepContract 1 1 x (fun w d => zr_wordAt w d) (some (some (Sum.inl true)))).seq
+  (zr_stepContract 1 1 x (fun w d => zr_wordAt w d) (some (some (Sum.inl false)))).seq
     (zr_blankBranchContract t x) (fun w => w) fun w d _ hp => by
       rw [zr_stepContract, Contract.ofSegment_pre] at hp
       rw [zr_blankBranchContract, Contract.branch_pre, zr_wordTestContract, zr_reindexContract,
@@ -3604,7 +3604,7 @@ private abbrev zr_scanMarked {k : ℕ} {S : Type} {x : List (ZoneSym k)}
   { d with
     state := some s
     workTapes := Function.update d.workTapes 1
-      (Function.update (d.workTapes 1) (d.workTapePos 1) (some (Sum.inl true)))
+      (Function.update (d.workTapes 1) (d.workTapePos 1) (some (Sum.inl false)))
     workTapePos := fun j => if j = 0 then p0 else d.workTapePos 1 + 1 }
 
 /-- **The scan body's fields**, by the zoned cell: on a blank cell it stops at its first exit
@@ -3801,9 +3801,9 @@ private lemma zr_scan_round {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (w : Li
     · show (zr_scanBack S).map (fun v => (⟨false, v⟩ : Σ b, zr_hostPh zr_scanSt b)) = _
       rw [hSV, Option.map_some]
     · show Function.update e.workTapes 1
-          (Function.update (e.workTapes 1) (e.workTapePos 1) (some (Sum.inl true))) =
+          (Function.update (e.workTapes 1) (e.workTapePos 1) (some (Sum.inl false))) =
         Function.update c.workTapes 1
-          (Function.update (c.workTapes 1) (c.workTapePos 1) (some (Sum.inl true)))
+          (Function.update (c.workTapes 1) (c.workTapePos 1) (some (Sum.inl false)))
       rw [hwt, hwp]
     · show (fun j : Fin 2 => if j = 0 then P0 else e.workTapePos 1 + 1) =
         fun j => if j = 0 then P0 else c.workTapePos 1 + 1
@@ -3864,7 +3864,7 @@ private def zr_scanCfg {k : ℕ} {S : Type} {x : List (ZoneSym k)} (d : Cfg 2 (Z
   { d with
     state := s
     workTapes := Function.update d.workTapes 1 fun q =>
-      if d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + n then some (Sum.inl true)
+      if d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + n then some (Sum.inl false)
       else d.workTapes 1 q
     workTapePos := fun j => if j = 0 then p else d.workTapePos 1 + n }
 
