@@ -3906,6 +3906,12 @@ private lemma zr_scanCfg_fields {k : ℕ} {S : Type} {x : List (ZoneSym k)}
 private def zr_scanWord {k : ℕ} (D : ZoneData k) (r : ℕ) : List (ZoneSym k) :=
   if h : r < D.1 then zoneCells true D.2 ⟨r, h⟩ else []
 
+/-- Past the layout the scan's cell is blank. -/
+private lemma zr_scan_end {k : ℕ} (D : ZoneData k) : zonedTape D.2 (zoneStart D.1) = none :=
+  zonedTape_blank_outside D.2 _ (by
+    rw [abs_of_nonneg (by omega)]
+    omega)
+
 /-- At the start of zone `r`, or at the cell past the layout, the scan's round word lies at the
 zoned head. -/
 private lemma zr_scanWord_at {k : ℕ} {S : Type} {x : List (ZoneSym k)} (D : ZoneData k)
@@ -3918,10 +3924,9 @@ private lemma zr_scanWord_at {k : ℕ} {S : Type} {x : List (ZoneSym k)} (D : Zo
     exact zonedTape_right_word D.2 ⟨r, h⟩ p (by omega) hp1
   · rw [zr_scanWord, dif_neg h, List.length_nil] at hp1
     obtain rfl : r = D.1 := by omega
-    rw [FinTM.bufferTape_nil]
-    exact zonedTape_blank_outside D.2 _ (by
-      rw [abs_of_nonneg (by omega)]
-      omega)
+    obtain rfl : p = 0 := by omega
+    rw [FinTM.bufferTape_nil, add_zero]
+    exact zr_scan_end D
 
 /-- The scan's tests at the start of zone `r`: the cell is not blank, and its track-`t` slot is
 empty exactly when zone `r` is. -/
@@ -3940,12 +3945,6 @@ private lemma zr_scan_test {k : ℕ} (D : ZoneData k) (t : Fin k) (r : ℕ) (hr 
   rw [hcell, Option.map_some, Option.some.injEq] at he
   rw [hcell, Option.isNone_some, zr_slotEmpty, Option.isNone_iff_eq_none, he]
   exact ⟨rfl, Iff.rfl⟩
-
-/-- Past the layout the scan's cell is blank. -/
-private lemma zr_scan_end {k : ℕ} (D : ZoneData k) : zonedTape D.2 (zoneStart D.1) = none :=
-  zonedTape_blank_outside D.2 _ (by
-    rw [abs_of_nonneg (by omega)]
-    omega)
 
 /-- At the scanned index, below the level count, the track-`t` slot is occupied. -/
 private lemma zr_scan_found {k : ℕ} (D : ZoneData k) (t : Fin k) (j : ℕ)
