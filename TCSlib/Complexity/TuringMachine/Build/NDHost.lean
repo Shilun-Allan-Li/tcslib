@@ -25,7 +25,7 @@ up front, with one small nondeterministic leaf, and then run deterministically.
 * **The ND phase host** `Turing.NDTM.phaseHostND` is `Turing.phaseHostTM` over nondeterministic
   phases, deterministic phases entering as `Turing.MultiTapeTM.toNDTM`. Each of its two slices
   is the deterministic phase host of the phases' slices (`Turing.NDTM.phaseHostND_fixChoice`,
-  by `rfl`), and a phase runs inside it along every word
+  through the phase host's field equations), and a phase runs inside it along every word
   (`Turing.NDTM.phaseHostND_run`, from the transfer `Turing.NDTM.runWith_mapState_of_agreeOn`).
 * **Never put a choice inside a round body.** A host whose correctness is a per-step lockstep
   (the phase host, Z1, the R1 embedding, renaming) lifts to NDTMs slice by slice. A host that
@@ -100,7 +100,13 @@ def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
     | none => ((M q.1).tr b q.2 inp w).mapState (Sigma.mk q.1)
 
 /-- **Each slice of the ND phase host is a deterministic phase host**: fixing the choice `b`
-in `Turing.NDTM.phaseHostND` gives `Turing.phaseHostTM` over the phases' slices at `b`. -/
+in `Turing.NDTM.phaseHostND` gives `Turing.phaseHostTM` over the phases' slices at `b`.
+
+**Proof sketch.** Compare the two fields. The start states agree (`Turing.NDTM.fixChoice_q₀`,
+`Turing.phaseHostTM_q₀`). For the tables, split on the redirect: at a redirected state both
+dispatch to its target (`Turing.phaseHostTM_tr_of_red_some`); elsewhere both take the phase's
+slice action with the successor tagged (`Turing.phaseHostTM_tr_of_red_none`,
+`Turing.NDTM.fixChoice_tr`). A machine is determined by its two fields. -/
 theorem phaseHostND_fixChoice {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
     (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (b : Bool) :
     (phaseHostND M q0 red).fixChoice b = phaseHostTM (fun i => (M i).fixChoice b) q0 red := by
