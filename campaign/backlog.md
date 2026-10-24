@@ -1595,7 +1595,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Gate 69 round 1: FAIL** (1 major: six older proofs in four files re-derived the prefix
     lemma). **Ruled (user, 2026-10-23): fix it in #156.** `0e5f210b` re-points them, with
     `OracleSim`'s table agreement (seven sites); round 2 staged (`pack-r2.md`);
-    `replay-lphl2.sh`, the five files' closure (23 modules) from `oleans-lphl`.
+    `replay-lphl2.sh`, the five files' closure (23 modules) from `oleans-lphl`. **Round 2
+    dispatched; `lphl2` passed (23/23, static-equal 27)**: #156 waits on round 2 only.
     - **The phase host's remaining field equations, a follow-up API PR (user, 2026-10-24).** The
       round-1 seal sweep found 12 older one-field or one-step reads of `phaseHostTM` in seven files
       (the start state, the redirect branch's dispatch, single table reads,
