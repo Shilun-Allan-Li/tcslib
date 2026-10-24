@@ -1608,7 +1608,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       `CodeSimulator`). **Prepared locally** (`local/phasehost-fields`, `31747bec` and `88306c22`
       on `0e5f210b`): `phaseHostTM_q₀` and `phaseHostTM_tr_of_red_some`; the seven files elaborate
       with the new lemmas stood in, plain and with `phaseHostTM` sealed, 0 errors; no explicit
-      unfolding left.
+      unfolding left. **PR #159** (`lean/phasehost-fields` at `5e881c42`, rebased on #156's merge);
+      **gate 71** (an API gate) staged; `replay-lphf.sh`, 88 modules from `oleans-lphl2`.
   - **F3 cont2's pre-ship at the tip `906a9d7b`** (`f3c2/preship-tip`, to be recorded with the
     brief): order 182 (the 176 plus six `Build/Contract` modules from #150), roots 54, base sorries
     28; import probe 102 checks, 0 errors; consumer and join probes as before; the route probe's
