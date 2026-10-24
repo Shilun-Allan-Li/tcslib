@@ -1673,7 +1673,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       (the PR then depends on nothing in flight); UN's `un_step` and the three suffix-drop copies go
       to the dedup window; B5a pre-discloses any startup-assembly pair below 90%.
     - **Q-U1: one API PR** with the two `simps` lines, `spaceUsedByTape_eq_card` (`Deterministic`)
-      and `pairEncode_drop` (`Build/InputDevice`); a 325-module replay.
+      and `pairEncode_drop` (`Build/InputDevice`); a 325-module replay. **PR #161**
+      (`lean/u2-api` at `a8c45ad7`); **gate 73** staged; `replay-lu2api.sh` (325 modules) runs
+      after #158–#160 merge. The suffix-drop family is ledgered as **SD-1**. Open (user, at
+      leisure): `rulerHostCfg_inputPos` as the `Fin` literal (as built) or a nested
+      `inputPos_val`; `rulerAt_iff` (optional, not built).
     - **F3 cont2: accept the three route refinements; land the six commits as delivered, after
       #156**, then replay `WindowClock` and the facade from #156's snapshot.
     - **G4 cont4: issue now, alone** (Codex), its pre-ship re-run at the issue commit; megafill C
