@@ -7700,12 +7700,17 @@ private lemma zr_pinTest_state {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : 
   simp only [zr_pinTestContract, zr_reindexContract, zr_exitsContract, Contract.ofSegment_post,
     zr_cellContract, zr_cellPost, Cfg.workTapeSymbols_eq, hd.1, hd.2]
 
+/-- The image of a pair of live exits under a renaming. -/
+private lemma zr_map_pair {S T : Type} (f : S → T) (a b : S) :
+    (Option.map f '' {some a, some b}) = {some (f a), some (f b)} := by
+  simp only [Set.image_insert_eq, Set.image_singleton, Option.map_some]
+
 /-- The seam's image of the verdict pair. -/
 private lemma zr_verdicts_inr {A : Type} :
     (Option.map (Sum.inr : Option Bool → A ⊕ Option Bool) ''
         {some (some true), some (some false)}) =
-      {some (.inr (some true)), some (.inr (some false))} := by
-  simp only [Set.image_insert_eq, Set.image_singleton, Option.map_some]
+      {some (.inr (some true)), some (.inr (some false))} :=
+  zr_map_pair _ _ _
 
 /-- The stationary anchor leaf as a pinned zero-time step. -/
 private def zr_pinAnchorContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop)
@@ -13741,9 +13746,8 @@ private lemma zr_rowP0_valid {k : ℕ} (t : Fin k) {I : ZoneData k × ℤ}
 private lemma zr_scan_exits :
     (Option.map Sum.inr '' {some ⟨false, some true⟩, some ⟨false, none⟩} :
       Set (Option (SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b))) =
-      {some (Sum.inr ⟨false, none⟩), some (Sum.inr ⟨false, some true⟩)} := by
-  simp only [Set.image_insert_eq, Set.image_singleton, Option.map_some]
-  exact Set.pair_comm _ _
+      {some (Sum.inr ⟨false, none⟩), some (Sum.inr ⟨false, some true⟩)} :=
+  (zr_map_pair _ _ _).trans (Set.pair_comm _ _)
 
 /-- A row start pinned at its scratch start meets the scan's precondition. -/
 private lemma zr_scanPin_pre {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) (I : ZoneData k × ℤ)
