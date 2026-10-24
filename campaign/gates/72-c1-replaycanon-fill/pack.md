@@ -69,7 +69,18 @@ the decoded machine's replay machine. It was the last admission of the interpret
    inspection table (`probe/C1RCReviewFeasibility.inspection.tsv`) found theorems and this file's
    definitions only. Is the seal complete for what the proof reaches? **Rule 11:** no R3 row, no
    other file's private.
-5. **Duplication.** ⟨SCREEN⟩ Is any new private a re-derivation of a published lemma (record
+5. **Duplication.** The v3 screen on the draft's 16-file population
+   (`screen-population.txt`): at the base, 541 declarations, 173 pairs, 86,076 characters, the
+   draft's pre-ship base exactly; at the head, 565 declarations, 176 pairs, 86,371 characters
+   (`screen-rcan-*`, `pairdiff-head.txt`). Three new pairs, none at 90% or more:
+   `rc_replay_table` → `StepBlock`'s private `tableBitsK_groups` (62%), `rc_workReads_snoc` →
+   `tableBitsK_groups` (55%), and the in-file `rc_rounds` → `rc_skip` (58%). The first two are
+   **cross-file**, which the draft's rules forbid unless justified: `tableBitsK_groups` is a
+   two-line lemma whose text is one `simp only` list of `List.flatMap` lemmas, and the matched
+   characters (87 and 77 of its 141) are that list; the statements differ (it regroups a table by
+   `readActions`; the new lemmas state the replay table and the reads at `k + 1` tapes). The
+   maintainer reads them as idiom pairs, for the user's acceptance. Is that reading right? Is any
+   new private a re-derivation of a published lemma (record
    splitting, `serializeK`/`tableBitsK` field lemmas, `Primrec` list helpers)?
 6. **The text.** The docstrings, the proof sketch, the `**Implementation.**` paragraph and the two
    status texts: accurate, and public-facing (no campaign labels, paths or dates in Lean text)?
@@ -84,15 +95,20 @@ the decoded machine's replay machine. It was the last admission of the interpret
   (`campaign/fills/c1/evidence/c1-replaycanon-landing/`).
 - **Axioms** (the module with `#print axioms` appended): `exists_replayCanonizer`,
   `exists_ndInterpreterCore` and the bridge on `[propext, Classical.choice, Quot.sound]`
-  (`NDCSAx.out`). The universal NDTM's chain is re-walked on the replayed snapshot.
+  (`NDCSAx.out`). On the replayed snapshot `oleans-lrcan`, `Turing.exists_timed_universal_NDTM`
+  is on `[propext, Classical.choice, Quot.sound]`: admission-free; `Complexity.ntime_hierarchy`
+  keeps its own `sorryAx` (`UniversalAx.*`).
 - **Freeze:** `freeze-NDCodeSimulator.txt` (3 → 3 public, 22 → 49 private, only the target's body
   changed among existing declarations); the target's statement byte-identical.
 - **Lint:** `TuringMachine` 0 FAIL, 68 WARN over 83 files; `Diagonalization` 0 FAIL, 2 WARN, both
   as at the base; no added line over 100 characters.
 - **Replay:** `replay-lrcan.sh`, the two changed files' downstream closure (4 modules:
   `NDCodeSimulator`, `Diagonalization/NTimeHierarchy`, the `Diagonalization` and `TuringMachine`
-  facades) at `73c99430`, chained from `oleans-lphl2`. **Pending:** as for gates 64–71, this gate
-  is dispatched before the replay; the PR is clear to merge only when both have passed.
+  facades) at `73c99430`, chained from `oleans-lphl2`. **Passed (user, 2026-10-24): 4 of 4**, 0
+  failed, static-equal (1: `ntime_hierarchy`) (`replay/`).
+- **Screen roots:** the base screen read the records worktree while it moved between records
+  commits (`f89c5c8d` to `01792e3f`, its status's revision); the Lean tree was `21d53053`'s
+  throughout.
 
 ## Findings format
 
