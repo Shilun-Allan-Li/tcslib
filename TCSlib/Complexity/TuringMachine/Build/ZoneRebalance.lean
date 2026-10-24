@@ -1696,7 +1696,7 @@ private lemma zr_round_of_body {n : ℕ} {Γ S I : Type} {x : List Γ} {M : Mult
       exact hP0
     · obtain ⟨v, rfl⟩ : ∃ v, u = 1 + v := ⟨u - 1, by omega⟩
       rw [MultiTapeTM.runFrom_add, h1]
-      exact hPC _ fun j => C.env i c₁ hc₁ hp v (by omega) j
+      exact hPC _ ((headBox_iff _ _ _).mpr fun j => C.env i c₁ hc₁ hp v (by omega) j)
 
 /-- **One round of the return loop**: from the anchor, with a delimited field `u` ending one
 blank before the zoned head, the loop dispatches, skips back over `u`, tests the cell after
@@ -1767,8 +1767,8 @@ private lemma zr_loop_round {k : ℕ} {x : List (ZoneSym k)} (u : List (ZoneSym 
         (zr_bodyContract x).hi u (c₁.mapState fun _ => Sum.inl SeekPhase.run) j := fun j => by
       rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_hi]
     obtain ⟨b₁, b₂, b₃, b₄⟩ := zr_body_bounds u (c₁.mapState fun _ => Sum.inl SeekPhase.run)
-    have h0 := hb 0
-    have h1 := hb 1
+    have h0 := (headBox_iff _ _ _).mp hb 0
+    have h1 := (headBox_iff _ _ _).mp hb 1
     rw [hlo, hhi, Finset.mem_Icc] at h0 h1
     rw [b₁, b₂, Cfg.mapState_workTapePos] at h0
     rw [b₃, b₄, Cfg.mapState_workTapePos] at h1
@@ -3543,7 +3543,9 @@ the zoned head. -/
 private def zr_wordTestContract {k : ℕ} (choose : Option (ZoneSym k) → Bool)
     (x : List (ZoneSym k)) :=
   zr_reindexContract (zr_exitsContract (zr_cellContract 0 choose none 0 x) _ zr_verdicts_pair)
-    (fun _ => ()) (fun w d => zr_wordAt w d) fun _ _ _ => trivial
+    (fun _ => ()) (fun w d => zr_wordAt w d) fun _ _ _ => by
+      rw [zr_exitsContract, Contract.ofSegment_pre]
+      trivial
 
 /-- A stationary test keeps the word at the zoned head. -/
 private lemma zr_wordTest_wordAt {k : ℕ} {S : Type} {x : List (ZoneSym k)}
@@ -3839,8 +3841,8 @@ private lemma zr_scan_round {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (w : Li
           zr_exitsContract, Contract.ofSegment_hi]
     obtain ⟨b₁, b₂, b₃, b₄⟩ := zr_scanBody_bounds t w e
     rw [hwp] at b₁ b₂ b₃ b₄
-    have h0 := hb 0
-    have h1 := hb 1
+    have h0 := (headBox_iff _ _ _).mp hb 0
+    have h1 := (headBox_iff _ _ _).mp hb 1
     rw [hlo, hhi, Finset.mem_Icc] at h0 h1
     exact hP p (b₁.trans h0.1) (h0.2.trans b₂) (b₃.trans h1.1) (h1.2.trans b₄)
   have hR := zr_round_of_body (zr_scanPhaseContract t x) w c c₁ hc hrun1 hc₁s hB0
