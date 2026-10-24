@@ -1629,6 +1629,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     (8 new in-file pairs, none cross-file) pass. Decisions pending (user): F2, the three route
     refinements (accept recommended); F1, the status wording; the commit form; the order against
     #156 (#156 first recommended, then `WindowClock` and the facade from `oleans-lphl2`).
+    **#156 merged (2026-10-24; `21d53053`); the campaign's Lean tree is `oleans-lphl2`'s.** The
+    landing: `lean/f3c2-landing` at `1911b1ca` (the six commits as delivered and the status
+    edits A1, A2), PR opened; **gate 70** (a fill gate) staged; `replay-lf3c2.sh`, 2 modules from
+    `oleans-lphl2`.
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent

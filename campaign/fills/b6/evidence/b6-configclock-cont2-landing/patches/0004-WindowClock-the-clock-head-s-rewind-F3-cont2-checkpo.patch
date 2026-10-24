@@ -1,0 +1,79 @@
+From fb1e1451206426e842c539eae32778da15632c6a Mon Sep 17 00:00:00 2001
+From: fill-agent <ragavanbsco@mit.edu>
+Date: Sat, 24 Oct 2026 00:42:55 +0000
+Subject: [PATCH 4/7] WindowClock: the clock head's rewind (F3 cont2,
+ checkpoint 4)
+
+cw_seg_clockBack, the skip back over the clock word, then the runner; the step
+past the clock's right delimiter is cw_seg_skipC's last-pass case.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01TkRuH1EPiee5bksNdDvJYd
+---
+ .../SpaceComplexity/WindowClock.lean          | 43 ++++++++++++++++---
+ 1 file changed, 36 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+index a6909487..6291492d 100644
+--- a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
++++ b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+@@ -1234,6 +1234,35 @@ private lemma cw_passes {K : ℕ} {Γ P : Type} [DecidableEq P] (e : Γ)
+     refine ⟨t + t', ?_, s.trans s'⟩
+     nlinarith
+ 
++/-- **The skip back over the clock word**, as a host segment: from one cell past the clock's
++right delimiter to the clock's first cell, followed by the windowed runner at its entry. -/
++private lemma cw_seg_clockBack {K : ℕ} {Γ P : Type} [DecidableEq P] (e : Γ)
++    (R : MultiTapeTM (K + 2) Γ P) (en : P) (ex : WindowExit → P) {c m : ℕ} {x : List Γ}
++    (d : Cfg (K + 2) Γ (Σ i : cw_Idx c m, cw_Ctrl P i) x)
++    (hclk : ∀ z, d.workTapes (Fin.last (K + 1)) z = none) (W r : ℕ) (hWr : W + 1 ≤ r) :
++    Segment (cw_hostTM e R en ex c m) {z | ∃ y : WindowExit, z = some ⟨.stop, y⟩}
++      (cw_box d.workTapePos r)
++      (cw_cfg e d (⟨.clockBack, (SeekPhase.run : SeekPhase)⟩ : Σ i, cw_Ctrl P i) 0 W
++        ((W : ℤ) + 1))
++      (cw_cfg e d (⟨.run, en⟩ : Σ i, cw_Ctrl P i) 0 W 0) (W + 3 + 1) := by
++  let a₀ : Cfg (K + 2) Γ SeekPhase x := cw_cfg e d SeekPhase.run 0 W ((W : ℤ) + 1)
++  have hu : ∀ z : ℤ, -1 ≤ z → z ≤ ((List.replicate W e).length : ℤ) →
++      a₀.workTapes (Fin.last (K + 1))
++          (a₀.workTapePos (Fin.last (K + 1)) - (List.replicate W e).length - 1 + z) =
++        FinTM.bufferTape (List.replicate W e) z := by
++    intro z hz₁ hz₂
++    have h := cw_skip_word e d hclk SeekPhase.run 0 W 0 W (by omega) z (Or.inr ⟨rfl, hz₁⟩) hz₂
++    rw [cw_cfg_posL, Nat.cast_zero, add_zero] at h
++    rw [cw_cfg_clockTape, cw_cfg_posL, List.length_replicate,
++      show d.workTapePos (Fin.last (K + 1)) + ((W : ℤ) + 1) - W - 1 + z =
++        d.workTapePos (Fin.last (K + 1)) + z by ring, ← h, cw_cfg_clockTape]
++  obtain ⟨h₁, h₂, h₃⟩ := skipBackTM_run_ofCfg (Fin.last (K + 1)) _ a₀ rfl hu
++  rw [List.length_replicate] at h₁ h₂ h₃
++  exact cw_seg_row e R en ex (.clockBack : cw_Idx c m) (by simp) d SeekPhase.run SeekPhase.done
++    _ (fun _ => rfl) 0 0 W ((W : ℤ) + 1)
++    0 _ r _ _ _ _ h₁ (cw_cfg_moveL e d _ _ 0 W _ _ 0 (by rw [cw_cfg_posL]; omega)) h₂ h₃
++    (by rw [cw_cfg_posL]; omega) (by simp) (by rw [abs_of_nonneg (by positivity)]; omega)
++
+ /-- **H3 with the configuration-count clock** (what `Complexity.space_hierarchy`'s
+ diagonalizer cites). The windowed runner that builds its own clock. For a fixed binary machine
+ `M` and a tag update `upd` that ignores silent steps, there is a module over the record alphabet
+@@ -1294,13 +1323,13 @@ skips past the field on the record tape and past the written cells on the clock,
+ one-cell move back onto the clock's right delimiter, the new cells joining the clock word by
+ `Turing.wordPatch_append`; one pass over the fields (`cw_pass`), whose writes form one constant
+ word; the `c` passes, the record head returning to the record's first cell after each
+-(`cw_rewind`, `cw_passes`). This target remains open.
+-**Proof sketch (remaining).** Return the clock head to the clock's first cell: a step past its
+-right delimiter and a skip back over the word. Then run `Turing.exists_windowRunnerTM` on the
+-word, clear the clock after a `halted` or `left` exit (`cw_clear_patch`), and dispatch to the
+-exits. The time and head bounds follow from the clock budget and the linear writer and clear
+-costs (`cw_time_bound`, `cw_head_bound`), the silence from the endpoint, and the space bound
+-from the head bound (`Turing.MultiTapeTM.spaceUsed_le_of_abs_le`).
++(`cw_rewind`, `cw_passes`); the clock head's return to the clock's first cell (`cw_seg_skipC`,
++`cw_seg_clockBack`). This target remains open.
++**Proof sketch (remaining).** Run `Turing.exists_windowRunnerTM` on the word, clear the clock
++after a `halted` or `left` exit (`cw_clear_patch`), and dispatch to the exits. The time and head
++bounds follow from the clock budget and the linear writer and clear costs (`cw_time_bound`,
++`cw_head_bound`), the silence from the endpoint, and the space bound from the head bound
++(`Turing.MultiTapeTM.spaceUsed_le_of_abs_le`).
+  -/
+ theorem exists_configWindowRunnerTM (M : FinTM Bool) {T : Type} [Fintype T] [DecidableEq T]
+     (upd : T → Option Bool → T) (hupd : ∀ τ, upd τ none = τ) :
+-- 
+2.50.1 (Apple Git-155)
+
