@@ -7561,9 +7561,14 @@ cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
 and one-cell leaf are proved. The pure cascade has a checked side-pass reordering valid for
 every guard and without a fullness assumption. The rightward scan is proved as a contract with
 both exits (a loop host whose rounds mark a unary zone count on scratch), and so is its short
-path (the return home and the count's clear). The leftward scan, the guarded column-move
-machines, the machine passes, the home move, the cleanup and the assembly remain open. Only
-this target's body is admitted. -/
+path (the return home and the count's clear). One level's column moves for the rightward
+cascade are proved as machine segments with their guards enabled: the right inward shift and
+the left outward shift at level `i`, each from the zoned tape to the zoned tape of the shifted
+track with the heads and the scratch restored, in `76 · 2^(i-1) + 77` and `76 · 2^(i-1) + 107`
+steps; their one-slot guard tests are characterized, and a disabled guard leaves the tape
+unchanged. The leftward scan, the mirrored moves, the guarded rounds and the machine passes,
+the home move, the cleanup and the assembly remain open. Only this target's body is
+admitted. -/
 theorem exists_zoneRebalanceTM (k : ℕ) :
     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
