@@ -5053,15 +5053,16 @@ private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (V 
       (fun j i => p j i + (w j).length) := by
   unfold zr_pinCopyContract
   refine zr_pinRe_step _ _ _ _ _ _ fun j d _ hd => ?_
-  rw [copyMapTM_contract_post, copyMapTM_contract_time, sweepPost_inputPos, sweepPost_output]
-  refine ⟨⟨funext fun i => funext fun q => ?_, funext fun i => ?_⟩, rfl, rfl, rfl, fun i => ?_⟩
-  · rw [sweepPost_workTapes, sweepMapWrite_apply, hd.1, hd.2]
-    simp only [zr_copyTapes]
+  refine ⟨⟨funext fun i => funext fun q => ?_, funext fun i => ?_⟩, ?_, ?_, ?_, fun i => ?_⟩
+  · rw [copyMapTM_contract_post_workTapes, hd.1, hd.2]
     by_cases hi : i = dst
     · subst hi
       rfl
-    · simp only [hi, false_and, if_false]
-  · rw [sweepPost_workTapePos, hd.2]
+    · simp only [zr_copyTapes, hi, false_and, if_false]
+  · rw [copyMapTM_contract_post, sweepPost_workTapePos, hd.2]
+  · rw [copyMapTM_contract_post, sweepPost_inputPos]
+  · rw [copyMapTM_contract_post, sweepPost_output]
+  · rw [copyMapTM_contract_time]
   · rw [copyMapTM_contract_lo, copyMapTM_contract_hi, hd.2]
     split_ifs <;> omega
 
