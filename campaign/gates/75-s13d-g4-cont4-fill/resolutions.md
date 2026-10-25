@@ -31,6 +31,12 @@ records.
 | 17 | note | Run and keep the two-module replay at the applicable landing or merged snapshot. | **Done at `37fe114e`:** `replay-lg4c4` passed, 2 of 2, static-equal (`campaign/fills/s13d/evidence/s13d-g4-cont4-landing/replay-lg4c4.log`; the snapshot `oleans-lg4c4`). The head has since moved by the two docstring commits. If #162 merges first, #165 will also need a campaign merge. Either way the merged-tree replay is rerun at the final head before #165 is clear. |
 | 7–14 | notes | Integrity; the frozen interface; extension at `C = 135`; rebalance at `C = 2300`; the three route deviations; rule 10's seal; duplication; sketch coverage (beyond 1–4). | No action. |
 
+**After #162 merged (2026-10-25):** the campaign branch was merged into #165 (`308838e5`; the facade
+auto-merged, the two edits in different lines). Its Lean diff from the campaign tip `5a258cc2` is
+the facade and `Build/ZoneRebalance`. The merged-tree replay `replay-lg4c4m` is written for that
+head: the same two modules, chained from `oleans-lkit2` (the campaign's tree after #162), with the
+two blobs pinned. Its prechecks pass in a dry run. **Pending:** the user runs it.
+
 **Merge state. #165: not yet clear to merge.** The gate is closed. The head is `78e6c53f`, after
 `replay-lg4c4` passed at `37fe114e`, so it needs a replay at its final head. That is the
 merged-tree replay if #162 merges first, since both PRs edit the `TuringMachine` facade.
