@@ -17,7 +17,13 @@ below are the drafting base's, measured with the first five imports.
 **Pre-ship re-run at the issue base (maintainer, 2026-10-25):** the campaign tip `a524c36f`, Lean
 equal to #162's merge `5a258cc2` (the snapshot `oleans-lkit2`), with the six imports:
 `campaign/fills/b5a/drafts/b5a-fill-unisim/preship-a524c36f/`. The line numbers, counts and blob
-below are that base's; ⟨BASE⟩ and ⟨IN-FLIGHT⟩ are filled at issue. -->
+below are that base's; ⟨BASE⟩ and ⟨IN-FLIGHT⟩ are filled at issue.
+**Rulings (user, 2026-10-25):** D-3 = **A+**: the startup assembly that this target shares with the
+interpreter core (`exists_ndInterpreterCore`) is harvested into a published contract before B5a
+issues, and the brief's route and hazards are rewritten against it then; **B5a is not issuable
+until that harvest PR lands with its gate** (and the pre-ship is re-run on it). Each of B5a's
+screens runs with no Lean process beside it (its peak memory is 7.8 GB). Q-M2 (the cover):
+sequential. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -501,12 +507,12 @@ screen after your first edit: it must equal the screen base (the overlay changes
   one side: 58 within it (four at 90% or more, all CC7-1's: the cut-leg pair and two leg-template
   pairs), 41 across files (one at 90% or more, `canonOffset_spec` of `Encoding`'s
   `length_bits_le_self`, 65 characters).
-- **The screen is long:** start the before run in the background right after your first edit (it
-  may run beside the one Lean process, never beside another screen), and the after run as soon as
-  the owned file is final. Run each on a frozen copy of its commit (`git worktree add <dir> HEAD`,
-  the screen's root `<dir>`), so that later edits cannot race its reads. Expect the after run to
-  be longer than the before run: your target's body, `sorry` at the base and so not screened,
-  becomes one of the largest screened declarations.
+- **The screen is long:** run the before run right after your first edit, before the bootstrap, and
+  the after run as soon as the owned file is final. **Run each with no Lean process beside it** (its
+  peak memory at your base was 7.8 GB), and never beside another screen. Run each on a frozen copy
+  of its commit (`git worktree add <dir> HEAD`, the screen's root `<dir>`), so that later edits
+  cannot race its reads. Expect the after run to be longer than the before run: your target's body,
+  `sorry` at the base and so not screened, becomes one of the largest screened declarations.
 
 ```sh
 P=campaign/fills/b5a/inputs/b5a-fill-unisim
@@ -530,9 +536,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   - the start identity: `UniversalK`'s `ss_captureInitial` and `ExhaustiveReplay`'s `xr_E_initCfg`
     (the `initCfg_with_q₀` idiom);
   - **the core's startup assembly** (`exists_ndInterpreterCore`'s body, its twelve phases at lines
-    983–2049): your target's body will be compared with it. ⟨D-3: the user's ruling⟩ A pair
-    below 90% is pre-disclosed: list it with its shared fragments; at 90% or more stop and
-    escalate;
+    983–2049): your target's body will be compared with it. ⟨D-3, ruled A+: rewritten against the
+    harvested startup contract⟩ A pair below 90% is pre-disclosed: list it with its shared
+    fragments; at 90% or more stop and escalate;
   - the input rewinds of IR-1 (`xr_inRewindTM`, `ss_inputRewind`): cite `Turing.inputRewindTM`;
   - the first-halt captures (`Build/CertShell`'s `certCore_run`); the R1 reconstruction family
     (cite `embedEmitCfg_eq`); `Cfg.mapState_mapState`'s field-equation idiom (two idiom pairs

@@ -1,0 +1,30 @@
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.ClassNP.Transducer
+
+/-! Gate 77, minor 1: the semantic-duplication probe for the three `scp_` helpers that the
+review's dossier grouped under "`exact?` finds nothing" but no probe posed: `scp_value`,
+`scp_time_arith`, `scp_space_arith` (their statements verbatim from `Savitch.lean`). Each goal is
+posed to `exact?` against the whole import closure; a hit would name a published lemma. -/
+
+set_option maxHeartbeats 400000
+
+-- scp_value
+example (c : ℕ) (hc : 1 ≤ c) (x : List Bool) :
+    (if decide (x = []) then Nat.bits 1
+      else Nat.bits (true :: List.replicate (1 * (x.tail.length + 1) ^ c) true).length) =
+      Nat.bits (x.length ^ c + 1) := by
+  exact?
+
+-- scp_time_arith
+example (c cL t n P N : ℕ) (hP : P ≤ N + 1) (ht : t ≤ n) :
+    n + 1 + t + 2 + (1 + 5 * c + 4) * P + P + 2 + (0 + 1 + P + 1) + (0 + 1 + P) + 2 +
+      cL * (0 + 1 + P + 1) ≤ (5 * c + 20 + 3 * cL) * (N + n + 1) := by
+  exact?
+
+-- scp_space_arith
+example (cM cD c₁ K n N : ℕ) (hn : n ≤ N) :
+    cM * (cD * (n + 1) + max (c₁ * (n + 1)) (K * (N + n + 1)) + 1) + 1 ≤
+      (cM * (cD + c₁ + 2 * K + 2) + 1) * (N + 1) := by
+  exact?

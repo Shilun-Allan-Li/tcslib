@@ -33,9 +33,9 @@ Each item is its own fill: its brief binds it, and it has its own branch, checks
     - `campaign/fills/b5a/briefs/b5a-fill-unisim.md`;
     - `campaign/fills/u2s/briefs/u2s-fill-universal.md`;
   - their inputs, order lists, base sorry sets, screen bases and pre-ship logs;
-  - **the prerequisites of both items**: B5a's, the startup kit `Build/InterpreterStartup`
-    (PR #162); U2's, the field equations of `Turing.StepBlock.forwardLoopCfg` and
-    `Turing.rulerHostCfg` (PR #161);
+  - **the prerequisites of both items**: B5a's, the startup kit `Build/InterpreterStartup` (PR #162)
+    and the harvested startup assembly (the user's ruling A+, 2026-10-25; ⟨PR⟩); U2's, the field
+    equations of `Turing.StepBlock.forwardLoopCfg` and `Turing.rulerHostCfg` (PR #161);
   - the addendum v2.5.
 - Every attached brief must match its repository copy at that commit except for its
   `@ANCESTOR@` placeholders. This cover's SHA-256 must be the one the dispatch message gives, and
@@ -71,8 +71,11 @@ Each item is its own fill: its brief binds it, and it has its own branch, checks
 Each budget is wall-clock from the item's branch creation (Part 3, item 3.4). Time an item does not
 use passes to the later one; the last item has the rest of the session. **B5a's screen is long** (57
 files; 53 minutes a run at the base on the maintainer's host, peak memory 7.8 GB, against U2's 6
-minutes and 3.5 GB): ⟨Q-M2: the user's ruling on how B5a's after run counts against its budget⟩.
-Never switch branches while a screen runs.
+minutes and 3.5 GB). **B5a's budget counts up to the start of its after run** (the user's ruling,
+2026-10-25). Write its last checkpoint zip first; start the after run at the latest when the
+budget ends, with no Lean process beside it, and write `REPORT.md` while it runs; create the next
+item's branch only after the run has ended and B5a's zip is written. Never switch branches while a
+screen runs.
 
 **Why this order.**
 - **B5a first:** the more valuable (the canonizer's module's last admission, behind six `EXPCOM`
