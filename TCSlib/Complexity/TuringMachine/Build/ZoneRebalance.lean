@@ -28,8 +28,8 @@ Both rows are two-tape machines over `Turing.ZoneSym k`: tape `0` carries the zo
 * **The extension row** (decision 13d.2): lay out level `ℓ` on every track, half full of virtual
   blanks, in `O(2^ℓ + 1)`.
 
-**Status: statements.** The two rows are sorried under their proof sketches (the fill plan);
-everything else here is proved. These rows replace the retired binary rows
+**Status: proved.** Every declaration is proved, both rows included; their machines and
+contracts are private to this module. These rows replace the retired binary rows
 `exists_zoneShiftInTM` and `exists_zoneShiftOutTM` of `Build/Zone`.
 
 ## How the assembly consumes the rows (§13d, G5; sketched for fit, not in this module)
@@ -51,7 +51,7 @@ mirror). The amortization `Σ_i T/2^{i-1} · 2^i = O(T log T)` is the consumer's
 
 ## Main results
 
-* `Turing.exists_zoneRebalanceTM`, `Turing.exists_zoneExtendTM`: the rows (sorried).
+* `Turing.exists_zoneRebalanceTM`, `Turing.exists_zoneExtendTM`: the rows (proved).
 * `Turing.zoneRowPre_rebalancePost`, `Turing.zoneRowPre_extendPost`: rows chain.
 * `Turing.zoneRebalancePost_state_done`, `Turing.zoneRebalanceData_of_short`,
   `Turing.zoneRebalanceIndex_extend_of_short`: the two exits.
@@ -6408,20 +6408,10 @@ private lemma zr_shiftOut_tape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t
     · rw [zonedTape_of_pos _ hq, zonedTape_of_pos _ hq, zoneCellAt_eq, zoneCellAt_eq]
       simp only [ZoneContents.words_true, zoneShiftOut_right, if_neg Bool.false_ne_true]
 
-/-- Zone contents are determined by their home and their two sides' words. -/
-private lemma zr_contents_ext {ℓ : ℕ} {u v : ZoneContents ℓ} (h1 : u.home = v.home)
-    (h2 : u.left = v.left) (h3 : u.right = v.right) : u = v := by
-  cases u
-  cases v
-  cases h1
-  cases h2
-  cases h3
-  rfl
-
 /-- **The right inward shift's guard disabled**: a nonempty receiver leaves the track unchanged. -/
 private lemma zr_shiftIn_off {ℓ : ℕ} (w : ZoneContents ℓ) (i : ℕ) (hi : 1 ≤ i) (hiℓ : i < ℓ)
     (hne : w.right ⟨i - 1, by omega⟩ ≠ []) : zoneShiftIn true i w = w :=
-  zr_contents_ext (zoneShiftIn_home true i w) (by
+  ZoneContents.ext' (zoneShiftIn_home true i w) (by
     funext j
     rw [zoneShiftIn_left, if_pos rfl]) (by
     funext j
@@ -6433,7 +6423,7 @@ private lemma zr_shiftOut_off {ℓ : ℕ} (w : ZoneContents ℓ) (i : ℕ) (hi :
     (hne : ¬ ((w.left ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) ∧
       (w.left ⟨i, hiℓ⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i)) :
     zoneShiftOut false i w = w :=
-  zr_contents_ext (zoneShiftOut_home false i w) (by
+  ZoneContents.ext' (zoneShiftOut_home false i w) (by
     funext j
     rw [zoneShiftOut_left, if_neg Bool.false_ne_true, zoneShiftOutW_eq, dif_pos ⟨hi, hiℓ⟩,
       if_neg hne]) (by
@@ -7989,7 +7979,7 @@ private lemma zr_rstart_mono {m n : ℕ} (h : m ≤ n) : zr_rstart m ≤ zr_rsta
 
 /-- The level-zero inward shift is the identity. -/
 private lemma zr_shiftIn_zero {ℓ : ℕ} (w : ZoneContents ℓ) : zoneShiftIn true 0 w = w := by
-  refine zr_contents_ext (zoneShiftIn_home true 0 w) ?_ ?_
+  refine ZoneContents.ext' (zoneShiftIn_home true 0 w) ?_ ?_
   · funext j
     rw [zoneShiftIn_left, if_pos rfl]
   · funext j
@@ -7997,7 +7987,7 @@ private lemma zr_shiftIn_zero {ℓ : ℕ} (w : ZoneContents ℓ) : zoneShiftIn t
 
 /-- The level-zero outward shift is the identity. -/
 private lemma zr_shiftOut_zero {ℓ : ℕ} (w : ZoneContents ℓ) : zoneShiftOut false 0 w = w := by
-  refine zr_contents_ext (zoneShiftOut_home false 0 w) ?_ ?_
+  refine ZoneContents.ext' (zoneShiftOut_home false 0 w) ?_ ?_
   · funext j
     rw [zoneShiftOut_left, if_neg (by decide), zoneShiftOutW_eq, dif_neg (by omega)]
   · funext j
@@ -14633,10 +14623,11 @@ cascade's `2i₀ + 1` guarded steps in its order — the descending pairs `i₀,
 the ascending pairs `1, …, i₀` — each pair at level `i` acting on zones `i - 1` and `i` of both
 sides in `O(2^i)` steps: a guard is a test of one or two slots (inner packing); a pairwise move
 copies the track-`t` column of the zones involved to the scratch tape with the mapped copy
-(`extract := zoneSlotOf t`), re-packs it there by scans, and writes it back with the mapped copy
-(`merge := zoneSlotSet t`), which keeps the other tracks and needs no save and restore, since
-zones are delimited words (`Turing.zonedTape_right_word`, `Turing.zonedTape_left_word`); the
-mirror side is reached through a scratch ruler of the distance to home. The scratch tape is
+(`extract := zoneSlotOf t`), cuts the copy at the new split by one-cell blanks, and writes the
+pieces back with the mapped copy (`merge := zoneSlotSet t`), which keeps the other tracks and
+needs no save and restore, since zones are delimited words (`Turing.zonedTape_right_word`,
+`Turing.zonedTape_left_word`); the other side is reached through a unary count, on scratch, of
+the zones crossed. The scratch tape is
 cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
 (`Turing.zoneCascade_cost_le`).
 
@@ -14689,11 +14680,11 @@ live exit `done`, whose run is a `Turing.Contract` with index `Turing.ZoneData k
 [AB09, §1.7]: zones are made half full "the first time we encounter it".
 
 **Proof sketch.** Fill plan: walk right from home across the layout to the first of two
-consecutive blanks (the separator after zone `ℓ - 1`); measure the new zone with a scratch
-ruler of zone `ℓ - 1`'s length doubled (zone `ℓ` has twice its capacity; at `ℓ = 0` finite
-control writes the two cells); write the inner half as all-tracks virtual blanks and the outer
-half as all-`⊠` cells; return through home and do the same on the left, through a ruler of the
-distance; clear the ruler and return home. Each phase is `O(2^ℓ)`.
+consecutive blanks (the separator after zone `ℓ - 1`); measure each half of the new zone with a
+scratch ruler copied from the last field, zone `ℓ - 1` or, at `ℓ = 0`, the home (zone `ℓ` has
+twice its capacity); write the inner half as all-tracks virtual blanks and the outer half as
+all-`⊠` cells; return home and do the same on the left with the same ruler; clear the ruler and
+return home. Each phase is `O(2^ℓ)`.
 
 **Implementation.** Four contracts composed through stationary seams, from the catalog rows
 (`seekEndTM`, `seekStartTM`, `skipTM`, `skipBackTM`, the mapped copy, `walkTM`, `clearTM`), the
