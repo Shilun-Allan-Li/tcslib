@@ -31,7 +31,9 @@ Local modifications (see policy.md §2, vendored code):
   `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
   2026-10-17).
 * added `spaceUsed_eq_sum`, the space measure as the sum of the per-tape counts, so that
-  consumers read `spaceUsed` through an equation.
+  consumers read `spaceUsed` through an equation;
+* added `spaceUsedByTape_eq_card`, a tape's space as the number of cells its head visited, so
+  that consumers read `spaceUsedByTape` through an equation.
 The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
@@ -323,6 +325,12 @@ lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) (i
 tapes, of the number of cells each head visited up to step `t`. -/
 theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :
     tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i :=
+  rfl
+
+/-- **A tape's space as a count**: the space tape `i` uses up to step `t` is the number of cells
+its head visited up to step `t`. -/
+theorem spaceUsedByTape_eq_card (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
+    tm.spaceUsedByTape cfg t i = (tm.visitedByTapeHead cfg t i).card :=
   rfl
 
 /-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
