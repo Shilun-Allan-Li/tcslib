@@ -570,7 +570,7 @@ window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1
 `NDCodeSimulator` 1 of 25 (4.0%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); the
 one-fifth rule is not reached.
 
-**SK-1, U2-S's capture start** (the startup-kit API PR, 2026-10-24, prepared). The kit's public
+**SK-1, U2-S's capture start** (PR #162, the startup-kit API PR, 2026-10-24). The kit's public
 `Turing.embedSilentCfg_initCfg` (`Build/InterpreterStartup`) is U2-S's private
 `ss_captureInitial` (`UniversalK`, line 329), harvested verbatim: 100% each way on the v3 screen.
 `UniversalK` cannot cite the kit until `CodeSimulator` imports it (B5a's landing). U2-S's other
