@@ -1,0 +1,29 @@
+U2SpaceProbe2.lean:578:2: error: Type mismatch
+  Finset.card_le_card h
+has type
+  (MultiTapeTM.visitedByTapeHead d t i).card ≤ (MultiTapeTM.visitedByTapeHead d' t' i').card
+but is expected to have type
+  MultiTapeTM.spaceUsedByTape d t i ≤ MultiTapeTM.spaceUsedByTape d' t' i'
+U2SpaceProbe2.lean:583:2: error: Type mismatch
+  LE.le.trans (Finset.card_le_card h) (Finset.card_union_le A B)
+has type
+  (MultiTapeTM.visitedByTapeHead d t i).card ≤ A.card + B.card
+but is expected to have type
+  MultiTapeTM.spaceUsedByTape d t i ≤ A.card + B.card
+U2SpaceProbe2.lean:589:78: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  MultiTapeTM.visitedByTapeHead d t i =
+    Finset.image (fun s => (MultiTapeTM.runFrom d s).workTapePos i) (Finset.range (t + 1))
+U2SpaceProbe2.lean:593:66: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  MultiTapeTM.spaceUsed d t = ∑ i, MultiTapeTM.spaceUsedByTape d t i
+@Turing.MultiTapeTM.spaceUsedByTape_eq_card : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : Turing.MultiTapeTM k Symbol State} (cfg : Turing.Cfg k Symbol State input) (t : ℕ) (i : Fin k),
+  Turing.MultiTapeTM.spaceUsedByTape cfg t i = (Turing.MultiTapeTM.visitedByTapeHead cfg t i).card
+'Turing.MultiTapeTM.spaceUsedByTape_eq_card' depends on axioms: [propext, Classical.choice, Quot.sound]

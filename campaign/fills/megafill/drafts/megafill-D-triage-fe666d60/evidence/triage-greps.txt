@@ -1,0 +1,90 @@
+# Triage evidence (greps at the drafting base fe666d60f21e51438374e7c3f3a966eaa93862c0), 2026-10-25T00:19:30Z
+
+## 1. Sorried declarations in TCSlib/Complexity (comment-stripped scan; the campaign's candidates)
+ClassNP/NDNormalForm: 1: exists_codeNDTM_accepts_linear
+ClassP/TimeConstructible: 2: _root_.Turing.FinTM.lengthBitsTM_computes _root_.Turing.FinTM.lengthBitsTM_spaceUsed
+ClassPSPACE/TQBF: 21: width_le code_length code_getD_inputVar code_getD_headVar code_getD_stateVar code_getD_workVar code_getD_summaryVar code_input_eq code_eq_iff validity_eval_iff adjacency_eval_iff adjacency_eval_of_ne acceptance_eval_iff validity_numVars_le acceptance_numVars_le adjacency_numVars_le exists_serialize_length_le polyTimeComputable_serialize_validity polyTimeComputable_serialize_adjacency polyTimeComputable_serialize_acceptance polyTimeComputable_code_initCfg
+Diagonalization/NTimeDiagonalizer: 2: exists_queryTM exists_diagonalizer
+Diagonalization/NTimeHierarchy: 1: ntime_hierarchy
+Expanders/Chernoff: 1: walk_visits_concentration
+FormulaKit/Emit: 10: polyTimeComputable_fragment_iff_serialize polyTimeComputable_flatMap_range polyTimeComputable_fragment_relabel polyTimeComputable_fragment_gate_select polyTimeComputable_unary_sub polyTimeComputable_unary_mul polyTimeComputable_unary_le polyTimeComputable_unary_div polyTimeComputable_unary_mod polyTimeComputable_serialize_relabel_add
+FormulaKit/Gate: 10: template_eval template_numVars_le template_length_le template_widthAtMost numVars_le_of_forall_lt exactlyOne_eval cost_flatMap_le serialize_length_le gate_cost_le exactlyOne_cost_le
+RAMSimulation/Classes: 9: mem_DTIME_of_decides mem_P_of_decides mem_P_of_decides_logWord mem_SPACE_of_decides mem_LOGSPACE_of_decides computesInSpace_of_computes mem_SPACE_mul_of_decides mem_NSPACE_of_accepts mem_NL_of_accepts
+RAMSimulation/Simulation: 2: exists_simulation exists_ndSimulation
+RAMSimulation/WordSize: 3: WordSizeComputable.mono wordSizeComputable_logSpace wordSizeComputable_of_spaceConstructible
+SpaceComplexity/Hierarchy: 4: space_universal space_hierarchy LOGSPACE_ssubset_PSPACE SPACE_linear_ne_NP
+SpaceComplexity/Savitch: 2: spaceConstructible_poly savitch
+TuringMachine/Build/Loop: 5: loopHostTM_contracts loopHostTM_decides loopHostTM_finds loopHostTM_spaceUsed_le_budget emitLoopTM_computes
+TuringMachine/Build/Primitives: 3: polyUnaryTM_spaceUsed unaryTokenTM_computes appendBitTM_computes
+TuringMachine/Build/RecordTable: 4: exists_tableFindTM exists_tableAppendTM exists_recordValidTM exists_recordNextTM
+TuringMachine/Build/Wrappers: 2: timedCondTM_computes timedCondTM_spaceUsed
+TuringMachine/Build/ZoneRebalance: 2: exists_zoneRebalanceTM exists_zoneExtendTM
+TuringMachine/CodeSimulator: 1: exists_uniformSimulator
+TuringMachine/Composition: 3: idTM_computes ifEqTM_computes condTM_computes_iff
+TuringMachine/Encoding: 1: pairDiagTM_computes
+TuringMachine/NDCodeSimulator: 1: exists_replayCanonizer
+TuringMachine/Simulation: 1: branchTM_spaceUsed
+TuringMachine/UniversalK: 2: exists_selfUniversalK universalK
+TCSlib/Programs/WordRAM/Extended.lean: 18: XSteps.trans xstep_map_base XSteps.of_steps XSteps.of_steps_proj XInstr.card_touches_le StepsIn.toSteps Steps.exists_stepsIn StepsIn.mono StepsIn.trans StepsIn.agreeOutside stepsIn_straight XStepsIn.toXSteps XSteps.exists_xStepsIn XStepsIn.of_stepsIn_proj HaltsWithin.mono HaltsWithin.touches_le HaltsWithin.unique HaltsWithin.coin_irrel
+
+## 2. NF: public declarations of Build/NDHost (no controller-flavour contract; only the trivial controller's block lemma)
+93:def phaseHostND {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+110:theorem phaseHostND_fixChoice {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+143:theorem phaseHostND_run {I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i))
+187:inductive NDWriterState (Q : Type) where
+203:def ndWriterTM (k : ℕ) (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+351:theorem ndWriterTM_run_block {k : ℕ} (j : Fin k) {x : List Bool}
+424:instance NDWriterState.instFintype {Q : Type} [Fintype Q] : Fintype (NDWriterState Q) :=
+439:inductive GuessRunPhase where
+457:def GuessRunPhase.State (SP SQ : Type) : GuessRunPhase → Type
+466:instance GuessRunPhase.instFintypeState {SP SQ : Type} [Fintype SP] [Fintype SQ] :
+476:instance GuessRunPhase.instDecidableEqState {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ] :
+493:def guessRunPhases {k : ℕ} {SP SQ : Type} (P : MultiTapeTM k Bool SP) (j : Fin k)
+509:def guessRunRed {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : SP)
+538:def guessRunTM {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+546:def guessRunCfg {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k)
+564:def streamStartCfg {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) :
+601:theorem guessRunTM_runWith_handoff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+779:theorem guessRunTM_runWith_live {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+806:theorem guessRunTM_runWith_handoff_state {k : ℕ} {SP SQ : Type} [DecidableEq SP]
+839:theorem guessRunTM_runWith {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+932:theorem guessRunTM_runWith_setup_halt {k : ℕ} {SP SQ : Type} [DecidableEq SP]
+978:theorem guessRunTM_haltsWithin {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+1013:theorem guessRunTM_accepts_iff {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ]
+1086:theorem guessRunCfg_clean {K k : ℕ} {SP SR : Type} {z : List Bool} (ι : Fin K ↪ Fin k)
+1168:theorem guessRunTM_silent_spec {K k : ℕ} {SP SR : Type} [DecidableEq SP] [DecidableEq SR]
+
+## 3. Chapter predicates: published _iff / _eq lemmas (none for TimeConstructible, SpaceConstructible, ComputesInSpace, logSpace, transduce nil/cons)
+timeConstructible_iff      declarations found: 0
+spaceConstructible_iff     declarations found: 0
+computesInSpace_iff        declarations found: 0
+logSpace_eq                declarations found: 0
+transduce_nil              declarations found: 0
+transduce_cons             declarations found: 0
+transduce_of_copy          declarations found: 0
+mem_SPACE_iff              declarations found: 0
+LOGSPACE_eq                declarations found: 0
+
+## 4. The copying-state idiom, published twice (semantic-duplication hazard for a tail transducer)
+TCSlib/Complexity/CircuitComplexity/MeyerVerifierGlue.lean:145:theorem transduce_fT_copy (u : List Bool) : transduce fTδ fTo none u = u := by
+TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean:87:theorem transduce_drop_true (p : List Bool) : transduce dropTr dropOut true p = p := by
+
+## 5. Space-hierarchy ordering ruling (backlog)
+2184:      the union, with H after F6 integrates.
+
+## 6. Paused / held / moved entries (backlog and plan)
+2031:| MIG-23 | `Build/RecordTable` rows 15, 16, 19, 20 (find, append, validity, next) | Paused, with no consumer since S1b stopped and Savitch moved to the language. Retire them under scenario B unle
+2112:  **Landed** (PR #86). **Paused (user, 2026-10-14):** the ARM merge proves PSPACE = NPSPACE,
+2114:  space; general `savitch` stays sorried. No stage-2 brief (PROG-2's edit and fidelity gate,
+2133:  **Landed** (PR #85). **Fills held (user, 2026-10-14):** the ARM merge proves `TQBF_PSPACEHard`
+
+## 7. E-Q and E-D share a file (gate 39's carry-forward)
+88:**Carry-forward** (the review's section (c)): E-Q and E-D share a file, so they run in sequence.
+
+## 8. MIG-24 groups folded into MIG-1's batches (user, 2026-10-17)
+55:**Answered (user, 2026-10-17): fold into MIG-1.** T1–T6 and T2b become named factoring obligations
+
+## 9. Open PR heads at drafting (read-only fetch)
+origin/pr161 1849dae6f5427a60814d4120d9258fa4a2f46dd3
+origin/pr162 06d314c322a357a471d8597555964b5fa16f1674
+origin/campaign-now 90688cbb645fcf1ef66ff6112c83bd8f0413000b
