@@ -1,0 +1,46 @@
+From aed02f55a894f090dce0d1c004f2239422279a79 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 15:48:16 +0000
+Subject: [PATCH 28/37] s13d g4 cont4: the pinned copy cites the copy row's
+ cell lemma
+
+zr_pinCopy_step reads the copy's endpoint cells through the public
+copyMapTM_contract_post_workTapes instead of reproducing its proof (the
+screen's one cross-file pair).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean          | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index f204834a..3a0ffbd9 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -5053,15 +5053,16 @@ private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (V
+       (fun j i => p j i + (w j).length) := by
+   unfold zr_pinCopyContract
+   refine zr_pinRe_step _ _ _ _ _ _ fun j d _ hd => ?_
+-  rw [copyMapTM_contract_post, copyMapTM_contract_time, sweepPost_inputPos, sweepPost_output]
+-  refine ⟨⟨funext fun i => funext fun q => ?_, funext fun i => ?_⟩, rfl, rfl, rfl, fun i => ?_⟩
+-  · rw [sweepPost_workTapes, sweepMapWrite_apply, hd.1, hd.2]
+-    simp only [zr_copyTapes]
++  refine ⟨⟨funext fun i => funext fun q => ?_, funext fun i => ?_⟩, ?_, ?_, ?_, fun i => ?_⟩
++  · rw [copyMapTM_contract_post_workTapes, hd.1, hd.2]
+     by_cases hi : i = dst
+     · subst hi
+       rfl
+-    · simp only [hi, false_and, if_false]
+-  · rw [sweepPost_workTapePos, hd.2]
++    · simp only [zr_copyTapes, hi, false_and, if_false]
++  · rw [copyMapTM_contract_post, sweepPost_workTapePos, hd.2]
++  · rw [copyMapTM_contract_post, sweepPost_inputPos]
++  · rw [copyMapTM_contract_post, sweepPost_output]
++  · rw [copyMapTM_contract_time]
+   · rw [copyMapTM_contract_lo, copyMapTM_contract_hi, hd.2]
+     split_ifs <;> omega
+ 
+-- 
+2.50.1 (Apple Git-155)
+

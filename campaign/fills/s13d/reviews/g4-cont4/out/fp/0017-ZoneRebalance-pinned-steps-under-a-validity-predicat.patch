@@ -1,0 +1,564 @@
+From c433aa27323b33901f238d9f94c9cc6ae7a79bac Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 12:29:13 +0000
+Subject: [PATCH 17/37] ZoneRebalance: pinned steps under a validity predicate;
+ the right layout's fields; scratch transitions
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 404 ++++++++++++++----
+ 1 file changed, 315 insertions(+), 89 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 187f71bb..d18e5c36 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -4792,28 +4792,18 @@ private lemma zr_pinned_mapState {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
+       (congrFun (congrFun h.1 j) q),
+     funext fun j => (Cfg.mapState_workTapePos f d j).trans (congrFun h.2 j)⟩
+ 
+-/-- **A pinned step**: from every start pinned at `(T₁ j, p₁ j)`, the contract's precondition
+-holds, and its endpoint is pinned at `(T₂ j, p₂ j)`, with the input head and the output kept,
+-after `τ j` steps, its heads within `[L j, U j]`. -/
++/-- **A pinned step**: from every start pinned at `(T₁ j, p₁ j)` at a valid index `j`, the
++contract's precondition holds, and its endpoint is pinned at `(T₂ j, p₂ j)`, with the input head
++and the output kept, after `τ j` steps, its heads within `[L j, U j]`. -/
+ private def zr_PinStep {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
+     {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} (C : Contract M e X J x)
+-    (T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)) (p₁ p₂ : J → Fin 2 → ℤ) (τ : J → ℕ)
+-    (L U : J → Fin 2 → ℤ) : Prop :=
+-  ∀ j (d : Cfg 2 (ZoneSym k) S x), zr_pinned (T₁ j) (p₁ j) d →
++    (V : J → Prop) (T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)) (p₁ p₂ : J → Fin 2 → ℤ)
++    (τ : J → ℕ) (L U : J → Fin 2 → ℤ) : Prop :=
++  ∀ j (d : Cfg 2 (ZoneSym k) S x), V j → zr_pinned (T₁ j) (p₁ j) d →
+     C.pre j d ∧ zr_pinned (T₂ j) (p₂ j) (C.post j d) ∧
+       (C.post j d).inputPos = d.inputPos ∧ (C.post j d).output = d.output ∧
+       C.time j d = τ j ∧ ∀ i, L j i ≤ C.lo j d i ∧ C.hi j d i ≤ U j i
+ 
+-/-- The seam of two pinned steps, from the first's endpoint pin. -/
+-private lemma zr_pin_link {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
+-    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} {C : Contract M e X J x}
+-    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ : J → ℕ}
+-    {L U : J → Fin 2 → ℤ} (h : zr_PinStep C T₁ T₂ p₁ p₂ τ L U)
+-    (hpre : ∀ j (d : Cfg 2 (ZoneSym k) S x), C.pre j d → zr_pinned (T₁ j) (p₁ j) d)
+-    {S' : Type} (e' : S') (j : J) (d : Cfg 2 (ZoneSym k) S x) (hp : C.pre j d) :
+-    zr_pinned (T₂ j) (p₂ j) ((C.post j d).mapState fun _ => e') :=
+-  zr_pinned_mapState _ (h j d (hpre j d hp)).2.1
+-
+ /-- **Pinned steps compose**: a sequence of two pinned steps, the second's start pin the
+ first's endpoint pin, is a pinned step; the times add with the seam's step, the boxes join. -/
+ private lemma zr_PinStep_seq {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {x : List (ZoneSym k)}
+@@ -4821,16 +4811,18 @@ private lemma zr_PinStep_seq {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {
+     {e₂ : S₂} {X₂ : Set (Option S₂)} {C₁ : Contract M₁ e₁ {some d₁} J x}
+     {C₂ : Contract M₂ e₂ X₂ J x}
+     {T₁ T₂ T₃ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ p₃ : J → Fin 2 → ℤ}
+-    {τ₁ τ₂ : J → ℕ} {L₁ U₁ L₂ U₂ : J → Fin 2 → ℤ}
+-    (h₁ : zr_PinStep C₁ T₁ T₂ p₁ p₂ τ₁ L₁ U₁) (h₂ : zr_PinStep C₂ T₂ T₃ p₂ p₃ τ₂ L₂ U₂)
++    {τ₁ τ₂ : J → ℕ} {L₁ U₁ L₂ U₂ : J → Fin 2 → ℤ} {V : J → Prop}
++    (h₁ : zr_PinStep C₁ V T₁ T₂ p₁ p₂ τ₁ L₁ U₁) (h₂ : zr_PinStep C₂ V T₂ T₃ p₂ p₃ τ₂ L₂ U₂)
+     (hl : ∀ j d, d.state = some e₁ → C₁.pre j d →
+       C₂.pre j ((C₁.post j d).mapState fun _ => e₂)) :
+-    zr_PinStep (C₁.seq C₂ (fun j => j) hl) T₁ T₃ p₁ p₃ (fun j => τ₁ j + 1 + τ₂ j)
++    zr_PinStep (C₁.seq C₂ (fun j => j) hl) V T₁ T₃ p₁ p₃ (fun j => τ₁ j + 1 + τ₂ j)
+       (fun j i => min (L₁ j i) (L₂ j i)) (fun j i => max (U₁ j i) (U₂ j i)) := by
+-  intro j d hd
+-  obtain ⟨hp₁, hq₁, hi₁, ho₁, ht₁, hb₁⟩ := h₁ j (d.mapState fun _ => e₁) (zr_pinned_mapState _ hd)
++  intro j d hV hd
++  obtain ⟨hp₁, hq₁, hi₁, ho₁, ht₁, hb₁⟩ :=
++    h₁ j (d.mapState fun _ => e₁) hV (zr_pinned_mapState _ hd)
+   obtain ⟨hp₂, hq₂, hi₂, ho₂, ht₂, hb₂⟩ :=
+-    h₂ j ((C₁.post j (d.mapState fun _ => e₁)).mapState fun _ => e₂) (zr_pinned_mapState _ hq₁)
++    h₂ j ((C₁.post j (d.mapState fun _ => e₁)).mapState fun _ => e₂) hV
++      (zr_pinned_mapState _ hq₁)
+   refine ⟨?_, ?_, ?_, ?_, ?_, fun i => ?_⟩
+   · rw [Contract.seq_pre]
+     exact hp₁
+@@ -4845,28 +4837,28 @@ private lemma zr_PinStep_seq {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {
+     exact ⟨min_le_min (hb₁ i).1 (hb₂ i).1, max_le_max (hb₁ i).2 (hb₂ i).2⟩
+ 
+ /-- A skip on tape `i`, its precondition the pin, the skipped word `w j` at the head. -/
+-private def zr_pinSkipContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (i : Fin 2)
++private def zr_pinSkipContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop) (i : Fin 2)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℤ, 0 ≤ q → q ≤ ((w j).length : ℤ) →
++    (hw : ∀ j, V j → ∀ q : ℤ, 0 ≤ q → q ≤ ((w j).length : ℤ) →
+       T j i (p j i + q) = FinTM.bufferTape (w j) q) :=
+-  zr_reindexContract (skipTM_contract i x) w (fun j d => zr_pinned (T j) (p j) d)
++  zr_reindexContract (skipTM_contract i x) w (fun j d => V j ∧ zr_pinned (T j) (p j) d)
+     fun j d hd => by
+-      rw [skipTM_contract_pre, hd.1, hd.2]
+-      exact hw j
++      rw [skipTM_contract_pre, hd.2.1, hd.2.2]
++      exact hw j hd.1
+ 
+ /-- The pinned skip moves only its head, past the word's right delimiter. -/
+-private lemma zr_pinSkip_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : Fin 2)
++private lemma zr_pinSkip_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop) (i : Fin 2)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℤ, 0 ≤ q → q ≤ ((w j).length : ℤ) →
++    (hw : ∀ j, V j → ∀ q : ℤ, 0 ≤ q → q ≤ ((w j).length : ℤ) →
+       T j i (p j i + q) = FinTM.bufferTape (w j) q) :
+-    zr_PinStep (zr_pinSkipContract x i w T p hw) T T p
++    zr_PinStep (zr_pinSkipContract x V i w T p hw) V T T p
+       (fun j => Function.update (p j) i (p j i + (w j).length + 1)) (fun j => (w j).length + 1)
+       p (fun j => Function.update (p j) i (p j i + (w j).length + 1)) := by
+-  intro j d hd
+-  have hp : (zr_pinSkipContract x i w T p hw).pre j d := by
++  intro j d hV hd
++  have hp : (zr_pinSkipContract x V i w T p hw).pre j d := by
+     rw [zr_pinSkipContract, zr_reindexContract, Contract.ofSegment_pre]
+-    exact hd
+-  have hpost : (zr_pinSkipContract x i w T p hw).post j d =
++    exact ⟨hV, hd⟩
++  have hpost : (zr_pinSkipContract x V i w T p hw).post j d =
+       seekPost SeekPhase.done i (d.workTapePos i + (w j).length + 1) d := by
+     rw [zr_pinSkipContract, zr_reindexContract, Contract.ofSegment_post, skipTM_contract_post]
+   refine ⟨hp, ⟨?_, ?_⟩, ?_, ?_, ?_, fun i' => ?_⟩
+@@ -4887,29 +4879,29 @@ private lemma zr_pinSkip_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : F
+ 
+ /-- A backward skip on tape `i`, its precondition the pin, the word `u j` ending one blank
+ before the head. -/
+-private def zr_pinBackContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (i : Fin 2)
++private def zr_pinBackContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop) (i : Fin 2)
+     (u : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hu : ∀ j, ∀ q : ℤ, -1 ≤ q → q ≤ ((u j).length : ℤ) →
++    (hu : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((u j).length : ℤ) →
+       T j i (p j i - (u j).length - 1 + q) = FinTM.bufferTape (u j) q) :=
+-  zr_reindexContract (skipBackTM_contract i x) u (fun j d => zr_pinned (T j) (p j) d)
++  zr_reindexContract (skipBackTM_contract i x) u (fun j d => V j ∧ zr_pinned (T j) (p j) d)
+     fun j d hd => by
+-      rw [skipBackTM_contract_pre, hd.1, hd.2]
+-      exact hu j
++      rw [skipBackTM_contract_pre, hd.2.1, hd.2.2]
++      exact hu j hd.1
+ 
+ /-- The pinned backward skip moves only its head, to the word's first cell. -/
+-private lemma zr_pinBack_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : Fin 2)
++private lemma zr_pinBack_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop) (i : Fin 2)
+     (u : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hu : ∀ j, ∀ q : ℤ, -1 ≤ q → q ≤ ((u j).length : ℤ) →
++    (hu : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((u j).length : ℤ) →
+       T j i (p j i - (u j).length - 1 + q) = FinTM.bufferTape (u j) q) :
+-    zr_PinStep (zr_pinBackContract x i u T p hu) T T p
++    zr_PinStep (zr_pinBackContract x V i u T p hu) V T T p
+       (fun j => Function.update (p j) i (p j i - (u j).length - 1))
+       (fun j => (u j).length + 3)
+       (fun j => Function.update (p j) i (p j i - (u j).length - 2)) p := by
+-  intro j d hd
+-  have hp : (zr_pinBackContract x i u T p hu).pre j d := by
++  intro j d hV hd
++  have hp : (zr_pinBackContract x V i u T p hu).pre j d := by
+     rw [zr_pinBackContract, zr_reindexContract, Contract.ofSegment_pre]
+-    exact hd
+-  have hpost : (zr_pinBackContract x i u T p hu).post j d =
++    exact ⟨hV, hd⟩
++  have hpost : (zr_pinBackContract x V i u T p hu).post j d =
+       seekPost SeekPhase.done i (d.workTapePos i - (u j).length - 1) d := by
+     rw [zr_pinBackContract, zr_reindexContract, Contract.ofSegment_post,
+       skipBackTM_contract_post]
+@@ -4931,28 +4923,28 @@ private lemma zr_pinBack_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : F
+     · simp only [hi, if_false, Function.update_of_ne hi, le_refl, and_self]
+ 
+ /-- The one-cell leaf as a pinned step: write `wr` if any, then move tape `i` by `dir`. -/
+-private def zr_pinCellContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (i : Fin 2)
++private def zr_pinCellContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop) (i : Fin 2)
+     (dir : SignType) (wr : Option (Option (ZoneSym k)))
+     (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :=
+-  zr_stepContract i dir x (fun j d => zr_pinned (T j) (p j) d) wr
++  zr_stepContract i dir x (fun j d => V j ∧ zr_pinned (T j) (p j) d) wr
+ 
+ /-- The one-cell leaf's pinned endpoint: tape `i` written at its head if asked, the head moved
+ by `dir`. -/
+-private lemma zr_pinCell_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : Fin 2)
++private lemma zr_pinCell_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop) (i : Fin 2)
+     (dir : SignType) (wr : Option (Option (ZoneSym k)))
+     (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :
+-    zr_PinStep (zr_pinCellContract x i dir wr T p) T
++    zr_PinStep (zr_pinCellContract x V i dir wr T p) V T
+       (fun j => match wr with
+         | none => T j
+         | some a => Function.update (T j) i (Function.update (T j i) (p j i) a))
+       p (fun j => Function.update (p j) i (p j i + dir)) (fun _ => 1)
+       (fun j i' => min (p j i') (Function.update (p j) i (p j i + dir) i'))
+       (fun j i' => max (p j i') (Function.update (p j) i (p j i + dir) i')) := by
+-  intro j d hd
+-  have hp : (zr_pinCellContract x i dir wr T p).pre j d := by
++  intro j d hV hd
++  have hp : (zr_pinCellContract x V i dir wr T p).pre j d := by
+     rw [zr_pinCellContract, zr_stepContract, Contract.ofSegment_pre]
+-    exact hd
+-  have hpost : (zr_pinCellContract x i dir wr T p).post j d =
++    exact ⟨hV, hd⟩
++  have hpost : (zr_pinCellContract x V i dir wr T p).post j d =
+       zr_cellPost i (fun _ => false) wr dir d := by
+     rw [zr_pinCellContract, zr_stepContract, Contract.ofSegment_post, zr_cellContract]
+   refine ⟨hp, ⟨?_, ?_⟩, ?_, ?_, ?_, fun i' => ?_⟩
+@@ -4971,26 +4963,26 @@ private lemma zr_pinCell_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : F
+     exact ⟨le_rfl, le_rfl⟩
+ 
+ /-- A rightward lockstep walk over the zoned word `w j`, both heads moved, as a pinned step. -/
+-private def zr_pinWalkContract {k : ℕ} {J : Type} (x : List (ZoneSym k))
++private def zr_pinWalkContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℕ, q ≤ (w j).length → T j 0 (p j 0 + q) = FinTM.bufferTape (w j) q) :=
++    (hw : ∀ j, V j → ∀ q : ℕ, q ≤ (w j).length → T j 0 (p j 0 + q) = FinTM.bufferTape (w j) q) :=
+   zr_reindexContract (walkTM_contract 0 (fun _ : Fin 2 => True) trivial 1 x) w
+-    (fun j d => zr_pinned (T j) (p j) d) fun j d hd => by
+-      rw [walkTM_contract_pre, hd.1, hd.2]
++    (fun j d => V j ∧ zr_pinned (T j) (p j) d) fun j d hd => by
++      rw [walkTM_contract_pre, hd.2.1, hd.2.2]
+       intro q hq
+-      simpa only [SignType.coe_one, one_mul] using hw j q hq
++      simpa only [SignType.coe_one, one_mul] using hw j hd.1 q hq
+ 
+ /-- The pinned walk moves both heads `|w j| + 1` cells right. -/
+-private lemma zr_pinWalk_step {k : ℕ} {J : Type} {x : List (ZoneSym k)}
++private lemma zr_pinWalk_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℕ, q ≤ (w j).length → T j 0 (p j 0 + q) = FinTM.bufferTape (w j) q) :
+-    zr_PinStep (zr_pinWalkContract x w T p hw) T T p
++    (hw : ∀ j, V j → ∀ q : ℕ, q ≤ (w j).length → T j 0 (p j 0 + q) = FinTM.bufferTape (w j) q) :
++    zr_PinStep (zr_pinWalkContract x V w T p hw) V T T p
+       (fun j i => p j i + ((w j).length + 1 : ℕ)) (fun j => (w j).length + 1) p
+       (fun j i => p j i + ((w j).length + 1 : ℕ)) := by
+-  intro j d hd
+-  have hp : (zr_pinWalkContract x w T p hw).pre j d := by
++  intro j d hV hd
++  have hp : (zr_pinWalkContract x V w T p hw).pre j d := by
+     rw [zr_pinWalkContract, zr_reindexContract, Contract.ofSegment_pre]
+-    exact hd
++    exact ⟨hV, hd⟩
+   refine ⟨hp, ⟨?_, ?_⟩, ?_, ?_, ?_, fun i => ?_⟩
+   · rw [zr_pinWalkContract, zr_reindexContract, Contract.ofSegment_post, walkTM_contract_post]
+     exact hd.1
+@@ -5014,31 +5006,31 @@ private abbrev zr_copyTapes {k : ℕ} {Δ : Type} (dst : Fin 2) (extract : ZoneS
+   else T j q
+ 
+ /-- A mapped copy from `src` onto `dst` as a pinned step, the copied word `w j` at `src`. -/
+-private def zr_pinCopyContract {k : ℕ} {J Δ : Type} (x : List (ZoneSym k)) (src dst : Fin 2)
++private def zr_pinCopyContract {k : ℕ} {J Δ : Type} (x : List (ZoneSym k)) (V : J → Prop) (src dst : Fin 2)
+     (hne : src ≠ dst) (extract : ZoneSym k → Δ) (merge : Option (ZoneSym k) → Δ → ZoneSym k)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
++    (hw : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
+       T j src (p j src + q) = FinTM.bufferTape (w j) q) :=
+   zr_reindexContract (copyMapTM_contract src dst hne extract merge x) w
+-    (fun j d => zr_pinned (T j) (p j) d) fun j d hd => by
+-      rw [copyMapTM_contract_pre, hd.1, hd.2]
+-      exact hw j
++    (fun j d => V j ∧ zr_pinned (T j) (p j) d) fun j d hd => by
++      rw [copyMapTM_contract_pre, hd.2.1, hd.2.2]
++      exact hw j hd.1
+ 
+ /-- The pinned mapped copy writes `dst`'s interval and keeps the heads. -/
+-private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (src dst : Fin 2)
++private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (V : J → Prop) (src dst : Fin 2)
+     (hne : src ≠ dst) (extract : ZoneSym k → Δ) (merge : Option (ZoneSym k) → Δ → ZoneSym k)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
++    (hw : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
+       T j src (p j src + q) = FinTM.bufferTape (w j) q) :
+-    zr_PinStep (zr_pinCopyContract x src dst hne extract merge w T p hw) T
++    zr_PinStep (zr_pinCopyContract x V src dst hne extract merge w T p hw) V T
+       (fun j => zr_copyTapes dst extract merge (w j) (T j) (p j)) p p
+       (fun j => 2 * (w j).length + 2) (fun j i => p j i - 1)
+       (fun j i => p j i + (w j).length) := by
+-  intro j d hd
+-  have hp : (zr_pinCopyContract x src dst hne extract merge w T p hw).pre j d := by
++  intro j d hV hd
++  have hp : (zr_pinCopyContract x V src dst hne extract merge w T p hw).pre j d := by
+     rw [zr_pinCopyContract, zr_reindexContract, Contract.ofSegment_pre]
+-    exact hd
+-  have hpost : (zr_pinCopyContract x src dst hne extract merge w T p hw).post j d =
++    exact ⟨hV, hd⟩
++  have hpost : (zr_pinCopyContract x V src dst hne extract merge w T p hw).post j d =
+       sweepPost SweepPhase.done dst (sweepMapWrite extract merge) (w j) d := by
+     rw [zr_pinCopyContract, zr_reindexContract, Contract.ofSegment_post,
+       copyMapTM_contract_post]
+@@ -5062,29 +5054,29 @@ private lemma zr_pinCopy_step {k : ℕ} {J Δ : Type} {x : List (ZoneSym k)} (sr
+     split_ifs <;> omega
+ 
+ /-- A clear of the word `w j` at tape `i`'s head as a pinned step. -/
+-private def zr_pinClearContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (i : Fin 2)
++private def zr_pinClearContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop) (i : Fin 2)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
++    (hw : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
+       T j i (p j i + q) = FinTM.bufferTape (w j) q) :=
+-  zr_reindexContract (clearTM_contract i x) w (fun j d => zr_pinned (T j) (p j) d)
++  zr_reindexContract (clearTM_contract i x) w (fun j d => V j ∧ zr_pinned (T j) (p j) d)
+     fun j d hd => by
+-      rw [clearTM_contract_pre, hd.1, hd.2]
+-      exact hw j
++      rw [clearTM_contract_pre, hd.2.1, hd.2.2]
++      exact hw j hd.1
+ 
+ /-- The pinned clear blanks the word's interval and keeps the heads. -/
+-private lemma zr_pinClear_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i : Fin 2)
++private lemma zr_pinClear_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop) (i : Fin 2)
+     (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
++    (hw : ∀ j, V j → ∀ q : ℤ, -1 ≤ q → q ≤ ((w j).length : ℤ) →
+       T j i (p j i + q) = FinTM.bufferTape (w j) q) :
+-    zr_PinStep (zr_pinClearContract x i w T p hw) T
++    zr_PinStep (zr_pinClearContract x V i w T p hw) V T
+       (fun j i' q => if i' = i ∧ p j i ≤ q ∧ q < p j i + (w j).length then none else T j i' q)
+       p p (fun j => 2 * (w j).length + 2) (fun j i => p j i - 1)
+       (fun j i => p j i + (w j).length) := by
+-  intro j d hd
+-  have hp : (zr_pinClearContract x i w T p hw).pre j d := by
++  intro j d hV hd
++  have hp : (zr_pinClearContract x V i w T p hw).pre j d := by
+     rw [zr_pinClearContract, zr_reindexContract, Contract.ofSegment_pre]
+-    exact hd
+-  have hpost : (zr_pinClearContract x i w T p hw).post j d =
++    exact ⟨hV, hd⟩
++  have hpost : (zr_pinClearContract x V i w T p hw).post j d =
+       sweepPost SweepPhase.done i (fun _ _ _ _ => none) (w j) d := by
+     rw [zr_pinClearContract, zr_reindexContract, Contract.ofSegment_post, clearTM_contract_post]
+   refine ⟨hp, ⟨?_, ?_⟩, ?_, ?_, ?_, fun i' => ?_⟩
+@@ -5104,6 +5096,240 @@ private lemma zr_pinClear_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (i :
+     beta_reduce
+     split_ifs <;> omega
+ 
++/-- The right layout's field `m`: the home at `m = 0`, zone `m - 1` after it (empty past the
++layout). -/
++private def zr_rfield {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) : List (ZoneSym k) :=
++  if m = 0 then [.inr fun t => some (z t).home]
++  else if h : m - 1 < ℓ then zoneCells true z ⟨m - 1, h⟩ else []
++
++/-- The right layout's field `m` starts at home for `m = 0` and at zone `m - 1`'s start after. -/
++private def zr_rstart (m : ℕ) : ℤ := if m = 0 then 0 else zoneStart (m - 1)
++
++/-- Field `m` has `2^m` cells. -/
++private lemma zr_rfield_length {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) (hm : m ≤ ℓ) :
++    (zr_rfield z m).length = 2 ^ m := by
++  rw [zr_rfield]
++  split_ifs with h0 h1
++  · subst h0
++    rfl
++  · rw [zoneCells_length, zoneCapacity_eq]
++    simp only
++    rw [← pow_succ']
++    congr 1
++    omega
++  · omega
++
++/-- The next field starts one separator after field `m` ends. -/
++private lemma zr_rstart_succ (m : ℕ) : zr_rstart (m + 1) = zr_rstart m + 2 ^ m + 1 := by
++  rw [zr_rstart, zr_rstart, if_neg (by omega), Nat.add_sub_cancel]
++  split_ifs with h
++  · subst h
++    norm_num [zoneStart_eq]
++  · have hs := zoneStart_succ (m - 1)
++    rw [show m - 1 + 1 = m by omega, zoneCapacity_eq,
++      show 2 * 2 ^ (m - 1) = 2 ^ m by rw [← pow_succ']; congr 1; omega] at hs
++    rw [hs]
++    push_cast
++    ring
++
++/-- **Each field of the right layout is a delimited word** on the zoned tape. -/
++private lemma zr_rfield_word {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) (hm : m ≤ ℓ) :
++    ∀ q : ℤ, -1 ≤ q → q ≤ ((zr_rfield z m).length : ℤ) →
++      zonedTape z (zr_rstart m + q) = FinTM.bufferTape (zr_rfield z m) q := by
++  intro q h1 h2
++  rw [zr_rfield, zr_rstart] at *
++  split_ifs at h2 ⊢ with h0 h1'
++  · rw [zero_add]
++    exact zr_home_word z q h1 (by simpa using h2)
++  · rw [zoneCells_length] at h2
++    exact zonedTape_right_word z ⟨m - 1, h1'⟩ q h1 h2
++  · omega
++
++/-- The scratch tape with the fields `ws` laid out from one cell past the head `s`: the start's
++scratch `σ` up to `s`. -/
++private abbrev zr_scr {k : ℕ} (σ : ℤ → Option (ZoneSym k)) (s : ℤ) (ws : List (List (ZoneSym k)))
++    (r : ℤ) : Option (ZoneSym k) :=
++  if r ≤ s then σ r else fieldsTape ws (r - (s + 1))
++
++/-- The two work tapes as one family. -/
++private abbrev zr_tapes {k : ℕ} (A B : ℤ → Option (ZoneSym k)) : Fin 2 → ℤ → Option (ZoneSym k) :=
++  fun j => if j = 0 then A else B
++
++/-- The two heads as one family. -/
++private abbrev zr_heads (a b : ℤ) : Fin 2 → ℤ := fun j => if j = 0 then a else b
++
++/-- A slot value as a scratch cell. -/
++private abbrev zr_enc {k : ℕ} (v : Option (Option Bool)) : ZoneSym k := .inr fun _ => v
++
++/-- Track `t`'s column of a word, as scratch cells. -/
++private abbrev zr_col {k : ℕ} (t : Fin k) (w : List (ZoneSym k)) : List (ZoneSym k) :=
++  w.map fun γ => zr_enc (zoneSlotOf t γ)
++
++/-- A mapped word's buffer is the mapped buffer. -/
++private lemma zr_bufferTape_map {α β : Type} (w : List α) (f : α → β) (q : ℤ) :
++    FinTM.bufferTape (w.map f) q = (FinTM.bufferTape w q).map f := by
++  rw [FinTM.bufferTape_eq, FinTM.bufferTape_eq]
++  split_ifs
++  · rw [List.getElem?_map]
++  · rfl
++
++/-- Past its last field a layout is blank. -/
++private lemma zr_fieldsTape_end {Γ : Type} (ws : List (List Γ)) (z : ℤ)
++    (hz : (fieldOffset ws ws.length : ℤ) ≤ z + 1) : fieldsTape ws z = none := by
++  by_cases hw : ws = []
++  · subst hw
++    exact fieldsTape_nil z
++  · have h := length_joinFields_add_one ws hw
++    exact fieldsTape_of_length_le ws (by omega)
++
++/-- **One more field**, for every layout (the empty one included). -/
++private lemma zr_fieldsTape_snoc' {Γ : Type} (ws : List (List Γ)) (u : List Γ) (z : ℤ) :
++    fieldsTape (ws ++ [u]) z =
++      if z < fieldOffset ws ws.length then fieldsTape ws z
++      else FinTM.bufferTape u (z - fieldOffset ws ws.length) := by
++  by_cases hw : ws = []
++  · subst hw
++    rw [List.nil_append, List.length_nil, fieldOffset_zero, Nat.cast_zero, sub_zero]
++    split_ifs with hz
++    · rw [fieldsTape_of_neg _ hz, fieldsTape_nil]
++    · rw [fieldsTape_of_nonneg _ (by omega), joinFields_singleton, FinTM.bufferTape_eq,
++        if_pos (by omega), List.getElem?_map]
++      cases u[z.toNat]? <;> rfl
++  · exact zr_fieldsTape_snoc ws hw u z
++
++/-- **A copy onto blank scratch appends a field**: a mapped copy from tape `0` onto scratch at
++the next field's offset lays the mapped word out as a new last field. -/
++private lemma zr_scr_copy {k : ℕ} {Δ : Type} (A σ : ℤ → Option (ZoneSym k)) (s a : ℤ)
++    (ws : List (List (ZoneSym k))) (extract : ZoneSym k → Δ)
++    (merge : Option (ZoneSym k) → Δ → ZoneSym k) (w : List (ZoneSym k)) :
++    zr_copyTapes 1 extract merge w (zr_tapes A (zr_scr σ s ws))
++        (zr_heads a (s + 1 + fieldOffset ws ws.length)) =
++      zr_tapes A (zr_scr σ s (ws ++ [w.map fun γ => merge none (extract γ)])) := by
++  funext j q
++  by_cases hj : j = 0
++  · subst hj
++    simp only [zr_copyTapes, zr_tapes, zr_heads, show (0 : Fin 2) ≠ 1 by decide, false_and,
++      if_false, if_true]
++  · have hj1 : j = 1 := by omega
++    subst hj1
++    simp only [zr_copyTapes, zr_tapes, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false,
++      true_and, zr_scr]
++    rw [zr_fieldsTape_snoc']
++    set o := fieldOffset ws ws.length
++    by_cases hq : q ≤ s
++    · rw [if_neg (by omega), if_pos hq, if_pos hq]
++    rw [if_neg hq, if_neg hq]
++    by_cases hin : s + 1 + (o : ℤ) ≤ q ∧ q < s + 1 + o + w.length
++    · rw [if_pos hin, if_neg (by omega), zr_fieldsTape_end ws _ (by omega), zr_bufferTape_map,
++        show q - (s + 1 + (o : ℤ)) = q - (s + 1) - o by ring]
++    · rw [if_neg hin]
++      by_cases hlt : q - (s + 1) < o
++      · rw [if_pos hlt]
++      · rw [if_neg hlt, zr_fieldsTape_end ws _ (by omega), FinTM.bufferTape_eq,
++          if_pos (by omega), List.getElem?_eq_none (by simp only [List.length_map]; omega)]
++
++/-- A concatenated word's buffer: the first word's cells, then the second's. -/
++private lemma zr_bufferTape_append {α : Type} (u v : List α) (q : ℤ) :
++    FinTM.bufferTape (u ++ v) q =
++      if q < u.length then FinTM.bufferTape u q else FinTM.bufferTape v (q - u.length) := by
++  rw [FinTM.bufferTape_eq, FinTM.bufferTape_eq, FinTM.bufferTape_eq]
++  split_ifs with h1 h2 h3 h3 <;> try omega
++  · rw [List.getElem?_append_left (by omega)]
++  · rw [List.getElem?_append_right (by omega), show q.toNat - u.length = (q - u.length).toNat by
++      omega]
++  · rfl
++
++/-- **A copy just past the last field extends it**: a mapped copy onto scratch at the blank right
++after the last field `u` appends the mapped word to `u`. -/
++private lemma zr_scr_extend {k : ℕ} {Δ : Type} (A σ : ℤ → Option (ZoneSym k)) (s a : ℤ)
++    (pre : List (List (ZoneSym k))) (u : List (ZoneSym k)) (extract : ZoneSym k → Δ)
++    (merge : Option (ZoneSym k) → Δ → ZoneSym k) (w : List (ZoneSym k)) :
++    zr_copyTapes 1 extract merge w (zr_tapes A (zr_scr σ s (pre ++ [u])))
++        (zr_heads a (s + 1 + fieldOffset pre pre.length + u.length)) =
++      zr_tapes A (zr_scr σ s (pre ++ [u ++ w.map fun γ => merge none (extract γ)])) := by
++  funext j q
++  by_cases hj : j = 0
++  · subst hj
++    simp only [zr_copyTapes, zr_tapes, zr_heads, show (0 : Fin 2) ≠ 1 by decide, false_and,
++      if_false, if_true]
++  · have hj1 : j = 1 := by omega
++    subst hj1
++    simp only [zr_copyTapes, zr_tapes, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false,
++      true_and, zr_scr]
++    rw [zr_fieldsTape_snoc', zr_fieldsTape_snoc', zr_bufferTape_append]
++    set o := fieldOffset pre pre.length
++    by_cases hq : q ≤ s
++    · rw [if_neg (by omega), if_pos hq, if_pos hq]
++    rw [if_neg hq, if_neg hq]
++    by_cases hin : s + 1 + (o : ℤ) + u.length ≤ q ∧ q < s + 1 + o + u.length + w.length
++    · rw [if_pos hin, if_neg (by omega), if_neg (by omega), if_neg (by omega),
++        FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_eq_none (by omega),
++        zr_bufferTape_map, show q - (s + 1 + (o : ℤ) + u.length) = q - (s + 1) - o - u.length by
++          ring]
++    · rw [if_neg hin]
++      by_cases hlt : q - (s + 1) < o
++      · rw [if_pos hlt, if_pos hlt]
++      · rw [if_neg hlt, if_neg hlt]
++        by_cases hu : q - (s + 1) - o < u.length
++        · rw [if_pos hu]
++        · rw [if_neg hu, FinTM.bufferTape_eq, if_pos (by omega), List.getElem?_eq_none (by omega),
++            FinTM.bufferTape_eq, if_pos (by omega),
++            List.getElem?_eq_none (by simp only [List.length_map]; omega)]
++
++/-- **A blank written inside a field cuts it**: blanking scratch at the cell after `u` in a field
++`u ++ a :: v` lays out `u` and `v` as two fields. -/
++private lemma zr_scr_cut {k : ℕ} (A σ : ℤ → Option (ZoneSym k)) (s : ℤ)
++    (pre post : List (List (ZoneSym k))) (u v : List (ZoneSym k)) (a : ZoneSym k) :
++    Function.update (zr_tapes A (zr_scr σ s (pre ++ [u ++ a :: v] ++ post))) 1
++        (Function.update (zr_tapes A (zr_scr σ s (pre ++ [u ++ a :: v] ++ post)) 1)
++          (s + 1 + fieldOffset pre pre.length + u.length) none) =
++      zr_tapes A (zr_scr σ s (pre ++ [u, v] ++ post)) := by
++  have hcut := zr_fieldsTape_cut pre post u v a
++  funext j q
++  by_cases hj : j = 1
++  · subst hj
++    simp only [Function.update_self, zr_tapes, show (1 : Fin 2) ≠ 0 by decide, if_false, zr_scr]
++    by_cases hq : q = s + 1 + fieldOffset pre pre.length + u.length
++    · rw [hq, Function.update_self, if_neg (by omega), ← hcut,
++        show s + 1 + (fieldOffset pre pre.length : ℤ) + u.length - (s + 1) =
++          ((fieldOffset pre pre.length + u.length : ℕ) : ℤ) by push_cast; ring,
++        Function.update_self]
++    · rw [Function.update_of_ne hq]
++      split_ifs with h
++      · rfl
++      · rw [← hcut, Function.update_of_ne (by push_cast; omega)]
++  · have hj0 : j = 0 := by omega
++    subst hj0
++    simp only [Function.update_of_ne hj, zr_tapes, if_true]
++
++/-- **Clearing the last field removes it**: blanking the last field's interval leaves the
++earlier layout. -/
++private lemma zr_scr_clear {k : ℕ} (A σ : ℤ → Option (ZoneSym k)) (s : ℤ)
++    (pre : List (List (ZoneSym k))) (u : List (ZoneSym k)) :
++    (fun (i' : Fin 2) q => if i' = 1 ∧ s + 1 + (fieldOffset pre pre.length : ℤ) ≤ q ∧
++        q < s + 1 + fieldOffset pre pre.length + u.length then none
++      else zr_tapes A (zr_scr σ s (pre ++ [u])) i' q) =
++      zr_tapes A (zr_scr σ s pre) := by
++  funext j q
++  by_cases hj : j = 0
++  · subst hj
++    simp only [show (0 : Fin 2) ≠ 1 by decide, false_and, if_false, zr_tapes, if_true]
++  · have hj1 : j = 1 := by omega
++    subst hj1
++    simp only [true_and, zr_tapes, show (1 : Fin 2) ≠ 0 by decide, if_false, zr_scr]
++    rw [zr_fieldsTape_snoc']
++    set o := fieldOffset pre pre.length
++    by_cases hin : s + 1 + (o : ℤ) ≤ q ∧ q < s + 1 + o + u.length
++    · rw [if_pos hin, if_neg (by omega), zr_fieldsTape_end pre _ (by omega)]
++    · rw [if_neg hin]
++      by_cases hq : q ≤ s
++      · rw [if_pos hq, if_pos hq]
++      · rw [if_neg hq, if_neg hq]
++        by_cases hlt : q - (s + 1) < o
++        · rw [if_pos hlt]
++        · rw [if_neg hlt, zr_fieldsTape_end pre _ (by omega), FinTM.bufferTape_eq,
++            if_pos (by omega), List.getElem?_eq_none (by omega)]
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,55 @@
+Environment records (addendum v2.5, Part 1), from the delivered logs
+
+Preflight (preflight.log, 2026-10-24T06:17:12Z): nproc 4; cgroup v1 memory.limit_in_bytes 9223372036854771712 (no effective limit) -> headroom = MemAvailable 15,906,124 kB (>= 4 GiB); in use usage - total_cache + total_shmem = 221,253,632 B; failcnt 0, oom_kill 0; clone ext4 on /dev/vda, 26,303,459,328 B free (>= 12 GiB); /dev/shm the only tmpfs, unused. Re-check before the cache (06:18:21Z): 23,717,871,616 B free (>= 8 GiB). PASS.
+Toolchain: elan installed leanprover/lean4:v4.25.0 (toolchain-install.log); Part 2 not used.
+Cache store (cache-store.log): /root/.cache/mathlib did not exist before the fetch; 1,004 files / 58,672,142 B after.
+Roots: 40 (mathlib-roots.txt), byte-equal to my extraction from the order list (out/33-roots-mine.txt) and to preship-21d53053/roots.txt.
+Fetch (cache-get.log): TAR_OPTIONS=--no-same-owner lake exe cache get <roots> (cache.time 06:18:27Z-06:19:59Z): packages cloned at the manifest revisions; 'Attempting to download 1002 file(s)', 'Decompressing 1002 file(s)', 'Completed successfully!', exit 0; M - N = 0; no failed download, no retry. The cache executable's own build (Cache.*, 20 jobs) is the allowed self-build.
+Manifest check (manifest-check.log): 11 present packages MATCH url+rev; ABSENT doc-gen4, UnicodeBasic, BibtexQuery, MD4Lean; 'RESULT: every present package matches the manifest'. Its trailing list of non-Mathlib/TCSlib imports is noisy (package directory names and the docstring words 'the', 'to'); my own grep of the order list's imports finds no non-Mathlib, non-TCSlib import except a docstring 'import the' false hit (none of the four absent packages).
+Zero-size oleans: none (zero-oleans.log empty). Cache probe: exit 0 (cache-probe.log).
+Bans: no 'lake build' and no unfiltered 'lake exe cache get' in any log; the narrowed fetch is the only cache command.
+
+== bootstrap.log
+ modules 96 order list equal and in order: True
+ all exit 0: True ; timed 96
+ error lines: 0
+ sorry warnings: 27
+    TCSlib/Complexity/TuringMachine/Simulation ['394']
+    TCSlib/Complexity/TuringMachine/Composition ['155', '368', '766']
+    TCSlib/Complexity/TuringMachine/Build/Wrappers ['740', '758']
+    TCSlib/Complexity/TuringMachine/Build/Loop ['2257', '2429', '2609', '2660', '4997']
+    TCSlib/Complexity/TuringMachine/Encoding ['506']
+    TCSlib/Complexity/ClassP/TimeConstructible ['422', '434']
+    TCSlib/Complexity/TuringMachine/Build/Primitives ['2379', '6914', '6996']
+    TCSlib/Complexity/TuringMachine/Build/ZoneRebalance ['1396', '1439']
+    TCSlib/Complexity/TuringMachine/Build/RecordTable ['1936', '2210', '6029', '6090']
+    TCSlib/Complexity/TuringMachine/CodeSimulator ['8654']
+    TCSlib/Complexity/TuringMachine/UniversalK ['1716', '1754']
+    TCSlib/Complexity/TuringMachine/NDCodeSimulator ['96']
+ peak maxrss 2900 MiB at TCSlib/Complexity/TuringMachine/Build/CfgRecord ; longest 185.4 s at TCSlib/Complexity/TuringMachine/NDCodeSimulator
+ ZoneRebalance timing (13.1, 2110, 0, '2026-10-24T06:28:02Z', '2026-10-24T06:28:15Z') diagnostics 2 [('TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean', '1396', 'warning', "declaration uses 'sorry'"), ('TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean', '1439', 'warning', "declaration uses 'sorry'")]
+ first start 2026-10-24T06:20:56Z last end 2026-10-24T06:43:14Z
+== final-sweep-374337b0.log
+ modules 96 order list equal and in order: True
+ all exit 0: True ; timed 96
+ error lines: 0
+ sorry warnings: 25
+    TCSlib/Complexity/TuringMachine/Simulation ['394']
+    TCSlib/Complexity/TuringMachine/Composition ['155', '368', '766']
+    TCSlib/Complexity/TuringMachine/Build/Wrappers ['740', '758']
+    TCSlib/Complexity/TuringMachine/Build/Loop ['2257', '2429', '2609', '2660', '4997']
+    TCSlib/Complexity/TuringMachine/Encoding ['506']
+    TCSlib/Complexity/ClassP/TimeConstructible ['422', '434']
+    TCSlib/Complexity/TuringMachine/Build/Primitives ['2379', '6914', '6996']
+    TCSlib/Complexity/TuringMachine/Build/RecordTable ['1936', '2210', '6029', '6090']
+    TCSlib/Complexity/TuringMachine/CodeSimulator ['8654']
+    TCSlib/Complexity/TuringMachine/UniversalK ['1716', '1754']
+    TCSlib/Complexity/TuringMachine/NDCodeSimulator ['96']
+ peak maxrss 4506 MiB at TCSlib/Complexity/TuringMachine/Build/ZoneRebalance ; longest 622.7 s at TCSlib/Complexity/TuringMachine/Build/ZoneRebalance
+ ZoneRebalance timing (622.7, 4506, 0, '2026-10-25T00:51:04Z', '2026-10-25T01:01:26Z') diagnostics 0 []
+ first start 2026-10-25T00:41:14Z last end 2026-10-25T01:16:50Z
+modules (other than ZoneRebalance) whose diagnostics differ bootstrap vs final: []
+total diagnostics outside ZoneRebalance: 398 398
+
+Memory: bootstrap peak 2,900 MiB (Build/CfgRecord); final sweep peak 4,506 MiB (Build/ZoneRebalance, 622.7 s). The delivered module needs ~4.4-4.5 GiB at -j4 on the fill host (sweep-cp7: 4,496 MiB; final: 4,506 MiB), above the addendum's measured 2.8 GiB and above its 4 GiB headroom floor; on this Mac my elaborations peaked at 3.2-3.6 GiB RSS (out/11, 12, 14, 17).
+Unusual: none blocking. timed_check.py's DeprecationWarning (utcnow) lines are interleaved in the logs; the sweep-cp7 check of the owned module ran beside the after-screen (585.1 s), which the brief does not forbid (only screens one at a time).

@@ -1,0 +1,37 @@
+# EQSealControl: source /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/wt-hk/campaign/fills/megafill/drafts/megafill-D-triage-fe666d60/eq/EQSealControl.lean.txt
+# record sha256 94ecf05dca2ff4b3788402320bd990f429328c1510410892634cc14ba0eb37a9; copy sha256 94ecf05dca2ff4b3788402320bd990f429328c1510410892634cc14ba0eb37a9
+# worktree HEAD 5cade0b848a3bb6d87a2149aacecf4a2af923889; oleans /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-lrcan3; start 2026-10-25T04:33:54Z
+ReviewProbe/EQSealControl.lean:49:9: error: Tactic `rcases` failed: `hf : TimeConstructible f` is not an inductive datatype
+ReviewProbe/EQSealControl.lean:53:70: error: Type mismatch
+  rfl
+has type
+  ?m.28 = ?m.28
+but is expected to have type
+  TimeConstructible T =
+    ((∀ (n : ℕ), n ≤ T n) ∧
+      ∃ c, 0 < c ∧ ∃ M, ∀ (x : List Bool), M.ComputesInTime x (T x.length).bits (c * (T x.length + 1)))
+ReviewProbe/EQSealControl.lean:55:73: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  M.ComputesInTime x w t = ∃ s, M.tm.ComputesInTimeAndSpace x w t s
+ReviewProbe/EQSealControl.lean:57:88: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+ReviewProbe/EQSealControl.lean:59:2: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg x) 0 = MultiTapeTM.initCfg x
+ReviewProbe/EQSealControl.lean:60:82: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.tm.q₀ x
+# exit=1 secs=1

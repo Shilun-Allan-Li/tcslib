@@ -1,0 +1,31 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+
+set_option autoImplicit false
+
+namespace Turing
+
+-- Q1 Mathlib's iterate lemmas against zr_iterate_pred / zr_iterate_succ
+#check @Nat.pred_iterate
+#check @Nat.succ_iterate
+example (m n : ℕ) : (fun i => i - 1)^[m] n = n - m := Nat.pred_iterate n m
+example (m n : ℕ) : (fun i => i + 1)^[m] n = n + m := Nat.succ_iterate n m
+
+-- Q2 the published phase-host step at T = 0 against zr_host_dispatch_run
+#check @phaseHostTM_run
+
+-- Q3 a geometric sum (zr_sum_asc_eq, a = 1, b = 0, c = 0) by exact?
+example (n : ℕ) : ∑ m ∈ Finset.range (n + 1), 2 ^ m + 1 = 2 ^ (n + 1) := by exact?
+
+-- Q4 zr_none_not_mem_union, zr_none_not_mem_image
+example {S : Type} {A B : Set (Option S)} (ha : none ∉ A) (hb : none ∉ B) : none ∉ A ∪ B := by
+  exact?
+example {S T : Type} {X : Set (Option S)} (f : S → T) (h : none ∉ X) :
+    none ∉ Option.map f '' X := by exact?
+
+-- Q5 zr_heads_le
+example {f g : Fin 2 → ℤ} (h0 : f 0 ≤ g 0) (h1 : f 1 ≤ g 1) : ∀ j, f j ≤ g j := by exact?
+
+end Turing

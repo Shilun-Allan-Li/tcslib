@@ -1,0 +1,210 @@
+From ae4849afd7f94cdc0890a12ed5c50ea9e075533c Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 25 Oct 2026 00:26:13 -0500
+Subject: [PATCH] The chapter predicates' readings: timeConstructible_iff,
+ spaceConstructible_iff, computesInSpace_iff and seven more
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Each definition gains the lemma that reads it, beside it, by Iff.rfl or rfl (policy.md §1):
+Complexity.timeConstructible_iff (ClassP/TimeConstructible); Complexity.spaceConstructible_iff
+(SpaceComplexity/Constructible); Turing.FinTM.computesInSpace_iff,
+Turing.FinTM.decidesInSpace_iff, Complexity.mem_SPACE_iff, Complexity.logSpace_eq and
+Complexity.LOGSPACE_eq (SpaceComplexity/Basic); Complexity.transduce_nil,
+Complexity.transduce_cons, and the copying-state lemma Complexity.transduce_of_copy
+(ClassNP/Transducer). Additions only; no statement changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/Transducer.lean     | 27 ++++++++++++++++
+ .../Complexity/ClassP/TimeConstructible.lean  | 10 ++++++
+ TCSlib/Complexity/SpaceComplexity/Basic.lean  | 32 +++++++++++++++++++
+ .../SpaceComplexity/Constructible.lean        | 10 ++++++
+ 4 files changed, 79 insertions(+)
+
+diff --git a/TCSlib/Complexity/ClassNP/Transducer.lean b/TCSlib/Complexity/ClassNP/Transducer.lean
+index cb565f8c..c8149894 100644
+--- a/TCSlib/Complexity/ClassNP/Transducer.lean
++++ b/TCSlib/Complexity/ClassNP/Transducer.lean
+@@ -30,6 +30,8 @@ verifier.
+ 
+ ## Main results
+ 
++* `Complexity.transduce_nil`, `Complexity.transduce_cons` — the function's case lemmas;
++  `Complexity.transduce_of_copy` — a state that copies and is kept gives the identity.
+ * `Complexity.transducerTM_computes` — the machine computes the transducer's function
+   within `|x| + 1` steps.
+ * `Complexity.polyTimeComputable_transduce` — hence it is in FP.
+@@ -52,6 +54,16 @@ def transduce (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) : σ 
+   | _, [] => []
+   | q, b :: l => (o q b).toList ++ transduce δ o (δ q b) l
+ 
++/-- A transducer emits nothing on the empty word: `transduce δ o q [] = []`. -/
++theorem transduce_nil (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ) :
++    transduce δ o q [] = [] := rfl
++
++/-- On `b :: l` a transducer emits `o q b` and continues from `δ q b`:
++`transduce δ o q (b :: l) = (o q b).toList ++ transduce δ o (δ q b) l`. -/
++theorem transduce_cons (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ) (b : Bool)
++    (l : List Bool) :
++    transduce δ o q (b :: l) = (o q b).toList ++ transduce δ o (δ q b) l := rfl
++
+ /-- The transducer on a concatenation: run the first part, then the second part from the
+ state reached. -/
+ theorem transduce_append (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ)
+@@ -62,6 +74,21 @@ theorem transduce_append (δ : σ → Bool → σ) (o : σ → Bool → Option B
+   | nil => rfl
+   | cons b l ih => simp [transduce, ih]
+ 
++/-- **A copying state copies**: if from the state `q` every bit is emitted unchanged
++(`o q b = some b`) and `q` is kept (`δ q b = q`), then the transducer started in `q` is the
++identity, `transduce δ o q l = l`.
++
++**Proof sketch.** Induction on `l`, by `Complexity.transduce_nil` and
++`Complexity.transduce_cons`. -/
++theorem transduce_of_copy (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ)
++    (hδ : ∀ b, δ q b = q) (ho : ∀ b, o q b = some b) (l : List Bool) :
++    transduce δ o q l = l := by
++  induction l with
++  | nil => exact transduce_nil δ o q
++  | cons b l ih =>
++    rw [transduce_cons, hδ, ho, ih]
++    rfl
++
+ /-- The transition table of the transducer machine: on a bit, emit, move right and change
+ state; on the right blank, halt. -/
+ def transducerTr (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) :
+diff --git a/TCSlib/Complexity/ClassP/TimeConstructible.lean b/TCSlib/Complexity/ClassP/TimeConstructible.lean
+index f386e8a0..05c92a4d 100644
+--- a/TCSlib/Complexity/ClassP/TimeConstructible.lean
++++ b/TCSlib/Complexity/ClassP/TimeConstructible.lean
+@@ -49,6 +49,7 @@ budget as an explicit extra input and needs no constructibility hypothesis.
+ 
+ ## Main results
+ 
++* `Complexity.timeConstructible_iff` — the definition as an equivalence.
+ * `Complexity.timeConstructible_id` — the identity function is time constructible,
+   restoring [AB09]'s example under the repaired definition.
+ * `Turing.FinTM.lengthBitsTM_computes`, `Turing.FinTM.lengthBitsTM_spaceUsed` — the
+@@ -75,6 +76,15 @@ def TimeConstructible (T : ℕ → ℕ) : Prop :=
+   ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
+     M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))
+ 
++/-- **Time constructibility, unfolded**: `T` is time constructible exactly when `n ≤ T n` for
++every `n` and, for some constant `c > 0`, some machine computes `(T |x|).bits` on every input `x`
++within `c · (T |x| + 1)` steps. -/
++theorem timeConstructible_iff (T : ℕ → ℕ) :
++    TimeConstructible T ↔
++      (∀ n, n ≤ T n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
++        M.ComputesInTime x (T x.length).bits (c * (T x.length + 1)) :=
++  Iff.rfl
++
+ /-- Increment a little-endian binary word, extending it on overflow. -/
+ private def counterInc : List Bool → List Bool
+   | [] => [true]
+diff --git a/TCSlib/Complexity/SpaceComplexity/Basic.lean b/TCSlib/Complexity/SpaceComplexity/Basic.lean
+index fb1d6cd3..46e84e46 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Basic.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Basic.lean
+@@ -46,6 +46,10 @@ shape of [AB09, Fig. 4.1]:
+ 
+ ## Main results
+ 
++* `Turing.FinTM.computesInSpace_iff`, `Complexity.logSpace_eq` — the definitions of
++  `ComputesInSpace` and `logSpace` as an equivalence and an equation.
++* `Turing.FinTM.decidesInSpace_iff`, `Complexity.mem_SPACE_iff`, `Complexity.LOGSPACE_eq` —
++  the definitions of `DecidesInSpace`, `SPACE` and `LOGSPACE`, unfolded.
+ * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
+ * `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
+ * `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
+@@ -101,11 +105,27 @@ def ComputesInSpace (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ →
+   ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
+     M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length
+ 
++/-- **Computing in space, unfolded**: `M` computes `f` in space `s` exactly when on every input
++`x` there is a time `t` at which `M` has halted with output `f x`
++(`Turing.FinTM.ComputesInTime`), having visited at most `s |x|` work-tape cells by then. -/
++theorem computesInSpace_iff (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ → ℕ) :
++    M.ComputesInSpace f s ↔
++      ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
++        M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length :=
++  Iff.rfl
++
+ /-- The machine `M` decides `L` in space `s`: it computes the indicator `[x ∈ L]` (a
+ one-bit output) in space `s`. [AB09, Def 4.1] -/
+ def DecidesInSpace (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) : Prop :=
+   M.ComputesInSpace (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) s
+ 
++/-- **Deciding in space, unfolded**: `M` decides `L` in space `s` exactly when it computes the
++one-bit indicator `x ↦ [x ∈ L]` in space `s`. -/
++theorem decidesInSpace_iff (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) :
++    M.DecidesInSpace L s ↔
++      M.ComputesInSpace (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) s :=
++  Iff.rfl
++
+ /-- A space bound can be weakened. -/
+ theorem ComputesInSpace.mono {M : FinTM Bool} {f : List Bool → List Bool} {s s' : ℕ → ℕ}
+     (h : M.ComputesInSpace f s) (hs : ∀ n, s n ≤ s' n) : M.ComputesInSpace f s' := by
+@@ -138,6 +158,12 @@ constant `c`. -/
+ def SPACE (s : ℕ → ℕ) : Set (Language Bool) :=
+   {L | ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * s n}
+ 
++/-- **Membership in `SPACE`, unfolded**: `L ∈ SPACE s` exactly when some machine decides `L` in
++space `c · s` for some constant `c`. -/
++theorem mem_SPACE_iff {s : ℕ → ℕ} {L : Language Bool} :
++    L ∈ SPACE s ↔ ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * s n :=
++  Iff.rfl
++
+ /-- `SPACE` is monotone in the space bound. -/
+ theorem SPACE.mono {s₁ s₂ : ℕ → ℕ} (h : ∀ n, s₁ n ≤ s₂ n) : SPACE s₁ ⊆ SPACE s₂ := by
+   rintro L ⟨c, M, hM⟩
+@@ -161,11 +187,17 @@ theorem SPACE.mono_const {s₁ s₂ : ℕ → ℕ} {a : ℕ} (h : ∀ n, s₁ n
+ convention `s(n) ≥ log n` of [AB09, p. 79]. -/
+ def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
+ 
++/-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
++theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
++
+ /-- **The class `L`** [AB09, Def 4.5]: `L = SPACE(log n)`, the languages decidable by a
+ machine visiting `O(log n)` work-tape cells. (Named `LOGSPACE` to keep the letter `L` free
+ for language variables.) -/
+ def LOGSPACE : Set (Language Bool) := SPACE logSpace
+ 
++/-- `LOGSPACE` is `SPACE logSpace`. -/
++theorem LOGSPACE_eq : LOGSPACE = SPACE logSpace := rfl
++
+ /-- The language `{⟨x, i⟩ | p x i}`, the pair encoded as `Turing.pairEncode x (Nat.bits i)`
+ (index in little-endian binary). The shape of the two languages of [AB09, Def 4.16]. -/
+ def indexLang (p : List Bool → ℕ → Prop) : Language Bool :=
+diff --git a/TCSlib/Complexity/SpaceComplexity/Constructible.lean b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+index 579cf63c..35e5e6e9 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Constructible.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+@@ -38,6 +38,7 @@ results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
+ 
+ ## Main results (proved)
+ 
++* `Complexity.spaceConstructible_iff` — the definition as an equivalence.
+ * `Complexity.spaceConstructible_logSpace` — `log` is space-constructible.
+ * `Complexity.spaceConstructible_linear` — `n + 1` is space-constructible.
+ 
+@@ -62,6 +63,15 @@ def SpaceConstructible (S : ℕ → ℕ) : Prop :=
+   ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool,
+     M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n
+ 
++/-- **Space constructibility, unfolded**: `S` is space constructible exactly when
++`logSpace n ≤ S n` for every `n` and, for some constant `c > 0`, some machine computes
++`x ↦ (S |x|).bits` in space `c · S` (`Turing.FinTM.ComputesInSpace`). -/
++theorem spaceConstructible_iff (S : ℕ → ℕ) :
++    SpaceConstructible S ↔
++      (∀ n, logSpace n ≤ S n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool,
++        M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n :=
++  Iff.rfl
++
+ /-- Positive binary words have exactly the normalized logarithmic width. -/
+ private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+     n.bits.length = logSpace n := by
+-- 
+2.50.1 (Apple Git-155)
+

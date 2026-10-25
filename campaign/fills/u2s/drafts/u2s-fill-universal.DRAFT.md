@@ -4,22 +4,23 @@
 `77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532` (TCSlib as after #155; #156 open). Pre-ship measured
 there, against a fresh bootstrap of the order list:
 `campaign/fills/u2s/drafts/u2s-fill-universal/preship-77f1eb4f/`.
-**Issue condition: the field-equation API PR Q-U1** (`campaign/fills/megafill/drafts/
-megafill-C-DRAFTING-REPORT.md`): H2-F's encoding `Turing.StepBlock.forwardLoopCfg` and H5's
-presentation `Turing.rulerHostCfg` are public definitions with no published lemma (the style
-lint's check 8 lists both), and both phases' seams read their fields. This draft cites the
-equations under the names `simps` generates beside them (`StepBlock.forwardLoopCfg_state`, …,
-`rulerHostCfg_output`); at issue, replace them by the landed names if they differ, and re-run the
-pre-ship against the API's head. The generated tape equations are pointwise in the cell
+**The field-equation API Q-U1 has landed: PR #161** (gate 73, PASS 0/0/3/9; merged 2026-10-25
+as `5bbef333`, its 325-module replay passed). H2-F's encoding `Turing.StepBlock.forwardLoopCfg`
+and H5's presentation `Turing.rulerHostCfg` now carry their field equations under the names
+`simps` generates, which are the names this draft cites (`StepBlock.forwardLoopCfg_state`, …,
+`rulerHostCfg_output`; gate 73's consumer probe `U2ApiConsumer` uses them). At issue, re-run the
+pre-ship at the issue commit. The generated tape equations are pointwise in the cell
 (`… .workTapes i a = … i a`), unlike the route probe's stand-ins: re-run the probe with `funext`
 before each tape rewrite (the review's API probe does, against the generated lemmas).
-**The same API PR also carries** (review F1, F2): `Turing.MultiTapeTM.spaceUsedByTape_eq_card`
-beside the definition in the vendored `Deterministic.lean` (U2-U's space ledger has no other
-published card step; replay: `Deterministic`'s closure, 325 modules, as #149's) and
-`Turing.pairEncode_drop` in `Build/InputDevice` (the suffix after one header; no extra replay).
-Other issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩ (#156's head moved during review; if it
-is in the issue base, its two lemmas become citable: add them to the probe), ⟨its PR⟩, the megafill
-banner. -->
+**#161 also carries** (review F1, F2): `Turing.MultiTapeTM.spaceUsedByTape_eq_card` beside the
+definition in the vendored `Deterministic.lean` (U2-U's space ledger has no other published card
+step) and `Turing.pairEncode_drop` in `Build/InputDevice` (the suffix after one header; the
+ledger's SD-1: cite it, add no local suffix drop). Gate 73's note 9 applies at issue: the route
+probe is rewritten against the generated names (`funext` before each pointwise tape equation,
+`.val` through `rulerHostCfg_inputPos`). #156 and #159 are in the issue base: their four
+phase-host lemmas are citable (add them to the probe). Other issue-time items: @ANCESTOR@,
+⟨BASE⟩, ⟨IN-FLIGHT⟩, the megafill banner, the semantic-duplication requirement (gates 69 and 72;
+megafill D's drafting brief §5). -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -45,12 +46,12 @@ banner. -->
   - **H5, proved** (PR #146, gate 60): `Turing.exists_rulerHostTM` (`Build/InputDevice`), the
     bounded-prefix ruler host, a block simulation of any native-input machine on a suffix input,
     through `Turing.rulerHostCfg`;
-  - **the field-equation API (Q-U1, ⟨its PR⟩)**: `StepBlock.forwardLoopCfg_state`, `_inputPos`,
-    `_workTapes`, `_workTapePos`, `_output` and `rulerHostCfg_state`, `_inputPos`, `_workTapes`,
-    `_workTapePos`, `_output` (the tape equations pointwise: `… .workTapes i a = … i a`); with
-    them `MultiTapeTM.spaceUsedByTape_eq_card` (`Deterministic`: a tape's space is the card of its
-    visited set) and `pairEncode_drop` (`Build/InputDevice`: `(pairEncode u x).drop (2|u| + 2) =
-    x`);
+  - **the field-equation API (Q-U1, PR #161, gate 73)**: `StepBlock.forwardLoopCfg_state`,
+    `_inputPos`, `_workTapes`, `_workTapePos`, `_output` and `rulerHostCfg_state`, `_inputPos`,
+    `_workTapes`, `_workTapePos`, `_output` (the tape equations pointwise:
+    `… .workTapes i a = … i a`); with them `MultiTapeTM.spaceUsedByTape_eq_card` (`Deterministic`:
+    a tape's space is the card of its visited set) and `pairEncode_drop` (`Build/InputDevice`:
+    `(pairEncode u x).drop (2|u| + 2) = x`);
   - the lockstep API (`Build/Contract/Basic`): `Lockstep.runFrom`, `Lockstep.cut`,
     `Lockstep.locate` and the structure's fields;
   - the space API (PR #149): `MultiTapeTM.spaceUsed_eq_sum`, `MultiTapeTM.spaceUsed_le_of_abs_le`;
@@ -101,8 +102,9 @@ banner. -->
   import of region (a) after line 11. **Line numbers below are the base's; the overlay's are 1
   more** (U2-U at 1716, overlay 1717; U2-E at 1754, overlay 1755).
 - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩ (at drafting: #156,
-  `Build/Seam`'s `phaseHostTM_tr_of_red_none` and `phaseHostTM_run_le`, gate 69 pending: **not
-  citable**; #135); on their own branches in this session, the other megafill items, among them
+  then not citable; it has since merged with #159, and `Build/Seam`'s `phaseHostTM_run_le`,
+  `phaseHostTM_tr_of_red_none`, `phaseHostTM_q₀` and `phaseHostTM_tr_of_red_some` are in your base;
+  #135); on their own branches in this session, the other megafill items, among them
   **B5a** (`CodeSimulator`, upstream of your file through `Codes2Tape`; you cite nothing of it).
   Cite nothing they add.
 

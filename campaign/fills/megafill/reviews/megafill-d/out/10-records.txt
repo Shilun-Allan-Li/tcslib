@@ -1,0 +1,49 @@
+# 10 — Records: hashes, environment logs, file list (check 7)
+
+## Hashes (scripts/hashes.sh; probe/fullhashes.txt, probe/fullhashes-types.txt)
+
+Every 40- and 64-hex word in the 55 delivered files (fe666d60..tip under campaign/):
+- tcslib commits, all resolving (`git cat-file -t` = commit) and meaning what the text says:
+  fe666d60 (the drafting base, the tip when drafting started: "Gate 72 round 2: PASS ...");
+  90688cbb (#160's merge, 3 minutes after the base); 53253f59 (the drafting brief's commit, an
+  ancestor of the base); 1849dae6, 06d314c3, a7433f3f (the heads of #161, #162, #135, equal to
+  `gh pr list`'s headRefOid for each today).
+- Not tcslib objects, and not claimed to be: the 11 package revisions in cache-get.log and
+  manifest-check.log (each equal to lake-manifest.json's `rev`, which is unchanged base → tip) and
+  Lean's own commit cdd38ac5 in toolchain.log (equal to the review host's `lean --version`).
+- SHA-256 values: the drafting brief's 9a8229a8... equals `shasum -a 256` of the brief at
+  53253f59, at the base and at the tip; each probe record's SHA-256 in its .out equals the
+  review's recomputation (all 12 records, incl. the two overlays 3c3dd42c..., 94cc2621...);
+  a620ff16... is in toolchain.log (the toolchain archive check).
+No hash is unresolved or mis-described.
+
+## Environment logs against addendum v2.5 (megafill-D-env-fe666d60/logs/)
+
+| Item | Log | Result |
+|---|---|---|
+| 1. Preflight: nproc, cgroup v1 limit/usage/stat, /proc/meminfo, df -B1 and df -T of the clone | preflight.log | logged; in use = usage − total_cache + total_shmem = 511,541,248 − 471,511,040 + 0 = 40,030,208 B; headroom 13.32 GiB ≥ 4; free 24.63 GiB ≥ 12; ext4 (not memory-backed): PASS |
+| 1. Re-check after the toolchain | recheck.log | 22.11 GiB ≥ 8: PASS |
+| 2. Cache store logged before the first fetch | cache-store.log | "exists: no (0 archives)" |
+| 2. Narrowed fetch, TAR_OPTIONS=--no-same-owner, roots only | mathlib-roots.txt, cache-get.log, cache-get.time | 57 roots = the union of the two overlays' roots (recomputed: probe/fi-scp-base/roots.txt ∪ fi-eq-base/roots.txt, identical); "Attempting to download 1029", "Decompressing 1029" (M − N = 0, consistent with the empty store); exit 0, 93 s |
+| 2. Manifest check, present packages | manifest-check.log | 11 present, each URL and rev matching; 4 ABSENT (doc-gen4, UnicodeBasic, BibtexQuery, MD4Lean); "RESULT: PASS" |
+| 3. Cache check | cache-check.log | 0 empty oleans; a probe importing the first root elaborated (exit 0) |
+| 5. Bootstrap | bootstrap.log, bootstrap-order.txt, bootstrap-addendum.log | 213/213 exit 0 ("0 failures"); per-module MEM lines; Transducer added for the Savitch overlay, exit 0 |
+The logs meet v2.5. (The fetch log does not echo the command line; the addendum's own recipe
+does not either. The report and README state the command.)
+
+## File list
+
+scripts/filelist.py parses the report's "## Files" section (per folder, with counts) and compares
+it with `git diff --name-only fe666d60 5cade0b8 -- campaign/`: 55 listed, 55 delivered, no
+difference either way; every folder's stated count matches its names.
+
+## Line numbers and small claims
+
+Checked against the tip (identical to the base for these files): Savitch.lean:81 and :114,
+NTimeDiagonalizer.lean:270 and :335, Hierarchy.lean:150/267/284/314, NDNormalForm.lean:78,
+TimeConstructible.lean:73, Constructible.lean:60/517, Basic.lean:100/162, Transducer.lean:51,
+KarpLiptonPrefix.lean:87, MeyerVerifierGlue.lean:145, PolyTimeBlockLoop.lean:143: all right.
+Wrong: "the docstring 239–269" of exists_queryTM (it is 248–269; 234–247 is acceptLang_mem_NTIME).
+Inexact: "#126 merged" (merged into a stacked base; landed by #127/#128); "(#161 and #162 edit it)"
+for NDCodeSimulator (#162 only; the evidence diffed #161 against the base, not its merge base);
+"no in-flight PR touches its closure" for Savitch (Deterministic, #161, is in its order list).
