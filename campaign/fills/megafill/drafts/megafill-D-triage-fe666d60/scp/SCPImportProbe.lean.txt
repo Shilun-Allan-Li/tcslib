@@ -1,0 +1,36 @@
+/-
+Megafill D drafting, 2026-10-25: the import probe for `Complexity.spaceConstructible_poly`, on the
+overlay's imports (`Savitch`'s three plus `ClassNP.Transducer`). Every public declaration the
+route of `SCPRouteProbe.lean.txt` cites, `#check @`-ed. A probe record. Expected at the drafting
+base: 0 errors; A1's five lemmas are absent and are not checked here.
+-/
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.ClassNP.Transducer
+
+-- the target's ingredients
+#check @Complexity.SpaceConstructible
+#check @Turing.FinTM.ComputesInSpace
+#check @Complexity.logSpace
+-- the rows
+#check @Complexity.transduce
+#check @Complexity.transducerTM
+#check @Complexity.transducerTM_computes
+#check @Turing.FinTM.polyUnaryTM
+#check @Turing.FinTM.polyUnaryTM_computes
+#check @Turing.FinTM.prependTM
+#check @Turing.FinTM.prependTM_computes
+#check @Turing.FinTM.computesFunInTime_lengthBits
+#check @Turing.FinTM.bufferedCompTM
+#check @Turing.FinTM.bufferedCompTM_computesInTime
+#check @Turing.FinTM.computesFunInTime_ifEq
+#check @Turing.FinTM.computesFunInTime_const
+#check @Turing.FinTM.computesFunInTime_cond
+-- the interface and the space measure
+#check @Turing.FinTM.computesFunInTime_iff
+#check @Turing.FinTM.ComputesInTime.mono
+#check @Turing.MultiTapeTM.spaceUsed_le_mul_succ
+-- arithmetic (Mathlib)
+#check @Nat.log_le_self
+#check @Nat.le_self_pow

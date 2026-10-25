@@ -1,0 +1,62 @@
+/-
+Megafill D drafting, 2026-10-25: the seal controls for `EQRouteProbe.lean.txt`, and the blocker.
+One goal per sealed definition that closes with nothing sealed and must fail under the seal.
+Control 1 is also the evidence for the blocker: eliminating a `TimeConstructible` hypothesis
+(`obtain`) reads the definition, so without a published `timeConstructible_iff` no rule-10
+route can obtain the witness. Expected: section `Unsealed` has no diagnostic; section `Sealed`
+has exactly one error per control (6).
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing Complexity
+
+section Unsealed
+
+example {f : ℕ → ℕ} (hf : TimeConstructible f) : ∃ M : FinTM Bool, M = M := by
+  obtain ⟨-, -, -, M, -⟩ := hf
+  exact ⟨M, rfl⟩
+example (T : ℕ → ℕ) : TimeConstructible T = ((∀ n, n ≤ T n) ∧ ∃ c : ℕ, 0 < c ∧
+    ∃ M : FinTM Bool, ∀ x : List Bool,
+      M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))) := rfl
+example (M : FinTM Bool) (x w : List Bool) (t : ℕ) :
+    M.ComputesInTime x w t = ∃ s, M.tm.ComputesInTimeAndSpace x w t s := rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x : List Bool, M.ComputesInTime x (f x) (T x.length) := rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.runFrom (M.tm.initCfg x) 0 = M.tm.initCfg x :=
+  rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.initCfg x = Cfg.init M.tm.q₀ x := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Complexity.TimeConstructible Turing.FinTM.ComputesInTime
+  Turing.FinTM.ComputesFunInTime Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg
+
+example {f : ℕ → ℕ} (hf : TimeConstructible f) : ∃ M : FinTM Bool, M = M := by
+  obtain ⟨-, -, -, M, -⟩ := hf
+  exact ⟨M, rfl⟩
+example (T : ℕ → ℕ) : TimeConstructible T = ((∀ n, n ≤ T n) ∧ ∃ c : ℕ, 0 < c ∧
+    ∃ M : FinTM Bool, ∀ x : List Bool,
+      M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))) := rfl
+example (M : FinTM Bool) (x w : List Bool) (t : ℕ) :
+    M.ComputesInTime x w t = ∃ s, M.tm.ComputesInTimeAndSpace x w t s := rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x : List Bool, M.ComputesInTime x (f x) (T x.length) := rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.runFrom (M.tm.initCfg x) 0 = M.tm.initCfg x :=
+  rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.initCfg x = Cfg.init M.tm.q₀ x := rfl
+
+end Sealed
