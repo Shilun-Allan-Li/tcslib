@@ -595,5 +595,23 @@ screen pairs nothing). All seven of the found path's passes go through it (`zr_p
 `Build/Contract/Basic`, with `Round.iterate` as its corollary, and re-points `zr_pinLoop` to it.**
 Census: `Build/ZoneRebalance` 1 of 871 declarations (0.1%); the one-fifth rule is not reached.
 
+**TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
+transducer started in a state that copies every bit and is kept is the identity, in three files:
+- `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
+  form: from `∀ b, δ q b = q` and `∀ b, o q b = some b`, `transduce δ o q l = l`;
+- `Complexity.KarpLipton.transduce_drop_true` (public, `CircuitComplexity/KarpLiptonPrefix`, line
+  87) and `Complexity.Meyer.transduce_fT_copy` (public, `CircuitComplexity/MeyerVerifierGlue`,
+  line 145): its instances at `q = true` and `q = none`, each the general lemma with `fun _ => rfl`
+  twice (the megafill D review's `probe/A1ConsumerProbe`; gate 76 checked both specializations),
+  each re-proved by its own induction.
+
+Both instance files import `ClassNP/Transducer`, so each can cite the general form.
+`spaceConstructible_poly`'s landing cites it (`Savitch`'s private `scp_transduce_copy` is the
+one-line application), which avoids a third copy. **The ruling (user, 2026-10-25, Q-D2): include
+the general form in A1; re-point the two instances in the user's dedup window (12.2c), since that
+edits `CircuitComplexity/*`.** Census (one member per file, at A1's head): `ClassNP/Transducer` 1 of
+10 declarations (10.0%), `KarpLiptonPrefix` 1 of 16 (6.3%), `MeyerVerifierGlue` 1 of 42 (2.4%). The
+one-fifth rule is not reached.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
