@@ -13,11 +13,9 @@ started. Every line number and measurement below is this tree's. **#160 merged t
 (`90688cbb645fcf1ef66ff6112c83bd8f0413000b`); it changes only `NDCodeSimulator` and
 `NTimeHierarchy`, both excluded files, so no triage verdict depends on it.
 
-**The branch:** `drafts/megafill-d`, from the drafting base; it adds files under `campaign/` only.
-**It could not be pushed:** this session can read `Shilun-Allan-Li/tcslib` but GitHub refuses its
-pushes (the Claude GitHub App is not installed for the repository). It is delivered as
-`megafill-d-drafts.zip` (drafting brief §1): a git bundle of the branch whose only prerequisite is
-the drafting base, and a copy of every added file.
+**The branch:** `drafts/megafill-d`, from the drafting base; it adds files under `campaign/` only,
+and is pushed to the repository (no pull request is opened; the user may open one into the campaign
+branch).
 
 ## The outcome in one paragraph
 
@@ -360,8 +358,6 @@ definition" as checklist failures), checkpoint zips delivered as written. The ag
   at the drafting base (the triage). The two dossiers hold everything a brief's pre-ship needs
   except **the copy-text screen bases**, which were not measured (a screen is a brief's pre-ship
   item, and its population is fixed with the brief); run them at the issue commit.
-- **The branch is not pushed** (no push access to the repository from this session); it is in the
-  zip as a bundle (the drafting brief §1's fallback).
 - The probes of the blocked items other than E-Q, E-D and `spaceConstructible_poly` were not run:
   their verdicts rest on rulings (paused, held, moved, ordered) or on in-flight PRs, which a probe
   cannot change.
@@ -371,7 +367,6 @@ definition" as checklist failures), checkpoint zips delivered as written. The ag
 - **Hashes:** every commit hash in these files was inserted by `git rev-parse` through
   `tools/subst_hashes.py` (megafill C's tool, copied unchanged into the environment folder), which
   also checks every remaining hexadecimal word against `git cat-file -t`; no hash was typed by hand.
-  The drafting base is tagged `drafting-base-d` in the bundle.
 - **Open PR heads searched (read-only fetches):** PR 161 (`lean/u2-api`) at
   `1849dae6f5427a60814d4120d9258fa4a2f46dd3`, PR 162 (`lean/startup-kit`) at
   `06d314c322a357a471d8597555964b5fa16f1674`, and PR 135 (`complexity/arora-barak-ch7`) at
