@@ -447,8 +447,9 @@ screen after your first edit: it must equal the screen base (the overlay changes
     (`Build/VirtualInput`), H2's clocked form (`Build/StepBlockLoop`), and `Simulation` (the input
     rewind family; this item writes none, but its startup sits beside U2-S's `ss_inputRewind`).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/u2s/logs/u2s-fill-universal-screen-base.txt`: **1,039
-  declarations, 785 pairs, 213,552 characters** (MEASURED at the drafting base; about 10 minutes).
+- **The base** is `campaign/fills/u2s/logs/u2s-fill-universal-screen-base.txt`: **1,057
+  declarations, 788 pairs, 213,847 characters** (MEASURED at your base; about 6 minutes, peak
+  memory 3.5 GB).
   14 pairs have a declaration of your file on one side: 13 within it (none at 90% or more), and
   one across files (`ss_inputRewind_run` of `Universal`'s `timedFrame_run`, 56%).
 

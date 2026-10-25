@@ -1,0 +1,80 @@
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
+
+/-! Pre-ship at issue: the controls for `StartProbe`'s seal. One `rfl` goal per sealed definition
+(9): every goal closes unsealed and must fail sealed. Eight are the kit gate's goals; the input
+rewind's is new. -/
+
+namespace Turing
+
+section Unsealed
+
+-- embedSilentRetTM
+example {m k : ℕ} {S : Type} (ι : Fin m ↪ Fin k) (cap : Fin k) (M : MultiTapeTM m Bool S) :
+    (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀ := rfl
+-- embedSilentCfg
+example {m k : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (pre out : List Bool)
+    (c : Cfg m Bool S x) :
+    (embedSilentCfg ι cap tapes heads pre out c).inputPos = c.inputPos := rfl
+-- seamCompTM
+example {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] (A : MultiTapeTM k Bool S₁) (e : S₁)
+    (B : MultiTapeTM k Bool S₂) (en : S₂) : (seamCompTM A e B en).q₀ = Sum.inl A.q₀ := rfl
+-- inputRewindTM
+example (k : ℕ) : (inputRewindTM k).q₀ = .start := rfl
+-- Cfg.mapState
+example {k : ℕ} {S T : Type} {x : List Bool} (f : S → T) (c : Cfg k Bool S x) :
+    (c.mapState f).inputPos = c.inputPos := rfl
+-- MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.runFrom c 0 = c := rfl
+-- MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+-- Cfg.init
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) : (Cfg.init (k := k) q x).output = [] := rfl
+-- FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] embedSilentRetTM embedSilentCfg seamCompTM inputRewindTM
+  Cfg.mapState MultiTapeTM.runFrom MultiTapeTM.initCfg Cfg.init FinTM.bufferTape
+attribute [-simp] MultiTapeTM.initCfg Cfg.init
+
+-- embedSilentRetTM
+example {m k : ℕ} {S : Type} (ι : Fin m ↪ Fin k) (cap : Fin k) (M : MultiTapeTM m Bool S) :
+    (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀ := rfl
+-- embedSilentCfg
+example {m k : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (pre out : List Bool)
+    (c : Cfg m Bool S x) :
+    (embedSilentCfg ι cap tapes heads pre out c).inputPos = c.inputPos := rfl
+-- seamCompTM
+example {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] (A : MultiTapeTM k Bool S₁) (e : S₁)
+    (B : MultiTapeTM k Bool S₂) (en : S₂) : (seamCompTM A e B en).q₀ = Sum.inl A.q₀ := rfl
+-- inputRewindTM
+example (k : ℕ) : (inputRewindTM k).q₀ = .start := rfl
+-- Cfg.mapState
+example {k : ℕ} {S T : Type} {x : List Bool} (f : S → T) (c : Cfg k Bool S x) :
+    (c.mapState f).inputPos = c.inputPos := rfl
+-- MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    M.runFrom c 0 = c := rfl
+-- MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+-- Cfg.init
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) : (Cfg.init (k := k) q x).output = [] := rfl
+-- FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+end Sealed
+
+end Turing

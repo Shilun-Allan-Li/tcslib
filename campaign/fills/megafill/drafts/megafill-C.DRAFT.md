@@ -69,9 +69,10 @@ Each item is its own fill: its brief binds it, and it has its own branch, checks
 | 2 | U2: U2-U `Turing.exists_selfUniversalK` and U2-E `Turing.universalK` (`UniversalK`) | `u2s/u2s-fill-universal.md` | `fill/u2s-universal` | `fill-u2s-universal.zip` | the rest |
 
 Each budget is wall-clock from the item's branch creation (Part 3, item 3.4). Time an item does not
-use passes to the later one; the last item has the rest of the session. **B5a's screen is long**
-(57 files; ⟨B5A-SCREEN⟩ a run at the base, against U2's ⟨U2-SCREEN⟩): ⟨Q-M2: the user's ruling on
-how B5a's after run counts against its budget⟩. Never switch branches while a screen runs.
+use passes to the later one; the last item has the rest of the session. **B5a's screen is long** (57
+files; 53 minutes a run at the base on the maintainer's host, peak memory 7.8 GB, against U2's 6
+minutes and 3.5 GB): ⟨Q-M2: the user's ruling on how B5a's after run counts against its budget⟩.
+Never switch branches while a screen runs.
 
 **Why this order.**
 - **B5a first:** the more valuable (the canonizer's module's last admission, behind six `EXPCOM`
