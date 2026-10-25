@@ -1,0 +1,706 @@
+From 5176234238c5105269ccad7261515d360218c124 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 23:25:59 +0000
+Subject: [PATCH 34/39] s13d g4 cont4: the rightward rebalance row; four proofs
+ the seal test caught
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The rightward row: the scan as a pinned test with its two exits, the found path widened to the
+row's box and composed with the count's clear, and the short path, through the pinned branch
+(which, with its seam and way-back lemmas, now takes a test that moves its pin). Restated on the
+data at its own scratch start, it is a contract with the target's fields at dir = true for every
+C ≥ 2300.
+
+The seal test caught four proofs that reduced another file's definitions: the segment-built
+re-index (Contract.ofSegment's precondition, now through Contract.ofSegment_pre), the seam's
+way back (Contract.seq_pre), a host round (Cfg.mapState_state) and the pass contract
+(headBox_iff).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 610 +++++++++++++++++-
+ 1 file changed, 594 insertions(+), 16 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index d3df2c3a..2f1dcf42 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -4891,8 +4891,10 @@ private lemma zr_pinRe_ofSeg {k : ℕ} {S I J : Type} {x : List (ZoneSym k)}
+         (post (f j) d).output = d.output ∧ time (f j) d = τ j ∧
+         ∀ i, L j i ≤ lo (f j) d i ∧ hi (f j) d i ≤ U j i) :
+     zr_PinStep (zr_reindexContract (Contract.ofSegment pre time post lo hi seg em) f
+-      (fun j d => V j ∧ zr_pinned (T j) (p j) d) hP) V T T₂ p p₂ τ L U :=
+-  zr_pinRe_step _ f V T p hP fun j d hV hd => by
++      (fun j d => V j ∧ zr_pinned (T j) (p j) d) fun j d hd => by
++        rw [Contract.ofSegment_pre]
++        exact hP j d hd) V T T₂ p p₂ τ L U :=
++  zr_pinRe_step _ f V T p _ fun j d hV hd => by
+     simp only [Contract.ofSegment_post, Contract.ofSegment_time, Contract.ofSegment_lo,
+       Contract.ofSegment_hi]
+     exact h j d hV hd
+@@ -7684,7 +7686,7 @@ private lemma zr_pinTest_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J
+       (fun j => Function.update (p j) i (p j i + dir)) (fun _ => 1)
+       (fun j i' => min (p j i') (Function.update (p j) i (p j i + dir) i'))
+       (fun j i' => max (p j i') (Function.update (p j) i (p j i + dir) i')) :=
+-  zr_pinRe_ofSeg _ _ _ _ _ fun j d _ hd => by
++  zr_pinRe_ofSeg _ _ _ _ (fun _ _ _ => trivial) fun j d _ hd => by
+     simp only [zr_cellContract, zr_cellPost, hd.1, hd.2]
+     exact ⟨⟨rfl, rfl⟩, trivial, trivial, trivial, fun _ => ⟨le_rfl, le_rfl⟩⟩
+ 
+@@ -7717,7 +7719,7 @@ private def zr_pinAnchorContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V
+ private lemma zr_pinAnchor_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
+     (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :
+     zr_PinStep (zr_pinAnchorContract x V T p) V T T p p (fun _ => 0) p p :=
+-  zr_pinRe_ofSeg _ _ _ _ _ fun _ _ _ hd =>
++  zr_pinRe_ofSeg _ _ _ _ (fun _ _ _ => trivial) fun _ _ _ hd =>
+     ⟨hd, rfl, rfl, rfl, fun i => ⟨(congrFun hd.2 i).ge, (congrFun hd.2 i).le⟩⟩
+ 
+ /-- **A pinned peek**: step tape `i` by `δ`, test the cell there with `choose` while stepping
+@@ -7878,6 +7880,7 @@ private lemma zr_BackIs_seq {n : ℕ} {Γ S₁ S₂ J : Type} {x : List Γ} [Dec
+     {b : S₂ → Option (Option Bool)} {w : J → Bool} (h : zr_BackIs C₂ b w) :
+     zr_BackIs (C₁.seq C₂ (fun j => j) hl) (zr_seqBack b) w := by
+   intro j c hc hp
++  rw [Contract.seq_pre] at hp
+   have hc' : (c.mapState fun _ => e₁).state = some e₁ := by
+     rw [Cfg.mapState_state, hc]
+     rfl
+@@ -7894,9 +7897,9 @@ private lemma zr_BackIs_branch {k : ℕ} {S₀ S₁ S₂ J : Type} [DecidableEq
+     {e₁ : S₁} {e₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} (he : a₁ ≠ a₂)
+     {C₀ : Contract M₀ e₀ {some a₁, some a₂} J x} {C₁ : Contract M₁ e₁ X₁ J x}
+     {C₂ : Contract M₂ e₂ X₂ J x} {V : J → Prop} {v : J → Bool}
+-    {T₁ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ : J → Fin 2 → ℤ} {τ₀ : J → ℕ}
+-    {L U : J → Fin 2 → ℤ} (h₀ : zr_PinStep C₀ V T₁ T₁ p₁ p₁ τ₀ L U)
+-    (hv : ∀ j d, V j → zr_pinned (T₁ j) (p₁ j) d →
++    {T₀ T₁ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₀ p₁ : J → Fin 2 → ℤ} {τ₀ : J → ℕ}
++    {L U : J → Fin 2 → ℤ} (h₀ : zr_PinStep C₀ V T₀ T₁ p₀ p₁ τ₀ L U)
++    (hv : ∀ j d, V j → zr_pinned (T₀ j) (p₀ j) d →
+       (C₀.post j d).state = some (if v j then a₁ else a₂))
+     {hl₁ : ∀ j d, d.state = some e₀ → C₀.pre j d → (C₀.post j d).state = some a₁ →
+       C₁.pre j ((C₀.post j d).mapState fun _ => e₁)}
+@@ -8027,7 +8030,7 @@ private lemma zr_pinRound {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
+       (({ c with state := some ⟨true, e⟩ } : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh B b) x).mapState
+         fun _ => e) := (zr_pinned_mapState_iff _).mpr hcp
+   obtain ⟨hpre, hpost, hin, hout, htime, hbox⟩ := hstep.2 j _ hV hpin
+-  obtain ⟨s, hs, hbs⟩ := hback j _ rfl hpre
++  obtain ⟨s, hs, hbs⟩ := hback j _ (by rw [Cfg.mapState_state]; rfl) hpre
+   have hB0 : (zr_hostBodyContract back C hnone hX).pre j { c with state := some ⟨true, e⟩ } := by
+     rw [zr_hostBodyContract, Contract.inPhase_pre]
+     exact hpre
+@@ -8501,10 +8504,11 @@ private noncomputable def zr_passContract {k : ℕ} {B J : Type} {x : List (Zone
+       ((hX _).mpr (by rw [hsa]; exact Option.some_ne_none _))
+       ((hX _).mpr (by rw [hsb]; exact Option.some_ne_none _)) (HeadBox (lo j) (hi j)) j (n j)
+       hp.1 (hfin j hp.1) (hnf j hp.1)
+-      (fun m hm i => Finset.mem_Icc.mpr ⟨(hbox j hp.1 m hm i).1.trans (hanchor _ i).1,
+-        (hanchor _ i).2.trans (hbox j hp.1 m hm i).2⟩)
+-      (fun m hm q hq i => Finset.mem_Icc.mpr ⟨(hbox j hp.1 m hm i).1.trans (hq i).1,
+-        (hq i).2.trans (hbox j hp.1 m hm i).2⟩) c hc hp.2)
++      (fun m hm => (headBox_iff _ _ _).mpr fun i => Finset.mem_Icc.mpr
++        ⟨(hbox j hp.1 m hm i).1.trans (hanchor _ i).1,
++          (hanchor _ i).2.trans (hbox j hp.1 m hm i).2⟩)
++      (fun m hm q hq => (headBox_iff _ _ _).mpr fun i => Finset.mem_Icc.mpr
++        ⟨(hbox j hp.1 m hm i).1.trans (hq i).1, (hq i).2.trans (hbox j hp.1 m hm i).2⟩) c hc hp.2)
+     (fun _ _ _ _ => Set.mem_singleton _)
+ 
+ /-- **A pass is a pinned step**: from the anchor pinned at `j`, it stops at the escape pinned at
+@@ -13695,6 +13699,577 @@ private lemma zr_fpSeg_time {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) {P : zr
+     (zr_tauOf (zr_fpG8 t x) P + 1 + (zr_tauOf (zr_fpG9 t x) P + 1 + 1))))))))) ≤ _
+   omega
+ 
++/-- **The found path's start at the scan's end**: the scanned zone's field `i₀ + 1`, the scan's
++count of `i₀ + 1` marks from the scratch start `I.2` as the base tape, the stack empty just past
++it. -/
++private abbrev zr_rowP0 {k : ℕ} (t : Fin k) (I : ZoneData k × ℤ) : zr_Px k :=
++  ⟨I.1, zoneRebalanceIndex true t I.1 + 1, zr_rulerTape (zoneRebalanceIndex true t I.1 + 1) I.2,
++    I.2 + zoneRebalanceIndex true t I.1 + 2, I.2 + zoneRebalanceIndex true t I.1 + 2⟩
++
++/-- The rightward row's start pin: the zoned tape of the data, scratch blank. -/
++private abbrev zr_rowT0 {k : ℕ} (I : ZoneData k × ℤ) : Fin 2 → ℤ → Option (ZoneSym k) :=
++  zr_tapes (zonedTape I.1.2) fun _ => none
++
++/-- The rightward row's endpoint pin: the zoned tape of the rebalanced data, scratch blank. -/
++private abbrev zr_rowT2 {k : ℕ} (t : Fin k) (I : ZoneData k × ℤ) :
++    Fin 2 → ℤ → Option (ZoneSym k) :=
++  zr_tapes (zonedTape (zoneRebalanceData true t I.1).2) fun _ => none
++
++/-- The rightward row's head box, its lower corner: the zoned head at `-zoneStart (i₀ + 1)`,
++scratch one cell below its start. -/
++private abbrev zr_rowL {k : ℕ} (t : Fin k) (I : ZoneData k × ℤ) : Fin 2 → ℤ :=
++  zr_heads (-(zoneStart (zoneRebalanceIndex true t I.1 + 1) : ℤ)) (I.2 - 1)
++
++/-- The rightward row's head box, its upper corner. -/
++private abbrev zr_rowU {k : ℕ} (t : Fin k) (I : ZoneData k × ℤ) : Fin 2 → ℤ :=
++  zr_heads (zoneStart (zoneRebalanceIndex true t I.1 + 1))
++    (I.2 + zoneRebalanceIndex true t I.1 + 13 + 18 * ((2 ^ zoneRebalanceIndex true t I.1 : ℕ) : ℤ))
++
++/-- A found scan's end is a found path index. -/
++private lemma zr_rowP0_valid {k : ℕ} (t : Fin k) {I : ZoneData k × ℤ}
++    (h : zoneRebalanceIndex true t I.1 < I.1.1) : zr_fpV (zr_rowP0 t I) := by
++  refine ⟨⟨show zoneRebalanceIndex true t I.1 + 1 ≤ I.1.1 by omega, le_rfl, fun r hr => ?_⟩, ?_,
++    rfl, show 1 ≤ zoneRebalanceIndex true t I.1 + 1 by omega,
++    show zoneRebalanceIndex true t I.1 + 1 ≤ I.1.1 by omega⟩
++  · have hr' : I.2 + zoneRebalanceIndex true t I.1 + 2 ≤ r := hr
++    show zr_rulerTape _ _ r = none
++    rw [zr_rulerTape, if_neg (by omega)]
++  · show zr_rulerTape _ _ (I.2 + zoneRebalanceIndex true t I.1 + 2 - 1) = none
++    rw [zr_rulerTape, if_neg (by omega)]
++
++/-- The scan's two escapes, the found one first. -/
++private lemma zr_scan_exits :
++    (Option.map Sum.inr '' {some ⟨false, some true⟩, some ⟨false, none⟩} :
++      Set (Option (SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b))) =
++      {some (Sum.inr ⟨false, none⟩), some (Sum.inr ⟨false, some true⟩)} := by
++  simp only [Set.image_insert_eq, Set.image_singleton, Option.map_some]
++  exact Set.pair_comm _ _
++
++/-- A row start pinned at its scratch start meets the scan's precondition. -/
++private lemma zr_scanPin_pre {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) (I : ZoneData k × ℤ)
++    (d : Cfg 2 (ZoneSym k) (SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b) x)
++    (hp : True ∧ zr_pinned (zr_rowT0 I) (zr_heads 0 I.2) d) : (zr_scanContract t x).pre I.1 d := by
++  obtain ⟨-, h1, h2⟩ := hp
++  rw [zr_scanContract, Contract.seq_pre, zr_homeSkipContract, zr_reindexContract,
++    Contract.ofSegment_pre]
++  refine ⟨funext fun q => ?_, ?_⟩
++  · rw [Cfg.mapState_workTapes, h1]
++    rfl
++  · rw [Cfg.mapState_workTapePos, h2]
++    rfl
++
++/-- **The scan as a pinned test**, at an index of the data and the scratch start: from the row's
++start pin to the found path's start pin, its two exits the found and the short escapes. -/
++private def zr_scanPin {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  zr_reindexContract (zr_exitsContract (zr_scanContract t x) _ zr_scan_exits) Prod.fst
++    (fun (I : ZoneData k × ℤ) d => True ∧ zr_pinned (zr_rowT0 I) (zr_heads 0 I.2) d)
++    fun I d hp => by
++      rw [zr_exitsContract, Contract.ofSegment_pre]
++      exact zr_scanPin_pre t x I d hp
++
++/-- **The scan's pinned step**: from the row's start to the scan's count of `i₀ + 1` marks, the
++zoned head at zone `i₀`'s start, in the row's box. -/
++private lemma zr_scanPin_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    zr_PinStep (zr_scanPin t x) (fun _ => True) zr_rowT0 (fun I => zr_pT (zr_rowP0 t I))
++      (fun I => zr_heads 0 I.2)
++      (fun I => zr_heads (zr_rstart (zr_rowP0 t I).i) ((zr_rowP0 t I).b - 1))
++      (fun I => zoneStart (zoneRebalanceIndex true t I.1) + 8 * zoneRebalanceIndex true t I.1 +
++        (if zoneRebalanceIndex true t I.1 < I.1.1 then 9 else 7)) (zr_rowL t) (zr_rowU t) :=
++  zr_pinRe_ofSeg _ _ _ _ (zr_scanPin_pre t x) fun I d _ hd => by
++    obtain ⟨ht, hpost, hl0, hh0, hl1, hh1⟩ := zr_scan_fields t I.1 d
++    have h0 : d.workTapePos 0 = 0 := by rw [hd.2]; rfl
++    have h1 : d.workTapePos 1 = I.2 := by rw [hd.2]; rfl
++    have hb : ∀ r, d.workTapes 1 r = none := fun r => by rw [hd.1]; rfl
++    have hz : d.workTapes 0 = zonedTape I.1.2 := by rw [hd.1]; rfl
++    have hL := two_le_zoneStart (zoneRebalanceIndex true t I.1 + 1)
++    have hs0 : zoneStart 0 = 2 := by norm_num [zoneStart_eq]
++    have hp := Nat.two_pow_pos (zoneRebalanceIndex true t I.1)
++    rw [hpost]
++    refine ⟨⟨funext fun j => funext fun r => ?_, funext fun j => ?_⟩, rfl, rfl, ht,
++      Fin.forall_fin_two.mpr ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩⟩
++    · by_cases hj : j = 0
++      · subst hj
++        simp only [zr_scanCfg, Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), hz,
++          zr_pT, zr_tapes, if_true]
++      · obtain rfl : j = 1 := by omega
++        simp only [zr_scanCfg, Function.update_self, h1, hb, zr_pT, zr_tapes, zr_pσ, zr_stk,
++          show (1 : Fin 2) ≠ 0 by decide, if_false, zr_rulerTape]
++        split_ifs <;> first | rfl | omega
++    · simp only [zr_scanCfg, zr_heads, zr_rstart, h1, Nat.add_sub_cancel, Nat.succ_ne_zero,
++        if_false]
++      split_ifs <;> push_cast <;> ring
++    · rw [hl0, h0, hs0]
++      simp only [zr_rowL, zr_heads, if_true]
++      omega
++    · rw [hh0, h0]
++      simp only [zr_rowU, zr_heads, if_true]
++      omega
++    · rw [hl1, h1]
++      simp only [zr_rowL, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false]
++      omega
++    · rw [hh1, h1]
++      simp only [zr_rowU, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false]
++      omega
++
++/-- The found path from the scan's end, at a found scan, in the rightward row's box. -/
++private noncomputable def zr_fpRow {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  show zr_PinSeg x _ _ _ (fun I => True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = true)
++    (fun I => zr_pT (zr_rowP0 t I)) (fun I => zr_pT (zr_fpS9 t (zr_rowP0 t I)))
++    (fun I => zr_heads (zr_rstart (zr_rowP0 t I).i) ((zr_rowP0 t I).b - 1))
++    (fun I => zr_heads 0 ((zr_rowP0 t I).b - 1)) _ (zr_rowL t) (zr_rowU t) from
++  zr_seg (zr_segRe (zr_fpSeg t x) (zr_rowP0 t) _ fun _ h =>
++      zr_rowP0_valid t (of_decide_eq_true h.2)).step (fun _ _ => rfl) fun I _ => by
++    have hp := Nat.two_pow_pos (zoneRebalanceIndex true t I.1)
++    refine ⟨rfl, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++    · exact le_rfl
++    · show I.2 - 1 ≤ I.2 + zoneRebalanceIndex true t I.1 + 2 - 2
++      omega
++    · exact le_rfl
++    · show I.2 + zoneRebalanceIndex true t I.1 + 2 +
++          9 * ((2 ^ (zoneRebalanceIndex true t I.1 + 1) : ℕ) : ℤ) + 11 ≤
++        I.2 + zoneRebalanceIndex true t I.1 + 13 +
++          18 * ((2 ^ zoneRebalanceIndex true t I.1 : ℕ) : ℤ)
++      rw [pow_succ]
++      push_cast
++      omega
++
++/-- At the found path's end the scan's count is all of scratch, its head just past the count. -/
++private lemma zr_cc_scratch {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k)
++    (I : ZoneData k × ℤ) (d : Cfg 2 (ZoneSym k) S x)
++    (hd : zr_pinned (zr_pT (zr_fpS9 t (zr_rowP0 t I))) (zr_heads 0 ((zr_rowP0 t I).b - 1)) d) :
++    zr_scratchAt ((zoneRebalanceIndex true t I.1 + 1 : ℕ) : ℤ)
++      (zoneRebalanceIndex true t I.1 + 1) d :=
++  ⟨Nat.succ_pos _, fun r => by
++    rw [hd.1, hd.2]
++    show zr_stk (zr_rowP0 t I).β (zr_rowP0 t I).b (zr_rowP0 t I).b r =
++      zr_rulerTape _ (I.2 + zoneRebalanceIndex true t I.1 + 2 - 1 - _) r
++    rw [zr_stk, if_neg (by omega)]
++    show zr_rulerTape _ I.2 r = _
++    congr 1
++    push_cast
++    ring⟩
++
++/-- **The count's clear at the found path's end**, at an index of the data and the scratch
++start. -/
++private def zr_ccPin {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  zr_singletonContract (zr_reindexContract (zr_countClearContract x)
++    (fun I : ZoneData k × ℤ => zoneRebalanceIndex true t I.1 + 1)
++    (fun I d => (True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = true) ∧
++      zr_pinned (zr_pT (zr_fpS9 t (zr_rowP0 t I))) (zr_heads 0 ((zr_rowP0 t I).b - 1)) d)
++    fun I d hp => by
++      rw [zr_countClearContract, Contract.seq_pre, zr_stepContract, Contract.ofSegment_pre]
++      exact zr_scratchAt_move _ _ (zr_cc_scratch t I d hp.2)
++        (fun r => by rw [Cfg.mapState_workTapes]) (by rw [Cfg.mapState_workTapePos]))
++    (Sum.inr (Sum.inr SweepPhase.done))
++
++/-- **The count clear's pinned step**: from the found path's end to the row's endpoint, scratch
++blank again and its head back at its start. -/
++private lemma zr_ccPin_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    zr_PinStep (zr_ccPin t x)
++      (fun I => True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = true)
++      (fun I => zr_pT (zr_fpS9 t (zr_rowP0 t I))) (zr_rowT2 t)
++      (fun I => zr_heads 0 ((zr_rowP0 t I).b - 1)) (fun I => zr_heads 0 I.2)
++      (fun I => 3 * (zoneRebalanceIndex true t I.1 + 1) + 8) (zr_rowL t) (zr_rowU t) :=
++  zr_PinStep_exits (hX := by simp only [Set.image_singleton, Option.map_some])
++    (zr_pinRe_step _ _ _ _ _ _ fun I d hV hd => by
++    obtain ⟨ht, hpost, hl0, hh0, hl1, hh1⟩ :=
++      zr_countClear_fields (zoneRebalanceIndex true t I.1 + 1) d (zr_cc_scratch t I d hd)
++    have hi : zoneRebalanceIndex true t I.1 < I.1.1 := of_decide_eq_true hV.2
++    have h0 : d.workTapePos 0 = 0 := by rw [hd.2]; rfl
++    have h1 : d.workTapePos 1 = I.2 + zoneRebalanceIndex true t I.1 + 2 - 1 := by rw [hd.2]; rfl
++    have hL := two_le_zoneStart (zoneRebalanceIndex true t I.1 + 1)
++    have hp := Nat.two_pow_pos (zoneRebalanceIndex true t I.1)
++    rw [hpost]
++    refine ⟨⟨funext fun j => funext fun r => ?_, ?_⟩, rfl, rfl, ht,
++      Fin.forall_fin_two.mpr ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩⟩
++    · by_cases hj : j = 0
++      · subst hj
++        show Function.update d.workTapes 1 (fun _ => none) 0 r = _
++        rw [Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), hd.1]
++        show zonedTape (zr_fpS9 t (zr_rowP0 t I)).D.2 r =
++          zonedTape (Function.update I.1.2 t (zoneRebalance true (I.1.2 t))) r
++        rw [zr_fp_data, zoneRebalance_of_lt _ _ hi, zoneCascade_true]
++        rfl
++      · obtain rfl : j = 1 := by omega
++        show Function.update d.workTapes 1 (fun _ => none) 1 r = _
++        rw [Function.update_self]
++        rfl
++    · show Function.update d.workTapePos 1 (d.workTapePos 1 - _) = zr_heads 0 I.2
++      rw [hd.2, zr_heads_set1, zr_heads_one]
++      congr 1
++      show I.2 + zoneRebalanceIndex true t I.1 + 2 - 1 -
++        ((zoneRebalanceIndex true t I.1 + 1 : ℕ) : ℤ) = I.2
++      push_cast
++      ring
++    · rw [hl0, h0]
++      simp only [zr_rowL, zr_heads, if_true]
++      omega
++    · rw [hh0, h0]
++      simp only [zr_rowU, zr_heads, if_true]
++      omega
++    · rw [hl1, h1]
++      simp only [zr_rowL, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false]
++      push_cast
++      omega
++    · rw [hh1, h1]
++      simp only [zr_rowU, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false]
++      omega)
++
++/-- Decidable equality of the scan's and the found path's states. -/
++private noncomputable def zr_rowDec {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    DecidableEq (zr_stOf (zr_scanPin t x)) × DecidableEq (zr_stOf (zr_fpRow t x).C) := by
++  refine ⟨?_, ?_⟩ <;>
++  repeat' (first | refine @instDecidableEqSum _ _ ?_ ?_ | refine zr_decHost ?_ |
++    exact inferInstance)
++
++/-- **The found arm**: the found path, then the count's clear, as one pinned segment from the
++scan's end to the row's endpoint. -/
++private noncomputable def zr_foundSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  letI := (zr_rowDec t x).2
++  zr_segSeq (zr_fpRow t x) ⟨zr_ccPin t x, zr_ccPin_step t x⟩
++
++/-- A short scan's index is the level count. -/
++private lemma zr_short_eq {k : ℕ} (t : Fin k) {I : ZoneData k × ℤ}
++    (h : ¬ zoneRebalanceIndex true t I.1 < I.1.1) : zoneRebalanceIndex true t I.1 = I.1.1 := by
++  have hle : zoneRebalanceIndex true t I.1 ≤ I.1.1 := zoneShiftIndex_le true (I.1.2 t)
++  omega
++
++/-- **A short scan's end is the short path's start**: past the layout, the scan's count of
++`ℓ + 1` marks all of scratch. -/
++private lemma zr_shortPin_pre {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (I : ZoneData k × ℤ)
++    (d : Cfg 2 (ZoneSym k) ((Σ b, zr_loopPh b) ⊕ Option Bool ⊕ SeekPhase ⊕ SweepPhase) x)
++    (h : ¬ zoneRebalanceIndex true t I.1 < I.1.1)
++    (hd : zr_pinned (zr_pT (zr_rowP0 t I))
++      (zr_heads (zr_rstart (zr_rowP0 t I).i) ((zr_rowP0 t I).b - 1)) d) :
++    (zr_shortContract x).pre I.1 d := by
++  letI := zr_decEqLoopPh
++  have hs := zr_short_eq t h
++  rw [zr_shortContract, Contract.seq_pre, zr_shortLoopContract, zr_reindexContract,
++    Contract.ofSegment_pre]
++  refine ⟨⟨?_, fun q _ _ => ?_⟩, Nat.succ_pos _, fun r => ?_⟩
++  · rw [Cfg.mapState_workTapePos, hd.2]
++    show zr_rstart (zoneRebalanceIndex true t I.1 + 1) = zoneStart I.1.1
++    rw [hs, zr_rstart, if_neg (Nat.succ_ne_zero _), Nat.add_sub_cancel]
++  · rw [Cfg.mapState_workTapes, hd.1]
++    rfl
++  · rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, hd.1, hd.2]
++    show zr_stk (zr_rowP0 t I).β (zr_rowP0 t I).b (zr_rowP0 t I).b r =
++      zr_rulerTape _ (I.2 + zoneRebalanceIndex true t I.1 + 2 - 1 - _) r
++    rw [zr_stk, if_neg (by omega)]
++    show zr_rulerTape (zoneRebalanceIndex true t I.1 + 1) I.2 r = _
++    rw [hs]
++    congr 1
++    push_cast
++    ring
++
++/-- **The short path at a short scan**, at an index of the data and the scratch start. -/
++private def zr_shortPin {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  zr_singletonContract (zr_reindexContract (zr_shortContract x) Prod.fst
++    (fun (I : ZoneData k × ℤ) d =>
++      (True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = false) ∧
++        zr_pinned (zr_pT (zr_rowP0 t I))
++          (zr_heads (zr_rstart (zr_rowP0 t I).i) ((zr_rowP0 t I).b - 1)) d)
++    fun I d hp => zr_shortPin_pre t I d (of_decide_eq_false hp.1.2) hp.2)
++    (Sum.inr (Sum.inr (Sum.inr SweepPhase.done)))
++
++/-- **The short path's pinned step**: from a short scan's end to the row's endpoint, the data
++unchanged. -/
++private lemma zr_shortPin_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    zr_PinStep (zr_shortPin t x)
++      (fun I => True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = false)
++      (fun I => zr_pT (zr_rowP0 t I)) (zr_rowT2 t)
++      (fun I => zr_heads (zr_rstart (zr_rowP0 t I).i) ((zr_rowP0 t I).b - 1))
++      (fun I => zr_heads 0 I.2) (fun I => zoneStart I.1.1 + 11 * I.1.1 + 20)
++      (zr_rowL t) (zr_rowU t) :=
++  zr_PinStep_exits (hX := by simp only [Set.image_singleton, Option.map_some])
++    (zr_pinRe_step _ _ _ _ _ _ fun I d hV hd => by
++    have hn : ¬ zoneRebalanceIndex true t I.1 < I.1.1 := of_decide_eq_false hV.2
++    have hs := zr_short_eq t hn
++    obtain ⟨ht, hpost, hl0, hh0, hl1, hh1⟩ := zr_short_fields I.1 d (zr_shortPin_pre t I d hn hd)
++    have h1 : d.workTapePos 1 = I.2 + zoneRebalanceIndex true t I.1 + 2 - 1 := by rw [hd.2]; rfl
++    have hm : zoneStart I.1.1 ≤ zoneStart (zoneRebalanceIndex true t I.1 + 1) := by
++      rw [hs]
++      exact zoneStart_mono (Nat.le_add_right _ 1)
++    have hL := two_le_zoneStart (zoneRebalanceIndex true t I.1 + 1)
++    have hp := Nat.two_pow_pos (zoneRebalanceIndex true t I.1)
++    rw [hpost]
++    refine ⟨⟨funext fun j => funext fun r => ?_, funext fun j => ?_⟩, rfl, rfl, ht,
++      Fin.forall_fin_two.mpr ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩⟩
++    · by_cases hj : j = 0
++      · subst hj
++        show Function.update d.workTapes 1 (fun _ => none) 0 r = _
++        rw [Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), hd.1]
++        show zonedTape I.1.2 r =
++          zonedTape (Function.update I.1.2 t (zoneRebalance true (I.1.2 t))) r
++        rw [zoneRebalance_of_le _ _ (show I.1.1 ≤ zoneShiftIndex true (I.1.2 t) from hs.ge),
++          Function.update_eq_self]
++      · obtain rfl : j = 1 := by omega
++        show Function.update d.workTapes 1 (fun _ => none) 1 r = _
++        rw [Function.update_self]
++        rfl
++    · show (if j = 0 then 0 else d.workTapePos 1 - (I.1.1 + 1)) = zr_heads 0 I.2 j
++      rw [h1]
++      simp only [zr_heads]
++      split_ifs
++      · rfl
++      · rw [hs]
++        ring
++    · rw [hl0]
++      simp only [zr_rowL, zr_heads, if_true]
++      omega
++    · rw [hh0]
++      simp only [zr_rowU, zr_heads, if_true]
++      exact_mod_cast hm
++    · rw [hl1, h1]
++      simp only [zr_rowL, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false]
++      rw [hs]
++      omega
++    · rw [hh1, h1]
++      simp only [zr_rowU, zr_heads, show (1 : Fin 2) ≠ 0 by decide, if_false]
++      omega)
++
++/-- The scan's two escapes are distinct. -/
++private lemma zr_scanNe :
++    (Sum.inr ⟨false, none⟩ : SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b) ≠
++      Sum.inr ⟨false, some true⟩ := by
++  simp
++
++/-- **The scan's verdict**: the found escape exactly when the scanned index is below `ℓ`. -/
++private lemma zr_scan_verdict {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    ∀ (I : ZoneData k × ℤ) d, True → zr_pinned (zr_rowT0 I) (zr_heads 0 I.2) d →
++      ((zr_scanPin t x).post I d).state =
++        some (if decide (zoneRebalanceIndex true t I.1 < I.1.1) then Sum.inr ⟨false, none⟩
++          else Sum.inr ⟨false, some true⟩) := fun I d _ _ => by
++  rw [zr_scanPin, zr_reindexContract, Contract.ofSegment_post, zr_exitsContract,
++    Contract.ofSegment_post, (zr_scan_fields t I.1 d).2.1, (zr_scanCfg_fields _ _ _ _).1]
++  by_cases h : zoneRebalanceIndex true t I.1 < I.1.1 <;> simp [h]
++
++/-- **The rightward row**: the scan, then at a found scan the found arm, at a short scan the
++short path. -/
++private noncomputable def zr_rowC {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  letI := (zr_rowDec t x).1
++  letI := (zr_rowDec t x).2
++  Contract.branch zr_scanNe (zr_scanPin t x) (zr_foundSeg t x).C (zr_shortPin t x) (fun I => I)
++    (fun I => I)
++    (zr_pin_blink true zr_scanNe (zr_scanPin_step t x) (zr_scan_verdict t x) rfl
++      (zr_foundSeg t x).step)
++    (zr_pin_blink false zr_scanNe (zr_scanPin_step t x) (zr_scan_verdict t x) rfl
++      (zr_shortPin_step t x))
++
++/-- **The rightward row's pinned step**: from the zoned tape of the data and a blank scratch to
++the zoned tape of the rebalanced data and a blank scratch, the heads back, in the row's box. -/
++private lemma zr_rowC_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    zr_PinStep (zr_rowC t x) (fun _ => True) zr_rowT0 (zr_rowT2 t) (fun I => zr_heads 0 I.2)
++      (fun I => zr_heads 0 I.2)
++      (fun I => zoneStart (zoneRebalanceIndex true t I.1) + 8 * zoneRebalanceIndex true t I.1 +
++        (if zoneRebalanceIndex true t I.1 < I.1.1 then 9 else 7) + 1 +
++        if decide (zoneRebalanceIndex true t I.1 < I.1.1) then
++          zr_tauOf (zr_fpSeg t x) (zr_rowP0 t I) + 1 + (3 * (zoneRebalanceIndex true t I.1 + 1) + 8)
++        else zoneStart I.1.1 + 11 * I.1.1 + 20) (zr_rowL t) (zr_rowU t) :=
++  letI := (zr_rowDec t x).1
++  letI := (zr_rowDec t x).2
++  zr_PinStep_branch zr_scanNe (zr_scanPin_step t x) (zr_scan_verdict t x) (zr_foundSeg t x).step
++    (zr_shortPin_step t x) _ _
++
++/-- **The rightward row's exits**: the found arm's at a found scan, the short path's
++otherwise. -/
++private lemma zr_rowC_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    zr_BackIs (zr_rowC t x)
++      (zr_branchBack (zr_oneBack (zr_exitOf (zr_foundSeg t x).C) true)
++        (zr_oneBack (zr_exitOf (zr_shortPin t x)) false))
++      fun I => if decide (zoneRebalanceIndex true t I.1 < I.1.1) then true else false :=
++  letI := (zr_rowDec t x).1
++  letI := (zr_rowDec t x).2
++  zr_BackIs_branch zr_scanNe (zr_scanPin_step t x) (zr_scan_verdict t x)
++    (zr_BackIs_one _ true) (zr_BackIs_one _ false)
++
++/-- The rightward row's exit state. -/
++private lemma zr_rowC_state {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) (I : ZoneData k × ℤ)
++    (d : Cfg 2 (ZoneSym k) (zr_stOf (zr_rowC t x)) x)
++    (hd : d.state = some (zr_entryOf (zr_rowC t x))) (hp : (zr_rowC t x).pre I d) :
++    ((zr_rowC t x).post I d).state = some (if zoneRebalanceIndex true t I.1 < I.1.1 then
++      Sum.inl (Sum.inr (zr_exitOf (zr_foundSeg t x).C)) else
++      Sum.inr (zr_exitOf (zr_shortPin t x))) := by
++  obtain ⟨s, hs, hb⟩ := zr_rowC_back t x I d hd hp
++  rw [hs]
++  by_cases h : zoneRebalanceIndex true t I.1 < I.1.1
++  · rw [if_pos h]
++    beta_reduce at hb
++    rw [if_pos (decide_eq_true h)] at hb
++    rcases s with (s | s) | s
++    · exact absurd hb (by simp [zr_branchBack])
++    · dsimp only [zr_branchBack] at hb
++      unfold zr_oneBack at hb
++      split_ifs at hb with h1
++      rw [h1]
++    · dsimp only [zr_branchBack] at hb
++      unfold zr_oneBack at hb
++      split_ifs at hb
++      exact absurd hb (by simp)
++  · rw [if_neg h]
++    beta_reduce at hb
++    rw [if_neg (by rwa [decide_eq_true_iff])] at hb
++    rcases s with (s | s) | s
++    · exact absurd hb (by simp [zr_branchBack])
++    · dsimp only [zr_branchBack] at hb
++      unfold zr_oneBack at hb
++      split_ifs at hb
++      exact absurd hb (by simp)
++    · dsimp only [zr_branchBack] at hb
++      unfold zr_oneBack at hb
++      split_ifs at hb with h1
++      rw [h1]
++
++/-- A zone-row start is pinned at the rightward row's start pin, at its own scratch start. -/
++private lemma zr_rowPre_pin {k : ℕ} {S : Type} {x : List (ZoneSym k)} {D : ZoneData k}
++    {d : Cfg 2 (ZoneSym k) S x} (hp : zoneRowPre D d) :
++    zr_pinned (zr_rowT0 (D, d.workTapePos 1)) (zr_heads 0 (D, d.workTapePos 1).2) d := by
++  refine ⟨funext fun j => funext fun r => ?_, funext fun j => ?_⟩
++  · by_cases hj : j = 0
++    · subst hj
++      rw [hp.1]
++      rfl
++    · obtain rfl : j = 1 := by omega
++      rw [hp.2.2 r]
++      rfl
++  · by_cases hj : j = 0
++    · subst hj
++      rw [hp.2.1]
++      rfl
++    · obtain rfl : j = 1 := by omega
++      rfl
++
++/-- **The rightward row's time** is at most `2300 · (2^i₀ + 1)`. -/
++private lemma zr_rowC_time {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) (I : ZoneData k × ℤ) :
++    zoneStart (zoneRebalanceIndex true t I.1) + 8 * zoneRebalanceIndex true t I.1 +
++        (if zoneRebalanceIndex true t I.1 < I.1.1 then 9 else 7) + 1 +
++        (if decide (zoneRebalanceIndex true t I.1 < I.1.1) then
++          zr_tauOf (zr_fpSeg t x) (zr_rowP0 t I) + 1 + (3 * (zoneRebalanceIndex true t I.1 + 1) + 8)
++        else zoneStart I.1.1 + 11 * I.1.1 + 20) ≤
++      2300 * (2 ^ zoneRebalanceIndex true t I.1 + 1) := by
++  have hz := zoneStart_eq (zoneRebalanceIndex true t I.1)
++  have hi : zoneRebalanceIndex true t I.1 < 2 ^ zoneRebalanceIndex true t I.1 :=
++    Nat.lt_two_pow_self
++  rw [pow_succ] at hz
++  by_cases h : zoneRebalanceIndex true t I.1 < I.1.1
++  · have hf := zr_fpSeg_time t x (zr_rowP0_valid t h)
++    have hp : 2 ^ (zr_rowP0 t I).i = 2 * 2 ^ zoneRebalanceIndex true t I.1 := by
++      show 2 ^ (zoneRebalanceIndex true t I.1 + 1) = _
++      rw [pow_succ]
++      ring
++    rw [hp] at hf
++    rw [if_pos h, if_pos (decide_eq_true h)]
++    omega
++  · have hs := zr_short_eq t h
++    rw [if_neg h, if_neg (by rwa [decide_eq_true_iff])]
++    rw [← hs]
++    omega
++
++/-- The rightward row's found and short exits. -/
++private noncomputable abbrev zr_rowDone {k : ℕ} (t : Fin k) :=
++  (Sum.inl (Sum.inr (zr_exitOf (zr_foundSeg t ([] : List (ZoneSym k))).C)) :
++    zr_stOf (zr_rowC t ([] : List (ZoneSym k))))
++
++/-- The rightward row's short exit. -/
++private noncomputable abbrev zr_rowShort {k : ℕ} (t : Fin k) :=
++  (Sum.inr (zr_exitOf (zr_shortPin t ([] : List (ZoneSym k)))) :
++    zr_stOf (zr_rowC t ([] : List (ZoneSym k))))
++
++/-- **The rightward rebalance row** on the data, its envelopes at the constant `C ≥ 2300`: the
++rightward row at the start's own scratch start. -/
++private noncomputable def zr_rowR {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C)
++    (x : List (ZoneSym k)) :
++    Contract (zr_machineOf (zr_rowC t ([] : List (ZoneSym k))))
++      (zr_entryOf (zr_rowC t ([] : List (ZoneSym k)))) {some (zr_rowDone t), some (zr_rowShort t)}
++      (ZoneData k) x :=
++  Contract.ofSegment zoneRowPre (fun D d => (zr_rowC t x).time (D, d.workTapePos 1) d)
++    (zoneRebalancePost true t (zr_rowDone t) (zr_rowShort t))
++    (zoneRowLo (zoneRebalanceIndex true t) C) (zoneRowHi (zoneRebalanceIndex true t) C)
++    (fun D d hd hp => by
++      have hpin := zr_rowPre_pin hp
++      obtain ⟨hpre, ⟨hT, hP⟩, hin, hout, -, hbox⟩ := (zr_rowC_step t x).2 _ d trivial hpin
++      have hseg := (zr_rowC t x).segment (D, d.workTapePos 1) d hd hpre
++      have hpost : (zr_rowC t x).post (D, d.workTapePos 1) d =
++          zoneRebalancePost true t (zr_rowDone t) (zr_rowShort t) D d := by
++        refine Cfg.ext ?_ hin (funext fun j => funext fun r => ?_) (funext fun j => ?_) hout
++        · rw [zr_rowC_state t x _ d hd hpre]
++          simp only [zoneRebalancePost]
++        · rw [hT]
++          by_cases hj : j = 0
++          · subst hj
++            simp only [zoneRebalancePost, if_true]
++            rfl
++          · obtain rfl : j = 1 := by omega
++            simp only [zoneRebalancePost, show (1 : Fin 2) ≠ 0 by decide, if_false, hp.2.2 r]
++            rfl
++        · rw [hP]
++          simp only [zoneRebalancePost]
++          by_cases hj : j = 0
++          · subst hj
++            rw [hp.2.1]
++            rfl
++          · obtain rfl : j = 1 := by omega
++            rfl
++      rw [hpost] at hseg
++      refine hseg.mono (fun s hs => ?_) fun p hb => ?_
++      · rcases hs with rfl | rfl
++        · exact Or.inl ⟨_, rfl, rfl⟩
++        · exact Or.inr ⟨_, rfl, rfl⟩
++      · have hpos : (0 : ℤ) < 2 ^ zoneRebalanceIndex true t D := by positivity
++        have hi : (zoneRebalanceIndex true t D : ℤ) < 2 ^ zoneRebalanceIndex true t D := by
++          exact_mod_cast Nat.lt_two_pow_self
++        rw [headBox_iff] at hb ⊢
++        intro j
++        have h := Finset.mem_Icc.mp (hb j)
++        obtain ⟨hl, hh⟩ := hbox j
++        rw [Finset.mem_Icc]
++        simp only [zoneRowLo, zoneRowHi]
++        by_cases hj : j = 0
++        · subst hj
++          simp only [zr_rowL, zr_rowU, zr_heads, if_true] at hl hh
++          simp only [if_true]
++          omega
++        · obtain rfl : j = 1 := by omega
++          simp only [zr_rowL, zr_rowU, zr_heads, show (1 : Fin 2) ≠ 0 by decide,
++            if_false] at hl hh
++          simp only [show (1 : Fin 2) ≠ 0 by decide, if_false]
++          have hC' : (2300 : ℤ) ≤ C := by exact_mod_cast hC
++          have hm : (2300 : ℤ) * (2 ^ zoneRebalanceIndex true t D + 1) ≤
++              C * (2 ^ zoneRebalanceIndex true t D + 1) :=
++            mul_le_mul_of_nonneg_right hC' (by positivity)
++          push_cast at hh ⊢
++          constructor <;> linarith)
++    (fun D d _ _ => by
++      simp only [zoneRebalancePost]
++      split_ifs
++      · exact Or.inl rfl
++      · exact Or.inr rfl)
++
++/-- **The rightward rebalance row's fields**: its precondition, endpoint and envelopes are the
++target's, and its time is at most `C · (2^i₀ + 1)`. -/
++private lemma zr_rowR_spec {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C) (x : List (ZoneSym k)) :
++    (zr_rowR t C hC x).pre = zoneRowPre ∧
++      (zr_rowR t C hC x).post = zoneRebalancePost true t (zr_rowDone t) (zr_rowShort t) ∧
++      (zr_rowR t C hC x).lo = zoneRowLo (zoneRebalanceIndex true t) C ∧
++      (zr_rowR t C hC x).hi = zoneRowHi (zoneRebalanceIndex true t) C ∧
++      ∀ D d, d.state = some (zr_entryOf (zr_rowC t ([] : List (ZoneSym k)))) →
++        (zr_rowR t C hC x).pre D d →
++          (zr_rowR t C hC x).time D d ≤ C * (2 ^ zoneRebalanceIndex true t D + 1) := by
++  refine ⟨funext fun D => funext fun d => by rw [zr_rowR, Contract.ofSegment_pre],
++    funext fun D => funext fun d => by rw [zr_rowR, Contract.ofSegment_post],
++    funext fun D => funext fun d => funext fun j => by rw [zr_rowR, Contract.ofSegment_lo],
++    funext fun D => funext fun d => funext fun j => by rw [zr_rowR, Contract.ofSegment_hi],
++    fun D d hd hp => ?_⟩
++  rw [zr_rowR, Contract.ofSegment_pre] at hp
++  rw [zr_rowR, Contract.ofSegment_time]
++  obtain ⟨-, -, -, -, ht, -⟩ := (zr_rowC_step t x).2 _ d trivial (zr_rowPre_pin hp)
++  rw [ht]
++  have := zr_rowC_time t x (D, d.workTapePos 1)
++  have h2 : 2300 * (2 ^ zoneRebalanceIndex true t D + 1) ≤
++      C * (2 ^ zoneRebalanceIndex true t D + 1) :=
++    Nat.mul_le_mul_right _ hC
++  exact this.trans h2
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+@@ -13753,10 +14328,13 @@ the found path, runs from the scanned zone's field and the scan's count to the h
+ count's end, with track `t` cascaded to the right at the scanned index (`zoneCascadeRight`,
+ through the side-pass reordering), every other track and the count kept, and the zoned head
+ within `zoneStart (i₀ + 1)` of home, in at most `1000 · 2^(i₀ + 1) + 200` steps (each round's
+-time bounded by its level and the passes' geometric sums). Its composition with the scan and the
+-count's clear, the leftward row (planned as the mirrored machine through
+-`Turing.Contract.lockstep`) and the assembly remain open. Only this target's body is
+-admitted. -/
++time bounded by its level and the passes' geometric sums). The rightward row is proved: the scan
++as a pinned test with its two exits, then at a found index the found path and the count's clear,
++at a short scan the short path, through the pinned branch; it is a contract with this target's
++fields at `dir = true` for every constant `C ≥ 2300`, the zoned head within `zoneStart (i₀ + 1)`
++of home and scratch within `18 · 2^i₀ + i₀ + 13` of its start. The leftward row (planned as the
++mirrored machine through `Turing.Contract.lockstep`) and the assembly remain open. Only this
++target's body is admitted. -/
+ theorem exists_zoneRebalanceTM (k : ℕ) :
+     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
+       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
+-- 
+2.50.1 (Apple Git-155)
+
