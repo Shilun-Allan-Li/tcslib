@@ -11,6 +11,7 @@ import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -28,7 +29,8 @@ verified phases, and the initial configuration of a fresh capture. The interpret
 
 ## Main results
 
-* `Turing.seamCompTM_step` — one seam step between two verified phases.
+* `Turing.seamCompTM_step` — the seam between two verified phases, with its one dispatch
+  transition.
 * `Turing.prefixCanon_pairExtract_halt`, `Turing.headerCapture_run` — the header projections,
   and their capture with a first live return.
 * `Turing.embedSilentRetTM_firstReturn`, `Turing.embedSilentCfg_initCfg` — a silent capture's
@@ -46,8 +48,9 @@ verified phases, and the initial configuration of a fresh capture. The interpret
 namespace Turing
 
 /-- **One seam step.** Composing a verified segment with a verified next phase through the seam
-`Turing.seamCompTM`: the endpoint, its control state, and the inherited first return of the
-phase's exit, in one step. [AB09, §1.4.1]
+`Turing.seamCompTM`: the endpoint and its control state, reached after the two runs and one
+additional dispatch transition (at time `T₁ + 1 + T₂`), and the inherited first return of the
+phase's exit. [AB09, §1.4.1]
 
 **Proof sketch.** The general-configuration seam run and its inherited first-return cut,
 with the endpoint state projected through the state renaming. -/
@@ -73,8 +76,8 @@ theorem seamCompTM_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : Lis
   rw [Cfg.mapState_state, hx₂, Option.map_some]
 
 /-- **The header projections.** On a timed paired input `⟨⟨bits t, α⟩, x⟩`, either header
-projection halts at the suffix with its selected component. The common time is
-`16 |bits t| + 8 |α| + 25`; in particular it is independent of the suffix. [AB09, §1.4.1]
+projection has halted at the suffix with its selected component by the common bound
+`16 |bits t| + 8 |α| + 25`, which is independent of the suffix. [AB09, §1.4.1]
 
 **Proof sketch.** Apply the published prefix contract to the first or second pair extractor.
 Decode the inner pair with its round-trip lemma and expand only its published length formula. -/
@@ -218,18 +221,6 @@ theorem headerCapture_run (first : Bool) (K : ℕ) (α x : List Bool) (t : ℕ)
   · intro j hj hjc
     exact embedSilentCfg_unselected ι cap tapes heads [] out _ j hj hjc
 
-/-- Removing the doubled header and its separator from a paired input leaves its suffix.
-
-**Proof sketch.** Express the pair as the empty-suffix header appended to the suffix. The
-published length formula gives exactly the number of symbols to drop. -/
-private theorem is_input_suffix (u x : List Bool) :
-    (pairEncode u x).drop (2 * u.length + 2) = x := by
-  have split : pairEncode u x = pairEncode u [] ++ x := by
-    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
-  have width : (pairEncode u []).length = 2 * u.length + 2 := by
-    rw [length_pairEncode, List.length_nil, Nat.add_zero]
-  rw [split, ← width, List.drop_left]
-
 /-- **The window call.** At the end of the header passes the copier produces exactly the
 bounded suffix window `x.take t` on an initially blank tape. Tapes other than the window and
 counter are framed, as are their heads, and the cost has no dependence on the uncopied suffix.
@@ -270,7 +261,7 @@ theorem exists_windowCall (K : ℕ) (j dst : Fin K) (hjd : j ≠ dst) :
     (counterValue_eq _).symm.trans (counterValue_bits t)
   obtain ⟨T, bound, w', _, hstate, hin, htapes, hheads, hout, hcut⟩ :=
     copy d (2 * (pairEncode (Nat.bits t) α).length + 2) (Nat.bits t) hd position hw
-  simp only [is_input_suffix, value] at bound hin htapes hheads
+  simp only [pairEncode_drop, value] at bound hin htapes hheads
   refine ⟨T, by simpa only [List.length_take] using bound, hstate, ?_, ?_, ?_, ?_, ?_, hout,
     hcut⟩
   · rw [length_pairEncode (Nat.bits t) α] at hin
