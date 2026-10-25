@@ -1,0 +1,28 @@
+# Round iteration along a sequence (PR #167, an API gate): resolutions (round 1; PASS; gate CLOSED)
+
+**Gate:** the API gate of PR #167 (`lean/round-iterate-seq` at `b768859d`, one commit on #165's
+merged head `308838e5`; stacked on #165). Pack `pack.md`; bundle SHA-256
+`1065b0044ec299ffb22c60f477dab1c37b7e80e14416ef651888302b5bbe13c8` (40 sections; folder
+`78-round-iterate-seq-api-gate/`), built from the Lean files at
+`b768859d58d59a0952cf340439cba91740c95084` and the records at
+`90d4ee727dea9b7d7f8a119167dfaeb394a504bc`. Dispatched before the replay.
+
+**Round 1** (`findings.md`, verbatim; received 2026-10-25, SHA-256
+`fbedd9c38b79580bc1a9fc3dc0de1182697bb8de712bed2d3609ced68a71d9ce`): **PASS, 0 blockers, 0 majors,
+3 minors, 10 notes. The gate is closed.** The maintainer checked the three minors directly: all
+true.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | `Round.iterate_seq`'s docstring (and `Round.iterate`'s) omits the hypotheses `some a ∉ E` and `P` at the start. | **True; fixed** by commit `98d56a71` on #167, docstrings only (`evidence/round1-fix/docfix.patch`). Both docstrings now open with "if the anchor is not an escape (`some a ∉ E`), the head condition `P` holds at …". The code is identical with comments stripped (`codeonly-docfix.txt`), and `Contract/Basic` elaborates with no diagnostic (`ContractBasic-docfix-ax.out`). Docstring-only changes need no gate. |
+| 2 | minor | `declfreeze.py` keys declarations by short name and collapses same-named declarations in different namespaces: 78 → 79 instead of 84 → 85. | **True; the tool fixed** (`devtools/seyoon/declfreeze.py` v4, on the campaign branch). It tracks `namespace`, `section` and `end` and keys each declaration by its qualified name, adding `#k` for a name still not unique. The authorized list accepts qualified or short names, so older recipes still work. **Regenerated:** `evidence/round1-fix/freeze-v4-*.txt` gives `Contract/Basic` 84 → 85 public, 1 → 1 private, `Turing.Round.iterate_seq` added, and the one authorized body change `Turing.Round.iterate`. `ZoneRebalance` gives 18 → 18 and 853 → 853, the one changed private being `Turing.zr_pinLoop`. Regression check: gate 77's Savitch freeze has the same counts under v4, with qualified names. Earlier freeze reports with namespace-colliding short names undercount the same way; their statement and body checks were made per surviving key, and each gate also compared ordered declaration lists, as this auditor did. |
+| 3 | minor | The pack says `oleans-lkit2`'s `ZoneRebalance` is the PR base's; it is the pre-G4 (sorried) version. | **True; erratum** (the dispatched pack is kept). **Erratum to the pack's elaboration attestation:** `oleans-lkit2` is the campaign's tree after #162. Its `Contract/Basic` is the PR base's, but its `ZoneRebalance` is the pre-#165 module (blob `1abbb871`, rows sorried). The overlay check elaborates the head's `ZoneRebalance` source against its imports and does not import the old module, so the result stands. The 91-module replay, chained from #165's merged-tree snapshot, is the check against the real base. |
+| 10 | note | The 279-ref name search has no supplied output. | **Agreed; supplied:** `evidence/round1-fix/name-search-iterate_seq.txt` lists the command, the 284 refs searched now, and the hits, which are only #167's own branch (local and remote). |
+| 13 | note | Complete #165's merged-tree replay and then the 91-module replay before merge clearance. | **Agreed;** these are #167's merge conditions (below). |
+| 8 | note | The seal's control maps describe the pre-overlay file; add 28 to their lines. | **Agreed;** noted here. |
+| 4–7, 9, 11, 12 | notes | Integrity; faithfulness; boundary cases; the consumers; the screen; the elaboration and axioms; lint. | No action. RI-1 retires when #167 lands. |
+
+**Merge state. #167: not yet clear to merge.** The gate is closed. #167 is stacked on #165 and
+waits for it to merge (after `replay-lg4c4m`). Then it is retargeted to the campaign branch, the
+campaign is merged in, and its 91-module replay runs from #165's snapshot. Its head is now
+`98d56a71`.
