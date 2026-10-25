@@ -562,13 +562,14 @@ statements. **The one-fifth rule** (`workflow.md` §4): not reached.
   private `drop_pairEncode` (line 225): the same statement through `pairEncode_eq_dbl`, different
   proofs (no screen pair).
 
-None of the four files can cite another's without a new import (`InputDevice` is upstream of none
-of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`). **Acknowledged (user, 2026-10-24)**: the U2
-review's F2 recommendation (publish `pairEncode_drop` with the API PR, ledger the family) was the
-ruling's content. **Disposition:** the startup-kit API PR re-points `ic_input_suffix` to
-`Turing.pairEncode_drop` if its new module imports `Build/InputDevice` (acyclic); the rest go to
-the user's dedup window, one home beside `pairEncode_eq` in `Encoding` (a large replay, hence the
-window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1.8%),
+*Historical (at #161's opening):* none of the four files could cite another's without a new import
+(`InputDevice` was upstream of none of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`).
+**Acknowledged (user, 2026-10-24)**: the U2 review's F2 recommendation (publish `pairEncode_drop`
+with the API PR, ledger the family) was the ruling's content. **Disposition:** the startup-kit
+re-point is **done** (gate 74's round 2): the kit imports `Build/InputDevice`, so `NDCodeSimulator`
+sees it through the kit, and the window call cites `Turing.pairEncode_drop`. Only the
+`Codec/Parse` and `PathWalk` members remain, for the user's dedup window: one home beside
+`pairEncode_eq` in `Encoding` (a large replay, hence the window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1.8%),
 `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); `NDCodeSimulator` and
 `Build/InterpreterStartup` 0 since gate 74's round 2. The one-fifth rule is not reached.
 

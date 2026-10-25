@@ -24,4 +24,31 @@ rest on the standard three). The freeze against round 1's head: 8 → 8 public, 
 widened by the suffix-drop family's files: 816 → 815 declarations, 446 → 446 pairs; SK-1's pair
 new, SD-1's `ic_input_suffix` ⇄ `pairEncode_drop` gone, nothing else new or gone.
 
-**Merge state. #162: not yet clear to merge.** `replay-lkit2` has passed; it needs gate 74's round 2.
+*(Superseded by round 2 below.)*
+
+## Round 2 (PASS; gate CLOSED)
+
+**Gate:** `pack-r2.md`; bundle SHA-256
+`9a36d7ade0b65d7f0f0da24d623d0902f171dfbe2cadaa5d73578906d07b9e1b` (50 sections; folder
+`74-startup-kit-api-r2-gate/`), built from the Lean files at
+`d47595812c160089a8b4dbc35d30629e4f7ef10d` and the records at
+`079a070766688031c177ff97f5eced81e476d18a`. Dispatched before `replay-lkit2`.
+
+**Round 2** (`findings-r2.md`, verbatim; received 2026-10-25, SHA-256
+`f7feb95d2293fcb76d8df0552fd548bea9d3e6b9f20ca806ea361236a04a464f`): **PASS, 0 blockers, 0 majors,
+2 minors, 11 notes. The gate is closed.** The maintainer checked the two minors directly: both
+true. Both are in the records; no Lean change.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | The pack says the six pairs added by the widened population lie inside the three added files; one crosses to `InputWindow`. | **True; erratum** (the dispatched pack is kept as sent). **Erratum to `pack-r2.md` item 5:** "all six involve an added file; five are in-file (`Codec/Parse` 2, `Build/InputDevice` 2, and `Shape1` ⇄ `Shape2` in both directions counted as two of the five) and one crosses to the existing `InputWindow` (`InputDevice`'s `rd_host_block` → `InputWindow`'s `iw_one`, 87/124 = 70%)." All six are in round 2's base, so none is introduced by the fix (`evidence/round1-fix/pairdiff-r2-head-vs-round1.txt`). |
+| 2 | minor | The ledger's SD-1 dependency sentence and disposition are in their pre-repair form. | **True; fixed** (`campaign/duplication-ledger.md`, SD-1). The dependency sentence is marked historical (at #161's opening), the startup re-point is stated as done (the kit imports `Build/InputDevice`, so `NDCodeSimulator` sees it through the kit), and only the `Codec/Parse` and `PathWalk` members remain for the dedup window. |
+| 11 | note | Record a successful replay at `d4759581` before merging. | **Done:** `replay-lkit2` passed at `d4759581`, 5 of 5, 0 failed, static-equal (`evidence/round1-fix/replay-lkit2.log`, `-static.txt`; the snapshot `oleans-lkit2`). |
+| 5 | note | `UniversalK` could import the kit directly; its re-point is a scheduling decision. | **Agreed;** SK-1's disposition stands (the dedup window, or U2's fill). |
+| 3, 4, 6–10, 12, 13 | notes | Provenance; the major's resolution; the timing prose; the freeze; the screens; the seal; the elaboration and axioms; contracts and boundary checks; lint. | No action. |
+
+**Merge state. #162: clear to merge** (2026-10-25). The gate is closed. `replay-lkit2` passed at the
+head `d4759581`, and the PR's base is the campaign branch, whose Lean tree has not moved since (its
+Lean diff from the head is the PR's four files). Merging it changes the `TuringMachine` facade,
+which #165 also edits: #165 then merges the campaign branch and replays the merged tree before it
+is clear.
