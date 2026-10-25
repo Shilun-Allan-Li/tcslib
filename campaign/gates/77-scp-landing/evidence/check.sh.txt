@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Gate 77's checks (maintainer, 2026-10-25). $S is the scratch directory; wt-scp is lean/scp-landing at
+# 0282b487 (A1's head ae4849af plus the landing commit); oleans-lu2api is the replayed tree after #161.
+# A1 is not in the olean tree, so each check file is Savitch.lean as it lands with A1's ten lemmas
+# declared before it, verbatim from A1's diff (mkoverlay.py.txt; the offset is 90 lines in the plain
+# file: overlay line = landing line + 90).
+W=$S/wt-scp; O=$S/oleans-lu2api; D=$S/scp; B=origin/complexity/arora-barak-ch3-4; A=origin/lean/a1-predicates
+python3 -I $D/mkoverlay.py $W $B $A plain  $D/SavitchLanding.lean
+python3 -I $D/mkoverlay.py $W $B $A sealed $D/SavitchSealed.lean $D/controls.lean
+for v in Landing Sealed; do { cat $D/Savitch$v.lean; echo; echo '#print axioms Complexity.spaceConstructible_poly'
+  echo '#print axioms Complexity.PSPACE_eq_NPSPACE'; } > $D/Savitch$v-ax.lean; done
+# the controls variant: the sealed file with its one `attribute [local irreducible]` line removed
+bash $S/tools/leanelab.sh $W $O $D/SavitchLanding-ax.lean          # expect: savitch's sorry only
+bash $S/tools/leanelab.sh $W $O $D/SavitchSealed-ax.lean           # expect: 12 errors, the controls only
+bash $S/tools/leanelab.sh $W $O $D/SavitchControlsUnsealed-ax.lean # expect: savitch's sorry only
+bash $S/tools/leanelab.sh $W $O $D/SavitchDefScan.lean             # the review's def scan, retargeted
+python3 -I $W/devtools/seyoon/declfreeze.py $D/freeze/Savitch-base.lean $W/TCSlib/Complexity/SpaceComplexity/Savitch.lean spaceConstructible_poly
+python3 -I $W/devtools/seyoon/codeonly.py $D/codeid/probe-region-renamed.lean.txt $D/codeid/landing-region.lean.txt
+(cd $W && python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/SpaceComplexity)
+python3 -I $W/devtools/seyoon/mkdownmulti.py $W $W/devtools/seyoon $D/down-lscp.txt TCSlib.Complexity.SpaceComplexity.Savitch

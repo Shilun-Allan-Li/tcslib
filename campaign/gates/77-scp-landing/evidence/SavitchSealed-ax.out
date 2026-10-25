@@ -1,0 +1,78 @@
+$S/scp/SavitchSealed-ax.lean:162:90: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  SpaceConstructible S =
+    ((∀ (n : ℕ), logSpace n ≤ S n) ∧ ∃ c, 0 < c ∧ ∃ M, M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n)
+$S/scp/SavitchSealed-ax.lean:165:56: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  M.ComputesInSpace f s =
+    ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t ∧ MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ s x.length
+$S/scp/SavitchSealed-ax.lean:166:50: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  logSpace n = Nat.log 2 n + 1
+$S/scp/SavitchSealed-ax.lean:168:88: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+$S/scp/SavitchSealed-ax.lean:170:73: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  M.ComputesInTime x w t = ∃ s, M.tm.ComputesInTimeAndSpace x w t s
+$S/scp/SavitchSealed-ax.lean:171:85: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+$S/scp/SavitchSealed-ax.lean:172:83: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  FinTM.polyUnaryTM C 0 = FinTM.constTM (List.replicate C true)
+$S/scp/SavitchSealed-ax.lean:173:55: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.prependTM w).k = 0
+$S/scp/SavitchSealed-ax.lean:175:38: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (transducerTM δ o false).k = 0
+$S/scp/SavitchSealed-ax.lean:177:31: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  transduce δ o q [] = []
+$S/scp/SavitchSealed-ax.lean:179:90: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t = ∑ i, MultiTapeTM.spaceUsedByTape (MultiTapeTM.initCfg x) t i
+$S/scp/SavitchSealed-ax.lean:180:82: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.tm.q₀ x
+$S/scp/SavitchSealed-ax.lean:375:8: warning: declaration uses 'sorry'
+'Complexity.spaceConstructible_poly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.PSPACE_eq_NPSPACE' depends on axioms: [propext, Classical.choice, Quot.sound]
+sealed exit 1
