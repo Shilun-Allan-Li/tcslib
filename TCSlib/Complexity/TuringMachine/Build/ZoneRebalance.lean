@@ -14042,12 +14042,13 @@ private lemma zr_pop_fields {k : ℕ} (t : Fin k)
 **Proof sketch.** Write `n = i₀ + 1`. The path is seven passes, the home move and fixed control
 steps. Each pass is a loop of rounds: a round at level `j` costs its body, at most `a · 2^j + b`
 steps for constants `a`, `b` of the pass (`zr_p1Tau_le`, `zr_woTau_le`, `zr_p2Tau_le`,
-`zr_p3Tau_le`, `zr_rbTau_le`, `zr_p4Tau_le`, `zr_lbTau_le`), plus two control steps. Over `m + 1`
-consecutive levels the geometric sum gives at most `2a · 2^m + (b + 2)(m + 1)`
-(`zr_pass_time_desc`, `zr_pass_time_asc`). The walk-out pass has `n + 1` rounds, the last its
-escape, so it costs at most `4 · 2^n + 13(n + 1)`; each of the other six has `n` rounds. Adding the
-home move's at most `155` steps and the fifteen pop and dispatch steps between the stages gives at
-most `268 · 2^n + 728 n + 183`, which is at most `1000 · 2^n + 200` since `n < 2^n`. -/
+`zr_p3Tau_le`, `zr_rbTau_le`, `zr_p4Tau_le`, `zr_lbTau_le`), plus two control steps. Over
+consecutive levels the geometric sum bounds a pass of `r` rounds whose highest level is `h` by
+`2a · 2^h + (b + 2) r` (`zr_pass_time_desc`, `zr_pass_time_asc`). The walk-out pass has `n + 1`
+rounds, the last its escape, so it costs at most `4 · 2^n + 13(n + 1)`; each of the other six has
+`n` rounds, with highest level `n` or `n - 1`. Adding the home move's at most `155` steps and the
+fifteen pop and dispatch steps between the stages gives at most `268 · 2^n + 728 n + 183`, which is
+at most `1000 · 2^n + 200` since `n < 2^n`. -/
 private lemma zr_fpSeg_time {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) {P : zr_Px k}
     (hV : zr_fpV P) : zr_tauOf (zr_fpSeg t x) P ≤ 1000 * 2 ^ P.i + 200 := by
   have h1i := hV.2.2.2.1
