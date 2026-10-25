@@ -2315,7 +2315,13 @@ private lemma zr_rightReturn_time {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData
   simp only [zr_outerWord, List.length_replicate, zoneExtendData]
 
 /-- The right pass and the return home keep the zoned head in `[-1, zoneStart (ℓ + 1)]` and the
-scratch head between the ruler's left delimiter and the cell past its right one. -/
+scratch head between the ruler's left delimiter and the cell past its right one.
+
+**Proof sketch.** The right pass's bounds and envelope give the first phase's head ranges. At its
+end the zoned head is at `zoneStart ℓ + 2^ℓ`, and from there the return loop's bounds give the
+second phase's ranges; `zoneStart (ℓ + 1)` bounds them through `zoneStart_succ`. The sequenced
+contract's envelope is the minimum and maximum of the two phases' envelopes, so each of the four
+inequalities is arithmetic. -/
 private lemma zr_rightReturn_bounds {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d)
     (hp : (zr_rightReturnContract x).pre D d) :
     -1 ≤ (zr_rightReturnContract x).lo D d 0 ∧
@@ -2433,7 +2439,12 @@ private def zr_twoStepsContract {k : ℕ} (dir : SignType) (off : ℕ → ℤ)
     (Sum.inr (some false))
 
 /-- Two scratch steps move only the scratch head, by `2 dir`; they take three steps, and the
-scratch head stays between its two ends. -/
+scratch head stays between its two ends.
+
+**Proof sketch.** The contract is two one-cell steps in sequence, each moving the scratch head by
+`dir` in one step, with one dispatch step between them: time `3`. The sequenced contract's endpoint
+is read from the one-cell contract's fields, and its envelopes are the minimum and maximum of the
+two steps' head positions, checked by cases on `dir`. -/
 private lemma zr_twoSteps_fields {k : ℕ} {x : List (ZoneSym k)} (dir : SignType)
     (off : ℕ → ℤ) (n : ℕ) (d : Cfg 2 (ZoneSym k) (Option Bool ⊕ Option Bool) x) :
     (zr_twoStepsContract dir off x).time n d = 3 ∧
@@ -2496,7 +2507,12 @@ private def zr_leftWalkContract {k : ℕ} (x : List (ZoneSym k)) :=
 
 /-- The leftward walk takes the ruler length plus two steps and moves both heads left by the
 length, scratch one cell more; the zoned head stays between its ends, scratch between its end
-and its start. -/
+and its start.
+
+**Proof sketch.** The contract is the adjusted walk, re-indexed: a lockstep walk over the ruler's
+`n` cells, then one scratch step. The walk's field equations move both heads left by `n` in `n`
+steps (the ruler is a nonempty word), and the step moves the scratch head once more; with the
+dispatch step the time is `n + 2`, and the envelopes are arithmetic. -/
 private lemma zr_leftWalk_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (hn : 0 < n)
     (d : Cfg 2 (ZoneSym k) ((Option Bool) ⊕ SeekPhase) x) :
     (zr_leftWalkContract x).time n d = n + 2 ∧
@@ -2545,7 +2561,12 @@ private lemma zr_leftMove_link₁ {k : ℕ} {x : List (ZoneSym k)} (n : ℕ)
 
 /-- **The left move**: skip the scratch ruler, step back onto its last cell, walk left over it
 with the zoned head, and step scratch back to the ruler's first cell. Only the zoned head
-moves, by the ruler length. -/
+moves, by the ruler length.
+
+**Proof sketch.** The three seam conditions. Before each phase the scratch head stands on the ruler
+(`zr_scratchAt`); this is carried through the skip, the two backward steps and the walk by
+`zr_scratchAt_move`, since no phase writes the scratch tape and each phase's field equations give
+its head moves. -/
 private def zr_leftMoveContract {k : ℕ} (x : List (ZoneSym k)) :=
   (zr_scratchSkipContract x).seq
     ((zr_twoStepsContract (-1) (fun n => (n : ℤ) + 1) x).seq
@@ -2576,7 +2597,12 @@ private def zr_leftMoveContract {k : ℕ} (x : List (ZoneSym k)) :=
 
 /-- The left move takes twice the ruler length plus twelve steps and moves only the zoned head,
 left by the ruler length. The zoned head stays between its two ends; scratch between two cells
-left of its start and the cell past the ruler's right delimiter. -/
+left of its start and the cell past the ruler's right delimiter.
+
+**Proof sketch.** Compose the four phases' fields: the scratch skip over the ruler, two backward
+steps, the walk, two forward steps. Their times and the three dispatch steps add to `2n + 12`; the
+scratch head goes over the ruler and back (net zero) while the zoned head goes left by `n`; the
+envelopes are the unions of the phases' envelopes. -/
 private lemma zr_leftMove_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (hn : 0 < n) (d) :
     (zr_leftMoveContract x).time n d = 2 * n + 12 ∧
       (zr_leftMoveContract x).post n d =
@@ -2656,7 +2682,12 @@ private def zr_decEqLM : DecidableEq (SeekPhase ⊕ ((Option Bool ⊕ Option Boo
 
 /-- **The left zone writer**: from the zoned head at the cell right of the separator to be
 written, step onto it, move left by the ruler, write the inner half, move left again and write
-the outer half. The zoned head ends at the zone's outer end; scratch is unchanged. -/
+the outer half. The zoned head ends at the zone's outer end; scratch is unchanged.
+
+**Proof sketch.** The seam conditions. Before each phase the scratch head stands at the ruler
+(`zr_scratchAt`), carried through the one-cell step, the two left moves and the inner half writer by
+`zr_scratchAt_move`, since none of them writes the scratch tape and their field equations give the
+head moves. -/
 private def zr_leftWriteContract {k : ℕ} (x : List (ZoneSym k)) :=
   letI := zr_decEqLM
   (zr_stepContract 0 (-1) x fun n d => zr_scratchAt 0 n d).seq
@@ -2702,7 +2733,13 @@ private lemma zr_leftWrite_pre {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (d) :
 ending at the cell left of the start, its outer half empty slots and its inner half stored
 virtual blanks; the zoned head ends at the zone's outer end, everything else unchanged. The
 zoned head stays within the zone and its delimiter cells, scratch within two cells left of its
-start and the cell past the ruler's right delimiter. -/
+start and the cell past the ruler's right delimiter.
+
+**Proof sketch.** Compose the five phases' fields: one step left, a left move by `n`, the inner half
+write, a second left move by `n`, the outer half write. The times add to `8n + 33`. The two half
+writers fill the `2n` cells of the zone, the inner `n` with stored virtual blanks and the outer `n`
+with empty slots, leaving the zoned head at the zone's outer end; the envelopes are the unions of
+the phases'. -/
 private lemma zr_leftWrite_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (hn : 0 < n) (d) :
     (zr_leftWriteContract x).time n d = 8 * n + 33 ∧
       (zr_leftWriteContract x).post n d =
@@ -2789,7 +2826,13 @@ private def zr_leftPassContract {k : ℕ} (x : List (ZoneSym k)) :=
 new left zone `[2 - zoneStart (ℓ + 1), -zoneStart ℓ]`, its outer half empty slots and its inner
 half stored virtual blanks; the zoned head ends at the zone's outer end, everything else
 unchanged. The zoned head stays in `[1 - zoneStart (ℓ + 1), 0]`; scratch within two cells left
-of its start and the cell past the ruler's right delimiter. -/
+of its start and the cell past the ruler's right delimiter.
+
+**Proof sketch.** The pass is a seek to the left layout's outermost cell, then the left zone writer
+at `n = 2^ℓ`. From home the seek's distance is the left fields' total offset, which `zr_left_reach`
+and `zr_left_offset` express through `zoneStart ℓ`; the writer's fields then give the time
+`zoneStart ℓ + 8 · 2^ℓ + 36`, the new zone `[2 - zoneStart (ℓ + 1), -zoneStart ℓ]`, and the head
+ranges. -/
 private lemma zr_leftPass_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d)
     (hp : (zr_leftPassContract x).pre D d) :
     (zr_leftPassContract x).time D d = zoneStart D.1 + 8 * 2 ^ D.1 + 36 ∧
@@ -3111,7 +3154,12 @@ private def zr_decEqLoopPh : (b : Bool) → DecidableEq (zr_loopPh b)
   | true => inferInstanceAs (DecidableEq (SeekPhase ⊕ (Option Bool ⊕ Option Bool)))
 
 /-- **The final return**: seek across the whole extended layout, run the return loop home, and
-clear the ruler. -/
+clear the ruler.
+
+**Proof sketch.** The two seam conditions. After the seek the zoned head is at the right end of the
+extended layout, `2 · zoneStart (ℓ + 1)` cells from its start by `zr_wholeFields_tape`, which is the
+return loop's precondition there; and the scratch ruler is untouched by the seek and by the loop
+(`zr_scratchAt_move`), which is the ruler clear's precondition. -/
 private def zr_finalContract {k : ℕ} (x : List (ZoneSym k)) :=
   letI := zr_decEqLoopPh
   (zr_finalSeekContract x).seq
@@ -3146,7 +3194,13 @@ private def zr_finalContract {k : ℕ} (x : List (ZoneSym k)) :=
 clear take `3 · zoneStart (ℓ + 1) + 2 · 2^ℓ + 8ℓ + 19` steps; the endpoint has the zoned head at
 home and scratch blank, everything else unchanged. The zoned head stays in
 `[2 - zoneStart (ℓ + 1), zoneStart (ℓ + 1)]`, scratch within one cell left of its start and the
-ruler's right delimiter. -/
+ruler's right delimiter.
+
+**Proof sketch.** Compose the three phases' fields: the seek across the extended layout, the return
+loop home, and the ruler clear. From the layout's outermost left cell `2 - zoneStart (ℓ + 1)` the
+seek ends past the layout's right end, the loop returns the zoned head to home, and the clear blanks
+the `2^ℓ` ruler cells, the only nonblank scratch cells; the times add to
+`3 · zoneStart (ℓ + 1) + 2 · 2^ℓ + 8ℓ + 19`, and the envelopes are the phases' unions. -/
 private lemma zr_final_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d)
     (hp : (zr_finalContract x).pre D d) :
     (zr_finalContract x).time D d = 3 * zoneStart (D.1 + 1) + 2 * 2 ^ D.1 + 8 * D.1 + 19 ∧
@@ -3326,7 +3380,13 @@ private lemma zr_rightLeft_post {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k
   · simp only [Cfg.mapState_output, zr_rightReturn_post D _ hr]
 /-- The right pass, the return home and the left pass: their times add up with one seam; the
 zoned head stays in `[1 - zoneStart (ℓ + 1), zoneStart (ℓ + 1)]`, scratch within two cells left
-of its start and the cell past the ruler's right delimiter. -/
+of its start and the cell past the ruler's right delimiter.
+
+**Proof sketch.** The contract is the right pass with the return home, then the left pass, through
+one seam. The time is the sum of the two parts' times (`zr_rightReturn_time` and the left pass's
+fields) and one dispatch step. The envelopes are the minimum and maximum of the parts': the first
+part's bounds come from `zr_rightReturn_bounds`, and the left pass starts at home with scratch where
+the return left it. -/
 private lemma zr_rightLeft_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d)
     (hp : (zr_rightLeftContract x).pre D d) :
     (zr_rightLeftContract x).time D d = zoneStart D.1 + 10 * 2 ^ D.1 + 23 + 1 +
@@ -3612,7 +3672,13 @@ private abbrev zr_scanMarked {k : ℕ} {S : Type} {x : List (ZoneSym k)}
 /-- **The scan body's fields**, by the zoned cell: on a blank cell it stops at its first exit
 after 4 steps; on a nonempty track-`t` slot at its third exit after 6; on an empty slot it skips
 the zone `w` and stops at its second exit after `|w| + 7`. Each time it has marked scratch's
-cell and moved scratch one cell right; tape `0` is unchanged. -/
+cell and moved scratch one cell right; tape `0` is unchanged.
+
+**Proof sketch.** By cases on the zoned cell. On a blank cell the blank branch exits after the mark
+and one step; on an occupied track-`t` slot the slot branch exits after its test; on an empty slot
+it skips the zone's word `w` with the published skip row and exits. In each case the scratch cell is
+marked and the scratch head moves one cell right, and tape `0` is not written; the times `4`, `6`
+and `|w| + 7` add up the branches' parts and their dispatch steps. -/
 private lemma zr_scanBody_fields {k : ℕ} {x : List (ZoneSym k)} (t : Fin k)
     (w : List (ZoneSym k)) (d) (hp : (zr_scanBodyContract t x).pre w d) :
     (zr_scanBodyContract t x).time w d =
@@ -4242,7 +4308,12 @@ private def zr_scanContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
 at the start of zone `i₀` (past the layout when every zone is empty) and `i₀ + 1` ruler cells on
 scratch from its start, its head just past them, after `zoneStart i₀ + 8 i₀ + 9` steps on a
 found zone and two fewer on a short scan; the zoned head stays in `[0, zoneStart (i₀ + 1)]`,
-scratch in `[q, q + i₀ + 1]`. -/
+scratch in `[q, q + i₀ + 1]`.
+
+**Proof sketch.** The scan is the skip over the home field, then the scan loop. The loop's endpoint
+and time are those of `zr_scanLoopPost`: it stops at zone `i₀ = zoneRebalanceIndex true t D` with
+`i₀ + 1` marks on scratch. Adding the home skip's time and the dispatch step gives the stated time
+on each branch of `i₀ < ℓ`, and the envelopes are the two parts' unions. -/
 private lemma zr_scan_fields {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
     (d : Cfg 2 (ZoneSym k) (SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b) x) :
     (zr_scanContract t x).time D d = zoneStart (zoneRebalanceIndex true t D) +
@@ -4302,7 +4373,12 @@ private def zr_scratchBackContract {k : ℕ} (x : List (ZoneSym k)) :=
       ring
 
 /-- **The count's clear**: from just past the scratch ruler of `n` cells, step right, skip back
-to its first cell and clear it. -/
+to its first cell and clear it.
+
+**Proof sketch.** The two seam conditions: the scratch ruler of `n` cells stays where it was
+(`zr_scratchAt`), carried by `zr_scratchAt_move` through the one step right and through the skip
+back to its first cell, since neither writes scratch; the head moves are those given by their field
+equations. -/
 private def zr_countClearContract {k : ℕ} (x : List (ZoneSym k)) :=
   (zr_stepContract 1 1 x fun (n : ℕ) d => zr_scratchAt (n : ℤ) n d).seq
     ((zr_scratchBackContract x).seq (zr_rulerClearContract (fun n : ℕ => n) x) (fun n => n)
@@ -4328,7 +4404,12 @@ private def zr_countClearContract {k : ℕ} (x : List (ZoneSym k)) :=
 
 /-- **The count clear's fields**: from just past a scratch ruler of `n` cells that is all of
 scratch, it blanks scratch and returns its head to the ruler's first cell in `3n + 8` steps;
-the zoned head is fixed and scratch stays in `[q - n - 1, q + 1]`. -/
+the zoned head is fixed and scratch stays in `[q - n - 1, q + 1]`.
+
+**Proof sketch.** Compose the three phases' fields: one step right, the skip back over the `n` ruler
+cells, the clear of those `n` cells. The ruler is all of scratch's nonblank cells, so the clear
+leaves scratch blank, and the head ends at the ruler's first cell; the times add to `3n + 8`, and
+the envelopes are the phases' unions. -/
 private lemma zr_countClear_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ)
     (d : Cfg 2 (ZoneSym k) (Option Bool ⊕ SeekPhase ⊕ SweepPhase) x)
     (hp : zr_scratchAt (n : ℤ) n d) :
@@ -4408,7 +4489,13 @@ private def zr_shortContract {k : ℕ} (x : List (ZoneSym k)) :=
 /-- **The short path's fields**: from one past the last zone of `D` with the count of
 `ℓ + 1` cells on scratch, it returns the zoned head home, blanks scratch and returns its head to
 the count's first cell, in `zoneStart ℓ + 11 ℓ + 20` steps; the zoned head stays in
-`[-1, zoneStart ℓ]`, scratch in `[q - ℓ - 2, q + 1]`. -/
+`[-1, zoneStart ℓ]`, scratch in `[q - ℓ - 2, q + 1]`.
+
+**Proof sketch.** The short path is the return loop home from one past the last zone, then the count
+clear. The loop moves only the zoned head, to home, so the count of `ℓ + 1` cells is still on
+scratch at the loop's end (`zr_scratchAt_move`); the count clear's fields (`zr_countClear_fields` at
+`n = ℓ + 1`) then give the endpoint, and the time and envelopes are the two parts' sums and unions.
+-/
 private lemma zr_short_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
     (d : Cfg 2 (ZoneSym k) ((Σ b, zr_loopPh b) ⊕ Option Bool ⊕ SeekPhase ⊕ SweepPhase) x)
     (hp : (zr_shortContract x).pre D d) :
@@ -4518,7 +4605,12 @@ private lemma zr_slot_track {k ℓ : ℕ} {z z' : Fin k → ZoneContents ℓ} {t
     cases zoneOwner ℓ q.toNat <;> simp only [Option.map_none, Option.map_some, zoneSlotOf_inr, h]
 
 /-- **Rewriting one track of a zoned cell**: where the zoned tape of `z` has a cell, the zoned
-tape with track `t` replaced by `u` holds that cell with track `t`'s slot set to the new one. -/
+tape with track `t` replaced by `u` holds that cell with track `t`'s slot set to the new one.
+
+**Proof sketch.** By the sign of the position. At home the cell holds every track's home symbol. On
+either side the cell belongs to at most one zone (`zoneOwner`); if to none, the hypothesis cannot
+hold. Where a zone owns it, the new cell's track-`t` slot is the new contents' slot and every other
+track's slot is unchanged, which is `zoneSlotSet t` applied to the old cell. -/
 private lemma zr_zonedTape_update {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k)
     (u : ZoneContents ℓ) (q : ℤ) (v : Option (Option Bool))
     (hv : (zonedTape (fun _ => u) q).map (zoneSlotOf t) = some v) :
@@ -4597,7 +4689,14 @@ private lemma zr_zonedTape_update_same {k ℓ : ℕ} (z : Fin k → ZoneContents
 /-- **The right inward shift on the zoned tape**, its guard enabled: when track `t`'s right zone
 `i - 1` is empty, the shift at level `i` sets track `t`'s slots of zone `i - 1`'s first
 `2^(i-1)` cells to zone `i`'s first `2^(i-1)` slots, and zone `i`'s slots to its slots
-`2^(i-1)` further on (`⊠` past its word); every other cell keeps its contents. -/
+`2^(i-1)` further on (`⊠` past its word); every other cell keeps its contents.
+
+**Proof sketch.** With its guard enabled, the pure shift `zoneShiftIn` moves the first `2^(i-1)`
+symbols of right zone `i` into the empty zone `i - 1`, keeps the rest of zone `i`, and leaves the
+left side and the home unchanged. Cell by cell: in zone `i - 1`'s first `2^(i-1)` cells and in zone
+`i`, the new track-`t` slot is the stated symbol of the old zone `i` (`zr_read_slot`), set by
+`zr_zonedTape_update`; elsewhere no track changes (`zr_zonedTape_update_same`), zone `i - 1`'s other
+cells staying empty. -/
 private lemma zr_shiftIn_tape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
     (hi : 1 ≤ i) (hiℓ : i < ℓ) (he : (z t).right ⟨i - 1, by omega⟩ = []) (q : ℤ) :
     zonedTape (Function.update z t (zoneShiftIn true i (z t))) q =
@@ -4751,7 +4850,12 @@ private lemma zr_getElem?_mid {α : Type} (P Q : List α) (x y : α) (n : ℕ) :
       List.getElem?_cons_succ]
 
 /-- **Cutting a field**: blanking the cell after `u` in a field `u ++ a :: v` splits it into the
-two fields `u` and `v`. -/
+two fields `u` and `v`.
+
+**Proof sketch.** Write the layout as the fields before, the cut field, and the fields after
+(`zr_joinFields_mid`). The blanked cell is the one right after `u` inside the cut field; a blank
+there is exactly a field separator, so the layout reads as the two fields `u` and `v`; every other
+cell is unchanged. -/
 private lemma zr_fieldsTape_cut {Γ : Type} (pre post : List (List Γ)) (u v : List Γ) (a : Γ) :
     Function.update (fieldsTape (pre ++ [u ++ a :: v] ++ post))
         ((fieldOffset pre pre.length + u.length : ℕ) : ℤ) none =
@@ -4816,7 +4920,13 @@ private def zr_PinStep {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
         C.time j d = τ j ∧ ∀ i, L j i ≤ C.lo j d i ∧ C.hi j d i ≤ U j i
 
 /-- **Pinned steps compose**: a sequence of two pinned steps, the second's start pin the
-first's endpoint pin, is a pinned step; the times add with the seam's step, the boxes join. -/
+first's endpoint pin, is a pinned step; the times add with the seam's step, the boxes join.
+
+**Proof sketch.** The two clauses of a pinned step. The sequenced contract's precondition is the
+first step's, so the first clause is the first step's. For the second, run the first step from its
+start pin, which ends at the second step's start pin, and run the second from there: the endpoints,
+input heads and outputs compose, the times add with the one dispatch step, and each head's box is
+the union of the two boxes. -/
 private lemma zr_PinStep_seq {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {x : List (ZoneSym k)}
     {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₁ d₁ : S₁}
     {e₂ : S₂} {X₂ : Set (Option S₂)} {C₁ : Contract M₁ e₁ {some d₁} J x}
@@ -4981,7 +5091,12 @@ private def zr_pinCellContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : 
   zr_stepContract i dir x (fun j d => V j ∧ zr_pinned (T j) (p j) d) wr
 
 /-- The one-cell leaf's pinned endpoint: tape `i` written at its head if asked, the head moved
-by `dir`. -/
+by `dir`.
+
+**Proof sketch.** The one-cell leaf's contract has time `1` and endpoint `zr_cellPost`: at its pin,
+the cell under head `i` is rewritten when asked and the head moves by `dir`. Each clause of the
+pinned step reads off that endpoint, and the head box is the minimum and maximum of the two
+positions. -/
 private lemma zr_pinCell_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop) (i : Fin 2)
     (dir : SignType) (wr : Option (Option (ZoneSym k)))
     (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :
@@ -5228,7 +5343,11 @@ private lemma zr_fieldsTape_snoc' {Γ : Type} (ws : List (List Γ)) (u : List Γ
   · exact zr_fieldsTape_snoc ws hw u z
 
 /-- **A copy onto blank scratch appends a field**: a mapped copy from tape `0` onto scratch at
-the next field's offset lays the mapped word out as a new last field. -/
+the next field's offset lays the mapped word out as a new last field.
+
+**Proof sketch.** By tape. Tape `0` is unchanged by the copy. On scratch, the cells up to the
+stack's base are unchanged; the copy writes the mapped word from the next field's offset, which is
+exactly the new last field of the layout (`zr_fieldsTape_snoc'`); the cells past it stay blank. -/
 private lemma zr_scr_copy {k : ℕ} {Δ : Type} (A σ : ℤ → Option (ZoneSym k)) (s a : ℤ)
     (ws : List (List (ZoneSym k))) (extract : ZoneSym k → Δ)
     (merge : Option (ZoneSym k) → Δ → ZoneSym k) (w : List (ZoneSym k)) (b : ℤ)
@@ -5603,7 +5722,13 @@ private lemma zr_slotSet_slotSet {k : ℕ} (t : Fin k) (c : Option (ZoneSym k))
 
 /-- **The shift's tape-`0` writes**: clearing the donor's track-`t` slots, writing them from
 the donor column's offset `2^(i-1)` on, and writing the receiver's first `2^(i-1)` slots from the
-column's first cells gives the zoned tape of the shifted track. -/
+column's first cells gives the zoned tape of the shifted track.
+
+**Proof sketch.** Cell by cell, against the shifted zoned tape of `zr_shiftIn_tape`. In the
+receiver's first `2^(i-1)` cells the write is the first column's cell; in the donor's first
+`3 · 2^(i-1)` cells it is the second column's cell `2^(i-1)` further on, and past them the slot is
+cleared; nothing else is written. The column copies hold the donor's track-`t` slots
+(`zr_col_zone`), and the layout facts `zr_inV_lengths` and `zr_inV_starts` place the zones. -/
 private lemma zr_inA3 {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_inV t J) :
     zr_wr0 (zoneSlotOf t) (zoneSlotSet t) (zr_W1 t J) (zr_inA2 t J) (zr_rstart J.i) =
       zonedTape (Function.update J.D.2 t (zoneShiftIn true J.i (J.D.2 t))) := by
@@ -5697,7 +5822,16 @@ private abbrev zr_inT {k : ℕ} (J : zr_Ix k) (A : ℤ → Option (ZoneSym k))
   zr_tapes A (zr_scr J.σ J.s L)
 
 /-- **The right inward shift at level `i`**, as one pinned segment: the thirty steps of the
-column move in sequence. -/
+column move in sequence.
+
+**Proof sketch.** Thirty pinned steps chained by `zr_segSeq`, each a catalog row or the one-cell
+leaf at explicit start and end pins; the step comments give the plan. Copy the donor's track-`t`
+column twice onto scratch and clear the donor's slots; return over the receiver and walk the field
+two inward to place cuts in the two copies, after `2^(i-1)` cells in the first and before cell
+`2^(i-1)` in the second; write the donor's slots from the second copy's rest and the receiver's from
+the first copy's head; clear the pieces and return both heads. Each step's obligations, its pinned
+tape matching the row's precondition and its heads inside the segment's box, follow from the layout
+facts `zr_inV_lengths` and `zr_inV_starts`. -/
 private def zr_inSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ (zr_inV t) (fun J => zr_inT J (zonedTape J.D.2) [])
       (fun J => zr_inT J (zr_inZ t J) []) (fun J => zr_heads (zr_rstart J.i) J.s)
@@ -6343,7 +6477,14 @@ private lemma zr_lfield_at {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : �
 `i - 1` is full and left zone `i` has room for `2^(i-1)` more slots, the shift at level `i`
 keeps track `t`'s first `2^(i-1)` slots of zone `i - 1` and clears the rest, and sets zone `i`'s
 slots to zone `i - 1`'s last `2^(i-1)` slots followed by zone `i`'s own; every other cell keeps
-its contents. Offsets are measured from each zone's inner end. -/
+its contents. Offsets are measured from each zone's inner end.
+
+**Proof sketch.** With its guard enabled (left zone `i - 1` full, room in left zone `i`), the pure
+shift `zoneShiftOut` keeps the first `2^(i-1)` symbols of left zone `i - 1` and prepends its last
+`2^(i-1)` to left zone `i`, leaving the right side and the home unchanged. Cell by cell, offsets
+measured outward from each zone's inner end: in zones `i - 1` and `i` the new track-`t` slot is the
+stated symbol (`zr_read_slot`), set by `zr_zonedTape_update`; elsewhere no track changes
+(`zr_zonedTape_update_same`). -/
 private lemma zr_shiftOut_tape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
     (hi : 1 ≤ i) (hiℓ : i < ℓ)
     (hf : ((z t).left ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1))
@@ -6577,7 +6718,14 @@ private lemma zr_slotSet_self {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t 
 
 /-- **The left outward shift's tape-`0` writes**: the outer zone's left part written from its
 own column from offset `2^(i-1)` on, its right part from the inner zone's first column cells,
-and the inner zone's first `2^(i-1)` cells cleared give the zoned tape of the shifted track. -/
+and the inner zone's first `2^(i-1)` cells cleared give the zoned tape of the shifted track.
+
+**Proof sketch.** Cell by cell, against the shifted zoned tape of `zr_shiftOut_tape`. In the outer
+zone, the part laid out from the outer column's offset `2^(i-1)` on comes from that column, and its
+remaining `2^(i-1)` cells come from the inner column's first cells; in the inner zone, the first
+`2^(i-1)` cells are cleared and the rest keep their slots (`zr_slotSet_self`). The column copies
+hold the zones' track-`t` slots (`zr_lcol`), and the layout facts `zr_outV_lengths` and
+`zr_outV_starts` place the zones. -/
 private lemma zr_outA3 {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_outV t J) :
     zr_wr0 (zoneSlotOf t) (fun c _ => zoneSlotSet t c none) (zr_oW t J) (zr_outO2 t J)
       (zr_lstart J.i) = zr_outZ t J := by
@@ -6655,7 +6803,16 @@ private abbrev zr_outT {k : ℕ} (J : zr_Ix k) (A : ℤ → Option (ZoneSym k))
   zr_tapes A (zr_scr J.σ (J.s + 1) L)
 
 /-- **The left outward shift at level `i`**, as one pinned segment: the forty steps of the
-column move in sequence. -/
+column move in sequence.
+
+**Proof sketch.** Forty pinned steps chained by `zr_segSeq`, each a catalog row or the one-cell leaf
+at explicit start and end pins; the step comments give the plan. Copy the outer zone's track-`t`
+column onto scratch and cut it before its cell `2^(i-1)`; copy the inner zone's column and cut it
+after its first `2^(i-1)` cells; return to the outer zone, write its left part from the outer
+column's rest and its right part from the inner column's head; clear the inner zone's first
+`2^(i-1)` slots; clear the four pieces and return both heads. Each step's obligations, its pinned
+tape matching the row's precondition and its heads inside the segment's box, follow from the layout
+facts `zr_outV_lengths` and `zr_outV_starts`. -/
 private def zr_outSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ (zr_outV t) (fun J => zr_outT J (zonedTape J.D.2) [])
       (fun J => zr_outT J (zr_outZ t J) [])
@@ -7569,7 +7726,13 @@ private lemma zr_pin_blink {k : ℕ} {S₀ S₁ J : Type} {x : List (ZoneSym k)}
 /-- **A pinned branch**: a pinned test whose verdict at `j` is `a₁` exactly when `v j`, followed
 by two arms pinned from the test's endpoint pin to one endpoint pin, each at the indices it
 selects, is a pinned step to that endpoint; its time is the selected arm's after the test and the
-dispatch step. -/
+dispatch step.
+
+**Proof sketch.** The branch's precondition is the test's, which gives the first clause. For the
+second, run the test from its pin; its verdict is `a₁` exactly when `v j` holds. By cases on `v j`,
+the selected arm starts at the test's endpoint pin, and its pinned step ends at the common endpoint
+pin. The endpoint, input head and output are the selected arm's, the time is the test's, the
+dispatch step and the arm's, and the head box is the union of the test's and the arm's boxes. -/
 private lemma zr_PinStep_branch {k : ℕ} {S₀ S₁ S₂ J : Type} [DecidableEq S₀] [DecidableEq S₁]
     {x : List (ZoneSym k)} {M₀ : MultiTapeTM 2 (ZoneSym k) S₀}
     {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₀ a₁ a₂ : S₀}
@@ -7727,7 +7890,12 @@ private def zr_pinPeekContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : 
       (fun j => j) (zr_pin_hlink (zr_pinCell_step V i δ none T p)
         (zr_pinTest_step V i choose (-δ) T _))) _ zr_verdicts_inr
 
-/-- The pinned peek is stationary, in three steps, its heads within one cell. -/
+/-- The pinned peek is stationary, in three steps, its heads within one cell.
+
+**Proof sketch.** The peek is a one-cell step by `δ` without a write, then the one-cell test
+stepping back by `-δ`. The two pinned steps compose (`zr_PinStep_seq`) into a step that returns to
+its own pin, the second update undoing the first, in `1 + 1 + 1` steps; the heads leave their pins
+by at most one cell. -/
 private lemma zr_pinPeek_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
     (i : Fin 2) (δ : SignType) (choose : Option (ZoneSym k) → Bool)
     (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :
@@ -7885,7 +8053,11 @@ private lemma zr_BackIs_seq {n : ℕ} {Γ S₁ S₂ J : Type} {x : List Γ} [Dec
   rw [Contract.seq_post, Cfg.mapState_state, hs]
   rfl
 
-/-- **A pinned branch returns the selected arm's verdict.** -/
+/-- **A pinned branch returns the selected arm's verdict.**
+
+**Proof sketch.** Run the test from the anchor; its verdict selects the arm. By cases on `v j`, the
+branch's endpoint is the selected arm's endpoint (`Contract.branch_post`), so its state is the arm's
+exit, and the arm's own verdict reading gives `w₁ j` or `w₂ j`, which is the branch's. -/
 private lemma zr_BackIs_branch {k : ℕ} {S₀ S₁ S₂ J : Type} [DecidableEq S₀] [DecidableEq S₁]
     {x : List (ZoneSym k)} {M₀ : MultiTapeTM 2 (ZoneSym k) S₀}
     {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₀ a₁ a₂ : S₀}
@@ -8004,7 +8176,14 @@ private abbrev zr_hostCfg {k : ℕ} {B : Type} {x : List (ZoneSym k)}
 to `(T (nxt j), p (nxt j))`, its exit sent by `back` to the anchor or to the escape as `fin j`
 says, a dispatch step and the body make a round from the anchor pinned at `j` to the
 anchor-phase state `some (fin j)` pinned at `nxt j`, in `τ j + 2` steps, under any head relation
-holding at the start and inside the body's box. -/
+holding at the start and inside the body's box.
+
+**Proof sketch.** One round of the loop host from the anchor: the dispatch step into the body
+(`zr_host_dispatch_run`), then the body's pinned step, run from its pin (`zr_PinStep`), whose exit
+`back` sends to the anchor or the escape. The body contract's time is `τ j + 1`, and its endpoint is
+the host configuration pinned at `nxt j` with the verdict `fin j` (`zr_bindState_eq`);
+`zr_round_of_body` turns this into a round of `τ j + 2` steps, the head relation holding inside the
+body's box. -/
 private lemma zr_pinRound {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
     {MB : MultiTapeTM 2 (ZoneSym k) B} {e : B} {X : Set (Option B)}
     (back : B → Option (Option Bool)) (C : Contract MB e X J x) (hnone : none ∉ X)
@@ -8076,7 +8255,14 @@ private lemma zr_pinRound {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
 `zr_pinRound`), validity passed on by every round that does not escape, the run from the anchor
 pinned at `j₀` repeats the body along `j₀, nxt j₀, …` until round `n`, the first whose `fin` is
 `true`, and stops at the escape pinned at `nxt^[n + 1] j₀`, after the rounds' times `τ + 2`,
-under any head relation holding at each round's start and inside each round's body box. -/
+under any head relation holding at each round's start and inside each round's body box.
+
+**Proof sketch.** Validity holds at every round start up to `n`, by induction on `m` from the
+passing condition `hV`. Each round is `zr_pinRound` at the index `nxt^[m] j₀`. By induction on
+`m ≤ n`, the segment from the start to round `m`'s anchor concatenates the first `m` rounds'
+segments (`Round.segment`, `Segment.trans`), each returning to the anchor since its verdict is
+`false`; round `n` escapes, and its segment ends the loop. This is the induction of
+`Turing.Round.iterate`, along the sequence of pinned starts instead of a configuration orbit. -/
 private lemma zr_pinLoop {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
     {MB : MultiTapeTM 2 (ZoneSym k) B} {e : B} {X : Set (Option B)}
     (back : B → Option (Option Bool)) (C : Contract MB e X J x) (hnone : none ∉ X)
@@ -8427,7 +8613,13 @@ private abbrev zr_pxFold {k : ℕ} (t : Fin k) (F : (ℓ : ℕ) → ℕ → Zone
   (List.range m).foldl (fun w r => F P.D.1 (G^[r] P.i) w) (P.D.2 t)
 
 /-- **A pass after `m` rounds**: track `t` changed at the fields `P.i, G P.i, …`, every other
-track and the stack's base kept, the field and the top moved `m` times. -/
+track and the stack's base kept, the field and the top moved `m` times.
+
+**Proof sketch.** Induction on `m`. One step of the pass index applies the round's operation `F` to
+track `t` at the current field and moves the field by `G` and the stack top by `δ`, keeping the
+other tracks, the level, the base and the stack's base. So after `m + 1` steps track `t` is the fold
+`zr_pxFold` extended by one more application, the field is `G^[m + 1] P.i`, and the top is
+`P.s + (m + 1) δ`. -/
 private lemma zr_px_iter {k : ℕ} (t : Fin k)
     (F : (ℓ : ℕ) → ℕ → ZoneContents ℓ → ZoneContents ℓ) (G : ℕ → ℕ) (δ : ℤ) (P : zr_Px k)
     (m : ℕ) :
@@ -8725,7 +8917,13 @@ private lemma zr_p1_facts {k : ℕ} {P : zr_Px k} (hV : zr_p1V P) :
   rw [show P.i - 1 + 1 = P.i by omega] at hs
   exact ⟨zr_rstart_mono (by omega), hs, by exact_mod_cast Nat.two_pow_pos _⟩
 
-/-- The descending right pass's lead: skip back over field `P.i - 1`, then push a count mark. -/
+/-- The descending right pass's lead: skip back over field `P.i - 1`, then push a count mark.
+
+**Proof sketch.** Two pinned steps chained by `zr_segSeq`: the skip back over field `P.i - 1`, then
+a one-cell write of a count mark on scratch with a step right. The skip's precondition is the zoned
+tape's reading of that field (`zr_rfield_at`, with its length from `zr_rfield_length`); the mark's
+write is the stack's push (`zr_stk_push`). Each step's heads stay inside the lead's box by the start
+positions' ordering (`zr_p1_facts`). -/
 private def zr_p1Lead {k : ℕ} (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_p1V zr_pT (fun P => zr_aT (zr_p1G P)) zr_rH
       (fun P => zr_rA (zr_p1G P)) _ zr_p1L zr_p1U from
@@ -8979,7 +9177,13 @@ private abbrev zr_p1Hi {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
   zr_heads (if P.i = 1 then zr_rstart P.i else zr_rstart P.i + 4 * zr_hh (zr_p1G P))
     (P.s + P.i + 8 * ((2 ^ P.i : ℕ) : ℤ) + 3)
 
-/-- Each round's box lies in the pass's box. -/
+/-- Each round's box lies in the pass's box.
+
+**Proof sketch.** After `m` rounds the field index is `P.i - m` and the stack top is `P.s + m`
+(`zr_dn_iter`). Zone starts grow with the index (`zr_rstart_mono`) and the half-capacity
+`2^(P.i - m - 2)` is at most the pass's, so each round's zoned-head box lies inside the pass's,
+between `-1` and the start of field `P.i` plus its capacity; the scratch head lies between `P.s` and
+`P.s + P.i + 8 · 2^(P.i) + 3`. -/
 private lemma zr_p1_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (m : ℕ) (hm : m < P.i) :
     ∀ i, zr_p1Lo P i ≤ zr_p1L ((zr_p1Nxt t)^[m] P) i ∧
       zr_p1U ((zr_p1Nxt t)^[m] P) i ≤ zr_p1Hi P i := by
@@ -9034,7 +9238,13 @@ private lemma zr_p1_anchor_box {k : ℕ} (P : zr_Px k) :
 
 /-- **The descending right pass**, as a pinned segment on its loop: from the anchor at field `P.i`'s
 start, `P.i` rounds shift track `t` inward at levels `P.i - 1, …, 1` (the last round, at the home,
-shifts nothing), push `P.i` count marks, and stop at the home. -/
+shifts nothing), push `P.i` count marks, and stop at the home.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the descending right pass's body:
+the round's verdict and its way back (`zr_p1Body_step`, `zr_p1Body_back`), validity passed on to the
+next index (`zr_p1_next_valid`), and the escape at the home after `P.i - 1` returning rounds, read
+from `zr_p1_home`. Each round's box lies in the pass's (`zr_p1_round_box`), and so does the
+anchor's. -/
 private noncomputable def zr_p1Pass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_p1Back t) (zr_p1Body t x) (zr_p1Body_none t x) (zr_p1Body_hX t x)
     (zr_p1Body_step t x) (zr_p1Body_back t x) (fun _ hV hh => zr_p1_next_valid t hV hh)
@@ -9085,7 +9295,14 @@ private abbrev zr_prL {k : ℕ} (J : zr_Ix k) : Fin 2 → ℤ :=
 private abbrev zr_prU {k : ℕ} (J : zr_Ix k) : Fin 2 → ℤ :=
   zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + zr_hh J + 3)
 /-- **The room probe**: copy the field one inward as a ruler and walk the zoned head onto the
-outer zone's room cell. -/
+outer zone's room cell.
+
+**Proof sketch.** Eight pinned steps chained by `zr_segSeq`; the step comments give the plan:
+scratch past the count; skip the inner zone; copy the track-`t` column of the field one inward onto
+scratch as a ruler (`zr_scr_copy`); back over the inner and the outer zones; the zoned head two
+cells left; and walk over the ruler, which ends the zoned head on the outer zone's room cell. Each
+step's precondition is the zoned tape's or the scratch layout's reading at its pin (`zr_lfield_at`,
+`zr_scr_at`), and its heads stay in the probe's box by `zr_prLen`'s lengths. -/
 private def zr_prSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ (zr_shPre) (fun J => zr_inT J (zonedTape J.D.2) [])
       (fun J => zr_inT J (zonedTape J.D.2) [zr_col t (zr_lfield J.D.2 (J.i - 1))])
@@ -9235,7 +9452,12 @@ private def zr_prSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
           if_false]
         all_goals omega))
 
-/-- **The probe's return**: skip back to the inner zone, clear the ruler, restore scratch. -/
+/-- **The probe's return**: skip back to the inner zone, clear the ruler, restore scratch.
+
+**Proof sketch.** Four pinned steps chained by `zr_segSeq`: skip the outer zone's rest to the inner
+zone; back over the scratch ruler; clear it (`zr_scr_clear`), restoring scratch's layout; and one
+step left to scratch's start. Each step's precondition is the zoned tape's or the scratch layout's
+reading at its pin, and its heads stay in the probe's box by `zr_prLen`'s lengths. -/
 private def zr_retSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ (zr_shPre)
       (fun J => zr_inT J (zonedTape J.D.2) [zr_col t (zr_lfield J.D.2 (J.i - 1))])
@@ -9697,7 +9919,11 @@ private lemma zr_popE_eq {k : ℕ} {P : zr_Px k} (hV : zr_pxV P) (hβ : P.β (P.
 private abbrev zr_popT {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ → Option (ZoneSym k) :=
   zr_tapes (zonedTape P.D.2) (zr_stk P.β P.b (P.s - 1))
 
-/-- **A pop**: step scratch down and blank the top mark, the zoned head at `a P`. -/
+/-- **A pop**: step scratch down and blank the top mark, the zoned head at `a P`.
+
+**Proof sketch.** Two one-cell pinned steps: scratch one cell left onto the top mark, then blank it
+in place. The blank is the stack's pop (`zr_stk_pop`), since the mark is above the stack's base; the
+zoned head stays at `a P`, and the scratch head moves between `P.s - 1` and `P.s`. -/
 private def zr_popSeg {k : ℕ} (x : List (ZoneSym k)) (V : zr_Px k → Prop) (a : zr_Px k → ℤ)
     (hV : ∀ P, V P → zr_pxV P ∧ P.b < P.s) :=
   show zr_PinSeg x _ _ _ V zr_pT zr_popT (fun P => zr_heads (a P) P.s)
@@ -9775,7 +10001,13 @@ private abbrev zr_ldL {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
 private abbrev zr_ldU {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ := zr_heads (zr_lstart P.i) P.s
 
 /-- **The left outward lead**: pop a count mark, then skip back over left field `P.i + 1` to its
-outermost cell. -/
+outermost cell.
+
+**Proof sketch.** Two pinned steps chained by `zr_segSeq`: the pop of a count mark (`zr_popSeg`),
+then the skip back over left field `P.i + 1` to its outermost cell. The skip's precondition is the
+zoned tape's reading of that field (`zr_lfield_at`, its length from `zr_lfield_length`), and the
+heads stay in the lead's box since left zone starts decrease with the index (`zr_lstart_anti`,
+`zr_lstart_succ`). -/
 private def zr_ldLead {k : ℕ} (x : List (ZoneSym k)) (V : zr_Px k → Prop)
     (hV : ∀ P, V P → (zr_pxV P ∧ P.b < P.s) ∧ P.i < P.D.1) :=
   show zr_PinSeg x _ _ _ V zr_pT zr_popT (fun P => zr_heads (zr_lstart P.i) P.s)
@@ -9962,7 +10194,11 @@ private lemma zr_popRound_back {k : ℕ} {S₂ : Type} (x : List (ZoneSym k)) (V
       zr_popE :=
   zr_peekRound_back x V 1 (-1) zr_popE a (fun _ => rfl) L U hL hU h₂ hb
 
-/-- The walk out's lead, from the anchor to the next index's anchor, in the round box. -/
+/-- The walk out's lead, from the anchor to the next index's anchor, in the round box.
+
+**Proof sketch.** The lead's pinned step (`zr_ldLead`), restated at the walk out's indices by
+`zr_PinStep_congr`. Since the stack is not empty, the next index pops one mark and moves one left
+field out, so the lead's endpoint pin is the next index's anchor; its box lies in the round box. -/
 private lemma zr_woLead_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_ldLead x (fun P => zr_woV P ∧ zr_popE P = false) fun _ h => zr_wo_lead h).C
       (fun P => zr_woV P ∧ zr_popE P = false) zr_pT (fun P => zr_pT (zr_woNxt t P)) zr_lH
@@ -10122,7 +10358,13 @@ private abbrev zr_woLo {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
 /-- The walk out's head box, its upper corner. -/
 private abbrev zr_woHi {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ := zr_heads (zr_lstart P.i + 1) (P.s + 1)
 
-/-- Each round's box lies in the walk out's box. -/
+/-- Each round's box lies in the walk out's box.
+
+**Proof sketch.** After `m ≤ P.s - P.b` rounds the field index is `P.i + m` and the stack top
+`P.s - m` (`zr_pop_iter`), and the round's verdict says whether the stack is empty (`zr_pop_pop`).
+Left zone starts decrease with the index (`zr_lstart_anti`), so each round's zoned-head box lies
+between the outermost field's start and the first field's; the scratch head lies between `P.b - 2`
+and `P.s + 1`. -/
 private lemma zr_wo_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_woV P) (m : ℕ)
     (hm : m ≤ (P.s - P.b).toNat) :
     ∀ i, zr_woLo P i ≤ zr_woL ((zr_woNxt t)^[m] P) i ∧
@@ -10162,7 +10404,13 @@ private lemma zr_wo_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_woV P
 
 /-- **The walk out**, as a pinned segment on its loop: from the anchor at left field `P.i`'s
 outermost cell, one round per count mark pops it and steps one left field out; on the empty stack it
-stops. -/
+stops.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the walk out's body: the round
+pops a mark and steps one left field out (`zr_woBody_step`, `zr_woBody_back`), validity passing on
+(`zr_pop_next_valid`). It escapes after `P.s - P.b` returning rounds, when the stack is empty
+(`zr_pop_pop`). Each round's box lies in the pass's (`zr_wo_round_box`), and so does the anchor's.
+-/
 private noncomputable def zr_woPass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_woBack t) (zr_woBody t x) (zr_woBody_none t x) (zr_woBody_hX t x)
     (zr_woBody_step t x) (zr_woBody_back t x)
@@ -10239,7 +10487,13 @@ private abbrev zr_p4Arm {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
     (zr_pin_hlink (zr_ldLead x _ _).step (zr_grdOut_step t x zr_popG _ fun _ h => zr_popG_pre h))
 
 /-- The ascending left pass's arm, from the anchor to the next index's anchor, in the round
-box. -/
+box.
+
+**Proof sketch.** The arm is the lead (pop a mark, then skip back over left field `P.i + 1`), then
+the guarded outward shift at that field's level, composed by `zr_PinStep_seq'`. The lead ends at the
+shift's start pin; the shift's pinned step (`zr_grdOut_step`) writes track `t`'s outward shift,
+which is the next index's tape. The two boxes lie in the round box, and the time is the lead's, the
+dispatch step and the guarded shift's, by its two guards. -/
 private lemma zr_p4Arm_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_p4Arm t x) (fun P => zr_upV P ∧ zr_popE P = false) zr_pT
       (fun P => zr_pT (zr_p4Nxt t P)) zr_lH (fun P => zr_lH (zr_p4Nxt t P))
@@ -10380,7 +10634,13 @@ private abbrev zr_p4Hi {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
   zr_heads (zr_lstart P.i + ((2 ^ P.i : ℕ) : ℤ) + 1)
     (P.s + 6 * ((2 ^ (P.i + (P.s - P.b).toNat) : ℕ) : ℤ) + 3)
 
-/-- Each round's box lies in the ascending left pass's box. -/
+/-- Each round's box lies in the ascending left pass's box.
+
+**Proof sketch.** After `m ≤ P.s - P.b` rounds the field index is `P.i + m` and the stack top
+`P.s - m` (`zr_pop_iter`), with the round's half-capacity `2^(P.i + m)`, at most the pass's last
+`2^(P.i + (P.s - P.b))`. Left zone starts decrease with the index (`zr_lstart_anti`), so each
+round's zoned-head box lies in the pass's, by cases on whether the stack is empty (`zr_pop_pop`);
+the scratch head lies between `P.b - 2` and `P.s` plus six half-capacities plus `3`. -/
 private lemma zr_p4_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_upV P) (m : ℕ)
     (hm : m ≤ (P.s - P.b).toNat) :
     ∀ i, zr_p4Lo P i ≤ zr_p4L ((zr_p4Nxt t)^[m] P) i ∧
@@ -10433,7 +10693,13 @@ private lemma zr_p4_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_upV P
 
 /-- **The ascending left pass**, as a pinned segment on its loop: from the anchor at left field
 `P.i`'s outermost cell, one round per count mark pops it, steps one left field out and runs the
-guarded outward shift at that field's level; on the empty stack it stops. -/
+guarded outward shift at that field's level; on the empty stack it stops.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the ascending left pass's body:
+the round pops a mark, steps one left field out and runs the guarded outward shift there
+(`zr_p4Body_step`, `zr_p4Body_back`), validity passing on (`zr_pop_next_valid`). It escapes after
+`P.s - P.b` returning rounds, on the empty stack (`zr_pop_pop`). Each round's box lies in the pass's
+(`zr_p4_round_box`), and so does the anchor's. -/
 private noncomputable def zr_p4Pass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_p4Back t) (zr_p4Body t x) (zr_p4Body_none t x) (zr_p4Body_hX t x)
     (zr_p4Body_step t x) (zr_p4Body_back t x)
@@ -10465,7 +10731,13 @@ private abbrev zr_reL {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ := zr_heads (zr_rs
 private abbrev zr_reU {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ := zr_heads (zr_rstart (P.i + 1)) P.s
 
 /-- **The right outward lead**: pop a count mark, then skip over right field `P.i` to the next
-field's start. -/
+field's start.
+
+**Proof sketch.** Two pinned steps chained by `zr_segSeq`: the pop of a count mark (`zr_popSeg`),
+then the skip over right field `P.i` to the next field's start. The skip's precondition is the zoned
+tape's reading of that field (`zr_rfield_at`, its length from `zr_rfield_length`), and the heads
+stay in the lead's box since right zone starts increase with the index (`zr_rstart_mono`,
+`zr_rstart_succ`). -/
 private def zr_reLead {k : ℕ} (x : List (ZoneSym k)) (V : zr_Px k → Prop)
     (hV : ∀ P, V P → (zr_pxV P ∧ P.b < P.s) ∧ P.i < P.D.1) :=
   show zr_PinSeg x _ _ _ V zr_pT zr_popT (fun P => zr_heads (zr_rstart P.i) P.s)
@@ -10516,7 +10788,13 @@ private abbrev zr_p3Arm {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
     (zr_pin_hlink (zr_reLead x _ _).step (zr_grdIn_step t x zr_popG _ fun _ h => zr_popG_pre h))
 
 /-- The ascending right pass's arm, from the anchor to the next index's anchor, in the round
-box. -/
+box.
+
+**Proof sketch.** The arm is the lead (`zr_reLead`: pop a mark, skip right field `P.i`), then the
+guarded inward shift at the next field's level, composed by `zr_PinStep_seq'`. The lead ends at the
+shift's start pin; the shift's pinned step (`zr_grdIn_step`) writes track `t`'s inward shift, which
+is the next index's tape. Both boxes lie in the round box, and the time is the lead's, the dispatch
+step and the guarded shift's. -/
 private lemma zr_p3Arm_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_p3Arm t x) (fun P => zr_upV P ∧ zr_popE P = false) zr_pT
       (fun P => zr_pT (zr_p3Nxt t P)) zr_rH (fun P => zr_rH (zr_p3Nxt t P))
@@ -10644,7 +10922,13 @@ private abbrev zr_p3Hi {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
       4 * ((2 ^ (P.i + (P.s - P.b).toNat - 1) : ℕ) : ℤ))
     (P.s + 8 * ((2 ^ (P.i + (P.s - P.b).toNat) : ℕ) : ℤ) + 1)
 
-/-- Each round's box lies in the ascending right pass's box. -/
+/-- Each round's box lies in the ascending right pass's box.
+
+**Proof sketch.** After `m ≤ P.s - P.b` rounds the field index is `P.i + m` and the stack top
+`P.s - m` (`zr_pop_iter`), with the round's half-capacity `2^(P.i + m)`. Right zone starts increase
+with the index (`zr_rstart_mono`, `zr_rstart_succ`), so each round's zoned-head box lies in the
+pass's, by cases on whether the stack is empty (`zr_pop_pop`) and whether the pass has rounds at
+all; the scratch head lies between `P.b - 2` and `P.s` plus eight half-capacities plus `1`. -/
 private lemma zr_p3_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_upV P) (m : ℕ)
     (hm : m ≤ (P.s - P.b).toNat) :
     ∀ i, zr_p3Lo P i ≤ zr_p3L ((zr_p3Nxt t)^[m] P) i ∧
@@ -10706,7 +10990,13 @@ private lemma zr_p3_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_upV P
 
 /-- **The ascending right pass**, as a pinned segment on its loop: from the anchor at right field
 `P.i`'s start, one round per count mark pops it, steps one right field out and runs the guarded
-inward shift at that field's level; on the empty stack it stops. -/
+inward shift at that field's level; on the empty stack it stops.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the ascending right pass's body:
+the round pops a mark, steps one right field out and runs the guarded inward shift there
+(`zr_p3Body_step`, `zr_p3Body_back`), validity passing on (`zr_pop_next_valid`). It escapes after
+`P.s - P.b` returning rounds, on the empty stack (`zr_pop_pop`). Each round's box lies in the pass's
+(`zr_p3_round_box`), and so does the anchor's. -/
 private noncomputable def zr_p3Pass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_p3Back t) (zr_p3Body t x) (zr_p3Body_none t x) (zr_p3Body_hX t x)
     (zr_p3Body_step t x) (zr_p3Body_back t x)
@@ -10755,7 +11045,12 @@ private lemma zr_p2_facts {k : ℕ} {P : zr_Px k} (hV : zr_p1V P) :
     by exact_mod_cast Nat.two_pow_pos _⟩
 
 /-- **The left inward skip**: skip over left field `P.i` to the next field inward's outermost
-cell. -/
+cell.
+
+**Proof sketch.** One pinned step: the skip over left field `P.i`, whose precondition is the zoned
+tape's reading of that field (`zr_lfield_at`). The field's length (`zr_lfield_length`) and the left
+zone starts' recurrence (`zr_lstart_succ`) place the skip's end at the next field inward's outermost
+cell; the zoned head stays between the two positions. -/
 private def zr_lsSeg {k : ℕ} (x : List (ZoneSym k)) (V : zr_Px k → Prop)
     (hV : ∀ P, V P → zr_pxV P ∧ 1 ≤ P.i) :=
   show zr_PinSeg x _ _ _ V zr_pT zr_pT zr_lH (fun P => zr_heads (zr_lstart (P.i - 1)) P.s) _ zr_lH
@@ -10781,7 +11076,12 @@ private def zr_lsSeg {k : ℕ} (x : List (ZoneSym k)) (V : zr_Px k → Prop)
         rw [hp]⟩
 
 /-- The descending left pass's lead: skip over left field `P.i` to the next field inward, then
-push a count mark. -/
+push a count mark.
+
+**Proof sketch.** Two pinned steps chained by `zr_segSeq`: the inward skip over left field `P.i`
+(`zr_lsSeg`), then a one-cell write of a count mark on scratch with a step right, which is the
+stack's push (`zr_stk_push`). The heads stay in the lead's box by the start positions' ordering
+(`zr_p2_facts`). -/
 private def zr_p2Lead {k : ℕ} (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_p1V zr_pT (fun P => zr_aT (zr_p1G P)) zr_lH
       (fun P => zr_lA (zr_p1G P)) _ zr_p2L zr_p2U from
@@ -10969,7 +11269,13 @@ private abbrev zr_p2Lo {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ := zr_heads (zr_l
 private abbrev zr_p2Hi {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
   zr_heads 2 (P.s + P.i + 6 * ((2 ^ P.i : ℕ) : ℤ) + 4)
 
-/-- Each round's box lies in the descending left pass's box. -/
+/-- Each round's box lies in the descending left pass's box.
+
+**Proof sketch.** After `m` rounds the field index is `P.i - m` and the stack top `P.s + m`
+(`zr_dn_iter`). Left zone starts decrease with the index (`zr_lstart_anti`, `zr_lstart_pow_anti`),
+so each round's zoned-head box lies between the start of left field `P.i` and the home's
+neighbourhood; its half-capacity is at most `2^(P.i)`, so the scratch head lies between `P.s` and
+`P.s + P.i + 6 · 2^(P.i) + 4`. -/
 private lemma zr_p2_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (m : ℕ) (hm : m < P.i) :
     ∀ i, zr_p2Lo P i ≤ zr_p2L ((zr_p2Nxt t)^[m] P) i ∧
       zr_p2U ((zr_p2Nxt t)^[m] P) i ≤ zr_p2Hi P i := by
@@ -11008,7 +11314,13 @@ private lemma zr_p2_anchor {k : ℕ} (P : zr_Px k) :
 
 /-- **The descending left pass**, as a pinned segment on its loop: from the anchor at left field
 `P.i`'s outermost cell, `P.i` rounds shift track `t` outward at levels `P.i - 1, …, 1` (the last
-round, at the home, shifts nothing), push `P.i` count marks, and stop at the home. -/
+round, at the home, shifts nothing), push `P.i` count marks, and stop at the home.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the descending left pass's body:
+each round shifts track `t` outward at the current level and pushes a mark (`zr_p2Body_step`,
+`zr_p2Body_back`), validity passing on (`zr_dn_valid`), and the escape is at the home after
+`P.i - 1` returning rounds (`zr_p2_home`). Each round's box lies in the pass's (`zr_p2_round_box`),
+and so does the anchor's. -/
 private noncomputable def zr_p2Pass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_p2Back t) (zr_p2Body t x) (zr_p2Body_none t x) (zr_p2Body_hX t x)
     (zr_p2Body_step t x) (zr_p2Body_back t x)
@@ -11069,7 +11381,12 @@ private abbrev zr_rbU {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
     (P.s + 8 * zr_hh (zr_p1G P) + 3)
 
 /-- The right return's arm: the descending right lead, from the anchor to the next index's
-anchor, in the round box. -/
+anchor, in the round box.
+
+**Proof sketch.** The arm is the descending right pass's lead (`zr_p1Lead`) at the return's indices,
+restated by `zr_PinStep_congr`: it skips back over the next field inward and pushes a mark, with
+track `t` unchanged, so its endpoint pin is the next index's anchor; its box lies in the round box.
+-/
 private lemma zr_rbArm_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_segRe (zr_p1Lead x) (fun P => P) (fun P => zr_pxV P ∧ zr_rbHome P = false)
         fun _ h => zr_rb_lead h).C (fun P => zr_pxV P ∧ zr_rbHome P = false) zr_pT
@@ -11181,7 +11498,13 @@ private abbrev zr_rbHi {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
   zr_heads (if P.i = 0 then 1 else zr_rstart P.i + 4 * ((2 ^ (P.i - 1 - 1) : ℕ) : ℤ))
     (P.s + P.i + 8 * ((2 ^ P.i : ℕ) : ℤ) + 3)
 
-/-- Each round's box lies in the right return's box. -/
+/-- Each round's box lies in the right return's box.
+
+**Proof sketch.** After `m ≤ P.i` rounds the field index is `P.i - m` and the stack top `P.s + m`
+(`zr_rb_iter`, `zr_dn_iter`), and the round's verdict says whether it is at the home (`zr_rb_home`).
+Right zone starts increase with the index (`zr_rstart_mono`), so each round's zoned-head box lies
+between `-1` and the start of field `P.i` plus its capacity, by cases on the home; the scratch head
+lies between `P.s - 1` and `P.s + P.i + 8 · 2^(P.i) + 3`. -/
 private lemma zr_rb_round_box {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_pxV P) (m : ℕ)
     (hm : m ≤ P.i) :
     ∀ i, zr_rbLo P i ≤ zr_rbL ((zr_rbNxt t)^[m] P) i ∧
@@ -11250,7 +11573,13 @@ private lemma zr_rb_anchor {k : ℕ} (P : zr_Px k) :
   · exact ⟨show P.s - 1 ≤ P.s by omega, show P.s ≤ P.s + 8 * zr_hh (zr_p1G P) + 3 by omega⟩
 
 /-- **The right return**, as a pinned segment on its loop: from the anchor at right field `P.i`'s
-start, `P.i` rounds skip back to the home, pushing a count mark for each field crossed. -/
+start, `P.i` rounds skip back to the home, pushing a count mark for each field crossed.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the right return's body: each
+round skips back one right field and pushes a mark (`zr_rbBody_step`, `zr_rbBody_back`), validity
+passing on (`zr_rb_valid`), and the escape is at the home after `P.i` returning rounds
+(`zr_rb_home`). Each round's box lies in the pass's (`zr_rb_round_box`), and so does the anchor's.
+-/
 private noncomputable def zr_rbPass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_rbBack t) (zr_rbBody t x) (zr_rbBody_none t x) (zr_rbBody_hX t x)
     (zr_rbBody_step t x) (zr_rbBody_back t x)
@@ -11305,7 +11634,11 @@ private abbrev zr_lbU {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
   zr_heads (zr_lstart (P.i - 1) + 1) (P.s + 1)
 
 /-- The left return's arm: the inward skip, from the anchor to the next index's anchor, in the
-round box. -/
+round box.
+
+**Proof sketch.** The arm is the inward skip (`zr_lsSeg`) at the return's indices, restated by
+`zr_PinStep_congr`: it skips one left field inward with track `t` and the stack unchanged, so its
+endpoint pin is the next index's anchor; its box lies in the round box. -/
 private lemma zr_lbArm_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_lsSeg x (fun P => zr_pxV P ∧ zr_lbHome P = false) fun _ h => zr_lb_lead h).C
       (fun P => zr_pxV P ∧ zr_lbHome P = false) zr_pT (fun P => zr_pT (zr_lbNxt t P)) zr_lH
@@ -11438,7 +11771,13 @@ private lemma zr_lb_anchor {k : ℕ} (P : zr_Px k) :
   · exact ⟨show P.s - 1 ≤ P.s by omega, show P.s ≤ P.s + 1 by omega⟩
 
 /-- **The left return**, as a pinned segment on its loop: from the anchor at left field `P.i`'s
-outermost cell, `P.i` rounds skip inward to the home. -/
+outermost cell, `P.i` rounds skip inward to the home.
+
+**Proof sketch.** An instance of the pinned pass `zr_passSeg` with the left return's body: each
+round skips one left field inward (`zr_lbBody_step`, `zr_lbBody_back`), validity passing on since
+the index decreases and the stack is unchanged (`zr_lb_iter`), and the escape is at the home after
+`P.i` returning rounds (`zr_lb_home`). Each round's box lies in the pass's (`zr_lb_round_box`), and
+so does the anchor's. -/
 private noncomputable def zr_lbPass {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   zr_passSeg (zr_lbBack t) (zr_lbBody t x) (zr_lbBody_none t x) (zr_lbBody_hX t x)
     (zr_lbBody_step t x) (zr_lbBody_back t x)
@@ -11576,7 +11915,14 @@ private lemma zr_scr_splitLast {k : ℕ} (A σ : ℤ → Option (ZoneSym k)) (s 
   rw [h, List.drop_eq_nil_of_le (by omega),
     show pre ++ [w.take n, []] = (pre ++ [w.take n]) ++ [[]] by simp, zr_scr_nilLast]
 /-- **The home move's gather**: lay out on scratch, as one-cell fields, left zone `0`'s inner
-slot, the home and right zone `0`'s two slots, track `t`'s column. -/
+slot, the home and right zone `0`'s two slots, track `t`'s column.
+
+**Proof sketch.** Seventeen pinned steps chained by `zr_segSeq`; the step comments give the plan.
+Past the count, copy track `t`'s column of left zone `0` onto scratch and cut off its outer slot;
+skip to the home and copy its column; skip to right zone `0`, copy its column and cut its first
+slot, copy it again and cut its second slot. Each copy appends a field to scratch's layout
+(`zr_scr_copy`), each cut splits one (`zr_fieldsTape_cut`), and each step's heads stay in the home
+move's box. -/
 private def zr_hmGat {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_hmV
       (fun J => zr_hmT J (zonedTape J.D.2) [])
@@ -11857,7 +12203,13 @@ private def zr_hmGat {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
           Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_hmL, zr_hmU, if_true,
           show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
         all_goals omega))
-/-- **The home move's first scatter**: write the new home and right zone `0`'s shifted slots. -/
+/-- **The home move's first scatter**: write the new home and right zone `0`'s shifted slots.
+
+**Proof sketch.** Eleven pinned steps chained by `zr_segSeq`, steps 18 to 28 of the home move; the
+step comments give the plan. Back over the home, write the new home from the gathered column and
+clear that field; step the zoned head to right zone `0`, set its first slot from the gathered slots
+and clear its second slot with the corresponding field. Each write is the one-cell leaf's at its
+pin, each clear empties one scratch field, and each step's heads stay in the home move's box. -/
 private def zr_hmSc1 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_hmV
       (fun J => zr_hmT J (zonedTape J.D.2) [[], zr_hmB t J, zr_hmH t J, [], zr_hmE t J, zr_hmC t J])
@@ -12057,7 +12409,13 @@ private def zr_hmSc1 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
           if_false]
         all_goals omega))
 /-- **The home move's second scatter**: write left zone `0`'s shifted slots and restore the
-heads. -/
+heads.
+
+**Proof sketch.** Twenty pinned steps chained by `zr_segSeq`, steps 29 to 48 of the home move; the
+step comments give the plan. Walk both heads left to left zone `0`, set its first slot from the old
+home's column and clear that field, step left and set its second slot from the gathered inner slot
+and clear its field, then return both heads. Each write is the one-cell leaf's at its pin, each
+clear empties one scratch field, and each step's heads stay in the home move's box. -/
 private def zr_hmSc2 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_hmV
       (fun J => zr_hmT J (zr_hmA3 t J) [[], zr_hmB t J, zr_hmH t J])
@@ -12381,7 +12739,13 @@ private lemma zr_enc_of_slot {k : ℕ} (t : Fin k) {o : Option (ZoneSym k)}
     rw [Option.map_some, h]
 
 /-- The home move's scratch cells: track `t`'s slots of left zone `0`'s inner cell, the home,
-and right zone `0`'s two cells. -/
+and right zone `0`'s two cells.
+
+**Proof sketch.** Read the four cells from the zoned tape. Left zone `0`'s inner cell, the home and
+right zone `0`'s two cells are at positions `-2`, `0`, `2` and `3` (`zr_lfield_at`, `zr_rfield_at`),
+and their track-`t` slots are the stated entries of the zone contents (`zr_read_slot`, with zone
+`0`'s capacity `2`). The gathered columns hold exactly the encodings of these slots
+(`zr_enc_of_slot`). -/
 private lemma zr_hm_cells {k : ℕ} (t : Fin k) {J : zr_Px k} (hV : zr_hmV J) :
     FinTM.bufferTape (zr_hmB t J) 0 = some (zr_enc ((J.D.2 t).left ⟨0, hV.2⟩)[0]?) ∧
       FinTM.bufferTape (zr_hmH t J) 0 = some (zr_enc (some (J.D.2 t).home)) ∧
@@ -12420,7 +12784,15 @@ private lemma zr_hm_cells {k : ℕ} (t : Fin k) {J : zr_Px k} (hV : zr_hmV J) :
     exact zr_enc_of_slot t s3
 
 /-- **The home move on the zoned tape**, its guard enabled: when track `t`'s left zone `0` has
-room (its outer slot `⊠`), the column operation's tape is the zoned tape of the moved track. -/
+room (its outer slot `⊠`), the column operation's tape is the zoned tape of the moved track.
+
+**Proof sketch.** With the guard enabled, left zone `0` has room, so the pure home move is
+`zoneMoveRight`: the old home becomes left zone `0`'s inner symbol and its old inner symbol moves
+outward, right zone `0`'s first symbol becomes the home, and its second symbol moves inward. Cell by
+cell over the five cells the column operation writes (positions `-3`, `-2`, `0`, `2`, `3`), the
+written slot is the moved contents' slot (`zr_read_slot`, `zr_hm_cells`), set by
+`zr_zonedTape_update`; every other cell keeps every track (`zr_zonedTape_update_same`), since only
+zone `0` on either side changes. -/
 private lemma zr_hmZ_eq {k : ℕ} (t : Fin k) {J : zr_Px k} (hV : zr_hmV J)
     (hg : (zonedTape J.D.2 (-3)).map (zoneSlotOf t) = some none) :
     zr_hmZ t J = zonedTape (Function.update J.D.2 t (zoneMove true (J.D.2 t))) := by
@@ -13082,7 +13454,13 @@ private abbrev zr_fpU {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
   zr_heads (zoneStart P.i) (P.b + 9 * ((2 ^ P.i : ℕ) : ℤ) + 11)
 
 /-- The found path's layout facts: the scanned zone's field and its neighbours, and the sizes
-the passes' boxes are stated in. -/
+the passes' boxes are stated in.
+
+**Proof sketch.** Arithmetic on the layout. Zone starts satisfy
+`zoneStart (i + 1) = zoneStart i + zoneCapacity i + 1` with `zoneCapacity i = 2^(i+1)`
+(`zoneStart_succ`, `zoneCapacity_eq`), so `zoneStart P.i = zoneStart (P.i - 1) + 2^(P.i) + 1`; the
+right and left starts are `zr_rstart` and `zr_lstart` of these, and the inequalities are
+monotonicity of the starts (`zr_rstart_mono`, `zr_lstart_anti`) and `P.i ≤ 2^(P.i)`. -/
 private lemma zr_fp_facts {k : ℕ} {P : zr_Px k} (hV : zr_fpV P) :
     zr_rstart 0 = 0 ∧ zr_lstart 0 = 0 ∧ zr_rstart P.i = zoneStart (P.i - 1) ∧
       (zoneStart P.i : ℤ) = zoneStart (P.i - 1) + ((2 ^ P.i : ℕ) : ℤ) + 1 ∧
@@ -13135,7 +13513,11 @@ private def zr_fpG0 {k : ℕ} (x : List (ZoneSym k)) :=
       Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), SignType.coe_one]
     all_goals omega
 
-/-- The found path's descending right pass, from the start to stage one. -/
+/-- The found path's descending right pass, from the start to stage one.
+
+**Proof sketch.** The descending right pass's pinned step, re-indexed at the found path's stage
+start (`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage one's tape and
+heads (`zr_fp1`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG1 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV zr_pT (fun P => zr_pT (zr_fpS1 t P)) zr_rH
     (fun P => zr_lH (zr_fpS1 t P)) _ zr_fpL zr_fpU from
@@ -13165,7 +13547,11 @@ private noncomputable def zr_fpG1 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     · show P.s + P.i + 8 * ((2 ^ P.i : ℕ) : ℤ) + 3 ≤ P.b + 9 * ((2 ^ P.i : ℕ) : ℤ) + 11
       omega
 
-/-- The found path's walk out, from stage one to stage two. -/
+/-- The found path's walk out, from stage one to stage two.
+
+**Proof sketch.** The walk out's pinned step, re-indexed at the found path's stage one
+(`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage two's tape and heads
+(`zr_fp2`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG2 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS1 t P)) (fun P => zr_pT (zr_fpS2 t P))
     (fun P => zr_lH (zr_fpS1 t P)) (fun P => zr_lH (zr_fpS2 t P)) _ zr_fpL zr_fpU from
@@ -13194,7 +13580,11 @@ private noncomputable def zr_fpG2 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     · show P.b + P.i + 1 ≤ P.b + 9 * ((2 ^ P.i : ℕ) : ℤ) + 11
       omega
 
-/-- The found path's descending left pass, from stage two to stage three. -/
+/-- The found path's descending left pass, from stage two to stage three.
+
+**Proof sketch.** The descending left pass's pinned step, re-indexed at the found path's stage two
+(`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage three's tape and heads
+(`zr_fp3`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG3 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS2 t P)) (fun P => zr_pT (zr_fpS3 t P))
     (fun P => zr_lH (zr_fpS2 t P)) (fun P => zr_heads 0 (zr_fpS3 t P).s) _ zr_fpL zr_fpU from
@@ -13241,7 +13631,11 @@ private noncomputable def zr_fpG4 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     · show P.b + P.i + 11 ≤ P.b + 9 * ((2 ^ P.i : ℕ) : ℤ) + 11
       omega
 
-/-- The found path's single pop, from stage four to stage five. -/
+/-- The found path's single pop, from stage four to stage five.
+
+**Proof sketch.** The pop's pinned segment (`zr_popSeg` with the zoned head at home), re-indexed at
+stage four (`zr_segRe`), whose stack is nonempty there. Its endpoint is stage five's tape and heads,
+and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private def zr_fpG5 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS4 t P)) (fun P => zr_pT (zr_fpS5 t P))
     (fun P => zr_heads 0 (zr_fpS4 t P).s) (fun P => zr_rH (zr_fpS5 t P)) _ zr_fpL zr_fpU from
@@ -13265,7 +13659,11 @@ private def zr_fpG5 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
     · show P.b + P.i ≤ P.b + 9 * ((2 ^ P.i : ℕ) : ℤ) + 11
       omega
 
-/-- The found path's ascending right pass, from stage five to stage six. -/
+/-- The found path's ascending right pass, from stage five to stage six.
+
+**Proof sketch.** The ascending right pass's pinned step, re-indexed at the found path's stage five
+(`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage six's tape and heads
+(`zr_fp6`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG6 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS5 t P)) (fun P => zr_pT (zr_fpS6 t P))
     (fun P => zr_rH (zr_fpS5 t P)) (fun P => zr_rH (zr_fpS6 t P)) _ zr_fpL zr_fpU from
@@ -13303,7 +13701,11 @@ private noncomputable def zr_fpG6 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
       rw [hn, zero_add]
       omega
 
-/-- The found path's right return, from stage six to stage seven. -/
+/-- The found path's right return, from stage six to stage seven.
+
+**Proof sketch.** The right return's pinned step, re-indexed at the found path's stage six
+(`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage seven's tape and heads
+(`zr_fp7`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG7 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS6 t P)) (fun P => zr_pT (zr_fpS7 t P))
     (fun P => zr_rH (zr_fpS6 t P)) (fun P => zr_lH (zr_fpS7 t P)) _ zr_fpL zr_fpU from
@@ -13336,7 +13738,11 @@ private noncomputable def zr_fpG7 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
         P.b + 9 * ((2 ^ P.i : ℕ) : ℤ) + 11
       omega
 
-/-- The found path's ascending left pass, from stage seven to stage eight. -/
+/-- The found path's ascending left pass, from stage seven to stage eight.
+
+**Proof sketch.** The ascending left pass's pinned step, re-indexed at the found path's stage seven
+(`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage eight's tape and heads
+(`zr_fp8`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG8 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS7 t P)) (fun P => zr_pT (zr_fpS8 t P))
     (fun P => zr_lH (zr_fpS7 t P)) (fun P => zr_lH (zr_fpS8 t P)) _ zr_fpL zr_fpU from
@@ -13370,7 +13776,11 @@ private noncomputable def zr_fpG8 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
       rw [hn, zero_add]
       omega
 
-/-- The found path's left return, from stage eight to stage nine. -/
+/-- The found path's left return, from stage eight to stage nine.
+
+**Proof sketch.** The left return's pinned step, re-indexed at the found path's stage eight
+(`zr_PinStep_re`), whose validity the stage satisfies. Its endpoint is stage nine's tape and heads
+(`zr_fp9`), and its boxes lie in the found path's box by the layout facts `zr_fp_facts`. -/
 private noncomputable def zr_fpG9 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
   show zr_PinSeg x _ _ _ zr_fpV (fun P => zr_pT (zr_fpS8 t P)) (fun P => zr_pT (zr_fpS9 t P))
     (fun P => zr_lH (zr_fpS8 t P)) (fun P => zr_heads 0 P.b) _ zr_fpL zr_fpU from
@@ -13621,7 +14031,14 @@ private lemma zr_pop_fields {k : ℕ} (t : Fin k)
   obtain ⟨he, -, hi, -⟩ := zr_pop_iter t F Q m (by omega)
   rw [he, hi]
 
-/-- **The found path's time**: at most `1000 · 2^(i₀ + 1) + 200` steps. -/
+/-- **The found path's time**: at most `1000 · 2^(i₀ + 1) + 200` steps.
+
+**Proof sketch.** Write `n = i₀ + 1`. Bound each pass by its rounds: a round at level `j` takes at
+most `a · 2^j + b` steps, for constants `a`, `b` of that pass (`zr_p1Tau_le`, `zr_woTau_le`,
+`zr_p2Tau_le`, `zr_p3Tau_le`, `zr_rbTau_le`, `zr_p4Tau_le`, `zr_lbTau_le`). The levels of a pass run
+through at most `n` consecutive values, so the geometric sum gives at most `2a · 2^n + b · n` for
+the pass (`zr_pass_time_desc`, `zr_pass_time_asc`). Adding the home move's at most `155` steps, the
+pop and the dispatch steps between the stages gives at most `1000 · 2^n + 200`, using `n < 2^n`. -/
 private lemma zr_fpSeg_time {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) {P : zr_Px k}
     (hV : zr_fpV P) : zr_tauOf (zr_fpSeg t x) P ≤ 1000 * 2 ^ P.i + 200 := by
   have h1i := hV.2.2.2.1
@@ -13762,7 +14179,13 @@ private def zr_scanPin {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
       exact zr_scanPin_pre t x I d hp
 
 /-- **The scan's pinned step**: from the row's start to the scan's count of `i₀ + 1` marks, the
-zoned head at zone `i₀`'s start, in the row's box. -/
+zoned head at zone `i₀`'s start, in the row's box.
+
+**Proof sketch.** The scan's pinned step from its contract (`zr_pinRe_ofSeg`). At the row's start
+the zoned head is at home and scratch is blank, which is the scan's precondition; its fields
+(`zr_scan_fields`) give the endpoint, the count of `i₀ + 1` marks on scratch and the zoned head at
+zone `i₀`'s start, which is the stage-zero pin, and the time. The heads stay in the row's box since
+zone starts are at least `2` (`two_le_zoneStart`). -/
 private lemma zr_scanPin_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_scanPin t x) (fun _ => True) zr_rowT0 (fun I => zr_pT (zr_rowP0 t I))
       (fun I => zr_heads 0 I.2)
@@ -13857,7 +14280,13 @@ private def zr_ccPin {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
     (Sum.inr (Sum.inr SweepPhase.done))
 
 /-- **The count clear's pinned step**: from the found path's end to the row's endpoint, scratch
-blank again and its head back at its start. -/
+blank again and its head back at its start.
+
+**Proof sketch.** The count clear's pinned step at the found path's end (`zr_pinRe_step`). There
+scratch holds exactly the count of `i₀ + 1` marks (`zr_cc_scratch`), so the count clear's fields
+(`zr_countClear_fields`) blank it and return its head to the start, in `3 (i₀ + 1) + 8` steps. Tape
+`0` is the found path's data, which is the rebalanced data (`zr_fp_data`, `zoneRebalance_of_lt`,
+`zoneCascade_true`): the row's endpoint. -/
 private lemma zr_ccPin_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_ccPin t x)
       (fun I => True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = true)
@@ -13967,7 +14396,13 @@ private def zr_shortPin {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
     (Sum.inr (Sum.inr (Sum.inr SweepPhase.done)))
 
 /-- **The short path's pinned step**: from a short scan's end to the row's endpoint, the data
-unchanged. -/
+unchanged.
+
+**Proof sketch.** The short path's pinned step at a short scan's end (`zr_pinRe_step`). On a short
+scan the scanned index is `ℓ` (`zr_short_eq`), so the short path's fields (`zr_short_fields`) return
+the zoned head home and clear the count; tape `0` is unchanged, and the rebalance at an index `≥ ℓ`
+is the identity (`zoneRebalance_of_le`), so this is the row's endpoint. The heads stay in the row's
+box by zone starts' monotonicity. -/
 private lemma zr_shortPin_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
     zr_PinStep (zr_shortPin t x)
       (fun I => True ∧ decide (zoneRebalanceIndex true t I.1 < I.1.1) = false)
@@ -14077,7 +14512,13 @@ private lemma zr_rowC_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
   zr_BackIs_branch zr_scanNe (zr_scanPin_step t x) (zr_scan_verdict t x)
     (zr_BackIs_one _ true) (zr_BackIs_one _ false)
 
-/-- The rightward row's exit state. -/
+/-- The rightward row's exit state.
+
+**Proof sketch.** The row's exit state is read through its way back (`zr_rowC_back`): it is some
+state `s` whose verdict is the branch's. By cases on whether the scanned index is below `ℓ`: on a
+found scan only the found arm's exit has the found verdict, and on a short scan only the short arm's
+exit has the short verdict; the other cases contradict the verdict (`zr_branchBack`, `zr_oneBack`).
+-/
 private lemma zr_rowC_state {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) (I : ZoneData k × ℤ)
     (d : Cfg 2 (ZoneSym k) (zr_stOf (zr_rowC t x)) x)
     (hd : d.state = some (zr_entryOf (zr_rowC t x))) (hp : (zr_rowC t x).pre I d) :
@@ -14170,7 +14611,15 @@ private noncomputable abbrev zr_rowShort {k : ℕ} (t : Fin k) :=
     zr_stOf (zr_rowC t ([] : List (ZoneSym k))))
 
 /-- **The rightward rebalance row** on the data, its envelopes at the constant `C ≥ 2300`: the
-rightward row at the start's own scratch start. -/
+rightward row at the start's own scratch start.
+
+**Proof sketch.** The segment obligation. At the row's precondition the start is the row's start pin
+(`zr_rowPre_pin`), so the branch's pinned step (`zr_rowC_step`) gives its endpoint pin, input head
+and output, and the branch contract gives a segment to its endpoint. That endpoint is
+`zoneRebalancePost` (its state by `zr_rowC_state`, its tapes and heads from the pin and the
+precondition's blank scratch). The pinned box lies in the envelopes `zoneRowLo`/`zoneRowHi` at any
+`C ≥ 2300`, since the row's box is within `2300 · (2^(i₀) + 1)` of its start and `i₀ < 2^(i₀)`; the
+exit is `done` or `short`. -/
 private noncomputable def zr_rowR {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C)
     (x : List (ZoneSym k)) :
     Contract (zr_machineOf (zr_rowC t ([] : List (ZoneSym k))))
@@ -14306,7 +14755,14 @@ private def zr_mirTM {k : ℕ} {S : Type} (M : MultiTapeTM 2 (ZoneSym k) S) :
       workTapes := fun j => if j = 0 then (((M.tr q inp work).workTapes 0).1,
         -((M.tr q inp work).workTapes 0).2) else (M.tr q inp work).workTapes j }
 
-/-- **The mirrored machine's step is the mirrored step.** -/
+/-- **The mirrored machine's step is the mirrored step.**
+
+**Proof sketch.** By the control state. A halted configuration is fixed by both machines. Otherwise
+the mirrored configuration reads the same input cell (`zr_inputSymbol_congr`) and the same work-tape
+symbols, since tape `0` and its head are both reflected, so both machines take the same transition.
+Applying it, field by field (`Action.apply_*`): the state, input head and output agree, the other
+tape is unchanged by the mirror, and on tape `0` the reversed move of the reflected head lands on
+the reflection of the new head, with the write at the reflected cell. -/
 private lemma zr_mir_step {k : ℕ} {S : Type} {x : List (ZoneSym k)}
     (M : MultiTapeTM 2 (ZoneSym k) S) (c : Cfg 2 (ZoneSym k) S x) :
     (zr_mirTM M).step (zr_mir c) = zr_mir (M.step c) := by
@@ -14427,7 +14883,14 @@ private lemma zr_mir_pre {k : ℕ} {S : Type} {x : List (ZoneSym k)} {D : ZoneDa
   · exact hp.2.2 r
 
 /-- **The mirrored rightward endpoint is the leftward endpoint**: reflecting the rightward row's
-endpoint at the exchanged data and the mirrored start gives the leftward row's. -/
+endpoint at the exchanged data and the mirrored start gives the leftward row's.
+
+**Proof sketch.** Field by field. The mirror reflects tape `0` and its head and keeps the rest.
+Exchanging every track's sides commutes with the rebalance: at track `t` the rightward rebalance of
+the exchanged contents is the exchange of the leftward rebalance (`zoneRebalance_false`,
+`ZoneContents.swap_swap`), and the scanned index is the same (`zr_index_swap`). The reflected zoned
+tape of exchanged contents is the zoned tape of the contents (`zr_mirror_tape`), so the reflected
+rightward endpoint is the leftward one. -/
 private lemma zr_mir_post {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k) (done short : S)
     (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x) :
     zr_mir (zoneRebalancePost true t done short (zr_swapD D) (zr_mir d)) =
@@ -14456,7 +14919,13 @@ private lemma zr_mir_post {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k
 
 /-- **The mirrored per-step box lies in the mirrored envelope**: along an admissible run, each
 step's mirrored heads, and at a live step the next ones, stay in the source envelope reflected on
-tape `0`. -/
+tape `0`.
+
+**Proof sketch.** Along the run every head stays in the contract's envelope (`Contract.env`); after
+the mirror, tape `0`'s head is reflected, so it stays in the reflected envelope `[-hi, -lo]`, and
+the other head is unchanged. At an exit step the box is the current heads only; at a live step,
+which is before the contract's time, it also contains the next step's heads, which are again in the
+envelope. -/
 private lemma zr_mir_env {k : ℕ} {S I : Type} {x : List (ZoneSym k)}
     {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} (R : Contract M e X I x)
     (i : I) (c : Cfg 2 (ZoneSym k) S x) (hc : c.state = some e) (hp : R.pre i c) (u : ℕ)
@@ -14507,7 +14976,15 @@ private lemma zr_mir_lohi {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k
   · simp [zoneRowLo, zoneRowHi, hj, zr_index_swap, zr_mir]
 
 /-- **The leftward rebalance row** on the data: the rightward row transported along the mirror
-lockstep, at the exchanged data and the mirrored start. -/
+lockstep, at the exchanged data and the mirrored start.
+
+**Proof sketch.** The segment obligation. At the leftward precondition the mirrored start at the
+exchanged data satisfies the rightward row's precondition (`zr_mir_pre`). Transport the rightward
+row along the mirror lockstep (`Contract.lockstep`, `zr_mir_lockstep`, with the per-step box
+`zr_mirB`): its segment runs the mirrored machine from the start, with the rightward row's time
+since each lockstep step costs one step. Its endpoint, mirrored back, is the leftward endpoint
+(`zr_mir_post`), and its box lies in the leftward envelopes, which are the rightward ones reflected
+on tape `0` (`zr_mir_env`, `zr_mir_lohi`). -/
 private noncomputable def zr_rowLeft {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C)
     (x : List (ZoneSym k)) :
     Contract (zr_mirTM (zr_machineOf (zr_rowC t ([] : List (ZoneSym k)))))
