@@ -14,12 +14,13 @@ true.
 | # | Severity | Finding | Resolution |
 |---|---|---|---|
 | 1 | minor | `Deterministic`'s vendored header does not list the new `spaceUsedByTape_eq_card` among the local modifications (`policy.md` §2). | **True; fixed.** Commit `4e9a46be` on #161, comments only: the header's list gains the entry beside `spaceUsed_eq_sum`'s. The code is identical with comments stripped; the file elaborates with no diagnostic against `oleans-lphf` (`evidence/round1-fix/`). A comment-only change needs no gate. |
-| 2 | minor | The replay driver checks the pre-merge API head, not the merged candidate the pack requires after #158–#160. | **True; planned.** After #160 merges, the campaign branch is merged into #161 and the replay is regenerated against that merged head (the three audited blobs pinned, the base the campaign tip, chained from the latest merged-tree snapshot); its head and result are recorded here before merge. |
+| 2 | minor | The replay driver checks the pre-merge API head, not the merged candidate the pack requires after #158–#160. | **True; done.** After #160 merged, the campaign branch was merged into #161 (`1849dae6`; `StepBlockForward` auto-merged #159's re-points with the new `simps` attribute, and elaborates with no output against `oleans-lrcan3`). The replay was regenerated against that head: the three audited blobs pinned, the base the campaign tip after #160 (`90688cbb`), chained from `oleans-lrcan3`. **Passed (user, 2026-10-24): 325 of 325, 0 failed; static-equal (81 sorry warnings, 0 mismatches)** (`evidence/merged-tree-replay/`). |
 | 3 | minor | The space probe seals `spaceUsedByTape`, `visitedByTapeHead` and `spaceUsed` but controls only the first. | **True; fixed.** `evidence/round1-fix/U2SpaceProbe2.*`: the same probe on the head's `Deterministic` with two more controls, `visitedByTapeHead`'s defining equation and `spaceUsed`'s sum equation. Unsealed all four controls close; sealed exactly the four fail (lines 578, 583, 589, 593); both ledger steps still close sealed through the new equation. |
 | 9 | note | Use the tested consumer forms when updating the U2 draft; rerun its issue-time checks. | **Agreed;** at U2's issue (megafill C) the draft's route probe is rewritten against the generated names (`funext` before the pointwise tape equations, `.val` through `rulerHostCfg_inputPos`) and its pre-ship re-run. |
 | 10 | note | SD-1 is fully disclosed and acknowledged; follow its disposition; add no U2-local suffix drop. | **Agreed;** the U2 brief cites `Turing.pairEncode_drop`. |
 | 11 | note | Keep command, status and fresh-output evidence with the merged-tree replay. | **Agreed.** |
 | 4–8, 12 | notes | Integrity and freeze; the two encodings' equations; the pairing drop; the cardinality equation; the consumer probe; lint. | No action. |
 
-**Merge state. #161: not yet clear to merge.** The gate is closed; the merged-tree replay (325
-modules) runs after #160 merges.
+**Merge state. #161: clear to merge** (2026-10-24). The gate is closed; the merged-tree replay at
+the head `1849dae6` passed, 325 of 325 (`evidence/merged-tree-replay/`). Its snapshot
+`oleans-lu2api` is the campaign's tree after #161.
