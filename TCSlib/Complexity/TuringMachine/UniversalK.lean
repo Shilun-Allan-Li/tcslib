@@ -9,6 +9,7 @@ import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.SpaceComplexity.Machines.Clean
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.Rewind
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
