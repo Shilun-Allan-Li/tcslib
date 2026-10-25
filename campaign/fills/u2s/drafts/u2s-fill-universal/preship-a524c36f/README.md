@@ -17,6 +17,7 @@ of `079a0707`, run again here. Lean ran through `tools/leanelab.sh` against `ole
 | Import probe | **93 checks of 93 names**, 0 errors, 0 warnings; five axiom prints within the standard three | `U2UEImportProbe.*` |
 | Route probe | against the published API, sealed over 8: 0 errors, 0 warnings; four axiom prints within the standard three | `U2UERouteProbe.*` |
 | Seal controls | 8 goals: all close unsealed, all 8 fail sealed (lines 59–88), as at `079a0707` | `U2UESealControl.*` |
+| Semantic duplication | the route probe's four statements posed to `exact?` against the owned module's closure with the overlay's import: all four "could not close the goal" | `U2DupProbe.*` |
 | Screen base | the 20-file population on a frozen worktree at the tip (`wt-mc`, `a524c36f`, no tracked change): **1,057 declarations, 788 pairs, 213,847 characters**; about 6 minutes under `nice -n 10`, peak memory 3.5 GB. Against `079a0707`'s base: no new pair; 2 gone, SD-1's `ic_input_suffix` ⇄ `pairEncode_drop` both ways (#162 deleted the `NDCodeSimulator` member). The owned file's pairs are `079a0707`'s: 13 within (none at 90% or more), one across (`ss_inputRewind_run` of `Universal`'s `timedFrame_run`, 56%) | `screen-base.*`, `screen-population.txt`, `pairdiff-vs-079a0707.txt` |
 
 **The screen** is re-run because one population file changed: #162 re-pointed `NDCodeSimulator`

@@ -1,6 +1,8 @@
 # Megafill C: B5a's uniform simulator and U2's universal machines
 
-<!-- DRAFT (drafting agent), 2026-10-24. Drafting base: the campaign tip
+<!-- DRAFT (drafting agent), 2026-10-24.
+**Issued (2026-10-25) as `campaign/fills/megafill/briefs/megafill-C.md` with U2 as its only item**
+(the user's ruling); B5a waits on the A+ harvest and goes in a later queue. Drafting base: the campaign tip
 `77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532`. The drafting report
 (`megafill-C-DRAFTING-REPORT.md`, beside this file) records the pre-ships, the open questions and
 the recommendations. Issue-time items: @ANCESTOR@, the SHA-256 column, the ⟨Q-M2⟩ ruling, each

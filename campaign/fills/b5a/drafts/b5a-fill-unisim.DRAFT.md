@@ -1,6 +1,8 @@
 # Ch3–4 fill campaign — B5a, H1: the uniform simulator (`Turing.MachineFormat.exists_uniformSimulator`, `TuringMachine/CodeSimulator.lean`)
 
-<!-- DRAFT (drafting agent), 2026-10-24, for megafill C. Drafting base: the campaign tip
+<!-- DRAFT (drafting agent), 2026-10-24, for megafill C.
+**Deferred from megafill C (user, 2026-10-25):** megafill C was issued with U2 only; this item goes
+in a later queue once the A+ harvest lands. Drafting base: the campaign tip
 `77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532` (TCSlib as after #155; #156 open). Pre-ship measured
 there, against a fresh bootstrap of the order list:
 `campaign/fills/b5a/drafts/b5a-fill-unisim/preship-77f1eb4f/`.
