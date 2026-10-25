@@ -13,7 +13,11 @@ issue commit.
 file's `canonEmitVerdict`, 4593–4603), the follow-up phase-host API PR #159 (merged; it edits
 `canonEmitVerdict` again) and the startup kit's PR #162. Regenerate the overlay (six imports, the
 kit's module the sixth) and every line number, count, blob and screen figure there; the numbers
-below are the drafting base's, measured with the first five imports. -->
+below are the drafting base's, measured with the first five imports.
+**Pre-ship re-run at the issue base (maintainer, 2026-10-25):** the campaign tip `a524c36f`, Lean
+equal to #162's merge `5a258cc2` (the snapshot `oleans-lkit2`), with the six imports:
+`campaign/fills/b5a/drafts/b5a-fill-unisim/preship-a524c36f/`. The line numbers, counts and blob
+below are that base's; ⟨BASE⟩ and ⟨IN-FLIGHT⟩ are filled at issue. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -78,8 +82,8 @@ below are the drafting base's, measured with the first five imports. -->
   git checkout -b fill/b5a-unisim @ANCESTOR@
   git rev-parse HEAD        # must print @ANCESTOR@
   git rev-parse HEAD:TCSlib/Complexity/TuringMachine/CodeSimulator.lean
-  # must print c64567f066dfb7ad4e31c489691605e754f16aad
-  # (the drafting base's blob, from git rev-parse; re-check at issue)
+  # must print 733a9a463e6bac937ef16ff95a8cb4d287bda725
+  # (the base's blob, from git rev-parse)
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
@@ -99,35 +103,35 @@ below are the drafting base's, measured with the first five imports. -->
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign tip ⟨BASE⟩.** Lines in this brief are those of the
-  drafting base's tree, where `CodeSimulator.lean` is #152's landing (8,668 lines; 12 public, 185
-  private); re-check them at issue.
+- **Your base's Lean content is the campaign tip ⟨BASE⟩.** Lines in this brief are those of your
+  base's tree, where `CodeSimulator.lean` is 8,666 lines (12 public, 185 private): #152's landing
+  with #156's and #159's edits to `canonEmitVerdict`.
 - **Your first edit makes your file equal to the overlay** (`CodeSimulatorOverlay.lean.txt`): the
   six imports of region (a) after line 15. **Line numbers below are the base's, and the
-  overlay's are 6 more** (the stub at 8656, overlay 8662). Every probe and measurement below was
+  overlay's are 6 more** (the stub at 8654, overlay 8660). Every probe and measurement below was
   run on the overlay or at the base, as marked.
 - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩ (at drafting: #135,
   chapter 7 onto `main`; #156, #159 and #162 are in your base, above); on
-  their own branches in this session, the other megafill items, among them **C1**
-  (`NDCodeSimulator`, downstream of your file) and **U2** (`UniversalK`, downstream of your file).
+  their own branch in this session, the other megafill item, **U2** (`UniversalK`, downstream of
+  your file).
   Cite nothing they add.
 
 ## Parallel batches this round
 
-None in `CodeSimulator.lean`. C1 and U2 run in this megafill on their own branches, downstream of
-your file; neither cites your target.
+None in `CodeSimulator.lean`. U2 runs in this megafill on its own branch, downstream of your file,
+and does not cite your target.
 
 ## What this is
 
 **B5a's H1: the uniform bounded-acceptance simulator.** One target, frozen:
-**`Turing.MachineFormat.exists_uniformSimulator`** (line 8656): for each machine format `F`, one
+**`Turing.MachineFormat.exists_uniformSimulator`** (line 8654): for each machine format `F`, one
 finite binary machine `S` and one degree `d` such that on `⟨⟨bits t, α⟩, x⟩` it answers `[true]`
 if the machine `α` denotes halts on `x` with output exactly `[true]` within `t` steps, and
 `[false]` otherwise, within `d · (|α| + |x| + t + 1)^d` steps. **`S` and `d` are uniform in the
 code**: no per-code constant (note 34).
 
-**The statement and the docstring's statement and sketch, frozen verbatim** (lines 8554–8582 and
-8656–8664; the fill appendices 8584–8653 and the `-/` alone on 8655 are frozen byte for byte too):
+**The statement and the docstring's statement and sketch, frozen verbatim** (lines 8552–8580 and
+8654–8662; the fill appendices 8582–8651 and the `-/` alone on 8653 are frozen byte for byte too):
 
 ```lean
 /-- **The uniform bounded-acceptance simulator** (spec, fill pending — batch
@@ -199,19 +203,20 @@ targets 3–8 and `Complexity.baker_gill_solovay` have none from your file.
   `d` representing the decoded machine's initial configuration on the window (`StepBlock.Rep`);
 - the pre-ship probes (below): their proofs may be copied into your home as `us_` privates.
 
-**Pre-ship check** (drafting agent, at the drafting base; re-run at issue;
-`campaign/fills/b5a/logs/b5a-fill-unisim-preship.log`):
-- **The overlay** elaborates with exactly one sorry warning, the target's (overlay line 8661). The
-  five imports create no cycle (none of their closures contains your file), and the downstream
-  modules that gain names through them (`Diagonalization/EXPCOM`, `Diagonalization/Relativization`,
-  `Codes2Tape`, `UniversalK`, `SelfUniversal`) share no declaration name with the gained modules.
+**Pre-ship check** (the maintainer, re-run at your base; the drafting agent's first run was at the
+drafting base; `campaign/fills/b5a/logs/b5a-fill-unisim-preship.log`):
+- **The overlay** elaborates with exactly one sorry warning, the target's (overlay line 8660). The
+  six imports create no cycle (none of their closures contains your file). Together with every
+  module downstream of your file they import without a clash (`ImportClashProbe.lean.txt`:
+  0 diagnostics).
 - **The import probe** (`B5aUSImportProbe.lean.txt`, a standalone import of your module and the
-  five, **109 checks of 109 names**, and eight axiom prints): 0 errors, 0 warnings. Every row the
-  route composes is on the standard three axioms (the input rewind on two). The review's
-  extension (137 names: the start's `MultiTapeTM.initCfg_with_q₀` and `runFrom_with_q₀`, the
-  `Cfg.init` fields, `stateWord_eq`, `seamReleaseTM_runFrom_pos`, R1's frame and field
-  equations, and the definitions the route names) is the probe at issue (with the
-  kit's eight names). **Re-run it after your delivery**, extended by every further name you cite.
+  six, **157 checks of 157 names**, and 26 axiom prints): 0 errors, 0 warnings. Every print is
+  within the standard three axioms (the input rewind, the seam step and the seam runs on two). The
+  names are the drafting probe's 109, the review's 28 more (the start's
+  `MultiTapeTM.initCfg_with_q₀` and `runFrom_with_q₀`, the `Cfg.init` fields, `stateWord_eq`,
+  `seamReleaseTM_runFrom_pos`, R1's frame and field equations, and the definitions the route
+  names), the kit's eight, the phase host's four, and the step reader, virtual host and clock of
+  the H1 loop. **Re-run it after your delivery**, extended by every further name you cite.
 - **The route probe** (`B5aUSRouteProbe.lean.txt`), sealed over 12 TCSlib definitions (the two
   `@[simp]` ones, `MultiTapeTM.initCfg` and `NDTM.initCfg`, also erased): 0 diagnostics. It proves
   `b5a_install` (the polynomial canonizer through the install call: one module, a first return
@@ -220,18 +225,24 @@ targets 3–8 and `Complexity.baker_gill_solovay` have none from your file.
   locality for a deterministic machine), `b5a_verdict` (a halt with output `[answer]` gives both
   clauses) and `b5a_table_le` (`|tableBitsK| ≤ max |α| |F.serialize F.fallback|`). The review
   re-ran all five as `us_` privates at your home (region (b)), also sealing `tableBitsK`,
-  `pairEncode` and `unaryFin`, which `b5a_table_le` touches: still clean.
+  `pairEncode` and `unaryFin`, which `b5a_table_le` touches: still clean. At your base the same
+  home probes (`HomeProbe.lean.txt`, and `HomeProbeSealed.lean.txt` sealed over 18) give only the
+  target's sorry warning, on the standard three axioms.
+- **The start probe** (`StartProbe.lean.txt`, sealed): `S`'s initial configuration as the first
+  phase's transported start, read through `MultiTapeTM.initCfg_with_q₀`, `runFrom_with_q₀`, the
+  kit's `Turing.embedSilentCfg_initCfg` and a five-line `Cfg.init` relabelling: 0 diagnostics.
 - **The verdict probe** (`B5aUSVerdictProbe.append.lean.txt`, appended to the overlay, sealed over
   4 more): `h1HostedVerdict_accepts` on the window decides bounded acceptance on `x`
   (`b5a_window_verdict`): only the target's sorry warning; the standard three axioms.
-- **The seal controls** (`B5aUSSealControl.lean.txt`, 16 `rfl` goals, one per sealed definition):
-  every one closes unsealed and fails sealed, each at its own goal.
+- **The seal controls** (`B5aUSSealControl.lean.txt`, 18 `rfl` goals, one per definition sealed by
+  the route, verdict and home probes): every one closes unsealed and fails sealed, each at its own
+  goal.
 
 ## Owned regions and targets (modify these and nothing else)
 
 | # | File:line (base) | Target |
 |---|---|---|
-| 1 | `CodeSimulator.lean:8656` | `Turing.MachineFormat.exists_uniformSimulator` (frozen statement) |
+| 1 | `CodeSimulator.lean:8654` | `Turing.MachineFormat.exists_uniformSimulator` (frozen statement) |
 
 Your regions:
 - **(a) the imports**, as your first edit: exactly these six, after line 15 (the overlay):
@@ -246,14 +257,14 @@ Your regions:
   ```
 
   No other import.
-- **(b) the home**, the blank line 8551, inside `section StepBlockClients` (where `open StepBlock`
-  is in force, line 8424), between `h1HostedVerdict_accepts`'s last line (8550) and
-  `end StepBlockClients` (8552), inside `namespace MachineFormat` with `F` the section variable:
+- **(b) the home**, the blank line 8549, inside `section StepBlockClients` (where `open StepBlock`
+  is in force, line 8422), between `h1HostedVerdict_accepts`'s last line (8548) and
+  `end StepBlockClients` (8550), inside `namespace MachineFormat` with `F` the section variable:
   your `private` declarations. `private` only, and no `section`, `open` or `variable` that leaks
   past one (`open … in` on one declaration is fine).
-- **(c) the body**, the `sorry` on line 8664.
+- **(c) the body**, the `sorry` on line 8662.
 - **(d) for a partial only, a paragraph headed `**Implementation status.**`** at the end of the
-  target's docstring, before its `-/` (alone on 8655). It is public-facing library text: what
+  target's docstring, before its `-/` (alone on 8653). It is public-facing library text: what
   is proved and what is open, in mathematical terms, with no campaign labels (brief, gate, finding,
   continuation or escalation names), no dates and no session narrative. The same holds for the
   docstrings of your new declarations; provenance goes in `REPORT.md`. **Every new declaration has a
@@ -394,7 +405,7 @@ kit's eight startup facts: cite them.
 
 ## Cited infrastructure (public and proved at the issue commit; all in `B5aUSImportProbe.lean.txt`)
 
-The probe's 109 names: the target, the format and the canonizer; the header passes and the
+The probe's 157 names: the target, the format and the canonizer; the header passes and the
 capture; the rewinds and the counter copy; the window and deterministic input locality; the
 install and the layout; the loop's entry and the hosted loop with `vhostCfg`'s and
 `counterLoopCfg`'s equations; composition and embedding; the model's run algebra and field
@@ -418,7 +429,7 @@ equations. In your file you also cite the canonizer, `h1HostedVerdictTM`,
    core's). Never write a second host, loop, seam, embedding, input rewind, prefix parser or
    layout machine.
 8. **Size.** No cap; file size alone is not a driver. Report the final line count and the public
-   and private declaration counts (base: 8,668 lines; 12 public, 185 private).
+   and private declaration counts (base: 8,666 lines; 12 public, 185 private).
 9. **Continuation budget.** A partial zip states the checkpoints reached, the open declarations
    (each with a literal "Proof sketch"), and the target's axiom walk. A partial is expected and
    fine; an unreported gap is not.
@@ -516,8 +527,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
     (`ss_capturedPrefix_run`, `ss_capture_run`, `ss_serialized_layout`), the other header passes;
   - the start identity: `UniversalK`'s `ss_captureInitial` and `ExhaustiveReplay`'s `xr_E_initCfg`
     (the `initCfg_with_q₀` idiom);
-  - **the core's startup assembly** (`exists_ndInterpreterCore`'s body, lines 924–1990 at the
-    drafting base): your target's body will be compared with it. ⟨D-3: the user's ruling⟩ A pair
+  - **the core's startup assembly** (`exists_ndInterpreterCore`'s body, its twelve phases at lines
+    983–2049): your target's body will be compared with it. ⟨D-3: the user's ruling⟩ A pair
     below 90% is pre-disclosed: list it with its shared fragments; at 90% or more stop and
     escalate;
   - the input rewinds of IR-1 (`xr_inRewindTM`, `ss_inputRewind`): cite `Turing.inputRewindTM`;
@@ -534,10 +545,11 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   overlay as at the base); **never `lake build`**, and never the unfiltered `lake exe cache get`.
   Use `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
 - **Re-bootstrap** (addendum Part 3, item 3.2) from `campaign/fills/b5a/orders/b5a-fill-unisim.txt`
-  (**119 modules**, computed on the overlay: the base list's set, with `Build/Rewind`,
-  `BufferWords`, `Build/SeamLayout` and `Build/InputWindow` now before your file), **after your
+  (**120 modules**, computed on the overlay: the base list's set, with `Build/Rewind`,
+  `BufferWords`, `Build/SeamLayout`, `Build/InputWindow` and `Build/InterpreterStartup` now before
+  your file), **after your
   first edit**, logging each module's start and end time and maximum memory. **The base
-  sorry-warning set has 31 entries in 15 modules**
+  sorry-warning set has 30 entries in 14 modules**
   (`campaign/fills/b5a/logs/b5a-fill-unisim-base-sorries.txt`). Yours is `CodeSimulator`'s only
   one. Record the base list by name first, and report any difference.
 - **Final checks:**
@@ -618,7 +630,7 @@ Everything in the base sorry set except your target: MIG-1 stage S's sorried spe
   (`initCfg_with_q₀`, `runFrom_with_q₀`); the composite's `q₀` has no other published equation.
 - **H1's proofs predate rule 10**: `h1HostedVerdict_effect` passes `MultiTapeTM.initCfg`,
   `Cfg.init`, `FinTM.VirtualTag`, `Action.apply` and `vhostCfg` to `simp` and unfolds
-  `MultiTapeTM.step` (8499–8528). Cite it; do not imitate its proof text.
+  `MultiTapeTM.step` (8497–8526). Cite it; do not imitate its proof text.
 - **`prefix` is a reserved keyword**; do not name a hypothesis `prefix`.
 - **Phase-indexed configurations do not match by `rw`**: close by `exact`.
 - **`counterLoopOrbit` is an `abbrev`:** `rw` may not fire on it; `exact` and `simp only` do.
