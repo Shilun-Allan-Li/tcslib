@@ -6,7 +6,7 @@ DECL = re.compile(r'^(@\[[^\]]*\]\s*)*((private|protected|noncomputable|nonrec|p
 ANON = re.compile(r'^(@\[[^\]]*\]\s*)*((private|protected|noncomputable|nonrec|partial|unsafe)\s+)*instance(?=\s*[(:{\[]|\s*$)')
 STOP = re.compile(r'^(end\b|namespace\b|section\b|/-!|open\b|variable\b|set_option\b|#|attribute\b|universe\b)')
 # v4 (gate 78, minor 2): declarations are keyed by their namespace-qualified name, so that two
-# declarations with one short name in different namespaces (`Segment.trans`, `Round.trans`) are not
+# declarations with one short name in different namespaces (`Segment.trans`, `SafeSegment.trans`) are not
 # collapsed; a name that is still not unique gets `#k` (k-th in source order).
 SCOPE = re.compile(r'^(?:(namespace)\s+(\S+)|(?:noncomputable\s+)?(section)\b\s*(\S*)|(mutual)\b|(end)\b\s*(\S*))')
 def chunks(text):

@@ -3514,6 +3514,17 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
 
 ## 5. Repository housekeeping
 
+### FRZ-1: re-run the declaration freezes with qualified names (from gate 78, minor 2; 2026-10-25)
+
+`devtools/seyoon/declfreeze.py` up to v3 keyed declarations by short name. In a file where two
+declarations share one (`Contract.trans`, `Segment.trans` and `SafeSegment.trans`, each written
+`theorem trans` inside its namespace), only the last of each name was kept on both sides of a
+freeze. A statement or body change to an earlier namesake would therefore not have been reported. v4
+(2026-10-25) keys by the qualified name. **To do:** re-run v4 over the base/head pairs of the past
+gates' freeze records, for the files with colliding short names (`Build/Contract/Basic` is one; find
+the rest by grepping the v3 and v4 counts for a difference). Report any change v3 missed; none is
+known.
+
 * **The campaign's merge to `main` (user, 2026-10-15).**
   - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
     `cryptography/garg-ch1-3`, so the cryptography work can build on it. The cryptography
