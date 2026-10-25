@@ -11,6 +11,7 @@ import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.Rewind
 import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -454,64 +455,6 @@ theorem exists_replayCanonizer (c : EffectiveNDMachineCode) :
     rw [Function.comp_apply, rc_g_serialize]
   exact ⟨M, _, e ▸ hM⟩
 
-/-- Either header projection halts at the suffix with its selected component. The common
-time is `16 |bits t| + 8 |α| + 25`; in particular it is independent of the suffix.
-
-**Proof sketch.** Apply the published prefix contract to the first or second pair extractor.
-Decode the inner pair with its round-trip lemma and expand only its published length formula. -/
-private theorem ic_header_result (first : Bool) (α x : List Bool) (t : ℕ) :
-    let F := if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true
-    let M := prefixCanonTM F
-    let z := pairEncode (pairEncode (Nat.bits t) α) x
-    let d := M.tm.runFrom (M.tm.initCfg z)
-      (16 * (Nat.bits t).length + 8 * α.length + 25)
-    d.state = none ∧ d.output = (if first then Nat.bits t else α) ∧
-      d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 := by
-  have duration : 3 * (pairEncode (Nat.bits t) α).length + 4 +
-      5 * ((pairEncode (Nat.bits t) α).length + 1) =
-      16 * (Nat.bits t).length + 8 * α.length + 25 := by
-    rw [length_pairEncode]
-    omega
-  have position : 2 * (pairEncode (Nat.bits t) α).length + 3 =
-      4 * (Nat.bits t).length + 2 * α.length + 7 := by
-    rw [length_pairEncode]
-    omega
-  cases first
-  · have h := prefixCanon_complete _ _ _ FinTM.pairExtractTM_snd
-      (pairEncode (Nat.bits t) α) x
-    simpa only [duration, position, pairDecode_pairEncode, Option.map_some,
-      Option.getD_some, Bool.false_eq_true, ↓reduceIte] using h
-  · have h := prefixCanon_complete _ _ _ FinTM.pairExtractTM_fst
-      (pairEncode (Nat.bits t) α) x
-    simpa only [duration, position, pairDecode_pairEncode, Option.map_some,
-      Option.getD_some, ↓reduceIte] using h
-
-/-- A bounded native-input computation can be silently captured with a first live return.
-The completed transport contains the source's final output, even if it halted before the bound.
-
-**Proof sketch.** Choose the first halt using the public first-halt lemma. The returning
-embedding reaches its live anchor there, with exactly the configuration at the supplied bound. -/
-private theorem ic_capture_return {k : ℕ} (M : FinTM Bool) (x : List Bool)
-    (ι : Fin M.k ↪ Fin k) (cap : Fin k) (hcap : cap ∉ Set.range ι)
-    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (out : List Bool)
-    (T : ℕ) (halt : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
-    ∃ u ≤ T,
-      (embedSilentRetTM ι cap M.tm).runFrom
-          ((embedSilentCfg ι cap tapes heads [] out (M.tm.initCfg x)).mapState Sum.inl) u =
-        { embedSilentCfg ι cap tapes heads [] out (M.tm.runFrom (M.tm.initCfg x) T) with
-          state := some (Sum.inr ()) } ∧
-      ∀ v < u,
-        ((embedSilentRetTM ι cap M.tm).runFrom
-          ((embedSilentCfg ι cap tapes heads [] out (M.tm.initCfg x)).mapState Sum.inl)
-          v).state ≠ some (Sum.inr ()) := by
-  obtain ⟨u, hu, before, same⟩ := M.tm.exists_first_halt (M.tm.initCfg x) halt
-  have live : (M.tm.initCfg x).state ≠ none := by
-    rw [MultiTapeTM.initCfg_eq, Cfg.init_state]
-    exact Option.some_ne_none _
-  obtain ⟨_, result, cut⟩ := embedSilentRetTM_run ι cap hcap M.tm tapes heads [] out
-    (M.tm.initCfg x) u live before (by rw [same]; exact halt)
-  exact ⟨u, hu, by simpa only [same] using result, cut⟩
-
 /-- Replaying any prefix of the stream on the bounded window gives the original branch's
 control and output. The stream may be longer than the deadline.
 
@@ -551,102 +494,6 @@ private theorem ic_table_call (c : EffectiveNDMachineCode) :
   exact ⟨M, entry, done,
     fun α => a * (τ α.length + α.length + (serializeK (c.decode α).tm.replayTM).length + 1),
     positive, installs⟩
-
-/-- A header projection has a silent first live return, with its selected word on the capture
-tape and the native head at the suffix. Unselected tapes other than the capture retain their
-contents and heads; no description of the projection's final scratch bank is needed.
-
-**Proof sketch.** Use the header's bounded halt and the returning capture lemma. Project the
-capture, input-position, output and unselected-tape equations at that return. -/
-private theorem ic_header_capture (first : Bool) (K : ℕ) (α x : List Bool) (t : ℕ)
-    (ι : Fin (prefixCanonTM
-      (if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true)).k ↪ Fin K)
-    (cap : Fin K) (hcap : cap ∉ Set.range ι)
-    (tapes : Fin K → ℤ → Option Bool) (heads : Fin K → ℤ) (out : List Bool) :
-    let M := prefixCanonTM
-      (if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true)
-    let z := pairEncode (pairEncode (Nat.bits t) α) x
-    let start := (embedSilentCfg ι cap tapes heads [] out (M.tm.initCfg z)).mapState Sum.inl
-    ∃ T ≤ 16 * (Nat.bits t).length + 8 * α.length + 25,
-      let e := (embedSilentRetTM ι cap M.tm).runFrom start T
-      e.state = some (Sum.inr ()) ∧
-      e.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 ∧
-      e.workTapes cap = FinTM.bufferTape (if first then Nat.bits t else α) ∧
-      e.workTapePos cap = ((if first then Nat.bits t else α).length : ℤ) ∧
-      e.output = out ∧
-      (∀ j : Fin K, j ∉ Set.range ι → j ≠ cap →
-        e.workTapes j = tapes j ∧ e.workTapePos j = heads j) ∧
-      ∀ u < T, ((embedSilentRetTM ι cap M.tm).runFrom start u).state ≠ some (Sum.inr ()) := by
-  dsimp only
-  let M := prefixCanonTM
-    (if first then FinTM.pairExtractTM true false else FinTM.pairExtractTM false true)
-  let z := pairEncode (pairEncode (Nat.bits t) α) x
-  obtain ⟨halt, word, pos⟩ := ic_header_result first α x t
-  obtain ⟨T, bound, run, cut⟩ := ic_capture_return M z ι cap hcap tapes heads out
-    (16 * (Nat.bits t).length + 8 * α.length + 25) halt
-  refine ⟨T, bound, ?_⟩
-  rw [run]
-  obtain ⟨hword, hhead⟩ := embedSilentCfg_cap ι cap hcap tapes heads [] out
-    (M.tm.runFrom (M.tm.initCfg z) (16 * (Nat.bits t).length + 8 * α.length + 25))
-  rw [List.nil_append, word] at hword hhead
-  refine ⟨rfl, ?_, hword, hhead, ?_, ?_, cut⟩
-  · simpa only [embedSilentCfg_inputPos] using pos
-  · rw [embedSilentCfg_output]
-  · intro j hj hjc
-    exact embedSilentCfg_unselected ι cap tapes heads [] out _ j hj hjc
-
-/-- A serialization installed at cell zero can be redistributed into the interpreter's table
-and empty-output summary. The return time depends on the serialized machine alone; all other
-tapes, the native input head, and the physical output retain their frame.
-
-**Proof sketch.** Specialize the shared layout contract to the state-count header and the
-machine's unary initial state. Its shifted unary buffer is the empty-output summary, since
-its cell at zero reads the blank cell at offset minus two. -/
-private theorem ic_layout_call (K : ℕ) (src tbl sm : Fin K) (hst : src ≠ tbl)
-    (hss : src ≠ sm) (hts : tbl ≠ sm) :
-    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM K Bool Q)
-      (entry done : Q) (C : ℕ),
-      ∀ {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))),
-        ∃ T ≤ C * ((serializeK M).length + 1),
-          ∀ {z : List Bool} (d : Cfg K Bool Q z),
-            d.state = some entry →
-            d.workTapes src = FinTM.bufferTape (serializeK M) →
-            d.workTapePos src = 0 →
-            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
-            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
-            (L.runFrom d T).state = some done ∧
-            (L.runFrom d T).inputPos = d.inputPos ∧
-            (L.runFrom d T).workTapes =
-              Function.update (Function.update (Function.update d.workTapes src (fun _ => none))
-                tbl (FinTM.bufferTape (tableBitsK M.tr)))
-                sm (StepBlock.summaryCells none (unaryFin M.q₀)) ∧
-            (L.runFrom d T).workTapePos =
-              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0) sm 0 ∧
-            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
-            ∀ u < T, (L.runFrom d u).state ≠ some done := by
-  obtain ⟨Q, hQ, hQ', L, entry, done, C, layout⟩ :=
-    exists_seamLayoutTM K src tbl sm hst hss hts
-  refine ⟨Q, hQ, hQ', L, entry, done, C, ?_⟩
-  intro k n M
-  have word : serializeK M =
-      pairEncode n.bits ((List.replicate (M.q₀ : ℕ) true ++ [false]) ++ tableBitsK M.tr) := by
-    rw [serializeK_eq, unaryFin_eq]
-  have summary : (fun p =>
-      FinTM.bufferTape (List.replicate (M.q₀ : ℕ) true ++ [false]) (p - 2)) =
-      StepBlock.summaryCells none (unaryFin M.q₀) := by
-    funext p
-    rw [StepBlock.summaryCells_eq, unaryFin_eq]
-    by_cases hp : p = 0
-    · rw [if_pos hp, hp]
-      exact FinTM.bufferTape_of_neg _ (by omega)
-    · rw [if_neg hp]
-  obtain ⟨T, bound, run⟩ := layout n.bits (tableBitsK M.tr) M.q₀ 0 (Nat.zero_le _)
-  rw [← word] at bound run
-  refine ⟨T, bound, ?_⟩
-  intro z d hd hsrc hsrcp htbl htblp hsm hsmp
-  obtain ⟨hstate, hin, htapes, hheads, hout, hcut⟩ :=
-    run d hd hsrc hsrcp htbl htblp hsm hsmp
-  exact ⟨hstate, hin, by rw [htapes, summary], hheads, hout, hcut⟩
 
 /-- The installed table and empty-output summary, together with the mirrored initial tapes,
 represent the replay machine's start with its entire choice stream on the last mirrored tape.
@@ -688,77 +535,6 @@ private theorem ic_replay_rep {k n : ℕ} (N : NDTM k Bool (Fin (n + 1))) (x s :
   · simpa only [NDTM.withChoiceTape_output, NDTM.withChoiceTape_state, NDTM.initCfg_eq,
       Cfg.init_output, Cfg.init_state, Option.map_some, Option.getD_some,
       StepBlock.outputSummary_nil] using hsm
-
-/-- Removing the doubled header and its separator from a paired input leaves its suffix.
-
-**Proof sketch.** Express the pair as the empty-suffix header appended to the suffix. The
-published length formula gives exactly the number of symbols to drop. -/
-private theorem ic_input_suffix (u x : List Bool) :
-    (pairEncode u x).drop (2 * u.length + 2) = x := by
-  have split : pairEncode u x = pairEncode u [] ++ x := by
-    rw [pairEncode_eq, pairEncode_eq, List.append_nil]
-  have width : (pairEncode u []).length = 2 * u.length + 2 := by
-    rw [length_pairEncode, List.length_nil, Nat.add_zero]
-  rw [split, ← width, List.drop_left]
-
-/-- At the end of the header passes the shared copier produces exactly the bounded suffix
-window on an initially blank tape. Tapes other than the window and counter are framed, as are
-their heads, and the cost has no dependence on the uncopied suffix.
-
-**Proof sketch.** Identify the suffix by dropping the encoded header, and read the binary
-counter through its published value equation. Project the copier's two tape updates; the
-blank destination outside the copied interval agrees with the window buffer's blank cells. -/
-private theorem ic_window_call (K : ℕ) (j dst : Fin K) (hjd : j ≠ dst) :
-    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (W : MultiTapeTM K Bool Q)
-      (entry done : Q) (C : ℕ),
-      ∀ (α x : List Bool) (t : ℕ)
-        (d : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)),
-        d.state = some entry →
-        d.inputPos.val = 4 * (Nat.bits t).length + 2 * α.length + 7 →
-        (∀ q : ℤ, -1 ≤ q → q ≤ ((Nat.bits t).length : ℤ) →
-          d.workTapes j (d.workTapePos j + q) = FinTM.bufferTape (Nat.bits t) q) →
-        d.workTapes dst = (fun _ => none) → d.workTapePos dst = 0 →
-        ∃ T ≤ C * (min t x.length + 1) + 2 * (Nat.bits t).length,
-          (W.runFrom d T).state = some done ∧
-          (W.runFrom d T).inputPos.val =
-            4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length ∧
-          (W.runFrom d T).workTapes dst = FinTM.bufferTape (x.take t) ∧
-          (W.runFrom d T).workTapePos dst = ((x.take t).length : ℤ) ∧
-          (W.runFrom d T).workTapePos j = d.workTapePos j ∧
-          (∀ i : Fin K, i ≠ j → i ≠ dst →
-            (W.runFrom d T).workTapes i = d.workTapes i ∧
-            (W.runFrom d T).workTapePos i = d.workTapePos i) ∧
-          (W.runFrom d T).output = d.output ∧
-          ∀ u < T, (W.runFrom d u).state ≠ some done := by
-  obtain ⟨Q, hQ, hQ', W, entry, done, C, copy⟩ := exists_inputWindowCopyTM K j dst hjd
-  refine ⟨Q, hQ, hQ', W, entry, done, C, ?_⟩
-  intro α x t d hd hp hw hblank hzero
-  have position : d.inputPos.val = 2 * (pairEncode (Nat.bits t) α).length + 2 + 1 := by
-    rw [hp, length_pairEncode]
-    omega
-  have value : Nat.ofDigits 2 ((Nat.bits t).map Bool.toNat) = t :=
-    (counterValue_eq _).symm.trans (counterValue_bits t)
-  obtain ⟨T, bound, w', _, hstate, hin, htapes, hheads, hout, hcut⟩ :=
-    copy d (2 * (pairEncode (Nat.bits t) α).length + 2) (Nat.bits t) hd position hw
-  simp only [ic_input_suffix, value] at bound hin htapes hheads
-  refine ⟨T, by simpa only [List.length_take] using bound, hstate, ?_, ?_, ?_, ?_, ?_, hout,
-    hcut⟩
-  · rw [length_pairEncode (Nat.bits t) α] at hin
-    omega
-  · rw [htapes, Function.update_of_ne hjd.symm, Function.update_self]
-    funext q
-    simp only [hzero, hblank, zero_add, sub_zero]
-    by_cases inside : 0 ≤ q ∧ q < ((x.take t).length : ℤ)
-    · rw [if_pos inside]
-    · rw [if_neg inside, FinTM.bufferTape_eq]
-      by_cases nonneg : 0 ≤ q
-      · rw [if_pos nonneg, List.getElem?_eq_none (by omega)]
-      · rw [if_neg nonneg]
-  · rw [hheads, Function.update_self, hzero, zero_add]
-  · rw [hheads, Function.update_of_ne hjd]
-  · intro i hij hid
-    exact ⟨by rw [htapes, Function.update_of_ne hij, Function.update_of_ne hid],
-      by rw [hheads, Function.update_of_ne hid]⟩
 
 /-- From a represented replay start, the hosted loop has both time bounds measured against
 the original nondeterministic branch. Its exit and summary cell give that branch's halting
@@ -1072,80 +848,6 @@ private theorem ic_time_ledger (a b w L t x r : ℕ) :
         gcongr ?_ + ?_ * _ + ?_ * _ + ?_ * _ <;> omega
       _ = _ := by ring
 
-/-- Composing a verified segment with a verified next phase through the public seam: the
-endpoint, its control state, and the inherited first return of the phase's exit, in one step.
-
-**Proof sketch.** The general-configuration seam run and its inherited first-return cut,
-with the endpoint state projected through the state renaming. -/
-private theorem ic_seam_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : List Bool}
-    (A : MultiTapeTM k Bool S₁) (exit₁ : S₁) (B : MultiTapeTM k Bool S₂)
-    (entry₂ exit₂ : S₂)
-    {c₀ c₁ : Cfg k Bool S₁ x} {c₂ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
-    (h₁ : A.runFrom c₀ T₁ = c₁) (hx₁ : c₁.state = some exit₁)
-    (hcut₁ : ∀ t < T₁, (A.runFrom c₀ t).state ≠ some exit₁)
-    (h₂ : B.runFrom (c₁.mapState fun _ => entry₂) T₂ = c₂)
-    (hx₂ : c₂.state = some exit₂)
-    (hcut₂ : ∀ t < T₂,
-      (B.runFrom (c₁.mapState fun _ => entry₂) t).state ≠ some exit₂) :
-    (seamCompTM A exit₁ B entry₂).runFrom (c₀.mapState Sum.inl) (T₁ + 1 + T₂) =
-        c₂.mapState (Sum.inr : S₂ → S₁ ⊕ S₂) ∧
-      (c₂.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr exit₂) ∧
-      ∀ t < T₁ + 1 + T₂,
-        ((seamCompTM A exit₁ B entry₂).runFrom (c₀.mapState Sum.inl) t).state ≠
-          some (Sum.inr exit₂) := by
-  refine ⟨seamCompTM_run_ofCfg A exit₁ B entry₂ h₁ hx₁ hcut₁ h₂, ?_,
-    seamCompTM_firstReturn_ofCfg A exit₁ B entry₂ exit₂ h₁ hx₁ hcut₁ h₂ hx₂
-      hcut₂⟩
-  rw [Cfg.mapState_state, hx₂, Option.map_some]
-
-/-- The install call, embedded silently on selected host tapes and wrapped in the release
-adapter, so that its first re-arrival at the installed seam is a positive event even when the
-call's entry and exit controls coincide. The embedded run carries one clean seam to the other;
-unselected tapes hold their frame throughout.
-
-**Proof sketch.** The silent embedding transports the call's run between the transported
-seams; the release adapter's positive lockstep makes the first arrival at the exit control
-strictly positive, and the call's interior cut excludes it earlier. -/
-private theorem ic_install_phase {K : ℕ} (CI : FinTM Bool) (entryI doneI : CI.State)
-    (ι : Fin CI.k ↪ Fin K) (cap : Fin K) (hcap : cap ∉ Set.range ι) {z : List Bool}
-    (tapes : Fin K → ℤ → Option Bool) (heads : Fin K → ℤ) (α w' : List Bool) (T : ℕ)
-    (hT : 0 < T)
-    (hrun : CI.tm.runFrom (Cfg.ofWords (input := z) entryI (stateWord CI.k α)) T =
-      Cfg.ofWords doneI (stateWord CI.k w'))
-    (hcut : ∀ u, 0 < u → u < T →
-      (CI.tm.runFrom (Cfg.ofWords (input := z) entryI (stateWord CI.k α)) u).state ≠
-        some doneI) :
-    (seamReleaseTM (embedSilentTM ι cap CI.tm) entryI).runFrom
-        ((embedSilentCfg ι cap tapes heads [] []
-          (Cfg.ofWords (input := z) entryI (stateWord CI.k α))).mapState
-            (fun _ => Sum.inl ())) T =
-      (embedSilentCfg ι cap tapes heads [] []
-        (Cfg.ofWords (input := z) doneI (stateWord CI.k w'))).mapState
-          (Sum.inr : CI.State → Unit ⊕ CI.State) ∧
-    ∀ u < T,
-      ((seamReleaseTM (embedSilentTM ι cap CI.tm) entryI).runFrom
-        ((embedSilentCfg ι cap tapes heads [] []
-          (Cfg.ofWords (input := z) entryI (stateWord CI.k α))).mapState
-            (fun _ => Sum.inl ())) u).state ≠ some (Sum.inr doneI) := by
-  have hstate : (embedSilentCfg ι cap tapes heads [] []
-      (Cfg.ofWords (input := z) entryI (stateWord CI.k α))).state = some entryI := by
-    rw [embedSilentCfg_state, Cfg.ofWords_state]
-  have hlock := embedSilentTM_runFrom ι cap hcap CI.tm tapes heads [] []
-    (Cfg.ofWords (input := z) entryI (stateWord CI.k α))
-  constructor
-  · rw [seamReleaseTM_runFrom_pos _ entryI _ hstate T hT, hlock T, hrun]
-  · intro u hu
-    cases u with
-    | zero =>
-      rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hstate]
-      simp
-    | succ u =>
-      rw [seamReleaseTM_runFrom_pos _ entryI _ hstate (u + 1) (by omega), hlock (u + 1),
-        Cfg.mapState_state, embedSilentCfg_state]
-      intro hbad
-      obtain ⟨q, hq, heq⟩ := Option.map_eq_some_iff.mp hbad
-      exact hcut (u + 1) (by omega) hu (hq.trans (congrArg some (Sum.inr.inj heq)))
-
 /-- **The interpreter core for nondeterministic codes** `R` (deterministic; shared by the
 universal NDTM and the diagonalizer's mid-rung). For every effective nondeterministic scheme
 `c` there is one finite machine `R`, uniform over codes, with `K` work tapes, a designated stream
@@ -1268,13 +970,14 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     dsimp only at hv ⊢
     split_ifs at hv <;> omega
   obtain ⟨QW, instFW, instDW, W, entryW, doneW, CW, windows⟩ :=
-    ic_window_call K jbt jwin (by intro h; have := congrArg Fin.val h; omega)
+    exists_windowCall K jbt jwin (by intro h; have := congrArg Fin.val h; omega)
   haveI := instFW
   haveI := instDW
   obtain ⟨QL, instFL, instDL, L, entryL, doneL, CL, layouts⟩ :=
-    ic_layout_call K jal jtbl jsm (by intro h; have := congrArg Fin.val h; omega)
+    exists_layoutCall K jal jtbl jsm (by intro h; have := congrArg Fin.val h; omega)
       (by intro h; have := congrArg Fin.val h; omega)
       (by intro h; have := congrArg Fin.val h; omega)
+  simp only [← serializeK_eq] at layouts
   haveI := instFL
   haveI := instDL
   -- The twelve phases.
@@ -1351,7 +1054,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       exact ⟨⟨j.val - (11 + k₁), by omega⟩,
         Fin.ext (by rw [hι₂]; show 11 + k₁ + (j.val - (11 + k₁)) = j.val; omega)⟩
   -- Phase 1: the first header pass, capturing `bits t` on its tape.
-  have hdr1 := ic_header_capture true K α x t ι₁ jbt
+  have hdr1 := headerCapture_run true K α x t ι₁ jbt
     (by rintro ⟨i, rfl⟩; have h := hι₁ i; omega) tapes₀ (fun _ => 0) []
   simp only [↓reduceIte] at hdr1
   obtain ⟨T₁, hT₁, h₁st, h₁pos, h₁bt, h₁bthd, h₁out, h₁frame, h₁cut⟩ := hdr1
@@ -1369,7 +1072,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     omega
   obtain ⟨hL1, hL2, -⟩ := inputRewindTM_run (e₁.mapState (fun _ => InputRewindPhase.start))
     hd₂st hd₂pos
-  obtain ⟨s2run, s2st, s2cut⟩ := ic_seam_step
+  obtain ⟨s2run, s2st, s2cut⟩ := seamCompTM_step
     (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm) (Sum.inr ())
     (inputRewindTM K) InputRewindPhase.start InputRewindPhase.done he₁.symm h₁st h₁cut hL1 rfl hL2
   set e₂ := ({ e₁.mapState (fun _ => InputRewindPhase.start) with
@@ -1483,7 +1186,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output,
         embedSilentCfg_output]
       exact h₁out
-  have hdr2 := ic_header_capture false K α x t ι₂ jal
+  have hdr2 := headerCapture_run false K α x t ι₂ jal
     (by rintro ⟨i, rfl⟩; have h := hι₂ i; omega) e₁.workTapes e₁.workTapePos []
   obtain ⟨T₃, hT₃, h₃st, h₃pos, h₃al, h₃alhd, h₃out, h₃frame, h₃cut⟩ := hdr2
   set e₃ := (embedSilentRetTM ι₂ jal
@@ -1491,7 +1194,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     ((embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
       ((prefixCanonTM (FinTM.pairExtractTM false true)).tm.initCfg
         (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl) T₃ with he₃
-  obtain ⟨s3run, s3st, s3cut⟩ := ic_seam_step
+  obtain ⟨s3run, s3st, s3cut⟩ := seamCompTM_step
     (seamCompTM (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm)
       (Sum.inr ()) (inputRewindTM K) InputRewindPhase.start)
     (Sum.inr InputRewindPhase.done)
@@ -1542,7 +1245,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
   obtain ⟨hr4run, hr4cut, hr4heads⟩ := rewindTM_run_ofCfg jbt (Nat.bits t)
     (Nat.bits t).length le_rfl
     ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)) hd₄st hd₄u
-  obtain ⟨s4run, s4st, s4cut⟩ := ic_seam_step _ (Sum.inr (Sum.inr ()))
+  obtain ⟨s4run, s4st, s4cut⟩ := seamCompTM_step _ (Sum.inr (Sum.inr ()))
     (rewindTM K jbt) RewindPhase.start RewindPhase.done
     s3run s3st s3cut hr4run rfl hr4cut
   set e₄ := ({ (e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start) with
@@ -1598,7 +1301,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₄tapes, h₃bt.1]
   obtain ⟨hc5run, hc5cut, hc5heads⟩ := copyTM_run_ofCfg jbt jctr hjbtctr (Nat.bits t)
     ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)) hd₅st hd₅w
-  obtain ⟨s5run, s5st, s5cut⟩ := ic_seam_step _ (Sum.inr RewindPhase.done)
+  obtain ⟨s5run, s5st, s5cut⟩ := seamCompTM_step _ (Sum.inr RewindPhase.done)
     (copyTM K jbt jctr) SweepPhase.sweep SweepPhase.done
     s4run s4st s4cut hc5run rfl hc5cut
   set e₅ := ({ (e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep) with
@@ -1709,7 +1412,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
       hd₆st hd₆pos hd₆ctr hd₆dst hd₆dstpos
   set e₆ := W.runFrom ((e₅.mapState (Sum.inr : _ → St₅)).mapState
     (fun _ => entryW)) T₆ with he₆
-  obtain ⟨s6run, s6st, s6cut⟩ := ic_seam_step _ (Sum.inr SweepPhase.done)
+  obtain ⟨s6run, s6st, s6cut⟩ := seamCompTM_step _ (Sum.inr SweepPhase.done)
     W entryW doneW s5run s5st s5cut he₆.symm h₆st h₆cut
   -- Phase 7: the second input rewind.
   have hd₇st :
@@ -1723,7 +1426,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     omega
   obtain ⟨hL1', hL2', -⟩ := inputRewindTM_run
     ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)) hd₇st hd₇pos
-  obtain ⟨s7run, s7st, s7cut⟩ := ic_seam_step _ (Sum.inr doneW)
+  obtain ⟨s7run, s7st, s7cut⟩ := seamCompTM_step _ (Sum.inr doneW)
     (inputRewindTM K) InputRewindPhase.start InputRewindPhase.done s6run s6st s6cut hL1' rfl hL2'
   set e₇ := ({ (e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start) with
     state := some InputRewindPhase.done, inputPos := 1 } : Cfg K Bool (InputRewindPhase) _) with he₇
@@ -1779,7 +1482,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₇al.1]
   obtain ⟨hr8run, hr8cut, hr8heads⟩ := rewindTM_run_ofCfg jal α α.length le_rfl
     ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)) hd₈st hd₈u
-  obtain ⟨s8run, s8st, s8cut⟩ := ic_seam_step _ (Sum.inr InputRewindPhase.done)
+  obtain ⟨s8run, s8st, s8cut⟩ := seamCompTM_step _ (Sum.inr InputRewindPhase.done)
     (rewindTM K jal) RewindPhase.start RewindPhase.done
     s7run s7st s7cut hr8run rfl hr8cut
   set e₈ := ({ (e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start) with
@@ -1971,7 +1674,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         rw [Cfg.mapState_output, Cfg.mapState_output]
         exact he₈out
       rw [hlhs, Cfg.mapState_output, embedSilentCfg_output]
-  obtain ⟨hIrun, hIcut⟩ := ic_install_phase CI entryI doneI ιI capI hcapInr
+  obtain ⟨hIrun, hIcut⟩ := installCall_releasePhase CI entryI doneI ιI capI hcapInr
     e₈.workTapes e₈.workTapePos α (serializeK (c.decode α).tm.replayTM) TI hTIpos
     hTIrun hTIcut
   have h₂9 : (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI).runFrom
@@ -1983,7 +1686,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
         (Sum.inr : CI.State → Unit ⊕ CI.State) := by
     rw [hjunc₉]
     exact hIrun
-  obtain ⟨s9run, s9st, s9cut⟩ := ic_seam_step _ (Sum.inr RewindPhase.done)
+  obtain ⟨s9run, s9st, s9cut⟩ := seamCompTM_step _ (Sum.inr RewindPhase.done)
     (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI) (Sum.inl ()) (Sum.inr doneI)
     s8run s8st s8cut h₂9
     (by rw [Cfg.mapState_state, embedSilentCfg_state, Cfg.ofWords_state, Option.map_some])
@@ -2086,7 +1789,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
       (Sum.inr : _ → St₉)).mapState (fun _ => entryL))
     hd₁₀st hd₁₀src hd₁₀srcp hd₁₀tbl hd₁₀tblp hd₁₀sm hd₁₀smp
-  obtain ⟨s10run, s10st, s10cut⟩ := ic_seam_step _ (Sum.inr (Sum.inr doneI))
+  obtain ⟨s10run, s10st, s10cut⟩ := seamCompTM_step _ (Sum.inr (Sum.inr doneI))
     L entryL doneL s9run s9st s9cut rfl hLst hLcut
   set e₁₀ := L.runFrom (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
     (Sum.inr : _ → St₉)).mapState (fun _ => entryL)) TL with he₁₀
@@ -2139,7 +1842,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     (x.take t).length le_rfl
     ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start))
     hd₁₁st hd₁₁u
-  obtain ⟨s11run, s11st, s11cut⟩ := ic_seam_step _ (Sum.inr doneL)
+  obtain ⟨s11run, s11st, s11cut⟩ := seamCompTM_step _ (Sum.inr doneL)
     (rewindTM K jwin) RewindPhase.start RewindPhase.done
     s10run s10st s10cut hr11run rfl hr11cut
   set e₁₁ := ({ (e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
@@ -2524,7 +2227,7 @@ theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
           TLoop) := by
     rw [hjunc₁₂]
     exact hA12 TLoop
-  obtain ⟨sRrun, sRst, sRcut⟩ := ic_seam_step _ (Sum.inr RewindPhase.done)
+  obtain ⟨sRrun, sRst, sRcut⟩ := seamCompTM_step _ (Sum.inr RewindPhase.done)
     (embedSilentTM ι₇ capL ic_loopHost)
     (⟨false, (CounterLoopState.dec FlagPhase.run, true)⟩ : Σ i, ic_loopPh i) _
     s11run s11st s11cut h₂12

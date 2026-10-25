@@ -1,0 +1,20 @@
+example (S : ℕ → ℕ) : SpaceConstructible S = ((∀ n, logSpace n ≤ S n) ∧ ∃ c : ℕ, 0 < c ∧
+    ∃ M : FinTM Bool, M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n) := rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ → ℕ) : M.ComputesInSpace f s =
+    ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length := rfl
+example (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x : List Bool, M.ComputesInTime x (f x) (T x.length) := rfl
+example (M : FinTM Bool) (x w : List Bool) (t : ℕ) :
+    M.ComputesInTime x w t = ∃ s, M.tm.ComputesInTimeAndSpace x w t s := rfl
+example (M₁ M₂ : FinTM Bool) : (FinTM.bufferedCompTM M₁ M₂).k = M₁.k + (1 + M₂.k) := rfl
+example (C : ℕ) : FinTM.polyUnaryTM C 0 = FinTM.constTM (List.replicate C true) := rfl
+example (w : List Bool) : (FinTM.prependTM w).k = 0 := rfl
+example (δ : Bool → Bool → Bool) (o : Bool → Bool → Option Bool) :
+    (transducerTM δ o false).k = 0 := rfl
+example (δ : Bool → Bool → Bool) (o : Bool → Bool → Option Bool) (q : Bool) :
+    transduce δ o q [] = [] := rfl
+example (M : FinTM Bool) (x : List Bool) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t = ∑ i, M.tm.spaceUsedByTape (M.tm.initCfg x) t i := rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.initCfg x = Cfg.init M.tm.q₀ x := rfl

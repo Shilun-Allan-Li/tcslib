@@ -1,0 +1,1176 @@
+From d92a06253618e18b70d9b175513447bbe403b79c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:43:15 +0000
+Subject: [PATCH 33/39] s13d g4 cont4: the found path's time bound; the
+ screen's new copies factored
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The found path runs in at most 1000 · 2^(i₀ + 1) + 200 steps: each round's time bounded by its
+level, the passes' times by their geometric sums. The checkpoint's copy-text screen pairs at 90%
+or more are factored through shared helpers (the never-halting exit sets, the pop rounds' and the
+returns' escapes, the home tests, the peek branch, the field starts' monotonicity, a field's
+first cell, the segment-built re-index, the one-cell branches' ways back, the room probe's box),
+and the pinned branch takes a test that moves its pin.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 739 +++++++++++++-----
+ 1 file changed, 539 insertions(+), 200 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 17d63fcd..d3df2c3a 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -4873,6 +4873,30 @@ private lemma zr_pinRe_step {k : ℕ} {S I J : Type} {x : List (ZoneSym k)}
+   rw [Contract.ofSegment_lo, Contract.ofSegment_hi]
+   exact h5 i
+ 
++/-- A re-indexed pinned step of a segment-built contract, from its fields at the pin. -/
++private lemma zr_pinRe_ofSeg {k : ℕ} {S I J : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)}
++    {pre : I → Cfg 2 (ZoneSym k) S x → Prop} {time : I → Cfg 2 (ZoneSym k) S x → ℕ}
++    {post : I → Cfg 2 (ZoneSym k) S x → Cfg 2 (ZoneSym k) S x}
++    {lo hi : I → Cfg 2 (ZoneSym k) S x → Fin 2 → ℤ}
++    {seg : ∀ i d, d.state = some e → pre i d →
++      Segment M X (HeadBox (lo i d) (hi i d)) d (post i d) (time i d)}
++    {em : ∀ i d, d.state = some e → pre i d → (post i d).state ∈ X}
++    (f : J → I) (V : J → Prop) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
++    (hP : ∀ j d, V j ∧ zr_pinned (T j) (p j) d → pre (f j) d)
++    {T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₂ : J → Fin 2 → ℤ} {τ : J → ℕ}
++    {L U : J → Fin 2 → ℤ}
++    (h : ∀ j d, V j → zr_pinned (T j) (p j) d →
++      zr_pinned (T₂ j) (p₂ j) (post (f j) d) ∧ (post (f j) d).inputPos = d.inputPos ∧
++        (post (f j) d).output = d.output ∧ time (f j) d = τ j ∧
++        ∀ i, L j i ≤ lo (f j) d i ∧ hi (f j) d i ≤ U j i) :
++    zr_PinStep (zr_reindexContract (Contract.ofSegment pre time post lo hi seg em) f
++      (fun j d => V j ∧ zr_pinned (T j) (p j) d) hP) V T T₂ p p₂ τ L U :=
++  zr_pinRe_step _ f V T p hP fun j d hV hd => by
++    simp only [Contract.ofSegment_post, Contract.ofSegment_time, Contract.ofSegment_lo,
++      Contract.ofSegment_hi]
++    exact h j d hV hd
++
+ /-- A seek-family endpoint from a pin: the tapes, the input head and the output kept, head `i`
+ moved to `v`. -/
+ private lemma zr_seekPost_pin {k : ℕ} {S : Type} {x : List (ZoneSym k)}
+@@ -7525,16 +7549,15 @@ private lemma zr_outZ_off {k : ℕ} (t : Fin k) (J : zr_Ix k) (hi : 1 ≤ J.i) (
+     zr_outZ t J = zonedTape J.D.2 := by
+   rw [zr_outZ, zr_shiftOut_off _ _ hi hiℓ hne, Function.update_eq_self]
+ 
+-/-- **The seam of a pinned branch arm**: a pinned stationary test whose verdict at `j` is
+-`a₁` exactly when `v j`, followed by an arm pinned from the test's pin at the indices it
+-selects. -/
++/-- **The seam of a pinned branch arm**: a pinned test whose verdict at `j` is `a₁` exactly
++when `v j`, followed by an arm pinned from the test's endpoint pin at the indices it selects. -/
+ private lemma zr_pin_blink {k : ℕ} {S₀ S₁ J : Type} {x : List (ZoneSym k)}
+     {M₀ : MultiTapeTM 2 (ZoneSym k) S₀} {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {e₀ a₁ a₂ a : S₀}
+     {e₁ : S₁} {X₀ : Set (Option S₀)} {X₁ : Set (Option S₁)} {C₀ : Contract M₀ e₀ X₀ J x}
+     {C₁ : Contract M₁ e₁ X₁ J x} {V : J → Prop} {v : J → Bool} (b : Bool) (he : a₁ ≠ a₂)
+-    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ₀ τ₁ : J → ℕ}
+-    {L₀ U₀ L₁ U₁ : J → Fin 2 → ℤ} (h₀ : zr_PinStep C₀ V T₁ T₁ p₁ p₁ τ₀ L₀ U₀)
+-    (hv : ∀ j d, V j → zr_pinned (T₁ j) (p₁ j) d →
++    {T₀ T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₀ p₁ p₂ : J → Fin 2 → ℤ}
++    {τ₀ τ₁ : J → ℕ} {L₀ U₀ L₁ U₁ : J → Fin 2 → ℤ} (h₀ : zr_PinStep C₀ V T₀ T₁ p₀ p₁ τ₀ L₀ U₀)
++    (hv : ∀ j d, V j → zr_pinned (T₀ j) (p₀ j) d →
+       (C₀.post j d).state = some (if v j then a₁ else a₂))
+     (ha : a = if b then a₁ else a₂)
+     (h₁ : zr_PinStep C₁ (fun j => V j ∧ v j = b) T₁ T₂ p₁ p₂ τ₁ L₁ U₁) :
+@@ -7551,8 +7574,8 @@ private lemma zr_pin_blink {k : ℕ} {S₀ S₁ J : Type} {x : List (ZoneSym k)}
+     · rfl
+   exact (h₁.2 j _ ⟨hV, hb⟩ ((zr_pinned_mapState_iff _).mpr (h₀.2 j d hV hd).2.1)).1
+ 
+-/-- **A pinned branch**: a pinned stationary test whose verdict at `j` is `a₁` exactly when
+-`v j`, followed by two arms pinned from the test's pin to one endpoint pin, each at the indices it
++/-- **A pinned branch**: a pinned test whose verdict at `j` is `a₁` exactly when `v j`, followed
++by two arms pinned from the test's endpoint pin to one endpoint pin, each at the indices it
+ selects, is a pinned step to that endpoint; its time is the selected arm's after the test and the
+ dispatch step. -/
+ private lemma zr_PinStep_branch {k : ℕ} {S₀ S₁ S₂ J : Type} [DecidableEq S₀] [DecidableEq S₁]
+@@ -7561,9 +7584,9 @@ private lemma zr_PinStep_branch {k : ℕ} {S₀ S₁ S₂ J : Type} [DecidableEq
+     {e₁ : S₁} {e₂ : S₂} {X₁ : Set (Option S₁)} {X₂ : Set (Option S₂)} (he : a₁ ≠ a₂)
+     {C₀ : Contract M₀ e₀ {some a₁, some a₂} J x} {C₁ : Contract M₁ e₁ X₁ J x}
+     {C₂ : Contract M₂ e₂ X₂ J x} {V : J → Prop} {v : J → Bool}
+-    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ₀ τ₁ τ₂ : J → ℕ}
+-    {L U : J → Fin 2 → ℤ} (h₀ : zr_PinStep C₀ V T₁ T₁ p₁ p₁ τ₀ L U)
+-    (hv : ∀ j d, V j → zr_pinned (T₁ j) (p₁ j) d →
++    {T₀ T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₀ p₁ p₂ : J → Fin 2 → ℤ}
++    {τ₀ τ₁ τ₂ : J → ℕ} {L U : J → Fin 2 → ℤ} (h₀ : zr_PinStep C₀ V T₀ T₁ p₀ p₁ τ₀ L U)
++    (hv : ∀ j d, V j → zr_pinned (T₀ j) (p₀ j) d →
+       (C₀.post j d).state = some (if v j then a₁ else a₂))
+     (h₁ : zr_PinStep C₁ (fun j => V j ∧ v j = true) T₁ T₂ p₁ p₂ τ₁ L U)
+     (h₂ : zr_PinStep C₂ (fun j => V j ∧ v j = false) T₁ T₂ p₁ p₂ τ₂ L U)
+@@ -7571,7 +7594,7 @@ private lemma zr_PinStep_branch {k : ℕ} {S₀ S₁ S₂ J : Type} [DecidableEq
+       C₁.pre j ((C₀.post j d).mapState fun _ => e₁))
+     (hl₂ : ∀ j d, d.state = some e₀ → C₀.pre j d → (C₀.post j d).state = some a₂ →
+       C₂.pre j ((C₀.post j d).mapState fun _ => e₂)) :
+-    zr_PinStep (Contract.branch he C₀ C₁ C₂ (fun j => j) (fun j => j) hl₁ hl₂) V T₁ T₂ p₁ p₂
++    zr_PinStep (Contract.branch he C₀ C₁ C₂ (fun j => j) (fun j => j) hl₁ hl₂) V T₀ T₂ p₀ p₂
+       (fun j => τ₀ j + 1 + if v j then τ₁ j else τ₂ j) L U := by
+   refine ⟨fun j d hd => ?_, fun j d hV hd => ?_⟩
+   · rw [Contract.branch_pre] at hd
+@@ -7660,11 +7683,10 @@ private lemma zr_pinTest_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J
+     zr_PinStep (zr_pinTestContract x V i choose dir T p) V T T p
+       (fun j => Function.update (p j) i (p j i + dir)) (fun _ => 1)
+       (fun j i' => min (p j i') (Function.update (p j) i (p j i + dir) i'))
+-      (fun j i' => max (p j i') (Function.update (p j) i (p j i + dir) i')) := by
+-  refine zr_pinRe_step _ _ _ _ _ _ fun j d _ hd => ?_
+-  simp only [zr_exitsContract, Contract.ofSegment_post, Contract.ofSegment_time,
+-    Contract.ofSegment_lo, Contract.ofSegment_hi, zr_cellContract, zr_cellPost, hd.1, hd.2]
+-  exact ⟨⟨rfl, rfl⟩, trivial, trivial, trivial, fun _ => ⟨le_rfl, le_rfl⟩⟩
++      (fun j i' => max (p j i') (Function.update (p j) i (p j i + dir) i')) :=
++  zr_pinRe_ofSeg _ _ _ _ _ fun j d _ hd => by
++    simp only [zr_cellContract, zr_cellPost, hd.1, hd.2]
++    exact ⟨⟨rfl, rfl⟩, trivial, trivial, trivial, fun _ => ⟨le_rfl, le_rfl⟩⟩
+ 
+ /-- The pinned test's verdict is `choose` of the cell under its head. -/
+ private lemma zr_pinTest_state {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
+@@ -7694,11 +7716,9 @@ private def zr_pinAnchorContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V
+ /-- The pinned anchor changes nothing and takes no step. -/
+ private lemma zr_pinAnchor_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
+     (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :
+-    zr_PinStep (zr_pinAnchorContract x V T p) V T T p p (fun _ => 0) p p := by
+-  refine zr_pinRe_step _ _ _ _ _ _ fun j d _ hd => ?_
+-  simp only [zr_anchorContract, Contract.ofSegment_post, Contract.ofSegment_time,
+-    Contract.ofSegment_lo, Contract.ofSegment_hi, hd.2]
+-  exact ⟨hd, trivial, trivial, trivial, fun _ => ⟨le_rfl, le_rfl⟩⟩
++    zr_PinStep (zr_pinAnchorContract x V T p) V T T p p (fun _ => 0) p p :=
++  zr_pinRe_ofSeg _ _ _ _ _ fun _ _ _ hd =>
++    ⟨hd, rfl, rfl, rfl, fun i => ⟨(congrFun hd.2 i).ge, (congrFun hd.2 i).le⟩⟩
+ 
+ /-- **A pinned peek**: step tape `i` by `δ`, test the cell there with `choose` while stepping
+ back. -/
+@@ -7827,6 +7847,14 @@ private lemma zr_oneBack_hX {S : Type} (d : S) (v : Bool) :
+     by_contra h'
+     exact h (if_neg h')
+ 
++/-- A pop round's exits are its way back's domain when its guarded arm's are. -/
++private lemma zr_popBack_hX {S₀ S₁ S₂ S₃ : Type} {d : S₁} {w : Bool} {X : Set (Option S₂)}
++    {b : S₂ → Option (Option Bool)} (h : ∀ s, some s ∈ X ↔ b s ≠ none) :
++    ∀ s : (S₀ ⊕ S₁) ⊕ (S₃ ⊕ S₂), some s ∈ (Option.map (Sum.inl ∘ Sum.inr) '' {some d} ∪
++      Option.map Sum.inr '' (Option.map Sum.inr '' X)) ↔
++        zr_branchBack (zr_oneBack d w) (zr_seqBack b) s ≠ none :=
++  zr_branchBack_hX (zr_oneBack_hX _ _) (zr_seqBack_hX h)
++
+ /-- **Every exit returns `w`**: from every entry configuration meeting the precondition, the
+ endpoint's state goes back to the anchor-phase verdict `w j`. -/
+ private def zr_BackIs {n : ℕ} {Γ S J : Type} {x : List Γ} {M : MultiTapeTM n Γ S} {e : S}
+@@ -7945,16 +7973,11 @@ private lemma zr_lhome_iff {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (n : 
+     zr_second_isNone _ n (zr_lfield_length z n hn)]
+ 
+ /-- The right layout's field starts increase. -/
+-private lemma zr_rstart_mono {m n : ℕ} (h : m ≤ n) : zr_rstart m ≤ zr_rstart n := by
+-  induction n with
+-  | zero => rw [Nat.le_zero.mp h]
+-  | succ n ih =>
+-    rcases Nat.lt_or_ge m (n + 1) with h' | h'
+-    · have := ih (by omega)
+-      have : (0 : ℤ) < ((2 ^ n : ℕ) : ℤ) := by exact_mod_cast Nat.two_pow_pos n
+-      rw [zr_rstart_succ]
+-      omega
+-    · rw [show m = n + 1 by omega]
++private lemma zr_rstart_mono {m n : ℕ} (h : m ≤ n) : zr_rstart m ≤ zr_rstart n :=
++  monotone_nat_of_le_succ (fun n => by
++    have := zr_rstart_succ n
++    have := Nat.two_pow_pos n
++    omega) h
+ 
+ /-- The level-zero inward shift is the identity. -/
+ private lemma zr_shiftIn_zero {ℓ : ℕ} (w : ZoneContents ℓ) : zoneShiftIn true 0 w = w := by
+@@ -8170,6 +8193,64 @@ private lemma zr_verdict_ite {S : Type} (f : Bool → S) (b : Bool) :
+     some (f b) = some (if b then f true else f false) := by
+   cases b <;> rfl
+ 
++/-- The peek's two verdict states are distinct. -/
++private lemma zr_peekNe :
++    (Sum.inr (some true) : Option Bool ⊕ Option Bool) ≠ Sum.inr (some false) := by
++  decide
++
++/-- A pinned peek's verdict selects the branch `v` reads off the peeked cell. -/
++private lemma zr_peek_verdict {k : ℕ} {J : Type} {x : List (ZoneSym k)} {V : J → Prop}
++    {i : Fin 2} {δ : SignType} {choose : Option (ZoneSym k) → Bool}
++    {T : J → Fin 2 → ℤ → Option (ZoneSym k)} {p : J → Fin 2 → ℤ} {v : J → Bool}
++    (hv : ∀ j, v j = choose (T j i (p j i + δ))) :
++    ∀ j d, V j → zr_pinned (T j) (p j) d →
++      ((zr_pinPeekContract x V i δ choose T p).post j d).state =
++        some (if v j then Sum.inr (some true) else Sum.inr (some false)) := fun j d hV hd => by
++  rw [zr_pinPeek_state _ _ _ _ _ _ j hV d hd, ← hv]
++  exact zr_verdict_ite (fun b => Sum.inr (some b)) _
++
++/-- **A peek branch**: a pinned peek whose verdict is `v`, on `true` stopping at the anchor,
++otherwise running the arm. -/
++private def zr_peekBranch {k : ℕ} {S₂ J : Type} {x : List (ZoneSym k)} {V : J → Prop}
++    {i : Fin 2} {δ : SignType} {choose : Option (ZoneSym k) → Bool}
++    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ₀ τ₂ : J → ℕ}
++    {L U : J → Fin 2 → ℤ} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₂ : S₂} {X₂ : Set (Option S₂)}
++    {C₂ : Contract M₂ e₂ X₂ J x} {v : J → Bool}
++    (h₀ : zr_PinStep (zr_pinPeekContract x V i δ choose T₁ p₁) V T₁ T₁ p₁ p₁ τ₀ L U)
++    (h₂ : zr_PinStep C₂ (fun j => V j ∧ v j = false) T₁ T₂ p₁ p₂ τ₂ L U)
++    (hv : ∀ j, v j = choose (T₁ j i (p₁ j i + δ))) :=
++  zr_anchBranch zr_peekNe h₀ (zr_peek_verdict hv) h₂
++
++/-- A peek branch is a pinned step to the arm's endpoint pin, which the anchor meets at the
++indices it selects. -/
++private lemma zr_peekBranch_step {k : ℕ} {S₂ J : Type} {x : List (ZoneSym k)} {V : J → Prop}
++    {i : Fin 2} {δ : SignType} {choose : Option (ZoneSym k) → Bool}
++    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ₀ τ₂ : J → ℕ}
++    {L U : J → Fin 2 → ℤ} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₂ : S₂} {X₂ : Set (Option S₂)}
++    {C₂ : Contract M₂ e₂ X₂ J x} {v : J → Bool}
++    (h₀ : zr_PinStep (zr_pinPeekContract x V i δ choose T₁ p₁) V T₁ T₁ p₁ p₁ τ₀ L U)
++    (h₂ : zr_PinStep C₂ (fun j => V j ∧ v j = false) T₁ T₂ p₁ p₂ τ₂ L U)
++    (hv : ∀ j, v j = choose (T₁ j i (p₁ j i + δ)))
++    (hesc : ∀ j, V j → v j = true → T₂ j = T₁ j ∧ p₂ j = p₁ j)
++    (hbox : ∀ j, V j → ∀ i, L j i ≤ p₁ j i ∧ p₁ j i ≤ U j i) :
++    zr_PinStep (zr_peekBranch h₀ h₂ hv) V T₁ T₂ p₁ p₂
++      (fun j => τ₀ j + 1 + if v j then 0 else τ₂ j) L U :=
++  zr_anchBranch_step zr_peekNe h₀ (zr_peek_verdict hv) h₂ hesc hbox
++
++/-- A peek branch returns `u` at the anchor and the arm's verdict otherwise. -/
++private lemma zr_peekBranch_back {k : ℕ} {S₂ J : Type} {x : List (ZoneSym k)} {V : J → Prop}
++    {i : Fin 2} {δ : SignType} {choose : Option (ZoneSym k) → Bool}
++    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ₀ τ₂ : J → ℕ}
++    {L U : J → Fin 2 → ℤ} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₂ : S₂} {X₂ : Set (Option S₂)}
++    {C₂ : Contract M₂ e₂ X₂ J x} {v : J → Bool}
++    (h₀ : zr_PinStep (zr_pinPeekContract x V i δ choose T₁ p₁) V T₁ T₁ p₁ p₁ τ₀ L U)
++    (h₂ : zr_PinStep C₂ (fun j => V j ∧ v j = false) T₁ T₂ p₁ p₂ τ₂ L U)
++    (hv : ∀ j, v j = choose (T₁ j i (p₁ j i + δ)))
++    {b₂ : S₂ → Option (Option Bool)} {w₂ : J → Bool} (hb : zr_BackIs C₂ b₂ w₂) (u : Bool) :
++    zr_BackIs (zr_peekBranch h₀ h₂ hv) (zr_branchBack (zr_oneBack (some false) u) b₂)
++      fun j => if v j then u else w₂ j :=
++  zr_anchBranch_back zr_peekNe h₀ (zr_peek_verdict hv) h₂ hb u
++
+ /-- Writing scratch's cell `r` in a two-tape family writes its second tape. -/
+ private lemma zr_tapes_write {k : ℕ} (A B : ℤ → Option (ZoneSym k)) (r : ℤ)
+     (v : Option (ZoneSym k)) :
+@@ -8195,14 +8276,21 @@ private lemma zr_slotEmpty_iff {k : ℕ} (t : Fin k) {o : Option (ZoneSym k)} (h
+   | none => exact absurd h Bool.false_ne_true
+   | some c => rw [zr_slotEmpty, Option.map_some, Option.some.injEq, Option.isNone_iff_eq_none]
+ 
++/-- A field of `2^i` cells, read from its first cell, is not blank there. -/
++private lemma zr_field_isSome {k : ℕ} {T : ℤ → Option (ZoneSym k)} {a : ℤ}
++    {w : List (ZoneSym k)} {i : ℕ}
++    (h : ∀ q, -1 ≤ q → q ≤ (w.length : ℤ) → T (a + q) = FinTM.bufferTape w q)
++    (hw : w.length = 2 ^ i) : (T a).isSome := by
++  have h0 := h 0 (by omega) (by omega)
++  rw [add_zero] at h0
++  rw [h0, show (0 : ℤ) = ((0 : ℕ) : ℤ) from rfl, FinTM.bufferTape_nat,
++    List.getElem?_eq_getElem (by rw [hw]; exact Nat.two_pow_pos i)]
++  rfl
++
+ /-- A right field's first cell is not blank. -/
+ private lemma zr_rstart_isSome {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (i : ℕ) (hi : i ≤ ℓ) :
+-    (zonedTape z (zr_rstart i)).isSome := by
+-  have h := zr_rfield_at z i hi _ rfl 0 (by omega) (by omega)
+-  rw [add_zero] at h
+-  rw [h, show (0 : ℤ) = ((0 : ℕ) : ℤ) from rfl, FinTM.bufferTape_nat,
+-    List.getElem?_eq_getElem (by rw [zr_rfield_length z i hi]; exact Nat.two_pow_pos i)]
+-  rfl
++    (zonedTape z (zr_rstart i)).isSome :=
++  zr_field_isSome (zr_rfield_at z i hi _ rfl) (zr_rfield_length z i hi)
+ 
+ /-- The state type of a contract's machine, read off its type. -/
+ private abbrev zr_stOf {n : ℕ} {Γ S I : Type} {x : List Γ} {M : MultiTapeTM n Γ S}
+@@ -8236,6 +8324,30 @@ private lemma zr_none_not_mem_union {S : Type} {A B : Set (Option S)} (ha : none
+     (hb : none ∉ B) : none ∉ A ∪ B :=
+   fun h => h.elim ha hb
+ 
++/-- A two-way exit set whose first arm is a single exit has no halted state when its second arm
++has none: the shape of every guard's and every round's exits. -/
++private lemma zr_none_arm {S T U : Type} {f : S → U} {g : T → U} {d : S} {Y : Set (Option T)}
++    (h : none ∉ Y) : none ∉ Option.map f '' {some d} ∪ Option.map g '' Y :=
++  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
++    (zr_none_not_mem_image _ h)
++
++/-- Two single exits, the anchor's and an arm's. -/
++private lemma zr_none_one {S T U : Type} {f : S → U} {g : T → U} {d : S} {e : T} :
++    none ∉ Option.map f '' {some d} ∪ Option.map g '' {some e} :=
++  zr_none_arm (zr_none_not_mem_single _)
++
++/-- A seam into a two-way exit set: a descending round's exits. -/
++private lemma zr_none_dn {S T U W : Type} {f : S → U} {g : T → U} {f' : U → W} {d : S}
++    {Y : Set (Option T)} (h : none ∉ Y) :
++    none ∉ Option.map f' '' (Option.map f '' {some d} ∪ Option.map g '' Y) :=
++  zr_none_not_mem_image _ (zr_none_arm h)
++
++/-- A single exit and a seam's arm: a pop round's exits. -/
++private lemma zr_none_up {S T V U : Type} {f : S → U} {g : T → U} {g' : V → T} {d : S}
++    {Y : Set (Option V)} (h : none ∉ Y) :
++    none ∉ Option.map f '' {some d} ∪ Option.map g '' (Option.map g' '' Y) :=
++  zr_none_arm (zr_none_not_mem_image _ h)
++
+ /-- **A pass index**: the data, the anchor's field, and scratch as a count stack — a base tape
+ `β`, blank from `b` on, with count marks on `[b, s)` and the head at `s`. -/
+ private structure zr_Px (k : ℕ) where
+@@ -8347,21 +8459,22 @@ private lemma zr_px_iter {k : ℕ} (t : Fin k)
+       push_cast
+       ring
+ 
+-/-- Stepping down `m` times. -/
+-private lemma zr_iterate_pred (m n : ℕ) : (fun i => i - 1)^[m] n = n - m := by
++/-- Stepping down and up `m` times. -/
++private lemma zr_iterate_step (m n : ℕ) :
++    (fun i => i - 1)^[m] n = n - m ∧ (fun i => i + 1)^[m] n = n + m := by
+   induction m with
+-  | zero => rfl
++  | zero => exact ⟨rfl, rfl⟩
+   | succ m ih =>
+-    rw [Function.iterate_succ_apply', ih]
+-    omega
++    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih.1, ih.2]
++    exact ⟨by omega, by omega⟩
++
++/-- Stepping down `m` times. -/
++private lemma zr_iterate_pred (m n : ℕ) : (fun i => i - 1)^[m] n = n - m :=
++  (zr_iterate_step m n).1
+ 
+ /-- Stepping up `m` times. -/
+-private lemma zr_iterate_succ (m n : ℕ) : (fun i => i + 1)^[m] n = n + m := by
+-  induction m with
+-  | zero => rfl
+-  | succ m ih =>
+-    rw [Function.iterate_succ_apply', ih]
+-    omega
++private lemma zr_iterate_succ (m n : ℕ) : (fun i => i + 1)^[m] n = n + m :=
++  (zr_iterate_step m n).2
+ 
+ /-- **A pass as a contract on its loop**: a pinned round body from each anchor to the next
+ index's, escaping after `n j` further rounds, its round boxes inside one pass box, runs from the
+@@ -8541,12 +8654,17 @@ private lemma zr_grdIn_step {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym
+           show zr_rstart (g j).i ≤ zr_rstart ((g j).i + 1) + 4 * (zr_hh (g j) : ℤ) by omega⟩
+       · exact ⟨le_refl (g j).s, show (g j).s ≤ (g j).s + 8 * (zr_hh (g j) : ℤ) + 2 by omega⟩
+ 
++/-- The way back of a branch from the one-cell leaf's verdict pair to a single-exit arm: the
++leaf's `some false` returns `v`, the arm's exit `e` returns `false`. -/
++private noncomputable abbrev zr_brBack {S₀ S₂ : Type} (v : Bool) (e : S₂) :
++    (S₀ ⊕ Option Bool) ⊕ S₂ → Option (Option Bool) :=
++  zr_branchBack (zr_oneBack (some false) v) (zr_oneBack e false)
++
+ /-- The guarded right inward shift's way back, both exits to the anchor. -/
+ private noncomputable def zr_grdInBack {k : ℕ} (t : Fin k) :
+     (Option Bool ⊕ Option Bool) ⊕ zr_stOf (zr_inSeg t ([] : List (ZoneSym k))).C →
+       Option (Option Bool) :=
+-  zr_branchBack (zr_oneBack (some false) false)
+-    (zr_oneBack (zr_exitOf (zr_inSeg t ([] : List (ZoneSym k))).C) false)
++  zr_brBack false (zr_exitOf (zr_inSeg t ([] : List (ZoneSym k))).C)
+ 
+ /-- The guarded right inward shift returns to the anchor. -/
+ private lemma zr_grdIn_back {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k))
+@@ -8565,8 +8683,7 @@ private lemma zr_grdIn_hX {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k)
+ private lemma zr_grdIn_none {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k))
+     (g : I → zr_Ix k) (V : I → Prop) (hV : ∀ j, V j → zr_shPre (g j)) :
+     none ∉ zr_exitsOf (zr_grdIn t x g V hV) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
++  zr_none_one
+ 
+ /-- A right pass's anchor heads: the zoned head at field `P.i`'s start, scratch at the top. -/
+ private abbrev zr_rH {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ := zr_heads (zr_rstart P.i) P.s
+@@ -8667,17 +8784,29 @@ private def zr_p1Lead {k : ℕ} (x : List (ZoneSym k)) :=
+             split_ifs <;> omega)
+             (show max P.s (P.s + 1) ≤ P.s + 8 * (zr_hh (zr_p1G P) : ℤ) + 3 by omega))
+ 
++/-- **A home test** one cell past a field's start, the field read through `st` (the right or the
++left layout): blank exactly at the home. -/
++private lemma zr_home_eq {k : ℕ} {P : zr_Px k} (st : ℕ → ℤ)
++    (hst : ∀ n, n ≤ P.D.1 → (zonedTape P.D.2 (st n + 1)).isNone = decide (n = 0)) {n : ℕ}
++    (hn : n ≤ P.i) (hV : zr_pxV P) :
++    (zonedTape P.D.2 (st n + ((1 : SignType) : ℤ))).isNone = decide (n = 0) := by
++  rw [SignType.coe_one]
++  exact hst n (hn.trans hV.1)
++
++/-- A descending pass's home test verdict, one cell past the field start `A` reads. -/
++private abbrev zr_dnHome {k : ℕ} (A : zr_Ix k → Fin 2 → ℤ) (P : zr_Px k) : Bool :=
++  Option.isNone (zr_aT (zr_p1G P) 0 (A (zr_p1G P) 0 + ((1 : SignType) : ℤ)))
++
+ /-- The descending right pass's home test verdict, one cell after field `P.i - 1`'s start. -/
+-private abbrev zr_p1Home {k : ℕ} (P : zr_Px k) : Bool :=
+-  Option.isNone (zr_aT (zr_p1G P) 0 (zr_rA (zr_p1G P) 0 + ((1 : SignType) : ℤ)))
++private abbrev zr_p1Home {k : ℕ} (P : zr_Px k) : Bool := zr_dnHome zr_rA P
++
++/-- The descending right pass's guard: a descending index away from the home. -/
++private abbrev zr_p1On {k : ℕ} (P : zr_Px k) : Prop := zr_p1V P ∧ zr_p1Home P = false
+ 
+ /-- The home test's verdict is whether field `P.i - 1` is the home. -/
+ private lemma zr_p1Home_eq {k : ℕ} {P : zr_Px k} (hV : zr_pxV P) :
+-    zr_p1Home P = decide (P.i - 1 = 0) := by
+-  have := hV.1
+-  show (zonedTape P.D.2 (zr_rstart (P.i - 1) + ((1 : SignType) : ℤ))).isNone = _
+-  rw [SignType.coe_one]
+-  exact zr_rhome_iff P.D.2 (P.i - 1) (by omega)
++    zr_p1Home P = decide (P.i - 1 = 0) :=
++  zr_home_eq zr_rstart (zr_rhome_iff _) (Nat.sub_le _ _) hV
+ 
+ /-- The descending right pass's home test, a peek one cell right, in the round box. -/
+ private lemma zr_p1Peek_step {k : ℕ} (x : List (ZoneSym k)) :
+@@ -8703,8 +8832,10 @@ private lemma zr_p1Peek_step {k : ℕ} (x : List (ZoneSym k)) :
+         omega)
+ 
+ /-- Past the home, a descending pass's shift index meets the shift's requirements. -/
+-private lemma zr_dnG_pre {k : ℕ} {P : zr_Px k} (hV : zr_p1V P) (h : P.i - 1 ≠ 0) :
+-    zr_shPre (zr_p1G P) := by
++private lemma zr_dnG_pre {k : ℕ} {P : zr_Px k} {v : Bool} (h : zr_p1V P ∧ v = false)
++    (hv : v = decide (P.i - 1 = 0)) : zr_shPre (zr_p1G P) := by
++  obtain ⟨hV, h⟩ := h
++  rw [hv, decide_eq_false_iff_not] at h
+   have := hV.1.1
+   refine ⟨show 1 ≤ P.i - 1 by omega, show P.i - 1 < P.D.1 by omega, fun r hr => ?_⟩
+   have hr' : P.s + 1 ≤ r := hr
+@@ -8714,10 +8845,8 @@ private lemma zr_dnG_pre {k : ℕ} {P : zr_Px k} (hV : zr_p1V P) (h : P.i - 1 
+ 
+ /-- Past the home, the descending right pass's shift index meets the shift's requirements. -/
+ private lemma zr_p1G_pre {k : ℕ} {P : zr_Px k} (h : zr_p1V P ∧ zr_p1Home P = false) :
+-    zr_shPre (zr_p1G P) := by
+-  obtain ⟨hV, hh⟩ := h
+-  rw [zr_p1Home_eq hV.1, decide_eq_false_iff_not] at hh
+-  exact zr_dnG_pre hV hh
++    zr_shPre (zr_p1G P) :=
++  zr_dnG_pre h (zr_p1Home_eq h.1.1)
+ 
+ /-- The descending right pass's guarded shift, in the round box. -/
+ private lemma zr_p1Grd_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+@@ -8745,11 +8874,7 @@ private lemma zr_p1Grd_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- **The descending right pass's branch**: at the home stop; otherwise run the guarded
+ shift. -/
+ private def zr_p1Br {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+-  zr_anchBranch (by decide : (Sum.inr (some true) : Option Bool ⊕ Option Bool) ≠
+-      Sum.inr (some false)) (zr_p1Peek_step x)
+-    (fun P d hV hd => by
+-      rw [zr_pinPeek_state _ _ _ _ _ _ P hV d hd]
+-      exact zr_verdict_ite (fun b => Sum.inr (some b)) _) (zr_p1Grd_step t x)
++  zr_peekBranch (zr_p1Peek_step x) (zr_p1Grd_step t x) fun _ => rfl
+ 
+ /-- The descending right pass's branch is a pinned step to the next index's anchor pin. -/
+ private lemma zr_p1Br_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+@@ -8757,7 +8882,7 @@ private lemma zr_p1Br_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+       (fun P => zr_rA (zr_p1G P)) (fun P => zr_rH (zr_p1Nxt t P))
+       (fun P => 3 + 1 + if zr_p1Home P then 0 else
+         1 + 1 + if zr_inOff t (zr_p1G P) then 0 else 76 * zr_hh (zr_p1G P) + 77) zr_p1L zr_p1U :=
+-  zr_anchBranch_step _ _ _ _ (fun P hV hh => by
++  zr_peekBranch_step _ _ _ (fun P hV hh => by
+       rw [zr_p1Home_eq hV.1, decide_eq_true_iff] at hh
+       refine ⟨?_, rfl⟩
+       show zr_tapes (zonedTape (Function.update P.D.2 t (zoneShiftIn true (P.i - 1) (P.D.2 t))))
+@@ -8800,7 +8925,7 @@ private noncomputable def zr_p1Back {k : ℕ} (t : Fin k) :
+ /-- The descending right pass's round escapes exactly at the home. -/
+ private lemma zr_p1Body_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     zr_BackIs (zr_p1Body t x) (zr_p1Back t) zr_p1Home :=
+-  zr_BackIs_seq (zr_BackIs_congr (zr_anchBranch_back _ _ _ _ (zr_grdIn_back t x _ _ _) true)
++  zr_BackIs_seq (zr_BackIs_congr (zr_peekBranch_back _ _ _ (zr_grdIn_back t x _ _ _) true)
+     fun P => by cases zr_p1Home P <;> rfl)
+ 
+ /-- The descending right pass's round's exits are its way back's domain. -/
+@@ -8812,10 +8937,7 @@ private lemma zr_p1Body_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The descending right pass's round never halts. -/
+ private lemma zr_p1Body_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_p1Body t x) :=
+-  zr_none_not_mem_image _ (zr_none_not_mem_union
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_grdIn_none t x zr_p1G
+-      (fun P => zr_p1V P ∧ zr_p1Home P = false) fun _ h => zr_p1G_pre h)))
++  zr_none_dn (zr_grdIn_none t x zr_p1G zr_p1On fun _ => zr_p1G_pre)
+ 
+ /-- A descending pass after `m` rounds: `m` fields further in, `m` marks pushed. -/
+ private lemma zr_dn_iter {k : ℕ} (t : Fin k)
+@@ -9237,12 +9359,8 @@ private lemma zr_retSeg_spec {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ 
+ /-- A left field's outermost cell is not blank. -/
+ private lemma zr_lstart_isSome {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (i : ℕ) (hi : i ≤ ℓ) :
+-    (zonedTape z (zr_lstart i)).isSome := by
+-  have h := zr_lfield_at z i hi _ rfl 0 (by omega) (by omega)
+-  rw [add_zero] at h
+-  rw [h, show (0 : ℤ) = ((0 : ℕ) : ℤ) from rfl, FinTM.bufferTape_nat,
+-    List.getElem?_eq_getElem (by rw [zr_lfield_length z i hi]; exact Nat.two_pow_pos i)]
+-  rfl
++    (zonedTape z (zr_lstart i)).isSome :=
++  zr_field_isSome (zr_lfield_at z i hi _ rfl) (zr_lfield_length z i hi)
+ 
+ /-- The left outward shift's first guard verdict at `J`: `true` when the guard is off, the inner
+ zone's outermost slot empty. -/
+@@ -9366,6 +9484,18 @@ private lemma zr_outOff_esc {k : ℕ} {t : Fin k} {J : zr_Ix k} (hJ : zr_shPre J
+   · rw [(zr_out2Off_iff hJ).mpr hr] at h
+     exact Bool.false_ne_true h
+ 
++/-- A room-probe half, re-indexed through `g`, in the guarded outward shift's box. -/
++private lemma zr_go_widen {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} {C : Contract M e X J x}
++    {V : J → Prop} {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ}
++    {τ : J → ℕ} (g : J → zr_Ix k)
++    (h : zr_PinStep C V T₁ T₂ p₁ p₂ τ (fun j => zr_prL (g j)) fun j => zr_prU (g j)) :
++    zr_PinStep C V T₁ T₂ p₁ p₂ τ (fun j => zr_goL (g j)) fun j => zr_goU (g j) :=
++  zr_PinStep_congr h (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
++    (fun _ _ => zr_heads_le le_rfl le_rfl)
++    (fun j _ => zr_heads_le le_rfl (show (g j).s + zr_hh (g j) + 3 ≤
++      (g j).s + 6 * zr_hh (g j) + 3 by omega))
++
+ /-- The room probe, re-indexed, in the guarded shift's box. -/
+ private lemma zr_goProbe_step {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k))
+     (g : I → zr_Ix k) (V : I → Prop) (hV : ∀ j, V j → zr_shPre (g j)) :
+@@ -9375,10 +9505,7 @@ private lemma zr_goProbe_step {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSy
+       (fun j => V j ∧ zr_out1Off t (g j) = false) (fun j => zr_aT (g j))
+       (fun j => zr_prT t (g j)) (fun j => zr_lA (g j)) (fun j => zr_prH (g j))
+       (fun j => 11 * zr_hh (g j) + 20) (fun j => zr_goL (g j)) (fun j => zr_goU (g j)) :=
+-  zr_PinStep_congr (zr_PinStep_re (zr_prSeg_spec t x) g _ fun j h => hV j h.1) (fun _ _ => rfl)
+-    (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => zr_heads_le le_rfl le_rfl)
+-    (fun j _ => zr_heads_le le_rfl (show (g j).s + zr_hh (g j) + 3 ≤
+-      (g j).s + 6 * zr_hh (g j) + 3 by omega))
++  zr_go_widen g (zr_PinStep_re (zr_prSeg_spec t x) g _ fun j h => hV j h.1)
+ 
+ /-- The room probe's return, re-indexed at the indices `V'` selects. -/
+ private abbrev zr_goRet {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k)) (g : I → zr_Ix k)
+@@ -9393,10 +9520,7 @@ private lemma zr_goRet_step {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym
+     zr_PinStep (zr_goRet t x g V' hV) V' (fun j => zr_prT t (g j)) (fun j => zr_aT (g j))
+       (fun j => zr_prH (g j)) (fun j => zr_lA (g j)) (fun j => 6 * zr_hh (g j) + 11)
+       (fun j => zr_goL (g j)) (fun j => zr_goU (g j)) :=
+-  zr_PinStep_congr (zr_PinStep_re (zr_retSeg_spec t x) g V' hV) (fun _ _ => rfl)
+-    (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => zr_heads_le le_rfl le_rfl)
+-    (fun j _ => zr_heads_le le_rfl (show (g j).s + zr_hh (g j) + 3 ≤
+-      (g j).s + 6 * zr_hh (g j) + 3 by omega))
++  zr_go_widen g (zr_PinStep_re (zr_retSeg_spec t x) g V' hV)
+ 
+ /-- The left outward shift, re-indexed at the indices whose guards are on. -/
+ private abbrev zr_goShift {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k))
+@@ -9544,22 +9668,14 @@ private lemma zr_grdOut_hX {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k
+ private lemma zr_grdOut_none {k : ℕ} {I : Type} (t : Fin k) (x : List (ZoneSym k))
+     (g : I → zr_Ix k) (V : I → Prop) (hV : ∀ j, V j → zr_shPre (g j)) :
+     none ∉ zr_exitsOf (zr_grdOut t x g V hV) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_image _ (zr_none_not_mem_union
+-      (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-      (zr_none_not_mem_image _ (zr_none_not_mem_image _ (zr_none_not_mem_single _))))))
++  zr_none_up (zr_none_arm (zr_none_not_mem_image _ (zr_none_not_mem_single _)))
+ 
+ /-- The left layout's field starts decrease outward. -/
+-private lemma zr_lstart_anti {m n : ℕ} (h : m ≤ n) : zr_lstart n ≤ zr_lstart m := by
+-  induction n with
+-  | zero => rw [Nat.le_zero.mp h]
+-  | succ n ih =>
+-    rcases Nat.lt_or_ge m (n + 1) with h' | h'
+-    · have := ih (by omega)
+-      have := zr_lstart_succ n
+-      have : (0 : ℤ) < ((2 ^ (n + 1) : ℕ) : ℤ) := by exact_mod_cast Nat.two_pow_pos _
+-      omega
+-    · rw [show m = n + 1 by omega]
++private lemma zr_lstart_anti {m n : ℕ} (h : m ≤ n) : zr_lstart n ≤ zr_lstart m :=
++  antitone_nat_of_succ_le (fun n => by
++    have := zr_lstart_succ n
++    have := Nat.two_pow_pos (n + 1)
++    omega) h
+ 
+ /-- The count stack's pop test verdict, the cell below the top: `true` when the stack is
+ empty. -/
+@@ -9711,6 +9827,10 @@ empty. -/
+ private abbrev zr_woNxt {k : ℕ} (t : Fin k) : zr_Px k → zr_Px k :=
+   zr_cNxt (fun P => P.s ≤ P.b) (zr_pxNxt t (fun _ _ w => w) (fun i => i + 1) (-1))
+ 
++/-- The walk out's run with marks left: the lead, then the skip across left field `P.i + 1`. -/
++private abbrev zr_woRun {k : ℕ} (P : zr_Px k) : ℕ :=
++  1 + 1 + 1 + 1 + ((zr_lfield P.D.2 (P.i + 1)).length + 3)
++
+ /-- The walk out's round box, its lower corner: the lead's reach unless the stack is empty. -/
+ private abbrev zr_woL {k : ℕ} (P : zr_Px k) : Fin 2 → ℤ :=
+   zr_heads (if zr_popE P then zr_lstart P.i - 1 else zr_lstart (P.i + 1) - 1) (P.s - 2)
+@@ -9810,6 +9930,24 @@ private lemma zr_popRound_step {k : ℕ} {S₂ : Type} (x : List (ZoneSym k)) (V
+       (fun P => 3 + 1 + if zr_popE P then 0 else τ₂ P) L U :=
+   zr_peekRound_step x V 1 (-1) zr_popE a (fun _ => rfl) L U hL hU h₂ hesc
+ 
++/-- At an empty stack a pop pass's next index is the index itself. -/
++private lemma zr_popEsc {k : ℕ} {c : ℤ} {P : zr_Px k} (N : zr_Px k) (H : zr_Px k → Fin 2 → ℤ)
++    (hV : zr_popV c P) (hp : zr_popE P = true) :
++    zr_pT (if P.s ≤ P.b then P else N) = zr_pT P ∧ H (if P.s ≤ P.b then P else N) = H P := by
++  have hs : P.s ≤ P.b := by
++    rw [zr_popE_eq hV.1 hV.2.1, decide_eq_true_iff] at hp
++    omega
++  rw [if_pos hs]
++  exact ⟨rfl, rfl⟩
++
++/-- At the home a return's next index is the index itself. -/
++private lemma zr_homeEsc {k : ℕ} {P : zr_Px k} {v : Bool} (N : zr_Px k) (H : zr_Px k → Fin 2 → ℤ)
++    (hh : v = true) (hv : v = decide (P.i = 0)) :
++    zr_pT (if P.i = 0 then P else N) = zr_pT P ∧ H (if P.i = 0 then P else N) = H P := by
++  have hi : P.i = 0 := by rwa [hv, decide_eq_true_iff] at hh
++  rw [if_pos hi]
++  exact ⟨rfl, rfl⟩
++
+ /-- A pop round escapes exactly on an empty stack. -/
+ private lemma zr_popRound_back {k : ℕ} {S₂ : Type} (x : List (ZoneSym k)) (V : zr_Px k → Prop)
+     (a : zr_Px k → ℤ) (L U : zr_Px k → Fin 2 → ℤ)
+@@ -9880,7 +10018,7 @@ private lemma zr_wo_anchor {k : ℕ} (P : zr_Px k) :
+ 
+ /-- The walk out's round time. -/
+ private abbrev zr_woTau {k : ℕ} (P : zr_Px k) : ℕ :=
+-  3 + 1 + if zr_popE P then 0 else 1 + 1 + 1 + 1 + ((zr_lfield P.D.2 (P.i + 1)).length + 3)
++  3 + 1 + if zr_popE P then 0 else zr_woRun P
+ 
+ /-- **The walk out's round** is a pinned step from the anchor to the next index's anchor. -/
+ private lemma zr_woBody_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+@@ -9914,8 +10052,7 @@ private lemma zr_woBody_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The walk out's round never halts. -/
+ private lemma zr_woBody_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_woBody t x) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
++  zr_none_one
+ 
+ /-- A pop pass's unconditional next index: one field out, its level changed by `F`, one mark
+ popped. -/
+@@ -10067,14 +10204,14 @@ private abbrev zr_p4Nxt {k : ℕ} (t : Fin k) : zr_Px k → zr_Px k :=
+ 
+ /-- With marks left, an ascending pass's index meets its lead's requirements. -/
+ private lemma zr_up_lead {k : ℕ} {P : zr_Px k} (h : zr_upV P ∧ zr_popE P = false) :
+-    (zr_pxV P ∧ P.b < P.s) ∧ P.i < P.D.1 := by
+-  obtain ⟨⟨hV, hβ, hl⟩, hp⟩ := h
+-  rw [zr_popE_eq hV hβ, decide_eq_false_iff_not] at hp
+-  have := hV.2.1
+-  exact ⟨⟨hV, by omega⟩, by omega⟩
++    (zr_pxV P ∧ P.b < P.s) ∧ P.i < P.D.1 :=
++  zr_wo_lead ⟨⟨h.1.1, h.1.2.1, by have := h.1.2.2; omega⟩, h.2⟩
++
++/-- The ascending passes' guard: a pop index with marks left. -/
++private abbrev zr_upOn {k : ℕ} (P : zr_Px k) : Prop := zr_upV P ∧ zr_popE P = false
+ 
+ /-- With marks left, a pop pass's shift index meets the shift's requirements. -/
+-private lemma zr_popG_pre {k : ℕ} {P : zr_Px k} (h : zr_upV P ∧ zr_popE P = false) :
++private lemma zr_popG_pre {k : ℕ} {P : zr_Px k} (h : zr_upOn P) :
+     zr_shPre (zr_popG P) := by
+   have hb := (zr_up_lead h).1.2
+   obtain ⟨⟨hV, hβ, hl⟩, -⟩ := h
+@@ -10178,15 +10315,9 @@ private def zr_p4Body {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+ /-- A left field's outermost cell plus its length decreases outward. -/
+ private lemma zr_lstart_pow_anti {m n : ℕ} (h : m ≤ n) :
+     zr_lstart n + ((2 ^ n : ℕ) : ℤ) ≤ zr_lstart m + ((2 ^ m : ℕ) : ℤ) := by
+-  induction n with
+-  | zero => rw [Nat.le_zero.mp h]
+-  | succ n ih =>
+-    rcases Nat.lt_or_ge m (n + 1) with h' | h'
+-    · have := ih (by omega)
+-      have := zr_lstart_succ n
+-      have : (0 : ℤ) < ((2 ^ n : ℕ) : ℤ) := by exact_mod_cast Nat.two_pow_pos _
+-      omega
+-    · rw [show m = n + 1 by omega]
++  have := zr_rstart_mono h
++  rw [zr_lstart, zr_lstart]
++  omega
+ 
+ /-- An anchor lies in the ascending left pass's round box. -/
+ private lemma zr_p4_anchor {k : ℕ} (P : zr_Px k) :
+@@ -10206,8 +10337,7 @@ private lemma zr_p4_anchor {k : ℕ} (P : zr_Px k) :
+ /-- The ascending left pass's round time. -/
+ private abbrev zr_p4Tau {k : ℕ} (t : Fin k) (P : zr_Px k) : ℕ :=
+   3 + 1 + if zr_popE P then 0 else
+-    1 + 1 + 1 + 1 + ((zr_lfield P.D.2 (P.i + 1)).length + 3) + 1 +
+-    (1 + 1 + if zr_out1Off t (zr_popG P) then 0 else
++    zr_woRun P + 1 + (1 + 1 + if zr_out1Off t (zr_popG P) then 0 else
+       11 * zr_hh (zr_popG P) + 20 + 1 + (1 + 1 + if zr_out2Off t (zr_popG P) then
+         6 * zr_hh (zr_popG P) + 11 else
+         6 * zr_hh (zr_popG P) + 11 + 1 + (76 * zr_hh (zr_popG P) + 107)))
+@@ -10218,12 +10348,7 @@ private lemma zr_p4Body_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     zr_PinStep (zr_p4Body t x) zr_upV zr_pT (fun P => zr_pT (zr_p4Nxt t P)) zr_lH
+       (fun P => zr_lH (zr_p4Nxt t P))
+       (zr_p4Tau t) zr_p4L zr_p4U :=
+-  zr_popRound_step _ _ _ _ _ _ _ _ fun P hV hp => by
+-    have hs : P.s ≤ P.b := by
+-      rw [zr_popE_eq hV.1 hV.2.1, decide_eq_true_iff] at hp
+-      omega
+-    exact ⟨show zr_pT (if P.s ≤ P.b then P else _) = _ by rw [if_pos hs],
+-      show zr_lH (if P.s ≤ P.b then P else _) = _ by rw [if_pos hs]⟩
++  zr_popRound_step _ _ _ _ _ _ _ _ fun _ hV hp => zr_popEsc _ zr_lH hV hp
+ 
+ /-- The ascending left pass's way back: the empty stack escapes, the guarded shift's exits
+ return to the anchor. -/
+@@ -10239,15 +10364,12 @@ private lemma zr_p4Body_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The ascending left pass's round's exits are its way back's domain. -/
+ private lemma zr_p4Body_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     ∀ s, some s ∈ zr_exitsOf (zr_p4Body t x) ↔ zr_p4Back t s ≠ none :=
+-  zr_branchBack_hX (zr_oneBack_hX _ _) (zr_seqBack_hX (zr_grdOut_hX t x zr_popG
+-    (fun P => zr_upV P ∧ zr_popE P = false) fun _ h => zr_popG_pre h))
++  zr_popBack_hX (zr_grdOut_hX t x zr_popG zr_upOn fun _ => zr_popG_pre)
+ 
+ /-- The ascending left pass's round never halts. -/
+ private lemma zr_p4Body_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_p4Body t x) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_image _ (zr_grdOut_none t x zr_popG
+-      (fun P => zr_upV P ∧ zr_popE P = false) fun _ h => zr_popG_pre h)))
++  zr_none_up (zr_grdOut_none t x zr_popG zr_upOn fun _ => zr_popG_pre)
+ 
+ /-- The ascending left pass's head box: the zoned head from two cells past the outermost zone it
+ shifts to the start's field and its reach, scratch over the marks and the shifts' work areas. -/
+@@ -10489,12 +10611,7 @@ private lemma zr_p3Body_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     zr_PinStep (zr_p3Body t x) zr_upV zr_pT (fun P => zr_pT (zr_p3Nxt t P)) zr_rH
+       (fun P => zr_rH (zr_p3Nxt t P))
+       (zr_p3Tau t) zr_p3L zr_p3U :=
+-  zr_popRound_step _ _ _ _ _ _ _ _ fun P hV hp => by
+-    have hs : P.s ≤ P.b := by
+-      rw [zr_popE_eq hV.1 hV.2.1, decide_eq_true_iff] at hp
+-      omega
+-    exact ⟨show zr_pT (if P.s ≤ P.b then P else _) = _ by rw [if_pos hs],
+-      show zr_rH (if P.s ≤ P.b then P else _) = _ by rw [if_pos hs]⟩
++  zr_popRound_step _ _ _ _ _ _ _ _ fun _ hV hp => zr_popEsc _ zr_rH hV hp
+ 
+ /-- The ascending right pass's way back: the empty stack escapes, the guarded shift's exits
+ return to the anchor. -/
+@@ -10510,15 +10627,12 @@ private lemma zr_p3Body_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The ascending right pass's round's exits are its way back's domain. -/
+ private lemma zr_p3Body_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     ∀ s, some s ∈ zr_exitsOf (zr_p3Body t x) ↔ zr_p3Back t s ≠ none :=
+-  zr_branchBack_hX (zr_oneBack_hX _ _) (zr_seqBack_hX (zr_grdIn_hX t x zr_popG
+-    (fun P => zr_upV P ∧ zr_popE P = false) fun _ h => zr_popG_pre h))
++  zr_popBack_hX (zr_grdIn_hX t x zr_popG zr_upOn fun _ => zr_popG_pre)
+ 
+ /-- The ascending right pass's round never halts. -/
+ private lemma zr_p3Body_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_p3Body t x) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_image _ (zr_grdIn_none t x zr_popG
+-      (fun P => zr_upV P ∧ zr_popE P = false) fun _ h => zr_popG_pre h)))
++  zr_none_up (zr_grdIn_none t x zr_popG zr_upOn fun _ => zr_popG_pre)
+ 
+ /-- The ascending right pass's head box: the zoned head from one cell left of the start's field
+ to the last shift's reach, scratch over the marks and the shifts' work areas. -/
+@@ -10706,16 +10820,15 @@ private def zr_p2Lead {k : ℕ} (x : List (ZoneSym k)) :=
+ 
+ /-- The descending left pass's home test verdict, one cell after left field `P.i - 1`'s outermost
+ cell. -/
+-private abbrev zr_p2Home {k : ℕ} (P : zr_Px k) : Bool :=
+-  Option.isNone (zr_aT (zr_p1G P) 0 (zr_lA (zr_p1G P) 0 + ((1 : SignType) : ℤ)))
++private abbrev zr_p2Home {k : ℕ} (P : zr_Px k) : Bool := zr_dnHome zr_lA P
++
++/-- The descending left pass's guard: a descending index away from the home. -/
++private abbrev zr_p2On {k : ℕ} (P : zr_Px k) : Prop := zr_p1V P ∧ zr_p2Home P = false
+ 
+ /-- The home test's verdict is whether left field `P.i - 1` is the home. -/
+ private lemma zr_p2Home_eq {k : ℕ} {P : zr_Px k} (hV : zr_pxV P) :
+-    zr_p2Home P = decide (P.i - 1 = 0) := by
+-  have := hV.1
+-  show (zonedTape P.D.2 (zr_lstart (P.i - 1) + ((1 : SignType) : ℤ))).isNone = _
+-  rw [SignType.coe_one]
+-  exact zr_lhome_iff P.D.2 (P.i - 1) (by omega)
++    zr_p2Home P = decide (P.i - 1 = 0) :=
++  zr_home_eq zr_lstart (zr_lhome_iff _) (Nat.sub_le _ _) hV
+ 
+ /-- **The descending left pass's next index**: left field `P.i - 1`, whose level is shifted
+ outward (the identity at the home), one count mark pushed. -/
+@@ -10724,10 +10837,8 @@ private abbrev zr_p2Nxt {k : ℕ} (t : Fin k) : zr_Px k → zr_Px k :=
+ 
+ /-- Past the home, the descending left pass's shift index meets the shift's requirements. -/
+ private lemma zr_p2G_pre {k : ℕ} {P : zr_Px k} (h : zr_p1V P ∧ zr_p2Home P = false) :
+-    zr_shPre (zr_p1G P) := by
+-  obtain ⟨hV, hh⟩ := h
+-  rw [zr_p2Home_eq hV.1, decide_eq_false_iff_not] at hh
+-  exact zr_dnG_pre hV hh
++    zr_shPre (zr_p1G P) :=
++  zr_dnG_pre h (zr_p2Home_eq h.1.1)
+ 
+ /-- The descending left pass's guarded shift, in the round box. -/
+ private lemma zr_p2Grd_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+@@ -10776,11 +10887,7 @@ private lemma zr_p2Peek_step {k : ℕ} (x : List (ZoneSym k)) :
+ /-- **The descending left pass's branch**: at the home stop; otherwise run the guarded outward
+ shift. -/
+ private def zr_p2Br {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+-  zr_anchBranch (by decide : (Sum.inr (some true) : Option Bool ⊕ Option Bool) ≠
+-      Sum.inr (some false)) (zr_p2Peek_step x)
+-    (fun P d hV hd => by
+-      rw [zr_pinPeek_state _ _ _ _ _ _ P hV d hd]
+-      exact zr_verdict_ite (fun b => Sum.inr (some b)) _) (zr_p2Grd_step t x)
++  zr_peekBranch (zr_p2Peek_step x) (zr_p2Grd_step t x) fun _ => rfl
+ 
+ /-- The descending left pass's branch is a pinned step to the next index's anchor pin. -/
+ private lemma zr_p2Br_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+@@ -10791,7 +10898,7 @@ private lemma zr_p2Br_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+           11 * zr_hh (zr_p1G P) + 20 + 1 + (1 + 1 + if zr_out2Off t (zr_p1G P) then
+             6 * zr_hh (zr_p1G P) + 11 else
+             6 * zr_hh (zr_p1G P) + 11 + 1 + (76 * zr_hh (zr_p1G P) + 107))) zr_p2L zr_p2U :=
+-  zr_anchBranch_step _ _ _ _ (fun P hV hh => by
++  zr_peekBranch_step _ _ _ (fun P hV hh => by
+       rw [zr_p2Home_eq hV.1, decide_eq_true_iff] at hh
+       refine ⟨?_, rfl⟩
+       show zr_tapes (zonedTape (Function.update P.D.2 t (zoneShiftOut false (P.i - 1) (P.D.2 t))))
+@@ -10836,7 +10943,7 @@ private noncomputable def zr_p2Back {k : ℕ} (t : Fin k) :
+ /-- The descending left pass's round escapes exactly at the home. -/
+ private lemma zr_p2Body_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     zr_BackIs (zr_p2Body t x) (zr_p2Back t) zr_p2Home :=
+-  zr_BackIs_seq (zr_BackIs_congr (zr_anchBranch_back _ _ _ _ (zr_grdOut_back t x _ _ _) true)
++  zr_BackIs_seq (zr_BackIs_congr (zr_peekBranch_back _ _ _ (zr_grdOut_back t x _ _ _) true)
+     fun P => by cases zr_p2Home P <;> rfl)
+ 
+ /-- The descending left pass's round's exits are its way back's domain. -/
+@@ -10848,10 +10955,7 @@ private lemma zr_p2Body_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The descending left pass's round never halts. -/
+ private lemma zr_p2Body_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_p2Body t x) :=
+-  zr_none_not_mem_image _ (zr_none_not_mem_union
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_grdOut_none t x zr_p1G
+-      (fun P => zr_p1V P ∧ zr_p2Home P = false) fun _ h => zr_p2G_pre h)))
++  zr_none_dn (zr_grdOut_none t x zr_p1G zr_p2On fun _ => zr_p2G_pre)
+ 
+ /-- Round `m` of the descending left pass is at the home exactly when it is the last. -/
+ private lemma zr_p2_home {k : ℕ} (t : Fin k) {P : zr_Px k} (hV : zr_p1V P) (m : ℕ)
+@@ -10941,10 +11045,8 @@ private abbrev zr_rbHome {k : ℕ} (P : zr_Px k) : Bool :=
+ 
+ /-- The right return's verdict is whether the anchor is the home. -/
+ private lemma zr_rbHome_eq {k : ℕ} {P : zr_Px k} (hV : zr_pxV P) :
+-    zr_rbHome P = decide (P.i = 0) := by
+-  show (zonedTape P.D.2 (zr_rstart P.i + ((1 : SignType) : ℤ))).isNone = _
+-  rw [SignType.coe_one]
+-  exact zr_rhome_iff P.D.2 P.i hV.1
++    zr_rbHome P = decide (P.i = 0) :=
++  zr_home_eq zr_rstart (zr_rhome_iff _) le_rfl hV
+ 
+ /-- Away from the home, a right return's index meets the descending lead's requirements. -/
+ private lemma zr_rb_lead {k : ℕ} {P : zr_Px k} (h : zr_pxV P ∧ zr_rbHome P = false) :
+@@ -11027,18 +11129,13 @@ private lemma zr_rbBody_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     zr_PinStep (zr_rbBody t x) zr_pxV zr_pT (fun P => zr_pT (zr_rbNxt t P)) zr_rH
+       (fun P => zr_rH (zr_rbNxt t P))
+       zr_rbTau zr_rbL zr_rbU :=
+-  zr_peekRound_step _ _ _ _ _ _ _ _ _ _ _ _ fun P hV hh => by
+-    have hi : P.i = 0 := by
+-      rw [zr_rbHome_eq hV, decide_eq_true_iff] at hh
+-      exact hh
+-    exact ⟨show zr_pT (if P.i = 0 then P else _) = _ by rw [if_pos hi],
+-      show zr_rH (if P.i = 0 then P else _) = _ by rw [if_pos hi]⟩
++  zr_peekRound_step _ _ _ _ _ _ _ _ _ _ _ _ fun _ hV hh =>
++    zr_homeEsc _ zr_rH hh (zr_rbHome_eq hV)
+ 
+ /-- The right return's way back: the home escapes, the lead returns to the anchor. -/
+ private noncomputable def zr_rbBack {k : ℕ} (t : Fin k) :
+     zr_stOf (zr_rbBody t ([] : List (ZoneSym k))) → Option (Option Bool) :=
+-  zr_branchBack (zr_oneBack (some false) true)
+-    (zr_oneBack (zr_exitOf (zr_p1Lead ([] : List (ZoneSym k))).C) false)
++  zr_brBack true (zr_exitOf (zr_p1Lead ([] : List (ZoneSym k))).C)
+ 
+ /-- The right return's round escapes exactly at the home. -/
+ private lemma zr_rbBody_back {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+@@ -11053,8 +11150,7 @@ private lemma zr_rbBody_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The right return's round never halts. -/
+ private lemma zr_rbBody_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_rbBody t x) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
++  zr_none_one
+ 
+ /-- Before the home, the right return's rounds are the descending ones. -/
+ private lemma zr_rb_iter {k : ℕ} (t : Fin k) (P : zr_Px k) (m : ℕ) (hm : m ≤ P.i) :
+@@ -11188,10 +11284,8 @@ private abbrev zr_lbHome {k : ℕ} (P : zr_Px k) : Bool :=
+ 
+ /-- The left return's verdict is whether the anchor is the home. -/
+ private lemma zr_lbHome_eq {k : ℕ} {P : zr_Px k} (hV : zr_pxV P) :
+-    zr_lbHome P = decide (P.i = 0) := by
+-  show (zonedTape P.D.2 (zr_lstart P.i + ((1 : SignType) : ℤ))).isNone = _
+-  rw [SignType.coe_one]
+-  exact zr_lhome_iff P.D.2 P.i hV.1
++    zr_lbHome P = decide (P.i = 0) :=
++  zr_home_eq zr_lstart (zr_lhome_iff _) le_rfl hV
+ 
+ /-- Away from the home, a left return's index meets the inward skip's requirements. -/
+ private lemma zr_lb_lead {k : ℕ} {P : zr_Px k} (h : zr_pxV P ∧ zr_lbHome P = false) :
+@@ -11262,12 +11356,8 @@ private lemma zr_lbBody_step {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     zr_PinStep (zr_lbBody t x) zr_pxV zr_pT (fun P => zr_pT (zr_lbNxt t P)) zr_lH
+       (fun P => zr_lH (zr_lbNxt t P))
+       zr_lbTau zr_lbL zr_lbU :=
+-  zr_peekRound_step _ _ _ _ _ _ _ _ _ _ _ _ fun P hV hh => by
+-    have hi : P.i = 0 := by
+-      rw [zr_lbHome_eq hV, decide_eq_true_iff] at hh
+-      exact hh
+-    exact ⟨show zr_pT (if P.i = 0 then P else _) = _ by rw [if_pos hi],
+-      show zr_lH (if P.i = 0 then P else _) = _ by rw [if_pos hi]⟩
++  zr_peekRound_step _ _ _ _ _ _ _ _ _ _ _ _ fun _ hV hh =>
++    zr_homeEsc _ zr_lH hh (zr_lbHome_eq hV)
+ 
+ /-- The left return's way back: the home escapes, the skip returns to the anchor. -/
+ private noncomputable def zr_lbBack {k : ℕ} (t : Fin k) :
+@@ -11289,8 +11379,7 @@ private lemma zr_lbBody_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The left return's round never halts. -/
+ private lemma zr_lbBody_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_lbBody t x) :=
+-  zr_none_not_mem_union (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
++  zr_none_one
+ 
+ /-- The left return after `m` rounds before the home: `m` fields in, scratch kept. -/
+ private lemma zr_lb_iter {k : ℕ} (t : Fin k) (P : zr_Px k) (m : ℕ) (hm : m ≤ P.i) :
+@@ -12649,9 +12738,7 @@ private lemma zr_hmBody_hX {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+ /-- The home move never halts. -/
+ private lemma zr_hmBody_none {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+     none ∉ zr_exitsOf (zr_hmBody t x) :=
+-  zr_none_not_mem_image _ (zr_none_not_mem_union
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _))
+-    (zr_none_not_mem_image _ (zr_none_not_mem_single _)))
++  zr_none_not_mem_image _ zr_none_one
+ 
+ /-- Every return of the home move's way back is the escape. -/
+ private lemma zr_hmBack_true {k : ℕ} (t : Fin k) (s : zr_stOf (zr_hmBody t ([] : List (ZoneSym k))))
+@@ -13357,6 +13444,257 @@ private lemma zr_fp_data {k : ℕ} (t : Fin k) (P : zr_Px k) :
+   show Function.update P.D.2 t (zr_fpZ5 t P) = _
+   rw [zr_cascade_passes]
+ 
++/-- A pinned segment's time, read off its type. -/
++private abbrev zr_tauOf {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e d : S} {V : J → Prop}
++    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ : J → ℕ}
++    {L U : J → Fin 2 → ℤ} (_ : zr_PinSeg x M e d V T₁ T₂ p₁ p₂ τ L U) : J → ℕ :=
++  τ
++
++/-- Rounds bounded by `a · 2^(N - m) + b`, from the top down: their bounds sum, with the last
++round's power, to `a · 2^(N + 1) + b (n + 1)`. -/
++private lemma zr_sum_desc_eq (a b N n : ℕ) (hn : n ≤ N) :
++    ∑ m ∈ Finset.range (n + 1), (a * 2 ^ (N - m) + b) + a * 2 ^ (N - n) =
++      a * 2 ^ (N + 1) + b * (n + 1) := by
++  induction n with
++  | zero =>
++    rw [zero_add, Finset.sum_range_one, Nat.sub_zero, pow_succ]
++    ring
++  | succ n ih =>
++    have h := ih (by omega)
++    have e : 2 ^ (N - n) = 2 * 2 ^ (N - (n + 1)) := by
++      rw [show N - n = N - (n + 1) + 1 by omega, pow_succ]
++      ring
++    rw [e] at h
++    rw [Finset.sum_range_succ]
++    linarith
++
++/-- Rounds bounded by `a · 2^(m + c) + b`, from the bottom up: their bounds sum, with `a · 2^c`,
++to `a · 2^(n + 1 + c) + b (n + 1)`. -/
++private lemma zr_sum_asc_eq (a b c n : ℕ) :
++    ∑ m ∈ Finset.range (n + 1), (a * 2 ^ (m + c) + b) + a * 2 ^ c =
++      a * 2 ^ (n + 1 + c) + b * (n + 1) := by
++  induction n with
++  | zero =>
++    rw [zero_add, Finset.sum_range_one, zero_add, pow_add, pow_one]
++    ring
++  | succ n ih =>
++    have e : 2 ^ (n + 1 + 1 + c) = 2 * 2 ^ (n + 1 + c) := by
++      rw [show n + 1 + 1 + c = n + 1 + c + 1 by ring, pow_succ]
++      ring
++    rw [Finset.sum_range_succ, e]
++    linarith
++
++/-- **A descending pass's time**: rounds bounded by `a · 2^(N - m) + b` sum to at most
++`2a · 2^N + b (n + 1)`. -/
++private lemma zr_time_desc (f : ℕ → ℕ) (a b N n : ℕ) (hn : n ≤ N)
++    (hf : ∀ m ≤ n, f m ≤ a * 2 ^ (N - m) + b) :
++    ∑ m ∈ Finset.range (n + 1), f m ≤ 2 * a * 2 ^ N + b * (n + 1) := by
++  have h := zr_sum_desc_eq a b N n hn
++  have h2 : a * 2 ^ (N + 1) = 2 * a * 2 ^ N := by ring
++  have hs : ∑ m ∈ Finset.range (n + 1), f m ≤ ∑ m ∈ Finset.range (n + 1), (a * 2 ^ (N - m) + b) :=
++    Finset.sum_le_sum fun m hm => hf m (by rw [Finset.mem_range] at hm; omega)
++  omega
++
++/-- **An ascending pass's time**: rounds bounded by `a · 2^(m + c) + b` sum to at most
++`2a · 2^(n + c) + b (n + 1)`. -/
++private lemma zr_time_asc (f : ℕ → ℕ) (a b c n : ℕ)
++    (hf : ∀ m ≤ n, f m ≤ a * 2 ^ (m + c) + b) :
++    ∑ m ∈ Finset.range (n + 1), f m ≤ 2 * a * 2 ^ (n + c) + b * (n + 1) := by
++  have h := zr_sum_asc_eq a b c n
++  have h2 : a * 2 ^ (n + 1 + c) = 2 * a * 2 ^ (n + c) := by ring
++  have hs : ∑ m ∈ Finset.range (n + 1), f m ≤ ∑ m ∈ Finset.range (n + 1), (a * 2 ^ (m + c) + b) :=
++    Finset.sum_le_sum fun m hm => hf m (by rw [Finset.mem_range] at hm; omega)
++  omega
++
++/-- Every right field has at most `2^m` cells. -/
++private lemma zr_rfield_le {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) :
++    (zr_rfield z m).length ≤ 2 ^ m := by
++  by_cases hm : m ≤ ℓ
++  · rw [zr_rfield_length z m hm]
++  · rw [zr_rfield, if_neg (by omega), dif_neg (by omega), List.length_nil]
++    exact Nat.zero_le _
++
++/-- Every left field has at most `2^m` cells. -/
++private lemma zr_lfield_le {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) :
++    (zr_lfield z m).length ≤ 2 ^ m := by
++  rw [zr_lfield, List.length_reverse]
++  exact zr_rfield_le _ m
++
++/-- The shift half-capacity one level below a field: at most a quarter of the field's power,
++plus one. -/
++private lemma zr_hh_le (i : ℕ) : 4 * 2 ^ (i - 1 - 1) ≤ 2 ^ i + 4 := by
++  rcases Nat.lt_or_ge i 2 with h | h
++  · rw [show i - 1 - 1 = 0 by omega, pow_zero]
++    have := Nat.two_pow_pos i
++    omega
++  · obtain ⟨j, rfl⟩ : ∃ j, i = j + 2 := ⟨i - 2, by omega⟩
++    rw [show j + 2 - 1 - 1 = j by omega, pow_succ, pow_succ]
++    omega
++
++/-- The descending right pass's round time is at most `20 · 2^i + 170`. -/
++private lemma zr_p1Tau_le {k : ℕ} (t : Fin k) (P : zr_Px k) :
++    zr_p1Tau t P ≤ 20 * 2 ^ P.i + 170 := by
++  have h1 := zr_rfield_le P.D.2 (P.i - 1)
++  have h2 : 2 ^ (P.i - 1) ≤ 2 ^ P.i := Nat.pow_le_pow_right (by norm_num) (by omega)
++  have h3 := zr_hh_le P.i
++  have hh : zr_hh (zr_p1G P) = 2 ^ (P.i - 1 - 1) := rfl
++  simp only [zr_p1Tau, hh]
++  split_ifs <;> omega
++
++/-- The walk out's round time is at most `2 · 2^i + 11`. -/
++private lemma zr_woTau_le {k : ℕ} (P : zr_Px k) : zr_woTau P ≤ 2 * 2 ^ P.i + 11 := by
++  have h1 := zr_lfield_le P.D.2 (P.i + 1)
++  rw [pow_succ] at h1
++  simp only [zr_woTau, zr_woRun]
++  split_ifs <;> omega
++
++/-- The descending left pass's round time is at most `25 · 2^i + 260`. -/
++private lemma zr_p2Tau_le {k : ℕ} (t : Fin k) (P : zr_Px k) :
++    zr_p2Tau t P ≤ 25 * 2 ^ P.i + 260 := by
++  have h1 := zr_lfield_le P.D.2 P.i
++  have h3 := zr_hh_le P.i
++  have hh : zr_hh (zr_p1G P) = 2 ^ (P.i - 1 - 1) := rfl
++  simp only [zr_p2Tau, hh]
++  split_ifs <;> omega
++
++/-- The ascending right pass's round time is at most `77 · 2^i + 89`. -/
++private lemma zr_p3Tau_le {k : ℕ} (t : Fin k) (P : zr_Px k) :
++    zr_p3Tau t P ≤ 77 * 2 ^ P.i + 89 := by
++  have h1 := zr_rfield_le P.D.2 P.i
++  have hh : zr_hh (zr_popG P) = 2 ^ P.i := by
++    show 2 ^ (P.i + 1 - 1) = 2 ^ P.i
++    rw [Nat.add_sub_cancel]
++  simp only [zr_p3Tau, hh]
++  split_ifs <;> omega
++
++/-- The ascending left pass's round time is at most `95 · 2^i + 170`. -/
++private lemma zr_p4Tau_le {k : ℕ} (t : Fin k) (P : zr_Px k) :
++    zr_p4Tau t P ≤ 95 * 2 ^ P.i + 170 := by
++  have h1 := zr_lfield_le P.D.2 (P.i + 1)
++  rw [pow_succ] at h1
++  have hh : zr_hh (zr_popG P) = 2 ^ P.i := by
++    show 2 ^ (P.i + 1 - 1) = 2 ^ P.i
++    rw [Nat.add_sub_cancel]
++  simp only [zr_p4Tau, zr_woRun, hh]
++  split_ifs <;> omega
++
++/-- The right return's round time is at most `2^i + 9`. -/
++private lemma zr_rbTau_le {k : ℕ} (P : zr_Px k) : zr_rbTau P ≤ 2 ^ P.i + 9 := by
++  have h1 := zr_rfield_le P.D.2 (P.i - 1)
++  have h2 : 2 ^ (P.i - 1) ≤ 2 ^ P.i := Nat.pow_le_pow_right (by norm_num) (by omega)
++  simp only [zr_rbTau]
++  split_ifs <;> omega
++
++/-- The left return's round time is at most `2^i + 5`. -/
++private lemma zr_lbTau_le {k : ℕ} (P : zr_Px k) : zr_lbTau P ≤ 2 ^ P.i + 5 := by
++  have h1 := zr_lfield_le P.D.2 P.i
++  simp only [zr_lbTau]
++  split_ifs <;> omega
++
++/-- **A descending pass's time**: rounds at fields `Q.i, Q.i - 1, …`, each at most
++`a · 2^i + b` plus the round's two dispatch steps. -/
++private lemma zr_pass_time_desc {k : ℕ} (τ : zr_Px k → ℕ) (nxt : zr_Px k → zr_Px k)
++    (Q : zr_Px k) (a b n : ℕ) (hn : n ≤ Q.i) (hτ : ∀ R, τ R ≤ a * 2 ^ R.i + b)
++    (hi : ∀ m ≤ n, (nxt^[m] Q).i = Q.i - m) :
++    ∑ m ∈ Finset.range (n + 1), (τ (nxt^[m] Q) + 2) ≤ 2 * a * 2 ^ Q.i + (b + 2) * (n + 1) :=
++  zr_time_desc _ a (b + 2) Q.i n hn fun m hm => by
++    have h := hτ (nxt^[m] Q)
++    rw [hi m hm] at h
++    omega
++
++/-- **An ascending pass's time**: rounds at fields `Q.i, Q.i + 1, …`, each at most
++`a · 2^i + b` plus the round's two dispatch steps. -/
++private lemma zr_pass_time_asc {k : ℕ} (τ : zr_Px k → ℕ) (nxt : zr_Px k → zr_Px k)
++    (Q : zr_Px k) (a b n : ℕ) (hτ : ∀ R, τ R ≤ a * 2 ^ R.i + b)
++    (hi : ∀ m ≤ n, (nxt^[m] Q).i = Q.i + m) :
++    ∑ m ∈ Finset.range (n + 1), (τ (nxt^[m] Q) + 2) ≤ 2 * a * 2 ^ (n + Q.i) + (b + 2) * (n + 1) :=
++  zr_time_asc _ a (b + 2) Q.i n fun m hm => by
++    have h := hτ (nxt^[m] Q)
++    rw [hi m hm, Nat.add_comm Q.i m] at h
++    omega
++
++/-- A pop pass's rounds, while marks remain, step one field out each. -/
++private lemma zr_pop_fields {k : ℕ} (t : Fin k)
++    (F : (ℓ : ℕ) → ℕ → ZoneContents ℓ → ZoneContents ℓ) (Q : zr_Px k) (hbs : Q.b ≤ Q.s) :
++    ∀ m ≤ (Q.s - Q.b).toNat,
++      ((zr_cNxt (fun P => P.s ≤ P.b) (zr_popF t F))^[m] Q).i = Q.i + m := fun m hm => by
++  obtain ⟨he, -, hi, -⟩ := zr_pop_iter t F Q m (by omega)
++  rw [he, hi]
++
++/-- **The found path's time**: at most `1000 · 2^(i₀ + 1) + 200` steps. -/
++private lemma zr_fpSeg_time {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) {P : zr_Px k}
++    (hV : zr_fpV P) : zr_tauOf (zr_fpSeg t x) P ≤ 1000 * 2 ^ P.i + 200 := by
++  have h1i := hV.2.2.2.1
++  have hP : P.i < 2 ^ P.i := Nat.lt_two_pow_self
++  have hp : 2 ^ P.i = 2 * 2 ^ (P.i - 1) := by
++    rw [← pow_succ']
++    congr 1
++    omega
++  have g1 := zr_pass_time_desc (zr_p1Tau t) (zr_p1Nxt t) P 20 170 (P.i - 1) (by omega)
++    (zr_p1Tau_le t) fun m _ => (zr_dn_iter t (fun _ i w => zoneShiftIn true (i - 1) w) P m).2.1
++  have g2 := zr_pass_time_asc zr_woTau (zr_woNxt t) (zr_fpS1 t P) 2 11
++    ((zr_fpS1 t P).s - (zr_fpS1 t P).b).toNat zr_woTau_le
++    (zr_pop_fields t _ _ (by show P.b ≤ P.b + P.i; omega))
++  have g3 := zr_pass_time_desc (zr_p2Tau t) (zr_p2Nxt t) (zr_fpS2 t P) 25 260
++    ((zr_fpS2 t P).i - 1) (by omega) (zr_p2Tau_le t)
++    fun m _ => (zr_dn_iter t (fun _ i w => zoneShiftOut false (i - 1) w) _ m).2.1
++  have g6 := zr_pass_time_asc (zr_p3Tau t) (zr_p3Nxt t) (zr_fpS5 t P) 77 89
++    ((zr_fpS5 t P).s - (zr_fpS5 t P).b).toNat (zr_p3Tau_le t)
++    (zr_pop_fields t _ _ (by show P.b ≤ P.b + P.i - 1; omega))
++  have g7 := zr_pass_time_desc zr_rbTau (zr_rbNxt t) (zr_fpS6 t P) 1 9 (zr_fpS6 t P).i le_rfl
++    (fun R => by have := zr_rbTau_le R; omega) fun m hm => by
++      rw [zr_rb_iter t _ m hm]
++      exact (zr_dn_iter t _ _ m).2.1
++  have g8 := zr_pass_time_asc (zr_p4Tau t) (zr_p4Nxt t) (zr_fpS7 t P) 95 170
++    ((zr_fpS7 t P).s - (zr_fpS7 t P).b).toNat (zr_p4Tau_le t)
++    (zr_pop_fields t _ _ (by show P.b ≤ P.b + P.i - 1; omega))
++  have g9 := zr_pass_time_desc zr_lbTau (zr_lbNxt t) (zr_fpS8 t P) 1 5 (zr_fpS8 t P).i le_rfl
++    (fun R => by have := zr_lbTau_le R; omega) fun m hm => by
++      rw [(zr_lb_iter t _ m hm).1]
++      exact (zr_lb_iter t _ m hm).2.2.1
++  have n2 : ((zr_fpS1 t P).s - (zr_fpS1 t P).b).toNat = P.i := by
++    show (P.b + P.i - P.b).toNat = P.i
++    omega
++  have n6 : ((zr_fpS5 t P).s - (zr_fpS5 t P).b).toNat = P.i - 1 := by
++    show (P.b + P.i - 1 - P.b).toNat = P.i - 1
++    omega
++  have n8 : ((zr_fpS7 t P).s - (zr_fpS7 t P).b).toNat = P.i - 1 := by
++    show (P.b + P.i - 1 - P.b).toNat = P.i - 1
++    omega
++  have k1 : zr_tauOf (zr_fpG1 t x) P ≤ 40 * 2 ^ P.i + 172 * P.i :=
++    g1.trans (by rw [show P.i - 1 + 1 = P.i by omega])
++  have k2 : zr_tauOf (zr_fpG2 t x) P ≤ 4 * 2 ^ P.i + 13 * (P.i + 1) :=
++    g2.trans (by rw [n2]; exact le_refl _)
++  have k3 : zr_tauOf (zr_fpG3 t x) P ≤ 50 * 2 ^ P.i + 262 * P.i :=
++    g3.trans (by show _ + _ * (P.i - 1 + 1) ≤ _; rw [show P.i - 1 + 1 = P.i by omega])
++  have k4 : zr_tauOf (zr_fpG4 t x) P ≤ 155 := by
++    show (if zr_hmOff t (zr_fpS3 t P) then 12 else 155) ≤ 155
++    split_ifs <;> omega
++  have k6 : zr_tauOf (zr_fpG6 t x) P ≤ 154 * 2 ^ (P.i - 1) + 91 * P.i :=
++    g6.trans (by
++      rw [n6]
++      show 2 * 77 * 2 ^ (P.i - 1 + 0) + 91 * (P.i - 1 + 1) ≤ _
++      rw [add_zero, show P.i - 1 + 1 = P.i by omega])
++  have k7 : zr_tauOf (zr_fpG7 t x) P ≤ 2 * 2 ^ (P.i - 1) + 11 * P.i :=
++    g7.trans (by
++      show 2 * 1 * 2 ^ (P.i - 1) + (9 + 2) * (P.i - 1 + 1) ≤ _
++      rw [show P.i - 1 + 1 = P.i by omega])
++  have k8 : zr_tauOf (zr_fpG8 t x) P ≤ 190 * 2 ^ (P.i - 1) + 172 * P.i :=
++    g8.trans (by
++      rw [n8]
++      show 2 * 95 * 2 ^ (P.i - 1 + 0) + 172 * (P.i - 1 + 1) ≤ _
++      rw [add_zero, show P.i - 1 + 1 = P.i by omega])
++  have k9 : zr_tauOf (zr_fpG9 t x) P ≤ 2 * 2 ^ (P.i - 1) + 7 * P.i :=
++    g9.trans (by
++      show 2 * 1 * 2 ^ (P.i - 1) + (5 + 2) * (P.i - 1 + 1) ≤ _
++      rw [show P.i - 1 + 1 = P.i by omega])
++  show 1 + 1 + (zr_tauOf (zr_fpG1 t x) P + 1 + (zr_tauOf (zr_fpG2 t x) P + 1 +
++    (zr_tauOf (zr_fpG3 t x) P + 1 + (zr_tauOf (zr_fpG4 t x) P + 1 + (1 + 1 + 1 + 1 +
++    (zr_tauOf (zr_fpG6 t x) P + 1 + (zr_tauOf (zr_fpG7 t x) P + 1 +
++    (zr_tauOf (zr_fpG8 t x) P + 1 + (zr_tauOf (zr_fpG9 t x) P + 1 + 1))))))))) ≤ _
++  omega
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+@@ -13414,8 +13752,9 @@ pinned segment on a loop host whose rounds keep a count stack on scratch. Their
+ the found path, runs from the scanned zone's field and the scan's count to the home and the
+ count's end, with track `t` cascaded to the right at the scanned index (`zoneCascadeRight`,
+ through the side-pass reordering), every other track and the count kept, and the zoned head
+-within `zoneStart (i₀ + 1)` of home. The found path's time bound, its composition with the scan
+-and the count's clear, the leftward row (planned as the mirrored machine through
++within `zoneStart (i₀ + 1)` of home, in at most `1000 · 2^(i₀ + 1) + 200` steps (each round's
++time bounded by its level and the passes' geometric sums). Its composition with the scan and the
++count's clear, the leftward row (planned as the mirrored machine through
+ `Turing.Contract.lockstep`) and the assembly remain open. Only this target's body is
+ admitted. -/
+ theorem exists_zoneRebalanceTM (k : ℕ) :
+-- 
+2.50.1 (Apple Git-155)
+

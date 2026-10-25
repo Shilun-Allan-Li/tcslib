@@ -1,0 +1,254 @@
+From d4c6f562be72490cfac57da7f0e139493396ee67 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 10:32:47 +0000
+Subject: [PATCH 08/39] ZoneRebalance: a generic two-phase loop host; the
+ return loop as its instance
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 164 +++++++++++-------
+ 1 file changed, 106 insertions(+), 58 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 6d106d03..e1111892 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -1519,30 +1519,51 @@ private lemma zr_body_bounds {k : ℕ} {x : List (ZoneSym k)} (u : List (ZoneSym
+     if_true, if_false, SignType.coe_one, SignType.coe_neg_one, min_self, max_self] <;>
+   omega
+ 
+-/-- The return loop's phases: phase `false` holds the anchor `some false` and the home exit
+-`some true` (verdict states of the leaf, at which it stands still); phase `true` is the body. -/
+-private abbrev zr_loopPh : Bool → Type
++/-- A two-phase loop host's phases: phase `false` is the one-cell leaf's, whose verdict
++`some false` is the anchor and whose other states are the escapes; phase `true` is a body with
++states `B`. -/
++private abbrev zr_hostPh (B : Type) : Bool → Type
+   | false => Option Bool
+-  | true => SeekPhase ⊕ (Option Bool ⊕ Option Bool)
++  | true => B
+ 
+-/-- The return loop's phase machines: the stationary leaf, and the body's machine. -/
+-private def zr_loopMachines {k : ℕ} : (b : Bool) → MultiTapeTM 2 (ZoneSym k) (zr_loopPh b)
++/-- The loop host's phase machines: the stationary leaf, and the body's machine `MB`. -/
++private def zr_hostMachines {k : ℕ} {B : Type} (MB : MultiTapeTM 2 (ZoneSym k) B) :
++    (b : Bool) → MultiTapeTM 2 (ZoneSym k) (zr_hostPh B b)
+   | false => zr_cellTM 0 (fun _ => false) none 0
+-  | true => seamCompTM (skipBackTM 2 0) SeekPhase.done
+-      (seamCompTM (zr_cellTM 0 (fun _ => false) none 1) (some false)
+-        (zr_cellTM 0 (fun a => a.isNone) none (-1)) none) (Sum.inl none)
+-
+-/-- The return loop's redirects: the anchor starts the body, and the body's verdict selects
+-the anchor (not yet home) or the home exit. -/
+-private def zr_loopRed : (b : Bool) → zr_loopPh b → Option (Σ b, zr_loopPh b)
+-  | false, some false => some ⟨true, .inl .run⟩
+-  | true, .inr (.inr (some v)) => some ⟨false, some v⟩
+-  | _, _ => none
+-
+-/-- **The return loop**, an instance of the public phase host: from its anchor it repeats the
+-body until the home test succeeds. -/
++  | true => MB
++
++/-- The loop host's redirects: the anchor starts the body at `e`, and a body state `s` with
++`back s = some v` is sent to the anchor-phase state `v`. -/
++private def zr_hostRed {B : Type} (e : B) (back : B → Option (Option Bool)) :
++    (b : Bool) → zr_hostPh B b → Option (Σ b, zr_hostPh B b)
++  | false, some false => some ⟨true, e⟩
++  | false, _ => none
++  | true, s => (back s).map fun v => ⟨false, v⟩
++
++/-- **A loop host**, an instance of the public phase host started at its anchor. -/
++private abbrev zr_hostTM {k : ℕ} {B : Type} (MB : MultiTapeTM 2 (ZoneSym k) B) (e : B)
++    (back : B → Option (Option Bool)) : MultiTapeTM 2 (ZoneSym k) (Σ b, zr_hostPh B b) :=
++  phaseHostTM (zr_hostMachines MB) ⟨false, some false⟩ (zr_hostRed e back)
++
++/-- The return loop's phases: the anchor phase, and the body's states. -/
++private abbrev zr_loopPh : Bool → Type := zr_hostPh (SeekPhase ⊕ (Option Bool ⊕ Option Bool))
++
++/-- The return loop's body machine: skip back over a field, step, and test for the home. -/
++private abbrev zr_loopBodyTM (k : ℕ) :
++    MultiTapeTM 2 (ZoneSym k) (SeekPhase ⊕ (Option Bool ⊕ Option Bool)) :=
++  seamCompTM (skipBackTM 2 0) SeekPhase.done
++    (seamCompTM (zr_cellTM 0 (fun _ => false) none 1) (some false)
++      (zr_cellTM 0 (fun a => a.isNone) none (-1)) none) (Sum.inl none)
++
++/-- The return loop's way back: the body's verdict selects the anchor (not yet home) or the home
++exit. -/
++private def zr_loopBack : SeekPhase ⊕ (Option Bool ⊕ Option Bool) → Option (Option Bool)
++  | .inr (.inr (some v)) => some (some v)
++  | _ => none
++
++/-- **The return loop**: from its anchor it repeats the body until the home test succeeds. -/
+ private abbrev zr_loopTM (k : ℕ) : MultiTapeTM 2 (ZoneSym k) (Σ b, zr_loopPh b) :=
+-  phaseHostTM zr_loopMachines ⟨false, some false⟩ zr_loopRed
++  zr_hostTM (zr_loopBodyTM k) (Sum.inl .run) zr_loopBack
+ 
+ /-- The anchor phase's stationary leaf as a zero-time contract at the anchor. -/
+ private def zr_anchorContract {k : ℕ} (x : List (ZoneSym k)) :
+@@ -1554,9 +1575,11 @@ private def zr_anchorContract {k : ℕ} (x : List (ZoneSym k)) :
+       ((headBox_iff _ _ _).mpr fun _ => Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩))
+     (fun _ d hd _ => by rw [hd]; exact Set.mem_singleton _)
+ 
+-/-- The anchor's dispatch inside the loop host: one stationary step to the body's entry. -/
+-private def zr_dispatchContract {k : ℕ} (x : List (ZoneSym k)) :=
+-  Contract.inPhase zr_loopMachines ⟨false, some false⟩ zr_loopRed false (zr_anchorContract x)
++/-- The anchor's dispatch inside a loop host: one stationary step to the body's entry. -/
++private def zr_hostDispatchContract {k : ℕ} {B : Type} (MB : MultiTapeTM 2 (ZoneSym k) B)
++    (e : B) (back : B → Option (Option Bool)) (x : List (ZoneSym k)) :=
++  Contract.inPhase (zr_hostMachines MB) ⟨false, some false⟩ (zr_hostRed e back) false
++    (zr_anchorContract x)
+     (fun h => by cases Set.mem_singleton_iff.mp h)
+     (fun s hs => by
+       match s, hs with
+@@ -1565,7 +1588,46 @@ private def zr_dispatchContract {k : ℕ} (x : List (ZoneSym k)) :=
+       | some true, _ => rfl)
+     (fun s hs => by
+       obtain rfl := Option.some_injective _ (Set.mem_singleton_iff.mp hs)
+-      exact ⟨⟨true, .inl .run⟩, rfl, by decide⟩)
++      exact ⟨⟨true, e⟩, rfl, Bool.false_ne_true.symm⟩)
++
++/-- A body inside a loop host: its exits are exactly the states that `back` sends to the
++anchor phase. -/
++private def zr_hostBodyContract {k : ℕ} {B I : Type} {x : List (ZoneSym k)}
++    {MB : MultiTapeTM 2 (ZoneSym k) B} {e : B} {X : Set (Option B)}
++    (back : B → Option (Option Bool)) (C : Contract MB e X I x) (hnone : none ∉ X)
++    (hX : ∀ s, some s ∈ X ↔ back s ≠ none) :=
++  Contract.inPhase (zr_hostMachines MB) ⟨false, some false⟩ (zr_hostRed e back) true C hnone
++    (fun s hs => by
++      show (back s).map _ = none
++      rw [not_not.mp (mt (hX s).mpr hs), Option.map_none])
++    (fun s hs => by
++      obtain ⟨v, hv⟩ := Option.ne_none_iff_exists'.mp ((hX s).mp hs)
++      refine ⟨⟨false, v⟩, ?_, Bool.false_ne_true⟩
++      show (back s).map _ = _
++      rw [hv, Option.map_some])
++
++/-- **The dispatch step**: from the anchor, one step of a loop host reaches the body's entry
++and changes nothing else.
++
++**Proof sketch.** Run the dispatch contract for its one step and read its endpoint. -/
++private lemma zr_host_dispatch_run {k : ℕ} {B : Type} {x : List (ZoneSym k)}
++    (MB : MultiTapeTM 2 (ZoneSym k) B) (e : B) (back : B → Option (Option Bool))
++    (c : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh B b) x) (hc : c.state = some ⟨false, some false⟩) :
++    (zr_hostTM MB e back).runFrom c 1 = { c with state := some ⟨true, e⟩ } := by
++  have hD0 : (zr_hostDispatchContract MB e back x).pre () c := by
++    rw [zr_hostDispatchContract, Contract.inPhase_pre, zr_anchorContract,
++      Contract.ofSegment_pre]
++    trivial
++  have hDt : (zr_hostDispatchContract MB e back x).time () c = 1 := by
++    rw [zr_hostDispatchContract, Contract.inPhase_time, zr_anchorContract,
++      Contract.ofSegment_time]
++  rw [← hDt, (zr_hostDispatchContract MB e back x).run () c hc hD0, zr_hostDispatchContract,
++    Contract.inPhase_post, zr_anchorContract, Contract.ofSegment_post]
++  refine zr_bindState_eq _ _ _ ?_ (Cfg.mapState_inputPos _ _)
++    (funext fun j => funext fun q => Cfg.mapState_workTapes _ _ j q)
++    (funext fun j => Cfg.mapState_workTapePos _ _ j) (Cfg.mapState_output _ _)
++  rw [Cfg.mapState_state, hc]
++  rfl
+ 
+ /-- The body's exits are exactly its verdict states. -/
+ private lemma zr_body_exit_iff
+@@ -1582,31 +1644,22 @@ private lemma zr_body_exit_iff
+ /-- The body inside the loop host: its two verdicts are redirected to the anchor and to the home
+ exit. -/
+ private def zr_bodyPhaseContract {k : ℕ} (x : List (ZoneSym k)) :=
+-  Contract.inPhase zr_loopMachines ⟨false, some false⟩ zr_loopRed true (zr_bodyContract x)
++  zr_hostBodyContract zr_loopBack (zr_bodyContract x)
+     (fun h => by
+       obtain ⟨_, ⟨_, ⟨_, rfl⟩, h₁⟩, h₂⟩ := h
+       cases h₁
+       cases h₂)
+-    (fun s hs => by
+-      match s, hs with
+-      | .inl _, _ => rfl
+-      | .inr (.inl _), _ => rfl
+-      | .inr (.inr none), _ => rfl
+-      | .inr (.inr (some v)), hs => exact absurd ((zr_body_exit_iff _).mpr ⟨v, rfl⟩) hs)
+-    (fun s hs => by
+-      obtain ⟨v, rfl⟩ := (zr_body_exit_iff s).mp hs
+-      exact ⟨⟨false, some v⟩, rfl, Bool.false_ne_true⟩)
+-
+-/-- The dispatch's endpoint is the start at the body's entry. -/
+-private lemma zr_dispatch_post {k : ℕ} {x : List (ZoneSym k)}
+-    (c : Cfg 2 (ZoneSym k) (Σ b, zr_loopPh b) x) (hc : c.state = some ⟨false, some false⟩) :
+-    (zr_dispatchContract x).post () c = { c with state := some ⟨true, .inl .run⟩ } := by
+-  rw [zr_dispatchContract, Contract.inPhase_post, zr_anchorContract, Contract.ofSegment_post]
+-  refine zr_bindState_eq _ _ _ ?_ (Cfg.mapState_inputPos _ _)
+-    (funext fun j => funext fun q => Cfg.mapState_workTapes _ _ j q)
+-    (funext fun j => Cfg.mapState_workTapePos _ _ j) (Cfg.mapState_output _ _)
+-  rw [Cfg.mapState_state, hc]
+-  rfl
++    (fun s => by
++      rw [zr_body_exit_iff]
++      constructor
++      · rintro ⟨v, rfl⟩
++        exact Option.some_ne_none _
++      · intro h
++        match s, h with
++        | .inl _, h => exact absurd rfl h
++        | .inr (.inl _), h => exact absurd rfl h
++        | .inr (.inr none), h => exact absurd rfl h
++        | .inr (.inr (some v)), _ => exact ⟨v, rfl⟩)
+ 
+ /-- **A dispatch step and a body make a round**: on any machine, one step from the anchor `a` to
+ a configuration at the body's entry, then the body's contract, whose exits contain the anchor and
+@@ -1666,28 +1719,23 @@ private lemma zr_loop_round {k : ℕ} {x : List (ZoneSym k)} (u : List (ZoneSym
+         state := some ⟨false, some (c.workTapes 0 (c.workTapePos 0 - u.length)).isNone⟩
+         workTapePos := Function.update c.workTapePos 0 (c.workTapePos 0 - u.length - 1) }
+       (u.length + 9) := by
+-  have hD0 : (zr_dispatchContract x).pre () c := by
+-    rw [zr_dispatchContract, Contract.inPhase_pre, zr_anchorContract, Contract.ofSegment_pre]
+-    trivial
+-  have hDt : (zr_dispatchContract x).time () c = 1 := by
+-    rw [zr_dispatchContract, Contract.inPhase_time, zr_anchorContract, Contract.ofSegment_time]
+-  have hrun1 : (zr_loopTM k).runFrom c 1 = { c with state := some ⟨true, .inl .run⟩ } := by
+-    rw [← hDt, (zr_dispatchContract x).run () c hc hD0, zr_dispatch_post c hc]
++  have hrun1 : (zr_loopTM k).runFrom c 1 = { c with state := some ⟨true, .inl .run⟩ } :=
++    zr_host_dispatch_run _ _ _ c hc
+   set c₁ : Cfg 2 (ZoneSym k) (Σ b, zr_loopPh b) x := { c with state := some ⟨true, .inl .run⟩ }
+     with hc₁
+   have hc₁s : c₁.state = some ⟨true, .inl .run⟩ := rfl
+   have hB0 : (zr_bodyPhaseContract x).pre u c₁ := by
+-    rw [zr_bodyPhaseContract, Contract.inPhase_pre, zr_bodyContract, Contract.seq_pre,
++    rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_pre, zr_bodyContract, Contract.seq_pre,
+       skipBackTM_contract_pre]
+     intro p h1 h2
+     simpa only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using hu p h1 h2
+   have hBt : (zr_bodyPhaseContract x).time u c₁ = u.length + 8 := by
+-    rw [zr_bodyPhaseContract, Contract.inPhase_time, zr_body_time]
++    rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_time, zr_body_time]
+   have hBpost : (zr_bodyPhaseContract x).post u c₁ =
+       { c with
+         state := some ⟨false, some (c.workTapes 0 (c.workTapePos 0 - u.length)).isNone⟩
+         workTapePos := Function.update c.workTapePos 0 (c.workTapePos 0 - u.length - 1) } := by
+-    rw [zr_bodyPhaseContract, Contract.inPhase_post, zr_body_post]
++    rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_post, zr_body_post]
+     let f : (Σ b, zr_loopPh b) → zr_loopPh true := fun _ => Sum.inl SeekPhase.run
+     refine zr_bindState_eq _ _ _ ?_ (Cfg.mapState_inputPos f c₁)
+       (funext fun j => funext fun q => Cfg.mapState_workTapes f c₁ j q) ?_
+@@ -1700,7 +1748,7 @@ private lemma zr_loop_round {k : ℕ} {x : List (ZoneSym k)} (u : List (ZoneSym
+   have hmem : ∀ v : Bool, some (⟨false, some v⟩ : Σ b, zr_loopPh b) ∈
+       {q | ∃ s, some s ∈ (Option.map Sum.inr '' (Option.map Sum.inr '' Set.range fun b : Bool =>
+         some (some b)) : Set (Option (SeekPhase ⊕ (Option Bool ⊕ Option Bool)))) ∧
+-          q = zr_loopRed true s} :=
++          q = zr_hostRed (Sum.inl .run) zr_loopBack true s} :=
+     fun v => ⟨Sum.inr (Sum.inr (some v)), (zr_body_exit_iff _).mpr ⟨v, rfl⟩, rfl⟩
+   have hend : ((zr_bodyPhaseContract x).post u c₁).state ∈
+       (insert (some ⟨false, some false⟩) {some ⟨false, some true⟩} :
+@@ -1714,10 +1762,10 @@ private lemma zr_loop_round {k : ℕ} {x : List (ZoneSym k)} (u : List (ZoneSym
+     intro p hb
+     have hlo : ∀ j, (zr_bodyPhaseContract x).lo u c₁ j =
+         (zr_bodyContract x).lo u (c₁.mapState fun _ => Sum.inl SeekPhase.run) j := fun j => by
+-      rw [zr_bodyPhaseContract, Contract.inPhase_lo]
++      rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_lo]
+     have hhi : ∀ j, (zr_bodyPhaseContract x).hi u c₁ j =
+         (zr_bodyContract x).hi u (c₁.mapState fun _ => Sum.inl SeekPhase.run) j := fun j => by
+-      rw [zr_bodyPhaseContract, Contract.inPhase_hi]
++      rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_hi]
+     obtain ⟨b₁, b₂, b₃, b₄⟩ := zr_body_bounds u (c₁.mapState fun _ => Sum.inl SeekPhase.run)
+     have h0 := hb 0
+     have h1 := hb 1
+-- 
+2.50.1 (Apple Git-155)
+

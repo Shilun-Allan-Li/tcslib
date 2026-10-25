@@ -1,0 +1,150 @@
+From 79ec64c90cc638a542c3b246b5e5925309dd5f7c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 09:45:37 +0000
+Subject: [PATCH 06/39] G4 cont4 checkpoints 1.5-1.6 (cont.): two duplication
+ pairs removed
+
+- The exit-normalizing adapter proves its set equality by an auto-param, so the composite rows
+  no longer repeat that proof (one 90% in-file pair).
+- The whole-layout bridge bounds each field by the layouts' own offset equations; the
+  field-bound helper, which reproduced half of the catalog's field lemma, is removed.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 35 +++++++------------
+ 1 file changed, 13 insertions(+), 22 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 4f46b81f..d15ce378 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -129,7 +129,8 @@ def zoneRowHi {k : ℕ} {S : Type} {x : List (ZoneSym k)} (r : ZoneData k → 
+ **Proof sketch.** Re-wrap its segment and exit membership through the given set equality. -/
+ private abbrev zr_singletonContract {n : ℕ} {Γ S I : Type} {x : List Γ}
+     {M : MultiTapeTM n Γ S} {entry : S} {X : Set (Option S)}
+-    (R : Contract M entry X I x) (done : S) (hX : X = {some done}) :
++    (R : Contract M entry X I x) (done : S)
++    (hX : X = {some done} := by simp only [Set.image_singleton, Option.map_some]) :
+     Contract M entry {some done} I x :=
+   Contract.ofSegment R.pre R.time R.post R.lo R.hi
+     (fun i d hd hp => by simpa only [hX] using R.segment i d hd hp)
+@@ -777,7 +778,6 @@ private def zr_rightSeekBackContract {k : ℕ} (x : List (ZoneSym k)) :
+   let R := (zr_rightSeekContract x).seq (skipBackTM_contract 0 x) zr_rightWord
+     (fun D d _ hp => zr_rightSeek_back_pre D d hp)
+   zr_singletonContract R (Sum.inr SeekPhase.done)
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ /-- The seek-and-back composite preserves all tapes and leaves the zoned head at the last
+ field's first cell. Its scratch head, input position, and output are unchanged.
+@@ -862,7 +862,6 @@ private def zr_rightRulerContract {k : ℕ} (x : List (ZoneSym k)) :=
+   let R := (zr_rightSeekBackContract x).seq (zr_rulerSkipContract x) zr_rightWord
+     (fun D d _ hp => zr_rightSeekBack_ruler_pre D d hp)
+   zr_singletonContract R (Sum.inr (Sum.inr SeekPhase.done))
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ /-- The ruler prefix requires exactly the original zoned input. -/
+ private lemma zr_rightRuler_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d) :
+@@ -986,7 +985,6 @@ private def zr_adjustedWalkContract {k : ℕ} (dir : SignType) (x : List (ZoneSy
+     (walkTM_contract 1 (fun _ : Fin 2 => True) trivial dir x) List.tail
+     (fun w d _ hp => zr_rulerStep_walk_pre dir w d hp)
+   zr_singletonContract R (Sum.inr SeekPhase.done)
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ /-- The adjusted walk preserves the tapes and has the two advertised head displacements.
+ 
+@@ -1051,7 +1049,6 @@ private def zr_adjustedBackContract {k : ℕ} (x : List (ZoneSym k)) :=
+   let R := (zr_adjustedWalkContract 1 x).seq (skipBackTM_contract 1 x) (fun w => w)
+     (fun w d _ hp => zr_adjustedWalk_back_pre w d hp)
+   zr_singletonContract R (Sum.inr SeekPhase.done)
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ /-- Rewinding scratch after the adjusted walk restores its head and keeps both tapes.
+ Only the zoned head remains displaced, by the ruler length.
+@@ -1420,7 +1417,6 @@ The normalization changes no endpoint, time or envelope. -/
+ private abbrev zr_rightPassRow {k : ℕ} (x : List (ZoneSym k)) :=
+   zr_singletonContract (zr_rightPassContract x)
+     (Sum.inr (Sum.inr (Sum.inr SweepPhase.done)))
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ /-- The home test: step right, read the cell there, and step back. Its verdict is `true` exactly
+ when that cell is blank. At the first cell of a layout field this identifies the home, the only
+@@ -2364,7 +2360,7 @@ private def zr_twoStepsContract {k : ℕ} (dir : SignType) (off : ℕ → ℤ)
+         simp only [zr_cellContract, zr_cellPost, Cfg.mapState_workTapes,
+           Cfg.mapState_workTapePos, Function.update_self]
+         ring)
+-    (Sum.inr (some false)) (by simp only [Set.image_singleton, Option.map_some])
++    (Sum.inr (some false))
+ 
+ /-- Two scratch steps move only the scratch head, by `2 dir`; they take three steps, and the
+ scratch head stays between its two ends. -/
+@@ -2559,8 +2555,8 @@ private lemma zr_leftMove_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (hn
+ 
+ /-- The left move with its nested exit normalized, for sequencing. -/
+ private abbrev zr_leftMoveRow {k : ℕ} (x : List (ZoneSym k)) :=
+-  zr_singletonContract (zr_leftMoveContract x) (Sum.inr (Sum.inr (Sum.inr (Sum.inr (some false)))))
+-    (by simp only [Set.image_singleton, Option.map_some])
++  zr_singletonContract (zr_leftMoveContract x)
++    (Sum.inr (Sum.inr (Sum.inr (Sum.inr (some false)))))
+ 
+ /-- The left move needs only the ruler at the scratch head. -/
+ private lemma zr_leftMove_pre {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (d) :
+@@ -2878,13 +2874,6 @@ private lemma zr_fieldOffset_append {Γ : Type} (L R : List (List Γ)) :
+       fieldOffset_succ R j (by omega), he]
+     omega
+ 
+-/-- A field ends before its layout's end offset. -/
+-private lemma zr_fieldOffset_lt {Γ : Type} (fs : List (List Γ)) (j : ℕ) (hj : j < fs.length) :
+-    fieldOffset fs j + fs[j].length < fieldOffset fs fs.length := by
+-  have h1 := fieldOffset_add_length_le fs j hj
+-  have h2 := length_joinFields_add_one fs (List.ne_nil_of_length_pos (by omega))
+-  omega
+-
+ /-- The whole extended layout from the outermost left cell: the left zones reversed, then the
+ home and the right zones. -/
+ private def zr_wholeFields {k : ℕ} (D : ZoneData k) : List (List (ZoneSym k)) :=
+@@ -2936,8 +2925,10 @@ private lemma zr_wholeFields_tape {k : ℕ} (D : ZoneData k) :
+       rw [hfj] at hq1 ⊢
+       rw [hA1 j hjL.le, ← fieldsTape_field _ j hjL q (by omega) hq1]
+       have h2 : (fieldOffset (zr_leftFields D) j : ℤ) + q < fieldOffset (zr_leftFields D) D.1 := by
+-        have h := zr_fieldOffset_lt (zr_leftFields D) j hjL
+-        rw [hL] at h
++        have h3 := fieldOffset_succ _ j hjL
++        have h4 : fieldOffset (zr_leftFields D) (j + 1) + zoneStart (D.1 - (j + 1)) =
++            zoneStart D.1 := zr_left_offset D.2 (j + 1) (by omega)
++        have h5 := two_le_zoneStart (D.1 - (j + 1))
+         omega
+       have hz : zonedTape D.2 (-(fieldOffset (zr_leftFields D) D.1 : ℤ) +
+           ((fieldOffset (zr_leftFields D) j : ℤ) + q)) =
+@@ -2960,8 +2951,10 @@ private lemma zr_wholeFields_tape {k : ℕ} (D : ZoneData k) :
+       rw [hA2 j' hj'.le, ← fieldsTape_field _ j' hj' q (by omega) hq1]
+       have h2 : (fieldOffset (zr_rightFields D) j' : ℤ) + q ≤
+           fieldOffset (zr_rightFields D) (D.1 + 1) := by
+-        have h := zr_fieldOffset_lt (zr_rightFields D) j' hj'
+-        rw [hR] at h
++        have h3 := fieldOffset_succ _ j' hj'
++        have h4 : fieldOffset (zr_rightFields D) (j' + 1) = zoneStart j' :=
++          zr_right_offset D.2 j' (by omega)
++        have h5 := zoneStart_mono (show j' ≤ D.1 by omega)
+         omega
+       have hz : zonedTape D.2 ((fieldOffset (zr_rightFields D) j' : ℤ) + q) =
+           fieldsTape (zr_rightFields D) ((fieldOffset (zr_rightFields D) j' : ℤ) + q) :=
+@@ -3158,7 +3151,6 @@ private lemma zr_final_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
+ private abbrev zr_rightReturnRow {k : ℕ} (x : List (ZoneSym k)) :=
+   letI := zr_decEqRP
+   zr_singletonContract (zr_rightReturnContract x) (Sum.inr (Sum.inr ⟨false, some true⟩))
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ set_option synthInstance.maxSize 256 in
+ /-- Decidable equality of the right pass and return home's state type, from its parts. -/
+@@ -3312,7 +3304,6 @@ private abbrev zr_rightLeftRow {k : ℕ} (x : List (ZoneSym k)) :=
+   letI := zr_decEqRR
+   zr_singletonContract (zr_rightLeftContract x)
+     (Sum.inr (Sum.inr (Sum.inr (Sum.inr (Sum.inr (Sum.inr SweepPhase.done))))))
+-    (by simp only [Set.image_singleton, Option.map_some])
+ 
+ set_option synthInstance.maxSize 512 in
+ /-- Decidable equality of the right pass, the return home and the left pass's state type, from
+-- 
+2.50.1 (Apple Git-155)
+
