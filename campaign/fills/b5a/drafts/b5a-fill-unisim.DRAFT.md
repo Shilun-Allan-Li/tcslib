@@ -4,16 +4,16 @@
 `77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532` (TCSlib as after #155; #156 open). Pre-ship measured
 there, against a fresh bootstrap of the order list:
 `campaign/fills/b5a/drafts/b5a-fill-unisim/preship-77f1eb4f/`.
-**Issue condition: the user's ruling Q-B1** (`campaign/fills/megafill/drafts/
-megafill-C-DRAFTING-REPORT.md`): whether R's startup kit is first published (the recommendation)
-or this fill writes its own private startup. The two paragraphs marked ⟨Q-B1: A⟩ and ⟨Q-B1: B⟩
-below are the two outcomes; keep one at issue. Other issue-time items: @ANCESTOR@, ⟨BASE⟩,
-⟨IN-FLIGHT⟩, the megafill banner, and re-running the pre-ship at the issue commit.
-**Issue base (review, 2026-10-24):** after #156 (whose round-2 head `0e5f210b` edits this file's
-`canonEmitVerdict`, 4593–4603) and the follow-up phase-host API PR (user, 2026-10-24; it edits
-`canonEmitVerdict` again), and, under ⟨Q-B1: A⟩, the startup kit's API PR. Regenerate the overlay
-and every line number, count, blob and screen figure there; the numbers below are the drafting
-base's. -->
+**Q-B1, ruled (user, 2026-10-24): option A**, the startup kit published first (PR #162,
+`Build/InterpreterStartup`); this text keeps option A, and option B's paragraphs are removed.
+Issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩, the megafill banner, the semantic-duplication
+requirement (gates 69 and 72; megafill D's drafting brief §5), and re-running the pre-ship at the
+issue commit.
+**Issue base (review, 2026-10-24):** after #156 (merged; its round-2 head `0e5f210b` edits this
+file's `canonEmitVerdict`, 4593–4603), the follow-up phase-host API PR #159 (merged; it edits
+`canonEmitVerdict` again) and the startup kit's PR #162. Regenerate the overlay (six imports, the
+kit's module the sixth) and every line number, count, blob and screen figure there; the numbers
+below are the drafting base's, measured with the first five imports. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -49,22 +49,22 @@ base's. -->
   - **the model for your startup:** C1's interpreter core `Turing.exists_ndInterpreterCore`
     (`NDCodeSimulator`, PR #151, gate 66), the same twelve-phase startup over these rows for the
     replay machine; and its review (`campaign/fills/c1/reviews/core-cont2/REVIEW.md`);
-  - ⟨Q-B1: A⟩ **the startup kit, published** (⟨its PR⟩, ⟨its module⟩): `Turing.seamCompTM_step`,
+  - **the startup kit, published** (PR #162, `Build/InterpreterStartup`): `Turing.seamCompTM_step`,
     `Turing.prefixCanon_pairExtract_halt`, `Turing.embedSilentRetTM_firstReturn`,
     `Turing.headerCapture_run`, `Turing.exists_windowCall`, `Turing.installCall_releasePhase`,
     `Turing.exists_layoutCall` (stated over `pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)`)
     and `Turing.embedSilentCfg_initCfg`, harvested from `NDCodeSimulator`'s startup privates and
     `UniversalK`'s `ss_captureInitial`;
-  - **the phase host's last phase** (PR #156, gate 69) and its start-state and redirect-branch
-    equations (the follow-up API PR): `Turing.phaseHostTM_tr_of_red_none`,
-    `Turing.phaseHostTM_run_le`, ⟨the follow-up's two equations⟩. Both PRs edit your file's
-    `canonEmitVerdict` (not yours);
+  - **the phase host's last phase** (PR #156, gate 69: `Turing.phaseHostTM_tr_of_red_none`,
+    `Turing.phaseHostTM_run_le`) and its start-state and redirect-branch equations (PR #159,
+    gate 71: `Turing.phaseHostTM_q₀`, `Turing.phaseHostTM_tr_of_red_some`). Both PRs edit your
+    file's `canonEmitVerdict` (not yours);
   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
     (**v2.5**: Part 1, the resources and the cache for the Mathlib roots only, with the cache
     store logged first; **Part 3, the megafill**, under which this session runs), and the
     copy-text screen v3 `scripts/copy-text-screen-v3.py`;
   - **this round's inputs** (`campaign/fills/b5a/inputs/b5a-fill-unisim/`): the overlay
-    `CodeSimulatorOverlay.lean.txt` (your file with the five imports of region (a)), the import
+    `CodeSimulatorOverlay.lean.txt` (your file with the six imports of region (a)), the import
     probe, the route and verdict probes with their seal controls, and the screen population; the
     order list `campaign/fills/b5a/orders/b5a-fill-unisim.txt`, the base sorry set, the screen
     base and the pre-ship log (`campaign/fills/b5a/logs/b5a-fill-unisim-*`).
@@ -103,11 +103,11 @@ base's. -->
   drafting base's tree, where `CodeSimulator.lean` is #152's landing (8,668 lines; 12 public, 185
   private); re-check them at issue.
 - **Your first edit makes your file equal to the overlay** (`CodeSimulatorOverlay.lean.txt`): the
-  five imports of region (a) after line 15. **Line numbers below are the base's, and the
-  overlay's are 5 more** (the stub at 8656, overlay 8661). Every probe and measurement below was
+  six imports of region (a) after line 15. **Line numbers below are the base's, and the
+  overlay's are 6 more** (the stub at 8656, overlay 8662). Every probe and measurement below was
   run on the overlay or at the base, as marked.
 - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩ (at drafting: #135,
-  chapter 7 onto `main`; #156 and the follow-up phase-host API PR are in your base, above); on
+  chapter 7 onto `main`; #156, #159 and #162 are in your base, above); on
   their own branches in this session, the other megafill items, among them **C1**
   (`NDCodeSimulator`, downstream of your file) and **U2** (`UniversalK`, downstream of your file).
   Cite nothing they add.
@@ -193,7 +193,7 @@ targets 3–8 and `Complexity.baker_gill_solovay` have none from your file.
 - C1's interpreter core `Turing.exists_ndInterpreterCore` and its `**Implementation.**` paragraph
   (`NDCodeSimulator.lean`): **the same startup**, for a replay machine and a per-code constant.
   Its private pieces are the pattern of your phases 1–3, **not citable** (another file's
-  privates) ⟨Q-B1: A⟩ **except through their published versions** (below);
+  privates) **except through their published versions**, the startup kit (below);
 - `h1HostedVerdict_accepts` and `StepBlock.hostedLoopTM_run`: your loop's entry configuration is
   `vhostCfg (counterLoopCfg (some (.dec .run)) d (FinTM.bufferTape t.bits) 0) true p []` with
   `d` representing the decoded machine's initial configuration on the window (`StepBlock.Rep`);
@@ -210,7 +210,7 @@ targets 3–8 and `Complexity.baker_gill_solovay` have none from your file.
   route composes is on the standard three axioms (the input rewind on two). The review's
   extension (137 names: the start's `MultiTapeTM.initCfg_with_q₀` and `runFrom_with_q₀`, the
   `Cfg.init` fields, `stateWord_eq`, `seamReleaseTM_runFrom_pos`, R1's frame and field
-  equations, and the definitions the route names) is the probe at issue ⟨Q-B1: A⟩ (with the
+  equations, and the definitions the route names) is the probe at issue (with the
   kit's eight names). **Re-run it after your delivery**, extended by every further name you cite.
 - **The route probe** (`B5aUSRouteProbe.lean.txt`), sealed over 12 TCSlib definitions (the two
   `@[simp]` ones, `MultiTapeTM.initCfg` and `NDTM.initCfg`, also erased): 0 diagnostics. It proves
@@ -234,7 +234,7 @@ targets 3–8 and `Complexity.baker_gill_solovay` have none from your file.
 | 1 | `CodeSimulator.lean:8656` | `Turing.MachineFormat.exists_uniformSimulator` (frozen statement) |
 
 Your regions:
-- **(a) the imports**, as your first edit: exactly these five, after line 15 (the overlay):
+- **(a) the imports**, as your first edit: exactly these six, after line 15 (the overlay):
 
   ```lean
   import TCSlib.Complexity.TuringMachine.UniversalStartup
@@ -242,9 +242,10 @@ Your regions:
   import TCSlib.Complexity.TuringMachine.Build.SeamLayout
   import TCSlib.Complexity.TuringMachine.Build.InputWindow
   import TCSlib.Complexity.TuringMachine.Nondeterministic
+  import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
   ```
 
-  No other import ⟨Q-B1: A⟩ (and the published kit's module).
+  No other import.
 - **(b) the home**, the blank line 8551, inside `section StepBlockClients` (where `open StepBlock`
   is in force, line 8424), between `h1HostedVerdict_accepts`'s last line (8550) and
   `end StepBlockClients` (8552), inside `namespace MachineFormat` with `F` the section variable:
@@ -272,39 +273,37 @@ and every other file.
   counter loop, virtual-input host or verdict.**
 - **Compose by the public combinators:** R2 seams (`seamCompTM`, `seamCompTM_run_ofCfg`,
   `seamCompTM_firstReturn_ofCfg`, `seamCompTM_runFrom_left`/`_right`, `seamReleaseTM`,
-  `seamReleaseTM_firstReturn`, `seamReleaseTM_runFrom_pos`; ⟨Q-B1: A⟩ `seamCompTM_step`), R1 and
+  `seamReleaseTM_firstReturn`, `seamReleaseTM_runFrom_pos`; the kit's `seamCompTM_step`), R1 and
   R1′ embeddings (`embedEmitTM`, `embedEmitTM_runFrom`, `embedEmitCfg_eq` for the emitting
   verdict; `embedSilentTM`, `embedSilentRetTM`, `embedSilentRetTM_run` for the silent phases).
 - **The phase host** is not needed: seams join every phase. If you host a phase in
   `phaseHostTM`, read it only through `phaseHostTM_run`, `phaseHostTM_run_le`,
-  `phaseHostTM_tr_of_red_none` and the follow-up API PR's two equations.
+  `phaseHostTM_tr_of_red_none`, `phaseHostTM_q₀` and `phaseHostTM_tr_of_red_some`.
 - **The rows:** the prefix canonizer with the pair extractors (`prefixCanonTM`,
   `prefixCanonTM_eq`, `prefixCanon_complete`, `FinTM.pairExtractTM_fst`/`_snd`); the input rewind
   `Turing.inputRewindTM`/`inputRewindTM_run`; the work-tape rewind `rewindTM_run_ofCfg`; the
   counter copy `copyTM_run_ofCfg`; the window `exists_inputWindowCopyTM`; the install
   `FinTM.exists_installCallTM`; the layout `exists_seamLayoutTM`. **Never write a private input
-  rewind** (IR-1 is being retired; `Turing.inputRewindTM` is the published one). ⟨Q-B1: A⟩ Through
+  rewind** (IR-1 is being retired; `Turing.inputRewindTM` is the published one). Through
   the published kit: `headerCapture_run` (both passes), `exists_windowCall`,
   `installCall_releasePhase`, `exists_layoutCall`, `embedSilentCfg_initCfg`: cite them, never
   re-prove them.
 - **Leaves you may write:** none is expected. A further leaf is an escalation.
 - **Promotion candidates** (notes only, in `REPORT.md`): the deterministic input-locality lemma
-  (`us_locality`; a candidate beside `MultiTapeTM.toNDTM_runWith`), and ⟨Q-B1: B⟩ every startup
-  piece you write (the kit's second consumer).
+  (`us_locality`; a candidate beside `MultiTapeTM.toNDTM_runWith`).
 
 ### The route (binding where it names a row)
 
 Write `M := F.machine (F.decode α)`, `u := pairEncode (bits t) α`, `z := pairEncode u x`. The
 machine is chosen before `α`, `x`, `t`; so is `d`.
 
-0. **The first edit**: the five imports (region (a)).
+0. **The first edit**: the six imports (region (a)).
    **The start.** `S.tm` is your seam composite `W` restarted at its first phase's initial
    state (`{ W with q₀ := q }`, `q` the nested `Sum.inl` of the first pass's `q₀`), read only
    through `MultiTapeTM.initCfg_with_q₀` and `MultiTapeTM.runFrom_with_q₀`: no lemma publishes
    `seamCompTM`'s or `embedSilentRetTM`'s `q₀`, so never read them by `rfl`, `show` or `simp`.
-   `Cfg.init` at the nested state is the first phase's transported start by ⟨Q-B1: A⟩
-   `embedSilentCfg_initCfg` ⟨Q-B1: B⟩ a `us_` copy of `UniversalK`'s `ss_captureInitial` (a
-   pre-disclosed pair), and a relabelling of `Cfg.init` from the `Cfg.init_*` and
+   `Cfg.init` at the nested state is the first phase's transported start by the kit's
+   `embedSilentCfg_initCfg`, and a relabelling of `Cfg.init` from the `Cfg.init_*` and
    `Cfg.mapState_*` field equations (U2-S's `ss_capture_run` is the pattern).
 1. **The header** (checkpoint 1). As in the core's phases 1–5:
    - **pass 1**, `prefixCanonTM (FinTM.pairExtractTM true false)` embedded silently with a first
@@ -318,10 +317,11 @@ machine is chosen before `α`, `x`, `t`; so is `d`.
    - **the rewind of `bits t`'s tape** (`rewindTM_run_ofCfg` at `n = |bits t|`) and **the counter
      copy** (`copyTM_run_ofCfg`, onto a blank tape at head `0`): the window consumes one counter,
      the loop needs the other.
-   ⟨Q-B1: A⟩ Cite the published header passes, capture and seam step for these. ⟨Q-B1: B⟩ Write
-   them as `us_` privates over the rows above, in your own proof text (see Duplication).
+   Cite the published kit's header passes, capture and seam step for these
+   (`headerCapture_run`, `prefixCanon_pairExtract_halt`, `embedSilentRetTM_firstReturn`,
+   `seamCompTM_step`).
 2. **The window and the locality bridge** (checkpoint 2):
-   - **the window** by `exists_inputWindowCopyTM` from the suffix (⟨Q-B1: A⟩ through
+   - **the window** by `exists_inputWindowCopyTM` from the suffix (through
      `exists_windowCall`): `x.take t` on a blank tape, the counter consumed, cost
      `C · (min t |x| + 1) + 2 |bits t|`;
    - **the input rewind** to `1`;
@@ -336,9 +336,8 @@ machine is chosen before `α`, `x`, `t`; so is `d`.
      return at `t ≤ a · ((|α| + 1)^d + |α| + max |α| |F.serialize F.fallback| + 1)` and
      `serializeK M` installed (`F.serialize_eq`). Embed `C`'s bank so that its tape `0` is `α`'s
      tape and the rest blank, which is exactly `Cfg.ofWords … (stateWord C.k α)`, behind
-     `seamReleaseTM` for the positive first return (⟨Q-B1: A⟩ `installCall_releasePhase`
-     ⟨Q-B1: B⟩ the core's install phase is the pattern);
-   - **the layout** by `exists_seamLayoutTM` (⟨Q-B1: A⟩ through `exists_layoutCall`, its source
+     `seamReleaseTM` for the positive first return (`installCall_releasePhase`);
+   - **the layout** by `exists_seamLayoutTM` (through `exists_layoutCall`, its source
      word rewritten by `simp only [← serializeK_eq]`; `src` the installed tape, three distinct
      tapes): the table tape `FinTM.bufferTape (tableBitsK M.tr)`, the summary tape
      `StepBlock.summaryCells none (unaryFin M.q₀)` (`serializeK_eq`, `unaryFin_eq`,
@@ -380,9 +379,8 @@ machine is chosen before `α`, `x`, `t`; so is `d`.
 
 **Do not run the canonizer through `prefixCanonTM`'s time bound**; the canonizer runs inside the
 install call, whose bound is polynomial (`b5a_install`). **Do not copy** `UniversalK`'s `ss_`
-startup or `Diagonalization/NTimeHierarchy`'s `un_` setup; ⟨Q-B1: A⟩ nor `NDCodeSimulator`'s
-privates (they are the published kit) ⟨Q-B1: B⟩ re-prove the eight startup facts as `us_`
-privates, their pairs pre-disclosed (Duplication).
+startup or `Diagonalization/NTimeHierarchy`'s `un_` setup, and do not re-prove the published
+kit's eight startup facts: cite them.
 
 ## Gate guidance (binding)
 
@@ -414,7 +412,7 @@ equations. In your file you also cite the canonizer, `h1HostedVerdictTM`,
    does not compose as the route says, stop **on that item only**, record the obstruction
    mathematically, and continue with every item that does not depend on it.
 5. **No touching other sorries.** Cite proved material; never re-prove it.
-6. **Imports.** Exactly the five of region (a) ⟨Q-B1: A⟩ (and the kit's module). A Mathlib
+6. **Imports.** Exactly the six of region (a). A Mathlib
    import only if a needed lemma requires it; flag it.
 7. **One proof per shared argument.** Never re-walk a landed contract (the canonizer's, H1's, the
    core's). Never write a second host, loop, seam, embedding, input rewind, prefix parser or
@@ -477,11 +475,11 @@ for yourself goes in only once proved. The freeze check for a partial is the **a
 Run the text-level screen **before and after**, **one run at a time, under `nice -n 10`**
 (`campaign/standards/TEMPLATE.md` failure mode 5; `policy.md`, **Duplication**). Run the before
 screen after your first edit: it must equal the screen base (the overlay changes only imports).
-- **The population** is 56 files (⟨Q-B1: A⟩ 57)
+- **The population** is 57 files
   (`campaign/fills/b5a/inputs/b5a-fill-unisim/screen-population.txt`): continuation 7's 45, the
   route's new imports (`Build/InputRewind`, `Build/Rewind`, `Build/InputWindow`,
   `Build/SeamLayout`, `BufferWords`, `Nondeterministic`), the two model files whose lemmas the
-  route reads (`Configuration`, `StateRenaming`), ⟨Q-B1: A⟩ the kit's module, and the remaining
+  route reads (`Configuration`, `StateRenaming`), the kit's module, and the remaining
   hazards: `Diagonalization/NTimeHierarchy` (UN's setup), `UniversalK` (U2-S's startup) and
   `ClassNP/ExhaustiveReplay` (IR-1's remaining input rewind). It contains `Simulation` and
   `Build/InputRewind` (the megafill A lesson for any item near an input rewind).
@@ -506,20 +504,16 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   $(grep -v '^#' $P/screen-population.txt) > /tmp/screen-after.txt
 ```
 
-- **No new cross-file pair** with an owned-file declaration on one side ⟨Q-B1: B⟩ **except the
-  startup pieces' pairs with `NDCodeSimulator` and the start identity's with `UniversalK`,
-  pre-disclosed by the user's ruling Q-B1**: list each with its shared text; at 90% or more it is
-  a copy, ledgered under the ruling.
+- **No new cross-file pair** with an owned-file declaration on one side.
 - **Recorded, add nothing to them:** CC7-1 (the canonizer's cut-leg, leg-template and per-record
   families), the earlier canonizer in-file pairs, and the uniform-code mirror pair.
 - **Known hazards** (a proof reproducing one at 90% or more must be factored if both sides are
   yours; if the other side is another file's, stop on that item and escalate):
-  - **`NDCodeSimulator`'s startup** (`ic_header_result`, `ic_capture_return`, `ic_header_capture`,
-    `ic_input_suffix`, `ic_window_call`, `ic_layout_call`, `ic_seam_step`, `ic_install_phase`,
-    `ic_time_ledger`, and the core's twelve-phase assembly): the same mathematics;
-  - UN's setup (`un_step`, which is `ic_seam_step`'s statement, `un_step'`, `un_canon_halt`,
-    `un_setup`) and U2-S's startup (`ss_capturedPrefix_run`, `ss_capture_run`,
-    `ss_serialized_layout`), the other header passes;
+  - **the startup kit's proofs** (`Build/InterpreterStartup`, harvested from `NDCodeSimulator`'s
+    startup), `NDCodeSimulator`'s `ic_time_ledger` and the core's twelve-phase assembly: the same
+    mathematics; cite the kit, never re-walk it;
+  - UN's setup (`un_step'`, `un_canon_halt`, `un_setup`) and U2-S's startup
+    (`ss_capturedPrefix_run`, `ss_capture_run`, `ss_serialized_layout`), the other header passes;
   - the start identity: `UniversalK`'s `ss_captureInitial` and `ExhaustiveReplay`'s `xr_E_initCfg`
     (the `initCfg_with_q₀` idiom);
   - **the core's startup assembly** (`exists_ndInterpreterCore`'s body, lines 924–1990 at the
@@ -594,8 +588,7 @@ Everything in the base sorry set except your target: MIG-1 stage S's sorried spe
       probe re-run as "N checks of M names", **the seal test with its controls and both raw
       outputs**, and the inspection table. Rule 11: `canonPreserveInstall` unchanged; a grep of
       your diff for the six R3 rows and for other files' private names.
-- [ ] Duplication: both v3 screens, every new pair justified (⟨Q-B1: B⟩ the startup's pairs with
-      their shared text), "new copies: none" otherwise.
+- [ ] Duplication: both v3 screens, every new pair justified, "new copies: none" otherwise.
 - [ ] File size; the final sweep tail; the re-run probes; every axiom print; the lint lines. The
       diff touches only your owned regions.
 
