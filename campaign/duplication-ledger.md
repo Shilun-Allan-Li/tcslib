@@ -563,14 +563,14 @@ statements. **The one-fifth rule** (`workflow.md` §4): not reached.
   proofs (no screen pair).
 
 *Historical (at #161's opening):* none of the four files could cite another's without a new import
-(`InputDevice` was upstream of none of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`).
-**Acknowledged (user, 2026-10-24)**: the U2 review's F2 recommendation (publish `pairEncode_drop`
-with the API PR, ledger the family) was the ruling's content. **Disposition:** the startup-kit
-re-point is **done** (gate 74's round 2): the kit imports `Build/InputDevice`, so `NDCodeSimulator`
-sees it through the kit, and the window call cites `Turing.pairEncode_drop`. Only the
-`Codec/Parse` and `PathWalk` members remain, for the user's dedup window: one home beside
-`pairEncode_eq` in `Encoding` (a large replay, hence the window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1.8%),
-`Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); `NDCodeSimulator` and
+(`InputDevice` was upstream of none of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`). **Acknowledged
+(user, 2026-10-24)**: the U2 review's F2 recommendation (publish `pairEncode_drop` with the API PR,
+ledger the family) was the ruling's content. **Disposition:** the startup-kit re-point is **done**
+(gate 74's round 2): the kit imports `Build/InputDevice`, so `NDCodeSimulator` sees it through the
+kit, and the window call cites `Turing.pairEncode_drop`. Only the `Codec/Parse` and `PathWalk`
+members remain, for the user's dedup window: one home beside `pairEncode_eq` in `Encoding` (a large
+replay, hence the window). **Census** (one member per file): `InputDevice` 1 of 57 declarations
+(1.8%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); `NDCodeSimulator` and
 `Build/InterpreterStartup` 0 since gate 74's round 2. The one-fifth rule is not reached.
 
 **SK-1, U2-S's capture start** (PR #162, the startup-kit API PR, 2026-10-24). The kit's public
@@ -591,10 +591,13 @@ iterates pinned rounds by its own induction (`Round.segment`, then `Segment.tran
 proof of the published `Turing.Round.iterate` (`Build/Contract/Basic`, line 781), along the sequence
 of pass indices `nxt^[m] j₀` instead of the configuration orbit `roundOrbit`. No published lemma
 states the sequence form, so it re-derives `Round.iterate`'s argument, not its statement (the text
-screen pairs nothing). All seven of the found path's passes go through it (`zr_passContract`).
-**The ruling (user, 2026-10-25): land G4 with this entry; then an API PR adds the sequence form to
+screen pairs nothing). All seven of the found path's passes go through it (`zr_passContract`). **The
+ruling (user, 2026-10-25): land G4 with this entry; then an API PR adds the sequence form to
 `Build/Contract/Basic`, with `Round.iterate` as its corollary, and re-points `zr_pinLoop` to it.**
-Census: `Build/ZoneRebalance` 1 of 871 declarations (0.1%); the one-fifth rule is not reached.
+Census (one member per file; the source side added at gate 75's minor 5): `Build/ZoneRebalance` 1 of
+871 declarations (0.1%), the private `zr_pinLoop`, 71 lines with its docstring;
+`Build/Contract/Basic` 1 of 85 (84 public, 1 private; 1.2%), the public `Turing.Round.iterate`, 18
+lines with its docstring. The one-fifth rule is not reached.
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
