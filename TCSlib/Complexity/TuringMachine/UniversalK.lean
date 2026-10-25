@@ -1687,6 +1687,273 @@ theorem exists_selfStartupTMK (k : ℕ) (E : EffectiveCodeK k) :
 
 /-! ## U2-U: the self-application universal machine -/
 
+/-- The startup's endpoint tapes, restricted to the forwarding loop's `k + 2`, are the encoding's
+tapes at the decoded machine's initial configuration.
+
+**Proof sketch.** Split the tape index into a mirrored tape and one of the two
+auxiliary tapes. The initial mirrored tapes are blank; the table is unchanged,
+and the summary agrees cell by cell, including its blank cell at zero. -/
+private theorem uk_encode_init_tapes {k n : ℕ} {Q : Type} (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) (j : Fin (k + 2)) :
+    (StepBlock.forwardLoopCfg entry M (M.initCfg x)).workTapes j =
+      if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+      else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+      else fun _ => none := by
+  have hw : (StepBlock.forwardLoopCfg entry M (M.initCfg x)).workTapes j =
+      Fin.addCases (motive := fun _ => ℤ → Option Bool) (M.initCfg x).workTapes (fun j =>
+        if j = 0 then FinTM.bufferTape (tableBitsK M.tr)
+        else StepBlock.summaryCells none (((M.initCfg x).state.map unaryFin).getD [])) j :=
+    funext fun a => StepBlock.forwardLoopCfg_workTapes entry M (M.initCfg x) j a
+  rw [hw]
+  refine Fin.addCases (fun i => ?_) (fun j' => ?_) j
+  · rw [Fin.addCases_left, MultiTapeTM.initCfg_eq]
+    have h1 : (Fin.castAdd 2 i).val ≠ k := by simp only [Fin.coe_castAdd]; omega
+    have h2 : (Fin.castAdd 2 i).val ≠ k + 1 := by simp only [Fin.coe_castAdd]; omega
+    rw [if_neg h1, if_neg h2]
+    funext p
+    rw [Cfg.init_workTapes]
+  · rw [Fin.addCases_right, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some,
+      Option.getD_some]
+    by_cases h : j' = 0
+    · subst h
+      have h1 : (Fin.natAdd k (0 : Fin 2)).val = k := by simp only [Fin.coe_natAdd]; omega
+      rw [if_pos rfl, if_pos h1]
+    · have hj : j' = 1 := by omega
+      subst hj
+      have h1 : (Fin.natAdd k (1 : Fin 2)).val ≠ k := by simp only [Fin.coe_natAdd]; omega
+      have h2 : (Fin.natAdd k (1 : Fin 2)).val = k + 1 := by simp only [Fin.coe_natAdd]; omega
+      rw [if_neg (by decide), if_neg h1, if_pos h2]
+      funext p
+      rw [StepBlock.summaryCells_eq]
+      by_cases hp : p = 0
+      · rw [if_pos hp, hp]
+        exact (FinTM.bufferTape_of_neg _ (by omega)).symm
+      · rw [if_neg hp]
+
+/-- The encoding of the initial configuration is at `entry`, with input head `1`, every head at
+`0` and an empty output. -/
+private theorem uk_encode_init_fields {k n : ℕ} {Q : Type} (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) :
+    (StepBlock.forwardLoopCfg entry M (M.initCfg x)).state = some entry ∧
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)).inputPos.val = 1 ∧
+      (∀ j, (StepBlock.forwardLoopCfg entry M (M.initCfg x)).workTapePos j = 0) ∧
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)).output = [] := by
+  refine ⟨?_, ?_, fun j => ?_, ?_⟩
+  · rw [StepBlock.forwardLoopCfg_state, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+  · rw [StepBlock.forwardLoopCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]; rfl
+  · rw [StepBlock.forwardLoopCfg_workTapePos]
+    refine Fin.addCases (fun i => ?_) (fun j' => ?_) j
+    · rw [Fin.addCases_left, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    · rw [Fin.addCases_right]
+  · rw [StepBlock.forwardLoopCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output]
+
+/-- An encoded configuration is halted exactly when the source is, and carries its output. -/
+private theorem uk_encode_halt {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (c : Cfg k Bool (Fin (n + 1)) x) :
+    ((StepBlock.forwardLoopCfg entry M c).state = none ↔ c.state = none) ∧
+      (StepBlock.forwardLoopCfg entry M c).output = c.output := by
+  rw [StepBlock.forwardLoopCfg_state, StepBlock.forwardLoopCfg_output, Option.map_eq_none_iff]
+  exact ⟨Iff.rfl, rfl⟩
+
+
+/-- Embedding the initial loop configuration in the first tapes gives the startup's
+endpoint, with its state replaced by the loop entry.
+
+**Proof sketch.** Use the public reconstruction theorem for the emitting embedding.
+The selected tapes and heads are the initial encoding's fields. An unselected
+tape has index at least `k + 2`, so both tests in the startup layout are false. -/
+private theorem uk_embed_init {k n K : ℕ} {P Q : Type} (exit : P) (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) :
+    embedEmitCfg (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2)))
+      (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)) =
+        (⟨some exit, 1,
+          fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+            else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+            else fun _ => none,
+          fun _ => 0, []⟩ : Cfg (K + (k + 2)) Bool P x).mapState (fun _ => entry) := by
+  apply embedEmitCfg_eq
+  · rw [Cfg.mapState_state]
+    exact (uk_encode_init_fields entry M x).1
+  · apply Fin.ext
+    rw [Cfg.mapState_inputPos]
+    exact (uk_encode_init_fields entry M x).2.1
+  · rw [List.nil_append, Cfg.mapState_output]
+    exact (uk_encode_init_fields entry M x).2.2.2
+  · intro i
+    constructor
+    · funext a
+      rw [Cfg.mapState_workTapes]
+      exact congrFun (uk_encode_init_tapes entry M x i) a
+    · rw [Cfg.mapState_workTapePos]
+      exact (uk_encode_init_fields entry M x).2.2.1 i
+  · intro j hj
+    have hjge : k + 2 ≤ j.val := by
+      by_contra h
+      have hlt : j.val < k + 2 := by omega
+      apply hj
+      refine ⟨⟨j.val, hlt⟩, ?_⟩
+      apply Fin.ext
+      rfl
+    constructor
+    · funext a
+      rw [Cfg.mapState_workTapes]
+      dsimp only
+      rw [if_neg (by omega : j.val ≠ k), if_neg (by omega : j.val ≠ k + 1)]
+    · rw [Cfg.mapState_workTapePos]
+
+/-- The startup followed by the emitting loop on the first `k + 2` tapes. -/
+private noncomputable def uk_loopTM {k K : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) :
+    MultiTapeTM (K + (k + 2)) Bool (P ⊕ Q) :=
+  { seamCompTM R exit
+      (embedEmitTM (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2))) L) entry with
+    q₀ := Sum.inl R.q₀ }
+
+/-- The composed machine starts in the startup's initial configuration, with a left state. -/
+private theorem uk_loop_init {k K : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) (x : List Bool) :
+    (uk_loopTM R exit L entry).initCfg x = (R.initCfg x).mapState Sum.inl := by
+  rw [uk_loopTM, MultiTapeTM.initCfg_with_q₀, MultiTapeTM.initCfg_eq]
+  apply Cfg.ext
+  · simp only [Cfg.init_state, Cfg.mapState_state, Option.map_some]
+  · simp only [Cfg.init_inputPos, Cfg.mapState_inputPos]
+  · funext j a
+    simp only [Cfg.init_workTapes, Cfg.mapState_workTapes]
+  · funext j
+    simp only [Cfg.init_workTapePos, Cfg.mapState_workTapePos]
+  · simp only [Cfg.init_output, Cfg.mapState_output]
+
+/-- At every time after the seam, the composed run is the embedded loop run.
+
+**Proof sketch.** The startup reaches its prescribed live endpoint at its first
+visit to the exit. The public seam theorem consumes that endpoint in one step.
+Reconstruct it as the embedding of the initial loop configuration and apply the
+emitting embedding's run theorem. -/
+private theorem uk_loop_run {k K n : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) (T : ℕ)
+    (hrun : R.runFrom (R.initCfg x) T =
+      ⟨some exit, 1,
+        fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+          else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩)
+    (hcut : ∀ u < T, (R.runFrom (R.initCfg x) u).state ≠ some exit) (t : ℕ) :
+    (uk_loopTM R exit L entry).runFrom ((uk_loopTM R exit L entry).initCfg x)
+        (T + 1 + t) =
+      (embedEmitCfg (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2)))
+        (fun _ _ => none) (fun _ => 0) []
+        (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) t)).mapState Sum.inr := by
+  let d : Cfg (K + (k + 2)) Bool P x :=
+    ⟨some exit, 1,
+      fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+        else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+        else fun _ => none,
+      fun _ => 0, []⟩
+  have hd : d.mapState (fun _ => entry) =
+      embedEmitCfg (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2)))
+        (fun _ _ => none) (fun _ => 0) []
+        (StepBlock.forwardLoopCfg entry M (M.initCfg x)) :=
+    (uk_embed_init exit entry M x).symm
+  rw [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀]
+  rw [seamCompTM_runFrom_right R exit _ entry (c₁ := d) hrun rfl hcut t, hd,
+    embedEmitTM_runFrom]
+
+/-- A halting source run gives a bounded loop run to its encoded final configuration.
+
+**Proof sketch.** Choose the first source halt. The lockstep applies up to that
+time, and each summand in its simulated time is bounded by the per-step bound.
+Absorption identifies the first halted configuration with the given final one. -/
+private theorem uk_loop_forward {k n : ℕ} {Q : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (L : MultiTapeTM (k + 2) Bool Q)
+    (entry : Q) (cost : Cfg k Bool (Fin (n + 1)) x → ℕ) (D : ℕ)
+    (hlock : Lockstep M L (StepBlock.forwardLoopCfg entry M) cost {none} {none})
+    (hcost : ∀ c, c.state ≠ none → cost c ≤ D) (t : ℕ)
+    (hhalt : (M.runFrom (M.initCfg x) t).state = none) :
+    ∃ t₀ ≤ t, (∀ u < t₀, (M.runFrom (M.initCfg x) u).state ≠ none) ∧
+      (∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u)) ≤ D * t ∧
+      L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+          (∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u)) =
+        StepBlock.forwardLoopCfg entry M (M.runFrom (M.initCfg x) t) := by
+  classical
+  let hex : ∃ u, (M.runFrom (M.initCfg x) u).state = none := ⟨t, hhalt⟩
+  let t₀ := Nat.find hex
+  have hle : t₀ ≤ t := Nat.find_min' hex hhalt
+  have hfirst : ∀ u < t₀, (M.runFrom (M.initCfg x) u).state ≠ none :=
+    fun u hu => Nat.find_min hex hu
+  have hsame : M.runFrom (M.initCfg x) t₀ = M.runFrom (M.initCfg x) t := by
+    symm
+    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+      MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+  refine ⟨t₀, hle, hfirst, ?_, ?_⟩
+  · calc
+      _ ≤ ∑ _u ∈ Finset.range t₀, D := Finset.sum_le_sum fun u hu =>
+        hcost _ (hfirst u (Finset.mem_range.mp hu))
+      _ = D * t₀ := by rw [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.mul_comm]
+      _ ≤ D * t := Nat.mul_le_mul_left D hle
+  · rw [hlock.runFrom (M.initCfg x) t₀ (by
+      simpa only [Set.mem_singleton_iff] using hfirst), hsame]
+
+/-- A source that remains live forever keeps its forwarding loop live forever.
+
+**Proof sketch.** For a target time `v`, simulate `v + 1` source steps. Every
+cost is positive, so their sum exceeds `v`; the lockstep cut gives liveness. -/
+private theorem uk_loop_live {k n : ℕ} {Q : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (L : MultiTapeTM (k + 2) Bool Q)
+    (entry : Q) (cost : Cfg k Bool (Fin (n + 1)) x → ℕ)
+    (hlock : Lockstep M L (StepBlock.forwardLoopCfg entry M) cost {none} {none})
+    (hpos : ∀ c, c.state ≠ none → 0 < cost c)
+    (hlive : ∀ u, (M.runFrom (M.initCfg x) u).state ≠ none) (v : ℕ) :
+    (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) v).state ≠ none := by
+  have hsum : v + 1 ≤ ∑ u ∈ Finset.range (v + 1), cost (M.runFrom (M.initCfg x) u) := by
+    calc
+      _ = ∑ _u ∈ Finset.range (v + 1), (1 : ℕ) := by
+        rw [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.mul_one]
+      _ ≤ _ := Finset.sum_le_sum fun u _ => hpos _ (hlive u)
+  have hcut := hlock.cut (M.initCfg x) (v + 1)
+    (fun u _ => by simpa only [Set.mem_singleton_iff] using hlive u) v (by omega)
+  simpa only [Set.mem_singleton_iff] using hcut
+
+/-- Every completed loop output is the source machine's completed output.
+
+**Proof sketch.** If the source never halted, positivity and the lockstep cut
+would keep the loop live at the given time. Choose a source halt and apply the
+forward lemma. The loop is now halted at both times, so its output agrees at
+their maximum; the encoding preserves the source's output. -/
+private theorem uk_loop_converse {k n : ℕ} {Q : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (L : MultiTapeTM (k + 2) Bool Q)
+    (entry : Q) (cost : Cfg k Bool (Fin (n + 1)) x → ℕ) (D : ℕ)
+    (hlock : Lockstep M L (StepBlock.forwardLoopCfg entry M) cost {none} {none})
+    (hcost : ∀ c, c.state ≠ none → 0 < cost c ∧ cost c ≤ D) (u : ℕ)
+    (hhalt : (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) u).state = none) :
+    ∃ t, (M.runFrom (M.initCfg x) t).state = none ∧
+      (M.runFrom (M.initCfg x) t).output =
+        (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) u).output := by
+  classical
+  have hex : ∃ t, (M.runFrom (M.initCfg x) t).state = none := by
+    by_contra h
+    have hsource : ∀ t, (M.runFrom (M.initCfg x) t).state ≠ none :=
+      fun t ht => h ⟨t, ht⟩
+    exact (uk_loop_live M L entry cost hlock (fun c hc => (hcost c hc).1) hsource u) hhalt
+  obtain ⟨t, ht⟩ := hex
+  obtain ⟨t₀, _, _, _, hr⟩ :=
+    uk_loop_forward M L entry cost D hlock (fun c hc => (hcost c hc).2) t ht
+  let v := ∑ i ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) i)
+  have hv : (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) v).state = none := by
+    rw [hr]
+    exact (uk_encode_halt entry M _).1.mpr ht
+  refine ⟨t, ht, ?_⟩
+  calc
+    _ = (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) v).output := by
+      rw [hr, (uk_encode_halt entry M _).2]
+    _ = (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) (max u v)).output :=
+      (MultiTapeTM.runFrom_output_eq_of_halt L _ (Nat.le_max_right u v) hv).symm
+    _ = _ := MultiTapeTM.runFrom_output_eq_of_halt L _ (Nat.le_max_left u v) hhalt
+
 /-- **U2-U, the self-application universal machine, with time and space ledgers and the
 converse** [AB09, Theorem 1.9 and Exercise 4.1, at self-application]. For a `k`-tape scheme `E`
 there is a binary machine `U` such that for every code `α` there is a constant `C > 0`
@@ -1713,7 +1980,11 @@ only `M`'s cells, at most `s`; the auxiliary heads stay in an interval of length
 `2 (50 · (|tableBitsK| + 1) + C_L) + 1`; the startup `B_α`; in all `≤ C · (s + 1)`, and the
 halted configuration is frozen afterwards. (iv) Converse: by the lockstep's cut
 (`Turing.Lockstep.cut`) `L` is live while `M` is, and an encoded live configuration is live, so
-`U` halts only at the encoding of a halted configuration of `M`, whose output is `M`'s. -/
+`U` halts only at the encoding of a halted configuration of `M`, whose output is `M`'s.
+
+**Implementation status.** The startup-to-loop composition and its run equation are proved, as are the loop
+run to an encoded source halt and preservation of divergence and completed outputs.
+The composed time and space ledgers and the bundled-machine conclusion remain open. -/
 theorem exists_selfUniversalK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ U : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧ ∀ w : List Bool,
       (∀ (output : List Bool) (t : ℕ),
@@ -1751,7 +2022,11 @@ of `L` on the suffix input `x`, with at most `C_R · (ℓ + 1)` host steps per s
 bank and output, and exit cut. Composing with H2-F's lockstep, each step of `M` costs at most
 `C_R (ℓ + 1)(50 · (|tableBitsK| + 1) + C_L)`, a constant for fixed `α`; with the startup this is
 `≤ C · (t + 1)`. (iii) *Converse:* the ruler host does not halt before `L`, nor `L` before `M`
-(the two cuts), so every completed output of `U` is `M`'s on `x`. -/
+(the two cuts), so every completed output of `U` is `M`'s on `x`.
+
+**Implementation status.** The input-generic loop simulation and its completed-output converse are proved.
+The header ruler, its composition with the suffix-input host, and the resulting
+evaluator bounds remain open. -/
 theorem universalK (k : ℕ) (E : EffectiveCodeK k) :
     ∃ U : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ x : List Bool,
       (∀ (output : List Bool) (t : ℕ), (E.toFinTM α).ComputesInTime x output t →
