@@ -35,8 +35,10 @@ records.
 auto-merged, the two edits in different lines). Its Lean diff from the campaign tip `5a258cc2` is
 the facade and `Build/ZoneRebalance`. The merged-tree replay `replay-lg4c4m` is written for that
 head: the same two modules, chained from `oleans-lkit2` (the campaign's tree after #162), with the
-two blobs pinned. Its prechecks pass in a dry run. **Pending:** the user runs it.
+two blobs pinned. **Passed** (user, 2026-10-25): 2 of 2, 0 failed, static-equal
+(`campaign/fills/s13d/evidence/s13d-g4-cont4-landing/merged-tree/replay-lg4c4m.log`, `-static.txt`;
+the snapshot `oleans-lg4c4m`, the campaign's tree after #162 and #165).
 
-**Merge state. #165: not yet clear to merge.** The gate is closed. The head is `78e6c53f`, after
-`replay-lg4c4` passed at `37fe114e`, so it needs a replay at its final head. That is the
-merged-tree replay if #162 merges first, since both PRs edit the `TuringMachine` facade.
+**Merge state. #165: clear to merge** (2026-10-25). The gate is closed. The merged-tree replay
+passed at the head `308838e5`, and the PR's base is the campaign branch, whose Lean has not moved
+since #162's merge `5a258cc2`. Its stacked follow-up #167 is retargeted after the merge.
