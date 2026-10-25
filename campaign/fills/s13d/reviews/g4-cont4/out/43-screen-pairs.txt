@@ -1,0 +1,33 @@
+== mine vs worker's screen-after-cp7 (non-metadata lines)
+IDENTICAL (comment lines aside)
+declarations screened: 1391; copy pairs (target reproduces >= half of source): 970; reproduced text: 353,746 chars
+   TCSlib/Complexity/TuringMachine/Build/Catalog.lean::f2_space_of_time  reproduces  Simulation.lean::ComputesInTime.spaceUsed_le: 713/713 = 100%
+== worker's before vs recorded base
+IDENTICAL
+== pairdiff head vs recorded base
+head pairs 970; union of earlier 477; new at head 500; earlier-only 7
+new pairs parsed 500
+cross-file new pairs: 0
+new pairs with a ZoneRebalance side: 500 ; both sides ZoneRebalance: 500
+>= 90%: []
+top 15:
+   zr_fp8 reproduces zr_fp6: 418/477 = 88%
+   zr_out2Test_step reproduces zr_out1Test_step: 295/338 = 87%
+   zr_fp6 reproduces zr_fp8: 418/481 = 87%
+   zr_scan_fields reproduces zr_return_post: 400/461 = 87%
+   zr_p2Body_back reproduces zr_p1Body_back: 91/106 = 86%
+   zr_scanLoopContract reproduces zr_scanLoopPost: 120/140 = 86%
+   zr_p4Arm reproduces zr_p3Arm: 188/220 = 85%
+   zr_p1Body_back reproduces zr_p2Body_back: 91/107 = 85%
+   zr_pinTestContract reproduces zr_wordTestContract: 147/173 = 85%
+   zr_mir_post reproduces zr_mir_mir: 200/236 = 85%
+   zr_pinBack_step reproduces zr_pinSkip_step: 321/379 = 85%
+   zr_p3Arm reproduces zr_p4Arm: 188/222 = 85%
+   zr_fpRow reproduces zr_rowP0: 122/146 = 84%
+   zr_rightLeftRow reproduces zr_rightPassRow: 71/85 = 84%
+   zr_scan_fields reproduces zr_return_time: 123/148 = 83%
+distribution: [(50, 232), (60, 155), (70, 80), (80, 33)]
+pairs touching the mirror (dir = false) declarations: [('zr_mir_post', 'zr_mir_mir', '85'), ('zr_rowR_spec', 'zr_rowLeft_spec', '69'), ('zr_mir_step', 'zr_mir_mir', '66'), ('zr_mir_box', 'zr_mir_lockstep', '60'), ('zr_rowLeft_spec', 'zr_rowR_spec', '56')]
+pairs touching hazards (rt_, exists_fieldsCopyTM, cascade, phaseHost, Round, Lockstep names): [('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_test_time', '64', '101', '63'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_scanPin_pre', '133', '212', '63'), ('ZoneRebalance.lean', 'zr_seekStart_pre', 'ZoneRebalance.lean', 'zr_left_reach', '94', '151', '62'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_rightLeftFinal_link', '264', '460', '57'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_test_post', '334', '585', '57'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_return_bounds', '314', '563', '56'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_leftMove_pre', '108', '206', '52'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_leftWrite_pre', '88', '168', '52'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_pass_step', '227', '451', '50'), ('ZoneRebalance.lean', 'zr_short_fields', 'ZoneRebalance.lean', 'zr_return_time', '74', '148', '50')]
+worker justification file: pairs of mine located 500 of 500
+not located: []

@@ -1,0 +1,68 @@
+# 03 — The blockers are real (check 2)
+
+## Independent search for published eliminators / characterizations
+
+scripts/statements.py lists every public theorem/lemma whose name or statement (up to `:=`,
+comment-stripped) mentions TimeConstructible, SpaceConstructible, ComputesInSpace, logSpace or
+transduce, at the tip and at the three open PR heads (probe/statements-mentioning.txt; the PR
+heads add no such statement: the per-branch diff against the tip's list is empty). A grep for
+`_def/_eq/_iff/_elim/_intro/_mk/_unfold/_nil/_cons` lemmas, `.def/.eq/.iff/...` dot lemmas and
+`@[simp]`/`attribute [simp]` on the five names: 0 hits on all four revisions.
+
+What exists, by role:
+- TimeConstructible: introductions only (`timeConstructible_id`, `timeConstructible_poly`,
+  `timeConstructible_two_pow`) and consumers taking it as a hypothesis (time_hierarchy,
+  diagLang(Of)_mem_DTIME, oblivious_of_mem_DTIME, ntime_hierarchy, the two E targets). No
+  statement yields the witness or the dominance. (Older files do eliminate it by anonymous
+  constructor, e.g. Build/Primitives.lean:2351 and ClassNP/TMSAT.lean:1531, pre-rule-10 debt;
+  a fill may not copy that.)
+- SpaceConstructible: two instances (logSpace, n + 1) and consumers (savitch, ExpTime,
+  ImmermanSzelepcsenyi, WordSize, Hierarchy). No closure or characterization lemma.
+- ComputesInSpace: eliminations (`ComputesInSpace.computesFunInTime`,
+  `.computesFunInTime_and_forall_spaceUsed_le`, `.k_eq_zero_of_exists_zero`), weakening
+  (`ComputesInSpace.mono`), and introductions only for zero work tapes
+  (`computesInSpace_zero_of_k_eq_zero`), from implicit logspace computability
+  (`ImplicitlyLogspaceComputable.computesInSpace`, space c·logSpace, itself needing LOGSPACE
+  membership) and the paused RAM layer (`computesInSpace_of_computes`, sorried). None introduces
+  space c·(n^c + 1) for a machine with work tapes.
+- logSpace: bounds (`logSpace_mono`, `logSpace_le_succ`, `logSpace_le_size_succ`, `logSpace_le_ell`,
+  `logSpace_le_lgv`, `logSpace_le_of_le_mul_two_pow`); no equation. Note `logSpace_le_succ`
+  (Machines/ARMWidth.lean:51) makes logSpace_eq unnecessary for the SCP route (see 02, F1).
+- transduce: `transduce_append`, the machine lemmas (`transducer_run`, `transducerTM_computes`,
+  `polyTimeComputable_transduce`) and the two copying-state instances. `transduce_append` yields
+  `transduce δ o q [] = []` indirectly (from `t = t ++ t`), but no lemma evaluates
+  `transduce δ o q [b]`, so the cons case is unreachable without A1.
+Conclusion: the five gaps are real at the tip and on #161, #162 and #135.
+
+## Seal controls re-run (against oleans-lrcan3)
+
+- eq/EQSealControl (probe/EQSealControl.out): 6 errors, at lines 49, 53, 55, 57, 59, 60, all in
+  section Sealed (which starts at line 43); none in section Unsealed (lines 25–41). Control 1
+  fails with "Tactic `rcases` failed: `hf : TimeConstructible f` is not an inductive datatype",
+  as claimed; the other five are `rfl` type mismatches. One error per control.
+- scp/SCPSealControl (probe/SCPSealControl.out): 12 errors, at lines 52, 55, 56, 58, 60, 61, 62,
+  63, 65, 67, 69, 70, all in section Sealed; none unsealed. One per control. The four blocker
+  controls (SpaceConstructible, ComputesInSpace, logSpace, transduce on []) fail as `rfl` type
+  mismatches, as claimed.
+- Record SHA-256s of both copies equal the drafter's (eccb045b..., 94ecf05d...).
+
+Strength of the SCP blocker controls: they test `rfl` equations, while the route meets the blocker
+as an introduction. The review's probe/ReviewBlockerControls.lean tests the forms the routes use:
+`refine ⟨h₁, h₂⟩` on SpaceConstructible ("Invalid ⟨...⟩ notation: ... not an inductive type"),
+`intro x` on ComputesInSpace ("introN failed"), `rfl` on transduce at a cons, and the eliminating
+`obtain` on TimeConstructible ("rcases failed"): all four close unsealed and fail sealed, one
+error each (exit 1, 4 errors, lines 37, 41, 45, 47).
+
+## Seal coverage of the route probes
+
+scripts/mkdefscan.py appends a metaprogram to a copy of each route probe that lists every TCSlib
+definition occurring in the type or value of the probe's lemmas (and of the probe's own helpers
+they reach):
+- SCPRouteDefScan (probe/SCPRouteDefScan.out, exit 0): SpaceConstructible, logSpace, transduce,
+  transducerTM, ComputesFunInTime, ComputesInSpace, ComputesInTime, bufferedCompTM, polyUnaryTM,
+  prependTM, initCfg, spaceUsed, plus the structure projections FinTM.State, FinTM.k, FinTM.tm.
+  The 12 non-projection definitions are exactly the 12 sealed ones. Complete.
+- EQRouteDefScan (probe/EQRouteDefScan.out, exit 0): TimeConstructible, ComputesInTime, initCfg,
+  runFrom (all sealed), the projections Cfg.state, Cfg.output, FinTM.State/k/tm, and the owned
+  file's budget, ladder, stage (read through their published laws; the owned file may read its own
+  definitions). Complete; ComputesFunInTime is sealed but untouched.

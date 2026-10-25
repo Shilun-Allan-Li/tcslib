@@ -1,0 +1,103 @@
+From d3cdc4dbae550d87e756c848c9d5a724195290ea Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 12:48:53 +0000
+Subject: [PATCH 22/37] ZoneRebalance: the glue of pinned chains
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 78 +++++++++++++++++++
+ 1 file changed, 78 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 46147580..c4b25659 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -5461,6 +5461,84 @@ private lemma zr_writeDonor {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t :
+     subst hj1
+     simp only [zr_copyTapes, zr_tapes, show (1 : Fin 2) ≠ 0 by decide, false_and, if_false]
+ 
++/-- A pinned step's endpoint pin, time and box restated by equalities and box inclusions. -/
++private lemma zr_PinStep_congr {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} {C : Contract M e X J x}
++    {V : J → Prop} {T₁ T₂ T₂' : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ p₂' : J → Fin 2 → ℤ}
++    {τ τ' : J → ℕ} {L U L' U' : J → Fin 2 → ℤ} (h : zr_PinStep C V T₁ T₂ p₁ p₂ τ L U)
++    (hT : ∀ j, V j → T₂ j = T₂' j) (hp : ∀ j, V j → p₂ j = p₂' j) (hτ : ∀ j, V j → τ j = τ' j)
++    (hL : ∀ j, V j → ∀ i, L' j i ≤ L j i) (hU : ∀ j, V j → ∀ i, U j i ≤ U' j i) :
++    zr_PinStep C V T₁ T₂' p₁ p₂' τ' L' U' := by
++  intro j d hV hd
++  obtain ⟨h1, h2, h3, h4, h5, h6⟩ := h j d hV hd
++  refine ⟨h1, ⟨(h2.1).trans (hT j hV), (h2.2).trans (hp j hV)⟩, h3, h4, h5.trans (hτ j hV),
++    fun i => ⟨(hL j hV i).trans (h6 i).1, (h6 i).2.trans (hU j hV i)⟩⟩
++
++/-- A contract whose precondition is a validity predicate and a pin. -/
++private def zr_PinPre {k : ℕ} {S J : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} (C : Contract M e X J x)
++    (V : J → Prop) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) : Prop :=
++  ∀ j (d : Cfg 2 (ZoneSym k) S x), C.pre j d ↔ V j ∧ zr_pinned (T j) (p j) d
++
++/-- A re-indexed contract with a pinned precondition is a pinned precondition. -/
++private lemma zr_PinPre_reindex {k : ℕ} {S I J : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} (C : Contract M e X I x)
++    (f : J → I) (V : J → Prop) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
++    (hP : ∀ j d, V j ∧ zr_pinned (T j) (p j) d → C.pre (f j) d) :
++    zr_PinPre (zr_reindexContract C f (fun j d => V j ∧ zr_pinned (T j) (p j) d) hP) V T p :=
++  fun j d => by rw [zr_reindexContract, Contract.ofSegment_pre]
++
++/-- The one-cell leaf's pinned precondition. -/
++private lemma zr_PinPre_cell {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop)
++    (i : Fin 2) (dir : SignType) (wr : Option (Option (ZoneSym k)))
++    (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ) :
++    zr_PinPre (zr_pinCellContract x V i dir wr T p) V T p :=
++  fun j d => by rw [zr_pinCellContract, zr_stepContract, Contract.ofSegment_pre]
++
++/-- A sequence's pinned precondition is its first part's. -/
++private lemma zr_PinPre_seq {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {x : List (ZoneSym k)}
++    {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₁ d₁ : S₁}
++    {e₂ : S₂} {X₂ : Set (Option S₂)} {C₁ : Contract M₁ e₁ {some d₁} J x}
++    {C₂ : Contract M₂ e₂ X₂ J x} {V : J → Prop} {T : J → Fin 2 → ℤ → Option (ZoneSym k)}
++    {p : J → Fin 2 → ℤ} (h : zr_PinPre C₁ V T p)
++    (hl : ∀ j d, d.state = some e₁ → C₁.pre j d →
++      C₂.pre j ((C₁.post j d).mapState fun _ => e₂)) :
++    zr_PinPre (C₁.seq C₂ (fun j => j) hl) V T p := by
++  intro j d
++  rw [Contract.seq_pre, h]
++  exact ⟨fun ⟨hV, hd⟩ => ⟨hV, ⟨funext fun i => funext fun q =>
++      ((Cfg.mapState_workTapes _ d i q).symm.trans (congrFun (congrFun hd.1 i) q)),
++    funext fun i => (Cfg.mapState_workTapePos _ d i).symm.trans (congrFun hd.2 i)⟩⟩,
++    fun ⟨hV, hd⟩ => ⟨hV, zr_pinned_mapState _ hd⟩⟩
++
++/-- **The seam of a pinned chain**: the next part's pinned precondition holds at the renamed
++endpoint of a pinned step. -/
++private lemma zr_pin_hlink {k : ℕ} {S₁ S₂ J : Type} {x : List (ZoneSym k)}
++    {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₁ : S₁}
++    {X₁ : Set (Option S₁)} {e₂ : S₂} {X₂ : Set (Option S₂)} {C₁ : Contract M₁ e₁ X₁ J x}
++    {C₂ : Contract M₂ e₂ X₂ J x} {V : J → Prop}
++    {T₁ T₂ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ : J → Fin 2 → ℤ} {τ : J → ℕ}
++    {L U : J → Fin 2 → ℤ} (h : zr_PinStep C₁ V T₁ T₂ p₁ p₂ τ L U) (h₁ : zr_PinPre C₁ V T₁ p₁)
++    (h₂ : zr_PinPre C₂ V T₂ p₂) :
++    ∀ j d, d.state = some e₁ → C₁.pre j d → C₂.pre j ((C₁.post j d).mapState fun _ => e₂) := by
++  intro j d _ hp
++  obtain ⟨hV, hd⟩ := (h₁ j d).mp hp
++  exact (h₂ j _).mpr ⟨hV, zr_pinned_mapState _ (h j d hV hd).2.1⟩
++
++/-- Pinned steps in one box compose in that box. -/
++private lemma zr_PinStep_seq' {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {x : List (ZoneSym k)}
++    {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₁ d₁ : S₁}
++    {e₂ : S₂} {X₂ : Set (Option S₂)} {C₁ : Contract M₁ e₁ {some d₁} J x}
++    {C₂ : Contract M₂ e₂ X₂ J x}
++    {T₁ T₂ T₃ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ p₃ : J → Fin 2 → ℤ}
++    {τ₁ τ₂ : J → ℕ} {L U : J → Fin 2 → ℤ} {V : J → Prop}
++    (h₁ : zr_PinStep C₁ V T₁ T₂ p₁ p₂ τ₁ L U) (h₂ : zr_PinStep C₂ V T₂ T₃ p₂ p₃ τ₂ L U)
++    (hl : ∀ j d, d.state = some e₁ → C₁.pre j d →
++      C₂.pre j ((C₁.post j d).mapState fun _ => e₂)) :
++    zr_PinStep (C₁.seq C₂ (fun j => j) hl) V T₁ T₃ p₁ p₃ (fun j => τ₁ j + 1 + τ₂ j) L U :=
++  zr_PinStep_congr (zr_PinStep_seq h₁ h₂ hl) (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
++    (fun _ _ _ => le_min le_rfl le_rfl) (fun _ _ _ => max_le le_rfl le_rfl)
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+-- 
+2.50.1 (Apple Git-155)
+

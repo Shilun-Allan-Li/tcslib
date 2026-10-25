@@ -1,0 +1,24 @@
+# ReviewBlockerControls: source /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/megafill-d/probe/ReviewBlockerControls.lean
+# record sha256 3656cb049460bff4022bb457ac690671aeaab82de34a0a1294963e73ab2d37b1; copy sha256 3656cb049460bff4022bb457ac690671aeaab82de34a0a1294963e73ab2d37b1
+# worktree HEAD 5cade0b848a3bb6d87a2149aacecf4a2af923889; oleans /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/oleans-lrcan3; start 2026-10-25T04:52:15Z
+ReviewProbe/ReviewBlockerControls.lean:37:9: error: Invalid `⟨...⟩` notation: The expected type `SpaceConstructible S` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+ReviewProbe/ReviewBlockerControls.lean:41:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+M : FinTM Bool
+f : List Bool → List Bool
+s : ℕ → ℕ
+h : ∀ (x : List Bool), ∃ t, M.ComputesInTime x (f x) t ∧ MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ s x.length
+⊢ M.ComputesInSpace f s
+ReviewProbe/ReviewBlockerControls.lean:45:2: error: Tactic `rfl` failed: The left-hand side
+  transduce (fun x x_1 => true) (fun q b => if q = true then some b else none) false (b :: l)
+is not definitionally equal to the right-hand side
+  transduce (fun x x_1 => true) (fun q b => if q = true then some b else none) true l
+
+b : Bool
+l : List Bool
+⊢ transduce (fun x x_1 => true) (fun q b => if q = true then some b else none) false (b :: l) =
+    transduce (fun x x_1 => true) (fun q b => if q = true then some b else none) true l
+ReviewProbe/ReviewBlockerControls.lean:47:9: error: Tactic `rcases` failed: `hf : TimeConstructible f` is not an inductive datatype
+# exit=1 secs=2

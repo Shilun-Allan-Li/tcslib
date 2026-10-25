@@ -1,0 +1,571 @@
+From e41c074a5982db008b0918176bb39305d3bcc3e7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 10:48:51 +0000
+Subject: [PATCH 09/37] ZoneRebalance: the rebalance scan loop (rightward), as
+ a contract with two escapes
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 545 ++++++++++++++++++
+ 1 file changed, 545 insertions(+)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index e1111892..1311eaa5 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -3664,6 +3664,551 @@ private lemma zr_scanBody_fields {k : ℕ} {x : List (ZoneSym k)} (t : Fin k)
+           Cfg.mapState_workTapePos, SignType.coe_one, if_neg hj]
+     · simp only [Cfg.mapState_output, seekPost_output]
+ 
++/-- The scan body's states: the mark's, then the blank test's, the anchor's, the slot test's,
++the skip's and the anchor's again. -/
++private abbrev zr_scanSt : Type :=
++  Option Bool ⊕ (Option Bool ⊕ Option Bool) ⊕ (Option Bool ⊕ SeekPhase) ⊕ Option Bool
++
++/-- The scan's way back: the body's blank exit to the short escape `some true`, its skip to the
++anchor, and its occupied-slot exit to the found escape `none`. -/
++private def zr_scanBack : zr_scanSt → Option (Option Bool)
++  | .inr (.inl (.inr (some false))) => some (some true)
++  | .inr (.inr (.inl (.inr .done))) => some (some false)
++  | .inr (.inr (.inr (some false))) => some none
++  | _ => none
++
++/-- **The rebalance scan**: the loop host over the scan body. -/
++private abbrev zr_scanTM {k : ℕ} (t : Fin k) :
++    MultiTapeTM 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) :=
++  zr_hostTM (zr_machineOf (zr_scanBodyContract t ([] : List (ZoneSym k)))) (Sum.inl none)
++    zr_scanBack
++
++/-- The scan body with its three exits listed. -/
++private def zr_scanBodyRow {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  zr_exitsContract (zr_scanBodyContract t x)
++    {some (.inr (.inl (.inr (some false)))), some (.inr (.inr (.inl (.inr .done)))),
++      some (.inr (.inr (.inr (some false))))}
++    (by
++      simp only [Set.image_singleton, Set.image_insert_eq, Option.map_some, Function.comp_apply,
++        Set.singleton_union])
++
++/-- The scan body inside the scan host: each of its three exits is redirected to the anchor
++phase. -/
++private def zr_scanPhaseContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  zr_hostBodyContract zr_scanBack (zr_scanBodyRow t x)
++    (fun h => by
++      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, reduceCtorEq, or_self] at h)
++    (fun s => by
++      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Option.some.injEq]
++      constructor
++      · rintro (rfl | rfl | rfl) <;> exact Option.some_ne_none _
++      · intro h
++        match s, h with
++        | .inr (.inl (.inr (some false))), _ => exact Or.inl rfl
++        | .inr (.inr (.inl (.inr .done))), _ => exact Or.inr (Or.inl rfl)
++        | .inr (.inr (.inr (some false))), _ => exact Or.inr (Or.inr rfl)
++        | .inl _, h => exact absurd rfl h
++        | .inr (.inl (.inl _)), h => exact absurd rfl h
++        | .inr (.inl (.inr none)), h => exact absurd rfl h
++        | .inr (.inl (.inr (some true))), h => exact absurd rfl h
++        | .inr (.inr (.inl (.inl _))), h => exact absurd rfl h
++        | .inr (.inr (.inl (.inr .run))), h => exact absurd rfl h
++        | .inr (.inr (.inr none)), h => exact absurd rfl h
++        | .inr (.inr (.inr (some true))), h => exact absurd rfl h)
++
++/-- The scan body's zoned head stays between its start and one past the skipped zone's right
++delimiter; the scratch head between its start and the next cell. -/
++private lemma zr_scanBody_bounds {k : ℕ} {x : List (ZoneSym k)} (t : Fin k)
++    (w : List (ZoneSym k)) (d : Cfg 2 (ZoneSym k) zr_scanSt x) :
++    d.workTapePos 0 ≤ (zr_scanBodyContract t x).lo w d 0 ∧
++      (zr_scanBodyContract t x).hi w d 0 ≤ d.workTapePos 0 + w.length + 1 ∧
++      d.workTapePos 1 ≤ (zr_scanBodyContract t x).lo w d 1 ∧
++      (zr_scanBodyContract t x).hi w d 1 ≤ d.workTapePos 1 + 1 := by
++  refine ⟨?_, ?_, ?_, ?_⟩ <;>
++  simp only [zr_scanBodyContract, Contract.seq_lo, Contract.seq_hi, zr_stepContract,
++    Contract.ofSegment_lo, Contract.ofSegment_hi, Contract.ofSegment_post, zr_cellContract,
++    zr_cellPost, zr_blankBranchContract, Contract.branch_lo, Contract.branch_hi,
++    zr_wordTestContract, zr_reindexContract, zr_exitsContract, zr_slotBranchContract,
++    zr_anchorContract, skipTM_contract_lo, skipTM_contract_hi, Cfg.mapState_workTapePos,
++    Function.update_self, Function.update_of_ne (by decide : (0 : Fin 2) ≠ 1),
++    SignType.coe_zero, SignType.coe_one, add_zero, Function.update_eq_self, if_true,
++    show (1 : Fin 2) ≠ 0 by decide, if_false, min_self, max_self] <;>
++  split_ifs <;> omega
++
++/-- **One round of the scan**: from the anchor, with the word `w` at the zoned head, the scan
++dispatches, marks scratch's cell and moves scratch right, then stops at the short escape on a
++blank cell after 6 steps, at the found escape on an occupied track-`t` slot after 8, or skips
++`w` and stops at the anchor after `|w| + 9`. Strictly in between it is live and off all three;
++the zoned head stays between its start and one past `w`'s delimiter, scratch within one cell.
++
++**Proof sketch.** The dispatch step and the body's phase contract make a round
++(`zr_round_of_body`); the body's fields give its endpoint and time, its bounds the head
++relation. -/
++private lemma zr_scan_round {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (w : List (ZoneSym k))
++    (c : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x)
++    (hc : c.state = some ⟨false, some false⟩) (hw : zr_wordAt w c) (P : (Fin 2 → ℤ) → Prop)
++    (hP : ∀ p : Fin 2 → ℤ, c.workTapePos 0 ≤ p 0 → p 0 ≤ c.workTapePos 0 + w.length + 1 →
++      c.workTapePos 1 ≤ p 1 → p 1 ≤ c.workTapePos 1 + 1 → P p) :
++    Round (zr_scanTM t) ⟨false, some false⟩ {some ⟨false, some true⟩, some ⟨false, none⟩} P c
++      (zr_scanMarked c
++        ⟨false, if (c.workTapes 0 (c.workTapePos 0)).isNone then some true
++          else if zr_slotEmpty t (c.workTapes 0 (c.workTapePos 0)) then some false else none⟩
++        (if ¬ (c.workTapes 0 (c.workTapePos 0)).isNone ∧
++            zr_slotEmpty t (c.workTapes 0 (c.workTapePos 0)) then
++          c.workTapePos 0 + w.length + 1
++        else c.workTapePos 0))
++      (if (c.workTapes 0 (c.workTapePos 0)).isNone then 6
++        else if zr_slotEmpty t (c.workTapes 0 (c.workTapePos 0)) then w.length + 9 else 8) := by
++  have hrun1 := zr_host_dispatch_run (zr_machineOf (zr_scanBodyContract t ([] : List (ZoneSym k))))
++    (Sum.inl none) zr_scanBack c hc
++  set c₁ : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x :=
++    { c with state := some ⟨true, Sum.inl none⟩ } with hc₁
++  have hc₁s : c₁.state = some ⟨true, Sum.inl none⟩ := rfl
++  set e : Cfg 2 (ZoneSym k) zr_scanSt x := c₁.mapState fun _ => Sum.inl none with he
++  have hwt : e.workTapes = c.workTapes :=
++    funext fun j => funext fun q => Cfg.mapState_workTapes _ c₁ j q
++  have hwp : e.workTapePos = c.workTapePos := funext fun j => Cfg.mapState_workTapePos _ c₁ j
++  have hp' : (zr_scanBodyContract t x).pre w e := by
++    rw [zr_scanBodyContract, Contract.seq_pre, zr_stepContract, Contract.ofSegment_pre]
++    intro p h0 h1
++    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, hwt, hwp]
++    exact hw p h0 h1
++  obtain ⟨hT, hpost⟩ := zr_scanBody_fields t w e hp'
++  rw [hwt, hwp] at hT hpost
++  generalize hcell : c.workTapes 0 (c.workTapePos 0) = cell at hT hpost ⊢
++  set S : zr_scanSt := if cell.isNone then Sum.inr (Sum.inl (Sum.inr (some false)))
++    else if zr_slotEmpty t cell then Sum.inr (Sum.inr (Sum.inl (Sum.inr SeekPhase.done)))
++    else Sum.inr (Sum.inr (Sum.inr (some false))) with hS
++  set V : Option Bool := if cell.isNone then some true
++    else if zr_slotEmpty t cell then some false else none with hV
++  set P0 : ℤ := if ¬ cell.isNone ∧ zr_slotEmpty t cell then c.workTapePos 0 + w.length + 1
++    else c.workTapePos 0 with hP0
++  have hSV : zr_scanBack S = some V := by
++    rw [hS, hV]
++    split_ifs <;> rfl
++  have hB0 : (zr_scanPhaseContract t x).pre w c₁ := by
++    rw [zr_scanPhaseContract, zr_hostBodyContract, Contract.inPhase_pre, zr_scanBodyRow,
++      zr_exitsContract, Contract.ofSegment_pre]
++    exact hp'
++  have hBt : (zr_scanPhaseContract t x).time w c₁ = (zr_scanBodyContract t x).time w e + 1 := by
++    rw [zr_scanPhaseContract, zr_hostBodyContract, Contract.inPhase_time, zr_scanBodyRow,
++      zr_exitsContract, Contract.ofSegment_time]
++  have hBpost : (zr_scanPhaseContract t x).post w c₁ = zr_scanMarked c ⟨false, V⟩ P0 := by
++    rw [zr_scanPhaseContract, zr_hostBodyContract, Contract.inPhase_post, zr_scanBodyRow,
++      zr_exitsContract, Contract.ofSegment_post, hpost]
++    refine zr_bindState_eq _ _ _ ?_ (Cfg.mapState_inputPos (fun _ => (Sum.inl none : zr_scanSt)) c₁)
++      ?_ ?_ (Cfg.mapState_output (fun _ => (Sum.inl none : zr_scanSt)) c₁)
++    · show (zr_scanBack S).map (fun v => (⟨false, v⟩ : Σ b, zr_hostPh zr_scanSt b)) = _
++      rw [hSV, Option.map_some]
++    · show Function.update e.workTapes 1
++          (Function.update (e.workTapes 1) (e.workTapePos 1) (some (Sum.inl true))) =
++        Function.update c.workTapes 1
++          (Function.update (c.workTapes 1) (c.workTapePos 1) (some (Sum.inl true)))
++      rw [hwt, hwp]
++    · show (fun j : Fin 2 => if j = 0 then P0 else e.workTapePos 1 + 1) =
++        fun j => if j = 0 then P0 else c.workTapePos 1 + 1
++      rw [hwp]
++  have hmem : ∀ s : zr_scanSt, some s ∈ ({some (.inr (.inl (.inr (some false)))),
++      some (.inr (.inr (.inl (.inr .done)))), some (.inr (.inr (.inr (some false))))} :
++        Set (Option zr_scanSt)) →
++      zr_hostRed (Sum.inl none) zr_scanBack true s ∈
++        {q | ∃ s, some s ∈ ({some (.inr (.inl (.inr (some false)))),
++          some (.inr (.inr (.inl (.inr .done)))), some (.inr (.inr (.inr (some false))))} :
++            Set (Option zr_scanSt)) ∧ q = zr_hostRed (Sum.inl none) zr_scanBack true s} :=
++    fun s hs => ⟨s, hs, rfl⟩
++  have hend : ((zr_scanPhaseContract t x).post w c₁).state ∈
++      (insert (some ⟨false, some false⟩) {some ⟨false, some true⟩, some ⟨false, none⟩} :
++        Set (Option (Σ b, zr_hostPh zr_scanSt b))) := by
++    rw [hBpost]
++    show some (⟨false, V⟩ : Σ b, zr_hostPh zr_scanSt b) ∈ _
++    rw [hV]
++    split_ifs
++    · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
++    · exact Set.mem_insert _ _
++    · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
++  have hPC : ∀ p, HeadBox ((zr_scanPhaseContract t x).lo w c₁)
++      ((zr_scanPhaseContract t x).hi w c₁) p → P p := by
++    intro p hb
++    have hlo : ∀ j, (zr_scanPhaseContract t x).lo w c₁ j = (zr_scanBodyContract t x).lo w e j :=
++      fun j => by
++        rw [zr_scanPhaseContract, zr_hostBodyContract, Contract.inPhase_lo, zr_scanBodyRow,
++          zr_exitsContract, Contract.ofSegment_lo]
++    have hhi : ∀ j, (zr_scanPhaseContract t x).hi w c₁ j = (zr_scanBodyContract t x).hi w e j :=
++      fun j => by
++        rw [zr_scanPhaseContract, zr_hostBodyContract, Contract.inPhase_hi, zr_scanBodyRow,
++          zr_exitsContract, Contract.ofSegment_hi]
++    obtain ⟨b₁, b₂, b₃, b₄⟩ := zr_scanBody_bounds t w e
++    rw [hwp] at b₁ b₂ b₃ b₄
++    have h0 := hb 0
++    have h1 := hb 1
++    rw [hlo, hhi, Finset.mem_Icc] at h0 h1
++    exact hP p (b₁.trans h0.1) (h0.2.trans b₂) (b₃.trans h1.1) (h1.2.trans b₄)
++  have hR := zr_round_of_body (zr_scanPhaseContract t x) w c c₁ hc hrun1 hc₁s hB0
++    (hmem _ (Set.mem_insert_of_mem _ (Set.mem_insert _ _)))
++    (fun q hq => by
++      rcases hq with rfl | hq
++      · exact hmem _ (Set.mem_insert _ _)
++      · rw [Set.mem_singleton_iff.mp hq]
++        exact hmem _ (Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)))
++    hend (hP _ le_rfl (by omega) le_rfl (by omega)) hPC
++  rw [hBt, hT, hBpost] at hR
++  rw [show (if cell.isNone = true then 6 else if zr_slotEmpty t cell = true then w.length + 9
++      else 8) = 1 + ((if cell.isNone = true then 4 else if zr_slotEmpty t cell = true then
++        w.length + 7 else 6) + 1) by split_ifs <;> omega]
++  exact hR
++
++/-- The scan's configuration after `n` rounds: `n` marks on scratch from its start, scratch's
++head just past them, the zoned head at `p` and the state `s`. -/
++private def zr_scanCfg {k : ℕ} {S : Type} {x : List (ZoneSym k)} (d : Cfg 2 (ZoneSym k) S x)
++    (s : Option S) (n : ℕ) (p : ℤ) : Cfg 2 (ZoneSym k) S x :=
++  { d with
++    state := s
++    workTapes := Function.update d.workTapes 1 fun q =>
++      if d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + n then some (Sum.inl true)
++      else d.workTapes 1 q
++    workTapePos := fun j => if j = 0 then p else d.workTapePos 1 + n }
++
++/-- One more mark extends the marked block by one cell. -/
++private lemma zr_scanCfg_marked {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (d : Cfg 2 (ZoneSym k) S x) (s : Option S) (n : ℕ) (p : ℤ) (s' : S) (p' : ℤ) :
++    zr_scanMarked (zr_scanCfg d s n p) s' p' = zr_scanCfg d (some s') (n + 1) p' := by
++  apply Cfg.ext
++  · rfl
++  · rfl
++  · funext j q
++    by_cases hj : j = 1
++    · subst hj
++      simp only [zr_scanCfg, Function.update_self, Function.update_apply,
++        show (1 : Fin 2) ≠ 0 by decide, if_false, Nat.cast_add, Nat.cast_one]
++      split_ifs <;> first | rfl | omega
++    · simp only [zr_scanCfg, Function.update_of_ne hj]
++  · funext j
++    simp only [zr_scanCfg, show (1 : Fin 2) ≠ 0 by decide, if_false,
++      Nat.cast_add, Nat.cast_one]
++    split_ifs
++    · rfl
++    · ring
++  · rfl
++
++/-- The scan configuration's fields: tape `0` and the start's other fields are kept. -/
++private lemma zr_scanCfg_fields {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (d : Cfg 2 (ZoneSym k) S x) (s : Option S) (n : ℕ) (p : ℤ) :
++    (zr_scanCfg d s n p).state = s ∧ (zr_scanCfg d s n p).workTapes 0 = d.workTapes 0 ∧
++      (zr_scanCfg d s n p).workTapePos 0 = p ∧
++      (zr_scanCfg d s n p).workTapePos 1 = d.workTapePos 1 + n :=
++  ⟨rfl, by simp only [zr_scanCfg, Function.update_of_ne (by decide : (0 : Fin 2) ≠ 1)],
++    by simp only [zr_scanCfg, if_true],
++    by simp only [zr_scanCfg, show (1 : Fin 2) ≠ 0 by decide, if_false]⟩
++
++/-- The word the scan's round `r` crosses: zone `r`, or the empty word past the layout. -/
++private def zr_scanWord {k : ℕ} (D : ZoneData k) (r : ℕ) : List (ZoneSym k) :=
++  if h : r < D.1 then zoneCells true D.2 ⟨r, h⟩ else []
++
++/-- At the start of zone `r`, or at the cell past the layout, the scan's round word lies at the
++zoned head. -/
++private lemma zr_scanWord_at {k : ℕ} {S : Type} {x : List (ZoneSym k)} (D : ZoneData k)
++    (r : ℕ) (hr : r ≤ D.1) (c : Cfg 2 (ZoneSym k) S x) (h0 : c.workTapes 0 = zonedTape D.2)
++    (hp : c.workTapePos 0 = zoneStart r) : zr_wordAt (zr_scanWord D r) c := by
++  intro p hp0 hp1
++  rw [h0, hp, zr_scanWord]
++  split_ifs with h
++  · rw [zr_scanWord, dif_pos h, zoneCells_length] at hp1
++    exact zonedTape_right_word D.2 ⟨r, h⟩ p (by omega) hp1
++  · rw [zr_scanWord, dif_neg h, List.length_nil] at hp1
++    obtain rfl : r = D.1 := by omega
++    rw [FinTM.bufferTape_nil]
++    exact zonedTape_blank_outside D.2 _ (by
++      rw [abs_of_nonneg (by omega)]
++      omega)
++
++/-- The scan's tests at the start of zone `r`: the cell is not blank, and its track-`t` slot is
++empty exactly when zone `r` is. -/
++private lemma zr_scan_test {k : ℕ} (D : ZoneData k) (t : Fin k) (r : ℕ) (hr : r < D.1) :
++    (zonedTape D.2 (zoneStart r)).isNone = false ∧
++      (zr_slotEmpty t (zonedTape D.2 (zoneStart r)) = true ↔
++        (D.2 t).words true ⟨r, hr⟩ = []) := by
++  have hcap : 0 < zoneCapacity r := by
++    rw [zoneCapacity_eq]
++    have := Nat.two_pow_pos r
++    omega
++  have hcell := zonedTape_right D.2 ⟨r, hr⟩ 0 hcap
++  have he := zr_inner_empty_iff true D.2 ⟨r, hr⟩ t
++  rw [zr_zonePos, if_pos rfl] at he
++  simp only [Nat.add_zero] at hcell he
++  rw [hcell, Option.map_some, Option.some.injEq] at he
++  rw [hcell, Option.isNone_some, zr_slotEmpty, Option.isNone_iff_eq_none, he]
++  exact ⟨rfl, Iff.rfl⟩
++
++/-- Past the layout the scan's cell is blank. -/
++private lemma zr_scan_end {k : ℕ} (D : ZoneData k) : zonedTape D.2 (zoneStart D.1) = none :=
++  zonedTape_blank_outside D.2 _ (by
++    rw [abs_of_nonneg (by omega)]
++    omega)
++
++/-- At the scanned index, below the level count, the track-`t` slot is occupied. -/
++private lemma zr_scan_found {k : ℕ} (D : ZoneData k) (t : Fin k) (j : ℕ)
++    (hj : zoneRebalanceIndex true t D = j) (hlt : j < D.1) :
++    zr_slotEmpty t (zonedTape D.2 (zoneStart j)) = false := by
++  subst hj
++  have hne := zoneShiftIndex_nonempty true (D.2 t) hlt
++  cases h : zr_slotEmpty t (zonedTape D.2 (zoneStart (zoneRebalanceIndex true t D)))
++  · rfl
++  · exact absurd ((zr_scan_test D t _ hlt).2.mp h) hne
++
++/-- The scan's round times add up to the crossed extent and nine steps per crossed zone. -/
++private lemma zr_scan_time_sum (n : ℕ) :
++    ∑ r ∈ Finset.range n, (zoneCapacity r + 9) + zoneStart 0 = zoneStart n + 8 * n := by
++  induction n with
++  | zero => simp only [Finset.range_zero, Finset.sum_empty, zero_add, mul_zero, add_zero]
++  | succ n ih =>
++    rw [Finset.sum_range_succ, zoneStart_succ]
++    omega
++
++/-- The scan's round time from a round's start `c`: by the zoned cell's tests, with the word of
++the zone at the scratch head's offset from the start `d`. -/
++private def zr_scanTau {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (d c : Cfg 2 (ZoneSym k) S x) : ℕ :=
++  if (c.workTapes 0 (c.workTapePos 0)).isNone then 6
++  else if zr_slotEmpty t (c.workTapes 0 (c.workTapePos 0)) then
++    (zr_scanWord D (c.workTapePos 1 - d.workTapePos 1).toNat).length + 9
++  else 8
++
++/-- The scan's precondition at the loop's start: tape `0` is the zoned tape of `D`, with its
++head at the start of zone `0`. -/
++private def zr_scanPre {k : ℕ} {S : Type} {x : List (ZoneSym k)} (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) S x) : Prop :=
++  d.workTapes 0 = zonedTape D.2 ∧ d.workTapePos 0 = zoneStart 0
++
++/-- The scan's round `r` from the anchor at the start of zone `r`, for `r` up to the scanned
++index, as one statement. -/
++private lemma zr_scan_round_at {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x)
++    (hd : d.state = some ⟨false, some false⟩) (hp : zr_scanPre D d) (r : ℕ)
++    (hr : r ≤ zoneRebalanceIndex true t D) (P : (Fin 2 → ℤ) → Prop)
++    (hP : ∀ p : Fin 2 → ℤ, zoneStart r ≤ p 0 → p 0 ≤ zoneStart r + (zr_scanWord D r).length + 1 →
++      d.workTapePos 1 + r ≤ p 1 → p 1 ≤ d.workTapePos 1 + r + 1 → P p) :
++    Round (zr_scanTM t) ⟨false, some false⟩ {some ⟨false, some true⟩, some ⟨false, none⟩} P
++      (zr_scanCfg d d.state r (zoneStart r))
++      (zr_scanMarked (zr_scanCfg d d.state r (zoneStart r))
++        ⟨false, if (zonedTape D.2 (zoneStart r)).isNone then some true
++          else if zr_slotEmpty t (zonedTape D.2 (zoneStart r)) then some false else none⟩
++        (if ¬ (zonedTape D.2 (zoneStart r)).isNone ∧ zr_slotEmpty t (zonedTape D.2 (zoneStart r))
++          then zoneStart r + (zr_scanWord D r).length + 1
++        else zoneStart r))
++      (zr_scanTau t D d (zr_scanCfg d d.state r (zoneStart r))) := by
++  have hi := zoneShiftIndex_le true (D.2 t)
++  rw [zoneRebalanceIndex] at hr
++  obtain ⟨e0, e1, e2, e3⟩ := zr_scanCfg_fields d d.state r (zoneStart r)
++  have hc : (zr_scanCfg d d.state r (zoneStart r)).workTapes 0
++      ((zr_scanCfg d d.state r (zoneStart r)).workTapePos 0) = zonedTape D.2 (zoneStart r) := by
++    rw [e1, e2, hp.1]
++  have hR := zr_scan_round t (zr_scanWord D r) (zr_scanCfg d d.state r (zoneStart r)) (e0.trans hd)
++    (zr_scanWord_at D r (by omega) _ (e1.trans hp.1) e2) P (fun p h₀ h₁ h₂ h₃ => by
++      rw [e2] at h₀ h₁
++      rw [e3] at h₂ h₃
++      exact hP p h₀ h₁ h₂ h₃)
++  rw [hc, e2] at hR
++  rw [zr_scanTau, hc, e3, show d.workTapePos 1 + (r : ℤ) - d.workTapePos 1 = r by ring,
++    Int.toNat_natCast]
++  exact hR
++
++/-- The scan's orbit: up to the scanned index, round `r` starts at the anchor with the zoned
++head at the start of zone `r` and `r` marks on scratch.
++
++**Proof sketch.** Induct on `r`: below the scanned index, zone `r` is empty
++(`zoneShiftIndex_empty`), so its round skips it and ends at the anchor at zone `r + 1`. -/
++private lemma zr_scan_orbit {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x)
++    (hd : d.state = some ⟨false, some false⟩) (hp : zr_scanPre D d) :
++    ∀ r ≤ zoneRebalanceIndex true t D,
++      roundOrbit (zr_scanTM t) (zr_scanTau t D d) d r = zr_scanCfg d d.state r (zoneStart r) := by
++  intro r
++  induction r with
++  | zero =>
++    intro _
++    rw [roundOrbit_zero]
++    apply Cfg.ext
++    · rfl
++    · rfl
++    · funext j q
++      by_cases hj : j = 1
++      · subst hj
++        simp only [zr_scanCfg, Function.update_self, Nat.cast_zero, add_zero]
++        split_ifs with h
++        · omega
++        · rfl
++      · simp only [zr_scanCfg, Function.update_of_ne hj]
++    · funext j
++      simp only [zr_scanCfg, Nat.cast_zero, add_zero]
++      split_ifs with h
++      · rw [h, hp.2]
++      · have hj1 : j = 1 := by omega
++        rw [hj1]
++    · rfl
++  | succ r ih =>
++    intro hr
++    have hi := zoneShiftIndex_le true (D.2 t)
++    rw [zoneRebalanceIndex] at hr
++    have hrl : r < D.1 := by omega
++    obtain ⟨hn, hs⟩ := zr_scan_test D t r hrl
++    have hem := zoneShiftIndex_empty true (D.2 t) ⟨r, hrl⟩ (by simp only; omega)
++    have hR := zr_scan_round_at t D d hd hp r (by rw [zoneRebalanceIndex]; omega)
++      (fun _ => True) (fun _ _ _ _ _ => trivial)
++    rw [roundOrbit_succ, ih (by rw [zoneRebalanceIndex]; omega),
++      ((round_iff _ _ _ _ _ _ _).mp hR).2.2.1, hn, hs.mpr hem]
++    simp only [Bool.false_eq_true, if_false, if_true, not_false_eq_true, true_and]
++    rw [zr_scanCfg_marked, hd, zr_scanWord, dif_pos hrl, zoneCells_length]
++    congr 2
++    rw [zoneStart_succ]
++    push_cast
++    ring
++
++/-- The scan loop's endpoint: the escape by the scanned index, `i₀ + 1` marks, the zoned head
++at the start of zone `i₀` (the cell past the layout when every zone is empty). -/
++private abbrev zr_scanLoopPost {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x) :
++    Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x :=
++  zr_scanCfg d
++    (some ⟨false, if zoneRebalanceIndex true t D < D.1 then none else some true⟩)
++    (zoneRebalanceIndex true t D + 1) (zoneStart (zoneRebalanceIndex true t D))
++
++/-- **The scan loop's run**, as a segment against its two escapes inside the box
++`[zoneStart 0, zoneStart (i₀ + 1)]` for the zoned head and `[q, q + i₀ + 1]` for scratch.
++
++**Proof sketch.** `Turing.Round.iterate` over the `i₀ + 1` rounds of `zr_scan_round_at`, on the
++orbit `zr_scan_orbit`; the last round stops at the found escape on zone `i₀`
++(`zoneShiftIndex_nonempty`) or at the short escape past the layout. The times add up by
++`zr_scan_time_sum`. -/
++private lemma zr_scanLoop_segment {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) (Σ b, zr_hostPh zr_scanSt b) x)
++    (hd : d.state = some ⟨false, some false⟩) (hp : zr_scanPre D d) :
++    Segment (zr_scanTM t) {some ⟨false, some true⟩, some ⟨false, none⟩}
++      (HeadBox (fun j => if j = 0 then (zoneStart 0 : ℤ) else d.workTapePos j)
++        (fun j => if j = 0 then (zoneStart (zoneRebalanceIndex true t D + 1) : ℤ)
++          else d.workTapePos 1 + zoneRebalanceIndex true t D + 1))
++      d (zr_scanLoopPost t D d)
++      (zoneStart (zoneRebalanceIndex true t D) + 8 * zoneRebalanceIndex true t D +
++        if zoneRebalanceIndex true t D < D.1 then 6 else 4) := by
++  have hi := zoneShiftIndex_le true (D.2 t)
++  have hsi : zoneShiftIndex true (D.2 t) = zoneRebalanceIndex true t D := rfl
++  rw [zr_scanLoopPost]
++  generalize hi₀ : zoneRebalanceIndex true t D = i₀ at hsi ⊢
++  rw [hsi] at hi
++  have hbox : ∀ p : Fin 2 → ℤ, (zoneStart 0 : ℤ) ≤ p 0 → p 0 ≤ zoneStart (i₀ + 1) →
++      d.workTapePos 1 ≤ p 1 → p 1 ≤ d.workTapePos 1 + i₀ + 1 →
++      HeadBox (fun j => if j = 0 then (zoneStart 0 : ℤ) else d.workTapePos j)
++        (fun j => if j = 0 then (zoneStart (i₀ + 1) : ℤ) else d.workTapePos 1 + i₀ + 1) p := by
++    intro p h0 h1 h2 h3
++    rw [headBox_iff]
++    intro j
++    rw [Finset.mem_Icc]
++    match j with
++    | 0 => exact ⟨h0, h1⟩
++    | 1 =>
++      simp only [show (1 : Fin 2) ≠ 0 by decide, if_false]
++      exact ⟨h2, h3⟩
++  have hround : ∀ r < i₀ + 1,
++      Round (zr_scanTM t) ⟨false, some false⟩ {some ⟨false, some true⟩, some ⟨false, none⟩}
++        (HeadBox (fun j => if j = 0 then (zoneStart 0 : ℤ) else d.workTapePos j)
++          (fun j => if j = 0 then (zoneStart (i₀ + 1) : ℤ) else d.workTapePos 1 + i₀ + 1))
++        (roundOrbit (zr_scanTM t) (zr_scanTau t D d) d r)
++        (roundOrbit (zr_scanTM t) (zr_scanTau t D d) d (r + 1))
++        (zr_scanTau t D d (roundOrbit (zr_scanTM t) (zr_scanTau t D d) d r)) := by
++    intro r hr
++    rw [roundOrbit_succ, zr_scan_orbit t D d hd hp r (by rw [hi₀]; omega)]
++    have hR := zr_scan_round_at t D d hd hp r (by rw [hi₀]; omega)
++      (HeadBox (fun j => if j = 0 then (zoneStart 0 : ℤ) else d.workTapePos j)
++        (fun j => if j = 0 then (zoneStart (i₀ + 1) : ℤ) else d.workTapePos 1 + i₀ + 1))
++      (fun p h₀ h₁ h₂ h₃ => by
++        have hm := zoneStart_mono (Nat.zero_le r)
++        have hw : (zoneStart r : ℤ) + (zr_scanWord D r).length + 1 ≤ zoneStart (i₀ + 1) := by
++          rw [zr_scanWord]
++          split_ifs with h
++          · rw [zoneCells_length, Fin.val_mk]
++            have := zoneStart_mono (show r + 1 ≤ i₀ + 1 by omega)
++            have := zoneStart_succ r
++            omega
++          · have := zoneStart_mono (show r ≤ i₀ by omega)
++            have := zoneStart_succ i₀
++            simp only [List.length_nil, Nat.cast_zero]
++            omega
++        exact hbox p (by omega) (by omega) (by omega) (by omega))
++    rw [((round_iff _ _ _ _ _ _ _).mp hR).2.2.1]
++    exact hR
++  have hseg := Round.iterate (zr_scanTau t D d) d
++    (fun h => by
++      simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Option.some.injEq, Sigma.mk.injEq,
++        heq_eq_eq, reduceCtorEq, and_false, or_self] at h)
++    (hbox _ (by rw [hp.2]) (by
++      rw [hp.2]
++      exact_mod_cast zoneStart_mono (Nat.zero_le _)) (le_refl _) (by omega)) (i₀ + 1) hround
++  have hlast := zr_scan_round_at t D d hd hp i₀ hi₀.ge (fun _ => True)
++    (fun _ _ _ _ _ => trivial)
++  have hend : roundOrbit (zr_scanTM t) (zr_scanTau t D d) d (i₀ + 1) =
++      zr_scanCfg d (some ⟨false, if i₀ < D.1 then none else some true⟩) (i₀ + 1)
++        (zoneStart i₀) := by
++    rw [roundOrbit_succ, zr_scan_orbit t D d hd hp i₀ hi₀.ge,
++      ((round_iff _ _ _ _ _ _ _).mp hlast).2.2.1, zr_scanCfg_marked]
++    rcases Nat.lt_or_ge i₀ D.1 with hlt | hge
++    · rw [(zr_scan_test D t i₀ hlt).1, zr_scan_found D t i₀ hi₀ hlt]
++      simp only [Bool.false_eq_true, if_false, and_false, if_pos hlt]
++    · obtain rfl : i₀ = D.1 := by omega
++      rw [zr_scan_end]
++      simp only [Option.isNone_none, if_true, not_true_eq_false, false_and, if_false,
++        lt_irrefl]
++  have htime : ∑ r ∈ Finset.range (i₀ + 1),
++      zr_scanTau t D d (roundOrbit (zr_scanTM t) (zr_scanTau t D d) d r) =
++        zoneStart i₀ + 8 * i₀ + if i₀ < D.1 then 6 else 4 := by
++    have hτ : ∀ r < i₀, zr_scanTau t D d (roundOrbit (zr_scanTM t) (zr_scanTau t D d) d r) =
++        zoneCapacity r + 9 := by
++      intro r hr
++      have hrl : r < D.1 := by omega
++      obtain ⟨e0, e1, e2, e3⟩ := zr_scanCfg_fields d d.state r (zoneStart r)
++      obtain ⟨hn, hs⟩ := zr_scan_test D t r hrl
++      have hem := zoneShiftIndex_empty true (D.2 t) ⟨r, hrl⟩ (by simp only; omega)
++      rw [zr_scan_orbit t D d hd hp r (by rw [hi₀]; omega), zr_scanTau, e1, e2, e3, hp.1, hn,
++        hs.mpr hem, show d.workTapePos 1 + (r : ℤ) - d.workTapePos 1 = r by ring,
++        Int.toNat_natCast, zr_scanWord, dif_pos hrl, zoneCells_length]
++      simp only [Bool.false_eq_true, if_false, if_true]
++    have hlastτ : zr_scanTau t D d (roundOrbit (zr_scanTM t) (zr_scanTau t D d) d i₀) =
++        if i₀ < D.1 then 8 else 6 := by
++      obtain ⟨e0, e1, e2, e3⟩ := zr_scanCfg_fields d d.state i₀ (zoneStart i₀)
++      rw [zr_scan_orbit t D d hd hp i₀ hi₀.ge, zr_scanTau, e1, e2, hp.1]
++      rcases Nat.lt_or_ge i₀ D.1 with hlt | hge
++      · rw [(zr_scan_test D t i₀ hlt).1, zr_scan_found D t i₀ hi₀ hlt]
++        simp only [Bool.false_eq_true, if_false, if_pos hlt]
++      · obtain rfl : i₀ = D.1 := by omega
++        rw [zr_scan_end]
++        simp only [Option.isNone_none, if_true, lt_irrefl, if_false]
++    rw [Finset.sum_range_succ, Finset.sum_congr rfl fun r hr => hτ r (Finset.mem_range.mp hr),
++      hlastτ]
++    have hs := zr_scan_time_sum i₀
++    have h0 : zoneStart 0 = 2 := by norm_num [zoneStart_eq]
++    split_ifs <;> omega
++  rw [hend, htime] at hseg
++  exact hseg
++
++/-- **The scan loop as a contract**: from the anchor at the start of zone `0` of `D`'s zoned
++tape, the loop crosses the empty zones of track `t`, marking scratch once per round, and stops at
++the found escape on zone `i₀` or at the short escape past the layout. -/
++private def zr_scanLoopContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
++    Contract (zr_scanTM t) ⟨false, some false⟩ {some ⟨false, some true⟩, some ⟨false, none⟩}
++      (ZoneData k) x :=
++  Contract.ofSegment zr_scanPre
++    (fun D _ => zoneStart (zoneRebalanceIndex true t D) + 8 * zoneRebalanceIndex true t D +
++      if zoneRebalanceIndex true t D < D.1 then 6 else 4)
++    (fun D d => zr_scanLoopPost t D d)
++    (fun _ d j => if j = 0 then (zoneStart 0 : ℤ) else d.workTapePos j)
++    (fun D d j => if j = 0 then (zoneStart (zoneRebalanceIndex true t D + 1) : ℤ)
++      else d.workTapePos 1 + zoneRebalanceIndex true t D + 1)
++    (fun D d hd hp => zr_scanLoop_segment t D d hd hp)
++    (fun D d _ _ => by
++      show some (⟨false, if zoneRebalanceIndex true t D < D.1 then none else some true⟩ :
++        Σ b, zr_hostPh zr_scanSt b) ∈ _
++      split_ifs
++      · exact Set.mem_insert_of_mem _ rfl
++      · exact Set.mem_insert _ _)
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+-- 
+2.50.1 (Apple Git-155)
+

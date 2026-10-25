@@ -1,0 +1,49 @@
+# 09 — Q-D1 to Q-D6 (check 6)
+
+Q-D1, A1 (the user's: new public declarations; two of the four files, SpaceComplexity/Basic and
+ClassNP/Transducer, are Hydroxyi's, and additions beside his definitions are a mechanical edit,
+which the user decides; an FYI to him).
+  Recommendation: open A1, with these changes: (1) transduce_of_copy in (Q-D2); (2) logSpace_eq
+  optional: neither route needs it once the SCP brief cites logSpace_le_succ (keep it only as
+  Basic's formula lemma); (3) docstrings as in the review's a1.patch: the transduce_of_copy
+  docstring without the downstream names, and one "Main results" line per file; (4) optionally,
+  at no extra replay, Basic's three readings for H: decidesInSpace_iff, mem_SPACE_iff (as
+  mem_NTIME_iff), LOGSPACE_eq. Order: gate now; merge and replay (193 modules) after #161 and #162
+  (08). Reason: it is the only gap between both dossiers and their briefs (03), each lemma is the
+  definition read by Iff.rfl/rfl (02), and the precedent is the 2026-10-16 ruling that
+  specification facts come from published lemmas (F3's E1, backlog.md:2281–2284).
+
+Q-D2, transduce_of_copy (the user's, as part of A1).
+  Recommendation: include it. It is a true generalization of both published instances (verified,
+  02); without it the SCP fill writes a third copy, the semantic duplication gates 69 and 72
+  failed on. Re-pointing KarpLipton.transduce_drop_true and Meyer.transduce_fT_copy edits
+  CircuitComplexity/*, outside the user's standing exceptions for Hydroxyi's files: a new ledger
+  row, disposition "the user's dedup window (12.2c)", not part of A1.
+
+Q-D3, the space hierarchy's order (the user's: it reverses or lifts a ruling).
+  Recommendation: keep the 2026-10-15 ruling for now; do not lift it. Reasons: (a) lifting it
+  makes nothing ready: H also needs SPACE-membership and DecidesInSpace readings (Q-D1's option
+  covers them), an inventory of its corollaries' class readings (PSPACE, NP), and cites U₀ modulo
+  UniversalK (megafill C); (b) F6 may be briefable as soon as #161 merges (06, T4), so "H after F6
+  integrates" may cost little; (c) the ruling serializes two fills on one file, the same rule as
+  E-Q/E-D's. If F6 stalls once H is otherwise ready, reverse the order (H first, then F6) rather
+  than run both on Hierarchy.lean at once. Do not split off the corollaries now (an item split,
+  with no gain while H is blocked).
+
+Q-D4, MIG-1's stage F (the maintainer's).
+  Recommendation: agree: refresh MIG1-design.md §5 and §9 before any stage-F brief, and widen it:
+  the scan misses unfoldings in three more moved proofs (06, T12), so decide each moved proof by a
+  seal test against its destination file; F-A after #161 (spaceUsedByTape_eq_card).
+
+Q-D5, the authorized imports (the maintainer's, in the briefs).
+  Recommendation: agree: E-Q's eight and SCP's one as region (a), as first edits. Numbers verified
+  (79 → 81 modules and 33 → 34 roots for E-Q; 182 → 183 and 54 roots for SCP; no cycle). At issue,
+  re-measure: E-Q's base sorry set is already 22 in 11 at the tip (05).
+
+Q-D6, #135's ClassP/BinaryArith (the maintainer's).
+  Recommendation: agree: do not wait for it. Name it in E-Q's brief as a copy hazard; if E-Q
+  writes private arithmetic leaves, record them for the dedup window against BinaryArith once
+  #135's content reaches the campaign branch.
+
+Which are whose: the user's: Q-D1 (with the option and the two Hydroxyi files), Q-D2, Q-D3. The
+maintainer's: Q-D4, Q-D5, Q-D6.
