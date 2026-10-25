@@ -772,10 +772,11 @@ theorem roundOrbit_succ {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (τ : 
     roundOrbit M τ c (r + 1) = M.runFrom (roundOrbit M τ c r) (τ (roundOrbit M τ c r)) :=
   Function.iterate_succ_apply' _ _ _
 
-/-- **Round iteration along a sequence of starts**: if, for each `r < n`, the run from `cs r` is
-a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` is one segment against
-the escapes to `cs n`, of length the sum of the round times. When the last round ends in an
-escape, the segment is a first exit (`Turing.Contract.ofSegment`).
+/-- **Round iteration along a sequence of starts**: if the anchor is not an escape
+(`some a ∉ E`), the head condition `P` holds at `cs 0`, and, for each `r < n`, the run from `cs r`
+is a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` is one segment
+against the escapes to `cs n`, of length the sum of the round times. When the last round ends in
+an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
 
 **Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
 by `Turing.Segment.trans`. -/
@@ -791,9 +792,10 @@ theorem Round.iterate_seq {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a :
     exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
 
 /-- **Round iteration on one machine** (the counter loop's composition, without the counter):
-if the first `n` rounds of the orbit are rounds, each lasting `τ` of its start, then the whole
-orbit prefix is one segment against the escapes, of length the sum of the round times. When the
-last round ends in an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
+if the anchor is not an escape (`some a ∉ E`), the head condition `P` holds at `c`, and the first
+`n` rounds of the orbit are rounds, each lasting `τ` of its start, then the whole orbit prefix is
+one segment against the escapes, of length the sum of the round times. When the last round ends
+in an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
 
 **Proof sketch.** The orbit `Turing.roundOrbit` as the sequence of starts in
 `Turing.Round.iterate_seq`; it starts at `c` (`Turing.roundOrbit_zero`). -/
