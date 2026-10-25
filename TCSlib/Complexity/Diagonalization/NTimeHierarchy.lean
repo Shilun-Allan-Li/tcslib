@@ -252,27 +252,6 @@ private lemma un_buffer_ge (w : List Bool) (q : ℤ) (hq : (w.length : ℤ) ≤ 
   rw [FinTM.bufferTape_nat]
   exact List.getElem?_eq_none (by exact_mod_cast hq)
 
-/-- One seam step: a chain that runs to its exit anchor with a first-visit cut, composed with
-a next phase that runs from the handover to its own anchor with its own cut, yields the
-composite's run, its anchor state and its inherited cut in one package. -/
-private theorem un_step {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {z : List Bool}
-    (M₁ : MultiTapeTM k Bool S₁) (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry : S₂)
-    (q₂ : S₂) {c₀ c₁ : Cfg k Bool S₁ z} {c₃ : Cfg k Bool S₂ z} {T₁ T₂ : ℕ}
-    (h₁ : M₁.runFrom c₀ T₁ = c₁) (hexit : c₁.state = some exit)
-    (hcut : ∀ t < T₁, (M₁.runFrom c₀ t).state ≠ some exit)
-    (h₂ : M₂.runFrom (c₁.mapState fun _ => entry) T₂ = c₃)
-    (hq : c₃.state = some q₂)
-    (hcut₂ : ∀ t < T₂, (M₂.runFrom (c₁.mapState fun _ => entry) t).state ≠ some q₂) :
-    (seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) (T₁ + 1 + T₂) =
-        c₃.mapState Sum.inr ∧
-      (c₃.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr q₂) ∧
-      ∀ t < T₁ + 1 + T₂,
-        ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
-          some (Sum.inr q₂) :=
-  ⟨seamCompTM_run_ofCfg M₁ exit M₂ entry h₁ hexit hcut h₂,
-    by rw [Cfg.mapState_state, hq, Option.map_some],
-    seamCompTM_firstReturn_ofCfg M₁ exit M₂ entry q₂ h₁ hexit hcut h₂ hq hcut₂⟩
-
 /-- **The header composite's exact first halt**, uniformly in the input suffix: the buffered
 composite of the prefix parser and the first-component extractor, on
 `pairEncode (pairEncode a b) x`, halts at exactly `3·|pairEncode a b| + 4 + (4·|a| + 5)` and is
@@ -604,7 +583,7 @@ private theorem un_step' {k : ℕ} {S₀ S₁ S₂ : Type} [DecidableEq S₁] {z
           some (Sum.inr q₂) := by
   have hcomp : (c₂.mapState g).mapState (fun _ => entry) = c₂.mapState fun _ => entry := by
     rw [Cfg.mapState_mapState]; rfl
-  exact un_step M₁ exit M₂ entry q₂ h₁ hexit hcut (by rw [hcomp]; exact h₂) hq
+  exact seamCompTM_step M₁ exit M₂ entry q₂ h₁ hexit hcut (by rw [hcomp]; exact h₂) hq
     (fun t ht => by rw [hcomp] at *; exact hcut₂ t ht)
 
 /-- **The setup machine.** For the interpreter core's tape count `K` and stream tape `jR`,
@@ -1413,7 +1392,7 @@ private theorem un_setup :
     funext i q
     exact Cfg.mapState_workTapes (fun _ => InputRewindPhase.start) E7 i q
   -- the chain: every seam inherits the run, the exit state and the first-visit cut
-  have hch2 := un_step A1 (Sum.inr ()) A2 RewindPhase.start RewindPhase.done
+  have hch2 := seamCompTM_step A1 (Sum.inr ()) A2 RewindPhase.start RewindPhase.done
     hs1.1 hs1.2.1 hs1.2.2 hs2.1 hs2.2.1 hs2.2.2
   have hch3 := un_step' R2 (Sum.inr RewindPhase.done) A3 SweepPhase.sweep SweepPhase.done
     Sum.inr hch2.1 hch2.2.1 hch2.2.2 hs3.1 rfl hs3.2.2
