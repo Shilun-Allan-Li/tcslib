@@ -30,6 +30,8 @@ verifier.
 
 ## Main results
 
+* `Complexity.transduce_nil`, `Complexity.transduce_cons` — the function's case lemmas;
+  `Complexity.transduce_of_copy` — a state that copies and is kept gives the identity.
 * `Complexity.transducerTM_computes` — the machine computes the transducer's function
   within `|x| + 1` steps.
 * `Complexity.polyTimeComputable_transduce` — hence it is in FP.
@@ -52,6 +54,16 @@ def transduce (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) : σ �
   | _, [] => []
   | q, b :: l => (o q b).toList ++ transduce δ o (δ q b) l
 
+/-- A transducer emits nothing on the empty word: `transduce δ o q [] = []`. -/
+theorem transduce_nil (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ) :
+    transduce δ o q [] = [] := rfl
+
+/-- On `b :: l` a transducer emits `o q b` and continues from `δ q b`:
+`transduce δ o q (b :: l) = (o q b).toList ++ transduce δ o (δ q b) l`. -/
+theorem transduce_cons (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ) (b : Bool)
+    (l : List Bool) :
+    transduce δ o q (b :: l) = (o q b).toList ++ transduce δ o (δ q b) l := rfl
+
 /-- The transducer on a concatenation: run the first part, then the second part from the
 state reached. -/
 theorem transduce_append (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ)
@@ -61,6 +73,21 @@ theorem transduce_append (δ : σ → Bool → σ) (o : σ → Bool → Option B
   induction l₁ generalizing q with
   | nil => rfl
   | cons b l ih => simp [transduce, ih]
+
+/-- **A copying state copies**: if from the state `q` every bit is emitted unchanged
+(`o q b = some b`) and `q` is kept (`δ q b = q`), then the transducer started in `q` is the
+identity, `transduce δ o q l = l`.
+
+**Proof sketch.** Induction on `l`, by `Complexity.transduce_nil` and
+`Complexity.transduce_cons`. -/
+theorem transduce_of_copy (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ)
+    (hδ : ∀ b, δ q b = q) (ho : ∀ b, o q b = some b) (l : List Bool) :
+    transduce δ o q l = l := by
+  induction l with
+  | nil => exact transduce_nil δ o q
+  | cons b l ih =>
+    rw [transduce_cons, hδ, ho, ih]
+    rfl
 
 /-- The transition table of the transducer machine: on a bit, emit, move right and change
 state; on the right blank, halt. -/
