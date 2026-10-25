@@ -1,0 +1,1231 @@
+From 042df7736c3b8361775744962003c41fc3d91fac Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 14:48:05 +0000
+Subject: [PATCH 25/37] s13d g4 cont4: left outward shift as one pinned segment
+
+The left layout's fields (zr_lfield, zr_lstart) and their word lemma; the left
+outward shift on the zoned tape (zr_shiftOut_tape) and both guards' disabled
+cases (zr_shiftIn_off, zr_shiftOut_off). The left outward shift at level i is
+one segment of forty catalog leaves: the outer and inner columns on scratch,
+two cuts, the outer zone written in two parts, the inner zone's outer half
+cleared, the scratch cleared (zr_outA3 for tape 0's endpoint). The pinned
+walk now takes its ruler from either tape.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 1165 ++++++++++++++++-
+ 1 file changed, 1155 insertions(+), 10 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 26944d14..7223742d 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -4977,11 +4977,14 @@ private lemma zr_pinCell_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J
+     simp only [zr_cellPost, hd.2]
+     exact ⟨le_rfl, le_rfl⟩
+ 
+-/-- A rightward lockstep walk over the zoned word `w j`, both heads moved, as a pinned step. -/
++/-- A rightward lockstep walk over the word `w j` at tape `src`'s head, both heads moved, as a
++pinned step. -/
+ private def zr_pinWalkContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V : J → Prop)
+-    (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, V j → ∀ q : ℕ, q ≤ (w j).length → T j 0 (p j 0 + q) = FinTM.bufferTape (w j) q) :=
+-  zr_reindexContract (walkTM_contract 0 (fun _ : Fin 2 => True) trivial 1 x) w
++    (src : Fin 2) (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k))
++    (p : J → Fin 2 → ℤ)
++    (hw : ∀ j, V j → ∀ q : ℕ, q ≤ (w j).length →
++      T j src (p j src + q) = FinTM.bufferTape (w j) q) :=
++  zr_reindexContract (walkTM_contract src (fun _ : Fin 2 => True) trivial 1 x) w
+     (fun j d => V j ∧ zr_pinned (T j) (p j) d) fun j d hd => by
+       rw [walkTM_contract_pre, hd.2.1, hd.2.2]
+       intro q hq
+@@ -4989,14 +4992,16 @@ private def zr_pinWalkContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V :
+ 
+ /-- The pinned walk moves both heads `|w j| + 1` cells right. -/
+ private lemma zr_pinWalk_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
+-    (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k)) (p : J → Fin 2 → ℤ)
+-    (hw : ∀ j, V j → ∀ q : ℕ, q ≤ (w j).length → T j 0 (p j 0 + q) = FinTM.bufferTape (w j) q) :
+-    zr_PinStep (zr_pinWalkContract x V w T p hw) V T T p
++    (src : Fin 2) (w : J → List (ZoneSym k)) (T : J → Fin 2 → ℤ → Option (ZoneSym k))
++    (p : J → Fin 2 → ℤ)
++    (hw : ∀ j, V j → ∀ q : ℕ, q ≤ (w j).length →
++      T j src (p j src + q) = FinTM.bufferTape (w j) q) :
++    zr_PinStep (zr_pinWalkContract x V src w T p hw) V T T p
+       (fun j i => p j i + ((w j).length + 1 : ℕ)) (fun j => (w j).length + 1) p
+       (fun j i => p j i + ((w j).length + 1 : ℕ)) := by
+   refine ⟨fun j d hd => ?_, fun j d hV hd => ?_⟩
+   · rwa [zr_pinWalkContract, zr_reindexContract, Contract.ofSegment_pre] at hd
+-  have hp : (zr_pinWalkContract x V w T p hw).pre j d := by
++  have hp : (zr_pinWalkContract x V src w T p hw).pre j d := by
+     rw [zr_pinWalkContract, zr_reindexContract, Contract.ofSegment_pre]
+     exact ⟨hV, hd⟩
+   refine ⟨hp, ⟨?_, ?_⟩, ?_, ?_, ?_, fun i => ?_⟩
+@@ -5888,7 +5893,7 @@ private def zr_inSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+           show (1 : Fin 2) ≠ 0 by decide, if_false]
+         all_goals omega)) <|
+   -- step 11: walk over the field two inward, scratch to the first column's cut
+-  zr_segSeq (zr_seg (zr_pinWalk_step _ (fun J => zr_rfield J.D.2 (J.i - 1))
++  zr_segSeq (zr_seg (zr_pinWalk_step _ 0 (fun J => zr_rfield J.D.2 (J.i - 1))
+         (fun J => zr_inT J (zr_inA1 t J) [zr_cD t J, zr_cD t J])
+         (fun J => zr_heads (zr_rstart (J.i - 1)) J.s)
+         fun J hV q hq => by
+@@ -5992,7 +5997,7 @@ private def zr_inSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+           show (1 : Fin 2) ≠ 0 by decide, if_false]
+         all_goals omega)) <|
+   -- step 17: walk over the field two inward, scratch to the second column's cut
+-  zr_segSeq (zr_seg (zr_pinWalk_step _ (fun J => zr_rfield J.D.2 (J.i - 1))
++  zr_segSeq (zr_seg (zr_pinWalk_step _ 0 (fun J => zr_rfield J.D.2 (J.i - 1))
+         (fun J => zr_inT J (zr_inA1 t J) [zr_W1 t J, zr_J1 t J, zr_cD t J])
+         (fun J => zr_heads (zr_rstart (J.i - 1)) (J.s + 4 * zr_hh J))
+         fun J hV q hq => by
+@@ -6282,6 +6287,1146 @@ private def zr_inSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+           show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
+         all_goals omega))
+ 
++/-- The left layout's field `m`, read left to right: the home at `m = 0`, left zone `m - 1`
++reversed after it (empty past the layout). -/
++private def zr_lfield {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) : List (ZoneSym k) :=
++  if m = 0 then [.inr fun t => some (z t).home]
++  else if h : m - 1 < ℓ then (zoneCells false z ⟨m - 1, h⟩).reverse else []
++
++/-- The left layout's field `m` starts at home for `m = 0` and at left zone `m - 1`'s outermost
++cell after. -/
++private def zr_lstart (m : ℕ) : ℤ :=
++  if m = 0 then 0 else -((zoneStart (m - 1) : ℤ) + zoneCapacity (m - 1) - 1)
++
++/-- Left field `m` has `2^m` cells. -/
++private lemma zr_lfield_length {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) (hm : m ≤ ℓ) :
++    (zr_lfield z m).length = 2 ^ m := by
++  rw [zr_lfield]
++  split_ifs with h0 h1
++  · subst h0
++    rfl
++  · rw [List.length_reverse, zoneCells_length, zoneCapacity_eq]
++    simp only
++    rw [← pow_succ']
++    congr 1
++    omega
++  · omega
++
++/-- Left field `m` ends one separator before left field `m - 1`'s start: the next field inward
++starts `2^(m+1) + 1` cells after field `m + 1`'s. -/
++private lemma zr_lstart_succ (m : ℕ) :
++    zr_lstart m = zr_lstart (m + 1) + ((2 ^ (m + 1) : ℕ) : ℤ) + 1 := by
++  have h1 : zr_lstart (m + 1) = -((zoneStart m : ℤ) + zoneCapacity m - 1) := by
++    rw [zr_lstart, if_neg (by omega), Nat.add_sub_cancel]
++  rw [h1, zoneCapacity_eq m, show 2 * 2 ^ m = 2 ^ (m + 1) by rw [pow_succ']]
++  rcases Nat.eq_zero_or_pos m with rfl | hm
++  · rw [zr_lstart, if_pos rfl]
++    norm_num [zoneStart_eq]
++  · have hs := zoneStart_succ (m - 1)
++    rw [show m - 1 + 1 = m by omega] at hs
++    rw [zr_lstart, if_neg (by omega), hs]
++    push_cast
++    ring
++
++/-- **Each field of the left layout is a delimited word** on the zoned tape. -/
++private lemma zr_lfield_at {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (m : ℕ) (hm : m ≤ ℓ) (b : ℤ)
++    (hb : b = zr_lstart m) (q : ℤ) (h1 : -1 ≤ q) (h2 : q ≤ ((zr_lfield z m).length : ℤ)) :
++    zonedTape z (b + q) = FinTM.bufferTape (zr_lfield z m) q := by
++  subst hb
++  rw [zr_lfield, zr_lstart] at *
++  split_ifs at h2 ⊢ with h0 h1'
++  · rw [zero_add]
++    exact zr_home_word z q h1 (by simpa using h2)
++  · rw [List.length_reverse, zoneCells_length] at h2
++    exact zonedTape_left_word z ⟨m - 1, h1'⟩ q h1 h2
++  · omega
++
++/-- **The left outward shift on the zoned tape**, its guard enabled: when track `t`'s left zone
++`i - 1` is full and left zone `i` has room for `2^(i-1)` more slots, the shift at level `i`
++keeps track `t`'s first `2^(i-1)` slots of zone `i - 1` and clears the rest, and sets zone `i`'s
++slots to zone `i - 1`'s last `2^(i-1)` slots followed by zone `i`'s own; every other cell keeps
++its contents. Offsets are measured from each zone's inner end. -/
++private lemma zr_shiftOut_tape {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ)
++    (hi : 1 ≤ i) (hiℓ : i < ℓ)
++    (hf : ((z t).left ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1))
++    (hr : ((z t).left ⟨i, hiℓ⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i) (q : ℤ) :
++    zonedTape (Function.update z t (zoneShiftOut false i (z t))) q =
++      if -((zoneStart (i - 1) : ℤ) + zoneCapacity (i - 1)) < q ∧ q ≤ -(zoneStart (i - 1) : ℤ)
++      then
++        some (zoneSlotSet t (zonedTape z q)
++          (((z t).left ⟨i - 1, by omega⟩).take (2 ^ (i - 1)))[(-q - zoneStart (i - 1)).toNat]?)
++      else if -((zoneStart i : ℤ) + zoneCapacity i) < q ∧ q ≤ -(zoneStart i : ℤ) then
++        some (zoneSlotSet t (zonedTape z q)
++          (((z t).left ⟨i - 1, by omega⟩).drop (2 ^ (i - 1)) ++
++            (z t).left ⟨i, hiℓ⟩)[(-q - zoneStart i).toNat]?)
++      else zonedTape z q := by
++  have hul : ∀ j : Fin ℓ, (zoneShiftOut false i (z t)).left j =
++      if j.val = i - 1 then ((z t).left ⟨i - 1, by omega⟩).take (2 ^ (i - 1))
++      else if j.val = i then ((z t).left ⟨i - 1, by omega⟩).drop (2 ^ (i - 1)) ++
++        (z t).left ⟨i, hiℓ⟩
++      else (z t).left j := by
++    intro j
++    rw [zoneShiftOut_left, if_neg Bool.false_ne_true, zoneShiftOutW_eq, dif_pos ⟨hi, hiℓ⟩,
++      if_pos ⟨hf, hr⟩]
++  split_ifs with h1 h2
++  · obtain ⟨p, rfl⟩ : ∃ p : ℕ, q = -(((zoneStart (i - 1) + p : ℕ) : ℤ)) :=
++      ⟨(-q - zoneStart (i - 1)).toNat, by omega⟩
++    apply zr_zonedTape_update
++    have hs := zr_read_slot false (fun _ => zoneShiftOut false i (z t)) ⟨i - 1, by omega⟩ t p
++      (by simp only; omega)
++    rw [zr_zonePos, if_neg Bool.false_ne_true] at hs
++    rw [hs, ZoneContents.words_false, hul, if_pos rfl]
++    congr 2
++    push_cast
++    omega
++  · obtain ⟨p, rfl⟩ : ∃ p : ℕ, q = -(((zoneStart i + p : ℕ) : ℤ)) :=
++      ⟨(-q - zoneStart i).toNat, by omega⟩
++    apply zr_zonedTape_update
++    have hs := zr_read_slot false (fun _ => zoneShiftOut false i (z t)) ⟨i, hiℓ⟩ t p
++      (by simp only; omega)
++    rw [zr_zonePos, if_neg Bool.false_ne_true] at hs
++    rw [hs, ZoneContents.words_false, hul, if_neg (by simp only; omega), if_pos rfl]
++    congr 2
++    push_cast
++    omega
++  · apply zr_zonedTape_update_same
++    rw [zr_slot_track (z := z) (z' := fun _ => z t) rfl q]
++    rcases lt_trichotomy q 0 with hq | rfl | hq
++    · rw [zonedTape_of_neg _ hq, zonedTape_of_neg _ hq, zoneCellAt_eq, zoneCellAt_eq]
++      cases ho : zoneOwner ℓ (-q).toNat with
++      | none => rfl
++      | some o =>
++        have hm := (Fin.find_eq_some_iff.mp ((zoneOwner_eq ℓ (-q).toNat).symm.trans ho)).1
++        simp only [Option.map_some, zoneSlotOf_inr, ZoneContents.words_false, hul]
++        split_ifs with ho1 ho2
++        · exfalso
++          rw [ho1] at hm
++          omega
++        · exfalso
++          rw [ho2] at hm
++          omega
++        · rfl
++    · simp only [zonedTape_zero, Option.map_some, zoneSlotOf_inr, zoneShiftOut_home]
++    · rw [zonedTape_of_pos _ hq, zonedTape_of_pos _ hq, zoneCellAt_eq, zoneCellAt_eq]
++      simp only [ZoneContents.words_true, zoneShiftOut_right, if_neg Bool.false_ne_true]
++
++/-- Zone contents are determined by their home and their two sides' words. -/
++private lemma zr_contents_ext {ℓ : ℕ} {u v : ZoneContents ℓ} (h1 : u.home = v.home)
++    (h2 : u.left = v.left) (h3 : u.right = v.right) : u = v := by
++  cases u
++  cases v
++  cases h1
++  cases h2
++  cases h3
++  rfl
++
++/-- **The right inward shift's guard disabled**: a nonempty receiver leaves the track unchanged. -/
++private lemma zr_shiftIn_off {ℓ : ℕ} (w : ZoneContents ℓ) (i : ℕ) (hi : 1 ≤ i) (hiℓ : i < ℓ)
++    (hne : w.right ⟨i - 1, by omega⟩ ≠ []) : zoneShiftIn true i w = w :=
++  zr_contents_ext (zoneShiftIn_home true i w) (by
++    funext j
++    rw [zoneShiftIn_left, if_pos rfl]) (by
++    funext j
++    rw [zoneShiftIn_right, if_pos rfl, zoneShiftInW_eq, dif_pos ⟨hi, hiℓ⟩, if_neg hne])
++
++/-- **The left outward shift's guard disabled**: without a full zone `i - 1` and room in zone
++`i`, the track is unchanged. -/
++private lemma zr_shiftOut_off {ℓ : ℕ} (w : ZoneContents ℓ) (i : ℕ) (hi : 1 ≤ i) (hiℓ : i < ℓ)
++    (hne : ¬ ((w.left ⟨i - 1, by omega⟩).length = zoneCapacity (i - 1) ∧
++      (w.left ⟨i, hiℓ⟩).length + 2 ^ (i - 1) ≤ zoneCapacity i)) :
++    zoneShiftOut false i w = w :=
++  zr_contents_ext (zoneShiftOut_home false i w) (by
++    funext j
++    rw [zoneShiftOut_left, if_neg Bool.false_ne_true, zoneShiftOutW_eq, dif_pos ⟨hi, hiℓ⟩,
++      if_neg hne]) (by
++    funext j
++    rw [zoneShiftOut_right, if_neg Bool.false_ne_true])
++
++/-- Track `t`'s left word at level `m`, empty past the layout. -/
++private def zr_lword {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (m : ℕ) :
++    List (Option Bool) :=
++  if h : m < ℓ then (z t).left ⟨m, h⟩ else []
++
++/-- A valid index for the left outward shift: `1 ≤ i < ℓ`, track `t`'s left zone `i - 1` full,
++left zone `i` with room for `2^(i-1)` more slots, and scratch blank from its head on. -/
++private def zr_outV {k : ℕ} (t : Fin k) (J : zr_Ix k) : Prop :=
++  1 ≤ J.i ∧ J.i < J.D.1 ∧ (zr_lword J.D.2 t (J.i - 1)).length = zoneCapacity (J.i - 1) ∧
++    (zr_lword J.D.2 t J.i).length + 2 ^ (J.i - 1) ≤ zoneCapacity J.i ∧
++    ∀ r, J.s ≤ r → J.σ r = none
++
++/-- The outer zone's track-`t` column, read left to right, as scratch cells. -/
++private abbrev zr_cA {k : ℕ} (t : Fin k) (J : zr_Ix k) : List (ZoneSym k) :=
++  zr_col t (zr_lfield J.D.2 (J.i + 1))
++
++/-- The inner zone's track-`t` column, read left to right, as scratch cells. -/
++private abbrev zr_cB {k : ℕ} (t : Fin k) (J : zr_Ix k) : List (ZoneSym k) :=
++  zr_col t (zr_lfield J.D.2 J.i)
++
++/-- The outer zone's new left part: its column from offset `2^(i-1)` on. -/
++private abbrev zr_oV {k : ℕ} (t : Fin k) (J : zr_Ix k) : List (ZoneSym k) :=
++  (zr_cA t J).drop (zr_hh J)
++
++/-- The outer zone's new right part: the inner zone's first `2^(i-1)` column cells. -/
++private abbrev zr_oW {k : ℕ} (t : Fin k) (J : zr_Ix k) : List (ZoneSym k) :=
++  (zr_cB t J).take (zr_hh J)
++
++/-- The pieces the two cuts leave behind. -/
++private abbrev zr_oJ1 {k : ℕ} (t : Fin k) (J : zr_Ix k) : List (ZoneSym k) :=
++  (zr_cB t J).drop (zr_hh J + 1)
++
++/-- The pieces the two cuts leave behind. -/
++private abbrev zr_oJ2 {k : ℕ} (t : Fin k) (J : zr_Ix k) : List (ZoneSym k) :=
++  (zr_cA t J).take (zr_hh J - 1)
++
++/-- The lengths at a valid index. -/
++private lemma zr_outV_lengths {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_outV t J) :
++    (zr_lfield J.D.2 (J.i + 1)).length = 4 * zr_hh J ∧
++      (zr_lfield J.D.2 J.i).length = 2 * zr_hh J ∧
++      (zr_lfield J.D.2 (J.i - 1)).length = zr_hh J ∧ (zr_cA t J).length = 4 * zr_hh J ∧
++      (zr_cB t J).length = 2 * zr_hh J ∧ (zr_oV t J).length = 3 * zr_hh J ∧
++      (zr_oW t J).length = zr_hh J ∧ (zr_oJ1 t J).length = zr_hh J - 1 ∧
++      (zr_oJ2 t J).length = zr_hh J - 1 ∧ 0 < zr_hh J := by
++  obtain ⟨h1, h2, -, -, -⟩ := hV
++  have e1 := zr_lfield_length J.D.2 (J.i + 1) (by omega)
++  have e2 := zr_lfield_length J.D.2 J.i (by omega)
++  have e3 := zr_lfield_length J.D.2 (J.i - 1) (by omega)
++  have p1 : (2 : ℕ) ^ J.i = 2 * 2 ^ (J.i - 1) := by
++    rw [← pow_succ']
++    congr 1
++    omega
++  have p2 : (2 : ℕ) ^ (J.i + 1) = 4 * 2 ^ (J.i - 1) := by
++    rw [show J.i + 1 = (J.i - 1) + 2 by omega, pow_add]
++    ring
++  have hpos : 0 < 2 ^ (J.i - 1) := Nat.two_pow_pos _
++  simp only [zr_hh, zr_cA, zr_cB, zr_oV, zr_oW, zr_oJ1, zr_oJ2, zr_col, List.length_map,
++    List.length_take, List.length_drop, e1, e2, e3, p1, p2, true_and]
++  omega
++
++/-- The field starts at a valid index: the outer zone, the inner zone, the field one inward. -/
++private lemma zr_outV_starts {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_outV t J) :
++    zr_lstart J.i = zr_lstart (J.i + 1) + 4 * zr_hh J + 1 ∧
++      zr_lstart (J.i - 1) = zr_lstart J.i + 2 * zr_hh J + 1 ∧
++      zr_lstart (J.i + 1) = -((zoneStart J.i : ℤ) + zoneCapacity J.i - 1) ∧
++      zr_lstart J.i = -((zoneStart (J.i - 1) : ℤ) + zoneCapacity (J.i - 1) - 1) ∧
++      zoneCapacity J.i = 4 * zr_hh J ∧ zoneCapacity (J.i - 1) = 2 * zr_hh J := by
++  obtain ⟨h1, -, -, -, -⟩ := hV
++  have s1 := zr_lstart_succ J.i
++  have s2 := zr_lstart_succ (J.i - 1)
++  rw [show J.i - 1 + 1 = J.i by omega] at s2
++  have p1 : (2 : ℕ) ^ J.i = 2 * 2 ^ (J.i - 1) := by
++    rw [← pow_succ']
++    congr 1
++    omega
++  have p2 : (2 : ℕ) ^ (J.i + 1) = 4 * 2 ^ (J.i - 1) := by
++    rw [show J.i + 1 = (J.i - 1) + 2 by omega, pow_add]
++    ring
++  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
++  · rw [s1, p2]
++    push_cast
++    ring
++  · rw [s2, p1]
++    push_cast
++    ring
++  · rw [zr_lstart, if_neg (by omega), Nat.add_sub_cancel]
++  · rw [zr_lstart, if_neg (by omega)]
++  · rw [zoneCapacity_eq, p1]
++    ring
++  · rw [zoneCapacity_eq]
++
++/-- A left zone's column, read left to right: zone `i`'s track-`t` slots from its outer end. -/
++private lemma zr_lcol {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : ℕ) (hi : i < ℓ)
++    (p : ℕ) :
++    (zr_col t (zr_lfield z (i + 1)))[p]? =
++      if p < zoneCapacity i then
++        some (zr_enc ((z t).left ⟨i, hi⟩)[zoneCapacity i - 1 - p]?)
++      else none := by
++  have hf : zr_lfield z (i + 1) = (zoneCells false z ⟨i, hi⟩).reverse := by
++    rw [zr_lfield, if_neg (by omega), dif_pos (by simpa using hi)]
++    rfl
++  rw [hf, zr_col, List.getElem?_map]
++  by_cases hp : p < zoneCapacity i
++  · have hlt : zoneCapacity i - 1 - p < zoneCapacity i := by omega
++    rw [List.getElem?_reverse (by rw [zoneCells_length]; exact hp), zoneCells_length,
++      zoneCells_eq, List.getElem?_map, List.getElem?_range hlt, if_pos hp, Option.map_some,
++      Option.map_some, zoneSlotOf_inr, ZoneContents.words_false]
++  · rw [List.getElem?_eq_none (by
++      rw [List.length_reverse, zoneCells_length]
++      exact Nat.le_of_not_lt hp), if_neg hp]
++    rfl
++
++/-- Tape `0` after the outer zone's left part is written. -/
++private abbrev zr_outO1 {k : ℕ} (t : Fin k) (J : zr_Ix k) : ℤ → Option (ZoneSym k) :=
++  zr_wr0 (zoneSlotOf t) (zoneSlotSet t) (zr_oV t J) (zonedTape J.D.2) (zr_lstart (J.i + 1))
++
++/-- Tape `0` after the outer zone's right part is written. -/
++private abbrev zr_outO2 {k : ℕ} (t : Fin k) (J : zr_Ix k) : ℤ → Option (ZoneSym k) :=
++  zr_wr0 (zoneSlotOf t) (zoneSlotSet t) (zr_oW t J) (zr_outO1 t J)
++    (zr_lstart (J.i + 1) + 3 * zr_hh J)
++
++/-- Tape `0` after the shift: the zoned tape of the shifted track. -/
++private abbrev zr_outZ {k : ℕ} (t : Fin k) (J : zr_Ix k) : ℤ → Option (ZoneSym k) :=
++  zonedTape (Function.update J.D.2 t (zoneShiftOut false J.i (J.D.2 t)))
++
++/-- A zoned cell with track `t`'s slot set to its own is unchanged. -/
++private lemma zr_slotSet_self {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : Fin ℓ)
++    (o : ℕ) (ho : o < zoneCapacity i) :
++    some (zoneSlotSet t (zonedTape z (-((zoneStart i + o : ℕ) : ℤ)))
++        ((z t).left i)[o]?) = zonedTape z (-((zoneStart i + o : ℕ) : ℤ)) := by
++  rw [zonedTape_left z i o ho, zoneSlotSet_eq, zoneCellOfCell_inr]
++  congr 2
++  exact Function.update_eq_self t _
++
++/-- **The left outward shift's tape-`0` writes**: the outer zone's left part written from its
++own column from offset `2^(i-1)` on, its right part from the inner zone's first column cells,
++and the inner zone's first `2^(i-1)` cells cleared give the zoned tape of the shifted track. -/
++private lemma zr_outA3 {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_outV t J) :
++    zr_wr0 (zoneSlotOf t) (fun c _ => zoneSlotSet t c none) (zr_oW t J) (zr_outO2 t J)
++      (zr_lstart J.i) = zr_outZ t J := by
++  have hl := zr_outV_lengths hV
++  have hs := zr_outV_starts hV
++  obtain ⟨h1, h2, hf, hr, -⟩ := hV
++  have hf' : ((J.D.2 t).left ⟨J.i - 1, by omega⟩).length = zoneCapacity (J.i - 1) := by
++    rw [zr_lword, dif_pos (by omega)] at hf
++    exact hf
++  have hr' : ((J.D.2 t).left ⟨J.i, h2⟩).length + 2 ^ (J.i - 1) ≤ zoneCapacity J.i := by
++    rw [zr_lword, dif_pos h2] at hr
++    exact hr
++  have hh : (2 : ℕ) ^ (J.i - 1) = zr_hh J := rfl
++  have hzs := zoneStart_succ (J.i - 1)
++  rw [show J.i - 1 + 1 = J.i by omega] at hzs
++  have hB : zr_cB t J = zr_col t (zr_lfield J.D.2 (J.i - 1 + 1)) := by
++    simp only [zr_cB, Nat.sub_add_cancel h1]
++  funext q
++  rw [zr_outZ, zr_shiftOut_tape J.D.2 t J.i h1 h2 hf' hr' q]
++  obtain ⟨l1, l2, l3, l4, l5, l6, l7, l8, l9, l10⟩ := hl
++  obtain ⟨s1, s2, s3, s4, s5, s6⟩ := hs
++  simp only [zr_wr0, zr_outO2, zr_outO1]
++  by_cases hR : zr_lstart (J.i + 1) ≤ q ∧ q < zr_lstart (J.i + 1) + 4 * zr_hh J
++  · obtain ⟨p, hp⟩ : ∃ p : ℕ, q - zr_lstart (J.i + 1) = p :=
++      ⟨(q - zr_lstart (J.i + 1)).toNat, by omega⟩
++    by_cases h3 : p < 3 * zr_hh J
++    · rw [if_neg (by omega), if_neg (by omega), if_pos (by omega), if_neg (by omega),
++        if_pos (by omega), hp, FinTM.bufferTape_nat, List.getElem?_drop,
++        zr_lcol J.D.2 t J.i h2 (zr_hh J + p), if_pos (by omega), Option.map_some, zoneSlotOf_inr,
++        List.getElem?_append_right (by rw [List.length_drop]; omega), List.length_drop]
++      congr 3
++      omega
++    · obtain ⟨r, hr0⟩ : ∃ r : ℕ, q - (zr_lstart (J.i + 1) + 3 * zr_hh J) = r :=
++        ⟨p - 3 * zr_hh J, by omega⟩
++      rw [if_neg (by omega), if_pos (by omega), if_neg (by omega), if_neg (by omega),
++        if_pos (by omega), hr0, FinTM.bufferTape_nat, List.getElem?_take, if_pos (by omega), hB,
++        zr_lcol J.D.2 t (J.i - 1) (by omega) r, if_pos (by omega), Option.map_some,
++        zoneSlotOf_inr, List.getElem?_append_left (by rw [List.length_drop]; omega),
++        List.getElem?_drop]
++      congr 3
++      omega
++  by_cases hC : zr_lstart J.i ≤ q ∧ q < zr_lstart J.i + 2 * zr_hh J
++  · obtain ⟨r, hr0⟩ : ∃ r : ℕ, q - zr_lstart J.i = r := ⟨(q - zr_lstart J.i).toNat, by omega⟩
++    by_cases h3 : r < zr_hh J
++    · rw [if_pos (by omega), if_neg (by omega), if_neg (by omega), if_pos (by omega), hr0,
++        FinTM.bufferTape_nat, List.getElem?_take, if_pos h3, hB,
++        zr_lcol J.D.2 t (J.i - 1) (by omega) r, if_pos (by omega), Option.map_some,
++        List.getElem?_take, if_neg (by omega)]
++    · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_pos (by omega),
++        List.getElem?_take, if_pos (by omega)]
++      obtain ⟨o, ho⟩ : ∃ o : ℕ, q = -((zoneStart (J.i - 1) + o : ℕ) : ℤ) :=
++        ⟨2 * zr_hh J - 1 - r, by push_cast; omega⟩
++      subst ho
++      rw [show (-(-((zoneStart (J.i - 1) + o : ℕ) : ℤ)) - zoneStart (J.i - 1)).toNat = o by
++        push_cast
++        omega]
++      exact (zr_slotSet_self J.D.2 t ⟨J.i - 1, by omega⟩ o
++        (by show o < zoneCapacity (J.i - 1); omega)).symm
++  · rw [if_neg (by omega), if_neg (by omega), if_neg (by omega), if_neg (by omega),
++      if_neg (by omega)]
++
++/-- The left outward shift's head box: the zoned head from one cell left of the outer zone to
++one past the field one inward, scratch over its work area. -/
++private abbrev zr_outL {k : ℕ} (J : zr_Ix k) : Fin 2 → ℤ :=
++  zr_heads (zr_lstart (J.i + 1) - 1) J.s
++
++/-- The left outward shift's head box, its upper corner. -/
++private abbrev zr_outU {k : ℕ} (J : zr_Ix k) : Fin 2 → ℤ :=
++  zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + 6 * zr_hh J + 3)
++
++/-- The left outward shift's tape stages: tape `0`, and the scratch layout `L` laid out from two
++cells past the scratch head. -/
++private abbrev zr_outT {k : ℕ} (J : zr_Ix k) (A : ℤ → Option (ZoneSym k))
++    (L : List (List (ZoneSym k))) : Fin 2 → ℤ → Option (ZoneSym k) :=
++  zr_tapes A (zr_scr J.σ (J.s + 1) L)
++
++/-- **The left outward shift at level `i`**, as one pinned segment: the forty steps of the
++column move in sequence. -/
++private def zr_outSeg {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  show zr_PinSeg x _ _ _ (zr_outV t) (fun J => zr_outT J (zonedTape J.D.2) [])
++      (fun J => zr_outT J (zr_outZ t J) [])
++      (fun J => zr_heads (zr_lstart J.i) J.s)
++      (fun J => zr_heads (zr_lstart J.i) J.s) _ zr_outL zr_outU from
++  -- step 1: back over the outer zone
++  zr_segSeq (zr_seg (zr_pinBack_step _ 0 (fun J => zr_lfield J.D.2 (J.i + 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [])
++        (fun J => zr_heads (zr_lstart J.i) J.s)
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart J.i - (zr_lfield J.D.2 (J.i + 1)).length - 1 + q) = _
++          exact zr_lfield_at J.D.2 (J.i + 1) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 2: scratch right
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (1) (none)
++        (fun J => zr_outT J (zonedTape J.D.2) [])
++        (fun J => zr_heads (zr_lstart (J.i + 1)) J.s))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_one]
++        all_goals omega)) <|
++  -- step 3: scratch right, to the work area
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (1) (none)
++        (fun J => zr_outT J (zonedTape J.D.2) [])
++        (fun J => zr_heads (zr_lstart (J.i + 1)) (J.s + 1)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_one]
++        all_goals omega)) <|
++  -- step 4: copy the outer zone's column
++  zr_segSeq (zr_seg (zr_pinCopy_step _ 0 1 (by decide) (zoneSlotOf t)
++        (fun _ v => zr_enc v)
++        (fun J => zr_lfield J.D.2 (J.i + 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [])
++        (fun J => zr_heads (zr_lstart (J.i + 1)) (J.s + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i + 1) + q) = _
++          exact zr_lfield_at J.D.2 (J.i + 1) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_copy _ _ _ _ [] _ _ _ _
++          (by rw [List.length_nil, fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 5: skip the outer zone
++  zr_segSeq (zr_seg (zr_pinSkip_step _ 0 (fun J => zr_lfield J.D.2 (J.i + 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_cA t J])
++        (fun J => zr_heads (zr_lstart (J.i + 1)) (J.s + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i + 1) + q) = _
++          exact zr_lfield_at J.D.2 (J.i + 1) (by have := hV.2.1; omega) _
++            (by omega) _ (by omega) h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 6: skip the inner zone
++  zr_segSeq (zr_seg (zr_pinSkip_step _ 0 (fun J => zr_lfield J.D.2 J.i)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_cA t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart J.i + q) = _
++          exact zr_lfield_at J.D.2 (J.i) (by have := hV.2.1; omega) _
++            (by omega) _ (by omega) h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 7: scratch left
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (-1) (none)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_cA t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) (J.s + 2)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
++        all_goals omega)) <|
++  -- step 8: scratch left, to its start
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (-1) (none)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_cA t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) (J.s + 1)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
++        all_goals omega)) <|
++  -- step 9: walk over the field one inward
++  zr_segSeq (zr_seg (zr_pinWalk_step _ 0 (fun J => zr_lfield J.D.2 (J.i - 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_cA t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) J.s)
++        fun J hV q hq => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i - 1) + ↑q) = _
++          exact zr_lfield_at J.D.2 (J.i - 1) (by have := hV.2.1; omega) _
++            (by omega) _ (by omega) (by exact_mod_cast hq))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 10: cut the outer column before its cell `2^(i-1)`
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (1) (some none)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_cA t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + zr_hh J + 1)))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_split _ _ _ _ [] [] (zr_cA t J) (zr_hh J - 1) (zr_hh J)
++          (by omega) (by omega)
++          (by rw [zr_heads_one, List.length_nil, fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_one]
++        all_goals omega)) <|
++  -- step 11: skip the outer column's rest
++  zr_segSeq (zr_seg (zr_pinSkip_step _ 1 (fun J => zr_oV t J)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J]
++            (J.s + zr_hh J + 2 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J] 1 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_zero]; omega) q (by omega) h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 12: back over the field one inward
++  zr_segSeq (zr_seg (zr_pinBack_step _ 0 (fun J => zr_lfield J.D.2 (J.i - 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i - 1) + zr_hh J + 1 - (zr_lfield J.D.2 (J.i - 1)).length - 1 + q) = _
++          exact zr_lfield_at J.D.2 (J.i - 1) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 13: back over the inner zone
++  zr_segSeq (zr_seg (zr_pinBack_step _ 0 (fun J => zr_lfield J.D.2 J.i)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i - 1) - (zr_lfield J.D.2 J.i).length - 1 + q) = _
++          exact zr_lfield_at J.D.2 (J.i) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 14: copy the inner zone's column
++  zr_segSeq (zr_seg (zr_pinCopy_step _ 0 1 (by decide) (zoneSlotOf t)
++        (fun _ v => zr_enc v)
++        (fun J => zr_lfield J.D.2 J.i)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart J.i + q) = _
++          exact zr_lfield_at J.D.2 (J.i) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_copy _ _ _ _ [zr_oJ2 t J, zr_oV t J] _ _ _ _
++          (by rw [List.length_cons, List.length_singleton, fieldOffset_cons_succ,
++              fieldOffset_cons_succ, fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 15: skip the inner zone
++  zr_segSeq (zr_seg (zr_pinSkip_step _ 0 (fun J => zr_lfield J.D.2 J.i)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_cB t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart J.i + q) = _
++          exact zr_lfield_at J.D.2 (J.i) (by have := hV.2.1; omega) _
++            (by omega) _ (by omega) h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 16: scratch left
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (-1) (none)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_cB t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) (J.s + 4 * zr_hh J + 3)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
++        all_goals omega)) <|
++  -- step 17: walk over the field one inward
++  zr_segSeq (zr_seg (zr_pinWalk_step _ 0 (fun J => zr_lfield J.D.2 (J.i - 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_cB t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) (J.s + 4 * zr_hh J + 2))
++        fun J hV q hq => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i - 1) + ↑q) = _
++          exact zr_lfield_at J.D.2 (J.i - 1) (by have := hV.2.1; omega) _
++            (by omega) _ (by omega) (by exact_mod_cast hq))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 18: cut the inner column after its first `2^(i-1)` cells
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (1) (some none)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_cB t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + 5 * zr_hh J + 3)))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_split _ _ _ _ [zr_oJ2 t J, zr_oV t J] [] (zr_cB t J) (zr_hh J) (zr_hh J + 1)
++          (by omega) (by omega)
++          (by rw [zr_heads_one, List.length_cons, List.length_singleton, fieldOffset_cons_succ,
++              fieldOffset_cons_succ, fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_one]
++        all_goals omega)) <|
++  -- step 19: back over the inner column's head
++  zr_segSeq (zr_seg (zr_pinBack_step _ 1 (fun J => zr_oW t J)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + 5 * zr_hh J + 4))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 5 * zr_hh J + 4 - ((zr_oW t J).length : ℤ) - 1 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 20: back over the outer column's rest
++  zr_segSeq (zr_seg (zr_pinBack_step _ 1 (fun J => zr_oV t J)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 4 * zr_hh J + 3 - ((zr_oV t J).length : ℤ) - 1 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 1 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 21: back over the field one inward
++  zr_segSeq (zr_seg (zr_pinBack_step _ 0 (fun J => zr_lfield J.D.2 (J.i - 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1) + zr_hh J + 1) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i - 1) + zr_hh J + 1 - (zr_lfield J.D.2 (J.i - 1)).length - 1 + q) = _
++          exact zr_lfield_at J.D.2 (J.i - 1) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 22: back over the inner zone
++  zr_segSeq (zr_seg (zr_pinBack_step _ 0 (fun J => zr_lfield J.D.2 J.i)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i - 1)) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart (J.i - 1) - (zr_lfield J.D.2 J.i).length - 1 + q) = _
++          exact zr_lfield_at J.D.2 (J.i) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 23: back over the outer zone
++  zr_segSeq (zr_seg (zr_pinBack_step _ 0 (fun J => zr_lfield J.D.2 (J.i + 1))
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          have := zr_outV_starts hV
++          show (zonedTape J.D.2)
++            (zr_lstart J.i - (zr_lfield J.D.2 (J.i + 1)).length - 1 + q) = _
++          exact zr_lfield_at J.D.2 (J.i + 1) (by have := hV.2.1; omega) _
++            (by omega) _ h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 24: write the outer zone's left part
++  zr_segSeq (zr_seg (zr_pinCopy_step _ 1 0 (by decide) (zoneSlotOf t)
++        (zoneSlotSet t)
++        (fun J => zr_oV t J)
++        (fun J => zr_outT J (zonedTape J.D.2) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i + 1)) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + zr_hh J + 2 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 1 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => zr_copy0 _ _ _ _ _ _ _)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 25: walk over the outer column's rest
++  zr_segSeq (zr_seg (zr_pinWalk_step _ 1 (fun J => zr_oV t J)
++        (fun J => zr_outT J (zr_outO1 t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i + 1)) (J.s + zr_hh J + 2))
++        fun J hV q hq => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + zr_hh J + 2 + ↑q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 1 (by simp) _
++            (by rw [fieldOffset_cons_succ,
++                fieldOffset_zero]; omega) ↑q (by omega) (by exact_mod_cast hq))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 26: zoned head left, to the outer zone's right part
++  zr_segSeq (zr_seg (zr_pinCell_step _ 0 (-1) (none)
++        (fun J => zr_outT J (zr_outO1 t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i + 1) + 3 * zr_hh J + 1) (J.s + 4 * zr_hh J + 3)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (1 : Fin 2) ≠ 0 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
++        all_goals omega)) <|
++  -- step 27: write the outer zone's right part
++  zr_segSeq (zr_seg (zr_pinCopy_step _ 1 0 (by decide) (zoneSlotOf t)
++        (zoneSlotSet t)
++        (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outO1 t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i + 1) + 3 * zr_hh J) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 4 * zr_hh J + 3 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => zr_copy0 _ _ _ _ _ _ _)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 28: walk over the inner column's head, to the inner zone
++  zr_segSeq (zr_seg (zr_pinWalk_step _ 1 (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outO2 t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart (J.i + 1) + 3 * zr_hh J) (J.s + 4 * zr_hh J + 3))
++        fun J hV q hq => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 4 * zr_hh J + 3 + ↑q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ,
++                fieldOffset_zero]; omega) ↑q (by omega) (by exact_mod_cast hq))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 29: back over the inner column's head
++  zr_segSeq (zr_seg (zr_pinBack_step _ 1 (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outO2 t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 5 * zr_hh J + 4))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 5 * zr_hh J + 4 - ((zr_oW t J).length : ℤ) - 1 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 30: clear the inner zone's first `2^(i-1)` cells
++  zr_segSeq (zr_seg (zr_pinCopy_step _ 1 0 (by decide) (zoneSlotOf t)
++        (fun c _ => zoneSlotSet t c none)
++        (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outO2 t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 4 * zr_hh J + 3 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun J hV => (zr_copy0 _ _ _ _ _ _ _).trans
++        (congrArg (fun A => zr_tapes A _) (zr_outA3 hV)))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 31: skip the inner column's head
++  zr_segSeq (zr_seg (zr_pinSkip_step _ 1 (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 4 * zr_hh J + 3 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ,
++                fieldOffset_zero]; omega) q (by omega) h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 32: clear the inner column's rest
++  zr_segSeq (zr_seg (zr_pinClear_step _ 1 (fun J => zr_oJ1 t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 5 * zr_hh J + 4))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J]
++            (J.s + 5 * zr_hh J + 4 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J, zr_oJ1 t J] 3 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_cons_succ,
++                fieldOffset_zero]; omega) q h0 h1)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_clear _ _ _ [zr_oJ2 t J, zr_oV t J, zr_oW t J] _ _
++          (by rw [zr_heads_one, List.length_cons, List.length_cons, List.length_singleton,
++              fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_cons_succ,
++              fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 33: back over the inner column's head
++  zr_segSeq (zr_seg (zr_pinBack_step _ 1 (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 5 * zr_hh J + 4))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J]
++            (J.s + 5 * zr_hh J + 4 - ((zr_oW t J).length : ℤ) - 1 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 34: clear it
++  zr_segSeq (zr_seg (zr_pinClear_step _ 1 (fun J => zr_oW t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J, zr_oV t J, zr_oW t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J, zr_oW t J]
++            (J.s + 4 * zr_hh J + 3 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J, zr_oW t J] 2 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_clear _ _ _ [zr_oJ2 t J, zr_oV t J] _ _
++          (by rw [zr_heads_one, List.length_cons, List.length_singleton, fieldOffset_cons_succ,
++              fieldOffset_cons_succ, fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 35: back over the outer column's rest
++  zr_segSeq (zr_seg (zr_pinBack_step _ 1 (fun J => zr_oV t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J, zr_oV t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 4 * zr_hh J + 3))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J]
++            (J.s + 4 * zr_hh J + 3 - ((zr_oV t J).length : ℤ) - 1 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J] 1 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 36: clear it
++  zr_segSeq (zr_seg (zr_pinClear_step _ 1 (fun J => zr_oV t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J, zr_oV t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J, zr_oV t J]
++            (J.s + zr_hh J + 2 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J, zr_oV t J] 1 (by simp) _
++            (by rw [fieldOffset_cons_succ, fieldOffset_zero]; omega) q h0 h1)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_clear _ _ _ [zr_oJ2 t J] _ _
++          (by rw [zr_heads_one, List.length_singleton, fieldOffset_cons_succ,
++              fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 37: back over the outer column's head
++  zr_segSeq (zr_seg (zr_pinBack_step _ 1 (fun J => zr_oJ2 t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + zr_hh J + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J]
++            (J.s + zr_hh J + 2 - ((zr_oJ2 t J).length : ℤ) - 1 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J] 0 (by simp) _
++            (by rw [fieldOffset_zero]; omega) q h0 h1)
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        all_goals omega)) <|
++  -- step 38: clear it
++  zr_segSeq (zr_seg (zr_pinClear_step _ 1 (fun J => zr_oJ2 t J)
++        (fun J => zr_outT J (zr_outZ t J) [zr_oJ2 t J])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 2))
++        fun J hV q h0 h1 => by
++          have := zr_outV_lengths hV
++          show zr_scr J.σ (J.s + 1) [zr_oJ2 t J]
++            (J.s + 2 + q) = _
++          exact zr_scr_at (hV.2.2.2.2 _ (by omega))
++            [zr_oJ2 t J] 0 (by simp) _
++            (by rw [fieldOffset_zero]; omega) q h0 h1)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        exact zr_scr_clear _ _ _ [] _ _
++          (by rw [zr_heads_one, List.length_nil, fieldOffset_zero]; omega))
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [zr_heads, zr_outL, zr_outU, if_true, show (1 : Fin 2) ≠ 0 by decide,
++          if_false]
++        all_goals omega)) <|
++  -- step 39: scratch left
++  zr_segSeq (zr_seg (zr_pinCell_step _ 1 (-1) (none)
++        (fun J => zr_outT J (zr_outZ t J) [])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 2)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
++        all_goals omega)) <|
++  -- step 40: scratch left, to its start
++  (zr_seg (zr_pinCell_step _ 1 (-1) (none)
++        (fun J => zr_outT J (zr_outZ t J) [])
++        (fun J => zr_heads (zr_lstart J.i) (J.s + 1)))
++      (fun _ _ => rfl)
++      (fun J hV => by
++        have := zr_outV_lengths hV
++        have := zr_outV_starts hV
++        refine ⟨zr_heads_ext ?_ ?_, zr_heads_le ?_ ?_, zr_heads_le ?_ ?_⟩
++        all_goals simp only [Function.update_self,
++          Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), zr_heads, zr_outL, zr_outU,
++          if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, SignType.coe_neg_one]
++        all_goals omega))
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+-- 
+2.50.1 (Apple Git-155)
+

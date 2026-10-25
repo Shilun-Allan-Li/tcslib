@@ -1,0 +1,46 @@
+# 07 — Census of sorried declarations at the tip; missed candidates (check 4)
+
+scripts/sorrycensus.py: every .lean file under wt/TCSlib, comment-stripped, declarations whose body
+contains `sorry`/`admit`/`sorryAx` (no `axiom` declarations found). Full output:
+probe/sorry-census-tip.txt (496 in all; the non-complexity areas BooleanAnalysis, GraphTheory,
+ErrorCorrectingCodes and Tactics hold 386, out of the campaign's scope). The campaign's areas
+(TCSlib/Complexity and TCSlib/Programs), per file (probe/census-complexity-tip.txt):
+
+TCSlib/Complexity/ClassNP/NDNormalForm.lean: 1
+TCSlib/Complexity/ClassP/TimeConstructible.lean: 2
+TCSlib/Complexity/ClassPSPACE/TQBF.lean: 21
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean: 2
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean: 1
+TCSlib/Complexity/Expanders/Chernoff.lean: 1
+TCSlib/Complexity/FormulaKit/Emit.lean: 10
+TCSlib/Complexity/FormulaKit/Gate.lean: 10
+TCSlib/Complexity/RAMSimulation/Classes.lean: 9
+TCSlib/Complexity/RAMSimulation/Simulation.lean: 2
+TCSlib/Complexity/RAMSimulation/WordSize.lean: 3
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean: 4
+TCSlib/Complexity/SpaceComplexity/Savitch.lean: 2
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean: 1
+TCSlib/Complexity/TuringMachine/Composition.lean: 3
+TCSlib/Complexity/TuringMachine/Encoding.lean: 1
+TCSlib/Complexity/TuringMachine/Simulation.lean: 1
+TCSlib/Complexity/TuringMachine/UniversalK.lean: 2
+TCSlib/Complexity/TuringMachine/Build/Loop.lean: 5
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean: 3
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean: 4
+TCSlib/Complexity/TuringMachine/Build/Wrappers.lean: 2
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean: 2
+TCSlib/Programs/WordRAM/Extended.lean: 18
+
+Compared with the drafter's list at the base (evidence/triage-greps.txt §1, normalized to the same
+form in probe/census-drafter-base.txt): identical file by file and count by count, except
+TuringMachine/NDCodeSimulator (1, exists_replayCanonizer), which #160 proved. Total 110 at the tip.
+
+Mapping to the report: T1/T2 NTimeDiagonalizer (2); T3 NDNormalForm (1); T4–T6 Hierarchy (4); T7/T8
+Savitch (2); T9 RAMSimulation (9 + 2 + 3); T10 WordRAM/Extended (18); T11 TQBF (21) and FormulaKit
+(10 + 10); T12 Composition (3), Simulation (1), Wrappers (2), Encoding (1), TimeConstructible (2),
+Primitives (3), Loop (5) = 17; T13 RecordTable (4); excluded NTimeHierarchy (1), CodeSimulator
+(1), UniversalK (2), ZoneRebalance (2); out of scope Expanders/Chernoff (1). Sum: 110. Every
+sorried declaration is accounted for.
+
+**Missed candidates: none.** (Not sorried, so outside the drafting brief's census but relevant to
+megafill D's queue: F6 may become briefable when #161 merges; see 06, T4.)

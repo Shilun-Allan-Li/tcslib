@@ -1,0 +1,44 @@
+rule elements (rw/rwa/simp/simpa/dsimp lists and unfold args) on added lines: 5981
+  core/mathlib-thm: 1989
+  local: 1063
+  own: 1532
+  simproc: 8
+  tcslib-thm: 1389
+definitions or simprocs used as a rule:
+  simproc:reduceCtorEq: 8 occurrence(s)
+      (3702, 'simp only', 'reduceCtorEq')
+      (4141, 'simp only', 'reduceCtorEq')
+      (7810, 'simp only', 'reduceCtorEq')
+      (7814, 'simp only', 'reduceCtorEq')
+      (7827, 'simp only', 'reduceCtorEq')
+      (7831, 'simp only', 'reduceCtorEq')
+      (7838, 'simp only', 'reduceCtorEq')
+      (7955, 'simp only', 'reduceCtorEq')
+show/change term identifiers: 3819 {'local': 2496, 'TCSLIB-DEF': 105, 'core/mathlib-induct': 275, 'core/mathlib-ctor': 40, 'own': 838, 'CORE/MATHLIB-DEF': 65}
+definitions mentioned in show/change terms (allowed; covered by the seal):
+  CORE/MATHLIB-DEF:Function.update: 37 (lines [3805, 8450, 8456, 8756, 8773, 8773, 8777, 8897]...)
+  CORE/MATHLIB-DEF:Max.max: 12 (lines [8786, 8791, 8794, 9732, 9737, 9739, 9755, 10821]...)
+  CORE/MATHLIB-DEF:Min.min: 12 (lines [8780, 8784, 8785, 9724, 9728, 9730, 9752, 10815]...)
+  CORE/MATHLIB-DEF:norm_num: 4 (lines [12629, 12640, 12644, 12674]...)
+  TCSLIB-DEF:Turing.Action.apply: 5 (lines [14340, 14344, 14350, 14364, 14374]...)
+  TCSLIB-DEF:Turing.fieldOffset: 4 (lines [5277, 5338, 5339, 5339]...)
+  TCSLIB-DEF:Turing.joinFields: 2 (lines [4700, 4706]...)
+  TCSLIB-DEF:Turing.zoneCapacity: 5 (lines [746, 1849, 1866, 6648, 7538]...)
+  TCSLIB-DEF:Turing.zoneRebalance: 1 (lines [14448]...)
+  TCSLIB-DEF:Turing.zoneShiftIn: 1 (lines [8897]...)
+  TCSLIB-DEF:Turing.zoneShiftIndex: 3 (lines [14008, 14425, 14425]...)
+  TCSLIB-DEF:Turing.zoneShiftOut: 1 (lines [10913]...)
+  TCSLIB-DEF:Turing.zoneStart: 31 (lines [746, 746, 1849, 1849, 1866, 1866, 2968, 4635]...)
+  TCSLIB-DEF:Turing.zonedTape: 52 (lines [3295, 5702, 5712, 5746, 5789, 6670, 6681, 6729]...)
+definitions inside a list element but not its head (term arguments, show ... by ...):
+  CORE/MATHLIB-DEF:List.ofFn: 1; e.g. [(616, 'hz (-(fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev')]
+  CORE/MATHLIB-DEF:Nat.one_pos: 1; e.g. [(12420, 'show (0 : ℕ) < 1 from Nat.one_pos')]
+  CORE/MATHLIB-DEF:absurd: 1; e.g. [(12665, 'zr_hm_off t hV.1 fun h => absurd (hV.2.symm.trans ((zr_hmOff_iff t hV.')]
+  CORE/MATHLIB-DEF:norm_num: 10; e.g. [(2225, 'show |(-1 : ℤ)| = 1 by norm_num'), (2968, 'show zoneStart 0 = 2 by norm_num [zoneStart_eq]')]
+  TCSLIB-DEF:Turing.fieldOffset: 6; e.g. [(616, 'hz (-(fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev'), (5276, 'show s + 1 + (fieldOffset pre pre.length : ℤ) + u.length - (s + 1) = (')]
+  TCSLIB-DEF:Turing.joinFields: 2; e.g. [(4699, 'show z.toNat - (joinFields ws).length = 0 by omega'), (4705, 'show z.toNat - (joinFields ws).length = n + 1 by omega')]
+  TCSLIB-DEF:Turing.zoneCapacity: 7; e.g. [(746, 'show ((zoneStart (n + 1) : ℕ) : ℤ) - zoneCapacity n - 1 + p = (zoneSta'), (1849, 'show ((zoneStart (i + 1) : ℕ) : ℤ) - zoneCapacity i - 1 + p = (zoneSta')]
+  TCSLIB-DEF:Turing.zoneCells: 1; e.g. [(616, 'hz (-(fieldOffset (List.ofFn fun i : Fin ℓ => (zoneCells false z i.rev')]
+  TCSLIB-DEF:Turing.zoneShiftIn: 2; e.g. [(8973, 'zr_p1Home_eq (zr_dn_valid t (fun _ i w => zoneShiftIn true (i - 1) w) '), (8973, '(zr_dn_iter t (fun _ i w => zoneShiftIn true (i - 1) w) P m).2.1')]
+  TCSLIB-DEF:Turing.zoneShiftIndex: 1; e.g. [(14008, 'zoneRebalance_of_le _ _ (show I.1.1 ≤ zoneShiftIndex true (I.1.2 t) fr')]
+  TCSLIB-DEF:Turing.zoneStart: 17; e.g. [(746, 'show ((zoneStart (n + 1) : ℕ) : ℤ) - zoneCapacity n - 1 + p = (zoneSta'), (746, 'show ((zoneStart (n + 1) : ℕ) : ℤ) - zoneCapacity n - 1 + p = (zoneSta')]

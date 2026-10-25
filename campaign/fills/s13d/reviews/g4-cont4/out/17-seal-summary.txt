@@ -1,0 +1,127 @@
+Rule-10 seal (my own), G4 cont4 delivery at 374337b0
+
+Seal set: 82 definitions = the 71 semireducible non-projection TCSlib definitions reached from the 821 new/changed declarations (out/16-ext-constants.txt)
+  + the worker's 4 extras (Cfg.SameOutside, Contract._sizeOf_inst, framedContract, sweepContract)
+  + 7 non-matcher definitions reached one level deeper from those values (Action.mapState, Contract._sizeOf_1, SeekPhase.enumList, SweepPhase.enumList, zoneBase, zoneCascadeLeft, zoneMoveLeft; out/17-seal-walk.out).
+  Not sealed: the 12 TCSlib matchers (.match_1/.match_3) of sealed definitions, reachable only by unfolding their sealed parents; reducible abbreviations and projections.
+  Plus attribute [-simp] Turing.Action.apply (the only @[simp] definition reached; simpUnfold=true in out/16).
+
+List:
+Turing.Action.apply
+Turing.Action.mapState
+Turing.Cfg.SameOutside
+Turing.Cfg.bindState
+Turing.Cfg.inputSymbol
+Turing.Cfg.mapState
+Turing.Cfg.workTapeSymbols
+Turing.Contract._sizeOf_1
+Turing.Contract._sizeOf_inst
+Turing.Contract.branch
+Turing.Contract.inPhase
+Turing.Contract.lockstep
+Turing.Contract.ofSegment
+Turing.Contract.seq
+Turing.FinTM.bufferTape
+Turing.HeadBox
+Turing.MultiTapeTM.runFrom
+Turing.MultiTapeTM.step
+Turing.Round
+Turing.SeekPhase.enumList
+Turing.Segment
+Turing.SweepPhase.enumList
+Turing.ZoneContents.extend
+Turing.ZoneContents.swap
+Turing.ZoneContents.words
+Turing.clearTM
+Turing.clearTM_contract
+Turing.copyMapTM
+Turing.copyMapTM_contract
+Turing.fieldOffset
+Turing.fieldsTape
+Turing.framedContract
+Turing.inputMoveAction
+Turing.instDecidableEqSeekPhase
+Turing.instDecidableEqSweepPhase
+Turing.instFintypeSeekPhase
+Turing.instFintypeSweepPhase
+Turing.joinFields
+Turing.moveInputPos
+Turing.phaseHostTM
+Turing.roundOrbit
+Turing.roundStop
+Turing.seamCompTM
+Turing.seamCompTM₂
+Turing.seekEndTM
+Turing.seekEndTM_contract
+Turing.seekPost
+Turing.seekStartTM
+Turing.seekStartTM_contract
+Turing.skipBackTM
+Turing.skipBackTM_contract
+Turing.skipTM
+Turing.skipTM_contract
+Turing.sweepContract
+Turing.sweepMapWrite
+Turing.sweepPost
+Turing.tapeAction
+Turing.walkTM
+Turing.walkTM_contract
+Turing.zoneBase
+Turing.zoneCapacity
+Turing.zoneCascade
+Turing.zoneCascadeLeft
+Turing.zoneCascadeRight
+Turing.zoneCellAt
+Turing.zoneCellOfCell
+Turing.zoneCells
+Turing.zoneMove
+Turing.zoneMoveLeft
+Turing.zoneMoveRight
+Turing.zoneOwner
+Turing.zoneRebalance
+Turing.zoneShiftIn
+Turing.zoneShiftInW
+Turing.zoneShiftIndex
+Turing.zoneShiftOut
+Turing.zoneShiftOutW
+Turing.zoneSlotOf
+Turing.zoneSlotSet
+Turing.zoneStart
+Turing.zoneStepPair
+Turing.zonedTape
+
+Runs (all through leanelab.sh, oleans-lphl2):
+-- G4C4RevCtlUnsealed: exit: 0 errors: 0 warnings: 0
+-- G4C4RevCtlSealed: exit: 1 errors: 82 warnings: 0
+-- G4C4RevCtlEach: exit: 1 errors: 81 warnings: 0
+-- G4C4RevSimpIrredOnly: exit: 0 errors: 0 warnings: 0
+-- G4C4RevSeal: exit: 1 errors: 82 warnings: 0
+
+Control mapping:
+-- G4C4RevCtlSealed
+controls 83 ; errors 82
+controls with no error: ['9 Turing.Contract._sizeOf_inst']
+controls with more than one error: {}
+errors outside controls: None
+-- G4C4RevCtlEach
+controls 82 ; errors 81
+controls with no error: ['S9 Turing.Contract._sizeOf_inst']
+controls with more than one error: {}
+errors outside controls: None
+-- G4C4RevSeal
+controls 83 ; errors 82
+controls with no error: ['9 Turing.Contract._sizeOf_inst']
+controls with more than one error: {}
+errors outside controls: None
+
+Reading:
+  * unsealed: all 83 controls (82 rfl + the default-simp control) close (0 errors).
+  * all sealed: 82 errors, one per control, except control 9 (Contract._sizeOf_inst), which closes.
+  * each control under only its own definition's seal: 81 of 82 fail, one error each; again only _sizeOf_inst passes.
+  * irreducible only, no [-simp]: the default-simp control closes: local irreducible alone does not stop simp unfolding Action.apply (worker's seal had no [-simp]).
+  * the module, seal section from line 127 (first home declaration) through exists_zoneExtendTM, controls at its top: exactly 82 errors, one in each of the 81 biting rfl controls and one in the default-simp control 83 (control 9 closes); 0 errors in the body (lines 517-15155); both targets [propext, Classical.choice, Quot.sound] under the seal.
+  * Contract._sizeOf_inst cannot matter: its only users in the module are the structure compiler's zr_PinSeg.mk.sizeOf_spec and zr_PinSeg._sizeOf_1 (USERS line), which no proof uses; no termination_by/decreasing_by/sizeOf in the module.
+  grep termination_by|decreasing_by|sizeOf in the delivered file: 0
+  * instFintypeSeekPhase/SweepPhase: the Finset.univ.card rfl controls bite (the worker's isDefEq controls did not).
+
+Worker's seal (75 names, seal/ZRSeal-cp7.lean): section starts after zr_exitsContract (line 138), so zr_exitsContract is outside it; no [-simp] on Action.apply; controls by isDefEq at default transparency (3 pass inside: instFintypeSeekPhase, instFintypeSweepPhase, Contract._sizeOf_inst). My seal covers all three gaps.

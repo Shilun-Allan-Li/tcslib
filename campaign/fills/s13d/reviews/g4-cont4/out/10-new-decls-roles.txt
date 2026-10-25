@@ -1,0 +1,872 @@
+    70 old abbrev    ZoneData                         **The data index of the zone rows**:
+    74 old def       zoneRowPre                       **The precondition of every zone row**:
+    82 old def       zoneRebalanceIndex               The scanned index of the rebalance of track `t` in direction `dir`.
+    86 old def       zoneRebalanceData                The data after the rebalance of track `t` in direction `dir`:
+    91 old def       zoneExtendData                   The data after the extension:
+    96 old def       zoneRebalancePost                **The rebalance row's endpoint**:
+   107 old def       zoneExtendPost                   **The extension row's endpoint**:
+   115 old def       zoneRowLo                        **The lower envelope of a zone row reaching level `r D`**:
+   122 old def       zoneRowHi                        The upper envelope of a zone row reaching level `r D`, mirroring `Turing.zoneRowLo`.
+   127 NEW abbrev    zr_exitsContract                 Restate a contract's exit set by an equality, without changing any of its fields.
+   138 CHG abbrev    zr_singletonContract             Normalize a composite's singleton exit without changing any of its contract fields.
+   146 NEW lemma     zr_singleton_fields              The normalized composite has the composite's fields.
+   159 NEW lemma     zr_bindState_eq                  A redirected configuration is determined by its redirected state and its other fields.
+   170 NEW def       zr_reindexContract               Re-index a contract through `f`, under a precondition `P` that implies the original's at `f j`.
+   181 old def       zr_zonePos                       The directed position of a slot, measured from the zone's inner end.
+   185 old lemma     zr_read_slot                     Reading a slot uses the same formula on both sides; the left side is mirrored.
+   197 old lemma     zr_capacity_pos                  Every physical zone has positive capacity.
+   202 old lemma     zr_slot_empty_iff                Inner packing turns a buffer-slot test into a length comparison.
+   209 old lemma     zr_inner_empty_iff               The scan's innermost-slot test detects exactly an empty feeding zone.
+   218 old lemma     zr_outer_full_iff                A zone is full exactly when its outermost slot is occupied.
+   228 old lemma     zr_room_iff                      The outward-shift room guard is one slot test, including equality at the boundary.
+   237 old lemma     zr_scan_index                    The physical scan tests characterize the pure scanned index.
+   253 old lemma     zr_scan_short                    If every scanned slot is empty, the pure rebalance takes its identity branch.
+   263 old lemma     zr_ruler_length                  The preceding zone is a ruler of the new zone's half-capacity.
+   269 old lemma     zr_extent_cost                   The level extent has a uniform geometric bound, including level zero.
+   276 old lemma     zr_mirror_tape                   Swapping every track's sides mirrors the physical tape about home.
+   291 old lemma     zr_extend_cell                   The extension writes its two constant half-words on either side of home.
+   305 old lemma     zr_ruler_tail                    Advancing only the ruler head exposes its tail as the next directed word.
+   327 old def       zr_cellTM                        A single-cell controller with two live verdicts.
+   339 old def       zr_cellPost                      The single-cell leaf's endpoint; all unmentioned configuration fields are preserved.
+   352 old lemma     zr_cell_step                     The leaf takes its advertised single step, using the public action lemmas.
+   369 old def       zr_cellContract                  The one-cell leaf as a contract:
+   403 old lemma     zr_fieldsTape_eq                 Agreement with each delimited field determines the layout up to its end offset.
+   442 old lemma     zr_right_offset                  The right layout's level `i` begins at the physical start of zone `i`.
+   461 old lemma     zr_zonedTape_right_fields        From home, the right zones form the field layout required by the seek-to-end row.
+   511 old lemma     zr_left_offset                   The reversed left layout's prefix and its remaining zone extent add to the full extent.
+   530 old lemma     zr_zonedTape_left_fields         The left zones, reversed within each zone and in level order, form the seek-start layout.
+   571 old lemma     zr_zoneCells_ne_nil              A physical zone is a nonempty field, even when every virtual slot is empty.
+   578 old lemma     zr_seekEnd_pre                   The right bridge discharges the seek-to-end contract's entire precondition.
+   596 CHG lemma     zr_seekStart_pre                 The left bridge discharges the seek-to-start contract's entire precondition, from two local facts:
+   620 NEW lemma     zr_left_reach                    One step and two adjusted walks by the half-capacity reach the new left zone's outermost cell from the seek's stop, across the separating blank:
+   635 old lemma     zr_shift_commute                 A right inward shift commutes with a left outward shift, including their guards.
+   655 old lemma     zr_inPass_out                    A whole right-side pass commutes past one left-side outward shift.
+   666 old lemma     zr_pair_pass                     A list of guarded pairs equals its right-side pass followed by its left-side pass.
+   681 old lemma     zr_cascade_passes                The total right cascade can perform each side's pass separately around the home move.
+   695 CHG def       zr_rightFields                   The home followed by the existing right-zone words.
+   699 CHG def       zr_rightWord                     The last field of the right layout:
+   705 NEW lemma     zr_rightWord_length              The last field has the new zone's half-capacity.
+   713 NEW lemma     zr_home_word                     The home is the delimited one-cell field at cell `0`.
+   732 NEW lemma     zr_rightWord_word                The last field is the delimited word ending one blank before the new zone's first cell.
+   750 CHG def       zr_rightSeekContract             Seeking the right end from a zoned input is a contract indexed by the zone data.
+   764 CHG lemma     zr_rightSeek_back_pre            After seeking the right end, the last field satisfies the backward skip's premise.
+   781 CHG def       zr_rightSeekBackContract         The first two phases reach the last old right zone through one stationary seam.
+   789 CHG lemma     zr_rightSeekBack_post            The seek-and-back composite preserves all tapes and leaves the zoned head at the last field's first cell.
+   820 CHG def       zr_rulerCopyContract             Copying the last field to scratch as a constant nonblank word makes the ruler.
+   825 old lemma     zr_rulerCopy_skip_pre            The mapped ruler copy leaves its source word and both heads unchanged, so the source can immediately be skipped.
+   840 CHG def       zr_rulerSkipContract             Copy the source field to scratch as a ruler, then skip the source field.
+   846 CHG lemma     zr_rightSeekBack_ruler_pre       The seek-and-back endpoint supplies the delimited last field for the ruler copy.
+   866 CHG def       zr_rightRulerContract            Seek the right end, return to the last field, copy its length to scratch, and skip back to the new zone's first cell.
+   873 CHG lemma     zr_rightRuler_pre                The ruler prefix requires exactly the original zoned input.
+   880 old lemma     zr_constantCopy_cell             A constant mapped copy writes exactly its destination interval.
+   897 CHG lemma     zr_rightRuler_post               The ruler prefix preserves the zoned tape, writes one constant ruler on scratch, and returns the zoned head to the new zone's first cell.
+   944 NEW def       zr_stepContract                  Advance one work head by one cell, restricting the existing leaf's verdict to its constant choice; the index and the precondition are the caller's.
+   962 CHG def       zr_rulerStepContract             Advance just the scratch head once along a nonempty ruler read in direction `dir`.
+   969 CHG lemma     zr_rulerStep_walk_pre            After the scratch-only advance, the tail of the ruler is the walk row's directed word.
+   986 CHG def       zr_adjustedWalkContract          Advancing the ruler alone and walking its tail moves the zoned head by exactly the ruler length along `dir`.
+   997 CHG lemma     zr_adjustedWalk_post             The adjusted walk preserves the tapes and has the two advertised head displacements.
+  1035 CHG lemma     zr_adjustedWalk_back_pre         The adjusted walk stops scratch exactly one blank beyond its ruler, ready for skip-back.
+  1054 CHG def       zr_adjustedBackContract          The adjusted walk followed by scratch rewind advances only the zoned head by one ruler length, restoring scratch to the beginning of its delimited wor
+  1061 CHG lemma     zr_adjustedBack_post             Rewinding scratch after the adjusted walk restores its head and keeps both tapes.
+  1102 old def       zr_halfCopyContract              A half-zone copy reads the scratch ruler and writes either stored virtual blanks or empty slots on every track of tape zero.
+  1108 old def       zr_innerCopyContract             The inner-half copy with a nonempty ruler, retaining the source word for the adjusted walk.
+  1117 CHG lemma     zr_innerCopy_adjusted_pre        The inner copy preserves the nonempty scratch ruler needed by the adjusted walk.
+  1136 CHG lemma     zr_adjustedBack_copy_pre         After the adjusted walk and scratch rewind, the original ruler is ready for the outer-half mapped copy.
+  1156 old def       zr_outerHalfContract             Move from the inner to the outer half, rewind the ruler, and write the empty slots.
+  1161 CHG def       zr_writeHalvesContract           The two half-zone writes, separated by an adjusted walk and scratch rewind, as one contract.
+  1171 CHG def       zr_rulerWord                     The constant scratch word has the last field's length, half the new zone's capacity.
+  1175 CHG lemma     zr_rightRuler_write_pre          The ruler prefix establishes the entire nonempty-word premise of the half-zone writer.
+  1200 CHG def       zr_rightPassContract             The complete right pass:
+  1206 CHG lemma     zr_rightPass_pre                 The complete right pass has exactly the original zoned-input precondition.
+  1212 CHG lemma     zr_rightPass_time                The right pass's exact time includes all eight stationary seam transitions.
+  1228 CHG lemma     zr_rightPass_time_le             The right pass takes at most thirty-two times the new half-capacity plus one.
+  1237 old lemma     zr_halfCopy_post                 The common endpoint equation for either constant half-zone write.
+  1258 CHG lemma     zr_writeHalves_post              Writing both halves fills one contiguous zone and leaves the head at its midpoint.
+  1300 CHG lemma     zr_rightPass_post                The right pass writes both halves of the new zone and a delimited scratch ruler.
+  1344 CHG lemma     zr_rightPass_bounds              The right pass keeps the zoned head between the home's left separator and the end of the new zone; scratch stays between the ruler's left delimiter an
+  1382 CHG lemma     zr_rightPass_envelope            The right pass's zoned-head envelope lies inside the next level's symmetric box.
+  1394 CHG lemma     zr_rightPass_tape                On the nonnegative half-line the right pass already realizes the extended zoned tape; on the nonpositive half-line it preserves the original zoned tap
+  1423 CHG abbrev    zr_rightPassRow                  The characterized right pass with its nested image exit normalized to one live exit.
+  1429 NEW def       zr_testContract                  The home test:
+  1436 NEW lemma     zr_test_post                     The home test reads the cell right of the head, records its blankness and leaves every other field unchanged.
+  1462 NEW lemma     zr_test_time                     The home test takes three steps:
+  1469 NEW def       zr_bodyContract                  One round's body:
+  1475 NEW lemma     zr_body_post                     The body ends at the crossed field's first cell, with the home test's verdict on the cell after it.
+  1499 NEW lemma     zr_body_time                     The body takes the crossed field's length plus seven steps.
+  1505 NEW lemma     zr_body_bounds                   The body's zoned head stays between the crossed field's left delimiter and its start; the scratch head does not move.
+  1522 NEW abbrev    zr_hostPh                        A two-phase loop host's phases:
+  1529 NEW def       zr_hostMachines                  The loop host's phase machines:
+  1535 NEW def       zr_hostRed                       The loop host's redirects:
+  1543 NEW abbrev    zr_hostTM                        **A loop host**, an instance of the public phase host started at its anchor.
+  1548 NEW abbrev    zr_loopPh                        The return loop's phases:
+  1551 NEW abbrev    zr_loopBodyTM                    The return loop's body machine:
+  1558 NEW def       zr_loopBack                      The return loop's way back:
+  1564 NEW abbrev    zr_loopTM                        **The return loop**:
+  1568 NEW def       zr_anchorContract                The anchor phase's stationary leaf as a zero-time contract at the anchor.
+  1578 NEW def       zr_hostDispatchContract          The anchor's dispatch inside a loop host:
+  1593 NEW def       zr_hostBodyContract              A body inside a loop host:
+  1609 NEW lemma     zr_host_dispatch_run             **The dispatch step**:
+  1632 NEW lemma     zr_body_exit_iff                 The body's exits are exactly its verdict states.
+  1644 NEW def       zr_bodyPhaseContract             The body inside the loop host:
+  1664 NEW lemma     zr_round_of_body                 **A dispatch step and a body make a round**:
+  1701 NEW lemma     zr_loop_round                    **One round of the return loop**:
+  1781 NEW def       zr_loopPre                       The return loop's precondition at the data `Z`:
+  1790 NEW def       zr_fieldLen                      The length of the layout field that ends one blank before the cell `p`:
+  1795 NEW lemma     zr_fieldLen_succ                 The field before zone `i + 1` is zone `i`.
+  1805 NEW lemma     zr_fieldLen_zero                 The field before zone `0` is the home.
+  1812 NEW lemma     zr_loop_time_sum                 The loop's rounds add up to the extent and eight steps per field.
+  1832 NEW def       zr_loopAt                        The loop's configuration with the zoned head moved to `p`.
+  1837 NEW lemma     zr_loop_zone_word                Zone `i` is the delimited field before the start of zone `i + 1`.
+  1853 NEW lemma     zr_loop_zone_test                At a zone's first cell the home test fails:
+  1869 NEW lemma     zr_loop_home_word                The home is the delimited one-cell field before zone `0`.
+  1883 NEW lemma     zr_loop_home_test                At the home the test succeeds:
+  1896 NEW lemma     zr_loop_orbit                    The return loop's orbit:
+  1937 NEW lemma     zr_loopAt_fields                 The loop configuration's fields:
+  1945 NEW lemma     zr_loop_segment                  **The return loop's run**, as a segment against its home exit inside the box `[-1, zoneStart Z.1]` for the zoned head, the other head fixed.
+  2052 NEW def       zr_loopContract                  **The return loop as a contract**:
+  2067 NEW def       zr_returnSkipContract            The return home's first row:
+  2081 NEW def       zr_returnContract                **The return home**:
+  2092 NEW lemma     zr_return_post                   The return home ends at the loop's home exit with the zoned head at home; the tapes, the other head, the input position and the output are the start's
+  2114 NEW lemma     zr_return_time                   The return home takes the skip, its seam and the loop.
+  2122 NEW lemma     zr_return_bounds                 During the return home the zoned head stays in `[-1, zoneStart Z.1]` and the scratch head is fixed, from any admissible start at or right of cell `-1`
+  2142 NEW def       zr_outerWord                     The right pass's index's outer half:
+  2146 NEW lemma     zr_returnSkip_premise            After the right pass, the outer half from the zoned head is followed by a blank:
+  2190 NEW lemma     zr_rightPassRow_eq               The re-wrapped right pass has the pass's precondition and endpoint.
+  2196 NEW lemma     zr_rightReturn_link              **The seam into the return home**:
+  2230 NEW def       zr_decEqRP                       Decidable equality of the right pass's twelve-leaf state type, given once, since the default search for it gives up.
+  2236 NEW def       zr_rightReturnContract           **The right pass and the return home** as one contract:
+  2244 NEW lemma     zr_rightReturn_pre               The right pass and the return home need exactly the original zoned input.
+  2251 NEW lemma     zr_rightReturn_post              **After the right pass and the return home**:
+  2306 NEW lemma     zr_rightReturn_time              The right pass and the return home take the pass, the seam, the skip over the outer half, its seam and the loop over the extended layout.
+  2317 NEW lemma     zr_rightReturn_bounds            The right pass and the return home keep the zoned head in `[-1, zoneStart (ℓ + 1)]` and the scratch head between the ruler's left delimiter and the ce
+  2365 NEW def       zr_rulerTape                     The scratch tape of a constant ruler:
+  2369 NEW lemma     zr_rulerTape_word                The constant ruler word, as a delimited buffer, is the ruler tape read from its first cell rightward, and also from its last cell leftward.
+  2389 NEW def       zr_scratchAt                     Scratch holds the constant ruler of `n ≥ 1` cells, starting `c` cells left of its head.
+  2394 NEW lemma     zr_scratchAt_move                The ruler premise follows the scratch head over an unchanged scratch tape.
+  2401 NEW lemma     zr_scratchAt_word                With the ruler at the scratch head, scratch read from its head is the ruler's delimited word:
+  2409 NEW lemma     zr_scratchSkip_pre               From the ruler's first cell, its word is the skip row's premise.
+  2416 NEW def       zr_scratchSkipContract           Skip the scratch ruler from its first cell to the cell past its right delimiter.
+  2421 NEW def       zr_twoStepsContract              Two scratch steps along `dir`; the ruler premise moves with the head.
+  2435 NEW lemma     zr_twoSteps_fields               Two scratch steps move only the scratch head, by `2 dir`; they take three steps, and the scratch head stays between its two ends.
+  2476 NEW lemma     zr_leftWalk_pre                  From the ruler's last cell, its word read leftward is the adjusted walk's premise.
+  2490 NEW def       zr_leftWalkContract              The leftward adjusted walk over the scratch ruler from its last cell, indexed by the ruler length.
+  2497 NEW lemma     zr_leftWalk_fields               The leftward walk takes the ruler length plus two steps and moves both heads left by the length, scratch one cell more; the zoned head stays between i
+  2534 NEW lemma     zr_leftMove_link₁                After skipping the ruler, scratch is two cells right of the ruler's last cell.
+  2546 NEW def       zr_leftMoveContract              **The left move**:
+  2577 NEW lemma     zr_leftMove_fields               The left move takes twice the ruler length plus twelve steps and moves only the zoned head, left by the ruler length.
+  2626 NEW abbrev    zr_leftMoveRow                   The left move with its nested exit normalized, for sequencing.
+  2631 NEW lemma     zr_leftMove_pre                  The left move needs only the ruler at the scratch head.
+  2638 NEW lemma     zr_halfWrite_pre                 With the ruler at the scratch head, its word is the half-zone copy's premise.
+  2645 NEW def       zr_halfWriteContract             One half-zone copy from the scratch ruler, indexed by the ruler length.
+  2651 NEW def       zr_decEqLM                       Decidable equality of the left move's state type, given once for its seams, since the default search for it gives up.
+  2657 NEW def       zr_leftWriteContract             **The left zone writer**:
+  2694 NEW lemma     zr_leftWrite_pre                 The left zone writer needs only the ruler at the scratch head.
+  2701 NEW lemma     zr_leftWrite_fields              **The left zone writer's fields**:
+  2758 NEW def       zr_leftFields                    The left zones as fields read rightward from the outermost cell:
+  2763 NEW def       zr_leftPre                       **The left pass's precondition**, by local facts:
+  2772 NEW def       zr_leftSeekContract              Seeking the left layout's outermost cell from home, indexed by the zone data.
+  2777 NEW def       zr_leftPassContract              **The left pass**:
+  2788 NEW lemma     zr_leftPass_fields               **The left pass's fields**:
+  2862 NEW lemma     zr_leftPass_one                  **The left pass at level one** ends at cell `-8`, the outermost cell of the new left zone `[-8, -5]`:
+  2872 NEW lemma     zr_leftPass_tape                 On the nonpositive half-line the left pass realizes the extended zoned tape, from a start agreeing with the original there:
+  2899 NEW lemma     zr_rightLeft_link                **The seam into the left pass**:
+  2920 NEW lemma     zr_fieldOffset_append            Offsets in a concatenated layout:
+  2947 NEW def       zr_wholeFields                   The whole extended layout from the outermost left cell:
+  2952 NEW lemma     zr_wholeFields_tape              **The whole layout bridge**:
+  3046 NEW def       zr_finalPre                      **The final return's precondition**:
+  3056 NEW lemma     zr_finalSeek_pre                 From the outermost cell, the whole extended layout is the seek-to-end row's premise.
+  3081 NEW def       zr_finalSeekContract             Seek across the whole extended layout, from its outermost left cell to the separator past its last right zone, indexed by the original data.
+  3087 NEW def       zr_finalLoopContract             The return loop over the extended layout, carrying the ruler at the scratch head.
+  3095 NEW lemma     zr_rulerClear_pre                With the ruler at the scratch head, its word is the clear row's premise.
+  3102 NEW def       zr_rulerClearContract            Clear the scratch ruler, of length `len j` at the index `j`.
+  3108 NEW def       zr_decEqLoopPh                   Decidable equality of the return loop's phases, by cases on the phase index.
+  3113 NEW def       zr_finalContract                 **The final return**:
+  3145 NEW lemma     zr_final_fields                  **The final return's fields**:
+  3220 NEW abbrev    zr_rightReturnRow                The right pass and the return home with their nested exit normalized, for sequencing.
+  3226 NEW def       zr_decEqRR                       Decidable equality of the right pass and return home's state type, from its parts.
+  3234 NEW def       zr_rightLeftContract             **The right pass, the return home and the left pass** as one contract.
+  3242 NEW lemma     zr_rightLeft_pre                 The right pass, the return home and the left pass need exactly the original zoned input.
+  3250 NEW lemma     zr_rightLeft_post                **After the right pass, the return home and the left pass**:
+  3327 NEW lemma     zr_rightLeft_fields              The right pass, the return home and the left pass:
+  3372 NEW abbrev    zr_rightLeftRow                  The right pass, the return home and the left pass with their nested exit normalized.
+  3379 NEW def       zr_decEqRL                       Decidable equality of the right pass, the return home and the left pass's state type, from its parts.
+  3392 NEW lemma     zr_rightLeftFinal_link           **The seam into the final return**:
+  3410 NEW def       zr_extendContract                **The extension machine's run**:
+  3419 NEW lemma     zr_extend_pre                    The extension machine's run needs exactly the original zoned input.
+  3426 NEW lemma     zr_extend_fields                 **The extension machine's run, characterized**:
+  3489 NEW lemma     zr_extend_time_le                The extension machine's time is at most `135 · (2^ℓ + 1)`.
+  3499 NEW abbrev    zr_machineOf                     The machine of a contract, read off its type.
+  3504 NEW abbrev    zr_entryOf                       The entry state of a contract, read off its type.
+  3510 NEW def       zr_fintypeLoopPh                 The return loop's phases are finite, by cases on the phase index.
+  3514 NEW def       zr_slotEmpty                     The rebalance scan's slot test:
+  3520 NEW lemma     zr_verdicts_pair                 The one-cell leaf's verdict set is the pair of its verdicts.
+  3535 NEW def       zr_wordAt                        The word `w` lies at the zoned head, followed by a blank:
+  3541 NEW def       zr_wordTestContract              A stationary test of the zoned cell, with its two verdicts as exits, indexed by the word at the zoned head.
+  3550 NEW lemma     zr_wordTest_wordAt               A stationary test keeps the word at the zoned head.
+  3561 NEW def       zr_slotBranchContract            The scan's inner branch:
+  3574 NEW def       zr_blankBranchContract           The scan's outer branch:
+  3590 NEW def       zr_scanBodyContract              **The scan's body**:
+  3603 NEW abbrev    zr_scanMarked                    The scan body's endpoint after its mark:
+  3612 NEW lemma     zr_scanBody_fields               **The scan body's fields**, by the zoned cell:
+  3669 NEW abbrev    zr_scanSt                        The scan body's states:
+  3674 NEW def       zr_scanBack                      The scan's way back:
+  3682 NEW abbrev    zr_scanTM                        **The rebalance scan**:
+  3688 NEW def       zr_scanBodyRow                   The scan body with its three exits listed.
+  3697 NEW def       zr_scanPhaseContract             The scan body inside the scan host:
+  3721 NEW lemma     zr_scanBody_bounds               The scan body's zoned head stays between its start and one past the skipped zone's right delimiter; the scratch head between its start and the next ce
+  3740 NEW lemma     zr_scan_round                    **One round of the scan**:
+  3862 NEW def       zr_scanCfg                       The scan's configuration after `n` rounds:
+  3873 NEW lemma     zr_scanCfg_marked                One more mark extends the marked block by one cell.
+  3895 NEW lemma     zr_scanCfg_fields                The scan configuration's fields:
+  3905 NEW def       zr_scanWord                      The word the scan's round `r` crosses:
+  3909 NEW lemma     zr_scan_end                      Past the layout the scan's cell is blank.
+  3915 NEW lemma     zr_scanWord_at                   At the start of zone `r`, or at the cell past the layout, the scan's round word lies at the zoned head.
+  3931 NEW lemma     zr_scan_test                     The scan's tests at the start of zone `r`:
+  3949 NEW lemma     zr_scan_found                    At the scanned index, below the level count, the track-`t` slot is occupied.
+  3959 NEW lemma     zr_scan_time_sum                 The scan's round times add up to the crossed extent and nine steps per crossed zone.
+  3968 NEW def       zr_scanTau                       The scan's round time from a round's start `c`:
+  3977 NEW def       zr_scanPre                       The scan's precondition at the loop's start:
+  3983 NEW lemma     zr_scan_round_at                 The scan's round `r` from the anchor at the start of zone `r`, for `r` up to the scanned index, as one statement.
+  4016 NEW lemma     zr_scan_orbit                    The scan's orbit:
+  4067 NEW abbrev    zr_scanLoopPost                  The scan loop's endpoint:
+  4076 NEW lemma     zr_scanLoop_segment              **The scan loop's run**, as a segment against its two escapes inside the box `[zoneStart 0, zoneStart (i₀ + 1)]` for the zoned head and `[q, q + i₀ + 
+  4192 NEW def       zr_scanLoopContract              **The scan loop as a contract**:
+  4213 NEW def       zr_homeSkipContract              The scan's lead-in:
+  4226 NEW def       zr_scanContract                  **The rebalance scan** (rightward):
+  4241 NEW lemma     zr_scan_fields                   **The scan's fields**:
+  4292 NEW def       zr_scratchBackContract           Skip back over the scratch ruler of `n` cells from two cells past its last one to its first cell.
+  4304 NEW def       zr_countClearContract            **The count's clear**:
+  4329 NEW lemma     zr_countClear_fields             **The count clear's fields**:
+  4387 NEW def       zr_shortLoopContract             The short path's return home:
+  4396 NEW def       zr_shortContract                 **The short path**:
+  4408 NEW lemma     zr_short_fields                  **The short path's fields**:
+  4490 NEW lemma     zr_scanShort_pre                 **A short scan leads into the short path**:
+  4509 NEW lemma     zr_slot_track                    A track's slots on the zoned tape depend on that track's contents only.
+  4520 NEW lemma     zr_zonedTape_update              **Rewriting one track of a zoned cell**:
+  4562 NEW lemma     zr_zonedTape_inr                 Every nonblank cell of the zoned tape is a zone cell.
+  4581 NEW lemma     zr_zonedTape_update_same         Where track `t`'s new slot equals the old one, the rewritten zoned tape keeps the cell.
+  4597 NEW lemma     zr_shiftIn_tape                  **The right inward shift on the zoned tape**, its guard enabled:
+  4669 NEW lemma     zr_joinFields_append             Two nonempty layouts side by side are one layout, with one separator between them.
+  4683 NEW lemma     zr_fieldsTape_snoc               **One more field**:
+  4710 NEW lemma     zr_joinFields_mid                A layout with a marked field:
+  4733 NEW lemma     zr_joinFields_mid_offset         The marked field starts where the earlier fields end.
+  4742 NEW lemma     zr_getElem?_mid                  One list entry replaced, read at every index.
+  4753 NEW lemma     zr_fieldsTape_cut                **Cutting a field**:
+  4782 NEW def       zr_pinned                        A configuration's tapes and heads are the pinned ones.
+  4787 NEW lemma     zr_pinned_mapState_iff           Renaming the state neither makes nor breaks a pin.
+  4799 NEW lemma     zr_pinned_mapState               Renaming the state keeps a pin.
+  4805 NEW def       zr_PinStep                       **A pinned step**:
+  4818 NEW lemma     zr_PinStep_seq                   **Pinned steps compose**:
+  4853 NEW lemma     zr_pinRe_step                    **A pinned re-indexed row is a pinned step** once its endpoint, its time and its envelope from the pin are known.
+  4876 NEW lemma     zr_pinRe_ofSeg                   A re-indexed pinned step of a segment-built contract, from its fields at the pin.
+  4902 NEW lemma     zr_seekPost_pin                  A seek-family endpoint from a pin:
+  4915 NEW def       zr_pinSkipContract               A skip on tape `i`, its precondition the pin, the skipped word `w j` at the head.
+  4925 NEW lemma     zr_pinSkip_step                  The pinned skip moves only its head, past the word's right delimiter.
+  4945 NEW def       zr_pinBackContract               A backward skip on tape `i`, its precondition the pin, the word `u j` ending one blank before the head.
+  4956 NEW lemma     zr_pinBack_step                  The pinned backward skip moves only its head, to the word's first cell.
+  4977 NEW def       zr_pinCellContract               The one-cell leaf as a pinned step:
+  4983 NEW lemma     zr_pinCell_step                  The one-cell leaf's pinned endpoint:
+  5018 NEW def       zr_pinWalkContract               A rightward lockstep walk over the word `w j` at tape `src`'s head, both heads moved, as a pinned step.
+  5032 NEW lemma     zr_pinWalk_step                  The pinned walk moves both heads `|w j| + 1` cells right.
+  5050 NEW abbrev    zr_copyTapes                     The tapes after a mapped copy from `src` onto `dst` of the word `w` at the pinned heads.
+  5058 NEW def       zr_pinCopyContract               A mapped copy from `src` onto `dst` as a pinned step, the copied word `w j` at `src`.
+  5070 NEW lemma     zr_pinCopy_step                  The pinned mapped copy writes `dst`'s interval and keeps the heads.
+  5096 NEW def       zr_pinClearContract              A clear of the word `w j` at tape `i`'s head as a pinned step.
+  5106 NEW lemma     zr_pinClear_step                 The pinned clear blanks the word's interval and keeps the heads.
+  5128 NEW def       zr_rfield                        The right layout's field `m`:
+  5134 NEW def       zr_rstart                        The right layout's field `m` starts at home for `m = 0` and at zone `m - 1`'s start after.
+  5137 NEW lemma     zr_rfield_length                 Field `m` has `2^m` cells.
+  5151 NEW lemma     zr_rstart_succ                   The next field starts one separator after field `m` ends.
+  5165 NEW lemma     zr_rfield_word                   **Each field of the right layout is a delimited word** on the zoned tape.
+  5178 NEW abbrev    zr_scr                           The scratch tape with the fields `ws` laid out from one cell past the head `s`:
+  5184 NEW abbrev    zr_tapes                         The two work tapes as one family.
+  5188 NEW abbrev    zr_heads                         The two heads as one family.
+  5191 NEW abbrev    zr_enc                           A slot value as a scratch cell.
+  5194 NEW abbrev    zr_col                           Track `t`'s column of a word, as scratch cells.
+  5198 NEW lemma     zr_bufferTape_map                A mapped word's buffer is the mapped buffer.
+  5206 NEW lemma     zr_fieldsTape_end                Past its last field a layout is blank.
+  5215 NEW lemma     zr_fieldsTape_snoc'              **One more field**, for every layout (the empty one included).
+  5230 NEW lemma     zr_scr_copy                      **A copy onto blank scratch appends a field**:
+  5262 NEW lemma     zr_scr_cut                       **A blank written inside a field cuts it**:
+  5288 NEW lemma     zr_scr_split                     **A blank written inside a field splits it** at the `n`-th cell, which it removes.
+  5300 NEW lemma     zr_scr_clear                     **Clearing the last field removes it**:
+  5329 NEW lemma     zr_scr_word                      **Each field of the scratch layout is a delimited word**, the cell before the layout blank.
+  5342 NEW lemma     zr_scr_at                        **A scratch field read at its offset.**
+  5350 NEW lemma     zr_col_zone                      The donor's column:
+  5365 NEW lemma     zr_PinStep_congr                 A pinned step's endpoint pin, time and box restated by equalities and box inclusions.
+  5378 NEW lemma     zr_pin_hlink                     **The seam of a pinned chain**:
+  5392 NEW lemma     zr_PinStep_seq'                  Pinned steps in one box compose in that box.
+  5406 NEW lemma     zr_PinStep_exits                 A pinned step survives an exit-set re-wrap.
+  5420 NEW structure zr_PinSeg                        **A pinned segment**:
+  5430 NEW def       zr_seg                           A pinned segment from a pinned step:
+  5441 NEW def       zr_segSeq                        **Pinned segments compose** in one box, re-wrapped to the second one's live exit.
+  5453 NEW structure zr_Ix                            The index of one level's column move:
+  5465 NEW def       zr_inV                           A valid index for the right inward shift:
+  5472 NEW lemma     zr_inV_empty                     At a valid index the receiving zone is empty on track `t`.
+  5479 NEW abbrev    zr_hh                            The half-capacity `2^(i-1)` of the receiving zone.
+  5482 NEW abbrev    zr_cD                            The donor's track-`t` column, as scratch cells.
+  5486 NEW abbrev    zr_W1                            The receiver's new slots:
+  5490 NEW abbrev    zr_V                             The donor's new slots up to its last `2^(i-1)`:
+  5494 NEW abbrev    zr_J1                            The scratch pieces the two cuts leave behind.
+  5498 NEW abbrev    zr_J2                            The scratch pieces the two cuts leave behind.
+  5502 NEW lemma     zr_inV_lengths                   The lengths at a valid index.
+  5526 NEW lemma     zr_inV_starts                    The field starts at a valid index:
+  5551 NEW abbrev    zr_wr0                           Tape `0` after a mapped copy onto it at `a` of the word `w`.
+  5559 NEW lemma     zr_copy0                         A mapped copy onto tape `0` rewrites tape `0` only.
+  5571 NEW lemma     zr_wr0_lt                        Left of the copy's start, tape `0` is kept.
+  5579 NEW abbrev    zr_inA1                          Tape `0` after the donor's track-`t` slots are cleared.
+  5584 NEW abbrev    zr_inA2                          Tape `0` after the donor's write from offset `2^(i-1)` on.
+  5588 NEW lemma     zr_inA1_lt                       Left of the donor, the cleared tape is the zoned tape.
+  5593 NEW lemma     zr_inA2_lt                       Left of the donor, the donor-written tape is the zoned tape.
+  5598 NEW lemma     zr_slotSet_slotSet               Setting a track's slot twice keeps the second.
+  5604 NEW lemma     zr_inA3                          **The shift's tape-`0` writes**:
+  5649 NEW abbrev    zr_inZ                           Tape `0` after the shift:
+  5653 NEW lemma     zr_heads_le                      Head vectors compare by their two entries.
+  5664 NEW lemma     zr_heads_one                     The second of two heads.
+  5667 NEW lemma     zr_heads_ext                     A head vector is the pair of its two entries.
+  5678 NEW lemma     zr_rfield_at                     **A right-layout field read at its start.**
+  5685 NEW abbrev    zr_inL                           The right inward shift's head box:
+  5690 NEW abbrev    zr_inU                           The right inward shift's head box, its upper corner.
+  5694 NEW abbrev    zr_inT                           The right inward shift's tape stages:
+  5699 NEW def       zr_inSeg                         **The right inward shift at level `i`**, as one pinned segment:
+  6294 NEW def       zr_lfield                        The left layout's field `m`, read left to right:
+  6299 NEW def       zr_lstart                        The left layout's field `m` starts at the mirror of the right field `m`'s last cell.
+  6302 NEW lemma     zr_lfield_length                 Left field `m` has `2^m` cells.
+  6307 NEW lemma     zr_lstart_succ                   Left field `m` ends one separator before left field `m - 1`'s start:
+  6315 NEW lemma     zr_bufferTape_reverse            A reversed word, read at `q`, is the word read at the mirrored position.
+  6327 NEW lemma     zr_lfield_at                     **Each field of the left layout is a delimited word** on the zoned tape:
+  6342 NEW lemma     zr_shiftOut_tape                 **The left outward shift on the zoned tape**, its guard enabled:
+  6411 NEW lemma     zr_contents_ext                  Zone contents are determined by their home and their two sides' words.
+  6421 NEW lemma     zr_shiftIn_off                   **The right inward shift's guard disabled**:
+  6430 NEW lemma     zr_shiftOut_off                  **The left outward shift's guard disabled**:
+  6443 NEW def       zr_lword                         Track `t`'s left word at level `m`, empty past the layout.
+  6448 NEW def       zr_outV                          A valid index for the left outward shift:
+  6455 NEW abbrev    zr_cA                            The outer zone's track-`t` column, read left to right, as scratch cells.
+  6459 NEW abbrev    zr_cB                            The inner zone's track-`t` column, read left to right, as scratch cells.
+  6463 NEW abbrev    zr_oV                            The outer zone's new left part:
+  6467 NEW abbrev    zr_oW                            The outer zone's new right part:
+  6471 NEW abbrev    zr_oJ1                           The pieces the two cuts leave behind.
+  6475 NEW abbrev    zr_oJ2                           The pieces the two cuts leave behind.
+  6479 NEW lemma     zr_lfields                       **The left fields around level `i`**, for `1 ≤ i < ℓ`:
+  6508 NEW lemma     zr_outV_lengths                  The lengths at a valid index.
+  6522 NEW lemma     zr_outV_starts                   The field starts at a valid index:
+  6544 NEW lemma     zr_lcol                          A left zone's column, read left to right:
+  6565 NEW abbrev    zr_outO1                         Tape `0` after the outer zone's left part is written.
+  6569 NEW abbrev    zr_outO2                         Tape `0` after the outer zone's right part is written.
+  6574 NEW abbrev    zr_outZ                          Tape `0` after the shift:
+  6578 NEW lemma     zr_slotSet_self                  A zoned cell with track `t`'s slot set to its own is unchanged.
+  6588 NEW lemma     zr_outA3                         **The left outward shift's tape-`0` writes**:
+  6652 NEW abbrev    zr_outL                          The left outward shift's head box:
+  6657 NEW abbrev    zr_outU                          The left outward shift's head box, its upper corner.
+  6661 NEW abbrev    zr_outT                          The left outward shift's tape stages:
+  6667 NEW def       zr_outSeg                        **The left outward shift at level `i`**, as one pinned segment:
+  7439 NEW lemma     zr_PinStep_start                 A pinned step's start tapes restated by an equality at every valid index.
+  7449 NEW lemma     zr_scr_nil                       The empty scratch layout over a tape blank from its head on is that tape.
+  7458 NEW lemma     zr_inSeg_spec                    **The right inward shift at level `i`, its guard enabled**:
+  7474 NEW lemma     zr_outSeg_spec                   **The left outward shift at level `i`, its guards enabled**:
+  7491 NEW lemma     zr_inGuard_iff                   **The right inward guard**:
+  7502 NEW lemma     zr_outFull_iff                   **The left outward guard's first test**:
+  7520 NEW lemma     zr_outRoom_iff                   **The left outward guard's second test**:
+  7542 NEW lemma     zr_inZ_off                       With the right inward guard disabled, the shifted tape is the zoned tape.
+  7547 NEW lemma     zr_outZ_off                      With the left outward guard disabled, the shifted tape is the zoned tape.
+  7554 NEW lemma     zr_pin_blink                     **The seam of a pinned branch arm**:
+  7579 NEW lemma     zr_PinStep_branch                **A pinned branch**:
+  7647 NEW lemma     zr_PinStep_re                    A pinned step re-indexed through `f`, under a validity predicate that implies the original's at `f j`.
+  7660 NEW def       zr_segRe                         A pinned segment re-indexed through `f`, under a validity predicate that implies the original's at `f j`.
+  7671 NEW def       zr_pinTestContract               The one-cell leaf as a pinned test:
+  7681 NEW lemma     zr_pinTest_step                  The pinned test keeps the tapes and moves only its head.
+  7693 NEW lemma     zr_pinTest_state                 The pinned test's verdict is `choose` of the cell under its head.
+  7703 NEW lemma     zr_map_pair                      The image of a pair of live exits under a renaming.
+  7708 NEW lemma     zr_verdicts_inr                  The seam's image of the verdict pair.
+  7715 NEW def       zr_pinAnchorContract             The stationary anchor leaf as a pinned zero-time step.
+  7723 NEW lemma     zr_pinAnchor_step                The pinned anchor changes nothing and takes no step.
+  7730 NEW def       zr_pinPeekContract               **A pinned peek**:
+  7740 NEW lemma     zr_pinPeek_step                  The pinned peek is stationary, in three steps, its heads within one cell.
+  7768 NEW lemma     zr_pinPeek_state                 The pinned peek's verdict is `choose` of the cell `δ` from tape `i`'s head.
+  7784 NEW def       zr_seqBack                       The way back of a seam composite:
+  7790 NEW def       zr_branchBack                    The way back of a two-way branch:
+  7798 NEW def       zr_oneBack                       The way back of a single live exit `d`, to the anchor-phase verdict `v`.
+  7803 NEW lemma     zr_seqBack_hX                    A seam composite's exits are its way back's domain when the second machine's are.
+  7819 NEW lemma     zr_branchBack_hX                 A branch's exits are its way back's domain when the arms' are.
+  7844 NEW lemma     zr_oneBack_hX                    A single live exit is its way back's domain.
+  7857 NEW lemma     zr_popBack_hX                    A pop round's exits are its way back's domain when its guarded arm's are.
+  7865 NEW def       zr_BackIs                        **Every exit returns `w`**:
+  7872 NEW lemma     zr_BackIs_one                    A single live exit returns its verdict.
+  7879 NEW lemma     zr_BackIs_seq                    A seam composite returns what its second machine returns.
+  7898 NEW lemma     zr_BackIs_branch                 **A pinned branch returns the selected arm's verdict.**
+  7950 NEW lemma     zr_none_not_mem_image            No exit set built from live exits contains the halted state.
+  7957 NEW lemma     zr_second_isNone                 A field of a doubling layout reads blank one cell in exactly when it is the home.
+  7968 NEW lemma     zr_rhome_iff                     **The home test on the right layout**:
+  7976 NEW lemma     zr_lhome_iff                     **The home test on the left layout**, the same at left field `n`'s outermost cell.
+  7983 NEW lemma     zr_rstart_mono                   The right layout's field starts increase.
+  7990 NEW lemma     zr_shiftIn_zero                  The level-zero inward shift is the identity.
+  7998 NEW lemma     zr_shiftOut_zero                 The level-zero outward shift is the identity.
+  8005 NEW abbrev    zr_hostCfg                       A loop host's configuration at the anchor-phase state `v`, pinned at `(T, p)`, with `c`'s input head and output.
+  8013 NEW lemma     zr_pinRound                      **One round of a pinned loop**:
+  8085 NEW lemma     zr_pinLoop                       **A pinned loop**:
+  8150 NEW def       zr_anchBranch                    **An anchor branch**:
+  8165 NEW lemma     zr_anchBranch_step               The anchor branch is a pinned step to the arm's endpoint pin, which the anchor already meets at the indices it selects.
+  8184 NEW lemma     zr_anchBranch_back               The anchor branch returns `u` at the anchor and the arm's verdict otherwise.
+  8199 NEW lemma     zr_verdict_ite                   A test's verdict state as a selection between its two verdicts.
+  8204 NEW lemma     zr_peekNe                        The peek's two verdict states are distinct.
+  8209 NEW lemma     zr_peek_verdict                  A pinned peek's verdict selects the branch `v` reads off the peeked cell.
+  8220 NEW def       zr_peekBranch                    **A peek branch**:
+  8232 NEW lemma     zr_peekBranch_step               A peek branch is a pinned step to the arm's endpoint pin, which the anchor meets at the indices it selects.
+  8248 NEW lemma     zr_peekBranch_back               A peek branch returns `u` at the anchor and the arm's verdict otherwise.
+  8262 NEW lemma     zr_tapes_write                   Writing scratch's cell `r` in a two-tape family writes its second tape.
+  8270 NEW lemma     zr_heads_set1                    Moving scratch's head in a head pair.
+  8275 NEW lemma     zr_heads_set0                    Moving the zoned head in a head pair.
+  8280 NEW lemma     zr_slotEmpty_iff                 The slot test on a cell that is not blank reads its slot.
+  8287 NEW lemma     zr_field_isSome                  A field of `2^i` cells, read from its first cell, is not blank there.
+  8298 NEW lemma     zr_rstart_isSome                 A right field's first cell is not blank.
+  8303 NEW abbrev    zr_stOf                          The state type of a contract's machine, read off its type.
+  8308 NEW abbrev    zr_exitOf                        The live exit of a single-exit contract, read off its type.
+  8313 NEW abbrev    zr_exitsOf                       The exit set of a contract, read off its type.
+  8318 NEW lemma     zr_BackIs_congr                  A return verdict restated pointwise.
+  8326 NEW lemma     zr_none_not_mem_single           A single live exit is not the halted state.
+  8330 NEW lemma     zr_none_not_mem_union            A union of exit sets without the halted state has none.
+  8335 NEW lemma     zr_none_arm                      A two-way exit set whose first arm is a single exit has no halted state when its second arm has none:
+  8342 NEW lemma     zr_none_one                      Two single exits, the anchor's and an arm's.
+  8347 NEW lemma     zr_none_dn                       A seam into a two-way exit set:
+  8353 NEW lemma     zr_none_up                       A single exit and a seam's arm:
+  8359 NEW structure zr_Px                            **A pass index**:
+  8373 NEW def       zr_stk                           The count stack:
+  8378 NEW abbrev    zr_pσ                            A pass index's scratch tape.
+  8381 NEW abbrev    zr_pT                            A pass's anchor tapes:
+  8385 NEW def       zr_pxV                           A pass's validity:
+  8390 NEW lemma     zr_stk_blank                     The count stack is blank from its top on.
+  8397 NEW lemma     zr_stk_push                      **A push**:
+  8408 NEW lemma     zr_stk_pop                       **A pop**:
+  8420 NEW lemma     zr_stk_top                       The cell below the stack's top:
+  8428 NEW abbrev    zr_pxNxt                         **A pass's next index**:
+  8434 NEW abbrev    zr_pxFold                        Track `t` after `m` rounds of a pass.
+  8439 NEW lemma     zr_px_iter                       **A pass after `m` rounds**:
+  8470 NEW lemma     zr_iterate_step                  Stepping down and up `m` times.
+  8479 NEW lemma     zr_iterate_pred                  Stepping down `m` times.
+  8483 NEW lemma     zr_iterate_succ                  Stepping up `m` times.
+  8487 NEW def       zr_passContract                  **A pass as a contract on its loop**:
+  8519 NEW lemma     zr_pass_step                     **A pass is a pinned step**:
+  8551 NEW def       zr_passSeg                       **A pass as a pinned segment**:
+  8570 NEW abbrev    zr_aT                            A shift index's tapes:
+  8574 NEW abbrev    zr_rA                            A right shift index's heads:
+  8577 NEW def       zr_shPre                         What every caller of a level move supplies:
+  8582 NEW abbrev    zr_inOff                         The right inward shift's guard verdict at `J`:
+  8587 NEW lemma     zr_inOff_valid                   With the guard on, the right inward shift's index is valid.
+  8598 NEW lemma     zr_inOff_esc                     With the guard off, the shifted tape is the zoned tape.
+  8611 NEW lemma     zr_inTest_step                   The right inward shift's guard test, stationary at the receiver's start, in the shift's box.
+  8638 NEW def       zr_grdIn                         **The guarded right inward shift** over the shift index `g j`:
+  8649 NEW lemma     zr_grdIn_step                    The guarded right inward shift ends at the shifted tape either way.
+  8666 NEW abbrev    zr_brBack                        The way back of a branch from the one-cell leaf's verdict pair to a single-exit arm:
+  8672 NEW def       zr_grdInBack                     The guarded right inward shift's way back, both exits to the anchor.
+  8678 NEW lemma     zr_grdIn_back                    The guarded right inward shift returns to the anchor.
+  8685 NEW lemma     zr_grdIn_hX                      The guarded right inward shift's exits are its way back's domain.
+  8691 NEW lemma     zr_grdIn_none                    The guarded right inward shift never halts.
+  8697 NEW abbrev    zr_rH                            A right pass's anchor heads:
+  8700 NEW abbrev    zr_p1G                           The descending right pass's shift index:
+  8704 NEW abbrev    zr_dnF                           A descending pass's unconditional next index:
+  8710 NEW abbrev    zr_p1Nxt                         **The descending right pass's next index**:
+  8715 NEW def       zr_p1V                           The descending right pass's validity:
+  8718 NEW abbrev    zr_p1L                           The descending right pass's round box, its lower corner.
+  8722 NEW abbrev    zr_p1U                           The descending right pass's round box, its upper corner:
+  8728 NEW lemma     zr_p1_facts                      The layout facts behind the descending right pass's round box.
+  8738 NEW def       zr_p1Lead                        The descending right pass's lead:
+  8796 NEW lemma     zr_home_eq                       **A home test** one cell past a field's start, the field read through `st` (the right or the left layout):
+  8805 NEW abbrev    zr_dnHome                        A descending pass's home test verdict, one cell past the field start `A` reads.
+  8809 NEW abbrev    zr_p1Home                        The descending right pass's home test verdict, one cell after field `P.i - 1`'s start.
+  8812 NEW abbrev    zr_p1On                          The descending right pass's guard:
+  8815 NEW lemma     zr_p1Home_eq                     The home test's verdict is whether field `P.i - 1` is the home.
+  8820 NEW lemma     zr_p1Peek_step                   The descending right pass's home test, a peek one cell right, in the round box.
+  8843 NEW lemma     zr_dnG_pre                       Past the home, a descending pass's shift index meets the shift's requirements.
+  8855 NEW lemma     zr_p1G_pre                       Past the home, the descending right pass's shift index meets the shift's requirements.
+  8860 NEW lemma     zr_p1Grd_step                    The descending right pass's guarded shift, in the round box.
+  8883 NEW def       zr_p1Br                          **The descending right pass's branch**:
+  8888 NEW lemma     zr_p1Br_step                     The descending right pass's branch is a pinned step to the next index's anchor pin.
+  8909 NEW def       zr_p1Body                        **The descending right pass's round body**:
+  8915 NEW abbrev    zr_p1Tau                         The descending right pass's round time.
+  8921 NEW lemma     zr_p1Body_step                   **The descending right pass's round** is a pinned step from the anchor to the next index's anchor.
+  8928 NEW def       zr_p1Back                        The descending right pass's way back:
+  8934 NEW lemma     zr_p1Body_back                   The descending right pass's round escapes exactly at the home.
+  8940 NEW lemma     zr_p1Body_hX                     The descending right pass's round's exits are its way back's domain.
+  8946 NEW lemma     zr_p1Body_none                   The descending right pass's round never halts.
+  8951 NEW lemma     zr_dn_iter                       A descending pass after `m` rounds:
+  8960 NEW lemma     zr_dn_valid                      A descending pass stays valid before its home round.
+  8970 NEW lemma     zr_p1_home                       Round `m` of the descending right pass is at the home exactly when it is the last.
+  8976 NEW lemma     zr_p1_next_valid                 A round that is not at the home leaves a valid index.
+  8983 NEW abbrev    zr_p1Lo                          The descending right pass's head box:
+  8987 NEW abbrev    zr_p1Hi                          The descending right pass's head box, its upper corner:
+  8992 NEW lemma     zr_p1_round_box                  Each round's box lies in the pass's box.
+  9033 NEW lemma     zr_p1_anchor_box                 An anchor lies in its round's box.
+  9045 NEW def       zr_p1Pass                        **The descending right pass**, as a pinned segment on its loop:
+  9074 NEW lemma     zr_prLen                         The room probe's facts at a valid index:
+  9089 NEW abbrev    zr_prL                           The room probe's head box:
+  9094 NEW abbrev    zr_prU                           The room probe's head box, its upper corner.
+  9097 NEW def       zr_prSeg                         **The room probe**:
+  9248 NEW def       zr_retSeg                        **The probe's return**:
+  9335 NEW abbrev    zr_prT                           The room probe's tapes at its end:
+  9339 NEW abbrev    zr_prH                           The room probe's heads at its end:
+  9344 NEW abbrev    zr_lA                            A left shift index's heads:
+  9347 NEW lemma     zr_prSeg_spec                    **The room probe**, its time in closed form.
+  9358 NEW lemma     zr_retSeg_spec                   **The probe's return**, its time in closed form.
+  9369 NEW lemma     zr_lstart_isSome                 A left field's outermost cell is not blank.
+  9374 NEW abbrev    zr_out1Off                       The left outward shift's first guard verdict at `J`:
+  9379 NEW abbrev    zr_out2Off                       The left outward shift's second guard verdict at `J`:
+  9384 NEW lemma     zr_out1Off_iff                   The first verdict reads whether the inner zone is full.
+  9393 NEW lemma     zr_out2Off_iff                   The second verdict reads whether the outer zone has room.
+  9413 NEW lemma     zr_outOn_valid                   With both guards on, the left outward shift's index is valid.
+  9423 NEW abbrev    zr_goL                           The guarded left outward shift's head box:
+  9427 NEW abbrev    zr_goU                           The guarded left outward shift's head box, its upper corner.
+  9431 NEW lemma     zr_go_anchor                     A left shift index's anchor lies in the guarded shift's box.
+  9441 NEW lemma     zr_out1Test_step                 The left outward shift's first guard test, stationary at the inner zone's outermost cell, in the guarded shift's box.
+  9458 NEW lemma     zr_out2Test_step                 The left outward shift's second guard test, stationary on the room cell, in the guarded shift's box.
+  9484 NEW lemma     zr_outOff_esc                    The guard off leaves the zoned tape unchanged.
+  9496 NEW lemma     zr_go_widen                      A room-probe half, re-indexed through `g`, in the guarded outward shift's box.
+  9508 NEW lemma     zr_goProbe_step                  The room probe, re-indexed, in the guarded shift's box.
+  9519 NEW abbrev    zr_goRet                         The room probe's return, re-indexed at the indices `V'` selects.
+  9526 NEW lemma     zr_goRet_step                    The probe's return, re-indexed, in the guarded shift's box.
+  9534 NEW abbrev    zr_goShift                       The left outward shift, re-indexed at the indices whose guards are on.
+  9543 NEW lemma     zr_goShift_step                  The left outward shift, re-indexed, in the guarded shift's box.
+  9556 NEW abbrev    zr_goOn                          With room, return and shift.
+  9563 NEW def       zr_goRoom                        The room branch:
+  9584 NEW lemma     zr_goRoom_step                   The room branch ends at the shifted tape either way.
+  9604 NEW abbrev    zr_goFull                        The inner zone full:
+  9614 NEW def       zr_grdOut                        **The guarded left outward shift** over the shift index `g j`:
+  9625 NEW lemma     zr_grdOut_step                   The guarded left outward shift ends at the shifted tape whichever guard fails.
+  9637 NEW lemma     zr_goRoom_back                   The room branch returns to the anchor.
+  9651 NEW def       zr_grdOutBack                    The guarded left outward shift's way back, every exit to the anchor.
+  9662 NEW lemma     zr_grdOut_back                   The guarded left outward shift returns to the anchor.
+  9669 NEW lemma     zr_grdOut_hX                     The guarded left outward shift's exits are its way back's domain.
+  9676 NEW lemma     zr_grdOut_none                   The guarded left outward shift never halts.
+  9682 NEW lemma     zr_lstart_anti                   The left layout's field starts decrease outward.
+  9689 NEW abbrev    zr_popE                          The count stack's pop test verdict, the cell below the top:
+  9694 NEW lemma     zr_popE_eq                       Over a base blank just below the stack, the pop test reads emptiness.
+  9706 NEW abbrev    zr_popT                          The stack after a pop.
+  9710 NEW def       zr_popSeg                        **A pop**:
+  9764 NEW abbrev    zr_cNxt                          **A conditional pass's next index**:
+  9769 NEW lemma     zr_cNxt_iter                     Before a conditional pass stops, its rounds are its unconditional rounds.
+  9780 NEW abbrev    zr_ldL                           The left outward lead's box, its lower corner.
+  9784 NEW abbrev    zr_ldU                           The left outward lead's box, its upper corner.
+  9787 NEW def       zr_ldLead                        **The left outward lead**:
+  9823 NEW abbrev    zr_lH                            A left pass's anchor heads:
+  9826 NEW def       zr_popV                          A pop pass's validity:
+  9831 NEW abbrev    zr_woV                           The walk out's validity:
+  9834 NEW abbrev    zr_woNxt                         **The walk out's next index**:
+  9839 NEW abbrev    zr_woRun                         The walk out's run with marks left:
+  9843 NEW abbrev    zr_woL                           The walk out's round box, its lower corner:
+  9847 NEW abbrev    zr_woU                           The walk out's round box, its upper corner.
+  9850 NEW lemma     zr_wo_lead                       With marks left, the walk out's index meets the lead's requirements.
+  9858 NEW def       zr_peekRound                     **A peek round**:
+  9880 NEW lemma     zr_peekRound_step                A peek round is a pinned step to the arm's endpoint pin, which the anchor meets on the verdict.
+  9899 NEW lemma     zr_peekRound_back                A peek round escapes exactly on the verdict.
+  9915 NEW def       zr_popRound                      **A pop round**:
+  9927 NEW lemma     zr_popRound_step                 A pop round is a pinned step to the arm's endpoint pin, which an empty stack meets.
+  9942 NEW lemma     zr_popEsc                        At an empty stack a pop pass's next index is the index itself.
+  9952 NEW lemma     zr_homeEsc                       At the home a return's next index is the index itself.
+  9960 NEW lemma     zr_popRound_back                 A pop round escapes exactly on an empty stack.
+  9975 NEW lemma     zr_woLead_step                   The walk out's lead, from the anchor to the next index's anchor, in the round box.
+ 10005 NEW def       zr_woBody                        **The walk out's round body**:
+ 10017 NEW lemma     zr_wo_anchor                     An anchor lies in the walk out's round box.
+ 10028 NEW abbrev    zr_woTau                         The walk out's round time.
+ 10032 NEW lemma     zr_woBody_step                   **The walk out's round** is a pinned step from the anchor to the next index's anchor.
+ 10044 NEW def       zr_woBack                        The walk out's way back:
+ 10051 NEW lemma     zr_woBody_back                   The walk out's round escapes exactly on an empty stack.
+ 10056 NEW lemma     zr_woBody_hX                     The walk out's round's exits are its way back's domain.
+ 10061 NEW lemma     zr_woBody_none                   The walk out's round never halts.
+ 10066 NEW abbrev    zr_popF                          A pop pass's unconditional next index:
+ 10072 NEW lemma     zr_pop_iter                      **A pop pass after `m` rounds**, while marks remain:
+ 10091 NEW lemma     zr_pop_valid                     A pop pass stays valid while marks remain.
+ 10107 NEW lemma     zr_pop_pop                       Round `m` of a pop pass finds the stack empty exactly when all marks are popped.
+ 10116 NEW lemma     zr_pop_next_valid                A round with marks left leaves a valid index.
+ 10127 NEW abbrev    zr_woLo                          The walk out's head box:
+ 10132 NEW abbrev    zr_woHi                          The walk out's head box, its upper corner.
+ 10135 NEW lemma     zr_wo_round_box                  Each round's box lies in the walk out's box.
+ 10173 NEW def       zr_woPass                        **The walk out**, as a pinned segment on its loop:
+ 10202 NEW abbrev    zr_popG                          A pop pass's shift index:
+ 10206 NEW abbrev    zr_upV                           An ascending pass's validity:
+ 10209 NEW abbrev    zr_p4Nxt                         **The ascending left pass's next index**:
+ 10214 NEW lemma     zr_up_lead                       With marks left, an ascending pass's index meets its lead's requirements.
+ 10219 NEW abbrev    zr_upOn                          The ascending passes' guard:
+ 10222 NEW lemma     zr_popG_pre                      With marks left, a pop pass's shift index meets the shift's requirements.
+ 10233 NEW abbrev    zr_p4L                           The ascending left pass's round box, its lower corner:
+ 10238 NEW abbrev    zr_p4U                           The ascending left pass's round box, its upper corner.
+ 10243 NEW abbrev    zr_p4Arm                         The ascending left pass's arm:
+ 10251 NEW lemma     zr_p4Arm_step                    The ascending left pass's arm, from the anchor to the next index's anchor, in the round box.
+ 10304 NEW def       zr_p4Body                        **The ascending left pass's round body**:
+ 10324 NEW lemma     zr_lstart_pow_anti               A left field's outermost cell plus its length decreases outward.
+ 10331 NEW lemma     zr_p4_anchor                     An anchor lies in the ascending left pass's round box.
+ 10346 NEW abbrev    zr_p4Tau                         The ascending left pass's round time.
+ 10354 NEW lemma     zr_p4Body_step                   **The ascending left pass's round** is a pinned step from the anchor to the next index's anchor.
+ 10362 NEW def       zr_p4Back                        The ascending left pass's way back:
+ 10368 NEW lemma     zr_p4Body_back                   The ascending left pass's round escapes exactly on an empty stack.
+ 10373 NEW lemma     zr_p4Body_hX                     The ascending left pass's round's exits are its way back's domain.
+ 10378 NEW lemma     zr_p4Body_none                   The ascending left pass's round never halts.
+ 10383 NEW abbrev    zr_p4Lo                          The ascending left pass's head box:
+ 10388 NEW abbrev    zr_p4Hi                          The ascending left pass's head box, its upper corner.
+ 10393 NEW lemma     zr_p4_round_box                  Each round's box lies in the ascending left pass's box.
+ 10444 NEW def       zr_p4Pass                        **The ascending left pass**, as a pinned segment on its loop:
+ 10471 NEW abbrev    zr_reL                           The right outward lead's box, its lower corner.
+ 10474 NEW abbrev    zr_reU                           The right outward lead's box, its upper corner.
+ 10477 NEW def       zr_reLead                        **The right outward lead**:
+ 10506 NEW abbrev    zr_p3Nxt                         **The ascending right pass's next index**:
+ 10511 NEW abbrev    zr_p3L                           The ascending right pass's round box, its lower corner.
+ 10514 NEW abbrev    zr_p3U                           The ascending right pass's round box, its upper corner:
+ 10520 NEW abbrev    zr_p3Arm                         The ascending right pass's arm:
+ 10528 NEW lemma     zr_p3Arm_step                    The ascending right pass's arm, from the anchor to the next index's anchor, in the round box.
+ 10574 NEW def       zr_p3Body                        **The ascending right pass's round body**:
+ 10595 NEW lemma     zr_p3_anchor                     An anchor lies in the ascending right pass's round box.
+ 10611 NEW abbrev    zr_p3Tau                         The ascending right pass's round time.
+ 10617 NEW lemma     zr_p3Body_step                   **The ascending right pass's round** is a pinned step from the anchor to the next index's anchor.
+ 10625 NEW def       zr_p3Back                        The ascending right pass's way back:
+ 10631 NEW lemma     zr_p3Body_back                   The ascending right pass's round escapes exactly on an empty stack.
+ 10636 NEW lemma     zr_p3Body_hX                     The ascending right pass's round's exits are its way back's domain.
+ 10641 NEW lemma     zr_p3Body_none                   The ascending right pass's round never halts.
+ 10646 NEW abbrev    zr_p3Lo                          The ascending right pass's head box:
+ 10650 NEW abbrev    zr_p3Hi                          The ascending right pass's head box, its upper corner.
+ 10657 NEW lemma     zr_p3_round_box                  Each round's box lies in the ascending right pass's box.
+ 10717 NEW def       zr_p3Pass                        **The ascending right pass**, as a pinned segment on its loop:
+ 10744 NEW lemma     zr_lstart_zero                   The left layout's home is at cell `0`.
+ 10749 NEW abbrev    zr_p2L                           The descending left pass's round box, its lower corner.
+ 10752 NEW abbrev    zr_p2U                           The descending left pass's round box, its upper corner.
+ 10756 NEW lemma     zr_p2_facts                      The layout facts behind the descending left pass's round box.
+ 10767 NEW def       zr_lsSeg                         **The left inward skip**:
+ 10793 NEW def       zr_p2Lead                        The descending left pass's lead:
+ 10830 NEW abbrev    zr_p2Home                        The descending left pass's home test verdict, one cell after left field `P.i - 1`'s outermost cell.
+ 10834 NEW abbrev    zr_p2On                          The descending left pass's guard:
+ 10837 NEW lemma     zr_p2Home_eq                     The home test's verdict is whether left field `P.i - 1` is the home.
+ 10842 NEW abbrev    zr_p2Nxt                         **The descending left pass's next index**:
+ 10847 NEW lemma     zr_p2G_pre                       Past the home, the descending left pass's shift index meets the shift's requirements.
+ 10852 NEW lemma     zr_p2Grd_step                    The descending left pass's guarded shift, in the round box.
+ 10874 NEW lemma     zr_p2Peek_step                   The descending left pass's home test, a peek one cell right, in the round box.
+ 10896 NEW def       zr_p2Br                          **The descending left pass's branch**:
+ 10901 NEW lemma     zr_p2Br_step                     The descending left pass's branch is a pinned step to the next index's anchor pin.
+ 10923 NEW def       zr_p2Body                        **The descending left pass's round body**:
+ 10929 NEW abbrev    zr_p2Tau                         The descending left pass's round time.
+ 10938 NEW lemma     zr_p2Body_step                   **The descending left pass's round** is a pinned step from the anchor to the next index's anchor.
+ 10946 NEW def       zr_p2Back                        The descending left pass's way back:
+ 10952 NEW lemma     zr_p2Body_back                   The descending left pass's round escapes exactly at the home.
+ 10958 NEW lemma     zr_p2Body_hX                     The descending left pass's round's exits are its way back's domain.
+ 10964 NEW lemma     zr_p2Body_none                   The descending left pass's round never halts.
+ 10969 NEW lemma     zr_p2_home                       Round `m` of the descending left pass is at the home exactly when it is the last.
+ 10974 NEW abbrev    zr_p2Lo                          The descending left pass's head box:
+ 10978 NEW abbrev    zr_p2Hi                          The descending left pass's head box, its upper corner.
+ 10982 NEW lemma     zr_p2_round_box                  Each round's box lies in the descending left pass's box.
+ 11009 NEW lemma     zr_p2_anchor                     An anchor lies in the descending left pass's round box.
+ 11019 NEW def       zr_p2Pass                        **The descending left pass**, as a pinned segment on its loop:
+ 11051 NEW abbrev    zr_rbHome                        The right return's home verdict, one cell after the anchor's field start.
+ 11055 NEW lemma     zr_rbHome_eq                     The right return's verdict is whether the anchor is the home.
+ 11060 NEW lemma     zr_rb_lead                       Away from the home, a right return's index meets the descending lead's requirements.
+ 11067 NEW abbrev    zr_rbNxt                         **The right return's next index**:
+ 11072 NEW abbrev    zr_rbL                           The right return's round box, its lower corner.
+ 11076 NEW abbrev    zr_rbU                           The right return's round box, its upper corner.
+ 11081 NEW lemma     zr_rbArm_step                    The right return's arm:
+ 11111 NEW def       zr_rbBody                        **The right return's round body**:
+ 11131 NEW abbrev    zr_rbTau                         The right return's round time.
+ 11135 NEW lemma     zr_rbBody_step                   **The right return's round** is a pinned step from the anchor to the next index's anchor.
+ 11144 NEW def       zr_rbBack                        The right return's way back:
+ 11149 NEW lemma     zr_rbBody_back                   The right return's round escapes exactly at the home.
+ 11154 NEW lemma     zr_rbBody_hX                     The right return's round's exits are its way back's domain.
+ 11159 NEW lemma     zr_rbBody_none                   The right return's round never halts.
+ 11164 NEW lemma     zr_rb_iter                       Before the home, the right return's rounds are the descending ones.
+ 11171 NEW lemma     zr_rb_valid                      The right return stays valid.
+ 11180 NEW lemma     zr_rb_home                       Round `m` of the right return is at the home exactly when it is the last.
+ 11185 NEW abbrev    zr_rbLo                          The right return's head box:
+ 11189 NEW abbrev    zr_rbHi                          The right return's head box, its upper corner.
+ 11194 NEW lemma     zr_rb_round_box                  Each round's box lies in the right return's box.
+ 11246 NEW lemma     zr_rb_anchor                     An anchor lies in the right return's round box.
+ 11262 NEW def       zr_rbPass                        **The right return**, as a pinned segment on its loop:
+ 11290 NEW abbrev    zr_lbHome                        The left return's home verdict, one cell after the anchor's outermost cell.
+ 11294 NEW lemma     zr_lbHome_eq                     The left return's verdict is whether the anchor is the home.
+ 11299 NEW lemma     zr_lb_lead                       Away from the home, a left return's index meets the inward skip's requirements.
+ 11306 NEW abbrev    zr_lbNxt                         **The left return's next index**:
+ 11310 NEW abbrev    zr_lbL                           The left return's round box, its lower corner.
+ 11313 NEW abbrev    zr_lbU                           The left return's round box, its upper corner.
+ 11317 NEW lemma     zr_lbArm_step                    The left return's arm:
+ 11347 NEW def       zr_lbBody                        **The left return's round body**:
+ 11359 NEW abbrev    zr_lbTau                         The left return's round time.
+ 11363 NEW lemma     zr_lbBody_step                   **The left return's round** is a pinned step from the anchor to the next index's anchor.
+ 11371 NEW def       zr_lbBack                        The left return's way back:
+ 11378 NEW lemma     zr_lbBody_back                   The left return's round escapes exactly at the home.
+ 11383 NEW lemma     zr_lbBody_hX                     The left return's round's exits are its way back's domain.
+ 11388 NEW lemma     zr_lbBody_none                   The left return's round never halts.
+ 11393 NEW lemma     zr_lb_iter                       The left return after `m` rounds before the home:
+ 11408 NEW lemma     zr_lb_home                       Round `m` of the left return is at the home exactly when it is the last.
+ 11417 NEW abbrev    zr_lbLo                          The left return's head box:
+ 11421 NEW abbrev    zr_lbHi                          The left return's head box, its upper corner.
+ 11424 NEW lemma     zr_lb_round_box                  Each round's box lies in the left return's box.
+ 11440 NEW lemma     zr_lb_anchor                     An anchor lies in the left return's round box.
+ 11450 NEW def       zr_lbPass                        **The left return**, as a pinned segment on its loop:
+ 11487 NEW def       zr_hmV                           **The home move's validity**:
+ 11490 NEW abbrev    zr_hmCL                          Left zone `0`'s track-`t` column, as scratch cells.
+ 11494 NEW abbrev    zr_hmB                           Left zone `0`'s inner slot, as a scratch cell.
+ 11497 NEW abbrev    zr_hmH                           The home's track-`t` slot, as a scratch cell.
+ 11501 NEW abbrev    zr_hmR                           Right zone `0`'s track-`t` column, as scratch cells.
+ 11505 NEW abbrev    zr_hmE                           Right zone `0`'s outer slot, as a scratch cell.
+ 11508 NEW abbrev    zr_hmC                           Right zone `0`'s inner slot, as a scratch cell.
+ 11511 NEW lemma     zr_hmLen                         The home move's layout facts:
+ 11535 NEW abbrev    zr_hmL                           The home move's head box:
+ 11539 NEW abbrev    zr_hmU                           The home move's head box, its upper corner.
+ 11542 NEW abbrev    zr_hmT                           The home move's tape stages:
+ 11547 NEW abbrev    zr_hmA1                          Tape `0` after the new home's write:
+ 11553 NEW abbrev    zr_hmA2                          Tape `0` after right zone `0`'s first slot is set to its second.
+ 11557 NEW abbrev    zr_hmA3                          Tape `0` after right zone `0`'s second slot is cleared.
+ 11561 NEW abbrev    zr_hmA4                          Tape `0` after left zone `0`'s first slot is set to the old home.
+ 11565 NEW abbrev    zr_hmZ                           Tape `0` after the home move:
+ 11569 NEW lemma     zr_scr_nilLast                   An empty last field of a scratch layout is no field.
+ 11577 NEW lemma     zr_scr_splitLast                 **A blank written on a field's last cell shortens it**, the last field of the layout.
+ 11588 NEW def       zr_hmGat                         **The home move's gather**:
+ 11870 NEW def       zr_hmSc1                         **The home move's first scatter**:
+ 12069 NEW def       zr_hmSc2                         **The home move's second scatter**:
+ 12355 NEW def       zr_hmSeg                         **The home move's column operation**, as one pinned segment:
+ 12364 NEW lemma     zr_hmSeg_spec                    The home move's column operation, from left zone `0`'s outer cell back to the home in `146` steps.
+ 12375 NEW lemma     zr_hm_pos                        The home move's slot positions:
+ 12383 NEW lemma     zr_enc_of_slot                   A cell of the zoned tape whose track-`t` slot is `v` gives the scratch cell of `v`.
+ 12393 NEW lemma     zr_hm_cells                      The home move's scratch cells:
+ 12432 NEW lemma     zr_hmZ_eq                        **The home move on the zoned tape**, its guard enabled:
+ 12518 NEW lemma     zr_hm_off                        With the guard off, left zone `0` full, the home move is the identity.
+ 12533 NEW def       zr_joinContract                  **A joined body**:
+ 12556 NEW lemma     zr_join_step                     A joined body is a pinned step when the body is, one dispatch step longer.
+ 12586 NEW abbrev    zr_hmNxt                         **The home move's next index**:
+ 12590 NEW abbrev    zr_hmOff                         The home move's guard verdict:
+ 12595 NEW lemma     zr_hmOff_iff                     The guard verdict read on the zoned tape.
+ 12604 NEW def       zr_hmLead                        The home move's lead:
+ 12613 NEW lemma     zr_hmLead_step                   The home move's lead is a pinned step from the home to left zone `0`'s outer cell.
+ 12631 NEW lemma     zr_hmTest_step                   The home move's guard test, stationary at left zone `0`'s outer cell.
+ 12647 NEW def       zr_hmSkip                        The home move's off arm:
+ 12656 NEW lemma     zr_hmSkip_step                   With the guard off, the skip back is the home move's pinned step.
+ 12680 NEW lemma     zr_hmArm_step                    With the guard on, the column operation is the home move's pinned step.
+ 12700 NEW def       zr_hmBr                          **The guarded home move**:
+ 12714 NEW lemma     zr_hmBr_step                     The guarded home move is a pinned step to the moved index.
+ 12724 NEW def       zr_hmBody                        The home move's body:
+ 12729 NEW lemma     zr_hmBody_step                   The home move's body is a pinned step from the home to the moved index's home.
+ 12736 NEW def       zr_hmBack                        The home move's way back:
+ 12742 NEW lemma     zr_hmBody_hX                     The home move's exits are its way back's domain.
+ 12747 NEW lemma     zr_hmBody_none                   The home move never halts.
+ 12752 NEW lemma     zr_hmBack_true                   Every return of the home move's way back is the escape.
+ 12767 NEW def       zr_hmContract                    **The home move**, as a contract with one exit:
+ 12775 NEW lemma     zr_hmContract_step               **The home move's pinned step**:
+ 12785 NEW lemma     zr_fold_desc                     A descending pass's levels, read off its rounds, are the cascade's descending levels:
+ 12805 NEW lemma     zr_fold_asc                      An ascending pass's levels, read off its rounds, are the cascade's ascending levels.
+ 12814 NEW lemma     zr_Px_ext                        Pass indices agree when their fields do.
+ 12823 NEW def       zr_fpV                           **The found path's start**:
+ 12828 NEW abbrev    zr_fpC                           A found-path stage:
+ 12833 NEW abbrev    zr_fpZ1                          Track `t` after the descending right pass:
+ 12837 NEW abbrev    zr_fpZ2                          Track `t` after the descending left pass:
+ 12841 NEW abbrev    zr_fpZ3                          Track `t` after the home move.
+ 12845 NEW abbrev    zr_fpZ4                          Track `t` after the ascending right pass:
+ 12849 NEW abbrev    zr_fpZ5                          Track `t` after the ascending left pass:
+ 12853 NEW lemma     zr_pxFold_id                     A pass whose rounds keep every track ends at the start's data.
+ 12861 NEW lemma     zr_dnPass_end                    **A descending pass's end**:
+ 12887 NEW lemma     zr_fp1                           **The descending right pass ends at stage one**:
+ 12895 NEW lemma     zr_popPass_end                   A pop pass ends, one stopping round after its marks run out, where its pops leave it.
+ 12905 NEW lemma     zr_homePass_end                  A pass that stops at the home ends, one stopping round after its fields run out, where its rounds leave it.
+ 12913 NEW abbrev    zr_fpS1                          The found path's stage after the descending right pass.
+ 12917 NEW abbrev    zr_fpS2                          The found path's stage after the walk out:
+ 12921 NEW abbrev    zr_fpS3                          The found path's stage after the descending left pass.
+ 12925 NEW abbrev    zr_fpS4                          The found path's stage after the home move.
+ 12929 NEW abbrev    zr_fpS5                          The found path's stage after one mark popped.
+ 12933 NEW abbrev    zr_fpS6                          The found path's stage after the ascending right pass.
+ 12937 NEW abbrev    zr_fpS7                          The found path's stage after the right return.
+ 12941 NEW abbrev    zr_fpS8                          The found path's stage after the ascending left pass.
+ 12945 NEW abbrev    zr_fpS9                          The found path's stage after the left return.
+ 12949 NEW lemma     zr_fp2                           **The walk out ends at stage two**:
+ 12971 NEW lemma     zr_fp3                           **The descending left pass ends at stage three**:
+ 12981 NEW lemma     zr_fp4                           **The home move ends at stage four.**
+ 12989 NEW lemma     zr_upPass_end                    **An ascending pass's end**:
+ 13016 NEW lemma     zr_fp6                           **The ascending right pass ends at stage six**:
+ 13031 NEW lemma     zr_fp7                           **The right return ends at stage seven**:
+ 13049 NEW lemma     zr_fp8                           **The ascending left pass ends at stage eight**:
+ 13064 NEW lemma     zr_fp9                           **The left return ends at stage nine**:
+ 13078 NEW def       zr_decHost                       Decidable equality of a loop host's states from its body's.
+ 13085 NEW abbrev    zr_fpL                           **The found path's head box**:
+ 13090 NEW abbrev    zr_fpU                           The found path's head box, its upper corner.
+ 13094 NEW lemma     zr_fp_facts                      The found path's layout facts:
+ 13130 NEW def       zr_fpG0                          The found path's opening gap:
+ 13148 NEW def       zr_fpG1                          The found path's descending right pass, from the start to stage one.
+ 13178 NEW def       zr_fpG2                          The found path's walk out, from stage one to stage two.
+ 13207 NEW def       zr_fpG3                          The found path's descending left pass, from stage two to stage three.
+ 13232 NEW def       zr_fpG4                          The found path's home move, from stage three to stage four.
+ 13254 NEW def       zr_fpG5                          The found path's single pop, from stage four to stage five.
+ 13278 NEW def       zr_fpG6                          The found path's ascending right pass, from stage five to stage six.
+ 13316 NEW def       zr_fpG7                          The found path's right return, from stage six to stage seven.
+ 13349 NEW def       zr_fpG8                          The found path's ascending left pass, from stage seven to stage eight.
+ 13383 NEW def       zr_fpG9                          The found path's left return, from stage eight to stage nine.
+ 13408 NEW def       zr_fpG10                         The found path's closing gap:
+ 13423 NEW def       zr_fpSeg                         **The found path**, as one pinned segment:
+ 13449 NEW lemma     zr_fp_data                       **The found path computes the cascade**:
+ 13456 NEW abbrev    zr_tauOf                         A pinned segment's time, read off its type.
+ 13463 NEW lemma     zr_sum_desc_eq                   Rounds bounded by `a · 2^(N - m) + b`, from the top down:
+ 13481 NEW lemma     zr_sum_asc_eq                    Rounds bounded by `a · 2^(m + c) + b`, from the bottom up:
+ 13497 NEW lemma     zr_time_desc                     **A descending pass's time**:
+ 13508 NEW lemma     zr_time_asc                      **An ascending pass's time**:
+ 13519 NEW lemma     zr_rfield_le                     Every right field has at most `2^m` cells.
+ 13527 NEW lemma     zr_lfield_le                     Every left field has at most `2^m` cells.
+ 13533 NEW lemma     zr_hh_le                         The shift half-capacity one level below a field:
+ 13544 NEW lemma     zr_p1Tau_le                      The descending right pass's round time is at most `20 · 2^i + 170`.
+ 13554 NEW lemma     zr_woTau_le                      The walk out's round time is at most `2 · 2^i + 11`.
+ 13561 NEW lemma     zr_p2Tau_le                      The descending left pass's round time is at most `25 · 2^i + 260`.
+ 13570 NEW lemma     zr_p3Tau_le                      The ascending right pass's round time is at most `77 · 2^i + 89`.
+ 13580 NEW lemma     zr_p4Tau_le                      The ascending left pass's round time is at most `95 · 2^i + 170`.
+ 13591 NEW lemma     zr_rbTau_le                      The right return's round time is at most `2^i + 9`.
+ 13598 NEW lemma     zr_lbTau_le                      The left return's round time is at most `2^i + 5`.
+ 13604 NEW lemma     zr_pass_time_desc                **A descending pass's time**:
+ 13615 NEW lemma     zr_pass_time_asc                 **An ascending pass's time**:
+ 13626 NEW lemma     zr_pop_fields                    A pop pass's rounds, while marks remain, step one field out each.
+ 13634 NEW lemma     zr_fpSeg_time                    **The found path's time**:
+ 13707 NEW abbrev    zr_rowP0                         **The found path's start at the scan's end**:
+ 13714 NEW abbrev    zr_rowT0                         The rightward row's start pin:
+ 13718 NEW abbrev    zr_rowT2                         The rightward row's endpoint pin:
+ 13723 NEW abbrev    zr_rowL                          The rightward row's head box, its lower corner:
+ 13728 NEW abbrev    zr_rowU                          The rightward row's head box, its upper corner.
+ 13733 NEW lemma     zr_rowP0_valid                   A found scan's end is a found path index.
+ 13745 NEW lemma     zr_scan_exits                    The scan's two escapes, the found one first.
+ 13752 NEW lemma     zr_scanPin_pre                   A row start pinned at its scratch start meets the scan's precondition.
+ 13765 NEW def       zr_scanPin                       **The scan as a pinned test**, at an index of the data and the scratch start:
+ 13774 NEW lemma     zr_scanPin_step                  **The scan's pinned step**:
+ 13818 NEW def       zr_fpRow                         The found path from the scan's end, at a found scan, in the rightward row's box.
+ 13840 NEW lemma     zr_cc_scratch                    At the found path's end the scan's count is all of scratch, its head just past the count.
+ 13856 NEW def       zr_ccPin                         **The count's clear at the found path's end**, at an index of the data and the scratch start.
+ 13869 NEW lemma     zr_ccPin_step                    **The count clear's pinned step**:
+ 13922 NEW def       zr_rowDec                        Decidable equality of the scan's and the found path's states.
+ 13929 NEW def       zr_foundSeg                      **The found arm**:
+ 13935 NEW lemma     zr_short_eq                      A short scan's index is the level count.
+ 13941 NEW lemma     zr_shortPin_pre                  **A short scan's end is the short path's start**:
+ 13969 NEW def       zr_shortPin                      **The short path at a short scan**, at an index of the data and the scratch start.
+ 13979 NEW lemma     zr_shortPin_step                 **The short path's pinned step**:
+ 14035 NEW lemma     zr_scanNe                        The scan's two escapes are distinct.
+ 14041 NEW lemma     zr_scan_verdict                  **The scan's verdict**:
+ 14051 NEW def       zr_rowC                          **The rightward row**:
+ 14063 NEW lemma     zr_rowC_step                     **The rightward row's pinned step**:
+ 14078 NEW lemma     zr_rowC_back                     **The rightward row's exits**:
+ 14090 NEW lemma     zr_rowC_state                    The rightward row's exit state.
+ 14127 NEW lemma     zr_rowPre_pin                    A zone-row start is pinned at the rightward row's start pin, at its own scratch start.
+ 14146 NEW lemma     zr_rowC_time                     **The rightward row's time** is at most `2300 · (2^i₀ + 1)`.
+ 14172 NEW abbrev    zr_rowDone                       The rightward row's found and short exits.
+ 14177 NEW abbrev    zr_rowShort                      The rightward row's short exit.
+ 14182 NEW def       zr_rowR                          **The rightward rebalance row** on the data, its envelopes at the constant `C ≥ 2300`:
+ 14252 NEW lemma     zr_rowR_spec                     **The rightward rebalance row's fields**:
+ 14277 NEW def       zr_mir                           **The mirror** of a two-tape configuration:
+ 14284 NEW lemma     zr_mir_mir                       The mirror is an involution.
+ 14297 NEW lemma     zr_inputSymbol_congr             The input head reads the same cell in configurations with the same input position.
+ 14310 NEW def       zr_mirTM                         **The mirrored machine**:
+ 14319 NEW lemma     zr_mir_step                      **The mirrored machine's step is the mirrored step.**
+ 14378 NEW lemma     zr_mir_lockstep                  **The mirror lockstep**:
+ 14391 NEW def       zr_mirB                          The mirror lockstep's per-step box, its ends by `op` (`min` the lower, `max` the upper):
+ 14399 NEW lemma     zr_mir_box                       The mirrored heads stay in the per-step box.
+ 14419 NEW abbrev    zr_swapD                         The data with every track's two sides exchanged.
+ 14422 NEW lemma     zr_index_swap                    The leftward scanned index is the rightward one of the exchanged data.
+ 14429 NEW lemma     zr_mir_pre                       A zone-row start, mirrored, is a zone-row start at the exchanged data.
+ 14439 NEW lemma     zr_mir_post                      **The mirrored rightward endpoint is the leftward endpoint**:
+ 14467 NEW lemma     zr_mir_env                       **The mirrored per-step box lies in the mirrored envelope**:
+ 14504 NEW lemma     zr_mir_lohi                      The rightward row's envelope at the exchanged data and the mirrored start, reflected on tape `0`, is the leftward row's envelope.
+ 14519 NEW def       zr_rowLeft                       **The leftward rebalance row** on the data:
+ 14565 NEW lemma     zr_rowLeft_spec                  **The leftward rebalance row's fields**:
+ 14586 NEW def       zr_finHost                       A loop host's states are finite when its body's are.
+ 14593 NEW def       zr_rowInst                       The rebalance rows' states are finite and have decidable equality.
+ 14605 CHG theorem   exists_zoneRebalanceTM           **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4).
+ 14677 CHG theorem   exists_zoneExtendTM              **§13d G4, the extension row** (design §13d, decision 13d.2).
+ 14768 old theorem   zoneRowPre_rebalancePost         **Rows chain**:
+ 14776 old theorem   zoneRowPre_extendPost            **Rows chain**:
+ 14783 old theorem   zoneRebalancePost_state_done     The rebalance exits at `done` exactly when its scanned index is below `ℓ`.
+ 14792 old theorem   zoneRebalanceData_of_short       **A short exit leaves the data unchanged**:
+ 14800 old theorem   zoneRebalanceIndex_extend_of_short **After a short exit, extend and retry**:
+ 14811 old theorem   zoneRebalancePost_frames         **The rebalance frames the touched levels**:
+ 14868 old theorem   zoneExtendPost_frames            **The extension frames the new level**:

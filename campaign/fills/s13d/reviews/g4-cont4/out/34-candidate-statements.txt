@@ -1,0 +1,197 @@
+===== zr_bindState_eq
+private lemma zr_bindState_eq {n : ℕ} {Γ S S' : Type} {x : List Γ} (e : Cfg n Γ S x)
+    (r : S → Option S') (y : Cfg n Γ S' x) (hs : e.state.bind r = y.state)
+    (hi : e.inputPos = y.inputPos) (ht : e.workTapes = y.workTapes)
+    (hp : e.workTapePos = y.workTapePos) (ho : e.output = y.output) : e.bindState r = y
+===== zr_inputSymbol_congr
+private lemma zr_inputSymbol_congr {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
+    {c : Cfg 2 (ZoneSym k) S x} {c' : Cfg 2 (ZoneSym k) S' x} (h : c.inputPos = c'.inputPos) :
+    c.inputSymbol = c'.inputSymbol
+===== zr_slot_track
+private lemma zr_slot_track {k ℓ : ℕ} {z z' : Fin k → ZoneContents ℓ} {t : Fin k}
+    (h : z t = z' t) (q : ℤ) :
+    (zonedTape z q).map (zoneSlotOf t) = (zonedTape z' q).map (zoneSlotOf t)
+===== zr_zonedTape_inr
+private lemma zr_zonedTape_inr {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (q : ℤ)
+    (γ : ZoneSym k) (h : zonedTape z q = some γ) : ∃ c, γ = .inr c
+===== zr_slotSet_slotSet
+private lemma zr_slotSet_slotSet {k : ℕ} (t : Fin k) (c : Option (ZoneSym k))
+    (v w : Option (Option Bool)) :
+    zoneSlotSet t (some (zoneSlotSet t c v)) w = zoneSlotSet t c w
+===== zr_shiftIn_zero
+private lemma zr_shiftIn_zero {ℓ : ℕ} (w : ZoneContents ℓ) : zoneShiftIn true 0 w = w
+===== zr_shiftOut_zero
+private lemma zr_shiftOut_zero {ℓ : ℕ} (w : ZoneContents ℓ) : zoneShiftOut false 0 w = w
+===== zr_joinFields_append
+private lemma zr_joinFields_append {Γ : Type} (ws vs : List (List Γ)) (hw : ws ≠ [])
+    (hv : vs ≠ []) : joinFields (ws ++ vs) = joinFields ws ++ none :: joinFields vs
+===== zr_fieldsTape_snoc
+private lemma zr_fieldsTape_snoc {Γ : Type} (ws : List (List Γ)) (hw : ws ≠ []) (u : List Γ)
+    (z : ℤ) :
+    fieldsTape (ws ++ [u]) z =
+      if z < fieldOffset ws ws.length then fieldsTape ws z
+      else FinTM.bufferTape u (z - fieldOffset ws ws.length)
+===== zr_joinFields_mid
+private lemma zr_joinFields_mid {Γ : Type} (pre post : List (List Γ)) (w : List Γ) :
+    joinFields (pre ++ [w] ++ post) =
+      (if pre.isEmpty then [] else joinFields pre ++ [none]) ++ w.map some ++
+        (if post.isEmpty then [] else none :: joinFields post)
+===== zr_joinFields_mid_offset
+private lemma zr_joinFields_mid_offset {Γ : Type} (pre : List (List Γ)) :
+    ((if pre.isEmpty then [] else joinFields pre ++ [none]) : List (Option Γ)).length =
+      fieldOffset pre pre.length
+===== zr_getElem?_mid
+private lemma zr_getElem?_mid {α : Type} (P Q : List α) (x y : α) (n : ℕ) :
+    (P ++ x :: Q)[n]? = if n = P.length then some x else (P ++ y :: Q)[n]?
+===== zr_fieldsTape_cut
+private lemma zr_fieldsTape_cut {Γ : Type} (pre post : List (List Γ)) (u v : List Γ) (a : Γ) :
+    Function.update (fieldsTape (pre ++ [u ++ a :: v] ++ post))
+        ((fieldOffset pre pre.length + u.length : ℕ) : ℤ) none =
+      fieldsTape (pre ++ [u, v] ++ post)
+===== zr_bufferTape_map
+private lemma zr_bufferTape_map {α β : Type} (w : List α) (f : α → β) (q : ℤ) :
+    FinTM.bufferTape (w.map f) q = (FinTM.bufferTape w q).map f
+===== zr_fieldsTape_end
+private lemma zr_fieldsTape_end {Γ : Type} (ws : List (List Γ)) (z : ℤ)
+    (hz : (fieldOffset ws ws.length : ℤ) ≤ z + 1) : fieldsTape ws z = none
+===== zr_fieldsTape_snoc'
+private lemma zr_fieldsTape_snoc' {Γ : Type} (ws : List (List Γ)) (u : List Γ) (z : ℤ) :
+    fieldsTape (ws ++ [u]) z =
+      if z < fieldOffset ws ws.length then fieldsTape ws z
+      else FinTM.bufferTape u (z - fieldOffset ws ws.length)
+===== zr_bufferTape_reverse
+private lemma zr_bufferTape_reverse {α : Type} (w : List α) (q : ℤ) (h1 : -1 ≤ q)
+    (h2 : q ≤ w.length) : FinTM.bufferTape w.reverse q = FinTM.bufferTape w (w.length - 1 - q)
+===== zr_contents_ext
+private lemma zr_contents_ext {ℓ : ℕ} {u v : ZoneContents ℓ} (h1 : u.home = v.home)
+    (h2 : u.left = v.left) (h3 : u.right = v.right) : u = v
+===== zr_map_pair
+private lemma zr_map_pair {S T : Type} (f : S → T) (a b : S) :
+    (Option.map f '' {some a, some b}) = {some (f a), some (f b)}
+===== zr_none_not_mem_image
+private lemma zr_none_not_mem_image {S T : Type} {X : Set (Option S)} (f : S → T)
+    (h : none ∉ X) : none ∉ Option.map f '' X
+===== zr_iterate_step
+private lemma zr_iterate_step (m n : ℕ) :
+    (fun i => i - 1)^[m] n = n - m ∧ (fun i => i + 1)^[m] n = n + m
+===== zr_iterate_pred
+private lemma zr_iterate_pred (m n : ℕ) : (fun i => i - 1)^[m] n = n - m
+===== zr_iterate_succ
+private lemma zr_iterate_succ (m n : ℕ) : (fun i => i + 1)^[m] n = n + m
+===== zr_fieldOffset_append
+private lemma zr_fieldOffset_append {Γ : Type} (L R : List (List Γ)) :
+    (∀ j, j ≤ L.length → fieldOffset (L ++ R) j = fieldOffset L j) ∧
+      ∀ j, j ≤ R.length →
+        fieldOffset (L ++ R) (L.length + j) = fieldOffset L L.length + fieldOffset R j
+===== zr_heads_le
+private lemma zr_heads_le {f g : Fin 2 → ℤ} (h0 : f 0 ≤ g 0) (h1 : f 1 ≤ g 1) :
+    ∀ j, f j ≤ g j
+===== zr_heads_ext
+private lemma zr_heads_ext {f : Fin 2 → ℤ} {a b : ℤ} (h0 : f 0 = a) (h1 : f 1 = b) :
+    f = zr_heads a b
+===== zr_zonedTape_update
+private lemma zr_zonedTape_update {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k)
+    (u : ZoneContents ℓ) (q : ℤ) (v : Option (Option Bool))
+    (hv : (zonedTape (fun _ => u) q).map (zoneSlotOf t) = some v) :
+    zonedTape (Function.update z t u) q = some (zoneSlotSet t (zonedTape z q) v)
+===== zr_zonedTape_update_same
+private lemma zr_zonedTape_update_same {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k)
+    (u : ZoneContents ℓ) (q : ℤ)
+    (h : (zonedTape (fun _ => u) q).map (zoneSlotOf t) = (zonedTape z q).map (zoneSlotOf t)) :
+    zonedTape (Function.update z t u) q = zonedTape z q
+===== zr_second_isNone
+private lemma zr_second_isNone {α : Type} (w : List α) (n : ℕ) (hw : w.length = 2 ^ n) :
+    (FinTM.bufferTape w 1).isNone = decide (n = 0)
+===== zr_field_isSome
+private lemma zr_field_isSome {k : ℕ} {T : ℤ → Option (ZoneSym k)} {a : ℤ}
+    {w : List (ZoneSym k)} {i : ℕ}
+    (h : ∀ q, -1 ≤ q → q ≤ (w.length : ℤ) → T (a + q) = FinTM.bufferTape w q)
+    (hw : w.length = 2 ^ i) : (T a).isSome
+===== zr_slotSet_self
+private lemma zr_slotSet_self {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t : Fin k) (i : Fin ℓ)
+    (o : ℕ) (ho : o < zoneCapacity i) :
+    some (zoneSlotSet t (zonedTape z (-((zoneStart i + o : ℕ) : ℤ)))
+        ((z t).left i)[o]?) = zonedTape z (-((zoneStart i + o : ℕ) : ℤ))
+===== zr_enc_of_slot
+private lemma zr_enc_of_slot {k : ℕ} (t : Fin k) {o : Option (ZoneSym k)}
+    {v : Option (Option Bool)} (h : o.map (zoneSlotOf t) = some v) :
+    o.map (fun γ => zr_enc (zoneSlotOf t γ)) = some (zr_enc v : ZoneSym k)
+===== zr_stk_push
+private lemma zr_stk_push {k : ℕ} (β : ℤ → Option (ZoneSym k)) {b s : ℤ} (hb : b ≤ s) :
+    Function.update (zr_stk β b s) s (some (.inl false)) = zr_stk β b (s + 1)
+===== zr_stk_pop
+private lemma zr_stk_pop {k : ℕ} {β : ℤ → Option (ZoneSym k)} {b s : ℤ}
+    (hβ : β (s - 1) = none) :
+    Function.update (zr_stk β b s) (s - 1) none = zr_stk β b (s - 1)
+===== zr_none_not_mem_single
+private lemma zr_none_not_mem_single {S : Type} (d : S) : none ∉ ({some d} : Set (Option S))
+===== zr_none_not_mem_union
+private lemma zr_none_not_mem_union {S : Type} {A B : Set (Option S)} (ha : none ∉ A)
+    (hb : none ∉ B) : none ∉ A ∪ B
+===== zr_verdicts_inr
+private lemma zr_verdicts_inr {A : Type} :
+    (Option.map (Sum.inr : Option Bool → A ⊕ Option Bool) ''
+        {some (some true), some (some false)}) =
+      {some (.inr (some true)), some (.inr (some false))}
+===== zr_fieldLen_succ
+private lemma zr_fieldLen_succ (i : ℕ) : zr_fieldLen (zoneStart (i + 1)) = zoneCapacity i
+===== zr_rulerTape_word
+private lemma zr_rulerTape_word {k : ℕ} (n : ℕ) (q p : ℤ) :
+    FinTM.bufferTape (List.replicate n (Sum.inl false : ZoneSym k)) p =
+        zr_rulerTape n q (q + p) ∧
+      FinTM.bufferTape (List.replicate n (Sum.inl false : ZoneSym k)) p =
+        zr_rulerTape n q (q + n - 1 - p)
+===== zr_scr_copy
+private lemma zr_scr_copy {k : ℕ} {Δ : Type} (A σ : ℤ → Option (ZoneSym k)) (s a : ℤ)
+    (ws : List (List (ZoneSym k))) (extract : ZoneSym k → Δ)
+    (merge : Option (ZoneSym k) → Δ → ZoneSym k) (w : List (ZoneSym k)) (b : ℤ)
+    (hb : b = s + 1 + fieldOffset ws ws.length) :
+    zr_copyTapes 1 extract merge w (zr_tapes A (zr_scr σ s ws)) (zr_heads a b) =
+      zr_tapes A (zr_scr σ s (ws ++ [w.map fun γ => merge none (extract γ)]))
+===== zr_scr_cut
+private lemma zr_scr_cut {k : ℕ} (A σ : ℤ → Option (ZoneSym k)) (s : ℤ)
+    (pre post : List (List (ZoneSym k))) (u v : List (ZoneSym k)) (a : ZoneSym k) :
+    Function.update (zr_tapes A (zr_scr σ s (pre ++ [u ++ a :: v] ++ post))) 1
+        (Function.update (zr_tapes A (zr_scr σ s (pre ++ [u ++ a :: v] ++ post)) 1)
+          (s + 1 + fieldOffset pre pre.length + u.length) none) =
+      zr_tapes A (zr_scr σ s (pre ++ [u, v] ++ post))
+===== zr_scr_clear
+private lemma zr_scr_clear {k : ℕ} (A σ : ℤ → Option (ZoneSym k)) (s : ℤ)
+    (pre : List (List (ZoneSym k))) (u : List (ZoneSym k)) (b : ℤ)
+    (hb : b = s + 1 + fieldOffset pre pre.length) :
+    (fun (i' : Fin 2) q => if i' = 1 ∧ b ≤ q ∧ q < b + u.length then none
+      else zr_tapes A (zr_scr σ s (pre ++ [u])) i' q) =
+      zr_tapes A (zr_scr σ s pre)
+===== zr_scr_word
+private lemma zr_scr_word {k : ℕ} (σ : ℤ → Option (ZoneSym k)) (s : ℤ) (hσ : σ s = none)
+    (ws : List (List (ZoneSym k))) (m : ℕ) (hm : m < ws.length) :
+    ∀ q : ℤ, -1 ≤ q → q ≤ (ws[m].length : ℤ) →
+      zr_scr σ s ws (s + 1 + fieldOffset ws m + q) = FinTM.bufferTape ws[m] q
+===== zr_PinStep_seq
+private lemma zr_PinStep_seq {k : ℕ} {S₁ S₂ J : Type} [DecidableEq S₁] {x : List (ZoneSym k)}
+    {M₁ : MultiTapeTM 2 (ZoneSym k) S₁} {M₂ : MultiTapeTM 2 (ZoneSym k) S₂} {e₁ d₁ : S₁}
+    {e₂ : S₂} {X₂ : Set (Option S₂)} {C₁ : Contract M₁ e₁ {some d₁} J x}
+    {C₂ : Contract M₂ e₂ X₂ J x}
+    {T₁ T₂ T₃ : J → Fin 2 → ℤ → Option (ZoneSym k)} {p₁ p₂ p₃ : J → Fin 2 → ℤ}
+    {τ₁ τ₂ : J → ℕ} {L₁ U₁ L₂ U₂ : J → Fin 2 → ℤ} {V : J → Prop}
+    (h₁ : zr_PinStep C₁ V T₁ T₂ p₁ p₂ τ₁ L₁ U₁) (h₂ : zr_PinStep C₂ V T₂ T₃ p₂ p₃ τ₂ L₂ U₂)
+    (hl : ∀ j d, d.state = some e₁ → C₁.pre j d →
+      C₂.pre j ((C₁.post j d).mapState fun _ => e₂)) :
+    zr_PinStep (C₁.seq C₂ (fun j => j) hl) V T₁ T₃ p₁ p₃ (fun j => τ₁ j + 1 + τ₂ j)
+      (fun j i => min (L₁ j i) (L₂ j i)) (fun j i => max (U₁ j i) (U₂ j i))
+===== zr_round_of_body
+private lemma zr_round_of_body {n : ℕ} {Γ S I : Type} {x : List Γ} {M : MultiTapeTM n Γ S}
+    {a entry : S} {E X : Set (Option S)} {P : (Fin n → ℤ) → Prop} (C : Contract M entry X I x)
+    (i : I) (c c₁ : Cfg n Γ S x) (hc : c.state = some a) (h1 : M.runFrom c 1 = c₁)
+    (hc₁ : c₁.state = some entry) (hp : C.pre i c₁) (haX : some a ∈ X) (hEX : E ⊆ X)
+    (hend : (C.post i c₁).state ∈ insert (some a) E) (hP0 : P c.workTapePos)
+    (hPC : ∀ p, HeadBox (C.lo i c₁) (C.hi i c₁) p → P p) :
+    Round M a E P c (C.post i c₁) (1 + C.time i c₁)
+===== zr_mir_step
+private lemma zr_mir_step {k : ℕ} {S : Type} {x : List (ZoneSym k)}
+    (M : MultiTapeTM 2 (ZoneSym k) S) (c : Cfg 2 (ZoneSym k) S x) :
+    (zr_mirTM M).step (zr_mir c) = zr_mir (M.step c)
+===== zr_mir_lockstep
+private lemma zr_mir_lockstep {k : ℕ} {S : Type} {x : List (ZoneSym k)}
+    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :
+    Lockstep (x

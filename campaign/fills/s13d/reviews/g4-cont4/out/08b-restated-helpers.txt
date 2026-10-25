@@ -1,0 +1,88 @@
+== zr_singletonContract: STATEMENT
+   delete: -[done}) : Contract M entry {some] +[]
+   delete: -[I x] +[]
+== zr_seekStart_pre: STATEMENT
+   replace: -[(hd] +[(h0]
+   replace: -[zoneRowPre ⟨ℓ, z⟩ d)] +[d.workTapePos 0 = 0) (hz : ∀ q : ℤ, -(zoneStart ℓ : ℤ) ≤ q → q ≤ 0 → d.workTapes 0 q = zonedTape z q)]
+== zr_rightFields: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightWord: STATEMENT
+   delete: -[(D] +[]
+   replace: -[zr_RightData k) :] +[ZoneData k →]
+   insert: -[] +[| ⟨0, z⟩ => [.inr fun t => some (z t).home] | ⟨n + 1, z⟩ => zoneCells true z ⟨n, Nat.lt_succ_self n⟩]
+== zr_rightSeekContract: STATEMENT
+   replace: -[(zr_RightData] +[(ZoneData]
+== zr_rightSeek_back_pre: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightSeekBackContract: STATEMENT
+   replace: -[(zr_RightData] +[(ZoneData]
+== zr_rightSeekBack_post: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[(zoneStart D.1)] +[((zoneStart D.1 : ℤ) - (2 ^ D.1 : ℕ) - 1)]
+== zr_rulerCopyContract: proof/docstring only
+== zr_rulerSkipContract: proof/docstring only
+== zr_rightSeekBack_ruler_pre: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightRulerContract: proof/docstring only
+== zr_rightRuler_pre: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[⟨D.1 + 1, D.2⟩] +[D]
+== zr_rightRuler_post: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rulerStepContract: STATEMENT
+   insert: -[] +[(dir : SignType)]
+   replace: -[1)] +[dir)]
+== zr_rulerStep_walk_pre: STATEMENT
+   insert: -[] +[(dir : SignType)]
+   insert: -[] +[dir]
+   replace: -[1] +[dir]
+   insert: -[] +[dir]
+== zr_adjustedWalkContract: STATEMENT
+   insert: -[] +[(dir : SignType)]
+   replace: -[1)] +[dir)]
+   replace: -[1)] +[dir)]
+== zr_adjustedWalk_post: STATEMENT
+   insert: -[] +[(dir : SignType)]
+   replace: -[(hp] +[(hw : w ≠ [])]
+   replace: -[x).pre w d) : (zr_adjustedWalkContract] +[dir]
+== zr_adjustedWalk_back_pre: STATEMENT
+   insert: -[] +[1]
+   insert: -[] +[1]
+== zr_adjustedBackContract: proof/docstring only
+== zr_adjustedBack_post: proof/docstring only
+== zr_innerCopy_adjusted_pre: proof/docstring only
+== zr_adjustedBack_copy_pre: proof/docstring only
+== zr_writeHalvesContract: proof/docstring only
+== zr_rulerWord: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightRuler_write_pre: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightPassContract: proof/docstring only
+== zr_rightPass_pre: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[⟨D.1 + 1, D.2⟩] +[D]
+== zr_rightPass_time: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[(D.1 + 1)] +[D.1]
+   replace: -[zoneCapacity] +[2 ^]
+== zr_rightPass_time_le: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[(D.1] +[D.1]
+   delete: -[+ 1)] +[]
+== zr_writeHalves_post: proof/docstring only
+== zr_rightPass_post: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightPass_bounds: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[0] +[-1]
+   replace: -[(D.1 + 1)] +[D.1]
+   replace: -[(D.1 + 1)] +[D.1]
+   replace: -[zoneCapacity] +[((2 ^]
+   insert: -[] +[: ℕ) : ℤ)]
+== zr_rightPass_envelope: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+   replace: -[2)] +[1)]
+   replace: -[2)] +[1)]
+== zr_rightPass_tape: STATEMENT
+   replace: -[zr_RightData] +[ZoneData]
+== zr_rightPassRow: proof/docstring only
