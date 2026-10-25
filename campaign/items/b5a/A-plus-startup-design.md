@@ -5,7 +5,9 @@ harvest the startup that it shares with the interpreter core (`Turing.exists_ndI
 `TuringMachine/NDCodeSimulator.lean`) into one published contract that both cite. The alternative,
 pre-disclosing a below-90% pair between the two assembly bodies, was not taken. **The user then
 asked for this note before any Lean.** It proposes the boundary, the statement and the vehicle. The
-decisions it needs are at the end.
+decisions it needs are at the end. **Ruled (user, 2026-10-25): the recommendation on all five** (a
+maintainer API PR; `p` passive tapes with an embedding; existential roles; the core re-pointed in
+the same PR; the PR opened after #164 and #165 merge).
 
 ## What the two machines share
 
