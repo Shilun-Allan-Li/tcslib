@@ -91,7 +91,8 @@ trajectories*, relations on the whole head vector.
 * `Turing.Segment.trans`, `Turing.Segment.live`, `Turing.Segment.time_eq`,
   `Turing.SafeSegment.trans`, `Turing.Contract.segment`: segment concatenation, liveness,
   uniqueness of first exits, and the contract bridge.
-* `Turing.Round.iterate`, `Turing.RoundContract.orbit_round`: round iteration along an orbit.
+* `Turing.Round.iterate_seq`, `Turing.Round.iterate`, `Turing.RoundContract.orbit_round`: round
+  iteration along a sequence of starts, and along an orbit.
 * `Turing.Contract.Traj.trans`, `Turing.Contract.Frames.trans`: preservation by `trans`.
 * `Turing.Contract.time_eq_zero_iff`, `Turing.Contract.trans_positive`: sanity lemmas.
 * `Turing.Contract.lockstep_admissible`: the target entry compatible with the encoding.
@@ -771,24 +772,40 @@ theorem roundOrbit_succ {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (τ : 
     roundOrbit M τ c (r + 1) = M.runFrom (roundOrbit M τ c r) (τ (roundOrbit M τ c r)) :=
   Function.iterate_succ_apply' _ _ _
 
+/-- **Round iteration along a sequence of starts**: if, for each `r < n`, the run from `cs r` is
+a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` is one segment against
+the escapes to `cs n`, of length the sum of the round times. When the last round ends in an
+escape, the segment is a first exit (`Turing.Contract.ofSegment`).
+
+**Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
+by `Turing.Segment.trans`. -/
+theorem Round.iterate_seq {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a : S}
+    {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (cs : ℕ → Cfg k Γ S x) (τ : ℕ → ℕ)
+    (ha : some a ∉ E) (h0 : P (cs 0).workTapePos) (n : ℕ)
+    (hround : ∀ r < n, Round M a E P (cs r) (cs (r + 1)) (τ r)) :
+    Segment M E P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) := by
+  induction n with
+  | zero => exact Segment.zero h0
+  | succ n ih =>
+    rw [Finset.sum_range_succ]
+    exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
+
 /-- **Round iteration on one machine** (the counter loop's composition, without the counter):
 if the first `n` rounds of the orbit are rounds, each lasting `τ` of its start, then the whole
 orbit prefix is one segment against the escapes, of length the sum of the round times. When the
 last round ends in an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
 
-**Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
-by `Turing.Segment.trans`. -/
+**Proof sketch.** The orbit `Turing.roundOrbit` as the sequence of starts in
+`Turing.Round.iterate_seq`; it starts at `c` (`Turing.roundOrbit_zero`). -/
 theorem Round.iterate {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a : S}
     {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x)
     (ha : some a ∉ E) (h0 : P c.workTapePos) (n : ℕ)
     (hround : ∀ r < n, Round M a E P (roundOrbit M τ c r) (roundOrbit M τ c (r + 1))
       (τ (roundOrbit M τ c r))) :
     Segment M E P c (roundOrbit M τ c n) (∑ r ∈ Finset.range n, τ (roundOrbit M τ c r)) := by
-  induction n with
-  | zero => exact Segment.zero h0
-  | succ n ih =>
-    rw [Finset.sum_range_succ]
-    exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
+  have h := Round.iterate_seq (roundOrbit M τ c) (fun r => τ (roundOrbit M τ c r)) ha
+    (by rw [roundOrbit_zero]; exact h0) n hround
+  rwa [roundOrbit_zero] at h
 
 /-- **A round contract** (design §16a item 2): from every admissible start at `anchor`, the run
 ends after a positive exact time back at the anchor or in the escape set; strictly in between it
