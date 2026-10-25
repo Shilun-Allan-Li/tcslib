@@ -1,0 +1,29 @@
+/-
+Megafill D drafting, 2026-10-25: the semantic-duplication probe for the private steps of
+`SCPRouteProbe.lean.txt` (drafting brief §5, §6 item 4). Each proposed private statement is posed
+to `exact?` over the route's import closure; "could not close" means no published declaration
+states it directly (a hit would be cited instead of a new private). A probe record.
+-/
+import TCSlib.Complexity.SpaceComplexity.ConfigGraph
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.ClassNP.Transducer
+
+open Turing Complexity
+
+-- the tail transducer's function (with the tables inlined)
+example (x : List Bool) :
+    transduce (fun _ _ => true) (fun q b => if q then some b else none) false x = x.tail := by
+  exact?
+-- a copying state is the identity (the general form of the two published instances)
+example {σ : Type} (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) (q : σ)
+    (hδ : ∀ b, δ q b = q) (ho : ∀ b, o q b = some b) (l : List Bool) :
+    transduce δ o q l = l := by
+  exact?
+-- the unary intermediate's length
+example (c : ℕ) (x : List Bool) : (x.tail.length + 1) ^ c ≤ x.length ^ c + 1 := by
+  exact?
+-- the space of a machine at time `t` is at most `k (t + 1)` (cited, not re-proved)
+example (M : FinTM Bool) (x : List Bool) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (t + 1) := by
+  exact?

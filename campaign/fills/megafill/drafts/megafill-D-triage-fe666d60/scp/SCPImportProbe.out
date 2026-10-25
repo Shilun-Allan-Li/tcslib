@@ -1,0 +1,43 @@
+# SCPImportProbe: record SHA-256 6fb2c804c5405ee66c036cfa8e75acad6e29e9f4da59cdfd0acb2e9d3a23426d, base fe666d60f21e51438374e7c3f3a966eaa93862c0, 2026-10-25T00:37:47Z
+Complexity.SpaceConstructible : (ℕ → ℕ) → Prop
+Turing.FinTM.ComputesInSpace : Turing.FinTM Bool → (List Bool → List Bool) → (ℕ → ℕ) → Prop
+Complexity.logSpace : ℕ → ℕ
+@Complexity.transduce : {σ : Type} → (σ → Bool → σ) → (σ → Bool → Option Bool) → σ → List Bool → List Bool
+@Complexity.transducerTM : {σ : Type} →
+  [Fintype σ] → [DecidableEq σ] → (σ → Bool → σ) → (σ → Bool → Option Bool) → σ → Turing.FinTM Bool
+@Complexity.transducerTM_computes : ∀ {σ : Type} [inst : Fintype σ] [inst_1 : DecidableEq σ] (δ : σ → Bool → σ)
+  (o : σ → Bool → Option Bool) (q₀ : σ),
+  (Complexity.transducerTM δ o q₀).ComputesFunInTime (Complexity.transduce δ o q₀) fun n => n + 1
+Turing.FinTM.polyUnaryTM : ℕ → ℕ → Turing.FinTM Bool
+Turing.FinTM.polyUnaryTM_computes : ∀ (C e : ℕ),
+  (Turing.FinTM.polyUnaryTM C e).ComputesFunInTime (fun x => List.replicate (C * (x.length + 1) ^ e) true) fun n =>
+    (C + 5 * e + 4) * (n + 1) ^ e
+Turing.FinTM.prependTM : List Bool → Turing.FinTM Bool
+Turing.FinTM.prependTM_computes : ∀ (w : List Bool),
+  (Turing.FinTM.prependTM w).ComputesFunInTime (fun x => w ++ x) fun n => w.length + n + 1
+Turing.FinTM.computesFunInTime_lengthBits : ∃ M c, M.ComputesFunInTime (fun x => x.length.bits) fun n => c * (n + 1)
+Turing.FinTM.bufferedCompTM : Turing.FinTM Bool → Turing.FinTM Bool → Turing.FinTM Bool
+Turing.FinTM.bufferedCompTM_computesInTime : ∀ (M₁ M₂ : Turing.FinTM Bool) {x y o : List Bool} {t₁ t₂ : ℕ},
+  M₁.ComputesInTime x y t₁ →
+    M₂.ComputesInTime y o t₂ → (M₁.bufferedCompTM M₂).ComputesInTime x o (t₁ + y.length + 2 + t₂)
+Turing.FinTM.computesFunInTime_ifEq : ∀ (w₀ u v : List Bool),
+  ∃ M c, M.ComputesFunInTime (fun w => if w = w₀ then u else v) fun n => c * (n + 1)
+Turing.FinTM.computesFunInTime_const : ∀ (w : List Bool), ∃ M c, M.ComputesFunInTime (fun x => w) fun n => c * (n + 1)
+@Turing.FinTM.computesFunInTime_cond : ∀ {D M₁ M₂ : Turing.FinTM Bool} {p : List Bool → Bool}
+  {f₁ f₂ : List Bool → List Bool} {T₀ T₁ T₂ : ℕ → ℕ},
+  D.ComputesFunInTime (fun x => [p x]) T₀ →
+    M₁.ComputesFunInTime f₁ T₁ →
+      M₂.ComputesFunInTime f₂ T₂ →
+        ∃ M c,
+          M.ComputesFunInTime (fun x => if p x = true then f₁ x else f₂ x) fun n => c * (T₀ n + max (T₁ n) (T₂ n) + 1)
+@Turing.FinTM.computesFunInTime_iff : ∀ {Symbol : Type} (M : Turing.FinTM Symbol) (f : List Symbol → List Symbol)
+  (T : ℕ → ℕ), M.ComputesFunInTime f T ↔ ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)
+@Turing.FinTM.ComputesInTime.mono : ∀ {Symbol : Type} {M : Turing.FinTM Symbol} {input output : List Symbol} {t t' : ℕ},
+  M.ComputesInTime input output t → t ≤ t' → M.ComputesInTime input output t'
+@Turing.MultiTapeTM.spaceUsed_le_mul_succ : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : Turing.MultiTapeTM k Symbol State) (cfg : Turing.Cfg k Symbol State input) (t : ℕ),
+  Turing.MultiTapeTM.spaceUsed cfg t ≤ k * (t + 1)
+Nat.log_le_self : ∀ (b x : ℕ), Nat.log b x ≤ x
+@Nat.le_self_pow : ∀ {n : ℕ}, n ≠ 0 → ∀ (a : ℕ), a ≤ a ^ n
+MEM SCPImportProbe start=2026-10-25T00:37:47Z end=2026-10-25T00:37:49Z secs=2.6 exit=0 maxrss_kib=2035624
+exit=0
