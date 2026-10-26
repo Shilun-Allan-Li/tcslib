@@ -1,0 +1,1127 @@
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+/-- The startup's endpoint tapes, restricted to the forwarding loop's `k + 2`, are the encoding's
+tapes at the decoded machine's initial configuration.
+
+**Proof sketch.** Split the tape index into a mirrored tape and one of the two
+auxiliary tapes. The initial mirrored tapes are blank; the table is unchanged,
+and the summary agrees cell by cell, including its blank cell at zero. -/
+private theorem uk_encode_init_tapes {k n : ℕ} {Q : Type} (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) (j : Fin (k + 2)) :
+    (StepBlock.forwardLoopCfg entry M (M.initCfg x)).workTapes j =
+      if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+      else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+      else fun _ => none := by
+  have hw : (StepBlock.forwardLoopCfg entry M (M.initCfg x)).workTapes j =
+      Fin.addCases (motive := fun _ => ℤ → Option Bool) (M.initCfg x).workTapes (fun j =>
+        if j = 0 then FinTM.bufferTape (tableBitsK M.tr)
+        else StepBlock.summaryCells none (((M.initCfg x).state.map unaryFin).getD [])) j :=
+    funext fun a => StepBlock.forwardLoopCfg_workTapes entry M (M.initCfg x) j a
+  rw [hw]
+  refine Fin.addCases (fun i => ?_) (fun j' => ?_) j
+  · rw [Fin.addCases_left, MultiTapeTM.initCfg_eq]
+    have h1 : (Fin.castAdd 2 i).val ≠ k := by simp only [Fin.coe_castAdd]; omega
+    have h2 : (Fin.castAdd 2 i).val ≠ k + 1 := by simp only [Fin.coe_castAdd]; omega
+    rw [if_neg h1, if_neg h2]
+    funext p
+    rw [Cfg.init_workTapes]
+  · rw [Fin.addCases_right, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some,
+      Option.getD_some]
+    by_cases h : j' = 0
+    · subst h
+      have h1 : (Fin.natAdd k (0 : Fin 2)).val = k := by simp only [Fin.coe_natAdd]; omega
+      rw [if_pos rfl, if_pos h1]
+    · have hj : j' = 1 := by omega
+      subst hj
+      have h1 : (Fin.natAdd k (1 : Fin 2)).val ≠ k := by simp only [Fin.coe_natAdd]; omega
+      have h2 : (Fin.natAdd k (1 : Fin 2)).val = k + 1 := by simp only [Fin.coe_natAdd]; omega
+      rw [if_neg (by decide), if_neg h1, if_pos h2]
+      funext p
+      rw [StepBlock.summaryCells_eq]
+      by_cases hp : p = 0
+      · rw [if_pos hp, hp]
+        exact (FinTM.bufferTape_of_neg _ (by omega)).symm
+      · rw [if_neg hp]
+
+/-- The encoding of the initial configuration is at `entry`, with input head `1`, every head at
+`0` and an empty output. -/
+private theorem uk_encode_init_fields {k n : ℕ} {Q : Type} (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) :
+    (StepBlock.forwardLoopCfg entry M (M.initCfg x)).state = some entry ∧
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)).inputPos.val = 1 ∧
+      (∀ j, (StepBlock.forwardLoopCfg entry M (M.initCfg x)).workTapePos j = 0) ∧
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)).output = [] := by
+  refine ⟨?_, ?_, fun j => ?_, ?_⟩
+  · rw [StepBlock.forwardLoopCfg_state, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+  · rw [StepBlock.forwardLoopCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]; rfl
+  · rw [StepBlock.forwardLoopCfg_workTapePos]
+    refine Fin.addCases (fun i => ?_) (fun j' => ?_) j
+    · rw [Fin.addCases_left, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    · rw [Fin.addCases_right]
+  · rw [StepBlock.forwardLoopCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output]
+
+/-- An encoded configuration is halted exactly when the source is, and carries its output. -/
+private theorem uk_encode_halt {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (c : Cfg k Bool (Fin (n + 1)) x) :
+    ((StepBlock.forwardLoopCfg entry M c).state = none ↔ c.state = none) ∧
+      (StepBlock.forwardLoopCfg entry M c).output = c.output := by
+  rw [StepBlock.forwardLoopCfg_state, StepBlock.forwardLoopCfg_output, Option.map_eq_none_iff]
+  exact ⟨Iff.rfl, rfl⟩
+
+
+/-- Embedding the initial loop configuration in the first tapes gives the startup's
+endpoint, with its state replaced by the loop entry.
+
+**Proof sketch.** Use the public reconstruction theorem for the emitting embedding.
+The selected tapes and heads are the initial encoding's fields. An unselected
+tape has index at least `k + 2`, so both tests in the startup layout are false. -/
+private theorem uk_embed_init {k n K : ℕ} {P Q : Type} (exit : P) (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) :
+    embedEmitCfg (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2)))
+      (fun _ _ => none) (fun _ => 0) []
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)) =
+        (⟨some exit, 1,
+          fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+            else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+            else fun _ => none,
+          fun _ => 0, []⟩ : Cfg (K + (k + 2)) Bool P x).mapState (fun _ => entry) := by
+  apply embedEmitCfg_eq
+  · rw [Cfg.mapState_state]
+    exact (uk_encode_init_fields entry M x).1
+  · apply Fin.ext
+    rw [Cfg.mapState_inputPos]
+    exact (uk_encode_init_fields entry M x).2.1
+  · rw [List.nil_append, Cfg.mapState_output]
+    exact (uk_encode_init_fields entry M x).2.2.2
+  · intro i
+    constructor
+    · funext a
+      rw [Cfg.mapState_workTapes]
+      exact congrFun (uk_encode_init_tapes entry M x i) a
+    · rw [Cfg.mapState_workTapePos]
+      exact (uk_encode_init_fields entry M x).2.2.1 i
+  · intro j hj
+    have hjge : k + 2 ≤ j.val := by
+      by_contra h
+      have hlt : j.val < k + 2 := by omega
+      apply hj
+      refine ⟨⟨j.val, hlt⟩, ?_⟩
+      apply Fin.ext
+      rfl
+    constructor
+    · funext a
+      rw [Cfg.mapState_workTapes]
+      dsimp only
+      rw [if_neg (by omega : j.val ≠ k), if_neg (by omega : j.val ≠ k + 1)]
+    · rw [Cfg.mapState_workTapePos]
+
+/-- The startup followed by the emitting loop on the first `k + 2` tapes. -/
+private noncomputable def uk_loopTM {k K : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) :
+    MultiTapeTM (K + (k + 2)) Bool (P ⊕ Q) :=
+  { seamCompTM R exit
+      (embedEmitTM (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2))) L) entry with
+    q₀ := Sum.inl R.q₀ }
+
+/-- Initial configurations commute with a state map that sends the initial states correctly. -/
+private theorem uk_init_mapState {m : ℕ} {P Q : Type}
+    (A : MultiTapeTM m Bool P) (B : MultiTapeTM m Bool Q) (f : P → Q)
+    (hq : B.q₀ = f A.q₀) (x : List Bool) : B.initCfg x = (A.initCfg x).mapState f := by
+  refine Cfg.ext ?_ ?_ (funext fun j => funext fun a => ?_) (funext fun j => ?_) ?_
+  all_goals
+    simp only [MultiTapeTM.initCfg_eq, Cfg.mapState_state, Cfg.mapState_inputPos,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Cfg.mapState_output,
+      Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes, Cfg.init_workTapePos,
+      Cfg.init_output, Option.map_some, hq]
+
+/-- The composed machine starts in the startup's initial configuration, with a left state. -/
+private theorem uk_loop_init {k K : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) (x : List Bool) :
+    (uk_loopTM R exit L entry).initCfg x = (R.initCfg x).mapState Sum.inl := by
+  exact uk_init_mapState R (uk_loopTM R exit L entry) Sum.inl rfl x
+
+/-- A live startup endpoint makes the composed startup prefix live. -/
+private theorem uk_loop_pre_live {k K : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) {x : List Bool} (T : ℕ)
+    (hlive : (R.runFrom (R.initCfg x) T).state ≠ none)
+    (hcut : ∀ u < T, (R.runFrom (R.initCfg x) u).state ≠ some exit)
+    (t : ℕ) (ht : t ≤ T) :
+    ((uk_loopTM R exit L entry).runFrom ((uk_loopTM R exit L entry).initCfg x) t).state ≠
+      none := by
+  rw [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀,
+    seamCompTM_runFrom_left R exit _ entry hcut t ht, Cfg.mapState_state]
+  intro hh
+  exact MultiTapeTM.runFrom_state_ne_none_of_le R (R.initCfg x) T hlive t ht
+    (Option.map_eq_none_iff.mp hh)
+
+/-- At every time after the seam, the composed run is the embedded continuation run.
+The continuation may be either the native forwarding loop or its suffix host. -/
+private theorem uk_loop_run {k K : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q) {x : List Bool}
+    (c : Cfg (k + 2) Bool Q x) (d : Cfg (K + (k + 2)) Bool P x) (T : ℕ)
+    (hrun : R.runFrom (R.initCfg x) T = d) (hexit : d.state = some exit)
+    (hcut : ∀ u < T, (R.runFrom (R.initCfg x) u).state ≠ some exit)
+    (hcfg : d.mapState (fun _ => entry) =
+      embedEmitCfg (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2)))
+        (fun _ _ => none) (fun _ => 0) [] c) (t : ℕ) :
+    (uk_loopTM R exit L entry).runFrom ((uk_loopTM R exit L entry).initCfg x)
+        (T + 1 + t) =
+      (embedEmitCfg (Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2)))
+        (fun _ _ => none) (fun _ => 0) [] (L.runFrom c t)).mapState Sum.inr := by
+  rw [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀,
+    seamCompTM_runFrom_right R exit _ entry hrun hexit hcut t, hcfg, embedEmitTM_runFrom]
+
+/-- A halting source run gives a bounded loop run to its encoded final configuration.
+
+**Proof sketch.** Choose the first source halt. The lockstep applies up to that
+time, and each summand in its simulated time is bounded by the per-step bound.
+Absorption identifies the first halted configuration with the given final one. -/
+private theorem uk_loop_forward {k n : ℕ} {Q : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (L : MultiTapeTM (k + 2) Bool Q)
+    (entry : Q) (cost : Cfg k Bool (Fin (n + 1)) x → ℕ) (D : ℕ)
+    (hlock : Lockstep M L (StepBlock.forwardLoopCfg entry M) cost {none} {none})
+    (hcost : ∀ c, c.state ≠ none → cost c ≤ D) (t : ℕ)
+    (hhalt : (M.runFrom (M.initCfg x) t).state = none) :
+    ∃ t₀ ≤ t, (∀ u < t₀, (M.runFrom (M.initCfg x) u).state ≠ none) ∧
+      (∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u)) ≤ D * t ∧
+      L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x))
+          (∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u)) =
+        StepBlock.forwardLoopCfg entry M (M.runFrom (M.initCfg x) t) := by
+  classical
+  let hex : ∃ u, (M.runFrom (M.initCfg x) u).state = none := ⟨t, hhalt⟩
+  let t₀ := Nat.find hex
+  have hle : t₀ ≤ t := Nat.find_min' hex hhalt
+  have hfirst : ∀ u < t₀, (M.runFrom (M.initCfg x) u).state ≠ none :=
+    fun u hu => Nat.find_min hex hu
+  have hsame : M.runFrom (M.initCfg x) t₀ = M.runFrom (M.initCfg x) t := by
+    symm
+    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+      MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+  refine ⟨t₀, hle, hfirst, ?_, ?_⟩
+  · calc
+      _ ≤ ∑ _u ∈ Finset.range t₀, D := Finset.sum_le_sum fun u hu =>
+        hcost _ (hfirst u (Finset.mem_range.mp hu))
+      _ = D * t₀ := by rw [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.mul_comm]
+      _ ≤ D * t := Nat.mul_le_mul_left D hle
+  · rw [hlock.runFrom (M.initCfg x) t₀ (by
+      simpa only [Set.mem_singleton_iff] using hfirst), hsame]
+
+/-- A source that remains live forever keeps its forwarding loop live forever.
+
+**Proof sketch.** For a target time `v`, simulate `v + 1` source steps. Every
+cost is positive, so their sum exceeds `v`; the lockstep cut gives liveness. -/
+private theorem uk_loop_live {k n : ℕ} {Q : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (L : MultiTapeTM (k + 2) Bool Q)
+    (entry : Q) (cost : Cfg k Bool (Fin (n + 1)) x → ℕ)
+    (hlock : Lockstep M L (StepBlock.forwardLoopCfg entry M) cost {none} {none})
+    (hpos : ∀ c, c.state ≠ none → 0 < cost c)
+    (hlive : ∀ u, (M.runFrom (M.initCfg x) u).state ≠ none) (v : ℕ) :
+    (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) v).state ≠ none := by
+  have hsum : v + 1 ≤ ∑ u ∈ Finset.range (v + 1), cost (M.runFrom (M.initCfg x) u) := by
+    calc
+      _ = ∑ _u ∈ Finset.range (v + 1), (1 : ℕ) := by
+        rw [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.mul_one]
+      _ ≤ _ := Finset.sum_le_sum fun u _ => hpos _ (hlive u)
+  have hcut := hlock.cut (M.initCfg x) (v + 1)
+    (fun u _ => by simpa only [Set.mem_singleton_iff] using hlive u) v (by omega)
+  simpa only [Set.mem_singleton_iff] using hcut
+
+/-- Every completed loop output is the source machine's completed output.
+
+**Proof sketch.** If the source never halted, positivity and the lockstep cut
+would keep the loop live at the given time. Choose a source halt and apply the
+forward lemma. The loop is now halted at both times, so its output agrees at
+their maximum; the encoding preserves the source's output. -/
+private theorem uk_loop_converse {k n : ℕ} {Q : Type} {x : List Bool}
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (L : MultiTapeTM (k + 2) Bool Q)
+    (entry : Q) (cost : Cfg k Bool (Fin (n + 1)) x → ℕ) (D : ℕ)
+    (hlock : Lockstep M L (StepBlock.forwardLoopCfg entry M) cost {none} {none})
+    (hcost : ∀ c, c.state ≠ none → 0 < cost c ∧ cost c ≤ D) (u : ℕ)
+    (hhalt : (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) u).state = none) :
+    ∃ t, (M.runFrom (M.initCfg x) t).state = none ∧
+      (M.runFrom (M.initCfg x) t).output =
+        (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) u).output := by
+  classical
+  have hex : ∃ t, (M.runFrom (M.initCfg x) t).state = none := by
+    by_contra h
+    have hsource : ∀ t, (M.runFrom (M.initCfg x) t).state ≠ none :=
+      fun t ht => h ⟨t, ht⟩
+    exact (uk_loop_live M L entry cost hlock (fun c hc => (hcost c hc).1) hsource u) hhalt
+  obtain ⟨t, ht⟩ := hex
+  obtain ⟨t₀, _, _, _, hr⟩ :=
+    uk_loop_forward M L entry cost D hlock (fun c hc => (hcost c hc).2) t ht
+  let v := ∑ i ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) i)
+  have hv : (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) v).state = none := by
+    rw [hr]
+    exact (uk_encode_halt entry M _).1.mpr ht
+  refine ⟨t, ht, ?_⟩
+  calc
+    _ = (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) v).output := by
+      rw [hr, (uk_encode_halt entry M _).2]
+    _ = (L.runFrom (StepBlock.forwardLoopCfg entry M (M.initCfg x)) (max u v)).output :=
+      (MultiTapeTM.runFrom_output_eq_of_halt L _ (Nat.le_max_right u v) hv).symm
+    _ = _ := MultiTapeTM.runFrom_output_eq_of_halt L _ (Nat.le_max_left u v) hhalt
+
+/-- The composed run uses the startup's space plus the embedded loop's per-tape bound.
+
+**Proof sketch.** The seam's visited-set theorem bounds each tape by the union
+of its startup and loop visits. A selected loop tape has the source loop's
+visited set; an unselected tape visits just its initial cell. Count each union
+and sum over the host's tapes, using the public space equations. -/
+private theorem uk_loop_space {k K n : ℕ} {P Q : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (entry : Q)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (x : List Bool) (T : ℕ)
+    (hrun : R.runFrom (R.initCfg x) T =
+      ⟨some exit, 1,
+        fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+          else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩)
+    (hcut : ∀ u < T, (R.runFrom (R.initCfg x) u).state ≠ some exit)
+    (t B S : ℕ) (hB : R.spaceUsed (R.initCfg x) T ≤ B) (hS : 1 ≤ S)
+    (hloop : ∀ i, L.spaceUsedByTape
+      (StepBlock.forwardLoopCfg entry M (M.initCfg x)) t i ≤ S) :
+    (uk_loopTM R exit L entry).spaceUsed ((uk_loopTM R exit L entry).initCfg x)
+        (T + 1 + t) ≤ B + (K + (k + 2)) * S := by
+  classical
+  let σ := Fin.castLEEmb (by omega : k + 2 ≤ K + (k + 2))
+  let A := embedEmitTM σ L
+  let c := StepBlock.forwardLoopCfg entry M (M.initCfg x)
+  let e := embedEmitCfg σ (fun _ _ => none) (fun _ => 0) [] c
+  let d : Cfg (K + (k + 2)) Bool P x :=
+    ⟨some exit, 1,
+      fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+        else if j.val = k + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)
+        else fun _ => none,
+      fun _ => 0, []⟩
+  have he : d.mapState (fun _ => entry) = e := (uk_embed_init exit entry M x).symm
+  have hA : ∀ j, A.spaceUsedByTape e t j ≤ S := by
+    intro j
+    by_cases hj : j ∈ Set.range σ
+    · obtain ⟨i, rfl⟩ := hj
+      rw [(embedEmitTM_visitedByTapeHead σ L _ _ [] c t i).2]
+      exact hloop i
+    · rw [(embedEmitTM_visitedByTapeHead_frame σ L _ _ [] c t j hj).2]
+      exact hS
+  have htape (j : Fin (K + (k + 2))) :
+      (uk_loopTM R exit L entry).spaceUsedByTape
+          ((uk_loopTM R exit L entry).initCfg x) (T + 1 + t) j ≤
+        R.spaceUsedByTape (R.initCfg x) T j + S := by
+    rw [MultiTapeTM.spaceUsedByTape_eq_card]
+    have hsub := seamCompTM_visitedByTapeHead_ofCfg R exit A entry
+      (c₁ := d) (T₂ := t) hrun rfl hcut j
+    rw [he] at hsub
+    have hown : (uk_loopTM R exit L entry).visitedByTapeHead
+        ((uk_loopTM R exit L entry).initCfg x) (T + 1 + t) j ⊆
+        (seamCompTM R exit A entry).visitedByTapeHead
+          ((R.initCfg x).mapState Sum.inl) (T + 1 + t) j := by
+      intro p hp
+      rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp ⊢
+      obtain ⟨u, hu, hp⟩ := hp
+      refine ⟨u, hu, ?_⟩
+      rw [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀] at hp
+      exact hp
+    calc
+      _ ≤ (R.visitedByTapeHead (R.initCfg x) T j ∪ A.visitedByTapeHead e t j).card :=
+        Finset.card_le_card (hown.trans hsub)
+      _ ≤ (R.visitedByTapeHead (R.initCfg x) T j).card +
+          (A.visitedByTapeHead e t j).card := Finset.card_union_le _ _
+      _ = R.spaceUsedByTape (R.initCfg x) T j + A.spaceUsedByTape e t j := by
+        rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+      _ ≤ _ := Nat.add_le_add_left (hA j) _
+  rw [MultiTapeTM.spaceUsed_eq_sum]
+  calc
+    _ ≤ ∑ j, (R.spaceUsedByTape (R.initCfg x) T j + S) :=
+      Finset.sum_le_sum fun j _ => htape j
+    _ = R.spaceUsed (R.initCfg x) T + (K + (k + 2)) * S := by
+      rw [Finset.sum_add_distrib, ← MultiTapeTM.spaceUsed_eq_sum, Finset.sum_const,
+        Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+    _ ≤ _ := Nat.add_le_add_right hB _
+
+  classical
+  obtain ⟨K, P, fP, dP, R, exit, hR⟩ := exists_selfStartupTMK k E
+  letI : Fintype P := fP
+  letI : DecidableEq P := dP
+  obtain ⟨Q, fQ, dQ, L, entry, C_L, hL⟩ := StepBlock.exists_forwardLoopTM k
+  letI : Fintype Q := fQ
+  letI : DecidableEq Q := dQ
+  let U : FinTM Bool :=
+    { k := K + (k + 2), State := P ⊕ Q, tm := uk_loopTM R exit L entry }
+  refine ⟨U, ?_⟩
+  intro α
+  obtain ⟨T, B, hRα⟩ := hR α
+  let M := E.machine α
+  let D := 50 * ((tableBitsK M.tr).length + 1) + C_L
+  let N := K + (k + 2)
+  let C := T + 1 + D + B + N * (2 * D + 1) + N
+  have hTC : T + 1 ≤ C := by dsimp only [C]; omega
+  have hDC : D ≤ C := by dsimp only [C]; omega
+  have hNC : N ≤ C := by dsimp only [C]; omega
+  have hBC : B + N * (2 * D + 1) ≤ C := by dsimp only [C]; omega
+  refine ⟨C, by omega, ?_⟩
+  intro w
+  let z := pairEncode α w
+  obtain ⟨hrun, hcut, _, hB⟩ := hRα w
+  obtain ⟨cost, hlock, hcost, hledger⟩ := hL (x := z) M
+  have hUrun := uk_loop_run R exit L entry
+    (StepBlock.forwardLoopCfg entry M (M.initCfg z)) (R.runFrom (R.initCfg z) T) T rfl
+    (by rw [hrun]) hcut (by rw [hrun]; exact (uk_embed_init exit entry M z).symm)
+  constructor
+  · intro output t hcomp
+    obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff (E.toFinTM α) z output t).mp hcomp
+    obtain ⟨t₀, ht₀, hfirst, hvbound, hr⟩ :=
+      uk_loop_forward M L entry cost D hlock (fun c hc => (hcost c hc).2) t hhalt
+    let v := ∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg z) u)
+    have hUhalt : (U.tm.runFrom (U.tm.initCfg z) (T + 1 + v)).state = none := by
+      rw [hUrun v, Cfg.mapState_state, embedEmitCfg_state, hr,
+        StepBlock.forwardLoopCfg_state, hhalt, Option.map_none, Option.map_none]
+    have hUout : (U.tm.runFrom (U.tm.initCfg z) (T + 1 + v)).output = output := by
+      rw [hUrun v, Cfg.mapState_output, embedEmitCfg_output, List.nil_append, hr,
+        StepBlock.forwardLoopCfg_output]
+      exact hout
+    have htime : T + 1 + v ≤ C * (t + 1) := by
+      calc
+        _ ≤ C + D * t := Nat.add_le_add hTC hvbound
+        _ ≤ C + C * t := Nat.add_le_add_left (Nat.mul_le_mul_right t hDC) C
+        _ = _ := by ring
+    refine ⟨((FinTM.computesInTime_iff U z output (T + 1 + v)).mpr
+      ⟨hUhalt, hUout⟩).mono htime, ?_⟩
+    let s := M.spaceUsed (M.initCfg z) t
+    have hloop : ∀ i, L.spaceUsedByTape
+        (StepBlock.forwardLoopCfg entry M (M.initCfg z)) v i ≤ s + (2 * D + 1) := by
+      intro i
+      by_cases hi : i.val < k
+      · let j : Fin k := ⟨i.val, hi⟩
+        have hij : Fin.castAdd 2 j = i := Fin.ext rfl
+        rw [← hij, MultiTapeTM.spaceUsedByTape_eq_card]
+        calc
+          _ ≤ (M.visitedByTapeHead (M.initCfg z) t₀ j).card :=
+            Finset.card_le_card ((hledger (M.initCfg z) t₀ hfirst).1 j)
+          _ ≤ (M.visitedByTapeHead (M.initCfg z) t j).card := Finset.card_le_card (by
+            intro p hp
+            rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp ⊢
+            obtain ⟨u, hu, hp⟩ := hp
+            exact ⟨u, hu.trans ht₀, hp⟩)
+          _ = M.spaceUsedByTape (M.initCfg z) t j :=
+            (MultiTapeTM.spaceUsedByTape_eq_card (tm := M) _ t j).symm
+          _ ≤ s := MultiTapeTM.spaceUsedByTape_le_spaceUsed (tm := M) _ t j
+          _ ≤ _ := by omega
+      · rw [MultiTapeTM.spaceUsedByTape_eq_card]
+        calc
+          _ ≤ (Finset.Icc (-(D : ℤ)) (D : ℤ)).card :=
+            Finset.card_le_card ((hledger (M.initCfg z) t₀ hfirst).2 i (by omega))
+          _ = 2 * D + 1 := by rw [Int.card_Icc]; omega
+          _ ≤ _ := by omega
+    have hspace := uk_loop_space R exit L entry M z T hrun hcut v B
+      (s + (2 * D + 1)) hB (by omega) hloop
+    have hfreeze : U.tm.spaceUsed (U.tm.initCfg z) (C * (t + 1)) ≤
+        U.tm.spaceUsed (U.tm.initCfg z) (T + 1 + v) := by
+      rw [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
+      apply Finset.sum_le_sum
+      intro j _
+      rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+      apply Finset.card_le_card
+      intro p hp
+      have splitVisits := MultiTapeTM.visitedByTapeHead_add_subset U.tm (U.tm.initCfg z)
+        (T + 1 + v) (C * (t + 1) - (T + 1 + v)) j
+      rw [Nat.add_sub_of_le htime] at splitVisits
+      rcases Finset.mem_union.mp (splitVisits hp) with hpast | hfuture
+      · exact hpast
+      · rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hfuture ⊢
+        obtain ⟨u, _, he⟩ := hfuture
+        rw [MultiTapeTM.runFrom_of_halt _ hUhalt] at he
+        exact ⟨T + 1 + v, le_rfl, he⟩
+    calc
+      _ ≤ U.tm.spaceUsed (U.tm.initCfg z) (T + 1 + v) := hfreeze
+      _ ≤ B + N * (s + (2 * D + 1)) := hspace
+      _ = N * s + (B + N * (2 * D + 1)) := by ring
+      _ ≤ C * s + C := Nat.add_le_add (Nat.mul_le_mul_right s hNC) hBC
+      _ = _ := by dsimp only [s, M, EffectiveCodeK.toFinTM]; ring
+  · intro output hcomp
+    obtain ⟨u, hu⟩ := hcomp
+    obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff U z output u).mp hu
+    have hprefix := uk_loop_pre_live R exit L entry T
+      (by rw [hrun]; exact Option.some_ne_none exit) hcut
+    have hafter : T + 1 ≤ u := by
+      by_contra h
+      exact hprefix u (by omega) hhalt
+    obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le hafter
+    rw [hUrun v, Cfg.mapState_state, embedEmitCfg_state, Option.map_eq_none_iff] at hhalt
+    rw [hUrun v, Cfg.mapState_output, embedEmitCfg_output, List.nil_append] at hout
+    obtain ⟨t, ht, ho⟩ := uk_loop_converse M L entry cost D hlock hcost v hhalt
+    exact ⟨t, (FinTM.computesInTime_iff (E.toFinTM α) z output t).mpr
+      ⟨ht, ho.trans hout⟩⟩
+
+/-- A header scan that writes one ruler mark per input cell. No public row writes a ruler
+of the doubled header's length. States zero, one and two read aligned pairs; three returns. -/
+private def uk_scanTM {k : ℕ} (i : Fin k) : MultiTapeTM k Bool (Fin 4) where
+  q₀ := 0
+  tr := fun q b _ =>
+    if q = 3 then inputMoveAction 0 3
+    else tapeAction i .pos (some (some true)) .pos
+      (if q = 0 then if b = some false then 1 else 2
+       else if q = 1 ∧ b = some true then 3 else 0)
+
+/-- The scan presentation after writing a consecutive interval of ruler marks. -/
+private def uk_scanCfg {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (q : Fin 4) (t : ℕ)
+    (ht : d.inputPos.val + t < z.length + 2) : Cfg k Bool (Fin 4) z :=
+  ⟨some q, ⟨d.inputPos.val + t, ht⟩,
+    Function.update d.workTapes i
+      (fun a => if d.workTapePos i ≤ a ∧ a < d.workTapePos i + t
+        then some true else d.workTapes i a),
+    Function.update d.workTapePos i (d.workTapePos i + t), d.output⟩
+
+/-- Zero scan steps leave the initial live configuration unchanged. -/
+private theorem uk_scan_zero {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (hd : d.state = some 0) :
+    uk_scanCfg i d 0 0 (by have := d.inputPos.isLt; omega) = d := by
+  apply Cfg.ext
+  · exact hd.symm
+  · apply Fin.ext; simp only [uk_scanCfg, Nat.add_zero]
+  · funext j a
+    simp only [uk_scanCfg, Nat.cast_zero, add_zero]
+    by_cases hj : j = i
+    · subst j
+      rw [Function.update_self]
+      rw [if_neg (by omega)]
+    · rw [Function.update_of_ne hj]
+  · simp only [uk_scanCfg, Nat.cast_zero, add_zero, Function.update_eq_self]
+  · rfl
+
+/-- One scan step writes and advances both heads, preserving every frame field.
+
+**Proof sketch.** Read the transition with the public writing-action equation. Its
+updated cell is exactly the new right endpoint of the already marked interval;
+all other cells retain their previous value. -/
+private theorem uk_scan_step {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (q : Fin 4) (t : ℕ)
+    (ht : d.inputPos.val + t < z.length + 1) (hq : q ≠ 3) (b : Bool)
+    (hb : (uk_scanCfg i d q t (by omega)).inputSymbol = some b) :
+    (uk_scanTM i).step (uk_scanCfg i d q t (by omega)) =
+      uk_scanCfg i d
+        (if q = 0 then if b = false then 1 else 2
+         else if q = 1 ∧ b = true then 3 else 0) (t + 1) (by omega) := by
+  have ht' : (uk_scanTM i).tr q (uk_scanCfg i d q t (by omega)).inputSymbol
+      (uk_scanCfg i d q t (by omega)).workTapeSymbols = tapeAction i .pos
+        (some (some true)) .pos
+        (if q = 0 then if b = false then 1 else 2
+         else if q = 1 ∧ b = true then 3 else 0) := by
+    simp only [uk_scanTM, if_neg hq, hb, Option.some.injEq]
+  rw [step_of_tapeAction_write _ _ i .pos (some true) .pos rfl ht']
+  apply Cfg.ext
+  · rfl
+  · rw [moveInputPos_pos_of_ne_right _ (by simp only [uk_scanCfg]; omega)]
+    apply Fin.ext
+    simp only [uk_scanCfg]
+    omega
+  · funext j a
+    by_cases hj : j = i
+    · subst j
+      simp only [uk_scanCfg, Function.update_self, Nat.cast_add, Nat.cast_one]
+      by_cases ha : a = d.workTapePos i + t
+      · subst a
+        rw [Function.update_self, if_pos (by omega)]
+      · rw [Function.update_of_ne ha]
+        by_cases ha' : d.workTapePos i ≤ a ∧ a < d.workTapePos i + t
+        · rw [if_pos ha', if_pos (by omega)]
+        · rw [if_neg ha', if_neg (by omega)]
+    · simp only [uk_scanCfg, Function.update_of_ne hj]
+  · funext j
+    by_cases hj : j = i
+    · subst j
+      simp only [uk_scanCfg, Function.update_self, Nat.cast_add, Nat.cast_one,
+        SignType.pos_eq_one, SignType.coe_one, add_assoc]
+    · simp only [uk_scanCfg, Function.update_of_ne hj]
+  · rfl
+
+/-- The scanner consumes one aligned pair, marking both input cells.
+
+**Proof sketch.** The suffix equation gives the two input symbols through `getElem_drop`.
+Apply the one-step result twice. The intermediate state stores the first bit,
+and the second bit either returns on the separator or resumes the pair scan. -/
+private theorem uk_scan_pair {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (p t : ℕ) (hp : d.inputPos.val = 1 + p)
+    (a b : Bool) (rest : List Bool) (hz : z.drop (p + t) = a :: b :: rest) :
+    let hlen : d.inputPos.val + (t + 2) < z.length + 2 := by
+      have h := congrArg List.length hz
+      simp only [List.length_drop, List.length_cons] at h
+      omega
+    let c := uk_scanCfg i d 0 t (by omega)
+    (uk_scanTM i).runFrom c 2 =
+        uk_scanCfg i d (if a = false ∧ b = true then 3 else 0) (t + 2) hlen ∧
+      (∀ v < 2, ((uk_scanTM i).runFrom c v).state ≠ some 3) := by
+  have hlen : p + t + 2 ≤ z.length := by
+    have h := congrArg List.length hz
+    simp only [List.length_drop, List.length_cons] at h
+    omega
+  dsimp only
+  have ha : z[p + t]'(by omega) = a := by
+    have hh : (z.drop (p + t))[0]'(by rw [hz]; simp) = a := by
+      simp only [hz, List.getElem_cons_zero]
+    simpa only [List.getElem_drop, Nat.add_zero] using hh
+  have hb : z[p + t + 1]'(by omega) = b := by
+    have hh : (z.drop (p + t))[1]'(by rw [hz]; simp) = b := by
+      simp only [hz, List.getElem_cons_succ, List.getElem_cons_zero]
+    simpa only [List.getElem_drop] using hh
+  let q : Fin 4 := if a = false then 1 else 2
+  have h1 : (uk_scanTM i).step (uk_scanCfg i d 0 t (by omega)) =
+      uk_scanCfg i d q (t + 1) (by omega) := by
+    have read : (uk_scanCfg i d 0 t (by omega)).inputSymbol = some a := by
+      rw [inputSymbolInner (p + t) (by simp only [uk_scanCfg]; omega) (by omega), ha]
+    simpa only [if_pos rfl] using uk_scan_step i d 0 t (by omega) (by decide) a read
+  have h2 : (uk_scanTM i).step (uk_scanCfg i d q (t + 1) (by omega)) =
+      uk_scanCfg i d (if a = false ∧ b = true then 3 else 0) (t + 2) (by omega) := by
+    have read : (uk_scanCfg i d q (t + 1) (by omega)).inputSymbol = some b := by
+      rw [inputSymbolInner (p + t + 1) (by simp only [uk_scanCfg]; omega) (by omega), hb]
+    have step := uk_scan_step i d q (t + 1) (by omega)
+      (by dsimp only [q]; split <;> decide) b read
+    cases a <;> cases b <;> simpa only [q, Bool.false_eq_true, Bool.true_eq_false,
+      ↓reduceIte, and_self, and_false, false_and, true_and] using step
+  have one (e : Cfg k Bool (Fin 4) z) :
+      (uk_scanTM i).runFrom e 1 = (uk_scanTM i).step e := by
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  constructor
+  · calc
+      _ = (uk_scanTM i).runFrom
+          ((uk_scanTM i).runFrom (uk_scanCfg i d 0 t (by omega)) 1) 1 :=
+        MultiTapeTM.runFrom_add _ 1 1
+      _ = _ := by rw [one, one, h1, h2]
+  · intro v hv
+    have casesv : v = 0 ∨ v = 1 := by omega
+    rcases casesv with rfl | rfl
+    · rw [MultiTapeTM.runFrom_zero]
+      change some (0 : Fin 4) ≠ some 3
+      decide
+    · rw [one, h1]
+      change some q ≠ some 3
+      cases a <;> decide
+
+/-- The scanner consumes one doubled header from any native input offset.
+
+**Proof sketch.** Induct on the header word. Every doubled bit takes two steps
+and returns to the pair-reading state; the separator takes two steps and returns.
+The suffix equation is advanced with `drop_drop`, while the exact-time cut is
+split before and after each pair. -/
+private theorem uk_scan_header {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (p : ℕ) (hp : d.inputPos.val = 1 + p)
+    (u v : List Bool) (t : ℕ) (hz : z.drop (p + t) = pairEncode u v) :
+    let hlen : d.inputPos.val + (t + (2 * u.length + 2)) < z.length + 2 := by
+      have h := congrArg List.length hz
+      rw [List.length_drop, length_pairEncode] at h
+      omega
+    (uk_scanTM i).runFrom (uk_scanCfg i d 0 t (by omega)) (2 * u.length + 2) =
+        uk_scanCfg i d 3 (t + (2 * u.length + 2)) hlen ∧
+      (∀ r < 2 * u.length + 2,
+        ((uk_scanTM i).runFrom (uk_scanCfg i d 0 t (by omega)) r).state ≠ some 3) := by
+  have length_bound : p + t + (2 * u.length + 2) ≤ z.length := by
+    have h := congrArg List.length hz
+    rw [List.length_drop, length_pairEncode] at h
+    omega
+  dsimp only
+  induction u generalizing t with
+  | nil =>
+    have hz' : z.drop (p + t) = false :: true :: v := by
+      simpa only [pairEncode_eq, List.flatMap_nil, List.nil_append,
+        List.cons_append] using hz
+    simpa only [List.length_nil, Nat.mul_zero, Nat.zero_add, and_self, ↓reduceIte]
+      using uk_scan_pair i d p t hp false true v hz'
+  | cons b u ih =>
+    have hz' : z.drop (p + t) = b :: b :: pairEncode u v := by
+      simpa only [pairEncode_eq, List.flatMap_cons, List.cons_append, List.nil_append,
+        List.append_assoc] using hz
+    have pair := uk_scan_pair i d p t hp b b (pairEncode u v) hz'
+    have hpair : (uk_scanTM i).runFrom (uk_scanCfg i d 0 t (by omega)) 2 =
+        uk_scanCfg i d 0 (t + 2) (by omega) := by
+      cases b <;> simpa only [Bool.false_eq_true, Bool.true_eq_false,
+        false_and, and_false, ↓reduceIte] using pair.1
+    have suffix : z.drop (p + (t + 2)) = pairEncode u v := by
+      rw [show p + (t + 2) = (p + t) + 2 by omega, ← List.drop_drop, hz']
+      rfl
+    have tail := ih (t + 2) suffix (by simp only [List.length_cons] at length_bound; omega)
+    have duration : 2 * (b :: u).length + 2 = 2 + (2 * u.length + 2) := by
+      simp only [List.length_cons]
+      omega
+    constructor
+    · calc
+        _ = (uk_scanTM i).runFrom (uk_scanCfg i d 0 t (by omega))
+            (2 + (2 * u.length + 2)) := congrArg _ duration
+        _ = uk_scanCfg i d 3 (t + 2 + (2 * u.length + 2)) (by omega) := by
+          rw [MultiTapeTM.runFrom_add, hpair, tail.1]
+        _ = _ := by congr 1; omega
+    · intro r hr
+      by_cases hsmall : r < 2
+      · exact pair.2 r hsmall
+      · have hr' : r - 2 < 2 * u.length + 2 := by omega
+        rw [show r = 2 + (r - 2) by omega, MultiTapeTM.runFrom_add, hpair]
+        exact tail.2 (r - 2) hr'
+
+/-- The framed, silent header-ruler scan, from any input offset and any ruler head.
+The painted interval overwrites its old contents; all cells outside it are preserved,
+so consecutive invocations can write a single ruler for consecutive headers.
+
+**Proof sketch.** Instantiate the header induction at time zero. The endpoint has
+the original output; output-prefix monotonicity in both directions gives silence
+at every intermediate time. -/
+private theorem uk_scan_run {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (p : ℕ) (hp : d.inputPos.val = 1 + p)
+    (hd : d.state = some 0) (u v : List Bool) (hz : z.drop p = pairEncode u v) :
+    let hlen : d.inputPos.val + (2 * u.length + 2) < z.length + 2 := by
+      have h := congrArg List.length hz
+      rw [List.length_drop, length_pairEncode] at h
+      omega
+    (uk_scanTM i).runFrom d (2 * u.length + 2) =
+        uk_scanCfg i d 3 (2 * u.length + 2) hlen ∧
+      (∀ t < 2 * u.length + 2, ((uk_scanTM i).runFrom d t).state ≠ some 3) ∧
+      (∀ t ≤ 2 * u.length + 2, ((uk_scanTM i).runFrom d t).output = d.output) := by
+  have hz' : z.drop (p + 0) = pairEncode u v := by simpa only [Nat.add_zero] using hz
+  have h := uk_scan_header i d p hp u v 0 hz'
+  simp only [Nat.zero_add, uk_scan_zero i d hd] at h
+  refine ⟨h.1, h.2, ?_⟩
+  intro t ht
+  have hle := MultiTapeTM.output_prefix (uk_scanTM i) d ht
+  have hge := MultiTapeTM.output_prefix (uk_scanTM i) d (Nat.zero_le t)
+  rw [h.1] at hle
+  rw [MultiTapeTM.runFrom_zero] at hge
+  exact hle.eq_of_length_le hge.length_le
+
+/-- On an initially blank ruler tape, the marked interval is the standard unary buffer.
+
+**Proof sketch.** Read the buffer through its public equation. For a nonnegative
+cell, a replicate lookup is present precisely before the interval's length;
+negative cells and cells beyond the interval stay blank. -/
+private theorem uk_scan_ruler {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (q : Fin 4) (t : ℕ)
+    (ht : d.inputPos.val + t < z.length + 2) (hblank : ∀ a, d.workTapes i a = none) :
+    ∀ a : ℤ, (uk_scanCfg i d q t ht).workTapes i (d.workTapePos i + a) =
+      FinTM.bufferTape (List.replicate t true) a := by
+  intro a
+  simp only [uk_scanCfg, Function.update_self, hblank, FinTM.bufferTape_eq]
+  by_cases ha : 0 ≤ a
+  · rw [if_pos ha]
+    by_cases hat : a < t
+    · rw [if_pos (by omega), List.getElem?_replicate]
+      simp only [show a.toNat < t by omega, ↓reduceIte]
+    · rw [if_neg (by omega), List.getElem?_replicate]
+      simp only [show ¬a.toNat < t by omega, ↓reduceIte]
+  · rw [if_neg ha, if_neg (by omega)]
+
+/-- The header scan followed by the public work-tape rewind. -/
+private def uk_headerTM {k : ℕ} (i : Fin k) :
+    MultiTapeTM k Bool (Fin 4 ⊕ RewindPhase) :=
+  { seamCompTM (uk_scanTM i) 3 (rewindTM k i) .start with q₀ := Sum.inl 0 }
+
+/-- Scanning and rewinding prepares a ruler without moving the other heads.
+
+**Proof sketch.** The scan writes the unary buffer and ends immediately after it.
+Its buffer equation supplies the framed rewind's hypothesis. The public seam
+combines their exact runs and first-return cuts; its endpoint resets just the
+ruler head, which restores the original vector of heads. -/
+private theorem uk_header_run {k : ℕ} {z : List Bool} (i : Fin k)
+    (d : Cfg k Bool (Fin 4) z) (p : ℕ) (hp : d.inputPos.val = 1 + p)
+    (hd : d.state = some 0) (u v : List Bool) (hz : z.drop p = pairEncode u v)
+    (hblank : ∀ a, d.workTapes i a = none) :
+    let ℓ := 2 * u.length + 2
+    let hlen : d.inputPos.val + ℓ < z.length + 2 := by
+      have h := congrArg List.length hz
+      rw [List.length_drop, length_pairEncode] at h
+      omega
+    let e : Cfg k Bool (Fin 4 ⊕ RewindPhase) z :=
+      ⟨some (Sum.inr .done), ⟨d.inputPos.val + ℓ, hlen⟩,
+        Function.update d.workTapes i
+          (fun a => FinTM.bufferTape (List.replicate ℓ true) (a - d.workTapePos i)),
+        d.workTapePos, d.output⟩
+    (uk_headerTM i).runFrom (d.mapState Sum.inl) (2 * ℓ + 3) = e ∧
+      (∀ t < 2 * ℓ + 3,
+        ((uk_headerTM i).runFrom (d.mapState Sum.inl) t).state ≠ some (Sum.inr .done)) := by
+  dsimp only
+  let ℓ := 2 * u.length + 2
+  have hlen : d.inputPos.val + ℓ < z.length + 2 := by
+    have h := congrArg List.length hz
+    rw [List.length_drop, length_pairEncode] at h
+    dsimp only [ℓ]; omega
+  let c := uk_scanCfg i d 3 ℓ hlen
+  obtain ⟨hscan, hcut, _⟩ := uk_scan_run i d p hp hd u v hz
+  have hrewind := rewindTM_run_ofCfg i (List.replicate ℓ true) ℓ
+    (by rw [List.length_replicate]) (c.mapState fun _ => RewindPhase.start)
+    (by rw [Cfg.mapState_state]; rfl) (by
+      intro a _ _
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+      have hh := uk_scan_ruler i d 3 ℓ hlen hblank a
+      simpa only [c, uk_scanCfg, Function.update_self, add_sub_cancel_right] using hh)
+  let r : Cfg k Bool RewindPhase z :=
+    { c.mapState (fun _ => RewindPhase.start) with
+      state := some .done
+      workTapePos := Function.update (c.mapState (fun _ => RewindPhase.start)).workTapePos i
+        ((c.mapState (fun _ => RewindPhase.start)).workTapePos i - ℓ) }
+  have endpoint : r.mapState Sum.inr =
+      (⟨some (Sum.inr RewindPhase.done), ⟨d.inputPos.val + ℓ, hlen⟩,
+        Function.update d.workTapes i
+          (fun a => FinTM.bufferTape (List.replicate ℓ true) (a - d.workTapePos i)),
+        d.workTapePos, d.output⟩ : Cfg k Bool (Fin 4 ⊕ RewindPhase) z) := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]; rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]; rfl
+    · funext j a
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      by_cases hj : j = i
+      · subst j
+        have hh := uk_scan_ruler i d 3 ℓ hlen hblank (a - d.workTapePos i)
+        simpa only [add_sub_cancel, Function.update_self] using hh
+      · simp only [c, uk_scanCfg, Function.update_of_ne hj]
+    · funext j
+      rw [Cfg.mapState_workTapePos]
+      by_cases hj : j = i
+      · subst j
+        simp only [r, c, Cfg.mapState_workTapePos, uk_scanCfg,
+          Function.update_self, add_sub_cancel_right]
+      · simp only [r, c, Cfg.mapState_workTapePos, uk_scanCfg, Function.update_of_ne hj]
+    · rw [Cfg.mapState_output, Cfg.mapState_output]; rfl
+  have total : 2 * ℓ + 3 = ℓ + 1 + (ℓ + 2) := by omega
+  constructor
+  · rw [uk_headerTM, MultiTapeTM.runFrom_with_q₀, total]
+    exact (seamCompTM_run_ofCfg (uk_scanTM i) 3 (rewindTM k i) .start
+      hscan rfl hcut hrewind.1).trans endpoint
+  · intro t ht
+    rw [uk_headerTM, MultiTapeTM.runFrom_with_q₀]
+    exact seamCompTM_firstReturn_ofCfg (uk_scanTM i) 3 (rewindTM k i) .start .done
+      hscan rfl hcut hrewind.1 rfl hrewind.2.1 t (by omega)
+
+
+/-- The startup embedded with one extra tape, followed by the header ruler preparation. -/
+private noncomputable def uk_suffixStartupTM {k K : ℕ} {P : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P) :
+    MultiTapeTM (K + (k + 3)) Bool (P ⊕ (Fin 4 ⊕ RewindPhase)) :=
+  { seamCompTM
+      ({ embedEmitTM (Fin.castLEEmb (by omega)) R with q₀ := R.q₀ }) exit
+      (uk_headerTM ⟨k + 2, by omega⟩) (Sum.inl 0) with q₀ := Sum.inl R.q₀ }
+
+/-- The initialized simulation bank and header ruler, ready for the suffix host. -/
+private def uk_suffixCfg {k K n : ℕ} {P : Type} (q : P)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (z : List Bool) (ℓ : ℕ)
+    (hℓ : ℓ + 1 < z.length + 2) : Cfg (K + (k + 3)) Bool P z :=
+  ⟨some q, ⟨ℓ + 1, hℓ⟩,
+    fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+      else if j.val = k + 1 then fun a => FinTM.bufferTape (unaryFin M.q₀) (a - 2)
+      else if j.val = k + 2 then FinTM.bufferTape (List.replicate ℓ true)
+      else fun _ => none,
+    fun _ => 0, []⟩
+
+/-- The original startup followed by the header scan and rewind reaches the suffix seam.
+
+**Proof sketch.** Embed the startup in one more tape and reconstruct its initial
+and final configurations with the public embedding theorem. At the endpoint,
+the tape immediately after the simulation bank is blank. The framed header
+contract prepares it, and the public seam composes the two runs and their cuts. -/
+private theorem uk_suffixStartup_run {k K n : ℕ} {P : Type} [DecidableEq P]
+    (R : MultiTapeTM (K + (k + 2)) Bool P) (exit : P)
+    (M : MultiTapeTM k Bool (Fin (n + 1))) (α x : List Bool) (T : ℕ)
+    (hrun : R.runFrom (R.initCfg (pairEncode α x)) T =
+      ⟨some exit, 1,
+        fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+          else if j.val = k + 1 then fun a => FinTM.bufferTape (unaryFin M.q₀) (a - 2)
+          else fun _ => none,
+        fun _ => 0, []⟩)
+    (hcut : ∀ t < T, (R.runFrom (R.initCfg (pairEncode α x)) t).state ≠ some exit) :
+    let ℓ := 2 * α.length + 2
+    let hlen : ℓ + 1 < (pairEncode α x).length + 2 := by rw [length_pairEncode]; omega
+    (uk_suffixStartupTM R exit).runFrom ((uk_suffixStartupTM R exit).initCfg (pairEncode α x))
+        (T + 1 + (2 * ℓ + 3)) = uk_suffixCfg (Sum.inr (Sum.inr .done)) M
+          (pairEncode α x) ℓ hlen ∧
+      (∀ t < T + 1 + (2 * ℓ + 3),
+        ((uk_suffixStartupTM R exit).runFrom
+          ((uk_suffixStartupTM R exit).initCfg (pairEncode α x)) t).state ≠
+            some (Sum.inr (Sum.inr .done))) := by
+  let z := pairEncode α x
+  let ℓ := 2 * α.length + 2
+  let σ := Fin.castLEEmb (by omega : K + (k + 2) ≤ K + (k + 3))
+  let A := ({ embedEmitTM σ R with q₀ := R.q₀ } : MultiTapeTM (K + (k + 3)) Bool P)
+  let i : Fin (K + (k + 3)) := ⟨k + 2, by omega⟩
+  let B := uk_headerTM i
+  let d : Cfg (K + (k + 3)) Bool P z :=
+    ⟨some exit, 1,
+      fun j => if j.val = k then FinTM.bufferTape (tableBitsK M.tr)
+        else if j.val = k + 1 then fun a => FinTM.bufferTape (unaryFin M.q₀) (a - 2)
+        else fun _ => none,
+      fun _ => 0, []⟩
+  have initEmbed : embedEmitCfg σ (fun _ _ => none) (fun _ => 0) [] (R.initCfg z) =
+      A.initCfg z := by
+    apply embedEmitCfg_eq
+    · simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_state]
+    · simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_inputPos]
+    · simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_output, List.nil_append]
+    · intro j
+      constructor
+      · funext a
+        simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes]
+      · simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos]
+    · intro j _
+      constructor
+      · funext a
+        simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes]
+      · simp only [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos]
+  have aRun : A.runFrom (A.initCfg z) T = d := by
+    rw [← initEmbed]
+    simp only [A, MultiTapeTM.runFrom_with_q₀, embedEmitTM_runFrom, z, hrun]
+    apply embedEmitCfg_eq
+    · rfl
+    · rfl
+    · rfl
+    · intro j; exact ⟨rfl, rfl⟩
+    · intro j hj
+      have hge : K + (k + 2) ≤ j.val := by
+        by_contra h
+        apply hj
+        refine ⟨⟨j.val, by omega⟩, ?_⟩
+        apply Fin.ext; rfl
+      constructor
+      · funext a
+        simp only [d, if_neg (by omega : j.val ≠ k), if_neg (by omega : j.val ≠ k + 1)]
+      · rfl
+  have aCut : ∀ t < T, (A.runFrom (A.initCfg z) t).state ≠ some exit := by
+    intro t ht
+    rw [← initEmbed]
+    simp only [A, MultiTapeTM.runFrom_with_q₀, embedEmitTM_runFrom, embedEmitCfg_state]
+    exact hcut t ht
+  let c := d.mapState (fun _ => (0 : Fin 4))
+  have cstate : c.state = some 0 := by rw [Cfg.mapState_state]; rfl
+  have cpos : c.inputPos.val = 1 + 0 := by rw [Cfg.mapState_inputPos]; rfl
+  have cblank : ∀ a, c.workTapes i a = none := by
+    intro a
+    rw [Cfg.mapState_workTapes]
+    simp only [d, i, if_neg (by omega : k + 2 ≠ k), if_neg (by omega : k + 2 ≠ k + 1)]
+  obtain ⟨bRun, bCut⟩ := uk_header_run i c 0 cpos cstate α x
+    (by rw [List.drop_zero]) cblank
+  have cmap : c.mapState Sum.inl = d.mapState (fun _ => (Sum.inl 0 : Fin 4 ⊕ RewindPhase)) := by
+    rw [Cfg.mapState_mapState]; rfl
+  rw [cmap] at bRun bCut
+  have clen : c.inputPos.val + ℓ < z.length + 2 := by
+    rw [cpos]
+    dsimp only [z, ℓ]
+    rw [length_pairEncode]
+    omega
+  have plen : ℓ + 1 < z.length + 2 := by
+    dsimp only [z, ℓ]
+    rw [length_pairEncode]
+    omega
+  have final :
+      (⟨some (Sum.inr RewindPhase.done),
+        ⟨c.inputPos.val + ℓ, clen⟩,
+        Function.update c.workTapes i
+          (fun a => FinTM.bufferTape (List.replicate ℓ true) (a - c.workTapePos i)),
+        c.workTapePos, c.output⟩ : Cfg (K + (k + 3)) Bool (Fin 4 ⊕ RewindPhase) z).mapState
+          Sum.inr =
+        uk_suffixCfg (Sum.inr (Sum.inr .done) : P ⊕ (Fin 4 ⊕ RewindPhase)) M z ℓ plen := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]; rfl
+    · rw [Cfg.mapState_inputPos]
+      apply Fin.ext
+      change c.inputPos.val + ℓ = ℓ + 1
+      rw [cpos]
+      omega
+    · funext j a
+      rw [Cfg.mapState_workTapes]
+      by_cases hj : j = i
+      · subst j
+        simp only [Function.update_self, c, Cfg.mapState_workTapePos, d, sub_zero,
+          uk_suffixCfg, i, if_neg (by omega : k + 2 ≠ k),
+          if_neg (by omega : k + 2 ≠ k + 1), ↓reduceIte]
+      · have hjv : j.val ≠ k + 2 := by intro h; apply hj; exact Fin.ext h
+        simp only [Function.update_of_ne hj, c, Cfg.mapState_workTapes, d,
+          uk_suffixCfg, if_neg hjv]
+    · funext j
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      rfl
+    · rw [Cfg.mapState_output, Cfg.mapState_output]; rfl
+  have init : (uk_suffixStartupTM R exit).initCfg z = (A.initCfg z).mapState Sum.inl := by
+    exact uk_init_mapState A (uk_suffixStartupTM R exit) Sum.inl rfl z
+  constructor
+  · rw [init, uk_suffixStartupTM, MultiTapeTM.runFrom_with_q₀]
+    exact (seamCompTM_run_ofCfg A exit B (Sum.inl 0) aRun rfl aCut bRun).trans final
+  · intro t ht
+    rw [init, uk_suffixStartupTM, MultiTapeTM.runFrom_with_q₀]
+    exact seamCompTM_firstReturn_ofCfg A exit B (Sum.inl 0) (Sum.inr .done)
+      aRun rfl aCut bRun rfl bCut t ht
+
+/-- The ruler host's presented configuration has its bank first and its ruler last. -/
+private theorem uk_ruler_fields {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ)
+    (hz : z.length = ℓ + y.length) (q : Option Q) (c : Cfg m Bool S y) (rt : ℤ → Option Bool)
+    (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).inputPos.val = ℓ + c.inputPos.val ∧
+      (rulerHostCfg ℓ hz q c rt rp).workTapes (Fin.last m) = rt ∧
+      (rulerHostCfg ℓ hz q c rt rp).workTapePos (Fin.last m) = rp ∧
+      (∀ i : Fin m, (rulerHostCfg ℓ hz q c rt rp).workTapes i.castSucc = c.workTapes i) ∧
+      (rulerHostCfg ℓ hz q c rt rp).output = c.output := by
+  refine ⟨by rw [rulerHostCfg_inputPos], ?_, ?_, fun i => ?_, rulerHostCfg_output _ _ _ _ _ _⟩
+  · funext a
+    rw [rulerHostCfg_workTapes, Fin.lastCases_last]
+  · rw [rulerHostCfg_workTapePos, Fin.lastCases_last]
+  · funext a
+    rw [rulerHostCfg_workTapes, Fin.lastCases_castSucc]
+
+/-- The prepared suffix seam is the embedding of the initial ruler-host presentation.
+
+**Proof sketch.** Reconstruct the embedding from its public field equations. Its
+first bank is the initial forwarding-loop encoding, its last tape is the ruler,
+and all unselected tapes are blank. The encoded input head is one, so the
+physical head is exactly one cell after the header and its virtual-zero tag is false. -/
+private theorem uk_embed_suffix {k K n : ℕ} {P Q H : Type} {x z : List Bool}
+    (exit : P) (entry : Q) (inj : Q → Bool → H) (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (ℓ : ℕ) (hz : z.length = ℓ + x.length) (hlen : ℓ + 1 < z.length + 2) :
+    let c := StepBlock.forwardLoopCfg entry M (M.initCfg x)
+    embedEmitCfg (Fin.castLEEmb (by omega : k + 3 ≤ K + (k + 3)))
+      (fun _ _ => none) (fun _ => 0) []
+      (rulerHostCfg ℓ hz (c.state.map fun q => inj q false) c
+        (FinTM.bufferTape (List.replicate ℓ true)) 0) =
+      (uk_suffixCfg (K := K) exit M z ℓ hlen).mapState (fun _ => inj entry false) := by
+  let c := StepBlock.forwardLoopCfg entry M (M.initCfg x)
+  have fields := uk_encode_init_fields entry M x
+  let rt := FinTM.bufferTape (List.replicate ℓ true)
+  have host := uk_ruler_fields ℓ hz (c.state.map fun q => inj q false) c rt 0
+  apply embedEmitCfg_eq
+  · rw [rulerHostCfg_state, fields.1, Option.map_some, Cfg.mapState_state]
+    rfl
+  · apply Fin.ext
+    rw [host.1, Cfg.mapState_inputPos]
+    change ℓ + c.inputPos.val = ℓ + 1
+    rw [fields.2.1]
+  · rw [List.nil_append, rulerHostCfg_output, fields.2.2.2, Cfg.mapState_output]
+    rfl
+  · intro j
+    refine Fin.lastCases ?_ (fun a => ?_) j
+    · constructor
+      · funext b
+        rw [rulerHostCfg_workTapes, Fin.lastCases_last, Cfg.mapState_workTapes]
+        simp only [uk_suffixCfg, Fin.coe_castLEEmb, Fin.coe_castLE, Fin.val_last,
+          if_neg (by omega : k + 2 ≠ k), if_neg (by omega : k + 2 ≠ k + 1), ↓reduceIte]
+      · rw [rulerHostCfg_workTapePos, Fin.lastCases_last, Cfg.mapState_workTapePos]
+        rfl
+    · constructor
+      · funext b
+        rw [rulerHostCfg_workTapes, Fin.lastCases_castSucc, Cfg.mapState_workTapes,
+          uk_encode_init_tapes]
+        have ha : a.val ≠ k + 2 := by omega
+        simp only [uk_suffixCfg, Fin.coe_castLEEmb, Fin.coe_castLE, Fin.coe_castSucc, if_neg ha]
+      · rw [rulerHostCfg_workTapePos, Fin.lastCases_castSucc, Cfg.mapState_workTapePos,
+          fields.2.2.1 a]
+        rfl
+  · intro j hj
+    have hjge : k + 3 ≤ j.val := by
+      by_contra h
+      apply hj
+      refine ⟨⟨j.val, by omega⟩, ?_⟩
+      apply Fin.ext; rfl
+    constructor
+    · funext a
+      rw [Cfg.mapState_workTapes]
+      simp only [uk_suffixCfg, if_neg (by omega : j.val ≠ k),
+        if_neg (by omega : j.val ≠ k + 1), if_neg (by omega : j.val ≠ k + 2)]
+    · rw [Cfg.mapState_workTapePos]
+      rfl
+
+  classical
+  obtain ⟨K, P, fP, dP, R, exit, hR⟩ := exists_selfStartupTMK k E
+  letI : Fintype P := fP
+  letI : DecidableEq P := dP
+  obtain ⟨Q, fQ, dQ, L, entry, C_L, hL⟩ := StepBlock.exists_forwardLoopTM k
+  letI : Fintype Q := fQ
+  letI : DecidableEq Q := dQ
+  obtain ⟨V, fV, dV, H, inj, C_R, hCR, hH⟩ := exists_rulerHostTM L
+  letI : Fintype V := fV
+  letI : DecidableEq V := dV
+  let A := uk_suffixStartupTM R exit
+  let finish : P ⊕ (Fin 4 ⊕ RewindPhase) := Sum.inr (Sum.inr .done)
+  let U : FinTM Bool :=
+    { k := K + (k + 3), State := (P ⊕ (Fin 4 ⊕ RewindPhase)) ⊕ V,
+      tm := uk_loopTM (k := k + 1) A finish H (inj entry false) }
+  refine ⟨U, ?_⟩
+  intro α
+  obtain ⟨T, _, hRα⟩ := hR α
+  let M := E.machine α
+  let ℓ := 2 * α.length + 2
+  let D := 50 * ((tableBitsK M.tr).length + 1) + C_L
+  let T_A := T + 1 + (2 * ℓ + 3)
+  let F := C_R * (ℓ + 1)
+  let C := T_A + 1 + F * D
+  have hAC : T_A + 1 ≤ C := by dsimp only [C]; omega
+  have hDC : F * D ≤ C := by dsimp only [C]; omega
+  refine ⟨C, ?_⟩
+  intro x
+  let z := pairEncode α x
+  have hz : z.length = ℓ + x.length := length_pairEncode α x
+  have hlen : ℓ + 1 < z.length + 2 := by omega
+  have hℓ : 0 < ℓ := by dsimp only [ℓ]; omega
+  obtain ⟨hrun, hcut, _, _⟩ := hRα x
+  obtain ⟨aRun, aCut⟩ := uk_suffixStartup_run R exit M α x T hrun hcut
+  let c := StepBlock.forwardLoopCfg entry M (M.initCfg x)
+  let rt := FinTM.bufferTape (List.replicate ℓ true)
+  let d := rulerHostCfg ℓ hz (c.state.map fun q => inj q false) c rt 0
+  have hb : false = true ↔ c.inputPos.val = 0 := by
+    rw [(uk_encode_init_fields entry M x).2.1]
+    decide
+  have host := hH ℓ hz hℓ (pairEncode_drop α x) rt 0
+    (by intro p _ _; rw [zero_add]) c false hb
+  have uRun := uk_loop_run (k := k + 1) A finish H (inj entry false) d
+    (uk_suffixCfg (K := K) finish M z ℓ hlen) T_A aRun rfl aCut
+    (uk_embed_suffix finish entry inj M ℓ hz hlen).symm
+  obtain ⟨cost, hlock, hcost, _⟩ := hL (x := x) M
+  constructor
+  · intro output t hcomp
+    obtain ⟨hhalt, hout⟩ := (FinTM.computesInTime_iff (E.toFinTM α) x output t).mp hcomp
+    obtain ⟨t₀, _, _, hvbound, hr⟩ :=
+      uk_loop_forward M L entry cost D hlock (fun e he => (hcost e he).2) t hhalt
+    let v := ∑ u ∈ Finset.range t₀, cost (M.runFrom (M.initCfg x) u)
+    obtain ⟨w, _, hw, ⟨b, _, hhost⟩, _, _, _, _⟩ := host v
+    have uHalt : (U.tm.runFrom (U.tm.initCfg z) (T_A + 1 + w)).state = none := by
+      rw [uRun w, Cfg.mapState_state, embedEmitCfg_state, hhost, rulerHostCfg_state,
+        hr, StepBlock.forwardLoopCfg_state, hhalt, Option.map_none, Option.map_none,
+        Option.map_none]
+    have uOut : (U.tm.runFrom (U.tm.initCfg z) (T_A + 1 + w)).output = output := by
+      rw [uRun w, Cfg.mapState_output, embedEmitCfg_output, List.nil_append, hhost,
+        rulerHostCfg_output, hr, StepBlock.forwardLoopCfg_output]
+      exact hout
+    have bound : T_A + 1 + w ≤ C * (t + 1) := by
+      calc
+        _ ≤ C + F * v := Nat.add_le_add hAC hw
+        _ ≤ C + F * (D * t) := Nat.add_le_add_left (Nat.mul_le_mul_left F hvbound) C
+        _ = C + (F * D) * t := by ring
+        _ ≤ C + C * t := Nat.add_le_add_left (Nat.mul_le_mul_right t hDC) C
+        _ = _ := by ring
+    exact ((FinTM.computesInTime_iff U z output (T_A + 1 + w)).mpr ⟨uHalt, uOut⟩).mono bound
+  · intro output hcomp
+    obtain ⟨u, hu⟩ := hcomp
+    obtain ⟨uhalt, uout⟩ := (FinTM.computesInTime_iff U z output u).mp hu
+    have hprefix := uk_loop_pre_live (k := k + 1) A finish H (inj entry false) T_A
+      (by rw [aRun]; exact Option.some_ne_none finish) aCut
+    have after : T_A + 1 ≤ u := by
+      by_contra h
+      exact hprefix u (by omega) uhalt
+    obtain ⟨v, rfl⟩ := Nat.exists_eq_add_of_le after
+    rw [uRun v, Cfg.mapState_state, embedEmitCfg_state, Option.map_eq_none_iff] at uhalt
+    rw [uRun v, Cfg.mapState_output, embedEmitCfg_output, List.nil_append] at uout
+    have loopHalts : ∃ r, (L.runFrom c r).state = none := by
+      by_contra hn
+      have forever : ∀ r, (L.runFrom c r).state ≠ none := by
+        intro r hr
+        exact hn ⟨r, hr⟩
+      obtain ⟨w, hw, _, _, cut, _, _, _⟩ := host (v + 1)
+      exact cut (fun r _ => forever r) v (by omega) uhalt
+    obtain ⟨r, rHalt⟩ := loopHalts
+    obtain ⟨w, _, _, ⟨b, _, endpoint⟩, _, _, _, _⟩ := host r
+    have wHalt : (H.runFrom d w).state = none := by
+      rw [endpoint, rulerHostCfg_state, rHalt, Option.map_none]
+    have loopOutput : (L.runFrom c r).output = output := by
+      calc
+        _ = (H.runFrom d w).output := by rw [endpoint, rulerHostCfg_output]
+        _ = (H.runFrom d (max v w)).output :=
+          (MultiTapeTM.runFrom_output_eq_of_halt H d (Nat.le_max_right v w) wHalt).symm
+        _ = (H.runFrom d v).output :=
+          MultiTapeTM.runFrom_output_eq_of_halt H d (Nat.le_max_left v w) uhalt
+        _ = _ := uout
+    obtain ⟨t, ht, ho⟩ := uk_loop_converse M L entry cost D hlock hcost r rHalt
+    exact ⟨t, (FinTM.computesInTime_iff (E.toFinTM α) x output t).mpr
+      ⟨ht, ho.trans loopOutput⟩⟩

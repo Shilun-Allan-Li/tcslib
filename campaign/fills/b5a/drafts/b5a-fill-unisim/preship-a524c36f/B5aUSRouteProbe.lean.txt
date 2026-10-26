@@ -1,0 +1,110 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
+
+/-! B5a, the uniform simulator: the pre-ship discharge of the route's key steps that are not
+already proved privately in the tree, from public lemmas only, with every other-file TCSlib
+definition they touch sealed (`attribute [local irreducible]`; the two `@[simp]` definitions
+among them, `MultiTapeTM.initCfg` and `NDTM.initCfg`, also erased from `simp`). The owned
+module's own definitions (`MachineFormat.toFinTM`) are read as the fill may read them.
+
+* `b5a_install`: **the installation is uniform and polynomial.** The format's polynomial
+  canonizer through the public install call: one module, and for every code a first return at a
+  time polynomial in `|α|`, with `serializeK` of the decoded machine installed.
+* `b5a_locality`, `b5a_accepts_take`: **deterministic input locality**, from the embedding into
+  NDTMs and the ND locality lemma: `t` steps on `x.take t` and on `x` agree in state and output,
+  so bounded acceptance on the window is bounded acceptance on `x`.
+* `b5a_verdict`: **the verdict is the target's two clauses.** A halt at `T ≤ B` with output
+  `[answer]`, `answer` deciding a proposition, gives both clauses at `B`.
+* `b5a_table_le`: **the table is short**: `|tableBitsK|` of the decoded machine is at most
+  `max |α| |F.serialize F.fallback|`, so the loop's per-step cost is polynomial in `|α|`. -/
+
+namespace Turing
+
+section B5aUSRoute
+
+attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
+  MultiTapeTM.ComputesInTimeAndSpace serializeK Cfg.ofWords stateWord MultiTapeTM.toNDTM
+  NDTM.runWith MultiTapeTM.runFrom MultiTapeTM.initCfg NDTM.initCfg CodeFormat.decode
+attribute [-simp] MultiTapeTM.initCfg NDTM.initCfg
+
+theorem b5a_install (F : MachineFormat) :
+    ∃ (C : FinTM Bool) (entry exit : C.State) (a d : ℕ), 0 < C.k ∧
+      ∀ x α : List Bool, ∃ t ≤ a * ((α.length + 1) ^ d + α.length +
+          max α.length (F.serialize F.fallback).length + 1), 0 < t ∧
+        (∀ t', 0 < t' → t' < t →
+          (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k α)) t').state ≠
+            some exit) ∧
+        C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k α)) t =
+          Cfg.ofWords exit (stateWord C.k (serializeK (F.machine (F.decode α)))) := by
+  obtain ⟨P, d, hP⟩ := F.exists_polyCanonizer
+  obtain ⟨C, entry, exit, c, hk, inst⟩ := FinTM.exists_installCallTM P _ _ hP
+  refine ⟨C, entry, exit, c * (d + 1), d, hk, fun x α => ?_⟩
+  obtain ⟨t, ht, hpos, hcut, hrun⟩ := inst x α
+  have hlen := F.serialize_decode_length_le α
+  refine ⟨t, ht.trans ?_, hpos, hcut, ?_⟩
+  · have hm : d * (α.length + 1) ^ d ≤ (d + 1) * (α.length + 1) ^ d :=
+      Nat.mul_le_mul_right _ (Nat.le_succ d)
+    calc c * (d * (α.length + 1) ^ d + α.length + (F.serialize (F.decode α)).length + 1)
+        ≤ c * ((d + 1) * (α.length + 1) ^ d + α.length +
+            max α.length (F.serialize F.fallback).length + 1) := by
+          apply Nat.mul_le_mul_left; omega
+      _ ≤ c * ((d + 1) * ((α.length + 1) ^ d + α.length +
+            max α.length (F.serialize F.fallback).length + 1)) := by
+          apply Nat.mul_le_mul_left
+          nlinarith [Nat.zero_le ((α.length + 1) ^ d)]
+      _ = c * (d + 1) * ((α.length + 1) ^ d + α.length +
+            max α.length (F.serialize F.fallback).length + 1) := by ring
+  · rw [hrun, F.serialize_eq]
+
+theorem b5a_locality {k : ℕ} {Q : Type} (M : MultiTapeTM k Bool Q) (x : List Bool) (t : ℕ) :
+    (M.runFrom (M.initCfg (x.take t)) t).state = (M.runFrom (M.initCfg x) t).state ∧
+      (M.runFrom (M.initCfg (x.take t)) t).output = (M.runFrom (M.initCfg x) t).output := by
+  have h := NDTM.runWith_initCfg_take M.toNDTM x t (List.replicate t false)
+    (by rw [List.length_replicate])
+  simp only [MultiTapeTM.toNDTM_runWith, MultiTapeTM.toNDTM_initCfg,
+    List.length_replicate] at h
+  exact ⟨h.1, h.2.2.2.2⟩
+
+theorem b5a_accepts_take (F : MachineFormat) (α x : List Bool) (t : ℕ) :
+    (F.toFinTM (F.decode α)).ComputesInTime (x.take t) [true] t ↔
+      (F.toFinTM (F.decode α)).ComputesInTime x [true] t := by
+  rw [FinTM.computesInTime_iff, FinTM.computesInTime_iff]
+  obtain ⟨hs, ho⟩ := b5a_locality (F.toFinTM (F.decode α)).tm x t
+  rw [hs, ho]
+
+theorem b5a_verdict (S : FinTM Bool) (z : List Bool) (T B : ℕ) (answer : Bool) (P : Prop)
+    (hT : T ≤ B) (halt : (S.tm.runFrom (S.tm.initCfg z) T).state = none)
+    (out : (S.tm.runFrom (S.tm.initCfg z) T).output = [answer]) (hans : answer = true ↔ P) :
+    (P → S.ComputesInTime z [true] B) ∧ (¬P → S.ComputesInTime z [false] B) := by
+  have hc : S.ComputesInTime z [answer] T := (FinTM.computesInTime_iff _ _ _ _).mpr ⟨halt, out⟩
+  constructor
+  · intro hp
+    rw [hans.mpr hp] at hc
+    exact hc.mono hT
+  · intro hp
+    cases answer with
+    | false => exact hc.mono hT
+    | true => exact absurd (hans.mp rfl) hp
+
+/-- The installed table is no longer than the code or the format's fallback serialization. -/
+theorem b5a_table_le (F : MachineFormat) (α : List Bool) :
+    (tableBitsK (F.machine (F.decode α)).tr).length ≤
+      max α.length (F.serialize F.fallback).length := by
+  have h := F.serialize_decode_length_le α
+  rw [F.serialize_eq, serializeK_eq, length_pairEncode, List.length_append] at h
+  omega
+
+end B5aUSRoute
+
+#print axioms b5a_install
+#print axioms b5a_locality
+#print axioms b5a_accepts_take
+#print axioms b5a_verdict
+#print axioms b5a_table_le
+
+end Turing

@@ -69,6 +69,14 @@ never unfold another file's definition (the no-unfolding rule of the briefs, use
 rule binds TCSlib's own definitions: core and Mathlib definitions may reduce in a `rfl`, `decide`
 or `show` step, but are never passed to `simp`, `rw` or `unfold`; use their equation lemmas
 (`Bool.toNat_true`, not `simp [Bool.toNat]`) (user, 2026-10-23).
+**Reducible abbreviations are notation** (user, 2026-10-26). Lean unfolds a TCSlib `abbrev` (such
+as `Turing.Cfg.Halted`, `cfg.state = none`) at every step, and the standard seal cannot cover it:
+under Lean's default reducibility validation, `attribute [local irreducible]` fails on a reducible
+declaration (only the unsafe override `set_option allowUnsafeReducibility true`, which the
+campaign's seals do not use, lifts the check). So reading an abbreviation through its body,
+for example `¬ c.Halted` as `c.state ≠ none`, is allowed and is not a definitional closure. A
+consumer names it in `simp`, `rw` or `unfold` only through a published lemma where one exists, and
+a new public `abbrev` still lands with its `_iff` or `_eq` lemma.
 They read the machine model's primitives (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
 `Cfg.mapState`) through the existing lemmas. The style lint's check 8 reports, per file, every
 public `def` with no lemma named after it and no `simps` attribute, so a head-against-base diff

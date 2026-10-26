@@ -1,0 +1,427 @@
+From 302754e35410322f6160ab58714ed5cc946ef493 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 23:57:10 +0000
+Subject: [PATCH 36/39] s13d g4 cont4: the leftward row through the mirror
+ lockstep; exists_zoneRebalanceTM proved
+
+The leftward row is the rightward row's machine with tape 0's moves reversed, run on the data
+with every track's sides exchanged: the mirror is one step per step (Turing.Contract.lockstep),
+the mirrored zoned tape is the exchanged data's (zr_mirror_tape), and Turing.zoneRebalance_false
+identifies the endpoint. Both rows meet the target's fields at the constant 2300, and the row's
+states are finite with decidable equality.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 381 ++++++++++++++++--
+ 1 file changed, 355 insertions(+), 26 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 9bd1cfc0..ceff0bcd 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -14274,6 +14274,340 @@ private lemma zr_rowR_spec {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C) (x
+     Nat.mul_le_mul_right _ hC
+   exact this.trans h2
+ 
++/-- **The mirror** of a two-tape configuration: tape `0` and its head reflected about home. -/
++private def zr_mir {k : ℕ} {S : Type} {x : List (ZoneSym k)} (c : Cfg 2 (ZoneSym k) S x) :
++    Cfg 2 (ZoneSym k) S x :=
++  { c with
++    workTapes := fun j r => if j = 0 then c.workTapes 0 (-r) else c.workTapes j r
++    workTapePos := fun j => if j = 0 then -c.workTapePos 0 else c.workTapePos j }
++
++/-- The mirror is an involution. -/
++private lemma zr_mir_mir {k : ℕ} {S : Type} {x : List (ZoneSym k)} (c : Cfg 2 (ZoneSym k) S x) :
++    zr_mir (zr_mir c) = c := by
++  refine Cfg.ext rfl rfl (funext fun j => funext fun r => ?_) (funext fun j => ?_) rfl
++  · by_cases hj : j = 0
++    · subst hj
++      simp only [zr_mir, if_true, neg_neg]
++    · simp only [zr_mir, hj, if_false]
++  · by_cases hj : j = 0
++    · subst hj
++      simp only [zr_mir, if_true, neg_neg]
++    · simp only [zr_mir, hj, if_false]
++
++/-- The input head reads the same cell in configurations with the same input position. -/
++private lemma zr_inputSymbol_congr {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
++    {c : Cfg 2 (ZoneSym k) S x} {c' : Cfg 2 (ZoneSym k) S' x} (h : c.inputPos = c'.inputPos) :
++    c.inputSymbol = c'.inputSymbol := by
++  by_cases h0 : c.inputPos = 0
++  · rw [Cfg.inputSymbol_of_zero h0, Cfg.inputSymbol_of_zero (h.symm.trans h0)]
++  · by_cases h1 : c.inputPos.val = x.length + 1
++    · rw [Cfg.inputSymbol_of_end h1, Cfg.inputSymbol_of_end (by rw [← h]; exact h1)]
++    · have h0' : c.inputPos.val ≠ 0 := fun hv => h0 (Fin.ext hv)
++      have hlt := c.inputPos.isLt
++      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
++        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by rw [← h]; omega) (by omega)]
++
++/-- **The mirrored machine**: tape `0`'s moves reversed, everything else as `M`'s. -/
++private def zr_mirTM {k : ℕ} {S : Type} (M : MultiTapeTM 2 (ZoneSym k) S) :
++    MultiTapeTM 2 (ZoneSym k) S where
++  q₀ := M.q₀
++  tr q inp work :=
++    { M.tr q inp work with
++      workTapes := fun j => if j = 0 then (((M.tr q inp work).workTapes 0).1,
++        -((M.tr q inp work).workTapes 0).2) else (M.tr q inp work).workTapes j }
++
++/-- **The mirrored machine's step is the mirrored step.** -/
++private lemma zr_mir_step {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (M : MultiTapeTM 2 (ZoneSym k) S) (c : Cfg 2 (ZoneSym k) S x) :
++    (zr_mirTM M).step (zr_mir c) = zr_mir (M.step c) := by
++  cases hq : c.state with
++  | none =>
++    have hq' : (zr_mir c).state = none := hq
++    rw [MultiTapeTM.step_of_halt hq', MultiTapeTM.step_of_halt hq]
++  | some q =>
++    have hq' : (zr_mir c).state = some q := hq
++    have hin : (zr_mir c).inputSymbol = c.inputSymbol := zr_inputSymbol_congr rfl
++    have hw : (zr_mir c).workTapeSymbols = c.workTapeSymbols := by
++      funext j
++      rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq]
++      by_cases hj : j = 0
++      · subst hj
++        simp only [zr_mir, if_true, neg_neg]
++      · simp only [zr_mir, hj, if_false]
++    rw [MultiTapeTM.step_of_some hq', MultiTapeTM.step_of_some hq, hin, hw]
++    refine Cfg.ext ?_ ?_ (funext fun j => funext fun r => ?_) (funext fun j => ?_) ?_
++    · rw [Action.apply_state]
++      show _ = (Action.apply _ c).state
++      rw [Action.apply_state]
++      rfl
++    · rw [Action.apply_inputPos]
++      show _ = (Action.apply _ c).inputPos
++      rw [Action.apply_inputPos]
++      rfl
++    · rw [Action.apply_workTapes]
++      by_cases hj : j = 0
++      · subst hj
++        show _ = (Action.apply _ c).workTapes 0 (-r)
++        rw [Action.apply_workTapes]
++        simp only [zr_mir, zr_mirTM, if_true, Function.update_apply, Cfg.workTapeSymbols_eq,
++          neg_neg]
++        split_ifs <;> first | rfl | omega
++      · have e : (zr_mir (Action.apply (M.tr q c.inputSymbol c.workTapeSymbols) c)).workTapes j r =
++            (Action.apply (M.tr q c.inputSymbol c.workTapeSymbols) c).workTapes j r := by
++          simp only [zr_mir, hj, if_false]
++        rw [e, Action.apply_workTapes]
++        simp only [zr_mir, zr_mirTM, hj, if_false, Cfg.workTapeSymbols_eq]
++        rw [if_neg hj]
++    · rw [Action.apply_workTapePos]
++      by_cases hj : j = 0
++      · subst hj
++        show _ = -(Action.apply _ c).workTapePos 0
++        rw [Action.apply_workTapePos]
++        simp only [zr_mir, zr_mirTM, if_true, SignType.coe_neg]
++        ring
++      · have e : (zr_mir (Action.apply (M.tr q c.inputSymbol c.workTapeSymbols) c)).workTapePos j =
++            (Action.apply (M.tr q c.inputSymbol c.workTapeSymbols) c).workTapePos j := by
++          simp only [zr_mir, hj, if_false]
++        rw [e, Action.apply_workTapePos]
++        simp only [zr_mir, zr_mirTM, hj, if_false]
++    · rw [Action.apply_output]
++      show _ = (Action.apply _ c).output
++      rw [Action.apply_output]
++      rfl
++
++/-- **The mirror lockstep**: each step of `M` is one step of the mirrored machine on the mirrored
++configuration. -/
++private lemma zr_mir_lockstep {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :
++    Lockstep (x := x) (x' := x) M (zr_mirTM M) zr_mir (fun _ => 1) X X :=
++  ⟨fun c _ => by
++      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step],
++    fun _ h => h, fun c h v hv => by
++      obtain rfl : v = 0 := by omega
++      rw [MultiTapeTM.runFrom_zero]
++      exact h⟩
++
++open Classical in
++/-- The mirror lockstep's per-step box, its lower ends: the mirrored heads, and at a live step
++the mirrored next heads too. -/
++private noncomputable def zr_mirLo {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) (c : Cfg 2 (ZoneSym k) S x)
++    (j : Fin 2) : ℤ :=
++  if c.state ∈ X then (zr_mir c).workTapePos j
++  else min ((zr_mir c).workTapePos j) ((zr_mir (M.step c)).workTapePos j)
++
++open Classical in
++/-- The mirror lockstep's per-step box, its upper ends. -/
++private noncomputable def zr_mirHi {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) (c : Cfg 2 (ZoneSym k) S x)
++    (j : Fin 2) : ℤ :=
++  if c.state ∈ X then (zr_mir c).workTapePos j
++  else max ((zr_mir c).workTapePos j) ((zr_mir (M.step c)).workTapePos j)
++
++/-- The mirrored heads stay in the per-step box. -/
++private lemma zr_mir_box {k : ℕ} {S : Type} {x : List (ZoneSym k)}
++    (M : MultiTapeTM 2 (ZoneSym k) S) (X : Set (Option S)) :
++    ∀ (c : Cfg 2 (ZoneSym k) S x) v, (v = 0 ∨ (c.state ∉ X ∧ v ≤ 1)) → ∀ j,
++      ((zr_mirTM M).runFrom (zr_mir c) v).workTapePos j ∈
++        Finset.Icc (zr_mirLo M X c j) (zr_mirHi M X c j) := by
++  intro c v hv j
++  rw [Finset.mem_Icc, zr_mirLo, zr_mirHi]
++  rcases hv with rfl | ⟨hX, hv⟩
++  · rw [MultiTapeTM.runFrom_zero]
++    split_ifs
++    · exact ⟨le_rfl, le_rfl⟩
++    · exact ⟨min_le_left _ _, le_max_left _ _⟩
++  · rw [if_neg hX, if_neg hX]
++    rcases (by omega : v = 0 ∨ v = 1) with rfl | rfl
++    · rw [MultiTapeTM.runFrom_zero]
++      exact ⟨min_le_left _ _, le_max_left _ _⟩
++    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, zr_mir_step]
++      exact ⟨min_le_right _ _, le_max_right _ _⟩
++
++/-- The data with every track's two sides exchanged. -/
++private abbrev zr_swapD {k : ℕ} (D : ZoneData k) : ZoneData k := ⟨D.1, fun t => (D.2 t).swap⟩
++
++/-- The leftward scanned index is the rightward one of the exchanged data. -/
++private lemma zr_index_swap {k : ℕ} (t : Fin k) (D : ZoneData k) :
++    zoneRebalanceIndex true t (zr_swapD D) = zoneRebalanceIndex false t D := by
++  show zoneShiftIndex true (D.2 t).swap = zoneShiftIndex false (D.2 t)
++  simp only [zoneShiftIndex_eq_findIdx, ZoneContents.words_true, ZoneContents.words_false,
++    ZoneContents.swap_right]
++
++/-- A zone-row start, mirrored, is a zone-row start at the exchanged data. -/
++private lemma zr_mir_pre {k : ℕ} {S : Type} {x : List (ZoneSym k)} {D : ZoneData k}
++    {d : Cfg 2 (ZoneSym k) S x} (hp : zoneRowPre D d) : zoneRowPre (zr_swapD D) (zr_mir d) := by
++  refine ⟨funext fun r => ?_, ?_, fun r => ?_⟩
++  · show d.workTapes 0 (-r) = zonedTape (fun t => (D.2 t).swap) r
++    rw [hp.1, zr_mirror_tape]
++  · show -d.workTapePos 0 = 0
++    rw [hp.2.1, neg_zero]
++  · exact hp.2.2 r
++
++/-- **The mirrored rightward endpoint is the leftward endpoint**: reflecting the rightward row's
++endpoint at the exchanged data and the mirrored start gives the leftward row's. -/
++private lemma zr_mir_post {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k) (done short : S)
++    (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x) :
++    zr_mir (zoneRebalancePost true t done short (zr_swapD D) (zr_mir d)) =
++      zoneRebalancePost false t done short D d := by
++  have hz : (zoneRebalanceData true t (zr_swapD D)).2 =
++      fun t' => ((zoneRebalanceData false t D).2 t').swap := by
++    funext t'
++    show Function.update (fun t => (D.2 t).swap) t (zoneRebalance true (D.2 t).swap) t' =
++      (Function.update D.2 t (zoneRebalance false (D.2 t)) t').swap
++    by_cases ht : t' = t
++    · subst ht
++      rw [Function.update_self, Function.update_self, zoneRebalance_false,
++        ZoneContents.swap_swap]
++    · rw [Function.update_of_ne ht, Function.update_of_ne ht]
++  refine Cfg.ext ?_ rfl (funext fun j => funext fun r => ?_) (funext fun j => ?_) rfl
++  · simp only [zr_mir, zoneRebalancePost, zr_index_swap]
++  · by_cases hj : j = 0
++    · subst hj
++      simp only [zr_mir, zoneRebalancePost, if_true]
++      rw [hz, zr_mirror_tape, neg_neg]
++    · simp only [zr_mir, zoneRebalancePost, hj, if_false]
++  · by_cases hj : j = 0
++    · subst hj
++      simp only [zr_mir, zoneRebalancePost, if_true, neg_neg]
++    · simp only [zr_mir, zoneRebalancePost, hj, if_false]
++
++/-- **The mirrored per-step box lies in the mirrored envelope**: along an admissible run, each
++step's mirrored heads, and at a live step the next ones, stay in the source envelope reflected on
++tape `0`. -/
++private lemma zr_mir_env {k : ℕ} {S I : Type} {x : List (ZoneSym k)}
++    {M : MultiTapeTM 2 (ZoneSym k) S} {e : S} {X : Set (Option S)} (R : Contract M e X I x)
++    (i : I) (c : Cfg 2 (ZoneSym k) S x) (hc : c.state = some e) (hp : R.pre i c) (u : ℕ)
++    (hu : u ≤ R.time i c) (j : Fin 2) :
++    (if j = 0 then -R.hi i c 0 else R.lo i c j) ≤ zr_mirLo M X (M.runFrom c u) j ∧
++      zr_mirHi M X (M.runFrom c u) j ≤ (if j = 0 then -R.lo i c 0 else R.hi i c j) := by
++  have hm : ∀ u' ≤ R.time i c, (if j = 0 then -R.hi i c 0 else R.lo i c j) ≤
++      (zr_mir (M.runFrom c u')).workTapePos j ∧
++        (zr_mir (M.runFrom c u')).workTapePos j ≤ (if j = 0 then -R.lo i c 0 else R.hi i c j) := by
++    intro u' hu'
++    have h := Finset.mem_Icc.mp (R.env i c hc hp u' hu' j)
++    by_cases hj : j = 0
++    · subst hj
++      simp only [zr_mir, if_true]
++      constructor <;> linarith [h.1, h.2]
++    · simp only [zr_mir, hj, if_false]
++      exact h
++  rw [zr_mirLo, zr_mirHi]
++  by_cases hs : (M.runFrom c u).state ∈ X
++  · rw [if_pos hs, if_pos hs]
++    exact hm u hu
++  · rw [if_neg hs, if_neg hs]
++    have hlt : u < R.time i c := by
++      rcases Nat.lt_or_ge u (R.time i c) with h | h
++      · exact h
++      · exfalso
++        apply hs
++        rw [show u = R.time i c by omega, R.run i c hc hp]
++        exact R.exit_mem i c hc hp
++    have h1 := hm u hu
++    have h2 := hm (u + 1) hlt
++    rw [MultiTapeTM.runFrom_succ_eq_step'] at h2
++    exact ⟨le_min h1.1 h2.1, max_le h1.2 h2.2⟩
++
++/-- The rightward row's envelope at the exchanged data and the mirrored start, reflected on tape
++`0`, is the leftward row's envelope. -/
++private lemma zr_mir_lohi {k : ℕ} {S : Type} {x : List (ZoneSym k)} (t : Fin k) (C : ℕ)
++    (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x) (j : Fin 2) :
++    (if j = 0 then -zoneRowHi (zoneRebalanceIndex true t) C (zr_swapD D) (zr_mir d) 0 else
++        zoneRowLo (zoneRebalanceIndex true t) C (zr_swapD D) (zr_mir d) j) =
++        zoneRowLo (zoneRebalanceIndex false t) C D d j ∧
++      (if j = 0 then -zoneRowLo (zoneRebalanceIndex true t) C (zr_swapD D) (zr_mir d) 0 else
++        zoneRowHi (zoneRebalanceIndex true t) C (zr_swapD D) (zr_mir d) j) =
++        zoneRowHi (zoneRebalanceIndex false t) C D d j := by
++  by_cases hj : j = 0
++  · subst hj
++    simp [zoneRowLo, zoneRowHi, zr_index_swap]
++  · simp [zoneRowLo, zoneRowHi, hj, zr_index_swap, zr_mir]
++
++/-- **The leftward rebalance row** on the data: the rightward row transported along the mirror
++lockstep, at the exchanged data and the mirrored start. -/
++private noncomputable def zr_rowLeft {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C)
++    (x : List (ZoneSym k)) :
++    Contract (zr_mirTM (zr_machineOf (zr_rowC t ([] : List (ZoneSym k)))))
++      (zr_entryOf (zr_rowC t ([] : List (ZoneSym k)))) {some (zr_rowDone t), some (zr_rowShort t)}
++      (ZoneData k) x :=
++  Contract.ofSegment zoneRowPre (fun D d => (zr_rowR t C hC x).time (zr_swapD D) (zr_mir d))
++    (zoneRebalancePost false t (zr_rowDone t) (zr_rowShort t))
++    (zoneRowLo (zoneRebalanceIndex false t) C) (zoneRowHi (zoneRebalanceIndex false t) C)
++    (fun D d hd hp => by
++      obtain ⟨hRpre, hRpost, hRlo, hRhi, -⟩ := zr_rowR_spec t C hC x
++      have hc : (zr_mir d).state = some (zr_entryOf (zr_rowC t ([] : List (ZoneSym k)))) := hd
++      have hpre : (zr_rowR t C hC x).pre (zr_swapD D) (zr_mir d) := by
++        rw [hRpre]
++        exact zr_mir_pre hp
++      have hseg := ((zr_rowR t C hC x).lockstep (zr_mir_lockstep _ _) _ (zr_mirLo _ _)
++        (zr_mirHi _ _) (zr_mir_box _ _)).segment (zr_swapD D, zr_mir d) d hd (by
++          rw [Contract.lockstep_pre]
++          exact ⟨(zr_mir_mir d).symm, hc, hpre⟩)
++      rw [Contract.lockstep_post] at hseg
++      simp only [Contract.lockstep_time, Finset.sum_const, Finset.card_range, Nat.nsmul_eq_mul,
++        mul_one] at hseg
++      rw [hRpost, zr_mir_post] at hseg
++      refine hseg.mono le_rfl fun p hb => ?_
++      rw [headBox_iff] at hb ⊢
++      intro j
++      have h := Finset.mem_Icc.mp (hb j)
++      rw [Contract.lockstep_lo, Contract.lockstep_hi] at h
++      rw [Finset.mem_Icc]
++      obtain ⟨el, eh⟩ := zr_mir_lohi t C D d j
++      constructor
++      · refine le_trans ?_ h.1
++        refine Finset.le_inf' _ _ fun u hu => ?_
++        rw [← el, ← hRlo, ← hRhi]
++        exact (zr_mir_env _ _ _ hc hpre u (by simpa [Nat.lt_succ_iff] using hu) j).1
++      · refine le_trans h.2 ?_
++        refine Finset.sup'_le _ _ fun u hu => ?_
++        rw [← eh, ← hRlo, ← hRhi]
++        exact (zr_mir_env _ _ _ hc hpre u (by simpa [Nat.lt_succ_iff] using hu) j).2)
++    (fun D d _ _ => by
++      simp only [zoneRebalancePost]
++      split_ifs
++      · exact Or.inl rfl
++      · exact Or.inr rfl)
++
++/-- **The leftward rebalance row's fields**: the target's at `dir = false`, its time the
++rightward row's at the exchanged data. -/
++private lemma zr_rowLeft_spec {k : ℕ} (t : Fin k) (C : ℕ) (hC : 2300 ≤ C)
++    (x : List (ZoneSym k)) :
++    (zr_rowLeft t C hC x).pre = zoneRowPre ∧
++      (zr_rowLeft t C hC x).post = zoneRebalancePost false t (zr_rowDone t) (zr_rowShort t) ∧
++      (zr_rowLeft t C hC x).lo = zoneRowLo (zoneRebalanceIndex false t) C ∧
++      (zr_rowLeft t C hC x).hi = zoneRowHi (zoneRebalanceIndex false t) C ∧
++      ∀ D d, d.state = some (zr_entryOf (zr_rowC t ([] : List (ZoneSym k)))) →
++        (zr_rowLeft t C hC x).pre D d →
++          (zr_rowLeft t C hC x).time D d ≤ C * (2 ^ zoneRebalanceIndex false t D + 1) := by
++  refine ⟨funext fun D => funext fun d => by rw [zr_rowLeft, Contract.ofSegment_pre],
++    funext fun D => funext fun d => by rw [zr_rowLeft, Contract.ofSegment_post],
++    funext fun D => funext fun d => funext fun j => by rw [zr_rowLeft, Contract.ofSegment_lo],
++    funext fun D => funext fun d => funext fun j => by rw [zr_rowLeft, Contract.ofSegment_hi],
++    fun D d hd hp => ?_⟩
++  rw [zr_rowLeft, Contract.ofSegment_pre] at hp
++  rw [zr_rowLeft, Contract.ofSegment_time, ← zr_index_swap]
++  obtain ⟨hRpre, -, -, -, ht⟩ := zr_rowR_spec t C hC x
++  exact ht _ _ hd (by rw [hRpre]; exact zr_mir_pre hp)
++
++/-- A loop host's states are finite when its body's are. -/
++private def zr_finHost {B : Type} (h : Fintype B) : Fintype (Σ b, zr_hostPh B b) := by
++  letI : ∀ b, Fintype (zr_hostPh B b) := fun b => match b with
++    | false => inferInstanceAs (Fintype (Option Bool))
++    | true => h
++  exact inferInstance
++
++/-- The rebalance rows' states are finite and have decidable equality. -/
++private noncomputable def zr_rowInst {k : ℕ} (t : Fin k) :
++    Fintype (zr_stOf (zr_rowC t ([] : List (ZoneSym k)))) ×
++      DecidableEq (zr_stOf (zr_rowC t ([] : List (ZoneSym k)))) := by
++  refine ⟨?_, ?_⟩
++  · repeat' (first | refine @instFintypeSum _ _ ?_ ?_ | refine zr_finHost ?_ |
++      exact inferInstance)
++  · repeat' (first | refine @instDecidableEqSum _ _ ?_ ?_ | refine zr_decHost ?_ |
++      exact inferInstance)
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+@@ -14314,31 +14648,20 @@ mirror side is reached through a scratch ruler of the distance to home. The scra
+ cleared before the exit. The sum `Σ_{i ≤ i₀} O(2^i)` is `O(2^{i₀})`
+ (`Turing.zoneCascade_cost_le`).
+ 
+-**Implementation status.** The slot guards, scan-index facts, short identity, tape mirror,
+-and one-cell leaf are proved. The pure cascade has a checked side-pass reordering valid for
+-every guard and without a fullness assumption. The rightward scan is proved as a contract with
+-both exits (a loop host whose rounds mark a unary zone count on scratch), and so is its short
+-path (the return home and the count's clear). One level's column moves for the rightward
+-cascade are proved as machine segments with their guards enabled: the right inward shift and
+-the left outward shift at level `i`, each from the zoned tape to the zoned tape of the shifted
+-track with the heads and the scratch restored, in `76 · 2^(i-1) + 77` and `76 · 2^(i-1) + 107`
+-steps; their one-slot guard tests are characterized, and a disabled guard leaves the tape
+-unchanged. The rightward cascade's passes are proved: the descending inward pass on the right
+-and outward pass on the left, the walk out between them, the guarded home move (a column
+-operation on the two zones `0` and the home through scratch, guarded by left zone `0`'s outer
+-slot), a single pop, the ascending inward and outward passes and their two returns, each a
+-pinned segment on a loop host whose rounds keep a count stack on scratch. Their composition,
+-the found path, runs from the scanned zone's field and the scan's count to the home and the
+-count's end, with track `t` cascaded to the right at the scanned index (`zoneCascadeRight`,
+-through the side-pass reordering), every other track and the count kept, and the zoned head
+-within `zoneStart (i₀ + 1)` of home, in at most `1000 · 2^(i₀ + 1) + 200` steps (each round's
+-time bounded by its level and the passes' geometric sums). The rightward row is proved: the scan
+-as a pinned test with its two exits, then at a found index the found path and the count's clear,
+-at a short scan the short path, through the pinned branch; it is a contract with this target's
+-fields at `dir = true` for every constant `C ≥ 2300`, the zoned head within `zoneStart (i₀ + 1)`
+-of home and scratch within `18 · 2^i₀ + i₀ + 13` of its start. The leftward row (planned as the
+-mirrored machine through `Turing.Contract.lockstep`) and the assembly remain open. Only this
+-target's body is admitted. -/
++**Implementation.** For `dir = true`, one machine through the pinned branch. The rightward scan
++(a loop host whose rounds mark a unary zone count on scratch) is a pinned test with two exits. At
++a found index `i₀ < ℓ` the found path runs: the descending inward pass on the right and outward
++pass on the left, the walk out between them, the guarded home move, a pop, and the ascending
++inward and outward passes with their two returns, each a pinned segment on a loop host whose
++rounds keep a count stack on scratch. It cascades track `t` to the right at the scanned index
++(`zoneCascadeRight`, through the side-pass reordering valid for every guard), in at most
++`1000 · 2^(i₀ + 1) + 200` steps; then the count's clear. At a short scan the return home and the
++count's clear. The row runs in at most `2300 · (2^i₀ + 1)` steps, the zoned head within
++`zoneStart (i₀ + 1)` of home and scratch within `18 · 2^i₀ + i₀ + 13` of its start. For
++`dir = false`, the mirrored machine (tape `0`'s moves reversed) runs the rightward row on the
++data with every track's sides exchanged (`Turing.ZoneContents.swap`, the mirrored zoned tape),
++in lockstep one step per step (`Turing.Contract.lockstep`), and `Turing.zoneRebalance_false`
++identifies its endpoint. The constant is `2300`. -/
+ theorem exists_zoneRebalanceTM (k : ℕ) :
+     ∃ C : ℕ, ∀ (dir : Bool) (t : Fin k),
+       ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
+@@ -14351,7 +14674,13 @@ theorem exists_zoneRebalanceTM (k : ℕ) :
+             R.hi = zoneRowHi (zoneRebalanceIndex dir t) C ∧
+             ∀ D d, d.state = some entry → R.pre D d →
+               R.time D d ≤ C * (2 ^ zoneRebalanceIndex dir t D + 1) := by
+-  sorry
++  refine ⟨2300, fun dir t => ⟨_, (zr_rowInst t).1, (zr_rowInst t).2, ?_⟩⟩
++  cases dir
++  · exact ⟨zr_mirTM (zr_machineOf (zr_rowC t ([] : List (ZoneSym k)))), _, zr_rowDone t,
++      zr_rowShort t, Sum.inl_ne_inr,
++      fun x => ⟨zr_rowLeft t 2300 le_rfl x, zr_rowLeft_spec t 2300 le_rfl x⟩⟩
++  · exact ⟨zr_machineOf (zr_rowC t ([] : List (ZoneSym k))), _, zr_rowDone t, zr_rowShort t,
++      Sum.inl_ne_inr, fun x => ⟨zr_rowR t 2300 le_rfl x, zr_rowR_spec t 2300 le_rfl x⟩⟩
+ 
+ /-- **§13d G4, the extension row** (design §13d, decision 13d.2). For every track count `k`
+ there are a constant `C` and one two-tape machine over `Turing.ZoneSym k`, with an entry and a
+-- 
+2.50.1 (Apple Git-155)
+

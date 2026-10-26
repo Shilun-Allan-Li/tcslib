@@ -1,0 +1,129 @@
+From 844c85e8450a55c52ed323efe75208a54257c9c5 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 25 Oct 2026 10:27:36 -0500
+Subject: [PATCH 1/2] ZoneRebalance: six sketch corrections (gate 75 minors
+ 1-4), docstrings only
+
+zr_leftWalk_fields (the scratch step first, the walk over the ruler's tail),
+zr_finalContract (the final seek's displacement), exists_zoneExtendTM's
+implementation note (the right seek's endpoint), zr_hmSc1 and zr_hmSc2 (the
+writes are mapped single-cell copies), zr_fpSeg_time (the escape round and the
+per-round control steps). The code is identical with comments stripped.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 63 +++++++++++--------
+ 1 file changed, 37 insertions(+), 26 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index cdcafc91..01ed931a 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -2509,10 +2509,11 @@ private def zr_leftWalkContract {k : ℕ} (x : List (ZoneSym k)) :=
+ length, scratch one cell more; the zoned head stays between its ends, scratch between its end
+ and its start.
+ 
+-**Proof sketch.** The contract is the adjusted walk, re-indexed: a lockstep walk over the ruler's
+-`n` cells, then one scratch step. The walk's field equations move both heads left by `n` in `n`
+-steps (the ruler is a nonempty word), and the step moves the scratch head once more; with the
+-dispatch step the time is `n + 2`, and the envelopes are arithmetic. -/
++**Proof sketch.** The contract is the adjusted walk, re-indexed: one scratch-only step, the
++dispatch, then the lockstep walk over the ruler's tail, its remaining `n - 1` cells
++(`List.length_tail`; the ruler is a nonempty word). The walk's field equations move both heads left
++by `n` in `n` steps, so the time is `1 + 1 + n = n + 2` and the scratch head ends one cell farther
++left than the zoned head; the envelopes are arithmetic. -/
+ private lemma zr_leftWalk_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ) (hn : 0 < n)
+     (d : Cfg 2 (ZoneSym k) ((Option Bool) ⊕ SeekPhase) x) :
+     (zr_leftWalkContract x).time n d = n + 2 ∧
+@@ -3156,9 +3157,10 @@ private def zr_decEqLoopPh : (b : Bool) → DecidableEq (zr_loopPh b)
+ /-- **The final return**: seek across the whole extended layout, run the return loop home, and
+ clear the ruler.
+ 
+-**Proof sketch.** The two seam conditions. After the seek the zoned head is at the right end of the
+-extended layout, `2 · zoneStart (ℓ + 1)` cells from its start by `zr_wholeFields_tape`, which is the
+-return loop's precondition there; and the scratch ruler is untouched by the seek and by the loop
++**Proof sketch.** The two seam conditions. The seek starts at the extended layout's outermost left
++cell, `2 - zoneStart (ℓ + 1)`, and ends at its right end, `zoneStart (ℓ + 1)`: a displacement of
++`2 · zoneStart (ℓ + 1) - 2` cells (`zr_wholeFields_tape`), which puts the zoned head where the
++return loop's precondition needs it; and the scratch ruler is untouched by the seek and by the loop
+ (`zr_scratchAt_move`), which is the ruler clear's precondition. -/
+ private def zr_finalContract {k : ℕ} (x : List (ZoneSym k)) :=
+   letI := zr_decEqLoopPh
+@@ -12208,8 +12210,10 @@ private def zr_hmGat {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+ **Proof sketch.** Eleven pinned steps chained by `zr_segSeq`, steps 18 to 28 of the home move; the
+ step comments give the plan. Back over the home, write the new home from the gathered column and
+ clear that field; step the zoned head to right zone `0`, set its first slot from the gathered slots
+-and clear its second slot with the corresponding field. Each write is the one-cell leaf's at its
+-pin, each clear empties one scratch field, and each step's heads stay in the home move's box. -/
++and clear its second slot with the corresponding field. Each write to tape `0` is a single-cell
++mapped copy at its pin (`zr_pinCopy_step`, steps 19, 25 and 27), each scratch field is emptied by
++the clear contract (`zr_pinClear_step`), the head moves are one-cell steps that write nothing
++(`zr_pinCell_step`) and the back skip, and each step's heads stay in the home move's box. -/
+ private def zr_hmSc1 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+   show zr_PinSeg x _ _ _ zr_hmV
+       (fun J => zr_hmT J (zonedTape J.D.2) [[], zr_hmB t J, zr_hmH t J, [], zr_hmE t J, zr_hmC t J])
+@@ -12414,8 +12418,10 @@ heads.
+ **Proof sketch.** Twenty pinned steps chained by `zr_segSeq`, steps 29 to 48 of the home move; the
+ step comments give the plan. Walk both heads left to left zone `0`, set its first slot from the old
+ home's column and clear that field, step left and set its second slot from the gathered inner slot
+-and clear its field, then return both heads. Each write is the one-cell leaf's at its pin, each
+-clear empties one scratch field, and each step's heads stay in the home move's box. -/
++and clear its field, then return both heads. Each write to tape `0` is a single-cell mapped copy
++at its pin (`zr_pinCopy_step`, steps 37 and 42), each scratch field is emptied by the clear
++contract (`zr_pinClear_step`), the head moves are one-cell steps that write nothing
++(`zr_pinCell_step`), and each step's heads stay in the home move's box. -/
+ private def zr_hmSc2 {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
+   show zr_PinSeg x _ _ _ zr_hmV
+       (fun J => zr_hmT J (zr_hmA3 t J) [[], zr_hmB t J, zr_hmH t J])
+@@ -14033,12 +14039,15 @@ private lemma zr_pop_fields {k : ℕ} (t : Fin k)
+ 
+ /-- **The found path's time**: at most `1000 · 2^(i₀ + 1) + 200` steps.
+ 
+-**Proof sketch.** Write `n = i₀ + 1`. Bound each pass by its rounds: a round at level `j` takes at
+-most `a · 2^j + b` steps, for constants `a`, `b` of that pass (`zr_p1Tau_le`, `zr_woTau_le`,
+-`zr_p2Tau_le`, `zr_p3Tau_le`, `zr_rbTau_le`, `zr_p4Tau_le`, `zr_lbTau_le`). The levels of a pass run
+-through at most `n` consecutive values, so the geometric sum gives at most `2a · 2^n + b · n` for
+-the pass (`zr_pass_time_desc`, `zr_pass_time_asc`). Adding the home move's at most `155` steps, the
+-pop and the dispatch steps between the stages gives at most `1000 · 2^n + 200`, using `n < 2^n`. -/
++**Proof sketch.** Write `n = i₀ + 1`. The path is seven passes, the home move and fixed control
++steps. Each pass is a loop of rounds: a round at level `j` costs its body, at most `a · 2^j + b`
++steps for constants `a`, `b` of the pass (`zr_p1Tau_le`, `zr_woTau_le`, `zr_p2Tau_le`,
++`zr_p3Tau_le`, `zr_rbTau_le`, `zr_p4Tau_le`, `zr_lbTau_le`), plus two control steps. Over `m + 1`
++consecutive levels the geometric sum gives at most `2a · 2^m + (b + 2)(m + 1)`
++(`zr_pass_time_desc`, `zr_pass_time_asc`). The walk-out pass has `n + 1` rounds, the last its
++escape, so it costs at most `4 · 2^n + 13(n + 1)`; each of the other six has `n` rounds. Adding the
++home move's at most `155` steps and the fifteen pop and dispatch steps between the stages gives at
++most `268 · 2^n + 728 n + 183`, which is at most `1000 · 2^n + 200` since `n < 2^n`. -/
+ private lemma zr_fpSeg_time {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) {P : zr_Px k}
+     (hV : zr_fpV P) : zr_tauOf (zr_fpSeg t x) P ≤ 1000 * 2 ^ P.i + 200 := by
+   have h1i := hV.2.2.2.1
+@@ -15165,15 +15174,17 @@ return home. Each phase is `O(2^ℓ)`.
+ 
+ **Implementation.** Four contracts composed through stationary seams, from the catalog rows
+ (`seekEndTM`, `seekStartTM`, `skipTM`, `skipBackTM`, the mapped copy, `walkTM`, `clearTM`), the
+-one-cell leaf and the phase host. *Right pass:* seek the right end; copy the last field (the last
+-zone, or the home at level zero, both of the new half-capacity `2^ℓ`) to scratch as a ruler;
+-write the new right zone's two halves, an adjusted walk by the ruler between them. *Return
+-home:* skip the outer half, then a phase-host loop whose round skips back over one field and
+-tests for the home, the only one-cell field. *Left pass:* seek the left layout's outermost cell,
+-step across the separator, and make two left moves by the ruler (skip the ruler on scratch, step
+-back onto its last cell, walk left over it, step back), writing the inner half after the first
+-and the outer half after the second. *Final return:* seek across the whole extended layout, run
+-the loop home, clear the ruler. The time is at most `135 · (2^ℓ + 1)`. -/
++one-cell leaf and the phase host. *Right pass:* seek the right end, which stops on the second of the
++two consecutive blanks past the last right zone, `zoneStart ℓ`, the new zone's first cell (the
++separator is the cell before it; the plan above names the separator); copy the last field (the last
++zone, or the home at level zero, both of the new half-capacity `2^ℓ`) to scratch as a ruler; write
++the new right zone's two halves, an adjusted walk by the ruler between them. *Return home:* skip the
++outer half, then a phase-host loop whose round skips back over one field and tests for the home, the
++only one-cell field. *Left pass:* seek the left layout's outermost cell, step across the separator,
++and make two left moves by the ruler (skip the ruler on scratch, step back onto its last cell, walk
++left over it, step back), writing the inner half after the first and the outer half after the
++second. *Final return:* seek across the whole extended layout, run the loop home, clear the ruler.
++The time is at most `135 · (2^ℓ + 1)`. -/
+ theorem exists_zoneExtendTM (k : ℕ) :
+     ∃ (C : ℕ) (S : Type) (_ : Fintype S) (_ : DecidableEq S)
+       (M : MultiTapeTM 2 (ZoneSym k) S) (entry done : S),
+-- 
+2.50.1 (Apple Git-155)
+

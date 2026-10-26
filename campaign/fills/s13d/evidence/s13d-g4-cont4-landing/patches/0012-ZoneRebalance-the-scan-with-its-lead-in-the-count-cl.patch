@@ -1,0 +1,333 @@
+From 4da04908e654b5c4392dbbbbfc59d49c7d26d524 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 11:06:02 +0000
+Subject: [PATCH 12/39] ZoneRebalance: the scan with its lead-in, the count
+ clear and the short path
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean    | 300 +++++++++++++++++-
+ 1 file changed, 298 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 617c4567..3e1675b9 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -1725,8 +1725,8 @@ private lemma zr_loop_round {k : ℕ} {x : List (ZoneSym k)} (u : List (ZoneSym
+     with hc₁
+   have hc₁s : c₁.state = some ⟨true, .inl .run⟩ := rfl
+   have hB0 : (zr_bodyPhaseContract x).pre u c₁ := by
+-    rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_pre, zr_bodyContract, Contract.seq_pre,
+-      skipBackTM_contract_pre]
++    rw [zr_bodyPhaseContract, zr_hostBodyContract, Contract.inPhase_pre, zr_bodyContract,
++      Contract.seq_pre, skipBackTM_contract_pre]
+     intro p h1 h2
+     simpa only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos] using hu p h1 h2
+   have hBt : (zr_bodyPhaseContract x).time u c₁ = u.length + 8 := by
+@@ -4209,6 +4209,302 @@ private def zr_scanLoopContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :
+       · exact Set.mem_insert_of_mem _ rfl
+       · exact Set.mem_insert _ _)
+ 
++/-- The scan's lead-in: from home, skip the home field to the start of zone `0`. Its
++precondition is the zoned tape of `D` at home. -/
++private def zr_homeSkipContract {k : ℕ} (x : List (ZoneSym k)) :=
++  zr_reindexContract (skipTM_contract 0 x)
++    (fun D : ZoneData k => [Sum.inr fun t => some (D.2 t).home])
++    (fun (D : ZoneData k) (d : Cfg 2 (ZoneSym k) SeekPhase x) =>
++      d.workTapes 0 = zonedTape D.2 ∧ d.workTapePos 0 = 0)
++    fun D d hp => by
++      rw [skipTM_contract_pre]
++      intro p h0 h1
++      rw [hp.1, hp.2, zero_add]
++      exact zr_home_word D.2 p (by omega) h1
++
++/-- **The rebalance scan** (rightward): skip the home field, then run the scan loop. It stops at
++the found escape on the first zone `i₀` whose track-`t` slot is occupied, or at the short
++escape past the layout, with `i₀ + 1` ruler cells on scratch. -/
++private def zr_scanContract {k : ℕ} (t : Fin k) (x : List (ZoneSym k)) :=
++  (zr_homeSkipContract x).seq (zr_scanLoopContract t x) (fun D => D) fun D d _ hp => by
++    rw [zr_homeSkipContract, zr_reindexContract, Contract.ofSegment_pre] at hp
++    rw [zr_scanLoopContract, Contract.ofSegment_pre, zr_scanPre, zr_homeSkipContract,
++      zr_reindexContract, Contract.ofSegment_post, skipTM_contract_post]
++    have h0 : zoneStart 0 = 2 := by norm_num [zoneStart_eq]
++    refine ⟨funext fun q => ?_, ?_⟩
++    · rw [Cfg.mapState_workTapes, seekPost_workTapes, hp.1]
++    · rw [Cfg.mapState_workTapePos, seekPost_workTapePos, Function.update_self, hp.2,
++        List.length_singleton, h0]
++      norm_num
++
++/-- **The scan's fields**: it stops at the escape by the scanned index `i₀`, with the zoned head
++at the start of zone `i₀` (past the layout when every zone is empty) and `i₀ + 1` ruler cells on
++scratch from its start, its head just past them, after `zoneStart i₀ + 8 i₀ + 9` steps on a
++found zone and two fewer on a short scan; the zoned head stays in `[0, zoneStart (i₀ + 1)]`,
++scratch in `[q, q + i₀ + 1]`. -/
++private lemma zr_scan_fields {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) (SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b) x) :
++    (zr_scanContract t x).time D d = zoneStart (zoneRebalanceIndex true t D) +
++        8 * zoneRebalanceIndex true t D + (if zoneRebalanceIndex true t D < D.1 then 9 else 7) ∧
++      (zr_scanContract t x).post D d =
++        zr_scanCfg d (some (Sum.inr
++          ⟨false, if zoneRebalanceIndex true t D < D.1 then none else some true⟩))
++          (zoneRebalanceIndex true t D + 1) (zoneStart (zoneRebalanceIndex true t D)) ∧
++      (zr_scanContract t x).lo D d 0 = min (d.workTapePos 0) (zoneStart 0) ∧
++      (zr_scanContract t x).hi D d 0 =
++        max (d.workTapePos 0 + 2) (zoneStart (zoneRebalanceIndex true t D + 1)) ∧
++      (zr_scanContract t x).lo D d 1 = d.workTapePos 1 ∧
++      (zr_scanContract t x).hi D d 1 = d.workTapePos 1 + zoneRebalanceIndex true t D + 1 := by
++  have hm := zoneStart_mono (Nat.zero_le (zoneRebalanceIndex true t D + 1))
++  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
++  · rw [zr_scanContract, Contract.seq_time, zr_scanLoopContract, Contract.ofSegment_time,
++      zr_homeSkipContract, zr_reindexContract, Contract.ofSegment_time, skipTM_contract_time,
++      List.length_singleton]
++    split_ifs <;> omega
++  · rw [zr_scanContract, Contract.seq_post, zr_scanLoopContract, Contract.ofSegment_post,
++      zr_scanLoopPost, zr_homeSkipContract, zr_reindexContract, Contract.ofSegment_post,
++      skipTM_contract_post]
++    apply Cfg.ext
++    · simp only [Cfg.mapState_state, Option.map_some, zr_scanCfg]
++    · simp only [Cfg.mapState_inputPos, zr_scanCfg, seekPost_inputPos]
++    · funext j q
++      by_cases hj : j = 1
++      · subst hj
++        simp only [Cfg.mapState_workTapes, zr_scanCfg, Function.update_self,
++          Cfg.mapState_workTapePos, seekPost_workTapes, seekPost_workTapePos,
++          Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0)]
++      · simp only [Cfg.mapState_workTapes, zr_scanCfg, Function.update_of_ne hj,
++          seekPost_workTapes]
++    · funext j
++      simp only [Cfg.mapState_workTapePos, zr_scanCfg, seekPost_workTapePos,
++        Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0)]
++    · simp only [Cfg.mapState_output, zr_scanCfg, seekPost_output]
++  all_goals
++    simp only [zr_scanContract, Contract.seq_lo, Contract.seq_hi, zr_scanLoopContract,
++      Contract.ofSegment_lo, Contract.ofSegment_hi, Contract.ofSegment_post,
++      zr_homeSkipContract, zr_reindexContract,
++      skipTM_contract_lo, skipTM_contract_hi, skipTM_contract_post, Cfg.mapState_workTapePos,
++      seekPost_workTapePos, Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0),
++      List.length_singleton, if_true, show (1 : Fin 2) ≠ 0 by decide, if_false, Nat.cast_one]
++  all_goals omega
++
++/-- Skip back over the scratch ruler of `n` cells from two cells past its last one to its first
++cell. -/
++private def zr_scratchBackContract {k : ℕ} (x : List (ZoneSym k)) :=
++  zr_reindexContract (skipBackTM_contract 1 x) (fun n => List.replicate n (Sum.inl false))
++    (fun n d => zr_scratchAt ((n : ℤ) + 1) n d) fun n d hp => by
++      rw [skipBackTM_contract_pre]
++      intro p _ _
++      rw [hp.2, (zr_rulerTape_word n (d.workTapePos 1 - ((n : ℤ) + 1)) p).1,
++        List.length_replicate]
++      congr 1
++      ring
++
++/-- **The count's clear**: from just past the scratch ruler of `n` cells, step right, skip back
++to its first cell and clear it. -/
++private def zr_countClearContract {k : ℕ} (x : List (ZoneSym k)) :=
++  (zr_stepContract 1 1 x fun (n : ℕ) d => zr_scratchAt (n : ℤ) n d).seq
++    ((zr_scratchBackContract x).seq (zr_rulerClearContract (fun n : ℕ => n) x) (fun n => n)
++      fun n d _ hp => by
++        rw [zr_scratchBackContract, zr_reindexContract, Contract.ofSegment_pre] at hp
++        rw [zr_rulerClearContract, zr_reindexContract, Contract.ofSegment_pre,
++          zr_scratchBackContract, zr_reindexContract, Contract.ofSegment_post,
++          skipBackTM_contract_post]
++        refine zr_scratchAt_move _ _ hp (fun r => ?_) ?_
++        · rw [Cfg.mapState_workTapes, seekPost_workTapes]
++        · rw [Cfg.mapState_workTapePos, seekPost_workTapePos, Function.update_self,
++            List.length_replicate]
++          ring)
++    (fun n => n) fun n d _ hp => by
++      rw [zr_stepContract, Contract.ofSegment_pre] at hp
++      rw [Contract.seq_pre, zr_scratchBackContract, zr_reindexContract, Contract.ofSegment_pre,
++        zr_stepContract, Contract.ofSegment_post]
++      refine zr_scratchAt_move _ _ hp (fun r => ?_) ?_
++      · simp only [Cfg.mapState_workTapes, zr_cellContract, zr_cellPost]
++      · simp only [Cfg.mapState_workTapePos, zr_cellContract, zr_cellPost, Function.update_self,
++          SignType.coe_one]
++        ring
++
++/-- **The count clear's fields**: from just past a scratch ruler of `n` cells that is all of
++scratch, it blanks scratch and returns its head to the ruler's first cell in `3n + 8` steps;
++the zoned head is fixed and scratch stays in `[q - n - 1, q + 1]`. -/
++private lemma zr_countClear_fields {k : ℕ} {x : List (ZoneSym k)} (n : ℕ)
++    (d : Cfg 2 (ZoneSym k) (Option Bool ⊕ SeekPhase ⊕ SweepPhase) x)
++    (hp : zr_scratchAt (n : ℤ) n d) :
++    (zr_countClearContract x).time n d = 3 * n + 8 ∧
++      (zr_countClearContract x).post n d =
++        { d with
++          state := some (Sum.inr (Sum.inr SweepPhase.done))
++          workTapes := Function.update d.workTapes 1 fun _ => none
++          workTapePos := Function.update d.workTapePos 1 (d.workTapePos 1 - n) } ∧
++      (zr_countClearContract x).lo n d 0 = d.workTapePos 0 ∧
++      (zr_countClearContract x).hi n d 0 = d.workTapePos 0 ∧
++      (zr_countClearContract x).lo n d 1 = d.workTapePos 1 - n - 1 ∧
++      (zr_countClearContract x).hi n d 1 = d.workTapePos 1 + 1 := by
++  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
++  · simp only [zr_countClearContract, Contract.seq_time, zr_stepContract,
++      Contract.ofSegment_time, zr_cellContract, zr_scratchBackContract, zr_reindexContract,
++      skipBackTM_contract_time, zr_rulerClearContract, clearTM_contract_time,
++      List.length_replicate]
++    omega
++  · simp only [zr_countClearContract, Contract.seq_post, zr_stepContract,
++      Contract.ofSegment_post, zr_cellContract, zr_cellPost, zr_scratchBackContract,
++      zr_reindexContract, skipBackTM_contract_post, zr_rulerClearContract,
++      clearTM_contract_post]
++    apply Cfg.ext
++    · simp only [Cfg.mapState_state, sweepPost_state, Option.map_some]
++    · simp only [Cfg.mapState_inputPos, sweepPost_inputPos, seekPost_inputPos]
++    · funext j q
++      by_cases hj : j = 1
++      · subst hj
++        simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, sweepPost_workTapes,
++          seekPost_workTapes, seekPost_workTapePos, Function.update_self,
++          List.length_replicate, true_and, SignType.coe_one, hp.2, zr_rulerTape]
++        split_ifs <;> first | rfl | omega
++      · simp only [Cfg.mapState_workTapes, sweepPost_workTapes, seekPost_workTapes, hj,
++          false_and, if_false, Function.update_of_ne hj]
++    · funext j
++      by_cases hj : j = 1
++      · subst hj
++        simp only [Cfg.mapState_workTapePos, sweepPost_workTapePos, seekPost_workTapePos,
++          Function.update_self, List.length_replicate, SignType.coe_one]
++        ring
++      · simp only [Cfg.mapState_workTapePos, sweepPost_workTapePos, seekPost_workTapePos,
++          Function.update_of_ne hj]
++    · simp only [Cfg.mapState_output, sweepPost_output, seekPost_output]
++  all_goals
++    simp only [zr_countClearContract, Contract.seq_lo, Contract.seq_hi, zr_stepContract,
++      Contract.ofSegment_lo, Contract.ofSegment_hi, Contract.ofSegment_post, zr_cellContract,
++      zr_cellPost, zr_scratchBackContract, zr_reindexContract, skipBackTM_contract_lo,
++      skipBackTM_contract_hi, skipBackTM_contract_post,
++      zr_rulerClearContract, clearTM_contract_lo, clearTM_contract_hi,
++      Cfg.mapState_workTapePos, seekPost_workTapePos, Function.update_self,
++      Function.update_of_ne (by decide : (0 : Fin 2) ≠ 1), List.length_replicate,
++      SignType.coe_one, if_true, show (0 : Fin 2) ≠ 1 by decide, if_false]
++  all_goals omega
++
++/-- The short path's return home: the return loop at the scanned data, carrying the count on
++scratch. -/
++private def zr_shortLoopContract {k : ℕ} (x : List (ZoneSym k)) :=
++  zr_reindexContract (zr_loopContract x) (fun D => D)
++    (fun (D : ZoneData k) d => zr_loopPre D d ∧ zr_scratchAt ((D.1 + 1 : ℕ) : ℤ) (D.1 + 1) d)
++    fun _ _ hp => by
++      rw [zr_loopContract, Contract.ofSegment_pre]
++      exact hp.1
++
++/-- **The short path**: after a short scan, return the zoned head home and clear the count. -/
++private def zr_shortContract {k : ℕ} (x : List (ZoneSym k)) :=
++  letI := zr_decEqLoopPh
++  (zr_shortLoopContract x).seq (zr_countClearContract x) (fun D => D.1 + 1) fun D d _ hp => by
++    rw [zr_shortLoopContract, zr_reindexContract, Contract.ofSegment_pre] at hp
++    rw [zr_countClearContract, Contract.seq_pre, zr_stepContract, Contract.ofSegment_pre,
++      zr_shortLoopContract, zr_reindexContract, Contract.ofSegment_post, zr_loopContract,
++      Contract.ofSegment_post]
++    refine zr_scratchAt_move _ _ hp.2 (fun r => ?_) ?_ <;>
++    simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
++      Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0)]
++
++/-- **The short path's fields**: from one past the last zone of `D` with the count of
++`ℓ + 1` cells on scratch, it returns the zoned head home, blanks scratch and returns its head to
++the count's first cell, in `zoneStart ℓ + 11 ℓ + 20` steps; the zoned head stays in
++`[-1, zoneStart ℓ]`, scratch in `[q - ℓ - 2, q + 1]`. -/
++private lemma zr_short_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
++    (d : Cfg 2 (ZoneSym k) ((Σ b, zr_loopPh b) ⊕ Option Bool ⊕ SeekPhase ⊕ SweepPhase) x)
++    (hp : (zr_shortContract x).pre D d) :
++    (zr_shortContract x).time D d = zoneStart D.1 + 11 * D.1 + 20 ∧
++      (zr_shortContract x).post D d =
++        { d with
++          state := some (Sum.inr (Sum.inr (Sum.inr SweepPhase.done)))
++          workTapes := Function.update d.workTapes 1 fun _ => none
++          workTapePos := fun j => if j = 0 then 0 else d.workTapePos 1 - (D.1 + 1) } ∧
++      (zr_shortContract x).lo D d 0 = -1 ∧ (zr_shortContract x).hi D d 0 = zoneStart D.1 ∧
++      (zr_shortContract x).lo D d 1 = d.workTapePos 1 - D.1 - 2 ∧
++      (zr_shortContract x).hi D d 1 = d.workTapePos 1 + 1 := by
++  letI := zr_decEqLoopPh
++  rw [zr_shortContract, Contract.seq_pre, zr_shortLoopContract, zr_reindexContract,
++    Contract.ofSegment_pre] at hp
++  set e := ((zr_shortLoopContract x).post D (d.mapState fun _ => ⟨false, some false⟩)).mapState
++    fun _ => (Sum.inl none : Option Bool ⊕ SeekPhase ⊕ SweepPhase) with he
++  have he0 : e.workTapePos 0 = 0 := by
++    rw [he, Cfg.mapState_workTapePos, zr_shortLoopContract, zr_reindexContract,
++      Contract.ofSegment_post, zr_loopContract, Contract.ofSegment_post]
++    simp only [Function.update_self]
++  have he1 : e.workTapePos 1 = d.workTapePos 1 := by
++    rw [he, Cfg.mapState_workTapePos, zr_shortLoopContract, zr_reindexContract,
++      Contract.ofSegment_post, zr_loopContract, Contract.ofSegment_post]
++    simp only [Function.update_of_ne (by decide : (1 : Fin 2) ≠ 0), Cfg.mapState_workTapePos]
++  have het : e.workTapes = d.workTapes := by
++    funext j q
++    rw [he, Cfg.mapState_workTapes, zr_shortLoopContract, zr_reindexContract,
++      Contract.ofSegment_post, zr_loopContract, Contract.ofSegment_post]
++    simp only [Cfg.mapState_workTapes]
++  have hc : zr_scratchAt ((D.1 + 1 : ℕ) : ℤ) (D.1 + 1) e :=
++    zr_scratchAt_move _ e hp.2 (fun r => by rw [het, Cfg.mapState_workTapes])
++      (by rw [he1, Cfg.mapState_workTapePos])
++  obtain ⟨ht, hpost, hlo0, hhi0, hlo1, hhi1⟩ := zr_countClear_fields (D.1 + 1) e hc
++  have hL := two_le_zoneStart D.1
++  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
++  · rw [zr_shortContract, Contract.seq_time, ← he, ht, zr_shortLoopContract, zr_reindexContract,
++      Contract.ofSegment_time, zr_loopContract, Contract.ofSegment_time]
++    ring
++  · rw [zr_shortContract, Contract.seq_post, ← he, hpost]
++    apply Cfg.ext
++    · simp only [Cfg.mapState_state, Option.map_some]
++    · rw [Cfg.mapState_inputPos, he, Cfg.mapState_inputPos, zr_shortLoopContract,
++        zr_reindexContract, Contract.ofSegment_post, zr_loopContract, Contract.ofSegment_post,
++        Cfg.mapState_inputPos]
++    · funext j q
++      rw [Cfg.mapState_workTapes]
++      simp only [het]
++    · funext j
++      rw [Cfg.mapState_workTapePos]
++      by_cases hj : j = 1
++      · subst hj
++        simp only [Function.update_self, he1, show (1 : Fin 2) ≠ 0 by decide, if_false]
++        push_cast
++        ring
++      · have hj0 : j = 0 := by omega
++        subst hj0
++        simp only [Function.update_of_ne hj, he0, if_true]
++    · rw [Cfg.mapState_output, he, Cfg.mapState_output, zr_shortLoopContract,
++        zr_reindexContract, Contract.ofSegment_post, zr_loopContract, Contract.ofSegment_post,
++        Cfg.mapState_output]
++  · rw [zr_shortContract, Contract.seq_lo, ← he, hlo0, zr_shortLoopContract,
++      zr_reindexContract, Contract.ofSegment_lo, zr_loopContract, Contract.ofSegment_lo, he0]
++    simp only [if_true]
++    omega
++  · rw [zr_shortContract, Contract.seq_hi, ← he, hhi0, zr_shortLoopContract,
++      zr_reindexContract, Contract.ofSegment_hi, zr_loopContract, Contract.ofSegment_hi, he0]
++    simp only [if_true]
++    omega
++  · rw [zr_shortContract, Contract.seq_lo, ← he, hlo1, zr_shortLoopContract,
++      zr_reindexContract, Contract.ofSegment_lo, zr_loopContract, Contract.ofSegment_lo, he1]
++    simp only [show (1 : Fin 2) ≠ 0 by decide, if_false, Cfg.mapState_workTapePos]
++    omega
++  · rw [zr_shortContract, Contract.seq_hi, ← he, hhi1, zr_shortLoopContract,
++      zr_reindexContract, Contract.ofSegment_hi, zr_loopContract, Contract.ofSegment_hi, he1]
++    simp only [show (1 : Fin 2) ≠ 0 by decide, if_false, Cfg.mapState_workTapePos]
++    omega
++
++/-- **A short scan leads into the short path**: when every feeding zone of track `t` is empty,
++the scan's endpoint from a zone-row start satisfies the short path's precondition (its count is
++all of scratch). -/
++private lemma zr_scanShort_pre {k : ℕ} {x : List (ZoneSym k)} (t : Fin k) (D : ZoneData k)
++    (s : Σ b, zr_loopPh b)
++    (d : Cfg 2 (ZoneSym k) (SeekPhase ⊕ Σ b, zr_hostPh zr_scanSt b) x) (hp : zoneRowPre D d)
++    (hs : zoneRebalanceIndex true t D = D.1) :
++    zr_loopPre D (((zr_scanContract t x).post D d).mapState fun _ => s) ∧
++      zr_scratchAt ((D.1 + 1 : ℕ) : ℤ) (D.1 + 1)
++        (((zr_scanContract t x).post D d).mapState fun _ => s) := by
++  rw [(zr_scan_fields t D d).2.1, hs]
++  obtain ⟨-, e1, e2, e3⟩ := zr_scanCfg_fields d
++    (some (Sum.inr ⟨false, if D.1 < D.1 then none else some true⟩)) (D.1 + 1) (zoneStart D.1)
++  refine ⟨⟨by rw [Cfg.mapState_workTapePos, e2], fun q _ _ => ?_⟩, Nat.succ_pos _, fun r => ?_⟩
++  · rw [Cfg.mapState_workTapes, e1, hp.1]
++  · rw [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, e3, zr_rulerTape]
++    simp only [zr_scanCfg, Function.update_self, hp.2.2 r]
++    split_ifs <;> first | rfl | omega
++
+ /-! ### The rows -/
+ 
+ /-- **§13d G4, the rebalance rows** (design §13d, G4; decisions 13d.2–13d.4). For every track
+-- 
+2.50.1 (Apple Git-155)
+

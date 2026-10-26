@@ -1,0 +1,19 @@
+import TCSlib.Complexity.TuringMachine.Finite
+
+open Turing
+
+section Unsealed
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :
+    c.Halted ↔ c.state = none := Iff.rfl
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (h : ¬ c.Halted) :
+    c.state ≠ none := h
+end Unsealed
+
+section Sealed
+attribute [local semireducible] Turing.Cfg.Halted
+attribute [local irreducible] Turing.Cfg.Halted
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :
+    c.Halted ↔ c.state = none := Iff.rfl
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (h : ¬ c.Halted) :
+    c.state ≠ none := h
+end Sealed

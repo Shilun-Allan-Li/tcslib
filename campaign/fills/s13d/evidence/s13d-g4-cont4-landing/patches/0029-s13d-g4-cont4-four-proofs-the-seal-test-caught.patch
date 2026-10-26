@@ -1,0 +1,59 @@
+From 688b35df8158a4a3ecb4ef5f43139d08d180e66a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 16:12:37 +0000
+Subject: [PATCH 29/39] s13d g4 cont4: four proofs the seal test caught
+
+zr_inV_empty, zr_inGuard_iff and zr_slotSet_self read a zone's words through
+ZoneContents.words_true/_false rather than by unfolding ZoneContents.words;
+the pinned walk's premise goes through FinTM.bufferTape_nat rather than by
+unfolding FinTM.bufferTape.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 3a0ffbd9..c6151001 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -5000,7 +5000,8 @@ private def zr_pinWalkContract {k : ℕ} {J : Type} (x : List (ZoneSym k)) (V :
+     (fun j d => V j ∧ zr_pinned (T j) (p j) d) fun j d hd => by
+       rw [walkTM_contract_pre, hd.2.1, hd.2.2]
+       intro q hq
+-      simpa only [SignType.coe_one, one_mul] using hw j hd.1 q hq
++      rw [SignType.coe_one, one_mul]
++      exact (hw j hd.1 q hq).trans (FinTM.bufferTape_nat (w j) q)
+ 
+ /-- The pinned walk moves both heads `|w j| + 1` cells right. -/
+ private lemma zr_pinWalk_step {k : ℕ} {J : Type} {x : List (ZoneSym k)} (V : J → Prop)
+@@ -5446,7 +5447,7 @@ private def zr_inV {k : ℕ} (t : Fin k) (J : zr_Ix k) : Prop :=
+ private lemma zr_inV_empty {k : ℕ} {t : Fin k} {J : zr_Ix k} (hV : zr_inV t J) :
+     (J.D.2 t).right ⟨J.i - 1, by have := hV.2.1; omega⟩ = [] := by
+   have h := (zr_inner_empty_iff true J.D.2 ⟨J.i - 1, by have := hV.2.1; omega⟩ t).mp
+-  rw [zr_zonePos, if_pos rfl, Nat.add_zero] at h
++  rw [zr_zonePos, if_pos rfl, Nat.add_zero, ZoneContents.words_true] at h
+   exact h hV.2.2.1
+ 
+ /-- The half-capacity `2^(i-1)` of the receiving zone. -/
+@@ -6546,6 +6547,7 @@ private lemma zr_slotSet_self {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t
+     some (zoneSlotSet t (zonedTape z (-((zoneStart i + o : ℕ) : ℤ)))
+         ((z t).left i)[o]?) = zonedTape z (-((zoneStart i + o : ℕ) : ℤ)) := by
+   rw [zonedTape_left z i o ho, zoneSlotSet_eq, zoneCellOfCell_inr]
++  simp only [ZoneContents.words_false]
+   congr 2
+   exact Function.update_eq_self t _
+ 
+@@ -7459,7 +7461,7 @@ private lemma zr_inGuard_iff {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (t :
+     (zonedTape z (zr_rstart i)).map (zoneSlotOf t) = some none ↔
+       (z t).right ⟨i - 1, by omega⟩ = [] := by
+   have h := zr_inner_empty_iff true z ⟨i - 1, by omega⟩ t
+-  rw [zr_zonePos, if_pos rfl, Nat.add_zero] at h
++  rw [zr_zonePos, if_pos rfl, Nat.add_zero, ZoneContents.words_true] at h
+   rw [zr_rstart, if_neg (by omega)]
+   exact h
+ 
+-- 
+2.50.1 (Apple Git-155)
+

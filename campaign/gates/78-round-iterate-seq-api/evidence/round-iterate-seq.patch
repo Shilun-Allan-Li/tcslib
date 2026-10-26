@@ -1,0 +1,137 @@
+From b768859d58d59a0952cf340439cba91740c95084 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 25 Oct 2026 11:27:31 -0500
+Subject: [PATCH] Contract/Basic: Round.iterate_seq (round iteration along a
+ sequence of starts); Round.iterate its corollary; ZoneRebalance's zr_pinLoop
+ re-pointed to it
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/Contract/Basic.lean   | 33 ++++++++++++----
+ .../TuringMachine/Build/ZoneRebalance.lean    | 38 +++++++++----------
+ 2 files changed, 42 insertions(+), 29 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+index f4c3b41c..5a7b9511 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+@@ -91,7 +91,8 @@ trajectories*, relations on the whole head vector.
+ * `Turing.Segment.trans`, `Turing.Segment.live`, `Turing.Segment.time_eq`,
+   `Turing.SafeSegment.trans`, `Turing.Contract.segment`: segment concatenation, liveness,
+   uniqueness of first exits, and the contract bridge.
+-* `Turing.Round.iterate`, `Turing.RoundContract.orbit_round`: round iteration along an orbit.
++* `Turing.Round.iterate_seq`, `Turing.Round.iterate`, `Turing.RoundContract.orbit_round`: round
++  iteration along a sequence of starts, and along an orbit.
+ * `Turing.Contract.Traj.trans`, `Turing.Contract.Frames.trans`: preservation by `trans`.
+ * `Turing.Contract.time_eq_zero_iff`, `Turing.Contract.trans_positive`: sanity lemmas.
+ * `Turing.Contract.lockstep_admissible`: the target entry compatible with the encoding.
+@@ -771,24 +772,40 @@ theorem roundOrbit_succ {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (τ :
+     roundOrbit M τ c (r + 1) = M.runFrom (roundOrbit M τ c r) (τ (roundOrbit M τ c r)) :=
+   Function.iterate_succ_apply' _ _ _
+ 
++/-- **Round iteration along a sequence of starts**: if, for each `r < n`, the run from `cs r` is
++a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` is one segment against
++the escapes to `cs n`, of length the sum of the round times. When the last round ends in an
++escape, the segment is a first exit (`Turing.Contract.ofSegment`).
++
++**Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
++by `Turing.Segment.trans`. -/
++theorem Round.iterate_seq {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a : S}
++    {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (cs : ℕ → Cfg k Γ S x) (τ : ℕ → ℕ)
++    (ha : some a ∉ E) (h0 : P (cs 0).workTapePos) (n : ℕ)
++    (hround : ∀ r < n, Round M a E P (cs r) (cs (r + 1)) (τ r)) :
++    Segment M E P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) := by
++  induction n with
++  | zero => exact Segment.zero h0
++  | succ n ih =>
++    rw [Finset.sum_range_succ]
++    exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
++
+ /-- **Round iteration on one machine** (the counter loop's composition, without the counter):
+ if the first `n` rounds of the orbit are rounds, each lasting `τ` of its start, then the whole
+ orbit prefix is one segment against the escapes, of length the sum of the round times. When the
+ last round ends in an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
+ 
+-**Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
+-by `Turing.Segment.trans`. -/
++**Proof sketch.** The orbit `Turing.roundOrbit` as the sequence of starts in
++`Turing.Round.iterate_seq`; it starts at `c` (`Turing.roundOrbit_zero`). -/
+ theorem Round.iterate {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a : S}
+     {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x)
+     (ha : some a ∉ E) (h0 : P c.workTapePos) (n : ℕ)
+     (hround : ∀ r < n, Round M a E P (roundOrbit M τ c r) (roundOrbit M τ c (r + 1))
+       (τ (roundOrbit M τ c r))) :
+     Segment M E P c (roundOrbit M τ c n) (∑ r ∈ Finset.range n, τ (roundOrbit M τ c r)) := by
+-  induction n with
+-  | zero => exact Segment.zero h0
+-  | succ n ih =>
+-    rw [Finset.sum_range_succ]
+-    exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
++  have h := Round.iterate_seq (roundOrbit M τ c) (fun r => τ (roundOrbit M τ c r)) ha
++    (by rw [roundOrbit_zero]; exact h0) n hround
++  rwa [roundOrbit_zero] at h
+ 
+ /-- **A round contract** (design §16a item 2): from every admissible start at `anchor`, the run
+ ends after a positive exact time back at the anchor or in the escape set; strictly in between it
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 00b88de3..8b01a3b9 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -8260,11 +8260,10 @@ pinned at `j₀` repeats the body along `j₀, nxt j₀, …` until round `n`, t
+ under any head relation holding at each round's start and inside each round's body box.
+ 
+ **Proof sketch.** Validity holds at every round start up to `n`, by induction on `m` from the
+-passing condition `hV`. Each round is `zr_pinRound` at the index `nxt^[m] j₀`. By induction on
+-`m ≤ n`, the segment from the start to round `m`'s anchor concatenates the first `m` rounds'
+-segments (`Round.segment`, `Segment.trans`), each returning to the anchor since its verdict is
+-`false`; round `n` escapes, and its segment ends the loop. This is the induction of
+-`Turing.Round.iterate`, along the sequence of pinned starts instead of a configuration orbit. -/
++passing condition `hV`. Each round is `zr_pinRound` at the index `nxt^[m] j₀`. The first `n`
++rounds return to the anchor, since their verdicts are `false`, so they concatenate into one
++segment from the start to round `n`'s anchor (`Turing.Round.iterate_seq` along the pinned starts).
++Round `n` escapes, and its segment ends the loop. -/
+ private lemma zr_pinLoop {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
+     {MB : MultiTapeTM 2 (ZoneSym k) B} {e : B} {X : Set (Option B)}
+     (back : B → Option (Option Bool)) (C : Contract MB e X J x) (hnone : none ∉ X)
+@@ -8305,25 +8304,22 @@ private lemma zr_pinLoop {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
+     rw [Function.iterate_succ_apply']
+     exact zr_pinRound back C hnone hX hstep hback hsa hsb hsaX hsbX P _ (hVm m hm) _ rfl
+       ⟨rfl, rfl⟩ (hPs m hm) (hP m hm)
+-  have hseg : ∀ m ≤ n, Segment (zr_hostTM MB e back) {some ⟨false, some true⟩} P c
+-      (zr_hostCfg c (some false) (T (nxt^[m] j₀)) (p (nxt^[m] j₀)))
+-      (∑ r ∈ Finset.range m, (τ (nxt^[r] j₀) + 2)) := by
+-    intro m hm
+-    induction m with
+-    | zero =>
+-      have h0 : zr_hostCfg c (some false) (T (nxt^[0] j₀)) (p (nxt^[0] j₀)) = c :=
+-        Cfg.ext hc.symm rfl hcp.1.symm hcp.2.symm rfl
+-      rw [h0, Finset.sum_range_zero]
+-      exact Segment.zero (hcp.2 ▸ hPs 0 (Nat.zero_le _))
+-    | succ m ih =>
+-      have h2 := (hround m (by omega)).segment hesc
+-      rw [hnf m (by omega)] at h2
+-      rw [Finset.sum_range_succ]
+-      exact (ih (by omega)).trans h2
++  have h0 : zr_hostCfg c (some false) (T (nxt^[0] j₀)) (p (nxt^[0] j₀)) = c :=
++    Cfg.ext hc.symm rfl hcp.1.symm hcp.2.symm rfl
++  have hseg := Round.iterate_seq (M := zr_hostTM MB e back) (P := P)
++    (fun m => zr_hostCfg c (some false) (T (nxt^[m] j₀)) (p (nxt^[m] j₀)))
++    (fun r => τ (nxt^[r] j₀) + 2) hesc
++    (by beta_reduce; rw [h0]; exact hcp.2 ▸ hPs 0 (Nat.zero_le _)) n
++    (fun r hr => by
++      have h2 := hround r (by omega)
++      rw [hnf r hr] at h2
++      exact h2)
++  beta_reduce at hseg
++  rw [h0] at hseg
+   have h2 := (hround n le_rfl).segment hesc
+   rw [hfin] at h2
+   rw [Finset.sum_range_succ]
+-  exact (hseg n le_rfl).trans h2
++  exact hseg.trans h2
+ 
+ /-- **An anchor branch**: a pinned stationary test whose verdict at `j` is `a₁` exactly when
+ `v j`; on `a₁` it stops at the anchor leaf, otherwise it runs the pinned arm `C₂`. -/
+-- 
+2.50.1 (Apple Git-155)
+

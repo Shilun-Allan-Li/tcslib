@@ -1,0 +1,92 @@
+import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+/-! U2, the `k`-tape universal machine: the controls for `U2UERouteProbe`'s seal. Each of the
+eight sealed definitions has one goal closing by `rfl` through it. Unsealed (the first section)
+every goal closes; sealed (the second) every goal is expected to FAIL. The first two are the
+API gap: without published field equations, `forwardLoopCfg`'s and `rulerHostCfg`'s fields are
+read only by unfolding. -/
+
+namespace Turing
+
+section Unsealed
+
+-- StepBlock.forwardLoopCfg
+example {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q) (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) : (StepBlock.forwardLoopCfg entry M c).output = c.output :=
+  rfl
+
+-- rulerHostCfg
+example {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+    (q : Option Q) (c : Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := rfl
+
+-- MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+
+-- Cfg.init
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).output = [] := rfl
+
+-- FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+-- StepBlock.summaryCells
+example (w : List Bool) : StepBlock.summaryCells none w 0 = none := rfl
+
+-- tableBitsK
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+
+-- unaryFin
+example : unaryFin (0 : Fin 1) = [false] := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] StepBlock.forwardLoopCfg rulerHostCfg MultiTapeTM.initCfg Cfg.init
+  FinTM.bufferTape StepBlock.summaryCells tableBitsK unaryFin
+attribute [-simp] MultiTapeTM.initCfg Cfg.init
+
+-- StepBlock.forwardLoopCfg
+example {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q) (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) : (StepBlock.forwardLoopCfg entry M c).output = c.output :=
+  rfl
+
+-- rulerHostCfg
+example {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+    (q : Option Q) (c : Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := rfl
+
+-- MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+
+-- Cfg.init
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).output = [] := rfl
+
+-- FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+-- StepBlock.summaryCells
+example (w : List Bool) : StepBlock.summaryCells none w 0 = none := rfl
+
+-- tableBitsK
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+
+-- unaryFin
+example : unaryFin (0 : Fin 1) = [false] := rfl
+
+end Sealed
+
+end Turing

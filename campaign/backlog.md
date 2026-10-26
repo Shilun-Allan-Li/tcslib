@@ -1662,6 +1662,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   (`campaign/fills/megafill/drafts/megafill-D-drafting-brief.md`). New in it: a required semantic
   duplication check (gates 69 and 72 failed round 1 on re-derived published lemmas), and screens
   on unmoving worktrees.
+  - **E-Q's route (2026-10-25; `campaign/items/c1/c1e/EQ-route-design.md`).** `spaceConstructible_poly`
+    landed directly (#166), so megafill D's cover is E-Q alone (Codex). **Ruled (user,
+    2026-10-25), the note's recommendation on all four:** unary arithmetic with cutoffs (no
+    multiplication leaf); the guard split at the function level (`computesFunInTime_cond`), the
+    main machine one machine-level composite; issue at the later of A1's (#164) and #167's
+    landings (the brief cites `Round.iterate_seq` and `timeConstructible_iff`); the maintainer
+    drafts the brief, with the pre-ship at the issue commit and a review sub-agent before issue.
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
@@ -1692,6 +1699,52 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       seven lemmas from `NDCodeSimulator` and `embedSilentCfg_initCfg` from U2-S, probed with
       corrected imports, sealed over 22 definitions; about +405/−291 lines; 5-module replay). Then
       a pre-ship re-run and `suggested-fix.diff`. Q-B2 and Q-B3 approved by the review.
+  - **Issued U2 alone (2026-10-25, `ed8f2e87`); delivered (2026-10-25,
+    `fill-u2s-universal.zip`, Codex): both targets claimed proved**, head `2410022f` (5 commits,
+    `UniversalK.lean` only, +1,127/−2; 28 new `uk_` privates). Intake: checksums, bundle and patch
+    series verified; the head fetched as `deliver/fill-u2s-universal-in`. Disclosed: E-CHK, three
+    grouped checkpoint zips instead of one per checkpoint.
+    **Reviewed** (`campaign/fills/u2s/reviews/universal/REVIEW.md`): complete (2/2), no
+    `sorryAx`; `Turing.exists_selfUniversal` becomes admission-free. Integrity, scope, freeze,
+    elaboration (at `lkit2`, and at the tip on `lg4c4m`), rule 10 (31-control seal), rule 11,
+    probes, screen (5 new in-file pairs, none cross-file) and lint pass. **F1 (major):** three
+    inline arguments re-prove published lemmas (`MultiTapeTM.exists_first_halt`,
+    `visitedByTapeHead_mono`, `FinTM.ComputesInTime.spaceUsed_le_of_halt`); fixed by the
+    review's tested edits D1–D3. Minors: the Implementation paragraph (F3), stale status text
+    (F4), E-CHK (F5). Decisions pending (user): D1–D3, the ruler on tape `k + 2` (F2), the
+    wording S1–S6, the landing order, E-CHK. Lands by a maintainer PR and a fill gate, with a
+    3-module replay. (The records commit `4ae9e632`'s subject says two indexes were omitted from
+    the review's records; it was seven, per its `NOT-COPIED.md`.)
+    **Ruled (user, 2026-10-26): the review's recommendation on all five** (D1–D3 and S1–S6 land;
+    F2 and E-CHK accepted; merge after #164 and #167). **Landing: PR #168**
+    (`lean/u2-universal-landing` at `fd995ec1`: the 5 commits cherry-picked, then the edits), with
+    **gate 80** (a fill gate) staged: `exchange/outbox/gates/80-u2-universal-fill-gate/`, bundle
+    `7de06b27…`, 164 sections, the records at `a1c9ec5d`. The replay (3 modules) is written after
+    #164 and #167 merge.
+    **Gate 80, round 1: FAIL (0/1/1/10).** The major: D1 reads `exists_first_halt`'s
+    `¬ (…).Halted` prefix as `state ≠ none`, a definitional use of the reducible `Cfg.Halted`.
+    **Ruled (user, 2026-10-26): keep D1 and answer with the convention**, now in `policy.md` and
+    `TEMPLATE.md`. Lean refuses to seal a reducible `abbrev` (probe in the gate's evidence), and
+    the C1 briefs and gate 34 already allow the reading. The minor (the sketch's seam step) is
+    fixed by `948df2f9`, docstring only. **Round 2 staged:**
+    `exchange/outbox/gates/80-u2-universal-fill-r2-gate/`, bundle `fe5f0f8a…`, 29 sections, the
+    records at `7a1370d7`.
+  - **A+ opened as #169** (2026-10-26; `lean/interpreter-startup` at `4bee8b09`, the campaign
+    merged in after #164). **Gate 79 staged:** `exchange/outbox/gates/79-interpreter-startup-api-gate/`,
+    bundle `e5fd8b80…`, 61 sections, the records at `7a1370d7`. The elaboration was re-run
+    against `oleans-la1m` with the same results. Its 5-module replay chains after #167's.
+    **Gate 79, round 1: FAIL (0/1/2/8); the startup itself needs no change.** The major: the B5a
+    consumer probe at `p = 0` was vacuous, since B5a's hosted verdict needs its `F.k` work tapes
+    blank. **Ruled (user, 2026-10-26): re-scope with a real probe and record the route.** B5a cites
+    the startup at `p = F.k` (the new `b5aP_startup` keeps every clause and shows the reserved
+    tapes blank), and its pre-ship proves the junction into `h1HostedVerdict_effect` in a
+    `CodeSimulator` overlay before B5a issues. The minors are fixed: the core's paragraph
+    (`df992ad7`, docstring only) and the bundle (the core seal's sources and recipe, all 18
+    population files). **Round 2 staged:** `exchange/outbox/gates/79-interpreter-startup-api-r2-gate/`,
+    bundle `854dddc5…`, 86 sections, the Lean at `df992ad7`, the records at `e259de60`.
+    **Gate 80, round 2: PASS (0/0/2/6), gate closed** (both
+    minors fixed: the probe at 614 of 613 names, and the sealing statement qualified).
+    **#167: replay-lriseqm passed (91 of 91); clear to merge.**
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
@@ -3513,6 +3566,29 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
 ---
 
 ## 5. Repository housekeeping
+
+### HLT-1: publish `Cfg.halted_iff` (from gate 80, finding 1; 2026-10-26)
+
+`Turing.Cfg.Halted` (`TuringMachine/Configuration.lean:226`) is a reducible `abbrev` for
+`cfg.state = none` with no `_iff` lemma. Published hypotheses use it widely (`Build/Catalog`'s
+`hlive`, `ClassNP/EXP`, `ClassNP/SAT`, `CookLevin/Hardness`), and consumers read it through its
+body, which the convention of 2026-10-26 allows (`policy.md`). **To do:** add `Cfg.halted_iff`
+(`Iff.rfl`) with the next API PR that touches `Configuration`; its replay closure is most of the
+library, so not alone. New code then cites it where it rewrites.
+
+### FRZ-1: re-run the declaration freezes with qualified names (from gate 78, minor 2; 2026-10-25)
+
+`devtools/seyoon/declfreeze.py` up to v3 keyed declarations by short name. In a file where two
+declarations share one (`Contract.trans`, `Segment.trans` and `SafeSegment.trans`, each written
+`theorem trans` inside its namespace), only the last of each name was kept on both sides of a
+freeze. A statement or body change to an earlier namesake would therefore not have been reported. v4
+(2026-10-25) keys by the qualified name. **Done (2026-10-25; `campaign/items/frz1/`): no campaign
+freeze missed a change.** A walk over every consecutive pair of versions, on the campaign's
+first-parent chain, of all 815 Lean files it changed finds two landings that changed a declaration
+v3 could not see. One is PR #2's communication-complexity split (2026-09-30), which is not
+campaign work. The other is Diagonal's parameterization (#100), whose freeze used its own
+qualified-name script and lists the three new namesakes. The four open PRs gated before v4 change
+no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal` among them.
 
 * **The campaign's merge to `main` (user, 2026-10-15).**
   - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
