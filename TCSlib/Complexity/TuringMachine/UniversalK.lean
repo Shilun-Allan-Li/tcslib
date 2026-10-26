@@ -2040,13 +2040,13 @@ arbitrary time and the table's length. B6's `Turing.exists_selfUniversal` is the
 cells, H2-F's encoding `Turing.StepBlock.forwardLoopCfg entry M (M.initCfg (pairEncode α w))` of
 the coded machine `M := E.machine α`, on the block's tapes, the other tapes blank; seam it into
 H2-F's machine `L` (R2, R1 on the first `k + 2` tapes). (ii) H2-F's lockstep
-(`Turing.Lockstep.runFrom`) runs `M` from its initial configuration: after `M` halts at `t`,
-`L` is at the encoding of the halted configuration, halted, with `M`'s output, after
-`Σ_{u < t} cost ≤ (50 · (|tableBitsK| + 1) + C_L) · t` steps; so the time is at most
-`T_α + (50 · (|tableBitsK| + 1) + C_L) · t ≤ C · (t + 1)`. (iii) Space: the mirrored heads visit
-only `M`'s cells, at most `s`; the auxiliary heads stay in an interval of length
-`2 (50 · (|tableBitsK| + 1) + C_L) + 1`; the startup `B_α`; in all `≤ C · (s + 1)`, and the
-halted configuration is frozen afterwards. (iv) Converse: by the lockstep's cut
+(`Turing.Lockstep.runFrom`) runs `M` from its initial configuration through its first halt
+`t₀ ≤ t`: `L` is then at the encoding of the halted configuration, halted, with `M`'s output,
+after `Σ_{u < t₀} cost ≤ (50 · (|tableBitsK| + 1) + C_L) · t` steps; with the seam's one step,
+the time is at most `T_α + 1 + (50 · (|tableBitsK| + 1) + C_L) · t ≤ C · (t + 1)`. (iii) Space:
+the mirrored heads visit only `M`'s cells, at most `s`; the auxiliary heads stay in an interval
+of length `2 (50 · (|tableBitsK| + 1) + C_L) + 1`; the startup `B_α`; in all `≤ C · (s + 1)`,
+and the halted configuration is frozen afterwards. (iv) Converse: by the lockstep's cut
 (`Turing.Lockstep.cut`) `L` is live while `M` is, and an encoded live configuration is live, so
 `U` halts only at the encoding of a halted configuration of `M`, whose output is `M`'s. -/
 theorem exists_selfUniversalK (k : ℕ) (E : EffectiveCodeK k) :
