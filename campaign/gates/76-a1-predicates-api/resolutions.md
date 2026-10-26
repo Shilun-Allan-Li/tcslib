@@ -22,4 +22,9 @@ tip `39c649e6`, Lean equal to #161's merged tree). Pack `pack.md`; bundle SHA-25
 | 1–6, 10, 13 | notes | Integrity; the readings' faithfulness (time and space constructibility, `ComputesInSpace`, `DecidesInSpace`, `SPACE`, `logSpace`, `LOGSPACE`, the transducer); the freeze; boundary checks. | No action. |
 
 **Merge state. #164: not yet clear to merge.** The gate is closed. The merged-tree replay is
-outstanding: it runs after #162 merges (its closure contains #162's).
+outstanding. After #162 and #165 merged, the campaign was merged into #164 (2026-10-26; head
+`1ff735f8b31a0770ba954ef3e39cd95dcaa67a8e`, Lean diff from the campaign tip `f0df8ee5` exactly the PR's
+four files). `replay-la1m` (`evidence/merged-tree/`) replays their downstream closure, 193
+modules, chained from `oleans-lg4c4m` (the campaign's tree after #165); its precheck passed. A
+trial merge before #165 landed gave the same list. #164 goes first: its snapshot then carries
+#167's 91-module replay, #166's 2-module replay and the A+ PR.
