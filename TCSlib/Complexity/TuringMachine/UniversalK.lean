@@ -2309,16 +2309,22 @@ private theorem uk_scan_pair {k : ℕ} {z : List Bool} (i : Fin k)
       (by dsimp only [q]; split <;> decide) b read
     cases a <;> cases b <;> simpa only [q, Bool.false_eq_true, Bool.true_eq_false,
       ↓reduceIte, and_self, and_false, false_and, true_and] using step
+  have one (e : Cfg k Bool (Fin 4) z) :
+      (uk_scanTM i).runFrom e 1 = (uk_scanTM i).step e := by
+    rw [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
   constructor
-  · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step',
-      MultiTapeTM.runFrom_zero, h1, h2]
+  · calc
+      _ = (uk_scanTM i).runFrom
+          ((uk_scanTM i).runFrom (uk_scanCfg i d 0 t (by omega)) 1) 1 :=
+        MultiTapeTM.runFrom_add _ 1 1
+      _ = _ := by rw [one, one, h1, h2]
   · intro v hv
     have casesv : v = 0 ∨ v = 1 := by omega
     rcases casesv with rfl | rfl
     · rw [MultiTapeTM.runFrom_zero]
       change some (0 : Fin 4) ≠ some 3
       decide
-    · rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero, h1]
+    · rw [one, h1]
       change some q ≠ some 3
       cases a <;> decide
 
