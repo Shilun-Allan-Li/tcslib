@@ -117,3 +117,23 @@ it, with the usual seal and controls and a consumer probe at `p = 0`, which is B
    exists to remove.
 5. **Timing:** after #164 and #165 merge (A1 adds nothing the startup uses; G4 is unrelated), so
    that the PR's base is quiet. The note does not depend on either.
+
+## As built (PR #169), and the departures from this sketch (gate 79)
+
+- **The serialization word** replaces `serializeK (M α)` in the statement, because `serializeK`
+  lives in `CodeSimulator`, which would close an import cycle. Consumers convert by
+  `serializeK_eq`.
+- **The endpoint states less than the sketch's "every other tape blank".** It specifies the four
+  role tapes and the `p` passive tapes, with their heads at `0`, and the input head at its first
+  cell. The startup's other tapes are internal scratch with no stated contents, which a
+  consumer's loop embedding leaves aside. A consumer that needs further clean tapes reserves
+  them as passive tapes, started blank.
+- **The core cites it at `p = 4`, not `p = 1`:** the stream, the loop's two banks and the loop's
+  capture.
+- **B5a will cite it at `p = F.k`, not `p = 0`.** Its hosted verdict `h1HostedVerdictTM F.k`
+  needs the initial configuration's `F.k` mirrored work tapes blank, with their heads at `0`
+  (`h1HostedVerdict_effect`'s `Rep`). The startup's roles supply the buffer (`jwin`, holding
+  `x.take t`), the counter (`jctr`), the table (`jtbl`) and the summary (`jsm`). The junction
+  reads `CodeSimulator`'s private loop lemmas, so B5a's pre-ship proves it, in a `CodeSimulator`
+  overlay, before B5a issues. Gate 79's consumer probe shows the reservation at `p = F.k`
+  (`b5aP_startup`, round 2).

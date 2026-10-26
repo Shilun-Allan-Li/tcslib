@@ -1733,6 +1733,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     merged in after #164). **Gate 79 staged:** `exchange/outbox/gates/79-interpreter-startup-api-gate/`,
     bundle `e5fd8b80…`, 61 sections, the records at `7a1370d7`. The elaboration was re-run
     against `oleans-la1m` with the same results. Its 5-module replay chains after #167's.
+    **Gate 79, round 1: FAIL (0/1/2/8); the startup itself needs no change.** The major: the B5a
+    consumer probe at `p = 0` was vacuous, since B5a's hosted verdict needs its `F.k` work tapes
+    blank. **Ruled (user, 2026-10-26): re-scope with a real probe and record the route.** B5a cites
+    the startup at `p = F.k` (the new `b5aP_startup` keeps every clause and shows the reserved
+    tapes blank), and its pre-ship proves the junction into `h1HostedVerdict_effect` in a
+    `CodeSimulator` overlay before B5a issues. The minors are fixed: the core's paragraph
+    (`df992ad7`, docstring only) and the bundle (the core seal's sources and recipe, all 18
+    population files). Round 2 staged. **Gate 80, round 2: PASS (0/0/2/6), gate closed** (both
+    minors fixed: the probe at 614 of 613 names, and the sealing statement qualified).
+    **#167: replay-lriseqm passed (91 of 91); clear to merge.**
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
