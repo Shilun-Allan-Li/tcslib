@@ -1662,6 +1662,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   (`campaign/fills/megafill/drafts/megafill-D-drafting-brief.md`). New in it: a required semantic
   duplication check (gates 69 and 72 failed round 1 on re-derived published lemmas), and screens
   on unmoving worktrees.
+  - **E-Q's route (2026-10-25; `campaign/items/c1/c1e/EQ-route-design.md`).** `spaceConstructible_poly`
+    landed directly (#166), so megafill D's cover is E-Q alone (Codex). **Ruled (user,
+    2026-10-25), the note's recommendation on all four:** unary arithmetic with cutoffs (no
+    multiplication leaf); the guard split at the function level (`computesFunInTime_cond`), the
+    main machine one machine-level composite; issue at the later of A1's (#164) and #167's
+    landings (the brief cites `Round.iterate_seq` and `timeConstructible_iff`); the maintainer
+    drafts the brief, with the pre-ship at the issue commit and a review sub-agent before issue.
 - **Megafill C (user, 2026-10-23): four items, Codex-facing**: G4 cont4 (drafted, pre-ship re-run
   at `6e761018`), C1's replay canonizer, B5a's uniform simulator, U2's `UniversalK` stubs. The
   three new briefs and the cover are handed to a drafting agent
@@ -1692,6 +1699,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       seven lemmas from `NDCodeSimulator` and `embedSilentCfg_initCfg` from U2-S, probed with
       corrected imports, sealed over 22 definitions; about +405/−291 lines; 5-module replay). Then
       a pre-ship re-run and `suggested-fix.diff`. Q-B2 and Q-B3 approved by the review.
+  - **Issued U2 alone (2026-10-25, `ed8f2e87`); delivered (2026-10-25,
+    `fill-u2s-universal.zip`, Codex): both targets claimed proved**, head `2410022f` (5 commits,
+    `UniversalK.lean` only, +1,127/−2; 28 new `uk_` privates). Intake: checksums, bundle and patch
+    series verified; the head fetched as `deliver/fill-u2s-universal-in`. Under review (a
+    sub-agent, `$S/review/u2-universal/`). Disclosed: E-CHK, three grouped checkpoint zips instead
+    of one per checkpoint.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
