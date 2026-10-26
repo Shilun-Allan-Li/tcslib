@@ -18,7 +18,11 @@ and the records at `d01e302531c5429cabb7bb9b8e0daf52b9734fcf`. Dispatched before
 | 12 | note | No new duplication; keep TC-1's cleanup commitment. | **Agreed;** TC-1 stands (the user's 12.2c window). |
 | 2–10, 13, 14 | notes | Integrity; faithfulness; the helpers; adversarial inputs; the two arithmetic ledgers; rule 10; the overlay; the docstring; code identity and freeze; lint. | No action. |
 
-**Merge state. #166: not yet clear to merge.** The gate is closed. #166 is stacked on #164
+**Merge state. #166: clear to merge** (2026-10-26). `replay-lscpm` passed (user, 2026-10-26): 2 of
+2 modules, static-equal (0 mismatches; `Savitch`'s one sorry is `savitch` itself;
+`evidence/merged-tree/replay-lscpm.log`, `-static.txt`) at the head `abf3887f`. The PR's base is
+the campaign branch, whose Lean has not moved since #167's merge. Its snapshot is `oleans-lscpm`.
+Before the replay: The gate is closed. #166 is stacked on #164
 (A1): it waits for #164 to merge (A1's merged-tree replay first). Then it is retargeted to the
 campaign branch, and its 2-module replay (`Savitch`, the `SpaceComplexity` facade) runs from A1's
 snapshot. **#164 merged (2026-10-26);** #166 is retargeted to the campaign branch (its diff is
