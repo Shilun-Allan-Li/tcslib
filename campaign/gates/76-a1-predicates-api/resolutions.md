@@ -21,9 +21,13 @@ tip `39c649e6`, Lean equal to #161's merged tree). Pack `pack.md`; bundle SHA-25
 | 14 | note | Run and record the 193-module replay on the integrated tree after #162 before treating A1 as cleared. | **Agreed;** it is A1's merge condition. The closure includes the `TuringMachine` facade, which #165 also edits, so if #165 merges first, the replay is the merged-tree union from the last common snapshot. |
 | 1–6, 10, 13 | notes | Integrity; the readings' faithfulness (time and space constructibility, `ComputesInSpace`, `DecidesInSpace`, `SPACE`, `logSpace`, `LOGSPACE`, the transducer); the freeze; boundary checks. | No action. |
 
-**Merge state. #164: not yet clear to merge.** The gate is closed. The merged-tree replay is
-outstanding. After #162 and #165 merged, the campaign was merged into #164 (2026-10-26; head
-`1ff735f8b31a0770ba954ef3e39cd95dcaa67a8e`, Lean diff from the campaign tip `f0df8ee5` exactly the PR's
+**Merge state. #164: clear to merge** (2026-10-26). The gate is closed. `replay-la1m` passed
+(user, 2026-10-26): 193 of 193 modules, with sorry counts equal to the static count (0 mismatches,
+62 in total; `evidence/merged-tree/replay-la1m.log`, `-static.txt`), at the head `1ff735f8`. The PR's
+base is the campaign branch, whose Lean has not moved since #165's merge `f0df8ee5`. Its snapshot
+`oleans-la1m` is the campaign's tree after #164.
+Before the replay: after #162 and #165 merged, the campaign was merged into #164 (2026-10-26;
+head `1ff735f8b31a0770ba954ef3e39cd95dcaa67a8e`, Lean diff from the campaign tip `f0df8ee5` exactly the PR's
 four files). `replay-la1m` (`evidence/merged-tree/`) replays their downstream closure, 193
 modules, chained from `oleans-lg4c4m` (the campaign's tree after #165); its precheck passed. A
 trial merge before #165 landed gave the same list. #164 goes first: its snapshot then carries
