@@ -1,0 +1,400 @@
+229 occurrences
+  rw           [hw]
+  rw           [Fin.addCases_left, MultiTapeTM.initCfg_eq]
+  simp only    [Fin.coe_castAdd]
+  simp only    [Fin.coe_castAdd]
+  rw           [if_neg h1, if_neg h2]
+  rw           [Cfg.init_workTapes]
+  rw           [Fin.addCases_right, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some, Option.getD_some]
+  simp only    [Fin.coe_natAdd]
+  rw           [if_pos rfl, if_pos h1]
+  simp only    [Fin.coe_natAdd]
+  simp only    [Fin.coe_natAdd]
+  rw           [if_neg (by decide), if_neg h1, if_pos h2]
+  rw           [StepBlock.summaryCells_eq]
+  rw           [if_pos hp, hp]
+  rw           [if_neg hp]
+  rw           [StepBlock.forwardLoopCfg_state, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+  rw           [StepBlock.forwardLoopCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
+  rw           [StepBlock.forwardLoopCfg_workTapePos]
+  rw           [Fin.addCases_left, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+  rw           [Fin.addCases_right]
+  rw           [StepBlock.forwardLoopCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output]
+  rw           [StepBlock.forwardLoopCfg_state, StepBlock.forwardLoopCfg_output, Option.map_eq_none_iff]
+  rw           [Cfg.mapState_state]
+  rw           [Cfg.mapState_inputPos]
+  rw           [List.nil_append, Cfg.mapState_output]
+  rw           [Cfg.mapState_workTapes]
+  rw           [Cfg.mapState_workTapePos]
+  rw           [Cfg.mapState_workTapes]
+  dsimp only   [(no lemma list)]
+  rw           [if_neg (by omega : j.val ≠ k), if_neg (by omega : j.val ≠ k + 1)]
+  rw           [Cfg.mapState_workTapePos]
+  simp only    [MultiTapeTM.initCfg_eq, Cfg.mapState_state, Cfg.mapState_inputPos, Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Cfg.mapState_output, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes, Cfg.init_workTapePos, Cfg.init_output, Option.map_some, hq]
+  rw           [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀, seamCompTM_runFrom_left R exit _ entry hcut t ht, Cfg.mapState_state]
+  rw           [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀, seamCompTM_runFrom_right R exit _ entry hrun hexit hcut t, hcfg, embedEmitTM_runFrom]
+  rw           [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+  rw           [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.mul_comm]
+  rw           [hlock.runFrom (M.initCfg x) t₀ (by simpa only [Set.mem_singleton_iff] using hfirst), hsame]
+  simpa only   [Set.mem_singleton_iff]
+  rw           [Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.mul_one]
+  simpa only   [Set.mem_singleton_iff]
+  simpa only   [Set.mem_singleton_iff]
+  rw           [hr]
+  rw           [hr, (uk_encode_halt entry M _).2]
+  rw           [(embedEmitTM_visitedByTapeHead σ L _ _ [] c t i).2]
+  rw           [(embedEmitTM_visitedByTapeHead_frame σ L _ _ [] c t j hj).2]
+  rw           [MultiTapeTM.spaceUsedByTape_eq_card]
+  rw           [he]
+  rw           [MultiTapeTM.mem_visitedByTapeHead_iff]
+  rw           [uk_loop_init, uk_loopTM, MultiTapeTM.runFrom_with_q₀]
+  rw           [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+  rw           [MultiTapeTM.spaceUsed_eq_sum]
+  rw           [Finset.sum_add_distrib, ← MultiTapeTM.spaceUsed_eq_sum, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+  dsimp only   [C]
+  dsimp only   [C]
+  dsimp only   [C]
+  dsimp only   [C]
+  rw           [hrun]
+  rw           [hrun]
+  rw           [hUrun v, Cfg.mapState_state, embedEmitCfg_state, hr, StepBlock.forwardLoopCfg_state, hhalt, Option.map_none, Option.map_none]
+  rw           [hUrun v, Cfg.mapState_output, embedEmitCfg_output, List.nil_append, hr, StepBlock.forwardLoopCfg_output]
+  rw           [← hij, MultiTapeTM.spaceUsedByTape_eq_card]
+  rw           [MultiTapeTM.mem_visitedByTapeHead_iff]
+  rw           [MultiTapeTM.spaceUsedByTape_eq_card]
+  rw           [Int.card_Icc]
+  rw           [MultiTapeTM.spaceUsed_eq_sum, MultiTapeTM.spaceUsed_eq_sum]
+  rw           [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
+  rw           [Nat.add_sub_of_le htime]
+  rw           [MultiTapeTM.mem_visitedByTapeHead_iff]
+  rw           [MultiTapeTM.runFrom_of_halt _ hUhalt]
+  dsimp only   [s, M, EffectiveCodeK.toFinTM]
+  rw           [hrun]
+  rw           [hUrun v, Cfg.mapState_state, embedEmitCfg_state, Option.map_eq_none_iff]
+  rw           [hUrun v, Cfg.mapState_output, embedEmitCfg_output, List.nil_append]
+  simp only    [uk_scanCfg, Nat.add_zero]
+  simp only    [uk_scanCfg, Nat.cast_zero, add_zero]
+  rw           [Function.update_self]
+  rw           [if_neg (by omega)]
+  rw           [Function.update_of_ne hj]
+  simp only    [uk_scanCfg, Nat.cast_zero, add_zero, Function.update_eq_self]
+  simp only    [uk_scanTM, if_neg hq, hb, Option.some.injEq]
+  rw           [step_of_tapeAction_write _ _ i .pos (some true) .pos rfl ht']
+  rw           [moveInputPos_pos_of_ne_right _ (by simp only [uk_scanCfg]; omega)]
+  simp only    [uk_scanCfg]
+  simp only    [uk_scanCfg]
+  simp only    [uk_scanCfg, Function.update_self, Nat.cast_add, Nat.cast_one]
+  rw           [Function.update_self, if_pos (by omega)]
+  rw           [Function.update_of_ne ha]
+  rw           [if_pos ha', if_pos (by omega)]
+  rw           [if_neg ha', if_neg (by omega)]
+  simp only    [uk_scanCfg, Function.update_of_ne hj]
+  simp only    [uk_scanCfg, Function.update_self, Nat.cast_add, Nat.cast_one, SignType.pos_eq_one, SignType.coe_one, add_assoc]
+  simp only    [uk_scanCfg, Function.update_of_ne hj]
+  simp only    [List.length_drop, List.length_cons]
+  simp only    [List.length_drop, List.length_cons]
+  dsimp only   [(no lemma list)]
+  rw           [hz]
+  simp         [(no lemma list)]
+  simp only    [hz, List.getElem_cons_zero]
+  simpa only   [List.getElem_drop, Nat.add_zero]
+  rw           [hz]
+  simp         [(no lemma list)]
+  simp only    [hz, List.getElem_cons_succ, List.getElem_cons_zero]
+  simpa only   [List.getElem_drop]
+  rw           [inputSymbolInner (p + t) (by simp only [uk_scanCfg]; omega) (by omega), ha]
+  simp only    [uk_scanCfg]
+  simpa only   [if_pos rfl]
+  rw           [inputSymbolInner (p + t + 1) (by simp only [uk_scanCfg]; omega) (by omega), hb]
+  simp only    [uk_scanCfg]
+  dsimp only   [q]
+  simpa only   [q, Bool.false_eq_true, Bool.true_eq_false, ↓reduceIte, and_self, and_false, false_and, true_and]
+  rw           [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]
+  rw           [one, one, h1, h2]
+  rw           [MultiTapeTM.runFrom_zero]
+  rw           [one, h1]
+  rw           [List.length_drop, length_pairEncode]
+  rw           [List.length_drop, length_pairEncode]
+  dsimp only   [(no lemma list)]
+  simpa only   [pairEncode_eq, List.flatMap_nil, List.nil_append, List.cons_append]
+  simpa only   [List.length_nil, Nat.mul_zero, Nat.zero_add, and_self, ↓reduceIte]
+  simpa only   [pairEncode_eq, List.flatMap_cons, List.cons_append, List.nil_append, List.append_assoc]
+  simpa only   [Bool.false_eq_true, Bool.true_eq_false, false_and, and_false, ↓reduceIte]
+  rw           [show p + (t + 2) = (p + t) + 2 by omega, ← List.drop_drop, hz']
+  simp only    [List.length_cons]
+  simp only    [List.length_cons]
+  rw           [MultiTapeTM.runFrom_add, hpair, tail.1]
+  rw           [show r = 2 + (r - 2) by omega, MultiTapeTM.runFrom_add, hpair]
+  rw           [List.length_drop, length_pairEncode]
+  simpa only   [Nat.add_zero]
+  simp only    [Nat.zero_add, uk_scan_zero i d hd]
+  rw           [h.1]
+  rw           [MultiTapeTM.runFrom_zero]
+  simp only    [uk_scanCfg, Function.update_self, hblank, FinTM.bufferTape_eq]
+  rw           [if_pos ha]
+  rw           [if_pos (by omega), List.getElem?_replicate]
+  simp only    [show a.toNat < t by omega, ↓reduceIte]
+  rw           [if_neg (by omega), List.getElem?_replicate]
+  simp only    [show ¬a.toNat < t by omega, ↓reduceIte]
+  rw           [if_neg ha, if_neg (by omega)]
+  rw           [List.length_drop, length_pairEncode]
+  dsimp only   [(no lemma list)]
+  rw           [List.length_drop, length_pairEncode]
+  dsimp only   [ℓ]
+  rw           [List.length_replicate]
+  rw           [Cfg.mapState_state]
+  rw           [Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+  simpa only   [c, uk_scanCfg, Function.update_self, add_sub_cancel_right]
+  rw           [Cfg.mapState_state]
+  rw           [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  rw           [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  simpa only   [add_sub_cancel, Function.update_self]
+  simp only    [c, uk_scanCfg, Function.update_of_ne hj]
+  rw           [Cfg.mapState_workTapePos]
+  simp only    [r, c, Cfg.mapState_workTapePos, uk_scanCfg, Function.update_self, add_sub_cancel_right]
+  simp only    [r, c, Cfg.mapState_workTapePos, uk_scanCfg, Function.update_of_ne hj]
+  rw           [Cfg.mapState_output, Cfg.mapState_output]
+  rw           [uk_headerTM, MultiTapeTM.runFrom_with_q₀, total]
+  rw           [uk_headerTM, MultiTapeTM.runFrom_with_q₀]
+  rw           [length_pairEncode]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_state]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_inputPos]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_output, List.nil_append]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapes]
+  simp only    [A, MultiTapeTM.initCfg_with_q₀, Cfg.init_workTapePos]
+  rw           [← initEmbed]
+  simp only    [A, MultiTapeTM.runFrom_with_q₀, embedEmitTM_runFrom, z, hrun]
+  simp only    [d, if_neg (by omega : j.val ≠ k), if_neg (by omega : j.val ≠ k + 1)]
+  rw           [← initEmbed]
+  simp only    [A, MultiTapeTM.runFrom_with_q₀, embedEmitTM_runFrom, embedEmitCfg_state]
+  rw           [Cfg.mapState_state]
+  rw           [Cfg.mapState_inputPos]
+  rw           [Cfg.mapState_workTapes]
+  simp only    [d, i, if_neg (by omega : k + 2 ≠ k), if_neg (by omega : k + 2 ≠ k + 1)]
+  rw           [List.drop_zero]
+  rw           [Cfg.mapState_mapState]
+  rw           [cmap]
+  rw           [cpos]
+  dsimp only   [z, ℓ]
+  rw           [length_pairEncode]
+  dsimp only   [z, ℓ]
+  rw           [length_pairEncode]
+  rw           [Cfg.mapState_state]
+  rw           [Cfg.mapState_inputPos]
+  rw           [cpos]
+  rw           [Cfg.mapState_workTapes]
+  simp only    [Function.update_self, c, Cfg.mapState_workTapePos, d, sub_zero, uk_suffixCfg, i, if_neg (by omega : k + 2 ≠ k), if_neg (by omega : k + 2 ≠ k + 1), ↓reduceIte]
+  simp only    [Function.update_of_ne hj, c, Cfg.mapState_workTapes, d, uk_suffixCfg, if_neg hjv]
+  rw           [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  rw           [Cfg.mapState_output, Cfg.mapState_output]
+  rw           [init, uk_suffixStartupTM, MultiTapeTM.runFrom_with_q₀]
+  rw           [init, uk_suffixStartupTM, MultiTapeTM.runFrom_with_q₀]
+  rw           [rulerHostCfg_inputPos]
+  rw           [rulerHostCfg_workTapes, Fin.lastCases_last]
+  rw           [rulerHostCfg_workTapePos, Fin.lastCases_last]
+  rw           [rulerHostCfg_workTapes, Fin.lastCases_castSucc]
+  rw           [rulerHostCfg_state, fields.1, Option.map_some, Cfg.mapState_state]
+  rw           [host.1, Cfg.mapState_inputPos]
+  rw           [fields.2.1]
+  rw           [List.nil_append, rulerHostCfg_output, fields.2.2.2, Cfg.mapState_output]
+  rw           [rulerHostCfg_workTapes, Fin.lastCases_last, Cfg.mapState_workTapes]
+  simp only    [uk_suffixCfg, Fin.coe_castLEEmb, Fin.coe_castLE, Fin.val_last, if_neg (by omega : k + 2 ≠ k), if_neg (by omega : k + 2 ≠ k + 1), ↓reduceIte]
+  rw           [rulerHostCfg_workTapePos, Fin.lastCases_last, Cfg.mapState_workTapePos]
+  rw           [rulerHostCfg_workTapes, Fin.lastCases_castSucc, Cfg.mapState_workTapes, uk_encode_init_tapes]
+  simp only    [uk_suffixCfg, Fin.coe_castLEEmb, Fin.coe_castLE, Fin.coe_castSucc, if_neg ha]
+  rw           [rulerHostCfg_workTapePos, Fin.lastCases_castSucc, Cfg.mapState_workTapePos, fields.2.2.1 a]
+  rw           [Cfg.mapState_workTapes]
+  simp only    [uk_suffixCfg, if_neg (by omega : j.val ≠ k), if_neg (by omega : j.val ≠ k + 1), if_neg (by omega : j.val ≠ k + 2)]
+  rw           [Cfg.mapState_workTapePos]
+  dsimp only   [C]
+  dsimp only   [C]
+  dsimp only   [ℓ]
+  rw           [(uk_encode_init_fields entry M x).2.1]
+  rw           [zero_add]
+  rw           [uRun w, Cfg.mapState_state, embedEmitCfg_state, hhost, rulerHostCfg_state, hr, StepBlock.forwardLoopCfg_state, hhalt, Option.map_none, Option.map_none, Option.map_none]
+  rw           [uRun w, Cfg.mapState_output, embedEmitCfg_output, List.nil_append, hhost, rulerHostCfg_output, hr, StepBlock.forwardLoopCfg_output]
+  rw           [aRun]
+  rw           [uRun v, Cfg.mapState_state, embedEmitCfg_state, Option.map_eq_none_iff]
+  rw           [uRun v, Cfg.mapState_output, embedEmitCfg_output, List.nil_append]
+  rw           [endpoint, rulerHostCfg_state, rHalt, Option.map_none]
+  rw           [endpoint, rulerHostCfg_output]
+  change       [some (0 : Fin 4) ≠ some 3]
+  change       [some q ≠ some 3]
+  show         [p + (t + 2) = (p + t) + 2 by omega, ← List.drop_drop, hz']]
+  show         [r = 2 + (r - 2) by omega, MultiTapeTM.runFrom_add, hpair]]
+  show         [a.toNat < t by omega, ↓reduceIte]]
+  show         [¬a.toNat < t by omega, ↓reduceIte]]
+  change       [c.inputPos.val + ℓ = ℓ + 1]
+  change       [ℓ + c.inputPos.val = ℓ + 1]
+
+168 distinct leading identifiers in rewrite/simp lists:
+  A                                             simp only
+  Bool.false_eq_true                            simpa only
+  Bool.true_eq_false                            simpa only
+  C                                             dsimp only
+  Cfg.init_inputPos                             rw,simp only
+  Cfg.init_output                               rw,simp only
+  Cfg.init_state                                rw,simp only
+  Cfg.init_workTapePos                          rw,simp only
+  Cfg.init_workTapes                            rw,simp only
+  Cfg.mapState_inputPos                         rw,simp only
+  Cfg.mapState_mapState                         rw
+  Cfg.mapState_output                           rw,simp only
+  Cfg.mapState_state                            rw,simp only
+  Cfg.mapState_workTapePos                      rw,simp only
+  Cfg.mapState_workTapes                        rw,simp only
+  EffectiveCodeK.toFinTM                        dsimp only
+  Fin.addCases_left                             rw
+  Fin.addCases_right                            rw
+  Fin.coe_castAdd                               simp only
+  Fin.coe_castLE                                simp only
+  Fin.coe_castLEEmb                             simp only
+  Fin.coe_castSucc                              simp only
+  Fin.coe_natAdd                                simp only
+  Fin.lastCases_castSucc                        rw
+  Fin.lastCases_last                            rw
+  Fin.val_last                                  simp only
+  FinTM.bufferTape_eq                           simp only
+  Finset.card_range                             rw
+  Finset.card_univ                              rw
+  Finset.sum_add_distrib                        rw
+  Finset.sum_const                              rw
+  Fintype.card_fin                              rw
+  Function.update_eq_self                       simp only
+  Function.update_of_ne                         rw,simp only
+  Function.update_self                          rw,simp only,simpa only
+  Int.card_Icc                                  rw
+  List.append_assoc                             simpa only
+  List.cons_append                              simpa only
+  List.drop_drop                                rw
+  List.drop_zero                                rw
+  List.flatMap_cons                             simpa only
+  List.flatMap_nil                              simpa only
+  List.getElem?_replicate                       rw
+  List.getElem_cons_succ                        simp only
+  List.getElem_cons_zero                        simp only
+  List.getElem_drop                             simpa only
+  List.length_cons                              simp only
+  List.length_drop                              rw,simp only
+  List.length_nil                               simpa only
+  List.length_replicate                         rw
+  List.nil_append                               rw,simp only,simpa only
+  M                                             dsimp only
+  MultiTapeTM.initCfg_eq                        rw,simp only
+  MultiTapeTM.initCfg_with_q₀                   simp only
+  MultiTapeTM.mem_visitedByTapeHead_iff         rw
+  MultiTapeTM.runFrom_add                       rw
+  MultiTapeTM.runFrom_of_halt                   rw
+  MultiTapeTM.runFrom_succ_eq_step              rw
+  MultiTapeTM.runFrom_with_q₀                   rw,simp only
+  MultiTapeTM.runFrom_zero                      rw
+  MultiTapeTM.spaceUsedByTape_eq_card           rw
+  MultiTapeTM.spaceUsed_eq_sum                  rw
+  Nat.add_sub_of_le                             rw
+  Nat.add_zero                                  simp only,simpa only
+  Nat.cast_add                                  simp only
+  Nat.cast_one                                  simp only
+  Nat.cast_zero                                 simp only
+  Nat.mul_comm                                  rw
+  Nat.mul_one                                   rw
+  Nat.mul_zero                                  simpa only
+  Nat.zero_add                                  simp only,simpa only
+  Option.getD_some                              rw
+  Option.map_eq_none_iff                        rw
+  Option.map_none                               rw
+  Option.map_some                               rw,simp only
+  Option.some.injEq                             simp only
+  Set.mem_singleton_iff                         simpa only
+  SignType.coe_one                              simp only
+  SignType.pos_eq_one                           simp only
+  StepBlock.forwardLoopCfg_inputPos             rw
+  StepBlock.forwardLoopCfg_output               rw
+  StepBlock.forwardLoopCfg_state                rw
+  StepBlock.forwardLoopCfg_workTapePos          rw
+  StepBlock.summaryCells_eq                     rw
+  aRun                                          rw
+  add_assoc                                     simp only
+  add_sub_cancel                                simpa only
+  add_sub_cancel_right                          simp only,simpa only
+  add_zero                                      simp only
+  and_false                                     simpa only
+  and_self                                      simpa only
+  c                                             simp only,simpa only
+  cmap                                          rw
+  cpos                                          rw
+  d                                             simp only
+  embedEmitCfg_output                           rw
+  embedEmitCfg_state                            rw,simp only
+  embedEmitTM_runFrom                           rw,simp only
+  endpoint                                      rw
+  false_and                                     simpa only
+  fields.1                                      rw
+  fields.2.1                                    rw
+  fields.2.2.1                                  rw
+  fields.2.2.2                                  rw
+  h.1                                           rw
+  h1                                            rw
+  h2                                            rw
+  hUrun                                         rw
+  ha                                            rw
+  hb                                            rw,simp only
+  hblank                                        simp only
+  hcfg                                          rw
+  he                                            rw
+  hhalt                                         rw
+  hhost                                         rw
+  hij                                           rw
+  hlock.runFrom                                 rw
+  host.1                                        rw
+  hp                                            rw
+  hpair                                         rw
+  hq                                            simp only
+  hr                                            rw
+  hrun                                          rw,simp only
+  hsame                                         rw
+  hw                                            rw
+  hz                                            rw,simp only
+  hz'                                           rw
+  i                                             simp only
+  if_neg                                        rw,simp only
+  if_pos                                        rw,simpa only
+  init                                          rw
+  initEmbed                                     rw
+  inputSymbolInner                              rw
+  length_pairEncode                             rw
+  moveInputPos_pos_of_ne_right                  rw
+  one                                           rw
+  pairEncode_eq                                 simpa only
+  q                                             dsimp only,simpa only
+  r                                             simp only
+  rHalt                                         rw
+  reduceIte                                     simp only,simpa only
+  rulerHostCfg_inputPos                         rw
+  rulerHostCfg_output                           rw
+  rulerHostCfg_state                            rw
+  rulerHostCfg_workTapePos                      rw
+  rulerHostCfg_workTapes                        rw
+  s                                             dsimp only
+  seamCompTM_runFrom_left                       rw
+  seamCompTM_runFrom_right                      rw
+  show                                          rw,simp only
+  smul_eq_mul                                   rw
+  step_of_tapeAction_write                      rw
+  sub_zero                                      simp only
+  tail.1                                        rw
+  total                                         rw
+  true_and                                      simpa only
+  uRun                                          rw
+  uk_encode_init_tapes                          rw
+  uk_headerTM                                   rw
+  uk_loopTM                                     rw
+  uk_loop_init                                  rw
+  uk_scanCfg                                    simp only,simpa only
+  uk_scanTM                                     simp only
+  uk_scan_zero                                  simp only
+  uk_suffixCfg                                  simp only
+  uk_suffixStartupTM                            rw
+  z                                             dsimp only,simp only
+  zero_add                                      rw

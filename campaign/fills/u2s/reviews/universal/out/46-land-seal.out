@@ -1,0 +1,183 @@
+Probe/LandSeal.lean:1707:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).output = []
+Probe/LandSeal.lean:1710:83: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  { state := q, inputPos := 0, workTapes := tp, workTapePos := hp, output := [] }.inputSymbol = none
+Probe/LandSeal.lean:1713:40: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).output = c.output
+Probe/LandSeal.lean:1716:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  c.workTapeSymbols i = c.workTapes i (c.workTapePos i)
+Probe/LandSeal.lean:1719:92: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  M.ComputesFunInTime f T = ∀ (input : List Bool), M.ComputesInTime input (f input) (T input.length)
+Probe/LandSeal.lean:1722:73: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  M.ComputesInTime i o t = ∃ s, M.tm.ComputesInTimeAndSpace i o t s
+Probe/LandSeal.lean:1724:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+Probe/LandSeal.lean:1727:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x
+Probe/LandSeal.lean:1730:32: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  MultiTapeTM.runFrom c 1 = MultiTapeTM.step c
+Probe/LandSeal.lean:1733:64: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+Probe/LandSeal.lean:1736:88: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+Probe/LandSeal.lean:1740:79: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  MultiTapeTM.step { state := none, inputPos := ip, workTapes := tp, workTapePos := hp, output := o } =
+    { state := none, inputPos := ip, workTapes := tp, workTapePos := hp, output := o }
+Probe/LandSeal.lean:1744:79: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun t' => (MultiTapeTM.runFrom c t').workTapePos i) (Finset.range (t + 1))
+Probe/LandSeal.lean:1748:2: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  (StepBlock.forwardLoopCfg entry M c).output = c.output
+Probe/LandSeal.lean:1750:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  StepBlock.summaryCells none w 0 = none
+Probe/LandSeal.lean:1756:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+Probe/LandSeal.lean:1760:81: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (embedEmitCfg ι tapes heads pre c).state = c.state
+Probe/LandSeal.lean:1763:35: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedEmitTM ι M).q₀ = M.q₀
+Probe/LandSeal.lean:1766:70: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (inputMoveAction 0 q).state = some q
+Probe/LandSeal.lean:1769:65: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (tapeAction i 0 none 0 q).state = some q
+Probe/LandSeal.lean:1771:53: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  moveInputPos 0 0 = 0
+Probe/LandSeal.lean:1773:46: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  pairEncode [] [] = [false, true]
+Probe/LandSeal.lean:1775:44: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  unaryFin 0 = [false]
+Probe/LandSeal.lean:1777:88: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+Probe/LandSeal.lean:1781:55: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (rulerHostCfg ℓ hz q c rt rp).output = c.output
+Probe/LandSeal.lean:1784:91: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ en).q₀ = Sum.inl M₁.q₀
+Probe/LandSeal.lean:1787:75: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr)
+Probe/LandSeal.lean:1790:36: error: `simp` made no progress
+Probe/LandSeal.lean:1793:76: error: `simp` made no progress
+Probe/LandSeal.lean:1795:67: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  decide (RewindPhase.start = RewindPhase.start) = true
+Probe/LandSeal.lean:1797:42: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  Fintype.card RewindPhase = 3

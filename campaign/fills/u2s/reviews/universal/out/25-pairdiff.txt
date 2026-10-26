@@ -1,0 +1,51 @@
+## pairdiff head vs screen base
+head pairs 793; union of earlier 788; new at head 5; earlier-only 0
+  NEW   UniversalK.lean::uk_encode_init_fields  reproduces  UniversalK.lean::uk_encode_halt: 66/109 = 61%
+  NEW   UniversalK.lean::uk_embed_suffix  reproduces  UniversalK.lean::uk_ruler_fields: 140/236 = 59%
+  NEW   UniversalK.lean::uk_loop_pre_live  reproduces  UniversalK.lean::uk_loop_run: 75/131 = 57%
+  NEW   UniversalK.lean::universalK  reproduces  UniversalK.lean::uk_encode_halt: 62/109 = 57%
+  NEW   UniversalK.lean::exists_selfUniversalK  reproduces  UniversalK.lean::uk_encode_halt: 62/109 = 57%
+
+## my head screen vs worker's screen-final.txt
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/u2-universal/out/24-screen-head.txt /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/u2-universal/delivery/fill-u2s-universal/evidence/logs/screen-final.txt differ: char 82, line 1
+## worker's before vs screen base
+worker's before == screen base (byte-identical)
+
+## my head screen vs worker's screen-final-repair.txt (REPORT's final)
+byte-identical to worker's screen-final-repair.txt
+Frozen HEAD: 2410022fee818a1206616571e6a972db9338a150
+START 2026-10-26T00:46:47.282842+00:00
+COMMAND: nice -n 10 python3 -I scripts/copy-text-screen-v3.py . TCSlib/Complexity/TuringMachine/UniversalK.lean TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean TCSlib/Complexity/TuringMachine/Build/InputDevice.lean TCSlib/Complexity/TuringMachine/Build/StepBlock.lean TCSlib/Complexity/TuringMachine/Build/Seam.lean TCSlib/Complexity/TuringMachine/Build/Embed.lean TCSlib/Complexity/TuringMachine/Build/Rewind.lean TCSlib/Complexity/TuringMachine/Build/Catalog.lean TCSlib/Complexity/TuringMachine/Deterministic.lean TCSlib/Complexity/TuringMachine/Finite.lean TCSlib/Complexity/TuringMachine/SelfUniversal.lean TCSlib/Complexity/SpaceComplexity/Hierarchy.lean TCSlib/Complexity/TuringMachine/Universal.lean TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean TCSlib/Complexity/TuringMachine/UniversalStartup.lean TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean TCSlib/Complexity/TuringMachine/Simulation.lean
+END 2026-10-26T00:56:03.139863+00:00 EXIT 0
+Maximum resident set size (kbytes): 743440
+
+## worker's screen-final.txt (pre-repair) vs head:
+head pairs 794; union of earlier 793; new at head 1; earlier-only 0
+  NEW   UniversalK.lean::uk_scan_pair  reproduces  Universal.lean::timedFrame_run: 70/126 = 56%
+
+## cross-file pairs touching UniversalK at head:
+   UniversalK.lean::ss_inputRewind_run  reproduces  Universal.lean::timedFrame_run: 71/126 = 56%
+## pairs >= 90% touching UniversalK:
+## all UniversalK pairs at head:
+19
+   UniversalK.lean::ss_bufferSeek_run  reproduces  UniversalK.lean::ss_bufferFinish_run: 1440/1718 = 84%
+   UniversalK.lean::ss_bufferCleanup_run  reproduces  UniversalK.lean::ss_bufferFinish_run: 1396/1718 = 81%
+   UniversalK.lean::ss_bufferCleanup_run  reproduces  UniversalK.lean::ss_bufferSeek_run: 1670/2086 = 80%
+   UniversalK.lean::ss_bufferFinish_run  reproduces  UniversalK.lean::ss_bufferSeek_run: 1440/2086 = 69%
+   UniversalK.lean::ss_bufferSeek_run  reproduces  UniversalK.lean::ss_bufferCleanup_run: 1670/2482 = 67%
+   UniversalK.lean::uk_encode_init_fields  reproduces  UniversalK.lean::uk_encode_halt: 66/109 = 61%
+   UniversalK.lean::uk_embed_suffix  reproduces  UniversalK.lean::uk_ruler_fields: 140/236 = 59%
+   UniversalK.lean::universalK  reproduces  UniversalK.lean::uk_encode_halt: 62/109 = 57%
+   UniversalK.lean::uk_loop_pre_live  reproduces  UniversalK.lean::uk_loop_run: 75/131 = 57%
+   UniversalK.lean::exists_selfUniversalK  reproduces  UniversalK.lean::uk_encode_halt: 62/109 = 57%
+   UniversalK.lean::ss_inputRewind_run  reproduces  Universal.lean::timedFrame_run: 71/126 = 56%
+   UniversalK.lean::ss_capturedPrefix_fields  reproduces  UniversalK.lean::ss_capturedPrefix_run: 648/1163 = 56%
+   UniversalK.lean::ss_bufferFinish_run  reproduces  UniversalK.lean::ss_bufferCleanup_run: 1396/2482 = 56%
+   UniversalK.lean::ss_inputRewind_run  reproduces  UniversalK.lean::ss_inputRewind_done: 177/321 = 55%
+   UniversalK.lean::EffectiveMachineCode2.toK  reproduces  UniversalK.lean::EffectiveMachineCode.toK: 84/154 = 55%
+   UniversalK.lean::EffectiveMachineCode.toK  reproduces  UniversalK.lean::EffectiveMachineCode2.toK: 84/155 = 54%
+   UniversalK.lean::ss_bufferFinish_run  reproduces  UniversalK.lean::ss_live_map: 97/192 = 51%
+   UniversalK.lean::ss_bufferCleanup_run  reproduces  UniversalK.lean::ss_live_map: 97/192 = 51%
+   UniversalK.lean::ss_bufferAdvance_run  reproduces  UniversalK.lean::ss_bufferClear_run: 1040/2075 = 50%
+## base UniversalK pairs:
+14
