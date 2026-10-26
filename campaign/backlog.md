@@ -1715,6 +1715,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     wording S1–S6, the landing order, E-CHK. Lands by a maintainer PR and a fill gate, with a
     3-module replay. (The records commit `4ae9e632`'s subject says two indexes were omitted from
     the review's records; it was seven, per its `NOT-COPIED.md`.)
+    **Ruled (user, 2026-10-26): the review's recommendation on all five** (D1–D3 and S1–S6 land;
+    F2 and E-CHK accepted; merge after #164 and #167). **Landing: PR #168**
+    (`lean/u2-universal-landing` at `fd995ec1`: the 5 commits cherry-picked, then the edits), with
+    **gate 80** (a fill gate) staged: `exchange/outbox/gates/80-u2-universal-fill-gate/`, bundle
+    `7de06b27…`, 164 sections, the records at `a1c9ec5d`. The replay (3 modules) is written after
+    #164 and #167 merge.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
