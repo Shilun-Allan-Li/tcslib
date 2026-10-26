@@ -32,3 +32,7 @@ Pack `pack-r2.md`; bundle SHA-256 `fe5f0f8ad8bd2b5acceed600d774c645f266eccc2fd73
 **Merge state. #168: not yet clear to merge.** The gate is closed. Its 3-module merged-tree replay
 (`UniversalK`, `SelfUniversal`, the `TuringMachine` facade) runs once #167 has merged, chained from
 `oleans-lriseqm` (or from #166's snapshot if #166 merges first). #168 then merges the campaign.
+**#166 merged (2026-10-26, `26ae1f10`).** The campaign is merged into #168 (head
+`3117770f2ff36150dc489f2f0c1c30bca0e3a0f0`; its three files keep the gated blobs).
+`replay-lu2m` (`campaign/fills/u2s/evidence/u2s-universal-landing/merged-tree/`), 3 modules
+chained from `oleans-lscpm`, is written; its precheck passed.

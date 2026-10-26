@@ -18,7 +18,9 @@ and the records at `d01e302531c5429cabb7bb9b8e0daf52b9734fcf`. Dispatched before
 | 12 | note | No new duplication; keep TC-1's cleanup commitment. | **Agreed;** TC-1 stands (the user's 12.2c window). |
 | 2–10, 13, 14 | notes | Integrity; faithfulness; the helpers; adversarial inputs; the two arithmetic ledgers; rule 10; the overlay; the docstring; code identity and freeze; lint. | No action. |
 
-**Merge state. #166: clear to merge** (2026-10-26). `replay-lscpm` passed (user, 2026-10-26): 2 of
+**Merged (user, 2026-10-26)** as `26ae1f10d6a480d76dfd5ecf93467dd7fc44abf0`. The campaign's TCSlib
+tree after the merge equals the replayed head `abf3887f`'s, so `oleans-lscpm` is the campaign's
+snapshot after #166. Before the merge: **#166: clear to merge** (2026-10-26). `replay-lscpm` passed (user, 2026-10-26): 2 of
 2 modules, static-equal (0 mismatches; `Savitch`'s one sorry is `savitch` itself;
 `evidence/merged-tree/replay-lscpm.log`, `-static.txt`) at the head `abf3887f`. The PR's base is
 the campaign branch, whose Lean has not moved since #167's merge. Its snapshot is `oleans-lscpm`.
