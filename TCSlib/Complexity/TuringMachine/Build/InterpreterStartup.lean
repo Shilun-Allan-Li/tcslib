@@ -12,6 +12,8 @@ import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -24,8 +26,10 @@ The pieces from which a universal machine's startup is composed, on a timed pair
 `⟨⟨bits t, α⟩, x⟩`: the two header projections and their silent capture, the window `x.take t`
 of the suffix, the install call as a released phase, the redistribution of an installed
 serialization into the step block's table and summary tapes, the seam step between two
-verified phases, and the initial configuration of a fresh capture. The interpreter core of
-`TCSlib.Complexity.TuringMachine.NDCodeSimulator` is assembled from them.
+verified phases, and the initial configuration of a fresh capture. Assembled from them is the
+interpreter startup itself, the eleven phases from the native input to the threshold of a hosted
+loop, with the installer and the passive tapes as parameters. The interpreter core of
+`TCSlib.Complexity.TuringMachine.NDCodeSimulator` cites it.
 
 ## Main results
 
@@ -38,6 +42,9 @@ verified phases, and the initial configuration of a fresh capture. The interpret
 * `Turing.exists_windowCall` — the suffix window.
 * `Turing.installCall_releasePhase` — the install call as a released phase.
 * `Turing.exists_layoutCall` — the layout of an installed serialization.
+* `Turing.exists_interpreterStartup` — the assembled startup: from the timed paired input to a
+  hosted loop's threshold, for any installer of the shape `Turing.FinTM.exists_installCallTM`
+  produces and any number of passive tapes.
 
 ## References
 
@@ -384,5 +391,1202 @@ theorem exists_layoutCall (K : ℕ) (src tbl sm : Fin K) (hst : src ≠ tbl)
   obtain ⟨hstate, hin, htapes, hheads, hout, hcut⟩ :=
     run d hd hsrc hsrcp htbl htblp hsm hsmp
   exact ⟨hstate, hin, by rw [htapes, summary], hheads, hout, hcut⟩
+
+/-- **The interpreter startup**: the per-code startup shared by the interpreters that run a
+machine family `M` on the input `⟨⟨bits t, α⟩, x⟩` under a binary deadline. Write
+`w α = pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)`, `M α`'s serialization.
+Given an installer `CI` that, from `stateWord CI.k α`, returns at `stateWord CI.k (w α)` within
+`costI α` steps (the shape of `Turing.FinTM.exists_installCallTM`'s contract), there is one
+machine `U`, uniform in `α`, `x` and `t`, with four role tapes and `p` passive tapes, such that
+the following holds. From `entry` on the native input, with every head at `0`, empty output, the
+passive tapes holding any words and every other tape blank, `U` first reaches `done` at a time
+`T ≤ costI α + A (|α| + |w α| + 1) + B (|bits t| + min t |x| + 1)`. There the input head is at
+its first cell, the output is empty, every role head is at `0`, and:
+* the counter tape `jctr` holds `bits t`;
+* the window tape `jwin` holds `x.take t`;
+* the table tape `jtbl` holds `tableBitsK (M α).tr`;
+* the summary tape `jsm` holds `StepBlock.summaryCells none (unaryFin (M α).q₀)`;
+* each passive tape holds its starting word, with its head at `0`.
+
+[AB09, §1.4.1: the universal machine's start, here for a deadline and an installed table]
+
+**Proof sketch.** `U` is one left-nested seam composite of eleven phases, each joined by
+`Turing.seamCompTM_step`:
+1. the header pass capturing `bits t` (`Turing.headerCapture_run`);
+2. an input rewind (`Turing.inputRewindTM_run`);
+3. the header pass capturing `α`;
+4. the rewind of the counter capture (`Turing.rewindTM_run_ofCfg`);
+5. its copy onto the counter tape (`Turing.copyTM_run_ofCfg`);
+6. the window copy (`Turing.exists_windowCall`);
+7. a second input rewind;
+8. the rewind of `α`;
+9. the installation behind a release adapter (`Turing.installCall_releasePhase`);
+10. the seam layout (`Turing.exists_layoutCall`);
+11. the rewind of the window.
+
+A clean ledger tracks every other tape through the phases: each phase's frame clause keeps the
+passive tapes, and the blank scratch tapes stay blank until their phase. The time is the sum of
+the phases' bounds and the seams' single steps. -/
+theorem exists_interpreterStartup {k : ℕ} (n : List Bool → ℕ)
+    (M : ∀ α : List Bool, MultiTapeTM k Bool (Fin (n α + 1)))
+    (CI : FinTM Bool) (entryI doneI : CI.State) (costI : List Bool → ℕ) (hkI : 0 < CI.k)
+    (installs : ∀ x α : List Bool, ∃ T ≤ costI α, 0 < T ∧
+      (∀ u, 0 < u → u < T →
+        (CI.tm.runFrom (Cfg.ofWords (input := x) entryI (stateWord CI.k α)) u).state ≠
+          some doneI) ∧
+      CI.tm.runFrom (Cfg.ofWords (input := x) entryI (stateWord CI.k α)) T =
+        Cfg.ofWords doneI
+          (stateWord CI.k (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr))))
+    (p : ℕ) :
+    ∃ (K : ℕ) (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (U : MultiTapeTM K Bool Q)
+      (entry done : Q) (ιP : Fin p ↪ Fin K) (jctr jwin jtbl jsm : Fin K) (A B : ℕ),
+      jctr ≠ jwin ∧ jctr ≠ jtbl ∧ jctr ≠ jsm ∧ jwin ≠ jtbl ∧ jwin ≠ jsm ∧ jtbl ≠ jsm ∧
+      jctr ∉ Set.range ιP ∧ jwin ∉ Set.range ιP ∧ jtbl ∉ Set.range ιP ∧
+      jsm ∉ Set.range ιP ∧
+      ∀ (α x : List Bool) (t : ℕ) (tapes₀ : Fin K → ℤ → Option Bool),
+        (∀ j, j ∉ Set.range ιP → tapes₀ j = fun _ => none) →
+        ∃ T, T ≤ costI α +
+            A * (α.length +
+              (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)).length + 1) +
+            B * ((Nat.bits t).length + min t x.length + 1) ∧
+          (U.runFrom (⟨some entry, 1, tapes₀, fun _ => 0, []⟩ :
+            Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)) T).state = some done ∧
+          (∀ u < T, (U.runFrom (⟨some entry, 1, tapes₀, fun _ => 0, []⟩ :
+            Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)) u).state ≠ some done) ∧
+          let c := U.runFrom (⟨some entry, 1, tapes₀, fun _ => 0, []⟩ :
+            Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)) T
+          c.inputPos = 1 ∧ c.output = [] ∧
+          c.workTapes jctr = FinTM.bufferTape (Nat.bits t) ∧ c.workTapePos jctr = 0 ∧
+          c.workTapes jwin = FinTM.bufferTape (x.take t) ∧ c.workTapePos jwin = 0 ∧
+          c.workTapes jtbl = FinTM.bufferTape (tableBitsK (M α).tr) ∧ c.workTapePos jtbl = 0 ∧
+          c.workTapes jsm = StepBlock.summaryCells none (unaryFin (M α).q₀) ∧
+          c.workTapePos jsm = 0 ∧
+          ∀ i, c.workTapes (ιP i) = tapes₀ (ιP i) ∧ c.workTapePos (ιP i) = 0 := by
+  classical
+  set k₁ := (prefixCanonTM (FinTM.pairExtractTM true false)).k with hk₁
+  set k₂ := (prefixCanonTM (FinTM.pairExtractTM false true)).k with hk₂
+  set K := 6 + k₁ + k₂ + CI.k + p with hK
+  obtain ⟨jbt, hjbt⟩ : {j : Fin K // j.val = 0} := ⟨⟨0, by omega⟩, rfl⟩
+  obtain ⟨jal, hjal⟩ : {j : Fin K // j.val = 1} := ⟨⟨1, by omega⟩, rfl⟩
+  obtain ⟨jctr, hjctr⟩ : {j : Fin K // j.val = 2} := ⟨⟨2, by omega⟩, rfl⟩
+  obtain ⟨jwin, hjwin⟩ : {j : Fin K // j.val = 3} := ⟨⟨3, by omega⟩, rfl⟩
+  obtain ⟨jtbl, hjtbl⟩ : {j : Fin K // j.val = 4} := ⟨⟨4, by omega⟩, rfl⟩
+  obtain ⟨jsm, hjsm⟩ : {j : Fin K // j.val = 5} := ⟨⟨5, by omega⟩, rfl⟩
+  obtain ⟨capI, hcapI⟩ : {j : Fin K // j.val = 6} := ⟨⟨6, by omega⟩, rfl⟩
+  obtain ⟨ι₁, hι₁⟩ : {f : Fin k₁ ↪ Fin K // ∀ i, (f i).val = 7 + i.val} :=
+    ⟨⟨fun i => ⟨7 + i.val, by omega⟩,
+      fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+  obtain ⟨ι₂, hι₂⟩ : {f : Fin k₂ ↪ Fin K // ∀ i, (f i).val = 7 + k₁ + i.val} :=
+    ⟨⟨fun i => ⟨7 + k₁ + i.val, by omega⟩,
+      fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+  obtain ⟨ιI, hιI⟩ :
+      {f : Fin CI.k ↪ Fin K //
+        ∀ i, (f i).val = if i.val = 0 then 1 else 6 + k₁ + k₂ + i.val} := by
+    refine ⟨⟨fun i => if h0 : i.val = 0 then jal else ⟨6 + k₁ + k₂ + i.val, by omega⟩,
+      fun a b h => ?_⟩, fun i => ?_⟩
+    · dsimp only at h
+      by_cases ha : a.val = 0 <;> by_cases hb : b.val = 0
+      · exact Fin.ext (by omega)
+      · rw [dif_pos ha, dif_neg hb] at h
+        have hv := congrArg Fin.val h
+        rw [hjal, Fin.val_mk] at hv
+        omega
+      · rw [dif_neg ha, dif_pos hb] at h
+        have hv := congrArg Fin.val h
+        rw [Fin.val_mk, hjal] at hv
+        omega
+      · rw [dif_neg ha, dif_neg hb, Fin.mk.injEq] at h
+        exact Fin.ext (by omega)
+    · simp only [Function.Embedding.coeFn_mk]
+      by_cases h0 : i.val = 0
+      · rw [dif_pos h0, if_pos h0, hjal]
+      · rw [dif_neg h0, if_neg h0, Fin.val_mk]
+  obtain ⟨ιP, hιP⟩ : {f : Fin p ↪ Fin K // ∀ i, (f i).val = 6 + k₁ + k₂ + CI.k + i.val} :=
+    ⟨⟨fun i => ⟨6 + k₁ + k₂ + CI.k + i.val, by omega⟩,
+      fun a b h => Fin.ext (by simpa using congrArg Fin.val h)⟩, fun i => rfl⟩
+  have hnotP : ∀ j : Fin K, j.val < 6 + k₁ + k₂ + CI.k → j ∉ Set.range ιP := by
+    rintro j hj ⟨i, rfl⟩
+    have := hιP i
+    omega
+  obtain ⟨QW, instFW, instDW, W, entryW, doneW, CW, windows⟩ :=
+    exists_windowCall K jbt jwin (by intro h; have := congrArg Fin.val h; omega)
+  haveI := instFW
+  haveI := instDW
+  obtain ⟨QL, instFL, instDL, L, entryL, doneL, CL, layouts⟩ :=
+    exists_layoutCall K jal jtbl jsm (by intro h; have := congrArg Fin.val h; omega)
+      (by intro h; have := congrArg Fin.val h; omega)
+      (by intro h; have := congrArg Fin.val h; omega)
+  haveI := instFL
+  haveI := instDL
+  let A₁ := embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm
+  let A₂ := inputRewindTM K
+  let A₃ := embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm
+  let A₄ : MultiTapeTM K Bool RewindPhase := rewindTM K jbt
+  let A₅ : MultiTapeTM K Bool SweepPhase := copyTM K jbt jctr
+  let A₈ : MultiTapeTM K Bool RewindPhase := rewindTM K jal
+  let A₉ := seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI
+  let A₁₁ : MultiTapeTM K Bool RewindPhase := rewindTM K jwin
+  let St₂ : Type :=
+    ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase
+  let St₃ : Type := St₂ ⊕ ((prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit)
+  let St₄ : Type := St₃ ⊕ RewindPhase
+  let St₅ : Type := St₄ ⊕ SweepPhase
+  let St₆ : Type := St₅ ⊕ QW
+  let St₇ : Type := St₆ ⊕ InputRewindPhase
+  let St₈ : Type := St₇ ⊕ RewindPhase
+  let St₉ : Type := St₈ ⊕ (Unit ⊕ CI.State)
+  let St₁₀ : Type := St₉ ⊕ QL
+  let St₁₁ : Type := St₁₀ ⊕ RewindPhase
+  let S₂ := seamCompTM A₁ (Sum.inr ()) A₂ InputRewindPhase.start
+  let S₃ := seamCompTM S₂ (Sum.inr InputRewindPhase.done) A₃
+    (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀)
+  let S₄ := seamCompTM S₃ (Sum.inr (Sum.inr ())) A₄ RewindPhase.start
+  let S₅ := seamCompTM S₄ (Sum.inr RewindPhase.done) A₅ SweepPhase.sweep
+  let S₆ := seamCompTM S₅ (Sum.inr SweepPhase.done) W entryW
+  let S₇ := seamCompTM S₆ (Sum.inr doneW) A₂ InputRewindPhase.start
+  let S₈ := seamCompTM S₇ (Sum.inr InputRewindPhase.done) A₈ RewindPhase.start
+  let S₉ := seamCompTM S₈ (Sum.inr RewindPhase.done) A₉ (Sum.inl ())
+  let S₁₀ := seamCompTM S₉ (Sum.inr (Sum.inr doneI)) L entryL
+  let S₁₁ := seamCompTM S₁₀ (Sum.inr doneL) A₁₁ RewindPhase.start
+  refine ⟨K, St₁₁, inferInstance, inferInstance, S₁₁,
+    Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl
+      (Sum.inl (prefixCanonTM (FinTM.pairExtractTM true false)).tm.q₀)))))))))),
+    Sum.inr RewindPhase.done, ιP, jctr, jwin, jtbl, jsm, 120 + CL, 47 + CW,
+    Fin.ne_of_val_ne (by omega), Fin.ne_of_val_ne (by omega), Fin.ne_of_val_ne (by omega),
+    Fin.ne_of_val_ne (by omega), Fin.ne_of_val_ne (by omega), Fin.ne_of_val_ne (by omega),
+    hnotP jctr (by omega), hnotP jwin (by omega), hnotP jtbl (by omega), hnotP jsm (by omega), ?_⟩
+  intro α x t tapes₀ htapes₀
+  -- Ranges of the two header scratch selections, by value.
+  have hr₁ : ∀ j : Fin K, j ∈ Set.range ι₁ ↔ 7 ≤ j.val ∧ j.val < 7 + k₁ := by
+    intro j
+    constructor
+    · rintro ⟨i, rfl⟩
+      have h := hι₁ i
+      have h7 := i.isLt
+      omega
+    · rintro ⟨h1, h2⟩
+      exact ⟨⟨j.val - 7, by omega⟩,
+        Fin.ext (by rw [hι₁]; show 7 + (j.val - 7) = j.val; omega)⟩
+  have hr₂ : ∀ j : Fin K,
+      j ∈ Set.range ι₂ ↔ 7 + k₁ ≤ j.val ∧ j.val < 7 + k₁ + k₂ := by
+    intro j
+    constructor
+    · rintro ⟨i, rfl⟩
+      have h := hι₂ i
+      have h7 := i.isLt
+      omega
+    · rintro ⟨h1, h2⟩
+      exact ⟨⟨j.val - (7 + k₁), by omega⟩,
+        Fin.ext (by rw [hι₂]; show 7 + k₁ + (j.val - (7 + k₁)) = j.val; omega)⟩
+  -- Phase 1: the first header pass, capturing `bits t` on its tape.
+  have hdr1 := headerCapture_run true K α x t ι₁ jbt
+    (by rintro ⟨i, rfl⟩; have h := hι₁ i; omega) tapes₀ (fun _ => 0) []
+  simp only [↓reduceIte] at hdr1
+  obtain ⟨T₁, hT₁, h₁st, h₁pos, h₁bt, h₁bthd, h₁out, h₁frame, h₁cut⟩ := hdr1
+  set cfg₀ := (embedSilentCfg ι₁ jbt tapes₀ (fun _ => 0) [] []
+    ((prefixCanonTM (FinTM.pairExtractTM true false)).tm.initCfg
+      (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl with hcfg₀
+  set e₁ := (embedSilentRetTM ι₁ jbt
+    (prefixCanonTM (FinTM.pairExtractTM true false)).tm).runFrom cfg₀ T₁ with he₁
+  -- Phase 2: the input rewind back to position 1, through the first seam.
+  have hd₂st : (e₁.mapState (fun _ => InputRewindPhase.start)).state = some .start := by
+    rw [Cfg.mapState_state, h₁st]
+    rfl
+  have hd₂pos : 1 ≤ (e₁.mapState (fun _ => InputRewindPhase.start)).inputPos.val := by
+    rw [Cfg.mapState_inputPos, h₁pos]
+    omega
+  obtain ⟨hL1, hL2, -⟩ := inputRewindTM_run (e₁.mapState (fun _ => InputRewindPhase.start))
+    hd₂st hd₂pos
+  obtain ⟨s2run, s2st, s2cut⟩ := seamCompTM_step
+    (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm) (Sum.inr ())
+    (inputRewindTM K) InputRewindPhase.start InputRewindPhase.done he₁.symm h₁st h₁cut hL1 rfl hL2
+  set e₂ := ({ e₁.mapState (fun _ => InputRewindPhase.start) with
+    state := some InputRewindPhase.done, inputPos := 1 } : Cfg K Bool (InputRewindPhase) _) with he₂
+  have he₂out : e₂.output = [] := by
+    rw [he₂]
+    show (e₁.mapState (fun _ => InputRewindPhase.start)).output = []
+    rw [Cfg.mapState_output]
+    exact h₁out
+  have htapes₀blank : ∀ j : Fin K, j.val < 6 + k₁ + k₂ + CI.k → tapes₀ j = fun _ => none := by
+    intro j hj
+    exact htapes₀ j (by rintro ⟨i, rfl⟩; have := hιP i; omega)
+  -- Phase 3: the second header pass, capturing `α` on its tape.
+  have hLHS₂t : ∀ j, ((e₂.mapState (Sum.inr : InputRewindPhase →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase)).mapState
+        (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
+          (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit))).workTapes j =
+      e₁.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₂]
+    exact Cfg.mapState_workTapes (fun _ => InputRewindPhase.start) e₁ j a
+  have hLHS₂p : ∀ j, ((e₂.mapState (Sum.inr : InputRewindPhase →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase)).mapState
+        (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
+          (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit))).workTapePos j =
+      e₁.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₂]
+    exact Cfg.mapState_workTapePos (fun _ => InputRewindPhase.start) e₁ j
+  have hjunc₂ : (e₂.mapState (Sum.inr : InputRewindPhase →
+      ((prefixCanonTM (FinTM.pairExtractTM true false)).State ⊕ Unit) ⊕ InputRewindPhase)).mapState
+      (fun _ => (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀ :
+        (prefixCanonTM (FinTM.pairExtractTM false true)).State ⊕ Unit)) =
+      (embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+        ((prefixCanonTM (FinTM.pairExtractTM false true)).tm.initCfg
+          (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl := by
+    have hcap₂ : jal ∉ Set.range ι₂ := by
+      intro hmem
+      rw [hr₂] at hmem
+      omega
+    have hniota : jal ∉ Set.range ι₁ := by
+      intro hmem
+      rw [hr₁] at hmem
+      omega
+    have hnjbt : jal ≠ jbt := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, embedSilentCfg_state,
+        MultiTapeTM.initCfg_eq, Cfg.init_state, he₂]
+      rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos,
+        embedSilentCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, he₂]
+    · funext j
+      rw [hLHS₂t j]
+      funext p
+      rw [Cfg.mapState_workTapes]
+      by_cases hsel : j ∈ Set.range ι₂
+      · obtain ⟨i, rfl⟩ := hsel
+        have hni : ι₂ i ∉ Set.range ι₁ := by
+          intro hmem
+          rw [hr₁] at hmem
+          have := hι₂ i
+          omega
+        have hnb : ι₂ i ≠ jbt := by
+          intro hmem
+          have := congrArg Fin.val hmem
+          have := hι₂ i
+          omega
+        rw [embedSilentCfg_selected_tape, MultiTapeTM.initCfg_eq, Cfg.init_workTapes,
+          (h₁frame _ hni hnb).1,
+          htapes₀blank _ (by have := hι₂ i; have := i.isLt; omega)]
+      · by_cases hcap : j = jal
+        · rw [hcap,
+            (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).1,
+            (h₁frame jal hniota hnjbt).1, htapes₀blank jal (by omega),
+            MultiTapeTM.initCfg_eq, Cfg.init_output, List.append_nil, FinTM.bufferTape_nil]
+        · rw [(embedSilentCfg_unselected ι₂ jal e₁.workTapes e₁.workTapePos [] [] _ j
+            hsel hcap).1]
+    · funext j
+      rw [hLHS₂p j, Cfg.mapState_workTapePos]
+      by_cases hsel : j ∈ Set.range ι₂
+      · obtain ⟨i, rfl⟩ := hsel
+        have hni : ι₂ i ∉ Set.range ι₁ := by
+          intro hmem
+          rw [hr₁] at hmem
+          have := hι₂ i
+          omega
+        have hnb : ι₂ i ≠ jbt := by
+          intro hmem
+          have := congrArg Fin.val hmem
+          have := hι₂ i
+          omega
+        rw [embedSilentCfg_selected_pos, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+        exact (h₁frame _ hni hnb).2
+      · by_cases hcap : j = jal
+        · rw [hcap,
+            (embedSilentCfg_cap ι₂ jal hcap₂ e₁.workTapes e₁.workTapePos [] [] _).2,
+            (h₁frame jal hniota hnjbt).2, MultiTapeTM.initCfg_eq, Cfg.init_output,
+            List.append_nil]
+          rfl
+        · rw [(embedSilentCfg_unselected ι₂ jal e₁.workTapes e₁.workTapePos [] [] _ j
+            hsel hcap).2]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output,
+        embedSilentCfg_output]
+      exact h₁out
+  have hdr2 := headerCapture_run false K α x t ι₂ jal
+    (by rintro ⟨i, rfl⟩; have h := hι₂ i; omega) e₁.workTapes e₁.workTapePos []
+  obtain ⟨T₃, hT₃, h₃st, h₃pos, h₃al, h₃alhd, h₃out, h₃frame, h₃cut⟩ := hdr2
+  set e₃ := (embedSilentRetTM ι₂ jal
+    (prefixCanonTM (FinTM.pairExtractTM false true)).tm).runFrom
+    ((embedSilentCfg ι₂ jal e₁.workTapes e₁.workTapePos [] []
+      ((prefixCanonTM (FinTM.pairExtractTM false true)).tm.initCfg
+        (pairEncode (pairEncode (Nat.bits t) α) x))).mapState Sum.inl) T₃ with he₃
+  obtain ⟨s3run, s3st, s3cut⟩ := seamCompTM_step
+    (seamCompTM (embedSilentRetTM ι₁ jbt (prefixCanonTM (FinTM.pairExtractTM true false)).tm)
+      (Sum.inr ()) (inputRewindTM K) InputRewindPhase.start)
+    (Sum.inr InputRewindPhase.done)
+    (embedSilentRetTM ι₂ jal (prefixCanonTM (FinTM.pairExtractTM false true)).tm)
+    (Sum.inl (prefixCanonTM (FinTM.pairExtractTM false true)).tm.q₀) (Sum.inr ())
+    s2run s2st s2cut (by rw [hjunc₂]) h₃st
+    (by simp only [hjunc₂]; exact h₃cut)
+  -- The clean ledger after the two header passes.
+  have hclean₃ : ∀ j : Fin K,
+      j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
+      e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0 := by
+    intro j h1 h2 h3 h4
+    obtain ⟨ht, hp⟩ := h₃frame j h3 h4
+    obtain ⟨ht', hp'⟩ := h₁frame j h1 h2
+    exact ⟨ht.trans ht', hp.trans hp'⟩
+  have hbyval : ∀ j : Fin K, j.val < 7 → j ≠ jbt → j ≠ jal →
+      e₃.workTapes j = tapes₀ j ∧ e₃.workTapePos j = 0 := by
+    intro j hv h2 h4
+    exact hclean₃ j (by intro hmem; rw [hr₁] at hmem; omega) h2
+      (by intro hmem; rw [hr₂] at hmem; omega) h4
+  -- The second pass leaves the first capture intact.
+  have h₃bt : e₃.workTapes jbt = FinTM.bufferTape (Nat.bits t) ∧
+      e₃.workTapePos jbt = ((Nat.bits t).length : ℤ) := by
+    have hn₂ : jbt ∉ Set.range ι₂ := by
+      intro hmem
+      rw [hr₂] at hmem
+      omega
+    have hnal : jbt ≠ jal := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    obtain ⟨ht, hp⟩ := h₃frame jbt hn₂ hnal
+    exact ⟨ht.trans h₁bt, hp.trans h₁bthd⟩
+  -- Phase 4: rewind the counter capture to its origin.
+  have hd₄st : ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+      (fun _ => RewindPhase.start)).state = some RewindPhase.start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, h₃st]
+    rfl
+  have hd₄u : ∀ p : ℤ, -1 ≤ p → p < ((Nat.bits t).length : ℤ) →
+      ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).workTapes jbt
+        (((e₃.mapState (Sum.inr : _ → St₃)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jbt - (Nat.bits t).length + p) =
+      FinTM.bufferTape (Nat.bits t) p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₃bt.2]
+    have harith : ((Nat.bits t).length : ℤ) - (Nat.bits t).length + p = p := by ring
+    rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₃bt.1]
+  obtain ⟨hr4run, hr4cut, hr4heads⟩ := rewindTM_run_ofCfg jbt (Nat.bits t)
+    (Nat.bits t).length le_rfl
+    ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)) hd₄st hd₄u
+  obtain ⟨s4run, s4st, s4cut⟩ := seamCompTM_step _ (Sum.inr (Sum.inr ()))
+    (rewindTM K jbt) RewindPhase.start RewindPhase.done
+    s3run s3st s3cut hr4run rfl hr4cut
+  set e₄ := ({ (e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start) with
+    state := some RewindPhase.done
+    workTapePos := Function.update
+      ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jbt
+      (((e₃.mapState (Sum.inr : _ → St₃)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jbt - (Nat.bits t).length) } :
+    Cfg K Bool RewindPhase _) with he₄
+  have he₄tapes : ∀ j, e₄.workTapes j = e₃.workTapes j := by
+    intro j
+    funext q
+    rw [he₄]
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+      (fun _ => RewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have he₄posbt : e₄.workTapePos jbt = 0 := by
+    rw [he₄]
+    show Function.update _ jbt _ jbt = 0
+    rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₃bt.2]
+    ring
+  have he₄pos : ∀ j, j ≠ jbt → e₄.workTapePos j = e₃.workTapePos j := by
+    intro j hj
+    rw [he₄]
+    show Function.update _ jbt _ j = _
+    rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have he₄in : e₄.inputPos = e₃.inputPos := by
+    rw [he₄]
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState
+      (fun _ => RewindPhase.start)).inputPos = _
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  have he₄out : e₄.output = e₃.output := by
+    rw [he₄]
+    show ((e₃.mapState (Sum.inr : _ → St₃)).mapState (fun _ => RewindPhase.start)).output = _
+    rw [Cfg.mapState_output, Cfg.mapState_output]
+  -- Phase 5: copy the counter onto its loop tape.
+  have hjbtctr : jbt ≠ jctr := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hd₅st : ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).state = some SweepPhase.sweep := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₄]
+    rfl
+  have hd₅w : ∀ p : ℤ, -1 ≤ p → p ≤ ((Nat.bits t).length : ℤ) →
+      ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).workTapes jbt
+        (((e₄.mapState (Sum.inr : _ → St₄)).mapState
+          (fun _ => SweepPhase.sweep)).workTapePos jbt + p) =
+      FinTM.bufferTape (Nat.bits t) p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₄posbt, zero_add,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₄tapes, h₃bt.1]
+  obtain ⟨hc5run, hc5cut, hc5heads⟩ := copyTM_run_ofCfg jbt jctr hjbtctr (Nat.bits t)
+    ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)) hd₅st hd₅w
+  obtain ⟨s5run, s5st, s5cut⟩ := seamCompTM_step _ (Sum.inr RewindPhase.done)
+    (copyTM K jbt jctr) SweepPhase.sweep SweepPhase.done
+    s4run s4st s4cut hc5run rfl hc5cut
+  set e₅ := ({ (e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep) with
+    state := some SweepPhase.done
+    workTapes := fun j q =>
+      if j = jctr ∧ ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+            (fun _ => SweepPhase.sweep)).workTapePos j ≤ q ∧
+          q < ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+            (fun _ => SweepPhase.sweep)).workTapePos j + ((Nat.bits t).length : ℤ)
+        then FinTM.bufferTape (Nat.bits t) (q - ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+          (fun _ => SweepPhase.sweep)).workTapePos j)
+      else ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+        (fun _ => SweepPhase.sweep)).workTapes j q } : Cfg K Bool SweepPhase _) with he₅
+  have he₅pos : ∀ j, j ≠ jbt → e₅.workTapePos j = e₃.workTapePos j := by
+    intro j hj
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).workTapePos j = _
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    exact he₄pos j hj
+  have he₅posbt : e₅.workTapePos jbt = 0 := by
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).workTapePos jbt = 0
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    exact he₄posbt
+  have hd₅ctrpos : ((e₄.mapState (Sum.inr : _ → St₄)).mapState
+      (fun _ => SweepPhase.sweep)).workTapePos jctr = 0 := by
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos,
+      he₄pos jctr (by intro hmem; have := congrArg Fin.val hmem; omega)]
+    exact (hbyval jctr (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  have he₅ctr : e₅.workTapes jctr = FinTM.bufferTape (Nat.bits t) := by
+    funext q
+    rw [he₅]
+    show (if jctr = jctr ∧ _ ∧ _ then _ else _) = _
+    rw [hd₅ctrpos]
+    by_cases hq : (0 : ℤ) ≤ q ∧ q < ((Nat.bits t).length : ℤ)
+    · rw [if_pos ⟨rfl, by omega, by omega⟩, sub_zero]
+    · rw [if_neg (by
+        intro hcontra
+        exact hq ⟨by omega, by have := hcontra.2.2; omega⟩)]
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₄tapes,
+        (hbyval jctr (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+          (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+        htapes₀blank jctr (by omega),
+        FinTM.bufferTape_eq]
+      by_cases hq0 : (0 : ℤ) ≤ q
+      · rw [if_pos hq0, List.getElem?_eq_none (by omega)]
+      · rw [if_neg hq0]
+  have he₅frame : ∀ j, j ≠ jctr → e₅.workTapes j = e₃.workTapes j := by
+    intro j hj
+    funext q
+    rw [he₅]
+    show (if j = jctr ∧ _ ∧ _ then _ else _) = _
+    rw [if_neg (by intro hcontra; exact hj hcontra.1), Cfg.mapState_workTapes,
+      Cfg.mapState_workTapes]
+    rw [he₄tapes]
+  have he₅bt : e₅.workTapes jbt = FinTM.bufferTape (Nat.bits t) := by
+    rw [he₅frame jbt hjbtctr]
+    exact h₃bt.1
+  have he₅in : e₅.inputPos = e₃.inputPos := by
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).inputPos = _
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    exact he₄in
+  have he₅out : e₅.output = e₃.output := by
+    rw [he₅]
+    show ((e₄.mapState (Sum.inr : _ → St₄)).mapState (fun _ => SweepPhase.sweep)).output = _
+    rw [Cfg.mapState_output, Cfg.mapState_output]
+    exact he₄out
+  -- Phase 6: the bounded window copy.
+  have hd₆st : ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).state =
+      some entryW := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₅]
+    rfl
+  have hd₆pos : ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+      (fun _ => entryW)).inputPos.val =
+      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₅in]
+    exact h₃pos
+  have hd₆ctr : ∀ q : ℤ, -1 ≤ q → q ≤ ((Nat.bits t).length : ℤ) →
+      ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW)).workTapes jbt
+        (((e₅.mapState (Sum.inr : _ → St₅)).mapState
+          (fun _ => entryW)).workTapePos jbt + q) =
+      FinTM.bufferTape (Nat.bits t) q := by
+    intro q hq1 hq2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₅posbt, zero_add,
+      Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅bt]
+  have hd₆dst : ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+      (fun _ => entryW)).workTapes jwin =
+      fun _ => none := by
+    funext q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes,
+      he₅frame jwin (by intro hmem; have := congrArg Fin.val hmem; omega),
+      (hbyval jwin (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      htapes₀blank jwin (by omega)]
+  have hd₆dstpos : ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+      (fun _ => entryW)).workTapePos jwin = 0 := by
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos,
+      he₅pos jwin (by intro hmem; have := congrArg Fin.val hmem; omega)]
+    exact (hbyval jwin (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  obtain ⟨T₆, hT₆, h₆st, h₆pos, h₆win, h₆winhd, h₆jbthd, h₆frame, h₆out,
+    h₆cut⟩ :=
+    windows α x t ((e₅.mapState (Sum.inr : _ → St₅)).mapState (fun _ => entryW))
+      hd₆st hd₆pos hd₆ctr hd₆dst hd₆dstpos
+  set e₆ := W.runFrom ((e₅.mapState (Sum.inr : _ → St₅)).mapState
+    (fun _ => entryW)) T₆ with he₆
+  obtain ⟨s6run, s6st, s6cut⟩ := seamCompTM_step _ (Sum.inr SweepPhase.done)
+    W entryW doneW s5run s5st s5cut he₆.symm h₆st h₆cut
+  -- Phase 7: the second input rewind.
+  have hd₇st :
+      ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)).state =
+        some .start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, h₆st]
+    rfl
+  have hd₇pos : 1 ≤ ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).inputPos.val := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, h₆pos]
+    omega
+  obtain ⟨hL1', hL2', -⟩ := inputRewindTM_run
+    ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)) hd₇st hd₇pos
+  obtain ⟨s7run, s7st, s7cut⟩ := seamCompTM_step _ (Sum.inr doneW)
+    (inputRewindTM K) InputRewindPhase.start InputRewindPhase.done s6run s6st s6cut hL1' rfl hL2'
+  set e₇ := ({ (e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start) with
+    state := some InputRewindPhase.done, inputPos := 1 } : Cfg K Bool (InputRewindPhase) _) with he₇
+  -- The α capture survives the window, the rewinds and the copy.
+  have hjalnbt : jal ≠ jbt := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjalnwin : jal ≠ jwin := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjalnctr : jal ≠ jctr := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have h₇al : e₇.workTapes jal = FinTM.bufferTape α ∧
+      e₇.workTapePos jal = (α.length : ℤ) := by
+    have htap : e₇.workTapes jal = e₆.workTapes jal := by
+      funext q
+      rw [he₇]
+      show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+        (fun _ => InputRewindPhase.start)).workTapes jal q = _
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    have hpp : e₇.workTapePos jal = e₆.workTapePos jal := by
+      rw [he₇]
+      show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+        (fun _ => InputRewindPhase.start)).workTapePos jal = _
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    obtain ⟨hft, hfp⟩ := h₆frame jal hjalnbt hjalnwin
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    have hft' : e₆.workTapes jal = e₅.workTapes jal := by
+      funext q
+      rw [hft, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    constructor
+    · rw [htap, hft', he₅frame jal hjalnctr]
+      exact h₃al
+    · rw [hpp, hfp, he₅pos jal hjalnbt]
+      exact h₃alhd
+  -- Phase 8: rewind the α capture to its origin.
+  have hd₈st : ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+      (fun _ => RewindPhase.start)).state = some RewindPhase.start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₇]
+    rfl
+  have hd₈u : ∀ p : ℤ, -1 ≤ p → p < (α.length : ℤ) →
+      ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).workTapes jal
+        (((e₇.mapState (Sum.inr : _ → St₇)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jal - α.length + p) =
+      FinTM.bufferTape α p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₇al.2]
+    have harith : (α.length : ℤ) - α.length + p = p := by ring
+    rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₇al.1]
+  obtain ⟨hr8run, hr8cut, hr8heads⟩ := rewindTM_run_ofCfg jal α α.length le_rfl
+    ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)) hd₈st hd₈u
+  obtain ⟨s8run, s8st, s8cut⟩ := seamCompTM_step _ (Sum.inr InputRewindPhase.done)
+    (rewindTM K jal) RewindPhase.start RewindPhase.done
+    s7run s7st s7cut hr8run rfl hr8cut
+  set e₈ := ({ (e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start) with
+    state := some RewindPhase.done
+    workTapePos := Function.update
+      ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jal
+      (((e₇.mapState (Sum.inr : _ → St₇)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jal - α.length) } :
+    Cfg K Bool RewindPhase _) with he₈
+  have he₈tapes : ∀ j, e₈.workTapes j = e₆.workTapes j := by
+    intro j
+    funext q
+    rw [he₈]
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+      (fun _ => RewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have he₈posjal : e₈.workTapePos jal = 0 := by
+    rw [he₈]
+    show Function.update _ jal _ jal = 0
+    rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).workTapePos jal - α.length = 0
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    obtain ⟨-, hfp⟩ := h₆frame jal hjalnbt hjalnwin
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    rw [hfp, he₅pos jal hjalnbt, h₃alhd]
+    show (α.length : ℤ) - α.length = 0
+    ring
+  have he₈pos : ∀ j, j ≠ jal → e₈.workTapePos j = e₆.workTapePos j := by
+    intro j hj
+    rw [he₈]
+    show Function.update _ jal _ j = _
+    rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).workTapePos j = _
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have he₈in : e₈.inputPos = 1 := by
+    rw [he₈]
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState
+      (fun _ => RewindPhase.start)).inputPos = 1
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₇]
+  have he₈out : e₈.output = [] := by
+    rw [he₈]
+    show ((e₇.mapState (Sum.inr : _ → St₇)).mapState (fun _ => RewindPhase.start)).output = []
+    rw [Cfg.mapState_output, Cfg.mapState_output, he₇]
+    show ((e₆.mapState (Sum.inr : _ → St₆)).mapState (fun _ => InputRewindPhase.start)).output = []
+    rw [Cfg.mapState_output, Cfg.mapState_output, h₆out, Cfg.mapState_output,
+      Cfg.mapState_output, he₅out]
+    exact h₃out
+  -- The comprehensive clean ledger at the install seam.
+  have hclean₈ : ∀ j : Fin K,
+      j ∉ Set.range ι₁ → j ≠ jbt → j ∉ Set.range ι₂ → j ≠ jal →
+      j ≠ jctr → j ≠ jwin → e₈.workTapes j = tapes₀ j ∧ e₈.workTapePos j = 0 := by
+    intro j h1 h2 h3 h4 h5 h6
+    obtain ⟨hft, hfp⟩ := h₆frame j h2 h6
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    obtain ⟨hct, hcp⟩ := hclean₃ j h1 h2 h3 h4
+    constructor
+    · rw [he₈tapes j, hft]
+      funext q
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      rw [he₅frame j h5, hct]
+    · rw [he₈pos j h4, hfp, he₅pos j h2, hcp]
+  -- The α capture holds α at its origin.
+  have he₈al : e₈.workTapes jal = FinTM.bufferTape α := by
+    rw [he₈tapes jal]
+    obtain ⟨hft, -⟩ := h₆frame jal hjalnbt hjalnwin
+    rw [hft]
+    funext q
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅frame jal hjalnctr, h₃al]
+    rfl
+  -- Phase 9: install the replay serialization through the clean call interface.
+  obtain ⟨TI, hTI, hTIpos, hTIcut, hTIrun⟩ :=
+    installs (pairEncode (pairEncode (Nat.bits t) α) x) α
+  have hcapInr : capI ∉ Set.range ιI := by
+    rintro ⟨i, rfl⟩
+    have h := hιI i
+    by_cases h0 : i.val = 0
+    · rw [if_pos h0] at h
+      omega
+    · rw [if_neg h0] at h
+      omega
+  have hscratch : ∀ i : Fin CI.k, i.val ≠ 0 →
+      e₈.workTapes (ιI i) = tapes₀ (ιI i) ∧ e₈.workTapePos (ιI i) = 0 := by
+    intro i h0
+    have hv := hιI i
+    rw [if_neg h0] at hv
+    exact hclean₈ (ιI i)
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+  have hlhs9t : ∀ j, ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+      (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapes j = e₈.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have hlhs9p : ∀ j, ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+      (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapePos j = e₈.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have hrhs9t : ((embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).mapState (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapes =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).workTapes := by
+    funext j a
+    rw [Cfg.mapState_workTapes]
+  have hrhs9p : ∀ j, ((embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).mapState (fun _ => (Sum.inl () : Unit ⊕ CI.State))).workTapePos j =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+      (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+        (stateWord CI.k α))).workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos]
+  have hjunc₉ : (e₈.mapState (Sum.inr : _ → St₈)).mapState
+      (fun _ => (Sum.inl () : Unit ⊕ CI.State)) =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+        (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) entryI
+          (stateWord CI.k α))).mapState (fun _ => (Sum.inl () : Unit ⊕ CI.State)) := by
+    have hcapcl := hclean₈ capI
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    apply Cfg.ext
+    · have hlhs : ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+          (fun _ => (Sum.inl () : Unit ⊕ CI.State))).state = some (Sum.inl ()) := by
+        rw [Cfg.mapState_state, Cfg.mapState_state, he₈]
+        rfl
+      rw [hlhs, Cfg.mapState_state, embedSilentCfg_state, Cfg.ofWords_state]
+      rfl
+    · have hlhs : ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+          (fun _ => (Sum.inl () : Unit ⊕ CI.State))).inputPos = 1 := by
+        rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+        exact he₈in
+      rw [hlhs, Cfg.mapState_inputPos, embedSilentCfg_inputPos, Cfg.ofWords_inputPos]
+    · funext j p
+      rw [hlhs9t j, hrhs9t]
+      by_cases hsel : j ∈ Set.range ιI
+      · obtain ⟨i, rfl⟩ := hsel
+        rw [embedSilentCfg_selected_tape, Cfg.ofWords_workTapes, stateWord_eq]
+        by_cases h0 : i.val = 0
+        · have hieq : ιI i = jal := Fin.ext (by rw [hιI, if_pos h0, hjal])
+          rw [if_pos h0, hieq, he₈al]
+        · rw [if_neg h0, (hscratch i h0).1,
+            htapes₀blank _ (by
+              have hv := hιI i
+              rw [if_neg h0] at hv
+              have := i.isLt
+              omega),
+            FinTM.bufferTape_nil]
+      · by_cases hcap : j = capI
+        · rw [hcap,
+            (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).1,
+            Cfg.ofWords_output, List.append_nil, FinTM.bufferTape_nil, hcapcl.1,
+            htapes₀blank capI (by omega)]
+        · rw [(embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j
+            hsel hcap).1]
+    · funext j
+      rw [hlhs9p j, hrhs9p j]
+      by_cases hsel : j ∈ Set.range ιI
+      · obtain ⟨i, rfl⟩ := hsel
+        rw [embedSilentCfg_selected_pos, Cfg.ofWords_workTapePos]
+        by_cases h0 : i.val = 0
+        · have hieq : ιI i = jal := Fin.ext (by rw [hιI, if_pos h0, hjal])
+          rw [hieq, he₈posjal]
+        · exact (hscratch i h0).2
+      · by_cases hcap : j = capI
+        · rw [hcap,
+            (embedSilentCfg_cap ιI capI hcapInr e₈.workTapes e₈.workTapePos [] [] _).2,
+            Cfg.ofWords_output, List.append_nil, hcapcl.2]
+          rfl
+        · rw [(embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j
+            hsel hcap).2]
+    · have hlhs : ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+          (fun _ => (Sum.inl () : Unit ⊕ CI.State))).output = [] := by
+        rw [Cfg.mapState_output, Cfg.mapState_output]
+        exact he₈out
+      rw [hlhs, Cfg.mapState_output, embedSilentCfg_output]
+  obtain ⟨hIrun, hIcut⟩ := installCall_releasePhase CI entryI doneI ιI capI hcapInr
+    e₈.workTapes e₈.workTapePos α
+    (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)) TI hTIpos
+    hTIrun hTIcut
+  have h₂9 : (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI).runFrom
+      ((e₈.mapState (Sum.inr : _ → St₈)).mapState
+        (fun _ => (Sum.inl () : Unit ⊕ CI.State))) TI =
+      (embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+        (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) doneI
+          (stateWord CI.k
+            (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr))))).mapState
+        (Sum.inr : CI.State → Unit ⊕ CI.State) := by
+    rw [hjunc₉]
+    exact hIrun
+  obtain ⟨s9run, s9st, s9cut⟩ := seamCompTM_step _ (Sum.inr RewindPhase.done)
+    (seamReleaseTM (embedSilentTM ιI capI CI.tm) entryI) (Sum.inl ()) (Sum.inr doneI)
+    s8run s8st s8cut h₂9
+    (by rw [Cfg.mapState_state, embedSilentCfg_state, Cfg.ofWords_state, Option.map_some])
+    (by intro u hu; rw [hjunc₉]; exact hIcut u hu)
+  -- Phase 10: the seam layout redistributes the installed serialization.
+  set e₉ := embedSilentCfg ιI capI e₈.workTapes e₈.workTapePos [] []
+    (Cfg.ofWords (input := pairEncode (pairEncode (Nat.bits t) α) x) doneI
+      (stateWord CI.k (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)))) with he₉
+  have hieq0 : ιI ⟨0, hkI⟩ = jal := Fin.ext (by rw [hιI, hjal]; simp)
+  have hlhs10t : ∀ j, ((((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes j : ℤ → Option Bool) =
+      e₉.workTapes j := by
+    intro j
+    funext a
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have hlhs10p : ∀ j, (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos j =
+      e₉.workTapePos j := by
+    intro j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have hd₁₀st : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).state = some entryL := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, Cfg.mapState_state, he₉, embedSilentCfg_state,
+      Cfg.ofWords_state]
+    rfl
+  have hd₁₀src : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes jal =
+      FinTM.bufferTape (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)) := by
+    rw [hlhs10t jal, he₉, ← hieq0, embedSilentCfg_selected_tape, Cfg.ofWords_workTapes,
+      stateWord_eq, if_pos rfl]
+  have hd₁₀srcp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jal = 0 := by
+    rw [hlhs10p jal, he₉, ← hieq0, embedSilentCfg_selected_pos, Cfg.ofWords_workTapePos]
+  have hinst_unsel : ∀ j : Fin K, j.val ≠ 1 →
+      ¬(7 + k₁ + k₂ ≤ j.val ∧ j.val < 6 + k₁ + k₂ + CI.k) →
+      j ∉ Set.range ιI := by
+    intro j h2 hrange
+    rintro ⟨i, rfl⟩
+    have hv := hιI i
+    by_cases h0 : i.val = 0
+    · rw [if_pos h0] at hv
+      omega
+    · rw [if_neg h0] at hv
+      have := i.isLt
+      exact hrange (by omega)
+  have hd₁₀tbl : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes jtbl = fun _ => none := by
+    funext a
+    rw [hlhs10t jtbl, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jtbl
+        (hinst_unsel jtbl (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      (hclean₈ jtbl (by intro hmem; rw [hr₁] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; rw [hr₂] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      htapes₀blank jtbl (by omega)]
+  have hd₁₀tblp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jtbl = 0 := by
+    rw [hlhs10p jtbl, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jtbl
+        (hinst_unsel jtbl (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).2]
+    exact (hclean₈ jtbl (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  have hd₁₀sm : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes jsm = fun _ => none := by
+    funext a
+    rw [hlhs10t jsm, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jsm
+        (hinst_unsel jsm (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      (hclean₈ jsm (by intro hmem; rw [hr₁] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; rw [hr₂] at hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+      htapes₀blank jsm (by omega)]
+  have hd₁₀smp : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos jsm = 0 := by
+    rw [hlhs10p jsm, he₉,
+      (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jsm
+        (hinst_unsel jsm (by omega) (by omega))
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).2]
+    exact (hclean₈ jsm (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  obtain ⟨TL, hTL, hLspec⟩ := layouts ((M α))
+  obtain ⟨hLst, hLin, hLtapes, hLheads, hLout, hLcut⟩ := hLspec
+    (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL))
+    hd₁₀st hd₁₀src hd₁₀srcp hd₁₀tbl hd₁₀tblp hd₁₀sm hd₁₀smp
+  obtain ⟨s10run, s10st, s10cut⟩ := seamCompTM_step _ (Sum.inr (Sum.inr doneI))
+    L entryL doneL s9run s9st s9cut rfl hLst hLcut
+  set e₁₀ := L.runFrom (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+    (Sum.inr : _ → St₉)).mapState (fun _ => entryL)) TL with he₁₀
+  -- Phase 11: rewind the window to its origin.
+  have hjwinal : jwin ≠ jal := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjwintbl : jwin ≠ jtbl := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have hjwinsm : jwin ≠ jsm := by
+    intro hmem
+    have := congrArg Fin.val hmem
+    omega
+  have h₁₀win : e₁₀.workTapes jwin = FinTM.bufferTape (x.take t) ∧
+      e₁₀.workTapePos jwin = ((x.take t).length : ℤ) := by
+    constructor
+    · funext a
+      rw [he₁₀, hLtapes, Function.update_of_ne hjwinsm, Function.update_of_ne hjwintbl,
+        Function.update_of_ne hjwinal, hlhs10t jwin, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jwin
+          (hinst_unsel jwin (by omega) (by omega))
+          (by intro hmem; have := congrArg Fin.val hmem; omega)).1,
+        he₈tapes jwin, h₆win]
+    · rw [he₁₀, hLheads, Function.update_of_ne hjwinsm, Function.update_of_ne hjwintbl,
+        Function.update_of_ne hjwinal, hlhs10p jwin, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ jwin
+          (hinst_unsel jwin (by omega) (by omega))
+          (by intro hmem; have := congrArg Fin.val hmem; omega)).2,
+        he₈pos jwin hjwinal]
+      exact h₆winhd
+  -- The rewind of the window.
+  have hd₁₁st : ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).state = some RewindPhase.start := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, he₁₀, hLst]
+    rfl
+  have hd₁₁u : ∀ p : ℤ, -1 ≤ p → p < ((x.take t).length : ℤ) →
+      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+          (fun _ => RewindPhase.start)).workTapes jwin
+        (((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+          (fun _ => RewindPhase.start)).workTapePos jwin - (x.take t).length + p) =
+      FinTM.bufferTape (x.take t) p := by
+    intro p hp1 hp2
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₁₀win.2]
+    have harith : ((x.take t).length : ℤ) - (x.take t).length + p = p := by ring
+    rw [harith, Cfg.mapState_workTapes, Cfg.mapState_workTapes, h₁₀win.1]
+  obtain ⟨hr11run, hr11cut, hr11heads⟩ := rewindTM_run_ofCfg jwin (x.take t)
+    (x.take t).length le_rfl
+    ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState (fun _ => RewindPhase.start))
+    hd₁₁st hd₁₁u
+  obtain ⟨s11run, s11st, s11cut⟩ := seamCompTM_step _ (Sum.inr doneL)
+    (rewindTM K jwin) RewindPhase.start RewindPhase.done
+    s10run s10st s10cut hr11run rfl hr11cut
+  set e₁₁ := ({ (e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start) with
+    state := some RewindPhase.done
+    workTapePos := Function.update
+      ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jwin
+      (((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+        (fun _ => RewindPhase.start)).workTapePos jwin - (x.take t).length) } :
+    Cfg K Bool RewindPhase _) with he₁₁
+  -- The complete tape inventory at the loop's threshold.
+  have he₁₁tapes : ∀ j, e₁₁.workTapes j = e₁₀.workTapes j := by
+    intro j
+    funext q
+    rw [he₁₁]
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).workTapes j q = _
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  have he₁₁pos : ∀ j, j ≠ jwin → e₁₁.workTapePos j = e₁₀.workTapePos j := by
+    intro j hj
+    rw [he₁₁]
+    show Function.update _ jwin _ j = _
+    rw [Function.update_of_ne hj, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  have he₁₁poswin : e₁₁.workTapePos jwin = 0 := by
+    rw [he₁₁]
+    show Function.update _ jwin _ jwin = 0
+    rw [Function.update_self, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, h₁₀win.2]
+    ring
+  have hd₁₀in : (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+      (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).inputPos = 1 := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₉,
+      embedSilentCfg_inputPos, Cfg.ofWords_inputPos]
+  have he₁₁in : e₁₁.inputPos = 1 := by
+    rw [he₁₁]
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).inputPos = 1
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, he₁₀, hLin]
+    exact hd₁₀in
+  have he₁₁out : e₁₁.output = [] := by
+    rw [he₁₁]
+    show ((e₁₀.mapState (Sum.inr : _ → St₁₀)).mapState
+      (fun _ => RewindPhase.start)).output = []
+    rw [Cfg.mapState_output, Cfg.mapState_output, he₁₀, hLout TL le_rfl,
+      Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output, he₉, embedSilentCfg_output]
+  -- Named-tape values at the threshold.
+  have hth : ∀ j : Fin K, j ≠ jal → j ≠ jtbl → j ≠ jsm → j ≠ jwin →
+      e₁₁.workTapes j = (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+        (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapes j ∧
+      e₁₁.workTapePos j = (((e₉.mapState (Sum.inr : CI.State → Unit ⊕ CI.State)).mapState
+        (Sum.inr : _ → St₉)).mapState (fun _ => entryL)).workTapePos j := by
+    intro j h1 h2 h3 h4
+    constructor
+    · funext q
+      rw [he₁₁tapes j, he₁₀, hLtapes, Function.update_of_ne h3, Function.update_of_ne h2,
+        Function.update_of_ne h1]
+    · rw [he₁₁pos j h4, he₁₀, hLheads, Function.update_of_ne h3, Function.update_of_ne h2,
+        Function.update_of_ne h1]
+  have hth' : ∀ j : Fin K,
+      j ∉ Set.range ιI → j ≠ capI → j ≠ jtbl → j ≠ jsm → j ≠ jwin →
+      e₁₁.workTapes j = e₈.workTapes j ∧ e₁₁.workTapePos j = e₈.workTapePos j := by
+    intro j h0 hc h2 h3 h4
+    have h1 : j ≠ jal := by
+      intro hj
+      exact h0 ⟨⟨0, hkI⟩, by rw [hieq0, hj]⟩
+    obtain ⟨ht, hp⟩ := hth j h1 h2 h3 h4
+    constructor
+    · funext q
+      rw [ht, hlhs10t j, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j h0 hc).1]
+    · rw [hp, hlhs10p j, he₉,
+        (embedSilentCfg_unselected ιI capI e₈.workTapes e₈.workTapePos [] [] _ j h0 hc).2]
+  have hctr₁₁ : e₁₁.workTapes jctr = FinTM.bufferTape (Nat.bits t) ∧
+      e₁₁.workTapePos jctr = 0 := by
+    obtain ⟨ht, hp⟩ := hth' jctr
+      (hinst_unsel jctr (by omega) (by omega))
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    obtain ⟨hft, hfp⟩ := h₆frame jctr
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos] at hfp
+    constructor
+    · funext q
+      rw [ht, he₈tapes jctr, hft, Cfg.mapState_workTapes, Cfg.mapState_workTapes, he₅ctr]
+    · rw [hp, he₈pos jctr (by intro hmem; have := congrArg Fin.val hmem; omega), hfp,
+        he₅pos jctr hjbtctr.symm]
+      exact (hbyval jctr (by omega) (by intro hmem; have := congrArg Fin.val hmem; omega)
+        (by intro hmem; have := congrArg Fin.val hmem; omega)).2
+  have htbl₁₁ : e₁₁.workTapes jtbl =
+      FinTM.bufferTape (tableBitsK (M α).tr) ∧
+      e₁₁.workTapePos jtbl = 0 := by
+    have h2 : jtbl ≠ jsm := by
+      intro hmem
+      have := congrArg Fin.val hmem
+      omega
+    constructor
+    · funext q
+      rw [he₁₁tapes jtbl, he₁₀, hLtapes, Function.update_of_ne h2, Function.update_self]
+    · rw [he₁₁pos jtbl (by intro hmem; have := congrArg Fin.val hmem; omega), he₁₀,
+        hLheads,
+        Function.update_of_ne h2, Function.update_self]
+  have hsm₁₁ : e₁₁.workTapes jsm =
+      StepBlock.summaryCells none (unaryFin (M α).q₀) ∧
+      e₁₁.workTapePos jsm = 0 := by
+    constructor
+    · funext q
+      rw [he₁₁tapes jsm, he₁₀, hLtapes, Function.update_self]
+    · rw [he₁₁pos jsm (by intro hmem; have := congrArg Fin.val hmem; omega), he₁₀, hLheads,
+        Function.update_self]
+  have hwin₁₁ : e₁₁.workTapes jwin = FinTM.bufferTape (x.take t) := by
+    rw [he₁₁tapes jwin]
+    exact h₁₀win.1
+  -- The startup's start is the composite's start.
+  have hstart : (⟨some (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl
+      (Sum.inl (Sum.inl (Sum.inl
+        (prefixCanonTM (FinTM.pairExtractTM true false)).tm.q₀))))))))))),
+      1, tapes₀, fun _ => 0, []⟩ : Cfg K Bool St₁₁
+        (pairEncode (pairEncode (Nat.bits t) α) x)) =
+      (((((((((cfg₀.mapState Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState
+        Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState Sum.inl).mapState
+        Sum.inl).mapState Sum.inl).mapState Sum.inl := by
+    apply Cfg.ext
+    · simp only [Cfg.mapState_state, hcfg₀, embedSilentCfg_state, MultiTapeTM.initCfg_eq,
+        Cfg.init_state, Option.map_some]
+    · simp only [Cfg.mapState_inputPos, hcfg₀, embedSilentCfg_inputPos, MultiTapeTM.initCfg_eq,
+        Cfg.init_inputPos]
+    · funext j q
+      simp only [Cfg.mapState_workTapes, hcfg₀]
+      by_cases hsel : j ∈ Set.range ι₁
+      · obtain ⟨i, rfl⟩ := hsel
+        rw [embedSilentCfg_selected_tape, MultiTapeTM.initCfg_eq, Cfg.init_workTapes,
+          htapes₀blank _ (by have := hι₁ i; have := i.isLt; omega)]
+      · by_cases hcap : j = jbt
+        · rw [hcap, (embedSilentCfg_cap ι₁ jbt
+            (by rintro ⟨i, rfl⟩; have h := hι₁ i; omega) tapes₀ (fun _ => 0) [] [] _).1,
+            MultiTapeTM.initCfg_eq, Cfg.init_output, List.append_nil, FinTM.bufferTape_nil,
+            htapes₀blank jbt (by omega)]
+        · rw [(embedSilentCfg_unselected ι₁ jbt tapes₀ (fun _ => 0) [] [] _ j hsel hcap).1]
+    · funext j
+      simp only [Cfg.mapState_workTapePos, hcfg₀]
+      by_cases hsel : j ∈ Set.range ι₁
+      · obtain ⟨i, rfl⟩ := hsel
+        rw [embedSilentCfg_selected_pos, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+      · by_cases hcap : j = jbt
+        · rw [hcap, (embedSilentCfg_cap ι₁ jbt
+            (by rintro ⟨i, rfl⟩; have h := hι₁ i; omega) tapes₀ (fun _ => 0) [] [] _).2,
+            MultiTapeTM.initCfg_eq, Cfg.init_output, List.append_nil]
+          rfl
+        · rw [(embedSilentCfg_unselected ι₁ jbt tapes₀ (fun _ => 0) [] [] _ j hsel hcap).2]
+    · simp only [Cfg.mapState_output, hcfg₀, embedSilentCfg_output]
+  set TPRE := T₁ + 1 + ((e₁.mapState (fun _ => InputRewindPhase.start)).inputPos.val + 1) + 1 +
+    T₃ + 1 +
+    ((Nat.bits t).length + 2) + 1 + (2 * (Nat.bits t).length + 2) + 1 + T₆ + 1 +
+    (((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).inputPos.val + 1) + 1 +
+    (α.length + 2) + 1 + TI + 1 + TL + 1 + ((x.take t).length + 2) with hTPRE
+  have hl1 : (e₁.mapState (fun _ => InputRewindPhase.start)).inputPos.val =
+      4 * (Nat.bits t).length + 2 * α.length + 7 := by
+    rw [Cfg.mapState_inputPos]
+    exact h₁pos
+  have hl2 : ((e₆.mapState (Sum.inr : _ → St₆)).mapState
+      (fun _ => InputRewindPhase.start)).inputPos.val =
+      4 * (Nat.bits t).length + 2 * α.length + 7 + (x.take t).length := by
+    rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    exact h₆pos
+  have hmin : (x.take t).length = min t x.length := by simp
+  -- The passive tapes, by the clean ledger.
+  have hpassive : ∀ i : Fin p,
+      e₁₁.workTapes (ιP i) = tapes₀ (ιP i) ∧ e₁₁.workTapePos (ιP i) = 0 := by
+    intro i
+    have hv := hιP i
+    have hi := i.isLt
+    obtain ⟨ht, hp⟩ := hth' (ιP i)
+      (hinst_unsel (ιP i) (by omega) (by omega))
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    obtain ⟨ht8, hp8⟩ := hclean₈ (ιP i)
+      (by intro hmem; rw [hr₁] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; rw [hr₂] at hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+      (by intro hmem; have := congrArg Fin.val hmem; omega)
+    exact ⟨ht.trans ht8, hp.trans hp8⟩
+  -- The time: the phases' bounds and the seams' steps.
+  have hTsum : TPRE ≤ costI α +
+      CL * ((pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)).length + 1) +
+      21 * α.length +
+      45 * (Nat.bits t).length + CW * (min t x.length + 1) + 2 * min t x.length + 84 := by
+    rw [hTPRE, hl1, hl2, hmin]
+    omega
+  have hTle : TPRE ≤ costI α +
+      (120 + CL) * (α.length +
+        (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)).length + 1) +
+      (47 + CW) * ((Nat.bits t).length + min t x.length + 1) := by
+    refine hTsum.trans ?_
+    nlinarith [Nat.zero_le (CL * α.length),
+      Nat.zero_le (CL * (pairEncode (n α).bits (unaryFin (M α).q₀ ++ tableBitsK (M α).tr)).length),
+      Nat.zero_le (CW * (Nat.bits t).length), Nat.zero_le (CW * min t x.length)]
+  refine ⟨TPRE, hTle, ?_, ?_, ?_⟩
+  · rw [hstart, s11run]
+    exact s11st
+  · intro u hu
+    rw [hstart]
+    exact s11cut u hu
+  · dsimp only
+    rw [hstart, s11run]
+    have hT : ∀ j, (e₁₁.mapState (Sum.inr : RewindPhase → St₁₀ ⊕ RewindPhase)).workTapes j =
+        e₁₁.workTapes j := by
+      intro j
+      funext a
+      rw [Cfg.mapState_workTapes]
+    refine ⟨by rw [Cfg.mapState_inputPos]; exact he₁₁in, by rw [Cfg.mapState_output]; exact he₁₁out,
+      by rw [hT]; exact hctr₁₁.1, by rw [Cfg.mapState_workTapePos]; exact hctr₁₁.2,
+      by rw [hT]; exact hwin₁₁, by rw [Cfg.mapState_workTapePos]; exact he₁₁poswin,
+      by rw [hT]; exact htbl₁₁.1, by rw [Cfg.mapState_workTapePos]; exact htbl₁₁.2,
+      by rw [hT]; exact hsm₁₁.1, by rw [Cfg.mapState_workTapePos]; exact hsm₁₁.2,
+      fun i => ⟨by rw [hT]; exact (hpassive i).1,
+        by rw [Cfg.mapState_workTapePos]; exact (hpassive i).2⟩⟩
 
 end Turing
