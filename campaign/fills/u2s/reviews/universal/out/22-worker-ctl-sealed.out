@@ -1,0 +1,163 @@
+Probe/WorkerCtlSealed.lean:20:2: error: Type mismatch
+  rfl
+has type
+  ?m.27 = ?m.27
+but is expected to have type
+  (StepBlock.forwardLoopCfg entry M c).output = c.output
+Probe/WorkerCtlSealed.lean:25:55: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  (rulerHostCfg ℓ hz q c rt rp).output = c.output
+Probe/WorkerCtlSealed.lean:29:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x
+Probe/WorkerCtlSealed.lean:33:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Cfg.init q x).output = []
+Probe/WorkerCtlSealed.lean:36:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+Probe/WorkerCtlSealed.lean:39:68: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  StepBlock.summaryCells none w 0 = none
+Probe/WorkerCtlSealed.lean:46:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+Probe/WorkerCtlSealed.lean:49:44: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  unaryFin 0 = [false]
+Probe/WorkerCtlSealed.lean:55:49: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀
+Probe/WorkerCtlSealed.lean:58:35: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedEmitTM ι M).q₀ = M.q₀
+Probe/WorkerCtlSealed.lean:62:76: error: Type mismatch
+  rfl
+has type
+  ?m.24 = ?m.24
+but is expected to have type
+  (embedEmitCfg ι (fun x x_1 => none) (fun x => 0) [] c).state = c.state
+Probe/WorkerCtlSealed.lean:65:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+Probe/WorkerCtlSealed.lean:68:48: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+Probe/WorkerCtlSealed.lean:71:85: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  MultiTapeTM.spaceUsed c t = ∑ i, MultiTapeTM.spaceUsedByTape c t i
+Probe/WorkerCtlSealed.lean:75:66: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.spaceUsedByTape c t i = (MultiTapeTM.visitedByTapeHead c t i).card
+Probe/WorkerCtlSealed.lean:80:79: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  MultiTapeTM.visitedByTapeHead c t i =
+    Finset.image (fun u => (MultiTapeTM.runFrom c u).workTapePos i) (Finset.range (t + 1))
+Probe/WorkerCtlSealed.lean:83:75: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  M.ComputesInTime x w t = ∃ s, M.tm.ComputesInTimeAndSpace x w t s
+Probe/WorkerCtlSealed.lean:85:56: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  pairEncode [] [true] = [false, true, true]
+Probe/WorkerCtlSealed.lean:87:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM k i).q₀ = RewindPhase.start
+Probe/WorkerCtlSealed.lean:90:2: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  { state := none, inputPos := 0, workTapes := fun x x_1 => none, workTapePos := fun x => 0,
+        output := [] }.inputSymbol =
+    none
+Probe/WorkerCtlSealed.lean:95:66: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  MultiTapeTM.step
+      { state := none, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+        output := d.output } =
+    { state := none, inputPos := d.inputPos, workTapes := d.workTapes, workTapePos := d.workTapePos,
+      output := d.output }
+Probe/WorkerCtlSealed.lean:98:61: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  d.workTapeSymbols i = d.workTapes i (d.workTapePos i)
+Probe/WorkerCtlSealed.lean:101:75: error: Type mismatch
+  rfl
+has type
+  ?m.39 = ?m.39
+but is expected to have type
+  tapeAction 0 0 none 0 () =
+    { inputTape := 0, workTapes := fun j => if j = 0 then (none, 0) else (none, 0), output := none, state := some () }
+Probe/WorkerCtlSealed.lean:104:46: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  inputMoveAction 0 () = { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some () }
+Probe/WorkerCtlSealed.lean:106:44: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  moveInputPos 0 0 = 0

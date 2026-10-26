@@ -47,8 +47,10 @@ true. Both are in the records; no Lean change.
 | 5 | note | `UniversalK` could import the kit directly; its re-point is a scheduling decision. | **Agreed;** SK-1's disposition stands (the dedup window, or U2's fill). |
 | 3, 4, 6–10, 12, 13 | notes | Provenance; the major's resolution; the timing prose; the freeze; the screens; the seal; the elaboration and axioms; contracts and boundary checks; lint. | No action. |
 
-**Merge state. #162: clear to merge** (2026-10-25). The gate is closed. `replay-lkit2` passed at the
-head `d4759581`, and the PR's base is the campaign branch, whose Lean tree has not moved since (its
-Lean diff from the head is the PR's four files). Merging it changes the `TuringMachine` facade,
-which #165 also edits: #165 then merges the campaign branch and replays the merged tree before it
-is clear.
+**Merged (user, 2026-10-25)** as `5a258cc2116dc7b761772a9bb6d9caa675243866`. The campaign's TCSlib
+tree after the merge equals the replayed head `d4759581`'s, so `oleans-lkit2` is the campaign's
+snapshot after #162. Before the merge: **#162: clear to merge** (2026-10-25). The gate is closed.
+`replay-lkit2` passed at the head `d4759581`, and the PR's base is the campaign branch, whose Lean
+tree has not moved since (its Lean diff from the head is the PR's four files). Merging it changes
+the `TuringMachine` facade, which #165 also edits: #165 then merges the campaign branch and replays
+the merged tree before it is clear.

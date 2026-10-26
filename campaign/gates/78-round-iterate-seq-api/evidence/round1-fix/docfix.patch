@@ -1,0 +1,49 @@
+From 98d56a71119913f68a4b2ad670d54e22c1b951a8 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Sun, 25 Oct 2026 18:36:45 -0500
+Subject: [PATCH] Contract/Basic: both round-iteration docstrings state the
+ anchor-escape disjointness and the initial head condition (gate 78 minor 1);
+ docstrings only
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/Contract/Basic.lean      | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+index 5a7b9511..23c5142d 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
+@@ -772,10 +772,11 @@ theorem roundOrbit_succ {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (τ :
+     roundOrbit M τ c (r + 1) = M.runFrom (roundOrbit M τ c r) (τ (roundOrbit M τ c r)) :=
+   Function.iterate_succ_apply' _ _ _
+ 
+-/-- **Round iteration along a sequence of starts**: if, for each `r < n`, the run from `cs r` is
+-a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` is one segment against
+-the escapes to `cs n`, of length the sum of the round times. When the last round ends in an
+-escape, the segment is a first exit (`Turing.Contract.ofSegment`).
++/-- **Round iteration along a sequence of starts**: if the anchor is not an escape
++(`some a ∉ E`), the head condition `P` holds at `cs 0`, and, for each `r < n`, the run from `cs r`
++is a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` is one segment
++against the escapes to `cs n`, of length the sum of the round times. When the last round ends in
++an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
+ 
+ **Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
+ by `Turing.Segment.trans`. -/
+@@ -791,9 +792,10 @@ theorem Round.iterate_seq {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a :
+     exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
+ 
+ /-- **Round iteration on one machine** (the counter loop's composition, without the counter):
+-if the first `n` rounds of the orbit are rounds, each lasting `τ` of its start, then the whole
+-orbit prefix is one segment against the escapes, of length the sum of the round times. When the
+-last round ends in an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
++if the anchor is not an escape (`some a ∉ E`), the head condition `P` holds at `c`, and the first
++`n` rounds of the orbit are rounds, each lasting `τ` of its start, then the whole orbit prefix is
++one segment against the escapes, of length the sum of the round times. When the last round ends
++in an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
+ 
+ **Proof sketch.** The orbit `Turing.roundOrbit` as the sequence of starts in
+ `Turing.Round.iterate_seq`; it starts at `c` (`Turing.roundOrbit_zero`). -/
+-- 
+2.50.1 (Apple Git-155)
+

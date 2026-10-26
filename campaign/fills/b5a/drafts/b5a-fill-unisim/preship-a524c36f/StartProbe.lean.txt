@@ -1,0 +1,49 @@
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Embed
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
+
+/-! Review probe: the start of `S`. `S.tm` is a seam composite restarted at its first phase's
+initial state; its initial configuration is the first phase's transported start, read only
+through published equations (`MultiTapeTM.initCfg_with_q₀`, `MultiTapeTM.runFrom_with_q₀`, the
+`Cfg.init` and `Cfg.mapState` fields) and the startup kit's published capture-initial identity
+(`Turing.embedSilentCfg_initCfg`, `Build/InterpreterStartup`; at issue, re-pointed from the review's local copy). Sealed. -/
+
+namespace Turing
+
+section StartSeal
+
+attribute [local irreducible] embedSilentRetTM embedSilentCfg seamCompTM inputRewindTM
+  Cfg.mapState MultiTapeTM.runFrom MultiTapeTM.initCfg Cfg.init FinTM.bufferTape
+attribute [-simp] MultiTapeTM.initCfg Cfg.init
+
+/-- Relabelling an initial configuration relabels its state. -/
+private theorem init_mapState {k : ℕ} {S T : Type} (f : S → T) (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).mapState f = Cfg.init (f q) x := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, Cfg.init_state, Option.map_some, Cfg.init_state]
+  · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+  · funext j z
+    rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+  · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+
+example {K : ℕ} (M : FinTM Bool) (ι : Fin M.k ↪ Fin K) (cap : Fin K)
+    (hcap : cap ∉ Set.range ι) (z : List Bool) (T : ℕ) :
+    let W := seamCompTM (embedSilentRetTM ι cap M.tm) (Sum.inr ()) (inputRewindTM K) .start
+    ({ W with q₀ := Sum.inl (Sum.inl M.tm.q₀) } : MultiTapeTM K Bool _).runFrom
+        (({ W with q₀ := Sum.inl (Sum.inl M.tm.q₀) } : MultiTapeTM K Bool _).initCfg z) T =
+      W.runFrom (((embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] []
+        (M.tm.initCfg z)).mapState Sum.inl).mapState Sum.inl) T := by
+  intro W
+  rw [MultiTapeTM.initCfg_with_q₀, MultiTapeTM.runFrom_with_q₀,
+    embedSilentCfg_initCfg M.tm ι cap hcap z, init_mapState]
+
+end StartSeal
+
+end Turing
+
+#print axioms Turing.embedSilentCfg_initCfg

@@ -597,7 +597,9 @@ ruling (user, 2026-10-25): land G4 with this entry; then an API PR adds the sequ
 Census (one member per file; the source side added at gate 75's minor 5): `Build/ZoneRebalance` 1 of
 871 declarations (0.1%), the private `zr_pinLoop`, 71 lines with its docstring;
 `Build/Contract/Basic` 1 of 85 (84 public, 1 private; 1.2%), the public `Turing.Round.iterate`, 18
-lines with its docstring. The one-fifth rule is not reached.
+lines with its docstring. The one-fifth rule is not reached. **The API PR is #167** (gate 78,
+2026-10-25; stacked on #165): `Turing.Round.iterate_seq` beside `Round.iterate`, which becomes its
+corollary, and `zr_pinLoop` re-pointed to it. On its landing RI-1 is retired.
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:

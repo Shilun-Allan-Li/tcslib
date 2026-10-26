@@ -1,0 +1,21 @@
+hunks (base start,count -> head start,count): [(11, 0, 12, 1), (1688, 0, 1690, 343), (1725, 1, 2069, 113), (1728, 0, 2185, 568), (1760, 1, 2784, 102)]
+- base 11,0: import region (a): insert after base line 11; removed []; added 1 lines
+    context: base[11]='import TCSlib.Complexity.TuringMachine.Build.SeamLayout', base[12]=''
+- base 1688,0: region (b): insert after blank 1688; removed []; added 343 lines
+    context: base[1688]='', base[1689]='/-- **U2-U, the self-application universal machine, with time and space ledgers and the'
+- base 1725,1: region (d): U2-U body sorry; removed ['  sorry']; added 113 lines
+- base 1728,0: region (c): insert after blank 1728; removed []; added 568 lines
+    context: base[1728]='', base[1729]='/-- **U2-E, the code-first evaluator** [AB09, Theorem 1.9, the evaluator `U(x, α) = M_α(x)`, in'
+- base 1760,1: region (d): U2-E body sorry; removed ['  sorry']; added 102 lines
+all hunks in regions: True
+base 1-11 == head 1-11 (imports before overlay): True
+base 12-1688 == head 13-1689 (module header .. startup section .. U2-U section header + blank): True
+base 1689-1724 == head 2033-2068 (U2-U docstring + statement): True
+base 1726-1728 == head 2182-2184 (U2-U end .. U2-E header + blank): True
+base 1729-1759 == head 2753-2783 (U2-E docstring + statement): True
+base 1761-1763 == head 2886-2888 (tail): True
+status lines base 29-32:
+    **Status.** The scheme interface and its two instances are defined and proved, and so is the
+    startup `Turing.exists_selfStartupTMK`; the other two machine contracts are sorried with their
+    proof sketches. Their fill builds on H2's step block and its forwarding round loop
+    `Turing.StepBlock.exists_forwardLoopTM` (H2-F, `Build/StepBlockForward.lean`).

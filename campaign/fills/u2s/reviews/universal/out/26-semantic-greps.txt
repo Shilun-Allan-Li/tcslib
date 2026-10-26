@@ -1,0 +1,87 @@
+### Q1 initCfg & mapState
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:117  Turing.embedSilentRetTM_firstReturn
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:124  Turing.embedSilentRetTM_firstReturn
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:144  Turing.embedSilentCfg_initCfg
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:151  Turing.embedSilentCfg_initCfg
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean:601  Turing.guessRunTM_runWith_handoff
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean:932  Turing.guessRunTM_runWith_setup_halt
+TCSlib/Complexity/TuringMachine/StateRenaming.lean:136  Turing.MultiTapeTM.relabelState_runFrom_init
+### Q1b initCfg & q₀ hypotheses
+### Q2 seamCompTM statements
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:57  Turing.seamCompTM_step
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:64  Turing.seamCompTM_step
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:206  Turing.seamCompTM_runFrom_left
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:229  Turing.seamCompTM_runFrom_right
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:342  Turing.seamCompTM_run
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:375  Turing.seamCompTM_firstReturn
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:414  Turing.seamCompTM_visitedByTapeHead
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:437  Turing.seamCompTM_spaceUsedByTape_le_add
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:461  Turing.seamCompTM_spaceUsed_le_add
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:496  Turing.seamCompTM_spaceUsedByTape_le_max
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:552  Turing.seamCompTM_run_ofCfg
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:572  Turing.seamCompTM_firstReturn_ofCfg
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:597  Turing.seamCompTM_visitedByTapeHead_ofCfg
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:638  Turing.seamCompTM₂_run_ofCfg
+### Q3 Lockstep statements
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1264  Turing.Lockstep.runFrom
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1278  Turing.Lockstep.cut
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1283  Turing.Lockstep.runFrom
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1297  Turing.Lockstep.cut
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1297  Turing.Lockstep.locate
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1316  Turing.Lockstep.locate
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1385  Turing.Contract.lockstep_admissible
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1400  Turing.Contract.lockstep_admissible_map
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1404  Turing.Contract.lockstep_admissible
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1419  Turing.Contract.lockstep_admissible_map
+TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean:481  Turing.StepBlock.exists_forwardLoopTM
+### Q3b forwardLoopCfg statements
+TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean:481  Turing.StepBlock.exists_forwardLoopTM
+### Q4 spaceUsed & (seam|embed)
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:423  Turing.embedSilentTM_visitedByTapeHead
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:452  Turing.embedSilentTM_visitedByTapeHead_frame
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:486  Turing.embedSilentTM_spaceUsedByTape_cap
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:608  Turing.embedEmitTM_visitedByTapeHead
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:635  Turing.embedEmitTM_visitedByTapeHead_frame
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:437  Turing.seamCompTM_spaceUsedByTape_le_add
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:461  Turing.seamCompTM_spaceUsed_le_add
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:496  Turing.seamCompTM_spaceUsedByTape_le_max
+### Q5 bufferTape & replicate
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:227  Complexity.Meyer.dec_sweep
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:257  Complexity.Meyer.ret_sweep
+TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean:160  Complexity.Meyer.wdec_sweep
+TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean:189  Complexity.Meyer.wret_sweep
+TCSlib/Complexity/SpaceComplexity/Machines/Parse.lean:290  Complexity.LogProg.jeqPlain_run
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:360  Complexity.LogProg.jeqPairSnd_run
+TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean:408  Complexity.LogProg.jeqPairFst_run
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:78  Complexity.TimeHierarchy.borrow_run
+TCSlib/Complexity/TuringMachine/BufferWords.lean:107  Turing.FinTM.bufferTape_unary
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:1226  Turing.exists_rulerHostTM
+TCSlib/Complexity/TuringMachine/Build/InputDevice.lean:382  Turing.exists_rulerTestTM
+### Q5b tapeAction
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11702  Turing.step_of_tapeAction_move
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11728  Turing.step_of_tapeAction_write
+### Q6 rewindTM
+TCSlib/Complexity/TuringMachine/Build/Rewind.lean:112  Turing.rewindTM_run_ofCfg
+### Q7 rulerHostCfg
+### Q8 runFrom_state_ne_none / live prefix
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:116  Turing.MultiTapeTM.ConfigCount.core_injOn
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:169  Complexity.LogProg.sim_step_clean
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:90  Complexity.LogProg.avoid_of_live
+TCSlib/Complexity/TimeHierarchy/ClockMachine.lean:361  Complexity.TimeHierarchy.kCfg_run
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:247  Turing.Contract.live
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:248  Turing.Contract.live
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:828  Turing.embedSilentRetTM_run
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:877  Turing.embedEmitRetTM_run
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:345  Turing.ClockHost.boot_run
+TCSlib/Complexity/TuringMachine/Build/NDHost.lean:779  Turing.guessRunTM_runWith_live
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:1094  Turing.FinTM.pairExtractTM_fst_run
+TCSlib/Complexity/TuringMachine/Build/StepBlockForward.lean:481  Turing.StepBlock.exists_forwardLoopTM
+TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean:301  Turing.StepBlock.loopTM_run
+TCSlib/Complexity/TuringMachine/Build/StepBlockLoop.lean:429  Turing.StepBlock.hostedLoopTM_run
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:157  Turing.windowRun_spec
+TCSlib/Complexity/TuringMachine/Build/WindowRun.lean:297  Turing.windowRun_exhausted_of_live
+TCSlib/Complexity/TuringMachine/ChoiceReplay.lean:96  Turing.NDTM.replayTM_runFrom
+TCSlib/Complexity/TuringMachine/Deterministic.lean:511  Turing.MultiTapeTM.not_halts_of_repeat_nonhalt
+TCSlib/Complexity/TuringMachine/Finite.lean:201  Turing.MultiTapeTM.runFrom_state_ne_none_of_le
+TCSlib/Complexity/TuringMachine/Simulation.lean:884  Turing.FinTM.bufferedFirstCfg_run
+TCSlib/Complexity/TuringMachine/UniversalBlock.lean:600  Turing.universal_live_block
