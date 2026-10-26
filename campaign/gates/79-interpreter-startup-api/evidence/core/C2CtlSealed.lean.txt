@@ -1,0 +1,269 @@
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.ChoiceReplay
+import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+set_option maxHeartbeats 0
+
+/-! A+ gate: gate 66's 46 rfl and 4 simp controls, alone, at the A+ base. Unsealed every control
+closes; under the 46-definition seal with the four simp erasures every control fails. -/
+
+namespace Turing
+
+section Sealed
+
+attribute [local irreducible] Turing.Action.apply
+attribute [local irreducible] Turing.Cfg.init
+attribute [local irreducible] Turing.Cfg.inputSymbol
+attribute [local irreducible] Turing.Cfg.mapState
+attribute [local irreducible] Turing.Cfg.ofWords
+attribute [local irreducible] Turing.Cfg.workTapeSymbols
+attribute [local irreducible] Turing.CodeNDTM.toFinNDTM
+attribute [local irreducible] Turing.FinTM.ComputesFunInTime
+attribute [local irreducible] Turing.FinTM.VirtualTag
+attribute [local irreducible] Turing.FinTM.bufferTape
+attribute [local irreducible] Turing.FinTM.controlAction
+attribute [local irreducible] Turing.FinTM.pairExtractTM
+attribute [local irreducible] Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Turing.MultiTapeTM.runFrom
+attribute [local irreducible] Turing.MultiTapeTM.step
+attribute [local irreducible] Turing.NDTM.initCfg
+attribute [local irreducible] Turing.NDTM.replayTM
+attribute [local irreducible] Turing.NDTM.runWith
+attribute [local irreducible] Turing.NDTM.withChoiceTape
+attribute [local irreducible] Turing.StepBlock.Rep
+attribute [local irreducible] Turing.StepBlock.exit
+attribute [local irreducible] Turing.StepBlock.hostedLoopTM
+attribute [local irreducible] Turing.StepBlock.outputSummary
+attribute [local irreducible] Turing.StepBlock.summaryCells
+attribute [local irreducible] Turing.StepBlock.summaryTape
+attribute [local irreducible] Turing.StepBlock.tableTape
+attribute [local irreducible] Turing.copyTM
+attribute [local irreducible] Turing.counterLoopCfg
+attribute [local irreducible] Turing.counterValue
+attribute [local irreducible] Turing.embedSilentCfg
+attribute [local irreducible] Turing.embedSilentRetTM
+attribute [local irreducible] Turing.embedSilentTM
+attribute [local irreducible] Turing.moveInputPos
+attribute [local irreducible] Turing.pairDecode
+attribute [local irreducible] Turing.pairEncode
+attribute [local irreducible] Turing.phaseHostTM
+attribute [local irreducible] Turing.prefixCanonTM
+attribute [local irreducible] Turing.rewindTM
+attribute [local irreducible] Turing.seamCompTM
+attribute [local irreducible] Turing.seamReleaseTM
+attribute [local irreducible] Turing.serializeK
+attribute [local irreducible] Turing.stateWord
+attribute [local irreducible] Turing.tableBitsK
+attribute [local irreducible] Turing.unaryFin
+attribute [local irreducible] Turing.vhostBank
+attribute [local irreducible] Turing.vhostCfg
+attribute [-simp] Turing.Action.apply
+attribute [-simp] Turing.Cfg.init
+attribute [-simp] Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.NDTM.initCfg
+
+/-- Control top-R1: closes only by unfolding `Turing.Action.apply` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).state = a.state := rfl
+
+/-- Control top-R2: closes only by unfolding `Turing.Cfg.init` (rfl). -/
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).state = some q := rfl
+
+/-- Control top-R3: closes only by unfolding `Turing.Cfg.inputSymbol` (rfl). -/
+example (t : Fin 1 → ℤ → Option Bool) (p : Fin 1 → ℤ) :
+    (⟨none, 0, t, p, []⟩ : Cfg 1 Bool Unit [true]).inputSymbol = none := rfl
+
+/-- Control top-R4: closes only by unfolding `Turing.Cfg.mapState` (rfl). -/
+example {k : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Cfg k Bool S x) :
+    (c.mapState f).inputPos = c.inputPos := rfl
+
+/-- Control top-R5: closes only by unfolding `Turing.Cfg.ofWords` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (q : S) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := x) q w).inputPos = 1 := rfl
+
+/-- Control top-R6: closes only by unfolding `Turing.Cfg.workTapeSymbols` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+
+/-- Control top-R7: closes only by unfolding `Turing.CodeNDTM.toFinNDTM` (rfl). -/
+example (M : CodeNDTM) : M.toFinNDTM.k = 2 := rfl
+
+/-- Control top-R8: closes only by unfolding `Turing.FinTM.ComputesFunInTime` (rfl). -/
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T =
+      ∀ input : List Bool, M.ComputesInTime input (f input) (T input.length) := rfl
+
+/-- Control top-R9: closes only by unfolding `Turing.FinTM.VirtualTag` (rfl). -/
+example {n : ℕ} (p : Fin (n + 2)) (b : Bool) :
+    FinTM.VirtualTag p b = ((p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true)) := rfl
+
+/-- Control top-R10: closes only by unfolding `Turing.FinTM.bufferTape` (rfl). -/
+example : FinTM.bufferTape [true] 0 = some true := rfl
+
+/-- Control top-R11: closes only by unfolding `Turing.FinTM.controlAction` (rfl). -/
+example {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    (FinTM.controlAction (k := k) m q).state = q := rfl
+
+/-- Control top-R12: closes only by unfolding `Turing.FinTM.pairExtractTM` (rfl). -/
+example : (FinTM.pairExtractTM true false).k = 1 := rfl
+
+/-- Control top-R13: closes only by unfolding `Turing.MultiTapeTM.initCfg` (rfl). -/
+example {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := rfl
+
+/-- Control top-R14: closes only by unfolding `Turing.MultiTapeTM.runFrom` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    tm.runFrom c 0 = c := rfl
+
+/-- Control top-R15: closes only by unfolding `Turing.MultiTapeTM.step` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S)
+    (p : Fin (x.length + 2)) (t : Fin k → ℤ → Option Bool) (h : Fin k → ℤ) :
+    tm.step (⟨none, p, t, h, []⟩ : Cfg k Bool S x) = ⟨none, p, t, h, []⟩ := rfl
+
+/-- Control top-R16: closes only by unfolding `Turing.NDTM.initCfg` (rfl). -/
+example {k : ℕ} {S : Type} (tm : NDTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := rfl
+
+/-- Control top-R17: closes only by unfolding `Turing.NDTM.replayTM` (rfl). -/
+example {k : ℕ} {S : Type} (N : NDTM k Bool S) : N.replayTM.q₀ = N.q₀ := rfl
+
+/-- Control top-R18: closes only by unfolding `Turing.NDTM.runWith` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (c : Cfg k Bool S x) :
+    tm.runWith [] c = c := rfl
+
+/-- Control top-R19: closes only by unfolding `Turing.NDTM.withChoiceTape` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (ct : ℤ → Option Bool)
+    (cp : ℤ) : (NDTM.withChoiceTape c ct cp).inputPos = c.inputPos := rfl
+
+/-- Control top-R20: closes only by unfolding `Turing.StepBlock.Rep` (rfl). -/
+example {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (d : Cfg (k + 2) Bool (Σ key, StepBlock.Ph k key) x) :
+    StepBlock.Rep tr c d = (d.inputPos = c.inputPos ∧
+      (∀ i : Fin k, d.workTapes (Fin.castAdd 2 i) = c.workTapes i ∧
+        d.workTapePos (Fin.castAdd 2 i) = c.workTapePos i) ∧
+      d.workTapes (StepBlock.tableTape k) = FinTM.bufferTape (tableBitsK tr) ∧
+      d.workTapes (StepBlock.summaryTape k) =
+        StepBlock.summaryCells (StepBlock.outputSummary c.output) ((c.state.map unaryFin).getD []) ∧
+      d.workTapePos (StepBlock.tableTape k) = 0 ∧ d.workTapePos (StepBlock.summaryTape k) = 0) :=
+  rfl
+
+/-- Control top-R21: closes only by unfolding `Turing.StepBlock.exit` (rfl). -/
+example (k : ℕ) : (StepBlock.exit k true).1 = StepBlock.Key.entry := rfl
+
+/-- Control top-R22: closes only by unfolding `Turing.StepBlock.hostedLoopTM` (rfl). -/
+example (k : ℕ) : StepBlock.hostedLoopTM k = vhostEmitTM (StepBlock.loopTM k) := rfl
+
+/-- Control top-R23: closes only by unfolding `Turing.StepBlock.outputSummary` (rfl). -/
+example : StepBlock.outputSummary [] = none := rfl
+
+/-- Control top-R24: closes only by unfolding `Turing.StepBlock.summaryCells` (rfl). -/
+example (s : Option Bool) (w : List Bool) : StepBlock.summaryCells s w 0 = s := rfl
+
+/-- Control top-R25: closes only by unfolding `Turing.StepBlock.summaryTape` (rfl). -/
+example (k : ℕ) : StepBlock.summaryTape k = Fin.natAdd k (1 : Fin 2) := rfl
+
+/-- Control top-R26: closes only by unfolding `Turing.StepBlock.tableTape` (rfl). -/
+example (k : ℕ) : StepBlock.tableTape k = Fin.natAdd k (0 : Fin 2) := rfl
+
+/-- Control top-R27: closes only by unfolding `Turing.copyTM` (rfl). -/
+example {k : ℕ} (src dst : Fin k) : (copyTM (Symbol := Bool) k src dst).q₀ = .sweep := rfl
+
+/-- Control top-R28: closes only by unfolding `Turing.counterLoopCfg` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (q : Option (CounterLoopState S))
+    (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
+    (counterLoopCfg q c ct cp).state = q := rfl
+
+/-- Control top-R29: closes only by unfolding `Turing.counterValue` (rfl). -/
+example : counterValue [] = 0 := rfl
+
+/-- Control top-R30: closes only by unfolding `Turing.embedSilentCfg` (rfl). -/
+example {m n : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin n) (cap : Fin n)
+    (c : Cfg m Bool S x) :
+    (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] [] c).state = c.state := rfl
+
+/-- Control top-R31: closes only by unfolding `Turing.embedSilentRetTM` (rfl). -/
+example {m n : ℕ} {S : Type} (ι : Fin m ↪ Fin n) (cap : Fin n) (M : MultiTapeTM m Bool S) :
+    (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀ := rfl
+
+/-- Control top-R32: closes only by unfolding `Turing.embedSilentTM` (rfl). -/
+example {m n : ℕ} {S : Type} (ι : Fin m ↪ Fin n) (cap : Fin n) (M : MultiTapeTM m Bool S) :
+    (embedSilentTM ι cap M).q₀ = M.q₀ := rfl
+
+/-- Control top-R33: closes only by unfolding `Turing.moveInputPos` (rfl). -/
+example : moveInputPos (n := 1) (0 : Fin 3) 0 = 0 := rfl
+
+/-- Control top-R34: closes only by unfolding `Turing.pairDecode` (rfl). -/
+example : pairDecode [false, true] = some ([], []) := rfl
+
+/-- Control top-R35: closes only by unfolding `Turing.pairEncode` (rfl). -/
+example : pairEncode [] [true] = [false, true, true] := rfl
+
+/-- Control top-R36: closes only by unfolding `Turing.phaseHostTM` (rfl). -/
+example {k : ℕ} {I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Bool (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (phaseHostTM M q0 red).q₀ = q0 := rfl
+
+/-- Control top-R37: closes only by unfolding `Turing.prefixCanonTM` (rfl). -/
+example (F : FinTM Bool) : prefixCanonTM F = FinTM.bufferedCompTM universalPrefixTM F := rfl
+
+/-- Control top-R38: closes only by unfolding `Turing.rewindTM` (rfl). -/
+example {k : ℕ} (i : Fin k) : (rewindTM (Symbol := Bool) k i).q₀ = RewindPhase.start := rfl
+
+/-- Control top-R39: closes only by unfolding `Turing.seamCompTM` (rfl). -/
+example {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (e : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (q : S₂) : (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀ := rfl
+
+/-- Control top-R40: closes only by unfolding `Turing.seamReleaseTM` (rfl). -/
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (a : S) :
+    (seamReleaseTM M a).q₀ = Sum.inl () := rfl
+
+/-- Control top-R41: closes only by unfolding `Turing.serializeK` (rfl). -/
+example {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) := rfl
+
+/-- Control top-R42: closes only by unfolding `Turing.stateWord` (rfl). -/
+example (k : ℕ) (s : List Bool) :
+    stateWord k s = fun i : Fin k => if (i : ℕ) = 0 then s else [] := rfl
+
+/-- Control top-R43: closes only by unfolding `Turing.tableBitsK` (rfl). -/
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+
+/-- Control top-R44: closes only by unfolding `Turing.unaryFin` (rfl). -/
+example : unaryFin (2 : Fin 3) = [true, true, false] := rfl
+
+/-- Control top-R45: closes only by unfolding `Turing.vhostBank` (rfl). -/
+example {m : ℕ} (i : Fin m) : vhostBank i = Fin.natAdd 1 i := rfl
+
+/-- Control top-R46: closes only by unfolding `Turing.vhostCfg` (rfl). -/
+example {m : ℕ} {S : Type} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool)
+    (p : Fin (x.length + 2)) (pre : List Bool) : (vhostCfg c b p pre).inputPos = p := rfl
+
+/-- Control top-S1: closes only through the `@[simp]` unfolding of `Turing.Action.apply`. -/
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).output = c.output ++ a.output.toList := by simp
+
+/-- Control top-S2: closes only through the `@[simp]` unfolding of `Turing.Cfg.init`. -/
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).output = [] := by simp
+
+/-- Control top-S3: closes only through the `@[simp]` unfolding of `Turing.MultiTapeTM.initCfg`. -/
+example {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := by simp
+
+/-- Control top-S4: closes only through the `@[simp]` unfolding of `Turing.NDTM.initCfg`. -/
+example {k : ℕ} {S : Type} (tm : NDTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := by simp
+
+end Sealed
+
+end Turing

@@ -1,0 +1,144 @@
+$S/aplus/check/KitStartupSealed.lean:401:89: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  prefixCanonTM F = universalPrefixTM.bufferedCompTM F
+$S/aplus/check/KitStartupSealed.lean:404:58: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (FinTM.pairExtractTM a b).k = 1
+$S/aplus/check/KitStartupSealed.lean:407:46: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  pairEncode [] [] = [false, true]
+$S/aplus/check/KitStartupSealed.lean:410:54: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  pairDecode [false, true] = some ([], [])
+$S/aplus/check/KitStartupSealed.lean:414:52: error: Type mismatch
+  rfl
+has type
+  ?m.15 = ?m.15
+but is expected to have type
+  (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀
+$S/aplus/check/KitStartupSealed.lean:419:74: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (embedSilentCfg ι cap tapes heads pre out c).inputPos = c.inputPos
+$S/aplus/check/KitStartupSealed.lean:423:41: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (embedSilentTM ι cap M).q₀ = M.q₀
+$S/aplus/check/KitStartupSealed.lean:427:87: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (seamCompTM A e B en).q₀ = Sum.inl A.q₀
+$S/aplus/check/KitStartupSealed.lean:431:43: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (seamReleaseTM M a).q₀ = Sum.inl ()
+$S/aplus/check/KitStartupSealed.lean:435:44: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (Cfg.mapState f c).inputPos = c.inputPos
+$S/aplus/check/KitStartupSealed.lean:439:25: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  MultiTapeTM.runFrom c 0 = c
+$S/aplus/check/KitStartupSealed.lean:443:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init M.q₀ x
+$S/aplus/check/KitStartupSealed.lean:446:92: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (Cfg.init q x).output = []
+$S/aplus/check/KitStartupSealed.lean:450:51: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (Cfg.ofWords q w).inputPos = 1
+$S/aplus/check/KitStartupSealed.lean:453:50: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  stateWord 2 s 1 = []
+$S/aplus/check/KitStartupSealed.lean:456:51: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  FinTM.bufferTape [true] 0 = some true
+$S/aplus/check/KitStartupSealed.lean:459:80: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  StepBlock.summaryCells s w 0 = s
+$S/aplus/check/KitStartupSealed.lean:466:68: error: Type mismatch
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  tableBitsK tr =
+    List.flatMap
+      (fun q =>
+        List.flatMap (fun inp => List.flatMap (fun w => actionBitsK (tr q inp w)) (workReadsK k))
+          [none, some false, some true])
+      (List.finRange (n + 1))
+$S/aplus/check/KitStartupSealed.lean:469:44: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  unaryFin 0 = [false]
+$S/aplus/check/KitStartupSealed.lean:472:80: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+$S/aplus/check/KitStartupSealed.lean:475:103: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  copyTM K a b = copyMapTM K a b id fun x s => s
+$S/aplus/check/KitStartupSealed.lean:478:51: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (inputRewindTM k).q₀ = InputRewindPhase.start
+$S/aplus/check/KitStartupSealed.lean:481:77: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  (rewindTM K j).q₀ = RewindPhase.start
+'Turing.exists_interpreterStartup' depends on axioms: [propext, Classical.choice, Quot.sound]
