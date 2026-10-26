@@ -1,4 +1,4 @@
-# External audit pack — the interpreter startup (PR ⟨PR⟩, A+, an API gate)
+# External audit pack — the interpreter startup (PR #169, A+, an API gate)
 
 Campaign: the Arora-Barak chapters 3-4 plan, B5a's uniform simulator and the interpreter core.
 - **Why:** megafill C's review of B5a's brief (`campaign/fills/megafill/reviews/megafill-c-drafts/
@@ -11,10 +11,11 @@ Campaign: the Arora-Barak chapters 3-4 plan, B5a's uniform simulator and the int
   note's recommendation on all five decisions:** a maintainer API PR; `p` passive tapes with an
   embedding; existential roles; the core re-pointed in the same PR; the PR opened after #164 and
   #165 merge.
-- **The head:** `lean/interpreter-startup` at ⟨HEAD⟩: the commit `f30210d7`
-  (`evidence/interpreter-startup.patch`) ⟨and the campaign merge after #164 and #165⟩. This
-  bundle's Lean files are from ⟨HEAD⟩, and its records from the records commit that the dispatch
-  prompt names.
+- **The head:** `lean/interpreter-startup` at `4bee8b0922cbbbf6637acb44c2e7a5269a0c210b`: the
+  commit `f30210d7` (`evidence/interpreter-startup.patch`), then a merge of the campaign branch
+  after #164 and #165 (`4bee8b09`). The merge brings #164 (A1's readings) and #165 (G4's zone
+  rows) and touches neither of this PR's two files. This bundle's Lean files are from `4bee8b09`,
+  and its records from the records commit that the dispatch prompt names.
 
 | File | Change |
 |---|---|
@@ -48,7 +49,8 @@ Campaign: the Arora-Barak chapters 3-4 plan, B5a's uniform simulator and the int
    error, and each control fails at its own goal. The re-pointed `NDCodeSimulator` passes gate
    66's whole-module seal (46 definitions and 4 erasures), and that gate's 50 controls fail sealed
    and close unsealed at this base (`evidence/core/`). Does any step still close only by
-   unfolding another file's definition?
+   unfolding another file's definition? (`Cfg.Halted`, a reducible `abbrev`, cannot be sealed;
+   reading it through its body is allowed, `policy.md`, *Definitions land with their lemmas*.)
 6. **Duplication.** The v3 screen ran on gate 74's population, widened by the rows the startup now
    cites (`Build/Rewind`, `Build/InputRewind`) and by `ClassNP/ExhaustiveReplay`: 18 files
    (`evidence/screen-population.txt`). It ran at the campaign tip (`wt-mc`, `a524c36f`) and at the
@@ -70,8 +72,9 @@ Campaign: the Arora-Barak chapters 3-4 plan, B5a's uniform simulator and the int
 
 ## Repository-side attestations (verify or challenge)
 
-- **Elaboration** (against `oleans-lkit2`, the campaign's tree after #162; recipe
-  `evidence/check.sh.txt`):
+- **Elaboration** (against `oleans-lkit2`, the campaign's tree after #162, recipe
+  `evidence/check.sh.txt`; and again after the campaign merge, against `oleans-la1m`, the tree
+  after #164 and #165, `evidence/check-la1m/`, with the same results):
   - the kit module with no diagnostic, and `exists_interpreterStartup` on the standard three
     axioms (`Kit-ax.out`);
   - `NDCodeSimulator` after the kit's text, imports merged: no diagnostic, and the core on the
@@ -86,7 +89,9 @@ Campaign: the Arora-Barak chapters 3-4 plan, B5a's uniform simulator and the int
 - **Lint** (`evidence/lint-*-TuringMachine.txt`): 0 FAIL at both; the head adds one WARN, the kit's
   size (1,592 lines > 1,000). No line over 100 characters.
 - **Replay:** the kit's downstream closure (the module, `NDCodeSimulator`, `NTimeHierarchy` and the
-  two facades), chained from the merged-tree snapshot after #164 and #165. **Pending.**
+  two facades), chained from the campaign's snapshot when this PR is next in line (after #167's
+  91-module replay, whose closure contains these modules). **Pending** (the gate is dispatched
+  before it).
 
 ## Findings format
 

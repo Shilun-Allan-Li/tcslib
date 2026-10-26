@@ -26,3 +26,8 @@ true.
 #167 is retargeted to the campaign branch (head `98d56a71`; its diff is its two files). #164 (A1)
 goes first. Then the campaign is merged into #167, and its 91-module replay runs from A1's snapshot
 `oleans-la1m`. A trial merge on A1's tree gave the same 91-module list.
+**#164 merged (2026-10-26, `c4ba87bf`).** The campaign is merged into #167 (head
+`508e0eab1f82ae6edbc9ddb6c6a90de60e4b2f65`; its two files keep the gated head's blobs).
+`replay-lriseqm` (`evidence/merged-tree/`) replays their downstream closure, 91 modules, chained
+from `oleans-la1m`; its precheck passed. Its closure contains #166's, #168's and #169's, so their
+replays chain after it.

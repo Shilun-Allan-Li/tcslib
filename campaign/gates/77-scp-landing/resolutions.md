@@ -21,4 +21,6 @@ and the records at `d01e302531c5429cabb7bb9b8e0daf52b9734fcf`. Dispatched before
 **Merge state. #166: not yet clear to merge.** The gate is closed. #166 is stacked on #164
 (A1): it waits for #164 to merge (A1's merged-tree replay first). Then it is retargeted to the
 campaign branch, and its 2-module replay (`Savitch`, the `SpaceComplexity` facade) runs from A1's
-snapshot.
+snapshot. **#164 merged (2026-10-26);** #166 is retargeted to the campaign branch (its diff is
+`Savitch`). Its two modules lie inside #167's 91-module closure, so its replay chains after
+#167's.

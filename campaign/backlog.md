@@ -1721,6 +1721,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **gate 80** (a fill gate) staged: `exchange/outbox/gates/80-u2-universal-fill-gate/`, bundle
     `7de06b27…`, 164 sections, the records at `a1c9ec5d`. The replay (3 modules) is written after
     #164 and #167 merge.
+    **Gate 80, round 1: FAIL (0/1/1/10).** The major: D1 reads `exists_first_halt`'s
+    `¬ (…).Halted` prefix as `state ≠ none`, a definitional use of the reducible `Cfg.Halted`.
+    **Ruled (user, 2026-10-26): keep D1 and answer with the convention**, now in `policy.md` and
+    `TEMPLATE.md`. Lean refuses to seal a reducible `abbrev` (probe in the gate's evidence), and
+    the C1 briefs and gate 34 already allow the reading. The minor (the sketch's seam step) is
+    fixed by `948df2f9`, docstring only. Round 2 staged.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
@@ -3542,6 +3548,15 @@ Remaining Chapter-6 items (each documented as a divergence in its file):
 ---
 
 ## 5. Repository housekeeping
+
+### HLT-1: publish `Cfg.halted_iff` (from gate 80, finding 1; 2026-10-26)
+
+`Turing.Cfg.Halted` (`TuringMachine/Configuration.lean:226`) is a reducible `abbrev` for
+`cfg.state = none` with no `_iff` lemma. Published hypotheses use it widely (`Build/Catalog`'s
+`hlive`, `ClassNP/EXP`, `ClassNP/SAT`, `CookLevin/Hardness`), and consumers read it through its
+body, which the convention of 2026-10-26 allows (`policy.md`). **To do:** add `Cfg.halted_iff`
+(`Iff.rfl`) with the next API PR that touches `Configuration`; its replay closure is most of the
+library, so not alone. New code then cites it where it rewrites.
 
 ### FRZ-1: re-run the declaration freezes with qualified names (from gate 78, minor 2; 2026-10-25)
 

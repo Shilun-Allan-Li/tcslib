@@ -21,7 +21,9 @@ tip `39c649e6`, Lean equal to #161's merged tree). Pack `pack.md`; bundle SHA-25
 | 14 | note | Run and record the 193-module replay on the integrated tree after #162 before treating A1 as cleared. | **Agreed;** it is A1's merge condition. The closure includes the `TuringMachine` facade, which #165 also edits, so if #165 merges first, the replay is the merged-tree union from the last common snapshot. |
 | 1–6, 10, 13 | notes | Integrity; the readings' faithfulness (time and space constructibility, `ComputesInSpace`, `DecidesInSpace`, `SPACE`, `logSpace`, `LOGSPACE`, the transducer); the freeze; boundary checks. | No action. |
 
-**Merge state. #164: clear to merge** (2026-10-26). The gate is closed. `replay-la1m` passed
+**Merged (user, 2026-10-26)** as `c4ba87bf2f566d645245ef881da22da9dcce5595`. The campaign's TCSlib
+tree after the merge equals the replayed head `1ff735f8`'s, so `oleans-la1m` is the campaign's
+snapshot after #164. Before the merge: **#164: clear to merge** (2026-10-26). The gate is closed. `replay-la1m` passed
 (user, 2026-10-26): 193 of 193 modules, with sorry counts equal to the static count (0 mismatches,
 62 in total; `evidence/merged-tree/replay-la1m.log`, `-static.txt`), at the head `1ff735f8`. The PR's
 base is the campaign branch, whose Lean has not moved since #165's merge `f0df8ee5`. Its snapshot
