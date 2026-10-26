@@ -47,16 +47,29 @@ per-round times. The ledger is the dossier's: passed rounds `O(ℓ_{h+1})`, the 
 `L = ⌊log₂ n⌋` in unary (from `|bits n| − 1`), and the clock's counter.
 
 **One round** at a rung `ℓ < n`, with `a = ℓ + 1 ≤ n`:
-1. **The witness under the cap.** Write `1^a` on a virtual-input buffer. Run `f`'s witness
-   through `vhostSilentTM` under `exists_stepClockTMVia`.
+1. **The witness under the cap, as a clocked install call** (refined while drafting, below).
+   `f`'s witness `M_f` computes `x ↦ bits (f |x|)` within `c_f (f |x| + 1)`. Its install call `C`
+   (`exists_installCallTM`) turns `1^a` on its tape `0` into `bits (f a)`. All its other tapes
+   are blank at both ends, and its first return to `exit` is within
+   `c' (c_f (f a + 1) + a + |bits (f a)| + 1)`. Run `C` under `exists_stepClockTMVia` with the
+   stop states `{exit}`.
    - **The counter needs no multiplication:** an all-ones word of width
-     `m = |bits n| + |bits c_f|` has value `2^m − 1 ≥ c_f (n + 1)`, and `2^m ≤ 4 c_f n`. Write it
-     by `copyMapTM` from `bits n` (every symbol mapped to `true`) and a constant tail. Restore it
-     each round the same way, since the clock leaves "some word of the same width".
-   - **Timeout:** `n < f a` (`eq_timeout`), so the round stops inside the stage. Its cost is
-     `O(n)`.
-   - **Finish:** the output `bits (f a)` is on the capture tape. Its cost is `O(f a + 1)`, which is
-     `O(ℓ_{h+1})` when the round passes (`eq_round_le`).
+     `m = |bits n| + |bits D₀|` has value `2^m − 1 ≥ D₀ (n + 1)`, with `D₀` a constant bounding
+     `C`'s time whenever `f a ≤ n` (then `a ≤ n` and `|bits (f a)| ≤ n`). Also `2^m ≤ 4 D₀ n`.
+     Write it by `copyMapTM` from `bits n` (every symbol mapped to `true`) and a constant tail.
+     Restore it each round the same way, since the clock leaves "some word of the same width".
+   - **Timeout:** `C` has not returned within `D₀ (n + 1)`, so `n < f a` (the analogue of
+     `eq_timeout` through the call's bound), and the round stops inside the stage. Its cost is
+     `O(n)`. Nothing needs restoring: it is the last round.
+   - **Finish:** `bits (f a)` is on the call's tape `0`, and every other tape of the call is blank
+     again. Its cost is `O(f a + 1)`, which is `O(ℓ_{h+1})` when the round passes
+     (`eq_round_le`).
+
+   **Why not `vhostSilentTM`** (the dossier's first sketch): a passed round leaves the witness's
+   work tapes dirty within radius `τ`, and the next run needs them blank. The only clearing
+   machinery for that is `ExhaustiveReplay`'s private window clear and translation lemma
+   (C1E-1(g)), which would have to be harvested first. The install call's tracked banks already
+   restore the scratch, so no harvest is needed.
 2. **`n < f a`?** A binary `≤` on `bits (f a)` against `bits n` (a leaf: lengths first, then from
    the top bit; `Nat.bits` has no trailing `false`). Do not expand `f a` to unary first: a fast
    witness can output `bits (f a)` with `f a` up to `2^τ`.
@@ -108,8 +121,8 @@ contract is the largest single checkpoint.
 
 ## Copy hazards the brief names
 
-- `ExhaustiveReplay`'s capped replays: the `xr_` privates over the same clock. Cite the clock
-  and `vhostSilentTM_runFrom`; never re-walk them.
+- `ExhaustiveReplay`'s capped replays: the `xr_` privates over the same clock, including its
+  window clear and translation lemma. Cite the clock and the install call; never re-walk them.
 - `TimeHierarchy/ClockLoop`, a colleague's file.
 - #135's `ClassP/BinaryArith` (on `main`'s side, polynomial-time only). The unary route avoids its
   multiplication, and the binary `≤` leaf is the only overlap. Ledger it against `BinaryArith`'s
@@ -118,6 +131,10 @@ contract is the largest single checkpoint.
   counter.
 
 ## Decisions
+
+**Ruled (user, 2026-10-25): the recommendation on 1–4**, with 5 as stated. The clocked install
+call in "One round" step 1 is a refinement found while drafting the brief, within those rulings:
+it replaces the virtual-input host, which would have needed a bank clear.
 
 1. **The arithmetic: unary with cutoffs** (recommended; no multiplication leaf, simpler run
    lemmas, cost polylogarithmic per round), or the binary rows of the docstring (add, square,
