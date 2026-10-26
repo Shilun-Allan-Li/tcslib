@@ -886,9 +886,11 @@ hosted loop embedded silently. The startup runs with the replay serialization's 
 four passive tapes: the stream, the loop's two banks and the loop's capture. Its eleven phases
 are the two header passes, the counter copy, the window copy, the installation and the seam
 layout, with their rewinds. At its threshold it leaves `bits t`, the window `x.take t`, the
-replay machine's table and its summary on four role tapes, every head at `0`, the passive
-tapes as they started, and the input head at its first cell. The loop's entry is read from
-these fields, and the join is `Turing.seamCompTM_step` with the startup's first-return cut. -/
+replay machine's table and its summary on four role tapes, the passive tapes as they started,
+the role and passive heads at `0`, and the input head at its first cell. Its other tapes are
+internal scratch with no stated contents, which the loop's embedding leaves aside. The loop's
+entry is read from these fields, and the join is `Turing.seamCompTM_step` with the startup's
+first-return cut. -/
 theorem exists_ndInterpreterCore (c : EffectiveNDMachineCode) :
     ∃ (K : ℕ) (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (R : MultiTapeTM K Bool Q)
       (j : Fin K) (entry accept reject : Q), accept ≠ reject ∧
