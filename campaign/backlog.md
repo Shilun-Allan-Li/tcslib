@@ -1726,7 +1726,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Ruled (user, 2026-10-26): keep D1 and answer with the convention**, now in `policy.md` and
     `TEMPLATE.md`. Lean refuses to seal a reducible `abbrev` (probe in the gate's evidence), and
     the C1 briefs and gate 34 already allow the reading. The minor (the sketch's seam step) is
-    fixed by `948df2f9`, docstring only. Round 2 staged.
+    fixed by `948df2f9`, docstring only. **Round 2 staged:**
+    `exchange/outbox/gates/80-u2-universal-fill-r2-gate/`, bundle `fe5f0f8a…`, 29 sections, the
+    records at `7a1370d7`.
+  - **A+ opened as #169** (2026-10-26; `lean/interpreter-startup` at `4bee8b09`, the campaign
+    merged in after #164). **Gate 79 staged:** `exchange/outbox/gates/79-interpreter-startup-api-gate/`,
+    bundle `e5fd8b80…`, 61 sections, the records at `7a1370d7`. The elaboration was re-run
+    against `oleans-la1m` with the same results. Its 5-module replay chains after #167's.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
