@@ -22,7 +22,10 @@ true.
 | 8 | note | The seal's control maps describe the pre-overlay file; add 28 to their lines. | **Agreed;** noted here. |
 | 4–7, 9, 11, 12 | notes | Integrity; faithfulness; boundary cases; the consumers; the screen; the elaboration and axioms; lint. | No action. RI-1 retires when #167 lands. |
 
-**Merge state. #167: not yet clear to merge.** The gate is closed. #165 merged (2026-10-26), and
+**Merge state. #167: clear to merge** (2026-10-26). `replay-lriseqm` passed (user, 2026-10-26): 91
+of 91 modules, static-equal (0 mismatches, 49 in total; `evidence/merged-tree/replay-lriseqm.log`,
+`-static.txt`) at the head `508e0eab`, whose base is the campaign branch; the campaign's Lean has
+not moved since #164's merge. Its snapshot is `oleans-lriseqm`. Before the replay: the gate was closed. #165 merged (2026-10-26), and
 #167 is retargeted to the campaign branch (head `98d56a71`; its diff is its two files). #164 (A1)
 goes first. Then the campaign is merged into #167, and its 91-module replay runs from A1's snapshot
 `oleans-la1m`. A trial merge on A1's tree gave the same 91-module list.

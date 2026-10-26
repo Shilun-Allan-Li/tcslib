@@ -70,8 +70,10 @@ rule binds TCSlib's own definitions: core and Mathlib definitions may reduce in 
 or `show` step, but are never passed to `simp`, `rw` or `unfold`; use their equation lemmas
 (`Bool.toNat_true`, not `simp [Bool.toNat]`) (user, 2026-10-23).
 **Reducible abbreviations are notation** (user, 2026-10-26). Lean unfolds a TCSlib `abbrev` (such
-as `Turing.Cfg.Halted`, `cfg.state = none`) at every step and refuses to seal it: `attribute
-[local irreducible]` fails on a reducible declaration. So reading an abbreviation through its body,
+as `Turing.Cfg.Halted`, `cfg.state = none`) at every step, and the standard seal cannot cover it:
+under Lean's default reducibility validation, `attribute [local irreducible]` fails on a reducible
+declaration (only the unsafe override `set_option allowUnsafeReducibility true`, which the
+campaign's seals do not use, lifts the check). So reading an abbreviation through its body,
 for example `¬ c.Halted` as `c.state ≠ none`, is allowed and is not a definitional closure. A
 consumer names it in `simp`, `rw` or `unfold` only through a published lemma where one exists, and
 a new public `abbrev` still lands with its `_iff` or `_eq` lemma.

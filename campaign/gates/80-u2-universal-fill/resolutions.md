@@ -1,4 +1,4 @@
-# U2, the `k`-tape universal machines (PR #168, a fill gate): resolutions (round 1; FAIL → round 2)
+# U2, the `k`-tape universal machines (PR #168, a fill gate): resolutions (round 1 FAIL; round 2 PASS; gate CLOSED)
 
 **Gate:** the fill gate of PR #168 (`lean/u2-universal-landing` at `fd995ec1`). Pack `pack.md`;
 bundle SHA-256 `7de06b274ad75beee61c39b27bb70f6845d95648260b53fc911440d52d75b0b5` (164 sections),
@@ -17,3 +17,18 @@ the records at `a1c9ec5d`. **Round 1: FAIL, 0 blockers, 1 major, 1 minor, 10 not
 | 3–12 | notes | Integrity and scope; the machine and configuration definitions; F2's ruler layout; U2-U's constants and ledger; U2-E's constant and Implementation paragraph; the converses and boundary cases; the duplication screens; rule 11 and the evidence; F5 and F9; the pending replay. | No action. Note 12's replay is #168's merge condition: the 3-module closure chained from the snapshot #167's replay leaves. |
 
 **Round 2** audits the answer to finding 1 and the fix of finding 2 (`pack-r2.md`).
+
+## Round 2: PASS, 0 blockers, 0 majors, 2 minors, 6 notes; gate CLOSED
+
+Pack `pack-r2.md`; bundle SHA-256 `fe5f0f8ad8bd2b5acceed600d774c645f266eccc2fd73878cdcb6df0b62cc764`
+(29 sections), the Lean at `948df2f9`, the records at `7a1370d7` (`findings-r2.md`, verbatim).
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | The extended probe covers the proof-term walk, not every source-level tactic argument: 17 external theorem names cited in the source have no check. | **Fixed.** The 17 (`Fin.coe_castAdd`, `Fin.coe_castLE`, `Fin.coe_castLEEmb`, `Fin.coe_castSucc`, `Fin.coe_natAdd`, `Fin.val_last`, `List.cons_append`, `List.getElem_cons_succ`, `List.getElem_cons_zero`, `List.length_cons`, `List.length_nil`, `MultiTapeTM.initCfg_with_q₀`, `Nat.add_zero`, `Nat.mul_zero`, `SignType.coe_one`, `SignType.pos_eq_one`, `true_and`) are added, found as the external `thm` rows of the review's `out/20b-tactic-arg-kinds.out` absent from the probe (`evidence/round2/tactic-args-not-in-probe.txt`). **614 checks of 613 names, 0 errors**, against `oleans-lriseqm` (`evidence/round2/LandingImportProbe2.*`). The remaining rows are the core simproc `reduceIte` and the module's own privates. |
+| 2 | minor | "Lean cannot seal an abbreviation" is stronger than shown: the error names the override `set_option allowUnsafeReducibility true`. | **Fixed in the standards.** `policy.md` and `TEMPLATE.md` now say the standard seal cannot cover it: Lean's default reducibility validation refuses the attribute, and the unsafe override is not used in seals. The convention, which round 2 accepts, does not depend on the stronger claim. |
+| 3–8 | notes | Integrity and the documentation-only delta; the convention resolves round 1's major; the sketch fix; the axioms; no reopened point; the pending replay. | No action. Note 8's replay is #168's merge condition. |
+
+**Merge state. #168: not yet clear to merge.** The gate is closed. Its 3-module merged-tree replay
+(`UniversalK`, `SelfUniversal`, the `TuringMachine` facade) runs once #167 has merged, chained from
+`oleans-lriseqm` (or from #166's snapshot if #166 merges first). #168 then merges the campaign.
