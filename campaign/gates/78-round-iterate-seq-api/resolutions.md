@@ -22,7 +22,10 @@ true.
 | 8 | note | The seal's control maps describe the pre-overlay file; add 28 to their lines. | **Agreed;** noted here. |
 | 4–7, 9, 11, 12 | notes | Integrity; faithfulness; boundary cases; the consumers; the screen; the elaboration and axioms; lint. | No action. RI-1 retires when #167 lands. |
 
-**Merge state. #167: clear to merge** (2026-10-26). `replay-lriseqm` passed (user, 2026-10-26): 91
+**Merged (user, 2026-10-26)** as `4c8c2e7e9ac3c0bd063cb3df074558de073bf7bf`. The campaign's TCSlib
+tree after the merge equals the replayed head `508e0eab`'s, so `oleans-lriseqm` is the campaign's
+snapshot after #167. RI-1 is retired (`campaign/duplication-ledger.md`). Before the merge:
+**#167: clear to merge** (2026-10-26). `replay-lriseqm` passed (user, 2026-10-26): 91
 of 91 modules, static-equal (0 mismatches, 49 in total; `evidence/merged-tree/replay-lriseqm.log`,
 `-static.txt`) at the head `508e0eab`, whose base is the campaign branch; the campaign's Lean has
 not moved since #164's merge. Its snapshot is `oleans-lriseqm`. Before the replay: the gate was closed. #165 merged (2026-10-26), and

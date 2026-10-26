@@ -1,4 +1,4 @@
-# The interpreter startup (PR #169, A+, an API gate): resolutions (round 1; FAIL → round 2)
+# The interpreter startup (PR #169, A+, an API gate): resolutions (round 1 FAIL; round 2 PASS; gate CLOSED)
 
 **Gate:** the API gate of PR #169 (`lean/interpreter-startup` at `4bee8b09`). Pack `pack.md`;
 bundle SHA-256 `e5fd8b80b595cbfa8bc89115f18c58971352634efef460d804c34c082955aeba` (61 sections),
@@ -19,3 +19,17 @@ or in the re-pointed core (notes 5–10).
 
 **Round 2** audits the probe, the recorded route, the docstring fix and the completed bundle
 (`pack-r2.md`).
+
+## Round 2: PASS, 0 blockers, 0 majors, 0 minors, 9 notes; gate CLOSED
+
+Pack `pack-r2.md`; bundle SHA-256 `854dddc5cc4d6c97cdcfd0b9919ec07acb0c2dcf99d76e8e18cbc28a7005f0c9`
+(86 sections), the Lean at `df992ad7`, the records at `e259de60` (`findings-r2.md`, verbatim).
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 3 | note | The tape map is consistent and `p = F.k` supplies the missing bank; the junction stays a B5a pre-ship obligation, and its acceptance argument must also bridge the window `x.take t` to `x`. | **Agreed; recorded** in the design note's "As built" for B5a's brief (the window bridge, as the B5a review records). |
+| 1, 2, 4–9 | notes | Integrity; the probe non-vacuous; the docstring fix; the seal recipe reproducible; the semantic comparison now complete, with no new family; no regression; the contract and ledger; the attestations. | No action. |
+
+**Merge state. #169: not yet clear to merge.** The gate is closed. Its 5-module replay (the kit,
+`NDCodeSimulator`, `NTimeHierarchy` and the two facades) chains after #166's and #168's, from the
+snapshot the last of them leaves, after the campaign is merged in.

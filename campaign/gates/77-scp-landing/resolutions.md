@@ -23,4 +23,7 @@ and the records at `d01e302531c5429cabb7bb9b8e0daf52b9734fcf`. Dispatched before
 campaign branch, and its 2-module replay (`Savitch`, the `SpaceComplexity` facade) runs from A1's
 snapshot. **#164 merged (2026-10-26);** #166 is retargeted to the campaign branch (its diff is
 `Savitch`). Its two modules lie inside #167's 91-module closure, so its replay chains after
-#167's.
+#167's. **#167 merged (2026-10-26).** The campaign is merged into #166 (head
+`abf3887f0b339942377bd433d562749b7d586585`; `Savitch` keeps the gated blob). `replay-lscpm`
+(`evidence/merged-tree/`), 2 modules chained from `oleans-lriseqm`, is written; its precheck
+passed.

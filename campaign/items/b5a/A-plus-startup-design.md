@@ -136,4 +136,5 @@ it, with the usual seal and controls and a consumer probe at `p = 0`, which is B
   `x.take t`), the counter (`jctr`), the table (`jtbl`) and the summary (`jsm`). The junction
   reads `CodeSimulator`'s private loop lemmas, so B5a's pre-ship proves it, in a `CodeSimulator`
   overlay, before B5a issues. Gate 79's consumer probe shows the reservation at `p = F.k`
-  (`b5aP_startup`, round 2).
+  (`b5aP_startup`, round 2). The loop then runs on the window, so B5a's acceptance argument
+  must also bridge `x.take t` to `x` (gate 79, round 2, note 3; the B5a review).

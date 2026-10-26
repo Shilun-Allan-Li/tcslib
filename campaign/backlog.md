@@ -1745,6 +1745,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Gate 80, round 2: PASS (0/0/2/6), gate closed** (both
     minors fixed: the probe at 614 of 613 names, and the sealing statement qualified).
     **#167: replay-lriseqm passed (91 of 91); clear to merge.**
+    **Gate 79, round 2: PASS (0/0/0/9), gate closed.** **#167 merged (2026-10-26, `4c8c2e7e`);
+    RI-1 retired.** #166 is merged with the campaign; `replay-lscpm` (2 modules from
+    `oleans-lriseqm`) is written. Then #168 (3 modules) and #169 (5) chain in turn. E-Q's issue
+    conditions (A1 and #167 landed) now hold.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
