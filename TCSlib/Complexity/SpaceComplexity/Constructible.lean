@@ -38,6 +38,7 @@ results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
 
 ## Main results (proved)
 
+* `Complexity.spaceConstructible_iff` — the definition as an equivalence.
 * `Complexity.spaceConstructible_logSpace` — `log` is space-constructible.
 * `Complexity.spaceConstructible_linear` — `n + 1` is space-constructible.
 
@@ -61,6 +62,15 @@ def SpaceConstructible (S : ℕ → ℕ) : Prop :=
   (∀ n, logSpace n ≤ S n) ∧
   ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool,
     M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n
+
+/-- **Space constructibility, unfolded**: `S` is space constructible exactly when
+`logSpace n ≤ S n` for every `n` and, for some constant `c > 0`, some machine computes
+`x ↦ (S |x|).bits` in space `c · S` (`Turing.FinTM.ComputesInSpace`). -/
+theorem spaceConstructible_iff (S : ℕ → ℕ) :
+    SpaceConstructible S ↔
+      (∀ n, logSpace n ≤ S n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool,
+        M.ComputesInSpace (fun x => (S x.length).bits) fun n => c * S n :=
+  Iff.rfl
 
 /-- Positive binary words have exactly the normalized logarithmic width. -/
 private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
