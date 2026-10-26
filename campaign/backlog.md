@@ -1740,7 +1740,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     tapes blank), and its pre-ship proves the junction into `h1HostedVerdict_effect` in a
     `CodeSimulator` overlay before B5a issues. The minors are fixed: the core's paragraph
     (`df992ad7`, docstring only) and the bundle (the core seal's sources and recipe, all 18
-    population files). Round 2 staged. **Gate 80, round 2: PASS (0/0/2/6), gate closed** (both
+    population files). **Round 2 staged:** `exchange/outbox/gates/79-interpreter-startup-api-r2-gate/`,
+    bundle `854dddc5…`, 86 sections, the Lean at `df992ad7`, the records at `e259de60`.
+    **Gate 80, round 2: PASS (0/0/2/6), gate closed** (both
     minors fixed: the probe at 614 of 613 names, and the sealing statement qualified).
     **#167: replay-lriseqm passed (91 of 91); clear to merge.**
   - **Rulings on the reviews (user, 2026-10-24):**
