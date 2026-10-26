@@ -1,0 +1,62 @@
+/-
+Seal controls for the E-Q route probe (`EQRouteProbe.lean`): for each of the seven sealed TCSlib
+definitions, one goal that closes by `rfl` with nothing sealed and fails under the seal. A probe
+record, not library code. Expected: the unsealed section elaborates; the sealed section has
+exactly seven errors, one per control.
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing.NTimeDiag
+
+section Unsealed
+
+example (T : ℕ → ℕ) : Complexity.TimeConstructible T =
+    ((∀ n, n ≤ T n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
+      M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))) := rfl
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x, M.ComputesInTime x (f x) (T x.length) := rfl
+example (M : FinTM Bool) (x : List Bool) (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    M.tm.runFrom c t = M.tm.step^[t] c := rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.initCfg x = Cfg.init M.tm.q₀ x := rfl
+example (w : List Bool) : counterValue w = Nat.ofDigits 2 (w.map Bool.toNat) := rfl
+example (u v : List Bool) : pairEncode u v = (u.flatMap fun b => [b, b]) ++ [false, true] ++ v :=
+  rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Complexity.TimeConstructible Turing.FinTM.ComputesInTime
+  Turing.FinTM.ComputesFunInTime Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg
+  Turing.counterValue Turing.pairEncode
+
+example (T : ℕ → ℕ) : Complexity.TimeConstructible T =
+    ((∀ n, n ≤ T n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
+      M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))) := rfl
+example (M : FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := rfl
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x, M.ComputesInTime x (f x) (T x.length) := rfl
+example (M : FinTM Bool) (x : List Bool) (c : Cfg M.k Bool M.State x) (t : ℕ) :
+    M.tm.runFrom c t = M.tm.step^[t] c := rfl
+example (M : FinTM Bool) (x : List Bool) : M.tm.initCfg x = Cfg.init M.tm.q₀ x := rfl
+example (w : List Bool) : counterValue w = Nat.ofDigits 2 (w.map Bool.toNat) := rfl
+example (u v : List Bool) : pairEncode u v = (u.flatMap fun b => [b, b]) ++ [false, true] ++ v :=
+  rfl
+
+end Sealed
+
+end Turing.NTimeDiag

@@ -1,0 +1,106 @@
+-- SEAL-ATTRIBUTES-BEGIN
+attribute [local irreducible] Cfg.init Cfg.inputSymbol Cfg.mapState Cfg.workTapeSymbols
+  FinTM.ComputesFunInTime FinTM.ComputesInTime FinTM.bufferTape MultiTapeTM.initCfg
+  MultiTapeTM.runFrom MultiTapeTM.spaceUsed MultiTapeTM.spaceUsedByTape MultiTapeTM.step
+  MultiTapeTM.visitedByTapeHead StepBlock.forwardLoopCfg StepBlock.summaryCells tableBitsK
+  embedEmitCfg embedEmitTM inputMoveAction tapeAction moveInputPos pairEncode unaryFin
+  rewindTM rulerHostCfg seamCompTM serializeK
+attribute [-simp] Cfg.init MultiTapeTM.initCfg
+-- SEAL-EXTRA
+-- SEAL-ATTRIBUTES-END
+
+/-! Review controls: each closes by `rfl` (or `simp`, for the two erased `@[simp]` definitions)
+only by unfolding the definition named in its comment. -/
+
+-- C01 Cfg.init
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).output = [] := rfl
+-- C02 Cfg.inputSymbol
+example {S : Type} {x : List Bool} (q : Option S) (tp : Fin 0 → ℤ → Option Bool)
+    (hp : Fin 0 → ℤ) : (⟨q, 0, tp, hp, []⟩ : Cfg 0 Bool S x).inputSymbol = none := rfl
+-- C03 Cfg.mapState
+example {k : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Cfg k Bool S x) :
+    (c.mapState f).output = c.output := rfl
+-- C04 Cfg.workTapeSymbols
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+-- C05 FinTM.ComputesFunInTime
+example (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ input, M.ComputesInTime input (f input) (T input.length) := rfl
+-- C06 FinTM.ComputesInTime
+example (M : FinTM Bool) (i o : List Bool) (t : ℕ) :
+    M.ComputesInTime i o t = ∃ s, M.tm.ComputesInTimeAndSpace i o t s := rfl
+-- C07 FinTM.bufferTape
+example : FinTM.bufferTape [true] 0 = some true := rfl
+-- C08 MultiTapeTM.initCfg
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+-- C09 MultiTapeTM.runFrom
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) {x : List Bool} (c : Cfg k Bool S x) :
+    M.runFrom c 1 = M.step c := rfl
+-- C10 MultiTapeTM.spaceUsed
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) {x : List Bool} (c : Cfg k Bool S x)
+    (t : ℕ) : M.spaceUsed c t = ∑ i, M.spaceUsedByTape c t i := rfl
+-- C11 MultiTapeTM.spaceUsedByTape
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) {x : List Bool} (c : Cfg k Bool S x)
+    (t : ℕ) (i : Fin k) : M.spaceUsedByTape c t i = (M.visitedByTapeHead c t i).card := rfl
+-- C12 MultiTapeTM.step
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) {x : List Bool}
+    (ip : Fin (x.length + 2)) (tp : Fin k → ℤ → Option Bool) (hp : Fin k → ℤ) (o : List Bool) :
+    M.step (⟨none, ip, tp, hp, o⟩ : Cfg k Bool S x) = ⟨none, ip, tp, hp, o⟩ := rfl
+-- C13 MultiTapeTM.visitedByTapeHead
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) {x : List Bool} (c : Cfg k Bool S x)
+    (t : ℕ) (i : Fin k) : M.visitedByTapeHead c t i =
+      (Finset.range (t + 1)).image fun t' => (M.runFrom c t').workTapePos i := rfl
+-- C14 StepBlock.forwardLoopCfg
+example {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q) (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) : (StepBlock.forwardLoopCfg entry M c).output = c.output :=
+  rfl
+-- C15 StepBlock.summaryCells
+example (w : List Bool) : StepBlock.summaryCells none w 0 = none := rfl
+-- C16 tableBitsK
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+-- C17 embedEmitCfg
+example {m k : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin k)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (pre : List Bool)
+    (c : Cfg m Bool S x) : (embedEmitCfg ι tapes heads pre c).state = c.state := rfl
+-- C18 embedEmitTM
+example {m k : ℕ} {S : Type} (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+    (embedEmitTM ι M).q₀ = M.q₀ := rfl
+-- C19 inputMoveAction
+example {k : ℕ} {S : Type} (q : S) :
+    (inputMoveAction (k := k) (Symbol := Bool) 0 q).state = some q := rfl
+-- C20 tapeAction
+example {k : ℕ} {S : Type} (i : Fin k) (q : S) :
+    (tapeAction (Symbol := Bool) i 0 none 0 q).state = some q := rfl
+-- C21 moveInputPos
+example : moveInputPos (n := 0) (0 : Fin 2) 0 = 0 := rfl
+-- C22 pairEncode
+example : pairEncode [] [] = [false, true] := rfl
+-- C23 unaryFin
+example : unaryFin (0 : Fin 1) = [false] := rfl
+-- C24 rewindTM
+example (k : ℕ) (i : Fin k) : (rewindTM (Symbol := Bool) k i).q₀ = RewindPhase.start := rfl
+-- C25 rulerHostCfg
+example {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+    (q : Option Q) (c : Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := rfl
+-- C26 seamCompTM
+example {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (e : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (en : S₂) : (seamCompTM M₁ e M₂ en).q₀ = Sum.inl M₁.q₀ := rfl
+-- C27 serializeK
+example {k n : ℕ} (M : MultiTapeTM k Bool (Fin (n + 1))) :
+    serializeK M = pairEncode n.bits (unaryFin M.q₀ ++ tableBitsK M.tr) := rfl
+-- C28 MultiTapeTM.initCfg erased from simp (with Cfg.init)
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    (M.initCfg x).output = [] := by simp
+-- C29 Cfg.init erased from simp
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).workTapePos = fun _ => 0 := by simp
+-- SEAL-CONTROLS-EXTRA
+-- SEAL-CONTROLS-END
+

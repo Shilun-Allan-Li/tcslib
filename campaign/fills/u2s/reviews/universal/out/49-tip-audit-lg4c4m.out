@@ -1,0 +1,889 @@
+'Turing.EffectiveCodeK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveCodeK.toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveCodeK.ofSerialize' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode.toK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode2.toK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode.toK_toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode2.toK_toFinTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode.toK_machine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.EffectiveMachineCode2.toK_machine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_cleanCanonizer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_cleanCanonizer_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_cleanCanonizer_halts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_lengthBound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_cleanCanonizer_computes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferedHalt_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_prefix_first_halt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_cleanCanonizer_first_halt' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_captureInitial' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_captureTM' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_capture_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_tapeBlocks_zeroLeft' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_prefix_return_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_capturedPrefix_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_capturedPrefix_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_serialized_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferLeaf' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_bufferLeaf_run' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferSkip_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferAdvance' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_bufferAdvance_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferSeek' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_bufferSeek_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferBack_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferClear' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_bufferClear_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferFinish' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_bufferFinish_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_bufferCleanup' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_bufferCleanup_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_RewindState' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_inputRewind' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.ss_inputRewind_done' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_inputRewind_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_live_map' depends on axioms: [Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_block_updates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_sourceSlot' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_captureTape' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.ss_capture_indices' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfStartupTMK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_encode_init_tapes' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_encode_init_fields' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_encode_halt' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_embed_init' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loopTM' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_init_mapState' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_init' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_pre_live' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_run' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_forward' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_live' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_converse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_loop_space' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversalK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_scanTM' depends on axioms: [propext]
+'_private.Probe.TipAudit.0.Turing.uk_scanCfg' does not depend on any axioms
+'_private.Probe.TipAudit.0.Turing.uk_scan_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_scan_step' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_scan_pair' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_scan_header' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_scan_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_scan_ruler' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_headerTM' depends on axioms: [propext]
+'_private.Probe.TipAudit.0.Turing.uk_header_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_suffixStartupTM' depends on axioms: [propext, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_suffixCfg' depends on axioms: [propext]
+'_private.Probe.TipAudit.0.Turing.uk_suffixStartup_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_ruler_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
+'_private.Probe.TipAudit.0.Turing.uk_embed_suffix' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.universalK' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfStartupTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.exists_selfUniversal' depends on axioms: [propext, Classical.choice, Quot.sound]
+LOCAL reached: 137: [Turing.EffectiveCodeK,
+ Turing.EffectiveCodeK.machine,
+ Turing.EffectiveCodeK.mk,
+ Turing.EffectiveCodeK.numStates,
+ Turing.EffectiveCodeK.toFinTM,
+ Turing.exists_selfUniversalK,
+ Turing.exists_selfUniversalK._proof_1_1,
+ Turing.exists_selfUniversalK._proof_1_10,
+ Turing.exists_selfUniversalK._proof_1_11,
+ Turing.exists_selfUniversalK._proof_1_2,
+ Turing.exists_selfUniversalK._proof_1_3,
+ Turing.exists_selfUniversalK._proof_1_4,
+ Turing.exists_selfUniversalK._proof_1_5,
+ Turing.exists_selfUniversalK._proof_1_6,
+ Turing.exists_selfUniversalK._proof_1_7,
+ Turing.exists_selfUniversalK._proof_1_8,
+ Turing.exists_selfUniversalK._proof_1_9,
+ Turing.universalK,
+ Turing.universalK._proof_1_1,
+ Turing.universalK._proof_1_2,
+ Turing.universalK._proof_1_3,
+ Turing.universalK._proof_1_4,
+ Turing.universalK._proof_1_5,
+ Turing.universalK._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_embed_init,
+ _private.Probe.TipAudit.0.Turing.uk_embed_init._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_embed_init._proof_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_embed_init._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_embed_init._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_7,
+ _private.Probe.TipAudit.0.Turing.uk_embed_suffix._proof_1_8,
+ _private.Probe.TipAudit.0.Turing.uk_encode_halt,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_fields,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_encode_init_tapes._proof_1_7,
+ _private.Probe.TipAudit.0.Turing.uk_headerTM,
+ _private.Probe.TipAudit.0.Turing.uk_headerTM.eq_1,
+ _private.Probe.TipAudit.0.Turing.uk_header_run,
+ _private.Probe.TipAudit.0.Turing.uk_header_run._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_header_run._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_init_mapState,
+ _private.Probe.TipAudit.0.Turing.uk_loopTM,
+ _private.Probe.TipAudit.0.Turing.uk_loopTM._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_loopTM.eq_1,
+ _private.Probe.TipAudit.0.Turing.uk_loop_converse,
+ _private.Probe.TipAudit.0.Turing.uk_loop_forward,
+ _private.Probe.TipAudit.0.Turing.uk_loop_forward._simp_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_loop_init,
+ _private.Probe.TipAudit.0.Turing.uk_loop_live,
+ _private.Probe.TipAudit.0.Turing.uk_loop_live._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_loop_live._simp_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_loop_pre_live,
+ _private.Probe.TipAudit.0.Turing.uk_loop_run,
+ _private.Probe.TipAudit.0.Turing.uk_loop_space,
+ _private.Probe.TipAudit.0.Turing.uk_loop_space._proof_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_ruler_fields,
+ _private.Probe.TipAudit.0.Turing.uk_scanCfg,
+ _private.Probe.TipAudit.0.Turing.uk_scanCfg.congr_simp,
+ _private.Probe.TipAudit.0.Turing.uk_scanTM,
+ _private.Probe.TipAudit.0.Turing.uk_scanTM._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_10,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_11,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_12,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_7,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_8,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_1_9,
+ _private.Probe.TipAudit.0.Turing.uk_scan_header._proof_2,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_10,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_11,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_12,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_13,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_7,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_1_9,
+ _private.Probe.TipAudit.0.Turing.uk_scan_pair._proof_2,
+ _private.Probe.TipAudit.0.Turing.uk_scan_ruler,
+ _private.Probe.TipAudit.0.Turing.uk_scan_ruler._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_scan_ruler._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_scan_ruler._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_scan_ruler._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_scan_ruler._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_scan_run,
+ _private.Probe.TipAudit.0.Turing.uk_scan_run._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_1_7,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_1_8,
+ _private.Probe.TipAudit.0.Turing.uk_scan_step._proof_2,
+ _private.Probe.TipAudit.0.Turing.uk_scan_zero,
+ _private.Probe.TipAudit.0.Turing.uk_scan_zero._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_scan_zero._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_suffixCfg,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartupTM,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartupTM._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartupTM._proof_2,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartupTM._proof_3,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartupTM._proof_4,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartupTM.eq_1,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_1,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_2,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_3,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_4,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_5,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_6,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_7,
+ _private.Probe.TipAudit.0.Turing.uk_suffixStartup_run._proof_1_8]
+DIRECT-TCSLIB 116:
+Turing.Action | inductive | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg | inductive | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.Halted | def[reducible] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.ext | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.init | def[semireducible,@[simp]] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.init_inputPos | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.init_output | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.init_state | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.init_workTapePos | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.init_workTapes | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.inputPos | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.inputSymbol | def[semireducible] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.mapState | def[semireducible] | TCSlib.Complexity.TuringMachine.StateRenaming
+Turing.Cfg.mapState_inputPos | thm | TCSlib.Complexity.TuringMachine.StateRenaming
+Turing.Cfg.mapState_mapState | thm | TCSlib.Complexity.TuringMachine.Build.InputRewind
+Turing.Cfg.mapState_output | thm | TCSlib.Complexity.TuringMachine.StateRenaming
+Turing.Cfg.mapState_state | thm | TCSlib.Complexity.TuringMachine.StateRenaming
+Turing.Cfg.mapState_workTapePos | thm | TCSlib.Complexity.TuringMachine.StateRenaming
+Turing.Cfg.mapState_workTapes | thm | TCSlib.Complexity.TuringMachine.StateRenaming
+Turing.Cfg.mk | ctor | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.output | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.state | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.workTapePos | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.workTapeSymbols | def[semireducible] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.Cfg.workTapes | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.FinTM | inductive | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.ComputesFunInTime | def[semireducible] | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.ComputesInTime | def[semireducible] | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.ComputesInTime.mono | thm | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.ComputesInTime.spaceUsed_le_of_halt | thm | TCSlib.Complexity.SpaceComplexity.ConfigCount
+Turing.FinTM.State | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.bufferTape | def[semireducible] | TCSlib.Complexity.TuringMachine.Simulation
+Turing.FinTM.bufferTape_of_neg | thm | TCSlib.Complexity.TuringMachine.Simulation
+Turing.FinTM.computesInTime_iff | thm | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.k | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.mk | ctor | TCSlib.Complexity.TuringMachine.Finite
+Turing.FinTM.tm | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Finite
+Turing.Lockstep | inductive | TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+Turing.Lockstep.cut | thm | TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+Turing.Lockstep.runFrom | thm | TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+Turing.MultiTapeTM | inductive | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.exists_first_halt | thm | TCSlib.Complexity.TuringMachine.Finite
+Turing.MultiTapeTM.initCfg | def[semireducible,@[simp]] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.initCfg_eq | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.mem_visitedByTapeHead_iff | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.mk | ctor | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.output_prefix | thm | TCSlib.Complexity.TuringMachine.Finite
+Turing.MultiTapeTM.q₀ | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.runFrom | def[semireducible] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.runFrom_add | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.runFrom_output_eq_of_halt | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.runFrom_state_ne_none_of_le | thm | TCSlib.Complexity.TuringMachine.Finite
+Turing.MultiTapeTM.runFrom_succ_eq_step | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.runFrom_with_q₀ | thm | TCSlib.Complexity.TuringMachine.Finite
+Turing.MultiTapeTM.runFrom_zero | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.spaceUsed | def[semireducible] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.spaceUsedByTape | def[semireducible] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.spaceUsedByTape_eq_card | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.spaceUsed_eq_sum | thm | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.step | def[semireducible] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.tr | def[reducible,projection] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.visitedByTapeHead | def[semireducible] | TCSlib.Complexity.TuringMachine.Deterministic
+Turing.MultiTapeTM.visitedByTapeHead_mono | thm | TCSlib.Complexity.SpaceComplexity.ConfigCount
+Turing.RewindPhase | inductive | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.RewindPhase.done | ctor | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.RewindPhase.start | ctor | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.StepBlock.exists_forwardLoopTM | thm | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.forwardLoopCfg | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.forwardLoopCfg_inputPos | thm | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.forwardLoopCfg_output | thm | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.forwardLoopCfg_state | thm | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.forwardLoopCfg_workTapePos | thm | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.forwardLoopCfg_workTapes | thm | TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+Turing.StepBlock.summaryCells | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.StepBlock
+Turing.StepBlock.summaryCells_eq | thm | TCSlib.Complexity.TuringMachine.Build.StepBlock
+Turing.embedEmitCfg | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitCfg_eq | thm | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitCfg_output | thm | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitCfg_state | thm | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitTM | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitTM_runFrom | thm | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitTM_visitedByTapeHead | thm | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.embedEmitTM_visitedByTapeHead_frame | thm | TCSlib.Complexity.TuringMachine.Build.Embed
+Turing.exists_rulerHostTM | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.inputMoveAction | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.Catalog
+Turing.inputSymbolInner | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.instDecidableEqRewindPhase | def[semireducible,instance] | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.instFintypeRewindPhase | def[semireducible,instance] | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.instInhabitedCfg.default._proof_1 | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.length_pairEncode | thm | TCSlib.Complexity.TuringMachine.Encoding
+Turing.moveInputPos | def[semireducible] | TCSlib.Complexity.TuringMachine.Configuration
+Turing.moveInputPos_pos_of_ne_right | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.moveInputPos_pos_of_ne_right._proof_1 | thm | TCSlib.Complexity.TuringMachine.Configuration
+Turing.pairEncode | def[semireducible] | TCSlib.Complexity.TuringMachine.Encoding
+Turing.pairEncode_drop | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rewindTM | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.rewindTM_run_ofCfg | thm | TCSlib.Complexity.TuringMachine.Build.Rewind
+Turing.rulerHostCfg | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rulerHostCfg._proof_2 | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rulerHostCfg_inputPos | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rulerHostCfg_output | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rulerHostCfg_state | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rulerHostCfg_workTapePos | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.rulerHostCfg_workTapes | thm | TCSlib.Complexity.TuringMachine.Build.InputDevice
+Turing.seamCompTM | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.Seam
+Turing.seamCompTM_firstReturn_ofCfg | thm | TCSlib.Complexity.TuringMachine.Build.Seam
+Turing.seamCompTM_runFrom_left | thm | TCSlib.Complexity.TuringMachine.Build.Seam
+Turing.seamCompTM_runFrom_right | thm | TCSlib.Complexity.TuringMachine.Build.Seam
+Turing.seamCompTM_run_ofCfg | thm | TCSlib.Complexity.TuringMachine.Build.Seam
+Turing.seamCompTM_visitedByTapeHead_ofCfg | thm | TCSlib.Complexity.TuringMachine.Build.Seam
+Turing.serializeK | def[semireducible] | TCSlib.Complexity.TuringMachine.CodeSimulator
+Turing.step_of_tapeAction_write | thm | TCSlib.Complexity.TuringMachine.Build.Catalog
+Turing.tableBitsK | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.StepBlock
+Turing.tapeAction | def[semireducible] | TCSlib.Complexity.TuringMachine.Build.Catalog
+Turing.unaryFin | def[semireducible] | TCSlib.Complexity.TuringMachine.Encoding
+DIRECT-CORE/MATHLIB 440:
+AddCancelCommMonoid.toAddCancelMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddCancelMonoid.toAddRightCancelMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddCommGroup.toAddGroup | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddCommGroup.toDivisionAddCommMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddCommMagma.toAdd | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddCommMonoid.toAddMonoid | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddCommMonoidWithOne.toAddMonoidWithOne | def[semireducible,instance,projection] | Mathlib.Data.Nat.Cast.Defs
+AddCommSemigroup.toAddCommMagma | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddGroup.toSubNegMonoid | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddGroupWithOne.toAddMonoidWithOne | def[semireducible,instance,projection] | Mathlib.Data.Int.Cast.Defs
+AddMonoid.toAddSemigroup | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddMonoid.toAddZeroClass | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddMonoid.toNatSMul | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddMonoidWithOne.toAddMonoid | def[semireducible,instance,projection] | Mathlib.Data.Nat.Cast.Defs
+AddMonoidWithOne.toNatCast | def[semireducible,instance,projection] | Mathlib.Data.Nat.Cast.Defs
+AddMonoidWithOne.toOne | def[semireducible,instance,projection] | Mathlib.Data.Nat.Cast.Defs
+AddRightCancelMonoid.toAddRightCancelSemigroup | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+AddRightCancelSemigroup.toIsRightCancelAdd | thm | Mathlib.Algebra.Group.Defs
+AddSemigroup.toAdd | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddZero.toAdd | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddZero.toZero | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+AddZeroClass.toAddZero | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+And | inductive | Init.Prelude
+And.casesOn | def[reducible] | Init.Prelude
+And.intro | ctor | Init.Prelude
+And.left | thm | Init.Prelude
+And.right | thm | Init.Prelude
+Bool | inductive | Init.Prelude
+Bool.casesOn | def[reducible] | Init.Prelude
+Bool.false | ctor | Init.Prelude
+Bool.false_eq_true | thm | Init.Data.Bool
+Bool.true | ctor | Init.Prelude
+Bool.true_eq_false | thm | Init.Data.Bool
+Classical.propDecidable | def[semireducible] | Init.Classical
+CommRing.toNonUnitalCommRing | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+CommSemiring.toSemiring | def[semireducible,instance,projection] | Mathlib.Algebra.Ring.Defs
+DFunLike.coe | def[semireducible,projection] | Mathlib.Data.FunLike.Basic
+Decidable | inductive | Init.Prelude
+Decidable.byContradiction | thm | Init.Core
+Decidable.casesOn | def[reducible] | Init.Prelude
+Decidable.decide | def[semireducible] | Init.Prelude
+DecidableEq | def[reducible] | Init.Prelude
+Distrib.toAdd | def[semireducible,instance,projection] | Mathlib.Algebra.Ring.Defs
+Distrib.toMul | def[semireducible,instance,projection] | Mathlib.Algebra.Ring.Defs
+Eq | inductive | Init.Prelude
+Eq.mp | def[semireducible] | Init.Core
+Eq.mpr | def[semireducible] | Init.Core
+Eq.ndrec | def[reducible,@[simp]] | Init.Prelude
+Eq.rec | recursor | Init.Prelude
+Eq.refl | ctor | Init.Prelude
+Eq.symm | thm | Init.Prelude
+Eq.trans | thm | Init.Prelude
+Exists | inductive | Init.Core
+Exists.casesOn | def[reducible] | Init.Core
+Exists.intro | ctor | Init.Core
+False | inductive | Init.Prelude
+Fin | inductive | Init.Prelude
+Fin.addCases | def[semireducible] | Init.Data.Fin.Lemmas
+Fin.addCases_left | thm | Init.Data.Fin.Lemmas
+Fin.addCases_right | thm | Init.Data.Fin.Lemmas
+Fin.castAdd | def[semireducible] | Init.Data.Fin.Basic
+Fin.castLE | def[semireducible] | Init.Data.Fin.Basic
+Fin.castLEEmb | def[semireducible] | Mathlib.Data.Fin.Embedding
+Fin.castSucc | def[semireducible] | Init.Data.Fin.Basic
+Fin.ext | thm | Init.Data.Fin.Lemmas
+Fin.fintype | def[semireducible,instance] | Mathlib.Data.Fintype.Basic
+Fin.instOfNat | def[semireducible,instance] | Init.Data.Fin.Basic
+Fin.isLt | thm | Init.Prelude
+Fin.last | def[semireducible] | Init.Data.Fin.Basic
+Fin.lastCases | def[semireducible] | Init.Data.Fin.Lemmas
+Fin.lastCases_castSucc | thm | Init.Data.Fin.Lemmas
+Fin.lastCases_last | thm | Init.Data.Fin.Lemmas
+Fin.mk | ctor | Init.Prelude
+Fin.mk.congr_simp | thm | Init.Data.Fin.Basic
+Fin.natAdd | def[semireducible] | Init.Data.Fin.Basic
+Fin.val | def[reducible,projection] | Init.Prelude
+Fin.val_add_one_le_of_lt | thm | Init.Data.Fin.Basic
+Finset | inductive | Mathlib.Data.Finset.Defs
+Finset.Icc | def[semireducible] | Mathlib.Order.Interval.Finset.Defs
+Finset.card | def[semireducible] | Mathlib.Data.Finset.Card
+Finset.card_le_card | thm | Mathlib.Data.Finset.Card
+Finset.card_range | thm | Mathlib.Data.Finset.Card
+Finset.card_union_le | thm | Mathlib.Data.Finset.Card
+Finset.card_univ | thm | Mathlib.Data.Fintype.Card
+Finset.instHasSubset | def[semireducible,instance] | Mathlib.Data.Finset.Defs
+Finset.instIsTransSubset | thm | Mathlib.Data.Finset.Defs
+Finset.instMembership | def[semireducible,instance] | Mathlib.Data.Finset.Defs
+Finset.instSingleton | def[semireducible,instance] | Mathlib.Data.Finset.Insert
+Finset.instUnion | def[semireducible,instance] | Mathlib.Data.Finset.Lattice.Basic
+Finset.mem_range | thm | Mathlib.Data.Finset.Range
+Finset.range | def[semireducible] | Mathlib.Data.Finset.Range
+Finset.sum | def[semireducible] | Mathlib.Algebra.BigOperators.Group.Finset.Defs
+Finset.sum_add_distrib | thm | Mathlib.Algebra.BigOperators.Group.Finset.Basic
+Finset.sum_const | thm | Mathlib.Algebra.BigOperators.Group.Finset.Basic
+Finset.sum_le_sum | thm | Mathlib.Algebra.Order.BigOperators.Group.Finset
+Finset.univ | def[semireducible] | Mathlib.Data.Fintype.Defs
+Fintype | inductive | Mathlib.Data.Fintype.Defs
+Fintype.card | def[semireducible] | Mathlib.Data.Fintype.Card
+Fintype.card_fin | thm | Mathlib.Data.Fintype.Card
+Fintype.decidableMemRangeFintype | def[semireducible,instance] | Mathlib.Data.Fintype.Defs
+Function.Embedding | inductive | Mathlib.Logic.Embedding.Basic
+Function.comp | def[semireducible] | Init.Prelude
+Function.instFunLikeEmbedding | def[semireducible,instance] | Mathlib.Logic.Embedding.Basic
+Function.update | def[semireducible] | Mathlib.Logic.Function.Basic
+Function.update.congr_simp | thm | Mathlib.Logic.Function.Basic
+Function.update_eq_self | thm | Mathlib.Logic.Function.Basic
+Function.update_of_ne | thm | Mathlib.Logic.Function.Basic
+Function.update_self | thm | Mathlib.Logic.Function.Basic
+GT.gt | def[reducible] | Init.Prelude
+GetElem.getElem | def[semireducible,projection] | Init.GetElem
+GetElem.getElem.congr_simp | thm | Init.GetElem
+GetElem?.getElem? | def[semireducible,projection] | Init.GetElem
+HAdd.hAdd | def[semireducible,projection] | Init.Prelude
+HAppend.hAppend | def[semireducible,projection] | Init.Prelude
+HMul.hMul | def[semireducible,projection] | Init.Prelude
+HPow.hPow | def[semireducible,projection] | Init.Prelude
+HSMul.hSMul | def[semireducible,projection] | Init.Prelude
+HSub.hSub | def[semireducible,projection] | Init.Prelude
+HasSubset.Subset | def[semireducible,projection] | Init.Core
+HasSubset.Subset.trans | thm | Mathlib.Order.RelClasses
+Iff | inductive | Init.Core
+Iff.mp | thm | Init.Core
+Iff.mpr | thm | Init.Core
+Iff.rfl | thm | Init.Core
+Int | inductive | Init.Data.Int.Basic
+Int.add_one_le_of_lt | thm | Init.Data.Int.Order
+Int.card_Icc | thm | Mathlib.Data.Int.Interval
+Int.decLe | def[semireducible,instance] | Init.Data.Int.Basic
+Int.decLt | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instAdd | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instAddCommGroup | def[semireducible,instance] | Mathlib.Algebra.Group.Int.Defs
+Int.instAddGroup | def[semireducible,instance] | Mathlib.Algebra.Group.Int.Defs
+Int.instAddMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Int.Defs
+Int.instAddSemigroup | def[semireducible,instance] | Mathlib.Algebra.Group.Int.Defs
+Int.instCommRing | def[semireducible,instance] | Mathlib.Algebra.Ring.Int.Defs
+Int.instDecidableEq | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instLEInt | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instLTInt | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instLocallyFiniteOrder | def[semireducible,instance] | Mathlib.Data.Int.Interval
+Int.instMax | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instMul | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instNegInt | def[semireducible,instance] | Init.Data.Int.Basic
+Int.instRing | def[semireducible,instance] | Mathlib.Algebra.Ring.Int.Defs
+Int.instSub | def[semireducible,instance] | Init.Data.Int.Basic
+Int.lt_or_gt_of_ne | thm | Init.Data.Int.Order
+Int.max_def | thm | Init.Data.Int.Order
+Int.natCast_add | thm | Init.Data.Int.Lemmas
+Int.ofNat_mul | thm | Init.Data.Int.Lemmas
+Int.ofNat_nonneg | thm | Init.Data.Int.Order
+Int.sub_eq_zero_of_eq | thm | Init.Data.Int.Lemmas
+Int.sub_nonneg_of_le | thm | Init.Data.Int.Order
+Int.toNat | def[semireducible] | Init.Data.Int.Basic
+Int.toNat_eq_max | thm | Init.Data.Int.Order
+IsOrderedAddMonoid.toAddLeftMono | thm | Mathlib.Algebra.Order.Monoid.Defs
+IsRightCancelAdd.addRightStrictMono_of_addRightMono | thm | Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+IsStrictOrderedRing.toIsOrderedRing | thm | Mathlib.Algebra.Order.Ring.Defs
+LE.le | def[semireducible,projection] | Init.Prelude
+LT.lt | def[semireducible,projection] | Init.Prelude
+Lattice.toSemilatticeInf | def[semireducible,instance] | Mathlib.Order.Lattice
+Lean.Omega.Coeffs.get | def[reducible] | Init.Omega.Coeffs
+Lean.Omega.Coeffs.isZero | def[reducible] | Init.Omega.Coeffs
+Lean.Omega.Coeffs.ofList | def[reducible] | Init.Omega.Coeffs
+Lean.Omega.Constraint.addEquality_sat | thm | Init.Omega.Constraint
+Lean.Omega.Constraint.addInequality_sat | thm | Init.Omega.Constraint
+Lean.Omega.Constraint.combine_sat' | thm | Init.Omega.Constraint
+Lean.Omega.Constraint.isImpossible | def[semireducible] | Init.Omega.Constraint
+Lean.Omega.Constraint.mk | ctor | Init.Omega.Constraint
+Lean.Omega.Constraint.not_sat'_of_isImpossible | thm | Init.Omega.Constraint
+Lean.Omega.Decidable.or_not_not_of_not_and | thm | Init.Omega.Logic
+Lean.Omega.Fin.lt_or_gt_of_ne | thm | Init.Omega.Int
+Lean.Omega.Fin.ofNat_val_natCast | thm | Init.Omega.Int
+Lean.Omega.Int.add_congr | thm | Init.Omega.Int
+Lean.Omega.Int.le_of_not_lt | thm | Init.Omega.Int
+Lean.Omega.Int.lt_of_not_le | thm | Init.Omega.Int
+Lean.Omega.Int.mul_congr | thm | Init.Omega.Int
+Lean.Omega.Int.neg_congr | thm | Init.Omega.Int
+Lean.Omega.Int.ofNat_congr | thm | Init.Omega.Int
+Lean.Omega.Int.ofNat_le_of_le | thm | Init.Omega.Int
+Lean.Omega.Int.ofNat_lt_of_lt | thm | Init.Omega.Int
+Lean.Omega.Int.ofNat_mul_nonneg | thm | Init.Omega.Int
+Lean.Omega.Int.ofNat_sub_dichotomy | thm | Init.Omega.Int
+Lean.Omega.Int.sub_congr | thm | Init.Omega.Int
+Lean.Omega.LinearCombo | inductive | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.add_eval | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate | def[semireducible] | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_0 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_1 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_2 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_3 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_4 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_5 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_6 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_7 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_8 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.coordinate_eval_9 | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.eval | def[semireducible] | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.instAdd | def[semireducible,instance] | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.instNeg | def[semireducible,instance] | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.instSub | def[semireducible,instance] | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.mk | ctor | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.mul | def[semireducible] | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.mul_eval | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.neg_eval | thm | Init.Omega.LinearCombo
+Lean.Omega.LinearCombo.sub_eval | thm | Init.Omega.LinearCombo
+Lean.Omega.and_not_not_of_not_or | thm | Init.Omega.Logic
+Lean.Omega.combo_sat' | thm | Init.Omega.Constraint
+Lean.Omega.ite_disjunction | thm | Init.Omega.Logic
+Lean.Omega.tidy_sat | thm | Init.Omega.Constraint
+List | inductive | Init.Prelude
+List.IsPrefix | def[semireducible] | Init.Data.List.Basic
+List.IsPrefix.eq_of_length_le | thm | Init.Data.List.Sublist
+List.IsPrefix.length_le | thm | Init.Data.List.Sublist
+List.append_assoc | thm | Init.Data.List.Basic
+List.cons | ctor | Init.Prelude
+List.decidableBAll | def[semireducible,instance] | Init.Data.List.Basic
+List.drop | def[semireducible] | Init.Data.List.Basic
+List.drop_drop | thm | Init.Data.List.TakeDrop
+List.drop_zero | thm | Init.Data.List.Basic
+List.flatMap | def[semireducible] | Init.Prelude
+List.flatMap_cons | thm | Init.Data.List.Basic
+List.flatMap_nil | thm | Init.Data.List.Basic
+List.getElem?_replicate | thm | Init.Data.List.Lemmas
+List.getElem_drop | thm | Init.Data.List.Nat.TakeDrop
+List.getElem_drop._proof_1 | thm | Init.Data.List.Nat.TakeDrop
+List.instAppend | def[semireducible,instance] | Init.Data.List.Basic
+List.instGetElem?NatLtLength | def[semireducible,instance] | Init.GetElem
+List.instGetElemNatLtLength | def[semireducible,instance] | Init.GetElem
+List.length | def[semireducible] | Init.Prelude
+List.length_drop | thm | Init.Data.List.TakeDrop
+List.length_replicate | thm | Init.Data.List.Basic
+List.nil | ctor | Init.Prelude
+List.nil_append | thm | Init.Data.List.Basic
+List.rec | recursor | Init.Prelude
+List.replicate | def[semireducible] | Init.Data.List.Basic
+Mathlib.Meta.NormNum.IsNat.of_raw | thm | Mathlib.Tactic.NormNum.Result
+Mathlib.Meta.NormNum.IsNat.to_raw_eq | thm | Mathlib.Tactic.NormNum.Result
+Mathlib.Meta.NormNum.isNat_add | thm | Mathlib.Tactic.NormNum.Basic
+Mathlib.Meta.NormNum.isNat_mul | thm | Mathlib.Tactic.NormNum.Basic
+Mathlib.Meta.NormNum.isNat_ofNat | thm | Mathlib.Tactic.NormNum.Basic
+Mathlib.Tactic.Ring.add_congr | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_mul | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_overlap_pf | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_pf_add_gt | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_pf_add_lt | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_pf_add_overlap | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_pf_add_zero | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.add_pf_zero_add | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.atom_pf | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.cast_pos | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.instCommSemiringNat | def[semireducible] | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.mul_add | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.mul_congr | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.mul_one | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.mul_pf_left | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.mul_pf_right | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.mul_zero | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.of_eq | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.one_mul | thm | Mathlib.Tactic.Ring.Basic
+Mathlib.Tactic.Ring.zero_mul | thm | Mathlib.Tactic.Ring.Basic
+Max.max | def[semireducible,projection] | Init.Prelude
+Membership.mem | def[semireducible,projection] | Init.Prelude
+Monoid.toNatPow | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+MonoidWithZero.toMonoid | def[semireducible,instance,projection] | Mathlib.Algebra.GroupWithZero.Defs
+MulZeroClass.toZero | def[semireducible,instance,projection] | Mathlib.Algebra.GroupWithZero.Defs
+Nat | inductive | Init.Prelude
+Nat.add_le_add | thm | Init.Data.Nat.Basic
+Nat.add_le_add_left | thm | Init.Data.Nat.Basic
+Nat.add_le_add_right | thm | Init.Data.Nat.Basic
+Nat.cast | def[reducible] | Init.Data.Cast
+Nat.cast_add | thm | Mathlib.Data.Nat.Cast.Defs
+Nat.cast_one | thm | Mathlib.Data.Nat.Cast.Defs
+Nat.cast_zero | thm | Mathlib.Data.Nat.Cast.Defs
+Nat.decLe | def[semireducible,instance] | Init.Prelude
+Nat.decLt | def[semireducible,instance] | Init.Prelude
+Nat.exists_eq_add_of_le | thm | Init.Data.Nat.Lemmas
+Nat.instAddCancelCommMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Nat.Defs
+Nat.instAddCommMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Nat.Defs
+Nat.instAddCommSemigroup | def[semireducible,instance] | Mathlib.Algebra.Group.Nat.Defs
+Nat.instAddMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Nat.Defs
+Nat.instAddMonoidWithOne | def[semireducible,instance] | Mathlib.Algebra.Ring.Nat
+Nat.instAtLeastTwoHAddOfNat | thm | Mathlib.Data.Nat.Init
+Nat.instCanonicallyOrderedAdd | thm | Mathlib.Algebra.Order.Group.Nat
+Nat.instCommSemiring | def[semireducible,instance] | Mathlib.Algebra.Ring.Nat
+Nat.instIsOrderedAddMonoid | thm | Mathlib.Algebra.Order.Group.Nat
+Nat.instIsStrictOrderedRing | thm | Mathlib.Algebra.Order.Ring.Nat
+Nat.instLinearOrder | def[semireducible,instance] | Mathlib.Data.Nat.Basic
+Nat.instMax | def[semireducible,instance] | Init.Data.Nat.Basic
+Nat.instNeZeroSucc | thm | Init.Data.Nat.Basic
+Nat.instNontrivial | thm | Mathlib.Data.Nat.Basic
+Nat.instOne | def[semireducible,instance] | Mathlib.Algebra.Group.Nat.Defs
+Nat.instPartialOrder | def[semireducible,instance] | Mathlib.Data.Nat.Basic
+Nat.instPreorder | def[semireducible,instance] | Mathlib.Data.Nat.Basic
+Nat.instSemiring | def[semireducible,instance] | Mathlib.Algebra.Ring.Nat
+Nat.instTransLe | def[semireducible,instance] | Init.Data.Nat.Basic
+Nat.instZeroLEOneClass | thm | Mathlib.Algebra.Order.ZeroLEOne
+Nat.le_max_left | thm | Init.Data.Nat.MinMax
+Nat.le_max_right | thm | Init.Data.Nat.MinMax
+Nat.le_of_not_lt | thm | Init.Data.Nat.Basic
+Nat.lt_of_not_le | thm | Init.Prelude
+Nat.lt_or_gt_of_ne | thm | Init.Data.Nat.Basic
+Nat.mul_comm | thm | Init.Data.Nat.Basic
+Nat.mul_le_mul_left | thm | Init.Data.Nat.Basic
+Nat.mul_le_mul_right | thm | Init.Data.Nat.Basic
+Nat.mul_one | thm | Init.Data.Nat.Basic
+Nat.ofNat_pos._simp_1 | thm | Mathlib.Data.Nat.Cast.Order.Ring
+Nat.rawCast | def[semireducible,@[simp]] | Mathlib.Tactic.NormNum.Result
+Nat.zero_add | thm | Init.Data.Nat.Basic
+Nat.zero_le | thm | Init.Prelude
+Ne | def[reducible] | Init.Core
+NeZero | inductive | Init.Data.NeZero
+Neg.neg | def[semireducible,projection] | Init.Prelude
+NegZeroClass.toZero | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+NonAssocSemiring.toAddCommMonoidWithOne | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+NonAssocSemiring.toNonUnitalNonAssocSemiring | def[semireducible,instance,projection] | Mathlib.Algebra.Ring.Defs
+NonUnitalCommRing.toNonUnitalNonAssocCommRing | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+NonUnitalNonAssocCommRing.toNonUnitalNonAssocCommSemiring | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+NonUnitalNonAssocCommSemiring.toNonUnitalNonAssocSemiring | def[semireducible,instance,projection] | Mathlib.Algebra.Ring.Defs
+NonUnitalNonAssocSemiring.toDistrib | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+NonUnitalNonAssocSemiring.toMulZeroClass | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+Not | def[semireducible] | Init.Prelude
+OfNat.ofNat | def[semireducible,projection] | Init.Prelude
+One.toOfNat1 | def[semireducible,instance] | Init.Data.Zero
+Option | inductive | Init.Prelude
+Option.getD | def[semireducible] | Init.Prelude
+Option.getD_some | thm | Init.Data.Option.Basic
+Option.instDecidableEq | def[semireducible,instance] | Init.Data.Option.Basic
+Option.map | def[semireducible] | Init.Prelude
+Option.map_eq_none_iff | thm | Init.Data.Option.Lemmas
+Option.map_none | thm | Init.Data.Option.Basic
+Option.map_some | thm | Init.Data.Option.Basic
+Option.none | ctor | Init.Prelude
+Option.some | ctor | Init.Prelude
+Option.some.injEq | thm | Init.Core
+Option.some_ne_none | thm | Init.Data.Option.Lemmas
+Or | inductive | Init.Prelude
+Or.casesOn | def[reducible] | Init.Prelude
+Or.elim | thm | Init.Prelude
+PartialOrder.toPreorder | def[semireducible,instance,projection] | Mathlib.Order.Defs.PartialOrder
+Preorder.toLE | def[semireducible,instance,projection] | Mathlib.Order.Defs.PartialOrder
+Preorder.toLT | def[semireducible,instance,projection] | Mathlib.Order.Defs.PartialOrder
+Ring.toAddGroupWithOne | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+SemilatticeInf.toPartialOrder | def[semireducible,instance,projection] | Mathlib.Order.Lattice
+Semiring.toMonoidWithZero | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+Semiring.toNonAssocSemiring | def[semireducible,instance] | Mathlib.Algebra.Ring.Defs
+Set | def[semireducible] | Mathlib.Data.Set.Defs
+Set.instMembership | def[semireducible,instance] | Mathlib.Data.Set.Defs
+Set.instSingletonSet | def[semireducible,instance] | Mathlib.Data.Set.Defs
+Set.mem_singleton_iff | thm | Mathlib.Data.Set.Insert
+Set.range | def[semireducible] | Mathlib.Data.Set.Operations
+SignType | inductive | Mathlib.Data.Sign.Defs
+SignType.cast | def[semireducible] | Mathlib.Data.Sign.Defs
+SignType.instZero | def[semireducible,instance] | Mathlib.Data.Sign.Defs
+SignType.pos | ctor | Mathlib.Data.Sign.Defs
+Singleton.singleton | def[semireducible,projection] | Init.Core
+SubNegMonoid.toAddMonoid | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+SubNegMonoid.toSub | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+SubNegZeroMonoid.toNegZeroClass | def[semireducible,instance] | Mathlib.Algebra.Group.Defs
+SubNegZeroMonoid.toSubNegMonoid | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+SubtractionCommMonoid.toSubtractionMonoid | def[semireducible,instance,projection] | Mathlib.Algebra.Group.Defs
+SubtractionMonoid.toSubNegZeroMonoid | def[semireducible,instance] | Mathlib.Algebra.Group.Basic
+Sum | inductive | Init.Core
+Sum.inl | ctor | Init.Core
+Sum.inr | ctor | Init.Core
+Trans.trans | def[semireducible,projection] | Init.Prelude
+True | inductive | Init.Prelude
+Union.union | def[semireducible,projection] | Init.Core
+Zero.ofOfNat0 | def[semireducible,instance] | Init.Data.Zero
+Zero.toOfNat0 | def[semireducible,instance] | Init.Data.Zero
+add_assoc | thm | Mathlib.Algebra.Group.Defs
+add_sub_cancel | thm | Mathlib.Algebra.Group.Basic
+add_sub_cancel_right | thm | Mathlib.Algebra.Group.Defs
+add_zero | thm | Mathlib.Algebra.Group.Defs
+and_false | thm | Init.SimpLemmas
+and_self | thm | Init.SimpLemmas
+congr | thm | Init.Prelude
+congrArg | thm | Init.Prelude
+congrFun | thm | Init.Prelude
+contravariant_lt_of_covariant_le | thm | Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+contravariant_swap_add_of_contravariant_add | thm | Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+covariant_swap_add_of_covariant_add | thm | Mathlib.Algebra.Order.Monoid.Unbundled.Defs
+dite | def[semireducible] | Init.Prelude
+eq_false | thm | Init.SimpLemmas
+eq_self | thm | Init.SimpLemmas
+eq_true | thm | Init.SimpLemmas
+false_and | thm | Init.SimpLemmas
+forall_congr | thm | Init.SimpLemmas
+funext | thm | Init.Core
+id | def[semireducible] | Init.Prelude
+if_neg | thm | Init.Core
+if_pos | thm | Init.Core
+implies_congr | thm | Init.SimpLemmas
+instAddNat | def[semireducible,instance] | Init.Prelude
+instDecidableAnd | def[semireducible,instance] | Init.Prelude
+instDecidableEqBool | def[semireducible,instance] | Init.Prelude
+instDecidableEqFin | def[semireducible,instance] | Init.Prelude
+instDecidableEqNat | def[semireducible,instance] | Init.Prelude
+instDecidableEqSum | def[semireducible,instance] | Init.Core
+instDecidableIff | def[semireducible,instance] | Init.Core
+instDecidableNot | def[semireducible,instance] | Init.Prelude
+instDecidableOr | def[semireducible,instance] | Init.Prelude
+instDecidableTrue | def[semireducible,instance] | Init.Core
+instFintypeSum | def[semireducible,instance] | Mathlib.Data.Fintype.Sum
+instHAdd | def[semireducible,instance] | Init.Prelude
+instHAppendOfAppend | def[semireducible,instance] | Init.Prelude
+instHMul | def[semireducible,instance] | Init.Prelude
+instHPow | def[semireducible,instance] | Init.Prelude
+instHSMul | def[semireducible,instance] | Init.Prelude
+instHSub | def[semireducible,instance] | Init.Prelude
+instLENat | def[semireducible,instance] | Init.Prelude
+instLTFin | def[semireducible,instance] | Init.Prelude
+instLTNat | def[semireducible,instance] | Init.Prelude
+instLatticeInt | def[semireducible,instance] | Mathlib.Order.Lattice
+instMulNat | def[semireducible,instance] | Init.Prelude
+instNatCastInt | def[semireducible,instance] | Init.Data.Int.Basic
+instNeZeroNatHAdd_1 | thm | Init.Data.NeZero
+instOfNat | def[semireducible,instance] | Init.Data.Int.Basic
+instOfNatAtLeastTwo | def[semireducible,instance] | Mathlib.Data.Nat.Cast.Defs
+instOfNatNat | def[semireducible,instance] | Init.Prelude
+instSMulOfMul | def[semireducible,instance] | Init.Prelude
+instSubNat | def[semireducible,instance] | Init.Prelude
+instTransEq | def[semireducible,instance] | Init.Prelude
+instTransEq_1 | def[semireducible,instance] | Init.Prelude
+ite | def[semireducible] | Init.Prelude
+ite_cond_eq_false | thm | Init.SimpLemmas
+ite_cond_eq_true | thm | Init.SimpLemmas
+ite_congr | thm | Init.SimpLemmas
+le_of_le_of_eq | thm | Init.Core
+le_refl | thm | Mathlib.Order.Defs.PartialOrder
+lt_mul_iff_one_lt_left'._simp_4 | thm | Mathlib.Algebra.Order.Monoid.Unbundled.Basic
+of_decide_eq_true | thm | Init.Prelude
+of_eq_true | thm | Init.SimpLemmas
+one_lt_mul_iff._simp_4 | thm | Mathlib.Algebra.Order.Monoid.Canonical.Defs
+or_true | thm | Init.SimpLemmas
+propext | axiom | Init.Core
+rfl | def[semireducible] | Init.Prelude
+smul_eq_mul | thm | Mathlib.Algebra.Group.Action.Defs
+sub_zero | thm | Mathlib.Algebra.Group.Basic
+zero_add | thm | Mathlib.Algebra.Group.Defs
+zero_lt_one._simp_1 | thm | Mathlib.Algebra.Order.ZeroLEOne
+DIRECT external private names: []
+DIRECT external equation/unfold/matcher/proof-aux names: [List.IsPrefix.eq_of_length_le,
+ List.getElem_drop._proof_1,
+ Turing.instInhabitedCfg.default._proof_1,
+ Turing.moveInputPos_pos_of_ne_right._proof_1,
+ Turing.rulerHostCfg._proof_2,
+ eq_false,
+ eq_self,
+ eq_true]
+DIRECT R3 rows: []
+STATEMENT-REACHED TCSlib definitions (not direct) 0:
+SORRY-SOURCES Turing.exists_selfUniversalK: []
+SORRY-SOURCES Turing.universalK: []
+SORRY-SOURCES Turing.exists_selfUniversal: []
+SORRY-SOURCES Turing.exists_selfStartupTM: []
+SORRY-SOURCES Turing.exists_selfStartupTMK: []
+LOCAL constants: 332; non-private: 94:
+[Turing.EffectiveCodeK,
+ Turing.EffectiveCodeK._sizeOf_1,
+ Turing.EffectiveCodeK._sizeOf_inst,
+ Turing.EffectiveCodeK.canonizer,
+ Turing.EffectiveCodeK.canonizerTime,
+ Turing.EffectiveCodeK.canonizer_computes,
+ Turing.EffectiveCodeK.casesOn,
+ Turing.EffectiveCodeK.ctorIdx,
+ Turing.EffectiveCodeK.machine,
+ Turing.EffectiveCodeK.mk,
+ Turing.EffectiveCodeK.mk._flat_ctor,
+ Turing.EffectiveCodeK.mk.inj,
+ Turing.EffectiveCodeK.mk.injEq,
+ Turing.EffectiveCodeK.mk.noConfusion,
+ Turing.EffectiveCodeK.mk.sizeOf_spec,
+ Turing.EffectiveCodeK.noConfusion,
+ Turing.EffectiveCodeK.noConfusionType,
+ Turing.EffectiveCodeK.numStates,
+ Turing.EffectiveCodeK.ofSerialize,
+ Turing.EffectiveCodeK.ofSerialize._proof_1,
+ Turing.EffectiveCodeK.rec,
+ Turing.EffectiveCodeK.recOn,
+ Turing.EffectiveCodeK.toFinTM,
+ Turing.EffectiveMachineCode.toK,
+ Turing.EffectiveMachineCode.toK_machine,
+ Turing.EffectiveMachineCode.toK_toFinTM,
+ Turing.EffectiveMachineCode2.toK,
+ Turing.EffectiveMachineCode2.toK_machine,
+ Turing.EffectiveMachineCode2.toK_toFinTM,
+ Turing.exists_selfStartupTM,
+ Turing.exists_selfStartupTM._proof_1_1,
+ Turing.exists_selfStartupTM._proof_1_2,
+ Turing.exists_selfStartupTMK,
+ Turing.exists_selfStartupTMK._proof_1_1,
+ Turing.exists_selfStartupTMK._proof_1_2,
+ Turing.exists_selfStartupTMK._proof_1_3,
+ Turing.exists_selfStartupTMK._proof_1_4,
+ Turing.exists_selfStartupTMK._proof_1_5,
+ Turing.exists_selfStartupTMK._proof_1_6,
+ Turing.exists_selfStartupTMK._proof_1_7,
+ Turing.exists_selfStartupTMK._proof_1_8,
+ Turing.exists_selfUniversal,
+ Turing.exists_selfUniversal._proof_1_1,
+ Turing.exists_selfUniversalK,
+ Turing.exists_selfUniversalK._proof_1_1,
+ Turing.exists_selfUniversalK._proof_1_10,
+ Turing.exists_selfUniversalK._proof_1_11,
+ Turing.exists_selfUniversalK._proof_1_2,
+ Turing.exists_selfUniversalK._proof_1_3,
+ Turing.exists_selfUniversalK._proof_1_4,
+ Turing.exists_selfUniversalK._proof_1_5,
+ Turing.exists_selfUniversalK._proof_1_6,
+ Turing.exists_selfUniversalK._proof_1_7,
+ Turing.exists_selfUniversalK._proof_1_8,
+ Turing.exists_selfUniversalK._proof_1_9,
+ Turing.instDecidableEqSs_RewindState,
+ Turing.instDecidableEqSs_RewindState._proof_1,
+ Turing.instDecidableEqSs_RewindState._proof_2,
+ Turing.instFintypeSs_RewindState,
+ Turing.instFintypeSs_RewindState._proof_1,
+ Turing.universalK,
+ Turing.universalK._proof_1_1,
+ Turing.universalK._proof_1_2,
+ Turing.universalK._proof_1_3,
+ Turing.universalK._proof_1_4,
+ Turing.universalK._proof_1_5,
+ Turing.universalK._proof_1_6,
+ UKAudit.isEqnLike,
+ UKAudit.isEqnLike.match_1,
+ UKAudit.isLocal,
+ UKAudit.isTCSlib,
+ UKAudit.isTCSlib.match_1,
+ UKAudit.kindOf,
+ UKAudit.kindOf.match_1,
+ UKAudit.kindOf.match_3,
+ UKAudit.modName?,
+ UKAudit.sorrySources,
+ UKAudit.sorrySources.match_1,
+ UKAudit.sortNames,
+ UKAudit.typeConsts,
+ UKAudit.usedOf,
+ UKAudit.usedOf.match_1,
+ UKAudit.walkLocal,
+ UKAudit.walkLocal.match_1,
+ UKAudit.walkLocal.match_3,
+ «_aux_Probe_TipAudit___elabRules_command#uk_audit__1»,
+ «_aux_Probe_TipAudit___elabRules_command#uk_audit__1».match_1,
+ «_aux_Probe_TipAudit___elabRules_command#uk_generated_1»,
+ «_aux_Probe_TipAudit___elabRules_command#uk_generated_1».match_1,
+ «_aux_Probe_TipAudit___elabRules_command#uk_generated_1».match_3,
+ «_aux_Probe_TipAudit___elabRules_command#uk_sorry__1»,
+ «command#uk_audit_»,
+ «command#uk_generated»,
+ «command#uk_sorry_»]

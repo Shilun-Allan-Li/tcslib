@@ -22,7 +22,7 @@ true.
 | 8 | note | The seal's control maps describe the pre-overlay file; add 28 to their lines. | **Agreed;** noted here. |
 | 4–7, 9, 11, 12 | notes | Integrity; faithfulness; boundary cases; the consumers; the screen; the elaboration and axioms; lint. | No action. RI-1 retires when #167 lands. |
 
-**Merge state. #167: not yet clear to merge.** The gate is closed. #167 is stacked on #165 and
-waits for it to merge (after `replay-lg4c4m`). Then it is retargeted to the campaign branch, the
-campaign is merged in, and its 91-module replay runs from #165's snapshot. Its head is now
-`98d56a71`.
+**Merge state. #167: not yet clear to merge.** The gate is closed. #165 merged (2026-10-26), and
+#167 is retargeted to the campaign branch (head `98d56a71`; its diff is its two files). #164 (A1)
+goes first. Then the campaign is merged into #167, and its 91-module replay runs from A1's snapshot
+`oleans-la1m`. A trial merge on A1's tree gave the same 91-module list.

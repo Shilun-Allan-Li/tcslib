@@ -39,6 +39,9 @@ two blobs pinned. **Passed** (user, 2026-10-25): 2 of 2, 0 failed, static-equal
 (`campaign/fills/s13d/evidence/s13d-g4-cont4-landing/merged-tree/replay-lg4c4m.log`, `-static.txt`;
 the snapshot `oleans-lg4c4m`, the campaign's tree after #162 and #165).
 
-**Merge state. #165: clear to merge** (2026-10-25). The gate is closed. The merged-tree replay
+**Merged (user, 2026-10-26)** as `f0df8ee555dbaa29befbe7ab576e17ccd656c49c`. The campaign's TCSlib
+tree after the merge equals the replayed head `308838e5`'s, so `oleans-lg4c4m` is the campaign's
+snapshot after #165. #167 is retargeted to the campaign branch. Before the merge:
+**#165: clear to merge** (2026-10-25). The gate is closed. The merged-tree replay
 passed at the head `308838e5`, and the PR's base is the campaign branch, whose Lean has not moved
 since #162's merge `5a258cc2`. Its stacked follow-up #167 is retargeted after the merge.

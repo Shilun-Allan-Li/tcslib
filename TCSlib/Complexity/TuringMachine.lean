@@ -163,8 +163,8 @@ for the local modifications.
   the extension by one level, and the virtual tape a track represents.
 * `Build/ZoneTape` — the multi-track zoned carrier over `ZoneSym k` (§13d, G3): the layout
   with blank separators, the inner-packed encoding `zonedTape` and its invariants.
-* `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts;
-  sorried for the G4 fill.
+* `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts.
+  Proved.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
