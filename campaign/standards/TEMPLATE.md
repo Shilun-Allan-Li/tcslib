@@ -40,6 +40,14 @@ review tactic scripts for correctness. The failure modes you are hunting are:
    further file past the one-fifth threshold, reveals copies outside the
    acknowledged family's named scope, or shows the named resolution cannot work.
 
+**Seals and reducible abbreviations.** A rule-10 seal (`attribute [local irreducible]` on
+other-file definitions, each with an `rfl` control that closes unsealed and fails sealed) cannot
+include a reducible `abbrev`: Lean's default reducibility validation refuses the attribute (the
+unsafe override `allowUnsafeReducibility` is not used in seals). `policy.md` (*Definitions
+land with their lemmas*) allows reading an abbreviation through its body, so that is not a finding.
+Do report an `abbrev` passed to `simp`, `rw` or `unfold` where a published lemma exists, and a new
+public `abbrev` without its lemma.
+
 For **every definition** in scope: restate it in your own mathematical English *without
 looking at the docstring first*, then compare your restatement against the cited source
 location, and report any daylight. For **every `sorry`d theorem**: argue in 2-5 sentences

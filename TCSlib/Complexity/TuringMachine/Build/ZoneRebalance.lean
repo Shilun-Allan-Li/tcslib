@@ -8260,11 +8260,10 @@ pinned at `j₀` repeats the body along `j₀, nxt j₀, …` until round `n`, t
 under any head relation holding at each round's start and inside each round's body box.
 
 **Proof sketch.** Validity holds at every round start up to `n`, by induction on `m` from the
-passing condition `hV`. Each round is `zr_pinRound` at the index `nxt^[m] j₀`. By induction on
-`m ≤ n`, the segment from the start to round `m`'s anchor concatenates the first `m` rounds'
-segments (`Round.segment`, `Segment.trans`), each returning to the anchor since its verdict is
-`false`; round `n` escapes, and its segment ends the loop. This is the induction of
-`Turing.Round.iterate`, along the sequence of pinned starts instead of a configuration orbit. -/
+passing condition `hV`. Each round is `zr_pinRound` at the index `nxt^[m] j₀`. The first `n`
+rounds return to the anchor, since their verdicts are `false`, so they concatenate into one
+segment from the start to round `n`'s anchor (`Turing.Round.iterate_seq` along the pinned starts).
+Round `n` escapes, and its segment ends the loop. -/
 private lemma zr_pinLoop {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
     {MB : MultiTapeTM 2 (ZoneSym k) B} {e : B} {X : Set (Option B)}
     (back : B → Option (Option Bool)) (C : Contract MB e X J x) (hnone : none ∉ X)
@@ -8305,25 +8304,22 @@ private lemma zr_pinLoop {k : ℕ} {B J : Type} {x : List (ZoneSym k)}
     rw [Function.iterate_succ_apply']
     exact zr_pinRound back C hnone hX hstep hback hsa hsb hsaX hsbX P _ (hVm m hm) _ rfl
       ⟨rfl, rfl⟩ (hPs m hm) (hP m hm)
-  have hseg : ∀ m ≤ n, Segment (zr_hostTM MB e back) {some ⟨false, some true⟩} P c
-      (zr_hostCfg c (some false) (T (nxt^[m] j₀)) (p (nxt^[m] j₀)))
-      (∑ r ∈ Finset.range m, (τ (nxt^[r] j₀) + 2)) := by
-    intro m hm
-    induction m with
-    | zero =>
-      have h0 : zr_hostCfg c (some false) (T (nxt^[0] j₀)) (p (nxt^[0] j₀)) = c :=
-        Cfg.ext hc.symm rfl hcp.1.symm hcp.2.symm rfl
-      rw [h0, Finset.sum_range_zero]
-      exact Segment.zero (hcp.2 ▸ hPs 0 (Nat.zero_le _))
-    | succ m ih =>
-      have h2 := (hround m (by omega)).segment hesc
-      rw [hnf m (by omega)] at h2
-      rw [Finset.sum_range_succ]
-      exact (ih (by omega)).trans h2
+  have h0 : zr_hostCfg c (some false) (T (nxt^[0] j₀)) (p (nxt^[0] j₀)) = c :=
+    Cfg.ext hc.symm rfl hcp.1.symm hcp.2.symm rfl
+  have hseg := Round.iterate_seq (M := zr_hostTM MB e back) (P := P)
+    (fun m => zr_hostCfg c (some false) (T (nxt^[m] j₀)) (p (nxt^[m] j₀)))
+    (fun r => τ (nxt^[r] j₀) + 2) hesc
+    (by beta_reduce; rw [h0]; exact hcp.2 ▸ hPs 0 (Nat.zero_le _)) n
+    (fun r hr => by
+      have h2 := hround r (by omega)
+      rw [hnf r hr] at h2
+      exact h2)
+  beta_reduce at hseg
+  rw [h0] at hseg
   have h2 := (hround n le_rfl).segment hesc
   rw [hfin] at h2
   rw [Finset.sum_range_succ]
-  exact (hseg n le_rfl).trans h2
+  exact hseg.trans h2
 
 /-- **An anchor branch**: a pinned stationary test whose verdict at `j` is `a₁` exactly when
 `v j`; on `a₁` it stops at the anchor leaf, otherwise it runs the pinned arm `C₂`. -/
