@@ -41,6 +41,7 @@ import TCSlib.Complexity.TuringMachine.Build.InputWindow
 import TCSlib.Complexity.TuringMachine.Build.SeamLayout
 import TCSlib.Complexity.TuringMachine.Build.Rewind
 import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -162,8 +163,8 @@ for the local modifications.
   the extension by one level, and the virtual tape a track represents.
 * `Build/ZoneTape` — the multi-track zoned carrier over `ZoneSym k` (§13d, G3): the layout
   with blank separators, the inner-packed encoding `zonedTape` and its invariants.
-* `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts;
-  sorried for the G4 fill.
+* `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts.
+  Proved.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
@@ -180,6 +181,9 @@ for the local modifications.
 * `Build/InputRewind` — the rewind of the native input head to the first input cell: its exact
   time, its first arrival at the park, and its unchanged work tapes, heads and output; and the
   composition of two state relabelings of a configuration. Proved.
+* `Build/InterpreterStartup` — the pieces of a universal machine's startup on a timed paired
+  input: the header projections and their capture, the suffix window, the released install call,
+  the table-and-summary layout, the seam step, a fresh capture's start. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;

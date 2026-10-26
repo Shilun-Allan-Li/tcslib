@@ -1,0 +1,24 @@
+head pairs 3026; union of earlier 3005; new at head 22; earlier-only 1
+  NEW   UniversalK.lean::ss_captureInitial  reproduces  InterpreterStartup.lean::embedSilentCfg_initCfg: 1110/1110 = 100%
+  NEW   InterpreterStartup.lean::embedSilentCfg_initCfg  reproduces  UniversalK.lean::ss_captureInitial: 1110/1110 = 100%
+  NEW   Configuration.lean::moveInputPos_pos_of_ne_right  reproduces  Configuration.lean::moveInputPos_rightBoundary: 71/73 = 97%
+  NEW   Configuration.lean::moveInputPos_neg_of_ne_left  reproduces  Configuration.lean::moveInputPos_rightBoundary: 68/73 = 93%
+  NEW   StateRenaming.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Seam.lean::seamReleaseTM_step_inr: 121/135 = 90%
+  NEW   StateRenaming.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Seam.lean::seamComp_step_right: 121/135 = 90%
+  NEW   InterpreterStartup.lean::embedSilentCfg_initCfg  reproduces  CfgRecord.lean::recordStep_mapState_eq: 150/173 = 87%
+  NEW   StateRenaming.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Catalog.lean::f2_splitEmbed_run: 153/188 = 81%
+  NEW   Configuration.lean::moveInputPos_neg_of_ne_left  reproduces  Configuration.lean::moveInputPos_pos_of_ne_right: 85/108 = 79%
+  NEW   Configuration.lean::moveInputPos_pos_of_ne_right  reproduces  Configuration.lean::moveInputPos_neg_of_ne_left: 85/116 = 73%
+  NEW   Seam.lean::phaseHostTM_run  reproduces  InputRewind.lean::Cfg.mapState_mapState: 270/402 = 67%
+  NEW   Configuration.lean::moveInputPos_rightBoundary  reproduces  Configuration.lean::moveInputPos_pos_of_ne_right: 71/108 = 66%
+  NEW   Seam.lean::phaseHostTM_run  reproduces  SeamLayout.lean::sl_rewrap: 203/322 = 63%
+  NEW   Catalog.lean::f2_branch_space  reproduces  StateRenaming.lean::MultiTapeTM.relabelState_spaceUsed: 70/113 = 62%
+  NEW   NDCodeSimulator.lean::rc_replay_table  reproduces  StepBlock.lean::tableBitsK_groups: 87/141 = 62%
+  NEW   StateRenaming.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Nondeterminism.lean::cont_core_run: 170/282 = 60%
+  NEW   Configuration.lean::moveInputPos_rightBoundary  reproduces  Configuration.lean::moveInputPos_neg_of_ne_left: 68/116 = 59%
+  NEW   NDCodeSimulator.lean::rc_rounds  reproduces  NDCodeSimulator.lean::rc_skip: 131/224 = 58%
+  NEW   StateRenaming.lean::MultiTapeTM.runFrom_mapState_of_agreeOn  reproduces  Seam.lean::seamComp_step_left: 121/216 = 56%
+  NEW   SymbolLift.lean::MultiTapeTM.liftSymbols_spaceUsed  reproduces  StateRenaming.lean::MultiTapeTM.relabelState_spaceUsed: 63/113 = 56%
+  NEW   NDCodeSimulator.lean::rc_workReads_snoc  reproduces  StepBlock.lean::tableBitsK_groups: 77/141 = 55%
+  NEW   StateRenaming.lean::MultiTapeTM.relabelState_spaceUsed  reproduces  SymbolLift.lean::MultiTapeTM.liftSymbols_spaceUsed: 63/126 = 50%
+  GONE  Seam.lean::phaseHostTM_run  reproduces  ExhaustiveReplay.lean::xr_runFrom_fixed: 62/122 = 51%

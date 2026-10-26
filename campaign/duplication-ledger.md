@@ -555,20 +555,23 @@ statements. **The one-fifth rule** (`workflow.md` §4): not reached.
 `(pairEncode u x).drop (2 * u.length + 2) = x`, in four files:
 - `Turing.pairEncode_drop` (public, `Build/InputDevice`, line 198, new in #161), the one U2 cites;
 - `NDCodeSimulator`'s private `ic_input_suffix` (line 340): the same statement and proof, 100% each
-  way on the v3 screen (#161's evidence);
+  way on the v3 screen (#161's evidence). **Retired** (2026-10-25): #162 moved it into
+  `Build/InterpreterStartup` as the private `is_input_suffix`, and gate 74's round 2 deleted it
+  there, the window call citing `Turing.pairEncode_drop` (the kit imports `Build/InputDevice`);
 - `Complexity.Codec.pe_drop` (public, `SpaceComplexity/Codec/Parse`, line 69) and `PathWalk`'s
   private `drop_pairEncode` (line 225): the same statement through `pairEncode_eq_dbl`, different
   proofs (no screen pair).
 
-None of the four files can cite another's without a new import (`InputDevice` is upstream of none
-of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`). **Acknowledged (user, 2026-10-24)**: the U2
-review's F2 recommendation (publish `pairEncode_drop` with the API PR, ledger the family) was the
-ruling's content. **Disposition:** the startup-kit API PR re-points `ic_input_suffix` to
-`Turing.pairEncode_drop` if its new module imports `Build/InputDevice` (acyclic); the rest go to
-the user's dedup window, one home beside `pairEncode_eq` in `Encoding` (a large replay, hence the
-window). **Census** (one member per file): `InputDevice` 1 of 57 declarations (1.8%),
-`NDCodeSimulator` 1 of 25 (4.0%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); the
-one-fifth rule is not reached.
+*Historical (at #161's opening):* none of the four files could cite another's without a new import
+(`InputDevice` was upstream of none of `NDCodeSimulator`, `Codec/Parse`, `PathWalk`). **Acknowledged
+(user, 2026-10-24)**: the U2 review's F2 recommendation (publish `pairEncode_drop` with the API PR,
+ledger the family) was the ruling's content. **Disposition:** the startup-kit re-point is **done**
+(gate 74's round 2): the kit imports `Build/InputDevice`, so `NDCodeSimulator` sees it through the
+kit, and the window call cites `Turing.pairEncode_drop`. Only the `Codec/Parse` and `PathWalk`
+members remain, for the user's dedup window: one home beside `pairEncode_eq` in `Encoding` (a large
+replay, hence the window). **Census** (one member per file): `InputDevice` 1 of 57 declarations
+(1.8%), `Codec/Parse` 1 of 16 (6.3%), `PathWalk` 1 of 32 (3.1%); `NDCodeSimulator` and
+`Build/InterpreterStartup` 0 since gate 74's round 2. The one-fifth rule is not reached.
 
 **SK-1, U2-S's capture start** (PR #162, the startup-kit API PR, 2026-10-24). The kit's public
 `Turing.embedSilentCfg_initCfg` (`Build/InterpreterStartup`) is U2-S's private
@@ -576,7 +579,45 @@ one-fifth rule is not reached.
 `UniversalK` cannot cite the kit until `CodeSimulator` imports it (B5a's landing). U2-S's other
 `ss_` startup pieces are the kit's constructions under other contracts (no screen pair). **By the
 ruling (2026-10-24, the B5a review's recommendation)** they go to the user's dedup window, or to
-U2's fill once `UniversalK` sees the kit. Census: `UniversalK` 1 member.
+U2's fill once `UniversalK` sees the kit. **Census** (gate 74, major 1, corrected at its round 2):
+`Build/InterpreterStartup` 1 of 8 declarations (12.5%), the public `embedSilentCfg_initCfg`, 40
+lines with its docstring; `UniversalK` 1 of 51 (2.0%), the private `ss_captureInitial`, 39 lines.
+Round 1's kit had a second member, SD-1's suffix drop (2 of 9, 22.2%, past the one-fifth rule);
+round 2 deleted it (SD-1 above), so the rule is not reached.
+
+**RI-1, the round iteration along a sequence** (§13d G4 continuation 4, its review's F2,
+2026-10-25). `Build/ZoneRebalance`'s private `zr_pinLoop` (line 8266, 71 lines with its docstring)
+iterates pinned rounds by its own induction (`Round.segment`, then `Segment.trans`), which is the
+proof of the published `Turing.Round.iterate` (`Build/Contract/Basic`, line 781), along the sequence
+of pass indices `nxt^[m] j₀` instead of the configuration orbit `roundOrbit`. No published lemma
+states the sequence form, so it re-derives `Round.iterate`'s argument, not its statement (the text
+screen pairs nothing). All seven of the found path's passes go through it (`zr_passContract`). **The
+ruling (user, 2026-10-25): land G4 with this entry; then an API PR adds the sequence form to
+`Build/Contract/Basic`, with `Round.iterate` as its corollary, and re-points `zr_pinLoop` to it.**
+Census (one member per file; the source side added at gate 75's minor 5): `Build/ZoneRebalance` 1 of
+871 declarations (0.1%), the private `zr_pinLoop`, 71 lines with its docstring;
+`Build/Contract/Basic` 1 of 85 (84 public, 1 private; 1.2%), the public `Turing.Round.iterate`, 18
+lines with its docstring. The one-fifth rule is not reached. **The API PR is #167** (gate 78,
+2026-10-25; stacked on #165): `Turing.Round.iterate_seq` beside `Round.iterate`, which becomes its
+corollary, and `zr_pinLoop` re-pointed to it. On its landing RI-1 is retired.
+
+**TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
+transducer started in a state that copies every bit and is kept is the identity, in three files:
+- `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
+  form: from `∀ b, δ q b = q` and `∀ b, o q b = some b`, `transduce δ o q l = l`;
+- `Complexity.KarpLipton.transduce_drop_true` (public, `CircuitComplexity/KarpLiptonPrefix`, line
+  87) and `Complexity.Meyer.transduce_fT_copy` (public, `CircuitComplexity/MeyerVerifierGlue`,
+  line 145): its instances at `q = true` and `q = none`, each the general lemma with `fun _ => rfl`
+  twice (the megafill D review's `probe/A1ConsumerProbe`; gate 76 checked both specializations),
+  each re-proved by its own induction.
+
+Both instance files import `ClassNP/Transducer`, so each can cite the general form.
+`spaceConstructible_poly`'s landing cites it (`Savitch`'s private `scp_transduce_copy` is the
+one-line application), which avoids a third copy. **The ruling (user, 2026-10-25, Q-D2): include
+the general form in A1; re-point the two instances in the user's dedup window (12.2c), since that
+edits `CircuitComplexity/*`.** Census (one member per file, at A1's head): `ClassNP/Transducer` 1 of
+10 declarations (10.0%), `KarpLiptonPrefix` 1 of 16 (6.3%), `MeyerVerifierGlue` 1 of 42 (2.4%). The
+one-fifth rule is not reached.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

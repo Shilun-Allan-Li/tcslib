@@ -1,0 +1,74 @@
+"""Per-pair dispositions for the G4 continuation 4 pairs that the worker justified only by class.
+usage: python3 -I classify.py <screen-v3.py> <repo root> <module path> <worker pairs .md> <out.md>
+Reuses the v3 screen's own extraction and greedy tiling (imported from its source, unchanged), and
+for each listed pair records the shared tiles, a class from their content, and whether the two
+statements coincide."""
+import re, sys, types
+scr, root, mod, wfile, out = sys.argv[1:6]
+src = open(scr, encoding='utf-8').read()
+# take the screen's helper definitions only (everything before the declaration loop)
+head = src[:src.index('grams = lambda')]
+head = head.replace("root, files = sys.argv[1], sys.argv[2:]", "root, files = ROOT, FILES")
+ns = {'ROOT': root, 'FILES': [mod]}
+exec(compile(head, scr, 'exec'), ns)
+strip, body, lcs = ns['strip'], ns['body'], ns['lcs']
+DECL = ns['DECL']
+t = strip(open(f'{root}/{mod}', encoding='utf-8').read()); ms = list(DECL.finditer(t))
+decl = {}
+for i, m in enumerate(ms):
+    end = ms[i + 1].start() if i + 1 < len(ms) else len(t)
+    txt = t[m.start():end]; bd = body(txt)
+    sig = re.sub(r'\s+', ' ', txt[:len(txt) - len(bd)]).strip()
+    sig = re.sub(r'^(private|protected|noncomputable)\s+', '', sig)
+    sig = re.sub(r'^(def|theorem|lemma|abbrev)\s+\S+', '', sig).strip()
+    # a top-level `:` in the header means an explicit type; otherwise the type is inferred
+    d = 0; typed = False
+    for ch in re.sub(r':=\s*$', '', sig):
+        if ch in '([{⟨': d += 1
+        elif ch in ')]}⟩': d -= 1
+        elif ch == ':' and d == 0: typed = True; break
+    decl.setdefault(m.group(3), []).append((re.sub(r'\s+', '', bd), sig, typed))
+def tiles(a, b):
+    segs = []
+    while True:
+        n, seg = lcs(a, b)
+        if n < 25: return segs
+        segs.append(seg); a = a.replace(seg, '\x00', 1); b = b.replace(seg, '\x01', 1)
+CLASSES = [
+  ('contract-opening', r'Contract\.(seq|ofSegment)_|_contract_(time|lo|hi|post)|zr_reindexContract|Contract[a-z]*\)|[A-Za-z]Contract,'),
+  ('field-branches', r'Cfg\.ext|Cfg\.mapState_|seekPost_|funext|Function\.update'),
+  ('zoneRowPre-reading', r'zoneRowPre|zr_scratchAt|zonedTape'),
+  ('instance-plumbing', r'inferInstanceAs|synthInstance|DecidableEq|Fintype'),
+  ('phase-literals', r'Sum\.inr\(Sum\.inr|SweepPhase\.|SeekPhase\.'),
+  ('arithmetic-ledger', r'zr_extent_cost|zoneStart_mono|zoneStart_eq|omega|norm_num|Nat\.le_'),
+  ('word-reading', r'List\.length_|zr_rulerTape_word|FinTM\.bufferTape'),
+]
+P = re.compile(r'^- (\d+)% \((\d+)/(\d+)\) `([^`]+)` ⟵ `([^`]+)` — zip (\d): justified by class')
+rows = []
+for line in open(wfile, encoding='utf-8'):
+    m = P.match(line)
+    if not m: continue
+    pct, sh, ln, tgt, srcd, z = m.groups()
+    (tb, ts, tt), = decl[tgt]; (sb, ss, st), = decl[srcd]
+    segs = tiles(sb, tb)  # the screen's order: tiled(source body, target body)
+    shared = sum(map(len, segs))
+    joined = ' '.join(segs)
+    cls = [c for c, rx in CLASSES if re.search(rx, joined)]
+    same = 'IDENTICAL' if ts == ss and tt and st else ('same binders, types inferred' if ts == ss else 'differ')
+    if shared != int(sh) or len(sb) != int(ln): print("MISMATCH", tgt, srcd, shared, sh, len(sb), ln)
+    rows.append((int(pct), tgt, srcd, z, shared, int(sh), int(ln), cls, same, max(segs, key=len) if segs else ''))
+assert len(rows) == 173, len(rows)
+with open(out, 'w', encoding='utf-8') as f:
+    same = [r for r in rows if r[8] == 'IDENTICAL']; inferred = [r for r in rows if r[8].startswith('same')]
+    nocls = [r for r in rows if not r[7]]
+    mism = [r for r in rows if r[4] != r[5]]
+    f.write(f"pairs: {len(rows)}; statements identical: {len(same)}; defs with the same binders and inferred types: {len(inferred)}; with no class: {len(nocls)}; "
+            f"tiling differs from the worker's figure: {len(mism)}\n")
+    for c, _ in CLASSES:
+        f.write(f"class {c}: {sum(1 for r in rows if c in r[7])}\n")
+    f.write('\n')
+    for r in sorted(rows, key=lambda r: (-r[0], r[1], r[2])):
+        pct, tgt, srcd, z, shared, sh, ln, cls, same_stmt, big = r
+        f.write(f"{pct}% ({sh}/{ln}) {tgt} <- {srcd} | zip {z} | classes {'+'.join(cls) or 'NONE'} | "
+                f"statements {same_stmt} | longest tile {len(big)}: {big[:90]}\n")
+print(open(out).read().split('\n\n')[0])

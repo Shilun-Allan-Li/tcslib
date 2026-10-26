@@ -4,22 +4,27 @@
 `77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532` (TCSlib as after #155; #156 open). Pre-ship measured
 there, against a fresh bootstrap of the order list:
 `campaign/fills/u2s/drafts/u2s-fill-universal/preship-77f1eb4f/`.
-**Issue condition: the field-equation API PR Q-U1** (`campaign/fills/megafill/drafts/
-megafill-C-DRAFTING-REPORT.md`): H2-F's encoding `Turing.StepBlock.forwardLoopCfg` and H5's
-presentation `Turing.rulerHostCfg` are public definitions with no published lemma (the style
-lint's check 8 lists both), and both phases' seams read their fields. This draft cites the
-equations under the names `simps` generates beside them (`StepBlock.forwardLoopCfg_state`, …,
-`rulerHostCfg_output`); at issue, replace them by the landed names if they differ, and re-run the
-pre-ship against the API's head. The generated tape equations are pointwise in the cell
+**The field-equation API Q-U1 has landed: PR #161** (gate 73, PASS 0/0/3/9; merged 2026-10-25
+as `5bbef333`, its 325-module replay passed). H2-F's encoding `Turing.StepBlock.forwardLoopCfg`
+and H5's presentation `Turing.rulerHostCfg` now carry their field equations under the names
+`simps` generates, which are the names this draft cites (`StepBlock.forwardLoopCfg_state`, …,
+`rulerHostCfg_output`; gate 73's consumer probe `U2ApiConsumer` uses them). At issue, re-run the
+pre-ship at the issue commit. The generated tape equations are pointwise in the cell
 (`… .workTapes i a = … i a`), unlike the route probe's stand-ins: re-run the probe with `funext`
 before each tape rewrite (the review's API probe does, against the generated lemmas).
-**The same API PR also carries** (review F1, F2): `Turing.MultiTapeTM.spaceUsedByTape_eq_card`
-beside the definition in the vendored `Deterministic.lean` (U2-U's space ledger has no other
-published card step; replay: `Deterministic`'s closure, 325 modules, as #149's) and
-`Turing.pairEncode_drop` in `Build/InputDevice` (the suffix after one header; no extra replay).
-Other issue-time items: @ANCESTOR@, ⟨BASE⟩, ⟨IN-FLIGHT⟩ (#156's head moved during review; if it
-is in the issue base, its two lemmas become citable: add them to the probe), ⟨its PR⟩, the megafill
-banner. -->
+**#161 also carries** (review F1, F2): `Turing.MultiTapeTM.spaceUsedByTape_eq_card` beside the
+definition in the vendored `Deterministic.lean` (U2-U's space ledger has no other published card
+step) and `Turing.pairEncode_drop` in `Build/InputDevice` (the suffix after one header; the
+ledger's SD-1: cite it, add no local suffix drop). Gate 73's note 9 applies at issue: the route
+probe is rewritten against the generated names (`funext` before each pointwise tape equation,
+`.val` through `rulerHostCfg_inputPos`). #156 and #159 are in the issue base: their four
+phase-host lemmas are citable (add them to the probe). Other issue-time items: @ANCESTOR@,
+⟨BASE⟩, ⟨IN-FLIGHT⟩, the megafill banner, the semantic-duplication requirement (gates 69 and 72;
+megafill D's drafting brief §5).
+**Pre-ship re-runs (maintainer, 2026-10-25):** at `079a0707` (the tree after #161; the route probe
+rewritten against #161's generated names: `preship-079a0707/`), then at the issue base `a524c36f`
+(Lean equal to #162's merge `5a258cc2`, the snapshot `oleans-lkit2`: `preship-a524c36f/`). The
+figures below are the latter's; ⟨BASE⟩ and ⟨IN-FLIGHT⟩ are filled at issue. -->
 
 > **⟨Megafill C, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the toolchain,
 > the clone and the cache are done once for the whole queue. For this item: create its branch from
@@ -45,12 +50,12 @@ banner. -->
   - **H5, proved** (PR #146, gate 60): `Turing.exists_rulerHostTM` (`Build/InputDevice`), the
     bounded-prefix ruler host, a block simulation of any native-input machine on a suffix input,
     through `Turing.rulerHostCfg`;
-  - **the field-equation API (Q-U1, ⟨its PR⟩)**: `StepBlock.forwardLoopCfg_state`, `_inputPos`,
-    `_workTapes`, `_workTapePos`, `_output` and `rulerHostCfg_state`, `_inputPos`, `_workTapes`,
-    `_workTapePos`, `_output` (the tape equations pointwise: `… .workTapes i a = … i a`); with
-    them `MultiTapeTM.spaceUsedByTape_eq_card` (`Deterministic`: a tape's space is the card of its
-    visited set) and `pairEncode_drop` (`Build/InputDevice`: `(pairEncode u x).drop (2|u| + 2) =
-    x`);
+  - **the field-equation API (Q-U1, PR #161, gate 73)**: `StepBlock.forwardLoopCfg_state`,
+    `_inputPos`, `_workTapes`, `_workTapePos`, `_output` and `rulerHostCfg_state`, `_inputPos`,
+    `_workTapes`, `_workTapePos`, `_output` (the tape equations pointwise:
+    `… .workTapes i a = … i a`); with them `MultiTapeTM.spaceUsedByTape_eq_card` (`Deterministic`:
+    a tape's space is the card of its visited set) and `pairEncode_drop` (`Build/InputDevice`:
+    `(pairEncode u x).drop (2|u| + 2) = x`);
   - the lockstep API (`Build/Contract/Basic`): `Lockstep.runFrom`, `Lockstep.cut`,
     `Lockstep.locate` and the structure's fields;
   - the space API (PR #149): `MultiTapeTM.spaceUsed_eq_sum`, `MultiTapeTM.spaceUsed_le_of_abs_le`;
@@ -94,15 +99,16 @@ banner. -->
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign tip ⟨BASE⟩.** Lines in this brief are those of the
-  drafting base's tree, where `UniversalK.lean` is #147's landing (1,762 lines; 12 public, 39
-  private); re-check them at issue (the API PR does not touch your file).
+- **Your base's Lean content is the campaign tip ⟨BASE⟩.** Lines in this brief are those of your
+  base's tree, where `UniversalK.lean` is #147's landing (1,762 lines; 12 public, 39 private),
+  unchanged since.
 - **Your first edit makes your file equal to the overlay** (`UniversalKOverlay.lean.txt`): the
   import of region (a) after line 11. **Line numbers below are the base's; the overlay's are 1
   more** (U2-U at 1716, overlay 1717; U2-E at 1754, overlay 1755).
 - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩ (at drafting: #156,
-  `Build/Seam`'s `phaseHostTM_tr_of_red_none` and `phaseHostTM_run_le`, gate 69 pending: **not
-  citable**; #135); on their own branches in this session, the other megafill items, among them
+  then not citable; it has since merged with #159, and `Build/Seam`'s `phaseHostTM_run_le`,
+  `phaseHostTM_tr_of_red_none`, `phaseHostTM_q₀` and `phaseHostTM_tr_of_red_some` are in your base;
+  #135); on its own branch in this session, the other megafill item,
   **B5a** (`CodeSimulator`, upstream of your file through `Codes2Tape`; you cite nothing of it).
   Cite nothing they add.
 
@@ -175,25 +181,27 @@ prints). **A complete delivery has no `sorryAx` in either target**, and then
 - the route probe `U2UERouteProbe.lean.txt`: the seam premises of both phases, derived sealed
   against the API's equations; its proofs may be copied into your homes as `uk_` privates.
 
-**Pre-ship check** (drafting agent, at the drafting base, the API stated as stand-ins; re-run at
-issue against the API's landed names;
+**Pre-ship check** (the maintainer, re-run at your base against the landed API; the drafting
+agent's first run stated the API as stand-ins;
 `campaign/fills/u2s/logs/u2s-fill-universal-preship.log`):
 - **The overlay** elaborates with exactly the two targets' sorry warnings (overlay lines 1717,
   1755). The import creates no cycle, and `SelfUniversal`, the one downstream module that gains
   names through it, shares no declaration name with `Build/Rewind`.
 - **The import probe** (`U2UEImportProbe.lean.txt`, a standalone import of your module and
-  `Build/Rewind`, **77 checks of 77 names**, and five axiom prints): 0 errors, 0 warnings; the
+  `Build/Rewind`, **93 checks of 93 names**, and five axiom prints): 0 errors, 0 warnings; the
   startup, H2-F, H5, `Lockstep.runFrom` and the work-tape rewind on the standard three axioms.
-  **Re-run it after your delivery**, extended by the API's ten names and every further name you
-  cite.
+  The names are the drafting probe's 77 and 16 more: #161's ten field equations,
+  `MultiTapeTM.spaceUsedByTape_eq_card`, `pairEncode_drop`, and the phase host's four.
+  **Re-run it after your delivery**, extended by every further name you cite.
 - **The route probe** (`U2UERouteProbe.lean.txt`), sealed over 8 TCSlib definitions (the two
-  `@[simp]` ones, `MultiTapeTM.initCfg` and `Cfg.init`, also erased), with the API's equations as
-  `rfl` stand-ins proved before the seal: 0 diagnostics. `u2_encode_init_tapes` and
+  `@[simp]` ones, `MultiTapeTM.initCfg` and `Cfg.init`, also erased), citing #161's published
+  field equations (each pointwise tape equation through one `funext`; `rulerHostCfg_inputPos` by
+  `rw`): 0 diagnostics; the standard three axioms. `u2_encode_init_tapes` and
   `u2_encode_init_fields` (the startup's endpoint on the first `k + 2` tapes is
   `forwardLoopCfg entry M (M.initCfg _)`), `u2_encode_halt` (the encoding halts exactly when the
   source does, with its output), `u2_ruler_fields` (the host's presentation).
 - **The seal controls** (`U2UESealControl.lean.txt`, 8 `rfl` goals): every one closes unsealed and
-  fails sealed; the first two are the API gap.
+  fails sealed (the first two were the gap that #161's API closed).
 
 ## Owned regions and targets (modify these and nothing else)
 
@@ -439,8 +447,9 @@ screen after your first edit: it must equal the screen base (the overlay changes
     (`Build/VirtualInput`), H2's clocked form (`Build/StepBlockLoop`), and `Simulation` (the input
     rewind family; this item writes none, but its startup sits beside U2-S's `ss_inputRewind`).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/u2s/logs/u2s-fill-universal-screen-base.txt`: **1,039
-  declarations, 785 pairs, 213,552 characters** (MEASURED at the drafting base; about 10 minutes).
+- **The base** is `campaign/fills/u2s/logs/u2s-fill-universal-screen-base.txt`: **1,057
+  declarations, 788 pairs, 213,847 characters** (MEASURED at your base; about 6 minutes, peak
+  memory 3.5 GB).
   14 pairs have a declaration of your file on one side: 13 within it (none at 90% or more), and
   one across files (`ss_inputRewind_run` of `Universal`'s `timedFrame_run`, 56%).
 
@@ -476,16 +485,16 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   **never `lake build`**, and never the unfiltered `lake exe cache get`. Use
   `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
 - **Re-bootstrap** (addendum Part 3, item 3.2) from
-  `campaign/fills/u2s/orders/u2s-fill-universal.txt` (**96 modules**, computed on the overlay; the
+  `campaign/fills/u2s/orders/u2s-fill-universal.txt` (**97 modules**, computed on the overlay; the
   same set as the base's), after your first edit, logging each module's start and end time and
-  maximum memory. **The base sorry-warning set has 27 entries in 12 modules**
+  maximum memory. **The base sorry-warning set has 26 entries in 11 modules**
   (`campaign/fills/u2s/logs/u2s-fill-universal-base-sorries.txt`). Yours are `UniversalK`'s two.
   Record the base list by name first, and report any difference.
 - **Final checks:**
   1. `UniversalK`: zero errors, no sorry warning (for a partial, exactly the open targets'), and
      no other warning in anything you added.
   2. Every other module of the order list: zero errors, and sorry warnings exactly the base's
-     minus yours (25 for a complete delivery).
+     minus yours (24 for a complete delivery).
   3. Re-run `U2UEImportProbe.lean.txt` (extended by the API's names and your citations): 0 errors.
 - **Axiom prints** (in a scratch copy of your module with `#print axioms` appended) for both
   targets and every new private, and for `Turing.exists_selfUniversal` (in a probe importing

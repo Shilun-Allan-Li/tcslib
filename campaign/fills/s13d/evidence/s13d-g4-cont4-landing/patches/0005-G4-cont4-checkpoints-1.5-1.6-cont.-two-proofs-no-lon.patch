@@ -1,0 +1,57 @@
+From 1e96a9e4e569e57c9e96dc2ac96e9d6e08b5d849 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 09:18:13 +0000
+Subject: [PATCH 05/39] G4 cont4 checkpoints 1.5-1.6 (cont.): two proofs no
+ longer close by unfolding
+
+- The final loop's precondition is read through the segment bridge's field equation instead of
+  closing by definitional unfolding of the bridge.
+- The scratch comparison after the left pass rewrites the head positions with `rw`, so the
+  test's decidability instance follows the rewritten condition, and compares the two tests by
+  cases instead of closing by unfolding the configuration map.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_0155fKrzMUhziJHzQxJacYbw
+---
+ .../TuringMachine/Build/ZoneRebalance.lean     | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 4cb90751..4f46b81f 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -3025,7 +3025,9 @@ private def zr_finalSeekContract {k : ℕ} (x : List (ZoneSym k)) :=
+ private def zr_finalLoopContract {k : ℕ} (x : List (ZoneSym k)) :=
+   zr_reindexContract (zr_loopContract x) zoneExtendData
+     (fun (D : ZoneData k) d => zr_loopPre (zoneExtendData D) d ∧ zr_scratchAt 0 (2 ^ D.1) d)
+-    fun _ _ hp => hp.1
++    fun _ _ hp => by
++      rw [zr_loopContract, Contract.ofSegment_pre]
++      exact hp.1
+ 
+ /-- With the ruler at the scratch head, its word is the clear row's premise. -/
+ private lemma zr_rulerClear_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
+@@ -3242,8 +3244,18 @@ private lemma zr_rightLeft_post {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k
+         rfl
+     · have hj1 : j = 1 := by omega
+       subst hj1
+-      simp only [Cfg.mapState_workTapes, Cfg.mapState_workTapePos, hj, false_and, if_false,
+-        zr_rightReturn_post D _ hr, zr_rulerTape, Nat.cast_pow, Nat.cast_ofNat]
++      simp only [Cfg.mapState_workTapes, hj, false_and, if_false, zr_rightReturn_post D _ hr,
++        zr_rulerTape]
++      rw [Cfg.mapState_workTapePos]
++      by_cases hc : d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + 2 ^ D.1
++      · have hc' : d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + ((2 ^ D.1 : ℕ) : ℤ) := by
++          rw [hcast]
++          exact hc
++        rw [if_pos hc, if_pos hc']
++      · have hc' : ¬ (d.workTapePos 1 ≤ q ∧ q < d.workTapePos 1 + ((2 ^ D.1 : ℕ) : ℤ)) := by
++          rw [hcast]
++          exact hc
++        rw [if_neg hc, if_neg hc']
+   · funext j
+     by_cases hj : j = 0
+     · subst hj
+-- 
+2.50.1 (Apple Git-155)
+
