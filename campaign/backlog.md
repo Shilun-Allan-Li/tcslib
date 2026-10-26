@@ -1702,9 +1702,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **Issued U2 alone (2026-10-25, `ed8f2e87`); delivered (2026-10-25,
     `fill-u2s-universal.zip`, Codex): both targets claimed proved**, head `2410022f` (5 commits,
     `UniversalK.lean` only, +1,127/−2; 28 new `uk_` privates). Intake: checksums, bundle and patch
-    series verified; the head fetched as `deliver/fill-u2s-universal-in`. Under review (a
-    sub-agent, `$S/review/u2-universal/`). Disclosed: E-CHK, three grouped checkpoint zips instead
-    of one per checkpoint.
+    series verified; the head fetched as `deliver/fill-u2s-universal-in`. Disclosed: E-CHK, three
+    grouped checkpoint zips instead of one per checkpoint.
+    **Reviewed** (`campaign/fills/u2s/reviews/universal/REVIEW.md`): complete (2/2), no
+    `sorryAx`; `Turing.exists_selfUniversal` becomes admission-free. Integrity, scope, freeze,
+    elaboration (at `lkit2`, and at the tip on `lg4c4m`), rule 10 (31-control seal), rule 11,
+    probes, screen (5 new in-file pairs, none cross-file) and lint pass. **F1 (major):** three
+    inline arguments re-prove published lemmas (`MultiTapeTM.exists_first_halt`,
+    `visitedByTapeHead_mono`, `FinTM.ComputesInTime.spaceUsed_le_of_halt`); fixed by the
+    review's tested edits D1–D3. Minors: the Implementation paragraph (F3), stale status text
+    (F4), E-CHK (F5). Decisions pending (user): D1–D3, the ruler on tape `k + 2` (F2), the
+    wording S1–S6, the landing order, E-CHK. Lands by a maintainer PR and a fill gate, with a
+    3-module replay. (The records commit `4ae9e632`'s subject says two indexes were omitted from
+    the review's records; it was seven, per its `NOT-COPIED.md`.)
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
