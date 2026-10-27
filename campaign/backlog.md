@@ -1791,6 +1791,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Ruled (user, 2026-10-27): D1 = (A), land the review's proof** by a maintainer PR from
     `local/b5a-landing`, with a fill gate and the 9-module replay; the restart identity's four
     variants are disclosed and ledgered.
+    **Ledgered (2026-10-27) as RS-1** (`campaign/duplication-ledger.md`), with a correction to
+    gate 81's pack: **three** members (`us_start`, `xr_E_initCfg`, `uk_init_mapState`), not four.
+    `un_setup`'s 89% is containment (a 980-line setup whose `Cfg.mapState_*` rewrites cover
+    `us_start`'s tokens). Disposition pending gate 81's answer to item 4. To be stated in gate 81's
+    resolutions. **PL-1** ledgered beside it (#171's residue: `a3n_poly_linear`/`a3n_poly_const`,
+    twins of `polyTimeComputable_of_linear`/`_const`; `Savitch`'s inline `hD'`), for 12.2c.
     **PR #170** (`lean/b5a-unisim-landing`, head `101434fd`: the assembly, the docstring rewrite
     and the downstream status lines, all docstring-only beyond the proof; the campaign merged
     in). `replay-lb5am` (10 modules from `oleans-laplusm`) is written; its precheck passed.
