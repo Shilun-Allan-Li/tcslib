@@ -1,0 +1,32 @@
+wt-probe/TMSATCat.lean:1205:4: error: unsolved goals
+case inl
+a b : List Bool
+x : List Bool := pairEncode a b
+pre : List Bool := List.flatMap (fun v => [v, v]) a ++ [false, true]
+hx : x = pre ++ b
+hp : pre.length = 2 * a.length + 2
+hs :
+  MultiTapeTM.runFrom (tmsatTakeCfg x (some 0) 0 ⋯ 0 0 []) (2 * a.length + 2) =
+    tmsatTakeCfg x (some 3) (2 * a.length + 2) ⋯ a.length (↑a.length - 1) []
+hi : MultiTapeTM.initCfg x = tmsatTakeCfg x (some 0) 0 ⋯ 0 0 []
+hrun :
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (2 * a.length + 2 + min a.length b.length) =
+    tmsatTakeCfg x (some 3) (pre.length + min a.length b.length) ⋯ a.length (↑a.length - ↑(min a.length b.length) - 1)
+      (List.take (min a.length b.length) b)
+hw : polyTape a.length (↑a.length - ↑(min a.length b.length) - 1) = none
+⊢ (match polyTape a.length (↑a.length - min ↑a.length ↑b.length - 1), x[pre.length + min a.length b.length]? with
+        | some val, some b => { inputTape := 1, workTapes := fun x => (none, -1), output := some b, state := some 3 }
+        | x, x_1 => { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := none }).state =
+      none ∧
+    (match polyTape a.length (↑a.length - min ↑a.length ↑b.length - 1), x[pre.length + min a.length b.length]? with
+        | some val, some b => { inputTape := 1, workTapes := fun x => (none, -1), output := some b, state := some 3 }
+        | x, x_1 => { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := none }).output =
+      none
+wt-probe/TMSATCat.lean:1205:60: warning: This simp argument is unused:
+  hw
+
+Hint: Omit it from the simp argument list.
+  simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, h̵w̵,̵ ̵Action.apply,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵List.take_eq_take_min]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`

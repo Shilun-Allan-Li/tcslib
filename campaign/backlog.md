@@ -1865,6 +1865,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - checkpoint 1: **land now with E1–E5** (after the API PR, re-pointed to its rows);
     - **cont1 goes to Claude** (user: Codex is not getting far with it), as a standalone fill, not
       a megafill item.
+    **PR #171** (`lean/word-tests`, head `d17f63c8`): `Build/WordTests` (4 public rows) and the
+    re-points in `Nondeterminism`, `TMSAT`, `EXPCOM` (5 privates removed, 4 re-proved as
+    citations); its replay closure is 18 modules, written after the merge order with #170 is
+    settled. **Gate 82** (an API gate) packed (`campaign/gates/82-word-tests-api/`).
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
