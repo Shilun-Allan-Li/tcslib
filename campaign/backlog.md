@@ -1973,7 +1973,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     Axioms standard (16 prints); sealed in five regions, 0 diagnostics; freeze 25 → 37 public,
     every signature unchanged; lint the base's. Screen: 10 new pairs, 4 gone, all moved
     boilerplate or invocation and citation idioms. **`replay-lnfapi3` passed** (4 of 4,
-    static-equal; snapshot `oleans-lnfapi3`). **Gate 85** (an API gate) staged.
+    static-equal; snapshot `oleans-lnfapi3`). **Gate 85** (an API gate) staged: bundle
+    `19830ec7…`, 71 sections, the Lean at `1045624d`, the records at `d51ac787`. **Dispatched (user,
+    2026-10-27).**
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
