@@ -644,12 +644,11 @@ the three re-pointed.
 **PL-1, the linear-to-polynomial lift, and WT-1's residue** (PR #171, the word tests, 2026-10-27;
 disclosed in gate 82's pack, item 5). Two copies outside the ruling's scope (E-DUP covered the
 fixed-word and all-`true` tests only):
-- `Nondeterminism`'s private `a3n_poly_linear` (line 3537 at #171's head `d17f63c8`; 13 uses)
-  and `a3n_poly_const` (line 3544), byte-equal in their proofs to the public
+- `Nondeterminism`'s private `a3n_poly_linear` (line 3537 at #171's head `d17f63c8`; 13 uses) and
+  `a3n_poly_const` (line 3544), equal in their proofs, up to the names, to the public
   `Complexity.polyTimeComputable_of_linear` and `Complexity.polyTimeComputable_const`
-  (`ClassNP/PolyTimePairing`, lines 64 and 71). `Nondeterminism` does not import
-  `PolyTimePairing`; the import is acyclic (`PolyTimePairing` imports only `ClassNP/PolyTime` and
-  `Build/Primitives`).
+  (`ClassNP/PolyTimePairing`, lines 64 and 71). `Nondeterminism` does not import `PolyTimePairing`;
+  the import is acyclic (`PolyTimePairing` imports only `ClassNP/PolyTime` and `Build/Primitives`).
 - `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
   proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
   which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
