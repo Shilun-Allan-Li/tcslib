@@ -1,0 +1,93 @@
+<!-- DRAFT (maintainer, 2026-10-27): megafill E, H alone (the user's ruling: H now, Codex; E-Q
+cont1 left it for Claude). Fill at issue: every ⟨…⟩ from H's pre-ship at the issue commit
+(@ANCESTOR@); then remove this comment. -->
+
+# Megafill E: H, the nondeterministic time hierarchy
+
+**One session, one host, a queue of one fill brief**, worked under Part 3 of the fill-agent
+environment addendum (`campaign/standards/fill-environment-addendum.md`, **v2.6**). The item is its
+own fill: its brief binds it, and it has its own branch, checks, screens, `REPORT.md` and zip,
+exactly as if it had been dispatched alone. **The agent is Codex.** H is a first attempt.
+
+## Repository and the shared base
+
+- Clone: `https://github.com/Shilun-Allan-Li/tcslib`
+- Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
+- Confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it fails, **stop**.
+  That commit, **the shared base**, contains:
+  - this cover brief and the item brief `campaign/fills/h/briefs/h-fill-hierarchy.md`;
+  - its inputs, order list, base sorry set, screen base and pre-ship log;
+  - **the contracts it cites:** `Turing.NTimeDiag.exists_diagonalizer` and
+    `Turing.FinNDTM.exists_codeNDTM_accepts_linear` (both sorried: H is proved modulo them), and
+    `Turing.exists_ndAcceptsWithin_decider` (proved);
+  - the route's design note `campaign/items/c1/c1e/H-route-design.md`;
+  - the addendum v2.6.
+- Every attached brief must match its repository copy at that commit except for its
+  `@ANCESTOR@` placeholders, and its SHA-256 must be the one the dispatch message gives.
+
+## Once, at the start
+
+1. **Part 1 of the addendum:** the preflight (item 1, with its floors: 12 GiB free on the clone's
+   filesystem, 4 GiB of memory headroom as the addendum computes it), the toolchain, one clone.
+   If Lean cannot start, Part 2 applies. **If Lean never runs, deliver the environment report
+   only: do not draft proofs blind.**
+2. **The cache** (Part 3, item 2): log the cache tool's archive store first, then fetch for the
+   item's order list's Mathlib roots: **⟨33⟩ roots** (⟨81⟩ modules). Never the unfiltered
+   `lake exe cache get`, never `lake build`.
+3. **Keep the shared logs** under `evidence/logs/` at the clone's root (preflight, cache store,
+   roots, cache fetch, manifest and cache checks), and **copy them into the item's zip**.
+
+## The queue
+
+| # | Item | Brief | Branch | Zip | Budget |
+|---|---|---|---|---|---|
+| 1 | H: `Complexity.ntime_hierarchy` (`Diagonalization/NTimeHierarchy`) | `h/briefs/h-fill-hierarchy.md` | `fill/h-hierarchy` | `fill-h-hierarchy.zip` | the session |
+
+The budget is wall-clock from the branch's creation (Part 3, item 3.4). The screen takes about ⟨a minute⟩ a run at the base on the maintainer's host. Never switch
+branches while a screen runs.
+
+## The item (Part 3, item 3)
+
+1. Start from a clean tree: `git checkout -b fill/h-hierarchy <the shared base>`.
+2. **Its first edit:** its overlay (one import, `Diagonalization/NTimeDiagonalizer`).
+3. **Re-bootstrap its whole order list** (`campaign/fills/h/orders/h-fill-hierarchy.txt`, ⟨81⟩
+   modules). Log each module's start and end time and **its maximum memory**, and the whole as the
+   item's bootstrap.
+4. Do the item as its brief says, through its delivery zip, and **deliver that zip at once**.
+5. **One checkpoint, one commit, one zip.** After each of the brief's five checkpoints, commit and
+   write `fill-h-hierarchy-cp<N>.zip`, and deliver it as soon as it is written. The session may end
+   at any time, and a finished checkpoint must survive it. Megafill C's grouped checkpoint zips (its
+   item's E-CHK) were a disclosed process deviation; do not repeat it.
+6. **Budget** (Part 3, item 3.4): when the session must end, finish the step in progress, commit,
+   and write the item's partial zip with its `REPORT.md`: the checkpoints reached, every open
+   declaration with its literal "Proof sketch", and the axiom walk. The item is about 800–1,500
+   lines (an ESTIMATE); a partial is fine.
+7. **Escalations** follow the brief's ground rules. If nothing is left that its escalations allow,
+   the item ends early, with its zip.
+
+## Environment rules for the session (addendum v2.6, with megafills A, C and D's lessons)
+
+- **Part 1 applies on this host** and **Part 3** governs the session: one preflight, one cache,
+  `df -B1` of the clone recorded before the item (E-RES below 3 GiB free stops the session).
+- **One Lean process at a time** (one that you start: a check, a probe, a sweep step, or one
+  `lake exe cache get`; the cache tool's own work inside it is not counted) and **one screen at
+  a time**, under `nice -n 10`. **A process deviation never ends the item**: disclose it and go
+  on (v2.6; megafill D's E-SERIAL stopped an item for nothing). Every check
+  through `scripts/lean_check_tree.sh`.
+- **After a proof edit, re-check the order list's tail from the edited module on**, not the
+  module alone.
+- **The shared environment logs go in the item's zip**, and **memory is logged per module** (in
+  the bootstrap, the final sweep and every probe).
+- **A seal not run is a checklist failure**, and so is a seal without `rfl` controls that fail
+  sealed and close unsealed (the brief's ground rule 10). Ship the raw outputs. A reducible
+  `abbrev` (such as `Turing.Cfg.Halted`) cannot be sealed under Lean's default reducibility
+  check; reading it through its body is allowed (`policy.md`).
+- **The import probe covers every external name the source cites**: the proof-term walk and the
+  source-level tactic arguments (megafill C's gate, round 2).
+
+## Delivery
+
+- The item's zip (and its checkpoint zips) **as soon as it is written**, named as its brief says.
+- At the end, or when the session must stop, `megafill-e-REPORT.md` (Part 3, item 6): the item's
+  outcome (complete; partial, with its checkpoints; or not started) with its branch's start and
+  end times and its zip's SHA-256; the preflight and cache numbers.

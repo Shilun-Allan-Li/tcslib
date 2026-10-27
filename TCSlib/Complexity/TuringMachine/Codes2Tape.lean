@@ -38,11 +38,12 @@ consumer needs uniformly timed decoding — `EffectiveMachineCode` bounds no
 decoding time), `UniformMachineCode` (`Diagonalization/EXPCOM.lean`) →
 `Turing.UniformMachineCode2`.
 
-## Status: B5a partial (flagged update)
+## Status
 
-The effective scheme is proved. The uniform scheme is proved modulo the uniform simulator
-`Turing.MachineFormat.exists_uniformSimulator` in `CodeSimulator` (whose canonizer is proved); its
-own admission is removed.
+The effective and the uniform schemes are proved, with no admission. The uniform scheme
+instantiates the shared canonizer and the uniform simulator of `CodeSimulator`
+(`Turing.MachineFormat.exists_polyCanonizer`, `Turing.MachineFormat.exists_uniformSimulator`) at
+two work tapes.
 
 ## Main definitions and results
 
@@ -299,7 +300,7 @@ private def twoTapeMachineFormat : MachineFormat :=
   MachineFormat.mk twoTapeFormat 2 Code2TM.tm
     Code2TM.serialize_eq_serializeK codeSkipTable2_eq_codeSkipTableK
 
-/-- **A uniformly timed two-tape scheme exists** (proved modulo the uniform simulator).
+/-- **A uniformly timed two-tape scheme exists**.
 
 **Proof sketch.** The concrete scheme of
 `Turing.exists_effectiveMachineCode2` with the uniform simulator built as
@@ -317,8 +318,8 @@ virtual-input layer supplies the input discipline.
 
 **Fill appendix (B5a).** This is the two-tape instance of the shared §12.11
 canonizer and H1, as in the statement probe's `uniform_two`. The two-tape
-writer and skipper bridges supply the format laws. The canonizer is proved and the uniform
-simulator remains admitted; no specialized interpreter is introduced. -/
+writer and skipper bridges supply the format laws. The canonizer and the
+uniform simulator are proved; no specialized interpreter is introduced. -/
 theorem exists_uniformMachineCode2 : Nonempty UniformMachineCode2 := by
   obtain ⟨C, dC, hC⟩ := twoTapeMachineFormat.exists_polyCanonizer
   obtain ⟨S, d, hS⟩ := twoTapeMachineFormat.exists_uniformSimulator

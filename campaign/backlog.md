@@ -1791,12 +1791,23 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Ruled (user, 2026-10-27): D1 = (A), land the review's proof** by a maintainer PR from
     `local/b5a-landing`, with a fill gate and the 9-module replay; the restart identity's four
     variants are disclosed and ledgered.
+    **Ledgered (2026-10-27) as RS-1** (`campaign/duplication-ledger.md`): **five sites in four
+    files** after gate 81's finding 1 (`exists_selfStartupTMK`'s `hinit`). A first entry called
+    `un_setup` containment; it is a member (its local `hstart`), as the pack said. Disposition:
+    the dedup window (12.2c); publication need not precede #170. **PL-1** ledgered beside it
+    (#171's residue: `a3n_poly_linear`/`a3n_poly_const`, twins of
+    `polyTimeComputable_of_linear`/`_const`; `Savitch`'s inline `hD'`), for 12.2c.
+    **Gate 81 resolved (2026-10-27): PASS 0/0/2/12** (`campaign/gates/81-b5a-unisim-fill/`).
+    Minor 1 ledgered (RS-1's fifth site); minor 2 fixed by `79efb462` (docstring only,
+    `baker_gill_solovay`'s appendix in public-facing terms). **#170 clear to merge** at `79efb462`.
     **PR #170** (`lean/b5a-unisim-landing`, head `101434fd`: the assembly, the docstring rewrite
     and the downstream status lines, all docstring-only beyond the proof; the campaign merged
     in). `replay-lb5am` (10 modules from `oleans-laplusm`) is written; its precheck passed.
     **Gate 81** (a fill gate) staged: `exchange/outbox/gates/81-b5a-unisim-fill-gate/`, bundle
     `b69054e0…`, 132 sections (the 57-file population included), the Lean at `101434fd`, the
     records at `06d98035`.
+    **`replay-lb5am` passed (10 of 10, static-equal); targets 3–8 and `baker_gill_solovay` print
+    the standard three: Baker–Gill–Solovay is admission-free.** #170 waits for gate 81.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
@@ -1863,6 +1874,22 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - checkpoint 1: **land now with E1–E5** (after the API PR, re-pointed to its rows);
     - **cont1 goes to Claude** (user: Codex is not getting far with it), as a standalone fill, not
       a megafill item.
+    **PR #171** (`lean/word-tests`, head `d17f63c8`): `Build/WordTests` (4 public rows) and the
+    re-points in `Nondeterminism`, `TMSAT`, `EXPCOM` (5 privates removed, 4 re-proved as
+    citations); its replay closure is 18 modules, written after the merge order with #170 is
+    settled. **Gate 82** (an API gate) staged: `exchange/outbox/gates/82-word-tests-api-gate/`,
+    bundle `6670e22b…`, 46 sections, the Lean at `d17f63c8`, the records at `5ffd739e`.
+    **E-Q's landing re-prepared, local only** (`local/eq-cp1-landing-v2` in `wt-eqland`, stacked
+    on #171's head): the cherry-picks and E1–E5, then `27ca2927`, the guard citing
+    `computesFunInTime_allTrue` and `computesFunInTime_decideEq` (54 lines removed; the two
+    expected sorries; the three privates on the standard three). Opens as a PR once #171 merges.
+    **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
+    **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
+    with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
+    `Build/WordTests` inlined: the two expected sorries, the privates on the standard three; the
+    review's seal re-run (body 0 errors sealed; 39 controls fail sealed, close unsealed); freeze
+    22 → 22, 0 → 3 private; lint unchanged; closure 2 modules. At the PR: rebase on #171's merge,
+    reword the two worker subjects without "E-Q" (the review's F8), re-run against #171's snapshot.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
@@ -1881,6 +1908,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     integration (recommended); the agent (Codex).
     **Ruled (user, 2026-10-27): run H now** as a second track, the brief superseding the old
     sketch, rewritten at landing; **megafill E, Codex, with H** (E-Q cont1 left it for Claude).
+    **Megafill E's cover drafted** (`campaign/fills/megafill/drafts/megafill-E.DRAFT.md`, from D's,
+    with v2.6's rules); H's brief is under review (a sub-agent).
     **Brief drafted and pre-shipped** (`campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md`;
     `preship-9d0af8cb/`, on the tree after #169): one import, 48 names, the route probe's seven
     lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4

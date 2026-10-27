@@ -620,5 +620,45 @@ edits `CircuitComplexity/*`.** Census (one member per file, at A1's head): `Clas
 10 declarations (10.0%), `KarpLiptonPrefix` 1 of 16 (6.3%), `MeyerVerifierGlue` 1 of 42 (2.4%). The
 one-fifth rule is not reached.
 
+**RS-1, the restart identity** (PR #170, B5a's landing, 2026-10-27; disclosed in gate 81's pack,
+item 4; completed by gate 81's finding 1). One fact: a machine whose initial state is a relabelled
+`q` starts in the relabelled blank configuration at `q`, i.e.
+`B.q₀ = f A.q₀ → B.initCfg x = (A.initCfg x).mapState f`. It is proved at five sites in four
+files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equations:
+- `Turing.UniversalK`'s `uk_init_mapState` (private, line 1816), the general form, used twice
+  (`uk_loop_init`, the suffix startup);
+- `Turing.UniversalK`'s `exists_selfStartupTMK` (public, line 1425): its local `hinit`
+  (line 1584), `R.initCfg (pairEncode α w) = d₀.mapState Sum.inl` with
+  `R := { W with q₀ := Sum.inl A.q₀ }` (gate 81's finding 1);
+- `CodeSimulator`'s `us_start` (private, line 8984 at #170's head), its instance at
+  `{ W with q₀ := Sum.inl entry }`, after `MultiTapeTM.initCfg_with_q₀`;
+- `ExhaustiveReplay`'s `xr_E_initCfg` (private, line 3133), its instance at a doubled `Sum.inl`
+  with the host's blank fields;
+- `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
+  at a seven-fold `Sum.inl` of the embedded blank start `c0`.
+
+Census (one member per file): `CodeSimulator` 1 of 208 declarations (12 public, 196 private;
+0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79 (2.5%), `NTimeHierarchy` 1 of 15
+(6.7%). The one-fifth rule is not reached. **Disposition** (gate 81's finding 1: publication need
+not precede #170 under D1(A)): a public row beside `MultiTapeTM.initCfg_with_q₀`
+(`TuringMachine/Finite`) in the user's dedup window (12.2c), with the five sites re-pointed.
+
+**PL-1, the linear-to-polynomial lift, and WT-1's residue** (PR #171, the word tests, 2026-10-27;
+disclosed in gate 82's pack, item 5). Two copies outside the ruling's scope (E-DUP covered the
+fixed-word and all-`true` tests only):
+- `Nondeterminism`'s private `a3n_poly_linear` (line 3537 at #171's head `d17f63c8`; 13 uses) and
+  `a3n_poly_const` (line 3544), equal in their proofs, up to the names, to the public
+  `Complexity.polyTimeComputable_of_linear` and `Complexity.polyTimeComputable_const`
+  (`ClassNP/PolyTimePairing`, lines 64 and 71). `Nondeterminism` does not import `PolyTimePairing`;
+  the import is acyclic (`PolyTimePairing` imports only `ClassNP/PolyTime` and `Build/Primitives`).
+- `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
+  proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
+  which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
+
+Census (one member per file): `Nondeterminism` 2 of 199 declarations (8 public, 191 private; 1.0%),
+`PolyTimePairing` 2 of 26 (7.7%; the public originals). The one-fifth rule is not reached.
+**Disposition:** the user's dedup window (12.2c): re-point the two privates to the public rows (one
+import), and `hD'` to `computesFunInTime_decideEq []` (the import of `Build/WordTests`).
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
