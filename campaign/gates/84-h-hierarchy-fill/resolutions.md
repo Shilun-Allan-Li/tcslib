@@ -53,3 +53,5 @@ campaign tip has exactly. Its precheck passed. The merged head's Lean equals the
 - **The gate:** passed, 0 blockers, 0 majors.
 - **The replay:** passed at that head.
 - **The base:** the campaign branch, with no Lean change since the merge-in `b2e01163`.
+
+**#172 merged** (2026-10-27, `b1a0aa27`).
