@@ -1839,6 +1839,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     duplication disposition rule with the two pairs pre-disclosed; the E-SERIAL ruling and the
     no-stop rule; the measured budget; the first round's seal lessons. The pre-ship re-runs on
     the landed tree at issue.
+    **The addendum's v2.6 drafted** (`campaign/standards/drafts/fill-environment-addendum-v2.6.DRAFT.md`:
+    the review's three wordings, applied to v2.5); adopted on decision 1.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
