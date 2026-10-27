@@ -36,5 +36,13 @@ checkpoint 1) changes. So the replay is written by `mk-next.sh` once #173 merges
 elaborates with no diagnostic, and its output is identical to the gate's: the three results are on
 the standard three and `sorryAx`, with direct `sorryAx` in the two contracts only.
 
-**Merge state. #172: not yet clear to merge** (2026-10-27): the gate is passed; it waits for #173's
-merge and then its replay.
+**The replay, written** (2026-10-27). #173 merged (`b2e01163`), so `mk-next.sh` merged the
+campaign into #172 (clean; head `940671e0d12b4edb59692447bfb42fb4739c359f`) and wrote
+`replay-lhh.sh` (`evidence/merged-tree/`). Its closure is 2 modules, `NTimeHierarchy` and the
+`Diagonalization` facade, chained from `oleans-leqcp1`; it pins `NTimeHierarchy`'s blob
+`87f207da`, #172's own. Its snapshot-tree commit is `599497bc`, #173's head, whose Lean the
+campaign tip has exactly. Its precheck passed. The merged head's Lean equals the trial merge's
+(`2973a416`), so the pre-check above gave the axiom prints and the sorry walk on this tree.
+
+**Merge state. #172: not yet clear to merge** (2026-10-27): the gate is passed; it waits for
+`replay-lhh`.
