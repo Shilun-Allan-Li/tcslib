@@ -1800,6 +1800,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Gate 81 resolved (2026-10-27): PASS 0/0/2/12** (`campaign/gates/81-b5a-unisim-fill/`).
     Minor 1 ledgered (RS-1's fifth site); minor 2 fixed by `79efb462` (docstring only,
     `baker_gill_solovay`'s appendix in public-facing terms). **#170 clear to merge** at `79efb462`.
+    **#170 merged (2026-10-27, `ba2441f7`).**
     **PR #170** (`lean/b5a-unisim-landing`, head `101434fd`: the assembly, the docstring rewrite
     and the downstream status lines, all docstring-only beyond the proof; the campaign merged
     in). `replay-lb5am` (10 modules from `oleans-laplusm`) is written; its precheck passed.
@@ -1883,6 +1884,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     on #171's head): the cherry-picks and E1–E5, then `27ca2927`, the guard citing
     `computesFunInTime_allTrue` and `computesFunInTime_decideEq` (54 lines removed; the two
     expected sorries; the three privates on the standard three). Opens as a PR once #171 merges.
+    **Gate 82 resolved (2026-10-27): PASS 0/0/3/12** (`campaign/gates/82-word-tests-api/`).
+    The three minors fixed by `9256939f` on #171: `EXPCOM`'s `hu` cites `decideEq []`; the
+    all-true test's proof and sketch agree; `## Main definitions`. Two more copies found
+    (`sat_pt_eq`, `clA5_pt_eq`), ledgered with PL-1 for 12.2c. After #170's merge, `mk-next`
+    merged the campaign into #171 (head `91a1ad87`) and wrote `replay-lwords` (18 modules from
+    `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **#171 not yet clear
+    to merge: waits for `replay-lwords`.**
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with

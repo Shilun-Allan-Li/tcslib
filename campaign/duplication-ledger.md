@@ -654,11 +654,18 @@ fixed-word and all-`true` tests only):
 - `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
   proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
   which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
+- `SAT`'s private `sat_pt_eq` (line 2886) and `CookLevin/Hardness`'s private `clA5_pt_eq` (line
+  6818), twins (found by gate 82's resolution of its finding 1): each lifts
+  `computesFunInTime_ifEq w [true] [false]`, converts it to `[decide (x = w)]` and composes it with
+  a polynomial field map. Each is `polyTimeComputable_of_linear (computesFunInTime_decideEq w)`
+  composed with that map.
 
 Census (one member per file): `Nondeterminism` 2 of 199 declarations (8 public, 191 private; 1.0%),
-`PolyTimePairing` 2 of 26 (7.7%; the public originals). The one-fifth rule is not reached.
+`PolyTimePairing` 2 of 26 (7.7%; the public originals), `SAT` 1 of 270 (0.4%), `CookLevin/Hardness`
+1 of 545 (0.2%). The one-fifth rule is not reached.
 **Disposition:** the user's dedup window (12.2c): re-point the two privates to the public rows (one
-import), and `hD'` to `computesFunInTime_decideEq []` (the import of `Build/WordTests`).
+import), `hD'` to `computesFunInTime_decideEq []`, and the twins to `computesFunInTime_decideEq w`
+(each with the import of `Build/WordTests`).
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
