@@ -620,5 +620,26 @@ edits `CircuitComplexity/*`.** Census (one member per file, at A1's head): `Clas
 10 declarations (10.0%), `KarpLiptonPrefix` 1 of 16 (6.3%), `MeyerVerifierGlue` 1 of 42 (2.4%). The
 one-fifth rule is not reached.
 
+**RS-1, the restart identity** (PR #170, B5a's landing, 2026-10-27; disclosed in gate 81's pack,
+item 4). One fact: a machine whose initial state is a relabelled `q` starts in the relabelled
+blank configuration at `q`, i.e. `B.q₀ = f A.q₀ → B.initCfg x = (A.initCfg x).mapState f`. It is
+proved privately in three files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field
+equations:
+- `Turing.UniversalK`'s `uk_init_mapState` (private, line 1816), the general form, used twice
+  (`uk_loop_init`, the suffix startup);
+- `CodeSimulator`'s `us_start` (private, line 8984 at #170's head `101434fd`), its instance at
+  `{ W with q₀ := Sum.inl entry }`, after `MultiTapeTM.initCfg_with_q₀`;
+- `ExhaustiveReplay`'s `xr_E_initCfg` (private, line 3133), its instance at a doubled `Sum.inl`
+  with the host's blank fields.
+
+The v3 screen's third pair at 89%, `NTimeHierarchy`'s `un_setup`, is containment, not a member: a
+980-line setup proof whose many `Cfg.mapState_*` field rewrites cover `us_start`'s tokens; it does
+not prove the identity. Census (one member per file): `CodeSimulator` 1 of 208 declarations
+(12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 1 of 79 (1.3%).
+The one-fifth rule is not reached. **Disposition pending:** gate 81's pack asks whether the
+identity should be published before #170 lands; the default is a public row beside
+`MultiTapeTM.initCfg_with_q₀` (`TuringMachine/Finite`) in the user's dedup window (12.2c), with
+the three re-pointed.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
