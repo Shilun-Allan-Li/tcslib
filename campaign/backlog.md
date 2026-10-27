@@ -1759,8 +1759,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     and `b5a_run` (the binary machine's halt with output `[answer]`, `b5a_verdict`'s shape) hold in
     the owned file's overlay (only the target's sorry; the standard three; sealed over 20 with
     their controls). The B5a brief's route steps 1–4 become the startup at `p = F.k` plus
-    `b5a_run`; the overlay can drop to two imports (`Nondeterministic`, the startup's module). Next:
-    rewrite the draft against them, then the pre-ship at issue after #169.
+    `b5a_run`. **The draft is rewritten against them** (2026-10-27): route steps 1–4 are the
+    startup at `p = F.k`, `us_bank` and `us_run`; two imports (`Nondeterministic`, the startup's
+    module); the hosts, hazards and pitfalls follow. Next: the pre-ship at issue after #169 merges,
+    on the two-import overlay, then a review sub-agent, then a queue.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
