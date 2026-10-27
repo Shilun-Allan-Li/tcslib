@@ -1951,6 +1951,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   so `S·S` covers the stack. The open point is the radius for general `S`: from the
   constructibility witness, or by iterative deepening on the radius (no subroutine beyond
   logspace). A route note decides it; stage 2 stays paused.
+  - **The general `savitch`'s route note** (`campaign/items/ch34/savitch-general/SAVITCH-route-design.md`,
+    2026-10-27): `arm_decides_SPACE` and `mem_iff_reach` are general (width linear in the radius);
+    the search lemmas are generic in `s`, `w` and the oracle but stated for the program `A E`, with
+    acceptance at decider 2; only `setup_run` is polynomial. The gap is the radius. Routes: (A)
+    iterative deepening (an edge language, window exactness, a deepening machine over a
+    generalized search; 1.5–3k), (B) the constructibility witness first (a new compile-layer
+    bridge), (C) a machine-level Savitch (3–6k). Both (A) and (B) extend Hydroxyi's
+    `SavitchARM`/`Machines` layer. Decisions pending (user): the route; consulting Hydroxyi; the queue.
   - **NF's route note** (`campaign/items/c1/nf/NF-route-design.md`, 2026-10-27): the C1 design's
     N1–N7 re-checked. `guessRunTM` carries only the bounded writer, so NF needs (an additive
     maintainer API PR in `Build/NDHost`) the controller writer's contract (drafted 2026-10-17,
