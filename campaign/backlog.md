@@ -1791,6 +1791,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Ruled (user, 2026-10-27): D1 = (A), land the review's proof** by a maintainer PR from
     `local/b5a-landing`, with a fill gate and the 9-module replay; the restart identity's four
     variants are disclosed and ledgered.
+    **PR #170** (`lean/b5a-unisim-landing`, head `101434fd`: the assembly, the docstring rewrite
+    and the downstream status lines, all docstring-only beyond the proof; the campaign merged
+    in). `replay-lb5am` (10 modules from `oleans-laplusm`) is written; its precheck passed.
+    **Gate 81** (a fill gate) staged: `exchange/outbox/gates/81-b5a-unisim-fill-gate/`, bundle
+    `b69054e0…`, 132 sections (the 57-file population included), the Lean at `101434fd`, the
+    records at `06d98035`.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
