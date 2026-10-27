@@ -1751,8 +1751,8 @@ theorem guessCtlRunTM_runWith {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [Decid
         Σ i, GuessRunPhase.CtlState SP SQ Q i))).workTapes i = d.workTapes i := fun i =>
       funext (Cfg.mapState_workTapes _ d i)
     apply Cfg.ext <;> (try funext i) <;> (try funext p) <;>
-      simp only [NDTM.phaseHostND, red, guessCtlRunRed, M, guessCtlRunPhases, hwt, Action.apply_state,
-        Action.apply_inputPos, Action.apply_workTapes, Action.apply_workTapePos,
+      simp only [NDTM.phaseHostND, red, guessCtlRunRed, M, guessCtlRunPhases, hwt,
+        Action.apply_state, Action.apply_inputPos, Action.apply_workTapes, Action.apply_workTapePos,
         Action.apply_output, Action.mapState_state, Action.mapState_inputTape,
         Action.mapState_workTapes, Action.mapState_output, Cfg.mapState_inputPos,
         Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Cfg.mapState_output,
