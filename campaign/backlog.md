@@ -1784,6 +1784,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `Codes2Tape`'s, `EXPCOM`'s and `Relativization`'s status lines (after the replay and the
     axiom prints of targets 3–8 and Baker–Gill–Solovay), the PR, the fill gate and the
     9-module replay.
+    **After-screen (F8) on `1a508123`:** 24 new pairs, none gone, none at 90%; the highest,
+    89%, are `xr_E_initCfg` and `un_setup` reproducing `us_start` (`landing-1a508123/`). With
+    `uk_init_mapState`, four private variants of the restart identity: a promotion candidate
+    (a public lemma beside `initCfg_with_q₀`), disclosed under (A) or (B).
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
