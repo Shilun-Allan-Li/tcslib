@@ -1966,6 +1966,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     (proofs); `NDHost` 18 of 45 declarations in one family.** **Ruled (user, 2026-10-27):
     generalize now**: one host over the writer's controller and flavor, `guessRunTM` and the
     controller host its instances, every public statement unchanged; a fresh replay after.
+    **Generalized (2026-10-27; head `1045624d`):** `guessCtlRunTM` over the writer's controller and
+    flavor, `guessRunTM` and its families its instances, the handoff and the rest of a branch
+    proved once (`gr_handoff`, `gr_runWith_of_handoff`); the writer's prefix induction and first
+    stop proved once (`wr_prefix_gen`, `wr_run_first_stop`), both contracts their instances.
+    Axioms standard (16 prints); sealed in five regions, 0 diagnostics; freeze 25 → 37 public,
+    every signature unchanged; lint the base's. Screen: 10 new pairs, 4 gone, all moved
+    boilerplate or invocation and citation idioms. **`replay-lnfapi3` passed** (4 of 4,
+    static-equal; snapshot `oleans-lnfapi3`). **Gate 85** (an API gate) staged.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
