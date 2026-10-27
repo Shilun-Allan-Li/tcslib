@@ -1958,7 +1958,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     iterative deepening (an edge language, window exactness, a deepening machine over a
     generalized search; 1.5–3k), (B) the constructibility witness first (a new compile-layer
     bridge), (C) a machine-level Savitch (3–6k). Both (A) and (B) extend Hydroxyi's
-    `SavitchARM`/`Machines` layer. Decisions pending (user): the route; consulting Hydroxyi; the queue.
+    `SavitchARM`/`Machines` layer. **Ruled (user, 2026-10-27): (A) iterative deepening; Hydroxyi FYI
+    only (no prior consultation); the queue after #174 and E-D's brief.**
   - **The space hierarchy's readiness (2026-10-27).** Every host `space_hierarchy`'s sketch names is
     proved on the standard axioms (17 axiom prints: `exists_selfUniversal`, the record rows
     `exists_recordInitTM`/`TestTM`/`StepTM`/`TemplateTM`, `exists_windowRunnerTM`/`LoopTM`, the
@@ -1967,7 +1968,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     The readings H must use exist (`mem_SPACE_iff`, `decidesInSpace_iff`, `computesInSpace_iff`,
     `spaceConstructible_iff`), so megafill D review's F8 is resolved; the corollaries lack
     `LOGSPACE` and `PSPACE` membership readings. F6 still waits on U2's harvest API PR. Q-D3 (H
-    after F6, one fill per file) is the one block: decision pending (user).
+    after F6, one fill per file) is the one block. **Ruled (user, 2026-10-27): H first, with
+    `LOGSPACE_ssubset_PSPACE` and `SPACE_linear_ne_NP` as later checkpoints of the same fill; F6
+    after U2's harvest API PR.** H's brief is next to draft.
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).

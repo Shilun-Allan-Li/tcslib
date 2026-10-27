@@ -71,3 +71,7 @@ ESTIMATE: 3–6k lines.
    generalizes his search's acceptance decider and the statement of `outerU_run`. Consult him
    before any edit (the standing rule for his files), with the design of the generalized search.
 3. **The queue.** After NF's API PR (#174) and E-D's brief; it does not touch their files.
+
+**Ruled (user, 2026-10-27):** route (A), iterative deepening; Hydroxyi: **proceed, FYI only** (the
+maintainer generalizes his search and adds the edge language, by PR and gate, with an FYI to him
+with the PR); the queue as recommended.
