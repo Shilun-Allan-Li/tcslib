@@ -1754,7 +1754,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     gated blobs kept); `replay-laplusm` (5 modules from `oleans-lu2m`) is written, and the
     combined screen on the merged head finds no new pair (gate 79's resolutions; U2's two
     `sl_rewrap` idiom pairs disclosed). **`replay-laplusm` passed (5 of 5, static-equal); #169
-    clear to merge** (2026-10-27).
+    clear to merge** (2026-10-27). **#169 merged (2026-10-27, `94296486`); `oleans-laplusm` is the
+    campaign's snapshot; A+ is published.** B5a's pre-ship (`preship-9d0af8cb/`) was measured on
+    this tree.
   - **B5a's junction proved** (`campaign/fills/b5a/drafts/b5a-fill-unisim/preship-junction/`,
     2026-10-27): gate 79's recorded obligation. `b5a_bank`, `b5a_junction`, `b5a_tail`, `b5a_start`
     and `b5a_run` (the binary machine's halt with output `[answer]`, `b5a_verdict`'s shape) hold in

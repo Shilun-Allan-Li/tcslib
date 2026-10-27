@@ -2,8 +2,9 @@
 
 Tree: #169's merged head `9d0af8cb` (the campaign tip after #168 with A+ merged in); the olean
 snapshot is `oleans-laplusm`, #169's replay. Once #169 merges with no other Lean change, the
-campaign's tree equals this one, so these figures are the issue base's; re-check that equality at
-issue. The draft is the rewrite against the interpreter startup
+campaign's tree equals this one, so these figures are the issue base's. **#169 merged
+(2026-10-27, `94296486`), with the TCSlib tree equal to `9d0af8cb`'s (checked).** Re-check the
+equality at issue if any later Lean lands. The draft is the rewrite against the interpreter startup
 (`../../b5a-fill-unisim.DRAFT.md`, 2026-10-27), with **the two imports** of region (a)
 (`Nondeterministic`, `Build/InterpreterStartup`), whose closure contains the earlier six. Lean ran
 through `tools/leanelab.sh` against `oleans-laplusm`, one elaboration at a time, in a worktree at
