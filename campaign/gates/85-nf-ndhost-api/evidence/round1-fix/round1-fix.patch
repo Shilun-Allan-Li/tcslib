@@ -1,0 +1,140 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/NDHost.lean b/TCSlib/Complexity/TuringMachine/Build/NDHost.lean
+index 958b6ee4..c01cd773 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/NDHost.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/NDHost.lean
+@@ -598,6 +598,32 @@ instance GuessRunPhase.instDecidableEqCtlState {SP SQ Q : Type} [DecidableEq SP]
+   | .run => inferInstanceAs (DecidableEq SQ)
+   | .out => inferInstanceAs (DecidableEq Bool)
+ 
++/-! The state family's fibers, one per phase: the reading of `Turing.GuessRunPhase.CtlState`. -/
++
++/-- The setup phase's states are the setup's. -/
++theorem GuessRunPhase.ctlState_pre (SP SQ Q : Type) : GuessRunPhase.CtlState SP SQ Q .pre = SP :=
++  rfl
++
++/-- The guess phase's states are the writer's. -/
++theorem GuessRunPhase.ctlState_guess (SP SQ Q : Type) :
++    GuessRunPhase.CtlState SP SQ Q .guess = NDWriterState Q := rfl
++
++/-- The step right's states are a seek's. -/
++theorem GuessRunPhase.ctlState_skip (SP SQ Q : Type) :
++    GuessRunPhase.CtlState SP SQ Q .skip = SeekPhase := rfl
++
++/-- The rewind's states are a seek's. -/
++theorem GuessRunPhase.ctlState_back (SP SQ Q : Type) :
++    GuessRunPhase.CtlState SP SQ Q .back = SeekPhase := rfl
++
++/-- The run phase's states are the run's. -/
++theorem GuessRunPhase.ctlState_run (SP SQ Q : Type) : GuessRunPhase.CtlState SP SQ Q .run = SQ :=
++  rfl
++
++/-- The verdict leaf's states are the verdict bits. -/
++theorem GuessRunPhase.ctlState_out (SP SQ Q : Type) :
++    GuessRunPhase.CtlState SP SQ Q .out = Bool := rfl
++
+ /-- **The control states of each phase of the guess-then-run host**: those of
+ `Turing.GuessRunPhase.CtlState` with the trivial controller, the writer's
+ `Turing.NDWriterState Unit` in the guess phase. -/
+@@ -632,6 +658,39 @@ def guessCtlRunPhases {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j
+   | .run => V.toNDTM
+   | .out => ⟨false, fun _ b _ _ => ⟨0, fun _ => (none, 0), some b, none⟩⟩
+ 
++section GuessCtlRunPhases
++
++variable {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q)
++  (δ : Q → Bool → Q) (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ)
++
++/-! The phases, one per phase: the reading of `Turing.guessCtlRunPhases`. -/
++
++/-- The setup phase is the setup, run as an NDTM. -/
++theorem guessCtlRunPhases_pre : guessCtlRunPhases P j q₀ δ stop bounded V .pre = P.toNDTM := rfl
++
++/-- The guess phase is the choice writer on tape `j`. -/
++theorem guessCtlRunPhases_guess :
++    guessCtlRunPhases P j q₀ δ stop bounded V .guess = ndWriterTM k j q₀ δ stop bounded := rfl
++
++/-- The step right is `Turing.skipTM` on tape `j`, run as an NDTM. -/
++theorem guessCtlRunPhases_skip :
++    guessCtlRunPhases P j q₀ δ stop bounded V .skip = (skipTM k j).toNDTM := rfl
++
++/-- The rewind is `Turing.skipBackTM` on tape `j`, run as an NDTM. -/
++theorem guessCtlRunPhases_back :
++    guessCtlRunPhases P j q₀ δ stop bounded V .back = (skipBackTM k j).toNDTM := rfl
++
++/-- The run phase is the deterministic run, run as an NDTM. -/
++theorem guessCtlRunPhases_run : guessCtlRunPhases P j q₀ δ stop bounded V .run = V.toNDTM := rfl
++
++/-- The verdict leaf: in state `b` it emits `b` and halts under either choice, moving no head and
++writing nothing. -/
++theorem guessCtlRunPhases_out :
++    guessCtlRunPhases P j q₀ δ stop bounded V .out =
++      ⟨false, fun _ b _ _ => ⟨0, fun _ => (none, 0), some b, none⟩⟩ := rfl
++
++end GuessCtlRunPhases
++
+ /-- **The phase machines of the guess-then-run host.** The setup `P` and the run `Q`, as
+ `Turing.MultiTapeTM.toNDTM` (both choices apply their one transition function); the bounded choice
+ writer `Turing.ndWriterTM` on tape `j` with the trivial controller that never stops (the instance of
+@@ -671,6 +730,49 @@ def guessCtlRunRed {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : S
+       else none
+   | .out, _ => none
+ 
++section GuessCtlRunRed
++
++variable {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : SP) (q₀ : Q)
++  (qentry acc rej : SQ)
++
++/-! The redirects, covering every phase and state: the reading of `Turing.guessCtlRunRed`. -/
++
++/-- The setup's exit dispatches to the writer's start; no other setup state is redirected. -/
++theorem guessCtlRunRed_pre (s : SP) :
++    guessCtlRunRed pexit q₀ qentry acc rej .pre s =
++      if s = pexit then some ⟨.guess, NDWriterState.run q₀⟩ else none := rfl
++
++/-- The writer's `done` dispatches to the step right. -/
++theorem guessCtlRunRed_guess_done :
++    guessCtlRunRed pexit q₀ qentry acc rej .guess .done = some ⟨.skip, SeekPhase.run⟩ := rfl
++
++/-- A running writer state is not redirected. -/
++theorem guessCtlRunRed_guess_run (q : Q) :
++    guessCtlRunRed pexit q₀ qentry acc rej .guess (.run q) = none := rfl
++
++/-- The step right's `done` dispatches to the rewind; no other seek state is redirected. -/
++theorem guessCtlRunRed_skip (s : SeekPhase) :
++    guessCtlRunRed pexit q₀ qentry acc rej .skip s =
++      if s = .done then some ⟨.back, SeekPhase.run⟩ else none := by
++  cases s <;> rfl
++
++/-- The rewind's `done` dispatches to the run's entry; no other seek state is redirected. -/
++theorem guessCtlRunRed_back (s : SeekPhase) :
++    guessCtlRunRed pexit q₀ qentry acc rej .back s =
++      if s = .done then some ⟨.run, qentry⟩ else none := by
++  cases s <;> rfl
++
++/-- The run's verdicts dispatch to the leaf, `acc` tested first; no other run state is
++redirected. -/
++theorem guessCtlRunRed_run (s : SQ) :
++    guessCtlRunRed pexit q₀ qentry acc rej .run s =
++      if s = acc then some ⟨.out, true⟩ else if s = rej then some ⟨.out, false⟩ else none := rfl
++
++/-- The verdict leaf is not redirected. -/
++theorem guessCtlRunRed_out (b : Bool) : guessCtlRunRed pexit q₀ qentry acc rej .out b = none := rfl
++
++end GuessCtlRunRed
++
+ /-- **The redirects of the guess-then-run host.** The setup's exit `pexit` dispatches to the
+ writer's start `run ()`; the writer's `done` to the start of the step right; its `done` to the start
+ of the rewind; the rewind's `done` to the run's entry `qentry`; the run's verdict `acc` to the
+@@ -687,8 +789,10 @@ def guessRunRed {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : SP)
+ `Turing.NDTM.phaseHostND` over `Turing.guessCtlRunPhases P j q₀ δ stop bounded V` with the
+ redirects `Turing.guessCtlRunRed pexit q₀ qentry acc rej`, started at the setup's initial state.
+ The setup `P` runs to its exit `pexit`; the writer guesses bits on tape `j` from that tape's head
+-until it stops (its controller stops it, or, bounded, it meets a blank); one step right and the
+-rewind `Turing.skipBackTM` return the head of tape `j` to the stream's start; the run `V` starts at
++until it stops (its controller stops it, or, bounded, it meets a blank); the step right
++`Turing.skipTM` and the rewind `Turing.skipBackTM` follow, which, when the stream has a blank on
++each side (the run lemmas' hypotheses), take one step and return the head of tape `j` to the
++stream's start; the run `V` starts at
+ `qentry` and runs to a live verdict, `acc` or `rej`; the verdict leaf emits `true` or `false` and
+ halts. Every phase but the writer is deterministic, so a branch is determined by the writer's
+ bits. The bounded, trivial-controller instance is `Turing.guessRunTM`. [AB09, §2.1.2: an NDTM

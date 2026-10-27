@@ -2000,6 +2000,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     static-equal; snapshot `oleans-lnfapi3`). **Gate 85** (an API gate) staged: bundle
     `19830ec7…`, 71 sections, the Lean at `1045624d`, the records at `d51ac787`. **Dispatched (user,
     2026-10-27).**
+    **Gate 85, round 1: FAIL 0/1/2/13** (`campaign/gates/85-nf-ndhost-api/`): the major, the three new
+    public definitions without reading lemmas (policy §1; check 8); minors, a docstring and a pack
+    sentence; the proofs confirmed. Fixed by `4c0a5943`: 19 case lemmas covering every input
+    (check 8 the base's three names again), the docstring; the erratum recorded. Round 2:
+    `replay-lnfapi4` written (precheck passed), the screen running, `pack-r2.md` drafted.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
