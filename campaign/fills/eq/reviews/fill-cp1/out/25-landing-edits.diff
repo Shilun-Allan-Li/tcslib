@@ -1,0 +1,52 @@
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 361d7c14..34191b5b 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -253,8 +253,8 @@ theorem acceptLang_mem_NTIME (D : FinNDTM Bool) (K : ℕ) (g : ℕ → ℕ)
+       Complexity.NTIME fun n => g n + 1 :=
+   ⟨K, D, fun x => ⟨h x, Iff.rfl⟩⟩
+ 
+-/-- The query agrees with its unary-input version exactly on unary words of length at least
+-three, and is empty otherwise. -/
++/-- The query of a word is the query of the unary word of the same length when the word is unary
++of length at least three, and is empty otherwise. -/
+ private theorem qy_guard (f g : ℕ → ℕ) (x : List Bool) :
+     query f g x = if x = List.replicate x.length true ∧ 3 ≤ x.length then
+       query f g (List.replicate x.length true) else [] := by
+@@ -266,7 +266,9 @@ private theorem qy_guard (f g : ℕ → ℕ) (x : List Bool) :
+ 
+ /-- A linear-time decider recognizes all-true words of length at least three. It uses the
+ published fixed-width increment, fixed-word comparisons and timed conditionals; it introduces
+-no input scan beyond those rows.
++no input scan beyond those rows. No public row decides this guard: the fixed-word test
++`Turing.FinTM.computesFunInTime_ifEq` decides one word, and the increment
++`Turing.FinTM.computesFunInTime_incFixed` signals an all-true word only by an empty output.
+ 
+ **Proof sketch.** Fixed-width increment overflows precisely on an all-true word. Its successful
+ output has the input's length and therefore cannot be empty. Compose increment with the empty
+@@ -351,7 +353,7 @@ private theorem qy_guard_decider :
+   refine ⟨D₂, c₂, ?_⟩
+   convert h₂ using 1
+   funext x
+-  apply congrArg List.singleton
++  refine congrArg (fun b => [b]) ?_
+   apply Bool.eq_iff_iff.mpr
+   simp only [Bool.and_eq_true, decide_eq_true_eq]
+   constructor
+@@ -416,7 +418,6 @@ private theorem qy_query_of_main {f g : ℕ → ℕ} (hg : Complexity.TimeConstr
+       nlinarith
+     _ = _ := by ring
+ 
+-
+ /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
+ time-constructible `f` and `g` there is a deterministic machine computing the stage query within
+ `C · (g n + 1)`.
+@@ -442,7 +443,7 @@ binary words, the unranking); the `pairEncode` writer; the ledger.
+ 
+ **Implementation status.** The linear-time guard and the reduction to a machine computing the
+ query on the unary word of every input's length are proved. The setup, capped locator, stage-code
+-conversion, budget computation and output writer remain open. -/
++conversion, budget computation, output writer and linear ledger remain open. -/
+ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) :
+     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by

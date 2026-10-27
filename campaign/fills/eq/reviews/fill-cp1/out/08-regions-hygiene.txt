@@ -1,0 +1,36 @@
+## hunks (base lines a1-a2 -> head lines b1-b2)
+insert: base 6-5 (0 lines) -> head 6-6 (1 lines)
+   + import Mathlib.Data.Nat.Log
+insert: base 9-8 (0 lines) -> head 10-16 (7 lines)
+   + import TCSlib.Complexity.TuringMachine.Build.StepClock
+   + import TCSlib.Complexity.TuringMachine.Build.InputCall
+   + import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+   + import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+   + import TCSlib.Complexity.TuringMachine.Build.Primitives
+   + import TCSlib.Complexity.TuringMachine.Build.Rewind
+   + import TCSlib.Complexity.TuringMachine.BufferWords
+insert: base 248-247 (0 lines) -> head 256-419 (164 lines)
+replace: base 269-269 (1 lines) -> head 441-445 (5 lines)
+   - binary words, the unranking); the `pairEncode` writer; the ledger. -/
+   + binary words, the unranking); the `pairEncode` writer; the ledger.
+   + 
+   + **Implementation status.** The linear-time guard and the reduction to a machine computing the
+   + query on the unary word of every input's length are proved. The setup, capped locator, stage-code
+   + conversion, budget computation and output writer remain open. -/
+insert: base 273-272 (0 lines) -> head 449-453 (5 lines)
+   +   suffices hmain : ∃ (M : FinTM Bool) (A : ℕ),
+   +       M.ComputesFunInTime (fun x => query f g (List.replicate x.length true))
+   +         (fun n => A * (g n + 1)) by
+   +     obtain ⟨M, A, hM⟩ := hmain
+   +     exact qy_query_of_main hg hM
+## added lines: 182; widest (characters): 97
+added lines over 100 characters: []
+whole-file lines over 100 characters, base: 0 ; head: 0
+## added code lines (comments and docstrings stripped): 161
+  open: 1 lines [445]
+  decide: 8 lines [278, 283, 286, 296, 297, 330, 336, 403]
+  convert: 2 lines [288, 352]
+  nlinarith: 3 lines [307, 346, 416]
+  omega: 4 lines [363, 368, 373, 378]
+unrestricted simp/simpa: [(298, 'by_cases he : x = w <;> simp [he]')]
+consecutive blank added lines at head lines: [418]

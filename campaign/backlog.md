@@ -1816,7 +1816,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     private fixed-word deciders, all three through the public `computesFunInTime_ifEq`). No
     `megafill-d-REPORT.md` in the zips; it came separately (user, 2026-10-27; SHA-256
     `caabb14f…`, `campaign/fills/megafill/reports/megafill-d-REPORT.md`), consistent with the zip.
-    Of the 43-minute item, the two screens took 19 minutes each. **Under review** (sub-agent).
+    Of the 43-minute item, the two screens took 19 minutes each.
+    **Reviewed** (`campaign/fills/eq/reviews/fill-cp1/REVIEW.md`, 2026-10-27): checkpoint 1 is
+    correct, with no new admission. Integrity, scope, freeze, elaboration at both snapshots,
+    the sweeps and rule 10 all pass (its own seal: 32 definitions, 39 controls). **F1 (major,
+    process): E-SERIAL was an unnecessary stop**: the 316 ms overlap is inside the cache tool's
+    own build at 05:35:46Z, before the branch existed, which Part 1 item 2 allows; the stop
+    cost checkpoints 2–7. **F2 (minor): E-DUP is not a copy** (each pair is the public row's
+    call and a three-step conversion, an idiom already pairing in the base). The landing edits
+    E1–E5 (`out/25-landing-edits.diff`) are tested. **Decisions pending (user):** E-SERIAL (not
+    a deviation; the addendum v2.6 wording, recommended); E-DUP ((a) accept as idiom pairs,
+    with a promotion request, recommended); the landing ((a) checkpoint 1 now with E1–E5 by a
+    maintainer PR and a light fill gate, 2-module replay, recommended); E1–E5; cont1's agent
+    (Codex). Cont1's base: the tip after the landing.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run

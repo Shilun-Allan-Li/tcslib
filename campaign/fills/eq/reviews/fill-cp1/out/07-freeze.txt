@@ -1,0 +1,40 @@
+## declfreeze v4: base -> head (no body change allowed)
+public before/after: 22 22 private before/after: 0 3
+public added: []
+public removed: []
+UNAUTHORIZED BODY CHANGE: Turing.NTimeDiag.exists_queryTM
+private removed: []
+private added: ['Turing.NTimeDiag.qy_guard', 'Turing.NTimeDiag.qy_guard_decider', 'Turing.NTimeDiag.qy_query_of_main']
+private changed: []
+
+## declfreeze v4: base -> head, target body authorized
+public before/after: 22 22 private before/after: 0 3
+public added: []
+public removed: []
+authorized body change: Turing.NTimeDiag.exists_queryTM
+private removed: []
+private added: ['Turing.NTimeDiag.qy_guard', 'Turing.NTimeDiag.qy_guard_decider', 'Turing.NTimeDiag.qy_query_of_main']
+private changed: []
+
+## declfreeze v4: overlay (fabce3bb) -> head, target authorized
+public before/after: 22 22 private before/after: 0 3
+public added: []
+public removed: []
+authorized body change: Turing.NTimeDiag.exists_queryTM
+private removed: []
+private added: ['Turing.NTimeDiag.qy_guard', 'Turing.NTimeDiag.qy_guard_decider', 'Turing.NTimeDiag.qy_query_of_main']
+private changed: []
+
+## privstmt base -> head
+declarations before/after: 22 25 | removed: []
+STATEMENT CHANGED: []
+body/docstring-only changes: 1 ['exists_queryTM']
+
+## stmtcheck base -> head
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/wt-base/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean -> /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/wt-head/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean: 129 code lines, 0 not found in order
+
+## stmtcheck overlay -> head
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/out/aux-c1.lean -> /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/wt-head/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean: 137 code lines, 0 not found in order
+
+## codeonly base vs overlay (imports only expected to differ)
+CODE DIFFERS
