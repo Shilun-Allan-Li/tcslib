@@ -1,0 +1,235 @@
+/-
+H brief review probe (review sub-agent, 2026-10-27): the whole of `Complexity.ntime_hierarchy`'s
+proof over the two cited contracts (`Turing.NTimeDiag.exists_diagonalizer` and
+`Turing.FinNDTM.exists_codeNDTM_accepts_linear`, both sorried at the base), sealed over every
+other-file definition the chain touches. The route probe's lemmas are repeated verbatim (bodies
+unchanged) so that this file stands alone.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Complexity
+
+open Turing
+
+section HReview
+
+attribute [local irreducible] NTIME FinNDTM.DecidesInTime FinNDTM.AcceptsWithin NDTM.HaltsWithin
+  NDTM.runWith NDTM.initCfg NTimeDiag.ladder NTimeDiag.budget NTimeDiag.stage
+  NTimeDiag.stageCode TimeConstructible CodeNDTM.toFinNDTM
+
+/-! ### The route probe's lemmas (verbatim) -/
+
+theorem nh_chain (P : ℕ → Prop) {a b : ℕ} (hab : a ≤ b)
+    (step : ∀ n, a ≤ n → n < b → (P n ↔ P (n + 1))) : P a ↔ P b := by
+  induction b, hab using Nat.le_induction with
+  | base => exact Iff.rfl
+  | succ b hab ih =>
+    exact (ih fun n h1 h2 => step n h1 (by omega)).trans (step b hab (by omega))
+
+theorem nh_absorb (f g : ℕ → ℕ) (N₀ : ℕ) (h : ∀ n ≥ N₀, f n ≤ g n) :
+    ∃ F : ℕ, ∀ n, f n ≤ F * (g n + 1) := by
+  refine ⟨1 + ∑ m ∈ Finset.range N₀, f m, fun n => ?_⟩
+  by_cases hn : N₀ ≤ n
+  · have h1 := h n hn
+    nlinarith [Nat.zero_le (∑ m ∈ Finset.range N₀, f m)]
+  · have hmem : n ∈ Finset.range N₀ := Finset.mem_range.mpr (by omega)
+    have h2 := Finset.single_le_sum (fun m _ => Nat.zero_le (f m)) hmem
+    nlinarith [Nat.zero_le (g n)]
+
+theorem nh_inclusion {f g : ℕ → ℕ}
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
+    NTIME f ⊆ NTIME (fun n => g n + 1) := by
+  obtain ⟨N₀, hN₀⟩ := hfg 1
+  obtain ⟨F, hF⟩ := nh_absorb f g N₀ (fun n hn => by have := hN₀ n hn; omega)
+  intro L hL
+  have h1 : L ∈ NTIME (fun n => F * (g n + 1)) := NTIME.mono hF hL
+  obtain ⟨a, N, hN⟩ := mem_NTIME_iff.mp h1
+  apply mem_NTIME_iff.mpr
+  refine ⟨a * F, N, FinNDTM.decidesInTime_iff.mpr ?_⟩
+  intro x
+  simpa only [Nat.mul_assoc] using (FinNDTM.decidesInTime_iff.mp hN x)
+
+theorem nh_top (C : ℕ) : ∃ T₀, ∀ T ≥ T₀, C * 2 ^ (C * (T + 1)) ≤ 2 ^ (T ^ 2) := by
+  refine ⟨2 * C + 2, fun T hT => ?_⟩
+  have hC : C < 2 ^ C := Nat.lt_two_pow_self
+  calc C * 2 ^ (C * (T + 1)) ≤ 2 ^ C * 2 ^ (C * (T + 1)) := Nat.mul_le_mul_right _ hC.le
+    _ = 2 ^ (C + C * (T + 1)) := by rw [← pow_add]
+    _ ≤ 2 ^ (T ^ 2) := Nat.pow_le_pow_right (by norm_num) (by nlinarith [Nat.mul_le_mul_right T hT])
+
+theorem nh_bottom (C₁ c₀ fa a : ℕ) (ha : C₁ * (c₀ + 1) ≤ a) :
+    C₁ * (c₀ * fa + 1) ≤ (fa + a + 1) ^ 2 := by
+  have h1 : C₁ * c₀ ≤ a := by nlinarith
+  have h2 : C₁ ≤ a := by nlinarith
+  nlinarith [Nat.mul_le_mul_right fa h1]
+
+theorem nh_middle {f g : ℕ → ℕ}
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) (C C₁ c₀ : ℕ) :
+    ∃ N, ∀ n ≥ N, C * (C₁ * (c₀ * f (n + 1) + 1) + 1) ≤ g n := by
+  obtain ⟨N, hN⟩ := hfg (C * C₁ * (c₀ + 1) + C)
+  refine ⟨N, fun n hn => le_trans ?_ (hN n hn)⟩
+  have hid : C * (C₁ * (c₀ * f (n + 1) + 1) + 1) +
+      (C * C₁ * f (n + 1) + C * f (n + 1) + C * C₁ * c₀) =
+      (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + 1) := by ring
+  calc C * (C₁ * (c₀ * f (n + 1) + 1) + 1)
+      ≤ (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + 1) := Nat.le.intro hid
+    _ ≤ (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + f n + n + 1) :=
+        Nat.mul_le_mul_left _ (by omega)
+
+theorem nh_stage (f : ℕ → ℕ) (α : List Bool) (N : ℕ) :
+    ∃ i, N ≤ Turing.NTimeDiag.ladder f i ∧ Turing.NTimeDiag.stageCode i = α := by
+  obtain ⟨i, hi, hα⟩ := Turing.NTimeDiag.stageCode_frequently α N
+  exact ⟨i, by have := Turing.NTimeDiag.le_ladder f i; omega, hα⟩
+
+/-! ### The review's additions -/
+
+/-- **Truncation at the all-branch budget.** If every branch of `N` on `x` halts within `T`, an
+acceptance of `x` at any length is an acceptance within `T`.
+
+**Proof sketch.** At a length `t ≤ T`, pad (`Turing.FinNDTM.AcceptsWithin.mono`). At `t > T`, the
+length-`T` prefix of the accepting word has halted, and the word runs as that prefix
+(`Turing.NDTM.runWith_append` on `w.take T ++ w.drop T`, `Turing.NDTM.runWith_of_halt`), which
+therefore accepts. (This variant needs no import beyond region (a)'s; the variant through
+`Turing.run_take_of_halted` is `HReviewProbeA.lean`.) -/
+theorem nh_accepts_of_halts {N : FinNDTM Bool} {x : List Bool} {T t : ℕ}
+    (hT : N.tm.HaltsWithin x T) (ht : N.AcceptsWithin x t) : N.AcceptsWithin x T := by
+  rcases le_or_gt t T with hle | hlt
+  · exact ht.mono hle
+  · obtain ⟨w, hw, -, hout⟩ := FinNDTM.acceptsWithin_iff.mp ht
+    have hlen : (w.take T).length = T := List.length_take_of_le (by omega)
+    have hp := NDTM.haltsWithin_iff.mp hT (w.take T) hlen
+    have hrun := NDTM.runWith_append (tm := N.tm) (w.take T) (w.drop T) (N.tm.initCfg x)
+    rw [List.take_append_drop, NDTM.runWith_of_halt _ hp] at hrun
+    exact FinNDTM.acceptsWithin_iff.mpr ⟨w.take T, hlen, hp, hrun ▸ hout⟩
+
+/-- **A decider's language from an unbounded acceptance.** If `N` decides `L` within `T`, any
+acceptance of `x`, at any length, puts `x` in `L`. -/
+theorem nh_mem_of_accepts {N : FinNDTM Bool} {L : Language Bool} {T : ℕ → ℕ}
+    (hN : N.DecidesInTime L T) {x : List Bool} (ht : ∃ t, N.AcceptsWithin x t) : x ∈ L := by
+  obtain ⟨t, ht⟩ := ht
+  exact ((FinNDTM.decidesInTime_iff.mp hN x).2).mpr
+    (nh_accepts_of_halts (FinNDTM.decidesInTime_iff.mp hN x).1 ht)
+
+/-- **The target, over the two contracts.** The statement of `Complexity.ntime_hierarchy`.
+
+**Proof sketch.** The inclusion is `nh_inclusion`. For strictness, `L = L(D)` at the budget
+`K · (g n + 1)` is in `NTIME (g + 1)`. If `N` decided it within `c₀ · f`, take the normal form
+`M'`, `C₁`, its code `α`, the diagonalizer's `C` at `α`, and a stage `i` of `α` with
+`ℓᵢ ≥ N₁ + T₀ + C₁ (c₀ + 1)` (`nh_stage`; `N₁` from `nh_middle`, `T₀` from `nh_top`). The middle
+steps chain `1^{ℓᵢ+1} ∈ L ↔ 1^{ℓᵢ₊₁} ∈ L`, the top flips it against `M'` at the bottom within `T*`,
+and the bottom's transfer identifies that with `1^{ℓᵢ+1} ∈ L`: `P ↔ ¬P`. -/
+theorem nh_target {f g : ℕ → ℕ} (hf : TimeConstructible f)
+    (hg : TimeConstructible g)
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
+    NTIME f ⊂ NTIME (fun n => g n + 1) := by
+  obtain ⟨c⟩ := exists_effectiveNDMachineCode
+  obtain ⟨D, K, hhalt, hD⟩ :=
+    NTimeDiag.exists_diagonalizer hf hg c (exists_ndAcceptsWithin_decider c)
+  refine (Set.ssubset_iff_of_subset (nh_inclusion hfg)).mpr
+    ⟨_, NTimeDiag.acceptLang_mem_NTIME D K g hhalt, fun hLf => ?_⟩
+  set L : Language Bool := {x | D.AcceptsWithin x (K * (g x.length + 1))} with hL
+  have hmemL : ∀ m, List.replicate m true ∈ L ↔
+      D.AcceptsWithin (List.replicate m true) (K * (g m + 1)) := by
+    intro m
+    change D.AcceptsWithin (List.replicate m true)
+      (K * (g (List.replicate m true).length + 1)) ↔ _
+    rw [List.length_replicate]
+  obtain ⟨c₀, N, hN⟩ := mem_NTIME_iff.mp hLf
+  have hdec : ∀ m, List.replicate m true ∈ L →
+      N.AcceptsWithin (List.replicate m true) (c₀ * f m) := by
+    intro m hm
+    have h := ((FinNDTM.decidesInTime_iff.mp hN (List.replicate m true)).2).mp hm
+    rwa [List.length_replicate] at h
+  obtain ⟨M', C₁, hfwd, hbwd⟩ := FinNDTM.exists_codeNDTM_accepts_linear N
+  obtain ⟨C, hC⟩ := hD (c.encode M')
+  rw [c.toNDMachineCode.decode_encode M'] at hC
+  obtain ⟨N₁, hN₁⟩ := nh_middle hfg C C₁ c₀
+  obtain ⟨T₀, hT₀⟩ := nh_top C
+  obtain ⟨i, hi, hiα⟩ := nh_stage f (c.encode M') (N₁ + T₀ + C₁ * (c₀ + 1))
+  have hℓ2 : 2 ≤ NTimeDiag.ladder f i := by have := NTimeDiag.le_ladder f i; omega
+  have hlt : NTimeDiag.ladder f i < NTimeDiag.ladder f (i + 1) :=
+    NTimeDiag.ladder_strictMono f (Nat.lt_succ_self i)
+  -- the middle step, at every `n` with `ℓᵢ < n < ℓᵢ₊₁`
+  have hmid : ∀ n, NTimeDiag.ladder f i + 1 ≤ n → n < NTimeDiag.ladder f (i + 1) →
+      (List.replicate n true ∈ L ↔ List.replicate (n + 1) true ∈ L) := by
+    intro n h1 h2
+    have hs : NTimeDiag.stage f n = i := NTimeDiag.stage_eq f (by omega) h2.le
+    obtain ⟨hmidC, -⟩ := hC n (by omega) (by rw [hs]; exact hiα)
+    obtain ⟨hsound, hcompl⟩ := hmidC (by rw [hs]; omega)
+    constructor
+    · intro hn
+      exact nh_mem_of_accepts hN (hbwd _ _ (hsound ((hmemL n).mp hn)))
+    · intro hn1
+      exact (hmemL n).mpr (hcompl _ (hfwd _ _ (hdec (n + 1) hn1)) (hN₁ n (by omega)))
+  have hchain := nh_chain (fun m => List.replicate m true ∈ L)
+    (show NTimeDiag.ladder f i + 1 ≤ NTimeDiag.ladder f (i + 1) by omega) hmid
+  -- the top's flip, at `n = ℓᵢ₊₁`
+  have htop : List.replicate (NTimeDiag.ladder f (i + 1)) true ∈ L ↔
+      ¬M'.toFinNDTM.AcceptsWithin (List.replicate (NTimeDiag.ladder f i + 1) true)
+        (NTimeDiag.budget f (NTimeDiag.ladder f i)) := by
+    have hs : NTimeDiag.stage f (NTimeDiag.ladder f (i + 1)) = i :=
+      NTimeDiag.stage_eq f hlt le_rfl
+    obtain ⟨-, htopC⟩ := hC (NTimeDiag.ladder f (i + 1)) (by omega) (by rw [hs]; exact hiα)
+    rw [hs] at htopC
+    have hTle : T₀ ≤ NTimeDiag.budget f (NTimeDiag.ladder f i) := by
+      rw [NTimeDiag.budget_eq]
+      calc T₀ ≤ f (NTimeDiag.ladder f i + 1) + (NTimeDiag.ladder f i + 1) + 1 := by omega
+        _ ≤ (f (NTimeDiag.ladder f i + 1) + (NTimeDiag.ladder f i + 1) + 1) ^ 2 :=
+          Nat.le_self_pow (by norm_num) _
+    have hthr : C * 2 ^ (C * (NTimeDiag.budget f (NTimeDiag.ladder f i) + 1)) ≤
+        NTimeDiag.ladder f (i + 1) := by
+      rw [NTimeDiag.ladder_succ f i]
+      exact hT₀ _ hTle
+    rw [hmemL]
+    exact htopC rfl hthr
+  -- the bottom's transfer, at `a = ℓᵢ + 1` within `T*`
+  have hbot : M'.toFinNDTM.AcceptsWithin (List.replicate (NTimeDiag.ladder f i + 1) true)
+      (NTimeDiag.budget f (NTimeDiag.ladder f i)) ↔
+      List.replicate (NTimeDiag.ladder f i + 1) true ∈ L := by
+    constructor
+    · intro hM
+      exact nh_mem_of_accepts hN (hbwd _ _ hM)
+    · intro hx
+      refine (hfwd _ _ (hdec _ hx)).mono ?_
+      rw [NTimeDiag.budget_eq]
+      exact nh_bottom C₁ c₀ _ _ (by omega)
+  exact iff_not_self (hchain.trans (htop.trans (not_congr hbot)))
+
+end HReview
+
+end Complexity
+
+#print axioms Complexity.nh_accepts_of_halts
+#print axioms Complexity.nh_mem_of_accepts
+#print axioms Complexity.nh_target
+
+/-! The axiom walk (review): every constant reachable from the root whose own type or value
+mentions `sorryAx` directly. -/
+open Lean in
+private def rvSorryWalk (root : Name) : CoreM (Array Name) := do
+  let env ← getEnv
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut out : Array Name := #[]
+  while !stack.isEmpty do
+    let n := stack.back!
+    stack := stack.pop
+    if visited.contains n then continue
+    visited := visited.insert n
+    if let some ci := env.find? n then
+      let cs := ci.type.getUsedConstants ++
+        ((ci.value? (allowOpaque := true)).map (·.getUsedConstants) |>.getD #[])
+      if cs.contains ``sorryAx then out := out.push n
+      for c in cs do
+        if !visited.contains c then stack := stack.push c
+  return out
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  for r in [``Complexity.nh_target, ``Complexity.nh_accepts_of_halts, ``Complexity.nh_mem_of_accepts] do
+    let s ← liftCoreM (rvSorryWalk r)
+    logInfo m!"walk {r}: direct sorryAx in {s}"

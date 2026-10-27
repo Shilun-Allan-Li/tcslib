@@ -1800,6 +1800,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Gate 81 resolved (2026-10-27): PASS 0/0/2/12** (`campaign/gates/81-b5a-unisim-fill/`).
     Minor 1 ledgered (RS-1's fifth site); minor 2 fixed by `79efb462` (docstring only,
     `baker_gill_solovay`'s appendix in public-facing terms). **#170 clear to merge** at `79efb462`.
+    **#170 merged (2026-10-27, `ba2441f7`).**
     **PR #170** (`lean/b5a-unisim-landing`, head `101434fd`: the assembly, the docstring rewrite
     and the downstream status lines, all docstring-only beyond the proof; the campaign merged
     in). `replay-lb5am` (10 modules from `oleans-laplusm`) is written; its precheck passed.
@@ -1883,6 +1884,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     on #171's head): the cherry-picks and E1–E5, then `27ca2927`, the guard citing
     `computesFunInTime_allTrue` and `computesFunInTime_decideEq` (54 lines removed; the two
     expected sorries; the three privates on the standard three). Opens as a PR once #171 merges.
+    **Gate 82 resolved (2026-10-27): PASS 0/0/3/12** (`campaign/gates/82-word-tests-api/`).
+    The three minors fixed by `9256939f` on #171: `EXPCOM`'s `hu` cites `decideEq []`; the
+    all-true test's proof and sketch agree; `## Main definitions`. Two more copies found
+    (`sat_pt_eq`, `clA5_pt_eq`), ledgered with PL-1 for 12.2c. After #170's merge, `mk-next`
+    merged the campaign into #171 (head `91a1ad87`) and wrote `replay-lwords` (18 modules from
+    `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **`replay-lwords`
+    passed** (18 of 18, static-equal; snapshot `oleans-lwords`). **#171 clear to merge** at
+    `91a1ad87`.
+    **E-Q's landing re-stacked, local only** (`local/eq-cp1-landing-v3` in `wt-eqland`, on #171's
+    merged head `91a1ad87`): `8841044d`, `4d93a8fe` (the worker's `fabce3bb`, `9d93626d`, the
+    subjects reworded without "E-Q"; same patch-ids), `1fd6a15d` (E1–E5), `a5c22dd9` (the
+    re-point); the owned file's blob unchanged (`f965eac0`). Gate 83's draft carries the hashes.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
@@ -1915,6 +1928,32 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4
     of 4, 81 modules, 22 base sorries, the screen base 102 declarations and 6 pairs. Issues on
     the user's decision 1, after a review sub-agent.
+    **H's brief reviewed** (`campaign/fills/h/reviews/brief/REVIEW.md`, 2026-10-27; a sub-agent,
+    interrupted once and resumed): **issue after edits**; one major (F1: the truncation of an
+    unbounded acceptance has no licensed host; rule 7 forbids `NTIME.mono`'s re-walk;
+    `run_take_of_halted` is outside the one-import closure; two private copies exist), nine minors,
+    `suggested-fix.diff` (assumes D1 (A), D2 (A)). **The review proved the target over the two
+    contracts** (`HChainProbe`, 9 privates, about 170 lines; filled in place, no diagnostic; walk:
+    `sorryAx` only through `exists_diagonalizer` and `exists_codeNDTM_accepts_linear`). At issue:
+    21 sorries in 10 modules after #170, the order list re-sorted, a post-#170 snapshot.
+    **Decisions pending (user):** D1 (the second import `ChoiceWords`, recommended; or an inline
+    leaf, a third copy); D2 (issue as ruled with the probe staged; or land the review's proof by a
+    maintainer PR, as B5a's D1 (A); or issue without it).
+    **Ruled (user, 2026-10-27): D1 (A)**, the second import `ChoiceWords` with the leaf through
+    `run_take_of_halted`; **D2: land the review's proof by a maintainer PR** (as B5a's D1 (A)), with
+    a fill gate and the downstream replay, after E-Q's checkpoint 1. **Megafill E is withdrawn**
+    (its cover draft kept as a record); H needs no fill. The docstring's sketch is rewritten to the
+    proved chain at landing.
+    **PR #172** (`lean/h-hierarchy-landing`, head `33d68537`, one commit on the tip `52b7edba`):
+    the review's filled file, without its prints, walk and section header; sketches on the
+    privates; a private `nh_fold`, cited by `nh_inclusion` and `ntime_hierarchy_of_pos` (removing
+    a 56% same-file pair); the target's docstring rewritten; the status lines. Against
+    `oleans-lb5am`: 0 diagnostics; the walk finds `sorryAx` only in the two contracts; the ten
+    privates within the standard three; sealed over the review's 12, 0 diagnostics. Freeze 5 → 5,
+    10 → 20. Screen (14 files) 224 → 226: the truncation pair (61%, ledgered as TR-1) and a 50%
+    idiom. **Gate 84** (a fill gate) staged: `exchange/outbox/gates/84-h-hierarchy-fill-gate/`,
+    bundle `bd597671…`, 54 sections (the 14-file population included), the Lean at `33d68537`,
+    the records at `3190c6be`. The replay waits for #171 and E-Q's landing.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

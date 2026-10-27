@@ -654,11 +654,34 @@ fixed-word and all-`true` tests only):
 - `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
   proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
   which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
+- `SAT`'s private `sat_pt_eq` (line 2886) and `CookLevin/Hardness`'s private `clA5_pt_eq` (line
+  6818), twins (found by gate 82's resolution of its finding 1): each lifts
+  `computesFunInTime_ifEq w [true] [false]`, converts it to `[decide (x = w)]` and composes it with
+  a polynomial field map. Each is `polyTimeComputable_of_linear (computesFunInTime_decideEq w)`
+  composed with that map.
 
 Census (one member per file): `Nondeterminism` 2 of 199 declarations (8 public, 191 private; 1.0%),
-`PolyTimePairing` 2 of 26 (7.7%; the public originals). The one-fifth rule is not reached.
+`PolyTimePairing` 2 of 26 (7.7%; the public originals), `SAT` 1 of 270 (0.4%), `CookLevin/Hardness`
+1 of 545 (0.2%). The one-fifth rule is not reached.
 **Disposition:** the user's dedup window (12.2c): re-point the two privates to the public rows (one
-import), and `hD'` to `computesFunInTime_decideEq []` (the import of `Build/WordTests`).
+import), `hD'` to `computesFunInTime_decideEq []`, and the twins to `computesFunInTime_decideEq w`
+(each with the import of `Build/WordTests`).
+
+**TR-1, the truncation of an acceptance at an all-branch budget** (PR #172, H's landing,
+2026-10-27; the H brief review's F1 and gate 84's pack, item 5). One fact: if every branch of `N`
+on `x` halts within `T`, an acceptance at any length is an acceptance within `T` (and conversely
+by `AcceptsWithin.mono`). It is stated privately in three files:
+- `Nondeterminism`'s `acceptsWithin_iff_of_halts` (line 165), through the published
+  `Turing.run_take_of_halted`;
+- `ExhaustiveReplay`'s `xr_accepts_iff_of_halts` (line 134);
+- `NTimeHierarchy`'s `nh_accepts_of_halts` (new in #172), through `run_take_of_halted`. The
+  user's D1 (A) licensed this leaf; the v3 screen pairs it with the first at 61%.
+
+`ClassNP/NTIME`'s `NTIME.mono` does the same truncation inline. Census (one member per file):
+`Nondeterminism` 1 of 199 (0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `NTimeHierarchy` 1 of 25
+(4.0%). The one-fifth rule is not reached. **Disposition:** the user's dedup window (12.2c):
+publish the truncation beside `FinNDTM.AcceptsWithin.mono` (`ClassNP/NTIME`, which would import
+`ChoiceWords`; no cycle), and re-point the three.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

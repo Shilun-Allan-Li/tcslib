@@ -1,0 +1,121 @@
+/-
+H's route probe (maintainer pre-ship, 2026-10-27): the chain's generic pieces for
+`Complexity.ntime_hierarchy`, sealed over the other-file definitions they touch. A probe record;
+its lemmas may be copied into the fill's home as `nh_` privates.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Complexity
+
+open Turing
+
+section HRoute
+
+attribute [local irreducible] NTIME FinNDTM.DecidesInTime FinNDTM.AcceptsWithin NDTM.HaltsWithin
+
+/-- **The chain's induction.** If `P n ↔ P (n + 1)` at every `n` from `a` up to `b`, then
+`P a ↔ P b`.
+
+**Proof sketch.** Induction on `b` from `a`. -/
+theorem nh_chain (P : ℕ → Prop) {a b : ℕ} (hab : a ≤ b)
+    (step : ∀ n, a ≤ n → n < b → (P n ↔ P (n + 1))) : P a ↔ P b := by
+  induction b, hab using Nat.le_induction with
+  | base => exact Iff.rfl
+  | succ b hab ih =>
+    exact (ih fun n h1 h2 => step n h1 (by omega)).trans (step b hab (by omega))
+
+/-- **Finite absorption.** A function eventually below `g` is below a constant multiple of
+`g + 1` everywhere.
+
+**Proof sketch.** Take `F = 1 + Σ_{m < N₀} f m`: above `N₀` use the hypothesis, below it the
+sum. -/
+theorem nh_absorb (f g : ℕ → ℕ) (N₀ : ℕ) (h : ∀ n ≥ N₀, f n ≤ g n) :
+    ∃ F : ℕ, ∀ n, f n ≤ F * (g n + 1) := by
+  refine ⟨1 + ∑ m ∈ Finset.range N₀, f m, fun n => ?_⟩
+  by_cases hn : N₀ ≤ n
+  · have h1 := h n hn
+    nlinarith [Nat.zero_le (∑ m ∈ Finset.range N₀, f m)]
+  · have hmem : n ∈ Finset.range N₀ := Finset.mem_range.mpr (by omega)
+    have h2 := Finset.single_le_sum (fun m _ => Nat.zero_le (f m)) hmem
+    nlinarith [Nat.zero_le (g n)]
+
+/-- **The inclusion** `NTIME f ⊆ NTIME (g + 1)` under the domination hypothesis.
+
+**Proof sketch.** At `A = 1` the hypothesis gives `f n ≤ g n` eventually; absorb the finitely many
+other lengths (`nh_absorb`), move to the bound `F · (g n + 1)` by `NTIME.mono`, and fold `F` into
+the membership witness's constant. -/
+theorem nh_inclusion {f g : ℕ → ℕ}
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
+    NTIME f ⊆ NTIME (fun n => g n + 1) := by
+  obtain ⟨N₀, hN₀⟩ := hfg 1
+  obtain ⟨F, hF⟩ := nh_absorb f g N₀ (fun n hn => by have := hN₀ n hn; omega)
+  intro L hL
+  have h1 : L ∈ NTIME (fun n => F * (g n + 1)) := NTIME.mono hF hL
+  obtain ⟨a, N, hN⟩ := mem_NTIME_iff.mp h1
+  apply mem_NTIME_iff.mpr
+  refine ⟨a * F, N, FinNDTM.decidesInTime_iff.mpr ?_⟩
+  intro x
+  simpa only [Nat.mul_assoc] using (FinNDTM.decidesInTime_iff.mp hN x)
+
+/-- **The top's threshold**: `C · 2^{C (T + 1)} ≤ 2^{T²}` for every large `T`.
+
+**Proof sketch.** `C < 2^C`, and `C + C (T + 1) ≤ T²` once `T ≥ 2C + 2`. -/
+theorem nh_top (C : ℕ) : ∃ T₀, ∀ T ≥ T₀, C * 2 ^ (C * (T + 1)) ≤ 2 ^ (T ^ 2) := by
+  refine ⟨2 * C + 2, fun T hT => ?_⟩
+  have hC : C < 2 ^ C := Nat.lt_two_pow_self
+  calc C * 2 ^ (C * (T + 1)) ≤ 2 ^ C * 2 ^ (C * (T + 1)) := Nat.mul_le_mul_right _ hC.le
+    _ = 2 ^ (C + C * (T + 1)) := by rw [← pow_add]
+    _ ≤ 2 ^ (T ^ 2) := Nat.pow_le_pow_right (by norm_num) (by nlinarith [Nat.mul_le_mul_right T hT])
+
+/-- **The bottom's transfer threshold**: `C₁ (c₀ · fa + 1) ≤ (fa + a + 1)²` once
+`a ≥ C₁ (c₀ + 1)`.
+
+**Proof sketch.** `C₁ c₀ ≤ a` and `C₁ ≤ a`, so the left side is at most `a · fa + a`, which the
+square dominates. -/
+theorem nh_bottom (C₁ c₀ fa a : ℕ) (ha : C₁ * (c₀ + 1) ≤ a) :
+    C₁ * (c₀ * fa + 1) ≤ (fa + a + 1) ^ 2 := by
+  have h1 : C₁ * c₀ ≤ a := by nlinarith
+  have h2 : C₁ ≤ a := by nlinarith
+  nlinarith [Nat.mul_le_mul_right fa h1]
+
+/-- **The middle's threshold**: under the domination hypothesis, for every large `n`,
+`C (C₁ (c₀ · f (n + 1) + 1) + 1) ≤ g n`.
+
+**Proof sketch.** The hypothesis at `A = C · C₁ · (c₀ + 1) + C`. -/
+theorem nh_middle {f g : ℕ → ℕ}
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) (C C₁ c₀ : ℕ) :
+    ∃ N, ∀ n ≥ N, C * (C₁ * (c₀ * f (n + 1) + 1) + 1) ≤ g n := by
+  obtain ⟨N, hN⟩ := hfg (C * C₁ * (c₀ + 1) + C)
+  refine ⟨N, fun n hn => le_trans ?_ (hN n hn)⟩
+  have hid : C * (C₁ * (c₀ * f (n + 1) + 1) + 1) +
+      (C * C₁ * f (n + 1) + C * f (n + 1) + C * C₁ * c₀) =
+      (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + 1) := by ring
+  calc C * (C₁ * (c₀ * f (n + 1) + 1) + 1)
+      ≤ (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + 1) := Nat.le.intro hid
+    _ ≤ (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + f n + n + 1) :=
+        Nat.mul_le_mul_left _ (by omega)
+
+/-- **A late stage of a code**: every code has a stage whose bottom is beyond any bound.
+
+**Proof sketch.** `stageCode_frequently` at the bound, and `i + 2 ≤ ℓᵢ` (`le_ladder`). -/
+theorem nh_stage (f : ℕ → ℕ) (α : List Bool) (N : ℕ) :
+    ∃ i, N ≤ Turing.NTimeDiag.ladder f i ∧ Turing.NTimeDiag.stageCode i = α := by
+  obtain ⟨i, hi, hα⟩ := Turing.NTimeDiag.stageCode_frequently α N
+  exact ⟨i, by have := Turing.NTimeDiag.le_ladder f i; omega, hα⟩
+
+end HRoute
+
+end Complexity
+
+#print axioms Complexity.nh_chain
+#print axioms Complexity.nh_absorb
+#print axioms Complexity.nh_inclusion
+#print axioms Complexity.nh_top
+#print axioms Complexity.nh_bottom
+#print axioms Complexity.nh_middle
+#print axioms Complexity.nh_stage

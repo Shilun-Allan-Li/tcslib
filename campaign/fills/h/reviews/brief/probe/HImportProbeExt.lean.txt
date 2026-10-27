@@ -1,0 +1,87 @@
+/-
+H's import probe, extended by the review (2026-10-27): the pre-ship's 48 names, then every further
+external name the review's proof (`NTimeHierarchyFilledA.lean`) cites, under the two-import header
+of decision D1 (A).
+-/
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.ChoiceWords
+
+#check @Complexity.ntime_hierarchy
+#check @Complexity.ntime_hierarchy_of_pos
+#check @Turing.NTimeDiag.exists_diagonalizer
+#check @Turing.NTimeDiag.exists_queryTM
+#check @Turing.exists_ndAcceptsWithin_decider
+#check @Turing.exists_timed_universal_NDTM
+#check @Turing.FinNDTM.exists_codeNDTM_accepts_linear
+#check @Turing.exists_effectiveNDMachineCode
+#check @Turing.EffectiveNDMachineCode
+#check @Turing.NDMachineCode.decode_encode
+#check @Turing.NTimeDiag.acceptLang_mem_NTIME
+#check @Turing.NTimeDiag.ladder
+#check @Turing.NTimeDiag.budget
+#check @Turing.NTimeDiag.stage
+#check @Turing.NTimeDiag.stageCode
+#check @Turing.NTimeDiag.ladder_zero
+#check @Turing.NTimeDiag.ladder_succ
+#check @Turing.NTimeDiag.le_ladder
+#check @Turing.NTimeDiag.ladder_strictMono
+#check @Turing.NTimeDiag.two_mul_lt_ladder_succ
+#check @Turing.NTimeDiag.stage_spec
+#check @Turing.NTimeDiag.stage_eq
+#check @Turing.NTimeDiag.stageCode_eq
+#check @Turing.NTimeDiag.stageCode_frequently
+#check @Turing.NTimeDiag.budget_eq
+#check @Complexity.NTIME
+#check @Complexity.mem_NTIME_iff
+#check @Complexity.NTIME.mono
+#check @Complexity.TimeConstructible
+#check @Complexity.timeConstructible_iff
+#check @Turing.FinNDTM.DecidesInTime
+#check @Turing.FinNDTM.decidesInTime_iff
+#check @Turing.FinNDTM.AcceptsWithin
+#check @Turing.FinNDTM.acceptsWithin_iff
+#check @Turing.FinNDTM.AcceptsWithin.mono
+#check @Turing.NDTM.HaltsWithin
+#check @Turing.NDTM.haltsWithin_iff
+#check @Turing.NDTM.HaltsWithin.mono
+#check @Turing.NDTM.runWith_of_halt
+#check @Turing.NDTM.runWith_append
+#check @Turing.CodeNDTM.toFinNDTM
+#check @Nat.le_induction
+#check @Finset.single_le_sum
+#check @Finset.mem_range
+#check @Nat.lt_two_pow_self
+#check @Nat.pow_le_pow_right
+#check @Set.ssubset_iff_subset_ne
+#check @pow_add
+
+-- the review's additions
+#check @Turing.run_take_of_halted
+#check @Set.ssubset_iff_of_subset
+#check @List.length_replicate
+#check @List.length_take_of_le
+#check @List.take_append_drop
+#check @Turing.EffectiveNDMachineCode.toNDMachineCode
+#check @Turing.NDMachineCode.encode
+#check @Turing.NDMachineCode.decode
+#check @Nat.lt_succ_self
+#check @Nat.le_self_pow
+#check @not_congr
+#check @iff_not_self
+#check @Iff.trans
+#check @le_or_gt
+#check @le_trans
+#check @Nat.le.intro
+#check @Nat.mul_le_mul_left
+#check @Nat.mul_le_mul_right
+#check @Nat.mul_assoc
+#check @Nat.zero_le
+#check @Finset.range
+#check @Finset.sum
+
+#print axioms Turing.exists_ndAcceptsWithin_decider
+#print axioms Turing.NTimeDiag.acceptLang_mem_NTIME
+#print axioms Complexity.NTIME.mono
+#print axioms Turing.NTimeDiag.stageCode_frequently
+#print axioms Turing.run_take_of_halted

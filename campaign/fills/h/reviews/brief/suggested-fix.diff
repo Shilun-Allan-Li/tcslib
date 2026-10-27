@@ -1,0 +1,389 @@
+diff --git a/campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md b/campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md
+index 1292188..723b876 100644
+--- a/campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md
++++ b/campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md
+@@ -2,12 +2,12 @@
+ that note's recommendations assumed (decisions 1–3 pending with the user). To fill at issue: every
+ ⟨…⟩ from the pre-ship at the issue commit (@ANCESTOR@; the base's Lean content; the blob; the
+ in-flight list; the overlay's lines; the order list, roots and base sorry set; the probes' counts;
+-the screen base; the lint base). Then a review sub-agent, then issue. Remove this comment at
+-issue. -->
++the screen base; the lint base; the staged review probes). Then a review sub-agent, then issue.
++Remove this comment at issue. -->
+ 
+ # Ch3–4 fill campaign — H, the nondeterministic time hierarchy (`Complexity.ntime_hierarchy`, `Diagonalization/NTimeHierarchy.lean`)
+ 
+-> **⟨Megafill …, item N⟩** (cover brief ⟨…⟩; addendum v2.5, Part 3). The preflight, the
++> **⟨Megafill …, item N⟩** (cover brief ⟨…⟩; addendum v2.6, Part 3). The preflight, the
+ > toolchain, the clone and the cache are done once for the session. For this item: create its
+ > branch from the shared base (below), make your first edit, **re-bootstrap your order list**, then
+ > follow this brief. **Budget:** ⟨the cover's⟩. Deliver a checkpoint zip after **each** checkpoint
+@@ -32,10 +32,12 @@ issue. -->
+     `ladder_strictMono`, `two_mul_lt_ladder_succ`, `stage_spec`, `stage_eq`, `stageCode_eq`,
+     `stageCode_frequently`, `budget_eq`; and `acceptLang_mem_NTIME`;
+   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
+-    (**v2.5**) and the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
++    (**v2.6**) and the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
+   - **this round's inputs** (`campaign/fills/h/inputs/h-fill-hierarchy/`): the overlay
+-    `NTimeHierarchyOverlay.lean.txt` (your file with region (a)'s import), the import probe, the
+-    route probe with its seal controls, the duplication probe and the screen population; the
++    `NTimeHierarchyOverlay.lean.txt` (your file with region (a)'s two imports), the import probe,
++    the route probe with its seal controls, the chain probe `HChainProbe.lean.txt` (the whole
++    proof over the two contracts) with its seal controls, the duplication probes and the screen
++    population; the
+     order list `campaign/fills/h/orders/h-fill-hierarchy.txt`, the base sorry set, the screen
+     base and the pre-ship log (`campaign/fills/h/logs/h-fill-hierarchy-*`). The route's note is
+     `campaign/items/c1/c1e/H-route-design.md`.
+@@ -63,20 +65,33 @@ issue. -->
+ 
+ ## Base, line numbers and what lands around you
+ 
+-- **Your base's Lean content is ⟨BASE⟩** (at drafting: the campaign after #169, `94296486`). Lines
++- **Your base's Lean content is ⟨BASE⟩** (at review: the campaign after #170, `ba2441f7`; the
++  drafting pre-ship ran after #169, `94296486`). Lines
+   in this brief are those of your base's tree, where `NTimeHierarchy.lean` is 1,793 lines (5 public,
+   10 private by the lint's count).
+-- **Your first edit makes your file equal to the overlay**: one import,
+-  `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer`, after line 16 (region (a)). **Line
+-  numbers below are the base's; the overlay's are 1 more** (the target at 1723, overlay 1724).
+-- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT; at drafting: E-Q's fill
+-  (megafill D's partial, under review, and its continuation) in `NTimeDiagonalizer.lean`, which adds
+-  that file's imports and privates; it changes no statement you cite⟩. Cite nothing they add.
++- **Your first edit makes your file equal to the overlay**: two imports,
++  `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer` and
++  `import TCSlib.Complexity.TuringMachine.ChoiceWords`, after line 16 (region (a)). **Line numbers
++  below are the base's; the overlay's are 2 more** (the target at 1723, overlay 1725).
++- **Merged since the drafting pre-ship, so in your base:** #170 (B5a's uniform simulator,
++  `ba2441f7`): `CodeSimulator`, in your file's import closure, with `exists_uniformSimulator`
++  proved and two new imports (already in the closure, but they reorder your order list); and
++  `EXPCOM`, `Relativization` (in your order list through the `Diagonalization` facade only) and
++  `Codes2Tape` (outside it). It changes no statement you cite.
++- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT; at review (2026-10-27),
++  none of them touching your file or a statement you cite:
++  - #171 (`Build/WordTests`): the new module enters your closure through `TMSAT`, which your file
++    imports, and the re-points in `TMSAT`, `EXPCOM` and `ClassNP/Nondeterminism`;
++  - E-Q's checkpoint-1 landing (after #171): `NTimeDiagonalizer`'s eight new imports (among them
++    `Mathlib.Data.Nat.Log`, `Build/Contract/Catalog`, `Build/Contract/Seam`) and three `qy_`
++    privates⟩. Cite nothing they add. If any of them merges before the issue commit, the order
++    list, roots, base sorry set and screen base below are the ones re-measured there.
+ 
+ ## Parallel batches this round
+ 
+-None in `NTimeHierarchy.lean`. E-Q runs on its own branch in `NTimeDiagonalizer.lean`; E-D follows
+-it there. Neither changes a statement you cite.
++None in `NTimeHierarchy.lean`. In `NTimeDiagonalizer.lean`: E-Q's checkpoint-1 landing (a
++maintainer PR) and its continuation (a separate fill); E-D follows there after E-Q. None changes a
++statement you cite.
+ 
+ ## What this is
+ 
+@@ -96,13 +111,16 @@ theorem ntime_hierarchy {f g : ℕ → ℕ} (hf : TimeConstructible f)
+ **This brief supersedes the docstring's construction.** The sketch describes the diagonalizer
+ inline: the locator, the guess, the self-clocked mid-rung and the prefix clause. All of that is now
+ `exists_diagonalizer`'s contract, a separate fill. **Your proof is the chain only**, over that
+-contract. Its inclusion half, its thresholds and its chain are the docstring's "the chain, for the
+-alleged decider" and "inclusion". Do not edit the docstring before (d): the maintainer rewrites
+-the sketch at integration.
++contract. Of the docstring, only the *inclusion* and the shape of "the chain, for the alleged
++decider" survive: the middle equivalence (3.3), the top's flip (3.4) and the bottom's transfer.
++Its arithmetic is superseded too (the constant `A*`, the core's prefix clause, the
++`|bits (g n)|` term, `BF`'s cost against `K · (g n + 1)`): the thresholds below bind. Do not edit
++the docstring before (d): the maintainer rewrites the sketch at integration.
+ 
+ **Proved modulo, exactly:** `Turing.NTimeDiag.exists_diagonalizer` (and through it
+ `exists_queryTM`) and `Turing.FinNDTM.exists_codeNDTM_accepts_linear`. A complete delivery has no
+-admission of its own: the target's axiom walk reaches `sorryAx` only through those two.
++admission of its own: the target's axiom walk reaches `sorryAx` only through those two (at your
++base `exists_diagonalizer` is a bare `sorry`, so `exists_queryTM` is not reached yet).
+ 
+ **Read first:**
+ - the route note `campaign/items/c1/c1e/H-route-design.md`;
+@@ -110,21 +128,37 @@ admission of its own: the target's axiom walk reaches `sorryAx` only through tho
+   hypothesis `hBF`), `exists_codeNDTM_accepts_linear`'s, `exists_ndAcceptsWithin_decider`'s;
+ - `Complexity.NTIME`, `mem_NTIME_iff`, `NTIME.mono` (its truncation argument),
+   `FinNDTM.DecidesInTime` with `decidesInTime_iff`, `FinNDTM.AcceptsWithin` with
+-  `acceptsWithin_iff` and `AcceptsWithin.mono`, `NDTM.HaltsWithin`, `NDTM.runWith_of_halt`;
+-- `ntime_hierarchy_of_pos`, right after your target (it consumes it unchanged).
++  `acceptsWithin_iff` and `AcceptsWithin.mono`, `NDTM.HaltsWithin` with `haltsWithin_iff`,
++  `NDTM.runWith_append`, `NDTM.runWith_of_halt`, and the shared branch truncation
++  `Turing.run_take_of_halted` (`TuringMachine/ChoiceWords`);
++- `ntime_hierarchy_of_pos`, right after your target (it consumes it unchanged);
++- the chain probe `HChainProbe.lean.txt`: the review's proof of the target's statement over the two
++  contracts (`nh_target`), sealed, with `sorryAx` only through them.
+ 
+ **Pre-ship check** (the maintainer, at your base; its log is
+ `campaign/fills/h/logs/h-fill-hierarchy-preship.log`):
+-- **The overlay** elaborates with exactly your file's one sorry warning (overlay 1724). The
+-  import creates no cycle (`NTimeDiagonalizer`'s closure does not contain your file).
+-- **The import probe** (`HImportProbe.lean.txt`, **48 checks of 48 names**): 0 errors.
++- **The overlay** elaborates with exactly your file's one sorry warning (overlay 1725). Neither
++  import creates a cycle (`NTimeDiagonalizer`'s closure does not contain your file; `ChoiceWords`
++  imports only Mathlib, three roots already among your 33).
++- **The import probe** (`HImportProbe.lean.txt`, **⟨70⟩ checks of ⟨70⟩ names**, the two imports):
++  0 errors.
+ - **The route probe** (`HRouteProbe.lean.txt`, sealed over 4): `nh_chain` (the chain's induction),
+   `nh_absorb` and `nh_inclusion` (the inclusion half, complete), `nh_top`, `nh_bottom`, `nh_middle`
+   (the three thresholds) and `nh_stage` (a late stage of a code), each within the standard three.
+   They may be copied into your home as `nh_` privates.
+-- **The seal controls** (`HSealControl.lean.txt`): every one closes unsealed and fails sealed.
+-- **The duplication probe** (`HDupProbe.lean.txt`): the chain, the absorption, the inclusion and the
+-  top threshold posed to `exact?`: 4 of 4 "could not close".
++- **The chain probe** (`HChainProbe.lean.txt`, sealed over 12: the 4 above, `NDTM.runWith`,
++  `NDTM.initCfg`, `NTimeDiag.ladder`, `budget`, `stage`, `stageCode`, `TimeConstructible`,
++  `CodeNDTM.toFinNDTM`): the truncation `nh_accepts_of_halts`, its decider corollary
++  `nh_mem_of_accepts`, and `nh_target`, the target's statement proved over the two contracts. Its
++  axiom walk: `sorryAx` directly in exactly `exists_diagonalizer` and
++  `exists_codeNDTM_accepts_linear`. In the home (both imports, the privates at (b), the body at
++  (c)) the file elaborates with no diagnostic. You may copy all of it as `nh_` privates and the
++  body; the checks, seals, screens and the report are still yours.
++- **The seal controls** (`HSealControl.lean.txt`, 4; `HChainSealControl.lean.txt`, 8 more): every
++  one closes unsealed and fails sealed.
++- **The duplication probes:** `HDupProbe.lean.txt` poses the chain, the absorption, the inclusion
++  and the top threshold to `exact?`: 4 of 4 "could not close"; `HChainDupProbe.lean.txt` the
++  truncation, its corollary, the bottom and middle thresholds and the late stage: 5 of 5.
+ 
+ ## Owned regions and targets (modify these and nothing else)
+ 
+@@ -133,8 +167,9 @@ admission of its own: the target's axiom walk reaches `sorryAx` only through tho
+ | 1 | `NTimeHierarchy.lean:1723` | `Complexity.ntime_hierarchy` (frozen statement) |
+ 
+ Your regions:
+-- **(a) the import**, as your first edit: exactly
+-  `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer`, after line 16. No other import.
++- **(a) the imports**, as your first edit: exactly
++  `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer` and
++  `import TCSlib.Complexity.TuringMachine.ChoiceWords`, after line 16. No other import.
+ - **(b) the home**, the blank line 1629 after `open Turing`, inside `namespace Complexity`: your
+   `private` declarations, `private` only, and no `section`, `open` or `variable` that leaks past
+   one.
+@@ -152,14 +187,21 @@ target's docstring before (d)), and every other file.
+ ### Hosts (binding)
+ 
+ - **The diagonalizer:** cite `exists_diagonalizer` with `c` from
+-  `Turing.exists_effectiveNDMachineCode` and `hBF := Turing.exists_ndAcceptsWithin_decider c`.
++  `Turing.exists_effectiveNDMachineCode` (a `Nonempty`: `obtain ⟨c⟩`) and
++  `hBF := Turing.exists_ndAcceptsWithin_decider c`.
+   **Never build a machine**: no part of this proof constructs or runs one.
+-- **The normal form:** cite `exists_codeNDTM_accepts_linear`; the code `α` of its `M'` by the
+-  scheme's `decode_encode`.
+-- **Classes:** `mem_NTIME_iff`, `decidesInTime_iff`, `acceptLang_mem_NTIME`, `NTIME.mono`.
+-- **Leaves you may write:** the inclusion's finite absorption; the thresholds' arithmetic; the
+-  chain's induction; the two transfers (the middle's at `f (n + 1)`, the bottom's at `f a`). A
+-  further leaf is an escalation.
++- **The normal form:** cite `exists_codeNDTM_accepts_linear`; the code `α = c.encode M'` of its
++  `M'` by the scheme's `decode_encode` (`c.toNDMachineCode.decode_encode M'`).
++- **Classes:** `mem_NTIME_iff`, `decidesInTime_iff`, `acceptsWithin_iff`, `haltsWithin_iff`,
++  `AcceptsWithin.mono`, `acceptLang_mem_NTIME`, `NTIME.mono`; the strictness by
++  `Set.ssubset_iff_of_subset`.
++- **The truncation:** `Turing.run_take_of_halted` (`ChoiceWords`, the shared form), with the
++  absorption `NDTM.runWith_append` and `NDTM.runWith_of_halt`.
++- **Leaves you may write:** the inclusion's finite absorption and constant fold; the thresholds'
++  arithmetic; the chain's induction; the truncation of an acceptance at `N`'s all-branch budget
++  through `run_take_of_halted` (the chain probe's `nh_accepts_of_halts`, with `nh_mem_of_accepts`);
++  the two transfers (the middle's at `f (n + 1)`, the bottom's at `f a`). A further leaf is an
++  escalation.
+ 
+ ### The route (binding where it names a row)
+ 
+@@ -175,45 +217,50 @@ Write `c` for the effective scheme, `D`, `K` for the diagonalizer and `L = {x |
+    Choose a stage `i` with `stageCode i = α` (`stageCode_frequently`) so large that, with
+    `a = ℓᵢ + 1` and `T* = budget f ℓᵢ`:
+    - for every `n` with `ℓᵢ < n`: `C · (C₁ · (c₀ · f (n + 1) + 1) + 1) ≤ g n` (`hfg` at a constant
+-     `A` with `A · (f (n + 1) + 1) ≥ C · (C₁ · (c₀ · f (n + 1) + 1) + 1)`, and `n > ℓᵢ ≥ i + 2`);
++     `A` with `A · (f (n + 1) + 1) ≥ C · (C₁ · (c₀ · f (n + 1) + 1) + 1)`, from some `N₁` on; and
++     `n > ℓᵢ ≥ N₁`, `nh_stage`);
+    - `C · 2^{C · (T* + 1)} ≤ 2^{T*²}`, that is the top's hypothesis at `n = ℓᵢ₊₁`
+-     (`ladder_succ`);
++     (`ladder_succ`), from some `T₀` on; `T* ≥ ℓᵢ + 2` (`budget_eq`), so `ℓᵢ ≥ T₀` suffices;
+    - `C₁ · (c₀ · f a + 1) ≤ T* = (f a + a + 1)²` (`budget_eq`; once `a ≥ C₁ · (c₀ + 1)`).
+ 3. **The middle step** (checkpoint 3): for `ℓᵢ < n < ℓᵢ₊₁` (so `n ≥ 3` and `stage f n = i`, by
+    `stage_eq`): `1ⁿ ∈ L ↔ 1^{n+1} ∈ L`.
+    - Forward: the middle's soundness gives `M'` accepting `1^{n+1}` within `g n`; the normal
+      form's converse gives an accepting `N`-branch; `N`'s decision, with truncation to its
+-     all-branch budget (`NDTM.runWith_of_halt`, as in `NTIME.mono`'s proof), gives `1^{n+1} ∈ L`.
++     all-branch budget (`nh_accepts_of_halts`, through `run_take_of_halted`), gives
++     `1^{n+1} ∈ L`.
+    - Backward: `N` accepts `1^{n+1}` within `c₀ · f (n + 1)`; the normal form gives `M'` within
+      `t' = C₁ · (c₀ · f (n + 1) + 1)`; the first threshold gives `C · (t' + 1) ≤ g n`; the
+      middle's completeness gives `1ⁿ ∈ L`.
+ 4. **The chain and the contradiction** (checkpoint 4): by induction from `a` to `ℓᵢ₊₁`,
+    `1^a ∈ L ↔ 1^{ℓᵢ₊₁} ∈ L`. The top's flip (the second threshold) gives
+    `1^{ℓᵢ₊₁} ∈ L ↔ ¬ M'` accepts `1^a` within `T*`. The bottom's transfer (the third
+-   threshold, `AcceptsWithin.mono`, the normal form's converse and `N`'s decision) gives
++   threshold, `AcceptsWithin.mono`, the normal form's converse, the truncation and `N`'s
++   decision) gives
+    `M'` accepts `1^a` within `T*` iff `1^a ∈ L`. So `1^a ∈ L ↔ ¬ (1^a ∈ L)`.
+ 5. **The target** (checkpoint 5): the inclusion and `L ∉ NTIME f` with `L ∈ NTIME (g + 1)` give
+-   the strict inclusion (`Set.ssubset_iff_subset_ne` or the definition of `⊂`).
++   the strict inclusion (`Set.ssubset_iff_of_subset`: the inclusion, then `L` as the witness).
+ 6. **Edge cases that must stay true of your proof:** `f` or `g` with zeros (the absorption's
+    `+ 1`); `n < 3` and the lengths at or below the seed `ℓ₀ = 2` (the stages start above it);
+-   `C = 0` or `C₁ = 0` (take `max 1`); `N₀ = 0`.
++   `C = 0` or `C₁ = 0` (no `max` is needed: every threshold holds at `0`); `N₀ = 0`.
+ 
+ ## Gate guidance (binding)
+ 
+-- **The P3.3 gate** (`campaign/gates/ch3-p33/`): the target's statement and the two declared addends
+-  of `hfg` (`f n` for the inclusion, `n + 1` for the middle's `1^{n+1}`).
++- **The P3.3 gate** (`campaign/gates/ch3-p33/`): the target's statement and the declared addends of
++  `hfg`: `f n` for the inclusion, `f (n + 1)` and the constant `1` for the middle's threshold. The
++  `n` addend is unused by this route (it covered the old construction's startup costs, now inside
++  `K`).
+ - **Gate 39 and gate 45** (`exists_diagonalizer`): `∀ α, ∃ C` before the stage selection, so every
+   threshold is chosen after `C`; the top's hypothesis is exactly the second threshold.
+ - **Gate 38** (`exists_codeNDTM_accepts_linear`): the linear transfer and its unbounded converse.
+ 
+ ## Cited infrastructure (public and proved, or the two named contracts, at the issue commit)
+ 
+-All in `HImportProbe.lean.txt` (48 names): the target and its neighbour `ntime_hierarchy_of_pos`;
++All in `HImportProbe.lean.txt` (⟨70⟩ names): the target and its neighbour `ntime_hierarchy_of_pos`;
+ `exists_diagonalizer`, `exists_queryTM`, `exists_ndAcceptsWithin_decider`,
+ `exists_timed_universal_NDTM`; the normal form and the scheme; the stages' definitions and laws;
+ `NTIME` and its API; `DecidesInTime`, `AcceptsWithin`, `HaltsWithin` with their unfolding lemmas and
+-monotonicity; `runWith_of_halt`, `runWith_append`; and the core and Mathlib facts the route probe
+-uses.
++monotonicity; `runWith_of_halt`, `runWith_append`, `run_take_of_halted`; and the core and Mathlib
++facts the route and chain probes use.
+ 
+ ## Ground rules (binding)
+ 
+@@ -226,9 +273,11 @@ uses.
+    it.
+ 5. **No touching other sorries.** Cite `exists_diagonalizer` and `exists_codeNDTM_accepts_linear`
+    as statements; never re-prove them or their parts.
+-6. **Imports.** Exactly the one of region (a).
+-7. **One proof per shared argument.** Never re-walk `NTIME.mono`'s truncation or
+-   `ntime_hierarchy_of_pos`'s rescaling; cite them or the lemmas they use.
++6. **Imports.** Exactly the two of region (a).
++7. **One proof per shared argument.** The truncation goes through `run_take_of_halted` (one
++   private, `nh_accepts_of_halts`); never re-walk `NTIME.mono`'s `take`/`drop` argument inline.
++   The constant fold of `nh_inclusion` (as in `ntime_hierarchy_of_pos`'s first step) has no
++   published form: write it once, and disclose its in-file pair.
+ 8. **Size.** No cap. Report the final line count and the declaration counts.
+ 9. **Continuation budget.** A partial zip states the checkpoints reached, the open declarations
+    (each with a literal "Proof sketch") and the target's axiom walk.
+@@ -237,10 +286,11 @@ uses.
+     `DecidesInTime` through `decidesInTime_iff`, `AcceptsWithin` through `acceptsWithin_iff`,
+     `HaltsWithin` through `haltsWithin_iff`, `TimeConstructible` through `timeConstructible_iff`
+     if at all, `budget` and `ladder` through `budget_eq`, `ladder_succ`, `ladder_zero`, `stage` and
+-    `stageCode` through their laws. Core and Mathlib definitions may reduce in `rfl`, `decide` or
++    `stageCode` through their laws, `NDTM.runWith` through `runWith_append` and `runWith_of_halt`,
++    `CodeNDTM.toFinNDTM` not at all. Core and Mathlib definitions may reduce in `rfl`, `decide` or
+     `show`, but are never passed to `simp`, `rw` or `unfold`. **Self-check by a seal test with
+     controls** (each sealed definition: a goal closing by `rfl` unsealed and failing sealed),
+-    starting from the pre-ship's list, and an inspection table of your `rw`/`simp` arguments.
++    starting from the chain probe's 12, and an inspection table of your `rw`/`simp` arguments.
+     Ship the raw outputs.
+ 11. Keep your new privates under the `nh_` prefix (unused in the tree at the drafting base). Cite no
+     private declaration of another file.
+@@ -252,16 +302,20 @@ The route's 1–5. Each may land alone. Add no new admission.
+ ## Duplication governance (binding)
+ 
+ Run the text screen **before and after**, one run at a time, under `nice -n 10`.
+-- **The population** (`campaign/fills/h/inputs/h-fill-hierarchy/screen-population.txt`, 11 files):
++- **The population** (`campaign/fills/h/inputs/h-fill-hierarchy/screen-population.txt`, 14 files):
+   your file; `NTimeDiagonalizer`, `ClassNP/NTIME`, `ClassNP/NDNormalForm`, `NDCodes`,
+-  `Nondeterministic`; and the hazards `TimeHierarchy/Diagonal` (`time_hierarchy`'s absorption and
+-  chain), `SpaceComplexity/Hierarchy` (the space hierarchy's), `ClassP/DTIME`,
+-  `TimeHierarchy/Separation`.
+-- **The base** is `campaign/fills/h/logs/h-fill-hierarchy-screen-base.txt`: 102 declarations, 6
+-  pairs (MEASURED at your base; seconds). Your file has no pair.
++  `Nondeterministic`, `ClassP/TimeConstructible`, `ChoiceWords`; and the hazards
++  `TimeHierarchy/Diagonal` (`time_hierarchy`'s absorption and chain), `SpaceComplexity/Hierarchy`
++  (the space hierarchy's), `ClassP/DTIME`, `TimeHierarchy/Separation`, `ClassNP/ExhaustiveReplay`
++  and `ClassNP/Nondeterminism` (the truncation's two private copies).
++- **The base** is `campaign/fills/h/logs/h-fill-hierarchy-screen-base.txt`: ⟨…⟩ declarations, ⟨…⟩
++  pairs (MEASURED at your base on the 14 files; seconds). ⟨Your file has no pair.⟩
+ - **No new cross-file pair** with an owned-file declaration on one side. **Known hazards:**
+-  `time_hierarchy`'s finite absorption (cite a published form if the pre-ship finds one);
+-  `NTIME.mono`'s truncation (cite).
++  `time_hierarchy`'s finite absorption (inline there, no published form: the pre-ship and the
++  review found none); the truncation, of which `ClassNP/ExhaustiveReplay`'s
++  `xr_accepts_iff_of_halts` and `ClassNP/Nondeterminism`'s `acceptsWithin_iff_of_halts` are private
++  copies (write yours through `run_take_of_halted`, and justify any pair with them);
++  `ntime_hierarchy_of_pos`'s constant fold (in-file).
+ - List every new in-file pair with a one-line justification. `REPORT.md` carries **"new copies:
+   none"** (or lists each pair).
+ 
+@@ -270,24 +324,29 @@ Run the text screen **before and after**, one run at a time, under `nice -n 10`.
+ - Lean 4 v4.25.0, mathlib pinned; the cache for the queue's Mathlib roots only (your order list's
+   modules import 33 roots); **never `lake build`**, never the unfiltered `lake exe cache get`. Use
+   `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
+-- **Re-bootstrap** from `campaign/fills/h/orders/h-fill-hierarchy.txt` (**81 modules**, on the
+-  overlay) after your first edit, logging each module's time and maximum memory. **The base
+-  sorry-warning set has 22 entries in 11 modules**. Yours is `NTimeHierarchy`'s one.
++- **Re-bootstrap** from `campaign/fills/h/orders/h-fill-hierarchy.txt` (**⟨81⟩ modules**, on the
++  overlay, in the order re-sorted at issue: since #170 `CodeSimulator` follows
++  `Build/InterpreterStartup`; `ChoiceWords` is already among them) after your first edit, logging
++  each module's time and maximum memory. **The base
++  sorry-warning set has ⟨21 entries in 10 modules⟩** (after #170). Yours is `NTimeHierarchy`'s
++  one.
+ - **Final checks:** `NTimeHierarchy`: zero errors, **no sorry warning** (for a partial, exactly the
+   target's); every other module of the order list: sorry warnings exactly the base's minus yours;
+   the import probe re-run, extended by your citations.
+ - **Axiom prints** for the target and every new private: within the standard three plus
+-  `sorryAx` only through the two named contracts; show the walk.
++  `sorryAx` only through the two named contracts; show the walk (the chain probe's `rvSorryWalk`
++  lists every reachable constant whose own type or value mentions `sorryAx`: exactly the two).
+ - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/Diagonalization`, 0 FAIL
+-  (base: 0 FAIL, 2 WARN over 5 files).
++  (base: 0 FAIL, 2 WARN over 5 files). The owned file's size WARN (over 1,000 lines) is expected
++  and stays: file size alone is not a finding.
+ 
+ ## Out-of-scope sorries you will see (leave every one untouched)
+ 
+ Everything in the base sorry set except your target: `exists_queryTM` and `exists_diagonalizer`
+ (`NTimeDiagonalizer`) and `exists_codeNDTM_accepts_linear` (`ClassNP/NDNormalForm`), which you cite
+ as statements; MIG-1 stage S's sorried specs (`Simulation`, `Composition`, `Encoding`,
+-`ClassP/TimeConstructible`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives`); and
+-`CodeSimulator`'s `exists_uniformSimulator` (B5a).
++`ClassP/TimeConstructible`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives`). `CodeSimulator`'s
++`exists_uniformSimulator` is proved since #170.
+ 
+ ## REPORT.md checklist
+ 
+@@ -295,7 +354,8 @@ as statements; MIG-1 stage S's sorried specs (`Simulation`, `Composition`, `Enco
+       bootstrap with per-module time and memory, and the base blob check.
+ - [ ] The overlay as the first edit; nothing else outside regions (b)–(d).
+ - [ ] The checkpoints reached, one zip each; the base hash and the ancestor check.
+-- [ ] Every new declaration with its role; the thresholds' constants; a proposed
++- [ ] Every new declaration with its role; the thresholds' constants (`N₁`, `T₀`, the stage
++      bound); what you copied from the route and chain probes and what you changed; a proposed
+       `**Implementation.**` paragraph for the target's docstring (public-facing).
+ - [ ] Rule 10: the declarations cited outside your file, the probe re-run, the seal with its
+       controls and raw outputs, the inspection table.
+@@ -307,9 +367,15 @@ as statements; MIG-1 stage S's sorried specs (`Simulation`, `Composition`, `Enco
+ - **`L`'s budget is `K · (g |x| + 1)`**, not `g |x| + 1`: membership is
+   `D.AcceptsWithin x (K * (g x.length + 1))` by definition of the set.
+ - **`N`'s acceptance at an unbounded time** (the normal form's converse) must be truncated to its
+-  all-branch budget before `N`'s decision applies: `NDTM.runWith_of_halt` (as `NTIME.mono`'s proof
+-  does).
++  all-branch budget before `N`'s decision applies, in the middle's forward step and in the
++  bottom's transfer: `nh_accepts_of_halts`, through `run_take_of_halted` (its run and halting
++  predicate as `fun w => N.tm.runWith w (N.tm.initCfg x)` and `fun c => c.state = none`).
++- **Membership in `L`** is `Language`'s own `∈`, not `Set`'s: `simp only [Set.mem_setOf_eq]`
++  makes no progress on it. Read it with `show` (as `acceptLang_mem_NTIME` does, by `Iff.rfl`), then
++  `List.length_replicate`.
++- **The decoded code:** `rw [c.toNDMachineCode.decode_encode M'] at hC` turns the contract's
++  `(c.decode α).toFinNDTM` into `M'.toFinNDTM` once `C` is obtained at `α = c.encode M'`.
+ - **The stage's ends:** `stage f n = i` holds exactly for `ℓᵢ < n ≤ ℓᵢ₊₁` (`stage_eq`); the
+   middle clause needs `n ≠ ℓᵢ₊₁`, the top clause `n = ℓᵢ₊₁`.
+ - `omega` with products and powers as atoms (`ring` first); the exponential threshold through
+-  `Nat.lt_two_pow` and `Nat.pow_le_pow_right`.
++  `Nat.lt_two_pow_self` (`Nat.lt_two_pow` does not exist at this pin) and `Nat.pow_le_pow_right`.
+diff --git a/campaign/fills/h/drafts/h-fill-hierarchy/preship-9d0af8cb/screen-population.txt b/campaign/fills/h/drafts/h-fill-hierarchy/preship-9d0af8cb/screen-population.txt
+index 5e2be14..983013c 100644
+--- a/campaign/fills/h/drafts/h-fill-hierarchy/preship-9d0af8cb/screen-population.txt
++++ b/campaign/fills/h/drafts/h-fill-hierarchy/preship-9d0af8cb/screen-population.txt
+@@ -5,8 +5,11 @@ TCSlib/Complexity/ClassNP/NTIME.lean
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean
+ TCSlib/Complexity/TuringMachine/NDCodes.lean
+ TCSlib/Complexity/TuringMachine/Nondeterministic.lean
++TCSlib/Complexity/TuringMachine/ChoiceWords.lean
+ TCSlib/Complexity/ClassP/TimeConstructible.lean
+ TCSlib/Complexity/ClassP/DTIME.lean
+ TCSlib/Complexity/TimeHierarchy/Diagonal.lean
+ TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+ TCSlib/Complexity/TimeHierarchy/Separation.lean
++TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++TCSlib/Complexity/ClassNP/Nondeterminism.lean

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Re-run the pre-ship's five Lean files, one at a time, through leanelab.sh.
+S=$S
+W=$S/review/h-brief/wt; O=$S/review/h-brief/out
+for f in "$@"; do
+  start=$(date +%s.%N 2>/dev/null || date +%s)
+  /usr/bin/time -l bash $S/tools/leanelab.sh $W $S/oleans-laplusm rvprobe/$f.lean > $O/$f.raw 2> $O/$f.time
+  ec=$?
+  end=$(date +%s)
+  peak=$(grep "maximum resident" $O/$f.time | awk '{print $1}')
+  real=$(grep " real" $O/$f.time | awk '{print $1}')
+  sed "s#$W/##g" $O/$f.raw > $O/$f.out
+  echo "# exit $ec; time: ${real} s, peak ${peak} bytes" >> $O/$f.out
+done
