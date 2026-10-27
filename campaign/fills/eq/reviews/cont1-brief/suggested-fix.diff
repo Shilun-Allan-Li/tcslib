@@ -1,0 +1,1521 @@
+diff --git a/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewDupProbe.lean.txt b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewDupProbe.lean.txt
+new file mode 100644
+index 0000000..0d493f6
+--- /dev/null
++++ b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewDupProbe.lean.txt
+@@ -0,0 +1,37 @@
++/-
++The cont1 brief review's semantic-duplication probe (a probe record): the review probe's new
++statements that do not mention the owned file's definitions, each posed to `exact?` against the
++owned module's closure.
++-/
++import Mathlib.Data.Nat.Log
++import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
++import TCSlib.Complexity.TuringMachine.Build.StepClock
++import TCSlib.Complexity.TuringMachine.Build.InputCall
++import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
++import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
++import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Rewind
++import TCSlib.Complexity.TuringMachine.BufferWords
++
++set_option maxHeartbeats 0
++
++-- 1. the expansion's unary block
++example (d : ℕ) : (List.replicate d [true]).flatten = List.replicate d true := by exact?
++
++-- 2. the polylogarithmic terms are linear
++example {n h : ℕ} (hn : 1 ≤ n) (hh : h ≤ Nat.log 2 n) : (h + 1) ^ 3 ≤ 8 * n := by exact?
++
++-- 3. the timeout certificate
++example (f : ℕ → ℕ) (c c' a n t : ℕ) (ha : a ≤ n)
++    (ht : t ≤ c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1))
++    (hlate : 2 ^ ((Nat.bits n).length + (Nat.bits (c' * (c + 2))).length) - 1 < t) :
++    n < f a := by exact?
++
++-- 4. the cutoff product decides the comparison (first clause)
++example (X L : ℕ) :
++    min (min (X * X) (L + 2) * min (X * X) (L + 2)) (L + 2) < L ↔ X ^ 4 < L := by exact?
++
++-- 5. the main machine's absorption into `g`
++example (g : ℕ → ℕ) (hg : ∀ n, n ≤ g n) (B₁ B₂ n T₁ T₂ : ℕ)
++    (h₁ : T₁ ≤ B₁ * (n + 1)) (h₂ : T₂ ≤ B₂ * (g n + 1)) :
++    T₁ + T₂ ≤ (B₁ + B₂) * (g n + 1) := by exact?
+diff --git a/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewProbe.lean.txt b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewProbe.lean.txt
+new file mode 100644
+index 0000000..7276ad2
+--- /dev/null
++++ b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewProbe.lean.txt
+@@ -0,0 +1,696 @@
++/-
++The cont1 brief review's probe (review sub-agent, 2026-10-27; a probe record, not library code).
++Under one seal of every other-file TCSlib definition it touches, it re-proves the pre-ship's
++route lemmas and the first review's lemmas together (copied verbatim, `qy_guard` omitted: it is
++landed), and adds the steps of the cont1 route the pre-ship did not probe:
++* the clocked, released install call from the published clauses of the step clock, the release
++  adapter and the install call (`qy_clocked_call`), and the timeout certificate;
++* the stop rule in the machine's form (`qy_rounds_spec`, `qy_stage_of_run`), and the machine's
++  decision through the cutoff product equal to `qyDecide` (`qy_machineDecide_eq`);
++* the loop's ledger and the polylogarithmic terms (`qy_loop_ledger`, `qy_poly_log_le`);
++* the writer's emission order (`qy_writer_word`).
++-/
++import Mathlib.Data.Nat.Log
++import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
++import TCSlib.Complexity.TuringMachine.Build.StepClock
++import TCSlib.Complexity.TuringMachine.Build.InputCall
++import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
++import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
++import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Rewind
++import TCSlib.Complexity.TuringMachine.BufferWords
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace Turing.NTimeDiag
++
++section Sealed
++
++attribute [local irreducible] Complexity.TimeConstructible Turing.FinTM.ComputesInTime
++  Turing.FinTM.ComputesFunInTime Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg
++  Turing.counterValue Turing.pairEncode Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState
++  Turing.seamReleaseTM Turing.Cfg.Stopped Turing.clockCfg Turing.wordPatch Turing.FinTM.bufferTape
++  Turing.NTimeDiag.query Turing.NTimeDiag.budget Turing.NTimeDiag.stageCode
++  Turing.NTimeDiag.stage Turing.NTimeDiag.ladder
++attribute [-simp] Turing.MultiTapeTM.initCfg
++
++/-! #### The dossier's lemmas -/
++
++/-- The witness, through A1's reading: `n ≤ f n`, and a machine computing `bits (f |x|)` within
++`c (f |x| + 1)`, as a function-level computation. -/
++theorem qy_witness {f : ℕ → ℕ} (hf : Complexity.TimeConstructible f) :
++    (∀ n, n ≤ f n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool,
++      M.ComputesFunInTime (fun y => (f y.length).bits) fun m => c * (f m + 1) := by
++  obtain ⟨hle, c, hc, M, hM⟩ := (Complexity.timeConstructible_iff f).mp hf
++  exact ⟨hle, c, hc, M, (FinTM.computesFunInTime_iff _ _ _).mpr hM⟩
++
++/-- The locator's three outcomes at a rung. -/
++inductive QyStep
++  | interior
++  | top
++  | next
++  deriving DecidableEq
++
++/-- The locator's decision at the rung `ℓ` on a length `n` (the dossier's `eqDecide`). -/
++def qyDecide (f : ℕ → ℕ) (n ℓ : ℕ) : QyStep :=
++  if n < f (ℓ + 1) then .interior
++  else if Nat.log 2 n < (f (ℓ + 1) + (ℓ + 1) + 1) ^ 4 then .interior
++  else if (f (ℓ + 1) + (ℓ + 1) + 1) ^ 4 = Nat.log 2 n then
++    (if n = 2 ^ Nat.log 2 n then .top else .next)
++  else .next
++
++theorem qy_ladder_succ_eq (f : ℕ → ℕ) (i : ℕ) :
++    ladder f (i + 1) = 2 ^ (f (ladder f i + 1) + (ladder f i + 1) + 1) ^ 4 := by
++  rw [ladder_succ, budget_eq, ← pow_mul]
++
++/-- The stop rule: at a rung below `n`, the decision is the comparison with the next rung. -/
++theorem qy_decide_spec (f : ℕ → ℕ) {n i : ℕ} (hn : 1 ≤ n) :
++    (qyDecide f n (ladder f i) = .interior ↔ n < ladder f (i + 1)) ∧
++    (qyDecide f n (ladder f i) = .top ↔ n = ladder f (i + 1)) ∧
++    (qyDecide f n (ladder f i) = .next ↔ ladder f (i + 1) < n) := by
++  rw [qy_ladder_succ_eq]
++  set X := f (ladder f i + 1) + (ladder f i + 1) + 1 with hX
++  set L := Nat.log 2 n with hL
++  have hlo : 2 ^ L ≤ n := Nat.pow_log_le_self 2 (by omega)
++  have hhi : n < 2 ^ (L + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
++  have hX1 : 1 ≤ X := by omega
++  have hX4 : X ≤ X ^ 4 := Nat.le_self_pow (by norm_num) X
++  by_cases h1 : n < f (ladder f i + 1)
++  · have hbig : n < 2 ^ X ^ 4 := by
++      have := Nat.lt_two_pow_self (n := X ^ 4)
++      omega
++    simp only [qyDecide, h1, if_true]
++    refine ⟨by simp; omega, by simp; omega, by simp; omega⟩
++  · by_cases h2 : L < X ^ 4
++    · have hbig : n < 2 ^ X ^ 4 :=
++        lt_of_lt_of_le hhi (Nat.pow_le_pow_right (by norm_num) (by omega))
++      simp only [qyDecide, h1, if_false, ← hL, ← hX, h2, if_true]
++      refine ⟨by simp; omega, by simp; omega, by simp; omega⟩
++    · by_cases h3 : X ^ 4 = L
++      · simp only [qyDecide, h1, if_false, ← hL, ← hX, h3, if_true]
++        by_cases h4 : n = 2 ^ L
++        · simp only [h4, if_true]
++          refine ⟨by simp, by simp, by simp⟩
++        · simp only [h4, if_false]
++          have : 2 ^ L < n := lt_of_le_of_ne hlo (Ne.symm h4)
++          refine ⟨by simp; omega, by simp, by simp; omega⟩
++      · have hlt : X ^ 4 < L := by omega
++        have hsmall : 2 ^ X ^ 4 < n :=
++          lt_of_lt_of_le (Nat.pow_lt_pow_right (by norm_num) hlt) hlo
++        simp only [qyDecide, h1, if_false, ← hL, ← hX, h2, h3]
++        refine ⟨by simp; omega, by simp; omega, by simp; omega⟩
++
++/-- At a rung `ℓᵢ < n`, a decision other than `next` locates the stage: `stage f n = i`. -/
++theorem qy_stage_of_stop (f : ℕ → ℕ) {n i : ℕ} (hlo : ladder f i < n)
++    (hstop : qyDecide f n (ladder f i) ≠ .next) : stage f n = i := by
++  have hn : 1 ≤ n := by have := le_ladder f i; omega
++  obtain ⟨-, -, hnext⟩ := qy_decide_spec f (i := i) hn
++  have hle : n ≤ ladder f (i + 1) := by
++    by_contra h
++    exact hstop (hnext.mpr (by omega))
++  exact stage_eq f hlo hle
++
++/-- A passed rung's operands are at most the next rung. -/
++theorem qy_round_le (f : ℕ → ℕ) (i : ℕ) :
++    f (ladder f i + 1) + (ladder f i + 1) + 1 ≤ ladder f (i + 1) := by
++  rw [qy_ladder_succ_eq]
++  set X := f (ladder f i + 1) + (ladder f i + 1) + 1
++  have h4 : X ≤ X ^ 4 := Nat.le_self_pow (by norm_num) X
++  have := Nat.lt_two_pow_self (n := X ^ 4)
++  omega
++
++/-- The ledger: the rungs passed before stage `s` sum to at most twice its bottom. -/
++theorem qy_ledger (f : ℕ → ℕ) (s : ℕ) :
++    ∑ h ∈ Finset.range s, ladder f (h + 1) ≤ 2 * ladder f s := by
++  induction s with
++  | zero => simp
++  | succ s ih =>
++    rw [Finset.sum_range_succ]
++    have := two_mul_lt_ladder_succ f s
++    omega
++
++/-! #### The note's new steps -/
++
++/-- **The all-ones counter's value**: `m` ones are worth `2 ^ m - 1`. -/
++theorem qy_ones_val (m : ℕ) :
++    Nat.ofDigits 2 ((List.replicate m true).map Bool.toNat) = 2 ^ m - 1 := by
++  induction m with
++  | zero => rfl
++  | succ m ih =>
++    rw [List.replicate_succ, List.map_cons, Nat.ofDigits_cons, ih, Bool.toNat_true, pow_succ]
++    have := Nat.one_le_two_pow (n := m)
++    omega
++
++/-- **The next rung's counter value**: `m` zeros then a one are worth `2 ^ m`. -/
++theorem qy_rung_val (m : ℕ) :
++    Nat.ofDigits 2 ((List.replicate m false ++ [true]).map Bool.toNat) = 2 ^ m := by
++  induction m with
++  | zero => rfl
++  | succ m ih =>
++    rw [List.replicate_succ, List.cons_append, List.map_cons, Nat.ofDigits_cons, ih,
++      Bool.toNat_false, pow_succ]
++    ring
++
++/-- **The counter is large enough**: the all-ones word of width `|bits n| + |bits D|` is worth at
++least `D (n + 1)`. -/
++theorem qy_ones_ge (n D : ℕ) :
++    D * (n + 1) ≤ 2 ^ ((Nat.bits n).length + (Nat.bits D).length) - 1 := by
++  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len, pow_add]
++  have hn := Nat.lt_size_self n
++  have hD := Nat.lt_size_self D
++  have hprod : (n + 1) * (D + 1) ≤ 2 ^ Nat.size n * 2 ^ Nat.size D :=
++    Nat.mul_le_mul hn hD
++  have : D * (n + 1) + 1 ≤ (n + 1) * (D + 1) := by nlinarith
++  omega
++
++/-- **The counter is not too large**: `2 ^ |bits n| ≤ 2 n + 1`. -/
++theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
++  rcases Nat.eq_zero_or_pos n with rfl | hn
++  · simp
++  · rw [Nat.size_eq_bits_len]
++    have hsz : Nat.size n = Nat.log 2 n + 1 := by
++      apply le_antisymm
++      · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
++      · by_contra h
++        have hlt : n < 2 ^ Nat.log 2 n :=
++          Nat.size_le.mp (by omega)
++        exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
++    rw [hsz, pow_succ]
++    have := Nat.pow_log_le_self 2 (show n ≠ 0 by omega)
++    omega
++
++/-- **`⌊log₂ n⌋` from `bits n`**: for `n ≥ 1`, `Nat.log 2 n + 1 = |bits n|`. -/
++theorem qy_log_bits {n : ℕ} (hn : 1 ≤ n) : Nat.log 2 n + 1 = (Nat.bits n).length := by
++  rw [Nat.size_eq_bits_len]
++  apply le_antisymm
++  · by_contra h
++    have hlt : n < 2 ^ Nat.log 2 n := Nat.size_le.mp (by omega)
++    exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
++  · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
++
++/-- **The power-of-two test on `bits n`**: `n = 2 ^ L` exactly when `bits n` is `L` zeros then a
++one, where `L = ⌊log₂ n⌋`. -/
++theorem qy_pow_two_bits (n : ℕ) :
++    n = 2 ^ Nat.log 2 n ↔ Nat.bits n = List.replicate (Nat.log 2 n) false ++ [true] := by
++  constructor
++  · intro h
++    calc Nat.bits n = Nat.bits (2 ^ Nat.log 2 n) := congrArg Nat.bits h
++      _ = List.replicate (Nat.log 2 n) false ++ [true] := bits_two_pow_eq_replicate _
++  · intro h
++    have hv := counterValue_bits n
++    rw [h, counterValue_eq, qy_rung_val] at hv
++    exact hv.symm
++
++/-- **The install call's bound under `f a ≤ n`** (the timeout certificate's arithmetic): with
++`a ≤ n` and `f a ≤ n`, the call's time bound `c' (c (f a + 1) + a + |bits (f a)| + 1)` is at most
++`c' (c + 2) (n + 1)`. -/
++theorem qy_call_bound (f : ℕ → ℕ) (c c' a n : ℕ) (ha : a ≤ n) (hfa : f a ≤ n) :
++    c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * (c + 2) * (n + 1) := by
++  have hb : (Nat.bits (f a)).length ≤ f a := by
++    rw [Nat.size_eq_bits_len]
++    exact Nat.size_le.mpr (Nat.lt_two_pow_self)
++  have h1 : c * (f a + 1) ≤ c * (n + 1) := Nat.mul_le_mul_left c (by omega)
++  have h2 : c * (f a + 1) + a + (Nat.bits (f a)).length + 1 ≤ (c + 2) * (n + 1) := by nlinarith
++  calc c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * ((c + 2) * (n + 1)) :=
++        Nat.mul_le_mul_left c' h2
++    _ = c' * (c + 2) * (n + 1) := by ring
++
++/-- The ladder is at least `2 ^ (i + 1)`. -/
++theorem qy_two_pow_le_ladder (f : ℕ → ℕ) (i : ℕ) : 2 ^ (i + 1) ≤ ladder f i := by
++  induction i with
++  | zero => rw [ladder_zero]; norm_num
++  | succ i ih =>
++    have := two_mul_lt_ladder_succ f i
++    rw [pow_succ]
++    omega
++
++/-- **The stage index is below `log₂ n`**: for `n ≥ 3`, `stage f n < Nat.log 2 n`. -/
++theorem qy_stage_lt_log (f : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) : stage f n < Nat.log 2 n := by
++  have hlo := (stage_spec f hn).1
++  have hp := qy_two_pow_le_ladder f (stage f n)
++  have : stage f n + 1 ≤ Nat.log 2 n := Nat.le_log_of_pow_le (by norm_num) (by omega)
++  omega
++
++
++/-- **F1: the clocked call through the release adapter.** From the install call's published
++clauses alone (a positive exit time, the positive cut, the endpoint), the call wrapped by
++`seamReleaseTM` at its entry, started at the fresh state and stopped at `Sum.inr exit`, first
++stops exactly at the call's exit time. No `entry ≠ exit` is needed. -/
++theorem rv_release_first_stop (C : FinTM Bool) (entry exit : C.State) (x arg out : List Bool)
++    (t : ℕ) (hpos : 0 < t)
++    (hcut : ∀ t', 0 < t' → t' < t →
++      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state ≠ some exit)
++    (hrun : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
++      Cfg.ofWords exit (stateWord C.k out)) :
++    ((seamReleaseTM C.tm entry).runFrom
++        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ())
++        t).Stopped (fun s => decide (s = Sum.inr exit)) ∧
++    (∀ u < t, ¬((seamReleaseTM C.tm entry).runFrom
++        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ())
++        u).Stopped (fun s => decide (s = Sum.inr exit))) ∧
++    (seamReleaseTM C.tm entry).runFrom
++        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ()) t =
++      (Cfg.ofWords (input := x) exit (stateWord C.k out)).mapState Sum.inr := by
++  have hc : (Cfg.ofWords (input := x) entry (stateWord C.k arg)).state = some entry :=
++    Cfg.ofWords_state entry _
++  have hend := seamReleaseTM_runFrom_pos C.tm entry _ hc t hpos
++  rw [hrun] at hend
++  have hlive : ∀ u ≤ t,
++      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) u).state ≠ none := by
++    refine MultiTapeTM.runFrom_state_ne_none_of_le C.tm _ t ?_
++    rw [hrun, Cfg.ofWords_state]
++    exact Option.some_ne_none _
++  refine ⟨?_, fun u hu => ?_, hend⟩
++  · rw [hend, Cfg.stopped_iff, Cfg.mapState_state, Cfg.ofWords_state]
++    exact Or.inr ⟨Sum.inr exit, rfl, decide_eq_true rfl⟩
++  · rw [Cfg.stopped_iff]
++    rintro (hnone | ⟨s, hs, hstop⟩)
++    · rcases Nat.eq_zero_or_pos u with rfl | hu0
++      · rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hc] at hnone
++        exact Option.some_ne_none _ hnone
++      · rw [seamReleaseTM_runFrom_pos C.tm entry _ hc u hu0, Cfg.mapState_state] at hnone
++        exact hlive u hu.le (Option.map_eq_none_iff.mp hnone)
++    · have hse : s = Sum.inr exit := of_decide_eq_true hstop
++      subst hse
++      rcases Nat.eq_zero_or_pos u with rfl | hu0
++      · rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hc] at hs
++        exact Sum.inl_ne_inr (Option.some.inj hs)
++      · rw [seamReleaseTM_runFrom_pos C.tm entry _ hc u hu0, Cfg.mapState_state] at hs
++        obtain ⟨q, hq, hqe⟩ := Option.map_eq_some_iff.mp hs
++        exact hcut u hu0 hu (hq.trans (congrArg some (Sum.inr.inj hqe)))
++
++/-- **F2: a timed-out call is silent.** Every configuration of the install call before its exit
++has empty output (output only grows, and the exit's output is `[]`). Its input head, by
++contrast, is not determined by any published clause. -/
++theorem rv_call_output_nil (C : FinTM Bool) (entry exit : C.State) (x arg out : List Bool)
++    (t v : ℕ) (hv : v ≤ t)
++    (hrun : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
++      Cfg.ofWords exit (stateWord C.k out)) :
++    (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).output = [] := by
++  have h := MultiTapeTM.output_prefix C.tm (Cfg.ofWords (input := x) entry (stateWord C.k arg)) hv
++  rw [hrun, Cfg.ofWords_output] at h
++  exact List.prefix_nil.mp h
++
++/-- **F2's fix: the input head goes home from anywhere.** The published input seek
++(`Turing.exists_inputSeekTM`, `Build/InputCall`, already imported) at `p = 1`, with the word
++`[true]` on its tape `0` and its tape `1` blank, returns the input head to position `1` from
++any position, within `C · (|[true]| + pos + 2)` steps, restoring the output (and every work tape
++and head). -/
++theorem rv_seek_home :
++    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
++      (C : ℕ), ∀ {x : List Bool} (d : Cfg 2 Bool S x), d.state = some entry →
++        (∀ q : ℤ, -1 ≤ q → q ≤ (([true] : List Bool).length : ℤ) →
++          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape [true] q) →
++        (∀ q, d.workTapes 1 q = none) →
++        ∃ t ≤ C * ([true].length + d.inputPos.val + 1 + 1),
++          (R.runFrom d t).state = some exit ∧ (R.runFrom d t).inputPos = 1 ∧
++            (R.runFrom d t).output = d.output := by
++  obtain ⟨S, hS, hdS, R, entry, exit, C, h⟩ := exists_inputSeekTM
++  refine ⟨S, hS, hdS, R, entry, exit, C, fun {x} d hd hw hblank => ?_⟩
++  have hp : Nat.ofDigits 2 (([true] : List Bool).map Bool.toNat) = 1 := by
++    rw [List.map_cons, List.map_nil, Bool.toNat_true, Nat.ofDigits_singleton]
++  obtain ⟨t, ht, -, -, hexit, hpos, -, -, hout⟩ :=
++    h (x := x) 1 [true] hp (by omega) d hd hw hblank
++  exact ⟨t, ht, hexit, Fin.ext (by rw [hpos]; rfl), hout⟩
++
++/-- Doubling twice is quadrupling. -/
++theorem rv_flatMap_dbl_dbl (B : List Bool) :
++    (B.flatMap fun b => [b, b]).flatMap (fun b => [b, b]) = B.flatMap fun b => [b, b, b, b] := by
++  induction B with
++  | nil => rfl
++  | cons b B ih =>
++    rw [List.flatMap_cons, List.flatMap_append, ih, List.flatMap_cons, List.flatMap_cons,
++      List.flatMap_cons, List.flatMap_nil, List.append_nil]
++    rfl
++
++/-- **F3: the query word.** `pairEncode (pairEncode B α) t` is `B` with every bit written four
++times, the inner separator doubled (`[false, false, true, true]`), `α` doubled, the outer
++separator `[false, true]`, then `t`. -/
++theorem rv_query_word (B α t : List Bool) :
++    pairEncode (pairEncode B α) t =
++      (B.flatMap fun b => [b, b, b, b]) ++ [false, false, true, true] ++
++        (α.flatMap fun b => [b, b]) ++ [false, true] ++ t := by
++  rw [pairEncode_eq, pairEncode_eq, List.flatMap_append, List.flatMap_append,
++    rv_flatMap_dbl_dbl]
++  rfl
++
++/-- **F4: the round's `X`.** With `a = ℓ + 1`, `X = f a + a + 1 = f a + ℓ + 2`: one copy of the
++rung and two cells, not "the rung twice and one cell", which would be `f a + 2ℓ + 1`. -/
++theorem rv_X_cells (fa ℓ : ℕ) : fa + (ℓ + 1) + 1 = fa + ℓ + 2 := by omega
++
++example : 0 + (2 + 1) + 1 ≠ 0 + 2 * 2 + 1 := by decide
++
++/-- **F9: the ledger's polylogarithmic term is linear**: `(L + 1)³ ≤ 8 · 2^L`, so with
++`2^L ≤ n` (`Nat.pow_log_le_self`) the `s · O((L + 1)²)` term, `s < L`, is at most `8 n`. -/
++theorem rv_cube_le (L : ℕ) : (L + 1) ^ 3 ≤ 8 * 2 ^ L := by
++  induction L with
++  | zero => norm_num
++  | succ L ih =>
++    rcases Nat.lt_or_ge L 3 with h | h
++    · have hL : L = 0 ∨ L = 1 ∨ L = 2 := by omega
++      rcases hL with rfl | rfl | rfl <;> norm_num
++    · have h2 : (L + 1 + 1) ^ 3 ≤ 2 * (L + 1) ^ 3 := by nlinarith [sq_nonneg (L : ℕ)]
++      calc (L + 1 + 1) ^ 3 ≤ 2 * (L + 1) ^ 3 := h2
++        _ ≤ 2 * (8 * 2 ^ L) := Nat.mul_le_mul_left 2 ih
++        _ = 8 * 2 ^ (L + 1) := by rw [pow_succ]; ring
++
++
++
++/-! #### The cont1 review's steps -/
++
++/-- **The timeout certificate.** If the install call's exit time `t` is within its published
++bound `c' (c (f a + 1) + a + |bits (f a)| + 1)`, `a ≤ n`, and the clock's all-ones counter of
++width `|bits n| + |bits (c' (c + 2))|` (value `2 ^ m - 1`) runs out before `t`, then `n < f a`. -/
++theorem qy_timeout_cert (f : ℕ → ℕ) (c c' a n t : ℕ) (ha : a ≤ n)
++    (ht : t ≤ c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1))
++    (hlate : 2 ^ ((Nat.bits n).length + (Nat.bits (c' * (c + 2))).length) - 1 < t) :
++    n < f a := by
++  by_contra h
++  have hfa : f a ≤ n := by omega
++  have h1 := qy_call_bound f c c' a n ha hfa
++  have h2 := qy_ones_ge n (c' * (c + 2))
++  exact absurd (hlate.trans_le (ht.trans (h1.trans h2))) (lt_irrefl _)
++
++/-- **The clocked, released install call** (the first-arrival cut). Clock the release adapter of
++a call `C` at its entry, with the stop state `Sum.inr exit`, by the step clock with the identity
++digit embedding. From the call's published clauses (a positive exit time `t`, the positive cut,
++the endpoint) and an all-ones counter of width `m` on the clock's tape:
++* if `t ≤ 2 ^ m - 1`, the host reaches `finish` at the call's endpoint, right-tagged, with the
++  counter tape patched by a word of width `m`, and no exit earlier;
++* if `t > 2 ^ m - 1`, the host reaches some `timeout r`, silent, and no exit earlier.
++No `entry ≠ exit` is used. -/
++theorem qy_clocked_call (C : FinTM Bool) (entry exit : C.State) :
++    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (H : MultiTapeTM (C.k + 1) Bool Q)
++      (inj : Unit ⊕ C.State → Q) (finish timeout : Option (Unit ⊕ C.State) → Q),
++      Function.Injective finish ∧ Function.Injective timeout ∧ (∀ a b, finish a ≠ timeout b) ∧
++      ∀ (x arg out : List Bool) (t : ℕ), 0 < t →
++        (∀ t', 0 < t' → t' < t →
++          (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state ≠
++            some exit) →
++        C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
++          Cfg.ofWords exit (stateWord C.k out) →
++        ∀ (m : ℕ) (ct : ℤ → Option Bool) (cp : ℤ),
++          (∀ p : ℤ, -1 ≤ p → p ≤ (m : ℤ) →
++            ct (cp + p) = FinTM.bufferTape (List.replicate m true) p) →
++        ∀ c₀ : Cfg C.k Bool (Unit ⊕ C.State) x,
++          c₀ = (Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState (fun _ => Sum.inl ()) →
++          (t ≤ 2 ^ m - 1 →
++            ∃ T ≤ 5 * t + 2 * m + 2, ∃ w' : List Bool, w'.length = m ∧
++              H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) T =
++                clockCfg (some (finish (some (Sum.inr exit))))
++                  ((Cfg.ofWords (input := x) exit (stateWord C.k out)).mapState
++                    (Sum.inr : C.State → Unit ⊕ C.State))
++                  (wordPatch ct cp w') cp ∧
++              ∀ u < T, ∀ r,
++                (H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) u).state ≠
++                    some (finish r) ∧
++                  (H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) u).state ≠
++                    some (timeout r)) ∧
++          (2 ^ m - 1 < t →
++            ∃ T ≤ 5 * (2 ^ m - 1) + 2 * m + 2, ∃ r : Option (Unit ⊕ C.State),
++              (H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) T).state =
++                  some (timeout r) ∧
++                (H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) T).output = [] ∧
++              ∀ u < T, ∀ r,
++                (H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) u).state ≠
++                    some (finish r) ∧
++                  (H.runFrom (clockCfg (some (inj (Sum.inl ()))) c₀ ct cp) u).state ≠
++                    some (timeout r)) := by
++  obtain ⟨Q, hQ, hdQ, H, inj, finish, timeout, hfi, hti, hft, -, hH⟩ :=
++    exists_stepClockTMVia (Function.Embedding.refl Bool) (seamReleaseTM C.tm entry)
++      (fun s => decide (s = Sum.inr exit))
++  refine ⟨Q, hQ, hdQ, H, inj, finish, timeout, hfi, hti, hft, ?_⟩
++  intro x arg out t hpos hcut hrun m ct cp hct c₀ hc₀
++  obtain ⟨hstop, hfirst, hend⟩ := rv_release_first_stop C entry exit x arg out t hpos hcut hrun
++  have hc0state : c₀.state = some (Sum.inl ()) := by
++    rw [hc₀, Cfg.mapState_state, Cfg.ofWords_state]
++    rfl
++  have hid : (List.replicate m true).map (Function.Embedding.refl Bool) =
++      List.replicate m true := by
++    rw [Function.Embedding.coe_refl, List.map_id]
++  have hct' : ∀ p : ℤ, -1 ≤ p → p ≤ ((List.replicate m true).length : ℤ) →
++      ct (cp + p) = FinTM.bufferTape ((List.replicate m true).map (Function.Embedding.refl Bool)) p := by
++    intro p h1 h2
++    rw [hid]
++    rw [List.length_replicate] at h2
++    exact hct p h1 h2
++  obtain ⟨hfin, hto⟩ := hH c₀ (Sum.inl ()) hc0state (List.replicate m true) ct cp hct'
++  rw [qy_ones_val m] at hfin hto
++  rw [List.length_replicate] at hfin hto
++  subst hc₀
++  refine ⟨fun hle => ?_, fun hlt => ?_⟩
++  · obtain ⟨T, hT, w', hw', hrunH, hcutH, -⟩ := hfin t hle hstop hfirst
++    refine ⟨T, hT, w'.map (Function.Embedding.refl Bool), by rw [List.length_map, hw'], ?_, hcutH⟩
++    rw [hrunH, hend, Cfg.mapState_state, Cfg.ofWords_state]
++    rfl
++  · have hns : ∀ u ≤ 2 ^ m - 1, ¬((seamReleaseTM C.tm entry).runFrom
++        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ())
++        u).Stopped (fun s => decide (s = Sum.inr exit)) := fun u hu => hfirst u (by omega)
++    obtain ⟨T, hT, w', -, hrunH, hcutH, -⟩ := hto hns
++    refine ⟨T, hT, ((seamReleaseTM C.tm entry).runFrom
++      ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ())
++      (2 ^ m - 1)).state, by rw [hrunH, clockCfg_state], ?_, hcutH⟩
++    rw [hrunH, clockCfg_output]
++    rcases Nat.eq_zero_or_pos (2 ^ m - 1) with h0 | h0
++    · rw [h0, MultiTapeTM.runFrom_zero, Cfg.mapState_output, Cfg.ofWords_output]
++    · rw [seamReleaseTM_runFrom_pos C.tm entry _ (Cfg.ofWords_state entry _) _ h0,
++        Cfg.mapState_output]
++      exact rv_call_output_nil C entry exit x arg out t _ hlt.le hrun
++
++/-- **The stop rule along the ladder.** For `n ≥ 3` and `s = stage f n`: every rung up to `s` is
++below `n`, the decision at every rung below `s` is `next`, the decision at `s` is not `next`, and
++it is `top` exactly at the top `n = ladder f (s + 1)`. -/
++theorem qy_rounds_spec (f : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) :
++    (∀ r ≤ stage f n, ladder f r < n) ∧
++    (∀ r < stage f n, qyDecide f n (ladder f r) = .next) ∧
++    qyDecide f n (ladder f (stage f n)) ≠ .next ∧
++    (qyDecide f n (ladder f (stage f n)) = .top ↔ n = ladder f (stage f n + 1)) := by
++  obtain ⟨hlo, hhi⟩ := stage_spec f hn
++  have h1 : 1 ≤ n := by omega
++  refine ⟨fun r hr => lt_of_le_of_lt ((ladder_strictMono f).monotone hr) hlo,
++    fun r hr => ?_, fun h => ?_, (qy_decide_spec f (i := stage f n) h1).2.1⟩
++  · have hle : ladder f (r + 1) ≤ ladder f (stage f n) :=
++      (ladder_strictMono f).monotone (by omega)
++    exact (qy_decide_spec f (i := r) h1).2.2.mpr (by omega)
++  · have := (qy_decide_spec f (i := stage f n) h1).2.2.mp h
++    omega
++
++/-- **The stop rule, converse**: a run that passes the rungs below `s` and stops at `s` stops at
++the stage of `n`. -/
++theorem qy_stage_of_run (f : ℕ → ℕ) {n s : ℕ} (hn : 3 ≤ n)
++    (hpass : ∀ r < s, qyDecide f n (ladder f r) = .next)
++    (hstop : qyDecide f n (ladder f s) ≠ .next) : s = stage f n := by
++  have h1 : 1 ≤ n := by omega
++  have hlo : ladder f s < n := by
++    rcases s with _ | s
++    · rw [ladder_zero]
++      omega
++    · exact (qy_decide_spec f (i := s) h1).2.2.mp (hpass s (by omega))
++  exact (qy_stage_of_stop f hlo hstop).symm
++
++/-- The cutoff fourth power: `min (min (X X) K · min (X X) K) K`. -/
++def qyCut (X K : ℕ) : ℕ := min (min (X * X) K * min (X * X) K) K
++
++/-- **The cutoff product decides the comparison.** With the cutoff `K = L + 2`, the cut fourth
++power is below, equal to, or above `L` exactly when `X ⁴` is; and when `X ⁴ ≤ L`, the inner cut
++square is `X ²`. -/
++theorem qy_cut_spec (X L : ℕ) :
++    (qyCut X (L + 2) < L ↔ X ^ 4 < L) ∧ (qyCut X (L + 2) = L ↔ X ^ 4 = L) ∧
++    (X ^ 4 ≤ L → min (X * X) (L + 2) = X ^ 2) := by
++  have h4 : X ^ 4 = X * X * (X * X) := by ring
++  have h2 : X ^ 2 = X * X := by ring
++  unfold qyCut
++  rw [h4, h2]
++  rcases Nat.lt_or_ge (X * X) (L + 2) with h | h
++  · rw [min_eq_left h.le]
++    rcases Nat.lt_or_ge (X * X * (X * X)) (L + 2) with h' | h'
++    · rw [min_eq_left h'.le]
++      exact ⟨Iff.rfl, Iff.rfl, fun _ => rfl⟩
++    · rw [min_eq_right h']
++      refine ⟨⟨fun h'' => by omega, fun h'' => by omega⟩,
++        ⟨fun h'' => by omega, fun h'' => by omega⟩, fun _ => rfl⟩
++  · rw [min_eq_right h]
++    have hsq : L + 2 ≤ (L + 2) * (L + 2) := Nat.le_mul_self _
++    have hX4 : (L + 2) * (L + 2) ≤ X * X * (X * X) := Nat.mul_le_mul h h
++    rw [min_eq_right hsq]
++    refine ⟨⟨fun h'' => by omega, fun h'' => by omega⟩,
++      ⟨fun h'' => by omega, fun h'' => by omega⟩, fun h'' => by omega⟩
++
++/-- The locator's decision as the machine computes it: `n < f a` (the binary compare), then
++`L < X` (the unary compare), then the cut fourth power against `L`, with the power-of-two fold's
++verdict `pow2` at equality. -/
++def qyMachineDecide (n fa X L : ℕ) (pow2 : Bool) : QyStep :=
++  if n < fa then .interior
++  else if L < X then .interior
++  else if qyCut X (L + 2) < L then .next
++  else if qyCut X (L + 2) = L then (if pow2 then .top else .next)
++  else .interior
++
++/-- **The machine's decision is the stop rule's**: with `L = |bits n| - 1`, `X = f a + ℓ + 2`
++and the fold's verdict on `bits n`, the machine decides exactly `qyDecide`. -/
++theorem qy_machineDecide_eq (f : ℕ → ℕ) {n ℓ : ℕ} (hn : 1 ≤ n) :
++    qyMachineDecide n (f (ℓ + 1)) (f (ℓ + 1) + ℓ + 2) ((Nat.bits n).length - 1)
++        (decide (Nat.bits n = List.replicate ((Nat.bits n).length - 1) false ++ [true])) =
++      qyDecide f n ℓ := by
++  have hL : (Nat.bits n).length - 1 = Nat.log 2 n := by
++    have := qy_log_bits hn
++    omega
++  have hpow : decide (Nat.bits n = List.replicate ((Nat.bits n).length - 1) false ++ [true]) =
++      decide (n = 2 ^ Nat.log 2 n) :=
++    decide_eq_decide.mpr (by rw [hL]; exact (qy_pow_two_bits n).symm)
++  rw [hpow, hL, ← rv_X_cells (f (ℓ + 1)) ℓ]
++  obtain ⟨hlt, heq, -⟩ := qy_cut_spec (f (ℓ + 1) + (ℓ + 1) + 1) (Nat.log 2 n)
++  have hX4 : f (ℓ + 1) + (ℓ + 1) + 1 ≤ (f (ℓ + 1) + (ℓ + 1) + 1) ^ 4 :=
++    Nat.le_self_pow (by norm_num) _
++  unfold qyMachineDecide qyDecide
++  by_cases h1 : n < f (ℓ + 1)
++  · rw [if_pos h1, if_pos h1]
++  · rw [if_neg h1, if_neg h1]
++    by_cases h2 : Nat.log 2 n < f (ℓ + 1) + (ℓ + 1) + 1
++    · rw [if_pos h2, if_pos (lt_of_lt_of_le h2 hX4)]
++    · rw [if_neg h2]
++      set X := f (ℓ + 1) + (ℓ + 1) + 1 with hXdef
++      set L := Nat.log 2 n with hLdef
++      rcases lt_trichotomy (X ^ 4) L with h3 | h3 | h3
++      · rw [if_pos (hlt.mpr h3), if_neg (show ¬L < X ^ 4 by omega),
++          if_neg (show ¬X ^ 4 = L by omega)]
++      · rw [if_neg (show ¬qyCut X (L + 2) < L from fun h => absurd (hlt.mp h) (by omega)),
++          if_pos (heq.mpr h3), if_neg (show ¬L < X ^ 4 by omega), if_pos h3]
++        by_cases hp : n = 2 ^ L
++        · rw [if_pos (decide_eq_true hp), if_pos hp]
++        · rw [if_neg (show ¬decide (n = 2 ^ L) = true by simpa using hp), if_neg hp]
++      · rw [if_neg (show ¬qyCut X (L + 2) < L from fun h => absurd (hlt.mp h) (by omega)),
++          if_neg (show ¬qyCut X (L + 2) = L from fun h => absurd (heq.mp h) (by omega)),
++          if_pos h3]
++
++/-- **At the top the cut square is the budget**: when `X ⁴ = L`, with `X = f (ℓ + 1) + ℓ + 2`,
++the inner cut square is `budget f ℓ`. -/
++theorem qy_top_budget (f : ℕ → ℕ) (ℓ L : ℕ) (h : (f (ℓ + 1) + ℓ + 2) ^ 4 = L) :
++    min ((f (ℓ + 1) + ℓ + 2) * (f (ℓ + 1) + ℓ + 2)) (L + 2) = budget f ℓ := by
++  rw [(qy_cut_spec (f (ℓ + 1) + ℓ + 2) L).2.2 h.le, budget_eq, rv_X_cells (f (ℓ + 1)) ℓ]
++
++/-- **The polylogarithmic terms are linear**: for `1 ≤ n` and `h ≤ ⌊log₂ n⌋`,
++`(h + 1) ³ ≤ 8 n`. -/
++theorem qy_poly_log_le {n : ℕ} (hn : 1 ≤ n) {h : ℕ} (hh : h ≤ Nat.log 2 n) :
++    (h + 1) ^ 3 ≤ 8 * n := by
++  have h1 : (h + 1) ^ 3 ≤ (Nat.log 2 n + 1) ^ 3 := Nat.pow_le_pow_left (by omega) 3
++  have h2 := rv_cube_le (Nat.log 2 n)
++  have h3 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
++  omega
++
++/-- **The loop's ledger.** If each passed round `r < stage f n` costs at most
++`A₁ (ℓ_{r+1} + (L + 1)²)` and the stopping round at most `A₂ (n + (L + 1)²)`, with
++`L = ⌊log₂ n⌋`, the loop costs at most `(10 A₁ + 9 A₂)(n + 1)`. -/
++theorem qy_loop_ledger (f : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) (A₁ A₂ τs : ℕ) (τ : ℕ → ℕ)
++    (hτ : ∀ r < stage f n, τ r ≤ A₁ * (ladder f (r + 1) + (Nat.log 2 n + 1) ^ 2))
++    (hs : τs ≤ A₂ * (n + (Nat.log 2 n + 1) ^ 2)) :
++    ∑ r ∈ Finset.range (stage f n), τ r + τs ≤ (10 * A₁ + 9 * A₂) * (n + 1) := by
++  have hsL : stage f n < Nat.log 2 n := qy_stage_lt_log f hn
++  have hlo : ladder f (stage f n) < n := (stage_spec f hn).1
++  have hcube : (Nat.log 2 n + 1) ^ 3 ≤ 8 * n := qy_poly_log_le (by omega) le_rfl
++  have hsum : ∑ r ∈ Finset.range (stage f n), τ r ≤
++      A₁ * (∑ r ∈ Finset.range (stage f n), ladder f (r + 1) +
++        stage f n * (Nat.log 2 n + 1) ^ 2) := by
++    calc ∑ r ∈ Finset.range (stage f n), τ r
++        ≤ ∑ r ∈ Finset.range (stage f n), A₁ * (ladder f (r + 1) + (Nat.log 2 n + 1) ^ 2) :=
++          Finset.sum_le_sum fun r hr => hτ r (Finset.mem_range.mp hr)
++      _ = A₁ * (∑ r ∈ Finset.range (stage f n), ladder f (r + 1) +
++            stage f n * (Nat.log 2 n + 1) ^ 2) := by
++          have key : ∀ s : ℕ, ∑ r ∈ Finset.range s, A₁ * (ladder f (r + 1) + (Nat.log 2 n + 1) ^ 2) =
++              A₁ * (∑ r ∈ Finset.range s, ladder f (r + 1) + s * (Nat.log 2 n + 1) ^ 2) := by
++            intro s
++            induction s with
++            | zero => simp
++            | succ s ih => rw [Finset.sum_range_succ, Finset.sum_range_succ, ih]; ring
++          exact key _
++  have hled := qy_ledger f (stage f n)
++  have hsq : stage f n * (Nat.log 2 n + 1) ^ 2 ≤ (Nat.log 2 n + 1) ^ 3 := by
++    calc stage f n * (Nat.log 2 n + 1) ^ 2 ≤ (Nat.log 2 n + 1) * (Nat.log 2 n + 1) ^ 2 :=
++          Nat.mul_le_mul_right _ (by omega)
++      _ = (Nat.log 2 n + 1) ^ 3 := by ring
++  have hsq2 : (Nat.log 2 n + 1) ^ 2 ≤ (Nat.log 2 n + 1) ^ 3 :=
++    Nat.pow_le_pow_right (by omega) (by omega)
++  have e1 : ∑ r ∈ Finset.range (stage f n), ladder f (r + 1) +
++      stage f n * (Nat.log 2 n + 1) ^ 2 ≤ 10 * n := by omega
++  have e2 : n + (Nat.log 2 n + 1) ^ 2 ≤ 9 * n := by omega
++  calc ∑ r ∈ Finset.range (stage f n), τ r + τs ≤ A₁ * (10 * n) + A₂ * (9 * n) :=
++        Nat.add_le_add (hsum.trans (Nat.mul_le_mul_left _ e1))
++          (hs.trans (Nat.mul_le_mul_left _ e2))
++    _ ≤ (10 * A₁ + 9 * A₂) * (n + 1) := by nlinarith
++
++/-- **The main machine's bound absorbs into `g`**: phase costs linear in `n + 1` and in
++`g n + 1` sum to a constant times `g n + 1` once `n ≤ g n`. -/
++theorem qy_main_bound (g : ℕ → ℕ) (hg : ∀ n, n ≤ g n) (B₁ B₂ n T₁ T₂ : ℕ)
++    (h₁ : T₁ ≤ B₁ * (n + 1)) (h₂ : T₂ ≤ B₂ * (g n + 1)) :
++    T₁ + T₂ ≤ (B₁ + B₂) * (g n + 1) := by
++  have := Nat.mul_le_mul_left B₁ (Nat.add_le_add_right (hg n) 1)
++  nlinarith
++
++/-- **The writer's emission order**: for `n ≥ 3` the stage query of `1ⁿ` is the flag, the budget
++field with every bit written four times, `[false, false, true, true]`, the code `α` doubled (the
++binary word of `j + 1` without its top bit, `j = (Nat.unpair i).1`), `[false, true]`, and the
++tail. At the top the budget is `(f (ℓ + 1) + ℓ + 2)²` and the tail `1^{ℓ+1}`; in the middle the
++budget is `g n` and the tail `1ⁿ` followed by one more `true`. -/
++theorem qy_writer_word (f g : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) :
++    query f g (List.replicate n true) =
++      if n = ladder f (stage f n + 1) then
++        true :: ((Nat.bits ((f (ladder f (stage f n) + 1) + ladder f (stage f n) + 2) ^ 2)).flatMap
++            (fun b => [b, b, b, b]) ++ [false, false, true, true] ++
++          ((Nat.bits ((Nat.unpair (stage f n)).1 + 1)).dropLast.flatMap fun b => [b, b]) ++
++          [false, true] ++ List.replicate (ladder f (stage f n) + 1) true)
++      else
++        false :: ((Nat.bits (g n)).flatMap (fun b => [b, b, b, b]) ++ [false, false, true, true] ++
++          ((Nat.bits ((Nat.unpair (stage f n)).1 + 1)).dropLast.flatMap fun b => [b, b]) ++
++          [false, true] ++ List.replicate n true ++ [true]) := by
++  rw [query_eq f g hn, budget_eq, stageCode_eq, rv_query_word, rv_query_word,
++    rv_X_cells (f (ladder f (stage f n) + 1)) (ladder f (stage f n)),
++    List.replicate_succ' (n := n)]
++  simp only [List.append_assoc]
++
++/-- The expansion's unary block: `d` copies of `[true]` are `1ᵈ`. -/
++theorem qy_flatten_replicate (d : ℕ) :
++    (List.replicate d [true]).flatten = List.replicate d true := by
++  induction d with
++  | zero => rfl
++  | succ d ih => rw [List.replicate_succ, List.flatten_cons, ih, List.singleton_append,
++      List.replicate_succ]
++
++end Sealed
++
++end Turing.NTimeDiag
++
++#print axioms Turing.NTimeDiag.qy_witness
++#print axioms Turing.NTimeDiag.qy_decide_spec
++#print axioms Turing.NTimeDiag.qy_stage_of_stop
++#print axioms Turing.NTimeDiag.qy_round_le
++#print axioms Turing.NTimeDiag.qy_ledger
++#print axioms Turing.NTimeDiag.qy_ones_val
++#print axioms Turing.NTimeDiag.qy_rung_val
++#print axioms Turing.NTimeDiag.qy_ones_ge
++#print axioms Turing.NTimeDiag.qy_two_pow_bits_le
++#print axioms Turing.NTimeDiag.qy_log_bits
++#print axioms Turing.NTimeDiag.qy_pow_two_bits
++#print axioms Turing.NTimeDiag.qy_call_bound
++#print axioms Turing.NTimeDiag.qy_stage_lt_log
++#print axioms Turing.NTimeDiag.qy_ladder_succ_eq
++#print axioms Turing.NTimeDiag.qy_two_pow_le_ladder
++#print axioms Turing.NTimeDiag.rv_release_first_stop
++#print axioms Turing.NTimeDiag.rv_call_output_nil
++#print axioms Turing.NTimeDiag.rv_seek_home
++#print axioms Turing.NTimeDiag.rv_query_word
++#print axioms Turing.NTimeDiag.rv_X_cells
++#print axioms Turing.NTimeDiag.rv_cube_le
++#print axioms Turing.NTimeDiag.qy_timeout_cert
++#print axioms Turing.NTimeDiag.qy_clocked_call
++#print axioms Turing.NTimeDiag.qy_rounds_spec
++#print axioms Turing.NTimeDiag.qy_stage_of_run
++#print axioms Turing.NTimeDiag.qy_cut_spec
++#print axioms Turing.NTimeDiag.qy_machineDecide_eq
++#print axioms Turing.NTimeDiag.qy_top_budget
++#print axioms Turing.NTimeDiag.qy_poly_log_le
++#print axioms Turing.NTimeDiag.qy_loop_ledger
++#print axioms Turing.NTimeDiag.qy_main_bound
++#print axioms Turing.NTimeDiag.qy_writer_word
++#print axioms Turing.NTimeDiag.qy_flatten_replicate
+diff --git a/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewSealControl.lean.txt b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewSealControl.lean.txt
+new file mode 100644
+index 0000000..f2fefbf
+--- /dev/null
++++ b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQC1ReviewSealControl.lean.txt
+@@ -0,0 +1,62 @@
++/-
++The cont1 brief review's seal controls (a probe record): for each definition the review probe
++seals beyond the pre-ship's twelve, a goal that closes by `rfl` with nothing sealed and fails
++under the seal.
++-/
++import Mathlib.Data.Nat.Log
++import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
++import TCSlib.Complexity.TuringMachine.Build.StepClock
++import TCSlib.Complexity.TuringMachine.Build.InputCall
++import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
++import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
++import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Rewind
++import TCSlib.Complexity.TuringMachine.BufferWords
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++namespace Turing.NTimeDiag
++
++section Unsealed
++
++example (x : List Bool) (q : Option Unit) (c : Cfg 1 Bool Unit x) (ct : ℤ → Option Bool)
++    (cp : ℤ) : (clockCfg q c ct cp).state = q := rfl
++example (ct : ℤ → Option Bool) (cp : ℤ) (u : List Bool) :
++    wordPatch ct cp u =
++      fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q :=
++  rfl
++example (w : List Bool) (z : ℤ) : FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
++  rfl
++example (f g : ℕ → ℕ) : query f g [] = [] := rfl
++example (f : ℕ → ℕ) (ℓ : ℕ) : budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2 := rfl
++example (i : ℕ) : stageCode i = (Nat.bits ((Nat.unpair i).1 + 1)).dropLast := rfl
++example (f : ℕ → ℕ) (n : ℕ) : stage f n = Nat.find (exists_le_ladder_succ f n) := rfl
++example (f : ℕ → ℕ) : ladder f 0 = 2 := rfl
++
++end Unsealed
++
++section Sealed
++
++attribute [local irreducible] Turing.clockCfg Turing.wordPatch Turing.FinTM.bufferTape
++  Turing.NTimeDiag.query Turing.NTimeDiag.budget Turing.NTimeDiag.stageCode
++  Turing.NTimeDiag.stage Turing.NTimeDiag.ladder
++
++example (x : List Bool) (q : Option Unit) (c : Cfg 1 Bool Unit x) (ct : ℤ → Option Bool)
++    (cp : ℤ) : (clockCfg q c ct cp).state = q := rfl
++example (ct : ℤ → Option Bool) (cp : ℤ) (u : List Bool) :
++    wordPatch ct cp u =
++      fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q :=
++  rfl
++example (w : List Bool) (z : ℤ) : FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
++  rfl
++example (f g : ℕ → ℕ) : query f g [] = [] := rfl
++example (f : ℕ → ℕ) (ℓ : ℕ) : budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2 := rfl
++example (i : ℕ) : stageCode i = (Nat.bits ((Nat.unpair i).1 + 1)).dropLast := rfl
++example (f : ℕ → ℕ) (n : ℕ) : stage f n = Nat.find (exists_le_ladder_succ f n) := rfl
++example (f : ℕ → ℕ) : ladder f 0 = 2 := rfl
++
++end Sealed
++
++end Turing.NTimeDiag
+diff --git a/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQImportProbe.lean.txt b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQImportProbe.lean.txt
+new file mode 100644
+index 0000000..900322a
+--- /dev/null
++++ b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/EQImportProbe.lean.txt
+@@ -0,0 +1,237 @@
++/-
++The import probe for E-Q cont1 (`Turing.NTimeDiag.exists_queryTM`'s main machine), on the owned
++file's imports at the landed tree (checkpoint 1): every public declaration the brief's route
++names, `#check @`-ed. A probe record, not library code. The first 182 checks are the first
++round's; the cont1 review adds the linear word tests the guard cites, the R1 transports' field
++equations, the clock layout's remaining fields, the machine model's step and action equations
++for own-file leaves, and the emit-mode call.
++-/
++import Mathlib.Data.Nat.Log
++import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
++import TCSlib.Complexity.TuringMachine.Build.StepClock
++import TCSlib.Complexity.TuringMachine.Build.InputCall
++import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
++import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
++import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Rewind
++import TCSlib.Complexity.TuringMachine.BufferWords
++import TCSlib.Complexity.TuringMachine.Build.WordTests
++
++#check @Turing.NTimeDiag.exists_queryTM
++#check @Turing.NTimeDiag.query
++#check @Turing.NTimeDiag.query_eq
++#check @Turing.NTimeDiag.query_of_not_guard
++#check @Turing.NTimeDiag.budget_eq
++#check @Turing.NTimeDiag.ladder_zero
++#check @Turing.NTimeDiag.ladder_succ
++#check @Turing.NTimeDiag.two_mul_lt_ladder_succ
++#check @Turing.NTimeDiag.le_ladder
++#check @Turing.NTimeDiag.ladder_strictMono
++#check @Turing.NTimeDiag.stage_spec
++#check @Turing.NTimeDiag.stage_eq
++#check @Turing.NTimeDiag.stage_of_le_two
++#check @Turing.NTimeDiag.stageCode_eq
++#check @Complexity.TimeConstructible
++#check @Turing.FinTM.computesFunInTime_iff
++#check @Turing.FinTM.computesInTime_iff
++#check @Turing.FinTM.ComputesInTime.mono
++#check @Turing.FinTM.computesFunInTime_comp
++#check @Turing.FinTM.bufferedCompTM_computesInTime
++#check @Turing.FinTM.computesFunInTime_const
++#check @Turing.FinTM.computesFunInTime_cond
++#check @Turing.FinTM.computesFunInTime_lengthBits
++#check @Turing.FinTM.computesFunInTime_prepend
++#check @Turing.FinTM.computesFunInTime_pairEncodeFixed
++#check @Turing.FinTM.computesFunInTime_pairConcat
++#check @Turing.FinTM.exists_comp_on_image
++#check @Turing.FinTM.exists_installCallTM
++#check @Turing.FinTM.exists_emitCallTM
++#check @Turing.FinTM.exists_inputCallTM
++#check @Turing.Cfg.ofWords
++#check @Turing.stateWord
++#check @Turing.exists_stepClockTMVia
++#check @Turing.exists_stepClockTM
++#check @Turing.clockCfg
++#check @Turing.expandTM
++#check @Turing.expandTM_run_ofCfg
++#check @Turing.counterValue_bits
++#check @Turing.skipTM_run_ofCfg
++#check @Turing.skipBackTM_run_ofCfg
++#check @Turing.clearTM_run_ofCfg
++#check @Turing.copyMapTM_run_ofCfg
++#check @Turing.rewindTM_run_ofCfg
++#check @Turing.Contract
++#check @Turing.Contract.ofSegment
++#check @Turing.Contract.seq
++#check @Turing.Contract.inPhase
++#check @Turing.Contract.branch
++#check @Turing.Contract.segment
++#check @Turing.Segment
++#check @Turing.segment_iff
++#check @Turing.Segment.trans
++#check @Turing.Segment.mono
++#check @Turing.Round
++#check @Turing.round_iff
++#check @Turing.Round.iterate
++#check @Turing.roundOrbit_zero
++#check @Turing.roundOrbit_succ
++#check @Turing.headBox_iff
++#check @Turing.skipTM_contract
++#check @Turing.skipBackTM_contract
++#check @Turing.clearTM_contract
++#check @Turing.copyMapTM_contract
++#check @Turing.seamCompTM_run_ofCfg
++#check @Turing.seamCompTM_firstReturn_ofCfg
++#check @Turing.phaseHostTM
++#check @Turing.phaseHostTM_run
++#check @Turing.phaseHostTM_run_le
++#check @Turing.pairEncode_eq
++#check @Turing.length_pairEncode
++#check @Turing.length_bits_le_self
++#check @Nat.bits_append_bit
++#check @Nat.unpair
++#check @Nat.log
++#check @Nat.pow_log_le_self
++#check @Nat.lt_pow_succ_log_self
++#check @Turing.NTimeDiag.stage
++#check @Turing.NTimeDiag.stageCode
++#check @Turing.NTimeDiag.ladder
++#check @Turing.NTimeDiag.budget
++#check @Turing.counterLoopCfg
++#check @Turing.counterValue
++#check @Turing.counterValue_eq
++#check @Turing.copyMapTM
++#check @Turing.writeAdvTM
++#check @Turing.writeAdvTM_run_ofCfg
++#check @Turing.clearTM
++#check @Turing.rewindTM
++#check @Turing.skipTM
++#check @Turing.clockCfg_state
++#check @Turing.clockCfg_workTapes
++#check @Turing.clockCfg_workTapePos
++#check @Turing.clockCfg_inputPos
++#check @Turing.clockCfg_output
++#check @Turing.Cfg.Stopped
++#check @Turing.Cfg.stopped_iff
++#check @Turing.wordPatch
++#check @Turing.wordPatch_of_mem
++#check @Turing.wordPatch_of_not_mem
++#check @Turing.seamCompTM
++#check @Turing.seamCompTM_runFrom_left
++#check @Turing.seamCompTM_runFrom_right
++#check @Turing.embedEmitTM
++#check @Turing.embedSilentTM
++#check @Turing.embedEmitCfg_eq
++#check @Turing.Round.segment
++#check @Turing.Segment.take
++#check @Turing.MultiTapeTM.runFrom_add
++#check @Turing.MultiTapeTM.runFrom_of_halt
++#check @Turing.MultiTapeTM.initCfg_with_q₀
++#check @Turing.MultiTapeTM.runFrom_with_q₀
++#check @Turing.pairEncode
++#check @Turing.bits_two_pow_eq_replicate
++#check @Nat.size_eq_bits_len
++#check @Nat.lt_size_self
++#check @Nat.size_le
++#check @Nat.le_log_of_pow_le
++#check @Nat.ofDigits_cons
++#check @Nat.unpair_pair
++#check @Complexity.timeConstructible_iff
++#check @Turing.Round.iterate_seq
++#check @Turing.seamReleaseTM
++#check @Turing.seamReleaseTM_runFrom_pos
++#check @Turing.seamReleaseTM_firstReturn
++#check @Turing.ReturnContract.release
++#check @Turing.exists_inputSeekTM
++#check @Turing.MultiTapeTM.output_prefix
++#check @Turing.MultiTapeTM.runFrom_state_ne_none_of_le
++#check @Turing.MultiTapeTM.runFrom_zero
++#check @Turing.Cfg.ofWords_state
++#check @Turing.Cfg.ofWords_inputPos
++#check @Turing.Cfg.ofWords_workTapes
++#check @Turing.Cfg.ofWords_workTapePos
++#check @Turing.Cfg.ofWords_output
++#check @Turing.stateWord_eq
++#check @Turing.initCfg_ofWords
++#check @Turing.Cfg.mapState_state
++#check @Turing.Cfg.mapState_inputPos
++#check @Turing.Cfg.mapState_workTapes
++#check @Turing.Cfg.mapState_workTapePos
++#check @Turing.Cfg.mapState_output
++#check @Turing.counter_cfg_eq
++#check @Turing.counterLoopCfg_body
++#check @Turing.phaseHostTM_q₀
++#check @Turing.phaseHostTM_tr_of_red_none
++#check @Turing.phaseHostTM_tr_of_red_some
++#check @Turing.embedEmitTM_runFrom
++#check @Turing.embedSilentTM_runFrom
++#check @Turing.embedEmitTM_frame
++#check @Turing.embedEmitCfg_ofWords_eq
++#check @Turing.embedEmitCfg_mapState_eq
++#check @Turing.scanTM
++#check @Turing.scanTM_run_ofCfg
++#check @Turing.scanTM_contract
++#check @Turing.scanResult_fold
++#check @Turing.scanFold
++#check @Turing.scanKeep
++#check @Turing.inputFoldTM
++#check @Turing.inputFoldTM_run_ofCfg
++#check @Turing.FinTM.emit_halts
++#check @Turing.FinTM.emit_run
++#check @Turing.emitAction
++#check @Turing.compareTM_contract
++#check @Turing.compareStop_spec
++#check @Turing.walkTM_run_ofCfg
++#check @Turing.walkTM_contract
++#check @Turing.dbl
++#check @Turing.pairEncode_eq_dbl
++#check @Turing.dbl_cons
++#check @Turing.length_dbl
++#check @Turing.FinTM.bufferTape_append_shift
++#check @Turing.FinTM.bufferTape_append_mid
++#check @Turing.FinTM.bufferTape_unary
++#check @Turing.FinTM.bufferTape_eq_none_of_not_mem
++#check @Turing.FinTM.bufferTape_eq
++#check @Turing.FinTM.bufferTape_append
++#check @List.flatMap_assoc
++#check @List.flatMap_append
++#check @Nat.ofDigits_singleton
++#check @Turing.RoundContract.release
++#check @Turing.FinTM.computesFunInTime_incFixed
++#check @Turing.incFixed_eq_none_iff_replicate
++
++-- the cont1 review's additions
++#check @Turing.FinTM.computesFunInTime_decideEq
++#check @Turing.FinTM.computesFunInTime_allTrue
++#check @Turing.FinTM.computesFunInTime_ifEq
++#check @Turing.wordPatch_append
++#check @Turing.clockCfg_workTapes
++#check @Turing.clockCfg_workTapePos
++#check @Turing.embedSilentCfg
++#check @Turing.embedSilentCfg_state
++#check @Turing.embedSilentCfg_inputPos
++#check @Turing.embedSilentCfg_output
++#check @Turing.embedSilentCfg_selected_tape
++#check @Turing.embedSilentCfg_selected_pos
++#check @Turing.embedSilentCfg_unselected
++#check @Turing.embedSilentCfg_cap
++#check @Turing.embedSilentTM_frame
++#check @Turing.embedEmitCfg
++#check @Turing.embedEmitCfg_state
++#check @Turing.embedEmitCfg_inputPos
++#check @Turing.embedEmitCfg_output
++#check @Turing.embedEmitCfg_selected_tape
++#check @Turing.embedEmitCfg_selected_pos
++#check @Turing.embedEmitCfg_unselected
++#check @Turing.MultiTapeTM.step_of_some
++#check @Turing.MultiTapeTM.runFrom_succ_eq_step
++#check @Turing.MultiTapeTM.runFrom_of_halt
++#check @Turing.Action.apply_state
++#check @Turing.Action.apply_inputPos
++#check @Turing.Action.apply_workTapes
++#check @Turing.Action.apply_workTapePos
++#check @Turing.Action.apply_output
++#check @Turing.FinTM.exists_emitCallTM
++#check @Turing.FinTM.computesInTime_iff
++#check @Turing.Round.of_cut
++#check @Turing.Round.cut_some
+diff --git a/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/screen-population.txt b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/screen-population.txt
+new file mode 100644
+index 0000000..4874767
+--- /dev/null
++++ b/campaign/fills/eq/drafts/eq-fill-query-cont1/review-inputs/screen-population.txt
+@@ -0,0 +1,33 @@
++# E-Q cont1's screen population (32 files: the pre-ship's 30 and the machine model's `Configuration` and `Deterministic`, whose step and action equations the leaves cite; the cont1 brief review). One repository path per line.
++TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++TCSlib/Complexity/TuringMachine/Build/StepClock.lean
++TCSlib/Complexity/TuringMachine/Build/Loop.lean
++TCSlib/Complexity/TuringMachine/Build/InputCall.lean
++TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++TCSlib/Complexity/TuringMachine/Build/WordTests.lean
++TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
++TCSlib/Complexity/TuringMachine/Build/Scan.lean
++TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++TCSlib/Complexity/TuringMachine/Build/Rewind.lean
++TCSlib/Complexity/TuringMachine/Build/Seam.lean
++TCSlib/Complexity/TuringMachine/Build/Embed.lean
++TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean
++TCSlib/Complexity/TuringMachine/Build/Contract/Catalog.lean
++TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean
++TCSlib/Complexity/TuringMachine/Composition.lean
++TCSlib/Complexity/TuringMachine/Finite.lean
++TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++TCSlib/Complexity/TimeHierarchy/ClockLoop.lean
++TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
++TCSlib/Complexity/TuringMachine/Simulation.lean
++TCSlib/Complexity/TuringMachine/Build/Convention.lean
++TCSlib/Complexity/TuringMachine/Encoding.lean
++TCSlib/Complexity/TuringMachine/StateRenaming.lean
++TCSlib/Complexity/TuringMachine/BufferWords.lean
++TCSlib/Complexity/ClassP/TimeConstructible.lean
++TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean
++TCSlib/Complexity/ClassNP/TMSAT.lean
++TCSlib/Complexity/ClassNP/Nondeterminism.lean
++TCSlib/Complexity/TuringMachine/Configuration.lean
++TCSlib/Complexity/TuringMachine/Deterministic.lean
+diff --git a/campaign/fills/eq/drafts/eq-fill-query-cont1.DRAFT.md b/campaign/fills/eq/drafts/eq-fill-query-cont1.DRAFT.md
+index bcb1150..214595a 100644
+--- a/campaign/fills/eq/drafts/eq-fill-query-cont1.DRAFT.md
++++ b/campaign/fills/eq/drafts/eq-fill-query-cont1.DRAFT.md
+@@ -10,6 +10,10 @@ review sub-agent, then issue. Remove this comment at issue. -->
+ 
+ # Ch3–4 fill campaign — E-Q cont1, the stage query's main machine (`Turing.NTimeDiag.exists_queryTM`, `Diagonalization/NTimeDiagonalizer.lean`)
+ 
++> **A single fill** (addendum v2.6, Parts 1 and 2; Part 3, the megafill, does not apply, except
++> its one-Lean rule and its no-stop rule, items 5 and 7, which "Environment and verification"
++> restates). Deliver a checkpoint zip after each checkpoint: the session may end at any time.
++
+ ## Repository and branch — read this before anything else
+ 
+ - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
+@@ -43,7 +47,8 @@ review sub-agent, then issue. Remove this comment at issue. -->
+     `scripts/copy-text-screen-v3.py`;
+   - **this round's inputs** (`campaign/fills/eq/inputs/eq-fill-query-cont1/`): the import probe, the
+     route probe with its seal controls, the semantic-duplication probe, the review's route lemmas
+-    with their controls and duplication probe, and the screen population; the order list
++    with their controls and duplication probe, the cont1 review's route lemmas with their controls
++    and duplication probe (`EQC1Review*.lean.txt`), and the screen population; the order list
+     `campaign/fills/eq/orders/eq-fill-query-cont1.txt`, the base sorry set, the screen base and the
+     pre-ship log (`campaign/fills/eq/logs/eq-fill-query-cont1-*`). The route's design note is
+     `campaign/items/c1/c1e/EQ-route-design.md`.
+@@ -72,14 +77,16 @@ review sub-agent, then issue. Remove this comment at issue. -->
+     `SHA256SUMS`.
+ - **Checkpoint zips.** After each checkpoint below, commit and write `fill-eq-query-cont1-cp<N>.zip`
+   (`N` the checkpoint's number, 2 to 7) with the same contents as of that commit (the final sweep
+-  may be your module's check only). Deliver the latest if the session ends early.
++  may be your module's check only; every log in it is a finished run, or is marked partial).
++  Deliver the latest if the session ends early.
+ 
+ ## Base, line numbers and what lands around you
+ 
+ - **Your base's Lean content is the campaign's tree after checkpoint 1's landing (PR #173)**
+   (@ANCESTOR@ adds records only). Lines in this brief are those of your base's tree, where
+   `NTimeDiagonalizer.lean` is 498 lines (22 public, 3 private, and their compiler auxiliaries).
+-- **There is no overlay.** The file already has its nine imports; your first edit is a proof edit.
++- **There is no overlay.** The file already has its twelve imports (lines 6–17: the original
++  three, the first round's eight and `Build/WordTests`); your first edit is a proof edit.
+   Where the line numbers below differ from the first round's brief, these are the base's.
+ - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩. Cite nothing they add.
+ 
+@@ -94,13 +101,19 @@ your file; your target's statement is frozen, so it is unaffected.
+ 
+ **The stage query of the lazy diagonalizer** ([AB09, §3.2, proof of Theorem 3.2 and Figure 3.1];
+ [Coo72]): one deterministic machine computes `Turing.NTimeDiag.query f g` within `C · (g n + 1)`.
+-The statement and its docstring are **frozen verbatim** (lines 248–273: the docstring 248–269;
+-the statement):
++The statement and its docstring are **frozen verbatim** (lines 376–404: the docstring 376–401,
++its last paragraph 399–401 being region (d); the statement 402–404). The body is checkpoint 1's
++`suffices` (405–410):
+ 
+ ```lean
+ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) :
+     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
++  suffices hmain : ∃ (M : FinTM Bool) (A : ℕ),
++      M.ComputesFunInTime (fun x => query f g (List.replicate x.length true))
++        (fun n => A * (g n + 1)) by
++    obtain ⟨M, A, hM⟩ := hmain
++    exact qy_query_of_main hg hM
+   sorry
+ ```
+ 
+@@ -125,8 +138,9 @@ the main machine's contract, under a `suffices`, and what is open is exactly
+ 
+ (`hmain`), on **every** word: `[]` when `|x| ≤ 2` (`query_of_not_guard`), and `query_eq`'s word
+ when `|x| ≥ 3`. `g`'s witness from `timeConstructible_iff` computes `bits (g |x|)` on every word,
+-so the input call on the native input serves non-unary words too; `n ≤ g n` is already
+-absorbed by `qy_query_of_main`.
++so the input call on the native input serves non-unary words too. `qy_query_of_main` absorbs
++the guard's and the empty branch's `n + 1`; `M₁`'s own linear phases still need `n ≤ g n` inside
++`hmain` (checkpoint 7).
+ 
+ **Proved modulo, exactly:** none. **A complete delivery has no `sorryAx` in the target.**
+ 
+@@ -146,12 +160,14 @@ absorbed by `qy_query_of_main`.
+ - **The base file** elaborates with exactly its two sorry warnings (lines 402 and 472), and the
+   three landed privates are within the standard three axioms. Every probe below reproduces the
+   first round's output exactly on this tree.
+-- **The import probe** (`EQImportProbe.lean.txt`, **182 checks of 182 names**: megafill D's
++- **The import probe** (`EQImportProbe.lean.txt`, **216 checks of 216 names**: megafill D's
+   76 after dropping the virtual-input host's five, the route's 43 more, `timeConstructible_iff`
+-  and `Round.iterate_seq`, and 61 for the release adapter, the input seek, the scan, fold and
+-  emitter rows, `BufferWords` and the layout equations): 0 errors, 0 warnings. **Re-run it after
+-  your delivery**, extended by every further name you cite.
+-- **The route probe** (`EQRouteProbe.lean.txt`, 16 lemmas, 14 of them axiom-printed, and the
++  and `Round.iterate_seq`, 61 for the release adapter, the input seek, the scan, fold and
++  emitter rows, `BufferWords` and the layout equations, and 34 for the linear word tests, the R1
++  transports' field equations, the clock layout's remaining fields and `wordPatch_append`, the
++  machine model's step and action equations, the emit-mode call and the round cut): 0 errors,
++  0 warnings. **Re-run it after your delivery**, extended by every further name you cite.
++- **The route probe** (`EQRouteProbe.lean.txt`, 16 lemmas, each axiom-printed, and the
+   decision `qyDecide` over `QyStep`), sealed over 7 TCSlib definitions
+   (`TimeConstructible`, `ComputesInTime`, `ComputesFunInTime`, `MultiTapeTM.runFrom`,
+   `MultiTapeTM.initCfg`, `counterValue`, `pairEncode`): 0 diagnostics, each lemma within the
+@@ -196,6 +212,27 @@ absorbed by `qy_query_of_main`.
+ 
+   Their duplication probe (`EQReviewDupProbe.lean.txt`): 3 of 4 "could not close"; the fourth,
+   doubling twice, is Mathlib's `List.flatMap_assoc` (cite it).
++- **The cont1 review's route lemmas** (`EQC1ReviewProbe.lean.txt`, one seal over 20 definitions:
++  the 12 above, `clockCfg`, `wordPatch`, `FinTM.bufferTape` and your file's `query`, `budget`,
++  `stageCode`, `stage`, `ladder`; their 8 further controls in `EQC1ReviewSealControl.lean.txt`,
++  each failing sealed): 0 diagnostics, 33 axiom prints within the standard three. It re-proves
++  both probes' lemmas together (without `qy_guard`) and adds:
++  - `qy_timeout_cert`: a timeout of the all-ones counter forces `n < f a`;
++  - `qy_clocked_call`: the clocked, released install call's two outcomes (finish at the call's
++    endpoint, right-tagged, the counter patched by a word of width `m`; or a silent `timeout r`),
++    from the published clauses of the clock, the release adapter and the call;
++  - `qy_rounds_spec`, `qy_stage_of_run`: the stop rule along the ladder and its converse;
++  - `qyCut`, `qy_cut_spec`, `qyMachineDecide`, `qy_machineDecide_eq`, `qy_top_budget`: the
++    machine's decision (binary compare, unary compare, cutoff product, power-of-two fold) is
++    `qyDecide`, and at the top the cut square is the budget;
++  - `qy_poly_log_le`, `qy_loop_ledger`, `qy_main_bound`: the loop within
++    `(10 A₁ + 9 A₂)(n + 1)` and the absorption into `g n + 1`;
++  - `qy_writer_word`: the emission order of `query_eq`'s word.
++
++  They may be copied into your home as `qy_` privates, with public-facing docstrings (not
++  `qy_flatten_replicate`). Their duplication probe (`EQC1ReviewDupProbe.lean.txt`): 4 of 5
++  "could not close"; the fifth, the expansion's block `(replicate d [true]).flatten`, is
++  `List.flatten_replicate_singleton` (cite it).
+ 
+ ## Owned regions and targets (modify these and nothing else)
+ 
+@@ -204,8 +241,7 @@ absorbed by `qy_query_of_main`.
+ | 1 | `NTimeDiagonalizer.lean:402` | `Turing.NTimeDiag.exists_queryTM` (frozen statement) |
+ 
+ Your regions:
+-- **(a) no import.** The nine are in the file (the first round's eight and `Build/WordTests`); add
+-  none.
++- **(a) no import.** The file's twelve imports (lines 6–17) stay as they are; add none.
+ - **(b) your home**, the blank line after `qy_query_of_main` (line 375), before the target's
+   docstring: your `private` declarations. **The three landed privates are frozen** (`qy_guard`,
+   `qy_guard_decider`, `qy_query_of_main`): change none without stopping on that item and
+@@ -218,14 +254,19 @@ Your regions:
+   lines a literal `**Proof sketch.**` paragraph** (`policy.md` §3).
+ 
+ In (b): `private` only, and no `section`, `open` or `variable` that leaks past one (`open … in` on
+-one declaration is fine). Frozen: the module header (lines 14–69: the maintainer updates its
++one declaration is fine). Frozen: the module header (lines 23–78: the maintainer updates its
+ status at integration), every definition and law, the target's statement and docstring before
+-(d), **`exists_diagonalizer` and its docstring (E-D's region, 275 to the end)**, and every other
++(d), **`exists_diagonalizer` and its docstring (E-D's region, 412 to the end)**, and every other
+ file.
+ 
+ ### Hosts (binding; the host-first rule, `policy.md` §1, `workflow.md` §2)
+ 
+-- **The clock:** `Turing.exists_stepClockTMVia` (or its `Bool` instance `exists_stepClockTM`).
++- **The clock:** `Turing.exists_stepClockTMVia` at `e := Function.Embedding.refl Bool`
++  (`Function.Embedding.coe_refl` and `List.map_id` read `w.map e` as `w`; `qy_clocked_call`).
++  **Not its `Bool` instance `exists_stepClockTM`:** it leaves the counter tape after either exit
++  arbitrary (`∃ ct'`) and drops the frame clause, so the next round's counter precondition
++  (blank at `cp - 1` and `cp + m`) cannot be re-established. The joint form's
++  `wordPatch ct cp (w'.map e)` with `|w'| = m` keeps every other cell (`wordPatch_of_not_mem`).
+   **Never write a second clock, counter or countdown.**
+ - **`f`'s witness: through its install call.** Take `M_f` from `hf` by
+   `Complexity.timeConstructible_iff` (never by unfolding `TimeConstructible`; read
+@@ -247,7 +288,8 @@ file.
+     `computesFunInTime_lengthBits`.
+ - **Unary from binary:** `expandTM_run_ofCfg` (pattern `[true]`, the counter's value through
+   `counterValue_bits`/`counterValue_eq`). **No second expansion loop.**
+-- **The guard split:** `FinTM.computesFunInTime_cond` with `computesFunInTime_const []`.
++- **The guard split** (landed: `qy_query_of_main`): `FinTM.computesFunInTime_cond` with
++  `computesFunInTime_const []`.
+ - **Compose by the public combinators:**
+   - the R2 seams (`seamCompTM`, `seamCompTM_run_ofCfg`, `seamCompTM_firstReturn_ofCfg`,
+     `seamCompTM_runFrom_left`/`_right`) and the phase host (`phaseHostTM`, `phaseHostTM_run`,
+@@ -259,11 +301,9 @@ file.
+     `writeAdvTM` (their `_run_ofCfg`/`_contract` forms).
+ - **Leaves you may write** (each private, a finite-state scan or a fixed composition of the rows
+   above, with a docstring saying which public row it is not):
+-  - **L1, the guard decider**: `x ↦ [decide (x = replicate |x| true ∧ 3 ≤ |x|)]`, linear time,
+-    composed from the framed input fold `Turing.inputFoldTM` (`inputFoldTM_run_ofCfg`) and a
+-    verdict emission over `Turing.emitAction` (`FinTM.emit_halts`), or from the function-level
+-    rows (`computesFunInTime_incFixed` with `incFixed_eq_none_iff_replicate`,
+-    `computesFunInTime_ifEq`, `computesFunInTime_cond`): not a hand-written scan of the input.
++  - **L1, the guard decider, is landed** (`qy_guard_decider`, from the published word tests
++    `computesFunInTime_allTrue` and `computesFunInTime_decideEq`): write no second guard
++    decider.
+   - **L2, the binary `≤`** of two tape-resident `Nat.bits` words (lengths first, in lockstep, then
+     from the top bit; `Nat.bits` has no trailing `false`), **within a constant times
+     `|bits n| + 1` steps whatever `|bits (f a)|` is**: no published lemma bounds `|bits (f a)|`
+@@ -282,7 +322,10 @@ file.
+     `Turing.emitAction` (`FinTM.emit_halts`, `FinTM.emit_run`).
+ 
+   L2 and L3 say in their docstrings why `compareTM_contract` (equality, at `compareStop`) and
+-  `walkTM_run_ofCfg` (the lockstep ruler) do not serve. **Any further leaf is an escalation.**
++  `walkTM_run_ofCfg` (the lockstep ruler) do not serve. A leaf that repeats a row (L3's product,
++  L5's search) iterates by the published round iteration (`Round.iterate_seq`, or the counter
++  loop `counterLoopTMVia`/`expandTM` where the count is a counter), never by a private loop
++  driver (`policy.md`, review checklist item 8). **Any further leaf is an escalation.**
+ - **The input head after a timeout.** Every call starts at `Cfg.ofWords`, with the input head at
+   `1`. After the clock's timeout the input head is the call's at some time before its exit, which
+   no published clause determines, and the call's bank and the counter tape are dirty. So, after
+@@ -321,7 +364,9 @@ witnesses `M_f`, `M_g` with constants `c_f`, `c_g > 0`. `L = ⌊log₂ n⌋ = |b
+ Every phase cost is `O(n)`.
+ 
+ **One round at the rung `ℓ < n`, `a = ℓ + 1`** (checkpoint 3; state it as a `Turing.Round` at the
+-locator's anchor, with three escapes: interior, top, timeout).
++locator's anchor, with three escapes: interior, top, timeout). Build the locator as its own
++machine (a phase host over the round's phases, the anchor a dispatch state), so that the round is
++stated before `M₁` exists; at checkpoint 7 the locator is one phase of `M₁`.
+ 1. Install `1^a` on `C_f`'s tape `0` (a copy of the rung, one more cell). Run `C_f`, released at
+    its entry, under the clock (stop state `Sum.inr exit`).
+    - **Timeout** (no return within `2^m − 1`): `n < f a` by the call's bound (`qy_call_bound`). The
+@@ -382,10 +427,11 @@ linear by `(L + 1)³ ≤ 8 · 2^L` (a private arithmetic lemma) and `2^L ≤ n`
+   This is exactly `query_eq`'s word. Cost
+   `O(|bits (g n)| + |α| + n + 1) = O(g n + 1)`.
+ 
+-**`M₁` and the target** (checkpoint 7). Assemble `M₁` by seams and the phase host, halting after the
+-writer, and silent before it. Its time is `≤ A' (g n + 1)`. Then `computesFunInTime_cond` and
+-`qy_guard` give the target, with `C` read off the conditional's bound
+-`c (T₀ n + max (T₁ n) (T₂ n) + 1)` and `n ≤ g n`.
++**`M₁` and `hmain`** (checkpoint 7). Assemble `M₁` by seams and the phase host, halting after the
++writer, and silent before it. Its time is at most `B₁ (n + 1) + B₂ (g n + 1)`, which is at most
++`(B₁ + B₂)(g n + 1)` by `n ≤ g n` (from `hg` through `timeConstructible_iff`; `qy_main_bound`):
++that is `hmain` with `A = B₁ + B₂`. The landed `suffices` then closes the target
++(`qy_query_of_main` supplies the conditional and its constant).
+ 
+ **Edge cases that must stay true:**
+ - `n ≤ 2` (the setup's short-circuit) and `n = 3`;
+@@ -402,15 +448,17 @@ writer, and silent before it. Its time is `≤ A' (g n + 1)`. Then `computesFunI
+   uniform (no dependence on `x`).
+ - **The C1-E design** (`campaign/items/c1/c1e/C1E-design.md`, "Deviations"): one machine computes
+   the pure function (D1, D2, D4, D5 internal), and its arithmetic rows are private leaves with
+-  promotion requests. This brief's leaves (L1–L3, L5, L6) and the scan folds are those rows, in
+-  unary where the note says so.
++  promotion requests. This brief's leaves (L1, landed; L2, L3, L5, L6) and the scan folds are
++  those rows, in unary where the note says so.
+ 
+ ## Cited infrastructure (public and proved at the issue commit; all in `EQImportProbe.lean.txt`)
+ 
+-The probe's 182 names: the target and the stages' laws; A1's reading and the function-level API;
++The probe's 216 names: the target and the stages' laws; A1's reading and the function-level API
++(the linear word tests among them);
+ the calls, the release adapter and the input seek; the clock; the expansion, copy, clear, skip,
+ write, rewind, scan, fold, compare and walk rows and the emitter; the seams, the phase host, R1,
+-the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log` and
++the layout equations (R1's transports and the clock's `wordPatch` among them) and the contract
++layer; the machine model's step and action equations; `BufferWords`; `Nat.bits`, `Nat.log` and
+ `Nat.unpair` facts.
+ 
+ ## Ground rules (binding)
+@@ -423,13 +471,14 @@ the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log
+    record the obstruction mathematically, and **continue with every item that does not depend on
+    it**. Checkpoints 5 and 6 depend on 4's escape, not on its ledger.
+ 5. **No touching other sorries.** Cite proved material; never re-prove it.
+-6. **Imports.** Exactly the nine in region (a).
++6. **Imports.** Exactly the file's twelve (region (a)); add none.
+ 7. **One proof per shared argument.** Never write a second clock, counter, expansion, call,
+    seam, embedding, round loop or input rewind. Never re-walk `ExhaustiveReplay`'s `xr_`
+    privates (its capped replay, window clear and translation), `TimeHierarchy/ClockLoop`'s, or
+-   `Build/Loop`'s call machinery (`callTM`, `emCall_*`). L1–L6 are allowed.
++   `Build/Loop`'s call machinery (`callTM`, `emCall_*`). L2, L3, L5 and L6 are allowed (L1 is
++   landed; L4 is the scan fold).
+ 8. **Size.** No cap; file size alone is not a driver. Report the final line count and the public
+-   and private declaration counts (base: 361 lines; 22 public, 0 private).
++   and private declaration counts (base: 498 lines; 22 public, 3 private).
+ 9. **Continuation budget.** A partial zip states the checkpoints reached, the open declarations
+    (each with a literal "Proof sketch") and the target's axiom walk. A partial is expected and
+    fine; an unreported gap is not.
+@@ -439,7 +488,11 @@ the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log
+       - `TimeConstructible`: only through `timeConstructible_iff`.
+       - `ComputesFunInTime`/`ComputesInTime`: through `computesFunInTime_iff`/
+         `computesInTime_iff`.
+-      - The clock's layout: through `clockCfg_*`.
++      - The clock's layout: through `clockCfg_*`; its patched counter `wordPatch` through
++        `wordPatch_of_mem`, `wordPatch_of_not_mem` and `wordPatch_append`.
++      - R1's transports `embedEmitCfg`/`embedSilentCfg`: through their `_state`, `_inputPos` and
++        `_output` equations, `_selected_tape`/`_selected_pos`, `_unselected`,
++        `embedSilentCfg_cap` and `embedEmitCfg_eq`.
+       - `counterLoopCfg`: through `Turing.counter_cfg_eq` (the body bank, then the counter) and
+         `counterLoopCfg_body`; it has no per-field equations.
+       - A released call: through `seamReleaseTM_runFrom_pos`.
+@@ -452,7 +505,9 @@ the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log
+       `Nat.unpair` lemmas).
+     - **The machine model's primitives** (`MultiTapeTM.step`, `runFrom`, `Action.apply`,
+       `Cfg.mapState`) are read through their lemmas. Unfold `step` and `Action.apply` only for a
+-      leaf defined in your own file (L1–L6).
++      leaf defined in your own file (L2, L3, L5, L6), and prefer `MultiTapeTM.step_of_some` and
++      the `Action.apply_*` field equations there too; the inspection table lists each such
++      unfolding as an own leaf's, not as a finding.
+     - Your own file's definitions (`ladder`, `budget`, `stage`, `stageCode`, `query`) may be
+       unfolded, but prefer their laws.
+     - If a fact you need about another file's definition has no published lemma, **stop on that
+@@ -462,10 +517,11 @@ the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log
+         every other-file TCSlib definition your proofs mention. Start from the pre-ship's 7 and
+         extend: at least `Complexity.TimeConstructible`, `FinTM.ComputesFunInTime`,
+         `FinTM.ComputesInTime`, `MultiTapeTM.runFrom`, `MultiTapeTM.initCfg`, `Cfg.ofWords`,
+-        `stateWord`, `clockCfg`, `counterLoopCfg`, `expandTM`, `copyMapTM`, `seamCompTM`,
+-        `embedEmitTM`, `embedSilentTM`, `pairEncode`, `seamReleaseTM`, `phaseHostTM`,
+-        `Cfg.mapState`, `Cfg.Stopped`, `embedEmitCfg`, `FinTM.bufferTape`, `scanTM`, `inputFoldTM`,
+-        `writeAdvTM`, `clearTM`, `rewindTM`, `dbl`. Add `attribute [-simp]` on the `@[simp]`
++        `stateWord`, `clockCfg`, `wordPatch`, `counterLoopCfg`, `expandTM`, `copyMapTM`,
++        `seamCompTM`, `embedEmitTM`, `embedSilentTM`, `pairEncode`, `seamReleaseTM`, `phaseHostTM`,
++        `Cfg.mapState`, `Cfg.Stopped`, `embedEmitCfg`, `embedSilentCfg`, `FinTM.bufferTape`,
++        `scanTM`, `inputFoldTM`, `writeAdvTM`, `clearTM`,
++        `rewindTM`, `dbl`. Add `attribute [-simp]` on the `@[simp]`
+         definitions among them. A reducible `abbrev` (`Cfg.Halted`, `counterLoopOrbit`) cannot be
+         sealed: read it through its body (`policy.md`). The copy must still elaborate, **with
+         controls**: for each sealed
+@@ -482,7 +538,10 @@ the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log
+     `transferTM_run`, `clearTM_run`, `compareTM_run`, `incrementTM_run_succ`,
+     `incrementTM_run_overflow`); use the framed `_ofCfg` forms. Cite no private declaration of
+     another file. Keep your new privates under the `qy_` prefix (`Qy`/`qy` for types and
+-    definitions, as `QyStep`, `qyDecide`; unused in the tree at the drafting base).
++    definitions, as `QyStep`, `qyDecide`; used in the tree only by your file's three landed
++    privates). A `private inductive` with `deriving DecidableEq` (as `QyStep`) gets a public
++    instance name (`instDecidableEqQyStep`): check that no file or open PR has it and report it
++    (`workflow.md` §4, counting public names), or write the instance as a `private instance`.
+ 
+ ### Checkpoints (for a partial; ground rule 9)
+ 
+@@ -516,24 +575,25 @@ root `<dir>`).
+   statement. **Cite proved material; never re-prove it.** `REPORT.md` lists, for each new private,
+   the search made and its result. The pre-ship probe `EQDupProbe.lean.txt` poses the route probe's
+   statements: none is published.
+-- **The population** is 30 files
++- **The population** is 32 files
+   (`campaign/fills/eq/inputs/eq-fill-query-cont1/screen-population.txt`):
+   - your file;
+   - the files the route cites: `Build/StepClock`, `Build/Loop`, `Build/InputCall`,
+     `Build/Wrappers`, `Build/Primitives`, `Build/CounterLoop`, `Build/Scan`, `Build/Catalog`,
+     `Build/Rewind`, `Build/Seam`, `Build/Embed`, `Build/Contract/Basic`,
+     `Build/Contract/Catalog`, `Build/Contract/Seam`, `Build/Convention`, `Composition`, `Finite`,
+-    `Encoding`, `StateRenaming`, `BufferWords`, `ClassP/TimeConstructible`, and `Build/WordTests`
+-    (the guard's rows);
++    `Encoding`, `StateRenaming`, `BufferWords`, `ClassP/TimeConstructible`, `Build/WordTests`
++    (the guard's rows), and the machine model's `Configuration` and `Deterministic` (the step and
++    action equations your leaves' run lemmas cite);
+   - the known hazards: `ClassNP/ExhaustiveReplay` (capped replays over the same clock),
+     `TimeHierarchy/ClockLoop` (a colleague's clocked loop), `Diagonalization/NTimeHierarchy`,
+     `Simulation` (the input-rewind and emitter family), `Build/SeamLayout` (a phase-host composite
+     over catalog rows and private leaves: a model to read, not to copy), and `ClassNP/TMSAT` and
+     `ClassNP/Nondeterminism` (private unary deciders, L1's neighbours).
+ - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
+-- **The base** is `campaign/fills/eq/logs/eq-fill-query-cont1-screen-base.txt`: **1,735
+-  declarations, 2,152 pairs, 757,579 characters** (MEASURED at your base; about 19 minutes under
+-  `nice -n 10`, peak memory 2.0 GB).
++- **The base** is `campaign/fills/eq/logs/eq-fill-query-cont1-screen-base.txt`: **⟨N⟩
++  declarations, ⟨P⟩ pairs, ⟨C⟩ characters** (MEASURED at your base; about ⟨T⟩ minutes under
++  `nice -n 10` on the maintainer's host, peak memory ⟨M⟩ GB).
+ 
+ ```sh
+ P=campaign/fills/eq/inputs/eq-fill-query-cont1
+@@ -547,9 +607,12 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
+ - **A new cross-file pair** with an owned-file declaration on one side is listed in `REPORT.md`
+   with its shared tiles and one disposition:
+   - **idiom**: the shared text is a public row's invocation and the standard conversion around it
+-    (for example `FinTM.computesFunInTime_ifEq w [true] [false]` with `convert … using 1;
+-    funext x; by_cases hx : x = w <;> simp …`), and no lemma, public or private, is re-derived.
+-    Justify it in one line and go on;
++    (for example the `Cfg.mapState_mapState` field equations around a seam), and no lemma, public
++    or private, is re-derived. Justify it in one line and go on. **Since #171 the
++    `[decide (x = w)]` conversion of `computesFunInTime_ifEq` is the published
++    `Turing.FinTM.computesFunInTime_decideEq`** (the unarity test is
++    `computesFunInTime_allTrue`): writing it again is a re-derivation of a published lemma, not an
++    idiom;
+   - **re-derivation of a published lemma**: cite the lemma instead, before the zip;
+   - **re-derivation of another file's private**: keep yours, and list it as a promotion request.
+ 
+@@ -561,8 +624,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
+   - `ExhaustiveReplay`'s `xr_replay_finish`/`_timeout` (the clock's two exits, read the same way):
+     cite `exists_stepClockTMVia`'s two clauses, never a prelude copied from them;
+   - the calls' internals (`Build/Loop`'s `emCall_*`): cite the call contracts;
+-  - `Build/Catalog`'s scans and `f2_` privates, against L1–L4: cite a framed row wherever one
+-    exists;
++  - `Build/Catalog`'s scans and `f2_` privates, against L2, L3, L6 and the scan folds: cite a
++    framed row wherever one exists;
+   - the `Cfg.mapState_mapState` field-equation idiom (two accepted idiom pairs: say so if yours is
+     a third);
+   - `ClassP/BinaryArith` (#135, merged into `main`, not in your tree): its polynomial-time `le` and
+@@ -570,8 +633,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
+     and L3 against them in `REPORT.md`, and include `origin/main` in the semantic search.
+ 
+   A pair at 90% or more is a copy.
+-- List every new in-file pair with a one-line justification. Quote both outputs in `REPORT.md`,
+-  which carries **"new copies: none"** (or lists each pair).
++- List every new in-file pair with a one-line justification. Quote each screen's summary line and
++  its new pairs in `REPORT.md`, which carries **"new copies: none"** (or lists each pair), and
++  ship both full outputs as files (`screens/`).
+ 
+ ## Environment and verification
+ 
+@@ -589,6 +653,10 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
+   minutes; each screen about 19 minutes (1,159 s and 1,145 s); the final sweep 8.4 minutes; a
+   tail re-check about 5 s. Reserve about 25 minutes for the finishing sequence (the final sweep
+   with the after screen beside it, then the REPORT and the zip), and use the rest for proofs.
++  These are a 9-CPU host's figures. The last Claude fill host (4 CPUs, 2026-10-24) ran 2–3×
++  slower: a 96-module bootstrap in 22 minutes, and a screen of 847 declarations in 12 minutes
++  (about 5 on the maintainer's host). If yours is like it, expect about 20 minutes for the
++  bootstrap and 45 for each screen, and reserve about an hour for the finishing sequence.
+ - **Bootstrap** (addendum Part 1, item 5) from
+   `campaign/fills/eq/orders/eq-fill-query-cont1.txt` (**84 modules**), right after branching,
+   logging each module's start and end time and maximum memory. **The base sorry-warning set has 21
+@@ -611,8 +679,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
+ ## Out-of-scope sorries you will see (leave every one untouched)
+ 
+ Everything in the base sorry set except your target: `exists_diagonalizer` (E-D, your file),
+-`ntime_hierarchy` (`NTimeHierarchy`), `exists_uniformSimulator` (`CodeSimulator`, B5a),
+-`exists_codeNDTM_accepts_linear` (`ClassNP/NDNormalForm`), and the older function-level and
++`ntime_hierarchy` (`NTimeHierarchy`), `exists_codeNDTM_accepts_linear`
++(`ClassNP/NDNormalForm`), and the older function-level and
+ space stubs of `Simulation`, `Composition`, `Encoding`, `ClassP/TimeConstructible`,
+ `Build/Wrappers`, `Build/Loop` and `Build/Primitives` (the list in
+ `campaign/fills/eq/logs/eq-fill-query-cont1-base-sorries.txt`). If a proof seems to
+@@ -626,13 +694,14 @@ space stubs of `Simulation`, `Composition`, `Encoding`, `ClassP/TimeConstructibl
+ - [ ] No import added; the three landed privates unchanged; nothing outside regions (b)–(d).
+ - [ ] The checkpoints reached (2–7), **one zip each**; the base hash and the ancestor check.
+ - [ ] Every new declaration with its role; `M₁`'s tapes (the call's, the clock's counter, the
+-      rung, `L`, `h`, the seek's, the scratch); each leaf (L1–L3, L5, L6) and its run, and each
++      rung, `L`, `h`, the seek's, the scratch); each leaf (L2, L3, L5, L6) and its run, and each
+       scan fold.
+ - [ ] Each call's release (or its `entry = exit` split); the input seek after the loop; the
+       timed-out call's silence.
+ - [ ] The base sorry list by name; each edge case with the lemma that covers it.
+-- [ ] `C`, term by term: the guard, the setup, the loop's ledger (passed rounds, the arithmetic
+-      term, the last round), the stage code, the budget field, the writer.
++- [ ] `hmain`'s `A`, term by term: the setup, the loop's ledger (passed rounds, the arithmetic
++      term, the last round), the seek, the stage code, the budget field, the writer; and the
++      target's `C` as `qy_query_of_main` forms it from `A`.
+ - [ ] Promotion candidates and escalations (each stated mathematically), or "none"; the proposed
+       `**Implementation.**` paragraph for the maintainer.
+ - [ ] Rule 10: the declarations cited outside your file (from an elaborated-constant walk), the

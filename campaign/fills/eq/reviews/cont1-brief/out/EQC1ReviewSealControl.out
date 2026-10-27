@@ -1,0 +1,49 @@
+rvprobe/EQC1ReviewSealControl.lean:47:49: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (clockCfg q c ct cp).state = q
+rvprobe/EQC1ReviewSealControl.lean:51:2: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  wordPatch ct cp u = fun q => if cp ≤ q ∧ q < cp + ↑u.length then FinTM.bufferTape u (q - cp) else ct q
+rvprobe/EQC1ReviewSealControl.lean:53:2: error: Type mismatch
+  rfl
+has type
+  ?m.17 = ?m.17
+but is expected to have type
+  FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none
+rvprobe/EQC1ReviewSealControl.lean:54:45: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  query f g [] = []
+rvprobe/EQC1ReviewSealControl.lean:55:76: error: Type mismatch
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2
+rvprobe/EQC1ReviewSealControl.lean:56:78: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  stageCode i = ((Nat.unpair i).1 + 1).bits.dropLast
+rvprobe/EQC1ReviewSealControl.lean:57:82: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  stage f n = Nat.find ⋯
+rvprobe/EQC1ReviewSealControl.lean:58:40: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  ladder f 0 = 2
+# exit 1

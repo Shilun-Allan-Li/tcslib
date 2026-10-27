@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Usage: elab.sh <name>  -- elaborate rvprobe/<name>.lean in the review worktree against oleans-leqcp1.
+S=$S
+R=$S/review/eq-cont1-brief; W=$R/wt; N="$1"
+/usr/bin/time -l bash $S/tools/leanelab.sh $W $S/oleans-leqcp1 rvprobe/$N.lean > $R/out/$N.raw 2> $R/out/$N.time
+echo "# exit $?" >> $R/out/$N.raw
+sed "s|$W/||g" $R/out/$N.raw > $R/out/$N.out

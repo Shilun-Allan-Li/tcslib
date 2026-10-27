@@ -1,0 +1,63 @@
+=== 599497bc
+-- Nat\.unpair
+599497bc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:184:def stageCode (i : ℕ) : List Bool := (Nat.bits ((Nat.unpair i).1 + 1)).dropLast
+599497bc:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:187:theorem stageCode_eq (i : ℕ) : stageCode i = (Nat.bits ((Nat.unpair i).1 + 1)).dropLast := rfl
+-- b, b, b, b\]
+-- unpairTM|unpairU|unaryUnpair|sqrtU|sqrtTM|Nat\.sqrt
+599497bc:TCSlib/Programs/Light/Lib/Sqrt.lean:62:@[simp] def sqrtTime (K : ℕ) : ℕ := 18 * Nat.sqrt K + 12
+-- mulU|unaryMul|mulTM|productTM|cutMul|minMul
+-- bitsLe|binLe|leBitsTM|ltBitsTM|compareBits|binaryLe|lexLe|bitsLt|polyTimeComputable_le|polyTimeComputable_lt
+599497bc:TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:255:private lemma polyTimeComputable_lenFstLe (m : ℕ) :
+599497bc:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:309:theorem polyTimeComputable_lenLe :
+599497bc:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:324:theorem polyTimeComputable_lenEq :
+599497bc:TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:195:theorem polyTimeComputable_levelBits {w : List Bool → ℕ}
+-- emitDbl|dblEmit|emitDoubled|doubleEmit|emitWordTM|emitTapeTM|copyOutTM|emitTape|dblTM
+-- unaryLe|unaryLt|unaryCompare|compareUnary|unaryMin|minTM
+599497bc:TCSlib/Complexity/ClassNP/SAT.lean:2844:private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
+-- \(L \+ 1\) \^ 3|\^ 3 ≤ 8
+599497bc:TCSlib/Programs/Light/Lib/Logs.lean:186:theorem cbrtLeast_pow_le (n : ℕ) : cbrtLeast n ^ 3 ≤ 8 * n := by
+=== origin/lean/h-hierarchy-landing
+-- Nat\.unpair
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:184:def stageCode (i : ℕ) : List Bool := (Nat.bits ((Nat.unpair i).1 + 1)).dropLast
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:187:theorem stageCode_eq (i : ℕ) : stageCode i = (Nat.bits ((Nat.unpair i).1 + 1)).dropLa
+-- b, b, b, b\]
+-- unpairTM|unpairU|unaryUnpair|sqrtU|sqrtTM|Nat\.sqrt
+origin/lean/h-hierarchy-landing:TCSlib/Programs/Light/Lib/Sqrt.lean:62:@[simp] def sqrtTime (K : ℕ) : ℕ := 18 * Nat.sqrt K + 12
+-- mulU|unaryMul|mulTM|productTM|cutMul|minMul
+-- bitsLe|binLe|leBitsTM|ltBitsTM|compareBits|binaryLe|lexLe|bitsLt|polyTimeComputable_le|polyTimeComputable_lt
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:255:private lemma polyTimeComputable_lenFstLe (m : ℕ) :
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:309:theorem polyTimeComputable_lenLe :
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:324:theorem polyTimeComputable_lenEq :
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:195:theorem polyTimeComputable_levelBits {w : List Bool → ℕ}
+-- emitDbl|dblEmit|emitDoubled|doubleEmit|emitWordTM|emitTapeTM|copyOutTM|emitTape|dblTM
+-- unaryLe|unaryLt|unaryCompare|compareUnary|unaryMin|minTM
+origin/lean/h-hierarchy-landing:TCSlib/Complexity/ClassNP/SAT.lean:2844:private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
+-- \(L \+ 1\) \^ 3|\^ 3 ≤ 8
+origin/lean/h-hierarchy-landing:TCSlib/Programs/Light/Lib/Logs.lean:186:theorem cbrtLeast_pow_le (n : ℕ) : cbrtLeast n ^ 3 ≤ 8 * n := by
+=== origin/main
+-- Nat\.unpair
+-- b, b, b, b\]
+-- unpairTM|unpairU|unaryUnpair|sqrtU|sqrtTM|Nat\.sqrt
+origin/main:TCSlib/Programs/Light/Lib/Sqrt.lean:62:@[simp] def sqrtTime (K : ℕ) : ℕ := 18 * Nat.sqrt K + 12
+-- mulU|unaryMul|mulTM|productTM|cutMul|minMul
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:421:private def mulUStep (d : List Bool) : List Bool :=
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:425:def mulU (z : List Bool) : List Bool :=
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:429:private theorem iterate_mulUStep (b acc : List Bool) (j : ℕ) :
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:438:theorem length_mulU (a b : List Bool) : (mulU (pairEncode a b)).length = a.length * b.length := by
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:442:theorem polyTimeComputable_mulU : PolyTimeComputable mulU := by
+origin/main:TCSlib/Complexity/Randomized/Matching.lean:267:private def tNK (z : List Bool) : List Bool := mulU (pairEncode (tU z) (tK z))
+-- bitsLe|binLe|leBitsTM|ltBitsTM|compareBits|binaryLe|lexLe|bitsLt|polyTimeComputable_le|polyTimeComputable_lt
+origin/main:TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:255:private lemma polyTimeComputable_lenFstLe (m : ℕ) :
+origin/main:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:309:theorem polyTimeComputable_lenLe :
+origin/main:TCSlib/Complexity/ClassNP/PolyTimePairing.lean:324:theorem polyTimeComputable_lenEq :
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:205:theorem polyTimeComputable_lt : PolyTimeComputable (fun z => [lt z]) := by
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:213:theorem polyTimeComputable_le : PolyTimeComputable (fun z => [le z]) := by
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:245:theorem lt_mem_P : {z | lt z = true} ∈ P := mem_P_of_test polyTimeComputable_lt
+origin/main:TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:249:theorem le_mem_P : {z | le z = true} ∈ P := mem_P_of_test polyTimeComputable_le
+origin/main:TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean:195:theorem polyTimeComputable_levelBits {w : List Bool → ℕ}
+origin/main:TCSlib/Complexity/Randomized/ZeroPRun.lean:57:theorem polyTimeComputable_ltLen {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+-- emitDbl|dblEmit|emitDoubled|doubleEmit|emitWordTM|emitTapeTM|copyOutTM|emitTape|dblTM
+-- unaryLe|unaryLt|unaryCompare|compareUnary|unaryMin|minTM
+origin/main:TCSlib/Complexity/ClassNP/SAT.lean:2844:private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
+-- \(L \+ 1\) \^ 3|\^ 3 ≤ 8
+origin/main:TCSlib/Programs/Light/Lib/Logs.lean:186:theorem cbrtLeast_pow_le (n : ℕ) : cbrtLeast n ^ 3 ≤ 8 * n := by

@@ -1,0 +1,321 @@
+/-! #### The dossier's lemmas -/
+
+/-- The witness, through A1's reading: `n ≤ f n`, and a machine computing `bits (f |x|)` within
+`c (f |x| + 1)`, as a function-level computation. -/
+theorem qy_witness {f : ℕ → ℕ} (hf : Complexity.TimeConstructible f) :
+    (∀ n, n ≤ f n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool,
+      M.ComputesFunInTime (fun y => (f y.length).bits) fun m => c * (f m + 1) := by
+  obtain ⟨hle, c, hc, M, hM⟩ := (Complexity.timeConstructible_iff f).mp hf
+  exact ⟨hle, c, hc, M, (FinTM.computesFunInTime_iff _ _ _).mpr hM⟩
+
+/-- The locator's three outcomes at a rung. -/
+inductive QyStep
+  | interior
+  | top
+  | next
+  deriving DecidableEq
+
+/-- The locator's decision at the rung `ℓ` on a length `n` (the dossier's `eqDecide`). -/
+def qyDecide (f : ℕ → ℕ) (n ℓ : ℕ) : QyStep :=
+  if n < f (ℓ + 1) then .interior
+  else if Nat.log 2 n < (f (ℓ + 1) + (ℓ + 1) + 1) ^ 4 then .interior
+  else if (f (ℓ + 1) + (ℓ + 1) + 1) ^ 4 = Nat.log 2 n then
+    (if n = 2 ^ Nat.log 2 n then .top else .next)
+  else .next
+
+theorem qy_ladder_succ_eq (f : ℕ → ℕ) (i : ℕ) :
+    ladder f (i + 1) = 2 ^ (f (ladder f i + 1) + (ladder f i + 1) + 1) ^ 4 := by
+  rw [ladder_succ, budget_eq, ← pow_mul]
+
+/-- The stop rule: at a rung below `n`, the decision is the comparison with the next rung. -/
+theorem qy_decide_spec (f : ℕ → ℕ) {n i : ℕ} (hn : 1 ≤ n) :
+    (qyDecide f n (ladder f i) = .interior ↔ n < ladder f (i + 1)) ∧
+    (qyDecide f n (ladder f i) = .top ↔ n = ladder f (i + 1)) ∧
+    (qyDecide f n (ladder f i) = .next ↔ ladder f (i + 1) < n) := by
+  rw [qy_ladder_succ_eq]
+  set X := f (ladder f i + 1) + (ladder f i + 1) + 1 with hX
+  set L := Nat.log 2 n with hL
+  have hlo : 2 ^ L ≤ n := Nat.pow_log_le_self 2 (by omega)
+  have hhi : n < 2 ^ (L + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
+  have hX1 : 1 ≤ X := by omega
+  have hX4 : X ≤ X ^ 4 := Nat.le_self_pow (by norm_num) X
+  by_cases h1 : n < f (ladder f i + 1)
+  · have hbig : n < 2 ^ X ^ 4 := by
+      have := Nat.lt_two_pow_self (n := X ^ 4)
+      omega
+    simp only [qyDecide, h1, if_true]
+    refine ⟨by simp; omega, by simp; omega, by simp; omega⟩
+  · by_cases h2 : L < X ^ 4
+    · have hbig : n < 2 ^ X ^ 4 :=
+        lt_of_lt_of_le hhi (Nat.pow_le_pow_right (by norm_num) (by omega))
+      simp only [qyDecide, h1, if_false, ← hL, ← hX, h2, if_true]
+      refine ⟨by simp; omega, by simp; omega, by simp; omega⟩
+    · by_cases h3 : X ^ 4 = L
+      · simp only [qyDecide, h1, if_false, ← hL, ← hX, h3, if_true]
+        by_cases h4 : n = 2 ^ L
+        · simp only [h4, if_true]
+          refine ⟨by simp, by simp, by simp⟩
+        · simp only [h4, if_false]
+          have : 2 ^ L < n := lt_of_le_of_ne hlo (Ne.symm h4)
+          refine ⟨by simp; omega, by simp, by simp; omega⟩
+      · have hlt : X ^ 4 < L := by omega
+        have hsmall : 2 ^ X ^ 4 < n :=
+          lt_of_lt_of_le (Nat.pow_lt_pow_right (by norm_num) hlt) hlo
+        simp only [qyDecide, h1, if_false, ← hL, ← hX, h2, h3]
+        refine ⟨by simp; omega, by simp; omega, by simp; omega⟩
+
+/-- At a rung `ℓᵢ < n`, a decision other than `next` locates the stage: `stage f n = i`. -/
+theorem qy_stage_of_stop (f : ℕ → ℕ) {n i : ℕ} (hlo : ladder f i < n)
+    (hstop : qyDecide f n (ladder f i) ≠ .next) : stage f n = i := by
+  have hn : 1 ≤ n := by have := le_ladder f i; omega
+  obtain ⟨-, -, hnext⟩ := qy_decide_spec f (i := i) hn
+  have hle : n ≤ ladder f (i + 1) := by
+    by_contra h
+    exact hstop (hnext.mpr (by omega))
+  exact stage_eq f hlo hle
+
+/-- A passed rung's operands are at most the next rung. -/
+theorem qy_round_le (f : ℕ → ℕ) (i : ℕ) :
+    f (ladder f i + 1) + (ladder f i + 1) + 1 ≤ ladder f (i + 1) := by
+  rw [qy_ladder_succ_eq]
+  set X := f (ladder f i + 1) + (ladder f i + 1) + 1
+  have h4 : X ≤ X ^ 4 := Nat.le_self_pow (by norm_num) X
+  have := Nat.lt_two_pow_self (n := X ^ 4)
+  omega
+
+/-- The ledger: the rungs passed before stage `s` sum to at most twice its bottom. -/
+theorem qy_ledger (f : ℕ → ℕ) (s : ℕ) :
+    ∑ h ∈ Finset.range s, ladder f (h + 1) ≤ 2 * ladder f s := by
+  induction s with
+  | zero => simp
+  | succ s ih =>
+    rw [Finset.sum_range_succ]
+    have := two_mul_lt_ladder_succ f s
+    omega
+
+/-! #### The note's new steps -/
+
+/-- **The all-ones counter's value**: `m` ones are worth `2 ^ m - 1`. -/
+theorem qy_ones_val (m : ℕ) :
+    Nat.ofDigits 2 ((List.replicate m true).map Bool.toNat) = 2 ^ m - 1 := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    rw [List.replicate_succ, List.map_cons, Nat.ofDigits_cons, ih, Bool.toNat_true, pow_succ]
+    have := Nat.one_le_two_pow (n := m)
+    omega
+
+/-- **The next rung's counter value**: `m` zeros then a one are worth `2 ^ m`. -/
+theorem qy_rung_val (m : ℕ) :
+    Nat.ofDigits 2 ((List.replicate m false ++ [true]).map Bool.toNat) = 2 ^ m := by
+  induction m with
+  | zero => rfl
+  | succ m ih =>
+    rw [List.replicate_succ, List.cons_append, List.map_cons, Nat.ofDigits_cons, ih,
+      Bool.toNat_false, pow_succ]
+    ring
+
+/-- **The counter is large enough**: the all-ones word of width `|bits n| + |bits D|` is worth at
+least `D (n + 1)`. -/
+theorem qy_ones_ge (n D : ℕ) :
+    D * (n + 1) ≤ 2 ^ ((Nat.bits n).length + (Nat.bits D).length) - 1 := by
+  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len, pow_add]
+  have hn := Nat.lt_size_self n
+  have hD := Nat.lt_size_self D
+  have hprod : (n + 1) * (D + 1) ≤ 2 ^ Nat.size n * 2 ^ Nat.size D :=
+    Nat.mul_le_mul hn hD
+  have : D * (n + 1) + 1 ≤ (n + 1) * (D + 1) := by nlinarith
+  omega
+
+/-- **The counter is not too large**: `2 ^ |bits n| ≤ 2 n + 1`. -/
+theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp
+  · rw [Nat.size_eq_bits_len]
+    have hsz : Nat.size n = Nat.log 2 n + 1 := by
+      apply le_antisymm
+      · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+      · by_contra h
+        have hlt : n < 2 ^ Nat.log 2 n :=
+          Nat.size_le.mp (by omega)
+        exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+    rw [hsz, pow_succ]
+    have := Nat.pow_log_le_self 2 (show n ≠ 0 by omega)
+    omega
+
+/-- **`⌊log₂ n⌋` from `bits n`**: for `n ≥ 1`, `Nat.log 2 n + 1 = |bits n|`. -/
+theorem qy_log_bits {n : ℕ} (hn : 1 ≤ n) : Nat.log 2 n + 1 = (Nat.bits n).length := by
+  rw [Nat.size_eq_bits_len]
+  apply le_antisymm
+  · by_contra h
+    have hlt : n < 2 ^ Nat.log 2 n := Nat.size_le.mp (by omega)
+    exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+  · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+
+/-- **The power-of-two test on `bits n`**: `n = 2 ^ L` exactly when `bits n` is `L` zeros then a
+one, where `L = ⌊log₂ n⌋`. -/
+theorem qy_pow_two_bits (n : ℕ) :
+    n = 2 ^ Nat.log 2 n ↔ Nat.bits n = List.replicate (Nat.log 2 n) false ++ [true] := by
+  constructor
+  · intro h
+    calc Nat.bits n = Nat.bits (2 ^ Nat.log 2 n) := congrArg Nat.bits h
+      _ = List.replicate (Nat.log 2 n) false ++ [true] := bits_two_pow_eq_replicate _
+  · intro h
+    have hv := counterValue_bits n
+    rw [h, counterValue_eq, qy_rung_val] at hv
+    exact hv.symm
+
+/-- **The install call's bound under `f a ≤ n`** (the timeout certificate's arithmetic): with
+`a ≤ n` and `f a ≤ n`, the call's time bound `c' (c (f a + 1) + a + |bits (f a)| + 1)` is at most
+`c' (c + 2) (n + 1)`. -/
+theorem qy_call_bound (f : ℕ → ℕ) (c c' a n : ℕ) (ha : a ≤ n) (hfa : f a ≤ n) :
+    c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * (c + 2) * (n + 1) := by
+  have hb : (Nat.bits (f a)).length ≤ f a := by
+    rw [Nat.size_eq_bits_len]
+    exact Nat.size_le.mpr (Nat.lt_two_pow_self)
+  have h1 : c * (f a + 1) ≤ c * (n + 1) := Nat.mul_le_mul_left c (by omega)
+  have h2 : c * (f a + 1) + a + (Nat.bits (f a)).length + 1 ≤ (c + 2) * (n + 1) := by nlinarith
+  calc c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * ((c + 2) * (n + 1)) :=
+        Nat.mul_le_mul_left c' h2
+    _ = c' * (c + 2) * (n + 1) := by ring
+
+/-- The ladder is at least `2 ^ (i + 1)`. -/
+theorem qy_two_pow_le_ladder (f : ℕ → ℕ) (i : ℕ) : 2 ^ (i + 1) ≤ ladder f i := by
+  induction i with
+  | zero => rw [ladder_zero]; norm_num
+  | succ i ih =>
+    have := two_mul_lt_ladder_succ f i
+    rw [pow_succ]
+    omega
+
+/-- **The stage index is below `log₂ n`**: for `n ≥ 3`, `stage f n < Nat.log 2 n`. -/
+theorem qy_stage_lt_log (f : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n) : stage f n < Nat.log 2 n := by
+  have hlo := (stage_spec f hn).1
+  have hp := qy_two_pow_le_ladder f (stage f n)
+  have : stage f n + 1 ≤ Nat.log 2 n := Nat.le_log_of_pow_le (by norm_num) (by omega)
+  omega
+
+
+/-- **F1: the clocked call through the release adapter.** From the install call's published
+clauses alone (a positive exit time, the positive cut, the endpoint), the call wrapped by
+`seamReleaseTM` at its entry, started at the fresh state and stopped at `Sum.inr exit`, first
+stops exactly at the call's exit time. No `entry ≠ exit` is needed. -/
+theorem rv_release_first_stop (C : FinTM Bool) (entry exit : C.State) (x arg out : List Bool)
+    (t : ℕ) (hpos : 0 < t)
+    (hcut : ∀ t', 0 < t' → t' < t →
+      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t').state ≠ some exit)
+    (hrun : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+      Cfg.ofWords exit (stateWord C.k out)) :
+    ((seamReleaseTM C.tm entry).runFrom
+        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ())
+        t).Stopped (fun s => decide (s = Sum.inr exit)) ∧
+    (∀ u < t, ¬((seamReleaseTM C.tm entry).runFrom
+        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ())
+        u).Stopped (fun s => decide (s = Sum.inr exit))) ∧
+    (seamReleaseTM C.tm entry).runFrom
+        ((Cfg.ofWords (input := x) entry (stateWord C.k arg)).mapState fun _ => Sum.inl ()) t =
+      (Cfg.ofWords (input := x) exit (stateWord C.k out)).mapState Sum.inr := by
+  have hc : (Cfg.ofWords (input := x) entry (stateWord C.k arg)).state = some entry :=
+    Cfg.ofWords_state entry _
+  have hend := seamReleaseTM_runFrom_pos C.tm entry _ hc t hpos
+  rw [hrun] at hend
+  have hlive : ∀ u ≤ t,
+      (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) u).state ≠ none := by
+    refine MultiTapeTM.runFrom_state_ne_none_of_le C.tm _ t ?_
+    rw [hrun, Cfg.ofWords_state]
+    exact Option.some_ne_none _
+  refine ⟨?_, fun u hu => ?_, hend⟩
+  · rw [hend, Cfg.stopped_iff, Cfg.mapState_state, Cfg.ofWords_state]
+    exact Or.inr ⟨Sum.inr exit, rfl, decide_eq_true rfl⟩
+  · rw [Cfg.stopped_iff]
+    rintro (hnone | ⟨s, hs, hstop⟩)
+    · rcases Nat.eq_zero_or_pos u with rfl | hu0
+      · rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hc] at hnone
+        exact Option.some_ne_none _ hnone
+      · rw [seamReleaseTM_runFrom_pos C.tm entry _ hc u hu0, Cfg.mapState_state] at hnone
+        exact hlive u hu.le (Option.map_eq_none_iff.mp hnone)
+    · have hse : s = Sum.inr exit := of_decide_eq_true hstop
+      subst hse
+      rcases Nat.eq_zero_or_pos u with rfl | hu0
+      · rw [MultiTapeTM.runFrom_zero, Cfg.mapState_state, hc] at hs
+        exact Sum.inl_ne_inr (Option.some.inj hs)
+      · rw [seamReleaseTM_runFrom_pos C.tm entry _ hc u hu0, Cfg.mapState_state] at hs
+        obtain ⟨q, hq, hqe⟩ := Option.map_eq_some_iff.mp hs
+        exact hcut u hu0 hu (hq.trans (congrArg some (Sum.inr.inj hqe)))
+
+/-- **F2: a timed-out call is silent.** Every configuration of the install call before its exit
+has empty output (output only grows, and the exit's output is `[]`). Its input head, by
+contrast, is not determined by any published clause. -/
+theorem rv_call_output_nil (C : FinTM Bool) (entry exit : C.State) (x arg out : List Bool)
+    (t v : ℕ) (hv : v ≤ t)
+    (hrun : C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t =
+      Cfg.ofWords exit (stateWord C.k out)) :
+    (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) v).output = [] := by
+  have h := MultiTapeTM.output_prefix C.tm (Cfg.ofWords (input := x) entry (stateWord C.k arg)) hv
+  rw [hrun, Cfg.ofWords_output] at h
+  exact List.prefix_nil.mp h
+
+/-- **F2's fix: the input head goes home from anywhere.** The published input seek
+(`Turing.exists_inputSeekTM`, `Build/InputCall`, already imported) at `p = 1`, with the word
+`[true]` on its tape `0` and its tape `1` blank, returns the input head to position `1` from
+any position, within `C · (|[true]| + pos + 2)` steps, restoring the output (and every work tape
+and head). -/
+theorem rv_seek_home :
+    ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (R : MultiTapeTM 2 Bool S) (entry exit : S)
+      (C : ℕ), ∀ {x : List Bool} (d : Cfg 2 Bool S x), d.state = some entry →
+        (∀ q : ℤ, -1 ≤ q → q ≤ (([true] : List Bool).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + q) = FinTM.bufferTape [true] q) →
+        (∀ q, d.workTapes 1 q = none) →
+        ∃ t ≤ C * ([true].length + d.inputPos.val + 1 + 1),
+          (R.runFrom d t).state = some exit ∧ (R.runFrom d t).inputPos = 1 ∧
+            (R.runFrom d t).output = d.output := by
+  obtain ⟨S, hS, hdS, R, entry, exit, C, h⟩ := exists_inputSeekTM
+  refine ⟨S, hS, hdS, R, entry, exit, C, fun {x} d hd hw hblank => ?_⟩
+  have hp : Nat.ofDigits 2 (([true] : List Bool).map Bool.toNat) = 1 := by
+    rw [List.map_cons, List.map_nil, Bool.toNat_true, Nat.ofDigits_singleton]
+  obtain ⟨t, ht, -, -, hexit, hpos, -, -, hout⟩ :=
+    h (x := x) 1 [true] hp (by omega) d hd hw hblank
+  exact ⟨t, ht, hexit, Fin.ext (by rw [hpos]; rfl), hout⟩
+
+/-- Doubling twice is quadrupling. -/
+theorem rv_flatMap_dbl_dbl (B : List Bool) :
+    (B.flatMap fun b => [b, b]).flatMap (fun b => [b, b]) = B.flatMap fun b => [b, b, b, b] := by
+  induction B with
+  | nil => rfl
+  | cons b B ih =>
+    rw [List.flatMap_cons, List.flatMap_append, ih, List.flatMap_cons, List.flatMap_cons,
+      List.flatMap_cons, List.flatMap_nil, List.append_nil]
+    rfl
+
+/-- **F3: the query word.** `pairEncode (pairEncode B α) t` is `B` with every bit written four
+times, the inner separator doubled (`[false, false, true, true]`), `α` doubled, the outer
+separator `[false, true]`, then `t`. -/
+theorem rv_query_word (B α t : List Bool) :
+    pairEncode (pairEncode B α) t =
+      (B.flatMap fun b => [b, b, b, b]) ++ [false, false, true, true] ++
+        (α.flatMap fun b => [b, b]) ++ [false, true] ++ t := by
+  rw [pairEncode_eq, pairEncode_eq, List.flatMap_append, List.flatMap_append,
+    rv_flatMap_dbl_dbl]
+  rfl
+
+/-- **F4: the round's `X`.** With `a = ℓ + 1`, `X = f a + a + 1 = f a + ℓ + 2`: one copy of the
+rung and two cells, not "the rung twice and one cell", which would be `f a + 2ℓ + 1`. -/
+theorem rv_X_cells (fa ℓ : ℕ) : fa + (ℓ + 1) + 1 = fa + ℓ + 2 := by omega
+
+example : 0 + (2 + 1) + 1 ≠ 0 + 2 * 2 + 1 := by decide
+
+/-- **F9: the ledger's polylogarithmic term is linear**: `(L + 1)³ ≤ 8 · 2^L`, so with
+`2^L ≤ n` (`Nat.pow_log_le_self`) the `s · O((L + 1)²)` term, `s < L`, is at most `8 n`. -/
+theorem rv_cube_le (L : ℕ) : (L + 1) ^ 3 ≤ 8 * 2 ^ L := by
+  induction L with
+  | zero => norm_num
+  | succ L ih =>
+    rcases Nat.lt_or_ge L 3 with h | h
+    · have hL : L = 0 ∨ L = 1 ∨ L = 2 := by omega
+      rcases hL with rfl | rfl | rfl <;> norm_num
+    · have h2 : (L + 1 + 1) ^ 3 ≤ 2 * (L + 1) ^ 3 := by nlinarith [sq_nonneg (L : ℕ)]
+      calc (L + 1 + 1) ^ 3 ≤ 2 * (L + 1) ^ 3 := h2
+        _ ≤ 2 * (8 * 2 ^ L) := Nat.mul_le_mul_left 2 ih
+        _ = 8 * 2 ^ (L + 1) := by rw [pow_succ]; ring
+
+
