@@ -1899,7 +1899,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **#171 merged (2026-10-27, `1b800c08`).** **PR #173** (`lean/eq-cp1-landing`, head
     `599497bc`: v3 with the campaign merged in, no Lean change). `replay-leqcp1` (2 modules from
     `oleans-lwords`) written; its precheck passed. Against `oleans-lwords`: the two expected
-    sorries; the seal reproduces. **Gate 83** (a light fill gate) staged.
+    sorries; the seal reproduces. **Gate 83** (a light fill gate) staged:
+    `exchange/outbox/gates/83-eq-query-cp1-fill-gate/`, bundle `49035558…`, 46 sections, the Lean
+    at `599497bc`, the records at `669fcca6`.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
