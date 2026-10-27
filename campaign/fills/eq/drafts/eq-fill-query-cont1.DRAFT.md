@@ -163,7 +163,9 @@ figures below are the first round's, kept until then⟩):
   - `qy_round_le`, `qy_ledger`: the passed-rung bound and the ledger.
 
   It adds the note's new steps:
-  - `qy_guard`: the guard split's equation;
+  - `qy_guard`: the guard split's equation. **It is landed**, with the same statement, as the
+    file's private `qy_guard` (checkpoint 1): cite that one, and do not copy the probe's (the name
+    would clash, and the copy would be a second proof);
   - `qy_ones_val`, `qy_rung_val`: the all-ones counter's value `2^m − 1` and the next rung's
     counter value `2^m`;
   - `qy_ones_ge`, `qy_two_pow_bits_le`: the counter is at least `D (n + 1)` and its width's
