@@ -1487,7 +1487,17 @@ theorem guessCtlRunTM_runWith_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP
       NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red := rfl
   rw [hN]
   set H := NDTM.phaseHostND M ⟨GuessRunPhase.pre, P.q₀⟩ red with hH
-  have hinit : H.initCfg z = (P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre) := rfl
+  have hinit : H.initCfg z = (P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre) := by
+    rw [NDTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.init_state, Cfg.init_state, Option.map_some]
+      rfl
+    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext i p
+      rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext i
+      rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
   -- phase 1: the setup, then one dispatch
   have h1 : H.runWith (a₁ ++ [b₁]) ((P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre)) =
       cP.mapState (fun _ =>
@@ -1512,17 +1522,11 @@ theorem guessCtlRunTM_runWith_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP
       (⟨.guess, NDWriterState.run q₀⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) =
       cW.mapState (Sigma.mk GuessRunPhase.guess) := by
     rw [Cfg.mapState_mapState]; rfl
-  have hWst : cW.state = some (NDWriterState.run q₀) := by simp [cW, Cfg.mapState, hPexit]
+  have hWst : cW.state = some (NDWriterState.run q₀) := by simp [cW, Cfg.mapState_state, hPexit]
   obtain ⟨hW1, hW2⟩ := ndWriterTM_run_controller j q₀ δ stop cW q₀ hWst a₂ m (by omega)
     hlive' hstop'
   rw [List.take_of_length_le (by omega)] at hW1
-  have h2 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.guess cW _ a₂ hW1
-    NDWriterState.done rfl ⟨.skip, SeekPhase.run⟩ rfl (by
-      intro u hu s' hs'
-      cases s' with
-      | done => exact absurd hs' (hW2 u (by omega))
-      | run _ => rfl) b₂).2
-  -- the writer's endpoint, named
+  -- the writer's endpoint, named, through the renaming's field equations
   let tW : ℤ → Option Bool := fun p =>
     if cP.workTapePos j ≤ p ∧ p < cP.workTapePos j + (m : ℤ) then
       FinTM.bufferTape s (p - cP.workTapePos j)
@@ -1530,18 +1534,38 @@ theorem guessCtlRunTM_runWith_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP
   let cW' : Cfg k Bool (NDWriterState Q) z :=
     ⟨some .done, cP.inputPos, Function.update cP.workTapes j tW,
       Function.update cP.workTapePos j (cP.workTapePos j + m), cP.output⟩
-  change _ = cW'.mapState _ at h2
+  have hX : (ndWriterTM k j q₀ δ stop false).runWith a₂ cW = cW' := by
+    rw [hW1]
+    apply Cfg.ext
+    · rfl
+    · exact Cfg.mapState_inputPos (fun _ => NDWriterState.run q₀) cP
+    · have hwt : (cP.mapState (fun _ => NDWriterState.run q₀)).workTapes = cP.workTapes :=
+        funext fun i => funext (Cfg.mapState_workTapes _ cP i)
+      funext i p
+      simp only [cW, cW', tW, ← hs_def, hwt, Function.update_apply, Cfg.mapState_workTapes,
+        Cfg.mapState_workTapePos]
+    · funext i
+      simp only [cW, cW', Function.update_apply, Cfg.mapState_workTapePos]
+    · exact Cfg.mapState_output (fun _ => NDWriterState.run q₀) cP
+  have h2 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.guess cW cW' a₂ hX
+    NDWriterState.done rfl ⟨.skip, SeekPhase.run⟩ rfl (by
+      intro u hu s' hs'
+      cases s' with
+      | done => exact absurd hs' (hW2 u (by omega))
+      | run _ => rfl) b₂).2
   -- phase 3: one step right, onto the cell after the stream's right blank, then one dispatch
   let cS : Cfg k Bool SeekPhase z := cW'.mapState (fun _ => SeekPhase.run)
   have hcS : cW'.mapState (fun _ =>
       (⟨.skip, SeekPhase.run⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) =
       cS.mapState (Sigma.mk GuessRunPhase.skip) := by
     rw [Cfg.mapState_mapState]; rfl
-  have hS := skipTM_run_ofCfg (x := z) j ([] : List Bool) cS rfl (by
+  have hS := skipTM_run_ofCfg (x := z) j ([] : List Bool) cS
+    (by simp only [cS, Cfg.mapState_state]; rfl) (by
     intro p h0 h1
     have hp : p = 0 := by simp at h1; omega
     subst hp
-    simp [cS, cW', tW, Cfg.mapState, hblank m])
+    simp [cS, cW', tW, Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+      hblank m])
   let cS' : Cfg k Bool SeekPhase z :=
     { cS with
       state := some .done
@@ -1568,13 +1592,16 @@ theorem guessCtlRunTM_runWith_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP
       cB.mapState (Sigma.mk GuessRunPhase.back) := by
     rw [Cfg.mapState_mapState]; rfl
   have hBpos : cB.workTapePos j = cP.workTapePos j + m + 1 := by
-    simp [cB, cS', cS, cW', Cfg.mapState]
-  have hB := skipBackTM_run_ofCfg (x := z) j s cB rfl (by
+    simp [cB, cS', cS, cW', Cfg.mapState_inputPos, Cfg.mapState_workTapePos,
+      Cfg.mapState_output]
+  have hB := skipBackTM_run_ofCfg (x := z) j s cB
+    (by simp only [cB, Cfg.mapState_state]; rfl) (by
     intro p h0 h1
     rw [hBpos, hslen]
     have harg : cP.workTapePos j + m + 1 - m - 1 + p = cP.workTapePos j + p := by ring
     rw [harg]
-    simp only [cB, cS', cS, cW', Cfg.mapState, Function.update_self]
+    simp only [cB, cS', cS, cW', Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+      Function.update_self]
     simp only [tW]
     by_cases hin : 0 ≤ p ∧ p < (m : ℤ)
     · rw [if_pos (by omega)]
@@ -1611,18 +1638,18 @@ theorem guessCtlRunTM_runWith_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP
   erw [hcB]
   rw [List.append_nil, h4]
   apply Cfg.ext
-  · rfl
-  · rfl
-  · show Function.update cP.workTapes j tW = _
-    simp only [guessRunCfg, Cfg.mapState, hslen]
-    rfl
-  · show Function.update (Function.update (Function.update cP.workTapePos j
-      (cP.workTapePos j + m)) j _) j _ = _
-    simp only [guessRunCfg, Cfg.mapState]
-    rw [Function.update_idem, Function.update_idem, hBpos, hslen]
-    have : cP.workTapePos j + m + 1 - m - 1 = cP.workTapePos j := by ring
-    rw [this, Function.update_eq_self]
-  · rfl
+  · simp only [cB', Cfg.mapState_state, guessRunCfg_state, Option.map_some]
+  · simp only [cB', cB, cS', cS, cW', Cfg.mapState_inputPos, guessRunCfg_inputPos]
+  · funext i p
+    simp only [cB', cB, cS', cS, cW', tW, Cfg.mapState_workTapes, guessRunCfg_workTapes, hslen]
+  · funext i
+    simp only [cB', cB, cS', cS, cW', Cfg.mapState_workTapePos, guessRunCfg_workTapePos,
+      Function.update_apply, hslen, List.length_nil]
+    split_ifs with h
+    · subst h
+      omega
+    · rfl
+  · simp only [cB', cB, cS', cS, cW', Cfg.mapState_output, guessRunCfg_output]
 
 /-- **The whole branch.** Under the setup hypotheses of `Turing.guessCtlRunTM_runWith_handoff`,
 let the stream `s` of length `m` first stop the controller at its end, and let the run `V` from
@@ -1717,12 +1744,20 @@ theorem guessCtlRunTM_runWith {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [Decid
     have hst : (d.mapState (fun _ => (⟨.out, decide (d.state = some acc)⟩ :
         Σ i, GuessRunPhase.CtlState SP SQ Q i))).state =
         some ⟨.out, decide (d.state = some acc)⟩ := by
-      simp [Cfg.mapState, hsv]
-    unfold NDTM.stepWith
-    rw [hst]
-    apply Cfg.ext <;>
-      simp [NDTM.phaseHostND, red, guessCtlRunRed, M, guessCtlRunPhases, Cfg.mapState,
-        Action.mapState]
+      rw [Cfg.mapState_state, hsv]
+      rfl
+    rw [NDTM.stepWith_of_some hst]
+    have hwt : ∀ i, (d.mapState (fun _ => (⟨.out, decide (d.state = some acc)⟩ :
+        Σ i, GuessRunPhase.CtlState SP SQ Q i))).workTapes i = d.workTapes i := fun i =>
+      funext (Cfg.mapState_workTapes _ d i)
+    apply Cfg.ext <;> (try funext i) <;> (try funext p) <;>
+      simp only [NDTM.phaseHostND, red, guessCtlRunRed, M, guessCtlRunPhases, hwt, Action.apply_state,
+        Action.apply_inputPos, Action.apply_workTapes, Action.apply_workTapePos,
+        Action.apply_output, Action.mapState_state, Action.mapState_inputTape,
+        Action.mapState_workTapes, Action.mapState_output, Cfg.mapState_inputPos,
+        Cfg.mapState_workTapes, Cfg.mapState_workTapePos, Cfg.mapState_output,
+        Cfg.workTapeSymbols_eq, Function.update_eq_self, moveInputPos_zero, Option.map_none,
+        Option.toList_some, Option.getD_none, SignType.coe_zero, add_zero]
   erw [hout]
   rw [NDTM.runWith_of_halt _ rfl]
 
@@ -1759,7 +1794,17 @@ theorem guessCtlRunTM_stop_of_halted {k : ℕ} {SP SQ Q : Type} [DecidableEq SP]
       NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red := rfl
   rw [hN] at hhalt
   have hinit : (NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red).initCfg z =
-      (P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre) := rfl
+      (P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre) := by
+    rw [NDTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.init_state, Cfg.init_state, Option.map_some]
+      rfl
+    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext i p
+      rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext i
+      rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
   rw [hinit] at hhalt
   -- the setup is live up to its exit
   have hPlive : ∀ u ≤ TP, (P.runFrom (P.initCfg z) u).state ≠ none := by
@@ -1794,7 +1839,7 @@ theorem guessCtlRunTM_stop_of_halted {k : ℕ} {SP SQ Q : Type} [DecidableEq SP]
       from rfl, hrun] at hhalt
     change ((P.toNDTM.runWith w (P.initCfg z)).mapState _).state = none at hhalt
     rw [MultiTapeTM.toNDTM_runWith] at hhalt
-    simp only [Cfg.mapState] at hhalt
+    simp only [Cfg.mapState_state] at hhalt
     exact hPlive w.length hshort (Option.map_eq_none_iff.mp hhalt)
   · -- after the setup: the host follows the writer, which has not stopped
     push_neg at hshort
@@ -1833,7 +1878,7 @@ theorem guessCtlRunTM_stop_of_halted {k : ℕ} {SP SQ Q : Type} [DecidableEq SP]
         (⟨.guess, NDWriterState.run q₀⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) =
         cW.mapState (Sigma.mk GuessRunPhase.guess) := by
       rw [Cfg.mapState_mapState]; rfl
-    have hWst : cW.state = some (NDWriterState.run q₀) := by simp [cW, Cfg.mapState, hPexit]
+    have hWst : cW.state = some (NDWriterState.run q₀) := by simp [cW, Cfg.mapState_state, hPexit]
     have hwr : ∀ u ≤ r.length, (ndWriterTM k j q₀ δ stop false).runWith (r.take u) cW =
         wr_cfg j cW (.run ((r.take u).foldl δ q₀)) (r.take u) := fun u hu =>
       wr_prefix_controller j q₀ δ stop cW q₀ hWst r u hu (fun i hi => hnostop i (by omega))
@@ -1859,7 +1904,7 @@ theorem guessCtlRunTM_stop_of_halted {k : ℕ} {SP SQ Q : Type} [DecidableEq SP]
       show cW.mapState (Sigma.mk GuessRunPhase.guess) = cW.mapState emb from rfl, hrun] at hhalt
     change (((ndWriterTM k j q₀ δ stop false).runWith r cW).mapState _).state = none at hhalt
     rw [show r = r.take r.length from (List.take_length).symm, hwr r.length le_rfl] at hhalt
-    simp [wr_cfg, Cfg.mapState] at hhalt
+    simp [wr_cfg, Cfg.mapState_state] at hhalt
 
 /-- **Acceptance, forward.** Under the setup hypotheses of `Turing.guessCtlRunTM_runWith_handoff`,
 let the stream `s` first stop the controller at its end, and let the run `V` from
