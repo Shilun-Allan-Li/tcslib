@@ -1911,7 +1911,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     2,152 pairs, the owned file in none (the guard pairs gone with #171). Draft updated (line
     numbers, blob, counts, the landed `qy_guard` hazard, H as #172). Valid while the Lean is #173's
     tree: if #172 merges first, re-take the order list, the sorry set and the screen base. Next:
-    its review sub-agent, then issue (Claude) after #173 merges.
+    its review sub-agent (launched 2026-10-27, working in `review/eq-cont1-brief/`), then issue
+    (Claude) after #173 merges.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
