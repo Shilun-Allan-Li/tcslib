@@ -29,12 +29,14 @@ findings 1 and 2; the campaign's records merged in by `086c0ef0` (no Lean change
 | 16 | note | The remaining lint and documentation claims are supported, subject to findings 1–2. | Agreed; both fixed. |
 
 **The replay, round 2:** `replay-lnfapi4.sh` (`evidence/round1-fix/`), the same 4 modules, chained
-from `oleans-lhh`, pinning the head's blob `c01cd773`. Its precheck passed. **Pending.**
+from `oleans-lhh`, pinning the head's blob `c01cd773`. **Passed** (user, 2026-10-27): 4 of 4 at
+`086c0ef0`, 0 failed, static-equal (`replay-lnfapi4.log`, `replay-lnfapi4-static.txt`); snapshot
+`oleans-lnfapi4`.
 
 **Round 2** (`pack-r2.md`, at `086c0ef0`): bundle SHA-256
 `67bedf22d76355ebe3c993889ab4ef8ee9aac369fc54ba8c2edfd017fef59dde` (29 sections), the records at `62c35d13`.
 The screen at `4c0a5943` is identical to round 1's head (none new, none gone; the case lemmas are
-below the screen's minimum body). **Findings: pending.**
+below the screen's minimum body). **Dispatched (user, 2026-10-27). Findings: pending.**
 
 **Merge state. #174: not yet clear to merge** (2026-10-27): it waits for gate 85's round 2 and
 `replay-lnfapi4`.

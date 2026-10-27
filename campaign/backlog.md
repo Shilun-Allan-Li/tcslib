@@ -2005,6 +2005,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     sentence; the proofs confirmed. Fixed by `4c0a5943`: 19 case lemmas covering every input
     (check 8 the base's three names again), the docstring; the erratum recorded. Round 2:
     `replay-lnfapi4` written (precheck passed), the screen running, `pack-r2.md` drafted.
+    **Round 2 dispatched** (bundle `67bedf22…`, 29 sections); **`replay-lnfapi4` passed** (4 of 4,
+    static-equal, at `086c0ef0`). #174 waits for round 2's findings.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
