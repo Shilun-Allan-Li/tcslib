@@ -1785,6 +1785,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     modules, 34 roots, 22 base sorries in 11 modules; the screen base 1,734 declarations and
     2,162 pairs (14 minutes, 2.0 GB); lint 0 FAIL, 2 WARN.
     **Dispatched (user, 2026-10-27), Codex.**
+  - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
+    `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
+    the block and the counter; one guessed block holds the stream and the budget word; the run
+    branches on the flag into the clocked, hosted core (middle) or decider (top). Published:
+    every host; missing: only leaves, among them a `pairEncode` writer, which E-Q's L6 provides
+    in the same file. 1.5–2.8k lines (ESTIMATE). **Decisions pending (user):** timing (after
+    E-Q, recommended), the guess (one block via `guessRunTM`, recommended), the budget's form
+    (binary, tested and normalized, recommended), the queue (after E-Q's delivery).
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
