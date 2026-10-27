@@ -1970,7 +1970,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `LOGSPACE` and `PSPACE` membership readings. F6 still waits on U2's harvest API PR. Q-D3 (H
     after F6, one fill per file) is the one block. **Ruled (user, 2026-10-27): H first, with
     `LOGSPACE_ssubset_PSPACE` and `SPACE_linear_ne_NP` as later checkpoints of the same fill; F6
-    after U2's harvest API PR.** H's brief is next to draft.
+    after U2's harvest API PR.** **H's route note** (`campaign/items/b6hosts/H/H-route-design.md`,
+    2026-10-27): every phase of `D` on a published host (the input fold; `g`'s witness lifted and
+    captured; `exists_recordInitTM` at radius `g n`; `exists_configWindowRunnerTM`, whose clock
+    supersedes the sketch's; the verdict), packaged by `decidesInSpace_of_alphabetReduction`; the
+    corollaries' readings exist. ESTIMATE 2.2–4.7k. Decisions: the agent; the timing. Next: the
+    brief and its pre-ship (order list 198 modules with the overlay `SelfUniversal`,
+    `Build/WindowRun`, `SpaceComplexity/WindowClock`; 54 roots; 26 base sorries in 10 modules).
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
