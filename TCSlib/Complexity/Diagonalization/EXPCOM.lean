@@ -366,10 +366,8 @@ private lemma expcom_front_poly : PolyTimeComputable expcom_front := by
     polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid
   have hu : PolyTimeComputable
       (fun z => [decide ((incFixed (expcom_tail z)).getD [] = [])]) := by
-    convert (polyTimeComputable_of_linear
-      (FinTM.computesFunInTime_ifEq [] [true] [false])).comp (hi.comp ht) using 1
-    funext z
-    by_cases h : (incFixed (expcom_tail z)).getD [] = [] <;> simp [Function.comp_def, h]
+    simpa only [Function.comp_def] using
+      (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq [])).comp (hi.comp ht)
   have hg : PolyTimeComputable (fun z => [expcom_ok z]) :=
     polyTimeComputable_and
       (polyTimeComputable_and hv (hv.comp polyTimeComputable_pairSndD)) hu

@@ -25,6 +25,10 @@ Two facts about the increment's output support the second: a successful incremen
 all-`true` word (`Turing.incFixed_getD_eq_nil_iff`), the overflow criterion
 `Turing.incFixed_eq_none_iff_replicate` in that form.
 
+## Main definitions
+
+None: the module states contracts for machines that the library already builds.
+
 ## Main results
 
 * `Turing.incFixed_ne_some_nil`, `Turing.incFixed_getD_eq_nil_iff` — the increment's output.
@@ -93,26 +97,24 @@ theorem computesFunInTime_decideEq (w : List Bool) :
 all-`true` words (the empty word included) and `[false]` elsewhere, within `c · (n + 1)`.
 
 **Proof sketch.** Compose the fixed-width increment (`computesFunInTime_incFixed`, its output read
-with the empty default) with the test for the empty word (`computesFunInTime_decideEq []`); the
-increment's output is at most as long as its input, so the composite stays linear. By
-`incFixed_getD_eq_nil_iff` the composite's bit is the all-`true` test. -/
+with the empty default) with the test for the empty word (`computesFunInTime_decideEq []`) by
+`computesFunInTime_comp`. Its bound, the increment's time plus the test's at the increment's time,
+is linear in `n + 1` again, and the constants are absorbed. By `incFixed_getD_eq_nil_iff` the
+composite's bit is the all-`true` test. -/
 theorem computesFunInTime_allTrue :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => [decide (x = List.replicate x.length true)])
         fun n => c * (n + 1) := by
   obtain ⟨I, a, hI⟩ := computesFunInTime_incFixed
-  obtain ⟨E, b, hE⟩ := computesFunInTime_ifEq [] [true] [false]
+  obtain ⟨E, b, hE⟩ := computesFunInTime_decideEq []
   obtain ⟨U, c, hU⟩ := computesFunInTime_comp hI hE
     (fun _ _ h => Nat.mul_le_mul_left b (Nat.add_le_add_right h 1))
   refine ⟨U, c * (a + b * a + b + 1), (computesFunInTime_iff _ _ _).mpr ?_⟩
   intro x
   have hx := (computesFunInTime_iff _ _ _).mp hU x
-  have hout : (if (incFixed x).getD [] = [] then [true] else [false]) =
+  have hout : [decide ((incFixed x).getD [] = [])] =
       [decide (x = List.replicate x.length true)] := by
     simp only [incFixed_getD_eq_nil_iff x]
-    by_cases he : x = List.replicate x.length true
-    · simp only [if_pos he, decide_eq_true he]
-    · simp only [if_neg he, decide_eq_false he]
   simp only [Function.comp_apply, hout] at hx
   apply hx.mono
   calc
@@ -122,7 +124,8 @@ theorem computesFunInTime_allTrue :
       have e1 : a * (x.length + 1) + b * (a * (x.length + 1) + 1) + 1 =
           (a * (x.length + 1) + b * a * (x.length + 1)) + (b + 1) := by ring
       have e2 : (a + b * a + b + 1) * (x.length + 1) =
-          (a * (x.length + 1) + b * a * (x.length + 1)) + (b * (x.length + 1) + (x.length + 1)) := by
+          (a * (x.length + 1) + b * a * (x.length + 1)) +
+            (b * (x.length + 1) + (x.length + 1)) := by
         ring
       rw [e1, e2]
       exact Nat.add_le_add_left (Nat.add_le_add h1 (by omega)) _
