@@ -1928,7 +1928,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     rule; **(3) ruled (user, 2026-10-27): stage the review's probes as inputs.** The #172 edits
     applied (base, in-flight none, 20 in 9, out-of-scope list, the tail's time). The base file
     and the 216-name import probe re-run on `oleans-lhh`: the same outputs. The 32-file screen
-    base is running.
+    base: 1,781 declarations, 2,165 pairs (13 new: 11 from the two added files, 2 #172's
+    disclosed at gate 84; none gone; no owned-file pair). Pre-ship `preship-940671e0/`.
+    **Cont1 issued (2026-10-27; Claude, a single fill)**: `campaign/fills/eq/briefs/
+    eq-fill-query-cont1.md`, with `inputs/eq-fill-query-cont1/` (11 files), the order list (84),
+    the base sorries (20 in 9), the screen base and the pre-ship log. The issue commit is the
+    brief's `@ANCESTOR@`.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in

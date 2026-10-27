@@ -1,0 +1,62 @@
+/-
+The cont1 brief review's seal controls (a probe record): for each definition the review probe
+seals beyond the pre-ship's twelve, a goal that closes by `rfl` with nothing sealed and fails
+under the seal.
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.BufferWords
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing.NTimeDiag
+
+section Unsealed
+
+example (x : List Bool) (q : Option Unit) (c : Cfg 1 Bool Unit x) (ct : ℤ → Option Bool)
+    (cp : ℤ) : (clockCfg q c ct cp).state = q := rfl
+example (ct : ℤ → Option Bool) (cp : ℤ) (u : List Bool) :
+    wordPatch ct cp u =
+      fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q :=
+  rfl
+example (w : List Bool) (z : ℤ) : FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
+  rfl
+example (f g : ℕ → ℕ) : query f g [] = [] := rfl
+example (f : ℕ → ℕ) (ℓ : ℕ) : budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2 := rfl
+example (i : ℕ) : stageCode i = (Nat.bits ((Nat.unpair i).1 + 1)).dropLast := rfl
+example (f : ℕ → ℕ) (n : ℕ) : stage f n = Nat.find (exists_le_ladder_succ f n) := rfl
+example (f : ℕ → ℕ) : ladder f 0 = 2 := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Turing.clockCfg Turing.wordPatch Turing.FinTM.bufferTape
+  Turing.NTimeDiag.query Turing.NTimeDiag.budget Turing.NTimeDiag.stageCode
+  Turing.NTimeDiag.stage Turing.NTimeDiag.ladder
+
+example (x : List Bool) (q : Option Unit) (c : Cfg 1 Bool Unit x) (ct : ℤ → Option Bool)
+    (cp : ℤ) : (clockCfg q c ct cp).state = q := rfl
+example (ct : ℤ → Option Bool) (cp : ℤ) (u : List Bool) :
+    wordPatch ct cp u =
+      fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q :=
+  rfl
+example (w : List Bool) (z : ℤ) : FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
+  rfl
+example (f g : ℕ → ℕ) : query f g [] = [] := rfl
+example (f : ℕ → ℕ) (ℓ : ℕ) : budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2 := rfl
+example (i : ℕ) : stageCode i = (Nat.bits ((Nat.unpair i).1 + 1)).dropLast := rfl
+example (f : ℕ → ℕ) (n : ℕ) : stage f n = Nat.find (exists_le_ladder_succ f n) := rfl
+example (f : ℕ → ℕ) : ladder f 0 = 2 := rfl
+
+end Sealed
+
+end Turing.NTimeDiag
