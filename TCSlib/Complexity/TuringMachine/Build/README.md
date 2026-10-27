@@ -50,6 +50,7 @@ Conventions:
 | --- | --- |
 | `Convention` | The seam `Cfg.ofWords` with its field equations, and the word functions the primitives are stated against (`incFixed`, `splitAtLastTrue`, `solveSplit`). |
 | `Primitives` | The catalog of timed string functions, as function-level statements (`Turing.FinTM.computesFunInTime_*`); several arguments travel through the self-delimiting pairing `Turing.pairEncode`. |
+| `WordTests` | Two linear-time one-bit tests, in the form the timed conditional takes: equality with a fixed word (`FinTM.computesFunInTime_decideEq`) and the all-`true` word (`FinTM.computesFunInTime_allTrue`), with the increment's output facts `incFixed_ne_some_nil` and `incFixed_getD_eq_nil_iff`. |
 | `Catalog` | Tape routines with exact time and space: `transferTM`, `copyTM`, `clearTM`, `compareTM`, `incrementTM`; the blank-separated field layout (`joinFields`, `fieldsTape`, `fieldOffset`); the seek family `skipTM`, `skipBackTM`, `seekEndTM`, `seekStartTM`; the lockstep walk `walkTM`; the mapped sweeps `copyMapTM` and `transferMapTM`; the finite-state sweep `scanTM`; the space bounds of the primitive catalog. |
 | `Scan` | Writers of a fixed word (`writeConstTM`, `writeAdvTM`) and sweeps of the native input (`inputCopyTM`, `inputFoldTM`). |
 | `Rewind`, `InputRewind` | Return a work-tape head (`rewindTM`) or the input head (`inputRewindTM`) to the start of its word, at an exact time. |
