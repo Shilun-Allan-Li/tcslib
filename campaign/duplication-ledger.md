@@ -621,25 +621,27 @@ edits `CircuitComplexity/*`.** Census (one member per file, at A1's head): `Clas
 one-fifth rule is not reached.
 
 **RS-1, the restart identity** (PR #170, B5a's landing, 2026-10-27; disclosed in gate 81's pack,
-item 4). One fact: a machine whose initial state is a relabelled `q` starts in the relabelled
-blank configuration at `q`, i.e. `B.q₀ = f A.q₀ → B.initCfg x = (A.initCfg x).mapState f`. It is
-proved privately in three files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field
-equations:
+item 4; completed by gate 81's finding 1). One fact: a machine whose initial state is a relabelled
+`q` starts in the relabelled blank configuration at `q`, i.e.
+`B.q₀ = f A.q₀ → B.initCfg x = (A.initCfg x).mapState f`. It is proved at five sites in four
+files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equations:
 - `Turing.UniversalK`'s `uk_init_mapState` (private, line 1816), the general form, used twice
   (`uk_loop_init`, the suffix startup);
-- `CodeSimulator`'s `us_start` (private, line 8984 at #170's head `101434fd`), its instance at
+- `Turing.UniversalK`'s `exists_selfStartupTMK` (public, line 1425): its local `hinit`
+  (line 1584), `R.initCfg (pairEncode α w) = d₀.mapState Sum.inl` with
+  `R := { W with q₀ := Sum.inl A.q₀ }` (gate 81's finding 1);
+- `CodeSimulator`'s `us_start` (private, line 8984 at #170's head), its instance at
   `{ W with q₀ := Sum.inl entry }`, after `MultiTapeTM.initCfg_with_q₀`;
 - `ExhaustiveReplay`'s `xr_E_initCfg` (private, line 3133), its instance at a doubled `Sum.inl`
-  with the host's blank fields.
+  with the host's blank fields;
+- `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
+  at a seven-fold `Sum.inl` of the embedded blank start `c0`.
 
-The v3 screen's third pair at 89%, `NTimeHierarchy`'s `un_setup`, is containment, not a member: a
-980-line setup proof whose many `Cfg.mapState_*` field rewrites cover `us_start`'s tokens; it does
-not prove the identity. Census (one member per file): `CodeSimulator` 1 of 208 declarations
-(12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 1 of 79 (1.3%).
-The one-fifth rule is not reached. **Disposition pending:** gate 81's pack asks whether the
-identity should be published before #170 lands; the default is a public row beside
-`MultiTapeTM.initCfg_with_q₀` (`TuringMachine/Finite`) in the user's dedup window (12.2c), with
-the three re-pointed.
+Census (one member per file): `CodeSimulator` 1 of 208 declarations (12 public, 196 private;
+0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79 (2.5%), `NTimeHierarchy` 1 of 15
+(6.7%). The one-fifth rule is not reached. **Disposition** (gate 81's finding 1: publication need
+not precede #170 under D1(A)): a public row beside `MultiTapeTM.initCfg_with_q₀`
+(`TuringMachine/Finite`) in the user's dedup window (12.2c), with the five sites re-pointed.
 
 **PL-1, the linear-to-polynomial lift, and WT-1's residue** (PR #171, the word tests, 2026-10-27;
 disclosed in gate 82's pack, item 5). Two copies outside the ruling's scope (E-DUP covered the
