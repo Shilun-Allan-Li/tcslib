@@ -1,0 +1,67 @@
+import TCSlib.Complexity.ClassPSPACE.TQBF
+import TCSlib.Complexity.Diagonalization.EXPCOM
+import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NotTimeConstructible
+import TCSlib.Complexity.Diagonalization.Relativization
+import TCSlib.Complexity.SpaceComplexity.ExpTime
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.Inclusions
+import TCSlib.Complexity.SpaceComplexity.Logspace.ImmermanSzelepcsenyi
+import TCSlib.Complexity.SpaceComplexity.Logspace.Path
+import TCSlib.Complexity.SpaceComplexity.Savitch
+import TCSlib.Complexity.TimeHierarchy.Diagonal
+import TCSlib.Complexity.TimeHierarchy.Separation
+
+/-! Roadmap probe: each headline's axioms and the constants it reaches that use `sorryAx` directly. -/
+
+open Lean in
+private def rmSorryWalk (root : Name) : CoreM (Array Name) := do
+  let env ← getEnv
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut out : Array Name := #[]
+  while !stack.isEmpty do
+    let n := stack.back!
+    stack := stack.pop
+    if visited.contains n then continue
+    visited := visited.insert n
+    if let some ci := env.find? n then
+      let cs := ci.type.getUsedConstants ++
+        ((ci.value? (allowOpaque := true)).map (·.getUsedConstants) |>.getD #[])
+      if cs.contains ``sorryAx then out := out.push n
+      for c in cs do
+        if !visited.contains c then stack := stack.push c
+  return out
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  for r in [``Complexity.time_hierarchy, ``Complexity.P_ssubset_EXP, ``Complexity.ntime_hierarchy, ``Complexity.NTIME_linear_ssubset_square, ``Complexity.exists_not_timeConstructible, ``Complexity.POracle_EXPCOM_eq_EXP, ``Complexity.NPOracle_EXPCOM_eq_EXP, ``Complexity.exists_oracle_ne, ``Complexity.baker_gill_solovay, ``Complexity.NP_subset_PSPACE, ``Complexity.NSPACE_subset_exp_dtime, ``Complexity.NL_subset_P, ``Complexity.savitch, ``Complexity.PSPACE_eq_NPSPACE, ``Complexity.TQBF_mem_PSPACE, ``Complexity.TQBF_PSPACEHard, ``Complexity.TQBF_PSPACEComplete, ``Complexity.space_universal, ``Complexity.space_hierarchy, ``Complexity.LOGSPACE_ssubset_PSPACE, ``Complexity.SPACE_linear_ne_NP, ``Complexity.PATH_mem_NL, ``Complexity.PATH_NLComplete, ``Complexity.compl_PATH_mem_NL, ``Complexity.NL_eq_coNL, ``Complexity.NSPACE_compl_eq] do
+    let s ← liftCoreM (rmSorryWalk r)
+    logInfo m!"WALK {r}: {s.size}: {s}"
+
+#print axioms Complexity.time_hierarchy
+#print axioms Complexity.P_ssubset_EXP
+#print axioms Complexity.ntime_hierarchy
+#print axioms Complexity.NTIME_linear_ssubset_square
+#print axioms Complexity.exists_not_timeConstructible
+#print axioms Complexity.POracle_EXPCOM_eq_EXP
+#print axioms Complexity.NPOracle_EXPCOM_eq_EXP
+#print axioms Complexity.exists_oracle_ne
+#print axioms Complexity.baker_gill_solovay
+#print axioms Complexity.NP_subset_PSPACE
+#print axioms Complexity.NSPACE_subset_exp_dtime
+#print axioms Complexity.NL_subset_P
+#print axioms Complexity.savitch
+#print axioms Complexity.PSPACE_eq_NPSPACE
+#print axioms Complexity.TQBF_mem_PSPACE
+#print axioms Complexity.TQBF_PSPACEHard
+#print axioms Complexity.TQBF_PSPACEComplete
+#print axioms Complexity.space_universal
+#print axioms Complexity.space_hierarchy
+#print axioms Complexity.LOGSPACE_ssubset_PSPACE
+#print axioms Complexity.SPACE_linear_ne_NP
+#print axioms Complexity.PATH_mem_NL
+#print axioms Complexity.PATH_NLComplete
+#print axioms Complexity.compl_PATH_mem_NL
+#print axioms Complexity.NL_eq_coNL
+#print axioms Complexity.NSPACE_compl_eq
