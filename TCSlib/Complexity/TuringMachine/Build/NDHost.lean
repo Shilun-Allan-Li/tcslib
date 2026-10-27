@@ -48,6 +48,12 @@ up front, with one small nondeterministic leaf, and then run deterministically.
   deterministic phases, and gives all-branch halting and exact-budget acceptance; with the
   interpreter core run silently (`Turing.embedSilentTM`), the core's precondition and live
   verdicts (`Turing.guessRunTM_silent_spec`).
+* **The controller-stopped assembly** `Turing.guessCtlRunTM` has the same phases with the
+  controller-stopped writer, over a tape blank from its head on: the guess ends when the
+  controller stops, after a number of bits that depends on the bits. Its contract gives the
+  handoff, the whole branch through the run's verdict, and acceptance in both directions; a
+  halted branch has passed a stop of the controller (`Turing.guessCtlRunTM_stop_of_halted`).
+  There is no all-branch halting: a stream that never stops the controller never ends the guess.
 
 ## Main definitions
 
@@ -55,6 +61,8 @@ up front, with one small nondeterministic leaf, and then run deterministically.
 * `Turing.NDWriterState`, `Turing.ndWriterTM` — the choice writer. [AB09, §2.1.2]
 * `Turing.GuessRunPhase`, `Turing.guessRunPhases`, `Turing.guessRunRed`, `Turing.guessRunTM` —
   the guess-then-run host. [AB09, §2.1.2, proof of Theorem 2.6]
+* `Turing.GuessRunPhase.CtlState`, `Turing.guessCtlRunPhases`, `Turing.guessCtlRunRed`,
+  `Turing.guessCtlRunTM` — the controller-stopped guess-then-run host. [AB09, §2.1.2]
 * `Turing.guessRunCfg`, `Turing.streamStartCfg` — the run's entry configuration after a guess,
   and the interpreter core's start configuration.
 
@@ -62,12 +70,16 @@ up front, with one small nondeterministic leaf, and then run deterministically.
 
 * `Turing.NDTM.phaseHostND_fixChoice`, `Turing.NDTM.phaseHostND_run` (proved).
 * `Turing.ndWriterTM_run_block` — the bounded flavor's contract (proved).
+* `Turing.ndWriterTM_run_controller` — the controller-stopped flavor's contract (proved).
 * `Turing.guessRunTM_runWith_handoff`, `Turing.guessRunTM_runWith_handoff_state`,
   `Turing.guessRunTM_runWith_live`, `Turing.guessRunTM_runWith`,
   `Turing.guessRunTM_haltsWithin`, `Turing.guessRunTM_accepts_iff` — the guess-then-run assembly
   (proved); `Turing.guessRunTM_runWith_setup_halt` — a halting setup (proved).
-* `Turing.guessRunCfg_clean` (proved), `Turing.guessRunTM_silent_spec` (proved modulo the
-  writer) — the interpreter core's interface: precondition, emission capture, live verdicts.
+* `Turing.guessRunCfg_clean`, `Turing.guessRunTM_silent_spec` (proved) — the interpreter
+  core's interface: precondition, emission capture, live verdicts.
+* `Turing.guessCtlRunTM_runWith_handoff`, `Turing.guessCtlRunTM_runWith`,
+  `Turing.guessCtlRunTM_stop_of_halted`, `Turing.guessCtlRunTM_accepts_of`,
+  `Turing.guessCtlRunTM_stream_of_accepts` — the controller-stopped assembly (proved).
 * The fields of the two configurations `Turing.guessRunCfg_state`, `_inputPos`, `_workTapes`,
   `_workTapePos`, `_output` and `Turing.streamStartCfg_state`, `_inputPos`, `_workTapes`,
   `_workTapePos`, `_output` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
