@@ -1,20 +1,14 @@
 <!-- DRAFT (maintainer, 2026-10-27), from the issued `eq-fill-query.md` and the review of megafill
-D's partial (`campaign/fills/eq/reviews/fill-cp1/REVIEW.md`, "The continuation"), written with the
-review's recommendations assumed: E-SERIAL not a deviation (decision 1), the two E-DUP pairs
-accepted as idiom pairs (decision 2(a)), checkpoint 1 landed first with E1–E5 (decision 3(a)),
-Codex. To fill at issue, from the pre-ship at the issue commit on the landed tree: every ⟨…⟩ (the
-issue commit @ANCESTOR@; the landing PR and its merge; the blob; the line numbers; the order list,
-roots and base sorry set; the probes' counts; the screen base, which then has the two pairs; the
-lint base). Then a review sub-agent, then issue. Remove this comment at issue. -->
+D's partial (`campaign/fills/eq/reviews/fill-cp1/REVIEW.md`, "The continuation"). **The user's
+rulings (2026-10-27):** E-SERIAL is not a deviation (addendum v2.6 adopted); E-DUP by an API PR
+first (PR #171, `Build/WordTests`, every copy re-pointed); checkpoint 1 lands with E1–E5, its guard
+citing #171's rows; **cont1 goes to Claude, as a standalone fill** (not a megafill item). To fill at
+issue, from the pre-ship at the issue commit on the landed tree (after #171 and the landing): every
+⟨…⟩ (the issue commit @ANCESTOR@; the two PRs and their merges; the blob; the line numbers; the
+order list, roots and base sorry set; the probes' counts; the screen base; the lint base). Then a
+review sub-agent, then issue. Remove this comment at issue. -->
 
 # Ch3–4 fill campaign — E-Q cont1, the stage query's main machine (`Turing.NTimeDiag.exists_queryTM`, `Diagonalization/NTimeDiagonalizer.lean`)
-
-> **⟨Megafill …, item N⟩** (cover brief ⟨…⟩; addendum ⟨v2.6⟩, Part 3). The preflight, the
-> toolchain, the clone and the cache are done once for the session. For this item: create its
-> branch from the shared base (below), **re-bootstrap your order list** (there is no overlay: your
-> first edit is a proof edit), then follow this brief. **Budget:** ⟨the cover's⟩. Deliver a
-> checkpoint zip after **each** checkpoint below, as soon as it is committed: the session may end
-> at any time, and a grouped checkpoint is a process deviation (megafill C's E-CHK).
 
 ## Repository and branch — read this before anything else
 
@@ -35,21 +29,28 @@ lint base). Then a review sub-agent, then issue. Remove this comment at issue. -
     `Turing.FinTM.exists_installCallTM` (`Build/Loop`) and `Turing.FinTM.exists_inputCallTM`
     (`Build/InputCall`), the function-level conditional `Turing.FinTM.computesFunInTime_cond`
     (`Build/Wrappers`), and the catalog's framed rows;
-  - **checkpoint 1, landed** (PR ⟨#⟩, gate ⟨⟩; megafill D's partial): your file's imports (the
-    eight of the first round), `qy_guard`, `qy_guard_decider` (the guard's decider, L1) and
-    `qy_query_of_main`, which reduces the target to the main machine's contract `hmain`
+  - **checkpoint 1, landed** (PR ⟨#⟩, gate ⟨⟩; megafill D's partial): your file's imports (the eight
+    of the first round and `Build/WordTests`), `qy_guard`, `qy_guard_decider` (the guard's decider,
+    L1) and `qy_query_of_main`, which reduces the target to the main machine's contract `hmain`
     (below);
+  - **the linear word tests** (PR #171, `Build/WordTests`):
+    `Turing.FinTM.computesFunInTime_decideEq` (equality with a fixed word, as `[decide (x = w)]`)
+    and `Turing.FinTM.computesFunInTime_allTrue`; the guard cites both. Use them wherever a leaf
+    needs a one-bit word test;
   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
-    (**⟨v2.6⟩**) and the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
+    (**v2.6**: Part 1, the resources and the cache, applies on every host; the cache is fetched
+    for your brief's Mathlib roots only), and the copy-text screen v3
+    `scripts/copy-text-screen-v3.py`;
   - **this round's inputs** (`campaign/fills/eq/inputs/eq-fill-query-cont1/`): the import probe, the
     route probe with its seal controls, the semantic-duplication probe, the review's route lemmas
     with their controls and duplication probe, and the screen population; the order list
     `campaign/fills/eq/orders/eq-fill-query-cont1.txt`, the base sorry set, the screen base and the
     pre-ship log (`campaign/fills/eq/logs/eq-fill-query-cont1-*`). The route's design note is
     `campaign/items/c1/c1e/EQ-route-design.md`.
-- **The environment was set up once, at the session's start** (the cover brief; Part 1 of the
-  addendum and its Part 3). If Lean cannot start, Part 2 applies. **If Lean never runs, do not
-  draft proofs blind.**
+- **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule
+  (E-RES). Fetch the cache for your roots only (⟨34⟩); never run the unfiltered
+  `lake exe cache get`. If Lean cannot start, follow Part 2 exactly. **If Lean never runs, do not
+  draft proofs blind**: deliver the environment report only.
 - **Branch at exactly that commit, not at the campaign tip:**
 
   ```sh
@@ -64,7 +65,7 @@ lint base). Then a review sub-agent, then issue. Remove this comment at issue. -
   - `REPORT.md` and the full modified source;
   - a `git format-patch` series against your base, and a git bundle whose only prerequisite is
     your base;
-  - **the session's shared environment logs** (`evidence/logs/` at the clone's root: preflight,
+  - **the environment logs** (`evidence/logs/` at the clone's root: preflight,
     cache store, roots, cache fetch, manifest check), this item's bootstrap and final sweep logs
     with **each module's time and maximum memory**, and the axiom log;
   - the seal test's source, its controls and both outputs; both screen outputs; and
@@ -577,8 +578,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
 
 ## Environment and verification
 
-- Lean 4 v4.25.0, mathlib pinned; the cache **for the queue's Mathlib roots only** (addendum ⟨v2.6⟩,
-  fetched once at the session's start; your order list's modules import 34 roots directly);
+- Lean 4 v4.25.0, mathlib pinned; the cache **for your roots only** (addendum v2.6, Part 1,
+  items 2–4; your order list's modules import ⟨34⟩ roots directly);
   **never `lake build`**, and never the unfiltered `lake exe cache get`. Use
   `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
 - **E-SERIAL (megafill D) is not a deviation** (the user's ruling): the cache tool's own
@@ -591,7 +592,7 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   minutes; each screen about 19 minutes (1,159 s and 1,145 s); the final sweep 8.4 minutes; a
   tail re-check about 5 s. Reserve about 25 minutes for the finishing sequence (the final sweep
   with the after screen beside it, then the REPORT and the zip), and use the rest for proofs.
-- **Re-bootstrap** (addendum Part 3, item 3.2) from
+- **Bootstrap** (addendum Part 1, item 5) from
   `campaign/fills/eq/orders/eq-fill-query-cont1.txt` (**⟨83⟩ modules**), right after branching,
   logging each module's start and end time and maximum memory. **The base sorry-warning set has ⟨22⟩
   entries in ⟨11⟩ modules** (`campaign/fills/eq/logs/eq-fill-query-cont1-base-sorries.txt`). Yours
@@ -622,8 +623,8 @@ space stubs of `Simulation`, `Composition`, `Encoding`, `ClassP/TimeConstructibl
 
 ## REPORT.md checklist
 
-- [ ] The session's shared preflight and cache numbers (quoted from its logs, the cache store's
-      log included), **the shared logs copied into this zip**, this item's bootstrap with
+- [ ] The preflight's numbers, the roots' count and the cache fetch's (quoted from the logs, the
+      cache store's log included), **the logs copied into this zip**, the bootstrap with
       per-module time and memory, and the base blob check.
 - [ ] No import added; the three landed privates unchanged; nothing outside regions (b)–(d).
 - [ ] The checkpoints reached (2–7), **one zip each**; the base hash and the ancestor check.

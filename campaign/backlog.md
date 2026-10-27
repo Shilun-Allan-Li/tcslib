@@ -1870,6 +1870,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     citations); its replay closure is 18 modules, written after the merge order with #170 is
     settled. **Gate 82** (an API gate) staged: `exchange/outbox/gates/82-word-tests-api-gate/`,
     bundle `6670e22b…`, 46 sections, the Lean at `d17f63c8`, the records at `5ffd739e`.
+    **E-Q's landing re-prepared, local only** (`local/eq-cp1-landing-v2` in `wt-eqland`, stacked
+    on #171's head): the cherry-picks and E1–E5, then `27ca2927`, the guard citing
+    `computesFunInTime_allTrue` and `computesFunInTime_decideEq` (54 lines removed; the two
+    expected sorries; the three privates on the standard three). Opens as a PR once #171 merges.
+    **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
