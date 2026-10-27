@@ -1,8 +1,4 @@
-<!-- DRAFT (maintainer, 2026-10-27): staged before #171 merges. At the PR: fill every ⟨…⟩, re-run
-the elaboration against #171's replay snapshot into evidence/, write the replay, build the
-bundle; then remove this comment. -->
-
-# External audit pack — E-Q checkpoint 1, the guard and the reduction (PR ⟨#⟩, a light fill gate)
+# External audit pack — E-Q checkpoint 1, the guard and the reduction (PR #173, a light fill gate)
 
 Campaign: the Arora-Barak chapters 3-4 plan, C1-E (the nondeterministic time hierarchy's
 diagonalizer, [AB09, proof of Theorem 3.2]). The fill brief E-Q
@@ -18,8 +14,9 @@ length (`hmain`), which stays `sorry`. The maintainer's review is
 lands now with the review's landing edits E1–E5, after the API PR #171, its guard re-pointed to
 #171's rows. The continuation (cont1) proves `hmain` on the landed tree.
 
-**The head:** `⟨branch⟩` at `⟨head, 40 characters⟩`, four commits on #171's merged head `91a1ad87`
-(`evidence/patches/`). The worker's two subjects are reworded without the campaign label (the
+**The head:** `lean/eq-cp1-landing` at `599497bc69889781f34b1925c8772b3645b00608`: four
+commits on #171's merged head `91a1ad87`, then the campaign merged in (no Lean change;
+`evidence/patches/`). The worker's two subjects are reworded without the campaign label (the
 review's F8); their author is the delivery's, and their patch-ids equal the delivered commits'.
 - `8841044d`: the worker's import overlay (the delivered `fabce3bb`), the eight imports the brief
   authorized (`Mathlib.Data.Nat.Log`, `Build/StepClock`, `Build/InputCall`,
@@ -79,7 +76,12 @@ review's F8); their author is the delivery's, and their patch-ids equal the deli
 - **Elaboration**, prepared against `oleans-laplusm` (the tree after #169) with `Build/WordTests`
   inlined (`evidence/prepared-laplusm/NTimeDiagonalizerCatAx.*`): exactly the two `sorry` warnings
   (the target and `exists_diagonalizer`); the three privates on `[propext, Classical.choice,
-  Quot.sound]`. ⟨Re-run at the PR head against #171's snapshot: `evidence/elab-head-ax.*`.⟩
+  Quot.sound]`.
+- **Elaboration and seal against `oleans-lwords`** (#171's replay snapshot, the PR's base tree;
+  `evidence/lwords/`): the module at the head, with five axiom prints, has exactly the two `sorry`
+  warnings (lines 402 and 472) and the privates on the standard three; the seal re-run on the real
+  module gives the same results (body 0 errors sealed; 39 controls fail sealed and close
+  unsealed).
 - **Freeze** (`declfreeze.py` v4, base the campaign tip's file): 22 → 22 public, 0 → 3 private,
   the one authorized body change.
 - **Lint** (`evidence/prepared-laplusm/lint-head-Diagonalization.txt`): `Diagonalization` 0 FAIL,
@@ -88,7 +90,7 @@ review's F8); their author is the delivery's, and their patch-ids equal the deli
 - **The review** (`campaign/fills/eq/reviews/fill-cp1/`): the bundle's integrity, the v3 screen,
   the duplication tiles and the import probes, on the delivery; E1–E5 tested at its head.
 - **Replay:** the downstream closure, 2 modules (`NTimeDiagonalizer` and the `Diagonalization`
-  facade, `evidence/prepared-laplusm/down-leqcp1.txt`), from ⟨#171's snapshot⟩. **Pending.**
+  facade, `evidence/prepared-laplusm/down-leqcp1.txt`), from `oleans-lwords`. **Pending.**
 
 ## Findings format
 

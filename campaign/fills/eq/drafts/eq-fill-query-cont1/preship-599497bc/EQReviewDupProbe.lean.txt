@@ -1,0 +1,32 @@
+/-
+A sample `exact?` duplication probe for the review: L1's function-level statement, the writer's
+word (`rv_query_word`), the release adapter's first stop shape, and the ledger's cube bound.
+"could not close the goal" means no published declaration states it directly.
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.BufferWords
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+open Turing Turing.NTimeDiag
+
+example : ∃ (M : FinTM Bool) (c : ℕ), M.ComputesFunInTime
+    (fun x => [decide (x = List.replicate x.length true ∧ 3 ≤ x.length)]) fun n => c * (n + 1) := by
+  exact?
+example (B α t : List Bool) : pairEncode (pairEncode B α) t =
+    (B.flatMap fun b => [b, b, b, b]) ++ [false, false, true, true] ++
+      (α.flatMap fun b => [b, b]) ++ [false, true] ++ t := by
+  exact?
+example (B : List Bool) :
+    (B.flatMap fun b => [b, b]).flatMap (fun b => [b, b]) = B.flatMap fun b => [b, b, b, b] := by
+  exact?
+example (L : ℕ) : (L + 1) ^ 3 ≤ 8 * 2 ^ L := by exact?

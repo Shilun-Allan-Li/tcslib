@@ -1889,12 +1889,34 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     all-true test's proof and sketch agree; `## Main definitions`. Two more copies found
     (`sat_pt_eq`, `clA5_pt_eq`), ledgered with PL-1 for 12.2c. After #170's merge, `mk-next`
     merged the campaign into #171 (head `91a1ad87`) and wrote `replay-lwords` (18 modules from
-    `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **#171 not yet clear
-    to merge: waits for `replay-lwords`.**
+    `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **`replay-lwords`
+    passed** (18 of 18, static-equal; snapshot `oleans-lwords`). **#171 clear to merge** at
+    `91a1ad87`.
     **E-Q's landing re-stacked, local only** (`local/eq-cp1-landing-v3` in `wt-eqland`, on #171's
     merged head `91a1ad87`): `8841044d`, `4d93a8fe` (the worker's `fabce3bb`, `9d93626d`, the
     subjects reworded without "E-Q"; same patch-ids), `1fd6a15d` (E1–E5), `a5c22dd9` (the
     re-point); the owned file's blob unchanged (`f965eac0`). Gate 83's draft carries the hashes.
+    **#171 merged (2026-10-27, `1b800c08`).** **PR #173** (`lean/eq-cp1-landing`, head
+    `599497bc`: v3 with the campaign merged in, no Lean change). `replay-leqcp1` (2 modules from
+    `oleans-lwords`) written; its precheck passed. Against `oleans-lwords`: the two expected
+    sorries; the seal reproduces. **Gate 83** (a light fill gate) staged:
+    `exchange/outbox/gates/83-eq-query-cp1-fill-gate/`, bundle `49035558…`, 46 sections, the Lean
+    at `599497bc`, the records at `669fcca6`.
+    **`replay-leqcp1` passed** (2 of 2, static-equal; snapshot `oleans-leqcp1`, cont1's base).
+    #173 waits for gate 83.
+    **Gate 83 resolved (2026-10-27): PASS 0/0/1/14** (`campaign/gates/83-eq-query-cp1-fill/`).
+    The minor (the seal generator printed 40 controls for 39) fixed in its evidence script;
+    the regenerated seal sources are byte-identical. **#173 clear to merge** at `599497bc`;
+    merge it before #172, whose replay chains from `oleans-leqcp1`.
+    **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
+    preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
+    identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
+    10 modules; lint unchanged; screen base (30 files, `Build/WordTests` added) 1,735 declarations,
+    2,152 pairs, the owned file in none (the guard pairs gone with #171). Draft updated (line
+    numbers, blob, counts, the landed `qy_guard` hazard, H as #172). Valid while the Lean is #173's
+    tree: if #172 merges first, re-take the order list, the sorry set and the screen base. Next:
+    its review sub-agent (launched 2026-10-27, working in `review/eq-cont1-brief/`), then issue
+    (Claude) after #173 merges.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
@@ -1943,6 +1965,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     a fill gate and the downstream replay, after E-Q's checkpoint 1. **Megafill E is withdrawn**
     (its cover draft kept as a record); H needs no fill. The docstring's sketch is rewritten to the
     proved chain at landing.
+    **PR #172** (`lean/h-hierarchy-landing`, head `33d68537`, one commit on the tip `52b7edba`):
+    the review's filled file, without its prints, walk and section header; sketches on the
+    privates; a private `nh_fold`, cited by `nh_inclusion` and `ntime_hierarchy_of_pos` (removing
+    a 56% same-file pair); the target's docstring rewritten; the status lines. Against
+    `oleans-lb5am`: 0 diagnostics; the walk finds `sorryAx` only in the two contracts; the ten
+    privates within the standard three; sealed over the review's 12, 0 diagnostics. Freeze 5 → 5,
+    10 → 20. Screen (14 files) 224 → 226: the truncation pair (61%, ledgered as TR-1) and a 50%
+    idiom. **Gate 84** (a fill gate) staged: `exchange/outbox/gates/84-h-hierarchy-fill-gate/`,
+    bundle `bd597671…`, 54 sections (the 14-file population included), the Lean at `33d68537`,
+    the records at `3190c6be`. The replay waits for #171 and E-Q's landing.
+    **Gate 84 resolved (2026-10-27): PASS 0/0/1/18** (`campaign/gates/84-h-hierarchy-fill/`);
+    minor 1 (the ledger's census trees and the cumulative 2 of 25) corrected. **#172 not yet clear
+    to merge:** its replay is written after #173 merges.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
