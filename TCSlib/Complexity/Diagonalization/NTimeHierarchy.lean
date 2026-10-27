@@ -14,6 +14,8 @@ import TCSlib.Complexity.ClassNP.ExhaustiveReplay
 import TCSlib.Complexity.ClassNP.TMSAT
 import TCSlib.Complexity.TuringMachine.Build.Rewind
 import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.ChoiceWords
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -35,8 +37,11 @@ Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
 
 **Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` is proved, from the
 interpreter core `Turing.exists_ndInterpreterCore`
-(`TCSlib.Complexity.TuringMachine.NDCodeSimulator`); the hierarchy `Complexity.ntime_hierarchy`
-is sorried; the exponential decider and the two corollaries are proved from them.
+(`TCSlib.Complexity.TuringMachine.NDCodeSimulator`), and the exponential decider from it. The
+hierarchy `Complexity.ntime_hierarchy` is proved from two contracts that are still `sorry`: the
+diagonalizer `Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
+`Turing.FinNDTM.exists_codeNDTM_accepts_linear`. The two corollaries are proved from the
+hierarchy.
 
 ## Design (declared deviations, each for the audit)
 
@@ -1627,107 +1632,253 @@ namespace Complexity
 
 open Turing
 
-/-- **The nondeterministic time hierarchy theorem** ([AB09, Theorem 3.2];
-[Coo72]; spec, fill pending — phase P3.3, **the phase summit**): for
-time-constructible `f` and `g`, if every constant multiple of
-`f(n+1) + f(n) + n + 1` is eventually below `g(n)` — the book's
-`f(n+1) = o(g(n))` with the two declared addends (module docstring) — then
-`NTIME f ⊊ NTIME (g + 1)`. Book strength: the overhead on `f` is **linear**
-(decision CH34-Q8), in contrast to the received deterministic hierarchy's
-square.
+/-- The chain's induction: `P n ↔ P (n + 1)` for `a ≤ n < b` gives `P a ↔ P b`.
 
-**Proof sketch.** *Inclusion:* the hypothesis at `A = 1` gives
-`f n ≤ g n` eventually (the `f n` addend); finitely many lengths absorb into
-the constant (the received `Complexity.time_hierarchy` `F`-sum idiom; no
-monotonicity needed). *Strictness* is lazy diagonalization [AB09, proof of
-Theorem 3.2 and Figure 3.1], over a scheme fixed by
-`Turing.exists_effectiveNDMachineCode`, rebuilt per the round-1 audit (its
-two majors: a per-code universal constant cannot be absorbed by choosing a
-padded large index — padding preserves `decode`, no law preserves cost —
-and the stage locator must be computable within the allowance). The
-repaired construction: **(i) the fixed-code stage schedule**: stage
-`i = pair(j, r)` runs the `j`-th binary string `α_j` (unranking), so every
-code recurs at infinitely many stages — no padded-index selection, and the
-alleged decider's constants stay fixed along its own stage subsequence (the
-same discipline as the P3.2 enumeration's repetition coordinate).
-**(ii) the `f`-adaptive ladder with capped comparisons**: with
-`a := ℓ_i + 1` the stage bottom, `T*_i := (f a + a + 1)²` and
-`ℓ_{i+1} := 2^{(T*_i)²}`, seeded at `ℓ₀ := 2` with the finitely many
-lengths at or below the seed rejected (round-2 finding 1 fixed the seed
-and this formula as *the* sequence — the round-2 pack's paraphrase
-differed by an offset, a pack erratum acknowledged in the resolutions) —
-an explicit recurrence over `f`'s constructibility witness; the locator
-compares `n` against `ℓ_{i+1}` by **bit-length arithmetic with capped
-witness runs** (the ladder value is
-never materialized in unary, and a capped run that fails to finish itself
-decides the comparison: an unfinished `f`-witness already certifies
-`ℓ_{i+1} > n`), with the completed stages' costs summing geometrically and
-the one incomplete evaluation capped — total `O(g n + 1)` after computing
-`g n` once by `g`'s witness. **(iii) the self-clocked mid-rung, guess first** (user decision 1 of
-2026-10-13; a declared sketch deviation from passing choice bits through):
-right after computing `g n`, `D` **guesses a stream of `g n` choice bits**
-with the bounded choice writer (`Turing.ndWriterTM_run_block`), its only
-nondeterministic phase; every later phase is deterministic. For
-`ℓ_i < n < ℓ_{i+1}`, `D` materializes `⟨⟨bits (g n), α_j⟩, 1^{n+1}⟩` and
-runs the deterministic interpreter core `Turing.exists_ndInterpreterCore`
-on it, hosted by Z1, with the guessed stream, at nominal simulated budget
-`g n`, under `D`'s **own step-clocked countdown of `K·(g n + 1)` steps**
-(the step clock `Turing.exists_stepClockTMVia`, shared with the B6 hosts)
-— `K` fixed by `D`'s architecture, independent of the code, **with the
-allowance split stated** (round-2 finding 2): a fixed share is reserved
-ahead of simulation for the one `g`-witness run (bounded by its own
-`c_g·(g n + 1)` clause — it runs *before* the countdown exists and is not
-cut by it), for the guess, for budget and countdown preparation, and for
-the worst single binary borrow; the **prefix-bound obligation is a clause
-of the core's contract**: when the simulated branch halts at `t' ≤ g n`,
-the core stops within `C_α·(t' + |x| + |bits (g n)| + 1)` (here
-`|x| = n + 1`, the bounded window copy of user decision 5), so the
-remaining share covers the relevant branches; `D` accepts iff the core
-accepts within the countdown, and branches cut by the countdown **reject**
-(sound: a cut branch is non-accepting, and completed accepting simulations
-are sound).
-**(iv) the top rung**: at `n = ℓ_{i+1}`, `D` runs `BF` on
-`⟨bits T*_i, α_j, 1^{a}⟩` under the same self-cap and **flips** a completed
-verdict (default answer if the cap trips); non-unary inputs reject.
-`D ∈ NTIME (g + 1)` **by construction**: every phase is either bounded
-within its reserved share of the `K·(g n + 1)` allowance or run under the
-step-clock cap, uniformly in the code. *The chain, for the alleged
-decider:* given `N` deciding `L(D)` within `c₀ · f`, take `M'` and `C₁`
-from `Turing.FinNDTM.exists_codeNDTM_accepts_linear N` and let `α` be
-`M'`'s code with its **fixed** interpreter constant `C_α`. Mid-rung, at the
-late stages of `α`'s subsequence: by the core's prefix clause the genuine
-simulation of an accepting `N`-branch costs at most
-`C_α·(C₁·(c₀·f(n+1) + 1) + (n + 1) + |bits (g n)| + 1)`, which is at most
-`A*·(f(n+1) + n + 1) + C_α·|bits (g n)|` host steps with
-`A* := C_α·(C₁·c₀ + C₁ + 2) + 1` **fixed**, and the domination hypothesis
-(its `f(n+1)` and `n + 1` addends; the logarithmic term is `o(g n)`) puts
-that below `K·(g n + 1)` eventually — so the countdown never cuts the
-relevant branches, and
-`D(1^n) = [M'` accepts `1^{n+1}` within the window`] = [1^{n+1} ∈ L(D)]`
-(forward by the linear transfer and `AcceptsWithin.mono`; backward by the
-unbounded transfer plus truncation at `N`'s own all-branch budget,
-`Turing.NDTM.runWith_of_halt`) — the chain (3.3). Top rung: the flip needs
-the transfer at the **bottom** length `a`:
-`T*_i = (f a + a + 1)² ≥ C₁·(c₀·f a + 1)` eventually — the square against
-fixed constants, no `g a` comparison needed; the hypothesis's `f n` addend
-serves the inclusion half (round-2 note 3) — and `BF`'s cost
-`C_BF·2^{C_BF·(T*_i + 1)} ≤ K·(g n + 1)` eventually along the subsequence
-since `g n ≥ n = 2^{(T*_i)²}` — the ladder's square in the exponent
-outruns any fixed linear exponent — which is the chain's (3.4); `N`
-agreeing with `D` on the whole stage collapses (3.3) into (3.4)'s flip,
-the contradiction of [AB09, Figure 3.1]. Fill obligations, named: the
-schedule and unranking; the ladder recurrence and the capped-comparison
-locator with its amortized ledger; the guess and the step-clocked
-interpreter core at fixed `K`; the two transfer instantiations (at `f(n+1)` mid-rung, at `f a`
-bottom); the chain induction. -/
+**Proof sketch.** Induction on `b` from `a`, composing the step at `b`. -/
+private theorem nh_chain (P : ℕ → Prop) {a b : ℕ} (hab : a ≤ b)
+    (step : ∀ n, a ≤ n → n < b → (P n ↔ P (n + 1))) : P a ↔ P b := by
+  induction b, hab using Nat.le_induction with
+  | base => exact Iff.rfl
+  | succ b hab ih =>
+    exact (ih fun n h1 h2 => step n h1 (by omega)).trans (step b hab (by omega))
+
+/-- Finite absorption: a function eventually below `g` is below `F · (g + 1)`.
+
+**Proof sketch.** Take `F` one more than the sum of `f` below `N₀`: beyond `N₀` the first summand
+pays, below it the sum does. -/
+private theorem nh_absorb (f g : ℕ → ℕ) (N₀ : ℕ) (h : ∀ n ≥ N₀, f n ≤ g n) :
+    ∃ F : ℕ, ∀ n, f n ≤ F * (g n + 1) := by
+  refine ⟨1 + ∑ m ∈ Finset.range N₀, f m, fun n => ?_⟩
+  by_cases hn : N₀ ≤ n
+  · have h1 := h n hn
+    nlinarith [Nat.zero_le (∑ m ∈ Finset.range N₀, f m)]
+  · have hmem : n ∈ Finset.range N₀ := Finset.mem_range.mpr (by omega)
+    have h2 := Finset.single_le_sum (fun m _ => Nat.zero_le (f m)) hmem
+    nlinarith [Nat.zero_le (g n)]
+
+/-- A constant factor folds into the membership constant: `NTIME (F · T) ⊆ NTIME T`.
+
+**Proof sketch.** A decider within `a · (F · T n)` decides within `(a F) · T n`
+(`Complexity.mem_NTIME_iff`, `Turing.FinNDTM.decidesInTime_iff`). -/
+private theorem nh_fold {T : ℕ → ℕ} (F : ℕ) : NTIME (fun n => F * T n) ⊆ NTIME T := by
+  intro L hL
+  obtain ⟨a, N, hN⟩ := mem_NTIME_iff.mp hL
+  apply mem_NTIME_iff.mpr
+  refine ⟨a * F, N, FinNDTM.decidesInTime_iff.mpr ?_⟩
+  intro x
+  simpa only [Nat.mul_assoc] using (FinNDTM.decidesInTime_iff.mp hN x)
+
+/-- The inclusion `NTIME f ⊆ NTIME (g + 1)` under the domination hypothesis.
+
+**Proof sketch.** The hypothesis at `A = 1` gives `f n ≤ g n` eventually; absorb the finitely many
+smaller lengths (`nh_absorb`), apply `NTIME.mono`, and fold the factor `F` into the membership
+constant (`nh_fold`). -/
+private theorem nh_inclusion {f g : ℕ → ℕ}
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
+    NTIME f ⊆ NTIME (fun n => g n + 1) := by
+  obtain ⟨N₀, hN₀⟩ := hfg 1
+  obtain ⟨F, hF⟩ := nh_absorb f g N₀ (fun n hn => by have := hN₀ n hn; omega)
+  intro L hL
+  have h1 : L ∈ NTIME (fun n => F * (g n + 1)) := NTIME.mono hF hL
+  exact nh_fold F h1
+
+/-- The top's threshold: `C · 2^{C (T + 1)} ≤ 2^{T²}` for every large `T`.
+
+**Proof sketch.** `C < 2^C`, so the left side is below `2^{C + C (T + 1)}`, and
+`C + C (T + 1) ≤ T²` once `T ≥ 2C + 2`. -/
+private theorem nh_top (C : ℕ) : ∃ T₀, ∀ T ≥ T₀, C * 2 ^ (C * (T + 1)) ≤ 2 ^ (T ^ 2) := by
+  refine ⟨2 * C + 2, fun T hT => ?_⟩
+  have hC : C < 2 ^ C := Nat.lt_two_pow_self
+  calc C * 2 ^ (C * (T + 1)) ≤ 2 ^ C * 2 ^ (C * (T + 1)) := Nat.mul_le_mul_right _ hC.le
+    _ = 2 ^ (C + C * (T + 1)) := by rw [← pow_add]
+    _ ≤ 2 ^ (T ^ 2) := Nat.pow_le_pow_right (by norm_num) (by nlinarith [Nat.mul_le_mul_right T hT])
+
+/-- The bottom's threshold: `C₁ (c₀ · fa + 1) ≤ (fa + a + 1)²` once `a ≥ C₁ (c₀ + 1)`.
+
+**Proof sketch.** Then `C₁ c₀ ≤ a` and `C₁ ≤ a`, and the square's cross terms pay for both. -/
+private theorem nh_bottom (C₁ c₀ fa a : ℕ) (ha : C₁ * (c₀ + 1) ≤ a) :
+    C₁ * (c₀ * fa + 1) ≤ (fa + a + 1) ^ 2 := by
+  have h1 : C₁ * c₀ ≤ a := by nlinarith
+  have h2 : C₁ ≤ a := by nlinarith
+  nlinarith [Nat.mul_le_mul_right fa h1]
+
+/-- The middle's threshold: `C (C₁ (c₀ · f (n + 1) + 1) + 1) ≤ g n` for every large `n`.
+
+**Proof sketch.** The left side is at most `(C C₁ (c₀ + 1) + C) · (f (n + 1) + 1)`, a ring
+identity; the domination hypothesis at that constant bounds it by `g n`. -/
+private theorem nh_middle {f g : ℕ → ℕ}
+    (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) (C C₁ c₀ : ℕ) :
+    ∃ N, ∀ n ≥ N, C * (C₁ * (c₀ * f (n + 1) + 1) + 1) ≤ g n := by
+  obtain ⟨N, hN⟩ := hfg (C * C₁ * (c₀ + 1) + C)
+  refine ⟨N, fun n hn => le_trans ?_ (hN n hn)⟩
+  have hid : C * (C₁ * (c₀ * f (n + 1) + 1) + 1) +
+      (C * C₁ * f (n + 1) + C * f (n + 1) + C * C₁ * c₀) =
+      (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + 1) := by ring
+  calc C * (C₁ * (c₀ * f (n + 1) + 1) + 1)
+      ≤ (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + 1) := Nat.le.intro hid
+    _ ≤ (C * C₁ * (c₀ + 1) + C) * (f (n + 1) + f n + n + 1) :=
+        Nat.mul_le_mul_left _ (by omega)
+
+/-- A late stage of a code: some stage of `α` has its bottom rung beyond `N`.
+
+**Proof sketch.** Every code recurs at stages beyond any bound
+(`Turing.NTimeDiag.stageCode_frequently`), and the ladder dominates the index
+(`Turing.NTimeDiag.le_ladder`). -/
+private theorem nh_stage (f : ℕ → ℕ) (α : List Bool) (N : ℕ) :
+    ∃ i, N ≤ Turing.NTimeDiag.ladder f i ∧ Turing.NTimeDiag.stageCode i = α := by
+  obtain ⟨i, hi, hα⟩ := Turing.NTimeDiag.stageCode_frequently α N
+  exact ⟨i, by have := Turing.NTimeDiag.le_ladder f i; omega, hα⟩
+
+/-- **Truncation at the all-branch budget.** If every branch of `N` on `x` halts within `T`, an
+acceptance of `x` at any length is an acceptance within `T`.
+
+**Proof sketch.** At a length `t ≤ T`, pad (`Turing.FinNDTM.AcceptsWithin.mono`). At `t > T`, the
+accepting word runs as its length-`T` prefix, which has halted (`Turing.run_take_of_halted`, with
+absorption by `Turing.NDTM.runWith_append` and `Turing.NDTM.runWith_of_halt`), so it accepts. -/
+private theorem nh_accepts_of_halts {N : FinNDTM Bool} {x : List Bool} {T t : ℕ}
+    (hT : N.tm.HaltsWithin x T) (ht : N.AcceptsWithin x t) : N.AcceptsWithin x T := by
+  rcases le_or_gt t T with hle | hlt
+  · exact ht.mono hle
+  · obtain ⟨w, hw, -, hout⟩ := FinNDTM.acceptsWithin_iff.mp ht
+    obtain ⟨hlen, hp, hr⟩ := run_take_of_halted (fun w => N.tm.runWith w (N.tm.initCfg x))
+      (fun c => c.state = none)
+      (fun w w' h => by simp only [NDTM.runWith_append w w' (N.tm.initCfg x),
+        NDTM.runWith_of_halt _ h])
+      (NDTM.haltsWithin_iff.mp hT) (w := w) (by omega)
+    exact FinNDTM.acceptsWithin_iff.mpr ⟨w.take T, hlen, hp, hr ▸ hout⟩
+
+/-- **A decider's language from an unbounded acceptance.** If `N` decides `L` within `T`, any
+acceptance of `x`, at any length, puts `x` in `L`.
+
+**Proof sketch.** Truncate the acceptance at `N`'s all-branch budget on `x`
+(`nh_accepts_of_halts`); the decider's clause reads membership off it. -/
+private theorem nh_mem_of_accepts {N : FinNDTM Bool} {L : Language Bool} {T : ℕ → ℕ}
+    (hN : N.DecidesInTime L T) {x : List Bool} (ht : ∃ t, N.AcceptsWithin x t) : x ∈ L := by
+  obtain ⟨t, ht⟩ := ht
+  exact ((FinNDTM.decidesInTime_iff.mp hN x).2).mpr
+    (nh_accepts_of_halts (FinNDTM.decidesInTime_iff.mp hN x).1 ht)
+
+/-- **The nondeterministic time hierarchy theorem** ([AB09, Theorem 3.2]; [Coo72]): for
+time-constructible `f` and `g`, if every constant multiple of `f(n+1) + f(n) + n + 1` is eventually
+below `g(n)` — the book's `f(n+1) = o(g(n))` with the two addends of the module docstring — then
+`NTIME f ⊊ NTIME (g + 1)`. The overhead on `f` is linear, as in the book, in contrast to the
+received deterministic hierarchy's square.
+
+**Proof sketch.** *Inclusion:* the hypothesis at `A = 1` gives `f n ≤ g n` eventually, and the
+finitely many smaller lengths are absorbed into the constant (no monotonicity of `f` is needed).
+
+*Strictness* is lazy diagonalization [AB09, proof of Theorem 3.2 and Figure 3.1]. Fix an effective
+scheme `c` (`Turing.exists_effectiveNDMachineCode`) and take the diagonalizer `D` of
+`Turing.NTimeDiag.exists_diagonalizer`, given the exponential decider
+`Turing.exists_ndAcceptsWithin_decider`. Its language `L`, acceptance of `x` within
+`K · (g |x| + 1)`, is in `NTIME (g + 1)` (`Turing.NTimeDiag.acceptLang_mem_NTIME`). Suppose `N`
+decides `L` within `c₀ · f`. The linear coded normal form
+(`Turing.FinNDTM.exists_codeNDTM_accepts_linear`) gives a coded machine `M'` and a constant `C₁`:
+an acceptance by `N` within `t` is one by `M'` within `C₁ (t + 1)`, and an acceptance by `M'` is
+one by `N` at some length. Let `C` be the diagonalizer's constant for `M'`'s code, and take a
+stage `i` of that code whose bottom rung `ℓᵢ` lies beyond the three thresholds below
+(`Turing.NTimeDiag.stageCode_frequently`). On unary words:
+- **the middle**, for `ℓᵢ < n < ℓᵢ₊₁`: `1ⁿ ∈ L ↔ 1ⁿ⁺¹ ∈ L`. Forward, `D`'s acceptance gives
+  `M'`'s within `g n`, hence `N`'s at some length; an acceptance at any length is one within
+  `N`'s all-branch budget, so `1ⁿ⁺¹ ∈ L`. Backward, `N`'s acceptance within `c₀ · f (n + 1)`
+  gives `M'`'s within `t' = C₁ (c₀ · f (n + 1) + 1)`, and the hypothesis puts `C (t' + 1)` below
+  `g n`;
+- **the chain** of these steps: `1^{ℓᵢ + 1} ∈ L ↔ 1^{ℓᵢ₊₁} ∈ L`;
+- **the top**, at `n = ℓᵢ₊₁ = 2^{T*²}` with `T* = budget f ℓᵢ`: `1ⁿ ∈ L` iff `M'` does not accept
+  `1^{ℓᵢ + 1}` within `T*`, since `C · 2^{C (T* + 1)} ≤ 2^{T*²}` once `T*` is large;
+- **the bottom**, at `a = ℓᵢ + 1`: `M'` accepts `1ᵃ` within `T*` iff `1ᵃ ∈ L`, since
+  `T* = (f a + a + 1)² ≥ C₁ (c₀ · f a + 1)` once `a ≥ C₁ (c₀ + 1)`.
+
+Together they give `1ᵃ ∈ L ↔ 1ᵃ ∉ L`.
+
+**Implementation.** The private lemmas before this theorem:
+- the chain's induction (`nh_chain`);
+- the absorption, the constant fold and the inclusion (`nh_absorb`, `nh_fold`, `nh_inclusion`);
+- the three thresholds (`nh_top`, `nh_bottom`, `nh_middle`);
+- a late stage of a code (`nh_stage`);
+- the truncation of an acceptance at an all-branch budget (`nh_accepts_of_halts`, through
+  `Turing.run_take_of_halted`), and its reading for a decider (`nh_mem_of_accepts`).
+
+The diagonalizer and the linear coded normal form are cited as contracts. -/
 theorem ntime_hierarchy {f g : ℕ → ℕ} (hf : TimeConstructible f)
     (hg : TimeConstructible g)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
     NTIME f ⊂ NTIME (fun n => g n + 1) := by
-  sorry
+  obtain ⟨c⟩ := exists_effectiveNDMachineCode
+  obtain ⟨D, K, hhalt, hD⟩ :=
+    NTimeDiag.exists_diagonalizer hf hg c (exists_ndAcceptsWithin_decider c)
+  refine (Set.ssubset_iff_of_subset (nh_inclusion hfg)).mpr
+    ⟨_, NTimeDiag.acceptLang_mem_NTIME D K g hhalt, fun hLf => ?_⟩
+  set L : Language Bool := {x | D.AcceptsWithin x (K * (g x.length + 1))} with hL
+  have hmemL : ∀ m, List.replicate m true ∈ L ↔
+      D.AcceptsWithin (List.replicate m true) (K * (g m + 1)) := by
+    intro m
+    change D.AcceptsWithin (List.replicate m true)
+      (K * (g (List.replicate m true).length + 1)) ↔ _
+    rw [List.length_replicate]
+  obtain ⟨c₀, N, hN⟩ := mem_NTIME_iff.mp hLf
+  have hdec : ∀ m, List.replicate m true ∈ L →
+      N.AcceptsWithin (List.replicate m true) (c₀ * f m) := by
+    intro m hm
+    have h := ((FinNDTM.decidesInTime_iff.mp hN (List.replicate m true)).2).mp hm
+    rwa [List.length_replicate] at h
+  obtain ⟨M', C₁, hfwd, hbwd⟩ := FinNDTM.exists_codeNDTM_accepts_linear N
+  obtain ⟨C, hC⟩ := hD (c.encode M')
+  rw [c.toNDMachineCode.decode_encode M'] at hC
+  obtain ⟨N₁, hN₁⟩ := nh_middle hfg C C₁ c₀
+  obtain ⟨T₀, hT₀⟩ := nh_top C
+  obtain ⟨i, hi, hiα⟩ := nh_stage f (c.encode M') (N₁ + T₀ + C₁ * (c₀ + 1))
+  have hℓ2 : 2 ≤ NTimeDiag.ladder f i := by have := NTimeDiag.le_ladder f i; omega
+  have hlt : NTimeDiag.ladder f i < NTimeDiag.ladder f (i + 1) :=
+    NTimeDiag.ladder_strictMono f (Nat.lt_succ_self i)
+  -- the middle step, at every `n` with `ℓᵢ < n < ℓᵢ₊₁`
+  have hmid : ∀ n, NTimeDiag.ladder f i + 1 ≤ n → n < NTimeDiag.ladder f (i + 1) →
+      (List.replicate n true ∈ L ↔ List.replicate (n + 1) true ∈ L) := by
+    intro n h1 h2
+    have hs : NTimeDiag.stage f n = i := NTimeDiag.stage_eq f (by omega) h2.le
+    obtain ⟨hmidC, -⟩ := hC n (by omega) (by rw [hs]; exact hiα)
+    obtain ⟨hsound, hcompl⟩ := hmidC (by rw [hs]; omega)
+    constructor
+    · intro hn
+      exact nh_mem_of_accepts hN (hbwd _ _ (hsound ((hmemL n).mp hn)))
+    · intro hn1
+      exact (hmemL n).mpr (hcompl _ (hfwd _ _ (hdec (n + 1) hn1)) (hN₁ n (by omega)))
+  have hchain := nh_chain (fun m => List.replicate m true ∈ L)
+    (show NTimeDiag.ladder f i + 1 ≤ NTimeDiag.ladder f (i + 1) by omega) hmid
+  -- the top's flip, at `n = ℓᵢ₊₁`
+  have htop : List.replicate (NTimeDiag.ladder f (i + 1)) true ∈ L ↔
+      ¬M'.toFinNDTM.AcceptsWithin (List.replicate (NTimeDiag.ladder f i + 1) true)
+        (NTimeDiag.budget f (NTimeDiag.ladder f i)) := by
+    have hs : NTimeDiag.stage f (NTimeDiag.ladder f (i + 1)) = i :=
+      NTimeDiag.stage_eq f hlt le_rfl
+    obtain ⟨-, htopC⟩ := hC (NTimeDiag.ladder f (i + 1)) (by omega) (by rw [hs]; exact hiα)
+    rw [hs] at htopC
+    have hTle : T₀ ≤ NTimeDiag.budget f (NTimeDiag.ladder f i) := by
+      rw [NTimeDiag.budget_eq]
+      calc T₀ ≤ f (NTimeDiag.ladder f i + 1) + (NTimeDiag.ladder f i + 1) + 1 := by omega
+        _ ≤ (f (NTimeDiag.ladder f i + 1) + (NTimeDiag.ladder f i + 1) + 1) ^ 2 :=
+          Nat.le_self_pow (by norm_num) _
+    have hthr : C * 2 ^ (C * (NTimeDiag.budget f (NTimeDiag.ladder f i) + 1)) ≤
+        NTimeDiag.ladder f (i + 1) := by
+      rw [NTimeDiag.ladder_succ f i]
+      exact hT₀ _ hTle
+    rw [hmemL]
+    exact htopC rfl hthr
+  -- the bottom's transfer, at `a = ℓᵢ + 1` within `T*`
+  have hbot : M'.toFinNDTM.AcceptsWithin (List.replicate (NTimeDiag.ladder f i + 1) true)
+      (NTimeDiag.budget f (NTimeDiag.ladder f i)) ↔
+      List.replicate (NTimeDiag.ladder f i + 1) true ∈ L := by
+    constructor
+    · intro hM
+      exact nh_mem_of_accepts hN (hbwd _ _ hM)
+    · intro hx
+      refine (hfwd _ _ (hdec _ hx)).mono ?_
+      rw [NTimeDiag.budget_eq]
+      exact nh_bottom C₁ c₀ _ _ (by omega)
+  exact iff_not_self (hchain.trans (htop.trans (not_congr hbot)))
 
 /-- **The nondeterministic time hierarchy for a positive bound**
-([AB09, Theorem 3.2]; spec, fill pending): as `Complexity.ntime_hierarchy`,
+([AB09, Theorem 3.2]): as `Complexity.ntime_hierarchy`,
 with the larger class exactly `NTIME g` when `g` never vanishes — mirroring
 `Complexity.time_hierarchy_of_pos`.
 
@@ -1735,8 +1886,8 @@ with the larger class exactly `NTIME g` when `g` never vanishes — mirroring
 `NTIME (g + 1) ⊆ NTIME g`; the reverse is `Complexity.NTIME.mono`; conclude
 from `Complexity.ntime_hierarchy`.
 
-Formally, the factor `2` is absorbed into the membership witness's constant
-(`Complexity.mem_NTIME_iff`, `Turing.FinNDTM.decidesInTime_iff`). -/
+Formally, the factor `2` is absorbed into the membership witness's constant by the private
+`nh_fold`, which the inclusion half of `Complexity.ntime_hierarchy` also uses. -/
 theorem ntime_hierarchy_of_pos {f g : ℕ → ℕ} (hf : TimeConstructible f)
     (hg : TimeConstructible g) (hpos : ∀ n, 0 < g n)
     (hfg : ∀ A : ℕ, ∃ N, ∀ n ≥ N, A * (f (n + 1) + f n + n + 1) ≤ g n) :
@@ -1745,16 +1896,12 @@ theorem ntime_hierarchy_of_pos {f g : ℕ → ℕ} (hf : TimeConstructible f)
     intro L hL
     have hscale : L ∈ NTIME (fun n => 2 * g n) :=
       NTIME.mono (fun n => by have := hpos n; omega) hL
-    obtain ⟨a, N, hN⟩ := mem_NTIME_iff.mp hscale
-    apply mem_NTIME_iff.mpr
-    refine ⟨a * 2, N, FinNDTM.decidesInTime_iff.mpr ?_⟩
-    intro x
-    simpa only [Nat.mul_assoc] using (FinNDTM.decidesInTime_iff.mp hN x)
+    exact nh_fold 2 hscale
   have heq : NTIME (fun n => g n + 1) = NTIME g :=
     Set.Subset.antisymm hback (NTIME.mono (fun n => Nat.le_succ (g n)))
   simpa only [heq] using ntime_hierarchy hf hg hfg
 
-/-- **The showcase separation** (spec, fill pending — phase P3.3):
+/-- **The showcase separation**:
 `NTIME(n + 1) ⊊ NTIME((n + 1)²)`, the ℕ-rendering of the book's displayed
 instance `NTIME(n) ⊊ NTIME(n^{1.5})` (fractional exponents have no ℕ-valued
 normal form in the campaign; the square is the nearest constructible bound).
