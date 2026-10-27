@@ -1,0 +1,10 @@
+Turing.MachineFormat.exists_uniformSimulator : ∀ (F : Turing.MachineFormat),
+  ∃ S d,
+    ∀ (α x : List Bool) (t : ℕ),
+      ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (Turing.pairEncode (Turing.pairEncode t.bits α) x) [true]
+            (d * (α.length + x.length + t + 1) ^ d)) ∧
+        (¬(F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (Turing.pairEncode (Turing.pairEncode t.bits α) x) [false]
+            (d * (α.length + x.length + t + 1) ^ d))
+# exit 0; time: 1.77 s, peak 1673297920 bytes

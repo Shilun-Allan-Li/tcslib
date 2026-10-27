@@ -10,7 +10,10 @@ startup and the probe's lemmas; the imports drop to two (`Nondeterministic` and 
 module, whose closure has the other four). **Issue after #169 merges**, with the pre-ship
 re-run there on the two-import overlay: the overlay and its lines, the import and clash
 probes, the route, start, verdict and junction probes with their controls, the lists, the
-screen base and the lint base. The paragraphs below this one are the earlier history.
+screen base and the lint base. **Measured (2026-10-27) on #169's merged head `9d0af8cb`** (`oleans-laplusm`;
+`campaign/fills/b5a/drafts/b5a-fill-unisim/preship-9d0af8cb/`), which the campaign equals once
+#169 merges: the figures below are that tree's. The paragraphs below this one are the earlier
+history.
 **Deferred from megafill C (user, 2026-10-25):** megafill C was issued with U2 only; this item goes
 in a later queue once the A+ harvest lands. Drafting base: the campaign tip
 `77f1eb4fb74deb7a1ac7bae7bc4e98d5d0f9a532` (TCSlib as after #155; #156 open). Pre-ship measured
@@ -115,12 +118,12 @@ sequential. -->
 ## Base, line numbers and what lands around you
 
 - **Your base's Lean content is the campaign tip ⟨BASE⟩** (after #169). Lines in this brief are
-  those of your base's tree, where `CodeSimulator.lean` is ⟨8,666⟩ lines (⟨12⟩ public, ⟨185⟩
-  private): #152's landing with #156's and #159's edits to `canonEmitVerdict`.
+  those of your base's tree, where `CodeSimulator.lean` is 8,666 lines (12 public, 185 private):
+  #152's landing with #156's and #159's edits to `canonEmitVerdict`.
 - **Your first edit makes your file equal to the overlay** (`CodeSimulatorOverlay.lean.txt`): the
   two imports of region (a) after line 15. **Line numbers below are the base's, and the overlay's
-  are 2 more** (the stub at ⟨8654⟩, overlay ⟨8656⟩). Every probe and measurement below was run on
-  the overlay or at the base, as marked.
+  are 2 more** (the stub at 8654, overlay 8656). Every probe and measurement below was run on the
+  overlay or at the base, as marked.
 - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩. Cite nothing they add.
 
 ## Parallel batches this round
@@ -212,19 +215,18 @@ targets 3–8 and `Complexity.baker_gill_solovay` have none from your file.
 
 **Pre-ship check** (the maintainer, at your base; its log is
 `campaign/fills/b5a/logs/b5a-fill-unisim-preship.log`):
-- **The overlay** elaborates with exactly one sorry warning, the target's (overlay line ⟨8656⟩).
-  The two imports create no cycle (neither closure contains your file). Together with every
-  module downstream of your file they import without a clash (`ImportClashProbe.lean.txt`:
-  ⟨0⟩ diagnostics).
-- **The import probe** (`B5aUSImportProbe.lean.txt`, a standalone import of your module and the
-  two, **⟨N⟩ checks of ⟨N⟩ names**, with axiom prints): 0 errors, 0 warnings, every print within
-  the standard three. **Re-run it after your delivery**, extended by every further name you cite.
-- **The route probe** (`B5aUSRouteProbe.lean.txt`, sealed): `b5a_install` (the polynomial
-  canonizer through the install call: one module `C`, uniform in the code, with a first positive
-  return at `t ≤ a · ((|α| + 1)^d + |α| + max |α| |F.serialize F.fallback| + 1)` and
+- **The overlay** elaborates with exactly one sorry warning, the target's (overlay line 8656). The
+  two imports create no cycle (neither closure contains your file). Together with every module
+  downstream of your file they import without a clash (`ImportClashProbe.lean.txt`: 0 diagnostics).
+- **The import probe** (`B5aUSImportProbe.lean.txt`, a standalone import of your module and the two,
+  **199 checks of 199 names**, with axiom prints): 0 errors, 0 warnings, every print within the
+  standard three. **Re-run it after your delivery**, extended by every further name you cite.
+- **The route probe** (`B5aUSRouteProbe.lean.txt`, sealed): `b5a_install` (the polynomial canonizer
+  through the install call: one module `C`, uniform in the code, with a first positive return at
+  `t ≤ a · ((|α| + 1)^d + |α| + max |α| |F.serialize F.fallback| + 1)` and
   `serializeK (F.machine (F.decode α))` installed), `b5a_locality` and `b5a_accepts_take` (input
-  locality), `b5a_verdict` (a halt with output `[answer]` gives both clauses) and
-  `b5a_table_le` (`|tableBitsK| ≤ max |α| |F.serialize F.fallback|`): ⟨0⟩ diagnostics.
+  locality), `b5a_verdict` (a halt with output `[answer]` gives both clauses) and `b5a_table_le`
+  (`|tableBitsK| ≤ max |α| |F.serialize F.fallback|`): 0 diagnostics.
 - **The junction probe** (`B5aJunctionProbe.append.lean.txt`, appended to the overlay, after the
   verdict probe's block `b5a_window_verdict`; sealed over 20 definitions): only the target's
   sorry warning; every lemma within the standard three:
@@ -363,7 +365,7 @@ call, whose bound is polynomial (`b5a_install`). **Do not copy** the startup's p
 
 ## Cited infrastructure (public and proved at the issue commit; all in `B5aUSImportProbe.lean.txt`)
 
-The probe's ⟨N⟩ names: the target, the format and the canonizer; the install call; the
+The probe's 199 names: the target, the format and the canonizer; the install call; the
 interpreter startup and `serializeK_eq`; input locality; the loop's entry and the hosted loop with
 `vhostCfg`'s and `counterLoopCfg`'s equations; the seam, the forwarding embedding and the
 restart; the model's run algebra and field equations. In your file you also cite the canonizer,
@@ -497,19 +499,19 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
 ## Environment and verification
 
 - Lean 4 v4.25.0, mathlib pinned; the cache **for the queue's Mathlib roots only** (addendum v2.5,
-  fetched once at the session's start; your order list's modules import ⟨41⟩ roots directly, at the
+  fetched once at the session's start; your order list's modules import 41 roots directly, at the
   overlay as at the base); **never `lake build`**, and never the unfiltered `lake exe cache get`.
   Use `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
 - **Re-bootstrap** (addendum Part 3, item 3.2) from `campaign/fills/b5a/orders/b5a-fill-unisim.txt`
-  (**⟨120⟩ modules**, computed on the overlay), **after your first edit**, logging each module's
-  start and end time and maximum memory. **The base sorry-warning set has ⟨N⟩ entries in ⟨N⟩
-  modules** (`campaign/fills/b5a/logs/b5a-fill-unisim-base-sorries.txt`). Yours is `CodeSimulator`'s
-  only one. Record the base list by name first, and report any difference.
+  (**120 modules**, computed on the overlay), **after your first edit**, logging each module's start
+  and end time and maximum memory. **The base sorry-warning set has 26 entries in 12 modules**
+  (`campaign/fills/b5a/logs/b5a-fill-unisim-base-sorries.txt`). Yours is `CodeSimulator`'s only one.
+  Record the base list by name first, and report any difference.
 - **Final checks:**
   1. `CodeSimulator`: zero errors, **no sorry warning** (for a partial, exactly the target's), and
      no other warning in anything you added.
-  2. Every other module of the order list: zero errors, and sorry warnings exactly the base's
-     minus yours (⟨N⟩ for a complete delivery).
+  2. Every other module of the order list: zero errors, and sorry warnings exactly the base's minus
+     yours (25 for a complete delivery).
   3. Re-run `B5aUSImportProbe.lean.txt` (extended by your citations) and the inherited probes:
      continuation 7's import probe
      (`campaign/fills/b5a/inputs/b5a-fill-canon-cont7/CanonCont7ImportProbe.lean.txt`), the
@@ -522,18 +524,18 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   and Baker–Gill–Solovay (the review's admission walk), so for a complete delivery all of them
   print within the standard three.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py` over `TCSlib/Complexity/TuringMachine`
-  (base: ⟨0 FAIL, 68 WARN over 84 files⟩; `CodeSimulator`'s are its size and three public
-  definitions without a lemma, `MachineFormat.toFinTM`, `codeSkipTableK`, `oneTapeMachineFormat`)
-  and `TCSlib/Complexity/Diagonalization` (base: 0 FAIL, 2 WARN over 5 files), 0 FAIL. Add no
-  line over 100 characters and no Lean linter warning in your region.
+  (base: 0 FAIL, 68 WARN over 84 files; `CodeSimulator`'s are its size and three public definitions
+  without a lemma, `MachineFormat.toFinTM`, `codeSkipTableK`, `oneTapeMachineFormat`) and
+  `TCSlib/Complexity/Diagonalization` (base: 0 FAIL, 2 WARN over 5 files), 0 FAIL. Add no line over
+  100 characters and no Lean linter warning in your region.
 
 ## Out-of-scope sorries you will see (leave every one untouched)
 
-Everything in the base sorry set except your target: ⟨the set at issue: MIG-1 stage S's sorried
-specs (`Simulation`, `Composition`, `Encoding`, `ClassP/TimeConstructible`, `Build/Wrappers`,
-`Build/Loop`, `Build/Primitives`); `Build/RecordTable`'s rows; `ClassNP/NDNormalForm`'s,
-`Diagonalization/NTimeHierarchy`'s and `Diagonalization/NTimeDiagonalizer`'s⟩. If a proof seems to
-*need* one of these beyond a named citation, that is an escalation, not a license.
+Everything in the base sorry set except your target: MIG-1 stage S's sorried specs (`Simulation`,
+`Composition`, `Encoding`, `ClassP/TimeConstructible`, `Build/Wrappers`, `Build/Loop`,
+`Build/Primitives`); `Build/RecordTable`'s four rows; `ClassNP/NDNormalForm`'s,
+`Diagonalization/NTimeHierarchy`'s and `Diagonalization/NTimeDiagonalizer`'s two. If a proof seems
+to *need* one of these beyond a named citation, that is an escalation, not a license.
 
 ## REPORT.md checklist
 
