@@ -1,0 +1,10 @@
+Turing.MachineFormat.exists_uniformSimulator : ∀ (F : Turing.MachineFormat),
+  ∃ S d,
+    ∀ (α x : List Bool) (t : ℕ),
+      ((F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (Turing.pairEncode (Turing.pairEncode t.bits α) x) [true]
+            (d * (α.length + x.length + t + 1) ^ d)) ∧
+        (¬(F.toFinTM (F.decode α)).ComputesInTime x [true] t →
+          S.ComputesInTime (Turing.pairEncode (Turing.pairEncode t.bits α) x) [false]
+            (d * (α.length + x.length + t + 1) ^ d))
+# command: bash $S/tools/leanelab.sh $W $S/oleans-laplusm rvprobe/ImportClashProbe.lean; exit 0; wall 2 s; peak 1673166848 bytes

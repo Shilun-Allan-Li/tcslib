@@ -1,0 +1,278 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Nondeterministic
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
+
+/-! B5a, the uniform simulator (`Turing.MachineFormat.exists_uniformSimulator`): the import probe.
+A standalone import of the owned module and of the two imports the brief authorizes; every
+public declaration the route cites must resolve. -/
+
+-- the target, the format and the canonizer (the owned module)
+#check @Turing.MachineFormat.exists_uniformSimulator
+#check @Turing.MachineFormat.exists_polyCanonizer
+#check @Turing.MachineFormat
+#check @Turing.MachineFormat.toFinTM
+#check @Turing.MachineFormat.machine
+#check @Turing.MachineFormat.serialize_eq
+#check @Turing.MachineFormat.skipTable_eq
+#check @Turing.CodeFormat.decode
+#check @Turing.CodeFormat.serialize_decode_length_le
+#check @Turing.CodeFormat.numStates_decode_le
+#check @Turing.serializeK
+#check @Turing.serializeK_eq
+
+-- the header passes
+#check @Turing.prefixCanonTM
+#check @Turing.prefixCanonTM_eq
+#check @Turing.prefixCanon_complete
+#check @Turing.FinTM.pairExtractTM
+#check @Turing.FinTM.pairExtractTM_fst
+#check @Turing.FinTM.pairExtractTM_snd
+#check @Turing.FinTM.pairExtractTM_fst_run
+#check @Turing.pairEncode_eq
+#check @Turing.length_pairEncode
+#check @Turing.pairDecode_pairEncode
+#check @Turing.embedSilentRetTM
+#check @Turing.embedSilentRetTM_run
+#check @Turing.embedSilentCfg
+#check @Turing.embedSilentCfg_cap
+#check @Turing.embedSilentCfg_inputPos
+#check @Turing.embedSilentCfg_output
+#check @Turing.embedSilentCfg_unselected
+#check @Turing.embedSilentCfg_selected_tape
+#check @Turing.embedSilentCfg_selected_pos
+#check @Turing.MultiTapeTM.exists_first_halt
+
+-- the rewinds and the counter copy
+#check @Turing.inputRewindTM
+#check @Turing.inputRewindTM_run
+#check @Turing.InputRewindPhase
+#check @Turing.Cfg.mapState_mapState
+#check @Turing.rewindTM
+#check @Turing.rewindTM_run_ofCfg
+#check @Turing.copyTM
+#check @Turing.copyTM_run_ofCfg
+
+-- the window, and input locality for a deterministic machine
+#check @Turing.exists_inputWindowCopyTM
+#check @Turing.counterValue_eq
+#check @Turing.counterValue_bits
+#check @Turing.MultiTapeTM.toNDTM
+#check @Turing.MultiTapeTM.toNDTM_runWith
+#check @Turing.MultiTapeTM.toNDTM_initCfg
+#check @Turing.NDTM.runWith_initCfg_take
+#check @Turing.FinTM.computesInTime_iff
+
+-- the install and the layout
+#check @Turing.FinTM.exists_installCallTM
+#check @Turing.stateWord
+#check @Turing.Cfg.ofWords
+#check @Turing.Cfg.ofWords_state
+#check @Turing.Cfg.ofWords_inputPos
+#check @Turing.Cfg.ofWords_workTapes
+#check @Turing.Cfg.ofWords_workTapePos
+#check @Turing.Cfg.ofWords_output
+#check @Turing.exists_seamLayoutTM
+#check @Turing.unaryFin_eq
+#check @Turing.FinTM.bufferTape_of_neg
+#check @Turing.FinTM.bufferTape_eq
+#check @Turing.StepBlock.summaryCells_eq
+
+-- the loop's entry and the hosted loop
+#check @Turing.StepBlock.Rep
+#check @Turing.StepBlock.Rep_iff
+#check @Turing.StepBlock.hostedLoopTM
+#check @Turing.StepBlock.hostedLoopTM_run
+#check @Turing.StepBlock.hostedLoop_read
+#check @Turing.StepBlock.exit_true
+#check @Turing.StepBlock.exit_false
+#check @Turing.StepBlock.summaryTape_eq
+#check @Turing.StepBlock.tableTape_eq
+#check @Turing.StepBlock.outputSummary_nil
+#check @Turing.StepBlock.outputSummary_true
+#check @Turing.vhostCfg
+#check @Turing.vhostCfg_state
+#check @Turing.vhostCfg_inputPos
+#check @Turing.vhostCfg_workTapes
+#check @Turing.vhostCfg_workTapePos
+#check @Turing.vhostCfg_output
+#check @Turing.vhostBank_eq
+#check @Turing.counterLoopCfg
+#check @Turing.counter_cfg_eq
+#check @Turing.FinTM.VirtualTag
+
+-- composition and embedding
+#check @Turing.seamCompTM
+#check @Turing.seamCompTM_run_ofCfg
+#check @Turing.seamCompTM_firstReturn_ofCfg
+#check @Turing.seamCompTM_runFrom_left
+#check @Turing.seamCompTM_runFrom_right
+#check @Turing.seamReleaseTM
+#check @Turing.seamReleaseTM_firstReturn
+#check @Turing.phaseHostTM
+#check @Turing.phaseHostTM_run
+#check @Turing.embedEmitTM
+#check @Turing.embedEmitTM_runFrom
+#check @Turing.embedEmitCfg_eq
+#check @Turing.embedSilentTM
+#check @Turing.embedSilentTM_runFrom
+
+-- the model
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.MultiTapeTM.runFrom_zero
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step
+#check @Turing.MultiTapeTM.output_prefix
+#check @Turing.MultiTapeTM.initCfg_eq
+#check @Turing.Cfg.mapState_state
+#check @Turing.Cfg.mapState_inputPos
+#check @Turing.Cfg.mapState_workTapes
+#check @Turing.Cfg.mapState_workTapePos
+#check @Turing.Cfg.mapState_output
+#check @Turing.Cfg.ext
+#check @Turing.FinTM.ComputesInTime.mono
+#check @Turing.length_bits_le_self
+
+-- review additions (2026-10-24): the start from `initCfg`, the install phase's release run,
+-- the field equations the route reads, and the definitions the route names
+#check @Turing.MultiTapeTM.initCfg_with_q₀
+#check @Turing.MultiTapeTM.runFrom_with_q₀
+#check @Turing.Cfg.init
+#check @Turing.Cfg.init_state
+#check @Turing.Cfg.init_inputPos
+#check @Turing.Cfg.init_workTapes
+#check @Turing.Cfg.init_workTapePos
+#check @Turing.Cfg.init_output
+#check @Turing.Cfg.mapState
+#check @Turing.stateWord_eq
+#check @Turing.seamReleaseTM_runFrom_pos
+#check @Turing.embedSilentCfg_state
+#check @Turing.embedEmitCfg
+#check @Turing.embedEmitCfg_selected_tape
+#check @Turing.embedEmitCfg_selected_pos
+#check @Turing.embedEmitCfg_unselected
+#check @Turing.embedEmitTM_frame
+#check @Turing.FinTM.bufferTape
+#check @Turing.FinTM.bufferTape_nil
+#check @Turing.StepBlock.summaryCells
+#check @Turing.StepBlock.exit
+#check @Turing.StepBlock.summaryTape
+#check @Turing.StepBlock.tableTape
+#check @Turing.tableBitsK
+#check @Turing.unaryFin
+#check @Turing.pairEncode
+#check @Turing.vhostBank
+#check @Turing.counterLoopOrbit
+
+-- admissions of the rows the route composes
+#print axioms Turing.MachineFormat.exists_polyCanonizer
+#print axioms Turing.FinTM.exists_installCallTM
+#print axioms Turing.exists_seamLayoutTM
+#print axioms Turing.exists_inputWindowCopyTM
+#print axioms Turing.StepBlock.hostedLoopTM_run
+#print axioms Turing.inputRewindTM_run
+#print axioms Turing.rewindTM_run_ofCfg
+#print axioms Turing.NDTM.runWith_initCfg_take
+#print axioms Turing.copyTM_run_ofCfg
+#print axioms Turing.prefixCanon_complete
+#print axioms Turing.embedSilentRetTM_run
+#print axioms Turing.seamCompTM_run_ofCfg
+#print axioms Turing.seamCompTM_firstReturn_ofCfg
+#print axioms Turing.seamReleaseTM_runFrom_pos
+#print axioms Turing.embedEmitTM_runFrom
+#print axioms Turing.embedEmitCfg_eq
+#print axioms Turing.MultiTapeTM.runFrom_with_q₀
+#print axioms Turing.MultiTapeTM.initCfg_with_q₀
+
+-- at issue (after #162): the startup kit's eight lemmas, the phase host's four, and the
+-- route's step reader, virtual host and clock
+#check @Turing.seamCompTM_step
+#check @Turing.prefixCanon_pairExtract_halt
+#check @Turing.headerCapture_run
+#check @Turing.embedSilentRetTM_firstReturn
+#check @Turing.embedSilentCfg_initCfg
+#check @Turing.exists_windowCall
+#check @Turing.installCall_releasePhase
+#check @Turing.exists_layoutCall
+#check @Turing.phaseHostTM_run_le
+#check @Turing.phaseHostTM_tr_of_red_none
+#check @Turing.phaseHostTM_q₀
+#check @Turing.phaseHostTM_tr_of_red_some
+#check @Turing.codeReadActionK
+#check @Turing.codeReadActionK_append
+#check @Turing.vhostEmitTM
+#check @Turing.vhostEmitTM_runFrom
+#check @Turing.counterLoopTM
+#check @Turing.counterLoopTM_run_done
+#check @Turing.counterLoopTM_run_escape
+#check @Turing.counterLoop_time_le
+#print axioms Turing.seamCompTM_step
+#print axioms Turing.prefixCanon_pairExtract_halt
+#print axioms Turing.headerCapture_run
+#print axioms Turing.embedSilentRetTM_firstReturn
+#print axioms Turing.embedSilentCfg_initCfg
+#print axioms Turing.exists_windowCall
+#print axioms Turing.installCall_releasePhase
+#print axioms Turing.exists_layoutCall
+
+-- at issue (after #169): the interpreter startup, and the junction probe's further
+-- citations (its source-level names not already above; TCSlib, then core and Mathlib)
+#check @Turing.CounterLoopState.dec
+#check @Turing.FinTM.ComputesInTime
+#check @Turing.FlagPhase.run
+#check @Turing.MultiTapeTM.ComputesInTimeAndSpace
+#check @Turing.MultiTapeTM.initCfg
+#check @Turing.MultiTapeTM.runFrom
+#check @Turing.NDTM.initCfg
+#check @Turing.NDTM.runWith
+#check @Turing.StepBlock.Ph
+#check @Turing.StepBlock.outputSummary
+#check @Turing.embedEmitCfg_output
+#check @Turing.embedEmitCfg_state
+#check @Turing.exists_interpreterStartup
+#check @Fin.addCases
+#check @Fin.addCases_left
+#check @Fin.addCases_right
+#check @Fin.castAdd
+#check @Fin.castSucc
+#check @Fin.coe_castAdd
+#check @Fin.coe_castSucc
+#check @Fin.coe_natAdd
+#check @Fin.exists_fin_two
+#check @Fin.ext
+#check @Fin.last
+#check @Fin.lastCases
+#check @Fin.lastCases_castSucc
+#check @Fin.lastCases_last
+#check @Fin.natAdd
+#check @Fin.val_last
+#check @Fin.val_one
+#check @Fin.val_zero
+#check @List.length_replicate
+#check @List.nil_append
+#check @List.replicate
+#check @Nat.bits
+#check @Option.getD_some
+#check @Option.map_some
+#check @Set.range
+#check @Subsingleton.elim
+#check @Sum.inl
+#check @if_neg
+#check @if_pos
+#print axioms Turing.exists_interpreterStartup
+#print axioms Turing.embedEmitCfg_output
+#print axioms Turing.embedEmitCfg_state
+
+-- review (2026-10-27): the review assembly's further core and Mathlib citations (the ledger,
+-- the installer's bound)
+#check @List.length_append
+#check @Nat.le_mul_of_pos_right
+#check @Nat.le_succ
+#check @Nat.mul_le_mul
+#check @Nat.mul_le_mul_left
+#check @Nat.mul_le_mul_right
+#check @Nat.one_le_pow
+#check @Nat.pow_le_pow_left
+#check @Nat.pow_le_pow_right
+#check @Nat.zero_le
+#check @add_mul
+#check @pow_one
+#check @pow_two

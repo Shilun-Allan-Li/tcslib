@@ -1766,6 +1766,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     startup at `p = F.k`, `us_bank` and `us_run`; two imports (`Nondeterministic`, the startup's
     module); the hosts, hazards and pitfalls follow. Next: the pre-ship at issue after #169 merges,
     on the two-import overlay, then a review sub-agent, then a queue.
+    **Reviewed** (`campaign/fills/b5a/reviews/unisim-rewrite/REVIEW.md`, 2026-10-27): issue after
+    edits (minors F2–F8 in `suggested-fix.diff`, 27 replacements; notes). **The review proved the
+    target**: `probe/B5aReviewAssembly.lean.txt`, eleven `us_` privates at the home and a 33-line
+    body, 0 errors and 0 warnings, the target and every private on the standard three, sealed
+    over 28 with 28 controls; re-elaborated by the maintainer against `oleans-laplusm` (0
+    diagnostics, the standard three) and freeze-checked (12 public unchanged; 11 privates added;
+    only the target's body changed). **Decision D1 pending (user):** (A) land the proof as a
+    maintainer PR with a fill gate (recommended, #169's and C1's precedent), (B) issue the brief
+    with the assembly as an input, (C) the brief alone.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).

@@ -1,0 +1,8 @@
+attribute [local irreducible] FinTM.ComputesFunInTime FinTM.ComputesInTime
+  MultiTapeTM.ComputesInTimeAndSpace Cfg.ofWords stateWord MultiTapeTM.toNDTM NDTM.runWith
+  MultiTapeTM.runFrom MultiTapeTM.initCfg NDTM.initCfg CodeFormat.decode vhostCfg counterLoopCfg
+  FinTM.bufferTape tableBitsK Cfg.init Cfg.mapState embedEmitCfg embedEmitTM seamCompTM
+  StepBlock.summaryCells StepBlock.Rep StepBlock.tableTape StepBlock.summaryTape StepBlock.exit
+  StepBlock.outputSummary unaryFin pairEncode
+attribute [-simp] MultiTapeTM.initCfg NDTM.initCfg Cfg.init
+
