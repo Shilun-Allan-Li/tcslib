@@ -29,7 +29,9 @@ Pack `pack-r2.md`; bundle SHA-256 `fe5f0f8ad8bd2b5acceed600d774c645f266eccc2fd73
 | 2 | minor | "Lean cannot seal an abbreviation" is stronger than shown: the error names the override `set_option allowUnsafeReducibility true`. | **Fixed in the standards.** `policy.md` and `TEMPLATE.md` now say the standard seal cannot cover it: Lean's default reducibility validation refuses the attribute, and the unsafe override is not used in seals. The convention, which round 2 accepts, does not depend on the stronger claim. |
 | 3–8 | notes | Integrity and the documentation-only delta; the convention resolves round 1's major; the sketch fix; the axioms; no reopened point; the pending replay. | No action. Note 8's replay is #168's merge condition. |
 
-**Merge state. #168: clear to merge** (2026-10-26). `replay-lu2m` passed (user, 2026-10-26): 3 of
+**Merged (user, 2026-10-26)** as `13120e0067ce19ee9c09809ef6578f2b38139cf6`. The campaign's TCSlib
+tree after the merge equals the replayed head `3117770f`'s, so `oleans-lu2m` is the campaign's
+snapshot after #168. Before the merge: **#168: clear to merge** (2026-10-26). `replay-lu2m` passed (user, 2026-10-26): 3 of
 3 modules, static-equal (0 mismatches, no sorry left in `UniversalK` or `SelfUniversal`;
 `campaign/fills/u2s/evidence/u2s-universal-landing/merged-tree/`) at the head `3117770f`, whose
 base is the campaign branch; the campaign's Lean has not moved since #166's merge. Its snapshot

@@ -33,3 +33,9 @@ Pack `pack-r2.md`; bundle SHA-256 `854dddc5cc4d6c97cdcfd0b9919ec07acb0c2dcf99d76
 **Merge state. #169: not yet clear to merge.** The gate is closed. Its 5-module replay (the kit,
 `NDCodeSimulator`, `NTimeHierarchy` and the two facades) chains after #166's and #168's, from the
 snapshot the last of them leaves, after the campaign is merged in.
+**#168 merged (2026-10-26).** The campaign is merged into #169 (head
+`9d0af8cb3f72d6ee4fc7c76309d32215c694233d`; its two files keep the gated blobs `84c00e33` and
+`baf1b454`). `replay-laplusm` (`evidence/merged-tree/`), 5 modules chained from `oleans-lu2m`, is
+written; its precheck passed. Since #168 changed `UniversalK`, a population file, the screen is
+re-run on the merged head and on the campaign tip after #168 (`13120e00`), and diffed by name
+against both and round 1's screens.

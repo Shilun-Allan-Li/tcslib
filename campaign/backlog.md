@@ -1749,6 +1749,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     RI-1 retired.** #166 is merged with the campaign; `replay-lscpm` (2 modules from
     `oleans-lriseqm`) is written. Then #168 (3 modules) and #169 (5) chain in turn. E-Q's issue
     conditions (A1 and #167 landed) now hold.
+    **#166 merged (`26ae1f10`); #168: replay-lu2m passed (3 of 3); #168 merged (2026-10-26,
+    `13120e00`), `oleans-lu2m` its snapshot.** #169 is merged with the campaign (`9d0af8cb`, the
+    gated blobs kept); `replay-laplusm` (5 modules from `oleans-lu2m`) is written, and the
+    combined screen on the merged head is running (#168 changed `UniversalK`, in its
+    population).
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
