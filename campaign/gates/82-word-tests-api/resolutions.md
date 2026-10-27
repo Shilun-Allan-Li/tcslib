@@ -52,5 +52,12 @@ into #171 (clean; head `91a1ad87a8777399251d063eeb474cc38cf5677a`) and wrote `re
 
 Its precheck passed.
 
-**Merge state. #171: not yet clear to merge** (2026-10-27): the gate is passed; it waits for
-`replay-lwords`.
+**`replay-lwords` passed** (user, 2026-10-27): 18 of 18 modules at `91a1ad87`, 0 failed,
+static-equal (0 mismatches; the one sorry is `NTimeHierarchy`'s `ntime_hierarchy`;
+`evidence/merged-tree/replay-lwords.log`, `replay-lwords-static.txt`). Its snapshot is
+`oleans-lwords`.
+
+**Merge state. #171: clear to merge** (2026-10-27) at
+`91a1ad87a8777399251d063eeb474cc38cf5677a`: the gate passed with 0 blockers and 0 majors; the replay
+passed at that head; its base is the campaign branch, which has had no Lean change since the
+merge-in `ba2441f7`.

@@ -29,7 +29,7 @@ review sub-agent, then issue. Remove this comment at issue. -->
     `Turing.FinTM.exists_installCallTM` (`Build/Loop`) and `Turing.FinTM.exists_inputCallTM`
     (`Build/InputCall`), the function-level conditional `Turing.FinTM.computesFunInTime_cond`
     (`Build/Wrappers`), and the catalog's framed rows;
-  - **checkpoint 1, landed** (PR ⟨#⟩, gate ⟨⟩; megafill D's partial): your file's imports (the eight
+  - **checkpoint 1, landed** (PR ⟨#⟩, gate 83; megafill D's partial): your file's imports (the eight
     of the first round and `Build/WordTests`), `qy_guard`, `qy_guard_decider` (the guard's decider,
     L1) and `qy_query_of_main`, which reduces the target to the main machine's contract `hmain`
     (below);
@@ -48,7 +48,7 @@ review sub-agent, then issue. Remove this comment at issue. -->
     pre-ship log (`campaign/fills/eq/logs/eq-fill-query-cont1-*`). The route's design note is
     `campaign/items/c1/c1e/EQ-route-design.md`.
 - **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule
-  (E-RES). Fetch the cache for your roots only (⟨34⟩); never run the unfiltered
+  (E-RES). Fetch the cache for your roots only (34); never run the unfiltered
   `lake exe cache get`. If Lean cannot start, follow Part 2 exactly. **If Lean never runs, do not
   draft proofs blind**: deliver the environment report only.
 - **Branch at exactly that commit, not at the campaign tip:**
@@ -57,7 +57,7 @@ review sub-agent, then issue. Remove this comment at issue. -->
   git checkout -b fill/eq-query-cont1 @ANCESTOR@
   git rev-parse HEAD        # must print @ANCESTOR@
   git rev-parse HEAD:TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
-  # must print ⟨blob at issue⟩
+  # must print f965eac02e06549e8239c7476b31c0ced4f3d11b
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
@@ -78,16 +78,17 @@ review sub-agent, then issue. Remove this comment at issue. -->
 
 - **Your base's Lean content is ⟨the campaign's tree after checkpoint 1's landing, PR ⟨#⟩⟩**
   (@ANCESTOR@ adds records only). Lines in this brief are those of your base's tree, where
-  `NTimeDiagonalizer.lean` is ⟨542⟩ lines (22 public, 3 private, and their compiler auxiliaries).
-- **There is no overlay.** The file already has its eight imports; your first edit is a proof edit.
+  `NTimeDiagonalizer.lean` is 498 lines (22 public, 3 private, and their compiler auxiliaries).
+- **There is no overlay.** The file already has its nine imports; your first edit is a proof edit.
   Where the line numbers below differ from the first round's brief, these are the base's.
 - **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT⟩. Cite nothing they add.
 
 ## Parallel batches this round
 
 None in `NTimeDiagonalizer.lean`. **E-D** (`Turing.NTimeDiag.exists_diagonalizer`, the same file)
-follows this item, citing your target's statement only. `ntime_hierarchy`'s fill (H, in
-`NTimeHierarchy`) follows E-D.
+follows this item, citing your target's statement only. `ntime_hierarchy` (`NTimeHierarchy`) is
+proved from `exists_diagonalizer`'s statement by a separate maintainer PR (#172), which imports
+your file; your target's statement is frozen, so it is unaffected.
 
 ## What this is
 
@@ -113,14 +114,8 @@ places, by the maintainer's route note** (`EQ-route-design.md`, ruled by the use
 Propose an `**Implementation.**` paragraph for the maintainer (`REPORT.md`); the docstring stays
 frozen.
 
-**Where it stands.** The stages are pure and proved: `ladder`, `budget`, `stage`, `stageCode`,
-`query` with their laws (`ladder_succ`, `two_mul_lt_ladder_succ`, `le_ladder`, `stage_spec`,
-`stage_eq`, `stage_of_le_two`, `stageCode_eq`, `query_eq`, `query_of_not_guard`). Every host is
-proved. What is open is the machine: the guard, the locator, the stage code, the budget field, the
-writer and the ledger.
-
-**Where it stands.** Checkpoint 1 is landed: the target's body is ⟨`qy_query_of_main` applied to
-the main machine's contract, under a `suffices`⟩, and what is open is exactly
+**Where it stands.** Checkpoint 1 is landed: the target's body is `qy_query_of_main` applied to
+the main machine's contract, under a `suffices`, and what is open is exactly
 
 ```lean
 ∃ (M : FinTM Bool) (A : ℕ),
@@ -205,17 +200,18 @@ figures below are the first round's, kept until then⟩):
 
 | # | File:line (base) | Target |
 |---|---|---|
-| 1 | `NTimeDiagonalizer.lean:270` | `Turing.NTimeDiag.exists_queryTM` (frozen statement) |
+| 1 | `NTimeDiagonalizer.lean:402` | `Turing.NTimeDiag.exists_queryTM` (frozen statement) |
 
 Your regions:
-- **(a) no import.** The eight are in the file; add none.
-- **(b) your home**, the blank line ⟨after `qy_query_of_main`⟩, before the target's docstring:
+- **(a) no import.** The nine are in the file (the first round's eight and `Build/WordTests`); add
+  none.
+- **(b) your home**, the blank line after `qy_query_of_main` (line 375), before the target's docstring:
   your `private` declarations. **The three landed privates are frozen** (`qy_guard`,
   `qy_guard_decider`, `qy_query_of_main`): change none without stopping on that item and
   reporting it.
-- **(c) the body**, the `sorry` under the `suffices` on line ⟨…⟩: prove `hmain`.
+- **(c) the body**, the `sorry` under the `suffices` on line 410: prove `hmain`.
 - **(d) the `**Implementation status.**` paragraph** at the end of the target's docstring (line
-  ⟨…⟩): update it to what is proved and what is open. It is public-facing library text: no
+  399): update it to what is proved and what is open. It is public-facing library text: no
   campaign labels, no dates, no session narrative. The same holds for your new docstrings;
   provenance goes in `REPORT.md`. **Every new declaration has a docstring, and every proof over 20
   lines a literal `**Proof sketch.**` paragraph** (`policy.md` §3).
@@ -426,7 +422,7 @@ the layout equations and the contract layer; `BufferWords`; `Nat.bits`, `Nat.log
    record the obstruction mathematically, and **continue with every item that does not depend on
    it**. Checkpoints 5 and 6 depend on 4's escape, not on its ledger.
 5. **No touching other sorries.** Cite proved material; never re-prove it.
-6. **Imports.** Exactly the eight in region (a).
+6. **Imports.** Exactly the nine in region (a).
 7. **One proof per shared argument.** Never write a second clock, counter, expansion, call,
    seam, embedding, round loop or input rewind. Never re-walk `ExhaustiveReplay`'s `xr_`
    privates (its capped replay, window clear and translation), `TimeHierarchy/ClockLoop`'s, or
@@ -519,14 +515,15 @@ root `<dir>`).
   statement. **Cite proved material; never re-prove it.** `REPORT.md` lists, for each new private,
   the search made and its result. The pre-ship probe `EQDupProbe.lean.txt` poses the route probe's
   statements: none is published.
-- **The population** is 29 files
+- **The population** is 30 files
   (`campaign/fills/eq/inputs/eq-fill-query-cont1/screen-population.txt`):
   - your file;
   - the files the route cites: `Build/StepClock`, `Build/Loop`, `Build/InputCall`,
     `Build/Wrappers`, `Build/Primitives`, `Build/CounterLoop`, `Build/Scan`, `Build/Catalog`,
     `Build/Rewind`, `Build/Seam`, `Build/Embed`, `Build/Contract/Basic`,
     `Build/Contract/Catalog`, `Build/Contract/Seam`, `Build/Convention`, `Composition`, `Finite`,
-    `Encoding`, `StateRenaming`, `BufferWords`, `ClassP/TimeConstructible`;
+    `Encoding`, `StateRenaming`, `BufferWords`, `ClassP/TimeConstructible`, and `Build/WordTests`
+    (the guard's rows);
   - the known hazards: `ClassNP/ExhaustiveReplay` (capped replays over the same clock),
     `TimeHierarchy/ClockLoop` (a colleague's clocked loop), `Diagonalization/NTimeHierarchy`,
     `Simulation` (the input-rewind and emitter family), `Build/SeamLayout` (a phase-host composite
@@ -579,7 +576,7 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
 ## Environment and verification
 
 - Lean 4 v4.25.0, mathlib pinned; the cache **for your roots only** (addendum v2.6, Part 1,
-  items 2–4; your order list's modules import ⟨34⟩ roots directly);
+  items 2–4; your order list's modules import 34 roots directly);
   **never `lake build`**, and never the unfiltered `lake exe cache get`. Use
   `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
 - **E-SERIAL (megafill D) is not a deviation** (the user's ruling): the cache tool's own
@@ -593,9 +590,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   tail re-check about 5 s. Reserve about 25 minutes for the finishing sequence (the final sweep
   with the after screen beside it, then the REPORT and the zip), and use the rest for proofs.
 - **Bootstrap** (addendum Part 1, item 5) from
-  `campaign/fills/eq/orders/eq-fill-query-cont1.txt` (**⟨83⟩ modules**), right after branching,
-  logging each module's start and end time and maximum memory. **The base sorry-warning set has ⟨22⟩
-  entries in ⟨11⟩ modules** (`campaign/fills/eq/logs/eq-fill-query-cont1-base-sorries.txt`). Yours
+  `campaign/fills/eq/orders/eq-fill-query-cont1.txt` (**84 modules**), right after branching,
+  logging each module's start and end time and maximum memory. **The base sorry-warning set has 21
+  entries in 10 modules** (`campaign/fills/eq/logs/eq-fill-query-cont1-base-sorries.txt`). Yours
   are `NTimeDiagonalizer`'s two. Record the base list by name first, and report any difference.
 - **Final checks:**
   1. `NTimeDiagonalizer`: zero errors, exactly one sorry warning (`exists_diagonalizer`'s; for a

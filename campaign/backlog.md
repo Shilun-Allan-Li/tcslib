@@ -1889,8 +1889,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     all-true test's proof and sketch agree; `## Main definitions`. Two more copies found
     (`sat_pt_eq`, `clA5_pt_eq`), ledgered with PL-1 for 12.2c. After #170's merge, `mk-next`
     merged the campaign into #171 (head `91a1ad87`) and wrote `replay-lwords` (18 modules from
-    `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **#171 not yet clear
-    to merge: waits for `replay-lwords`.**
+    `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **`replay-lwords`
+    passed** (18 of 18, static-equal; snapshot `oleans-lwords`). **#171 clear to merge** at
+    `91a1ad87`.
     **E-Q's landing re-stacked, local only** (`local/eq-cp1-landing-v3` in `wt-eqland`, on #171's
     merged head `91a1ad87`): `8841044d`, `4d93a8fe` (the worker's `fabce3bb`, `9d93626d`, the
     subjects reworded without "E-Q"; same patch-ids), `1fd6a15d` (E1–E5), `a5c22dd9` (the
