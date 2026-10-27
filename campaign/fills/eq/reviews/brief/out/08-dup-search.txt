@@ -1,0 +1,206 @@
+===== 1963b3b80fa250619719cac787c3fb6a765f2c7f (1963b3b8)
+-- L1 guard [decide \(x = List\.replicate x\.length true]: 2
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3994:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:892:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+-- L1 guard [replicate [a-z]+\.length true ∧ 3 ≤]: 0
+
+-- L2 binary le [(def|theorem|lemma) [A-Za-z_]*([Ll]eBits|bitsLe|BitsLe|compareBits|leTM|ltTM|cmpTM)]: 27
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1972:private def xr_idleTM (K : ℕ) : MultiTapeTM K Bool xr_St where
+TCSlib/Complexity/Diagonalization/Relativization.lean:538:theorem exists_finOracleTM_enumeration :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:141:def mcompileTM (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194:lemma mcompileTM_step (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:280:lemma mcompileTM_init (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:188:def ncompileTM (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+-- L2 binary le [^def (le|lt) \(z]: 0
+
+-- L3 unary product [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary|cutoff|Cutoff)]: 2
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.lean:49:lemma linearThreshold_fourier_cutoff :
+TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.lean:303:theorem computableDAG_real_cutoff (n : ℕ) :
+-- L4 power of two [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+
+-- L4 power of two [bits \(2 \^ [a-z]+\) = List\.replicate]: 0
+
+-- L5 unpair TM [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+
+-- L6 doubled emitter [(def|theorem|lemma) [A-Za-z_]*([Dd]oubl|dblEmit|emitDbl|[Dd]bl)[A-Za-z_]*]: 35
+TCSlib/BooleanAnalysis/LMN.lean:31:- Passing through the Bernoulli cost theorem doubles the constant to `(20pw)^d`
+TCSlib/Complexity/CircuitComplexity/Advice.lean:171:private lemma length_doubled (x : List Bool) :
+TCSlib/Complexity/CircuitComplexity/Advice.lean:424:private lemma doubled_getElem? (x : List Bool) (p : ℕ) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:750:private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:215:private theorem goes_doubled (keep : Bool) (u tail : List Bool) (n : ℕ) :
+TCSlib/Complexity/ClassNP/SAT.lean:417:private lemma satEval_double (M : FinTM Bool) {w : List Bool}
+===== origin/lean/u2-universal-landing (948df2f9)
+-- L1 guard [decide \(x = List\.replicate x\.length true]: 2
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3994:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:892:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+-- L1 guard [replicate [a-z]+\.length true ∧ 3 ≤]: 0
+
+-- L2 binary le [(def|theorem|lemma) [A-Za-z_]*([Ll]eBits|bitsLe|BitsLe|compareBits|leTM|ltTM|cmpTM)]: 27
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1972:private def xr_idleTM (K : ℕ) : MultiTapeTM K Bool xr_St where
+TCSlib/Complexity/Diagonalization/Relativization.lean:538:theorem exists_finOracleTM_enumeration :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:141:def mcompileTM (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194:lemma mcompileTM_step (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:280:lemma mcompileTM_init (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:188:def ncompileTM (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+-- L2 binary le [^def (le|lt) \(z]: 0
+
+-- L3 unary product [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary|cutoff|Cutoff)]: 2
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.lean:49:lemma linearThreshold_fourier_cutoff :
+TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.lean:303:theorem computableDAG_real_cutoff (n : ℕ) :
+-- L4 power of two [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+
+-- L4 power of two [bits \(2 \^ [a-z]+\) = List\.replicate]: 0
+
+-- L5 unpair TM [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+
+-- L6 doubled emitter [(def|theorem|lemma) [A-Za-z_]*([Dd]oubl|dblEmit|emitDbl|[Dd]bl)[A-Za-z_]*]: 35
+TCSlib/BooleanAnalysis/LMN.lean:31:- Passing through the Bernoulli cost theorem doubles the constant to `(20pw)^d`
+TCSlib/Complexity/CircuitComplexity/Advice.lean:171:private lemma length_doubled (x : List Bool) :
+TCSlib/Complexity/CircuitComplexity/Advice.lean:424:private lemma doubled_getElem? (x : List Bool) (p : ℕ) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:750:private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:215:private theorem goes_doubled (keep : Bool) (u tail : List Bool) (n : ℕ) :
+TCSlib/Complexity/ClassNP/SAT.lean:417:private lemma satEval_double (M : FinTM Bool) {w : List Bool}
+===== origin/lean/interpreter-startup (df992ad7)
+-- L1 guard [decide \(x = List\.replicate x\.length true]: 2
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3994:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:892:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+-- L1 guard [replicate [a-z]+\.length true ∧ 3 ≤]: 0
+
+-- L2 binary le [(def|theorem|lemma) [A-Za-z_]*([Ll]eBits|bitsLe|BitsLe|compareBits|leTM|ltTM|cmpTM)]: 27
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1972:private def xr_idleTM (K : ℕ) : MultiTapeTM K Bool xr_St where
+TCSlib/Complexity/Diagonalization/Relativization.lean:538:theorem exists_finOracleTM_enumeration :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:141:def mcompileTM (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194:lemma mcompileTM_step (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:280:lemma mcompileTM_init (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:188:def ncompileTM (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+-- L2 binary le [^def (le|lt) \(z]: 0
+
+-- L3 unary product [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary|cutoff|Cutoff)]: 2
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.lean:49:lemma linearThreshold_fourier_cutoff :
+TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.lean:303:theorem computableDAG_real_cutoff (n : ℕ) :
+-- L4 power of two [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+
+-- L4 power of two [bits \(2 \^ [a-z]+\) = List\.replicate]: 0
+
+-- L5 unpair TM [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+
+-- L6 doubled emitter [(def|theorem|lemma) [A-Za-z_]*([Dd]oubl|dblEmit|emitDbl|[Dd]bl)[A-Za-z_]*]: 35
+TCSlib/BooleanAnalysis/LMN.lean:31:- Passing through the Bernoulli cost theorem doubles the constant to `(20pw)^d`
+TCSlib/Complexity/CircuitComplexity/Advice.lean:171:private lemma length_doubled (x : List Bool) :
+TCSlib/Complexity/CircuitComplexity/Advice.lean:424:private lemma doubled_getElem? (x : List Bool) (p : ℕ) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:750:private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:215:private theorem goes_doubled (keep : Bool) (u tail : List Bool) (n : ℕ) :
+TCSlib/Complexity/ClassNP/SAT.lean:417:private lemma satEval_double (M : FinTM Bool) {w : List Bool}
+===== origin/lean/scp-landing (abf3887f)
+-- L1 guard [decide \(x = List\.replicate x\.length true]: 2
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3994:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:892:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+-- L1 guard [replicate [a-z]+\.length true ∧ 3 ≤]: 0
+
+-- L2 binary le [(def|theorem|lemma) [A-Za-z_]*([Ll]eBits|bitsLe|BitsLe|compareBits|leTM|ltTM|cmpTM)]: 27
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1972:private def xr_idleTM (K : ℕ) : MultiTapeTM K Bool xr_St where
+TCSlib/Complexity/Diagonalization/Relativization.lean:538:theorem exists_finOracleTM_enumeration :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:141:def mcompileTM (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194:lemma mcompileTM_step (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:280:lemma mcompileTM_init (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:188:def ncompileTM (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+-- L2 binary le [^def (le|lt) \(z]: 0
+
+-- L3 unary product [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary|cutoff|Cutoff)]: 2
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.lean:49:lemma linearThreshold_fourier_cutoff :
+TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.lean:303:theorem computableDAG_real_cutoff (n : ℕ) :
+-- L4 power of two [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+
+-- L4 power of two [bits \(2 \^ [a-z]+\) = List\.replicate]: 0
+
+-- L5 unpair TM [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+
+-- L6 doubled emitter [(def|theorem|lemma) [A-Za-z_]*([Dd]oubl|dblEmit|emitDbl|[Dd]bl)[A-Za-z_]*]: 35
+TCSlib/BooleanAnalysis/LMN.lean:31:- Passing through the Bernoulli cost theorem doubles the constant to `(20pw)^d`
+TCSlib/Complexity/CircuitComplexity/Advice.lean:171:private lemma length_doubled (x : List Bool) :
+TCSlib/Complexity/CircuitComplexity/Advice.lean:424:private lemma doubled_getElem? (x : List Bool) (p : ℕ) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:750:private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:215:private theorem goes_doubled (keep : Bool) (u tail : List Bool) (n : ℕ) :
+TCSlib/Complexity/ClassNP/SAT.lean:417:private lemma satEval_double (M : FinTM Bool) {w : List Bool}
+===== origin/main (b1101766)
+-- L1 guard [decide \(x = List\.replicate x\.length true]: 2
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3994:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:892:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+-- L1 guard [replicate [a-z]+\.length true ∧ 3 ≤]: 0
+
+-- L2 binary le [(def|theorem|lemma) [A-Za-z_]*([Ll]eBits|bitsLe|BitsLe|compareBits|leTM|ltTM|cmpTM)]: 23
+TCSlib/Complexity/Diagonalization/Relativization.lean:538:theorem exists_finOracleTM_enumeration :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:141:def mcompileTM (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194:lemma mcompileTM_step (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:280:lemma mcompileTM_init (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:188:def ncompileTM (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:229:lemma ncompileTM_tr (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → S
+-- L2 binary le [^def (le|lt) \(z]: 2
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:183:def lt (z : List Bool) : Bool := decide (bitsVal (pairFstD z) < bitsVal (pairSndD z))
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:186:def le (z : List Bool) : Bool := decide (bitsVal (pairFstD z) ≤ bitsVal (pairSndD z))
+-- L3 unary product [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary|cutoff|Cutoff)]: 15
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.lean:38:private noncomputable def cutoffRamp (v η x : ℝ) : ℝ :=
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.lean:43:private theorem lipschitz_cutoffRamp {η : ℝ} (hη : 0 < η) (v : ℝ) :
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.lean:56:private theorem cutoffRamp_bounds {η : ℝ} (hη : 0 < η) (v : ℝ) :
+TCSlib/BooleanAnalysis/GaussianSpace/Invariance/Cutoff.lean:75:theorem exists_contDiff_cutoff (m : ℕ) (u : ℝ) {η : ℝ} (hη : 0 < η) :
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceDistribution.lean:75:lemma integral_cutoff_sandwich (μ : Measure ℝ) [IsFiniteMeasure μ]
+TCSlib/BooleanAnalysis/GaussianSpace/InvarianceTruncation.lean:114:lemma invariance_cutoff_nonneg {ε : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) :
+-- L4 power of two [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+
+-- L4 power of two [bits \(2 \^ [a-z]+\) = List\.replicate]: 0
+
+-- L5 unpair TM [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+
+-- L6 doubled emitter [(def|theorem|lemma) [A-Za-z_]*([Dd]oubl|dblEmit|emitDbl|[Dd]bl)[A-Za-z_]*]: 44
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.lean:156:lemma integrable_gaussian_double_phase (a b : ℝ) (x : Fin n → ℝ)
+TCSlib/BooleanAnalysis/GaussianSpace/Noise/Fourier.lean:176:lemma integral_gaussian_double_phase (a b : ℝ) {f : (Fin n → ℝ) → ℝ}
+TCSlib/BooleanAnalysis/LMN.lean:31:- Passing through the Bernoulli cost theorem doubles the constant to `(20pw)^d`
+TCSlib/Complexity/CircuitComplexity/Advice.lean:171:private lemma length_doubled (x : List Bool) :
+TCSlib/Complexity/CircuitComplexity/Advice.lean:424:private lemma doubled_getElem? (x : List Bool) (p : ℕ) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:750:private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+===== origin/complexity/arora-barak-ch7 (a7433f3f)
+-- L1 guard [decide \(x = List\.replicate x\.length true]: 2
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:3994:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+TCSlib/Complexity/ClassNP/TMSAT.lean:892:    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
+-- L1 guard [replicate [a-z]+\.length true ∧ 3 ≤]: 0
+
+-- L2 binary le [(def|theorem|lemma) [A-Za-z_]*([Ll]eBits|bitsLe|BitsLe|compareBits|leTM|ltTM|cmpTM)]: 23
+TCSlib/Complexity/Diagonalization/Relativization.lean:538:theorem exists_finOracleTM_enumeration :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:141:def mcompileTM (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:194:lemma mcompileTM_step (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean:280:lemma mcompileTM_init (A : MARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d →
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:188:def ncompileTM (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → SD) :
+TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile.lean:229:lemma ncompileTM_tr (A : NARM m d Λ) (l₀ : Λ) (D : MultiTapeTM kD Bool SD) (q0 : Fin d → S
+-- L2 binary le [^def (le|lt) \(z]: 2
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:183:def lt (z : List Bool) : Bool := decide (bitsVal (pairFstD z) < bitsVal (pairSndD z))
+TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean:186:def le (z : List Bool) : Bool := decide (bitsVal (pairFstD z) ≤ bitsVal (pairSndD z))
+-- L3 unary product [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary|cutoff|Cutoff)]: 7
+TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Threshold.lean:49:lemma linearThreshold_fourier_cutoff :
+TCSlib/Complexity/CircuitComplexity/ShannonProbabilistic.lean:303:theorem computableDAG_real_cutoff (n : ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:421:private def mulUStep (d : List Bool) : List Bool :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:425:def mulU (z : List Bool) : List Bool :=
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:429:private theorem iterate_mulUStep (b acc : List Bool) (j : ℕ) :
+TCSlib/Complexity/ClassP/BinaryArith/Loops.lean:438:theorem length_mulU (a b : List Bool) : (mulU (pairEncode a b)).length = a.length * b.length := by
+-- L4 power of two [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+
+-- L4 power of two [bits \(2 \^ [a-z]+\) = List\.replicate]: 0
+
+-- L5 unpair TM [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+
+-- L6 doubled emitter [(def|theorem|lemma) [A-Za-z_]*([Dd]oubl|dblEmit|emitDbl|[Dd]bl)[A-Za-z_]*]: 42
+TCSlib/BooleanAnalysis/LMN.lean:31:- Passing through the Bernoulli cost theorem doubles the constant to `(20pw)^d`
+TCSlib/Complexity/CircuitComplexity/Advice.lean:171:private lemma length_doubled (x : List Bool) :
+TCSlib/Complexity/CircuitComplexity/Advice.lean:424:private lemma doubled_getElem? (x : List Bool) (p : ℕ) :
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:750:private lemma cont_parse_double (N : FinNDTM Bool) (y pre rest x : List Bool)
+TCSlib/Complexity/ClassNP/PolyTimePrefix.lean:215:private theorem goes_doubled (keep : Bool) (u tail : List Bool) (n : ℕ) :
+TCSlib/Complexity/ClassNP/SAT.lean:417:private lemma satEval_double (M : FinTM Bool) {w : List Bool}
+
+===== re-run on origin/lean/u2-universal-landing at 3117770f (the head moved from 948df2f9 during the review: merged with the campaign)
+-- [decide \(x = List\.replicate x\.length true]: 2
+-- [(def|theorem|lemma) [A-Za-z_]*([Pp]ow[Tt]wo|isPow2|powOfTwo)]: 0
+-- [(def|theorem) [A-Za-z_]*[Uu]npair[A-Za-z_]*TM]: 0
+-- [(def|theorem|lemma) [A-Za-z_]*(mulU|unaryMul|mulUnary)]: 0
+diff of TCSlib between 948df2f9 and 3117770f, files:
+ .../TuringMachine/Build/Contract/Basic.lean        |  39 +++--
+ .../TuringMachine/Build/ZoneRebalance.lean         |  38 ++---
+ 7 files changed, 287 insertions(+), 50 deletions(-)

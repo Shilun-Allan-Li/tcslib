@@ -1,0 +1,54 @@
+/-
+Seal controls for the review probe's five extra sealed definitions (`Cfg.ofWords`, `stateWord`,
+`Cfg.mapState`, `seamReleaseTM`, `Cfg.Stopped`): each goal closes by `rfl` unsealed and fails
+sealed. Expected: exactly five errors, all in the sealed section.
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+namespace Turing.NTimeDiag
+
+section Unsealed
+
+example (k : ℕ) (S : Type) (x : List Bool) (q : S) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := x) q w).state = some q := rfl
+example (k : ℕ) (s : List Bool) (i : Fin k) : stateWord k s i = if (i : ℕ) = 0 then s else [] :=
+  rfl
+example (k : ℕ) (S T : Type) (x : List Bool) (f : S → T) (c : Cfg k Bool S x) :
+    (c.mapState f).state = c.state.map f := rfl
+example (k : ℕ) (S : Type) (M : MultiTapeTM k Bool S) (a : S) :
+    (seamReleaseTM M a).q₀ = Sum.inl () := rfl
+example (k : ℕ) (S : Type) (x : List Bool) (p : S → Bool) (c : Cfg k Bool S x) :
+    c.Stopped p = (c.state = none ∨ ∃ s, c.state = some s ∧ p s = true) := rfl
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Turing.Cfg.ofWords Turing.stateWord Turing.Cfg.mapState
+  Turing.seamReleaseTM Turing.Cfg.Stopped
+
+example (k : ℕ) (S : Type) (x : List Bool) (q : S) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := x) q w).state = some q := rfl
+example (k : ℕ) (s : List Bool) (i : Fin k) : stateWord k s i = if (i : ℕ) = 0 then s else [] :=
+  rfl
+example (k : ℕ) (S T : Type) (x : List Bool) (f : S → T) (c : Cfg k Bool S x) :
+    (c.mapState f).state = c.state.map f := rfl
+example (k : ℕ) (S : Type) (M : MultiTapeTM k Bool S) (a : S) :
+    (seamReleaseTM M a).q₀ = Sum.inl () := rfl
+example (k : ℕ) (S : Type) (x : List Bool) (p : S → Bool) (c : Cfg k Bool S x) :
+    c.Stopped p = (c.state = none ∨ ∃ s, c.state = some s ∧ p s = true) := rfl
+
+end Sealed
+
+end Turing.NTimeDiag

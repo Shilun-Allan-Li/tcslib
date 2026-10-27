@@ -20,7 +20,8 @@ exactly as if it had been dispatched alone. **The agent is Codex.**
     - A1's readings of the chapter predicates (PR #164), among them
       `Complexity.timeConstructible_iff`;
     - the sequence form of round iteration, `Turing.Round.iterate_seq` (PR #167);
-  - the route's design note `campaign/items/c1/c1e/EQ-route-design.md`;
+  - the route's design note `campaign/items/c1/c1e/EQ-route-design.md`, and the brief's review
+    (`campaign/fills/eq/reviews/brief/REVIEW.md`);
   - the addendum v2.5.
 - Every attached brief must match its repository copy at that commit except for its
   `@ANCESTOR@` placeholders, and its SHA-256 must be the one the dispatch message gives.
@@ -41,7 +42,7 @@ exactly as if it had been dispatched alone. **The agent is Codex.**
 
 | # | Item | Brief | Branch | Zip | Budget |
 |---|---|---|---|---|---|
-| 1 | E-Q: `Turing.NTimeDiag.exists_queryTM` (`Diagonalization/NTimeDiagonalizer`) | `eq/eq-fill-query.md` | `fill/eq-query` | `fill-eq-query.zip` | the session |
+| 1 | E-Q: `Turing.NTimeDiag.exists_queryTM` (`Diagonalization/NTimeDiagonalizer`) | `eq/briefs/eq-fill-query.md` | `fill/eq-query` | `fill-eq-query.zip` | the session |
 
 The budget is wall-clock from the branch's creation (Part 3, item 3.4). The screen takes about
 ⟨N⟩ minutes a run at the base on the maintainer's host (peak memory ⟨N⟩ GB). Never switch
@@ -50,7 +51,7 @@ branches while a screen runs.
 ## The item (Part 3, item 3)
 
 1. Start from a clean tree: `git checkout -b fill/eq-query <the shared base>`.
-2. **Its first edit:** its overlay (seven imports).
+2. **Its first edit:** its overlay (eight imports).
 3. **Re-bootstrap its whole order list** (`campaign/fills/eq/orders/eq-fill-query.txt`, ⟨N⟩
    modules). Log each module's start and end time and **its maximum memory**, and the whole as
    the item's bootstrap.

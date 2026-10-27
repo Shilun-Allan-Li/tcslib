@@ -1754,6 +1754,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     gated blobs kept); `replay-laplusm` (5 modules from `oleans-lu2m`) is written, and the
     combined screen on the merged head is running (#168 changed `UniversalK`, in its
     population).
+  - **E-Q's brief reviewed** (`campaign/fills/eq/reviews/brief/REVIEW.md`, 2026-10-26): issue
+    after edits, no prerequisite PR. Five majors, each fixed through published rows: the calls'
+    `entry` may equal `exit` (F1, the release adapter); the input head after a timeout (F2); the
+    query word (F3, the budget bits four times); L1 and L4 re-derive published scans (F4); the
+    cell identities need `BufferWords` (F5). Nine minors, five notes. **Ruled (user, 2026-10-26):
+    D1 = the input seek `exists_inputSeekTM` after the loop; D2 = `BufferWords` as the eighth
+    import.** The review's `suggested-fix.diff` is applied to the draft and its population (29
+    files); the cover says eight imports. At issue: the pre-ship on the eight-import overlay with
+    the review's extended probes (`probe/EQImportProbeExt`, 182 names; the route probe citing
+    `Complexity.timeConstructible_iff`), the lists and the screen base re-measured.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

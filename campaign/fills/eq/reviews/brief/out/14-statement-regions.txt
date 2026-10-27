@@ -1,0 +1,46 @@
+# 14 — statement, docstring and regions at the tip (blob 3cdc4f33)
+lines:      361
+--- 5,10
+   5| -/
+   6| import TCSlib.Complexity.TuringMachine.NDCodes
+   7| import TCSlib.Complexity.ClassNP.NTIME
+   8| import TCSlib.Complexity.ClassP.TimeConstructible
+   9| 
+  10| set_option maxHeartbeats 0
+--- 13,14
+  13| 
+  14| /-!
+--- 68,71
+  68|   STOC 1972. (Cited through [AB09]; no external text is required.)
+  69| -/
+  70| 
+  71| namespace Turing.NTimeDiag
+--- 245,249
+ 245|       Complexity.NTIME fun n => g n + 1 :=
+ 246|   ⟨K, D, fun x => ⟨h x, Iff.rfl⟩⟩
+ 247| 
+ 248| /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
+ 249| time-constructible `f` and `g` there is a deterministic machine computing the stage query within
+--- 268,275
+ 268| fixed-degree binary arithmetic, the `⌊log₂⌋` comparison, the power-of-two test, `Nat.unpair` on
+ 269| binary words, the unranking); the `pairEncode` writer; the ledger. -/
+ 270| theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+ 271|     (hg : Complexity.TimeConstructible g) :
+ 272|     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
+ 273|   sorry
+ 274| 
+ 275| /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
+--- 334,336
+ 334| constant `C = max 1 (max C_R C_BF)`. -/
+ 335| theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+ 336|     (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode)
+--- 358,361
+ 358|               (budget f (ladder f (stage f n))))) := by
+ 359|   sorry
+ 360| 
+ 361| end Turing.NTimeDiag
+--- the brief's quoted statement vs lines 270-273 (diff, empty = identical)
+IDENTICAL
+--- public declarations (name lines)
+22
+1
