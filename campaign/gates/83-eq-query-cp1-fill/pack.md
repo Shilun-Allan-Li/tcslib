@@ -1,8 +1,4 @@
-<!-- DRAFT (maintainer, 2026-10-27): staged before #171 merges. At the PR: fill every ⟨…⟩, re-run
-the elaboration against #171's replay snapshot into evidence/, write the replay, build the
-bundle; then remove this comment. -->
-
-# External audit pack — E-Q checkpoint 1, the guard and the reduction (PR ⟨#⟩, a light fill gate)
+# External audit pack — E-Q checkpoint 1, the guard and the reduction (PR #173, a light fill gate)
 
 Campaign: the Arora-Barak chapters 3-4 plan, C1-E (the nondeterministic time hierarchy's
 diagonalizer, [AB09, proof of Theorem 3.2]). The fill brief E-Q
@@ -18,8 +14,9 @@ length (`hmain`), which stays `sorry`. The maintainer's review is
 lands now with the review's landing edits E1–E5, after the API PR #171, its guard re-pointed to
 #171's rows. The continuation (cont1) proves `hmain` on the landed tree.
 
-**The head:** `⟨branch⟩` at `⟨head, 40 characters⟩`, four commits on #171's merged head `91a1ad87`
-(`evidence/patches/`). The worker's two subjects are reworded without the campaign label (the
+**The head:** `lean/eq-cp1-landing` at `599497bc69889781f34b1925c8772b3645b00608`: four
+commits on #171's merged head `91a1ad87`, then the campaign merged in (no Lean change;
+`evidence/patches/`). The worker's two subjects are reworded without the campaign label (the
 review's F8); their author is the delivery's, and their patch-ids equal the delivered commits'.
 - `8841044d`: the worker's import overlay (the delivered `fabce3bb`), the eight imports the brief
   authorized (`Mathlib.Data.Nat.Log`, `Build/StepClock`, `Build/InputCall`,

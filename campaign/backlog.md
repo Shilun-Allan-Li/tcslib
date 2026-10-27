@@ -1896,6 +1896,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     merged head `91a1ad87`): `8841044d`, `4d93a8fe` (the worker's `fabce3bb`, `9d93626d`, the
     subjects reworded without "E-Q"; same patch-ids), `1fd6a15d` (E1–E5), `a5c22dd9` (the
     re-point); the owned file's blob unchanged (`f965eac0`). Gate 83's draft carries the hashes.
+    **#171 merged (2026-10-27, `1b800c08`).** **PR #173** (`lean/eq-cp1-landing`, head
+    `599497bc`: v3 with the campaign merged in, no Lean change). `replay-leqcp1` (2 modules from
+    `oleans-lwords`) written; its precheck passed. Against `oleans-lwords`: the two expected
+    sorries; the seal reproduces. **Gate 83** (a light fill gate) staged.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
