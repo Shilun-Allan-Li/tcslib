@@ -1959,6 +1959,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     the transfers, the relabeling. ESTIMATE: API 0.5–0.9k, NF 2.2–4.5k. Decisions pending
     (user): the contract's landing, the host's home, the display's end, the queue. **Ruled (user,
     2026-10-27): all four as recommended**; the API PR starts now.
+    **PR #174** (`lean/nf-ndhost-api`): the controller writer's contract and an additive
+    controller-stopped host, proved; rule 10 sealed (17 definitions, 21 controls); freeze 25 → 37
+    public; lint the base's. `replay-lnfapi` passed at `248aecec` (4 of 4). **The screen (14
+    files): 27 new pairs, the new host mirroring `guessRunTM` at 84–100% (definitions) and 87%
+    (proofs); `NDHost` 18 of 45 declarations in one family.** **Ruled (user, 2026-10-27):
+    generalize now**: one host over the writer's controller and flavor, `guessRunTM` and the
+    controller host its instances, every public statement unchanged; a fresh replay after.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
