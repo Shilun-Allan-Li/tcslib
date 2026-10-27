@@ -1974,9 +1974,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     2026-10-27): every phase of `D` on a published host (the input fold; `g`'s witness lifted and
     captured; `exists_recordInitTM` at radius `g n`; `exists_configWindowRunnerTM`, whose clock
     supersedes the sketch's; the verdict), packaged by `decidesInSpace_of_alphabetReduction`; the
-    corollaries' readings exist. ESTIMATE 2.2–4.7k. Decisions: the agent; the timing. Next: the
-    brief and its pre-ship (order list 198 modules with the overlay `SelfUniversal`,
-    `Build/WindowRun`, `SpaceComplexity/WindowClock`; 54 roots; 26 base sorries in 10 modules).
+    corollaries' readings exist. ESTIMATE 2.2–4.7k. **The first pre-ship checks**
+    (`campaign/fills/b6/drafts/b6-fill-hierarchy/preship-940671e0/`): the overlay (`SelfUniversal`,
+    `Build/WindowRun`, `SpaceComplexity/WindowClock`) with its four sorries only; order list 198
+    modules, 54 roots, 26 base sorries in 10 modules; the import probe 65 of 65; the route probe
+    proves the inclusion and `LOGSPACE ⊂ PSPACE` from the statement. `spaceConstructible_poly`
+    (`Savitch.lean:158`, needed by `SPACE_linear_ne_NP`) is outside H's closure. **Ruled (user,
+    2026-10-27): move `spaceConstructible_poly` to `Constructible` (an API PR, statement unchanged,
+    with its gate and a replay of `Constructible`'s downstream); Codex for H's fill.** Next: the SCP
+    PR; then the rest of the pre-ship (seal controls, duplication probe, screen base, lint base) at
+    the issue commit, after the SCP PR and #174 merge.
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
@@ -2012,7 +2019,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     (check 8 the base's three names again), the docstring; the erratum recorded. Round 2:
     `replay-lnfapi4` written (precheck passed), the screen running, `pack-r2.md` drafted.
     **Round 2 dispatched** (bundle `67bedf22…`, 29 sections); **`replay-lnfapi4` passed** (4 of 4,
-    static-equal, at `086c0ef0`). #174 waits for round 2's findings.
+    static-equal, at `086c0ef0`). **Gate 85, round 2: PASS 0/0/1/11** (the minor, the seal
+    generator's docstring, fixed in the records; its output byte-identical). **#174: clear to merge**
+    at `086c0ef0` (2026-10-27). After it merges: NF's brief (with the verifier's `hV` obligation).
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in

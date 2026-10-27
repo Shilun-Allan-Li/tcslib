@@ -107,3 +107,9 @@ In all **2.2–4.7k**, the triage's 2.1–4.5k with the corollaries.
 1. **The agent** (a separate question): the fill-agent rule suggests Codex for a first attempt.
 2. **The issue's timing:** after #174 merges (H's closure excludes `NDHost`, so the order is free),
    with the pre-ship at the issue commit.
+3. **`spaceConstructible_poly`'s home** (found by the pre-ship's import probe): it is in
+   `Savitch.lean`, outside H's closure, and `SPACE_linear_ne_NP` needs it at degree two.
+
+**Ruled (user, 2026-10-27):** Codex for H's fill; `spaceConstructible_poly` moves to
+`Constructible.lean` by an API PR (statement unchanged; `Constructible` gains the import of
+`ClassNP/Transducer`), with its gate and a replay of `Constructible`'s downstream, before H issues.
