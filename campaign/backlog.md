@@ -1951,6 +1951,30 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   so `S·S` covers the stack. The open point is the radius for general `S`: from the
   constructibility witness, or by iterative deepening on the radius (no subroutine beyond
   logspace). A route note decides it; stage 2 stays paused.
+  - **The general `savitch`'s route note** (`campaign/items/ch34/savitch-general/SAVITCH-route-design.md`,
+    2026-10-27): `arm_decides_SPACE` and `mem_iff_reach` are general (width linear in the radius);
+    the search lemmas are generic in `s`, `w` and the oracle but stated for the program `A E`, with
+    acceptance at decider 2; only `setup_run` is polynomial. The gap is the radius. Routes: (A)
+    iterative deepening (an edge language, window exactness, a deepening machine over a
+    generalized search; 1.5–3k), (B) the constructibility witness first (a new compile-layer
+    bridge), (C) a machine-level Savitch (3–6k). Both (A) and (B) extend Hydroxyi's
+    `SavitchARM`/`Machines` layer. **Ruled (user, 2026-10-27): (A) iterative deepening; Hydroxyi FYI
+    only (no prior consultation); the queue after #174 and E-D's brief.**
+  - **The space hierarchy's readiness (2026-10-27).** Every host `space_hierarchy`'s sketch names is
+    proved on the standard axioms (17 axiom prints: `exists_selfUniversal`, the record rows
+    `exists_recordInitTM`/`TestTM`/`StepTM`/`TemplateTM`, `exists_windowRunnerTM`/`LoopTM`, the
+    alphabet reduction's and one-work-tape normal form's space clauses, `exists_codeTM`, the
+    visited-interval and configuration-count facts; `campaign/status/2026-10-27-headlines/HHosts.*`).
+    The readings H must use exist (`mem_SPACE_iff`, `decidesInSpace_iff`, `computesInSpace_iff`,
+    `spaceConstructible_iff`), so megafill D review's F8 is resolved; the corollaries lack
+    `LOGSPACE` and `PSPACE` membership readings. F6 still waits on U2's harvest API PR. Q-D3 (H
+    after F6, one fill per file) is the one block. **Ruled (user, 2026-10-27): H first, with
+    `LOGSPACE_ssubset_PSPACE` and `SPACE_linear_ne_NP` as later checkpoints of the same fill; F6
+    after U2's harvest API PR.** H's brief is next to draft.
+  - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
+    (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
+    reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
+    Its files are ours but `Diagonal` (Hydroxyi's, authorized); every input is proved.
   - **NF's route note** (`campaign/items/c1/nf/NF-route-design.md`, 2026-10-27): the C1 design's
     N1–N7 re-checked. `guessRunTM` carries only the bounded writer, so NF needs (an additive
     maintainer API PR in `Build/NDHost`) the controller writer's contract (drafted 2026-10-17,
@@ -1966,6 +1990,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     (proofs); `NDHost` 18 of 45 declarations in one family.** **Ruled (user, 2026-10-27):
     generalize now**: one host over the writer's controller and flavor, `guessRunTM` and the
     controller host its instances, every public statement unchanged; a fresh replay after.
+    **Generalized (2026-10-27; head `1045624d`):** `guessCtlRunTM` over the writer's controller and
+    flavor, `guessRunTM` and its families its instances, the handoff and the rest of a branch
+    proved once (`gr_handoff`, `gr_runWith_of_handoff`); the writer's prefix induction and first
+    stop proved once (`wr_prefix_gen`, `wr_run_first_stop`), both contracts their instances.
+    Axioms standard (16 prints); sealed in five regions, 0 diagnostics; freeze 25 → 37 public,
+    every signature unchanged; lint the base's. Screen: 10 new pairs, 4 gone, all moved
+    boilerplate or invocation and citation idioms. **`replay-lnfapi3` passed** (4 of 4,
+    static-equal; snapshot `oleans-lnfapi3`). **Gate 85** (an API gate) staged: bundle
+    `19830ec7…`, 71 sections, the Lean at `1045624d`, the records at `d51ac787`. **Dispatched (user,
+    2026-10-27).**
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
