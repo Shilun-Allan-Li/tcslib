@@ -208,7 +208,12 @@ Write `c` for the effective scheme, `D`, `K` for the diagonalizer and `L = {x | 
 
 ## Cited infrastructure (public and proved, or the two named contracts, at the issue commit)
 
-All in `HImportProbe.lean.txt` (48 names): the target and its neighbour `ntime_hierarchy_of_pos`; `exists_diagonalizer`, `exists_queryTM`, `exists_ndAcceptsWithin_decider`, `exists_timed_universal_NDTM`; the normal form and the scheme; the stages' definitions and laws; `NTIME` and its API; `DecidesInTime`, `AcceptsWithin`, `HaltsWithin` with their unfolding lemmas and monotonicity; `runWith_of_halt`, `runWith_append`; and the core and Mathlib facts the route probe uses.
+All in `HImportProbe.lean.txt` (48 names): the target and its neighbour `ntime_hierarchy_of_pos`;
+`exists_diagonalizer`, `exists_queryTM`, `exists_ndAcceptsWithin_decider`,
+`exists_timed_universal_NDTM`; the normal form and the scheme; the stages' definitions and laws;
+`NTIME` and its API; `DecidesInTime`, `AcceptsWithin`, `HaltsWithin` with their unfolding lemmas and
+monotonicity; `runWith_of_halt`, `runWith_append`; and the core and Mathlib facts the route probe
+uses.
 
 ## Ground rules (binding)
 
