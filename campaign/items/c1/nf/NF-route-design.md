@@ -163,3 +163,8 @@ The API PR is **0.5–0.9k**, and NF **2.2–4.5k** (the C1 plan's 2.5–5k for 
      no flag, but a controller over `N`'s states and a partial record.
 4. **The queue.** NF's brief issues after the API PR lands, and can run beside E-Q cont1 and E-D
    (different files). The agent is a separate question.
+
+**Ruled (user, 2026-10-27): all four as recommended.** D1 (A): the maintainer proves the controller
+contract in the API PR. D2 (A): the controller-stopped guess-run host goes in `Build/NDHost`, in the
+same PR, beside `guessRunTM`. D3 (A): a guessed end flag per record, checked in sweep 0. D4: the API
+PR starts now; NF's brief follows its merge.

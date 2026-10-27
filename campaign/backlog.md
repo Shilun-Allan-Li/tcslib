@@ -1957,7 +1957,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     never landed) and a controller-stopped guess-run host beside `guessRunTM`; then NF's
     brief: the display (width `2k + 4`), a two-tape verifier of `k + 2` sweeps as own leaves,
     the transfers, the relabeling. ESTIMATE: API 0.5–0.9k, NF 2.2–4.5k. Decisions pending
-    (user): the contract's landing, the host's home, the display's end, the queue.
+    (user): the contract's landing, the host's home, the display's end, the queue. **Ruled (user,
+    2026-10-27): all four as recommended**; the API PR starts now.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
