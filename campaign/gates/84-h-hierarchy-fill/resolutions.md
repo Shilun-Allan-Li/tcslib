@@ -44,5 +44,12 @@ campaign into #172 (clean; head `940671e0d12b4edb59692447bfb42fb4739c359f`) and 
 campaign tip has exactly. Its precheck passed. The merged head's Lean equals the trial merge's
 (`2973a416`), so the pre-check above gave the axiom prints and the sorry walk on this tree.
 
-**Merge state. #172: not yet clear to merge** (2026-10-27): the gate is passed; it waits for
-`replay-lhh`.
+**`replay-lhh` passed** (user, 2026-10-27): 2 of 2 modules at `940671e0`, 0 failed, static-equal
+(0 mismatches; `NTimeHierarchy` has no sorry of its own now;
+`evidence/merged-tree/replay-lhh.log`, `replay-lhh-static.txt`). Its snapshot is `oleans-lhh`.
+
+**Merge state. #172: clear to merge** (2026-10-27) at
+`940671e0d12b4edb59692447bfb42fb4739c359f`:
+- **The gate:** passed, 0 blockers, 0 majors.
+- **The replay:** passed at that head.
+- **The base:** the campaign branch, with no Lean change since the merge-in `b2e01163`.

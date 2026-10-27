@@ -1911,6 +1911,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **#173 merged (2026-10-27, `b2e01163`).** `mk-next` merged the campaign into #172 (head
     `940671e0`) and wrote `replay-lhh` (2 modules from `oleans-leqcp1`); precheck passed. The
     axiom prints on that tree were taken beforehand (gate 84's `evidence/trial-on-173/`).
+    **`replay-lhh` passed** (2 of 2, static-equal; snapshot `oleans-lhh`). **#172 clear to merge**
+    at `940671e0`.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
