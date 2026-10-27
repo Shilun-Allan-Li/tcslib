@@ -31,5 +31,10 @@ the records at `3190c6be`. **Findings** (`findings.md`, verbatim, SHA-256 `e7ecf
 checkpoint 1) changes. So the replay is written by `mk-next.sh` once #173 merges, chained from
 `oleans-leqcp1`, with the headline axiom prints and the sorry walk on that tree.
 
+**A pre-check** (2026-10-27, `evidence/trial-on-173/`): a local trial merge of #173's head into
+#172 is clean and changes `NTimeHierarchy` alone. Against `oleans-leqcp1`, the gate's axiom probe
+elaborates with no diagnostic, and its output is identical to the gate's: the three results are on
+the standard three and `sorryAx`, with direct `sorryAx` in the two contracts only.
+
 **Merge state. #172: not yet clear to merge** (2026-10-27): the gate is passed; it waits for #173's
 merge and then its replay.
