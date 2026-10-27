@@ -332,28 +332,80 @@ private theorem wr_cfg_stepWith {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (δ 
       omega
     · simp only [wr_cfg, Function.update_of_ne hi, if_neg hi, SignType.coe_zero, add_zero]
 
-/-- Every prefix that fits in the nonblank block is exactly the written-prefix configuration.
+/-- While the writer does not stop (its controller does not stop it, and, bounded, the next cell
+is nonblank), every prefix of the word drives it to the written-prefix configuration, in the
+controller state that the prefix reaches.
 
-**Proof sketch.** Induct once on the prefix length. The next scanned cell is the original
-nonblank cell at that offset, so the one-step lemma appends the next choice bit. -/
+**Proof sketch.** Induct on the prefix length. The writer does not stop at the state the prefix
+so far reaches, so the one-step lemma appends the next choice bit and updates the controller by
+it; `List.foldl` over the extended prefix is that update. -/
+private theorem wr_prefix_gen {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) (bounded : Bool) {x : List Bool} (c : Cfg k Bool (NDWriterState Q) x)
+    (q : Q) (hc : c.state = some (.run q)) (w : List Bool) (u : ℕ) (hw : u ≤ w.length)
+    (hlive : ∀ i < u, (stop ((w.take i).foldl δ q) ||
+      (bounded && (c.workTapes j (c.workTapePos j + i)).isNone)) = false) :
+    (ndWriterTM k j q₀ δ stop bounded).runWith (w.take u) c =
+      wr_cfg j c (.run ((w.take u).foldl δ q)) (w.take u) := by
+  revert hw hlive
+  induction u with
+  | zero =>
+    intro _ _
+    rw [List.take_zero, NDTM.runWith_nil, List.foldl_nil, wr_cfg_nil j c _ hc]
+  | succ u ih =>
+    intro hw hlive
+    have hlt : u < w.length := by omega
+    have hlen : (w.take u).length = u := List.length_take_of_le (by omega)
+    rw [List.take_succ_eq_append_getElem hlt, NDTM.runWith_append,
+      ih (by omega) (fun i hi => hlive i (by omega)), NDTM.runWith_cons, NDTM.runWith_nil,
+      wr_cfg_stepWith, hlen, if_neg (by simp [hlive u (by omega)]), List.foldl_append,
+      List.foldl_cons, List.foldl_nil]
+
+/-- Every prefix that fits in the nonblank block drives the bounded writer with the trivial
+controller to the written-prefix configuration (`wr_prefix_gen`). -/
 private theorem wr_prefix {k : ℕ} (j : Fin k) {x : List Bool}
     (c : Cfg k Bool (NDWriterState Unit) x) (hc : c.state = some (.run ()))
     (m : ℕ) (hblock : ∀ p : ℕ, p < m → c.workTapes j (c.workTapePos j + p) ≠ none)
     (w : List Bool) (u : ℕ) (hu : u ≤ m) (hw : u ≤ w.length) :
     (ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith (w.take u) c =
-      wr_cfg j c (.run ()) (w.take u) := by
-  revert hu hw
-  induction u with
-  | zero =>
-    intro _ _
-    rw [List.take_zero, NDTM.runWith_nil, wr_cfg_nil j c _ hc]
-  | succ u ih =>
-    intro hu hw
-    have hlt : u < w.length := by omega
-    have hlen : (w.take u).length = u := List.length_take_of_le (by omega)
-    rw [List.take_succ_eq_append_getElem hlt, NDTM.runWith_append,
-      ih (by omega) (by omega), NDTM.runWith_cons, NDTM.runWith_nil]
-    rw [wr_cfg_stepWith, if_neg (by simpa [hlen] using hblock u (by omega))]
+      wr_cfg j c (.run ()) (w.take u) :=
+  wr_prefix_gen j () (fun _ _ => ()) (fun _ => false) true c () hc w u hw (fun i hi => by
+    cases h : c.workTapes j (c.workTapePos j + i) with
+    | none => exact absurd h (hblock i (by omega))
+    | some _ => rfl)
+
+/-- **The writer's first stop.** If along the word `w` the writer first stops after `m` written
+bits (its controller, or, bounded, the next cell, stops it at `m` and at no `i < m`), with
+`m < |w|`, then the prefix `w.take (m + 1)` writes `w.take m` from the head and reaches `done`,
+every other field unchanged, and no prefix of length at most `m` reaches `done`.
+
+**Proof sketch.** `wr_prefix_gen` up to `m`, then one step of `wr_cfg_stepWith`, whose test holds
+at `m`; the prefixes up to `m` are at `run`. -/
+private theorem wr_run_first_stop {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) (bounded : Bool) {x : List Bool} (c : Cfg k Bool (NDWriterState Q) x)
+    (q : Q) (hc : c.state = some (.run q)) (w : List Bool) (m : ℕ) (hm : m < w.length)
+    (hlive : ∀ i < m, (stop ((w.take i).foldl δ q) ||
+      (bounded && (c.workTapes j (c.workTapePos j + i)).isNone)) = false)
+    (hstop : (stop ((w.take m).foldl δ q) ||
+      (bounded && (c.workTapes j (c.workTapePos j + m)).isNone)) = true) :
+    (ndWriterTM k j q₀ δ stop bounded).runWith (w.take (m + 1)) c =
+      { c with
+        state := some .done
+        workTapes := Function.update c.workTapes j (fun p =>
+          if c.workTapePos j ≤ p ∧ p < c.workTapePos j + m then
+            FinTM.bufferTape (w.take m) (p - c.workTapePos j)
+          else c.workTapes j p)
+        workTapePos := Function.update c.workTapePos j (c.workTapePos j + m) } ∧
+    ∀ i ≤ m, ((ndWriterTM k j q₀ δ stop bounded).runWith (w.take i) c).state ≠ some .done := by
+  have hlen : (w.take m).length = m := List.length_take_of_le hm.le
+  constructor
+  · rw [List.take_succ_eq_append_getElem hm, NDTM.runWith_append,
+      wr_prefix_gen j q₀ δ stop bounded c q hc w m hm.le hlive, NDTM.runWith_cons,
+      NDTM.runWith_nil, wr_cfg_stepWith, hlen, if_pos hstop]
+    simp only [wr_cfg, hlen]
+  · intro i hi
+    rw [wr_prefix_gen j q₀ δ stop bounded c q hc w i (by omega)
+      (fun i' hi' => hlive i' (by omega))]
+    simp only [wr_cfg, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true]
 
 /-- **The bounded choice writer's contract.** Start the bounded writer with the trivial
 controller at `run ()` over a nonblank block of `m` cells of tape `j` from its head, followed by
@@ -383,46 +435,30 @@ theorem ndWriterTM_run_block {k : ℕ} (j : Fin k) {x : List Bool}
     ∀ w' : List Bool, w'.length < m + 1 →
       ((ndWriterTM k j () (fun _ _ => ()) (fun _ => false) true).runWith w' c).state ≠
         some .done := by
-  have hm : m < w.length := by omega
-  have hlen : (w.take m).length = m := List.length_take_of_le (by omega)
-  constructor
-  · have hsplit : w = w.take m ++ [w[m]] := by
-      rw [← List.take_succ_eq_append_getElem hm, ← hw, List.take_length]
-    conv_lhs => rw [hsplit]
-    rw [NDTM.runWith_append, wr_prefix j c hc m hblock w m le_rfl (by omega),
-      NDTM.runWith_cons, NDTM.runWith_nil, wr_cfg_stepWith,
-      if_pos (by simp [hlen, hend])]
-    simp only [wr_cfg, hlen]
-  · intro w' hw'
-    have hrun := wr_prefix j c hc m hblock w' w'.length (by omega) le_rfl
-    rw [List.take_length] at hrun
-    rw [hrun]
-    simp only [wr_cfg, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true]
+  have hfirst := wr_run_first_stop j () (fun _ _ => ()) (fun _ => false) true c () hc w m (by omega)
+    (fun i hi => by
+      cases h : c.workTapes j (c.workTapePos j + i) with
+      | none => exact absurd h (hblock i hi)
+      | some _ => rfl)
+    (by simp [hend])
+  rw [List.take_of_length_le (show w.length ≤ m + 1 by omega)] at hfirst
+  refine ⟨hfirst.1, ?_⟩
+  intro w' hw'
+  have hrun := wr_prefix j c hc m hblock w' w'.length (by omega) le_rfl
+  rw [List.take_length] at hrun
+  rw [hrun]
+  simp only [wr_cfg, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true]
 
 /-- While the controller has not stopped, every prefix of the word drives the controller-stopped
-writer to the written-prefix configuration, in the controller state that the prefix reaches.
-
-**Proof sketch.** Induct on the prefix length. The controller does not stop at the state the
-prefix so far reaches, so the one-step lemma appends the next choice bit and updates the
-controller by it; `List.foldl` over the extended prefix is that update. -/
+writer to the written-prefix configuration, in the controller state that the prefix reaches
+(`wr_prefix_gen`). -/
 private theorem wr_prefix_controller {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q)
     (δ : Q → Bool → Q) (stop : Q → Bool) {x : List Bool} (c : Cfg k Bool (NDWriterState Q) x)
     (q : Q) (hc : c.state = some (.run q)) (w : List Bool) (u : ℕ) (hw : u ≤ w.length)
     (hlive : ∀ i < u, stop ((w.take i).foldl δ q) = false) :
     (ndWriterTM k j q₀ δ stop false).runWith (w.take u) c =
-      wr_cfg j c (.run ((w.take u).foldl δ q)) (w.take u) := by
-  revert hw hlive
-  induction u with
-  | zero =>
-    intro _ _
-    rw [List.take_zero, NDTM.runWith_nil, List.foldl_nil, wr_cfg_nil j c _ hc]
-  | succ u ih =>
-    intro hw hlive
-    have hlt : u < w.length := by omega
-    rw [List.take_succ_eq_append_getElem hlt, NDTM.runWith_append,
-      ih (by omega) (fun i hi => hlive i (by omega)), NDTM.runWith_cons, NDTM.runWith_nil,
-      wr_cfg_stepWith, if_neg (by simp [hlive u (by omega)]), List.foldl_append,
-      List.foldl_cons, List.foldl_nil]
+      wr_cfg j c (.run ((w.take u).foldl δ q)) (w.take u) :=
+  wr_prefix_gen j q₀ δ stop false c q hc w u hw (fun i hi => by simp [hlive i hi])
 
 /-- **The controller-stopped choice writer's contract.** Start the writer, unbounded, at `run q`
 on any tape `j`. Let a choice word `w` first stop the controller after `m` written bits: the
@@ -449,17 +485,9 @@ theorem ndWriterTM_run_controller {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (�
             FinTM.bufferTape (w.take m) (p - c.workTapePos j)
           else c.workTapes j p)
         workTapePos := Function.update c.workTapePos j (c.workTapePos j + m) } ∧
-    ∀ i ≤ m, ((ndWriterTM k j q₀ δ stop false).runWith (w.take i) c).state ≠ some .done := by
-  have hlen : (w.take m).length = m := List.length_take_of_le hm.le
-  constructor
-  · rw [List.take_succ_eq_append_getElem hm, NDTM.runWith_append,
-      wr_prefix_controller j q₀ δ stop c q hc w m hm.le hlive, NDTM.runWith_cons,
-      NDTM.runWith_nil, wr_cfg_stepWith, if_pos (by simp [hstop])]
-    simp only [wr_cfg, hlen]
-  · intro i hi
-    rw [wr_prefix_controller j q₀ δ stop c q hc w i (by omega)
-      (fun i' hi' => hlive i' (by omega))]
-    simp only [wr_cfg, ne_eq, Option.some.injEq, reduceCtorEq, not_false_eq_true]
+    ∀ i ≤ m, ((ndWriterTM k j q₀ δ stop false).runWith (w.take i) c).state ≠ some .done :=
+  wr_run_first_stop j q₀ δ stop false c q hc w m hm (fun i hi => by simp [hlive i hi])
+    (by simp [hstop])
 
 end Turing
 
