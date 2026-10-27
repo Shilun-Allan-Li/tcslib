@@ -3,9 +3,17 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
+import Mathlib.Data.Nat.Log
 import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.BufferWords
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
