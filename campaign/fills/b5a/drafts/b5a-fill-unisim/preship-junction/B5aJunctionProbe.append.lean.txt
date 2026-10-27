@@ -1,0 +1,352 @@
+-- The junction probe's block: the owned file with the brief's six imports after line 15 (the
+-- overlay `CodeSimulatorOverlay.lean.txt`), then a blank line and this block before
+-- `end MachineFormat`; the four lines after the marker are appended at the end, after a blank
+-- line. Its first section is the verdict probe's block, unchanged.
+/-! ### B5a pre-ship: the verdict on the window is the target's predicate (in-module probe)
+
+Appended to the overlay. Sealed over the other-file TCSlib definitions the step touches. The
+file's private hosted verdict `h1HostedVerdict_accepts`, run with the window `x.take t` as the
+virtual input, decides bounded acceptance on `x` itself, by deterministic input locality (the
+embedding into NDTMs and the ND locality lemma). -/
+
+section B5aUSVerdict
+
+attribute [local irreducible] FinTM.ComputesInTime MultiTapeTM.ComputesInTimeAndSpace
+  MultiTapeTM.toNDTM NDTM.runWith MultiTapeTM.runFrom MultiTapeTM.initCfg NDTM.initCfg vhostCfg
+  counterLoopCfg FinTM.bufferTape tableBitsK
+attribute [-simp] MultiTapeTM.initCfg NDTM.initCfg
+
+private theorem b5a_locality' {k : ℕ} {Q : Type} (M : MultiTapeTM k Bool Q) (x : List Bool)
+    (t : ℕ) :
+    (M.runFrom (M.initCfg (x.take t)) t).state = (M.runFrom (M.initCfg x) t).state ∧
+      (M.runFrom (M.initCfg (x.take t)) t).output = (M.runFrom (M.initCfg x) t).output := by
+  have h := NDTM.runWith_initCfg_take M.toNDTM x t (List.replicate t false)
+    (by rw [List.length_replicate])
+  simp only [MultiTapeTM.toNDTM_runWith, MultiTapeTM.toNDTM_initCfg,
+    List.length_replicate] at h
+  exact ⟨h.1, h.2.2.2.2⟩
+
+private theorem b5a_window_verdict (α x z : List Bool) (t : ℕ)
+    (d : Cfg (F.k + 2) Bool (Σ key, StepBlock.Ph F.k key) (x.take t))
+    (entry : d.state = some (StepBlock.exit F.k true))
+    (rel : StepBlock.Rep (F.machine (F.decode α)).tr
+      ((F.machine (F.decode α)).initCfg (x.take t)) d)
+    (p : Fin (z.length + 2)) (silent : d.output = []) :
+    ∃ T ≤ t * (50 * ((tableBitsK (F.machine (F.decode α)).tr).length + 1)) +
+        4 * t + 2 * t.bits.length + 3, ∃ answer : Bool,
+      ((h1HostedVerdictTM F.k).runFrom
+        (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) true p []) T).state = none ∧
+      ((h1HostedVerdictTM F.k).runFrom
+        (vhostCfg (counterLoopCfg (some (.dec .run)) d
+          (FinTM.bufferTape t.bits) 0) true p []) T).output = [answer] ∧
+      (answer = true ↔ (F.toFinTM (F.decode α)).ComputesInTime x [true] t) := by
+  obtain ⟨T, bound, answer, halted, out, iff⟩ :=
+    h1HostedVerdict_accepts F α (x.take t) z d entry rel t p
+  refine ⟨T, bound, answer, halted, by rw [out, silent, List.nil_append], iff.trans ?_⟩
+  rw [FinTM.computesInTime_iff, FinTM.computesInTime_iff]
+  obtain ⟨hs, ho⟩ := b5a_locality' (F.toFinTM (F.decode α)).tm x t
+  rw [hs, ho]
+
+end B5aUSVerdict
+
+/-! ### B5a pre-ship: the startup's threshold as the hosted verdict's start (in-module probe)
+
+Appended to the owned file after the verdict probe's block, both before `end MachineFormat`.
+Sealed over the other-file TCSlib definitions the junction touches. The interpreter startup at
+`p = F.k` leaves the counter, the window, the table and the summary on four role tapes and the
+`F.k` reserved tapes blank, every role and reserved head at `0`. `b5a_bank` gives the hosted
+verdict's tape map from the startup's role and passive indices. `b5a_junction` reads the
+threshold, relabelled, as the embedded hosted start `vhostCfg (counterLoopCfg …)` with a
+represented start on the window. `b5a_tail` runs the seam into the embedded verdict to output
+`[answer]`, with `answer` deciding bounded acceptance on `x`. -/
+
+section B5aUSJunction
+
+attribute [local irreducible] MultiTapeTM.runFrom MultiTapeTM.initCfg vhostCfg counterLoopCfg
+  FinTM.bufferTape tableBitsK Cfg.init Cfg.mapState embedEmitCfg embedEmitTM seamCompTM
+  StepBlock.summaryCells StepBlock.Rep StepBlock.tableTape StepBlock.summaryTape StepBlock.exit
+  StepBlock.outputSummary unaryFin FinTM.ComputesInTime pairEncode
+attribute [-simp] MultiTapeTM.initCfg Cfg.init
+
+/-- **The hosted verdict's tape map into the startup's tapes.** The virtual window first, then
+the `k` mirrored work tapes on the reserved passive tapes, the table, the summary, and last the
+counter. The map is injective by the startup's ten separation facts.
+
+**Proof sketch.** Define the map by `Fin.addCases` and `Fin.lastCases`, which gives the five
+value equations. Every index of `Fin (1 + (k + 2 + 1))` is one of the five forms, by its value.
+For injectivity, compare two indices form by form. Two reserved tapes are equal only at the same
+index, since `ιP` is injective. Any other two distinct forms land on tapes that the separation
+facts keep apart. -/
+private theorem b5a_bank {k K : ℕ} (ιP : Fin k ↪ Fin K) (jctr jwin jtbl jsm : Fin K)
+    (hcw : jctr ≠ jwin) (hct : jctr ≠ jtbl) (hcs : jctr ≠ jsm) (hwt : jwin ≠ jtbl)
+    (hws : jwin ≠ jsm) (hts : jtbl ≠ jsm) (hcP : jctr ∉ Set.range ιP)
+    (hwP : jwin ∉ Set.range ιP) (htP : jtbl ∉ Set.range ιP) (hsP : jsm ∉ Set.range ιP) :
+    ∃ g : Fin (1 + (k + 2 + 1)) ↪ Fin K,
+      g (Fin.castAdd (k + 2 + 1) 0) = jwin ∧
+      (∀ i, g (Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) = ιP i) ∧
+      g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd k 0))) = jtbl ∧
+      g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd k 1))) = jsm ∧
+      g (Fin.natAdd 1 (Fin.last (k + 2))) = jctr := by
+  obtain ⟨f, fw, fP, ft, fs, fc⟩ : ∃ f : Fin (1 + (k + 2 + 1)) → Fin K,
+      f (Fin.castAdd (k + 2 + 1) 0) = jwin ∧
+      (∀ i, f (Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) = ιP i) ∧
+      f (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd k 0))) = jtbl ∧
+      f (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd k 1))) = jsm ∧
+      f (Fin.natAdd 1 (Fin.last (k + 2))) = jctr :=
+    ⟨Fin.addCases (motive := fun _ => Fin K) (fun _ => jwin)
+        (Fin.lastCases (motive := fun _ => Fin K) jctr
+          (Fin.addCases (motive := fun _ => Fin K) (fun i => ιP i)
+            (fun j => if j = 0 then jtbl else jsm))),
+      by rw [Fin.addCases_left],
+      fun i => by rw [Fin.addCases_right, Fin.lastCases_castSucc, Fin.addCases_left],
+      by
+        rw [Fin.addCases_right, Fin.lastCases_castSucc, Fin.addCases_right]
+        try exact if_pos rfl,
+      by
+        rw [Fin.addCases_right, Fin.lastCases_castSucc, Fin.addCases_right]
+        try exact if_neg (by decide),
+      by rw [Fin.addCases_right, Fin.lastCases_last]⟩
+  have cover : ∀ a : Fin (1 + (k + 2 + 1)), a = Fin.castAdd (k + 2 + 1) 0 ∨
+      (∃ i, a = Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) ∨
+      a = Fin.natAdd 1 (Fin.castSucc (Fin.natAdd k 0)) ∨
+      a = Fin.natAdd 1 (Fin.castSucc (Fin.natAdd k 1)) ∨
+      a = Fin.natAdd 1 (Fin.last (k + 2)) := by
+    intro a
+    have ha := a.isLt
+    by_cases h0 : a.val = 0
+    · left
+      exact Fin.ext (by rw [Fin.coe_castAdd, Fin.val_zero]; omega)
+    by_cases h1 : a.val ≤ k
+    · right; left
+      refine ⟨⟨a.val - 1, by omega⟩, Fin.ext ?_⟩
+      rw [Fin.coe_natAdd, Fin.coe_castSucc, Fin.coe_castAdd]
+      show (a : ℕ) = 1 + (a.val - 1)
+      omega
+    by_cases h2 : a.val = k + 1
+    · right; right; left
+      exact Fin.ext (by rw [Fin.coe_natAdd, Fin.coe_castSucc, Fin.coe_natAdd, Fin.val_zero]; omega)
+    by_cases h3 : a.val = k + 2
+    · right; right; right; left
+      exact Fin.ext (by rw [Fin.coe_natAdd, Fin.coe_castSucc, Fin.coe_natAdd, Fin.val_one]; omega)
+    · right; right; right; right
+      exact Fin.ext (by rw [Fin.coe_natAdd, Fin.val_last]; omega)
+  refine ⟨⟨f, fun a b h => ?_⟩, fw, fP, ft, fs, fc⟩
+  rcases cover a with rfl | ⟨i, rfl⟩ | rfl | rfl | rfl <;>
+    rcases cover b with rfl | ⟨i', rfl⟩ | rfl | rfl | rfl <;>
+    simp only [fw, fP, ft, fs, fc] at h <;>
+    first
+    | rfl
+    | exact congrArg (fun i => Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) (ιP.injective h)
+    | exact absurd h hcw | exact absurd h.symm hcw
+    | exact absurd h hct | exact absurd h.symm hct
+    | exact absurd h hcs | exact absurd h.symm hcs
+    | exact absurd h hwt | exact absurd h.symm hwt
+    | exact absurd h hws | exact absurd h.symm hws
+    | exact absurd h hts | exact absurd h.symm hts
+    | exact (hcP ⟨_, h⟩).elim | exact (hcP ⟨_, h.symm⟩).elim
+    | exact (hwP ⟨_, h⟩).elim | exact (hwP ⟨_, h.symm⟩).elim
+    | exact (htP ⟨_, h⟩).elim | exact (htP ⟨_, h.symm⟩).elim
+    | exact (hsP ⟨_, h⟩).elim | exact (hsP ⟨_, h.symm⟩).elim
+
+/-- **The loop junction.** A configuration with the interpreter startup's threshold fields, at
+`p = F.k`, is the hosted verdict's start embedded along the tape map. The startup's threshold has
+the counter `bits t`, the window `x.take t`, the decoded machine's table and its summary on the
+four role tapes, the `F.k` reserved tapes blank, every role and reserved head at `0`, and the
+empty output. Relabelled to the hosted clock's first state, it is the forwarding embedding of
+`vhostCfg (counterLoopCfg (some (.dec .run)) d (bufferTape t.bits) 0)` at the configuration's own
+input head. Here `d` is a represented start of the decoded machine on the window, at the step
+block's live exit, with empty output.
+
+**Proof sketch.** Take for `d` the step block's live exit, input head `1`, the mirrored tapes
+blank, the table and the summary from the startup, every head at `0`, empty output. It
+represents the initial configuration on the window (`StepBlock.Rep_iff`, the `Cfg.init`
+fields). For the embedding, apply `embedEmitCfg_eq`. The state, input head and output come from
+the field equations of `vhostCfg`, `counter_cfg_eq` and `Cfg.mapState`. For a selected tape,
+split its index by `Fin.addCases` and `Fin.lastCases` into the window, the mirrored bank, the
+table, the summary and the counter; each contents and head is the corresponding threshold field.
+The tapes off the map are the configuration's own. -/
+private theorem b5a_junction {K : ℕ} {Q : Type} {z : List Bool} (α x : List Bool) (t : ℕ)
+    (g : Fin (1 + (F.k + 2 + 1)) ↪ Fin K) (ιP : Fin F.k ↪ Fin K) (jctr jwin jtbl jsm : Fin K)
+    (gw : g (Fin.castAdd (F.k + 2 + 1) 0) = jwin)
+    (gP : ∀ i, g (Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) = ιP i)
+    (gt : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 0))) = jtbl)
+    (gs : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 1))) = jsm)
+    (gc : g (Fin.natAdd 1 (Fin.last (F.k + 2))) = jctr)
+    (c : Cfg K Bool Q z) (done : Q) (hst : c.state = some done) (hout : c.output = [])
+    (hctr : c.workTapes jctr = FinTM.bufferTape (Nat.bits t)) (hctrp : c.workTapePos jctr = 0)
+    (hwin : c.workTapes jwin = FinTM.bufferTape (x.take t)) (hwinp : c.workTapePos jwin = 0)
+    (htbl : c.workTapes jtbl = FinTM.bufferTape (tableBitsK (F.machine (F.decode α)).tr))
+    (htblp : c.workTapePos jtbl = 0)
+    (hsm : c.workTapes jsm =
+      StepBlock.summaryCells none (unaryFin (F.machine (F.decode α)).q₀))
+    (hsmp : c.workTapePos jsm = 0)
+    (hpas : ∀ i, c.workTapes (ιP i) = (fun _ => none) ∧ c.workTapePos (ιP i) = 0) :
+    ∃ d : Cfg (F.k + 2) Bool (Σ key, StepBlock.Ph F.k key) (x.take t),
+      d.state = some (StepBlock.exit F.k true) ∧
+      StepBlock.Rep (F.machine (F.decode α)).tr
+        ((F.machine (F.decode α)).initCfg (x.take t)) d ∧
+      d.output = [] ∧
+      c.mapState (fun _ => ((CounterLoopState.dec FlagPhase.run, true) :
+          CounterLoopState (Σ key, StepBlock.Ph F.k key) × Bool)) =
+        embedEmitCfg g c.workTapes c.workTapePos []
+          (vhostCfg (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d
+            (FinTM.bufferTape t.bits) 0) true c.inputPos []) := by
+  obtain ⟨wt, wtP, wtT, wtS⟩ : ∃ wt : Fin (F.k + 2) → ℤ → Option Bool,
+      (∀ i, wt (Fin.castAdd 2 i) = fun _ => none) ∧
+      wt (Fin.natAdd F.k 0) = FinTM.bufferTape (tableBitsK (F.machine (F.decode α)).tr) ∧
+      wt (Fin.natAdd F.k 1) =
+        StepBlock.summaryCells none (unaryFin (F.machine (F.decode α)).q₀) :=
+    ⟨Fin.addCases (motive := fun _ => ℤ → Option Bool) (fun _ => fun _ => none)
+        (fun j => if j = 0 then FinTM.bufferTape (tableBitsK (F.machine (F.decode α)).tr)
+          else StepBlock.summaryCells none (unaryFin (F.machine (F.decode α)).q₀)),
+      fun i => by rw [Fin.addCases_left],
+      by
+        rw [Fin.addCases_right]
+        try exact if_pos rfl,
+      by
+        rw [Fin.addCases_right]
+        try exact if_neg (by decide)⟩
+  obtain ⟨d, hds, hdi, hdw, hdp, hdo⟩ :
+      ∃ d : Cfg (F.k + 2) Bool (Σ key, StepBlock.Ph F.k key) (x.take t),
+        d.state = some (StepBlock.exit F.k true) ∧ d.inputPos = 1 ∧ d.workTapes = wt ∧
+          d.workTapePos = (fun _ => 0) ∧ d.output = [] :=
+    ⟨⟨some (StepBlock.exit F.k true), 1, wt, fun _ => 0, []⟩, rfl, rfl, rfl, rfl, rfl⟩
+  have hrep : StepBlock.Rep (F.machine (F.decode α)).tr
+      ((F.machine (F.decode α)).initCfg (x.take t)) d := by
+    rw [StepBlock.Rep_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Cfg.init_output,
+      Cfg.init_state, StepBlock.outputSummary_nil, Option.map_some, Option.getD_some,
+      StepBlock.tableTape_eq, StepBlock.summaryTape_eq, hdi, hdw, hdp]
+    refine ⟨rfl, fun i => ⟨?_, ?_⟩, wtT, wtS, rfl, rfl⟩
+    · rw [wtP i]
+      funext q
+      rw [Cfg.init_workTapes]
+    · rw [Cfg.init_workTapePos]
+  have hcl_tapes : ∀ i : Fin (F.k + 2 + 1),
+      (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d
+        (FinTM.bufferTape (Nat.bits t)) 0).workTapes i =
+      Fin.lastCases (FinTM.bufferTape (Nat.bits t)) d.workTapes i := by
+    intro i
+    rw [counter_cfg_eq]
+  have hcl_pos : ∀ i : Fin (F.k + 2 + 1),
+      (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d
+        (FinTM.bufferTape (Nat.bits t)) 0).workTapePos i =
+      Fin.lastCases 0 d.workTapePos i := by
+    intro i
+    rw [counter_cfg_eq]
+  have hcl_in : (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d
+      (FinTM.bufferTape (Nat.bits t)) 0).inputPos = d.inputPos := by
+    rw [counter_cfg_eq]
+  have hcl_out : (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d
+      (FinTM.bufferTape (Nat.bits t)) 0).output = d.output := by
+    rw [counter_cfg_eq]
+  have hcl_state : (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) d
+      (FinTM.bufferTape (Nat.bits t)) 0).state =
+      some (CounterLoopState.dec FlagPhase.run) := by
+    rw [counter_cfg_eq]
+  refine ⟨d, hds, hrep, hdo, ?_⟩
+  refine (embedEmitCfg_eq g c.workTapes c.workTapePos [] _ _ ?_ ?_ ?_ ?_ ?_).symm
+  · rw [vhostCfg_state, hcl_state, Cfg.mapState_state, hst, Option.map_some, Option.map_some]
+  · rw [vhostCfg_inputPos, Cfg.mapState_inputPos]
+  · rw [vhostCfg_output, hcl_out, hdo, Cfg.mapState_output, hout, List.nil_append,
+      List.nil_append]
+  · intro i
+    induction i using Fin.addCases with
+    | left i0 =>
+      obtain rfl : i0 = 0 := Subsingleton.elim _ _
+      refine ⟨funext fun q => ?_, ?_⟩
+      · rw [vhostCfg_workTapes, Fin.addCases_left, Cfg.mapState_workTapes, gw, hwin]
+      · rw [vhostCfg_workTapePos, Fin.addCases_left, Cfg.mapState_workTapePos, gw, hwinp, hcl_in,
+          hdi, Fin.val_one]
+        norm_num
+    | right j =>
+      induction j using Fin.lastCases with
+      | last =>
+        refine ⟨funext fun q => ?_, ?_⟩
+        · rw [vhostCfg_workTapes, Fin.addCases_right, hcl_tapes, Fin.lastCases_last,
+            Cfg.mapState_workTapes, gc, hctr]
+        · rw [vhostCfg_workTapePos, Fin.addCases_right, hcl_pos, Fin.lastCases_last,
+            Cfg.mapState_workTapePos, gc, hctrp]
+      | cast j =>
+        induction j using Fin.addCases with
+        | left i =>
+          refine ⟨funext fun q => ?_, ?_⟩
+          · rw [vhostCfg_workTapes, Fin.addCases_right, hcl_tapes, Fin.lastCases_castSucc, hdw,
+              wtP, Cfg.mapState_workTapes, gP, (hpas i).1]
+          · rw [vhostCfg_workTapePos, Fin.addCases_right, hcl_pos, Fin.lastCases_castSucc, hdp,
+              Cfg.mapState_workTapePos, gP, (hpas i).2]
+        | right j =>
+          rcases (Fin.exists_fin_two (p := fun i => i = j)).mp ⟨j, rfl⟩ with rfl | rfl
+          · refine ⟨funext fun q => ?_, ?_⟩
+            · rw [vhostCfg_workTapes, Fin.addCases_right, hcl_tapes, Fin.lastCases_castSucc, hdw,
+                wtT, Cfg.mapState_workTapes, gt, htbl]
+            · rw [vhostCfg_workTapePos, Fin.addCases_right, hcl_pos, Fin.lastCases_castSucc, hdp,
+                Cfg.mapState_workTapePos, gt, htblp]
+          · refine ⟨funext fun q => ?_, ?_⟩
+            · rw [vhostCfg_workTapes, Fin.addCases_right, hcl_tapes, Fin.lastCases_castSucc, hdw,
+                wtS, Cfg.mapState_workTapes, gs, hsm]
+            · rw [vhostCfg_workTapePos, Fin.addCases_right, hcl_pos, Fin.lastCases_castSucc, hdp,
+                Cfg.mapState_workTapePos, gs, hsmp]
+  · intro j _
+    refine ⟨funext fun q => ?_, ?_⟩
+    · rw [Cfg.mapState_workTapes]
+    · rw [Cfg.mapState_workTapePos]
+
+/-- **The startup's threshold into the verdict.** From a run of a machine `U` that first
+reaches `done` at a configuration with the startup's threshold fields, the seam into the hosted
+verdict embedded along the tape map halts, within the hosted verdict's bound after the threshold
+and one dispatch step, with output exactly `[answer]`, where `answer` decides bounded acceptance
+of the decoded machine on `x` itself.
+
+**Proof sketch.** The junction gives the relabelled threshold as the embedded hosted start, with
+a represented start `d` on the window. The window verdict runs from it and decides acceptance on
+`x`. The seam's right run (`seamCompTM_runFrom_right`) and the forwarding transport
+(`embedEmitTM_runFrom`) carry that run into the composite. Its state and output are read through
+the relabelling's and the transport's field equations, after the threshold's empty output. -/
+private theorem b5a_tail {K : ℕ} {Q : Type} [DecidableEq Q] (α x : List Bool) (t : ℕ)
+    (U : MultiTapeTM K Bool Q) (done : Q) (g : Fin (1 + (F.k + 2 + 1)) ↪ Fin K)
+    (ιP : Fin F.k ↪ Fin K) (jctr jwin jtbl jsm : Fin K)
+    (gw : g (Fin.castAdd (F.k + 2 + 1) 0) = jwin)
+    (gP : ∀ i, g (Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) = ιP i)
+    (gt : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 0))) = jtbl)
+    (gs : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 1))) = jsm)
+    (gc : g (Fin.natAdd 1 (Fin.last (F.k + 2))) = jctr)
+    (c₀ c : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)) (T₁ : ℕ)
+    (run : U.runFrom c₀ T₁ = c) (hst : c.state = some done)
+    (cut : ∀ u < T₁, (U.runFrom c₀ u).state ≠ some done) (hout : c.output = [])
+    (hctr : c.workTapes jctr = FinTM.bufferTape (Nat.bits t)) (hctrp : c.workTapePos jctr = 0)
+    (hwin : c.workTapes jwin = FinTM.bufferTape (x.take t)) (hwinp : c.workTapePos jwin = 0)
+    (htbl : c.workTapes jtbl = FinTM.bufferTape (tableBitsK (F.machine (F.decode α)).tr))
+    (htblp : c.workTapePos jtbl = 0)
+    (hsm : c.workTapes jsm =
+      StepBlock.summaryCells none (unaryFin (F.machine (F.decode α)).q₀))
+    (hsmp : c.workTapePos jsm = 0)
+    (hpas : ∀ i, c.workTapes (ιP i) = (fun _ => none) ∧ c.workTapePos (ιP i) = 0) :
+    ∃ T₂ ≤ t * (50 * ((tableBitsK (F.machine (F.decode α)).tr).length + 1)) +
+        4 * t + 2 * t.bits.length + 3, ∃ answer : Bool,
+      ((seamCompTM U done (embedEmitTM g (h1HostedVerdictTM F.k))
+          (CounterLoopState.dec FlagPhase.run, true)).runFrom (c₀.mapState Sum.inl)
+          (T₁ + 1 + T₂)).state = none ∧
+      ((seamCompTM U done (embedEmitTM g (h1HostedVerdictTM F.k))
+          (CounterLoopState.dec FlagPhase.run, true)).runFrom (c₀.mapState Sum.inl)
+          (T₁ + 1 + T₂)).output = [answer] ∧
+      (answer = true ↔ (F.toFinTM (F.decode α)).ComputesInTime x [true] t) := by
+  obtain ⟨d, hds, hrel, hdo, junc⟩ :=
+    b5a_junction F α x t g ιP jctr jwin jtbl jsm gw gP gt gs gc c done hst hout hctr hctrp hwin
+      hwinp htbl htblp hsm hsmp hpas
+  obtain ⟨T₂, bound, answer, halted, out, iff⟩ :=
+    b5a_window_verdict F α x _ t d hds hrel c.inputPos hdo
+  refine ⟨T₂, bound, answer, ?_⟩
+  rw [seamCompTM_runFrom_right U done _ _ run hst cut T₂, junc, embedEmitTM_runFrom]
+  refine ⟨?_, ?_, iff⟩
+  · rw [Cfg.mapState_state, embedEmitCfg_state, halted]
+    rfl
+  · rw [Cfg.mapState_output, embedEmitCfg_output, out, List.nil_append]
+
+end B5aUSJunction
+
+-- (appended at the end:)
+#print axioms Turing.MachineFormat.b5a_window_verdict
+#print axioms Turing.MachineFormat.b5a_bank
+#print axioms Turing.MachineFormat.b5a_junction
+#print axioms Turing.MachineFormat.b5a_tail

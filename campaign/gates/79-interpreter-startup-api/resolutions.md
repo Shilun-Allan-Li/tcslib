@@ -39,3 +39,15 @@ snapshot the last of them leaves, after the campaign is merged in.
 written; its precheck passed. Since #168 changed `UniversalK`, a population file, the screen is
 re-run on the merged head and on the campaign tip after #168 (`13120e00`), and diffed by name
 against both and round 1's screens.
+**The combined screen** (`evidence/merged-tree/`, the 18-file population; about 12 minutes
+each, peak 6.1 GB): the merged head `9d0af8cb` has 984 declarations and 605 pairs; the tip after
+#168 has 983 and 603. **No pair at the merged head is new** against the union of the tip's and
+round 1's two screens (`pairdiff-merged-head-vs-all.txt`). Against the tip alone, the only new
+pairs are round 1's two inherited idiom pairs (`pairdiff-merged-head-vs-tip.txt`). No pair
+joins the startup to U2's new privates. **Disclosed:** U2 itself adds 7 pairs against round 1's
+base (`pairdiff-tip-vs-gate79-base.txt`). Five are gate 80's in-file pairs. Two are
+cross-file pairs that gate 80's population (without `Build/SeamLayout`) did not show:
+`uk_header_run` (74%) and `uk_suffixStartup_run` (59%) reproduce `SeamLayout`'s private
+`sl_rewrap`, the five-field `Cfg.ext` rewrap. That is the idiom of round 1's `252/322` pair,
+which round 1 (note 10) and round 2 (note 6) accepted. Both are below 90%, and no ledger family
+is opened. A public rewrap lemma would serve all three; it is a candidate for the dedup window.

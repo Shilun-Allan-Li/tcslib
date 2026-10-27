@@ -138,3 +138,9 @@ it, with the usual seal and controls and a consumer probe at `p = 0`, which is B
   overlay, before B5a issues. Gate 79's consumer probe shows the reservation at `p = F.k`
   (`b5aP_startup`, round 2). The loop then runs on the window, so B5a's acceptance argument
   must also bridge `x.take t` to `x` (gate 79, round 2, note 3; the B5a review).
+  **Proved (maintainer, 2026-10-27):**
+  `campaign/fills/b5a/drafts/b5a-fill-unisim/preship-junction/`, in the owned file's overlay,
+  sealed over 20 definitions with their controls. `b5a_bank` gives the tape map from the
+  startup's roles. `b5a_junction` reads the relabelled threshold as the embedded `vhostCfg`
+  start, with the `Rep` on the window. `b5a_tail` runs the seam into the embedded verdict, to
+  output `[answer]` deciding acceptance on `x` itself.
