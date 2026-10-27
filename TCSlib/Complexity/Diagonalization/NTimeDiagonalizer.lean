@@ -4546,6 +4546,243 @@ private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn
     rw [hA]
     omega
 
+/-! ### After the loop: the input seek and the stage code -/
+
+/-- A tape past the blocks of the input call and `f`'s call is off the round's scratch.
+
+**Proof sketch.** The clock's bank is `f`'s call bank (tape `7` and the block after the input
+call's) and the counter tape `8`, and the other scratch tapes are `3` to `6`: compare indices
+(`qyBank_zero`, `qyBank_val`, `QyKit.tp_val`). -/
+private theorem qy_not_scratch_ge {f g : ℕ → ℕ} (κ : QyKit f g) (t : Fin κ.K)
+    (ht : 16 + κ.cb.k + κ.cf.k ≤ (t : ℕ)) : ¬ qyScratch κ t := by
+  rintro (⟨i, hi⟩ | h | h | h | h)
+  · unfold QyKit.bClk at hi
+    rw [Function.Embedding.coeFn_mk] at hi
+    by_cases hlt : (i : ℕ) < κ.cf.k
+    · rw [dif_pos hlt] at hi
+      by_cases h0 : (i : ℕ) = 0
+      · have e : (⟨i, hlt⟩ : Fin κ.cf.k) = ⟨0, κ.cfK⟩ := Fin.ext h0
+        rw [e] at hi
+        have := congrArg Fin.val hi
+        unfold QyKit.bCf at this
+        rw [qyBank_zero, κ.tp_val] at this
+        simp at this
+        omega
+      · have := congrArg Fin.val hi
+        unfold QyKit.bCf at this
+        rw [qyBank_val _ _ _ _ _ ⟨i, hlt⟩ h0] at this
+        simp at this
+        omega
+    · rw [dif_neg hlt] at hi
+      have := congrArg Fin.val hi
+      rw [κ.tp_val] at this
+      simp at this
+      omega
+  all_goals
+    have := congrArg Fin.val h
+    rw [κ.tp_val] at this
+    simp at this
+    omega
+
+/-- A named tape other than `3` to `8` is off the round's scratch. -/
+private theorem qy_not_scratch_tp {f g : ℕ → ℕ} (κ : QyKit f g) (c : Fin 16)
+    (hc : (c : ℕ) < 3 ∨ 8 < (c : ℕ)) : ¬ qyScratch κ (κ.tp c) := by
+  rintro (⟨i, hi⟩ | h | h | h | h)
+  · unfold QyKit.bClk at hi
+    rw [Function.Embedding.coeFn_mk] at hi
+    by_cases hlt : (i : ℕ) < κ.cf.k
+    · rw [dif_pos hlt] at hi
+      by_cases h0 : (i : ℕ) = 0
+      · have e : (⟨i, hlt⟩ : Fin κ.cf.k) = ⟨0, κ.cfK⟩ := Fin.ext h0
+        rw [e] at hi
+        have := congrArg Fin.val (κ.tp_inj.mp hi)
+        simp at this
+        omega
+      · exact κ.bCf_ne ⟨i, hlt⟩ h0 c hi
+    · rw [dif_neg hlt] at hi
+      have := congrArg Fin.val (κ.tp_inj.mp hi)
+      simp at this
+      omega
+  all_goals
+    have := congrArg Fin.val (κ.tp_inj.mp h)
+    simp at this
+    omega
+
+/-- A bank tape other than tape `0`, at an offset past `f`'s call bank, is off the scratch. -/
+private theorem qy_bank_not_scratch {f g : ℕ → ℕ} (κ : QyKit f g) (t0 : Fin κ.K) (off k : ℕ)
+    (hK : off + k ≤ κ.K) (h0 : (t0 : ℕ) < off) (hoff : 16 + κ.cb.k + κ.cf.k ≤ off) (i : Fin k)
+    (hi : (i : ℕ) ≠ 0) : ¬ qyScratch κ (qyBank t0 off k hK h0 i) :=
+  qy_not_scratch_ge κ _ (by rw [qyBank_val _ _ _ _ _ _ hi]; omega)
+
+/-- An escape's tapes at a named tape off the scratch: the layout's word, its head at `0`. -/
+private theorem QyEscT.tp {f g : ℕ → ℕ} {κ : QyKit f g} {n a j k : ℕ}
+    {T : Fin κ.K → ℤ → Option Bool} {P : Fin κ.K → ℤ} (h : QyEscT κ n a j k T P) (c : Fin 16)
+    (hc : (c : ℕ) < 3 ∨ 8 < (c : ℕ)) :
+    T (κ.tp c) = FinTM.bufferTape (qyLay κ n a j k (κ.tp c)) ∧ P (κ.tp c) = 0 :=
+  h _ (qy_not_scratch_tp κ c hc)
+
+/-- An escape's tapes at a bank tape past `f`'s call bank: blank, its head at `0`. -/
+private theorem QyEscT.bank {f g : ℕ → ℕ} {κ : QyKit f g} {n a j k : ℕ}
+    {T : Fin κ.K → ℤ → Option Bool} {P : Fin κ.K → ℤ} (h : QyEscT κ n a j k T P) (t0 : Fin κ.K)
+    (off kb : ℕ) (hK : off + kb ≤ κ.K) (h0 : (t0 : ℕ) < off) (hoff : 16 + κ.cb.k + κ.cf.k ≤ off)
+    (i : Fin kb) (hi : (i : ℕ) ≠ 0) :
+    T (qyBank t0 off kb hK h0 i) = FinTM.bufferTape [] ∧ P (qyBank t0 off kb hK h0 i) = 0 := by
+  obtain ⟨e1, e2⟩ := h _ (qy_bank_not_scratch κ t0 off kb hK h0 hoff i hi)
+  refine ⟨?_, e2⟩
+  rw [e1]
+  congr 1
+  have hne : ∀ c : Fin 16, qyBank t0 off kb hK h0 i ≠ κ.tp c :=
+    qyBank_ne_tp κ t0 off kb hK h0 (by omega) i hi
+  simp [qyLay, hne]
+
+/-- The length call's bank tapes other than tape `0` are off the named tapes. -/
+private theorem QyKit.bCl_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.cl.k) (hi : (i : ℕ) ≠ 0)
+    (c : Fin 16) : κ.bCl i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
+
+/-- **The stage code's calls after an escape** (checkpoint 5): on an escape's tapes with the input
+head at `1`, the increment's call on the bank of tape `10` gives `1^{j + 1}`, and the length call
+on the same tape then gives `bits (j + 1)` (the code `α` is its top bit dropped,
+`stageCode_eq`), within `abA (j + 1)` and `clA (j + 2)` steps, each reaching its exit first at
+its end.
+
+**Proof sketch.** Two calls (`qy_callHost`), each bank holding the seam of its argument
+(`qy_arg_bank`; the banks' other tapes blank by `QyEscT.bank`); `Function.update_idem` merges the
+two writes to tape `10`. -/
+private theorem qy_code_calls {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
+    (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ) (hesc : QyEscT κ x.length a j k T P) :
+    (∃ tb ≤ κ.abA * (j + 1),
+      (embedEmitTM κ.bAbJ (seamReleaseTM κ.ab.tm κ.abE)).runFrom
+          (qyC (x := x) (Sum.inl ()) 1 T P []) tb =
+        qyC (Sum.inr κ.abX) 1 (Function.update T (κ.tp 10)
+          (FinTM.bufferTape (List.replicate (j + 1) true))) P [] ∧
+      ∀ u < tb, ((embedEmitTM κ.bAbJ (seamReleaseTM κ.ab.tm κ.abE)).runFrom
+          (qyC (x := x) (Sum.inl ()) 1 T P []) u).state ≠ some (Sum.inr κ.abX)) ∧
+    (∃ tc ≤ κ.clA * (j + 2),
+      (embedEmitTM κ.bCl (seamReleaseTM κ.cl.tm κ.clE)).runFrom
+          (qyC (x := x) (Sum.inl ()) 1 (Function.update T (κ.tp 10)
+            (FinTM.bufferTape (List.replicate (j + 1) true))) P []) tc =
+        qyC (Sum.inr κ.clX) 1 (Function.update T (κ.tp 10)
+          (FinTM.bufferTape (Nat.bits (j + 1)))) P [] ∧
+      ∀ u < tc, ((embedEmitTM κ.bCl (seamReleaseTM κ.cl.tm κ.clE)).runFrom
+          (qyC (x := x) (Sum.inl ()) 1 (Function.update T (κ.tp 10)
+            (FinTM.bufferTape (List.replicate (j + 1) true))) P []) u).state ≠
+          some (Sum.inr κ.clX)) := by
+  obtain ⟨hT10, hP10⟩ := hesc.tp 10 (by decide)
+  have hJ : T (κ.tp 10) = FinTM.bufferTape (List.replicate j true) := by
+    rw [hT10]
+    simp [qyLay, QyKit.tp_inj]
+  constructor
+  · obtain ⟨tb, htb, hposb, hcutb, hrunb⟩ := κ.abS x (List.replicate j true)
+    simp only [List.length_replicate] at htb
+    have hb10 : κ.bAbJ ⟨0, κ.abK⟩ = κ.tp 10 := rfl
+    have c := qy_callHost κ.ab κ.abK κ.bAbJ κ.abE κ.abX (List.replicate j true) _ tb hposb
+      hcutb hrunb T P []
+      (qy_arg_bank κ.bAbJ κ.abK T _ (by rw [hb10]; exact hJ)
+        (fun i hi => (hesc.bank _ _ _ _ _ (by omega) i hi).1))
+      (fun i => by
+        by_cases hi : (i : ℕ) = 0
+        · have e : i = ⟨0, κ.abK⟩ := Fin.ext hi
+          rw [e, hb10]
+          exact hP10
+        · exact (hesc.bank _ _ _ _ _ (by omega) i hi).2)
+    beta_reduce at c
+    rw [hb10, ← List.replicate_succ'] at c
+    exact ⟨tb, htb, c⟩
+  · obtain ⟨tc, htc, hposc, hcutc, hrunc⟩ := κ.clS x (List.replicate (j + 1) true)
+    simp only [List.length_replicate] at htc hrunc
+    have hb10 : κ.bCl ⟨0, κ.clK⟩ = κ.tp 10 := rfl
+    have c := qy_callHost κ.cl κ.clK κ.bCl κ.clE κ.clX (List.replicate (j + 1) true) _ tc hposc
+      hcutc hrunc (Function.update T (κ.tp 10) (FinTM.bufferTape (List.replicate (j + 1) true)))
+      P []
+      (qy_arg_bank κ.bCl κ.clK _ _ (by rw [hb10]; simp)
+        (fun i hi => by
+          rw [Function.update_of_ne (κ.bCl_ne i hi 10)]
+          exact (hesc.bank _ _ _ _ _ (by omega) i hi).1))
+      (fun i => by
+        by_cases hi : (i : ℕ) = 0
+        · have e : i = ⟨0, κ.clK⟩ := Fin.ext hi
+          rw [e, hb10]
+          exact hP10
+        · exact (hesc.bank _ _ _ _ _ (by omega) i hi).2)
+    rw [hb10, Function.update_idem] at c
+    exact ⟨tc, by omega, c⟩
+
+/-- **The input seek after an escape** (checkpoint 5): on an escape's tapes, from any input
+head position, the seek on tapes `12` and `13` (`[true]`, worth `1`, and a blank tape) returns
+the input head to `1` within `rC (n + 4)` steps, every work tape and head unchanged.
+
+**Proof sketch.** `qy_seekHost` on the kit's seek clause, its two tapes read off `QyEscT.tp`;
+`ip ≤ n + 1` bounds its time. -/
+private theorem qy_seek_run {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
+    (ip : Fin (x.length + 2)) (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ)
+    (hesc : QyEscT κ x.length a j k T P) :
+    ∃ t ≤ κ.rC * (x.length + 4),
+      (embedEmitTM (qyEmb2 (κ.tp 12) (κ.tp 13) (κ.tp_ne (by decide))) κ.R).runFrom
+          (qyC (x := x) κ.rE ip T P []) t = qyC κ.rX 1 T P [] ∧
+      ∀ u < t, ((embedEmitTM (qyEmb2 (κ.tp 12) (κ.tp 13) (κ.tp_ne (by decide))) κ.R).runFrom
+          (qyC (x := x) κ.rE ip T P []) u).state ≠ some κ.rX := by
+  obtain ⟨hT12, hP12⟩ := hesc.tp 12 (by decide)
+  obtain ⟨hT13, -⟩ := hesc.tp 13 (by decide)
+  obtain ⟨t, ht, hrun⟩ := qy_seekHost κ.R κ.rE κ.rX κ.rC (κ.rS (x := x))
+    (qyEmb2 (κ.tp 12) (κ.tp 13) (κ.tp_ne (by decide))) (κ.tp 12) (κ.tp 13) rfl rfl ip T P []
+    (by rw [hT12]; simp [qyLay, QyKit.tp_inj]) hP12 (by rw [hT13]; simp [qyLay, QyKit.tp_inj])
+  refine ⟨t, ht.trans (Nat.mul_le_mul_left _ ?_), hrun⟩
+  have := ip.isLt
+  omega
+
+/-- **The middle writer's head** (checkpoint 5): from its entry on an escape's tapes, the input
+seek, the increment of `j` and the length call reach the budget's call with the input head at `1`
+and `bits (j + 1)` on tape `10`.
+
+**Proof sketch.** Three hosted phases (`qy_hosted`): `qy_seek_run`, then `qy_code_calls`' two
+calls, each guard its cut (`qy_guard_of_cut`). -/
+private theorem qy_mid_code {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
+    (ip : Fin (x.length + 2)) (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ)
+    (hesc : QyEscT κ x.length a j k T P) :
+    ∃ t ≤ κ.rC * (x.length + 4) + κ.abA * (j + 1) + κ.clA * (j + 2) + 3,
+      Segment (qyMid κ) ∅ (fun _ => True) (qyC (x := x) ⟨.m0, κ.rE⟩ ip T P [])
+        (qyC ⟨.m3, Sum.inl ()⟩ 1 (Function.update T (κ.tp 10)
+          (FinTM.bufferTape (Nat.bits (j + 1)))) P []) t := by
+  unfold qyMid
+  obtain ⟨t0, ht0, c0⟩ := qy_seek_run κ (x := x) a j k ip T P hesc
+  have seg0 := qy_hosted (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m0 κ.rE κ.rX ⟨.m1, Sum.inl ()⟩ ip 1
+    T T P P [] [] t0 c0.1 (by simp [qyMidRed])
+    (qy_guard_of_cut κ.rX (qyMidRed κ .m0) (fun s hs => by simp [qyMidRed, hs]) c0.2) ∅
+    (fun _ h => h)
+  obtain ⟨⟨tb, htb, c1⟩, ⟨tc, htc, c2⟩⟩ := qy_code_calls κ (x := x) a j k T P hesc
+  have seg1 := qy_hosted (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m1 (Sum.inl ()) (Sum.inr κ.abX)
+    ⟨.m2, Sum.inl ()⟩ 1 1 T _ P P [] [] tb c1.1 (by simp [qyMidRed])
+    (qy_guard_of_cut (Sum.inr κ.abX) (qyMidRed κ .m1) (fun s hs => by simp [qyMidRed, hs]) c1.2)
+    ∅ (fun _ h => h)
+  have seg2 := qy_hosted (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m2 (Sum.inl ()) (Sum.inr κ.clX)
+    ⟨.m3, Sum.inl ()⟩ 1 1 _ _ P P [] [] tc c2.1 (by simp [qyMidRed])
+    (qy_guard_of_cut (Sum.inr κ.clX) (qyMidRed κ .m2) (fun s hs => by simp [qyMidRed, hs]) c2.2)
+    ∅ (fun _ h => h)
+  exact ⟨_, by omega, seg0.trans (seg1.trans seg2)⟩
+
+/-- **The top writer's head** (checkpoint 5): from its entry on an escape's tapes with the input
+head at `1`, the increment of `j` and the length call reach the budget's call with
+`bits (j + 1)` on tape `10`.
+
+**Proof sketch.** Two hosted phases (`qy_hosted`): `qy_code_calls`' two calls. -/
+private theorem qy_top_code {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
+    (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ) (hesc : QyEscT κ x.length a j k T P) :
+    ∃ t ≤ κ.abA * (j + 1) + κ.clA * (j + 2) + 2,
+      Segment (qyTop κ) ∅ (fun _ => True) (qyC (x := x) ⟨.t1, Sum.inl ()⟩ 1 T P [])
+        (qyC ⟨.t3, Sum.inl ()⟩ 1 (Function.update T (κ.tp 10)
+          (FinTM.bufferTape (Nat.bits (j + 1)))) P []) t := by
+  unfold qyTop
+  obtain ⟨⟨tb, htb, c1⟩, ⟨tc, htc, c2⟩⟩ := qy_code_calls κ (x := x) a j k T P hesc
+  have seg1 := qy_hosted (qyTopM κ) ⟨.t1, Sum.inl ()⟩ (qyTopRed κ) .t1 (Sum.inl ())
+    (Sum.inr κ.abX) ⟨.t2, Sum.inl ()⟩ 1 1 T _ P P [] [] tb c1.1 (by simp [qyTopRed])
+    (qy_guard_of_cut (Sum.inr κ.abX) (qyTopRed κ .t1) (fun s hs => by simp [qyTopRed, hs]) c1.2)
+    ∅ (fun _ h => h)
+  have seg2 := qy_hosted (qyTopM κ) ⟨.t1, Sum.inl ()⟩ (qyTopRed κ) .t2 (Sum.inl ())
+    (Sum.inr κ.clX) ⟨.t3, Sum.inl ()⟩ 1 1 _ _ P P [] [] tc c2.1 (by simp [qyTopRed])
+    (qy_guard_of_cut (Sum.inr κ.clX) (qyTopRed κ .t2) (fun s hs => by simp [qyTopRed, hs]) c2.2)
+    ∅ (fun _ h => h)
+  exact ⟨_, by omega, seg1.trans seg2⟩
+
 /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
 time-constructible `f` and `g` there is a deterministic machine computing the stage query within
 `C · (g n + 1)`.
@@ -4573,9 +4810,10 @@ binary words, the unranking); the `pairEncode` writer; the ledger.
 query on the unary word of every input's length are proved. So are the main machine's setup in
 linear time (`bits n` by the input call, `1^{n+1}`, the first rung, the test `n ≥ 3`, the seek's
 tape and the all-ones counter, as a run of its phase host), one round of its locator, as a round
-at the locator's anchor with its three escapes (interior, top, timeout) and its cost, and the
+at the locator's anchor with its three escapes (interior, top, timeout) and its cost, the
 locator's whole run: from the first rung to an escape at the input's stage, with the top flag,
-within a linear bound. The stage code, the budget field and the writer remain open. -/
+within a linear bound, and, in both writers, the input head returned to `1` and `bits (j + 1)`
+for the stage code. The budget field and the writer's emissions remain open. -/
 theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
     (hg : Complexity.TimeConstructible g) :
     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
