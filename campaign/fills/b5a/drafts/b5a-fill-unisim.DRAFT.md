@@ -454,18 +454,19 @@ screen after your first edit: it must equal the screen base (the overlay changes
   `ClassNP/ExhaustiveReplay` (IR-1's remaining input rewind). It contains `Simulation` and
   `Build/InputRewind` (the megafill A lesson for any item near an input rewind).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/b5a/logs/b5a-fill-unisim-screen-base.txt`: **2,800
-  declarations, 3,026 pairs, 977,536 characters** (MEASURED at your base, on the 57 files; 53
-  minutes under `nice -n 10`, **peak memory 7.8 GB**). 99 pairs have a declaration of your file on
+- **The base** is `campaign/fills/b5a/logs/b5a-fill-unisim-screen-base.txt`: **2,830
+  declarations, 3,038 pairs, 979,220 characters** (MEASURED at your base, on the 57 files; 54
+  minutes under `nice -n 10`, **peak memory 5.7 GB**). 99 pairs have a declaration of your file on
   one side: 58 within it (four at 90% or more, all CC7-1's: the cut-leg pair and two leg-template
   pairs), 41 across files (one at 90% or more, `canonOffset_spec` of `Encoding`'s
   `length_bits_le_self`, 65 characters).
 - **The screen is long:** run the before run right after your first edit, before the bootstrap, and
   the after run as soon as the owned file is final. **Run each with no Lean process beside it** (its
-  peak memory at your base was 7.8 GB), and never beside another screen. Run each on a frozen copy
-  of its commit (`git worktree add <dir> HEAD`, the screen's root `<dir>`), so that later edits
-  cannot race its reads. Expect the after run to be longer than the before run: your target's body,
-  `sorry` at the base and so not screened, becomes one of the largest screened declarations.
+  peak memory at your base was 5.7 GB, 7.8 GB at the drafting base), and never beside another
+  screen. Run each on a frozen copy of its commit (`git worktree add <dir> HEAD`, the screen's root
+  `<dir>`), so that later edits cannot race its reads. Expect the after run to be longer than the
+  before run: your target's body, `sorry` at the base and so not screened, becomes one of the
+  largest screened declarations.
 
 ```sh
 P=campaign/fills/b5a/inputs/b5a-fill-unisim
@@ -492,7 +493,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   - the input rewinds of IR-1 (`xr_inRewindTM`, `ss_inputRewind`): cite `Turing.inputRewindTM`;
   - the first-halt captures (`Build/CertShell`'s `certCore_run`); the R1 reconstruction family
     (cite `embedEmitCfg_eq`); the field-equation idioms of `Cfg.mapState_mapState` and
-    `SeamLayout`'s `sl_rewrap` (accepted idiom pairs: say so if yours is another).
+    `SeamLayout`'s `sl_rewrap` and `CfgRecord`'s private `recordStep_mapState_eq` (accepted idiom
+    pairs; the junction probe's lemmas pair with them at 54–64%: disclose, do not factor; at 90%
+    or more stop and escalate).
 - List every new in-file pair with a one-line justification. Quote both outputs in `REPORT.md`,
   which carries **"new copies: none"** (or lists each pair).
 
