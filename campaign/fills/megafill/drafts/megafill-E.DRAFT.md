@@ -5,7 +5,8 @@ cont1 left it for Claude). Fill at issue: every ⟨…⟩ from H's pre-ship at t
 # Megafill E: H, the nondeterministic time hierarchy
 
 **One session, one host, a queue of one fill brief**, worked under Part 3 of the fill-agent
-environment addendum (`campaign/standards/fill-environment-addendum.md`, **v2.6**). The item is its own fill: its brief binds it, and it has its own branch, checks, screens, `REPORT.md` and zip,
+environment addendum (`campaign/standards/fill-environment-addendum.md`, **v2.6**). The item is its
+own fill: its brief binds it, and it has its own branch, checks, screens, `REPORT.md` and zip,
 exactly as if it had been dispatched alone. **The agent is Codex.** H is a first attempt.
 
 ## Repository and the shared base
