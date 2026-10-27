@@ -1849,7 +1849,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **The addendum's v2.6 drafted** (`campaign/standards/drafts/fill-environment-addendum-v2.6.DRAFT.md`:
     the review's three wordings, applied to v2.5); adopted on decision 1.
     **Ruled (user, 2026-10-27):**
-    - E-SERIAL: not a deviation; **adopt v2.6**;
+    - E-SERIAL: not a deviation; **adopt v2.6** (adopted 2026-10-27:
+      `campaign/standards/fill-environment-addendum.md`, the draft removed);
     - E-DUP: **an API PR first** (not the review's recommendation), which **publishes the review's
       three rows and re-points the private copies in `Nondeterminism`, `TMSAT` and `EXPCOM`**;
       E-Q's guard cites them in its landing;

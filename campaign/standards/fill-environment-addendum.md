@@ -1,4 +1,11 @@
-# Fill-agent environment addendum (v2.5): resources, the dependency cache, starting Lean, and megafills
+# Fill-agent environment addendum (v2.6): resources, the dependency cache, starting Lean, and megafills
+
+**Version 2.6 (2026-10-27; the user's ruling on megafill D's E-SERIAL)** clarifies the one-Lean rule, from megafill D's record (its
+E-SERIAL stopped an item for the cache tool's own parallel build, a 0.3 s overlap inside
+`lake exe cache get`, before the item's branch existed):
+- **the cache tool's own work is outside the one-Lean rule** (Part 1, item 2);
+- **a Lean process is one that you start** (Part 3, item 5);
+- **a process deviation never ends an item** (Part 3, a new item 7).
 
 **Version 2.5 (2026-10-22)** changes two rules of Part 1, item 2, from the first megafills' records
 (gates 59 and 60):
@@ -120,10 +127,14 @@ cleanly.
      never join `LEAN_PATH`s across trees.
    - Never put the clone, `.lake`, the cache, an olean tree (`TCSLIB_OLEANS`) or `TMPDIR` on a
      memory-backed filesystem (`/dev/shm`, any tmpfs).
-   - The cache tool's own internal validation (`lake build --no-build proofwidgets:release`) is
-     expected and allowed; it is not a `lake build` under your brief's ban. On its first use,
-     `lake exe cache` also compiles the cache executable itself; that, too, is expected and is not
-     a `lake build` of the project.
+   - **The cache tool's own work is outside the one-Lean rule.** `lake exe cache get` may first
+     compile the cache executable (on a fresh clone, about 20 Lake jobs, among them a few
+     Batteries modules) and runs `lake build --no-build proofwidgets:release`. Lake schedules
+     these jobs itself, and at this pin it has no option to serialize them. They are expected and
+     allowed. They are not a `lake build` of the project, and they are not "a Lean process" in the
+     sense of Part 3, item 5. Run the command alone: start no check of your own until it has
+     exited. Do not reconstruct, measure or certify Lake's internal scheduling, and do not report
+     it as a deviation.
    - **Packages match the manifest** (v2.5: the packages present). A fresh clone's first
      `lake exe cache get …` fetches the packages that `lake-manifest.json` names, except those the
      narrowed fetch does not need. Afterwards, and before every later Lake command, check each
@@ -306,8 +317,15 @@ shared.
       its escalations allow ends early, with its zip.
 4. **Disk between items.** Before each item after the first, record `df -B1` of the clone. Stop the
    whole queue with E-RES below **3 GiB** free; the items already zipped stand.
-5. **One Lean process at a time** across the whole queue, and one screen at a time.
+5. **One Lean process at a time** across the whole queue, and one screen at a time. A Lean
+   process is one that you start: a module check, a probe, a bootstrap or sweep step (each
+   through `scripts/lean_check_tree.sh`), or one `lake exe cache get`. Never run two of them at
+   once. One text screen (Python, `nice -n 10`) may run beside one of them. Processes that Lake or
+   the cache tool start inside `lake exe cache get` are not counted.
 6. **At the end** (or when the session must stop), deliver `megafill-<name>-REPORT.md`: the queue;
    each item's outcome (complete; partial, with its checkpoints; or not started), with its
    branch's start and end times and its zip's SHA-256; the shared preflight and cache numbers. An
    item never started is simply listed as such: it is not a failure.
+7. **A process deviation never ends an item.** A deviation from these rules, yours or a tool's, is
+   disclosed in `REPORT.md` with its evidence, and the work continues: stopping does not undo it.
+   Only E-RES (Part 1) or an item brief's own escalation (its ground rules) ends an item early.
