@@ -1,6 +1,6 @@
 -- The junction probe's block: the owned file with the brief's six imports after line 15 (the
 -- overlay `CodeSimulatorOverlay.lean.txt`), then a blank line and this block before
--- `end MachineFormat`; the four lines after the marker are appended at the end, after a blank
+-- `end MachineFormat`; the six lines after the marker are appended at the end, after a blank
 -- line. Its first section is the verdict probe's block, unchanged.
 /-! ### B5a pre-ship: the verdict on the window is the target's predicate (in-module probe)
 
@@ -343,6 +343,82 @@ private theorem b5a_tail {K : ℕ} {Q : Type} [DecidableEq Q] (α x : List Bool)
     rfl
   · rw [Cfg.mapState_output, embedEmitCfg_output, out, List.nil_append]
 
+/-- **The start.** A composite over a sum of states, restarted at the left tag of a state
+`entry`, starts at the blank configuration at `entry`, relabelled by the left tag: input head `1`,
+every tape blank, every head at `0`, empty output.
+
+**Proof sketch.** The restarted machine's initial configuration is `Cfg.init` at the tagged state
+(`initCfg_with_q₀`); compare it with the relabelled blank start field by field, through the
+`Cfg.init` and `Cfg.mapState` field equations. -/
+private theorem b5a_start {K : ℕ} {Q R : Type} (W : MultiTapeTM K Bool (Q ⊕ R)) (entry : Q)
+    (z : List Bool) :
+    ({ W with q₀ := Sum.inl entry } : MultiTapeTM K Bool (Q ⊕ R)).initCfg z =
+      (⟨some entry, 1, fun _ _ => none, fun _ => 0, []⟩ : Cfg K Bool Q z).mapState Sum.inl := by
+  rw [MultiTapeTM.initCfg_with_q₀]
+  apply Cfg.ext
+  · rw [Cfg.init_state, Cfg.mapState_state]
+    rfl
+  · rw [Cfg.init_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.init_workTapes, Cfg.mapState_workTapes]
+  · funext j
+    rw [Cfg.init_workTapePos, Cfg.mapState_workTapePos]
+  · rw [Cfg.init_output, Cfg.mapState_output]
+
+/-- **The simulator's run.** For a machine `U` that, from the blank start at `entry` on
+`⟨⟨bits t, α⟩, x⟩`, first reaches `done` at a configuration with the startup's threshold fields,
+the binary machine `S` (the seam of `U` into the hosted verdict embedded along the tape map,
+restarted at `entry`) halts from its initial configuration within `T₁ + 1 + T₂` steps with
+output `[answer]`, deciding bounded acceptance on `x`. This is the shape `b5a_verdict` takes.
+
+**Proof sketch.** `b5a_start` turns `S`'s initial configuration into the relabelled blank start,
+and the restart changes no run (`runFrom_with_q₀`); then `b5a_tail`. -/
+private theorem b5a_run {K : ℕ} {Q : Type} [Fintype Q] [DecidableEq Q] (α x : List Bool)
+    (t : ℕ) (U : MultiTapeTM K Bool Q) (entry done : Q) (g : Fin (1 + (F.k + 2 + 1)) ↪ Fin K)
+    (ιP : Fin F.k ↪ Fin K) (jctr jwin jtbl jsm : Fin K)
+    (gw : g (Fin.castAdd (F.k + 2 + 1) 0) = jwin)
+    (gP : ∀ i, g (Fin.natAdd 1 (Fin.castSucc (Fin.castAdd 2 i))) = ιP i)
+    (gt : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 0))) = jtbl)
+    (gs : g (Fin.natAdd 1 (Fin.castSucc (Fin.natAdd F.k 1))) = jsm)
+    (gc : g (Fin.natAdd 1 (Fin.last (F.k + 2))) = jctr)
+    (c : Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)) (T₁ : ℕ)
+    (run : U.runFrom ⟨some entry, 1, fun _ _ => none, fun _ => 0, []⟩ T₁ = c)
+    (hst : c.state = some done)
+    (cut : ∀ u < T₁, (U.runFrom (⟨some entry, 1, fun _ _ => none, fun _ => 0, []⟩ :
+      Cfg K Bool Q (pairEncode (pairEncode (Nat.bits t) α) x)) u).state ≠ some done)
+    (hout : c.output = [])
+    (hctr : c.workTapes jctr = FinTM.bufferTape (Nat.bits t)) (hctrp : c.workTapePos jctr = 0)
+    (hwin : c.workTapes jwin = FinTM.bufferTape (x.take t)) (hwinp : c.workTapePos jwin = 0)
+    (htbl : c.workTapes jtbl = FinTM.bufferTape (tableBitsK (F.machine (F.decode α)).tr))
+    (htblp : c.workTapePos jtbl = 0)
+    (hsm : c.workTapes jsm =
+      StepBlock.summaryCells none (unaryFin (F.machine (F.decode α)).q₀))
+    (hsmp : c.workTapePos jsm = 0)
+    (hpas : ∀ i, c.workTapes (ιP i) = (fun _ => none) ∧ c.workTapePos (ιP i) = 0) :
+    let S : FinTM Bool :=
+      { k := K, State := Q ⊕ (CounterLoopState (Σ key, StepBlock.Ph F.k key) × Bool),
+        tm := { seamCompTM U done (embedEmitTM g (h1HostedVerdictTM F.k))
+          (CounterLoopState.dec FlagPhase.run, true) with q₀ := Sum.inl entry } }
+    ∃ T₂ ≤ t * (50 * ((tableBitsK (F.machine (F.decode α)).tr).length + 1)) +
+        4 * t + 2 * t.bits.length + 3, ∃ answer : Bool,
+      (S.tm.runFrom (S.tm.initCfg (pairEncode (pairEncode (Nat.bits t) α) x))
+          (T₁ + 1 + T₂)).state = none ∧
+      (S.tm.runFrom (S.tm.initCfg (pairEncode (pairEncode (Nat.bits t) α) x))
+          (T₁ + 1 + T₂)).output = [answer] ∧
+      (answer = true ↔ (F.toFinTM (F.decode α)).ComputesInTime x [true] t) := by
+  intro S
+  obtain ⟨T₂, bound, answer, halted, out, iff⟩ :=
+    b5a_tail F α x t U done g ιP jctr jwin jtbl jsm gw gP gt gs gc _ c T₁ run hst cut hout hctr
+      hctrp hwin hwinp htbl htblp hsm hsmp hpas
+  have hS : S.tm = ({ seamCompTM U done (embedEmitTM g (h1HostedVerdictTM F.k))
+      (CounterLoopState.dec FlagPhase.run, true) with q₀ := Sum.inl entry } :
+        MultiTapeTM K Bool (Q ⊕ (CounterLoopState (Σ key, StepBlock.Ph F.k key) × Bool))) := rfl
+  refine ⟨T₂, bound, answer, ?_, ?_, iff⟩
+  · rw [hS, MultiTapeTM.runFrom_with_q₀, b5a_start]
+    exact halted
+  · rw [hS, MultiTapeTM.runFrom_with_q₀, b5a_start]
+    exact out
+
 end B5aUSJunction
 
 -- (appended at the end:)
@@ -350,3 +426,5 @@ end B5aUSJunction
 #print axioms Turing.MachineFormat.b5a_bank
 #print axioms Turing.MachineFormat.b5a_junction
 #print axioms Turing.MachineFormat.b5a_tail
+#print axioms Turing.MachineFormat.b5a_start
+#print axioms Turing.MachineFormat.b5a_run

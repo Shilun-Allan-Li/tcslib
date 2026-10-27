@@ -1755,10 +1755,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     combined screen on the merged head finds no new pair (gate 79's resolutions; U2's two
     `sl_rewrap` idiom pairs disclosed). **#169 waits only for `replay-laplusm`.**
   - **B5a's junction proved** (`campaign/fills/b5a/drafts/b5a-fill-unisim/preship-junction/`,
-    2026-10-27): gate 79's recorded obligation. `b5a_bank`, `b5a_junction` and `b5a_tail` hold in
+    2026-10-27): gate 79's recorded obligation. `b5a_bank`, `b5a_junction`, `b5a_tail`, `b5a_start`
+    and `b5a_run` (the binary machine's halt with output `[answer]`, `b5a_verdict`'s shape) hold in
     the owned file's overlay (only the target's sorry; the standard three; sealed over 20 with
     their controls). The B5a brief's route steps 1–4 become the startup at `p = F.k` plus
-    `b5a_tail`. Next: rewrite the draft against them, then the pre-ship at issue after #169.
+    `b5a_run`; the overlay can drop to two imports (`Nondeterministic`, the startup's module). Next:
+    rewrite the draft against them, then the pre-ship at issue after #169.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).

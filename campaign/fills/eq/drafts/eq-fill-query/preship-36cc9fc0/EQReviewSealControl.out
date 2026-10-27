@@ -1,0 +1,31 @@
+eqps/EQReviewSealControl.lean:43:53: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  (Cfg.ofWords q w).state = some q
+eqps/EQReviewSealControl.lean:45:2: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  stateWord k s i = if ↑i = 0 then s else []
+eqps/EQReviewSealControl.lean:47:44: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (Cfg.mapState f c).state = Option.map f c.state
+eqps/EQReviewSealControl.lean:49:43: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (seamReleaseTM M a).q₀ = Sum.inl ()
+eqps/EQReviewSealControl.lean:51:75: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  Cfg.Stopped p c = (c.state = none ∨ ∃ s, c.state = some s ∧ p s = true)
+# exit 1; time: 1.32 s, peak 1539719168 bytes

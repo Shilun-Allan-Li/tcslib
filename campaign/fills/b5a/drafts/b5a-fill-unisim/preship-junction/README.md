@@ -14,7 +14,7 @@ startup states them, so it holds for whatever machine reaches them. Lean ran thr
 
 | Check | Result | File |
 |---|---|---|
-| The junction probe | the overlay (`../preship-a524c36f/CodeSimulatorOverlay.lean.txt`, the brief's six imports) with the block inserted before `end MachineFormat`: exactly the target's sorry warning (overlay line 8660); `b5a_window_verdict`, `b5a_bank`, `b5a_junction`, `b5a_tail` on `[propext, Classical.choice, Quot.sound]`; 20.9 s, 2.57 GB. The overlay plus the block reproduces the elaborated file byte for byte (checked) | `B5aJunctionProbe.append.lean.txt`, `B5aJunctionProbe.out` |
+| The junction probe | the overlay (`../preship-a524c36f/CodeSimulatorOverlay.lean.txt`, the brief's six imports) with the block inserted before `end MachineFormat`: exactly the target's sorry warning (overlay line 8660); `b5a_window_verdict`, `b5a_bank`, `b5a_junction`, `b5a_tail`, `b5a_start`, `b5a_run` on `[propext, Classical.choice, Quot.sound]`; 20.7 s, 2.57 GB. The overlay plus the block reproduces the elaborated file byte for byte (checked) | `B5aJunctionProbe.append.lean.txt`, `B5aJunctionProbe.out` |
 | Standalone | `b5a_bank` and `b5a_junction` alone, importing `CodeSimulator` (no privates needed), under the same seal: 0 diagnostics, the standard three | `B5aJunctionDev.lean.txt`, `B5aJunctionDev.out` |
 | Seal controls | the junction section's 20 sealed definitions (`MultiTapeTM.runFrom`, `MultiTapeTM.initCfg`, `vhostCfg`, `counterLoopCfg`, `FinTM.bufferTape`, `tableBitsK`, `Cfg.init`, `Cfg.mapState`, `embedEmitCfg`, `embedEmitTM`, `seamCompTM`, `StepBlock.summaryCells`, `StepBlock.Rep`, `StepBlock.tableTape`, `StepBlock.summaryTape`, `StepBlock.exit`, `StepBlock.outputSummary`, `unaryFin`, `FinTM.ComputesInTime`, `pairEncode`; `-simp` on `MultiTapeTM.initCfg` and `Cfg.init`): unsealed all close; sealed all 20 fail, each at its own goal | `B5aJunctionSealControl.*` |
 
@@ -38,10 +38,16 @@ startup states them, so it holds for whatever machine reaches them. Lean ran thr
   `T₁ + 1 + T₂` steps with output exactly `[answer]`. `T₂` is within the hosted verdict's bound,
   and `answer = true` iff the decoded machine accepts `x` (not the window) within `t`, by
   `b5a_window_verdict`, which is the window-to-`x` bridge.
+- **`b5a_start`:** a composite over `Q ⊕ R`, restarted at `Sum.inl entry`, starts at the
+  startup's blank start `⟨some entry, 1, blank, 0, []⟩` relabelled by `Sum.inl`
+  (`initCfg_with_q₀`, the `Cfg.init` and `Cfg.mapState` fields).
+- **`b5a_run`:** the binary machine `S : FinTM Bool` (the seam, restarted at `entry`; its
+  state type's `Fintype` and `DecidableEq` instances are found) halts from
+  `S.tm.initCfg ⟨⟨bits t, α⟩, x⟩` at `T₁ + 1 + T₂` with output `[answer]`: exactly the
+  hypotheses of the route probe's `b5a_verdict`.
 
 **For the brief:** route steps 1–4 (the header, the window, the table and the loop's entry)
-become one citation of the startup at `p = F.k` with the installer `us_install`, followed by
-`b5a_tail`. What remains for the fill is the start (`S`'s initial configuration as the startup's
-`⟨some entry, 1, blank, 0, []⟩`, through `initCfg_with_q₀` and the `Cfg.init` fields), the
-startup's citation, and the joint ledger with `b5a_verdict`. The probe's proofs may be copied as
+become one citation of the startup at `p = F.k` with the installer `us_install`, `b5a_bank` on
+its roles, and `b5a_run`. What remains for the fill is that citation, the choice of `S` and `d`
+before the inputs, and the joint polynomial ledger with `b5a_verdict`. The probe's proofs may be copied as
 `us_` privates.
