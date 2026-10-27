@@ -1,0 +1,42 @@
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.BufferWords
+
+/-! Review probe: is any new private, or an inner fact of `qy_guard_decider` that the
+neighbouring private unary deciders also prove, already published? The environment is the
+head's import closure (the base module's statements, unchanged at the head). -/
+
+open Turing Turing.NTimeDiag
+
+-- 1. qy_guard
+example (f g : ℕ → ℕ) (x : List Bool) :
+    query f g x = if x = List.replicate x.length true ∧ 3 ≤ x.length then
+      query f g (List.replicate x.length true) else [] := by exact?
+-- 2. qy_guard_decider
+example : ∃ (D : FinTM Bool) (c : ℕ), D.ComputesFunInTime
+    (fun x => [decide (x = List.replicate x.length true ∧ 3 ≤ x.length)]) (fun n => c * (n + 1)) := by
+  exact?
+-- 3. the fixed-word decider in Boolean form (hE', and the neighbours' *_fixed_eq / *_pt_eq)
+example (w : List Bool) : ∃ (D : FinTM Bool) (c : ℕ),
+    D.ComputesFunInTime (fun x => [decide (x = w)]) (fun n => c * (n + 1)) := by exact?
+-- 4. the unary decider (hU', and the neighbours' *_unary at polynomial time)
+example : ∃ (D : FinTM Bool) (c : ℕ),
+    D.ComputesFunInTime (fun x => [decide (x = List.replicate x.length true)])
+      (fun n => c * (n + 1)) := by exact?
+-- 5. the getD form of the overflow criterion (hu; the neighbours' `he`, EXPCOM's expcom_all_true)
+example (x : List Bool) : (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
+  exact?
+-- 6. a successful increment is never empty (the neighbours' *_inc_nonempty)
+example (x : List Bool) : incFixed x ≠ some [] := by exact?
+-- 7. qy_query_of_main (with its hypotheses)
+example {f g : ℕ → ℕ} (hg : Complexity.TimeConstructible g) {M : FinTM Bool} {A : ℕ}
+    (hM : M.ComputesFunInTime (fun x => query f g (List.replicate x.length true))
+      (fun n => A * (g n + 1))) :
+    ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) (fun n => C * (g n + 1)) := by
+  exact?

@@ -1,0 +1,44 @@
+## axioms, landing candidate
+Turing.NTimeDiag.exists_le_ladder_succ: [propext, Classical.choice, Quot.sound]
+_private.EQLandAudit.0.Turing.NTimeDiag.qy_guard: [propext, Classical.choice, Quot.sound]
+_private.EQLandAudit.0.Turing.NTimeDiag.qy_guard_decider: [propext, Classical.choice, Quot.sound]
+_private.EQLandAudit.0.Turing.NTimeDiag.qy_query_of_main: [propext, Classical.choice, Quot.sound]
+Turing.NTimeDiag.exists_queryTM: [propext, sorryAx, Classical.choice, Quot.sound]
+Turing.NTimeDiag.exists_diagonalizer: [propext, sorryAx, Classical.choice, Quot.sound]
+SORRY-SOURCES _private.EQLandAudit.0.Turing.NTimeDiag.qy_guard []
+SORRY-SOURCES _private.EQLandAudit.0.Turing.NTimeDiag.qy_guard_decider []
+SORRY-SOURCES _private.EQLandAudit.0.Turing.NTimeDiag.qy_query_of_main []
+SORRY-SOURCES Turing.NTimeDiag.exists_queryTM [Turing.NTimeDiag.exists_queryTM]
+SORRY-SOURCES Turing.NTimeDiag.exists_diagonalizer [Turing.NTimeDiag.exists_diagonalizer]
+## freeze base -> landing (target authorized)
+public before/after: 22 22 private before/after: 0 3
+public added: []
+public removed: []
+authorized body change: Turing.NTimeDiag.exists_queryTM
+private removed: []
+private added: ['Turing.NTimeDiag.qy_guard', 'Turing.NTimeDiag.qy_guard_decider', 'Turing.NTimeDiag.qy_query_of_main']
+private changed: []
+## freeze head -> landing (no body change authorized)
+public before/after: 22 22 private before/after: 3 3
+public added: []
+public removed: []
+private removed: []
+private added: []
+private changed: ['Turing.NTimeDiag.qy_guard', 'Turing.NTimeDiag.qy_guard_decider']
+declarations before/after: 25 25 | removed: []
+STATEMENT CHANGED: []
+body/docstring-only changes: 2 ['qy_guard', 'qy_guard_decider']
+wt-base/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean -> wt-land/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean: 129 code lines, 0 not found in order
+## widths
+## added lines: 183; widest (characters): 97
+added lines over 100 characters: []
+whole-file lines over 100 characters, base: 0 ; head: 0
+consecutive blank added lines at head lines: []
+## lint
+style_lint: 0 FAIL, 2 WARN over 5 files
+INFO  TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean     543 lines; 22 public / 3 private declarations
+## pair measurements at the landing candidate
+qy_guard_decider (2953 chars) reproduces a3n_poly_fixed_eq (114 chars): 76/114 = 67%
+qy_guard_decider (2953 chars) reproduces tmsat_pt_eq (127 chars): 76/127 = 60%
+qy_guard_decider (2953 chars) reproduces a3n_poly_unary (317 chars): 156/317 = 49%
+qy_guard_decider (2953 chars) reproduces tmsat_pt_unary (328 chars): 156/328 = 48%

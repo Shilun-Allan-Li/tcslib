@@ -1,0 +1,66 @@
+## zips
+ecad72665bfcd0f7a5ca97a9189998812371adfb1b3b0eb31febc898dcb02124  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/delivery/main/fill-eq-query.zip
+60d9e7c219412f5a0bca63f5f6eb3b859b6d50a954fde69a3f973419c780e4b1  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/delivery/cp1/fill-eq-query-cp1.zip
+## sums
+entries 295 ok 295 bad 0 missing 0
+unlisted files: []
+entries 257 ok 257 bad 0 missing 0
+unlisted files: []
+## bundle
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-fill/delivery/main/x/fill-eq-query.bundle is okay
+The bundle contains this ref:
+9d93626dadf1561c757494cfff992d1951a458e2 HEAD
+The bundle requires this ref:
+ab09aa4124da9ffce36e939f652dc4bc30e6f3c5 
+The bundle uses this hash algorithm: sha1
+deliver/fill-eq-query-in = 9d93626dadf1561c757494cfff992d1951a458e2
+cp1 bundle == final bundle (byte-equal)
+## commits base..head
+9d93626dadf1561c757494cfff992d1951a458e2 fabce3bb1008815d8f592da0c628e40c1355015d
+fabce3bb1008815d8f592da0c628e40c1355015d ab09aa4124da9ffce36e939f652dc4bc30e6f3c5
+9d93626dadf1561c757494cfff992d1951a458e2 Codex <codex@openai.com> 2026-10-27T08:59:38+03:00 | 2026-10-27T08:59:38+03:00 | E-Q checkpoint 1: linear guard and reduction to the main query machine
+fabce3bb1008815d8f592da0c628e40c1355015d Codex <codex@openai.com> 2026-10-27T08:37:27+03:00 | 2026-10-27T08:37:27+03:00 | E-Q: apply authorized eight-import overlay
+## files touched per commit
+fabce3bb1008815d8f592da0c628e40c1355015d: TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean 
+fabce3bb1008815d8f592da0c628e40c1355015d
+8	0	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+9d93626dadf1561c757494cfff992d1951a458e2: TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean 
+9d93626dadf1561c757494cfff992d1951a458e2
+174	1	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+## blobs
+base blob 3cdc4f33a1650df104c752f2783bf5dc734be3b3 (brief: 3cdc4f33a1650df104c752f2783bf5dc734be3b3)
+overlay-commit blob c46a7bd68543b90634d4adba956b138277553696
+head blob 361d7c14307bef1ff4637a64fb5cbdf3804de8ec
+zip source blob (main) 361d7c14307bef1ff4637a64fb5cbdf3804de8ec; (cp1) 361d7c14307bef1ff4637a64fb5cbdf3804de8ec
+## first commit == overlay input
+fabce3bb file == base's NTimeDiagonalizerOverlay.lean.txt (byte-equal)
+## overlay vs base diff
++import Mathlib.Data.Nat.Log
++import TCSlib.Complexity.TuringMachine.Build.StepClock
++import TCSlib.Complexity.TuringMachine.Build.InputCall
++import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
++import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
++import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Rewind
++import TCSlib.Complexity.TuringMachine.BufferWords
+## patches
+0001-E-Q-apply-authorized-eight-import-overlay.patch: patch-id 52c11a1844ae0584f1ced4ab1940f8a5b489dad2 fabce3bb1008815d8f592da0c628e40c1355015d
+0002-E-Q-checkpoint-1-linear-guard-and-reduction-to-the-m.patch: patch-id 97194fe2cb4afb6d3311a85e2418ae52e84e0022 9d93626dadf1561c757494cfff992d1951a458e2
+commit fabce3bb1008815d8f592da0c628e40c1355015d: patch-id 52c11a1844ae0584f1ced4ab1940f8a5b489dad2 fabce3bb1008815d8f592da0c628e40c1355015d
+commit 9d93626dadf1561c757494cfff992d1951a458e2: patch-id 97194fe2cb4afb6d3311a85e2418ae52e84e0022 9d93626dadf1561c757494cfff992d1951a458e2
+cp1 patches == final patches
+cp1 source == final source
+## base Lean content vs #168 merge 13120e00
+commit
+lean files differing:        0
+all files differing:
+ campaign/gates/80-u2-universal-fill/resolutions.md |    4 +-
+ campaign/items/b5a/A-plus-startup-design.md        |    6 +
+ 105 files changed, 18061 insertions(+), 90 deletions(-)
+## base is ancestor of the campaign tip (records worktree)
+tip 729ffb99af7b25cf5026f3d2616a12c87381fea4
+base is an ancestor of the tip
+owned file at tip: 3cdc4f33a1650df104c752f2783bf5dc734be3b3 (base 3cdc4f33a1650df104c752f2783bf5dc734be3b3)
+lean files changed base..tip:
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean

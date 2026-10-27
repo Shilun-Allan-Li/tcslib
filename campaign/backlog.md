@@ -1775,6 +1775,22 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     only the target's body changed). **Decision D1 pending (user):** (A) land the proof as a
     maintainer PR with a fill gate (recommended, #169's and C1's precedent), (B) issue the brief
     with the assembly as an input, (C) the brief alone.
+    **Prepared for (A), local only (2026-10-27):** the branch `local/b5a-landing` (worktree
+    `wt-b5aland`, at `1a508123` on the campaign tip: the assembly without its prints; not
+    pushed). The after-screen of the 57 files runs on it (F8). The public text is drafted
+    (`CodeSimulator`'s status paragraph and the target's docstring: the sketch rewritten to the
+    startup route, an `**Implementation.**` paragraph, the dated fill appendices removed), and
+    is docstring-only by `codeonly.py`; it elaborates with no diagnostic. Still to do under (A):
+    `Codes2Tape`'s, `EXPCOM`'s and `Relativization`'s status lines (after the replay and the
+    axiom prints of targets 3–8 and Baker–Gill–Solovay), the PR, the fill gate and the
+    9-module replay.
+    **After-screen (F8) on `1a508123`:** 24 new pairs, none gone, none at 90%; the highest,
+    89%, are `xr_E_initCfg` and `un_setup` reproducing `us_start` (`landing-1a508123/`). With
+    `uk_init_mapState`, four private variants of the restart identity: a promotion candidate
+    (a public lemma beside `initCfg_with_q₀`), disclosed under (A) or (B).
+    **Ruled (user, 2026-10-27): D1 = (A), land the review's proof** by a maintainer PR from
+    `local/b5a-landing`, with a fill gate and the 9-module replay; the restart identity's four
+    variants are disclosed and ledgered.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
@@ -1807,7 +1823,40 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     private fixed-word deciders, all three through the public `computesFunInTime_ifEq`). No
     `megafill-d-REPORT.md` in the zips; it came separately (user, 2026-10-27; SHA-256
     `caabb14f…`, `campaign/fills/megafill/reports/megafill-d-REPORT.md`), consistent with the zip.
-    Of the 43-minute item, the two screens took 19 minutes each. **Under review** (sub-agent).
+    Of the 43-minute item, the two screens took 19 minutes each.
+    **Reviewed** (`campaign/fills/eq/reviews/fill-cp1/REVIEW.md`, 2026-10-27): checkpoint 1 is
+    correct, with no new admission. Integrity, scope, freeze, elaboration at both snapshots,
+    the sweeps and rule 10 all pass (its own seal: 32 definitions, 39 controls). **F1 (major,
+    process): E-SERIAL was an unnecessary stop**: the 316 ms overlap is inside the cache tool's
+    own build at 05:35:46Z, before the branch existed, which Part 1 item 2 allows; the stop
+    cost checkpoints 2–7. **F2 (minor): E-DUP is not a copy** (each pair is the public row's
+    call and a three-step conversion, an idiom already pairing in the base). The landing edits
+    E1–E5 (`out/25-landing-edits.diff`) are tested. **Decisions pending (user):** E-SERIAL (not
+    a deviation; the addendum v2.6 wording, recommended); E-DUP ((a) accept as idiom pairs,
+    with a promotion request, recommended); the landing ((a) checkpoint 1 now with E1–E5 by a
+    maintainer PR and a light fill gate, 2-module replay, recommended); E1–E5; cont1's agent
+    (Codex). Cont1's base: the tip after the landing.
+    **Prepared for the landing (a), local only:** `local/eq-cp1-landing` (worktree `wt-eqland`):
+    the two delivered commits cherry-picked onto the tip (the owned file equal to the
+    delivery's), then E1–E5 (`a83aa226`); against `oleans-laplusm` exactly the two expected
+    sorry warnings (447, 517). Not pushed.
+    **E-Q cont1's brief drafted** (`campaign/fills/eq/drafts/eq-fill-query-cont1.DRAFT.md`, from
+    the issued brief and the review's "The continuation", with its recommendations assumed): no
+    overlay; `hmain` the target; checkpoints 2–7 and `fill-eq-query-cont1-cp<N>.zip`; the
+    duplication disposition rule with the two pairs pre-disclosed; the E-SERIAL ruling and the
+    no-stop rule; the measured budget; the first round's seal lessons. The pre-ship re-runs on
+    the landed tree at issue.
+    **The addendum's v2.6 drafted** (`campaign/standards/drafts/fill-environment-addendum-v2.6.DRAFT.md`:
+    the review's three wordings, applied to v2.5); adopted on decision 1.
+    **Ruled (user, 2026-10-27):**
+    - E-SERIAL: not a deviation; **adopt v2.6** (adopted 2026-10-27:
+      `campaign/standards/fill-environment-addendum.md`, the draft removed);
+    - E-DUP: **an API PR first** (not the review's recommendation), which **publishes the review's
+      three rows and re-points the private copies in `Nondeterminism`, `TMSAT` and `EXPCOM`**;
+      E-Q's guard cites them in its landing;
+    - checkpoint 1: **land now with E1–E5** (after the API PR, re-pointed to its rows);
+    - **cont1 goes to Claude** (user: Codex is not getting far with it), as a standalone fill, not
+      a megafill item.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
@@ -1816,12 +1865,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     in the same file. 1.5–2.8k lines (ESTIMATE). **Decisions pending (user):** timing (after
     E-Q, recommended), the guess (one block via `guessRunTM`, recommended), the budget's form
     (binary, tested and normalized, recommended), the queue (after E-Q's delivery).
+    **Ruled (user, 2026-10-27): all three route recommendations** (after E-Q lands; one block
+    through `guessRunTM`; the binary budget). The queue waits for E-Q's outcome.
   - **H's route note** (`campaign/items/c1/c1e/H-route-design.md`, 2026-10-27): `ntime_hierarchy`
     is the chain of [AB09, Figure 3.1] over E-D's contract, NF's transfer and the proved `hBF`
     (`exists_ndAcceptsWithin_decider`); a different file from E-Q's and E-D's, no machine, about
     0.8–1.5k lines. **Decisions pending (user):** run it now as a second track, modulo E-D and NF
     (recommended); the old docstring sketch superseded in the brief and rewritten at
     integration (recommended); the agent (Codex).
+    **Ruled (user, 2026-10-27): run H now** as a second track, the brief superseding the old
+    sketch, rewritten at landing; **megafill E, Codex, with H** (E-Q cont1 left it for Claude).
     **Brief drafted and pre-shipped** (`campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md`;
     `preship-9d0af8cb/`, on the tree after #169): one import, 48 names, the route probe's seven
     lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4
