@@ -641,5 +641,23 @@ identity should be published before #170 lands; the default is a public row besi
 `MultiTapeTM.initCfg_with_q₀` (`TuringMachine/Finite`) in the user's dedup window (12.2c), with
 the three re-pointed.
 
+**PL-1, the linear-to-polynomial lift, and WT-1's residue** (PR #171, the word tests, 2026-10-27;
+disclosed in gate 82's pack, item 5). Two copies outside the ruling's scope (E-DUP covered the
+fixed-word and all-`true` tests only):
+- `Nondeterminism`'s private `a3n_poly_linear` (line 3537 at #171's head `d17f63c8`; 13 uses)
+  and `a3n_poly_const` (line 3544), byte-equal in their proofs to the public
+  `Complexity.polyTimeComputable_of_linear` and `Complexity.polyTimeComputable_const`
+  (`ClassNP/PolyTimePairing`, lines 64 and 71). `Nondeterminism` does not import
+  `PolyTimePairing`; the import is acyclic (`PolyTimePairing` imports only `ClassNP/PolyTime` and
+  `Build/Primitives`).
+- `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
+  proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
+  which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
+
+Census (one member per file): `Nondeterminism` 2 of 199 declarations (8 public, 191 private; 1.0%),
+`PolyTimePairing` 2 of 26 (7.7%; the public originals). The one-fifth rule is not reached.
+**Disposition:** the user's dedup window (12.2c): re-point the two privates to the public rows (one
+import), and `hD'` to `computesFunInTime_decideEq []` (the import of `Build/WordTests`).
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
