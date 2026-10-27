@@ -31,7 +31,12 @@ and the campaign's records merged in (no Lean change; `NDHost`'s blob is `c01cd7
    (round 1's five and the three blocks of the new lemmas; `evidence/round1-fix/NDHostSealed.*`,
    generator `mkseal_nf3.py`): 0 diagnostics.
 4. **Duplication.** The new case lemmas are short and parallel. The screen at `4c0a5943` against the
-   same base (`evidence/round1-fix/screen/`): ⟨SCREEN⟩. Are its dispositions right?
+   same base (`evidence/round1-fix/screen/`): 1,040 declarations, 738 pairs, identical to round 1's head
+   (`pairdiff-vs-r1.txt`: none new, none gone; against the base, round 1's ten new and four gone,
+   `pairdiff.txt`). The 19 lemmas are not screened: the screen compares extracted bodies of at least
+   60 characters, and theirs are `rfl` or `cases s <;> rfl`, so the count stays 1,040. Their
+   statements are the definitions' cases by construction. Is that an adequate duplication account
+   for them?
 5. **Anything else** in the fix diff.
 
 ## Repository-side attestations (verify or challenge)
@@ -47,7 +52,7 @@ and the campaign's records merged in (no Lean change; `NDHost`'s blob is `c01cd7
   the policy linter its one size finding (`style-lint-head-NDHost.txt`). No line over 100
   characters.
 - **Replay:** `replay-lnfapi4.sh` (`evidence/round1-fix/`), the same 4 modules from `oleans-lhh`,
-  pinning blob `c01cd773`. ⟨REPLAY⟩
+  pinning blob `c01cd773`. **Pending** (a merge condition of its own; its precheck passed).
 
 ## Findings format
 
