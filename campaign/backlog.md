@@ -1788,6 +1788,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     89%, are `xr_E_initCfg` and `un_setup` reproducing `us_start` (`landing-1a508123/`). With
     `uk_init_mapState`, four private variants of the restart identity: a promotion candidate
     (a public lemma beside `initCfg_with_q₀`), disclosed under (A) or (B).
+    **Ruled (user, 2026-10-27): D1 = (A), land the review's proof** by a maintainer PR from
+    `local/b5a-landing`, with a fill gate and the 9-module replay; the restart identity's four
+    variants are disclosed and ledgered.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
@@ -1845,6 +1848,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     the landed tree at issue.
     **The addendum's v2.6 drafted** (`campaign/standards/drafts/fill-environment-addendum-v2.6.DRAFT.md`:
     the review's three wordings, applied to v2.5); adopted on decision 1.
+    **Ruled (user, 2026-10-27):**
+    - E-SERIAL: not a deviation; **adopt v2.6**;
+    - E-DUP: **an API PR first** (not the review's recommendation), which **publishes the review's
+      three rows and re-points the private copies in `Nondeterminism`, `TMSAT` and `EXPCOM`**;
+      E-Q's guard cites them in its landing;
+    - checkpoint 1: **land now with E1–E5** (after the API PR, re-pointed to its rows);
+    - **cont1 goes to Claude** (user: Codex is not getting far with it), as a standalone fill, not
+      a megafill item.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
@@ -1853,12 +1864,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     in the same file. 1.5–2.8k lines (ESTIMATE). **Decisions pending (user):** timing (after
     E-Q, recommended), the guess (one block via `guessRunTM`, recommended), the budget's form
     (binary, tested and normalized, recommended), the queue (after E-Q's delivery).
+    **Ruled (user, 2026-10-27): all three route recommendations** (after E-Q lands; one block
+    through `guessRunTM`; the binary budget). The queue waits for E-Q's outcome.
   - **H's route note** (`campaign/items/c1/c1e/H-route-design.md`, 2026-10-27): `ntime_hierarchy`
     is the chain of [AB09, Figure 3.1] over E-D's contract, NF's transfer and the proved `hBF`
     (`exists_ndAcceptsWithin_decider`); a different file from E-Q's and E-D's, no machine, about
     0.8–1.5k lines. **Decisions pending (user):** run it now as a second track, modulo E-D and NF
     (recommended); the old docstring sketch superseded in the brief and rewritten at
     integration (recommended); the agent (Codex).
+    **Ruled (user, 2026-10-27): run H now** as a second track, the brief superseding the old
+    sketch, rewritten at landing; **megafill E, Codex, with H** (E-Q cont1 left it for Claude).
     **Brief drafted and pre-shipped** (`campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md`;
     `preship-9d0af8cb/`, on the tree after #169): one import, 48 names, the route probe's seven
     lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4
