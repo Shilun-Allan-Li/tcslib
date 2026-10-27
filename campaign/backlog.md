@@ -1793,6 +1793,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     in the same file. 1.5–2.8k lines (ESTIMATE). **Decisions pending (user):** timing (after
     E-Q, recommended), the guess (one block via `guessRunTM`, recommended), the budget's form
     (binary, tested and normalized, recommended), the queue (after E-Q's delivery).
+  - **H's route note** (`campaign/items/c1/c1e/H-route-design.md`, 2026-10-27): `ntime_hierarchy`
+    is the chain of [AB09, Figure 3.1] over E-D's contract, NF's transfer and the proved `hBF`
+    (`exists_ndAcceptsWithin_decider`); a different file from E-Q's and E-D's, no machine, about
+    0.8–1.5k lines. **Decisions pending (user):** run it now as a second track, modulo E-D and NF
+    (recommended); the old docstring sketch superseded in the brief and rewritten at
+    integration (recommended); the agent (Codex).
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
