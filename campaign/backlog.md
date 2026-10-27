@@ -1917,6 +1917,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     No Lean PR is open. Cont1's pre-ship is being re-taken on this tree (snapshot `oleans-lhh`):
     84 modules (`NTimeHierarchy` re-sorted after `NTimeDiagonalizer`), 34 roots, 20 sorries in 9
     modules, lint unchanged; the probes stand; the screen base re-running.
+    **Cont1's brief reviewed** (`campaign/fills/eq/reviews/cont1-brief/REVIEW.md`, 2026-10-27; a
+    sub-agent, interrupted once and resumed): **issue after edits**; 2 majors (F1: the freeze
+    text's line ranges were the first round's, freezing the agent's own home; F2: the clock's
+    `Bool` instance leaves the counter tape arbitrary, so the loop must use
+    `exists_stepClockTMVia`), 12 minors, 4 notes; verified (both majors read in the files; the
+    probe's 33 prints and 8 sealed failures counted). Its sealed probe proves the clocked call,
+    the stop rule, the cutoff decision, the ledger and the writer's order. `suggested-fix.diff`
+    applied. Decisions: (1) moot, both PRs merged; (2) the 32-file population, by the standing
+    rule; **(3) ruled (user, 2026-10-27): stage the review's probes as inputs.** The #172 edits
+    applied (base, in-flight none, 20 in 9, out-of-scope list, the tail's time). The base file
+    and the 216-name import probe re-run on `oleans-lhh`: the same outputs. The 32-file screen
+    base is running.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in

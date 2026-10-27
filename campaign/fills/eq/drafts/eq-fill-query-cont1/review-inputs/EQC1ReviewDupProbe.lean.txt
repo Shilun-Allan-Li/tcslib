@@ -1,0 +1,37 @@
+/-
+The cont1 brief review's semantic-duplication probe (a probe record): the review probe's new
+statements that do not mention the owned file's definitions, each posed to `exact?` against the
+owned module's closure.
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.BufferWords
+
+set_option maxHeartbeats 0
+
+-- 1. the expansion's unary block
+example (d : ℕ) : (List.replicate d [true]).flatten = List.replicate d true := by exact?
+
+-- 2. the polylogarithmic terms are linear
+example {n h : ℕ} (hn : 1 ≤ n) (hh : h ≤ Nat.log 2 n) : (h + 1) ^ 3 ≤ 8 * n := by exact?
+
+-- 3. the timeout certificate
+example (f : ℕ → ℕ) (c c' a n t : ℕ) (ha : a ≤ n)
+    (ht : t ≤ c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1))
+    (hlate : 2 ^ ((Nat.bits n).length + (Nat.bits (c' * (c + 2))).length) - 1 < t) :
+    n < f a := by exact?
+
+-- 4. the cutoff product decides the comparison (first clause)
+example (X L : ℕ) :
+    min (min (X * X) (L + 2) * min (X * X) (L + 2)) (L + 2) < L ↔ X ^ 4 < L := by exact?
+
+-- 5. the main machine's absorption into `g`
+example (g : ℕ → ℕ) (hg : ∀ n, n ≤ g n) (B₁ B₂ n T₁ T₂ : ℕ)
+    (h₁ : T₁ ≤ B₁ * (n + 1)) (h₂ : T₂ ≤ B₂ * (g n + 1)) :
+    T₁ + T₂ ≤ (B₁ + B₂) * (g n + 1) := by exact?
