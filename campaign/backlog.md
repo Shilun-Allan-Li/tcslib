@@ -1811,6 +1811,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     0.8–1.5k lines. **Decisions pending (user):** run it now as a second track, modulo E-D and NF
     (recommended); the old docstring sketch superseded in the brief and rewritten at
     integration (recommended); the agent (Codex).
+    **Brief drafted and pre-shipped** (`campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md`;
+    `preship-9d0af8cb/`, on the tree after #169): one import, 48 names, the route probe's seven
+    lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4
+    of 4, 81 modules, 22 base sorries, the screen base 102 declarations and 6 pairs. Issues on
+    the user's decision 1, after a review sub-agent.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

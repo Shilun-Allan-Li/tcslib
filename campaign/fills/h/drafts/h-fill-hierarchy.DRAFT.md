@@ -48,7 +48,7 @@ issue. -->
   git checkout -b fill/h-hierarchy @ANCESTOR@
   git rev-parse HEAD        # must print @ANCESTOR@
   git rev-parse HEAD:TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean
-  # must print ⟨blob at issue⟩
+  # must print a99d95dbe67c0419d8f410dfb1b0cd183ab80fac
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
@@ -63,14 +63,12 @@ issue. -->
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is ⟨BASE⟩.** Lines in this brief are those of your base's tree, where
-  `NTimeHierarchy.lean` is ⟨1,793⟩ lines (⟨5⟩ public, ⟨10⟩ private by the lint's count).
+- **Your base's Lean content is ⟨BASE⟩** (at drafting: the campaign after #169, `94296486`). Lines in this brief are those of your base's tree, where
+  `NTimeHierarchy.lean` is 1,793 lines (5 public, 10 private by the lint's count).
 - **Your first edit makes your file equal to the overlay**: one import,
   `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer`, after line 16 (region (a)). **Line
-  numbers below are the base's; the overlay's are 1 more** (the target at ⟨1723⟩, overlay ⟨1724⟩).
-- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT; at drafting: E-Q's fill
-  (megafill D) in `NTimeDiagonalizer.lean`, which proves `exists_queryTM` and adds that file's
-  imports and privates; it changes no statement you cite⟩. Cite nothing they add.
+  numbers below are the base's; the overlay's are 1 more** (the target at 1723, overlay 1724).
+- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT; at drafting: E-Q's fill (megafill D's partial, under review, and its continuation) in `NTimeDiagonalizer.lean`, which adds that file's imports and privates; it changes no statement you cite⟩. Cite nothing they add.
 
 ## Parallel batches this round
 
@@ -82,7 +80,7 @@ it there. Neither changes a statement you cite.
 **The nondeterministic time hierarchy** [AB09, §3.2, Theorem 3.2] ([Coo72]): for
 time-constructible `f`, `g` with every constant multiple of `f (n + 1) + f n + n + 1` eventually
 below `g n`, `NTIME f ⊊ NTIME (g + 1)`. The statement and its docstring are **frozen verbatim**
-(the docstring ⟨1630–1722⟩, the statement ⟨1723–1726⟩):
+(the docstring 1630–1722, the statement 1723–1726):
 
 ```lean
 theorem ntime_hierarchy {f g : ℕ → ℕ} (hf : TimeConstructible f)
@@ -114,30 +112,29 @@ admission of its own: the target's axiom walk reaches `sorryAx` only through tho
 
 **Pre-ship check** (the maintainer, at your base; its log is
 `campaign/fills/h/logs/h-fill-hierarchy-preship.log`):
-- **The overlay** elaborates with exactly ⟨your file's one sorry warning (overlay ⟨1724⟩)⟩. The
+- **The overlay** elaborates with exactly your file's one sorry warning (overlay 1724). The
   import creates no cycle (`NTimeDiagonalizer`'s closure does not contain your file).
-- **The import probe** (`HImportProbe.lean.txt`, **⟨N⟩ checks of ⟨N⟩ names**): 0 errors.
-- **The route probe** (`HRouteProbe.lean.txt`, sealed over ⟨N⟩): ⟨the chain's generic step, the
-  finite absorption, and the top threshold's arithmetic⟩, each within the standard three. They may
+- **The import probe** (`HImportProbe.lean.txt`, **48 checks of 48 names**): 0 errors.
+- **The route probe** (`HRouteProbe.lean.txt`, sealed over 4): `nh_chain` (the chain's induction), `nh_absorb` and `nh_inclusion` (the inclusion half, complete), `nh_top`, `nh_bottom`, `nh_middle` (the three thresholds) and `nh_stage` (a late stage of a code), each within the standard three. They may
   be copied into your home as `nh_` privates.
 - **The seal controls** (`HSealControl.lean.txt`): every one closes unsealed and fails sealed.
-- **The duplication probe** (`HDupProbe.lean.txt`): ⟨…⟩.
+- **The duplication probe** (`HDupProbe.lean.txt`): the chain, the absorption, the inclusion and the top threshold posed to `exact?`: 4 of 4 "could not close".
 
 ## Owned regions and targets (modify these and nothing else)
 
 | # | File:line (base) | Target |
 |---|---|---|
-| 1 | `NTimeHierarchy.lean:⟨1723⟩` | `Complexity.ntime_hierarchy` (frozen statement) |
+| 1 | `NTimeHierarchy.lean:1723` | `Complexity.ntime_hierarchy` (frozen statement) |
 
 Your regions:
 - **(a) the import**, as your first edit: exactly
   `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer`, after line 16. No other import.
-- **(b) the home**, the blank line ⟨1629⟩ after `open Turing`, inside `namespace Complexity`: your
+- **(b) the home**, the blank line 1629 after `open Turing`, inside `namespace Complexity`: your
   `private` declarations, `private` only, and no `section`, `open` or `variable` that leaks past
   one.
-- **(c) the body**, the `sorry` on line ⟨1727⟩.
+- **(c) the body**, the `sorry` on line 1727.
 - **(d) for a partial only, a paragraph headed `**Implementation status.**`** at the end of the
-  target's docstring, before its ` -/` (line ⟨1722⟩). It is public-facing library text: what is
+  target's docstring, before its ` -/` (line 1722). It is public-facing library text: what is
   proved and what is open, in mathematical terms, with no campaign labels and no dates. **Every
   new declaration has a docstring, and every proof over 20 lines a literal `**Proof sketch.**`
   paragraph** (`policy.md` §3).
@@ -205,7 +202,7 @@ Write `c` for the effective scheme, `D`, `K` for the diagonalizer and `L = {x | 
 
 ## Cited infrastructure (public and proved, or the two named contracts, at the issue commit)
 
-All in `HImportProbe.lean.txt`: ⟨the list at issue⟩.
+All in `HImportProbe.lean.txt` (48 names): the target and its neighbour `ntime_hierarchy_of_pos`; `exists_diagonalizer`, `exists_queryTM`, `exists_ndAcceptsWithin_decider`, `exists_timed_universal_NDTM`; the normal form and the scheme; the stages' definitions and laws; `NTIME` and its API; `DecidesInTime`, `AcceptsWithin`, `HaltsWithin` with their unfolding lemmas and monotonicity; `runWith_of_halt`, `runWith_append`; and the core and Mathlib facts the route probe uses.
 
 ## Ground rules (binding)
 
@@ -244,12 +241,10 @@ The route's 1–5. Each may land alone. Add no new admission.
 ## Duplication governance (binding)
 
 Run the text screen **before and after**, one run at a time, under `nice -n 10`.
-- **The population** (`campaign/fills/h/inputs/h-fill-hierarchy/screen-population.txt`, ⟨N⟩
-  files): your file; `NTimeDiagonalizer`, `ClassNP/NTIME`, `ClassNP/NDNormalForm`, `NDCodes`,
+- **The population** (`campaign/fills/h/inputs/h-fill-hierarchy/screen-population.txt`, 11 files): your file; `NTimeDiagonalizer`, `ClassNP/NTIME`, `ClassNP/NDNormalForm`, `NDCodes`,
   `Nondeterministic`; and the hazards `TimeHierarchy/Diagonal` (`time_hierarchy`'s absorption and
-  chain), `SpaceComplexity/Hierarchy` (the space hierarchy's), `ClassP/DTIME`.
-- **The base** is `campaign/fills/h/logs/h-fill-hierarchy-screen-base.txt`: ⟨N⟩ declarations,
-  ⟨N⟩ pairs (MEASURED at your base).
+  chain), `SpaceComplexity/Hierarchy` (the space hierarchy's), `ClassP/DTIME`, `TimeHierarchy/Separation`.
+- **The base** is `campaign/fills/h/logs/h-fill-hierarchy-screen-base.txt`: 102 declarations, 6 pairs (MEASURED at your base; seconds). Your file has no pair.
 - **No new cross-file pair** with an owned-file declaration on one side. **Known hazards:**
   `time_hierarchy`'s finite absorption (cite a published form if the pre-ship finds one);
   `NTIME.mono`'s truncation (cite).
@@ -258,25 +253,24 @@ Run the text screen **before and after**, one run at a time, under `nice -n 10`.
 
 ## Environment and verification
 
-- Lean 4 v4.25.0, mathlib pinned; the cache for the queue's Mathlib roots only (your order list's
-  modules import ⟨N⟩ roots); **never `lake build`**, never the unfiltered `lake exe cache get`.
+- Lean 4 v4.25.0, mathlib pinned; the cache for the queue's Mathlib roots only (your order list's modules import 33 roots); **never `lake build`**, never the unfiltered `lake exe cache get`.
   Use `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
-- **Re-bootstrap** from `campaign/fills/h/orders/h-fill-hierarchy.txt` (**⟨N⟩ modules**, on the
-  overlay) after your first edit, logging each module's time and maximum memory. **The base
-  sorry-warning set has ⟨N⟩ entries in ⟨N⟩ modules**. Yours is `NTimeHierarchy`'s one.
+- **Re-bootstrap** from `campaign/fills/h/orders/h-fill-hierarchy.txt` (**81 modules**, on the overlay) after your first edit, logging each module's time and maximum memory. **The base sorry-warning set has 22 entries in 11 modules**. Yours is `NTimeHierarchy`'s one.
 - **Final checks:** `NTimeHierarchy`: zero errors, **no sorry warning** (for a partial, exactly the
   target's); every other module of the order list: sorry warnings exactly the base's minus yours;
   the import probe re-run, extended by your citations.
 - **Axiom prints** for the target and every new private: within the standard three plus
   `sorryAx` only through the two named contracts; show the walk.
 - **Lint:** `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/Diagonalization`, 0 FAIL
-  (base: ⟨0 FAIL, 2 WARN over 5 files⟩).
+  (base: 0 FAIL, 2 WARN over 5 files).
 
 ## Out-of-scope sorries you will see (leave every one untouched)
 
-Everything in the base sorry set except your target: ⟨the set at issue, among them
-`exists_diagonalizer` and `exists_queryTM` (`NTimeDiagonalizer`) and
-`exists_codeNDTM_accepts_linear` (`ClassNP/NDNormalForm`), which you cite as statements⟩.
+Everything in the base sorry set except your target: `exists_queryTM` and `exists_diagonalizer`
+(`NTimeDiagonalizer`) and `exists_codeNDTM_accepts_linear` (`ClassNP/NDNormalForm`), which you cite
+as statements; MIG-1 stage S's sorried specs (`Simulation`, `Composition`, `Encoding`,
+`ClassP/TimeConstructible`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives`); and
+`CodeSimulator`'s `exists_uniformSimulator` (B5a).
 
 ## REPORT.md checklist
 
