@@ -12,6 +12,7 @@ import TCSlib.Complexity.TuringMachine.CodeSimulator
 -- B5b sanctioned imports: the certificate shell and exponential-polynomial ledger.
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.ClassNP.ExpPoly
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -302,24 +303,6 @@ theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
     by_contra hx
     simp [MultiTapeTM.indicator, hx] at hi
 
-/-- An empty increment result certifies an all-`true` word.
-This is the needed direction of the overflow criterion, now public as
-`Turing.incFixed_eq_none_iff_replicate` in `Build/Convention` (CH34-D4); this
-private form only converts the guard's `getD` form.
-
-**Proof sketch.** By the criterion it suffices that the increment overflows.
-The empty word overflows. A leading `false` increments to a nonempty word,
-contradicting the empty result. After a leading `true`, a tail that did not
-overflow would also give a nonempty result, so the tail overflows. (Maintainer,
-CH34-D4.) -/
-private lemma expcom_all_true (w : List Bool) (h : (incFixed w).getD [] = []) :
-    w = List.replicate w.length true := by
-  refine (incFixed_eq_none_iff_replicate w).mp ?_
-  rcases w with _ | ⟨_ | _, w⟩
-  · rfl
-  · simp [incFixed] at h
-  · cases hw : incFixed w <;> simp_all [incFixed]
-
 /-- The unary deadline field, projected from a possibly malformed query. -/
 private def expcom_tail (z : List Bool) : List Bool := pairSndD (pairSndD z)
 
@@ -360,7 +343,7 @@ private lemma expcom_ok_iff (z : List Bool) :
     have hv := eq_pairEncode_of_pairDecode v x w hx
     subst v
     have hw : w = List.replicate w.length true :=
-      expcom_all_true w (by simpa [expcom_tail] using hp.2)
+      (incFixed_getD_eq_nil_iff w).mp (by simpa [expcom_tail] using hp.2)
     exact ⟨α, x, w.length, by rw [← hw]⟩
   · rintro ⟨α, x, n, rfl⟩
     have hinc : incFixed (List.replicate n true) = none := by
