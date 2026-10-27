@@ -1829,6 +1829,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     with a promotion request, recommended); the landing ((a) checkpoint 1 now with E1–E5 by a
     maintainer PR and a light fill gate, 2-module replay, recommended); E1–E5; cont1's agent
     (Codex). Cont1's base: the tip after the landing.
+    **Prepared for the landing (a), local only:** `local/eq-cp1-landing` (worktree `wt-eqland`):
+    the two delivered commits cherry-picked onto the tip (the owned file equal to the
+    delivery's), then E1–E5 (`a83aa226`); against `oleans-laplusm` exactly the two expected
+    sorry warnings (447, 517). Not pushed.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
