@@ -637,10 +637,11 @@ files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equati
 - `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
   at a seven-fold `Sum.inl` of the embedded blank start `c0`.
 
-Census (one member per file): `CodeSimulator` 1 of 208 declarations (12 public, 196 private;
-0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79 (2.5%), `NTimeHierarchy` 1 of 15
-(6.7%). The one-fifth rule is not reached. **Disposition** (gate 81's finding 1: publication need
-not precede #170 under D1(A)): a public row beside `MultiTapeTM.initCfg_with_q₀`
+Census (one member per file; each count at the tree named): `CodeSimulator` 1 of 208 declarations at
+#170's head (12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79
+(2.5%), `NTimeHierarchy` 1 of 15 at the campaign tip before #172 (6.7%), 1 of 25 after it (4.0%;
+cumulative with TR-1 below). The one-fifth rule is not reached. **Disposition** (gate 81's finding
+1: publication need not precede #170 under D1(A)): a public row beside `MultiTapeTM.initCfg_with_q₀`
 (`TuringMachine/Finite`) in the user's dedup window (12.2c), with the five sites re-pointed.
 
 **PL-1, the linear-to-polynomial lift, and WT-1's residue** (PR #171, the word tests, 2026-10-27;
@@ -660,12 +661,12 @@ fixed-word and all-`true` tests only):
   a polynomial field map. Each is `polyTimeComputable_of_linear (computesFunInTime_decideEq w)`
   composed with that map.
 
-Census (one member per file): `Nondeterminism` 2 of 199 declarations (8 public, 191 private; 1.0%),
-`PolyTimePairing` 2 of 26 (7.7%; the public originals), `SAT` 1 of 270 (0.4%), `CookLevin/Hardness`
-1 of 545 (0.2%). The one-fifth rule is not reached.
-**Disposition:** the user's dedup window (12.2c): re-point the two privates to the public rows (one
-import), `hD'` to `computesFunInTime_decideEq []`, and the twins to `computesFunInTime_decideEq w`
-(each with the import of `Build/WordTests`).
+Census (one member per file, at #171's head): `Nondeterminism` 2 of 199 declarations (8 public, 191
+private; 1.0%), `PolyTimePairing` 2 of 26 (7.7%; the public originals), `SAT` 1 of 270 (0.4%),
+`CookLevin/Hardness` 1 of 545 (0.2%). The one-fifth rule is not reached. **Disposition:** the user's
+dedup window (12.2c): re-point the two privates to the public rows (one import), `hD'` to
+`computesFunInTime_decideEq []`, and the twins to `computesFunInTime_decideEq w` (each with the
+import of `Build/WordTests`).
 
 **TR-1, the truncation of an acceptance at an all-branch budget** (PR #172, H's landing,
 2026-10-27; the H brief review's F1 and gate 84's pack, item 5). One fact: if every branch of `N`
@@ -677,11 +678,14 @@ by `AcceptsWithin.mono`). It is stated privately in three files:
 - `NTimeHierarchy`'s `nh_accepts_of_halts` (new in #172), through `run_take_of_halted`. The
   user's D1 (A) licensed this leaf; the v3 screen pairs it with the first at 61%.
 
-`ClassNP/NTIME`'s `NTIME.mono` does the same truncation inline. Census (one member per file):
-`Nondeterminism` 1 of 199 (0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `NTimeHierarchy` 1 of 25
-(4.0%). The one-fifth rule is not reached. **Disposition:** the user's dedup window (12.2c):
-publish the truncation beside `FinNDTM.AcceptsWithin.mono` (`ClassNP/NTIME`, which would import
-`ChoiceWords`; no cycle), and re-point the three.
+`ClassNP/NTIME`'s `NTIME.mono` does the same truncation inline. Census (one member per file, at
+#172's head `33d68537`, a tree before #171): `Nondeterminism` 1 of 201 (8 public, 193 private; 0.5%;
+1 of 199 after #171), `ExhaustiveReplay` 1 of 185 (0.5%), `NTimeHierarchy` 1 of 25 (4.0%).
+**Cumulative across families** (gate 84's finding 1): after #172, `NTimeHierarchy` carries RS-1's
+`un_setup` and TR-1's `nh_accepts_of_halts`, **2 of 25 (8.0%)**. No file reaches one fifth.
+**Disposition:** the user's dedup window (12.2c): publish the truncation beside
+`FinNDTM.AcceptsWithin.mono` (`ClassNP/NTIME`, which would import `ChoiceWords`; no cycle), and
+re-point the three.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

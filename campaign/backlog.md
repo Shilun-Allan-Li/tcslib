@@ -1962,6 +1962,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     idiom. **Gate 84** (a fill gate) staged: `exchange/outbox/gates/84-h-hierarchy-fill-gate/`,
     bundle `bd597671…`, 54 sections (the 14-file population included), the Lean at `33d68537`,
     the records at `3190c6be`. The replay waits for #171 and E-Q's landing.
+    **Gate 84 resolved (2026-10-27): PASS 0/0/1/18** (`campaign/gates/84-h-hierarchy-fill/`);
+    minor 1 (the ledger's census trees and the cumulative 2 of 25) corrected. **#172 not yet clear
+    to merge:** its replay is written after #173 merges.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
