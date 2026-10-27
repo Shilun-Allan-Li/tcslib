@@ -14,6 +14,7 @@ import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
 import TCSlib.Complexity.TuringMachine.Build.Primitives
 import TCSlib.Complexity.TuringMachine.Build.Rewind
 import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -264,16 +265,13 @@ private theorem qy_guard (f g : ℕ → ℕ) (x : List Bool) :
   · rw [if_neg h]
     exact query_of_not_guard f g h
 
-/-- A linear-time decider recognizes all-true words of length at least three. It uses the
-published fixed-width increment, fixed-word comparisons and timed conditionals; it introduces
-no input scan beyond those rows. No public row decides this guard: the fixed-word test
-`Turing.FinTM.computesFunInTime_ifEq` decides one word, and the increment
-`Turing.FinTM.computesFunInTime_incFixed` signals an all-true word only by an empty output.
+/-- A linear-time decider recognizes all-true words of length at least three. It composes the
+published all-true test `Turing.FinTM.computesFunInTime_allTrue` with three fixed-word tests
+`Turing.FinTM.computesFunInTime_decideEq` by the timed conditional; it introduces no input scan
+beyond those rows. No public row decides the length bound.
 
-**Proof sketch.** Fixed-width increment overflows precisely on an all-true word. Its successful
-output has the input's length and therefore cannot be empty. Compose increment with the empty
-word test to decide unarity. Three fixed-word tests reject the empty word and the all-true words
-of lengths one and two. Each conditional preserves a linear time bound. -/
+**Proof sketch.** The all-true test decides unarity. Three fixed-word tests reject the empty word
+and the all-true words of lengths one and two. Each conditional preserves a linear time bound. -/
 private theorem qy_guard_decider :
     ∃ (D : FinTM Bool) (c : ℕ),
       D.ComputesFunInTime
@@ -284,12 +282,7 @@ private theorem qy_guard_decider :
       ∃ (D : FinTM Bool) (c : ℕ),
         D.ComputesFunInTime (fun x => [decide (x ≠ w) && p x])
           (fun n => c * (n + 1)) := by
-    obtain ⟨E, a, hE⟩ := FinTM.computesFunInTime_ifEq w [true] [false]
-    have hE' : E.ComputesFunInTime (fun x => [decide (x = w)])
-        (fun n => a * (n + 1)) := by
-      convert hE using 1
-      funext x
-      by_cases hx : x = w <;> simp only [hx, if_true, if_false, decide_true, decide_false]
+    obtain ⟨E, a, hE'⟩ := FinTM.computesFunInTime_decideEq w
     obtain ⟨F, b, hF⟩ := FinTM.computesFunInTime_const [false]
     obtain ⟨D, d, hD⟩ := FinTM.computesFunInTime_cond hE' hF hM
     refine ⟨D, d * (a + b + C + 1), (FinTM.computesFunInTime_iff _ _ _).mpr ?_⟩
@@ -308,45 +301,7 @@ private theorem qy_guard_decider :
           max_le (Nat.le_add_right _ _) (Nat.le_add_left _ _)
         nlinarith
       _ = _ := by ring
-  obtain ⟨I, a, hI⟩ := FinTM.computesFunInTime_incFixed
-  obtain ⟨E, b, hE⟩ := FinTM.computesFunInTime_ifEq [] [true] [false]
-  obtain ⟨U, c, hU⟩ := FinTM.computesFunInTime_comp hI hE
-    (fun _ _ h => Nat.mul_le_mul_left b (Nat.add_le_add_right h 1))
-  have hu (x : List Bool) :
-      (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
-    rw [← incFixed_eq_none_iff_replicate]
-    cases hi : incFixed x with
-    | none => simp only [Option.getD_none]
-    | some y =>
-      simp only [Option.getD_some]
-      constructor
-      · intro hy
-        have hlen := incFixed_length hi
-        rw [hy, List.length_nil] at hlen
-        have hx : x = [] := List.length_eq_zero_iff.mp hlen.symm
-        subst x
-        rw [incFixed_nil] at hi
-        cases hi
-      · intro h
-        cases h
-  have hU' : U.ComputesFunInTime (fun x => [decide (x = List.replicate x.length true)])
-      (fun n => (c * (a + b * a + b + 1)) * (n + 1)) := by
-    apply (FinTM.computesFunInTime_iff _ _ _).mpr
-    intro x
-    have hx := (FinTM.computesFunInTime_iff _ _ _).mp hU x
-    have hout : (if (incFixed x).getD [] = [] then [true] else [false]) =
-        [decide (x = List.replicate x.length true)] := by
-      simp only [hu x]
-      by_cases he : x = List.replicate x.length true
-      · simp only [if_pos he, decide_eq_true he]
-      · simp only [if_neg he, decide_eq_false he]
-    simp only [Function.comp_apply, hout] at hx
-    apply hx.mono
-    calc
-      _ ≤ c * ((a + b * a + b + 1) * (x.length + 1)) := by
-        apply Nat.mul_le_mul_left
-        nlinarith
-      _ = _ := by ring
+  obtain ⟨U, c, hU'⟩ := FinTM.computesFunInTime_allTrue
   obtain ⟨D₀, c₀, h₀⟩ := hcut [] hU'
   obtain ⟨D₁, c₁, h₁⟩ := hcut [true] h₀
   obtain ⟨D₂, c₂, h₂⟩ := hcut [true, true] h₁
