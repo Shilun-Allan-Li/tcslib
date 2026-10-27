@@ -1833,6 +1833,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     the two delivered commits cherry-picked onto the tip (the owned file equal to the
     delivery's), then E1–E5 (`a83aa226`); against `oleans-laplusm` exactly the two expected
     sorry warnings (447, 517). Not pushed.
+    **E-Q cont1's brief drafted** (`campaign/fills/eq/drafts/eq-fill-query-cont1.DRAFT.md`, from
+    the issued brief and the review's "The continuation", with its recommendations assumed): no
+    overlay; `hmain` the target; checkpoints 2–7 and `fill-eq-query-cont1-cp<N>.zip`; the
+    duplication disposition rule with the two pairs pre-disclosed; the E-SERIAL ruling and the
+    no-stop rule; the measured budget; the first round's seal lessons. The pre-ship re-runs on
+    the landed tree at issue.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
