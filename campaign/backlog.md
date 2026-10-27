@@ -1938,6 +1938,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Decisions pending (user):** D1 (the second import `ChoiceWords`, recommended; or an inline
     leaf, a third copy); D2 (issue as ruled with the probe staged; or land the review's proof by a
     maintainer PR, as B5a's D1 (A); or issue without it).
+    **Ruled (user, 2026-10-27): D1 (A)**, the second import `ChoiceWords` with the leaf through
+    `run_take_of_halted`; **D2: land the review's proof by a maintainer PR** (as B5a's D1 (A)), with
+    a fill gate and the downstream replay, after E-Q's checkpoint 1. **Megafill E is withdrawn**
+    (its cover draft kept as a record); H needs no fill. The docstring's sketch is rewritten to the
+    proved chain at landing.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.
