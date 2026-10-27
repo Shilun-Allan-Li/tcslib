@@ -22,7 +22,18 @@ true.
 | 8 | note | The seal's control maps describe the pre-overlay file; add 28 to their lines. | **Agreed;** noted here. |
 | 4–7, 9, 11, 12 | notes | Integrity; faithfulness; boundary cases; the consumers; the screen; the elaboration and axioms; lint. | No action. RI-1 retires when #167 lands. |
 
-**Merge state. #167: not yet clear to merge.** The gate is closed. #165 merged (2026-10-26), and
+**Merged (user, 2026-10-26)** as `4c8c2e7e9ac3c0bd063cb3df074558de073bf7bf`. The campaign's TCSlib
+tree after the merge equals the replayed head `508e0eab`'s, so `oleans-lriseqm` is the campaign's
+snapshot after #167. RI-1 is retired (`campaign/duplication-ledger.md`). Before the merge:
+**#167: clear to merge** (2026-10-26). `replay-lriseqm` passed (user, 2026-10-26): 91
+of 91 modules, static-equal (0 mismatches, 49 in total; `evidence/merged-tree/replay-lriseqm.log`,
+`-static.txt`) at the head `508e0eab`, whose base is the campaign branch; the campaign's Lean has
+not moved since #164's merge. Its snapshot is `oleans-lriseqm`. Before the replay: the gate was closed. #165 merged (2026-10-26), and
 #167 is retargeted to the campaign branch (head `98d56a71`; its diff is its two files). #164 (A1)
 goes first. Then the campaign is merged into #167, and its 91-module replay runs from A1's snapshot
 `oleans-la1m`. A trial merge on A1's tree gave the same 91-module list.
+**#164 merged (2026-10-26, `c4ba87bf`).** The campaign is merged into #167 (head
+`508e0eab1f82ae6edbc9ddb6c6a90de60e4b2f65`; its two files keep the gated head's blobs).
+`replay-lriseqm` (`evidence/merged-tree/`) replays their downstream closure, 91 modules, chained
+from `oleans-la1m`; its precheck passed. Its closure contains #166's, #168's and #169's, so their
+replays chain after it.

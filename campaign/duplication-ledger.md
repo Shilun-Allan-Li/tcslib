@@ -599,7 +599,8 @@ Census (one member per file; the source side added at gate 75's minor 5): `Build
 `Build/Contract/Basic` 1 of 85 (84 public, 1 private; 1.2%), the public `Turing.Round.iterate`, 18
 lines with its docstring. The one-fifth rule is not reached. **The API PR is #167** (gate 78,
 2026-10-25; stacked on #165): `Turing.Round.iterate_seq` beside `Round.iterate`, which becomes its
-corollary, and `zr_pinLoop` re-pointed to it. On its landing RI-1 is retired.
+corollary, and `zr_pinLoop` re-pointed to it. On its landing RI-1 is retired. **Retired
+(2026-10-26):** #167 merged as `4c8c2e7e`; `zr_pinLoop` cites `Round.iterate_seq`.
 
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
