@@ -1797,6 +1797,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Gate 81** (a fill gate) staged: `exchange/outbox/gates/81-b5a-unisim-fill-gate/`, bundle
     `b69054e0…`, 132 sections (the 57-file population included), the Lean at `101434fd`, the
     records at `06d98035`.
+    **`replay-lb5am` passed (10 of 10, static-equal); targets 3–8 and `baker_gill_solovay` print
+    the standard three: Baker–Gill–Solovay is admission-free.** #170 waits for gate 81.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
