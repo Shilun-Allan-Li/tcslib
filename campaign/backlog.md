@@ -1875,6 +1875,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `computesFunInTime_allTrue` and `computesFunInTime_decideEq` (54 lines removed; the two
     expected sorries; the three privates on the standard three). Opens as a PR once #171 merges.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
+    **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
+    with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
+    `Build/WordTests` inlined: the two expected sorries, the privates on the standard three; the
+    review's seal re-run (body 0 errors sealed; 39 controls fail sealed, close unsealed); freeze
+    22 → 22, 0 → 3 private; lint unchanged; closure 2 modules. At the PR: rebase on #171's merge,
+    reword the two worker subjects without "E-Q" (the review's F8), re-run against #171's snapshot.
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
