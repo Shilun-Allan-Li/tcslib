@@ -1,0 +1,9 @@
+The seal generator after finding 1's fix (mkseal-count.patch), re-run on the head blob
+f965eac02e06549e8239c7476b31c0ced4f3d11b with the worker's 29-name list
+(the cp1 delivery's evidence/probes/seal-definitions.txt):
+
+$ python3 -I mkseal_v2.py NTimeDiagonalizer.lean seal-definitions.txt out
+sealed 32 definitions; erased 4 ; controls 39 ; region (b) starts at sealed line 297 ; body ends at line 537
+
+cmp out/EQSeal_sealed.lean   evidence/lwords/EQSeal_sealed.lean.txt    -> identical
+cmp out/EQSeal_unsealed.lean evidence/lwords/EQSeal_unsealed.lean.txt  -> identical
