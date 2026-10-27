@@ -1943,6 +1943,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   (the H/F6 order, Q-D3, to be ruled; H's readiness: the space predicates' readings and F6's
   U2 harvest); (3) G5's statement phase (book-form Thm 3.1); (4) the dedup window (12.2c).
   Sequenced in that order under the Lean throttle; the dedup PRs fill the gaps.
+  **Ruled (user, 2026-10-27): revive the general `savitch`** (paused with stage 2 since
+  2026-10-14), a fifth track. First read: `PSPACE_eq_NPSPACE` already runs the midpoint
+  recursion as the register machine `SavitchARM.A` (radius `(n + 2)^E` by counting loops,
+  then `arm_decides_pspace_val`). `arm_decides_SPACE` (`Machines/ARMWidth`) is the general
+  bridge: `O(S)`-digit registers and logspace subroutines give `SPACE S` for `S ≥ logSpace`,
+  so `S·S` covers the stack. The open point is the radius for general `S`: from the
+  constructibility witness, or by iterative deepening on the radius (no subroutine beyond
+  logspace). A route note decides it; stage 2 stays paused.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
