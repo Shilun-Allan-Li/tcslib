@@ -1934,6 +1934,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     eq-fill-query-cont1.md`, with `inputs/eq-fill-query-cont1/` (11 files), the order list (84),
     the base sorries (20 in 9), the screen base and the pre-ship log. The issue commit is the
     brief's `@ANCESTOR@`.
+    **Dispatched (user, 2026-10-27).**
+- **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
+  the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
+  `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`
+  (paused). Unstated: book-form Thm 3.1 (G5) and Ladner. **Ruled (user, 2026-10-27): start
+  four maintainer tracks while cont1 runs**: (1) NF's route note; (2) the space hierarchy track
+  (the H/F6 order, Q-D3, to be ruled; H's readiness: the space predicates' readings and F6's
+  U2 harvest); (3) G5's statement phase (book-form Thm 3.1); (4) the dedup window (12.2c).
+  Sequenced in that order under the Lean throttle; the dedup PRs fill the gaps.
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
