@@ -1794,8 +1794,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Ledgered (2026-10-27) as RS-1** (`campaign/duplication-ledger.md`): **five sites in four
     files** after gate 81's finding 1 (`exists_selfStartupTMK`'s `hinit`). A first entry called
     `un_setup` containment; it is a member (its local `hstart`), as the pack said. Disposition:
-    the dedup window (12.2c); publication need not precede #170. **PL-1** ledgered beside it (#171's residue: `a3n_poly_linear`/`a3n_poly_const`,
-    twins of `polyTimeComputable_of_linear`/`_const`; `Savitch`'s inline `hD'`), for 12.2c.
+    the dedup window (12.2c); publication need not precede #170. **PL-1** ledgered beside it
+    (#171's residue: `a3n_poly_linear`/`a3n_poly_const`, twins of
+    `polyTimeComputable_of_linear`/`_const`; `Savitch`'s inline `hD'`), for 12.2c.
+    **Gate 81 resolved (2026-10-27): PASS 0/0/2/12** (`campaign/gates/81-b5a-unisim-fill/`).
+    Minor 1 ledgered (RS-1's fifth site); minor 2 fixed by `79efb462` (docstring only,
+    `baker_gill_solovay`'s appendix in public-facing terms). **#170 clear to merge** at `79efb462`.
     **PR #170** (`lean/b5a-unisim-landing`, head `101434fd`: the assembly, the docstring rewrite
     and the downstream status lines, all docstring-only beyond the proof; the campaign merged
     in). `replay-lb5am` (10 modules from `oleans-laplusm`) is written; its precheck passed.
