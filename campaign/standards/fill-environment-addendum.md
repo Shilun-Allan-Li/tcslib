@@ -1,8 +1,8 @@
 # Fill-agent environment addendum (v2.6): resources, the dependency cache, starting Lean, and megafills
 
-**Version 2.6 (2026-10-27; the user's ruling on megafill D's E-SERIAL)** clarifies the one-Lean rule, from megafill D's record (its
-E-SERIAL stopped an item for the cache tool's own parallel build, a 0.3 s overlap inside
-`lake exe cache get`, before the item's branch existed):
+**Version 2.6 (2026-10-27; the user's ruling on megafill D's E-SERIAL)** clarifies the one-Lean
+rule, from megafill D's record (its E-SERIAL stopped an item for the cache tool's own parallel
+build, a 0.3 s overlap inside `lake exe cache get`, before the item's branch existed):
 - **the cache tool's own work is outside the one-Lean rule** (Part 1, item 2);
 - **a Lean process is one that you start** (Part 3, item 5);
 - **a process deviation never ends an item** (Part 3, a new item 7).
