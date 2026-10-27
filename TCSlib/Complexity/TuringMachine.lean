@@ -26,6 +26,7 @@ import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.Build.Wrappers
 import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.NDHost
@@ -238,6 +239,8 @@ for the local modifications.
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
   the bounded-loop combinator, and the primitive catalog of timed string functions.
   Proved, and audited at the shared-infrastructure gates.
+* `Build/WordTests` — two linear-time one-bit word tests, equality with a fixed word and the
+  all-`true` word, in the form the timed conditional takes as its test. Proved.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
