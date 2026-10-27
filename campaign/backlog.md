@@ -1893,6 +1893,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     integration (recommended); the agent (Codex).
     **Ruled (user, 2026-10-27): run H now** as a second track, the brief superseding the old
     sketch, rewritten at landing; **megafill E, Codex, with H** (E-Q cont1 left it for Claude).
+    **Megafill E's cover drafted** (`campaign/fills/megafill/drafts/megafill-E.DRAFT.md`, from D's,
+    with v2.6's rules); H's brief is under review (a sub-agent).
     **Brief drafted and pre-shipped** (`campaign/fills/h/drafts/h-fill-hierarchy.DRAFT.md`;
     `preship-9d0af8cb/`, on the tree after #169): one import, 48 names, the route probe's seven
     lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4
