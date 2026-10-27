@@ -63,12 +63,15 @@ issue. -->
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is ⟨BASE⟩** (at drafting: the campaign after #169, `94296486`). Lines in this brief are those of your base's tree, where
-  `NTimeHierarchy.lean` is 1,793 lines (5 public, 10 private by the lint's count).
+- **Your base's Lean content is ⟨BASE⟩** (at drafting: the campaign after #169, `94296486`). Lines
+  in this brief are those of your base's tree, where `NTimeHierarchy.lean` is 1,793 lines (5 public,
+  10 private by the lint's count).
 - **Your first edit makes your file equal to the overlay**: one import,
   `import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer`, after line 16 (region (a)). **Line
   numbers below are the base's; the overlay's are 1 more** (the target at 1723, overlay 1724).
-- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT; at drafting: E-Q's fill (megafill D's partial, under review, and its continuation) in `NTimeDiagonalizer.lean`, which adds that file's imports and privates; it changes no statement you cite⟩. Cite nothing they add.
+- **In flight, merging after your base and invisible to it:** ⟨IN-FLIGHT; at drafting: E-Q's fill
+  (megafill D's partial, under review, and its continuation) in `NTimeDiagonalizer.lean`, which adds
+  that file's imports and privates; it changes no statement you cite⟩. Cite nothing they add.
 
 ## Parallel batches this round
 
@@ -115,10 +118,13 @@ admission of its own: the target's axiom walk reaches `sorryAx` only through tho
 - **The overlay** elaborates with exactly your file's one sorry warning (overlay 1724). The
   import creates no cycle (`NTimeDiagonalizer`'s closure does not contain your file).
 - **The import probe** (`HImportProbe.lean.txt`, **48 checks of 48 names**): 0 errors.
-- **The route probe** (`HRouteProbe.lean.txt`, sealed over 4): `nh_chain` (the chain's induction), `nh_absorb` and `nh_inclusion` (the inclusion half, complete), `nh_top`, `nh_bottom`, `nh_middle` (the three thresholds) and `nh_stage` (a late stage of a code), each within the standard three. They may
-  be copied into your home as `nh_` privates.
+- **The route probe** (`HRouteProbe.lean.txt`, sealed over 4): `nh_chain` (the chain's induction),
+  `nh_absorb` and `nh_inclusion` (the inclusion half, complete), `nh_top`, `nh_bottom`, `nh_middle`
+  (the three thresholds) and `nh_stage` (a late stage of a code), each within the standard three.
+  They may be copied into your home as `nh_` privates.
 - **The seal controls** (`HSealControl.lean.txt`): every one closes unsealed and fails sealed.
-- **The duplication probe** (`HDupProbe.lean.txt`): the chain, the absorption, the inclusion and the top threshold posed to `exact?`: 4 of 4 "could not close".
+- **The duplication probe** (`HDupProbe.lean.txt`): the chain, the absorption, the inclusion and the
+  top threshold posed to `exact?`: 4 of 4 "could not close".
 
 ## Owned regions and targets (modify these and nothing else)
 
@@ -241,10 +247,13 @@ The route's 1–5. Each may land alone. Add no new admission.
 ## Duplication governance (binding)
 
 Run the text screen **before and after**, one run at a time, under `nice -n 10`.
-- **The population** (`campaign/fills/h/inputs/h-fill-hierarchy/screen-population.txt`, 11 files): your file; `NTimeDiagonalizer`, `ClassNP/NTIME`, `ClassNP/NDNormalForm`, `NDCodes`,
+- **The population** (`campaign/fills/h/inputs/h-fill-hierarchy/screen-population.txt`, 11 files):
+  your file; `NTimeDiagonalizer`, `ClassNP/NTIME`, `ClassNP/NDNormalForm`, `NDCodes`,
   `Nondeterministic`; and the hazards `TimeHierarchy/Diagonal` (`time_hierarchy`'s absorption and
-  chain), `SpaceComplexity/Hierarchy` (the space hierarchy's), `ClassP/DTIME`, `TimeHierarchy/Separation`.
-- **The base** is `campaign/fills/h/logs/h-fill-hierarchy-screen-base.txt`: 102 declarations, 6 pairs (MEASURED at your base; seconds). Your file has no pair.
+  chain), `SpaceComplexity/Hierarchy` (the space hierarchy's), `ClassP/DTIME`,
+  `TimeHierarchy/Separation`.
+- **The base** is `campaign/fills/h/logs/h-fill-hierarchy-screen-base.txt`: 102 declarations, 6
+  pairs (MEASURED at your base; seconds). Your file has no pair.
 - **No new cross-file pair** with an owned-file declaration on one side. **Known hazards:**
   `time_hierarchy`'s finite absorption (cite a published form if the pre-ship finds one);
   `NTIME.mono`'s truncation (cite).
@@ -253,9 +262,12 @@ Run the text screen **before and after**, one run at a time, under `nice -n 10`.
 
 ## Environment and verification
 
-- Lean 4 v4.25.0, mathlib pinned; the cache for the queue's Mathlib roots only (your order list's modules import 33 roots); **never `lake build`**, never the unfiltered `lake exe cache get`.
-  Use `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
-- **Re-bootstrap** from `campaign/fills/h/orders/h-fill-hierarchy.txt` (**81 modules**, on the overlay) after your first edit, logging each module's time and maximum memory. **The base sorry-warning set has 22 entries in 11 modules**. Yours is `NTimeHierarchy`'s one.
+- Lean 4 v4.25.0, mathlib pinned; the cache for the queue's Mathlib roots only (your order list's
+  modules import 33 roots); **never `lake build`**, never the unfiltered `lake exe cache get`. Use
+  `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
+- **Re-bootstrap** from `campaign/fills/h/orders/h-fill-hierarchy.txt` (**81 modules**, on the
+  overlay) after your first edit, logging each module's time and maximum memory. **The base
+  sorry-warning set has 22 entries in 11 modules**. Yours is `NTimeHierarchy`'s one.
 - **Final checks:** `NTimeHierarchy`: zero errors, **no sorry warning** (for a partial, exactly the
   target's); every other module of the order list: sorry warnings exactly the base's minus yours;
   the import probe re-run, extended by your citations.
