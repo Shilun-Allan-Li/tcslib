@@ -79,7 +79,12 @@ review's F8); their author is the delivery's, and their patch-ids equal the deli
 - **Elaboration**, prepared against `oleans-laplusm` (the tree after #169) with `Build/WordTests`
   inlined (`evidence/prepared-laplusm/NTimeDiagonalizerCatAx.*`): exactly the two `sorry` warnings
   (the target and `exists_diagonalizer`); the three privates on `[propext, Classical.choice,
-  Quot.sound]`. ⟨Re-run at the PR head against #171's snapshot: `evidence/elab-head-ax.*`.⟩
+  Quot.sound]`.
+- **Elaboration and seal against `oleans-lwords`** (#171's replay snapshot, the PR's base tree;
+  `evidence/lwords/`): the module at the head, with five axiom prints, has exactly the two `sorry`
+  warnings (lines 402 and 472) and the privates on the standard three; the seal re-run on the real
+  module gives the same results (body 0 errors sealed; 39 controls fail sealed and close
+  unsealed).
 - **Freeze** (`declfreeze.py` v4, base the campaign tip's file): 22 → 22 public, 0 → 3 private,
   the one authorized body change.
 - **Lint** (`evidence/prepared-laplusm/lint-head-Diagonalization.txt`): `Diagonalization` 0 FAIL,
@@ -88,7 +93,7 @@ review's F8); their author is the delivery's, and their patch-ids equal the deli
 - **The review** (`campaign/fills/eq/reviews/fill-cp1/`): the bundle's integrity, the v3 screen,
   the duplication tiles and the import probes, on the delivery; E1–E5 tested at its head.
 - **Replay:** the downstream closure, 2 modules (`NTimeDiagonalizer` and the `Diagonalization`
-  facade, `evidence/prepared-laplusm/down-leqcp1.txt`), from ⟨#171's snapshot⟩. **Pending.**
+  facade, `evidence/prepared-laplusm/down-leqcp1.txt`), from `oleans-lwords`. **Pending.**
 
 ## Findings format
 
