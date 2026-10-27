@@ -1796,7 +1796,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     tool's own parallel Batteries build, a 0.3 s overlap, as a breach of the one-Lean rule) and
     **E-DUP** (`qy_guard_decider` pairs at 67% and 60% with `Nondeterminism`'s and `TMSAT`'s
     private fixed-word deciders, all three through the public `computesFunInTime_ifEq`). No
-    `megafill-d-REPORT.md`. **Under review** (sub-agent).
+    `megafill-d-REPORT.md` in the zips; it came separately (user, 2026-10-27; SHA-256
+    `caabb14f…`, `campaign/fills/megafill/reports/megafill-d-REPORT.md`), consistent with the zip.
+    Of the 43-minute item, the two screens took 19 minutes each. **Under review** (sub-agent).
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
