@@ -18,18 +18,19 @@ length (`hmain`), which stays `sorry`. The maintainer's review is
 lands now with the review's landing edits E1–E5, after the API PR #171, its guard re-pointed to
 #171's rows. The continuation (cont1) proves `hmain` on the landed tree.
 
-**The head:** `⟨branch⟩` at `⟨head, 40 characters⟩`, four commits on the campaign branch after
-#171's merge (`evidence/patches/`):
-- `⟨b762ce4c'⟩`: the worker's import overlay, the eight imports the brief authorized
-  (`Mathlib.Data.Nat.Log`, `Build/StepClock`, `Build/InputCall`, `Build/Contract/Catalog`,
-  `Build/Contract/Seam`, `Build/Primitives`, `Build/Rewind`, `BufferWords`), cherry-picked from the
-  verified bundle;
-- `⟨795aa714'⟩`: the worker's checkpoint 1, cherry-picked: `qy_guard`, `qy_guard_decider`,
-  `qy_query_of_main` and the target's `suffices`;
-- `⟨accb99f7'⟩`: the maintainer's E1–E5 (the review's `out/25-landing-edits.diff`): two
+**The head:** `⟨branch⟩` at `⟨head, 40 characters⟩`, four commits on #171's merged head `91a1ad87`
+(`evidence/patches/`). The worker's two subjects are reworded without the campaign label (the
+review's F8); their author is the delivery's, and their patch-ids equal the delivered commits'.
+- `8841044d`: the worker's import overlay (the delivered `fabce3bb`), the eight imports the brief
+  authorized (`Mathlib.Data.Nat.Log`, `Build/StepClock`, `Build/InputCall`,
+  `Build/Contract/Catalog`, `Build/Contract/Seam`, `Build/Primitives`, `Build/Rewind`,
+  `BufferWords`), cherry-picked from the verified bundle;
+- `4d93a8fe`: the worker's checkpoint 1 (the delivered `9d93626d`), cherry-picked: `qy_guard`,
+  `qy_guard_decider`, `qy_query_of_main` and the target's `suffices`;
+- `1fd6a15d`: the maintainer's E1–E5 (the review's `out/25-landing-edits.diff`): two
   docstring corrections (F3, F4), one tactic step (F6: `refine congrArg (fun b => [b]) ?_` for
   `apply congrArg List.singleton`), one blank line (F8), the status paragraph (F5);
-- `⟨27ca2927'⟩`: the maintainer's re-point. `qy_guard_decider` cites
+- `a5c22dd9`: the maintainer's re-point. `qy_guard_decider` cites
   `Turing.FinTM.computesFunInTime_allTrue` and `Turing.FinTM.computesFunInTime_decideEq` (#171) in
   place of its private copies (54 lines removed), and the module imports `Build/WordTests`. Its
   docstring's "which public row it is not" sentence (E2) is rewritten to the one fact no row
@@ -54,7 +55,7 @@ lands now with the review's landing edits E1–E5, after the API PR #171, its gu
      `[true, true]`) by `computesFunInTime_cond`, each linear.
    - `qy_query_of_main`: the guard chooses between the supplied machine and the constant `[]`;
      the bound absorbs `n ≤ g n` (`Complexity.timeConstructible_iff`).
-2. **The re-point** (`⟨27ca2927'⟩`). Does `qy_guard_decider` use #171's rows as published, with no
+2. **The re-point** (`a5c22dd9`). Does `qy_guard_decider` use #171's rows as published, with no
    copy of them left in the file? Is its rewritten docstring true ("No public row decides the
    length bound")?
 3. **Rule 10** (with the scope of 2026-10-23). The review's seal (32 definitions, the four

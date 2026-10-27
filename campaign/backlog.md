@@ -1891,6 +1891,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     merged the campaign into #171 (head `91a1ad87`) and wrote `replay-lwords` (18 modules from
     `oleans-lb5am`, the snapshot-tree commit `79efb462`); precheck passed. **#171 not yet clear
     to merge: waits for `replay-lwords`.**
+    **E-Q's landing re-stacked, local only** (`local/eq-cp1-landing-v3` in `wt-eqland`, on #171's
+    merged head `91a1ad87`): `8841044d`, `4d93a8fe` (the worker's `fabce3bb`, `9d93626d`, the
+    subjects reworded without "E-Q"; same patch-ids), `1fd6a15d` (E1–E5), `a5c22dd9` (the
+    re-point); the owned file's blob unchanged (`f965eac0`). Gate 83's draft carries the hashes.
     **Cont1's draft updated** to the rulings: Claude, standalone (no megafill cover), #171's rows.
     **Gate 83 staged as a draft** (`campaign/gates/83-eq-query-cp1-fill/`, 2026-10-27): the pack
     with ⟨…⟩ for the PR, and the evidence prepared on the landing v2 against `oleans-laplusm` with
