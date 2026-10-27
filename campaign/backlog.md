@@ -1775,6 +1775,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     only the target's body changed). **Decision D1 pending (user):** (A) land the proof as a
     maintainer PR with a fill gate (recommended, #169's and C1's precedent), (B) issue the brief
     with the assembly as an input, (C) the brief alone.
+    **Prepared for (A), local only (2026-10-27):** the branch `local/b5a-landing` (worktree
+    `wt-b5aland`, at `1a508123` on the campaign tip: the assembly without its prints; not
+    pushed). The after-screen of the 57 files runs on it (F8). The public text is drafted
+    (`CodeSimulator`'s status paragraph and the target's docstring: the sketch rewritten to the
+    startup route, an `**Implementation.**` paragraph, the dated fill appendices removed), and
+    is docstring-only by `codeonly.py`; it elaborates with no diagnostic. Still to do under (A):
+    `Codes2Tape`'s, `EXPCOM`'s and `Relativization`'s status lines (after the replay and the
+    axiom prints of targets 3–8 and Baker–Gill–Solovay), the PR, the fill gate and the
+    9-module replay.
   - **Dedup-window candidate:** a public configuration rewrap lemma for `SeamLayout`'s private
     `sl_rewrap` idiom (`exists_interpreterStartup`, `uk_header_run`, `uk_suffixStartup_run`
     reproduce it at 59–78%).
