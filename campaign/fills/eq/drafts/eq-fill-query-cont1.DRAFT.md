@@ -29,10 +29,10 @@ review sub-agent, then issue. Remove this comment at issue. -->
     `Turing.FinTM.exists_installCallTM` (`Build/Loop`) and `Turing.FinTM.exists_inputCallTM`
     (`Build/InputCall`), the function-level conditional `Turing.FinTM.computesFunInTime_cond`
     (`Build/Wrappers`), and the catalog's framed rows;
-  - **checkpoint 1, landed** (PR ⟨#⟩, gate 83; megafill D's partial): your file's imports (the eight
-    of the first round and `Build/WordTests`), `qy_guard`, `qy_guard_decider` (the guard's decider,
-    L1) and `qy_query_of_main`, which reduces the target to the main machine's contract `hmain`
-    (below);
+  - **checkpoint 1, landed** (PR #173, gate 83; megafill D's partial): your file's imports (the
+    eight of the first round and `Build/WordTests`), `qy_guard`, `qy_guard_decider` (the guard's
+    decider, L1) and `qy_query_of_main`, which reduces the target to the main machine's contract
+    `hmain` (below);
   - **the linear word tests** (PR #171, `Build/WordTests`):
     `Turing.FinTM.computesFunInTime_decideEq` (equality with a fixed word, as `[decide (x = w)]`)
     and `Turing.FinTM.computesFunInTime_allTrue`; the guard cites both. Use them wherever a leaf
@@ -76,7 +76,7 @@ review sub-agent, then issue. Remove this comment at issue. -->
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is ⟨the campaign's tree after checkpoint 1's landing, PR ⟨#⟩⟩**
+- **Your base's Lean content is the campaign's tree after checkpoint 1's landing (PR #173)**
   (@ANCESTOR@ adds records only). Lines in this brief are those of your base's tree, where
   `NTimeDiagonalizer.lean` is 498 lines (22 public, 3 private, and their compiler auxiliaries).
 - **There is no overlay.** The file already has its nine imports; your first edit is a proof edit.
@@ -141,12 +141,11 @@ absorbed by `qy_query_of_main`.
 - the release adapter `seamReleaseTM_runFrom_pos`, the input seek `exists_inputSeekTM`, and
   `exists_inputCallTM`'s proof (its split on `entry = exit`): a call's exit may be its entry.
 
-**Pre-ship check** (the maintainer, at your base; its log is
-`campaign/fills/eq/logs/eq-fill-query-cont1-preship.log`; ⟨re-run at issue on the landed tree: the
-figures below are the first round's, kept until then⟩):
-- **The overlay** elaborates with exactly the file's two sorry warnings (overlay lines 278 and
-  343), at the review and again at your base. The imports create no cycle: their closure
-  contains no `Diagonalization` module.
+**Pre-ship check** (the maintainer, on the landed tree against its replay snapshot; its log is
+`campaign/fills/eq/logs/eq-fill-query-cont1-preship.log`):
+- **The base file** elaborates with exactly its two sorry warnings (lines 402 and 472), and the
+  three landed privates are within the standard three axioms. Every probe below reproduces the
+  first round's output exactly on this tree.
 - **The import probe** (`EQImportProbe.lean.txt`, **182 checks of 182 names**: megafill D's
   76 after dropping the virtual-input host's five, the route's 43 more, `timeConstructible_iff`
   and `Round.iterate_seq`, and 61 for the release adapter, the input seek, the scan, fold and
@@ -182,7 +181,7 @@ figures below are the first round's, kept until then⟩):
 - **The seal controls** (`EQSealControl.lean.txt`, 7 `rfl` goals, one per sealed definition):
   every one closes unsealed and fails sealed.
 - **The semantic-duplication probe** (`EQDupProbe.lean.txt`): the route probe's statements, each
-  posed to `exact?` against your module's closure with the overlay's imports: all ten new ones
+  posed to `exact?` against your module's closure with the file's imports: all ten new ones
   "could not close" (megafill D's probe covered the dossier's five).
 - **The review's route lemmas** (`EQReviewProbe.lean.txt`, sealed over 12: the route probe's 7 and
   `Cfg.ofWords`, `stateWord`, `Cfg.mapState`, `seamReleaseTM`, `Cfg.Stopped`; their 5 further
@@ -207,8 +206,8 @@ figures below are the first round's, kept until then⟩):
 Your regions:
 - **(a) no import.** The nine are in the file (the first round's eight and `Build/WordTests`); add
   none.
-- **(b) your home**, the blank line after `qy_query_of_main` (line 375), before the target's docstring:
-  your `private` declarations. **The three landed privates are frozen** (`qy_guard`,
+- **(b) your home**, the blank line after `qy_query_of_main` (line 375), before the target's
+  docstring: your `private` declarations. **The three landed privates are frozen** (`qy_guard`,
   `qy_guard_decider`, `qy_query_of_main`): change none without stopping on that item and
   reporting it.
 - **(c) the body**, the `sorry` under the `suffices` on line 410: prove `hmain`.
@@ -532,8 +531,8 @@ root `<dir>`).
     over catalog rows and private leaves: a model to read, not to copy), and `ClassNP/TMSAT` and
     `ClassNP/Nondeterminism` (private unary deciders, L1's neighbours).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/eq/logs/eq-fill-query-cont1-screen-base.txt`: **1,734
-  declarations, 2,162 pairs, 758,806 characters** (MEASURED at your base; about 14 minutes under
+- **The base** is `campaign/fills/eq/logs/eq-fill-query-cont1-screen-base.txt`: **1,735
+  declarations, 2,152 pairs, 757,579 characters** (MEASURED at your base; about 19 minutes under
   `nice -n 10`, peak memory 2.0 GB).
 
 ```sh
@@ -555,10 +554,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   - **re-derivation of another file's private**: keep yours, and list it as a promotion request.
 
   **None of these ends the item.**
-- **Pre-disclosed** (in your screen base, accepted idiom pairs): `qy_guard_decider` with
-  `Nondeterminism`'s `a3n_poly_fixed_eq` (67%) and `TMSAT`'s `tmsat_pt_eq` (60%), the
-  `[decide (x = w)]` conversion of `computesFunInTime_ifEq`; and the `Cfg.mapState_mapState`
-  field-equation idiom.
+- **Your file has no pair in the screen base.** The first round's two guard pairs (with
+  `a3n_poly_fixed_eq` and `tmsat_pt_eq`) are gone: since #171 all three cite the published word
+  tests. The `Cfg.mapState_mapState` field-equation idiom stays an accepted idiom pair elsewhere.
 - **Known hazards:**
   - `ExhaustiveReplay`'s `xr_replay_finish`/`_timeout` (the clock's two exits, read the same way):
     cite `exists_stepClockTMVia`'s two clauses, never a prelude copied from them;
