@@ -1,3 +1,4 @@
+<!-- ISSUED (2026-10-27) as `campaign/fills/megafill/briefs/megafill-D.md`; this draft is kept as the record. -->
 <!-- DRAFT (maintainer, 2026-10-26). Fill at issue: every ⟨…⟩ from the E-Q pre-ship at the issue
 commit (@ANCESTOR@); then remove this comment. -->
 

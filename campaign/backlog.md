@@ -1774,6 +1774,13 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     files); the cover says eight imports. At issue: the pre-ship on the eight-import overlay with
     the review's extended probes (`probe/EQImportProbeExt`, 182 names; the route probe citing
     `Complexity.timeConstructible_iff`), the lists and the screen base re-measured.
+    **Issued (2026-10-27) as megafill D** (`campaign/fills/megafill/briefs/megafill-D.md`, Codex;
+    one item, `campaign/fills/eq/briefs/eq-fill-query.md`). The pre-ship ran at `36cc9fc0` (Lean
+    as after #168, `oleans-lu2m`; `drafts/eq-fill-query/preship-36cc9fc0/`): the overlay's two
+    warnings; 182 of 182 names; the route probe and the review's route lemmas clean, sealed with
+    their 7 + 5 controls; the duplication probes 10 of 10 and 3 of 4; 54 host prints; 83
+    modules, 34 roots, 22 base sorries in 11 modules; the screen base 1,734 declarations and
+    2,162 pairs (14 minutes, 2.0 GB); lint 0 FAIL, 2 WARN.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

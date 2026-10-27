@@ -1,3 +1,4 @@
+<!-- ISSUED (2026-10-27) as `campaign/fills/eq/briefs/eq-fill-query.md`; this draft is kept as the record. -->
 <!-- DRAFT (maintainer, 2026-10-25), from `campaign/items/c1/c1e/EQ-route-design.md` and the user's
 rulings on it. To fill at issue (#164 and #167 are in; the base is now also after #166 and #168,
 `13120e00` or later), from the pre-ship run there: every ⟨…⟩ (the issue commit is @ANCESTOR@; the
