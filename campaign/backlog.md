@@ -1943,6 +1943,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     a fill gate and the downstream replay, after E-Q's checkpoint 1. **Megafill E is withdrawn**
     (its cover draft kept as a record); H needs no fill. The docstring's sketch is rewritten to the
     proved chain at landing.
+    **PR #172** (`lean/h-hierarchy-landing`, head `33d68537`, one commit on the tip `52b7edba`):
+    the review's filled file, without its prints, walk and section header; sketches on the
+    privates; a private `nh_fold`, cited by `nh_inclusion` and `ntime_hierarchy_of_pos` (removing
+    a 56% same-file pair); the target's docstring rewritten; the status lines. Against
+    `oleans-lb5am`: 0 diagnostics; the walk finds `sorryAx` only in the two contracts; the ten
+    privates within the standard three; sealed over the review's 12, 0 diagnostics. Freeze 5 → 5,
+    10 → 20. Screen (14 files) 224 → 226: the truncation pair (61%, ledgered as TR-1) and a 50%
+    idiom. **Gate 84** (a fill gate) staged. The replay waits for #171 and E-Q's landing.
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

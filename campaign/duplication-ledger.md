@@ -667,5 +667,21 @@ Census (one member per file): `Nondeterminism` 2 of 199 declarations (8 public, 
 import), `hD'` to `computesFunInTime_decideEq []`, and the twins to `computesFunInTime_decideEq w`
 (each with the import of `Build/WordTests`).
 
+**TR-1, the truncation of an acceptance at an all-branch budget** (PR #172, H's landing,
+2026-10-27; the H brief review's F1 and gate 84's pack, item 5). One fact: if every branch of `N`
+on `x` halts within `T`, an acceptance at any length is an acceptance within `T` (and conversely
+by `AcceptsWithin.mono`). It is stated privately in three files:
+- `Nondeterminism`'s `acceptsWithin_iff_of_halts` (line 165), through the published
+  `Turing.run_take_of_halted`;
+- `ExhaustiveReplay`'s `xr_accepts_iff_of_halts` (line 134);
+- `NTimeHierarchy`'s `nh_accepts_of_halts` (new in #172), through `run_take_of_halted`. The
+  user's D1 (A) licensed this leaf; the v3 screen pairs it with the first at 61%.
+
+`ClassNP/NTIME`'s `NTIME.mono` does the same truncation inline. Census (one member per file):
+`Nondeterminism` 1 of 199 (0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `NTimeHierarchy` 1 of 25
+(4.0%). The one-fifth rule is not reached. **Disposition:** the user's dedup window (12.2c):
+publish the truncation beside `FinNDTM.AcceptsWithin.mono` (`ClassNP/NTIME`, which would import
+`ChoiceWords`; no cycle), and re-point the three.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
