@@ -1959,6 +1959,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     generalized search; 1.5–3k), (B) the constructibility witness first (a new compile-layer
     bridge), (C) a machine-level Savitch (3–6k). Both (A) and (B) extend Hydroxyi's
     `SavitchARM`/`Machines` layer. Decisions pending (user): the route; consulting Hydroxyi; the queue.
+  - **The space hierarchy's readiness (2026-10-27).** Every host `space_hierarchy`'s sketch names is
+    proved on the standard axioms (17 axiom prints: `exists_selfUniversal`, the record rows
+    `exists_recordInitTM`/`TestTM`/`StepTM`/`TemplateTM`, `exists_windowRunnerTM`/`LoopTM`, the
+    alphabet reduction's and one-work-tape normal form's space clauses, `exists_codeTM`, the
+    visited-interval and configuration-count facts; `campaign/status/2026-10-27-headlines/HHosts.*`).
+    The readings H must use exist (`mem_SPACE_iff`, `decidesInSpace_iff`, `computesInSpace_iff`,
+    `spaceConstructible_iff`), so megafill D review's F8 is resolved; the corollaries lack
+    `LOGSPACE` and `PSPACE` membership readings. F6 still waits on U2's harvest API PR. Q-D3 (H
+    after F6, one fill per file) is the one block: decision pending (user).
+  - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
+    (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
+    reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
+    Its files are ours but `Diagonal` (Hydroxyi's, authorized); every input is proved.
   - **NF's route note** (`campaign/items/c1/nf/NF-route-design.md`, 2026-10-27): the C1 design's
     N1–N7 re-checked. `guessRunTM` carries only the bounded writer, so NF needs (an additive
     maintainer API PR in `Build/NDHost`) the controller writer's contract (drafted 2026-10-17,
