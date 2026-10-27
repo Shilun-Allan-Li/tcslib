@@ -36,7 +36,26 @@ from `oleans-lhh`, pinning the head's blob `c01cd773`. **Passed** (user, 2026-10
 **Round 2** (`pack-r2.md`, at `086c0ef0`): bundle SHA-256
 `67bedf22d76355ebe3c993889ab4ef8ee9aac369fc54ba8c2edfd017fef59dde` (29 sections), the records at `62c35d13`.
 The screen at `4c0a5943` is identical to round 1's head (none new, none gone; the case lemmas are
-below the screen's minimum body). **Dispatched (user, 2026-10-27). Findings: pending.**
+below the screen's minimum body). **Dispatched (user, 2026-10-27).** **Findings** (`findings-r2.md`,
+verbatim, SHA-256 `7104c6b8c3214b749d93e772b85d7e85c7609dbd9fc76fb1916d41ec903e78bd`; received
+2026-10-27): **PASS, 0 blockers, 0 majors, 1 minor, 11 notes.** The gate closes.
 
-**Merge state. #174: not yet clear to merge** (2026-10-27): it waits for gate 85's round 2 and
-`replay-lnfapi4`.
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | The seal generator's description still says unchanged declarations stay outside every seal; its first region holds the unchanged private `wr_tape_append`. | **True; fixed** in the records (the generator's docstring only): the unchanged public declarations stay outside every seal, and the one unchanged private helper `wr_tape_append` is inside the first region. Re-run on the audited blob `c01cd773`, the generator's output is byte-identical to `NDHostSealed.lean.txt` (8 regions, 17 definitions, 4 erased). No Lean text is affected. |
+| 2 | note | Target, provenance and fix scope verified. | Agreed. |
+| 3 | note | The twelve fiber and phase equations are exhaustive readings (policy §1). | Agreed; round 1's finding 1 is resolved. |
+| 4 | note | The seven redirect equations cover every input. | Agreed. |
+| 5 | note | The delimiter qualification resolves round 1's finding 2. | Agreed. |
+| 6 | note | The freeze attestation and the fix's scope are supported. | Agreed. |
+| 7 | note | The eight-region seal is reproducible; the erratum is correct. | Agreed; finding 1 fixes the generator's text. |
+| 8 | note | The duplication account is adequate. | Agreed. |
+| 9 | note | Elaboration and axiom records match the audited source. | Agreed. |
+| 10 | note | The lint attestation is supported; check 8 is the base's list again. | Agreed. The one-line difference is the policy linter's count: `scripts/style_lint.py` splits on newlines, so the empty text after the final newline counts as a line. The finding is unchanged. |
+| 11 | note | Boundary cases and the shared implementation are intact. | Agreed. |
+| 12 | note | The round-2 replay is a separate merge condition; the bundle carries no result for it. | Agreed; the replay ran after the bundle was staged. **`replay-lnfapi4` passed** (user, 2026-10-27): 4 of 4 at `086c0ef0`, the audited head, 0 failed, static-equal (`evidence/round1-fix/replay-lnfapi4.log`, `replay-lnfapi4-static.txt`). |
+
+**Merge state. #174: clear to merge** at `086c0ef0f99a696f76c0f213f27c85a71902157a` (2026-10-27):
+the gate passed in round 2, `replay-lnfapi4` passed at that head, the base is the campaign branch,
+and the campaign has had no Lean change since the merge-in (merge base `f587e483`, 0 `.lean` files
+differ at `210695f1`).

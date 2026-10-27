@@ -1,7 +1,8 @@
 """Seal the NDHost API PR's changed declarations (python3 -I): mkseal_nf3.py <NDHost.lean> <out.lean>.
 Each changed region is wrapped in its own section, which makes the other-file TCSlib definitions
 the changed code reaches locally irreducible and erases the four @[simp] TCSlib definitions of the
-environment; unchanged declarations stay outside every seal."""
+environment. The unchanged public declarations stay outside every seal; the one unchanged private
+helper `wr_tape_append` is inside the first region (the writer's helpers and contracts)."""
 import sys
 src, out = sys.argv[1:3]
 s = open(src, encoding='utf-8').read()
