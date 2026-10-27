@@ -1787,6 +1787,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     modules, 34 roots, 22 base sorries in 11 modules; the screen base 1,734 declarations and
     2,162 pairs (14 minutes, 2.0 GB); lint 0 FAIL, 2 WARN.
     **Dispatched (user, 2026-10-27), Codex.**
+    **Delivered (2026-10-27, `fill-eq-query.zip` and `fill-eq-query-cp1.zip`, Codex): a partial,
+    checkpoint 1 proved** (head `9d93626d`, 2 commits, the owned file only, +182/−1; 3 `qy_`
+    privates on the standard three: the guard, its L1 decider from published rows, and the
+    reduction to the main machine). Intake: checksums (295 and 257), the bundle (prerequisite
+    `ab09aa41`) and the source verified; the head fetched as `deliver/fill-eq-query-in`.
+    Disclosed: **E-SERIAL** (the agent stopped proof work after checkpoint 1, reading the cache
+    tool's own parallel Batteries build, a 0.3 s overlap, as a breach of the one-Lean rule) and
+    **E-DUP** (`qy_guard_decider` pairs at 67% and 60% with `Nondeterminism`'s and `TMSAT`'s
+    private fixed-word deciders, all three through the public `computesFunInTime_ifEq`). No
+    `megafill-d-REPORT.md`. **Under review** (sub-agent).
   - **E-D's route note** (`campaign/items/c1/c1e/ED-route-design.md`, 2026-10-27): `D` as one
     `guessRunTM` (the docstring's `phaseHostND`). The setup holds the query call, `g`'s witness,
     the block and the counter; one guessed block holds the stream and the budget word; the run
