@@ -1927,6 +1927,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     lemmas sealed with 4 controls (the inclusion half proved outright), the duplication probe 4
     of 4, 81 modules, 22 base sorries, the screen base 102 declarations and 6 pairs. Issues on
     the user's decision 1, after a review sub-agent.
+    **H's brief reviewed** (`campaign/fills/h/reviews/brief/REVIEW.md`, 2026-10-27; a sub-agent,
+    interrupted once and resumed): **issue after edits**; one major (F1: the truncation of an
+    unbounded acceptance has no licensed host; rule 7 forbids `NTIME.mono`'s re-walk;
+    `run_take_of_halted` is outside the one-import closure; two private copies exist), nine minors,
+    `suggested-fix.diff` (assumes D1 (A), D2 (A)). **The review proved the target over the two
+    contracts** (`HChainProbe`, 9 privates, about 170 lines; filled in place, no diagnostic; walk:
+    `sorryAx` only through `exists_diagonalizer` and `exists_codeNDTM_accepts_linear`). At issue:
+    21 sorries in 10 modules after #170, the order list re-sorted, a post-#170 snapshot.
+    **Decisions pending (user):** D1 (the second import `ChoiceWords`, recommended; or an inline
+    leaf, a third copy); D2 (issue as ruled with the probe staged; or land the review's proof by a
+    maintainer PR, as B5a's D1 (A); or issue without it).
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

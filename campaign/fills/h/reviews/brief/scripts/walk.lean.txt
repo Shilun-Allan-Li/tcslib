@@ -1,0 +1,27 @@
+
+/-! The axiom walk (review): every constant reachable from the root whose own type or value
+mentions `sorryAx` directly. -/
+open Lean in
+private def rvSorryWalk (root : Name) : CoreM (Array Name) := do
+  let env ← getEnv
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[root]
+  let mut out : Array Name := #[]
+  while !stack.isEmpty do
+    let n := stack.back!
+    stack := stack.pop
+    if visited.contains n then continue
+    visited := visited.insert n
+    if let some ci := env.find? n then
+      let cs := ci.type.getUsedConstants ++
+        ((ci.value? (allowOpaque := true)).map (·.getUsedConstants) |>.getD #[])
+      if cs.contains ``sorryAx then out := out.push n
+      for c in cs do
+        if !visited.contains c then stack := stack.push c
+  return out
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  for r in [ROOTS] do
+    let s ← liftCoreM (rvSorryWalk r)
+    logInfo m!"walk {r}: direct sorryAx in {s}"
