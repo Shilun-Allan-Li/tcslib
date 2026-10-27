@@ -1753,7 +1753,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `13120e00`), `oleans-lu2m` its snapshot.** #169 is merged with the campaign (`9d0af8cb`, the
     gated blobs kept); `replay-laplusm` (5 modules from `oleans-lu2m`) is written, and the
     combined screen on the merged head finds no new pair (gate 79's resolutions; U2's two
-    `sl_rewrap` idiom pairs disclosed). **#169 waits only for `replay-laplusm`.**
+    `sl_rewrap` idiom pairs disclosed). **`replay-laplusm` passed (5 of 5, static-equal); #169
+    clear to merge** (2026-10-27).
   - **B5a's junction proved** (`campaign/fills/b5a/drafts/b5a-fill-unisim/preship-junction/`,
     2026-10-27): gate 79's recorded obligation. `b5a_bank`, `b5a_junction`, `b5a_tail`, `b5a_start`
     and `b5a_run` (the binary machine's halt with output `[answer]`, `b5a_verdict`'s shape) hold in
@@ -1783,6 +1784,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     their 7 + 5 controls; the duplication probes 10 of 10 and 3 of 4; 54 host prints; 83
     modules, 34 roots, 22 base sorries in 11 modules; the screen base 1,734 declarations and
     2,162 pairs (14 minutes, 2.0 GB); lint 0 FAIL, 2 WARN.
+    **Dispatched (user, 2026-10-27), Codex.**
   - **Rulings on the reviews (user, 2026-10-24):**
     - **C1: land the reviewer's proof directly** (a maintainer PR in house style, a fill gate, a
       replay); C1 leaves megafill C.

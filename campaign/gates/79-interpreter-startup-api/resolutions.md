@@ -30,7 +30,12 @@ Pack `pack-r2.md`; bundle SHA-256 `854dddc5cc4d6c97cdcfd0b9919ec07acb0c2dcf99d76
 | 3 | note | The tape map is consistent and `p = F.k` supplies the missing bank; the junction stays a B5a pre-ship obligation, and its acceptance argument must also bridge the window `x.take t` to `x`. | **Agreed; recorded** in the design note's "As built" for B5a's brief (the window bridge, as the B5a review records). |
 | 1, 2, 4–9 | notes | Integrity; the probe non-vacuous; the docstring fix; the seal recipe reproducible; the semantic comparison now complete, with no new family; no regression; the contract and ledger; the attestations. | No action. |
 
-**Merge state. #169: not yet clear to merge.** The gate is closed. Its 5-module replay (the kit,
+**Merge state. #169: clear to merge** (2026-10-27). `replay-laplusm` passed (user, 2026-10-27): 5 of
+5 modules, static-equal (0 mismatches; `NTimeHierarchy`'s one sorry is `ntime_hierarchy`; the kit
+and `NDCodeSimulator` sorry-free; `evidence/merged-tree/replay-laplusm.log`, `-static.txt`) at the
+head `9d0af8cb`, whose base is the campaign branch; the campaign's Lean has not moved since #168's
+merge. Its snapshot is `oleans-laplusm`. The combined screen below finds no new pair. Before the
+replay: the gate is closed. Its 5-module replay (the kit,
 `NDCodeSimulator`, `NTimeHierarchy` and the two facades) chains after #166's and #168's, from the
 snapshot the last of them leaves, after the campaign is merged in.
 **#168 merged (2026-10-26).** The campaign is merged into #169 (head
