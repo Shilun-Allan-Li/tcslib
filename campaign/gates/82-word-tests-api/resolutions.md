@@ -1,8 +1,8 @@
 # The linear word tests (PR #171, an API gate): resolutions
 
 **Gate:** the API gate of PR #171 (`lean/word-tests` at `d17f63c8`). Pack `pack.md`; bundle
-SHA-256 `6670e22b2c6aa1ce51bd54206d886048b4d0a6504d70dda4d69f7f9e6bcbc4c9` (46 sections), the records
-at `5ffd739e`. **Findings** (`findings.md`, verbatim, SHA-256 `2daa1b36…`; received 2026-10-27):
+SHA-256 `6670e22b2c6aa1ce51bd54206d886048b4d0a6504d70dda4d69f7f9e6bcbc4c9` (46 sections), the
+records at `5ffd739e`. **Findings** (`findings.md`, verbatim, SHA-256 `2daa1b36…`; received 2026-10-27):
 **PASS, 0 blockers, 0 majors, 3 minors, 12 notes.** The gate is closed.
 
 **The round-1 fix:** commit `9256939f` on #171 (`evidence/round1-fix/round1-fix.patch`), for
