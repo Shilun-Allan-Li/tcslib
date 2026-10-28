@@ -1,0 +1,26 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! NF's duplication probe: the route probe's statements posed to `exact?`; a success would name a
+published declaration to cite instead. -/
+
+open Turing
+
+example {S : Type} [Fintype S] (H : NDTM 2 Bool S) :
+    ∃ M : CodeNDTM, ∀ (x : List Bool) (t : ℕ), M.toFinNDTM.AcceptsWithin x t ↔
+      ∃ w : List Bool, w.length = t ∧ (H.runWith w (H.initCfg x)).state = none ∧
+        (H.runWith w (H.initCfg x)).output = [true] := by
+  first | exact? | sorry
+
+example {SP : Type} (P : MultiTapeTM 2 Bool SP) (z : List Bool) (j : Fin 2) :
+    P.runFrom (P.initCfg z) 0 = P.initCfg z ∧ (P.initCfg z).state = some P.q₀ ∧
+      (∀ u < 0, (P.runFrom (P.initCfg z) u).state ≠ some P.q₀) ∧
+      (∀ p : ℕ, (P.initCfg z).workTapes j ((P.initCfg z).workTapePos j + p) = none) ∧
+      (P.initCfg z).workTapes j ((P.initCfg z).workTapePos j - 1) = none := by
+  first | exact? | sorry
+
+example {SP : Type} (P : MultiTapeTM 2 Bool SP) (z : List Bool) (j : Fin 2) (p : ℕ) :
+    (P.initCfg z).workTapes j ((P.initCfg z).workTapePos j + p) = none := by
+  first | exact? | sorry

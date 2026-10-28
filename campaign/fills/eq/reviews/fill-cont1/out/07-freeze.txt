@@ -1,0 +1,30 @@
+## declfreeze (v4) base -> head, with the target's body authorized
+public before/after: 22 22 private before/after: 3 214
+public added: []
+public removed: []
+authorized body change: Turing.NTimeDiag.exists_queryTM
+private removed: []
+private changed: []
+## privstmt base -> head
+declarations before/after: 25 236 | removed: []
+STATEMENT CHANGED: []
+body/docstring-only changes: 1 ['exists_queryTM']
+## stmtcheck base -> head
+   MISSING:           (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) ↔
+   MISSING:             ¬(c.decode α).toFinNDTM.AcceptsWithin
+   MISSING:               (List.replicate (ladder f (stage f n) + 1) true)
+   MISSING:               (budget f (ladder f (stage f n))))) := by
+   MISSING:   sorry
+base lines 498 head lines 5402 offset 4904
+EQUAL   header, imports, module docstring, definitions, laws, the three landed privates (base 1-375) -> head 1-375
+EQUAL   the target's docstring before (d) (base 376-398) -> head 5275-5297
+EQUAL   the target's statement and the suffices (base 402-409) -> head 5306-5313
+EQUAL   exists_diagonalizer, its docstring, and the file's end (base 411-499) -> head 5315-5403
+base 410: '  sorry' -> head 5314: '  exact qy_main hf hg'
+region (d) base 399-401 -> head 5298-5305 (see 08-regions)
+## reviewer's note on stmtcheck
+stmtcheck's 25 "MISSING" lines are an artifact of its in-order matching: the base's own `  sorry`
+line (the target's body, base 410) is matched to the head's later `  sorry` (exists_diagonalizer's,
+head 5400), after which none of exists_diagonalizer's lines can be found "in order". The direct
+comparison (the anchor-based frozen spans, out/07b-frozen-spans.txt) shows exists_diagonalizer,
+its docstring and the file's end byte-identical to the base.

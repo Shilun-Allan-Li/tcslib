@@ -1,0 +1,30 @@
+The rewrite and simplification arguments of the moved block (Constructible.lean at 550024b4,
+lines 550-713), every rw / rwa / simp / simpa / dsimp / unfold / show / change in the code
+(comments and docstrings stripped), classified. There is no unfold, show, change or dsimp.
+
+566  rw [transduce_cons]                        other-file theorem (ClassNP/Transducer)
+567  simp only [scp_tailO, scp_tailδ, ...]      own-file definitions scp_tailO, scp_tailδ (private,
+                                               moved with the block); own-file theorem
+                                               scp_transduce_copy; Core/Mathlib theorems
+                                               Bool.false_eq_true, if_false, Option.toList_none,
+                                               List.nil_append, List.tail_cons
+574  simp                                      (scp_tail_pow_le, nil case) default set
+575  simp                                      (scp_tail_pow_le, cons case) default set
+586  simp only [decide_true, if_true, List.length_nil]          Core theorems
+587  rw [zero_pow (by omega), Nat.zero_add]                     Mathlib/Core theorems
+589  simp only [reduceCtorEq, decide_false, ...]                the simproc reduceCtorEq; Core
+                                                                theorems
+661  rwa [scp_transduce_tail]                  own-file theorem
+672  simp                                      (x.tail.length ≤ x.length) default set
+673  simp only [List.length_replicate, Nat.one_mul, List.length_append, List.length_cons,
+                List.length_nil]                                Core/Mathlib theorems
+681  simp [hw]                                 local hypothesis, default set
+682  rw [← hfun]                               local
+690  rw [hval]                                 local
+695  rw [logSpace_eq]                          other-file theorem (SpaceComplexity/Basic), the
+                                               published equation of logSpace
+712  rw [← Nat.mul_assoc]                      Core theorem
+
+The default-set simp calls (574, 575, 672, 681) also close in the sealed copy, where the three
+@[simp] TCSlib definitions of the environment are erased (ConstructibleSealed.*). No other-file
+TCSlib definition and no Core or Mathlib definition is passed to simp, rw or unfold.

@@ -1,0 +1,25 @@
+-- base block 161 lines (Savitch), head block 164 lines (Constructible)
+--- Savitch (base)
++++ Constructible (head)
+@@ -70,4 +70,4 @@
+ 
+-/-- **Polynomial bounds are space-constructible**: for `1 ≤ c`, the normal-form bound
+-`n ^ c + 1` is `Complexity.SpaceConstructible`. (Degree zero is excluded: `n ^ 0 + 1 = 2`
++/-- **Polynomial bounds are space-constructible** [AB09, p. 79]: for `1 ≤ c`, the normal-form
++bound `n ^ c + 1` is `Complexity.SpaceConstructible`. (Degree zero is excluded: `n ^ 0 + 1 = 2`
+ fails the bundled `logSpace n ≤ S n` at large `n`; consumers route degree
+@@ -75,4 +75,4 @@
+ 
+-**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1`
+-(`Complexity.logSpace_le_succ`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
++**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_eq` and
++`Nat.log_le_self`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
+ `x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
+@@ -144,3 +144,6 @@
+     M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1, by omega, M, ?_⟩
+-  · have h1 := logSpace_le_succ n
++  · have h1 : logSpace n ≤ n + 1 := by
++      rw [logSpace_eq]
++      have := Nat.log_le_self 2 n
++      omega
+     have h2 : n ≤ n ^ c := Nat.le_self_pow (by omega) n

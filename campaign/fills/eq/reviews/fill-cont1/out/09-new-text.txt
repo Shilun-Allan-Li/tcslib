@@ -1,0 +1,107 @@
+comment/docstring lines: 632
+LABEL HITS: 22
+   1000: [L3] - **The length comparison** (leaf L3, the unary compare). Started with the heads of tapes `a`
+   1197: [L6] - **The writer's emitter** (leaf L6). Emit the fixed word `pre`; then emit the word under the
+   3049: [checkpoint] - **The setup, long path** (checkpoint 2): on inputs of length `n ≥ 3`, from the blank seam, the
+   3176: [checkpoint] - **The setup, short path** (checkpoint 2): on inputs of length `n ≤ 2`, from the blank seam,
+   3395: [checkpoint] - **The round's call** (checkpoint 3): from the anchor layout at the rung `1^a`, `a ≤ n`, the
+   3535: [checkpoint] - **The round's tests** (checkpoint 3): from the length test after a returned call (`bits F`,
+   3542: [L2] `|bits n|` (L2, `qy_cmp_run`; longer gives `F > n`); `F` expanded to `1^F` (`qy_expandHost`, the
+   3905: [checkpoint] - **A passed round's cleanup** (checkpoint 3): from the tapes `qyTB` after the tests, the
+   4019: [checkpoint] - **A passed round's pair update** (checkpoint 3): from the anchor layout with
+   4023: [L2] **Proof sketch.** The comparison `j` against `k` (L2), then by its verdict: `lt`, the increment
+   4208: [checkpoint] - **One round of the locator** (checkpoint 3), as a `Turing.Round` at the anchor with the three
+   4392: [checkpoint] - **The locator's loop** (checkpoint 4): on inputs of length `n ≥ 3`, from the anchor at the
+   4601: [checkpoint] - **The stage code's calls after an escape** (checkpoint 5): on an escape's tapes with the input
+   4669: [checkpoint] - **The input seek after an escape** (checkpoint 5): on an escape's tapes, from any input
+   4692: [checkpoint] - **The middle writer's head** (checkpoint 5): from its entry on an escape's tapes, the input
+   4722: [checkpoint] - **The top writer's head** (checkpoint 5): from its entry on an escape's tapes with the input
+   4757: [L6] - **The writer's word** (L6's three emissions): the flag, the budget field's bits each written
+   4826: [checkpoint] - **The middle writer** (checkpoint 6): from its entry on an escape's tapes, it halts within
+   4918: [checkpoint] - **The top writer** (checkpoint 6): from its entry on an escape's tapes with `1^{F + a}` on
+   5096: [checkpoint] - **`M₁` on inputs of length `n ≥ 3`** (checkpoint 7): from its initial configuration it halts
+   5207: [checkpoint] - **`M₁` on inputs of length `n ≤ 2`** (checkpoint 7): from its initial configuration it halts
+   5255: [checkpoint] (checkpoint 7, the target's `hmain`): for time-constructible `f` and `g`, `M₁` halts on every
+PATH HITS: 0
+own private names cited in the text (distinct): 93
+line comments (--): 80
+   1086: -- the forward scan
+   1106: -- the turn
+   1142: -- the return pass
+   1279: -- the prefix
+   1300: -- the copies of one symbol
+   1323: -- the body: from the cell `k`, with the rest of the word `rest`
+   1448: -- the suffix
+   1471: -- assembly
+   2276: -- f's call and its clock
+   2279: -- the bits of the input length
+   2282: -- the fourth power, the increment, the prefix, the length, the square
+   2309: -- g's input call and the seek
+   2988: -- s1: bits n by the input call
+   3001: -- s2: 1^n on tape 0 from the counter bits n on tape 1
+   3013: -- s3: one more cell
+   3022: -- s4: rewind tape 0
+   3033: -- s5: the first rung 1^3 on tape 2
+   3068: -- s6: the test n ≥ 3
+   3099: -- s7: the seek's [true] on tape 12
+   3107: -- s8: the width word onto tape 9
+   3117: -- s9: the counter's fixed tail
+   3135: -- s10: the counter onto tape 8
+   3150: -- the endpoint is the anchor layout
+   3161: -- the time bound
+   3426: -- r1: the rung onto f's call tape
+   3436: -- clk: the clocked call of f's witness on 1^a
+   3447: -- the call returns in time
+   3473: -- the counter runs out
+   3586: -- r3: |bits F| against |bits n|
+   3599: -- interior: |bits F| > |bits n| gives F > n
+   3621: -- r4: F in unary on tape 4, from the counter bits F on tape 7
+   3638: -- r5: 1^a appended to tape 4
+   3650: -- r6: rewind tape 4
+   3661: -- r7: X - 1 = F + a against |bits n|
+   3679: -- interior: X - 1 ≥ |bits n|
+   3694: -- r8: the copy 1^{F + a} onto the fourth power's tape 5
+   3705: -- pu: the fourth power 1^{X⁴}
+   3723: -- r10: X⁴ against |bits n|
+   3741: -- interior: X⁴ ≥ |bits n|
+   3765: -- r11: the copy 0^{X⁴} onto the counter tape 6
+   3775: -- ab: the increment to 0^{X⁴} 1, worth ℓ'
+   3793: -- r13: the next rung 1^{ℓ'} on tape 3
+   3811: -- r14: one more cell
+   3820: -- r15: rewind tape 3
+   3831: -- r16: ℓ' + 1 against n + 1
+   3858: -- next: ℓ' < n
+   3890: -- top: ℓ' = n
+   3926: -- c1: clear the old rung
+   3934: -- c2: the next rung onto the rung's tape
+   3945: -- c3: clear f's call tape
+   3953: -- c4: clear tape 4
+   3961: -- c5: clear tape 5
+   3969: -- c6: clear tape 6
+   3977: -- c7: restore the counter from its copy
+   4044: -- u1: j against k
+   4058: -- j < k: increment j
+   4079: -- u2: j + 1 against k
+   4092: -- j + 1 < k: the pair (j + 1, k)
+   4106: -- j + 1 = k: the pair (k, 0)
+   4129: -- j = k: clear j, increment k
+   4164: -- k < j: increment k
+   4256: -- interior
+   4262: -- top
+   4268: -- next
+   4285: -- timeout
+   4431: -- the passed rounds, with their times chosen first
+   4457: -- the stopping round
+   4464: -- the ledger
+   4849: -- m3: g's input call
+   4872: -- m4: the flag, the budget field four times, the inner separator
+   4880: -- m5: the code doubled, the outer separator
+   4889: -- m6: the tail 1^{n+1}, and the halt
+   4938: -- t3: the square's call on 1^{F + a}
+   4962: -- t4: the flag, the budget field four times, the inner separator
+   4970: -- t5: the code doubled, the outer separator
+   4979: -- t6: the tail 1^a from the rung, and the halt
+   5116: -- the setup
+   5123: -- the locator
+   5148: -- the middle
+   5171: -- the top

@@ -1,0 +1,29 @@
+## declfreeze base -> landed (target's body authorized)
+public before/after: 22 22 private before/after: 3 214
+public added: []
+public removed: []
+authorized body change: Turing.NTimeDiag.exists_queryTM
+private removed: []
+private changed: []
+## declfreeze head -> landed
+public before/after: 22 22 private before/after: 214 214
+public added: []
+public removed: []
+private removed: []
+private changed: ['Turing.NTimeDiag.qyCmpTM', 'Turing.NTimeDiag.qyEmitTM', 'Turing.NTimeDiag.qy_bits_len_mono', 'Turing.NTimeDiag.qy_code_calls', 'Turing.NTimeDiag.qy_loop', 'Turing.NTimeDiag.qy_lt_two_pow_bits', 'Turing.NTimeDiag.qy_main', 'Turing.NTimeDiag.qy_main_long', 'Turing.NTimeDiag.qy_main_short', 'Turing.NTimeDiag.qy_mid_code', 'Turing.NTimeDiag.qy_mid_run', 'Turing.NTimeDiag.qy_rnd_call', 'Turing.NTimeDiag.qy_rnd_clean', 'Turing.NTimeDiag.qy_rnd_pair', 'Turing.NTimeDiag.qy_rnd_tests', 'Turing.NTimeDiag.qy_round', 'Turing.NTimeDiag.qy_seek_run', 'Turing.NTimeDiag.qy_setup_long', 'Turing.NTimeDiag.qy_setup_short', 'Turing.NTimeDiag.qy_top_code', 'Turing.NTimeDiag.qy_top_run', 'Turing.NTimeDiag.qy_writer_word']
+## privstmt head -> landed
+declarations before/after: 236 236 | removed: []
+STATEMENT CHANGED: []
+body/docstring-only changes: 22 ['qyCmpTM', 'qyEmitTM', 'qy_bits_len_mono', 'qy_code_calls', 'qy_loop', 'qy_lt_two_pow_bits', 'qy_main', 'qy_main_long', 'qy_main_short', 'qy_mid_code', 'qy_mid_run', 'qy_rnd_call', 'qy_rnd_clean', 'qy_rnd_pair', 'qy_rnd_tests', 'qy_round', 'qy_seek_run', 'qy_setup_long', 'qy_setup_short', 'qy_top_code', 'qy_top_run', 'qy_writer_word']
+## frozen spans base -> landed (the header differs only on line 69 by E4)
+base 1-375 vs landed 1-375 differing lines: [69]
+## frozen spans: see out/07b-frozen-spans.txt (the earlier fixed-offset comparison removed)
+region b ends before the target's docstring; target at 5293; (d) at 5285
+comment/docstring lines: 632
+LABEL HITS: 0
+PATH HITS: 0
+style_lint: 0 FAIL, 3 WARN over 5 files
+without a docstring: none
+over 20 lines without a literal "**Proof sketch.**": [(521, 'theorem', "qy_hosted'", 23), (563, 'theorem', 'qy_hosted_last', 25), (641, 'theorem', 'qy_copy', 27), (671, 'theorem', 'qy_copy_over', 26), (745, 'theorem', 'qy_clear', 23), (771, 'theorem', 'qy_writeConst', 22), (965, 'theorem', 'qy_step', 25), (1199, 'def', 'qyEmitTM', 24), (1661, 'def', 'QyClockSpec', 36), (2491, 'def', 'QyKit.bClk', 34), (2564, 'def', 'qyLocM', 34), (2600, 'def', 'qyLocRed', 63), (4315, 'theorem', 'qy_rndP_le', 23), (4534, 'theorem', 'qy_not_scratch_tp', 22)]
+## theorems: proof lines (after the statement) over 20 without a sketch
+theorems with proofs over 20 lines: 30

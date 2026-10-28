@@ -1,0 +1,64 @@
+## rows by tactic kind and class
+  dsimp only       own                          20
+  dsimp only (no list) local                        10
+  norm_num (no list) local                        20
+  rw               core/mathlib ctor            23
+  rw               core/mathlib def             4
+  rw               core/mathlib inductive       1
+  rw               core/mathlib thm             452
+  rw               local                        979
+  rw               own                          120
+  rw               tcslib inductive             1
+  rw               tcslib thm                   192
+  rwa              own                          1
+  show term        core/mathlib ctor            6
+  show term        core/mathlib def             4
+  show term        core/mathlib inductive       5
+  show term        core/mathlib thm             4
+  show term        local                        185
+  show term        own                          12
+  show term        tcslib def                   4
+  show term        tcslib thm                   8
+  simp             core/mathlib thm             20
+  simp             local                        344
+  simp             own                          297
+  simp (no list)   local                        34
+  simp only        core/mathlib def             3
+  simp only        core/mathlib thm             70
+  simp only        local                        17
+  simp only        own                          26
+  simp only (no list) local                        3
+  simp_all         own                          2
+  simpa (no list)  local                        4
+  unfold           local                        9
+  unfold           own                          69
+## distinct identifiers per class
+  core/mathlib ctor: 5
+  core/mathlib def: 4
+  core/mathlib inductive: 2
+  core/mathlib thm: 95
+  local: 242
+  own: 81
+  tcslib def: 2
+  tcslib inductive: 1
+  tcslib thm: 45
+## definitions (or opaques) of other files or of core/Mathlib passed to rw/simp/dsimp/unfold:
+   ('rw', 'Function.update', 'def[semireducible]', 'Mathlib.Logic.Function.Basic', '1341')
+   ('rw', 'Function.update', 'def[semireducible]', 'Mathlib.Logic.Function.Basic', '1364')
+   ('rw', 'Function.update', 'def[semireducible]', 'Mathlib.Logic.Function.Basic', '1373')
+   ('rw', 'Function.update', 'def[semireducible]', 'Mathlib.Logic.Function.Basic', '1396')
+   ('simp only', 'reduceCtorEq', 'def[semireducible]', 'Lean.Meta.Tactic.Simp.BuiltinSimprocs.Core', '3090')
+   ('simp only', 'reduceCtorEq', 'def[semireducible]', 'Lean.Meta.Tactic.Simp.BuiltinSimprocs.Core', '3147')
+   ('simp only', 'reduceCtorEq', 'def[semireducible]', 'Lean.Meta.Tactic.Simp.BuiltinSimprocs.Core', '3209')
+## definitions named in show/change terms (other files and core/Mathlib), with their lines:
+   core/mathlib Fin.last def[semireducible]: [1799, 1815]
+   core/mathlib Function.update def[semireducible]: [984]
+   core/mathlib Nat.bits def[semireducible]: [3046]
+   tcslib Turing.Cfg.ofWords def[semireducible]: [5014]
+   tcslib Turing.phaseHostTM def[semireducible]: [5014, 5113, 5220]
+## other-file TCSlib theorems passed to rw/simp (distinct):
+   ['Turing.Action.apply_inputPos', 'Turing.Action.apply_output', 'Turing.Action.apply_state', 'Turing.Action.apply_workTapePos', 'Turing.Action.apply_workTapes', 'Turing.Cfg.mapState_inputPos', 'Turing.Cfg.mapState_output', 'Turing.Cfg.mapState_state', 'Turing.Cfg.mapState_workTapePos', 'Turing.Cfg.mapState_workTapes', 'Turing.Cfg.ofWords_inputPos', 'Turing.Cfg.ofWords_output', 'Turing.Cfg.ofWords_state', 'Turing.Cfg.ofWords_workTapePos', 'Turing.Cfg.ofWords_workTapes', 'Turing.Cfg.stopped_iff', 'Turing.Cfg.workTapeSymbols_eq', 'Turing.FinTM.bufferTape_eq', 'Turing.FinTM.bufferTape_eq_none_of_not_mem', 'Turing.FinTM.bufferTape_left', 'Turing.FinTM.bufferTape_nat', 'Turing.FinTM.bufferTape_nil', 'Turing.MultiTapeTM.runFrom_add', "Turing.MultiTapeTM.runFrom_succ_eq_step'", 'Turing.MultiTapeTM.runFrom_zero', 'Turing.MultiTapeTM.step_of_some', 'Turing.clockCfg_inputPos', 'Turing.clockCfg_output', 'Turing.clockCfg_state', 'Turing.clockCfg_workTapePos', 'Turing.clockCfg_workTapes', 'Turing.counterValue_bits', 'Turing.counterValue_eq', 'Turing.counter_cfg_eq', 'Turing.embedEmitCfg_output', 'Turing.embedEmitCfg_state', 'Turing.embedEmitTM_runFrom', 'Turing.initCfg_ofWords', 'Turing.moveInputPos_zero', 'Turing.pairEncode_eq', 'Turing.phaseHostTM_q₀', 'Turing.seamReleaseTM_runFrom_pos', 'Turing.stateWord_eq', 'Turing.wordPatch_of_mem', 'Turing.wordPatch_of_not_mem']
+## other-file TCSlib non-theorem, non-definition names in rw/simp lists:
+   [('Turing.Cfg', 'inductive')]
+## core/Mathlib non-theorem names in rw/simp lists:
+   [('Bool', 'inductive'), ('Function.update', 'def[semireducible]'), ('Option.none', 'ctor'), ('Option.some', 'ctor'), ('Or.inl', 'ctor'), ('Or.inr', 'ctor'), ('reduceCtorEq', 'def[semireducible]')]

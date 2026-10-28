@@ -687,5 +687,22 @@ by `AcceptsWithin.mono`). It is stated privately in three files:
 `FinNDTM.AcceptsWithin.mono` (`ClassNP/NTIME`, which would import `ChoiceWords`; no cycle), and
 re-point the three.
 
+**LS-1, the logarithmic bound below the linear one** (PR #175, the move of
+`spaceConstructible_poly` to `Constructible`, 2026-10-27, pending its merge; gate 86's pack, item 3).
+One fact, `logSpace n ≤ n + 1`, in three places:
+- `Machines/ARMWidth`'s public `Complexity.logSpace_le_succ` (line 51), the lemma (a colleague's
+  file, outside `Constructible`'s closure);
+- `Constructible`'s `spaceConstructible_poly`, the dominance step, inline through `logSpace_eq` and
+  `Nat.log_le_self` (before #175 it cited `logSpace_le_succ` from `Savitch`, whose closure has
+  `ARMWidth`);
+- `Constructible`'s `spaceConstructible_linear`, its dominance conjunct, inline as
+  `Nat.succ_le_succ (Nat.log_le_self 2 n)` by reduction of `logSpace` (another file's definition;
+  the proof predates rule 10).
+
+Two inline steps and one declaration; the one-fifth rule is not in question. **Disposition:** the
+user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic` beside
+`logSpace_eq` (a mechanical edit in `ARMWidth`, FYI to its author), and re-point the two inline
+steps to it.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

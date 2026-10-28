@@ -1942,8 +1942,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     sealed 43 definitions (43 controls close unsealed, fail sealed); 84 modules swept; screen 120
     new pairs, 0 gone; no escalation. **Intake verified** (99 sums; the bundle's one prerequisite
     the base; the 8 patches equal the bundle; the source its head). The campaign's Lean since the
-    base: only `NDHost` (#174), outside the owned file's closure. Next: the review sub-agent, then
-    the landing PR, its replay from `oleans-lnfapi4` and the fill gate.
+    base: only `NDHost` (#174), outside the owned file's closure. **Reviewed**
+    (`campaign/fills/eq/reviews/fill-cont1/REVIEW.md`, a sub-agent, 2026-10-27): **land with
+    edits; 0 blockers, 0 majors, 4 minors, 9 notes**; its own maximal seal (275 definitions, 289
+    controls) and 2,949 classified tactic arguments find no rule-10 issue. Landing edits E1–E4
+    tested (labels, blank lines, two `Nat.bits` lemmas through `Nat.size`, the header's status);
+    the maintainer adds **F14/E5** (nine privates without the policy linter's proof sketch;
+    `maintainer-notes.md`). Decisions for the user: E1–E5, F4 (the comparator in place of the
+    scan folds), F11 (the frozen sketch's resync), F10 (the subjects), the duplication entries.
+    Replay list: `NTimeDiagonalizer`, `NTimeHierarchy`, the `Diagonalization` facade, from
+    `oleans-lnfapi4`.
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`
@@ -1997,7 +2005,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     statement unchanged; one proof step through `logSpace_eq` (`ARMWidth`'s `logSpace_le_succ` is
     outside `Constructible`'s closure; a 12.2c candidate: move it to `Basic`); `Constructible`
     elaborates with no diagnostic; sealed (12 definitions, 3 erased; 15 controls); freeze a pure
-    move. The screen is to re-run (interrupted).
+    move. **PR #175** (head `6ae641a2`, the campaign merged in): screen 844 declarations, 1,146
+    pairs at base and head, none new or gone; axioms standard; lint the base's. **Gate 86** staged
+    (bundle `5d6800fd…`, 52 sections); `replay-lscp` written (53 modules from `oleans-lnfapi4`,
+    precheck passed). **Gate 86 dispatched; `replay-lscp` running (user, 2026-10-27).**
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).

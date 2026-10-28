@@ -1,0 +1,24 @@
+new pairs 120 cross-file 20 in-file 100 neither 0
+cross-file, owned file as target: 3 ; as source: 17
+>=90%: cross [('sl_unarySplit_copy', 'qy_run_one', '100'), ('sl_unarySplitTM_run', 'qy_run_one', '99'), ('sl_pairSkip_two_steps', 'qy_run_one', '99')]
+>=90%: in-file [('QyKit.bCl', 'QyKit.bAbJ', '95'), ('qy_transfer', 'qy_copy', '94'), ('qy_clockHost_finish', 'qy_clock_start', '91'), ('QyKit.bCg', 'QyKit.K', '90')]
+  CROSS SeamLayout.lean::sl_unarySplit_copy <- NTimeDiagonalizer.lean::qy_run_one 85/85 100%
+  CROSS SeamLayout.lean::sl_unarySplitTM_run <- NTimeDiagonalizer.lean::qy_run_one 84/85 99%
+  CROSS SeamLayout.lean::sl_pairSkip_two_steps <- NTimeDiagonalizer.lean::qy_run_one 84/85 99%
+  CROSS ExhaustiveReplay.lean::xr_halt_fixed <- NTimeDiagonalizer.lean::qyC_mapState 144/173 83%
+  CROSS Encoding.lean::pairDiag_separator <- NTimeDiagonalizer.lean::qy_run_one 64/85 75%
+  CROSS SeamLayout.lean::exists_seamLayoutTM <- NTimeDiagonalizer.lean::qyC_mapState 124/173 72%
+  CROSS Catalog.lean::f2_splitEmit_suffix <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Catalog.lean::f2_scanCopy_suffix <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Catalog.lean::f2_loopHost_fuel_copy <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Catalog.lean::f2_extract_suffix <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Primitives.lean::splitEmit_suffix <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Primitives.lean::scanCopy_suffix <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Primitives.lean::extract_suffix <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Primitives.lean::emitterToken_separator <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS Loop.lean::loopHost_fuel_copy <- NTimeDiagonalizer.lean::qy_run_one 60/85 71%
+  CROSS SeamLayout.lean::sl_rewrap <- NTimeDiagonalizer.lean::qyC_mapState 121/173 70%
+  CROSS ExhaustiveReplay.lean::xr_phase_step <- NTimeDiagonalizer.lean::qyC_mapState 120/173 69%
+  CROSS NTimeDiagonalizer.lean::qyEmitTM <- Simulation.lean::emitAction 73/110 66%
+  CROSS NTimeDiagonalizer.lean::qy_call <- SeamLayout.lean::sl_rewrap 169/322 52%
+  CROSS NTimeDiagonalizer.lean::qy_cmp_run <- Nondeterminism.lean::b2_unary_run 68/135 50%
