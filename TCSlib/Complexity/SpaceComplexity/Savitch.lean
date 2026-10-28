@@ -19,29 +19,30 @@ set_option autoImplicit false
 deterministic overhead, via the midpoint recursion `reach?(u, v, i)` over the
 configuration graph of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`. The
 corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
-Phase P4.2 of `AroraBarakChapters3-4Plan.md`.
 
-**Status: partly filled (phase P4.2).** `Complexity.PSPACE_eq_NPSPACE` is
+**Status.** `Complexity.PSPACE_eq_NPSPACE` is
 proved, directly at the polynomial level, by the Savitch register machine of
 `TCSlib.Complexity.SpaceComplexity.SavitchARM` (`Complexity.NPSPACE_subset_PSPACE`);
 `Complexity.savitch` (general space-constructible `S`) remains sorried with a sketch
 naming its fill obligations. The polynomial bounds' constructibility,
 `Complexity.spaceConstructible_poly`, is in `TCSlib.Complexity.SpaceComplexity.Constructible`.
-The `SpaceComplexity.lean` facade has carried this module since the P4.1 gate closed
-(root-wired while that gate was live).
 
 ## Design
 
 * **The positive-bound convention is respected without side conditions**:
   `Complexity.SpaceConstructible` bundles `logSpace n ≤ S n`, so `S` and
-  `S · S` are everywhere positive and the P0-adopted convention
+  `S · S` are everywhere positive and the zero-bound convention
   (`TCSlib.Complexity.SpaceComplexity.ZeroSpace`) imposes no extra hypothesis.
 * **The recursion is realized iteratively**: `reach?`'s call stack becomes an
   explicit stack of `O(S)`-bit frames (coded vertices and a midpoint cursor)
-  on a dedicated bank, walked by the loop combinator — the §12 layer
+  on a dedicated bank, walked by the loop combinator — the construction library
   (`Build/Embed.lean`, `Build/Seam.lean`, `Build/Catalog.lean`) is the
   intended engine, with the depth `O(S)` and frame size `O(S)` giving the
   `O(S²)` ledger.
+
+## Main definitions
+
+None: the module states theorems only.
 
 ## Main results
 
@@ -53,8 +54,7 @@ The `SpaceComplexity.lean` facade has carried this module since the P4.1 gate cl
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§4.2.1, Theorem 4.14; §4.1.2.)
 * [Sav70] W. J. Savitch, *Relationships between nondeterministic and
-  deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09];
-  no external text is required for this audit.)
+  deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09].)
 -/
 
 namespace Complexity
@@ -97,7 +97,7 @@ theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
 /-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
 space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.
 
-**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE` (phase P4.1). `⊇` is
+**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE`. `⊇` is
 `Complexity.NPSPACE_subset_PSPACE`, proved directly rather than through
 `Complexity.savitch`: for `N` deciding `L` in space `c (n ^ k + 1)`, take the radius
 `s = (n + 2) ^ E` and the code width `w = (n + 2) ^ (2E)` (`E` a constant of `N`, `k`, `c`),

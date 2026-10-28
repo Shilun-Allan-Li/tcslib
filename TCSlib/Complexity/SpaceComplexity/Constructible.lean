@@ -10,6 +10,7 @@ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.SpaceComplexity.Machines.Bin
 import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -23,14 +24,12 @@ computes `S(|x|)` from `x` within `O(S(|x|))` space, and the book's standing
 convention is `S(n) > log n`. The definition mirrors
 `Complexity.TimeConstructible` — output in binary (`Nat.bits`), constant slack
 `c · S n`, which implements the book's own asymptotic space convention
-([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); whether an
-exact-space variant is also satisfiable is a separate question this campaign
-does not pose (the chapter-1 exact-**time** refutation does not transfer: a
-space deadline forces no premature halt — round-1 audit, finding 3) — and
-carries the book's
+([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); an exact-space
+variant is not posed here (the exact-**time** refutation of chapter 1 does not
+transfer: a space deadline forces no premature halt) — and carries the book's
 convention as the conjunct `∀ n, logSpace n ≤ S n`, so that downstream
 statements (the space hierarchy, Savitch) can draw on it without restating it;
-results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
+results needing only weaker hypotheses must say so.
 
 ## Main definitions
 
@@ -479,7 +478,7 @@ in binary on a work tape by one left-to-right input scan with a binary
 increment at each step (the `Turing.counterTM`/`incrementTM` idiom — P11 of
 `machine-library-design.md` §4, space-annotated per §12 R3) — the counter word
 has `|Nat.bits n| = logSpace n` cells **for `n > 0` only** (`Nat.bits 0 = []`
-has length `0 ≠ logSpace 0 = 1`; round-1 audit, finding 1), so (ii) the empty
+has length `0 ≠ logSpace 0 = 1`), so (ii) the empty
 input is special-cased to emit `(logSpace 0).bits = [true]` directly, and
 otherwise the machine computes the counter word's bit-length by a second count
 and emits its bits. Space: the counters and markers fit in
@@ -509,7 +508,7 @@ theorem spaceConstructible_logSpace : SpaceConstructible logSpace := by
     _ = (2 * A) * logSpace x.length := by ring
 
 /-- **Linear space is constructible**: `n ↦ n + 1` is space-constructible (the
-`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the P0
+`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the zero-bound
 convention, `SpaceComplexity/ZeroSpace.lean` — and satisfies the dominance
 conjunct; zero-space classes are nonempty, so this is about collapse, not
 vacuity).
@@ -517,7 +516,7 @@ vacuity).
 **Proof sketch.** The input-scan counter of
 `Complexity.spaceConstructible_logSpace`, **initialized at `1`** so that after
 `n` consumed symbols it holds `n + 1` (an uncorrected length counter holds `n`
-and emits the wrong word — round-1 audit, finding 2); emit its bits. Space:
+and emits the wrong word); emit its bits. Space:
 the counter's binary width plus fixed administrative cells fit in
 `A·(n + 2) ≤ 2A·(n + 1)` visited cells; dominance is `logSpace n ≤ n + 1`
 (`1 ≤ 1` at `n = 0`; a small arithmetic lemma otherwise).
@@ -626,7 +625,7 @@ zero through monotonicity into degree one.)
 `Nat.log_le_self`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
 `x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
 (`Turing.FinTM.computesFunInTime_cond`, with the decider
-`Turing.FinTM.computesFunInTime_ifEq [] [true] [false]`). On the empty input the constant
+`Turing.FinTM.computesFunInTime_decideEq []`). On the empty input the constant
 writer emits `(1).bits`, which is the value since `0 ^ c + 1 = 1`. Otherwise four phases run by
 buffered composition (`Turing.FinTM.bufferedCompTM_computesInTime`), each at its exact time:
 1. a two-state transducer drops the first bit (`Complexity.transducerTM_computes`; from its
@@ -643,7 +642,7 @@ theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
     SpaceConstructible fun n => n ^ c + 1 := by
   -- the published rows
   obtain ⟨L, cL, hL⟩ := FinTM.computesFunInTime_lengthBits
-  obtain ⟨D, cD, hD⟩ := FinTM.computesFunInTime_ifEq [] [true] [false]
+  obtain ⟨D, cD, hD'⟩ := FinTM.computesFunInTime_decideEq []
   obtain ⟨K₁, c₁, hK₁⟩ := FinTM.computesFunInTime_const (Nat.bits 1)
   let T := transducerTM scp_tailδ scp_tailO false
   let U := FinTM.polyUnaryTM 1 c
@@ -673,14 +672,6 @@ theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
     simp only [List.length_replicate, Nat.one_mul, List.length_append, List.length_cons,
       List.length_nil]
     exact scp_time_arith c cL x.tail.length x.length _ _ hp htl
-  -- the decider for the empty input
-  have hD' : D.ComputesFunInTime (fun x => [decide (x = [])]) fun n => cD * (n + 1) := by
-    have hfun : (fun w : List Bool => if w = [] then [true] else [false]) =
-        fun x => [decide (x = [])] := by
-      funext w
-      by_cases hw : w = [] <;> simp [hw]
-    rw [← hfun]
-    exact hD
   obtain ⟨M, cM, hM⟩ := FinTM.computesFunInTime_cond hD' hK₁ hN
   -- the value
   have hval : (fun x : List Bool => if decide (x = []) then Nat.bits 1 else f₂ x) =
