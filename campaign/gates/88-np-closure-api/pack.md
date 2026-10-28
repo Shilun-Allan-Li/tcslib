@@ -46,7 +46,15 @@ the file). The file's blob: `b5bfef1c`.
    `PolyTimePairing`'s theorems `pairFstD_pairEncode`, `pairSndD_pairEncode`. Is any other-file
    definition unfolded or closed by reduction?
 5. **Duplication.** The screen (9 files: the file, the files its proof cites, and the classes'
-   closure neighbours): ⟨summary⟩. Does the new proof re-derive anything published?
+   closure neighbours; base at `b7f69d00`, whose Lean is the base's, head at `ce00b6d3`;
+   `evidence/screen/`): 405 → 406 declarations, 206 → 207 pairs, one new and none gone
+   (`pairdiff.txt`). The new pair: the theorem reproduces 61 of the 65 characters of
+   `PolyTimePairing`'s `polyTimeComputable_pairSwap` (94%), whose whole body is the invocation
+   `polyTimeComputable_pairSndD.pairEncode polyTimeComputable_pairFstD`; the shared text is the
+   names of those three public rows, which the new proof invokes for a different map
+   (`z ↦ ⟨f (pairFstD z), pairSndD z⟩`). Disclosed as an idiom pair (a public row's invocation; no
+   lemma re-derived). Is that disposition right, and does the new proof re-derive anything
+   published?
 6. **The inherited sketch** of `prefixTM_copy`: is it accurate?
 
 ## Repository-side attestations (verify or challenge)
