@@ -1,0 +1,78 @@
+probe/ConstructibleSealControl.lean:80:77: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  Complexity.transduce (fun x x_1 => true) (fun q b => if q = true then some b else none) false [true, false] = [false]
+probe/ConstructibleSealControl.lean:84:55: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  (Complexity.transducerTM δ o q).k = 0
+probe/ConstructibleSealControl.lean:88:83: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  Turing.FinTM.polyUnaryTM C 0 = Turing.FinTM.constTM (List.replicate C true)
+probe/ConstructibleSealControl.lean:91:62: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (Turing.FinTM.prependTM w).k = 0
+probe/ConstructibleSealControl.lean:95:65: error: Type mismatch
+  rfl
+has type
+  ?m.16 = ?m.16
+but is expected to have type
+  (M₁.bufferedCompTM M₂).k = M₁.k + (1 + M₂.k)
+probe/ConstructibleSealControl.lean:99:76: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  M.ComputesFunInTime f T = ∀ (x : List Bool), M.ComputesInTime x (f x) (T x.length)
+probe/ConstructibleSealControl.lean:103:73: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+probe/ConstructibleSealControl.lean:108:56: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  M.ComputesInSpace f s =
+    ∀ (x : List Bool),
+      ∃ t, M.ComputesInTime x (f x) t ∧ Turing.MultiTapeTM.spaceUsed (Turing.MultiTapeTM.initCfg x) t ≤ s x.length
+probe/ConstructibleSealControl.lean:112:60: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  Turing.MultiTapeTM.spaceUsed c t = ∑ i, Turing.MultiTapeTM.spaceUsedByTape c t i
+probe/ConstructibleSealControl.lean:116:50: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  Turing.MultiTapeTM.initCfg x = Turing.Cfg.init M.tm.q₀ x
+probe/ConstructibleSealControl.lean:120:80: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (Turing.Cfg.init M.tm.q₀ x).inputPos = 1
+probe/ConstructibleSealControl.lean:123:61: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  Complexity.logSpace n = Nat.log 2 n + 1
+probe/ConstructibleSealControl.lean:127:76: error: `simp` made no progress
+probe/ConstructibleSealControl.lean:131:83: error: `simp` made no progress
+probe/ConstructibleSealControl.lean:135:53: error: `simp` made no progress
+exit 1
