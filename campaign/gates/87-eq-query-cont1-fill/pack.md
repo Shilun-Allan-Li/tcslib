@@ -82,7 +82,8 @@ proof uses the private comparator for `n ≥ 3` and decides the rung by building
 - **Lint:** `Diagonalization` 0 FAIL, 3 WARN over 5 files (the file's size among them;
   `evidence/lint-head-Diagonalization.txt`); the policy linter: the file's size only.
 - **Replay:** `replay-leqc1.sh` (`evidence/merged-tree/`), `NTimeDiagonalizer`, `NTimeHierarchy`
-  and the `Diagonalization` facade from `oleans-lnfapi4`. ⟨Running.⟩
+  and the `Diagonalization` facade from `oleans-lnfapi4`. **Passed** (user, 2026-10-27): 3 of 3 at
+  `cecd76a0`, 0 failed, static-equal (`replay-leqc1.log`, `replay-leqc1-static.txt`).
 
 ## Findings format
 

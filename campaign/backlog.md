@@ -2038,8 +2038,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **PR #176** (`lean/eq-cont1-landing`, head `cecd76a0`): E-Q cont1's eight commits, reworded,
     and the maintainer's E1–E5; elaboration at the tip's snapshot: one sorry warning
     (`exists_diagonalizer`); lint 0 FAIL. `replay-leqc1` written (3 modules from `oleans-lnfapi4`,
-    precheck passed). Gate 87 (the fill gate) next: the head screen running. **`replay-leqc1` and
-    `replay-lscp2` running; gate 86 round 2 dispatched (user, 2026-10-27).**
+    precheck passed). Gate 87 (the fill gate) next: the head screen running. Gate 86 round 2 dispatched (user, 2026-10-27).
+    **`replay-leqc1` passed** (3 of 3, static-equal; `oleans-leqc1`); **`replay-lscp2` passed** (53 of
+    53, static-equal; `oleans-lscp2`).
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
