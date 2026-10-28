@@ -1952,6 +1952,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     scan folds), F11 (the frozen sketch's resync), F10 (the subjects), the duplication entries.
     Replay list: `NTimeDiagonalizer`, `NTimeHierarchy`, the `Diagonalization` facade, from
     `oleans-lnfapi4`.
+    **Ruled (user, 2026-10-27): land as recommended** (E1–E5, F4 ratified, the subjects reworded
+    with the `Claude-Session:` trailers kept, the four ledger entries; F11 in the deferred docstring
+    cleanup). Next: the landing PR, its replay and the fill gate.
+  - **NF's brief drafted** (`campaign/fills/c1/drafts/c1-fill-nf.DRAFT.md`; pre-ship
+    `preship-086c0ef0/`, inputs `campaign/fills/c1/inputs/c1-fill-nf/`): the controller-stopped host
+    of #174 with a trivial setup, the route probe's `nfr_pack` and `nfr_setup` (sealed, 9 controls),
+    88-name import probe, order list 112 (39 roots, 20 sorries in 9). **Agent: Codex (user,
+    2026-10-27).** Next: the screen base's numbers, the brief review (a sub-agent), the issue.
+  - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
+    (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
+    `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`

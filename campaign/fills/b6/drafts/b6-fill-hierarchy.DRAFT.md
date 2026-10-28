@@ -1,8 +1,8 @@
 # Ch3–4 fill campaign — B6's H, the space hierarchy (`Complexity.space_hierarchy`, with `LOGSPACE_ssubset_PSPACE` and `SPACE_linear_ne_NP`; `SpaceComplexity/Hierarchy.lean`)
 
-> **DRAFT** (maintainer, 2026-10-27). Issues after PR #175 merges (`spaceConstructible_poly` in
-> `Constructible`), with the pre-ship re-taken at the issue commit. ⟨…⟩ marks what the pre-ship
-> fills in. **Agent: Codex** (user, 2026-10-27).
+> **DRAFT** (maintainer, 2026-10-27). Issues after PR #175 (`spaceConstructible_poly` in
+> `Constructible`) and the `NP`-closure API PR merge, with the pre-ship re-taken at the issue
+> commit. ⟨…⟩ marks what the pre-ship fills in. **Agent: Codex** (user, 2026-10-27).
 
 > **A single fill** (addendum v2.6, Parts 1 and 2; Part 3, the megafill, does not apply, except
 > its one-Lean rule and its no-stop rule, items 5 and 7, which "Environment and verification"
@@ -173,8 +173,9 @@ at `A := C_α (c · c₀ + c + 1)`, `U₀`'s run stays in the radius-`g n` windo
 `hr_logSpace_dom` and `hr_sq_le_two_pow`. Copy the three as privates.
 
 **`SPACE (n + 1) ≠ NP`**: by padding and `NP`'s closure under `≤ₚ` (the docstring's sketch). Its
-obligations: ⟨the `NP` closure lemma: a decision for the user — a private here, or a public row
-beside `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`) by an API PR first⟩; the padded
+obligations: `NP`'s closure under `≤ₚ`, **published before this brief issues** by the maintainer's
+API PR beside `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`; user, 2026-10-27): cite it,
+never re-prove it; the padded
 language's space decider; the padding reduction; the strictness extraction, through
 `space_hierarchy` at `n + 1` and `n ^ 2 + 1` (`spaceConstructible_linear`,
 `spaceConstructible_poly 2`; `A · (n + 1) ≤ n ^ 2 + 1` eventually).
