@@ -1,0 +1,1128 @@
+From ee3fd5f8ee36cdf353515534c1ec7c2429507fc6 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 22:55:33 +0000
+Subject: [PATCH 2/9] NTimeDiagonalizer: one round of the locator as a
+ Turing.Round
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`qy_round`: from the locator's anchor on the layout of the rung `1^a` (`a ≤ n`) with
+`(j, k) = unpair h`, one round of the locator `qyLoc κ` is a `Turing.Round` at its anchor with
+the three escapes (interior, top, timeout). With `X = f a + a + 1` and `ℓ' = 2 ^ X⁴`: if
+`ℓ' < n` it returns to the anchor on the layout of the rung `ℓ' + 1` and the pair
+`unpair (h + 1)`, within `qyRndP` (the next rung plus polylogarithmic terms); if `n < ℓ'` it
+ends at the interior or the timeout escape with the tapes off its scratch untouched; if
+`ℓ' = n` at the top escape with `1^{X - 1}` on tape 4; both within `qyRndS` (linear in `n` and
+the clock's budget). Assembled from the anchor's dispatch and four segments: the clocked call
+(`qy_rnd_call`), the tests (`qy_rnd_tests`), the cleanup (`qy_rnd_clean`) and the pair's update
+by the successor rule of `Nat.unpair` (`qy_rnd_pair`). The Implementation status paragraph
+records the round.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTj5speLTvae6QLXuLG
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 1080 ++++++++++++++++-
+ 1 file changed, 1076 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 8d4d15ec..e77bf07f 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -3259,6 +3259,1076 @@ private theorem qy_setup_short {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bo
+   unfold qySetB
+   nlinarith
+ 
++/-! ### The locator's round: arithmetic -/
++
++/-- The length of `bits` is monotone. -/
++private theorem qy_bits_len_mono {a b : ℕ} (h : a ≤ b) :
++    (Nat.bits a).length ≤ (Nat.bits b).length := by
++  rcases Nat.eq_zero_or_pos a with rfl | ha
++  · rw [Nat.zero_bits, List.length_nil]
++    exact Nat.zero_le _
++  · rw [← qy_log_bits ha, ← qy_log_bits (ha.trans_le h)]
++    exact Nat.succ_le_succ (Nat.log_mono_right h)
++
++/-- Every number is below two to the length of its bits. -/
++private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
++  rcases Nat.eq_zero_or_pos n with rfl | hn
++  · rw [Nat.zero_bits, List.length_nil]
++    exact Nat.one_pos
++  · rw [← qy_log_bits hn]
++    exact Nat.lt_pow_succ_log_self (by norm_num) n
++
++/-- The successor of a pair below the diagonal's next corner: `(j, k) ↦ (j + 1, k)` when
++`j + 1 < k`. -/
++private theorem qy_unpair_succ_lt {h j k : ℕ} (H : Nat.unpair h = (j, k)) (hjk : j + 1 < k) :
++    Nat.unpair (h + 1) = (j + 1, k) := by
++  have hp := Nat.pair_eq_of_unpair_eq H
++  have e : Nat.pair j k + 1 = Nat.pair (j + 1) k := by
++    show (if j < k then k * k + j else j * j + j + k) + 1 =
++      if j + 1 < k then k * k + (j + 1) else (j + 1) * (j + 1) + (j + 1) + k
++    rw [if_pos (by omega), if_pos hjk]
++    omega
++  rw [← hp, e, Nat.unpair_pair]
++
++/-- The successor at the column's last pair below the diagonal: `(k - 1, k) ↦ (k, 0)`. -/
++private theorem qy_unpair_succ_last {h j k : ℕ} (H : Nat.unpair h = (j, k)) (hjk : j + 1 = k) :
++    Nat.unpair (h + 1) = (k, 0) := by
++  have hp := Nat.pair_eq_of_unpair_eq H
++  have e : Nat.pair j k + 1 = Nat.pair k 0 := by
++    show (if j < k then k * k + j else j * j + j + k) + 1 =
++      if k < 0 then 0 * 0 + k else k * k + k + 0
++    rw [if_pos (by omega), if_neg (by omega)]
++    subst hjk
++    ring
++  rw [← hp, e, Nat.unpair_pair]
++
++/-- The successor on the diagonal: `(j, j) ↦ (0, j + 1)`. -/
++private theorem qy_unpair_succ_diag {h j : ℕ} (H : Nat.unpair h = (j, j)) :
++    Nat.unpair (h + 1) = (0, j + 1) := by
++  have hp := Nat.pair_eq_of_unpair_eq H
++  have e : Nat.pair j j + 1 = Nat.pair 0 (j + 1) := by
++    show (if j < j then j * j + j else j * j + j + j) + 1 =
++      if 0 < j + 1 then (j + 1) * (j + 1) + 0 else 0 * 0 + 0 + (j + 1)
++    rw [if_neg (lt_irrefl j), if_pos (Nat.succ_pos j)]
++    ring
++  rw [← hp, e, Nat.unpair_pair]
++
++/-- The successor above the diagonal: `(j, k) ↦ (j, k + 1)` when `k < j`. -/
++private theorem qy_unpair_succ_gt {h j k : ℕ} (H : Nat.unpair h = (j, k)) (hjk : k < j) :
++    Nat.unpair (h + 1) = (j, k + 1) := by
++  have hp := Nat.pair_eq_of_unpair_eq H
++  have e : Nat.pair j k + 1 = Nat.pair j (k + 1) := by
++    show (if j < k then k * k + j else j * j + j + k) + 1 =
++      if j < k + 1 then (k + 1) * (k + 1) + j else j * j + j + (k + 1)
++    rw [if_neg (by omega), if_neg (by omega)]
++    ring
++  rw [← hp, e, Nat.unpair_pair]
++
++/-! ### The locator's round: banks, anchor and escapes -/
++
++/-- The clock's bank on the call's tapes is the call's bank. -/
++private theorem QyKit.bClk_castSucc {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.cf.k) :
++    κ.bClk i.castSucc = κ.bCf i := by
++  unfold QyKit.bClk
++  rw [Function.Embedding.coeFn_mk, dif_pos (by rw [Fin.coe_castSucc]; exact i.isLt)]
++  rfl
++
++/-- The clock's last tape is the counter tape `8`. -/
++private theorem QyKit.bClk_last {f g : ℕ → ℕ} (κ : QyKit f g) :
++    κ.bClk (Fin.last κ.cf.k) = κ.tp 8 := by
++  unfold QyKit.bClk
++  rw [Function.Embedding.coeFn_mk, dif_neg (by rw [Fin.val_last]; exact lt_irrefl _)]
++
++/-- `f`'s call bank tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bCf_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.cf.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bCf i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The fourth power's call bank tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bPu_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.pu.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bPu i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The counter's increment bank tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bAb0_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.ab.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bAb0 i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The increment bank of `j`: tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bAbJ_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.ab.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bAbJ i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The increment bank of `k`: tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bAbK_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.ab.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bAbK i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The anchor layout's tapes. -/
++private def qyLayT {f g : ℕ → ℕ} (κ : QyKit f g) (n a j k : ℕ) : Fin κ.K → ℤ → Option Bool :=
++  fun t => FinTM.bufferTape (qyLay κ n a j k t)
++
++/-- The locator's anchor. -/
++private def qyAnc {f g : ℕ → ℕ} (κ : QyKit f g) : Σ i, QyLPh κ i := ⟨.anc, SweepPhase.sweep⟩
++
++/-- The locator's escape phases: interior, top and timeout. -/
++private def QyLK.isEsc : QyLK → Bool
++  | .escI | .escTop | .escTO => true
++  | _ => false
++
++/-- The locator's escapes: every state of an escape phase. -/
++private def qyLocE {f g : ℕ → ℕ} (κ : QyKit f g) : Set (Option (Σ i, QyLPh κ i)) :=
++  {q | ∃ p, q = some p ∧ p.1.isEsc = true}
++
++/-- A state of a phase other than the anchor and the escapes is off the round's stop set. -/
++private theorem qy_notStop {f g : ℕ → ℕ} (κ : QyKit f g) (i : QyLK) (hi : i ≠ .anc)
++    (he : i.isEsc = false) (s : QyLPh κ i) :
++    some (⟨i, s⟩ : Σ i, QyLPh κ i) ∉ roundStop (qyAnc κ) (qyLocE κ) :=
++  not_mem_roundStop.mpr ⟨_, rfl, fun h => hi (congrArg Sigma.fst h), fun ⟨p, hp, hpe⟩ => by
++    rw [← Option.some.inj hp, he] at hpe
++    exact Bool.false_ne_true hpe⟩
++
++/-- An escape phase's sweep state is an endpoint of a round. -/
++private theorem qy_esc_mem {f g : ℕ → ℕ} (κ : QyKit f g) (i : QyLK) (he : i.isEsc = true)
++    (s : QyLPh κ i) :
++    some (⟨i, s⟩ : Σ i, QyLPh κ i) ∈ insert (some (qyAnc κ)) (qyLocE κ) :=
++  Set.mem_insert_of_mem _ ⟨_, rfl, he⟩
++
++/-- The tapes a round may leave dirty: the clock's bank (the call's and the counter) and the
++round's scratch tapes `3` to `6`. -/
++private def qyScratch {f g : ℕ → ℕ} (κ : QyKit f g) (t : Fin κ.K) : Prop :=
++  t ∈ Set.range κ.bClk ∨ t = κ.tp 3 ∨ t = κ.tp 4 ∨ t = κ.tp 5 ∨ t = κ.tp 6
++
++/-- **An escape's tapes**: off the round's scratch, the anchor layout, every head at `0`. -/
++private def QyEscT {f g : ℕ → ℕ} (κ : QyKit f g) (n a j k : ℕ) (T : Fin κ.K → ℤ → Option Bool)
++    (P : Fin κ.K → ℤ) : Prop :=
++  ∀ t, ¬ qyScratch κ t → T t = FinTM.bufferTape (qyLay κ n a j k t) ∧ P t = 0
++
++/-- `f`'s call tape is in the clock's bank. -/
++private theorem qy_tp7_mem {f g : ℕ → ℕ} (κ : QyKit f g) : κ.tp 7 ∈ Set.range κ.bClk :=
++  ⟨(⟨0, κ.cfK⟩ : Fin κ.cf.k).castSucc, by rw [κ.bClk_castSucc]; rfl⟩
++
++/-- The counter tape is in the clock's bank. -/
++private theorem qy_tp8_mem {f g : ℕ → ℕ} (κ : QyKit f g) : κ.tp 8 ∈ Set.range κ.bClk :=
++  ⟨Fin.last κ.cf.k, κ.bClk_last⟩
++
++/-- Off the scratch means off the named scratch tapes `3` to `8`. -/
++private theorem qy_not_scratch {f g : ℕ → ℕ} (κ : QyKit f g) {t : Fin κ.K} (h : ¬ qyScratch κ t) :
++    t ≠ κ.tp 3 ∧ t ≠ κ.tp 4 ∧ t ≠ κ.tp 5 ∧ t ≠ κ.tp 6 ∧ t ≠ κ.tp 7 ∧ t ≠ κ.tp 8 :=
++  ⟨fun e => h (Or.inr (Or.inl e)), fun e => h (Or.inr (Or.inr (Or.inl e))),
++    fun e => h (Or.inr (Or.inr (Or.inr (Or.inl e)))),
++    fun e => h (Or.inr (Or.inr (Or.inr (Or.inr e)))),
++    fun e => h (Or.inl (e ▸ qy_tp7_mem κ)), fun e => h (Or.inl (e ▸ qy_tp8_mem κ))⟩
++
++/-- **A round from its first step and a segment.** If the run from `c`, at the anchor, reaches
++`c₁` in one step, and from `c₁` a segment avoiding the round's stop set reaches `c'`, at the
++anchor or an escape, then the run from `c` is a round to `c'`, of one more step. -/
++private theorem qy_round_of_seg {K : ℕ} {S : Type} {x : List Bool} {M : MultiTapeTM K Bool S}
++    {a : S}
++    {E : Set (Option S)} {c c₁ c' : Cfg K Bool S x} {t : ℕ} (hc : c.state = some a)
++    (h1 : M.runFrom c 1 = c₁) (hseg : Segment M (roundStop a E) (fun _ => True) c₁ c' t)
++    (hend : c'.state ∈ insert (some a) E) : Round M a E (fun _ => True) c c' (1 + t) := by
++  obtain ⟨hrun, hcut, -⟩ := (segment_iff _ _ _ _ _ _).mp hseg
++  refine (round_iff _ _ _ _ _ _ _).mpr
++    ⟨hc, by omega, ?_, hend, fun u hu hut => ?_, fun _ _ => trivial⟩
++  · rw [MultiTapeTM.runFrom_add, h1, hrun]
++  · obtain ⟨v, rfl⟩ : ∃ v, u = 1 + v := ⟨u - 1, by omega⟩
++    rw [MultiTapeTM.runFrom_add, h1]
++    exact hcut v (by omega)
++
++/-! ### The locator's round: the clocked call -/
++
++/-- **The round's call** (checkpoint 3): from the anchor layout at the rung `1^a`, `a ≤ n`, the
++locator copies the rung onto `f`'s call tape and runs `f`'s witness under the clock. Either the
++call returns: `bits (f a)` on tape `7`, a word of the counter's width on tape `8`, at the length
++test, within the clock's two bounds; or the counter runs out: then `n < f a`, and the locator is
++at its timeout escape with the tapes off the clock's bank untouched.
++
++**Proof sketch.** Two hosted phases: the copy (`qy_copy`) and the clocked call
++(`qy_clockHost_finish` or `qy_clockHost_timeout`, split on the call's time against `2 ^ m - 1`),
++the call's bank holding the seam of `1^a` (`qy_arg_bank`). The timeout's `n < f a` is
++`qy_timeout_cert`. -/
++private theorem qy_rnd_call {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
++    (ha : a ≤ x.length) :
++    (∃ t ≤ 2 * a + 3 + (5 * (2 ^ κ.m x.length - 1) + 2 * κ.m x.length + 3),
++      t ≤ 2 * a + 3 + (5 * (κ.cfA * (κ.cfc * (f a + 1) + a + (Nat.bits (f a)).length + 1)) +
++        2 * κ.m x.length + 3) ∧
++      ∃ w' : List Bool, w'.length = κ.m x.length ∧
++        Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++          (qyC (x := x) ⟨.r1, SweepPhase.sweep⟩ 1 (qyLayT κ x.length a j k) (fun _ => 0) [])
++          (qyC ⟨.r3, QyCmp.scan⟩ 1 (Function.update (Function.update (qyLayT κ x.length a j k)
++            (κ.tp 7) (FinTM.bufferTape (Nat.bits (f a)))) (κ.tp 8) (FinTM.bufferTape w'))
++            (fun _ => 0) []) t) ∨
++    (x.length < f a ∧ ∃ t ≤ 2 * a + 3 + (5 * (2 ^ κ.m x.length - 1) + 2 * κ.m x.length + 3),
++      ∃ (ip : Fin (x.length + 2)) (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++        Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++          (qyC (x := x) ⟨.r1, SweepPhase.sweep⟩ 1 (qyLayT κ x.length a j k) (fun _ => 0) [])
++          (qyC ⟨.escTO, SweepPhase.sweep⟩ ip T P []) t ∧
++        QyEscT κ x.length a j k T P) := by
++  set n := x.length with hnx
++  set T₀ := qyLayT κ n a j k with hT₀
++  set P₀ : Fin κ.K → ℤ := fun _ => 0 with hP₀
++  unfold qyLoc
++  -- r1: the rung onto f's call tape
++  have c1 := qy_copy (x := x) (κ.tp 2) (κ.tp 7) (κ.tp_ne (by decide)) (fun b => b) 1 T₀ P₀ []
++    (List.replicate a true) [] (by simp [hT₀, qyLayT, qyLay, QyKit.tp_inj]) rfl
++    (by simp [hT₀, qyLayT, qyLay, QyKit.tp_inj]) (by simp [hP₀])
++  rw [List.nil_append, List.map_id'] at c1
++  set T₁ := Function.update T₀ (κ.tp 7) (FinTM.bufferTape (List.replicate a true)) with hT₁
++  have seg1 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r1 .sweep .done
++    ⟨.clk, κ.inj (Sum.inl ())⟩ 1 1 T₀ T₁ P₀ P₀ [] [] _ c1.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .r1) (fun s hs => by simp [qyLocRed, hs]) c1.2)
++    _ (qy_notStop κ .r1 (by decide) rfl)
++  -- clk: the clocked call of f's witness on 1^a
++  obtain ⟨tc, htc, hposc, hcutc, hrunc⟩ := κ.cfS x (List.replicate a true)
++  simp only [List.length_replicate] at htc hrunc
++  have hb0 : κ.bCf ⟨0, κ.cfK⟩ = κ.tp 7 := rfl
++  have hbank : ∀ i, T₁ (κ.bCf i) = FinTM.bufferTape (stateWord κ.cf.k (List.replicate a true) i) :=
++    qy_arg_bank κ.bCf κ.cfK T₁ _ (by rw [hb0]; simp [hT₁])
++      (fun i hi => by simp [hT₁, hT₀, qyLayT, qyLay, κ.bCf_ne i hi])
++  have hTc : T₁ (κ.tp 8) = FinTM.bufferTape (List.replicate (κ.m n) true) := by
++    simp [hT₁, hT₀, qyLayT, qyLay, QyKit.tp_inj]
++  have hcall := qy_call_bound f κ.cfc κ.cfA a n ha
++  by_cases hlate : tc ≤ 2 ^ κ.m n - 1
++  · -- the call returns in time
++    obtain ⟨T1, hT1, w', hw', hrun, hcut⟩ := qy_clockHost_finish κ.cf κ.cfK κ.cfE κ.cfX κ.H κ.inj
++      κ.fsh κ.tmo κ.hH κ.bClk κ.bCf (κ.tp 8) κ.bClk_castSucc κ.bClk_last
++      (List.replicate a true) _ tc hposc hcutc hrunc (κ.m n) hlate T₁ P₀ [] hbank
++      (fun _ => rfl) hTc rfl
++    have hT2 : Function.update (Function.update T₁ (κ.bCf ⟨0, κ.cfK⟩)
++        (FinTM.bufferTape (Nat.bits (f a)))) (κ.tp 8) (FinTM.bufferTape w') =
++        Function.update (Function.update T₀ (κ.tp 7) (FinTM.bufferTape (Nat.bits (f a))))
++          (κ.tp 8) (FinTM.bufferTape w') := by
++      rw [hb0, hT₁, Function.update_idem]
++    rw [hT2] at hrun
++    have seg2 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .clk
++      (κ.inj (Sum.inl ())) (κ.fsh (some (Sum.inr κ.cfX))) ⟨.r3, QyCmp.scan⟩ 1 1 T₁ _ P₀ P₀ [] []
++      T1 hrun (by simp only [qyLocRed]; rw [if_pos ⟨_, rfl⟩])
++      (fun u hu s hs => by
++        have h1 : ¬ ∃ r, s = κ.fsh r := fun ⟨r, hr⟩ => (hcut u hu r).1 (hr ▸ hs)
++        have h2 : ¬ ∃ r, s = κ.tmo r := fun ⟨r, hr⟩ => (hcut u hu r).2 (hr ▸ hs)
++        simp only [qyLocRed]
++        rw [if_neg h1, if_neg h2])
++      _ (qy_notStop κ .clk (by decide) rfl)
++    have e1 : 2 ^ κ.m x.length = 2 ^ κ.m n := rfl
++    have e2 : κ.m x.length = κ.m n := rfl
++    have e3 : (List.replicate a true).length = a := List.length_replicate
++    refine Or.inl ⟨_, ?_, ?_, w', hw', seg1.trans seg2⟩
++    · omega
++    · omega
++  · -- the counter runs out
++    obtain ⟨T1, hT1, r, ip', T', P', hrun, hkeep, hcut⟩ := qy_clockHost_timeout κ.cf κ.cfE κ.cfX
++      κ.H κ.inj κ.fsh κ.tmo κ.hH κ.bClk κ.bCf (κ.tp 8) κ.bClk_castSucc κ.bClk_last
++      (List.replicate a true) _ tc hposc hcutc hrunc (κ.m n) (by omega) T₁ P₀ [] hbank
++      (fun _ => rfl) hTc rfl
++    have seg2 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .clk
++      (κ.inj (Sum.inl ())) (κ.tmo r) ⟨.escTO, SweepPhase.sweep⟩ 1 ip' T₁ T' P₀ P' [] []
++      T1 hrun
++      (by
++        simp only [qyLocRed]
++        rw [if_neg (fun ⟨r', h⟩ => κ.hft r' r h.symm), if_pos ⟨r, rfl⟩])
++      (fun u hu s hs => by
++        have h1 : ¬ ∃ r, s = κ.fsh r := fun ⟨r, hr⟩ => (hcut u hu r).1 (hr ▸ hs)
++        have h2 : ¬ ∃ r, s = κ.tmo r := fun ⟨r, hr⟩ => (hcut u hu r).2 (hr ▸ hs)
++        simp only [qyLocRed]
++        rw [if_neg h1, if_neg h2])
++      _ (qy_notStop κ .clk (by decide) rfl)
++    have e1 : 2 ^ κ.m x.length = 2 ^ κ.m n := rfl
++    have e2 : κ.m x.length = κ.m n := rfl
++    have e3 : (List.replicate a true).length = a := List.length_replicate
++    refine Or.inr ⟨?_, _, by omega, ip', T', P', seg1.trans seg2, fun t ht => ?_⟩
++    · have hm : κ.m n = (Nat.bits n).length + (Nat.bits (κ.cfA * (κ.cfc + 2))).length := by
++        unfold QyKit.m
++        omega
++      exact qy_timeout_cert f κ.cfc κ.cfA a n tc ha htc (by rw [← hm]; omega)
++    · obtain ⟨h3, h4, h5, h6, h7, h8⟩ := qy_not_scratch κ ht
++      obtain ⟨e1, e2⟩ := hkeep t (fun hm => ht (Or.inl hm))
++      rw [e1, e2, hT₁, Function.update_of_ne h7]
++      exact ⟨rfl, rfl⟩
++
++/-! ### The locator's round: the tests -/
++
++/-- The tapes after the round's call: `bits F` on `f`'s call tape `7` and the counter's word `w'`
++on tape `8`, over the anchor layout. -/
++private def qyTA {f g : ℕ → ℕ} (κ : QyKit f g) (n a j k F : ℕ) (w' : List Bool) :
++    Fin κ.K → ℤ → Option Bool :=
++  Function.update (Function.update (qyLayT κ n a j k) (κ.tp 7) (FinTM.bufferTape (Nat.bits F)))
++    (κ.tp 8) (FinTM.bufferTape w')
++
++/-- The tapes after a passed round's tests: `1^{F + a}` on tape `4`, the expanded counter on
++tape `7`, `1^{X⁴}` and `1^{X⁴ + 1}` on tapes `5` and `6`, and the next rung `1^{ℓ' + 1}` on
++tape `3`. -/
++private def qyTB {f g : ℕ → ℕ} (κ : QyKit f g) (T : Fin κ.K → ℤ → Option Bool) (F a X4 ℓ' : ℕ) :
++    Fin κ.K → ℤ → Option Bool :=
++  Function.update (Function.update (Function.update (Function.update (Function.update T
++    (κ.tp 4) (FinTM.bufferTape (List.replicate (F + a) true)))
++    (κ.tp 7) (FinTM.bufferTape (List.replicate (Nat.bits F).length true)))
++    (κ.tp 5) (FinTM.bufferTape (List.replicate X4 true)))
++    (κ.tp 6) (FinTM.bufferTape (List.replicate (X4 + 1) true)))
++    (κ.tp 3) (FinTM.bufferTape (List.replicate (ℓ' + 1) true))
++
++/-- The tests' time bound when the round stops: linear in `n`, plus the fourth power's call on a
++word shorter than `|bits n|`. -/
++private def qyTestS {f g : ℕ → ℕ} (κ : QyKit f g) (n a : ℕ) : ℕ :=
++  40 * (n + 1) + 4 * a + 16 * (Nat.bits n).length + κ.puA * (Nat.bits n).length ^ 5 +
++    κ.abA * ((Nat.bits n).length + 1) + 60
++
++/-- The tests' time bound when the round passes: the next rung, plus polylogarithmic terms. -/
++private def qyTestP {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' : ℕ) : ℕ :=
++  9 * ℓ' + 25 * (Nat.bits n).length + κ.puA * (Nat.bits n).length ^ 5 +
++    κ.abA * ((Nat.bits n).length + 1) + 50
++
++/-- **The round's tests** (checkpoint 3): from the length test after a returned call (`bits F`,
++`F = f a`, on tape `7`), with `X = F + a + 1` and the next rung `ℓ' = 2 ^ X⁴`, the locator ends
++at its interior escape if `n < ℓ'`, at its top escape if `ℓ' = n` (with `1^{X - 1}` on tape `4`
++for the budget), and otherwise at the cleanup with the tapes `qyTB`, `X < |bits n|` and
++`X⁴ < |bits n|`.
++
++**Proof sketch.** Fourteen hosted phases (`qy_hosted`), each a row's run: `|bits F|` against
++`|bits n|` (L2, `qy_cmp_run`; longer gives `F > n`); `F` expanded to `1^F` (`qy_expandHost`, the
++counter worth `F`), `1^a` appended, the rewind; `X - 1` against `|bits n|` (not shorter gives
++`ℓ' ≥ 2 ^ |bits n| > n`); the copy and the fourth power's call (`qy_callHost`); `X⁴` against
++`|bits n|`; the copy as `0^{X⁴}`, the increment's call to `0^{X⁴} 1` (worth `ℓ'`,
++`qy_rung_val`), its expansion to `1^{ℓ'}` (at most `n` cells, since `X⁴ ≤ log₂ n`), one more
++cell and the rewind; `ℓ' + 1` against `n + 1`. The tapes off the scratch keep the layout; the
++times are summed with `Turing.counterOverhead_le`. -/
++private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
++    (w' : List Bool) :
++    (x.length < 2 ^ (f a + a + 1) ^ 4 ∧ ∃ t ≤ qyTestS κ x.length a,
++      ∃ (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++        Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++          (qyC (x := x) ⟨.r3, QyCmp.scan⟩ 1 (qyTA κ x.length a j k (f a) w') (fun _ => 0) [])
++          (qyC ⟨.escI, SweepPhase.sweep⟩ 1 T P []) t ∧ QyEscT κ x.length a j k T P) ∨
++    (2 ^ (f a + a + 1) ^ 4 = x.length ∧ ∃ t ≤ qyTestS κ x.length a,
++      ∃ (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++        Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++          (qyC (x := x) ⟨.r3, QyCmp.scan⟩ 1 (qyTA κ x.length a j k (f a) w') (fun _ => 0) [])
++          (qyC ⟨.escTop, SweepPhase.sweep⟩ 1 T P []) t ∧ QyEscT κ x.length a j k T P ∧
++        T (κ.tp 4) = FinTM.bufferTape (List.replicate (f a + a) true) ∧ P (κ.tp 4) = 0) ∨
++    (2 ^ (f a + a + 1) ^ 4 < x.length ∧ f a + a + 1 ≤ (Nat.bits x.length).length ∧
++      (f a + a + 1) ^ 4 < (Nat.bits x.length).length ∧
++      ∃ t ≤ qyTestP κ x.length (2 ^ (f a + a + 1) ^ 4),
++        Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++          (qyC (x := x) ⟨.r3, QyCmp.scan⟩ 1 (qyTA κ x.length a j k (f a) w') (fun _ => 0) [])
++          (qyC ⟨.c1, SweepPhase.sweep⟩ 1 (qyTB κ (qyTA κ x.length a j k (f a) w') (f a) a
++            ((f a + a + 1) ^ 4) (2 ^ (f a + a + 1) ^ 4)) (fun _ => 0) []) t) := by
++  simp only [qyTestS, qyTestP]
++  set n := x.length with hnx
++  set F := f a with hF
++  set Lb := (Nat.bits n).length with hLb
++  set X4 := (F + a + 1) ^ 4 with hX4
++  set ℓ' := 2 ^ X4 with hℓ'
++  set T₀ := qyLayT κ n a j k with hT₀
++  set P₀ : Fin κ.K → ℤ := fun _ => 0 with hP₀
++  set TA := qyTA κ n a j k F w' with hTA
++  unfold qyLoc
++  have hX : F + a + 1 ≤ X4 := Nat.le_self_pow (by norm_num) _
++  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
++  have hesc : ∀ T : Fin κ.K → ℤ → Option Bool, (∀ t, t ≠ κ.tp 3 → t ≠ κ.tp 4 → t ≠ κ.tp 5 →
++      t ≠ κ.tp 6 → t ≠ κ.tp 7 → t ≠ κ.tp 8 → T t = T₀ t) → QyEscT κ n a j k T P₀ :=
++    fun T hT t ht => by
++      obtain ⟨h3, h4, h5, h6, h7, h8⟩ := qy_not_scratch κ ht
++      exact ⟨hT t h3 h4 h5 h6 h7 h8, rfl⟩
++  -- r3: |bits F| against |bits n|
++  have c3 := qy_cmp_run (x := x) (κ.tp 7) (κ.tp 1) (κ.tp_ne (by decide)) 1 TA P₀ []
++    (Nat.bits F) (List.replicate Lb true) (by simp [hTA, qyTA, QyKit.tp_inj])
++    (by simp [hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj, hLb]) rfl rfl
++  rw [List.length_replicate] at c3
++  have hg3 : ∀ u < 2 * min (Nat.bits F).length Lb + 2, ∀ s,
++      ((qyLocM κ .r3).runFrom (qyC QyCmp.scan 1 TA P₀ []) u).state = some s →
++        qyLocRed κ .r3 s = none := fun u hu s hs => by
++    cases s with
++    | done w => exact absurd hs (c3.2 u hu w)
++    | _ => simp [qyLocRed]
++  have hm3 := min_le_right (Nat.bits F).length Lb
++  by_cases hgt : compare (Nat.bits F).length Lb = .gt
++  · -- interior: |bits F| > |bits n| gives F > n
++    rw [hgt] at c3
++    have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r3 .scan (.done .gt)
++      ⟨.escI, SweepPhase.sweep⟩ 1 1 TA TA P₀ P₀ [] [] _ c3.1 (by simp [qyLocRed]) hg3 _
++      (qy_notStop κ .r3 (by decide) rfl)
++    refine Or.inl ⟨?_, _, by omega, TA, P₀, seg3, hesc TA fun t _ _ _ _ h7 h8 => by
++      simp [hTA, qyTA, hT₀, Function.update_of_ne h7, Function.update_of_ne h8]⟩
++    have hFn : n < F := by
++      by_contra hc
++      exact absurd (compare_gt_iff_gt.mp hgt) (not_lt.mpr (qy_bits_len_mono (not_lt.mp hc)))
++    have := Nat.lt_two_pow_self (n := X4)
++    omega
++  have hFL : (Nat.bits F).length ≤ Lb := not_lt.mp fun h => hgt (compare_gt_iff_gt.mpr h)
++  have hF2 : F ≤ 2 * n := by
++    have h1 := qy_lt_two_pow_bits F
++    have h2 : 2 ^ (Nat.bits F).length ≤ 2 ^ (Nat.bits n).length :=
++      Nat.pow_le_pow_right (by norm_num) hFL
++    have h3 := qy_two_pow_bits_le n
++    omega
++  have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r3 .scan
++    (.done (compare (Nat.bits F).length Lb)) ⟨.r4, CounterLoopState.dec .run⟩ 1 1 TA TA P₀ P₀ []
++    [] _ c3.1 (by simp [qyLocRed, hgt]) hg3 _ (qy_notStop κ .r3 (by decide) rfl)
++  -- r4: F in unary on tape 4, from the counter bits F on tape 7
++  have c4 := qy_expandHost (x := x) (qyEmb2 (κ.tp 4) (κ.tp 7) (κ.tp_ne (by decide))) (κ.tp 4)
++    (κ.tp 7) rfl rfl 1 TA P₀ [] [] (Nat.bits F) F (qy_bits_val F)
++    (by simp [hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj]) (by simp [hP₀])
++    (by simp [hTA, qyTA, QyKit.tp_inj]) (by simp [hP₀])
++  rw [List.nil_append] at c4
++  set T4 := Function.update (Function.update TA (κ.tp 4)
++    (FinTM.bufferTape (List.replicate F true))) (κ.tp 7)
++    (FinTM.bufferTape (List.replicate (Nat.bits F).length true)) with hT4
++  set P4 := Function.update P₀ (κ.tp 4) ((([] : List Bool).length : ℤ) + F) with hP4
++  have seg4 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r4 (.dec .run) .done
++    ⟨.r5, SweepPhase.sweep⟩ 1 1 TA T4 P₀ P4 [] [] _ c4.1 (by simp [qyLocRed])
++    (qy_guard_of_cut CounterLoopState.done (qyLocRed κ .r4) (fun s hs => by simp [qyLocRed, hs])
++      c4.2) _ (qy_notStop κ .r4 (by decide) rfl)
++  have hco4 := counterOverhead_le (Nat.bits F)
++  rw [qy_bits_val] at hco4
++  have hbF := length_bits_le_self F
++  -- r5: 1^a appended to tape 4
++  have c5 := qy_copy (x := x) (κ.tp 2) (κ.tp 4) (κ.tp_ne (by decide)) (fun b => b) 1 T4 P4 []
++    (List.replicate a true) (List.replicate F true)
++    (by simp [hT4, hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj])
++    (by simp [hP4, hP₀, QyKit.tp_inj]) (by simp [hT4, QyKit.tp_inj]) (by simp [hP4])
++  rw [List.map_id', List.replicate_append_replicate] at c5
++  set T5 := Function.update T4 (κ.tp 4) (FinTM.bufferTape (List.replicate (F + a) true))
++    with hT5
++  have seg5 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r5 .sweep .done
++    ⟨.r6, RewindPhase.start⟩ 1 1 T4 T5 P4 P4 [] [] _ c5.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .r5) (fun s hs => by simp [qyLocRed, hs]) c5.2)
++    _ (qy_notStop κ .r5 (by decide) rfl)
++  -- r6: rewind tape 4
++  have c6 := qy_rewind (x := x) (κ.tp 4) 1 T5 P4 [] (List.replicate (F + a) true) F
++    (by simp) (by simp [hT5]) (by simp [hP4])
++  have hP6 : Function.update P4 (κ.tp 4) 0 = P₀ := by
++    rw [hP4, Function.update_idem]
++    exact Function.update_eq_self_iff.mpr rfl
++  rw [hP6] at c6
++  have seg6 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r6 .start .done
++    ⟨.r7, QyCmp.scan⟩ 1 1 T5 T5 P4 P₀ [] [] _ c6.1 (by simp [qyLocRed])
++    (qy_guard_of_cut RewindPhase.done (qyLocRed κ .r6) (fun s hs => by simp [qyLocRed, hs]) c6.2)
++    _ (qy_notStop κ .r6 (by decide) rfl)
++  -- r7: X - 1 = F + a against |bits n|
++  have c7 := qy_cmp_run (x := x) (κ.tp 4) (κ.tp 1) (κ.tp_ne (by decide)) 1 T5 P₀ []
++    (List.replicate (F + a) true) (List.replicate Lb true) (by simp [hT5])
++    (by simp [hT5, hT4, hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj, hLb]) rfl rfl
++  rw [List.length_replicate, List.length_replicate] at c7
++  have hg7 : ∀ u < 2 * min (F + a) Lb + 2, ∀ s,
++      ((qyLocM κ .r7).runFrom (qyC QyCmp.scan 1 T5 P₀ []) u).state = some s →
++        qyLocRed κ .r7 s = none := fun u hu s hs => by
++    cases s with
++    | done w => exact absurd hs (c7.2 u hu w)
++    | _ => simp [qyLocRed]
++  have hm7 := min_le_right (F + a) Lb
++  have hT5esc : ∀ t, t ≠ κ.tp 3 → t ≠ κ.tp 4 → t ≠ κ.tp 5 → t ≠ κ.tp 6 → t ≠ κ.tp 7 →
++      t ≠ κ.tp 8 → T5 t = T₀ t := fun t _ h4 _ _ h7 h8 => by
++    simp [hT5, hT4, hTA, qyTA, hT₀, Function.update_of_ne h4, Function.update_of_ne h7,
++      Function.update_of_ne h8]
++  by_cases hlt7 : compare (F + a) Lb = .lt
++  swap
++  · -- interior: X - 1 ≥ |bits n|
++    have seg7 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r7 .scan
++      (.done (compare (F + a) Lb)) ⟨.escI, SweepPhase.sweep⟩ 1 1 T5 T5 P₀ P₀ [] [] _ c7.1
++      (by simp [qyLocRed, hlt7]) hg7 _ (qy_notStop κ .r7 (by decide) rfl)
++    have hge : Lb ≤ F + a := not_lt.mp fun h => hlt7 (compare_lt_iff_lt.mpr h)
++    refine Or.inl ⟨?_, _, ?_, T5, P₀,
++      seg3.trans (seg4.trans (seg5.trans (seg6.trans seg7))), hesc T5 hT5esc⟩
++    · have : 2 ^ Lb ≤ 2 ^ X4 := Nat.pow_le_pow_right (by norm_num) (by omega)
++      omega
++    · simp only [List.length_replicate] at *
++      omega
++  have hlt7' : F + a < Lb := compare_lt_iff_lt.mp hlt7
++  have seg7 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r7 .scan
++    (.done (compare (F + a) Lb)) ⟨.r8, SweepPhase.sweep⟩ 1 1 T5 T5 P₀ P₀ [] [] _ c7.1
++    (by simp [qyLocRed, hlt7]) hg7 _ (qy_notStop κ .r7 (by decide) rfl)
++  -- r8: the copy 1^{F + a} onto the fourth power's tape 5
++  have c8 := qy_copy (x := x) (κ.tp 4) (κ.tp 5) (κ.tp_ne (by decide)) (fun b => b) 1 T5 P₀ []
++    (List.replicate (F + a) true) [] (by simp [hT5]) rfl
++    (by simp [hT5, hT4, hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj]) (by simp [hP₀])
++  rw [List.map_id', List.nil_append] at c8
++  set T8 := Function.update T5 (κ.tp 5) (FinTM.bufferTape (List.replicate (F + a) true))
++    with hT8
++  have seg8 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r8 .sweep .done
++    ⟨.pu, Sum.inl ()⟩ 1 1 T5 T8 P₀ P₀ [] [] _ c8.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .r8) (fun s hs => by simp [qyLocRed, hs]) c8.2)
++    _ (qy_notStop κ .r8 (by decide) rfl)
++  -- pu: the fourth power 1^{X⁴}
++  obtain ⟨tq, htq, hposq, hcutq, hrunq⟩ := κ.puS x (List.replicate (F + a) true)
++  simp only [List.length_replicate] at htq hrunq
++  have hb5 : κ.bPu ⟨0, κ.puK⟩ = κ.tp 5 := rfl
++  have c9 := qy_callHost κ.pu κ.puK κ.bPu κ.puE κ.puX (List.replicate (F + a) true) _ tq hposq
++    hcutq hrunq T8 P₀ []
++    (qy_arg_bank κ.bPu κ.puK T8 _ (by rw [hb5]; simp [hT8])
++      (fun i hi => by
++        simp [hT8, hT5, hT4, hTA, qyTA, qyLayT, qyLay, κ.bPu_ne i hi]))
++    (fun _ => rfl)
++  rw [hb5] at c9
++  set T9 := Function.update T8 (κ.tp 5) (FinTM.bufferTape (List.replicate X4 true)) with hT9
++  have seg9 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .pu (Sum.inl ())
++    (Sum.inr κ.puX) ⟨.r10, QyCmp.scan⟩ 1 1 T8 T9 P₀ P₀ [] [] tq c9.1 (by simp [qyLocRed])
++    (qy_guard_of_cut (Sum.inr κ.puX) (qyLocRed κ .pu) (fun s hs => by simp [qyLocRed, hs]) c9.2)
++    _ (qy_notStop κ .pu (by decide) rfl)
++  have hpu5 : κ.puA * (F + a + 1) ^ 5 ≤ κ.puA * Lb ^ 5 :=
++    Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by omega) 5)
++  -- r10: X⁴ against |bits n|
++  have c10 := qy_cmp_run (x := x) (κ.tp 5) (κ.tp 1) (κ.tp_ne (by decide)) 1 T9 P₀ []
++    (List.replicate X4 true) (List.replicate Lb true) (by simp [hT9])
++    (by simp [hT9, hT8, hT5, hT4, hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj, hLb]) rfl rfl
++  rw [List.length_replicate, List.length_replicate] at c10
++  have hg10 : ∀ u < 2 * min X4 Lb + 2, ∀ s,
++      ((qyLocM κ .r10).runFrom (qyC QyCmp.scan 1 T9 P₀ []) u).state = some s →
++        qyLocRed κ .r10 s = none := fun u hu s hs => by
++    cases s with
++    | done w => exact absurd hs (c10.2 u hu w)
++    | _ => simp [qyLocRed]
++  have hm10 := min_le_right X4 Lb
++  have hT9esc : ∀ t, t ≠ κ.tp 3 → t ≠ κ.tp 4 → t ≠ κ.tp 5 → t ≠ κ.tp 6 → t ≠ κ.tp 7 →
++      t ≠ κ.tp 8 → T9 t = T₀ t := fun t h3 h4 h5 h6 h7 h8 => by
++    rw [hT9, Function.update_of_ne h5, hT8, Function.update_of_ne h5]
++    exact hT5esc t h3 h4 h5 h6 h7 h8
++  by_cases hlt10 : compare X4 Lb = .lt
++  swap
++  · -- interior: X⁴ ≥ |bits n|
++    have seg10 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r10 .scan
++      (.done (compare X4 Lb)) ⟨.escI, SweepPhase.sweep⟩ 1 1 T9 T9 P₀ P₀ [] [] _ c10.1
++      (by simp [qyLocRed, hlt10]) hg10 _ (qy_notStop κ .r10 (by decide) rfl)
++    have hge : Lb ≤ X4 := not_lt.mp fun h => hlt10 (compare_lt_iff_lt.mpr h)
++    refine Or.inl ⟨?_, _, ?_, T9, P₀, seg3.trans (seg4.trans (seg5.trans (seg6.trans
++      (seg7.trans (seg8.trans (seg9.trans seg10)))))), hesc T9 hT9esc⟩
++    · have : 2 ^ Lb ≤ 2 ^ X4 := Nat.pow_le_pow_right (by norm_num) hge
++      omega
++    · simp only [List.length_replicate] at *
++      omega
++  have hlt10' : X4 < Lb := compare_lt_iff_lt.mp hlt10
++  have hℓn : ℓ' ≤ n := by
++    have hn0 : n ≠ 0 := by
++      rintro h0
++      rw [h0, Nat.zero_bits, List.length_nil] at hLb
++      omega
++    have h1 := qy_log_bits (Nat.pos_of_ne_zero hn0)
++    have h2 := Nat.pow_log_le_self 2 hn0
++    have h3 : 2 ^ X4 ≤ 2 ^ Nat.log 2 n := Nat.pow_le_pow_right (by norm_num) (by omega)
++    omega
++  have seg10 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r10 .scan
++    (.done (compare X4 Lb)) ⟨.r11, SweepPhase.sweep⟩ 1 1 T9 T9 P₀ P₀ [] [] _ c10.1
++    (by simp [qyLocRed, hlt10]) hg10 _ (qy_notStop κ .r10 (by decide) rfl)
++  -- r11: the copy 0^{X⁴} onto the counter tape 6
++  have c11 := qy_copy (x := x) (κ.tp 5) (κ.tp 6) (κ.tp_ne (by decide)) (fun _ => false) 1 T9 P₀
++    [] (List.replicate X4 true) [] (by simp [hT9]) rfl
++    (by simp [hT9, hT8, hT5, hT4, hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj]) (by simp [hP₀])
++  rw [List.map_replicate, List.nil_append] at c11
++  set T11 := Function.update T9 (κ.tp 6) (FinTM.bufferTape (List.replicate X4 false)) with hT11
++  have seg11 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r11 .sweep .done
++    ⟨.ab, Sum.inl ()⟩ 1 1 T9 T11 P₀ P₀ [] [] _ c11.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .r11) (fun s hs => by simp [qyLocRed, hs])
++      c11.2) _ (qy_notStop κ .r11 (by decide) rfl)
++  -- ab: the increment to 0^{X⁴} 1, worth ℓ'
++  obtain ⟨tb, htb, hposb, hcutb, hrunb⟩ := κ.abS x (List.replicate X4 false)
++  simp only [List.length_replicate] at htb
++  have hb6 : κ.bAb0 ⟨0, κ.abK⟩ = κ.tp 6 := rfl
++  have c12 := qy_callHost κ.ab κ.abK κ.bAb0 κ.abE κ.abX (List.replicate X4 false) _ tb hposb
++    hcutb hrunb T11 P₀ []
++    (qy_arg_bank κ.bAb0 κ.abK T11 _ (by rw [hb6]; simp [hT11])
++      (fun i hi => by
++        simp [hT11, hT9, hT8, hT5, hT4, hTA, qyTA, qyLayT, qyLay, κ.bAb0_ne i hi]))
++    (fun _ => rfl)
++  rw [hb6] at c12
++  set T12 := Function.update T11 (κ.tp 6) (FinTM.bufferTape (List.replicate X4 false ++ [true]))
++    with hT12
++  have seg12 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .ab (Sum.inl ())
++    (Sum.inr κ.abX) ⟨.r13, CounterLoopState.dec .run⟩ 1 1 T11 T12 P₀ P₀ [] [] tb c12.1
++    (by simp [qyLocRed])
++    (qy_guard_of_cut (Sum.inr κ.abX) (qyLocRed κ .ab) (fun s hs => by simp [qyLocRed, hs])
++      c12.2) _ (qy_notStop κ .ab (by decide) rfl)
++  -- r13: the next rung 1^{ℓ'} on tape 3
++  have c13 := qy_expandHost (x := x) (qyEmb2 (κ.tp 3) (κ.tp 6) (κ.tp_ne (by decide))) (κ.tp 3)
++    (κ.tp 6) rfl rfl 1 T12 P₀ [] [] (List.replicate X4 false ++ [true]) ℓ' (qy_rung_val X4)
++    (by simp [hT12, hT11, hT9, hT8, hT5, hT4, hTA, qyTA, qyLayT, qyLay, QyKit.tp_inj])
++    (by simp [hP₀]) (by simp [hT12]) (by simp [hP₀])
++  rw [List.nil_append] at c13
++  set T13 := Function.update (Function.update T12 (κ.tp 3)
++    (FinTM.bufferTape (List.replicate ℓ' true))) (κ.tp 6)
++    (FinTM.bufferTape (List.replicate (List.replicate X4 false ++ [true]).length true)) with hT13
++  set P13 := Function.update P₀ (κ.tp 3) ((([] : List Bool).length : ℤ) + ℓ') with hP13
++  have seg13 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r13 (.dec .run)
++    .done ⟨.r14, WritePhase.wr 0⟩ 1 1 T12 T13 P₀ P13 [] [] _ c13.1 (by simp [qyLocRed])
++    (qy_guard_of_cut CounterLoopState.done (qyLocRed κ .r13) (fun s hs => by simp [qyLocRed, hs])
++      c13.2) _ (qy_notStop κ .r13 (by decide) rfl)
++  have hco13 : counterOverhead (List.replicate X4 false ++ [true]) (ℓ' + 1) ≤
++      4 * ℓ' + 2 * (List.replicate X4 false ++ [true]).length + 2 := by
++    have h := counterOverhead_le (List.replicate X4 false ++ [true])
++    rwa [qy_rung_val] at h
++  -- r14: one more cell
++  have c14 := qy_writeConst (x := x) (κ.tp 3) [true] 1 T13 P13 [] (List.replicate ℓ' true)
++    (by simp [hT13, QyKit.tp_inj]) (by simp [hP13])
++  set T14 := Function.update T13 (κ.tp 3) (FinTM.bufferTape (List.replicate ℓ' true ++ [true]))
++    with hT14
++  have seg14 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r14 (.wr 0) .done
++    ⟨.r15, RewindPhase.start⟩ 1 1 T13 T14 P13 P13 [] [] _ c14.1 (by simp [qyLocRed])
++    (qy_guard_of_cut WritePhase.done (qyLocRed κ .r14) (fun s hs => by simp [qyLocRed, hs])
++      c14.2) _ (qy_notStop κ .r14 (by decide) rfl)
++  -- r15: rewind tape 3
++  have c15 := qy_rewind (x := x) (κ.tp 3) 1 T14 P13 [] (List.replicate ℓ' true ++ [true]) ℓ'
++    (by simp) (by simp [hT14]) (by simp [hP13])
++  have hP15 : Function.update P13 (κ.tp 3) 0 = P₀ := by
++    rw [hP13, Function.update_idem]
++    exact Function.update_eq_self_iff.mpr rfl
++  rw [hP15] at c15
++  have seg15 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r15 .start .done
++    ⟨.r16, QyCmp.scan⟩ 1 1 T14 T14 P13 P₀ [] [] _ c15.1 (by simp [qyLocRed])
++    (qy_guard_of_cut RewindPhase.done (qyLocRed κ .r15) (fun s hs => by simp [qyLocRed, hs])
++      c15.2) _ (qy_notStop κ .r15 (by decide) rfl)
++  -- r16: ℓ' + 1 against n + 1
++  have c16 := qy_cmp_run (x := x) (κ.tp 3) (κ.tp 0) (κ.tp_ne (by decide)) 1 T14 P₀ []
++    (List.replicate ℓ' true ++ [true]) (List.replicate (n + 1) true) (by simp [hT14])
++    (by simp [hT14, hT13, hT12, hT11, hT9, hT8, hT5, hT4, hTA, qyTA, qyLayT, qyLay,
++      QyKit.tp_inj]) rfl rfl
++  have hl16 : (List.replicate ℓ' true ++ [true]).length = ℓ' + 1 := by simp
++  rw [hl16, List.length_replicate] at c16
++  have hg16 : ∀ u < 2 * min (ℓ' + 1) (n + 1) + 2, ∀ s,
++      ((qyLocM κ .r16).runFrom (qyC QyCmp.scan 1 T14 P₀ []) u).state = some s →
++        qyLocRed κ .r16 s = none := fun u hu s hs => by
++    cases s with
++    | done w => exact absurd hs (c16.2 u hu w)
++    | _ => simp [qyLocRed]
++  have hm16 := min_le_left (ℓ' + 1) (n + 1)
++  have hT14esc : ∀ t, t ≠ κ.tp 3 → t ≠ κ.tp 4 → t ≠ κ.tp 5 → t ≠ κ.tp 6 → t ≠ κ.tp 7 →
++      t ≠ κ.tp 8 → T14 t = T₀ t := fun t h3 h4 h5 h6 h7 h8 => by
++    rw [hT14, Function.update_of_ne h3, hT13, Function.update_of_ne h6, Function.update_of_ne h3,
++      hT12, Function.update_of_ne h6, hT11, Function.update_of_ne h6]
++    exact hT9esc t h3 h4 h5 h6 h7 h8
++  have hl12 : (List.replicate X4 false ++ [true]).length = X4 + 1 := by simp
++  have htb' : tb ≤ κ.abA * (X4 + 1) := htb
++  have hab : κ.abA * (X4 + 1) ≤ κ.abA * (Lb + 1) := Nat.mul_le_mul_left _ (by omega)
++  have hl5 : (List.replicate (F + a) true).length = F + a := List.length_replicate
++  have hla : (List.replicate a true).length = a := List.length_replicate
++  have hlX : (List.replicate X4 true).length = X4 := List.length_replicate
++  have hlF : (List.replicate F true).length = F := List.length_replicate
++  rcases Nat.lt_or_ge ℓ' n with hlt | hge
++  · -- next: ℓ' < n
++    have hv : compare (ℓ' + 1) (n + 1) = .lt := compare_lt_iff_lt.mpr (by omega)
++    have seg16 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r16 .scan
++      (.done (compare (ℓ' + 1) (n + 1))) ⟨.c1, SweepPhase.sweep⟩ 1 1 T14 T14 P₀ P₀ [] [] _ c16.1
++      (by simp [qyLocRed, hv]) hg16 _ (qy_notStop κ .r16 (by decide) rfl)
++    have hend : T14 = qyTB κ TA F a X4 ℓ' := by
++      funext t
++      by_cases h3 : t = κ.tp 3
++      · subst h3
++        simp [hT14, qyTB, List.replicate_succ']
++      by_cases h6 : t = κ.tp 6
++      · subst h6
++        simp [hT14, hT13, qyTB, QyKit.tp_inj, hl12]
++      by_cases h5 : t = κ.tp 5
++      · subst h5
++        simp [hT14, hT13, hT12, hT11, hT9, qyTB, QyKit.tp_inj]
++      by_cases h7 : t = κ.tp 7
++      · subst h7
++        simp [hT14, hT13, hT12, hT11, hT9, hT8, hT5, hT4, qyTB, QyKit.tp_inj]
++      by_cases h4 : t = κ.tp 4
++      · subst h4
++        simp [hT14, hT13, hT12, hT11, hT9, hT8, hT5, qyTB, QyKit.tp_inj]
++      simp [hT14, hT13, hT12, hT11, hT9, hT8, hT5, hT4, qyTB, Function.update_of_ne h3,
++        Function.update_of_ne h4, Function.update_of_ne h5, Function.update_of_ne h6,
++        Function.update_of_ne h7]
++    have chain := seg3.trans (seg4.trans (seg5.trans (seg6.trans (seg7.trans (seg8.trans
++      (seg9.trans (seg10.trans (seg11.trans (seg12.trans (seg13.trans (seg14.trans
++      (seg15.trans seg16))))))))))))
++    rw [hend] at chain
++    refine Or.inr (Or.inr ⟨hlt, by omega, hlt10', _, ?_, chain⟩)
++    simp only [List.length_replicate, List.length_cons, List.length_nil] at *
++    omega
++  · -- top: ℓ' = n
++    have heq : ℓ' = n := le_antisymm hℓn hge
++    have hv : compare (ℓ' + 1) (n + 1) = .eq := compare_eq_iff_eq.mpr (by omega)
++    have seg16 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r16 .scan
++      (.done (compare (ℓ' + 1) (n + 1))) ⟨.escTop, SweepPhase.sweep⟩ 1 1 T14 T14 P₀ P₀ [] [] _
++      c16.1 (by simp [qyLocRed, hv]) hg16 _ (qy_notStop κ .r16 (by decide) rfl)
++    refine Or.inr (Or.inl ⟨heq, _, ?_, T14, P₀, seg3.trans (seg4.trans (seg5.trans
++      (seg6.trans (seg7.trans (seg8.trans (seg9.trans (seg10.trans (seg11.trans (seg12.trans
++      (seg13.trans (seg14.trans (seg15.trans seg16)))))))))))), hesc T14 hT14esc, ?_, rfl⟩)
++    · simp only [List.length_replicate, List.length_cons, List.length_nil] at *
++      omega
++    · simp [hT14, hT13, hT12, hT11, hT9, hT8, hT5, QyKit.tp_inj]
++
++/-! ### The locator's round: the cleanup and the pair's update -/
++
++/-- **A passed round's cleanup** (checkpoint 3): from the tapes `qyTB` after the tests, the
++locator clears the old rung, moves the next rung `1^{ℓ' + 1}` onto the rung's tape, clears the
++scratch tapes `4` to `7`, and restores the counter from its copy, ending at the pair's update on
++the anchor layout of the rung `ℓ' + 1`.
++
++**Proof sketch.** Seven hosted phases, each a row's run: `qy_clear` on tape `2`, `qy_transfer`
++from tape `3` to tape `2`, `qy_clear` on tapes `7`, `4`, `5`, `6`, and `qy_copy_over` from tape
++`9` to tape `8` (the counter's word `w'` has the copy's width). The endpoint's tapes are the
++layout, tape by tape. -/
++private theorem qy_rnd_clean {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k F X4 ℓ' : ℕ)
++    (w' : List Bool) (hw' : w'.length = κ.m x.length) :
++    ∃ t ≤ 2 * a + 2 * (ℓ' + 1) + 2 * (Nat.bits F).length + 2 * (F + a) + 2 * X4 +
++        2 * (X4 + 1) + 2 * κ.m x.length + 21,
++      Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++        (qyC (x := x) ⟨.c1, SweepPhase.sweep⟩ 1
++          (qyTB κ (qyTA κ x.length a j k F w') F a X4 ℓ') (fun _ => 0) [])
++        (qyC ⟨.u1, QyCmp.scan⟩ 1 (qyLayT κ x.length (ℓ' + 1) j k) (fun _ => 0) []) t := by
++  set n := x.length with hnx
++  set P₀ : Fin κ.K → ℤ := fun _ => 0 with hP₀
++  set TB := qyTB κ (qyTA κ n a j k F w') F a X4 ℓ' with hTB
++  unfold qyLoc
++  -- c1: clear the old rung
++  have c1 := qy_clear (x := x) (κ.tp 2) 1 TB P₀ [] (List.replicate a true)
++    (by simp [hTB, qyTB, qyTA, qyLayT, qyLay, QyKit.tp_inj]) rfl
++  set T1 := Function.update TB (κ.tp 2) (FinTM.bufferTape []) with hT1
++  have seg1 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c1 .sweep .done
++    ⟨.c2, SweepPhase.sweep⟩ 1 1 TB T1 P₀ P₀ [] [] _ c1.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c1) (fun s hs => by simp [qyLocRed, hs]) c1.2)
++    _ (qy_notStop κ .c1 (by decide) rfl)
++  -- c2: the next rung onto the rung's tape
++  have c2 := qy_transfer (x := x) (κ.tp 3) (κ.tp 2) (κ.tp_ne (by decide)) (fun b => b) 1 T1 P₀ []
++    (List.replicate (ℓ' + 1) true) [] (by simp [hT1, hTB, qyTB, QyKit.tp_inj]) rfl
++    (by simp [hT1]) (by simp [hP₀])
++  rw [List.map_id', List.nil_append] at c2
++  set T2 := Function.update (Function.update T1 (κ.tp 3) (FinTM.bufferTape [])) (κ.tp 2)
++    (FinTM.bufferTape (List.replicate (ℓ' + 1) true)) with hT2
++  have seg2 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c2 .sweep .done
++    ⟨.c3, SweepPhase.sweep⟩ 1 1 T1 T2 P₀ P₀ [] [] _ c2.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c2) (fun s hs => by simp [qyLocRed, hs]) c2.2)
++    _ (qy_notStop κ .c2 (by decide) rfl)
++  -- c3: clear f's call tape
++  have c3 := qy_clear (x := x) (κ.tp 7) 1 T2 P₀ [] (List.replicate (Nat.bits F).length true)
++    (by simp [hT2, hT1, hTB, qyTB, QyKit.tp_inj]) rfl
++  set T3 := Function.update T2 (κ.tp 7) (FinTM.bufferTape []) with hT3
++  have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c3 .sweep .done
++    ⟨.c4, SweepPhase.sweep⟩ 1 1 T2 T3 P₀ P₀ [] [] _ c3.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c3) (fun s hs => by simp [qyLocRed, hs]) c3.2)
++    _ (qy_notStop κ .c3 (by decide) rfl)
++  -- c4: clear tape 4
++  have c4 := qy_clear (x := x) (κ.tp 4) 1 T3 P₀ [] (List.replicate (F + a) true)
++    (by simp [hT3, hT2, hT1, hTB, qyTB, QyKit.tp_inj]) rfl
++  set T4 := Function.update T3 (κ.tp 4) (FinTM.bufferTape []) with hT4
++  have seg4 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c4 .sweep .done
++    ⟨.c5, SweepPhase.sweep⟩ 1 1 T3 T4 P₀ P₀ [] [] _ c4.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c4) (fun s hs => by simp [qyLocRed, hs]) c4.2)
++    _ (qy_notStop κ .c4 (by decide) rfl)
++  -- c5: clear tape 5
++  have c5 := qy_clear (x := x) (κ.tp 5) 1 T4 P₀ [] (List.replicate X4 true)
++    (by simp [hT4, hT3, hT2, hT1, hTB, qyTB, QyKit.tp_inj]) rfl
++  set T5 := Function.update T4 (κ.tp 5) (FinTM.bufferTape []) with hT5
++  have seg5 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c5 .sweep .done
++    ⟨.c6, SweepPhase.sweep⟩ 1 1 T4 T5 P₀ P₀ [] [] _ c5.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c5) (fun s hs => by simp [qyLocRed, hs]) c5.2)
++    _ (qy_notStop κ .c5 (by decide) rfl)
++  -- c6: clear tape 6
++  have c6 := qy_clear (x := x) (κ.tp 6) 1 T5 P₀ [] (List.replicate (X4 + 1) true)
++    (by simp [hT5, hT4, hT3, hT2, hT1, hTB, qyTB, QyKit.tp_inj]) rfl
++  set T6 := Function.update T5 (κ.tp 6) (FinTM.bufferTape []) with hT6
++  have seg6 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c6 .sweep .done
++    ⟨.c7, SweepPhase.sweep⟩ 1 1 T5 T6 P₀ P₀ [] [] _ c6.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c6) (fun s hs => by simp [qyLocRed, hs]) c6.2)
++    _ (qy_notStop κ .c6 (by decide) rfl)
++  -- c7: restore the counter from its copy
++  have c7 := qy_copy_over (x := x) (κ.tp 9) (κ.tp 8) (κ.tp_ne (by decide)) (fun b => b) 1 T6 P₀
++    [] (List.replicate (κ.m n) true) w' (by simp [hw'])
++    (by simp [hT6, hT5, hT4, hT3, hT2, hT1, hTB, qyTB, qyTA, qyLayT, qyLay, QyKit.tp_inj]) rfl
++    (by simp [hT6, hT5, hT4, hT3, hT2, hT1, hTB, qyTB, qyTA, QyKit.tp_inj]) rfl
++  rw [List.map_id'] at c7
++  have hend : Function.update T6 (κ.tp 8) (FinTM.bufferTape (List.replicate (κ.m n) true)) =
++      qyLayT κ n (ℓ' + 1) j k := by
++    funext t
++    rcases κ.tape_cases t with ⟨c, rfl⟩ | h
++    · fin_cases c <;>
++        simp [hT6, hT5, hT4, hT3, hT2, hT1, hTB, qyTB, qyTA, qyLayT, qyLay, QyKit.tp_inj]
++    · simp [hT6, hT5, hT4, hT3, hT2, hT1, hTB, qyTB, qyTA, qyLayT, qyLay, h]
++  rw [hend] at c7
++  have seg7 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .c7 .sweep .done
++    ⟨.u1, QyCmp.scan⟩ 1 1 T6 _ P₀ P₀ [] [] _ c7.1 (by simp [qyLocRed])
++    (qy_guard_of_cut SweepPhase.done (qyLocRed κ .c7) (fun s hs => by simp [qyLocRed, hs]) c7.2)
++    _ (qy_notStop κ .c7 (by decide) rfl)
++  refine ⟨_, ?_, seg1.trans (seg2.trans (seg3.trans (seg4.trans (seg5.trans (seg6.trans
++    seg7)))))⟩
++  have e : κ.m x.length = κ.m n := rfl
++  simp only [List.length_replicate]
++  omega
++
++/-- The anchor layout with the pair's tapes changed is the layout of the new pair. -/
++private theorem qy_layT_pair {f g : ℕ → ℕ} (κ : QyKit f g) (n a j k j' k' : ℕ)
++    (T : Fin κ.K → ℤ → Option Bool) (h10 : T (κ.tp 10) = FinTM.bufferTape (List.replicate j' true))
++    (h11 : T (κ.tp 11) = FinTM.bufferTape (List.replicate k' true))
++    (hrest : ∀ t, t ≠ κ.tp 10 → t ≠ κ.tp 11 → T t = qyLayT κ n a j k t) :
++    T = qyLayT κ n a j' k' := by
++  funext t
++  by_cases e10 : t = κ.tp 10
++  · subst e10
++    rw [h10]
++    simp [qyLayT, qyLay, QyKit.tp_inj]
++  by_cases e11 : t = κ.tp 11
++  · subst e11
++    rw [h11]
++    simp [qyLayT, qyLay, QyKit.tp_inj]
++  rw [hrest t e10 e11]
++  simp [qyLayT, qyLay, e10, e11]
++
++/-- **A passed round's pair update** (checkpoint 3): from the anchor layout with
++`(j, k) = unpair h` on tapes `10` and `11`, the locator moves the pair to `unpair (h + 1)` by the
++successor rule of `Nat.unpair` and returns to its anchor.
++
++**Proof sketch.** The comparison `j` against `k` (L2), then by its verdict: `lt`, the increment
++of `j` (the `appendBit` call on tape `10`) and the comparison `j + 1` against `k`, with the clear
++of `k` on `eq` (`qy_unpair_succ_last`) and nothing on `lt` (`qy_unpair_succ_lt`); `eq`, the clear
++of `j` and the increment of `k` (`qy_unpair_succ_diag`); `gt`, the increment of `k`
++(`qy_unpair_succ_gt`). The last phase dispatches to the anchor; the layout is
++`qy_layT_pair`. -/
++private theorem qy_rnd_pair {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a h j k : ℕ)
++    (H : Nat.unpair h = (j, k)) :
++    ∃ t ≤ κ.abA * (j + k + 2) + 6 * (j + k) + 30,
++      Segment (qyLoc κ) (roundStop (qyAnc κ) (qyLocE κ)) (fun _ => True)
++        (qyC (x := x) ⟨.u1, QyCmp.scan⟩ 1 (qyLayT κ x.length a j k) (fun _ => 0) [])
++        (qyC (qyAnc κ) 1 (qyLayT κ x.length a (Nat.unpair (h + 1)).1 (Nat.unpair (h + 1)).2)
++          (fun _ => 0) []) t := by
++  set n := x.length with hnx
++  set P₀ : Fin κ.K → ℤ := fun _ => 0 with hP₀
++  set T₀ := qyLayT κ n a j k with hT₀
++  unfold qyLoc qyAnc
++  have hJ : T₀ (κ.tp 10) = FinTM.bufferTape (List.replicate j true) := by
++    simp [hT₀, qyLayT, qyLay, QyKit.tp_inj]
++  have hK : T₀ (κ.tp 11) = FinTM.bufferTape (List.replicate k true) := by
++    simp [hT₀, qyLayT, qyLay, QyKit.tp_inj]
++  -- u1: j against k
++  have c1 := qy_cmp_run (x := x) (κ.tp 10) (κ.tp 11) (κ.tp_ne (by decide)) 1 T₀ P₀ []
++    (List.replicate j true) (List.replicate k true) hJ hK rfl rfl
++  rw [List.length_replicate, List.length_replicate] at c1
++  have hg1 : ∀ u < 2 * min j k + 2, ∀ s,
++      ((qyLocM κ .u1).runFrom (qyC QyCmp.scan 1 T₀ P₀ []) u).state = some s →
++        qyLocRed κ .u1 s = none := fun u hu s hs => by
++    cases s with
++    | done w => exact absurd hs (c1.2 u hu w)
++    | _ => simp [qyLocRed]
++  have hm1 := min_le_left j k
++  have hab : ∀ i, i ≤ j + k + 1 → κ.abA * (i + 1) ≤ κ.abA * (j + k + 2) :=
++    fun i hi => Nat.mul_le_mul_left _ (by omega)
++  rcases Nat.lt_trichotomy j k with hlt | heq | hgt
++  · -- j < k: increment j
++    have hv : compare j k = .lt := compare_lt_iff_lt.mpr hlt
++    have seg1 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .u1 .scan
++      (.done (compare j k)) ⟨.incJ, Sum.inl ()⟩ 1 1 T₀ T₀ P₀ P₀ [] [] _ c1.1
++      (by simp [qyLocRed, hv]) hg1 _ (qy_notStop κ .u1 (by decide) rfl)
++    obtain ⟨tb, htb, hposb, hcutb, hrunb⟩ := κ.abS x (List.replicate j true)
++    simp only [List.length_replicate] at htb
++    have hb10 : κ.bAbJ ⟨0, κ.abK⟩ = κ.tp 10 := rfl
++    have c2 := qy_callHost κ.ab κ.abK κ.bAbJ κ.abE κ.abX (List.replicate j true) _ tb hposb
++      hcutb hrunb T₀ P₀ []
++      (qy_arg_bank κ.bAbJ κ.abK T₀ _ (by rw [hb10]; exact hJ)
++        (fun i hi => by simp [hT₀, qyLayT, qyLay, κ.bAbJ_ne i hi]))
++      (fun _ => rfl)
++    beta_reduce at c2
++    rw [hb10, ← List.replicate_succ'] at c2
++    set T2 := Function.update T₀ (κ.tp 10) (FinTM.bufferTape (List.replicate (j + 1) true))
++      with hT2
++    have seg2 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .incJ (Sum.inl ())
++      (Sum.inr κ.abX) ⟨.u2, QyCmp.scan⟩ 1 1 T₀ T2 P₀ P₀ [] [] tb c2.1 (by simp [qyLocRed])
++      (qy_guard_of_cut (Sum.inr κ.abX) (qyLocRed κ .incJ) (fun s hs => by simp [qyLocRed, hs])
++        c2.2) _ (qy_notStop κ .incJ (by decide) rfl)
++    -- u2: j + 1 against k
++    have c3 := qy_cmp_run (x := x) (κ.tp 10) (κ.tp 11) (κ.tp_ne (by decide)) 1 T2 P₀ []
++      (List.replicate (j + 1) true) (List.replicate k true) (by simp [hT2])
++      (by simp [hT2, hT₀, qyLayT, qyLay, QyKit.tp_inj]) rfl rfl
++    rw [List.length_replicate, List.length_replicate] at c3
++    have hg3 : ∀ u < 2 * min (j + 1) k + 2, ∀ s,
++        ((qyLocM κ .u2).runFrom (qyC QyCmp.scan 1 T2 P₀ []) u).state = some s →
++          qyLocRed κ .u2 s = none := fun u hu s hs => by
++      cases s with
++      | done w => exact absurd hs (c3.2 u hu w)
++      | _ => simp [qyLocRed]
++    have hm3 := min_le_right (j + 1) k
++    rcases Nat.lt_or_ge (j + 1) k with hlt' | hge'
++    · -- j + 1 < k: the pair (j + 1, k)
++      have hv' : compare (j + 1) k = .lt := compare_lt_iff_lt.mpr hlt'
++      have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .u2 .scan
++        (.done (compare (j + 1) k)) ⟨.anc, SweepPhase.sweep⟩ 1 1 T2 T2 P₀ P₀ [] [] _ c3.1
++        (by simp [qyLocRed, hv']) hg3 _ (qy_notStop κ .u2 (by decide) rfl)
++      have hend : T2 = qyLayT κ n a (Nat.unpair (h + 1)).1 (Nat.unpair (h + 1)).2 := by
++        rw [qy_unpair_succ_lt H hlt']
++        exact qy_layT_pair κ n a j k _ _ T2 (by simp [hT2]) (by simp [hT2, hK, QyKit.tp_inj])
++          (fun t e10 _ => by simp [hT2, hT₀, Function.update_of_ne e10])
++      have chain := seg1.trans (seg2.trans seg3)
++      rw [hend] at chain
++      refine ⟨_, ?_, chain⟩
++      have := hab j (by omega)
++      omega
++    · -- j + 1 = k: the pair (k, 0)
++      have he : j + 1 = k := by omega
++      have hv' : compare (j + 1) k = .eq := compare_eq_iff_eq.mpr he
++      have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .u2 .scan
++        (.done (compare (j + 1) k)) ⟨.clrK, SweepPhase.sweep⟩ 1 1 T2 T2 P₀ P₀ [] [] _ c3.1
++        (by simp [qyLocRed, hv']) hg3 _ (qy_notStop κ .u2 (by decide) rfl)
++      have c4 := qy_clear (x := x) (κ.tp 11) 1 T2 P₀ [] (List.replicate k true)
++        (by simp [hT2, hK, QyKit.tp_inj]) rfl
++      have hend : Function.update T2 (κ.tp 11) (FinTM.bufferTape []) =
++          qyLayT κ n a (Nat.unpair (h + 1)).1 (Nat.unpair (h + 1)).2 := by
++        rw [qy_unpair_succ_last H he]
++        refine qy_layT_pair κ n a j k _ _ _ (by simp [hT2, he, QyKit.tp_inj]) (by simp)
++          (fun t e10 e11 => by
++            simp [hT2, hT₀, Function.update_of_ne e10, Function.update_of_ne e11])
++      rw [hend] at c4
++      have seg4 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .clrK .sweep .done
++        ⟨.anc, SweepPhase.sweep⟩ 1 1 T2 _ P₀ P₀ [] [] _ c4.1 (by simp [qyLocRed])
++        (qy_guard_of_cut SweepPhase.done (qyLocRed κ .clrK) (fun s hs => by simp [qyLocRed, hs])
++          c4.2) _ (qy_notStop κ .clrK (by decide) rfl)
++      refine ⟨_, ?_, seg1.trans (seg2.trans (seg3.trans seg4))⟩
++      have := hab j (by omega)
++      simp only [List.length_replicate]
++      omega
++  · -- j = k: clear j, increment k
++    subst heq
++    have seg1 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .u1 .scan
++      (.done (compare j j)) ⟨.clrJ, SweepPhase.sweep⟩ 1 1 T₀ T₀ P₀ P₀ [] [] _ c1.1
++      (by simp [qyLocRed]) hg1 _ (qy_notStop κ .u1 (by decide) rfl)
++    have c2 := qy_clear (x := x) (κ.tp 10) 1 T₀ P₀ [] (List.replicate j true) hJ rfl
++    set T2 := Function.update T₀ (κ.tp 10) (FinTM.bufferTape []) with hT2
++    have seg2 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .clrJ .sweep .done
++      ⟨.incK, Sum.inl ()⟩ 1 1 T₀ T2 P₀ P₀ [] [] _ c2.1 (by simp [qyLocRed])
++      (qy_guard_of_cut SweepPhase.done (qyLocRed κ .clrJ) (fun s hs => by simp [qyLocRed, hs])
++        c2.2) _ (qy_notStop κ .clrJ (by decide) rfl)
++    obtain ⟨tb, htb, hposb, hcutb, hrunb⟩ := κ.abS x (List.replicate j true)
++    simp only [List.length_replicate] at htb
++    have hb11 : κ.bAbK ⟨0, κ.abK⟩ = κ.tp 11 := rfl
++    have c3 := qy_callHost κ.ab κ.abK κ.bAbK κ.abE κ.abX (List.replicate j true) _ tb hposb
++      hcutb hrunb T2 P₀ []
++      (qy_arg_bank κ.bAbK κ.abK T2 _ (by rw [hb11]; simp [hT2, hK, QyKit.tp_inj])
++        (fun i hi => by simp [hT2, hT₀, qyLayT, qyLay, κ.bAbK_ne i hi]))
++      (fun _ => rfl)
++    beta_reduce at c3
++    rw [hb11, ← List.replicate_succ'] at c3
++    have hend : Function.update T2 (κ.tp 11) (FinTM.bufferTape (List.replicate (j + 1) true)) =
++        qyLayT κ n a (Nat.unpair (h + 1)).1 (Nat.unpair (h + 1)).2 := by
++      rw [qy_unpair_succ_diag H]
++      refine qy_layT_pair κ n a j j _ _ _ (by simp [hT2, QyKit.tp_inj]) (by simp)
++        (fun t e10 e11 => by simp [hT2, hT₀, Function.update_of_ne e10, Function.update_of_ne e11])
++    rw [hend] at c3
++    have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .incK (Sum.inl ())
++      (Sum.inr κ.abX) ⟨.anc, SweepPhase.sweep⟩ 1 1 T2 _ P₀ P₀ [] [] tb c3.1 (by simp [qyLocRed])
++      (qy_guard_of_cut (Sum.inr κ.abX) (qyLocRed κ .incK) (fun s hs => by simp [qyLocRed, hs])
++        c3.2) _ (qy_notStop κ .incK (by decide) rfl)
++    refine ⟨_, ?_, seg1.trans (seg2.trans seg3)⟩
++    have := hab j (by omega)
++    simp only [List.length_replicate]
++    omega
++  · -- k < j: increment k
++    have hv : compare j k = .gt := compare_gt_iff_gt.mpr hgt
++    have seg1 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .u1 .scan
++      (.done (compare j k)) ⟨.incK, Sum.inl ()⟩ 1 1 T₀ T₀ P₀ P₀ [] [] _ c1.1
++      (by simp [qyLocRed, hv]) hg1 _ (qy_notStop κ .u1 (by decide) rfl)
++    obtain ⟨tb, htb, hposb, hcutb, hrunb⟩ := κ.abS x (List.replicate k true)
++    simp only [List.length_replicate] at htb
++    have hb11 : κ.bAbK ⟨0, κ.abK⟩ = κ.tp 11 := rfl
++    have c2 := qy_callHost κ.ab κ.abK κ.bAbK κ.abE κ.abX (List.replicate k true) _ tb hposb
++      hcutb hrunb T₀ P₀ []
++      (qy_arg_bank κ.bAbK κ.abK T₀ _ (by rw [hb11]; exact hK)
++        (fun i hi => by simp [hT₀, qyLayT, qyLay, κ.bAbK_ne i hi]))
++      (fun _ => rfl)
++    beta_reduce at c2
++    rw [hb11, ← List.replicate_succ'] at c2
++    have hend : Function.update T₀ (κ.tp 11) (FinTM.bufferTape (List.replicate (k + 1) true)) =
++        qyLayT κ n a (Nat.unpair (h + 1)).1 (Nat.unpair (h + 1)).2 := by
++      rw [qy_unpair_succ_gt H hgt]
++      refine qy_layT_pair κ n a j k _ _ _ (by simp [hJ, QyKit.tp_inj]) (by simp)
++        (fun t _ e11 => by simp [hT₀, Function.update_of_ne e11])
++    rw [hend] at c2
++    have seg2 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .incK (Sum.inl ())
++      (Sum.inr κ.abX) ⟨.anc, SweepPhase.sweep⟩ 1 1 T₀ _ P₀ P₀ [] [] tb c2.1 (by simp [qyLocRed])
++      (qy_guard_of_cut (Sum.inr κ.abX) (qyLocRed κ .incK) (fun s hs => by simp [qyLocRed, hs])
++        c2.2) _ (qy_notStop κ .incK (by decide) rfl)
++    refine ⟨_, ?_, seg1.trans seg2⟩
++    have := hab k (by omega)
++    omega
++
++/-! ### The locator's round -/
++
++/-- A passed round's time bound: the next rung `ℓ'`, the counter's width `m`, the call's bound on
++arguments below `|bits n|`, the polylogarithmic calls, and the pair `(j, k)`. -/
++private def qyRndP {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' j k : ℕ) : ℕ :=
++  11 * ℓ' + 50 * (Nat.bits n).length + 4 * κ.m n +
++    5 * (κ.cfA * ((κ.cfc + 3) * ((Nat.bits n).length + 1))) + κ.puA * (Nat.bits n).length ^ 5 +
++    κ.abA * ((Nat.bits n).length + 1) + κ.abA * (j + k + 2) + 6 * (j + k) + 150
++
++/-- A stopping round's time bound: linear in `n` and in the clock's budget `2 ^ m`, plus the
++fourth power's call on a word shorter than `|bits n|`. -/
++private def qyRndS {f g : ℕ → ℕ} (κ : QyKit f g) (n a : ℕ) : ℕ :=
++  6 * a + 5 * 2 ^ κ.m n + 2 * κ.m n + 40 * (n + 1) + 16 * (Nat.bits n).length +
++    κ.puA * (Nat.bits n).length ^ 5 + κ.abA * ((Nat.bits n).length + 1) + 70
++
++/-- **One round of the locator** (checkpoint 3), as a `Turing.Round` at the anchor with the three
++escapes: from the anchor layout at the rung `1^a`, `a ≤ n`, with `(j, k) = unpair h`, and with
++`X = f a + a + 1` and `ℓ' = 2 ^ X⁴`:
++* if `ℓ' < n`, the round returns to the anchor on the layout of the rung `ℓ' + 1` and the pair
++  `unpair (h + 1)`, within `qyRndP`;
++* if `n < ℓ'`, it ends at the interior or the timeout escape, the tapes off the scratch untouched,
++  within `qyRndS`;
++* if `ℓ' = n`, it ends at the top escape, with `1^{X - 1}` on tape `4`, within `qyRndS`.
++
++**Proof sketch.** The anchor's dispatch (`qy_hosted_run`), then the call (`qy_rnd_call`): its
++timeout is the timeout escape (`n < f a < ℓ'`). After a returned call, the tests
++(`qy_rnd_tests`) give the interior and the top escapes, or the passed tests, followed by the
++cleanup (`qy_rnd_clean`) and the pair's update (`qy_rnd_pair`). The segments are chained by
++`Turing.Segment.trans` and made a round by `qy_round_of_seg`; the time bounds are summed, with
++`X < |bits n|` and `X⁴ < |bits n|` on a passed round. -/
++private theorem qy_round {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a h j k : ℕ)
++    (ha : a ≤ x.length) (H : Nat.unpair h = (j, k)) :
++    ∃ (c' : Cfg κ.K Bool (Σ i, QyLPh κ i) x) (t : ℕ),
++      Round (qyLoc κ) (qyAnc κ) (qyLocE κ) (fun _ => True)
++        (qyC (x := x) (qyAnc κ) 1 (qyLayT κ x.length a j k) (fun _ => 0) []) c' t ∧
++      ((2 ^ (f a + a + 1) ^ 4 < x.length ∧
++          c' = qyC (qyAnc κ) 1 (qyLayT κ x.length (2 ^ (f a + a + 1) ^ 4 + 1)
++            (Nat.unpair (h + 1)).1 (Nat.unpair (h + 1)).2) (fun _ => 0) [] ∧
++          t ≤ qyRndP κ x.length (2 ^ (f a + a + 1) ^ 4) j k) ∨
++        (x.length < 2 ^ (f a + a + 1) ^ 4 ∧ t ≤ qyRndS κ x.length a ∧
++          ∃ (ip : Fin (x.length + 2)) (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++            (c' = qyC ⟨.escI, SweepPhase.sweep⟩ ip T P [] ∨
++              c' = qyC ⟨.escTO, SweepPhase.sweep⟩ ip T P []) ∧ QyEscT κ x.length a j k T P) ∨
++        (2 ^ (f a + a + 1) ^ 4 = x.length ∧ t ≤ qyRndS κ x.length a ∧
++          ∃ (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++            c' = qyC ⟨.escTop, SweepPhase.sweep⟩ 1 T P [] ∧ QyEscT κ x.length a j k T P ∧
++            T (κ.tp 4) = FinTM.bufferTape (List.replicate (f a + a) true) ∧ P (κ.tp 4) = 0)) := by
++  have h1 : (qyLoc κ).runFrom (qyC (x := x) (qyAnc κ) 1 (qyLayT κ x.length a j k)
++      (fun _ => 0) []) 1 = qyC ⟨.r1, SweepPhase.sweep⟩ 1 (qyLayT κ x.length a j k)
++      (fun _ => 0) [] := by
++    unfold qyLoc qyAnc
++    exact qy_hosted_run (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .anc .sweep .sweep
++      ⟨.r1, SweepPhase.sweep⟩ 1 1 _ _ _ _ [] [] 0 MultiTapeTM.runFrom_zero (by simp [qyLocRed])
++      (fun u hu => absurd hu (Nat.not_lt_zero u))
++  have hc : (qyC (x := x) (qyAnc κ) 1 (qyLayT κ x.length a j k) (fun _ => 0) []).state =
++      some (qyAnc κ) := rfl
++  have hX : f a + a + 1 ≤ (f a + a + 1) ^ 4 := Nat.le_self_pow (by norm_num) _
++  have hXl := Nat.lt_two_pow_self (n := (f a + a + 1) ^ 4)
++  rcases qy_rnd_call κ (x := x) a j k ha with
++    ⟨t1, ht1, ht1', w', hw', seg1⟩ | ⟨hFn, t1, ht1, ip, T, P, seg1, hesc⟩
++  · rcases qy_rnd_tests κ (x := x) a j k w' with
++      ⟨hI, t2, ht2, T, P, seg2, hesc⟩ | ⟨hT, t2, ht2, T, P, seg2, hesc, h4, hP4⟩ |
++        ⟨hN, hXb, hX4b, t2, ht2, seg2⟩
++    · -- interior
++      refine ⟨_, _, qy_round_of_seg hc h1 (seg1.trans seg2) (qy_esc_mem κ .escI rfl _),
++        Or.inr (Or.inl ⟨hI, ?_, 1, T, P, Or.inl rfl, hesc⟩)⟩
++      unfold qyRndS
++      unfold qyTestS at ht2
++      omega
++    · -- top
++      refine ⟨_, _, qy_round_of_seg hc h1 (seg1.trans seg2) (qy_esc_mem κ .escTop rfl _),
++        Or.inr (Or.inr ⟨hT, ?_, T, P, rfl, hesc, h4, hP4⟩)⟩
++      unfold qyRndS
++      unfold qyTestS at ht2
++      omega
++    · -- next
++      obtain ⟨t3, ht3, seg3⟩ := qy_rnd_clean κ (x := x) a j k (f a) ((f a + a + 1) ^ 4)
++        (2 ^ (f a + a + 1) ^ 4) w' hw'
++      obtain ⟨t4, ht4, seg4⟩ := qy_rnd_pair κ (x := x) (2 ^ (f a + a + 1) ^ 4 + 1) h j k H
++      refine ⟨_, _, qy_round_of_seg hc h1 (seg1.trans (seg2.trans (seg3.trans seg4)))
++        (Set.mem_insert _ _), Or.inl ⟨hN, rfl, ?_⟩⟩
++      have hbF := length_bits_le_self (f a)
++      have hq1 : κ.cfc * (f a + 1) ≤ κ.cfc * ((Nat.bits x.length).length + 1) :=
++        Nat.mul_le_mul_left _ (by omega)
++      have hq2 : κ.cfc * (f a + 1) + a + (Nat.bits (f a)).length + 1 ≤
++          (κ.cfc + 3) * ((Nat.bits x.length).length + 1) := by
++        rw [add_mul]
++        omega
++      have hq3 := Nat.mul_le_mul_left κ.cfA hq2
++      unfold qyRndP
++      unfold qyTestP at ht2
++      omega
++  · -- timeout
++    refine ⟨_, _, qy_round_of_seg hc h1 seg1 (qy_esc_mem κ .escTO rfl _),
++      Or.inr (Or.inl ⟨by omega, ?_, ip, T, P, Or.inr rfl, hesc⟩)⟩
++    unfold qyRndS
++    omega
++
+ /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
+ time-constructible `f` and `g` there is a deterministic machine computing the stage query within
+ `C · (g n + 1)`.
+@@ -3283,10 +4353,12 @@ fixed-degree binary arithmetic, the `⌊log₂⌋` comparison, the power-of-two
+ binary words, the unranking); the `pairEncode` writer; the ledger.
+ 
+ **Implementation status.** The linear-time guard and the reduction to a machine computing the
+-query on the unary word of every input's length are proved. So is the main machine's setup in
+-linear time: `bits n` by the input call, `1^{n+1}`, the first rung, the test `n ≥ 3`, the seek's
+-tape and the all-ones counter, as a run of its phase host. The locator's rounds and loop, the
+-stage code, the budget field, the writer and the linear ledger remain open. -/
++query on the unary word of every input's length are proved. So are the main machine's setup in
++linear time (`bits n` by the input call, `1^{n+1}`, the first rung, the test `n ≥ 3`, the seek's
++tape and the all-ones counter, as a run of its phase host) and one round of its locator, as a
++round at the locator's anchor with its three escapes (interior, top, timeout) and its cost. The
++locator's loop and its linear ledger, the stage code, the budget field and the writer remain
++open. -/
+ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) :
+     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
+-- 
+2.50.1 (Apple Git-155)
+

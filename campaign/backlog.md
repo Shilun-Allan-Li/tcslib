@@ -1963,6 +1963,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
+    **PR #177** (`lean/np-closure`, head `ce00b6d3`): `Complexity.mem_NP_of_polyTimeReducible`,
+    through `PClosure`'s `inter_mem_P`, `lenLe_preimage_mem_P` and `preimage_mem_P` (no new reading
+    was needed); `Reductions` imports `PClosure` (13 modules more in its closure); `prefixTM_copy`
+    gains its sketch. Axioms standard; sealed (6 definitions, 3 erased; 6 controls); freeze 10 → 11;
+    lint the base's, the policy linter clean; no copy on any ref. `replay-lnpc` written (86 modules
+    from `oleans-lnfapi4`, precheck passed). **Its downstream overlaps #175's** (`SpaceComplexity`'s
+    `ConfigGraph`, `Codec/*`, …): whichever merges second takes a merged-tree replay of the overlap.
+    Next: its screen, gate 88.
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`

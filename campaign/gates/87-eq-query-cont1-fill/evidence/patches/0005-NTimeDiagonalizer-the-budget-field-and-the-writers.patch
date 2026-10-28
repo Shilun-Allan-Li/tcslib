@@ -1,0 +1,310 @@
+From 6bf47c844da459438ca140296a79547f99eeaa1d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 23:24:49 +0000
+Subject: [PATCH 5/9] NTimeDiagonalizer: the budget field and the writers
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`qy_mid_run`: from the middle writer's entry on an escape's tapes, the middle writer halts
+within `qyMidB` steps with the output `false :: ⟨⟨bits (g n), α⟩, 1^{n+1}⟩` (`g`'s input call,
+then the three emissions of the private emitter `qyEmitTM`). `qy_top_run`: from the top writer's entry
+with `1^{X - 1}` on tape 4, it halts within `qyTopB` steps with `true :: ⟨⟨bits (X²), α⟩, 1^a⟩`
+(the square's install call, then the emissions). The words are `qy_writer_word`
+(`pairEncode_eq` twice); a halting hosted phase is `qy_hosted_halt`. The Implementation status
+paragraph records the writers.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTj5speLTvae6QLXuLG
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 267 +++++++++++++++++-
+ 1 file changed, 265 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 9902e7c0..3b82d265 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -4783,6 +4783,268 @@ private theorem qy_top_code {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool}
+     ∅ (fun _ h => h)
+   exact ⟨_, by omega, seg1.trans seg2⟩
+ 
++/-! ### The budget field and the writer -/
++
++/-- Doubling twice is quadrupling: `(B.flatMap dbl).flatMap dbl = B.flatMap (replicate 4)`. -/
++private theorem qy_flatMap_dbl_dbl (B : List Bool) :
++    ((B.flatMap fun b => [b, b]).flatMap fun b => [b, b]) =
++      B.flatMap fun b => List.replicate (3 + 1) b := by
++  induction B with
++  | nil => rfl
++  | cons b B ih =>
++    rw [List.flatMap_cons, List.flatMap_append, ih, List.flatMap_cons]
++    rfl
++
++/-- **The writer's word** (L6's three emissions): the flag, the budget field's bits each written
++four times and `[false, false, true, true]`; the code's bits but the top one, doubled, and
++`[false, true]`; the tail. It is `b :: pairEncode (pairEncode B W.dropLast) N`. -/
++private theorem qy_writer_word (b : Bool) (B W N : List Bool) :
++    ((([] ++ [b] ++ qyBody false 3 B ++ [false, false, true, true]) ++ [] ++ qyBody true 1 W ++
++      [false, true]) ++ [] ++ qyBody false 0 N ++ []) =
++      b :: pairEncode (pairEncode B W.dropLast) N := by
++  have hN : (N.flatMap fun b => List.replicate (0 + 1) b) = N := by
++    induction N with
++    | nil => rfl
++    | cons c N ih =>
++      rw [List.flatMap_cons, ih]
++      rfl
++  have hW : (W.dropLast.flatMap fun b => List.replicate (1 + 1) b) =
++      W.dropLast.flatMap fun b => [b, b] := rfl
++  unfold qyBody
++  rw [if_neg Bool.false_ne_true, if_pos rfl, if_neg Bool.false_ne_true, hN, hW, pairEncode_eq,
++    pairEncode_eq, List.flatMap_append, List.flatMap_append, qy_flatMap_dbl_dbl]
++  simp
++
++/-- **A hosted phase that halts**: if phase `k` halts at time `t`, with no redirect before, the
++host halts at `t` with the phase's output. -/
++private theorem qy_hosted_halt {K : ℕ} {I : Type} {Ph : I → Type}
++    (M : (i : I) → MultiTapeTM K Bool (Ph i)) (q0 : Σ i, Ph i)
++    (red : (i : I) → Ph i → Option (Σ i, Ph i)) (k : I) {x : List Bool} (e : Ph k)
++    (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool)
++    (t : ℕ) (c' : Cfg K Bool (Ph k) x) (h : (M k).runFrom (qyC e ip T P o) t = c')
++    (hc : c'.state = none)
++    (hguard : ∀ u < t, ∀ s, ((M k).runFrom (qyC e ip T P o) u).state = some s → red k s = none) :
++    ((phaseHostTM M q0 red).runFrom (qyC ⟨k, e⟩ ip T P o) t).state = none ∧
++      ((phaseHostTM M q0 red).runFrom (qyC ⟨k, e⟩ ip T P o) t).output = c'.output := by
++  have H := phaseHostTM_run_le M q0 red k (qyC e ip T P o) t hguard t le_rfl
++  rw [qyC_mapState] at H
++  rw [H, h, Cfg.mapState_state, Cfg.mapState_output, hc]
++  exact ⟨rfl, rfl⟩
++
++/-- An emitter's run to its halt: the run of `qy_emit_run` and one more step (`qy_emit_halt`). -/
++private theorem qy_emit_stop {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : List Bool) (rr : ℕ)
++    (dl : Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)
++    (o : List Bool) (w : List Bool) (hT : T i = FinTM.bufferTape w) (hP : P i = 0) :
++    ∃ t ≤ pre.length + suf.length + 4 + w.length * (rr + 3),
++      ((qyEmitTM K i pre suf rr dl).runFrom (qyC (.pre 0) ip T P o) t).state = none ∧
++      ((qyEmitTM K i pre suf rr dl).runFrom (qyC (.pre 0) ip T P o) t).output =
++        o ++ pre ++ qyBody dl rr w ++ suf := by
++  obtain ⟨t, ht, hrun, -⟩ := qy_emit_run (x := x) i pre suf rr dl ip T P o w hT hP
++  have h1 := qy_emit_halt (x := x) i pre suf rr dl ip T
++    (Function.update P i w.length) (o ++ pre ++ qyBody dl rr w ++ suf)
++  refine ⟨t + 1, by omega, ?_⟩
++  rw [MultiTapeTM.runFrom_add, hrun]
++  exact h1
++
++/-- `g`'s call bank tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bCg_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.cg.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bCg i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The square's call bank tapes other than tape `0` are off the named tapes. -/
++private theorem QyKit.bPb_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.pb.k) (hi : (i : ℕ) ≠ 0)
++    (c : Fin 16) : κ.bPb i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
++
++/-- The middle writer's time bound: the seek, the code's calls, `g`'s call and the emissions. -/
++private def qyMidB {f g : ℕ → ℕ} (κ : QyKit f g) (n j : ℕ) : ℕ :=
++  κ.rC * (n + 4) + κ.abA * (j + 1) + κ.clA * (j + 2) + κ.cgA * (g n + 1) + 6 * g n +
++    4 * (j + 1) + 3 * (n + 1) + 30
++
++/-- The top writer's time bound: the code's calls, the square's call on `1^{X - 1}` and the
++emissions. -/
++private def qyTopB {f g : ℕ → ℕ} (κ : QyKit f g) (X a j : ℕ) : ℕ :=
++  κ.abA * (j + 1) + κ.clA * (j + 2) + κ.pbA * X ^ 3 + 6 * X ^ 2 + 4 * (j + 1) + 3 * a + 30
++
++/-- **The middle writer** (checkpoint 6): from its entry on an escape's tapes, it halts within
++`qyMidB` steps with the output `false :: ⟨⟨bits (g n), α⟩, 1^{n + 1}⟩`, `α` the bits of `j + 1`
++but the top one.
++
++**Proof sketch.** The head (`qy_mid_code`), then `g`'s input call (`qy_callHost` from the blank
++seam, `qy_blank_bank`) and the three emissions (`qy_emit_run`, the last to its halt by
++`qy_emit_stop` and `qy_hosted_halt`): `bits (g n)` each four times between the flag `false` and
++`[false, false, true, true]`; `bits (j + 1)` but its top bit, doubled, and `[false, true]`; the
++tail `1^{n + 1}` from tape `0`. The output is the word by `qy_writer_word`. -/
++private theorem qy_mid_run {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
++    (ip : Fin (x.length + 2)) (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ)
++    (hesc : QyEscT κ x.length a j k T P) :
++    ∃ t ≤ qyMidB κ x.length j,
++      ((qyMid κ).runFrom (qyC (x := x) ⟨.m0, κ.rE⟩ ip T P []) t).state = none ∧
++      ((qyMid κ).runFrom (qyC (x := x) ⟨.m0, κ.rE⟩ ip T P []) t).output =
++        false :: pairEncode (pairEncode (Nat.bits (g x.length)) (Nat.bits (j + 1)).dropLast)
++          (List.replicate (x.length + 1) true) := by
++  obtain ⟨t0, ht0, seg0⟩ := qy_mid_code κ (x := x) a j k ip T P hesc
++  obtain ⟨hT14, hP14⟩ := hesc.tp 14 (by decide)
++  obtain ⟨hT0, hP0⟩ := hesc.tp 0 (by decide)
++  obtain ⟨-, hP10⟩ := hesc.tp 10 (by decide)
++  set T₂ := Function.update T (κ.tp 10) (FinTM.bufferTape (Nat.bits (j + 1))) with hT₂
++  unfold qyMid at seg0 ⊢
++  -- m3: g's input call
++  obtain ⟨t3, ht3, hpos3, hcut3, hrun3⟩ := κ.cgS x
++  have hb14 : κ.bCg ⟨0, κ.cgK⟩ = κ.tp 14 := rfl
++  have c3 := qy_callHost κ.cg κ.cgK κ.bCg κ.cgE κ.cgX [] _ t3 hpos3 hcut3 hrun3 T₂ P []
++    (qy_blank_bank κ.bCg T₂ fun i => by
++      by_cases hi : (i : ℕ) = 0
++      · have e : i = ⟨0, κ.cgK⟩ := Fin.ext hi
++        rw [e, hb14, hT₂, Function.update_of_ne (κ.tp_ne (by decide)), hT14]
++        simp [qyLay, QyKit.tp_inj]
++      · rw [hT₂, Function.update_of_ne (κ.bCg_ne i hi 10)]
++        exact (hesc.bank _ _ _ _ _ (by omega) i hi).1)
++    (fun i => by
++      by_cases hi : (i : ℕ) = 0
++      · have e : i = ⟨0, κ.cgK⟩ := Fin.ext hi
++        rw [e, hb14]
++        exact hP14
++      · exact (hesc.bank _ _ _ _ _ (by omega) i hi).2)
++  rw [hb14] at c3
++  set T₃ := Function.update T₂ (κ.tp 14) (FinTM.bufferTape (Nat.bits (g x.length))) with hT₃
++  have seg3 := qy_hosted (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m3 (Sum.inl ()) (Sum.inr κ.cgX)
++    ⟨.m4, QyEm.pre 0⟩ 1 1 T₂ T₃ P P [] [] t3 c3.1 (by simp [qyMidRed])
++    (qy_guard_of_cut (Sum.inr κ.cgX) (qyMidRed κ .m3) (fun s hs => by simp [qyMidRed, hs]) c3.2)
++    ∅ (fun _ h => h)
++  -- m4: the flag, the budget field four times, the inner separator
++  obtain ⟨t4, ht4, c4, hcut4⟩ := qy_emit_run (x := x) (κ.tp 14) [false] [false, false, true, true]
++    3 false 1 T₃ P [] (Nat.bits (g x.length)) (by simp [hT₃]) hP14
++  set P₄ := Function.update P (κ.tp 14) ((Nat.bits (g x.length)).length : ℤ) with hP₄
++  have seg4 := qy_hosted (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m4 (.pre 0) .done
++    ⟨.m5, QyEm.pre 0⟩ 1 1 T₃ T₃ P P₄ [] _ t4 c4 (by simp [qyMidRed])
++    (qy_guard_of_cut QyEm.done (qyMidRed κ .m4) (fun s hs => by simp [qyMidRed, hs]) hcut4)
++    ∅ (fun _ h => h)
++  -- m5: the code doubled, the outer separator
++  obtain ⟨t5, ht5, c5, hcut5⟩ := qy_emit_run (x := x) (κ.tp 10) [] [false, true] 1 true 1 T₃ P₄
++    _ (Nat.bits (j + 1)) (by simp [hT₃, hT₂, QyKit.tp_inj])
++    (by rw [hP₄, Function.update_of_ne (κ.tp_ne (by decide))]; exact hP10)
++  set P₅ := Function.update P₄ (κ.tp 10) ((Nat.bits (j + 1)).length : ℤ) with hP₅
++  have seg5 := qy_hosted (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m5 (.pre 0) .done
++    ⟨.m6, QyEm.pre 0⟩ 1 1 T₃ T₃ P₄ P₅ _ _ t5 c5 (by simp [qyMidRed])
++    (qy_guard_of_cut QyEm.done (qyMidRed κ .m5) (fun s hs => by simp [qyMidRed, hs]) hcut5)
++    ∅ (fun _ h => h)
++  -- m6: the tail 1^{n+1}, and the halt
++  obtain ⟨t6, ht6, c6, c6o⟩ := qy_emit_stop (x := x) (κ.tp 0) [] [] 0 false 1 T₃ P₅ _
++    (List.replicate (x.length + 1) true)
++    (by
++      rw [hT₃, Function.update_of_ne (κ.tp_ne (by decide)), hT₂,
++        Function.update_of_ne (κ.tp_ne (by decide)), hT0]
++      simp [qyLay])
++    (by
++      rw [hP₅, Function.update_of_ne (κ.tp_ne (by decide)), hP₄,
++        Function.update_of_ne (κ.tp_ne (by decide))]
++      exact hP0)
++  have h6 := qy_hosted_halt (qyMidM κ) ⟨.m0, κ.rE⟩ (qyMidRed κ) .m6 (.pre 0) 1 T₃ P₅ _ t6 _ rfl
++    c6 (fun _ _ _ _ => by simp [qyMidRed])
++  have hseg := (segment_iff _ _ _ _ _ _).mp (seg0.trans (seg3.trans (seg4.trans seg5)))
++  refine ⟨t0 + (t3 + 1 + (t4 + 1 + (t5 + 1))) + t6, ?_, ?_⟩
++  · have hbg := length_bits_le_self (g x.length)
++    have hbj := length_bits_le_self (j + 1)
++    have ht3' : t3 ≤ κ.cgA * (g x.length + 1) := ht3
++    unfold qyMidB
++    simp only [List.length_cons, List.length_nil] at ht4 ht5 ht6
++    have e4 : (Nat.bits (g x.length)).length * (3 + 3) ≤ 6 * g x.length := by omega
++    have e5 : (Nat.bits (j + 1)).length * (1 + 3) ≤ 4 * (j + 1) := by omega
++    have e6 : (List.replicate (x.length + 1) true).length * (0 + 3) = 3 * (x.length + 1) := by
++      simp [mul_comm]
++    omega
++  · rw [MultiTapeTM.runFrom_add, hseg.1]
++    refine ⟨h6.1, ?_⟩
++    rw [h6.2, c6o, qy_writer_word]
++
++/-- **The top writer** (checkpoint 6): from its entry on an escape's tapes with `1^{F + a}` on
++tape `4` (`F = f a`, `a` the rung), it halts within `qyTopB` steps with the output
++`true :: ⟨⟨bits ((F + a + 1)²), α⟩, 1^a⟩`.
++
++**Proof sketch.** The head (`qy_top_code`), then the square's call on tape `4`
++(`qy_callHost`, `1^{F + a} ↦ bits ((F + a + 1)²)`) and the three emissions, as in
++`qy_mid_run`, with the flag `true` and the tail `1^a` from the rung's tape `2`. -/
++private theorem qy_top_run {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a j k : ℕ)
++    (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ) (hesc : QyEscT κ x.length a j k T P)
++    (h4 : T (κ.tp 4) = FinTM.bufferTape (List.replicate (f a + a) true)) (hP4 : P (κ.tp 4) = 0) :
++    ∃ t ≤ qyTopB κ (f a + a + 1) a j,
++      ((qyTop κ).runFrom (qyC (x := x) ⟨.t1, Sum.inl ()⟩ 1 T P []) t).state = none ∧
++      ((qyTop κ).runFrom (qyC (x := x) ⟨.t1, Sum.inl ()⟩ 1 T P []) t).output =
++        true :: pairEncode (pairEncode (Nat.bits ((f a + a + 1) ^ 2)) (Nat.bits (j + 1)).dropLast)
++          (List.replicate a true) := by
++  obtain ⟨t0, ht0, seg0⟩ := qy_top_code κ (x := x) a j k T P hesc
++  obtain ⟨hT2, hP2⟩ := hesc.tp 2 (by decide)
++  obtain ⟨-, hP10⟩ := hesc.tp 10 (by decide)
++  set T₂ := Function.update T (κ.tp 10) (FinTM.bufferTape (Nat.bits (j + 1))) with hT₂
++  unfold qyTop at seg0 ⊢
++  -- t3: the square's call on 1^{F + a}
++  obtain ⟨t3, ht3, hpos3, hcut3, hrun3⟩ := κ.pbS x (List.replicate (f a + a) true)
++  simp only [List.length_replicate] at ht3 hrun3
++  have hb4 : κ.bPb ⟨0, κ.pbK⟩ = κ.tp 4 := rfl
++  have c3 := qy_callHost κ.pb κ.pbK κ.bPb κ.pbE κ.pbX (List.replicate (f a + a) true) _ t3 hpos3
++    hcut3 hrun3 T₂ P []
++    (qy_arg_bank κ.bPb κ.pbK T₂ _
++      (by rw [hb4, hT₂, Function.update_of_ne (κ.tp_ne (by decide))]; exact h4)
++      (fun i hi => by
++        rw [hT₂, Function.update_of_ne (κ.bPb_ne i hi 10)]
++        exact (hesc.bank _ _ _ _ _ (by omega) i hi).1))
++    (fun i => by
++      by_cases hi : (i : ℕ) = 0
++      · have e : i = ⟨0, κ.pbK⟩ := Fin.ext hi
++        rw [e, hb4]
++        exact hP4
++      · exact (hesc.bank _ _ _ _ _ (by omega) i hi).2)
++  rw [hb4] at c3
++  set T₃ := Function.update T₂ (κ.tp 4) (FinTM.bufferTape (Nat.bits ((f a + a + 1) ^ 2)))
++    with hT₃
++  have seg3 := qy_hosted (qyTopM κ) ⟨.t1, Sum.inl ()⟩ (qyTopRed κ) .t3 (Sum.inl ())
++    (Sum.inr κ.pbX) ⟨.t4, QyEm.pre 0⟩ 1 1 T₂ T₃ P P [] [] t3 c3.1 (by simp [qyTopRed])
++    (qy_guard_of_cut (Sum.inr κ.pbX) (qyTopRed κ .t3) (fun s hs => by simp [qyTopRed, hs]) c3.2)
++    ∅ (fun _ h => h)
++  -- t4: the flag, the budget field four times, the inner separator
++  obtain ⟨t4, ht4, c4, hcut4⟩ := qy_emit_run (x := x) (κ.tp 4) [true] [false, false, true, true]
++    3 false 1 T₃ P [] (Nat.bits ((f a + a + 1) ^ 2)) (by simp [hT₃]) hP4
++  set P₄ := Function.update P (κ.tp 4) ((Nat.bits ((f a + a + 1) ^ 2)).length : ℤ) with hP₄
++  have seg4 := qy_hosted (qyTopM κ) ⟨.t1, Sum.inl ()⟩ (qyTopRed κ) .t4 (.pre 0) .done
++    ⟨.t5, QyEm.pre 0⟩ 1 1 T₃ T₃ P P₄ [] _ t4 c4 (by simp [qyTopRed])
++    (qy_guard_of_cut QyEm.done (qyTopRed κ .t4) (fun s hs => by simp [qyTopRed, hs]) hcut4)
++    ∅ (fun _ h => h)
++  -- t5: the code doubled, the outer separator
++  obtain ⟨t5, ht5, c5, hcut5⟩ := qy_emit_run (x := x) (κ.tp 10) [] [false, true] 1 true 1 T₃ P₄
++    _ (Nat.bits (j + 1)) (by simp [hT₃, hT₂, QyKit.tp_inj])
++    (by rw [hP₄, Function.update_of_ne (κ.tp_ne (by decide))]; exact hP10)
++  set P₅ := Function.update P₄ (κ.tp 10) ((Nat.bits (j + 1)).length : ℤ) with hP₅
++  have seg5 := qy_hosted (qyTopM κ) ⟨.t1, Sum.inl ()⟩ (qyTopRed κ) .t5 (.pre 0) .done
++    ⟨.t6, QyEm.pre 0⟩ 1 1 T₃ T₃ P₄ P₅ _ _ t5 c5 (by simp [qyTopRed])
++    (qy_guard_of_cut QyEm.done (qyTopRed κ .t5) (fun s hs => by simp [qyTopRed, hs]) hcut5)
++    ∅ (fun _ h => h)
++  -- t6: the tail 1^a from the rung, and the halt
++  obtain ⟨t6, ht6, c6, c6o⟩ := qy_emit_stop (x := x) (κ.tp 2) [] [] 0 false 1 T₃ P₅ _
++    (List.replicate a true)
++    (by
++      rw [hT₃, Function.update_of_ne (κ.tp_ne (by decide)), hT₂,
++        Function.update_of_ne (κ.tp_ne (by decide)), hT2]
++      simp [qyLay, QyKit.tp_inj])
++    (by
++      rw [hP₅, Function.update_of_ne (κ.tp_ne (by decide)), hP₄,
++        Function.update_of_ne (κ.tp_ne (by decide))]
++      exact hP2)
++  have h6 := qy_hosted_halt (qyTopM κ) ⟨.t1, Sum.inl ()⟩ (qyTopRed κ) .t6 (.pre 0) 1 T₃ P₅ _ t6 _
++    rfl c6 (fun _ _ _ _ => by simp [qyTopRed])
++  have hseg := (segment_iff _ _ _ _ _ _).mp (seg0.trans (seg3.trans (seg4.trans seg5)))
++  refine ⟨t0 + (t3 + 1 + (t4 + 1 + (t5 + 1))) + t6, ?_, ?_⟩
++  · have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
++    have hbj := length_bits_le_self (j + 1)
++    unfold qyTopB
++    simp only [List.length_cons, List.length_nil] at ht4 ht5 ht6
++    have e4 : (Nat.bits ((f a + a + 1) ^ 2)).length * (3 + 3) ≤ 6 * (f a + a + 1) ^ 2 := by
++      omega
++    have e5 : (Nat.bits (j + 1)).length * (1 + 3) ≤ 4 * (j + 1) := by omega
++    have e6 : (List.replicate a true).length * (0 + 3) = 3 * a := by simp [mul_comm]
++    omega
++  · rw [MultiTapeTM.runFrom_add, hseg.1]
++    refine ⟨h6.1, ?_⟩
++    rw [h6.2, c6o, qy_writer_word]
++
+ /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
+ time-constructible `f` and `g` there is a deterministic machine computing the stage query within
+ `C · (g n + 1)`.
+@@ -4812,8 +5074,9 @@ linear time (`bits n` by the input call, `1^{n+1}`, the first rung, the test `n
+ tape and the all-ones counter, as a run of its phase host), one round of its locator, as a round
+ at the locator's anchor with its three escapes (interior, top, timeout) and its cost, the
+ locator's whole run: from the first rung to an escape at the input's stage, with the top flag,
+-within a linear bound, and, in both writers, the input head returned to `1` and `bits (j + 1)`
+-for the stage code. The budget field and the writer's emissions remain open. -/
++within a linear bound, and both writers: from an escape, each halts with the query's word as its
++output (the flag, the budget field `bits (g n)` or `bits T*`, the code and the tail), within its
++bound. The assembly of the main machine and its time bound remain open. -/
+ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) :
+     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,339 @@
+From 5634dbf9fc0638c5ce065883e8c0106c75030ca0 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 23:36:48 +0000
+Subject: [PATCH 6/9] NTimeDiagonalizer: the main machine; exists_queryTM
+ proved
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`qy_main` proves `hmain`: the main machine `qyM₁ κ` computes the query on the unary word of
+every input's length within `qyMainA κ · (g n + 1)` steps. On inputs of length `n ≥ 3` it hosts
+the setup, the locator and the writer its escape selects, run to the halt (`qy_main_long`); on
+`n ≤ 2` the setup's short path and the empty emission (`qy_main_short`). The initial
+configuration is the blank seam at the setup's entry (`qy_initCfg`). `exists_queryTM`'s body is
+now `exact qy_main hf hg` after the landed `suffices`; its axioms are
+`[propext, Classical.choice, Quot.sound]`. The Implementation status paragraph records the
+proof.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTj5speLTvae6QLXuLG
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 287 +++++++++++++++++-
+ 1 file changed, 277 insertions(+), 10 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 3b82d265..466f380c 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -5045,6 +5045,274 @@ private theorem qy_top_run {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool}
+     refine ⟨h6.1, ?_⟩
+     rw [h6.2, c6o, qy_writer_word]
+ 
++/-! ### The main machine `M₁` -/
++
++/-- `M₁`'s initial configuration is the blank seam at the setup's entry. -/
++private theorem qy_initCfg {f g : ℕ → ℕ} (κ : QyKit f g) (x : List Bool) :
++    (qyM₁ κ).tm.initCfg x =
++      qyC ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ 1 (fun _ => FinTM.bufferTape []) (fun _ => 0) [] := by
++  rw [initCfg_ofWords]
++  show Cfg.ofWords (phaseHostTM (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ)).q₀
++    (fun _ => []) = _
++  rw [phaseHostTM_q₀]
++  apply Cfg.ext
++  · rw [Cfg.ofWords_state]
++    rfl
++  · rw [Cfg.ofWords_inputPos]
++    rfl
++  · funext j q
++    rw [Cfg.ofWords_workTapes]
++    rfl
++  · funext j
++    rw [Cfg.ofWords_workTapePos]
++    rfl
++  · rw [Cfg.ofWords_output]
++    rfl
++
++/-- `M₁` dispatches from its setup only at the setup's exits. -/
++private theorem qy_mainRed_setup {f g : ℕ → ℕ} (κ : QyKit f g) (s : Σ i, QySPh κ i)
++    (hs : some s ∉ qySetF κ) : qyMainRed κ .setup s = none := by
++  rcases s with ⟨i, s⟩
++  cases i
++  case s10 =>
++    have : s ≠ SweepPhase.done := fun h => hs (by subst h; simp [qySetF])
++    simp [qyMainRed, this]
++  case s6 =>
++    have h1 : s ≠ QyCmp.done .lt := fun h => hs (by subst h; simp [qySetF])
++    have h2 : s ≠ QyCmp.done .eq := fun h => hs (by subst h; simp [qySetF])
++    simp [qyMainRed, h1, h2]
++  all_goals simp [qyMainRed]
++
++/-- `M₁` dispatches from its locator only at the locator's escapes. -/
++private theorem qy_mainRed_loc {f g : ℕ → ℕ} (κ : QyKit f g) (s : Σ i, QyLPh κ i)
++    (hs : some s ∉ qyLocE κ) : qyMainRed κ .loc s = none := by
++  rcases s with ⟨i, s⟩
++  have he : i.isEsc = false := by
++    by_contra h
++    exact hs ⟨_, rfl, by simpa using h⟩
++  cases i <;> simp_all [qyMainRed, QyLK.isEsc]
++
++/-- The writers' constant: the coefficient of `g n + 1` in either writer. -/
++private def qyWk {f g : ℕ → ℕ} (κ : QyKit f g) : ℕ :=
++  4 * κ.rC + κ.abA + 2 * κ.clA + κ.cgA + κ.pbA + 60
++
++/-- `M₁`'s constant `A`: the setup's, the locator's and the writers'. -/
++private def qyMainA {f g : ℕ → ℕ} (κ : QyKit f g) : ℕ :=
++  (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) + qyLoopA κ + qyWk κ + 8
++
++/-- The middle writer's bound is linear in `g n + 1` when `j ≤ n ≤ g n`. -/
++private theorem qy_midB_le {f g : ℕ → ℕ} (κ : QyKit f g) (n j : ℕ) (hj : j ≤ n) (hg : n ≤ g n) :
++    qyMidB κ n j ≤ qyWk κ * (g n + 1) := by
++  unfold qyMidB qyWk
++  have e1 : κ.rC * (n + 4) ≤ 4 * (κ.rC * (g n + 1)) := by
++    calc κ.rC * (n + 4) ≤ κ.rC * (4 * (g n + 1)) := Nat.mul_le_mul_left _ (by omega)
++      _ = 4 * (κ.rC * (g n + 1)) := by ring
++  have e2 : κ.abA * (j + 1) ≤ κ.abA * (g n + 1) := Nat.mul_le_mul_left _ (by omega)
++  have e3 : κ.clA * (j + 2) ≤ 2 * (κ.clA * (g n + 1)) := by
++    calc κ.clA * (j + 2) ≤ κ.clA * (2 * (g n + 1)) := Nat.mul_le_mul_left _ (by omega)
++      _ = 2 * (κ.clA * (g n + 1)) := by ring
++  have e4 : κ.pbA * 0 ≤ κ.pbA * (g n + 1) := Nat.mul_le_mul_left _ (by omega)
++  have e5 : (4 * κ.rC + κ.abA + 2 * κ.clA + κ.cgA + κ.pbA + 60) * (g n + 1) =
++      4 * (κ.rC * (g n + 1)) + κ.abA * (g n + 1) + 2 * (κ.clA * (g n + 1)) +
++        κ.cgA * (g n + 1) + κ.pbA * (g n + 1) + 60 * (g n + 1) := by ring
++  rw [e5]
++  omega
++
++/-- The top writer's bound is linear in `n + 1` when `X³, X², a, j ≤ n`. -/
++private theorem qy_topB_le {f g : ℕ → ℕ} (κ : QyKit f g) (n X a j : ℕ) (hX3 : X ^ 3 ≤ n)
++    (hX2 : X ^ 2 ≤ n) (ha : a ≤ n) (hj : j ≤ n) :
++    qyTopB κ X a j ≤ qyWk κ * (n + 1) := by
++  unfold qyTopB qyWk
++  have e2 : κ.abA * (j + 1) ≤ κ.abA * (n + 1) := Nat.mul_le_mul_left _ (by omega)
++  have e3 : κ.clA * (j + 2) ≤ 2 * (κ.clA * (n + 1)) := by
++    calc κ.clA * (j + 2) ≤ κ.clA * (2 * (n + 1)) := Nat.mul_le_mul_left _ (by omega)
++      _ = 2 * (κ.clA * (n + 1)) := by ring
++  have e4 : κ.pbA * X ^ 3 ≤ κ.pbA * (n + 1) := Nat.mul_le_mul_left _ (by omega)
++  have e5 : (4 * κ.rC + κ.abA + 2 * κ.clA + κ.cgA + κ.pbA + 60) * (n + 1) =
++      4 * (κ.rC * (n + 1)) + κ.abA * (n + 1) + 2 * (κ.clA * (n + 1)) +
++        κ.cgA * (n + 1) + κ.pbA * (n + 1) + 60 * (n + 1) := by ring
++  rw [e5]
++  omega
++
++/-- **`M₁` on inputs of length `n ≥ 3`** (checkpoint 7): from its initial configuration it halts
++within `qyMainA (g n + 1)` steps with the stage query of `1ⁿ` as its output.
++
++**Proof sketch.** Three hosted phases of `M₁` (`qy_hosted`, each guard read off the phase's
++segment by `qy_mainRed_setup`, `qy_mainRed_loc`): the setup (`qy_setup_long`), the locator
++(`qy_loop`), and the writer its escape selects, run to its halt (`qy_mid_run` or `qy_top_run`,
++then `qy_hosted_halt`). The output is `query_eq`'s word: in the middle `n < ℓ_{s+1}`, at the top
++`n = ℓ_{s+1}` with `X² = budget f ℓ_s` (`budget_eq`), the code `stageCode_eq`. The time: the
++setup's `qySetB`, the locator's `qyLoopA (n + 1)`, the writer's (`qy_midB_le`, `qy_topB_le`, with
++`j ≤ s < n` and, at the top, `X⁴ < 2 ^ X⁴ = n`), and `n ≤ g n`. -/
++private theorem qy_main_long {f g : ℕ → ℕ} (κ : QyKit f g) (hle : ∀ n, n ≤ g n) {x : List Bool}
++    (hn : 3 ≤ x.length) :
++    ∃ t ≤ qyMainA κ * (g x.length + 1),
++      ((qyM₁ κ).tm.runFrom ((qyM₁ κ).tm.initCfg x) t).state = none ∧
++      ((qyM₁ κ).tm.runFrom ((qyM₁ κ).tm.initCfg x) t).output =
++        query f g (List.replicate x.length true) := by
++  rw [qy_initCfg]
++  show ∃ t ≤ _, ((phaseHostTM (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ)).runFrom
++    _ t).state = none ∧ ((phaseHostTM (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩
++      (qyMainRed κ)).runFrom _ t).output = _
++  -- the setup
++  obtain ⟨t1, ht1, seg1⟩ := qy_setup_long κ hn
++  obtain ⟨h1, hc1, -⟩ := (segment_iff _ _ _ _ _ _).mp seg1
++  have hs1 := qy_hosted (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .setup
++    ⟨.s1, Sum.inl ()⟩ ⟨.s10, SweepPhase.done⟩ ⟨.loc, ⟨.anc, SweepPhase.sweep⟩⟩ 1 1 _ _ _ _ [] []
++    t1 h1 (by simp [qyMainRed]) (fun u hu s hs => qy_mainRed_setup κ s (hs ▸ hc1 u hu)) ∅
++    (fun _ h => h)
++  -- the locator
++  obtain ⟨t2, ht2, c', seg2, hcase⟩ := qy_loop κ hn
++  have hq0 : qyAt κ x 0 = qyC ⟨.anc, SweepPhase.sweep⟩ 1
++      (fun t => FinTM.bufferTape (qyLay κ x.length 3 0 0 t)) (fun _ => 0) [] := by
++    unfold qyAt qyAnc qyLayT
++    rw [ladder_zero, Nat.unpair_zero]
++    rfl
++  rw [hq0] at seg2
++  obtain ⟨h2, hc2, -⟩ := (segment_iff _ _ _ _ _ _).mp seg2
++  have hs := stage_spec f hn
++  have hlog := qy_stage_lt_log f hn
++  have hlogn := Nat.log_le_self 2 x.length
++  have hj := Nat.unpair_left_le (stage f x.length)
++  have hS : qySetB κ x.length ≤
++      (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) * (g x.length + 1) := by
++    unfold qySetB
++    exact Nat.mul_le_mul_left _ (by have := hle x.length; omega)
++  have hL : qyLoopA κ * (x.length + 1) ≤ qyLoopA κ * (g x.length + 1) :=
++    Nat.mul_le_mul_left _ (by have := hle x.length; omega)
++  have hA : qyMainA κ * (g x.length + 1) =
++      (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) * (g x.length + 1) +
++        qyLoopA κ * (g x.length + 1) + qyWk κ * (g x.length + 1) + 8 * (g x.length + 1) := by
++    unfold qyMainA
++    ring
++  rcases hcase with ⟨hI, ip, T, P, hc', hesc⟩ | ⟨hT, T, P, hc', hesc, h4, hP4⟩
++  · -- the middle
++    have hmid : Segment (phaseHostTM (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ)) ∅
++        (fun _ => True) (qyC ⟨.loc, ⟨.anc, SweepPhase.sweep⟩⟩ 1
++          (fun t => FinTM.bufferTape (qyLay κ x.length 3 0 0 t)) (fun _ => 0) [])
++        (qyC ⟨.mid, ⟨.m0, κ.rE⟩⟩ ip T P []) (t2 + 1) := by
++      rcases hc' with hc' | hc' <;> subst hc' <;>
++        exact qy_hosted (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .loc
++          ⟨.anc, SweepPhase.sweep⟩ _ ⟨.mid, ⟨.m0, κ.rE⟩⟩ 1 ip _ T _ P [] [] t2 h2
++          (by simp [qyMainRed]) (fun u hu s hs => qy_mainRed_loc κ s (hs ▸ hc2 u hu)) ∅
++          (fun _ h => h)
++    obtain ⟨t3, ht3, hh3, ho3⟩ := qy_mid_run κ (x := x) _ _ _ ip T P hesc
++    have h3 := qy_hosted_halt (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .mid
++      ⟨.m0, κ.rE⟩ ip T P [] t3 _ rfl hh3 (fun _ _ _ _ => by simp [qyMainRed])
++    have hseg := (segment_iff _ _ _ _ _ _).mp (hs1.trans hmid)
++    refine ⟨t1 + 1 + (t2 + 1) + t3, ?_, ?_⟩
++    · have hW := qy_midB_le κ x.length (Nat.unpair (stage f x.length)).1 (by omega)
++        (hle x.length)
++      rw [hA]
++      omega
++    · rw [MultiTapeTM.runFrom_add]
++      erw [hseg.1]
++      refine ⟨h3.1, ?_⟩
++      rw [h3.2, ho3, query_eq f g hn, if_neg (by omega), stageCode_eq]
++  · -- the top
++    subst hc'
++    have htop := qy_hosted (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .loc
++      ⟨.anc, SweepPhase.sweep⟩ _ ⟨.top, ⟨.t1, Sum.inl ()⟩⟩ 1 1 _ T _ P [] [] t2 h2
++      (by simp [qyMainRed]) (fun u hu s hs => qy_mainRed_loc κ s (hs ▸ hc2 u hu)) ∅
++      (fun _ h => h)
++    obtain ⟨t3, ht3, hh3, ho3⟩ := qy_top_run κ (x := x) _ _ _ T P hesc h4 hP4
++    have h3 := qy_hosted_halt (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .top
++      ⟨.t1, Sum.inl ()⟩ 1 T P [] t3 _ rfl hh3 (fun _ _ _ _ => by simp [qyMainRed])
++    have hseg := (segment_iff _ _ _ _ _ _).mp (hs1.trans htop)
++    refine ⟨t1 + 1 + (t2 + 1) + t3, ?_, ?_⟩
++    · have hX := qy_ladder_succ_eq f (stage f x.length)
++      rw [hT] at hX
++      set X := f (ladder f (stage f x.length) + 1) + (ladder f (stage f x.length) + 1) + 1
++        with hXd
++      have hX4 : X ^ 4 < x.length := by
++        rw [hX]
++        exact Nat.lt_two_pow_self
++      have hX1 : 1 ≤ X := by omega
++      have hX3 : X ^ 3 ≤ x.length := by
++        have : X ^ 3 ≤ X ^ 4 := Nat.pow_le_pow_right hX1 (by norm_num)
++        omega
++      have hX2 : X ^ 2 ≤ x.length := by
++        have : X ^ 2 ≤ X ^ 4 := Nat.pow_le_pow_right hX1 (by norm_num)
++        omega
++      have hW := qy_topB_le κ x.length X (ladder f (stage f x.length) + 1)
++        (Nat.unpair (stage f x.length)).1 hX3 hX2 (by omega) (by omega)
++      have hW' : qyWk κ * (x.length + 1) ≤ qyWk κ * (g x.length + 1) :=
++        Nat.mul_le_mul_left _ (by have := hle x.length; omega)
++      rw [hA]
++      omega
++    · rw [MultiTapeTM.runFrom_add]
++      erw [hseg.1]
++      refine ⟨h3.1, ?_⟩
++      rw [h3.2, ho3, query_eq f g hn, if_pos hT.symm, stageCode_eq, budget_eq]
++
++/-- **`M₁` on inputs of length `n ≤ 2`** (checkpoint 7): from its initial configuration it halts
++within `qyMainA (g n + 1)` steps with the empty output, the stage query of `1ⁿ`.
++
++**Proof sketch.** The setup's short path (`qy_setup_short`), hosted; then the halting phase, an
++emitter of nothing (`qy_emit_stop`, `qy_hosted_halt`). The query is `[]` off its guard
++(`query_of_not_guard`). -/
++private theorem qy_main_short {f g : ℕ → ℕ} (κ : QyKit f g) (hle : ∀ n, n ≤ g n) {x : List Bool}
++    (hn : x.length ≤ 2) :
++    ∃ t ≤ qyMainA κ * (g x.length + 1),
++      ((qyM₁ κ).tm.runFrom ((qyM₁ κ).tm.initCfg x) t).state = none ∧
++      ((qyM₁ κ).tm.runFrom ((qyM₁ κ).tm.initCfg x) t).output =
++        query f g (List.replicate x.length true) := by
++  rw [qy_initCfg]
++  show ∃ t ≤ _, ((phaseHostTM (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ)).runFrom
++    _ t).state = none ∧ ((phaseHostTM (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩
++      (qyMainRed κ)).runFrom _ t).output = _
++  obtain ⟨t1, ht1, v, hv, seg1⟩ := qy_setup_short κ hn
++  obtain ⟨h1, hc1, -⟩ := (segment_iff _ _ _ _ _ _).mp seg1
++  have hs1 := qy_hosted (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .setup
++    ⟨.s1, Sum.inl ()⟩ ⟨.s6, QyCmp.done v⟩ ⟨.halt, QyEm.pre 0⟩ 1 1 _ _ _ _ [] [] t1 h1
++    (by rcases hv with rfl | rfl <;> simp [qyMainRed])
++    (fun u hu s hs => qy_mainRed_setup κ s (hs ▸ hc1 u hu)) ∅ (fun _ h => h)
++  obtain ⟨t2, ht2, hh2, ho2⟩ := qy_emit_stop (x := x) (κ.tp 15) [] [] 0 false 1 (qySetT5 κ x.length)
++    (fun _ => 0) [] [] (by simp [qySetT5, QyKit.tp_inj]) rfl
++  have h2 := qy_hosted_halt (qyMainM κ) ⟨.setup, ⟨.s1, Sum.inl ()⟩⟩ (qyMainRed κ) .halt
++    (QyEm.pre 0) 1 (qySetT5 κ x.length) (fun _ => 0) [] t2 _ rfl hh2
++    (fun _ _ _ _ => by simp [qyMainRed])
++  have hseg := (segment_iff _ _ _ _ _ _).mp hs1
++  refine ⟨t1 + 1 + t2, ?_, ?_⟩
++  · simp only [List.length_nil, zero_mul] at ht2
++    have hS : qySetB κ x.length ≤
++        (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) * (g x.length + 1) := by
++      unfold qySetB
++      exact Nat.mul_le_mul_left _ (by have := hle x.length; omega)
++    have hA : qyMainA κ * (g x.length + 1) =
++        (κ.cbA + κ.prA + 2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 60) * (g x.length + 1) +
++          qyLoopA κ * (g x.length + 1) + qyWk κ * (g x.length + 1) + 8 * (g x.length + 1) := by
++      unfold qyMainA
++      ring
++    rw [hA]
++    omega
++  · rw [MultiTapeTM.runFrom_add]
++    erw [hseg.1]
++    refine ⟨h2.1, ?_⟩
++    rw [h2.2, ho2, query_of_not_guard f g (by simp only [List.length_replicate]; omega)]
++    simp [qyBody]
++
++/-- **The main machine computes the query on the unary word of every input's length**
++(checkpoint 7, the target's `hmain`): for time-constructible `f` and `g`, `M₁` halts on every
++input `x` within `qyMainA (g |x| + 1)` steps with `query f g 1^{|x|}`.
++
++**Proof sketch.** The kit (`qy_kit_exists`); `n ≤ g n` from `Complexity.timeConstructible_iff`;
++on each input, `qy_main_long` or `qy_main_short`, read through `Turing.FinTM.computesInTime_iff`
++and widened to the bound by `Turing.FinTM.ComputesInTime.mono`. -/
++private theorem qy_main {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
++    (hg : Complexity.TimeConstructible g) :
++    ∃ (M : FinTM Bool) (A : ℕ),
++      M.ComputesFunInTime (fun x => query f g (List.replicate x.length true))
++        (fun n => A * (g n + 1)) := by
++  obtain ⟨κ⟩ := qy_kit_exists hf hg
++  have hle := ((Complexity.timeConstructible_iff g).mp hg).1
++  refine ⟨qyM₁ κ, qyMainA κ, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
++  rcases Nat.lt_or_ge x.length 3 with h | h
++  · obtain ⟨t, ht, h1, h2⟩ := qy_main_short κ hle (x := x) (by omega)
++    exact ((FinTM.computesInTime_iff _ _ _ _).mpr ⟨h1, h2⟩).mono ht
++  · obtain ⟨t, ht, h1, h2⟩ := qy_main_long κ hle h
++    exact ((FinTM.computesInTime_iff _ _ _ _).mpr ⟨h1, h2⟩).mono ht
++
+ /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
+ time-constructible `f` and `g` there is a deterministic machine computing the stage query within
+ `C · (g n + 1)`.
+@@ -5068,15 +5336,14 @@ locator is `O(n + 1) ≤ O(g n + 1)` by `n ≤ g n`, and `g`'s witness and the m
+ fixed-degree binary arithmetic, the `⌊log₂⌋` comparison, the power-of-two test, `Nat.unpair` on
+ binary words, the unranking); the `pairEncode` writer; the ledger.
+ 
+-**Implementation status.** The linear-time guard and the reduction to a machine computing the
+-query on the unary word of every input's length are proved. So are the main machine's setup in
+-linear time (`bits n` by the input call, `1^{n+1}`, the first rung, the test `n ≥ 3`, the seek's
+-tape and the all-ones counter, as a run of its phase host), one round of its locator, as a round
+-at the locator's anchor with its three escapes (interior, top, timeout) and its cost, the
+-locator's whole run: from the first rung to an escape at the input's stage, with the top flag,
+-within a linear bound, and both writers: from an escape, each halts with the query's word as its
+-output (the flag, the budget field `bits (g n)` or `bits T*`, the code and the tail), within its
+-bound. The assembly of the main machine and its time bound remain open. -/
++**Implementation status.** Proved. The guard reduces the query to a machine computing it on the
++unary word of every input's length. That machine is a phase host of: a linear-time setup
++(`bits n` by the input call, `1^{n+1}`, the first rung, the test `n ≥ 3`, the input seek's tape
++and an all-ones clock counter); the locator, whose rounds run `f`'s witness under the step clock
++on the rung `1^a` and build the next rung `2 ^ (f a + a + 1)⁴` in unary only when it is at most
++`n`, each a round at the locator's anchor with interior, top and timeout escapes, the passed
++rungs summing to less than `2n`; and two writers, which seek the input head home, compute the
++stage code, run `g`'s witness or the budget's square, and emit the `pairEncode` word. -/
+ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) :
+     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
+@@ -5085,7 +5352,7 @@ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+         (fun n => A * (g n + 1)) by
+     obtain ⟨M, A, hM⟩ := hmain
+     exact qy_query_of_main hg hM
+-  sorry
++  exact qy_main hf hg
+ 
+ /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
+ P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
+-- 
+2.50.1 (Apple Git-155)
+

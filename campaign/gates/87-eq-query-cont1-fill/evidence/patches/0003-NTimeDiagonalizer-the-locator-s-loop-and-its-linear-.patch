@@ -1,0 +1,271 @@
+From 3f0d237bf6d31e49cfba15390e50e79461aeec42 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Tue, 27 Oct 2026 23:05:19 +0000
+Subject: [PATCH 3/9] NTimeDiagonalizer: the locator's loop and its linear
+ ledger
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+`qy_loop`: on inputs of length `n ≥ 3`, from the locator's anchor at the first rung, the
+locator runs, avoiding its escapes before the end, to an escape at the stage `stage f n`: the
+interior or timeout escape when `n < ℓ_{s+1}`, the top escape when `n = ℓ_{s+1}` (with
+`1^{X - 1}` on tape 4), the tapes off the round's scratch on the anchor layout of that stage,
+within `qyLoopA κ (n + 1)` steps. The passed rounds are iterated by `Turing.Round.iterate_seq`
+(their times chosen first), the stopping round appended by `Turing.Round.segment`. The ledger:
+the passed rungs sum to at most `2 ℓ_s` (`qy_ledger`), the polylogarithmic terms are linear by
+`x ^ 6 ≤ 6 ^ 6 · 2 ^ x` (`qy_pow6_le`), and the stopping round is linear in `n` and the
+clock's budget. The Implementation status paragraph records the loop.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTj5speLTvae6QLXuLG
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 225 +++++++++++++++++-
+ 1 file changed, 221 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index e77bf07f..80b0f1e2 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -4329,6 +4329,223 @@ private theorem qy_round {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (a
+     unfold qyRndS
+     omega
+ 
++/-! ### The locator's loop and its ledger -/
++
++/-- **A sixth power is at most exponential**: `x ^ 6 ≤ 6 ^ 6 · 2 ^ x`. -/
++private theorem qy_pow6_le (x : ℕ) : x ^ 6 ≤ 6 ^ 6 * 2 ^ x := by
++  have hq : x / 6 + 1 ≤ 2 ^ (x / 6) := Nat.lt_two_pow_self
++  have h1 : x ≤ 6 * 2 ^ (x / 6) := by omega
++  have h2 : 2 ^ (6 * (x / 6)) ≤ 2 ^ x := Nat.pow_le_pow_right (by norm_num) (Nat.mul_div_le x 6)
++  calc x ^ 6 ≤ (6 * 2 ^ (x / 6)) ^ 6 := Nat.pow_le_pow_left h1 6
++    _ = 6 ^ 6 * 2 ^ (6 * (x / 6)) := by rw [mul_pow, ← pow_mul, mul_comm (x / 6) 6]
++    _ ≤ 6 ^ 6 * 2 ^ x := Nat.mul_le_mul_left _ h2
++
++/-- A sum of an affine family: `∑_{r < s} (11 u r + c) = 11 ∑_{r < s} u r + s c`. -/
++private theorem qy_sum_affine (u : ℕ → ℕ) (c s : ℕ) :
++    ∑ r ∈ Finset.range s, (11 * u r + c) = 11 * ∑ r ∈ Finset.range s, u r + s * c := by
++  induction s with
++  | zero => simp
++  | succ s ih =>
++    rw [Finset.sum_range_succ, Finset.sum_range_succ, ih]
++    ring
++
++/-- The kit's polylogarithmic constant: the coefficient of `(|bits n| + 1) ^ 5` in a round. -/
++private def qyCk {f g : ℕ → ℕ} (κ : QyKit f g) : ℕ :=
++  210 + 4 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length + 5 * (κ.cfA * (κ.cfc + 3)) + κ.puA +
++    3 * κ.abA
++
++/-- The kit's linear constant: the coefficient of `n + 1` in a stopping round. -/
++private def qyDk {f g : ℕ → ℕ} (κ : QyKit f g) : ℕ :=
++  134 + 10 * 2 ^ (Nat.bits (κ.cfA * (κ.cfc + 2))).length +
++    2 * (Nat.bits (κ.cfA * (κ.cfc + 2))).length
++
++/-- The locator's constant: its whole run on inputs of length `n ≥ 3` is within
++`qyLoopA (n + 1)`. -/
++private def qyLoopA {f g : ℕ → ℕ} (κ : QyKit f g) : ℕ :=
++  22 + qyDk κ + 8 * 6 ^ 6 * qyCk κ
++
++/-- **A passed round's bound, simplified**: with `j + k ≤ |bits n|`, the bound `qyRndP` is at
++most `11 ℓ'` plus the polylogarithmic `qyCk (|bits n| + 1) ^ 5`. -/
++private theorem qy_rndP_le {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' j k : ℕ)
++    (hjk : j + k ≤ (Nat.bits n).length) :
++    qyRndP κ n ℓ' j k ≤ 11 * ℓ' + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
++  unfold qyRndP qyCk QyKit.m
++  set L := (Nat.bits n).length with hL
++  set D := (Nat.bits (κ.cfA * (κ.cfc + 2))).length with hD
++  set P := (L + 1) ^ 5 with hP
++  have hP1 : L + 1 ≤ P := Nat.le_self_pow (by norm_num) _
++  have hP5 : L ^ 5 ≤ P := Nat.pow_le_pow_left (Nat.le_succ L) 5
++  have e1 : κ.cfA * ((κ.cfc + 3) * (L + 1)) ≤ κ.cfA * (κ.cfc + 3) * P := by
++    rw [← mul_assoc]
++    exact Nat.mul_le_mul_left _ hP1
++  have e2 : κ.puA * L ^ 5 ≤ κ.puA * P := Nat.mul_le_mul_left _ hP5
++  have e3 : κ.abA * (L + 1) ≤ κ.abA * P := Nat.mul_le_mul_left _ hP1
++  have e4 : κ.abA * (j + k + 2) ≤ 2 * (κ.abA * P) := by
++    calc κ.abA * (j + k + 2) ≤ κ.abA * (2 * P) := Nat.mul_le_mul_left _ (by omega)
++      _ = 2 * (κ.abA * P) := by ring
++  have e5 : D ≤ D * P := Nat.le_mul_of_pos_right _ (by omega)
++  have e6 : (210 + 4 * D + 5 * (κ.cfA * (κ.cfc + 3)) + κ.puA + 3 * κ.abA) * P =
++      210 * P + 4 * (D * P) + 5 * (κ.cfA * (κ.cfc + 3) * P) + κ.puA * P + 3 * (κ.abA * P) := by
++    ring
++  rw [e6]
++  omega
++
++/-- **A stopping round's bound, simplified**: with `a ≤ n`, the bound `qyRndS` is at most
++`qyDk (n + 1)` plus the polylogarithmic `qyCk (|bits n| + 1) ^ 5`.
++
++**Proof sketch.** `6 a ≤ 6 n`; the clock's budget `2 ^ m = 2 ^ |bits D₀| · 2 ^ |bits n| ≤
++2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
++`(|bits n| + 1) ^ 5` times their constants. Expand both products and add. -/
++private theorem qy_rndS_le {f g : ℕ → ℕ} (κ : QyKit f g) (n a : ℕ) (ha : a ≤ n) :
++    qyRndS κ n a ≤ qyDk κ * (n + 1) + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
++  unfold qyRndS qyDk qyCk QyKit.m
++  have hLn := length_bits_le_self n
++  have h2L := qy_two_pow_bits_le n
++  set L := (Nat.bits n).length with hL
++  set D := (Nat.bits (κ.cfA * (κ.cfc + 2))).length with hD
++  set P := (L + 1) ^ 5 with hP
++  have hP1 : L + 1 ≤ P := Nat.le_self_pow (by norm_num) _
++  have hP5 : L ^ 5 ≤ P := Nat.pow_le_pow_left (Nat.le_succ L) 5
++  have e2 : κ.puA * L ^ 5 ≤ κ.puA * P := Nat.mul_le_mul_left _ hP5
++  have e3 : κ.abA * (L + 1) ≤ κ.abA * P := Nat.mul_le_mul_left _ hP1
++  have e4 : 2 ^ (D + L) ≤ 2 ^ D * (2 * n + 1) := by
++    rw [pow_add]
++    exact Nat.mul_le_mul_left _ h2L
++  have e5 : 2 ^ D * (2 * n + 1) ≤ 2 * (2 ^ D * (n + 1)) := by
++    calc 2 ^ D * (2 * n + 1) ≤ 2 ^ D * (2 * (n + 1)) := Nat.mul_le_mul_left _ (by omega)
++      _ = 2 * (2 ^ D * (n + 1)) := by ring
++  have e6 : D ≤ D * (n + 1) := Nat.le_mul_of_pos_right _ (by omega)
++  have e7 : (134 + 10 * 2 ^ D + 2 * D) * (n + 1) =
++      134 * (n + 1) + 10 * (2 ^ D * (n + 1)) + 2 * (D * (n + 1)) := by ring
++  have e8 : (210 + 4 * D + 5 * (κ.cfA * (κ.cfc + 3)) + κ.puA + 3 * κ.abA) * P =
++      210 * P + 4 * (D * P) + 5 * (κ.cfA * (κ.cfc + 3) * P) + κ.puA * P + 3 * (κ.abA * P) := by
++    ring
++  rw [e7, e8]
++  omega
++
++/-- The locator's anchor configuration at the stage `i` on inputs of length `n`: the rung
++`ℓᵢ + 1` and the pair `unpair i`. -/
++private def qyAt {f g : ℕ → ℕ} (κ : QyKit f g) (x : List Bool) (i : ℕ) :
++    Cfg κ.K Bool (Σ i, QyLPh κ i) x :=
++  qyC (qyAnc κ) 1 (qyLayT κ x.length (ladder f i + 1) (Nat.unpair i).1 (Nat.unpair i).2)
++    (fun _ => 0) []
++
++/-- **The locator's loop** (checkpoint 4): on inputs of length `n ≥ 3`, from the anchor at the
++first rung, the locator runs, avoiding its escapes before the end, to an escape at the stage
++`s = stage f n`, within `qyLoopA (n + 1)` steps: an interior or timeout escape when
++`n < ℓ_{s+1}`, the top escape when `n = ℓ_{s+1}` (with `1^{X - 1}` on tape `4`,
++`X = f (ℓ_s + 1) + ℓ_s + 2`), the tapes off the round's scratch on the anchor layout of the
++stage `s` with their heads at `0`.
++
++**Proof sketch.** The rounds at the stages `i < s` pass (`qy_round`; `ℓᵢ₊₁ ≤ ℓ_s < n` by
++`stage_spec` and `ladder_strictMono`), each from `qyAt κ x i` to `qyAt κ x (i + 1)` with the
++rung `ladder f (i + 1) + 1` (`qy_ladder_succ_eq`); their times are chosen first, then
++`Turing.Round.iterate_seq` gives one segment against the escapes. The round at `s` stops
++(`stage_spec`), and `Turing.Round.segment` appends it. The ledger: the passed rounds cost at
++most `11 ∑ ℓᵢ₊₁ ≤ 22 ℓ_s` (`qy_ledger`) plus `s · qyCk (|bits n| + 1)⁵` (`qy_rndP_le`, with
++`j + k ≤ i < s < log₂ n`, `Nat.unpair_add_le`, `qy_stage_lt_log`); the stopping round at most
++`qyDk (n + 1) + qyCk (|bits n| + 1)⁵` (`qy_rndS_le`); and `(|bits n| + 1)⁶ ≤ 6⁶ · 2 ^ (|bits n| + 1)
++≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
++private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn : 3 ≤ x.length) :
++    ∃ t ≤ qyLoopA κ * (x.length + 1), ∃ c' : Cfg κ.K Bool (Σ i, QyLPh κ i) x,
++      Segment (qyLoc κ) (qyLocE κ) (fun _ => True) (qyAt κ x 0) c' t ∧
++      ((x.length < ladder f (stage f x.length + 1) ∧
++          ∃ (ip : Fin (x.length + 2)) (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++            (c' = qyC ⟨.escI, SweepPhase.sweep⟩ ip T P [] ∨
++              c' = qyC ⟨.escTO, SweepPhase.sweep⟩ ip T P []) ∧
++            QyEscT κ x.length (ladder f (stage f x.length) + 1)
++              (Nat.unpair (stage f x.length)).1 (Nat.unpair (stage f x.length)).2 T P) ∨
++        (ladder f (stage f x.length + 1) = x.length ∧
++          ∃ (T : Fin κ.K → ℤ → Option Bool) (P : Fin κ.K → ℤ),
++            c' = qyC ⟨.escTop, SweepPhase.sweep⟩ 1 T P [] ∧
++            QyEscT κ x.length (ladder f (stage f x.length) + 1)
++              (Nat.unpair (stage f x.length)).1 (Nat.unpair (stage f x.length)).2 T P ∧
++            T (κ.tp 4) = FinTM.bufferTape (List.replicate
++              (f (ladder f (stage f x.length) + 1) + (ladder f (stage f x.length) + 1)) true) ∧
++            P (κ.tp 4) = 0)) := by
++  have hspec := stage_spec f hn
++  have hlog := qy_stage_lt_log f hn
++  have hLb := qy_log_bits (n := x.length) (by omega)
++  have hanc : some (qyAnc κ) ∉ qyLocE κ := fun ⟨p, hp, hpe⟩ => by
++    rw [← Option.some.inj hp] at hpe
++    exact Bool.false_ne_true hpe
++  -- the passed rounds, with their times chosen first
++  have hpass : ∀ i, ∃ t, i < stage f x.length →
++      Round (qyLoc κ) (qyAnc κ) (qyLocE κ) (fun _ => True) (qyAt κ x i) (qyAt κ x (i + 1)) t ∧
++        t ≤ 11 * ladder f (i + 1) + qyCk κ * ((Nat.bits x.length).length + 1) ^ 5 := by
++    intro i
++    by_cases hi : i < stage f x.length
++    · have hlt : ladder f (i + 1) < x.length :=
++        lt_of_le_of_lt ((ladder_strictMono f).monotone hi) hspec.1
++      have hle : ladder f i + 1 ≤ x.length := by
++        have := (ladder_strictMono f) (show i < i + 1 by omega)
++        omega
++      obtain ⟨c', t, hR, hcase⟩ := qy_round κ (x := x) (ladder f i + 1) i (Nat.unpair i).1
++        (Nat.unpair i).2 hle rfl
++      rw [← qy_ladder_succ_eq] at hcase
++      rcases hcase with ⟨_, hc', ht⟩ | ⟨hI, _⟩ | ⟨hT, _⟩
++      · refine ⟨t, fun _ => ⟨?_, ?_⟩⟩
++        · rw [hc'] at hR
++          exact hR
++        · have hjk := Nat.unpair_add_le i
++          exact ht.trans (qy_rndP_le κ _ _ _ _ (by omega))
++      · omega
++      · omega
++    · exact ⟨0, fun h => absurd h hi⟩
++  choose τ hτ using hpass
++  have hseq := Round.iterate_seq (qyAt κ x) τ hanc trivial (stage f x.length)
++    (fun r hr => (hτ r hr).1)
++  -- the stopping round
++  have hle : ladder f (stage f x.length) + 1 ≤ x.length := by omega
++  obtain ⟨c', t, hR, hcase⟩ := qy_round κ (x := x) (ladder f (stage f x.length) + 1)
++    (stage f x.length) (Nat.unpair (stage f x.length)).1 (Nat.unpair (stage f x.length)).2 hle
++    rfl
++  rw [← qy_ladder_succ_eq] at hcase
++  have hseg := hseq.trans (hR.segment hanc)
++  -- the ledger
++  have hsum : ∑ r ∈ Finset.range (stage f x.length), τ r ≤
++      11 * (2 * ladder f (stage f x.length)) +
++        stage f x.length * (qyCk κ * ((Nat.bits x.length).length + 1) ^ 5) := by
++    calc ∑ r ∈ Finset.range (stage f x.length), τ r
++        ≤ ∑ r ∈ Finset.range (stage f x.length),
++            (11 * ladder f (r + 1) + qyCk κ * ((Nat.bits x.length).length + 1) ^ 5) :=
++          Finset.sum_le_sum fun r hr => (hτ r (Finset.mem_range.mp hr)).2
++      _ = 11 * ∑ r ∈ Finset.range (stage f x.length), ladder f (r + 1) +
++            stage f x.length * (qyCk κ * ((Nat.bits x.length).length + 1) ^ 5) := by
++          exact qy_sum_affine _ _ _
++      _ ≤ _ := by
++          have := qy_ledger f (stage f x.length)
++          omega
++  set L := (Nat.bits x.length).length with hL
++  have hP6 := qy_pow6_le (L + 1)
++  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
++  have hsP : stage f x.length * (qyCk κ * (L + 1) ^ 5) ≤ qyCk κ * (L + 1) ^ 6 := by
++    calc stage f x.length * (qyCk κ * (L + 1) ^ 5) ≤ (L + 1) * (qyCk κ * (L + 1) ^ 5) :=
++          Nat.mul_le_mul_right _ (by omega)
++      _ = qyCk κ * (L + 1) ^ 6 := by ring
++  have hP56 : (L + 1) ^ 5 ≤ (L + 1) ^ 6 := Nat.pow_le_pow_right (by omega) (by omega)
++  have hCP : qyCk κ * (L + 1) ^ 5 ≤ qyCk κ * (L + 1) ^ 6 := Nat.mul_le_mul_left _ hP56
++  have hC6 : qyCk κ * (L + 1) ^ 6 ≤ qyCk κ * (6 ^ 6 * (4 * (x.length + 1))) := by
++    apply Nat.mul_le_mul_left
++    calc (L + 1) ^ 6 ≤ 6 ^ 6 * 2 ^ (L + 1) := hP6
++      _ ≤ 6 ^ 6 * (4 * (x.length + 1)) := Nat.mul_le_mul_left _ (by rw [pow_succ]; omega)
++  have hA : qyLoopA κ * (x.length + 1) = 22 * (x.length + 1) + qyDk κ * (x.length + 1) +
++      2 * (qyCk κ * (6 ^ 6 * (4 * (x.length + 1)))) := by
++    unfold qyLoopA
++    ring
++  rcases hcase with ⟨hN, _⟩ | ⟨hI, ht, ip, T, P, hc', hesc⟩ | ⟨hT, ht, T, P, hc', hesc, h4, hP4⟩
++  · omega
++  · have ht' : t ≤ qyDk κ * (x.length + 1) + qyCk κ * (L + 1) ^ 5 :=
++      ht.trans (qy_rndS_le κ _ _ hle)
++    refine ⟨_, ?_, c', hseg, Or.inl ⟨hI, ip, T, P, hc', hesc⟩⟩
++    rw [hA]
++    omega
++  · have ht' : t ≤ qyDk κ * (x.length + 1) + qyCk κ * (L + 1) ^ 5 :=
++      ht.trans (qy_rndS_le κ _ _ hle)
++    refine ⟨_, ?_, c', hseg, Or.inr ⟨hT, T, P, hc', hesc, h4, hP4⟩⟩
++    rw [hA]
++    omega
++
+ /-- **The stage query in linear time** (C1-E; [the P3.3 gate's round 2, §2]): for
+ time-constructible `f` and `g` there is a deterministic machine computing the stage query within
+ `C · (g n + 1)`.
+@@ -4355,10 +4572,10 @@ binary words, the unranking); the `pairEncode` writer; the ledger.
+ **Implementation status.** The linear-time guard and the reduction to a machine computing the
+ query on the unary word of every input's length are proved. So are the main machine's setup in
+ linear time (`bits n` by the input call, `1^{n+1}`, the first rung, the test `n ≥ 3`, the seek's
+-tape and the all-ones counter, as a run of its phase host) and one round of its locator, as a
+-round at the locator's anchor with its three escapes (interior, top, timeout) and its cost. The
+-locator's loop and its linear ledger, the stage code, the budget field and the writer remain
+-open. -/
++tape and the all-ones counter, as a run of its phase host), one round of its locator, as a round
++at the locator's anchor with its three escapes (interior, top, timeout) and its cost, and the
++locator's whole run: from the first rung to an escape at the input's stage, with the top flag,
++within a linear bound. The stage code, the budget field and the writer remain open. -/
+ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) :
+     ∃ (G : FinTM Bool) (C : ℕ), G.ComputesFunInTime (query f g) fun n => C * (g n + 1) := by
+-- 
+2.50.1 (Apple Git-155)
+
