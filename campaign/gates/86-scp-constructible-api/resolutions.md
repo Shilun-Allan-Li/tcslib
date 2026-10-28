@@ -36,12 +36,12 @@ records merged in by `ca0eafb8` (no Lean change).
 
 **The replay, round 2:** `replay-lscp2.sh` (`evidence/round1-fix/`), the same 53 modules from
 `oleans-lnfapi4`, pinning `Constructible` `9fb71337` and `Savitch` `b4157d58`, with the corrected
-exit status; precheck passed. **Not yet run.**
+exit status; precheck passed. **Running (user, 2026-10-27).**
 
 **Round 2** (`pack-r2.md`, at `ca0eafb8`): bundle SHA-256
 `6a103efc595f514a33777ac0835101bd4c0dbb44dc9611d54a8d06b242e06d6a` (44 sections), the records at
 `283e6549`. The screen at `ca0eafb8` (13 files) equals the base's: 848 declarations, 1,146 pairs.
-**Staged (2026-10-27); not yet dispatched.** Findings: pending.
+**Staged; dispatched (user, 2026-10-27).** Findings: pending.
 
 **Merge state. #175: not yet clear to merge** (2026-10-27): it waits for gate 86's round 2 and
 `replay-lscp2` (`replay-lscp`, at round 1's head, no longer certifies the PR).
