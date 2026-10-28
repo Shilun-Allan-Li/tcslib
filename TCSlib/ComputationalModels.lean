@@ -14,6 +14,7 @@ import TCSlib.Complexity.CircuitComplexity.LayeredPPoly
 import TCSlib.Complexity.Formulas.CNF
 import TCSlib.Complexity.Formulas.DNF
 import TCSlib.Complexity.NPReductions.SATTo3SAT
+import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
@@ -56,6 +57,11 @@ under `Complexity/`.
   reading-neutral `Depth2 n` shape of `LitList n`s over `Literal n`; flat
   width-measured formulas for the switching-lemma development [OD14]
   (`Complexity/CircuitComplexity/Formulas.lean`).
+* `Complexity.NUPPT` — non-uniform probabilistic polynomial-time machines
+  [PS10, Definitions 23.4 and 26.8]: a `FinTM` clocked on every input, run on
+  `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` with an explicit coin polynomial and advice
+  polynomial; `Complexity.PPT` is the uniform subtype
+  (`Complexity/Randomized/PPT.lean`).
 * `DecisionTree n` — binary decision trees, with `dtDepth` the least depth
   computing a given function [OD14] (`BooleanAnalysis/DecisionTree.lean`).
 * `FinNDTM` — bundled binary-choice nondeterministic machines; the carrier
@@ -116,4 +122,5 @@ Model-to-model maps (pointers only — their files are not imported here):
   Cambridge University Press, 2009.
 * [OD14] R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University
   Press, 2014.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
 -/

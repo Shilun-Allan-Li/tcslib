@@ -31,6 +31,7 @@ import TCSlib.Complexity.Formulas
 import TCSlib.Complexity.CookLevin
 import TCSlib.Complexity.ClassNP
 import TCSlib.Complexity.PolyHierarchy
+import TCSlib.Complexity.Randomized
 import TCSlib.Complexity.TimeHierarchy
 import TCSlib.Complexity.SpaceComplexity
 
@@ -43,6 +44,10 @@ import TCSlib.Cryptography.Foundations
 import TCSlib.Cryptography.OneWayFunctions
 import TCSlib.Cryptography.HardcoreBit
 import TCSlib.Cryptography.Pseudorandom
+import TCSlib.Cryptography.Asymptotic
+import TCSlib.Cryptography.Candidates
+import TCSlib.Cryptography.NumberTheory
+import TCSlib.Cryptography.ZeroKnowledge
 
 import TCSlib.InformationTheory
 
