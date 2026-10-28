@@ -66,7 +66,7 @@ diagonalization, as two contracts over a pure description of its stages. C1-E's 
   `query_of_not_guard` — the stages' laws (proved).
 * `Turing.NTimeDiag.acceptLang_mem_NTIME` — a halting NDTM's bounded language is in `NTIME`
   (proved).
-* `Turing.NTimeDiag.exists_queryTM` — the stage query in linear time (sorried; C1-E's first fill).
+* `Turing.NTimeDiag.exists_queryTM` — the stage query in linear time (proved).
 * `Turing.NTimeDiag.exists_diagonalizer` — the diagonalizer (sorried; C1-E's second fill).
 
 ## References
@@ -517,7 +517,13 @@ configuration at `e` to one at the live exit `s'`, which the host redirects to `
 redirect earlier, then the host runs, in one more step, from the tagged start to the redirected
 endpoint, avoiding every set `F` of host states that contains no state the phase's run visits
 up to its end. It is `Turing.phaseHostTM_run` with the tag of every intermediate state read
-off. -/
+off.
+
+**Proof sketch.** `Turing.phaseHostTM_run` gives the host's run as the tagged phase run up to `t`
+and the redirected endpoint at `t + 1`. Before its end the phase is live
+(`MultiTapeTM.runFrom_state_ne_none_of_le`), so each intermediate host state is `some ⟨k, s⟩` for a
+state `s` the phase's run visits, which `hF` keeps out of `F`; `Turing.segment_iff` assembles the
+segment. -/
 private theorem qy_hosted' {K : ℕ} {I : Type} {Ph : I → Type}
     (M : (i : I) → MultiTapeTM K Bool (Ph i))
     (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (k : I) {x : List Bool}
@@ -559,7 +565,11 @@ private theorem qy_hosted {K : ℕ} {I : Type} {Ph : I → Type}
 
 /-- **A hosted last phase is a segment** without dispatch: if phase `k` runs to a live endpoint
 that the host does not redirect, with no redirect earlier, the host's run is the tagged phase run,
-avoiding every set that the phase's run avoids before its end. -/
+avoiding every set that the phase's run avoids before its end.
+
+**Proof sketch.** `Turing.phaseHostTM_run_le` gives the host's run as the tagged phase run at every
+time up to `t`, so at `t` it is the tagged endpoint. Before `t` each host state is a tagged live
+phase state, kept out of `F` by `hF`; `Turing.segment_iff` assembles the segment. -/
 private theorem qy_hosted_last {K : ℕ} {I : Type} {Ph : I → Type}
     (M : (i : I) → MultiTapeTM K Bool (Ph i)) (q0 : Σ i, Ph i)
     (red : (i : I) → Ph i → Option (Σ i, Ph i)) (k : I) {x : List Bool}
@@ -628,7 +638,6 @@ private theorem qy_bufferTape_map (w : List Bool) (g : Bool → Bool) (z : ℤ) 
   · rw [List.getElem?_map]
   · rfl
 
-
 /-- A guard from a row's first-visit cut: before the exit, every live state of the phase is one
 the host does not redirect. -/
 private theorem qy_guard_of_cut {K : ℕ} {S α : Type} {x : List Bool} {M : MultiTapeTM K Bool S}
@@ -638,7 +647,11 @@ private theorem qy_guard_of_cut {K : ℕ} {S α : Type} {x : List Bool} {M : Mul
   fun u hu s hs => hr s fun h => hcut u hu (h ▸ hs)
 
 /-- **The mapped copy, appending.** `Turing.copyMapTM` copies the word `w` under the head of
-`src`, mapped by `g`, onto `dst` right after the word `u` there; nothing else changes. -/
+`src`, mapped by `g`, onto `dst` right after the word `u` there; nothing else changes.
+
+**Proof sketch.** `Turing.copyMapTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+patches `dst` from its head with `w.map g`; that head is at the end of `u`, so the patched tape is
+the buffer of `u ++ w.map g` (`qy_patch_end`). Every other tape is unchanged. -/
 private theorem qy_copy {K : ℕ} {x : List Bool} (src dst : Fin K) (hne : src ≠ dst)
     (g : Bool → Bool)
     (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool)
@@ -668,7 +681,12 @@ private theorem qy_copy {K : ℕ} {x : List Bool} (src dst : Fin K) (hne : src �
   · rw [if_neg (fun h => hj h.1), Function.update_of_ne hj]
 
 /-- **The mapped copy, overwriting.** `Turing.copyMapTM` copies the word `w` under the head of
-`src`, mapped by `g`, over the word `u` under the head of `dst`, which is no longer than `w`. -/
+`src`, mapped by `g`, over the word `u` under the head of `dst`, which is no longer than `w`.
+
+**Proof sketch.** `Turing.copyMapTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+overwrites `dst` from cell `0` with `w.map g`; since `u` is no longer than `w`, no cell of `u`
+survives beyond it (`FinTM.bufferTape_eq_none_of_not_mem`), so the tape is the buffer of `w.map g`.
+Every other tape is unchanged. -/
 private theorem qy_copy_over {K : ℕ} {x : List Bool} (src dst : Fin K) (hne : src ≠ dst)
     (g : Bool → Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)
     (o : List Bool) (w u : List Bool) (hu : u.length ≤ w.length)
@@ -742,7 +760,12 @@ private theorem qy_transfer {K : ℕ} {x : List Bool} (src dst : Fin K) (hne : s
         exact FinTM.bufferTape_eq_none_of_not_mem w (by omega)
     · rw [if_neg (fun h => hs h.1), if_neg (fun h => hj h.1), Function.update_of_ne hs]
 
-/-- **The clear.** `Turing.clearTM` blanks the word `w` under the head of tape `i`. -/
+/-- **The clear.** `Turing.clearTM` blanks the word `w` under the head of tape `i`.
+
+**Proof sketch.** `Turing.clearTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+blanks the `|w|` cells from the head at `0`, and the cells of `w`'s buffer outside them were already
+blank (`FinTM.bufferTape_eq_none_of_not_mem`), so tape `i` is the empty buffer. Every other tape is
+unchanged. -/
 private theorem qy_clear {K : ℕ} {x : List Bool} (i : Fin K) (ip : Fin (x.length + 2))
     (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool) (w : List Bool)
     (hT : T i = FinTM.bufferTape w) (hP : P i = 0) :
@@ -768,7 +791,11 @@ private theorem qy_clear {K : ℕ} {x : List Bool} (i : Fin K) (ip : Fin (x.leng
   · rw [if_neg (fun h => hj h.1), Function.update_of_ne hj]
 
 /-- **The constant writer, appending.** `Turing.writeConstTM` writes the fixed word `w₀` on tape
-`i` right after the word `u` there, its head back where it started. -/
+`i` right after the word `u` there, its head back where it started.
+
+**Proof sketch.** `Turing.writeConstTM_run_ofCfg` gives the run and its first arrival. Its endpoint
+patches tape `i` from its head, at the end of `u`, with `w₀`, which is the buffer of `u ++ w₀`
+(`qy_patch_end`). Every other tape is unchanged. -/
 private theorem qy_writeConst {K : ℕ} {x : List Bool} (i : Fin K) (w₀ : List Bool)
     (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool)
     (u : List Bool) (hT : T i = FinTM.bufferTape u) (hP : P i = u.length) :
@@ -962,7 +989,13 @@ private theorem qy_callHost {K : ℕ} {x : List Bool} (C : FinTM Bool) (hk : 0 <
 
 /-- **One step of an own leaf.** At a live normal-form configuration, a transition that writes
 nothing, keeps the input head, moves each work head by `mv j` and emits `out` gives the
-normal-form configuration with the heads moved and the emission appended. -/
+normal-form configuration with the heads moved and the emission appended.
+
+**Proof sketch.** `MultiTapeTM.step_of_some` at the live state applies the transition's action to
+the configuration, whose work reads are the cells under the heads (`Cfg.workTapeSymbols_eq`). Each
+field of the result is read through the `Action.apply_*` equations: the state `s'`, the input head
+unmoved (`moveInputPos_zero`), every tape unchanged (the writes are `none`), the heads moved by
+`mv`, the emission appended. -/
 private theorem qy_step {K : ℕ} {S : Type} {x : List Bool} (M : MultiTapeTM K Bool S) (s s' : S)
     (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool)
     (mv : Fin K → SignType) (out : Option Bool)
@@ -997,7 +1030,7 @@ private inductive QyCmp
   | done (v : Ordering)
   deriving DecidableEq, Fintype
 
-/-- **The length comparison** (leaf L3, the unary compare). Started with the heads of tapes `a`
+/-- **The length comparison**. Started with the heads of tapes `a`
 and `b` on the first cells of two words, it moves both heads right in lockstep while both read a
 symbol. At the first blank under either head it knows how the lengths compare and walks both
 heads back in lockstep to their starts, then enters the live exit `done` of the verdict. Nothing
@@ -1024,7 +1057,6 @@ private def qyCmpTM (K : ℕ) (a b : Fin K) : MultiTapeTM K Bool QyCmp where
       | some _ => ⟨0, fun j => (none, if j = a ∨ j = b then .neg else 0), none, some (.back v)⟩
       | none => ⟨0, fun j => (none, if j = a ∨ j = b then .pos else 0), none, some (.done v)⟩
     | .done v => ⟨0, fun _ => (none, 0), none, some (.done v)⟩
-
 
 /-- The lockstep head vector of `Turing.NTimeDiag.qyCmpTM`: both compared heads at `i`. -/
 private def qyAt2 {K : ℕ} (P : Fin K → ℤ) (a b : Fin K) (i : ℤ) : Fin K → ℤ :=
@@ -1181,7 +1213,6 @@ private theorem qy_cmp_run {K : ℕ} {x : List Bool} (a b : Fin K) (hab : a ≠ 
     intro h
     cases Option.some.inj h
 
-
 /-- The control states of the writer's emitter `Turing.NTimeDiag.qyEmitTM`: emitting the fixed
 prefix, reading a cell, holding a read symbol while looking ahead, emitting its copies, emitting
 the fixed suffix, and the exit, whose action halts. -/
@@ -1194,7 +1225,7 @@ private inductive QyEm (np ns rr : ℕ)
   | done
   deriving DecidableEq, Fintype
 
-/-- **The writer's emitter** (leaf L6). Emit the fixed word `pre`; then emit the word under the
+/-- **The writer's emitter**. Emit the fixed word `pre`; then emit the word under the
 head of tape `i`, each symbol `rr + 1` times, omitting its last symbol when `dl` holds (one cell
 of lookahead); then emit the fixed word `suf` and enter `done`, whose action halts. Nothing is
 written and the input head stays. It is the fixed-word emission chain of `Turing.FinTM.emitAction`
@@ -1650,7 +1681,6 @@ private theorem qy_clocked_call (C : FinTM Bool) (entry exit : C.State) :
         Cfg.mapState_output]
       exact qy_call_output_nil C entry exit x arg out t _ hlt.le hrun
 
-
 /-- A word patched over an all-ones word of the same width is that word. -/
 private theorem qy_wordPatch_ones (m : ℕ) (w : List Bool) (hw : w.length = m) :
     wordPatch (FinTM.bufferTape (List.replicate m true)) 0 w = FinTM.bufferTape w := by
@@ -1893,7 +1923,6 @@ private theorem qy_clockHost_timeout {K : ℕ} {x : List Bool} (C : FinTM Bool)
     exact embedEmitCfg_unselected σ T P o _ j hj
   · rw [qy_embed_state, hstart]
     exact hcutH u hu r
-
 
 /-- The expansion's start, in normal form: the destination word under the body head and the
 counter word under the counter head.
@@ -2248,7 +2277,6 @@ private structure QyKit (f g : ℕ → ℕ) : Type 1 where
 
 attribute [local instance] QyKit.Qf QyKit.Qd QyKit.Sf QyKit.Sd
 
-
 /-- `(n + 1)^a ≤ (n + 1)^b` for `a ≤ b`. -/
 private theorem qy_pow_mono (n a b : ℕ) (h : a ≤ b) : (n + 1) ^ a ≤ (n + 1) ^ b :=
   Nat.pow_le_pow_right (Nat.succ_pos n) h
@@ -2528,7 +2556,6 @@ private def QyKit.bClk {f g : ℕ → ℕ} (κ : QyKit f g) : Fin (κ.cf.k + 1) 
         simp at this
         omega
     · exact Fin.ext (by omega)
-
 
 /-- The named tapes are distinct. -/
 private theorem QyKit.tp_ne {f g : ℕ → ℕ} (κ : QyKit f g) {a b : Fin 16} (h : a ≠ b) :
@@ -3046,7 +3073,7 @@ private theorem qy_setup_head {f g : ℕ → ℕ} (κ : QyKit f g) (x : List Boo
   show _ ≤ κ.cbA * (n + 1) + 7 * n + 2 * (Nat.bits n).length + 27
   omega
 
-/-- **The setup, long path** (checkpoint 2): on inputs of length `n ≥ 3`, from the blank seam, the
+/-- **The setup, long path**: on inputs of length `n ≥ 3`, from the blank seam, the
 setup reaches its long exit at the anchor layout of the first rung `ℓ₀ = 2` (`a = 3`) with
 `unpair 0 = (0, 0)`, within `qySetB κ n` steps, avoiding its exits before.
 
@@ -3173,7 +3200,7 @@ private theorem qy_setup_long {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Boo
   rw [← hnx]
   nlinarith
 
-/-- **The setup, short path** (checkpoint 2): on inputs of length `n ≤ 2`, from the blank seam,
+/-- **The setup, short path**: on inputs of length `n ≤ 2`, from the blank seam,
 the setup stops at a short exit of its test `n ≥ 3` within `qySetB κ n` steps, avoiding its exits
 before, with tape `15` blank and nothing emitted.
 
@@ -3223,19 +3250,13 @@ private theorem qy_setup_short {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bo
 /-- The length of `bits` is monotone. -/
 private theorem qy_bits_len_mono {a b : ℕ} (h : a ≤ b) :
     (Nat.bits a).length ≤ (Nat.bits b).length := by
-  rcases Nat.eq_zero_or_pos a with rfl | ha
-  · rw [Nat.zero_bits, List.length_nil]
-    exact Nat.zero_le _
-  · rw [← qy_log_bits ha, ← qy_log_bits (ha.trans_le h)]
-    exact Nat.succ_le_succ (Nat.log_mono_right h)
+  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]
+  exact Nat.size_le_size h
 
 /-- Every number is below two to the length of its bits. -/
 private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · rw [Nat.zero_bits, List.length_nil]
-    exact Nat.one_pos
-  · rw [← qy_log_bits hn]
-    exact Nat.lt_pow_succ_log_self (by norm_num) n
+  rw [Nat.size_eq_bits_len]
+  exact Nat.lt_size_self n
 
 /-- The successor of a pair below the diagonal's next corner: `(j, k) ↦ (j + 1, k)` when
 `j + 1 < k`. -/
@@ -3392,7 +3413,7 @@ private theorem qy_round_of_seg {K : ℕ} {S : Type} {x : List Bool} {M : MultiT
 
 /-! ### The locator's round: the clocked call -/
 
-/-- **The round's call** (checkpoint 3): from the anchor layout at the rung `1^a`, `a ≤ n`, the
+/-- **The round's call**: from the anchor layout at the rung `1^a`, `a ≤ n`, the
 locator copies the rung onto `f`'s call tape and runs `f`'s witness under the clock. Either the
 call returns: `bits (f a)` on tape `7`, a word of the counter's width on tape `8`, at the length
 test, within the clock's two bounds; or the counter runs out: then `n < f a`, and the locator is
@@ -3532,14 +3553,14 @@ private def qyTestP {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' : ℕ) : ℕ :=
   9 * ℓ' + 25 * (Nat.bits n).length + κ.puA * (Nat.bits n).length ^ 5 +
     κ.abA * ((Nat.bits n).length + 1) + 50
 
-/-- **The round's tests** (checkpoint 3): from the length test after a returned call (`bits F`,
+/-- **The round's tests**: from the length test after a returned call (`bits F`,
 `F = f a`, on tape `7`), with `X = F + a + 1` and the next rung `ℓ' = 2 ^ X⁴`, the locator ends
 at its interior escape if `n < ℓ'`, at its top escape if `ℓ' = n` (with `1^{X - 1}` on tape `4`
 for the budget), and otherwise at the cleanup with the tapes `qyTB`, `X < |bits n|` and
 `X⁴ < |bits n|`.
 
 **Proof sketch.** Fourteen hosted phases (`qy_hosted`), each a row's run: `|bits F|` against
-`|bits n|` (L2, `qy_cmp_run`; longer gives `F > n`); `F` expanded to `1^F` (`qy_expandHost`, the
+`|bits n|` (`qy_cmp_run`; longer gives `F > n`); `F` expanded to `1^F` (`qy_expandHost`, the
 counter worth `F`), `1^a` appended, the rewind; `X - 1` against `|bits n|` (not shorter gives
 `ℓ' ≥ 2 ^ |bits n| > n`); the copy and the fourth power's call (`qy_callHost`); `X⁴` against
 `|bits n|`; the copy as `0^{X⁴}`, the increment's call to `0^{X⁴} 1` (worth `ℓ'`,
@@ -3902,7 +3923,7 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
 
 /-! ### The locator's round: the cleanup and the pair's update -/
 
-/-- **A passed round's cleanup** (checkpoint 3): from the tapes `qyTB` after the tests, the
+/-- **A passed round's cleanup**: from the tapes `qyTB` after the tests, the
 locator clears the old rung, moves the next rung `1^{ℓ' + 1}` onto the rung's tape, clears the
 scratch tapes `4` to `7`, and restores the counter from its copy, ending at the pair's update on
 the anchor layout of the rung `ℓ' + 1`.
@@ -4016,11 +4037,11 @@ private theorem qy_layT_pair {f g : ℕ → ℕ} (κ : QyKit f g) (n a j k j' k'
   rw [hrest t e10 e11]
   simp [qyLayT, qyLay, e10, e11]
 
-/-- **A passed round's pair update** (checkpoint 3): from the anchor layout with
+/-- **A passed round's pair update**: from the anchor layout with
 `(j, k) = unpair h` on tapes `10` and `11`, the locator moves the pair to `unpair (h + 1)` by the
 successor rule of `Nat.unpair` and returns to its anchor.
 
-**Proof sketch.** The comparison `j` against `k` (L2), then by its verdict: `lt`, the increment
+**Proof sketch.** The comparison `j` against `k`, then by its verdict: `lt`, the increment
 of `j` (the `appendBit` call on tape `10`) and the comparison `j + 1` against `k`, with the clear
 of `k` on `eq` (`qy_unpair_succ_last`) and nothing on `lt` (`qy_unpair_succ_lt`); `eq`, the clear
 of `j` and the increment of `k` (`qy_unpair_succ_diag`); `gt`, the increment of `k`
@@ -4205,7 +4226,7 @@ private def qyRndS {f g : ℕ → ℕ} (κ : QyKit f g) (n a : ℕ) : ℕ :=
   6 * a + 5 * 2 ^ κ.m n + 2 * κ.m n + 40 * (n + 1) + 16 * (Nat.bits n).length +
     κ.puA * (Nat.bits n).length ^ 5 + κ.abA * ((Nat.bits n).length + 1) + 70
 
-/-- **One round of the locator** (checkpoint 3), as a `Turing.Round` at the anchor with the three
+/-- **One round of the locator**, as a `Turing.Round` at the anchor with the three
 escapes: from the anchor layout at the rung `1^a`, `a ≤ n`, with `(j, k) = unpair h`, and with
 `X = f a + a + 1` and `ℓ' = 2 ^ X⁴`:
 * if `ℓ' < n`, the round returns to the anchor on the layout of the rung `ℓ' + 1` and the pair
@@ -4324,7 +4345,11 @@ private def qyLoopA {f g : ℕ → ℕ} (κ : QyKit f g) : ℕ :=
   22 + qyDk κ + 8 * 6 ^ 6 * qyCk κ
 
 /-- **A passed round's bound, simplified**: with `j + k ≤ |bits n|`, the bound `qyRndP` is at
-most `11 ℓ'` plus the polylogarithmic `qyCk (|bits n| + 1) ^ 5`. -/
+most `11 ℓ'` plus the polylogarithmic `qyCk (|bits n| + 1) ^ 5`.
+
+**Proof sketch.** Unfold the file's own `qyRndP` and `qyCk`. With `L = |bits n|` and `P = (L + 1) ^
+5`, bound each polylogarithmic term by a multiple of `P` (`L + 1 ≤ P`, `L ^ 5 ≤ P`, and `j + k + 2 ≤
+2 P` from `hjk`), then collect the constants (`ring`, `omega`). -/
 private theorem qy_rndP_le {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' j k : ℕ)
     (hjk : j + k ≤ (Nat.bits n).length) :
     qyRndP κ n ℓ' j k ≤ 11 * ℓ' + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
@@ -4389,7 +4414,7 @@ private def qyAt {f g : ℕ → ℕ} (κ : QyKit f g) (x : List Bool) (i : ℕ) 
   qyC (qyAnc κ) 1 (qyLayT κ x.length (ladder f i + 1) (Nat.unpair i).1 (Nat.unpair i).2)
     (fun _ => 0) []
 
-/-- **The locator's loop** (checkpoint 4): on inputs of length `n ≥ 3`, from the anchor at the
+/-- **The locator's loop**: on inputs of length `n ≥ 3`, from the anchor at the
 first rung, the locator runs, avoiding its escapes before the end, to an escape at the stage
 `s = stage f n`, within `qyLoopA (n + 1)` steps: an interior or timeout escape when
 `n < ℓ_{s+1}`, the top escape when `n = ℓ_{s+1}` (with `1^{X - 1}` on tape `4`,
@@ -4543,7 +4568,12 @@ private theorem qy_not_scratch_ge {f g : ℕ → ℕ} (κ : QyKit f g) (t : Fin 
     simp at this
     omega
 
-/-- A named tape other than `3` to `8` is off the round's scratch. -/
+/-- A named tape other than `3` to `8` is off the round's scratch.
+
+**Proof sketch.** Case on the disjuncts of `qyScratch`. A tape of the clock's bank is the call's
+first tape or the counter, each a named tape `κ.tp` with index from `3` to `8`, excluded by the
+injectivity of `κ.tp`; or another tape of the call's bank, which is never a named tape
+(`QyKit.bCf_ne`). The other four disjuncts name `κ.tp 3` to `κ.tp 6`, excluded by injectivity. -/
 private theorem qy_not_scratch_tp {f g : ℕ → ℕ} (κ : QyKit f g) (c : Fin 16)
     (hc : (c : ℕ) < 3 ∨ 8 < (c : ℕ)) : ¬ qyScratch κ (κ.tp c) := by
   rintro (⟨i, hi⟩ | h | h | h | h)
@@ -4598,7 +4628,7 @@ private theorem QyEscT.bank {f g : ℕ → ℕ} {κ : QyKit f g} {n a j k : ℕ}
 private theorem QyKit.bCl_ne {f g : ℕ → ℕ} (κ : QyKit f g) (i : Fin κ.cl.k) (hi : (i : ℕ) ≠ 0)
     (c : Fin 16) : κ.bCl i ≠ κ.tp c := qyBank_ne_tp κ _ _ _ _ _ (by omega) i hi c
 
-/-- **The stage code's calls after an escape** (checkpoint 5): on an escape's tapes with the input
+/-- **The stage code's calls after an escape**: on an escape's tapes with the input
 head at `1`, the increment's call on the bank of tape `10` gives `1^{j + 1}`, and the length call
 on the same tape then gives `bits (j + 1)` (the code `α` is its top bit dropped,
 `stageCode_eq`), within `abA (j + 1)` and `clA (j + 2)` steps, each reaching its exit first at
@@ -4666,7 +4696,7 @@ private theorem qy_code_calls {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Boo
     rw [hb10, Function.update_idem] at c
     exact ⟨tc, by omega, c⟩
 
-/-- **The input seek after an escape** (checkpoint 5): on an escape's tapes, from any input
+/-- **The input seek after an escape**: on an escape's tapes, from any input
 head position, the seek on tapes `12` and `13` (`[true]`, worth `1`, and a blank tape) returns
 the input head to `1` within `rC (n + 4)` steps, every work tape and head unchanged.
 
@@ -4689,7 +4719,7 @@ private theorem qy_seek_run {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool}
   have := ip.isLt
   omega
 
-/-- **The middle writer's head** (checkpoint 5): from its entry on an escape's tapes, the input
+/-- **The middle writer's head**: from its entry on an escape's tapes, the input
 seek, the increment of `j` and the length call reach the budget's call with the input head at `1`
 and `bits (j + 1)` on tape `10`.
 
@@ -4719,7 +4749,7 @@ private theorem qy_mid_code {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool}
     ∅ (fun _ h => h)
   exact ⟨_, by omega, seg0.trans (seg1.trans seg2)⟩
 
-/-- **The top writer's head** (checkpoint 5): from its entry on an escape's tapes with the input
+/-- **The top writer's head**: from its entry on an escape's tapes with the input
 head at `1`, the increment of `j` and the length call reach the budget's call with
 `bits (j + 1)` on tape `10`.
 
@@ -4754,7 +4784,7 @@ private theorem qy_flatMap_dbl_dbl (B : List Bool) :
     rw [List.flatMap_cons, List.flatMap_append, ih, List.flatMap_cons]
     rfl
 
-/-- **The writer's word** (L6's three emissions): the flag, the budget field's bits each written
+/-- **The writer's word** (three emissions): the flag, the budget field's bits each written
 four times and `[false, false, true, true]`; the code's bits but the top one, doubled, and
 `[false, true]`; the tail. It is `b :: pairEncode (pairEncode B W.dropLast) N`. -/
 private theorem qy_writer_word (b : Bool) (B W N : List Bool) :
@@ -4823,7 +4853,7 @@ emissions. -/
 private def qyTopB {f g : ℕ → ℕ} (κ : QyKit f g) (X a j : ℕ) : ℕ :=
   κ.abA * (j + 1) + κ.clA * (j + 2) + κ.pbA * X ^ 3 + 6 * X ^ 2 + 4 * (j + 1) + 3 * a + 30
 
-/-- **The middle writer** (checkpoint 6): from its entry on an escape's tapes, it halts within
+/-- **The middle writer**: from its entry on an escape's tapes, it halts within
 `qyMidB` steps with the output `false :: ⟨⟨bits (g n), α⟩, 1^{n + 1}⟩`, `α` the bits of `j + 1`
 but the top one.
 
@@ -4915,7 +4945,7 @@ private theorem qy_mid_run {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} 
     refine ⟨h6.1, ?_⟩
     rw [h6.2, c6o, qy_writer_word]
 
-/-- **The top writer** (checkpoint 6): from its entry on an escape's tapes with `1^{F + a}` on
+/-- **The top writer**: from its entry on an escape's tapes with `1^{F + a}` on
 tape `4` (`F = f a`, `a` the rung), it halts within `qyTopB` steps with the output
 `true :: ⟨⟨bits ((F + a + 1)²), α⟩, 1^a⟩`.
 
@@ -5093,7 +5123,7 @@ private theorem qy_topB_le {f g : ℕ → ℕ} (κ : QyKit f g) (n X a j : ℕ) 
   rw [e5]
   omega
 
-/-- **`M₁` on inputs of length `n ≥ 3`** (checkpoint 7): from its initial configuration it halts
+/-- **`M₁` on inputs of length `n ≥ 3`**: from its initial configuration it halts
 within `qyMainA (g n + 1)` steps with the stage query of `1ⁿ` as its output.
 
 **Proof sketch.** Three hosted phases of `M₁` (`qy_hosted`, each guard read off the phase's
@@ -5204,7 +5234,7 @@ private theorem qy_main_long {f g : ℕ → ℕ} (κ : QyKit f g) (hle : ∀ n, 
       refine ⟨h3.1, ?_⟩
       rw [h3.2, ho3, query_eq f g hn, if_pos hT.symm, stageCode_eq, budget_eq]
 
-/-- **`M₁` on inputs of length `n ≤ 2`** (checkpoint 7): from its initial configuration it halts
+/-- **`M₁` on inputs of length `n ≤ 2`**: from its initial configuration it halts
 within `qyMainA (g n + 1)` steps with the empty output, the stage query of `1ⁿ`.
 
 **Proof sketch.** The setup's short path (`qy_setup_short`), hosted; then the halting phase, an
@@ -5252,7 +5282,7 @@ private theorem qy_main_short {f g : ℕ → ℕ} (κ : QyKit f g) (hle : ∀ n,
     simp [qyBody]
 
 /-- **The main machine computes the query on the unary word of every input's length**
-(checkpoint 7, the target's `hmain`): for time-constructible `f` and `g`, `M₁` halts on every
+(the target's `hmain`): for time-constructible `f` and `g`, `M₁` halts on every
 input `x` within `qyMainA (g |x| + 1)` steps with `query f g 1^{|x|}`.
 
 **Proof sketch.** The kit (`qy_kit_exists`); `n ≤ g n` from `Complexity.timeConstructible_iff`;
