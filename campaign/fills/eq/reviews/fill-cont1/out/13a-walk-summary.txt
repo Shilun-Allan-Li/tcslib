@@ -1,0 +1,49 @@
+## summary of out/13-audit-head.out (the review's audit probe on the head)
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/eq-cont1-fill/probe/AuditHead.lean:5377:8: warning: declaration uses 'sorry'
+'Turing.NTimeDiag.exists_queryTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.exists_diagonalizer' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_main' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_main_long' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_main_short' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_loop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_round' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_setup_long' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_setup_short' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_mid_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_top_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_cmp_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_emit_run' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_emit_stop' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_clocked_call' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_writer_word' depends on axioms: [propext]
+'Turing.NTimeDiag.qy_rnd_call' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_rnd_tests' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_unpair_succ_gt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_pow6_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_kit_exists' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_initCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_query_of_main' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.qy_guard_decider' depends on axioms: [propext, Classical.choice, Quot.sound]
+AXIOMS-ALL: 1323 local constants within the standard three; outside it 1:
+Turing.NTimeDiag.exists_diagonalizer: #[propext, Quot.sound, Classical.choice, sorryAx]
+ROOTS 1276 (every local constant other than the frozen declarations and their auxiliaries); reached 1276
+FROZEN DECLARATIONS USED by the new code: [Turing.NTimeDiag.budget, Turing.NTimeDiag.budget_eq, Turing.NTimeDiag.ladder, Turing.NTimeDiag.ladder_strictMono, Turing.NTimeDiag.ladder_succ, Turing.NTimeDiag.ladder_zero, Turing.NTimeDiag.query, Turing.NTimeDiag.query_eq, Turing.NTimeDiag.query_of_not_guard, Turing.NTimeDiag.qy_query_of_main, Turing.NTimeDiag.stage, Turing.NTimeDiag.stageCode, Turing.NTimeDiag.stageCode_eq, Turing.NTimeDiag.stage_spec, Turing.NTimeDiag.two_mul_lt_ladder_succ]
+DIRECT-TCSLIB 162:
+DIRECT-CORE/MATHLIB 964:
+direct TCSlib constants by kind:
+  14 ctor
+  60 def
+   8 inductive
+  80 thm
+direct TCSlib definitions (semireducible, not instances):       34
+Complexity.TimeConstructible Turing.Action.apply Turing.Cfg.Stopped Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.ofWords Turing.Cfg.workTapeSymbols Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step Turing.Round Turing.Segment Turing.clearTM Turing.clockCfg Turing.copyMapTM Turing.counterLoopCfg Turing.counterOverhead Turing.counterValue Turing.embedEmitCfg Turing.embedEmitTM Turing.expandTM Turing.moveInputPos Turing.pairEncode Turing.phaseHostTM Turing.rewindTM Turing.roundStop Turing.seamReleaseTM Turing.stateWord Turing.transferMapTM Turing.wordPatch Turing.writeConstTM 
+DIRECT external private names: [_private._stdin.0.Turing.NTimeDiag.QyLK.isEsc.match_1.eq_4, _private._stdin.0.Turing.NTimeDiag.qyLocRed.match_1.eq_2, _private._stdin.0.Turing.NTimeDiag.qyLocRed.match_11.eq_2, _private._stdin.0.Turing.NTimeDiag.qyLocRed.match_3.eq_2, _private._stdin.0.Turing.NTimeDiag.qyLocRed.match_5.eq_2, _private._stdin.0.Turing.NTimeDiag.qyLocRed.match_7.eq_2, _private._stdin.0.Turing.NTimeDiag.qyLocRed.match_9.eq_2, _private._stdin.0.Turing.NTimeDiag.qyMainRed.match_1.eq_3, _private._stdin.0.Turing.NTimeDiag.qyMainRed.match_1.eq_7]DIRECT R3 rows: []
+DIRECT R3 rows: []
+STATEMENT-REACHED TCSlib definitions (not direct) 0:
+ALLDEFS 275:
+SIMPDEFS 4:
+SIMPDEFS 4:
+Turing.Action.apply
+Turing.Cfg.init
+Turing.MultiTapeTM.initCfg
+Turing.NDTM.initCfg

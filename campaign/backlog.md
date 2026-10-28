@@ -1942,8 +1942,16 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     sealed 43 definitions (43 controls close unsealed, fail sealed); 84 modules swept; screen 120
     new pairs, 0 gone; no escalation. **Intake verified** (99 sums; the bundle's one prerequisite
     the base; the 8 patches equal the bundle; the source its head). The campaign's Lean since the
-    base: only `NDHost` (#174), outside the owned file's closure. Next: the review sub-agent, then
-    the landing PR, its replay from `oleans-lnfapi4` and the fill gate.
+    base: only `NDHost` (#174), outside the owned file's closure. **Reviewed**
+    (`campaign/fills/eq/reviews/fill-cont1/REVIEW.md`, a sub-agent, 2026-10-27): **land with
+    edits; 0 blockers, 0 majors, 4 minors, 9 notes**; its own maximal seal (275 definitions, 289
+    controls) and 2,949 classified tactic arguments find no rule-10 issue. Landing edits E1–E4
+    tested (labels, blank lines, two `Nat.bits` lemmas through `Nat.size`, the header's status);
+    the maintainer adds **F14/E5** (nine privates without the policy linter's proof sketch;
+    `maintainer-notes.md`). Decisions for the user: E1–E5, F4 (the comparator in place of the
+    scan folds), F11 (the frozen sketch's resync), F10 (the subjects), the duplication entries.
+    Replay list: `NTimeDiagonalizer`, `NTimeHierarchy`, the `Diagonalization` facade, from
+    `oleans-lnfapi4`.
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`

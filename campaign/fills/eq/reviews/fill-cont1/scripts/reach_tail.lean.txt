@@ -1,0 +1,30 @@
+
+open Lean Meta Elab Command in
+/-- The new source-level declarations not reachable from the target. -/
+elab "#eq_reach" : command => do
+  let env ← getEnv
+  let isLoc := fun (n : Name) => (env.getModuleIdxFor? n).isNone && (env.find? n).isSome
+  let mut visited : NameSet := {}
+  let mut stack : Array Name := #[`Turing.NTimeDiag.exists_queryTM]
+  while !stack.isEmpty do
+    let c := stack.back!
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    if let some ci := env.find? c then
+      for d in ci.getUsedConstantsAsSet.toList do
+        if isLoc d && !visited.contains d then stack := stack.push d
+  let mut unreached : Array String := #[]
+  let mut srcDecls : Nat := 0
+  for (n, ci) in env.constants.map₂.toList do
+    let u := (privateToUserName? n).getD n
+    if u.isInternalDetail then continue
+    match ci with
+    | .thmInfo _ | .defnInfo _ | .inductInfo _ =>
+      let s := u.toString
+      if (s.splitOn "NTimeDiag.qy").length > 1 || (s.splitOn "NTimeDiag.Qy").length > 1 then
+        srcDecls := srcDecls + 1
+        unless visited.contains n do unreached := unreached.push s
+    | _ => pure ()
+  unreached := unreached.qsort (· < ·)
+  logInfo m!"REACH from exists_queryTM: {visited.size} local constants; new qy/Qy theorems, definitions and inductives (no auxiliaries): {srcDecls}; not reached {unreached.size}:\n{String.intercalate "\n" unreached.toList}"
