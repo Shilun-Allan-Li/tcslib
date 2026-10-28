@@ -373,7 +373,11 @@ private lemma prefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
     · simp
     · rw [List.take_succ, List.getElem?_eq_getElem hlt]
 
-/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
+/-- The copy phase emits one input bit per step and preserves the fixed prefix.
+
+**Proof sketch.** Induction on the number of steps `i`. At step `i + 1` the input head is on the
+`(i + 1)`-st input cell (`inputSymbolInner`), so the copy state's transition emits `x[i]` and moves
+the head right (`moveInputPos_pos_of_ne_right`), appending `x[i]` to `w ++ x.take i`. -/
 private lemma prefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
     (prefixTM w).tm.runFrom
       (prefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
