@@ -1959,7 +1959,14 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     `preship-086c0ef0/`, inputs `campaign/fills/c1/inputs/c1-fill-nf/`): the controller-stopped host
     of #174 with a trivial setup, the route probe's `nfr_pack` and `nfr_setup` (sealed, 9 controls),
     88-name import probe, order list 112 (39 roots, 20 sorries in 9). **Agent: Codex (user,
-    2026-10-27).** Next: the screen base's numbers, the brief review (a sub-agent), the issue.
+    2026-10-27).** **Brief reviewed** (`campaign/fills/c1/reviews/nf-brief/REVIEW.md`, a sub-agent,
+    2026-10-28): **issue after edits; 2 majors, 11 minors, 7 notes**; no redesign. F1: sweep 0 is the
+    published scan fold (`scanTM`/`scanFold`, `rv_sweep0` proved sealed); F2: A's rewind and B's
+    clear need `skipTM` then `skipBackTM` (and `clearTM`), not `skipBackTM` alone; F4: drop the input
+    rewind; F5: extend the import probe by 61 names; the rest wording, seal list, prefix, controller,
+    hazards, in-flight (#176, #177). Its probes (`rv_skeleton`, `rv_entry`, `rv_sweep0`,
+    `rv_inputSymbol_congr`, 30 controls) to stage as inputs. Next: apply the edits, then the issue
+    (Codex).
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.

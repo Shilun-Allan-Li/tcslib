@@ -1,0 +1,231 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! Controls for the review probe's seal beyond the route probe's 9: the draft's 20 and 10 more.
+Unsealed every goal closes; sealed every goal is expected to FAIL, each at its own goal. -/
+
+open Turing
+
+section Unsealed
+
+-- guessCtlRunTM
+example {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ] (P : MultiTapeTM 2 Bool SP) (pexit : SP) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool) (b : Bool) (V : MultiTapeTM 2 Bool SQ) (qe a r : SQ) :
+    guessCtlRunTM P pexit 0 q₀ δ stop b V qe a r =
+      NDTM.phaseHostND (guessCtlRunPhases P 0 q₀ δ stop b V) ⟨.pre, P.q₀⟩ (guessCtlRunRed pexit q₀ qe a r) := rfl
+
+-- GuessRunPhase.CtlState
+example (SP SQ Q : Type) : GuessRunPhase.CtlState SP SQ Q .run = SQ := rfl
+
+-- guessCtlRunPhases
+example {SP SQ Q : Type} (P : MultiTapeTM 2 Bool SP) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool) (b : Bool) (V : MultiTapeTM 2 Bool SQ) :
+    guessCtlRunPhases P 0 q₀ δ stop b V .skip = (skipTM 2 0).toNDTM := rfl
+
+-- guessCtlRunRed
+example {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : SP) (q₀ : Q) (qe a r : SQ) (b : Bool) :
+    guessCtlRunRed pexit q₀ qe a r .out b = none := rfl
+
+-- guessRunCfg
+example {S S' : Type} {z : List Bool} (c : Cfg 2 Bool S z) (s : List Bool) (q : S') :
+    (guessRunCfg c 0 s q).state = some q := rfl
+
+-- ndWriterTM
+example {Q : Type} (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool) (b : Bool) :
+    (ndWriterTM 2 0 q₀ δ stop b).q₀ = .run q₀ := rfl
+
+-- NDTM.phaseHostND
+example {I : Type} {Ph : I → Type} (M : (i : I) → NDTM 2 Bool (Ph i)) (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (NDTM.phaseHostND M q0 red).q₀ = q0 := rfl
+
+-- phaseHostTM
+example {I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM 2 Bool (Ph i)) (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (phaseHostTM M q0 red).q₀ = q0 := rfl
+
+-- skipTM
+example : (skipTM 2 0 : MultiTapeTM 2 Bool SeekPhase).q₀ = .run := rfl
+
+-- skipBackTM
+example : (skipBackTM 2 0 : MultiTapeTM 2 Bool SeekPhase).q₀ = .run := rfl
+
+-- inputRewindTM
+example : (inputRewindTM 2).q₀ = .start := rfl
+
+-- StepBlock.outputSummary
+example : StepBlock.outputSummary [true] = some true := rfl
+
+-- StepBlock.summaryEmit
+example (s : Option Bool) : StepBlock.summaryEmit s none = s := rfl
+
+-- MultiTapeTM.step (usage: a halted configuration)
+example {S : Type} {x : List Bool} (M : MultiTapeTM 2 Bool S) (p : Fin (x.length + 2)) (t : Fin 2 → ℤ → Option Bool) (h : Fin 2 → ℤ) (o : List Bool) :
+    M.step (⟨none, p, t, h, o⟩ : Cfg 2 Bool S x) = ⟨none, p, t, h, o⟩ := rfl
+
+-- MultiTapeTM.toNDTM
+example {S : Type} (M : MultiTapeTM 2 Bool S) : M.toNDTM.q₀ = M.q₀ := rfl
+
+-- NDTM.stepWith (usage: a halted configuration)
+example {S : Type} {x : List Bool} (H : NDTM 2 Bool S) (b : Bool) (p : Fin (x.length + 2)) (t : Fin 2 → ℤ → Option Bool) (h : Fin 2 → ℤ) (o : List Bool) :
+    H.stepWith b (⟨none, p, t, h, o⟩ : Cfg 2 Bool S x) = ⟨none, p, t, h, o⟩ := rfl
+
+-- Action.apply
+example {S : Type} {x : List Bool} (a : Action 2 Bool S) (c : Cfg 2 Bool S x) : (a.apply c).state = a.state := rfl
+
+-- Action.mapState
+example {S S' : Type} (f : S → S') (a : Action 2 Bool S) : (a.mapState f).output = a.output := rfl
+
+-- FinTM.bufferTape
+example (w : List Bool) (z : ℤ) : FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none := rfl
+
+-- moveInputPos
+example {n : ℕ} (p : Fin (n + 2)) (m : SignType) :
+    moveInputPos p m = (if h : ((p.val : ℤ) + (m.cast : ℤ)).toNat < n + 2 then ⟨((p.val : ℤ) + (m.cast : ℤ)).toNat, h⟩ else ⟨n + 1, by omega⟩) := rfl
+
+-- Cfg.inputSymbol (usage: the left blank)
+example {S : Type} {x : List Bool} (q : Option S) (t : Fin 2 → ℤ → Option Bool) (h : Fin 2 → ℤ) (o : List Bool) :
+    (⟨q, 0, t, h, o⟩ : Cfg 2 Bool S x).inputSymbol = none := rfl
+
+-- Cfg.workTapeSymbols
+example {S : Type} {x : List Bool} (c : Cfg 2 Bool S x) (i : Fin 2) : c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+
+-- streamStartCfg
+example {S : Type} (z : List Bool) (q : S) (s : List Bool) : (streamStartCfg z (0 : Fin 2) q s).inputPos = 1 := rfl
+
+-- scanTM
+example {A : Type} (δf δb : A → Bool → A × Bool) (a₀ : A) : (scanTM 2 0 δf δb a₀).q₀ = .fwd a₀ := rfl
+
+-- scanResult (usage: the empty word)
+example {A : Type} (δf δb : A → Bool → A × Bool) (a₀ : A) : scanResult δf δb a₀ ([] : List Bool) = (a₀, []) := rfl
+
+-- scanFold
+example {A : Type} (δ : A → Bool → A) (a : A) (g : Bool) : scanFold δ a g = (δ a g, g) := rfl
+
+-- scanKeep
+example {A : Type} (a : A) (g : Bool) : scanKeep a g = (a, g) := rfl
+
+-- clearTM
+example : (clearTM 2 0 : MultiTapeTM 2 Bool SweepPhase).q₀ = .sweep := rfl
+
+-- FinTM.controlAction
+example {S : Type} (m : SignType) (q : Option S) : (FinTM.controlAction m q : Action 2 Bool S).inputTape = m := rfl
+
+-- tapeAction
+example {S : Type} (i : Fin 2) (inp m : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i inp w m q : Action 2 Bool S).state = some q := rfl
+
+end Unsealed
+
+section Sealed
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible] Turing.guessCtlRunTM Turing.GuessRunPhase.CtlState
+  Turing.guessCtlRunPhases Turing.guessCtlRunRed Turing.guessRunCfg Turing.ndWriterTM
+  Turing.NDTM.phaseHostND Turing.phaseHostTM Turing.skipTM Turing.skipBackTM Turing.inputRewindTM
+  Turing.StepBlock.outputSummary Turing.StepBlock.summaryEmit Turing.MultiTapeTM.step
+  Turing.MultiTapeTM.toNDTM Turing.NDTM.stepWith Turing.Action.apply Turing.Action.mapState
+  Turing.FinTM.bufferTape Turing.moveInputPos
+attribute [local irreducible] Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols
+  Turing.streamStartCfg Turing.scanTM Turing.scanResult Turing.scanFold Turing.scanKeep
+  Turing.clearTM Turing.FinTM.controlAction Turing.tapeAction
+
+-- guessCtlRunTM
+example {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ] (P : MultiTapeTM 2 Bool SP) (pexit : SP) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool) (b : Bool) (V : MultiTapeTM 2 Bool SQ) (qe a r : SQ) :
+    guessCtlRunTM P pexit 0 q₀ δ stop b V qe a r =
+      NDTM.phaseHostND (guessCtlRunPhases P 0 q₀ δ stop b V) ⟨.pre, P.q₀⟩ (guessCtlRunRed pexit q₀ qe a r) := rfl
+
+-- GuessRunPhase.CtlState
+example (SP SQ Q : Type) : GuessRunPhase.CtlState SP SQ Q .run = SQ := rfl
+
+-- guessCtlRunPhases
+example {SP SQ Q : Type} (P : MultiTapeTM 2 Bool SP) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool) (b : Bool) (V : MultiTapeTM 2 Bool SQ) :
+    guessCtlRunPhases P 0 q₀ δ stop b V .skip = (skipTM 2 0).toNDTM := rfl
+
+-- guessCtlRunRed
+example {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ] (pexit : SP) (q₀ : Q) (qe a r : SQ) (b : Bool) :
+    guessCtlRunRed pexit q₀ qe a r .out b = none := rfl
+
+-- guessRunCfg
+example {S S' : Type} {z : List Bool} (c : Cfg 2 Bool S z) (s : List Bool) (q : S') :
+    (guessRunCfg c 0 s q).state = some q := rfl
+
+-- ndWriterTM
+example {Q : Type} (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool) (b : Bool) :
+    (ndWriterTM 2 0 q₀ δ stop b).q₀ = .run q₀ := rfl
+
+-- NDTM.phaseHostND
+example {I : Type} {Ph : I → Type} (M : (i : I) → NDTM 2 Bool (Ph i)) (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (NDTM.phaseHostND M q0 red).q₀ = q0 := rfl
+
+-- phaseHostTM
+example {I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM 2 Bool (Ph i)) (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) :
+    (phaseHostTM M q0 red).q₀ = q0 := rfl
+
+-- skipTM
+example : (skipTM 2 0 : MultiTapeTM 2 Bool SeekPhase).q₀ = .run := rfl
+
+-- skipBackTM
+example : (skipBackTM 2 0 : MultiTapeTM 2 Bool SeekPhase).q₀ = .run := rfl
+
+-- inputRewindTM
+example : (inputRewindTM 2).q₀ = .start := rfl
+
+-- StepBlock.outputSummary
+example : StepBlock.outputSummary [true] = some true := rfl
+
+-- StepBlock.summaryEmit
+example (s : Option Bool) : StepBlock.summaryEmit s none = s := rfl
+
+-- MultiTapeTM.step (usage: a halted configuration)
+example {S : Type} {x : List Bool} (M : MultiTapeTM 2 Bool S) (p : Fin (x.length + 2)) (t : Fin 2 → ℤ → Option Bool) (h : Fin 2 → ℤ) (o : List Bool) :
+    M.step (⟨none, p, t, h, o⟩ : Cfg 2 Bool S x) = ⟨none, p, t, h, o⟩ := rfl
+
+-- MultiTapeTM.toNDTM
+example {S : Type} (M : MultiTapeTM 2 Bool S) : M.toNDTM.q₀ = M.q₀ := rfl
+
+-- NDTM.stepWith (usage: a halted configuration)
+example {S : Type} {x : List Bool} (H : NDTM 2 Bool S) (b : Bool) (p : Fin (x.length + 2)) (t : Fin 2 → ℤ → Option Bool) (h : Fin 2 → ℤ) (o : List Bool) :
+    H.stepWith b (⟨none, p, t, h, o⟩ : Cfg 2 Bool S x) = ⟨none, p, t, h, o⟩ := rfl
+
+-- Action.apply
+example {S : Type} {x : List Bool} (a : Action 2 Bool S) (c : Cfg 2 Bool S x) : (a.apply c).state = a.state := rfl
+
+-- Action.mapState
+example {S S' : Type} (f : S → S') (a : Action 2 Bool S) : (a.mapState f).output = a.output := rfl
+
+-- FinTM.bufferTape
+example (w : List Bool) (z : ℤ) : FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none := rfl
+
+-- moveInputPos
+example {n : ℕ} (p : Fin (n + 2)) (m : SignType) :
+    moveInputPos p m = (if h : ((p.val : ℤ) + (m.cast : ℤ)).toNat < n + 2 then ⟨((p.val : ℤ) + (m.cast : ℤ)).toNat, h⟩ else ⟨n + 1, by omega⟩) := rfl
+
+-- Cfg.inputSymbol (usage: the left blank)
+example {S : Type} {x : List Bool} (q : Option S) (t : Fin 2 → ℤ → Option Bool) (h : Fin 2 → ℤ) (o : List Bool) :
+    (⟨q, 0, t, h, o⟩ : Cfg 2 Bool S x).inputSymbol = none := rfl
+
+-- Cfg.workTapeSymbols
+example {S : Type} {x : List Bool} (c : Cfg 2 Bool S x) (i : Fin 2) : c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+
+-- streamStartCfg
+example {S : Type} (z : List Bool) (q : S) (s : List Bool) : (streamStartCfg z (0 : Fin 2) q s).inputPos = 1 := rfl
+
+-- scanTM
+example {A : Type} (δf δb : A → Bool → A × Bool) (a₀ : A) : (scanTM 2 0 δf δb a₀).q₀ = .fwd a₀ := rfl
+
+-- scanResult (usage: the empty word)
+example {A : Type} (δf δb : A → Bool → A × Bool) (a₀ : A) : scanResult δf δb a₀ ([] : List Bool) = (a₀, []) := rfl
+
+-- scanFold
+example {A : Type} (δ : A → Bool → A) (a : A) (g : Bool) : scanFold δ a g = (δ a g, g) := rfl
+
+-- scanKeep
+example {A : Type} (a : A) (g : Bool) : scanKeep a g = (a, g) := rfl
+
+-- clearTM
+example : (clearTM 2 0 : MultiTapeTM 2 Bool SweepPhase).q₀ = .sweep := rfl
+
+-- FinTM.controlAction
+example {S : Type} (m : SignType) (q : Option S) : (FinTM.controlAction m q : Action 2 Bool S).inputTape = m := rfl
+
+-- tapeAction
+example {S : Type} (i : Fin 2) (inp m : SignType) (w : Option (Option Bool)) (q : S) : (tapeAction i inp w m q : Action 2 Bool S).state = some q := rfl
+
+end Sealed
