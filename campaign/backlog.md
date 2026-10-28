@@ -2020,6 +2020,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     pairs at base and head, none new or gone; axioms standard; lint the base's. **Gate 86** staged
     (bundle `5d6800fd…`, 52 sections); `replay-lscp` written (53 modules from `oleans-lnfapi4`,
     precheck passed). **Gate 86 dispatched; `replay-lscp` running (user, 2026-10-27).**
+    **Gate 86, round 1: FAIL 0/2/3/10**: both majors debt acknowledgments. **Ruled (user,
+    2026-10-27):** accept the `logSpace` restatement for 12.2c (LS-1); re-point `hD'` now and
+    accept `WordTests`' 25% census (PL-1 corrected). Fixed by `00d5ff05` (the decider from
+    `computesFunInTime_decideEq []`, public-facing module text, `Savitch`'s heading); the replay
+    generator now exits nonzero on a failure. **Round 2 staged** (bundle `6a103efc…`, 44 sections;
+    head `ca0eafb8`); `replay-lscp2` written (53 modules, precheck passed). `replay-lscp` (round 1's
+    head) no longer certifies the PR.
+  - **PR #176** (`lean/eq-cont1-landing`, head `cecd76a0`): E-Q cont1's eight commits, reworded,
+    and the maintainer's E1–E5; elaboration at the tip's snapshot: one sorry warning
+    (`exists_diagonalizer`); lint 0 FAIL. `replay-leqc1` written (3 modules from `oleans-lnfapi4`,
+    precheck passed). Gate 87 (the fill gate) next: the head screen running.
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
