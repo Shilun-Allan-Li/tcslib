@@ -1935,6 +1935,15 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     the base sorries (20 in 9), the screen base and the pre-ship log. The issue commit is the
     brief's `@ANCESTOR@`.
     **Dispatched (user, 2026-10-27).**
+    **Cont1 delivered complete** (`fill-eq-query-cont1.zip`, SHA-256 `aa8e3ab1…`; report
+    `campaign/fills/eq/reports/eq-fill-query-cont1-REPORT.md`): `exists_queryTM` proved, all seven
+    checkpoints; head `e952bc50` (8 commits on `43fe918f`, the owned file only, +4,908 lines; 22
+    public, 214 private); one sorry left, `exists_diagonalizer`'s; axioms standard (212 prints);
+    sealed 43 definitions (43 controls close unsealed, fail sealed); 84 modules swept; screen 120
+    new pairs, 0 gone; no escalation. **Intake verified** (99 sums; the bundle's one prerequisite
+    the base; the 8 patches equal the bundle; the source its head). The campaign's Lean since the
+    base: only `NDHost` (#174), outside the owned file's closure. Next: the review sub-agent, then
+    the landing PR, its replay from `oleans-lnfapi4` and the fill gate.
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`
@@ -1983,7 +1992,12 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     2026-10-27): move `spaceConstructible_poly` to `Constructible` (an API PR, statement unchanged,
     with its gate and a replay of `Constructible`'s downstream); Codex for H's fill.** Next: the SCP
     PR; then the rest of the pre-ship (seal controls, duplication probe, screen base, lint base) at
-    the issue commit, after the SCP PR and #174 merge.
+    the issue commit, after the SCP PR and #174 merge. **The SCP move** (branch
+    `lean/scp-constructible`, `550024b4`; no PR yet): the block (8 privates and the theorem) moved,
+    statement unchanged; one proof step through `logSpace_eq` (`ARMWidth`'s `logSpace_le_succ` is
+    outside `Constructible`'s closure; a 12.2c candidate: move it to `Basic`); `Constructible`
+    elaborates with no diagnostic; sealed (12 definitions, 3 erased; 15 controls); freeze a pure
+    move. The screen is to re-run (interrupted).
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
@@ -2021,7 +2035,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     **Round 2 dispatched** (bundle `67bedf22…`, 29 sections); **`replay-lnfapi4` passed** (4 of 4,
     static-equal, at `086c0ef0`). **Gate 85, round 2: PASS 0/0/1/11** (the minor, the seal
     generator's docstring, fixed in the records; its output byte-identical). **#174: clear to merge**
-    at `086c0ef0` (2026-10-27). After it merges: NF's brief (with the verifier's `hV` obligation).
+    at `086c0ef0` (2026-10-27). **Merged (`c2887fb5`, 2026-10-27).** Next: NF's brief (with the
+    verifier's `hV` obligation).
     **Cont1's pre-ship taken on the landed tree** (`campaign/fills/eq/drafts/eq-fill-query-cont1/
     preship-599497bc/`, against `oleans-leqcp1`): the base file's two sorries; all eight probes
     identical to the first round's; order list 84 (re-sorted after #170), 34 roots, 21 sorries in
