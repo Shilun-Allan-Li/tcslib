@@ -1,0 +1,139 @@
+/-
+Seal controls (scratch; not library code): for each sealed TCSlib definition `c`, the goal
+`c = <its defining value>` closed by `rfl`. Expected: every control in `Unsealed` closes (an
+info line each), and every control in `Sealed` fails (exactly 43 errors, one per control).
+-/
+import Mathlib.Data.Nat.Log
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.TuringMachine.Build.StepClock
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.WordTests
+
+set_option maxHeartbeats 0
+
+open Lean Meta Elab Command Term in
+/-- `#qy_control c`: elaborate `rfl` against `c = <the value of c>` at default transparency. -/
+elab "#qy_control " id:ident : command => liftTermElabM do
+  let c ← realizeGlobalConstNoOverload id
+  let ci ← getConstInfo c
+  let some v := ci.value? | throwError "{c} has no value"
+  let us ← ci.levelParams.mapM fun _ => mkFreshLevelMVar
+  let ty ← mkEq (mkConst c us) (v.instantiateLevelParams ci.levelParams us)
+  let _ ← withoutErrToSorry <| elabTermEnsuringType (← `(rfl)) ty
+  synthesizeSyntheticMVarsNoPostponing
+  logInfo m!"control {c}: closes by rfl"
+
+section Unsealed
+
+#qy_control Complexity.TimeConstructible
+#qy_control Turing.FinTM.ComputesFunInTime
+#qy_control Turing.FinTM.ComputesInTime
+#qy_control Turing.MultiTapeTM.runFrom
+#qy_control Turing.MultiTapeTM.initCfg
+#qy_control Turing.Cfg.ofWords
+#qy_control Turing.stateWord
+#qy_control Turing.clockCfg
+#qy_control Turing.wordPatch
+#qy_control Turing.counterLoopCfg
+#qy_control Turing.expandTM
+#qy_control Turing.copyMapTM
+#qy_control Turing.seamCompTM
+#qy_control Turing.embedEmitTM
+#qy_control Turing.embedSilentTM
+#qy_control Turing.pairEncode
+#qy_control Turing.seamReleaseTM
+#qy_control Turing.phaseHostTM
+#qy_control Turing.Cfg.mapState
+#qy_control Turing.Cfg.Stopped
+#qy_control Turing.embedEmitCfg
+#qy_control Turing.embedSilentCfg
+#qy_control Turing.FinTM.bufferTape
+#qy_control Turing.scanTM
+#qy_control Turing.inputFoldTM
+#qy_control Turing.writeAdvTM
+#qy_control Turing.clearTM
+#qy_control Turing.rewindTM
+#qy_control Turing.dbl
+#qy_control Turing.counterValue
+#qy_control Turing.Action.apply
+#qy_control Turing.Cfg.init
+#qy_control Turing.NDTM.initCfg
+#qy_control Turing.Cfg.inputSymbol
+#qy_control Turing.Cfg.workTapeSymbols
+#qy_control Turing.MultiTapeTM.step
+#qy_control Turing.Round
+#qy_control Turing.Segment
+#qy_control Turing.counterOverhead
+#qy_control Turing.moveInputPos
+#qy_control Turing.roundStop
+#qy_control Turing.transferMapTM
+#qy_control Turing.writeConstTM
+
+end Unsealed
+
+section Sealed
+
+attribute [local irreducible] Complexity.TimeConstructible Turing.FinTM.ComputesFunInTime
+  Turing.FinTM.ComputesInTime Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg
+  Turing.Cfg.ofWords Turing.stateWord Turing.clockCfg Turing.wordPatch Turing.counterLoopCfg
+  Turing.expandTM Turing.copyMapTM Turing.seamCompTM Turing.embedEmitTM Turing.embedSilentTM
+  Turing.pairEncode Turing.seamReleaseTM Turing.phaseHostTM Turing.Cfg.mapState Turing.Cfg.Stopped
+  Turing.embedEmitCfg Turing.embedSilentCfg Turing.FinTM.bufferTape Turing.scanTM Turing.inputFoldTM
+  Turing.writeAdvTM Turing.clearTM Turing.rewindTM Turing.dbl Turing.counterValue
+  Turing.Action.apply Turing.Cfg.init Turing.NDTM.initCfg Turing.Cfg.inputSymbol
+  Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.step Turing.Round Turing.Segment
+  Turing.counterOverhead Turing.moveInputPos Turing.roundStop Turing.transferMapTM
+  Turing.writeConstTM
+
+#qy_control Complexity.TimeConstructible
+#qy_control Turing.FinTM.ComputesFunInTime
+#qy_control Turing.FinTM.ComputesInTime
+#qy_control Turing.MultiTapeTM.runFrom
+#qy_control Turing.MultiTapeTM.initCfg
+#qy_control Turing.Cfg.ofWords
+#qy_control Turing.stateWord
+#qy_control Turing.clockCfg
+#qy_control Turing.wordPatch
+#qy_control Turing.counterLoopCfg
+#qy_control Turing.expandTM
+#qy_control Turing.copyMapTM
+#qy_control Turing.seamCompTM
+#qy_control Turing.embedEmitTM
+#qy_control Turing.embedSilentTM
+#qy_control Turing.pairEncode
+#qy_control Turing.seamReleaseTM
+#qy_control Turing.phaseHostTM
+#qy_control Turing.Cfg.mapState
+#qy_control Turing.Cfg.Stopped
+#qy_control Turing.embedEmitCfg
+#qy_control Turing.embedSilentCfg
+#qy_control Turing.FinTM.bufferTape
+#qy_control Turing.scanTM
+#qy_control Turing.inputFoldTM
+#qy_control Turing.writeAdvTM
+#qy_control Turing.clearTM
+#qy_control Turing.rewindTM
+#qy_control Turing.dbl
+#qy_control Turing.counterValue
+#qy_control Turing.Action.apply
+#qy_control Turing.Cfg.init
+#qy_control Turing.NDTM.initCfg
+#qy_control Turing.Cfg.inputSymbol
+#qy_control Turing.Cfg.workTapeSymbols
+#qy_control Turing.MultiTapeTM.step
+#qy_control Turing.Round
+#qy_control Turing.Segment
+#qy_control Turing.counterOverhead
+#qy_control Turing.moveInputPos
+#qy_control Turing.roundStop
+#qy_control Turing.transferMapTM
+#qy_control Turing.writeConstTM
+
+end Sealed
