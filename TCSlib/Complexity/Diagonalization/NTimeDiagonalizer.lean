@@ -515,34 +515,9 @@ private theorem qyC_mapState {K : ℕ} {S S' : Type} {x : List Bool} (f : S → 
 /-- **A hosted phase is a segment.** If phase `k` of a phase host runs from a normal-form
 configuration at `e` to one at the live exit `s'`, which the host redirects to `q'`, with no
 redirect earlier, then the host runs, in one more step, from the tagged start to the redirected
-endpoint, avoiding every set `F` of host states that contains neither `none` nor a state of
-phase `k` before the end. It is `Turing.phaseHostTM_run` with the tag of every intermediate
-state read off. -/
-private theorem qy_hosted {K : ℕ} {I : Type} {Ph : I → Type}
-    (M : (i : I) → MultiTapeTM K Bool (Ph i))
-    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (k : I) {x : List Bool}
-    (e s' : Ph k) (q' : Σ i, Ph i) (ip ip' : Fin (x.length + 2))
-    (T T' : Fin K → ℤ → Option Bool) (P P' : Fin K → ℤ) (o o' : List Bool) (t : ℕ)
-    (h : (M k).runFrom (qyC e ip T P o) t = qyC s' ip' T' P' o')
-    (hred : red k s' = some q')
-    (hguard : ∀ u < t, ∀ s, ((M k).runFrom (qyC e ip T P o) u).state = some s → red k s = none)
-    (F : Set (Option (Σ i, Ph i))) (hF : ∀ s, some ⟨k, s⟩ ∉ F) :
-    Segment (phaseHostTM M q0 red) F (fun _ => True) (qyC ⟨k, e⟩ ip T P o)
-      (qyC q' ip' T' P' o') (t + 1) := by
-  have H := phaseHostTM_run M q0 red k (qyC e ip T P o) _ t h s' rfl q' hred hguard
-  rw [qyC_mapState, qyC_mapState] at H
-  refine (segment_iff _ _ _ _ _ _).mpr ⟨H.2, fun u hu => ?_, fun _ _ => trivial⟩
-  have hlive : ((M k).runFrom (qyC e ip T P o) u).state ≠ none :=
-    MultiTapeTM.runFrom_state_ne_none_of_le (M k) _ t (by rw [h]; exact Option.some_ne_none _)
-      u (by omega)
-  have hu' := H.1 u (by omega)
-  rw [hu', Cfg.mapState_state]
-  obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp hlive
-  rw [hs, Option.map_some]
-  exact hF s
-
-/-- **A hosted phase is a segment**, with the avoided set checked along the phase's own run: it
-may contain states of phase `k` that the run does not visit up to its end. -/
+endpoint, avoiding every set `F` of host states that contains no state the phase's run visits
+up to its end. It is `Turing.phaseHostTM_run` with the tag of every intermediate state read
+off. -/
 private theorem qy_hosted' {K : ℕ} {I : Type} {Ph : I → Type}
     (M : (i : I) → MultiTapeTM K Bool (Ph i))
     (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (k : I) {x : List Bool}
@@ -566,6 +541,21 @@ private theorem qy_hosted' {K : ℕ} {I : Type} {Ph : I → Type}
   obtain ⟨s, hs⟩ := Option.ne_none_iff_exists'.mp hlive
   rw [hs, Option.map_some]
   exact hF u (by omega) s hs
+
+/-- **A hosted phase is a segment**, avoiding every set `F` of host states that contains neither
+`none` nor a state of phase `k`: `qy_hosted'` with the avoided set checked once for all. -/
+private theorem qy_hosted {K : ℕ} {I : Type} {Ph : I → Type}
+    (M : (i : I) → MultiTapeTM K Bool (Ph i))
+    (q0 : Σ i, Ph i) (red : (i : I) → Ph i → Option (Σ i, Ph i)) (k : I) {x : List Bool}
+    (e s' : Ph k) (q' : Σ i, Ph i) (ip ip' : Fin (x.length + 2))
+    (T T' : Fin K → ℤ → Option Bool) (P P' : Fin K → ℤ) (o o' : List Bool) (t : ℕ)
+    (h : (M k).runFrom (qyC e ip T P o) t = qyC s' ip' T' P' o')
+    (hred : red k s' = some q')
+    (hguard : ∀ u < t, ∀ s, ((M k).runFrom (qyC e ip T P o) u).state = some s → red k s = none)
+    (F : Set (Option (Σ i, Ph i))) (hF : ∀ s, some ⟨k, s⟩ ∉ F) :
+    Segment (phaseHostTM M q0 red) F (fun _ => True) (qyC ⟨k, e⟩ ip T P o)
+      (qyC q' ip' T' P' o') (t + 1) :=
+  qy_hosted' M q0 red k e s' q' ip ip' T T' P P' o o' t h hred hguard F fun _ _ s _ => hF s
 
 /-- **A hosted last phase is a segment** without dispatch: if phase `k` runs to a live endpoint
 that the host does not redirect, with no redirect earlier, the host's run is the tagged phase run,
@@ -818,6 +808,19 @@ private theorem qy_rewind {K : ℕ} {x : List Bool} (i : Fin K) (ip : Fin (x.len
   dsimp only [qyC]
   rw [hP, sub_self]
 
+/-- **An embedded run, read through the transport.** The host run of `Turing.embedEmitTM` from a
+normal-form configuration is the transport of the source run from its selected bank. -/
+private theorem qy_embed_gen {m K : ℕ} {S : Type} {x : List Bool} (σ : Fin m ↪ Fin K)
+    (M : MultiTapeTM m Bool S) (s : S) (ip : Fin (x.length + 2))
+    (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool) (t : ℕ) :
+    (embedEmitTM σ M).runFrom (qyC s ip T P o) t =
+      embedEmitCfg σ T P o (M.runFrom (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) t) := by
+  have hD : embedEmitCfg σ T P o (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) =
+      (qyC s ip T P o : Cfg K Bool S x) :=
+    embedEmitCfg_eq σ T P o _ _ rfl rfl (List.append_nil o) (fun _ => ⟨rfl, rfl⟩)
+      (fun _ _ => ⟨rfl, rfl⟩)
+  rw [← hD, embedEmitTM_runFrom]
+
 /-- **An embedded run in normal form.** A source machine run along `σ` from the selected bank of
 a normal-form configuration, ending in normal form, is the host run of `Turing.embedEmitTM`
 from that configuration: the selected tapes and heads are the source's, every other one is
@@ -831,11 +834,7 @@ private theorem qy_embed {m K : ℕ} {S : Type} {x : List Bool} (σ : Fin m ↪ 
     (hsel : ∀ i, T' (σ i) = T₀ i ∧ P' (σ i) = P₀ i)
     (hout : ∀ j, j ∉ Set.range σ → T' j = T j ∧ P' j = P j) :
     (embedEmitTM σ M).runFrom (qyC s ip T P o) t = qyC s' ip' T' P' (o ++ o') := by
-  have hD : embedEmitCfg σ T P o (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) =
-      (qyC s ip T P o : Cfg K Bool S x) :=
-    embedEmitCfg_eq σ T P o _ _ rfl rfl (List.append_nil o) (fun _ => ⟨rfl, rfl⟩)
-      (fun _ _ => ⟨rfl, rfl⟩)
-  rw [← hD, embedEmitTM_runFrom, hrun]
+  rw [qy_embed_gen, hrun]
   exact embedEmitCfg_eq σ T P o _ _ rfl rfl rfl (fun i => ⟨(hsel i).1.symm, (hsel i).2.symm⟩)
     (fun j hj => ⟨(hout j hj).1.symm, (hout j hj).2.symm⟩)
 
@@ -846,11 +845,7 @@ private theorem qy_embed_state {m K : ℕ} {S : Type} {x : List Bool} (σ : Fin 
     (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool) (u : ℕ) :
     ((embedEmitTM σ M).runFrom (qyC s ip T P o) u).state =
       (M.runFrom (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) u).state := by
-  have hD : embedEmitCfg σ T P o (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) =
-      (qyC s ip T P o : Cfg K Bool S x) :=
-    embedEmitCfg_eq σ T P o _ _ rfl rfl (List.append_nil o) (fun _ => ⟨rfl, rfl⟩)
-      (fun _ _ => ⟨rfl, rfl⟩)
-  rw [← hD, embedEmitTM_runFrom, embedEmitCfg_state]
+  rw [qy_embed_gen, embedEmitCfg_state]
 
 /-- **A released call in normal form.** A call that reaches its exit first at the positive time
 `t`, with `res` installed, run through the release adapter from its fresh state over the seam
@@ -1664,19 +1659,6 @@ private theorem qy_wordPatch_ones (m : ℕ) (w : List Bool) (hw : w.length = m) 
   · rw [wordPatch_of_mem _ _ _ h.1 h.2, sub_zero]
   · rw [wordPatch_of_not_mem _ _ _ h, FinTM.bufferTape_eq_none_of_not_mem _ (by
       rw [List.length_replicate]; omega), FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
-
-/-- **An embedded run, read through the transport.** The host run of `Turing.embedEmitTM` from a
-normal-form configuration is the transport of the source run from its selected bank. -/
-private theorem qy_embed_gen {m K : ℕ} {S : Type} {x : List Bool} (σ : Fin m ↪ Fin K)
-    (M : MultiTapeTM m Bool S) (s : S) (ip : Fin (x.length + 2))
-    (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool) (t : ℕ) :
-    (embedEmitTM σ M).runFrom (qyC s ip T P o) t =
-      embedEmitCfg σ T P o (M.runFrom (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) t) := by
-  have hD : embedEmitCfg σ T P o (qyC s ip (fun i => T (σ i)) (fun i => P (σ i)) []) =
-      (qyC s ip T P o : Cfg K Bool S x) :=
-    embedEmitCfg_eq σ T P o _ _ rfl rfl (List.append_nil o) (fun _ => ⟨rfl, rfl⟩)
-      (fun _ _ => ⟨rfl, rfl⟩)
-  rw [← hD, embedEmitTM_runFrom]
 
 /-- **The clocked call's clause**, for a call `C` with entry and exit and a step clock `H` over
 its release adapter (the conclusion of `Turing.NTimeDiag.qy_clocked_call` after its witnesses). -/
