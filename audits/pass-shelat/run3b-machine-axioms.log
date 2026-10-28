@@ -1,0 +1,149 @@
+# Pass–shelat ch. 2–4 campaign — RUN 3b (machine-layer fills) verification log
+# Verifier: Claude Code subagent, 2026-10-28
+# Worktree: /Users/dehmelf/Research/tcslib-pass-shelat  (branch cryptography/pass-shelat-ch2-4)
+
+## 1. Build
+Command : lake build TCSlib.Complexity.Randomized TCSlib.Cryptography.Asymptotic.Adversary
+Exit    : 0   ("Build completed successfully (2126 jobs)")
+error:  : 0 lines
+Fresh   : 0 modules rebuilt (all oleans up to date with sources; 4 modules replayed cached
+          warnings: TuringMachine.Configuration, TuringMachine.Build.Loop,
+          TuringMachine.Build.Primitives (pre-existing linter warnings, not campaign files),
+          Randomized.NonUniform)
+sorry   : 1 warning in the whole closure:
+          TCSlib/Complexity/Randomized/NonUniform.lean:153:8  declaration uses 'sorry'
+          (= Complexity.NUPPT.decides_of_decidesWithAdviceInTime, the optional
+           DecidesWithAdviceInTime -> NUPPT bridge; D11 optional module "NUPPT.ofPartial",
+           off every critical path; carries its **Proof sketch.**)
+Per-file sorry count: PolyExpr 0, PPT 0, NonUniform 1, Primitives 0, Closure 0, Repetition 0,
+          Build/{IterateFind,IterateFindHost,PairSplit,StateLoop,StringLoops,UnaryMul} 0.
+Textual 'axiom' declarations under TCSlib/Complexity/Randomized/: none.
+Warnings emitted by any Randomized/ or Randomized/Build/ module: none besides the sorry above.
+
+## 2. #print axioms (scratch /tmp/run3b/Run3bAxioms.lean via lake env lean, exit 0)
+'Turing.FinTM.computesFunInTime_pairSplitAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_unaryMul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_unaryPoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairTakePoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairDropPoly' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_reparam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_reparam_advice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_withAdvice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_split' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_seq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_iterateFind' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_iterate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_iterateEmit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_majority' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairXor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_pairEq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.polyTimeComputable_blockMap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.decides_of_decidesWithAdviceInTime' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]
+
+Result: all 18 run-3b fill targets print exactly [propext, Classical.choice, Quot.sound].
+Change vs run2-axioms.log: 15 targets moved from sorryAx to closed (pairSplitAt, unaryMul,
+unaryPoly, pairTakePoly, pairDropPoly, exists_reparam, exists_reparam_advice, exists_split,
+exists_seq, iterateFind, iterate, iterateEmit, majority, pairXor, pairEq, blockMap);
+exists_comp and exists_withAdvice were already closed. D11's single admissible admission
+polyTimeComputable_iterateFind is now CLOSED (no sorryAx).
+
+## 3. Statement freeze (six Randomized files vs briefs/pass-shelat/DESIGN-freeze-scratch.lean L18–363)
+Method : mechanical extraction of every non-private top-level declaration header (keyword ..
+         first top-level ':=' / 'where'; full structure bodies; doc comments stripped;
+         whitespace-normalised; keyed by fully qualified name, freeze's Complexity.Turing.FinTM.*
+         identified with Turing.FinTM.*). Script: /tmp/run3b/stmtdiff.py (not in repo).
+Result : 56 frozen declarations found, 56 statements IDENTICAL, 0 different, 0 missing.
+         Only presentational difference: freeze writes 'theorem NUPPT.exists_comp' at the
+         Complexity level, files write 'theorem exists_comp' inside 'namespace NUPPT' (same name).
+Additional public declarations in the six files that are not in the freeze (helper API added
+during runs 2–3b; no frozen statement touched): 55
+    PolyExpr.lean:122  Complexity.PolyExpr.subst_var
+    PolyExpr.lean:176  Complexity.PolyExpr.polyBound_eval
+    PolyExpr.lean:180  Complexity.PolyExpr.exists_normal_ge
+    PolyExpr.lean:190  Complexity.polyTimeComputable_unaryNormal
+    PPT.lean:185  Complexity.NUPPT.output_length_le
+    PPT.lean:232  Complexity.NUPPT.Computes.runAt_eq
+    PPT.lean:261  Complexity.NUPPT.coins_ofPolyTime
+    PPT.lean:266  Complexity.NUPPT.adv_ofPolyTime
+    PPT.lean:271  Complexity.NUPPT.advice_ofPolyTime
+    PPT.lean:276  Complexity.NUPPT.runAtL_ofPolyTime
+    PPT.lean:293  Complexity.NUPPT.output_ofPolyTimeUniform
+    PPT.lean:298  Complexity.NUPPT.coins_ofPolyTimeUniform
+    PPT.lean:303  Complexity.NUPPT.runAtL_ofPolyTimeUniform
+    PPT.lean:314  Complexity.NUPPT.exists_uniform_computes
+    PPT.lean:333  Complexity.PPT.nonempty
+    NonUniform.lean:82  Complexity.NUPPT.runLit_eq_runAt
+    NonUniform.lean:86  Complexity.NUPPT.runLit_eq_runAtL
+    NonUniform.lean:90  Complexity.NUPPT.Uniform.advice_eq
+    NonUniform.lean:93  Complexity.NUPPT.Uniform.runAtL_eq
+    NonUniform.lean:98  Complexity.NUPPT.Uniform.runAt_eq
+    NonUniform.lean:103  Complexity.NUPPT.ofPolyTime_uniform
+    NonUniform.lean:108  Complexity.NUPPT.uniform_iff
+    NonUniform.lean:112  Complexity.NUPPT.runLit_ofPolyTimeUniform
+    NonUniform.lean:127  Complexity.NUPPT.polyTimeComputable_runAtL
+    NonUniform.lean:165  Complexity.PPT.toNUPPT
+    NonUniform.lean:168  Complexity.PPT.uniform
+    NonUniform.lean:172  Complexity.PPT.ofPolyTime
+    NonUniform.lean:177  Complexity.PPT.toNUPPT_ofPolyTime
+    Closure.lean:89  Complexity.NUPPT.layout
+    Closure.lean:92  Complexity.NUPPT.inParam
+    Closure.lean:95  Complexity.NUPPT.inArg
+    Closure.lean:98  Complexity.NUPPT.inAdvice
+    Closure.lean:101  Complexity.NUPPT.inCoins
+    Closure.lean:104  Complexity.NUPPT.inParam_layout
+    Closure.lean:108  Complexity.NUPPT.inArg_layout
+    Closure.lean:112  Complexity.NUPPT.inAdvice_layout
+    Closure.lean:116  Complexity.NUPPT.inCoins_layout
+    Closure.lean:120  Complexity.NUPPT.runAtL_eq_output_layout
+    Closure.lean:124  Complexity.NUPPT.polyTimeComputable_inParam
+    Closure.lean:128  Complexity.NUPPT.polyTimeComputable_inArg
+    Closure.lean:132  Complexity.NUPPT.polyTimeComputable_inAdvice
+    Closure.lean:136  Complexity.NUPPT.polyTimeComputable_inCoins
+    Closure.lean:141  Complexity.NUPPT.polyTimeComputable_layout
+    Closure.lean:157  Complexity.NUPPT.combineAdvice
+    Closure.lean:161  Complexity.NUPPT.pairFstD_combineAdvice
+    Closure.lean:169  Complexity.NUPPT.pairSndD_combineAdvice
+    Closure.lean:177  Complexity.NUPPT.combineAdvice_nil
+    Closure.lean:181  Complexity.NUPPT.length_combineAdvice_le
+    Closure.lean:381  Complexity.NUPPT.Computes.polyTimeComputable
+    Repetition.lean:139  Complexity.guardedStep
+    Repetition.lean:144  Complexity.LoopInv
+    Repetition.lean:149  Complexity.loopInv_init
+    Repetition.lean:155  Complexity.loopInv_guardedStep
+    Repetition.lean:164  Complexity.iterate_guardedStep_eq
+    Repetition.lean:180  Complexity.acc_guardedStep_eq
+
+## 4. New files under TCSlib/Complexity/Randomized/Build/
+File (lines, wc -l)              imported by (public consumer)
+  PairSplit.lean       540        Randomized/Primitives.lean  -> computesFunInTime_pairSplitAt
+  UnaryMul.lean        482        Randomized/Primitives.lean  -> computesFunInTime_unaryMul
+  IterateFindHost.lean 695        Build/IterateFind.lean (transitively Repetition.lean)
+  IterateFind.lean     520        Randomized/Repetition.lean  -> polyTimeComputable_iterateFind
+  StateLoop.lean       377        Randomized/Repetition.lean (and Build/StringLoops.lean)
+  StringLoops.lean     587        Randomized/Repetition.lean  -> majority/pairXor/pairEq/blockMap
+All six <= 1000 lines (max 695). All reachable from the facade TCSlib.Complexity.Randomized.
+Headers: copyright block, set_option maxHeartbeats 0 / relaxedAutoImplicit false /
+         autoImplicit false, module docstring with ## References incl. [PS10]: OK in all six.
+Docstrings: every declaration (public or private) has a docstring in all six files.
+Visibility: PairSplit 1 public (exists_pairSplitTM) + 17 private; UnaryMul 1 public
+         (exists_unaryMulTM) + 17 private; IterateFind 3 public + 17 private;
+         IterateFindHost 15 public + 20 private (inner namespace Complexity.IterateFind);
+         StateLoop 37 public, StringLoops 66 public, all in inner namespaces
+         Complexity.StateLoop.{IterLoop,EmitLoop,MajLoop,XorLoop,EqLoop,BlockLoop}.
+Lint   : python3 scripts/style_lint.py on Randomized.lean + 6 Randomized files + 6 Build files
+         -> "0 findings in 13 files", exit 0.
+
+## 5. Ownership / git
+Tracked pre-existing files under TCSlib/Complexity/ (TuringMachine, ClassNP, CircuitComplexity, …)
+and TCSlib/Cryptography/{Foundations,OneWayFunctions,HardcoreBit,Pseudorandom}: unmodified
+(git status clean there). Only tracked modifications: TCSlib.lean (+5 facade imports) and
+TCSlib/ComputationalModels.lean (+NUPPT registry entry) — the integrator's registrations.
+The six Randomized files and Build/ files are untracked (new on this branch).
+
+## 6. Remaining admissions in the machine layer
+  Complexity.NUPPT.decides_of_decidesWithAdviceInTime  (NonUniform.lean:153; optional bridge,
+    D11 optional module; not a dependency of any run-3b target; sorryAx)
