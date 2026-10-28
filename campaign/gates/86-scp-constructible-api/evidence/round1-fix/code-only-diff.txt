@@ -1,0 +1,18 @@
+== Constructible.lean: 10 changed code lines
+--- round 1 (code only)
++++ round-1 fix (code only)
+@@ -7,0 +8 @@
++import TCSlib.Complexity.TuringMachine.Build.WordTests
+@@ -453 +454 @@
+-  obtain ⟨D, cD, hD⟩ := FinTM.computesFunInTime_ifEq [] [true] [false]
++  obtain ⟨D, cD, hD'⟩ := FinTM.computesFunInTime_decideEq []
+@@ -482,7 +482,0 @@
+-  have hD' : D.ComputesFunInTime (fun x => [decide (x = [])]) fun n => cD * (n + 1) := by
+-    have hfun : (fun w : List Bool => if w = [] then [true] else [false]) =
+-        fun x => [decide (x = [])] := by
+-      funext w
+-      by_cases hw : w = [] <;> simp [hw]
+-    rw [← hfun]
+-    exact hD
+== Savitch.lean: 0 changed code lines
+

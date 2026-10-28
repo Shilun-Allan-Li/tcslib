@@ -655,6 +655,8 @@ fixed-word and all-`true` tests only):
 - `Savitch`'s inline `hD'` (`SpaceComplexity/Savitch`, line 193 in `spaceConstructible_poly`'s
   proof): the conversion of `computesFunInTime_ifEq [] [true] [false]` to `[decide (x = [])]`,
   which is `Turing.FinTM.computesFunInTime_decideEq []` (#171). An inline step, not a declaration.
+  **Re-pointed by #175's round-1 fix** (gate 86's finding 2, user, 2026-10-27): the proof, now in
+  `Constructible`, takes its decider from `computesFunInTime_decideEq []`; no copy is left there.
 - `SAT`'s private `sat_pt_eq` (line 2886) and `CookLevin/Hardness`'s private `clA5_pt_eq` (line
   6818), twins (found by gate 82's resolution of its finding 1): each lifts
   `computesFunInTime_ifEq w [true] [false]`, converts it to `[decide (x = w)]` and composes it with
@@ -663,10 +665,14 @@ fixed-word and all-`true` tests only):
 
 Census (one member per file, at #171's head): `Nondeterminism` 2 of 199 declarations (8 public, 191
 private; 1.0%), `PolyTimePairing` 2 of 26 (7.7%; the public originals), `SAT` 1 of 270 (0.4%),
-`CookLevin/Hardness` 1 of 545 (0.2%). The one-fifth rule is not reached. **Disposition:** the user's
-dedup window (12.2c): re-point the two privates to the public rows (one import), `hD'` to
-`computesFunInTime_decideEq []`, and the twins to `computesFunInTime_decideEq w` (each with the
-import of `Build/WordTests`).
+`CookLevin/Hardness` 1 of 545 (0.2%). **Corrected (gate 86's finding 2, 2026-10-27):** the census
+omitted the fixed-word test's public original, `Build/WordTests`'s `computesFunInTime_decideEq`,
+**1 of 4 declarations (25%)**, so the source-inclusive count crosses one fifth in `WordTests`.
+**Human review (user, 2026-10-27): accepted** — a four-declaration module whose member is the
+public row the copies should cite; the consumers' re-points retire the family. **Disposition:** the
+user's dedup window (12.2c): re-point the two privates to the public rows (one import), and the
+twins to `computesFunInTime_decideEq w` (each with the import of `Build/WordTests`); `hD'` is
+re-pointed already (#175).
 
 **TR-1, the truncation of an acceptance at an all-branch budget** (PR #172, H's landing,
 2026-10-27; the H brief review's F1 and gate 84's pack, item 5). One fact: if every branch of `N`
@@ -699,7 +705,8 @@ One fact, `logSpace n ≤ n + 1`, in three places:
   `Nat.succ_le_succ (Nat.log_le_self 2 n)` by reduction of `logSpace` (another file's definition;
   the proof predates rule 10).
 
-Two inline steps and one declaration; the one-fifth rule is not in question. **Disposition:** the
+Two inline steps and one declaration; the one-fifth rule is not in question. **Accepted (user,
+2026-10-27; gate 86's finding 1)** as debt, the new inline step included. **Disposition:** the
 user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic` beside
 `logSpace_eq` (a mechanical edit in `ARMWidth`, FYI to its author), and re-point the two inline
 steps to it.

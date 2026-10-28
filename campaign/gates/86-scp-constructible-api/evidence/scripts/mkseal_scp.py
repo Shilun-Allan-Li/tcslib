@@ -1,5 +1,5 @@
 """Seal the moved block of `Constructible` (python3 -I): mkseal_scp.py <Constructible.lean> <out.lean>.
-The block (the six private helpers and `spaceConstructible_poly`) is wrapped in one section that
+The block (the eight private helpers and `spaceConstructible_poly`) is wrapped in one section that
 makes the other-file TCSlib definitions it reaches locally irreducible and erases the three
 @[simp] TCSlib definitions of the environment; the rest of the file stays outside the seal."""
 import sys

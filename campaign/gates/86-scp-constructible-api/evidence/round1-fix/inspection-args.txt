@@ -1,0 +1,15 @@
+# The rewrite and simplification arguments of the moved block at 00d5ff05 (Constructible lines 549-704),
+# every rw / rwa / simp / simpa / dsimp / unfold / show / change in the code (comments and docstrings stripped)
+565: rw [transduce_cons]
+566: simp only [scp_tailO, scp_tailδ, Bool.false_eq_true, if_false, Option.toList_none, List.nil_append, scp_transduce_copy, List.tail_cons]
+573: simp 
+574: simp 
+585: simp only [decide_true, if_true, List.length_nil]
+586: rw [zero_pow (by omega), Nat.zero_add]
+588: simp only [reduceCtorEq, decide_false, Bool.false_eq_true, if_false, List.length_cons, List.length_replicate, Nat.one_mul, List.tail_cons]
+660: rwa [scp_transduce_tail]
+671: simp 
+672: simp only [List.length_replicate, Nat.one_mul, List.length_append, List.length_cons, List.length_nil]
+681: rw [hval]
+686: rw [logSpace_eq]
+703: rw [← Nat.mul_assoc]

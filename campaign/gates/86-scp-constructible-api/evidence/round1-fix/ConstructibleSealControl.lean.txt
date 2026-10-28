@@ -1,0 +1,137 @@
+import TCSlib.Complexity.SpaceComplexity.Constructible
+import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+
+/-! The controls for the seal of `Constructible`'s moved block: unsealed every goal closes; sealed
+every goal is expected to FAIL, each at its own goal. -/
+
+section Unsealed
+
+-- transduce (a usage control: the recursive definition on a concrete word)
+example : Complexity.transduce (fun (_ : Bool) (_ : Bool) => true)
+    (fun q b => if q then some b else none) false [true, false] = [false] := rfl
+
+-- transducerTM
+example {σ : Type} [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ) (o : σ → Bool → Option Bool)
+    (q : σ) : (Complexity.transducerTM δ o q).k = 0 := rfl
+
+-- FinTM.polyUnaryTM (a usage control: the degree-zero case)
+example (C : ℕ) :
+    Turing.FinTM.polyUnaryTM C 0 = Turing.FinTM.constTM (List.replicate C true) := rfl
+
+-- FinTM.prependTM
+example (w : List Bool) : (Turing.FinTM.prependTM w).k = 0 := rfl
+
+-- FinTM.bufferedCompTM
+example (M₁ M₂ : Turing.FinTM Bool) :
+    (Turing.FinTM.bufferedCompTM M₁ M₂).k = M₁.k + (1 + M₂.k) := rfl
+
+-- FinTM.ComputesFunInTime
+example (M : Turing.FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x, M.ComputesInTime x (f x) (T x.length) := rfl
+
+-- FinTM.ComputesInTime
+example (M : Turing.FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := rfl
+
+-- FinTM.ComputesInSpace
+example (M : Turing.FinTM Bool) (f : List Bool → List Bool) (s : ℕ → ℕ) :
+    M.ComputesInSpace f s = ∀ x, ∃ t, M.ComputesInTime x (f x) t ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length := rfl
+
+-- MultiTapeTM.spaceUsed
+example (M : Turing.FinTM Bool) (x : List Bool) (c : Turing.Cfg M.k Bool M.State x) (t : ℕ) :
+    M.tm.spaceUsed c t = ∑ i, M.tm.spaceUsedByTape c t i := rfl
+
+-- MultiTapeTM.initCfg
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    M.tm.initCfg x = Turing.Cfg.init M.tm.q₀ x := rfl
+
+-- Cfg.init
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    (Turing.Cfg.init M.tm.q₀ x : Turing.Cfg M.k Bool M.State x).inputPos = 1 := rfl
+
+-- logSpace
+example (n : ℕ) : Complexity.logSpace n = Nat.log 2 n + 1 := rfl
+
+-- the simp erasure: Action.apply
+example (M : Turing.FinTM Bool) (x : List Bool) (a : Turing.Action M.k Bool M.State)
+    (c : Turing.Cfg M.k Bool M.State x) : (a.apply c).state = a.state := by simp
+
+-- the simp erasure: Cfg.init
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    (Turing.Cfg.init M.tm.q₀ x : Turing.Cfg M.k Bool M.State x).inputPos = 1 := by simp
+
+-- the simp erasure: MultiTapeTM.initCfg
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    M.tm.initCfg x = Turing.Cfg.init M.tm.q₀ x := by simp
+
+end Unsealed
+
+section Sealed
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Complexity.transduce Complexity.transducerTM
+  Turing.FinTM.polyUnaryTM Turing.FinTM.prependTM Turing.FinTM.bufferedCompTM
+  Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.ComputesInSpace
+  Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.initCfg Turing.Cfg.init Complexity.logSpace
+
+-- transduce (a usage control: the recursive definition on a concrete word)
+example : Complexity.transduce (fun (_ : Bool) (_ : Bool) => true)
+    (fun q b => if q then some b else none) false [true, false] = [false] := rfl
+
+-- transducerTM
+example {σ : Type} [Fintype σ] [DecidableEq σ] (δ : σ → Bool → σ) (o : σ → Bool → Option Bool)
+    (q : σ) : (Complexity.transducerTM δ o q).k = 0 := rfl
+
+-- FinTM.polyUnaryTM (a usage control: the degree-zero case)
+example (C : ℕ) :
+    Turing.FinTM.polyUnaryTM C 0 = Turing.FinTM.constTM (List.replicate C true) := rfl
+
+-- FinTM.prependTM
+example (w : List Bool) : (Turing.FinTM.prependTM w).k = 0 := rfl
+
+-- FinTM.bufferedCompTM
+example (M₁ M₂ : Turing.FinTM Bool) :
+    (Turing.FinTM.bufferedCompTM M₁ M₂).k = M₁.k + (1 + M₂.k) := rfl
+
+-- FinTM.ComputesFunInTime
+example (M : Turing.FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T = ∀ x, M.ComputesInTime x (f x) (T x.length) := rfl
+
+-- FinTM.ComputesInTime
+example (M : Turing.FinTM Bool) (x y : List Bool) (t : ℕ) :
+    M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s := rfl
+
+-- FinTM.ComputesInSpace
+example (M : Turing.FinTM Bool) (f : List Bool → List Bool) (s : ℕ → ℕ) :
+    M.ComputesInSpace f s = ∀ x, ∃ t, M.ComputesInTime x (f x) t ∧
+      M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length := rfl
+
+-- MultiTapeTM.spaceUsed
+example (M : Turing.FinTM Bool) (x : List Bool) (c : Turing.Cfg M.k Bool M.State x) (t : ℕ) :
+    M.tm.spaceUsed c t = ∑ i, M.tm.spaceUsedByTape c t i := rfl
+
+-- MultiTapeTM.initCfg
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    M.tm.initCfg x = Turing.Cfg.init M.tm.q₀ x := rfl
+
+-- Cfg.init
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    (Turing.Cfg.init M.tm.q₀ x : Turing.Cfg M.k Bool M.State x).inputPos = 1 := rfl
+
+-- logSpace
+example (n : ℕ) : Complexity.logSpace n = Nat.log 2 n + 1 := rfl
+
+-- the simp erasure: Action.apply
+example (M : Turing.FinTM Bool) (x : List Bool) (a : Turing.Action M.k Bool M.State)
+    (c : Turing.Cfg M.k Bool M.State x) : (a.apply c).state = a.state := by simp
+
+-- the simp erasure: Cfg.init
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    (Turing.Cfg.init M.tm.q₀ x : Turing.Cfg M.k Bool M.State x).inputPos = 1 := by simp
+
+-- the simp erasure: MultiTapeTM.initCfg
+example (M : Turing.FinTM Bool) (x : List Bool) :
+    M.tm.initCfg x = Turing.Cfg.init M.tm.q₀ x := by simp
+
+end Sealed
