@@ -1970,7 +1970,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     lint the base's, the policy linter clean; no copy on any ref. `replay-lnpc` written (86 modules
     from `oleans-lnfapi4`, precheck passed). **Its downstream overlaps #175's** (`SpaceComplexity`'s
     `ConfigGraph`, `Codec/*`, …): whichever merges second takes a merged-tree replay of the overlap.
-    Next: its screen, gate 88.
+    Screen: one new pair, an idiom (`pairSwap`'s one-line invocation of the same rows). **Gate 88
+    staged** (bundle `4ccd459e…`, 37 sections). **Gate 87** (#176) **staged** (bundle `43a728a1…`, 282
+    sections; the landing head's screen: none new against the worker's after screen).
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`
