@@ -66,8 +66,11 @@ proof uses the private comparator for `n ≥ 3` and decides the rung by building
 5. **Duplication.** The worker's screens (`screens/`: 120 new pairs, 0 gone, every new pair with
    an owned-file declaration), the review's dispositions (F2, F5, F6) and the four ledger entries
    (`campaign/duplication-ledger.md`, RO-1, NB-1, RC-1, QF-1). E3 re-points two `Nat.bits`
-   lemmas to Mathlib's `Nat.size` facts. The maintainer's screen at the landing head:
-   ⟨summary⟩.
+   lemmas to Mathlib's `Nat.size` facts. The maintainer's screen at the landing head (the brief's
+   32 files, `evidence/screen/`): 1,931 declarations, 2,284 pairs; against the brief's screen base,
+   119 new and none gone (`pairdiff-vs-base.txt`); against the worker's after screen, none new and
+   one gone, the in-file pair `qy_two_pow_bits_le`/`qy_lt_two_pow_bits` (51%) that E3 removes
+   (`pairdiff-vs-worker.txt`; one declaration fewer, E3's proof being below the screen's minimum).
 6. **The public-facing text** after E1, E4 and E5; F11's frozen sketch (deferred).
 7. **The landing.** Are the cherry-picks the delivered commits (patch-ids), and the maintainer's
    commit exactly E1–E5?
