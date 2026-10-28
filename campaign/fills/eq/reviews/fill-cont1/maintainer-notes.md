@@ -14,3 +14,7 @@ campaign linter's (`campaign_style_lint.py`, 0 FAIL), which does not make this c
 `lint.log` is the same. Beside them, the size finding (5,390 lines) is expected (file size alone is not
 a driver). **Fix (landing edit E5):** a one-paragraph `**Proof sketch.**` in each of the nine
 docstrings, by the maintainer at landing; text only.
+
+**Stored names.** The review's two Lean probes are stored as `probe/BitsDup.lean.txt` and
+`probe/land/NTimeDiagonalizer.lean.txt` (the review cites them without `.txt`), so that the
+records add no `.lean` file: the replay tooling compares the campaign's `*.lean` paths.
