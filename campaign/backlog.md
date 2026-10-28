@@ -2000,7 +2000,7 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     move. **PR #175** (head `6ae641a2`, the campaign merged in): screen 844 declarations, 1,146
     pairs at base and head, none new or gone; axioms standard; lint the base's. **Gate 86** staged
     (bundle `5d6800fd…`, 52 sections); `replay-lscp` written (53 modules from `oleans-lnfapi4`,
-    precheck passed).
+    precheck passed). **Gate 86 dispatched; `replay-lscp` running (user, 2026-10-27).**
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
