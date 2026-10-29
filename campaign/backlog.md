@@ -4021,7 +4021,12 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   `replay-lm2c` written: the root build, 887 modules (the root's import closure, then `TCSlib`),
   fresh into `oleans-lm2c`; precheck passed. **`replay-lm2c` passed** (user, 2026-10-28): 887 of
   887 at `76ad1933`, the root included, 0 failed (`campaign/items/main-merge-2/`); snapshot
-  `oleans-lm2c`, the first since `oleans-lmain` to cover the whole root closure. Then the PR into `main` from an integration branch at
+  `oleans-lm2c`, the first since `oleans-lmain` to cover the whole root closure. **#179 merged
+  (user, 2026-10-28).** **PR #180** (`integrate/campaign-to-main-2`, head `22b03750`, into `main`):
+  the campaign tip with `campaign/`, `devtools/` and the `audits/`/`briefs/` stubs removed; against
+  `main` it also removes the 2026-10-15 records (`audits/`, `briefs/`, the four chapter plans,
+  `backlog.md`, `arm-extensions-proposal.md`, `nomenclature-findings.md`); its `TCSlib` differs from
+  the replayed `76ad1933` only by the README. Then the PR into `main` from an integration branch at
   the replayed state, without `campaign/`, `devtools/`, `audits/`, `briefs/README.md`.
 * **The campaign's merge to `main` (user, 2026-10-15).**
   - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
