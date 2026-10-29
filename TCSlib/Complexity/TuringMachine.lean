@@ -15,6 +15,7 @@ import TCSlib.Complexity.TuringMachine.OracleFinite
 import TCSlib.Complexity.TuringMachine.OracleNondeterministic
 import TCSlib.Complexity.TuringMachine.OracleAgreement
 import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.BufferWords
 import TCSlib.Complexity.TuringMachine.Sweep
 import TCSlib.Complexity.TuringMachine.Composition
 import TCSlib.Complexity.TuringMachine.UnaryTape
@@ -25,16 +26,23 @@ import TCSlib.Complexity.TuringMachine.Build.Convention
 import TCSlib.Complexity.TuringMachine.Build.Wrappers
 import TCSlib.Complexity.TuringMachine.Build.Loop
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 import TCSlib.Complexity.TuringMachine.Build.Embed
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.Build.NDHost
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Zone
+import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.OracleCall
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.CounterLoop
 import TCSlib.Complexity.TuringMachine.Build.InputWindow
+import TCSlib.Complexity.TuringMachine.Build.SeamLayout
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+import TCSlib.Complexity.TuringMachine.Build.InputRewind
+import TCSlib.Complexity.TuringMachine.Build.InterpreterStartup
 import TCSlib.Complexity.TuringMachine.Build.Scan
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.CfgRecord
@@ -127,11 +135,14 @@ for the local modifications.
   coded normal form, its fixed serialization, and the scheme laws with the effective
   (canonizer) form.
 * `NDCodeSimulator` — the interpreter core for nondeterministic codes (C1): the serialization
-  bridge, the per-code replay canonizer and the core `R` [AB09, Exercise 2.6]. The canonizer
-  and the core are sorried.
+  bridge, the per-code replay canonizer and the core `R` [AB09, Exercise 2.6]. The core is
+  proved; the canonizer is sorried.
 * `Simulation` — generic machine-construction gadgets: emission chains, control
   actions, disjoint tape-block embeddings with lockstep run lemmas, the input-head
   rewind, and the two-machine branch union.
+* `BufferWords` — the cells of a buffer tape holding a composite word: a suffix at an offset, a
+  middle word's letters, prefixes and suffixes, the blank cells off the word, and a unary word
+  with its terminator. Proved.
 * `Sweep` — the generic zipper/transduction layer for sweep-based tape
   simulations, with the initialized-run head/support bound.
 * `Composition` — identity/constant machines and closure of time-bounded computability
@@ -147,12 +158,17 @@ for the local modifications.
   general-configuration forms and the release adapter, and the space-annotated
   catalog rows.
 * `Build/NDHost` — the nondeterministic phase host over NDTM phases and the choice writer, for
-  the guess-first route of the nondeterministic time hierarchy (C1). The writer's bounded
-  contract is sorried.
+  the guess-first route of the nondeterministic time hierarchy (C1). Proved, the writer's
+  bounded contract included (C1-W, 2026-10-17).
 * `Build/VirtualInput` — virtual-input hosting (`machine-library-design.md` §13, Z1): a
   machine whose input is a buffered work-tape word runs inside a host, one step per step.
-* `Build/Zone` — the zoned tape carrier (§13, Z2), under the §13d revision: its two
-  superseded shift rows are scheduled for retirement through the G3/G4 gate.
+* `Build/Zone` — the pure zone layer (§13, Z2, as revised by §13d): zone contents, the
+  guarded pairwise ops, the cascade and its mirror, the scanned index, the total rebalance,
+  the extension by one level, and the virtual tape a track represents.
+* `Build/ZoneTape` — the multi-track zoned carrier over `ZoneSym k` (§13d, G3): the layout
+  with blank separators, the inner-packed encoding `zonedTape` and its invariants.
+* `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts.
+  Proved.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a
@@ -161,7 +177,17 @@ for the local modifications.
 * `Build/CounterLoop` — the counter-driven loop (§12.7) and the pattern expansion
   `expandTM` (§12.8, R8.6).
 * `Build/InputWindow` — the counter-driven copy of a bounded window of the native input onto a
-  work tape (C1; user decision 5 of 2026-10-13). Sorried.
+  work tape, for the nondeterministic time hierarchy [AB09, Theorem 3.2]. Proved.
+* `Build/SeamLayout` — the step block's table and summary tapes from a captured serialization,
+  the one redistribution the step-block startups cite. Proved.
+* `Build/Rewind` — the rewind of a work-tape head to the start of a word, from any cell of the
+  word or just past it, the empty word included. Proved.
+* `Build/InputRewind` — the rewind of the native input head to the first input cell: its exact
+  time, its first arrival at the park, and its unchanged work tapes, heads and output; and the
+  composition of two state relabelings of a configuration. Proved.
+* `Build/InterpreterStartup` — the pieces of a universal machine's startup on a timed paired
+  input: the header projections and their capture, the suffix window, the released install call,
+  the table-and-summary layout, the seam step, a fresh capture's start. Proved.
 * `Build/Scan`, `Build/InputCall`, `Build/CfgRecord` — the §12.8 rows, with the field
   layout, compare, seeks and two-pass scan in `Build/Catalog`'s Part 3: the constant and
   advancing writers and the native-input copy and fold; the input call and input seek;
@@ -214,13 +240,14 @@ for the local modifications.
   run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate
   passed 2026-10-14; the specification is proved, the machine contracts are sorried.
 * `Build/InputDevice` — host H5: the input-device interface, the native device, and the
-  bounded-prefix ruler device with its host transformer. Statement gate passed 2026-10-14; the
-  devices' facts are proved, the machine contracts are sorried.
+  bounded-prefix ruler device with its boundary test, call rows and host. Proved.
 * `Build/Convention`, `Build/Wrappers`, `Build/Loop`, `Build/Primitives` — the
   machine-construction library (`machine-library-design.md`): the `Cfg.ofWords` seam
   discipline, the capture/silence and halt-redirect wrappers with the timed branch,
   the bounded-loop combinator, and the primitive catalog of timed string functions.
   Proved, and audited at the shared-infrastructure gates.
+* `Build/WordTests` — two linear-time one-bit word tests, equality with a fixed word and the
+  all-`true` word, in the form the timed conditional takes as its test. Proved.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
@@ -235,8 +262,8 @@ for the local modifications.
 * `UniversalK` — the `k`-generic universal machine (U2) [AB09, Theorem 1.9]: the `k`-tape
   scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
   the self-application universal machine with time and space ledgers, and the code-first
-  evaluator. Statement gate passed 2026-10-15; the three contracts are sorried.
+  evaluator, all proved.
 * `SelfUniversal` — the self-application universal machine `U₀` and its startup
   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
-  Statement gate passed 2026-10-14; both are the `k = 1` cases of `UniversalK`'s statements.
+  Both are proved, as the `k = 1` cases of `UniversalK`'s statements.
 -/

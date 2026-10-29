@@ -44,12 +44,19 @@ transports and segment composition.
 
 * `Turing.clockCfg` — the host layout: body tapes first, the counter tape last.
 * `Turing.wordPatch` — a tape with a word written over an interval.
+* `Turing.wordPatch_of_mem`, `Turing.wordPatch_of_not_mem` — its cells, the specification API
+  (user, 2026-10-16).
+* `Turing.wordPatch_append` — adjacent patches join: patching `u` and then `v` right after it
+  is patching `u ++ v`.
 * `Turing.Cfg.Stopped` — a body configuration that is halted or in a designated stop state.
 
 ## Main results
 
 * `Turing.exists_stepClockTMVia` — the step clock over any alphabet (proved; B6-F1 fill).
 * `Turing.exists_stepClockTM` — its `Bool` instance, in C1's draft form (proved from it).
+* `Turing.clockCfg_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output` — the clocked
+  configuration's fields, and `Turing.Cfg.stopped_iff` (the ND inventory API, C1's pre-ship
+  inventory, 2026-10-17).
 
 ## References
 
@@ -69,15 +76,69 @@ def clockCfg {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k �
     (ct : ℤ → Option Γ) (cp : ℤ) : Cfg (k + 1) Γ Q x :=
   ⟨q, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
 
+/-! The clocked configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: the state is `q`, the input head and output are `c`'s,
+`(clockCfg q c ct cp).workTapes = Fin.lastCases ct c.workTapes` and
+`(clockCfg q c ct cp).workTapePos = Fin.lastCases cp c.workTapePos`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  clockCfg
+
 /-- **A tape with a word patched in**: the cells `cp, …, cp + |u| - 1` hold `u`, every other
 cell is `ct`'s. -/
 def wordPatch {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) : ℤ → Option Γ :=
   fun q => if cp ≤ q ∧ q < cp + (u.length : ℤ) then FinTM.bufferTape u (q - cp) else ct q
 
+/-- A cell inside the patched interval holds the word's letter at its offset:
+`wordPatch ct cp u q = FinTM.bufferTape u (q - cp)` when `cp ≤ q < cp + u.length`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h₁ : cp ≤ q) (h₂ : q < cp + (u.length : ℤ)) :
+    wordPatch ct cp u q = FinTM.bufferTape u (q - cp) := by
+  simp [wordPatch, h₁, h₂]
+
+/-- A cell outside the patched interval is the original tape's: `wordPatch ct cp u q = ct q`
+(the specification API, user 2026-10-16). -/
+theorem wordPatch_of_not_mem {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ}
+    (h : ¬(cp ≤ q ∧ q < cp + (u.length : ℤ))) : wordPatch ct cp u q = ct q := by
+  simp only [wordPatch, if_neg h]
+
+/-- **Adjacent patches join**: patching `u` at `cp` and then `v` at `cp + |u|`, right after it,
+is patching `u ++ v` at `cp`.
+
+**Proof sketch.** Split on the cell. Inside `u`'s interval both sides read `u`'s letter, since
+`u ++ v` begins with `u`; inside `v`'s interval both read `v`'s letter at the offset past `u`;
+outside both intervals both read the original tape. -/
+theorem wordPatch_append {Γ : Type*} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ) :
+    wordPatch (wordPatch ct cp u) (cp + u.length) v = wordPatch ct cp (u ++ v) := by
+  funext q
+  have hlen : ((u ++ v).length : ℤ) = u.length + v.length := by simp
+  by_cases h₁ : cp ≤ q ∧ q < cp + (u.length : ℤ)
+  · have hn : 0 ≤ q - cp := by omega
+    rw [wordPatch_of_not_mem _ _ _ (by omega), wordPatch_of_mem _ _ _ h₁.1 h₁.2,
+      wordPatch_of_mem _ _ _ h₁.1 (by omega), ← Int.toNat_of_nonneg hn, FinTM.bufferTape_nat,
+      FinTM.bufferTape_nat, List.getElem?_append_left (by omega)]
+  · by_cases h₂ : cp + (u.length : ℤ) ≤ q ∧ q < cp + u.length + (v.length : ℤ)
+    · have hn : 0 ≤ q - (cp + u.length) := by omega
+      have hm : 0 ≤ q - cp := by omega
+      rw [wordPatch_of_mem _ _ _ h₂.1 h₂.2, wordPatch_of_mem _ _ _ (by omega) (by omega),
+        ← Int.toNat_of_nonneg hn, ← Int.toNat_of_nonneg hm, FinTM.bufferTape_nat,
+        FinTM.bufferTape_nat, List.getElem?_append_right (by omega)]
+      congr 1
+      omega
+    · rw [wordPatch_of_not_mem _ _ _ h₂, wordPatch_of_not_mem _ _ _ h₁,
+        wordPatch_of_not_mem _ _ _ (by omega)]
+
 /-- **A stopped body configuration**: halted, or live in a designated stop state. -/
 def Cfg.Stopped {k : ℕ} {Γ S : Type*} {x : List Γ} (stopAt : S → Bool) (c : Cfg k Γ S x) :
     Prop :=
   c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true
+
+/-- **A stopped configuration, unfolded** (the ND inventory API, 2026-10-17): `c.Stopped stopAt`
+holds iff `c` is halted or live in a state `s` with `stopAt s = true`. -/
+theorem Cfg.stopped_iff {k : ℕ} {Γ S : Type*} {x : List Γ} {stopAt : S → Bool}
+    {c : Cfg k Γ S x} :
+    c.Stopped stopAt ↔ c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true :=
+  Iff.rfl
 
 /-! ### Step-clock fill (B6-F1, brief v2): the fused control -/
 

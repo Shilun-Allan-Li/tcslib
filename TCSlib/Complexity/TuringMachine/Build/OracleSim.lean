@@ -1226,9 +1226,10 @@ private noncomputable def oracleStableCfg (M : FinOracleTM Bool) (C : FinTM Bool
 /-- Off-query segments of the candidate host are the inherited source/shadow
 transport, with all auxiliary tapes clean at their boundaries.
 
-**Proof sketch.** The source redirect is absent off the query state. Its
-phase table is exactly the R1 shadow placement, so `oracleOffQuery` supplies
-the whole segment and the side witness; no lockstep is repeated. -/
+**Proof sketch.** The source redirect is absent off the query state, so there
+the host's table is the source phase's (`Turing.phaseHostTM_tr_of_red_none`),
+the R1 shadow placement, and `oracleOffQuery` supplies the whole segment and
+the side witness; no lockstep is repeated. -/
 private theorem oracleHost_offQuery (M : FinOracleTM Bool) (C : FinTM Bool)
     (hc : 0 < C.k) (en ex : C.State) (O : Language Bool) {x : List Bool}
     (c : Cfg (M.k + 1) Bool M.State x) (side : Bool)
@@ -1243,7 +1244,8 @@ private theorem oracleHost_offQuery (M : FinOracleTM Bool) (C : FinTM Bool)
     (oracleSourceBank M.k C.k) ⟨Sigma.mk (β := oraclePhaseState M C) OraclePhase.source, sigma_mk_injective⟩
     (fun _ _ => none) (fun _ => 0)
   · intro qb hq inp work
-    simp [oracleHost, phaseHostTM, oracleRedirect, oraclePhases, hq]
+    exact phaseHostTM_tr_of_red_none (oraclePhases M C hc en) _ (oracleRedirect M C ex)
+      .source qb (by simp [oracleRedirect, hq]) inp work
   · exact hb
   · exact hvisit
 
@@ -1899,6 +1901,8 @@ private theorem oracleHost_initial (M : FinOracleTM Bool) (C : FinTM Bool)
       at mapped
     rw [mapped]
     rfl
+  rw [show (oracleHost M C hc en ex).tm.q₀ =
+    (⟨.dispatch, .boot⟩ : Σ i, oraclePhaseState M C i) from phaseHostTM_q₀ _ _ _]
   change (oracleHost M C hc en ex).tm.runFrom (d.mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch)) 2 = _
   rw [← placement, admin, bootView]
   unfold oracleStableCfg

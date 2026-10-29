@@ -46,6 +46,8 @@ generic clearing pass.
 * `Turing.Cfg.ofWords` — the canonical seam configuration: anchor state,
   input head at 1, work tape `i` holding word `w i` from the origin, heads
   at the origin, empty output.
+* `Turing.Cfg.ofWords_state`, `_inputPos`, `_workTapePos`, `_output` — the seam's fields beside
+  `Turing.Cfg.ofWords_workTapes` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
 * `Turing.splitAtLastTrue` — strip a marker suffix: the prefix before the
   last `true`, or `none` if the word is all `false` (the audited marker
   discipline of the Chapter-2 Exercise-2.1 construction).
@@ -98,6 +100,27 @@ lemma Cfg.ofWords_workTapes {input : List Bool} (q : State)
     (Cfg.ofWords (input := input) q w).workTapes i = FinTM.bufferTape (w i) :=
   rfl
 
+/-- The seam's other fields (the ND inventory API, 2026-10-17; C1 wave 1's route inventory): the
+state is `some q`, `(Cfg.ofWords q w).state = some q`. -/
+theorem Cfg.ofWords_state {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).state = some q :=
+  rfl
+
+/-- At a seam the input head is at its initial position: `(Cfg.ofWords q w).inputPos = 1`. -/
+theorem Cfg.ofWords_inputPos {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).inputPos = 1 :=
+  rfl
+
+/-- At a seam every work head is at the origin: `(Cfg.ofWords q w).workTapePos i = 0`. -/
+theorem Cfg.ofWords_workTapePos {input : List Bool} (q : State) (w : Fin k → List Bool)
+    (i : Fin k) : (Cfg.ofWords (input := input) q w).workTapePos i = 0 :=
+  rfl
+
+/-- At a seam the output is empty: `(Cfg.ofWords q w).output = []`. -/
+theorem Cfg.ofWords_output {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).output = [] :=
+  rfl
+
 /-- Strip a marker suffix: the prefix of `v` before its **last** `true`, or
 `none` when `v` is all `false`. This is the Chapter-2 Exercise-2.1 marker
 discipline (split at the last `true`; an all-`false` certificate region is
@@ -123,6 +146,45 @@ def incFixed : List Bool → Option (List Bool)
   | [] => none
   | false :: rest => some (true :: rest)
   | true :: rest => (incFixed rest).map (false :: ·)
+
+/-- The empty word overflows: `incFixed [] = none`. -/
+theorem incFixed_nil : incFixed [] = none :=
+  rfl
+
+/-- A low `false` absorbs the carry: `incFixed (false :: w) = some (true :: w)`. -/
+theorem incFixed_false_cons (w : List Bool) : incFixed (false :: w) = some (true :: w) :=
+  rfl
+
+/-- A low `true` passes the carry on: `incFixed (true :: w) = (incFixed w).map (false :: ·)`. -/
+theorem incFixed_true_cons (w : List Bool) :
+    incFixed (true :: w) = (incFixed w).map (false :: ·) :=
+  rfl
+
+/-- **The increment keeps the width:** `incFixed w = some v → |v| = |w|`.
+
+**Proof sketch.** Induct on `w` through the three case equations: the empty word overflows, a
+low `false` becomes `true`, and a low `true` becomes `false` before the incremented tail. -/
+theorem incFixed_length {w v : List Bool} (h : incFixed w = some v) : v.length = w.length := by
+  induction w generalizing v with
+  | nil =>
+    rw [incFixed_nil] at h
+    exact absurd h (by simp)
+  | cons b w ih =>
+    cases b with
+    | false =>
+      rw [incFixed_false_cons, Option.some.injEq] at h
+      subst v
+      rfl
+    | true =>
+      rw [incFixed_true_cons] at h
+      cases he : incFixed w with
+      | none =>
+        rw [he] at h
+        exact absurd h (by simp)
+      | some z =>
+        rw [he, Option.map_some, Option.some.injEq] at h
+        subst v
+        rw [List.length_cons, List.length_cons, ih he]
 
 /-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
 `1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,

@@ -21,8 +21,20 @@ Local modifications (see policy.md §2, vendored code):
 * added the repository-standard `set_option` header;
 * corrected the module docstring's attribution of the non-blank space measure
   ([AB09, Def 4.1] counts visited cells for `SPACE`, non-blank cells only for
-  `NSPACE`); comments only, no code change (2026-10-08).
-The remaining mathematical content is unchanged.
+  `NSPACE`); comments only, no code change (2026-10-08);
+* added `timed_input_bound`, promoted from the campaign (D6, 2026-10-05);
+* added lemmas that are not upstream, the specification API (user, 2026-10-16):
+  `initCfg_eq` and `mem_visitedByTapeHead_iff`, and the split lemmas
+  `visitedByTapeHead_add_subset`, `visitedByTapeHead_step_subset`, moved here from
+  `Build/StepBlock` with their statements and proofs (design note O9);
+* added `step_of_some` and `outputSymbol_of_some`, the live-state cases beside the upstream
+  `step_of_halt` and `outputSymbol_of_halt`, the brief-inventory API's round 3 (user,
+  2026-10-17).
+* added `spaceUsed_eq_sum`, the space measure as the sum of the per-tape counts, so that
+  consumers read `spaceUsed` through an equation;
+* added `spaceUsedByTape_eq_card`, a tape's space as the number of cells its head visited, so
+  that consumers read `spaceUsedByTape` through an equation.
+The upstream definitions and theorems are otherwise unchanged.
 -/
 import Mathlib.Algebra.Order.Group.Abs
 import Mathlib.Algebra.Order.Group.Int
@@ -101,6 +113,17 @@ We define a number of structures and concepts related to multi-tape Turing machi
 * `DecidableInTimeAndSpace`: a proof that a TM decides a language within a certain time
     and space bound.
 
+**The specification API** (user, 2026-10-16): `Turing.MultiTapeTM.initCfg_eq`,
+`Turing.MultiTapeTM.mem_visitedByTapeHead_iff`,
+and the split lemmas `visitedByTapeHead_add_subset` and `visitedByTapeHead_step_subset` (moved
+here from `Build/StepBlock`, design note O9).
+
+**The brief-inventory API, round 3** (user, 2026-10-17): `Turing.MultiTapeTM.step_of_some` and
+`Turing.MultiTapeTM.outputSymbol_of_some`, a live step and its emission as equations.
+
+**The space measure as a sum:** `Turing.MultiTapeTM.spaceUsed_eq_sum`, the cells visited on each
+work tape, summed over the tapes.
+
 ## References
 
 * [Pap94] C. Papadimitriou, *Computational Complexity*, Addison-Wesley, 1994.
@@ -159,9 +182,23 @@ def outputSymbol (cfg : Cfg k Symbol State input) : Option Symbol :=
 @[simp]
 def initCfg (input : List Symbol) : Cfg k Symbol State input := Cfg.init tm.q₀ input
 
+/-- A machine's initial configuration on `input` is `Cfg.init` at its start state:
+`tm.initCfg input = Cfg.init tm.q₀ input` (the specification API, user 2026-10-16). -/
+theorem initCfg_eq (input : List Symbol) : tm.initCfg input = Cfg.init tm.q₀ input :=
+  rfl
+
 @[simp]
 lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
     tm.step cfg = cfg := by
+  unfold step
+  rw [h]
+
+/-- **A live step applies the chosen action** (the brief-inventory API, round 3; the round-2
+gate's finding 1): at a live state `q` one step applies the transition table's action for the
+scanned symbols, `cfg.state = some q →`
+`tm.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg`. -/
+theorem step_of_some {cfg : Cfg k Symbol State input} {q : State} (h : cfg.state = some q) :
+    tm.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := by
   unfold step
   rw [h]
 
@@ -231,6 +268,15 @@ lemma outputSymbol_of_halt {cfg : Cfg k Symbol State input} (h_halt : cfg.state 
     tm.outputSymbol cfg = none := by
   simp [outputSymbol, h_halt]
 
+/-- **A live step emits the chosen action's symbol** (the brief-inventory API, round 3; the
+round-2 gate's finding 1): at a live state `q`, `cfg.state = some q →`
+`tm.outputSymbol cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).output`. -/
+theorem outputSymbol_of_some {cfg : Cfg k Symbol State input} {q : State}
+    (h : cfg.state = some q) :
+    tm.outputSymbol cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).output := by
+  unfold outputSymbol
+  rw [h]
+
 /-- The work-tape head moves by at most one cell in a single step. -/
 lemma workTapePos_step_le (c : Cfg k Symbol State input) (i : Fin k) :
     |(tm.step c).workTapePos i - c.workTapePos i| ≤ 1 := by
@@ -275,6 +321,18 @@ lemma spaceUsedByTape_le_spaceUsed (cfg : Cfg k Symbol State input) (t : ℕ) (i
     tm.spaceUsedByTape cfg t i ≤ tm.spaceUsed cfg t :=
   Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ i)
 
+/-- **The space measure as a sum**: the space used up to step `t` is the sum, over the work
+tapes, of the number of cells each head visited up to step `t`. -/
+theorem spaceUsed_eq_sum (cfg : Cfg k Symbol State input) (t : ℕ) :
+    tm.spaceUsed cfg t = ∑ i, tm.spaceUsedByTape cfg t i :=
+  rfl
+
+/-- **A tape's space as a count**: the space tape `i` uses up to step `t` is the number of cells
+its head visited up to step `t`. -/
+theorem spaceUsedByTape_eq_card (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) :
+    tm.spaceUsedByTape cfg t i = (tm.visitedByTapeHead cfg t i).card :=
+  rfl
+
 /-- The space used up to step `t` is the space touched by the configurations up to step `t`. -/
 lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
     tm.spaceUsed cfg t = spaceUsedOfCfgs ((List.range (t + 1)).map (tm.runFrom cfg)) := by
@@ -282,6 +340,53 @@ lemma spaceUsed_eq_spaceUsedOfCfgs (cfg : Cfg k Symbol State input) (t : ℕ) :
   refine Finset.sum_congr rfl fun i _ => congrArg Finset.card ?_
   ext z
   simp [visitedByTapeHead, visitedOfCfgs]
+
+/-- **Membership in a visited set** (the specification API, user 2026-10-16): a cell is visited by
+head `i` within `t` steps exactly when the head stands on it at some time `u ≤ t`.
+
+**Proof sketch.** `Turing.MultiTapeTM.visitedByTapeHead` is the image of the head positions over
+`Finset.range (t + 1)`. -/
+theorem mem_visitedByTapeHead_iff (cfg : Cfg k Symbol State input) (t : ℕ) (i : Fin k) (p : ℤ) :
+    p ∈ tm.visitedByTapeHead cfg t i ↔ ∃ u ≤ t, (tm.runFrom cfg u).workTapePos i = p := by
+  simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range, Nat.lt_succ_iff]
+
+/-- **Visited cells split at an intermediate time** (moved here from `Build/StepBlock`, design
+note O9, with the specification API, user 2026-10-16): the cells visited by head `j` in
+`T₁ + T₂` steps from `d` are those visited in the first `T₁` steps, together with those visited
+in `T₂` steps from where the run is at time `T₁`.
+
+**Proof sketch.** A visiting time `u ≤ T₁ + T₂` is either at most `T₁`, or `T₁ + v` with
+`v ≤ T₂`, and then run additivity identifies the configuration. -/
+lemma visitedByTapeHead_add_subset {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (d : Cfg m Bool S x) (T₁ T₂ : ℕ) (j : Fin m) :
+    M.visitedByTapeHead d (T₁ + T₂) j ⊆
+      M.visitedByTapeHead d T₁ j ∪ M.visitedByTapeHead (M.runFrom d T₁) T₂ j := by
+  intro p hp
+  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_union, Finset.mem_image,
+    Finset.mem_range] at hp ⊢
+  obtain ⟨u, hu, rfl⟩ := hp
+  by_cases hle : u ≤ T₁
+  · exact Or.inl ⟨u, by omega, rfl⟩
+  · refine Or.inr ⟨u - T₁, by omega, ?_⟩
+    rw [← MultiTapeTM.runFrom_add]
+    congr 2
+    omega
+
+/-- **Visited cells after the first step** (moved here from `Build/StepBlock`, with the
+specification API): the cells visited in `t` steps from the successor of `c`, and `c`'s own head
+cell, are among those visited in `t + 1` steps from `c`.
+
+**Proof sketch.** Shift every visiting time by one; time `0` gives `c`'s cell. -/
+lemma visitedByTapeHead_step_subset {m : ℕ} {S : Type} {x : List Bool}
+    (M : MultiTapeTM m Bool S) (c : Cfg m Bool S x) (t : ℕ) (j : Fin m) :
+    insert (c.workTapePos j) (M.visitedByTapeHead (M.step c) t j) ⊆
+      M.visitedByTapeHead c (t + 1) j := by
+  intro p hp
+  simp only [MultiTapeTM.visitedByTapeHead, Finset.mem_insert, Finset.mem_image,
+    Finset.mem_range] at hp ⊢
+  rcases hp with rfl | ⟨v, hv, rfl⟩
+  · exact ⟨0, by omega, by rw [MultiTapeTM.runFrom_zero]⟩
+  · exact ⟨v + 1, by omega, by rw [MultiTapeTM.runFrom_succ_eq_step]⟩
 
 end Space
 

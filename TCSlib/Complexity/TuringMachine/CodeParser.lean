@@ -40,6 +40,9 @@ epoch-3→4 merge; its content is the epoch-3 fill, batch A.
   `codeReadSymbols`, `codeReadVec`; their exact prefix inverses (`_append`),
   soundness (`_sound`) and suffix-erasure (`codeErase*`) laws; `codeBitsNat_bits`
   and `codeFlatMap_length` — for reuse by other machine-code formats.
+* `Turing.codeSkipRepeat_zero`, `Turing.codeSkipRepeat_succ` — the repetition's two cases, the
+  brief-inventory API (its gate, finding 1).
+* `Turing.codeBitsNat_eq` — the binary value as an equation (the ND inventory API, round 2).
 
 ## References
 
@@ -123,6 +126,10 @@ def codeReadVec {A : Type} (read : List Bool → Option (A × List Bool)) :
 /-- Interpret a least-significant-bit-first word. Canonical syntax is checked
 separately, so this function also has a value on noncanonical words. -/
 def codeBitsNat (xs : List Bool) : ℕ := xs.foldr Nat.bit 0
+
+/-- **The binary value, unfolded** (the ND inventory API, round 2; C1-R's escalation E1):
+`codeBitsNat xs = xs.foldr Nat.bit 0`. -/
+theorem codeBitsNat_eq (xs : List Bool) : codeBitsNat xs = xs.foldr Nat.bit 0 := rfl
 
 /-- The fallback is the one-state, immediately halting, silent machine. -/
 def codeFallback : CodeTM :=
@@ -381,6 +388,19 @@ def codeSkipAction (n : ℕ) (xs : List Bool) : Option (List Bool) := do
 def codeSkipRepeat (r : List Bool → Option (List Bool)) : ℕ → List Bool → Option (List Bool)
   | 0, xs => some xs
   | n + 1, xs => (r xs).bind (codeSkipRepeat r n)
+
+/-- **No repetition** (the brief-inventory API, user 2026-10-16; its gate, finding 1): zero
+repetitions return the input, `codeSkipRepeat r 0 xs = some xs`. -/
+theorem codeSkipRepeat_zero (r : List Bool → Option (List Bool)) (xs : List Bool) :
+    codeSkipRepeat r 0 xs = some xs :=
+  rfl
+
+/-- **One more repetition** (the brief-inventory API; its gate, finding 1): `n + 1` repetitions
+run the skipper once, then the other `n` on its suffix, and fail as soon as one run fails,
+`codeSkipRepeat r (n + 1) xs = (r xs).bind (codeSkipRepeat r n)`. -/
+theorem codeSkipRepeat_succ (r : List Bool → Option (List Bool)) (n : ℕ) (xs : List Bool) :
+    codeSkipRepeat r (n + 1) xs = (r xs).bind (codeSkipRepeat r n) :=
+  rfl
 
 /-- Erasing the decoded value of the bounded unary reader leaves exactly the public
 skipper: `codeReadFin n` erases to `codeSkipFin n`. -/

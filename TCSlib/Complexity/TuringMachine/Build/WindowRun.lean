@@ -530,7 +530,8 @@ private theorem wl_stop_fixed {K : ℕ} {Q T Pt Ps : Type}
     (hd : d.state = some ⟨.stop, e⟩) (t : ℕ) :
     (wl_loopTM Rt Rs te ty tn se sy sn).runFrom d t = d := by
   have hs : (wl_loopTM Rt Rs te ty tn se sy sn).step d = d := by
-    simp only [MultiTapeTM.step, hd, wl_loopTM, phaseHostTM, wl_red, wl_rows]
+    simp only [MultiTapeTM.step, hd, wl_loopTM,
+      phaseHostTM_tr_of_red_none (wl_rows Rt Rs) _ (wl_red te ty tn se sy sn) .stop e rfl, wl_rows]
     apply Cfg.ext <;> simp [Action.mapState, Action.apply, hd]
   exact Function.iterate_fixed hs t
 
@@ -966,24 +967,18 @@ private theorem wr_clockCfg_eta {K : ℕ} {Γ P Q : Type} {x : List Γ}
   · rfl
 
 /-- Before any timeout, the runner follows the clock with its phase tag.
-Proof sketch: the phase table agrees with the clock on every non-timeout state, so the
-public state-transport theorem gives the prefix without another simulation induction. -/
+Proof sketch: the runner redirects only the timeouts, and no state reached before `t` is
+one, so the phase host's last-phase lemma `Turing.phaseHostTM_run_le` gives the prefix. -/
 private theorem wr_prefix {k : ℕ} {Γ Q S : Type} [DecidableEq Q] [Fintype S]
     (H : MultiTapeTM k Γ Q) (timeout : Option S → Q) {x : List Γ}
     (a : Cfg k Γ Q x) (t : ℕ)
     (hcut : ∀ u < t, ∀ r, (H.runFrom a u).state ≠ some (timeout r)) :
     ∀ u ≤ t, (wr_runnerTM H timeout).runFrom (a.mapState (Sigma.mk true)) u =
       (H.runFrom a u).mapState (Sigma.mk true) := by
-  intro u hu
-  refine MultiTapeTM.runFrom_mapState_of_agreeOn H (wr_runnerTM H timeout)
-    ⟨(fun q : Q => (⟨true, q⟩ : Σ b, wr_Ctrl Q b)),
-      fun _ _ h => eq_of_heq (Sigma.mk.inj h).2⟩
-    (fun q => ∀ r, q ≠ timeout r) ?_ a u ?_
-  · intro q hq inp work
-    have hnot : ¬∃ r, q = timeout r := by simpa using hq
-    simp only [wr_runnerTM, phaseHostTM, Function.Embedding.coeFn_mk, if_neg hnot]
-  · intro v hv q hq r he
-    exact hcut v (by omega) r (hq.trans (congrArg some he))
+  refine phaseHostTM_run_le (Ph := wr_Ctrl Q) _ _ _ true a t ?_
+  intro u hu q hq
+  have hnot : ¬∃ r, q = timeout r := fun ⟨r, he⟩ => hcut u hu r (hq.trans (congrArg some he))
+  exact if_neg hnot
 
 /-- At a timeout the runner makes exactly one stationary dispatch to exhaustion. -/
 private theorem wr_timeout_dispatch {k : ℕ} {Γ Q S : Type}
@@ -1003,24 +998,13 @@ private theorem wr_timeout_dispatch {k : ℕ} {Γ Q S : Type}
       exact hcut u hu r hq
     exact if_neg hn
 
-/-- A common head radius bounds the total visited work space.
-Proof sketch: each visited set lies in its head-centred integer interval; sum the public
-per-tape interval bound, whose interval has `2 * radius + 1` cells. -/
+/-- A common head radius bounds the total visited work space: the public
+`Turing.MultiTapeTM.spaceUsed_le_of_abs_le`, at this module's universe. -/
 private theorem wr_space {k : ℕ} {Γ P : Type} (R : MultiTapeTM k Γ P)
     {x : List Γ} (d : Cfg k Γ P x) (t radius : ℕ)
     (henv : ∀ u ≤ t, ∀ j, |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ (radius : ℤ)) :
-    R.spaceUsed d t ≤ k * (2 * radius + 1) := by
-  have hj (j : Fin k) : R.spaceUsedByTape d t j ≤ 2 * radius + 1 := by
-    have h := R.spaceUsedByTape_le_card_Icc d t j
-      (d.workTapePos j - radius) (d.workTapePos j + radius) (fun u hu => by
-        rw [Finset.mem_Icc]
-        have he := abs_le.mp (henv u hu j)
-        constructor <;> omega)
-    convert h using 1
-    omega
-  calc
-    R.spaceUsed d t ≤ ∑ j : Fin k, (2 * radius + 1) := Finset.sum_le_sum (fun j _ => hj j)
-    _ = k * (2 * radius + 1) := by simp
+    R.spaceUsed d t ≤ k * (2 * radius + 1) :=
+  MultiTapeTM.spaceUsed_le_of_abs_le R d t radius henv
 
 /-- **H3, the windowed runner** (the loop under the step clock, with the clock word supplied
 by the consumer). For a fixed binary machine `M` and a tag update `upd` that ignores silent

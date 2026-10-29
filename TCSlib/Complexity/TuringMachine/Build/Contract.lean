@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
 import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
 import TCSlib.Complexity.TuringMachine.Build.Contract.Embed
 import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Counter
 import TCSlib.Complexity.TuringMachine.Build.Contract.Lift
 
 set_option maxHeartbeats 0
@@ -37,7 +38,11 @@ work head inside an interval. The core adds segments, rounds and joint trajector
 * `TCSlib.Complexity.TuringMachine.Build.Contract.Seam` — `seq`, `inPhase`, `branch` and the
   release adapters over `Build/Seam`, with their trajectories, frames and positivity.
 * `TCSlib.Complexity.TuringMachine.Build.Contract.Embed` — `embed` over `Build/Embed`.
-* `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog` — R3 clear as a contract.
+* `TCSlib.Complexity.TuringMachine.Build.Contract.Catalog` — the catalog rows as contracts:
+  R3 clear and copy, the mapped sweeps, the walk, the seek family, the scan and the framed
+  compare.
+* `TCSlib.Complexity.TuringMachine.Build.Contract.Counter` — the counter rows (the successful
+  increment and decrement) as contracts (MIG-11a, user 2026-10-16), beside `Build/CounterLoop`.
 * `TCSlib.Complexity.TuringMachine.Build.Contract.Lift` — the symbol lift.
 
 Elsewhere, beside the machinery they adapt: the counter loop over round contracts in

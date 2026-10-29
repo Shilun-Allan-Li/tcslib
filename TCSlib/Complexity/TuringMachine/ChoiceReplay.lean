@@ -40,6 +40,9 @@ deterministic verifier checks by simulation).
 ## Main results
 
 * `Turing.NDTM.replayTM_runFrom` — the replay lemma (proved).
+* The fields of the replay machine `Turing.NDTM.replayTM_q₀`, `_tr` and of the extended
+  configuration `Turing.NDTM.withChoiceTape_state`, `_inputPos`, `_workTapes`, `_workTapePos`,
+  `_output` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
 
 ## References
 
@@ -63,11 +66,24 @@ def replayTM (N : NDTM k Bool S) : MultiTapeTM (k + 1) Bool S where
     let a := N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)
     ⟨a.inputTape, Fin.lastCases (none, 1) a.workTapes, a.output, a.state⟩
 
+/-! The replay machine's fields as equations (the ND inventory API, 2026-10-17), by `simps` without
+the `simp` attribute: `N.replayTM.q₀ = N.q₀`, and `N.replayTM.tr q inp w` is the action of
+`N.tr ((w (Fin.last k)).getD false) q inp (fun i => w i.castSucc)` on the first `k` tapes, with the
+choice tape unwritten and its head moved right. -/
+attribute [simps (config := { isSimp := false }) q₀ tr] replayTM
+
 /-- The configuration `c` of an NDTM extended by a choice tape `ct` with its head at `cp` as the
 last work tape; every other field is `c`'s. -/
 def withChoiceTape {x : List Bool} (c : Cfg k Bool S x) (ct : ℤ → Option Bool) (cp : ℤ) :
     Cfg (k + 1) Bool S x :=
   ⟨c.state, c.inputPos, Fin.lastCases ct c.workTapes, Fin.lastCases cp c.workTapePos, c.output⟩
+
+/-! The extended configuration's fields as equations (the ND inventory API, 2026-10-17), by `simps`
+without the `simp` attribute: the state, input head and output are `c`'s, and
+`(withChoiceTape c ct cp).workTapes = Fin.lastCases ct c.workTapes`,
+`(withChoiceTape c ct cp).workTapePos = Fin.lastCases cp c.workTapePos`. -/
+attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
+  withChoiceTape
 
 /-- **The replay lemma.** With the word `s` on the choice tape from cell `0`, the replay
 machine's run for `t ≤ |s|` steps is the NDTM's branch along `s.take t`, extended by the

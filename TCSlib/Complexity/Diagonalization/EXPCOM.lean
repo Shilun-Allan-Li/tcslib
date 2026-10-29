@@ -12,6 +12,7 @@ import TCSlib.Complexity.TuringMachine.CodeSimulator
 -- B5b sanctioned imports: the certificate shell and exponential-polynomial ledger.
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.ClassNP.ExpPoly
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -69,7 +70,7 @@ of [BGS75, Theorem 1] stays recorded there as the fallback).
 * `Complexity.EXPCOM` — the oracle language, over `expCode`.
   [AB09, Example 3.6(3)]
 
-## Main results (the B5b summit is proved modulo the two §12.11 rows of B5a)
+## Main results
 
 * `Turing.exists_uniformMachineCode` — a uniformly-timed scheme exists.
 
@@ -118,7 +119,8 @@ structure UniformMachineCode extends EffectiveMachineCode where
     simulator.ComputesInTime (pairEncode (pairEncode (Nat.bits t) α) x) [false]
       (simDegree * (α.length + x.length + t + 1) ^ simDegree)
 
-/-- **A uniformly-timed scheme exists** (proved modulo §12.11; B5a partial): the chapter-1 concrete scheme, with its time analysis made uniform.
+/-- **A uniformly-timed scheme exists**: the chapter-1
+concrete scheme, with its time analysis made uniform.
 
 **Proof sketch.** The concrete grammar of the chapter-1 scheme
 (`encode := CodeTM.serialize`, `decode := codeDecode`, the encoding law from
@@ -150,7 +152,7 @@ certain.**
 **Fill appendix (B5a, route Z).** Instantiate §12.11 at
 `oneTapeMachineFormat`, as in the statement probe's `uniform_one`. The
 polynomial canonizer and H1 supply the inherited canonizer and the two
-simulator clauses. Both shared contracts remain admitted in this partial. -/
+simulator clauses. The canonizer and the uniform simulator are proved. -/
 theorem exists_uniformMachineCode : Nonempty UniformMachineCode := by
   obtain ⟨C, dC, hC⟩ := oneTapeMachineFormat.exists_polyCanonizer
   obtain ⟨S, d, hS⟩ := oneTapeMachineFormat.exists_uniformSimulator
@@ -172,9 +174,7 @@ namespace Complexity
 open Turing
 
 /-- The chosen uniformly-timed scheme for the `EXPCOM` cluster — the
-`Complexity.TimeHierarchy.code` pattern over the **sorried** existence
-`Turing.exists_uniformMachineCode` (declared: until that fill lands, this
-definition and its consumers carry `sorryAx` through the choice). -/
+`Complexity.TimeHierarchy.code` pattern over the existence `Turing.exists_uniformMachineCode`. -/
 noncomputable def expCode : UniformMachineCode :=
   Classical.choice exists_uniformMachineCode
 
@@ -301,24 +301,6 @@ theorem EXP_subset_POracle_EXPCOM : EXP ⊆ POracle EXPCOM := by
     by_contra hx
     simp [MultiTapeTM.indicator, hx] at hi
 
-/-- An empty increment result certifies an all-`true` word.
-This is the needed direction of the overflow criterion, now public as
-`Turing.incFixed_eq_none_iff_replicate` in `Build/Convention` (CH34-D4); this
-private form only converts the guard's `getD` form.
-
-**Proof sketch.** By the criterion it suffices that the increment overflows.
-The empty word overflows. A leading `false` increments to a nonempty word,
-contradicting the empty result. After a leading `true`, a tail that did not
-overflow would also give a nonempty result, so the tail overflows. (Maintainer,
-CH34-D4.) -/
-private lemma expcom_all_true (w : List Bool) (h : (incFixed w).getD [] = []) :
-    w = List.replicate w.length true := by
-  refine (incFixed_eq_none_iff_replicate w).mp ?_
-  rcases w with _ | ⟨_ | _, w⟩
-  · rfl
-  · simp [incFixed] at h
-  · cases hw : incFixed w <;> simp_all [incFixed]
-
 /-- The unary deadline field, projected from a possibly malformed query. -/
 private def expcom_tail (z : List Bool) : List Bool := pairSndD (pairSndD z)
 
@@ -359,7 +341,7 @@ private lemma expcom_ok_iff (z : List Bool) :
     have hv := eq_pairEncode_of_pairDecode v x w hx
     subst v
     have hw : w = List.replicate w.length true :=
-      expcom_all_true w (by simpa [expcom_tail] using hp.2)
+      (incFixed_getD_eq_nil_iff w).mp (by simpa [expcom_tail] using hp.2)
     exact ⟨α, x, w.length, by rw [← hw]⟩
   · rintro ⟨α, x, n, rfl⟩
     have hinc : incFixed (List.replicate n true) = none := by
@@ -382,10 +364,8 @@ private lemma expcom_front_poly : PolyTimeComputable expcom_front := by
     polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid
   have hu : PolyTimeComputable
       (fun z => [decide ((incFixed (expcom_tail z)).getD [] = [])]) := by
-    convert (polyTimeComputable_of_linear
-      (FinTM.computesFunInTime_ifEq [] [true] [false])).comp (hi.comp ht) using 1
-    funext z
-    by_cases h : (incFixed (expcom_tail z)).getD [] = [] <;> simp [Function.comp_def, h]
+    simpa only [Function.comp_def] using
+      (polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq [])).comp (hi.comp ht)
   have hg : PolyTimeComputable (fun z => [expcom_ok z]) :=
     polyTimeComputable_and
       (polyTimeComputable_and hv (hv.comp polyTimeComputable_pairSndD)) hu
@@ -657,10 +637,9 @@ The private `expcom_decider` answers queries by parsing, rebuilding the canonica
 simulator input, and composing `expCode.simulator` only on that front end's image;
 malformed queries select a fixed rejecting zero-deadline input. The transcribed
 `ExpPoly` ledger absorbs the simulator, shell and projection-enumerator budgets.
-The result is proved modulo exactly W2-S (`FinOracleTM.exists_plain_simulation`)
-and the two §12.11 rows (`MachineFormat.exists_polyCanonizer` and
-`MachineFormat.exists_uniformSimulator`). (Maintainer note, 2026-10-12: W2-S
-landed at the same fills-6 integration, so only the two §12.11 rows remain.) -/
+The plain oracle simulation (`FinOracleTM.exists_plain_simulation`), the canonizer
+(`MachineFormat.exists_polyCanonizer`) and the uniform simulator
+(`MachineFormat.exists_uniformSimulator`) are proved. -/
 theorem NPOracle_EXPCOM_subset_EXP : NPOracle EXPCOM ⊆ EXP := by
   intro L hL
   obtain ⟨k, a, N, hN⟩ := Set.mem_iUnion.mp hL

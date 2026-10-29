@@ -82,12 +82,12 @@ and any skeleton-time proofs) against the source text.
   prioritized brief (the plan's seeded design questions go here), and the findings
   table format with the severity guide: **blocker** (a downstream phase would build on
   a wrong statement) / **major** (fixable but materially misleading) / **minor** /
-  **note**. `audits/TEMPLATE.md` is the skeleton.
+  **note**. `campaign/standards/TEMPLATE.md` is the skeleton.
 * `…-bundle.md` — a single uploadable file: the pack verbatim, then every attachment
   under a `## ===== <path> =====` header (prior findings, both plans, `policy.md`,
   the root, and the full module tree). **Not committed** (user, 2026-10-15): it is kept
   in the local dispatch folder, and the resolutions record its SHA-256 and section
-  count. Bundles committed before then are indexed in `audits/BUNDLES.md`, with how to
+  count. Bundles committed before then are indexed in `campaign/BUNDLES.md`, with how to
   retrieve them from history.
 * A short kickoff message (drafted per round, pasted by the maintainer into a fresh
   auditor chat with the bundle attached).
@@ -101,7 +101,7 @@ be swept in the closing commit and re-verified). Repairs adopt the auditor's own
 constructions where supplied, are re-gated, and are recorded in the decision log; when
 the loop closes, `…-resolutions.md` summarizes every round, every repair, and the note
 dispositions. The complete worked example is the three-round
-`audits/ch2-phase1-{pack,findings,reaudit-…,round3-…,resolutions}.md` loop.
+`campaign/gates/ch2-phase1{,-reaudit,-round3}/{pack,findings,resolutions}.md` loop.
 
 Audits complement, never replace, in-Lean sanity theorems — the machine-checked and
 permanent form of the same checks.
@@ -150,6 +150,24 @@ human-review item before the epoch's audit pack ships — no discretion. Integra
 is `git am -3` from the patch series, preserving the agent's authorship. Large fills that exhaust one agent's budget
 continue via a continuation brief to a fresh agent (the `universal` B2 precedent).
 
+**Counting public names** (user, 2026-10-22; gate 59). Public-declaration drift, the statement
+freeze and a brief's "no new public declaration" rule count **public declarations**: the
+declarations the source introduces without `private` (`theorem`, `lemma`, `def`, `abbrev`,
+`instance`, `structure`, `inductive`, `class`), counted by the comment-aware source census
+(`devtools/seyoon/declfreeze.py`). Packs say so ("N → N public declarations, at source"). A
+**public constant** is a non-private name in the module's elaborated environment (the axiom
+probe's walk of the module's publics). Packs and reviews report a module's new public constants
+separately, by kind:
+- a declaration's compiler auxiliaries (`_proof_N`, `_simp_N`, `match_N`, `eq_N`, `eq_def`,
+  `congr_simp`);
+- the instances that `deriving` generates for a **private** type, which Lean 4.25 names publicly
+  (e.g. `instDecidableEqSl_Key`).
+
+Neither kind is a public declaration. A derived instance of a private type needs no finding when
+its type is private to its file and a name check over the tree and the open PRs finds no clash;
+where a derived name would clash, write an explicit `private instance`. Any other new public
+constant is reported as a finding.
+
 **Epoch boundaries**: the maintainer re-runs the full sweep, produces a **drift
 attestation** (§6), and prepares the epoch's audit pack with elaboration evidence
 and the epoch's **duplication ledger**, which the auditor verifies independently
@@ -188,9 +206,11 @@ pipeline detail).
 * **`scripts/campaign_style_lint.py`** (named `scripts/style_lint.py` until the
   main merge, which adopted main's per-file policy linter under that name — the
   historical audit logs' invocations refer to this tool) — mechanical policy checks: statement-prose docstrings,
-  sketch-before-sorry, file sizes, `## References`, facade coverage. Campaign
-  baseline: zero FAIL (legacy pre-campaign files outside the audited surface are
-  tolerated and listed).
+  sketch-before-sorry, file sizes, `## References`, facade coverage, and (check 8, since
+  2026-10-16) public definitions without a lemma beside them (`policy.md` §1, *Definitions
+  land with their lemmas*). Campaign baseline: zero FAIL (legacy pre-campaign files outside
+  the audited surface are tolerated and listed). Check 8 is a WARN listing names; a landing
+  adds no name to it.
 * **Axiom prints** — `#print axioms` for every headline theorem on the *fresh* olean
   tree: closed results must show exactly `[propext, Classical.choice, Quot.sound]`;
   sorried statements show `sorryAx`, and any other axiom is a stop-the-line event.

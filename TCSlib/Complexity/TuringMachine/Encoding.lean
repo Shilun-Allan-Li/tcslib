@@ -90,6 +90,12 @@ The concrete parser/decoder realizing a scheme lives in
 `TCSlib.Complexity.TuringMachine.CodeParser`, and the existence of an effective
 scheme (`Turing.exists_effectiveMachineCode`) is proved in
 `TCSlib.Complexity.TuringMachine.MathlibBridge`.
+* `Turing.pairEncode_eq`, `Turing.unaryFin_eq` — the two encodings as equations, the
+  specification API (user, 2026-10-16).
+* `Turing.signBits_neg`/`_zero`/`_pos`, `Turing.optBoolBits_none`/`_some_false`/`_some_true`,
+  `Turing.optOptBoolBits_none`/`_some_none`/`_some_false`/`_some_true`,
+  `Turing.optStateBits_none`/`_some` — the record fields' encoders, case by case (the ND inventory
+  API, round 2; gate 37, finding 1).
 
 ## References
 
@@ -128,6 +134,12 @@ Argument B: with the input first, no bound `C · (t + 1)` with `C` independent o
 can hold). -/
 def pairEncode (x α : List Bool) : List Bool :=
   (x.flatMap fun b => [b, b]) ++ [false, true] ++ α
+
+/-- **The pairing as an equation** (the specification API, user 2026-10-16): the code doubled,
+the separator `false, true`, then the second word. -/
+theorem pairEncode_eq (x α : List Bool) :
+    pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α :=
+  rfl
 
 /-- Parse aligned doubled bits until the separator, leaving its suffix untouched. -/
 def pairDecode : List Bool → Option (List Bool × List Bool)
@@ -529,11 +541,35 @@ def signBits : SignType → List Bool
   | .zero => [false, false]
   | .pos => [true, false]
 
+/-- **A left move's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`signBits .neg = [true, true]`. -/
+theorem signBits_neg : signBits .neg = [true, true] := rfl
+
+/-- **A stay's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`signBits .zero = [false, false]`. -/
+theorem signBits_zero : signBits .zero = [false, false] := rfl
+
+/-- **A right move's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`signBits .pos = [true, false]`. -/
+theorem signBits_pos : signBits .pos = [true, false] := rfl
+
 /-- Fixed two-bit serialization of an optional bit. -/
 def optBoolBits : Option Bool → List Bool
   | none => [false, false]
   | some false => [true, false]
   | some true => [true, true]
+
+/-- **No bit's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optBoolBits none = [false, false]`. -/
+theorem optBoolBits_none : optBoolBits none = [false, false] := rfl
+
+/-- **The bit `false`'s bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optBoolBits (some false) = [true, false]`. -/
+theorem optBoolBits_some_false : optBoolBits (some false) = [true, false] := rfl
+
+/-- **The bit `true`'s bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optBoolBits (some true) = [true, true]`. -/
+theorem optBoolBits_some_true : optBoolBits (some true) = [true, true] := rfl
 
 /-- Fixed two-bit serialization of an optional write (which may itself write blank). -/
 def optOptBoolBits : Option (Option Bool) → List Bool
@@ -542,14 +578,43 @@ def optOptBoolBits : Option (Option Bool) → List Bool
   | some (some false) => [true, false]
   | some (some true) => [true, true]
 
+/-- **No write's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optOptBoolBits none = [false, false]`. -/
+theorem optOptBoolBits_none : optOptBoolBits none = [false, false] := rfl
+
+/-- **A blank write's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optOptBoolBits (some none) = [false, true]`. -/
+theorem optOptBoolBits_some_none : optOptBoolBits (some none) = [false, true] := rfl
+
+/-- **Writing `false`, in bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optOptBoolBits (some (some false)) = [true, false]`. -/
+theorem optOptBoolBits_some_false : optOptBoolBits (some (some false)) = [true, false] := rfl
+
+/-- **Writing `true`, in bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optOptBoolBits (some (some true)) = [true, true]`. -/
+theorem optOptBoolBits_some_true : optOptBoolBits (some (some true)) = [true, true] := rfl
+
 /-- Self-delimiting unary serialization of a state index. -/
 def unaryFin {n : ℕ} (s : Fin n) : List Bool :=
   List.replicate (s : ℕ) true ++ [false]
+
+/-- **The unary state word as an equation** (the specification API, user 2026-10-16): `s`
+`true`s, then the delimiter `false`. -/
+theorem unaryFin_eq {n : ℕ} (s : Fin n) : unaryFin s = List.replicate (s : ℕ) true ++ [false] :=
+  rfl
 
 /-- Serialization of an optional successor state (`none` = halt). -/
 def optStateBits {n : ℕ} : Option (Fin n) → List Bool
   | none => [false]
   | some s => true :: unaryFin s
+
+/-- **Halting's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optStateBits none = [false]`. -/
+theorem optStateBits_none {n : ℕ} : optStateBits (none : Option (Fin n)) = [false] := rfl
+
+/-- **A successor state's bits** (the ND inventory API, round 2; gate 37, finding 1):
+`optStateBits (some s) = true :: unaryFin s`. -/
+theorem optStateBits_some {n : ℕ} (s : Fin n) : optStateBits (some s) = true :: unaryFin s := rfl
 
 /-- Serialization of one transition record. -/
 def actionBits {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) : List Bool :=
