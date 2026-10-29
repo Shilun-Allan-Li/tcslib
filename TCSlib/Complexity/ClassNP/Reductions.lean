@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.Uncomputability.Halting
+import TCSlib.Complexity.ClassNP.PClosure
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -34,6 +35,7 @@ Chapter 1: `HALT` is `NP`-hard but — being undecidable — not in `NP`, hence 
   [AB09, Theorem 2.8.1 and Exercise 2.9].
 * `Complexity.mem_P_of_polyTimeReducible` — downward closure of `P` under `≤ₚ`
   [AB09, Figure 2.1].
+* `Complexity.mem_NP_of_polyTimeReducible` — downward closure of `NP` under `≤ₚ` [AB09, §2.2].
 * `Complexity.P_eq_NP_of_NPHard_mem_P` — [AB09, Theorem 2.8.2].
 * `Complexity.NPComplete.mem_P_iff` — [AB09, Theorem 2.8.3].
 * `Complexity.HALT_NPHard`, `Complexity.HALT_not_mem_NP` — [AB09, Exercise 2.8].
@@ -118,6 +120,57 @@ theorem mem_P_of_polyTimeReducible {L L' : Language Bool}
       A * (n + 1) ^ d ≤ A * (2 ^ d * (n ^ d + 1)) :=
         Nat.mul_le_mul_left A (succ_pow_le n d)
       _ = A * 2 ^ d * (n ^ d + 1) := (Nat.mul_assoc _ _ _).symm
+
+/-- **`NP` is closed downward under `≤ₚ`** [AB09, §2.2]: if `L ≤ₚ L'` and `L' ∈ NP` then
+`L ∈ NP`.
+
+**Proof sketch.** Read `L'` in the bounded-certificate form
+(`Complexity.mem_NP_iff_exists_length_le`): a verifier `V ∈ P` and the bound `C (|y| + 1) ^ c`.
+Let `f` be the reduction, with `|f x| ≤ A (|x| + 1) ^ d`
+(`Complexity.PolyTimeComputable.output_length_le`). The verifier for `L` accepts `⟨x, u⟩` exactly
+when `|u| ≤ C (|f x| + 1) ^ c` and `⟨f x, u⟩ ∈ V`: the intersection (`Complexity.inter_mem_P`) of a
+length test against the unary word `1 ^ (C (|f x| + 1) ^ c)` (`Complexity.lenLe_preimage_mem_P`)
+and the preimage of `V` under a polynomial-time pair map (`Complexity.preimage_mem_P`). Its
+certificates are those of `f x`, so they are bounded by `C (A + 1) ^ c (|x| + 1) ^ (d c)`, since
+`|f x| + 1 ≤ (A + 1) (|x| + 1) ^ d`; the length test keeps a longer certificate from being
+accepted. -/
+theorem mem_NP_of_polyTimeReducible {L L' : Language Bool}
+    (h : L ≤ₚ L') (h' : L' ∈ NP) : L ∈ NP := by
+  obtain ⟨f, hf, hL⟩ := h
+  obtain ⟨C, c, V, hV, hL'⟩ := mem_NP_iff_exists_length_le.mp h'
+  obtain ⟨A, d, hA⟩ := hf.output_length_le
+  have hF : PolyTimeComputable (fun z => f (pairFstD z)) := hf.comp polyTimeComputable_pairFstD
+  have hB : PolyTimeComputable
+      (fun z => List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true) :=
+    (polyTimeComputable_polyUnary C c).comp hF
+  have hG : PolyTimeComputable (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) :=
+    hF.pairEncode polyTimeComputable_pairSndD
+  have hW := inter_mem_P (lenLe_preimage_mem_P hB polyTimeComputable_pairSndD)
+    (preimage_mem_P hV hG)
+  refine mem_NP_iff_exists_length_le.mpr ⟨C * (A + 1) ^ c, d * c, _, hW, fun x => ?_⟩
+  have hmem : ∀ u : List Bool, pairEncode x u ∈
+      {z | z ∈ {z | (pairSndD z).length ≤
+          (List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true).length} ∧
+        z ∈ (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) ⁻¹' V} ↔
+      u.length ≤ C * ((f x).length + 1) ^ c ∧ pairEncode (f x) u ∈ V := by
+    intro u
+    simp only [Set.mem_setOf_eq, Set.mem_preimage, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate]
+  have hbound : C * ((f x).length + 1) ^ c ≤ C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+    have h1 : (f x).length + 1 ≤ (A + 1) * (x.length + 1) ^ d := by
+      have hpos : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow _ _ (Nat.succ_pos _)
+      have := hA x
+      nlinarith
+    calc C * ((f x).length + 1) ^ c ≤ C * ((A + 1) * (x.length + 1) ^ d) ^ c :=
+          Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 c)
+      _ = C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+          rw [mul_pow, pow_mul, Nat.mul_assoc]
+  rw [hL x, hL' (f x)]
+  constructor
+  · rintro ⟨u, hu, hVu⟩
+    exact ⟨u, hu.trans hbound, (hmem u).mpr ⟨hu, hVu⟩⟩
+  · rintro ⟨u, -, hu⟩
+    exact ⟨u, ((hmem u).mp hu).1, ((hmem u).mp hu).2⟩
 
 /-- **`NP`-hardness** [AB09, Definition 2.7]: every `NP` language Karp-reduces to
 `L`. -/
@@ -320,7 +373,11 @@ private lemma prefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
     · simp
     · rw [List.take_succ, List.getElem?_eq_getElem hlt]
 
-/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
+/-- The copy phase emits one input bit per step and preserves the fixed prefix.
+
+**Proof sketch.** Induction on the number of steps `i`. At step `i + 1` the input head is on the
+`(i + 1)`-st input cell (`inputSymbolInner`), so the copy state's transition emits `x[i]` and moves
+the head right (`moveInputPos_pos_of_ne_right`), appending `x[i]` to `w ++ x.take i`. -/
 private lemma prefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
     (prefixTM w).tm.runFrom
       (prefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
