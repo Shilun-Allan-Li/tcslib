@@ -9,6 +9,8 @@ import TCSlib.Complexity.TuringMachine.Build.InputLength
 import TCSlib.Complexity.TuringMachine.Build.VirtualInput
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.SpaceComplexity.Machines.Bin
+import TCSlib.Complexity.ClassNP.Transducer
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -22,14 +24,12 @@ computes `S(|x|)` from `x` within `O(S(|x|))` space, and the book's standing
 convention is `S(n) > log n`. The definition mirrors
 `Complexity.TimeConstructible` — output in binary (`Nat.bits`), constant slack
 `c · S n`, which implements the book's own asymptotic space convention
-([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); whether an
-exact-space variant is also satisfiable is a separate question this campaign
-does not pose (the chapter-1 exact-**time** refutation does not transfer: a
-space deadline forces no premature halt — round-1 audit, finding 3) — and
-carries the book's
+([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); an exact-space
+variant is not posed here (the exact-**time** refutation of chapter 1 does not
+transfer: a space deadline forces no premature halt) — and carries the book's
 convention as the conjunct `∀ n, logSpace n ≤ S n`, so that downstream
 statements (the space hierarchy, Savitch) can draw on it without restating it;
-results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
+results needing only weaker hypotheses must say so.
 
 ## Main definitions
 
@@ -41,6 +41,7 @@ results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
 * `Complexity.spaceConstructible_iff` — the definition as an equivalence.
 * `Complexity.spaceConstructible_logSpace` — `log` is space-constructible.
 * `Complexity.spaceConstructible_linear` — `n + 1` is space-constructible.
+* `Complexity.spaceConstructible_poly` — `n ^ c + 1` is space-constructible for `c ≥ 1`.
 
 ## References
 
@@ -477,7 +478,7 @@ in binary on a work tape by one left-to-right input scan with a binary
 increment at each step (the `Turing.counterTM`/`incrementTM` idiom — P11 of
 `machine-library-design.md` §4, space-annotated per §12 R3) — the counter word
 has `|Nat.bits n| = logSpace n` cells **for `n > 0` only** (`Nat.bits 0 = []`
-has length `0 ≠ logSpace 0 = 1`; round-1 audit, finding 1), so (ii) the empty
+has length `0 ≠ logSpace 0 = 1`), so (ii) the empty
 input is special-cased to emit `(logSpace 0).bits = [true]` directly, and
 otherwise the machine computes the counter word's bit-length by a second count
 and emits its bits. Space: the counters and markers fit in
@@ -507,7 +508,7 @@ theorem spaceConstructible_logSpace : SpaceConstructible logSpace := by
     _ = (2 * A) * logSpace x.length := by ring
 
 /-- **Linear space is constructible**: `n ↦ n + 1` is space-constructible (the
-`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the P0
+`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the zero-bound
 convention, `SpaceComplexity/ZeroSpace.lean` — and satisfies the dominance
 conjunct; zero-space classes are nonempty, so this is about collapse, not
 vacuity).
@@ -515,7 +516,7 @@ vacuity).
 **Proof sketch.** The input-scan counter of
 `Complexity.spaceConstructible_logSpace`, **initialized at `1`** so that after
 `n` consumed symbols it holds `n + 1` (an uncorrected length counter holds `n`
-and emits the wrong word — round-1 audit, finding 2); emit its bits. Space:
+and emits the wrong word); emit its bits. Space:
 the counter's binary width plus fixed administrative cells fit in
 `A·(n + 2) ≤ 2A·(n + 1)` visited cells; dominance is `logSpace n ≤ n + 1`
 (`1 ≤ 1` at `n = 0`; a small arithmetic lemma otherwise).
@@ -542,6 +543,163 @@ theorem spaceConstructible_linear : SpaceConstructible fun n => n + 1 := by
         M.tm.spaceUsed_le_mul_succ _ _
       _ ≤ M.k * ((a + 2 * b + 4) * (x.length + 1)) := Nat.mul_le_mul_left _ ht
       _ ≤ (M.k * (a + 2 * b + 4) + 1) * (x.length + 1) := by
+        rw [← Nat.mul_assoc]
+        exact Nat.mul_le_mul_right _ (Nat.le_succ _)
+
+/-- The tail transducer's transition: one bit of state, "the first bit has been read". -/
+private def scp_tailδ : Bool → Bool → Bool := fun _ _ => true
+
+/-- The tail transducer's emission: nothing on the first bit, the bit itself afterwards. -/
+private def scp_tailO : Bool → Bool → Option Bool := fun q b => if q then some b else none
+
+/-- After the first bit the tail transducer copies its input. -/
+private theorem scp_transduce_copy (l : List Bool) : transduce scp_tailδ scp_tailO true l = l :=
+  transduce_of_copy _ _ true (fun _ => rfl) (fun _ => rfl) l
+
+/-- From its start state the tail transducer computes `List.tail`. -/
+private theorem scp_transduce_tail (x : List Bool) :
+    transduce scp_tailδ scp_tailO false x = x.tail := by
+  cases x with
+  | nil => exact transduce_nil _ _ _
+  | cons b l =>
+    rw [transduce_cons]
+    simp only [scp_tailO, scp_tailδ, Bool.false_eq_true, if_false, Option.toList_none,
+      List.nil_append, scp_transduce_copy, List.tail_cons]
+
+/-- The unary intermediate is short: `(|x.tail| + 1) ^ c ≤ |x| ^ c + 1`. -/
+private theorem scp_tail_pow_le (c : ℕ) (x : List Bool) :
+    (x.tail.length + 1) ^ c ≤ x.length ^ c + 1 := by
+  cases x with
+  | nil => simp
+  | cons b l => simp
+
+/-- The conditional's value: for `1 ≤ c`, the branch function is `x ↦ (|x| ^ c + 1).bits`
+(`0 ^ c + 1 = 1` on the empty input; otherwise the count of `true :: 1ᴾ` with
+`P = (|x.tail| + 1) ^ c = |x| ^ c`). -/
+private theorem scp_value (c : ℕ) (hc : 1 ≤ c) (x : List Bool) :
+    (if decide (x = []) then Nat.bits 1
+      else Nat.bits (true :: List.replicate (1 * (x.tail.length + 1) ^ c) true).length) =
+      Nat.bits (x.length ^ c + 1) := by
+  cases x with
+  | nil =>
+    simp only [decide_true, if_true, List.length_nil]
+    rw [zero_pow (by omega), Nat.zero_add]
+  | cons b l =>
+    simp only [reduceCtorEq, decide_false, Bool.false_eq_true, if_false, List.length_cons,
+      List.length_replicate, Nat.one_mul, List.tail_cons]
+
+/-- The main branch's time, as arithmetic: with `P = (|x.tail| + 1) ^ c ≤ N + 1`, `N = |x| ^ c`,
+and `|x.tail| ≤ |x|`, the four phases' exact times sum to at most
+`(5c + 20 + 3c_L)(N + |x| + 1)`. -/
+private theorem scp_time_arith (c cL t n P N : ℕ) (hP : P ≤ N + 1) (ht : t ≤ n) :
+    n + 1 + t + 2 + (1 + 5 * c + 4) * P + P + 2 + (0 + 1 + P + 1) + (0 + 1 + P) + 2 +
+      cL * (0 + 1 + P + 1) ≤ (5 * c + 20 + 3 * cL) * (N + n + 1) := by
+  have h1 := Nat.mul_le_mul_left (1 + 5 * c + 4) hP
+  have h2 := Nat.mul_le_mul_left cL hP
+  nlinarith [h1, h2, Nat.zero_le (c * n), Nat.zero_le (cL * n), Nat.zero_le (cL * N),
+    Nat.zero_le (c * N)]
+
+/-- The conditional's time, as arithmetic: with `n ≤ N`, the bound
+`c_M (c_D (n + 1) + max (c₁ (n + 1)) (K (N + n + 1)) + 1) + 1` is at most `A (N + 1)` for
+`A = c_M (c_D + c₁ + 2K + 2) + 1`. -/
+private theorem scp_space_arith (cM cD c₁ K n N : ℕ) (hn : n ≤ N) :
+    cM * (cD * (n + 1) + max (c₁ * (n + 1)) (K * (N + n + 1)) + 1) + 1 ≤
+      (cM * (cD + c₁ + 2 * K + 2) + 1) * (N + 1) := by
+  have hmax : max (c₁ * (n + 1)) (K * (N + n + 1)) ≤ c₁ * (n + 1) + K * (N + n + 1) :=
+    max_le_add_of_nonneg (Nat.zero_le _) (Nat.zero_le _)
+  have e1 := Nat.mul_le_mul_left cD hn
+  have e2 := Nat.mul_le_mul_left c₁ hn
+  have e3 := Nat.mul_le_mul_left K hn
+  have hin : cD * (n + 1) + max (c₁ * (n + 1)) (K * (N + n + 1)) + 1 ≤
+      (cD + c₁ + 2 * K + 2) * (N + 1) := by
+    nlinarith [hmax, e1, e2, e3]
+  have h4 := Nat.mul_le_mul_left cM hin
+  nlinarith [h4, Nat.zero_le (cM * (cD + c₁ + 2 * K + 2))]
+
+/-- **Polynomial bounds are space-constructible** [AB09, p. 79]: for `1 ≤ c`, the normal-form
+bound `n ^ c + 1` is `Complexity.SpaceConstructible`. (Degree zero is excluded: `n ^ 0 + 1 = 2`
+fails the bundled `logSpace n ≤ S n` at large `n`; consumers route degree
+zero through monotonicity into degree one.)
+
+**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_eq` and
+`Nat.log_le_self`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
+`x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
+(`Turing.FinTM.computesFunInTime_cond`, with the decider
+`Turing.FinTM.computesFunInTime_decideEq []`). On the empty input the constant
+writer emits `(1).bits`, which is the value since `0 ^ c + 1 = 1`. Otherwise four phases run by
+buffered composition (`Turing.FinTM.bufferedCompTM_computesInTime`), each at its exact time:
+1. a two-state transducer drops the first bit (`Complexity.transducerTM_computes`; from its
+   second state it copies, `Complexity.transduce_of_copy`);
+2. the unary generator `polyUnaryTM 1 c` writes `(|x| - 1 + 1) ^ c = |x| ^ c` ones;
+3. `prependTM [true]` adds one more;
+4. the length counter emits the binary length `|x| ^ c + 1`.
+The four times sum to `O(|x| ^ c + |x| + 1)`, because the unary word has length at most
+`|x| ^ c + 1`, so the conditional halts within `A (|x| ^ c + 1)` steps for a constant `A`
+(`|x| ≤ |x| ^ c`). Space follows from time: a `k`-tape machine visits at most `k (t + 1)`
+work-tape cells in `t` steps (`Turing.MultiTapeTM.spaceUsed_le_mul_succ`), which gives the
+space constant `k A + 1`. -/
+theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
+    SpaceConstructible fun n => n ^ c + 1 := by
+  -- the published rows
+  obtain ⟨L, cL, hL⟩ := FinTM.computesFunInTime_lengthBits
+  obtain ⟨D, cD, hD'⟩ := FinTM.computesFunInTime_decideEq []
+  obtain ⟨K₁, c₁, hK₁⟩ := FinTM.computesFunInTime_const (Nat.bits 1)
+  let T := transducerTM scp_tailδ scp_tailO false
+  let U := FinTM.polyUnaryTM 1 c
+  let P := FinTM.prependTM [true]
+  let N := FinTM.bufferedCompTM (FinTM.bufferedCompTM (FinTM.bufferedCompTM T U) P) L
+  let f₂ : List Bool → List Bool := fun x =>
+    Nat.bits (true :: List.replicate (1 * (x.tail.length + 1) ^ c) true).length
+  -- the main branch, input by input: exact times of the four phases, composed
+  have hN : N.ComputesFunInTime f₂ fun n => (5 * c + 20 + 3 * cL) * (n ^ c + n + 1) := by
+    apply (FinTM.computesFunInTime_iff _ _ _).mpr
+    intro x
+    have hT : T.ComputesInTime x x.tail (x.length + 1) := by
+      have h := (FinTM.computesFunInTime_iff _ _ _).mp
+        (transducerTM_computes scp_tailδ scp_tailO false) x
+      rwa [scp_transduce_tail] at h
+    have hU := (FinTM.computesFunInTime_iff _ _ _).mp (FinTM.polyUnaryTM_computes 1 c) x.tail
+    have hP := (FinTM.computesFunInTime_iff _ _ _).mp (FinTM.prependTM_computes [true])
+      (List.replicate (1 * (x.tail.length + 1) ^ c) true)
+    have hL' := (FinTM.computesFunInTime_iff _ _ _).mp hL
+      ([true] ++ List.replicate (1 * (x.tail.length + 1) ^ c) true)
+    have h₁ := FinTM.bufferedCompTM_computesInTime T U hT hU
+    have h₂ := FinTM.bufferedCompTM_computesInTime _ P h₁ hP
+    have h₃ := FinTM.bufferedCompTM_computesInTime _ L h₂ hL'
+    apply h₃.mono
+    have hp := scp_tail_pow_le c x
+    have htl : x.tail.length ≤ x.length := by simp
+    simp only [List.length_replicate, Nat.one_mul, List.length_append, List.length_cons,
+      List.length_nil]
+    exact scp_time_arith c cL x.tail.length x.length _ _ hp htl
+  obtain ⟨M, cM, hM⟩ := FinTM.computesFunInTime_cond hD' hK₁ hN
+  -- the value
+  have hval : (fun x : List Bool => if decide (x = []) then Nat.bits 1 else f₂ x) =
+      fun x => Nat.bits (x.length ^ c + 1) := by
+    funext x
+    exact scp_value c hc x
+  rw [hval] at hM
+  -- time, then space from time
+  refine (spaceConstructible_iff _).mpr ⟨fun n => ?_,
+    M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1, by omega, M, ?_⟩
+  · have h1 : logSpace n ≤ n + 1 := by
+      rw [logSpace_eq]
+      have := Nat.log_le_self 2 n
+      omega
+    have h2 : n ≤ n ^ c := Nat.le_self_pow (by omega) n
+    omega
+  · apply (FinTM.computesInSpace_iff _ _ _).mpr
+    intro x
+    refine ⟨_, (FinTM.computesFunInTime_iff _ _ _).mp hM x, ?_⟩
+    apply (MultiTapeTM.spaceUsed_le_mul_succ _ _ _).trans
+    have hB := scp_space_arith cM cD c₁ (5 * c + 20 + 3 * cL) x.length (x.length ^ c)
+      (Nat.le_self_pow (by omega) x.length)
+    calc M.k * (cM * (cD * (x.length + 1) + max (c₁ * (x.length + 1))
+            ((5 * c + 20 + 3 * cL) * (x.length ^ c + x.length + 1)) + 1) + 1)
+        ≤ M.k * ((cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) * (x.length ^ c + 1)) :=
+          Nat.mul_le_mul_left _ hB
+      _ ≤ (M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1) *
+            (x.length ^ c + 1) := by
         rw [← Nat.mul_assoc]
         exact Nat.mul_le_mul_right _ (Nat.le_succ _)
 
