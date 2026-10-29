@@ -2,8 +2,8 @@
  "lean_name": "BooleanAnalysis.Hypercontractivity.general_two_function_hypercontractivity",
  "key": "2c6dd4539baf4443",
  "kind": "theorem",
- "title": "General two-function hypercontractivity",
- "statement": "Fix a natural number $n$, real exponents $1 \\le p \\le u$ with $u \\ge 2$, and a noise rate $\\rho$ with $0 \\le\n\\rho \\le 1$ satisfying $\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then for every pair of Boolean\nfunctions $f, g : \\{0,1\\}^n \\to \\bbr$,\n\\[\n  \\langle f, T_\\rho g\\rangle\n  \\;\\le\\;\n  \\bigl(\\E\\bigl[\\,\\abs{f}^{u/(u-1)}\\,\\bigr]\\bigr)^{(u-1)/u}\\,\n  \\bigl(\\E\\bigl[\\,\\abs{g}^{p}\\,\\bigr]\\bigr)^{1/p},\n\\]\nwhere $\\langle\\cdot,\\cdot\\rangle$ is the $L^2$ inner product, $\\E$ the expectation, and\n$T_\\rho$ the noise operator, all taken with respect to the uniform measure on the\nhypercube.",
+ "title": "Sharp finite-exponent cube pairing bound",
+ "statement": "Fix a natural number $n$, real exponents $1 \\le p \\le u$ with $u \\ge 2$, and a noise rate $\\rho$ with $0 \\le\n\\rho \\le 1$ satisfying $\\rho \\le \\sqrt{(p-1)/(u-1)}$. Then for every pair of Boolean\nfunctions $f, g : \\{0,1\\}^n \\to \\bbr$,\n\\[\n  \\langle f, T_\\rho g\\rangle\n  \\;\\le\\;\n  \\bigl(\\E\\bigl[\\,\\abs{f}^{u/(u-1)}\\,\\bigr]\\bigr)^{(u-1)/u}\\,\n  \\bigl(\\E\\bigl[\\,\\abs{g}^{p}\\,\\bigr]\\bigr)^{1/p},\n\\]\nwhere $\\langle\\cdot,\\cdot\\rangle$ is the $L^2$ inner product, $\\E$ the expectation, and\n$T_\\rho$ the noise operator, all taken with respect to the uniform measure on the\nhypercube. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure.",
  "hypotheses_covered": [
   "1 ≤ p",
   "p ≤ u",

@@ -1,43 +1,45 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean :: chernoff_binomial_upper_tail -->
+<!-- lean-source: TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean :: BernoulliCost.chernoff_binomial_upper_tail -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# Chernoff upper tail for the binomial at twice the mean
+# A Chernoff upper-tail bound for the binomial distribution
 
-**Claim.** For `nn : ℕ` and `p : ℝ` with `0 < p ≤ 1`,
-`∑ k ∈ (Finset.range (nn+1)).filter (fun k => (k : ℝ) > 2 · nn · p),
-binomialPMF nn p k ≤ Real.exp (-(nn · p / 3))`. In words: `Pr[Bin(nn,p) > 2 nn p]
-≤ e^{−nn p/3}`, the multiplicative Chernoff bound at `δ = 1`.
+**Claim.** Fix a natural number $n$ and a real $p$ with $0 < p \le 1$. Writing the binomial probability mass as $\binom{n}{k}p^k(1-p)^{n-k}$, the total mass carried by the indices $k \in \{0,1,\dots,n\}$ with $k > 2np$ is at most $e^{-np/3}$. In probabilistic terms, $\Pr[\mathrm{Bin}(n,p) > 2np] \le e^{-np/3}$: the chance that a binomial variable exceeds twice its mean decays exponentially in the mean.
 
-**Proof.** `by_cases h_cases : p ≤ 0.5`.
+**Proof.** The argument splits on the size of $p$. The interesting case is $p \le \tfrac12$, handled by a Chernoff (exponential moment) estimate with a *fixed*, unoptimised parameter $t = \log 2$; the case $p > \tfrac12$ is disposed of because the tail is then empty.
 
-*Case `p ≤ 1/2`* — the genuine Chernoff argument, with `t = log 2`.
+**Case $p \le \tfrac12$.** The engine is the elementary bound $\mathbf 1[k > a] \le e^{t(k-a)}$, valid for any threshold $a$ and any $t>0$. We take $a = 2np$ and $t = \log 2$, so that $e^{t} = 2$.
 
-1. **MGF identity and bound:**
-   `∑ k C(nn,k) p^k (1−p)^{nn−k} e^{k log 2} = (p e^{log 2} + (1−p))^{nn}` by
-   `add_pow` with `mul_pow` and `Real.exp_nat_mul`; then `Real.rpow_natCast`,
-   `Real.rpow_def_of_pos` and `Real.log_le_sub_one_of_pos` bound it by
-   `exp (nn · p · (e^{log 2} − 1))` (base positive by `Real.add_one_le_exp`,
-   `Real.log_pos one_lt_two`).
-2. **Shift by the threshold:** multiply through by `exp (−2 nn p log 2) ≥ 0`
-   (`mul_le_mul_of_nonneg_right`, `Real.exp_nonneg`), rearranging summands with
-   `Finset.sum_mul` and `Real.exp_add`/`Real.exp_neg`, to get
-   `∑ k … e^{(k − 2 nn p) log 2} ≤ exp (nn p (e^{log 2} − 1) − 2 nn p log 2)`.
-3. **Exponent arithmetic:** `Real.exp_log` turns `e^{log 2}` into `2`, and
-   `Real.log_two_gt_d9` with `nlinarith` (using `nn · p ≥ 0`) gives
-   `nn p (2 − 1) − 2 nn p log 2 ≤ −nn p / 3`.
-4. **Dropping the exponential on the tail:** for `k > 2 nn p` the factor
-   `e^{(k − 2 nn p) log 2} ≥ 1` (`Real.one_le_exp`, `le_mul_of_one_le_right`) and
-   all summands are nonnegative, so `gcongr`/`split_ifs` bounds
-   `∑ k, if k > 2 nn p then binomialPMF nn p k else 0` by the step-2 sum; a final
-   `convert … using 1` with `Finset.sum_ite` matches the filtered sum.
+1. **The moment generating function is a binomial.** By the binomial theorem $(x+y)^n = \sum_{k=0}^n \binom{n}{k}x^k y^{n-k}$ (`add_pow`), applied with $x = p\,e^{\log 2}$ and $y = 1-p$,
+\[
+\sum_{k=0}^{n}\binom{n}{k}p^{k}(1-p)^{n-k}e^{k\log 2}
+=\bigl(p\,e^{\log 2}+(1-p)\bigr)^{n},
+\]
+since $p^k e^{k\log 2} = (p\,e^{\log 2})^k$.
 
-*Case `p > 1/2`* — the tail is empty.
+2. **Bound the MGF by a single exponential.** Write the base as $1 + p(e^{\log 2}-1)$; because $0<p\le 1$ this base is positive, so the power equals $\exp\!\bigl(n\log(1+p(e^{\log 2}-1))\bigr)$. The bound $\log x \le x-1$ (`Real.log_le_sub_one_of_pos`) gives $\log\!\bigl(1+p(e^{\log 2}-1)\bigr) \le p(e^{\log 2}-1)$, hence
+\[
+\sum_{k=0}^{n}\binom{n}{k}p^{k}(1-p)^{n-k}e^{k\log 2}
+\le \exp\!\bigl(np(e^{\log 2}-1)\bigr).
+\]
+(Positivity of the base uses $e^{\log 2} > 1$, which follows from $1+x\le e^x$, i.e. `Real.add_one_le_exp`.)
 
-5. `rcases eq_or_ne nn 0`: for `nn = 0`, `simp` and `Finset.sum_filter` finish.
-   For `nn > 0`, `2 nn p > nn ≥ k` for every `k ∈ range (nn+1)` (`nlinarith` from
-   `k ≤ nn`, `0 < nn`, `0.5 < p`), so the filter is `∅`; `Finset.sum_empty` and
-   `Real.exp_nonneg` close the goal.
+3. **Insert the threshold.** Multiplying both sides by the positive constant $e^{-2np\log 2}$ and folding it into each summand via $e^{k\log 2}e^{-2np\log 2}=e^{(k-2np)\log 2}$ yields
+\[
+\sum_{k=0}^{n}\binom{n}{k}p^{k}(1-p)^{n-k}e^{(k-2np)\log 2}
+\le \exp\!\bigl(np(e^{\log 2}-1)-2np\log 2\bigr).
+\]
 
-**Used in.** `bernoulli_restriction_cost`, as the additive `e^{−np/3}` error
-term.
+4. **Simplify the exponent to $-np/3$.** Since $e^{\log 2}=2$, the exponent collapses to $np(2-1)-2np\log 2 = np\,(1-2\log 2)$. As $np \ge 0$, to get $np(1-2\log 2) \le -np/3$ it suffices that $1-2\log 2 \le -\tfrac13$, i.e. $\log 2 \ge \tfrac23$. This holds because $\log 2 = 0.6931\ldots > 0.6\overline{6}$ (the numeric lower bound `Real.log_two_gt_d9`). Therefore the right-hand side of Step 3 is at most $e^{-np/3}$.
+
+5. **Drop to the tail terms.** Compare the target sum, restricted to $k > 2np$, with the full weighted sum of Step 3. For an index $k > 2np$ the weight satisfies $e^{(k-2np)\log 2} \ge 1$ (the exponent is nonnegative since $\log 2 > 0$), so the plain summand is $\le$ its weighted version; for every other $k$ the weighted summand is still nonnegative and only adds to the full sum. All binomial summands are nonnegative here because $0 \le p$ and $1-p \ge 0$. Chaining these comparisons,
+\[
+\sum_{\substack{0\le k\le n\\ k > 2np}}\binom{n}{k}p^{k}(1-p)^{n-k}
+\;\le\;
+\sum_{k=0}^{n}\binom{n}{k}p^{k}(1-p)^{n-k}e^{(k-2np)\log 2}
+\;\le\; e^{-np/3},
+\]
+which is the claim.
+
+**Case $p > \tfrac12$.** Here the tail is empty, so the sum is $0 \le e^{-np/3}$. If $n=0$ the index set $\{0\}$ already fails the condition $k > 0$. If $n \ge 1$, then for every $k \le n$ we have $(k:\mathbb R) \le n < 2np$, because $2p > 1$ forces $2np > n$; hence no admissible $k$ satisfies $k > 2np$ and the filtered sum is empty. Nonnegativity of $e^{-np/3}$ finishes it.

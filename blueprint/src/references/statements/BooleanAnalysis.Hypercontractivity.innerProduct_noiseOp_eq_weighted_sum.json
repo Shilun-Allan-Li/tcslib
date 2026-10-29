@@ -3,7 +3,7 @@
  "key": "41b676a83d976838",
  "kind": "lemma",
  "title": "Noise inner product as a double sum",
- "statement": "Fix a dimension $n$ and a real number $\\rho$. For any two Boolean functions $f, g :\n\\{0,1\\}^n \\to \\bbr$, the $L^2$ inner product of $f$ with the noised function $T_\\rho g$\ncan be written as a kernel-weighted double sum:\n\\[\n\\langle f, T_\\rho g\\rangle \\;=\\; 2^{-n} \\sum_{x \\in \\{0,1\\}^n} \\sum_{y \\in \\{0,1\\}^n}\nK_\\rho(x,y)\\, f(x)\\, g(y),\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the\nnoise kernel and $\\sigma$ is the $\\pm 1$ sign encoding of a bit.",
+ "statement": "Fix a dimension $n$ and a real number $\\rho$. For any two Boolean functions $f, g :\n\\{0,1\\}^n \\to \\bbr$, the $L^2$ inner product of $f$ with the noised function $T_\\rho g$\ncan be written as a kernel-weighted double sum:\n\\[\n\\langle f, T_\\rho g\\rangle \\;=\\; 2^{-n} \\sum_{x \\in \\{0,1\\}^n} \\sum_{y \\in \\{0,1\\}^n}\nK_\\rho(x,y)\\, f(x)\\, g(y),\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the\nnoise kernel and $\\sigma$ is the $\\pm 1$ sign encoding of a bit. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure.",
  "hypotheses_covered": [
   "real parameter $\\rho$ (arbitrary, no range restriction)",
   "Boolean functions $f, g : \\{0,1\\}^n \\to \\bbr$",

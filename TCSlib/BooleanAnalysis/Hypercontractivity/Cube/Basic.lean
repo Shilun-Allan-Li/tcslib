@@ -31,11 +31,14 @@ set_option autoImplicit false
 * `fourierCoeff_derivative`: coordinate derivatives remove their Fourier coordinate.
 * `cube_moment_interpolation`: weighted Hölder interpolates two absolute moments.
 * `cubeVariance_eq_sum_nonempty_fourier`: the Fourier variance identity.
+* `cubeVariance_noiseOp_le`: noise contraction of variance.
 * `cubeVariance_rpow_ratio_le_noisy_total`: the Jensen bound for noisy Fourier energy.
 * `fourierWeightAbove_le_totalInfluence_div_succ`: total influence bounds Fourier tails.
 * `cubeLpNorm_rpow`: raising a positive-exponent power mean recovers its moment.
 * `cubeProbability_le_cubeLpNorm_div_rpow`: Markov bounds cube tails through their moments.
 * `has_degree_at_most_sub_const`: subtracting a constant preserves a Fourier degree bound.
+* `totalInfluence_le_degree_mul_variance`: Fourier degree bounds total influence by variance.
+* `sum_sq_influences_le_degree_mul`: small influences bound their squared sum.
 * `l2Norm_noiseOp_le`: Fourier rescaling by `ρ ≥ 1` increases the second norm of a
   degree-`k` function by at most `ρ ^ k`.
 
@@ -183,6 +186,99 @@ lemma cubeVariance_eq_sum_nonempty_fourier {n : ℕ} (f : BooleanFunc n) :
 )
 
 open scoped BigOperators in
+/-- A cube function of Fourier degree at most `k` has total influence at most `k` times
+its variance. [OD14, §2.2, Fourier total-influence formula; Cor. 11.67 (proof)]
+
+**Proof sketch.** The empty Fourier set contributes zero to total influence. Every
+other nonzero Fourier coefficient has set size at most `k`, so its contribution is
+at most `k` times its squared coefficient. Sum and use the Fourier variance identity. -/
+lemma totalInfluence_le_degree_mul_variance {n k : ℕ} (f : BooleanFunc n)
+    (hdeg : has_degree_at_most f k) :
+    totalInfluence f ≤ (k : ℝ) * cubeVariance f := by
+  classical
+  rw [totalInfluence_eq_sum_sq_deg, cubeVariance_eq_sum_nonempty_fourier, Finset.mul_sum]
+  apply Finset.sum_le_sum
+  intro S _
+  by_cases hEmpty : S = ∅
+  · simp [hEmpty]
+  · simp only [if_neg hEmpty]
+    by_cases hzero : fourierCoeff f S = 0
+    · simp [hzero]
+    · exact mul_le_mul_of_nonneg_right (Nat.cast_le.mpr (hdeg S hzero)) (sq_nonneg _)
+
+open scoped BigOperators in
+/-- For a degree-`k` cube function with variance at most one and influences at most
+`ε`, the sum of squared influences is at most `kε`. [OD14, Cor. 11.67 (proof)]
+
+**Proof sketch.** Nonnegative influences give `∑ᵢ Infᵢ² ≤ ε ∑ᵢ Infᵢ`.
+The total-influence degree bound and the variance hypothesis bound the last sum by `k`. -/
+lemma sum_sq_influences_le_degree_mul {n k : ℕ} (f : BooleanFunc n)
+    (hdegree : has_degree_at_most f k) (hvar : cubeVariance f ≤ 1)
+    (ε : ℝ) (hε : 0 ≤ ε) (hinf : ∀ i, influence i f ≤ ε) :
+    ∑ i : Fin n, (influence i f) ^ 2 ≤ (k : ℝ) * ε := by
+  classical
+  calc
+    ∑ i : Fin n, (influence i f) ^ 2 ≤ ∑ i : Fin n, ε * influence i f := by
+      apply Finset.sum_le_sum
+      intro i _
+      rw [pow_two]
+      exact mul_le_mul_of_nonneg_right (hinf i) (influence_nonneg i f)
+    _ = ε * totalInfluence f := by rw [totalInfluence, Finset.mul_sum]
+    _ ≤ ε * ((k : ℝ) * cubeVariance f) :=
+      mul_le_mul_of_nonneg_left (totalInfluence_le_degree_mul_variance f hdegree) hε
+    _ ≤ ε * ((k : ℝ) * 1) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left hvar (Nat.cast_nonneg _)) hε
+    _ = _ := by ring
+
+/-- The sum of influences to the three-halves power is bounded by degree times
+the square root of the maximum influence, when variance is at most one.
+[OD14, Cor. 11.70 (proof)]
+
+**Proof sketch.** Each influence contributes its product with its square root.
+Bound the square root by the maximum, then apply the total-influence degree bound. -/
+lemma sum_three_halves_influences_le_degree_mul {n k : ℕ} (f : BooleanFunc n)
+    (hdegree : has_degree_at_most f k) (hvar : cubeVariance f ≤ 1)
+    (ε : ℝ) (hinf : ∀ i, influence i f ≤ ε) :
+    ∑ i : Fin n, (influence i f) ^ (3 / 2 : ℝ) ≤ (k : ℝ) * Real.sqrt ε := by
+  classical
+  calc
+    _ ≤ ∑ i : Fin n, Real.sqrt ε * influence i f := by
+      apply Finset.sum_le_sum
+      intro i _
+      calc
+        _ = influence i f * Real.sqrt (influence i f) := by
+          rw [show (3 / 2 : ℝ) = 1 + 1 / 2 by norm_num,
+            Real.rpow_add_of_nonneg (influence_nonneg i f) zero_le_one (by norm_num),
+            Real.rpow_one, ← Real.sqrt_eq_rpow]
+        _ ≤ influence i f * Real.sqrt ε :=
+          mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt (hinf i)) (influence_nonneg i f)
+        _ = _ := mul_comm _ _
+    _ = Real.sqrt ε * totalInfluence f := by rw [totalInfluence, Finset.mul_sum]
+    _ ≤ Real.sqrt ε * ((k : ℝ) * cubeVariance f) :=
+      mul_le_mul_of_nonneg_left (totalInfluence_le_degree_mul_variance f hdegree)
+        (Real.sqrt_nonneg ε)
+    _ ≤ Real.sqrt ε * ((k : ℝ) * 1) :=
+      mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left hvar (Nat.cast_nonneg _)) (Real.sqrt_nonneg ε)
+    _ = _ := by ring
+
+open scoped BigOperators in
+/-- Applying noise at radius in `[0,1]` cannot increase cube variance.
+[OD14, §2.4, Fourier formula for noise stability] -/
+lemma cubeVariance_noiseOp_le {n : ℕ} (f : BooleanFunc n) (ρ : ℝ)
+    (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
+    cubeVariance (noiseOp ρ f) ≤ cubeVariance f := by
+  classical
+  rw [cubeVariance_eq_sum_nonempty_fourier, cubeVariance_eq_sum_nonempty_fourier]
+  apply Finset.sum_le_sum
+  intro S hS
+  by_cases hE : S = ∅
+  · simp [hE]
+  · simp only [if_neg hE, noiseOp_fourier, mul_pow]
+    exact mul_le_of_le_one_left (sq_nonneg _)
+      (pow_le_one₀ (pow_nonneg hρ0 _) (pow_le_one₀ hρ0 hρ1))
+
 /-- For a real-valued cube function of positive variance and any positive noise rate `ρ`,
 variance times `ρ` raised to normalized total influence is at most the degree-weighted
 noisy Fourier energy. [OD14, §9.6, KKL Edge-Isoperimetric Theorem proof]

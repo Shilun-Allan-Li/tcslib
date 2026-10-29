@@ -1,33 +1,40 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/KKL.lean :: fourierCoeff_lowDegreePart -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.lean :: KKL.fourierCoeff_lowDegreePart -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
 # Fourier coefficients of the low-degree truncation
 
-**Claim.** `fourierCoeff (lowDegreePart f k) S = if S.card ≤ k then fourierCoeff f S else 0`.
-Truncating the expansion truncates the coefficients, and changes nothing else.
+**Claim.** Let $f:\{0,1\}^n\to\mathbb R$ be a function on the uniform Boolean cube, let $k\in\mathbb N$, and let $f^{\le k}$ be the degree-$k$ truncation of $f$, i.e. the function obtained by keeping only those Fourier terms of $f$ indexed by sets of size at most $k$. Then for every $S\subseteq[n]$ the Fourier coefficient of the truncation is $\widehat{f^{\le k}}(S)=\widehat f(S)$ when $|S|\le k$, and $\widehat{f^{\le k}}(S)=0$ when $|S|>k$. In words: truncating to degree $k$ keeps the low-degree coefficients unchanged and kills the high-degree ones.
 
-**Proof.** Everything is done at the unfolded level: `lowDegreePart`,
-`BooleanAnalysis.fourierCoeff`, `innerProduct` and `expect` are all unfolded and
-`beta_reduce`d, then `w := uniformWeight n` and `fhat T := w * ∑ y, f y * chiS T y`
-are abbreviated with `set`.
+**Proof.** Throughout, $\langle g,h\rangle=\mathbb E_{x}\,[g(x)h(x)]$ denotes the inner product under the uniform measure on $\{0,1\}^n$, the characters are $\chi_T(x)=\prod_{i\in T}(-1)^{x_i}$, and $\widehat g(T)=\langle g,\chi_T\rangle$. By definition the truncation is the explicit Fourier expansion
+\[
+f^{\le k}(x)=\sum_{T\subseteq[n]}\mathbf 1[\,|T|\le k\,]\;\widehat f(T)\,\chi_T(x),
+\]
+so the entire statement is a single computation of $\langle f^{\le k},\chi_S\rangle$, carried out exactly as follows.
 
-- `step1` — exchange the order of summation:
-  `w * ∑ x, (∑ T, if |T| ≤ k then fhat T · χ_T(x) else 0) · χ_S(x)`
-  becomes `∑ T, if |T| ≤ k then fhat T · (w * ∑ x, χ_T(x)·χ_S(x)) else 0`,
-  via `Finset.mul_sum`, `Finset.sum_mul`, a `simp_rw` that pushes `χ_S(x)` inside
-  the `if` (`split_ifs <;> ring`), and `Finset.sum_comm`.
-- `ortho` — orthonormality of the characters: `fourier_coeff_chi T S` with
-  `innerProduct`/`expect` unfolded says `w * ∑ x, χ_T(x)·χ_S(x) = if T = S then 1 else 0`.
-- Collapse the nested guards (`if |T| ≤ k then (if T = S then fhat T else 0) else 0`
-  rewritten as `if T = S then (if |S| ≤ k then fhat S else 0) else 0`, by
-  `split_ifs <;> simp_all`) and `Finset.sum_ite_eq'` extracts the `T = S` term. ∎
+1. **Expand by linearity.** Writing the Fourier coefficient as an expectation and inserting the definition of $f^{\le k}$,
+\[
+\widehat{f^{\le k}}(S)=\Big\langle \sum_{T}\mathbf 1[|T|\le k]\,\widehat f(T)\,\chi_T,\;\chi_S\Big\rangle
+=\mathbb E_x\Big[\Big(\sum_{T}\mathbf 1[|T|\le k]\,\widehat f(T)\,\chi_T(x)\Big)\chi_S(x)\Big].
+\]
+Since the sum over $T$ is finite, the expectation (a weighted finite sum over $x$) commutes with it; distributing $\chi_S(x)$ across the sum and interchanging the order of summation over $x$ and over $T$ gives
+\[
+\widehat{f^{\le k}}(S)=\sum_{T}\mathbf 1[|T|\le k]\,\widehat f(T)\,\mathbb E_x\big[\chi_T(x)\chi_S(x)\big]
+=\sum_{T}\mathbf 1[|T|\le k]\,\widehat f(T)\,\langle\chi_T,\chi_S\rangle .
+\]
+This is the only genuinely "analytic" move; everything after it is bookkeeping.
 
-**Remark.** The proof has to work with unfolded sums because the development has
-no linearity lemma for `fourierCoeff` (no `fourierCoeff_add`/`fourierCoeff_sum`
-in `BooleanAnalysis/Basic.lean`). The same twenty-line pattern is duplicated as
-the `hcoeff` step inside `lowDegreePart_depends_on_influential`, with the guard
-`|S| ≤ k` replaced by `|S| ≤ k ∧ ¬S ⊆ J`.
+2. **Apply orthonormality of the characters.** The characters form an orthonormal system: $\langle\chi_T,\chi_S\rangle=\mathbf 1[T=S]$ (`BooleanAnalysis.fourier_coeff_chi`). Substituting, every term with $T\ne S$ vanishes, so
+\[
+\widehat{f^{\le k}}(S)=\sum_{T}\mathbf 1[|T|\le k]\,\widehat f(T)\,\mathbf 1[T=S].
+\]
 
-**Used in.** `lowDegree_l2_error` (the `hfour` step). No call sites outside
-`BooleanAnalysis/KKL.lean`.
+3. **Collapse the Kronecker delta.** Only the term $T=S$ survives the factor $\mathbf 1[T=S]$, and in that term the side condition $\mathbf 1[|T|\le k]$ becomes $\mathbf 1[|S|\le k]$. Reading off the single surviving summand,
+\[
+\widehat{f^{\le k}}(S)=\mathbf 1[|S|\le k]\,\widehat f(S)
+=\begin{cases}\widehat f(S), & |S|\le k,\\[2pt] 0, & |S|>k,\end{cases}
+\]
+which is exactly the claim.
+
+**Key facts.** `BooleanAnalysis.fourier_coeff_chi`.

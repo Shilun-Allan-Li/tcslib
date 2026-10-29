@@ -104,6 +104,8 @@ jobs:
     steps:
       - name: Checkout project
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # dataset_stats.py dates the page by the dataset file's last commit
 
       - name: Install elan
         run: curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.0.0
@@ -115,6 +117,10 @@ jobs:
           mkdir -p _site/theorems
           cp ../dataset/tcslib_theorems.jsonl.gz _site/theorems/
           test -f _site/theorems/index.html || { echo "::error::theorems viewer missing from generated site"; exit 1; }
+          # The dataset page carries %%tokens%% for its numbers; fill them from the
+          # dataset file deployed alongside it (fails if any token has no value).
+          test -f _site/dataset/index.html || { echo "::error::dataset page missing from generated site"; exit 1; }
+          python3 ../scripts/dataset_stats.py --render _site/dataset/index.html --json _site/theorems/stats.json
 
       - name: Upload Verso artifact
         uses: actions/upload-artifact@v4

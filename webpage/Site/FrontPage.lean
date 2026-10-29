@@ -19,7 +19,6 @@ Theoretical Computer Science
 TCSlib is an open-source library formalizing results in Boolean Function Analysis
 and Error-Correcting Codes using [Lean 4](https://lean-lang.org) and
 [Mathlib](https://leanprover-community.github.io/mathlib4_docs/).
-Every theorem is machine-checked.
 
 ::::html a (class := "hero-btn primary") (href := "https://github.com/Shilun-Allan-Li/tcslib")
 :::html img (src := "/tcslib/static/arrow.svg") (alt := "") (width := "20") (height := "20")

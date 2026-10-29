@@ -522,6 +522,12 @@ lemma flipBit_ne (x : BoolCube n) (i j : Fin n) (h : i ≠ j) :
 noncomputable def influence (i : Fin n) (f : BooleanFunc n) : ℝ :=
   expect (fun x ↦ (f x - f (flipBit x i)) ^ 2 / 4)
 
+/-- Each coordinate influence is nonnegative, since it is the expectation of
+a squared difference divided by four. [OD14, §2.1] -/
+lemma influence_nonneg (i : Fin n) (f : BooleanFunc n) : 0 ≤ influence i f := by
+  unfold influence expect uniformWeight
+  positivity
+
 /-- The **total influence** of `f`:
   `I[f] = ∑_{i=1}^{n} Inf_i[f]`.
 

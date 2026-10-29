@@ -1,32 +1,35 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/LMN/RestrictionCompose.lean :: bernoulliRestrWeight_eq_prod -->
+<!-- lean-source: TCSlib/BooleanAnalysis/LMN/RestrictionCompose.lean :: LMN.bernoulliRestrWeight_eq_prod -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The Bernoulli restriction weight factors over coordinates
+# Bernoulli restriction weight factors over coordinates
 
-**Claim.** For every `p : ℝ` and `ρ : Restriction n`,
+**Claim.** Let $p$ be a real parameter and let $\rho$ be a restriction on $n$ variables, each coordinate being either fixed to a Boolean value or left free. Write $k$ for the number of free coordinates. Then the Bernoulli weight of $\rho$, namely $p^{k}\bigl(\tfrac{1-p}{2}\bigr)^{\,n-k}$, equals the product $\prod_{i=1}^{n} w_p(\rho(i))$ of the per-coordinate weights, where $w_p(\rho(i))=p$ when coordinate $i$ is free and $w_p(\rho(i))=\tfrac{1-p}{2}$ when it is fixed.
 
-`bernoulliRestrWeight p ρ = ∏ i : Fin n, varWeight p (ρ i)`,
+**Proof.** The proof rewrites the product on the right until it matches the closed form on the left; the only real idea is to split the index set into the free and the fixed coordinates.
 
-i.e. the closed form `p ^ |ρ.freeVars| * ((1-p)/2) ^ (n - |ρ.freeVars|)` equals
-the coordinatewise product of `varWeight`s. No hypothesis on `p`.
+1. **Split the product along free versus fixed coordinates.** Let $F=\{\,i : \rho(i)\text{ is free}\,\}$ be the set of free coordinates, so that $|F|=k$. Since $F$ is a subset of the full index set $\{1,\dots,n\}$, the product over all coordinates factors as a product over $F$ times a product over its complement:
+\[
+  \prod_{i=1}^{n} w_p(\rho(i))
+  \;=\;
+  \Bigl(\prod_{i\in F} w_p(\rho(i))\Bigr)
+  \cdot
+  \Bigl(\prod_{i\notin F} w_p(\rho(i))\Bigr).
+\]
+This is the multiplicativity of a finite product over a set partitioned into a subset and its complement (`Finset.prod_sdiff`), used here with the complement taken inside the universe $\{1,\dots,n\}$.
 
-**Proof.** Split the product at the free/fixed partition, then count.
+2. **Evaluate each factor as a constant.** By the definition of $F$, a coordinate $i$ lies in $F$ exactly when $\rho(i)$ is free, in which case $w_p(\rho(i))=p$; and $i$ lies outside $F$ exactly when $\rho(i)$ is fixed, in which case $w_p(\rho(i))=\tfrac{1-p}{2}$. The fixed case is a routine check on the definition of $w_p$: a coordinate not marked free carries some Boolean value, and $w_p$ returns $\tfrac{1-p}{2}$ whichever value it is. Each of the two products is therefore a product of a single constant, so it collapses to a power:
+\[
+  \prod_{i\in F} w_p(\rho(i)) = p^{\,|F|},
+  \qquad
+  \prod_{i\notin F} w_p(\rho(i)) = \Bigl(\tfrac{1-p}{2}\Bigr)^{\,|F^{c}|}.
+\]
 
-1. **`h_split`:** `∏ i, varWeight p (ρ i) = (∏ i ∈ ρ.freeVars, p) * (∏ i ∈ univ \ ρ.freeVars, (1-p)/2)`.
-   Obtained by `rw [← Finset.prod_sdiff (Finset.subset_univ ρ.freeVars)]` and
-   `mul_comm`, then matching the two factors with
-   `congrArg₂ _ (Finset.prod_congr rfl …) (Finset.prod_congr rfl …)` and
-   `simp_all +decide [Restriction.freeVars]`: on `ρ.freeVars` the value is
-   `none` so `varWeight p (ρ x) = p` (`rfl`), and off it `ρ x = some _` so the
-   weight is `(1-p)/2` (`cases h : ρ x <;> aesop`).
-2. The two constant products collapse to powers with exponents
-   `|ρ.freeVars|` and `n - |ρ.freeVars|` — `simp_all +decide [Finset.card_sdiff]`
-   supplies the complement's cardinality.
-3. `unfold bernoulliRestrWeight; ring_nf`, then the normal forms are reconciled
-   by `rw [show (1 / 2 + p * (-1 / 2)) = (1 - p) / 2 by ring]`, `rw [div_pow]`,
-   `ring_nf!` and `norm_num` — bookkeeping only, `ring_nf` having pushed the
-   `(1-p)/2` base into an expanded form.
+3. **Count the fixed coordinates.** The complement $F^{c}=\{1,\dots,n\}\setminus F$ has cardinality $n-|F|$, since $F$ sits inside an $n$-element index set (`Finset.card_sdiff` together with the fact that the universe has $n$ elements). Hence the right-hand side equals
+\[
+  p^{\,k}\Bigl(\tfrac{1-p}{2}\Bigr)^{\,n-k},
+\]
+which is exactly the definition of the Bernoulli weight $\mathrm{bernoulliRestrWeight}(p,\rho)$.
 
-**Used in.** `compose_fiber_weight_eq` (both to expand the summands and to close
-the goal at parameter `p * q`) and, outside this file, `RestrictionFourier.lean`.
+4. **Reconcile the two forms.** Unfolding the Bernoulli weight makes both sides literally equal; the remaining work is purely algebraic normalization, matching the expression $\tfrac{1-p}{2}$ against the expanded form $\tfrac12-\tfrac{p}{2}$ and distributing the exponent over the quotient. No further mathematical content is involved. $\qquad\blacksquare$
