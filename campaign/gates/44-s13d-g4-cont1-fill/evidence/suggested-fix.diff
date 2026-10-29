@@ -1,6 +1,0 @@
-440,441c440,441
-<         simpa only [Nat.cast_zero, zero_add, FinTM.bufferTape_nat,
-<           List.getElem?_cons_succ, List.getElem?_nil] using hsep
----
->         rw [Nat.cast_zero, zero_add, ← Nat.cast_one, FinTM.bufferTape_nat]
->         simpa only [Nat.cast_one, List.getElem?_cons_succ, List.getElem?_nil] using hsep

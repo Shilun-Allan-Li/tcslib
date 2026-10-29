@@ -1,8 +1,0 @@
-'Complexity.nh_accepts_of_halts' depends on axioms: [propext, Quot.sound]
-'Complexity.nh_mem_of_accepts' depends on axioms: [propext, Quot.sound]
-'Complexity.nh_target' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
-walk Complexity.nh_target: direct sorryAx in [Turing.FinNDTM.exists_codeNDTM_accepts_linear,
- Turing.NTimeDiag.exists_diagonalizer]
-walk Complexity.nh_accepts_of_halts: direct sorryAx in []
-walk Complexity.nh_mem_of_accepts: direct sorryAx in []
-# exit 0; time: 2.92 s, peak 1735000064 bytes

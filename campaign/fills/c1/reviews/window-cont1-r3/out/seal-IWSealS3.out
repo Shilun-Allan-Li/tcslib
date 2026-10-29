@@ -1,8 +1,0 @@
-ReviewScratch/IWSealS3.lean:329:8: error: Tactic `decide` failed for proposition
-  some CounterLoopState.escape ≠ some CounterLoopState.done
-because its `Decidable` instance
-  instDecidableNot
-did not reduce to `isTrue` or `isFalse`.
-
-After unfolding the instances `instDecidableNot`, `Option.instDecidableEq`, and `Option.instDecidableEq.decEq`, reduction got stuck at the `Decidable` instance
-  instDecidableEqCounterLoopState CounterLoopState.escape CounterLoopState.done

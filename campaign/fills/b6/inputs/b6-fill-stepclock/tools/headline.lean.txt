@@ -1,7 +1,0 @@
-  refine ⟨sc_State S, inferInstance, inferInstance, sc_clockTM e M stopAt,
-    fun s => .dec s .run, sc_State.finish, sc_State.timeout,
-    fun _ _ h => sc_State.finish.inj h, fun _ _ h => sc_State.timeout.inj h,
-    fun _ _ h => sc_State.noConfusion h,
-    fun _ _ => ⟨fun h => sc_State.noConfusion h, fun h => sc_State.noConfusion h⟩, ?_⟩
-  intro x c q hq w ct cp hw
-  exact ⟨sc_finish e M stopAt c q hq w ct cp hw, sc_timeout e M stopAt c q hq w ct cp hw⟩
