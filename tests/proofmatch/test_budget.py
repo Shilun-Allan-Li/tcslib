@@ -44,9 +44,18 @@ class BudgetTests(unittest.TestCase):
             Decimal("7.50"),
         )
 
-    def test_unknown_model_is_rejected(self):
-        with self.assertRaisesRegex(ValueError, "unknown model"):
-            token_cost("imaginary", 100, 100)
+    def test_unknown_model_is_estimated_at_fallback_rates(self):
+        # A model with no price row (a new release, a dated id) is estimated at the
+        # opus-class fallback rate instead of failing the pre-flight.
+        from proofmatch.budget import ESTIMATE_FALLBACK_MODEL
+        self.assertEqual(
+            token_cost("imaginary", 1_000_000, 1_000_000),
+            token_cost(ESTIMATE_FALLBACK_MODEL, 1_000_000, 1_000_000),
+        )
+
+    def test_versioned_model_ids_use_their_family_row(self):
+        self.assertEqual(token_cost("gpt-5-2026-01-01", 1_000_000, 0), Decimal("1.25"))
+        self.assertEqual(token_cost("claude-opus-4-8-20260101", 1_000_000, 0), Decimal("5.00"))
 
 
 if __name__ == "__main__":

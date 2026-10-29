@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.balanced_totalInfluence_ge_one",
- "key": "d85ea2048c516b33",
+ "key": "17465e756e1ebd02",
  "kind": "lemma",
- "title": "Balanced Boolean functions have total influence at least one",
- "statement": "Let $n \\ge 1$ and let $f : \\{0,1\\}^n \\to \\bbr$ be a $\\pm 1$-valued Boolean function that is balanced, meaning $\\E[f] = 0$ under the uniform measure. Then its total influence satisfies $I[f] \\ge 1$.",
+ "title": "Balanced total influence lower bound",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube with $n>0$ and $\\mathbb Ef=0$. Then $I(f)\\ge1$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$.",
  "hypotheses_covered": [
   "f is ±1-valued",
   "f is balanced: E[f] = 0",

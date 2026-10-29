@@ -26,10 +26,11 @@ dataset/tcslib_theorems.jsonl
 #   !cleanup/reports/
 cleanup/
 
-# Generated next to its input by the have->lemma metaprogram fixtures in TCSlib/Tactics
-# (see HANDOFF.md). Regenerate with the fixture; never commit.
-*_iter_output.lean
-*.lean.progress
+# Rewritten files that scripts/haves.py shows as diffs before anything is written.
+have2lemma/.out/
+
+# Dataset pipeline state (scripts/dataset_pipeline.py): pass-1 builds, logs, snapshots.
+dataset/.pipeline/
 
 # --- the local dispatch exchange (uploads, downloads, archive); never committed ---
 exchange/

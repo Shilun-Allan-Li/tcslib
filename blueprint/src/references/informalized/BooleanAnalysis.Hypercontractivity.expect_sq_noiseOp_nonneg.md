@@ -1,15 +1,10 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean :: expect_sq_noiseOp_nonneg -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean :: BooleanAnalysis.Hypercontractivity.expect_sq_noiseOp_nonneg -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The second moment of T_ρ f is nonnegative
+# The expected square of a smoothed Boolean function is nonnegative
 
-**Claim.** For any `ρ : ℝ` and `f : BooleanFunc n`,
-`0 ≤ expect (fun x => noiseOp ρ f x ^ 2)`. No hypothesis on `ρ` is required —
-the integrand is a square and the uniform weight is positive.
+**Claim.** Let $f\colon\{0,1\}^n\to\mathbb R$ be a Boolean function and $\rho\in\mathbb R$ arbitrary. Form the noise-operator image $T_\rho f$ and average its square over the uniform measure on the cube. The resulting quantity $\mathbb E\!\left[(T_\rho f)^2\right]$ is nonnegative.
 
-**Proof.** `unfold expect uniformWeight` leaves `2⁻¹ ^ n * ∑ x, noiseOp ρ f x ^ 2`.
-Split with `mul_nonneg (pow_nonneg (by positivity) _)`, then `Finset.sum_nonneg`
-with `positivity` on each square. ∎
-
-**Used in.** `BooleanAnalysis.Hypercontractivity.hypercontractivity_p_2_general` in `TCSlib/BooleanAnalysis/Hypercontractivity/Cube/EvenMoments.lean`; `BooleanAnalysis.Hypercontractivity.weak_two_function_hypercontractivity_one_bit` in `TCSlib/BooleanAnalysis/Hypercontractivity/Cube/General/Tensorization.lean`; `BooleanAnalysis.ThresholdFunctions.low_degree_moment_bound` in `TCSlib/BooleanAnalysis/ThresholdFunctions/LowDegreeNorm.lean`.
+**Proof.** The claim is proved by unwinding the definition of the uniform average and observing that it exhibits the quantity as a product of two manifestly nonnegative factors.

@@ -5,6 +5,7 @@ Authors: Owen McGinty, Mina Sha
 -/
 
 import TCSlib.BooleanAnalysis.Basic
+import TCSlib.BooleanAnalysis.ThresholdFunctions.Polynomial
 import TCSlib.BooleanAnalysis.Hypercontractivity.Cube.Bonami
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.MeanInequalities
@@ -25,6 +26,9 @@ set_option autoImplicit false
 
 ## Main results
 
+* `fourierCoeff_highDegreePart`: the coefficient formula above a cutoff.
+* `influence_lowDegreePart_le`: truncation cannot increase influence.
+* `influence_noiseOp_le_noisyInfluence`: noise converts noisy influence to an ordinary bound.
 * `lowDegree_approx`: the influence bound for the Fourier tail.
 * `influential_coords_card`: the number of coordinates above a threshold.
 * `card_bounded_subsets_le`: a polynomial count of subsets below a degree cutoff.
@@ -217,6 +221,48 @@ lemma fourierCoeff_lowDegreePart (f : BooleanFunc n) (k : ℕ) (S : Finset (Fin 
     split_ifs <;> simp_all]
   simp [Finset.sum_ite_eq', fhat]
 
+/-- The high-degree part retains exactly the Fourier coefficients strictly
+above the cutoff. [OD14, §§1.4, 3.1] -/
+lemma fourierCoeff_highDegreePart (f : BooleanFunc n) (d : ℕ) (T : Finset (Fin n)) :
+    fourierCoeff (highDegreePart f d) T =
+      if d < T.card then fourierCoeff f T else 0 := by
+  classical
+  have he : highDegreePart f d = ThresholdFunctions.MultilinearPolynomial.eval
+      (fun S => if d < S.card then fourierCoeff f S else 0) := by
+    funext x
+    simp only [highDegreePart, ThresholdFunctions.MultilinearPolynomial.eval, ite_mul, zero_mul]
+  rw [he]
+  exact ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval _ T
+
+/-- Removing Fourier levels above a cutoff cannot increase any influence.
+[OD14, §3.1, Fourier influence formula] -/
+lemma influence_lowDegreePart_le (f : BooleanFunc n) (d : ℕ) (i : Fin n) :
+    influence i (lowDegreePart f d) ≤ influence i f := by
+  classical
+  rw [influence_eq_sum_fourier, influence_eq_sum_fourier]
+  apply Finset.sum_le_sum
+  intro S hS
+  by_cases hi : i ∈ S
+  · simp only [if_pos hi, fourierCoeff_lowDegreePart]
+    split_ifs <;> simp [sq_nonneg]
+  · simp only [if_neg hi, le_refl]
+
+/-- Ordinary influence after noise smoothing is bounded by the noisy influence
+of the original function at the same radius. [OD14, Cor. 11.69 (proof)] -/
+lemma influence_noiseOp_le_noisyInfluence (f : BooleanFunc n) (i : Fin n)
+    (ρ : ℝ) (hρ0 : 0 ≤ ρ) (hρ1 : ρ ≤ 1) :
+    influence i (noiseOp ρ f) ≤ noisyInfluence ρ i f := by
+  classical
+  rw [influence_eq_sum_fourier, noisyInfluence]
+  apply Finset.sum_le_sum
+  intro S hS
+  by_cases hi : i ∈ S
+  · simp only [if_pos hi, noiseOp_fourier, mul_pow]
+    apply mul_le_mul_of_nonneg_right _ (sq_nonneg _)
+    rw [← pow_mul]
+    exact pow_le_pow_of_le_one hρ0 hρ1 (by omega)
+  · simp only [if_neg hi, le_refl]
+
 -- Step 08: The L2 error of low-degree truncation is the tail Fourier weight.
 /-- The squared L² error of degree truncation is exactly the Fourier weight above the cutoff. [OD14, §§1.4, 3.1]
 
@@ -236,25 +282,7 @@ lemma lowDegree_l2_error (f : BooleanFunc n) (k : ℕ) :
   rw [step2, parseval]
   -- Step 3: compute fourierCoeff of highDegreePart
   congr 1; ext S
-  have hfour : fourierCoeff (highDegreePart f k) S =
-      if k < S.card then fourierCoeff f S else 0 := by
-    have hdef : highDegreePart f k = fun x => f x - lowDegreePart f k x :=
-      funext (fun x => (hfg x).symm)
-    rw [hdef]
-    unfold BooleanAnalysis.fourierCoeff innerProduct expect
-    rw [show uniformWeight n * ∑ x, (f x - lowDegreePart f k x) * chiS S x =
-        uniformWeight n * ∑ x, f x * chiS S x -
-        uniformWeight n * ∑ x, lowDegreePart f k x * chiS S x from by
-      rw [← mul_sub, ← Finset.sum_sub_distrib]
-      congr 1
-      apply Finset.sum_congr rfl; intro x _; ring]
-    change fourierCoeff f S - fourierCoeff (lowDegreePart f k) S =
-        if k < S.card then fourierCoeff f S else 0
-    rw [fourierCoeff_lowDegreePart]
-    by_cases h : S.card ≤ k
-    · simp [h, Nat.not_lt.mpr h]
-    · simp [h, Nat.lt_of_not_le h]
-  rw [hfour]
+  rw [fourierCoeff_highDegreePart]
   split_ifs <;> simp
 
 -- Step 09: Tail Fourier weight bound: sum_{|S|>k} fhat(S)^2 <= I[f] / k.

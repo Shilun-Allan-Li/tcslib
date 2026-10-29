@@ -167,16 +167,25 @@ def from_blueprint():
 
 
 def from_dataset(path: Path):
+    """Lean-derived statements only: a cited passage is the source's own text."""
+    sys.path.insert(0, str(BASE))
+    from scripts.informal_sources import statement_part
+    from proofmatch.dataset_io import open_dataset
+
     #: `kind` is the Lean kind (`theorem`/`lemma`/`def`/...); map it onto the
     #: blueprint environment names the env-sensitive checks are written against.
-    for line in path.open():
+    with open_dataset(path) as handle:
+        lines = [line for line in handle if line.strip()]
+    for line in lines:
         d = json.loads(line)
+        if d.get("statement_source", "lean") != "lean":
+            continue
         kind = d.get("kind", "")
         env = {"def": "definition", "abbrev": "definition", "structure": "definition",
                "inductive": "definition", "class": "definition",
                "instance": "definition"}.get(kind, kind)
-        yield (d["id"], d.get("title", ""), d.get("statement_informal", ""), env,
-               d.get("source_module", ""))
+        yield (d["id"], d.get("title", ""), statement_part(d.get("informal_statement", "")),
+               env, d.get("source_module", ""))
 
 
 def main() -> int:

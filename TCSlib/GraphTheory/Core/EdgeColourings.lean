@@ -13,6 +13,7 @@ import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Combinatorics.SimpleGraph.Paths
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 import Mathlib.Data.Set.Card
+import TCSlib.GraphTheory.Core.Matchings
 
 /-!
 # Bondy & Murty, *Graph Theory with Applications* — Chapter 6: Edge Colourings
@@ -235,45 +236,10 @@ this is harmless, but the definition is not faithful in general.
 def IsUniquelyEdgeColourable {V : Type*} (G : SimpleGraph V) (k : ℕ) : Prop :=
   ∀ C C' : G.lineGraph.Coloring (Fin k), ∃ σ : Equiv.Perm (Fin k), ∀ e, C' e = σ (C e)
 
-/-- The Petersen graph.  In the repo it lives at `Matchings/Defs.lean` (the Kneser graph on
-2-subsets of `Fin 5`); restated here as an opaque stub since this scaffold does not import
-`TCSlib.*`.  Do **not** re-derive it — fill from the repo definition.
-
-## Book context (exercise 6.1.2, p. 100) — verbatim
-
-> 6.1.2 Show that the Petersen graph is 4-edge-chromatic.
-
-The book introduces the graph itself only by figure 4.4, so there is no
-definitional text to quote.
-
-## In Lean notation
-
-The `3`-regular graph on ten vertices, the Kneser graph on 2-subsets of a
-5-element set (adjacent when disjoint).
-
-In this chapter it is the standing witness that (6.1) can be strict for
-non-bipartite graphs: `Δ = 3` but `χ' = 4`, the upper side of Vizing's dichotomy.
-
-Equivalently, by the partition view of a proper colouring, this is exercise
-5.1.5(a)(ii) — the Petersen graph is not 1-factorable.
-
-## Status
-
-`sorry` — an opaque constant, so `petersenGraph_edgeChromaticNumber` below is
-**unprovable** as it stands, not merely unproved.
-
-✅ **Do not re-derive it.**  `Matchings.lean` already defines the Petersen graph
-properly, as the Kneser graph on `{s : Finset (Fin 5) // s.card = 2}`.  That
-carrier is also the better one for this chapter, since vertex-transitivity cuts
-the case analysis down.  The obstacle is purely organisational: this scaffold
-does not import `TCSlib.*`.  Fixing the import (or moving the definition to a
-shared file) is preferable to writing a third Petersen graph.
-
-⚠ Note `EulerHamilton.lean` *also* declares `petersenGraph : SimpleGraph (Fin 10)
-:= sorry` — so the repo currently has two identical opaque stubs and one real
-definition, none of them connected.
--/
-def petersenGraph : SimpleGraph (Fin 10) := sorry
+-- NOTE (this session): the opaque `petersenGraph : SimpleGraph (Fin 10) := sorry` stub that
+-- lived here (used by nothing in this file) was removed in favour of the real Kneser-graph
+-- definition `SimpleGraph.petersenGraph` now imported from
+-- `TCSlib.GraphTheory.Core.Matchings` — exactly the fix the stub's own docstring recommended.
 
 /-! ## (6.1): χ′ ≥ Δ — ⭐ build first, self-contained -/
 
@@ -314,13 +280,46 @@ which Mathlib provides before committing to step 3.
 
 ## Status
 
-`sorry`.  The file header marks it "⭐ build first, self-contained" — it is the
-only §6.1 result not blocked on Euler tours, and everything else cites it.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`), by
+the planned clique argument: the attached incident edges at a maximal-degree
+vertex inject into `G.edgeSet` as a `lineGraph`-clique of size `Δ`
+(`lineGraph_adj_iff_exists` with the shared vertex as witness), then
+`IsClique.card_le_chromaticNumber`.  Empty `V` handled separately since
+`exists_maximal_degree_vertex` needs `[Nonempty V]`.
 -/
 theorem maxDegree_le_edgeChromaticNumber
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj] :
-    (G.maxDegree : ℕ∞) ≤ G.lineGraph.chromaticNumber := by
-  sorry
+    (G.maxDegree : ℕ∞) ≤ G.lineGraph.chromaticNumber := (by
+  classical
+  obtain hV | hV := isEmpty_or_nonempty V
+  · haveI := hV
+    simp
+  · haveI := hV
+    obtain ⟨v, hv⟩ := G.exists_maximal_degree_vertex
+    have hinj : Set.InjOn
+        (fun e : {x // x ∈ G.incidenceFinset v} =>
+          (⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩ : G.edgeSet))
+        ((G.incidenceFinset v).attach : Set {x // x ∈ G.incidenceFinset v}) := by
+      intro a _ b _ hab
+      exact Subtype.ext (Subtype.mk_eq_mk.mp hab)
+    have hclique : G.lineGraph.IsClique
+        (((G.incidenceFinset v).attach.image fun e =>
+          (⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩ : G.edgeSet)) :
+          Set G.edgeSet) := by
+      rw [isClique_iff]
+      intro e₁ he₁ e₂ he₂ hne
+      rw [lineGraph_adj_iff_exists]
+      refine ⟨hne, v, ?_, ?_⟩
+      · obtain ⟨a, -, rfl⟩ := Finset.mem_image.mp (Finset.mem_coe.mp he₁)
+        exact G.edge_mem_incidenceSet_iff.mp ((G.mem_incidenceFinset v a.1).mp a.2)
+      · obtain ⟨a, -, rfl⟩ := Finset.mem_image.mp (Finset.mem_coe.mp he₂)
+        exact G.edge_mem_incidenceSet_iff.mp ((G.mem_incidenceFinset v a.1).mp a.2)
+    have hfin := hclique.card_le_chromaticNumber
+    rw [Finset.card_image_of_injOn hinj, Finset.card_attach,
+      G.card_incidenceFinset_eq_degree v] at hfin
+    rw [hv]
+    exact hfin
+)
 
 /-! ## (6.3): c(v) ≤ d(v), and properness ⟺ equality -/
 
@@ -349,14 +348,27 @@ is a `Finset.ext` plus unfolding `IsRepresentedAt`.
 
 ## Status
 
-`sorry`.  Genuinely short, and needed by
-`isProper_iff_numColoursAt_eq_degree` and by both main theorems.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`), by
+exactly the planned image argument: the represented-colour filter is contained
+in the image of the attached incident edges under `C`, then `card_image_le`.
 -/
 theorem numColoursAt_le_degree
     {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V} [DecidableRel G.Adj]
     {k : ℕ} (C : G.edgeSet → Fin k) (v : V) :
-    numColoursAt C v ≤ G.degree v := by
-  sorry
+    numColoursAt C v ≤ G.degree v := (by
+  classical
+  unfold numColoursAt
+  rw [← G.card_incidenceFinset_eq_degree v]
+  have hsub : (Finset.univ.filter fun i => IsRepresentedAt C i v) ⊆
+      (G.incidenceFinset v).attach.image fun e =>
+        C ⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩ := by
+    intro i hi
+    obtain ⟨e, he, hce⟩ := (Finset.mem_filter.mp hi).2
+    rw [Finset.mem_image]
+    exact ⟨⟨(e : Sym2 V), (G.mem_incidenceFinset v (e : Sym2 V)).mpr he⟩,
+      Finset.mem_attach _ _, (congrArg C (Subtype.ext rfl)).trans hce⟩
+  exact le_trans (Finset.card_le_card hsub) (le_trans Finset.card_image_le Finset.card_attach.le)
+)
 
 /-- (6.3): `C` is proper ⟺ equality holds in (6.3) at every vertex.
 
@@ -394,13 +406,66 @@ strictly smaller and `c(v) < d(v)`.
 
 ## Status
 
-`sorry`.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`).  The
+shared `key` step upgrades `numColoursAt_le_degree`'s inclusion to the equality
+`numColoursAt C v = (image of C on incident edges).card`; then (⇒) is
+`card_image_of_injOn` (properness ⇒ injectivity on incident edges, which are
+pairwise `lineGraph`-adjacent) and (⇐) is `Finset.card_image_iff.mp` applied to
+the shared vertex extracted by `lineGraph_adj_iff_exists`.
 -/
 theorem isProper_iff_numColoursAt_eq_degree
     {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V} [DecidableRel G.Adj]
     {k : ℕ} (C : G.edgeSet → Fin k) :
-    (∀ e₁ e₂, G.lineGraph.Adj e₁ e₂ → C e₁ ≠ C e₂) ↔ ∀ v, numColoursAt C v = G.degree v := by
-  sorry
+    (∀ e₁ e₂, G.lineGraph.Adj e₁ e₂ → C e₁ ≠ C e₂) ↔ ∀ v, numColoursAt C v = G.degree v := (by
+  classical
+  have key : ∀ v : V, numColoursAt C v =
+      ((G.incidenceFinset v).attach.image fun e =>
+        C ⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩).card := by
+    intro v
+    unfold numColoursAt
+    refine congrArg Finset.card (Finset.ext fun i => ⟨fun hi => ?_, fun hi => ?_⟩)
+    · obtain ⟨e, he, hce⟩ := (Finset.mem_filter.mp hi).2
+      rw [Finset.mem_image]
+      exact ⟨⟨(e : Sym2 V), (G.mem_incidenceFinset v (e : Sym2 V)).mpr he⟩,
+        Finset.mem_attach _ _, (congrArg C (Subtype.ext rfl)).trans hce⟩
+    · rw [Finset.mem_image] at hi
+      obtain ⟨e, -, rfl⟩ := hi
+      refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
+      exact ⟨⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩,
+        (G.mem_incidenceFinset v e.1).mp e.2, rfl⟩
+  constructor
+  · intro hproper v
+    have hinj : Set.InjOn
+        (fun e : {x // x ∈ G.incidenceFinset v} =>
+          C ⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩)
+        ((G.incidenceFinset v).attach : Set {x // x ∈ G.incidenceFinset v}) := by
+      intro e₁ _ e₂ _ h12
+      by_contra hne
+      have hadj : G.lineGraph.Adj
+          ⟨e₁.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e₁.1).mp e₁.2)⟩
+          ⟨e₂.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e₂.1).mp e₂.2)⟩ := by
+        rw [lineGraph_adj_iff_exists]
+        exact ⟨fun h => hne (Subtype.ext (Subtype.mk_eq_mk.mp h)), v,
+          G.edge_mem_incidenceSet_iff.mp ((G.mem_incidenceFinset v e₁.1).mp e₁.2),
+          G.edge_mem_incidenceSet_iff.mp ((G.mem_incidenceFinset v e₂.1).mp e₂.2)⟩
+      exact hproper _ _ hadj h12
+    rw [key v, Finset.card_image_of_injOn hinj, Finset.card_attach,
+      G.card_incidenceFinset_eq_degree v]
+  · intro heq e₁ e₂ hadj hC
+    obtain ⟨hne, v, hv1, hv2⟩ := lineGraph_adj_iff_exists.mp hadj
+    have h1 : (e₁ : Sym2 V) ∈ G.incidenceFinset v :=
+      (G.mem_incidenceFinset v (e₁ : Sym2 V)).mpr (G.edge_mem_incidenceSet_iff.mpr hv1)
+    have h2 : (e₂ : Sym2 V) ∈ G.incidenceFinset v :=
+      (G.mem_incidenceFinset v (e₂ : Sym2 V)).mpr (G.edge_mem_incidenceSet_iff.mpr hv2)
+    have hcard : ((G.incidenceFinset v).attach.image fun e =>
+        C ⟨e.1, G.incidenceSet_subset v ((G.mem_incidenceFinset v e.1).mp e.2)⟩).card =
+        (G.incidenceFinset v).attach.card := by
+      rw [← key v, heq v, Finset.card_attach, G.card_incidenceFinset_eq_degree v]
+    have hmk : (⟨(e₁ : Sym2 V), h1⟩ : {x // x ∈ G.incidenceFinset v}) = ⟨(e₂ : Sym2 V), h2⟩ :=
+      Finset.card_image_iff.mp hcard
+        (Finset.mem_attach _ ⟨(e₁ : Sym2 V), h1⟩) (Finset.mem_attach _ ⟨(e₂ : Sym2 V), h2⟩) hC
+    exact hne (Subtype.ext (Subtype.mk_eq_mk.mp hmk))
+)
 
 /-! ## Lemma 6.1.1: 2-edge colouring with both colours represented ⚠ BLOCKED -/
 
@@ -965,14 +1030,284 @@ recommended path to Theorem 6.1 in Lean — see the note there.
 
 ## Status
 
-`sorry`.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`), by a
+deficiency induction rather than the two-copies-side-by-side sketch above: the
+`main` induction doubles the current graph onto `W ⊕ W`, adds the clone-matching
+edges exactly at deficient vertices (degree `+1` there, unchanged elsewhere),
+keeps 2-colourability by flipping the colouring on the second copy (so clone
+edges are bichromatic), and keeps the `inl` copy induced; max deficiency drops
+by one per round.  `G` is first transported to `Fin (card V)` by pulling back
+along `Fintype.equivFin` so every carrier stays in `Type 0`.
 -/
 theorem exists_regular_bipartite_supergraph
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (hbip : G.IsBipartite) :
     ∃ (W : Type) (_ : Fintype W) (H : SimpleGraph W) (_ : DecidableRel H.Adj) (_ : G ↪g H),
-      H.IsBipartite ∧ H.IsRegularOfDegree G.maxDegree := by
-  sorry
+      H.IsBipartite ∧ H.IsRegularOfDegree G.maxDegree := (by
+  have main : ∀ d : ℕ, ∀ (W : Type) (iW : Fintype W) (dW : DecidableEq W)
+      (H : SimpleGraph W) (dH : DecidableRel H.Adj), (G ↪g H) → H.Colorable 2 →
+      (∀ w, H.degree w ≤ G.maxDegree) → (∀ w, G.maxDegree ≤ H.degree w + d) →
+      ∃ (W' : Type) (_ : Fintype W') (H' : SimpleGraph W') (_ : DecidableRel H'.Adj)
+        (_ : G ↪g H'), H'.IsBipartite ∧ H'.IsRegularOfDegree G.maxDegree := by
+    intro d
+    induction d with
+    | zero =>
+      intro W iW dW H dH f hcol hle hdef
+      refine ⟨W, iW, H, dH, f, hcol, ?_⟩
+      intro w
+      have h1 := hle w
+      have h2 := hdef w
+      have h3 : H.degree w = G.maxDegree := by omega
+      exact h3
+    | succ d ih =>
+      intro W iW dW H dH f hcol hle hdef
+      obtain ⟨c⟩ := hcol
+      let H' : SimpleGraph (W ⊕ W) :=
+        { Adj := fun x y =>
+            (∃ a b, x = Sum.inl a ∧ y = Sum.inl b ∧ H.Adj a b) ∨
+            (∃ a b, x = Sum.inr a ∧ y = Sum.inr b ∧ H.Adj a b) ∨
+            (∃ a, H.degree a < G.maxDegree ∧
+              ((x = Sum.inl a ∧ y = Sum.inr a) ∨ (x = Sum.inr a ∧ y = Sum.inl a)))
+          symm := by
+            rintro x y (⟨a, b, rfl, rfl, hab⟩ | ⟨a, b, rfl, rfl, hab⟩ |
+              ⟨a, ha, ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩⟩)
+            · exact Or.inl ⟨b, a, rfl, rfl, hab.symm⟩
+            · exact Or.inr (Or.inl ⟨b, a, rfl, rfl, hab.symm⟩)
+            · exact Or.inr (Or.inr ⟨a, ha, Or.inr ⟨rfl, rfl⟩⟩)
+            · exact Or.inr (Or.inr ⟨a, ha, Or.inl ⟨rfl, rfl⟩⟩)
+          loopless := by
+            rintro x (⟨a, b, rfl, h2, hab⟩ | ⟨a, b, rfl, h2, hab⟩ |
+              ⟨a, ha, ⟨rfl, h2⟩ | ⟨rfl, h2⟩⟩)
+            · obtain rfl := Sum.inl_injective h2
+              exact H.loopless _ hab
+            · obtain rfl := Sum.inr_injective h2
+              exact H.loopless _ hab
+            · simp at h2
+            · simp at h2 }
+      letI dH' : DecidableRel H'.Adj := Classical.decRel _
+      have hadj : ∀ x y, H'.Adj x y ↔
+          ((∃ a b, x = Sum.inl a ∧ y = Sum.inl b ∧ H.Adj a b) ∨
+            (∃ a b, x = Sum.inr a ∧ y = Sum.inr b ∧ H.Adj a b) ∨
+            (∃ a, H.degree a < G.maxDegree ∧
+              ((x = Sum.inl a ∧ y = Sum.inr a) ∨ (x = Sum.inr a ∧ y = Sum.inl a)))) :=
+        fun x y => Iff.rfl
+      have hll : ∀ a b : W, H'.Adj (Sum.inl a) (Sum.inl b) ↔ H.Adj a b := by
+        intro a b
+        constructor
+        · intro hxy
+          rcases (hadj _ _).mp hxy with ⟨a', b', h1, h2, hab⟩ | ⟨a', b', h1, h2, hab⟩ |
+            ⟨a', ha', ⟨h1, h2⟩ | ⟨h1, h2⟩⟩
+          · obtain rfl := Sum.inl_injective h1
+            obtain rfl := Sum.inl_injective h2
+            exact hab
+          · simp at h1
+          · simp at h2
+          · simp at h1
+        · intro hab
+          exact (hadj _ _).mpr (Or.inl ⟨a, b, rfl, rfl, hab⟩)
+      have hrr : ∀ a b : W, H'.Adj (Sum.inr a) (Sum.inr b) ↔ H.Adj a b := by
+        intro a b
+        constructor
+        · intro hxy
+          rcases (hadj _ _).mp hxy with ⟨a', b', h1, h2, hab⟩ | ⟨a', b', h1, h2, hab⟩ |
+            ⟨a', ha', ⟨h1, h2⟩ | ⟨h1, h2⟩⟩
+          · simp at h1
+          · obtain rfl := Sum.inr_injective h1
+            obtain rfl := Sum.inr_injective h2
+            exact hab
+          · simp at h1
+          · simp at h2
+        · intro hab
+          exact (hadj _ _).mpr (Or.inr (Or.inl ⟨a, b, rfl, rfl, hab⟩))
+      have hlr : ∀ a b : W, H'.Adj (Sum.inl a) (Sum.inr b) ↔
+          (b = a ∧ H.degree a < G.maxDegree) := by
+        intro a b
+        constructor
+        · intro hxy
+          rcases (hadj _ _).mp hxy with ⟨a', b', h1, h2, hab⟩ | ⟨a', b', h1, h2, hab⟩ |
+            ⟨a', ha', ⟨h1, h2⟩ | ⟨h1, h2⟩⟩
+          · simp at h2
+          · simp at h1
+          · obtain rfl := Sum.inl_injective h1
+            obtain rfl := Sum.inr_injective h2
+            exact ⟨rfl, ha'⟩
+          · simp at h1
+        · rintro ⟨hba, ha⟩
+          refine (hadj _ _).mpr (Or.inr (Or.inr ⟨a, ha, Or.inl ⟨rfl, ?_⟩⟩))
+          rw [hba]
+      have hrl : ∀ a b : W, H'.Adj (Sum.inr a) (Sum.inl b) ↔
+          (b = a ∧ H.degree a < G.maxDegree) := by
+        intro a b
+        constructor
+        · intro hxy
+          rcases (hadj _ _).mp hxy with ⟨a', b', h1, h2, hab⟩ | ⟨a', b', h1, h2, hab⟩ |
+            ⟨a', ha', ⟨h1, h2⟩ | ⟨h1, h2⟩⟩
+          · simp at h1
+          · simp at h2
+          · simp at h1
+          · obtain rfl := Sum.inr_injective h1
+            obtain rfl := Sum.inl_injective h2
+            exact ⟨rfl, ha'⟩
+        · rintro ⟨hba, ha⟩
+          refine (hadj _ _).mpr (Or.inr (Or.inr ⟨a, ha, Or.inr ⟨rfl, ?_⟩⟩))
+          rw [hba]
+      have hNl : ∀ w : W, H'.neighborFinset (Sum.inl w) =
+          ((H.neighborFinset w).map ⟨Sum.inl, Sum.inl_injective⟩) ∪
+            (if H.degree w < G.maxDegree then {Sum.inr w} else ∅) := by
+        intro w
+        ext x
+        rcases x with a | a
+        · by_cases hw : H.degree w < G.maxDegree <;>
+            simp [mem_neighborFinset, hll, hw]
+        · by_cases hw : H.degree w < G.maxDegree <;>
+            simp [mem_neighborFinset, hlr, hw]
+      have hNr : ∀ w : W, H'.neighborFinset (Sum.inr w) =
+          ((H.neighborFinset w).map ⟨Sum.inr, Sum.inr_injective⟩) ∪
+            (if H.degree w < G.maxDegree then {Sum.inl w} else ∅) := by
+        intro w
+        ext x
+        rcases x with a | a
+        · by_cases hw : H.degree w < G.maxDegree <;>
+            simp [mem_neighborFinset, hrl, hw]
+        · by_cases hw : H.degree w < G.maxDegree <;>
+            simp [mem_neighborFinset, hrr, hw]
+      have hdl : ∀ w : W, H'.degree (Sum.inl w) =
+          H.degree w + (if H.degree w < G.maxDegree then 1 else 0) := by
+        intro w
+        show (H'.neighborFinset (Sum.inl w)).card = _
+        rw [hNl w]
+        by_cases hw : H.degree w < G.maxDegree
+        · have hdisj : Disjoint ((H.neighborFinset w).map ⟨Sum.inl, Sum.inl_injective⟩)
+              ({Sum.inr w} : Finset (W ⊕ W)) := by
+            rw [Finset.disjoint_singleton_right]
+            simp
+          simp only [if_pos hw]
+          rw [Finset.card_union_of_disjoint hdisj, Finset.card_map, Finset.card_singleton,
+            card_neighborFinset_eq_degree]
+        · simp only [if_neg hw]
+          rw [Finset.union_empty, Finset.card_map, card_neighborFinset_eq_degree,
+            Nat.add_zero]
+      have hdr : ∀ w : W, H'.degree (Sum.inr w) =
+          H.degree w + (if H.degree w < G.maxDegree then 1 else 0) := by
+        intro w
+        show (H'.neighborFinset (Sum.inr w)).card = _
+        rw [hNr w]
+        by_cases hw : H.degree w < G.maxDegree
+        · have hdisj : Disjoint ((H.neighborFinset w).map ⟨Sum.inr, Sum.inr_injective⟩)
+              ({Sum.inl w} : Finset (W ⊕ W)) := by
+            rw [Finset.disjoint_singleton_right]
+            simp
+          simp only [if_pos hw]
+          rw [Finset.card_union_of_disjoint hdisj, Finset.card_map, Finset.card_singleton,
+            card_neighborFinset_eq_degree]
+        · simp only [if_neg hw]
+          rw [Finset.union_empty, Finset.card_map, card_neighborFinset_eq_degree,
+            Nat.add_zero]
+      have hle' : ∀ x : W ⊕ W, H'.degree x ≤ G.maxDegree := by
+        rintro (w | w)
+        · rw [hdl w]
+          have h1 := hle w
+          by_cases hw : H.degree w < G.maxDegree
+          · simp only [if_pos hw]
+            omega
+          · simp only [if_neg hw]
+            omega
+        · rw [hdr w]
+          have h1 := hle w
+          by_cases hw : H.degree w < G.maxDegree
+          · simp only [if_pos hw]
+            omega
+          · simp only [if_neg hw]
+            omega
+      have hdef' : ∀ x : W ⊕ W, G.maxDegree ≤ H'.degree x + d := by
+        rintro (w | w)
+        · rw [hdl w]
+          have h1 := hdef w
+          by_cases hw : H.degree w < G.maxDegree
+          · simp only [if_pos hw]
+            omega
+          · simp only [if_neg hw]
+            omega
+        · rw [hdr w]
+          have h1 := hdef w
+          by_cases hw : H.degree w < G.maxDegree
+          · simp only [if_pos hw]
+            omega
+          · simp only [if_neg hw]
+            omega
+      have hcol' : H'.Colorable 2 := by
+        refine ⟨Coloring.mk
+          (Sum.elim (fun w => c w) (fun w => (⟨1 - (c w).val, by omega⟩ : Fin 2))) ?_⟩
+        rintro (a | a) (b | b) hxy
+        · have hab := (hll a b).mp hxy
+          simp only [Sum.elim_inl]
+          exact c.valid hab
+        · obtain ⟨hba, -⟩ := (hlr a b).mp hxy
+          rw [hba]
+          simp only [Sum.elim_inl, Sum.elim_inr]
+          apply Fin.ne_of_val_ne
+          show (c a).val ≠ 1 - (c a).val
+          have h2 := (c a).isLt
+          omega
+        · obtain ⟨hba, -⟩ := (hrl a b).mp hxy
+          rw [hba]
+          simp only [Sum.elim_inl, Sum.elim_inr]
+          apply Fin.ne_of_val_ne
+          show 1 - (c a).val ≠ (c a).val
+          have h2 := (c a).isLt
+          omega
+        · have hab := (hrr a b).mp hxy
+          simp only [Sum.elim_inr]
+          apply Fin.ne_of_val_ne
+          show 1 - (c a).val ≠ 1 - (c b).val
+          have h3 : (c a).val ≠ (c b).val := fun h => c.valid hab (Fin.val_injective h)
+          have h4 := (c a).isLt
+          have h5 := (c b).isLt
+          omega
+      have embl : H ↪g H' := by
+        refine ⟨⟨Sum.inl, Sum.inl_injective⟩, ?_⟩
+        intro a b
+        exact hll a b
+      exact ih (W ⊕ W) inferInstance inferInstance H' dH' (embl.comp f) hcol' hle' hdef'
+  obtain ⟨c₀⟩ := hbip
+  let e : V ≃ Fin (Fintype.card V) := Fintype.equivFin V
+  let G₀ : SimpleGraph (Fin (Fintype.card V)) :=
+    { Adj := fun a b => G.Adj (e.symm a) (e.symm b)
+      symm := by
+        intro a b h
+        exact G.symm h
+      loopless := by
+        intro a h
+        exact G.loopless _ h }
+  letI dG₀ : DecidableRel G₀.Adj := Classical.decRel _
+  have hadj₀ : ∀ a b, G₀.Adj a b ↔ G.Adj (e.symm a) (e.symm b) := fun a b => Iff.rfl
+  have hcol₀ : G₀.Colorable 2 :=
+    ⟨Coloring.mk (fun a => c₀ (e.symm a)) (fun h => c₀.valid ((hadj₀ _ _).mp h))⟩
+  have f₀ : G ↪g G₀ := by
+    refine ⟨e.toEmbedding, ?_⟩
+    intro a b
+    rw [hadj₀]
+    simp
+  have hN₀ : ∀ a, G₀.neighborFinset a = (G.neighborFinset (e.symm a)).map e.toEmbedding := by
+    intro a
+    ext x
+    simp only [mem_neighborFinset, Finset.mem_map, Equiv.coe_toEmbedding, hadj₀]
+    constructor
+    · intro h
+      exact ⟨e.symm x, h, e.apply_symm_apply x⟩
+    · rintro ⟨y, hy, rfl⟩
+      rwa [e.symm_apply_apply]
+  have hle₀ : ∀ a, G₀.degree a ≤ G.maxDegree := by
+    intro a
+    have hda : G₀.degree a = G.degree (e.symm a) := by
+      show (G₀.neighborFinset a).card = (G.neighborFinset (e.symm a)).card
+      rw [hN₀ a, Finset.card_map]
+    rw [hda]
+    exact G.degree_le_maxDegree _
+  have hdef₀ : ∀ a, G.maxDegree ≤ G₀.degree a + G.maxDegree := fun a => Nat.le_add_left _ _
+  exact main G.maxDegree (Fin (Fintype.card V)) inferInstance inferInstance G₀ dG₀ f₀ hcol₀
+    hle₀ hdef₀
+)
 
 /-- Ex 6.1.6 (Gupta) ⚠ BLOCKED: bipartite with `δ > 0` ⇒ a `δ`-edge colouring with all colours
 represented at every vertex (not required proper).
@@ -1062,12 +1397,19 @@ Note it needs **no Vizing**, only the counting.
 
 ⚠ `2 * n - 1` truncates in ℕ at `n = 0`, which `hn` rules out.
 
+## Statement repair (this session, user-authorized)
+
+`hn : 0 < n` was strengthened to `hn : 2 ≤ n`.  **Counterexample to the old
+form at `n = 1`**: `K_{2·1−1} = K_1` has no edges, its line graph has an empty
+vertex type, so the LHS is `0` (`chromaticNumber_eq_zero_of_isEmpty`) while the
+RHS is `(1 : ℕ∞)`.  For `n ≥ 2` the classical claim is true.
+
 ## Status
 
 `sorry`.  Reachable without the blocked chain, though step 2 is more work than
 the even case.
 -/
-theorem edgeChromaticNumber_completeGraph_odd (n : ℕ) (hn : 0 < n) :
+theorem edgeChromaticNumber_completeGraph_odd (n : ℕ) (hn : 2 ≤ n) :
     (⊤ : SimpleGraph (Fin (2 * n - 1))).lineGraph.chromaticNumber = (2 * n - 1 : ℕ) := by
   sorry
 
@@ -1333,12 +1675,21 @@ partition" (flagged on `IsUniquelyEdgeColourable`) could bite.  Here all three
 classes are nonempty, so the two notions do agree — but the proof should make
 that explicit rather than assume it.
 
+## Statement repair (this session, user-authorized)
+
+`[Nonempty V]` was added.  **Counterexample to the old form at `V = Fin 0`,
+`G = ⊥`**: `hreg` is vacuous, the line graph's vertex type is empty so `hcol`
+holds trivially and `huniq` holds with `σ = 1`, yet the conclusion demands a
+vertex.  `hcol` guards against the Petersen vacuity (as documented above) but
+not against the empty carrier; both guards are needed.
+
 ## Status
 
 `sorry`.
 -/
 theorem isHamiltonian_of_uniquely_three_edge_colourable
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {V : Type*} [Fintype V] [DecidableEq V] [Nonempty V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
     (hreg : G.IsRegularOfDegree 3) (huniq : G.IsUniquelyEdgeColourable 3)
     (hcol : G.lineGraph.Colorable 3) :
     ∃ (u : V) (p : G.Walk u u), p.IsHamiltonianCycle := by

@@ -1,41 +1,46 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/KKL.lean :: lowDegreePart_depends_on_influential -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Applications/KKL/Basic.lean :: KKL.lowDegreePart_depends_on_influential -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The low-degree part is close to a junta on the influential coordinates
+# Approximating the low-degree part by an influential-coordinate junta
 
-**Claim.** For `τ > 0` there is `g : BooleanFunc n` with
-`IsJunta g (influentialCoords f τ)` and
-`l2DistSq (lowDegreePart f k) g ≤ (n : ℝ) * τ`.
+**Claim.** Let $f:\{0,1\}^n\to\mathbb R$ be a function on the uniform Boolean cube, let $k\in\mathbb N$, and let $\tau>0$. Write $J_\tau(f)=\{i : I_i(f)\ge\tau\}$ for its set of $\tau$-influential coordinates, where $I_i(h)=\tfrac14\,\mathbb E_x\big(h(x)-h(x^{(i)})\big)^2$ and $x^{(i)}$ flips coordinate $i$. Then there is a function $g$ depending only on the coordinates in $J_\tau(f)$ (a $J_\tau(f)$-junta) such that the low-degree truncation $f^{\le k}$ is close to it in mean square, namely $\mathbb E\big(f^{\le k}-g\big)^2\le n\tau$.
 
-**Proof.** Take `J := influentialCoords f τ` and
-`g x := ∑ S, if S.card ≤ k ∧ S ⊆ J then f̂(S)·χ_S(x) else 0` — the low-degree
-part with every Fourier set that leaves `J` deleted.
+**Proof.** Throughout, $\hat f(S)=\mathbb E_x\,f(x)\chi_S(x)$ denotes the Fourier coefficient of $f$ at $S\subseteq\{1,\dots,n\}$, where $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ is the corresponding character, and $f^{\le k}=\sum_{|S|\le k}\hat f(S)\,\chi_S$ is the low-degree part. Write $J=J_\tau(f)$ for brevity.
 
-- *Junta.* If `x` and `y` agree on `J`, each surviving character agrees:
-  `chiS` is a product over `i ∈ S ⊆ J`, so `Finset.prod_congr` plus
-  `congrArg boolToSign (hxy i (h.2 hi))` gives `g x = g y`.
-- *`hdiff`.* `lowDegreePart f k x - g x = ∑ S, if S.card ≤ k ∧ ¬S ⊆ J then f̂(S)·χ_S(x) else 0`
-  (subtract the sums termwise, `by_cases` on the two guards).
-- *`hbound`.* Parseval on that difference: `hh_eq` rewrites
-  `expect (h²)` as `innerProduct h h` and then `parseval` as `∑ S, fourierCoeff h S ^ 2`;
-  `hcoeff` computes `fourierCoeff h T = if T.card ≤ k ∧ ¬T ⊆ J then f̂(T) else 0`
-  by the same unfolded orthogonality computation as
-  `fourierCoeff_lowDegreePart` (`fourier_coeff_chi`, `Finset.sum_comm`,
-  `Finset.sum_ite_eq'`). Dropping the `|S| ≤ k` guard (adding nonnegative terms)
-  gives `l2DistSq (lowDegreePart f k) g ≤ ∑ S, if ¬S ⊆ J then f̂(S)² else 0`.
-- *`hunion`.* Each `S ⊄ J` contains some `i ∉ J` (`Finset.not_subset.mp`), so
-  after `Finset.sum_comm` and `influence_eq_sum_fourier` the weight `f̂(S)²` is
-  charged to that coordinate by `Finset.single_le_sum`:
-  `∑_{S ⊄ J} f̂(S)² ≤ ∑_{i ∉ J} influence i f`.
-- *`hinfluence`.* Every `i ∉ J` has `influence i f < τ` (negation of the filter
-  condition), so the sum is at most `(#{i ∉ J}) · τ ≤ n · τ`
-  (`Finset.sum_const`, `nsmul_eq_mul`, `Finset.card_filter_le`).
-- `linarith` chains the last three bounds. ∎
+**1. The approximant.** Take
+\[
+g \;=\; \sum_{\substack{|S|\le k\\ S\subseteq J}} \hat f(S)\,\chi_S,
+\]
+that is, $f^{\le k}$ with every Fourier character whose support strays outside $J$ deleted. This is the natural candidate: it keeps exactly the part of $f^{\le k}$ that can be built from coordinates in $J$.
 
-**Remark.** The error bound is `n · τ`, not the sharp Friedgut estimate — the
-union bound charges each excluded coordinate its full influence. `friedgut_junta`
-absorbs the factor `n` by choosing `τ = ε/(4n)`.
+**2. $g$ is a $J$-junta.** Each surviving character $\chi_S$ has $S\subseteq J$, so its value $\prod_{i\in S}(-1)^{x_i}$ is determined by the coordinates of $x$ lying in $J$. Hence if $x$ and $y$ agree on every coordinate of $J$, then $\chi_S(x)=\chi_S(y)$ for all such $S$, and summing gives $g(x)=g(y)$. Thus $g$ depends only on $J$.
 
-**Used in.** `friedgut_junta` (the `hjunta` step, paired with
-`influential_coords_card`). No call sites outside `BooleanAnalysis/KKL.lean`.
+**3. The difference and its mean square (Parseval).** Subtracting term by term, the characters with $S\subseteq J$ cancel, leaving
+\[
+f^{\le k}-g \;=\; h \;:=\; \sum_{\substack{|S|\le k\\ S\not\subseteq J}} \hat f(S)\,\chi_S .
+\]
+Now $\mathbb E\,h^2=\langle h,h\rangle=\sum_T \hat h(T)^2$ by Parseval's identity (`parseval`). The Fourier coefficients of $h$ are read off from the orthonormality of the characters, $\langle\chi_S,\chi_T\rangle=[S=T]$ (`fourier_coeff_chi`): the inner product $\hat h(T)=\langle h,\chi_T\rangle$ picks out the single term $S=T$ from the defining sum, so
+\[
+\hat h(T)=\begin{cases}\hat f(T),& |T|\le k\ \text{and}\ T\not\subseteq J,\\[2pt] 0,&\text{otherwise.}\end{cases}
+\]
+Therefore
+\[
+\mathbb E\big(f^{\le k}-g\big)^2 \;=\; \sum_{\substack{|S|\le k\\ S\not\subseteq J}} \hat f(S)^2 \;\le\; \sum_{S\not\subseteq J} \hat f(S)^2 ,
+\]
+the inequality being the (harmless) step of dropping the degree restriction $|S|\le k$, which only adds nonnegative squares.
+
+**4. Union bound over the excluded coordinates.** Using the Fourier formula for influence, $I_i(f)=\sum_{S\ni i}\hat f(S)^2$ (`influence_eq_sum_fourier`), the right-hand sum below expands and, after exchanging the order of summation, dominates term by term:
+\[
+\sum_{S\not\subseteq J}\hat f(S)^2 \;\le\; \sum_{i\notin J}\ \sum_{S\ni i}\hat f(S)^2 \;=\; \sum_{i\notin J} I_i(f).
+\]
+The comparison holds character by character: if $S\not\subseteq J$ then $S$ contains at least one coordinate $i\notin J$, so $\hat f(S)^2$ appears among the nonnegative terms on the right (formally, it is bounded by the single summand indexed by that $i$); if instead $S\subseteq J$ its left-hand contribution is $0$.
+
+**5. Bounding the leftover influence.** Every coordinate $i\notin J$ fails the defining condition $I_i(f)\ge\tau$ of $J=J_\tau(f)$, so $I_i(f)<\tau$. Since there are at most $n$ coordinates in all,
+\[
+\sum_{i\notin J} I_i(f) \;\le\; \sum_{i\notin J}\tau \;\le\; n\tau .
+\]
+Chaining Steps 3–5 yields $\mathbb E\big(f^{\le k}-g\big)^2\le n\tau$, which together with the junta property of Step 2 completes the proof.
+
+**Key facts.** `BooleanAnalysis.parseval`, `BooleanAnalysis.fourier_coeff_chi`, `BooleanAnalysis.influence_eq_sum_fourier`.

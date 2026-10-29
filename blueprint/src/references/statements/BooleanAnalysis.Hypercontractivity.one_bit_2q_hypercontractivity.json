@@ -2,8 +2,8 @@
  "lean_name": "BooleanAnalysis.Hypercontractivity.one_bit_2q_hypercontractivity",
  "key": "858d84fd96267261",
  "kind": "theorem",
- "title": "One-bit $(2,q)$-hypercontractivity",
- "statement": "Fix a real exponent $q \\ge 2$, and let $g : \\{0,1\\}^1 \\to \\bbr$ be a Boolean function of\narity one. Write $\\norm{h}_p = \\left(\\E\\,|h|^{p}\\right)^{1/p}$ for the $L^p$ norm taken\nwith respect to the uniform measure, and let $T_\\rho$ denote the noise operator. Then,\nwith noise parameter $\\rho = 1/\\sqrt{q-1}$,\n\\[\n  \\norm{T_{1/\\sqrt{q-1}}\\, g}_q \\;\\le\\; \\norm{g}_2 .\n\\]",
+ "title": "Higher one-bit norms controlled by second norm",
+ "statement": "Fix a real exponent $q \\ge 2$, and let $g : \\{0,1\\}^1 \\to \\bbr$ be a Boolean function of\narity one. Write $\\norm{h}_p = \\left(\\E\\,|h|^{p}\\right)^{1/p}$ for the $L^p$ norm taken\nwith respect to the uniform measure, and let $T_\\rho$ denote the noise operator. Then,\nwith noise parameter $\\rho = 1/\\sqrt{q-1}$,\n\\[\n  \\norm{T_{1/\\sqrt{q-1}}\\, g}_q \\;\\le\\; \\norm{g}_2 .\n\\] For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure.",
  "hypotheses_covered": [
   "q is real with q ≥ 2",
   "g is a Boolean function of arity one (on the single-bit cube)",

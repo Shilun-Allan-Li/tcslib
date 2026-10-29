@@ -51,6 +51,9 @@ import TCSlib.Complexity.TuringMachine.Build.RecordTable
 import TCSlib.Complexity.TuringMachine.Build.CertShell
 import TCSlib.Complexity.TuringMachine.Build.OracleSim
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.Build.NDCombinators
+import TCSlib.Complexity.TuringMachine.Build.NDClockHost
+import TCSlib.Complexity.TuringMachine.Build.NDClockHostRun
 import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.WindowRun
 import TCSlib.Complexity.TuringMachine.Build.InputDevice
@@ -228,6 +231,10 @@ for the local modifications.
   wrappers over the public rows, and the segment, round and joint-trajectory layers with state
   renaming and the macro-step lockstep. The core, `Build/Contract/Basic`, imports only the
   machine core. Proved; the MIG-0a and MIG-0b gates closed.
+* `Build/NDCombinators`, `Build/NDClockHost`, `Build/NDClockHostRun` — the nondeterministic
+  construction rows: run locality, output maps and the coin dispatcher for binary-choice
+  machines, and the clocked restart host `Turing.FinNDTM.clockHost` (clocked runner and
+  restart loop of [AB09, §7.4.2, Exercise 7.6(a)]) with its startup and round contracts.
 * `Build/StepClock`, `Build/WindowRun` — host H3 (`machine-library-design.md` §14): the
   step-clocked runner, shared with the nondeterministic time hierarchy; the semantic windowed
   run `windowRun`; the windowed round loop and the step-clocked windowed runner. Statement gate

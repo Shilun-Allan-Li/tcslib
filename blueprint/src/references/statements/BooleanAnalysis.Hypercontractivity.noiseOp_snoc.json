@@ -3,7 +3,7 @@
  "key": "109ec00ed0eca468",
  "kind": "lemma",
  "title": "Noise operator splits along the last coordinate",
- "statement": "Fix $\\rho \\in \\bbr$ and a Boolean function $f \\colon \\{0,1\\}^{n+1} \\to \\bbr$, and let\n$Af$ and $Df$ be the average and the half-difference of $f$ over its last coordinate,\neach a Boolean function on $\\{0,1\\}^n$, with\n$Af(x)=(f(x,0)+f(x,1))/2$ and $Df(x)=(f(x,0)-f(x,1))/2$.\nFor every $x \\in \\{0,1\\}^n$ and every bit $b$,\n\\[\n  T_\\rho f(x, b) \\;=\\; T_\\rho(Af)(x) \\;+\\; \\sigma(b)\\,\\rho\\,T_\\rho(Df)(x),\n\\]\nwhere $(x,b) \\in \\{0,1\\}^{n+1}$ is the point obtained by appending $b$ as the last\ncoordinate, $\\sigma(0)=1$, $\\sigma(1)=-1$, and $T_\\rho$ is the noise operator.",
+ "statement": "Fix $\\rho \\in \\bbr$ and a Boolean function $f \\colon \\{0,1\\}^{n+1} \\to \\bbr$, and let\n$Af$ and $Df$ be the average and the half-difference of $f$ over its last coordinate,\neach a Boolean function on $\\{0,1\\}^n$, with\n$Af(x)=(f(x,0)+f(x,1))/2$ and $Df(x)=(f(x,0)-f(x,1))/2$.\nFor every $x \\in \\{0,1\\}^n$ and every bit $b$,\n\\[\n  T_\\rho f(x, b) \\;=\\; T_\\rho(Af)(x) \\;+\\; \\sigma(b)\\,\\rho\\,T_\\rho(Df)(x),\n\\]\nwhere $(x,b) \\in \\{0,1\\}^{n+1}$ is the point obtained by appending $b$ as the last\ncoordinate, $\\sigma(0)=1$, $\\sigma(1)=-1$, and $T_\\rho$ is the noise operator. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure.",
  "hypotheses_covered": [
   "ρ is a real number",
   "f is a Boolean function on n+1 variables",

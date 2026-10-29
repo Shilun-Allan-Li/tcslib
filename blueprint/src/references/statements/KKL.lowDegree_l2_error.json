@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.lowDegree_l2_error",
- "key": "c83a3c18e3e2b43d",
+ "key": "9a407cb5ab9b0186",
  "kind": "lemma",
- "title": "$L^2$ error of the low-degree truncation",
- "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, and for a natural number $k$ let $f_{\\le k}(x) = \\sum_{\\abs{S}\\le k} \\hat f(S)\\,\\chi_S(x)$ be its low-degree part, retaining only the Fourier--Walsh coefficients of degree at most $k$. Then, under the uniform measure on the cube, the squared $L^2$ distance between $f$ and this truncation equals the total Fourier weight sitting above level $k$:\n\\[\n  \\E\\big[(f(x) - f_{\\le k}(x))^2\\big] \\;=\\; \\sum_{\\abs{S} > k} \\hat f(S)^2 .\n\\]",
+ "title": "Squared truncation error",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube and $k\\in\\mathbb N$. Then $\\mathbb E(f-f^{\\le k})^2=\\sum_{|S|>k}\\widehat f(S)^2$.",
  "hypotheses_covered": [
   "f is a Boolean function of arity n",
   "k is a natural number (the truncation level)"

@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.lowDegree_approx",
- "key": "daf1e667aa63e2b3",
+ "key": "fd1c52ac7e83abe0",
  "kind": "lemma",
- "title": "Low-degree approximation error bound",
- "statement": "Let $f\\colon\\{0,1\\}^n\\to\\bbr$ be a Boolean function and let $k\\ge 1$ be an integer. Writing $f_{\\le k}(x)=\\sum_{\\abs S\\le k}\\hat f(S)\\,\\chi_S(x)$ for the truncation of $f$ to its Fourier coefficients of degree at most $k$, the squared $L^2$ distance between $f$ and $f_{\\le k}$ under the uniform measure on the cube is bounded by\n\\[\n  \\E\\big[(f(x)-f_{\\le k}(x))^2\\big]\\;\\le\\;\\frac{I[f]}{k},\n\\]\nwhere $I[f]=\\sum_{i=1}^n\\mathrm{Inf}_i[f]$ is the total influence of $f$.",
+ "title": "Low degree approximation",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube and a positive integer $k$. Then $\\mathbb E(f-f^{\\le k})^2\\le I(f)/k$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$.",
  "hypotheses_covered": [
   "f is a Boolean function on the n-cube",
   "k is a natural number with 0 < k"
