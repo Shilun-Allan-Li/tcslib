@@ -4004,6 +4004,16 @@ campaign work. The other is Diagonal's parameterization (#100), whose freeze use
 qualified-name script and lists the three new namesakes. The four open PRs gated before v4 change
 no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal` among them.
 
+* **The second merge to `main` (asked 2026-10-28; a colleague wants the campaign's work).** Same
+  procedure as 2026-10-15: `main` into the campaign by a PR (27 commits since; one textual conflict,
+  `.gitignore`; `Nondeterminism`, the `TuringMachine` facade and `policy.md` changed on both sides),
+  a name-clash scan, a root-build replay of the merged tree (about 920 modules), then the PR into
+  `main` from an integration branch. Toolchain and manifest identical on both sides. **Ruled (user,
+  2026-10-28): `campaign/` and `devtools/` stay off `main`, and `main`'s existing `audits/` (the
+  2026-10-15 records, 2,381 files) is dropped in the same PR**, with the stubs `audits/README.md`
+  and `briefs/README.md`. Every later merge repeats the exclusion. Open: whether to add a public
+  "what's proved" summary on `main`; the 42 Lean files citing record paths stay for the deferred
+  docstring cleanup.
 * **The campaign's merge to `main` (user, 2026-10-15).**
   - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
     `cryptography/garg-ch1-3`, so the cryptography work can build on it. The cryptography
