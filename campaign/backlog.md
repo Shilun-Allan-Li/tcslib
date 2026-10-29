@@ -4013,7 +4013,14 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   2026-10-15 records, 2,381 files) is dropped in the same PR**, with the stubs `audits/README.md`
   and `briefs/README.md`. Every later merge repeats the exclusion. Open: whether to add a public
   "what's proved" summary on `main`; the 42 Lean files citing record paths stay for the deferred
-  docstring cleanup.
+  docstring cleanup. **Ruled (user, 2026-10-28): the summary at `TCSlib/Complexity/README.md`**
+  (written, `661cc9bb`: 19 of 26 headlines proved, the open items, a map). **PR #179**
+  (`integrate/main-into-campaign-2`, head `76ad1933`): `main` merged in, `.gitignore` resolved (main's
+  entries and the campaign's `exchange/`); toolchain and manifest identical; the static name scan
+  (`$S/m2c/namescan.py`) finds 11 duplicates, all within `main`'s `GraphTheory/Core`.
+  `replay-lm2c` written: the root build, 887 modules (the root's import closure, then `TCSlib`),
+  fresh into `oleans-lm2c`; precheck passed. Then the PR into `main` from an integration branch at
+  the replayed state, without `campaign/`, `devtools/`, `audits/`, `briefs/README.md`.
 * **The campaign's merge to `main` (user, 2026-10-15).**
   - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
     `cryptography/garg-ch1-3`, so the cryptography work can build on it. The cryptography
