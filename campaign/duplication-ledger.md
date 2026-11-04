@@ -794,6 +794,22 @@ rule is not in question. **Accepted (user, 2026-11-04)** as debt. **Disposition:
 (12.2c): one home for the five bounds below both layers (beside `Turing.length_bits_le_self`), then
 re-points where the imports allow. `CircuitComplexity` needs its own authorization.
 
+**CL-1, the codec languages' sibling idiom** (gate 91, the edge-mode PR's screen; ruled with it,
+user, 2026-11-04). Each code language of `SpaceComplexity/Codec` has its own definition, its own
+membership lemma at an encoded input (`mem_validLang`, …), its own characterization through the
+word-level check (`validLang_iff`, …) and its own decider proof (`validLang_mem`, …). The proofs
+repeat two pieces: the decoding of `⟨x, ⟨bits c, bits s⟩⟩` (`pairEncode_inj` twice, then
+`bits_injective`) and the decider wrapper (`arm_decides_poly` on `CA`, the `one_run` case split and
+the reject branch). The four languages `validLang`, `initLang`, `acceptLang` and `stepLang`
+(Hydroxyi's) already formed 31 copy pairs at the base. The edge-mode PR adds `edgeLang`,
+`mem_edgeLang`, `edgeLang_iff` and `edgeLang_mem`, 25 more pairs. About 25 lines of shared text
+are the decoding proofs and the wrapper's skeleton. The edge mode's own correctness proof
+(`edge_round`, `edge_loop`, `edge_tail`) is in no pair. The one-fifth rule is not in question.
+**Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
+lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
+with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface
+design that waits for him.
+
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
 (`MultiTapeTM.runFrom` is in the vendored `Deterministic`). Private copies: `NTimeDiagonalizer`'s
