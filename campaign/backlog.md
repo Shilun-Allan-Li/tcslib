@@ -1983,6 +1983,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     Screen: one new pair, an idiom (`pairSwap`'s one-line invocation of the same rows). **Gate 88
     staged** (bundle `4ccd459e…`, 37 sections). **Gate 87** (#176) **staged** (bundle `43a728a1…`, 282
     sections; the landing head's screen: none new against the worker's after screen).
+    **Gate 88: PASS 0/0/2/10** (2026-11-04; minors: fresh lint at the head, the generated
+    `_simp_1_1` in the constant census). `replay-lnpc2` written (127 modules from `oleans-lscp3`,
+    the campaign merged into #177 by `2c213708`).
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`
