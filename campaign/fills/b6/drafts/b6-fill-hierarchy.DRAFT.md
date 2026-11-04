@@ -57,14 +57,17 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign's tree after PR #175.** Lines in this brief are those
-  of your base's tree, where `Hierarchy.lean` is 317 lines (4 public declarations, no private).
+- **Your base's Lean content is the campaign's tree after PRs #175 and #177.** Lines in this brief
+  are those of your base's tree, where `Hierarchy.lean` is 317 lines (4 public declarations, no
+  private).
 - **The overlay is your first edit** (region (a)): add, after line 10, exactly
   `import TCSlib.Complexity.TuringMachine.SelfUniversal`,
-  `import TCSlib.Complexity.TuringMachine.Build.WindowRun` and
-  `import TCSlib.Complexity.SpaceComplexity.WindowClock`
-  (`HierarchyOverlay.lean.txt` is the file after it). The pre-ship elaborated it: exactly the four
-  sorry warnings (lines 161, 271, 285, 315 of the base), nothing else.
+  `import TCSlib.Complexity.TuringMachine.Build.WindowRun`,
+  `import TCSlib.Complexity.SpaceComplexity.WindowClock` and
+  `import TCSlib.Complexity.ClassNP.PClosure` (for `preimage_mem_NP`; it brings
+  `Mathlib.Tactic.Linarith` into the file's environment)
+  (`HierarchyOverlay.lean.txt` is the file after it). The pre-ship elaborated it: ⟨exactly the four
+  sorry warnings (lines 161, 271, 285, 315 of the base), nothing else⟩.
 - **In flight:** ⟨none touching your order list, at the issue commit⟩.
 
 ## Parallel batches this round
@@ -98,7 +101,7 @@ sorries⟩; the screen base ⟨…⟩; lint ⟨…⟩.
 ## Owned regions and targets (modify these and nothing else)
 
 `TCSlib/Complexity/SpaceComplexity/Hierarchy.lean`:
-- **(a)** the imports, lines 6–10: add exactly the overlay's three;
+- **(a)** the imports, lines 6–10: add exactly the overlay's four;
 - **(b)** new private declarations after `space_universal`'s body (line 161) and before
   `space_hierarchy`'s docstring (line 162), in sections of your own if you like;
 - **(c)** the three bodies: lines 271 (`space_hierarchy`), 285 (`LOGSPACE_ssubset_PSPACE`) and 315
@@ -173,9 +176,9 @@ at `A := C_α (c · c₀ + c + 1)`, `U₀`'s run stays in the radius-`g n` windo
 `hr_logSpace_dom` and `hr_sq_le_two_pow`. Copy the three as privates.
 
 **`SPACE (n + 1) ≠ NP`**: by padding and `NP`'s closure under `≤ₚ` (the docstring's sketch). Its
-obligations: `NP`'s closure under `≤ₚ`, **published before this brief issues** by the maintainer's
-API PR beside `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`; user, 2026-10-27): cite it,
-never re-prove it; the padded
+obligations: `NP`'s closure under `≤ₚ` is published, as `Complexity.preimage_mem_NP`
+(`ClassNP/PClosure`, PR #177: `NP` is closed under polynomial-time preimages; with `L ≤ₚ L'` by
+`f`, `L = f ⁻¹' L'`): cite it, never re-prove it; the padded
 language's space decider; the padding reduction; the strictness extraction, through
 `space_hierarchy` at `n + 1` and `n ^ 2 + 1` (`spaceConstructible_linear`,
 `spaceConstructible_poly 2`; `A · (n + 1) ≤ n ^ 2 + 1` eventually).
@@ -216,7 +219,7 @@ bounded-certificate reading `mem_NP_iff_exists_length_le` and the reductions' `�
    before it.
 5. **No touching other sorries**, `space_universal`'s among them. Cite proved material; never
    re-prove it.
-6. **Imports.** Exactly the base's five and the overlay's three; add none.
+6. **Imports.** Exactly the base's five and the overlay's four; add none.
 7. **One proof per shared argument.** Never write a second universal machine, clock, counter loop,
    record row, window runner, seam, symbol lift or capture. Never re-walk
    `TimeHierarchy/Diagonal`'s or `TimeHierarchy/Separation`'s privates (a colleague's
