@@ -65,4 +65,4 @@ static-equal (`evidence/round1-fix/replay-lscp2.log`, `replay-lscp2-static.txt`)
 **Merge state. #175: not yet clear to merge** (2026-11-03): gate 86 passed in round 2; it waits for
 `replay-lscp3`, the merged-tree replay after #179 brought `main` into the campaign: head
 `1cf3da65` (the campaign merged in), 69 modules from `oleans-lm2c` (16 of `main`'s, among them
-`Randomized/Space*`, now downstream of `Constructible`), precheck passed; **not yet run**.
+`Randomized/Space*`, now downstream of `Constructible`), precheck passed; **running (user, 2026-11-03)**.
