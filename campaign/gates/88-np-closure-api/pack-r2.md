@@ -51,8 +51,11 @@ theorem, import and `prefixTM_copy` sketch are gone from it).
    `@[simp]` TCSlib definitions of `PClosure`'s closure erased, 0 diagnostics
    (`PClosureSealed.*`; `scripts-note.txt`); the six controls close unsealed and fail sealed
    (`PClosureSealControl.*`).
-5. **Duplication.** The screen (10 files: round 1's nine and `TMSAT`): ⟨summary⟩. Round 1's
-   idiom pair with `polyTimeComputable_pairSwap` moves with the proof.
+5. **Duplication.** The screen (10 files: round 1's nine and `TMSAT`; base at `3f318cf4`, whose
+   population files are the base's, head at `a0d511ec`; `evidence/round1-fix/screen/`): 470 → 471
+   declarations, 224 → 225 pairs, one new and none gone (`pairdiff.txt`): round 1's idiom pair,
+   `preimage_mem_NP` with `polyTimeComputable_pairSwap` (61 of 65 characters, the names of the rows
+   both invoke), now from `PClosure`. `TMSAT`'s changed step adds no pair.
 6. **Lint.** `TMSAT` keeps 9 policy-linter findings, all present at the base (10 there; the
    touched lemma's sketch is added): is leaving them for the deferred cleanup acceptable in a PR
    that touches the file?
