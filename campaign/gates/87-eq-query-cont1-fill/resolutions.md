@@ -40,3 +40,8 @@ pinning the blob; precheck passed. **#176: not yet clear to merge**: it waits fo
 alone, blob `852931eb`, the gated file). `replay-leqc3.sh` (`evidence/merged-tree/`), its 3 modules
 from `oleans-lnpc3` (the tree after #177), pinning the blob; precheck passed. **#176: not yet clear to
 merge**: it waits for `replay-leqc3`.
+
+**`replay-leqc3` passed** (user, 2026-11-04): 3 of 3 at `f69b86b9`, 0 failed, static-equal (the one
+sorry is `exists_diagonalizer`, E-D's target); snapshot `oleans-leqc3`. **#176: clear to merge** at
+`f69b86b9f32ead0c0ffb870ad19b3e3b340b4ff9` (2026-11-04): the gate passed, the replay passed at that
+head, its base is the campaign branch, and the campaign has had no Lean change since #177's merge.
