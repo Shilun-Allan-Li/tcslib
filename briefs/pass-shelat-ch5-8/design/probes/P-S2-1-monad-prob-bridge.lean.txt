@@ -1,0 +1,114 @@
+import TCSlib.Cryptography.Foundations.Experiments
+
+/-! Route probe P-S2-1 (S2 design note): oracle computations as a free monad over an indexed
+oracle specification, sampling as an oracle with a finite-sum semantics (ruling R-1), and the
+bridge B2: Garg's `invProb` is the probability of a one-line game. Design adapted from [VCVio]
+(OracleComp/OracleSpec, OracleComp.lean); no code transcribed. Probe only, not library code. -/
+
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.ProbeS2
+
+/-- A family of oracles named by `ι`: oracle `i` takes queries in `dom i`, answers in `rng i`. -/
+structure OracleSpec (ι : Type) where
+  dom : ι → Type
+  rng : ι → Type
+
+/-- Computations with access to the oracles of `spec`, returning an `α`. -/
+inductive OracleComp {ι : Type} (spec : OracleSpec ι) (α : Type) : Type where
+  | pure : α → OracleComp spec α
+  | query (i : ι) (x : spec.dom i) (k : spec.rng i → OracleComp spec α) : OracleComp spec α
+
+namespace OracleComp
+
+variable {ι : Type} {spec : OracleSpec ι} {α β : Type}
+
+/-- Sequencing: run `c`, then `f` on its result. -/
+def bind : OracleComp spec α → (α → OracleComp spec β) → OracleComp spec β
+  | .pure a, f => f a
+  | .query i x k, f => .query i x (fun y => bind (k y) f)
+
+instance : Monad (OracleComp spec) where
+  pure := .pure
+  bind := bind
+
+theorem bind_eq (c : OracleComp spec α) (f : α → OracleComp spec β) :
+    (c >>= f) = OracleComp.bind c f := rfl
+
+theorem map_eq (h : α → β) (c : OracleComp spec α) :
+    (h <$> c) = OracleComp.bind c (fun a => .pure (h a)) := rfl
+
+theorem pure_eq (a : α) : (Pure.pure a : OracleComp spec α) = .pure a := rfl
+
+end OracleComp
+
+/-- Uniform sampling as an oracle: oracle `m` answers a uniform element of `Fin (m + 1)`. -/
+abbrev unifSpec : OracleSpec ℕ := ⟨fun _ => Unit, fun m => Fin (m + 1)⟩
+
+/-- Probabilistic computations: oracle computations whose only oracle is uniform sampling. -/
+abbrev ProbComp := OracleComp unifSpec
+
+/-- A uniform element of `Fin (m + 1)`. -/
+def sampleFin (m : ℕ) : ProbComp (Fin (m + 1)) := .query m () .pure
+
+/-- A uniform element of a nonempty finite type, through `Fintype.equivFin`. -/
+noncomputable def sample (T : Type) [Fintype T] [Nonempty T] : ProbComp T :=
+  (fun j : Fin (Fintype.card T - 1 + 1) =>
+    (Fintype.equivFin T).symm (Fin.cast (Nat.sub_add_cancel Fintype.card_pos) j)) <$>
+      sampleFin (Fintype.card T - 1)
+
+variable {α β : Type}
+
+/-- The expectation of `g` over the output of `c`: a finite sum at every sampling step. -/
+noncomputable def expect : ProbComp α → (α → ℝ) → ℝ
+  | .pure a, g => g a
+  | .query m _ k, g => ((m : ℝ) + 1)⁻¹ * ∑ j : Fin (m + 1), expect (k j) g
+
+/-- The probability that the output of `c` satisfies `p`. -/
+noncomputable def prob (c : ProbComp α) (p : α → Prop) : ℝ := by
+  classical exact expect c (fun a => if p a then 1 else 0)
+
+theorem expect_pure (a : α) (g : α → ℝ) : expect (.pure a) g = g a := rfl
+
+/-- Total expectation: the expectation over `c >>= f` averages the expectations over `f a`. -/
+theorem expect_bind (c : ProbComp α) (f : α → ProbComp β) (g : β → ℝ) :
+    expect (OracleComp.bind c f) g = expect c (fun a => expect (f a) g) := by
+  induction c with
+  | pure a => rfl
+  | query m x k ih => simp only [OracleComp.bind, expect, ih]
+
+theorem expect_map (h : α → β) (c : ProbComp α) (g : β → ℝ) :
+    expect (h <$> c) g = expect c (fun a => g (h a)) := by
+  rw [OracleComp.map_eq, expect_bind]; rfl
+
+theorem expect_sampleFin (m : ℕ) (g : Fin (m + 1) → ℝ) :
+    expect (sampleFin m) g = ((m : ℝ) + 1)⁻¹ * ∑ j, g j := rfl
+
+/-- Sampling a finite type is the uniform average. -/
+theorem expect_sample (T : Type) [Fintype T] [Nonempty T] (g : T → ℝ) :
+    expect (sample T) g = (Fintype.card T : ℝ)⁻¹ * ∑ t, g t := by
+  have hc : Fintype.card T - 1 + 1 = Fintype.card T := Nat.sub_add_cancel Fintype.card_pos
+  rw [sample, expect_map, expect_sampleFin]
+  congr 1
+  · congr 1
+    exact_mod_cast hc
+  · exact Fintype.sum_equiv ((finCongr hc).trans (Fintype.equivFin T).symm) _ _
+      (fun j => by simp)
+
+/-- **Bridge B2 on inversion.** Garg's inversion probability `invProb f A` is the probability of
+the one-line game "sample `x` and the adversary's coins `r`; win if `A` inverts `f x`". -/
+theorem invProb_eq_prob {β ρ : Type} [Fintype α] [Nonempty α] [Fintype ρ] [Nonempty ρ]
+    (f : α → β) (A : β → ρ → α) :
+    invProb f A =
+      prob (do let x ← sample α; let r ← sample ρ; pure (x, r))
+        (fun z => f (A (f z.1) z.2) = f z.1) := by
+  classical
+  simp only [prob, OracleComp.bind_eq, OracleComp.pure_eq, expect_bind, expect_sample,
+    expect_pure]
+  -- the left side: `uprob` over the product, as an iterated average
+  rw [invProb, uprob_prod]
+  simp only [uexp, uprob_eq_uexp, div_eq_inv_mul, Finset.mul_sum]
+
+#print axioms invProb_eq_prob
+
+end TCSlib.Cryptography.ProbeS2

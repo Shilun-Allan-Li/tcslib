@@ -235,7 +235,7 @@ and §6.2.
 
 | Probe | Shows |
 |---|---|
-| P-S2-1 | the monad, `Pr`, and B2 on `invProb` (one ch. 2–4 functional, transferred) |
+| P-S2-1 | the monad, `Pr`, and B2 on `invProb` (one ch. 2–4 functional, transferred). **Passed 2026-11-04** (`probes/P-S2-1-monad-prob-bridge.lean.txt`): the free monad, `unifSpec` sampling, the finite-sum `expect`/`prob`, total expectation (`expect_bind`), `expect_sample`, and `invProb f A = Pr[game]`, with standard axioms. It reads `invProb` and `uexp` by their bodies, for want of published equations (F-3) |
 | P-S2-2 | Thm 135.4's concrete reduction: a forger, run under a handler that answers `Tag` with a PRF-or-random oracle, gives a distinguisher with advantage `≥ ε − 2^{-n}` |
 | P-S2-3 | the CPA game for Alg 99.1 with a stateful, fresh-coin `Enc` oracle, and one hop of Thm 168.2's proof |
 | P-S2-4 | one OT execution (Prot 160.4) through `exec`, with the receiver's view read from the log |
@@ -249,6 +249,8 @@ and §6.2.
   integration.
 - **F-3:** the framework adapts his `encodeHist`/`pairEncode` codecs and cites his closure
   calculus; any machine lemma we need in his `Closure.lean` is requested, not added.
+  It also requests published equations for `invProb`, `predProb`, `acceptProb` and `uexp`
+  (`Foundations/`): bridge B2 reads them by their bodies today (P-S2-1).
 
 ## Decisions for the user (ruled 2026-11-04: R-1 (a) the sampling oracle; R-2 reuse via bridges)
 
