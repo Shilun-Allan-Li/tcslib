@@ -768,19 +768,20 @@ theorem edgeLang_mem : edgeLang N ∈ LOGSPACE := by
     fun y => ?_
   rw [← val_empty]
   refine AHalt.mono ?_ (fun a h => gd_mono a h)
+  rw [← orc_eq]
   rcases one_run (N := N) (mode := .edge) (by decide) y with
     ⟨x, w, s, hsh, hpre, st, R, hst, hR, hA, hS, hT, -, run⟩ | ⟨hfail, hhalt⟩
   · have hyl : y.length = 2 * x.length + 2 * w.length + 4 + (Nat.bits s).length := by
-      rw [hsh.1, length_pairEncode, length_pairEncode]; ring
-    have hs := s_le_of_width y s (by omega) hsh.2
+      rw [hsh.eq, length_pairEncode, length_pairEncode]; ring
+    have hs := s_le_of_width y s (by omega) hsh.width
     have hind : MultiTapeTM.indicator (edgeLang N : Set (List Bool)) y =
         decide (VAcc N st.1 ∧ ∃ i : Fin N.k, w.getD (hH N + 3 * (i : ℕ) + 2) false = true ∨
           w.getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false = true) := by
       apply indicator_eq_of_iff
-      rw [hsh.1, edgeLang_iff, edgeChk_def, validChk_iff_pre, hst]
+      rw [hsh.eq, edgeLang_iff, edgeChk_def, validChk_iff_pre, hst]
       exact ⟨fun ⟨⟨_, hv⟩, h⟩ => ⟨hv, h⟩, fun ⟨hv, h⟩ => ⟨⟨hpre, hv⟩, h⟩⟩
     rw [hind]
-    exact AReach.halt run (edge_tail y x w (Nat.bits s) hsh.1 R s st hR hA hS hT hs
+    exact AReach.halt run (edge_tail y x w (Nat.bits s) hsh.eq R s st hR hA hS hT hs
       (by have := hpre.1; omega))
   · have hind : MultiTapeTM.indicator (edgeLang N : Set (List Bool)) y = false := by
       rw [indicator_eq_of_iff (P := False) (Iff.intro (fun h => ?_) False.elim)]
