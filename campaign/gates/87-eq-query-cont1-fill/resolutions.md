@@ -29,4 +29,7 @@ the Lean at `cecd76a0f996411d5371f91e8d4e3757e122fd60`, the records at `00757f88
 #177** (their downstream closures share `NTimeHierarchy` and `Diagonalization`). The campaign has
 had Lean changes since `oleans-lnfapi4` (#175 and `main`'s merge-in, the tree of `oleans-lscp3`), so
 #176 takes the campaign merged in and a merged-tree replay of its 3 modules from `oleans-lscp3`
-(`replay-leqc2`). **#176: not yet clear to merge**: it waits for `replay-leqc2`.
+(`replay-leqc2`). The merge: `029f3aa92970159c40f5d12e7fdc47c03c6cd61a` (the campaign at `92de073f`
+merged in; the Lean diff against the campaign is `NTimeDiagonalizer` alone, blob `852931eb`, the
+gated file unchanged). `replay-leqc2.sh` (`evidence/merged-tree/`), 3 modules from `oleans-lscp3`,
+pinning the blob; precheck passed. **#176: not yet clear to merge**: it waits for `replay-leqc2`.
