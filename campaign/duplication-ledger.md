@@ -712,6 +712,27 @@ user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic
 steps to it. **Brought forward (user, 2026-11-04): PR #181** (gate 89) does exactly that, and also
 moves `logSpace_le_of_le_mul_two_pow` to `Basic` and `LOGSPACE_subset_PSPACE` and
 `SPACE_succ_pow_subset_PSPACE` to `SpaceClasses`. **LS-1 is retired when #181 merges.**
+**Scope corrected (gate 89, round 1, major 1).** Two further inline copies predated #181:
+- `narm_decides` (`Machines/NARMProof`);
+- `narm_logspace_ptm` (`Machines/NARMLogspace`).
+
+Both are `have hLn : logSpace n ≤ n + 1` by `Nat.log_le_self` and `simp only [logSpace]`, in
+Hydroxyi's files, and neither was in this entry. Round 2 of #181 (`1d1247a3`) re-points both to
+`logSpace_le_succ`, a mechanical ARM dedup edit (FYI). A search of the round-2 head
+(`campaign/gates/89-space-facts-api/evidence/round2/ls1-search/`) finds the fact stated only in
+`Basic` and cited everywhere else.
+**Scope corrected again (gate 89, round 2, major 1).** Two more inner steps derived the logarithm's
+form of the fact, `Nat.log 2 m + 1 ≤ m + 1`:
+- `ImplicitlyLogspaceComputable.computesInSpace` (`ImplicitPoly`, Hydroxyi's ARM-program file):
+  `W ≤ F + 2` with `W = Nat.log 2 (F + 1) + 1`;
+- `mem_LOGSPACE_preimage` (`Logspace/PreimageHost`, the campaign's).
+
+Round 2's search had classed both as "polylogarithmic bounds": true of the enclosing bounds, not of
+these steps. Round 3 of #181 (`8d41671c`) re-points both to `logSpace_le_succ` through
+`logSpace_eq`. Its exhaustive classification of every `Nat.log_le_self` use and every
+`logSpace`-by-successor statement
+(`campaign/gates/89-space-facts-api/evidence/round3/ls1-search/classification.md`) finds the fact
+proved once, in `Basic`, and cited at eight sites.
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
@@ -770,6 +791,20 @@ are specializations, not copies; the copy-text screen pairs none of them. The la
 name with the general `astep_jeqFst`, and resolves by argument type in its own file, which opens
 `Complexity.LogProg`. **Disposition:** in the dedup window (mechanical ARM edits, FYI), re-prove the
 three through the general equations, and rename the circuit one if the shared name is unwanted.
+**Extended (gate 90, minor 3):** three more specializations of `astep_call`:
+- `BoolCircuit.AdjScan.astep_rd` (`LogspaceUniformScan:196`, with `vword_unary₁`);
+- `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
+  `vword_unary₁` and `vword_unary₂`).
+
+That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+170 → 179 declarations and 46 → 46 pairs, identical
+(`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
+
+**NF-X1, an idiom exclusion** (NF's partial delivery, review F6; ruled by the user, 2026-11-04).
+`NTimeHierarchy.lean::un_setup` reproduces 57% of `NDNormalForm.lean::nf_setup`. The shared text
+is three invocations of the published initial-configuration field equations
+(`MultiTapeTM.initCfg_eq`, `Cfg.init_state`, `Cfg.init_workTapes`): the idiom of reading the
+initial configuration, not a re-derived composite. **Disposition:** excluded; not counted.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

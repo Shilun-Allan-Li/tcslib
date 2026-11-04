@@ -1984,8 +1984,27 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - **continuation must-pins:** MP1–MP11;
     - **replay:** 4 modules from the merged tree's snapshot.
 
-    **Decisions pending (user):** land now with E1–E3; E3 now; accept the idiom pair; one
-    continuation for checkpoints 3–8; its agent; land before H issues.
+    **Ruled (user, 2026-11-04):**
+    - the partial travels with its continuation; nothing lands until the target is proved;
+    - E1–E3 go on the partial branch now;
+    - one continuation for checkpoints 3–8, **Claude**;
+    - the `un_setup` idiom pair is accepted, with a ledger exclusion;
+    - H does not wait for NF; NF's final landing re-takes H's overlap.
+
+    **`lean/c1-nf-partial`** (pushed, no PR) at `5241eb82`. It holds the two worker commits with
+    reworded subjects (`7791e6fc`, `252dea65`, trees equal to the delivery), E1–E3 (`969d221d`, the
+    review's landed file, blob `e6432b1e`), and a merge of the campaign at `cd9f1d92`. Only
+    `NDNormalForm` differs from the campaign. It elaborates against `oleans-leqc3` with exactly the
+    target's sorry. Next: NF cont1's brief, based on that commit.
+    **NF cont1's brief** (`campaign/fills/c1/briefs/c1-fill-nf-cont1.md`, checkpoints 3–8, Claude):
+    - **pre-ship at `5241eb82`:** the verifier's phase layout probe (`NfcPh`, named instances, the
+      host and packaging, `nfc_aReturn` sealed with 10 controls); import probe 588; order 112;
+      base sorries 19 in 9; screen base 1,379/866;
+    - **reviewed** (`reviews/nfc-brief/`): issue after edits, 0/1/10/4. The major, "every record
+      writes its block", was restored. **Ruled (user, 2026-11-04):** `rv_bClear` ships, and the
+      leaf skips the last record's move;
+    - **issued 2026-11-04**, at a merge of the records into `lean/c1-nf-partial`, before #181 lands
+      (review D3).
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -4151,8 +4170,12 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   - the consumer probe transports `outerU_run` sealed.
 
   `replay-larm` is written (138 modules from `oleans-leqc3`, precheck passed). It overlaps #181's
-  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 staged**
-  (`exchange/outbox/gates/90-arm-embed-api-gate/`, bundle `e253274f…`, 90 sections).
+  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 dispatched**
+  (user, 2026-11-04; `exchange/archive/gates/90-arm-embed-api-gate/`, bundle `e253274f…`, 90
+  sections); **`replay-larm` passed** (138 of 138, static-equal; `oleans-larm`).
+  **Gate 90: PASS 0/0/3/9.** Minors 2–3 are fixed in the records. Minor 1 (`dsimp only
+  [Function.comp]`) is fixed on #182 by `94093275`. **Ruled (user, 2026-11-04): #181 merges first**;
+  then #182 takes one merged-tree replay from `oleans-lsm2`.
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).

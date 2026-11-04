@@ -1,0 +1,47 @@
+## Action.apply_workTapes (Simulation.lean 89-93, 5241eb82): a no-write action leaves the cell
+lemma Action.apply_workTapes {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+    (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) :
+    (a.apply c).workTapes i =
+      Function.update (c.workTapes i) (c.workTapePos i)
+        ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by
+
+## the first round's brief (campaign/fills/c1/briefs/c1-fill-nf.md), the work-tape sweeps
+238:   B blank with its head at the region's first cell. The region is never empty: every record writes
+
+## the draft (orig/, lines 213-216 and 287)
+- **A work-tape instance** keeps tape `j` on B as two-bit blocks: a visited cell is two nonblank
+  bits encoding its `Option Bool` content, an unvisited cell two blanks. B's head sits at twice
+  the simulated head, so a simulated move is two cells on B. It checks each decoded claim against
+  B's block, then writes the recomputed write.
+- a work-tape write of a blank: the block encodes `none` and stays nonblank;
+
+## counterexample to the literal reading (the leaf writes only when (a.workTapes j).1 = some _)
+N with k = 2, three steps, halting on the third with output [true]:
+  step 1: tape 0 writes true, moves right;  tape 1 writes nothing, moves left
+  step 2: tape 0 writes nothing, moves right; tape 1 writes nothing, moves left
+  step 3: tape 0 writes true; halt, emit true (tape 1 reads its cell -2: blank)
+Replay of tape 0 on B (B's start a = 0, skip the last move): blocks 0 and 2 written, block 1
+blank (step 2 wrote nothing). Nonblank cells {0,1} u {4,5}; B's head at 4. The pinned exit
+invariant ("the contiguous, nonblank visited region") is false; skipBackTM_run_ofCfg at u := the
+visited region {0..5} does not apply (cells 2,3 are blank, not bufferTape R). Clearing the
+component [4,6) leaves cells 0,1 holding the code of true, with B's head at 4.
+Replay of tape 1: its head 0, -1, -2 sits at B cells 4, 2, 0. Record 3's genuine claim for tape 1
+is blank, but B's block at cells 0,1 decodes to `some true`: the genuine display is rejected, so
+the forward transfer fails for this N.
+With every record writing its block (the first round's pin), tape 0's region is blocks 0..2
+(cells 0..5), contiguous, B's head at 4; the clear (rv_bClear, R of length 6, i = 4) blanks it.
+
+## the rows' exact hypotheses (Catalog.lean, 5241eb82)
+theorem skipTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (w : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hw : ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
+    (skipTM k i).runFrom d (w.length + 1) =
+theorem skipBackTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (u : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes i (d.workTapePos i - u.length - 1 + p) = FinTM.bufferTape u p) :
+theorem clearTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) :
