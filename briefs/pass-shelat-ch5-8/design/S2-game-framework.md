@@ -156,11 +156,13 @@ def simulate (impl : QueryImpl spec σ spec') : OracleComp spec α → σ → Or
 ```lean
 /-- A party that sends messages of type `Out`, receives messages of type `In`, and draws coins. -/
 abbrev Party (Out In α : Type) := OracleComp (exchangeSpec Out In + unifSpec) α
---   exchangeSpec Out In has one oracle: query = outgoing message, answer = incoming message
+--   exchangeSpec Out In has one oracle: query = outgoing message,
+--   answer = the other party's next message, or `none` once the other party has returned
 ```
 
-- **Execution** `exec (A : Party M₁ M₂ α) (B : Party M₂ M₁ β) (fuel : ℕ) : ProbComp (Option (α × β)
-  × Transcript)` is the coroutine interleaving: A's exchange query is answered by running B until
+- **Execution** `exec (fuel : ℕ) (A : Party M₁ M₂ α) (B : Option M₁ → Party M₂ M₁ β) :
+  ProbComp (Option (α × β))` (probed in P-S2-4; the transcript comes from logging handlers) is the
+  coroutine interleaving: A's exchange query is answered by running B until
   B's next exchange query, and so on. The fuel is the protocol's message count, as in
   Frederick's fixed alternation.
 - **A party's view** is (its input, its coins, the messages it received), read off the log of its
@@ -238,7 +240,7 @@ and §6.2.
 | P-S2-1 | the monad, `Pr`, and B2 on `invProb` (one ch. 2–4 functional, transferred). **Passed 2026-11-04** (`probes/P-S2-1-monad-prob-bridge.lean.txt`): the free monad, `unifSpec` sampling, the finite-sum `expect`/`prob`, total expectation (`expect_bind`), `expect_sample`, and `invProb f A = Pr[game]`, with standard axioms. It reads `invProb` and `uexp` by their bodies, for want of published equations (F-3) |
 | P-S2-2 | Thm 135.4's concrete reduction: a forger, run under a handler that answers `Tag` with a PRF-or-random oracle, gives a distinguisher with advantage `≥ ε − 2^{-n}` |
 | P-S2-3 | the CPA game for Alg 99.1 with a stateful, fresh-coin `Enc` oracle, and one hop of Thm 168.2's proof. **Passed in part, 2026-11-04** (`probes/P-S2-3-handlers-log-cpa.lean.txt`). Done: sums of specs and of handlers, `simulate` with state, logging, `simulate_withLog` (logging is conservative; proved), the fresh-coin `encImpl`, the IND-CPA experiment as a program (phases, adversary state, challenge), `cpaAdv`, and the bad event of Thm 168.2 as a log predicate. **Not yet:** the hop itself, which needs the oracle-substitution and identical-until-bad lemmas (§5) and is scheduled for the statement-phase probes |
-| P-S2-4 | one OT execution (Prot 160.4) through `exec`, with the receiver's view read from the log |
+| P-S2-4 | one OT execution (Prot 160.4) through `exec`, with the receiver's view read from the log. **Passed in part, 2026-11-04** (`probes/P-S2-4-protocol-exec.lean.txt`): `Party` over `exchangeSpec` + `unifSpec`, `step`/`finish`, `exec` with fuel and role swap, a toy protocol executing by `rfl`. Design fix found: an exchange answers `Option In`, where `none` means the other party has returned, so a waiting party can finish. **Not yet:** OT itself and views from logs |
 | P-S2-5 | B3: his `toOracleAdversary` as an instance of `NUPPT.toComp`, at the level of definitions |
 
 ## Coordination with Frederick (adds to the S1 note)

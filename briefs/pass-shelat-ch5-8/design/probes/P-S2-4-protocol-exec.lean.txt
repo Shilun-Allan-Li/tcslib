@@ -1,0 +1,63 @@
+import ProbeS2_3
+
+/-! Route probe P-S2-4 (S2 design note §6, "protocols unified"): a two-party protocol as two
+oracle computations whose only non-sampling oracle is the message exchange, and the execution as
+a coroutine interleaving with a fuel bound. A reply `none` means "the other party has finished",
+so a party waiting on a reply after its counterpart returns is resumed and can finish. Design
+adapted from [VCVio] (OracleComp); no code transcribed. -/
+
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.ProbeS2
+
+/-- One oracle: send a message of type `Out`; the answer is the other party's next message, or
+`none` if the other party has finished. -/
+abbrev exchangeSpec (Out In : Type) : OracleSpec Unit := ⟨fun _ => Out, fun _ => Option In⟩
+
+/-- A party sending `Out`, receiving `In`, drawing its own coins, and returning an `α`. -/
+abbrev Party (Out In α : Type) := OracleComp ((exchangeSpec Out In).add unifSpec) α
+
+variable {Out In α β : Type}
+
+/-- Run a party until it returns or sends a message, passing its coin draws through. -/
+def step : Party Out In α → ProbComp (α ⊕ (Out × (Option In → Party Out In α)))
+  | .pure a => .pure (.inl a)
+  | .query (.inl ()) m k => .pure (.inr (m, k))
+  | .query (.inr j) x k => .query j x (fun y => step (k y))
+
+/-- Finish a party whose counterpart has returned: every send is answered `none`. -/
+def finish : Party Out In α → ProbComp α
+  | .pure a => .pure a
+  | .query (.inl ()) _ k => finish (k none)
+  | .query (.inr j) x k => .query j x (fun y => finish (k y))
+
+/-- **Execution** of a protocol with at most `fuel` messages: `A` moves first, and `B` waits for
+`A`'s first message. The roles swap after each message. `none` if the fuel runs out. -/
+def exec : ℕ → ∀ {M₁ M₂ α β : Type},
+    Party M₁ M₂ α → (Option M₁ → Party M₂ M₁ β) → ProbComp (Option (α × β))
+  | 0, _, _, _, _, _, _ => .pure none
+  | fuel + 1, _, _, _, _, A, B =>
+    OracleComp.bind (step A) fun
+      | .inl a => OracleComp.bind (finish (B none)) fun b => .pure (some (a, b))
+      | .inr (m, kA) =>
+        OracleComp.bind (exec fuel (B (some m)) kA) fun r => .pure (r.map Prod.swap)
+
+/-! A toy protocol: `A` sends its bit `a`; `B` replies with `a && b`; both output that bit. -/
+
+/-- The first mover: send `a`, output the reply (or `false` if none comes). -/
+def toyA (a : Bool) : Party Bool Bool Bool :=
+  .query (.inl ()) a fun r => .pure (r.getD false)
+
+/-- The second mover: on `a`, send `a && b`, and output it. -/
+def toyB (b : Bool) : Option Bool → Party Bool Bool Bool
+  | none => .pure false
+  | some a => .query (.inl ()) (a && b) fun _ => .pure (a && b)
+
+/-- Three messages of fuel suffice; both parties output `a ∧ b`. -/
+theorem exec_toy (a b : Bool) :
+    exec 3 (toyA a) (toyB b) = .pure (some (a && b, a && b)) := by
+  cases a <;> cases b <;> rfl
+
+end TCSlib.Cryptography.ProbeS2
+
+#print axioms TCSlib.Cryptography.ProbeS2.exec_toy
