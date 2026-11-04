@@ -4124,8 +4124,19 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   deciders). Rule 10 places it beside `astep`/`PreS`/`AHalt`: an additive API in `Machines/ARM`
   (14 step equations), `Machines/ARMProof` (`Ins.embed`, `preS_of_ins`, `preS_embed`,
   `astep_embed`, `AHalt.embed`) and `SavitchARM/Machine` (`A_noVal`), about 250 lines; then a
-  fill (the edge language, window exactness, the machine, the assembly; 1.5–2.8k). **Decisions
-  pending (user):** the embedding instead of restating the search; the edge decider's home.
+  fill (the edge language, window exactness, the machine, the assembly; 1.5–2.8k). **Ruled (user,
+  2026-11-04):** the embedding API; the edge decider's home decided at the fill's pre-ship.
+  **PR #182** (`lean/arm-embed`, head `8fd6f91a`; commit `024e19bf`): 25 public declarations, about
+  330 added lines in five of Hydroxyi's files (`Machines/ARM`, `Program`, `ARMProof`, `ARMLoops`,
+  `SavitchARM/Machine`), nothing removed. Checks:
+  - rule 10 sealed: 4 copies, 16 controls; the first run caught `RegExt`'s projections, so it is
+    now a structure;
+  - axioms standard; lint the base's;
+  - the screen finds no new pair; AS-1 is ledgered;
+  - the consumer probe transports `outerU_run` sealed.
+
+  `replay-larm` is written (138 modules from `oleans-leqc3`, precheck passed). It overlaps #181's
+  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 staged.**
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
