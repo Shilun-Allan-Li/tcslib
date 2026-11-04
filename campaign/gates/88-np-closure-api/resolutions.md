@@ -28,7 +28,15 @@ the two merges second takes a merged-tree replay of the overlap.
 
 **The merged-tree replay:** `replay-lnpc2.sh` (`evidence/merged-tree/`): the campaign (after #179 and
 #175) merged into #177 by `2c213708`; `Reductions`' downstream, now 127 modules, from `oleans-lscp3`,
-pinning `Reductions` `b5bfef1c`; precheck passed. **Running (user, 2026-11-04).**
+pinning `Reductions` `b5bfef1c`; precheck passed. **Running (user, 2026-11-04). Failed:** `ClassNP/TMSAT` (line 1089, unsolved goals)
+and 7 modules behind it. `Reductions`' new import of `PClosure` brings `Mathlib.Tactic.Linarith`
+(through `TuringMachine/CounterProgRun`) into `Reductions`' 85+ downstream modules; that activates
+Mathlib's `@[simp] Nat.cast_min`, which rewrites the goal's `↑(min a b)` while the hypothesis `hw`
+keeps it, so `TMSAT`'s unrestricted `simp [..., hw, ...]` no longer closes (the trap gate 82 hit
+with #171). **Ruled (user, 2026-11-04): the theorem moves to `PClosure`, and `TMSAT`'s step is
+hardened in #177** (robust whatever the simp set). `Reductions` returns to the campaign's text; in
+`PClosure`'s idiom the theorem is stated for preimages, `preimage_mem_NP` (beside
+`preimage_mem_P`), so `PClosure` needs no import of `Reductions`. Gate 88 round 2 follows.
 
 **Merge state. #177: not yet clear to merge** (2026-11-04): gate 88 passed; it waits for
 `replay-lnpc2`.
