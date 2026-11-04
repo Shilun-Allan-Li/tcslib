@@ -3,7 +3,7 @@
 > **DRAFT** (maintainer, 2026-11-04), drafted against PR #176's head `cecd76a0` (E-Q cont1's
 > landing; gate 87 passed, 2026-11-04; it merges with the campaign merged in, after
 > `replay-leqc2`). Issues after #176 merges; ⟨…⟩ marks what the pre-ship fills in at the issue
-> commit (line numbers, counts, probes). **Agent: ⟨the user's choice⟩.**
+> commit (line numbers, counts, probes). **Agent: Claude** (user, 2026-11-04).
 >
 > **Maintainer's landing item (not the fill's):** gate 87's finding 2, ruled 2026-11-04: in E-D's
 > landing PR, `qy_call_bound`'s local `hb` becomes `have hb := Turing.length_bits_le_self (f a)`
