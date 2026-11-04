@@ -53,6 +53,8 @@ shape of [AB09, Fig. 4.1]:
 * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
 * `Complexity.logSpace_le_succ`, `Complexity.logSpace_le_of_le_mul_two_pow` — the logarithmic
   bound is at most linear, and at most `(A + 1) s` below `A · 2^s`.
+* `Complexity.logSpace_le_size_succ` — the logarithmic bound is at most one more than the
+  binary length.
 * `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
 * `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
   2026-10-10).
@@ -199,6 +201,21 @@ theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
   have := Nat.log_le_self 2 n
   rw [logSpace_eq]
   omega
+
+/-- The logarithmic width is at most one more than the binary length:
+`logSpace n ≤ Nat.size n + 1`.
+
+**Proof sketch.** At `n = 0` both sides are `1`. Otherwise `2 ^ Nat.log 2 n ≤ n < 2 ^ Nat.size n`
+(`Nat.pow_log_le_self`, `Nat.lt_size_self`), so `Nat.log 2 n < Nat.size n`. -/
+lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
+  unfold logSpace
+  rcases Nat.eq_zero_or_pos n with h | h
+  · subst h; simp
+  · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+    have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
+    have : Nat.log 2 n < Nat.size n :=
+      (Nat.pow_lt_pow_iff_right (show 1 < 2 by norm_num)).mp (lt_of_le_of_lt h1 h2)
+    omega
 
 /-- A number at most `A · 2^s` (with `s ≥ 1`) has `logSpace` at most `(A + 1) s`. -/
 theorem logSpace_le_of_le_mul_two_pow {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) :

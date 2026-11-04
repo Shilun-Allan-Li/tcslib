@@ -256,10 +256,8 @@ theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
 
 /-- `logSpace n ≤ ℓ`. -/
 theorem logSpace_le_ell (n : ℕ) : logSpace n ≤ ell n := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp [logSpace, ell]
-  · have := Nat.log_lt_of_lt_pow (b := 2) (by omega) (lt_two_pow_bits n)
-    simp only [logSpace, ell]; omega
+  rw [ell, Nat.size_eq_bits_len]
+  exact logSpace_le_size_succ n
 
 /-- `K ≥ 32 (n + 1)^d` when `F ≥ d + 5`. -/
 theorem bigK_ge {F n d : ℕ} (hF : d + 5 ≤ F) : 32 * (n + 1) ^ d ≤ bigK F n := by
