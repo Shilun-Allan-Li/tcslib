@@ -779,6 +779,14 @@ are specializations, not copies; the copy-text screen pairs none of them. The la
 name with the general `astep_jeqFst`, and resolves by argument type in its own file, which opens
 `Complexity.LogProg`. **Disposition:** in the dedup window (mechanical ARM edits, FYI), re-prove the
 three through the general equations, and rename the circuit one if the shared name is unwanted.
+**Extended (gate 90, minor 3):** three more specializations of `astep_call`:
+- `BoolCircuit.AdjScan.astep_rd` (`LogspaceUniformScan:196`, with `vword_unary₁`);
+- `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
+  `vword_unary₁` and `vword_unary₂`).
+
+That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+170 → 179 declarations and 46 → 46 pairs, identical
+(`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
 
 **NF-X1, an idiom exclusion** (NF's partial delivery, review F6; ruled by the user, 2026-11-04).
 `NTimeHierarchy.lean::un_setup` reproduces 57% of `NDNormalForm.lean::nf_setup`. The shared text
