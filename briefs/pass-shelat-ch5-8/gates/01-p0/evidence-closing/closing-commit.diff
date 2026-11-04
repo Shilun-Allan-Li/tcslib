@@ -1,0 +1,266 @@
+diff --git a/TCSlib/Cryptography/SecretSharing/Defs.lean b/TCSlib/Cryptography/SecretSharing/Defs.lean
+index 0beec863..39425c58 100644
+--- a/TCSlib/Cryptography/SecretSharing/Defs.lean
++++ b/TCSlib/Cryptography/SecretSharing/Defs.lean
+@@ -94,7 +94,8 @@ namespace Scheme
+ variable {Secret Share Rand : Type*} (S : Scheme P Secret Share Rand)
+ 
+ /-- Every authorized set recovers the secret, whatever the dealer's coins were. [Bei11, §1]
+-For the threshold structure this is [PS10, Def 152.1, item 2]: any `k` shares reconstruct. -/
++For the threshold structure, together with `LocalReconstruct`, this gives
++[PS10, Def 152.1, item 2]: any `k` shares reconstruct. -/
+ def Correct (Γ : AccessStructure P) : Prop :=
+   ∀ A : Finset P, Γ.Auth A → ∀ (sec : Secret) (r : Rand), S.reconstruct A (S.share sec r) = sec
+ 
+@@ -110,9 +111,11 @@ parties of `B` exactly the shares they would have received had the secret been `
+ `r`. With uniform coins this says the `B`-view is distributed independently of the secret.
+ [Bei11, §1], [Sha79, §2]
+ 
+-For the threshold structure this gives [PS10, Def 152.1, item 3]: the shares of fewer than `k`
+-parties have the same distribution for any two secrets, so they are statistically close at
+-distance zero. **Deviation:** stated as a bijection of the coins rather than as closeness of
++For the threshold structure and finite, uniformly sampled coins, this gives
++[PS10, Def 152.1, item 3]: the shares of fewer than `k` parties have the same distribution for
++any two secrets, so they are statistically close at distance zero. ([PS10] writes both "at most
++`k`" and "`|S′| < k`"; the latter is meant, since `k` shares reconstruct.) **Deviation:** stated
++as a bijection of the coins rather than as closeness of
+ distributions; this is the stronger, perfect form, and the one Shamir's scheme achieves
+ (`card_view_eq` gives the counting consequence). -/
+ def PerfectPrivacy (Γ : AccessStructure P) : Prop :=
+diff --git a/TCSlib/Cryptography/SecretSharing/Shamir.lean b/TCSlib/Cryptography/SecretSharing/Shamir.lean
+index 42fc43f3..0d3fe209 100644
+--- a/TCSlib/Cryptography/SecretSharing/Shamir.lean
++++ b/TCSlib/Cryptography/SecretSharing/Shamir.lean
+@@ -91,11 +91,13 @@ constant term `sec`, and reconstruct by Lagrange interpolation at `0`. [Sha79, 
+ 
+ **Deviations from [PS10, Prot 154.4].** [PS10] works over `ℤ_p` for a prime `p > n` and gives
+ shares only to the parties `1, …, n`; here the field is arbitrary and every nonzero element is a
+-party. [PS10]'s `n`-party scheme is this one with the other parties' shares discarded, and its
+-correctness and privacy claims, which concern sets of those parties, are special cases of
+-`correct` and `perfectPrivacy`. [PS10] draws `n − 1` random coefficients and writes the
+-polynomial up to `a_n tⁿ`, a typo: threshold `k` needs degree `k − 1` and the `k − 1` random
+-coefficients that the coins `q` carry here. -/
++party. For `F = ℤ_p` and `1 ≤ k`, [PS10]'s `n`-party scheme is this one with the other parties'
++shares discarded, and its correctness and privacy claims, which concern sets of those parties,
++are special cases of `correct` (which needs `0 < k`), `localReconstruct` and `perfectPrivacy`.
++[PS10] draws `n − 1` random coefficients and writes the polynomial up to `a_n tⁿ`, a typo:
++threshold `k` needs degree at most `k − 1`, that is, the `k − 1` random coefficients that the
++coins `q` carry here. [PS10, Lem 153.2] says "the unique degree-`n` polynomial"; the interpolant
++is the unique one of degree *at most* `n`, as its proof uses. -/
+ noncomputable def scheme (k : ℕ) (F : Type*) [Field F] [DecidableEq F] :
+     Scheme (Party F) F F (degreeLT F (k - 1)) where
+   share sec q a := (poly sec q).eval (label a)
+diff --git a/TCSlib/InformationTheory/Entropy.lean b/TCSlib/InformationTheory/Entropy.lean
+index bf03d3b4..89f050a8 100644
+--- a/TCSlib/InformationTheory/Entropy.lean
++++ b/TCSlib/InformationTheory/Entropy.lean
+@@ -70,13 +70,20 @@ entropy; only the base-2 case is defined here. -/
+ noncomputable def shannonEntropy (p : FinDist α) : ℝ :=
+   ∑ a, negMulLog (p a) / log 2
+ 
+-/-- Shannon entropy is nonnegative: each term `-p log₂ p` is nonnegative for `0 ≤ p ≤ 1`. -/
++/-- Shannon entropy is the sum of `negMulLog (p a) / log 2` over the outcomes `a`. -/
++theorem shannonEntropy_eq (p : FinDist α) :
++    shannonEntropy p = ∑ a, negMulLog (p a) / log 2 :=
++  rfl
++
++/-- Shannon entropy is nonnegative: each term `-p log₂ p` is nonnegative for `0 ≤ p ≤ 1`. An
++elementary consequence of [PS10, Def 182.3], not stated there. -/
+ theorem shannonEntropy_nonneg (p : FinDist α) : 0 ≤ shannonEntropy p :=
+   sum_nonneg fun a _ =>
+     div_nonneg (negMulLog_nonneg (p.nonneg a) (p.le_one a)) (log_nonneg one_le_two)
+ 
+ /-- The uniform distribution on `α` has Shannon entropy `log₂ |α|`. [PS10, p. 182, the uniform
+-example after Def 182.3]
++example after Def 182.3], generalized from `{0,1}^n` to any nonempty finite type (the source's
++case is `shannonEntropy_uniform_bits`).
+ 
+ **Proof sketch.** Every one of the `|α|` terms is `(1/|α|) · log₂ |α|`. -/
+ theorem shannonEntropy_uniform [Nonempty α] :
+@@ -114,8 +121,9 @@ theorem maxProb_pos (p : FinDist α) : 0 < maxProb p := by
+   rw [p.sum_prob] at this
+   norm_num at this
+ 
+-/-- The **min-entropy** of `p` in bits: `H∞(p) = minₓ log₂ (1 / p(x)) = -log₂ (maxₓ p(x))`.
+-[PS10, Def 183.4] -/
++/-- The **min-entropy** of `p` in bits: `H∞(p) = minₓ log₂ (1 / p(x)) = -log₂ (maxₓ p(x))`, the
++minimum taken over the points of positive probability (a point of probability zero has infinite
++surprise). [PS10, Def 183.4] -/
+ noncomputable def minEntropy (p : FinDist α) : ℝ :=
+   -logb 2 (maxProb p)
+ 
+@@ -150,12 +158,23 @@ theorem IsSource.mono {k k' : ℝ} {p : FinDist α} (h : IsSource k p) (hk : k'
+ /-- `p` is a **`k`-flat source**: it is the uniform distribution on some set of `2^k` distinct
+ points. [PS10, Def 183.5]
+ 
+-**Deviation:** [PS10] requires a flat source to be a `k`-source as well; that is automatic
+-(`IsFlatSource.isSource`), so it is a theorem here rather than part of the definition. -/
++**Deviations:** [PS10] requires a flat source to be a `k`-source as well; that is automatic
++(`IsFlatSource.isSource`), so it is a theorem here rather than part of the definition. Here `k`
++is a natural number, so only supports whose size is a power of two are covered; [PS10] leaves `k`
++untyped, and in a real reading the uniform distribution on `N` points is `log₂ N`-flat. Those
++distributions are still available as `flat s`. -/
+ def IsFlatSource [DecidableEq α] (k : ℕ) (p : FinDist α) : Prop :=
+   ∃ s : Finset α, #s = 2 ^ k ∧ ∀ a, p a = if a ∈ s then ((2 : ℝ) ^ k)⁻¹ else 0
+ 
+-/-- A `k`-flat source is a `k`-source: every point has probability `2^(-k)` or `0`. -/
++/-- The defining condition of a `k`-flat source: some set of exactly `2^k` points has
++probability `2^(-k)` at each of its points, and every other point has probability zero. -/
++theorem isFlatSource_iff [DecidableEq α] {k : ℕ} {p : FinDist α} :
++    IsFlatSource k p ↔
++      ∃ s : Finset α, #s = 2 ^ k ∧ ∀ a, p a = if a ∈ s then ((2 : ℝ) ^ k)⁻¹ else 0 :=
++  Iff.rfl
++
++/-- A `k`-flat source is a `k`-source: every point has probability `2^(-k)` or `0`. This is the
++"additionally" clause of [PS10, Def 183.5], proved here rather than assumed. -/
+ theorem IsFlatSource.isSource [DecidableEq α] {k : ℕ} {p : FinDist α} (h : IsFlatSource k p) :
+     IsSource k p := by
+   obtain ⟨s, -, hp⟩ := h
+@@ -184,7 +203,8 @@ theorem isFlatSource_flat [DecidableEq α] {k : ℕ} (s : Finset α) (hs : #s =
+     IsFlatSource k (flat s (Finset.card_pos.1 (hs ▸ pow_pos two_pos k))) :=
+   ⟨s, hs, fun a => by simp [hs]⟩
+ 
+-/-- The uniform distribution on `α` is a `log₂ |α|`-source; on `n`-bit strings, an `n`-source. -/
++/-- The uniform distribution on `α` is a `log₂ |α|`-source; on `n`-bit strings, an `n`-source.
++An elementary consequence of [PS10, Defs 183.4 and 183.5]. -/
+ theorem isSource_uniform [Nonempty α] : IsSource (logb 2 (Fintype.card α)) (uniform α) := by
+   refine isSource_iff_hasMinEntropy.2 fun a => ?_
+   have hc : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos
+diff --git a/TCSlib/InformationTheory/Extractors.lean b/TCSlib/InformationTheory/Extractors.lean
+index 36b20dae..9e13d468 100644
+--- a/TCSlib/InformationTheory/Extractors.lean
++++ b/TCSlib/InformationTheory/Extractors.lean
+@@ -43,8 +43,8 @@ universal hash family is a *strong* extractor for every class of `k`-sources.
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+   §8.3.1 (Definitions 181.1 and 181.2) and §8.3.3 (the leftover hash lemma, heading only).
+-* [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012, §6.1–6.2 (Lemma 6.4, Def 6.13,
+-  Thm 6.18).
++* [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012, §6.1–6.2 (statistical difference,
++  strong extractors, Thm 6.18).
+ * [HILL99] J. Håstad, R. Impagliazzo, L. Levin, M. Luby, *A pseudorandom generator from any
+   one-way function*, SICOMP 28(4), 1999 (Lemma 4.8).
+ -/
+@@ -68,17 +68,23 @@ no bound on its running time, has advantage at most `ε`,
+ def EpsClose (ε : ℝ) (p q : FinDist α) : Prop :=
+   ∀ D : α → Bool, |p.probTrue D - q.probTrue D| ≤ ε
+ 
+-/-- A distinguisher's advantage is a sum of probability differences over the points it accepts. -/
++/-- The signed difference of two acceptance probabilities, `Pr_p[D = 1] - Pr_q[D = 1]`, is the
++sum of the probability differences `p a - q a` over the points `D` accepts. -/
+ theorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :
+     p.probTrue D - q.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by
+   simp only [FinDist.probTrue, sum_sub_distrib]
+ 
++/-- `probTrue p D` is the total probability of the points that `D` accepts. -/
++theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
++    p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
++  rfl
++
+ /-- The probability differences of two distributions sum to zero. -/
+ private theorem sum_sub_eq_zero (p q : FinDist α) : ∑ a, (p a - q a) = 0 := by
+   rw [sum_sub_distrib, p.sum_prob, q.sum_prob, sub_self]
+ 
+ /-- **No distinguisher beats statistical distance.** For every test `D`,
+-`|Pr_p[D = 1] - Pr_q[D = 1]| ≤ statDist p q`. [Vad12, Lemma 6.4]
++`|Pr_p[D = 1] - Pr_q[D = 1]| ≤ statDist p q`. [Vad12, §6.1]
+ 
+ **Proof sketch.** Let `d = p - q` and let `A` be the accepted set. Since `d` sums to zero, the sum
+ of `d` over `A` is minus its sum over the complement, so twice its absolute value is at most
+@@ -99,7 +105,7 @@ theorem abs_probTrue_sub_le_statDist (p q : FinDist α) (D : α → Bool) :
+   linarith
+ 
+ /-- **The optimal distinguisher attains statistical distance.** If every test has advantage at
+-most `ε`, then `statDist p q ≤ ε`. [Vad12, Lemma 6.4]
++most `ε`, then `statDist p q ≤ ε`. [Vad12, §6.1]
+ 
+ **Proof sketch.** Test `D` accepting exactly the points where `p` is more likely than `q`. On the
+ accepted set `|p - q| = p - q`, off it `|p - q| = q - p`, and the two sums of `p - q` cancel, so
+@@ -132,17 +138,18 @@ theorem statDist_le_of_epsClose {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p
+   linarith
+ 
+ /-- **`ε`-closeness is a statistical-distance bound.** `p ≈_ε q` in the distinguisher form of
+-[PS10, Def 181.1] exactly when `statDist p q ≤ ε`. [Vad12, Lemma 6.4] -/
++[PS10, Def 181.1] exactly when `statDist p q ≤ ε`. [Vad12, §6.1] -/
+ theorem epsClose_iff_statDist_le {ε : ℝ} {p q : FinDist α} :
+     EpsClose ε p q ↔ statDist p q ≤ ε :=
+   ⟨statDist_le_of_epsClose, fun h D => (abs_probTrue_sub_le_statDist p q D).trans h⟩
+ 
+-/-- Closeness is symmetric. -/
++/-- Closeness is symmetric. An elementary consequence of [PS10, Def 181.1]. -/
+ theorem EpsClose.symm {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p q) : EpsClose ε q p := by
+   rw [epsClose_iff_statDist_le] at h ⊢
+   rwa [statDist_comm]
+ 
+-/-- Closeness composes: `p ≈_ε q` and `q ≈_δ r` give `p ≈_{ε+δ} r`. -/
++/-- Closeness composes: `p ≈_ε q` and `q ≈_δ r` give `p ≈_{ε+δ} r`. An elementary consequence of
++[PS10, Def 181.1]. -/
+ theorem EpsClose.trans {ε δ : ℝ} {p q r : FinDist α} (h₁ : EpsClose ε p q)
+     (h₂ : EpsClose δ q r) : EpsClose (ε + δ) p r := by
+   rw [epsClose_iff_statDist_le] at *
+@@ -160,6 +167,12 @@ def IsExtractor [DecidableEq β] [Nonempty β] (C : Set (FinDist α)) (ε : ℝ)
+     Prop :=
+   ∀ X ∈ C, EpsClose ε (X.map Ext) (uniform β)
+ 
++/-- `Ext` is an `ε`-extractor for `C` exactly when `Ext(X)` is `ε`-close to uniform for every
++`X ∈ C`. -/
++theorem isExtractor_iff [DecidableEq β] [Nonempty β] {C : Set (FinDist α)} {ε : ℝ}
++    {Ext : α → β} : IsExtractor C ε Ext ↔ ∀ X ∈ C, EpsClose ε (X.map Ext) (uniform β) :=
++  Iff.rfl
++
+ /-- An extractor for a class is one for every subclass. -/
+ theorem IsExtractor.mono [DecidableEq β] [Nonempty β] {C C' : Set (FinDist α)} {ε : ℝ}
+     {Ext : α → β} (h : IsExtractor C ε Ext) (hC : C' ⊆ C) : IsExtractor C' ε Ext :=
+@@ -167,18 +180,34 @@ theorem IsExtractor.mono [DecidableEq β] [Nonempty β] {C C' : Set (FinDist α)
+ 
+ /-- The seeded family `f : S → α → β` is a **strong `ε`-extractor for `C`**: for every source `X`
+ in `C`, the pair `(s, f s x)` with a uniform seed `s` and `x ← X` is `ε`-close to uniform on
+-`S × β`. [Vad12, Def 6.13]; [PS10, §8.3.3] states the leftover hash lemma under this heading
+-without a definition. -/
++`S × β`. [Vad12, Ch. 6, strong extractors]. [PS10] has no such definition: its §8.3.3 (the
++leftover hash lemma) contains only a heading.
++
++**Deviation:** [Vad12] defines strong `(k, ε)`-extractors on bit strings, for the class of
++`k`-sources; here the class `C` and the finite seed, input and output types are arbitrary. -/
+ def IsStrongExtractor [DecidableEq S] [DecidableEq α] [DecidableEq β] [Nonempty S] [Nonempty β]
+     (C : Set (FinDist α)) (ε : ℝ) (f : S → α → β) : Prop :=
+   ∀ X ∈ C, EpsClose ε (hashPair f X) (uniform (S × β))
+ 
++/-- `f` is a strong `ε`-extractor for `C` exactly when `(s, f s x)` is `ε`-close to uniform on
++`S × β` for every `X ∈ C`. -/
++theorem isStrongExtractor_iff [DecidableEq S] [DecidableEq α] [DecidableEq β] [Nonempty S]
++    [Nonempty β] {C : Set (FinDist α)} {ε : ℝ} {f : S → α → β} :
++    IsStrongExtractor C ε f ↔ ∀ X ∈ C, EpsClose ε (hashPair f X) (uniform (S × β)) :=
++  Iff.rfl
++
+ /-- The **seeded sources** over `C`: a uniform seed in `S` paired with an independent sample of a
+ source in `C`. A strong extractor is a deterministic extractor ([PS10, Def 181.2]) for exactly
+ these. -/
+ def seededSources [Nonempty S] (C : Set (FinDist α)) : Set (FinDist (S × α)) :=
+   {Y | ∃ X ∈ C, Y = FinDist.prod (uniform S) X}
+ 
++/-- The seeded sources over `C` are exactly the products of the uniform seed with a source in
++`C`. -/
++theorem mem_seededSources [Nonempty S] {C : Set (FinDist α)} {Y : FinDist (S × α)} :
++    Y ∈ seededSources (S := S) C ↔ ∃ X ∈ C, Y = FinDist.prod (uniform S) X :=
++  Iff.rfl
++
+ /-- A strong extractor `f` makes `(s, x) ↦ (s, f s x)` a deterministic `ε`-extractor
+ ([PS10, Def 181.2]) for the seeded sources over `C`: the seed is part of the sample and is
+ output again. -/
+@@ -190,8 +219,13 @@ theorem IsStrongExtractor.isExtractor_seeded [DecidableEq S] [DecidableEq α] [D
+   exact h X hX
+ 
+ /-- **The leftover hash lemma as an extractor.** A universal hash family `f : S → α → β` is a
+-strong `½ √(|β| · 2^(-k))`-extractor for the `k`-sources on `α`. [PS10, §8.3.3],
+-[HILL99, Lemma 4.8], [Vad12, Thm 6.18]
++strong `½ √(|β| · 2^(-k))`-extractor for the `k`-sources on `α`. [HILL99, Lemma 4.8],
++[Vad12, Thm 6.18]; [PS10, §8.3.3] carries this title but no text.
++
++**Deviation:** stated over arbitrary finite types, for min-entropy `k` and for `f` universal in
++the collision-count sense of `IsUniversal`, with the error in closed form (for `|β| = 2^m` it is
++`2^((m - k)/2 - 1)`); the cited statements are over bit strings and are not phrased in exactly
++these terms.
+ 
+ **Proof sketch.** A `k`-source has `HasMinEntropy X k` (`isSource_iff_hasMinEntropy`), so the
+ library's `leftover_hash` bounds the statistical distance of `(s, f s x)` from uniform by
