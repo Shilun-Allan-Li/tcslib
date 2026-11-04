@@ -18,7 +18,7 @@ Security definitions come in three shapes, each measured at one value of the sec
   difference of the two games' acceptance probabilities;
 - a **guess-the-bit game**: a bit `b` is drawn, the game runs on `b`, and the adversary wins if it
   outputs `b`. Its advantage is the distance of the winning probability from `½`, which is half
-  the distinguishing advantage of the two games (`guessAdv_eq_half_distAdv`).
+  the distinguishing advantage of the two games (`guessAdv_eq_half_advantage`).
 
 Games are `ProbComp Bool`s built from the adversary; these shapes are what asymptotic security
 definitions wrap with "negligible for every efficient adversary".
@@ -26,15 +26,15 @@ definitions wrap with "negligible for every efficient adversary".
 ## Main definitions
 
 * `Games.accept G`: the probability that `G` outputs `true`.
-* `Games.distAdv G₀ G₁`: `|Pr[G₀ = 1] − Pr[G₁ = 1]|`.
+* `Games.advantage G₀ G₁`: `|Pr[G₀ = 1] − Pr[G₁ = 1]|`.
 * `Games.guessGame G`, `Games.guessAdv G`: the guess-the-bit game over `G : Bool → ProbComp Bool`
   and its advantage `|Pr[win] − ½|`.
 
 ## Main results
 
-* `distAdv_triangle`, `distAdv_hybrid`: the hybrid argument; the advantage between the ends of a
+* `advantage_triangle`, `advantage_hybrid`: the hybrid argument; the advantage between the ends of a
   chain of games is at most the sum of the advantages between neighbours.
-* `guessAdv_eq_half_distAdv`: the guess-the-bit advantage is half the distinguishing advantage
+* `guessAdv_eq_half_advantage`: the guess-the-bit advantage is half the distinguishing advantage
   between the games for `b = 1` and `b = 0`.
 
 ## References
@@ -60,7 +60,7 @@ noncomputable def accept (G : ProbComp Bool) : ℝ := prob G (· = true)
 
 /-- The **distinguishing advantage** between two games: `|Pr[G₀ = 1] − Pr[G₁ = 1]|`.
 [PS10, §3.1] -/
-noncomputable def distAdv (G₀ G₁ : ProbComp Bool) : ℝ := |accept G₀ - accept G₁|
+noncomputable def advantage (G₀ G₁ : ProbComp Bool) : ℝ := |accept G₀ - accept G₁|
 
 /-- An acceptance probability is between zero and one. -/
 theorem accept_nonneg (G : ProbComp Bool) : 0 ≤ accept G := prob_nonneg G _
@@ -69,38 +69,38 @@ theorem accept_nonneg (G : ProbComp Bool) : 0 ≤ accept G := prob_nonneg G _
 theorem accept_le_one (G : ProbComp Bool) : accept G ≤ 1 := prob_le_one G _
 
 /-- The distinguishing advantage is nonnegative. -/
-theorem distAdv_nonneg (G₀ G₁ : ProbComp Bool) : 0 ≤ distAdv G₀ G₁ := abs_nonneg _
+theorem advantage_nonneg (G₀ G₁ : ProbComp Bool) : 0 ≤ advantage G₀ G₁ := abs_nonneg _
 
 /-- The distinguishing advantage is symmetric. -/
-theorem distAdv_comm (G₀ G₁ : ProbComp Bool) : distAdv G₀ G₁ = distAdv G₁ G₀ :=
+theorem advantage_comm (G₀ G₁ : ProbComp Bool) : advantage G₀ G₁ = advantage G₁ G₀ :=
   abs_sub_comm _ _
 
 /-- A game has no advantage against itself. -/
-@[simp] theorem distAdv_self (G : ProbComp Bool) : distAdv G G = 0 := by simp [distAdv]
+@[simp] theorem advantage_self (G : ProbComp Bool) : advantage G G = 0 := by simp [advantage]
 
 /-- The distinguishing advantage is at most one. -/
-theorem distAdv_le_one (G₀ G₁ : ProbComp Bool) : distAdv G₀ G₁ ≤ 1 := by
-  unfold distAdv
+theorem advantage_le_one (G₀ G₁ : ProbComp Bool) : advantage G₀ G₁ ≤ 1 := by
+  unfold advantage
   rw [abs_le]
   constructor <;> linarith [accept_nonneg G₀, accept_nonneg G₁, accept_le_one G₀, accept_le_one G₁]
 
 /-- **One game hop:** the advantage between `G₀` and `G₂` is at most the sum of the advantages
 through `G₁`. -/
-theorem distAdv_triangle (G₀ G₁ G₂ : ProbComp Bool) :
-    distAdv G₀ G₂ ≤ distAdv G₀ G₁ + distAdv G₁ G₂ :=
+theorem advantage_triangle (G₀ G₁ G₂ : ProbComp Bool) :
+    advantage G₀ G₂ ≤ advantage G₀ G₁ + advantage G₁ G₂ :=
   abs_sub_le _ _ _
 
 /-- **The hybrid argument:** along a chain of games `G 0, …, G n`, the advantage between the ends
 is at most the sum of the advantages between neighbours. [PS10, Lemma 70.2], [Sho04, §3]
 
-**Proof sketch.** Induction on `n`, one game hop (`distAdv_triangle`) per step. -/
-theorem distAdv_hybrid (G : ℕ → ProbComp Bool) (n : ℕ) :
-    distAdv (G 0) (G n) ≤ ∑ i ∈ range n, distAdv (G i) (G (i + 1)) := by
+**Proof sketch.** Induction on `n`, one game hop (`advantage_triangle`) per step. -/
+theorem advantage_hybrid (G : ℕ → ProbComp Bool) (n : ℕ) :
+    advantage (G 0) (G n) ≤ ∑ i ∈ range n, advantage (G i) (G (i + 1)) := by
   induction n with
   | zero => simp
   | succ n ih =>
     rw [sum_range_succ]
-    exact (distAdv_triangle _ (G n) _).trans (by linarith)
+    exact (advantage_triangle _ (G n) _).trans (by linarith)
 
 /-! ### Guess-the-bit games -/
 
@@ -140,9 +140,9 @@ theorem accept_guessGame (G : Bool → ProbComp Bool) :
 
 /-- **Guessing versus distinguishing:** the guess-the-bit advantage is half the distinguishing
 advantage between `G 1` and `G 0`. -/
-theorem guessAdv_eq_half_distAdv (G : Bool → ProbComp Bool) :
-    guessAdv G = distAdv (G true) (G false) / 2 := by
-  unfold guessAdv distAdv
+theorem guessAdv_eq_half_advantage (G : Bool → ProbComp Bool) :
+    guessAdv G = advantage (G true) (G false) / 2 := by
+  unfold guessAdv advantage
   rw [accept_guessGame]
   rw [show (accept (G true) + (1 - accept (G false))) / 2 - 1 / 2 =
       (accept (G true) - accept (G false)) / 2 by ring, abs_div, abs_two]

@@ -22,7 +22,7 @@ The steps of a game-based security proof, proved once:
   probability at most `q / |T|`. This is the "bad event" of most PRF-based proofs, for example a
   repeated nonce in [PS10, Thm 168.2].
 
-The hybrid argument itself is `distAdv_hybrid` (`TCSlib.Cryptography.Games.Advantage`).
+The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Advantage`).
 
 ## Main definitions
 

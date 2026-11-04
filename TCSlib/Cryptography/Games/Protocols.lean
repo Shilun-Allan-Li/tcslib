@@ -20,7 +20,7 @@ finished"), so it too can finish.
 
 This is the same framework as security games: a party's view (its coins and the messages it
 received) is the log of its own oracle answers, and simulation-based security compares two
-`ProbComp`s with `distAdv`. The bridge to the next-message strategies of the ch. 2–4 layer
+`ProbComp`s with `advantage`. The bridge to the next-message strategies of the ch. 2–4 layer
 (`TCSlib.Cryptography.Strategy`, `TCSlib.Cryptography.exec`) is part of the S2b layer.
 
 ## Main definitions
