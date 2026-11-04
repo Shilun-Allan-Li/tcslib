@@ -87,7 +87,7 @@ For finite `α` this gives a `FinDist α` (`ProbComp.dist`), which connects to `
 `acceptProb` and `distAdv` are exactly the probabilities of four one-line games, and every
 ch. 2–4 result stated through them transfers.
 
-- **R-1 (for the user):**
+- **R-1 (ruled 2026-11-04: (a), the sampling oracle):**
   - (a) sampling as an oracle in the monad, as above (recommended): games read as programs, as in
     [PS10]'s experiments, and the semantics is a finite sum;
   - (b) all randomness as external finite seeds (`ρ → OracleComp spec α`, handlers reading coin
@@ -250,7 +250,7 @@ and §6.2.
 - **F-3:** the framework adapts his `encodeHist`/`pairEncode` codecs and cites his closure
   calculus; any machine lemma we need in his `Closure.lean` is requested, not added.
 
-## Decisions for the user
+## Decisions for the user (ruled 2026-11-04: R-1 (a) the sampling oracle; R-2 reuse via bridges)
 
 - **R-1:** sampling as an oracle inside the monad (recommended), or external finite seeds (§2).
 - **R-2:** the generic lemmas of §5, re-derived through B1/B2 from Garg's concrete layer where
