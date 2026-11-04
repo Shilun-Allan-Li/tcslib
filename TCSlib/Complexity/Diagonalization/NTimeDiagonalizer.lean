@@ -6900,6 +6900,335 @@ private theorem dz_tail_run {K : ℕ} {x : List Bool} (src dst : Fin K) (hne : s
         FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
   · rw [if_neg (fun h => hj h.1), Function.update_of_ne hj]
 
+/-! ### The middle's split, test and normalization -/
+
+/-- **The block after the split.** The buffer of `s₁ ++ [b] ++ w` with its cell `|s₁|` blanked and
+the cells of `w` blanked is the buffer of `s₁`. -/
+private theorem dz_split_tape (s₁ w : List Bool) (b : Bool) :
+    (fun q => if (s₁.length : ℤ) + 1 ≤ q ∧ q < (s₁.length : ℤ) + 1 + (w.length : ℤ) then
+        (FinTM.bufferTape w (q - ((s₁.length : ℤ) + 1))).bind fun _ => none
+      else Function.update (FinTM.bufferTape (s₁ ++ [b] ++ w)) (s₁.length : ℤ) none q) =
+      FinTM.bufferTape s₁ := by
+  funext q
+  by_cases h1 : (s₁.length : ℤ) + 1 ≤ q ∧ q < (s₁.length : ℤ) + 1 + (w.length : ℤ)
+  · rw [if_pos h1, FinTM.bufferTape_eq_none_of_not_mem s₁ (z := q) (by omega)]
+    cases FinTM.bufferTape w (q - ((s₁.length : ℤ) + 1)) <;> rfl
+  · rw [if_neg h1]
+    by_cases h2 : q = (s₁.length : ℤ)
+    · rw [h2, Function.update_self, FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
+    · rw [Function.update_of_ne h2]
+      by_cases h3 : 0 ≤ q ∧ q < (s₁.length : ℤ)
+      · rw [FinTM.bufferTape_eq, FinTM.bufferTape_eq, if_pos h3.1, if_pos h3.1, List.append_assoc,
+          List.getElem?_append_left (by omega)]
+      · rw [FinTM.bufferTape_eq_none_of_not_mem _ h3, FinTM.bufferTape_eq_none_of_not_mem _ (by
+          simp only [List.length_append, List.length_singleton]
+          push_cast
+          omega)]
+
+/-- **The split.** From the middle's first split phase over a layout whose block tape holds the
+stream `s₁` (of length `G`), a separator bit and the budget word `w`, whose ruler tape holds
+`1^G` and whose budget tape is blank, every one of these heads at `0`, the run skips back over
+the empty word, walks the block's head over the ruler onto the separator, takes the separator,
+moves `w` onto the budget tape and skips back over `s₁`: the block tape holds exactly `s₁` and
+the budget tape `w`, both heads at `0`, the ruler's head at `G + 1`.
+
+**Proof sketch.** Five hosted phases (`qy_hosted`), chained by `Turing.Segment.trans`:
+`Turing.skipBackTM_run_ofCfg` over the empty word (cells `-2`, `-1` are blank), the lockstep walk
+`Turing.walkTM_run_ofCfg` with the ruler as its source (`G + 1` steps), the take `dz_take_run` (its
+cell `G` is the separator, now blank: the budget word's left delimiter), the move
+`Turing.transferMapTM_run_ofCfg` (its delimiters are the blanked separator and the block's right
+blank; `FinTM.bufferTape_append_shift`), whose block tape is the buffer of `s₁`
+(`dz_split_tape`), and `Turing.skipBackTM_run_ofCfg` over `s₁`. Each guard is its row's cut. -/
+private theorem dz_split {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
+    (s₁ w : List Bool) (sp : Bool) (h6 : L 6 = FinTM.bufferTape (s₁ ++ [sp] ++ w))
+    (h7 : L 7 = FinTM.bufferTape (List.replicate s₁.length true))
+    (h9 : L 9 = FinTM.bufferTape []) (hP6 : Pn 6 = 0) (hP7 : Pn 7 = 0) (hP9 : Pn 9 = 0) :
+    ∃ t ≤ 2 * s₁.length + 2 * w.length + 15, Segment (dzQ κ) (dzQF κ) (fun _ => True)
+      (qyC (x := z) ⟨.sb0, SeekPhase.run⟩ 1 (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [])
+      (qyC ⟨.exp, CounterLoopState.dec .run⟩ 1
+        (dzLay (Function.update (Function.update L 6 (FinTM.bufferTape s₁)) 9 (FinTM.bufferTape w))
+          (FinTM.bufferTape []))
+        (dzLay (Function.update Pn 7 ((s₁.length : ℤ) + 1)) 0) []) t := by
+  set Bl : ℤ → Option Bool := FinTM.bufferTape [] with hBl
+  set G := s₁.length with hG
+  -- sb0: skip back over the empty word
+  obtain ⟨r1, k1, -⟩ := skipBackTM_run_ofCfg (κ.tp 6) ([] : List Bool)
+    (qyC (x := z) SeekPhase.run 1 (dzLay L Bl) (dzLay Pn 0) []) rfl (fun p hp1 hp2 => by
+      show dzLay L Bl (κ.tp 6) (dzLay Pn 0 (κ.tp 6) - (([] : List Bool).length : ℤ) - 1 + p) = _
+      rw [dzLay_tp, dzLay_tp, h6, hP6, FinTM.bufferTape_of_neg _ (by simp at hp2 ⊢; omega),
+        FinTM.bufferTape_eq_none_of_not_mem _ (by simp)])
+  obtain ⟨P1, hP1⟩ : ∃ P1 : Fin 14 → ℤ, P1 = Function.update Pn 6 (-1) := ⟨_, rfl⟩
+  have e1 : (skipBackTM κ.K (κ.tp 6)).runFrom
+      (qyC (x := z) SeekPhase.run 1 (dzLay L Bl) (dzLay Pn 0) []) (([] : List Bool).length + 3) =
+      qyC SeekPhase.done 1 (dzLay L Bl) (dzLay P1 0) [] := by
+    rw [r1, hP1, ← dzLay_update κ]
+    dsimp only [qyC]
+    rw [dzLay_tp, hP6]
+    rfl
+  have seg1 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .sb0 .run .done ⟨.walk, SeekPhase.run⟩
+    1 1 _ _ _ _ [] [] _ e1 (by simp [dzQRed])
+    (qy_guard_of_cut SeekPhase.done (dzQRed κ .sb0) (fun s hs => by simp [dzQRed, hs]) k1)
+    (dzQF κ) (fun s => dz_notF κ .sb0 s (by simp) (by simp))
+  -- walk: the block's head onto the separator, in lockstep with the ruler
+  obtain ⟨r2, k2, -⟩ := walkTM_run_ofCfg (κ.tp 7) (fun i => i = κ.tp 7 ∨ i = κ.tp 6) (Or.inl rfl)
+    .pos (List.replicate G true) (qyC (x := z) SeekPhase.run 1 (dzLay L Bl) (dzLay P1 0) []) rfl
+    (fun p hp => by
+      show dzLay L Bl (κ.tp 7) (dzLay P1 0 (κ.tp 7) + ((SignType.pos : SignType) : ℤ) * p) = _
+      rw [dzLay_tp, dzLay_tp, h7, hP1, Function.update_of_ne (by decide), hP7,
+        show ((SignType.pos : SignType) : ℤ) = 1 from rfl, one_mul, zero_add])
+  have e2 : (walkTM κ.K (κ.tp 7) (fun i => i = κ.tp 7 ∨ i = κ.tp 6) .pos).runFrom
+      (qyC (x := z) SeekPhase.run 1 (dzLay L Bl) (dzLay P1 0) [])
+      ((List.replicate G true).length + 1)
+      = qyC SeekPhase.done 1 (dzLay L Bl) (Function.update (Function.update (dzLay P1 0) (κ.tp 7)
+        ((G : ℤ) + 1)) (κ.tp 6) (G : ℤ)) [] := by
+    rw [r2]
+    dsimp only [qyC]
+    congr 1
+    funext j
+    rw [List.length_replicate, show ((SignType.pos : SignType) : ℤ) = 1 from rfl, one_mul]
+    by_cases j6 : j = κ.tp 6
+    · subst j6
+      rw [if_pos (Or.inr rfl), Function.update_self, dzLay_tp, hP1, Function.update_self]
+      push_cast
+      ring
+    · rw [Function.update_of_ne j6]
+      by_cases j7 : j = κ.tp 7
+      · subst j7
+        rw [if_pos (Or.inl rfl), Function.update_self, dzLay_tp, hP1,
+          Function.update_of_ne (by decide), hP7]
+        push_cast
+        ring
+      · rw [if_neg (by tauto), add_zero, Function.update_of_ne j7]
+  rw [dzLay_update, dzLay_update] at e2
+  have seg2 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .walk .run .done ⟨.sep, none⟩
+    1 1 _ _ _ _ [] [] _ e2 (by simp [dzQRed])
+    (qy_guard_of_cut SeekPhase.done (dzQRed κ .walk) (fun s hs => by simp [dzQRed, hs]) k2)
+    (dzQF κ) (fun s => dz_notF κ .walk s (by simp) (by simp))
+  obtain ⟨P2, hP2⟩ : ∃ P2 : Fin 14 → ℤ,
+      P2 = Function.update (Function.update P1 7 ((G : ℤ) + 1)) 6 (G : ℤ) := ⟨_, rfl⟩
+  rw [← hP2] at seg2
+  -- sep: take the separator
+  have e3 := dz_take_run (x := z) (κ.tp 6) 1 (dzLay L Bl) (dzLay P2 0) []
+  have hsep : FinTM.bufferTape (s₁ ++ [sp] ++ w) (G : ℤ) = some sp := by
+    rw [FinTM.bufferTape_eq, if_pos (by omega), show (G : ℤ).toNat = G by omega,
+      List.append_assoc, List.getElem?_append_right (by omega), hG, Nat.sub_self]
+    rfl
+  have hP2_6 : P2 6 = (G : ℤ) := by rw [hP2, Function.update_self]
+  rw [dzLay_tp, dzLay_tp, h6, hP2_6, hsep, dzLay_update, dzLay_update] at e3
+  have seg3 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .sep none (some (some sp))
+    ⟨.xfer, SweepPhase.sweep⟩ 1 1 _ _ _ _ [] [] 1 e3 (by simp [dzQRed])
+    (fun u hu s hs => by
+      obtain rfl : u = 0 := by omega
+      rw [MultiTapeTM.runFrom_zero] at hs
+      cases Option.some.inj hs
+      simp [dzQRed]) (dzQF κ) (fun s => dz_notF κ .sep s (by simp) (by simp))
+  obtain ⟨L3, hL3⟩ : ∃ L3 : Fin 14 → ℤ → Option Bool,
+      L3 = Function.update L 6
+        (Function.update (FinTM.bufferTape (s₁ ++ [sp] ++ w)) (G : ℤ) none) :=
+    ⟨_, rfl⟩
+  obtain ⟨P3, hP3⟩ : ∃ P3 : Fin 14 → ℤ, P3 = Function.update P2 6 ((G : ℤ) + 1) := ⟨_, rfl⟩
+  rw [← hL3, ← hP3] at seg3
+  -- xfer: move the budget word onto the budget tape
+  have hP3_6 : P3 6 = (G : ℤ) + 1 := by rw [hP3, Function.update_self]
+  have hP3_9 : P3 9 = 0 := by
+    rw [hP3, hP2, hP1]
+    simp [hP9]
+  obtain ⟨r4, k4, -⟩ := transferMapTM_run_ofCfg (κ.tp 6) (κ.tp 9) (κ.tp_ne (by decide))
+    (fun b => b) (fun _ b => b) (fun _ => none) w
+    (qyC (x := z) SweepPhase.sweep 1 (dzLay L3 Bl) (dzLay P3 0) []) rfl (fun p hp1 hp2 => by
+      show dzLay L3 Bl (κ.tp 6) (dzLay P3 0 (κ.tp 6) + p) = _
+      rw [dzLay_tp, dzLay_tp, hL3, hP3_6, Function.update_self]
+      by_cases hp : p = -1
+      · subst hp
+        rw [show (G : ℤ) + 1 + -1 = G by ring, Function.update_self,
+          FinTM.bufferTape_of_neg _ (by norm_num)]
+      · rw [Function.update_of_ne (by omega)]
+        have := FinTM.bufferTape_append_shift (s₁ ++ [sp]) w (z := p) (by omega)
+        rw [List.length_append, List.length_singleton] at this
+        rw [← this]
+        congr 1)
+  have e4 : (transferMapTM κ.K (κ.tp 6) (κ.tp 9) (fun b => b) (fun _ b => b)
+      (fun _ => none)).runFrom (qyC (x := z) SweepPhase.sweep 1 (dzLay L3 Bl) (dzLay P3 0) [])
+      (2 * w.length + 2) = qyC SweepPhase.done 1 (Function.update (Function.update (dzLay L3 Bl)
+        (κ.tp 6) (FinTM.bufferTape s₁)) (κ.tp 9) (FinTM.bufferTape w)) (dzLay P3 0) [] := by
+    rw [r4]
+    dsimp only [qyC]
+    congr 1
+    funext j q
+    by_cases j9 : j = κ.tp 9
+    · subst j9
+      rw [if_neg (fun h => κ.tp_ne (by decide) h.1), Function.update_self, dzLay_tp, hP3_9]
+      by_cases hq : (0 : ℤ) ≤ q ∧ q < 0 + (w.length : ℤ)
+      · rw [if_pos ⟨rfl, hq⟩, sub_zero]
+        cases FinTM.bufferTape w q <;> rfl
+      · rw [if_neg (fun h => hq h.2), dzLay_tp, hL3, Function.update_of_ne (by decide), h9,
+          hBl, FinTM.bufferTape_nil, FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
+    · rw [Function.update_of_ne j9]
+      by_cases j6 : j = κ.tp 6
+      · subst j6
+        rw [Function.update_self, dzLay_tp, hP3_6]
+        have hs := congrFun (dz_split_tape s₁ w sp) q
+        rw [← hG] at hs
+        by_cases hq : (G : ℤ) + 1 ≤ q ∧ q < (G : ℤ) + 1 + (w.length : ℤ)
+        · rw [if_pos ⟨rfl, hq⟩, ← hs, if_pos hq]
+        · rw [if_neg (fun h => hq h.2), if_neg (fun h => κ.tp_ne (by decide) h.1), dzLay_tp, hL3,
+            Function.update_self, ← hs, if_neg hq]
+      · rw [if_neg (fun h => j6 h.1), if_neg (fun h => j9 h.1), Function.update_of_ne j6]
+  rw [dzLay_update, dzLay_update] at e4
+  have seg4 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .xfer .sweep .done ⟨.sb1, SeekPhase.run⟩
+    1 1 _ _ _ _ [] [] _ e4 (by simp [dzQRed])
+    (qy_guard_of_cut SweepPhase.done (dzQRed κ .xfer) (fun s hs => by simp [dzQRed, hs]) k4)
+    (dzQF κ) (fun s => dz_notF κ .xfer s (by simp) (by simp))
+  have hL4 : Function.update (Function.update L3 6 (FinTM.bufferTape s₁)) 9 (FinTM.bufferTape w) =
+      Function.update (Function.update L 6 (FinTM.bufferTape s₁)) 9 (FinTM.bufferTape w) := by
+    rw [hL3, Function.update_idem]
+  rw [hL4] at seg4
+  -- sb1: skip back over the stream
+  obtain ⟨L4, hL4'⟩ : ∃ L4 : Fin 14 → ℤ → Option Bool,
+      L4 = Function.update (Function.update L 6 (FinTM.bufferTape s₁)) 9 (FinTM.bufferTape w) :=
+    ⟨_, rfl⟩
+  rw [← hL4'] at seg4 ⊢
+  obtain ⟨r5, k5, -⟩ := skipBackTM_run_ofCfg (κ.tp 6) s₁
+    (qyC (x := z) SeekPhase.run 1 (dzLay L4 Bl) (dzLay P3 0) []) rfl (fun p hp1 hp2 => by
+      show dzLay L4 Bl (κ.tp 6) (dzLay P3 0 (κ.tp 6) - (s₁.length : ℤ) - 1 + p) = _
+      rw [dzLay_tp, dzLay_tp, hL4', Function.update_of_ne (by decide), Function.update_self,
+        hP3_6, ← hG]
+      congr 1
+      ring)
+  have hPend : Function.update P3 6 ((G : ℤ) + 1 - (s₁.length : ℤ) - 1) =
+      Function.update Pn 7 ((G : ℤ) + 1) := by
+    funext i
+    rw [hP3, hP2, hP1]
+    simp only [Function.update_apply]
+    split_ifs with h1 h2 h3 <;> first | rfl | (subst_vars; simp_all)
+  have e5 : (skipBackTM κ.K (κ.tp 6)).runFrom
+      (qyC (x := z) SeekPhase.run 1 (dzLay L4 Bl) (dzLay P3 0) []) (s₁.length + 3) =
+      qyC SeekPhase.done 1 (dzLay L4 Bl) (dzLay (Function.update Pn 7 ((G : ℤ) + 1)) 0) [] := by
+    rw [r5, ← hPend, ← dzLay_update κ]
+    dsimp only [qyC]
+    rw [dzLay_tp, hP3_6]
+  have seg5 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .sb1 .run .done
+    ⟨.exp, CounterLoopState.dec .run⟩ 1 1 _ _ _ _ [] [] _ e5 (by simp [dzQRed])
+    (qy_guard_of_cut SeekPhase.done (dzQRed κ .sb1) (fun s hs => by simp [dzQRed, hs]) k5)
+    (dzQF κ) (fun s => dz_notF κ .sb1 s (by simp) (by simp))
+  refine ⟨_, ?_, seg1.trans (seg2.trans (seg3.trans (seg4.trans seg5)))⟩
+  simp only [List.length_nil, List.length_replicate]
+  clear_value G
+  subst hG
+  omega
+
+/-- **The budget's test.** From the expansion phase over a layout with the stream `s₁` on the block
+tape and the budget word `w` (value `b`) on the budget tape, the expansion tape blank, these heads
+at `0`, the run expands `w` to `1^b` (top zeros included), rewinds it and compares it with `s₁`: it
+enters the normalization when `b ≤ |s₁|` and rejects otherwise.
+
+**Proof sketch.** Three hosted phases: `qy_expandHost` (counter `w`, worth `b`), `qy_rewind`, and
+`qy_cmp_run` on `1^b` and `s₁`, whose verdict `compare b |s₁|` is `gt` exactly when `|s₁| < b`. The
+expansion's overhead is at most `4b + 2|w| + 2` (`Turing.counterOverhead_le`). -/
+private theorem dz_test {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
+    (s₁ w : List Bool) (h6 : L 6 = FinTM.bufferTape s₁) (h9 : L 9 = FinTM.bufferTape w)
+    (h10 : L 10 = FinTM.bufferTape []) (hP6 : Pn 6 = 0) (hP9 : Pn 9 = 0) (hP10 : Pn 10 = 0) :
+    ∃ t ≤ 9 * Nat.ofDigits 2 (w.map Bool.toNat) + 2 * w.length + 12,
+      Segment (dzQ κ) (dzQF κ) (fun _ => True)
+        (qyC (x := z) ⟨.exp, CounterLoopState.dec .run⟩ 1 (dzLay L (FinTM.bufferTape []))
+          (dzLay Pn 0) [])
+        (qyC (if Nat.ofDigits 2 (w.map Bool.toNat) ≤ s₁.length then ⟨.lb, Sum.inl ()⟩
+            else dzRej κ) 1
+          (dzLay (Function.update (Function.update L 10
+            (FinTM.bufferTape (List.replicate (Nat.ofDigits 2 (w.map Bool.toNat)) true))) 9
+            (FinTM.bufferTape (List.replicate w.length true))) (FinTM.bufferTape [])) (dzLay Pn 0)
+          []) t := by
+  set Bl : ℤ → Option Bool := FinTM.bufferTape [] with hBl
+  set b := Nat.ofDigits 2 (w.map Bool.toNat) with hb
+  -- exp: `1^b` on the expansion tape
+  have c1 := qy_expandHost (x := z) (qyEmb2 (κ.tp 10) (κ.tp 9) (κ.tp_ne (by decide))) (κ.tp 10)
+    (κ.tp 9) rfl rfl 1 (dzLay L Bl) (dzLay Pn 0) [] [] w b hb.symm (by rw [dzLay_tp, h10])
+    (by rw [dzLay_tp, hP10]; rfl) (by rw [dzLay_tp, h9]) (by rw [dzLay_tp, hP9])
+  rw [dzLay_update, dzLay_update, dzLay_update, List.nil_append] at c1
+  obtain ⟨L1, hL1⟩ : ∃ L1 : Fin 14 → ℤ → Option Bool, L1 = Function.update (Function.update L 10
+      (FinTM.bufferTape (List.replicate b true))) 9
+      (FinTM.bufferTape (List.replicate w.length true)) := ⟨_, rfl⟩
+  rw [← hL1] at c1 ⊢
+  have seg1 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .exp (.dec .run) .done
+    ⟨.rwU, RewindPhase.start⟩ 1 1 _ _ _ _ [] [] _ c1.1 (by simp [dzQRed])
+    (qy_guard_of_cut CounterLoopState.done (dzQRed κ .exp) (fun s hs => by simp [dzQRed, hs]) c1.2)
+    (dzQF κ) (fun s => dz_notF κ .exp s (by simp) (by simp))
+  -- rwU: rewind it
+  have hL1_10 : L1 10 = FinTM.bufferTape (List.replicate b true) := by
+    rw [hL1, Function.update_of_ne (by decide), Function.update_self]
+  have c2 := qy_rewind (x := z) (κ.tp 10) 1 (dzLay L1 Bl)
+    (dzLay (Function.update Pn 10 ((([] : List Bool).length : ℤ) + b)) 0) []
+    (List.replicate b true) b (by simp) (by rw [dzLay_tp, hL1_10])
+    (by rw [dzLay_tp, Function.update_self]; simp)
+  have hPn : Function.update Pn (10 : Fin 14) 0 = Pn := Function.update_eq_self_iff.mpr hP10.symm
+  rw [dzLay_update, Function.update_idem, hPn] at c2
+  have seg2 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .rwU .start .done ⟨.cmp, QyCmp.scan⟩
+    1 1 _ _ _ _ [] [] _ c2.1 (by simp [dzQRed])
+    (qy_guard_of_cut RewindPhase.done (dzQRed κ .rwU) (fun s hs => by simp [dzQRed, hs]) c2.2)
+    (dzQF κ) (fun s => dz_notF κ .rwU s (by simp) (by simp))
+  -- cmp: compare `1^b` with the stream
+  have c3 := qy_cmp_run (x := z) (κ.tp 10) (κ.tp 6) (κ.tp_ne (by decide)) 1 (dzLay L1 Bl)
+    (dzLay Pn 0) [] (List.replicate b true) s₁ (by rw [dzLay_tp, hL1_10])
+    (by rw [dzLay_tp, hL1, Function.update_of_ne (by decide), Function.update_of_ne (by decide),
+      h6])
+    (by rw [dzLay_tp, hP10]) (by rw [dzLay_tp, hP6])
+  rw [List.length_replicate] at c3
+  have hred : dzQRed κ .cmp (QyCmp.done (compare b s₁.length)) =
+      some (if b ≤ s₁.length then ⟨.lb, Sum.inl ()⟩ else dzRej κ) := by
+    by_cases hbs : b ≤ s₁.length
+    · rw [if_pos hbs]
+      have : compare b s₁.length ≠ .gt := by
+        rw [Ne, compare_gt_iff_gt]
+        omega
+      simp [dzQRed, this]
+    · rw [if_neg hbs]
+      have : compare b s₁.length = .gt := by
+        rw [compare_gt_iff_gt]
+        omega
+      simp [dzQRed, this]
+  have seg3 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .cmp .scan
+    (QyCmp.done (compare b s₁.length)) _ 1 1 _ _ _ _ [] [] _ c3.1 hred
+    (fun u hu s hs => by
+      cases s with
+      | done v => exact absurd hs (c3.2 u hu v)
+      | _ => rfl)
+    (dzQF κ) (fun s => dz_notF κ .cmp s (by simp) (by simp))
+  refine ⟨_, ?_, seg1.trans (seg2.trans seg3)⟩
+  have hco := counterOverhead_le w
+  rw [← hb] at hco
+  have hmin : min b s₁.length ≤ b := min_le_left _ _
+  omega
+
+/-- **The normalization.** The install call of `y ↦ bits |y|` on the expansion tape's `1^b` leaves
+`bits b` there and enters the extractor's call, within `lcA (b + 1) + 1` steps.
+
+**Proof sketch.** The bank over the layout holds the seam of `1^b` (`dz_arg_bank`); the released
+call (`qy_callHost`) installs `bits |1^b| = bits b` on the expansion tape. -/
+private theorem dz_norm {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
+    (b : ℕ) (h10 : L 10 = FinTM.bufferTape (List.replicate b true)) (hP10 : Pn 10 = 0) :
+    ∃ t ≤ κ.lcA * (b + 1) + 1, Segment (dzQ κ) (dzQF κ) (fun _ => True)
+      (qyC (x := z) ⟨.lb, Sum.inl ()⟩ 1 (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [])
+      (qyC ⟨.al, Sum.inl ()⟩ 1 (dzLay (Function.update L 10 (FinTM.bufferTape (Nat.bits b)))
+        (FinTM.bufferTape [])) (dzLay Pn 0) []) t := by
+  obtain ⟨t, ht, hpos, hcut, hrun⟩ := κ.lcS z (List.replicate b true)
+  have c1 := qy_callHost κ.lc κ.lcK κ.bL κ.lcE κ.lcX (List.replicate b true) _ t hpos hcut hrun
+    (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []
+    (dz_arg_bank κ L 10 _ _ _ _ (by omega) κ.lcK _ h10)
+    (dz_zero_bank κ Pn 10 _ _ _ _ (by omega) hP10)
+  rw [show κ.bL ⟨0, κ.lcK⟩ = κ.tp 10 from rfl, dzLay_update] at c1
+  simp only [List.length_replicate] at c1
+  have seg := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .lb (Sum.inl ()) (Sum.inr κ.lcX)
+    ⟨.al, Sum.inl ()⟩ 1 1 _ _ _ _ [] [] t c1.1 (by simp [dzQRed])
+    (qy_guard_of_cut (Sum.inr κ.lcX) (dzQRed κ .lb) (fun s hs => by simp [dzQRed, hs]) c1.2)
+    (dzQF κ) (fun s => dz_notF κ .lb s (by simp) (by simp))
+  refine ⟨_, ?_, seg⟩
+  have ht' : t ≤ κ.lcA * ((List.replicate b true).length + 1) := ht
+  rw [List.length_replicate] at ht'
+  omega
+
 /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
 P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
 deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
