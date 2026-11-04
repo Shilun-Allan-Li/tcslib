@@ -399,11 +399,7 @@ theorem two_pow_codes_le (n : ℕ) :
   have hpow : 2 ^ m ≤ 2 * (n + 1) := by
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [m]
-    · have hm : m = n.size := Nat.size_eq_bits_len n
-      have hpos : 0 < m := by rw [hm]; exact Nat.size_pos.mpr hn
-      have : 2 ^ (m - 1) ≤ n := by rw [hm] at hpos ⊢; exact Nat.lt_size.mp (by omega)
-      calc 2 ^ m = 2 * 2 ^ (m - 1) := by rw [← pow_succ']; congr 1; omega
-        _ ≤ 2 * (n + 1) := by omega
+    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
   set e := codeK N * (c + 1)
   calc 2 ^ (codeK N * (c * (m + 1) + logSpace n + 1)) ≤ 2 ^ (e * (m + 2)) := by
         refine Nat.pow_le_pow_right (by norm_num) ?_

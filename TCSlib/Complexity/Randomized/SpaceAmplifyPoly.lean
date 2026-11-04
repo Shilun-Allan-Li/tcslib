@@ -241,14 +241,9 @@ theorem two_mul_pow_le {K n d : ℕ} (hK : 32 * (n + 1) ^ d ≤ K) :
 
 /-- `2^{|bits n|} ≤ 2n + 1`. -/
 theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
-  rw [Nat.size_eq_bits_len]
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp
-  · have hs : 0 < n.size := Nat.size_pos.mpr hn
-    have := Nat.lt_size.mp (show n.size - 1 < n.size by omega)
-    have e : 2 ^ n.size = 2 * 2 ^ (n.size - 1) := by
-      rw [← pow_succ']; congr 1; omega
-    omega
+  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
 
 /-- `n < 2^{|bits n|}`. -/
 theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
@@ -283,8 +278,7 @@ theorem bigK_le (F n : ℕ) : bigK F n ≤ 4 ^ F * (n + 1) ^ F := by
 /-- `ℓ ≤ n + 1`. -/
 theorem ell_le (n : ℕ) : ell n ≤ n + 1 := by
   have := lt_two_pow_bits n
-  have h : (Nat.bits n).length ≤ n := by
-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr (Nat.lt_two_pow_self)
+  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
   simp only [ell]; omega
 
 /-- The register bound is polynomial. -/

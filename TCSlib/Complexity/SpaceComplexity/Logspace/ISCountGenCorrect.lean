@@ -207,7 +207,7 @@ open Turing LogProg LogProg.ISCount LogProg.ISGen LogProg.SavitchARM
 /-- A number `m ≤ 2 ^ e + 1` has a binary expansion of at most `e + 2` digits after one
 increment. -/
 private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
-  rw [Nat.size_eq_bits_len, Nat.size_le]
+  apply length_bits_le
   have : 2 ^ e + 2 < 2 ^ (e + 2) := by
     rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
   omega

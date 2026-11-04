@@ -86,18 +86,12 @@ lemma logSpace_le_ell (m : ℕ) : logSpace m ≤ ell m := by
     omega
 
 /-- `2 ^ ℓ ≤ 2 (m + 1)`. -/
-lemma two_pow_ell_le (m : ℕ) : 2 ^ ell m ≤ 2 * (m + 1) := by
-  rw [ell_eq_size]
-  have hpos : 0 < Nat.size (m + 1) := Nat.size_pos.mpr (by omega)
-  have h : ¬ (m + 1 < 2 ^ (Nat.size (m + 1) - 1)) := fun h =>
-    absurd (Nat.size_le.mpr h) (by omega)
-  have e : 2 ^ Nat.size (m + 1) = 2 * 2 ^ (Nat.size (m + 1) - 1) := by
-    rw [← pow_succ']; congr 1; omega
-  omega
+lemma two_pow_ell_le (m : ℕ) : 2 ^ ell m ≤ 2 * (m + 1) :=
+  two_pow_bits_le (m + 1) (by omega)
 
 /-- `ℓ` is monotone. -/
-lemma ell_mono {m m' : ℕ} (h : m ≤ m') : ell m ≤ ell m' := by
-  rw [ell_eq_size, ell_eq_size]; exact Nat.size_le_size (by omega)
+lemma ell_mono {m m' : ℕ} (h : m ≤ m') : ell m ≤ ell m' :=
+  length_bits_mono (by omega)
 
 /-- The vertex count is monotone in the input length. -/
 lemma nV_mono (K c₀ : ℕ) {m m' : ℕ} (h : m ≤ m') : nV K c₀ m ≤ nV K c₀ m' := by
