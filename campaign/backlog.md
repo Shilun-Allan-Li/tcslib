@@ -4136,7 +4136,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   - the consumer probe transports `outerU_run` sealed.
 
   `replay-larm` is written (138 modules from `oleans-leqc3`, precheck passed). It overlaps #181's
-  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 staged.**
+  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 staged**
+  (`exchange/outbox/gates/90-arm-embed-api-gate/`, bundle `e253274f…`, 90 sections).
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
