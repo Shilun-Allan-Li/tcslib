@@ -1,0 +1,54 @@
+# duplication screen, 2026-11-04T22:22:14Z
+# pattern (git grep -E over TCSlib/*.lean): (def|structure|abbrev|theorem|lemma|class) +(\w+\.)*(StatClose|statClose|EpsClose|epsClose|IsExtractor|isExtractor\w*|IsStrongExtractor|isStrongExtractor\w*|seededSources|minEntropy|maxProb|shannonEntropy\w*|IsSource|isSource\w*|IsFlatSource|isFlatSource\w*|probTrue\w*|statDist_le_of_epsClose|abs_probTrue\w*|le_minEntropy_iff|flat|tvDist|totalVariation)\b
+== origin/main 06e61e912eedc2bce49b3ccff77bb9c4a7e18579
+== origin/cryptography/pass-shelat-ch2-4 0cd203344e9c97b8a1f55f31e8be3eec9eed748a
+TCSlib/Cryptography/Asymptotic/Sampling.lean:109:def StatClose {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) (δ : ℝ) : Prop :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:117:theorem StatClose.abs_uprob_sub_le {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:123:theorem StatClose.uprob_le_add {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ)
+TCSlib/Cryptography/Asymptotic/Sampling.lean:128:theorem StatClose.nonneg {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) : 0 ≤ δ :=
+TCSlib/Cryptography/Asymptotic/Sampling.lean:132:theorem StatClose.refl (X : σ → γ) : StatClose X X 0 := fun _ => by
+TCSlib/Cryptography/Asymptotic/Sampling.lean:136:theorem StatClose.symm {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:142:theorem StatClose.mono {X : σ → γ} {Y : τ → γ} {δ δ' : ℝ} (h : StatClose X Y δ) (hδ : δ ≤ δ') :
+TCSlib/Cryptography/Asymptotic/Sampling.lean:146:theorem StatClose.trans {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:153:theorem StatClose.map {σ τ γ γ' : Type*} [Fintype σ] [Fintype τ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:158:theorem StatClose.comp_equiv_left {σ' : Type*} [Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:164:theorem StatClose.comp_equiv_right {τ' : Type*} [Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:181:theorem StatClose.comp_pushesUniform {Ω : Type*} [Fintype Ω] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:208:theorem StatClose.abs_uprob_sub_le_prod {ρ : Type*} [Fintype ρ] {X : σ → γ} {Y : τ → γ} {δ : ℝ}
+TCSlib/Cryptography/Asymptotic/Sampling.lean:233:theorem StatClose.prod {σ σ' τ τ' γ γ' : Type*} [Fintype σ] [Fintype σ'] [Fintype τ] [Fintype τ']
+== origin/complexity/arora-barak-ch3-4 aa162208b7f8704fb9dd706c7e3db7b6c5f0ad17
+== origin/cryptography/garg-ch1-3 e946ed240f1e8e1a5cfb03b438ce268c622ec801
+== PR head 789cf450527ff6b8c779161e555f04093080b88d (the new declarations themselves)
+TCSlib/InformationTheory/Entropy.lean:70:noncomputable def shannonEntropy (p : FinDist α) : ℝ :=
+TCSlib/InformationTheory/Entropy.lean:74:theorem shannonEntropy_nonneg (p : FinDist α) : 0 ≤ shannonEntropy p :=
+TCSlib/InformationTheory/Entropy.lean:82:theorem shannonEntropy_uniform [Nonempty α] :
+TCSlib/InformationTheory/Entropy.lean:90:theorem shannonEntropy_uniform_bits (n : ℕ) :
+TCSlib/InformationTheory/Entropy.lean:98:noncomputable def maxProb (p : FinDist α) : ℝ :=
+TCSlib/InformationTheory/Entropy.lean:119:noncomputable def minEntropy (p : FinDist α) : ℝ :=
+TCSlib/InformationTheory/Entropy.lean:128:theorem le_minEntropy_iff (p : FinDist α) (k : ℝ) :
+TCSlib/InformationTheory/Entropy.lean:136:def IsSource (k : ℝ) (p : FinDist α) : Prop :=
+TCSlib/InformationTheory/Entropy.lean:141:theorem isSource_iff_hasMinEntropy {k : ℝ} {p : FinDist α} :
+TCSlib/InformationTheory/Entropy.lean:146:theorem IsSource.mono {k k' : ℝ} {p : FinDist α} (h : IsSource k p) (hk : k' ≤ k) :
+TCSlib/InformationTheory/Entropy.lean:155:def IsFlatSource [DecidableEq α] (k : ℕ) (p : FinDist α) : Prop :=
+TCSlib/InformationTheory/Entropy.lean:159:theorem IsFlatSource.isSource [DecidableEq α] {k : ℕ} {p : FinDist α} (h : IsFlatSource k p) :
+TCSlib/InformationTheory/Entropy.lean:169:noncomputable def flat [DecidableEq α] (s : Finset α) (hs : s.Nonempty) : FinDist α where
+TCSlib/InformationTheory/Entropy.lean:183:theorem isFlatSource_flat [DecidableEq α] {k : ℕ} (s : Finset α) (hs : #s = 2 ^ k) :
+TCSlib/InformationTheory/Entropy.lean:188:theorem isSource_uniform [Nonempty α] : IsSource (logb 2 (Fintype.card α)) (uniform α) := by
+TCSlib/InformationTheory/Extractors.lean:62:noncomputable def FinDist.probTrue (p : FinDist α) (D : α → Bool) : ℝ :=
+TCSlib/InformationTheory/Extractors.lean:68:def EpsClose (ε : ℝ) (p q : FinDist α) : Prop :=
+TCSlib/InformationTheory/Extractors.lean:72:theorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :
+TCSlib/InformationTheory/Extractors.lean:86:theorem abs_probTrue_sub_le_statDist (p q : FinDist α) (D : α → Bool) :
+TCSlib/InformationTheory/Extractors.lean:108:theorem statDist_le_of_epsClose {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p q) :
+TCSlib/InformationTheory/Extractors.lean:141:theorem EpsClose.symm {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p q) : EpsClose ε q p := by
+TCSlib/InformationTheory/Extractors.lean:146:theorem EpsClose.trans {ε δ : ℝ} {p q r : FinDist α} (h₁ : EpsClose ε p q)
+TCSlib/InformationTheory/Extractors.lean:159:def IsExtractor [DecidableEq β] [Nonempty β] (C : Set (FinDist α)) (ε : ℝ) (Ext : α → β) :
+TCSlib/InformationTheory/Extractors.lean:164:theorem IsExtractor.mono [DecidableEq β] [Nonempty β] {C C' : Set (FinDist α)} {ε : ℝ}
+TCSlib/InformationTheory/Extractors.lean:172:def IsStrongExtractor [DecidableEq S] [DecidableEq α] [DecidableEq β] [Nonempty S] [Nonempty β]
+TCSlib/InformationTheory/Extractors.lean:179:def seededSources [Nonempty S] (C : Set (FinDist α)) : Set (FinDist (S × α)) :=
+TCSlib/InformationTheory/Extractors.lean:185:theorem IsStrongExtractor.isExtractor_seeded [DecidableEq S] [DecidableEq α] [DecidableEq β]
+TCSlib/InformationTheory/Extractors.lean:200:theorem isStrongExtractor_of_isUniversal [DecidableEq S] [DecidableEq α] [DecidableEq β]
+== Mathlib at the pinned rev 029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e: files mentioning tvDist / totalVariation / statistical distance
+Mathlib/MeasureTheory/VectorMeasure/Decomposition/Lebesgue.lean
+Mathlib/MeasureTheory/VectorMeasure/Decomposition/Jordan.lean
+Mathlib/MeasureTheory/VectorMeasure/Decomposition/RadonNikodym.lean
+== conclusion: no copy of a new declaration; one parallel concept, TCSlib.Cryptography.StatClose (ch. 2-4 branch, sampler carrier)

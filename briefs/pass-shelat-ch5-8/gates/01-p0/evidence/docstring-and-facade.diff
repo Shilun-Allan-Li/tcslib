@@ -1,0 +1,139 @@
+diff --git a/TCSlib/Cryptography/SecretSharing/Defs.lean b/TCSlib/Cryptography/SecretSharing/Defs.lean
+index 783dc079..0beec863 100644
+--- a/TCSlib/Cryptography/SecretSharing/Defs.lean
++++ b/TCSlib/Cryptography/SecretSharing/Defs.lean
+@@ -44,6 +44,8 @@ finiteness-free and measure-theory-free, and it is what a scheme's proof natural
+ 
+ * [Sha79] A. Shamir, *How to share a secret*, Communications of the ACM 22(11), 1979.
+ * [Bei11] A. Beimel, *Secret-sharing schemes: a survey*, IWCC 2011, §1–2.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.1.1 (Definition 152.1, `(k, n)` secret sharing).
+ -/
+ 
+ namespace TCSlib.SecretSharing
+@@ -74,7 +76,13 @@ theorem AccessStructure.threshold_auth {k : ℕ} {A : Finset P} :
+ /-- The data of a secret sharing scheme: `share sec r i` is the share handed to party `i` when
+ the secret is `sec` and the dealer's coins are `r`, and `reconstruct A f` is the secret that the
+ set `A` computes from the share assignment `f`. Security is not part of the data; see
+-`Scheme.Correct` and `Scheme.PerfectPrivacy`. [Bei11, §1] -/
++`Scheme.Correct` and `Scheme.PerfectPrivacy`. [Bei11, §1]; the pair `(Share, Recon)` of
++[PS10, Def 152.1].
++
++**Deviation:** [PS10] asks `Share` and `Recon` to be probabilistic polynomial-time; efficiency is
++not modelled here, since the security notions are information-theoretic. [PS10]'s `Recon`
++receives `k` shares with their indices; here it receives a set of parties and a share assignment,
++and `LocalReconstruct` says it reads only the shares of that set. -/
+ structure Scheme (P Secret Share Rand : Type*) where
+   /-- The dealer's sharing map. -/
+   share : Secret → Rand → P → Share
+@@ -85,7 +93,8 @@ namespace Scheme
+ 
+ variable {Secret Share Rand : Type*} (S : Scheme P Secret Share Rand)
+ 
+-/-- Every authorized set recovers the secret, whatever the dealer's coins were. [Bei11, §1] -/
++/-- Every authorized set recovers the secret, whatever the dealer's coins were. [Bei11, §1]
++For the threshold structure this is [PS10, Def 152.1, item 2]: any `k` shares reconstruct. -/
+ def Correct (Γ : AccessStructure P) : Prop :=
+   ∀ A : Finset P, Γ.Auth A → ∀ (sec : Secret) (r : Rand), S.reconstruct A (S.share sec r) = sec
+ 
+@@ -99,7 +108,13 @@ def LocalReconstruct : Prop :=
+ bijection `e` of the randomness space such that sharing `sec'` with coins `e r` gives the
+ parties of `B` exactly the shares they would have received had the secret been `sec` with coins
+ `r`. With uniform coins this says the `B`-view is distributed independently of the secret.
+-[Bei11, §1], [Sha79, §2] -/
++[Bei11, §1], [Sha79, §2]
++
++For the threshold structure this gives [PS10, Def 152.1, item 3]: the shares of fewer than `k`
++parties have the same distribution for any two secrets, so they are statistically close at
++distance zero. **Deviation:** stated as a bijection of the coins rather than as closeness of
++distributions; this is the stronger, perfect form, and the one Shamir's scheme achieves
++(`card_view_eq` gives the counting consequence). -/
+ def PerfectPrivacy (Γ : AccessStructure P) : Prop :=
+   ∀ B : Finset P, ¬ Γ.Auth B → ∀ sec sec' : Secret,
+     ∃ e : Rand ≃ Rand, ∀ (r : Rand), ∀ i ∈ B, S.share sec' (e r) i = S.share sec r i
+diff --git a/TCSlib/Cryptography/SecretSharing/Shamir.lean b/TCSlib/Cryptography/SecretSharing/Shamir.lean
+index 74288535..42fc43f3 100644
+--- a/TCSlib/Cryptography/SecretSharing/Shamir.lean
++++ b/TCSlib/Cryptography/SecretSharing/Shamir.lean
+@@ -38,6 +38,8 @@ literally translation by a fixed polynomial.
+ 
+ * [Sha79] A. Shamir, *How to share a secret*, Communications of the ACM 22(11), 1979, §2–3.
+ * [Bei11] A. Beimel, *Secret-sharing schemes: a survey*, IWCC 2011, §2.1.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
++  §6.1.2–6.1.3 (Lemma 153.2, Fact 153.3, Protocol 154.4, Proposition 154.5).
+ -/
+ 
+ namespace TCSlib.Shamir
+@@ -83,7 +85,17 @@ theorem degree_poly_lt (hk : 0 < k) (sec : F) (q : degreeLT F (k - 1)) :
+   exact lt_of_le_of_lt degree_C_le (by exact_mod_cast hk)
+ 
+ /-- Shamir's scheme: share `sec` as the evaluations of a random degree-`< k` polynomial with
+-constant term `sec`, and reconstruct by Lagrange interpolation at `0`. [Sha79, §2] -/
++constant term `sec`, and reconstruct by Lagrange interpolation at `0`. [Sha79, §2],
++[PS10, Prot 154.4]; the interpolation step is [PS10, Lem 153.2] (Mathlib's
++`Lagrange.interpolate`).
++
++**Deviations from [PS10, Prot 154.4].** [PS10] works over `ℤ_p` for a prime `p > n` and gives
++shares only to the parties `1, …, n`; here the field is arbitrary and every nonzero element is a
++party. [PS10]'s `n`-party scheme is this one with the other parties' shares discarded, and its
++correctness and privacy claims, which concern sets of those parties, are special cases of
++`correct` and `perfectPrivacy`. [PS10] draws `n − 1` random coefficients and writes the
++polynomial up to `a_n tⁿ`, a typo: threshold `k` needs degree `k − 1` and the `k − 1` random
++coefficients that the coins `q` carry here. -/
+ noncomputable def scheme (k : ℕ) (F : Type*) [Field F] [DecidableEq F] :
+     Scheme (Party F) F F (degreeLT F (k - 1)) where
+   share sec q a := (poly sec q).eval (label a)
+@@ -100,7 +112,8 @@ theorem localReconstruct [DecidableEq F] : (scheme k F).LocalReconstruct := by
+   exact Lagrange.interpolate_eq_of_values_eq_on _ _ hfg
+ 
+ /-- **Correctness.** Any `k` (or more) parties reconstruct the secret exactly, whatever the
+-dealer's coins were. [Sha79, §2]
++dealer's coins were. [Sha79, §2]; the reconstruction half of [PS10, Prop 154.5], which [PS10]
++leaves as an exercise.
+ 
+ **Proof sketch.** The dealer's polynomial `p` has degree `< k ≤ #A`, and it agrees with the
+ shares on the `#A` distinct nodes of `A`, so by uniqueness of Lagrange interpolation it *is*
+@@ -118,7 +131,8 @@ theorem correct [DecidableEq F] (hk : 0 < k) :
+ 
+ /-- **Perfect privacy.** For any set `B` of at most `k - 1` parties and any two secrets there is
+ a bijection of the dealer's coins carrying one secret's `B`-view to the other's; so the shares
+-held by `B` carry no information whatsoever about the secret. [Sha79, §3]
++held by `B` carry no information whatsoever about the secret. [Sha79, §3]; the privacy half of
++[PS10, Prop 154.5], in its perfect form (see `Scheme.PerfectPrivacy`).
+ 
+ **Proof sketch.** Let `δ = sec - sec'`. Interpolate through the `#B ≤ k - 1` points
+ `(b, δ / b)` (legitimate: party labels are nonzero) to get `r` of degree `< #B ≤ k - 1`, and
+diff --git a/TCSlib/InformationTheory.lean b/TCSlib/InformationTheory.lean
+index 12437b49..737a9b19 100644
+--- a/TCSlib/InformationTheory.lean
++++ b/TCSlib/InformationTheory.lean
+@@ -6,11 +6,13 @@ import TCSlib.InformationTheory.FinDist
+ import TCSlib.InformationTheory.StatisticalDistance
+ import TCSlib.InformationTheory.UniversalHashing
+ import TCSlib.InformationTheory.LeftoverHash
++import TCSlib.InformationTheory.Entropy
++import TCSlib.InformationTheory.Extractors
+ 
+ /-!
+ # Information theory
+ 
+-Finite distributions, statistical distance, and randomness extraction.
++Finite distributions, statistical distance, entropy, and randomness extraction.
+ 
+ ## Contents
+ 
+@@ -19,10 +21,14 @@ Finite distributions, statistical distance, and randomness extraction.
+ * `TCSlib.InformationTheory.StatisticalDistance`: statistical distance and the `ℓ¹`–`ℓ²` bound.
+ * `TCSlib.InformationTheory.UniversalHashing`: universal hash families.
+ * `TCSlib.InformationTheory.LeftoverHash`: the leftover hash lemma.
++* `TCSlib.InformationTheory.Entropy`: Shannon entropy, min-entropy, `k`-sources and flat sources.
++* `TCSlib.InformationTheory.Extractors`: `ε`-closeness (equivalent to a statistical-distance
++  bound), deterministic and strong extractors, and the leftover hash lemma as an extractor.
+ 
+ ## References
+ 
+ * [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012.
+ * [HILL99] J. Håstad, R. Impagliazzo, L. Levin, M. Luby, *A pseudorandom generator from any
+   one-way function*, SICOMP 28(4), 1999.
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+ -/
