@@ -1,0 +1,190 @@
+/-
+The general `savitch`'s design probe: an abstract register machine embedded as a block of a
+larger one. A probe record, not library code (it unfolds `astep`, `arun`, `PreS` and `AHalt`
+freely; the landed lemmas would sit beside those definitions).
+-/
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+
+set_option autoImplicit false
+
+namespace Complexity.LogProg
+
+open Turing
+
+variable {m d m' d' : ℕ} {Λ Λ' : Type}
+
+/-- An instruction relabeled into a larger machine: registers along `ρ`, deciders along `σ`,
+labels along `ι`, and an answer `b` replaced by a jump to the exit `k b`. -/
+def Ins.embed (ρ : Fin m → Fin m') (σ : Fin d → Fin d') (ι : Λ → Λ') (k : Bool → Λ')
+    (r₀ : Fin m') : Ins m d Λ → Ins m' d' Λ'
+  | .inc r l => .inc (ρ r) (ι l)
+  | .dec r l => .dec (ρ r) (ι l)
+  | .clr r l => .clr (ρ r) (ι l)
+  | .half r l => .half (ρ r) (ι l)
+  | .jz r l₁ l₀ => .jz (ρ r) (ι l₁) (ι l₀)
+  | .jodd r l₁ l₀ => .jodd (ρ r) (ι l₁) (ι l₀)
+  | .jeq r s l₁ l₀ => .jeq (ρ r) (ρ s) (ι l₁) (ι l₀)
+  | .call j md args l₁ l₀ => .call (σ j) md (args.map ρ) (ι l₁) (ι l₀)
+  | .ret b => .jz r₀ (k b) (k b)
+  | .valP r l => .valP (ρ r) (ι l)
+  | .valQ r l => .valQ (ρ r) (ι l)
+  | .jeqIn r l₁ l₀ => .jeqIn (ρ r) (ι l₁) (ι l₀)
+  | .jeqFst r l₁ l₀ => .jeqFst (ρ r) (ι l₁) (ι l₀)
+  | .jeqSnd r l₁ l₀ => .jeqSnd (ρ r) (ι l₁) (ι l₀)
+
+/-- `v'` extends `v` along `ρ`, and agrees with `e` off `ρ`'s range. -/
+def Ext (ρ : Fin m → Fin m') (e : Fin m' → ℕ) (v : Fin m → ℕ) (v' : Fin m' → ℕ) : Prop :=
+  (∀ r, v' (ρ r) = v r) ∧ ∀ r', (∀ r, ρ r ≠ r') → v' r' = e r'
+
+lemma Ext.update {ρ : Fin m → Fin m'} (hρ : Function.Injective ρ) {e : Fin m' → ℕ}
+    {v : Fin m → ℕ} {v' : Fin m' → ℕ} (h : Ext ρ e v v') (r : Fin m) (n : ℕ) :
+    Ext ρ e (Function.update v r n) (Function.update v' (ρ r) n) := by
+  refine ⟨fun r₁ => ?_, fun r' hr' => ?_⟩
+  · by_cases h1 : r₁ = r
+    · subst h1; simp
+    · rw [Function.update_of_ne (hρ.ne h1), Function.update_of_ne h1, h.1]
+  · rw [Function.update_of_ne (fun h' => hr' r h'.symm), h.2 r' hr']
+
+/-- One step of the embedded block (a non-answering, non-validating instruction). -/
+lemma astep_embed {A : ARM m d Λ} {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'}
+    (hρ : Function.Injective ρ) {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    (oracle : Fin d' → List Bool → Bool) (x : List Bool) {e : Fin m' → ℕ}
+    {l : Λ} {v : Fin m → ℕ} {v' : Fin m' → ℕ} (hv : Ext ρ e v v')
+    (hA : ∀ r l', A l ≠ .valP r l' ∧ A l ≠ .valQ r l') :
+    (∃ l₂ v₂ v₂', astep A (oracle ∘ σ) x (some l, v, none) = (some l₂, v₂, none) ∧
+        astep D oracle x (some (ι l), v', none) = (some (ι l₂), v₂', none) ∧ Ext ρ e v₂ v₂') ∨
+      ∃ b, astep A (oracle ∘ σ) x (some l, v, none) = (none, v, some b) ∧
+        astep D oracle x (some (ι l), v', none) = (some (k b), v', none) := by
+  have hW : (fun r => Nat.bits (v r)) = (fun r' => Nat.bits (v' r')) ∘ ρ := by
+    funext r; simp [hv.1 r]
+  cases hAl : A l with
+  | inc r l₁ => exact Or.inl ⟨l₁, _, _, by simp [astep, hAl], by simp [astep, hD, hAl,
+      Ins.embed, hv.1], hv.update hρ r (v r + 1)⟩
+  | dec r l₁ => exact Or.inl ⟨l₁, _, _, by simp [astep, hAl], by simp [astep, hD, hAl,
+      Ins.embed, hv.1], hv.update hρ r (v r - 1)⟩
+  | clr r l₁ => exact Or.inl ⟨l₁, _, _, by simp [astep, hAl], by simp [astep, hD, hAl,
+      Ins.embed], hv.update hρ r 0⟩
+  | half r l₁ => exact Or.inl ⟨l₁, _, _, by simp [astep, hAl], by simp [astep, hD, hAl,
+      Ins.embed, hv.1], hv.update hρ r (v r / 2)⟩
+  | jz r l₁ l₀ =>
+    refine Or.inl ⟨if v r = 0 then l₁ else l₀, v, v', by simp [astep, hAl], ?_, hv⟩
+    simp only [astep, hD, hAl, Ins.embed, hv.1]; split_ifs <;> rfl
+  | jodd r l₁ l₀ =>
+    refine Or.inl ⟨if v r % 2 = 1 then l₁ else l₀, v, v', by simp [astep, hAl], ?_, hv⟩
+    simp only [astep, hD, hAl, Ins.embed, hv.1]; split_ifs <;> rfl
+  | jeq r s l₁ l₀ =>
+    refine Or.inl ⟨if v r = v s then l₁ else l₀, v, v', by simp [astep, hAl], ?_, hv⟩
+    simp only [astep, hD, hAl, Ins.embed, hv.1]; split_ifs <;> rfl
+  | call j md args l₁ l₀ =>
+    refine Or.inl ⟨if oracle (σ j) (vword (callSegs ⟨j, md, args, l₁, l₀⟩ x
+      (fun r => Nat.bits (v r)))) then l₁ else l₀, v, v', by simp [astep, hAl], ?_, hv⟩
+    have hseg : callSegs (⟨σ j, md, args.map ρ, ι l₁, ι l₀⟩ : CallSpec m' d' Λ') x
+        (fun r' => Nat.bits (v' r')) = callSegs ⟨j, md, args, l₁, l₀⟩ x
+        (fun r => Nat.bits (v r)) := by
+      simp only [callSegs, List.map_map, hW]
+    simp only [astep, hD, hAl, Ins.embed, hseg]; split_ifs <;> rfl
+  | ret b => exact Or.inr ⟨b, by simp [astep, hAl], by simp [astep, hD, hAl, Ins.embed]⟩
+  | valP r l₁ => exact absurd hAl (hA r l₁).1
+  | valQ r l₁ => exact absurd hAl (hA r l₁).2
+  | jeqIn r l₁ l₀ =>
+    refine Or.inl ⟨if Nat.bits (v r) = plainWord x then l₁ else l₀, v, v',
+      by simp [astep, hAl], ?_, hv⟩
+    simp only [astep, hD, hAl, Ins.embed, hv.1]; split_ifs <;> rfl
+  | jeqFst r l₁ l₀ =>
+    refine Or.inl ⟨if Nat.bits (v r) = (pairWords x).1 then l₁ else l₀, v, v',
+      by simp [astep, hAl], ?_, hv⟩
+    simp only [astep, hD, hAl, Ins.embed, hv.1]; split_ifs <;> rfl
+  | jeqSnd r l₁ l₀ =>
+    refine Or.inl ⟨if Nat.bits (v r) = (pairWords x).2 then l₁ else l₀, v, v',
+      by simp [astep, hAl], ?_, hv⟩
+    simp only [astep, hD, hAl, Ins.embed, hv.1]; split_ifs <;> rfl
+
+/-- A halted configuration stays put. -/
+lemma arun_none (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+    (v : Fin m → ℕ) (r : Option Bool) (T : ℕ) : arun A oracle x (none, v, r) T = (none, v, r) := by
+  induction T with
+  | zero => rfl
+  | succ T ih => rw [arun, Function.iterate_succ_apply', ← arun, ih]; rfl
+
+/-- The syntactic preconditions transfer to the embedded block. -/
+lemma preS_embed {A : ARM m d Λ} {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'}
+    (hρ : Function.Injective ρ) {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀) {x : List Bool} {l : Λ} {v : Fin m → ℕ}
+    {v' : Fin m' → ℕ} (h : PreS A x (some l, v, none)) : PreS D x (some (ι l), v', none) := by
+  simp only [PreS, hD] at h ⊢
+  cases hAl : A l <;> simp only [hAl, Ins.embed] at h ⊢
+  all_goals first | exact h | exact hρ.ne h | exact h.map hρ
+
+/-- **The embedding of a halting run**: a run of `A` (deciders read through `σ`) answering `b`
+from `l` becomes a run of `D` from `ι l` to the exit `k b`, through registers extending `A`'s
+and fixed off `ρ`'s range. -/
+theorem AHalt.embed {A : ARM m d Λ} {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'}
+    (hρ : Function.Injective ρ) {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    (hA : ∀ l r l', A l ≠ .valP r l' ∧ A l ≠ .valQ r l')
+    {oracle : Fin d' → List Bool → Bool} {x : List Bool} {B B' : ℕ} (hBB : B ≤ B')
+    {e : Fin m' → ℕ} (he : ∀ r', e r' ≤ B') {l : Λ} {v : Fin m → ℕ} {b : Bool}
+    (h : AHalt A (oracle ∘ σ) x (GuardLe A x B) (some l, v, none) b)
+    {v' : Fin m' → ℕ} (hv : Ext ρ e v v') :
+    ∃ v₂', (∀ r', (∀ r, ρ r ≠ r') → v₂' r' = e r') ∧ (∀ r, v₂' (ρ r) ≤ B) ∧
+      AReach D oracle x (GuardLe D x B') (some (ι l), v', none) (some (k b), v₂', none) := by
+  obtain ⟨T, hT1, hT2, hT3⟩ := h
+  induction T generalizing l v v' with
+  | zero => simp [arun] at hT1
+  | succ T ih =>
+    have hG := hT3 0 (Nat.succ_pos _)
+    simp only [arun, Function.iterate_zero, id] at hG
+    have hG' : GuardLe D x B' (some (ι l), v', none) := by
+      refine ⟨preS_embed hρ hD hG.1, fun r' => ?_⟩
+      have hGr : ∀ r, v r ≤ B := hG.2
+      show v' r' ≤ B'
+      by_cases hr : ∃ r, ρ r = r'
+      · obtain ⟨r, rfl⟩ := hr; rw [hv.1]; exact (hGr r).trans hBB
+      · push_neg at hr; rw [hv.2 r' hr]; exact he r'
+    rcases astep_embed hρ hD oracle x hv (hA l) with
+      ⟨l₂, v₂, v₂', hA1, hD1, hv₂⟩ | ⟨b', hA1, hD1⟩
+    · have hT1' : (arun A (oracle ∘ σ) x (some l₂, v₂, none) T).1 = none := by
+        rw [← hA1]; simpa [arun, Function.iterate_succ_apply] using hT1
+      have hT2' : (arun A (oracle ∘ σ) x (some l₂, v₂, none) T).2.2 = some b := by
+        rw [← hA1]; simpa [arun, Function.iterate_succ_apply] using hT2
+      have hT3' : ∀ t < T, GuardLe A x B (arun A (oracle ∘ σ) x (some l₂, v₂, none) t) := by
+        intro t ht; rw [← hA1]
+        simpa [arun, Function.iterate_succ_apply] using hT3 (t + 1) (by omega)
+      obtain ⟨v₃', h1, h2, h3⟩ := ih hv₂ hT1' hT2' hT3'
+      exact ⟨v₃', h1, h2, AReach.step hG' (hD1 ▸ h3)⟩
+    · -- `A` answers `b'` in one step, so `T = 0` and `b' = b`
+      have hrest : arun A (oracle ∘ σ) x (some l, v, none) (T + 1) = (none, v, some b') := by
+        rw [arun, Function.iterate_succ_apply]
+        change arun A (oracle ∘ σ) x (astep A (oracle ∘ σ) x (some l, v, none)) T = _
+        rw [hA1]; exact arun_none _ _ _ _ _ _
+      rw [hrest] at hT2
+      obtain rfl : b' = b := by simpa using hT2
+      exact ⟨v', hv.2, fun r => (hv.1 r).symm ▸ hG.2 r, AReach.step hG' (hD1 ▸ AReach.refl _)⟩
+
+/-! ## Fit: the outer search of `SavitchARM.A E`, embedded -/
+
+namespace SavitchARM
+
+/-- A toy host: the Savitch machine's labels plus one answer label. -/
+def toyD (E : ℕ) : ARM 19 5 (Lb E ⊕ Unit)
+  | .inl l => (A E l).embed Fin.castSucc (fun j => if j = 2 then 4 else j.castSucc) Sum.inl
+      (fun _ => .inr ()) 0
+  | .inr () => .ret true
+
+example (E : ℕ) (hnv : ∀ l r l', A E l ≠ .valP r l' ∧ A E l ≠ .valQ r l')
+    (oracle : Fin 5 → List Bool → Bool) (x : List Bool) (s w : ℕ) (hsw : s ≤ w)
+    (e : Fin 19 → ℕ) (he : ∀ r', e r' ≤ 2 ^ (w * w)) (v' : Fin 19 → ℕ)
+    (hv : Ext Fin.castSucc e (outerSt s w 0 0 0).toV v') :
+    ∃ v₂', (∀ r', (∀ r, Fin.castSucc r ≠ r') → v₂' r' = e r') ∧
+      (∀ r, v₂' (Fin.castSucc r) ≤ 2 ^ (w * w)) ∧
+      AReach (toyD E) oracle x (GuardLe (toyD E) x (2 ^ (w * w))) (some (.inl .OU), v', none)
+        (some (.inr ()), v₂', none) :=
+  AHalt.embed (D := toyD E) (ι := Sum.inl) (k := fun _ => .inr ()) (r₀ := 0)
+    (σ := fun j => if j = 2 then 4 else j.castSucc) (oracle := oracle) (x := x)
+    (Fin.castSucc_injective _) (fun _ => rfl) hnv le_rfl he
+    (outerU_run (E := E) hsw (2 ^ w) 0 0 (by omega) (Nat.zero_le _)) hv
+
+end SavitchARM
+
+end Complexity.LogProg

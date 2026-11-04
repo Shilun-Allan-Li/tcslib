@@ -1,0 +1,33 @@
+## hunks (base lines a1-a2 -> head lines b1-b2)
+insert: base 8-7 (0 lines) -> head 8-9 (2 lines)
+   + import TCSlib.Complexity.TuringMachine.Build.NDHost
+   + import TCSlib.Complexity.TuringMachine.Build.StepBlock
+replace: base 20-22 (3 lines) -> head 22-22 (1 lines)
+   - over these codes. The statement was gated with phase P3.3's statements and lived in that module. It
+   - moved here unchanged (user, 2026-10-17; C1's fill plan, `audits/evidence/c1/C1-fill-plan.md`), so
+   - that its fill can run beside the universal machine's in `NTimeHierarchy`.
+   + over these codes. This module isolates the normal-form statement and its supporting construction.
+replace: base 30-31 (2 lines) -> head 30-31 (2 lines)
+   - * `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form (sorried;
+   -   phase P3.3).
+   + * `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form
+   +   (statement; proof incomplete).
+insert: base 45-44 (0 lines) -> head 45-708 (664 lines)
+replace: base 46-46 (1 lines) -> head 710-710 (1 lines)
+   - cited through [AB09, §3.2]; spec, fill pending — phase P3.3): every
+   + cited through [AB09, §3.2]; statement; proof incomplete): every
+replace: base 66-66 (1 lines) -> head 730-730 (1 lines)
+   - guess and the input sweep remain (round-1 finding 6).
+   + guess and the input sweep remain.
+## added lines: 671; widest (characters): 99
+added lines over 100 characters: []
+whole-file lines over 100 characters, base: 0 ; head: 0
+## added code lines (comments and docstrings stripped): 521
+  simp_all: 1 lines [580]
+  decide: 14 lines [101, 205, 218, 242, 311, 413, 430, 439, 605, 622, 636, 657, 671, 685]
+  rfl: 17 lines [63, 77, 112, 168, 173, 235, 297, 385, 392, 503, 520, 564, 674, 675, 680, 687, 707]
+  show: 19 lines [119, 124, 168, 173, 187, 188, 192, 193, 224, 225, 278, 281, 294, 341, 478, 483, 519, 574, 612]
+  omega: 69 lines [56, 97, 118, 119, 120, 123, 124, 150, 162, 167, 168, 181, 182, 185, 186, 187, 188, 190, 191, 192, 193, 201, 202, 220, 221, 224, 226, 236, 240, 253, 269, 271, 276, 279, 281, 283, 292, 295, 314, 323, 325, 329, 332, 333, 336, 349, 375, 376, 389, 413, 421, 466, 476, 478, 481, 483, 487, 488, 501, 504, 509, 512, 518, 520, 612, 656, 666, 677, 683]
+  def: 9 lines [94, 100, 157, 198, 373, 405, 416, 424, 429]
+unrestricted simp/simpa: [(137, '| nil => simp [nf_ctlStop]'), (145, "simp [nf_ctlStop, hz']"), (153, "simp [nf_ctlStop, hn']")]
+consecutive blank added lines at head lines: [91, 540, 584, 626]

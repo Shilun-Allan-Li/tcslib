@@ -709,7 +709,9 @@ Two inline steps and one declaration; the one-fifth rule is not in question. **A
 2026-10-27; gate 86's finding 1)** as debt, the new inline step included. **Disposition:** the
 user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic` beside
 `logSpace_eq` (a mechanical edit in `ARMWidth`, FYI to its author), and re-point the two inline
-steps to it.
+steps to it. **Brought forward (user, 2026-11-04): PR #181** (gate 89) does exactly that, and also
+moves `logSpace_le_of_le_mul_two_pow` to `Basic` and `LOGSPACE_subset_PSPACE` and
+`SPACE_succ_pow_subset_PSPACE` to `SpaceClasses`. **LS-1 is retired when #181 merges.**
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
@@ -751,6 +753,29 @@ second consumer appears, or in the dedup window.
 **QF-1, two in-file factorings** (PR #176; the review's F6). The `copyMapTM`/`transferMapTM`
 endpoint conversion and the `clockCfg` field conversion recur in `NTimeDiagonalizer` (pairs at
 90–94%, justified as readings of different rows). Optional. **Disposition:** the dedup window.
+
+**RC-2, a framed take-one-cell row** (E-D's brief, 2026-11-04; its review's F1, ruled by the user).
+No published row writes a blank at one cell, and every framed row needs blanks at its word's
+relative positions `-1` and `|w|`, so a word inside a nonblank block cannot be split off by
+published rows. E-D's own leaf `dzTakeTM` (read the cell, blank it, step right) fills the gap,
+privately. Not a copy. **Disposition:** promotion to a public framed row when a second consumer
+appears, or in the dedup window.
+
+**AS-1, machine-specific step lemmas beside the general ones** (#182, gate 90, 2026-11-04). #182
+publishes one step equation per instruction (`Complexity.LogProg.astep_inc` … `astep_jeqSnd`,
+`Machines/ARM`). Three older lemmas state a step of one particular machine at one label:
+`LogProg.astep_call₁` (`UnaryLogspace`: `astep_call` with `vword_unary₁`), and
+`BoolCircuit.AdjScan.astep_hit` and `astep_jeqFst` (`CircuitComplexity/LogspaceUniformScan`). They
+are specializations, not copies; the copy-text screen pairs none of them. The last shares its short
+name with the general `astep_jeqFst`, and resolves by argument type in its own file, which opens
+`Complexity.LogProg`. **Disposition:** in the dedup window (mechanical ARM edits, FYI), re-prove the
+three through the general equations, and rename the circuit one if the shared name is unwanted.
+
+**NF-X1, an idiom exclusion** (NF's partial delivery, review F6; ruled by the user, 2026-11-04).
+`NTimeHierarchy.lean::un_setup` reproduces 57% of `NDNormalForm.lean::nf_setup`. The shared text
+is three invocations of the published initial-configuration field equations
+(`MultiTapeTM.initCfg_eq`, `Cfg.init_state`, `Cfg.init_workTapes`): the idiom of reading the
+initial configuration, not a re-derived composite. **Disposition:** excluded; not counted.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

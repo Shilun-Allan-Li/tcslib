@@ -1,0 +1,18 @@
+## head tree (base + owned file)
+TCSlib/Complexity/ClassNP/NDNormalForm: upstream 26 TCSlib modules; downstream 3: ['TCSlib/Complexity/ClassNP', 'TCSlib/Complexity/Diagonalization', 'TCSlib/Complexity/Diagonalization/NTimeHierarchy']
+  TCSlib/Complexity/ClassNP/PClosure: in upstream False; in downstream False
+  TCSlib/Complexity/ClassNP/TMSAT: in upstream False; in downstream False
+  TCSlib/Complexity/Diagonalization/NTimeDiagonalizer: in upstream False; in downstream False
+
+## tip tree (ccee2258) with the owned file at the base blob (imports unchanged by the head except +NDHost +StepBlock)
+TCSlib/Complexity/ClassNP/NDNormalForm: upstream 16 TCSlib modules; downstream 3: ['TCSlib/Complexity/ClassNP', 'TCSlib/Complexity/Diagonalization', 'TCSlib/Complexity/Diagonalization/NTimeHierarchy']
+  TCSlib/Complexity/ClassNP/PClosure: in upstream False; in downstream False
+  TCSlib/Complexity/ClassNP/TMSAT: in upstream False; in downstream False
+  TCSlib/Complexity/Diagonalization/NTimeDiagonalizer: in upstream False; in downstream False
+
+## imports among the replay set (tip tree)
+  TCSlib/Complexity/ClassNP/NDNormalForm -> []
+  TCSlib/Complexity/Diagonalization/NTimeHierarchy -> ['TCSlib/Complexity/ClassNP/NDNormalForm']
+  TCSlib/Complexity/ClassNP -> ['TCSlib/Complexity/ClassNP/NDNormalForm']
+  TCSlib/Complexity/Diagonalization -> ['TCSlib/Complexity/Diagonalization/NTimeHierarchy']
+topological replay order: ['TCSlib/Complexity/ClassNP/NDNormalForm', 'TCSlib/Complexity/Diagonalization/NTimeHierarchy', 'TCSlib/Complexity/ClassNP', 'TCSlib/Complexity/Diagonalization']

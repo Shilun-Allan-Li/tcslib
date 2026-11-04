@@ -1971,6 +1971,31 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     WARN). **NF issued (2026-11-04; Codex):** `campaign/fills/c1/briefs/c1-fill-nf.md`; its issue
     commit `951251f6` is the brief's `@ANCESTOR@`; in flight #176 and #177. **Dispatched (user,
     2026-11-04).**
+    **Delivered (partial, checkpoints 1–2 of 8):** `fill-c1-nf.zip` (SHA-256 `1558c81e…58ca`,
+    archived in `exchange/archive/deliveries/`), branch `refs/deliv/c1-nf` at `4af97d46`. It has two
+    commits, 39 privates and no new admission. Intake was clean: 188/188 sums, the bundle on
+    `951251f6`, and patches and source equal. **Reviewed** (`campaign/fills/c1/reviews/nf-fill/`, a
+    sub-agent, 2026-11-04):
+    - **verdict:** land the partial with edits, 0 blockers, 0 majors, 3 minors, 6 notes;
+    - **E1–E3:** docstrings only, tested; the landed file is `land/NDNormalForm.lean.txt`, blob
+      `e6432b1e`;
+    - **F3**, forward-looking: named `DecidableEq` instances for the sweep state;
+    - **F6:** the `un_setup` idiom pair;
+    - **continuation must-pins:** MP1–MP11;
+    - **replay:** 4 modules from the merged tree's snapshot.
+
+    **Ruled (user, 2026-11-04):**
+    - the partial travels with its continuation; nothing lands until the target is proved;
+    - E1–E3 go on the partial branch now;
+    - one continuation for checkpoints 3–8, **Claude**;
+    - the `un_setup` idiom pair is accepted, with a ledger exclusion;
+    - H does not wait for NF; NF's final landing re-takes H's overlap.
+
+    **`lean/c1-nf-partial`** (pushed, no PR) at `5241eb82`. It holds the two worker commits with
+    reworded subjects (`7791e6fc`, `252dea65`, trees equal to the delivery), E1–E3 (`969d221d`, the
+    review's landed file, blob `e6432b1e`), and a merge of the campaign at `cd9f1d92`. Only
+    `NDNormalForm` differs from the campaign. It elaborates against `oleans-leqc3` with exactly the
+    target's sorry. Next: NF cont1's brief, based on that commit.
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -4112,3 +4137,34 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 * **`polyTimeReducible_iff` in `ClassNP/Reductions`** (gate 88 round 2, note 7): `PolyTimeReducible` has
   no `_iff` or witness lemma, so a rule-10 consumer holding `L ≤ₚ L'` cannot unpack it sealed. Publish
   it with the next API PR that touches `Reductions`, before such a consumer exists.
+
+* **E-D issued (2026-11-04):** `campaign/fills/eq/briefs/eq-fill-diagonalizer.md` at the issue commit
+  `c8b0711408c02a2c7e254663511ecdb65516ae88` (the campaign tip after #176, Lean `711f5444`), Claude. The
+  dispatch copy `exchange/outbox/fills/eq-fill-diagonalizer.md` (SHA-256
+  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2).
+* **The general `savitch`: the deepening design** (`campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md`,
+  2026-11-04; probes `probes/`): Hydroxyi's search needs no restating. A generic embedding
+  theorem (`AHalt.embed`, proved in the probe) transports any halting run of `A` into a larger
+  machine containing `A`'s table, so the deepening machine holds `A E` twice (accept and edge
+  deciders). Rule 10 places it beside `astep`/`PreS`/`AHalt`: an additive API in `Machines/ARM`
+  (14 step equations), `Machines/ARMProof` (`Ins.embed`, `preS_of_ins`, `preS_embed`,
+  `astep_embed`, `AHalt.embed`) and `SavitchARM/Machine` (`A_noVal`), about 250 lines; then a
+  fill (the edge language, window exactness, the machine, the assembly; 1.5–2.8k). **Ruled (user,
+  2026-11-04):** the embedding API; the edge decider's home decided at the fill's pre-ship.
+  **PR #182** (`lean/arm-embed`, head `8fd6f91a`; commit `024e19bf`): 25 public declarations, about
+  330 added lines in five of Hydroxyi's files (`Machines/ARM`, `Program`, `ARMProof`, `ARMLoops`,
+  `SavitchARM/Machine`), nothing removed. Checks:
+  - rule 10 sealed: 4 copies, 16 controls; the first run caught `RegExt`'s projections, so it is
+    now a structure;
+  - axioms standard; lint the base's;
+  - the screen finds no new pair; AS-1 is ledgered;
+  - the consumer probe transports `outerU_run` sealed.
+
+  `replay-larm` is written (138 modules from `oleans-leqc3`, precheck passed). It overlaps #181's
+  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 dispatched**
+  (user, 2026-11-04; `exchange/archive/gates/90-arm-embed-api-gate/`, bundle `e253274f…`, 90
+  sections); `replay-larm` running.
+* **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
+  **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
+  merges, with its pre-ship re-taken (its screen population includes three of #181's files).
+

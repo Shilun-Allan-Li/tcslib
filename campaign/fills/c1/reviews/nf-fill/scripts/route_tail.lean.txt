@@ -1,0 +1,38 @@
+
+/-! ## Review route-shape checks (appended by the reviewer; not part of the module) -/
+
+-- R1: the host over sweep 0 alone as the verifier, at the default instance limits (expected to
+-- fail: `DecidableEq (ScanPhase (nf_SweepState N))` is not synthesized at `synthInstance.maxSize` 128)
+example (N : FinNDTM Bool) (P : MultiTapeTM 2 Bool Unit) (qe acc rej : ScanPhase (nf_SweepState N)) :
+    NDTM 2 Bool (Σ i, GuessRunPhase.CtlState Unit (ScanPhase (nf_SweepState N))
+      (Fin (2 * N.k + 4) × Bool) i) :=
+  guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k) false
+    (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)) qe acc rej
+
+-- R2: the same with one named instance for the sweep state
+section
+local instance nfReviewDecEq (N : FinNDTM Bool) : DecidableEq (nf_SweepState N) := inferInstance
+local instance nfReviewFintype (N : FinNDTM Bool) : Fintype (nf_SweepState N) := inferInstance
+
+example (N : FinNDTM Bool) (P : MultiTapeTM 2 Bool Unit) (qe acc rej : ScanPhase (nf_SweepState N)) :
+    NDTM 2 Bool (Σ i, GuessRunPhase.CtlState Unit (ScanPhase (nf_SweepState N))
+      (Fin (2 * N.k + 4) × Bool) i) :=
+  guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k) false
+    (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)) qe acc rej
+
+-- R3: and the packaging applies to that host (its state type is finite by the published instances)
+example (N : FinNDTM Bool) (P : MultiTapeTM 2 Bool Unit) (qe acc rej : ScanPhase (nf_SweepState N)) :
+    ∃ M : CodeNDTM, ∀ (x : List Bool) (t : ℕ), M.toFinNDTM.AcceptsWithin x t ↔
+      ∃ w : List Bool, w.length = t ∧
+        ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k)
+          false (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)) qe acc rej).runWith
+            w ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k)
+              (nf_ctlStop N.k) false (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep
+                (nf_sweepInit N)) qe acc rej).initCfg x)).state = none ∧
+        ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k)
+          false (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)) qe acc rej).runWith
+            w ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k)
+              (nf_ctlStop N.k) false (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep
+                (nf_sweepInit N)) qe acc rej).initCfg x)).output = [true] :=
+  nf_pack _
+end

@@ -1,0 +1,41 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! Review probe (NF partial): `exact?` on generic forms of the new privates' content, stated
+without the owned file's definitions, to test whether a published lemma states them. -/
+
+set_option maxHeartbeats 400000
+
+open Turing
+
+-- E1: sweep 0 from the stream start (generic fold; the content of `nf_sweep_run`)
+example {A : Type} (δ : A → Bool → A) (a₀ : A) (x s : List Bool) :
+    (scanTM 2 0 (scanFold δ) scanKeep a₀).runFrom (streamStartCfg x 0 (ScanPhase.fwd a₀) s)
+        (2 * s.length + 2) = streamStartCfg x 0 (ScanPhase.done (s.foldl δ a₀)) s := by
+  exact?
+
+-- E2: one step on a choice prefix (the inline `hnext` of `nf_sweep_control_prefix`)
+example {k : ℕ} {S : Type} {x : List Bool} (M : NDTM k Bool S) (w : List Bool) (c : Cfg k Bool S x)
+    (n : ℕ) (h : n < w.length) :
+    M.runWith (w.take (n + 1)) c = M.stepWith w[n] (M.runWith (w.take n) c) := by
+  exact?
+
+-- E3: a fold over concatenated blocks (the content of `nf_sweep_records`)
+example {α β γ : Type} (f : α → List β) (g : γ → β → γ) (l : List α) (a : γ) :
+    (l.flatMap f).foldl g a = l.foldl (fun b r => (f r).foldl g b) a := by
+  exact?
+
+-- E4: a choice-word display's packaging (the content of `nf_pack`, generic finite state)
+example {S : Type} [Fintype S] (H : NDTM 2 Bool S) :
+    ∃ M : CodeNDTM, ∀ (x : List Bool) (t : ℕ), M.toFinNDTM.AcceptsWithin x t ↔
+      ∃ w : List Bool, w.length = t ∧ (H.runWith w (H.initCfg x)).state = none ∧
+        (H.runWith w (H.initCfg x)).output = [true] := by
+  exact?
+
+-- E5: a controller fold's first stop decomposes into records (generic in the width)
+example (W : ℕ) (hW : 0 < W) (s : List Bool) (stop : Fin W × Bool → Bool)
+    (δ : Fin W × Bool → Bool → Fin W × Bool) (q₀ : Fin W × Bool)
+    (hstop : stop (s.foldl δ q₀) = true) : W ∣ s.length := by
+  exact?

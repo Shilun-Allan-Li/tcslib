@@ -1,0 +1,27 @@
+
+open NFAudit in
+/-- Local constants using a given constant directly, and imported TCSlib theorems among the
+direct externals whose statements mention it. -/
+elab "#nf_users " id:ident : command => do
+  let env ← getEnv
+  let n := id.getId
+  let mut out : Array String := #[]
+  for (c, ci) in env.constants.map₂.toList do
+    if ci.getUsedConstantsAsSet.contains n then out := out.push s!"{pub c}"
+  out := out.qsort (· < ·)
+  logInfo m!"USERS of {n} ({out.size}): {out}"
+
+open NFAudit in
+/-- Direct TCSlib theorems of the new code whose statement mentions a given constant. -/
+elab "#nf_stmt_mentions " id:ident : command => do
+  let env ← getEnv
+  let n := id.getId
+  let mut ext : NameSet := {}
+  for (_, ci) in env.constants.map₂.toList do
+    for d in ci.getUsedConstantsAsSet.toList do
+      if isTCSlib env d then ext := ext.insert d
+  let mut out : Array String := #[]
+  for d in ext.toList do
+    if (typeConsts env d).contains n then out := out.push s!"{d}"
+  out := out.qsort (· < ·)
+  logInfo m!"DIRECT TCSlib constants whose type mentions {n} ({out.size}): {out}"

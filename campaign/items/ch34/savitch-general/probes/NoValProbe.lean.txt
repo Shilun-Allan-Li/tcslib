@@ -1,0 +1,18 @@
+/-
+The general `savitch`'s design probe: the Savitch machine has no input-validation instruction
+(the embedding's hypothesis). A probe record; it unfolds `A` as `Machine.lean` itself may.
+-/
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Machine
+
+namespace Complexity.LogProg.SavitchARM
+
+theorem A_noVal (E : ℕ) (l : Lb E) (r : Fin 18) (l' : Lb E) :
+    A E l ≠ .valP r l' ∧ A E l ≠ .valQ r l' := by
+  cases l <;> simp only [A, mvI, dmI, sbI, hvI, cpI, shI, ne_eq] <;>
+    first
+    | exact ⟨Ins.noConfusion, Ins.noConfusion⟩
+    | (split <;> exact ⟨Ins.noConfusion, Ins.noConfusion⟩)
+    | (rename_i j; fin_cases j <;> simp)
+    | skip
+
+end Complexity.LogProg.SavitchARM

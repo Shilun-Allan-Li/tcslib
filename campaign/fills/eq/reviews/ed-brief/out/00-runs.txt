@@ -1,0 +1,23 @@
+# Review runs (leanelab.sh, one at a time, against oleans-lscp3; worktree wt/ at 029f3aa9)
+# file | exit | real s | max RSS bytes | identical to pre-ship (paths normalized edprobe/ -> rvprobe/)
+NTimeDiagonalizerOverlay | 0 | 16.60 | 2364555264 | identical
+EDImportProbe | 0 | 1.42 | 1557643264 | identical
+EDRouteProbe | 0 | 1.58 | 1600208896 | identical
+EDSealControl_unsealed | 0 | 1.45 | 1587380224 | identical
+EDSealControl_sealed | 0 | 1.44 | 1587445760 | identical
+EDDupProbe | 1 | 5.38 | 1830322176 | identical
+RVRouteRows | 0 | 3.33 | 1654210560 | (review probe; no pre-ship output)
+RVOverlayAx | 0 | 17.57 | 2396176384 | (review probe; no pre-ship output)
+RVSorriedRows | 0 | 4.60 | 1571749888 | (review probe; no pre-ship output)
+# probe inputs (pre-ship .lean.txt, copied verbatim to rvprobe/*.lean)
+5d83444c28bf824d40d6fb05158690ccf112132ec5100c3fe44c4b6ad8a25a66  wt-hk/campaign/fills/eq/drafts/eq-fill-diagonalizer/probes/EDDupProbe.lean.txt
+c923b0b5504d8173563e0ade0e8493924431f1ca477d3ef9754b881a3fa432b5  wt-hk/campaign/fills/eq/drafts/eq-fill-diagonalizer/probes/EDImportProbe.lean.txt
+0e3761f173804d69f928c7391eefb033d1e2868030450b9c638b5590d448e001  wt-hk/campaign/fills/eq/drafts/eq-fill-diagonalizer/probes/EDRouteProbe.lean.txt
+c2272de0fc4f747a5838a7f082d918e57be5affbc3cf55fb16f98edee0784bb5  wt-hk/campaign/fills/eq/drafts/eq-fill-diagonalizer/probes/EDSealControl_sealed.lean.txt
+877e8f80a24859b907a21b10bfec1e1140119c48f8ce695e40e54f68d2acc7f2  wt-hk/campaign/fills/eq/drafts/eq-fill-diagonalizer/probes/EDSealControl_unsealed.lean.txt
+c5c428938d08ad71d644a482c603af028f1ebf95fba5d601a97f2e4934425c87  wt-hk/campaign/fills/eq/drafts/eq-fill-diagonalizer/probes/NTimeDiagonalizerOverlay.lean.txt
+# review probe sources (probe/)
+faf7d944c53f9ca4f4de5c7a2c4cf231c5ac068509d131add065c208b5502c63  probe/RVOverlayAx.appendix.lean
+818703429389ec300abc39d5c7a493c771f26b411230ccd3a8637029303f6225  probe/RVOverlayAx.lean
+c56bfbe82765bf214b2c256d891c3e1d8edd6a3534fa5adbef2e015a4402358e  probe/RVRouteRows.lean
+370aed5501b35dea38a3e7cd2b5f54aa1034444c478dbaa8670c0b9f9328d129  probe/RVSorriedRows.lean

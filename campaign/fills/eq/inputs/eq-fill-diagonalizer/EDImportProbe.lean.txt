@@ -1,0 +1,89 @@
+/-
+The import probe for the fill E-D, `Turing.NTimeDiag.exists_diagonalizer`
+(`Diagonalization/NTimeDiagonalizer.lean`). A probe record, not library code.
+
+It imports exactly what the fill's file sees after its overlay (the file itself and the overlay's
+three imports) and checks that every declaration the brief cites outside the file is public and
+resolves to one declaration. `#check @` prints each full name and statement.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+open Turing Turing.FinTM Turing.FinNDTM Turing.MultiTapeTM Complexity
+
+-- The target and E-Q's public results in the same file.
+#check @Turing.NTimeDiag.exists_diagonalizer
+#check @Turing.NTimeDiag.exists_queryTM
+#check @Turing.NTimeDiag.query
+#check @Turing.NTimeDiag.query_eq
+#check @Turing.NTimeDiag.query_of_not_guard
+#check @Turing.NTimeDiag.budget_eq
+#check @Turing.NTimeDiag.ladder_zero
+#check @Turing.NTimeDiag.ladder_succ
+#check @Turing.NTimeDiag.two_mul_lt_ladder_succ
+#check @Turing.NTimeDiag.le_ladder
+#check @Turing.NTimeDiag.ladder_strictMono
+#check @Turing.NTimeDiag.stage_spec
+#check @Turing.NTimeDiag.stage_eq
+#check @Turing.NTimeDiag.stage_of_le_two
+#check @Turing.NTimeDiag.stageCode_eq
+
+-- The guess-then-run host (`Build/NDHost`).
+#check @Turing.guessRunTM
+#check @Turing.guessRunCfg
+#check @Turing.guessRunCfg_state
+#check @Turing.guessRunCfg_inputPos
+#check @Turing.guessRunCfg_workTapes
+#check @Turing.guessRunCfg_workTapePos
+#check @Turing.guessRunCfg_output
+#check @Turing.guessRunTM_haltsWithin
+#check @Turing.guessRunTM_accepts_iff
+#check @Turing.guessRunTM_silent_spec
+#check @Turing.streamStartCfg
+
+-- The interpreter core (`NDCodeSimulator`).
+#check @Turing.exists_ndInterpreterCore
+
+-- The step clock (`Build/StepClock`).
+#check @Turing.exists_stepClockTMVia
+#check @Turing.exists_stepClockTM
+
+-- The virtual-input host and the capture wrapper (`Build/VirtualInput`, `Build/Embed`).
+#check @Turing.vhostSilentTM
+#check @Turing.vhostSilentCfg
+#check @Turing.vhostSilentTM_runFrom
+#check @Turing.embedSilentTM
+#check @Turing.embedSilentCfg
+#check @Turing.embedSilentTM_runFrom
+
+-- The calls.
+#check @Turing.FinTM.exists_inputCallTM
+#check @Turing.FinTM.exists_installCallTM
+#check @Turing.seamReleaseTM
+#check @Turing.FinTM.computesFunInTime_lengthBits
+
+-- The rows: expansion, copy, transfer, clear, rewinds, the pair extractor, the phase host.
+#check @Turing.expandTM
+#check @Turing.expandTM_run_ofCfg
+#check @copyMapTM_run_ofCfg
+#check @transferMapTM_run_ofCfg
+#check @clearTM_run_ofCfg
+#check @skipBackTM_run_ofCfg
+#check @rewindTM_run_ofCfg
+#check @Turing.FinTM.pairExtractTM
+#check @Turing.phaseHostTM
+
+-- The readings and the machine model.
+#check @Complexity.timeConstructible_iff
+#check @Turing.FinNDTM.AcceptsWithin
+#check @Turing.FinNDTM.AcceptsWithin.mono
+#check @Turing.NDTM.HaltsWithin
+#check @Turing.EffectiveNDMachineCode
+#check @Turing.MultiTapeTM.step_of_some
+#check @Turing.length_bits_le_self
+#check @Turing.pairEncode_eq
+#check @Turing.FinNDTM.acceptsWithin_iff
+#check @Turing.counterValue_eq
+#check @Turing.counterValue_bits

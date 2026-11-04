@@ -1,8 +1,10 @@
 # Ch3–4 fill campaign — B6's H, the space hierarchy (`Complexity.space_hierarchy`, with `LOGSPACE_ssubset_PSPACE` and `SPACE_linear_ne_NP`; `SpaceComplexity/Hierarchy.lean`)
 
-> **DRAFT** (maintainer, 2026-10-27). Issues after PR #175 (`spaceConstructible_poly` in
-> `Constructible`) and the `NP`-closure API PR merge, with the pre-ship re-taken at the issue
-> commit. ⟨…⟩ marks what the pre-ship fills in. **Agent: Codex** (user, 2026-10-27).
+> **DRAFT** (maintainer, 2026-10-27; updated 2026-11-04). Issues after PR #181 merges (the space
+> facts out of `Machines/ARMWidth`: `logSpace_le_succ` in `Basic`, `LOGSPACE_subset_PSPACE` in
+> `SpaceClasses`; ruled by the user, 2026-11-04), with the pre-ship re-taken at the issue commit.
+> #175 and #177 have merged. ⟨…⟩ marks what the pre-ship fills in. **Agent: Codex** (user,
+> 2026-10-27).
 
 > **A single fill** (addendum v2.6, Parts 1 and 2; Part 3, the megafill, does not apply, except
 > its one-Lean rule and its no-stop rule, items 5 and 7, which "Environment and verification"
@@ -173,7 +175,10 @@ at `A := C_α (c · c₀ + c + 1)`, `U₀`'s run stays in the radius-`g n` windo
 `[x ∈ L_D]`; `D` answers the opposite.
 
 **`LOGSPACE ⊂ PSPACE`**: the route probe's `hr_logspace_ssubset` applied to `space_hierarchy`, with
-`hr_logSpace_dom` and `hr_sq_le_two_pow`. Copy the three as privates.
+`hr_logSpace_dom` and `hr_sq_le_two_pow`. Copy the three as privates, but take the inclusion from
+the published `Complexity.LOGSPACE_subset_PSPACE` (`SpaceClasses`, after #181) and
+`logSpace n ≤ n + 1` from `Complexity.logSpace_le_succ` (`Basic`, after #181): never re-prove
+either (the ledger's LS-1).
 
 **`SPACE (n + 1) ≠ NP`**: by padding and `NP`'s closure under `≤ₚ` (the docstring's sketch). Its
 obligations: `NP`'s closure under `≤ₚ` is published, as `Complexity.preimage_mem_NP`
