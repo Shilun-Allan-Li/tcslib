@@ -57,6 +57,8 @@ Proposed layout (all new):
 
 ## S2. The oracle-game layer (one design for A and C)
 
+**Superseded in part (2026-11-04):** S2 is a general framework of oracle computations, home-built and adapting VCVio's design (cited: `design/CITATION-VCVio.md`). It also carries two-party protocols (ruled "protocols unified"), so S3a folds into S2. The requirements below still hold; the design note is `design/S2-game-framework.md`.
+
 Two experiment shapes recur.
 
 - **Search games** (A): MAC forgery, signature forgery, collision finding, one-time variants.
