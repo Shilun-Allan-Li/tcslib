@@ -1,0 +1,26 @@
+# LS-1 search at #181's round-2 head 5de52d9aa76c22a4317b6ba83dcd4634c8ef36eb (git grep over TCSlib/**/*.lean).
+## 1. statements of a logSpace bound by a successor (have/theorem/lemma lines)
+TCSlib/Complexity/Randomized/BPLInP.lean:396:  have hlog : logSpace n ≤ m + 1 := by
+TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:95:    have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:216:  have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+## 2. Nat.log_le_self next to logSpace (within 3 lines)
+TCSlib/Complexity/SpaceComplexity/Basic.lean-195-/-- The logarithmic bound is at most linear: `logSpace n ≤ n + 1`.
+TCSlib/Complexity/SpaceComplexity/Basic.lean:197:**Proof sketch.** `Nat.log 2 n ≤ n` (`Nat.log_le_self`), then `Complexity.logSpace_eq`. -/
+TCSlib/Complexity/SpaceComplexity/Basic.lean-198-theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
+TCSlib/Complexity/SpaceComplexity/Basic.lean:199:  have := Nat.log_le_self 2 n
+TCSlib/Complexity/SpaceComplexity/Basic.lean-200-  rw [logSpace_eq]
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean-377-  have hlogW : logSpace (2 * n + 2 + W) ≤ K2 * L := by
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:379:      have := Nat.log_le_self 2 (F + 1); omega
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean-785-  have hJx : logSpace (2 * x.length + 2 + W) ≤ J * L := by
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:787:      (LogProg.length_bits_le_log _).trans (by have := Nat.log_le_self 2 ((f x).length + 1); omega)
+## 3. citations of logSpace_le_succ
+TCSlib/Complexity/SpaceComplexity/Basic.lean:54:* `Complexity.logSpace_le_succ`, `Complexity.logSpace_le_of_le_mul_two_pow` — the logarithmic
+TCSlib/Complexity/SpaceComplexity/Basic.lean:198:theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:529:  refine ⟨logSpace_le_succ, ?_⟩
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:624:**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_le_succ`,
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:685:  · have h1 := logSpace_le_succ n
+TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:95:    have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:216:  have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean:166:  have hlog := logSpace_le_succ n
+TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean:79:**Proof sketch.** `logSpace n ≤ n + 1 = n ^ 1 + 1` (`Complexity.logSpace_le_succ`), so
+TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean:84:  exact (SPACE.mono fun n => by simpa only [pow_one] using logSpace_le_succ n).trans
