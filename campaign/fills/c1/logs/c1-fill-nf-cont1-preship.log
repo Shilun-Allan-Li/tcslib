@@ -1,0 +1,35 @@
+NF cont1's pre-ship (maintainer, 2026-11-04). Taken on the worktree wt-nfp at lean/c1-nf-partial
+5241eb82 against oleans-leqc3. That commit is the first round's two commits with reworded subjects,
+the review's E1–E3, and a merge of the campaign at cd9f1d92. Its Lean is 711f5444's, the campaign
+after #176, except NDNormalForm. Lean ran through tools/leanelab.sh, one at a time. Outputs are in
+campaign/fills/c1/drafts/c1-fill-nf-cont1/preship-5241eb82/.
+
+module      NDNormalForm at blob e6432b1e (762 lines; 1 public, 39 private): exit 0, one
+            warning, the target's sorry (752:8) (module-elab.out)
+import      NFContImportProbe.lean.txt: 588 checks (the first round's worker's extended probe, 578,
+            and 10 names the route probe adds), exit 0, 0 errors, 2 warnings (the deprecated
+            Int.ofNat_mul / Int.ofNat_nonneg references in omega's output, as the first round
+            found) (import.out)
+route       NFContRouteTail.lean.txt, appended to a copy of the module (NFContRoute.lean): exit 0,
+            0 errors, one warning, the target's sorry (route.out). It covers:
+            - NfcPh, NfcSt, the named instances nfcStDecEq/nfcStFintype, nfcPark, nfcM, nfcAfter,
+              nfcRed and nfcV elaborate;
+            - DecidableEq and Fintype of the verifier's state type by inference;
+            - guessCtlRunTM over nfcV elaborates, and nf_pack applies to it;
+            - nfc_retag on [propext, Quot.sound];
+            - nfc_aReturn on the standard three, in section Chain under a seal of 10 definitions
+              (Cfg.mapState, MultiTapeTM.runFrom, phaseHostTM, skipTM, skipBackTM, clearTM,
+              scanTM, FinTM.bufferTape, MultiTapeTM.step, Action.apply) with the four @[simp]
+              TCSlib definitions erased
+controls    NFContSealControl_{unsealed,sealed}: one #ctl_rfl per sealed definition; unsealed 10 of
+            10 CONTROL_PASS, sealed 10 of 10 CONTROL_FAIL
+order       fillinputs.py at 5241eb82: 112 modules, the first round's list (identical), 39 roots;
+            base sorries 19 in 9 modules (exists_queryTM proved by #176)
+lint        campaign_style_lint ClassNP: 0 FAIL, 17 WARN over 21 files; style_lint NDNormalForm:
+            0 findings (lint-base.txt)
+screen      the first round's 21 files at 5241eb82: 1,379 declarations, 866 pairs, 274,994
+            characters (842 s, peak 2.47 GB), equal to the first round's after screen. Against
+            the first round's base: one new pair, NTimeHierarchy's un_setup reproducing nf_setup
+            (57%, the accepted idiom NF-X1), none gone
+tail        NDNormalForm's downstream in the order list: the ClassNP facade (81), NTimeHierarchy
+            (111), the Diagonalization facade (112). #181 and #182 change no module of the list.

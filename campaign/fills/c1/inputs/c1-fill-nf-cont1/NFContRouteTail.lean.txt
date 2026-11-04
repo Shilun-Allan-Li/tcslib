@@ -1,0 +1,273 @@
+
+/-! ## The continuation's route probe (appended to a copy of the module at the base; not library
+code)
+
+The verifier's phase layout, as the continuation's brief pins it:
+- the phase index `NfcPh k`, with the control sweep, one replay per tape (`none` the input, `some j`
+  work tape `j` on B), A's return (`skipTM` then `skipBackTM` on tape `0`), B's clear (`skipTM`,
+  `skipBackTM`, `clearTM` on tape `1`) and the verdict park;
+- the state family, the machines and the redirect table, over an abstract replay leaf `L` whose
+  exits are read by `exit`;
+- named instances for the state family, and the host and its packaging over this `V`;
+- a two-phase chain through `Turing.phaseHostTM_run`: A's return after the input replay, from A's
+  head on the blank after the stream to cell `0`, in `|s| + 6` steps.
+
+All of it reads other files' definitions through their published lemmas only (sealed below). -/
+
+namespace Turing
+
+namespace FinNDTM
+
+/-- The verifier's phases for `k` work tapes. -/
+private inductive NfcPh (k : ℕ) where
+  /-- the control sweep, a scan fold over the stream on A -/
+  | ctl
+  /-- the replay of tape `j` (`none`: the input; `some j`: work tape `j`, on B) -/
+  | rep (j : Option (Fin k))
+  /-- A's return, first step: from the blank after the stream, one cell right -/
+  | aFwd (j : Option (Fin k))
+  /-- A's return, second step: back to cell `0` -/
+  | aBack (j : Option (Fin k))
+  /-- B's clear, first step: to one past the visited region's right blank -/
+  | bFwd (j : Fin k)
+  /-- B's clear, second step: back to the visited region's first cell -/
+  | bBack (j : Fin k)
+  /-- B's clear, third step: blank the visited region -/
+  | bClr (j : Fin k)
+  /-- the verdict park -/
+  | park
+  deriving DecidableEq, Fintype
+
+/-- The states of each phase, over the replay leaf's state type `SL`. -/
+private def NfcSt (N : FinNDTM Bool) (SL : Type) : NfcPh N.k → Type
+  | .ctl => ScanPhase (nf_SweepState N)
+  | .rep _ => SL
+  | .aFwd _ => SeekPhase
+  | .aBack _ => SeekPhase
+  | .bFwd _ => SeekPhase
+  | .bBack _ => SeekPhase
+  | .bClr _ => SweepPhase
+  | .park => Bool
+
+/-- Decidable equality of each phase's states (named: default synthesis does not reach
+`ScanPhase (nf_SweepState N)`). -/
+private instance nfcStDecEq (N : FinNDTM Bool) (SL : Type) [DecidableEq SL] :
+    (i : NfcPh N.k) → DecidableEq (NfcSt N SL i)
+  | .ctl => @instDecidableEqScanPhase _ inferInstance
+  | .rep _ => (inferInstance : DecidableEq SL)
+  | .aFwd _ => (inferInstance : DecidableEq SeekPhase)
+  | .aBack _ => (inferInstance : DecidableEq SeekPhase)
+  | .bFwd _ => (inferInstance : DecidableEq SeekPhase)
+  | .bBack _ => (inferInstance : DecidableEq SeekPhase)
+  | .bClr _ => (inferInstance : DecidableEq SweepPhase)
+  | .park => (inferInstance : DecidableEq Bool)
+
+/-- Finiteness of each phase's states. -/
+private instance nfcStFintype (N : FinNDTM Bool) (SL : Type) [Fintype SL] :
+    (i : NfcPh N.k) → Fintype (NfcSt N SL i)
+  | .ctl => @instFintypeScanPhase _ inferInstance
+  | .rep _ => (inferInstance : Fintype SL)
+  | .aFwd _ => (inferInstance : Fintype SeekPhase)
+  | .aBack _ => (inferInstance : Fintype SeekPhase)
+  | .bFwd _ => (inferInstance : Fintype SeekPhase)
+  | .bBack _ => (inferInstance : Fintype SeekPhase)
+  | .bClr _ => (inferInstance : Fintype SweepPhase)
+  | .park => (inferInstance : Fintype Bool)
+
+/-- The verdict park: it stays at its state and moves nothing. -/
+private def nfcPark : MultiTapeTM 2 Bool Bool :=
+  ⟨true, fun q _ _ => ⟨0, fun _ => (none, 0), none, some q⟩⟩
+
+/-- The phase machines, over a replay leaf `L` per replayed tape. -/
+private def nfcM (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) :
+    (i : NfcPh N.k) → MultiTapeTM 2 Bool (NfcSt N SL i)
+  | .ctl => scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)
+  | .rep j => L j
+  | .aFwd _ => skipTM 2 0
+  | .aBack _ => skipBackTM 2 0
+  | .bFwd _ => skipTM 2 1
+  | .bBack _ => skipBackTM 2 1
+  | .bClr _ => clearTM 2 1
+  | .park => nfcPark
+
+/-- After tape `j`'s phases: the next work tape's replay, or the passing verdict. -/
+private def nfcAfter (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) :
+    Option (Fin N.k) → Σ i, NfcSt N SL i
+  | none => if h : 0 < N.k then ⟨.rep (some ⟨0, h⟩), (L (some ⟨0, h⟩)).q₀⟩ else ⟨.park, true⟩
+  | some j => if h : j.val + 1 < N.k then ⟨.rep (some ⟨j.val + 1, h⟩), (L (some ⟨j.val + 1, h⟩)).q₀⟩
+      else ⟨.park, true⟩
+
+/-- The redirect table: each phase's exit to the next phase's start, a failure to the rejecting
+park. `exit` reads the replay leaf's verdict states (`some true` passed, `some false` failed). -/
+private def nfcRed (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL)
+    (exit : SL → Option Bool) : (i : NfcPh N.k) → NfcSt N SL i → Option (Σ i, NfcSt N SL i)
+  | .ctl, .done a => some (if nf_sweepPass N a then ⟨.rep none, (L none).q₀⟩ else ⟨.park, false⟩)
+  | .ctl, .fwd _ => none
+  | .ctl, .bwd _ => none
+  | .rep j, q =>
+    match exit q with
+    | some true => some ⟨.aFwd j, .run⟩
+    | some false => some ⟨.park, false⟩
+    | none => none
+  | .aFwd j, .done => some ⟨.aBack j, .run⟩
+  | .aFwd _, .run => none
+  | .aFwd _, .gap => none
+  | .aFwd _, .back => none
+  | .aBack none, .done => some (nfcAfter N L none)
+  | .aBack (some j), .done => some ⟨.bFwd j, .run⟩
+  | .aBack _, .run => none
+  | .aBack _, .gap => none
+  | .aBack _, .back => none
+  | .bFwd j, .done => some ⟨.bBack j, .run⟩
+  | .bFwd _, .run => none
+  | .bFwd _, .gap => none
+  | .bFwd _, .back => none
+  | .bBack j, .done => some ⟨.bClr j, .sweep⟩
+  | .bBack _, .run => none
+  | .bBack _, .gap => none
+  | .bBack _, .back => none
+  | .bClr j, .done => some (nfcAfter N L (some j))
+  | .bClr _, .sweep => none
+  | .bClr _, .rewind => none
+  | .park, _ => none
+
+/-- The verifier: the phase host over the phases, entered at the control sweep. -/
+private def nfcV (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL)
+    (exit : SL → Option Bool) : MultiTapeTM 2 Bool (Σ i, NfcSt N SL i) :=
+  phaseHostTM (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ (nfcRed N L exit)
+
+-- the verifier's state type is finite with decidable equality, by the named instances
+example (N : FinNDTM Bool) (SL : Type) [DecidableEq SL] : DecidableEq (Σ i, NfcSt N SL i) :=
+  inferInstance
+example (N : FinNDTM Bool) (SL : Type) [Fintype SL] : Fintype (Σ i, NfcSt N SL i) :=
+  inferInstance
+
+-- the host over this verifier, and the packaging applies to it
+example (N : FinNDTM Bool) {SL : Type} [Fintype SL] [DecidableEq SL]
+    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool)
+    (P : MultiTapeTM 2 Bool Unit) :
+    ∃ M : CodeNDTM, ∀ (x : List Bool) (t : ℕ), M.toFinNDTM.AcceptsWithin x t ↔
+      ∃ w : List Bool, w.length = t ∧
+        ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k)
+          false (nfcV N L exit) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ ⟨.park, true⟩
+            ⟨.park, false⟩).runWith w
+          ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k)
+            (nf_ctlStop N.k) false (nfcV N L exit) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+              ⟨.park, true⟩ ⟨.park, false⟩).initCfg x)).state = none ∧
+        ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k)
+          false (nfcV N L exit) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ ⟨.park, true⟩
+            ⟨.park, false⟩).runWith w
+          ((guessCtlRunTM P () 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k)
+            (nf_ctlStop N.k) false (nfcV N L exit) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+              ⟨.park, true⟩ ⟨.park, false⟩).initCfg x)).output = [true] :=
+  nf_pack _
+
+section Chain
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible] Turing.Cfg.mapState Turing.MultiTapeTM.runFrom Turing.phaseHostTM
+  Turing.skipTM Turing.skipBackTM Turing.clearTM Turing.scanTM Turing.FinTM.bufferTape
+  Turing.MultiTapeTM.step Turing.Action.apply
+
+/-- A configuration whose state is redirected to `⟨i, q⟩` is the tagged configuration of phase
+`i` at `q`. -/
+private theorem nfc_retag {N : FinNDTM Bool} {SL : Type} {i₀ : NfcPh N.k} {x : List Bool}
+    (c : Cfg 2 Bool (NfcSt N SL i₀) x) (i : NfcPh N.k) (q : NfcSt N SL i) (hc : c.state.isSome) :
+    c.mapState (fun _ => (⟨i, q⟩ : Σ i, NfcSt N SL i)) =
+      ({ state := some q, inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output } : Cfg 2 Bool (NfcSt N SL i) x).mapState
+        (Sigma.mk i) := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, Cfg.mapState_state]
+    obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
+    rw [hs]; rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]
+
+/-- **Two phases chained: A's return after the input replay.** From A's head on the blank after
+the stream `s` (A holding `s` from cell `0`), the verifier's phases `aFwd none` (`skipTM` at
+`w := []`) and `aBack none` (`skipBackTM` at `u := s`) bring A's head to cell `0` and redirect to
+the next tape's replay, or the verdict, in `|s| + 6` steps, with the tapes, B's head, the input
+head and the output unchanged. -/
+private theorem nfc_aReturn (N : FinNDTM Bool) {SL : Type}
+    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool) {x : List Bool}
+    (s : List Bool) (c : Cfg 2 Bool SeekPhase x) (hst : c.state = some .run)
+    (hpos : c.workTapePos 0 = s.length)
+    (htape : ∀ p, c.workTapes 0 p = FinTM.bufferTape s p) :
+    ∃ c₃ : Cfg 2 Bool SeekPhase x,
+      (nfcV N L exit).runFrom
+          ((c : Cfg 2 Bool (NfcSt N SL (NfcPh.aFwd none)) x).mapState (Sigma.mk (NfcPh.aFwd none)))
+          (s.length + 6) = c₃.mapState (fun _ => nfcAfter N L none) ∧
+        c₃.workTapePos 0 = 0 ∧ c₃.workTapePos 1 = c.workTapePos 1 ∧ c₃.workTapes = c.workTapes ∧
+        c₃.inputPos = c.inputPos ∧ c₃.output = c.output := by
+  -- phase `aFwd none`: one step right, over the blank
+  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ (([] : List Bool).length : ℤ) →
+      c.workTapes 0 (c.workTapePos 0 + p) = FinTM.bufferTape [] p := by
+    intro p h0 h1
+    simp only [List.length_nil, Nat.cast_zero] at h1
+    obtain rfl : p = 0 := le_antisymm h1 h0
+    rw [htape, hpos, add_zero, FinTM.bufferTape_nat, FinTM.bufferTape_nil, List.getElem?_eq_none
+      (le_refl _)]
+  obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (0 : Fin 2) [] c hst hw
+  set c₁ : Cfg 2 Bool SeekPhase x := { c with
+      state := some .done
+      workTapePos := Function.update c.workTapePos 0 (c.workTapePos 0 + ([] : List Bool).length + 1) }
+    with hc₁
+  obtain ⟨-, hA⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.aFwd none) (c := c) (c' := c₁) (([] : List Bool).length + 1) h1
+    SeekPhase.done rfl ⟨.aBack none, .run⟩ rfl (by
+      intro u hu q hq
+      obtain rfl : u = 0 := by simp at hu; omega
+      rw [MultiTapeTM.runFrom_zero, hst] at hq
+      cases hq
+      rfl)
+  -- the redirected configuration is phase `aBack none`'s start
+  have hre := nfc_retag (N := N) (SL := SL) (i₀ := NfcPh.aFwd none) (c₁ : Cfg 2 Bool (NfcSt N SL
+    (NfcPh.aFwd none)) x) (NfcPh.aBack none) SeekPhase.run (by simp [hc₁])
+  set c₂ : Cfg 2 Bool SeekPhase x := { c₁ with state := some .run } with hc₂
+  -- phase `aBack none`: back over the stream to cell `0`
+  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
+      c₂.workTapes 0 (c₂.workTapePos 0 - s.length - 1 + p) = FinTM.bufferTape s p := by
+    intro p _ _
+    simp only [hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
+    rw [htape]
+    congr 1
+    ring
+  obtain ⟨h3, h4, -⟩ := skipBackTM_run_ofCfg (k := 2) (0 : Fin 2) s c₂ rfl hu
+  set c₃ : Cfg 2 Bool SeekPhase x := { c₂ with
+      state := some .done
+      workTapePos := Function.update c₂.workTapePos 0 (c₂.workTapePos 0 - s.length - 1) }
+    with hc₃
+  obtain ⟨-, hB⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.aBack none) (c := c₂) (c' := c₃) (s.length + 3) h3
+    SeekPhase.done rfl (nfcAfter N L none) rfl (by
+      intro u hu q hq
+      cases q with
+      | done => exact absurd hq (h4 u hu)
+      | run => rfl
+      | gap => rfl
+      | back => rfl)
+  refine ⟨c₃, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
+    rw [e, MultiTapeTM.runFrom_add]
+    unfold nfcV
+    rw [hA, hre]
+    exact hB
+  · simp only [hc₃, hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
+    ring
+  · simp only [hc₃, hc₂, hc₁]
+    rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+  · simp only [hc₃, hc₂, hc₁]
+  · simp only [hc₃, hc₂, hc₁]
+  · simp only [hc₃, hc₂, hc₁]
+
+end Chain
+
+#print axioms nfc_retag
+#print axioms nfc_aReturn
+
+end FinNDTM
+
+end Turing
