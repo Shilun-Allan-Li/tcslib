@@ -1,0 +1,17 @@
+
+/-! ## Review instance checks (appended by the reviewer; not part of the module) -/
+
+#check @instDecidableEqScanPhase
+#check @instFintypeScanPhase
+example : DecidableEq (ScanPhase (Fin 3 → Option Bool)) := inferInstance
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (Option N.State)) := inferInstance
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (nf_Control N)) := inferInstance
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (Fin (2 * N.k + 4) × (Fin (2 * N.k + 4) → Option Bool))) := inferInstance
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (nf_SweepState N)) :=
+  @instDecidableEqScanPhase _ inferInstance
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (nf_SweepState N)) :=
+  inferInstanceAs (DecidableEq (ScanPhase ((Fin (2 * N.k + 4) × (Fin (2 * N.k + 4) → Option Bool)) × nf_Control N)))
+set_option synthInstance.maxSize 1024 in
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (nf_SweepState N)) := inferInstance
+set_option synthInstance.maxHeartbeats 200000 in
+example (N : FinNDTM Bool) : DecidableEq (ScanPhase (nf_SweepState N)) := inferInstance

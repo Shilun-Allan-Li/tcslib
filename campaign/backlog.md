@@ -1971,6 +1971,21 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     WARN). **NF issued (2026-11-04; Codex):** `campaign/fills/c1/briefs/c1-fill-nf.md`; its issue
     commit `951251f6` is the brief's `@ANCESTOR@`; in flight #176 and #177. **Dispatched (user,
     2026-11-04).**
+    **Delivered (partial, checkpoints 1–2 of 8):** `fill-c1-nf.zip` (SHA-256 `1558c81e…58ca`,
+    archived in `exchange/archive/deliveries/`), branch `refs/deliv/c1-nf` at `4af97d46`. It has two
+    commits, 39 privates and no new admission. Intake was clean: 188/188 sums, the bundle on
+    `951251f6`, and patches and source equal. **Reviewed** (`campaign/fills/c1/reviews/nf-fill/`, a
+    sub-agent, 2026-11-04):
+    - **verdict:** land the partial with edits, 0 blockers, 0 majors, 3 minors, 6 notes;
+    - **E1–E3:** docstrings only, tested; the landed file is `land/NDNormalForm.lean.txt`, blob
+      `e6432b1e`;
+    - **F3**, forward-looking: named `DecidableEq` instances for the sweep state;
+    - **F6:** the `un_setup` idiom pair;
+    - **continuation must-pins:** MP1–MP11;
+    - **replay:** 4 modules from the merged tree's snapshot.
+
+    **Decisions pending (user):** land now with E1–E3; E3 now; accept the idiom pair; one
+    continuation for checkpoints 3–8; its agent; land before H issues.
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.

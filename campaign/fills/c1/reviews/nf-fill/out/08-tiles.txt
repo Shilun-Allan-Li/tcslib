@@ -1,0 +1,14 @@
+## tiles (v3 extraction/tiling, scripts/tiles.py) in the head worktree
+un_setup (31091 chars) reproduces nf_setup (218 chars): 124/218 = 57%
+  source body: byrefine⟨MultiTapeTM.runFrom_zero,?_,funuhu=>absurdhu(Nat.not_lt_zerou),funp=>?_,?_⟩·rw[MultiTapeTM.initCfg_eq,Cfg.init_state]·rw[MultiTapeTM.initCfg_eq,Cfg.init_workTapes]·rw[MultiTapeTM.initCfg_eq,Cfg.init_workTapes]
+  tile 43: MultiTapeTM.initCfg_eq,Cfg.init_workTapes]·
+  tile 41: rw[MultiTapeTM.initCfg_eq,Cfg.init_state]
+  tile 40: MultiTapeTM.initCfg_eq,Cfg.init_workTape
+
+## reverse direction
+nf_setup (218 chars) reproduces un_setup (31091 chars): 124/31091 = 0%
+  tile 43: MultiTapeTM.initCfg_eq,Cfg.init_workTapes]·
+  tile 41: rw[MultiTapeTM.initCfg_eq,Cfg.init_state]
+  tile 40: MultiTapeTM.initCfg_eq,Cfg.init_workTape
+
+## nf_sweep_run vs the review probe's rv_sweep0 is not in the population (campaign input, not a library file); nf_pack vs nfr_pack likewise
