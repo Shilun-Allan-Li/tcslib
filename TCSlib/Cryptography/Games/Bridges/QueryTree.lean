@@ -96,12 +96,14 @@ def OracleComp.toTree : OracleComp (singleSpec I O) α → TCSlib.Cryptography.Q
   | .pure a => .ret a
   | .query () x k => .query x (fun o => toTree (k o))
 
+/-- Translating a tree to a computation and back gives the tree. -/
 theorem toTree_toComp (t : TCSlib.Cryptography.QueryTree I O α) :
     OracleComp.toTree (QueryTree.toComp t) = t := by
   induction t with
   | ret a => rfl
   | query x k ih => simp only [QueryTree.toComp, OracleComp.toTree, ih]
 
+/-- Translating a one-oracle computation to a tree and back gives the computation. -/
 theorem toComp_toTree (c : OracleComp (singleSpec I O) α) :
     QueryTree.toComp (OracleComp.toTree c) = c := by
   induction c with

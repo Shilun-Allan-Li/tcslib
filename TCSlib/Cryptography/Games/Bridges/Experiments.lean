@@ -28,6 +28,10 @@ probability `uprob` of the event. It reads `uprob` only through its published eq
 equation in `Foundations/Experiments.lean`. Their bridges read the definitions' bodies (`rfl` and
 `unfold`); a request to publish equations is recorded (coordination point F-3).
 
+## Main definitions
+
+* `Games.Bridge.acceptGame X D`: the acceptance game of a sampler and a distinguisher.
+
 ## Main results
 
 * `Games.Bridge.prob_sample_eq_uprob`: `Pr[x ← $ α : p x] = uprob p`.
