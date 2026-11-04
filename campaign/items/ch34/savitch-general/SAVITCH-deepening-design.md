@@ -159,3 +159,41 @@ or embed `CA`'s partial run, which the API transports only for halting runs. So,
 ESTIMATE: 400–600 lines. It is independent of #182, so the two PRs can land in either order. The
 deepening fill's brief issues once both have merged.
 
+
+## 8. The fill's route, pinned (2026-11-04, after #182 and #184 were staged)
+
+The route probe is `probes/DeepenRoute.lean.txt`. It was elaborated against a clone with #182 and
+#184 compiled on the campaign's Lean (`probes/DeepenRoute.out`): exactly the four `sorry` warnings
+below, nothing else. It states the fill's new pieces and proves `savitch` from them.
+
+| Statement (pinned) | What it says | Home (new files, ours) |
+|---|---|---|
+| `NoEdge N x s w` | no edge code is `Reach`able at level `w` from an initial code at radius `s` | `SavitchARM/Window` |
+| `mem_iff_reach_of_noEdge (h : N.DecidesInSpace L sp) x s w hw hcb (hne : NoEdge N x s w)` | `mem_iff_reach`'s conclusion, with `sp |x| ≤ s` replaced by `NoEdge` | `SavitchARM/Window` |
+| `noEdge_of_lt h x s w (hs : sp |x| < s)` | beyond the space bound no edge code is reachable | `SavitchARM/Window` |
+| `configBound_le_pow N n s` | `configBound n s ≤ 2 ^ ((|Q| + 3 + 9k)(s + logSpace n + 1))` | `SavitchARM/Window` |
+| `DeepenContract L sp` / `deepen_contract h` | some ARM with logspace deciders answers `x ∈ L` with register digits at most `C (sp |x| + logSpace |x| + 1)²`: `arm_decides_SPACE`'s hypothesis | `SavitchARM/Deepen` |
+| `savitch_of_logSpace_le S (hS : ∀ n, logSpace n ≤ S n)` | `NSPACE S ⊆ SPACE (S · S)`; **proved in the probe** from `deepen_contract` and `arm_decides_SPACE`, with `K = C (c + 2)²` | `Savitch` |
+
+`savitch` follows as `savitch_of_logSpace_le S hS.1`. **Constructibility is used only through
+`logSpace ≤ S`**: iterative deepening never computes `S`. The probe's proofs also check the
+arithmetic of the pins by hand:
+- **The configuration count.** Its exponents add up to
+  `|Q| + 3 + logSpace n + 6ks + 2k ≤ (|Q| + 3 + 9k)(s + logSpace n + 1)`.
+- **Window exactness (⇒).** Take an accepting branch. If no prefix configuration has a head at
+  `±s`, the prefixes form a `StepRel` path at radius `s`. Shortcut it below `configBound ≤ 2 ^ w`
+  and cut it with `reach_of_chain`. Otherwise the first configuration with a head at `±s` is still
+  window-bounded: the write lands at the old head position, which is inside. So it is a reachable
+  edge code, against `NoEdge`.
+- **Window exactness (⇐)** is `mem_of_codePath`, at any radius.
+- **Termination.** A `Reach` witness unfolds to a `CfgStep` path from the initial configuration.
+  Under `DecidesInSpace`, its heads stay at distance below `sp |x|` (visited cells, the halting
+  budget), so no head reaches `±s`.
+
+**The fill's work:** the four `sorry`s; the shortest-path lemma (check Mathlib first); and the
+machine `D` of §2, built from `AHalt.embed_guardLe` (#182), the `ARMLoops` loops (`copy_run`,
+`shl_run`, `halve_run`, …) and the deciders `inputLenLang`, `initLang`, `acceptLang`,
+`stepLang` and `edgeLang` (`edgeLang_mem`, #184). The register bound comes from the last radius
+`s ≤ sp |x| + 1`, where `w = C_w (s + logSpace |x| + 1)` and every register is at most
+`2 ^ (w · w)`. ESTIMATE: 1.2–2.2k lines. The brief issues once #182 and #184 have merged, with its
+pre-ship on the merged tree.
