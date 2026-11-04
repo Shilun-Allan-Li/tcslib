@@ -41,12 +41,15 @@ hardened in #177** (robust whatever the simp set). `Reductions` returns to the c
 **Round 2** (`pack-r2.md`, at `a0d511ec`): `preimage_mem_NP` in `PClosure`, `TMSAT`'s step
 hardened, `Reductions` the campaign's. Bundle SHA-256
 `5ca648583c65e070d20f50b4df06d3e3b8e5c0fb52b454816fb10216816d816d` (46 sections), the records at
-`34804ca4`. `replay-lnpc3` (66 modules from `oleans-lscp3`) written, precheck passed; **running (user,
-2026-11-04)**. **Staged
+`34804ca4`. `replay-lnpc3` (66 modules from `oleans-lscp3`) written, precheck passed; **passed (user,
+2026-11-04): 66 of 66 at `a0d511ec`, 0 failed, static-equal (0 sorries)**; snapshot `oleans-lnpc3`
+(`evidence/round1-fix/merged-tree/replay-lnpc3.log`). **Staged
 (2026-11-04); dispatched (user, 2026-11-04).** Findings: pending.
 
 **Merge state. #177: not yet clear to merge** (2026-11-04): it waits for gate 88's round 2 and
 `replay-lnpc3` (`replay-lnpc2` failed and no longer applies).
+`replay-lnpc3` has since passed (2026-11-04); #177 waits for gate 88's round 2 and, after #176's merge,
+the overlap replay below.
 
 **Ruled (user, 2026-11-04): #176 merges before #177.** Their downstream closures share
 `NTimeHierarchy` and `Diagonalization`, so after #176 merges, #177 takes the campaign merged in and

@@ -36,10 +36,10 @@
   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
     (**v2.6**), and the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
   - **this round's inputs** (`campaign/fills/eq/inputs/eq-fill-diagonalizer/`): ⟨the import probe,
-    the route probe with its seal controls, the duplication probe, the import overlay and the
-    screen population⟩; the order list `campaign/fills/eq/orders/eq-fill-diagonalizer.txt`, the base
-    sorry set, the screen base and the pre-ship log (`campaign/fills/eq/logs/eq-fill-diagonalizer-*`).
-    The route's design note is `campaign/items/c1/c1e/ED-route-design.md`, **with its revision of
+    the route probe with its seal controls, the duplication probe, the import overlay and the screen
+    population⟩; the order list `campaign/fills/eq/orders/eq-fill-diagonalizer.txt`, the base sorry
+    set, the screen base and the pre-ship log (`campaign/fills/eq/logs/eq-fill-diagonalizer-*`). The
+    route's design note is `campaign/items/c1/c1e/ED-route-design.md`, **with its revision of
     2026-11-04** (after E-Q cont1).
 - **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule
   (E-RES). Fetch the cache for your roots only (⟨roots⟩); never run the unfiltered
@@ -66,8 +66,8 @@
 ## Base, line numbers and what lands around you
 
 - **Your base's Lean content is the campaign's tree after #176** (E-Q cont1). Lines in this brief
-  are those of your base's tree, where `NTimeDiagonalizer.lean` is ⟨5,432⟩ lines (⟨22⟩ public,
-  ⟨214⟩ private).
+  are those of your base's tree, where `NTimeDiagonalizer.lean` is ⟨5,432⟩ lines (⟨22⟩ public, ⟨214⟩
+  private).
 - **The overlay is your first edit** (region (a)): add, after the `Build/WordTests` import, exactly
   `import TCSlib.Complexity.TuringMachine.Build.NDHost`,
   `import TCSlib.Complexity.TuringMachine.NDCodeSimulator` and
@@ -138,9 +138,9 @@ declarations and every other statement are frozen too.
      with no new leaf:** copy `w_b` off the block and clear its cells (the copy and clear rows);
      expand it to `1^b` (`expandTM` with the pattern `[true]`: `expandTM_run_ofCfg` takes any
      little-endian word, top zeros included); compare `1^b` with the stream `s` (`g n` nonblank
-     cells) by `qyCmpTM`: `gt` → `rej`; normalize to `bits b` by the published `lengthBits`
-     install call on `1^b`; extract `α` by one hosted call of the second-component extractor on
-     the query word's tail; write the core's input `⟨⟨bits b, α⟩, 1^{n + 1}⟩` onto a buffer by three
+     cells) by `qyCmpTM`: `gt` → `rej`; normalize to `bits b` by the published `lengthBits` install
+     call on `1^b`; extract `α` by one hosted call of the second-component extractor on the query
+     word's tail; write the core's input `⟨⟨bits b, α⟩, 1^{n + 1}⟩` onto a buffer by three
      `qyEmitTM` emissions (`bits b`, each bit four times, then `[false, false, true, true]`; `α`
      doubled, then `[false, true]`; `1^{n + 1}`) **run under the capture wrapper `embedSilentTM`**,
      which records every emission on its capture tape and emits nothing;
@@ -165,8 +165,8 @@ inputs the query is `[]` and `Q` rejects at once).
 - **Completeness:** an acceptance of `1^{n + 1}` along `v`, `|v| = t'`, `C (t' + 1) ≤ g n`: take the
   stream `v` padded to `g n` bits and `w_b := bits t'` padded with zeros to width `L`. The test
   passes, the core runs on `⟨⟨bits t', α⟩, 1^{n + 1}⟩` and accepts at `T ≤ C_R (t' + 1) ≤ g n`,
-  inside the allowance (`finish accept`); `guessRunTM_accepts_iff` gives the accepting branch at
-  the budget `K (g n + 1)`.
+  inside the allowance (`finish accept`); `guessRunTM_accepts_iff` gives the accepting branch at the
+  budget `K (g n + 1)`.
 - **Soundness:** an accepting branch has a stream `s` and `b ≤ g n` whose core run accepts inside
   the allowance, so the coded machine's branch along `s.take b` halts with `[true]` (the core's
   clause): `AcceptsWithin (1^{n + 1}) b`, then `AcceptsWithin.mono` to `g n`.
