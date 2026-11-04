@@ -10,7 +10,7 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# The four code languages
+# The code languages
 
 The languages a configuration-graph algorithm calls on codes of configurations of a fixed
 machine `N` on its real input `x`, at window radius `s` [AB09, §4.1.1]. Each takes the input
@@ -23,7 +23,9 @@ of an abstract register machine whose registers hold the codes and the radius
 * `Complexity.Codec.acceptLang N` — `c` is the code of a halted window-bounded
   configuration with output `[true]` (acceptance as in `Turing.FinNDTM.AcceptsWithin`);
 * `Complexity.Codec.stepLang N` — `c`, `c'` are codes of window-bounded configurations
-  with an edge `Turing.NDTM.CfgStep` between them.
+  with an edge `Turing.NDTM.CfgStep` between them;
+* `Complexity.Codec.edgeLang N` — `c` is the code of a window-bounded configuration with a
+  work head on the window's boundary.
 
 Besides the membership characterizations, this file reduces membership to the finite
 checks on code words that the logspace deciders perform (`ValidChk`, `InitChk`,
@@ -33,12 +35,13 @@ Configuration-graph infrastructure; not a result of [AB09].
 
 ## Main definitions
 
-* `Complexity.Codec.validLang`, `initLang`, `acceptLang`, `stepLang`.
+* `Complexity.Codec.validLang`, `initLang`, `acceptLang`, `stepLang`, `edgeLang`.
 * `Complexity.Codec.InitChk`, `AcceptChk`, `StepChk` — the word-level checks.
 
 ## Main results
 
-* `Complexity.Codec.mem_validLang`, `mem_initLang`, `mem_acceptLang`, `mem_stepLang` —
+* `Complexity.Codec.mem_validLang`, `mem_initLang`, `mem_acceptLang`, `mem_stepLang`,
+  `mem_edgeLang_iff` —
   membership through the codec.
 * `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff` — the checks recognize
   the code words of the respective configurations.
@@ -84,6 +87,22 @@ def stepLang : Language Bool :=
     y = pairEncode x (pairEncode (Nat.bits c) (pairEncode (Nat.bits c') (Nat.bits s))) ∧
     ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
       ∃ C' : Cfg N.k Bool N.State x, N.tm.CfgStep C C' ∧ Cfg.InWindow s C' ∧ cfgCode s C' = c'}
+
+/-- **Edge codes**: `⟨x, ⟨bits c, bits s⟩⟩` such that `c` is the code at radius `s` of a
+window-bounded configuration of `N` on `x` with some work head on the window's boundary, at
+position `-s` or `s`. A configuration-graph search at radius `s` that reaches no edge code has
+seen every reachable configuration. -/
+def edgeLang : Language Bool :=
+  {y | ∃ (x : List Bool) (c s : ℕ), y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+    ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+      ∃ i, |C.workTapePos i| = (s : ℤ)}
+
+/-- Membership in the edge-code language, unfolded. -/
+lemma mem_edgeLang_iff (y : List Bool) :
+    y ∈ edgeLang N ↔ ∃ (x : List Bool) (c s : ℕ),
+      y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+        ∃ i, |C.workTapePos i| = (s : ℤ) := Iff.rfl
 
 /-- The pairing is injective in both components. -/
 lemma pairEncode_inj {a b a' b' : List Bool} (h : pairEncode a b = pairEncode a' b') :
