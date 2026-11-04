@@ -94,7 +94,8 @@ namespace Scheme
 variable {Secret Share Rand : Type*} (S : Scheme P Secret Share Rand)
 
 /-- Every authorized set recovers the secret, whatever the dealer's coins were. [Bei11, §1]
-For the threshold structure this is [PS10, Def 152.1, item 2]: any `k` shares reconstruct. -/
+For the threshold structure, together with `LocalReconstruct`, this gives
+[PS10, Def 152.1, item 2]: any `k` shares reconstruct. -/
 def Correct (Γ : AccessStructure P) : Prop :=
   ∀ A : Finset P, Γ.Auth A → ∀ (sec : Secret) (r : Rand), S.reconstruct A (S.share sec r) = sec
 
@@ -110,9 +111,11 @@ parties of `B` exactly the shares they would have received had the secret been `
 `r`. With uniform coins this says the `B`-view is distributed independently of the secret.
 [Bei11, §1], [Sha79, §2]
 
-For the threshold structure this gives [PS10, Def 152.1, item 3]: the shares of fewer than `k`
-parties have the same distribution for any two secrets, so they are statistically close at
-distance zero. **Deviation:** stated as a bijection of the coins rather than as closeness of
+For the threshold structure and finite, uniformly sampled coins, this gives
+[PS10, Def 152.1, item 3]: the shares of fewer than `k` parties have the same distribution for
+any two secrets, so they are statistically close at distance zero. ([PS10] writes both "at most
+`k`" and "`|S′| < k`"; the latter is meant, since `k` shares reconstruct.) **Deviation:** stated
+as a bijection of the coins rather than as closeness of
 distributions; this is the stronger, perfect form, and the one Shamir's scheme achieves
 (`card_view_eq` gives the counting consequence). -/
 def PerfectPrivacy (Γ : AccessStructure P) : Prop :=

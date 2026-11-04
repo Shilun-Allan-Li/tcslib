@@ -43,8 +43,8 @@ universal hash family is a *strong* extractor for every class of `k`-sources.
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   §8.3.1 (Definitions 181.1 and 181.2) and §8.3.3 (the leftover hash lemma, heading only).
-* [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012, §6.1–6.2 (Lemma 6.4, Def 6.13,
-  Thm 6.18).
+* [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012, §6.1–6.2 (statistical difference,
+  strong extractors, Thm 6.18).
 * [HILL99] J. Håstad, R. Impagliazzo, L. Levin, M. Luby, *A pseudorandom generator from any
   one-way function*, SICOMP 28(4), 1999 (Lemma 4.8).
 -/
@@ -68,17 +68,23 @@ no bound on its running time, has advantage at most `ε`,
 def EpsClose (ε : ℝ) (p q : FinDist α) : Prop :=
   ∀ D : α → Bool, |p.probTrue D - q.probTrue D| ≤ ε
 
-/-- A distinguisher's advantage is a sum of probability differences over the points it accepts. -/
+/-- The signed difference of two acceptance probabilities, `Pr_p[D = 1] - Pr_q[D = 1]`, is the
+sum of the probability differences `p a - q a` over the points `D` accepts. -/
 theorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :
     p.probTrue D - q.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by
   simp only [FinDist.probTrue, sum_sub_distrib]
+
+/-- `probTrue p D` is the total probability of the points that `D` accepts. -/
+theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
+    p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
+  rfl
 
 /-- The probability differences of two distributions sum to zero. -/
 private theorem sum_sub_eq_zero (p q : FinDist α) : ∑ a, (p a - q a) = 0 := by
   rw [sum_sub_distrib, p.sum_prob, q.sum_prob, sub_self]
 
 /-- **No distinguisher beats statistical distance.** For every test `D`,
-`|Pr_p[D = 1] - Pr_q[D = 1]| ≤ statDist p q`. [Vad12, Lemma 6.4]
+`|Pr_p[D = 1] - Pr_q[D = 1]| ≤ statDist p q`. [Vad12, §6.1]
 
 **Proof sketch.** Let `d = p - q` and let `A` be the accepted set. Since `d` sums to zero, the sum
 of `d` over `A` is minus its sum over the complement, so twice its absolute value is at most
@@ -99,7 +105,7 @@ theorem abs_probTrue_sub_le_statDist (p q : FinDist α) (D : α → Bool) :
   linarith
 
 /-- **The optimal distinguisher attains statistical distance.** If every test has advantage at
-most `ε`, then `statDist p q ≤ ε`. [Vad12, Lemma 6.4]
+most `ε`, then `statDist p q ≤ ε`. [Vad12, §6.1]
 
 **Proof sketch.** Test `D` accepting exactly the points where `p` is more likely than `q`. On the
 accepted set `|p - q| = p - q`, off it `|p - q| = q - p`, and the two sums of `p - q` cancel, so
@@ -132,17 +138,18 @@ theorem statDist_le_of_epsClose {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p
   linarith
 
 /-- **`ε`-closeness is a statistical-distance bound.** `p ≈_ε q` in the distinguisher form of
-[PS10, Def 181.1] exactly when `statDist p q ≤ ε`. [Vad12, Lemma 6.4] -/
+[PS10, Def 181.1] exactly when `statDist p q ≤ ε`. [Vad12, §6.1] -/
 theorem epsClose_iff_statDist_le {ε : ℝ} {p q : FinDist α} :
     EpsClose ε p q ↔ statDist p q ≤ ε :=
   ⟨statDist_le_of_epsClose, fun h D => (abs_probTrue_sub_le_statDist p q D).trans h⟩
 
-/-- Closeness is symmetric. -/
+/-- Closeness is symmetric. An elementary consequence of [PS10, Def 181.1]. -/
 theorem EpsClose.symm {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p q) : EpsClose ε q p := by
   rw [epsClose_iff_statDist_le] at h ⊢
   rwa [statDist_comm]
 
-/-- Closeness composes: `p ≈_ε q` and `q ≈_δ r` give `p ≈_{ε+δ} r`. -/
+/-- Closeness composes: `p ≈_ε q` and `q ≈_δ r` give `p ≈_{ε+δ} r`. An elementary consequence of
+[PS10, Def 181.1]. -/
 theorem EpsClose.trans {ε δ : ℝ} {p q r : FinDist α} (h₁ : EpsClose ε p q)
     (h₂ : EpsClose δ q r) : EpsClose (ε + δ) p r := by
   rw [epsClose_iff_statDist_le] at *
@@ -160,6 +167,12 @@ def IsExtractor [DecidableEq β] [Nonempty β] (C : Set (FinDist α)) (ε : ℝ)
     Prop :=
   ∀ X ∈ C, EpsClose ε (X.map Ext) (uniform β)
 
+/-- `Ext` is an `ε`-extractor for `C` exactly when `Ext(X)` is `ε`-close to uniform for every
+`X ∈ C`. -/
+theorem isExtractor_iff [DecidableEq β] [Nonempty β] {C : Set (FinDist α)} {ε : ℝ}
+    {Ext : α → β} : IsExtractor C ε Ext ↔ ∀ X ∈ C, EpsClose ε (X.map Ext) (uniform β) :=
+  Iff.rfl
+
 /-- An extractor for a class is one for every subclass. -/
 theorem IsExtractor.mono [DecidableEq β] [Nonempty β] {C C' : Set (FinDist α)} {ε : ℝ}
     {Ext : α → β} (h : IsExtractor C ε Ext) (hC : C' ⊆ C) : IsExtractor C' ε Ext :=
@@ -167,17 +180,33 @@ theorem IsExtractor.mono [DecidableEq β] [Nonempty β] {C C' : Set (FinDist α)
 
 /-- The seeded family `f : S → α → β` is a **strong `ε`-extractor for `C`**: for every source `X`
 in `C`, the pair `(s, f s x)` with a uniform seed `s` and `x ← X` is `ε`-close to uniform on
-`S × β`. [Vad12, Def 6.13]; [PS10, §8.3.3] states the leftover hash lemma under this heading
-without a definition. -/
+`S × β`. [Vad12, Ch. 6, strong extractors]. [PS10] has no such definition: its §8.3.3 (the
+leftover hash lemma) contains only a heading.
+
+**Deviation:** [Vad12] defines strong `(k, ε)`-extractors on bit strings, for the class of
+`k`-sources; here the class `C` and the finite seed, input and output types are arbitrary. -/
 def IsStrongExtractor [DecidableEq S] [DecidableEq α] [DecidableEq β] [Nonempty S] [Nonempty β]
     (C : Set (FinDist α)) (ε : ℝ) (f : S → α → β) : Prop :=
   ∀ X ∈ C, EpsClose ε (hashPair f X) (uniform (S × β))
+
+/-- `f` is a strong `ε`-extractor for `C` exactly when `(s, f s x)` is `ε`-close to uniform on
+`S × β` for every `X ∈ C`. -/
+theorem isStrongExtractor_iff [DecidableEq S] [DecidableEq α] [DecidableEq β] [Nonempty S]
+    [Nonempty β] {C : Set (FinDist α)} {ε : ℝ} {f : S → α → β} :
+    IsStrongExtractor C ε f ↔ ∀ X ∈ C, EpsClose ε (hashPair f X) (uniform (S × β)) :=
+  Iff.rfl
 
 /-- The **seeded sources** over `C`: a uniform seed in `S` paired with an independent sample of a
 source in `C`. A strong extractor is a deterministic extractor ([PS10, Def 181.2]) for exactly
 these. -/
 def seededSources [Nonempty S] (C : Set (FinDist α)) : Set (FinDist (S × α)) :=
   {Y | ∃ X ∈ C, Y = FinDist.prod (uniform S) X}
+
+/-- The seeded sources over `C` are exactly the products of the uniform seed with a source in
+`C`. -/
+theorem mem_seededSources [Nonempty S] {C : Set (FinDist α)} {Y : FinDist (S × α)} :
+    Y ∈ seededSources (S := S) C ↔ ∃ X ∈ C, Y = FinDist.prod (uniform S) X :=
+  Iff.rfl
 
 /-- A strong extractor `f` makes `(s, x) ↦ (s, f s x)` a deterministic `ε`-extractor
 ([PS10, Def 181.2]) for the seeded sources over `C`: the seed is part of the sample and is
@@ -190,8 +219,13 @@ theorem IsStrongExtractor.isExtractor_seeded [DecidableEq S] [DecidableEq α] [D
   exact h X hX
 
 /-- **The leftover hash lemma as an extractor.** A universal hash family `f : S → α → β` is a
-strong `½ √(|β| · 2^(-k))`-extractor for the `k`-sources on `α`. [PS10, §8.3.3],
-[HILL99, Lemma 4.8], [Vad12, Thm 6.18]
+strong `½ √(|β| · 2^(-k))`-extractor for the `k`-sources on `α`. [HILL99, Lemma 4.8],
+[Vad12, Thm 6.18]; [PS10, §8.3.3] carries this title but no text.
+
+**Deviation:** stated over arbitrary finite types, for min-entropy `k` and for `f` universal in
+the collision-count sense of `IsUniversal`, with the error in closed form (for `|β| = 2^m` it is
+`2^((m - k)/2 - 1)`); the cited statements are over bit strings and are not phrased in exactly
+these terms.
 
 **Proof sketch.** A `k`-source has `HasMinEntropy X k` (`isSource_iff_hasMinEntropy`), so the
 library's `leftover_hash` bounds the statistical distance of `(s, f s x)` from uniform by

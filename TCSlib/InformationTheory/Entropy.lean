@@ -70,13 +70,20 @@ entropy; only the base-2 case is defined here. -/
 noncomputable def shannonEntropy (p : FinDist α) : ℝ :=
   ∑ a, negMulLog (p a) / log 2
 
-/-- Shannon entropy is nonnegative: each term `-p log₂ p` is nonnegative for `0 ≤ p ≤ 1`. -/
+/-- Shannon entropy is the sum of `negMulLog (p a) / log 2` over the outcomes `a`. -/
+theorem shannonEntropy_eq (p : FinDist α) :
+    shannonEntropy p = ∑ a, negMulLog (p a) / log 2 :=
+  rfl
+
+/-- Shannon entropy is nonnegative: each term `-p log₂ p` is nonnegative for `0 ≤ p ≤ 1`. An
+elementary consequence of [PS10, Def 182.3], not stated there. -/
 theorem shannonEntropy_nonneg (p : FinDist α) : 0 ≤ shannonEntropy p :=
   sum_nonneg fun a _ =>
     div_nonneg (negMulLog_nonneg (p.nonneg a) (p.le_one a)) (log_nonneg one_le_two)
 
 /-- The uniform distribution on `α` has Shannon entropy `log₂ |α|`. [PS10, p. 182, the uniform
-example after Def 182.3]
+example after Def 182.3], generalized from `{0,1}^n` to any nonempty finite type (the source's
+case is `shannonEntropy_uniform_bits`).
 
 **Proof sketch.** Every one of the `|α|` terms is `(1/|α|) · log₂ |α|`. -/
 theorem shannonEntropy_uniform [Nonempty α] :
@@ -114,8 +121,9 @@ theorem maxProb_pos (p : FinDist α) : 0 < maxProb p := by
   rw [p.sum_prob] at this
   norm_num at this
 
-/-- The **min-entropy** of `p` in bits: `H∞(p) = minₓ log₂ (1 / p(x)) = -log₂ (maxₓ p(x))`.
-[PS10, Def 183.4] -/
+/-- The **min-entropy** of `p` in bits: `H∞(p) = minₓ log₂ (1 / p(x)) = -log₂ (maxₓ p(x))`, the
+minimum taken over the points of positive probability (a point of probability zero has infinite
+surprise). [PS10, Def 183.4] -/
 noncomputable def minEntropy (p : FinDist α) : ℝ :=
   -logb 2 (maxProb p)
 
@@ -150,12 +158,23 @@ theorem IsSource.mono {k k' : ℝ} {p : FinDist α} (h : IsSource k p) (hk : k' 
 /-- `p` is a **`k`-flat source**: it is the uniform distribution on some set of `2^k` distinct
 points. [PS10, Def 183.5]
 
-**Deviation:** [PS10] requires a flat source to be a `k`-source as well; that is automatic
-(`IsFlatSource.isSource`), so it is a theorem here rather than part of the definition. -/
+**Deviations:** [PS10] requires a flat source to be a `k`-source as well; that is automatic
+(`IsFlatSource.isSource`), so it is a theorem here rather than part of the definition. Here `k`
+is a natural number, so only supports whose size is a power of two are covered; [PS10] leaves `k`
+untyped, and in a real reading the uniform distribution on `N` points is `log₂ N`-flat. Those
+distributions are still available as `flat s`. -/
 def IsFlatSource [DecidableEq α] (k : ℕ) (p : FinDist α) : Prop :=
   ∃ s : Finset α, #s = 2 ^ k ∧ ∀ a, p a = if a ∈ s then ((2 : ℝ) ^ k)⁻¹ else 0
 
-/-- A `k`-flat source is a `k`-source: every point has probability `2^(-k)` or `0`. -/
+/-- The defining condition of a `k`-flat source: some set of exactly `2^k` points has
+probability `2^(-k)` at each of its points, and every other point has probability zero. -/
+theorem isFlatSource_iff [DecidableEq α] {k : ℕ} {p : FinDist α} :
+    IsFlatSource k p ↔
+      ∃ s : Finset α, #s = 2 ^ k ∧ ∀ a, p a = if a ∈ s then ((2 : ℝ) ^ k)⁻¹ else 0 :=
+  Iff.rfl
+
+/-- A `k`-flat source is a `k`-source: every point has probability `2^(-k)` or `0`. This is the
+"additionally" clause of [PS10, Def 183.5], proved here rather than assumed. -/
 theorem IsFlatSource.isSource [DecidableEq α] {k : ℕ} {p : FinDist α} (h : IsFlatSource k p) :
     IsSource k p := by
   obtain ⟨s, -, hp⟩ := h
@@ -184,7 +203,8 @@ theorem isFlatSource_flat [DecidableEq α] {k : ℕ} (s : Finset α) (hs : #s = 
     IsFlatSource k (flat s (Finset.card_pos.1 (hs ▸ pow_pos two_pos k))) :=
   ⟨s, hs, fun a => by simp [hs]⟩
 
-/-- The uniform distribution on `α` is a `log₂ |α|`-source; on `n`-bit strings, an `n`-source. -/
+/-- The uniform distribution on `α` is a `log₂ |α|`-source; on `n`-bit strings, an `n`-source.
+An elementary consequence of [PS10, Defs 183.4 and 183.5]. -/
 theorem isSource_uniform [Nonempty α] : IsSource (logb 2 (Fintype.card α)) (uniform α) := by
   refine isSource_iff_hasMinEntropy.2 fun a => ?_
   have hc : (0 : ℝ) < Fintype.card α := by exact_mod_cast Fintype.card_pos

@@ -91,11 +91,13 @@ constant term `sec`, and reconstruct by Lagrange interpolation at `0`. [Sha79, �
 
 **Deviations from [PS10, Prot 154.4].** [PS10] works over `ℤ_p` for a prime `p > n` and gives
 shares only to the parties `1, …, n`; here the field is arbitrary and every nonzero element is a
-party. [PS10]'s `n`-party scheme is this one with the other parties' shares discarded, and its
-correctness and privacy claims, which concern sets of those parties, are special cases of
-`correct` and `perfectPrivacy`. [PS10] draws `n − 1` random coefficients and writes the
-polynomial up to `a_n tⁿ`, a typo: threshold `k` needs degree `k − 1` and the `k − 1` random
-coefficients that the coins `q` carry here. -/
+party. For `F = ℤ_p` and `1 ≤ k`, [PS10]'s `n`-party scheme is this one with the other parties'
+shares discarded, and its correctness and privacy claims, which concern sets of those parties,
+are special cases of `correct` (which needs `0 < k`), `localReconstruct` and `perfectPrivacy`.
+[PS10] draws `n − 1` random coefficients and writes the polynomial up to `a_n tⁿ`, a typo:
+threshold `k` needs degree at most `k − 1`, that is, the `k − 1` random coefficients that the
+coins `q` carry here. [PS10, Lem 153.2] says "the unique degree-`n` polynomial"; the interpolant
+is the unique one of degree *at most* `n`, as its proof uses. -/
 noncomputable def scheme (k : ℕ) (F : Type*) [Field F] [DecidableEq F] :
     Scheme (Party F) F F (degreeLT F (k - 1)) where
   share sec q a := (poly sec q).eval (label a)
