@@ -29,7 +29,8 @@ blockers, 1 major, 4 minors, 10 notes.**
 | 5 | minor | The design note's §7 says #184 is independent of #182. | **Fixed:** the sentence is superseded in place. #184 reads the machine through #182's step equations, is stacked on it, and lands after it. |
 | 6–15 | note | Provenance, the language's meaning, the check and layout, the adversarial cases, the machine, the deciders' contracts, the seal, the census, names and lint, the replay order. | Agreed. Note 9's optional sanity lemmas (zero tapes, radius zero) are left to the deepening fill, which may state them if it needs them. The replay follows the order in note 15. |
 
-**Round 2 staged (2026-11-04)** at #184's head `b360808c`. Evidence `evidence/round2/`:
+**Round 2 staged (2026-11-04)** at #184's head `b360808c`. Pack `pack-r2.md`; bundle SHA-256
+`ccf4b5ecbbd8145bb7cfd113efa876475d422e872713b71512461d327f34d63f` (237 sections), the records at `26f66ef1`. Evidence `evidence/round2/`:
 - the elaboration chain: all 16 `Codec` modules at 0 diagnostics, in a fresh clone of #182's
   compiled head;
 - the three sealed copies at 0 diagnostics; controls 73/74 unsealed and 0/74 sealed;
