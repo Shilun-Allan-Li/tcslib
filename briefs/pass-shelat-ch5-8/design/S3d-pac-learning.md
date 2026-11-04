@@ -79,7 +79,7 @@ S. Ben-David, *Understanding Machine Learning*, ch. 3. The definitions:
 - **Layer 2** needs `NUPPT`, `PRF` and S2, so it lives on the ch. 2–4 branch in prong D.
 - **Size estimate:** layer 1 about 400–700 lines; layer 2 about 300–600, beyond S2.
 
-## Decision for the user
+## Decision for the user (ruled 2026-11-04: R-3, its own PR to `main`, written after S2 settles)
 
 - **R-3:** where the information-theoretic PAC layer lands: on `main` by its own PR, now or after
   S2 (recommended, as for P0), or with prong D on the ch. 2–4 branch.
