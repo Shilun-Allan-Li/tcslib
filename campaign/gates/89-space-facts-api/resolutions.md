@@ -48,5 +48,7 @@ blockers, 1 major, 0 minors, 7 notes.**
 
 **Round 3 staged (2026-11-04):** `pack-r3.md`, at #181's head `b8add1ac`. Bundle SHA-256
 `763bee495a3bb520a2d0447b411c310f3d656e406966593c0338984820d509ec` (140 sections), the records at
-`04d2123a`. **Dispatched (user, 2026-11-04); `replay-lsm3` running.** `replay-lsm3` is written
+`04d2123a`. **Dispatched (user, 2026-11-04).** **`replay-lsm3` passed** (user, 2026-11-04): 137 of 137 at
+`b8add1ac`, 0 failed, static-equal (40, all pre-existing); snapshot `oleans-lsm3`
+(`evidence/round3/merged-tree/`). `replay-lsm3` is written
 (137 modules from `oleans-leqc3`, eight blobs pinned; precheck passed); not yet run.
