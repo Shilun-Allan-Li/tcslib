@@ -4116,9 +4116,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 * **E-D issued (2026-11-04):** `campaign/fills/eq/briefs/eq-fill-diagonalizer.md` at the issue commit
   `c8b0711408c02a2c7e254663511ecdb65516ae88` (the campaign tip after #176, Lean `711f5444`), Claude. The
   dispatch copy `exchange/outbox/fills/eq-fill-diagonalizer.md` (SHA-256
-  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); not yet
-  dispatched. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2).
-* **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is staged
-  (`exchange/outbox/gates/89-space-facts-api-gate/`), not yet dispatched. H's brief issues after #181
+  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2).
+* **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
+  **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
 

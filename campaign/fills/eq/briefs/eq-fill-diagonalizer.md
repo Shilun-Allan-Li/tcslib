@@ -3,7 +3,8 @@
 > **Issued** (maintainer, 2026-11-04) at the campaign tip after #176 (`711f5444`: E-Q cont1's
 > landing, merged after #177). The brief was reviewed before issue
 > (`campaign/fills/eq/reviews/ed-brief/REVIEW.md`); its one blocker was ruled by the user
-> (2026-11-04): the own leaf `dzTakeTM`. **Agent: Claude** (user, 2026-11-04).
+> (2026-11-04): the own leaf `dzTakeTM`. **Agent: Claude** (user, 2026-11-04). **Dispatched** (user,
+> 2026-11-04).
 >
 > **Maintainer's landing item (not the fill's):** gate 87's finding 2, ruled 2026-11-04: in E-D's
 > landing PR, `qy_call_bound`'s local `hb` becomes `have hb := Turing.length_bits_le_self (f a)`
