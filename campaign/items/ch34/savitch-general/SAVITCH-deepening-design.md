@@ -132,3 +132,30 @@ most `2 ^ (w·w)` have `O((S|x|)²)` bits, because `logSpace ≤ S` is `hS.1`. C
    by the pre-ship probe of `cfgWord`'s published layout facts. Use (b) if they exist, otherwise
    (a).
 3. **Agent for the fill**: by the soft rule, Codex for a first attempt.
+
+## 7. Decided at pre-ship (2026-11-04): the edge decider is a codec mode
+
+The rule (decision 2, user 2026-11-04) was a separate decider if `cfgWord`'s head-flag positions
+are published, else a codec mode. The chunk-level facts are published (`getD_cfgWord_chunk`,
+`chunkBit_tape`, `cellOf`'s head field), so the check is easy to state. Deciding it in logspace is
+another matter: it needs the codec machine's parse of `⟨x, ⟨w, bits s⟩⟩` (the radius into a
+register, the layout's base address) and its validity scan. A separate decider would rebuild both,
+or embed `CA`'s partial run, which the API transports only for halting runs. So, by the rule:
+**a fifth mode `edge` of `Complexity.Codec.CA`**, a maintainer API PR in Hydroxyi's `Codec` files
+(the 2026-10-27 authorization; FYI only):
+- `Langs`: `edgeLang N`, the codes at radius `s` of window-bounded configurations with some work
+  head at `±s`;
+- `Checks`: `EdgeChk` (valid, and some tape `i` with the head flag set at chunk `0`, offset
+  `hH + 3i + 2`, or at chunk `2s`), and `edgeLang_iff`, from `validChk_iff`,
+  `getD_cfgWord_chunk`, `chunkBit_tape` and `cellOf`;
+- `Machine`: `CMode.edge`; after the validity scan, if `VAcc` holds, a loop over tapes. Set
+  `U := A + 2(hH + 2)` and a down-counter to `k`; read the bit at `U`; copy `U`, add `4W · s`, read
+  again; then `U += 6` and count down. It answers `true` at the first set flag and `false` at the
+  end. With no work tape it answers `false`. New sites: copies (`A → U`, `U → Q1`, `S → T`), a
+  scale (`Q1 += 4W · T`) and increment chains (`2(hH + 2)`, `6`, `k`), all within the label
+  families' bounds;
+- `Deciders`: `edge_tail` (as `init_tail`, by induction over tapes) and `edgeLang_mem`.
+
+ESTIMATE: 400–600 lines. It is independent of #182, so the two PRs can land in either order. The
+deepening fill's brief issues once both have merged.
+
