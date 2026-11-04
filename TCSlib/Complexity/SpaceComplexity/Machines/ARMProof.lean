@@ -454,7 +454,7 @@ lemma astep_embed (hρ : Function.Injective ρ) (hD : ∀ l, D (ι l) = (A l).em
         (fun r' => Nat.bits (v' r')) = callSegs ⟨j, md, args, l₁, l₀⟩ x
         (fun r => Nat.bits (v r)) :=
       callSegs_congr rfl (by simp only [List.map_map]; congr 1; funext r; simp [hv.reg r])
-    rw [astep_call (hDl _ hAl), hseg]; dsimp only [Function.comp]; split_ifs <;> rfl
+    rw [astep_call (hDl _ hAl), hseg]; simp only [Function.comp_apply]; split_ifs <;> rfl
   | ret b =>
     refine Or.inr ⟨b, astep_ret hAl, ?_⟩
     rw [astep_jz (hDl _ hAl)]; split_ifs <;> rfl
