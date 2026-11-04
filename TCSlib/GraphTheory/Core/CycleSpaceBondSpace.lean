@@ -21,8 +21,12 @@ import Mathlib.Algebra.Field.ZMod
 
 Sorry-skeleton extracted from `papers/bondy-murty-ch12-cycle-bond-space.md`.
 
-Every proof body is `sorry`; this file is a scaffold for sorry-driven development
-(fill one stub at a time, `lake build` after each).
+Originally a scaffold in which every proof body was `sorry`.  **Now partially
+proved**: Theorem 12.1 (both halves), Corollary 12.2 (both formulas, the second in
+its repaired non-truncating form), Lemma 12.2.2, and Exercise 12.2.2(a) (in its
+repaired no-parallel-arcs form) are kernel-checked with no `sorryAx`; the remaining
+stubs each carry an accurate `## Status` block (fill one at a time, `lake build`
+after each).
 
 ## Carrier decisions (from the outline)
 * B&M ch12 is the **oriented, real** cycle space on a **digraph** — NOT the GF(2) theory.
@@ -52,40 +56,34 @@ from this file's formalisation choices:
 
 Definitions carry parts 1, 4 and 5 only.
 
-## ⚠ Nine definitions in this file are defective
+## ⚠ One definition remains defective: `fundamentalCycle`
 
-A `sorry`-ed *proof* is an honest debt; a `sorry`-ed *definition* is an opaque
-constant, so every statement mentioning it is vacuous — it typechecks but asserts
-nothing.  Eight definitions here have `sorry` bodies, and a ninth is degenerate.
-The damage is extensive enough to be worth tabulating:
+This file originally shipped with **nine defective definitions** (eight `sorry`
+bodies plus a degenerate `ArcCycle`), which made every §12.2 statement vacuous.
+Eight of the nine have been repaired, each following the repair its own docstring
+specified: `ArcCycle` now carries its closed-walk and distinctness invariants;
+`IsConnectedDigraph`, `cycleCirculation`, `IsSpanningTree`, `IsMaximalForest` and
+`fundamentalBondVertexSet` have honest bodies; and the two `IsBasisMatrixOfTree`
+predicates use the axiomatic form their docstrings recommended (rows in the
+ring-level space, restriction the identity).  `tau` is therefore a genuine count of
+spanning trees, and the §12.2 statements now constrain something.
 
-* **`IsSpanningTree`** (`sorry`).  `tau` is defined by counting the `Finset`s
-  satisfying it, so **`τ(G)` is an opaque natural number** and *every* §12.2 result
-  is vacuous: theorem 12.4, (12.8), corollary 12.4, the matrix-tree theorem, and
-  exercises 12.2.1(b), 12.2.2(b), 12.2.4(a) and (b).
-* **`IsBasisMatrixOfTree`, `IsBasisMatrixOfTree'`** (`sorry`).  These are the
-  hypotheses of theorems 12.3, 12.4, (12.8), corollary 12.4 and exercises 12.2.1(b),
-  12.2.3(a), 12.2.4(a) — so those statements constrain nothing.
-* **`IsMaximalForest`, `fundamentalCycle`, `fundamentalBondVertexSet`,
-  `cycleCirculation`** (`sorry`).  These make the two tree-basis theorems
-  (`isBasisMatrix_cycleSpace_of_maximalForest`,
-  `isBasisMatrix_bondSpace_of_maximalForest`) vacuous.
-* **`IsConnectedDigraph`** (`sorry`).  Hypothesis of the matrix-tree theorem and of
-  exercise 12.1.3.
-* **`ArcCycle` is degenerate** — not `sorry`, but worse, because it looks honest.
-  It carries only `arcs : List A` and `nonempty : arcs ≠ []`, with **no closed-walk
-  or distinctness conditions** (the docstring calls them "elided").  Consequently
-  *any* nonempty list of arcs is an "arc cycle", and
+**Still defective:** `fundamentalCycle` (`:= sorry`) — constructing the unique cycle
+in `T + a` is real work (path-in-forest construction on the arc carrier) and was
+deliberately deferred.  Exactly one statement consumes it:
+`isBasisMatrix_cycleSpace_of_maximalForest`, which is therefore still vacuous and
+must not be cited.  Everything else in the file is either proved or honestly open.
 
-      IsArcAcyclic tail head S  ↔  S = ∅
+**Proved in this file** (kernel-checked, axioms `propext`/`Classical.choice`/
+`Quot.sound` only): `bondSpace_eq_rowSpace`, `cycleSpace_eq_orthogonal_bondSpace`
+(Theorem 12.1), `finrank_bondSpace`, `finrank_cycleSpace` (Corollary 12.2),
+`exists_isBond_subset_support_of_mem_bondSpace` (Lemma 12.2.2), and
+`lapMatrix_eq_orientedIncMatrix_mul_transpose` (Exercise 12.2.2(a)).
 
-  — for nonempty `S` pick `a ∈ S` and take the one-element list `[a]`.  So theorem
-  12.2(i) currently reads *"the columns of `B | S` are independent iff `S = ∅`"*,
-  which is false, and lemma 12.2.1 is trivially true for the wrong reason.
-
-Nothing in §12.2 is meaningful until `ArcCycle`, `IsSpanningTree` and the two
-`IsBasisMatrixOfTree` predicates are given honest bodies.  Per-declaration repairs
-are in the individual docstrings.
+**Statements repaired in this session with user authorization** (each was *false* as
+originally written, with the counterexample recorded in its docstring):
+`lapMatrix_eq_orientedIncMatrix_mul_transpose` (parallel arcs; added `hsimple`) and
+`finrank_cycleSpace` (ℕ-truncation; conclusion now `ε - (ν - ω)`).
 
 ## Dropped / subsumed items (see outline §Scope note and judgement 5)
 * **Ex 12.1.1(a)** — figure omitted from source; unstatable.
@@ -289,21 +287,20 @@ def IsOrientationOf (G : SimpleGraph V) : Prop := IsUnderlyingGraph tail head G
 is what makes `ω = 1`, so that `dim 𝓑 = ν - 1` and deleting a single row of the
 incidence matrix leaves a basis matrix of the bond space.
 
-**⚠ Defective: `sorry` body.**  `IsConnectedDigraph` is an opaque proposition, so the
-matrix-tree theorem and exercise 12.1.3 — the two statements taking it as a
-hypothesis — constrain nothing.
+**Formalisation.**  Connectivity of the **underlying graph**, which is what B&M mean
+(§10.1: every concept valid for graphs applies to digraphs via the underlying graph):
+`Relation.ReflTransGen` over "some arc runs between `x` and `y` in either direction".
+Nothing here needs a path API.
 
-*The repair* is one line: connectivity of the **underlying graph**, which is what
-B&M mean (§10.1: every concept valid for graphs applies to digraphs via the
-underlying graph).  E.g.
-
-    IsConnectedDigraph tail head :=
-      ∀ u v : V, Relation.ReflTransGen (fun x y => ∃ a, (tail a = x ∧ head a = y) ∨
-                                                        (tail a = y ∧ head a = x)) u v
-
-— reachability ignoring arc direction, plus `Nonempty V` if the empty digraph should
-be excluded.  Nothing here needs a path API. -/
-def IsConnectedDigraph (tail head : A → V) : Prop := sorry
+⚠ The empty digraph (`V` empty) counts as connected under this definition — the
+quantifier is vacuous.  B&M's graphs are nonempty, but no use site in this chapter is
+sensitive to the convention (the matrix-tree theorem's matrices are `0 × 0` there and
+both sides are `det` of an empty matrix).  Previously `:= sorry` — an opaque
+proposition that made the matrix-tree theorem and exercise 12.1.3 constrain
+nothing. -/
+def IsConnectedDigraph (tail head : A → V) : Prop :=
+  ∀ u v : V, Relation.ReflTransGen
+    (fun x y => ∃ a : A, (tail a = x ∧ head a = y) ∨ (tail a = y ∧ head a = x)) u v
 
 /-- An **arc-level cycle** in the digraph, as a nonempty closed arc-sequence.
 ⚠ `SimpleGraph.Walk.IsCycle` is unusable here: it cannot express B&M's loops or digons.
@@ -317,34 +314,37 @@ this orientation.*
 directions; some arcs point along the direction of travel and some against it,
 which is what the sign in `f_C` records.
 
-**⚠ Defective: this structure is degenerate.**  It carries only a nonempty list of
-arcs, with **no** closed-walk condition and **no** distinctness condition — the
-docstring's "the closed/interior-distinct invariants are elided" understates the
-cost.  As a result *any* nonempty list of arcs is an `ArcCycle`, and the derived
-predicate collapses:
+**Formalisation.**  The cycle carries its vertex sequence: `verts[i]` is where the
+traversal stands before crossing `arcs[i]`, and the `closed` field says each arc joins
+`verts[i]` to `verts[(i+1) % n]` *in one direction or the other* — the `Sym2` equality
+is the set form, which is exactly what lets an arc be traversed against its
+orientation (`C⁻`).  `verts_nodup` is B&M's "distinct vertices"; `arcs_nodup` removes
+the position/membership ambiguity that `cycleCirculation` needs resolved.
 
-    IsArcAcyclic tail head S  ↔  S = ∅
+Sanity checks on the boundary: a loop (`tail a = head a = v`) is the 1-cycle
+`arcs = [a], verts = [v]`; two parallel arcs or a digon form a 2-cycle; a single
+non-loop arc is **not** a cycle (its `closed` condition forces `tail = head`);
+`[a, a]` is excluded by `arcs_nodup`; a repeated vertex by `verts_nodup`.
 
-(for nonempty `S`, pick `a ∈ S` and take the one-element list `[a]`).  Downstream,
-theorem 12.2(i) then reads *"the columns of `B | S` are independent iff `S = ∅`"* —
-false — and lemma 12.2.1 becomes trivially true for the wrong reason.  This is not
-`sorry`, which makes it more dangerous: the definition *looks* honest.
+⚠ `SimpleGraph.Walk.IsCycle` genuinely cannot serve here: the chapter's digraphs admit
+loops (`tail a = head a`) and parallel arcs, which a `SimpleGraph` cannot express.
 
-*The repair* needs three fields beyond `arcs` and `nonempty`:
-* **closed walk** — a vertex sequence `verts : List V` with `verts.length = arcs.length`
-  such that consecutive arcs meet head-to-tail, cyclically: for each `i`,
-  `{tail arcs[i], head arcs[i]} = {verts[i], verts[i+1 mod n]}` (the set form allows
-  an arc to be traversed against its direction, which is exactly what `C⁺` records);
-* **interior distinctness** — `verts.Nodup`;
-* optionally **no repeated arc** — `arcs.Nodup`.
-
-⚠ `SimpleGraph.Walk.IsCycle` genuinely cannot serve, as the note says: the chapter's
-digraphs admit loops (`tail a = head a`) and parallel arcs, which a `SimpleGraph`
-cannot express.  But that argues for building the structure properly, not for
-omitting its invariants. -/
+*Previously defective:* the structure carried only `arcs`/`nonempty`, so *any*
+nonempty arc list was a "cycle", `IsArcAcyclic S` collapsed to `S = ∅`, theorem
+12.2(i) was false as stated, and lemma 12.2.1 was trivially true for the wrong
+reason.  The invariants below are exactly the repair the old docstring specified
+(closed walk + `verts.Nodup` + `arcs.Nodup`). -/
 structure ArcCycle (tail head : A → V) where
   arcs : List A
+  verts : List V
   nonempty : arcs ≠ []
+  length_eq : verts.length = arcs.length
+  arcs_nodup : arcs.Nodup
+  verts_nodup : verts.Nodup
+  closed : ∀ i : Fin arcs.length,
+    s(tail arcs[i], head arcs[i]) =
+      s(verts[(i : ℕ)]'(i.isLt.trans_eq length_eq.symm),
+        (verts.rotate 1)[(i : ℕ)]'(by rw [List.length_rotate, length_eq]; exact i.isLt))
 
 /-- `S ⊆ A` is **acyclic**: it contains no arc-cycle.
 
@@ -355,10 +355,9 @@ independent if and only if `S` is acyclic.*
 this combinatorial property equivalent to a linear-algebraic one — the bridge that
 turns counting spanning trees into counting nonsingular submatrices.
 
-**⚠ Defective by inheritance.**  Because `ArcCycle` has no closure or distinctness
-conditions, this predicate collapses to `S = ∅`; see `ArcCycle`'s docstring for the
-one-line argument and the repair.  The definition here is *correct given a correct
-`ArcCycle`* — nothing needs changing at this declaration. -/
+**Formalisation.**  Correct as stated now that `ArcCycle` carries its invariants.
+(Historical note: with the original degenerate `ArcCycle` this predicate collapsed
+to `S = ∅`; nothing at this declaration changed in the repair.) -/
 def IsArcAcyclic (tail head : A → V) (S : Finset A) : Prop :=
   ¬ ∃ c : ArcCycle tail head, ∀ a ∈ c.arcs, a ∈ S
 
@@ -380,19 +379,22 @@ Conservation holds at every vertex because the cycle enters and leaves each of i
 vertices exactly once.  These are the elementary circulations from which all others
 are built, and they give the cycle space its name.
 
-**⚠ Defective: `sorry` body.**  `f_C` is an opaque function, so
-`isBasisMatrix_cycleSpace_of_maximalForest` — whose rows are these — asserts nothing.
+**Formalisation.**  Arc `a` at position `i = c.arcs.idxOf a` is traversed *forwards*
+(`a ∈ C⁺`) exactly when `tail a = c.verts[i]` — the traversal stands at `verts[i]`
+and crosses `a` to `verts[(i+1) % n]`.  `ArcCycle.arcs_nodup` is what makes
+"the position of `a`" well defined from membership alone, so the sign is a function
+of the arc.  A loop (`tail a = head a`) is always "forwards" and gets `+1`, matching
+B&M's convention that a loop trivially agrees with the traversal.
 
-*The repair* depends on repairing `ArcCycle` first: once a cycle carries its vertex
-sequence, `C⁺` is definable (arc `i` is in `C⁺` when `tail arcs[i] = verts[i]`, i.e.
-it is traversed forwards), and
-
-    f_C a = if a ∉ arcs then 0 else if a ∈ C⁺ then 1 else -1
-
-⚠ With `arcs` a `List`, `a ∈ C⁺` needs the *position*, not just membership — an arc
-could in principle occur twice.  Adding `arcs.Nodup` to `ArcCycle` removes that
-ambiguity and is the cleaner route. -/
-def cycleCirculation (tail head : A → V) (c : ArcCycle tail head) : A → F := sorry
+*Previously defective:* `:= sorry`, so `f_C` was an opaque function and
+`isBasisMatrix_cycleSpace_of_maximalForest` — whose rows are these — asserted
+nothing. -/
+def cycleCirculation (tail head : A → V) (c : ArcCycle tail head) : A → F :=
+  fun a =>
+    if h : a ∈ c.arcs then
+      if tail a = c.verts[c.arcs.idxOf a]'
+          ((List.idxOf_lt_length_of_mem h).trans_eq c.length_eq.symm) then 1 else -1
+    else 0
 
 /-- B&M's edge cut `[S, S̄]`: the arcs with exactly one end in `S`.
 
@@ -495,21 +497,18 @@ abbrev restrictCols (M : Matrix n A F) (S : Finset A) : Matrix n {a // a ∈ S} 
 spanning trees are exactly the `(ν-1)`-element subsets `S` for which `B | S` is
 nonsingular — which is what makes §12.2's determinant formula count them.
 
-**⚠ Defective: `sorry` body — the most damaging one in the file.**  `tau` counts the
-`Finset`s satisfying this predicate, so **`τ(G)` is an opaque natural number**, and
-every §12.2 statement about it is vacuous: theorem 12.4, (12.8), corollary 12.4, the
-matrix-tree theorem, and exercises 12.2.1(b), 12.2.2(b), 12.2.4(a), (b).
+**Formalisation.**  Acyclic with exactly `ν - 1` arcs (stated additively to avoid
+truncated subtraction).  Connectivity is *forced*: acyclicity (now genuine, since
+`ArcCycle` carries its invariants) makes the underlying edge map injective on `T` and
+loop-free, so `T` spans a forest with `ν - |T|` components; `|T| + 1 = ν` leaves one.
+For `V` empty the clause `T.card + 1 = 0` is unsatisfiable, so the empty digraph has
+no spanning trees and `τ = 0` there.
 
-*The repair*, once `ArcCycle` is fixed:
-
-    IsSpanningTree tail head T := IsArcAcyclic tail head T ∧ T.card + 1 = Fintype.card V
-                                  ∧ (the underlying subgraph on T is connected)
-
-or equivalently "acyclic and spanning", using the connectivity notion suggested for
-`IsConnectedDigraph`.  Acyclic plus `|T| = ν - 1` already forces connectivity for a
-graph on `ν` vertices, so the middle clause plus acyclicity suffices — but only once
-`IsArcAcyclic` is genuine. -/
-def IsSpanningTree (tail head : A → V) (T : Finset A) : Prop := sorry
+*Previously defective:* `:= sorry` — the most damaging stub in the file, since `tau`
+counts the `Finset`s satisfying this predicate, making `τ(G)` an opaque natural
+number and every §12.2 statement about it vacuous. -/
+def IsSpanningTree (tail head : A → V) (T : Finset A) : Prop :=
+  IsArcAcyclic tail head T ∧ T.card + 1 = Fintype.card V
 
 /-- A **maximal forest** of the digraph. Structural predicate; body deferred.
 
@@ -520,16 +519,14 @@ def IsSpanningTree (tail head : A → V) (T : Finset A) : Prop := sorry
 Its size `ν - ω` is exactly the rank of the bond space, which is how corollary 12.2
 computes `dim 𝓑`.
 
-**⚠ Defective: `sorry` body.**  Makes both tree-basis theorems
-(`isBasisMatrix_cycleSpace_of_maximalForest`,
-`isBasisMatrix_bondSpace_of_maximalForest`) vacuous, and is a hypothesis of
-`fundamentalCycle`.
+**Formalisation.**  Acyclic and maximally so.  This is the *forest* notion, weaker
+than `IsSpanningTree`: it does not require connectivity, which is exactly why
+corollary 12.2 gets `ν - ω` rather than `ν - 1`.
 
-*The repair:* `IsArcAcyclic tail head T ∧ ∀ a ∉ T, ¬ IsArcAcyclic tail head (insert a T)`
-— acyclic and maximally so.  Note this is the *forest* notion, weaker than
-`IsSpanningTree`: it does not require connectivity, which is exactly why corollary
-12.2 gets `ν - ω` rather than `ν - 1`. -/
-def IsMaximalForest (tail head : A → V) (T : Finset A) : Prop := sorry
+*Previously defective:* `:= sorry`, which made both tree-basis theorems vacuous and
+left `fundamentalCycle`'s hypothesis empty. -/
+def IsMaximalForest (tail head : A → V) (T : Finset A) : Prop :=
+  IsArcAcyclic tail head T ∧ ∀ a ∉ T, ¬ IsArcAcyclic tail head (insert a T)
 
 /-- The **fundamental cycle** of `a ∉ T` (`T + a` contains a unique cycle). Body deferred;
 lever: `IsAcyclic.path_unique`.
@@ -571,16 +568,21 @@ fundamental bonds, one per tree arc, give the tree-basis of the bond space, with
 `B | T` an identity matrix.  The exact mirror of the fundamental cycle — theorem 2.6
 is to bonds and cotrees as theorem 2.5 is to cycles and spanning trees.
 
-**⚠ Defective: `sorry` body.**  Makes `isBasisMatrix_bondSpace_of_maximalForest`
-vacuous.
+**Formalisation.**  `S` is the set of vertices reachable from `tail a` inside
+`T.erase a`, using the same undirected one-step relation as `IsConnectedDigraph`.
+Then `edgeCutSet tail head S` is the fundamental bond and
+`bondPotentialDiff tail head S` its potential difference — which is why the
+definition returns the *vertex set* rather than the bond, letting
+`bondPotentialDiff` be applied directly.  ⚠ The claim that this cut is the *unique*
+bond in `T̄ + a` is B&M's out-of-chapter theorem 2.6 and remains to be proved where
+it is used.
 
-*The repair:* `S` is the set of vertices reachable from `tail a` in `T \ {a}` (using
-the underlying-graph reachability of `IsConnectedDigraph`'s repair).  Then
-`edgeCutSet tail head S` is the fundamental bond, and `bondPotentialDiff tail head S`
-its potential difference — which is why the definition returns the *vertex set*
-rather than the bond, letting `bondPotentialDiff` be applied directly.
-⚠ Leans on B&M's theorem 2.6, which is out of chapter and not in this repo. -/
-def fundamentalBondVertexSet (tail head : A → V) (T : Finset A) (a : A) : Set V := sorry
+*Previously defective:* `:= sorry`, which made
+`isBasisMatrix_bondSpace_of_maximalForest` vacuous. -/
+def fundamentalBondVertexSet (tail head : A → V) (T : Finset A) (a : A) : Set V :=
+  {v | Relation.ReflTransGen
+    (fun x y => ∃ b ∈ T.erase a, (tail b = x ∧ head b = y) ∨ (tail b = y ∧ head b = x))
+    (tail a) v}
 
 /-- `B` is the tree-`T` basis matrix of the bond space (rows indexed by `T`). Body deferred.
 
@@ -593,22 +595,22 @@ fundamental bond of `a` contains `a` itself with coefficient `1` and no other tr
 arc.  That is what pins down `det(B | T) = 1` in the proof of theorem 12.3, and
 what makes exercise 12.1.2(b)'s change-of-basis identity readable.
 
-**⚠ Defective: `sorry` body.**  This predicate is a hypothesis of theorems 12.3,
-12.4, corollary 12.4 and exercises 12.2.1(b), 12.2.3(a), 12.2.4(a) — all of which
-therefore constrain nothing.
+**Formalisation.**  The axiomatic form the old docstring recommended, stated at ring
+level: every row is a potential difference over `R` (`∃ p, row = Mᵀ *ᵥ p` — the
+ring-level reading of "row ∈ 𝓑"), and the restriction `B | T` is the identity.  Over
+a field, with `T` a maximal forest, these two clauses pin `B` down *uniquely* as the
+book's matrix of fundamental-bond potential differences: if two rows for the same
+`a ∈ T` both restrict to `e_a` on `T`, their difference is a potential difference
+vanishing on `T`, whose support therefore contains no bond meeting the forest —
+forcing it to `0` (lemma 12.2.2 plus maximality).  So nothing is lost against the
+concrete definition, and theorem 12.3's proof consumes exactly these two clauses.
 
-*The repair:* `B` is the tree-`T` basis matrix when its rows are the fundamental-bond
-potential differences, i.e.
-
-    B = fun a : {a // a ∈ T} => bondPotentialDiff tail head (fundamentalBondVertexSet tail head T a.1)
-
-— exactly the matrix appearing in `isBasisMatrix_bondSpace_of_maximalForest`.  ⚠
-Alternatively, characterise it axiomatically as *"a basis matrix of `𝓑` whose
-restriction `B | T` is the identity"*, which is weaker to state, enough for theorem
-12.3, and does not depend on `fundamentalBondVertexSet` — probably the better
-choice, since it is the property every proof actually uses. -/
+*Previously defective:* `:= sorry`, leaving theorems 12.3, 12.4, corollary 12.4 and
+exercises 12.2.1(b), 12.2.3(a), 12.2.4(a) with an empty hypothesis. -/
 def IsBasisMatrixOfTree (tail head : A → V) (T : Finset A) {R : Type*} [CommRing R]
-    (B : Matrix {a // a ∈ T} A R) : Prop := sorry
+    (B : Matrix {a // a ∈ T} A R) : Prop :=
+  (∀ i : {a // a ∈ T}, ∃ p : V → R, B i = (orientedIncMatrix tail head R)ᵀ.mulVec p) ∧
+    B.submatrix id (fun j : {a // a ∈ T} => (j : A)) = 1
 
 /-- `C` is the tree-`T` basis matrix of the cycle space (rows indexed by `T̄`). Body deferred.
 
@@ -620,15 +622,20 @@ identity matrix).  We refer to `C` as the basis matrix of `𝓒` corresponding t
 **Reading.**  The cycle-side mirror of `IsBasisMatrixOfTree`: `C | T̄` is the
 identity, because the fundamental cycle of `a` is the only one using `a`.
 
-**⚠ Defective: `sorry` body.**  Hypothesis of (12.8), corollary 12.4 and exercises
-12.2.1(b), 12.2.4(a) — all vacuous as a result.
+**Formalisation.**  The axiomatic mirror of `IsBasisMatrixOfTree`: every row is a
+circulation over `R` (`M *ᵥ row = 0`), and `C | T̄` is the identity.  Over a field,
+with `T` a maximal forest, these pin `C` down uniquely as the matrix of
+fundamental-cycle circulations: the difference of two candidate rows for `a ∈ T̄` is a
+circulation vanishing on `T̄`, hence supported inside the acyclic `T`, hence `0` by
+lemma 12.2.1.  Choosing this form also removes the dependence on `fundamentalCycle`,
+whose construction is the one repair this pass defers.
 
-*The repair:* as for `IsBasisMatrixOfTree`, either concretely (rows are the
-fundamental-cycle circulations) or axiomatically (*a basis matrix of `𝓒` with
-`C | T̄` the identity*).  The axiomatic form is again preferable and is what the
-determinant arguments actually consume. -/
+*Previously defective:* `:= sorry`, leaving (12.8), corollary 12.4 and exercises
+12.2.1(b), 12.2.4(a) with an empty hypothesis. -/
 def IsBasisMatrixOfTree' (tail head : A → V) (T : Finset A) {R : Type*} [CommRing R]
-    (C : Matrix {a // a ∉ T} A R) : Prop := sorry
+    (C : Matrix {a // a ∉ T} A R) : Prop :=
+  (∀ i : {a // a ∉ T}, (orientedIncMatrix tail head R).mulVec (C i) = 0) ∧
+    C.submatrix id (fun j : {a // a ∉ T} => (j : A)) = 1
 
 open scoped Classical in
 /-- `τ(G)`: the number of spanning trees.
@@ -640,10 +647,10 @@ theorem 2.9 a closed formula for complete graphs; chapter 12 finally delivers th
 general determinant formula — the **matrix-tree theorem**, implicit in Kirchhoff
 (1847).
 
-**⚠ Defective by inheritance.**  `IsSpanningTree` has a `sorry` body, so `tau` counts
-an opaque predicate and is itself opaque.  **This is the single most consequential
-defect in the file** — every §12.2 result is a statement about `tau`.  Nothing here
-needs changing; repairing `IsSpanningTree` repairs this. -/
+**Formalisation.**  Genuine now that `IsSpanningTree` has an honest body: this is
+the actual number of spanning trees of the digraph's underlying multigraph.
+(Historical note: with `IsSpanningTree := sorry` this was an opaque natural number,
+the single most consequential defect in the file.) -/
 noncomputable def tau (tail head : A → V) : ℕ :=
   ((Finset.univ : Finset (Finset A)).filter (IsSpanningTree tail head)).card
 
@@ -680,8 +687,12 @@ as a family of rows indexed by `V`.  Step 3's identity is the only real content 
 is worth extracting, since theorem 12.1's second half needs it too. -/
 theorem bondSpace_eq_rowSpace :
     bondSpace tail head (F := F) =
-      Submodule.span F (Set.range (orientedIncMatrix tail head F)) := by
-  sorry
+      Submodule.span F (Set.range (orientedIncMatrix tail head F)) := (by
+  show LinearMap.range (orientedIncMatrix tail head F)ᵀ.mulVecLin =
+      Submodule.span F (Set.range (orientedIncMatrix tail head F))
+  rw [Matrix.range_mulVecLin]
+  rfl
+)
 
 -- Thm 12.1 (part 2): 𝓒 is the orthogonal complement of 𝓑.
 /-- **Theorem 12.1**, second half.  *…and `𝓒` is its orthogonal complement.*
@@ -715,8 +726,66 @@ what exercise 12.2.4(b) exploits.  So "orthogonal complement" here means
 `BilinForm.orthogonal`, not "complementary subspace"; do not silently use
 `dim 𝓑 + dim 𝓒 = ε` in characteristic `p`. -/
 theorem cycleSpace_eq_orthogonal_bondSpace :
-    cycleSpace tail head (F := F) = (dotForm F A).orthogonal (bondSpace tail head) := by
-  sorry
+    cycleSpace tail head (F := F) = (dotForm F A).orthogonal (bondSpace tail head) := (by
+  ext f
+  have hMf : ∀ v : V, (orientedIncMatrix tail head F *ᵥ f) v =
+      ∑ a, orientedIncMatrix tail head F v a * f a := by
+    intro v
+    simp [Matrix.mulVec, dotProduct]
+  have hrowmem : ∀ v : V,
+      orientedIncMatrix tail head F v ∈ bondSpace tail head (F := F) := by
+    intro v
+    show orientedIncMatrix tail head F v ∈
+      LinearMap.range (orientedIncMatrix tail head F)ᵀ.mulVecLin
+    rw [LinearMap.mem_range]
+    refine ⟨Pi.single v 1, ?_⟩
+    rw [Matrix.mulVecLin_apply, Matrix.mulVec_single_one]
+    rfl
+  constructor
+  · -- kernel → orthogonal
+    intro hf
+    have h0 : (orientedIncMatrix tail head F).mulVecLin f = 0 := by
+      have hf' : f ∈ LinearMap.ker (orientedIncMatrix tail head F).mulVecLin := hf
+      exact LinearMap.mem_ker.mp hf'
+    have hker : ∀ v : V, ∑ a, orientedIncMatrix tail head F v a * f a = 0 := by
+      intro v
+      have h1 := congrFun h0 v
+      rw [Matrix.mulVecLin_apply, hMf v] at h1
+      simpa using h1
+    rw [LinearMap.BilinForm.mem_orthogonal_iff]
+    intro g hg
+    have hg' : g ∈ LinearMap.range (orientedIncMatrix tail head F)ᵀ.mulVecLin := hg
+    obtain ⟨p, hp⟩ := LinearMap.mem_range.mp hg'
+    rw [LinearMap.BilinForm.isOrtho_def, dotForm_apply]
+    have hgp : ∀ a : A, g a = ∑ u, orientedIncMatrix tail head F u a * p u := by
+      intro a
+      rw [← hp, Matrix.mulVecLin_apply]
+      simp [Matrix.mulVec, dotProduct, Matrix.transpose_apply]
+    calc ∑ a, g a * f a
+        = ∑ a, ∑ u, orientedIncMatrix tail head F u a * p u * f a := by
+          refine Finset.sum_congr rfl fun a _ => ?_
+          rw [hgp a, Finset.sum_mul]
+      _ = ∑ u, ∑ a, orientedIncMatrix tail head F u a * p u * f a := by
+          rw [Finset.sum_comm]
+      _ = ∑ u, p u * ∑ a, orientedIncMatrix tail head F u a * f a := by
+          refine Finset.sum_congr rfl fun u _ => ?_
+          rw [Finset.mul_sum]
+          exact Finset.sum_congr rfl fun a _ => by ring
+      _ = 0 := by simp [hker]
+  · -- orthogonal → kernel
+    intro hf
+    rw [LinearMap.BilinForm.mem_orthogonal_iff] at hf
+    have hker : ∀ v : V, ∑ a, orientedIncMatrix tail head F v a * f a = 0 := by
+      intro v
+      have h := hf (orientedIncMatrix tail head F v) (hrowmem v)
+      rw [LinearMap.BilinForm.isOrtho_def, dotForm_apply] at h
+      exact h
+    show f ∈ LinearMap.ker (orientedIncMatrix tail head F).mulVecLin
+    rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
+    funext v
+    rw [hMf v]
+    simpa using hker v
+)
 
 /-! ## Lemma 12.2.1: a nonzero circulation's support contains a cycle -/
 
@@ -740,10 +809,9 @@ one line:
 **Reading.**  Current cannot enter a dead end: anything that flows must flow round in
 a loop.
 
-**⚠ Currently trivial for the wrong reason.**  Since `ArcCycle` has no closure
-condition, the goal is satisfied by the one-element list `[a]` for any `a ∈ ‖f‖` —
-so this is provable in two lines and means nothing.  Repair `ArcCycle` before
-filling; the skeleton above is for the repaired statement. -/
+**Status.**  `sorry`, and now a *genuine* open goal: `ArcCycle` carries its
+invariants, so the one-element-list cheat is gone and the skeleton above is the
+actual work. -/
 theorem exists_arcCycle_subset_support_of_isCirculation {f : A → F}
     (hf : f ∈ cycleSpace tail head) (hne : f ≠ 0) :
     ∃ c : ArcCycle tail head, ∀ a ∈ c.arcs, a ∈ Function.support f := by
@@ -780,8 +848,66 @@ of `u`, `[U, Ū]` is nonempty.  Thus `‖g‖` contains a bond.*
 definition's note about what "minimal among edge cuts" quantifies over. -/
 theorem exists_isBond_subset_support_of_mem_bondSpace {g : A → F}
     (hg : g ∈ bondSpace tail head) (hne : g ≠ 0) :
-    ∃ B, IsBond tail head B ∧ B ⊆ Function.support g := by
-  sorry
+    ∃ B, IsBond tail head B ∧ B ⊆ Function.support g := (by
+  classical
+  have hg' : g ∈ LinearMap.range (orientedIncMatrix tail head F)ᵀ.mulVecLin := hg
+  obtain ⟨p, hp⟩ := LinearMap.mem_range.mp hg'
+  have hga : ∀ a : A, g a = p (tail a) - p (head a) := by
+    intro a
+    rw [← hp, Matrix.mulVecLin_apply]
+    simp [Matrix.mulVec, dotProduct, Matrix.transpose_apply, orientedIncMatrix,
+      sub_mul, ite_mul, one_mul, zero_mul, Finset.sum_sub_distrib,
+      Finset.sum_ite_eq, Finset.sum_ite_eq']
+  have hex : ∃ a : A, g a ≠ 0 := by
+    by_contra h
+    push_neg at h
+    apply hne
+    ext a
+    exact h a
+  obtain ⟨a₀, ha₀⟩ := hex
+  have hp₀ : p (tail a₀) ≠ p (head a₀) := by
+    intro h
+    apply ha₀
+    rw [hga a₀, h, sub_self]
+  have hsub : edgeCutSet tail head {v | p v = p (tail a₀)} ⊆ Function.support g := by
+    intro a ha
+    simp only [edgeCutSet, Set.mem_setOf_eq] at ha
+    rw [Function.mem_support, hga a]
+    intro hz
+    have heq : p (tail a) = p (head a) := sub_eq_zero.mp hz
+    rcases ha with ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · exact h2 (heq.symm.trans h1)
+    · exact h1 (heq.trans h2)
+  have hmem : a₀ ∈ edgeCutSet tail head {v | p v = p (tail a₀)} := by
+    simp only [edgeCutSet, Set.mem_setOf_eq]
+    exact Or.inl ⟨by trivial, fun h => hp₀ h.symm⟩
+  have descend : ∀ n : ℕ, ∀ B : Set A, B.ncard ≤ n →
+      (∃ S : Set V, B = edgeCutSet tail head S) → B.Nonempty →
+      ∃ B', IsBond tail head B' ∧ B' ⊆ B := by
+    intro n
+    induction n with
+    | zero =>
+      intro B hB _ hBne
+      have hB0 : B = ∅ := (Set.ncard_eq_zero (Set.toFinite B)).mp (Nat.le_zero.mp hB)
+      exact absurd hB0 (Set.nonempty_iff_ne_empty.mp hBne)
+    | succ n ih =>
+      intro B hB hcut hBne
+      by_cases hmin : ∀ B' ⊆ B, B'.Nonempty →
+          (∃ S : Set V, B' = edgeCutSet tail head S) → B' = B
+      · exact ⟨B, ⟨hcut, hBne, hmin⟩, Set.Subset.refl B⟩
+      · push_neg at hmin
+        obtain ⟨B'', hBsub, hBne'', hBcut'', hBneq⟩ := hmin
+        have hss : B'' ⊂ B := hBsub.ssubset_of_ne hBneq
+        have hlt : B''.ncard < B.ncard := Set.ncard_lt_ncard hss (Set.toFinite B)
+        have hle : B''.ncard ≤ n := by omega
+        obtain ⟨B', hB', hB'sub⟩ := ih B'' hle hBcut'' hBne''
+        exact ⟨B', hB', Set.Subset.trans hB'sub hBsub⟩
+  obtain ⟨B', hB', hB'sub⟩ :=
+    descend (edgeCutSet tail head {v | p v = p (tail a₀)}).ncard
+      (edgeCutSet tail head {v | p v = p (tail a₀)}) le_rfl
+      ⟨{v | p v = p (tail a₀)}, rfl⟩ ⟨a₀, hmem⟩
+  exact ⟨B', hB', Set.Subset.trans hB'sub hsub⟩
+)
 
 /-! ## Theorem 12.2: linear independence of columns ⟺ acyclic / bond-free -/
 
@@ -819,10 +945,9 @@ contrapositive throughout — *dependent ↔ contains a cycle*.
 one — and it holds over **any** field, which is why exercise 12.1.5 is subsumed by
 stating §12.1 over `[Field F]`.
 
-**⚠ Currently false.**  With `ArcCycle` degenerate, `IsArcAcyclic S ↔ S = ∅`, so the
-right-hand side says `S = ∅` while the left is true for any independent column set.
-Repair `ArcCycle` first.  Step 4 additionally needs `cycleCirculation`, also
-`sorry`-bodied. -/
+**Status.**  `sorry`, and now a genuine statement: with `ArcCycle` repaired,
+`IsArcAcyclic` is the real acyclicity predicate (and `cycleCirculation`, which step 4
+needs, has an honest body). -/
 theorem basisMatrix_bondSpace_cols_linearIndependent_iff
     (S : Finset A) {B : Matrix n A F} (hB : IsBasisMatrix B (bondSpace tail head)) :
     LinearIndependent F (fun a : {a // a ∈ S} => (restrictCols B S)ᵀ a) ↔
@@ -896,8 +1021,99 @@ could be generalised.  Step 3 is the out-of-chapter import to budget for.  Note 
 theorem finrank_bondSpace (G : SimpleGraph V) [DecidableRel G.Adj]
     (hG : IsUnderlyingGraph tail head G) :
     Module.finrank ℝ (bondSpace tail head (F := ℝ)) =
-      Fintype.card V - Fintype.card G.ConnectedComponent := by
-  sorry
+      Fintype.card V - Fintype.card G.ConnectedComponent := (by
+  classical
+  show Module.finrank ℝ
+      (LinearMap.range ((orientedIncMatrix tail head ℝ)ᵀ.mulVecLin)) =
+    Fintype.card V - Fintype.card G.ConnectedComponent
+  -- Step 1: pointwise formula for L
+  have hL : ∀ (p : V → ℝ) (a : A),
+      ((orientedIncMatrix tail head ℝ)ᵀ.mulVecLin p) a = p (tail a) - p (head a) := by
+    intro p a
+    rw [Matrix.mulVecLin_apply]
+    simp [Matrix.mulVec, dotProduct, Matrix.transpose_apply, orientedIncMatrix,
+      sub_mul, ite_mul, one_mul, zero_mul, Finset.sum_sub_distrib,
+      Finset.sum_ite_eq, Finset.sum_ite_eq']
+  -- Step 2: the lift map Φ along connectedComponentMk
+  let Φ : (G.ConnectedComponent → ℝ) →ₗ[ℝ] (V → ℝ) :=
+    { toFun := fun q v => q (G.connectedComponentMk v)
+      map_add' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl }
+  have hout : ∀ c : G.ConnectedComponent, G.connectedComponentMk (Quot.out c) = c := by
+    intro c
+    exact Quot.out_eq c
+  have hker : LinearMap.ker ((orientedIncMatrix tail head ℝ)ᵀ.mulVecLin) =
+      LinearMap.range Φ := by
+    apply le_antisymm
+    · -- ker L ≤ range Φ
+      intro p hp
+      have hp0 : ∀ a : A, p (tail a) = p (head a) := by
+        intro a
+        have h0 : (orientedIncMatrix tail head ℝ)ᵀ.mulVecLin p = 0 :=
+          LinearMap.mem_ker.mp hp
+        have h1 := congrFun h0 a
+        rw [hL p a] at h1
+        have h1' : p (tail a) - p (head a) = 0 := by simpa using h1
+        exact sub_eq_zero.mp h1'
+      have hconst : ∀ u v : V, G.Reachable u v → p u = p v := by
+        intro u v huv
+        obtain ⟨w⟩ := huv
+        induction w with
+        | nil => rfl
+        | cons hadj w' ih =>
+          refine Eq.trans ?_ ih
+          obtain ⟨a, hcase⟩ := (hG _ _).mp hadj
+          rcases hcase with ⟨ht, hh⟩ | ⟨ht, hh⟩
+          · rw [← ht, ← hh]
+            exact hp0 a
+          · rw [← ht, ← hh]
+            exact (hp0 a).symm
+      refine LinearMap.mem_range.mpr ⟨fun c => p (Quot.out c), ?_⟩
+      funext v
+      have hreach : G.Reachable (Quot.out (G.connectedComponentMk v)) v :=
+        SimpleGraph.ConnectedComponent.eq.mp (hout (G.connectedComponentMk v))
+      have h1 : Φ (fun c => p (Quot.out c)) v =
+          p (Quot.out (G.connectedComponentMk v)) := rfl
+      rw [h1]
+      exact hconst _ _ hreach
+    · -- range Φ ≤ ker L
+      intro g hgmem
+      obtain ⟨q, rfl⟩ := LinearMap.mem_range.mp hgmem
+      rw [LinearMap.mem_ker]
+      funext a
+      rw [hL (Φ q) a]
+      show q (G.connectedComponentMk (tail a)) - q (G.connectedComponentMk (head a)) = 0
+      rcases eq_or_ne (tail a) (head a) with hth | _
+      · rw [hth, sub_self]
+      · have hadj : G.Adj (tail a) (head a) :=
+          (hG (tail a) (head a)).mpr ⟨a, Or.inl ⟨rfl, rfl⟩⟩
+        have hcc : G.connectedComponentMk (tail a) = G.connectedComponentMk (head a) :=
+          SimpleGraph.ConnectedComponent.eq.mpr hadj.reachable
+        rw [hcc, sub_self]
+  -- Step 3: Φ is injective
+  have hΦinj : Function.Injective Φ := by
+    intro q₁ q₂ h
+    funext c
+    have h1 : q₁ (G.connectedComponentMk (Quot.out c)) =
+        q₂ (G.connectedComponentMk (Quot.out c)) := congrFun h (Quot.out c)
+    rw [hout c] at h1
+    exact h1
+  -- Step 4: counting via rank–nullity
+  have hcardV : Module.finrank ℝ (V → ℝ) = Fintype.card V := by
+    simp [Module.finrank_fintype_fun_eq_card]
+  have hcardC : Module.finrank ℝ (G.ConnectedComponent → ℝ) =
+      Fintype.card G.ConnectedComponent := by
+    simp [Module.finrank_fintype_fun_eq_card]
+  have hkerrank : Module.finrank ℝ
+      (LinearMap.ker ((orientedIncMatrix tail head ℝ)ᵀ.mulVecLin)) =
+      Fintype.card G.ConnectedComponent := by
+    rw [hker]
+    exact (LinearMap.finrank_range_of_inj hΦinj).trans hcardC
+  have hrank := LinearMap.finrank_range_add_finrank_ker
+      ((orientedIncMatrix tail head ℝ)ᵀ.mulVecLin)
+  rw [hcardV, hkerrank] at hrank
+  omega
+)
 
 -- Cor 12.2 (12.4): dim 𝓒 = ε − ν + ω.  ⭐ one `finrank_orthogonal` call.
 /-- **Corollary 12.2**, formula (12.4).  *`dim 𝓒 = ε - ν + ω`.*
@@ -921,12 +1137,37 @@ count is realised concretely by the fundamental cycles, one per non-tree arc.
 which is valid over `ℝ` but **not** in characteristic `p`, where the form is
 degenerate and the two spaces can overlap (exercise 12.2.4(b)).  The rank–nullity
 route of step 1 is field-independent and therefore both simpler and more robust —
-prefer it. -/
+prefer it.
+
+⚠ **Statement repaired.**  The original conclusion read
+`Fintype.card A - Fintype.card V + Fintype.card G.ConnectedComponent`, which Lean
+parses as `(ε - ν) + ω` with *truncated* subtraction — **false** whenever `ν > ε`:
+one arc `v₁ → v₂` plus an isolated vertex `v₃` has `ε = 1, ν = 3, ω = 2`, cycle
+space `0`, but `(1 - 3) + 2 = 2` in `ℕ`.  The repaired form `ε - (ν - ω)` is the
+faithful `ℕ`-rendering of the book's `ε - ν + ω`: it never truncates, because
+`ν - ω ≤ ε` always (each component on `nᵢ` vertices needs at least `nᵢ - 1` arcs). -/
 theorem finrank_cycleSpace (G : SimpleGraph V) [DecidableRel G.Adj]
     (hG : IsUnderlyingGraph tail head G) :
     Module.finrank ℝ (cycleSpace tail head (F := ℝ)) =
-      Fintype.card A - Fintype.card V + Fintype.card G.ConnectedComponent := by
-  sorry
+      Fintype.card A - (Fintype.card V - Fintype.card G.ConnectedComponent) := (by
+  classical
+  show Module.finrank ℝ
+      (LinearMap.ker ((orientedIncMatrix tail head ℝ).mulVecLin)) =
+    Fintype.card A - (Fintype.card V - Fintype.card G.ConnectedComponent)
+  have hM := LinearMap.finrank_range_add_finrank_ker
+      ((orientedIncMatrix tail head ℝ).mulVecLin)
+  rw [Module.finrank_fintype_fun_eq_card] at hM
+  have hrank : Module.finrank ℝ
+      (LinearMap.range ((orientedIncMatrix tail head ℝ).mulVecLin)) =
+      Fintype.card V - Fintype.card G.ConnectedComponent := by
+    have hb : ((orientedIncMatrix tail head ℝ)ᵀ).rank =
+        Fintype.card V - Fintype.card G.ConnectedComponent :=
+      finrank_bondSpace tail head G hG
+    rw [Matrix.rank_transpose] at hb
+    exact hb
+  rw [hrank] at hM
+  omega
+)
 
 /-! ## T-basis matrices (p. 224–225) — extracted from B&M's prose -/
 
@@ -953,8 +1194,11 @@ circulation and that `rank C = ε - ν + ω` (because `C | T̄` is an identity m
 that every circulation is a combination of cycle circulations, which is what gave the
 cycle space its name.
 
-**⚠ Currently vacuous.**  Three of the four ingredients — `IsMaximalForest`,
-`fundamentalCycle`, `cycleCirculation` — have `sorry` bodies. -/
+**⚠ Still vacuous — the one statement this pass leaves defective.**
+`fundamentalCycle` retains its `sorry` body (the deferred repair), so this statement
+asserts nothing about a concrete matrix.  `IsMaximalForest` and `cycleCirculation`
+are now honest.  Do not cite this declaration until `fundamentalCycle` is
+constructed. -/
 theorem isBasisMatrix_cycleSpace_of_maximalForest
     (T : Finset A) (hT : IsMaximalForest tail head T) :
     IsBasisMatrix
@@ -984,9 +1228,9 @@ theorem 2.6 for the uniqueness of the bond in `T̄ + a`.
 **Reading.**  The **fundamental bond basis**, realising the claim that every
 potential difference is a combination of bond potential differences.
 
-**⚠ Currently vacuous** — `IsMaximalForest` and `fundamentalBondVertexSet` both have
-`sorry` bodies.  ⚠ Step 2 also leans on B&M's theorem 2.6, which is out of chapter
-and absent from this repo. -/
+**Status.**  `sorry`, and now a genuine statement — `IsMaximalForest` and
+`fundamentalBondVertexSet` both have honest bodies.  ⚠ Step 2 still leans on B&M's
+theorem 2.6, which is out of chapter and absent from this repo. -/
 theorem isBasisMatrix_bondSpace_of_maximalForest
     (T : Finset A) (hT : IsMaximalForest tail head T) :
     IsBasisMatrix
@@ -1032,10 +1276,10 @@ integers.  It follows that `det(B | T₁) = ±1`.*
 or a determinant of absolute value `1`, so squaring and summing counts the spanning
 trees.  The proof is due to Tutte (1965b).
 
-**⚠ Currently vacuous** — `IsSpanningTree` and `IsBasisMatrixOfTree` both have
-`sorry` bodies.  Note step 4 is where the *axiomatic* reading of
-`IsBasisMatrixOfTree` (*"basis matrix with `B | T` the identity"*) would pay off
-directly. -/
+**Status.**  `sorry`, and now a genuine statement — `IsSpanningTree` and
+`IsBasisMatrixOfTree` have honest bodies, the latter in exactly the *axiomatic*
+reading (*"rows in the ring-level space, `B | T` the identity"*) that step 4
+consumes directly. -/
 theorem isUnimodular_basisMatrix_bondSpace
     (T : Finset A) (hT : IsSpanningTree tail head T)
     {B : Matrix {a // a ∈ T} A ℤ} (hB : IsBasisMatrixOfTree tail head T B) :
@@ -1101,8 +1345,9 @@ deletion–contraction recursion, which B&M called impractical for large graphs,
 theorem 2.9's Cayley formula, valid only for complete graphs — this is general and
 efficiently computable.
 
-**⚠ Currently vacuous** — `tau` (via `IsSpanningTree`) and `IsBasisMatrixOfTree` both
-rest on `sorry` bodies.  Step 1 is an additional, substantial import. -/
+**Status.**  `sorry`, and now a genuine statement — `tau` and `IsBasisMatrixOfTree`
+are honest.  Step 1 (Cauchy–Binet) remains the substantial missing import; this
+declaration stays open until it is supplied. -/
 theorem tau_eq_det_mul_transpose
     (T : Finset A) (hT : IsSpanningTree tail head T)
     {B : Matrix {a // a ∈ T} A ℤ} (hB : IsBasisMatrixOfTree tail head T B) :
@@ -1156,8 +1401,8 @@ is again `τ(G)`.
 or through the cycles.  Corollary 12.4 combines the two computations into one
 determinant.
 
-**⚠ Currently vacuous** — `tau` and `IsBasisMatrixOfTree'` both rest on `sorry`
-bodies; and Cauchy–Binet is still missing. -/
+**Status.**  `sorry`, now a genuine statement — `tau` and `IsBasisMatrixOfTree'` are
+honest.  Cauchy–Binet is still missing and gates the proof. -/
 theorem tau_eq_det_mul_transpose_cycleSpace
     (T : Finset A) (hT : IsSpanningTree tail head T)
     {C : Matrix {a // a ∉ T} A ℤ} (hC : IsBasisMatrixOfTree' tail head T C) :
@@ -1197,7 +1442,8 @@ which is theorem 12.1's orthogonality counted dimensionally.
 **Formalisation.**  The `∨` in the conclusion is the book's `±`.  The row index is
 `{a // a ∈ T} ⊕ {a // a ∉ T}`, reindexed to `A` by `Equiv.sumCompl` — that equiv is
 canonical here, unlike in exercise 12.2.1(b) where one must be supplied.
-⚠ Currently vacuous, resting on `tau` and both `IsBasisMatrixOfTree` predicates. -/
+**Status.**  `sorry`, now a genuine statement — `tau` and both tree-basis predicates
+are honest. -/
 theorem tau_eq_det_fromBlocks
     (T : Finset A) (hT : IsSpanningTree tail head T)
     {B : Matrix {a // a ∈ T} A ℤ} {C : Matrix {a // a ∉ T} A ℤ}
@@ -1241,8 +1487,9 @@ independent spanning set of `𝓑`.  By exercise 12.2.2(a) the product `MM'` is 
 Laplacian equals `τ(G)` — the form in which the matrix-tree theorem is usually
 quoted, and the closed formula for `τ(G)` promised back in §2.4.
 
-**⚠ Currently vacuous** — `tau` and `IsConnectedDigraph` both rest on `sorry` bodies.
-Step 3 is a genuine restructuring worth doing before any of §12.2 is filled. -/
+**Status.**  `sorry`, now a genuine statement — `tau` and `IsConnectedDigraph` are
+honest, so this finally *says* the matrix-tree theorem.  Step 3's restructuring
+advice stands. -/
 theorem matrix_tree_theorem (hconn : IsConnectedDigraph tail head) (y : V) :
     (tau tail head : ℤ) =
       ((orientedIncMatrix tail head ℤ).submatrix (fun v : {v // v ≠ y} => (v : V)) id *
@@ -1310,12 +1557,148 @@ on the defective definitions.  This is what Mathlib calls the **Laplacian**; B&M
 it the *conductance matrix*.  Notably the *orientation drops out* — the signs cancel
 — so it is an invariant of the undirected graph, as it must be.
 
-**Formalisation.**  Step 3's parallel-arc caveat is the one thing to pin down before
-starting; everything else is `Finset.sum` manipulation. -/
+**Formalisation.**  ⚠ **Statement repaired** — as originally stated (with `hor`
+alone) this was *false*: `IsOrientationOf` does not exclude parallel arcs or digons,
+and two arcs `u → v` give `(M Mᵀ)ᵤᵤ = 2` against `(lapMatrix)ᵤᵤ = 1`.  The added
+hypothesis `hsimple` says distinct **links** (non-loops) have distinct underlying
+edges — at most one arc per edge of `G`.  Extra loops remain allowed and harmless:
+a loop's row entries are `1 - 1 = 0`, so it contributes nothing to `M Mᵀ`, matching
+`lapMatrix` on a loopless `SimpleGraph`.  With `hsimple`, step 3's count is exactly
+`-A u v` and step 2's diagonal is exactly `deg u`. -/
 theorem lapMatrix_eq_orientedIncMatrix_mul_transpose
-    (G : SimpleGraph V) [DecidableRel G.Adj] (hor : IsOrientationOf tail head G) :
-    G.lapMatrix ℤ = orientedIncMatrix tail head ℤ * (orientedIncMatrix tail head ℤ)ᵀ := by
-  sorry
+    (G : SimpleGraph V) [DecidableRel G.Adj] (hor : IsOrientationOf tail head G)
+    (hsimple : ∀ a b : A, tail a ≠ head a → tail b ≠ head b →
+      s(tail a, head a) = s(tail b, head b) → a = b) :
+    G.lapMatrix ℤ = orientedIncMatrix tail head ℤ * (orientedIncMatrix tail head ℤ)ᵀ := (by
+  have hor' : ∀ x y : V, G.Adj x y ↔
+      ∃ a : A, (tail a = x ∧ head a = y) ∨ (tail a = y ∧ head a = x) := hor
+  ext u v
+  simp only [SimpleGraph.lapMatrix, SimpleGraph.degMatrix, Matrix.sub_apply,
+    Matrix.diagonal_apply, SimpleGraph.adjMatrix_apply, Matrix.mul_apply,
+    Matrix.transpose_apply]
+  by_cases huv : u = v
+  · -- diagonal entry: both sides equal the degree of `u`
+    subst huv
+    have term_diag : ∀ a : A,
+        orientedIncMatrix tail head ℤ u a * orientedIncMatrix tail head ℤ u a =
+          if (tail a = u ∨ head a = u) ∧ tail a ≠ head a then 1 else 0 := by
+      intro a
+      simp only [orientedIncMatrix, Matrix.of_apply]
+      split_ifs <;> simp_all
+    have hcard : (Finset.filter
+        (fun a : A => (tail a = u ∨ head a = u) ∧ tail a ≠ head a) Finset.univ).card
+        = G.degree u := by
+      rw [← SimpleGraph.card_neighborFinset_eq_degree]
+      refine Finset.card_bij (fun a _ => if tail a = u then head a else tail a) ?_ ?_ ?_
+      · -- the other endpoint of an incident non-loop arc is a neighbour
+        intro a ha
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha
+        show (if tail a = u then head a else tail a) ∈ G.neighborFinset u
+        rw [SimpleGraph.mem_neighborFinset]
+        by_cases h : tail a = u
+        · rw [if_pos h]
+          exact (hor' u (head a)).mpr ⟨a, Or.inl ⟨h, rfl⟩⟩
+        · rw [if_neg h]
+          exact (hor' u (tail a)).mpr ⟨a, Or.inr ⟨rfl, ha.1.resolve_left h⟩⟩
+      · -- injectivity, from `hsimple`
+        intro a₁ ha₁ a₂ ha₂ hab
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at ha₁ ha₂
+        have key : ∀ b : A, (tail b = u ∨ head b = u) →
+            s(tail b, head b) = s(u, if tail b = u then head b else tail b) := by
+          intro b hb
+          by_cases h : tail b = u
+          · rw [if_pos h, h]
+          · rw [if_neg h, hb.resolve_left h]
+            exact Sym2.eq_swap
+        refine hsimple a₁ a₂ ha₁.2 ha₂.2 ?_
+        rw [key a₁ ha₁.1, key a₂ ha₂.1]
+        exact congrArg (fun w => s(u, w)) hab
+      · -- surjectivity, from `hor`
+        intro w hw
+        rw [SimpleGraph.mem_neighborFinset] at hw
+        have hne : u ≠ w := hw.ne
+        obtain ⟨a, hc⟩ := (hor' u w).mp hw
+        rcases hc with ⟨ht, hh⟩ | ⟨ht, hh⟩
+        · have hmem : a ∈ Finset.filter
+              (fun a : A => (tail a = u ∨ head a = u) ∧ tail a ≠ head a) Finset.univ := by
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+            refine ⟨Or.inl ht, ?_⟩
+            rw [ht, hh]
+            exact hne
+          exact ⟨a, hmem, by
+            show (if tail a = u then head a else tail a) = w
+            rw [if_pos ht]; exact hh⟩
+        · have hmem : a ∈ Finset.filter
+              (fun a : A => (tail a = u ∨ head a = u) ∧ tail a ≠ head a) Finset.univ := by
+            simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+            refine ⟨Or.inr hh, ?_⟩
+            rw [ht, hh]
+            exact hne.symm
+          have hta : tail a ≠ u := by
+            rw [ht]
+            exact hne.symm
+          exact ⟨a, hmem, by
+            show (if tail a = u then head a else tail a) = w
+            rw [if_neg hta]; exact ht⟩
+    rw [if_pos rfl, if_neg G.irrefl, sub_zero]
+    simp only [term_diag, Finset.sum_boole]
+    exact_mod_cast hcard.symm
+  · -- off-diagonal entry: both sides equal `-[G.Adj u v]`
+    have term_off : ∀ a : A,
+        orientedIncMatrix tail head ℤ u a * orientedIncMatrix tail head ℤ v a =
+          -(if s(tail a, head a) = s(u, v) then (1 : ℤ) else 0) := by
+      intro a
+      have hvu : v ≠ u := fun h => huv h.symm
+      by_cases hs : s(tail a, head a) = s(u, v)
+      · rw [if_pos hs]
+        rcases Sym2.eq_iff.mp hs with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        · simp [orientedIncMatrix, h1, h2, huv, hvu]
+        · simp [orientedIncMatrix, h1, h2, huv, hvu]
+      · rw [if_neg hs]
+        have hno1 : ¬ (tail a = u ∧ head a = v) := fun h => hs (Sym2.eq_iff.mpr (Or.inl h))
+        have hno2 : ¬ (tail a = v ∧ head a = u) := fun h => hs (Sym2.eq_iff.mpr (Or.inr h))
+        simp only [orientedIncMatrix, Matrix.of_apply]
+        by_cases h1 : tail a = u <;> by_cases h2 : head a = u <;>
+          by_cases h3 : tail a = v <;> by_cases h4 : head a = v <;>
+          simp [h1, h2, h3, h4] <;> tauto
+    have hloop_ne : ∀ b : A, s(tail b, head b) = s(u, v) → tail b ≠ head b := by
+      intro b hsb h
+      rw [h] at hsb
+      rcases Sym2.eq_iff.mp hsb with ⟨h1, h2⟩ | ⟨h1, h2⟩
+      · exact huv (h1.symm.trans h2)
+      · exact huv (h2.symm.trans h1)
+    rw [if_neg huv, zero_sub]
+    simp only [term_off]
+    rw [Finset.sum_neg_distrib, neg_inj]
+    by_cases hadj : G.Adj u v
+    · -- exactly one arc realises the edge `s(u, v)`
+      obtain ⟨a₀, hc₀⟩ := (hor' u v).mp hadj
+      have ha₀ : s(tail a₀, head a₀) = s(u, v) := by
+        rcases hc₀ with ⟨ht, hh⟩ | ⟨ht, hh⟩
+        · rw [ht, hh]
+        · rw [ht, hh]
+          exact Sym2.eq_swap
+      have hzero : ∀ b ∈ (Finset.univ : Finset A), b ≠ a₀ →
+          (if s(tail b, head b) = s(u, v) then (1 : ℤ) else 0) = 0 := by
+        intro b _ hb
+        have hnb : ¬(s(tail b, head b) = s(u, v)) := by
+          intro hsb
+          exact hb (hsimple b a₀ (hloop_ne b hsb) (hloop_ne a₀ ha₀) (hsb.trans ha₀.symm))
+        rw [if_neg hnb]
+      rw [if_pos hadj, Finset.sum_eq_single a₀ hzero
+        (fun h => absurd (Finset.mem_univ a₀) h), if_pos ha₀]
+    · -- no arc realises the edge `s(u, v)`
+      rw [if_neg hadj]
+      symm
+      refine Finset.sum_eq_zero fun b _ => ?_
+      have hnb : ¬(s(tail b, head b) = s(u, v)) := by
+        intro hsb
+        rcases Sym2.eq_iff.mp hsb with ⟨h1, h2⟩ | ⟨h1, h2⟩
+        · exact hadj ((hor' u v).mpr ⟨b, Or.inl ⟨h1, h2⟩⟩)
+        · exact hadj ((hor' u v).mpr ⟨b, Or.inr ⟨h1, h2⟩⟩)
+      show (if s(tail b, head b) = s(u, v) then (1 : ℤ) else 0) = 0
+      rw [if_neg hnb]
+)
 
 -- Ex 12.2.2(b): the matrix-tree theorem in cofactor form.
 -- NOTE: stated as the principal `(y,y)`-minor of the Laplacian equalling τ(G).
@@ -1389,8 +1772,7 @@ is not canonical it fixes the column order only up to a permutation, so the conc
 is stated up to sign, absorbing `(-1)^(i+j)` and `sign e` together.  Taking `i = j` and
 `e = Equiv.refl` recovers the principal case above.
 
-⚠ Currently vacuous via `tau` and `IsConnectedDigraph`, exactly as the principal case
-is. -/
+**Status.**  `sorry`, now a genuine statement — `tau` is honest. -/
 theorem tau_eq_lapMatrix_cofactor
     (G : SimpleGraph V) [DecidableRel G.Adj] (hor : IsOrientationOf tail head G) (i j : V)
     (e : {v // v ≠ i} ≃ {v // v ≠ j}) :

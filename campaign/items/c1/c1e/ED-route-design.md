@@ -144,3 +144,40 @@ accept `1^a` within `T*`. Every stream gives the same verdict, so one stream suf
    of its own).
 4. **The queue** (with E-Q's outcome): E-D alone in a later megafill (Codex), or paired with
    another ready item. This waits for E-Q's delivery.
+
+## Revision after E-Q cont1's delivery (maintainer, 2026-11-04)
+
+E-Q cont1 (PR #176, head `cecd76a0`; gate 87 pending) took a different route from the one this note
+assumed. It leaves **no binary `≤` row and no work-tape `pairEncode` writer** in the file. Instead
+it has a framed length comparison `qyCmpTM` (`qy_cmp_run`: from the starts of `u` and `v`, the
+verdict `compare |u| |v|` after `2 · min |u| |v| + 2` steps, nothing changed), a repeating emitter
+`qyEmitTM` (`qy_emit_run`: emits `pre`, the word under a head with each bit `rr + 1` times, and
+`suf`), the writer word `qy_writer_word` (`b :: pairEncode (pairEncode B W.dropLast) N` in three
+emissions), and the clocked, released install call (`QyClockSpec`, `qy_clocked_call`). The same-file
+privates are citable by E-D. **Every piece of E-D's preparation then comes from published rows and
+E-Q's leaves, with no new leaf:**
+
+- **The budget's test, `b ≤ g n`.** Copy the budget word `w_b` and expand it to `1^b` by
+  `expandTM` with the pattern `[true]` (`expandTM_run_ofCfg` takes any little-endian word, top zeros
+  included: its value is `Nat.ofDigits 2 (w.map Bool.toNat)`), then compare `1^b` with the stream
+  `s` by `qyCmpTM`. The stream is `g n` nonblank cells, so `compare b (g n)` decides the test with
+  no second unary word.
+- **The normalization to `bits b`:** the published `lengthBits` install call on `1^b`, as E-Q's
+  stage code does on `1^{j + 1}`.
+- **The rewrite** of the core's input `⟨⟨bits b, α⟩, 1^{n + 1}⟩` onto a work-tape buffer:
+  three `qyEmitTM` emissions (`bits b` with each bit written four times and suffix
+  `[false, false, true, true]`; `α` doubled and suffix `[false, true]`; the tail `1^{n + 1}`), run
+  under the R1 capture wrapper `embedSilentTM`, which records every emission on its capture tape
+  and emits nothing. This is `qy_writer_word`'s shape without the flag bit.
+- **`α`** by one hosted call of the second-component extractor on the query word's tail, as above.
+
+The two clocked, hosted simulators remain new composition (`exists_stepClockTMVia` over
+`vhostSilentTM`); `qy_clocked_call` is the model for an install call's clock, not a citable row
+for a hosted machine. The flag reader and the two verdict readers stay one-step leaves.
+
+**Sizes, revised (ESTIMATE):** the preparation shrinks by the two leaves this note priced
+(the budget's test and normalization, 200–400; the doubling writer, 200–400), to about **1.2k–2.3k**
+lines in all.
+
+**Still open for the brief:** the agent (the fill-agent rule suggests Codex for a first attempt);
+the issue waits for #176's merge, so that the line numbers and E-Q's privates are final.

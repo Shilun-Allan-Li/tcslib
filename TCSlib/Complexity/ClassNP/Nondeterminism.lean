@@ -4353,4 +4353,133 @@ theorem P_ne_NP_of_EXP_ne_NEXP (h : EXP ≠ NEXP) : P ≠ NP := by
   intro hPN
   exact h (EXP_eq_NEXP_of_P_eq_NP hPN)
 
+/-! ### Public interface for the randomized classes
+
+Two wrappers over the private Theorem-2.6 machinery, added for the PTM/certificate
+equivalence of [AB09, Def 7.2 and Def 7.3] (`TCSlib.Complexity.Randomized.PTMEquiv`). -/
+
+/-- The bits of `w` at the positions where `mask` is `true`: a coordinate projection. -/
+def maskSelect : List Bool → List Bool → List Bool
+  | [], _ => []
+  | _, [] => []
+  | emit :: mask, b :: w => (if emit then [b] else []) ++ maskSelect mask w
+
+/-- The private selector of the reverse compiler is `maskSelect`. -/
+private lemma contSelect_eq_maskSelect (mask w : List Bool) :
+    contSelect mask w = maskSelect mask w := by
+  induction mask generalizing w with
+  | nil => cases w <;> rfl
+  | cons emit mask ih =>
+    cases w with
+    | nil => rfl
+    | cons b w => simp only [contSelect, maskSelect, ih]
+
+/-- **The choice-word verifier is in `P`**: for a fixed `FinNDTM` `N` and certificate length
+`C·(n+1)^c`, some `P`-language accepts `x ++ u` (with `|u| = C·(|x|+1)^c`) exactly when the
+run of `N` on `x` under the choice word `u` has halted with output `[true]`. -/
+theorem exists_choiceVerifier_mem_P (N : FinNDTM Bool) (C c : ℕ) :
+    ∃ V ∈ P, ∀ x u : List Bool, u.length = C * (x.length + 1) ^ c →
+      (x ++ u ∈ V ↔ (N.tm.runWith u (N.tm.initCfg x)).state = none ∧
+        (N.tm.runWith u (N.tm.initCfg x)).output = [true]) :=
+  ⟨choiceVerifier N C c, cont_choiceVerifier_mem_P N C c, choiceVerifier_append N C c⟩
+
+/-- **The certificate-guessing machine reads its certificate off fixed coordinates**: for
+`V ∈ P` there is a `FinNDTM` running in time `K·(n^e + 1)` on every branch whose verdict on
+`x` under the choice word `w` is `V(x ++ u)`, where `u` is the projection of `w` onto a mask
+determined by `x` alone, with exactly `C·(|x|+1)^c` marked positions.
+
+**Proof sketch.** Take the certificate-guessing machine of `NP_subset_iUnion_NTIME`. It
+first copies the input `x` (the first `2|x| + 2` coins are ignored). It then runs a
+deterministic machine on the unary word of length `|x|` that emits `C·(|x|+1)^c` bits; at each
+step where that machine emits, the current coin is appended to the copy of `x` as a certificate
+bit, and all other coins are ignored. So the certificate is the projection of the coins onto a
+mask that depends only on `|x|` and has exactly `C·(|x|+1)^c` marked positions. Finally it runs
+the `P`-decider for `V` on `x ++ u` and outputs its verdict. The total running time is
+polynomial in `|x|`, and once the machine has halted, extra coins change nothing, so the
+contract extends to the envelope `K·(|x|^e + 1)`. -/
+theorem exists_maskSelect_host (V : Language Bool) (hV : V ∈ P) (C c : ℕ) :
+    ∃ (K e : ℕ) (N : FinNDTM Bool), ∀ x : List Bool, ∃ (s : ℕ) (mask : List Bool),
+      (mask.filter id).length = C * (x.length + 1) ^ c ∧
+      s + mask.length ≤ K * (x.length ^ e + 1) ∧
+      ∀ w : List Bool, w.length = K * (x.length ^ e + 1) →
+        (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
+        (N.tm.runWith w (N.tm.initCfg x)).output =
+          [MultiTapeTM.indicator V (x ++ maskSelect mask ((w.drop s).take mask.length))] := by
+  classical
+  obtain ⟨A, d, M, hM⟩ := mem_P_iff.mp hV
+  obtain ⟨S, B, hS⟩ := computesFunInTime_polyUnary C c
+  obtain ⟨τ, hτ⟩ := b2_unary_first S (fun n => List.replicate (C * (n + 1) ^ c) true)
+    (fun n => B * (n + 1) ^ (c + 1)) (fun n => by
+      simpa only [List.length_replicate] using hS (List.replicate n true))
+  refine ⟨(B + A + 5) * (C + 1) ^ (c + d + 1) * 2 ^ ((c + d + 1) * max 1 c),
+    (c + d + 1) * max 1 c, b2Host S M, fun x => ?_⟩
+  obtain ⟨hτle, hτc, hτlive⟩ := hτ x
+  let c0 := (b2UnaryTM S).tm.initCfg x
+  let T := τ x.length
+  let Q := C * (x.length + 1) ^ c
+  let mask := contEmissionMask (b2UnaryTM S) c0 T
+  let Bv := x.length + Q + 2 + (A * (x.length + Q + 1) ^ d + 1)
+  let H := 2 * x.length + 2 + T + Bv
+  have hHle : H ≤ (B + A + 5) * (C + 1) ^ (c + d + 1) * 2 ^ ((c + d + 1) * max 1 c) *
+      (x.length ^ ((c + d + 1) * max 1 c) + 1) :=
+    (b2_host_bound C c B A d x.length T hτle).trans
+      (cont_guess_time_bound C c (B + A + 5) (c + d + 1) x.length)
+  have hmlen : mask.length = T := cont_mask_length _ _ _
+  have hcount : (mask.filter id).length = Q := by
+    have h := cont_mask_count (b2UnaryTM S) c0 T
+    rw [((computesInTime_iff _ _ _ _).mp hτc).2] at h
+    simpa only [c0, MultiTapeTM.initCfg, Cfg.init, List.length_nil, Nat.zero_add,
+      List.length_replicate] using h
+  have hc : ((b2UnaryTM S).tm.runFrom c0 T).state = none :=
+    ((computesInTime_iff _ _ _ _).mp hτc).1
+  -- the contract at the exact ledger length `H`
+  have hexact : ∀ w : List Bool, w.length = H →
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).state = none ∧
+      ((b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x)).output =
+        [MultiTapeTM.indicator V
+          (x ++ maskSelect mask ((w.drop (2 * x.length + 2)).take T))] := by
+    intro w hw
+    let a := w.take (2 * x.length + 2)
+    let rest := w.drop (2 * x.length + 2)
+    let g := rest.take T
+    let z := rest.drop T
+    have ha : a.length = 2 * x.length + 2 := List.length_take_of_le (by omega)
+    have hr : rest.length = T + Bv := by
+      simp only [rest, List.length_drop, hw, H]
+      omega
+    have hglen : g.length = T := List.length_take_of_le (by omega)
+    have hz : z.length = Bv := by simp only [z, List.length_drop, hr]; omega
+    have he : a ++ g ++ z = w := by
+      simp only [a, g, z, rest, List.append_assoc, List.take_append_drop]
+    have hg := b2_guess_run S M c0 [] g (by rw [hglen]; exact hτlive)
+    rw [hglen, List.nil_append, contSelect_eq_maskSelect] at hg
+    have hu : (maskSelect mask g).length = Q := by
+      rw [← contSelect_eq_maskSelect, cont_select_length mask g (hglen.trans hmlen.symm),
+        hcount]
+    have hrun : (b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x) =
+        (b2Host S M).tm.runWith z (b2GuessCfg S M ((b2UnaryTM S).tm.runFrom c0 T)
+          (maskSelect mask g)) := by
+      rw [← he, NDTM.runWith_append, NDTM.runWith_append, b2_start S M x a ha, hg]
+    rw [hrun]
+    exact b2_finish S M _ hc _ _ _ (hM (x ++ maskSelect mask g)) z
+      (by simp only [List.length_append, hu, hz, Bv])
+  refine ⟨2 * x.length + 2, mask, hcount, ?_, fun w hw => ?_⟩
+  · rw [hmlen]
+    exact le_trans (by simp only [H]; omega) hHle
+  · have hH : H ≤ w.length := hw ▸ hHle
+    have hwt : (w.take H).length = H := List.length_take_of_le hH
+    obtain ⟨hhalt, hout⟩ := hexact (w.take H) hwt
+    have hrun : (b2Host S M).tm.runWith w ((b2Host S M).tm.initCfg x) =
+        (b2Host S M).tm.runWith (w.take H) ((b2Host S M).tm.initCfg x) := by
+      conv_lhs => rw [← List.take_append_drop H w]
+      rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hhalt]
+    have hslice : ((w.take H).drop (2 * x.length + 2)).take T =
+        (w.drop (2 * x.length + 2)).take T := by
+      rw [List.drop_take, List.take_take]
+      congr 1
+      simp only [H]
+      omega
+    rw [hrun, hmlen, ← hslice]
+    exact ⟨hhalt, hout⟩
+
 end Complexity

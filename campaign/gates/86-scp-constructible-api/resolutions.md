@@ -34,5 +34,33 @@ records merged in by `ca0eafb8` (no Lean change).
 `oleans-lnfapi4`, pinning `Constructible` `791f3a48` and `Savitch` `6ea81136`; precheck passed.
 **Running (user, 2026-10-27).**
 
-**Merge state. #175: not yet clear to merge** (2026-10-27): it waits for gate 86's round 2 and
-`replay-lscp2` (`replay-lscp`, at round 1's head, no longer certifies the PR).
+**The replay, round 2:** `replay-lscp2.sh` (`evidence/round1-fix/`), the same 53 modules from
+`oleans-lnfapi4`, pinning `Constructible` `9fb71337` and `Savitch` `b4157d58`, with the corrected
+exit status; precheck passed. **Passed** (user, 2026-10-27): 53 of 53 at `ca0eafb8`, 0 failed,
+static-equal (`evidence/round1-fix/replay-lscp2.log`, `replay-lscp2-static.txt`); snapshot `oleans-lscp2`.
+(`replay-lscp` at round 1's head also passed, 53 of 53: `evidence/merged-tree/replay-lscp.log`.)
+
+**Round 2** (`pack-r2.md`, at `ca0eafb8`): bundle SHA-256
+`6a103efc595f514a33777ac0835101bd4c0dbb44dc9611d54a8d06b242e06d6a` (44 sections), the records at
+`283e6549`. The screen at `ca0eafb8` (13 files) equals the base's: 848 declarations, 1,146 pairs.
+**Staged; dispatched (user, 2026-10-28).** **Findings** (`findings-r2.md`, verbatim, SHA-256
+`3f4f1b32834863902e500f1a3fc0d56291db6776664fd5e6c651b1372dbf85de`; received 2026-11-03): **PASS,
+0 blockers, 0 majors, 1 minor, 11 notes.** The gate closes.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | "The 15 controls' output identical to round 1's" holds only after normalizing the diagnostic path: round 1's log prefixes each location with `probe/`. | **True; erratum** (`pack-r2.md`, the rule-10 attestation, and this file's finding 11): the round-2 controls' output equals round 1's after removing the `probe/` path prefix, goal texts, locations and exit status included. The dispatched pack is kept as dispatched. |
+| 2 | note | Integrity and provenance pass. | Agreed. |
+| 3 | note | The recorded rulings discharge both round-1 majors. | Agreed; the 12.2c dispositions (LS-1, PL-1) stand. |
+| 4 | note | The re-pointed decider is exactly the former `hD'` contract; the import adds one module, no cycle. | Agreed. |
+| 5 | note | The fix and the freeze reproduce. | Agreed. |
+| 6 | note | The published-reading discipline holds; the seal is consistent. | Agreed. |
+| 7 | note | The per-ref search supports "at most one file on every ref". | Agreed. |
+| 8 | note | The driver propagates module and static failures. | Agreed; `replay-lscp2` passed (53 of 53, static-equal) at `ca0eafb8`. |
+| 9 | note | The documentation repair is adequate; the deferred cleanup should also list `R8.4` and `Savitch`'s `§12 R1/R2`. | Agreed; both added to the deferred docstring cleanup's inventory (backlog). |
+| 10 | note | Both screens reproduce. | Agreed. |
+| 11 | note | No semantic weakening or new obstruction. | Agreed. |
+| 12 | note | The gate does not certify merge readiness; keep the replay's evidence. | Agreed. Since round 2, `main` has been merged into the campaign (#179), so the merge needs a fresh merged-tree replay from `oleans-lm2c` (`replay-lscp3`).
+
+**Merge state. #175: clear to merge** at `1cf3da65` (2026-11-03): gate 86 passed in round 2, and
+`replay-lscp3` passed at that head, the campaign merged in (no campaign Lean change since). **Merged (user, 2026-11-03).**

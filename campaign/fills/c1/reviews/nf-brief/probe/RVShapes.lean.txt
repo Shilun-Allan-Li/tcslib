@@ -1,0 +1,61 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! Review: the shapes of the readings the review probe uses. -/
+
+open Turing
+
+#check @Turing.guessRunCfg_workTapes
+#check @Turing.guessRunCfg_state
+#check @Turing.guessRunCfg_inputPos
+#check @Turing.streamStartCfg_workTapes
+#check @Turing.Cfg.init_workTapes
+#check @Turing.Cfg.mapState_workTapes
+#check @Turing.Cfg.mapState_state
+#check @Turing.Action.mapState
+#check @Turing.Action.mapState_state
+#check @Turing.NDTM.stepWith_of_some
+#check @Turing.NDTM.stepWith_of_halt
+#check @Turing.MultiTapeTM.step_of_halt
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step
+#check @Turing.MultiTapeTM.runFrom_succ_eq_step'
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.MultiTapeTM.runFrom_zero
+#check @Turing.MultiTapeTM.toNDTM_q₀
+#check @Turing.MultiTapeTM.toNDTM_tr
+#check @Turing.Cfg.inputSymbol_of_zero
+#check @Turing.Cfg.inputSymbol_of_end
+#check @Turing.inputSymbolInner
+#check @Turing.Cfg.workTapeSymbols_eq
+#check @Turing.moveInputPos_zero
+#check @Turing.moveInputPos_leftBoundary
+#check @Turing.moveInputPos_rightBoundary
+#check @Turing.moveInputPos_neg_of_ne_left
+#check @Turing.moveInputPos_pos_of_ne_right
+#check @Turing.FinTM.bufferTape_eq
+#check @Turing.FinTM.bufferTape_of_neg
+#check @Turing.FinTM.bufferTape_nat
+#check @Turing.FinTM.bufferTape_left
+#check @Turing.scanTM
+#check @Turing.scanTM_run_ofCfg
+#check @Turing.scanResult_fold
+#check @Turing.scanFold
+#check @Turing.scanKeep
+#check @Turing.ScanPhase
+#check @Turing.clearTM
+#check @Turing.clearTM_run_ofCfg
+#check @Turing.skipTM_run_ofCfg
+#check @Turing.FinTM.controlAction
+#check @Turing.FinTM.controlAction_apply
+#check @Turing.tapeAction
+#check @Turing.step_of_tapeAction_move
+#check @Turing.MultiTapeTM.runFrom_mapState_of_agreeOn
+#check @Fintype.equivFin
+#check @Turing.GuessRunPhase.instFintypeCtlState
+#check @Turing.GuessRunPhase.instDecidableEqCtlState
+example {SQ Q : Type} [Fintype SQ] [Fintype Q] :
+    Fintype (Σ i, GuessRunPhase.CtlState Unit SQ Q i) := inferInstance
+example {SQ Q : Type} [DecidableEq SQ] [DecidableEq Q] :
+    DecidableEq (Σ i, GuessRunPhase.CtlState Unit SQ Q i) := inferInstance

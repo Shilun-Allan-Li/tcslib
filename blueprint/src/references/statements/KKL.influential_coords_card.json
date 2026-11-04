@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.influential_coords_card",
- "key": "ab59fb077163f159",
+ "key": "c158e7d1f5edb755",
  "kind": "lemma",
- "title": "Few influential coordinates",
- "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function and let $\\tau > 0$. The number of $\\tau$-influential coordinates of $f$ — those $i \\in [n]$ with $\\mathrm{Inf}_i[f] \\ge \\tau$ — is bounded by\n\\[\n  \\abs{J_\\tau(f)} \\;\\le\\; \\frac{I[f]}{\\tau},\n\\]\nwhere $I[f] = \\sum_{i=1}^n \\mathrm{Inf}_i[f]$ is the total influence.",
+ "title": "Number of influential coordinates",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube and $\\tau>0$. Then $|\\{i:I_i(f)\\ge\\tau\\}|\\le I(f)/\\tau$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$.",
  "hypotheses_covered": [
   "f is a Boolean function of arity n",
   "the threshold satisfies τ > 0"

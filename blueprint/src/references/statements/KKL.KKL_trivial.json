@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.KKL_trivial",
- "key": "600172fc298e7668",
+ "key": "69717f7d3fcad51f",
  "kind": "theorem",
- "title": "Averaging bound for coordinate influence",
- "statement": "Let $n \\ge 1$ and let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function. Then some coordinate carries at least the average influence: there exists an index $i \\in \\{1,\\dots,n\\}$ with\n\\[\n  \\mathrm{Inf}_i[f] \\;\\ge\\; \\frac{I[f]}{n},\n\\]\nwhere $\\mathrm{Inf}_i[f]$ is the influence of coordinate $i$ and $I[f] = \\sum_{j=1}^n \\mathrm{Inf}_j[f]$ is the total influence.",
+ "title": "Average coordinate influence bound",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube in dimension $n>0$. Then some $i\\in[n]$ satisfies $I_i(f)\\ge I(f)/n$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$.",
  "hypotheses_covered": [
   "n is positive (0 < n)",
   "f is a Boolean function of arity n"

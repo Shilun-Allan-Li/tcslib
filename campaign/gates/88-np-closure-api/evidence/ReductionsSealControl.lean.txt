@@ -1,0 +1,60 @@
+import TCSlib.Complexity.ClassNP.Reductions
+
+/-! The controls for mem_NP_of_polyTimeReducible's seal: unsealed every goal closes; sealed every goal is expected to FAIL, each at its own goal. -/
+
+section Unsealed
+
+-- NP
+example (L : Language Bool) : (L ∈ Complexity.NP) = (∃ (C c : ℕ) (V : Language Bool),
+    V ∈ Complexity.P ∧ ∀ x : List Bool, x ∈ L ↔
+      ∃ u : List Bool, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V) := rfl
+
+-- P
+example : Complexity.P = ⋃ c : ℕ, Complexity.DTIME fun n => n ^ c + 1 := rfl
+
+-- PolyTimeComputable
+example (f : List Bool → List Bool) : Complexity.PolyTimeComputable f =
+    ∃ (M : Turing.FinTM Bool) (C c : ℕ), M.ComputesFunInTime f fun n => C * (n + 1) ^ c := rfl
+
+-- pairFstD
+example (z : List Bool) :
+    Complexity.pairFstD z = ((Turing.pairDecode z).map Prod.fst).getD [] := rfl
+
+-- pairSndD
+example (z : List Bool) :
+    Complexity.pairSndD z = ((Turing.pairDecode z).map Prod.snd).getD [] := rfl
+
+-- pairEncode
+example (x α : List Bool) :
+    Turing.pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α := rfl
+
+end Unsealed
+
+section Sealed
+attribute [local irreducible] Complexity.NP Complexity.P Complexity.PolyTimeComputable Complexity.pairFstD Complexity.pairSndD Turing.pairEncode
+
+-- NP
+example (L : Language Bool) : (L ∈ Complexity.NP) = (∃ (C c : ℕ) (V : Language Bool),
+    V ∈ Complexity.P ∧ ∀ x : List Bool, x ∈ L ↔
+      ∃ u : List Bool, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V) := rfl
+
+-- P
+example : Complexity.P = ⋃ c : ℕ, Complexity.DTIME fun n => n ^ c + 1 := rfl
+
+-- PolyTimeComputable
+example (f : List Bool → List Bool) : Complexity.PolyTimeComputable f =
+    ∃ (M : Turing.FinTM Bool) (C c : ℕ), M.ComputesFunInTime f fun n => C * (n + 1) ^ c := rfl
+
+-- pairFstD
+example (z : List Bool) :
+    Complexity.pairFstD z = ((Turing.pairDecode z).map Prod.fst).getD [] := rfl
+
+-- pairSndD
+example (z : List Bool) :
+    Complexity.pairSndD z = ((Turing.pairDecode z).map Prod.snd).getD [] := rfl
+
+-- pairEncode
+example (x α : List Bool) :
+    Turing.pairEncode x α = (x.flatMap fun b => [b, b]) ++ [false, true] ++ α := rfl
+
+end Sealed

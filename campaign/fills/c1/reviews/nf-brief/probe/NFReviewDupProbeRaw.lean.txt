@@ -1,0 +1,31 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! The review probe's new statements posed to `exact?`; a success would name a published
+declaration to cite instead. -/
+
+open Turing
+
+-- rv_entry
+example {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List Bool) (q : S) :
+    guessRunCfg (P.initCfg x) 0 s q = streamStartCfg x 0 q s := by
+  exact?
+
+-- rv_sweep0 (first clause)
+example {A : Type} (δ : A → Bool → A) (a₀ : A) (x s : List Bool) :
+    (scanTM 2 0 (scanFold δ) scanKeep a₀).runFrom (streamStartCfg x 0 (ScanPhase.fwd a₀) s)
+        (2 * s.length + 2) = streamStartCfg x 0 (ScanPhase.done (s.foldl δ a₀)) s := by
+  exact?
+
+-- rv_inputSymbol_congr
+example {k k' : ℕ} {S S' : Type} {x : List Bool} (c : Cfg k Bool S x)
+    (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
+    c.inputSymbol = c'.inputSymbol := by
+  exact?
+
+-- rv_moveInputPos_le (first half)
+example {n : ℕ} (p : Fin (n + 2)) (m : SignType) :
+    (moveInputPos p m).val ≤ p.val + 1 := by
+  exact?

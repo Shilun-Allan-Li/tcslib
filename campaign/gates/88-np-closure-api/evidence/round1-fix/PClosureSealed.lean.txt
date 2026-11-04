@@ -1,0 +1,329 @@
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Hydroxyi
+-/
+import TCSlib.Complexity.ClassNP.CoNP
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+import TCSlib.Complexity.ClassNP.PolyTimeBlockMajority
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Closure properties of `P`
+
+The class `P` [AB09, Def 1.13] is closed under polynomial-time preimages (many-one
+reductions), under the Boolean operations, and hence under Boolean functions of finitely
+many tests. These facts are used tacitly throughout [AB09] (e.g. ch. 2, ch. 5, ch. 6); here
+they are derived from the function class FP (`TCSlib.Complexity.ClassNP.PolyTimePairing`)
+and the closure under complement (`Complexity.compl_mem_P`, `ClassNP/CoNP.lean`).
+
+## Main definitions
+
+None — this module only proves theorems about existing definitions.
+
+## Main results
+
+* `Complexity.mem_P_iff_polyTimeComputable` — `V ∈ P` iff its one-bit indicator is in FP;
+  `Complexity.mem_P_of_test`, `Complexity.test_of_mem_P` — the same for Boolean tests.
+* `Complexity.preimage_mem_P` — `P` is closed under polynomial-time preimages.
+* `Complexity.inter_mem_P`, `Complexity.union_mem_P`, `Complexity.empty_mem_P`,
+  `Complexity.univ_mem_P` — Boolean closure.
+* `Complexity.mem_P_of_atoms` — `P` is closed under Boolean functions of finitely many
+  tests.
+* `Complexity.lenEq_mem_P`, `lenLe_mem_P`, `lenEq_preimage_mem_P`, `lenLe_preimage_mem_P`
+  — length comparisons are in `P`.
+* `Complexity.preimage_mem_NP` — `NP` is closed under polynomial-time preimages, so under
+  Karp reductions.
+* `Complexity.mem_P_of_blockAny`, `Complexity.mem_P_of_blockMajority`,
+  `Complexity.mem_P_of_blockXorAny` — `P` is closed under running a `P`-decider on
+  polynomially many polynomial-length blocks of the input and aggregating the answers
+  (OR / strict majority / XOR-then-OR), the folklore repetition closures used tacitly
+  by [AB09] ch. 7 (Theorems 7.8, 7.10, 7.14, 7.15); the machine engine is
+  `TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.6, Definition 1.13; §2.2.)
+-/
+
+namespace Complexity
+
+open Turing
+
+/-! ### `P` and polynomial-time functions -/
+
+/-- `V ∈ P` iff its singleton indicator `x ↦ [1_V(x)]` is polynomial-time computable. -/
+theorem mem_P_iff_polyTimeComputable {V : Language Bool} :
+    V ∈ P ↔ PolyTimeComputable (fun x => [MultiTapeTM.indicator V x]) := by
+  constructor
+  · intro h
+    obtain ⟨C, c, M, hM⟩ := mem_P_iff.mp h
+    exact ⟨M, C, c, hM⟩
+  · rintro ⟨M, C, c, hM⟩
+    exact mem_P_iff.mpr ⟨C, c, M, hM⟩
+
+/-- **`P` is closed under polynomial-time preimages**: if `V ∈ P` and `g` is
+polynomial-time computable then `g⁻¹(V) ∈ P` (the decider of `V` run on `g x`). -/
+theorem preimage_mem_P {V : Language Bool} {g : List Bool → List Bool} (hV : V ∈ P)
+    (hg : PolyTimeComputable g) : g ⁻¹' V ∈ P :=
+  mem_P_iff_polyTimeComputable.mpr ((mem_P_iff_polyTimeComputable.mp hV).comp hg)
+
+/-- A language whose Boolean test is polynomial-time computable (as a one-bit output) is
+in `P`. -/
+theorem mem_P_of_test {b : List Bool → Bool} (h : PolyTimeComputable (fun z => [b z])) :
+    {z | b z = true} ∈ P := by
+  rw [mem_P_iff_polyTimeComputable]
+  convert h using 2 with z
+  by_cases hz : b z = true <;> simp [MultiTapeTM.indicator, hz]
+
+/-- The Boolean test of a language in `P` is polynomial-time computable. -/
+theorem test_of_mem_P {L : Language Bool} (h : L ∈ P) :
+    PolyTimeComputable (fun z => [MultiTapeTM.indicator L z]) :=
+  mem_P_iff_polyTimeComputable.mp h
+
+/-! ### Boolean closure -/
+
+/-- **`P` is closed under intersection.** -/
+theorem inter_mem_P {L₁ L₂ : Language Bool} (h₁ : L₁ ∈ P) (h₂ : L₂ ∈ P) :
+    {z | z ∈ L₁ ∧ z ∈ L₂} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_and (test_of_mem_P h₁) (test_of_mem_P h₂))
+  convert h using 1
+  ext z
+  by_cases a : z ∈ L₁ <;> by_cases b : z ∈ L₂ <;> simp [MultiTapeTM.indicator, a, b]
+
+/-- **`P` is closed under union** (branching on the first test). -/
+theorem union_mem_P {L₁ L₂ : Language Bool} (h₁ : L₁ ∈ P) (h₂ : L₂ ∈ P) :
+    {z | z ∈ L₁ ∨ z ∈ L₂} ∈ P := by
+  have ht : PolyTimeComputable
+      (fun z => [MultiTapeTM.indicator L₁ z || MultiTapeTM.indicator L₂ z]) := by
+    convert polyTimeComputable_ite (test_of_mem_P h₁) (polyTimeComputable_const [true])
+      (test_of_mem_P h₂) using 1
+    funext z
+    cases MultiTapeTM.indicator L₁ z <;> rfl
+  convert mem_P_of_test ht using 1
+  ext z
+  by_cases a : z ∈ L₁ <;> by_cases b : z ∈ L₂ <;> simp [MultiTapeTM.indicator, a, b]
+
+/-- The empty language is in `P`. -/
+theorem empty_mem_P : ({_z | false = true} : Language Bool) ∈ P :=
+  mem_P_of_test (polyTimeComputable_const [false])
+
+/-- The full language is in `P`. -/
+theorem univ_mem_P : ({_z | true = true} : Language Bool) ∈ P :=
+  mem_P_of_test (polyTimeComputable_const [true])
+
+/-- **`P` is closed under Boolean functions of finitely many tests**: if each test
+`b i` decides a language in `P`, so does `z ↦ F (b · z)` for any `F`.
+
+**Proof sketch.** The language is the finite union, over the valuations `β` with
+`F β = true`, of the finite intersections `⋂ᵢ {z | b i z = β i}`; each set in the
+intersection is a test language or its complement. -/
+theorem mem_P_of_atoms {ι : Type} [Fintype ι] [DecidableEq ι] (b : ι → List Bool → Bool)
+    (hb : ∀ i, ({z | b i z = true} : Language Bool) ∈ P) (F : (ι → Bool) → Bool) :
+    ({z | F (fun i => b i z) = true} : Language Bool) ∈ P := by
+  classical
+  -- one valuation
+  have hval : ∀ β : ι → Bool, ∀ s : Finset ι,
+      ({z | ∀ i ∈ s, b i z = β i} : Language Bool) ∈ P := by
+    intro β s
+    induction s using Finset.induction_on with
+    | empty => simpa using univ_mem_P
+    | insert i s hi ih =>
+      have hi' : ({z | b i z = β i} : Language Bool) ∈ P := by
+        cases hβ : β i
+        · have := compl_mem_P (hb i)
+          convert this using 1
+          ext z
+          change b i z = false ↔ ¬ (b i z = true)
+          simp
+        · exact hb i
+      have := inter_mem_P hi' ih
+      convert this using 1
+      ext z
+      simp
+  have hunion : ∀ s : Finset (ι → Bool),
+      ({z | ∃ β ∈ s, ∀ i, b i z = β i} : Language Bool) ∈ P := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => simpa using empty_mem_P
+    | insert β s hβ ih =>
+      have h1 := hval β Finset.univ
+      have := union_mem_P h1 ih
+      convert this using 1
+      ext z
+      change (∃ β' ∈ insert β s, ∀ i, b i z = β' i) ↔
+        (∀ i ∈ Finset.univ, b i z = β i) ∨ (∃ β' ∈ s, ∀ i, b i z = β' i)
+      simp
+  have h := hunion (Finset.univ.filter fun β => F β = true)
+  convert h using 1
+  ext z
+  simp only [Set.mem_setOf_eq, Finset.mem_filter, Finset.mem_univ, true_and]
+  constructor
+  · intro hz; exact ⟨_, hz, fun i => rfl⟩
+  · rintro ⟨β, hβ, hb'⟩
+    have : (fun i => b i z) = β := funext hb'
+    rw [this]; exact hβ
+
+/-! ### Length comparisons -/
+
+/-- The words whose two components under the total default projections
+(`pairFstD`/`pairSndD`, both `[]` on malformed input) have equal length form a language
+in `P`. Malformed words project to `([], [])` and are therefore members — e.g. `[]`
+itself; the well-formed-pair corollaries below are unaffected (P0 round 1, finding 5). -/
+theorem lenEq_mem_P : {z : List Bool | (pairFstD z).length = (pairSndD z).length} ∈ P := by
+  have h := mem_P_of_test polyTimeComputable_lenEq
+  simpa using h
+
+/-- The words whose second default-projected component is at most as long as the first
+form a language in `P` — with the same totalization as `Complexity.lenEq_mem_P`:
+malformed words project to `([], [])` and are members. -/
+theorem lenLe_mem_P : {z : List Bool | (pairSndD z).length ≤ (pairFstD z).length} ∈ P := by
+  have h := mem_P_of_test polyTimeComputable_lenLe
+  simpa using h
+
+/-- Comparing the lengths of two polynomial-time computable strings is in `P`. -/
+theorem lenEq_preimage_mem_P {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (hg : PolyTimeComputable g) : {z | (f z).length = (g z).length} ∈ P := by
+  have h := preimage_mem_P lenEq_mem_P (hf.pairEncode hg)
+  simpa using h
+
+/-- `|g z| ≤ |f z|` for polynomial-time `f`, `g` is decidable in `P`. -/
+theorem lenLe_preimage_mem_P {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (hg : PolyTimeComputable g) : {z | (g z).length ≤ (f z).length} ∈ P := by
+  have h := preimage_mem_P lenLe_mem_P (hf.pairEncode hg)
+  simpa using h
+
+/-! ### `NP` under preimages -/
+
+section NPCSeal
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible]
+  Complexity.NP
+  Complexity.P
+  Complexity.PolyTimeComputable
+  Complexity.pairFstD
+  Complexity.pairSndD
+  Turing.pairEncode
+
+/-- **`NP` is closed under polynomial-time preimages** [AB09, §2.2]: if `L' ∈ NP` and `f` is
+polynomial-time computable, then `f ⁻¹' L' ∈ NP`. With `L ≤ₚ L'` by `f`, `L = f ⁻¹' L'`, so `NP` is
+closed downward under Karp reductions.
+
+**Proof sketch.** Read `L'` in the bounded-certificate form
+(`Complexity.mem_NP_iff_exists_length_le`): a verifier `V ∈ P` and the bound `C (|y| + 1) ^ c`.
+With `|f x| ≤ A (|x| + 1) ^ d` (`Complexity.PolyTimeComputable.output_length_le`), the verifier
+for the preimage accepts `⟨x, u⟩` exactly when `|u| ≤ C (|f x| + 1) ^ c` and `⟨f x, u⟩ ∈ V`: the
+intersection (`Complexity.inter_mem_P`) of a length test against the unary word
+`1 ^ (C (|f x| + 1) ^ c)` (`Complexity.lenLe_preimage_mem_P`) and the preimage of `V` under a
+polynomial-time pair map (`Complexity.preimage_mem_P`). Its certificates are those of `f x`, so
+they are bounded by `C (A + 1) ^ c (|x| + 1) ^ (d c)`, since `|f x| + 1 ≤ (A + 1) (|x| + 1) ^ d`;
+the length test keeps a longer certificate from being accepted. -/
+theorem preimage_mem_NP {L' : Language Bool} {f : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (h' : L' ∈ NP) : f ⁻¹' L' ∈ NP := by
+  obtain ⟨C, c, V, hV, hL'⟩ := mem_NP_iff_exists_length_le.mp h'
+  obtain ⟨A, d, hA⟩ := hf.output_length_le
+  have hF : PolyTimeComputable (fun z => f (pairFstD z)) := hf.comp polyTimeComputable_pairFstD
+  have hB : PolyTimeComputable
+      (fun z => List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true) :=
+    (polyTimeComputable_polyUnary C c).comp hF
+  have hG : PolyTimeComputable (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) :=
+    hF.pairEncode polyTimeComputable_pairSndD
+  have hW := inter_mem_P (lenLe_preimage_mem_P hB polyTimeComputable_pairSndD)
+    (preimage_mem_P hV hG)
+  refine mem_NP_iff_exists_length_le.mpr ⟨C * (A + 1) ^ c, d * c, _, hW, fun x => ?_⟩
+  have hmem : ∀ u : List Bool, pairEncode x u ∈
+      {z | z ∈ {z | (pairSndD z).length ≤
+          (List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true).length} ∧
+        z ∈ (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) ⁻¹' V} ↔
+      u.length ≤ C * ((f x).length + 1) ^ c ∧ pairEncode (f x) u ∈ V := by
+    intro u
+    simp only [Set.mem_setOf_eq, Set.mem_preimage, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate]
+  have hbound : C * ((f x).length + 1) ^ c ≤ C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+    have h1 : (f x).length + 1 ≤ (A + 1) * (x.length + 1) ^ d := by
+      have hpos : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow _ _ (Nat.succ_pos _)
+      have := hA x
+      nlinarith
+    calc C * ((f x).length + 1) ^ c ≤ C * ((A + 1) * (x.length + 1) ^ d) ^ c :=
+          Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 c)
+      _ = C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+          rw [mul_pow, pow_mul, Nat.mul_assoc]
+  rw [Set.mem_preimage, hL' (f x)]
+  constructor
+  · rintro ⟨u, hu, hVu⟩
+    exact ⟨u, hu.trans hbound, (hmem u).mpr ⟨hu, hVu⟩⟩
+  · rintro ⟨u, -, hu⟩
+    exact ⟨u, ((hmem u).mp hu).1, ((hmem u).mp hu).2⟩
+
+end NPCSeal
+
+/-! ### Block-query closure
+
+`P` is closed under running a `P`-decider on polynomially many fixed-size blocks of
+the second component of a pair and aggregating the answers.  `blockAt a k z i` is the
+`i`-th length-`a·(n+1)^k` block of `pairSndD z`, with `n = |pairFstD z|`; the block
+count is `a'·(n+1)^k'`.  These are the folklore "repeat the machine polynomially many
+times" closures that [AB09] ch. 7 uses tacitly (§7.3, Theorem 7.8; §7.4.1;
+Theorems 7.14–7.15); the machine-level loop lives in
+`TCSlib.Complexity.ClassNP.PolyTimeBlockLoop`.
+
+Like the length comparisons above, all three languages are total extensions through
+the default projections: a malformed word is classified by the same test on its
+default-decoded components (for the nested pair, an invalid inner pair leaves only the
+outer mask), and `V` is consulted only on re-encoded queries (ch7 fill audit, note 3). -/
+
+/-- **`P` is closed under a polynomial block-OR**: if `V ∈ P` then so is the set of
+pairs some of whose `a'·(n+1)^k'` blocks of length `a·(n+1)^k` passes `V`'s test,
+paired with the first component. -/
+theorem mem_P_of_blockAny {V : Language Bool} (hV : V ∈ P) (a k a' k' : ℕ) :
+    {z : List Bool | ∃ i < a' * ((pairFstD z).length + 1) ^ k',
+      pairEncode (pairFstD z) (blockAt a k z i) ∈ V} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_blockAnyTest (test_of_mem_P hV) a k a' k')
+  convert h using 1
+  ext z
+  simp only [Set.mem_setOf_eq, List.any_eq_true, List.mem_range]
+  constructor
+  · rintro ⟨i, hi, hmem⟩
+    exact ⟨i, hi, by simp [MultiTapeTM.indicator, hmem]⟩
+  · rintro ⟨i, hi, hbit⟩
+    refine ⟨i, hi, ?_⟩
+    by_contra hmem
+    simp [MultiTapeTM.indicator, hmem] at hbit
+
+/-- **`P` is closed under a polynomial block-majority**: if `V ∈ P` then so is the
+set of pairs a strict majority of whose `a'·(n+1)^k'` blocks of length `a·(n+1)^k`
+passes `V`'s test, paired with the first component. -/
+theorem mem_P_of_blockMajority {V : Language Bool} (hV : V ∈ P) (a k a' k' : ℕ) :
+    {z : List Bool | a' * ((pairFstD z).length + 1) ^ k' <
+      2 * (List.range (a' * ((pairFstD z).length + 1) ^ k')).countP
+        (fun i => MultiTapeTM.indicator V (pairEncode (pairFstD z) (blockAt a k z i)))} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_blockMajorityTest (test_of_mem_P hV) a k a' k')
+  convert h using 1
+  ext z
+  simp only [Set.mem_setOf_eq, decide_eq_true_eq]
+
+/-- **`P` is closed under a polynomial XOR-shifted block-OR**: on a nested pair
+`⟨⟨x, u⟩, v⟩`, if `V ∈ P` then so is the set of nested pairs some of whose
+`a'·(|x|+1)^k'` blocks of `u` of length `a·(|x|+1)^k`, XORed bitwise with `v`
+(truncating to the shorter word), passes `V`'s test paired with `x`. -/
+theorem mem_P_of_blockXorAny {V : Language Bool} (hV : V ∈ P) (a k a' k' : ℕ) :
+    {w : List Bool | ∃ i < a' * ((pairFstD (pairFstD w)).length + 1) ^ k',
+      pairEncode (pairFstD (pairFstD w))
+        (List.zipWith xor (pairSndD w) (blockAt a k (pairFstD w) i)) ∈ V} ∈ P := by
+  have h := mem_P_of_test (polyTimeComputable_blockXorAnyTest (test_of_mem_P hV) a k a' k')
+  convert h using 1
+  ext w
+  simp only [Set.mem_setOf_eq, List.any_eq_true, List.mem_range]
+  constructor
+  · rintro ⟨i, hi, hmem⟩
+    exact ⟨i, hi, by simp [MultiTapeTM.indicator, hmem]⟩
+  · rintro ⟨i, hi, hbit⟩
+    refine ⟨i, hi, ?_⟩
+    by_contra hmem
+    simp [MultiTapeTM.indicator, hmem] at hbit
+
+end Complexity

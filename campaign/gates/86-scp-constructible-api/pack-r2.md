@@ -54,7 +54,10 @@ campaign's records merged in (no Lean change). The blobs: `Constructible` `9fb71
   "body changes" of three declarations are docstring-only (`freeze-note.txt`, `code-only-diff.txt`).
 - **Lint:** `SpaceComplexity` 0 FAIL, 82 WARN over 107 files, the base's but for the two files'
   INFO lines; the policy linter 0 findings on both files (`lint-head-*`, `style-lint-head.txt`).
-- **Screen** (13 files: round 1's 12 and `Build/WordTests`, base and head): ⟨summary⟩.
+- **Screen** (13 files: round 1's 12 and `Build/WordTests`; base at `940671e0`, head at `ca0eafb8`;
+  `evidence/round1-fix/screen/`): 848 declarations and 1,146 pairs at both, none new and none gone
+  (`pairdiff.txt`); no pair involves the moved block. The removed conversion was an inline step,
+  not a declaration, so the pair count is unchanged.
 - **Replay:** `replay-lscp2.sh`, the same 53 modules from `oleans-lnfapi4`, pinning both blobs; its
   precheck passed. **Pending** (a merge condition of its own).
 
