@@ -80,3 +80,6 @@ the campaign merged in and its 3 modules replayed from `oleans-lnpc3`. **#177: c
 `a0d511ec61b2e40b2216e44c07278531fc33a2e6` (2026-11-04): the gate passed, `replay-lnpc3` passed at
 that head, its base is the campaign branch, and the campaign has had no Lean change since
 `oleans-lscp3`'s tree.
+
+**Merged** (user, 2026-11-04): `8d49d0ee821255896da01a77d983fadd8e974c1a`. The campaign's Lean is now
+`oleans-lnpc3`'s tree. The gate is closed.

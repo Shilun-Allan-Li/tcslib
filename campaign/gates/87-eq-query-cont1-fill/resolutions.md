@@ -33,3 +33,10 @@ had Lean changes since `oleans-lnfapi4` (#175 and `main`'s merge-in, the tree of
 merged in; the Lean diff against the campaign is `NTimeDiagonalizer` alone, blob `852931eb`, the
 gated file unchanged). `replay-leqc2.sh` (`evidence/merged-tree/`), 3 modules from `oleans-lscp3`,
 pinning the blob; precheck passed. **#176: not yet clear to merge**: it waits for `replay-leqc2`.
+
+**Re-ruled (user, 2026-11-04): #177 merged first** (`8d49d0ee`), since `replay-leqc2` had not run;
+`replay-leqc2` is superseded and was never run. #176 took the campaign after #177 merged in:
+`f69b86b9f32ead0c0ffb870ad19b3e3b340b4ff9` (the Lean diff against the campaign is `NTimeDiagonalizer`
+alone, blob `852931eb`, the gated file). `replay-leqc3.sh` (`evidence/merged-tree/`), its 3 modules
+from `oleans-lnpc3` (the tree after #177), pinning the blob; precheck passed. **#176: not yet clear to
+merge**: it waits for `replay-leqc3`.
