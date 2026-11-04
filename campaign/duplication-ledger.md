@@ -712,6 +712,15 @@ user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic
 steps to it. **Brought forward (user, 2026-11-04): PR #181** (gate 89) does exactly that, and also
 moves `logSpace_le_of_le_mul_two_pow` to `Basic` and `LOGSPACE_subset_PSPACE` and
 `SPACE_succ_pow_subset_PSPACE` to `SpaceClasses`. **LS-1 is retired when #181 merges.**
+**Scope corrected (gate 89, round 1, major 1).** Two further inline copies predated #181:
+- `narm_decides` (`Machines/NARMProof`);
+- `narm_logspace_ptm` (`Machines/NARMLogspace`).
+
+Both are `have hLn : logSpace n ≤ n + 1` by `Nat.log_le_self` and `simp only [logSpace]`, in
+Hydroxyi's files, and neither was in this entry. Round 2 of #181 (`1d1247a3`) re-points both to
+`logSpace_le_succ`, a mechanical ARM dedup edit (FYI). A search of the round-2 head
+(`campaign/gates/89-space-facts-api/evidence/round2/ls1-search/`) finds the fact stated only in
+`Basic` and cited everywhere else.
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
