@@ -7229,6 +7229,204 @@ private theorem dz_norm {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : F
   rw [List.length_replicate] at ht'
   omega
 
+/-! ### The middle's rewrite: `α` and the core's input -/
+
+/-- **The core's input word** in three emissions without a flag: the budget's bits each written
+four times and `[false, false, true, true]`; the code doubled and `[false, true]`; the tail. It is
+`⟨⟨B, α⟩, N⟩`, read off `qy_writer_word` with the code `α ++ [true]` and its flag cancelled. -/
+private theorem dz_core_word (B α N : List Bool) :
+    (([] ++ ([] ++ [] ++ qyBody false 3 B ++ [false, false, true, true])) ++
+        ([] ++ [] ++ qyBody false 1 α ++ [false, true])) ++ ([] ++ [] ++ qyBody false 0 N ++ []) =
+      pairEncode (pairEncode B α) N := by
+  have h := qy_writer_word false B (α ++ [true]) N
+  rw [List.dropLast_concat] at h
+  have hb : qyBody true 1 (α ++ [true]) = qyBody false 1 α := by
+    unfold qyBody
+    rw [if_pos rfl, if_neg Bool.false_ne_true, List.dropLast_concat]
+  rw [hb] at h
+  apply List.cons_injective (a := false)
+  rw [← h]
+  simp only [List.nil_append, List.append_nil, List.append_assoc, List.cons_append]
+
+/-- **An emission under the capture wrapper.** `qyEmitTM` on one tape `src` holding `wd` (head at
+`0`), with no prefix, the suffix `suf`, each symbol written `rr + 1` times, run under
+`Turing.embedSilentTM` with the capture tape `cap` holding `pre` (head after it): the capture tape
+gains the emission, the head of `src` moves to the word's end, nothing else changes, nothing is
+emitted, and `done` is reached first within `|suf| + 3 + |wd| (rr + 3)` steps.
+
+**Proof sketch.** `qy_emit_run` on the one-tape source gives its run and cut; `dz_silent`
+transports it through the capture wrapper. -/
+private theorem dz_emit_run {K : ℕ} {x : List Bool} (src cap : Fin K) (hne : src ≠ cap)
+    (suf : List Bool) (rr : ℕ) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o pre wd : List Bool)
+    (hT : T src = FinTM.bufferTape wd) (hP : P src = 0) (hTc : T cap = FinTM.bufferTape pre)
+    (hPc : P cap = pre.length) :
+    ∃ t ≤ suf.length + 3 + wd.length * (rr + 3),
+      (embedSilentTM (dzOne src) cap (qyEmitTM 1 0 [] suf rr false)).runFrom
+          (qyC (x := x) (.pre 0) 1 T P o) t =
+        qyC .done 1 (Function.update T cap
+          (FinTM.bufferTape (pre ++ ([] ++ [] ++ qyBody false rr wd ++ suf))))
+          (Function.update (Function.update P src wd.length) cap
+            ((pre ++ ([] ++ [] ++ qyBody false rr wd ++ suf)).length : ℤ)) o ∧
+      ∀ u < t, ((embedSilentTM (dzOne src) cap (qyEmitTM 1 0 [] suf rr false)).runFrom
+          (qyC (x := x) (.pre 0) 1 T P o) u).state ≠ some .done := by
+  have hcap : cap ∉ Set.range (dzOne src) := fun ⟨_, h⟩ => hne h
+  obtain ⟨t, ht, hrun, hcut⟩ := qy_emit_run (x := x) (0 : Fin 1) [] suf rr false 1
+    (fun i => T (dzOne src i)) (fun i => P (dzOne src i)) [] wd hT hP
+  obtain ⟨h1, h2⟩ := dz_silent (dzOne src) cap hcap (qyEmitTM 1 0 [] suf rr false) (.pre 0) .done 1
+    T (Function.update T cap
+      (FinTM.bufferTape (pre ++ ([] ++ [] ++ qyBody false rr wd ++ suf))))
+    P (Function.update (Function.update P src wd.length) cap
+      ((pre ++ ([] ++ [] ++ qyBody false rr wd ++ suf)).length : ℤ)) o pre
+    ([] ++ [] ++ qyBody false rr wd ++ suf) _ _ t hTc hPc hrun
+    (fun i => ⟨by
+      show Function.update T cap _ src = T src
+      rw [Function.update_of_ne hne], by
+      show Function.update (Function.update P src wd.length) cap _ src = _
+      rw [Function.update_of_ne hne, Function.update_self]
+      obtain rfl : i = 0 := Subsingleton.elim _ _
+      rw [Function.update_self]⟩)
+    ⟨Function.update_self _ _ _, Function.update_self _ _ _⟩
+    (fun j hj hjc => ⟨Function.update_of_ne hjc _ _, by
+      rw [Function.update_of_ne hjc,
+        Function.update_of_ne (show j ≠ src from fun h => hj ⟨0, h.symm⟩)]⟩)
+  refine ⟨t, by simpa using ht, h1, fun u hu => ?_⟩
+  rw [h2]
+  exact hcut u hu
+
+/-- The length of a pair: `|⟨x, α⟩| = 2|x| + 2 + |α|`. -/
+private theorem dz_pairEncode_length (x α : List Bool) :
+    (pairEncode x α).length = 2 * x.length + 2 + α.length := by
+  rw [pairEncode_eq]
+  induction x with
+  | nil => simp; omega
+  | cons b x ih =>
+    simp only [List.flatMap_cons, List.length_append, List.length_cons, List.length_nil] at ih ⊢
+    omega
+
+/-- **The rewrite.** From the extractor's call over a layout with the query's tail on tape `8`, the
+budget's bits `bits b` on tape `10`, the word `1^{n + 1}` on tape `2`, the core's input tape `11`
+blank, these heads at `0`: the install call of the composite extractor leaves `α = dzAlpha tail` on
+tape `8`; three emissions under the capture wrapper write `⟨⟨bits b, α⟩, 1^{n + 1}⟩` on tape `11`
+(`dz_core_word`); its rewind returns that head to `0`, and the run enters the hosted core.
+
+**Proof sketch.** Five hosted phases: `qy_callHost` with the extractor's bank holding the seam of
+the tail (`dz_arg_bank`); `dz_emit_run` three times (`bits b` four times each with
+`[false, false, true, true]`; `α` doubled with `[false, true]`; `1^{n + 1}` once), each appending to
+the capture tape; `qy_rewind` on the captured word. The emitters' heads stay at their words'
+ends. -/
+private theorem dz_rewrite {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
+    (tail B : List Bool) (h2 : L 2 = FinTM.bufferTape ([true] ++ z))
+    (h8 : L 8 = FinTM.bufferTape tail) (h10 : L 10 = FinTM.bufferTape B)
+    (h11 : L 11 = FinTM.bufferTape []) (hP2 : Pn 2 = 0) (hP8 : Pn 8 = 0) (hP10 : Pn 10 = 0)
+    (hP11 : Pn 11 = 0) :
+    ∃ t ≤ κ.acA * (tail.length + 1) + 10 * B.length + 6 * (dzAlpha tail).length + 4 * z.length + 40,
+      Segment (dzQ κ) (dzQF κ) (fun _ => True)
+        (qyC (x := z) ⟨.al, Sum.inl ()⟩ 1 (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [])
+        (qyC ⟨.runR, κ.iR (κ.rE, true)⟩ 1
+          (dzLay (Function.update (Function.update L 8 (FinTM.bufferTape (dzAlpha tail))) 11
+            (FinTM.bufferTape (pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z))))
+            (FinTM.bufferTape []))
+          (dzLay (Function.update (Function.update (Function.update Pn 10 (B.length : ℤ)) 8
+            ((dzAlpha tail).length : ℤ)) 2 ((([true] ++ z).length : ℕ) : ℤ)) 0) []) t := by
+  set Bl : ℤ → Option Bool := FinTM.bufferTape [] with hBl
+  -- al: `α` by the composite extractor
+  obtain ⟨t1, ht1, hpos1, hcut1, hrun1⟩ := κ.acS z tail
+  have c1 := qy_callHost κ.ac κ.acK κ.bA κ.acE κ.acX tail _ t1 hpos1 hcut1 hrun1
+    (dzLay L Bl) (dzLay Pn 0) [] (dz_arg_bank κ L 8 _ _ _ _ (by omega) κ.acK _ h8)
+    (dz_zero_bank κ Pn 8 _ _ _ _ (by omega) hP8)
+  rw [show κ.bA ⟨0, κ.acK⟩ = κ.tp 8 from rfl, dzLay_update] at c1
+  obtain ⟨L1, hL1⟩ : ∃ L1 : Fin 14 → ℤ → Option Bool,
+      L1 = Function.update L 8 (FinTM.bufferTape (dzAlpha tail)) := ⟨_, rfl⟩
+  rw [← hL1] at c1
+  have seg1 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .al (Sum.inl ()) (Sum.inr κ.acX)
+    ⟨.e1, QyEm.pre 0⟩ 1 1 _ _ _ _ [] [] t1 c1.1 (by simp [dzQRed])
+    (qy_guard_of_cut (Sum.inr κ.acX) (dzQRed κ .al) (fun s hs => by simp [dzQRed, hs]) c1.2)
+    (dzQF κ) (fun s => dz_notF κ .al s (by simp) (by simp))
+  -- e1: the budget's bits, each four times, and the inner separator
+  have hL1_10 : L1 10 = FinTM.bufferTape B := by rw [hL1, Function.update_of_ne (by decide), h10]
+  have hL1_11 : L1 11 = FinTM.bufferTape [] := by rw [hL1, Function.update_of_ne (by decide), h11]
+  obtain ⟨t2, ht2, c2, k2⟩ := dz_emit_run (x := z) (κ.tp 10) (κ.tp 11) (κ.tp_ne (by decide))
+    [false, false, true, true] 3 (dzLay L1 Bl) (dzLay Pn 0) [] [] B (by rw [dzLay_tp, hL1_10])
+    (by rw [dzLay_tp, hP10]) (by rw [dzLay_tp, hL1_11]) (by rw [dzLay_tp, hP11]; rfl)
+  rw [dzLay_update, dzLay_update, dzLay_update] at c2
+  set O1 := [] ++ ([] ++ [] ++ qyBody false 3 B ++ [false, false, true, true]) with hO1
+  obtain ⟨P2, eP2⟩ : ∃ P2 : Fin 14 → ℤ,
+      P2 = Function.update (Function.update Pn 10 (B.length : ℤ)) 11 (O1.length : ℤ) := ⟨_, rfl⟩
+  rw [← eP2] at c2
+  have seg2 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .e1 (.pre 0) .done ⟨.e2, QyEm.pre 0⟩
+    1 1 _ _ _ _ [] [] _ c2 (by simp [dzQRed])
+    (qy_guard_of_cut QyEm.done (dzQRed κ .e1) (fun s hs => by simp [dzQRed, hs]) k2)
+    (dzQF κ) (fun s => dz_notF κ .e1 s (by simp) (by simp))
+  -- e2: the code doubled and the outer separator
+  obtain ⟨t3, ht3, c3, k3⟩ := dz_emit_run (x := z) (κ.tp 8) (κ.tp 11) (κ.tp_ne (by decide))
+    [false, true] 1 (dzLay (Function.update L1 11 (FinTM.bufferTape O1)) Bl) (dzLay P2 0) [] O1
+    (dzAlpha tail)
+    (by rw [dzLay_tp, Function.update_of_ne (by decide), hL1, Function.update_self])
+    (by rw [dzLay_tp, eP2, Function.update_of_ne (by decide), Function.update_of_ne (by decide),
+      hP8])
+    (by rw [dzLay_tp, Function.update_self]) (by rw [dzLay_tp, eP2, Function.update_self])
+  rw [dzLay_update, dzLay_update, dzLay_update, Function.update_idem] at c3
+  set O2 := O1 ++ ([] ++ [] ++ qyBody false 1 (dzAlpha tail) ++ [false, true]) with hO2
+  obtain ⟨P3, eP3⟩ : ∃ P3 : Fin 14 → ℤ,
+      P3 = Function.update (Function.update P2 8 ((dzAlpha tail).length : ℤ)) 11 (O2.length : ℤ) :=
+    ⟨_, rfl⟩
+  rw [← eP3] at c3
+  have seg3 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .e2 (.pre 0) .done ⟨.e3, QyEm.pre 0⟩
+    1 1 _ _ _ _ [] [] _ c3 (by simp [dzQRed])
+    (qy_guard_of_cut QyEm.done (dzQRed κ .e2) (fun s hs => by simp [dzQRed, hs]) k3)
+    (dzQF κ) (fun s => dz_notF κ .e2 s (by simp) (by simp))
+  -- e3: the tail `1^{n + 1}`
+  obtain ⟨t4, ht4, c4, k4⟩ := dz_emit_run (x := z) (κ.tp 2) (κ.tp 11) (κ.tp_ne (by decide))
+    [] 0 (dzLay (Function.update L1 11 (FinTM.bufferTape O2)) Bl) (dzLay P3 0) [] O2
+    ([true] ++ z)
+    (by rw [dzLay_tp, Function.update_of_ne (by decide), hL1, Function.update_of_ne (by decide),
+      h2])
+    (by rw [dzLay_tp, eP3, Function.update_of_ne (by decide), Function.update_of_ne (by decide),
+      eP2, Function.update_of_ne (by decide), Function.update_of_ne (by decide), hP2])
+    (by rw [dzLay_tp, Function.update_self]) (by rw [dzLay_tp, eP3, Function.update_self])
+  rw [dzLay_update, dzLay_update, dzLay_update, Function.update_idem] at c4
+  set O3 := O2 ++ ([] ++ [] ++ qyBody false 0 ([true] ++ z) ++ []) with hO3
+  have hword : O3 = pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z) := by
+    rw [hO3, hO2, hO1]
+    exact dz_core_word B (dzAlpha tail) ([true] ++ z)
+  rw [hword] at c4
+  obtain ⟨P4, eP4⟩ : ∃ P4 : Fin 14 → ℤ,
+      P4 = Function.update (Function.update P3 2 ((([true] ++ z).length : ℕ) : ℤ)) 11
+        ((pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z)).length : ℤ) := ⟨_, rfl⟩
+  rw [← eP4] at c4
+  have seg4 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .e3 (.pre 0) .done
+    ⟨.rwZ, RewindPhase.start⟩ 1 1 _ _ _ _ [] [] _ c4 (by simp [dzQRed])
+    (qy_guard_of_cut QyEm.done (dzQRed κ .e3) (fun s hs => by simp [dzQRed, hs]) k4)
+    (dzQF κ) (fun s => dz_notF κ .e3 s (by simp) (by simp))
+  -- rwZ: rewind the core's input
+  obtain ⟨t5c, k5⟩ := qy_rewind (x := z) (κ.tp 11) 1
+    (dzLay (Function.update L1 11 (FinTM.bufferTape
+      (pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z)))) Bl) (dzLay P4 0) []
+    (pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z))
+    (pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z)).length le_rfl
+    (by rw [dzLay_tp, Function.update_self])
+    (by rw [dzLay_tp, eP4, Function.update_self])
+  rw [dzLay_update] at t5c
+  have hPend : Function.update P4 11 0 = Function.update (Function.update (Function.update Pn 10
+      (B.length : ℤ)) 8 ((dzAlpha tail).length : ℤ)) 2 ((([true] ++ z).length : ℕ) : ℤ) := by
+    funext i
+    rw [eP4, eP3, eP2]
+    simp only [Function.update_apply]
+    split_ifs <;> first | rfl | (subst_vars; simp_all)
+  rw [hPend] at t5c
+  have seg5 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .rwZ .start .done
+    ⟨.runR, κ.iR (κ.rE, true)⟩ 1 1 _ _ _ _ [] [] _ t5c (by simp [dzQRed])
+    (qy_guard_of_cut RewindPhase.done (dzQRed κ .rwZ) (fun s hs => by simp [dzQRed, hs]) k5)
+    (dzQF κ) (fun s => dz_notF κ .rwZ s (by simp) (by simp))
+  rw [← hL1]
+  refine ⟨_, ?_, seg1.trans (seg2.trans (seg3.trans (seg4.trans seg5)))⟩
+  have hlen := dz_pairEncode_length (pairEncode B (dzAlpha tail)) ([true] ++ z)
+  have hlen' := dz_pairEncode_length B (dzAlpha tail)
+  have ht1' : t1 ≤ κ.acA * (tail.length + 1) := ht1
+  simp only [List.length_cons, List.length_nil, List.length_append] at ht2 ht3 ht4 hlen ⊢
+  nlinarith
+
 /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
 P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
 deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
