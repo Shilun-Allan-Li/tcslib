@@ -1,0 +1,137 @@
+/-
+Seal controls for the codec edge-mode API PR's rule-10 checks, with the generic control commands
+of E-Q cont1's review: a delta goal (`#ctl_rfl`) for each of the 37 definitions sealed in the three
+sealed copies (the union), and an equation goal (`#ctl_eqn`) for each. Each logs `CONTROL_PASS` or
+`CONTROL_FAIL`. Expected: unsealed, every control passes except recursive definitions' delta goals;
+sealed, every control fails. A probe record, not library code.
+-/
+import TCSlib.Complexity.SpaceComplexity.Codec.Deciders
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+
+
+section Controls
+
+
+#ctl_rfl Complexity.Codec.CA
+#ctl_rfl Complexity.Codec.EdgeChk
+#ctl_rfl Complexity.Codec.Regs.Bd
+#ctl_rfl Complexity.Codec.Regs.val
+#ctl_rfl Complexity.Codec.Shape1
+#ctl_rfl Complexity.Codec.VAcc
+#ctl_rfl Complexity.Codec.ValidChk
+#ctl_rfl Complexity.Codec.W
+#ctl_rfl Complexity.Codec.bnd
+#ctl_rfl Complexity.Codec.cellOf
+#ctl_rfl Complexity.Codec.cfgCode
+#ctl_rfl Complexity.Codec.cfgWord
+#ctl_rfl Complexity.Codec.chunkBit
+#ctl_rfl Complexity.Codec.cpDst
+#ctl_rfl Complexity.Codec.cpNext
+#ctl_rfl Complexity.Codec.cpSrc
+#ctl_rfl Complexity.Codec.edgeLang
+#ctl_rfl Complexity.Codec.goto
+#ctl_rfl Complexity.Codec.hH
+#ctl_rfl Complexity.Codec.icCount
+#ctl_rfl Complexity.Codec.icL
+#ctl_rfl Complexity.Codec.icNext
+#ctl_rfl Complexity.Codec.icReg
+#ctl_rfl Complexity.Codec.orc
+#ctl_rfl Complexity.Codec.scDst
+#ctl_rfl Complexity.Codec.scFactor
+#ctl_rfl Complexity.Codec.scNext
+#ctl_rfl Complexity.Codec.scSrc
+#ctl_rfl Complexity.LogProg.AHalt
+#ctl_rfl Complexity.LogProg.AReach
+#ctl_rfl Complexity.LogProg.PreS
+#ctl_rfl Complexity.LogProg.arun
+#ctl_rfl Complexity.LogProg.astep
+#ctl_rfl Complexity.LogProg.callSegs
+#ctl_rfl Complexity.LogProg.vword
+#ctl_rfl Turing.Cfg.InWindow
+#ctl_rfl Turing.pairEncode
+#ctl_eqn Complexity.Codec.CA
+#ctl_eqn Complexity.Codec.EdgeChk
+#ctl_eqn Complexity.Codec.Regs.Bd
+#ctl_eqn Complexity.Codec.Regs.val
+#ctl_eqn Complexity.Codec.Shape1
+#ctl_eqn Complexity.Codec.VAcc
+#ctl_eqn Complexity.Codec.ValidChk
+#ctl_eqn Complexity.Codec.W
+#ctl_eqn Complexity.Codec.bnd
+#ctl_eqn Complexity.Codec.cellOf
+#ctl_eqn Complexity.Codec.cfgCode
+#ctl_eqn Complexity.Codec.cfgWord
+#ctl_eqn Complexity.Codec.chunkBit
+#ctl_eqn Complexity.Codec.cpDst
+#ctl_eqn Complexity.Codec.cpNext
+#ctl_eqn Complexity.Codec.cpSrc
+#ctl_eqn Complexity.Codec.edgeLang
+#ctl_eqn Complexity.Codec.goto
+#ctl_eqn Complexity.Codec.hH
+#ctl_eqn Complexity.Codec.icCount
+#ctl_eqn Complexity.Codec.icL
+#ctl_eqn Complexity.Codec.icNext
+#ctl_eqn Complexity.Codec.icReg
+#ctl_eqn Complexity.Codec.orc
+#ctl_eqn Complexity.Codec.scDst
+#ctl_eqn Complexity.Codec.scFactor
+#ctl_eqn Complexity.Codec.scNext
+#ctl_eqn Complexity.Codec.scSrc
+#ctl_eqn Complexity.LogProg.AHalt
+#ctl_eqn Complexity.LogProg.AReach
+#ctl_eqn Complexity.LogProg.PreS
+#ctl_eqn Complexity.LogProg.arun
+#ctl_eqn Complexity.LogProg.astep
+#ctl_eqn Complexity.LogProg.callSegs
+#ctl_eqn Complexity.LogProg.vword
+#ctl_eqn Turing.Cfg.InWindow
+#ctl_eqn Turing.pairEncode
+
+end Controls
