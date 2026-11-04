@@ -89,7 +89,6 @@ private theorem nf_setup {SP : Type} (P : MultiTapeTM 2 Bool SP) (z : List Bool)
   · rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
   · rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
 
-
 /-- The display controller records the next position and the last completed record's flag. -/
 private def nf_ctlStep (k : ℕ) (q : Fin (2 * k + 4) × Bool) (b : Bool) :
     Fin (2 * k + 4) × Bool :=
@@ -211,8 +210,9 @@ private theorem nf_display_length (N : FinNDTM Bool) (x w : List Bool) :
 
 /-- The end bit of the `r`th record of a display is true exactly on its last record.
 
-**Proof sketch.** The final cell of record `r` has index `W(r+1)-1`. Its quotient by `W`
-is `r` and its remainder is `W-1`, so the record encoder returns the prescribed end flag. -/
+**Proof sketch.** With the width `W = 2k + 4`, the final cell of record `r` has index
+`W(r+1)-1`. Its quotient by `W` is `r` and its remainder is `W-1`, so the record encoder returns
+the prescribed end flag. -/
 private theorem nf_display_flag (N : FinNDTM Bool) (x w : List Bool) (r : Fin w.length) :
     (nf_display N x w)[(2 * N.k + 4) * (r.val + 1) - 1]? =
       some (decide (r.val + 1 = w.length)) := by
@@ -299,7 +299,7 @@ private theorem nf_display_firstStop (N : FinNDTM Bool) (x w : List Bool) (hw : 
         hf, Option.getD_some]
 
 /-- A stream that first stops the controller consists of a positive number of complete
-records, with false end flags on all but the final record.
+records, with false end flags on all but the final record, whose end flag is true.
 
 **Proof sketch.** The stopping criterion makes the total length a positive multiple of the
 width. Apply the same criterion to each shorter record boundary: its flag must be false,
@@ -420,7 +420,7 @@ private def nf_sweepStep (N : FinNDTM Bool) (c : nf_SweepState N) (b : Bool) :
     ((0, fun _ => none), nf_complete N r c.2)
   else ((⟨c.1.1.val + 1, by have := c.1.1.isLt; omega⟩, r), c.2)
 
-/-- Sweep zero begins at the start state with an empty record and output summary. -/
+/-- The control sweep begins at the start state with an empty record and output summary. -/
 private def nf_sweepInit (N : FinNDTM Bool) : nf_SweepState N :=
   ((0, fun _ => none), (some N.tm.q₀, none, false))
 
@@ -538,11 +538,10 @@ private theorem nf_sweepPass_output (N : FinNDTM Bool) (c : nf_SweepState N) (o 
   rw [nf_sweepPass, Bool.and_eq_true, Bool.and_eq_true, Bool.and_eq_true] at hp
   exact (StepBlock.outputSummary_true o).mp (ho.symm.trans (of_decide_eq_true hp.1.2))
 
-
-/-- **Sweep 0 is the published scan fold.** From the entry configuration with the scan's
-forward state, the scan on tape `0` reaches the completed bit fold at
-exactly `2|s| + 2`, not at any `done` before, with every tape, head, the input head and the
-output as at the entry: A's head is back at `0` with no separate rewind.
+/-- **The control sweep is the fold instance of `Turing.scanTM`.** From the stream start with
+the scan's forward state, the scan on tape `0` reaches the completed bit fold at exactly
+`2|s| + 2`, not at any `done` before, with every tape, head, the input head and the output as at
+the start: the head of tape `0` is back at cell `0` with no separate rewind.
 
 **Proof sketch.** Apply the framed scan contract with the fold and identity backward pass.
 The scan-result equation identifies the final fold and unchanged word; the configuration
@@ -581,7 +580,6 @@ private theorem nf_sweep_run (N : FinNDTM Bool) (x s : List Bool) :
   · funext j
     rw [streamStartCfg_workTapePos, streamStartCfg_workTapePos]
   · rw [streamStartCfg_output, streamStartCfg_output]
-
 
 /-- A sequence of whole records is checked by folding their completion rules, with the
 bit parser reset between records. -/
@@ -623,7 +621,6 @@ private theorem nf_sweep_display (N : FinNDTM Bool) (x w : List Bool) :
             (fun d r => nf_complete N (fun p => some (r p)) d)
             (some N.tm.q₀, none, false)) := by
   rw [nf_display_records, nf_sweepInit, nf_sweep_records]
-
 
 /-- For a live configuration, completing its genuine record gives the next state and
 output summary, and compares the flag with the actual next configuration's halting status. -/
@@ -687,7 +684,7 @@ private theorem nf_sweep_control_prefix (N : FinNDTM Bool) (x w : List Bool)
       decide_eq_false (fun h => h rfl)
     rw [hfalse, Bool.false_or]
 
-/-- Sweep zero passes the display of a branch that first halts at its end with output
+/-- The control sweep passes the display of a branch that first halts at its end with output
 exactly `[true]`.
 
 **Proof sketch.** The display decomposition and record-fold law identify the bit fold with
@@ -738,7 +735,20 @@ packages as `Fin` by the relabeling `Turing.NDTM.relabelState` (the
 nondeterministic mirror of `Turing.MultiTapeTM.relabelState`, as in the
 `exists_codeTM` precedent). Fill obligations, named: the display format and
 its on-the-fly control check; the `k + 1` verification sweeps; the two
-transfer directions; the relabeling packaging. -/
+transfer directions; the relabeling packaging.
+
+**Implementation.** The display refines the sketch: one record of `2k + 4`
+bits per step of `N`, holding the step's choice bit, the claimed input and
+work-tape reads (two bits each: `00` blank, `10` false, `11` true) and an end
+flag, set on the last record only. States and actions are not guessed: the
+verifier recomputes them from `N`'s table in its finite control. The guess
+runs under the controller-stopped host `Turing.guessCtlRunTM` with a trivial
+setup; its controller stops at the first record boundary after a set end
+flag. The verifier is deterministic and silent: a control sweep (a fold by
+`Turing.scanTM`) checks the recomputed states, the end flags and the output,
+and replay sweeps check the claimed reads against the input and, on the
+second work tape, against each replayed work tape, which `Turing.skipTM`,
+`Turing.skipBackTM` and `Turing.clearTM` then erase. -/
 theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
     ∃ (M : CodeNDTM) (C : ℕ),
       (∀ (x : List Bool) (t : ℕ),
