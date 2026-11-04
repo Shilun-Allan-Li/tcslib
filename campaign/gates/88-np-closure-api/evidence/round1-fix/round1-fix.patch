@@ -1,0 +1,235 @@
+From 02aedc76ef347ce2eb4ac21f94c7fcc5f0dabd3d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 00:23:17 -0800
+Subject: [PATCH] NP's closure moves to PClosure as preimage_mem_NP; TMSAT's
+ prefix-extraction step no longer depends on the simp set
+
+Reductions returns to the campaign's text: its import of PClosure brought Mathlib.Tactic.Linarith
+into its downstream modules, which made Mathlib's simp lemma Nat.cast_min reshape a goal in
+TMSAT's tmsat_take_computes. The theorem now lives beside preimage_mem_P, stated for preimages
+(NP is closed under polynomial-time preimages, so under Karp reductions), with no new import.
+TMSAT's step replaces min a.length b.length by its value in each case before simp, so no min is
+left to reshape; it holds with and without Linarith in scope. tmsat_take_computes gains its proof
+sketch.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/PClosure.lean   | 54 +++++++++++++++++++++
+ TCSlib/Complexity/ClassNP/Reductions.lean | 59 +----------------------
+ TCSlib/Complexity/ClassNP/TMSAT.lean      | 30 +++++++-----
+ 3 files changed, 73 insertions(+), 70 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/PClosure.lean b/TCSlib/Complexity/ClassNP/PClosure.lean
+index 19422d73..7acc5fab 100644
+--- a/TCSlib/Complexity/ClassNP/PClosure.lean
++++ b/TCSlib/Complexity/ClassNP/PClosure.lean
+@@ -35,6 +35,8 @@ None — this module only proves theorems about existing definitions.
+   tests.
+ * `Complexity.lenEq_mem_P`, `lenLe_mem_P`, `lenEq_preimage_mem_P`, `lenLe_preimage_mem_P`
+   — length comparisons are in `P`.
++* `Complexity.preimage_mem_NP` — `NP` is closed under polynomial-time preimages, so under
++  Karp reductions.
+ * `Complexity.mem_P_of_blockAny`, `Complexity.mem_P_of_blockMajority`,
+   `Complexity.mem_P_of_blockXorAny` — `P` is closed under running a `P`-decider on
+   polynomially many polynomial-length blocks of the input and aggregating the answers
+@@ -195,6 +197,58 @@ theorem lenLe_preimage_mem_P {f g : List Bool → List Bool} (hf : PolyTimeCompu
+   have h := preimage_mem_P lenLe_mem_P (hf.pairEncode hg)
+   simpa using h
+ 
++/-! ### `NP` under preimages -/
++
++/-- **`NP` is closed under polynomial-time preimages** [AB09, §2.2]: if `L' ∈ NP` and `f` is
++polynomial-time computable, then `f ⁻¹' L' ∈ NP`. With `L ≤ₚ L'` by `f`, `L = f ⁻¹' L'`, so `NP` is
++closed downward under Karp reductions.
++
++**Proof sketch.** Read `L'` in the bounded-certificate form
++(`Complexity.mem_NP_iff_exists_length_le`): a verifier `V ∈ P` and the bound `C (|y| + 1) ^ c`.
++With `|f x| ≤ A (|x| + 1) ^ d` (`Complexity.PolyTimeComputable.output_length_le`), the verifier
++for the preimage accepts `⟨x, u⟩` exactly when `|u| ≤ C (|f x| + 1) ^ c` and `⟨f x, u⟩ ∈ V`: the
++intersection (`Complexity.inter_mem_P`) of a length test against the unary word
++`1 ^ (C (|f x| + 1) ^ c)` (`Complexity.lenLe_preimage_mem_P`) and the preimage of `V` under a
++polynomial-time pair map (`Complexity.preimage_mem_P`). Its certificates are those of `f x`, so
++they are bounded by `C (A + 1) ^ c (|x| + 1) ^ (d c)`, since `|f x| + 1 ≤ (A + 1) (|x| + 1) ^ d`;
++the length test keeps a longer certificate from being accepted. -/
++theorem preimage_mem_NP {L' : Language Bool} {f : List Bool → List Bool}
++    (hf : PolyTimeComputable f) (h' : L' ∈ NP) : f ⁻¹' L' ∈ NP := by
++  obtain ⟨C, c, V, hV, hL'⟩ := mem_NP_iff_exists_length_le.mp h'
++  obtain ⟨A, d, hA⟩ := hf.output_length_le
++  have hF : PolyTimeComputable (fun z => f (pairFstD z)) := hf.comp polyTimeComputable_pairFstD
++  have hB : PolyTimeComputable
++      (fun z => List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true) :=
++    (polyTimeComputable_polyUnary C c).comp hF
++  have hG : PolyTimeComputable (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) :=
++    hF.pairEncode polyTimeComputable_pairSndD
++  have hW := inter_mem_P (lenLe_preimage_mem_P hB polyTimeComputable_pairSndD)
++    (preimage_mem_P hV hG)
++  refine mem_NP_iff_exists_length_le.mpr ⟨C * (A + 1) ^ c, d * c, _, hW, fun x => ?_⟩
++  have hmem : ∀ u : List Bool, pairEncode x u ∈
++      {z | z ∈ {z | (pairSndD z).length ≤
++          (List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true).length} ∧
++        z ∈ (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) ⁻¹' V} ↔
++      u.length ≤ C * ((f x).length + 1) ^ c ∧ pairEncode (f x) u ∈ V := by
++    intro u
++    simp only [Set.mem_setOf_eq, Set.mem_preimage, pairFstD_pairEncode, pairSndD_pairEncode,
++      List.length_replicate]
++  have hbound : C * ((f x).length + 1) ^ c ≤ C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
++    have h1 : (f x).length + 1 ≤ (A + 1) * (x.length + 1) ^ d := by
++      have hpos : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow _ _ (Nat.succ_pos _)
++      have := hA x
++      nlinarith
++    calc C * ((f x).length + 1) ^ c ≤ C * ((A + 1) * (x.length + 1) ^ d) ^ c :=
++          Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 c)
++      _ = C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
++          rw [mul_pow, pow_mul, Nat.mul_assoc]
++  rw [Set.mem_preimage, hL' (f x)]
++  constructor
++  · rintro ⟨u, hu, hVu⟩
++    exact ⟨u, hu.trans hbound, (hmem u).mpr ⟨hu, hVu⟩⟩
++  · rintro ⟨u, -, hu⟩
++    exact ⟨u, ((hmem u).mp hu).1, ((hmem u).mp hu).2⟩
++
+ /-! ### Block-query closure
+ 
+ `P` is closed under running a `P`-decider on polynomially many fixed-size blocks of
+diff --git a/TCSlib/Complexity/ClassNP/Reductions.lean b/TCSlib/Complexity/ClassNP/Reductions.lean
+index b5bfef1c..0225e205 100644
+--- a/TCSlib/Complexity/ClassNP/Reductions.lean
++++ b/TCSlib/Complexity/ClassNP/Reductions.lean
+@@ -5,7 +5,6 @@ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.ClassNP.EXP
+ import TCSlib.Complexity.Uncomputability.Halting
+-import TCSlib.Complexity.ClassNP.PClosure
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -35,7 +34,6 @@ Chapter 1: `HALT` is `NP`-hard but — being undecidable — not in `NP`, hence
+   [AB09, Theorem 2.8.1 and Exercise 2.9].
+ * `Complexity.mem_P_of_polyTimeReducible` — downward closure of `P` under `≤ₚ`
+   [AB09, Figure 2.1].
+-* `Complexity.mem_NP_of_polyTimeReducible` — downward closure of `NP` under `≤ₚ` [AB09, §2.2].
+ * `Complexity.P_eq_NP_of_NPHard_mem_P` — [AB09, Theorem 2.8.2].
+ * `Complexity.NPComplete.mem_P_iff` — [AB09, Theorem 2.8.3].
+ * `Complexity.HALT_NPHard`, `Complexity.HALT_not_mem_NP` — [AB09, Exercise 2.8].
+@@ -121,57 +119,6 @@ theorem mem_P_of_polyTimeReducible {L L' : Language Bool}
+         Nat.mul_le_mul_left A (succ_pow_le n d)
+       _ = A * 2 ^ d * (n ^ d + 1) := (Nat.mul_assoc _ _ _).symm
+ 
+-/-- **`NP` is closed downward under `≤ₚ`** [AB09, §2.2]: if `L ≤ₚ L'` and `L' ∈ NP` then
+-`L ∈ NP`.
+-
+-**Proof sketch.** Read `L'` in the bounded-certificate form
+-(`Complexity.mem_NP_iff_exists_length_le`): a verifier `V ∈ P` and the bound `C (|y| + 1) ^ c`.
+-Let `f` be the reduction, with `|f x| ≤ A (|x| + 1) ^ d`
+-(`Complexity.PolyTimeComputable.output_length_le`). The verifier for `L` accepts `⟨x, u⟩` exactly
+-when `|u| ≤ C (|f x| + 1) ^ c` and `⟨f x, u⟩ ∈ V`: the intersection (`Complexity.inter_mem_P`) of a
+-length test against the unary word `1 ^ (C (|f x| + 1) ^ c)` (`Complexity.lenLe_preimage_mem_P`)
+-and the preimage of `V` under a polynomial-time pair map (`Complexity.preimage_mem_P`). Its
+-certificates are those of `f x`, so they are bounded by `C (A + 1) ^ c (|x| + 1) ^ (d c)`, since
+-`|f x| + 1 ≤ (A + 1) (|x| + 1) ^ d`; the length test keeps a longer certificate from being
+-accepted. -/
+-theorem mem_NP_of_polyTimeReducible {L L' : Language Bool}
+-    (h : L ≤ₚ L') (h' : L' ∈ NP) : L ∈ NP := by
+-  obtain ⟨f, hf, hL⟩ := h
+-  obtain ⟨C, c, V, hV, hL'⟩ := mem_NP_iff_exists_length_le.mp h'
+-  obtain ⟨A, d, hA⟩ := hf.output_length_le
+-  have hF : PolyTimeComputable (fun z => f (pairFstD z)) := hf.comp polyTimeComputable_pairFstD
+-  have hB : PolyTimeComputable
+-      (fun z => List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true) :=
+-    (polyTimeComputable_polyUnary C c).comp hF
+-  have hG : PolyTimeComputable (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) :=
+-    hF.pairEncode polyTimeComputable_pairSndD
+-  have hW := inter_mem_P (lenLe_preimage_mem_P hB polyTimeComputable_pairSndD)
+-    (preimage_mem_P hV hG)
+-  refine mem_NP_iff_exists_length_le.mpr ⟨C * (A + 1) ^ c, d * c, _, hW, fun x => ?_⟩
+-  have hmem : ∀ u : List Bool, pairEncode x u ∈
+-      {z | z ∈ {z | (pairSndD z).length ≤
+-          (List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true).length} ∧
+-        z ∈ (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) ⁻¹' V} ↔
+-      u.length ≤ C * ((f x).length + 1) ^ c ∧ pairEncode (f x) u ∈ V := by
+-    intro u
+-    simp only [Set.mem_setOf_eq, Set.mem_preimage, pairFstD_pairEncode, pairSndD_pairEncode,
+-      List.length_replicate]
+-  have hbound : C * ((f x).length + 1) ^ c ≤ C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+-    have h1 : (f x).length + 1 ≤ (A + 1) * (x.length + 1) ^ d := by
+-      have hpos : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow _ _ (Nat.succ_pos _)
+-      have := hA x
+-      nlinarith
+-    calc C * ((f x).length + 1) ^ c ≤ C * ((A + 1) * (x.length + 1) ^ d) ^ c :=
+-          Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 c)
+-      _ = C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+-          rw [mul_pow, pow_mul, Nat.mul_assoc]
+-  rw [hL x, hL' (f x)]
+-  constructor
+-  · rintro ⟨u, hu, hVu⟩
+-    exact ⟨u, hu.trans hbound, (hmem u).mpr ⟨hu, hVu⟩⟩
+-  · rintro ⟨u, -, hu⟩
+-    exact ⟨u, ((hmem u).mp hu).1, ((hmem u).mp hu).2⟩
+-
+ /-- **`NP`-hardness** [AB09, Definition 2.7]: every `NP` language Karp-reduces to
+ `L`. -/
+ def NPHard (L : Language Bool) : Prop :=
+@@ -373,11 +320,7 @@ private lemma prefixTM_emit (w x : List Bool) : ∀ i (hi : i ≤ w.length),
+     · simp
+     · rw [List.take_succ, List.getElem?_eq_getElem hlt]
+ 
+-/-- The copy phase emits one input bit per step and preserves the fixed prefix.
+-
+-**Proof sketch.** Induction on the number of steps `i`. At step `i + 1` the input head is on the
+-`(i + 1)`-st input cell (`inputSymbolInner`), so the copy state's transition emits `x[i]` and moves
+-the head right (`moveInputPos_pos_of_ne_right`), appending `x[i]` to `w ++ x.take i`. -/
++/-- The copy phase emits one input bit per step and preserves the fixed prefix. -/
+ private lemma prefixTM_copy (w x : List Bool) : ∀ i (hi : i ≤ x.length),
+     (prefixTM w).tm.runFrom
+       (prefixCfg w x (some ⟨w.length, by omega⟩) 1 w) i =
+diff --git a/TCSlib/Complexity/ClassNP/TMSAT.lean b/TCSlib/Complexity/ClassNP/TMSAT.lean
+index 03e2fae7..d5f4e37f 100644
+--- a/TCSlib/Complexity/ClassNP/TMSAT.lean
++++ b/TCSlib/Complexity/ClassNP/TMSAT.lean
+@@ -1048,7 +1048,13 @@ private lemma tmsat_take_payload (x pre b : List Bool) (hx : x = pre ++ b) (m :
+       rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+ 
+ /-- On every constructed pair, prefix extraction takes at most input length
+-plus one steps. Malformed-input behavior is never invoked by the assembly. -/
++plus one steps. Malformed-input behavior is never invoked by the assembly.
++
++**Proof sketch.** Write the input as `pre ++ b`, where `pre` is the doubled code with its
++separator (`2|a| + 2` cells). The machine reads `pre` in `2|a| + 2` steps, then copies
++`min |a| |b|` payload bits (`tmsat_take_payload`), and halts at the next step, when the width
++tape or the input runs out. That last step is read by cases on `|a| ≤ |b|`, with the minimum
++replaced by its value first. In all, at most `|pairEncode a b| + 1` steps. -/
+ private lemma tmsat_take_computes (a b : List Bool) :
+     tmsatTakeTM.ComputesInTime (pairEncode a b) (b.take a.length)
+       ((pairEncode a b).length+1) := by
+@@ -1079,17 +1085,17 @@ private lemma tmsat_take_computes (a b : List Bool) :
+     change ((tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _).state = none ∧
+       ((tmsatTakeTM.tm.tr (3 : Fin 4) _ _).apply _).output = b.take a.length
+     rw [tmsat_take_read]
+-    have hend :
+-      polyTape a.length ((a.length:ℤ)-min a.length b.length-1) = none ∨
+-        x[pre.length+min a.length b.length]? = none := by
+-      by_cases h : a.length ≤ b.length
+-      · left; simp [Nat.min_eq_left h, polyTape]
+-      · right; simp [Nat.min_eq_right (by omega : b.length ≤ a.length), hx]
+-    rcases hend with hw | hr
+-    · simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hw, Action.apply,
+-        List.take_eq_take_min]
+-    · simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hr, Action.apply,
+-        List.take_eq_take_min]
++    -- `min a.length b.length` is replaced by its value first, so no `min` is left for the
++    -- simp set to reshape (a cast lemma such as `Nat.cast_min` would otherwise move it).
++    by_cases h : a.length ≤ b.length
++    · have hm : min a.length b.length = a.length := Nat.min_eq_left h
++      simp only [hm]
++      simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, polyTape, Action.apply]
++    · have hm : min a.length b.length = b.length := Nat.min_eq_right (by omega)
++      have hr : x[pre.length+b.length]? = none := by simp [hx]
++      simp only [hm]
++      simp [tmsatTakeTM, tmsatTakeCfg, Cfg.workTapeSymbols, hr, Action.apply,
++        List.take_of_length_le (by omega : b.length ≤ a.length)]
+   apply ht.mono
+   dsimp [x]
+   rw [universal_pair_length]
+-- 
+2.50.1 (Apple Git-155)
+
