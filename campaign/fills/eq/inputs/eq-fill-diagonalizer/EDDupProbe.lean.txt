@@ -1,0 +1,46 @@
+/-
+The duplication probe for the fill E-D: for each arithmetic or reading step of the route probe
+(`EDRouteProbe.lean`), whether a published declaration closes it outright (`exact?`). A step that
+`exact?` closes is cited in the brief instead of re-proved; a step it does not close is left to the
+fill, under the one-proof rule. Each `exact?` that finds nothing is an error ("could not close
+the goal"), so the errors and the nonzero exit are by design. A probe record, not library code.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+set_option autoImplicit false
+
+open Turing
+
+-- the block's width
+example (G : ℕ) : G + (Nat.bits G).length ≤ 2 * (G + 1) := by exact?
+
+-- `|bits G| ≤ G` (gate 87's finding 2: `Turing.length_bits_le_self`)
+example (G : ℕ) : (Nat.bits G).length ≤ G := by exact?
+
+-- the width's power
+example (G : ℕ) : 2 ^ (Nat.bits G).length ≤ 2 * G + 1 := by exact?
+
+-- a word's value is below `2 ^ |w|`
+example (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by exact?
+
+-- a budget at most `G` fits the width
+example (t G : ℕ) (h : t ≤ G) : (Nat.bits t).length ≤ (Nat.bits G).length := by exact?
+
+-- the zero-padded word keeps its value
+example (t r : ℕ) :
+    Nat.ofDigits 2 ((Nat.bits t ++ List.replicate r false).map Bool.toNat) = t := by exact?
+
+-- the counter value of `bits t`
+example (t : ℕ) : counterValue (Nat.bits t) = t := by exact?
+
+-- soundness: acceptance along a prefix is acceptance within `G`
+example (N : FinNDTM Bool) (x s : List Bool) (b G : ℕ) (hb : b ≤ s.length) (hsG : s.length = G)
+    (h1 : (N.tm.runWith (s.take b) (N.tm.initCfg x)).state = none)
+    (h2 : (N.tm.runWith (s.take b) (N.tm.initCfg x)).output = [true]) :
+    N.AcceptsWithin x G := by exact?
+
+-- `n ≤ g n` from time constructibility
+example (g : ℕ → ℕ) (hg : Complexity.TimeConstructible g) (n : ℕ) : n ≤ g n := by exact?

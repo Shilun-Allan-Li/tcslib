@@ -1,0 +1,24 @@
+# eq-fill-diagonalizer (E-D): the pre-ship at the issue tree (maintainer, 2026-11-04)
+
+The issue tree is the campaign tip after #176, `711f5444bf3412f7c9268c7bc96667fdd5af3149` (#177
+merged first, `8d49d0ee`); the owned blob is `852931eb9347377fcd2e4e3c1e754462b236c1ad`. The
+snapshot is `oleans-leqc3` (`replay-leqc3`, passed: #176's 3 modules over `oleans-lnpc3`, the tree
+after #177), whose Lean equals the issue tree's. The probes ran in `wt-edps`; the order list and the
+screen in `wt-edis`, at a local overlay commit on `711f5444` (`2219912d`). Lean ran through
+`tools/leanelab.sh`, one elaboration at a time. The first pre-ship (at #176's head `029f3aa9`,
+against `oleans-lscp3`) is in `campaign/fills/eq/drafts/eq-fill-diagonalizer/preship-029f3aa9/`;
+this one is in `.../preship-711f5444/` (raw outputs, paths stripped).
+
+| Check | Result |
+|---|---|
+| Overlay (`NTimeDiagonalizerOverlay.lean.txt`) | exit 0; one warning, `exists_diagonalizer`'s sorry at 5409 (= 5406 + 3); 19.8 s. Identical to the first pre-ship's |
+| Import probe (`EDImportProbe.lean.txt`) | 59 checks, exit 0, 0 errors, 0 warnings. Identical |
+| Import supplement (`EDImportProbe2.lean.txt`, after the brief review) | 19 more checks and their axiom prints, exit 0, no `sorryAx` |
+| Axioms (`EDAxProbe.lean.txt`) | 59 prints; `sorryAx` only in `Turing.NTimeDiag.exists_diagonalizer` |
+| Route probe (`EDRouteProbe.lean.txt`, sealed over 11 definitions, four `@[simp]` erased) | exit 0; 12 lemmas, 8 on `[propext, Classical.choice, Quot.sound]`, 4 on `[propext, Quot.sound]`. Identical |
+| Seal controls (`EDSealControl_*.lean.txt`, 17) | unsealed 15 pass (the recursive `ladder` and `NDTM.runWith` delta goals fail; their equation controls pass); sealed 17 fail. Identical |
+| Duplication probe (`EDDupProbe.lean.txt`, 9 `exact?`) | closes `length_bits_le_self` and `counterValue_bits`; 7 errors by design. Identical |
+| Review probes (`RVRouteRows.lean.txt`, `RVOverlayAx.lean.txt`) | exit 0; identical to the review's runs (modulo the private-name module prefix); `sorryAx` only in the target |
+| Order list (`fillinputs.py` at `2219912d`) | 84 modules, 34 roots, 19 sorried declarations in 9 modules; identical to the first pre-ship's (#177 changed no import and no sorry) |
+| Lint (first pre-ship; the Diagonalization files are unchanged since) | `Diagonalization` 0 FAIL, 3 WARN over 5 files; the file 5,432 lines at the base, 5,435 with the overlay |
+| Screen base (38 files, at `2219912d`, clean) | 2,241 declarations, 2,439 pairs, 858,015 characters; `NTimeDiagonalizer` in 133 pairs; 1,698 s, 3.24 GB. Byte-identical to the first pre-ship's (at `029f3aa9`): #177's change to `TMSAT`, a population file, adds and removes no pair (`eq-fill-diagonalizer-screen-base.txt`) |

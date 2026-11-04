@@ -1,0 +1,95 @@
+/-
+Seal controls for the E-D route probe (`EDRouteProbe.lean`), with the cont1 review's generic
+control commands: for each of the 11 sealed definitions a delta goal (`#ctl_rfl`), for the two
+recursive ones also their first equation (`#ctl_eqn`), and for the four erased `@[simp]`
+definitions a pointwise unfolding goal by `intros; simp` (`#ctl_simp`). Each logs `CONTROL_PASS`
+or `CONTROL_FAIL`. Expected: unsealed, every control passes except the two recursive delta goals;
+sealed, every control fails. A probe record, not library code.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+section Controls
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible]
+  Turing.counterValue
+  Turing.FinNDTM.AcceptsWithin
+  Turing.NTimeDiag.query
+  Turing.NTimeDiag.budget
+  Turing.NTimeDiag.ladder
+  Turing.NTimeDiag.stage
+  Turing.NTimeDiag.stageCode
+  Turing.pairEncode
+  Complexity.TimeConstructible
+  Turing.NDTM.runWith
+  Turing.NDTM.initCfg
+
+#ctl_rfl Turing.counterValue
+#ctl_rfl Turing.FinNDTM.AcceptsWithin
+#ctl_rfl Turing.NTimeDiag.query
+#ctl_rfl Turing.NTimeDiag.budget
+#ctl_rfl Turing.NTimeDiag.ladder
+#ctl_rfl Turing.NTimeDiag.stage
+#ctl_rfl Turing.NTimeDiag.stageCode
+#ctl_rfl Turing.pairEncode
+#ctl_rfl Complexity.TimeConstructible
+#ctl_rfl Turing.NDTM.runWith
+#ctl_rfl Turing.NDTM.initCfg
+#ctl_eqn Turing.NTimeDiag.ladder
+#ctl_eqn Turing.NDTM.runWith
+#ctl_simp Turing.Action.apply
+#ctl_simp Turing.Cfg.init
+#ctl_simp Turing.MultiTapeTM.initCfg
+#ctl_simp Turing.NDTM.initCfg
+
+end Controls
