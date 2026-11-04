@@ -1969,7 +1969,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     (Codex). **Edits applied; the pre-ship re-taken at the tip after #179 and #175** (149 checks;
     the review's probes staged; the screen base 21 files, 1,351 declarations, 865 pairs; lint 17
     WARN). **NF issued (2026-11-04; Codex):** `campaign/fills/c1/briefs/c1-fill-nf.md`; its issue
-    commit is the brief's `@ANCESTOR@`; in flight #176 and #177.
+    commit `951251f6` is the brief's `@ANCESTOR@`; in flight #176 and #177. **Dispatched (user,
+    2026-11-04).**
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.

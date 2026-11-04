@@ -28,7 +28,7 @@ the two merges second takes a merged-tree replay of the overlap.
 
 **The merged-tree replay:** `replay-lnpc2.sh` (`evidence/merged-tree/`): the campaign (after #179 and
 #175) merged into #177 by `2c213708`; `Reductions`' downstream, now 127 modules, from `oleans-lscp3`,
-pinning `Reductions` `b5bfef1c`; precheck passed. **Not yet run.**
+pinning `Reductions` `b5bfef1c`; precheck passed. **Running (user, 2026-11-04).**
 
 **Merge state. #177: not yet clear to merge** (2026-11-04): gate 88 passed; it waits for
 `replay-lnpc2`.
