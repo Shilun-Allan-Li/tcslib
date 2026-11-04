@@ -3,7 +3,7 @@
 > **DRAFT** (maintainer, 2026-11-04), drafted against PR #176's head `cecd76a0` (E-Q cont1's
 > landing; gate 87 passed, 2026-11-04; it merges with the campaign merged in, after
 > `replay-leqc2`). Issues after #176 merges; ⟨…⟩ marks what the pre-ship fills in at the issue
-> commit (line numbers, counts, probes). **Agent: ⟨the user's choice⟩.**
+> commit (line numbers, counts, probes). **Agent: Claude** (user, 2026-11-04).
 >
 > **Maintainer's landing item (not the fill's):** gate 87's finding 2, ruled 2026-11-04: in E-D's
 > landing PR, `qy_call_bound`'s local `hb` becomes `have hb := Turing.length_bits_le_self (f a)`
@@ -35,14 +35,15 @@
     `Complexity.timeConstructible_iff` (A1);
   - the fill-agent environment addendum `campaign/standards/fill-environment-addendum.md`
     (**v2.6**), and the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
-  - **this round's inputs** (`campaign/fills/eq/inputs/eq-fill-diagonalizer/`): ⟨the import probe,
-    the route probe with its seal controls, the duplication probe, the import overlay and the
-    screen population⟩; the order list `campaign/fills/eq/orders/eq-fill-diagonalizer.txt`, the base
-    sorry set, the screen base and the pre-ship log (`campaign/fills/eq/logs/eq-fill-diagonalizer-*`).
-    The route's design note is `campaign/items/c1/c1e/ED-route-design.md`, **with its revision of
+  - **this round's inputs** (`campaign/fills/eq/inputs/eq-fill-diagonalizer/`): the import probe
+    `EDImportProbe.lean.txt`, the route probe `EDRouteProbe.lean.txt` with its seal controls
+    `EDSealControl_{unsealed,sealed}.lean.txt`, the duplication probe `EDDupProbe.lean.txt`, the
+    import overlay `NTimeDiagonalizerOverlay.lean.txt` and the screen population; the order list `campaign/fills/eq/orders/eq-fill-diagonalizer.txt`, the base sorry
+    set, the screen base and the pre-ship log (`campaign/fills/eq/logs/eq-fill-diagonalizer-*`). The
+    route's design note is `campaign/items/c1/c1e/ED-route-design.md`, **with its revision of
     2026-11-04** (after E-Q cont1).
 - **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule
-  (E-RES). Fetch the cache for your roots only (⟨roots⟩); never run the unfiltered
+  (E-RES). Fetch the cache for your roots only (34 Mathlib roots, `campaign/fills/eq/orders/eq-fill-diagonalizer-roots.txt`); never run the unfiltered
   `lake exe cache get`. If Lean cannot start, follow Part 2 exactly. **If Lean never runs, do not
   draft proofs blind**: deliver the environment report only.
 - **Branch at exactly that commit, not at the campaign tip:**
@@ -66,8 +67,8 @@
 ## Base, line numbers and what lands around you
 
 - **Your base's Lean content is the campaign's tree after #176** (E-Q cont1). Lines in this brief
-  are those of your base's tree, where `NTimeDiagonalizer.lean` is ⟨5,432⟩ lines (⟨22⟩ public,
-  ⟨214⟩ private).
+  are those of your base's tree, where `NTimeDiagonalizer.lean` is 5,432 lines (22 public, 214 private
+  declarations).
 - **The overlay is your first edit** (region (a)): add, after the `Build/WordTests` import, exactly
   `import TCSlib.Complexity.TuringMachine.Build.NDHost`,
   `import TCSlib.Complexity.TuringMachine.NDCodeSimulator` and
@@ -90,13 +91,13 @@ acceptance (`hBF`), a nondeterministic machine `D` and a uniform `K` with: every
 every input halts within `K · (g |x| + 1)`; per code `α` a constant `C` such that, on `1ⁿ` with
 `n ≥ 3` in a stage of `α`, in the middle `D` accepts `1ⁿ` iff (up to the stated slack) the coded
 machine accepts `1^{n + 1}`, and at the top `D` accepts `1ⁿ` iff the coded machine does **not**
-accept the stage's bottom `1^{ℓᵢ + 1}` within `T* = budget f ℓᵢ` (the statement, line ⟨5406⟩).
+accept the stage's bottom `1^{ℓᵢ + 1}` within `T* = budget f ℓᵢ` (the statement, line 5406).
 
 **Where it stands.** The body is `sorry`. Every host is proved, and E-Q's query is proved in your
 file. **Proved modulo, exactly:** none. **A complete delivery has no `sorryAx` in the target.**
 
 **Read first:** the route note with its revision (`ED-route-design.md`); the target's docstring
-(lines ⟨5346–5405⟩), whose sketch this brief refines; `Build/NDHost.lean`'s `guessRunTM` family
+(lines 5346–5405), whose sketch this brief refines; `Build/NDHost.lean`'s `guessRunTM` family
 (its docstrings name the setup hypotheses); E-Q's leaves named above; `exists_ndInterpreterCore`'s
 statement; `Build/VirtualInput.lean`'s header.
 
@@ -104,18 +105,18 @@ statement; `Build/VirtualInput.lean`'s header.
 
 `TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean`:
 - **(a)** the imports: add exactly the overlay's three;
-- **(b)** new private declarations after `exists_queryTM`'s proof (line ⟨5345⟩) and before
-  `exists_diagonalizer`'s docstring (line ⟨5346⟩), in sections of your own. Every new declaration
+- **(b)** new private declarations after `exists_queryTM`'s proof (which ends at line 5344) and
+  before `exists_diagonalizer`'s docstring (line 5346), in sections of your own. Every new declaration
   has a docstring, and every proof over 20 lines a literal `**Proof sketch.**` (`policy.md` §3);
   docstrings are public-facing (no campaign labels, dates or session narrative; provenance in
   `REPORT.md`); a hand-built machine's docstring says which public row it is not;
-- **(c)** the target's body (line ⟨5431⟩, `sorry`);
-- **(d)** the status text: the module docstring's line ⟨70⟩ ("(sorried; C1-E's second fill)"), and
+- **(c)** the target's body (line 5430, `sorry`);
+- **(d)** the status text: the module docstring's line 70 ("(sorried; C1-E's second fill)"), and
   in the target's docstring the labels "(C1-E; …)", "the P3.3 gate's round 2" and "(the statement
   gate, finding 1)". Rewrite them as public-facing text; propose an `**Implementation.**` paragraph
   in `REPORT.md`; the maintainer lands it.
 
-**Target:** `Turing.NTimeDiag.exists_diagonalizer` (line ⟨5406⟩), its statement frozen. E-Q's
+**Target:** `Turing.NTimeDiag.exists_diagonalizer` (line 5406), its statement frozen. E-Q's
 declarations and every other statement are frozen too.
 
 ### Hosts (binding; the host-first rule, `policy.md` §1, `workflow.md` §2)
@@ -138,9 +139,9 @@ declarations and every other statement are frozen too.
      with no new leaf:** copy `w_b` off the block and clear its cells (the copy and clear rows);
      expand it to `1^b` (`expandTM` with the pattern `[true]`: `expandTM_run_ofCfg` takes any
      little-endian word, top zeros included); compare `1^b` with the stream `s` (`g n` nonblank
-     cells) by `qyCmpTM`: `gt` → `rej`; normalize to `bits b` by the published `lengthBits`
-     install call on `1^b`; extract `α` by one hosted call of the second-component extractor on
-     the query word's tail; write the core's input `⟨⟨bits b, α⟩, 1^{n + 1}⟩` onto a buffer by three
+     cells) by `qyCmpTM`: `gt` → `rej`; normalize to `bits b` by the published `lengthBits` install
+     call on `1^b`; extract `α` by one hosted call of the second-component extractor on the query
+     word's tail; write the core's input `⟨⟨bits b, α⟩, 1^{n + 1}⟩` onto a buffer by three
      `qyEmitTM` emissions (`bits b`, each bit four times, then `[false, false, true, true]`; `α`
      doubled, then `[false, true]`; `1^{n + 1}`) **run under the capture wrapper `embedSilentTM`**,
      which records every emission on its capture tape and emits nothing;
@@ -148,7 +149,7 @@ declarations and every other statement are frozen too.
      `vhostSilentTM R`, `R` the interpreter core, stopping at its `accept` or `reject`:
      `finish accept` → `acc`; `finish reject` and `timeout` → `rej`;
   4. **the top's run:** the clock over `vhostSilentTM BF` on the query word's tail
-     `⟨⟨bits T*, α⟩, 1^a⟩`, stopping at `BF`'s halt; then read the captured bit: `[false]` → `acc`,
+     `⟨⟨bits T*, α⟩, 1^{ℓᵢ + 1}⟩` (`query_eq`'s top branch, exactly `hBF`'s input shape), stopping at `BF`'s halt; then read the captured bit: `[false]` → `acc`,
      anything else, or a `timeout`, → `rej`.
 
   **`Q` is silent:** both simulators are hosted silently and every other phase emits nothing, so
@@ -165,8 +166,8 @@ inputs the query is `[]` and `Q` rejects at once).
 - **Completeness:** an acceptance of `1^{n + 1}` along `v`, `|v| = t'`, `C (t' + 1) ≤ g n`: take the
   stream `v` padded to `g n` bits and `w_b := bits t'` padded with zeros to width `L`. The test
   passes, the core runs on `⟨⟨bits t', α⟩, 1^{n + 1}⟩` and accepts at `T ≤ C_R (t' + 1) ≤ g n`,
-  inside the allowance (`finish accept`); `guessRunTM_accepts_iff` gives the accepting branch at
-  the budget `K (g n + 1)`.
+  inside the allowance (`finish accept`); `guessRunTM_accepts_iff` gives the accepting branch at the
+  budget `K (g n + 1)`.
 - **Soundness:** an accepting branch has a stream `s` and `b ≤ g n` whose core run accepts inside
   the allowance, so the coded machine's branch along `s.take b` halts with `[true]` (the core's
   clause): `AcceptsWithin (1^{n + 1}) b`, then `AcceptsWithin.mono` to `g n`.
@@ -190,13 +191,45 @@ out: `rej`); `BF` halting with a word other than `[false]` or `[true]` (`rej`); 
 - **The route note and its revision:** one guessed block through `guessRunTM` (ruled); the binary
   budget, tested and normalized (ruled); E-Q's leaves cited, never copied.
 
-## Cited infrastructure (public and proved at the issue commit; `EDImportProbe.lean.txt`, ⟨N⟩ checks)
+## Cited infrastructure (public and proved at the issue commit; `EDImportProbe.lean.txt`, 59 checks)
 
-⟨The probe's names: the host and its three lemmas; the input call and the release adapter; the step
-clock; the interpreter core; the virtual-input host and the capture wrapper with their runs and
-configuration equations; `expandTM_run_ofCfg`; the copy, clear and rewind rows (`_ofCfg` forms);
-the pair extractors; the `lengthBits` install call; `timeConstructible_iff`; the phase host and its
-equations; `AcceptsWithin.mono`; the machine model's step and action equations.⟩
+- **The host** (`Build/NDHost`): `Turing.guessRunTM`, `Turing.guessRunCfg` with its five field
+  equations (`guessRunCfg_state`, `_inputPos`, `_workTapes`, `_workTapePos`, `_output`),
+  `Turing.guessRunTM_haltsWithin`, `Turing.guessRunTM_accepts_iff`; for reference only,
+  `Turing.guessRunTM_silent_spec` and `Turing.streamStartCfg` (the clean-setup form, which does not
+  apply: your setup keeps the query word and the counter).
+- **The core** (`NDCodeSimulator`): `Turing.exists_ndInterpreterCore` (its total-time clause
+  `T ≤ C (t + 1)` and its verdict clause; not its prefix clause).
+- **The clock** (`Build/StepClock`): `Turing.exists_stepClockTMVia` (`exists_stepClockTM` is its
+  plain form).
+- **The hosts of a machine** (`Build/VirtualInput`, `Build/Embed`): `Turing.vhostSilentTM`,
+  `Turing.vhostSilentCfg`, `Turing.vhostSilentTM_runFrom`; `Turing.embedSilentTM`,
+  `Turing.embedSilentCfg`, `Turing.embedSilentTM_runFrom`.
+- **The calls:** `Turing.FinTM.exists_inputCallTM`, `Turing.FinTM.exists_installCallTM`,
+  `Turing.seamReleaseTM`, `Turing.FinTM.computesFunInTime_lengthBits`.
+- **The rows** (framed `_ofCfg` forms): `Turing.expandTM`, `Turing.expandTM_run_ofCfg` (it reads
+  the word by `Nat.ofDigits 2`, top zeros included), `copyMapTM_run_ofCfg`,
+  `transferMapTM_run_ofCfg`, `clearTM_run_ofCfg`, `skipBackTM_run_ofCfg`, `rewindTM_run_ofCfg`;
+  `Turing.FinTM.pairExtractTM`; the phase host `Turing.phaseHostTM`.
+- **The readings:** `Complexity.timeConstructible_iff` (its first conjunct gives `n ≤ g n`, the top's
+  last step); `Turing.FinNDTM.acceptsWithin_iff`, `Turing.FinNDTM.AcceptsWithin.mono`;
+  `Turing.NDTM.HaltsWithin`; `Turing.pairEncode_eq`; `Turing.counterValue_eq`,
+  `Turing.counterValue_bits`; `Turing.length_bits_le_self`; `Turing.MultiTapeTM.step_of_some`; and
+  E-Q's public results in your file (`query_eq`, `query_of_not_guard`, `budget_eq`, the ladder and
+  stage lemmas, `stageCode_eq`).
+
+**The route probe** (`EDRouteProbe.lean.txt`, sealed over 11 definitions with the four `@[simp]`
+TCSlib definitions erased; its 17 controls in `EDSealControl_*.lean.txt`) proves the route's
+arithmetic and readings from these: the block's width `g n + |bits (g n)| ≤ 2 (g n + 1)`; a budget
+word of that width has value at most `2 g n` (so its expansion is `O(g n)`); a budget `t' ≤ g n`
+fits the width, and its zero-padded word has value `t'`; an accepting word of length `t'`, padded to
+`g n`, is the stream's first `t'` bits; soundness (acceptance along `s.take b`, `b ≤ |s| = g n`, is
+acceptance within `g n`); the middle's and the top's allowance arithmetic; the uniform constant
+`(P₀ + P₁ + 15) (g n + 1)`; and the query word's three shapes (top, middle, off-stage). Its lemmas
+are a probe record: re-prove what you need under your prefix, citing the same published lemmas.
+**The duplication probe** (`EDDupProbe.lean.txt`): `exact?` closes only `|bits G| ≤ G`
+(`length_bits_le_self`) and `counterValue (bits t) = t` (`counterValue_bits`); `2 ^ |bits G| ≤
+2 G + 1` is your file's `qy_two_pow_bits_le` (cite it).
 
 ## Ground rules (binding)
 
@@ -226,8 +259,8 @@ equations; `AcceptsWithin.mono`; the machine model's step and action equations.�
     `rfl`, `decide` or `show`, never passed to `simp`, `rw` or `unfold`. Own leaves: unfold `step`
     and `Action.apply` by `unfold`/`rw`/`simp only` (never `show`/`change`/`rfl`), preferring
     `MultiTapeTM.step_of_some` and the `Action.apply_*` equations. **Self-check by both methods:**
-    a seal test (⟨the pre-ship's list⟩, the four `@[simp]` TCSlib definitions erased) **with
-    controls**, and an inspection table; ship the raw outputs.
+    a seal test (every other-file TCSlib definition your code reaches, at least the route probe's
+    11, with the four `@[simp]` TCSlib definitions erased) **with controls**, and an inspection table; ship the raw outputs.
 11. **MIG-1 compatibility.** Cite none of the six R3 canonical rows; use the framed `_ofCfg`
     forms. Cite no private declaration of another file. Keep your new privates under the `dz_`
     prefix (`Dz`/`dz` for types and definitions; unused in the tree).
@@ -251,7 +284,7 @@ once.**
 As in E-Q's briefs: both v3 screens on frozen copies, one at a time under `nice -n 10`; the
 semantic search for every new private (in the tree, on every open PR branch, by name and statement,
 and by an `exact?` or `apply?` probe), listed per private in `REPORT.md`. **The population** is
-⟨N⟩ files (`screen-population.txt`): your file; the files the route cites; the known hazards
+38 files (`screen-population.txt`): your file; the files the route cites; the known hazards
 (`NTimeHierarchy`, `ExhaustiveReplay`, `NDCodeSimulator`, `CodeSimulator`, `Build/SeamLayout`).
 **The base** is `campaign/fills/eq/logs/eq-fill-diagonalizer-screen-base.txt`: ⟨…⟩. A pair at 90%
 or more is a copy; every new pair gets one disposition (idiom; re-derivation of a published lemma:
@@ -264,14 +297,15 @@ setup; E-Q's own leaves (cite them); the one-step identity (ledger RO-1); the `C
 - Lean 4 v4.25.0, mathlib pinned; the cache **for your roots only**; **never `lake build`**, never
   the unfiltered `lake exe cache get`; `scripts/lean_check_tree.sh` for every check, one Lean
   process at a time (a screen may run beside one). **A process deviation never ends the item.**
-- **Bootstrap** from the order list (⟨N⟩ modules), logging each module's time and maximum memory.
-  **The base sorry-warning set** has ⟨N⟩ entries in ⟨N⟩ modules; yours is the target's one.
+- **Bootstrap** from the order list (84 modules), logging each module's time and maximum memory.
+  **The base sorry set** has 19 declarations in 9 modules (static count,
+  `campaign/fills/eq/logs/eq-fill-diagonalizer-base-sorries.txt`); yours is the target's one.
 - **Final checks:** your file with zero errors and no sorry warning (a partial: the target's only);
   every other module the base's; the import probe re-run; after every proof edit, the order list's
   tail from your module on.
 - **Axiom prints** for the target and every new private: within `[propext, Classical.choice,
   Quot.sound]`.
-- **Lint:** `campaign_style_lint.py TCSlib/Complexity/Diagonalization`, 0 FAIL (base ⟨…⟩), and
+- **Lint:** `campaign_style_lint.py TCSlib/Complexity/Diagonalization`, 0 FAIL (base: 0 FAIL, 3 WARN over 5 files), and
   `style_lint.py` on your file.
 
 ## Out-of-scope sorries you will see (leave every one untouched)

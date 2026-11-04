@@ -1,0 +1,207 @@
+/-
+The route probe for the fill E-D, `Turing.NTimeDiag.exists_diagonalizer`
+(`Diagonalization/NTimeDiagonalizer.lean`), drafted from the maintainer's route note
+`campaign/items/c1/c1e/ED-route-design.md` and its revision of 2026-11-04. A probe record, not
+library code.
+
+It checks, from published declarations only and under a seal of every other-file TCSlib definition
+it touches, the mathematical steps the brief's route rests on:
+* the block's width `m = g n + |bits (g n)| ≤ 2 (g n + 1)`, and the budget word's range: a word of
+  that width has value below `2 ^ |bits (g n)| ≤ 2 g n + 1`, so its expansion is `O(g n)`;
+* the completeness witness: a budget `t' ≤ g n` fits the width, and its zero-padded word has value
+  `t'` (`expandTM_run_ofCfg` reads `Nat.ofDigits 2`, top zeros included);
+* the stream: an accepting word of length `t'`, padded to `g n`, is the stream's first `t'` bits;
+* soundness: an accepting core run along `s.take b`, `b ≤ |s| = g n`, is acceptance within `g n`;
+* the allowance arithmetic of the middle and the top, and the uniform time constant;
+* the query word's two shapes, which match the core's and the decider's inputs.
+The machine assembly is not probed.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+set_option autoImplicit false
+
+open Turing
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible]
+  Turing.counterValue
+  Turing.FinNDTM.AcceptsWithin
+  Turing.NTimeDiag.query
+  Turing.NTimeDiag.budget
+  Turing.NTimeDiag.ladder
+  Turing.NTimeDiag.stage
+  Turing.NTimeDiag.stageCode
+  Turing.pairEncode
+  Complexity.TimeConstructible
+  Turing.NDTM.runWith
+  Turing.NDTM.initCfg
+
+namespace EDProbe
+
+/-- The block's width: `g n` stream cells and `|bits (g n)|` budget cells, at most
+`2 (g n + 1)`. -/
+theorem ed_block_le (G : ℕ) : G + (Nat.bits G).length ≤ 2 * (G + 1) := by
+  have := Turing.length_bits_le_self G
+  omega
+
+/-- A word's binary value is below `2 ^ |w|`. -/
+theorem ed_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
+  have h := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
+    (by
+      intro d hd
+      obtain ⟨a, -, rfl⟩ := List.mem_map.mp hd
+      cases a <;> decide)
+  rwa [List.length_map] at h
+
+/-- The width's power: `2 ^ |bits G| ≤ 2 G + 1` (the statement of the file's
+`qy_two_pow_bits_le`, which the fill cites). So a budget word of the block's width has value at
+most `2 G`. -/
+theorem ed_two_pow_width (G : ℕ) : 2 ^ (Nat.bits G).length ≤ 2 * G + 1 := by
+  rw [Nat.size_eq_bits_len]
+  rcases Nat.eq_zero_or_pos G with rfl | hG
+  · simp
+  · have hs : 0 < Nat.size G := Nat.size_pos.mpr hG
+    have h := Nat.lt_size.mp (show Nat.size G - 1 < Nat.size G by omega)
+    have he : 2 ^ Nat.size G = 2 * 2 ^ (Nat.size G - 1) := by
+      rw [← pow_succ']
+      congr 1
+      omega
+    omega
+
+/-- The budget word's value is at most `2 G`. -/
+theorem ed_budget_le (G : ℕ) (w : List Bool) (hw : w.length = (Nat.bits G).length) :
+    Nat.ofDigits 2 (w.map Bool.toNat) ≤ 2 * G := by
+  have h1 := ed_word_lt w
+  have h2 := ed_two_pow_width G
+  rw [hw] at h1
+  omega
+
+/-- A budget at most `G` fits the width. -/
+theorem ed_width {t G : ℕ} (h : t ≤ G) : (Nat.bits t).length ≤ (Nat.bits G).length := by
+  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]
+  exact Nat.size_le_size h
+
+/-- The zero-padded budget word keeps its value. -/
+theorem ed_padded_value (t r : ℕ) :
+    Nat.ofDigits 2 ((Nat.bits t ++ List.replicate r false).map Bool.toNat) = t := by
+  have h0 : ∀ r : ℕ, Nat.ofDigits 2 ((List.replicate r false).map Bool.toNat) = 0 := by
+    intro r
+    induction r with
+    | zero => rfl
+    | succ r ih =>
+      rw [List.replicate_succ, List.map_cons, Nat.ofDigits_cons, ih]
+      rfl
+  rw [List.map_append, Nat.ofDigits_append, h0, mul_zero, add_zero, ← Turing.counterValue_eq,
+    Turing.counterValue_bits]
+
+/-- The completeness witness's budget word: width `|bits G|` and value `t'`. -/
+theorem ed_budget_word {t' G : ℕ} (h : t' ≤ G) :
+    ∃ w : List Bool, w.length = (Nat.bits G).length ∧ Nat.ofDigits 2 (w.map Bool.toNat) = t' :=
+  ⟨Nat.bits t' ++ List.replicate ((Nat.bits G).length - (Nat.bits t').length) false,
+    by have := ed_width h; simp only [List.length_append, List.length_replicate]; omega,
+    ed_padded_value _ _⟩
+
+/-- The completeness witness's stream: an accepting word of length `t' ≤ G`, padded to length
+`G`, whose first `t'` bits are that word. -/
+theorem ed_complete_stream {N : FinNDTM Bool} {x : List Bool} {t' G : ℕ} (htG : t' ≤ G)
+    (h : N.AcceptsWithin x t') :
+    ∃ s : List Bool, s.length = G ∧ (N.tm.runWith (s.take t') (N.tm.initCfg x)).state = none ∧
+      (N.tm.runWith (s.take t') (N.tm.initCfg x)).output = [true] := by
+  obtain ⟨v, hv, h1, h2⟩ := FinNDTM.acceptsWithin_iff.mp h
+  have ht : (v ++ List.replicate (G - t') false).take t' = v := by
+    rw [← hv]
+    exact List.take_left' rfl
+  refine ⟨v ++ List.replicate (G - t') false, ?_, ?_, ?_⟩
+  · rw [List.length_append, List.length_replicate]
+    omega
+  · rw [ht]
+    exact h1
+  · rw [ht]
+    exact h2
+
+/-- Soundness: an accepting run along the stream's first `b ≤ |s| = G` bits is acceptance within
+`G` (`Turing.FinNDTM.AcceptsWithin.mono`). -/
+theorem ed_sound {N : FinNDTM Bool} {x s : List Bool} {b G : ℕ} (hb : b ≤ s.length)
+    (hsG : s.length = G)
+    (h1 : (N.tm.runWith (s.take b) (N.tm.initCfg x)).state = none)
+    (h2 : (N.tm.runWith (s.take b) (N.tm.initCfg x)).output = [true]) :
+    N.AcceptsWithin x G := by
+  have hlen : (s.take b).length = b := by
+    rw [List.length_take]
+    omega
+  exact (FinNDTM.acceptsWithin_iff.mpr ⟨s.take b, hlen, h1, h2⟩).mono (by omega)
+
+/-- The middle's allowance: with `C_R ≤ C`, the core's total-time clause `T ≤ C_R (t' + 1)` lands
+inside the allowance `G` whenever `C (t' + 1) ≤ G`; and then `t' ≤ G` when `C ≥ 1`. -/
+theorem ed_mid_allowance {CR C t' G : ℕ} (hC : CR ≤ C) (hC1 : 1 ≤ C) (h : C * (t' + 1) ≤ G) :
+    CR * (t' + 1) ≤ G ∧ t' ≤ G := by
+  refine ⟨le_trans (Nat.mul_le_mul_right _ hC) h, ?_⟩
+  have : t' + 1 ≤ C * (t' + 1) := Nat.le_mul_of_pos_left _ (by omega)
+  omega
+
+/-- The top's allowance: with `C_BF ≤ C`, the decider's time is inside the allowance `G`, since
+`C 2 ^ (C (T* + 1)) ≤ n ≤ G` (`n ≤ g n` by `Complexity.timeConstructible_iff`). -/
+theorem ed_top_allowance {CB C T n G : ℕ} (hC : CB ≤ C) (htop : C * 2 ^ (C * (T + 1)) ≤ n)
+    (hn : n ≤ G) : CB * 2 ^ (CB * (T + 1)) ≤ G := by
+  have h1 : 2 ^ (CB * (T + 1)) ≤ 2 ^ (C * (T + 1)) :=
+    Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_right _ hC)
+  calc CB * 2 ^ (CB * (T + 1)) ≤ C * 2 ^ (C * (T + 1)) := Nat.mul_le_mul hC h1
+    _ ≤ n := htop
+    _ ≤ G := hn
+
+/-- `n ≤ g n` from time constructibility (the top's last step). -/
+theorem ed_le_g {g : ℕ → ℕ} (hg : Complexity.TimeConstructible g) (n : ℕ) : n ≤ g n :=
+  ((Complexity.timeConstructible_iff g).mp hg).1 n
+
+/-- The uniform constant: with the setup's first exit `TP ≤ P₀ (G + 1)`, the block
+`m ≤ 2 (G + 1)` and the run `T ≤ P₁ (G + 1)`, `guessRunTM_haltsWithin`'s bound
+`TP + 2m + T + 11` is at most `(P₀ + P₁ + 15) (G + 1)`. -/
+theorem ed_time {G TP m T P₀ P₁ : ℕ} (hTP : TP ≤ P₀ * (G + 1)) (hm : m ≤ 2 * (G + 1))
+    (hT : T ≤ P₁ * (G + 1)) : TP + 2 * m + T + 11 ≤ (P₀ + P₁ + 15) * (G + 1) := by
+  have he : (P₀ + P₁ + 15) * (G + 1) = P₀ * (G + 1) + P₁ * (G + 1) + 15 * (G + 1) := by ring
+  rw [he]
+  omega
+
+/-- The query word at the top: the flag `true`, then the decider's input
+`⟨⟨bits T*, α⟩, 1^{ℓᵢ + 1}⟩`, exactly `hBF`'s shape with `t = T*` and `x = 1^{ℓᵢ + 1}`. -/
+theorem ed_query_top (f g : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n)
+    (htop : n = NTimeDiag.ladder f (NTimeDiag.stage f n + 1)) :
+    NTimeDiag.query f g (List.replicate n true) =
+      true :: pairEncode (pairEncode
+        (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n))).bits
+        (NTimeDiag.stageCode (NTimeDiag.stage f n)))
+        (List.replicate (NTimeDiag.ladder f (NTimeDiag.stage f n) + 1) true) := by
+  rw [NTimeDiag.query_eq f g hn, if_pos htop]
+
+/-- The query word in the middle: the flag `false`, then `⟨⟨bits (g n), α⟩, 1^{n + 1}⟩`; the
+rewrite replaces its first field by `bits b`, giving the core's input. -/
+theorem ed_query_mid (f g : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n)
+    (hmid : n ≠ NTimeDiag.ladder f (NTimeDiag.stage f n + 1)) :
+    NTimeDiag.query f g (List.replicate n true) =
+      false :: pairEncode (pairEncode (g n).bits (NTimeDiag.stageCode (NTimeDiag.stage f n)))
+        (List.replicate (n + 1) true) := by
+  rw [NTimeDiag.query_eq f g hn, if_neg hmid]
+
+/-- Off the stages (`n ≤ 2` or a non-unary input) the query is empty, so the flag reader sees a
+blank and rejects. -/
+theorem ed_query_off (f g : ℕ → ℕ) {x : List Bool}
+    (h : ¬(x = List.replicate x.length true ∧ 3 ≤ x.length)) : NTimeDiag.query f g x = [] :=
+  NTimeDiag.query_of_not_guard f g h
+
+end EDProbe
+
+#print axioms EDProbe.ed_block_le
+#print axioms EDProbe.ed_budget_le
+#print axioms EDProbe.ed_budget_word
+#print axioms EDProbe.ed_complete_stream
+#print axioms EDProbe.ed_sound
+#print axioms EDProbe.ed_mid_allowance
+#print axioms EDProbe.ed_top_allowance
+#print axioms EDProbe.ed_le_g
+#print axioms EDProbe.ed_time
+#print axioms EDProbe.ed_query_top
+#print axioms EDProbe.ed_query_mid
+#print axioms EDProbe.ed_query_off

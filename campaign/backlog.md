@@ -4020,6 +4020,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
     to `main`), dangling on `main`, where the records are not carried;
   - design-note references inside proof sketches: `Constructible`'s `P11`, `§12 R3`, `R8.5c`,
     `R8.4`, and `Savitch`'s `§12 R1/R2` (gate 86's round-2 note 9);
+  - `TMSAT`'s two policy-linter false positives ("lemma from", "theorem with": lines inside a
+    docstring read as declarations; gate 88 round 2, note 12), to fix in the linter;
   - E-Q cont1's frozen proof sketch of `exists_queryTM`, which describes the binary route, not the
     unary one proved (its review's F11): align it with the unary rung construction and comparison,
     and with the degree-six accumulated polylogarithmic overhead (gate 87's note 7).
@@ -4106,3 +4108,7 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   names. Regenerate them at the next blueprint increment.
 * **`HANDOFF.md`** — the have→lemma extractor campaign's own tracking
   document; deliberately *not* absorbed here.
+
+* **`polyTimeReducible_iff` in `ClassNP/Reductions`** (gate 88 round 2, note 7): `PolyTimeReducible` has
+  no `_iff` or witness lemma, so a rule-10 consumer holding `L ≤ₚ L'` cannot unpack it sealed. Publish
+  it with the next API PR that touches `Reductions`, before such a consumer exists.
