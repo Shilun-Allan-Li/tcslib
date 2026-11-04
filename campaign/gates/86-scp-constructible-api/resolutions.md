@@ -62,7 +62,5 @@ static-equal (`evidence/round1-fix/replay-lscp2.log`, `replay-lscp2-static.txt`)
 | 11 | note | No semantic weakening or new obstruction. | Agreed. |
 | 12 | note | The gate does not certify merge readiness; keep the replay's evidence. | Agreed. Since round 2, `main` has been merged into the campaign (#179), so the merge needs a fresh merged-tree replay from `oleans-lm2c` (`replay-lscp3`).
 
-**Merge state. #175: not yet clear to merge** (2026-11-03): gate 86 passed in round 2; it waits for
-`replay-lscp3`, the merged-tree replay after #179 brought `main` into the campaign: head
-`1cf3da65` (the campaign merged in), 69 modules from `oleans-lm2c` (16 of `main`'s, among them
-`Randomized/Space*`, now downstream of `Constructible`), precheck passed; **running (user, 2026-11-03)**.
+**Merge state. #175: clear to merge** at `1cf3da65` (2026-11-03): gate 86 passed in round 2, and
+`replay-lscp3` passed at that head, the campaign merged in (no campaign Lean change since).

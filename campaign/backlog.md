@@ -2044,6 +2044,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     generator now exits nonzero on a failure. **Round 2 staged** (bundle `6a103efc…`, 44 sections;
     head `ca0eafb8`); `replay-lscp2` written (53 modules, precheck passed). `replay-lscp` (round 1's
     head) no longer certifies the PR.
+    **Gate 86 round 2: PASS 0/0/1/11** (2026-11-03); **`replay-lscp3` passed** (69 of 69, from
+    `oleans-lm2c`, after #179); **#175 clear to merge** at `1cf3da65`.
   - **PR #176** (`lean/eq-cont1-landing`, head `cecd76a0`): E-Q cont1's eight commits, reworded,
     and the maintainer's E1–E5; elaboration at the tip's snapshot: one sorry warning
     (`exists_diagonalizer`); lint 0 FAIL. `replay-leqc1` written (3 modules from `oleans-lnfapi4`,
