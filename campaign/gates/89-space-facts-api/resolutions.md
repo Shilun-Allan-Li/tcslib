@@ -36,3 +36,15 @@ records at `a47a9a90`. **Dispatched (user, 2026-11-04).**
 - **The replay:** `replay-lsm2` (137 modules from `oleans-leqc3`, six blobs pinned) **passed** (user,
   2026-11-04): 137 of 137 at `5de52d9a`, 0 failed, static-equal (40, all pre-existing); snapshot
   `oleans-lsm2` (`evidence/round2/merged-tree/`).
+
+**Round 2** (`pack-r2.md`, head `5de52d9a`). **Findings** (`findings-r2.md`, verbatim, SHA-256
+`0affabd012805818bcc0bbaab77153a0c9a538e474caf04e185b2f4f2636c557`; received 2026-11-04): **OPEN, 0
+blockers, 1 major, 0 minors, 7 notes.**
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | major | LS-1 is still not retired. `ImplicitPoly`'s `hWle` and `PreimageHost`'s inner `.trans` step each re-prove the logarithm's form of `logSpace m ≤ m + 1`; round 2's search had classed them as different polylogarithmic facts. | **True; fixed in round 3** (`8d41671c`, head `b8add1ac`). Both steps cite `logSpace_le_succ` through `logSpace_eq`, and both files elaborate with 0 diagnostics against `oleans-lsm2` (`evidence/round3/elab/`). `ImplicitPoly` is Hydroxyi's, an ARM-program file, so its re-point is the standing mechanical dedup exception (FYI); `PreimageHost` is the campaign's. The freeze shows exactly the two authorized bodies changed (`round3/freeze/`). A new search classifies every `Nat.log_le_self` use and every `logSpace`-by-successor statement (`round3/ls1-search/classification.md`): the fact is proved once, in `Basic`, and cited at eight sites. The screen covers 17 files with the two added (`round3/screen/`): 124 → 124 declarations, 23 → 23 pairs, none new or gone. The ledger records the corrected scope. |
+| 2–8 | note | Provenance, the round-2 replacements, the baseline rerun, screen and lint reproduction, homes, meaning and execution evidence. | Agreed. On note 4, `NARMLogspace`'s missing `Main definitions` heading predates #181; it is in the deferred docstring cleanup. On note 8, `replay-lsm2` passed (above) but is superseded by round 3's `replay-lsm3`. |
+
+**Round 3 staged (2026-11-04):** `pack-r3.md`, at #181's head `b8add1ac`. `replay-lsm3` is written
+(137 modules from `oleans-leqc3`, eight blobs pinned; precheck passed); not yet run.
