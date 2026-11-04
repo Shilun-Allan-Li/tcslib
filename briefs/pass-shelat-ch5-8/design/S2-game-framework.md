@@ -237,7 +237,7 @@ and §6.2.
 |---|---|
 | P-S2-1 | the monad, `Pr`, and B2 on `invProb` (one ch. 2–4 functional, transferred). **Passed 2026-11-04** (`probes/P-S2-1-monad-prob-bridge.lean.txt`): the free monad, `unifSpec` sampling, the finite-sum `expect`/`prob`, total expectation (`expect_bind`), `expect_sample`, and `invProb f A = Pr[game]`, with standard axioms. It reads `invProb` and `uexp` by their bodies, for want of published equations (F-3) |
 | P-S2-2 | Thm 135.4's concrete reduction: a forger, run under a handler that answers `Tag` with a PRF-or-random oracle, gives a distinguisher with advantage `≥ ε − 2^{-n}` |
-| P-S2-3 | the CPA game for Alg 99.1 with a stateful, fresh-coin `Enc` oracle, and one hop of Thm 168.2's proof |
+| P-S2-3 | the CPA game for Alg 99.1 with a stateful, fresh-coin `Enc` oracle, and one hop of Thm 168.2's proof. **Passed in part, 2026-11-04** (`probes/P-S2-3-handlers-log-cpa.lean.txt`). Done: sums of specs and of handlers, `simulate` with state, logging, `simulate_withLog` (logging is conservative; proved), the fresh-coin `encImpl`, the IND-CPA experiment as a program (phases, adversary state, challenge), `cpaAdv`, and the bad event of Thm 168.2 as a log predicate. **Not yet:** the hop itself, which needs the oracle-substitution and identical-until-bad lemmas (§5) and is scheduled for the statement-phase probes |
 | P-S2-4 | one OT execution (Prot 160.4) through `exec`, with the receiver's view read from the log |
 | P-S2-5 | B3: his `toOracleAdversary` as an instance of `NUPPT.toComp`, at the level of definitions |
 

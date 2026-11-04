@@ -1,0 +1,131 @@
+import ProbeS2_1
+
+/-! Route probe P-S2-3 (S2 design note): stateful, randomized oracle implementations,
+`simulate`, query logging, and the IND-CPA game of [PS10, Def 168.1] for the scheme of
+[PS10, Alg 99.1] (`Enc_k(m) = (r, m ⊕ f_k(r))` with fresh `r` per query), written as a program.
+Design adapted from [VCVio] (SimSemantics, QueryTracking/LoggingOracle); no code transcribed. -/
+
+set_option autoImplicit false
+
+namespace TCSlib.Cryptography.ProbeS2
+
+variable {ι ι₁ ι₂ ι' : Type} {α β γ σ : Type}
+
+namespace OracleComp
+
+variable {spec : OracleSpec ι}
+
+theorem bind_pure' (a : α) (f : α → OracleComp spec β) : bind (.pure a) f = f a := rfl
+
+theorem bind_assoc' (c : OracleComp spec α) (f : α → OracleComp spec β)
+    (g : β → OracleComp spec γ) : bind (bind c f) g = bind c (fun a => bind (f a) g) := by
+  induction c with
+  | pure a => rfl
+  | query i x k ih => simp only [bind, ih]
+
+end OracleComp
+
+/-- The disjoint union of two oracle families. -/
+def OracleSpec.add (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) : OracleSpec (ι₁ ⊕ ι₂) :=
+  ⟨Sum.elim s₁.dom s₂.dom, Sum.elim s₁.rng s₂.rng⟩
+
+/-- An implementation of the oracles of `spec` by computations over `spec'`, with state `σ`. -/
+def QueryImpl (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') :=
+  ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)
+
+/-- Run `c`, answering each of its queries by the implementation `impl`, threading its state. -/
+def simulate {spec : OracleSpec ι} {spec' : OracleSpec ι'} (impl : QueryImpl spec σ spec') :
+    OracleComp spec α → σ → OracleComp spec' (α × σ)
+  | .pure a, s => .pure (a, s)
+  | .query i x k, s => OracleComp.bind (impl i x s) (fun ys => simulate impl (k ys.1) ys.2)
+
+/-- Implement two oracle families side by side, sharing one state. -/
+def QueryImpl.sum {s₁ : OracleSpec ι₁} {s₂ : OracleSpec ι₂} {spec' : OracleSpec ι'}
+    (impl₁ : QueryImpl s₁ σ spec') (impl₂ : QueryImpl s₂ σ spec') :
+    QueryImpl (s₁.add s₂) σ spec'
+  | .inl i => impl₁ i
+  | .inr j => impl₂ j
+
+/-- Pass sampling queries through unchanged. -/
+def QueryImpl.idUnif : QueryImpl unifSpec σ unifSpec :=
+  fun m x s => .query m x (fun y => .pure (y, s))
+
+/-- The record of one query: which oracle, the query, the answer. -/
+abbrev QueryLog (spec : OracleSpec ι) := List (Σ i, spec.dom i × spec.rng i)
+
+/-- The same implementation, additionally appending every query and its answer to a log. -/
+def QueryImpl.withLog {spec : OracleSpec ι} {spec' : OracleSpec ι'} (impl : QueryImpl spec σ spec') :
+    QueryImpl spec (σ × QueryLog spec) spec' :=
+  fun i x s => OracleComp.bind (impl i x s.1) (fun ys => .pure (ys.1, (ys.2, s.2 ++ [⟨i, x, ys.1⟩])))
+
+/-- **Logging is conservative:** forgetting the log of a logged simulation gives the plain
+simulation. -/
+theorem simulate_withLog {spec : OracleSpec ι} {spec' : OracleSpec ι'}
+    (impl : QueryImpl spec σ spec') (c : OracleComp spec α) (s : σ) (log : QueryLog spec) :
+    OracleComp.bind (simulate impl.withLog c (s, log)) (fun p => .pure (p.1, p.2.1)) =
+      simulate impl c s := by
+  induction c generalizing s log with
+  | pure a => rfl
+  | query i x k ih =>
+    simp only [simulate, QueryImpl.withLog, OracleComp.bind_assoc', OracleComp.bind_pure']
+    congr 1
+    funext ys
+    exact ih ys.1 ys.2 _
+
+/-! ### IND-CPA for the scheme of [PS10, Alg 99.1] -/
+
+section CPA
+
+variable (n : ℕ)
+
+/-- `n`-bit strings. -/
+abbrev Bits := Fin n → Bool
+
+/-- Bitwise exclusive or. -/
+def xorBits (a b : Bits n) : Bits n := fun i => xor (a i) (b i)
+
+/-- One oracle: encrypt a message; the answer is a ciphertext `(r, m ⊕ f_k(r))`. -/
+abbrev encSpec : OracleSpec Unit := ⟨fun _ => Bits n, fun _ => Bits n × Bits n⟩
+
+/-- The adversary's oracles: encryption, and its own coins. -/
+abbrev advSpec : OracleSpec (Unit ⊕ ℕ) := (encSpec n).add unifSpec
+
+/-- The encryption oracle of [PS10, Alg 99.1] under key `k`: **fresh coins on every query**
+(a randomized oracle, which a fixed function `I → O` cannot express). -/
+noncomputable def encImpl (F : Bits n → Bits n → Bits n) (k : Bits n) :
+    QueryImpl (encSpec n) Unit unifSpec :=
+  fun _ m s => OracleComp.bind (sample (Bits n)) (fun r => .pure ((r, xorBits n m (F k r)), s))
+
+/-- **The IND-CPA experiment** [PS10, Def 168.1] with challenge bit `b`: phase 1 with the
+encryption oracle, the challenge `Enc_k(m_b)`, phase 2 with the oracle again, and the
+adversary's guess. The adversary's state between phases is its phase-1 output `st`. -/
+noncomputable def cpaGame {St : Type} (F : Bits n → Bits n → Bits n)
+    (A₁ : OracleComp (advSpec n) (Bits n × Bits n × St))
+    (A₂ : St → Bits n × Bits n → OracleComp (advSpec n) Bool) (b : Bool) : ProbComp Bool :=
+  OracleComp.bind (sample (Bits n)) fun k =>
+  OracleComp.bind (simulate ((encImpl n F k).sum QueryImpl.idUnif) A₁ ()) fun p =>
+  OracleComp.bind (sample (Bits n)) fun r =>
+  let m := if b then p.1.2.1 else p.1.1
+  OracleComp.bind (simulate ((encImpl n F k).sum QueryImpl.idUnif) (A₂ p.1.2.2 (r, xorBits n m (F k r))) ())
+    fun q => .pure q.1
+
+/-- The IND-CPA advantage. -/
+noncomputable def cpaAdv {St : Type} (F : Bits n → Bits n → Bits n)
+    (A₁ : OracleComp (advSpec n) (Bits n × Bits n × St))
+    (A₂ : St → Bits n × Bits n → OracleComp (advSpec n) Bool) : ℝ :=
+  |prob (cpaGame n F A₁ A₂ true) (· = true) - prob (cpaGame n F A₁ A₂ false) (· = true)|
+
+/-- The bad event of [PS10, Thm 168.2]'s proof, as a predicate on a logged run: the challenge's
+`r` was already used by an encryption-oracle answer. -/
+def challengeCollides (r : Bits n) (log : QueryLog (advSpec n)) : Prop :=
+  ∃ e ∈ log, match e with
+    | ⟨.inl (), _, y⟩ => y.1 = r
+    | ⟨.inr _, _, _⟩ => False
+
+end CPA
+
+#print axioms simulate_withLog
+#print axioms cpaAdv
+#print axioms challengeCollides
+
+end TCSlib.Cryptography.ProbeS2
