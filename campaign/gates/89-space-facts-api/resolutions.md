@@ -27,3 +27,9 @@ pinning the four blobs; precheck passed. **Passed** (user, 2026-11-04): 137 of 1
 0 failed, static-equal; snapshot `oleans-lsm1`.
 
 **Merge state. #181: not yet clear to merge** (2026-11-04): the replay passed; it waits for gate 89.
+
+**Round 2 staged (2026-11-04):** `pack-r2.md`, at #181's head `5de52d9a` (the fix `1d1247a3`).
+- **The screen:** 15 files, base a `git archive` export of `711f5444`. 87 → 87 declarations,
+  23 → 23 pairs, none new or gone.
+- **The replay:** `replay-lsm2` is written (137 modules from `oleans-leqc3`, six blobs pinned,
+  precheck passed); not yet run.

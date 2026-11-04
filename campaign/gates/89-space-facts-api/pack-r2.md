@@ -44,7 +44,9 @@ definition, from each proof.
    `2219912d` and at `711f5444`: all are equal. Round 2's base screen runs on a `git archive` export
    of `711f5444` itself (`screen-base.status`). Is that sufficient?
 3. **The screen, round 2** (`evidence/round2/screen/`): 15 files, round 1's 14 and `NARMLogspace`.
-   Base `711f5444`, head `5de52d9a`: SCREEN-R2. Is any pair new or gone?
+   Base `711f5444` (a `git archive` export), head `5de52d9a`: 87 → 87 declarations screened, 23 → 23
+   pairs, 5,119 → 5,087 reproduced characters, no pair new and none gone (`pairdiff.txt`). The 32
+   fewer characters are the two re-pointed steps. Is that right?
 4. **Unchanged from round 1:** the four moved declarations, their homes, imports, users, rule-10
    evidence and census. Confirm that the round-2 commit touches none of them.
 
