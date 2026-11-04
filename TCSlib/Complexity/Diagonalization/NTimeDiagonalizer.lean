@@ -8118,7 +8118,12 @@ private theorem dz_hQ {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : Fin
 
 /-- The setup's facts for `Turing.guessRunTM`'s lemmas: its run to the exit, the exit's first
 arrival, and the block, nonblank on its `|dzBlk (g n)|` cells from the head and blank on both
-sides. -/
+sides.
+
+**Proof sketch.** `dz_setup`'s segment, read through `Turing.segment_iff` from the initial
+configuration (`dz_initCfg`): its run gives the exit and its avoided set the first arrival. The
+block tape holds `bufferTape (dzBlk (g n))` with its head at `0` (`dzLay_tp`), so its cells
+`0, …, |dzBlk (g n)| - 1` are nonblank and the cells `-1` and `|dzBlk (g n)|` blank. -/
 private theorem dz_setup_facts {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
     (κ : DzKit f g c BF) (z : List Bool) :
     ∃ TP ≤ dzSetB κ (g z.length),
