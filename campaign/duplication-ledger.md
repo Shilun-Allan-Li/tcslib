@@ -733,6 +733,66 @@ these steps. Round 3 of #181 (`8d41671c`) re-points both to `logSpace_le_succ` t
 `logSpace`-by-successor statement
 (`campaign/gates/89-space-facts-api/evidence/round3/ls1-search/classification.md`) finds the fact
 proved once, in `Basic`, and cited at eight sites.
+**Scope corrected a third time (gate 89, round 3, major 1).** Round 3's search had looked for
+`Nat.log_le_self` only, so it missed one more inline copy: `arm_decides` (`Machines/ARMProof`,
+Hydroxyi's) proved `hLn : Ls ≤ n + 1`, with `Ls := logSpace n`, by unfolding `logSpace` and citing
+`Nat.log_lt_self`. Round 4 of #181 (`a7c2a655`) re-points it to `logSpace_le_succ` (a mechanical ARM
+dedup edit, FYI). Round 4's search covers every line that touches `logSpace`'s definition and every
+Mathlib upper bound of `Nat.log`
+(`campaign/gates/89-space-facts-api/evidence/round4/ls1-search/classification.md`). It finds the
+fact proved once, in `Basic`, and cited at nine sites.
+
+**LS-2, the logarithmic bound by the binary length** (gate 89, round 4's search; ruled with it, user,
+2026-11-04: "Fix in #181 now"). The fact is `logSpace n ≤ Nat.size n + 1`, equivalently
+`≤ |bits n| + 1`; its converse is `|bits n| ≤ Nat.log 2 n + 1`. Before round 4:
+- the public `Complexity.LogProg.ISCount.logSpace_le_size_succ` (`Logspace/ISCountMath`);
+- inline re-derivations in `Randomized/BPLInP`, twice (`two_pow_codes_le`, `BPL_subset_P`);
+- the public `Randomized.PolyAmp.logSpace_le_ell` (`Randomized/SpaceAmplifyPoly`, its `ell n` is
+  `|bits n| + 1`), re-proved through `Nat.log_lt_of_lt_pow`;
+- the converse, published as `LogProg.length_bits_le_log` (`Machines/Bin`) and re-derived by the
+  private `size_le_logSpace` (`Logspace/ISCountGenCorrect`).
+
+All in Hydroxyi's files. `BPLInP` did not import `ISCountMath`. **Retired by #181, round 4**
+(`fe4bdb67`, `227d92ee`): `logSpace_le_size_succ` moves verbatim to `SpaceComplexity/Basic` as
+`Complexity.logSpace_le_size_succ`, and the four re-derivations cite it or `length_bits_le_log`
+(copy deletions and re-points, FYI). Same round, same ruling: `ExpBFS/Run`'s `setup_run` cites its
+own file's `lgv_le_succ` for `hv |x| ≤ |x|` instead of re-deriving it (`252bbcb8`).
+
+**LS-3, the binary length as the logarithm** (gate 89, round 4's search). The fact is
+`|bits n| = Nat.log 2 n + 1` for `n ≠ 0`. No public lemma states it. Private copies:
+- `Constructible`'s `b3a_bits_length` (the campaign's);
+- `Randomized/QuasiPolyHierarchy`'s `length_bits_eq` (Hydroxyi's);
+- `Diagonalization/NTimeDiagonalizer`'s `qy_log_bits`, with `Nat.size n = Nat.log 2 n + 1` also
+  inline in its `qy_two_pow_bits_le` (E-D's file, in flight).
+
+Each is 1 declaration of its file's hundreds, so the one-fifth rule is not in question. **Accepted
+(user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): publish the equality
+beside `LogProg.length_bits_le_log` and re-point the three after E-D lands.
+
+**BL-1, elementary bounds on the binary length** (gate 89, round 4's binary-length sweep,
+`campaign/gates/89-space-facts-api/evidence/round4/ls1-search/bitsweep.tsv`). One- and two-line
+steps that carry a Mathlib `Nat.size` fact over to `|Nat.bits n|` through `Nat.size_eq_bits_len`,
+where a lemma already states the bound:
+- (i) `|bits n| ≤ m` from `n < 2 ^ m` (`LogProg.length_bits_le`, `Machines/Bin`): `Meyer:189`,
+  `MeyerTableau:437`, `ISCountGenCorrect`'s private `bits_succ_le` (`:210`);
+- (ii) monotonicity (`LogProg.length_bits_mono`): `NTimeDiagonalizer`'s private `qy_bits_len_mono`,
+  `RecordTable:2762`, `InputLength:418`, `:420`, `Catalog:4125`;
+- (iii) `|bits n| ≤ n` (`Turing.length_bits_le_self`, `TuringMachine/Encoding`):
+  `CodeSimulator:1448`, `NTimeDiagonalizer:455`, `SpaceAmplifyPoly:287` (`ell_le`),
+  `RecordTable:2764`, `:4256`;
+- (iv) `n < 2 ^ |bits n|`: public as `Randomized.PolyAmp.lt_two_pow_bits` and, for `posWidth`,
+  `Turing.record_pos_lt`; inline or private in `NTimeDiagonalizer`'s `qy_lt_two_pow_bits`,
+  `Logspace/Mult:254`, `:255`, `WindowClock:119`;
+- (v) `2 ^ |bits n| ≤ 2n` or `2n + 1`: public as `Complexity.Codec.two_pow_bits_le` (`Codec/Layout`)
+  and `Randomized.PolyAmp.two_pow_bits_le`; inline or private in `Codec/Parse:90`,
+  `NTimeDiagonalizer`'s `qy_two_pow_bits_le`, `BPLInP:399`.
+
+The files are the campaign's, Hydroxyi's, E-D's in-flight `NTimeDiagonalizer` and the
+colleague-owned `CircuitComplexity/Meyer*`. `Machines/Bin` sits above the `CircuitComplexity` and
+`TuringMachine` layers, so several sites cannot import it. Each site is one step, so the one-fifth
+rule is not in question. **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window
+(12.2c): one home for the five bounds below both layers (beside `Turing.length_bits_le_self`), then
+re-points where the imports allow. `CircuitComplexity` needs its own authorization.
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
