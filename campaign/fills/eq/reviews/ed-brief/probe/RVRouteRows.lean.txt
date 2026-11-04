@@ -1,0 +1,172 @@
+/-
+Review probe for the E-D brief draft (`eq-fill-diagonalizer.DRAFT.md` at 615e56b4). A probe record,
+not library code. It imports what the fill's file sees after its overlay and checks:
+* (A) every public row the route needs, cited or proposed, resolves and is free of `sorryAx`;
+* (B) the split obstruction: the framed copy/transfer/clear rows need a blank at relative
+  position `-1`, which a suffix of a contiguous nonblank block never has;
+* (C) the positioning that published rows do allow: skip back over the empty word, then the
+  lockstep walk with a ruler `1^G`, lands a head on cell `G` of the block;
+* (D) `α` from the query's tail by a function-level composite (an install call's argument), its
+  value on the tail, and `1^{n+1}` by the prepend row;
+* (E) the core's stream needs no clearing: `(s ++ w).take b = s.take b` for `b ≤ |s|`.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+set_option autoImplicit false
+
+open Turing
+
+namespace RVProbe
+
+/-! ### (B) The split obstruction -/
+
+/-- The framed rows' delimiter hypothesis (`copyMapTM_run_ofCfg`, `transferMapTM_run_ofCfg`,
+`clearTM_run_ofCfg`, and the counters of `expandTM_run_ofCfg` and the step clock) fails for the
+suffix `w` of a block `s ++ w` read from the suffix's first cell, whenever `s ≠ []`: the cell at
+relative position `-1` is `s`'s last symbol, not a blank. -/
+theorem rv_no_left_delim (s w : List Bool) (hs : s ≠ []) :
+    ¬ (∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      FinTM.bufferTape (s ++ w) ((s.length : ℤ) + p) = FinTM.bufferTape w p) := by
+  intro h
+  have hlen : 0 < s.length := by
+    cases s with
+    | nil => exact absurd rfl hs
+    | cons a t => exact Nat.succ_pos _
+  have h1 := h (-1) le_rfl (by omega)
+  rw [FinTM.bufferTape_left] at h1
+  have hc : ((s.length : ℤ) + -1) = ((s.length - 1 : ℕ) : ℤ) := by omega
+  rw [hc, FinTM.bufferTape_nat, List.getElem?_append_left (by omega),
+    List.getElem?_eq_getElem (by omega)] at h1
+  exact Option.some_ne_none _ h1
+
+/-- The same at the query tape: the tail after the flag has the flag as its left neighbour. -/
+theorem rv_flag_no_left_delim (b : Bool) (tail : List Bool) :
+    ¬ (∀ p : ℤ, -1 ≤ p → p ≤ (tail.length : ℤ) →
+      FinTM.bufferTape (b :: tail) (1 + p) = FinTM.bufferTape tail p) := by
+  have h := rv_no_left_delim [b] tail (List.cons_ne_nil _ _)
+  simpa only [List.singleton_append, List.length_singleton, Nat.cast_one] using h
+
+/-! ### (C) Positioning by published rows -/
+
+/-- Skip back over the empty word: from cell `0` of a tape holding a buffer word, the head of
+`skipBackTM` ends on cell `-1` (cells `-2` and `-1` are blank). -/
+theorem rv_skipBack_empty {k : ℕ} {x : List Bool} (j : Fin k) (d : Cfg k Bool SeekPhase x)
+    (hst : d.state = some .run) (v : List Bool) (hT : d.workTapes j = FinTM.bufferTape v)
+    (hP : d.workTapePos j = 0) :
+    ((skipBackTM k j).runFrom d (([] : List Bool).length + 3)).workTapePos j = -1 := by
+  obtain ⟨h1, -, -⟩ := skipBackTM_run_ofCfg j ([] : List Bool) d hst (fun p hp1 hp2 => by
+    rw [hT, hP, FinTM.bufferTape_of_neg v (by simp only [List.length_nil, Nat.cast_zero] at hp2 ⊢; omega),
+      FinTM.bufferTape_eq_none_of_not_mem ([] : List Bool) (by
+        simp only [List.length_nil, Nat.cast_zero]; omega)])
+  rw [h1]
+  show Function.update d.workTapePos j (d.workTapePos j - (([] : List Bool).length : ℤ) - 1) j = -1
+  rw [Function.update_self, hP]
+  simp only [List.length_nil, Nat.cast_zero]
+  omega
+
+/-- The lockstep walk with the ruler `1^G` (tape `A`, head on its first cell) carries a head that
+starts on cell `-1` to cell `G`, the first cell after `G` stream cells. -/
+theorem rv_walk_to_boundary {k : ℕ} {x : List Bool} (A j : Fin k)
+    (d : Cfg k Bool SeekPhase x) (hst : d.state = some .run) (G : ℕ)
+    (hA : d.workTapes A = FinTM.bufferTape (List.replicate G true)) (hPA : d.workTapePos A = 0)
+    (hPj : d.workTapePos j = -1) :
+    ((walkTM k A (fun i => i = A ∨ i = j) .pos).runFrom d (G + 1)).workTapePos j = G := by
+  obtain ⟨h1, -, -⟩ := walkTM_run_ofCfg A (fun i => i = A ∨ i = j) (Or.inl rfl) .pos
+    (List.replicate G true) d hst (fun p _ => by
+      rw [hA, hPA, show ((SignType.pos : SignType) : ℤ) = 1 from rfl, one_mul, zero_add])
+  rw [List.length_replicate] at h1
+  rw [h1]
+  show d.workTapePos j + (if (j = A ∨ j = j) then ((SignType.pos : SignType) : ℤ) *
+    ((G + 1 : ℕ) : ℤ) else 0) = G
+  rw [if_pos (Or.inr rfl), hPj, show ((SignType.pos : SignType) : ℤ) = 1 from rfl, one_mul]
+  push_cast
+  ring
+
+/-! ### (D) `α` and `1^{n+1}` from function-level rows -/
+
+/-- The inner second component as a function-level composite of the published extractors
+(`Turing.FinTM.computesFunInTime_comp`): linear time, hence an install call's argument row. -/
+theorem rv_alpha_row : ∃ (M : FinTM Bool) (c : ℕ),
+    M.ComputesFunInTime
+      (fun z => ((pairDecode (((pairDecode z).map Prod.fst).getD [])).map Prod.snd).getD [])
+      (fun n => c * (5 * (n + 1) + 5 * (5 * (n + 1) + 1) + 1)) := by
+  obtain ⟨M, c, h⟩ := FinTM.computesFunInTime_comp FinTM.pairExtractTM_fst FinTM.pairExtractTM_snd
+    (fun a b hab => by show 5 * (a + 1) ≤ 5 * (b + 1); omega)
+  exact ⟨M, c, h⟩
+
+/-- On the query's middle tail `⟨⟨bits b, α⟩, N⟩` the composite returns `α`. -/
+theorem rv_alpha_value (B α N : List Bool) :
+    ((pairDecode (((pairDecode (pairEncode (pairEncode B α) N)).map Prod.fst).getD [])).map
+      Prod.snd).getD [] = α := by
+  simp only [pairDecode_pairEncode, Option.map_some, Option.getD_some]
+
+/-- `1^{n+1}` by the published prepend row: `[true] ++ 1ⁿ = 1^{n+1}`. -/
+theorem rv_tail_ones : (∃ (M : FinTM Bool) (c : ℕ),
+    M.ComputesFunInTime (fun x => [true] ++ x) (fun n => c * (n + 1))) ∧
+    ∀ n : ℕ, [true] ++ List.replicate n true = List.replicate (n + 1) true := by
+  refine ⟨FinTM.computesFunInTime_prepend [true], fun n => ?_⟩
+  rw [List.replicate_succ]
+  rfl
+
+/-! ### (E) The core's stream -/
+
+/-- The core reads only `stream.take b`, so the whole block (stream, then budget word) serves as
+its stream when `b ≤ |s|`. -/
+theorem rv_stream_take (s w : List Bool) (b : ℕ) (hb : b ≤ s.length) :
+    (s ++ w).take b = s.take b :=
+  List.take_append_of_le_length hb
+
+end RVProbe
+
+/-! ### (A) The rows: resolution and axioms -/
+
+#print axioms Turing.guessRunTM_haltsWithin
+#print axioms Turing.guessRunTM_accepts_iff
+#print axioms Turing.guessRunTM_runWith
+#print axioms Turing.exists_ndInterpreterCore
+#print axioms Turing.exists_stepClockTMVia
+#print axioms Turing.vhostSilentTM_runFrom
+#print axioms Turing.FinTM.VirtualTag_iff
+#print axioms Turing.embedSilentTM_runFrom
+#print axioms Turing.embedSilentCfg_cap
+#print axioms Turing.embedEmitTM_runFrom
+#print axioms Turing.embedEmitCfg_eq
+#print axioms Turing.FinTM.exists_inputCallTM
+#print axioms Turing.FinTM.exists_installCallTM
+#print axioms Turing.FinTM.computesFunInTime_lengthBits
+#print axioms Complexity.timeConstructible_iff
+#print axioms Turing.expandTM_run_ofCfg
+#print axioms Turing.copyMapTM_run_ofCfg
+#print axioms Turing.transferMapTM_run_ofCfg
+#print axioms Turing.clearTM_run_ofCfg
+#print axioms Turing.skipBackTM_run_ofCfg
+#print axioms Turing.skipTM_run_ofCfg
+#print axioms Turing.walkTM_run_ofCfg
+#print axioms Turing.rewindTM_run_ofCfg
+#print axioms Turing.inputCopyTM_run_ofCfg
+#print axioms Turing.phaseHostTM_run
+#print axioms Turing.phaseHostTM_run_le
+#print axioms Turing.seamReleaseTM_runFrom_pos
+#print axioms Turing.FinNDTM.acceptsWithin_iff
+#print axioms Turing.FinNDTM.AcceptsWithin.mono
+#print axioms Turing.FinTM.computesFunInTime_comp
+#print axioms Turing.FinTM.pairExtractTM_fst
+#print axioms Turing.FinTM.pairExtractTM_snd
+#print axioms Turing.FinTM.computesFunInTime_pairFst
+#print axioms Turing.FinTM.computesFunInTime_pairSnd
+#print axioms Turing.prefixCanon_pairExtract_halt
+#print axioms Turing.FinTM.computesFunInTime_prepend
+#print axioms Turing.FinTM.computesFunInTime_splitSolveWith
+#print axioms Turing.pairDecode_pairEncode
+#print axioms Turing.Cfg.stopped_iff
+#print axioms RVProbe.rv_no_left_delim
+#print axioms RVProbe.rv_flag_no_left_delim
+#print axioms RVProbe.rv_skipBack_empty
+#print axioms RVProbe.rv_walk_to_boundary
+#print axioms RVProbe.rv_alpha_row
+#print axioms RVProbe.rv_alpha_value
+#print axioms RVProbe.rv_tail_ones
+#print axioms RVProbe.rv_stream_take

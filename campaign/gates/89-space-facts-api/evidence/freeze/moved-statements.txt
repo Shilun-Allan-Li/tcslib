@@ -1,0 +1,14 @@
+# The four moved declarations: the statement text (binders and type, whitespace-normalized) in ARMWidth at the base and in its new home at the head
+logSpace_le_succ: identical
+  base: (n : ℕ) : logSpace n ≤ n + 1
+  head: (n : ℕ) : logSpace n ≤ n + 1
+logSpace_le_of_le_mul_two_pow: identical
+  base: {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) : logSpace v ≤ (A + 1) * s
+  head: {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) : logSpace v ≤ (A + 1) * s
+LOGSPACE_subset_PSPACE: identical
+  base: : LOGSPACE ⊆ PSPACE
+  head: : LOGSPACE ⊆ PSPACE
+SPACE_succ_pow_subset_PSPACE: identical
+  base: (k : ℕ) : SPACE (fun n => (n + 1) ^ k) ⊆ PSPACE
+  head: (k : ℕ) : SPACE (fun n => (n + 1) ^ k) ⊆ PSPACE
+# all identical: True

@@ -1,0 +1,473 @@
+@NTimeDiag.exists_diagonalizer : ∀ {f g : ℕ → ℕ},
+  TimeConstructible f →
+    TimeConstructible g →
+      ∀ (c : EffectiveNDMachineCode),
+        (∃ BF,
+            ∀ (α : List Bool),
+              ∃ C,
+                ∀ (x : List Bool) (t : ℕ),
+                  ((c.decode α).toFinNDTM.AcceptsWithin x t →
+                      BF.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true] (C * 2 ^ (C * (t + 1)))) ∧
+                    (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+                      BF.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false] (C * 2 ^ (C * (t + 1))))) →
+          ∃ D K,
+            (∀ (x : List Bool), D.tm.HaltsWithin x (K * (g x.length + 1))) ∧
+              ∀ (α : List Bool),
+                ∃ C,
+                  ∀ (n : ℕ),
+                    3 ≤ n →
+                      NTimeDiag.stageCode (NTimeDiag.stage f n) = α →
+                        (n ≠ NTimeDiag.ladder f (NTimeDiag.stage f n + 1) →
+                            (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) →
+                                (c.decode α).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true) (g n)) ∧
+                              ∀ (t' : ℕ),
+                                (c.decode α).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true) t' →
+                                  C * (t' + 1) ≤ g n → D.AcceptsWithin (List.replicate n true) (K * (g n + 1))) ∧
+                          (n = NTimeDiag.ladder f (NTimeDiag.stage f n + 1) →
+                            C * 2 ^ (C * (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n)) + 1)) ≤ n →
+                              (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) ↔
+                                ¬(c.decode α).toFinNDTM.AcceptsWithin
+                                    (List.replicate (NTimeDiag.ladder f (NTimeDiag.stage f n) + 1) true)
+                                    (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n)))))
+@NTimeDiag.exists_queryTM : ∀ {f g : ℕ → ℕ},
+  TimeConstructible f → TimeConstructible g → ∃ G C, G.ComputesFunInTime (NTimeDiag.query f g) fun n => C * (g n + 1)
+NTimeDiag.query : (ℕ → ℕ) → (ℕ → ℕ) → List Bool → List Bool
+NTimeDiag.query_eq : ∀ (f g : ℕ → ℕ) {n : ℕ},
+  3 ≤ n →
+    NTimeDiag.query f g (List.replicate n true) =
+      if n = NTimeDiag.ladder f (NTimeDiag.stage f n + 1) then
+        true ::
+          pairEncode
+            (pairEncode (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n))).bits
+              (NTimeDiag.stageCode (NTimeDiag.stage f n)))
+            (List.replicate (NTimeDiag.ladder f (NTimeDiag.stage f n) + 1) true)
+      else
+        false ::
+          pairEncode (pairEncode (g n).bits (NTimeDiag.stageCode (NTimeDiag.stage f n))) (List.replicate (n + 1) true)
+NTimeDiag.query_of_not_guard : ∀ (f g : ℕ → ℕ) {x : List Bool},
+  ¬(x = List.replicate x.length true ∧ 3 ≤ x.length) → NTimeDiag.query f g x = []
+NTimeDiag.budget_eq : ∀ (f : ℕ → ℕ) (ℓ : ℕ), NTimeDiag.budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2
+NTimeDiag.ladder_zero : ∀ (f : ℕ → ℕ), NTimeDiag.ladder f 0 = 2
+NTimeDiag.ladder_succ : ∀ (f : ℕ → ℕ) (i : ℕ),
+  NTimeDiag.ladder f (i + 1) = 2 ^ NTimeDiag.budget f (NTimeDiag.ladder f i) ^ 2
+NTimeDiag.two_mul_lt_ladder_succ : ∀ (f : ℕ → ℕ) (i : ℕ), 2 * NTimeDiag.ladder f i < NTimeDiag.ladder f (i + 1)
+NTimeDiag.le_ladder : ∀ (f : ℕ → ℕ) (i : ℕ), i + 2 ≤ NTimeDiag.ladder f i
+NTimeDiag.ladder_strictMono : ∀ (f : ℕ → ℕ), StrictMono (NTimeDiag.ladder f)
+NTimeDiag.stage_spec : ∀ (f : ℕ → ℕ) {n : ℕ},
+  3 ≤ n → NTimeDiag.ladder f (NTimeDiag.stage f n) < n ∧ n ≤ NTimeDiag.ladder f (NTimeDiag.stage f n + 1)
+NTimeDiag.stage_eq : ∀ (f : ℕ → ℕ) {n i : ℕ},
+  NTimeDiag.ladder f i < n → n ≤ NTimeDiag.ladder f (i + 1) → NTimeDiag.stage f n = i
+NTimeDiag.stage_of_le_two : ∀ (f : ℕ → ℕ) {n : ℕ}, n ≤ 2 → NTimeDiag.stage f n = 0
+NTimeDiag.stageCode_eq : ∀ (i : ℕ), NTimeDiag.stageCode i = ((Nat.unpair i).1 + 1).bits.dropLast
+@guessRunTM : {k : ℕ} →
+  {SP SQ : Type} →
+    [DecidableEq SP] →
+      [DecidableEq SQ] →
+        MultiTapeTM k Bool SP →
+          SP →
+            Fin k →
+              MultiTapeTM k Bool SQ → SQ → SQ → SQ → NDTM k Bool ((i : GuessRunPhase) × GuessRunPhase.State SP SQ i)
+@guessRunCfg : {k : ℕ} → {S S' : Type} → {z : List Bool} → Cfg k Bool S z → Fin k → List Bool → S' → Cfg k Bool S' z
+@guessRunCfg_state : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool) (q : S'),
+  (guessRunCfg c j s q).state = some q
+@guessRunCfg_inputPos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S'), (guessRunCfg c j s q).inputPos = c.inputPos
+@guessRunCfg_workTapes : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S') (a : Fin k) (a_1 : ℤ),
+  (guessRunCfg c j s q).workTapes a a_1 =
+    Function.update c.workTapes j
+      (fun p =>
+        if c.workTapePos j ≤ p ∧ p < c.workTapePos j + ↑s.length then bufferTape s (p - c.workTapePos j)
+        else c.workTapes j p)
+      a a_1
+@guessRunCfg_workTapePos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S') (a : Fin k), (guessRunCfg c j s q).workTapePos a = c.workTapePos a
+@guessRunCfg_output : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool) (q : S'),
+  (guessRunCfg c j s q).output = c.output
+@guessRunTM_haltsWithin : ∀ {k : ℕ} {SP SQ : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool}
+  (TP : ℕ) (cP : Cfg k Bool SP z),
+  runFrom (initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (runFrom (initCfg z) u).state ≠ some pexit) →
+        ∀ (m : ℕ),
+          (∀ p < m, cP.workTapes j (cP.workTapePos j + ↑p) ≠ none) →
+            cP.workTapes j (cP.workTapePos j + ↑m) = none →
+              cP.workTapes j (cP.workTapePos j - 1) = none →
+                ∀ (T : ℕ),
+                  (∀ (s : List Bool),
+                      s.length = m →
+                        ∃ TQ ≤ T,
+                          ((runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+                              (runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+                            ∀ u < TQ,
+                              (runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                (runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+                    (guessRunTM P pexit j Q qentry acc rej).HaltsWithin z (TP + 2 * m + T + 11)
+@guessRunTM_accepts_iff : ∀ {k : ℕ} {SP SQ : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool}
+  (TP : ℕ) (cP : Cfg k Bool SP z),
+  runFrom (initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (runFrom (initCfg z) u).state ≠ some pexit) →
+        ∀ (m : ℕ),
+          (∀ p < m, cP.workTapes j (cP.workTapePos j + ↑p) ≠ none) →
+            cP.workTapes j (cP.workTapePos j + ↑m) = none →
+              cP.workTapes j (cP.workTapePos j - 1) = none →
+                ∀ (T : ℕ),
+                  (∀ (s : List Bool),
+                      s.length = m →
+                        ∃ TQ ≤ T,
+                          ((runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+                              (runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+                            ∀ u < TQ,
+                              (runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                (runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+                    ∀ (B : ℕ),
+                      TP + 2 * m + T + 11 ≤ B →
+                        ((∃ w,
+                            w.length = B ∧
+                              (NDTM.runWith w (NDTM.initCfg z)).state = none ∧
+                                (NDTM.runWith w (NDTM.initCfg z)).output = [true]) ↔
+                          ∃ s,
+                            s.length = m ∧
+                              ∃ TQ,
+                                (runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∧
+                                  (∀ u < TQ,
+                                      (runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                        (runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) ∧
+                                    (runFrom (guessRunCfg cP j s qentry) TQ).output = [])
+@guessRunTM_silent_spec : ∀ {K k : ℕ} {SP SR : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SR]
+  (ι : Fin K ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (jR : Fin K) (R : MultiTapeTM K Bool SR) (entry acc rej : SR) (P : MultiTapeTM k Bool SP) (pexit : SP)
+      {z : List Bool} (TP m : ℕ) (blk : ℤ → Option Bool),
+      (∀ (p : ℤ), blk p ≠ none ↔ 0 ≤ p ∧ p < ↑m) →
+        runFrom (initCfg z) TP =
+            { state := some pexit, inputPos := 1, workTapes := Function.update (fun x x_1 => none) (ι jR) blk,
+              workTapePos := fun x => 0, output := [] } →
+          (∀ u < TP, (runFrom (initCfg z) u).state ≠ some pexit) →
+            ∀ (T : ℕ),
+              (∀ (s : List Bool),
+                  s.length = m →
+                    ∃ TR ≤ T,
+                      ((runFrom (streamStartCfg z jR entry s) TR).state = some acc ∨
+                          (runFrom (streamStartCfg z jR entry s) TR).state = some rej) ∧
+                        ∀ u < TR,
+                          (runFrom (streamStartCfg z jR entry s) u).state ≠ some acc ∧
+                            (runFrom (streamStartCfg z jR entry s) u).state ≠ some rej) →
+                have N := guessRunTM P pexit (ι jR) (embedSilentTM ι cap R) entry acc rej;
+                N.HaltsWithin z (TP + 2 * m + T + 11) ∧
+                  ∀ (B : ℕ),
+                    TP + 2 * m + T + 11 ≤ B →
+                      ((∃ w,
+                          w.length = B ∧
+                            (NDTM.runWith w (NDTM.initCfg z)).state = none ∧
+                              (NDTM.runWith w (NDTM.initCfg z)).output = [true]) ↔
+                        ∃ s,
+                          s.length = m ∧
+                            ∃ TR,
+                              (runFrom (streamStartCfg z jR entry s) TR).state = some acc ∧
+                                ∀ u < TR,
+                                  (runFrom (streamStartCfg z jR entry s) u).state ≠ some acc ∧
+                                    (runFrom (streamStartCfg z jR entry s) u).state ≠ some rej)
+@streamStartCfg : {K : ℕ} → {S : Type} → (z : List Bool) → Fin K → S → List Bool → Cfg K Bool S z
+exists_ndInterpreterCore : ∀ (c : EffectiveNDMachineCode),
+  ∃ K Q x x R j entry accept reject,
+    accept ≠ reject ∧
+      ∀ (α : List Bool),
+        ∃ C,
+          ∀ (x : List Bool) (t : ℕ) (s : List Bool),
+            t ≤ s.length →
+              have z := pairEncode (pairEncode t.bits α) x;
+              have N := (c.decode α).toFinNDTM;
+              have start :=
+                { state := some entry, inputPos := 1,
+                  workTapes := fun i => if i = j then bufferTape s else fun x => none, workTapePos := fun x => 0,
+                  output := [] };
+              have e := NDTM.runWith (List.take t s) (NDTM.initCfg x);
+              ∃ T,
+                (∀ t' ≤ t,
+                    (NDTM.runWith (List.take t' s) (NDTM.initCfg x)).state = none →
+                      T ≤ C * (t' + x.length + t.bits.length + 1)) ∧
+                  T ≤ C * (t + 1) ∧
+                    (runFrom start T).state = some (if e.state = none ∧ e.output = [true] then accept else reject) ∧
+                      ∀ u < T, (runFrom start u).state ≠ some accept ∧ (runFrom start u).state ≠ some reject
+@exists_stepClockTMVia : ∀ {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S] [DecidableEq Γ] (e : Bool ↪ Γ)
+  (M : MultiTapeTM k Γ S) (stopAt : S → Bool),
+  ∃ Q x x H inj finish timeout,
+    Function.Injective finish ∧
+      Function.Injective timeout ∧
+        (∀ (a b : Option S), finish a ≠ timeout b) ∧
+          (∀ (s : S) (r : Option S), inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+            ∀ {x : List Γ} (c : Cfg k Γ S x) (q : S),
+              c.state = some q →
+                ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+                  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape (List.map (⇑e) w) p) →
+                    (∀ τ ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                        Cfg.Stopped stopAt (runFrom c τ) →
+                          (∀ u < τ, ¬Cfg.Stopped stopAt (runFrom c u)) →
+                            ∃ T ≤ 5 * τ + 2 * w.length + 2,
+                              ∃ w',
+                                w'.length = w.length ∧
+                                  runFrom (clockCfg (some (inj q)) c ct cp) T =
+                                      clockCfg (some (finish (runFrom c τ).state)) (runFrom c τ)
+                                        (wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                    (∀ u < T,
+                                        ∀ (r : Option S),
+                                          (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+                                      ∀ u ≤ T,
+                                        ∃ v ≤ τ,
+                                          (∀ (j : Fin k),
+                                              (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                                                  (runFrom c v).workTapes j ∧
+                                                (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                                                  (runFrom c v).workTapePos j) ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                                                (runFrom c v).inputPos ∧
+                                              (runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                                                  (runFrom c v).output ∧
+                                                (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                                                  Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                      ((∀ u ≤ Nat.ofDigits 2 (List.map Bool.toNat w), ¬Cfg.Stopped stopAt (runFrom c u)) →
+                        ∃ T ≤ 5 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 2,
+                          ∃ w',
+                            w'.length = w.length ∧
+                              runFrom (clockCfg (some (inj q)) c ct cp) T =
+                                  clockCfg (some (timeout (runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w))).state))
+                                    (runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w)))
+                                    (wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                (∀ u < T,
+                                    ∀ (r : Option S),
+                                      (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                                        (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+                                  ∀ u ≤ T,
+                                    ∃ v ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                                      (∀ (j : Fin k),
+                                          (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                                              (runFrom c v).workTapes j ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                                              (runFrom c v).workTapePos j) ∧
+                                        (runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                                            (runFrom c v).inputPos ∧
+                                          (runFrom (clockCfg (some (inj q)) c ct cp) u).output = (runFrom c v).output ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                                              Finset.Icc (cp - 1) (cp + ↑w.length))
+@exists_stepClockTM : ∀ {k : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM k Bool S) (stopAt : S → Bool),
+  ∃ Q x x H inj finish timeout,
+    ∀ {x : List Bool} (c : Cfg k Bool S x) (q : S),
+      c.state = some q →
+        ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+          (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape w p) →
+            have d := Nat.ofDigits 2 (List.map Bool.toNat w);
+            have stopped := fun e => e.state = none ∨ ∃ s, e.state = some s ∧ stopAt s = true;
+            (∀ τ ≤ d,
+                stopped (runFrom c τ) →
+                  (∀ u < τ, ¬stopped (runFrom c u)) →
+                    ∃ T ≤ 5 * τ + 2 * w.length + 2,
+                      ∃ ct',
+                        runFrom (clockCfg (some (inj q)) c ct cp) T =
+                            clockCfg (some (finish (runFrom c τ).state)) (runFrom c τ) ct' cp ∧
+                          ∀ u < T,
+                            ∀ (r : Option S),
+                              (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                                (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+              ((∀ u ≤ d, ¬stopped (runFrom c u)) →
+                ∃ T ≤ 5 * d + 2 * w.length + 2,
+                  ∃ ct',
+                    runFrom (clockCfg (some (inj q)) c ct cp) T =
+                        clockCfg (some (timeout (runFrom c d).state)) (runFrom c d) ct' cp ∧
+                      ∀ u < T,
+                        ∀ (r : Option S),
+                          (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                            (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r))
+@vhostSilentTM : {m : ℕ} → {S : Type u_1} → MultiTapeTM m Bool S → MultiTapeTM (1 + m + 1) Bool (S × Bool)
+@vhostSilentCfg : {m : ℕ} →
+  {S : Type u_1} →
+    {x y : List Bool} →
+      Cfg m Bool S y → Bool → Fin (x.length + 2) → List Bool → List Bool → Cfg (1 + m + 1) Bool (S × Bool) x
+@vhostSilentTM_runFrom : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
+  (b : Bool),
+  VirtualTag c.inputPos b →
+    ∀ (p : Fin (x.length + 2)) (capPre out₀ : List Bool) (t : ℕ),
+      ∃ b',
+        VirtualTag (runFrom c t).inputPos b' ∧
+          runFrom (vhostSilentCfg c b p capPre out₀) t = vhostSilentCfg (runFrom c t) b' p capPre out₀
+@embedSilentTM : {m k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → (Fin m ↪ Fin k) → Fin k → MultiTapeTM m Symbol S → MultiTapeTM k Symbol S
+@embedSilentCfg : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} →
+      {x : List Symbol} →
+        (Fin m ↪ Fin k) →
+          Fin k →
+            (Fin k → ℤ → Option Symbol) → (Fin k → ℤ) → List Symbol → List Symbol → Cfg m Symbol S x → Cfg k Symbol S x
+@embedSilentTM_runFrom : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (M : MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol)
+      (c : Cfg m Symbol S x) (t : ℕ),
+      runFrom (embedSilentCfg ι cap tapes heads pre out₀ c) t = embedSilentCfg ι cap tapes heads pre out₀ (runFrom c t)
+exists_inputCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x : List Bool),
+          ∃ t ≤ c * (T x.length + x.length + (f x).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ), 0 < t' → t' < t → (runFrom (Cfg.ofWords entry fun x => []) t').state ≠ some exit) ∧
+                runFrom (Cfg.ofWords entry fun x => []) t = Cfg.ofWords exit (stateWord C.k (f x))
+exists_installCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x arg : List Bool),
+          ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ), 0 < t' → t' < t → (runFrom (Cfg.ofWords entry (stateWord C.k arg)) t').state ≠ some exit) ∧
+                runFrom (Cfg.ofWords entry (stateWord C.k arg)) t = Cfg.ofWords exit (stateWord C.k (f arg))
+@seamReleaseTM : {k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → MultiTapeTM k Symbol S → S → MultiTapeTM k Symbol (Unit ⊕ S)
+computesFunInTime_lengthBits : ∃ M c, M.ComputesFunInTime (fun x => x.length.bits) fun n => c * (n + 1)
+expandTM : (k : ℕ) → Fin k → (pat : List Bool) → MultiTapeTM (k + 1) Bool (CounterLoopState (Fin (pat.length + 1)))
+@expandTM_run_ofCfg : ∀ {k : ℕ} {x : List Bool} (i : Fin k) (pat : List Bool) (c : Cfg k Bool (Fin (pat.length + 1)) x),
+  c.state = some 0 →
+    ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+      (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape w p) →
+        ∀ (d : ℕ),
+          Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+            runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                  (d * (pat.length + 1) + counterOverhead w (d + 1)) =
+                counterLoopCfg (some CounterLoopState.done)
+                  { state := c.state, inputPos := c.inputPos,
+                    workTapes := fun j q =>
+                      if j = i ∧ c.workTapePos j ≤ q ∧ q < c.workTapePos j + ↑(d * pat.length) then
+                        bufferTape (List.replicate d pat).flatten (q - c.workTapePos j)
+                      else c.workTapes j q,
+                    workTapePos := Function.update c.workTapePos i (c.workTapePos i + ↑(d * pat.length)),
+                    output := c.output }
+                  (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some true else ct q) cp ∧
+              (∀ t < d * (pat.length + 1) + counterOverhead w (d + 1),
+                  (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).state ≠
+                      some CounterLoopState.done ∧
+                    (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).state ≠
+                      some CounterLoopState.escape) ∧
+                (∀ t ≤ d * (pat.length + 1) + counterOverhead w (d + 1),
+                    (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).workTapePos
+                        (Fin.last k) ∈
+                      Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                  ∀ t ≤ d * (pat.length + 1) + counterOverhead w (d + 1),
+                    ∀ (j : Fin k),
+                      if j = i then
+                        (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).workTapePos
+                            j.castSucc ∈
+                          Finset.Icc (c.workTapePos j) (c.workTapePos j + ↑(d * pat.length))
+                      else
+                        (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).workTapePos
+                            j.castSucc =
+                          c.workTapePos j
+@copyMapTM_run_ofCfg : ∀ {Symbol : Type u_1} {Δ : Type u_2} {k : ℕ} {x : List Symbol} (src dst : Fin k),
+  src ≠ dst →
+    ∀ (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol) (w : List Symbol) (d : Cfg k Symbol SweepPhase x),
+      d.state = some SweepPhase.sweep →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = bufferTape w p) →
+          runFrom d (2 * w.length + 2) =
+              { state := some SweepPhase.done, inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (bufferTape w (q - d.workTapePos j))
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, (runFrom d t).state ≠ some SweepPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = src ∨ j = dst then
+                    (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (runFrom d t).workTapePos j = d.workTapePos j
+@transferMapTM_run_ofCfg : ∀ {Symbol : Type u_1} {Δ : Type u_2} {k : ℕ} {x : List Symbol} (src dst : Fin k),
+  src ≠ dst →
+    ∀ (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol) (rest : Symbol → Option Symbol) (w : List Symbol)
+      (d : Cfg k Symbol SweepPhase x),
+      d.state = some SweepPhase.sweep →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = bufferTape w p) →
+          runFrom d (2 * w.length + 2) =
+              { state := some SweepPhase.done, inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    (bufferTape w (q - d.workTapePos j)).bind rest
+                  else
+                    if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                      Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (bufferTape w (q - d.workTapePos j))
+                    else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, (runFrom d t).state ≠ some SweepPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = src ∨ j = dst then
+                    (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (runFrom d t).workTapePos j = d.workTapePos j
+@clearTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SweepPhase x),
+  d.state = some SweepPhase.sweep →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = bufferTape w p) →
+      runFrom d (2 * w.length + 2) =
+          { state := some SweepPhase.done, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, (runFrom d t).state ≠ some SweepPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (runFrom d t).workTapePos j = d.workTapePos j
+@skipBackTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (u : List Symbol)
+  (d : Cfg k Symbol SeekPhase x),
+  d.state = some SeekPhase.run →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑u.length → d.workTapes i (d.workTapePos i - ↑u.length - 1 + p) = bufferTape u p) →
+      runFrom d (u.length + 3) =
+          { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+            workTapePos := Function.update d.workTapePos i (d.workTapePos i - ↑u.length - 1), output := d.output } ∧
+        (∀ t < u.length + 3, (runFrom d t).state ≠ some SeekPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ u.length + 3,
+              if j = i then (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - ↑u.length - 2) (d.workTapePos j)
+              else (runFrom d t).workTapePos j = d.workTapePos j
+@rewindTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (u : List Symbol),
+  ∀ n ≤ u.length,
+    ∀ (d : Cfg k Symbol RewindPhase x),
+      d.state = some RewindPhase.start →
+        (∀ (p : ℤ), -1 ≤ p → p < ↑n → d.workTapes i (d.workTapePos i - ↑n + p) = bufferTape u p) →
+          runFrom d (n + 2) =
+              { state := some RewindPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+                workTapePos := Function.update d.workTapePos i (d.workTapePos i - ↑n), output := d.output } ∧
+            (∀ t < n + 2, (runFrom d t).state ≠ some RewindPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ n + 2,
+                  if j = i then (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - ↑n - 1) (d.workTapePos j)
+                  else (runFrom d t).workTapePos j = d.workTapePos j
+pairExtractTM : Bool → Bool → FinTM Bool
+@phaseHostTM : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → MultiTapeTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → MultiTapeTM k Γ ((i : I) × Ph i)
+timeConstructible_iff : ∀ (T : ℕ → ℕ),
+  TimeConstructible T ↔
+    (∀ (n : ℕ), n ≤ T n) ∧
+      ∃ c, 0 < c ∧ ∃ M, ∀ (x : List Bool), M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))
+AcceptsWithin : FinNDTM Bool → List Bool → ℕ → Prop
+@AcceptsWithin.mono : ∀ {N : FinNDTM Bool} {x : List Bool} {t t' : ℕ},
+  N.AcceptsWithin x t → t ≤ t' → N.AcceptsWithin x t'
+@NDTM.HaltsWithin : {k : ℕ} → {State : Type u_1} → {Symbol : Type u_2} → NDTM k Symbol State → List Symbol → ℕ → Prop
+EffectiveNDMachineCode : Type 1
+@step_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
+  {cfg : Cfg k Symbol State input} {q : State},
+  cfg.state = some q → step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+length_bits_le_self : ∀ (m : ℕ), m.bits.length ≤ m
+pairEncode_eq : ∀ (x α : List Bool), pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+@acceptsWithin_iff : ∀ {N : FinNDTM Bool} {x : List Bool} {t : ℕ},
+  N.AcceptsWithin x t ↔
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+counterValue_eq : ∀ (w : List Bool), counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+counterValue_bits : ∀ (t : ℕ), counterValue t.bits = t

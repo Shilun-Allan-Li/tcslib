@@ -1,0 +1,46 @@
+
+/-! Review probe appendix (not library code): axioms of E-Q's leaves in #176's file, and the
+core's input word without the flag, derived from `qy_writer_word` (no second writer lemma). -/
+namespace Turing.NTimeDiag
+
+private theorem rv_core_word (B α N : List Bool) :
+    qyBody false 3 B ++ [false, false, true, true] ++ qyBody false 1 α ++ [false, true] ++
+      qyBody false 0 N = pairEncode (pairEncode B α) N := by
+  have h := qy_writer_word true B (α ++ [true]) N
+  have hb : qyBody true 1 (α ++ [true]) = qyBody false 1 α := by
+    unfold qyBody
+    rw [if_pos rfl, if_neg Bool.false_ne_true, List.dropLast_concat]
+  rw [hb, List.dropLast_concat] at h
+  simp only [List.nil_append, List.append_nil, List.singleton_append, List.cons_append,
+    List.append_assoc] at h
+  simpa only [List.append_assoc] using (List.cons.inj h).2
+
+end Turing.NTimeDiag
+
+#print axioms Turing.NTimeDiag.exists_queryTM
+#print axioms Turing.NTimeDiag.exists_diagonalizer
+#print axioms Turing.NTimeDiag.rv_core_word
+#print axioms Turing.NTimeDiag.qy_writer_word
+#print axioms Turing.NTimeDiag.qy_cmp_run
+#print axioms Turing.NTimeDiag.qy_emit_run
+#print axioms Turing.NTimeDiag.qy_emit_stop
+#print axioms Turing.NTimeDiag.qy_clocked_call
+#print axioms Turing.NTimeDiag.qy_clockHost_finish
+#print axioms Turing.NTimeDiag.qy_clockHost_timeout
+#print axioms Turing.NTimeDiag.qy_expandHost
+#print axioms Turing.NTimeDiag.qy_callHost
+#print axioms Turing.NTimeDiag.qy_installSpec
+#print axioms Turing.NTimeDiag.qy_inputSpec
+#print axioms Turing.NTimeDiag.qy_copy
+#print axioms Turing.NTimeDiag.qy_copy_over
+#print axioms Turing.NTimeDiag.qy_transfer
+#print axioms Turing.NTimeDiag.qy_clear
+#print axioms Turing.NTimeDiag.qy_rewind
+#print axioms Turing.NTimeDiag.qy_embed
+#print axioms Turing.NTimeDiag.qy_embed_state
+#print axioms Turing.NTimeDiag.qy_step
+#print axioms Turing.NTimeDiag.qy_hosted
+#print axioms Turing.NTimeDiag.qy_hosted_last
+#print axioms Turing.NTimeDiag.qy_hosted_halt
+#print axioms Turing.NTimeDiag.qy_two_pow_bits_le
+#print axioms Turing.NTimeDiag.qy_bits_val

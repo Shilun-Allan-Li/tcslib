@@ -1,0 +1,36 @@
+nf_pack (29 lines) vs nfr_pack (29 lines), renamed []: identical=False
+   --- nfr_pack
+   +++ nf_pack
+   @@ -1 +1 @@
+   -theorem nfr_pack {S : Type} [Fintype S] (H : NDTM 2 Bool S) :
+   +theorem nf_pack {S : Type} [Fintype S] (H : NDTM 2 Bool S) :
+nf_setup (9 lines) vs nfr_setup (9 lines), renamed []: identical=False
+   --- nfr_setup
+   +++ nf_setup
+   @@ -1 +1 @@
+   -theorem nfr_setup {SP : Type} (P : MultiTapeTM 2 Bool SP) (z : List Bool) (j : Fin 2) :
+   +theorem nf_setup {SP : Type} (P : MultiTapeTM 2 Bool SP) (z : List Bool) (j : Fin 2) :
+nf_sweep_run (34 lines) vs rv_sweep0 (29 lines), renamed ['rv_sweep0=nf_sweep_run', 'scanFold δ=scanFold (nf_sweepStep N)', 'fwd a₀=fwd (nf_sweepInit N)', 'foldl δ a₀=foldl (nf_sweepStep N) (nf_sweepInit N)', 'scanKeep a₀=scanKeep (nf_sweepInit N)']: identical=False
+   --- rv_sweep0
+   +++ nf_sweep_run
+   @@ -1,3 +1,5 @@
+   -theorem nf_sweep_run {A : Type} (δ : A → Bool → A) (a₀ : A) (x s : List Bool) :
+   -    (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)).runFrom (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s)
+   -        (2 * s.length + 2) = streamStartCfg x 0 (ScanPhase.done (s.foldl (nf_sweepStep N) (nf_sweepInit N))) s ∧
+   +theorem nf_sweep_run (N : FinNDTM Bool) (x s : List Bool) :
+   +    (scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)).runFrom
+   +        (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s)
+   +        (2 * s.length + 2) =
+   +      streamStartCfg x 0 (ScanPhase.done (s.foldl (nf_sweepStep N) (nf_sweepInit N))) s ∧
+   @@ -6 +8,2 @@
+   -          (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s) t).state ≠ some (ScanPhase.done a) := by
+   +          (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s) t).state ≠
+   +            some (ScanPhase.done a) := by
+   @@ -13 +16,2 @@
+   -  obtain ⟨h1, h2, -⟩ := scanTM_run_ofCfg (k := 2) (0 : Fin 2) (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N) s
+   +  obtain ⟨h1, h2, -⟩ := scanTM_run_ofCfg (k := 2) (0 : Fin 2)
+   +    (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N) s
+   @@ -23 +27,2 @@
+   -        then FinTM.bufferTape s (q - (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s).workTapePos j)
+   +        then FinTM.bufferTape s
+   +          (q - (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s).workTapePos j)

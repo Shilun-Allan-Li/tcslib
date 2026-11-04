@@ -1,0 +1,20 @@
+base: docstring lines 45-77, code lines 78-84
+head: docstring lines 709-741, code lines 742-748
+code (statement + body) byte-identical: True
+   | theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
+   |     ∃ (M : CodeNDTM) (C : ℕ),
+   |       (∀ (x : List Bool) (t : ℕ),
+   |         N.AcceptsWithin x t → M.toFinNDTM.AcceptsWithin x (C * (t + 1))) ∧
+   |       (∀ (x : List Bool) (t : ℕ),
+   |         M.toFinNDTM.AcceptsWithin x t → ∃ t', N.AcceptsWithin x t') := by
+   |   sorry
+## docstring diff
+--- base
++++ head
+@@ -2 +2 @@
+-cited through [AB09, §3.2]; spec, fill pending — phase P3.3): every
++cited through [AB09, §3.2]; statement; proof incomplete): every
+@@ -22 +22 @@
+-guess and the input sweep remain (round-1 finding 6).
++guess and the input sweep remain.
+## module docstring and other region diff

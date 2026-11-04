@@ -1,0 +1,70 @@
+@clockCfg_state : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x) (ct : ℤ → Option Γ) (cp : ℤ),
+  (clockCfg q c ct cp).state = q
+@clockCfg_inputPos : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x) (ct : ℤ → Option Γ)
+  (cp : ℤ), (clockCfg q c ct cp).inputPos = c.inputPos
+@clockCfg_workTapes : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x) (ct : ℤ → Option Γ)
+  (cp : ℤ) (i : Fin (k + 1)) (a : ℤ),
+  (clockCfg q c ct cp).workTapes i a = Fin.lastCases (motive := fun x => ℤ → Option Γ) ct c.workTapes i a
+@clockCfg_workTapePos : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x) (ct : ℤ → Option Γ)
+  (cp : ℤ) (i : Fin (k + 1)), (clockCfg q c ct cp).workTapePos i = Fin.lastCases cp c.workTapePos i
+@clockCfg_output : ∀ {k : ℕ} {Γ S Q : Type} {x : List Γ} (q : Option Q) (c : Cfg k Γ S x) (ct : ℤ → Option Γ) (cp : ℤ),
+  (clockCfg q c ct cp).output = c.output
+@wordPatch_of_mem : ∀ {Γ : Type u_1} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ},
+  cp ≤ q → q < cp + ↑u.length → wordPatch ct cp u q = bufferTape u (q - cp)
+@wordPatch_of_not_mem : ∀ {Γ : Type u_1} (ct : ℤ → Option Γ) (cp : ℤ) (u : List Γ) {q : ℤ},
+  ¬(cp ≤ q ∧ q < cp + ↑u.length) → wordPatch ct cp u q = ct q
+@wordPatch_append : ∀ {Γ : Type u_1} (ct : ℤ → Option Γ) (cp : ℤ) (u v : List Γ),
+  wordPatch (wordPatch ct cp u) (cp + ↑u.length) v = wordPatch ct cp (u ++ v)
+@counter_cfg_eq : ∀ {k : ℕ} {S : Type} {x : List Bool} (q : Option (CounterLoopState S)) (c : Cfg k Bool S x)
+  (ct : ℤ → Option Bool) (cp : ℤ),
+  counterLoopCfg q c ct cp =
+    { state := q, inputPos := c.inputPos,
+      workTapes := fun i => Fin.lastCases (motive := fun x => ℤ → Option Bool) ct c.workTapes i,
+      workTapePos := fun i => Fin.lastCases cp c.workTapePos i, output := c.output }
+@phaseHostTM_q₀ : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i)
+  (red : (i : I) → Ph i → Option ((i : I) × Ph i)), (phaseHostTM M q0 red).q₀ = q0
+@initCfg_ofWords : ∀ {k : ℕ} {State : Type u_1} (tm : MultiTapeTM k Bool State) (x : List Bool),
+  initCfg x = Cfg.ofWords tm.q₀ fun x => []
+@vhostSilentCfg_eq : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+  (capPre out₀ : List Bool),
+  vhostSilentCfg c b p capPre out₀ =
+    embedSilentCfg (Fin.castAddEmb 1) (vhostCap m) (fun x x_1 => none) (fun x => 0) capPre out₀ (vhostCfg c b p [])
+vhostBuffer_eq : ∀ (m : ℕ), vhostBuffer m = Fin.castAdd m 0
+@vhostBank_eq : ∀ {m : ℕ} (i : Fin m), vhostBank i = Fin.natAdd 1 i
+vhostCap_eq : ∀ (m : ℕ), vhostCap m = Fin.natAdd (1 + m) 0
+@embedSilentCfg_cap : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x),
+      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes cap = bufferTape (pre ++ c.output) ∧
+        (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos cap = ↑(pre ++ c.output).length
+@embedSilentCfg_selected_pos : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x)
+  (i : Fin m), (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos (ι i) = c.workTapePos i
+@embedSilentCfg_selected_tape : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x)
+  (i : Fin m), (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes (ι i) = c.workTapes i
+@embedSilentCfg_unselected : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x),
+  ∀ j ∉ Set.range ⇑ι,
+    j ≠ cap →
+      (embedSilentCfg ι cap tapes heads pre out₀ c).workTapes j = tapes j ∧
+        (embedSilentCfg ι cap tapes heads pre out₀ c).workTapePos j = heads j
+'Turing.clockCfg_state' depends on axioms: [propext, Quot.sound]
+'Turing.clockCfg_inputPos' depends on axioms: [propext, Quot.sound]
+'Turing.clockCfg_workTapes' depends on axioms: [propext, Quot.sound]
+'Turing.clockCfg_workTapePos' depends on axioms: [propext, Quot.sound]
+'Turing.clockCfg_output' depends on axioms: [propext, Quot.sound]
+'Turing.wordPatch_of_mem' depends on axioms: [propext]
+'Turing.wordPatch_of_not_mem' depends on axioms: [propext]
+'Turing.wordPatch_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counter_cfg_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.phaseHostTM_q₀' does not depend on any axioms
+'Turing.initCfg_ofWords' depends on axioms: [propext, Quot.sound]
+'Turing.vhostSilentCfg_eq' depends on axioms: [propext, Quot.sound]
+'Turing.vhostBuffer_eq' depends on axioms: [propext]
+'Turing.vhostBank_eq' does not depend on any axioms
+'Turing.vhostCap_eq' depends on axioms: [propext]
+'Turing.embedSilentCfg_cap' depends on axioms: [propext, Quot.sound]
+'Turing.embedSilentCfg_selected_pos' depends on axioms: [propext, Quot.sound]
+'Turing.embedSilentCfg_selected_tape' depends on axioms: [propext, Quot.sound]
+'Turing.embedSilentCfg_unselected' depends on axioms: [propext, Quot.sound]

@@ -1,0 +1,17 @@
+# git apply checks of suggested-fix.diff (from each tree's root: git apply -p2 --directory=campaign/fills/eq/drafts)
+# r615 = the draft at 615e56b4 (SHA-256 ae31d4fa...); rae0 = its revision at ae0011e5 (screen-base line filled)
+r615: check OK
+r615: applied
+rae0: check OK
+rae0: applied
+r615 result == edited/ (byte-identical)
+# rae0 result vs edited/ (expected: only the screen-base line)
+387,389c387
+< **The base** is `campaign/fills/eq/logs/eq-fill-diagonalizer-screen-base.txt`: 2,241 declarations,
+< 2,439 pairs, 858,015 characters reproduced; your file is in 133 pairs, all E-Q's (ledger RO-1, NB-1,
+< QF-1); 1,651 s, peak 3.27 GB on the maintainer's host. A pair at 90%
+---
+> **The base** is `campaign/fills/eq/logs/eq-fill-diagonalizer-screen-base.txt`: ⟨…⟩. A pair at 90%
+ae31d4fa4d9f3093bea31ed5ad12eec53b7c6cd9dd227f5a0b705ca35c5550b8  orig/eq-fill-diagonalizer.DRAFT.md
+607e741fbfedeab51c54daaae700d7ddc166e84c30aecb8ebf376cf75fc59d03  edited/eq-fill-diagonalizer.DRAFT.md
+8c82896edfd011d97ed15d6eefb772e1d00e5f8b5745edf1677a80a8cb2e9a0e  suggested-fix.diff

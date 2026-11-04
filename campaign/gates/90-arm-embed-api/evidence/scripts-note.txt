@@ -1,0 +1,64 @@
+How the evidence was produced (maintainer, 2026-11-04).
+
+The PR: #182 on `lean/arm-embed`. Its one Lean commit is `024e19bf` (`patches/`), on the campaign
+commit `ccee2258` (whose Lean is `711f5444`'s, the campaign after #176). The head `8fd6f91a` merges
+the campaign's later records commit `5d2a16e6` and changes no Lean.
+
+Elaboration chain (`elab-chain/`). The five changed files, in dependency order (`Machines/Program`,
+`Machines/ARM`, `Machines/ARMProof`, `Machines/ARMLoops`, `SavitchARM/Machine`), were compiled with
+`lean -o` into an APFS copy-on-write clone of `oleans-leqc3` (`cp -cR`), so later files load the
+new `.olean`s of earlier ones. The tool is `scripts/leanelab-o.sh`: `tools/leanelab.sh` (the two-slot
+throttle, `-j4`, `nice -n 10`) with an `-o` output into the clone. Against the same clone:
+`CircuitComplexity/LogspaceUniformScan` (which opens `Complexity.LogProg` and declares its own
+`BoolCircuit.AdjScan.astep_jeqFst`) and the consumer probe `rule10/EmbedFit`. All seven outputs are
+empty (0 diagnostics). This is a pre-replay check; `replay-larm` (138 modules, fresh `.olean`s,
+the static sorry check) is the merge evidence.
+
+Rule 10 (`rule10/`). `scripts/mkseal_arm.py <worktree> <outdir>` writes the four sealed copies and
+the two control files. The control header (`scripts/ctl_header.lean.part.txt`, E-Q cont1's review's
+`#ctl_rfl`, `#ctl_eqn`, `#ctl_simp`) is read from `SavProbe/ctl_header.lean.part` in the worktree.
+Each sealed copy is the head file with its new declarations moved to the file's end, inside a
+section that makes every other-file TCSlib definition they could reach locally irreducible and
+erases `Action.apply`, `Cfg.init` and `MultiTapeTM.initCfg`. `NDTM.initCfg` is outside these files'
+closures; naming it is an error, which is how the first run's seal lines failed.
+- `ARMSealed`: the 14 step equations with `callSegs`, `vword`, `argSegs`, `Mode.seg0`, `ValidPlain`
+  and `ValidPair` sealed. Their proofs unfold `astep` only, which is this file's own definition.
+- `ARMProofSealed`: the embedding section with `astep`, `arun`, `callSegs`, `vword`, `argSegs`,
+  `Mode.seg0`, `ValidPlain`, `ValidPair`, `plainWord` and `pairWords` sealed. The proofs read `astep`
+  through the step equations, `arun` through `arun_zero`/`ARMRun`'s `arun_succ` and `arun_halted`,
+  and `callSegs` through `callSegs_congr`.
+- `ARMLoopsSealed`: `AHalt.embed_guardLe` with `AHalt`, `AReach`, `PreS`, `Ins.embed`, `astep` and
+  `arun` sealed. The first run failed here, at `RegExt`'s `.1`/`.2`: `RegExt` was a `def` (an `∧`).
+  It became a `structure` with fields `reg`, `ext`, and the head is that version. A structure
+  cannot be sealed, and its fields are its published access.
+- `MachineSealed`: `A_noVal` with `astep`, `arun`, `AHalt`, `AReach`, `PreS` and `Ins.embed` sealed.
+  It unfolds only `A` and its sub-tables (this file's).
+- `SealControl_{unsealed,sealed}`: a delta control for each of the 15 sealed definitions (the
+  union) and an equation control for the recursive `vword` and `argSegs`. Unsealed, 14 of 16 pass:
+  the two recursive delta goals fail and their equation controls pass. Sealed, all 16 fail.
+- `EmbedFit`: a consumer at the head, sealed (`astep`, `arun`, `AHalt`, `AReach`, `PreS`,
+  `Ins.embed`, `SavitchARM.A`, `outerSt`, `setSt`). It defines a host holding `SavitchARM.A E` as a
+  block, decider `2` rerouted to `4`, and transports `outerU_run` with `AHalt.embed_guardLe` and
+  `A_noVal` alone.
+
+Census (`census/`). A `run_cmd` probe per changed module lists its non-private constants, compiler
+auxiliaries included. It runs against `oleans-leqc3` (base) and the clone (head). `NewAx` prints the
+axioms of the 24 new declarations other than the structure `RegExt` (25 in all).
+
+API copies (`api-copy-search.txt`, `scripts/api_copy_search.sh`). This is a `git grep` of every origin
+ref for a declaration of each new name (bare `embed` and `update` included, so unrelated
+declarations match too).
+
+Lint (`lint/`). `scripts/campaign_style_lint.py TCSlib/Complexity/SpaceComplexity` and
+`scripts/style_lint.py` on the five files, at the base (a `git archive` export of `ccee2258`) and at
+`024e19bf`.
+
+Screen (`screen/`). `scripts/copy-text-screen-v3.py` over the 13-file population at the base export
+and the head, one at a time under the screen lock, using `scripts/screen_run.sh`. `pairdiff.txt` is
+`devtools/seyoon/pairdiff.py`.
+
+Replay (`merged-tree/`). `fills/replay/mk-next.sh larm wt-sav lean/arm-embed 711f5444…
+oleans-leqc3 replay-leqc3.log oleans-larm "the campaign tip after #176" "#182" 5` merged the campaign
+into the branch (`8fd6f91a`), pushed it, and wrote `replay-larm.sh` and `precheck-larm.sh`
+(precheck passed). The replay covers 138 modules, the five files' downstream closure, built from
+`oleans-leqc3` with the five blobs pinned.

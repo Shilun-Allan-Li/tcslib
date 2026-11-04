@@ -35,6 +35,8 @@ None — this module only proves theorems about existing definitions.
   tests.
 * `Complexity.lenEq_mem_P`, `lenLe_mem_P`, `lenEq_preimage_mem_P`, `lenLe_preimage_mem_P`
   — length comparisons are in `P`.
+* `Complexity.preimage_mem_NP` — `NP` is closed under polynomial-time preimages, so under
+  Karp reductions.
 * `Complexity.mem_P_of_blockAny`, `Complexity.mem_P_of_blockMajority`,
   `Complexity.mem_P_of_blockXorAny` — `P` is closed under running a `P`-decider on
   polynomially many polynomial-length blocks of the input and aggregating the answers
@@ -194,6 +196,58 @@ theorem lenLe_preimage_mem_P {f g : List Bool → List Bool} (hf : PolyTimeCompu
     (hg : PolyTimeComputable g) : {z | (g z).length ≤ (f z).length} ∈ P := by
   have h := preimage_mem_P lenLe_mem_P (hf.pairEncode hg)
   simpa using h
+
+/-! ### `NP` under preimages -/
+
+/-- **`NP` is closed under polynomial-time preimages** [AB09, §2.2]: if `L' ∈ NP` and `f` is
+polynomial-time computable, then `f ⁻¹' L' ∈ NP`. With `L ≤ₚ L'` by `f`, `L = f ⁻¹' L'`, so `NP` is
+closed downward under Karp reductions.
+
+**Proof sketch.** Read `L'` in the bounded-certificate form
+(`Complexity.mem_NP_iff_exists_length_le`): a verifier `V ∈ P` and the bound `C (|y| + 1) ^ c`.
+With `|f x| ≤ A (|x| + 1) ^ d` (`Complexity.PolyTimeComputable.output_length_le`), the verifier
+for the preimage accepts `⟨x, u⟩` exactly when `|u| ≤ C (|f x| + 1) ^ c` and `⟨f x, u⟩ ∈ V`: the
+intersection (`Complexity.inter_mem_P`) of a length test against the unary word
+`1 ^ (C (|f x| + 1) ^ c)` (`Complexity.lenLe_preimage_mem_P`) and the preimage of `V` under a
+polynomial-time pair map (`Complexity.preimage_mem_P`). Its certificates are those of `f x`, so
+they are bounded by `C (A + 1) ^ c (|x| + 1) ^ (d c)`, since `|f x| + 1 ≤ (A + 1) (|x| + 1) ^ d`;
+the length test keeps a longer certificate from being accepted. -/
+theorem preimage_mem_NP {L' : Language Bool} {f : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (h' : L' ∈ NP) : f ⁻¹' L' ∈ NP := by
+  obtain ⟨C, c, V, hV, hL'⟩ := mem_NP_iff_exists_length_le.mp h'
+  obtain ⟨A, d, hA⟩ := hf.output_length_le
+  have hF : PolyTimeComputable (fun z => f (pairFstD z)) := hf.comp polyTimeComputable_pairFstD
+  have hB : PolyTimeComputable
+      (fun z => List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true) :=
+    (polyTimeComputable_polyUnary C c).comp hF
+  have hG : PolyTimeComputable (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) :=
+    hF.pairEncode polyTimeComputable_pairSndD
+  have hW := inter_mem_P (lenLe_preimage_mem_P hB polyTimeComputable_pairSndD)
+    (preimage_mem_P hV hG)
+  refine mem_NP_iff_exists_length_le.mpr ⟨C * (A + 1) ^ c, d * c, _, hW, fun x => ?_⟩
+  have hmem : ∀ u : List Bool, pairEncode x u ∈
+      {z | z ∈ {z | (pairSndD z).length ≤
+          (List.replicate (C * ((f (pairFstD z)).length + 1) ^ c) true).length} ∧
+        z ∈ (fun z => pairEncode (f (pairFstD z)) (pairSndD z)) ⁻¹' V} ↔
+      u.length ≤ C * ((f x).length + 1) ^ c ∧ pairEncode (f x) u ∈ V := by
+    intro u
+    simp only [Set.mem_setOf_eq, Set.mem_preimage, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate]
+  have hbound : C * ((f x).length + 1) ^ c ≤ C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+    have h1 : (f x).length + 1 ≤ (A + 1) * (x.length + 1) ^ d := by
+      have hpos : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow _ _ (Nat.succ_pos _)
+      have := hA x
+      nlinarith
+    calc C * ((f x).length + 1) ^ c ≤ C * ((A + 1) * (x.length + 1) ^ d) ^ c :=
+          Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 c)
+      _ = C * (A + 1) ^ c * (x.length + 1) ^ (d * c) := by
+          rw [mul_pow, pow_mul, Nat.mul_assoc]
+  rw [Set.mem_preimage, hL' (f x)]
+  constructor
+  · rintro ⟨u, hu, hVu⟩
+    exact ⟨u, hu.trans hbound, (hmem u).mpr ⟨hu, hVu⟩⟩
+  · rintro ⟨u, -, hu⟩
+    exact ⟨u, ((hmem u).mp hu).1, ((hmem u).mp hu).2⟩
 
 /-! ### Block-query closure
 

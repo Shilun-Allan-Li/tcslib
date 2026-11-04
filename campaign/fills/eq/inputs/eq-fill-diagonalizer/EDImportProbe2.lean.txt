@@ -1,0 +1,51 @@
+/-
+The import probe's supplement for the fill E-D (the brief review's edits): the layout and field
+readings the brief cites that neither `EDImportProbe.lean.txt` nor the review probe
+`RVRouteRows.lean.txt` checks. Each `#check` prints the name's statement, each `#print axioms` its
+axioms. A probe record, not library code.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+open Turing Turing.FinTM Turing.MultiTapeTM Complexity
+
+#check @clockCfg_state
+#check @clockCfg_inputPos
+#check @clockCfg_workTapes
+#check @clockCfg_workTapePos
+#check @clockCfg_output
+#check @wordPatch_of_mem
+#check @wordPatch_of_not_mem
+#check @wordPatch_append
+#check @counter_cfg_eq
+#check @phaseHostTM_q₀
+#check @initCfg_ofWords
+#check @vhostSilentCfg_eq
+#check @vhostBuffer_eq
+#check @vhostBank_eq
+#check @vhostCap_eq
+#check @embedSilentCfg_cap
+#check @embedSilentCfg_selected_pos
+#check @embedSilentCfg_selected_tape
+#check @embedSilentCfg_unselected
+#print axioms clockCfg_state
+#print axioms clockCfg_inputPos
+#print axioms clockCfg_workTapes
+#print axioms clockCfg_workTapePos
+#print axioms clockCfg_output
+#print axioms wordPatch_of_mem
+#print axioms wordPatch_of_not_mem
+#print axioms wordPatch_append
+#print axioms counter_cfg_eq
+#print axioms phaseHostTM_q₀
+#print axioms initCfg_ofWords
+#print axioms vhostSilentCfg_eq
+#print axioms vhostBuffer_eq
+#print axioms vhostBank_eq
+#print axioms vhostCap_eq
+#print axioms embedSilentCfg_cap
+#print axioms embedSilentCfg_selected_pos
+#print axioms embedSilentCfg_selected_tape
+#print axioms embedSilentCfg_unselected
