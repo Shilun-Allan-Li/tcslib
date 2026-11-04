@@ -30,7 +30,7 @@ pinning the four blobs; precheck passed. **Passed** (user, 2026-11-04): 137 of 1
 
 **Round 2 staged (2026-11-04):** `pack-r2.md`, at #181's head `5de52d9a` (the fix `1d1247a3`). Bundle
 SHA-256 `88447a4c6de8012e3ed0c5eecddff6fd23c391c727af5bd730257b93b81397e6` (114 sections), the
-records at `a47a9a90`.
+records at `a47a9a90`. **Dispatched (user, 2026-11-04).**
 - **The screen:** 15 files, base a `git archive` export of `711f5444`. 87 → 87 declarations,
   23 → 23 pairs, none new or gone.
 - **The replay:** `replay-lsm2` is written (137 modules from `oleans-leqc3`, six blobs pinned,
