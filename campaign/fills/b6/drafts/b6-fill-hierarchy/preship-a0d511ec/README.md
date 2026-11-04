@@ -16,7 +16,7 @@ merges first. **Snapshot:** `oleans-lnpc3` (`replay-lnpc3`, passed). Lean throug
 | Duplication probe (6 `exact?`) | none closes, from the four-import overlay; in particular `logSpace n ≤ n + 1` and `LOGSPACE ⊆ PSPACE` are not in reach (below) | `HDupProbe.*` |
 | Order list | **218 modules**, **63 roots**, **26 sorried declarations in 10 modules** (`Hierarchy`'s four, `Savitch`'s `savitch`, and the inherited twenty-one) | `order.txt`, `roots.txt`, `base-sorries.txt` |
 | Lint | `SpaceComplexity` 0 FAIL, 83 WARN over 110 files; `Hierarchy` 321 lines, 4 public, 0 private; the policy linter: `Hierarchy`'s module docstring lacks `## Main definitions` (the base's) | `lint-base-SpaceComplexity.txt`, `style-lint-base.txt` |
-| Screen base | 27 files (`screen-population.txt`) | queued behind E-D's screen |
+| Screen base | 27 files (`screen-population.txt`), at the overlay commit `45a46c93`, clean | 1,338 declarations, 740 pairs, 207,465 characters; `Hierarchy` in no pair; 766 s, 1.71 GB. **To re-take at H's issue:** the API PR moving the `ARMWidth` space facts changes `Basic`, `SpaceClasses` and `Constructible`, three population files |
 
 **An open choice (for the user).** `hr_logspace_ssubset` proves `logSpace n ≤ n + 1` inline
 (`logSpace_eq`, `Nat.log_le_self`): the statement of `Machines/ARMWidth`'s public
@@ -27,3 +27,9 @@ and its closure (42 modules) adds no module to that list and makes no cycle; onl
 elaborates with exactly the four sorries (`HierarchyOverlay5.*`), and the import probe with it
 resolves `logSpace_le_succ` and `LOGSPACE_subset_PSPACE` (70 checks, 0 errors, `HImportProbe5.*`).
 With it the fill cites `LOGSPACE_subset_PSPACE` and adds no LS-1 member.
+
+**Ruled (user, 2026-11-04), superseding the open choice:** no fifth import. An API PR first moves
+`logSpace_le_succ` and `logSpace_le_of_le_mul_two_pow` to `SpaceComplexity/Basic`, and
+`LOGSPACE_subset_PSPACE` and `SPACE_succ_pow_subset_PSPACE` to `SpaceClasses` (all four out of
+`Machines/ARMWidth`), and re-points `Constructible`'s two inline steps; H then cites them from its
+four-import overlay. H issues after that PR merges, with the pre-ship re-taken.
