@@ -16,4 +16,4 @@ replay) at the issue. Lean through `tools/leanelab.sh`, one at a time.
 | dup | `EDDupProbe.lean.txt` (9 `exact?`) | closes 2: `length_bits_le_self`, `counterValue_bits`; 7 errors by design (exit 1) |
 | order | `fillinputs.py` at the local overlay commit `dcd8cb87` | 84 modules, 34 roots, 19 sorried declarations in 9 modules |
 | lint | `lint-base-Diagonalization.txt`, `style-lint-base.txt` | `Diagonalization` 0 FAIL, 3 WARN over 5 files; `style_lint` on the file: its size only |
-| screen | `screen-population.txt` (38 files) | running |
+| screen | `screen-population.txt` (38 files), at the overlay commit `dcd8cb87`, clean | 2,241 declarations, 2,439 pairs, 858,015 characters; `NTimeDiagonalizer` in 133 pairs; 1,651 s, 3.27 GB (`../screen-base.txt`) |

@@ -286,7 +286,9 @@ semantic search for every new private (in the tree, on every open PR branch, by 
 and by an `exact?` or `apply?` probe), listed per private in `REPORT.md`. **The population** is
 38 files (`screen-population.txt`): your file; the files the route cites; the known hazards
 (`NTimeHierarchy`, `ExhaustiveReplay`, `NDCodeSimulator`, `CodeSimulator`, `Build/SeamLayout`).
-**The base** is `campaign/fills/eq/logs/eq-fill-diagonalizer-screen-base.txt`: ⟨…⟩. A pair at 90%
+**The base** is `campaign/fills/eq/logs/eq-fill-diagonalizer-screen-base.txt`: 2,241 declarations,
+2,439 pairs, 858,015 characters reproduced; your file is in 133 pairs, all E-Q's (ledger RO-1, NB-1,
+QF-1); 1,651 s, peak 3.27 GB on the maintainer's host. A pair at 90%
 or more is a copy; every new pair gets one disposition (idiom; re-derivation of a published lemma:
 cite it instead; of another file's private: keep yours and request a promotion), and `REPORT.md`
 carries "new copies: none" or lists each pair. **Known hazards:** `NTimeHierarchy`'s guess-then-run
