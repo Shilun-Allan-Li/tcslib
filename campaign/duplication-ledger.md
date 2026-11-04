@@ -804,7 +804,10 @@ the reject branch). The four languages `validLang`, `initLang`, `acceptLang` and
 (Hydroxyi's) already formed 31 copy pairs at the base. The edge-mode PR adds `edgeLang`,
 `mem_edgeLang`, `edgeLang_iff` and `edgeLang_mem`, 25 more pairs. About 25 lines of shared text
 are the decoding proofs and the wrapper's skeleton. The edge mode's own correctness proof
-(`edge_round`, `edge_loop`, `edge_tail`) is in no pair. The one-fifth rule is not in question.
+(`edge_round`, `edge_loop`, `edge_tail`) is in no pair. **Census** (gate 91, minor 3; members of the
+family over all declarations, private included): `Langs` 8/9 → 10/12, `Checks` 4/26 → 5/31,
+`Deciders` 3/16 → 4/22. `Langs` was already above one fifth at the base, from the four existing
+languages; the acceptance above covers it. The edge member crosses no new file's threshold.
 **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
 lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
 with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface

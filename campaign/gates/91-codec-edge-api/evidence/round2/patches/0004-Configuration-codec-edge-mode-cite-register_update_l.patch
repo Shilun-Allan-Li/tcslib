@@ -1,0 +1,272 @@
+From b360808c150fbab8ddd4fd1888e8bffaf75fa3a6 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 15:47:51 -0800
+Subject: [PATCH] Configuration codec, edge mode: cite register_update_le; read
+ W through W_eq; state each site equation
+
+The private upd_le re-proved LogProg.register_update_le; its uses now cite it. The new
+match arms and site equations prove 0 < W through W_eq instead of unfolding W. Each new site
+equation's docstring states its register, factor, count or exit; the Checks introduction
+names the fifth language and its check.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../SpaceComplexity/Codec/Checks.lean         |  6 +-
+ .../SpaceComplexity/Codec/Deciders.lean       | 34 +++++------
+ .../SpaceComplexity/Codec/Machine.lean        | 59 ++++++++++---------
+ 3 files changed, 48 insertions(+), 51 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
+index afe6d8b6..0cc44cc3 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Checks.lean
+@@ -12,7 +12,7 @@ set_option autoImplicit false
+ /-!
+ # The word-level checks of the code languages
+ 
+-What the logspace deciders of the four code languages actually test, as predicates on the
++What the logspace deciders of the five code languages actually test, as predicates on the
+ code words: the validity test `Complexity.Codec.ValidChk` of
+ `TCSlib.Complexity.SpaceComplexity.Codec.Valid`, plus
+ 
+@@ -21,7 +21,9 @@ code words: the validity test `Complexity.Codec.ValidChk` of
+ * for an accepting code: header `(halted, accept)`;
+ * for a step: the second word has the right length and final letter, and for one of the two
+   choice bits its input position is the moved one and the sliding check of the two chunk
+-  regions accepts under the local rule of that bit's action.
++  regions accepts under the local rule of that bit's action;
++* for an edge code: the head flag of some tape is set in the first or the last cell
++  (`Complexity.Codec.EdgeChk`).
+ 
+ Each check recognizes exactly the code words of the corresponding configurations, and so
+ decides membership in the code languages on well-shaped inputs.
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+index 5e25f1fe..7e1d6fd2 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Deciders.lean
+@@ -424,14 +424,6 @@ step equations of `astep` and the published loop runs, without unfolding `CA` or
+ 
+ section Edge
+ 
+-/-- A register update keeps a valuation below a bound when the new value is below it. -/
+-private lemma upd_le {v : Fin 21 → ℕ} {B : ℕ} (hv : ∀ r, v r ≤ B) (i : Fin 21) {n : ℕ}
+-    (hn : n ≤ B) : ∀ r, Function.update v i n r ≤ B := by
+-  intro r
+-  by_cases h : r = i
+-  · subst h; rw [Function.update_self]; exact hn
+-  · rw [Function.update_of_ne h]; exact hv r
+-
+ variable (N) in
+ /-- The syntactic preconditions an instruction of the edge tail meets: distinct registers in an
+ equality test, distinct call arguments, and no input comparison. -/
+@@ -494,13 +486,13 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
+     fun h => Reach.single' hg1 (by rw [e1, if_neg h])
+   -- the address of the flag in the last cell: `Q1 := U + 4W · s`
+   set v1 := Function.update v rQ1 0 with hv1
+-  have hv1B : ∀ r, v1 r ≤ B := upd_le hv rQ1 (Nat.zero_le _)
++  have hv1B : ∀ r, v1 r ≤ B := register_update_le _ rQ1 _ _ hv (Nat.zero_le _)
+   have r2 : Reach N .edge y B .eFar v (.cp .Qe) v1 :=
+     Reach.single' (edge_gd hv (CA_eFar .edge) trivial) (astep_clr (CA_eFar .edge))
+   have h1U : v1 rU = v rU := by rw [hv1, Function.update_of_ne (by decide)]
+   have h1Q : v1 rQ1 = 0 := by rw [hv1, Function.update_self]
+   set v2 := Function.update v1 rQ1 (v rU) with hv2
+-  have hv2B : ∀ r, v2 r ≤ B := upd_le hv1B rQ1 (hv rU)
++  have hv2B : ∀ r, v2 r ≤ B := register_update_le _ rQ1 _ _ hv1B (hv rU)
+   have r3 : Reach N .edge y B (.cp .Qe) v1 (.cp .Te) v2 := by
+     have h := cp_run (N := N) (mode := .edge) y B .Qe v1 hv1B
+       (by rw [cpDst_Qe, cpSrc_Qe, h1Q]; exact Nat.zero_le _)
+@@ -510,7 +502,7 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
+   have h2S : v2 rS = s := by
+     rw [hv2, Function.update_of_ne (by decide), hv1, Function.update_of_ne (by decide), hS]
+   set v3 := Function.update v2 rT s with hv3
+-  have hv3B : ∀ r, v3 r ≤ B := upd_le hv2B rT hsB
++  have hv3B : ∀ r, v3 r ≤ B := register_update_le _ rT _ _ hv2B hsB
+   have r4 : Reach N .edge y B (.cp .Te) v2 (.sc .Ee) v3 := by
+     have h := cp_run (N := N) (mode := .edge) y B .Te v2 hv2B
+       (by rw [cpDst_Te, cpSrc_Te, h2T]; exact Nat.zero_le _)
+@@ -522,7 +514,8 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
+     have : 4 * W N * s = 2 * (W N * (2 * s)) := by ring
+     omega
+   set v4 := Function.update (Function.update v3 rT 0) rQ1 (v rU + 4 * W N * s) with hv4
+-  have hv4B : ∀ r, v4 r ≤ B := upd_le (upd_le hv3B rT (Nat.zero_le _)) rQ1 hfar
++  have hv4B : ∀ r, v4 r ≤ B :=
++    register_update_le _ rQ1 _ _ (register_update_le _ rT _ _ hv3B (Nat.zero_le _)) hfar
+   have r5 : Reach N .edge y B (.sc .Ee) v3 .eRd2 v4 := by
+     have h := sc_run (N := N) (mode := .edge) y B .Ee v3 hv3B
+       (by rw [scDst_Ee, scSrc_Ee, scFactor_Ee, h3Q, h3T]; exact hfar)
+@@ -543,7 +536,8 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
+     edge_gd hv4B (CA_eRd2 .edge) (by simp [EdgeOK])
+   -- count the tape down
+   set v5 := Function.update v4 rQ3 (v4 rQ3 - 1) with hv5
+-  have hv5B : ∀ r, v5 r ≤ B := upd_le hv4B rQ3 (le_trans (Nat.sub_le _ _) (hv4B rQ3))
++  have hv5B : ∀ r, v5 r ≤ B :=
++    register_update_le _ rQ3 _ _ hv4B (le_trans (Nat.sub_le _ _) (hv4B rQ3))
+   have r6 : Reach N .edge y B .eNext v4 .eTest v5 :=
+     Reach.single' (edge_gd hv4B (CA_eNext .edge) trivial) (astep_dec (CA_eNext .edge))
+   constructor
+@@ -622,14 +616,14 @@ theorem edge_loop (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w re
+       have hWs : W N ≤ W N * (2 * s + 1) := Nat.le_mul_of_pos_right _ (by omega)
+       have hU6 : v' rU + 6 ≤ B := by omega
+       set v6 := Function.update v' rU (v' rU + 3) with hv6
+-      have hv6B : ∀ r, v6 r ≤ B := upd_le hv'B rU (by omega)
++      have hv6B : ∀ r, v6 r ≤ B := register_update_le _ rU _ _ hv'B (by omega)
+       have r8 : Reach N .edge y B (icL N .S1 0) v' (icL N .S2 0) v6 := by
+         have h := ic_run (N := N) (mode := .edge) y B .S1 v' hv'B
+           (by rw [icReg_S1, icCount_S1]; omega)
+         rwa [icNext_S1, icReg_S1, icCount_S1, ← icL_zero] at h
+       have h6U : v6 rU = v' rU + 3 := by rw [hv6, Function.update_self]
+       set v7 := Function.update v6 rU (v6 rU + 3) with hv7
+-      have hv7B : ∀ r, v7 r ≤ B := upd_le hv6B rU (by omega)
++      have hv7B : ∀ r, v7 r ≤ B := register_update_le _ rU _ _ hv6B (by omega)
+       have r9 : Reach N .edge y B (icL N .S2 0) v6 .eRd1 v7 := by
+         have h := ic_run (N := N) (mode := .edge) y B .S2 v6 hv6B
+           (by rw [icReg_S2, icCount_S2]; omega)
+@@ -707,13 +701,13 @@ theorem edge_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+       (edge_gd hv0 (CA_eStart_of_zero .edge hk) trivial))
+   -- the address of tape `0`'s flag in the first cell, and the tape counter
+   set v1 := Function.update R.val rU 0 with hv1
+-  have hv1B : ∀ r, v1 r ≤ B := upd_le hv0 rU (Nat.zero_le _)
++  have hv1B : ∀ r, v1 r ≤ B := register_update_le _ rU _ _ hv0 (Nat.zero_le _)
+   have r1 : Reach N .edge y B .eStart R.val (.cp .Ue) v1 :=
+     Reach.single' (edge_gd hv0 (CA_eStart_of_pos .edge hk) trivial)
+       (astep_clr (CA_eStart_of_pos .edge hk))
+   have h1A : v1 rA = R.A := by rw [hv1, Function.update_of_ne (by decide), Regs.val_A]
+   set v2 := Function.update v1 rU R.A with hv2
+-  have hv2B : ∀ r, v2 r ≤ B := upd_le hv1B rU (by rw [hA]; omega)
++  have hv2B : ∀ r, v2 r ≤ B := register_update_le _ rU _ _ hv1B (by rw [hA]; omega)
+   have r2 : Reach N .edge y B (.cp .Ue) v1 (icL N .Eh 0) v2 := by
+     have h := cp_run (N := N) (mode := .edge) y B .Ue v1 hv1B
+       (by rw [cpDst_Ue, cpSrc_Ue, hv1, Function.update_self]; exact Nat.zero_le _)
+@@ -722,20 +716,20 @@ theorem edge_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w
+   have hW0 : hH N + 2 < W N := by rw [W_eq]; omega
+   have hWs : W N ≤ W N * (2 * s + 1) := Nat.le_mul_of_pos_right _ (by omega)
+   set v3 := Function.update v2 rU (R.A + 2 * (hH N + 2)) with hv3
+-  have hv3B : ∀ r, v3 r ≤ B := upd_le hv2B rU (by omega)
++  have hv3B : ∀ r, v3 r ≤ B := register_update_le _ rU _ _ hv2B (by omega)
+   have r3 : Reach N .edge y B (icL N .Eh 0) v2 .eK v3 := by
+     have h := ic_run (N := N) (mode := .edge) y B .Eh v2 hv2B
+       (by rw [icReg_Eh, icCount_Eh, h2U]; omega)
+     rwa [icNext_Eh, icReg_Eh, icCount_Eh, h2U] at h
+   set v4 := Function.update v3 rQ3 0 with hv4
+-  have hv4B : ∀ r, v4 r ≤ B := upd_le hv3B rQ3 (Nat.zero_le _)
++  have hv4B : ∀ r, v4 r ≤ B := register_update_le _ rQ3 _ _ hv3B (Nat.zero_le _)
+   have r4 : Reach N .edge y B .eK v3 (icL N .Ke 0) v4 :=
+     Reach.single' (edge_gd hv3B (CA_eK .edge) trivial) (astep_clr (CA_eK .edge))
+   have hkB : N.k - 1 + 1 ≤ B := by
+     have : N.k ≤ W N := by rw [W_eq]; omega
+     omega
+   set v5 := Function.update v4 rQ3 (N.k - 1 + 1) with hv5
+-  have hv5B : ∀ r, v5 r ≤ B := upd_le hv4B rQ3 hkB
++  have hv5B : ∀ r, v5 r ≤ B := register_update_le _ rQ3 _ _ hv4B hkB
+   have r5 : Reach N .edge y B (icL N .Ke 0) v4 .eRd1 v5 := by
+     have h := ic_run (N := N) (mode := .edge) y B .Ke v4 hv4B
+       (by rw [icReg_Ke, icCount_Ke, hv4, Function.update_self]; omega)
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean
+index 7fd325ae..7e51dbcd 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Machine.lean
+@@ -201,7 +201,7 @@ def cpNext : CpId → Lab N
+   | .U2 => .ic .U2 ⟨0, by simp [W]⟩ | .Q1f2 => .dcTest .Pos2 | .Tpos => .inDec
+   | .Q3 => .cp .Q4 | .Q4 => .clrQ1v | .Q1a => .cp .Q2a | .Q2a => .vTest (vAd0 N)
+   | .Uc => .cp .Tsc | .Tsc => .sc .C
+-  | .Ue => .ic .Eh ⟨0, by simp [W]⟩ | .Qe => .cp .Te | .Te => .sc .Ee
++  | .Ue => .ic .Eh ⟨0, by rw [W_eq]; omega⟩ | .Qe => .cp .Te | .Te => .sc .Ee
+ 
+ /-- Pointer, base, accumulator, temporary of a decoding loop. -/
+ def dcPtr : DcId → Fin 21 | .S => rQ2 | .Pos => rQ1 | .Pos2 => rQ1
+@@ -269,7 +269,7 @@ lemma icCount_le (c : IcId) : icCount N c ≤ 4 * W N := by
+ /-- Successor of an increment chain. -/
+ def icNext : IcId → Lab N
+   | .E => .cp .F | .U => .lenChk | .E2 => .cp .F2 | .U2 => .lenChk2 | .C => .cenRead
+-  | .Eh => .eK | .Ke => .eRd1 | .S1 => .ic .S2 ⟨0, by simp [W]⟩ | .S2 => .eRd1
++  | .Eh => .eK | .Ke => .eRd1 | .S1 => .ic .S2 ⟨0, by rw [W_eq]; omega⟩ | .S2 => .eRd1
+ 
+ /-- The labels of an increment chain. -/
+ def icL (c : IcId) (i : ℕ) : Lab N :=
+@@ -466,55 +466,56 @@ lemma CA_eNext (mode : CMode) : CA N mode .eNext = .dec rQ3 .eTest := rfl
+ /-- After the last tape, no edge; otherwise advance `U` to the next tape. -/
+ lemma CA_eTest (mode : CMode) : CA N mode .eTest = .jz rQ3 .rej (icL N .S1 0) := rfl
+ 
+-/-- The edge tail's copy, scale and increment sites: registers, factors, counts and exits. -/
++/-- The copy site `Ue` writes `U`. -/
+ lemma cpDst_Ue : cpDst .Ue = rU := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The copy site `Ue` reads `A`, the end of the input field. -/
+ lemma cpSrc_Ue : cpSrc .Ue = rA := rfl
+-/-- See `cpDst_Ue`. -/
+-lemma cpNext_Ue : cpNext N .Ue = .ic .Eh ⟨0, by simp [W]⟩ := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After `U := A`, add `2 (hH + 2)`: the first tape's flag, at the doubled word offset `hH + 2`. -/
++lemma cpNext_Ue : cpNext N .Ue = .ic .Eh ⟨0, by rw [W_eq]; omega⟩ := rfl
++/-- The copy site `Qe` writes `Q1`. -/
+ lemma cpDst_Qe : cpDst .Qe = rQ1 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The copy site `Qe` reads `U`, the current near address. -/
+ lemma cpSrc_Qe : cpSrc .Qe = rU := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After `Q1 := U`, copy the radius. -/
+ lemma cpNext_Qe : cpNext N .Qe = .cp .Te := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The copy site `Te` writes `T`. -/
+ lemma cpDst_Te : cpDst .Te = rT := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The copy site `Te` reads `S`, the radius. -/
+ lemma cpSrc_Te : cpSrc .Te = rS := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After `T := S`, scale it into `Q1`. -/
+ lemma cpNext_Te : cpNext N .Te = .sc .Ee := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The scale site `Ee` consumes `T`. -/
+ lemma scSrc_Ee : scSrc .Ee = rT := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The scale site `Ee` adds into `Q1`. -/
+ lemma scDst_Ee : scDst .Ee = rQ1 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The scale site `Ee` adds `4W` per unit of `T`: chunk `2s` lies `2 · 2s · W` input positions
++further on. -/
+ lemma scFactor_Ee : scFactor N .Ee = 4 * W N := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After `Q1 += 4W · s`, read the far flag. -/
+ lemma scNext_Ee : scNext N .Ee = .eRd2 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `Eh` increments `U`. -/
+ lemma icReg_Eh : icReg .Eh = rU := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `Eh` adds `2 (hH + 2)`. -/
+ lemma icCount_Eh : icCount N .Eh = 2 * (hH N + 2) := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After the first address, set the tape counter. -/
+ lemma icNext_Eh : icNext N .Eh = .eK := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `Ke` increments `Q3`, the tape counter. -/
+ lemma icReg_Ke : icReg .Ke = rQ3 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `Ke` adds `N.k - 1 + 1`, which is `N.k` on its branch (`N.k ≠ 0`). -/
+ lemma icCount_Ke : icCount N .Ke = N.k - 1 + 1 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After the counter, read the near flag. -/
+ lemma icNext_Ke : icNext N .Ke = .eRd1 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `S1` increments `U`. -/
+ lemma icReg_S1 : icReg .S1 = rU := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `S1` adds `3`. -/
+ lemma icCount_S1 : icCount N .S1 = 3 := rfl
+-/-- See `cpDst_Ue`. -/
+-lemma icNext_S1 : icNext N .S1 = .ic .S2 ⟨0, by simp [W]⟩ := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After `S1`, three more: the next tape's flag is `2 · 3` input positions further on. -/
++lemma icNext_S1 : icNext N .S1 = .ic .S2 ⟨0, by rw [W_eq]; omega⟩ := rfl
++/-- The increment site `S2` increments `U`. -/
+ lemma icReg_S2 : icReg .S2 = rU := rfl
+-/-- See `cpDst_Ue`. -/
++/-- The increment site `S2` adds `3`. -/
+ lemma icCount_S2 : icCount N .S2 = 3 := rfl
+-/-- See `cpDst_Ue`. -/
++/-- After the stride, read the next tape's near flag. -/
+ lemma icNext_S2 : icNext N .S2 = .eRd1 := rfl
+ 
+ end EdgeTable
+-- 
+2.50.1 (Apple Git-155)
+

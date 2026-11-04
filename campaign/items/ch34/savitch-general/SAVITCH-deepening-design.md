@@ -156,8 +156,9 @@ or embed `CA`'s partial run, which the API transports only for halting runs. So,
   families' bounds;
 - `Deciders`: `edge_tail` (as `init_tail`, by induction over tapes) and `edgeLang_mem`.
 
-ESTIMATE: 400–600 lines. It is independent of #182, so the two PRs can land in either order. The
-deepening fill's brief issues once both have merged.
+ESTIMATE: 400–600 lines. *Superseded (gate 91, minor 5):* as shipped (#184), the edge proofs read
+the machine through #182's step equations and `preS_of_ins`, so #184 is stacked on #182 and lands
+after it. The deepening fill's brief issues once both have merged.
 
 
 ## 8. The fill's route, pinned (2026-11-04, after #182 and #184 were staged)
