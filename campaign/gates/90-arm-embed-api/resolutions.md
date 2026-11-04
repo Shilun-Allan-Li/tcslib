@@ -7,8 +7,8 @@ sit beside the definitions they read, in his `Machines` and `SavitchARM` files: 
 only, the user's to send. The design is
 `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md`. Bundle SHA-256
 `e253274fec7dbdc422563b96b501f3208909763e07894ef06c89a85827567819` (90 sections), the Lean at
-`8fd6f91a270f497a872146765cfab8422c3faf8e`, the records at `415fe4ee`. **Staged (2026-11-04)**; not yet
-dispatched. Findings: pending.
+`8fd6f91a270f497a872146765cfab8422c3faf8e`, the records at `415fe4ee`. **Staged (2026-11-04); dispatched
+(user, 2026-11-04).** Findings: pending.
 
 **The replay:** `replay-larm.sh` (`evidence/merged-tree/`), 138 modules from `oleans-leqc3`, pinning
-the five blobs; precheck passed. Not yet run.
+the five blobs; precheck passed. **Running** (user, 2026-11-04).
