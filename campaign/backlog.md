@@ -4164,6 +4164,9 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 dispatched**
   (user, 2026-11-04; `exchange/archive/gates/90-arm-embed-api-gate/`, bundle `e253274f…`, 90
   sections); **`replay-larm` passed** (138 of 138, static-equal; `oleans-larm`).
+  **Gate 90: PASS 0/0/3/9.** Minors 2–3 are fixed in the records. Minor 1 (`dsimp only
+  [Function.comp]`) is fixed on #182 by `94093275`. **Ruled (user, 2026-11-04): #181 merges first**;
+  then #182 takes one merged-tree replay from `oleans-lsm2`.
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
