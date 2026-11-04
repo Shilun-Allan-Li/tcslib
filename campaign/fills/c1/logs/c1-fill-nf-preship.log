@@ -22,4 +22,9 @@ order       fillinputs.py at a local overlay commit on 3f318cf4: 112 modules, 39
             in 9 modules (the set equal to the first round's)
 lint        campaign_style_lint ClassNP: 0 FAIL, 17 WARN over 21 files (one more than at 086c0ef0, from
             main's merge); style_lint NDNormalForm: 0 findings
-screen      21 files (the first round's 20 and TuringMachine/ChoiceReplay): SCREEN_RESULT
+screen      21 files (the first round's 20 and TuringMachine/ChoiceReplay): 1,351 declarations, 865
+            pairs, 274,870 characters; NDNormalForm in no pair; 1,069 s, peak 2.79 GB. Against the
+            first round's base: 3 new pairs (ChoiceReplay's two, one within main's Nondeterminism
+            text), none gone
+tip         after #175's merge (1cf3da65's Lean): #175 changed Constructible and Savitch only, outside
+            the order list, so this pre-ship holds for the issue commit

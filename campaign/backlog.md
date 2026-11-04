@@ -1966,7 +1966,10 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     rewind; F5: extend the import probe by 61 names; the rest wording, seal list, prefix, controller,
     hazards, in-flight (#176, #177). Its probes (`rv_skeleton`, `rv_entry`, `rv_sweep0`,
     `rv_inputSymbol_congr`, 30 controls) to stage as inputs. Next: apply the edits, then the issue
-    (Codex).
+    (Codex). **Edits applied; the pre-ship re-taken at the tip after #179 and #175** (149 checks;
+    the review's probes staged; the screen base 21 files, 1,351 declarations, 865 pairs; lint 17
+    WARN). **NF issued (2026-11-04; Codex):** `campaign/fills/c1/briefs/c1-fill-nf.md`; its issue
+    commit is the brief's `@ANCESTOR@`; in flight #176 and #177.
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
