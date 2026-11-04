@@ -2007,8 +2007,8 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       (review D3): `@ANCESTOR@` = `348781a383f102d971fca153c818026b4f49fbf6`, with Lean equal to
       `5241eb82`'s;
     - **dispatch copy** `exchange/outbox/fills/c1-fill-nf-cont1.md`, SHA-256
-      `7853cd44b1f5c6aac7e260a7a6fcca9e1471faae96f1dbd06e4dca273da44c72`, 553 lines. Not yet
-      dispatched.
+      `7853cd44b1f5c6aac7e260a7a6fcca9e1471faae96f1dbd06e4dca273da44c72`, 553 lines. **Dispatched
+      (user, 2026-11-04).**
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.

@@ -10,7 +10,7 @@
 > issue (`campaign/fills/c1/reviews/nfc-brief/REVIEW.md`: 0 blockers, 1 major, 10 minors; all
 > applied). Ruled by the user (2026-11-04): the partial travels with this continuation, which runs
 > as one fill by Claude; the review's `rv_bClear` ships as an authorized transcription; and the
-> work-tape leaf skips the end-flagged record's head move.
+> work-tape leaf skips the end-flagged record's head move. **Dispatched** (user, 2026-11-04).
 
 ## Repository and branch — read this before anything else
 
