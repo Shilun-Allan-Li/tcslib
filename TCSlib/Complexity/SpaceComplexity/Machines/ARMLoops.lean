@@ -39,6 +39,8 @@ Infrastructure for the register-machine description of space-bounded algorithms 
 ## Main results
 
 * `Complexity.LogProg.GuardLe.of_preS` — introducing the guard.
+* `Complexity.LogProg.AHalt.embed_guardLe` — a bounded halting run of a block, inside a
+  larger machine.
 * `Complexity.LogProg.reach_of_eq` — rewriting the end configuration of a run.
 * `Complexity.LogProg.move_run`, `move2_run`, `dmove_run`, `sub_run`, `halve_run` — the
   single loops.
@@ -66,6 +68,39 @@ variable {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool
 guard. -/
 lemma GuardLe.of_preS {a : AConf m Λ} (h : PreS A x a) (hv : ∀ r, a.2.1 r ≤ B) :
     GuardLe A x B a := ⟨h, hv⟩
+
+/-- **A bounded halting run of a block, inside a larger machine**: if `A`, its deciders read
+through `σ`, answers `b` from `l` with registers at most `B`, then a larger machine holding
+`A`'s table as a block (`Complexity.LogProg.Ins.embed`) runs from the image of `l` to the exit
+`k b` with registers at most `B' ≥ B`, provided its own registers (`e`, off `ρ`'s range) are at
+most `B'`. It ends with the block's registers at most `B` and its own registers unchanged.
+
+**Proof sketch.** `Complexity.LogProg.AHalt.embed`; the guard carries over because the
+syntactic preconditions do (`Complexity.LogProg.preS_embed`) and every register of the larger
+machine is either an image of one of `A`'s or one of its own. -/
+theorem AHalt.embed_guardLe {m' d' : ℕ} {Λ' : Type} {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'}
+    {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hρ : Function.Injective ρ) (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    (hA : ∀ l r l', A l ≠ .valP r l' ∧ A l ≠ .valQ r l') {oracle' : Fin d' → List Bool → Bool}
+    {B' : ℕ} (hBB : B ≤ B') {e : Fin m' → ℕ} (he : ∀ r', e r' ≤ B') {l : Λ} {v : Fin m → ℕ}
+    {b : Bool} (h : AHalt A (oracle' ∘ σ) x (GuardLe A x B) (some l, v, none) b)
+    {v' : Fin m' → ℕ} (hv : RegExt ρ e v v') :
+    ∃ v₂', (∀ r', (∀ r, ρ r ≠ r') → v₂' r' = e r') ∧ (∀ r, v₂' (ρ r) ≤ B) ∧
+      AReach D oracle' x (GuardLe D x B') (some (ι l), v', none) (some (k b), v₂', none) := by
+  have hG : ∀ l v v', GuardLe A x B (some l, v, none) → RegExt ρ e v v' →
+      GuardLe D x B' (some (ι l), v', none) := by
+    intro l v v' hg hv
+    refine ⟨preS_embed hρ hD hg.1, fun r' => ?_⟩
+    show v' r' ≤ B'
+    by_cases hr : ∃ r, ρ r = r'
+    · obtain ⟨r, rfl⟩ := hr
+      rw [hv.reg]
+      exact (hg.2 r).trans hBB
+    · push_neg at hr
+      rw [hv.ext r' hr]
+      exact he r'
+  obtain ⟨v₂, v₂', ⟨l₂, hg₂⟩, hv₂, hr⟩ := AHalt.embed hρ hD hA hG h hv
+  exact ⟨v₂', hv₂.ext, fun r => (hv₂.reg r).symm ▸ hg₂.2 r, hr⟩
 
 /-- A run whose end configuration is rewritten along an equation. -/
 lemma reach_of_eq {G : AConf m Λ → Prop} {a b b' : AConf m Λ} (h : AReach A oracle x G a b)
