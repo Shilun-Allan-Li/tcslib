@@ -73,8 +73,8 @@ def InPi2 (L : Language Bool) : Prop :=
 /-- The two-witness predicate `(u, v) ↦ ⋁_{i < k} M(x, v ⊕ uᵢ)`, where the
 first witness `u` is the concatenation of `k` shift strings `u₁,…,u_k` of
 length `p(|x|)` each and `⊕` is bitwise XOR: the predicate with which
-[AB09, Thm 7.15]'s proof expresses: the translates of the accepting set by
-`u₁,…,u_k` cover all random strings `v`. -/
+[AB09, Thm 7.15]'s proof expresses "the translates of the accepting set by
+`u₁,…,u_k` cover all random strings `v`". -/
 def shiftOrVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
     List Bool → List Bool → List Bool → Bool := fun x u v =>
   (List.range (k x.length)).any fun i =>

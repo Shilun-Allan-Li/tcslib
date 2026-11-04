@@ -375,7 +375,9 @@ def _main() -> int:
     base = Path(__file__).resolve().parent.parent
     ap = argparse.ArgumentParser(description=_main.__doc__)
     ap.add_argument("--dataset", nargs="?", const=str(base / "dataset" / "tcslib_theorems.jsonl"),
-                    help="grade statement_informal in a built dataset instead")
+                    help="grade the Lean-derived informal statements of a built dataset "
+                         "instead (records whose statement_source is `lean`; the claim "
+                         "alone, without its definitions block)")
     ap.add_argument("--show", type=int, default=0)
     ap.add_argument("--strict", action="store_true",
                     help="apply the checks meant for freshly generated prose")
@@ -383,10 +385,17 @@ def _main() -> int:
 
     rows: list[tuple[str, str, str]] = []
     if args.dataset:
-        for line in Path(args.dataset).open():
-            if line.strip():
-                d = json.loads(line)
-                rows.append((d["id"], d.get("statement_informal", ""), ""))
+        import sys
+        sys.path.insert(0, str(base))
+        from scripts.informal_sources import statement_part
+        from proofmatch.dataset_io import open_dataset
+        with open_dataset(Path(args.dataset)) as handle:
+            for line in handle:
+                if line.strip():
+                    d = json.loads(line)
+                    if d.get("statement_source", "lean") != "lean":
+                        continue
+                    rows.append((d["id"], statement_part(d.get("informal_statement", "")), ""))
     else:
         for path in sorted((base / "blueprint" / "src" / "references" / "statements").glob("*.json")):
             d = json.loads(path.read_text(encoding="utf-8"))

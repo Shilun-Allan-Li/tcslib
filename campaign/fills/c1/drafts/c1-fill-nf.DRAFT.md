@@ -1,5 +1,8 @@
 # Ch3–4 fill campaign — NF, the linear normal form of an NDTM (`Turing.FinNDTM.exists_codeNDTM_accepts_linear`, `ClassNP/NDNormalForm.lean`)
 
+> **DRAFT** (maintainer, 2026-10-27). **Agent: Codex** (user, 2026-10-27). ⟨…⟩ marks what the
+> pre-ship fills in.
+
 > **A single fill** (addendum v2.6, Parts 1 and 2; Part 3, the megafill, does not apply, except
 > its one-Lean rule and its no-stop rule, items 5 and 7, which "Environment and verification"
 > restates). Deliver a checkpoint zip after each checkpoint: the session may end at any time.
@@ -121,7 +124,8 @@ writes the display, the verifier and the transfers, and composes nothing at the 
   9 controls close unsealed and fail sealed, each at its own goal) proves the packaging and the
   trivial setup's hypotheses (below), each on the standard axioms or fewer;
 - the order list: **112 modules, 39 Mathlib roots, 20 base sorries in 9 modules**;
-- the screen base (20 files): ⟨screen base⟩;
+- the screen base (20 files): 1,344 declarations, 862 pairs, 274,615 characters; your file in no
+  pair;
 - lint: `ClassNP` 0 FAIL, 16 WARN over 21 files; the policy linter 0 findings on your file.
 
 ## Owned regions and targets (modify these and nothing else)
@@ -383,8 +387,9 @@ root `<dir>`).
     on a choice word), `CodeSimulator` and `NDCodeSimulator` (record families and an interpreter
     core over a guessed stream), `Diagonalization/NTimeHierarchy`, `Simulation`.
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/c1/logs/c1-fill-nf-screen-base.txt`: ⟨screen base, with its time
-  and peak memory⟩.
+- **The base** is `campaign/fills/c1/logs/c1-fill-nf-screen-base.txt`: **1,344 declarations, 862
+  pairs, 274,615 characters** (MEASURED at your base's Lean; about 13 minutes under `nice -n 10` on
+  the maintainer's host, peak memory 3.2 GB). Your file is in no pair.
 
 ```sh
 P=campaign/fills/c1/inputs/c1-fill-nf
@@ -430,8 +435,9 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   one at a time: never two `lean_check_tree.sh` runs, probes or sweeps at once, and none while
   `lake exe cache get` runs. A screen may run beside one of them. **A process deviation never ends
   the item**: disclose it with its evidence and continue.
-- **Budget, measured:** ⟨the bootstrap's and the screen's times on the maintainer's host⟩. The
-  last 4-CPU fill host ran 2–3× slower than the maintainer's. Reserve about an hour for the
+- **Budget, measured:** each screen about 13 minutes on the maintainer's host (peak 3.2 GB). The
+  last 4-CPU fill host ran 2–3× slower than the maintainer's: expect about 30–40 minutes per
+  screen and 25–40 minutes for the 112-module bootstrap. Reserve about an hour for the
   finishing sequence (the final sweep with the after screen beside it, then the REPORT and the
   zip), and use the rest for proofs.
 - **Bootstrap** (addendum Part 1, item 5) from `campaign/fills/c1/orders/c1-fill-nf.txt`

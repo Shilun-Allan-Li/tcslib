@@ -1,0 +1,174 @@
+From 00d5ff0588c995b1eb6d3d08fa734b603a0e774c Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Tue, 27 Oct 2026 22:36:07 -0700
+Subject: [PATCH] Constructible: the empty-input decider is
+ computesFunInTime_decideEq []; public-facing module text in Constructible and
+ Savitch
+
+spaceConstructible_poly's decider for the empty input now cites the published
+Turing.FinTM.computesFunInTime_decideEq [] (Build/WordTests, now imported) in place of its
+inline conversion of computesFunInTime_ifEq [] [true] [false]. The two module docstrings drop
+their history and audit labels, and Savitch's gains its Main definitions heading; four
+declaration docstrings drop audit and phase labels. No statement changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../SpaceComplexity/Constructible.lean        | 29 +++++++------------
+ .../Complexity/SpaceComplexity/Savitch.lean   | 18 ++++++------
+ 2 files changed, 19 insertions(+), 28 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Constructible.lean b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+index 791f3a48..9fb71337 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Constructible.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+@@ -10,6 +10,7 @@ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+ import TCSlib.Complexity.TuringMachine.Build.Seam
+ import TCSlib.Complexity.SpaceComplexity.Machines.Bin
+ import TCSlib.Complexity.ClassNP.Transducer
++import TCSlib.Complexity.TuringMachine.Build.WordTests
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -23,14 +24,12 @@ computes `S(|x|)` from `x` within `O(S(|x|))` space, and the book's standing
+ convention is `S(n) > log n`. The definition mirrors
+ `Complexity.TimeConstructible` — output in binary (`Nat.bits`), constant slack
+ `c · S n`, which implements the book's own asymptotic space convention
+-([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); whether an
+-exact-space variant is also satisfiable is a separate question this campaign
+-does not pose (the chapter-1 exact-**time** refutation does not transfer: a
+-space deadline forces no premature halt — round-1 audit, finding 3) — and
+-carries the book's
++([AB09, p. 79]: "computes `S(|x|)` in `O(S(|x|))` space"); an exact-space
++variant is not posed here (the exact-**time** refutation of chapter 1 does not
++transfer: a space deadline forces no premature halt) — and carries the book's
+ convention as the conjunct `∀ n, logSpace n ≤ S n`, so that downstream
+ statements (the space hierarchy, Savitch) can draw on it without restating it;
+-results needing only weaker hypotheses must say so (seeded to the P4.1 audit).
++results needing only weaker hypotheses must say so.
+ 
+ ## Main definitions
+ 
+@@ -479,7 +478,7 @@ in binary on a work tape by one left-to-right input scan with a binary
+ increment at each step (the `Turing.counterTM`/`incrementTM` idiom — P11 of
+ `machine-library-design.md` §4, space-annotated per §12 R3) — the counter word
+ has `|Nat.bits n| = logSpace n` cells **for `n > 0` only** (`Nat.bits 0 = []`
+-has length `0 ≠ logSpace 0 = 1`; round-1 audit, finding 1), so (ii) the empty
++has length `0 ≠ logSpace 0 = 1`), so (ii) the empty
+ input is special-cased to emit `(logSpace 0).bits = [true]` directly, and
+ otherwise the machine computes the counter word's bit-length by a second count
+ and emits its bits. Space: the counters and markers fit in
+@@ -509,7 +508,7 @@ theorem spaceConstructible_logSpace : SpaceConstructible logSpace := by
+     _ = (2 * A) * logSpace x.length := by ring
+ 
+ /-- **Linear space is constructible**: `n ↦ n + 1` is space-constructible (the
+-`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the P0
++`+ 1` prevents the inherited zero-bound collapse at `n = 0` — the zero-bound
+ convention, `SpaceComplexity/ZeroSpace.lean` — and satisfies the dominance
+ conjunct; zero-space classes are nonempty, so this is about collapse, not
+ vacuity).
+@@ -517,7 +516,7 @@ vacuity).
+ **Proof sketch.** The input-scan counter of
+ `Complexity.spaceConstructible_logSpace`, **initialized at `1`** so that after
+ `n` consumed symbols it holds `n + 1` (an uncorrected length counter holds `n`
+-and emits the wrong word — round-1 audit, finding 2); emit its bits. Space:
++and emits the wrong word); emit its bits. Space:
+ the counter's binary width plus fixed administrative cells fit in
+ `A·(n + 2) ≤ 2A·(n + 1)` visited cells; dominance is `logSpace n ≤ n + 1`
+ (`1 ≤ 1` at `n = 0`; a small arithmetic lemma otherwise).
+@@ -626,7 +625,7 @@ zero through monotonicity into degree one.)
+ `Nat.log_le_self`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
+ `x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
+ (`Turing.FinTM.computesFunInTime_cond`, with the decider
+-`Turing.FinTM.computesFunInTime_ifEq [] [true] [false]`). On the empty input the constant
++`Turing.FinTM.computesFunInTime_decideEq []`). On the empty input the constant
+ writer emits `(1).bits`, which is the value since `0 ^ c + 1 = 1`. Otherwise four phases run by
+ buffered composition (`Turing.FinTM.bufferedCompTM_computesInTime`), each at its exact time:
+ 1. a two-state transducer drops the first bit (`Complexity.transducerTM_computes`; from its
+@@ -643,7 +642,7 @@ theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
+     SpaceConstructible fun n => n ^ c + 1 := by
+   -- the published rows
+   obtain ⟨L, cL, hL⟩ := FinTM.computesFunInTime_lengthBits
+-  obtain ⟨D, cD, hD⟩ := FinTM.computesFunInTime_ifEq [] [true] [false]
++  obtain ⟨D, cD, hD'⟩ := FinTM.computesFunInTime_decideEq []
+   obtain ⟨K₁, c₁, hK₁⟩ := FinTM.computesFunInTime_const (Nat.bits 1)
+   let T := transducerTM scp_tailδ scp_tailO false
+   let U := FinTM.polyUnaryTM 1 c
+@@ -673,14 +672,6 @@ theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
+     simp only [List.length_replicate, Nat.one_mul, List.length_append, List.length_cons,
+       List.length_nil]
+     exact scp_time_arith c cL x.tail.length x.length _ _ hp htl
+-  -- the decider for the empty input
+-  have hD' : D.ComputesFunInTime (fun x => [decide (x = [])]) fun n => cD * (n + 1) := by
+-    have hfun : (fun w : List Bool => if w = [] then [true] else [false]) =
+-        fun x => [decide (x = [])] := by
+-      funext w
+-      by_cases hw : w = [] <;> simp [hw]
+-    rw [← hfun]
+-    exact hD
+   obtain ⟨M, cM, hM⟩ := FinTM.computesFunInTime_cond hD' hK₁ hN
+   -- the value
+   have hval : (fun x : List Bool => if decide (x = []) then Nat.bits 1 else f₂ x) =
+diff --git a/TCSlib/Complexity/SpaceComplexity/Savitch.lean b/TCSlib/Complexity/SpaceComplexity/Savitch.lean
+index 6ea81136..b4157d58 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Savitch.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Savitch.lean
+@@ -19,30 +19,31 @@ set_option autoImplicit false
+ deterministic overhead, via the midpoint recursion `reach?(u, v, i)` over the
+ configuration graph of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`. The
+ corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
+-Phase P4.2 of `AroraBarakChapters3-4Plan.md`.
+ 
+-**Status: partly filled (phase P4.2).** `Complexity.PSPACE_eq_NPSPACE` is
++**Status.** `Complexity.PSPACE_eq_NPSPACE` is
+ proved, directly at the polynomial level, by the Savitch register machine of
+ `TCSlib.Complexity.SpaceComplexity.SavitchARM` (`Complexity.NPSPACE_subset_PSPACE`);
+ `Complexity.savitch` (general space-constructible `S`) remains sorried with a sketch
+ naming its fill obligations. The polynomial bounds' constructibility,
+ `Complexity.spaceConstructible_poly`, is in `TCSlib.Complexity.SpaceComplexity.Constructible`.
+-The `SpaceComplexity.lean` facade has carried this module since the P4.1 gate closed
+-(root-wired while that gate was live).
+ 
+ ## Design
+ 
+ * **The positive-bound convention is respected without side conditions**:
+   `Complexity.SpaceConstructible` bundles `logSpace n ≤ S n`, so `S` and
+-  `S · S` are everywhere positive and the P0-adopted convention
++  `S · S` are everywhere positive and the zero-bound convention
+   (`TCSlib.Complexity.SpaceComplexity.ZeroSpace`) imposes no extra hypothesis.
+ * **The recursion is realized iteratively**: `reach?`'s call stack becomes an
+   explicit stack of `O(S)`-bit frames (coded vertices and a midpoint cursor)
+-  on a dedicated bank, walked by the loop combinator — the §12 layer
++  on a dedicated bank, walked by the loop combinator — the construction library
+   (`Build/Embed.lean`, `Build/Seam.lean`, `Build/Catalog.lean`) is the
+   intended engine, with the depth `O(S)` and frame size `O(S)` giving the
+   `O(S²)` ledger.
+ 
++## Main definitions
++
++None: the module states theorems only.
++
+ ## Main results
+ 
+ * `Complexity.savitch` — [AB09, Theorem 4.14]. (Sorried.)
+@@ -53,8 +54,7 @@ The `SpaceComplexity.lean` facade has carried this module since the P4.1 gate cl
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+   Cambridge University Press, 2009. (§4.2.1, Theorem 4.14; §4.1.2.)
+ * [Sav70] W. J. Savitch, *Relationships between nondeterministic and
+-  deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09];
+-  no external text is required for this audit.)
++  deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09].)
+ -/
+ 
+ namespace Complexity
+@@ -97,7 +97,7 @@ theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
+ /-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
+ space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.
+ 
+-**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE` (phase P4.1). `⊇` is
++**Proof sketch.** `⊆` is `Complexity.PSPACE_subset_NPSPACE`. `⊇` is
+ `Complexity.NPSPACE_subset_PSPACE`, proved directly rather than through
+ `Complexity.savitch`: for `N` deciding `L` in space `c (n ^ k + 1)`, take the radius
+ `s = (n + 2) ^ E` and the code width `w = (n + 2) ^ (2E)` (`E` a constant of `N`, `k`, `c`),
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,8 @@
+The round-1 fix's freeze (freeze-*.txt, against the base and against round 1's head 6ae641a2):
+no public or private declaration added, removed or changed in its statement. The "UNAUTHORIZED
+BODY CHANGE" lines for spaceConstructible_linear, spaceConstructible_logSpace (Constructible) and
+PSPACE_eq_NPSPACE (Savitch) are docstring-only changes (declfreeze counts a declaration's docstring
+with its body): code-only-diff.txt, the two files with comments and docstrings stripped, shows the
+only code changes are Constructible's import of Build/WordTests and spaceConstructible_poly's
+decider (obtain from computesFunInTime_decideEq [], the inline hD' removed); Savitch's code is
+unchanged.

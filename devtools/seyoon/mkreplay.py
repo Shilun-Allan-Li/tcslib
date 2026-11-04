@@ -41,8 +41,12 @@ cd "$WT" || exit 1
   done < "$LIST"
   echo "# modules=$n failed=$f"
 }} > "$LOG" 2>&1
-python3 -I "$S/api/staticsorry.py" "$WT" "$LOG" > "${{LOG%.log}}-static.txt"
+python3 -I "$S/api/staticsorry.py" "$WT" "$LOG" > "${{LOG%.log}}-static.txt"; sst=$?
 tail -n 6 "$LOG"
 tail -n 1 "${{LOG%.log}}-static.txt"
+# the exit status: nonzero unless every listed module passed and the static check found no mismatch
+tail -1 "$LOG" | grep -qx "# modules={n} failed=0" || {{ echo "replay: a module failed, or the count is not {n}" >&2; exit 1; }}
+[ $sst -eq 0 ] && tail -1 "${{LOG%.log}}-static.txt" | grep -q "mismatches 0," || {{ echo "replay: the static sorry check failed" >&2; exit 1; }}
+exit 0
 '''
 open(out, 'w').write(s); print('written', out, n)

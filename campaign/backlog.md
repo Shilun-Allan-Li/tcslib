@@ -1952,6 +1952,34 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     scan folds), F11 (the frozen sketch's resync), F10 (the subjects), the duplication entries.
     Replay list: `NTimeDiagonalizer`, `NTimeHierarchy`, the `Diagonalization` facade, from
     `oleans-lnfapi4`.
+    **Ruled (user, 2026-10-27): land as recommended** (E1–E5, F4 ratified, the subjects reworded
+    with the `Claude-Session:` trailers kept, the four ledger entries; F11 in the deferred docstring
+    cleanup). Next: the landing PR, its replay and the fill gate.
+  - **NF's brief drafted** (`campaign/fills/c1/drafts/c1-fill-nf.DRAFT.md`; pre-ship
+    `preship-086c0ef0/`, inputs `campaign/fills/c1/inputs/c1-fill-nf/`): the controller-stopped host
+    of #174 with a trivial setup, the route probe's `nfr_pack` and `nfr_setup` (sealed, 9 controls),
+    88-name import probe, order list 112 (39 roots, 20 sorries in 9). **Agent: Codex (user,
+    2026-10-27).** **Brief reviewed** (`campaign/fills/c1/reviews/nf-brief/REVIEW.md`, a sub-agent,
+    2026-10-28): **issue after edits; 2 majors, 11 minors, 7 notes**; no redesign. F1: sweep 0 is the
+    published scan fold (`scanTM`/`scanFold`, `rv_sweep0` proved sealed); F2: A's rewind and B's
+    clear need `skipTM` then `skipBackTM` (and `clearTM`), not `skipBackTM` alone; F4: drop the input
+    rewind; F5: extend the import probe by 61 names; the rest wording, seal list, prefix, controller,
+    hazards, in-flight (#176, #177). Its probes (`rv_skeleton`, `rv_entry`, `rv_sweep0`,
+    `rv_inputSymbol_congr`, 30 controls) to stage as inputs. Next: apply the edits, then the issue
+    (Codex).
+  - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
+    (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
+    `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
+    **PR #177** (`lean/np-closure`, head `ce00b6d3`): `Complexity.mem_NP_of_polyTimeReducible`,
+    through `PClosure`'s `inter_mem_P`, `lenLe_preimage_mem_P` and `preimage_mem_P` (no new reading
+    was needed); `Reductions` imports `PClosure` (13 modules more in its closure); `prefixTM_copy`
+    gains its sketch. Axioms standard; sealed (6 definitions, 3 erased; 6 controls); freeze 10 → 11;
+    lint the base's, the policy linter clean; no copy on any ref. `replay-lnpc` written (86 modules
+    from `oleans-lnfapi4`, precheck passed). **Its downstream overlaps #175's** (`SpaceComplexity`'s
+    `ConfigGraph`, `Codec/*`, …): whichever merges second takes a merged-tree replay of the overlap.
+    Screen: one new pair, an idiom (`pairSwap`'s one-line invocation of the same rows). **Gate 88
+    staged** (bundle `4ccd459e…`, 37 sections). **Gate 87** (#176) **staged** (bundle `43a728a1…`, 282
+    sections; the landing head's screen: none new against the worker's after screen).
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`
@@ -2009,6 +2037,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     pairs at base and head, none new or gone; axioms standard; lint the base's. **Gate 86** staged
     (bundle `5d6800fd…`, 52 sections); `replay-lscp` written (53 modules from `oleans-lnfapi4`,
     precheck passed). **Gate 86 dispatched; `replay-lscp` running (user, 2026-10-27).**
+    **Gate 86, round 1: FAIL 0/2/3/10**: both majors debt acknowledgments. **Ruled (user,
+    2026-10-27):** accept the `logSpace` restatement for 12.2c (LS-1); re-point `hD'` now and
+    accept `WordTests`' 25% census (PL-1 corrected). Fixed by `00d5ff05` (the decider from
+    `computesFunInTime_decideEq []`, public-facing module text, `Savitch`'s heading); the replay
+    generator now exits nonzero on a failure. **Round 2 staged** (bundle `6a103efc…`, 44 sections;
+    head `ca0eafb8`); `replay-lscp2` written (53 modules, precheck passed). `replay-lscp` (round 1's
+    head) no longer certifies the PR.
+  - **PR #176** (`lean/eq-cont1-landing`, head `cecd76a0`): E-Q cont1's eight commits, reworded,
+    and the maintainer's E1–E5; elaboration at the tip's snapshot: one sorry warning
+    (`exists_diagonalizer`); lint 0 FAIL. `replay-leqc1` written (3 modules from `oleans-lnfapi4`,
+    precheck passed). Gate 87 (the fill gate) next: the head screen running. Gate 86 round 2 dispatched (user, 2026-10-27).
+    **`replay-leqc1` passed** (3 of 3, static-equal; `oleans-leqc1`); **`replay-lscp2` passed** (53 of
+    53, static-equal; `oleans-lscp2`).
   - **G5's statement phase: ready.** The U2 design (§3.2, §4.2) fixes its statements
     (`two_work_tapes_run` per run with the converse; the function-level form; a per-run alphabet
     reduction export; `Diagonal.lean`'s `f log f` layer under the 2026-10-14 authorization).
@@ -3963,6 +4004,39 @@ campaign work. The other is Diagonal's parameterization (#100), whose freeze use
 qualified-name script and lists the three new namesakes. The four open PRs gated before v4 change
 no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal` among them.
 
+* **The deferred public-facing docstring cleanup (one pass, the user's to schedule).** Inventory:
+  - about 280 existing campaign labels in Lean text (gate, finding, round, phase names, dated
+    rulings; the public-facing rule of 2026-10-23 binds new text only);
+  - the Lean files whose docstrings cite `audits/…` or `campaign/…` paths (42 at the second merge
+    to `main`), dangling on `main`, where the records are not carried;
+  - design-note references inside proof sketches: `Constructible`'s `P11`, `§12 R3`, `R8.5c`,
+    `R8.4`, and `Savitch`'s `§12 R1/R2` (gate 86's round-2 note 9);
+  - E-Q cont1's frozen proof sketch of `exists_queryTM`, which describes the binary route, not the
+    unary one proved (its review's F11).
+* **The second merge to `main` (asked 2026-10-28; a colleague wants the campaign's work).** Same
+  procedure as 2026-10-15: `main` into the campaign by a PR (27 commits since; one textual conflict,
+  `.gitignore`; `Nondeterminism`, the `TuringMachine` facade and `policy.md` changed on both sides),
+  a name-clash scan, a root-build replay of the merged tree (about 920 modules), then the PR into
+  `main` from an integration branch. Toolchain and manifest identical on both sides. **Ruled (user,
+  2026-10-28): `campaign/` and `devtools/` stay off `main`, and `main`'s existing `audits/` (the
+  2026-10-15 records, 2,381 files) is dropped in the same PR**, with the stubs `audits/README.md`
+  and `briefs/README.md`. Every later merge repeats the exclusion. Open: whether to add a public
+  "what's proved" summary on `main`; the 42 Lean files citing record paths stay for the deferred
+  docstring cleanup. **Ruled (user, 2026-10-28): the summary at `TCSlib/Complexity/README.md`**
+  (written, `661cc9bb`: 19 of 26 headlines proved, the open items, a map). **PR #179**
+  (`integrate/main-into-campaign-2`, head `76ad1933`): `main` merged in, `.gitignore` resolved (main's
+  entries and the campaign's `exchange/`); toolchain and manifest identical; the static name scan
+  (`$S/m2c/namescan.py`) finds 11 duplicates, all within `main`'s `GraphTheory/Core`.
+  `replay-lm2c` written: the root build, 887 modules (the root's import closure, then `TCSlib`),
+  fresh into `oleans-lm2c`; precheck passed. **`replay-lm2c` passed** (user, 2026-10-28): 887 of
+  887 at `76ad1933`, the root included, 0 failed (`campaign/items/main-merge-2/`); snapshot
+  `oleans-lm2c`, the first since `oleans-lmain` to cover the whole root closure. **#179 merged
+  (user, 2026-10-28).** **PR #180** (`integrate/campaign-to-main-2`, head `22b03750`, into `main`):
+  the campaign tip with `campaign/`, `devtools/` and the `audits/`/`briefs/` stubs removed; against
+  `main` it also removes the 2026-10-15 records (`audits/`, `briefs/`, the four chapter plans,
+  `backlog.md`, `arm-extensions-proposal.md`, `nomenclature-findings.md`); its `TCSlib` differs from
+  the replayed `76ad1933` only by the README. Then the PR into `main` from an integration branch at
+  the replayed state, without `campaign/`, `devtools/`, `audits/`, `briefs/README.md`.
 * **The campaign's merge to `main` (user, 2026-10-15).**
   - **Purpose:** our infrastructure goes to `main`, and `main` then goes into
     `cryptography/garg-ch1-3`, so the cryptography work can build on it. The cryptography

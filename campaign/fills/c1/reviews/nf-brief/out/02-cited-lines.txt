@@ -1,0 +1,48 @@
+## TCSlib/Complexity/ClassNP/NDNormalForm.lean (88 lines)
+    6: import TCSlib.Complexity.ClassNP.NTIME
+    7: import TCSlib.Complexity.TuringMachine.NDCodes
+   20: over these codes. The statement was gated with phase P3.3's statements and lived in that module. It
+   21: moved here unchanged (user, 2026-10-17; C1's fill plan, `audits/evidence/c1/C1-fill-plan.md`), so
+   22: that its fill can run beside the universal machine's in `NTimeHierarchy`.
+   30: * `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form (sorried;
+   31:   phase P3.3).
+   43: namespace FinNDTM
+   45: /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+   46: cited through [AB09, §3.2]; spec, fill pending — phase P3.3): every
+   66: guess and the input sweep remain (round-1 finding 6).
+   77: transfer directions; the relabeling packaging. -/
+   78: theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
+   84:   sorry
+   86: end FinNDTM
+   88: end Turing
+## TCSlib/Complexity/TuringMachine/Build/NDHost.lean (2057 lines)
+  571: def GuessRunPhase.CtlState (SP SQ Q : Type) : GuessRunPhase → Type
+ 1705: namespace Turing
+ 1706: 
+ 1707: /-- **Through the guess and the rewind.** Let the setup `P` run from its initial configuration on
+ 1721: theorem guessCtlRunTM_runWith_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ]
+ 1760: theorem guessCtlRunTM_runWith {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ]
+ 1809: theorem guessCtlRunTM_stop_of_halted {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ]
+ 1951: theorem guessCtlRunTM_accepts_of {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ]
+ 1999: theorem guessCtlRunTM_stream_of_accepts {k : ℕ} {SP SQ Q : Type} [DecidableEq SP]
+## TCSlib/Complexity/ClassNP/NTIME.lean (264 lines)
+   96: def AcceptsWithin (N : FinNDTM Bool) (x : List Bool) (t : ℕ) : Prop :=
+  104: theorem acceptsWithin_iff {N : FinNDTM Bool} {x : List Bool} {t : ℕ} :
+## TCSlib/Complexity/TuringMachine/NDCodes.lean (277 lines)
+   99: structure CodeNDTM where
+## TCSlib/Complexity/TuringMachine/Build/StepBlock.lean (3533 lines)
+  134: namespace StepBlock
+  135: 
+  136: /-! ## The three-valued output summary -/
+  137: 
+  138: /-- **The output summary** of an output word, as the content of one tape cell: `none` for the
+  142: def outputSummary : List Bool → Option Bool
+  146: 
+  149: 
+  153:   | s, none => s
+  163: lemma outputSummary_append (w : List Bool) (b : Option Bool) :
+  198: lemma summaryEmit_none (b : Option Bool) : summaryEmit none b = b := by
+  199:   rcases b with _ | _ | _ <;> rfl
+## TCSlib/Complexity/TuringMachine/Nondeterministic.lean (642 lines)
+  474: def relabelState (tm : NDTM k Γ S) (e : S ≃ S') : NDTM k Γ S' where
+  488: theorem relabelState_runWith {x : List Γ} (tm : NDTM k Γ S) (e : S ≃ S')
