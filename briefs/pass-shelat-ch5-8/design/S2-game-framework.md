@@ -204,6 +204,12 @@ abbrev Party (Out In α : Type) := OracleComp (exchangeSpec Out In + unifSpec) �
 
 ### 8. Bridges to existing code (all in our files; nothing of his edited without agreement)
 
+**Status (2026-11-04, S2b branch `cryptography/pass-shelat-ch5-8-s2b`, stacked on #185):**
+- **B1 proved** (`Games/Bridges/QueryTree.lean`): a bijection `QueryTree I O α ≃ OracleComp (singleSpec I O) α`, under which evaluation, Garg's `simulate` and `BoundedBy` (as `CostBoundedBy` with unit costs) are preserved.
+- **B2 proved** (`Games/Bridges/Experiments.lean`): `Pr[x ← $ α : p x] = uprob p` (through the published `uprob_eq_card_filter`), sequential sampling equals product sampling, and `invProb`, `predProb`, `acceptProb` and `distAdv` as one-line games. It reads the four definitions' bodies (F-3).
+- **B3 decoder drafted** (`Games/Machines.lean`): `Move`, `MachineCodec`, `buildComp`, `NUPPT.toComp` with its query bound, and `toComp_singleCodec`, which shows that `toOracleAdversary` is the one-oracle instance. The efficiency lemma is not started.
+- **B4, B5 not started:** B4 waits for gate 02's findings on `Protocols`; B5's asymptotic part needs B3.
+
 | Bridge | Relates | Purpose |
 |---|---|---|
 | B1 | `QueryTree I O α` ≃ one-oracle `OracleComp`; `eval`, `simulate`, `BoundedBy` | reuse Garg's PRF/GGM/lazy-sampling results |
