@@ -4183,4 +4183,28 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
+  **Rounds 1–3 OPEN** (one major each: LS-1's scope, missed inline copies). **Round 4** (head
+  `227d92ee`): `arm_decides` re-pointed; a search of every `logSpace` unfolding and every Mathlib
+  upper bound of `Nat.log` finds LS-1 proved once and cited at nine sites. A binary-length sweep
+  found three more families, each ruled by the user (2026-11-04):
+  - **LS-2** fixed in #181 (`logSpace_le_size_succ` moved to `Basic`; `BPLInP`,
+    `SpaceAmplifyPoly`, `ISCountGenCorrect` and `ExpBFS/Run` re-pointed);
+  - **LS-3** and **BL-1** ledgered for 12.2c.
+
+  **`replay-lsm4` passed** (137 of 137, static-equal; `oleans-lsm4`). **Gate 89 round 4
+  dispatched** (user, 2026-11-04). #181 is clear to merge on a PASS. After it merges, #182 takes a
+  merged-tree replay from `oleans-lsm4`.
+* **#184 (the codec's edge mode, `edgeLang_mem : edgeLang N ∈ LOGSPACE`), gate 91.** The edge
+  decider's home was decided at pre-ship by the user's rule: a fifth mode of `CA` (design note
+  §7). It is stacked on #182, head `8d43e126`, seven `Codec` files, +646 −20, additive. Checks:
+  - the 16 `Codec` modules elaborate with 0 diagnostics;
+  - rule 10 sealed: 3 copies, 37 definitions, controls 73/74 unsealed and 0/74 sealed;
+  - axioms standard;
+  - lint the base's;
+  - the screen's 25 new pairs are the edge member of the code languages' families, ledgered as
+    **CL-1** for 12.2c (user, 2026-11-04).
+
+  **Gate 91 dispatched** (user, 2026-11-04; `exchange/archive/gates/91-codec-edge-api-gate/`).
+  After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
+  deepening fill's brief issues once #182 and #184 have both merged.
 

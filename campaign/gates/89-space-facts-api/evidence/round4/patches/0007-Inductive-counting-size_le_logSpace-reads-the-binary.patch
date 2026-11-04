@@ -1,0 +1,32 @@
+From 227d92ee4a91fa86860d1d1ddf3a98130fa674b9 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 14:31:14 -0800
+Subject: [PATCH] Inductive counting: size_le_logSpace reads the binary length
+ from length_bits_le_log
+
+The private size_le_logSpace re-derived LogProg.length_bits_le_log (the binary length is at
+most Nat.log 2 n + 1); it now cites it through Nat.size_eq_bits_len and logSpace_eq.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../SpaceComplexity/Logspace/ISCountGenCorrect.lean           | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+index bcf7c391..490cfb04 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+@@ -214,8 +214,8 @@ private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)
+ 
+ /-- The binary length is at most the logarithmic width. -/
+ private lemma size_le_logSpace (n : ℕ) : Nat.size n ≤ logSpace n := by
+-  rw [Nat.size_le]
+-  exact Nat.lt_pow_succ_log_self (by norm_num) n
++  rw [← Nat.size_eq_bits_len, logSpace_eq]
++  exact length_bits_le_log n
+ 
+ /-- **Nondeterministic space is closed under complement** [AB09, Corollary 4.21, proved by
+ the inductive counting of Theorem 4.20 on the configuration graph]: for every bound
+-- 
+2.50.1 (Apple Git-155)
+

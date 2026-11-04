@@ -50,5 +50,19 @@ blockers, 1 major, 0 minors, 7 notes.**
 `763bee495a3bb520a2d0447b411c310f3d656e406966593c0338984820d509ec` (140 sections), the records at
 `04d2123a`. **Dispatched (user, 2026-11-04).** **`replay-lsm3` passed** (user, 2026-11-04): 137 of 137 at
 `b8add1ac`, 0 failed, static-equal (40, all pre-existing); snapshot `oleans-lsm3`
-(`evidence/round3/merged-tree/`). `replay-lsm3` is written
-(137 modules from `oleans-leqc3`, eight blobs pinned; precheck passed); not yet run.
+(`evidence/round3/merged-tree/`), 137 modules from `oleans-leqc3`, eight blobs pinned.
+
+**Round 3** (`pack-r3.md`, head `b8add1ac`). **Findings** (`findings-r3.md`, verbatim, SHA-256
+`f553fc4ae21427ebdae589320951b77a508f778b13d1abd6488cca5ea88b84e0`; received 2026-11-04): **OPEN, 0
+blockers, 1 major, 0 minors, 7 notes.**
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | major | LS-1 is still not retired. `ARMProof`'s `arm_decides` proves `hLn : Ls ≤ n + 1` inline, with `Ls := logSpace n`, by unfolding `logSpace` and `Nat.log_lt_self`. Round 3's search (by `Nat.log_le_self`) and its screen missed it. | **True; fixed in round 4** (`a7c2a655`): `have hLn : Ls ≤ n + 1 := by rw [hLs]; exact logSpace_le_succ n` (Hydroxyi's file, a mechanical dedup re-point, FYI). Round 4's search (`evidence/round4/ls1-search/`) covers every code line that touches `logSpace`'s definition (unfolds, rewrite and simp lists, `logSpace_eq`, local aliases) and every Mathlib upper bound of `Nat.log` (`log_le_self`, `log_lt_self`, `log_lt_of_lt_pow` and four more): 91 lines in 60 declarations, each classified. LS-1 is proved once, in `Basic`, and cited at nine sites. A binary-length sweep (189 lines) found three more families; the user ruled on each (2026-11-04). **LS-2**, `logSpace n ≤ Nat.size n + 1` and its converse: "Fix in #181 now". `logSpace_le_size_succ` moves verbatim from `ISCountMath` to `Basic`. `BPLInP`'s two inline copies, `SpaceAmplifyPoly`'s `logSpace_le_ell` and `ISCountGenCorrect`'s private `size_le_logSpace` now cite it or `length_bits_le_log` (`fe4bdb67`, `227d92ee`). In the same round, `ExpBFS/Run`'s `setup_run` cites its own file's `lgv_le_succ` (`252bbcb8`). **LS-3**, `|bits n| = Nat.log 2 n + 1`, three private copies, one in E-D's in-flight file: ledgered for the dedup window. **BL-1**, the binary length's elementary bounds re-derived from `Nat.size`: ledgered for the dedup window. The seven files round 4 changes elaborate with 0 diagnostics (`round4/elab/`), and the freeze shows exactly the intended changes (`round4/freeze/`). The screen covers 24 files (`round4/screen/`): 232 → 232 declarations, 63 → 63 pairs, none new or gone. The ledger's LS-1 entry records the third correction, and LS-2, LS-3 and BL-1 have entries of their own. |
+| 2–7 | note | Provenance and freeze, the round-3 replacements, the screen and lint, the homes, meaning, and execution evidence. | Agreed. On note 3, round 4 classifies every candidate pattern, not only the listed hits. |
+| 8 | note | A replay certifying the repaired final head remains outstanding; #182 must then replay its combined closure. | Agreed. `replay-lsm4` is written (`round4/merged-tree/`): 137 modules from `oleans-leqc3`, 14 blobs pinned, the same closure as round 3's. Its precheck passed at `227d92ee`. #182 then takes one merged-tree replay from round 4's snapshot (`oleans-lsm4`), as ruled. |
+
+**Round 4 staged (2026-11-04):** `pack-r4.md`, at #181's head `227d92ee`. Bundle SHA-256
+`72810cba1ccb4857a4e4a5e9a371bdf97eb93e18ae1da233e8c1b415c0149232` (212 sections), the records at `51d6cd83`. **Dispatched (user, 2026-11-04).** **`replay-lsm4` passed** (user, 2026-11-04): 137 of 137 at
+`227d92ee`, 0 failed, static-equal (40, all pre-existing); snapshot `oleans-lsm4`
+(`evidence/round4/merged-tree/`).
