@@ -1984,8 +1984,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - **continuation must-pins:** MP1–MP11;
     - **replay:** 4 modules from the merged tree's snapshot.
 
-    **Decisions pending (user):** land now with E1–E3; E3 now; accept the idiom pair; one
-    continuation for checkpoints 3–8; its agent; land before H issues.
+    **Ruled (user, 2026-11-04):**
+    - the partial travels with its continuation; nothing lands until the target is proved;
+    - E1–E3 go on the partial branch now;
+    - one continuation for checkpoints 3–8, **Claude**;
+    - the `un_setup` idiom pair is accepted, with a ledger exclusion;
+    - H does not wait for NF; NF's final landing re-takes H's overlap.
+
+    **`lean/c1-nf-partial`** (pushed, no PR) at `5241eb82`. It holds the two worker commits with
+    reworded subjects (`7791e6fc`, `252dea65`, trees equal to the delivery), E1–E3 (`969d221d`, the
+    review's landed file, blob `e6432b1e`), and a merge of the campaign at `cd9f1d92`. Only
+    `NDNormalForm` differs from the campaign. It elaborates against `oleans-leqc3` with exactly the
+    target's sorry. Next: NF cont1's brief, based on that commit.
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.

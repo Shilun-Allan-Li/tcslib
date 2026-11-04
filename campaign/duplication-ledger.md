@@ -771,5 +771,11 @@ name with the general `astep_jeqFst`, and resolves by argument type in its own f
 `Complexity.LogProg`. **Disposition:** in the dedup window (mechanical ARM edits, FYI), re-prove the
 three through the general equations, and rename the circuit one if the shared name is unwanted.
 
+**NF-X1, an idiom exclusion** (NF's partial delivery, review F6; ruled by the user, 2026-11-04).
+`NTimeHierarchy.lean::un_setup` reproduces 57% of `NDNormalForm.lean::nf_setup`. The shared text
+is three invocations of the published initial-configuration field equations
+(`MultiTapeTM.initCfg_eq`, `Cfg.init_state`, `Cfg.init_workTapes`): the idiom of reading the
+initial configuration, not a re-derived composite. **Disposition:** excluded; not counted.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
