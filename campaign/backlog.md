@@ -4117,6 +4117,15 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   `c8b0711408c02a2c7e254663511ecdb65516ae88` (the campaign tip after #176, Lean `711f5444`), Claude. The
   dispatch copy `exchange/outbox/fills/eq-fill-diagonalizer.md` (SHA-256
   `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2).
+* **The general `savitch`: the deepening design** (`campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md`,
+  2026-11-04; probes `probes/`): Hydroxyi's search needs no restating. A generic embedding
+  theorem (`AHalt.embed`, proved in the probe) transports any halting run of `A` into a larger
+  machine containing `A`'s table, so the deepening machine holds `A E` twice (accept and edge
+  deciders). Rule 10 places it beside `astep`/`PreS`/`AHalt`: an additive API in `Machines/ARM`
+  (14 step equations), `Machines/ARMProof` (`Ins.embed`, `preS_of_ins`, `preS_embed`,
+  `astep_embed`, `AHalt.embed`) and `SavitchARM/Machine` (`A_noVal`), about 250 lines; then a
+  fill (the edge language, window exactness, the machine, the assembly; 1.5–2.8k). **Decisions
+  pending (user):** the embedding instead of restating the search; the edge decider's home.
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
