@@ -41,7 +41,7 @@ Configuration-graph infrastructure; not a result of [AB09].
 ## Main results
 
 * `Complexity.Codec.mem_validLang`, `mem_initLang`, `mem_acceptLang`, `mem_stepLang`,
-  `mem_edgeLang_iff` —
+  `mem_edgeLang` —
   membership through the codec.
 * `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff` — the checks recognize
   the code words of the respective configurations.
@@ -163,5 +163,19 @@ theorem mem_stepLang (x : List Bool) (c c' s : ℕ) :
     rw [bits_injective h3, bits_injective h5, bits_injective h6]
     exact hC
   · intro h; exact ⟨x, c, c', s, rfl, h⟩
+
+/-- **Membership in the edge-code language.** -/
+theorem mem_edgeLang (x : List Bool) (c s : ℕ) :
+    pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ edgeLang N ↔
+      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
+        ∃ i, |C.workTapePos i| = (s : ℤ) := by
+  rw [mem_edgeLang_iff]
+  constructor
+  · rintro ⟨x', c', s', h, hC⟩
+    obtain ⟨rfl, h2⟩ := pairEncode_inj h
+    obtain ⟨h3, h4⟩ := pairEncode_inj h2
+    rw [bits_injective h3, bits_injective h4]
+    exact hC
+  · intro h; exact ⟨x, c, s, rfl, h⟩
 
 end Complexity.Codec
