@@ -1,0 +1,221 @@
+From 124ba88c64c88cf618bd3657a946c7c678880648 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 01:23:40 -0800
+Subject: [PATCH] Four general space facts out of Machines/ARMWidth:
+ logSpace_le_succ and logSpace_le_of_le_mul_two_pow to SpaceComplexity/Basic;
+ LOGSPACE_subset_PSPACE and SPACE_succ_pow_subset_PSPACE to SpaceClasses;
+ Constructible's two inline steps cite logSpace_le_succ
+
+The ledger's LS-1 family, retired ahead of the dedup window so that the space hierarchy's fill can
+cite these results from its imports. ARMWidth's edit is mechanical: the four declarations move,
+unchanged in name and statement, and every user already imports the new homes; ARMWidth keeps the
+register-machine wrappers. SpaceClasses imports ClassP/P (for succ_pow_le): one module, no new
+Mathlib root, no simp lemma, and every module downstream of SpaceClasses already imports it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/Basic.lean  | 25 +++++++++++
+ .../SpaceComplexity/Constructible.lean        | 11 ++---
+ .../SpaceComplexity/Machines/ARMWidth.lean    | 44 +------------------
+ .../SpaceComplexity/SpaceClasses.lean         | 23 ++++++++++
+ 4 files changed, 53 insertions(+), 50 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Basic.lean b/TCSlib/Complexity/SpaceComplexity/Basic.lean
+index 46e84e46..d4212759 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Basic.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Basic.lean
+@@ -51,6 +51,8 @@ shape of [AB09, Fig. 4.1]:
+ * `Turing.FinTM.decidesInSpace_iff`, `Complexity.mem_SPACE_iff`, `Complexity.LOGSPACE_eq` —
+   the definitions of `DecidesInSpace`, `SPACE` and `LOGSPACE`, unfolded.
+ * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
++* `Complexity.logSpace_le_succ`, `Complexity.logSpace_le_of_le_mul_two_pow` — the logarithmic
++  bound is at most linear, and at most `(A + 1) s` below `A · 2^s`.
+ * `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
+ * `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
+   2026-10-10).
+@@ -190,6 +192,29 @@ def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
+ /-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
+ theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+ 
++/-- The logarithmic bound is at most linear: `logSpace n ≤ n + 1`.
++
++**Proof sketch.** `Nat.log 2 n ≤ n` (`Nat.log_le_self`), then `Complexity.logSpace_eq`. -/
++theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
++  have := Nat.log_le_self 2 n
++  rw [logSpace_eq]
++  omega
++
++/-- A number at most `A · 2^s` (with `s ≥ 1`) has `logSpace` at most `(A + 1) s`. -/
++theorem logSpace_le_of_le_mul_two_pow {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) :
++    logSpace v ≤ (A + 1) * s := by
++  have hA : A < 2 ^ A := Nat.lt_two_pow_self
++  have hlt : v < 2 ^ (A + s) := by
++    rw [pow_add]
++    exact lt_of_le_of_lt h (Nat.mul_lt_mul_of_pos_right hA (Nat.two_pow_pos s))
++  have hle : A + s ≤ (A + 1) * s := by
++    have := Nat.le_mul_of_pos_right A (show 0 < s by omega)
++    rw [Nat.add_mul, Nat.one_mul]; omega
++  rcases Nat.eq_zero_or_pos v with rfl | hv
++  · simp only [logSpace, Nat.log_zero_right]; omega
++  · have := Nat.log_lt_of_lt_pow (by omega) hlt
++    simp only [logSpace]; omega
++
+ /-- **The class `L`** [AB09, Def 4.5]: `L = SPACE(log n)`, the languages decidable by a
+ machine visiting `O(log n)` work-tape cells. (Named `LOGSPACE` to keep the letter `L` free
+ for language variables.) -/
+diff --git a/TCSlib/Complexity/SpaceComplexity/Constructible.lean b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+index 9fb71337..b629cc8f 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Constructible.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Constructible.lean
+@@ -526,7 +526,7 @@ length counter on `true :: x`, using the proved prepend and buffered-composition
+ rows. Its linear running time bounds all visited work-tape cells, including
+ the counter width and boundary cells. -/
+ theorem spaceConstructible_linear : SpaceConstructible fun n => n + 1 := by
+-  refine ⟨fun n => Nat.succ_le_succ (Nat.log_le_self 2 n), ?_⟩
++  refine ⟨logSpace_le_succ, ?_⟩
+   obtain ⟨P, a, hp, _⟩ := FinTM.computesFunInTime_prepend_spaceUsed [true]
+   obtain ⟨L, b, hl, _⟩ := FinTM.computesFunInTime_lengthBits_spaceUsed
+   let M := FinTM.bufferedCompTM P L
+@@ -621,8 +621,8 @@ bound `n ^ c + 1` is `Complexity.SpaceConstructible`. (Degree zero is excluded:
+ fails the bundled `logSpace n ≤ S n` at large `n`; consumers route degree
+ zero through monotonicity into degree one.)
+ 
+-**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_eq` and
+-`Nat.log_le_self`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
++**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_le_succ`,
++and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
+ `x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
+ (`Turing.FinTM.computesFunInTime_cond`, with the decider
+ `Turing.FinTM.computesFunInTime_decideEq []`). On the empty input the constant
+@@ -682,10 +682,7 @@ theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
+   -- time, then space from time
+   refine (spaceConstructible_iff _).mpr ⟨fun n => ?_,
+     M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1, by omega, M, ?_⟩
+-  · have h1 : logSpace n ≤ n + 1 := by
+-      rw [logSpace_eq]
+-      have := Nat.log_le_self 2 n
+-      omega
++  · have h1 := logSpace_le_succ n
+     have h2 : n ≤ n ^ c := Nat.le_self_pow (by omega) n
+     omega
+   · apply (FinTM.computesInSpace_iff _ _ _).mpr
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+index 4c369627..821ba947 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean
+@@ -25,8 +25,7 @@ This is infrastructure — the register-machine description of space-bounded alg
+ 
+ ## Main definitions
+ 
+-* none (wrapper theorems for `Complexity.LogProg.ARM`, and the inclusions `L ⊆ PSPACE` and
+-  `SPACE ((n + 1)^k) ⊆ PSPACE`).
++* none (wrapper theorems for `Complexity.LogProg.ARM`).
+ 
+ ## Main results
+ 
+@@ -37,7 +36,6 @@ This is infrastructure — the register-machine description of space-bounded alg
+ * `Complexity.LogProg.arm_decides_pspace` — registers of polynomially many binary digits with
+   `PSPACE` deciders give `PSPACE`; `Complexity.LogProg.arm_decides_pspace_of_logspace` and
+   `Complexity.LogProg.arm_decides_pspace_val` are its logspace-decider and value-bound forms.
+-* `Complexity.LOGSPACE_subset_PSPACE` — `L ⊆ PSPACE`.
+ 
+ ## References
+ 
+@@ -45,46 +43,6 @@ This is infrastructure — the register-machine description of space-bounded alg
+   Cambridge University Press, 2009. (§4.1, Definitions 4.1 and 4.5.)
+ -/
+ 
+-namespace Complexity
+-
+-/-- The logarithmic bound is at most linear: `logSpace n ≤ n + 1`. -/
+-lemma logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
+-  have := Nat.log_le_self 2 n
+-  simp only [logSpace]; omega
+-
+-/-- **`L ⊆ PSPACE`** [AB09, §4.1.2, the chain `L ⊆ … ⊆ PSPACE` of p. 92 (its first and
+-last members)]: a logspace decider uses at most `c · (n + 1)` cells.
+-
+-**Proof sketch.** `logSpace n ≤ n + 1 = n ^ 1 + 1`, so `SPACE (logSpace) ⊆ SPACE (n ^ 1 + 1)`
+-(`Complexity.SPACE.mono`), which lies in `PSPACE` at degree one. -/
+-theorem LOGSPACE_subset_PSPACE : LOGSPACE ⊆ PSPACE :=
+-  (SPACE.mono fun n => by simpa using logSpace_le_succ n).trans (space_poly_subset_PSPACE 1)
+-
+-/-- `SPACE ((n + 1)^k) ⊆ PSPACE`: the shifted polynomial bound gives polynomial space.
+-
+-**Proof sketch.** `(n + 1)^k ≤ 2^k (n^k + 1)` (`Complexity.succ_pow_le`), so
+-`Complexity.SPACE.mono_const` and `Complexity.space_poly_subset_PSPACE` at degree `k`. -/
+-theorem SPACE_succ_pow_subset_PSPACE (k : ℕ) : SPACE (fun n => (n + 1) ^ k) ⊆ PSPACE :=
+-  (SPACE.mono_const (a := 2 ^ k) fun n => succ_pow_le n k).trans
+-    (space_poly_subset_PSPACE k)
+-
+-/-- A number at most `A · 2^s` (with `s ≥ 1`) has `logSpace` at most `(A + 1) s`. -/
+-lemma logSpace_le_of_le_mul_two_pow {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) :
+-    logSpace v ≤ (A + 1) * s := by
+-  have hA : A < 2 ^ A := Nat.lt_two_pow_self
+-  have hlt : v < 2 ^ (A + s) := by
+-    rw [pow_add]
+-    exact lt_of_le_of_lt h (Nat.mul_lt_mul_of_pos_right hA (Nat.two_pow_pos s))
+-  have hle : A + s ≤ (A + 1) * s := by
+-    have := Nat.le_mul_of_pos_right A (show 0 < s by omega)
+-    rw [Nat.add_mul, Nat.one_mul]; omega
+-  rcases Nat.eq_zero_or_pos v with rfl | hv
+-  · simp only [logSpace, Nat.log_zero_right]; omega
+-  · have := Nat.log_lt_of_lt_pow (by omega) hlt
+-    simp only [logSpace]; omega
+-
+-end Complexity
+-
+ namespace Complexity.LogProg
+ 
+ open Turing
+diff --git a/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean b/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean
+index 94da191c..cfc4df36 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SpaceClasses.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
+ import TCSlib.Complexity.SpaceComplexity.NSPACE
++import TCSlib.Complexity.ClassP.P
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -33,6 +34,9 @@ claimed here.
+ 
+ * `Complexity.space_poly_subset_PSPACE`, `Complexity.PSPACE_subset_NPSPACE`,
+   `Complexity.LOGSPACE_subset_NL` — the definitional inclusions.
++* `Complexity.LOGSPACE_subset_PSPACE` — `L ⊆ PSPACE`.
++* `Complexity.SPACE_succ_pow_subset_PSPACE` — the shifted polynomial bounds `(n + 1)^k` give
++  polynomial space.
+ 
+ ## References
+ 
+@@ -69,6 +73,25 @@ def coNL : Set (Language Bool) := {L | Lᶜ ∈ NL}
+ theorem space_poly_subset_PSPACE (c : ℕ) : SPACE (fun n => n ^ c + 1) ⊆ PSPACE := by
+   exact Set.subset_iUnion (fun d : ℕ => SPACE fun n => n ^ d + 1) c
+ 
++/-- **`L ⊆ PSPACE`** [AB09, §4.1.2, the chain `L ⊆ … ⊆ PSPACE` of p. 92 (its first and
++last members)]: a logspace decider uses at most `c · (n + 1)` cells.
++
++**Proof sketch.** `logSpace n ≤ n + 1 = n ^ 1 + 1` (`Complexity.logSpace_le_succ`), so
++`SPACE (logSpace) ⊆ SPACE (n ^ 1 + 1)` (`Complexity.SPACE.mono`), which lies in `PSPACE` at degree
++one. -/
++theorem LOGSPACE_subset_PSPACE : LOGSPACE ⊆ PSPACE := by
++  rw [LOGSPACE_eq]
++  exact (SPACE.mono fun n => by simpa only [pow_one] using logSpace_le_succ n).trans
++    (space_poly_subset_PSPACE 1)
++
++/-- `SPACE ((n + 1)^k) ⊆ PSPACE`: the shifted polynomial bound gives polynomial space.
++
++**Proof sketch.** `(n + 1)^k ≤ 2^k (n^k + 1)` (`Complexity.succ_pow_le`), so
++`Complexity.SPACE.mono_const` and `Complexity.space_poly_subset_PSPACE` at degree `k`. -/
++theorem SPACE_succ_pow_subset_PSPACE (k : ℕ) : SPACE (fun n => (n + 1) ^ k) ⊆ PSPACE :=
++  (SPACE.mono_const (a := 2 ^ k) fun n => succ_pow_le n k).trans
++    (space_poly_subset_PSPACE k)
++
+ /-- `PSPACE ⊆ NPSPACE`: determinism is a special case, degree by degree.
+ 
+ **Proof sketch.** `Complexity.SPACE_subset_NSPACE` at each degree, then the
+-- 
+2.50.1 (Apple Git-155)
+

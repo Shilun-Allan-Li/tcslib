@@ -1,0 +1,29 @@
+How the evidence was produced (maintainer, 2026-11-04).
+
+Elaboration chain (`elab-chain/`). The four changed files and the seven users of the moved results,
+elaborated in dependency order at the PR's commit `124ba88c` (the four files' blobs are the same at
+the head `50adf098`, which only merges the campaign in: #176's `NTimeDiagonalizer`, outside every
+closure here). Each module was compiled with `lean -o` into an APFS copy-on-write clone of
+`oleans-lnpc3` (`cp -cR`), so later modules load the new `.olean`s of earlier ones; `oleans-lnpc3`
+and the campaign tip after #176 agree on every module of these closures. The tool is
+`scripts/leanelab-o.sh`: `tools/leanelab.sh` (the two-slot throttle, `-j4`, `nice -n 10`) with an
+`-o` output into the clone. This is a pre-replay check; `replay-lsm1` (137 modules, fresh
+`.olean`s, the static sorry check) is the merge evidence.
+
+Rule 10 (`rule10/`), elaborated against the same clone:
+- `SpaceClassesSealed`: `SpaceClasses` at the head with the two moved proofs in a section that makes
+  `SPACE`, `LOGSPACE` and `logSpace` (other-file definitions; `Basic`'s) locally irreducible and
+  erases the four `@[simp]` TCSlib definitions.
+- `ConstructibleSealed`: gate 86's seal of the moved block (`scripts/mkseal_scp.py`, unchanged: 12
+  definitions, `logSpace` among them, three erased) applied at the head, where
+  `spaceConstructible_poly`'s dominance step now cites `logSpace_le_succ`.
+- `ConstructibleLinearSealed` / `...Base`: `spaceConstructible_linear` with `logSpace` sealed, at
+  the head and at the base: the head elaborates; the base's step
+  `Nat.succ_le_succ (Nat.log_le_self 2 n)` fails at exactly that term (it needed `logSpace`'s
+  reduction), which shows the re-point removes the reduction and the seal discriminates.
+- `SealControl_{unsealed,sealed}`: one delta control per sealed definition (14, the union), the
+  equation control of the recursive `transduce`, and four `simp` controls; the control commands
+  are E-Q cont1's review's (`#ctl_rfl`, `#ctl_eqn`, `#ctl_simp`).
+`Basic`'s two declarations reach no other-file TCSlib definition: `logSpace_le_succ` reads
+`logSpace` through `logSpace_eq`, and `logSpace_le_of_le_mul_two_pow` (moved verbatim) unfolds
+`logSpace`, now its own file's definition.

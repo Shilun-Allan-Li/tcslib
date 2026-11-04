@@ -1,0 +1,15 @@
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
+
+/-! The non-private constants of `TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth`, compiler auxiliaries
+included, sorted. A census probe, not library code. -/
+
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let some idx := env.getModuleIdx? `TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth | throwError "no module"
+  let mut names : Array String := #[]
+  for (n, _) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some idx && !isPrivateName n then names := names.push n.toString
+  let sorted := names.qsort (· < ·)
+  logInfo m!"count {sorted.size}"
+  for n in sorted do logInfo m!"CONST {n}"
