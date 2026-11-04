@@ -1545,6 +1545,19 @@ private def nf_ok (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x
     nf_decode N.k (fun p => some (rec p)) i =
       (Fin.cases c.inputSymbol c.workTapeSymbols : Fin (N.k + 1) → Option Bool) i
 
+/-- The control fold's state follows the decoded virtual run, one record at a time. -/
+private theorem nf_vstep_state (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
+    (ctl : nf_Control N) (rec : Fin (2 * N.k + 4) → Bool) (h1 : ctl.1 = c.state) :
+    (nf_complete N (fun p => some (rec p)) ctl).1 = (nf_vstep N c rec).state := by
+  obtain ⟨cs, o, f⟩ := ctl
+  simp only at h1
+  subst h1
+  cases hc : c.state with
+  | none => simp only [nf_complete, nf_vstep, hc]
+  | some q =>
+    simp only [nf_complete, nf_vstep, hc]
+    exact (Action.apply_state _ _).symm
+
 /-- The control fold's state and output summary follow the decoded virtual run.
 
 **Proof sketch.** Case on the virtual state. Halted, both stay. Live, the completion rule and
@@ -1556,15 +1569,14 @@ private theorem nf_vstep_ctl (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Boo
     (nf_complete N (fun p => some (rec p)) ctl).1 = (nf_vstep N c rec).state ∧
       (nf_complete N (fun p => some (rec p)) ctl).2.1 =
         StepBlock.outputSummary (nf_vstep N c rec).output := by
+  refine ⟨nf_vstep_state N c ctl rec h1, ?_⟩
   obtain ⟨cs, o, f⟩ := ctl
   simp only at h1 h2
   subst h1 h2
   cases hc : c.state with
-  | none =>
-    simp only [nf_complete, nf_vstep, hc, and_self]
+  | none => simp only [nf_complete, nf_vstep, hc]
   | some q =>
     simp only [nf_complete, nf_vstep, hc]
-    refine ⟨(Action.apply_state _ _).symm, ?_⟩
     rw [Action.apply_output, StepBlock.outputSummary_append]
     rfl
 
@@ -1611,6 +1623,39 @@ private theorem nf_stream_cons (k : ℕ) (rec : Fin (2 * k + 4) → Bool)
     push_cast
     ring
 
+/-- Every record of `rec :: rs` meets a check along the virtual run from `c` exactly when `rec`
+meets it at `c` and every record of `rs` meets it along the run from the virtual step. -/
+private theorem nf_all_cons (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
+    (rec : Fin (2 * N.k + 4) → Bool) (rs : List (Fin (2 * N.k + 4) → Bool))
+    (P : Cfg N.k Bool N.State x → (Fin (2 * N.k + 4) → Bool) → Prop) :
+    (∀ r (h : r < (rec :: rs).length),
+      P (((rec :: rs).take r).foldl (nf_vstep N) c) (rec :: rs)[r]) ↔
+      P c rec ∧ ∀ r (h : r < rs.length),
+        P ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] := by
+  constructor
+  · intro h
+    exact ⟨h 0 (by simp), fun r hr => h (r + 1) (by simp; omega)⟩
+  · rintro ⟨h0, h⟩ r hr
+    cases r with
+    | zero => exact h0
+    | succ r => exact h r (by simp at hr; omega)
+
+/-- In a stream of records whose end flags mark exactly the last, the first record's flag says
+whether it is the only one, and the rest's flags mark exactly the rest's last. -/
+private theorem nf_flags_cons {k : ℕ} (rec : Fin (2 * k + 4) → Bool)
+    (rs : List (Fin (2 * k + 4) → Bool))
+    (hflag : ∀ r (h : r < (rec :: rs).length),
+      (rec :: rs)[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = (rec :: rs).length)) :
+    rec ⟨2 * k + 3, by omega⟩ = decide (rs = []) ∧
+      ∀ r (h : r < rs.length), rs[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = rs.length) := by
+  refine ⟨?_, fun r hr => ?_⟩
+  · have := hflag 0 (by simp)
+    simp only [List.getElem_cons_zero, List.length_cons, zero_add] at this
+    rw [this]
+    cases rs <;> simp
+  · have := hflag (r + 1) (by simp; omega)
+    simpa using this
+
 section LeafRun
 
 attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
@@ -1651,17 +1696,8 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
     obtain ⟨hA0, hA1⟩ := nf_stream_cons N.k rec rs (d.workTapes 0) (d.workTapePos 0) hA
     obtain ⟨hpre, hpass, hrej⟩ := nf_leaf_record_in N d rec ctl hst hA0
     have hinp : d.inputSymbol = c.inputSymbol := nf_inputSymbol_congr d c (by rw [hip])
-    have hall : (∀ r (h : r < (rec :: rs).length),
-        nf_ok N (((rec :: rs).take r).foldl (nf_vstep N) c) (rec :: rs)[r] 0) ↔
-        nf_ok N c rec 0 ∧ ∀ r (h : r < rs.length),
-          nf_ok N ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] 0 := by
-      constructor
-      · intro h
-        exact ⟨h 0 (by simp), fun r hr => h (r + 1) (by simp; omega)⟩
-      · rintro ⟨h0, h⟩ r hr
-        cases r with
-        | zero => exact h0
-        | succ r => exact h r (by simp at hr; omega)
+    have hall := nf_all_cons N c rec rs (fun c rec => nf_ok N c rec 0)
+    obtain ⟨hfl, hflag'⟩ := nf_flags_cons rec rs hflag
     by_cases hok : nf_ok N c rec 0
     · obtain ⟨hlive, hdec⟩ := hok
       obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlive
@@ -1670,9 +1706,7 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
       have hrun := hpass q (hc.trans hq) hdec'
       cases rs with
       | nil =>
-        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by
-          have := hflag 0 (by simp)
-          simpa using this
+        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by simpa using hfl
         refine ⟨2 * N.k + 4, hpre, fun _ => ⟨by simp,
           moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape, ?_⟩,
           fun hn => absurd ?_ hn⟩
@@ -1683,9 +1717,7 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
           subst hr
           exact ⟨hlive, hdec⟩
       | cons rec' rs' =>
-        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by
-          have := hflag 0 (by simp)
-          simpa using this
+        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by simpa using hfl
         rw [if_neg (by simp [hl])] at hrun
         set d' : Cfg 2 Bool (nf_LeafSt N) x := { d with
           state := some (.read ((0, fun _ => none),
@@ -1693,12 +1725,7 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
           inputPos := moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape
           workTapePos := Function.update d.workTapePos 0
             (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) } with hd'
-        have hvc : (nf_complete N (fun p => some (rec p)) ctl).1 = (nf_vstep N c rec).state := by
-          obtain ⟨cs, o, f⟩ := ctl
-          simp only at hc
-          subst hc
-          simp only [nf_complete, nf_vstep, hq]
-          exact (Action.apply_state _ _).symm
+        have hvc := nf_vstep_state N c ctl rec hc
         have hvip : d'.inputPos = (nf_vstep N c rec).inputPos := by
           show moveInputPos d.inputPos _ = _
           simp only [nf_vstep, hq]
@@ -1710,11 +1737,6 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
             (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) 0 + p) = _
           rw [Function.update_self]
           exact hA1 p hp
-        have hflag' : ∀ r (h : r < (rec' :: rs').length),
-            (rec' :: rs')[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = (rec' :: rs').length) := by
-          intro r hr
-          have := hflag (r + 1) (by simp at hr ⊢; omega)
-          simpa using this
         obtain ⟨T', hpre', hpass', hrej'⟩ := nf_leaf_run_in N (rec' :: rs') d'
           (nf_complete N (fun p => some (rec p)) ctl) (nf_vstep N c rec) (by simp) hflag' rfl hvc
           hvip hA'
@@ -1752,6 +1774,615 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
         rfl
 
 end LeafRun
+
+/-- Tape `1` with the block at cell `b` rewritten to hold the content `n`: two nonblank bits,
+`nf_record`'s code of `n`. -/
+private def nf_blockWrite (B : ℤ → Option Bool) (b : ℤ) (n : Option Bool) : ℤ → Option Bool :=
+  Function.update (Function.update B b (some n.isSome)) (b + 1) (some (n.getD false))
+
+section LeafBlock
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+
+/-- **One block of a work tape's replay.** At the first cell `b` of the block on tape `1`, the
+work-tape instance reads the block's two cells, rewriting them to the cell's new content `n`, in
+two steps. If the block decodes to the claim, then after the end-flagged record it passes, its
+head on the block's second cell; after any other record two more steps leave that head at
+`b + 2 mv`, at the next record boundary. Otherwise it rejects. Tape `0`, its head, the input head
+and the output do not change, and there is no exit before.
+
+**Proof sketch.** Each of the four steps is a one-tape action of the leaf's table on tape `1`:
+two writing steps, the second of which checks the block read off the first step's old cell and
+the second cell (unchanged by the first write), then two moves. The head of tape `1` moves by
+`+1`, then `+1` or `−1`, then `0` or `−1` twice, which sums to two cells per simulated move. -/
+private theorem nf_leaf_block (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}
+    (e : Cfg 2 Bool (nf_LeafSt N) x) (σ : nf_SweepState N) (claim n : Option Bool)
+    (mv : SignType) (last : Bool) (hst : e.state = some (.blk₁ σ claim n mv last)) :
+    (∀ u < 2, ∀ s, ((nf_leaf N (some t)).runFrom e u).state = some s →
+      nf_leafExit N s = none) ∧
+    (nf_blockDecode (e.workTapes 1 (e.workTapePos 1)) (e.workTapes 1 (e.workTapePos 1 + 1)) =
+        claim → last = true →
+      (nf_leaf N (some t)).runFrom e 2 = { e with
+        state := some .pass
+        workTapes :=
+          Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n)
+        workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 1) }) ∧
+    (nf_blockDecode (e.workTapes 1 (e.workTapePos 1)) (e.workTapes 1 (e.workTapePos 1 + 1)) =
+        claim → last = false →
+      (∀ u < 4, ∀ s, ((nf_leaf N (some t)).runFrom e u).state = some s →
+        nf_leafExit N s = none) ∧
+      (nf_leaf N (some t)).runFrom e 4 = { e with
+        state := some (.read σ)
+        workTapes :=
+          Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n)
+        workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * (mv : ℤ)) }) ∧
+    (nf_blockDecode (e.workTapes 1 (e.workTapePos 1)) (e.workTapes 1 (e.workTapePos 1 + 1)) ≠
+        claim → ((nf_leaf N (some t)).runFrom e 2).state = some .rej) := by
+  set b := e.workTapePos 1 with hb
+  -- the first block step: read the first cell, write the content's first bit, move right
+  set e₁ : Cfg 2 Bool (nf_LeafSt N) x := { e with
+      state := some (.blk₂ σ claim n mv last (e.workTapes 1 b))
+      inputPos := moveInputPos e.inputPos 0
+      workTapes := Function.update e.workTapes 1
+        (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome))
+      workTapePos := Function.update e.workTapePos 1 (e.workTapePos 1 + 1) } with he₁
+  have h1 : (nf_leaf N (some t)).runFrom e 1 = e₁ := by
+    rw [show (1 : ℕ) = 0 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,
+      step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1 0
+        (some n.isSome) 1 hst rfl, SignType.coe_one, Cfg.workTapeSymbols_eq]
+  have hsym1 : e₁.workTapeSymbols 1 = e.workTapes 1 (b + 1) := by
+    rw [Cfg.workTapeSymbols_eq]
+    show Function.update e.workTapes 1
+      (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome)) 1
+      (Function.update e.workTapePos 1 (e.workTapePos 1 + 1) 1) = _
+    rw [Function.update_self, Function.update_self, Function.update_of_ne (by omega)]
+  have hpre : ∀ u < 2, ∀ s, ((nf_leaf N (some t)).runFrom e u).state = some s →
+      nf_leafExit N s = none := by
+    intro u hu s hs
+    rcases (by omega : u = 0 ∨ u = 1) with rfl | rfl
+    · rw [MultiTapeTM.runFrom_zero, hst] at hs
+      cases hs
+      rfl
+    · rw [h1] at hs
+      cases hs
+      rfl
+  have hw2 : ∀ (q' : nf_LeafSt N) (m : SignType) (v : Bool),
+      (nf_leaf N (some t)).tr (.blk₂ σ claim n mv last (e.workTapes 1 b)) e₁.inputSymbol
+        e₁.workTapeSymbols = tapeAction 1 0 (some (some v)) m q' →
+      (nf_leaf N (some t)).runFrom e 2 = { e₁ with
+        state := some q'
+        inputPos := moveInputPos e₁.inputPos 0
+        workTapes := Function.update e₁.workTapes 1
+          (Function.update (e₁.workTapes 1) (e₁.workTapePos 1) (some v))
+        workTapePos := Function.update e₁.workTapePos 1 (e₁.workTapePos 1 + m) } := by
+    intro q' m v htr
+    have e2 : (nf_leaf N (some t)).runFrom e 2 =
+        (nf_leaf N (some t)).step ((nf_leaf N (some t)).runFrom e 1) :=
+      MultiTapeTM.runFrom_succ_eq_step'
+    rw [e2, h1,
+      step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last
+        (e.workTapes 1 b)) 1 0 (some v) m rfl htr]
+  have htape2 : Function.update e₁.workTapes 1
+      (Function.update (e₁.workTapes 1) (e₁.workTapePos 1) (some (n.getD false))) =
+        Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) b n) := by
+    show Function.update (Function.update e.workTapes 1
+      (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome))) 1
+      (Function.update (Function.update e.workTapes 1
+        (Function.update (e.workTapes 1) (e.workTapePos 1) (some n.isSome)) 1)
+        (Function.update e.workTapePos 1 (e.workTapePos 1 + 1) 1) (some (n.getD false))) = _
+    rw [Function.update_self, Function.update_self, Function.update_idem]
+    rfl
+  refine ⟨hpre, fun hdec hl => ?_, fun hdec hl => ?_, fun hdec => ?_⟩
+  · subst hl
+    rw [hw2 .pass 0 (n.getD false) (by
+      simp only [nf_leaf]
+      rw [hsym1, if_pos hdec]
+      rfl), htape2]
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_zero _ |>.trans (moveInputPos_zero _)
+    · rfl
+    · funext i
+      by_cases hi : i = 1
+      · subst hi
+        simp only [he₁, Function.update_self, SignType.coe_zero, add_zero]
+        rfl
+      · simp only [he₁, Function.update_of_ne hi]
+    · rfl
+  · subst hl
+    -- the second block step, then the two head adjustments
+    set m₂ : SignType := if mv = 1 then 1 else -1 with hm₂
+    set m₃ : SignType := if mv = -1 then -1 else 0 with hm₃
+    have h2 := hw2 (.adj₁ σ mv) m₂ (n.getD false) (by
+      simp only [nf_leaf]
+      rw [hsym1, if_pos hdec]
+      rfl)
+    rw [htape2] at h2
+    set e₂ : Cfg 2 Bool (nf_LeafSt N) x := { e₁ with
+        state := some (.adj₁ σ mv)
+        inputPos := moveInputPos e₁.inputPos 0
+        workTapes := Function.update e.workTapes 1 (nf_blockWrite (e.workTapes 1) b n)
+        workTapePos := Function.update e₁.workTapePos 1 (e₁.workTapePos 1 + m₂) } with he₂
+    have h3 : (nf_leaf N (some t)).runFrom e 3 = { e₂ with
+        state := some (.adj₂ σ mv)
+        inputPos := moveInputPos e₂.inputPos 0
+        workTapePos := Function.update e₂.workTapePos 1 (e₂.workTapePos 1 + m₃) } := by
+      rw [show (3 : ℕ) = 2 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', h2,
+        step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl]
+    have h4 : (nf_leaf N (some t)).runFrom e 4 = { e₂ with
+        state := some (.read σ)
+        inputPos := moveInputPos (moveInputPos e₂.inputPos 0) 0
+        workTapePos := Function.update (Function.update e₂.workTapePos 1 (e₂.workTapePos 1 + m₃)) 1
+          (Function.update e₂.workTapePos 1 (e₂.workTapePos 1 + m₃) 1 + m₃) } := by
+      rw [show (4 : ℕ) = 3 + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step', h3,
+        step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl]
+    refine ⟨fun u hu s hs => ?_, ?_⟩
+    · rcases (by omega : u < 2 ∨ u = 2 ∨ u = 3) with hu2 | rfl | rfl
+      · exact hpre u hu2 s hs
+      · rw [h2] at hs
+        cases hs
+        rfl
+      · rw [h3] at hs
+        cases hs
+        rfl
+    · rw [h4]
+      apply Cfg.ext
+      · rfl
+      · show moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _
+        rw [moveInputPos_zero, moveInputPos_zero, moveInputPos_zero, moveInputPos_zero]
+      · rfl
+      · funext i
+        by_cases hi : i = 1
+        · subst hi
+          simp only [he₂, he₁, Function.update_self]
+          rw [hm₂, hm₃]
+          rcases mv with _ | _ | _ <;> simp <;> ring
+        · simp only [he₂, he₁, Function.update_of_ne hi]
+      · rfl
+  · have e2 : (nf_leaf N (some t)).runFrom e 2 =
+        (nf_leaf N (some t)).step ((nf_leaf N (some t)).runFrom e 1) :=
+      MultiTapeTM.runFrom_succ_eq_step'
+    rw [e2, h1, step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last
+        (e.workTapes 1 b)) (q' := .rej) 1 0 0 rfl (by
+        simp only [nf_leaf]
+        rw [hsym1, if_neg hdec])]
+
+end LeafBlock
+
+section LeafWork
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+
+/-- **The read of one record by a work-tape instance.** From a record boundary, with the record on
+tape `0` from its head, the instance for work tape `t` reads the record in `2k + 4` steps, at no
+exit before. At a live control it is then at the first cell of the block on tape `1`, carrying
+the decoded claim on tape `t`, the cell's new content under the recomputed action, the simulated
+move and the end flag, with the head of tape `0` one cell past the record and nothing else
+changed; at a halted control it rejects.
+
+**Proof sketch.** The first `2k + 3` steps read the record's first bits. At the last bit the
+parser completes the record, and the leaf's table at a live control is a right move on tape `0`
+into the block's first state, with the record's decoded claims and recomputed action. -/
+private theorem nf_leaf_record_wk (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}
+    (d : Cfg 2 Bool (nf_LeafSt N) x) (rec : Fin (2 * N.k + 4) → Bool) (ctl : nf_Control N)
+    (hst : d.state = some (.read ((0, fun _ => none), ctl)))
+    (hA : ∀ p : Fin (2 * N.k + 4), d.workTapes 0 (d.workTapePos 0 + (p.val : ℤ)) = some (rec p)) :
+    (∀ u < 2 * N.k + 4, ∀ s, ((nf_leaf N (some t)).runFrom d u).state = some s →
+      nf_leafExit N s = none) ∧
+    (∀ q, ctl.1 = some q →
+      (nf_leaf N (some t)).runFrom d (2 * N.k + 4) = { d with
+        state := some (.blk₁ ((0, fun _ => none), nf_complete N (fun p => some (rec p)) ctl)
+          (nf_decode N.k (fun p => some (rec p)) t.succ)
+          (((nf_act N (fun p => some (rec p)) q).workTapes t).1.getD
+            (nf_decode N.k (fun p => some (rec p)) t.succ))
+          ((nf_act N (fun p => some (rec p)) q).workTapes t).2 (rec ⟨2 * N.k + 3, by omega⟩))
+        workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) }) ∧
+    (ctl.1 = none → ((nf_leaf N (some t)).runFrom d (2 * N.k + 4)).state = some .rej) := by
+  have hpre := nf_leaf_prefix N (some t) d rec ctl hst hA
+  refine ⟨fun u hu s hs => ?_, ?_⟩
+  · rw [hpre u hu] at hs
+    cases hs
+    rfl
+  set σ := (List.ofFn fun i : Fin (2 * N.k + 3) => rec ⟨i.val, by omega⟩).foldl
+    (nf_sweepStep N) ((0, fun _ => none), ctl) with hσ
+  obtain ⟨h1, h2, h3, h4⟩ := nf_prefix_last N rec ctl σ hσ
+  set c : Cfg 2 Bool (nf_LeafSt N) x := { d with
+      state := some (.read σ)
+      workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) }
+    with hc
+  have hrun : (nf_leaf N (some t)).runFrom d (2 * N.k + 4) = (nf_leaf N (some t)).step c := by
+    rw [show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+      hpre (2 * N.k + 3) (by omega)]
+  have hsym : c.workTapeSymbols 0 = some (rec ⟨2 * N.k + 3, by omega⟩) := by
+    rw [Cfg.workTapeSymbols_eq]
+    show d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) 0) = _
+    rw [Function.update_self]
+    exact hA ⟨2 * N.k + 3, by omega⟩
+  refine ⟨fun q hq => ?_, fun hn => ?_⟩
+  · rw [hrun, step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)
+      (q' := .blk₁ ((0, fun _ => none), nf_complete N (fun p => some (rec p)) ctl)
+        (nf_decode N.k (fun p => some (rec p)) t.succ)
+        (((nf_act N (fun p => some (rec p)) q).workTapes t).1.getD
+          (nf_decode N.k (fun p => some (rec p)) t.succ))
+        ((nf_act N (fun p => some (rec p)) q).workTapes t).2 (rec ⟨2 * N.k + 3, by omega⟩))
+      0 0 1 rfl (by
+      simp only [nf_leaf]
+      rw [if_pos h1, hsym, Option.getD_some, h3, h4, h2, hq])]
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_zero _
+    · rfl
+    · funext i
+      by_cases hi : i = 0
+      · subst hi
+        simp only [hc, Function.update_self, SignType.coe_one]
+        push_cast
+        ring
+      · simp only [hc, Function.update_of_ne hi]
+    · rfl
+  · rw [hrun, step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0 rfl
+      (by
+        simp only [nf_leaf]
+        rw [if_pos h1, h2, hn])]
+
+/-- **The block representation of a replayed work tape.** Tape `1` holds the replayed tape's cells
+`[lo, hi]` as two-bit blocks from cell `p₀` (cell `y` at `p₀ + 2y` and `p₀ + 2y + 1`), with the
+contents `v`, and is blank elsewhere; and `v` is blank outside `[lo, hi]`. -/
+private def nf_blocks (B : ℤ → Option Bool) (p₀ lo hi : ℤ) (v : ℤ → Option Bool) : Prop :=
+  (∀ y : ℤ, B (p₀ + 2 * y) = (if lo ≤ y ∧ y ≤ hi then some (v y).isSome else none) ∧
+    B (p₀ + 2 * y + 1) = (if lo ≤ y ∧ y ≤ hi then some ((v y).getD false) else none)) ∧
+  ∀ y : ℤ, ¬(lo ≤ y ∧ y ≤ hi) → v y = none
+
+/-- A represented cell's block decodes to the cell's content, visited or not. -/
+private theorem nf_blocks_decode {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {v : ℤ → Option Bool}
+    (h : nf_blocks B p₀ lo hi v) (y : ℤ) :
+    nf_blockDecode (B (p₀ + 2 * y)) (B (p₀ + 2 * y + 1)) = v y := by
+  rw [(h.1 y).1, (h.1 y).2]
+  by_cases hy : lo ≤ y ∧ y ≤ hi
+  · rw [if_pos hy, if_pos hy]
+    unfold nf_blockDecode
+    cases v y with
+    | none => rfl
+    | some b => rfl
+  · rw [if_neg hy, if_neg hy, h.2 y hy]
+    rfl
+
+/-- Rewriting the block of a cell next to or inside the represented interval extends the
+interval by that cell and updates its content.
+
+**Proof sketch.** The rewritten cells are the block of `y`; every other cell is unchanged, and a
+cell other than `y` is in the new interval exactly when it is in the old one, since `y` is at most
+one cell outside it. -/
+private theorem nf_blocks_write {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {v : ℤ → Option Bool}
+    (h : nf_blocks B p₀ lo hi v) (y : ℤ) (n : Option Bool) (h1 : lo - 1 ≤ y) (h2 : y ≤ hi + 1) :
+    nf_blocks (nf_blockWrite B (p₀ + 2 * y) n) p₀ (min lo y) (max hi y)
+      (Function.update v y n) := by
+  have hin : ∀ z, z ≠ y → ((min lo y ≤ z ∧ z ≤ max hi y) ↔ (lo ≤ z ∧ z ≤ hi)) := by
+    intro z hz
+    constructor
+    · rintro ⟨ha, hb⟩
+      rw [min_le_iff] at ha
+      rw [le_max_iff] at hb
+      omega
+    · rintro ⟨ha, hb⟩
+      exact ⟨min_le_of_left_le ha, le_max_of_le_left hb⟩
+  have hy : min lo y ≤ y ∧ y ≤ max hi y := ⟨min_le_right _ _, le_max_right _ _⟩
+  refine ⟨fun z => ?_, fun z hz => ?_⟩
+  · unfold nf_blockWrite
+    by_cases hzy : z = y
+    · rw [hzy]
+      have e2 : p₀ + 2 * y ≠ p₀ + 2 * y + 1 := by omega
+      rw [Function.update_of_ne e2]
+      simp only [Function.update_self, if_pos hy, and_self]
+    · have e1 : p₀ + 2 * z ≠ p₀ + 2 * y := by omega
+      have e2 : p₀ + 2 * z ≠ p₀ + 2 * y + 1 := by omega
+      have e3 : p₀ + 2 * z + 1 ≠ p₀ + 2 * y := by omega
+      have e4 : p₀ + 2 * z + 1 ≠ p₀ + 2 * y + 1 := by omega
+      rw [Function.update_of_ne e2, Function.update_of_ne e1, Function.update_of_ne e4,
+        Function.update_of_ne e3, Function.update_of_ne hzy, (h.1 z).1, (h.1 z).2]
+      by_cases hz' : lo ≤ z ∧ z ≤ hi
+      · rw [if_pos hz', if_pos hz', if_pos ((hin z hzy).mpr hz'), if_pos ((hin z hzy).mpr hz')]
+        exact ⟨rfl, rfl⟩
+      · rw [if_neg hz', if_neg hz', if_neg (fun h' => hz' ((hin z hzy).mp h')),
+          if_neg (fun h' => hz' ((hin z hzy).mp h'))]
+        exact ⟨rfl, rfl⟩
+  · have hzy : z ≠ y := fun e => hz (e ▸ hy)
+    rw [Function.update_of_ne hzy]
+    exact h.2 z (fun h' => hz ((hin z hzy).mpr h'))
+
+/-- The nonblank cells of a represented interval `[lo, hi]` are exactly its blocks'.
+
+**Proof sketch.** Every cell is the first or the second cell of some block; a block's cells are
+nonblank exactly when its cell is in the interval. -/
+private theorem nf_blocks_support {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {v : ℤ → Option Bool}
+    (h : nf_blocks B p₀ lo hi v) (q : ℤ) :
+    B q ≠ none ↔ p₀ + 2 * lo ≤ q ∧ q ≤ p₀ + 2 * hi + 1 := by
+  obtain ⟨z, hz | hz⟩ : ∃ z, q = p₀ + 2 * z ∨ q = p₀ + 2 * z + 1 :=
+    ⟨(q - p₀) / 2, by omega⟩
+  · subst hz
+    rw [(h.1 z).1]
+    by_cases hzi : lo ≤ z ∧ z ≤ hi
+    · rw [if_pos hzi]
+      exact ⟨fun _ => by omega, fun _ => Option.some_ne_none _⟩
+    · rw [if_neg hzi]
+      exact ⟨fun h' => absurd rfl h', fun h' => absurd ⟨by omega, by omega⟩ hzi⟩
+  · subst hz
+    rw [(h.1 z).2]
+    by_cases hzi : lo ≤ z ∧ z ≤ hi
+    · rw [if_pos hzi]
+      exact ⟨fun _ => by omega, fun _ => Option.some_ne_none _⟩
+    · rw [if_neg hzi]
+      exact ⟨fun h' => absurd rfl h', fun h' => absurd ⟨by omega, by omega⟩ hzi⟩
+
+end LeafWork
+
+section LeafWorkRun
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+
+/-- A simulated move is at most one cell. -/
+private theorem nf_signType_bound (m : SignType) : -1 ≤ (m : ℤ) ∧ (m : ℤ) ≤ 1 := by
+  rcases m with _ | _ | _ <;> simp
+
+/-- **A work tape's replay.** From a record boundary with a stream of `n ≥ 1` records on tape `0`
+from its head (only the last end-flagged), at a control that follows the virtual configuration
+`c`, and with tape `1` holding `c`'s work tape `t` as blocks from `p₀` over an interval
+`[lo, hi]` within one cell of `c`'s head (and the head of tape `1` on the head's block), the
+instance for work tape `t` reaches an exit at some time `T`, at no exit before. It passes exactly
+when every record's claim on tape `t` is checked along the decoded virtual run; then
+`T + 2 = (2k + 8)n`, its head on tape `0` is one cell past the stream, and tape `1` is blank
+outside a nonempty contiguous region of nonblank cells `[p₀ + 2lo', p₀ + 2hi' + 1]`, of at most
+`hi - lo + 1 + n` blocks, holding the head of tape `1` on its block `y`'s second cell. Otherwise it
+rejects.
+
+**Proof sketch.** Induct over the records. One record is its read, then its block: a dead control
+rejects after the read, a failed check rejects after the block's second step. A passed check
+writes the block of the virtual head with the cell's new content, which is the virtual step's,
+so the block representation extends by that cell; after the end-flagged record the leaf passes
+there, and after any other the head of tape `1` moves to the next virtual head's block, within one
+cell of the extended interval, where the induction hypothesis applies. -/
+private theorem nf_leaf_run_wk (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool} (p₀ : ℤ) :
+    ∀ (rs : List (Fin (2 * N.k + 4) → Bool)) (d : Cfg 2 Bool (nf_LeafSt N) x)
+      (ctl : nf_Control N) (c : Cfg N.k Bool N.State x) (lo hi : ℤ),
+    rs ≠ [] →
+    (∀ r (h : r < rs.length), rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length)) →
+    d.state = some (.read ((0, fun _ => none), ctl)) → ctl.1 = c.state →
+    nf_blocks (d.workTapes 1) p₀ lo hi (c.workTapes t) →
+    d.workTapePos 1 = p₀ + 2 * c.workTapePos t →
+    lo ≤ hi + 1 → lo - 1 ≤ c.workTapePos t → c.workTapePos t ≤ hi + 1 →
+    (∀ p : ℕ, p < (rs.flatMap List.ofFn).length →
+      d.workTapes 0 (d.workTapePos 0 + p) = (rs.flatMap List.ofFn)[p]?) →
+    ∃ T, (∀ u < T, ∀ s, ((nf_leaf N (some t)).runFrom d u).state = some s →
+        nf_leafExit N s = none) ∧
+      ((∀ r (h : r < rs.length), nf_ok N ((rs.take r).foldl (nf_vstep N) c) rs[r] t.succ) →
+        T + 2 = (2 * N.k + 8) * rs.length ∧
+        ∃ (B : ℤ → Option Bool) (lo' hi' y : ℤ),
+          (nf_leaf N (some t)).runFrom d T = { d with
+            state := some .pass
+            workTapes := Function.update d.workTapes 1 B
+            workTapePos := Function.update (Function.update d.workTapePos 0
+              (d.workTapePos 0 + ((2 * N.k + 4) * rs.length : ℕ))) 1 (p₀ + 2 * y + 1) } ∧
+          (∀ q, B q ≠ none ↔ p₀ + 2 * lo' ≤ q ∧ q ≤ p₀ + 2 * hi' + 1) ∧
+          lo' ≤ y ∧ y ≤ hi' ∧ hi' - lo' ≤ hi - lo + rs.length) ∧
+      (¬ (∀ r (h : r < rs.length), nf_ok N ((rs.take r).foldl (nf_vstep N) c) rs[r] t.succ) →
+        ((nf_leaf N (some t)).runFrom d T).state = some .rej)
+  | [], _, _, _, _, _, hne, _, _, _, _, _, _, _, _, _ => absurd rfl hne
+  | rec :: rs, d, ctl, c, lo, hi, _, hflag, hst, hc, hB, hpos, h0, h1, h2, hA => by
+    obtain ⟨hA0, hA1⟩ := nf_stream_cons N.k rec rs (d.workTapes 0) (d.workTapePos 0) hA
+    obtain ⟨hpreR, hlive, hdead⟩ := nf_leaf_record_wk N t d rec ctl hst hA0
+    have hall := nf_all_cons N c rec rs (fun c rec => nf_ok N c rec t.succ)
+    obtain ⟨hfl, hflag'⟩ := nf_flags_cons rec rs hflag
+    by_cases hlv : c.state = none
+    · refine ⟨2 * N.k + 4, hpreR, fun h => absurd hlv (hall.mp h).1.1,
+        fun _ => hdead (hc.trans hlv)⟩
+    obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlv
+    have hrun := hlive q (hc.trans hq)
+    set r : Fin (2 * N.k + 4) → Option Bool := fun p => some (rec p) with hr
+    set a := nf_act N r q with ha
+    set claim := nf_decode N.k r t.succ with hclaim
+    set n := (a.workTapes t).1.getD claim with hn
+    set e : Cfg 2 Bool (nf_LeafSt N) x := { d with
+        state := some (.blk₁ ((0, fun _ => none), nf_complete N r ctl) claim n (a.workTapes t).2
+          (rec ⟨2 * N.k + 3, by omega⟩))
+        workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) }
+      with he
+    obtain ⟨hpreB, hpassL, hpassN, hrejB⟩ := nf_leaf_block N t e _ claim n (a.workTapes t).2
+      (rec ⟨2 * N.k + 3, by omega⟩) rfl
+    have hew1 : e.workTapes 1 = d.workTapes 1 := rfl
+    have hep1 : e.workTapePos 1 = d.workTapePos 1 := by
+      simp only [he]
+      exact Function.update_of_ne (by decide) _ _
+    have hdecB : nf_blockDecode (e.workTapes 1 (e.workTapePos 1))
+        (e.workTapes 1 (e.workTapePos 1 + 1)) = c.workTapeSymbols t := by
+      rw [hew1, hep1, hpos, Cfg.workTapeSymbols_eq]
+      exact nf_blocks_decode hB _
+    have hpre2 : ∀ u < 2 * N.k + 4 + 2, ∀ s, ((nf_leaf N (some t)).runFrom d u).state = some s →
+        nf_leafExit N s = none := by
+      intro u hu s hs
+      by_cases hu1 : u < 2 * N.k + 4
+      · exact hpreR u hu1 s hs
+      · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
+        rw [MultiTapeTM.runFrom_add, hrun] at hs
+        exact hpreB v (by omega) s hs
+    by_cases hok0 : claim = c.workTapeSymbols t
+    · have hdec : nf_blockDecode (e.workTapes 1 (e.workTapePos 1))
+          (e.workTapes 1 (e.workTapePos 1 + 1)) = claim := hdecB.trans hok0.symm
+      have hok : nf_ok N c rec t.succ := ⟨hlv, hok0⟩
+      -- the virtual step on work tape `t`
+      have hvt : (nf_vstep N c rec).workTapes t = Function.update (c.workTapes t)
+          (c.workTapePos t) n := by
+        simp only [nf_vstep, hq]
+        rw [Action.apply_workTapes, ← hok0]
+      have hvp : (nf_vstep N c rec).workTapePos t = c.workTapePos t + (a.workTapes t).2 := by
+        simp only [nf_vstep, hq]
+        rw [Action.apply_workTapePos]
+      have hBw : nf_blocks (nf_blockWrite (d.workTapes 1) (p₀ + 2 * c.workTapePos t) n) p₀
+          (min lo (c.workTapePos t)) (max hi (c.workTapePos t))
+          ((nf_vstep N c rec).workTapes t) := by
+        rw [hvt]
+        exact nf_blocks_write hB _ n h1 h2
+      have hmv := nf_signType_bound (a.workTapes t).2
+      cases rs with
+      | nil =>
+        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by simpa using hfl
+        have h2s := hpassL hdec hl
+        refine ⟨2 * N.k + 4 + 2, hpre2, fun _ => ⟨by simp only [List.length_singleton]; omega,
+          nf_blockWrite (d.workTapes 1) (p₀ + 2 * c.workTapePos t) n,
+          min lo (c.workTapePos t), max hi (c.workTapePos t), c.workTapePos t, ?_,
+          nf_blocks_support hBw, min_le_right _ _, le_max_right _ _, by simp; omega⟩,
+          fun hn' => absurd (hall.mpr ⟨hok, fun r hr => by simp at hr⟩) hn'⟩
+        rw [MultiTapeTM.runFrom_add, hrun, h2s]
+        apply Cfg.ext
+        · rfl
+        · rfl
+        · show Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n) = _
+          rw [hew1, hep1, hpos]
+        · funext i
+          by_cases hi : i = 1
+          · subst hi
+            simp only [Function.update_self]
+            rw [hep1, hpos]
+          · simp only [he, Function.update_of_ne hi, List.length_singleton, Nat.mul_one]
+        · rfl
+      | cons rec' rs' =>
+        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by simpa using hfl
+        obtain ⟨hpre4, h4s⟩ := hpassN hdec hl
+        set d' : Cfg 2 Bool (nf_LeafSt N) x := { e with
+            state := some (.read ((0, fun _ => none), nf_complete N r ctl))
+            workTapes := Function.update e.workTapes 1
+              (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n)
+            workTapePos := Function.update e.workTapePos 1
+              (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) } with hd'
+        have hvc := nf_vstep_state N c ctl rec hc
+        have hB' : nf_blocks (d'.workTapes 1) p₀ (min lo (c.workTapePos t))
+            (max hi (c.workTapePos t)) ((nf_vstep N c rec).workTapes t) := by
+          show nf_blocks (Function.update e.workTapes 1
+            (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n) 1) _ _ _ _
+          rw [Function.update_self, hew1, hep1, hpos]
+          exact hBw
+        have hpos' : d'.workTapePos 1 = p₀ + 2 * (nf_vstep N c rec).workTapePos t := by
+          show Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 1 = _
+          rw [Function.update_self, hep1, hpos, hvp]
+          ring
+        have hA' : ∀ p : ℕ, p < ((rec' :: rs').flatMap List.ofFn).length →
+            d'.workTapes 0 (d'.workTapePos 0 + p) = ((rec' :: rs').flatMap List.ofFn)[p]? := by
+          intro p hp
+          have hw0 : d'.workTapes 0 = d.workTapes 0 := by
+            simp only [hd', he]
+            exact Function.update_of_ne (by decide) _ _
+          have hp0 : d'.workTapePos 0 = d.workTapePos 0 + (2 * N.k + 4 : ℕ) := by
+            simp only [hd', he]
+            rw [Function.update_of_ne (by decide), Function.update_self]
+          rw [hw0, hp0]
+          exact hA1 p hp
+        obtain ⟨T', hpre', hpass', hrej'⟩ := nf_leaf_run_wk N t p₀ (rec' :: rs') d'
+          (nf_complete N r ctl) (nf_vstep N c rec) (min lo (c.workTapePos t))
+          (max hi (c.workTapePos t)) (by simp) hflag' rfl hvc hB' hpos'
+          (by have := min_le_right lo (c.workTapePos t); have := le_max_right hi (c.workTapePos t)
+              omega)
+          (by rw [hvp]; have := min_le_right lo (c.workTapePos t); omega)
+          (by rw [hvp]; have := le_max_right hi (c.workTapePos t); omega) hA'
+        have hrun4 : (nf_leaf N (some t)).runFrom d (2 * N.k + 4 + 4) = d' := by
+          rw [MultiTapeTM.runFrom_add, hrun, h4s]
+        refine ⟨2 * N.k + 4 + 4 + T', fun u hu s hs => ?_, fun h => ?_, fun h => ?_⟩
+        · by_cases hu1 : u < 2 * N.k + 4
+          · exact hpreR u hu1 s hs
+          · by_cases hu2 : u < 2 * N.k + 4 + 4
+            · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
+              rw [MultiTapeTM.runFrom_add, hrun] at hs
+              exact hpre4 v (by omega) s hs
+            · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4 + 4) + v :=
+                ⟨u - (2 * N.k + 4 + 4), by omega⟩
+              rw [MultiTapeTM.runFrom_add, hrun4] at hs
+              exact hpre' v (by omega) s hs
+        · obtain ⟨hT, B, lo', hi', y, hcfg, hsupp, hy1, hy2, hsz⟩ := hpass' (hall.mp h).2
+          refine ⟨by simp only [List.length_cons] at hT ⊢; rw [Nat.mul_add, ← hT]; ring, B, lo',
+            hi', y, ?_, hsupp, hy1, hy2, ?_⟩
+          · rw [MultiTapeTM.runFrom_add, hrun4, hcfg]
+            apply Cfg.ext
+            · rfl
+            · rfl
+            · show Function.update (Function.update d.workTapes 1 _) 1 B = _
+              rw [Function.update_idem]
+            · funext i
+              by_cases hi : i = 1
+              · subst hi
+                simp only [Function.update_self]
+              · have hi0 : i = 0 := by omega
+                subst hi0
+                simp only [hd', he, Function.update_self,
+                  Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide), List.length_cons]
+                push_cast
+                ring
+            · rfl
+          · simp only [List.length_cons] at hsz ⊢
+            have := min_le_left lo (c.workTapePos t)
+            have := le_max_left hi (c.workTapePos t)
+            rw [min_le_iff] at *
+            rw [le_max_iff] at *
+            push_cast at hsz ⊢
+            have := min_le_right lo (c.workTapePos t)
+            have := le_max_right hi (c.workTapePos t)
+            omega
+        · have hn' : ¬ ∀ r (h : r < (rec' :: rs').length),
+              nf_ok N (((rec' :: rs').take r).foldl (nf_vstep N) (nf_vstep N c rec))
+                (rec' :: rs')[r] t.succ := fun h' => h (hall.mpr ⟨hok, h'⟩)
+          rw [MultiTapeTM.runFrom_add, hrun4]
+          exact hrej' hn'
+    · have hnok : ¬ nf_ok N c rec t.succ := fun h => hok0 h.2
+      refine ⟨2 * N.k + 4 + 2, hpre2, fun h => absurd (hall.mp h).1 hnok, fun _ => ?_⟩
+      rw [MultiTapeTM.runFrom_add, hrun]
+      exact hrejB (fun h => hok0 (h.symm.trans hdecB))
+
+end LeafWorkRun
+
+/-- **The exit invariant on tape `1` gives its clear's input.** If tape `1`'s nonblank cells are
+exactly the interval `[S, E]` and its head is at `h ∈ [S, E]`, then from `h - i` (with
+`i = h - S`) it holds a blank-delimited word `R` of length `E - S + 1`, and blanking `R`'s cells
+leaves tape `1` blank everywhere.
+
+**Proof sketch.** Read `R` off the interval's cells. Inside the interval every cell is nonblank,
+so it is `R`'s letter there; the cells just left and right of the interval are blank, as is the
+buffer of `R` there; and every cell outside the interval was blank already. -/
+private theorem nf_region (B : ℤ → Option Bool) (S E h : ℤ)
+    (hB : ∀ q, B q ≠ none ↔ S ≤ q ∧ q ≤ E) (hS : S ≤ h) (hE : h ≤ E) :
+    ∃ (R : List Bool) (i : ℕ), i ≤ R.length ∧ (R.length : ℤ) = E - S + 1 ∧ (i : ℤ) = h - S ∧
+      (∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) → B (h - i + p) = FinTM.bufferTape R p) ∧
+      ∀ q, (if h - i ≤ q ∧ q < h - i + R.length then none else B q) = none := by
+  set L : ℕ := (E - S + 1).toNat with hL
+  have hL' : (L : ℤ) = E - S + 1 := by rw [hL]; omega
+  refine ⟨List.ofFn fun m : Fin L => (B (S + m)).getD false, (h - S).toNat,
+    by rw [List.length_ofFn]; omega, by rw [List.length_ofFn]; exact hL', by omega,
+    fun p hp1 hp2 => ?_, fun q => ?_⟩
+  · rw [List.length_ofFn] at hp2
+    have hs : h - ((h - S).toNat : ℤ) = S := by omega
+    rw [hs]
+    by_cases hp0 : p = -1
+    · subst hp0
+      rw [FinTM.bufferTape_left]
+      by_contra hne
+      have := (hB _).mp hne
+      omega
+    · by_cases hpL : p = L
+      · rw [hpL, FinTM.bufferTape_nat, List.getElem?_eq_none (by rw [List.length_ofFn])]
+        by_contra hne
+        have := (hB _).mp hne
+        omega
+      · obtain ⟨m, rfl⟩ : ∃ m : ℕ, p = m := ⟨p.toNat, by omega⟩
+        have hm : m < L := by omega
+        rw [FinTM.bufferTape_nat, List.getElem?_ofFn]
+        simp only [hm, dite_true]
+        have hne : B (S + m) ≠ none := (hB _).mpr ⟨by omega, by omega⟩
+        obtain ⟨b, hb⟩ := Option.ne_none_iff_exists'.mp hne
+        rw [hb]
+        rfl
+  · rw [List.length_ofFn]
+    by_cases hq : h - ((h - S).toNat : ℤ) ≤ q ∧ q < h - ((h - S).toNat : ℤ) + L
+    · rw [if_pos hq]
+    · rw [if_neg hq]
+      by_contra hne
+      have := (hB q).mp hne
+      omega
 
 /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
 cited through [AB09, §3.2]; statement; proof incomplete): every
