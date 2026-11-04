@@ -63,4 +63,5 @@ blockers, 1 major, 0 minors, 7 notes.**
 | 8 | note | A replay certifying the repaired final head remains outstanding; #182 must then replay its combined closure. | Agreed. `replay-lsm4` is written (`round4/merged-tree/`): 137 modules from `oleans-leqc3`, 14 blobs pinned, the same closure as round 3's. Its precheck passed at `227d92ee`. #182 then takes one merged-tree replay from round 4's snapshot (`oleans-lsm4`), as ruled. |
 
 **Round 4 staged (2026-11-04):** `pack-r4.md`, at #181's head `227d92ee`. Bundle SHA-256
-`72810cba1ccb4857a4e4a5e9a371bdf97eb93e18ae1da233e8c1b415c0149232` (212 sections), the records at `51d6cd83`.
+`72810cba1ccb4857a4e4a5e9a371bdf97eb93e18ae1da233e8c1b415c0149232` (212 sections), the records at `51d6cd83`. **Dispatched (user, 2026-11-04).** `replay-lsm4` running (user,
+2026-11-04).
