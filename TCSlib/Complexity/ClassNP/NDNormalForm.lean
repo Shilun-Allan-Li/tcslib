@@ -27,8 +27,7 @@ No new definitions: the normal form is an existential contract.
 
 ## Main results
 
-* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form
-  (statement; proof incomplete).
+* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form.
 
 ## References
 
@@ -3323,7 +3322,7 @@ private theorem nf_backward_host (N : FinNDTM Bool) (x w : List Bool)
 end Backward
 
 /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
-cited through [AB09, §3.2]; statement; proof incomplete): every
+cited through [AB09, §3.2]): every
 nondeterministic machine has a coded (two-work-tape) equivalent whose
 acceptance tracks the original's at linear time overhead — forward with the
 explicit constant, backward in unbounded form (the consumer recovers the
@@ -3374,7 +3373,10 @@ theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
         N.AcceptsWithin x t → M.toFinNDTM.AcceptsWithin x (C * (t + 1))) ∧
       (∀ (x : List Bool) (t : ℕ),
         M.toFinNDTM.AcceptsWithin x t → ∃ t', N.AcceptsWithin x t') := by
-  sorry
+  obtain ⟨M, hM⟩ := nf_pack (nf_host N)
+  refine ⟨M, nf_C N.k, fun x t hN => (hM x _).2 (nf_forward N x t hN), fun x t hMt => ?_⟩
+  obtain ⟨w, -, hh, ho⟩ := (hM x t).1 hMt
+  exact nf_backward_host N x w hh ho
 
 end FinNDTM
 
