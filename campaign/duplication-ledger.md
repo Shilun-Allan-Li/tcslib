@@ -726,8 +726,19 @@ steps to it.
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
 `qy_log_bits` (whose `≤` half is `Machines/Bin`'s `length_bits_le_log`); before E3 also
 `qy_bits_len_mono` (`Bin`'s `length_bits_mono`) and `qy_lt_two_pow_bits`, now through Mathlib's
-`Nat.size` facts. Census: `NTimeDiagonalizer` 2 of 236 (0.8%), `Machines/Bin` 2 of 12 (16.7%; the
-public originals). Below one fifth. **Disposition:** the dedup window: a shared `Nat.bits` module.
+`Nat.size` facts; and, inline, `qy_call_bound`'s `(Nat.bits (f a)).length ≤ f a`, the statement of
+`Encoding`'s `Turing.length_bits_le_self` (gate 87's finding 2). Census, source-inclusive (gate 87's
+finding 3; declaration members, inline steps counted as in RO-1): `NTimeDiagonalizer` 3 of 236
+(1.3%), `Machines/Bin` 2 of 12 (16.7%), `SpaceAmplifyPoly` 1 of 20 (5%; `two_pow_bits_le`, on `main`
+and on the campaign since its merge of `main`), `Encoding` 1 of 61 (1.6%; `length_bits_le_self`);
+the last three are the public originals. Below one fifth. **Disposition:** `qy_call_bound`'s step
+re-points to `length_bits_le_self` in E-D's landing (ruled, user, 2026-11-04); the rest in the dedup
+window: a shared `Nat.bits` module.
+
+**Cumulative per-file accounting for RO-1 and NB-1** (source-inclusive; gate 87's finding 3).
+`NTimeDiagonalizer` 4 of 236 (1.7%: RO-1 1, NB-1 3; 3 after E-D's landing re-points
+`qy_call_bound`); `Encoding` 2 of 61 (3.3%: RO-1 1, NB-1 1). Every other file is in one of the two
+families only, its census above. No file approaches one fifth.
 
 **RC-1, row candidates from E-Q cont1** (PR #176; the brief's and the report's, the review's F9).
 Private leaves and lemmas with no published counterpart, each a candidate public row: the clocked

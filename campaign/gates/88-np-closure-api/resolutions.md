@@ -43,7 +43,12 @@ hardened, `Reductions` the campaign's. Bundle SHA-256
 `5ca648583c65e070d20f50b4df06d3e3b8e5c0fb52b454816fb10216816d816d` (46 sections), the records at
 `34804ca4`. `replay-lnpc3` (66 modules from `oleans-lscp3`) written, precheck passed; **running (user,
 2026-11-04)**. **Staged
-(2026-11-04); not yet dispatched.**
+(2026-11-04); dispatched (user, 2026-11-04).** Findings: pending.
 
 **Merge state. #177: not yet clear to merge** (2026-11-04): it waits for gate 88's round 2 and
 `replay-lnpc3` (`replay-lnpc2` failed and no longer applies).
+
+**Ruled (user, 2026-11-04): #176 merges before #177.** Their downstream closures share
+`NTimeHierarchy` and `Diagonalization`, so after #176 merges, #177 takes the campaign merged in and
+a merged-tree replay of the overlap from `oleans-lnpc3`: `NTimeDiagonalizer` (#176's) and its 2
+downstream modules.

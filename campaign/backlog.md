@@ -4021,7 +4021,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   - design-note references inside proof sketches: `Constructible`'s `P11`, `§12 R3`, `R8.5c`,
     `R8.4`, and `Savitch`'s `§12 R1/R2` (gate 86's round-2 note 9);
   - E-Q cont1's frozen proof sketch of `exists_queryTM`, which describes the binary route, not the
-    unary one proved (its review's F11).
+    unary one proved (its review's F11): align it with the unary rung construction and comparison,
+    and with the degree-six accumulated polylogarithmic overhead (gate 87's note 7).
 * **The second merge to `main` (asked 2026-10-28; a colleague wants the campaign's work).** Same
   procedure as 2026-10-15: `main` into the campaign by a PR (27 commits since; one textual conflict,
   `.gitignore`; `Nondeterminism`, the `TuringMachine` facade and `policy.md` changed on both sides),
