@@ -11,4 +11,6 @@ only, the user's to send. The design is
 (user, 2026-11-04).** Findings: pending.
 
 **The replay:** `replay-larm.sh` (`evidence/merged-tree/`), 138 modules from `oleans-leqc3`, pinning
-the five blobs; precheck passed. **Running** (user, 2026-11-04).
+the five blobs; precheck passed. **Passed** (user, 2026-11-04): 138 of 138 at `8fd6f91a`, 0 failed; the static sorry
+check equal (22, all pre-existing); snapshot `oleans-larm` (`evidence/merged-tree/replay-larm.log`,
+`replay-larm-static.txt`).
