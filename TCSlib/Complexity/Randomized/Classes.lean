@@ -65,9 +65,9 @@ decides membership with the class's acceptance-probability profile.
   (building the race, majority, complement, and projection verifiers out of
   given ones) are stated as explicit named hypotheses (`ClosedUnder…`), all of
   which hold for the intended instantiation "computable in polynomial time".
-  Intended instantiation targets, once a uniform-computability layer is
-  available: the `P`/`PolyTime` development of the `complexity/arora-barak-ch1`
-  branch, or Mathlib's `Turing.TM2ComputableInPolyTime`.
+  That instantiation is `Randomized.polyTimeModel` (`Randomized/PolyTimeModel.lean`),
+  which discharges the closure hypotheses; `Randomized/BPPAmplify.lean` instantiates
+  Lemma 7.9 and Theorem 7.10 there and transfers them to polynomial-time PTMs.
 * **Length schedules.** [AB09, Def 7.3] draws `r ∈ {0,1}^{p(|x|)}` for a
   polynomial `p`.  We fix the canonical schedule `polyLen a k : n ↦ a·(n+1)^k`
   (existentially quantified over `a, k : ℕ`) rather than an arbitrary
@@ -248,14 +248,13 @@ decide undecidable languages). -/
 def polyLen (a k : ℕ) : ℕ → ℕ := fun n => a * (n + 1) ^ k
 
 /-- An abstract *efficiency notion* for verifiers, standing in for
-"polynomial-time TM" in [AB09, Def 7.3] (see the module
+"polynomial-time Turing machine" in [AB09, Def 7.3] (see the module
 docstring's **Deviations**).  `Eff M` reads "`M` is an efficient verifier";
 verifiers are `Option Bool`-valued so that zero-error ("don't know") verifiers
 and ordinary Boolean verifiers share one notion.  `EffTwoWitness N` is the
 corresponding notion for predicates of an input and two witness strings, the
-verifier format of `Σ₂`-statements (used by [AB09, Thm 7.15]).  Intended
-instantiations: a polynomial-time TM layer (the `complexity/arora-barak-ch1`
-branch's `PolyTime`, or Mathlib's `Turing.TM2ComputableInPolyTime`). -/
+verifier format of `Σ₂`-statements (used by [AB09, Thm 7.15]).  The
+polynomial-time instance is `Randomized.polyTimeModel`. -/
 structure VerifierModel where
   /-- "`M` is an efficient (poly-time) verifier." -/
   Eff : (List Bool → List Bool → Option Bool) → Prop
@@ -713,7 +712,7 @@ end Counting
 
 /-- `BPP` is closed under complementation (`BPP = coBPP`): swap the two
 acceptance clauses and negate the verifier's answer.  Used by
-[AB09, Thm 7.15]'s proof ("it is enough to prove that `BPP ⊆ Σ₂ᵖ` because `BPP`
+[AB09, Thm 7.15]'s proof ("it is enough to prove `BPP ⊆ Σ₂ᵖ` because `BPP`
 is closed under complementation").
 
 **Proof sketch.** If `M` decides `L` with two-sided error `1/3`, then
@@ -875,8 +874,9 @@ This is the identity for the **Las Vegas / abort-form** `ZPP` (`InZPP`: a
 zero-error verifier that outputs `some b` or aborts with `none`, abort
 probability `≤ 1/2`), **not** the book's expected-polynomial-time formulation
 ([AB09, Def 7.7]).  The two are equivalent by the standard truncate-and-repeat
-bridge, which is not formalized here; until it is, read this as the abort-form
-identity (the documented deviation, plan question CH7-Q2).
+bridge, formalized for polynomial time as `Randomized.ZPP_PTM_eq_setOf_inZPP`
+(`Randomized/ZPPHostsClasses.lean`); the book's Theorem 7.8 for Def 7.7's `ZPP`
+is `Randomized.ZPP_PTM_eq_RP_PTM_inter_coRP_PTM` there.
 
 **Proof sketch.** (⊆) A zero-error verifier yields an `RP` verifier by
 answering `true` exactly on output `some true` (`hAns`): inputs outside `L`

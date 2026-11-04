@@ -1,29 +1,22 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/LMN/RestrictionFourier.lean :: prod_if_subset -->
+<!-- lean-source: TCSlib/BooleanAnalysis/LMN/RestrictionFourier.lean :: RestrictionFourier.prod_if_subset -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# Closing the coordinatewise product into `p^|S| (1−p)^|U∖S|`
+# A three-valued weight product over coordinates
 
-**Claim.** For `p : ℝ` and finsets `S U : Finset (Fin n)`,
+**Claim.** Fix a real number $p$ and two subsets $S, U \subseteq \{1,\dots,n\}$. Assign to each coordinate $i$ the weight $p$ when $i \in S$, the weight $1-p$ when $i \in U \setminus S$, and the weight $1$ otherwise. Then the product of these weights over all $n$ coordinates equals $p^{|S|}\,(1-p)^{|U \setminus S|}$, where $|\cdot|$ denotes cardinality.
 
-`∏ i : Fin n, (if i ∈ S then p else if i ∈ U then (1 - p) else 1)`
-` = p ^ S.card * (1 - p) ^ (U \ S).card`.
+**Proof.** The weight attached to coordinate $i$ is the nested conditional
+\[
+  w(i) \;=\; \begin{cases} p & i \in S,\\ 1-p & i \notin S \ \text{and}\ i \in U,\\ 1 & \text{otherwise.}\end{cases}
+\]
+The argument splits the full product over $\{1,\dots,n\}$ into its part on $S$ and its part on the complement $\{1,\dots,n\}\setminus S$, evaluates each factor, and multiplies.
 
-Purely arithmetic bookkeeping; note there is **no** hypothesis relating `S` and
-`U` — the `U \ S` on the right handles the overlap.
+1. **Split off $S$.** Since $S$ is a subset of the whole index set, the product over all coordinates factors as the product over $\{1,\dots,n\}\setminus S$ times the product over $S$ (`Finset.prod_sdiff`). It therefore suffices to compute these two factors separately.
 
-**Proof.**
+2. **The factor over $S$.** For every $i \in S$ the first branch of the conditional fires, so $w(i) = p$ there. The product of the constant $p$ over $S$ is thus $p^{|S|}$.
 
-1. `rw [← Finset.prod_sdiff (Finset.subset_univ S)]` splits the product over
-   `univ` into the part over `univ \ S` times the part over `S`.
-2. `h1`: on `S` the first test always succeeds (`if_pos`), so `Finset.prod_const`
-   gives `p ^ S.card`.
-3. `h2`: on `univ \ S` the first test always fails (`if_neg` via
-   `Finset.mem_sdiff`), leaving `if i ∈ U then (1 - p) else 1`; then
-   `Finset.prod_ite_mem` together with `hset : (univ \ S) ∩ U = U \ S`
-   (`ext`/`tauto`) and `Finset.prod_const` give `(1 - p) ^ (U \ S).card`.
-4. `rw [h1, h2, mul_comm]`.
+3. **The factor over the complement.** For $i \notin S$ the test $i \in S$ fails, so on $\{1,\dots,n\}\setminus S$ the weight collapses to the two-valued form $w(i) = 1-p$ if $i \in U$ and $w(i) = 1$ otherwise. A product of such indicator factors — a value on the members of $U$ and $1$ on the rest — keeps only the terms where the test holds (`Finset.prod_ite_mem`); that is, it equals the product of $1-p$ over $\big(\{1,\dots,n\}\setminus S\big)\cap U$. This intersection is exactly $U \setminus S$, since an element lies in it iff it belongs to $U$ but not to $S$. Hence the factor is the constant $1-p$ raised to the power $|U \setminus S|$, namely $(1-p)^{|U \setminus S|}$.
 
-**Used in.** `expectation_fourierCoeff_sq_restrictBF`, immediately after
-`sum_varWeight_localFactor_mul` has reduced each coordinate to `p`, `1 - p`, or
-`1` — this lemma converts that product into the stated exponents.
+4. **Combine.** Multiplying the two factors gives $p^{|S|}\,(1-p)^{|U \setminus S|}$, as claimed (the two pieces are produced in the opposite order and simply commuted into place).

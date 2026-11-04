@@ -3,7 +3,7 @@
  "key": "fe6a15b38de10dd0",
  "kind": "lemma",
  "title": "Noise operator as a kernel sum",
- "statement": "Fix $\\rho \\in \\bbr$, an arity $n$, and a point $x \\in \\{0,1\\}^n$. For every Boolean\nfunction $g : \\{0,1\\}^n \\to \\bbr$, the value of the noise operator $T_\\rho$ at $x$\nequals the kernel-weighted sum of $g$, namely\n\\[\n  (T_\\rho g)(x) \\;=\\; \\sum_{y \\in \\{0,1\\}^n} K_\\rho(x,y)\\, g(y),\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the\nnoise kernel and $\\sigma$ is the $\\pm 1$ sign encoding of a bit.",
+ "statement": "Fix $\\rho \\in \\bbr$, an arity $n$, and a point $x \\in \\{0,1\\}^n$. For every Boolean\nfunction $g : \\{0,1\\}^n \\to \\bbr$, the value of the noise operator $T_\\rho$ at $x$\nequals the kernel-weighted sum of $g$, namely\n\\[\n  (T_\\rho g)(x) \\;=\\; \\sum_{y \\in \\{0,1\\}^n} K_\\rho(x,y)\\, g(y),\n\\]\nwhere $K_\\rho(x,y) = \\prod_{i} \\tfrac{1 + \\rho\\,\\sigma(x_i)\\,\\sigma(y_i)}{2}$ is the\nnoise kernel and $\\sigma$ is the $\\pm 1$ sign encoding of a bit. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure.",
  "hypotheses_covered": [
   "ρ ∈ ℝ arbitrary",
   "arity n",

@@ -711,5 +711,35 @@ user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic
 `logSpace_eq` (a mechanical edit in `ARMWidth`, FYI to its author), and re-point the two inline
 steps to it.
 
+**RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
+2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
+(`MultiTapeTM.runFrom` is in the vendored `Deterministic`). Private copies: `NTimeDiagonalizer`'s
+`qy_run_one` (new), `ExhaustiveReplay`'s `xr_runFrom_one`, `SAT`'s `satRed_one`, `CfgRecord`'s
+`recordStep_runFrom_one`; inline in 13 declarations (`SeamLayout` 3, `Catalog` 4, `Primitives` 4,
+`Loop` 1, `Encoding` 1). Census (declaration members, at #176's head): `NTimeDiagonalizer` 1 of 236
+(0.4%), `ExhaustiveReplay` 1 of 185 (0.5%), `SAT` 1 of 270 (0.4%), `CfgRecord` 1 of 138 (0.7%),
+`SeamLayout` 3 of 36 (8.3%), `Catalog` 4 of 505, `Primitives` 4 of 285, `Loop` 1 of 205, `Encoding`
+1 of 61. The one-fifth rule is not reached. **Disposition:** the dedup window (12.2c): a public
+`MultiTapeTM.runFrom_one` in a non-vendored module, and the 17 sites re-pointed.
+
+**NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
+`qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
+`qy_log_bits` (whose `≤` half is `Machines/Bin`'s `length_bits_le_log`); before E3 also
+`qy_bits_len_mono` (`Bin`'s `length_bits_mono`) and `qy_lt_two_pow_bits`, now through Mathlib's
+`Nat.size` facts. Census: `NTimeDiagonalizer` 2 of 236 (0.8%), `Machines/Bin` 2 of 12 (16.7%; the
+public originals). Below one fifth. **Disposition:** the dedup window: a shared `Nat.bits` module.
+
+**RC-1, row candidates from E-Q cont1** (PR #176; the brief's and the report's, the review's F9).
+Private leaves and lemmas with no published counterpart, each a candidate public row: the clocked
+install call (`QyClockSpec`, `qy_clocked_call`, `qy_clockHost_*`); the framed length comparison
+with verdict (`qyCmpTM`, `qy_cmp_run`); the repeating emitter (`qyEmitTM`, `qy_emit_run`,
+`qy_emit_stop`); the phase host's segment forms (`qy_hosted*`, `qy_round_of_seg`); the
+`Nat.unpair` successor rule (`qy_unpair_succ_*`). Not copies. **Disposition:** promotion when a
+second consumer appears, or in the dedup window.
+
+**QF-1, two in-file factorings** (PR #176; the review's F6). The `copyMapTM`/`transferMapTM`
+endpoint conversion and the `clockCfg` field conversion recur in `NTimeDiagonalizer` (pairs at
+90–94%, justified as readings of different rows). Optional. **Disposition:** the dedup window.
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

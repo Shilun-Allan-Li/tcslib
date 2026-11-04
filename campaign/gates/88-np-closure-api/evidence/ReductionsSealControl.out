@@ -1,0 +1,38 @@
+ReductionsSealControl.lean:39:74: error: Type mismatch
+  rfl
+has type
+  ?m.40 = ?m.40
+but is expected to have type
+  (L ∈ Complexity.NP) =
+    ∃ C c, ∃ V ∈ Complexity.P, ∀ (x : List Bool), x ∈ L ↔ ∃ u, u.length = C * (x.length + 1) ^ c ∧ x ++ u ∈ V
+ReductionsSealControl.lean:42:73: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  Complexity.P = ⋃ c, Complexity.DTIME fun n => n ^ c + 1
+ReductionsSealControl.lean:46:91: error: Type mismatch
+  rfl
+has type
+  ?m.26 = ?m.26
+but is expected to have type
+  Complexity.PolyTimeComputable f = ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+ReductionsSealControl.lean:50:76: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  Complexity.pairFstD z = (Option.map Prod.fst (Turing.pairDecode z)).getD []
+ReductionsSealControl.lean:54:76: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  Complexity.pairSndD z = (Option.map Prod.snd (Turing.pairDecode z)).getD []
+ReductionsSealControl.lean:58:81: error: Type mismatch
+  rfl
+has type
+  ?m.23 = ?m.23
+but is expected to have type
+  Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+exit 1

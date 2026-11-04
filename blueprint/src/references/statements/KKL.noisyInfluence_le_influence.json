@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.noisyInfluence_le_influence",
- "key": "e1f4131f5224986b",
+ "key": "3082dee70400b640",
  "kind": "lemma",
- "title": "Noisy influence is dominated by influence",
- "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function, let $i\\in[n]$ be a coordinate, and let $\\rho\\in\\bbr$ satisfy $0\\le\\rho\\le 1$. Then the noisy influence of $i$ on $f$ at noise rate $\\rho$ is at most the influence of $i$ on $f$:\n\\[\n  \\mathrm{Inf}_i^{\\rho}[f]\\;\\le\\;\\mathrm{Inf}_i[f].\n\\]",
+ "title": "Noisy influence upper bound",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube, $i\\in[n]$, and $0\\le\\rho\\le1$. Then $I_i^{(\\rho)}(f)\\le I_i(f)$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation.",
  "hypotheses_covered": [
   "coordinate $i \\in [n]$",
   "Boolean function $f$",

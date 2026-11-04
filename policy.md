@@ -183,7 +183,15 @@ is part of the trusted surface.
 entries use `\statementsource{<ref>}{<anchor>}` and `\proofsource{<ref>}{<anchor>}` to cite
 it, subject to the existing rule that these are written only after an approved proofmatch
 run. When starting a new chapter or paper, ingest it as a reference pair
-(`<name>.raw.md` + `<name>.md`) so these citations are possible.
+(`<name>.raw.md` + `<name>.md`) so these citations are possible: put the PDF under
+`blueprint/src/references/` in the change that formalizes it and run
+`python3 scripts/dataset_pipeline.py --yes`, which ingests it, matches every text the
+blueprint does not cite yet, and carries the new statements into the dataset
+(`python3 scripts/sources.py add TAG=<pdf or md>` does the ingest and match alone, with
+the docstring tag above; `python3 scripts/sources.py` shows which texts are attached and
+which are still missing; see `dataset/INSTRUCTIONS.md`). The dataset builder does not
+search outside that directory for sources; an unattached text leaves the theorems with
+informalized proof notes instead of citations.
 
 **Vendored code.** Lean code adapted from another project keeps the original copyright
 header and license notice, and its file docstring names the source project, the commit it

@@ -17,11 +17,17 @@ introduced, every hypothesis rendered, mathematics in mathematical notation, no
 reference to anything outside the sentence.  The blueprint is left alone -- it
 stays the book-cited document it is.
 
+It is the fallback for records whose statement nothing cites.  A record whose
+blueprint entry cites the passage that states the result (`\statementsource`)
+takes that passage as its `informal_statement` (scripts/informal_sources.py), so
+nothing is generated for it; `--include-cited` overrides that.  A `\proofsource`
+alone fills only the proof column, so such a record still gets its statement here.
+
 Output is cached per declaration under
 `blueprint/src/references/statements/<lean_name>.json`, keyed by a hash of the
 formal statement, so a run is resumable and a re-run only revisits declarations
-whose Lean statement actually changed.  `apply_informal_statements.py` folds the
-cache into the dataset, in the same post-pass style as `build_proof_notes.py`.
+whose Lean statement actually changed.  `blueprint_restate.py --apply-only` folds
+the cache into the blueprint entries, from which build_dataset.py reads it.
 
 Usage
 -----
@@ -31,6 +37,15 @@ Usage
     python3 scripts/build_informal_statements.py --jobs 8          # full run
     python3 scripts/build_informal_statements.py --force           # ignore cache
     python3 scripts/build_informal_statements.py --estimate        # cost only
+    python3 scripts/build_informal_statements.py --definitions stubs
+        # also describe the definition-kind declarations whose blueprint entry is a
+        # blueprint_stub.py placeholder (the headless pipeline's path); `all`
+        # rewrites every bound definition, `none` (default) leaves definitions to
+        # the blueprint's own wording
+
+Definitions are not dataset records (records are theorems and lemmas), so for
+them the payload is built from the index directly: the definition with its body,
+plus its own definition closure, is the "formal statement" the prompt describes.
 """
 
 from __future__ import annotations
@@ -54,6 +69,8 @@ from proofmatch.agents import (  # noqa: E402
 )
 from proofmatch.dataset_io import read_dataset_text  # noqa: E402
 from proofmatch import statements as cache  # noqa: E402
+from proofmatch.model_policy import check_model  # noqa: E402
+from scripts import informal_sources as isrc  # noqa: E402
 
 # `scripts/proofmatch.py` shadows the `proofmatch` package on sys.path, so the
 # sibling module is loaded by path rather than by putting scripts/ on the path.
@@ -64,6 +81,16 @@ _spec = importlib.util.spec_from_file_location(
 )
 Q = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(Q)
+
+_bd_spec = importlib.util.spec_from_file_location(
+    "build_dataset", Path(__file__).resolve().parent / "build_dataset.py"
+)
+bd = importlib.util.module_from_spec(_bd_spec)
+_bd_spec.loader.exec_module(bd)
+
+STUB_MARKER = "dataset-pipeline: stub"
+#: Checks that judge a *claim*; a definition introduces an object and makes none.
+NOT_FOR_DEFINITIONS = {"no-claim"}
 
 DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
 CACHE_DIR = cache.CACHE_DIR
@@ -102,7 +129,8 @@ def build_payload(record: dict) -> dict:
         "definitions": definitions,
         "current": {
             "title": record.get("title", ""),
-            "statement": record.get("statement_informal", ""),
+            "statement": (isrc.statement_part(record.get("informal_statement", ""))
+                          if record.get("statement_source", "lean") == "lean" else ""),
         },
     }
 
@@ -123,11 +151,55 @@ def grade(result: dict) -> list[str]:
     return Q.check(result.get("statement", ""), result.get("title", ""), strict=True)
 
 
+def definition_records(mode: str) -> list[dict]:
+    """Pseudo-records for blueprint-bound definitions, shaped like dataset records.
+
+    `mode` is `stubs` (only entries whose body is a blueprint_stub.py placeholder)
+    or `all` (every bound definition-kind declaration except instances).
+    """
+    if not bd.DEP_GRAPH.exists():
+        print(f"ERROR: {bd.DEP_GRAPH} not found.")
+        return []
+    graph = json.load(open(bd.DEP_GRAPH))["modules"]
+    index = bd.build_index(graph)
+    env = bd.make_formal_env(graph, index)
+    informal = bd.parse_blueprint()
+    out: list[dict] = []
+    for name, entry in informal.items():
+        rec = index.get(name)
+        if rec is None or rec["kind"] not in bd.DEF_KINDS or rec["kind"] == "instance":
+            continue
+        if mode == "stubs" and STUB_MARKER not in (entry.get("informal") or ""):
+            continue
+        formal, ordered = bd.build_formal(rec, index, False, target_body=True, env=env)
+        definitions = []
+        for d in ordered:
+            de = informal.get(d)
+            if de and (de.get("informal") or de.get("title")) and STUB_MARKER not in de.get("informal", ""):
+                definitions.append({"id": d, "title": de.get("title", ""),
+                                    "informal": de.get("informal", "")})
+        body = entry.get("informal", "")
+        if STUB_MARKER in body:
+            body = ""
+        out.append({
+            "id": name,
+            "kind": rec["kind"],
+            "formal_statement": formal,
+            "definitions": definitions,
+            "title": entry.get("title", ""),
+            "informal_statement": body,
+            "source_module": rec["module"],
+        })
+    return out
+
+
 def generate(agent: ClaudeAgent, record: dict) -> dict:
     """One declaration: generate, grade, and re-ask once if the rubric bites."""
     payload = build_payload(record)
     result = agent.run("informalize_statement", payload)
     problems = grade(result)
+    if record.get("kind") in bd.DEF_KINDS:
+        problems = [p for p in problems if p not in NOT_FOR_DEFINITIONS]
     if [p for p in problems if p not in NOT_PROSE]:
         # One correction round.  The rubric names the defect precisely, so this
         # is cheap and fixes most of what it catches (dot-notation, "as above").
@@ -141,6 +213,8 @@ def generate(agent: ClaudeAgent, record: dict) -> dict:
         )
         result = agent.run("informalize_statement", retry)
         problems = grade(result)
+        if record.get("kind") in bd.DEF_KINDS:
+            problems = [p for p in problems if p not in NOT_FOR_DEFINITIONS]
     result["rubric"] = problems
     return result
 
@@ -151,7 +225,9 @@ def main() -> int:
     ap.add_argument("--limit", type=int, help="stop after this many declarations")
     ap.add_argument("--area", help="only this top-level area (GraphTheory, ...)")
     ap.add_argument("--only", nargs="+", help="only these lean names")
-    ap.add_argument("--jobs", type=int, default=6, help="concurrent claude calls")
+    ap.add_argument("--modules", nargs="+", metavar="MODULE",
+                    help="only declarations of these modules (full name, dotted suffix or area)")
+    ap.add_argument("--jobs", type=int, default=6, help="concurrent model calls")
     ap.add_argument("--model", help="override the model")
     ap.add_argument("--force", action="store_true", help="ignore the cache")
     ap.add_argument("--sample", action="store_true",
@@ -162,7 +238,31 @@ def main() -> int:
                          "and regenerate the ones that now fail")
     ap.add_argument("--estimate", action="store_true",
                     help="report how much work is outstanding, call nothing")
+    ap.add_argument("--definitions", choices=["none", "stubs", "all"], default="none",
+                    help="also describe blueprint-bound definitions: only stub entries, "
+                         "or every one (default: none)")
+    ap.add_argument("--allow-weak-models", action="store_true",
+                    help="run on a model below the prose floor (see proofmatch/model_policy.py)")
+    ap.add_argument("--include-cited", action="store_true",
+                    help="also generate for records whose blueprint entry carries a "
+                         "\\statementsource (by default their informal statement is that "
+                         "passage; a \\proofsource alone does not exempt a record)")
+    ap.add_argument("--generate", action="store_true",
+                    help="with --rekey: go on to generate the outstanding statements afterwards "
+                         "(without it, --rekey only migrates the cache and exits)")
+    ap.add_argument("--rekey", nargs="+", metavar="DATASET",
+                    help="before anything else, revalidate cache entries keyed against the "
+                         "formal statements of these earlier datasets (same core -> rekeyed, "
+                         "no model call); then report and exit unless other work is requested")
+    ap.add_argument("--trust-unknown", action="store_true",
+                    help="with --rekey: keep entries whose key matches none of the given "
+                         "datasets (instead of regenerating them)")
     args = ap.parse_args()
+
+    model = args.model or ClaudeAgent().model
+    verdict = check_model(model, "prose", allow_weak=args.allow_weak_models)
+    if verdict.startswith("WARNING"):
+        print(verdict)
 
     global CACHE_DIR
     if args.cache_dir:
@@ -170,12 +270,51 @@ def main() -> int:
 
     records = [json.loads(line) for line in read_dataset_text(Path(args.dataset)).splitlines()
                if line.strip()]
+    if args.definitions != "none":
+        defs = definition_records(args.definitions)
+        print(f"{len(defs)} definition entries added ({args.definitions})")
+        records += defs
     if args.area:
         records = [r for r in records
                    if r.get("source_module", "").split(".")[1:2] == [args.area]]
     if args.only:
         wanted = set(args.only)
         records = [r for r in records if r["id"] in wanted]
+    if args.modules:
+        records = [r for r in records
+                   if bd.module_matches(r.get("source_module", ""), args.modules)]
+    if not args.include_cited:
+        citations = isrc.blueprint_citations()
+        cited = [r for r in records if isrc.cites_statement(r["id"], citations)]
+        records = [r for r in records if not isrc.cites_statement(r["id"], citations)]
+        print(f"{len(cited)} statement-cited records skipped: their informal statement is "
+              f"the cited passage (--include-cited to generate anyway)")
+
+    if args.rekey:
+        historical: dict[str, list[str]] = {}
+        for path in args.rekey:
+            for line in read_dataset_text(Path(path)).splitlines():
+                if line.strip():
+                    d = json.loads(line)
+                    historical.setdefault(d["id"], []).append(d["formal_statement"])
+        tally: dict[str, int] = {}
+        changed: list[str] = []
+        for r in records:
+            verdict = cache.rekey(r["id"], r["formal_statement"], historical.get(r["id"], []),
+                                  CACHE_DIR, trust_unknown=args.trust_unknown)
+            tally[verdict] = tally.get(verdict, 0) + 1
+            if verdict == "changed":
+                changed.append(r["id"])
+        print("rekey:", ", ".join(f"{v} {k}" for k, v in sorted(tally.items())))
+        for name in changed[:20]:
+            print(f"  statement changed since its prose was written: {name}")
+        if len(changed) > 20:
+            print(f"  ... and {len(changed) - 20} more")
+        if not (args.estimate or args.regrade or args.generate):
+            # --rekey is a migration, not a request to spend: stop here unless the
+            # caller asked for an estimate, a regrade, or generation (--generate).
+            print("rekey done; add --estimate to see what is outstanding, --generate to write it")
+            return 0
 
     if args.regrade:
         stale = []

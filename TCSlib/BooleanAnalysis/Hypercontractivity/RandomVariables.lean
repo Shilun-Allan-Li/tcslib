@@ -8,6 +8,7 @@ import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Basic
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Discrete
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.FiniteLaw
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.General
+import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Moments
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Norms
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Polynomial
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables.Sharp
@@ -37,6 +38,7 @@ This facade exports the complete development in its folder.
 * `Discrete`: Discrete contraction, the sharp radius, and optimality.
 * `FiniteLaw`: Finite-support laws and probability-mass lower bounds.
 * `General`: Independent sums and the centered-variable sufficient bound.
+* `Moments`: Coefficient moment identities for standardized independent inputs.
 * `Norms`: Norm formulations and randomization estimates.
 * `Polynomial`: Reasonability of independent multilinear polynomials.
 * `Sharp`: Scalar and finite-law ingredients for the sharp discrete radius.
