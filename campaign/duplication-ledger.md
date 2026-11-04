@@ -721,6 +721,18 @@ Hydroxyi's files, and neither was in this entry. Round 2 of #181 (`1d1247a3`) re
 `logSpace_le_succ`, a mechanical ARM dedup edit (FYI). A search of the round-2 head
 (`campaign/gates/89-space-facts-api/evidence/round2/ls1-search/`) finds the fact stated only in
 `Basic` and cited everywhere else.
+**Scope corrected again (gate 89, round 2, major 1).** Two more inner steps derived the logarithm's
+form of the fact, `Nat.log 2 m + 1 ≤ m + 1`:
+- `ImplicitlyLogspaceComputable.computesInSpace` (`ImplicitPoly`, Hydroxyi's ARM-program file):
+  `W ≤ F + 2` with `W = Nat.log 2 (F + 1) + 1`;
+- `mem_LOGSPACE_preimage` (`Logspace/PreimageHost`, the campaign's).
+
+Round 2's search had classed both as "polylogarithmic bounds": true of the enclosing bounds, not of
+these steps. Round 3 of #181 (`8d41671c`) re-points both to `logSpace_le_succ` through
+`logSpace_eq`. Its exhaustive classification of every `Nat.log_le_self` use and every
+`logSpace`-by-successor statement
+(`campaign/gates/89-space-facts-api/evidence/round3/ls1-search/classification.md`) finds the fact
+proved once, in `Basic`, and cited at eight sites.
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it

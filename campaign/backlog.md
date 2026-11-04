@@ -1996,6 +1996,19 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     review's landed file, blob `e6432b1e`), and a merge of the campaign at `cd9f1d92`. Only
     `NDNormalForm` differs from the campaign. It elaborates against `oleans-leqc3` with exactly the
     target's sorry. Next: NF cont1's brief, based on that commit.
+    **NF cont1's brief** (`campaign/fills/c1/briefs/c1-fill-nf-cont1.md`, checkpoints 3–8, Claude):
+    - **pre-ship at `5241eb82`:** the verifier's phase layout probe (`NfcPh`, named instances, the
+      host and packaging, `nfc_aReturn` sealed with 10 controls); import probe 588; order 112;
+      base sorries 19 in 9; screen base 1,379/866;
+    - **reviewed** (`reviews/nfc-brief/`): issue after edits, 0/1/10/4. The major, "every record
+      writes its block", was restored. **Ruled (user, 2026-11-04):** `rv_bClear` ships, and the
+      leaf skips the last record's move;
+    - **issued 2026-11-04**, at a merge of the records into `lean/c1-nf-partial`, before #181 lands
+      (review D3): `@ANCESTOR@` = `348781a383f102d971fca153c818026b4f49fbf6`, with Lean equal to
+      `5241eb82`'s;
+    - **dispatch copy** `exchange/outbox/fills/c1-fill-nf-cont1.md`, SHA-256
+      `7853cd44b1f5c6aac7e260a7a6fcca9e1471faae96f1dbd06e4dca273da44c72`, 553 lines. **Dispatched
+      (user, 2026-11-04).**
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
