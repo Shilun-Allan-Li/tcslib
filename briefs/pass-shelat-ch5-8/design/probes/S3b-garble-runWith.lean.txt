@@ -1,0 +1,75 @@
+import TCSlib.Complexity.CircuitComplexity.DAGCircuit
+
+/-! Route probe for prong B (Yao): garbled evaluation as a second `runWith` instance whose gate
+function reads its gate index from the length of the data so far, and an indexed simulation
+lemma relating it to Boolean evaluation. Uses only the published `runWith` equations. -/
+
+open BoolCircuit
+
+/-- **Indexed simulation of `runWith`.** If the second evaluator, at gate `i`, maps data that
+encode the first evaluator's data (wire by wire, through `W v`) on the gate's inputs to the
+encoding of the first evaluator's output, then the two runs agree through `W` on every vertex. -/
+theorem runWith_sim {α β : Type} (fA : DAGGate → List α → α) (fB : ℕ → DAGGate → List β → β)
+    (W : ℕ → α → β) (dA : α) (dB : β) (gs : List DAGGate) (initA : List α) (initB : List β)
+    (hlen : initB.length = initA.length)
+    (hinit : ∀ v < initA.length, initB.getD v dB = W v (initA.getD v dA))
+    (hacyc : ∀ (i : ℕ) (h : i < gs.length), ∀ a ∈ (gs[i]).args, a < initA.length + i)
+    (hgate : ∀ (i : ℕ) (h : i < gs.length) (vA : List α) (vB : List β),
+       vA.length = initA.length + i → vB.length = initA.length + i →
+       (∀ a ∈ (gs[i]).args, vB.getD a dB = W a (vA.getD a dA)) →
+       fB (initA.length + i) gs[i] vB = W (initA.length + i) (fA gs[i] vA)) :
+    ∀ v < initA.length + gs.length,
+      (runWith (fun g vs => fB vs.length g vs) gs initB).getD v dB =
+        W v ((runWith fA gs initA).getD v dA) := by
+  intro v
+  induction v using Nat.strong_induction_on with
+  | _ v ih =>
+    intro hv
+    by_cases hlt : v < initA.length
+    · rw [runWith_getD_of_lt _ _ _ (hlen ▸ hlt), runWith_getD_of_lt _ _ _ hlt]
+      exact hinit v hlt
+    · obtain ⟨i, rfl⟩ : ∃ i, v = initA.length + i := ⟨v - initA.length, by omega⟩
+      have hi : i < gs.length := by omega
+      have hB := runWith_getD_gate (fun g vs => fB vs.length g vs) gs initB hi dB
+      have hA := runWith_getD_gate fA gs initA hi dA
+      rw [hlen] at hB
+      rw [hB, hA, length_runWith, List.length_take_of_le hi.le, hlen]
+      refine hgate i hi _ _ (by rw [length_runWith, List.length_take_of_le hi.le])
+        (by rw [length_runWith, List.length_take_of_le hi.le, hlen]) fun a ha => ?_
+      have ha' := hacyc i hi a ha
+      rw [runWith_getD_take _ gs initB hi.le (by omega),
+        runWith_getD_take _ gs initA hi.le ha']
+      exact ih a ha' (by omega)
+
+/-- One garbled gate: a fan-in-two gate reading vertices `0` and `1`, garbled as a lookup table
+from its two input keys (an ideal "decrypt the right row" step), evaluates through `runWith` to
+the key encoding the gate's Boolean value. -/
+example {K : Type} (W : ℕ → Bool → K) (dK : K) (T : List K → K) (x y : Bool)
+    (hT : ∀ b c : Bool, T [W 0 b, W 1 c] = W 2 ((DAGGate.mk .and [0, 1]).eval [b, c])) :
+    (runWith (fun g vs => (fun _ (g : DAGGate) (vs : List K) => T (g.args.map fun a => vs.getD a dK))
+        vs.length g vs) [⟨.and, [0, 1]⟩] [W 0 x, W 1 y]).getD 2 dK =
+      W 2 ((runWith DAGGate.eval [⟨.and, [0, 1]⟩] [x, y]).getD 2 false) := by
+  refine runWith_sim DAGGate.eval (fun _ g vs => T (g.args.map fun a => vs.getD a dK)) W false dK
+    _ [x, y] [W 0 x, W 1 y] rfl ?_ ?_ ?_ 2 (by simp)
+  · intro v hv
+    simp only [List.length_cons, List.length_nil] at hv
+    rcases v with _ | _ | v
+    · rfl
+    · rfl
+    · omega
+  · intro i hi a ha
+    simp only [List.length_cons, List.length_nil, zero_add, Nat.lt_one_iff] at hi
+    subst hi
+    simp only [List.getElem_cons_zero, List.mem_cons, List.not_mem_nil, or_false] at ha
+    simp only [List.length_cons, List.length_nil]
+    omega
+  · intro i hi vA vB _ _ hargs
+    simp only [List.length_cons, List.length_nil, zero_add, Nat.lt_one_iff] at hi
+    subst hi
+    simp only [List.getElem_cons_zero] at hargs ⊢
+    have h0 := hargs 0 (by simp)
+    have h1 := hargs 1 (by simp)
+    simp only [List.map_cons, List.map_nil, h0, h1, hT, List.length_cons, List.length_nil]
+    simp [DAGGate.eval]
+
+#print axioms runWith_sim
