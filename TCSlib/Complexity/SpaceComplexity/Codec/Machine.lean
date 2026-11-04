@@ -201,7 +201,7 @@ def cpNext : CpId → Lab N
   | .U2 => .ic .U2 ⟨0, by simp [W]⟩ | .Q1f2 => .dcTest .Pos2 | .Tpos => .inDec
   | .Q3 => .cp .Q4 | .Q4 => .clrQ1v | .Q1a => .cp .Q2a | .Q2a => .vTest (vAd0 N)
   | .Uc => .cp .Tsc | .Tsc => .sc .C
-  | .Ue => .ic .Eh ⟨0, by simp [W]⟩ | .Qe => .cp .Te | .Te => .sc .Ee
+  | .Ue => .ic .Eh ⟨0, by rw [W_eq]; omega⟩ | .Qe => .cp .Te | .Te => .sc .Ee
 
 /-- Pointer, base, accumulator, temporary of a decoding loop. -/
 def dcPtr : DcId → Fin 21 | .S => rQ2 | .Pos => rQ1 | .Pos2 => rQ1
@@ -269,7 +269,7 @@ lemma icCount_le (c : IcId) : icCount N c ≤ 4 * W N := by
 /-- Successor of an increment chain. -/
 def icNext : IcId → Lab N
   | .E => .cp .F | .U => .lenChk | .E2 => .cp .F2 | .U2 => .lenChk2 | .C => .cenRead
-  | .Eh => .eK | .Ke => .eRd1 | .S1 => .ic .S2 ⟨0, by simp [W]⟩ | .S2 => .eRd1
+  | .Eh => .eK | .Ke => .eRd1 | .S1 => .ic .S2 ⟨0, by rw [W_eq]; omega⟩ | .S2 => .eRd1
 
 /-- The labels of an increment chain. -/
 def icL (c : IcId) (i : ℕ) : Lab N :=
@@ -466,55 +466,56 @@ lemma CA_eNext (mode : CMode) : CA N mode .eNext = .dec rQ3 .eTest := rfl
 /-- After the last tape, no edge; otherwise advance `U` to the next tape. -/
 lemma CA_eTest (mode : CMode) : CA N mode .eTest = .jz rQ3 .rej (icL N .S1 0) := rfl
 
-/-- The edge tail's copy, scale and increment sites: registers, factors, counts and exits. -/
+/-- The copy site `Ue` writes `U`. -/
 lemma cpDst_Ue : cpDst .Ue = rU := rfl
-/-- See `cpDst_Ue`. -/
+/-- The copy site `Ue` reads `A`, the end of the input field. -/
 lemma cpSrc_Ue : cpSrc .Ue = rA := rfl
-/-- See `cpDst_Ue`. -/
-lemma cpNext_Ue : cpNext N .Ue = .ic .Eh ⟨0, by simp [W]⟩ := rfl
-/-- See `cpDst_Ue`. -/
+/-- After `U := A`, add `2 (hH + 2)`: the first tape's flag, at the doubled word offset `hH + 2`. -/
+lemma cpNext_Ue : cpNext N .Ue = .ic .Eh ⟨0, by rw [W_eq]; omega⟩ := rfl
+/-- The copy site `Qe` writes `Q1`. -/
 lemma cpDst_Qe : cpDst .Qe = rQ1 := rfl
-/-- See `cpDst_Ue`. -/
+/-- The copy site `Qe` reads `U`, the current near address. -/
 lemma cpSrc_Qe : cpSrc .Qe = rU := rfl
-/-- See `cpDst_Ue`. -/
+/-- After `Q1 := U`, copy the radius. -/
 lemma cpNext_Qe : cpNext N .Qe = .cp .Te := rfl
-/-- See `cpDst_Ue`. -/
+/-- The copy site `Te` writes `T`. -/
 lemma cpDst_Te : cpDst .Te = rT := rfl
-/-- See `cpDst_Ue`. -/
+/-- The copy site `Te` reads `S`, the radius. -/
 lemma cpSrc_Te : cpSrc .Te = rS := rfl
-/-- See `cpDst_Ue`. -/
+/-- After `T := S`, scale it into `Q1`. -/
 lemma cpNext_Te : cpNext N .Te = .sc .Ee := rfl
-/-- See `cpDst_Ue`. -/
+/-- The scale site `Ee` consumes `T`. -/
 lemma scSrc_Ee : scSrc .Ee = rT := rfl
-/-- See `cpDst_Ue`. -/
+/-- The scale site `Ee` adds into `Q1`. -/
 lemma scDst_Ee : scDst .Ee = rQ1 := rfl
-/-- See `cpDst_Ue`. -/
+/-- The scale site `Ee` adds `4W` per unit of `T`: chunk `2s` lies `2 · 2s · W` input positions
+further on. -/
 lemma scFactor_Ee : scFactor N .Ee = 4 * W N := rfl
-/-- See `cpDst_Ue`. -/
+/-- After `Q1 += 4W · s`, read the far flag. -/
 lemma scNext_Ee : scNext N .Ee = .eRd2 := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `Eh` increments `U`. -/
 lemma icReg_Eh : icReg .Eh = rU := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `Eh` adds `2 (hH + 2)`. -/
 lemma icCount_Eh : icCount N .Eh = 2 * (hH N + 2) := rfl
-/-- See `cpDst_Ue`. -/
+/-- After the first address, set the tape counter. -/
 lemma icNext_Eh : icNext N .Eh = .eK := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `Ke` increments `Q3`, the tape counter. -/
 lemma icReg_Ke : icReg .Ke = rQ3 := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `Ke` adds `N.k - 1 + 1`, which is `N.k` on its branch (`N.k ≠ 0`). -/
 lemma icCount_Ke : icCount N .Ke = N.k - 1 + 1 := rfl
-/-- See `cpDst_Ue`. -/
+/-- After the counter, read the near flag. -/
 lemma icNext_Ke : icNext N .Ke = .eRd1 := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `S1` increments `U`. -/
 lemma icReg_S1 : icReg .S1 = rU := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `S1` adds `3`. -/
 lemma icCount_S1 : icCount N .S1 = 3 := rfl
-/-- See `cpDst_Ue`. -/
-lemma icNext_S1 : icNext N .S1 = .ic .S2 ⟨0, by simp [W]⟩ := rfl
-/-- See `cpDst_Ue`. -/
+/-- After `S1`, three more: the next tape's flag is `2 · 3` input positions further on. -/
+lemma icNext_S1 : icNext N .S1 = .ic .S2 ⟨0, by rw [W_eq]; omega⟩ := rfl
+/-- The increment site `S2` increments `U`. -/
 lemma icReg_S2 : icReg .S2 = rU := rfl
-/-- See `cpDst_Ue`. -/
+/-- The increment site `S2` adds `3`. -/
 lemma icCount_S2 : icCount N .S2 = 3 := rfl
-/-- See `cpDst_Ue`. -/
+/-- After the stride, read the next tape's near flag. -/
 lemma icNext_S2 : icNext N .S2 = .eRd1 := rfl
 
 end EdgeTable

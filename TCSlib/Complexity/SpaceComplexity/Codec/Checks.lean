@@ -12,7 +12,7 @@ set_option autoImplicit false
 /-!
 # The word-level checks of the code languages
 
-What the logspace deciders of the four code languages actually test, as predicates on the
+What the logspace deciders of the five code languages actually test, as predicates on the
 code words: the validity test `Complexity.Codec.ValidChk` of
 `TCSlib.Complexity.SpaceComplexity.Codec.Valid`, plus
 
@@ -21,7 +21,9 @@ code words: the validity test `Complexity.Codec.ValidChk` of
 * for an accepting code: header `(halted, accept)`;
 * for a step: the second word has the right length and final letter, and for one of the two
   choice bits its input position is the moved one and the sliding check of the two chunk
-  regions accepts under the local rule of that bit's action.
+  regions accepts under the local rule of that bit's action;
+* for an edge code: the head flag of some tape is set in the first or the last cell
+  (`Complexity.Codec.EdgeChk`).
 
 Each check recognizes exactly the code words of the corresponding configurations, and so
 decides membership in the code languages on well-shaped inputs.

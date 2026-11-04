@@ -424,14 +424,6 @@ step equations of `astep` and the published loop runs, without unfolding `CA` or
 
 section Edge
 
-/-- A register update keeps a valuation below a bound when the new value is below it. -/
-private lemma upd_le {v : Fin 21 → ℕ} {B : ℕ} (hv : ∀ r, v r ≤ B) (i : Fin 21) {n : ℕ}
-    (hn : n ≤ B) : ∀ r, Function.update v i n r ≤ B := by
-  intro r
-  by_cases h : r = i
-  · subst h; rw [Function.update_self]; exact hn
-  · rw [Function.update_of_ne h]; exact hv r
-
 variable (N) in
 /-- The syntactic preconditions an instruction of the edge tail meets: distinct registers in an
 equality test, distinct call arguments, and no input comparison. -/
@@ -494,13 +486,13 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
     fun h => Reach.single' hg1 (by rw [e1, if_neg h])
   -- the address of the flag in the last cell: `Q1 := U + 4W · s`
   set v1 := Function.update v rQ1 0 with hv1
-  have hv1B : ∀ r, v1 r ≤ B := upd_le hv rQ1 (Nat.zero_le _)
+  have hv1B : ∀ r, v1 r ≤ B := register_update_le _ rQ1 _ _ hv (Nat.zero_le _)
   have r2 : Reach N .edge y B .eFar v (.cp .Qe) v1 :=
     Reach.single' (edge_gd hv (CA_eFar .edge) trivial) (astep_clr (CA_eFar .edge))
   have h1U : v1 rU = v rU := by rw [hv1, Function.update_of_ne (by decide)]
   have h1Q : v1 rQ1 = 0 := by rw [hv1, Function.update_self]
   set v2 := Function.update v1 rQ1 (v rU) with hv2
-  have hv2B : ∀ r, v2 r ≤ B := upd_le hv1B rQ1 (hv rU)
+  have hv2B : ∀ r, v2 r ≤ B := register_update_le _ rQ1 _ _ hv1B (hv rU)
   have r3 : Reach N .edge y B (.cp .Qe) v1 (.cp .Te) v2 := by
     have h := cp_run (N := N) (mode := .edge) y B .Qe v1 hv1B
       (by rw [cpDst_Qe, cpSrc_Qe, h1Q]; exact Nat.zero_le _)
@@ -510,7 +502,7 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
   have h2S : v2 rS = s := by
     rw [hv2, Function.update_of_ne (by decide), hv1, Function.update_of_ne (by decide), hS]
   set v3 := Function.update v2 rT s with hv3
-  have hv3B : ∀ r, v3 r ≤ B := upd_le hv2B rT hsB
+  have hv3B : ∀ r, v3 r ≤ B := register_update_le _ rT _ _ hv2B hsB
   have r4 : Reach N .edge y B (.cp .Te) v2 (.sc .Ee) v3 := by
     have h := cp_run (N := N) (mode := .edge) y B .Te v2 hv2B
       (by rw [cpDst_Te, cpSrc_Te, h2T]; exact Nat.zero_le _)
@@ -522,7 +514,8 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
     have : 4 * W N * s = 2 * (W N * (2 * s)) := by ring
     omega
   set v4 := Function.update (Function.update v3 rT 0) rQ1 (v rU + 4 * W N * s) with hv4
-  have hv4B : ∀ r, v4 r ≤ B := upd_le (upd_le hv3B rT (Nat.zero_le _)) rQ1 hfar
+  have hv4B : ∀ r, v4 r ≤ B :=
+    register_update_le _ rQ1 _ _ (register_update_le _ rT _ _ hv3B (Nat.zero_le _)) hfar
   have r5 : Reach N .edge y B (.sc .Ee) v3 .eRd2 v4 := by
     have h := sc_run (N := N) (mode := .edge) y B .Ee v3 hv3B
       (by rw [scDst_Ee, scSrc_Ee, scFactor_Ee, h3Q, h3T]; exact hfar)
@@ -543,7 +536,8 @@ theorem edge_round (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w r
     edge_gd hv4B (CA_eRd2 .edge) (by simp [EdgeOK])
   -- count the tape down
   set v5 := Function.update v4 rQ3 (v4 rQ3 - 1) with hv5
-  have hv5B : ∀ r, v5 r ≤ B := upd_le hv4B rQ3 (le_trans (Nat.sub_le _ _) (hv4B rQ3))
+  have hv5B : ∀ r, v5 r ≤ B :=
+    register_update_le _ rQ3 _ _ hv4B (le_trans (Nat.sub_le _ _) (hv4B rQ3))
   have r6 : Reach N .edge y B .eNext v4 .eTest v5 :=
     Reach.single' (edge_gd hv4B (CA_eNext .edge) trivial) (astep_dec (CA_eNext .edge))
   constructor
@@ -622,14 +616,14 @@ theorem edge_loop (x w rest : List Bool) (hy : y = pairEncode x (pairEncode w re
       have hWs : W N ≤ W N * (2 * s + 1) := Nat.le_mul_of_pos_right _ (by omega)
       have hU6 : v' rU + 6 ≤ B := by omega
       set v6 := Function.update v' rU (v' rU + 3) with hv6
-      have hv6B : ∀ r, v6 r ≤ B := upd_le hv'B rU (by omega)
+      have hv6B : ∀ r, v6 r ≤ B := register_update_le _ rU _ _ hv'B (by omega)
       have r8 : Reach N .edge y B (icL N .S1 0) v' (icL N .S2 0) v6 := by
         have h := ic_run (N := N) (mode := .edge) y B .S1 v' hv'B
           (by rw [icReg_S1, icCount_S1]; omega)
         rwa [icNext_S1, icReg_S1, icCount_S1, ← icL_zero] at h
       have h6U : v6 rU = v' rU + 3 := by rw [hv6, Function.update_self]
       set v7 := Function.update v6 rU (v6 rU + 3) with hv7
-      have hv7B : ∀ r, v7 r ≤ B := upd_le hv6B rU (by omega)
+      have hv7B : ∀ r, v7 r ≤ B := register_update_le _ rU _ _ hv6B (by omega)
       have r9 : Reach N .edge y B (icL N .S2 0) v6 .eRd1 v7 := by
         have h := ic_run (N := N) (mode := .edge) y B .S2 v6 hv6B
           (by rw [icReg_S2, icCount_S2]; omega)
@@ -707,13 +701,13 @@ theorem edge_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
       (edge_gd hv0 (CA_eStart_of_zero .edge hk) trivial))
   -- the address of tape `0`'s flag in the first cell, and the tape counter
   set v1 := Function.update R.val rU 0 with hv1
-  have hv1B : ∀ r, v1 r ≤ B := upd_le hv0 rU (Nat.zero_le _)
+  have hv1B : ∀ r, v1 r ≤ B := register_update_le _ rU _ _ hv0 (Nat.zero_le _)
   have r1 : Reach N .edge y B .eStart R.val (.cp .Ue) v1 :=
     Reach.single' (edge_gd hv0 (CA_eStart_of_pos .edge hk) trivial)
       (astep_clr (CA_eStart_of_pos .edge hk))
   have h1A : v1 rA = R.A := by rw [hv1, Function.update_of_ne (by decide), Regs.val_A]
   set v2 := Function.update v1 rU R.A with hv2
-  have hv2B : ∀ r, v2 r ≤ B := upd_le hv1B rU (by rw [hA]; omega)
+  have hv2B : ∀ r, v2 r ≤ B := register_update_le _ rU _ _ hv1B (by rw [hA]; omega)
   have r2 : Reach N .edge y B (.cp .Ue) v1 (icL N .Eh 0) v2 := by
     have h := cp_run (N := N) (mode := .edge) y B .Ue v1 hv1B
       (by rw [cpDst_Ue, cpSrc_Ue, hv1, Function.update_self]; exact Nat.zero_le _)
@@ -722,20 +716,20 @@ theorem edge_tail (y x w rest : List Bool) (hy : y = pairEncode x (pairEncode w 
   have hW0 : hH N + 2 < W N := by rw [W_eq]; omega
   have hWs : W N ≤ W N * (2 * s + 1) := Nat.le_mul_of_pos_right _ (by omega)
   set v3 := Function.update v2 rU (R.A + 2 * (hH N + 2)) with hv3
-  have hv3B : ∀ r, v3 r ≤ B := upd_le hv2B rU (by omega)
+  have hv3B : ∀ r, v3 r ≤ B := register_update_le _ rU _ _ hv2B (by omega)
   have r3 : Reach N .edge y B (icL N .Eh 0) v2 .eK v3 := by
     have h := ic_run (N := N) (mode := .edge) y B .Eh v2 hv2B
       (by rw [icReg_Eh, icCount_Eh, h2U]; omega)
     rwa [icNext_Eh, icReg_Eh, icCount_Eh, h2U] at h
   set v4 := Function.update v3 rQ3 0 with hv4
-  have hv4B : ∀ r, v4 r ≤ B := upd_le hv3B rQ3 (Nat.zero_le _)
+  have hv4B : ∀ r, v4 r ≤ B := register_update_le _ rQ3 _ _ hv3B (Nat.zero_le _)
   have r4 : Reach N .edge y B .eK v3 (icL N .Ke 0) v4 :=
     Reach.single' (edge_gd hv3B (CA_eK .edge) trivial) (astep_clr (CA_eK .edge))
   have hkB : N.k - 1 + 1 ≤ B := by
     have : N.k ≤ W N := by rw [W_eq]; omega
     omega
   set v5 := Function.update v4 rQ3 (N.k - 1 + 1) with hv5
-  have hv5B : ∀ r, v5 r ≤ B := upd_le hv4B rQ3 hkB
+  have hv5B : ∀ r, v5 r ≤ B := register_update_le _ rQ3 _ _ hv4B hkB
   have r5 : Reach N .edge y B (icL N .Ke 0) v4 .eRd1 v5 := by
     have h := ic_run (N := N) (mode := .edge) y B .Ke v4 hv4B
       (by rw [icReg_Ke, icCount_Ke, hv4, Function.update_self]; omega)
