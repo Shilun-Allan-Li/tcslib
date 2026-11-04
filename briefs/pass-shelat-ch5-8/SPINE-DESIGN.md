@@ -132,6 +132,8 @@ style (recommended), not a PAC framework.
 
 ## S4. The statement phase and its gate
 
+**Superseded in part (2026-11-04, user):** the one statement gate is replaced by an API gate for S2a (the framework core), another for S2b (bridges and machine layer), and one statement gate per prong. Prong order: B and Thm 180.1 first, then A with C, then D's small items. All of S2 stays on `cryptography/pass-shelat-ch2-4`.
+
 1. **Statements.** Every core item of the inventory is stated in its prong's files, each proof a
    `sorry` under a literal `**Proof sketch.**`, everything compiling on the base. This includes
    the spine's own definitions and bridges (S2, S3), whose small lemmas may be proved at once.

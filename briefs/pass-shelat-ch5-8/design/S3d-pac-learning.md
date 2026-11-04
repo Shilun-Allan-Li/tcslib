@@ -74,8 +74,10 @@ S. Ben-David, *Understanding Machine Learning*, ch. 3. The definitions:
 
 ## Placement and landing
 
-- **Layer 1** needs nothing from ch. 2–4. **Proposal:** it lands on `main` by its own PR, like P0
-  (D-1), with its own gate. That depends on `main`'s `FinDist` only.
+- **Layer 1** needs nothing from ch. 2–4. **Ruled (R-3):** it lands on `main` by its own PR, like
+  P0 (D-1), with its own gate. That depends on `main`'s `FinDist` only. Since all of S2 stays on the
+  ch. 2–4 branch (ruled 2026-11-04), layer 1 does not refer to S2; the bridge from its prediction
+  game to S2's example-oracle game is part of layer 2.
 - **Layer 2** needs `NUPPT`, `PRF` and S2, so it lives on the ch. 2–4 branch in prong D.
 - **Size estimate:** layer 1 about 400–700 lines; layer 2 about 300–600, beyond S2.
 
