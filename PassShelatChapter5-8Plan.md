@@ -156,4 +156,18 @@ These need agreement before S1 completes. Suggested points:
 |---|---|---|
 | 2026-11-04 | ch. 2–4 stays with Frederick Dehmel; the user pursues ch. 5–8 in parallel (user) | active |
 | 2026-11-04 | Shape: P0 now; a short sequential spine (S1–S4) with one statement gate; then four prongs, two at a time (proposal; user asked for the inventory and spine design) | proposed |
-| 2026-11-04 | Decisions D-1…D-7 open (`SPINE-DESIGN.md`) | open |
+| 2026-11-04 | Decisions D-1…D-7 open (`SPINE-DESIGN.md`) | **Superseded** by the rulings below |
+| 2026-11-04 | Maintainer session picks up the line. Preflight passed: 4 CPUs, 15 GiB, about 25 GiB free; `leanprover/lean4:v4.25.0` installs; the narrowed Mathlib cache (12 roots, 2,230 files) fetches with no failure; `scripts/lean_check_tree.sh` elaborates the `InformationTheory` and `SecretSharing` chains (`briefs/pass-shelat-ch5-8/evidence/preflight-2026-11-04.log`) | record |
+| 2026-11-04 | Finding: Shamir secret sharing is already proved on `main` (`TCSlib/Cryptography/SecretSharing/`, 2026-09-30): correctness, perfect privacy and the counting form, over any field with every nonzero element a party. [PS10] §6.1 is a special case. The spine design had listed it as new | record |
+| 2026-11-04 | Finding: of the two "duplicate names" of the base, only `TCSlib.Cryptography.zipWith_xor_ofFn` clashes (`Asymptotic/Encryption` and `Asymptotic/HardCoreLoops`, joined by the `Asymptotic` facade). The two `zipWith_xor_ofFn_eq_add` are in different namespaces (`TCSlib.Cryptography` and `TCSlib.Cryptography.MultiMsg`): a duplicated statement, not a clash. To be confirmed by Lean in S1 | record (static) |
+| 2026-11-04 | Source of record: the user uploaded the notes to this branch (`Pass–Shelat.pdf`, 3rd ed., January 2010, 204 pages, SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`) in commit `52457d2d1b45f690d00b23f04797e7b76dcc6285`. The course host is denied by the cloud session's network policy. No text extract is committed | record |
+| 2026-11-04 | **D-0** (user): ch. 5–8 records and Lean PR bases stay on `cryptography/pass-shelat-ch2-4`; records are pushed directly | active |
+| 2026-11-04 | **D-0b** (user): an orphan branch `exchange/pass-shelat-ch5-8` holds the hand-off folders `outbox/`, `inbox/`, `archive/` | active |
+| 2026-11-04 | **D-1** (user): P0 lands on `main` by its own PR | active |
+| 2026-11-04 | **P0, §6.1** (user): main's Shamir is cited in place: docstring-only [PS10] tags and deviation notes on `SecretSharing/Defs.lean` and `Shamir.lean`, no new declarations, in the P0 PR; Frederick is told as a courtesy. P0's new Lean is the extractor basics of §8.3 | active |
+| 2026-11-04 | **D-2** (user): the S2 game layer becomes a common base, and Frederick's `OracleEnsemble` is restated over it. This edits his PRF files, so it needs his agreement (S1 note) | active, needs Frederick |
+| 2026-11-04 | **D-3** (user): Thm 144.1 is core for messages of length `≤ p(n)`; the unbounded form is optional | active |
+| 2026-11-04 | **D-4** (user): optional, deferred and statement-only items as in the inventory | active |
+| 2026-11-04 | **D-5** (user): the learning game of Def 179.a and Thm 179.1 is built as PAC learning in `TCSlib/LearningTheory`, not a crypto-style game | active |
+| 2026-11-04 | **D-6** (user): a one-way bridge lemma (a `polyTimeModel` BPP verifier gives a NUPPT running it, input hard-wired as advice); Thm 180.1 is stated against main's `InBPP` and `DTIME`. Prong D needs a base that includes `main` | active |
+| 2026-11-04 | **D-7** (user): Claude for all fills | active |

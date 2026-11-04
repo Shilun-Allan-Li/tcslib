@@ -21,6 +21,8 @@ taken.
 
 The plan and `SPINE-DESIGN.md` §S1 say what the ch. 5–8 line needs from it.
 
+**Update (2026-11-04, maintainer session):** decisions D-0…D-7 are ruled (plan, decision log). Shamir is already proved on `main`, so P0 is the extractor basics plus [PS10] citations on main's Shamir. The hand-off folders are on the orphan branch `exchange/pass-shelat-ch5-8`.
+
 **Next steps:**
 1. Rulings on D-1…D-7.
 2. Prong zero (Shamir secret sharing, extractor basics), which needs nothing from ch. 2–4.

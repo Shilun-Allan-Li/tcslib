@@ -148,6 +148,8 @@ style (recommended), not a PAC framework.
 
 ## Decisions for the user (with recommendations)
 
+**Ruled 2026-11-04** (the plan's decision log has each ruling): D-1, D-3, D-4, D-6 as recommended; D-2 **against** the recommendation (a common base, with `OracleEnsemble` restated over it, by agreement with the ch. 2–4 owner); D-5 **against** (PAC in `TCSlib/LearningTheory`); D-7 **Claude for all fills**. P0's Shamir half is a citation of `main`'s existing `SecretSharing/`, not a new directory.
+
 | # | Decision | Recommendation |
 |---|---|---|
 | D-1 | Where P0 lands (Shamir and the extractor basics need nothing from ch. 2–4) | on `main` (or the campaign branch) directly, now, as a separate small PR; it does not wait for S1 |
