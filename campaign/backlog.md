@@ -1966,7 +1966,11 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     rewind; F5: extend the import probe by 61 names; the rest wording, seal list, prefix, controller,
     hazards, in-flight (#176, #177). Its probes (`rv_skeleton`, `rv_entry`, `rv_sweep0`,
     `rv_inputSymbol_congr`, 30 controls) to stage as inputs. Next: apply the edits, then the issue
-    (Codex).
+    (Codex). **Edits applied; the pre-ship re-taken at the tip after #179 and #175** (149 checks;
+    the review's probes staged; the screen base 21 files, 1,351 declarations, 865 pairs; lint 17
+    WARN). **NF issued (2026-11-04; Codex):** `campaign/fills/c1/briefs/c1-fill-nf.md`; its issue
+    commit `951251f6` is the brief's `@ANCESTOR@`; in flight #176 and #177. **Dispatched (user,
+    2026-11-04).**
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -1980,6 +1984,9 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     Screen: one new pair, an idiom (`pairSwap`'s one-line invocation of the same rows). **Gate 88
     staged** (bundle `4ccd459e…`, 37 sections). **Gate 87** (#176) **staged** (bundle `43a728a1…`, 282
     sections; the landing head's screen: none new against the worker's after screen).
+    **Gate 88: PASS 0/0/2/10** (2026-11-04; minors: fresh lint at the head, the generated
+    `_simp_1_1` in the constant census). `replay-lnpc2` written (127 modules from `oleans-lscp3`,
+    the campaign merged into #177 by `2c213708`).
 - **Roadmap check-in (2026-10-27; `campaign/status/2026-10-27-headlines/`).** At the tip, 20 of
   the 26 stated headlines are on the standard axioms. Open: the NTIME hierarchy (over
   `exists_diagonalizer` and NF), the space hierarchy cluster (4 stubs), the general `savitch`

@@ -74,9 +74,11 @@
 
 ## Base, line numbers and what lands around you
 
-- **Your base's Lean content is the campaign's tree after PR #179**, which merged `main` into the
-  campaign (@ANCESTOR@ adds records only). Lines in this brief are those of your base's tree, where
-  `NDNormalForm.lean` is 88 lines (1 public declaration, no private).
+- **Your base's Lean content is the campaign's tree after PR #175**, which follows #179's merge of
+  `main` into the campaign (@ANCESTOR@ adds records only). #175 changed only
+  `SpaceComplexity/Constructible` and `Savitch`, outside your order list. Lines in this brief are
+  those of your base's tree, where `NDNormalForm.lean` is 88 lines (1 public declaration, no
+  private).
 - **The overlay is your first edit** (region (a)): add, after line 7, exactly
   `import TCSlib.Complexity.TuringMachine.Build.NDHost` and
   `import TCSlib.Complexity.TuringMachine.Build.StepBlock`
@@ -88,7 +90,7 @@
   `NTimeHierarchy`; every public statement frozen; it proves `exists_queryTM`, so its sorry count
   drops from two to one) and `NP`'s closure under `≤ₚ` (PR #177, `ClassNP/Reductions`, in your order
   list as an import of the `ClassNP` facade; additive). Nothing cites your file but
-  `NTimeHierarchy`, by statement. PR #175 (`SpaceComplexity`) is outside your order list.
+  `NTimeHierarchy`, by statement.
 
 ## Parallel batches this round
 
@@ -141,7 +143,7 @@ writes the display, the verifier and the transfers, and composes nothing at the 
   `rv_inputSymbol_congr`, `rv_moveInputPos_le`, and a one-sweep `V` (`rv_V_verdict`), each on the
   standard axioms or fewer; their 30 controls close unsealed and fail sealed;
 - the order list: **112 modules, 39 Mathlib roots, 20 base sorries in 9 modules**;
-- the screen base (20 files): 1,344 declarations, 862 pairs, 274,615 characters; your file in no
+- the screen base (21 files): 1,351 declarations, 865 pairs, 274,870 characters; your file in no
   pair;
 - lint: `ClassNP` 0 FAIL, 17 WARN over 21 files; the policy linter 0 findings on your file.
 
@@ -463,9 +465,9 @@ root `<dir>`).
     guessed stream), `Diagonalization/NTimeHierarchy`, `Simulation`, and `Build/Contract/Catalog`
     and `Build/Contract/Basic` (the contract forms of the rows; outside your imports).
 - **The screen** is `scripts/copy-text-screen-v3.py`, on the repository paths.
-- **The base** is `campaign/fills/c1/logs/c1-fill-nf-screen-base.txt`: **1,344 declarations, 862
-  pairs, 274,615 characters** (MEASURED at your base's Lean; about 13 minutes under `nice -n 10` on
-  the maintainer's host, peak memory 3.2 GB). Your file is in no pair.
+- **The base** is `campaign/fills/c1/logs/c1-fill-nf-screen-base.txt`: **1,351 declarations, 865
+  pairs, 274,870 characters** (MEASURED at your base's Lean; about 18 minutes under `nice -n 10` on
+  the maintainer's host, peak memory 2.8 GB). Your file is in no pair.
 
 ```sh
 P=campaign/fills/c1/inputs/c1-fill-nf
@@ -515,8 +517,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
   one at a time: never two `lean_check_tree.sh` runs, probes or sweeps at once, and none while
   `lake exe cache get` runs. A screen may run beside one of them. **A process deviation never ends
   the item**: disclose it with its evidence and continue.
-- **Budget, measured:** each screen about 13 minutes on the maintainer's host (peak 3.2 GB). The
-  last 4-CPU fill host ran 2–3× slower than the maintainer's: expect about 30–40 minutes per
+- **Budget, measured:** each screen about 18 minutes on the maintainer's host (peak 2.8 GB). The
+  last 4-CPU fill host ran 2–3× slower than the maintainer's: expect about 40–55 minutes per
   screen and 25–40 minutes for the 112-module bootstrap. Reserve about an hour for the
   finishing sequence (the final sweep with the after screen beside it, then the REPORT and the
   zip), and use the rest for proofs.
