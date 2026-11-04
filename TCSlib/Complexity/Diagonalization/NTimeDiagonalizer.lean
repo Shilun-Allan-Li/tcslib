@@ -7304,16 +7304,6 @@ private theorem dz_emit_run {K : ℕ} {x : List Bool} (src cap : Fin K) (hne : s
   rw [h2]
   exact hcut u hu
 
-/-- The length of a pair: `|⟨x, α⟩| = 2|x| + 2 + |α|`. -/
-private theorem dz_pairEncode_length (x α : List Bool) :
-    (pairEncode x α).length = 2 * x.length + 2 + α.length := by
-  rw [pairEncode_eq]
-  induction x with
-  | nil => simp; omega
-  | cons b x ih =>
-    simp only [List.flatMap_cons, List.length_append, List.length_cons, List.length_nil] at ih ⊢
-    omega
-
 /-- **The rewrite.** From the extractor's call over a layout with the query's tail on tape `8`, the
 budget's bits `bits b` on tape `10`, the word `1^{n + 1}` on tape `2`, the core's input tape `11`
 blank, these heads at `0`: the install call of the composite extractor leaves `α = dzAlpha tail` on
@@ -7432,8 +7422,8 @@ private theorem dz_rewrite {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF 
     (dzQF κ) (fun s => dz_notF κ .rwZ s (by simp) (by simp))
   rw [← hL1]
   refine ⟨_, ?_, seg1.trans (seg2.trans (seg3.trans (seg4.trans seg5)))⟩
-  have hlen := dz_pairEncode_length (pairEncode B (dzAlpha tail)) ([true] ++ z)
-  have hlen' := dz_pairEncode_length B (dzAlpha tail)
+  have hlen := length_pairEncode (pairEncode B (dzAlpha tail)) ([true] ++ z)
+  have hlen' := length_pairEncode B (dzAlpha tail)
   have ht1' : t1 ≤ κ.acA * (tail.length + 1) := ht1
   simp only [List.length_cons, List.length_nil, List.length_append] at ht2 ht3 ht4 hlen ⊢
   nlinarith
