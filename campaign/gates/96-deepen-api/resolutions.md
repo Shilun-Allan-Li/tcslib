@@ -62,3 +62,9 @@ the existing 30 `sorry`s, chained from `oleans-cloud0` (`evidence/round2/merged-
 **Not yet clear to merge: #196** (gate 96's round 2 is staged, not yet dispatched).
 
 **Round 2 dispatched (2026-11-05, the user).**
+
+**Replay on the merged tree after #197 (2026-11-05):** `replay-ldwa3` passed (73 modules, 0 failed;
+modules 73, mismatches 0, static total 30), at #196's head
+`97adec6962e55c3a8ff191e602627674697fef18` (the campaign after #197 merged in; no file of the PR
+changed), chained from `oleans-lzsa2` (`evidence/round2/merged-tree-after-197/`). It is the replay
+of record for the merge while the campaign's Lean stays at #197's.

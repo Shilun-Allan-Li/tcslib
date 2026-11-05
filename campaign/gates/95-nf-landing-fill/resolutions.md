@@ -56,3 +56,9 @@ that changes no `.lean` file).
 **Not yet clear to merge: #191** (gate 95's round 2 is staged, not yet dispatched).
 
 **Round 2 dispatched (2026-11-05, the user).**
+
+**Replay on the merged tree after #197 (2026-11-05):** `replay-lnf3` passed (4 modules, 0 failed;
+modules 4, mismatches 0, static total 0), at #191's head `86cec90d0d46254d1ef3ba01c63f616c970d8072`
+(the campaign after #197 merged in; no file of the PR changed), chained from `oleans-lzsa2`
+(`evidence/round2/merged-tree-after-197/`). It is the replay of record for the merge while the
+campaign's Lean stays at #197's.
