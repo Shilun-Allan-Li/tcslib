@@ -20,6 +20,15 @@ Proved once, it spares every reduction of prongs A–D a machine construction of
 layer built one per reduction (`Asymptotic/GGMReduction*`, `HardCoreGL*`, …), each several hundred
 lines.
 
+## A close relative (found 2026-11-05)
+
+Frederick's GGM reduction machine (`TCSlib/Cryptography/Asymptotic/GGMReduction.lean`, `GGMReductionEval.lean`) is this construction for one particular handler:
+- it runs a next-query machine to completion in a state loop, holding the encoded history and a lazily sampled table, and each round runs the machine, decodes the move and answers from the reduction's own coins;
+- its loop, `GGMRed.stateLoopFun` with `stateLoopFun_poly` and `stateLoopFun_eval`, is generic in start, step, acceptance and output, and **is reused verbatim**;
+- the round, `rawFun_poly` and the GGM identity are specific, and are generalized by analogy.
+
+The fill (ruled 2026-11-05: Claude, after gate 02) adds the **log-replay variant** for reductions that are oracle machines: each round reads the answers to the handler's own queries from the reduction's log, and stops at the first unanswered one. GGM becomes an instance at the integration of ch. 2–4 (coordination point F-4).
+
 ## The route
 
 1. **Handlers as string functions.** A `PolyHandler` packages `impl` as polynomial-time maps on
