@@ -69,6 +69,11 @@ on oracle `i`, query `x` and state `s`, a computation returning the answer and t
 def QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
   ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)
 
+/-- An implementation is a function of the oracle, the query and the state:
+`QueryImpl spec σ spec' = ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)`. -/
+theorem queryImpl_def {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') :
+    QueryImpl spec σ spec' = ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ) := rfl
+
 /-- **Simulation:** run `c` from state `s`, answering each of its queries with `impl` and
 threading the state; return `c`'s result and the final state. [VCVio, SimSemantics] -/
 def simulate {spec : OracleSpec ι} {spec' : OracleSpec ι'} (impl : QueryImpl spec σ spec') :

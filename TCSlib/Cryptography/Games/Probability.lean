@@ -79,12 +79,23 @@ variable {α β : Type}
 /-- A uniformly random element of `Fin (m + 1)`. [VCVio, OracleComp/ProbComp/Basic (uniformFin)] -/
 def sampleFin (m : ℕ) : ProbComp (Fin (m + 1)) := .query m () .pure
 
+/-- Sampling `Fin (m + 1)` is one query to the `m`-th sampling oracle:
+`sampleFin m = .query m () .pure`. -/
+theorem sampleFin_eq (m : ℕ) : sampleFin m = .query m () .pure := rfl
+
 /-- A uniformly random element of the nonempty finite type `T`, through its enumeration
 `Fintype.equivFin`. -/
 noncomputable def sample (T : Type) [Fintype T] [Nonempty T] : ProbComp T :=
   (fun j : Fin (Fintype.card T - 1 + 1) =>
     (Fintype.equivFin T).symm (Fin.cast (Nat.sub_add_cancel Fintype.card_pos) j)) <$>
       sampleFin (Fintype.card T - 1)
+
+/-- Sampling `T` is sampling an index below `|T|` and reading it through `Fintype.equivFin`:
+`sample T = (fun j => (equivFin T).symm (Fin.cast _ j)) <$> sampleFin (|T| − 1)`. -/
+theorem sample_eq (T : Type) [Fintype T] [Nonempty T] :
+    sample T = (fun j : Fin (Fintype.card T - 1 + 1) =>
+      (Fintype.equivFin T).symm (Fin.cast (Nat.sub_add_cancel Fintype.card_pos) j)) <$>
+        sampleFin (Fintype.card T - 1) := rfl
 
 /-- The **expectation** of `g` over the output of `c`: `g a` for a return, and the average over
 the `m + 1` equally likely answers at a sampling step. -/

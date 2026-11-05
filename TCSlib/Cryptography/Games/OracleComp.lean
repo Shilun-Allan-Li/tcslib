@@ -166,6 +166,22 @@ def OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : Oracle
     OracleSpec (ι₁ ⊕ ι₂) :=
   ⟨Sum.elim s₁.dom s₂.dom, Sum.elim s₁.rng s₂.rng⟩
 
+/-- The left oracles of the union have the queries of `s₁`: `(s₁.add s₂).dom (.inl i) = s₁.dom i`. -/
+theorem OracleSpec.add_dom_inl {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) (i : ι₁) :
+    (s₁.add s₂).dom (.inl i) = s₁.dom i := rfl
+
+/-- The right oracles of the union have the queries of `s₂`: `(s₁.add s₂).dom (.inr j) = s₂.dom j`. -/
+theorem OracleSpec.add_dom_inr {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) (j : ι₂) :
+    (s₁.add s₂).dom (.inr j) = s₂.dom j := rfl
+
+/-- The left oracles of the union have the answers of `s₁`: `(s₁.add s₂).rng (.inl i) = s₁.rng i`. -/
+theorem OracleSpec.add_rng_inl {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) (i : ι₁) :
+    (s₁.add s₂).rng (.inl i) = s₁.rng i := rfl
+
+/-- The right oracles of the union have the answers of `s₂`: `(s₁.add s₂).rng (.inr j) = s₂.rng j`. -/
+theorem OracleSpec.add_rng_inr {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) (j : ι₂) :
+    (s₁.add s₂).rng (.inr j) = s₂.rng j := rfl
+
 namespace OracleComp
 
 variable {ι ι₁ ι₂ : Type} {α β : Type}
