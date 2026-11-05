@@ -1302,13 +1302,13 @@ private theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List B
 private theorem nf_tag {N : FinNDTM Bool} {SL : Type} (x s : List Bool) (i : nf_Ph N.k)
     (q : nf_St N SL i) :
     streamStartCfg x (0 : Fin 2) (⟨i, q⟩ : Σ i, nf_St N SL i) s =
-      (streamStartCfg x (0 : Fin 2) q s).mapState (Sigma.mk i) := by
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, streamStartCfg_state, streamStartCfg_state]; rfl
-  · rw [Cfg.mapState_inputPos, streamStartCfg_inputPos, streamStartCfg_inputPos]
-  · funext i p; rw [Cfg.mapState_workTapes, streamStartCfg_workTapes, streamStartCfg_workTapes]
-  · funext i; rw [Cfg.mapState_workTapePos, streamStartCfg_workTapePos, streamStartCfg_workTapePos]
-  · rw [Cfg.mapState_output, streamStartCfg_output, streamStartCfg_output]
+      (streamStartCfg x (0 : Fin 2) q s).mapState (Sigma.mk i) :=
+  (Cfg.mapState_eq_of_fields _ _ _
+    (by rw [streamStartCfg_state, streamStartCfg_state]; rfl)
+    (by rw [streamStartCfg_inputPos, streamStartCfg_inputPos])
+    (by funext j p; rw [streamStartCfg_workTapes, streamStartCfg_workTapes])
+    (by funext j; rw [streamStartCfg_workTapePos, streamStartCfg_workTapePos])
+    (by rw [streamStartCfg_output, streamStartCfg_output])).symm
 
 /-- After a record's first `2k + 3` bits the parser is at the last position with the control
 unchanged; the record's last bit completes the full record array, and the parser's step there
