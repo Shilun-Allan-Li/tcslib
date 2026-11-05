@@ -1,7 +1,8 @@
 # Gate 05 (Pass–shelat ch. 5–8, S3d layer 1): external audit pack
 
-**Status: draft, pending the user's ruling on Q-4** (whether the PAC layer is gated before it
-lands on `main`).
+**Status: ready to dispatch** (staged 2026-11-05; the user ruled on Q-4 that the PAC layer is
+gated before it lands on `main`). The evidence is under `evidence/` and
+`../../evidence/pac-2026-11-05/`.
 
 **What is audited:** PR [Shilun-Allan-Li/tcslib#194](https://github.com/Shilun-Allan-Li/tcslib/pull/194)
 into `main`, at its head `44d27f39c233849a3a30a117bf15434610e485e9` (base: `main` at
@@ -71,11 +72,20 @@ At `44d27f39c233849a3a30a117bf15434610e485e9` (`evidence/pac-2026-11-05/` on the
 - **`sorry`:** none.
 - **Axioms:** all 38 theorems of the new files print within `propext`, `Classical.choice` and
   `Quot.sound`.
-- **Lint:** 0 findings on the new files (worker's run; to be rerun by the maintainer at staging).
+- **Lint:** `scripts/style_lint.py`, rerun by the maintainer at staging on each of
+  `Samples.lean`, `PAC/Defs.lean`, `PAC/Prediction.lean` and the `PAC.lean` facade: 0 findings
+  (`evidence/lint.log`).
 
 ## Findings format (auditor fills)
 
 | # | Severity | File · declaration | Claim | Evidence / counterexample | Proposed fix |
 |---|---|---|---|---|---|
 
-Severity guide as in gate 01. The gate closes at **0 blockers and 0 majors**.
+Severity guide:
+- **blocker:** a downstream phase would build on a wrong statement;
+- **major:** a statement is fixable but materially misleading as it stands, or accumulated debt
+  (failure mode 5) that the gate may not close over without explicit human acknowledgment;
+- **minor:** an edge case, or a naming or attribution defect;
+- **note:** an observation; no change required.
+
+The gate closes at **0 blockers and 0 majors**.

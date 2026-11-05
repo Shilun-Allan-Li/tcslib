@@ -3,7 +3,7 @@
 Items that need you, newest last. Work that does not depend on them continues meanwhile. Each
 question gives the options, with the recommended one first.
 
-## Q-1. Thm 175.1 and the efficiency of verifiers (decision)
+## Q-1. Thm 175.1 and the efficiency of verifiers — **ruled: option 1** (2026-11-05)
 
 **Context.** Frederick's `Strategy.Efficient` (D8) bounds each activation's time by its own input,
 received messages included. His own docstring (run-3 audit P9-1) notes that this does not bound a
@@ -22,7 +22,7 @@ party's work in `|x|`. The consequence:
    (`ReadsPrefix`, as `IP` already does). Closer to the source's p.p.t. verifier, but it changes
    ch. 2–4's ZK definitions and their proofs, and pack 03e audits the new form.
 
-## Q-2. PSV06 for Def 173.7 and Thm 174.8 (action)
+## Q-2. PSV06 for Def 173.7 and Thm 174.8 — **done:** [PSV06] and [PSV07] uploaded (2026-11-05)
 
 The ruling is to follow [PSV06]. The session's network policy refused
 `shelat.khoury.northeastern.edu` and `www.iacr.org`. Either add a host under Allowed domains
@@ -30,7 +30,11 @@ The ruling is to follow [PSV06]. The session's network policy refused
 https://code.claude.com/docs/en/cloud-environments#network-access), or put the PDF on the records
 branch as for [PS10].
 
-## Q-3. A merged-away remote branch (yes/no)
+**Outcome.** Both papers are uploaded. They are not committed, since they are publisher copies; their
+SHA-256s are in the decision log. The simulation-based form is in [PSV07], not [PSV06], and it
+shows Thm 174.8 holds only under CPA (decision log, 2026-11-05). For gate 06, attach both PDFs.
+
+## Q-3. A merged-away remote branch — **deferred** (user: not yet)
 
 Two merged-away branches. **Recommended: delete both.** I have not deleted them, because deleting
 a remote branch is yours to approve.
@@ -39,7 +43,7 @@ a remote branch is yours to approve.
 - `cryptography/pass-shelat-ch5-8-prong-d-learn` (Thm 179.1's side branch) is merged into
   `cryptography/pass-shelat-ch5-8-prong-d`.
 
-## Q-4. The PAC layer's PR to `main`: gate or not (decision)
+## Q-4. The PAC layer's PR to `main` — **ruled: gate it** (gate 05 staged)
 
 [Shilun-Allan-Li/tcslib#194](https://github.com/Shilun-Allan-Li/tcslib/pull/194) adds S3d layer 1
 (per ruling R-3). It is 646 lines, sorry-free, with standard axioms only, and was checked by the
@@ -52,7 +56,7 @@ maintainer (`evidence/pac-2026-11-05/`).
 2. **Merge on the maintainer's checks.** Faster, since it is information-theoretic and fully proved.
    But nothing outside the campaign has read the definitions.
 
-## Q-5. How to state Yao's protocol and Thm 163.7 (decision)
+## Q-5. How to state Yao's protocol and Thm 163.7 (decision; explained in chat, 2026-11-05)
 
 **Context.** Prong B now has Def 155.1, OT (Prot 160.4, Prop 161.5), the special encryption
 (Alg 157.2, Claim 157.a) and garbling (Constr 158.a, Claim 159.a). Two points remain open.
@@ -93,7 +97,7 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
   - **the rest:** 03i (`fb94694c…`), 03k (`2fb353c2…`), 03l (`d43f8e31…`).
 
   Each pack attaches its bundle and the PDF (`Pass–Shelat.pdf`, SHA-256 `76245560…`).
-- **Gate 04 (S2b): Ready to dispatch.** It audits PR
+- **Gate 04 (S2b): dispatched by the user (2026-11-05).** It audits PR
   [Shilun-Allan-Li/tcslib#195](https://github.com/Shilun-Allan-Li/tcslib/pull/195) at
   `afe5982f612081bba2fbcec9ab41adcbbc118b13`. Its replay passes (772 modules); axioms are standard
   except T1 and T2; lint is clean. The folder is `outbox/gates/04-s2b-gate/` on
@@ -101,7 +105,9 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
   bundle (SHA-256 `d64276ef…`) and the dispatch prompt in `README.md`.
 - **#195 (S2b): Not yet clear to merge — gate 04 first.** After it merges, gate 03's packs 03d and
   03j pin to the merged head, and the prongs (all stacked on S2b) can be integrated for gate 06.
-- **#194 (PAC layer, to `main`):** see Q-4.
+- **Gate 05 (PAC layer, #194): Ready to dispatch.** The folder is `outbox/gates/05-pac-gate/` on
+  `exchange/pass-shelat-ch5-8`.
+- **#194 (PAC layer, to `main`): Not yet clear to merge — gate 05 first.**
 - **Lean branches (no PRs; for the ch. 5–8 statement gate later):** prong A
   `cryptography/pass-shelat-ch5-8-prong-a`, prong B `…-prong-b`, prong C `…-prong-c`, prong D
   `…-prong-d`.

@@ -29,12 +29,13 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 - **`π′`'s tag covers `(r, c₁)`** (inventory erratum): tagging `c₁` alone is not CCA2-secure.
 - **Public-key games pad ciphertexts** (ruling): canonical padding, with non-canonical strings
   refused.
-- **Non-malleability follows [PSV06]** (ruling): Thm 174.8 is not true as written in [PS10].
+- **Non-malleability follows [PSV06] and [PSV07]** (ruling): Thm 174.8 is not true as written in
+  [PS10]. [PSV07] shows the equivalence holds under CPA only (its Thms 3 and 4).
 - **`CRH` carries domain and range tests:** with fixed-length domains, Thm 142.3 had trivial
   collisions.
 - **Thm 144.1 needs a full-domain CRH:** the CRH game counts only in-domain collisions.
 - **Thm 175.1 assumes `ProverBounded`:** D8's verifier efficiency allows exponential views
-  (Q-1).
+  (Q-1, ruled: keep D8 with this hypothesis).
 - **Prop 161.5 assumes `SamplerCanonical`:** non-canonical encodings would leak the receiver's
   choice.
 - **OT has five messages:** D8's output convention (the last mover's last message is its output).
@@ -42,7 +43,8 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 
 ## Open before dispatch
 
-- Def 173.7 and Thm 174.8 wait for [PSV06] (Q-2).
+- Def 173.7 and Thm 174.8: the sources are in hand ([PSV06], [PSV07]; Q-2 done); being stated.
+  Pack 06C attaches both PDFs.
 - Prong B: Yao (Prot 162.6, Thm 163.7). Its composition step for the OT simulators needs [Gol04]
   §7.3 (inventory). Also whether `HBCSecure` should require efficient honest parties.
 - The PAC layer (#194) must reach the base before 06D: it lands on `main` (Q-4), and `main` is merged in again.
