@@ -10,3 +10,8 @@
 mismatches, the campaign's existing 45 `sorry`s (`evidence/merged-tree/`).
 
 #197 is clear to merge once gate 97 closes with zero blockers and zero majors.
+
+**Supplementary sweep before dispatch (2026-11-05, cloud session):** the inline-step sweep and the
+statement-shape grep that gates 95 and 96 found missing (their F5 and F6), run on #197's added
+lines: no hit, and one candidate, the private `zs_rowPre_mapState`, which is RN-1's kind (at most
+an accounting minor) (`evidence/sweep/README.md`). The staged bundle stands.
