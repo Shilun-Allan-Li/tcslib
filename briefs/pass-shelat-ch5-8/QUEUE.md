@@ -56,7 +56,7 @@ maintainer (`evidence/pac-2026-11-05/`).
 2. **Merge on the maintainer's checks.** Faster, since it is information-theoretic and fully proved.
    But nothing outside the campaign has read the definitions.
 
-## Q-5. How to state Yao's protocol and Thm 163.7 (decision; explained in chat, 2026-11-05)
+## Q-5. How to state Yao's protocol and Thm 163.7 — **ruled: option 1**; efficiency **ruled: in the definition, `Efficient` + bounded honest messages** (2026-11-05)
 
 **Context.** Prong B now has Def 155.1, OT (Prot 160.4, Prop 161.5), the special encryption
 (Alg 157.2, Claim 157.a) and garbling (Constr 158.a, Claim 159.a). Two points remain open.
@@ -84,7 +84,7 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
 
 ## Dispatches and merges
 
-- **Gate 03 (ch. 2–4): Ready to dispatch** (11 packs). They are pinned to
+- **Gate 03 (ch. 2–4): 03a, 03b, 03c, 03e dispatched by the user (2026-11-05); the other seven Ready to dispatch** (11 packs). They are pinned to
   `a3c5fa8b72e50939822f22364647dc844a3914a0`, after a fresh replay of their closure there (415
   modules with `Checks.lean`, all pass; `gates/03-ch2-4/evidence/replay/`). The records are at
   `fed6c2fb9dd35fcceda878ab36f3dc2a34cd3a5c`. Each folder on `exchange/pass-shelat-ch5-8`
