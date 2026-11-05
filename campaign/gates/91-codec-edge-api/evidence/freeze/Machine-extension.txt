@@ -1,0 +1,46 @@
+# Machine: each changed declaration, base 94093275 against head; lines removed (-) and the number of lines added
+CMode: 2 lines added, 0 removed
+CpId: 1 lines added, 0 removed
+IcId: 1 lines added, 1 removed
+    -   | E | U | E2 | U2 | C
+ScId: 1 lines added, 1 removed
+    -   | E | F | E2 | F2 | In | C
+Lab: 1 lines added, 0 removed
+CA: 8 lines added, 0 removed
+cpDst: 1 lines added, 0 removed
+cpNext: 1 lines added, 0 removed
+cpSrc: 1 lines added, 0 removed
+icCount: 1 lines added, 0 removed
+icNext: 1 lines added, 0 removed
+icReg: 3 lines added, 1 removed
+    - def icReg : IcId → Fin 21 | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+scDst: 1 lines added, 1 removed
+    -   | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU
+scFactor: 1 lines added, 0 removed
+scNext: 1 lines added, 0 removed
+== inductive IcId
+2c2
+<   | E | U | E2 | U2 | C
+---
+>   | E | U | E2 | U2 | C | Eh | Ke | S1 | S2
+== inductive ScId
+2c2
+<   | E | F | E2 | F2 | In | C
+---
+>   | E | F | E2 | F2 | In | C | Ee
+== def icReg
+1c1,3
+< def icReg : IcId → Fin 21 | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+---
+> def icReg : IcId → Fin 21
+>   | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+>   | .Eh => rU | .Ke => rQ3 | .S1 => rU | .S2 => rU
+4a7
+>   | .Eh => 2 * (hH N + 2) | .Ke => N.k - 1 + 1 | .S1 => 3 | .S2 => 3
+== def scDst
+2c2
+<   | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU
+---
+>   | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU | .Ee => rQ1
+5a6
+>   | .Ee => 4 * W N

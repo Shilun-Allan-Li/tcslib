@@ -1,0 +1,14 @@
+## declfreeze (devtools/seyoon/declfreeze.py from the records worktree ccee2258) base -> head
+public before/after: 1 1 private before/after: 0 39
+public added: []
+public removed: []
+UNAUTHORIZED BODY CHANGE: Turing.FinNDTM.exists_codeNDTM_accepts_linear
+private removed: []
+private added: ['Turing.FinNDTM.nf_Control', 'Turing.FinNDTM.nf_SweepState', 'Turing.FinNDTM.nf_complete', 'Turing.FinNDTM.nf_complete_failed', 'Turing.FinNDTM.nf_complete_other', 'Turing.FinNDTM.nf_complete_output', 'Turing.FinNDTM.nf_complete_record', 'Turing.FinNDTM.nf_complete_step', 'Turing.FinNDTM.nf_ctlStep', 'Turing.FinNDTM.nf_ctlStop', 'Turing.FinNDTM.nf_ctl_position', 'Turing.FinNDTM.nf_ctl_stop_iff', 'Turing.FinNDTM.nf_decode', 'Turing.FinNDTM.nf_decode_absent', 'Turing.FinNDTM.nf_decode_record', 'Turing.FinNDTM.nf_display', 'Turing.FinNDTM.nf_display_firstStop', 'Turing.FinNDTM.nf_display_flag', 'Turing.FinNDTM.nf_display_length', 'Turing.FinNDTM.nf_display_prefix_length', 'Turing.FinNDTM.nf_display_records', 'Turing.FinNDTM.nf_firstStop_records', 'Turing.FinNDTM.nf_pack', 'Turing.FinNDTM.nf_record', 'Turing.FinNDTM.nf_record_choice', 'Turing.FinNDTM.nf_record_last', 'Turing.FinNDTM.nf_record_read', 'Turing.FinNDTM.nf_setup', 'Turing.FinNDTM.nf_sweepInit', 'Turing.FinNDTM.nf_sweepPass', 'Turing.FinNDTM.nf_sweepPass_output', 'Turing.FinNDTM.nf_sweepStep', 'Turing.FinNDTM.nf_sweep_control_prefix', 'Turing.FinNDTM.nf_sweep_display', 'Turing.FinNDTM.nf_sweep_display_pass', 'Turing.FinNDTM.nf_sweep_prefix', 'Turing.FinNDTM.nf_sweep_record', 'Turing.FinNDTM.nf_sweep_records', 'Turing.FinNDTM.nf_sweep_run']
+private changed: []
+exit 0
+
+## with the target's body authorized?
+73:a = chunks(open(sys.argv[1]).read()); b = chunks(open(sys.argv[2]).read())
+74:allowed = set(sys.argv[3].split(',')) if len(sys.argv) > 3 else set()
+84:        print(('authorized body change: ' if ok else 'UNAUTHORIZED BODY CHANGE: ') + n)

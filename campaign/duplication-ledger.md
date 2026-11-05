@@ -712,6 +712,180 @@ user's dedup window (12.2c): move `logSpace_le_succ` into `SpaceComplexity/Basic
 steps to it. **Brought forward (user, 2026-11-04): PR #181** (gate 89) does exactly that, and also
 moves `logSpace_le_of_le_mul_two_pow` to `Basic` and `LOGSPACE_subset_PSPACE` and
 `SPACE_succ_pow_subset_PSPACE` to `SpaceClasses`. **LS-1 is retired when #181 merges.**
+**Scope corrected (gate 89, round 1, major 1).** Two further inline copies predated #181:
+- `narm_decides` (`Machines/NARMProof`);
+- `narm_logspace_ptm` (`Machines/NARMLogspace`).
+
+Both are `have hLn : logSpace n ≤ n + 1` by `Nat.log_le_self` and `simp only [logSpace]`, in
+Hydroxyi's files, and neither was in this entry. Round 2 of #181 (`1d1247a3`) re-points both to
+`logSpace_le_succ`, a mechanical ARM dedup edit (FYI). A search of the round-2 head
+(`campaign/gates/89-space-facts-api/evidence/round2/ls1-search/`) finds the fact stated only in
+`Basic` and cited everywhere else.
+**Scope corrected again (gate 89, round 2, major 1).** Two more inner steps derived the logarithm's
+form of the fact, `Nat.log 2 m + 1 ≤ m + 1`:
+- `ImplicitlyLogspaceComputable.computesInSpace` (`ImplicitPoly`, Hydroxyi's ARM-program file):
+  `W ≤ F + 2` with `W = Nat.log 2 (F + 1) + 1`;
+- `mem_LOGSPACE_preimage` (`Logspace/PreimageHost`, the campaign's).
+
+Round 2's search had classed both as "polylogarithmic bounds": true of the enclosing bounds, not of
+these steps. Round 3 of #181 (`8d41671c`) re-points both to `logSpace_le_succ` through
+`logSpace_eq`. Its exhaustive classification of every `Nat.log_le_self` use and every
+`logSpace`-by-successor statement
+(`campaign/gates/89-space-facts-api/evidence/round3/ls1-search/classification.md`) finds the fact
+proved once, in `Basic`, and cited at eight sites.
+**Scope corrected a third time (gate 89, round 3, major 1).** Round 3's search had looked for
+`Nat.log_le_self` only, so it missed one more inline copy: `arm_decides` (`Machines/ARMProof`,
+Hydroxyi's) proved `hLn : Ls ≤ n + 1`, with `Ls := logSpace n`, by unfolding `logSpace` and citing
+`Nat.log_lt_self`. Round 4 of #181 (`a7c2a655`) re-points it to `logSpace_le_succ` (a mechanical ARM
+dedup edit, FYI). Round 4's search covers every line that touches `logSpace`'s definition and every
+Mathlib upper bound of `Nat.log`
+(`campaign/gates/89-space-facts-api/evidence/round4/ls1-search/classification.md`). It finds the
+fact proved once, in `Basic`, and cited at nine sites.
+
+**LS-2, the logarithmic bound by the binary length** (gate 89, round 4's search; ruled with it, user,
+2026-11-04: "Fix in #181 now"). The fact is `logSpace n ≤ Nat.size n + 1`, equivalently
+`≤ |bits n| + 1`; its converse is `|bits n| ≤ Nat.log 2 n + 1`. Before round 4:
+- the public `Complexity.LogProg.ISCount.logSpace_le_size_succ` (`Logspace/ISCountMath`);
+- inline re-derivations in `Randomized/BPLInP`, twice (`two_pow_codes_le`, `BPL_subset_P`);
+- the public `Randomized.PolyAmp.logSpace_le_ell` (`Randomized/SpaceAmplifyPoly`, its `ell n` is
+  `|bits n| + 1`), re-proved through `Nat.log_lt_of_lt_pow`;
+- the converse, published as `LogProg.length_bits_le_log` (`Machines/Bin`) and re-derived by the
+  private `size_le_logSpace` (`Logspace/ISCountGenCorrect`).
+
+All in Hydroxyi's files. `BPLInP` did not import `ISCountMath`. **Retired by #181, round 4**
+(`fe4bdb67`, `227d92ee`): `logSpace_le_size_succ` moves verbatim to `SpaceComplexity/Basic` as
+`Complexity.logSpace_le_size_succ`, and the four re-derivations cite it or `length_bits_le_log`
+(copy deletions and re-points, FYI). Same round, same ruling: `ExpBFS/Run`'s `setup_run` cites its
+own file's `lgv_le_succ` for `hv |x| ≤ |x|` instead of re-deriving it (`252bbcb8`).
+
+**LS-3, the binary length as the logarithm** (gate 89, round 4's search). The fact is
+`|bits n| = Nat.log 2 n + 1` for `n ≠ 0`. No public lemma states it. Private copies:
+- `Constructible`'s `b3a_bits_length` (the campaign's);
+- `Randomized/QuasiPolyHierarchy`'s `length_bits_eq` (Hydroxyi's);
+- `Diagonalization/NTimeDiagonalizer`'s `qy_log_bits`, with `Nat.size n = Nat.log 2 n + 1` also
+  inline in its `qy_two_pow_bits_le` (E-D's file, in flight).
+
+**Census** (gate 89, round 4's minor 2; members over all declarations, private included):
+- `Constructible` 1/28;
+- `QuasiPolyHierarchy` 1/25;
+- `NTimeDiagonalizer` 2/236 (`qy_log_bits` and `qy_two_pow_bits_le`'s inline equality).
+
+None reaches one fifth. The halves of these equalities also prove LS-2's converse
+(`QuasiPolyHierarchy:63`, `NTimeDiagonalizer:430`, `:446`); they stay within LS-3, and the one
+public converse lemma is `LogProg.length_bits_le_log`. **Accepted (user, 2026-11-04)** as debt.
+**Disposition:** the dedup window (12.2c): publish the equality beside `LogProg.length_bits_le_log`
+and re-point all four occurrences (the three privates and the inline step) after E-D lands.
+
+**BL-1, elementary bounds on the binary length** (gate 89, round 4's binary-length sweep,
+`campaign/gates/89-space-facts-api/evidence/round4/ls1-search/bitsweep.tsv`). One- and two-line
+steps that carry a Mathlib `Nat.size` fact over to `|Nat.bits n|` through `Nat.size_eq_bits_len`,
+where a lemma already states the bound:
+- (i) `|bits n| ≤ m` from `n < 2 ^ m` (`LogProg.length_bits_le`, `Machines/Bin`): `Meyer:189`,
+  `MeyerTableau:437`, `ISCountGenCorrect`'s private `bits_succ_le` (`:210`);
+- (ii) monotonicity (`LogProg.length_bits_mono`): `NTimeDiagonalizer`'s private `qy_bits_len_mono`,
+  `RecordTable:2762`, `InputLength:418`, `:420`, `Catalog:4125`;
+- (iii) `|bits n| ≤ n` (`Turing.length_bits_le_self`, `TuringMachine/Encoding`):
+  `CodeSimulator:1448`, `NTimeDiagonalizer:455`, `SpaceAmplifyPoly:287` (`ell_le`),
+  `RecordTable:2764`, `:4256`;
+- (iv) `n < 2 ^ |bits n|`: public as `Randomized.PolyAmp.lt_two_pow_bits` and, for `posWidth`,
+  `Turing.record_pos_lt`; inline or private in `NTimeDiagonalizer`'s `qy_lt_two_pow_bits`,
+  `Logspace/Mult:254`, `:255`, `WindowClock:119`;
+- (v) `2 ^ |bits n| ≤ 2n` or `2n + 1`: public as `Complexity.Codec.two_pow_bits_le` (`Codec/Layout`)
+  and `Randomized.PolyAmp.two_pow_bits_le`; inline or private in `Codec/Parse:90`,
+  `NTimeDiagonalizer`'s `qy_two_pow_bits_le`, `BPLInP:399`.
+
+The files are the campaign's, Hydroxyi's, E-D's in-flight `NTimeDiagonalizer` and the
+colleague-owned `CircuitComplexity/Meyer*`. `Machines/Bin` sits above the `CircuitComplexity` and
+`TuringMachine` layers, so several sites cannot import it. Each site is one step, so the one-fifth
+rule is not in question. **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window
+(12.2c): one home for the five bounds below both layers (beside `Turing.length_bits_le_self`), then
+re-points where the imports allow. `CircuitComplexity` needs its own authorization.
+**Scope corrected (gate 89, round 4, major 1).** The list above missed:
+- `Codec/Layout`'s `wP_le` (iii, through logarithms);
+- `PathHard`'s `two_pow_ell_le` (v) and `ell_mono` (ii);
+- `RandomWalkPad`'s `padDegree_le` (v);
+- `PrimeFind:204`, `:318` and `TQBFHardParams`' `wP_le` (iii).
+
+With `Layout`'s `wP_le`, `Layout` stood at 2 of 9 declarations. **Ruled (user, 2026-11-04): "Re-point
+now in #181."** Round 5 of #181 (`d789d6db`, `98912ab2`) re-points every site whose file can reach
+a canonical lemma:
+- (v) `two_pow_bits_le` moves from `Codec/Layout` to `Machines/Bin`. `Parse:90`, `PathHard`'s
+  `two_pow_ell_le`, `RandomWalkPad`'s `padDegree_le`, `BPLInP:399` and `PolyAmp.two_pow_bits_le`
+  cite it;
+- (iii) `Layout`'s `wP_le` cites `Turing.length_bits_le_self` through the new `Codec.wP_eq`, and
+  `TQBFHardParams`' `wP_le`, a restatement of `Codec.wP_le`, is removed. `PrimeFind:204`, `:318`,
+  `CodeSimulator:1448`, `RecordTable:2764`, `:4256` and `SpaceAmplifyPoly`'s `ell_le` cite
+  `length_bits_le_self`;
+- (i) `ISCountGenCorrect`'s `bits_succ_le` cites `length_bits_le`;
+- (ii) `PathHard`'s `ell_mono` cites `length_bits_mono`;
+- (iv) `WindowClock:119` cites `record_pos_lt`.
+
+`Layout` now has no member. **The residual**, every member of the sweep's classification at
+#181's round-5 head (`campaign/gates/89-space-facts-api/evidence/round5/ls1-search/bitsweep-classes.md`):
+- (i) `Meyer:189` and `MeyerTableau:437`: colleague-owned `CircuitComplexity`;
+- (ii) `RecordTable:2762`, `InputLength:418`, `:420` and `Catalog:4125`: `Machines/Bin` is above
+  these files;
+- (iv) `Mult:254`, `:255`: no (iv) lemma that this file can reach. `PolyAmp.lt_two_pow_bits` and
+  `Turing.record_pos_lt` are two public statements of (iv) in different layers and forms;
+- `NTimeDiagonalizer`, E-D's file in flight:
+  - (ii) `qy_bits_len_mono`;
+  - (iii) `qy_call_bound:455`, which E-D's landing already re-points;
+  - (iv) `qy_lt_two_pow_bits`;
+  - (v) `qy_two_pow_bits_le`;
+  - (iv) **`qy_ones_ge:415–417`, new in round 5's sweep** (two inline `Nat.lt_size_self` steps); **acknowledged (user, 2026-11-04)**. The acknowledgment was asked on the
+    premise that E-D's landing re-points it. That premise was wrong: the file does not reach `Machines/Bin`,
+    so its disposition is the dedup window.
+
+**Disposition of the residual:**
+- E-D's landing PR re-points `qy_call_bound:455` (iii), since the file reaches `Encoding`;
+- `NTimeDiagonalizer`'s other four members cannot reach `Machines/Bin`, like `RecordTable`'s, and go
+  to the dedup window with the rest;
+- `CircuitComplexity` comes under its own authorization.
+
+**Scope by kind (gate 89, round 5, majors 1 and 2; ruled by the user, 2026-11-04: "Acknowledge,
+scope by kind").** BL-1's acknowledged scope is every re-derivation of kinds (i)–(vi) anywhere in
+TCSlib, whether or not a sweep lists it. A member found later is an accounting correction (a minor,
+TEMPLATE failure mode 5), unless it pushes a file past one fifth. The kinds are:
+- (i)–(v), above;
+- **(vi)**, new: the word-value bound `bitsVal w < 2 ^ |w|` (`LogProg.bitsVal_lt_two_pow`,
+  `Machines/Bin`).
+
+Round 5's audit found five members outside the site lists, all predating #181 and all acknowledged:
+- (v) `Logspace/QueryReshape`'s private `query_index_bound` (sweep group 90) and
+  `Randomized/UniformSample`'s `le_two_pow_size_pred` (group 62), whose positive branches derive
+  `2 ^ size n ≤ 2n` natively. Both files reach `Machines/Bin`. `UniformSample` is Hydroxyi's;
+- (i) `CookLevin/Hardness`'s private `clCount_width`, by binary induction, and (iii) its
+  `clElapsed_width`, through `clCount_width`. `Hardness` reaches `Encoding` but not `Bin`;
+- (vi) `Codec/Word`'s `Complexity.Codec.bitsVal_lt_two_pow`, an exact copy of `Bin`'s, which
+  `Word` imports. `Word` is Hydroxyi's. Its users would resolve to `Bin`'s through `open LogProg`.
+
+**Census:**
+- `QueryReshape` 1/120, `UniformSample` 1/19, `Hardness` 2/545, `Word` 1/47;
+- `Bin`'s five members (`length_bits_le`, `length_bits_mono`, `two_pow_bits_le`,
+  `length_bits_le_log`, `bitsVal_lt_two_pow`) are the canonical statements the copies re-point to,
+  not copies. That makes 5/15, recorded as the one-fifth review item.
+
+**Disposition:** the dedup window, with the rest. The one home below both layers re-points them
+once.
+
+**CL-1, the codec languages' sibling idiom** (gate 91, the edge-mode PR's screen; ruled with it,
+user, 2026-11-04). Each code language of `SpaceComplexity/Codec` has its own definition, its own
+membership lemma at an encoded input (`mem_validLang`, …), its own characterization through the
+word-level check (`validLang_iff`, …) and its own decider proof (`validLang_mem`, …). The proofs
+repeat two pieces: the decoding of `⟨x, ⟨bits c, bits s⟩⟩` (`pairEncode_inj` twice, then
+`bits_injective`) and the decider wrapper (`arm_decides_poly` on `CA`, the `one_run` case split and
+the reject branch). The four languages `validLang`, `initLang`, `acceptLang` and `stepLang`
+(Hydroxyi's) already formed 31 copy pairs at the base. The edge-mode PR adds `edgeLang`,
+`mem_edgeLang`, `edgeLang_iff` and `edgeLang_mem`, 25 more pairs. About 25 lines of shared text
+are the decoding proofs and the wrapper's skeleton. The edge mode's own correctness proof
+(`edge_round`, `edge_loop`, `edge_tail`) is in no pair. **Census** (gate 91, minor 3; members of the
+family over all declarations, private included): `Langs` 8/9 → 10/12, `Checks` 4/26 → 5/31,
+`Deciders` 3/16 → 4/22. `Langs` was already above one fifth at the base, from the four existing
+languages; the acceptance above covers it. The edge member crosses no new file's threshold.
+**Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): one membership
+lemma for languages of encoded triples, and one decider wrapper parameterized by the mode's tail,
+with the five languages re-proved through them. This reworks Hydroxyi's proved deciders, interface
+design that waits for him.
 
 **RO-1, the one-step identity `M.runFrom c 1 = M.step c`** (PR #176, E-Q cont1's landing,
 2026-10-27; its review's F5; ruled with the landing, user, 2026-10-27). No public lemma states it
@@ -760,6 +934,69 @@ relative positions `-1` and `|w|`, so a word inside a nonblank block cannot be s
 published rows. E-D's own leaf `dzTakeTM` (read the cell, blank it, step right) fills the gap,
 privately. Not a copy. **Disposition:** promotion to a public framed row when a second consumer
 appears, or in the dedup window.
+
+**AS-1, machine-specific step lemmas beside the general ones** (#182, gate 90, 2026-11-04). #182
+publishes one step equation per instruction (`Complexity.LogProg.astep_inc` … `astep_jeqSnd`,
+`Machines/ARM`). Three older lemmas state a step of one particular machine at one label:
+`LogProg.astep_call₁` (`UnaryLogspace`: `astep_call` with `vword_unary₁`), and
+`BoolCircuit.AdjScan.astep_hit` and `astep_jeqFst` (`CircuitComplexity/LogspaceUniformScan`). They
+are specializations, not copies; the copy-text screen pairs none of them. The last shares its short
+name with the general `astep_jeqFst`, and resolves by argument type in its own file, which opens
+`Complexity.LogProg`. **Disposition:** in the dedup window (mechanical ARM edits, FYI), re-prove the
+three through the general equations, and rename the circuit one if the shared name is unwanted.
+**Extended (gate 90, minor 3):** three more specializations of `astep_call`:
+- `BoolCircuit.AdjScan.astep_rd` (`LogspaceUniformScan:196`, with `vword_unary₁`);
+- `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
+  `vword_unary₁` and `vword_unary₂`).
+
+That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+170 → 179 declarations and 46 → 46 pairs, identical
+(`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
+
+**NF-X1, an idiom exclusion** (NF's partial delivery, review F6; ruled by the user, 2026-11-04).
+`NTimeHierarchy.lean::un_setup` reproduces 57% of `NDNormalForm.lean::nf_setup`. The shared text
+is three invocations of the published initial-configuration field equations
+(`MultiTapeTM.initCfg_eq`, `Cfg.init_state`, `Cfg.init_workTapes`): the idiom of reading the
+initial configuration, not a re-derived composite. **Disposition:** excluded; not counted.
+
+**E-D's delivery** (`exists_diagonalizer`, #188; review `campaign/fills/eq/reviews/ed-fill/`;
+ruled by the user, 2026-11-04):
+- **BL-1 (vi):** `dz_word_lt` (`Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ |w|`) is a new member,
+  **acknowledged** for the dedup window's single home below both layers; `NTimeDiagonalizer`
+  cannot reach `Machines/Bin`. Census `NTimeDiagonalizer` (vi) 1.
+- **Removed at landing:** `dz_padded_value`'s inline re-derivation of Mathlib's
+  `Nat.ofDigits_append_replicate_zero` (E3), and `dz_top_run`'s inline first halt, FH-1's
+  `MultiTapeTM.exists_first_halt` (E4). Recorded so that the ledger shows them caught.
+- **Promotion requests:** `dz_split_stream` restates `Build/NDHost`'s private `guessRun_split`
+  (98%), to be promoted or given a public `List` form; `dz_word_lt` restates `ExhaustiveReplay`'s
+  private `xr_val_lt` (65%), with BL-1 (vi)'s home.
+- **QF-1, extended:** `dz_initCfg` and `qy_initCfg` state one fact for different machines ("a
+  phase host's initial configuration is the blank seam in normal form"); one generic lemma over
+  `phaseHostTM_q₀` and `initCfg_ofWords`.
+- **RC-3, row candidates:** the clocked hosted run (`DzClockSpec`, `dz_clock_exists`); the
+  silent-transport reconstruction (`dz_silentCfg_eq`), beside `embedEmitCfg_eq`; and the output
+  length of a computed function (`dz_out_le`, `|F y| ≤ T |y|`), also inline in `SAT`,
+  `Nondeterminism`, `TMSAT` and `Build/Loop`'s private `loop_fuel_width`. **Disposition:** the
+  dedup window.
+
+**NF cont1's delivery, F2: four kinds re-stated** (review
+`campaign/fills/c1/reviews/nf-cont1-fill/`; ruled by the user, 2026-11-04: **publish homes
+first**). An API PR publishes each fact beside its definitions before NF lands, and NF's landing
+cites them:
+- (i) the input read depends on the input head only (`nf_inputSymbol_congr`; privates
+  `ExhaustiveReplay.xr_inputSymbol_congr`, `ZoneRebalance.zr_inputSymbol_congr`);
+- (ii) a live configuration redirected to `⟨i, q⟩` is phase `i`'s tagged configuration at `q`
+  (`nf_retag`; `SeamLayout`'s private `sl_rewrap`, and inline in 15 declarations);
+- (iii) a configuration tagged by phase `i` is at no state of another phase (`nf_tagged_ne_park`;
+  privates `CfgRecord.record_tag_ne`, `SeamLayout.sl_tagged_ne_done`);
+- (iv) the length of a list of equal-length chunks (`nf_stream_length`; public as
+  `Complexity.CfgTableau.length_flatMap_const` in colleague-owned `CircuitComplexity`, which
+  NF cannot import).
+
+The existing private copies are re-pointed in the API PR where the files are the campaign's.
+The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
+its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
+`Nat.forall_lt_succ_left'` (E1).
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

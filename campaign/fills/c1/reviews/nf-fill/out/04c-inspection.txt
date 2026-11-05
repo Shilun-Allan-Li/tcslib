@@ -1,0 +1,53 @@
+## rows by tactic kind and class
+  rw               core/mathlib def             1
+  rw               core/mathlib inductive       2
+  rw               core/mathlib thm             96
+  rw               local                        108
+  rw               own                          32
+  rw               tcslib def                   8
+  rw               tcslib thm                   50
+  rwa              tcslib thm                   4
+  show term        core/mathlib def             1
+  show term        core/mathlib inductive       2
+  show term        core/mathlib thm             3
+  show term        local                        38
+  show term        own                          1
+  show term        tcslib ctor                  1
+  show term        tcslib def                   8
+  simp             local                        2
+  simp             own                          3
+  simp only        core/mathlib thm             36
+  simp only        local                        4
+  simp only        own                          6
+  simp only        tcslib thm                   9
+  simp_all (no list) local                        1
+  simpa only       core/mathlib thm             8
+## distinct identifiers per class
+  core/mathlib def: 1
+  core/mathlib inductive: 1
+  core/mathlib thm: 58
+  local: 61
+  own: 20
+  tcslib ctor: 1
+  tcslib def: 2
+  tcslib thm: 33
+## definitions (or opaques) of other files or of core/Mathlib passed to rw/simp/dsimp/unfold:
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '119')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '124')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '168')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '173')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '188')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '193')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '384')
+   ('rw', 'Turing.FinNDTM.k', 'def[reducible,projection]', 'TCSlib.Complexity.TuringMachine.Nondeterministic', '384')
+   ('rw', 'Fin.last', 'def[semireducible]', 'Init.Data.Fin.Basic', '519')
+## definitions named in show/change terms (other files and core/Mathlib), with their lines:
+   core/mathlib Fin.last def[semireducible]: [519]
+   tcslib Turing.FinNDTM.k def[reducible,projection]: [119, 124, 168, 173, 188, 193, 341]
+   tcslib Turing.streamStartCfg def[semireducible]: [574]
+## other-file TCSlib theorems passed to rw/simp (distinct):
+   ['Turing.Action.apply_output', 'Turing.Action.apply_state', 'Turing.Cfg.init_inputPos', 'Turing.Cfg.init_output', 'Turing.Cfg.init_state', 'Turing.Cfg.init_workTapePos', 'Turing.Cfg.init_workTapes', 'Turing.Cfg.mapState_inputPos', 'Turing.Cfg.mapState_output', 'Turing.Cfg.mapState_state', 'Turing.Cfg.mapState_workTapePos', 'Turing.Cfg.mapState_workTapes', 'Turing.CodeNDTM.toFinNDTM_State', 'Turing.CodeNDTM.toFinNDTM_k', 'Turing.CodeNDTM.toFinNDTM_tm', 'Turing.FinNDTM.acceptsWithin_iff', 'Turing.MultiTapeTM.initCfg_eq', 'Turing.NDTM.initCfg_eq', 'Turing.NDTM.relabelState_q₀', 'Turing.NDTM.relabelState_runWith', 'Turing.NDTM.runWith_append', 'Turing.NDTM.runWith_cons', 'Turing.NDTM.runWith_nil', 'Turing.NDTM.stepWith_of_some', 'Turing.StepBlock.outputSummary_append', 'Turing.StepBlock.outputSummary_nil', 'Turing.StepBlock.summaryEmit_other', 'Turing.scanResult_fold', 'Turing.streamStartCfg_inputPos', 'Turing.streamStartCfg_output', 'Turing.streamStartCfg_state', 'Turing.streamStartCfg_workTapePos', 'Turing.streamStartCfg_workTapes']
+## other-file TCSlib non-theorem, non-definition names in rw/simp lists:
+   []
+## core/Mathlib non-theorem names in rw/simp lists:
+   [('Fin', 'inductive'), ('Fin.last', 'def[semireducible]')]

@@ -1,0 +1,48 @@
+== cp2-seal-final.log
+END 2026-11-04T09:10:14.505129+00:00 .scratch/NFWork2SealFinal exit=0 elapsed_seconds=6.723 maximum_resident_set_kb=1948356
+CHECKS PASS: 1 modules
+errors: 0
+== final-controls-audit.log
+39 original controls: all close unsealed (exit 0), all fail sealed (39 errors, exit 1). The two fiber-sensitive controls with CtlState unsealed each fail at rfl (2 errors, exit 1). The same 39-definition seal is used in 
+errors: 0
+== controls-sealed.log
+.scratch/NFControlsSealed.lean:28:53: error: Type mismatch
+.scratch/NFControlsSealed.lean:32:38: error: Type mismatch
+.scratch/NFControlsSealed.lean:36:44: error: Type mismatch
+.scratch/NFControlsSealed.lean:40:66: error: Type mismatch
+.scratch/NFControlsSealed.lean:44:40: error: Type mismatch
+.scratch/NFControlsSealed.lean:48:26: error: Type mismatch
+.scratch/NFControlsSealed.lean:54:59: error: Type mismatch
+.scratch/NFControlsSealed.lean:58:25: error: Type mismatch
+errors: 40
+== controls-unsealed.log
+START 2026-11-04T08:41:33.619350+00:00 .scratch/NFControlsUnsealed
+COMMAND bash scripts/lean_check_tree.sh .scratch/NFControlsUnsealed
+END 2026-11-04T08:41:35.409021+00:00 .scratch/NFControlsUnsealed exit=0 elapsed_seconds=1.790 maximum_resident_set_kb=1858148
+CHECKS PASS: 1 modules
+errors: 0
+== controls-fibers.log
+.scratch/NFFiberControls.lean:27:71: error: Type mismatch
+.scratch/NFFiberControls.lean:29:52: error: Type mismatch
+FAIL(.scratch/NFFiberControls): lean exited with status 1
+FAIL(.scratch/NFFiberControls): error diagnostics reported
+FAIL(.scratch/NFFiberControls): no fresh .olean produced
+END 2026-11-04T08:41:38.458644+00:00 .scratch/NFFiberControls exit=1 elapsed_seconds=1.323 maximum_resident_set_kb=1845192
+errors: 3
+== cp2-projection-seal.log
+.scratch/NFProjectionSeal2.lean:44:17: error: failed to set `[local irreducible]`, `Action.output` is currently `[reducible]`, `[semireducible]` expected
+.scratch/NFProjectionSeal2.lean:44:17: error: failed to set `[local irreducible]`, `Action.state` is currently `[reducible]`, `[semireducible]` expected
+.scratch/NFProjectionSeal2.lean:44:17: error: failed to set `[local irreducible]`, `NDTM.tr` is currently `[reducible]`, `[semireducible]` expected
+FAIL(.scratch/NFProjectionSeal2): lean exited with status 1
+FAIL(.scratch/NFProjectionSeal2): error diagnostics reported
+FAIL(.scratch/NFProjectionSeal2): no fresh .olean produced
+END 2026-11-04T09:23:30.063005+00:00 .scratch/NFProjectionSeal2 exit=1 elapsed_seconds=4.200 maximum_resident_set_kb=1917288
+errors: 4
+== worker seal attribute block (NFCheckpoint2Seal.lean)
+44:attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+46:attribute [local irreducible] Turing.CodeNDTM.toFinNDTM Turing.NDTM.relabelState Turing.NDTM.initCfg
+50:attribute [local irreducible] Turing.guessCtlRunTM Turing.GuessRunPhase.CtlState
+57:attribute [local irreducible] Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols
+12
+== worker controls: count of example/theorem in NFControlsSealed.lean
+39

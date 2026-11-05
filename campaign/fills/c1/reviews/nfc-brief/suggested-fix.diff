@@ -1,0 +1,191 @@
+diff --git a/orig/c1-fill-nf-cont1.DRAFT.md b/edited/c1-fill-nf-cont1.DRAFT.md
+index 16411f3..ee320ac 100644
+--- a/orig/c1-fill-nf-cont1.DRAFT.md
++++ b/edited/c1-fill-nf-cont1.DRAFT.md
+@@ -17,6 +17,8 @@
+   git rev-parse HEAD        # must print @ANCESTOR@
+   git rev-parse HEAD:TCSlib/Complexity/ClassNP/NDNormalForm.lean
+   # must print e6432b1e6cf6eb33f81bff05eb389b09dd7cb9f0
++  git diff --quiet 5241eb8257bdeb5b5c274145575749dd186ec65f HEAD -- '*.lean' && echo same-Lean
++  # must print same-Lean: your base's Lean is that of the first round's branch tip
+   ```
+   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
+ - **That commit contains:**
+@@ -42,8 +44,9 @@
+     - the screen population.
+ 
+     The first round's inputs (`campaign/fills/c1/inputs/c1-fill-nf/`) still apply, in particular
+-    `NFReviewProbe.lean.txt` (`rv_entry`, `rv_tag`, `rv_inputSymbol_congr`,
+-    `rv_moveInputPos_le`) and `NFReviewVProbe.lean.txt` (`rvPark`).
++    `NFReviewProbe.lean.txt` (`rv_entry`, `rv_inputSymbol_congr`, `rv_moveInputPos_le`, and
++    `rv_skeleton`: the target assembled from the obligations on `V`, sealed, the model for
++    checkpoint 8) and `NFReviewVProbe.lean.txt` (`rv_tag`, `rvPark`).
+ 
+     The order list, base sorries, screen base and pre-ship log are
+     `campaign/fills/c1/orders/c1-fill-nf-cont1.txt` and `campaign/fills/c1/logs/c1-fill-nf-cont1-*`.
+@@ -146,12 +149,15 @@ log `campaign/fills/c1/logs/c1-fill-nf-cont1-preship.log`):
+   before it. Every new declaration has a docstring, and every proof over 20 lines a literal
+   `**Proof sketch.**` paragraph (`policy.md` §3). Docstrings are public-facing library text: no
+   campaign labels ("NF", "checkpoint", "cont1", "sweep 0"), dates or session narrative; provenance
+-  goes in `REPORT.md`. The replay leaf's docstring says which public rows it is not and what was
+-  missing (`policy.md` §1): `scanTM` reads one tape, and `StepBlock`'s `recordTM` reads records on
+-  `k + 2` tapes;
++  goes in `REPORT.md`. "A" and "B" are this brief's names, not the library's: in docstrings write
++  tape `0` (the stream) and tape `1` (the replay tape). The route probe's docstrings use "A" and
++  "B"; rewrite them when you copy its layout. The replay leaf's docstring says which public rows
++  it is not and what was missing (`policy.md` §1): `scanTM` reads one tape, and `StepBlock`'s
++  `recordTM` reads records on `k + 2` tapes;
+ - **(c)** the target's body, line 758 (`sorry`);
+ - **(d)** at completion only: the module docstring's and the target docstring's status phrases
+-  (public-facing; no campaign labels). If your route departs from the target's
++  ("(statement; proof incomplete)", lines 30–31, and "statement; proof incomplete", line 707;
++  public-facing; no campaign labels). If your route departs from the target's
+   `**Implementation.**` paragraph, propose its new text in `REPORT.md`; the maintainer lands it.
+ 
+ **Frozen:** the target's statement, and the first round's 39 privates: their statements and their
+@@ -191,15 +197,19 @@ machines, the redirect table and the verifier. The phases, in order:
+ 4. the verdict park.
+ 
+ `nfc_aReturn` is A's return chained through `phaseHostTM_run`, `nfc_retag` the step from a
+-redirected configuration to the next phase's start. Keep both, renamed. A layout of equal
++redirected configuration to the next phase's start. Keep both, renamed. `nfc_aReturn` is stated
++for the input's return: state it once for every replayed tape, whose last redirect is
++`nfcAfter N L none` for the input and `⟨.bFwd j, .run⟩` for work tape `j`. A layout of equal
+ strength is allowed if you say why in `REPORT.md`, for example the leaf's verdict exits read
+ through another function than the probe's `exit : SL → Option Bool`.
+ 
+-**Named instances (pinned).** `DecidableEq` and `Fintype` for the control sweep's `ScanPhase
+-(nf_SweepState N)` (as `@instDecidableEqScanPhase _ inferInstance`), the leaf's state, the phase
+-family and `V`'s state, each as a `private instance` (or `local instance`). Default synthesis does
+-not reach `DecidableEq (ScanPhase (nf_SweepState N))` at the default instance size (the review's
+-F3). Never raise `synthInstance.maxSize` instead.
++**Named instances (pinned).** As in the probe: `DecidableEq` and `Fintype` for the phase family's
++fibers (`nfcStDecEq`, `nfcStFintype`), with the control sweep's `ScanPhase (nf_SweepState N)`
++inside them (`@instDecidableEqScanPhase _ inferInstance`, `@instFintypeScanPhase _ inferInstance`),
++and for the leaf's state, each as a `private instance` (or `local instance`). `V`'s state then has
++both by inference (the probe's two `example`s). Default synthesis does not reach
++`DecidableEq (ScanPhase (nf_SweepState N))` at the default instance size (the review's F3). Never
++raise `synthInstance.maxSize` instead.
+ 
+ **The replay leaf (pinned).**
+ - **One own-file two-tape machine, parameterized by the replayed tape** (`none` the input,
+@@ -211,26 +221,36 @@ F3). Never raise `synthInstance.maxSize` instead.
+ - **The input instance** compares each decoded input claim with the cell under the native input
+   head, then performs the recomputed input move (`moveInputPos`). The input head is not returned.
+ - **A work-tape instance** keeps tape `j` on B as two-bit blocks: a visited cell is two nonblank
+-  bits encoding its `Option Bool` content, an unvisited cell two blanks. B's head sits at twice
+-  the simulated head, so a simulated move is two cells on B. It checks each decoded claim against
+-  B's block, then writes the recomputed write.
+-- **Its exits** are A's blank after `s` (pass) or a reject state.
++  bits encoding its `Option Bool` content, an unvisited cell two blanks. B's head sits at its
++  start position plus twice the simulated head, so a simulated move is two cells on B. It checks
++  each decoded claim against B's block, then **writes the block at every record**: two nonblank
++  bits encoding the cell's content after the step, `(a.workTapes j).1.getD old` (the shape of
++  `Action.apply_workTapes`). An action that writes nothing (`(a.workTapes j).1 = none`) still
++  writes its block, so an unvisited cell under the head becomes the nonblank code of blank.
++  Otherwise the visited region can have blank holes, and B's clear either does not apply or leaves
++  cells that a later work tape's replay reads, rejecting a genuine display.
++- **Its exits** are a pass state, entered after the end-flagged record with A's head on the blank
++  after `s` (cell `|s|`, not past it: `nfc_aReturn`'s `hpos`), or a reject state.
+ - **Its run lemma** has the shape "after `r` records, a pure fold of the stream". It is framed over
+   A's position, with the stream read from A's head; B's head position, with B blank or holding the
+   region; and the input position. It gives the exact time as a function of the stream. Prove it
+   by induction over records through `MultiTapeTM.step_of_some` and the `Action.apply_*` field
+   equations; no private loop driver.
+-- **The exit invariant on B (pinned).** At a work-tape instance's exit, B's head is on a cell of
+-  the nonempty, contiguous, nonblank visited region. `skipTM_run_ofCfg` started left of the region
+-  ends on its first cell, so B's clear would not apply otherwise. The head can leave the region
+-  only by the last record's move to the left. **Keep the invariant by not performing the
+-  end-flagged record's head move** (the leaf knows the record is the last when it completes it,
+-  and that move affects no later check), or else by the first round's proposal: initialize a
+-  previously blank destination block as two nonblank bits encoding blank. Say which in
+-  `REPORT.md`.
+-
+-**Authorized transcriptions** (from `NFReviewProbe.lean.txt` and `NFReviewVProbe.lean.txt`, as
+-`nf_pack` and `nf_setup` were; renamed `nf_`):
++- **The exit invariant on B (pinned).** At a work-tape instance's exit, B is blank outside the
++  visited region, which is nonempty, contiguous and nonblank (every record writes its block), and
++  B's head is on a cell of it. B's clear also applies from the region's right delimiter, but not
++  from the block left of the region: there `skipTM_run_ofCfg` at `w := []` ends on the left
++  delimiter, and `skipBackTM_run_ofCfg` at `u :=` the region does not apply. Since every record
++  writes its block, the head can leave the region only by the last record's move, and only a
++  move to the left is harmful. **Keep the invariant by not performing the end-flagged record's
++  head move** (the leaf knows the record is the last when it completes it, and that move affects
++  no later check), or else by the first round's proposal: initialize a previously blank
++  destination block as two nonblank bits encoding blank. Say which in `REPORT.md`. If the work
++  tape's head never moves, the region is the one block at B's start.
++
++**Authorized transcriptions** (`rv_entry`, `rv_inputSymbol_congr` and `rv_moveInputPos_le` from
++`NFReviewProbe.lean.txt`, `rv_tag` and `rvPark` from `NFReviewVProbe.lean.txt`, as `nf_pack` and
++`nf_setup` were; renamed `nf_`):
+ - `rv_entry`: `V`'s entry is `streamStartCfg x 0 q s`;
+ - `rv_tag`: the tagged stream start is a `mapState`;
+ - `rv_inputSymbol_congr`: stated once, and listed as a promotion request;
+@@ -273,9 +293,10 @@ and the backward "accepted ⇒ every check passed". The transfers then never tou
+ `t₀ ≤ t`, and `TQ(s)` the sum of the phase times:
+ - the control sweep, `2|s| + 2`;
+ - each replay, `O(|s|)`, with `O(1)` B operations per record;
+-- each return of A, `|s| + 6`;
+-- each clear of B, `O(t₀)`;
+-- one step per redirect.
++- each return of A, `|s| + 6`, its two redirects included (`nfc_aReturn`);
++- each clear of B, `(|R| − i + 1) + (|R| + 3) + (2|R| + 2)` with `R` the region and `i` B's
++  head's offset in it, plus its three redirects: `4|R| − i + 9 = O(t₀)`;
++- one step for each other redirect (after the control sweep and after each replay).
+ 
+ `C` is a closed form in `N.k`, uniform in `x` and `t`. Give it term by term in `REPORT.md`.
+ 
+@@ -285,6 +306,8 @@ and the backward "accepted ⇒ every check passed". The transfers then never tou
+ - `t₀ = 1`: one record;
+ - the input head left of the first cell or past the input: the claimed read is the blank there;
+ - a work-tape write of a blank: the block encodes `none` and stays nonblank;
++- a work-tape action that writes nothing: its block is still written, so the region has no hole;
++  a work tape whose head never moves: the region is one block;
+ - a halting transition that emits (`summaryEmit`), or a run emitting twice (rejected by the
+   control sweep);
+ - wrong claims: rejected, and the verdict still reached (`hV`);
+@@ -348,16 +371,19 @@ relabeling, the run algebra, the field equations), and in addition: `instDecidab
+     `transferTM_run`, `clearTM_run`, `compareTM_run`, `incrementTM_run_succ`,
+     `incrementTM_run_overflow`); use the `_ofCfg` forms. Cite no private declaration of another
+     file. Keep your new privates under the `nf_` prefix, clear of the 39 existing names. A
+-    `private inductive` with `deriving DecidableEq` gets a public instance name: write the
+-    instance as a `private instance` instead, or check that no file or open PR has the name, and
+-    report it.
++    `private inductive` with `deriving` gets public instance names: the probe's phase index gets
++    `Turing.FinNDTM.instDecidableEqNfcPh` and `Turing.FinNDTM.instFintypeNfcPh`, with their
++    auxiliaries. These are public constants, not public declarations (`workflow.md` §4, counting
++    public names): check that no file or open PR has your renamed ones and report them, or write
++    the instances as `private instance`s.
+ 
+ ### Checkpoints (for a partial; ground rule 9)
+ 
+-3. **The input's replay:** the leaf, its run lemma at the input instance, A's return after it.
++3. **The input's replay:** the leaf, its run lemma at the input instance, `V`'s layout (generic
++   over the leaf, as in the probe), A's return after it.
+ 4. **A work tape's replay on B and B's clear:** the leaf at a work-tape instance, the exit
+    invariant, and B's three clear phases.
+-5. **`V`:** the layout, its characterization, `hV`, and its verdict on a display.
++5. **`V`:** its characterization, `hV`, and its verdict on a display.
+ 6. **The forward transfer** and the ledger.
+ 7. **The backward transfer**: a passing display is a genuine accepting run.
+ 8. **The target.**
+@@ -404,7 +430,8 @@ nice -n 10 python3 -I scripts/copy-text-screen-v3.py . \
+   - **re-derivation of another file's private:** keep yours, and list it as a promotion request.
+ - **Known hazards:**
+   - the one-step identity `M.runFrom c 1 = M.step c` (private in `CfgRecord` as
+-    `recordStep_runFrom_one`): if you need it, state it once and list it as a promotion request;
++    `recordStep_runFrom_one`): `MultiTapeTM.runFrom_succ_eq_step'` at `t := 0` and `runFrom_zero`
++    give it in one `rw`, so no lemma is needed;
+   - `ExhaustiveReplay`'s replays and `Nondeterminism`'s `choiceCore`: your sweeps replay claimed
+     actions, not a fixed machine's run on a word;
+   - the record readers of `StepBlock` and `CodeSimulator`: fixed-width readers on `k + 2` tapes.
+@@ -467,7 +494,8 @@ citation, that is an escalation, not a license.
+       cache store's log included), **the logs copied into this zip**, the bootstrap with
+       per-module time and memory, and the base blob check.
+ - [ ] Nothing outside regions (b)–(d); the 39 privates unchanged (a freeze check against your base).
+-- [ ] The checkpoints reached (3–8), **one zip each**, and the base hash.
++- [ ] The checkpoints reached (3–8), **one zip each**, the base hash and the ancestor check; if
++      the session stopped before checkpoint 8, what ended it.
+ - [ ] Every new declaration with its role: the leaf and its run lemma, the exit invariant (which of
+       the two ways), the instances, `V`'s phases and redirects, each hand-built machine's
+       docstring naming the row it is not.

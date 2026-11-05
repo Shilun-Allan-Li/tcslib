@@ -1,0 +1,36 @@
+/-
+The general `savitch`'s fit probe at the API PR's head: a host machine holding the Savitch
+machine as a block, its outer search transported by the published `AHalt.embed_guardLe` and
+`A_noVal` alone (sealed: no TCSlib definition of another file is unfolded). A probe record.
+-/
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+
+set_option autoImplicit false
+
+attribute [local irreducible] Complexity.LogProg.astep Complexity.LogProg.arun
+  Complexity.LogProg.AHalt Complexity.LogProg.AReach Complexity.LogProg.PreS
+  Complexity.LogProg.Ins.embed Complexity.LogProg.SavitchARM.A
+  Complexity.LogProg.SavitchARM.outerSt Complexity.LogProg.SavitchARM.setSt
+
+namespace Complexity.LogProg.SavitchARM
+
+/-- A toy host: the Savitch machine's labels, then one answering label; decider `2` is read
+as the host's decider `4`. -/
+def toyD (E : ℕ) : ARM 19 5 (Lb E ⊕ Unit)
+  | .inl l => (A E l).embed Fin.castSucc (fun j => if j = 2 then 4 else j.castSucc) Sum.inl
+      (fun _ => .inr ()) 0
+  | .inr () => .ret true
+
+example (E : ℕ) (oracle : Fin 5 → List Bool → Bool) (x : List Bool) (s w : ℕ) (hsw : s ≤ w)
+    (e : Fin 19 → ℕ) (he : ∀ r', e r' ≤ 2 ^ (w * w)) (v' : Fin 19 → ℕ)
+    (hv : RegExt Fin.castSucc e (outerSt s w 0 0 0).toV v') :
+    ∃ v₂', (∀ r', (∀ r, Fin.castSucc r ≠ r') → v₂' r' = e r') ∧
+      (∀ r, v₂' (Fin.castSucc r) ≤ 2 ^ (w * w)) ∧
+      AReach (toyD E) oracle x (GuardLe (toyD E) x (2 ^ (w * w))) (some (.inl .OU), v', none)
+        (some (.inr ()), v₂', none) :=
+  AHalt.embed_guardLe (D := toyD E) (ι := Sum.inl) (k := fun _ => .inr ()) (r₀ := 0)
+    (σ := fun j => if j = 2 then 4 else j.castSucc) (oracle' := oracle) (x := x)
+    (Fin.castSucc_injective _) (fun _ => rfl) (A_noVal E) le_rfl he
+    (outerU_run hsw (2 ^ w) 0 0 (by omega) (Nat.zero_le _)) hv
+
+end Complexity.LogProg.SavitchARM

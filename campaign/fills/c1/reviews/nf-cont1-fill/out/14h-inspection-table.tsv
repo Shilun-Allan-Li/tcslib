@@ -1,0 +1,1581 @@
+line	tactic	argument	identifier	class
+997	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+997	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+999	rw	hs	hs	local
+1000	rw	Cfg.mapState_inputPos	Cfg.mapState_inputPos	tcslib:thm
+1000	rw	Cfg.mapState_inputPos	Cfg.mapState_inputPos	tcslib:thm
+1001	rw	Cfg.mapState_workTapes	Cfg.mapState_workTapes	tcslib:thm
+1001	rw	Cfg.mapState_workTapes	Cfg.mapState_workTapes	tcslib:thm
+1002	rw	Cfg.mapState_workTapePos	Cfg.mapState_workTapePos	tcslib:thm
+1002	rw	Cfg.mapState_workTapePos	Cfg.mapState_workTapePos	tcslib:thm
+1003	rw	Cfg.mapState_output	Cfg.mapState_output	tcslib:thm
+1003	rw	Cfg.mapState_output	Cfg.mapState_output	tcslib:thm
+1009	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+1052	simp only	List.length_nil	List.length_nil	core/mathlib:thm
+1052	simp only	Nat.cast_zero	Nat.cast_zero	core/mathlib:thm
+1054	rw	htape	htape	local
+1054	rw	hpos	hpos	local
+1054	rw	add_zero	add_zero	core/mathlib:thm
+1054	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+1054	rw	FinTM.bufferTape_nil	FinTM.bufferTape_nil	tcslib:thm
+1054	rw	List.getElem?_eq_none       (le_refl _)	List.getElem?_eq_none	core/mathlib:thm
+1054	rw	List.getElem?_eq_none       (le_refl _)	le_refl	core/mathlib:thm
+1054	rw	List.getElem?_eq_none       (le_refl _)	_	local
+1067	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+1067	rw	hst	hst	local
+1072	simp	hc₁	hc₁	local
+1078	simp only	hc₂	hc₂	local
+1078	simp only	hc₁	hc₁	local
+1078	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1078	simp only	List.length_nil	List.length_nil	core/mathlib:thm
+1078	simp only	Nat.cast_zero	Nat.cast_zero	core/mathlib:thm
+1078	simp only	hpos	hpos	local
+1079	rw	htape	htape	local
+1100	rw	e	e	local
+1100	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1101	unfold	nf_V	nf_V	own:def
+1102	rw	hA	hA	local
+1102	rw	hre	hre	local
+1104	simp	hc₃	hc₃	local
+1105	simp only	hc₃	hc₃	local
+1105	simp only	hc₂	hc₂	local
+1105	simp only	hc₁	hc₁	local
+1105	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1105	simp only	List.length_nil	List.length_nil	core/mathlib:thm
+1105	simp only	Nat.cast_zero	Nat.cast_zero	core/mathlib:thm
+1105	simp only	hpos	hpos	local
+1107	simp only	hc₃	hc₃	local
+1107	simp only	hc₂	hc₂	local
+1107	simp only	hc₁	hc₁	local
+1108	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+1108	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+1108	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+1108	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+1109	simp only	hc₃	hc₃	local
+1109	simp only	hc₂	hc₂	local
+1109	simp only	hc₁	hc₁	local
+1110	simp only	hc₃	hc₃	local
+1110	simp only	hc₂	hc₂	local
+1110	simp only	hc₁	hc₁	local
+1111	simp only	hc₃	hc₃	local
+1111	simp only	hc₂	hc₂	local
+1111	simp only	hc₁	hc₁	local
+1113	unfold	nf_V	nf_V	own:def
+1115	rw	hpA u hu1	hpA	local
+1115	rw	hpA u hu1	u	local
+1115	rw	hpA u hu1	hu1	local
+1119	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1119	rw	hA	hA	local
+1119	rw	hre	hre	local
+1119	rw	hpB v (by simp at hu ⊢; omega)	hpB	local
+1119	rw	hpB v (by simp at hu ⊢; omega)	v	local
+1119	rw	hpB v (by simp at hu ⊢; omega)	simp	local
+1119	rw	hpB v (by simp at hu ⊢; omega)	hu	local
+1119	rw	hpB v (by simp at hu ⊢; omega)	omega	local
+1155	rw	List.length_drop	List.length_drop	core/mathlib:thm
+1155	push_cast	Nat.cast_sub hi	Nat.cast_sub	core/mathlib:thm
+1155	push_cast	Nat.cast_sub hi	hi	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	c.workTapePos	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	i	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	p	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	i	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	c.workTapePos	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	p	local
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	ring	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	c.workTapePos	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	i	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	p	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	i	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	c.workTapePos	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	p	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	ring	local
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	h	local
+1162	rw	h	h	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	n	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	ℤ	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	i	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	ℤ	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	n	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	i	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	ℕ	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	ℤ	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	push_cast	local
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	ring	local
+1164	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+1164	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+1164	rw	List.getElem?_drop	List.getElem?_drop	core/mathlib:thm
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	n	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	ℤ	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	i	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	ℤ	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	n	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	i	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	ℕ	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	ℤ	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	push_cast	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	ring	local
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+1183	simp	hc₁	hc₁	local
+1189	simp only	hc₂	hc₂	local
+1189	simp only	hc₁	hc₁	local
+1189	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1190	rw	← htape p h0 h1	htape	local
+1190	rw	← htape p h0 h1	p	local
+1190	rw	← htape p h0 h1	h0	local
+1190	rw	← htape p h0 h1	h1	local
+1192	rw	hdl	hdl	local
+1209	simp only	hc₃	hc₃	local
+1209	simp only	hc₂	hc₂	local
+1209	simp only	hc₁	hc₁	local
+1209	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1210	rw	hdl	hdl	local
+1214	simp	hc₃	hc₃	local
+1222	simp only	hc₄	hc₄	local
+1223	rw	e	e	local
+1224	simp only	hc₄	hc₄	local
+1224	simp only	hc₃	hc₃	local
+1224	simp only	hc₂	hc₂	local
+1224	simp only	hc₁	hc₁	local
+1243	rw	List.length_drop	List.length_drop	core/mathlib:thm
+1245	rw	e	e	local
+1245	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1246	unfold	nf_V	nf_V	own:def
+1247	rw	hA	hA	local
+1247	rw	hre	hre	local
+1247	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1247	rw	hB	hB	local
+1247	rw	hre2	hre2	local
+1249	simp	hc₅	hc₅	local
+1250	simp only	hc₅	hc₅	local
+1250	simp only	hc₄	hc₄	local
+1252	simp only	hc₅	hc₅	local
+1252	simp only	hc₄	hc₄	local
+1252	simp only	hc₃	hc₃	local
+1252	simp only	hc₂	hc₂	local
+1252	simp only	hc₁	hc₁	local
+1253	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+1253	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+1253	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+1253	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+1254	simp only	hc₅	hc₅	local
+1254	simp only	hc₄	hc₄	local
+1254	simp only	hc₃	hc₃	local
+1254	simp only	hc₂	hc₂	local
+1254	simp only	hc₁	hc₁	local
+1256	rw	if_neg (fun h => absurd h.1 (by decide))	if_neg	core/mathlib:thm
+1256	rw	if_neg (fun h => absurd h.1 (by decide))	h	local
+1256	rw	if_neg (fun h => absurd h.1 (by decide))	absurd	core/mathlib:def
+1256	rw	if_neg (fun h => absurd h.1 (by decide))	h.1	local
+1256	rw	if_neg (fun h => absurd h.1 (by decide))	decide	core/mathlib:def
+1257	simp only	hc₅	hc₅	local
+1257	simp only	hc₄	hc₄	local
+1257	simp only	hc₃	hc₃	local
+1257	simp only	hc₂	hc₂	local
+1257	simp only	hc₁	hc₁	local
+1258	simp only	hc₅	hc₅	local
+1258	simp only	hc₄	hc₄	local
+1258	simp only	hc₃	hc₃	local
+1258	simp only	hc₂	hc₂	local
+1258	simp only	hc₁	hc₁	local
+1260	simp only	hc₄	hc₄	local
+1261	simp only	hc₄	hc₄	local
+1261	simp only	hc₃	hc₃	local
+1261	simp only	hc₂	hc₂	local
+1261	simp only	hc₁	hc₁	local
+1264	rw	hq	hq	local
+1264	rw	e4	e4	local
+1264	rw	ew	ew	local
+1266	rw	if_pos ⟨rfl, h⟩	if_pos	core/mathlib:thm
+1266	rw	if_pos ⟨rfl, h⟩	rfl	core/mathlib:def
+1266	rw	if_pos ⟨rfl, h⟩	h	local
+1266	rw	if_pos h	if_pos	core/mathlib:thm
+1266	rw	if_pos h	h	local
+1267	rw	if_neg (fun h' => h h'.2)	if_neg	core/mathlib:thm
+1267	rw	if_neg (fun h' => h h'.2)	h'	local
+1267	rw	if_neg (fun h' => h h'.2)	h	local
+1267	rw	if_neg (fun h' => h h'.2)	h'.2	local
+1267	rw	if_neg h	if_neg	core/mathlib:thm
+1267	rw	if_neg h	h	local
+1269	unfold	nf_V	nf_V	own:def
+1271	rw	hpA u hu1	hpA	local
+1271	rw	hpA u hu1	u	local
+1271	rw	hpA u hu1	hu1	local
+1275	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1275	rw	hA	hA	local
+1275	rw	hre	hre	local
+1277	rw	hpB v hv1	hpB	local
+1277	rw	hpB v hv1	v	local
+1277	rw	hpB v hv1	hv1	local
+1280	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1280	rw	hB	hB	local
+1280	rw	hre2	hre2	local
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	hpC	local
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	w	local
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	rw	local
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	List.length_drop	core/mathlib:thm
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	hu	local
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	omega	local
+1280	rw	List.length_drop	List.length_drop	core/mathlib:thm
+1293	rw	MultiTapeTM.initCfg_eq	MultiTapeTM.initCfg_eq	tcslib:thm
+1295	rw	guessRunCfg_state	guessRunCfg_state	tcslib:thm
+1295	rw	streamStartCfg_state	streamStartCfg_state	tcslib:thm
+1296	rw	guessRunCfg_inputPos	guessRunCfg_inputPos	tcslib:thm
+1296	rw	streamStartCfg_inputPos	streamStartCfg_inputPos	tcslib:thm
+1296	rw	Cfg.init_inputPos	Cfg.init_inputPos	tcslib:thm
+1298	rw	guessRunCfg_workTapes	guessRunCfg_workTapes	tcslib:thm
+1298	rw	streamStartCfg_workTapes	streamStartCfg_workTapes	tcslib:thm
+1298	rw	Cfg.init_workTapePos	Cfg.init_workTapePos	tcslib:thm
+1301	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1301	rw	if_pos rfl	if_pos	core/mathlib:thm
+1301	rw	if_pos rfl	rfl	core/mathlib:def
+1303	rw	if_pos hp	if_pos	core/mathlib:thm
+1303	rw	if_pos hp	hp	local
+1303	rw	sub_zero	sub_zero	core/mathlib:thm
+1304	rw	if_neg hp	if_neg	core/mathlib:thm
+1304	rw	if_neg hp	hp	local
+1304	rw	Cfg.init_workTapes	Cfg.init_workTapes	tcslib:thm
+1306	rw	FinTM.bufferTape_of_neg s hneg	FinTM.bufferTape_of_neg	tcslib:thm
+1306	rw	FinTM.bufferTape_of_neg s hneg	s	local
+1306	rw	FinTM.bufferTape_of_neg s hneg	hneg	local
+1307	rw	FinTM.bufferTape_eq	FinTM.bufferTape_eq	tcslib:thm
+1307	rw	if_pos (by omega)	if_pos	core/mathlib:thm
+1307	rw	if_pos (by omega)	omega	local
+1309	rw	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1309	rw	Function.update_of_ne hi	hi	local
+1309	rw	if_neg hi	if_neg	core/mathlib:thm
+1309	rw	if_neg hi	hi	local
+1309	rw	Cfg.init_workTapes	Cfg.init_workTapes	tcslib:thm
+1311	rw	guessRunCfg_workTapePos	guessRunCfg_workTapePos	tcslib:thm
+1311	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos	tcslib:thm
+1311	rw	Cfg.init_workTapePos	Cfg.init_workTapePos	tcslib:thm
+1312	rw	guessRunCfg_output	guessRunCfg_output	tcslib:thm
+1312	rw	streamStartCfg_output	streamStartCfg_output	tcslib:thm
+1312	rw	Cfg.init_output	Cfg.init_output	tcslib:thm
+1320	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+1320	rw	streamStartCfg_state	streamStartCfg_state	tcslib:thm
+1320	rw	streamStartCfg_state	streamStartCfg_state	tcslib:thm
+1321	rw	Cfg.mapState_inputPos	Cfg.mapState_inputPos	tcslib:thm
+1321	rw	streamStartCfg_inputPos	streamStartCfg_inputPos	tcslib:thm
+1321	rw	streamStartCfg_inputPos	streamStartCfg_inputPos	tcslib:thm
+1322	rw	Cfg.mapState_workTapes	Cfg.mapState_workTapes	tcslib:thm
+1322	rw	streamStartCfg_workTapes	streamStartCfg_workTapes	tcslib:thm
+1322	rw	streamStartCfg_workTapes	streamStartCfg_workTapes	tcslib:thm
+1323	rw	Cfg.mapState_workTapePos	Cfg.mapState_workTapePos	tcslib:thm
+1323	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos	tcslib:thm
+1323	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos	tcslib:thm
+1324	rw	Cfg.mapState_output	Cfg.mapState_output	tcslib:thm
+1324	rw	streamStartCfg_output	streamStartCfg_output	tcslib:thm
+1324	rw	streamStartCfg_output	streamStartCfg_output	tcslib:thm
+1332	rw	← h	h	local
+1333	rw	Cfg.inputSymbol_of_zero (Fin.ext h0)	Cfg.inputSymbol_of_zero	tcslib:thm
+1333	rw	Cfg.inputSymbol_of_zero (Fin.ext h0)	Fin.ext	core/mathlib:thm
+1333	rw	Cfg.inputSymbol_of_zero (Fin.ext h0)	h0	local
+1333	rw	Cfg.inputSymbol_of_zero h0'	Cfg.inputSymbol_of_zero	tcslib:thm
+1333	rw	Cfg.inputSymbol_of_zero h0'	h0'	local
+1335	rw	Cfg.inputSymbol_of_end he	Cfg.inputSymbol_of_end	tcslib:thm
+1335	rw	Cfg.inputSymbol_of_end he	he	local
+1335	rw	Cfg.inputSymbol_of_end (by omega)	Cfg.inputSymbol_of_end	tcslib:thm
+1335	rw	Cfg.inputSymbol_of_end (by omega)	omega	local
+1337	rw	inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega)	inputSymbolInner	tcslib:thm
+1337	rw	inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega)	c.inputPos.val	local
+1337	rw	inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega)	omega	local
+1337	rw	inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega)	omega	local
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	inputSymbolInner	tcslib:thm
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	cfg	local
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	c'	local
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	c.inputPos.val	local
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	omega	local
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	omega	local
+1358	rw	← hσ	hσ	local
+1359	rw	hp	hp	local
+1359	rw	hp	hp	local
+1360	rw	hp	hp	local
+1364	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1367	rw	Function.update_of_ne he	Function.update_of_ne	core/mathlib:thm
+1367	rw	Function.update_of_ne he	he	local
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	p.val	local
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	N.k	local
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	some	core/mathlib:ctor
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	rec	tcslib:rec
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	p	local
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	none	core/mathlib:ctor
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	some	core/mathlib:ctor
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	rec	tcslib:rec
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	p	local
+1369	rw	if_pos (by omega)	if_pos	core/mathlib:thm
+1369	rw	if_pos (by omega)	omega	local
+1371	rw	List.ofFn_succ_last	List.ofFn_succ_last	core/mathlib:thm
+1371	rw	List.foldl_append	List.foldl_append	core/mathlib:thm
+1371	rw	List.foldl_cons	List.foldl_cons	core/mathlib:thm
+1371	rw	List.foldl_nil	List.foldl_nil	core/mathlib:thm
+1372	rw	hσ	hσ	local
+1392	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+1394	rw	hst	hst	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	d.workTapePos	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	i	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	Function.update	core/mathlib:def
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	d.workTapePos	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	d.workTapePos	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	ℕ	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	ℤ	local
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	i	local
+1400	rw	Nat.cast_zero	Nat.cast_zero	core/mathlib:thm
+1400	rw	add_zero	add_zero	core/mathlib:thm
+1400	rw	Function.update_eq_self	Function.update_eq_self	core/mathlib:thm
+1403	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'	tcslib:thm
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	nf_leaf_prefix	own:thm
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	N	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	j	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	d	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	rec	tcslib:rec
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	ctl	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	hst	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	hA	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	m	local
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	omega	local
+1406	rw	hp	hp	local
+1412	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq	tcslib:thm
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	d.workTapes	local
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	Function.update	core/mathlib:def
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	d.workTapePos	local
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	d.workTapePos	local
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	m	local
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	_	local
+1414	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	step_of_tapeAction_move	tcslib:thm
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	nf_leaf	own:def
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	N	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	j	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	_	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	q	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	read	core/mathlib:def:proj
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	_	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	rfl	core/mathlib:def
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	simp	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	nf_leaf	own:def
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	rw	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	if_neg	core/mathlib:thm
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	rw	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	hm1	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	omega	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	hsym	local
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	Option.getD_some	core/mathlib:thm
+1417	simp only	nf_leaf	nf_leaf	own:def
+1418	rw	if_neg (by rw [hm1]; omega)	if_neg	core/mathlib:thm
+1418	rw	if_neg (by rw [hm1]; omega)	rw	local
+1418	rw	if_neg (by rw [hm1]; omega)	hm1	local
+1418	rw	if_neg (by rw [hm1]; omega)	omega	local
+1418	rw	hsym	hsym	local
+1418	rw	Option.getD_some	Option.getD_some	core/mathlib:thm
+1418	rw	hm1	hm1	local
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	some	core/mathlib:ctor
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	nf_LeafSt.read	own:ctor
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	nf_sweepStep	own:def
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	N	local
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	_	local
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	_	local
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	some	core/mathlib:ctor
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	nf_LeafSt.read	own:ctor
+1423	rw	List.ofFn_succ_last	List.ofFn_succ_last	core/mathlib:thm
+1423	rw	List.foldl_append	List.foldl_append	core/mathlib:thm
+1424	simp only	Fin.coe_castSucc	Fin.coe_castSucc	core/mathlib:thm
+1424	simp only	Fin.val_last	Fin.val_last	core/mathlib:thm
+1424	simp only	List.foldl_cons	List.foldl_cons	core/mathlib:thm
+1424	simp only	List.foldl_nil	List.foldl_nil	core/mathlib:thm
+1424	simp only	hp	hp	local
+1431	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1431	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1431	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1431	rw	SignType.coe_one	SignType.coe_one	core/mathlib:thm
+1434	rw	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1434	rw	Function.update_of_ne hi	hi	local
+1434	rw	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1434	rw	Function.update_of_ne hi	hi	local
+1434	rw	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1434	rw	Function.update_of_ne hi	hi	local
+1463	rw	hpre u hu	hpre	local
+1463	rw	hpre u hu	u	local
+1463	rw	hpre u hu	hu	local
+1470	rw	show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl	N.k	local
+1470	rw	show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl	N.k	local
+1470	rw	show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl	rfl	core/mathlib:def
+1470	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'	tcslib:thm
+1470	rw	hpre (2 * N.k + 3) (by omega)	hpre	local
+1470	rw	hpre (2 * N.k + 3) (by omega)	N.k	local
+1470	rw	hpre (2 * N.k + 3) (by omega)	omega	local
+1470	show	2 * N.k + 4 = (2 * N.k + 3) + 1	N.k	local
+1470	show	2 * N.k + 4 = (2 * N.k + 3) + 1	N.k	local
+1472	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq	tcslib:thm
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	d.workTapes	local
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	Function.update	core/mathlib:def
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	d.workTapePos	local
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	d.workTapePos	local
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	N.k	local
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	ℕ	local
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	_	local
+1474	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1510	rw	hrun	hrun	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	step_of_tapeAction_move	tcslib:thm
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	nf_leaf	own:def
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	N	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	none	core/mathlib:ctor
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	c	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	q	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	read	core/mathlib:def:proj
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	σ	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	_	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	rfl	core/mathlib:def
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	simp	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	nf_leaf	own:def
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	rw	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	if_pos	core/mathlib:thm
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	h1	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	h2	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	hq	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	dsimp	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	rw	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	hsym	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	Option.getD_some	core/mathlib:thm
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	h3	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	hinp	local
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	if_pos	core/mathlib:thm
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	hdec	local
+1511	simp only	nf_leaf	nf_leaf	own:def
+1512	rw	if_pos h1	if_pos	core/mathlib:thm
+1512	rw	if_pos h1	h1	local
+1512	rw	h2	h2	local
+1512	rw	hq	hq	local
+1514	rw	hsym	hsym	local
+1514	rw	Option.getD_some	Option.getD_some	core/mathlib:thm
+1514	rw	h3	h3	local
+1514	rw	hinp	hinp	local
+1514	rw	if_pos hdec	if_pos	core/mathlib:thm
+1514	rw	if_pos hdec	hdec	local
+1516	show	some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass	some	core/mathlib:ctor
+1516	show	some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass	rec	tcslib:rec
+1516	show	some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass	N.k	local
+1516	show	some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass	omega	local
+1516	show	some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass	nf_LeafSt.pass	own:ctor
+1518	rw	h4	h4	local
+1524	simp only	hc	hc	local
+1524	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1524	simp only	SignType.coe_one	SignType.coe_one	core/mathlib:thm
+1527	simp only	hc	hc	local
+1527	simp only	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1527	simp only	Function.update_of_ne hi	hi	local
+1529	rw	hrun	hrun	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	step_of_tapeAction_move	tcslib:thm
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	nf_leaf	own:def
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	N	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	none	core/mathlib:ctor
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	c	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	q	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	read	core/mathlib:def:proj
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	σ	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	q'	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rej	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rfl	core/mathlib:def
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	simp	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	nf_leaf	own:def
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rw	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	if_pos	core/mathlib:thm
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h1	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h2	local
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	hn	local
+1532	simp only	nf_leaf	nf_leaf	own:def
+1533	rw	if_pos h1	if_pos	core/mathlib:thm
+1533	rw	if_pos h1	h1	local
+1533	rw	h2	h2	local
+1533	rw	hn	hn	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	step_of_tapeAction_move	tcslib:thm
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	nf_leaf	own:def
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	N	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	none	core/mathlib:ctor
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	c	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	q	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	read	core/mathlib:def:proj
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	σ	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	q'	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rej	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rfl	core/mathlib:def
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	simp	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	nf_leaf	own:def
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rw	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	if_pos	core/mathlib:thm
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h1	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h2	local
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	hq	local
+1537	simp only	nf_leaf	nf_leaf	own:def
+1538	rw	if_pos h1	if_pos	core/mathlib:thm
+1538	rw	if_pos h1	h1	local
+1538	rw	h2	h2	local
+1538	rw	hq	hq	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	step_of_tapeAction_move	tcslib:thm
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	nf_leaf	own:def
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	N	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	none	core/mathlib:ctor
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	c	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	q	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	read	core/mathlib:def:proj
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	σ	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	q'	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rej	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rfl	core/mathlib:def
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	simp	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	nf_leaf	own:def
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rw	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	if_pos	core/mathlib:thm
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h1	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h2	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	hq	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	dsimp	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	rw	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	hsym	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	Option.getD_some	core/mathlib:thm
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	h3	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	hinp	local
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	if_neg	core/mathlib:thm
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	hdec	local
+1541	simp only	nf_leaf	nf_leaf	own:def
+1542	rw	if_pos h1	if_pos	core/mathlib:thm
+1542	rw	if_pos h1	h1	local
+1542	rw	h2	h2	local
+1542	rw	hq	hq	local
+1544	rw	hsym	hsym	local
+1544	rw	Option.getD_some	Option.getD_some	core/mathlib:thm
+1544	rw	h3	h3	local
+1544	rw	hinp	hinp	local
+1544	rw	if_neg hdec	if_neg	core/mathlib:thm
+1544	rw	if_neg hdec	hdec	local
+1572	simp only	nf_complete	nf_complete	own:def
+1572	simp only	nf_vstep	nf_vstep	own:def
+1572	simp only	hc	hc	local
+1574	simp only	nf_complete	nf_complete	own:def
+1574	simp only	nf_vstep	nf_vstep	own:def
+1574	simp only	hc	hc	local
+1593	simp only	nf_complete	nf_complete	own:def
+1593	simp only	nf_vstep	nf_vstep	own:def
+1593	simp only	hc	hc	local
+1595	simp only	nf_complete	nf_complete	own:def
+1595	simp only	nf_vstep	nf_vstep	own:def
+1595	simp only	hc	hc	local
+1596	rw	Action.apply_output	Action.apply_output	tcslib:thm
+1596	rw	StepBlock.outputSummary_append	StepBlock.outputSummary_append	tcslib:thm
+1625	rw	List.flatMap_cons	List.flatMap_cons	core/mathlib:thm
+1628	rw	List.length_append	List.length_append	core/mathlib:thm
+1628	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+1629	rw	hT p.val hlt	hT	local
+1629	rw	hT p.val hlt	p.val	local
+1629	rw	hT p.val hlt	hlt	local
+1629	rw	List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt)	List.getElem?_append_left	core/mathlib:thm
+1629	rw	List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt)	rw	local
+1629	rw	List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt)	List.length_ofFn	core/mathlib:thm
+1629	rw	List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt)	exact	local
+1629	rw	List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt)	p.isLt	local
+1629	rw	List.getElem?_ofFn	List.getElem?_ofFn	core/mathlib:thm
+1629	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+1633	rw	List.length_append	List.length_append	core/mathlib:thm
+1633	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+1635	rw	List.getElem?_append_right (by rw [List.length_ofFn]; omega)	List.getElem?_append_right	core/mathlib:thm
+1635	rw	List.getElem?_append_right (by rw [List.length_ofFn]; omega)	rw	local
+1635	rw	List.getElem?_append_right (by rw [List.length_ofFn]; omega)	List.length_ofFn	core/mathlib:thm
+1635	rw	List.getElem?_append_right (by rw [List.length_ofFn]; omega)	omega	local
+1635	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+1635	rw	Nat.add_sub_cancel_left	Nat.add_sub_cancel_left	core/mathlib:thm
+1635	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+1637	rw	← e	e	local
+1669	simp only	List.getElem_cons_zero	List.getElem_cons_zero	core/mathlib:thm
+1669	simp only	List.length_cons	List.length_cons	core/mathlib:thm
+1669	simp only	zero_add	zero_add	core/mathlib:thm
+1711	rw	hip	hip	local
+1718	rw	hinp	hinp	local
+1718	rw	hdec	hdec	local
+1726	rw	hrun	hrun	local
+1726	rw	if_pos hl	if_pos	core/mathlib:thm
+1726	rw	if_pos hl	hl	local
+1734	rw	if_neg (by simp [hl])	if_neg	core/mathlib:thm
+1734	rw	if_neg (by simp [hl])	simp	local
+1734	rw	if_neg (by simp [hl])	hl	local
+1734	simp	hl	hl	local
+1743	show	moveInputPos d.inputPos _ = _	moveInputPos	tcslib:def
+1743	show	moveInputPos d.inputPos _ = _	d.inputPos	local
+1743	show	moveInputPos d.inputPos _ = _	_	local
+1743	show	moveInputPos d.inputPos _ = _	_	local
+1744	simp only	nf_vstep	nf_vstep	own:def
+1744	simp only	hq	hq	local
+1745	rw	Action.apply_inputPos	Action.apply_inputPos	tcslib:thm
+1745	rw	hip	hip	local
+1749	show	d.workTapes 0 (Function.update d.workTapePos 0	d.workTapes	local
+1749	show	d.workTapes 0 (Function.update d.workTapePos 0	Function.update	core/mathlib:def
+1749	show	d.workTapes 0 (Function.update d.workTapePos 0	d.workTapePos	local
+1751	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1760	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1760	rw	hrun	hrun	local
+1763	rw	hT	hT	local
+1764	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1764	rw	hrun	hrun	local
+1764	rw	hcfg	hcfg	local
+1772	simp only	hd'	hd'	local
+1772	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1772	simp only	List.length_cons	List.length_cons	core/mathlib:thm
+1775	simp only	hd'	hd'	local
+1775	simp only	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1775	simp only	Function.update_of_ne hi	hi	local
+1780	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+1780	rw	hrun	hrun	local
+1786	rw	hdec	hdec	local
+1786	rw	hinp	hinp	local
+1839	rw	show (1 : ℕ) = 0 + 1 from rfl	ℕ	local
+1839	rw	show (1 : ℕ) = 0 + 1 from rfl	rfl	core/mathlib:def
+1839	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'	tcslib:thm
+1839	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	step_of_tapeAction_write	tcslib:thm
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	nf_leaf	own:def
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	N	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	some	core/mathlib:ctor
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	t	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	e	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	q	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	blk₁	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	σ	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	claim	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	n	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	mv	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	last	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	some	core/mathlib:ctor
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	n.isSome	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	hst	local
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	rfl	core/mathlib:def
+1839	rw	SignType.coe_one	SignType.coe_one	core/mathlib:thm
+1839	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq	tcslib:thm
+1839	show	(1 : ℕ) = 0 + 1	ℕ	local
+1843	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq	tcslib:thm
+1844	show	Function.update e.workTapes 1	Function.update	core/mathlib:def
+1844	show	Function.update e.workTapes 1	e.workTapes	local
+1847	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1847	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1847	rw	Function.update_of_ne (by omega)	Function.update_of_ne	core/mathlib:thm
+1847	rw	Function.update_of_ne (by omega)	omega	local
+1852	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+1852	rw	hst	hst	local
+1855	rw	h1	h1	local
+1871	rw	e2	e2	local
+1871	rw	h1	h1	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	step_of_tapeAction_write	tcslib:thm
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	nf_leaf	own:def
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	N	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	some	core/mathlib:ctor
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	t	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	e₁	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	q	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	blk₂	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	σ	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	claim	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	n	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	mv	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	last	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	e.workTapes	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	b	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	some	core/mathlib:ctor
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	v	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	m	local
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	rfl	core/mathlib:def
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	htr	local
+1877	show	Function.update (Function.update e.workTapes 1	Function.update	core/mathlib:def
+1877	show	Function.update (Function.update e.workTapes 1	Function.update	core/mathlib:def
+1877	show	Function.update (Function.update e.workTapes 1	e.workTapes	local
+1882	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1882	rw	Function.update_self	Function.update_self	core/mathlib:thm
+1882	rw	Function.update_idem	Function.update_idem	core/mathlib:thm
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	hw2	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	pass	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	n.getD	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	simp	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	nf_leaf	own:def
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	rw	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	hsym1	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	if_pos	core/mathlib:thm
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	hdec	local
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	rfl	core/mathlib:def
+1886	rw	htape2	htape2	local
+1887	simp only	nf_leaf	nf_leaf	own:def
+1888	rw	hsym1	hsym1	local
+1888	rw	if_pos hdec	if_pos	core/mathlib:thm
+1888	rw	if_pos hdec	hdec	local
+1897	simp only	he₁	he₁	local
+1897	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1897	simp only	SignType.coe_zero	SignType.coe_zero	core/mathlib:thm
+1897	simp only	add_zero	add_zero	core/mathlib:thm
+1899	simp only	he₁	he₁	local
+1899	simp only	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1899	simp only	Function.update_of_ne hi	hi	local
+1906	simp only	nf_leaf	nf_leaf	own:def
+1907	rw	hsym1	hsym1	local
+1907	rw	if_pos hdec	if_pos	core/mathlib:thm
+1907	rw	if_pos hdec	hdec	local
+1909	rw	htape2	htape2	local
+1919	rw	show (3 : ℕ) = 2 + 1 from rfl	ℕ	local
+1919	rw	show (3 : ℕ) = 2 + 1 from rfl	rfl	core/mathlib:def
+1919	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'	tcslib:thm
+1919	rw	h2	h2	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	step_of_tapeAction_move	tcslib:thm
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	nf_leaf	own:def
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	N	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	some	core/mathlib:ctor
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	t	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	e₂	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	q	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	adj₁	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	σ	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	mv	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	m₃	local
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	rfl	core/mathlib:def
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	rfl	core/mathlib:def
+1919	show	(3 : ℕ) = 2 + 1	ℕ	local
+1926	rw	show (4 : ℕ) = 3 + 1 from rfl	ℕ	local
+1926	rw	show (4 : ℕ) = 3 + 1 from rfl	rfl	core/mathlib:def
+1926	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'	tcslib:thm
+1926	rw	h3	h3	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	step_of_tapeAction_move	tcslib:thm
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	nf_leaf	own:def
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	N	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	some	core/mathlib:ctor
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	t	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	_	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	q	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	adj₂	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	σ	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	mv	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	m₃	local
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	rfl	core/mathlib:def
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	rfl	core/mathlib:def
+1926	show	(4 : ℕ) = 3 + 1	ℕ	local
+1931	rw	h2	h2	local
+1934	rw	h3	h3	local
+1937	rw	h4	h4	local
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	moveInputPos	tcslib:def
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	moveInputPos	tcslib:def
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	moveInputPos	tcslib:def
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	moveInputPos	tcslib:def
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	e.inputPos	local
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	_	local
+1941	rw	moveInputPos_zero	moveInputPos_zero	tcslib:thm
+1941	rw	moveInputPos_zero	moveInputPos_zero	tcslib:thm
+1941	rw	moveInputPos_zero	moveInputPos_zero	tcslib:thm
+1941	rw	moveInputPos_zero	moveInputPos_zero	tcslib:thm
+1946	simp only	he₂	he₂	local
+1946	simp only	he₁	he₁	local
+1946	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+1947	rw	hm₂	hm₂	local
+1947	rw	hm₃	hm₃	local
+1949	simp only	he₂	he₂	local
+1949	simp only	he₁	he₁	local
+1949	simp only	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+1949	simp only	Function.update_of_ne hi	hi	local
+1954	rw	e2	e2	local
+1954	rw	h1	h1	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	step_of_tapeAction_move	tcslib:thm
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	nf_leaf	own:def
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	N	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	some	core/mathlib:ctor
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	t	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	e₁	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	q	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	blk₂	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	σ	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	claim	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	n	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	mv	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	last	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	e.workTapes	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	b	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	q'	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	rej	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	rfl	core/mathlib:def
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	simp	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	nf_leaf	own:def
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	rw	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	hsym1	local
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	if_neg	core/mathlib:thm
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	hdec	local
+1956	simp only	nf_leaf	nf_leaf	own:def
+1957	rw	hsym1	hsym1	local
+1957	rw	if_neg hdec	if_neg	core/mathlib:thm
+1957	rw	if_neg hdec	hdec	local
+1993	rw	hrun	hrun	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	step_of_tapeAction_move	tcslib:thm
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_leaf	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	some	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	t	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	c	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	q	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	read	core/mathlib:def:proj
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	σ	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	q'	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	blk₁	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	_	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	none	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_complete	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	some	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rec	tcslib:rec
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	ctl	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_decode	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N.k	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	some	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rec	tcslib:rec
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	t.succ	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_act	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	some	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rec	tcslib:rec
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	q	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	workTapes	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	t	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	getD	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_decode	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N.k	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	some	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rec	tcslib:rec
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	t.succ	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_act	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	some	core/mathlib:ctor
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rec	tcslib:rec
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	p	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	q	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	workTapes	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	t	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rec	tcslib:rec
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	N.k	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	omega	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rfl	core/mathlib:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	simp	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	nf_leaf	own:def
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	rw	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	if_pos	core/mathlib:thm
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	h1	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	hsym	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	Option.getD_some	core/mathlib:thm
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	h3	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	h4	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	h2	local
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	hq	local
+2000	simp only	nf_leaf	nf_leaf	own:def
+2001	rw	if_pos h1	if_pos	core/mathlib:thm
+2001	rw	if_pos h1	h1	local
+2001	rw	hsym	hsym	local
+2001	rw	Option.getD_some	Option.getD_some	core/mathlib:thm
+2001	rw	h3	h3	local
+2001	rw	h4	h4	local
+2001	rw	h2	h2	local
+2001	rw	hq	hq	local
+2009	simp only	hc	hc	local
+2009	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+2009	simp only	SignType.coe_one	SignType.coe_one	core/mathlib:thm
+2012	simp only	hc	hc	local
+2012	simp only	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+2012	simp only	Function.update_of_ne hi	hi	local
+2014	rw	hrun	hrun	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	step_of_tapeAction_move	tcslib:thm
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	nf_leaf	own:def
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	N	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	some	core/mathlib:ctor
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	t	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	c	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	q	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	read	core/mathlib:def:proj
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	σ	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	q'	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	rej	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	rfl	core/mathlib:def
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	simp	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	nf_leaf	own:def
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	rw	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	if_pos	core/mathlib:thm
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	h1	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	h2	local
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	hn	local
+2016	simp only	nf_leaf	nf_leaf	own:def
+2017	rw	if_pos h1	if_pos	core/mathlib:thm
+2017	rw	if_pos h1	h1	local
+2017	rw	h2	h2	local
+2017	rw	hn	hn	local
+2031	rw	(h.1 y).1	h.1	local
+2031	rw	(h.1 y).1	y	local
+2031	rw	(h.1 y).2	h.1	local
+2031	rw	(h.1 y).2	y	local
+2033	rw	if_pos hy	if_pos	core/mathlib:thm
+2033	rw	if_pos hy	hy	local
+2033	rw	if_pos hy	if_pos	core/mathlib:thm
+2033	rw	if_pos hy	hy	local
+2034	unfold	nf_blockDecode	nf_blockDecode	own:def
+2038	rw	if_neg hy	if_neg	core/mathlib:thm
+2038	rw	if_neg hy	hy	local
+2038	rw	if_neg hy	if_neg	core/mathlib:thm
+2038	rw	if_neg hy	hy	local
+2038	rw	h.2 y hy	h.2	local
+2038	rw	h.2 y hy	y	local
+2038	rw	h.2 y hy	hy	local
+2055	rw	min_le_iff	min_le_iff	core/mathlib:thm
+2056	rw	le_max_iff	le_max_iff	core/mathlib:thm
+2062	unfold	nf_blockWrite	nf_blockWrite	own:def
+2064	rw	hzy	hzy	local
+2066	rw	Function.update_of_ne e2	Function.update_of_ne	core/mathlib:thm
+2066	rw	Function.update_of_ne e2	e2	local
+2067	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+2067	simp only	if_pos hy	if_pos	core/mathlib:thm
+2067	simp only	if_pos hy	hy	local
+2067	simp only	and_self	and_self	core/mathlib:thm
+2072	rw	Function.update_of_ne e2	Function.update_of_ne	core/mathlib:thm
+2072	rw	Function.update_of_ne e2	e2	local
+2072	rw	Function.update_of_ne e1	Function.update_of_ne	core/mathlib:thm
+2072	rw	Function.update_of_ne e1	e1	local
+2072	rw	Function.update_of_ne e4	Function.update_of_ne	core/mathlib:thm
+2072	rw	Function.update_of_ne e4	e4	local
+2072	rw	Function.update_of_ne e3	Function.update_of_ne	core/mathlib:thm
+2072	rw	Function.update_of_ne e3	e3	local
+2072	rw	Function.update_of_ne hzy	Function.update_of_ne	core/mathlib:thm
+2072	rw	Function.update_of_ne hzy	hzy	local
+2072	rw	(h.1 z).1	h.1	local
+2072	rw	(h.1 z).1	z	local
+2072	rw	(h.1 z).2	h.1	local
+2072	rw	(h.1 z).2	z	local
+2075	rw	if_pos hz'	if_pos	core/mathlib:thm
+2075	rw	if_pos hz'	hz'	local
+2075	rw	if_pos hz'	if_pos	core/mathlib:thm
+2075	rw	if_pos hz'	hz'	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	if_pos	core/mathlib:thm
+2075	rw	if_pos ((hin z hzy).mpr hz')	hin	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	z	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	hzy	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	mpr	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	hz'	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	if_pos	core/mathlib:thm
+2075	rw	if_pos ((hin z hzy).mpr hz')	hin	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	z	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	hzy	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	mpr	local
+2075	rw	if_pos ((hin z hzy).mpr hz')	hz'	local
+2077	rw	if_neg hz'	if_neg	core/mathlib:thm
+2077	rw	if_neg hz'	hz'	local
+2077	rw	if_neg hz'	if_neg	core/mathlib:thm
+2077	rw	if_neg hz'	hz'	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	if_neg	core/mathlib:thm
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	h'	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	hz'	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	hin	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	z	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	hzy	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	mp	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	h'	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	if_neg	core/mathlib:thm
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	h'	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	hz'	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	hin	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	z	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	hzy	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	mp	local
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	h'	local
+2081	rw	Function.update_of_ne hzy	Function.update_of_ne	core/mathlib:thm
+2081	rw	Function.update_of_ne hzy	hzy	local
+2094	rw	(h.1 z).1	h.1	local
+2094	rw	(h.1 z).1	z	local
+2096	rw	if_pos hzi	if_pos	core/mathlib:thm
+2096	rw	if_pos hzi	hzi	local
+2098	rw	if_neg hzi	if_neg	core/mathlib:thm
+2098	rw	if_neg hzi	hzi	local
+2101	rw	(h.1 z).2	h.1	local
+2101	rw	(h.1 z).2	z	local
+2103	rw	if_pos hzi	if_pos	core/mathlib:thm
+2103	rw	if_pos hzi	hzi	local
+2105	rw	if_neg hzi	if_neg	core/mathlib:thm
+2105	rw	if_neg hzi	hzi	local
+2180	simp only	he	he	local
+2184	rw	hew1	hew1	local
+2184	rw	hep1	hep1	local
+2184	rw	hpos	hpos	local
+2184	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq	tcslib:thm
+2192	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2192	rw	hrun	hrun	local
+2201	simp only	nf_vstep	nf_vstep	own:def
+2201	simp only	hq	hq	local
+2202	rw	Action.apply_workTapes	Action.apply_workTapes	tcslib:thm
+2202	rw	← hok0	hok0	local
+2204	simp only	nf_vstep	nf_vstep	own:def
+2204	simp only	hq	hq	local
+2205	rw	Action.apply_workTapePos	Action.apply_workTapePos	tcslib:thm
+2209	rw	hvt	hvt	local
+2216	simp only	List.length_singleton	List.length_singleton	core/mathlib:thm
+2221	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2221	rw	hrun	hrun	local
+2221	rw	h2s	h2s	local
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	Function.update	core/mathlib:def
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	d.workTapes	local
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	nf_blockWrite	own:def
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	e.workTapes	local
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	e.workTapePos	local
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	n	local
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	_	local
+2226	rw	hew1	hew1	local
+2226	rw	hep1	hep1	local
+2226	rw	hpos	hpos	local
+2230	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+2231	rw	hep1	hep1	local
+2231	rw	hpos	hpos	local
+2232	simp only	he	he	local
+2232	simp only	Function.update_of_ne hi	Function.update_of_ne	core/mathlib:thm
+2232	simp only	Function.update_of_ne hi	hi	local
+2232	simp only	List.length_singleton	List.length_singleton	core/mathlib:thm
+2232	simp only	Nat.mul_one	Nat.mul_one	core/mathlib:thm
+2246	show	nf_blocks (Function.update e.workTapes 1	nf_blocks	own:def
+2246	show	nf_blocks (Function.update e.workTapes 1	Function.update	core/mathlib:def
+2246	show	nf_blocks (Function.update e.workTapes 1	e.workTapes	local
+2248	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2248	rw	hew1	hew1	local
+2248	rw	hep1	hep1	local
+2248	rw	hpos	hpos	local
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	Function.update	core/mathlib:def
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	e.workTapePos	local
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	e.workTapePos	local
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	a.workTapes	local
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	t	local
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	ℤ	local
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	_	local
+2252	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2252	rw	hep1	hep1	local
+2252	rw	hpos	hpos	local
+2252	rw	hvp	hvp	local
+2258	simp only	hd'	hd'	local
+2258	simp only	he	he	local
+2261	simp only	hd'	hd'	local
+2261	simp only	he	he	local
+2262	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+2262	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+2262	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2263	rw	hw0	hw0	local
+2263	rw	hp0	hp0	local
+2270	rw	hvp	hvp	local
+2271	rw	hvp	hvp	local
+2273	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2273	rw	hrun	hrun	local
+2273	rw	h4s	h4s	local
+2279	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2279	rw	hrun	hrun	local
+2283	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2283	rw	hrun4	hrun4	local
+2286	simp only	List.length_cons	List.length_cons	core/mathlib:thm
+2286	rw	Nat.mul_add	Nat.mul_add	core/mathlib:thm
+2286	rw	← hT	hT	local
+2288	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2288	rw	hrun4	hrun4	local
+2288	rw	hcfg	hcfg	local
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	Function.update	core/mathlib:def
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	Function.update	core/mathlib:def
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	d.workTapes	local
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	_	local
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	B	local
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	_	local
+2293	rw	Function.update_idem	Function.update_idem	core/mathlib:thm
+2297	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+2300	simp only	hd'	hd'	local
+2300	simp only	he	he	local
+2300	simp only	Function.update_self	Function.update_self	core/mathlib:thm
+2300	simp only	Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide)	Function.update_of_ne	core/mathlib:thm
+2300	simp only	Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide)	Fin	core/mathlib:induct
+2300	simp only	Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide)	decide	core/mathlib:def
+2300	simp only	List.length_cons	List.length_cons	core/mathlib:thm
+2301	show	(0 : Fin 2) ≠ 1 by decide), List.length_cons]	Fin	core/mathlib:induct
+2301	show	(0 : Fin 2) ≠ 1 by decide), List.length_cons]	decide	core/mathlib:def
+2301	show	(0 : Fin 2) ≠ 1 by decide), List.length_cons]	List.length_cons	core/mathlib:thm
+2305	simp only	List.length_cons	List.length_cons	core/mathlib:thm
+2308	rw	min_le_iff	min_le_iff	core/mathlib:thm
+2309	rw	le_max_iff	le_max_iff	core/mathlib:thm
+2317	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2317	rw	hrun4	hrun4	local
+2321	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2321	rw	hrun	hrun	local
+2339	rw	hL	hL	local
+2341	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2341	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2343	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2345	rw	hs	hs	local
+2348	rw	FinTM.bufferTape_left	FinTM.bufferTape_left	tcslib:thm
+2353	rw	hpL	hpL	local
+2353	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+2353	rw	List.getElem?_eq_none (by rw [List.length_ofFn])	List.getElem?_eq_none	core/mathlib:thm
+2353	rw	List.getElem?_eq_none (by rw [List.length_ofFn])	rw	local
+2353	rw	List.getElem?_eq_none (by rw [List.length_ofFn])	List.length_ofFn	core/mathlib:thm
+2353	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2359	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+2359	rw	List.getElem?_ofFn	List.getElem?_ofFn	core/mathlib:thm
+2360	simp only	hm	hm	local
+2360	simp only	dite_true	dite_true	core/mathlib:thm
+2363	rw	hb	hb	local
+2365	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2367	rw	if_pos hq	if_pos	core/mathlib:thm
+2367	rw	if_pos hq	hq	local
+2368	rw	if_neg hq	if_neg	core/mathlib:thm
+2368	rw	if_neg hq	hq	local
+2381	rw	List.flatMap_cons	List.flatMap_cons	core/mathlib:thm
+2381	rw	List.length_append	List.length_append	core/mathlib:thm
+2381	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2381	rw	ih	ih	local
+2381	rw	List.length_cons	List.length_cons	core/mathlib:thm
+2437	unfold	nf_tapeEntry	nf_tapeEntry	own:def
+2438	rw	dif_neg hk	dif_neg	core/mathlib:thm
+2438	rw	dif_neg hk	hk	local
+2440	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+2440	rw	he	he	local
+2442	rw	hq	hq	local
+2444	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+2446	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+2447	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero	tcslib:thm
+2447	rw	Cfg.mapState_output	Cfg.mapState_output	tcslib:thm
+2447	rw	hout	hout	local
+2455	unfold	nf_tapeEntry	nf_tapeEntry	own:def
+2456	rw	dif_pos hk	dif_pos	core/mathlib:thm
+2456	rw	dif_pos hk	hk	local
+2464	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+2464	rw	Cfg.init_state	Cfg.init_state	tcslib:thm
+2467	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+2467	rw	Cfg.init_workTapes	Cfg.init_workTapes	tcslib:thm
+2469	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+2469	rw	Cfg.init_workTapePos	Cfg.init_workTapePos	tcslib:thm
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	nf_blocks	own:def
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	c.workTapes	local
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	_	local
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	_	local
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	_	local
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	_	local
+2473	rw	hB	hB	local
+2473	rw	hinit_tape	hinit_tape	local
+2475	rw	if_neg (by omega)	if_neg	core/mathlib:thm
+2475	rw	if_neg (by omega)	omega	local
+2475	rw	if_neg (by omega)	if_neg	core/mathlib:thm
+2475	rw	if_neg (by omega)	omega	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	c.workTapePos	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	_	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	rw	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	hinit_pos	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	ring	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	omega	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	rw	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	hinit_pos	local
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	omega	local
+2479	rw	hinit_pos	hinit_pos	local
+2479	rw	hinit_pos	hinit_pos	local
+2480	rw	hinit_pos	hinit_pos	local
+2482	show	c.workTapes 0 (c.workTapePos 0 + p) = _	c.workTapes	local
+2482	show	c.workTapes 0 (c.workTapePos 0 + p) = _	c.workTapePos	local
+2482	show	c.workTapes 0 (c.workTapePos 0 + p) = _	p	local
+2482	show	c.workTapes 0 (c.workTapePos 0 + p) = _	_	local
+2483	rw	hA	hA	local
+2483	rw	hA0	hA0	local
+2483	rw	zero_add	zero_add	core/mathlib:thm
+2483	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+2488	show	(match nf_leafExit N q with	nf_leafExit	own:def
+2488	show	(match nf_leafExit N q with	N	local
+2488	show	(match nf_leafExit N q with	q	local
+2490	rw	h	h	local
+2494	rw	he	he	local
+2494	rw	hre	hre	local
+2495	unfold	nf_V	nf_V	own:def
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	phaseHostTM_run_le	tcslib:thm
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_M	own:def
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_leaf	own:def
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	_	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_red	own:def
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_leaf	own:def
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_leafExit	own:def
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_Ph.rep	own:ctor
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	some	core/mathlib:ctor
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	t	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	dL	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	T₁	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	hguard₁	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	u	local
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	hu	local
+2514	rw	hc₁	hc₁	local
+2519	simp only	hc₁'	hc₁'	local
+2519	simp only	hc₁	hc₁	local
+2519	simp only	hdL	hdL	local
+2520	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+2520	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+2520	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2520	rw	hA0	hA0	local
+2520	rw	zero_add	zero_add	core/mathlib:thm
+2520	rw	hslen	hslen	local
+2523	simp only	hc₁'	hc₁'	local
+2523	simp only	hc₁	hc₁	local
+2523	simp only	hdL	hdL	local
+2524	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+2524	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+2524	rw	hA	hA	local
+2538	simp only	hc₃'	hc₃'	local
+2539	rw	h3w	h3w	local
+2540	simp only	hc₁'	hc₁'	local
+2540	simp only	hc₁	hc₁	local
+2541	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2543	simp only	hc₃'	hc₃'	local
+2544	rw	h3p1	h3p1	local
+2545	simp only	hc₁'	hc₁'	local
+2545	simp only	hc₁	hc₁	local
+2546	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2553	rw	hB3	hB3	local
+2553	rw	hP3	hP3	local
+2561	rw	h5w0	h5w0	local
+2562	simp only	hc₃'	hc₃'	local
+2563	rw	h3w	h3w	local
+2564	simp only	hc₁'	hc₁'	local
+2564	simp only	hc₁	hc₁	local
+2564	simp only	hdL	hdL	local
+2565	rw	Function.update_of_ne (by decide)	Function.update_of_ne	core/mathlib:thm
+2565	rw	Function.update_of_ne (by decide)	decide	core/mathlib:def
+2565	rw	hA	hA	local
+2567	rw	h5p0	h5p0	local
+2568	simp only	hc₃'	hc₃'	local
+2572	rw	h5w1 q	h5w1	local
+2572	rw	h5w1 q	q	local
+2572	rw	hB3	hB3	local
+2572	rw	hP3	hP3	local
+2575	rw	h5o	h5o	local
+2576	simp only	hc₃'	hc₃'	local
+2577	rw	h3o	h3o	local
+2578	simp only	hc₁'	hc₁'	local
+2578	simp only	hc₁	hc₁	local
+2578	simp only	hdL	hdL	local
+2588	rw	he	he	local
+2588	rw	hre	hre	local
+2589	unfold	nf_V	nf_V	own:def
+2590	rw	hR	hR	local
+2590	rw	hre1	hre1	local
+2595	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2595	rw	hrun1	hrun1	local
+2595	rw	h3'	h3'	local
+2595	rw	hre3	hre3	local
+2599	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2599	rw	hrun2	hrun2	local
+2599	rw	h5'	h5'	local
+2613	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2613	rw	hrun3	hrun3	local
+2618	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2618	rw	hrun1	hrun1	local
+2622	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2622	rw	h3'	h3'	local
+2622	rw	hre3	hre3	local
+2626	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2626	rw	h5'	h5'	local
+2628	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2628	rw	hrun3	hrun3	local
+2628	rw	hacc2	hacc2	local
+2631	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2631	rw	hrun3	hrun3	local
+2638	rw	e3	e3	local
+2639	rw	e1	e1	local
+2640	rw	e2	e2	local
+2650	rw	he	he	local
+2650	rw	hre	hre	local
+2651	unfold	nf_V	nf_V	own:def
+2652	rw	hR	hR	local
+2652	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+2652	rw	hrj	hrj	local
+2656	rw	hver	hver	local
+2711	rw	nf_tag	nf_tag	own:thm
+2731	rw	hV	hV	local
+2732	unfold	nf_V	nf_V	own:def
+2733	rw	hp0 u hu	hp0	local
+2733	rw	hp0 u hu	u	local
+2733	rw	hp0 u hu	hu	local
+2741	rw	hV	hV	local
+2742	unfold	nf_V	nf_V	own:def
+2743	rw	hD	hD	local
+2743	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+2743	rw	streamStartCfg_state	streamStartCfg_state	tcslib:thm
+2744	simp only	Option.map_some	Option.map_some	core/mathlib:thm
+2745	rw	if_neg hpass	if_neg	core/mathlib:thm
+2745	rw	if_neg hpass	hpass	local
+2748	rw	hver	hver	local
+2755	rw	hdS	hdS	local
+2755	rw	streamStartCfg_state	streamStartCfg_state	tcslib:thm
+2760	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+2760	rw	Cfg.init_state	Cfg.init_state	tcslib:thm
+2764	show	dS.inputPos = _	dS.inputPos	local
+2764	show	dS.inputPos = _	_	local
+2765	rw	hdS	hdS	local
+2765	rw	streamStartCfg_inputPos	streamStartCfg_inputPos	tcslib:thm
+2765	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+2765	rw	Cfg.init_inputPos	Cfg.init_inputPos	tcslib:thm
+2768	show	dS.workTapes 0 (dS.workTapePos 0 + p) = _	dS.workTapes	local
+2768	show	dS.workTapes 0 (dS.workTapePos 0 + p) = _	dS.workTapePos	local
+2768	show	dS.workTapes 0 (dS.workTapePos 0 + p) = _	p	local
+2768	show	dS.workTapes 0 (dS.workTapePos 0 + p) = _	_	local
+2769	rw	hdS	hdS	local
+2769	rw	streamStartCfg_workTapes	streamStartCfg_workTapes	tcslib:thm
+2769	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos	tcslib:thm
+2769	rw	if_pos rfl	if_pos	core/mathlib:thm
+2769	rw	if_pos rfl	rfl	core/mathlib:def
+2769	rw	zero_add	zero_add	core/mathlib:thm
+2769	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat	tcslib:thm
+2775	show	(match nf_leafExit N q with	nf_leafExit	own:def
+2775	show	(match nf_leafExit N q with	N	local
+2775	show	(match nf_leafExit N q with	q	local
+2777	rw	h	h	local
+2782	rw	hV	hV	local
+2783	unfold	nf_V	nf_V	own:def
+2784	rw	hD	hD	local
+2785	simp only	hpass	hpass	local
+2785	simp only	if_true	if_true	core/mathlib:thm
+2790	rw	hV	hV	local
+2791	unfold	nf_V	nf_V	own:def
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	phaseHostTM_run_le	tcslib:thm
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_M	own:def
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_leaf	own:def
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	_	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_red	own:def
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_leaf	own:def
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_leafExit	own:def
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	N	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	nf_Ph.rep	own:ctor
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	none	core/mathlib:ctor
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	dL	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	T₁	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	hguard₁	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	u	local
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	hu	local
+2802	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2802	rw	hrun0	hrun0	local
+2816	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2816	rw	hrun0	hrun0	local
+2816	rw	hV	hV	local
+2817	unfold	nf_V	nf_V	own:def
+2818	rw	hR	hR	local
+2818	rw	Cfg.mapState_state	Cfg.mapState_state	tcslib:thm
+2818	rw	hrj	hrj	local
+2823	rw	hver	hver	local
+2837	rw	hc₁	hc₁	local
+2842	simp only	hc₁'	hc₁'	local
+2842	simp only	hc₁	hc₁	local
+2842	simp only	hdL	hdL	local
+2842	simp only	hdS	hdS	local
+2843	rw	Function.update_self	Function.update_self	core/mathlib:thm
+2843	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos	tcslib:thm
+2843	rw	zero_add	zero_add	core/mathlib:thm
+2843	rw	hslen	hslen	local
+2846	simp only	hc₁'	hc₁'	local
+2846	simp only	hc₁	hc₁	local
+2846	simp only	hdL	hdL	local
+2846	simp only	hdS	hdS	local
+2847	rw	streamStartCfg_workTapes	streamStartCfg_workTapes	tcslib:thm
+2847	rw	if_pos rfl	if_pos	core/mathlib:thm
+2847	rw	if_pos rfl	rfl	core/mathlib:def
+2855	rw	h3w	h3w	local
+2859	rw	h3w	h3w	local
+2861	simp only	hc₁'	hc₁'	local
+2861	simp only	hc₁	hc₁	local
+2861	simp only	hdL	hdL	local
+2861	simp only	hdS	hdS	local
+2862	rw	streamStartCfg_workTapes	streamStartCfg_workTapes	tcslib:thm
+2862	rw	if_neg (by decide)	if_neg	core/mathlib:thm
+2862	rw	if_neg (by decide)	decide	core/mathlib:def
+2864	rw	h3o	h3o	local
+2865	simp only	hc₁'	hc₁'	local
+2865	simp only	hc₁	hc₁	local
+2865	simp only	hdL	hdL	local
+2865	simp only	hdS	hdS	local
+2866	rw	streamStartCfg_output	streamStartCfg_output	tcslib:thm
+2874	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2874	rw	hrun0	hrun0	local
+2874	rw	hV	hV	local
+2875	unfold	nf_V	nf_V	own:def
+2876	rw	hR	hR	local
+2876	rw	hre1	hre1	local
+2881	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2881	rw	hrun1	hrun1	local
+2881	rw	h3'	h3'	local
+2884	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2884	rw	hrun2	hrun2	local
+2890	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2890	rw	hrun1	hrun1	local
+2894	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2894	rw	h3'	h3'	local
+2896	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2896	rw	hrun2	hrun2	local
+2896	rw	hacc2	hacc2	local
+2896	rw	nf_allPass_iff	nf_allPass_iff	own:thm
+2899	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add	tcslib:thm
+2899	rw	hrun2	hrun2	local
+2900	rw	hT₁	hT₁	local
+2902	rw	e2	e2	local
+2920	rw	hlen	hlen	local
+2923	rw	Nat.mul_add	Nat.mul_add	core/mathlib:thm
+2923	rw	Nat.mul_one	Nat.mul_one	core/mathlib:thm
+2929	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2929	rw	List.length_nil	List.length_nil	core/mathlib:thm
+2932	rw	hlen	hlen	local
+2933	rw	hlen	hlen	local
+2935	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2935	rw	hlen	hlen	local
+2937	rw	List.getElem_ofFn	List.getElem_ofFn	core/mathlib:thm
+2938	rw	List.flatMap_def	List.flatMap_def	core/mathlib:thm
+2938	rw	List.map_ofFn	List.map_ofFn	core/mathlib:thm
+2941	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+2942	rw	List.getElem_ofFn	List.getElem_ofFn	core/mathlib:thm
+2945	rw	Nat.mul_add	Nat.mul_add	core/mathlib:thm
+2945	rw	Nat.mul_one	Nat.mul_one	core/mathlib:thm
+2947	rw	e	e	local
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	List.getElem?_eq_getElem	core/mathlib:thm
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	hidx	local
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	r	local
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	hr	local
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	k	tcslib:def:reducible:proj
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	omega	local
+2979	rw	nf_entry	nf_entry	own:thm
+2997	rw	List.take_zero	List.take_zero	core/mathlib:thm
+2997	rw	List.foldl_nil	List.foldl_nil	core/mathlib:thm
+2997	rw	List.take_zero	List.take_zero	core/mathlib:thm
+2997	rw	NDTM.runWith_nil	NDTM.runWith_nil	tcslib:thm
+3005	rwa	ih	ih	local
+3006	rw	List.take_succ_eq_append_getElem hlt	List.take_succ_eq_append_getElem	core/mathlib:thm
+3006	rw	List.take_succ_eq_append_getElem hlt	hlt	local
+3006	rw	List.foldl_append	List.foldl_append	core/mathlib:thm
+3006	rw	ih	ih	local
+3006	rw	List.foldl_cons	List.foldl_cons	core/mathlib:thm
+3006	rw	List.foldl_nil	List.foldl_nil	core/mathlib:thm
+3006	rw	List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt)	List.take_succ_eq_append_getElem	core/mathlib:thm
+3006	rw	List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt)	rw	local
+3006	rw	List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt)	List.length_map	core/mathlib:thm
+3006	rw	List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt)	exact	local
+3006	rw	List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt)	hlt	local
+3006	rw	NDTM.runWith_append	NDTM.runWith_append	tcslib:thm
+3006	rw	NDTM.runWith_cons	NDTM.runWith_cons	tcslib:thm
+3006	rw	NDTM.runWith_nil	NDTM.runWith_nil	tcslib:thm
+3007	rw	List.length_map	List.length_map	core/mathlib:thm
+3017	simp only	nf_vstep	nf_vstep	own:def
+3017	simp only	hq	hq	local
+3018	rw	NDTM.stepWith_of_some hq	NDTM.stepWith_of_some	tcslib:thm
+3018	rw	NDTM.stepWith_of_some hq	hq	local
+3019	unfold	nf_act	nf_act	own:def
+3020	rw	Option.getD_some	Option.getD_some	core/mathlib:thm
+3020	rw	hd0	hd0	local
+3020	rw	hds	hds	local
+3020	rw	List.getElem_map	List.getElem_map	core/mathlib:thm
+3052	rw	hrs	hrs	local
+3054	rw	hrs	hrs	local
+3054	rw	List.length_ofFn	List.length_ofFn	core/mathlib:thm
+3056	rw	hrlen	hrlen	local
+3062	rw	List.getElem_ofFn	List.getElem_ofFn	core/mathlib:thm
+3066	rw	hrlen	hrlen	local
+3066	rw	List.length_nil	List.length_nil	core/mathlib:thm
+3071	rw	hget r hr	hget	local
+3071	rw	hget r hr	r	local
+3071	rw	hget r hr	hr	local
+3074	rw	List.length_map	List.length_map	core/mathlib:thm
+3074	rw	hrlen	hrlen	local
+3076	rw	List.getElem_map	List.getElem_map	core/mathlib:thm
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	hget	local
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	r	local
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	rw	local
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	List.length_map	core/mathlib:thm
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	h1	local
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	exact	local
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	h1	local
+3076	rw	List.length_map	List.length_map	core/mathlib:thm
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	nf_vrun_of_ok	own:thm
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	N	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	x	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	rs	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	r	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	hr.le	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	r'	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	h'	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	i'	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	ih	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	r'	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	h'	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	omega	local
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	i'	local
+3084	rw	hmap	hmap	local
+3085	rw	← hrlen	hrlen	local
+3086	rw	hget r hr	hget	local
+3086	rw	hget r hr	r	local
+3086	rw	hget r hr	hr	local
+3090	rw	← hdisp	hdisp	local
+3092	rw	hdisp	hdisp	local
+3096	rw	hrlen	hrlen	local
+3128	rw	hs	hs	local
+3128	rw	hA	hA	local
+3133	unfold	nf_C	nf_C	own:def
+3134	rw	hA	hA	local
+3154	rw	← hw	hw	local
+3154	rw	List.take_length	List.take_length	core/mathlib:thm
+3160	rw	← hw	hw	local
+3160	rw	List.take_length	List.take_length	core/mathlib:thm
+3165	rw	h00	h00	local
+3165	rw	List.take_zero	List.take_zero	core/mathlib:thm
+3165	rw	NDTM.runWith_nil	NDTM.runWith_nil	tcslib:thm
+3165	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+3165	rw	Cfg.init_state	Cfg.init_state	tcslib:thm
+3168	rw	hw₀	hw₀	local
+3168	rw	List.length_take	List.length_take	core/mathlib:thm
+3172	rw	hw₀len	hw₀len	local
+3172	rw	List.length_nil	List.length_nil	core/mathlib:thm
+3176	rw	hw₀len	hw₀len	local
+3177	rw	hw₀	hw₀	local
+3177	rw	List.take_take	List.take_take	core/mathlib:thm
+3177	rw	Nat.min_eq_left hr.le	Nat.min_eq_left	core/mathlib:thm
+3177	rw	Nat.min_eq_left hr.le	hr.le	local
+3181	rw	hw₀	hw₀	local
+3181	rw	List.take_append_drop	List.take_append_drop	core/mathlib:thm
+3181	rw	NDTM.runWith_of_halt _ hspec	NDTM.runWith_of_halt	tcslib:thm
+3181	rw	NDTM.runWith_of_halt _ hspec	_	local
+3181	rw	NDTM.runWith_of_halt _ hspec	hspec	local
+3182	rw	hw₀	hw₀	local
+3182	rw	← hsplit	hsplit	local
+3189	rw	nf_display_length	nf_display_length	own:thm
+3189	rw	hw₀len	hw₀len	local
+3190	rw	hw₀len	hw₀len	local
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	nf_entry	own:thm
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	nf_P	own:def
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	x	local
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	nf_display	own:def
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	N	local
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	x	local
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	w₀	local
+3218	rw	List.take_length	List.take_length	core/mathlib:thm
+3218	rw	← hwlen	hwlen	local
+3218	rw	List.take_length	List.take_length	core/mathlib:thm
+3221	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+3221	rw	Cfg.init_state	Cfg.init_state	tcslib:thm
+3223	rw	NDTM.initCfg_eq	NDTM.initCfg_eq	tcslib:thm
+3223	rw	Cfg.init_output	Cfg.init_output	tcslib:thm
+3223	rw	StepBlock.outputSummary_nil	StepBlock.outputSummary_nil	tcslib:thm
+3226	rw	hfin	hfin	local
+3231	rw	hsw	hsw	local
+3235	unfold	nf_sweepPass	nf_sweepPass	own:def
+3235	unfold	at	at	local
+3235	unfold	hctl	hctl	local
+3236	rw	Bool.and_eq_true	Bool.and_eq_true	core/mathlib:thm
+3236	rw	Bool.and_eq_true	Bool.and_eq_true	core/mathlib:thm
+3236	rw	Bool.and_eq_true	Bool.and_eq_true	core/mathlib:thm
+3238	rw	hc1	hc1	local
+3258	rw	nf_entry	nf_entry	own:thm

@@ -250,11 +250,7 @@ theorem arm_decides {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : ARM m
   set n := x.length with hn
   set Ls := logSpace n with hLs
   have hL1 : 1 ≤ Ls := by simp [hLs, logSpace]
-  have hLn : Ls ≤ n + 1 := by
-    simp only [hLs, logSpace]
-    rcases Nat.eq_zero_or_pos n with h | h
-    · rw [h]; simp
-    · have := Nat.log_lt_self 2 (show n ≠ 0 by omega); omega
+  have hLn : Ls ≤ n + 1 := by rw [hLs]; exact logSpace_le_succ n
   set W := K * Ls with hW
   set B := cs * K2 * Ls + 1 with hB
   obtain ⟨N, h1, h2, hm⟩ := hcorr x

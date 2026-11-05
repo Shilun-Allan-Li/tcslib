@@ -16,6 +16,8 @@ Run Python tools with `python3 -I`.
 | Tool | What it does |
 |---|---|
 | `leanelab.sh <worktree> <olean dir> <file.lean>` | elaborate one file against an olean tree: at most 2 at once machine-wide (lock slots under `$TCSLIB_SCRATCH/locks`), `lean -j4` under `nice -n 10` |
+| `leanelab-o.sh <worktree> <olean dir> <file.lean> <overlay>` | the same, writing the module's `.olean` into the overlay (a copy-on-write clone of the snapshot, passed as both the olean dir and the overlay); used to compile a change into a clone before its replay |
+| `mk-next.sh <name> <worktree dir> <branch> <snapshot-tree commit> <prev snap> <prev log> <new snap> "<base label>" "<label>" <n changed>` | merge the campaign into a PR branch (stopping before any push if a check fails), then write and precheck its merged-tree replay `$TCSLIB_SCRATCH/fills/replay/replay-<name>.sh`, chained from the previous snapshot |
 | `declfreeze.py <base.lean> <head.lean> [authorized,…]` | compare declarations: publics added or removed, statement changes, body changes (authorized or not), private changes |
 | `privstmt.py`, `stmtcheck.py`, `census.py`, `codeonly.py`, `imports.py`, `axprobe.py` | declaration statements, counts, comment-stripped code, imports, axiom-print probes |
 | `pairdiff.py <head screen> <earlier screen>…` | new and removed pairs between copy-text screens (`scripts/copy-text-screen-v3.py`) |

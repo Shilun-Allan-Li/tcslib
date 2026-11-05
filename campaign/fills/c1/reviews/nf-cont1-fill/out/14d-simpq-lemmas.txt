@@ -1,0 +1,42 @@
+suggestions 39
+   simp only [List.length_nil, zero_add, Nat.lt_one_iff] at hu
+   simp only [hc₁, Fin.isValue, List.length_nil, Nat.cast_zero, add_zero, Option.isSome_some]
+   simp only [List.length_nil, zero_add, Nat.reduceAdd]
+   simp only [hc₃, Fin.isValue, Option.isSome_some]
+   simp only [List.length_nil, zero_add, Nat.reduceAdd] at hu ⊢
+   simp only [hc₁, Fin.isValue, List.length_drop, Option.isSome_some]
+   simp only [hc₃, Fin.isValue, Option.isSome_some]
+   simp only [hc₅, Fin.isValue, Option.isSome_some]
+   simp only [Fin.is_lt, ↓reduceDIte, Fin.eta]
+   simp only [List.length_cons, lt_add_iff_pos_left, add_pos_iff, zero_lt_one, or_true]
+   simp only [List.length_cons, add_lt_add_iff_right]
+   simp only [List.length_cons, add_lt_add_iff_right] at hr
+   simp only [List.length_cons, lt_add_iff_pos_left, add_pos_iff, zero_lt_one, or_true]
+   simp only [List.length_nil, zero_add, decide_true]
+   simp only [List.length_cons, Nat.right_eq_add, Nat.add_eq_zero, List.length_eq_zero_iff, one_ne_zero, and_false, decide_false, reduceCtorEq]
+   simp only [List.length_cons, add_lt_add_iff_right]
+   simpa only [List.getElem_cons_succ, List.length_cons, Nat.add_right_cancel_iff] using this
+   simpa only [decide_true] using hfl
+   simp only [List.length_cons, List.length_nil, zero_add, mul_one, Nat.add_left_cancel_iff]
+   simp only [Fin.isValue, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, List.length_cons, List.length_nil, zero_add, mul_one]
+   simp only [List.length_cons, List.length_nil, zero_add, Nat.lt_one_iff] at hr
+   simpa only [reduceCtorEq, decide_false] using hfl
+   simp only [hl, Bool.false_eq_true, not_false_eq_true]
+   simp only [ne_eq, reduceCtorEq, not_false_eq_true]
+   simp only [List.length_cons]
+   simp only [Fin.isValue, SignType.zero_eq_zero, zero_ne_one, ↓reduceIte, SignType.coe_neg, SignType.coe_one, Int.reduceNeg, add_neg_cancel_right, reduceCtorEq, SignType.coe_zero, add_zero, mul_zero]
+   simp only [Fin.isValue, SignType.neg_eq_neg_one, SignType.neg_eq_self_iff, one_ne_zero, ↓reduceIte, SignType.coe_neg, SignType.coe_one, Int.reduceNeg, add_neg_cancel_right, mul_neg, mul_one]
+   simp only [Fin.isValue, SignType.pos_eq_one, ↓reduceIte, SignType.coe_one, SignType.self_eq_neg_iff, one_ne_zero, SignType.coe_zero, add_zero, mul_one]
+   simp only [Int.reduceNeg, SignType.zero_eq_zero, SignType.coe_zero, Left.neg_nonpos_iff, zero_le_one, and_self]
+   simp only [Int.reduceNeg, SignType.neg_eq_neg_one, SignType.coe_neg, SignType.coe_one, le_refl, neg_le_self_iff, zero_le_one, and_self]
+   simp only [Int.reduceNeg, SignType.pos_eq_one, SignType.coe_one, neg_le_self_iff, zero_le_one, le_refl, and_self]
+   simpa only [decide_true] using hfl
+   simp only [List.length_cons, List.length_nil, zero_add, Nat.cast_one, tsub_le_iff_right, sup_le_iff]
+   simp only [List.length_nil, not_lt_zero'] at hr
+   simpa only [reduceCtorEq, decide_false] using hfl
+   simp only [ne_eq, reduceCtorEq, not_false_eq_true]
+   simp only [heq_eq_eq, reduceCtorEq, not_false_eq_true]
+   simp only [heq_eq_eq, reduceCtorEq, not_false_eq_true]
+   simp only [heq_eq_eq, reduceCtorEq, not_false_eq_true]
+DISTINCT 64
+Bool.false_eq_true Fin.eta Fin.isValue Fin.is_lt Int.reduceNeg Left.neg_nonpos_iff List.getElem_cons_succ List.length_cons List.length_drop List.length_eq_zero_iff List.length_nil Nat.add_eq_zero Nat.add_left_cancel_iff Nat.add_right_cancel_iff Nat.cast_add Nat.cast_mul Nat.cast_ofNat Nat.cast_one Nat.cast_zero Nat.lt_one_iff Nat.reduceAdd Nat.right_eq_add Option.isSome_some SignType.coe_neg SignType.coe_one SignType.coe_zero SignType.neg_eq_neg_one SignType.neg_eq_self_iff SignType.pos_eq_one SignType.self_eq_neg_iff SignType.zero_eq_zero add_lt_add_iff_right add_neg_cancel_right add_pos_iff add_zero and_false and_self decide_false decide_true hc₁ hc₃ hc₅ heq_eq_eq hl le_refl lt_add_iff_pos_left mul_neg mul_one mul_zero ne_eq neg_le_self_iff not_false_eq_true not_lt_zero' one_ne_zero or_true reduceCtorEq reduceDIte reduceIte sup_le_iff tsub_le_iff_right zero_add zero_le_one zero_lt_one zero_ne_one

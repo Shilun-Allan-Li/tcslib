@@ -1,0 +1,46 @@
+From 8d43e126345a9e94998b1b11f0eee315518ae73f Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 14:05:35 -0800
+Subject: [PATCH 3/3] Configuration codec: membership in the edge-code language
+ at an encoded input
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Complexity/SpaceComplexity/Codec/Langs.lean  | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
+index d03dfa70..4b3adaf2 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Langs.lean
+@@ -41,7 +41,7 @@ Configuration-graph infrastructure; not a result of [AB09].
+ ## Main results
+ 
+ * `Complexity.Codec.mem_validLang`, `mem_initLang`, `mem_acceptLang`, `mem_stepLang`,
+-  `mem_edgeLang_iff` —
++  `mem_edgeLang` —
+   membership through the codec.
+ * `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff` — the checks recognize
+   the code words of the respective configurations.
+@@ -164,4 +164,18 @@ theorem mem_stepLang (x : List Bool) (c c' s : ℕ) :
+     exact hC
+   · intro h; exact ⟨x, c, c', s, rfl, h⟩
+ 
++/-- **Membership in the edge-code language.** -/
++theorem mem_edgeLang (x : List Bool) (c s : ℕ) :
++    pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ edgeLang N ↔
++      ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
++        ∃ i, |C.workTapePos i| = (s : ℤ) := by
++  rw [mem_edgeLang_iff]
++  constructor
++  · rintro ⟨x', c', s', h, hC⟩
++    obtain ⟨rfl, h2⟩ := pairEncode_inj h
++    obtain ⟨h3, h4⟩ := pairEncode_inj h2
++    rw [bits_injective h3, bits_injective h4]
++    exact hC
++  · intro h; exact ⟨x, c, s, rfl, h⟩
++
+ end Complexity.Codec
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,42 @@
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+/-! Reviewer's duplication probe: the statements of the new arithmetic, list and reading lemmas
+(restated here, not copied from the delivery's proofs), each tried by `exact?` in the owned
+file's import closure. A success names a published lemma that states it. -/
+
+open Turing
+
+-- dz_word_lt (BL-1 kind (vi))
+example (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by exact?
+-- the same through the published counter value
+example (w : List Bool) : counterValue w < 2 ^ w.length := by exact?
+-- dz_padded_value and its zero tail
+example (l : List ℕ) (r : ℕ) : Nat.ofDigits 2 (l ++ List.replicate r 0) = Nat.ofDigits 2 l := by
+  exact?
+example (r : ℕ) : Nat.ofDigits 2 ((List.replicate r false).map Bool.toNat) = 0 := by exact?
+example (t r : ℕ) : Nat.ofDigits 2 ((Nat.bits t ++ List.replicate r false).map Bool.toNat) = t := by
+  exact?
+-- dz_budget_le
+example (G : ℕ) (w : List Bool) (hw : w.length = (Nat.bits G).length) :
+    Nat.ofDigits 2 (w.map Bool.toNat) ≤ 2 * G := by exact?
+-- dz_out_le
+example {M : FinTM Bool} {F : List Bool → List Bool} {T : ℕ → ℕ} (h : M.ComputesFunInTime F T)
+    (y : List Bool) : (F y).length ≤ T y.length := by exact?
+-- dz_split_stream, two forms
+example (s : List Bool) (G : ℕ) (h : G < s.length) : s = s.take G ++ [s[G]] ++ s.drop (G + 1) := by
+  exact?
+example (s : List Bool) (G : ℕ) (h : G < s.length) : s.take G ++ s[G] :: s.drop (G + 1) = s := by
+  exact?
+-- dz_ones_succ
+example (n : ℕ) : [true] ++ List.replicate n true = List.replicate (n + 1) true := by exact?
+-- dz_cell0
+example (b : Bool) (tail : List Bool) : FinTM.bufferTape (b :: tail) 0 = some b := by exact?
+-- dz_alpha_eq
+example (B α N : List Bool) : ((pairDecode (((pairDecode (pairEncode (pairEncode B α) N)).map
+    Prod.fst).getD [])).map Prod.snd).getD [] = α := by exact?
+-- the first-halt step inside dz_top_run (FH-1's kind)
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) {x : List Bool} (c : Cfg k Bool S x) (t : ℕ)
+    (h : (M.runFrom c t).state = none) :
+    ∃ u ≤ t, (∀ v < u, ¬(M.runFrom c v).Halted) ∧ M.runFrom c u = M.runFrom c t := by exact?
+#check @MultiTapeTM.exists_first_halt
+#check @Cfg.halted_iff
+#check @length_bits_le_self

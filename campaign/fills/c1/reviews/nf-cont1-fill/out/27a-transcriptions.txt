@@ -1,0 +1,173 @@
+=== NfcPh -> nf_Ph: identical modulo renaming and whitespace: True; similarity 1.00; source 222 chars, landed 222 chars
+=== NfcSt -> nf_St: identical modulo renaming and whitespace: True; similarity 1.00; source 254 chars, landed 254 chars
+=== nfcStDecEq -> nf_stDecEq: identical modulo renaming and whitespace: True; similarity 1.00; source 533 chars, landed 533 chars
+=== nfcStFintype -> nf_stFintype: identical modulo renaming and whitespace: True; similarity 1.00; source 495 chars, landed 495 chars
+=== nfcPark -> nf_park: identical modulo renaming and whitespace: True; similarity 1.00; source 107 chars, landed 107 chars
+=== rvPark -> nf_park: identical modulo renaming and whitespace: False; similarity 0.96; source 99 chars, landed 107 chars
+    @@ -1 +1,2 @@
+    -def nf_park : MultiTapeTM 2 Bool Bool := ⟨true, fun q _ _ => ⟨0, fun _ => (none, 0), none, some q⟩⟩
+    +private def nf_park : MultiTapeTM 2 Bool Bool :=
+    +⟨true, fun q _ _ => ⟨0, fun _ => (none, 0), none, some q⟩⟩
+=== nfcM -> nf_M: identical modulo renaming and whitespace: True; similarity 1.00; source 389 chars, landed 389 chars
+=== nfcAfter -> nf_after: identical modulo renaming and whitespace: True; similarity 1.00; source 347 chars, landed 347 chars
+=== nfcRed -> nf_red: identical modulo renaming and whitespace: True; similarity 1.00; source 1091 chars, landed 1091 chars
+=== nfcV -> nf_V: identical modulo renaming and whitespace: True; similarity 1.00; source 244 chars, landed 244 chars
+=== nfc_retag -> nf_retag: identical modulo renaming and whitespace: False; similarity 0.98; source 771 chars, landed 742 chars
+    @@ -1,2 +1,2 @@
+    -private theorem nf_retag {N : FinNDTM Bool} {SL : Type} {i₀ : nf_Ph N.k} {x : List Bool}
+    -(c : Cfg 2 Bool (nf_St N SL i₀) x) (i : nf_Ph N.k) (q : nf_St N SL i) (hc : c.state.isSome) :
+    +private theorem nf_retag {N : FinNDTM Bool} {SL S : Type} {x : List Bool}
+    +(c : Cfg 2 Bool S x) (i : nf_Ph N.k) (q : nf_St N SL i) (hc : c.state.isSome) :
+=== nfc_aReturn -> nf_aReturn: identical modulo renaming and whitespace: False; similarity 0.86; source 3088 chars, landed 3795 chars
+    @@ -3,2 +3,2 @@
+    -(s : List Bool) (c : Cfg 2 Bool SeekPhase x) (hst : c.state = some .run)
+    -(hpos : c.workTapePos 0 = s.length)
+    +(j : Option (Fin N.k)) (s : List Bool) (c : Cfg 2 Bool SeekPhase x)
+    +(hst : c.state = some .run) (hpos : c.workTapePos 0 = s.length)
+    @@ -8,2 +8,3 @@
+    -((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd none)) x).mapState (Sigma.mk (nf_Ph.aFwd none)))
+    -(s.length + 6) = c₃.mapState (fun _ => nf_after N L none) ∧
+    +((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd j)) x).mapState (Sigma.mk (nf_Ph.aFwd j)))
+    +(s.length + 6) = c₃.mapState (fun _ => nf_aNext N L j) ∧
+    +c₃.state.isSome ∧
+    @@ -11 +12,4 @@
+    -c₃.inputPos = c.inputPos ∧ c₃.output = c.output := by
+    +c₃.inputPos = c.inputPos ∧ c₃.output = c.output ∧
+    +∀ u < s.length + 6, ∀ b, ((nf_V N L exit).runFrom
+    +((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd j)) x).mapState (Sigma.mk (nf_Ph.aFwd j)))
+    +u).state ≠ some ⟨.park, b⟩ := by
+    @@ -22 +26,2 @@
+    -workTapePos := Function.update c.workTapePos 0 (c.workTapePos 0 + ([] : List Bool).length + 1) }
+    +workTapePos :=
+    +Function.update c.workTapePos 0 (c.workTapePos 0 + ([] : List Bool).length + 1) }
+    @@ -24,3 +29,3 @@
+    -obtain ⟨-, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    -(nf_red N L exit) (nf_Ph.aFwd none) (c := c) (c' := c₁) (([] : List Bool).length + 1) h1
+    -SeekPhase.done rfl ⟨.aBack none, .run⟩ rfl (by
+    +obtain ⟨hpA, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    +(nf_red N L exit) (nf_Ph.aFwd j) (c := c) (c' := c₁) (([] : List Bool).length + 1) h1
+    +SeekPhase.done rfl ⟨.aBack j, .run⟩ rfl (by
+    @@ -32,2 +37,2 @@
+    -have hre := nf_retag (N := N) (SL := SL) (i₀ := nf_Ph.aFwd none) (c₁ : Cfg 2 Bool (nf_St N SL
+    -(nf_Ph.aFwd none)) x) (nf_Ph.aBack none) SeekPhase.run (by simp [hc₁])
+    +have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.aFwd j)) c₁ (nf_Ph.aBack j)
+    +SeekPhase.run (by simp [hc₁])
+    @@ -47,3 +52,5 @@
+    -obtain ⟨-, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    -(nf_red N L exit) (nf_Ph.aBack none) (c := c₂) (c' := c₃) (s.length + 3) h3
+    -SeekPhase.done rfl (nf_after N L none) rfl (by
+    +have hred : nf_red N L exit (nf_Ph.aBack j) SeekPhase.done = some (nf_aNext N L j) := by
+    +cases j <;> rfl
+    +obtain ⟨hpB, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    +(nf_red N L exit) (nf_Ph.aBack j) (c := c₂) (c' := c₃) (s.length + 3) h3
+    +SeekPhase.done rfl (nf_aNext N L j) hred (by
+    @@ -53,6 +60,6 @@
+    -| run => rfl
+    -| gap => rfl
+    -| back => rfl)
+    -refine ⟨c₃, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    -· have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
+    -rw [e, MultiTapeTM.runFrom_add]
+    +| run => cases j <;> rfl
+    +| gap => cases j <;> rfl
+    +| back => cases j <;> rfl)
+    +have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
+    +refine ⟨c₃, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    +· rw [e, MultiTapeTM.runFrom_add]
+    @@ -61,0 +69 @@
+    +· simp [hc₃]
+    @@ -68,0 +77,9 @@
+    +· intro u hu b
+    +unfold nf_V
+    +by_cases hu1 : u ≤ ([] : List Bool).length + 1
+    +· rw [hpA u hu1]
+    +exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
+    +· obtain ⟨v, rfl⟩ : ∃ v, u = (([] : List Bool).length + 1 + 1) + v :=
+    +⟨u - (([] : List Bool).length + 1 + 1), by omega⟩
+    +rw [MultiTapeTM.runFrom_add, hA, hre, hpB v (by simp at hu ⊢; omega)]
+    +exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
+=== rv_bClear -> nf_bClear: identical modulo renaming and whitespace: False; similarity 0.87; source 5127 chars, landed 6376 chars
+    @@ -12,3 +12,9 @@
+    -c₅.workTapePos 1 = c.workTapePos 1 - i ∧
+    -∀ q, c₅.workTapes 1 q = if c.workTapePos 1 - i ≤ q ∧ q < c.workTapePos 1 - i + R.length
+    -then none else c.workTapes 1 q := by
+    +c₅.state.isSome ∧
+    +c₅.workTapePos 1 = c.workTapePos 1 - i ∧ c₅.workTapePos 0 = c.workTapePos 0 ∧
+    +c₅.workTapes 0 = c.workTapes 0 ∧ c₅.inputPos = c.inputPos ∧ c₅.output = c.output ∧
+    +(∀ q, c₅.workTapes 1 q = if c.workTapePos 1 - i ≤ q ∧ q < c.workTapePos 1 - i + R.length
+    +then none else c.workTapes 1 q) ∧
+    +∀ u < (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1), ∀ b,
+    +((nf_V N L exit).runFrom
+    +((c : Cfg 2 Bool (nf_St N SL (nf_Ph.bFwd j)) x).mapState (Sigma.mk (nf_Ph.bFwd j)))
+    +u).state ≠ some ⟨.park, b⟩ := by
+    @@ -33 +39 @@
+    -obtain ⟨-, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    +obtain ⟨hpA, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    @@ -42,2 +48,2 @@
+    -have hre := nf_retag (N := N) (SL := SL) (i₀ := nf_Ph.bFwd j) (c₁ : Cfg 2 Bool (nf_St N SL
+    -(nf_Ph.bFwd j)) x) (nf_Ph.bBack j) SeekPhase.run (by simp [hc₁])
+    +have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.bFwd j)) c₁ (nf_Ph.bBack j)
+    +SeekPhase.run (by simp [hc₁])
+    @@ -58 +64 @@
+    -obtain ⟨-, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    +obtain ⟨hpB, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    @@ -71,2 +77,2 @@
+    -have hre2 := nf_retag (N := N) (SL := SL) (i₀ := nf_Ph.bBack j) (c₃ : Cfg 2 Bool (nf_St N SL
+    -(nf_Ph.bBack j)) x) (nf_Ph.bClr j) SweepPhase.sweep (by simp [hc₃])
+    +have hre2 := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.bBack j)) c₃ (nf_Ph.bClr j)
+    +SweepPhase.sweep (by simp [hc₃])
+    @@ -90 +96 @@
+    -obtain ⟨-, hC⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    +obtain ⟨hpC, hC⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    @@ -98,2 +104 @@
+    -refine ⟨c₅, ?_, ?_, ?_⟩
+    -· have e : (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1) =
+    +have e : (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1) =
+    @@ -102 +107,2 @@
+    -rw [e, MultiTapeTM.runFrom_add]
+    +refine ⟨c₅, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    +· rw [e, MultiTapeTM.runFrom_add]
+    @@ -105,0 +112 @@
+    +· simp [hc₅]
+    @@ -107,0 +115,7 @@
+    +· simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
+    +rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+    +· simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
+    +funext q
+    +rw [if_neg (fun h => absurd h.1 (by decide))]
+    +· simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
+    +· simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
+    @@ -116,0 +131,14 @@
+    +· intro u hu b
+    +unfold nf_V
+    +by_cases hu1 : u ≤ (R.drop i).length + 1
+    +· rw [hpA u hu1]
+    +exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
+    +· obtain ⟨v, rfl⟩ : ∃ v, u = ((R.drop i).length + 1 + 1) + v :=
+    +⟨u - ((R.drop i).length + 1 + 1), by omega⟩
+    +rw [MultiTapeTM.runFrom_add, hA, hre]
+    +by_cases hv1 : v ≤ R.length + 3
+    +· rw [hpB v hv1]
+    +exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
+    +· obtain ⟨w, rfl⟩ : ∃ w, v = (R.length + 3 + 1) + w := ⟨v - (R.length + 3 + 1), by omega⟩
+    +rw [MultiTapeTM.runFrom_add, hB, hre2, hpC w (by rw [List.length_drop] at hu; omega)]
+    +exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
+=== rv_entry -> nf_entry: identical modulo renaming and whitespace: False; similarity 1.00; source 953 chars, landed 961 chars
+    @@ -1 +1 @@
+    -theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List Bool) (q : S) :
+    +private theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List Bool) (q : S) :
+=== rv_tag -> nf_tag: identical modulo renaming and whitespace: False; similarity 0.88; source 642 chars, landed 666 chars
+    @@ -1,3 +1,4 @@
+    -theorem nf_tag {A : Type} (x s : List Bool) (q : ScanPhase A) :
+    -streamStartCfg x (0 : Fin 2) (⟨false, q⟩ : Σ i, rvPh A i) s =
+    -(streamStartCfg x (0 : Fin 2) (q : rvPh A false) s).mapState (Sigma.mk false) := by
+    +private theorem nf_tag {N : FinNDTM Bool} {SL : Type} (x s : List Bool) (i : nf_Ph N.k)
+    +(q : nf_St N SL i) :
+    +streamStartCfg x (0 : Fin 2) (⟨i, q⟩ : Σ i, nf_St N SL i) s =
+    +(streamStartCfg x (0 : Fin 2) q s).mapState (Sigma.mk i) := by
+=== rv_inputSymbol_congr -> nf_inputSymbol_congr: identical modulo renaming and whitespace: False; similarity 0.99; source 642 chars, landed 650 chars
+    @@ -1,2 +1,2 @@
+    -theorem nf_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool} (c : Cfg k Bool S x)
+    -(c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
+    +private theorem nf_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
+    +(c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :

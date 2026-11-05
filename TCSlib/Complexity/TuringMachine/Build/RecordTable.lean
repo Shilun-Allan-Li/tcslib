@@ -2760,9 +2760,7 @@ private theorem rt_exists_boundTM :
   obtain ⟨u, ub, ucut, uheads, urun⟩ := rt_succ_run (0 : Fin (K + 1)) x.length.bits c rfl framed
   have monotone : x.length.bits.length ≤ (x.length + 1).bits.length := by
     simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ x.length)
-  have short : x.length.bits.length ≤ x.length + 1 := by
-    rw [Nat.size_eq_bits_len, Nat.size_le]
-    exact lt_trans (Nat.lt_succ_self _) Nat.lt_two_pow_self
+  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
   let B : ℤ := ((C + 20) * ((x.length + 1).bits.length + 1) : ℕ)
   have firstBound : (C * (x.length.bits.length + 1) : ℕ) ≤
       (C + 20) * ((x.length + 1).bits.length + 1) := by nlinarith
@@ -4252,9 +4250,7 @@ private theorem rt_exists_boundFieldTM (Q T : Type) [DecidableEq Q] [DecidableEq
       (d.workTapePos (ι 0) + p - d.workTapePos (ι 0)) else _) = _
     rw [if_pos rfl]; congr 1; omega
   obtain ⟨move, moveCut, moveHeads⟩ := rt_moveWord_run (ι 0) dst different w b rfl frame
-  have short : (x.length + 1).bits.length ≤ x.length + 1 := by
-    rw [Nat.size_eq_bits_len, Nat.size_le]
-    exact Nat.lt_two_pow_self
+  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
   let B : ℤ := ((C + 10) * ((x.length + 1).bits.length + 1) : ℕ)
   have radA : ∀ u ≤ t, ∀ j,
       |((embedEmitTM ι R).runFrom a u).workTapePos j - d.workTapePos j| ≤ B := by

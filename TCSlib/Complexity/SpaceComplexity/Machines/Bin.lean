@@ -31,7 +31,8 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
   value is below `2^{length}` and determines the word among words of its length.
 * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
 * `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
-  `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`.
+  `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`;
+  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
 
 ## References
 
@@ -123,6 +124,19 @@ lemma bits_succ (n : ℕ) : Nat.bits (n + 1) = incW (Nat.bits n) := by
 lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
   rw [Nat.size_eq_bits_len]
   exact Nat.size_le.mpr h
+
+/-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`.
+
+**Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
+`2 ^ |bits L| = 2 · 2 ^ (Nat.size L - 1) ≤ 2L`. -/
+lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+  rw [Nat.size_eq_bits_len]
+  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
+  have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
+    rw [← Nat.size_le]; omega
+  have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
+    rw [← pow_succ']; congr 1; omega
+  omega
 
 /-- Binary words of larger numbers are not shorter. -/
 lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
