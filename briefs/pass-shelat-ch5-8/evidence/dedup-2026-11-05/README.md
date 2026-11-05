@@ -33,3 +33,16 @@
   `sorryAx`. **Declaration by declaration, this is identical to the base-repair print** (before
   the `main` merge). So none of `main`'s 17 machine-layer sorries reaches a ch. 2–4 headline: the
   open question of the merge record is closed.
+- **The merged tree** (checked 2026-11-05, before merging #192 and #193). After the dedup's branch
+  point, the base gained S2a's `Games` layer (#185: `Games.lean`, six `Games/` modules, and the
+  export in `TCSlib.lean`). The replays above do not include it, so the merged tree was checked
+  for interaction:
+  - the layer's upstream (8 modules) contains none of the 14 files that #192 and #193 change;
+  - it uses none of the removed or changed names;
+  - the PRs' new names (`Turing.pairEncode_ne_nil`, `statClose_iff_epsClose_map`,
+    `uprob_comp_eq_probTrue_map`, `prfDecWF`, `decodeFin_runAt_prfDec_of_not_wf`) do not occur
+    in it;
+  - the only module importing both sides is the root facade, which only imports.
+
+  So every module of the merged tree is either one the replays checked, or a `Games` module with
+  an unchanged upstream (checked in #185).
