@@ -62,6 +62,14 @@ To be filled at the pinned head:
    - `Strategy.Efficient` is polynomial in the total input length, with `ReadsPrefix` restoring
      the bound in `|x|`. Is that faithful to "time `t(|x|)` regardless of messages"?
    - Is `ReadsPrefix` required wherever the source needs it?
+   - **Known consequence (maintainer, 2026-11-05).** `ZK` quantifies over `Strategy.Efficient`
+     verifiers without `ReadsPrefix`. Such a verifier may double its messages from activation to
+     activation, so over polynomially many rounds, against an honest prover that echoes it, its
+     view can grow exponentially, and no strict-PPT simulator can output it. Ch. 5–8's sequential
+     composition (Thm 175.1) therefore assumes bounded honest-prover messages
+     (`Protocol.ProverBounded`). Does any ch. 2–4 ZK theorem depend on this gap? The honest
+     provers of the graph protocols have fixed message lengths. Should `ZK` itself require
+     `ReadsPrefix` of `V*`? (Queued for the user as Q-1.)
 3. **Interactive proofs (Def 116.1).** Are completeness and soundness stated against every
    (unbounded) prover, with the source's error bounds?
 4. **Zero knowledge (Defs 121.1, 121.2, 122.a).**
