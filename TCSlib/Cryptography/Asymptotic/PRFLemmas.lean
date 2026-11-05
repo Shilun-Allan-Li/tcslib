@@ -284,12 +284,12 @@ def ggmStep (E : List Bool → List Bool) (w : List Bool) : List Bool :=
 
 /-- The walk down the tree from the label `y` along the bits `bs`:
 `walk G' y [b₁, …, b_k] = G'_{b_k}(⋯ G'_{b₁}(y) ⋯)`. -/
-def walk {S : Type*} (G' : S → S × S) (y : S) (bs : List Bool) : S :=
+def walk {S : Type} (G' : S → S × S) (y : S) (bs : List Bool) : S :=
   bs.foldl (fun y b => pairSel b (G' y)) y
 
 /-- `ggmFrom G' x i y` is the walk from `y` along the bits of `x` from position `i` on
 (strong induction on `n − i`, `ggmFrom_of_lt`, `ggmFrom_of_le`). -/
-theorem ggmFrom_eq_walk {S : Type*} (G' : S → S × S) {n : ℕ} (x : Fin n → Bool) :
+theorem ggmFrom_eq_walk {S : Type} (G' : S → S × S) {n : ℕ} (x : Fin n → Bool) :
     ∀ (i : ℕ) (y : S), ggmFrom G' x i y = walk G' y ((List.ofFn x).drop i)
   | i, y => by
     by_cases h : i < n
