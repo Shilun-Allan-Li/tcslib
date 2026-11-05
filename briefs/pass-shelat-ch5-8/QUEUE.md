@@ -51,5 +51,12 @@ maintainer (`evidence/pac-2026-11-05/`).
 
 ## Dispatches and merges
 
-To be added as they become ready: the gate 03 packs, the S2b PR and gate 04, and the PAC layer's
-PR to `main`.
+- **Gate 03 (ch. 2–4):** packs 03a–03c, 03e–03i, 03k, 03l, pinned to `a3c5fa8b`, after a fresh replay
+  of their closure there. The replay is running; the bundles are staged when it finishes (status
+  added below).
+- **S2b PR and gate 04:** after S2b's post-merge replay (running). S2b now also carries T2, and
+  gate 04's pack covers it.
+- **#194 (PAC layer, to `main`):** see Q-4.
+- **Lean branches (no PRs; for the ch. 5–8 statement gate later):** prong A
+  `cryptography/pass-shelat-ch5-8-prong-a`, prong B `…-prong-b`, prong C `…-prong-c`, prong D
+  `…-prong-d`.
