@@ -437,11 +437,12 @@ section EdgeTable
 
 variable {N}
 
-/-- The answering labels. -/
+/-- In every mode, the label `acc` returns `true`. -/
 lemma CA_acc (mode : CMode) : CA N mode .acc = .ret true := rfl
-/-- The answering labels. -/
+/-- In every mode, the label `rej` returns `false`. -/
 lemma CA_rej (mode : CMode) : CA N mode .rej = .ret false := rfl
-/-- The end of the validity scan, in the edge-code mode. -/
+/-- In the edge-code mode, the end of the validity scan jumps to `eStart` if the scan accepted
+(`VAcc`), and to `rej` otherwise. -/
 lemma CA_vDone_edge (st : VAd N) :
     CA N .edge (.vDone st) = goto N (if VAcc N st.1 then .eStart else .rej) := rfl
 /-- `goto` is a zero test of `Z` with equal branches. -/

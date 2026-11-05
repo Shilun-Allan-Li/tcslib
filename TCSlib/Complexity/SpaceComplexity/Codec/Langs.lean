@@ -97,7 +97,9 @@ def edgeLang : Language Bool :=
     ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧
       ∃ i, |C.workTapePos i| = (s : ℤ)}
 
-/-- Membership in the edge-code language, unfolded. -/
+/-- A word is in the edge-code language exactly when it encodes an input `x`, a code `c` and a
+radius `s` such that `c` is the radius-`s` code of a configuration on `x` that stays in the
+window of radius `s` and has some work head at `-s` or `+s`. -/
 lemma mem_edgeLang_iff (y : List Bool) :
     y ∈ edgeLang N ↔ ∃ (x : List Bool) (c s : ℕ),
       y = pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∧
@@ -164,7 +166,9 @@ theorem mem_stepLang (x : List Bool) (c c' s : ℕ) :
     exact hC
   · intro h; exact ⟨x, c, c', s, rfl, h⟩
 
-/-- **Membership in the edge-code language.** -/
+/-- **Membership in the edge-code language.** The encoding of `x`, `bits c` and `bits s` is in
+the language exactly when `c` is the radius-`s` code of a configuration on `x` inside the window
+of radius `s` with some work head at `-s` or `+s`. -/
 theorem mem_edgeLang (x : List Bool) (c s : ℕ) :
     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ edgeLang N ↔
       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧

@@ -454,7 +454,9 @@ def EdgeChk (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
       w.getD (W N * (2 * s) + (hH N + 3 * (i : ℕ) + 2)) false = true
 
 variable (N) in
-/-- The edge-code check, unfolded. -/
+/-- The edge-code check holds of a word `w` exactly when `w` passes the validity check at radius
+`s` for inputs of length `|x|` and, for some work tape `i`, tape `i`'s head flag is set in chunk
+`0` or in chunk `2s` of `w`, the cells at `-s` and `+s`. -/
 lemma edgeChk_def (x : List Bool) (s : ℕ) (w : List Bool) :
     EdgeChk N x s w ↔ ValidChk (N := N) x.length s w ∧
       ∃ i : Fin N.k, w.getD (hH N + 3 * (i : ℕ) + 2) false = true ∨
@@ -505,7 +507,8 @@ theorem edgeChk_iff (s : ℕ) (w : List Bool) :
     · exact Or.inl h
 
 variable (N) in
-/-- **Edge codes through the check.** -/
+/-- **Edge codes through the check.** For every word `w`, not only for codes, the encoding of
+`x`, `w` and `bits s` is in the edge-code language exactly when `w` passes the edge-code check. -/
 theorem edgeLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ edgeLang N ↔ EdgeChk N x s w := by
   rw [edgeChk_iff, mem_edgeLang_iff]
