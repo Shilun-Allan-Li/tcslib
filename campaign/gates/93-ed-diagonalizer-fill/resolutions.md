@@ -61,3 +61,6 @@ Checks at the fix:
   `exists_diagonalizer` on the standard three.
 
 `replay-led3` is written (3 modules from `oleans-ledge`).
+
+**Round 3 staged (2026-11-04):** `pack-r3.md`, at #188's head `935245f4`. Bundle SHA-256
+`7b82b58654eb9ed1edb625c5fc2896b2f6a192b3222b561c33341f3472d2ba96` (27 sections), the records at `50809827`.
