@@ -1,10 +1,9 @@
 # Gate 03a ([PS10] ch. 2–4, machines and probability): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/a/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the machine model and the probability
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the machine model and the probability
 notions on which the rest of the layer, and ch. 5–8, are stated.
 - **Gate type:** an external **statement gate** (`workflow.md` §3; user's ruling of 2026-11-05).
   The layer was written in another campaign (Frederick Dehmel's, now closed). It had an internal
@@ -57,7 +56,21 @@ resolved unless the resolution is wrong. Do not give a blanket approval.
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/a/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 323 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   22 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 41 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 40 use only the standard axioms, and
+   1 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 1 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 2 findings in 11 files.
+   Both are in `SamplingFinDist.lean`, the dedup's new bridge (the maintainer's file): a missing
+   `set_option maxHeartbeats 0` and a missing `## Main definitions` heading. Style only; fixed with
+   gate 03's repairs.
+
+Pack-specific notes (as drafted):
 1. **Elaboration:** a fresh replay of the closure.
 2. **Axioms:** the prints for this pack's headline theorems, from `audits/pass-shelat/Checks.lean`.
 3. **Admissions:** the one `sorry` in scope, `NUPPT.decides_of_decidesWithAdviceInTime`

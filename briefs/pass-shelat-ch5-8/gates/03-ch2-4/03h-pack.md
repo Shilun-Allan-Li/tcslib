@@ -1,10 +1,9 @@
 # Gate 03h ([PS10] ch. 2–4, ch. 2 results and the universal one-way function): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/h/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the statements of ch. 2's main results proved in their own files: Yao's amplification (Thm 35.1's proof) and its lemmas, the collections theorem's proof (Thm 42.2), and the universal one-way function of §2.13.
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the statements of ch. 2's main results proved in their own files: Yao's amplification (Thm 35.1's proof) and its lemmas, the collections theorem's proof (Thm 42.2), and the universal one-way function of §2.13.
 - **This pack gates fills.** Its files hold **2 `sorry`s**, to be filled after this pack
   closes (user's ruling of 2026-11-05). A statement that cannot be proved as stated, or that is
   weaker than the source, must be found **now**.
@@ -45,7 +44,18 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/h/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 69 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   19 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 9 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 6 use only the standard axioms, and
+   3 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 2 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 6 files.
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
 - the axiom prints of this pack's headlines (`audits/pass-shelat/Checks.lean`);
 - admissions: the 2 `sorry`s, listed by declaration;

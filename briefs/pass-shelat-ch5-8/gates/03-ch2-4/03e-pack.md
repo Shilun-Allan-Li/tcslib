@@ -1,10 +1,9 @@
 # Gate 03e ([PS10] ch. 2–4, interaction and ZK definitions): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/e/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the interaction model (strategies, executions, views, protocols), interactive proofs, the zero-knowledge definitions, commitments, and the NP layer used by Thm 124.1.
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the interaction model (strategies, executions, views, protocols), interactive proofs, the zero-knowledge definitions, commitments, and the NP layer used by Thm 124.1.
 - **Gate type:** an external **statement gate** (`workflow.md` §3; user's ruling of 2026-11-05),
   over a layer written in another campaign (Frederick Dehmel's, now closed). That layer had only
   an internal audit (run 3a, summary in the bundle).
@@ -41,7 +40,18 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/e/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 358 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   25 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 26 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 22 use only the standard axioms, and
+   4 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 0 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 5 files.
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
 - the axiom prints for this pack's headline theorems (`audits/pass-shelat/Checks.lean`);
 - admissions: none in these five files;
