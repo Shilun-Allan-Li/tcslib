@@ -31,3 +31,4 @@ after #184). Checks at the fix:
 **Round 2 staged (2026-11-04):** `pack-r2.md`, at #188's head `02030b70`. Bundle SHA-256
 `15ce490ba941df5345e6585b2e0da96cd9f5d17c8e7f066cda0f54b4b29ff69e` (22 sections), the records at `330ba0dc`.
 **Dispatched (user, 2026-11-04);** the folder archived.
+**`replay-led2` passed** (2026-11-04): 3 of 3 at `02030b70`, 0 failed, static-equal; snapshot `oleans-led2`.
