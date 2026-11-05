@@ -34,3 +34,5 @@ the remaining Hennie–Stearns admission is authorized for this statement gate.
 | 3–7 | note | Integrity; the fixes; coverage; the records. | Agreed. |
 
 **Gate 92 closes (round 2, CLOSE, 2026-11-04).**
+
+**`replay-lg5b` passed** (2026-11-05): 325 of 325 at `9e96f646`, 0 failed, static-equal (73, all pre-existing); snapshot `oleans-lg5b`. **#189 is clear to merge** (gate 92 closed). It merges before #188, whose file is in this closure.
