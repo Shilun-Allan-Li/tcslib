@@ -66,3 +66,7 @@ campaign branch.
 
 **Clear to merge: #197** at `fde50a5a72c7dfa34699a2968255a67dec1965ef` (gate 97 closed;
 `replay-lzsa2` passed).
+
+**Merged (2026-11-05, the user):** #197 at `33ceeed161301fa5147826c25d40265e3d7528a5`. The campaign's
+Lean tree is now #197's head `fde50a5a`'s, so `replay-lzsa2`'s snapshot `oleans-lzsa2` is the
+campaign's snapshot and the replay of record.

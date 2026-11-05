@@ -54,3 +54,5 @@ that changes no `.lean` file).
 `3db74cec40daa103128d90754940571f47b348a1`. Findings file `nf-landing-fill-r2-findings.md`.
 
 **Not yet clear to merge: #191** (gate 95's round 2 is staged, not yet dispatched).
+
+**Round 2 dispatched (2026-11-05, the user).**

@@ -115,13 +115,14 @@ replay below chained from it with only its own PR.
 
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 1 does not close (0/1/4); **round 2 staged** (`outbox/gates/95-nf-landing-fill-r2-gate/`, 84 sections) | dispatch round 2; merge when it closes |
-| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 round 1 does not close (0/2/4); **round 2 staged** (`outbox/gates/96-deepen-api-r2-gate/`, 149 sections) | dispatch round 2; merge when it closes; then the deepening fill (Claude) |
-| #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **clear to merge**; then G5's fill brief |
+| #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 1 does not close (0/1/4); **round 2 dispatched** 2026-11-05 (84 sections) | merge when it closes, after a replay on the merged tree |
+| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 round 1 does not close (0/2/4); **round 2 dispatched** 2026-11-05 (149 sections) | merge when it closes, after a replay on the merged tree; then the deepening fill (Claude) |
+| #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
-**Merging several of these:** each replay chained from `oleans-cloud0` with only its own PR. Once a
-second one merges, replay the downstream closure of every `.lean` file changed since `dfed8b1f`'s
-tree, on the merged tree, chained from `oleans-cloud0` (WORKFLOW §2).
+**After #197's merge** the campaign's Lean tree is #197's head's, and `oleans-lzsa2` is its
+snapshot (the replay of record). #191's and #196's replays above chained from `oleans-cloud0`
+without #197, so each is re-run on the merged tree, chained from `oleans-lzsa2`, before it is clear
+to merge.
 
 **The user's rulings (2026-11-05):** gate 95 F1 repair; gate 96 F2 harvest; WS-1 acknowledged by
 kind and widened; QL-X1 an idiom and CQ-1 opened; gate 97 F5 publish; CE-1 acknowledged; PFR left

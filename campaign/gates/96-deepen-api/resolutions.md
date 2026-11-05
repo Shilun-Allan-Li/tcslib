@@ -60,3 +60,5 @@ the existing 30 `sorry`s, chained from `oleans-cloud0` (`evidence/round2/merged-
 `4558427c98b6205a3d5ed0d49251b5d3895b5cad`. Findings file `deepen-api-r2-findings.md`.
 
 **Not yet clear to merge: #196** (gate 96's round 2 is staged, not yet dispatched).
+
+**Round 2 dispatched (2026-11-05, the user).**
