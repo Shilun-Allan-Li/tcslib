@@ -387,8 +387,8 @@ theorem polyTimeComputable_bplTest : PolyTimeComputable (fun x => [bplTest N c B
 `c (|bits n| + 1)` are below `8^e (n + 1)^e`.
 
 **Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` (`Complexity.logSpace_le_size_succ`)
-and `2^m ≤ 2(n + 1)` (`Nat.lt_size`), so the exponent is at most `e (m + 2)` and
-`2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
+and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+`e (m + 2)` and `2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
 theorem two_pow_codes_le (n : ℕ) :
     2 ^ (codeK N * (c * ((Nat.bits n).length + 1) + logSpace n + 1)) ≤
       8 ^ (codeK N * (c + 1)) * (n + 1) ^ (codeK N * (c + 1)) := by
