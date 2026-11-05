@@ -39,7 +39,16 @@ file):
   - `nf_retag`, `nf_tagged_ne_park` and `nf_stream_length` keep their statements, with bodies
     citing `Cfg.mapState_const_eq_mapState_sigma`, `Cfg.mapState_sigma_state_ne` and
     `length_flatMap_uniform`;
-  - the file imports `TuringMachine/CfgFacts`.
+  - the file imports `TuringMachine/CfgFacts`;
+- `5732d5bd`: `nf_tag` (RN-1) converts the tagged stream start through
+  `Cfg.mapState_eq_of_fields`;
+- `4354cbeb`: two inline steps found by the maintainer's sweep for inline re-derivations
+  (`campaign/maintainer/WORKFLOW.md` §3) now cite published lemmas. **Its commit message says
+  `nf_setup`; the site is `nf_entry`.**
+  - `nf_backward_host`'s equal first verdict times cite `Segment.time_eq`, the pattern gate 93
+    rated a major in E-D's `dz_first`;
+  - `nf_entry`'s blank cell past the stream cites `FinTM.bufferTape_eq_none_of_not_mem`;
+  - the file imports `BufferWords` and `Build/Contract/Basic`, low published modules.
 
 **Stacked on #190**, whose branch is merged in. After #190 merges, #191 is retargeted to the
 campaign branch, merged with the campaign, and replayed.
@@ -71,7 +80,16 @@ campaign branch, merged with the campaign, and replayed.
    - The screen at the landing head (`evidence/screen/`): the v3 screen restricted to pairs with an
      `NDNormalForm` declaration, over the brief's 21-file population plus `CfgFacts`.
 
-   Is anything else re-derived, including inline sub-steps (gate 93's lesson)?
+   **The sweep** (`evidence/sweep.txt`) looked for `bufferTape_eq` unfoldings,
+   `Nat.exists_eq_add_of_le`, `runFrom_add`/`runFrom_of_halt`, `lt_trichotomy`, `Nat.find` and
+   `Cfg.ext` blocks. Its results:
+   - two inline re-derivations, now fixed (above);
+   - `Nat.find` in `nf_forward`: the first halt of a nondeterministic branch (`runWith` over word
+     prefixes), with no published lemma, as NF's report notes;
+   - eleven `Cfg.ext` blocks, which are configuration-equation idioms or RN-1 members, under the
+     user's by-kind acknowledgment.
+
+   Is anything else re-derived, including inline sub-steps?
 6. **Public-facing text:** E2–E6, and the target's docstring now that the proof exists.
 
 ## Repository-side attestations (verify or challenge)
