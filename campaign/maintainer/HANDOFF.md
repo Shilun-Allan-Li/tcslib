@@ -118,8 +118,7 @@ The rest stay on the Mac.
 - **Gate 97 (#197): PASS**, 0/0/6. The user ruled **publish** `zoneRowPre_congr` and
   `zoneRowPre_mapState_iff` (F5). The minors are swept in one closing commit.
 
-**Duplication rulings of 2026-11-05 (the user)**, to enter `duplication-ledger.md` with the pushed
-repairs (the draft is `$TCSLIB_SCRATCH/agents/ledger/duplication-ledger.proposed.md`):
+**Duplication rulings of 2026-11-05 (the user)**, recorded in `duplication-ledger.md`:
 - **WS-1**, acknowledged by kind and then **widened**: every proof that one step keeps a
   configuration within a window of any shape, and window monotonicity; canonical
   `Cfg.InWindow.apply_iff`, `Cfg.InWindow.mono`, and the tape half (to be published in 12.2c;
@@ -148,6 +147,8 @@ and gates 95 and 96 go to round 2. Each gate's `resolutions.md` holds the detail
 3. **H's brief:** re-take its pre-ship after NF and E-D land. Its screen population includes both
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
-   (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1.
+   (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
+   kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1 and WC-1
+   (optional), with QL-X1 an idiom exclusion.
 5. **The deferred cleanup of public-facing docstrings** (WORKFLOW §2): about 280 campaign labels in
    existing Lean text, and E-D's frozen proof sketch (F9).

@@ -1005,11 +1005,14 @@ cites them:
   (`nf_retag`; `SeamLayout`'s private `sl_rewrap`, and inline in 15 declarations);
 - (iii) a configuration tagged by phase `i` is at no state of another phase (`nf_tagged_ne_park`;
   privates `CfgRecord.record_tag_ne`, `SeamLayout.sl_tagged_ne_done`);
-- (iv) the length of a list of equal-length chunks (`nf_stream_length`; public as
+- (vi) the length of a list of equal-length chunks (`nf_stream_length`; public as
   `Complexity.CfgTableau.length_flatMap_const` in colleague-owned `CircuitComplexity`, which
   NF cannot import).
 
 The existing private copies are re-pointed in the API PR where the files are the campaign's.
+*Numbering (gate 95, note 9):* the kinds carry the review's labels, (i)–(iii) and (vi), as in the
+decision put to the user. This entry first numbered the chunk length (iv), which collided with the
+review's F8 (iv), the buffer end (RC-4 below). The review uses no (v).
 
 **RN-1, renamed configurations converted field by field, scoped by kind** (ruled by the user,
 2026-11-04, with gate 94). #190 publishes the general fact, `Turing.Cfg.mapState_eq_of_fields`: a
@@ -1043,6 +1046,203 @@ renamed configuration equals any configuration with its data fields and the rena
 The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
 its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
 `Nat.forall_lt_succ_left'` (E1).
+
+**RN-1, an accounting minor at NF's landing** (gate 95, minor 3; 2026-11-05). `NDNormalForm`'s
+`nf_pack` proved its local `hinit`, `(H.relabelState e).initCfg x = (H.initCfg x).mapState e`
+(lines 62–69 at #191's head `e8994dc1`), by the five-line block: an RN-1 member that the list
+above did not name. It is inside the family, so a minor. #191's repair commit `10c01517` cites
+`(Cfg.mapState_eq_of_fields …).symm` there, as `nf_tag` does since `5732d5bd`. The file's other
+eleven `Cfg.ext` blocks (`nf_sweep_run`, `nf_entry` and nine leaf-run endpoints) are
+configuration-record equations, not renamings, so they are not members. Census: `NDNormalForm`
+1 of 104 declarations at `e8994dc1`, none at `10c01517`.
+
+**NF's landing, gate 95's major 1: repaired, no new family** (#191; ruled by the user,
+2026-11-05: **repair**). At the landed head `NDNormalForm` imports `TuringMachine/BufferWords`,
+but three inline steps still re-proved its identities, outside every acknowledged family (ED-IN
+is scoped to `NTimeDiagonalizer`, BW-1 to `StepBlock`'s privates, RN-1 to renamings):
+- `nf_bClear`'s `hw`, `bufferTape R (p + i) = bufferTape (R.drop i) p` for `0 ≤ p`, by
+  `bufferTape_nat` twice and `List.getElem?_drop`: that is `FinTM.bufferTape_drop`;
+- `nf_aReturn`'s `hw` (cell `|s|`) and `nf_region`'s cell `|R|`, blank at the buffer's end by
+  `bufferTape_nat` and `List.getElem?_eq_none`: that is `FinTM.bufferTape_eq_none_of_not_mem`.
+
+The steps came from the brief's own route probes, written when the fill could not import
+`BufferWords`. #191's repair commit `10c01517` cites the two lemmas at the three sites, and no
+member remains. Recorded so that the ledger shows them caught.
+
+**RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
+note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
+carried here until now.
+- **The first halting time of a choice word**, FH-1's kind for `NDTM.runWith`: `Nat.find` over
+  the run's prefixes (`find_spec`, `find_min`, `find_min'`), then the output after the halt by
+  `NDTM.runWith_append` and `NDTM.runWith_of_halt`. FH-1's public form,
+  `MultiTapeTM.exists_first_halt`, is deterministic, and no `NDTM` form exists. It runs inline at
+  two sites: `NDNormalForm`'s `nf_forward` (lines 3097–3127 at #191's head `e8994dc1`) and
+  `ExhaustiveReplay`'s `xr_replay_host` (lines 2179–2189 at the campaign tip). Neither
+  re-derives a lemma. **Disposition:** a public `NDTM` first-halt row in the dedup window
+  (12.2c), cited at both sites.
+- **(iv) a buffer is blank at and past its end** is not a row candidate after all: the review's
+  "no public form" held only at the fill's frozen imports. `FinTM.bufferTape_eq_none_of_not_mem`
+  (`TuringMachine/BufferWords`, public since PR #140; BW-1) states it. NF's three inline sites
+  cite it: `nf_entry` since `4354cbeb`, `nf_aReturn` and `nf_region` since `10c01517` (major 1
+  above). `CodeSimulator`'s private `canonStageBuffer_none` (lines 5040–5043 at the campaign
+  tip; four uses) restates it for cells at or past the end. **Disposition:** the dedup window
+  (12.2c): re-point its four uses to `FinTM.bufferTape_eq_none_of_not_mem` and delete it.
+  `CodeSimulator` does not import `BufferWords` yet; the import is acyclic (`BufferWords`
+  imports only `Simulation`).
+
+Census (members over all declarations, as the style lint counts them, at the campaign tip):
+`CodeSimulator` 1 of 208 (`canonStageBuffer_none`). With CC7-1's eleven and RN-1's three others
+(`canonStageOuterSpec`, `canonStageInnerSpec`, `us_start`, the last also RS-1's), the file holds
+15 of 208 (7.2%). The first-halt sites are row candidates and are not counted, as in RC-1–RC-3.
+The one-fifth rule is not reached.
+
+**WS-1, one step keeps a configuration in a window, and window monotonicity, scoped by kind**
+(#196, the deepening's API; gate 96, major 2; acknowledged by the user, 2026-11-05, and widened by
+kind the same day). #196's public `Turing.Cfg.InWindow.apply_of_lt` (`Build/CfgRecord`)
+re-derived its own file's private `recordStep_window` (line 679 at #196's head `89f4ebbc`), and
+one of its steps repeated `ExpBFS.inWin_mono`'s second component verbatim. The v3 screen paired
+none of them (the proofs are restructured), and no family covered the kind, so it was a debt
+major.
+- **Ruled (user, 2026-11-05): harvest.** On #196's repaired head `b1b5199b`, `recordStep_window` is
+  public as `Turing.Cfg.InWindow.apply_iff`, over any alphabet, beside the new
+  `Turing.Cfg.InWindow.mono`; `apply_of_lt` is proved from the two; and the record step
+  (`recordStep_observed_action`), the private lemma's one use, cites `apply_iff`.
+- **The family, acknowledged by kind for 12.2c (user, 2026-11-05), widened by kind (user,
+  2026-11-05):** every proof, anywhere in TCSlib, that one step keeps a configuration within a
+  window of any shape (the radius window `Cfg.InWindow`, a per-tape radius, an interval, a
+  visited interval), and every proof of window monotonicity. A later find is an accounting minor.
+  The canonical statements:
+  - `Turing.Cfg.InWindow.apply_iff`: for `c` in the radius-`s` window, `(a.apply c).InWindow s`
+    holds iff no work head is at `-s` moving left or at `s` moving right;
+  - `Turing.Cfg.InWindow.mono`: `c.InWindow s → s ≤ s' → c.InWindow s'`;
+  - **the tape half**, to be published in the 12.2c window: an action changes a work cell only
+    under that tape's old head (`z ≠ c.workTapePos i → (a.apply c).workTapes i z =
+    c.workTapes i z`). It exists today as `TuringMachine/Oracle`'s private
+    `apply_workTapes_eq_of_ne` (line 304 at the campaign tip), the natural one to harvest.
+- **Members on `Cfg.InWindow`** (lines at the campaign tip):
+  - `Complexity.ExpBFS.inWin_mono` and `inWin_stepWith` (`SpaceComplexity/ExpBFS/Radius`, lines
+    63 and 70; Hydroxyi's): the monotonicity, and one choice step from radius `s` into `s + 1`;
+  - the window half of `Complexity.Codec.boundary_iff` (`SpaceComplexity/Codec/Step`, line 195;
+    Hydroxyi's): once the two boundary cells are read as head conditions, `apply_iff`;
+  - `codec_step_blank` (private, `ClassPSPACE/TQBF`, line 1505; the campaign's): the tape half at
+    the same radius for one deterministic step;
+  - `xr_window_stepWith` (private, `ClassNP/ExhaustiveReplay`, line 67; the campaign's):
+    `inWin_stepWith` for any machine, with `Cfg.InWindow`'s two clauses written out (its output
+    bound is outside the kind).
+- **Members over other window shapes** (the widening; all the campaign's):
+  - `Turing.FinTM.source_bounds` (`TuringMachine/Sweep`, line 359): the interval `[-t, t]`, its
+    one-step case inline;
+  - `Turing.OracleTM.step_radius` (`TuringMachine/Oracle`, line 346): a per-tape radius, one
+    oracle step, through the private tape half above;
+  - `dgWindow_step` (private, `TuringMachine/Robustness/SingleTape`, line 1933): the window part of
+    a grown interval (its visited, history and size fields are outside the kind);
+  - `emCall_track_support` with `emCall_track_extent` (private, `TuringMachine/Build/Loop`, lines
+    3316 and 3294): the visited interval of a source run, its step inline.
+- **Disposition:** the dedup window (12.2c): publish the tape half, then re-prove the members from
+  the canonical statements or re-point their uses; a member over another window shape keeps its
+  own statement and cites the canonical ones for its step. Eight of the members re-prove the tape
+  half.
+
+Census (members over all declarations, as the style lint counts them; source-inclusive):
+`Build/CfgRecord` 2 of 130 at `b1b5199b` (1.5%; the canonical pair), 3 of 130 (2.3%) with RO-1's
+`recordStep_runFrom_one`; `ExpBFS/Radius` 2 of 27 (7.4%); `Codec/Step` 1 of 30 (3.3%); one
+member each in `TQBF`, `ExhaustiveReplay`, `Sweep`, `Oracle` (`step_radius`; its private
+`apply_workTapes_eq_of_ne` is the tape half's harvest source, not a copy) and
+`Robustness/SingleTape`, and two declarations in `Build/Loop`. The one-fifth rule is not
+reached.
+
+**WL-1, a `WalkLe` equation in a consumer file** (gate 96, minor 3's residue; recorded
+2026-11-05). `Complexity.LogProg.ISCount.walkLe_succ_iff` (`Logspace/ISCountMath`, line 120),
+the last-edge form
+`WalkLe R K (j + 1) c t ↔ WalkLe R K j c t ∨ ∃ w, WalkLe R K j c w ∧ R w t ∧ t < K`,
+is a fact about `Complexity.WalkLe` (`Logspace/PathWalk`) that lives in a consumer file and
+namespace, and its proof unfolds `WalkLe` by `simp only [WalkLe]`, a cross-file unfolding.
+Since #196's repair (`b1b5199b`) `SavitchARM/Reach` no longer uses it: `chain_of_walkLe` reads
+walks at the front through the new `Complexity.walkLe_succ_iff_head` (`PathWalk`, `Iff.rfl`),
+and `Reach` imports `PathWalk` instead of `ISCountMath`. Its remaining uses are in
+`ISCountMath`'s own `mem_succ_iff`. Not a copy. **Disposition:** the dedup window (12.2c): move
+it beside `WalkLe` in `PathWalk`, or re-prove it there from `walkLe_succ_iff_head` without
+unfolding, and cite it from `ISCountMath`. Both files are Hydroxyi's.
+
+**WC-1, a window-run closure lemma (optional)** (gate 96, note 10; recorded 2026-11-05).
+`Complexity.ExpBFS.winRun_of_card_eq` (`ExpBFS/Radius`) and the induction inside
+`Complexity.LogProg.SavitchARM.mem_iff_reach_of_noEdge` (`SavitchARM/Window`) share about ten
+lines of one skeleton: extend a window run by `WinRun.snoc`, then finish with `rcode_iff` and
+`mem_acceptLang`. The closing steps differ: a shared pattern, not a copy. The induction also
+shows more than it states: under `NoEdge`, every word is a window run. **Disposition
+(optional):** the dedup window (12.2c): one closure lemma, "if every one-step extension of a
+window run stays in the window, every word is a window run", from which `winRun_of_card_eq` and
+a public `winRun_of_noEdge` both follow.
+
+**QL-X1, an idiom exclusion: the query layout** (gate 96, note 11; ruled by the user,
+2026-11-05). `SavitchARM/Window`'s `NoEdge` reproduces 85% of `SavitchARM/Recursion`'s `Rel` on
+the v3 screen. The shared text is the query layout
+`pairEncode x (pairEncode (bits u) … (bits s))`, through which each predicate reads a code
+language or an oracle answer; `NoEdge` restates none of `Rel`'s meaning. **Ruled (user,
+2026-11-05): an idiom**, as with NF-X1's. **Disposition:** excluded; not counted.
+
+**CQ-1, codec-level query predicates** (gate 96, note 11; opened by the user, 2026-11-05, as a
+12.2c item). The queries "`⟨x, ⟨bits u, bits s⟩⟩` is in `initLang N`" (and likewise for
+`acceptLang N` and `edgeLang N`) are spelled out wherever they are used: in
+`Complexity.LogProg.SavitchARM`'s `mem_iff_reach` and `NoEdge`, and in the deepening's block-fit
+lemmas (the design's `BlockFit` probe: `fit_initO`, `fit_edgeO`, `fit_accO`, `fit_edge_block`).
+`Logspace/ISCountGenRadius` names two of them as public `abbrev`s in a consumer file,
+`ISGen.InitM` and `ISGen.AccM`, with no `_iff` lemmas. **Disposition:** the dedup window
+(12.2c): a `def` per query, each with its `_iff` lemma, beside `initLang`, `acceptLang` and
+`edgeLang` (`SpaceComplexity/Codec/Langs`), replacing `ISGen`'s `InitM` and `AccM` and serving
+`mem_iff_reach`, `NoEdge` and the fit lemmas alike. `Codec/Langs` and `ISCountGenRadius` are
+Hydroxyi's: interface design in their files.
+
+**RP-1, definitional reads that #196's equations can replace** (gate 96, the round-2 shape
+search; recorded 2026-11-05; not duplication). #196 publishes `Iff.rfl` equations for `WalkLe`,
+`StepRel`, `RCode`, `WinRun`, `Rel`, `InitO` and `AccO`. Colleagues' files read these definitions
+by unfolding or by definitional equality: `WalkLe` in `Logspace/ISCountGenWalk` (83–105),
+`PathWalkMachine` (429–439) and `ISCountMath` (124); `StepRel` in `ExpBFS/Radius` (167),
+`Logspace/PathHard` (232) and `Randomized/BPLInPCount` (119); `RCode` in `ExpBFS/Main` (98–104)
+and `ISCountGenRadius` (88–92); `Rel`, `InitO` and `AccO` in `SavitchARM/Correct` (55–71); lines
+at the campaign tip. **Disposition:** the dedup window (12.2c): re-point them to the equations.
+Not counted.
+
+**CE-1, equal codes of window configurations, copied** (found 2026-11-05 by gate 96's round-2
+screen; **acknowledged by the user for 12.2c, 2026-11-05**). `coreSum_eq_of_code_eq` (equal
+radius-`s` codes of two configurations in the radius-`s` window give equal vertices) is public, with
+the same statement and the same one-line proof through `coreSum_eq_of_cfgWord_eq`, in
+`SpaceComplexity/ExpBFS/Radius` (`Complexity.ExpBFS`, line 126 at the campaign tip) and in
+`Randomized/BPLInPCount` (`Randomized.BPLInP`, line 106). Both files are Hydroxyi's, and the copy
+predates #196. **Disposition:** the dedup window (12.2c): keep `ExpBFS`'s and re-point
+`BPLInPCount`'s uses. Census: one declaration in each file.
+
+**ZP-1, the zone row's precondition under a change of state** (#197, G5's consumer API; gate 97,
+minor 5; ruled by the user, 2026-11-05). `Turing.zoneRowPre` (`Build/ZoneRebalance`) reads only
+the work tapes and work tape `0`'s head, so it holds of a configuration exactly when it holds
+after the state is renamed or rebound. No public lemma said so. `Build/ZoneStep` re-derived it
+privately (`zs_rowPre_mapState`); G5's controller needs it too (its phase host starts a phase at
+`d.mapState (fun _ => s₀)` and returns `post.bindState (red p)`); and `ZoneRebalance` proves it
+inline twelve times, unfolding `zoneRowPre` with `funext_iff`, `Cfg.mapState_workTapes` and
+`Cfg.mapState_workTapePos`. That is legal in the definition's home, so there is no rule-10 issue.
+- **Ruled (user, 2026-11-05): publish** `zoneRowPre_congr` (across state types: equal work tapes
+  and equal tape-`0` heads give the same precondition, which covers `mapState` and `bindState`)
+  and its corollary `zoneRowPre_mapState_iff`, beside `zoneRowPre`. Done on #197's head
+  `20e7fc75`; `ZoneStep` cites them, and its private copy is gone.
+- **The twelve inline sites are re-pointed in the 12.2c window** (the same ruling): lines 831,
+  884, 906, 1239, 2275, 2301, 2362, 3330, 3354, 3432, 3512 and 3539 at #197's original head
+  `0a1b64d5` (each 22 lines lower at `20e7fc75`), one in each of `zr_rightSeekBack_post`,
+  `zr_rightSeekBack_ruler_pre`, `zr_rightRuler_pre`, `zr_rightPass_pre`, `zr_rightReturn_pre`,
+  `zr_rightReturn_post`, `zr_rightReturn_bounds`, `zr_rightLeft_pre`, `zr_rightLeft_post`,
+  `zr_rightLeft_fields`, `zr_extend_pre` and `zr_extend_fields`.
+- **Not RN-1, by kind.** RN-1's fact is a configuration equation (`Cfg.mapState_eq_of_fields`: a
+  renamed configuration equals any configuration with its data fields and the renamed state),
+  and its family is the five-line `Cfg.ext`/`Cfg.mapState_*` block. These twelve prove one
+  predicate's invariance under a change of state, with no `Cfg.ext` and no configuration
+  equation, so they are this 12.2c item, with `zoneRowPre_congr` and `zoneRowPre_mapState_iff`
+  as its canonical statements. (Gate 97's pre-dispatch sweep, `evidence/sweep/README.md`, called
+  `zs_rowPre_mapState` "RN-1's kind"; by RN-1's scope it belongs here.)
+
+Census (inline steps inside declarations, counted as RN-1's are; members over all declarations,
+as the style lint counts them, at `20e7fc75`): `ZoneRebalance` 14 of 875 (1.6%: the twelve sites
+and the canonical pair). Four of the twelve declarations also hold an RN-1 block
+(`zr_rightSeekBack_post`, `zr_rightReturn_post`, `zr_rightLeft_post`, `zr_extend_fields`), so with
+RN-1's 21 the file holds 31 of 875 (3.5%). The one-fifth rule is not reached.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
