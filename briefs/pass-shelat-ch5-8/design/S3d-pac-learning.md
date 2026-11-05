@@ -48,10 +48,11 @@ S. Ben-David, *Understanding Machine Learning*, ch. 3. The definitions:
   a learner with prediction advantage `≤ γ` does not satisfy `WeakLearnsUnder U C m L γ' δ`
   whenever `γ + δ < γ' ≤ ½`: split the expected error over the accuracy event (error at most
   `½ − γ'`) and its complement (probability at most `δ`, error at most 1). Starting from
-  [KV94, §4.1, p. 74]'s weak learner, which succeeds only with probability `1/q`, a small `δ`
-  needs confidence amplification [KV94, §4.2, pp. 76–77]; layer 2 applies the bridge to the
-  amplified learner, with its own sample count, running time and edge (gate 05, round 2, R2-1
-  and R2-2).
+  [KV94, §4.1, p. 74]'s weak learner, which is guaranteed to succeed only with probability `1/q`,
+  a small `δ` is obtained by confidence amplification [KV94, §4.2, pp. 76–77] unless the learner
+  is already certified at it; layer 2 applies the bridge to the learner actually used (the
+  amplified one, with its own sample count, running time and edge, when amplification is needed)
+  (gate 05, rounds 2 and 3: R2-1, R2-2, R3-2).
 
 ### Layer 2: efficient learning and Thm 179.1 (prong D, `TCSlib/Cryptography/Randomness/`)
 
