@@ -1,0 +1,42 @@
+From f5236461d23e774d4b37a6c0ef880c2e2da6806e Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 5 Nov 2026 01:15:40 -0800
+Subject: [PATCH 6/9] SavitchARM/Recursion: Rel's defining equation,
+ rel_iff_orc
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../SpaceComplexity/SavitchARM/Recursion.lean          | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean
+index 409ad525..274fdf6a 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion.lean
+@@ -30,7 +30,8 @@ every register stays below `2 ^ (w · w)`.
+ 
+ ## Main definitions
+ 
+-* `Complexity.LogProg.SavitchARM.Rel` — the step relation read from the oracle.
++* `Complexity.LogProg.SavitchARM.Rel` — the step relation read from the oracle, with its
++  defining equation `rel_iff_orc`.
+ * `Complexity.LogProg.SavitchARM.Inv` — the register invariant at a level.
+ 
+ ## Main results
+@@ -54,6 +55,13 @@ open Turing
+ def Rel (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u v : ℕ) : Prop :=
+   orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) = true
+ 
++/-- `Complexity.LogProg.SavitchARM.Rel`'s defining equation. -/
++theorem rel_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u v : ℕ} :
++    Rel orc x s u v ↔
++      orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) =
++        true :=
++  Iff.rfl
++
+ /-- **The register invariant at level `i`**: the setup registers and the scratch registers
+ are clear, the radius, width and code bound are in place, the node's codes are below
+ `2 ^ w`, the midpoint is at most `2 ^ w`, and the two stacks hold at most `w - i` frames. -/
+-- 
+2.50.1 (Apple Git-155)
+

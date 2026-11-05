@@ -30,6 +30,9 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - mechanical dedup edits (copy deletions, re-points) in Hydroxyi's ARM files, with an FYI only;
   - the general Savitch's generalization of `SpaceComplexity/SavitchARM/*`, `Machines/*` and
     `Codec/*`, with an FYI only;
+  - four `Iff.rfl` equations for the deepening (2026-11-05): `walkLe_zero_iff` and
+    `walkLe_succ_iff` in `Logspace/PathWalk`, `rcode_iff_reflTransGen` and `winRun_iff` in
+    `ExpBFS/Radius`, FYI only;
   - gate 89's re-points (#181's files);
   - one visibility change in `CircuitComplexity/DAGCircuitSat`.
 
@@ -148,9 +151,12 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 - **Agent choice, a soft suggestion per item:** Codex for a first (maybe second) attempt; Claude
   for an item making slow progress (one stalled Codex round counts); megafills go to Codex.
   Ask the agent as its own question, never inside an option.
-- **Sub-agents are only for reviewing incoming fills and audits.** Give them the full standing
-  rules: no `lake build`, Lean only through the throttled tools, `python3 -I` on untrusted data,
-  no commits or pushes. The maintainer integrates the result.
+- **Sub-agents** review incoming fills and audits. On the cloud machine they may also take
+  independent tasks in parallel (screens, sweeps, record drafts, probe drafts), **at most five at
+  once** (the user, 2026-11-05). Give them the full standing rules: no `lake build`, Lean only
+  through the throttled tools and within the machine-wide limit of two, `python3 -I` on untrusted
+  data, screens one at a time, no commits or pushes, outputs only in their own scratch folder.
+  The maintainer integrates the result.
 
 ## 6. Scripted edits and records
 

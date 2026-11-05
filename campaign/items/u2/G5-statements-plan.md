@@ -87,3 +87,50 @@ writes only images of bits.
 elsewhere is not possible: it needs the file's private run lemmas.
 
 **Next:** the screen; the PR and gate 92's pack; the replay, after #181 merges, from `oleans-lsm5`.
+
+## 6. The fill's pre-ship, started (2026-11-05, overnight)
+
+- **The zone layer is complete.** `Build/Zone`, `Build/ZoneTape` and `Build/ZoneRebalance` have no
+  `sorry`; the rows `exists_zoneRebalanceTM` and `exists_zoneExtendTM` are proved.
+- **The consumer fit still holds on the landed rows.** Gate 22's fit section
+  (`s13d/g24/landing/parts/fit.tail`: `trackStep_fit`, `amortized_le`, `run_cost_le`), on top of
+  the landed `ZoneRebalance`, `ZoneTape` and `Contract/Seam`, elaborates with 0 diagnostics
+  against `oleans-lcf3`, the campaign after #190 (`probes/G5FitLanded.lean.txt`, `.out`). The
+  statement-phase probe as a whole no longer elaborates, because it restates the layer that has
+  since landed.
+
+**Decision G5-F1 (the user's, before the brief):**
+- **API first** (as for NF's host and the deepening). The maintainer publishes the consumer side
+  by PR and gate, beside the rows (`Build/ZoneRebalance` or a small `Build/ZoneStep`):
+  - `trackStep_fit`, strengthened per gate 22's minor 2 (`Fintype S`, and the endpoint
+    equalities for `inputPos`, `output` and the scratch head);
+  - `amortized_le`;
+  - `run_cost_le` with a fixed per-step overhead (minor 1).
+
+  The fill then writes the controller, the invariant and the count bound.
+- **Or all in the fill:** it proves these as privates of `Robustness/TwoTapes`, citing the rows.
+
+The recommendation is API first. It fixes the interface under rule 10 before the fill starts,
+and the three are statements another consumer (a later `k → 1` or `k → 2` variant) would reuse.
+Size: about 300–400 lines (ESTIMATE), and the replay is `ZoneRebalance`'s downstream.
+
+## 7. Decision G5-F1 ruled: API first (the user, 2026-11-05)
+
+The consumer side is published by PR `lean/zone-step-api` and gate 97
+(`campaign/gates/97-zone-step-api/`):
+- **`Build/ZoneStep` (new):**
+  - `exists_zoneTrackStepTM`, one track's step. It meets gate 22's minor 2 (`Fintype S`, and the
+    endpoint's scratch head, input head and output), has one constant for every direction and
+    track, and has live exits (`none ∉ X`) for the phase host;
+  - `sum_two_pow_le_of_count`, the layer cake, through Mathlib's geometric sums;
+  - `sum_cost_le_of_count`, with the fixed overhead `B` of minor 1, sound at `k = 0`;
+  - `zoneTrackStepData`.
+- **`Build/ZoneRebalance`:**
+  - `zoneRowPre_iff`, `zoneRebalanceIndex_eq` and `zoneRebalanceIndex_le`;
+  - the data maps' and endpoints' fields (`simps`).
+- **`Build/Contract/Basic`:** `Contract.zero`, the zero-time contract.
+  - The screen paired the step's private stop contract with `ZoneRebalance`'s private anchor
+    (99%), so both now use `Contract.zero` (homes first).
+
+G5's fill then writes the controller, its invariant and the count bound, citing these. Its brief
+follows the merge.

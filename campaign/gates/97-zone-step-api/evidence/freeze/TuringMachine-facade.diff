@@ -1,0 +1,21 @@
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 4edcf9fe..8dc81561 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -35,6 +35,7 @@ import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+ import TCSlib.Complexity.TuringMachine.Build.Zone
+ import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+ import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
++import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+ import TCSlib.Complexity.TuringMachine.Build.Catalog
+ import TCSlib.Complexity.TuringMachine.Build.OracleCall
+ import TCSlib.Complexity.TuringMachine.SymbolLift
+@@ -175,6 +176,8 @@ for the local modifications.
+   with blank separators, the inner-packed encoding `zonedTape` and its invariants.
+ * `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts.
+   Proved.
++* `Build/ZoneStep` — one track's step from the rows, as a contract, and the amortized
++  `O(T log T)` cost of a run (§13d). Proved.
+ * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
+   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
+ * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a

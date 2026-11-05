@@ -198,3 +198,101 @@ machine `D` of §2, built from `AHalt.embed_guardLe` (#182), the `ARMLoops` loop
 `s ≤ sp |x| + 1`, where `w = C_w (s + logSpace |x| + 1)` and every register is at most
 `2 ^ (w · w)`. ESTIMATE: 1.2–2.2k lines. The brief issues once #182 and #184 have merged, with its
 pre-ship on the merged tree.
+
+## 9. The pre-ship on the merged tree (2026-11-05, after #182, #184, #188, #189 and #190)
+
+The probes are in `probes/`. They were elaborated against `oleans-led4` (the campaign's Lean
+after #188 and #189), then again against `oleans-lcf3` (after #190, which changed
+`Build/CfgRecord`, in the fill's import closure), with identical outputs (`probes/lcf3/`).
+
+1. **§8's route probe is unchanged on the merged tree** (`DeepenRoute-merged.lean.txt`, `.out`):
+   exactly its four `sorry` warnings.
+2. **The window lemmas are mostly published already, in `ExpBFS/Radius` (Hydroxyi's).** That file
+   searches growing radii for the exponential-time simulation. It proves that reachable codes are
+   the codes of window runs (`rcode_iff`), that every run of a space-`sp` decider stays in the
+   window `sp |x|` (`inWin_runWith_of_decides`), and the window run's extension laws
+   (`WinRun.snoc`, `WinRun.last`, `inWin_init`, `coreSum_eq_of_code_eq`). The window route probe
+   (`WindowRoute.lean.txt`) proves `noEdge_of_lt` and `mem_iff_reach_of_noEdge` from those lemmas,
+   `mem_*Lang`, `cfgCode_lt`, `reflTransGen_of_reach`, `mem_of_codePath`,
+   `Cfg.InWindow.core_bounds`, `inWindow_of_coreSum_eq`, `stepWith_eq_apply` and
+   `DecidesInSpace.mem_iff_acceptsWithin_configBound`, plus six API statements (below). Sealed
+   over 24 other-file definitions (`window-seal/`), it elaborates with only the two non-equation
+   API stand-ins' `sorry` warnings. Its 48 controls all fail sealed; unsealed, 46 pass, and the two
+   others are the recursive definitions' delta goals (`Reach`, `NDTM.runWith`).
+3. **Revised pins.** Path shortening is done on codes, which lie below `2 ^ w` once
+   `codeK N (s + logSpace |x| + 1) ≤ w`, so the configuration count is not needed:
+   - `mem_iff_reach_of_noEdge` drops `hcb : N.configBound x.length s ≤ 2 ^ w`;
+   - `configBound_le_pow` is dropped from the fill (it would also have had to read `configBound`'s
+     value, which has no published equation);
+   - `D`'s width is then `w = codeK N (s + ℓ + 1)` exactly.
+4. **The API the route needs (six lemmas).** Each is proved at its home in
+   `WindowApi.lean.txt` (0 diagnostics); `reach_of_reflTransGen` is proved there under a seal of
+   `WalkLe` and `Reach`.
+
+   | Home | Lemma | Owner | Covered by the 2026-10-27 exception? |
+   |---|---|---|---|
+   | `Build/CfgRecord` | `Cfg.InWindow.apply_of_lt`: an action applied to a window-`s` configuration whose heads are strictly inside `[-s', s']` (`s ≤ s'`) lands in the window `s'` (it also gives `ExpBFS`'s `inWin_stepWith`, at `s' = s + 1`) | the campaign | not needed |
+   | `Codec/Bridge` | `stepRel_iff` (`Iff.rfl`) | Hydroxyi | yes (`Codec/*`) |
+   | `SavitchARM/Reach` | `reach_of_reflTransGen`: a path of a relation whose steps stay below `K` is a `Reach K R i` witness when `K ≤ 2 ^ i`; from `reach_iff_walkLe` (one shortening argument in TCSlib, `walkLe_short`) and `reach_of_chain` | Hydroxyi | yes (`SavitchARM/*`) |
+   | `Logspace/PathWalk` | `walkLe_zero_iff`, `walkLe_succ_iff` (`Iff.rfl`) | Hydroxyi | **no** |
+   | `ExpBFS/Radius` | `rcode_iff_reflTransGen`, `winRun_iff` (`Iff.rfl`) | Hydroxyi | **no** |
+
+   Without the last two rows, the fill would have to re-derive `rcode_iff` (path to run) and
+   `walkLe_short` (shortening), because rule 10 forbids reading `RCode`, `WinRun` and `WalkLe`
+   by their definitions. That is a ruling for the user (decision 4 below).
+5. **What is left for the fill:** the machine `D` of §2, `deepen_contract`, and the two window
+   lemmas in their probed form, about 1.0–2.0k lines (ESTIMATE).
+
+**Decision 4, ruled by the user (2026-11-05): "Four Iff.rfl equations".** The exception extends
+to the four `Iff.rfl` equations in `Logspace/PathWalk` and `ExpBFS/Radius`, FYI only. The six
+lemmas land in one maintainer API PR with its gate and replay; the fill's brief issues after it
+merges.
+
+## 10. The block fit, and the API completed (2026-11-05, overnight)
+
+**The fit.** `probes/BlockFit.lean.txt` (0 diagnostics, on the API branch's tree, sealed over 19
+definitions) embeds `A E` in an abstract five-decider machine `D` with decider `2` rerouted to the
+edge language. Entered at the outer search with the setup's registers, the block exits through
+`k b`, with `b` exactly the deepening's question: whether some initial code reaches some edge code
+by midpoint reachability at radius `s` and level `w`, in the codec's terms. It reads the search
+through four more equations, which are the API's last rows:
+
+| Home (Hydroxyi's, 2026-10-27 exception) | Lemma |
+|---|---|
+| `SavitchARM/Search` | `initO_iff_orc`, `accO_iff_orc` (`Iff.rfl`); `outerSt_toV` (the outer search's register file as `Function.update`s of `setSt`'s) |
+| `SavitchARM/Recursion` | `rel_iff_orc` (`Iff.rfl`) |
+| `SavitchARM/Setup` | `setSt_toV` (the setup's register file as `Function.update`s of zero) |
+
+The register-file equations are proved through `Machine`'s published `St.toV_zero` and `St.upd_*`,
+so they read `Machine`'s definitions under rule 10. With them, the fill's machine sets the
+block's registers by clearing all eighteen and writing `rs`, `rw`, `rK`, `rU`, `rV`, `rM` in
+that order. Its register file then matches `RegExt`'s target pointwise, with no register-distinctness
+facts needed.
+
+**The window lemmas are proved.** On the API branch, `probes/WindowRoute.lean.txt`'s two lemmas
+close with no `sorry`. `probes/WindowModuleDraft.lean.txt` (163 lines, 0 diagnostics) is the module
+`SavitchARM/Window` as library text, with docstrings and sketches. Whether it lands with the API PR
+or goes to the fill as an input is for the user (decision 5).
+
+**The API branch** (`lean/deepen-window-api`, local, eight commits, one per file): eleven lemmas
+and one private helper, additive. Gate 96's pack and evidence are drafted in
+`campaign/gates/96-deepen-api/`. The downstream replay is 72 modules.
+
+**What remains for the fill:** the machine `D` (its own loops: the input length through decider
+`0`, `ℓ`, the radius loop, the width and `2 ^ w`, the register resets), its run lemma by induction
+on `sp |x| + 1 - s`, the register bound, and `deepen_contract`; `savitch_of_logSpace_le` and
+`savitch` as probed in §8. ESTIMATE: 0.8–1.6k lines.
+
+**Decision 5 (the user's):** land `SavitchARM/Window` with the API PR (the maintainer's proof,
+gated with it), or give it to the fill as an input to land as is.
+
+**Ruled, 2026-11-05 (morning).**
+- **Decision 5:** the window module lands with the API PR. It is
+  `SpaceComplexity/SavitchARM/Window.lean` on #196 (`lean/deepen-window-api`, head `89f4ebbc`),
+  the draft of `probes/WindowModuleDraft.lean.txt` with the header options moved above the module
+  docstring as in its siblings, and one import line plus one module-list entry in the facade
+  `SpaceComplexity.lean`. Sealed over the window route's 24 definitions, it elaborates with 0
+  diagnostics; `noEdge_of_lt` and `mem_iff_reach_of_noEdge` are on the standard axioms.
+- **The fill's agent:** Claude (the user). The brief `ch34-fill-deepen-DRAFT.md` records both.
+- **The API branch is pushed** and #196 is open against the campaign. Its replay, `replay-ldwa`, is
+  the ten files' downstream closure, 73 modules chained from `oleans-lcf3`.

@@ -1,0 +1,43 @@
+From a2a49935236b92efbd3458d2d7f11e359b31ec4f Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 5 Nov 2026 00:57:17 -0800
+Subject: [PATCH 4/9] ExpBFS/Radius: the defining equations of WinRun and RCode
+ (winRun_iff, rcode_iff_reflTransGen)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
+index e7fbcc35..0594fa00 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius.lean
+@@ -93,6 +93,11 @@ lemma inWin_stepWith {s : ℕ} {C : Cfg N.k Bool N.State x} (h : Cfg.InWindow s
+ def WinRun (N : FinNDTM Bool) (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
+   ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x))
+ 
++/-- `Complexity.ExpBFS.WinRun`'s defining equation. -/
++lemma winRun_iff {s : ℕ} {w : List Bool} :
++    WinRun N x s w ↔ ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) :=
++  Iff.rfl
++
+ /-- The initial configuration is in every window. -/
+ lemma inWin_init (s : ℕ) : Cfg.InWindow s (N.tm.initCfg x) := Cfg.inWindow_init _ x s
+ 
+@@ -122,6 +127,12 @@ pairs at radius `s`. -/
+ def RCode (N : FinNDTM Bool) (x : List Bool) (s u : ℕ) : Prop :=
+   Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u
+ 
++/-- `Complexity.ExpBFS.RCode`'s defining equation: a reachable code is a step-pair path's end
++from the initial code. -/
++lemma rcode_iff_reflTransGen {s u : ℕ} :
++    RCode N x s u ↔ Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u :=
++  Iff.rfl
++
+ /-- Equal codes of window configurations are equal vertices. -/
+ lemma coreSum_eq_of_code_eq {s : ℕ} {C D : Cfg N.k Bool N.State x} (hC : Cfg.InWindow s C)
+     (hD : Cfg.InWindow s D) (h : cfgCode s C = cfgCode s D) : NDTM.coreSum C = NDTM.coreSum D :=
+-- 
+2.50.1 (Apple Git-155)
+

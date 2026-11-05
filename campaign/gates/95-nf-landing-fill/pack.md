@@ -25,8 +25,9 @@ produced it, and this gate covers the whole file:
 
 ## The PR
 
-#191 on `lean/c1-nf-landing`, head `e210f418` at staging (`evidence/patches/`, 12 commits on the
-file):
+#191 on `lean/c1-nf-landing`, head `e8994dc115fd61a940509516b658a9975edbb71a`, based on the campaign branch since #190
+merged. Against the campaign it changes one file, `ClassNP/NDNormalForm.lean` (3,289 lines, blob
+`9474847a`; `evidence/final-vs-campaign.diff`). Its 14 commits on the file are in `evidence/patches/`:
 - the partial's two worker commits and its E1–E3 commit (`7791e6fc`, `252dea65`, `969d221d`, from
   `lean/c1-nf-partial`);
 - cont1's seven commits, cherry-picked in order with authorship kept, the checkpoint labels and
@@ -50,8 +51,8 @@ file):
   - `nf_entry`'s blank cell past the stream cites `FinTM.bufferTape_eq_none_of_not_mem`;
   - the file imports `BufferWords` and `Build/Contract/Basic`, low published modules.
 
-**Stacked on #190**, whose branch is merged in. After #190 merges, #191 is retargeted to the
-campaign branch, merged with the campaign, and replayed.
+**#190 merged on 2026-11-05.** #191 was then retargeted to the campaign branch and merged with
+it (`e8994dc1`, a merge commit; the file is unchanged by it).
 
 ## Brief for the auditor
 
@@ -77,8 +78,17 @@ campaign branch, merged with the campaign, and replayed.
    - The cont1 review's dispositions: F1 (removed by E1); F2 (homes first, #190); the in-file
      pairs; the promotion requests.
    - The partial review's F6, NF-X1.
-   - The screen at the landing head (`evidence/screen/`): the v3 screen restricted to pairs with an
-     `NDNormalForm` declaration, over the brief's 21-file population plus `CfgFacts`.
+   - The screen at the final head (`evidence/screen/`): the v3 screen restricted to pairs with an
+     `NDNormalForm` declaration, over the brief's 21-file population plus `CfgFacts`, on a frozen
+     checkout of the final head. **13 pairs** (1,438 declarations, 5,230 characters), against 14 at
+     the first landing head `e210f418` (`superseded-e210f418/`, `pairdiff-e210f418-final.txt`):
+     - gone: `nf_tag` against `CfgFacts`' `Cfg.mapState_eq_of_fields` (83%; `nf_tag` now cites
+       it) and `nf_entry` against `CodeSimulator`'s `canonStageBuffer_none` (80%; the blank cell
+       now cites `FinTM.bufferTape_eq_none_of_not_mem`);
+     - new: `nf_entry` against `nf_tag` (54%, in the file). **Disposition: idiom**, the five
+       `streamStartCfg_*` field equations rewritten around two different statements;
+     - the one cross-file pair left is `un_setup` against `nf_setup` (57%), NF-X1, excluded by the
+       user's ruling. The other eleven are in-file pairs, with the cont1 review's dispositions.
 
    **The sweep** (`evidence/sweep.txt`) looked for `bufferTape_eq` unfoldings,
    `Nat.exists_eq_add_of_le`, `runFrom_add`/`runFrom_of_halt`, `lt_trichotomy`, `Nat.find` and
@@ -95,12 +105,19 @@ campaign branch, merged with the campaign, and replayed.
 ## Repository-side attestations (verify or challenge)
 
 - **Elaboration:** the landing file elaborates against a clone of the campaign's snapshot with
-  #190 compiled in, with no output.
+  #190 compiled in, with no output. The replay below compiles it on the merged tree.
 - **Axioms** (`evidence/axioms/`): `exists_codeNDTM_accepts_linear` on
   `[propext, Classical.choice, Quot.sound]`.
-- **Replay:** after #190 merges. It covers `NDNormalForm`, the `ClassNP` facade, `NTimeHierarchy`
-  and `Diagonalization`, chained from #190's snapshot. With #188 merged too, `NTimeHierarchy`'s
-  three theorems should be free of `sorryAx`. That is checked at the replay.
+- **Replay:** `replay-lnf` (`evidence/merged-tree/`), the downstream closure of the one changed
+  file on the merged tree: `NDNormalForm`, the `ClassNP` facade, `NTimeHierarchy` and
+  `Diagonalization`, 4 modules chained from `oleans-lcf3` (the campaign after #190):
+  **`# modules=4 failed=0`**, every module with 0 `sorry` warnings; the static check 4 modules,
+  0 mismatches.
+- **The headlines** (`evidence/axioms/NTHAx.lean.txt`, `.out`, on `replay-lnf`'s snapshot): the
+  target, `exists_diagonalizer`, `exists_timed_universal_NDTM`, `exists_ndAcceptsWithin_decider`,
+  `ntime_hierarchy`, `ntime_hierarchy_of_pos` and `NTIME_linear_ssubset_square` all on
+  `[propext, Classical.choice, Quot.sound]`: the nondeterministic time hierarchy is free of
+  `sorryAx` once #191 merges.
 
 ## Findings format
 

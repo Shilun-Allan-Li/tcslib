@@ -1,0 +1,105 @@
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
+
+/-! The deepening's API, proved in home-like contexts (maintainer pre-ship, 2026-11-05). Each
+section stands for one home: `Cfg.InWindow.apply_of_lt` beside `Cfg.InWindow` (`Build/CfgRecord`,
+which may unfold its own definition), `WalkLe`'s two equations beside `WalkLe`
+(`Logspace/PathWalk`), and `reach_of_reflTransGen` beside `Reach` (`SavitchARM/Reach`), which
+reads `WalkLe` only through those equations and `Reach` only through `reach_of_chain`. A probe,
+not library code. -/
+
+set_option autoImplicit false
+
+/-! ## Home: `Build/CfgRecord` -/
+
+namespace Turing
+
+/-- **One step stays in a window when the heads are strictly inside it**: if `C` is in the
+window of radius `s ≤ s'` and every work head of `C` is strictly inside `[-s', s']`, then every
+action applied to `C` lands in the window of radius `s'`. Heads move by at most one cell, and the
+write lands under the old head. -/
+theorem Cfg.InWindow.apply_of_lt {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' := by
+  refine ⟨fun i => ?_, fun i z hz => ?_⟩
+  · have h1 := workTapePos_apply_le a C i
+    have h2 := hlt i
+    rw [abs_le] at h1 ⊢; rw [abs_lt] at h2
+    constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
+  · rw [Action.apply_workTapes]
+    have hzp : z ≠ C.workTapePos i := by
+      rintro rfl; exact absurd (hlt i) (not_lt.mpr hz.le)
+    rw [Function.update_of_ne hzp]
+    exact hC.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)
+
+end Turing
+
+/-! ## Home: `Logspace/PathWalk` -/
+
+namespace Complexity
+
+theorem walkLe_zero_iff {E : ℕ → ℕ → Prop} {n c t : ℕ} : WalkLe E n 0 c t ↔ c = t := Iff.rfl
+
+theorem walkLe_succ_iff {E : ℕ → ℕ → Prop} {n j c t : ℕ} :
+    WalkLe E n (j + 1) c t ↔ c = t ∨ ∃ v, v < n ∧ E c v ∧ WalkLe E n j v t := Iff.rfl
+
+end Complexity
+
+/-! ## Home: `SavitchARM/Reach` (sealed: `WalkLe` and `Reach` are other files' here) -/
+
+namespace Complexity.LogProg.SavitchARM
+
+section Sealed
+
+attribute [local irreducible] Complexity.WalkLe Complexity.LogProg.SavitchARM.Reach
+
+/-- A bounded walk is a chain of at most as many steps, every vertex below the bound. -/
+theorem rr_chain_of_walkLe (K : ℕ) (R : ℕ → ℕ → Prop) :
+    ∀ j c t, c < K → WalkLe R K j c t → ∃ T ≤ j, ∃ f : ℕ → ℕ, f 0 = c ∧ f T = t ∧
+      (∀ i < T, R (f i) (f (i + 1))) ∧ ∀ i ≤ T, f i < K := by
+  intro j
+  induction j with
+  | zero =>
+    intro c t hc h
+    rw [walkLe_zero_iff] at h
+    exact ⟨0, le_rfl, fun _ => c, rfl, h, fun i hi => absurd hi (Nat.not_lt_zero _),
+      fun _ _ => hc⟩
+  | succ j ih =>
+    intro c t hc h
+    rcases walkLe_succ_iff.mp h with rfl | ⟨v, hv, he, hw⟩
+    · exact ⟨0, Nat.zero_le _, fun _ => c, rfl, rfl, fun i hi => absurd hi (Nat.not_lt_zero _),
+        fun _ _ => hc⟩
+    · obtain ⟨T, hT, f, h0, hTt, hstep, hlt⟩ := ih v t hv hw
+      refine ⟨T + 1, by omega, fun i => if i = 0 then c else f (i - 1), by simp, ?_, ?_, ?_⟩
+      · simpa using hTt
+      · intro i hi
+        rcases Nat.eq_zero_or_pos i with rfl | hpos
+        · simpa [h0] using he
+        · have := hstep (i - 1) (by omega)
+          simp only [show i ≠ 0 by omega, if_false, Nat.add_sub_cancel]
+          rwa [show i - 1 + 1 = i by omega] at this
+      · intro i hi
+        rcases Nat.eq_zero_or_pos i with rfl | hpos
+        · simpa using hc
+        · simp only [show i ≠ 0 by omega, if_false]
+          exact hlt (i - 1) (by omega)
+
+/-- **Path shortening into a midpoint witness**: for a relation whose steps stay below `K`, a
+path from `u < K` to `v` is a `Reach K R i` witness at every level `i` with `K ≤ 2 ^ i`. -/
+theorem reach_of_reflTransGen (K : ℕ) (R : ℕ → ℕ → Prop)
+    (hR : ∀ a b, R a b → a < K ∧ b < K) {u v : ℕ} (hu : u < K)
+    (h : Relation.ReflTransGen R u v) (i : ℕ) (hi : K ≤ 2 ^ i) : Reach K R i u v := by
+  have hv : v < K := by
+    rcases Relation.ReflTransGen.cases_tail h with rfl | ⟨b, -, hb⟩
+    · exact hu
+    · exact (hR _ _ hb).2
+  have h' : Relation.ReflTransGen (fun a b => a < K ∧ b < K ∧ R a b) u v :=
+    Relation.ReflTransGen.mono (fun a b hab => ⟨(hR a b hab).1, (hR a b hab).2, hab⟩) h
+  obtain ⟨T, hT, f, h0, hTv, hstep, hlt⟩ :=
+    rr_chain_of_walkLe K R K u v hu ((reach_iff_walkLe hu hv).mp h')
+  have := reach_of_chain K R f T hstep hlt i 0 T (by omega) (hT.trans hi)
+  rwa [h0, zero_add, hTv] at this
+
+end Sealed
+
+end Complexity.LogProg.SavitchARM

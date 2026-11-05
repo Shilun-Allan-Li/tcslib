@@ -1,0 +1,49 @@
+"""List the declarations a v3 copy-text screen extracts, without screening any pair.
+
+Usage: python3 -I decl-list.py <copy-text-screen-v3.py> <repo-root> <file.lean> [...]
+
+Executes the v3 script's own source up to (not including) its declaration loop, so `strip`, `DECL`,
+`scopes`, `qualify` and `body` are v3's verbatim, then repeats v3's declaration loop recording
+every regex match: `screened` when the whitespace-free body has at least 60 characters (v3 keeps
+exactly these), `short` otherwise. Labels are v3's (unique short name, else qualified, else `#k`),
+computed over the screened declarations only, as v3 does. Output: one tab-separated line per match:
+status, file, source line (located by the
+header text, best effort), label (or raw name for `short`), kind, keyword, body length, and
+SHA-1 prefixes of the whitespace-free body and of the whitespace-free stripped span (header to the
+next header; v3's body is the span's text after the first depth-0 `:=`).
+"""
+import hashlib, re, sys
+h = lambda x: hashlib.sha1(x.encode()).hexdigest()[:10]
+v3, args = sys.argv[1], sys.argv[2:]
+src = open(v3, encoding='utf-8').read()
+cut = src.index('\ndecls = []\n')
+sys.argv = [v3] + args
+g = {'__name__': 'v3prefix'}
+exec(compile(src[:cut], v3, 'exec'), g)
+strip, DECL, scopes, qualify, body = g['strip'], g['DECL'], g['scopes'], g['qualify'], g['body']
+root, paths = g['root'], g['paths']
+for p in paths:
+    o = open(f'{root}/{p}', encoding='utf-8').read(); t = strip(o); ms = list(DECL.finditer(t))
+    ev = scopes(p, t); found = []; rows = []; cur = 0
+    for i, m in enumerate(ms):
+        end = ms[i + 1].start() if i + 1 < len(ms) else len(t)
+        kind = 'proof' if m.group(2) in ('theorem', 'lemma') else 'term'
+        bd = re.sub(r'\s+', '', body(t[m.start():end]))
+        ns = [n for off, n in ev if off <= m.start()][-1]
+        hm = re.compile(r'^[ \t]*' + r'\s+'.join(map(re.escape, m.group(0).split())), re.M).search(o, cur)
+        if hm: cur = hm.end(); line = o.count('\n', 0, hm.start()) + 1
+        else: line = '?'
+        sp = re.sub(r'\s+', '', t[m.start():end])
+        rows.append((m.start(), line, m.group(3), qualify(ns, m.group(3)), kind, m.group(2), len(bd), h(bd), h(sp)))
+        if len(bd) >= 60: found.append((m.start(), m.group(3), qualify(ns, m.group(3))))
+    short = {}; qual = {}
+    for (_, nm, qn) in found: short[nm] = short.get(nm, 0) + 1; qual[qn] = qual.get(qn, 0) + 1
+    seen = {}; lab = {}
+    for (pos, nm, qn) in found:
+        if short[nm] == 1: name = nm
+        elif qual[qn] == 1: name = qn
+        else: seen[qn] = seen.get(qn, 0) + 1; name = f'{qn}#{seen[qn]}'
+        lab[pos] = name
+    for (pos, line, nm, qn, kind, kw, n, hb, hs) in rows:
+        st = 'screened' if pos in lab else 'short'
+        print(f"{st}\t{p}\t{line}\t{lab.get(pos, qn)}\t{kind}\t{kw}\t{n}\t{hb}\t{hs}")

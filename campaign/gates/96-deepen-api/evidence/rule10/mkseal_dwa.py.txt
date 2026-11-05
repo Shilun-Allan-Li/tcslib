@@ -1,0 +1,55 @@
+"""Seal copies and controls for the deepening window API PR (rule 10).
+Usage: python3 -I mkseal_dwa.py <worktree> <outdir>
+The four non-`Iff.rfl` proofs are copied, renamed, into scratch modules that import their
+homes, under a seal of every other-file TCSlib definition they could reach, with the usual simp
+erasures. The home's own definitions stay open, as in their homes (`Cfg.InWindow` for the window
+lemma, `setSt` for `setSt_toV`, `outerSt` for `outerSt_toV`); `Reach` is sealed although it is
+the home's own, since the proof reads it only through `reach_of_chain`. Controls: a delta and an
+equation goal per sealed definition."""
+import sys, pathlib, re
+wt, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+ERASE_W = 'attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg'
+ERASE = ERASE_W + ' Turing.NDTM.initCfg'
+SEAL_W = ['Turing.Action.apply', 'Turing.Cfg.workTapeSymbols']
+SEAL_R = ['Complexity.WalkLe', 'Complexity.LogProg.SavitchARM.Reach']
+SEAL_SET = ['Complexity.LogProg.SavitchARM.St.toV', 'Complexity.LogProg.SavitchARM.St.zero', 'Complexity.LogProg.SavitchARM.rs', 'Complexity.LogProg.SavitchARM.rw', 'Complexity.LogProg.SavitchARM.rK']
+SEAL_OUT = ['Complexity.LogProg.SavitchARM.St.toV', 'Complexity.LogProg.SavitchARM.St.zero', 'Complexity.LogProg.SavitchARM.rU', 'Complexity.LogProg.SavitchARM.rV', 'Complexity.LogProg.SavitchARM.rM', 'Complexity.LogProg.SavitchARM.setSt']
+def seal(names, erase=None):
+    return (erase or ERASE) + '\nattribute [local irreducible]\n' + '\n'.join('  ' + n for n in names) + '\n'
+def grab(rel, start, stop):
+    t = (wt / rel).read_text()
+    i = t.index(start); j = t.index(stop, i)
+    return t[i:j]
+w = grab('TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean', 'theorem Cfg.InWindow.apply_of_lt', '\nend Turing')
+w = w.replace('theorem Cfg.InWindow.apply_of_lt', 'theorem Cfg.InWindow.apply_of_lt_sealed', 1)
+(out / 'WindowSealed.lean').write_text(
+    'import TCSlib.Complexity.TuringMachine.Build.CfgRecord\n\nset_option autoImplicit false\n\n'
+    'namespace Turing\n\nsection Sealed\n\n' + seal(SEAL_W, ERASE_W) + '\n' + w + '\nend Sealed\n\nend Turing\n')
+r = grab('TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean', 'private theorem chain_of_walkLe', '\n/-! ## The size bounds -/')
+r = r.replace('private theorem chain_of_walkLe', 'theorem chain_of_walkLe_sealed').replace('chain_of_walkLe K R u', 'chain_of_walkLe_sealed K R u')
+r = r.replace('theorem reach_of_reflTransGen', 'theorem reach_of_reflTransGen_sealed', 1)
+assert 'chain_of_walkLe_sealed K R u' in r
+(out / 'ReachSealed.lean').write_text(
+    'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach\n\nset_option autoImplicit false\n\n'
+    'namespace Complexity.LogProg.SavitchARM\n\nsection Sealed\n\n' + seal(SEAL_R) + '\n' + r
+    + '\nend Sealed\n\nend Complexity.LogProg.SavitchARM\n')
+st = grab('TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean', 'theorem setSt_toV', '\n/--')
+st = st.replace('theorem setSt_toV', 'theorem setSt_toV_sealed', 1)
+ot = grab('TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean', 'theorem outerSt_toV', '\n/--')
+ot = ot.replace('theorem outerSt_toV', 'theorem outerSt_toV_sealed', 1)
+(out / 'RegsSealed.lean').write_text(
+    'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search\n\nset_option autoImplicit false\n\n'
+    'namespace Complexity.LogProg.SavitchARM\n\nsection SetupHome\n\n'
+    'attribute [local irreducible]\n' + '\n'.join('  ' + n for n in SEAL_SET) + '\n\n' + st.rstrip() + '\n\nend SetupHome\n\n'
+    'section SearchHome\n\nattribute [local irreducible]\n' + '\n'.join('  ' + n for n in SEAL_OUT) + '\n\n' + ot.rstrip()
+    + '\n\nend SearchHome\n\nend Complexity.LogProg.SavitchARM\n')
+hdr = (out / 'ctl_header.lean.part.txt').read_text()
+SEAL = list(dict.fromkeys(SEAL_W + SEAL_R + SEAL_SET + SEAL_OUT))
+doc = ("/-\nSeal controls for the deepening window API PR: a delta and an equation goal for each sealed "
+       "definition.\nExpected: unsealed, every control passes except recursive definitions' delta goals; "
+       "sealed, every\ncontrol fails. A probe record, not library code.\n-/\n"
+       "import TCSlib.Complexity.TuringMachine.Build.CfgRecord\nimport TCSlib.Complexity.SpaceComplexity.SavitchARM.Search\n")
+ctl = ''.join(f'#ctl_rfl {n}\n' for n in SEAL) + ''.join(f'#ctl_eqn {n}\n' for n in SEAL)
+for name, s in (('unsealed', ''), ('sealed', seal(SEAL))):
+    (out / f'SealControl_{name}.lean').write_text(doc + hdr + '\n\nsection Controls\n\n' + s + '\n' + ctl + '\nend Controls\n')
+print(len(SEAL), 'sealed definitions')

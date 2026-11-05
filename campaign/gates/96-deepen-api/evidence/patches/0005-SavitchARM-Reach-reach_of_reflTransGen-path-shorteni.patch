@@ -1,0 +1,103 @@
+From 46bf218d91ee9504c2a513714cceda253cae972b Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 5 Nov 2026 00:57:17 -0800
+Subject: [PATCH 5/9] SavitchARM/Reach: reach_of_reflTransGen, path shortening
+ into a midpoint witness
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../SpaceComplexity/SavitchARM/Reach.lean     | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
+index a848daee..43e9a4a4 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean
+@@ -5,6 +5,7 @@ Authors: Hydroxyi
+ -/
+ import TCSlib.Complexity.SpaceComplexity.Codec.Bridge
+ import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
++import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -37,6 +38,8 @@ is at most `2 ^ w`: chains of length at most `2 ^ w` are cut at midpoints
+ 
+ * `Complexity.LogProg.SavitchARM.reach_of_chain`, `reflTransGen_of_reach` — the two
+   directions of midpoint reachability.
++* `Complexity.LogProg.SavitchARM.reach_of_reflTransGen` — a path through vertices below `K` is
++  a midpoint witness at every level `i` with `K ≤ 2 ^ i` (path shortening).
+ * `Complexity.LogProg.SavitchARM.configBound_le` — the configuration count at radius
+   `(n + 2) ^ E` is below `2 ^ ((n + 2) ^ (2 E))`.
+ * `Complexity.LogProg.SavitchARM.mem_iff_reach` — membership as midpoint reachability.
+@@ -104,6 +107,67 @@ theorem reflTransGen_of_reach (K : ℕ) (R : ℕ → ℕ → Prop) :
+     rintro u v ⟨m, -, h1, h2⟩
+     exact (ih u m h1).trans (ih m v h2)
+ 
++/-- A walk of at most `j` edges from `c < K` (`Complexity.WalkLe`) is a chain of at most `j`
++steps with every member below `K`.
++
++**Proof sketch.** Induction on `j`, reading the walk through `Complexity.walkLe_zero_iff` and the
++last-edge form `Complexity.LogProg.ISCount.walkLe_succ_iff`: a walk of at most `j + 1` edges is
++one of at most `j` edges, or one of at most `j` edges to some `w` followed by an edge from `w` to
++`t < K`, which extends the chain by one member. -/
++private theorem chain_of_walkLe (K : ℕ) (R : ℕ → ℕ → Prop) (c : ℕ) (hc : c < K) :
++    ∀ j t, WalkLe R K j c t → ∃ T ≤ j, ∃ f : ℕ → ℕ, f 0 = c ∧ f T = t ∧
++      (∀ i < T, R (f i) (f (i + 1))) ∧ ∀ i ≤ T, f i < K := by
++  intro j
++  induction j with
++  | zero =>
++    intro t h
++    rw [walkLe_zero_iff] at h
++    exact ⟨0, le_rfl, fun _ => c, rfl, h, fun i hi => absurd hi (Nat.not_lt_zero _),
++      fun _ _ => hc⟩
++  | succ j ih =>
++    intro t h
++    rcases (ISCount.walkLe_succ_iff j c t).mp h with h | ⟨w, hw, hwt, ht⟩
++    · obtain ⟨T, hT, f, hf⟩ := ih t h
++      exact ⟨T, by omega, f, hf⟩
++    · obtain ⟨T, hT, f, h0, hTw, hstep, hlt⟩ := ih w hw
++      refine ⟨T + 1, by omega, fun i => if i ≤ T then f i else t, by simp [h0], by simp, ?_, ?_⟩
++      · intro i hi
++        rcases Nat.lt_or_ge i T with hiT | hiT
++        · simp only [show i ≤ T by omega, show i + 1 ≤ T by omega, if_true]
++          exact hstep i hiT
++        · obtain rfl : i = T := by omega
++          simp only [le_rfl, if_true, show ¬ i + 1 ≤ i by omega, if_false, hTw]
++          exact hwt
++      · intro i hi
++        by_cases hiT : i ≤ T
++        · simp only [hiT, if_true]
++          exact hlt i hiT
++        · simp only [hiT, if_false]
++          exact ht
++
++/-- **Path shortening into a midpoint witness**: if every step of `R` joins vertices below
++`K`, a path from `u < K` to `v` is a midpoint witness `Reach K R i u v` at every level `i` with
++`K ≤ 2 ^ i`. This is the converse of `reflTransGen_of_reach` under a vertex bound. [AB09,
++§4.2.1, proof of Theorem 4.14: a path in a graph of at most `2 ^ i` vertices has at most
++`2 ^ i` steps]
++
++**Proof sketch.** The path runs through vertices below `K`, so it is a walk of at most `K`
++edges (`Complexity.reach_iff_walkLe`, from the shortening `Complexity.walkLe_short`), hence a
++chain of at most `K ≤ 2 ^ i` steps, which `reach_of_chain` cuts at midpoints. -/
++theorem reach_of_reflTransGen (K : ℕ) (R : ℕ → ℕ → Prop) (hR : ∀ a b, R a b → a < K ∧ b < K)
++    {u v : ℕ} (hu : u < K) (h : Relation.ReflTransGen R u v) (i : ℕ) (hi : K ≤ 2 ^ i) :
++    Reach K R i u v := by
++  have hv : v < K := by
++    rcases Relation.ReflTransGen.cases_tail h with rfl | ⟨b, -, hb⟩
++    · exact hu
++    · exact (hR _ _ hb).2
++  have h' : Relation.ReflTransGen (fun a b => a < K ∧ b < K ∧ R a b) u v :=
++    Relation.ReflTransGen.mono (fun a b hab => ⟨(hR a b hab).1, (hR a b hab).2, hab⟩) h
++  obtain ⟨T, hT, f, h0, hTv, hstep, hlt⟩ :=
++    chain_of_walkLe K R u hu K v ((reach_iff_walkLe hu hv).mp h')
++  have := reach_of_chain K R f T hstep hlt i 0 T (by omega) (hT.trans hi)
++  rwa [h0, zero_add, hTv] at this
++
+ /-! ## The size bounds -/
+ 
+ /-- **The configuration count is doubly exponentially bounded**: at radius `(n + 2) ^ E`,
+-- 
+2.50.1 (Apple Git-155)
+

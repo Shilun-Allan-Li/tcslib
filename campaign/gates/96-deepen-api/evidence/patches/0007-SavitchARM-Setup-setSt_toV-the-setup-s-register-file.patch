@@ -1,0 +1,40 @@
+From 2808a9405ce572dd41ad9427db00238f99adab12 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 5 Nov 2026 01:15:40 -0800
+Subject: [PATCH 7/9] SavitchARM/Setup: setSt_toV, the setup's register file as
+ registers
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean
+index f244c56b..60b34530 100644
+--- a/TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean
++++ b/TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean
+@@ -28,6 +28,7 @@ Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result o
+ ## Main results
+ 
+ * `Complexity.LogProg.SavitchARM.setup_run` — the setup.
++* `Complexity.LogProg.SavitchARM.setSt_toV` — the register file after the setup, as registers.
+ * `Complexity.LogProg.SavitchARM.outerU_run` — the outer search answers whether an initial
+   and an accepting code are joined by midpoint reachability at level `w`.
+ 
+@@ -123,6 +124,13 @@ theorem pw_run : ∀ (j : ℕ) (st : St), st.X = j → st.C = 0 → st.T = 0 →
+ other register clear. -/
+ def setSt (s w : ℕ) : St := { St.zero with s := s, w := w, K := 2 ^ w }
+ 
++/-- **The register file after the setup, as registers**: `s`, `w` and `2 ^ w` in the radius,
++width and code-bound registers, every other register clear. -/
++theorem setSt_toV (s w : ℕ) : (setSt s w).toV =
++    Function.update (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w) := by
++  rw [St.toV_zero, St.upd_s, St.upd_w, St.upd_K]
++  rfl
++
+ /-- **The setup** [AB09, §4.2.1: the radius and the vertex-code width are computed first]:
+ from `scan` with all registers clear, the machine reaches `OU` with radius
+ `s = (|x| + 2) ^ E`, width `w = (|x| + 2) ^ (2E)` and code bound `2 ^ w`, everything else
+-- 
+2.50.1 (Apple Git-155)
+

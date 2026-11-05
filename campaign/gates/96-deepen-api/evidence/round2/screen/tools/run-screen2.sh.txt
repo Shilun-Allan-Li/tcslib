@@ -1,0 +1,21 @@
+#!/bin/bash
+# usage: run-screen.sh <label> <screen script> <root> <population file> <out.txt> <status file> <commit>
+# Takes the machine-wide screen lock ($TCSLIB_SCRATCH/locks/screen), runs the screen niced under
+# `python3 -I`, writes <out.txt>, <out stem>.time and <out stem>.err, appends a status line, and
+# releases the lock. A lock is treated as stale only when no screen process is seen twice, 10 s apart.
+. /home/user/tcslib-scratch/env.sh
+label=$1; script=$2; root=$3; pop=$4; out=$5; status=$6; commit=$7
+lock=$TCSLIB_SCRATCH/locks/screen
+until mkdir "$lock" 2>/dev/null; do
+  if ! pgrep -f "python3.*copy-text-screen" >/dev/null && sleep 10 && [ -d "$lock" ] && ! pgrep -f "python3.*copy-text-screen" >/dev/null; then
+    echo "stale lock (no screen process): removing" >&2; rmdir "$lock" 2>/dev/null; continue
+  fi
+  echo "lock held, waiting" >&2; sleep 30
+done
+trap 'rmdir "$lock"' EXIT
+stem=${out%.txt}
+mapfile -t files < "$pop"
+TIMEFORMAT='%R real %U user %S sys'
+{ time nice -n 10 python3 -I "$script" "$root" "${files[@]}" > "$out" 2> "$stem.err"; rc=$?; } 2> "$stem.time"
+echo "$label exit $rc $commit $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$status"
+echo "$label exit $rc"

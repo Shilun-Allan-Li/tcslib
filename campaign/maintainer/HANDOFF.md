@@ -39,32 +39,112 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 5. **Copy-text screens:** `scripts/copy-text-screen-v3.py`, one at a time under
    `$TCSLIB_SCRATCH/locks/screen`.
 
+6. **Cloud specifics, learned 2026-11-05** (the first cloud session):
+   - **Profile edits are refused**, so the variables live in `$TCSLIB_SCRATCH/env.sh` (with elan's
+     `bin` on `PATH`); source it at the start of every command. elan is installed with
+     `--no-modify-path` and no default toolchain; the pin comes from `lean-toolchain`.
+   - **The cache:** narrowed to the Mathlib roots of the bootstrap set plus the open PR heads
+     (355 roots, 3,605 files, from the Azure host `lakecache.blob.core.windows.net`, 0 failures).
+     `mathlib4.lean-cache.cloud` is refused by the proxy, but this Mathlib uses it only under
+     `USE_FRO_CACHE=1`. A new Mathlib import needs a narrowed fetch for its root.
+   - **A worker restart ends every process**, detached ones included, and restarts came while the
+     session waited on the user. Long jobs must be resumable: `bootstrap-snapshot.sh <wt> <name>
+     --resume` continues a killed bootstrap after its checks. After a restart, check
+     `$TCSLIB_SCRATCH/fills/replay/*.log` and resume.
+   - **`lean_check_tree.sh` takes no lock slot**, so a running bootstrap or replay holds slot 2 by
+     hand: `mkdir $TCSLIB_SCRATCH/locks/lean-slot-2 && echo <its bash pid> > …/pid` (freed by the
+     stale check when it dies).
+   - **ext4 has no copy-on-write:** `cp -R` copies a snapshot in full (about 1 GB). Prune.
+   - `mkreplay.py` calls `$TCSLIB_SCRATCH/api/staticsorry.py`: a copy of
+     `devtools/seyoon/staticsorry.py`. `$TCSLIB_SCRATCH/api/chain.py` lists a change's pre-replay
+     compile chain.
+   - **Sub-agents:** at most five at once, for independent tasks (WORKFLOW §5).
+   - **PFR is left out** (ruled by the user, 2026-11-05: option B). The Mathlib cache does not
+     provide the `PFR` package's oleans, so the twenty `CommunicationComplexity/NewmanTheorem`
+     modules that import it (directly or not) are left out of cloud snapshots
+     (`bootstrap_order.py`; `skipped-<name>.txt`). They are outside WORKFLOW §2's snapshot areas,
+     and no open PR's replay reached them. Building them would need a direct `lean` run over 31
+     PFR modules, which the rules do not cover: ask the user first.
+
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
 
-## 2. State (updated 2026-11-05, about 00:40 PST)
+## 2. State (updated 2026-11-05, about 10:40 PST): quiescent, no replay owed
 
 **Merged on 2026-11-04/05:** #181 (space facts), #182 (ARM embedding), #184 (the codec's edge mode),
-#189 (G5's statements; gate 92 closed), #188 (E-D's landing, `exists_diagonalizer`; gate 93 closed
-in round 3).
+#189 (G5's statements; gate 92), #188 (E-D's landing, `exists_diagonalizer`; gate 93), #190 (the
+configuration facts; gate 94, `replay-lcf3`).
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #190 | the configuration facts (`CfgFacts`, five lemmas; RN-1 by kind) | `replay-lcf3` **running** (86 modules from `oleans-led4`, at `a5d448e3`) | 94 **closed** (CLOSE 0/0/2) | merge when `lcf3` passes |
-| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | after #190 merges: retarget to the campaign, merge it, replay from `oleans-lcf3` (`NDNormalForm`, the `ClassNP` facade, `NTimeHierarchy`, `Diagonalization`) | 95: pack drafted (`campaign/gates/95-nf-landing-fill/`), staged after the retarget with its landing screen re-run | merge on a pass and a PASS |
+| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | `replay-lnf` **passed** (4 modules from `oleans-lcf3`, at `e8994dc1`; 0 `sorry`) | 95 **dispatched** 2026-11-05 (`outbox/gates/95-nf-landing-fill-gate/`, 415 sections) | merge when gate 95 closes |
+| #196 | the deepening's API: `SavitchARM/Window` (window exactness, termination) and eleven facts in eight files (design §9–§10; decisions 4 and 5) | `replay-ldwa` **passed** (73 modules from `oleans-lcf3`, at `89f4ebbc`; the existing 30 `sorry`s) | 96 **dispatched** 2026-11-05 (`outbox/gates/96-deepen-api-gate/`, 209 sections) | merge when gate 96 closes; then issue the deepening fill (Claude) |
+| #197 | G5's consumer API (decision G5-F1, API first): `Build/ZoneStep` (`exists_zoneTrackStepTM`, the amortization), `Contract.zero`, `ZoneRebalance`'s equations | `replay-lzsa` **passed** (111 modules from `oleans-lcf3`, at `0a1b64d5`; the existing 45 `sorry`s) | 97 **staged** (`outbox/gates/97-zone-step-api-gate/`, 91 sections) | dispatch gate 97; merge when it closes; then G5's fill brief |
 
-With #191 merged, the headline count is expected to reach **21 of 26**. Check `NTimeHierarchy` with
-`#print axioms`; the status record is `campaign/status/2026-11-05-headlines/`.
+On #191's merged tree the nondeterministic time hierarchy is admission-free:
+`ntime_hierarchy`, `ntime_hierarchy_of_pos` and `NTIME_linear_ssubset_square` rest on the
+standard axioms (gate 95's `evidence/axioms/NTHAx.out`). With #191 merged, the headline count is
+expected to reach **21 of 26**; the status record is `campaign/status/2026-11-05-headlines/`.
+
+**Merging several of these:** each replay above chained from `oleans-lcf3` with only its own
+PR. Once two or more have merged, the merged campaign's first snapshot (§1, item 4) is the replay
+of record for the combination.
+
+**Mac-only branches with commits not in the campaign** (checked 2026-11-05; none has an upstream
+that contains them). Most are superseded deliveries or landings:
+- `deliver/fill-eq-query-in`, `deliver/fill-s13d-g4-cont4-in`, `deliver/fill-u2s-universal-in`;
+- `lean/g4-cont1-partial`, `lean/ntime-diag-bf`, `lean/seam-layout`;
+- `local/eq-cp1-landing`, `local/eq-cp1-landing-v2`;
+- `dedup/ch34-d4`, which has no Lean.
+
+Two October re-points may still be 12.2c material. The user had them pushed as archive branches
+(2026-11-05):
+- `archive/mac/canon-mapcomp-repoint` (`e4c5d015`): `CodeSimulator`'s grammar-stage relabeling as
+  `Cfg.mapState_mapState`;
+- `archive/mac/r-leaf-repoint` (`89bf6acb`): `NDCodeSimulator`'s input rewinds as
+  `Build/InputRewind`'s.
+
+The rest stay on the Mac.
+
+`maint/12.2c-t2a` (2026-10-12) is the T2a facade wiring.
+
+**Update (2026-11-05, cloud session).** All three gates have reported:
+- **Gate 95 (#191): does not close**, 0/1/4 (F1, inline `BufferWords` re-derivations). The user
+  ruled **repair**.
+- **Gate 96 (#196): does not close**, 0/2/4 (F1, `NoEdge` without `_iff`; F2, `apply_of_lt`
+  re-derives `recordStep_window`). The user ruled **harvest** (public `Cfg.InWindow.apply_iff` and
+  `.mono`), **acknowledged by kind** the window-step family for 12.2c, and ruled F11's pair an
+  **idiom** with a 12.2c item for codec-level query predicates.
+- **Gate 97 (#197): PASS**, 0/0/6. The user ruled **publish** `zoneRowPre_congr` and
+  `zoneRowPre_mapState_iff` (F5). The minors are swept in one closing commit.
+
+**Duplication rulings of 2026-11-05 (the user)**, to enter `duplication-ledger.md` with the pushed
+repairs (the draft is `$TCSLIB_SCRATCH/agents/ledger/duplication-ledger.proposed.md`):
+- **WS-1**, acknowledged by kind and then **widened**: every proof that one step keeps a
+  configuration within a window of any shape, and window monotonicity; canonical
+  `Cfg.InWindow.apply_iff`, `Cfg.InWindow.mono`, and the tape half (to be published in 12.2c;
+  `Oracle`'s private `apply_workTapes_eq_of_ne` is its source).
+- **CE-1**, acknowledged for 12.2c: `coreSum_eq_of_code_eq`, public in both `ExpBFS/Radius` and
+  `Randomized/BPLInPCount`.
+- **QL-X1**: the `NoEdge`/`Rel` pair is an idiom; **CQ-1** opened (codec-level query predicates).
+- **ZP-1**: `zoneRowPre_congr` and `zoneRowPre_mapState_iff` published; `ZoneRebalance`'s twelve
+  inline sites re-pointed in 12.2c.
+- Maintainer records with them: RN-1 accounting (`nf_pack`), RC-4 (F8's row candidates), WL-1,
+  WC-1 (optional), RP-1 (definitional reads #196's equations can replace).
+
+The repairs are local commits on `wt-191`, `wt-196`, `wt-197` until each elaborates on the first
+cloud snapshot `oleans-cloud0` (the bootstrap at `dfed8b1f`'s Lean tree); then pushed, replayed,
+and gates 95 and 96 go to round 2. Each gate's `resolutions.md` holds the details.
 
 ## 3. Queue after the PRs
 
-1. **The general `savitch`'s deepening fill brief** (now unblocked: #182 and #184 merged); then
-   **G5's fill brief:** Hennie–Stearns over G2–G4's zone contracts. The two carried minors of
-   gate 22 are pinned (plan §2), and `k = 0` is handled separately. Codex first.
-2. **The general `savitch`'s deepening fill:** its brief is due now that #182 and #184 have
-   merged. The route is pinned in
-   `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` §8, and the route probe is
-   `probes/DeepenRoute.lean.txt`.
+1. **The general `savitch`'s deepening fill** (agent: Claude, the user's 2026-11-05 choice). The
+   brief `campaign/fills/ch34/briefs/ch34-fill-deepen-DRAFT.md` issues after #196 merges, with
+   its pre-ship re-run on the merged tree and its `@TBD@` items measured. The design is
+   `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` §8–§10.
+2. **G5's fill brief**, after #197 merges: Hennie–Stearns over the zone layer, citing
+   `Build/ZoneStep`. The fill writes the controller, its invariant and the count bound; `k = 0`
+   is handled separately (plan §2). Codex first, by the soft rule.
 3. **H's brief:** re-take its pre-ship after NF and E-D land. Its screen population includes both
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
