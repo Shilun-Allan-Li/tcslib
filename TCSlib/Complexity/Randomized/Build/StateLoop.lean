@@ -344,7 +344,7 @@ theorem acc_poly (R : PolyExpr) : PolyTimeComputable fun w => [acc R w] := by
 theorem out_poly : PolyTimeComputable out :=
   polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
 
-/-- The closed form of the orbit: `⟨1^i, g^[i] x⟩`. -/
+/-- After `i` rounds the state is `⟨1^i, g^[i] x⟩`. -/
 theorem orbit_eq (g : List Bool → List Bool) (x : List Bool) (i : ℕ) :
     orbit start (step g) x i = pairEncode (List.replicate i true) (g^[i] x) := by
   induction i with
@@ -388,11 +388,13 @@ theorem out_eq (emit : List Bool → List Bool) (w : List Bool) :
     out emit w = pairSndD (pairSndD (pairSndD w)) ++ emit (pairFstD (pairSndD (pairSndD w))) :=
   rfl
 
-/-- The orbit point of the state word. -/
+/-- The map `w ↦ fst (snd (snd w))` (the orbit point `s` of the state word
+`⟨x, ⟨cnt, ⟨s, a⟩⟩⟩`) is polynomial-time computable. -/
 theorem point_poly : PolyTimeComputable fun w => pairFstD (pairSndD (pairSndD w)) :=
   polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The accumulator of the state word. -/
+/-- The map `w ↦ snd (snd (snd w))` (the accumulator `a` of the state word
+`⟨x, ⟨cnt, ⟨s, a⟩⟩⟩`) is polynomial-time computable. -/
 theorem accum_poly : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
@@ -412,7 +414,7 @@ theorem out_poly {emit : List Bool → List Bool} (hemit : PolyTimeComputable em
     PolyTimeComputable (out emit) :=
   accum_poly.append (hemit.comp point_poly)
 
-/-- The closed form of the orbit: `⟨1^i, ⟨g^[i] x, emit x ++ ⋯ ++ emit (g^[i-1] x)⟩⟩`. -/
+/-- After `i` rounds the state is `⟨1^i, ⟨g^[i] x, emit x ++ ⋯ ++ emit (g^[i-1] x)⟩⟩`. -/
 theorem orbit_eq (g emit : List Bool → List Bool) (x : List Bool) (i : ℕ) :
     orbit start (step g emit) x i =
       pairEncode (List.replicate i true)

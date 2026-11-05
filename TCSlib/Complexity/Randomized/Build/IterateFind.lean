@@ -163,7 +163,7 @@ private theorem verdictWord_length (acc : List Bool → Bool) (w : List Bool) :
   simp [verdictWord, length_pairEncode]
   omega
 
-/-- On the verdict word of an admissible pair, `stepWord` is the guarded step. -/
+/-- On the verdict word of a pair `⟨x, s⟩`, `stepWord` is the guarded step. -/
 private theorem stepWord_verdictWord (g : List Bool → List Bool) (P : PolyExpr)
     (acc : List Bool → Bool) (x s : List Bool) :
     stepWord g P (verdictWord acc (pairEncode x s)) = step g P x (pairEncode x s) := by

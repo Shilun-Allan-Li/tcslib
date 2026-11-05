@@ -109,15 +109,18 @@ theorem out_eq (v : List Bool) :
       (pairFstD (pairSndD (pairSndD v))).length)] :=
   rfl
 
-/-- The remaining word of the state word. -/
+/-- The map `v ↦ fst (snd v)` (the remaining word `rest` of the state word
+`⟨w, ⟨rest, ⟨t, f⟩⟩⟩`) is polynomial-time computable. -/
 theorem rest_poly : PolyTimeComputable fun v => pairFstD (pairSndD v) :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
 
-/-- The `true` counter of the state word. -/
+/-- The map `v ↦ fst (snd (snd v))` (the `true` counter `t` of the state word
+`⟨w, ⟨rest, ⟨t, f⟩⟩⟩`) is polynomial-time computable. -/
 theorem trues_poly : PolyTimeComputable fun v => pairFstD (pairSndD (pairSndD v)) :=
   polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The `false` counter of the state word. -/
+/-- The map `v ↦ snd (snd (snd v))` (the `false` counter `f` of the state word
+`⟨w, ⟨rest, ⟨t, f⟩⟩⟩`) is polynomial-time computable. -/
 theorem falses_poly : PolyTimeComputable fun v => pairSndD (pairSndD (pairSndD v)) :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
@@ -142,7 +145,7 @@ theorem acc_poly : PolyTimeComputable fun v => [acc v] :=
 theorem out_poly : PolyTimeComputable out :=
   lenLe_comp trues_poly ((cons_poly true).comp falses_poly)
 
-/-- The closed form of the orbit for `i ≤ |w|`:
+/-- After `i ≤ |w|` rounds the state is
 `⟨w.drop i, ⟨1^{#true (w.take i)}, 1^{#false (w.take i)}⟩⟩`. -/
 theorem orbit_eq (w : List Bool) : ∀ i ≤ w.length, orbit start step w i =
     pairEncode (w.drop i)
@@ -249,19 +252,24 @@ def rounds (z : List Bool) : ℕ := min (pairFstD z).length (pairSndD z).length
 theorem rounds_eq (z : List Bool) : rounds z = min (pairFstD z).length (pairSndD z).length :=
   rfl
 
-/-- The remaining first component of the state word. -/
+/-- The map `v ↦ fst (snd v)` (the remaining first component `a` of the state word
+`⟨z, ⟨a, ⟨b, c⟩⟩⟩`) is polynomial-time computable. -/
 theorem fstRest_poly : PolyTimeComputable fun v => pairFstD (pairSndD v) :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
 
-/-- The remaining second component of the state word. -/
+/-- The map `v ↦ fst (snd (snd v))` (the remaining second component `b` of the state word
+`⟨z, ⟨a, ⟨b, c⟩⟩⟩`) is polynomial-time computable. -/
 theorem sndRest_poly : PolyTimeComputable fun v => pairFstD (pairSndD (pairSndD v)) :=
   polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The accumulator of the state word. -/
+/-- The map `v ↦ snd (snd (snd v))` (the accumulator `c` of the state word
+`⟨z, ⟨a, ⟨b, c⟩⟩⟩`) is polynomial-time computable. -/
 theorem accum_poly : PolyTimeComputable fun v => pairSndD (pairSndD (pairSndD v)) :=
   polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
 
-/-- The xor of the two head bits of the state word, as a one-bit output. -/
+/-- The map `v ↦ [xor (head a) (head b)]` (the xor of the head bits of the two remaining
+components of the state word `⟨z, ⟨a, ⟨b, c⟩⟩⟩`, heads read with default `false`, as a one-bit
+output) is polynomial-time computable. -/
 theorem xorBit_poly : PolyTimeComputable fun v =>
     [xor ((pairFstD (pairSndD v)).headD false)
       ((pairFstD (pairSndD (pairSndD v))).headD false)] := by
@@ -292,7 +300,7 @@ theorem acc_poly : PolyTimeComputable fun v => [acc v] := by
 /-- The output is polynomial-time. -/
 theorem out_poly : PolyTimeComputable out := accum_poly
 
-/-- The closed form of the orbit for `i ≤ rounds z`:
+/-- After `i ≤ rounds z` rounds the state is
 `⟨a.drop i, ⟨b.drop i, (zipWith xor a b).take i⟩⟩` with `a = fst z`, `b = snd z`. -/
 theorem orbit_eq (z : List Bool) : ∀ i ≤ rounds z, orbit start step z i =
     pairEncode ((pairFstD z).drop i)
@@ -432,7 +440,7 @@ theorem length_flag_le (a b : List Bool) (i : ℕ) : (flag a b i).length ≤ 1 :
   unfold flag
   split_ifs <;> simp
 
-/-- The closed form of the orbit for `i ≤ XorLoop.rounds z`:
+/-- After `i ≤ XorLoop.rounds z` rounds the state is
 `⟨a.drop i, ⟨b.drop i, flag a b i⟩⟩` with `a = fst z`, `b = snd z`. -/
 theorem orbit_eq (z : List Bool) : ∀ i ≤ XorLoop.rounds z, orbit XorLoop.start step z i =
     pairEncode ((pairFstD z).drop i)
@@ -562,15 +570,19 @@ theorem rounds_eq (b : PolyExpr) (z : List Bool) :
     rounds b z = (pairSndD z).length / b.eval (pairFstD z).length :=
   rfl
 
-/-- The unary parameter `fst z` of the state word. -/
+/-- The map `v ↦ fst (fst v)` (the parameter `fst z` of the state word `⟨z, ⟨rest, c⟩⟩`) is
+polynomial-time computable. Any first component works: only its length is used, as the
+argument of the block length `b`. -/
 theorem param_poly : PolyTimeComputable fun v => pairFstD (pairFstD v) :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD
 
-/-- The remaining word of the state word. -/
+/-- The map `v ↦ fst (snd v)` (the remaining word `rest` of the state word `⟨z, ⟨rest, c⟩⟩`) is
+polynomial-time computable. -/
 theorem rest_poly : PolyTimeComputable fun v => pairFstD (pairSndD v) :=
   polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
 
-/-- The accumulator of the state word. -/
+/-- The map `v ↦ snd (snd v)` (the accumulator `c` of the state word `⟨z, ⟨rest, c⟩⟩`) is
+polynomial-time computable. -/
 theorem accum_poly : PolyTimeComputable fun v => pairSndD (pairSndD v) :=
   polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
 
@@ -608,7 +620,7 @@ theorem acc_poly (b : PolyExpr) : PolyTimeComputable fun v => [acc b v] := by
 /-- The output is polynomial-time. -/
 theorem out_poly : PolyTimeComputable out := accum_poly
 
-/-- The closed form of the orbit (all rounds): with `k = b(|fst z|)` and `s = snd z`,
+/-- After `i` rounds (any `i`) the state is, with `k = b(|fst z|)` and `s = snd z`,
 `⟨s.drop (i k), g (block 0) ++ ⋯ ++ g (block (i-1))⟩` where `block j = (s.drop (j k)).take k`. -/
 theorem orbit_eq (b : PolyExpr) (g : List Bool → List Bool) (z : List Bool) (i : ℕ) :
     orbit start (step b g) z i =
