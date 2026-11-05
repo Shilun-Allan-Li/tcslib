@@ -127,3 +127,12 @@ From the reviews of the findings (`gates/03-ch2-4/review/`). Options are listed 
 - **G3-8 — ruled (A), 2026-11-05.** Prop 161.5 cannot be proved as stated (03b review, missed by the auditor).** If the sampler draws `f(u)` from a random `u`, Bob's coins reveal `a_{1−b}`: the enhanced-trapdoor gap. (A) add an enhanced hard-core hypothesis in prong B (Goldreich vol. 2, App. C.1), declared. (B) restrict to samplers that return their coins (excludes RSA and Rabin). (C) put the enhanced predicate into the ch. 2–4 interface (reopens 03b).
 
 **Dispatch under the recommended options:** 03l now; 03d and 03j after #195; 03f1 and 03f2 after G3-1's repair; 03g and 03k after G3-3's; 03h, 03i and 03k after G3-5's cleanup.
+
+## Gate 04 and 05 rulings — all ruled (A), 2026-11-05
+
+R-04-1 strict unary; R-04-2 all equation lemmas in #195; R-04-3 extend T0–T2 before the fill; G5-1 remove `PACLearnable`; G5-2 `probTrue` later (queued below).
+
+## Queued follow-ups
+
+- **`FinDist.probTrue` into `FinDist.lean`** (G5-2): a small PR to `main` after #194 lands.
+- **Gate 03, 03l: Ready to dispatch** (folder `outbox/gates/03l-ch2-4-gate/`; its one stale prose line, `StringLoops.lean:36–38` calling `stateFind` private, changes in the G3-5 clean-up).
