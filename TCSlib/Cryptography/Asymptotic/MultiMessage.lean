@@ -440,13 +440,6 @@ private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.len
     simp only [List.zipWith_cons_cons, List.cons.injEq]
     exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
 
-/-- The string exclusive-or of two `n`-bit strings is the encoding of their sum in the Boolean
-group `Fin n → Bool`. -/
-theorem zipWith_xor_ofFn_eq_add {n : ℕ} (a b : Fin n → Bool) :
-    List.zipWith xor (List.ofFn a) (List.ofFn b) = List.ofFn (a + b) := by
-  rw [zipWith_xor_ofFn le_rfl a b]
-  exact congrArg List.ofFn (funext fun _ => rfl)
-
 /-- **The many-message encryption scheme of [PS10, Algorithm 99.1]** for a function family
 `F` with polynomial-time evaluator `E` on `⟨s, x⟩`: `Gen(1^n)` outputs a uniform `n`-bit key
 `k` (its coin string); `Enc_k(m)` draws `r ← U_n` (its coin string) and outputs
@@ -511,7 +504,7 @@ theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool)
   rw [runAt_coinKey, runAt_prfEnc hE]
   have h : E (pairEncode (List.ofFn r.1) (List.ofFn (r.2 j))) = List.ofFn (F n r.1 (r.2 j)) :=
     hFE n r.1 (r.2 j)
-  rw [h, zipWith_xor_ofFn_eq_add]
+  rw [h, zipWith_xor_ofFn_add]
   rfl
 
 /-- **[PS10, Theorem 99.2]: the scheme of Algorithm 99.1 is multi-message secure** when `F` is

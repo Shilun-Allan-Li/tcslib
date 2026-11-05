@@ -500,7 +500,7 @@ theorem giProver_efficient : giProver.Efficient := by
     rfl
   | cons m h =>
     rw [giProver_next_cons']
-    simp only [argM_ilayout, Strategy.encodeMsgs_cons, pairEncode_ne_nil, decide_false,
+    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
       Bool.false_eq_true, if_false, pairFstD_pairEncode, argX_ilayout, inCoins_ilayout, argZ_ilayout]
     rw [sampleStr, mulInvStr_encPerm]
     split_ifs <;> rfl
@@ -539,18 +539,20 @@ theorem giVerifier_efficient : giVerifier.Efficient := by
   · rw [giVerifier_next_nil']
     simp only [argM_ilayout, Strategy.encodeMsgs_nil, decide_true, if_true]
   · rw [giVerifier_next_one]
-    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, pairEncode_ne_nil,
+    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil,
+      Turing.pairEncode_ne_nil,
       decide_false, Bool.false_eq_true, if_false, pairSndD_pairEncode, decide_true, if_true,
       inCoins_ilayout]
   · rw [giVerifier_next_two']
-    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, pairEncode_ne_nil,
+    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil,
+      Turing.pairEncode_ne_nil,
       decide_false, Bool.false_eq_true, if_false, pairSndD_pairEncode, pairFstD_pairEncode,
       decide_true, if_true, vcount_ilayout, argX_ilayout, inCoins_ilayout,
       Bool.decide_and, Bool.decide_eq_true]
     rw [relabelAt_replicate]
     split_ifs <;> rfl
   · rw [giVerifier_next_long']
-    simp only [argM_ilayout, Strategy.encodeMsgs_cons, pairEncode_ne_nil, decide_false,
+    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
       Bool.false_eq_true, if_false, pairSndD_pairEncode]
 
 /-- The verifier of one iteration of the graph non-isomorphism protocol is a PPT strategy
@@ -588,12 +590,13 @@ theorem gniVerifier_efficient : gniVerifier.Efficient := by
     rw [relabelAt_replicate, sampleStr, decPerm_encPerm]
     split_ifs <;> rfl
   · rw [gniVerifier_next_one]
-    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, pairEncode_ne_nil,
+    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil,
+      Turing.pairEncode_ne_nil,
       decide_false, Bool.false_eq_true, if_false, pairSndD_pairEncode, pairFstD_pairEncode,
       decide_true, if_true, argX_ilayout, inCoins_ilayout, Bool.decide_and,
       Bool.decide_eq_true, List.cons.injEq, and_true]
   · rw [gniVerifier_next_long']
-    simp only [argM_ilayout, Strategy.encodeMsgs_cons, pairEncode_ne_nil, decide_false,
+    simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
       Bool.false_eq_true, if_false, pairSndD_pairEncode]
 
 end TCSlib.Cryptography.GI

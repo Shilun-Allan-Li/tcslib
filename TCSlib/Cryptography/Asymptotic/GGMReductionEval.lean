@@ -477,7 +477,7 @@ theorem step_eq (E : List Bool → List Bool)
   rw [hpure]
   by_cases hmem : prefixAt x d.i ∈ s.2
   · have hnf : notFound D q (pairEncode (rawInput d) (encState d s t)) = false := by
-      simp [notFound, hlook, hmem, pairEncode_ne_nil]
+      simp [notFound, hlook, hmem, Turing.pairEncode_ne_nil]
     have hv : vstr E D q (pairEncode (rawInput d) (encState d s t)) =
         valStr d (s.2.idxOf (prefixAt x d.i)) := by
       rw [vstr, hnf, hlook, if_pos hmem]

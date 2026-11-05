@@ -69,7 +69,8 @@ self-delimiting pairing used by the universal machine.
 
 * `Turing.MachineCode.decode_encode` — decoding a code recovers the machine.
 * `Turing.pairEncode_injective` — the pairing is injective (aligned-pair parsing).
-* `Turing.length_pairEncode`, `Turing.pairEncode_eq_dbl`, `Turing.pairDecode_eq_none`,
+* `Turing.length_pairEncode`, `Turing.pairEncode_ne_nil`, `Turing.pairEncode_eq_dbl`,
+  `Turing.pairDecode_eq_none`,
   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
   the pairing, shared by the machine-side developments.
 * `Turing.length_bits_le_self` — `|bits m| ≤ m`.
@@ -216,6 +217,12 @@ theorem length_pairEncode (x y : List Bool) :
     (pairEncode x y).length = 2 * x.length + 2 + y.length := by
   simp [pairEncode_eq_dbl]
   omega
+
+/-- No pair encoding is the empty word: `pairEncode x y` has length at least `2`. -/
+theorem pairEncode_ne_nil (x y : List Bool) : pairEncode x y ≠ [] := by
+  intro h
+  have := congrArg List.length h
+  simp [length_pairEncode] at this
 
 /-- A string that is not a pair is a doubled word followed by a malformed tail: the end
 of the string, a lone bit, or the aligned pair `10`.
