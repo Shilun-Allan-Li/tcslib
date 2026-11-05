@@ -29,6 +29,15 @@ Frederick's GGM reduction machine (`TCSlib/Cryptography/Asymptotic/GGMReduction.
 
 The fill (ruled 2026-11-05: Claude, after gate 02) adds the **log-replay variant** for reductions that are oracle machines: each round reads the answers to the handler's own queries from the reduction's log, and stops at the first unanswered one. GGM becomes an instance at the integration of ch. 2–4 (coordination point F-4).
 
+## Relation to P^O = P (checked 2026-11-05, at the user's prompt)
+
+In substance the efficiency result is *FP with an efficiently implementable oracle is FP*. `main` (and the ch. 3–4 branch) prove the Turing-machine form: `Turing.FinOracleTM.exists_plain_simulation` (`Complexity/TuringMachine/Build/OracleSim.lean`), behind `Complexity.POracle_eq_P_of_mem_P` (`ClassOracle/Classes.lean`). It is **not reused**, for three reasons:
+1. **The machine model.** It is about oracle Turing machines ([AB09, Def 3.4]: query tape, `qQuery`/`qYes`/`qNo`). The ch. 2–4 adversaries are plain machines restarted on the encoded history (D7). In that model the statement is function-level, closure of polynomial-time functions under polynomially bounded iteration (`Complexity.polyTimeComputable_iterate`/`iterateFind`, `Randomized/Repetition.lean`), and the tape engineering of `OracleSim` has no counterpart.
+2. **The oracles.** It needs a *language* oracle decided by a plain machine (one-bit answers, no state, no coins). Ours answer strings and are stateful and randomized; using it would need bitwise answer encodings and an encoding of state and coins.
+3. **Availability.** `OracleSim` and `ClassOracle` are on `main` and the ch. 3–4 branch, not on `cryptography/pass-shelat-ch2-4` until `main` is merged in.
+
+Routing through it would mean a new bridge from NUPPT next-move machines to oracle TMs, which costs more than the function-level route. There, polynomial time is already generic (`GGMRed.stateLoopFun_poly`), and the remaining work is the functional equation, of which `GGMReductionEval.lean` is the worked example.
+
 ## The route
 
 1. **Handlers as string functions.** A `PolyHandler` packages `impl` as polynomial-time maps on
