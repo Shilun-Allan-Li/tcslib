@@ -1,0 +1,9 @@
+-- ===== source controls for the definitions the repaired head's imports add (maintainer, gate 95 finding 2) =====
+-- C42 Turing.Segment (Build/Contract/Basic; `nf_backward_host` reads it through `segment_iff` and `Segment.time_eq`)
+example {S : Type} (M : Turing.MultiTapeTM 2 Bool S) (F : Set (Option S))
+    (P : (Fin 2 → ℤ) → Prop) (a b : Turing.Cfg 2 Bool S []) (t : ℕ) :
+    Turing.Segment M F P a b t ↔ M.runFrom a t = b ∧ (∀ u < t, (M.runFrom a u).state ∉ F) ∧
+      ∀ u ≤ t, P (M.runFrom a u).workTapePos := Iff.rfl
+-- C43 Turing.HeadBox (Build/Contract/Basic; the envelope relation inside `Segment`'s contracts)
+example (lo hi p : Fin 2 → ℤ) :
+    Turing.HeadBox lo hi p ↔ ∀ j, p j ∈ Finset.Icc (lo j) (hi j) := Iff.rfl

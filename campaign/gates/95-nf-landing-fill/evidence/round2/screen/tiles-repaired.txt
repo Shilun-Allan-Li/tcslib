@@ -1,0 +1,125 @@
+   NDNormalForm.lean::nf_leafStDecEq  reproduces  NDNormalForm.lean::nf_leafStFintype: 299/375 = 80%
+      [83] (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+      [72] (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool):=inferInstanceletI:
+      [68] (OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+      [40] (nf_SweepStateN×SignType):=inferInstance
+      [36] (nf_SweepStateN):=inferInstanceletI:
+      total 299 (screen: 299)
+   NDNormalForm.lean::nf_leafStFintype  reproduces  NDNormalForm.lean::nf_leafStDecEq: 299/386 = 77%
+      [83] (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+      [72] (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool):=inferInstanceletI:
+      [68] (OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+      [40] (nf_SweepStateN×SignType):=inferInstance
+      [36] (nf_SweepStateN):=inferInstanceletI:
+      total 299 (screen: 299)
+   NDNormalForm.lean::nf_stDecEq  reproduces  NDNormalForm.lean::nf_stFintype: 245/318 = 77%
+      [46] ScanPhase_inferInstance|.rep_=>(inferInstance:
+      [35] SeekPhase)|.aBack_=>(inferInstance:
+      [35] SeekPhase)|.bBack_=>(inferInstance:
+      [34] SeekPhase)|.bFwd_=>(inferInstance:
+      [34] SeekPhase)|.bClr_=>(inferInstance:
+      [34] SweepPhase)|.park=>(inferInstance:
+      [27] SL)|.aFwd_=>(inferInstance:
+      total 245 (screen: 245)
+   NDNormalForm.lean::nf_vstep_ctl  reproduces  NDNormalForm.lean::nf_vstep_state: 131/172 = 76%
+      [100] caseshc:c.statewith|none=>simponly[nf_complete,nf_vstep,hc]|someq=>simponly[nf_complete,nf_vstep,hc]
+      [31] obtain⟨cs,o,f⟩:=ctlsimponlyath1
+      total 131 (screen: 131)
+   NDNormalForm.lean::nf_V_tail  reproduces  NDNormalForm.lean::nf_setup: 154/218 = 71%
+      [36] ,funuhu=>absurdhu(Nat.not_lt_zerou),
+      [33] TM.initCfg_eq,Cfg.init_workTapes]
+      [31] TM.initCfg_eq,Cfg.init_workTape
+      [29] TM.initCfg_eq,Cfg.init_state]
+      [25] MultiTapeTM.runFrom_zero,
+      total 154 (screen: 154)
+   NDNormalForm.lean::nf_stFintype  reproduces  NDNormalForm.lean::nf_stDecEq: 245/350 = 70%
+      [46] ScanPhase_inferInstance|.rep_=>(inferInstance:
+      [35] SeekPhase)|.aBack_=>(inferInstance:
+      [35] SeekPhase)|.bBack_=>(inferInstance:
+      [34] SeekPhase)|.bFwd_=>(inferInstance:
+      [34] SeekPhase)|.bClr_=>(inferInstance:
+      [34] SweepPhase)|.park=>(inferInstance:
+      [27] SL)|.aFwd_=>(inferInstance:
+      total 245 (screen: 245)
+   NDNormalForm.lean::nf_sweep_run  reproduces  NDNormalForm.lean::nf_tag: 207/329 = 63%
+      [57] rw[streamStartCfg_workTapePos,streamStartCfg_workTapePos]
+      [52] rw[streamStartCfg_workTapes,streamStartCfg_workTapes
+      [51] rw[streamStartCfg_inputPos,streamStartCfg_inputPos]
+      [47] rw[streamStartCfg_output,streamStartCfg_output]
+      total 207 (screen: 207)
+   NDNormalForm.lean::nf_leaf_record_in  reproduces  NDNormalForm.lean::nf_leaf_record_wk: 567/929 = 61%
+      [157] drecctlhsthArefine⟨hpre,?_⟩setc:Cfg2Bool(nf_LeafStN)x:={dwithstate:=some(.readσ)workTapePos:=Function.updated.workTapePos0(d.workTapePos0+(2*N.k+3:ℕ))}withhc
+      [146] ·rfl·funextiby_caseshi:i=0·substhisimponly[hc,Function.update_self,SignType.coe_one]push_castring·simponly[hc,Function.update_of_nehi]·rfl·rw[hrun
+      [69] )c(q:=.readσ)(q':=.rej)000rfl(bysimponly[nf_leaf]rw[if_posh1,h2,hn])]
+      [55] byobtain⟨hpre,σ,h1,h2,h3,h4,hrun,hsym⟩:=nf_leaf_toLastN
+      [46] =>?_⟩·rw[hrun,step_of_tapeAction_move(nf_leafN
+      [37] 1rfl(bysimponly[nf_leaf]rw[if_posh1,h
+      [32] step_of_tapeAction_move(nf_leafN
+      [25] sym,Option.getD_some,h3,h
+      total 567 (screen: 567)
+   NTimeHierarchy.lean::un_setup  reproduces  NDNormalForm.lean::nf_setup: 124/218 = 57%
+      [43] MultiTapeTM.initCfg_eq,Cfg.init_workTapes]·
+      [41] rw[MultiTapeTM.initCfg_eq,Cfg.init_state]
+      [40] MultiTapeTM.initCfg_eq,Cfg.init_workTape
+      total 124 (screen: 124)
+   NDNormalForm.lean::nf_bClear  reproduces  NDNormalForm.lean::nf_aReturn: 1314/2367 = 56%
+      [114] ).length+1)}withhc₁obtain⟨hpA,hA⟩:=phaseHostTM_run(nf_MNL)⟨.ctl,ScanPhase.fwd(nf_sweepInitN)⟩(nf_redNLexit)(nf_Ph.
+      [108] Backj)SeekPhase.run(bysimp[hc₁])setc₂:Cfg2BoolSeekPhasex:={c₁withstate:=some.run}withhc₂havehu:∀p:ℤ,-1≤p→p≤(
+      [98] c₂rflhusetc₃:Cfg2BoolSeekPhasex:={c₂withstate:=some.doneworkTapePos:=Function.updatec₂.workTapePos
+      [95] chsthwsetc₁:Cfg2BoolSeekPhasex:={cwithstate:=some.doneworkTapePos:=Function.updatec.workTapePos
+      [95] obtain⟨hpB,hB⟩:=phaseHostTM_run(nf_MNL)⟨.ctl,ScanPhase.fwd(nf_sweepInitN)⟩(nf_redNLexit)(nf_Ph.
+      [94] ).length+1·rw[hpAuhu1]exactnf_tagged_ne_park(funh=>nf_Ph.noConfusionh)_b·obtain⟨v,rfl⟩:∃v,u=((
+      [91] hc₃,hc₂,hc₁]rw[Function.update_of_ne(bydecide),Function.update_of_ne(bydecide)]·simponly[hc
+      [74] ,?_,?_,?_,?_,?_,?_,?_,?_⟩·rw[e,MultiTapeTM.runFrom_add]unfoldnf_Vrw[hA,hre
+      [58] ;omega)]exactnf_tagged_ne_park(funh=>nf_Ph.noConfusionh)_b
+      [57] (byintrouhuqhqcasesqwith|done=>exactabsurdhq(h4uhu)|run=>
+      [55] ).length+1+1),byomega⟩rw[MultiTapeTM.runFrom_add,hA,hre
+      [54] rfl)havehre:=nf_retag(N:=N)(SL:=SL)(S:=nf_StNSL(nf_Ph.
+      [48] ringobtain⟨h3,h4,-⟩:=skipBackTM_run_ofCfg(k:=2)(
+      [41] ]obtain⟨h1,h2,-⟩:=skipTM_run_ofCfg(k:=2)(
+      [41] simponly[hc₃,hc₂,hc₁,Function.update_self
+      [37] simponly[hc₂,hc₁,Function.update_self
+      [36] ]·introuhubunfoldnf_Vby_caseshu1:u≤(
+      [32] ).length+1)h1SeekPhase.donerfl⟨.
+      [29] .length-1+p)=FinTM.bufferTape
+      [29] .length+3)h3SeekPhase.donerfl
+      [28] Backj,.run⟩rfl(byintrouhuqhq
+      total 1314 (screen: 1314)
+   NDNormalForm.lean::nf_vstep_state  reproduces  NDNormalForm.lean::nf_vstep_ctl: 131/236 = 56%
+      [100] caseshc:c.statewith|none=>simponly[nf_complete,nf_vstep,hc]|someq=>simponly[nf_complete,nf_vstep,hc]
+      [31] obtain⟨cs,o,f⟩:=ctlsimponlyath1
+      total 131 (screen: 131)
+   NDNormalForm.lean::nf_entry  reproduces  NDNormalForm.lean::nf_tag: 179/329 = 54%
+      [42] Cfg_workTapePos,streamStartCfg_workTapePos
+      [38] Cfg_workTapes,streamStartCfg_workTapes
+      [36] Cfg_inputPos,streamStartCfg_inputPos
+      [32] Cfg_output,streamStartCfg_output
+      [31] Cfg_state,streamStartCfg_state]
+      total 179 (screen: 179)
+   NDNormalForm.lean::nf_leaf_run_wk  reproduces  NDNormalForm.lean::nf_leaf_run_in: 1296/2436 = 53%
+      [132] havehA':∀p:ℕ,p<((rec'::rs').flatMapList.ofFn).length→d'.workTapes0(d'.workTapePos0+p)=((rec'::rs').flatMapList.ofFn)[p]?:=byintrophp
+      [106] uhu1shs·obtain⟨v,rfl⟩:∃v,u=(2*N.k+4)+v:=⟨u-(2*N.k+4),byomega⟩rw[MultiTapeTM.runFrom_add,hrun]athsexacthpre
+      [102] :¬∀r(h:r<(rec'::rs').length),nf_okN(((rec'::rs').taker).foldl(nf_vstepN)(nf_vstepNcrec))(rec'::rs')[r]
+      [76] workTapePos:=Function.updated.workTapePos0(d.workTapePos0+(2*N.k+4:ℕ))}withh
+      [68] +T',funuhushs=>?_,funh=>?_,funh=>?_⟩·by_caseshu1:u<2*N.k+4·exacthpre
+      [66] casesrswith|nil=>havehl:rec⟨2*N.k+3,byomega⟩=true:=bysimpausinghfl
+      [65] nf_stream_consN.krecrs(d.workTapes0)(d.workTapePos0)hAobtain⟨hpre
+      [64] |consrec'rs'=>havehl:rec⟨2*N.k+3,byomega⟩=false:=bysimpausinghfl
+      [55] ]exacthA1phpobtain⟨T',hpre',hpass',hrej'⟩:=nf_leaf_run_
+      [53] )obtain⟨hfl,hflag'⟩:=nf_flags_consrecrshflagby_casesh
+      [49] withstate:=some(.read((0,fun_=>none),nf_completeN
+      [48] havehall:=nf_all_consNcrecrs(funcrec=>nf_okNcrec
+      [45] obtain⟨q,hq⟩:=Option.ne_none_iff_exists'.mphl
+      [41] rw[MultiTapeTM.runFrom_add,hrun]exacthrej
+      [40] d'havehvc:=nf_vstep_stateNcctlrechchaveh
+      [37] simponly[nf_vstep,hq]rw[Action.apply_
+      [34] ⟩rw[MultiTapeTM.runFrom_add,hrun,h
+      [32] ,List.length_cons]push_castring·
+      [30] setd':Cfg2Bool(nf_LeafStN)x:={
+      [26] (Function.updated.workTape
+      [26] d.workTapePos0+(2*N.k+4:ℕ)
+      [26] (rec'::rs')d'(nf_completeN
+      [25] =_rw[Function.update_self
+      [25] 'v(byomega)shs·obtain⟨hT,
+      [25] cfg]applyCfg.ext·rfl·rfl·
+      total 1296 (screen: 1296)

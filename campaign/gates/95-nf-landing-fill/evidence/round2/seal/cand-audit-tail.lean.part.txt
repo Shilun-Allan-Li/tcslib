@@ -1,0 +1,60 @@
+
+-- ===== seal-candidate audit (maintainer, gate 95 F2): the review's candidate filter and walk =====
+open Lean in
+partial def rvConstsAux (e : Expr) : StateM (Std.HashSet Expr × Std.HashSet Name) Unit := do
+  if (← get).1.contains e then return
+  modify fun (v, a) => (v.insert e, a)
+  match e with
+  | .const n _ => modify fun (v, a) => (v, a.insert n)
+  | .app f x => rvConstsAux f; rvConstsAux x
+  | .lam _ t b _ => rvConstsAux t; rvConstsAux b
+  | .forallE _ t b _ => rvConstsAux t; rvConstsAux b
+  | .letE _ t v b _ => rvConstsAux t; rvConstsAux v; rvConstsAux b
+  | .mdata _ b => rvConstsAux b
+  | .proj _ _ b => rvConstsAux b
+  | _ => pure ()
+
+open Lean in
+def rvConsts (ci : ConstantInfo) : Array Name :=
+  let act : StateM (Std.HashSet Expr × Std.HashSet Name) Unit := do
+    rvConstsAux ci.type
+    if let some v := ci.value? then rvConstsAux v
+  ((act.run ({}, {})).2.2).toArray
+
+open Lean Elab Command Meta in
+elab "#rv_seal_audit" : command => do
+  let env ← getEnv
+  let modOf : Name → Name := fun n => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => `LOCAL
+  -- the walk: the TCSlib definitions that the module's own constants name directly
+  let locals := env.constants.map₂.foldl (init := (#[] : Array (Name × ConstantInfo)))
+    fun acc n ci => acc.push (n, ci)
+  let mut reached : Std.HashSet Name := {}
+  for (_, ci) in locals do
+    for c in rvConsts ci do
+      if (`TCSlib).isPrefixOf (modOf c) then reached := reached.insert c
+  let mut tcDefs : Array String := #[]
+  for c in reached.toArray.qsort (fun a b => a.toString < b.toString) do
+    if let some (.defnInfo _) := env.find? c then
+      let red ← getReducibilityStatus c
+      let inst ← liftCoreM (isInstance c)
+      tcDefs := tcDefs.push s!"{c} | {modOf c} | {repr red} | inst={inst} proj={env.isProjectionFn c}"
+  logInfo m!"WALK_TCSLIB_DEFS {tcDefs.size}\n{String.intercalate "\n" tcDefs.toList}"
+  -- maximal seal candidates: every imported TCSlib definition, semireducible, not a projection,
+  -- matcher, auxiliary recursor or another file's private
+  let st ← liftTermElabM getSimpTheorems
+  let mut cand : Array String := #[]
+  let mut simpDefs : Array String := #[]
+  for (c, ci) in env.constants.map₁.toList do
+    if (`TCSlib).isPrefixOf (modOf c) then
+      if let .defnInfo _ := ci then
+        if st.isDeclToUnfold c then simpDefs := simpDefs.push c.toString
+        let red ← getReducibilityStatus c
+        if red matches .semireducible && !env.isProjectionFn c && !isMatcherCore env c && !isAuxRecursor env c &&
+            !isNoConfusion env c && !(privateToUserName? c).isSome then
+          let inst ← liftCoreM (isInstance c)
+          cand := cand.push s!"{c} inst={inst}"
+  logInfo m!"SEAL_CANDIDATES {cand.size}\n{String.intercalate "\n" (cand.qsort (· < ·)).toList}\nSIMP_DEFS {simpDefs.qsort (· < ·)}"
+
+#rv_seal_audit

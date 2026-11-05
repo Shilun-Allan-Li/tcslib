@@ -1,0 +1,165 @@
+From 10c015177fde0f9f2b020c010cf44f0f3b3dd37f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 5 Nov 2026 20:14:55 +0000
+Subject: [PATCH] NDNormalForm: BufferWords' identities cited at three sites,
+ RN-1's lemma in nf_pack, the headline's sketch follows the code
+
+- nf_bClear cites FinTM.bufferTape_drop; nf_aReturn and nf_region cite
+  FinTM.bufferTape_eq_none_of_not_mem (gate 95, finding 1).
+- nf_pack's renamed initial configuration is Cfg.mapState_eq_of_fields
+  (finding 3).
+- exists_codeNDTM_accepts_linear's proof sketch describes the implemented
+  route (tape 0 and tape 1, the records, the control sweep, two-cell blocks)
+  and drops the fill-obligation list (finding 4).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5MM3PtshNwvNBXBw
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 103 ++++++++------------
+ 1 file changed, 43 insertions(+), 60 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index 9474847a..ad4202ca 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -61,12 +61,12 @@ private theorem nf_pack {S : Type} [Fintype S] (H : NDTM 2 Bool S) :
+   simp only [CodeNDTM.toFinNDTM_tm, CodeNDTM.toFinNDTM_k, CodeNDTM.toFinNDTM_State]
+   have hinit : (H.relabelState e).initCfg x = (H.initCfg x).mapState e := by
+     rw [NDTM.initCfg_eq, NDTM.initCfg_eq, NDTM.relabelState_q₀]
+-    apply Cfg.ext
+-    · rw [Cfg.init_state, Cfg.mapState_state, Cfg.init_state]; rfl
+-    · rw [Cfg.init_inputPos, Cfg.mapState_inputPos, Cfg.init_inputPos]
+-    · funext i p; rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+-    · funext i; rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+-    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
++    exact (Cfg.mapState_eq_of_fields _ e _
++      (by rw [Cfg.init_state, Cfg.init_state]; rfl)
++      (by rw [Cfg.init_inputPos, Cfg.init_inputPos])
++      (by funext i p; rw [Cfg.init_workTapes, Cfg.init_workTapes])
++      (by funext i; rw [Cfg.init_workTapePos, Cfg.init_workTapePos])
++      (by rw [Cfg.init_output, Cfg.init_output])).symm
+   rw [hinit]
+   constructor
+   · rintro ⟨w, hw, hh, ho⟩
+@@ -1041,8 +1041,9 @@ private theorem nf_aReturn (N : FinNDTM Bool) {SL : Type}
+     intro p h0 h1
+     simp only [List.length_nil, Nat.cast_zero] at h1
+     obtain rfl : p = 0 := le_antisymm h1 h0
+-    rw [htape, hpos, add_zero, FinTM.bufferTape_nat, FinTM.bufferTape_nil, List.getElem?_eq_none
+-      (le_refl _)]
++    rw [htape, hpos, add_zero,
++      FinTM.bufferTape_eq_none_of_not_mem s (z := (s.length : ℤ)) (by omega),
++      FinTM.bufferTape_nil]
+   obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (0 : Fin 2) [] c hst hw
+   set c₁ : Cfg 2 Bool SeekPhase x := { c with
+       state := some .done
+@@ -1149,12 +1150,7 @@ private theorem nf_bClear (N : FinNDTM Bool) {SL : Type}
+     intro p h0 h1
+     have h := htape (p + i) (by omega) (by omega)
+     rw [show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h
+-    rw [h]
+-    obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le h0
+-    rw [show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat,
+-      FinTM.bufferTape_nat, List.getElem?_drop]
+-    congr 1
+-    omega
++    rw [h, FinTM.bufferTape_drop R i h0, add_comm]
+   obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (1 : Fin 2) (R.drop i) c hst hw
+   set c₁ : Cfg 2 Bool SeekPhase x := { c with
+       state := some .done
+@@ -2306,10 +2302,12 @@ private theorem nf_region (B : ℤ → Option Bool) (S E h : ℤ)
+       have := (hB _).mp hne
+       omega
+     · by_cases hpL : p = L
+-      · rw [hpL, FinTM.bufferTape_nat, List.getElem?_eq_none (by rw [List.length_ofFn])]
+-        by_contra hne
+-        have := (hB _).mp hne
+-        omega
++      · rw [hpL, FinTM.bufferTape_eq_none_of_not_mem]
++        · by_contra hne
++          have := (hB _).mp hne
++          omega
++        · rw [List.length_ofFn]
++          omega
+       · obtain ⟨m, rfl⟩ : ∃ m : ℕ, p = m := ⟨p.toNat, by omega⟩
+         have hm : m < L := by omega
+         rw [FinTM.bufferTape_nat, List.getElem?_ofFn]
+@@ -3231,48 +3229,33 @@ explicit constant, backward in unbounded form (the consumer recovers the
+ budgeted form from the original's all-branch halting by the truncation
+ argument, `Turing.NDTM.runWith_of_halt`).
+ 
+-**Proof sketch.** Guess-then-verify, the reason codes carry **two** work
+-tapes: on tape A the simulator guesses, left to right and one choice bit per
+-guessed bit, the full display sequence of a `k`-tape run of `N` — per step
+-the choice bit, the state, the `k + 1` scanned symbols, and the action record
+-(`O_N(1)` cells per step) — checking the **control-local** part on the fly
+-(each record must follow from its predecessor by `N`'s table, hardwired in
+-the simulator's finite control). Then the non-local reads are verified in
+-`k + 1` sweeps: the input claims by replaying the claimed input-head moves
+-against the real input tape, and each work tape `j` by replaying tape `j` on
+-tape B — B's head tracks tape `j`'s claimed head, so each step checks the
+-claimed read against B's cell and applies the claimed write at unit cost —
+-rewinding A and clearing B between sweeps. Total `O_N((k+1)·(t+1)) =
+-C·(t+1)` — the `k+1` covers the zero-work-tape case, where the display
+-guess and the input sweep remain.
+-Forward transfer: a genuine accepting run of length `t` yields the accepting
+-display, guessed and verified within `C·(t+1)`. Backward: a verified display
+-**is** a genuine run (the sweeps force consistency), so an accepting branch
+-of the simulator exhibits an accepting branch of `N` at some length —
+-unbounded on purpose: runaway guessing branches never accept, and no
+-all-branch-halting claim is made for the simulator. State-space finiteness
+-packages as `Fin` by the relabeling `Turing.NDTM.relabelState` (the
+-nondeterministic mirror of `Turing.MultiTapeTM.relabelState`, as in the
+-`exists_codeTM` precedent). Fill obligations, named: the display format and
+-its on-the-fly control check; the `k + 1` verification sweeps; the two
+-transfer directions; the relabeling packaging.
+-
+-**Implementation.** The display refines the sketch: one record of `2k + 4`
+-bits per step of `N`, holding the step's choice bit, the claimed input and
+-work-tape reads (two bits each: `00` blank, `10` false, `11` true) and an end
+-flag, set on the last record only. States and actions are not guessed: the
+-verifier recomputes them from `N`'s table in its finite control. The guess
+-runs under the controller-stopped host `Turing.guessCtlRunTM` with a trivial
+-setup; its controller stops at the first record boundary after a set end
+-flag. The verifier is deterministic and silent: a control sweep (a fold by
+-`Turing.scanTM`) checks the recomputed states, the end flags and the output,
+-and replay sweeps check the claimed reads against the input and, on the
+-second work tape, against each replayed work tape. That tape is kept there as
+-one two-cell block per visited cell, rewritten at every record; the last
+-record's head move is not performed, so the blocks stay contiguous around the
+-head. Between sweeps `Turing.skipTM` and `Turing.skipBackTM` return the heads
+-and `Turing.clearTM` erases the blocks. The constant is
+-`C = 6W + k(2W + 12) + 21 + 15k` with `W = 2k + 4`, for `N`'s `k` work tapes. -/
++**Proof sketch.** Guess, then verify; this is why codes carry two work tapes.
++1. On work tape `0` the simulator guesses a display: one record of `2k + 4` bits per step of
++   `N`, holding the step's choice bit, the claimed reads of the input and of each of the `k` work
++   tapes (two bits each: `00` blank, `10` false, `11` true) and an end flag, set on the last
++   record only. The guess stops at the first record boundary after a set end flag. States and
++   actions are not guessed: the verifier recomputes them from `N`'s table in its finite control.
++2. A deterministic, silent verifier then reads the display. A control sweep checks the
++   recomputed states, the end flags and the output. Replay sweeps check the claimed reads: one
++   against the input, and one per work tape `j` of `N` against tape `j` replayed on work tape `1`,
++   kept there as one two-cell block per visited cell and rewritten at every record. Between
++   sweeps the heads return and the blocks are erased.
++3. Each phase is linear in the display, so the simulator runs within `C · (t + 1)` steps, with
++   `C = 6W + k(2W + 12) + 21 + 15k` and `W = 2k + 4`; the `+ 1` covers `k = 0`, where the guess
++   and the input sweep remain.
++4. Forward transfer: a genuine accepting run of length `t` yields an accepting display, guessed
++   and verified within `C · (t + 1)`. Backward transfer: a verified display **is** a genuine run
++   (the sweeps force consistency), so an accepting branch of the simulator exhibits an accepting
++   branch of `N` at some length — unbounded on purpose: runaway guessing branches never accept,
++   and no all-branch-halting claim is made for the simulator.
++5. The finite state space is relabeled to `Fin`.
++
++**Implementation.** The guess runs under the controller-stopped host `Turing.guessCtlRunTM` with
++a trivial setup. The control sweep is a fold by `Turing.scanTM`. A replay does not perform the
++last record's head move, so the blocks stay contiguous around the head. Between sweeps
++`Turing.skipTM` and `Turing.skipBackTM` return the heads and `Turing.clearTM` erases the blocks.
++The relabeling is `Turing.NDTM.relabelState` (the nondeterministic mirror of
++`Turing.MultiTapeTM.relabelState`, as in the `exists_codeTM` precedent). -/
+ theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
+     ∃ (M : CodeNDTM) (C : ℕ),
+       (∀ (x : List Bool) (t : ℕ),
+-- 
+2.43.0
+
