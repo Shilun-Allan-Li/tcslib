@@ -37,13 +37,22 @@ a view reaches the distinguisher encoded (`View.encode`).
   are bits).
 - **Uniformity.** "For all `x, y`" is read with one negligible bound for all inputs of each
   length (`ε` before `x, y`), the convention of the ch. 2–4 layer's security definitions.
+- **Polynomial time** (ruling of 2026-11-05). The definition leaves the parties' efficiency to
+  §4.4's convention; here it is required (`Functionality.PolyTime`). Both strategies are PPT, and
+  the messages of honest executions are polynomially bounded. Under D8, `Strategy.Efficient`
+  alone bounds an activation by the length of the messages received, not by `n`.
 
 ## Main definitions
 
 * `SecureComputation.Functionality`: a two-party functionality with private outputs.
 * `SecureComputation.realA`, `idealA`, `realB`, `idealB`: the four samplers of Def 155.1.
+* `SecureComputation.Functionality.PolyTime`: the parties run in polynomial time.
 * `SecureComputation.HBCSecure`: [PS10, Definition 155.1].
 * `SecureComputation.otFunctionality`: [PS10, Def 160.a], `OT(a₁, a₂, b) = (⊥, a_b)`.
+
+## Main results
+
+* `SecureComputation.otFunctionality_f_snd`: the OT functionality gives Bob the chosen bit.
 
 ## References
 
@@ -100,14 +109,30 @@ def idealB (S : NUPPT) (n : ℕ) (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.i
   pairEncode (S.runAt n (pairEncode (List.ofFn y) (List.ofFn (F.f n x y).2)) s)
     (List.ofFn (F.f n x y).1)
 
+/-- **The parties run in polynomial time** on `F`'s inputs (ruling of 2026-11-05).
+- Both strategies are PPT (`Strategy.Efficient`).
+- For a polynomial `B`, in every honest execution with common input `1^n` and inputs of `F`'s
+  lengths, every message has at most `B(n)` bits.
+
+Under D8 a PPT strategy's activation is polynomial in its whole input, the messages received
+included. With the honest messages bounded and `rounds(n)` activations, each party's work in an
+honest execution (the only kind in this model) is polynomial in `n`. -/
+def PolyTime (π : Protocol) : Prop :=
+  π.P.Efficient ∧ π.V.Efficient ∧ ∃ B : PolyExpr, ∀ n (x : Fin (F.inA.eval n) → Bool)
+    (y : Fin (F.inB.eval n) → Bool) (r : π.ExecCoins π.P (List.replicate n true)),
+    ∀ msg ∈ (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).1 ++
+        (π.transcript (List.replicate n true) (List.ofFn x) (List.ofFn y) r).2,
+      msg.length ≤ B.eval n
+
 end Functionality
 
-/-- **Honest-but-curious security** [PS10, Definition 155.1]: there are non-uniform PPT simulators
+/-- **Honest-but-curious security** [PS10, Definition 155.1]: the parties run in polynomial time
+(`Functionality.PolyTime`; see the module docstring), and there are non-uniform PPT simulators
 `S_A`, `S_B` such that for every non-uniform PPT distinguisher `D` there is a negligible `ε` with,
 for all `n` and all inputs `x`, `y`, `D`'s advantage between Alice's real and ideal samplers, and
 between Bob's, at most `ε(n)`. -/
 def HBCSecure (π : Protocol) (F : Functionality) : Prop :=
-  ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+  F.PolyTime π ∧ ∃ SA SB : NUPPT, ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
     ∀ n (x : Fin (F.inA.eval n) → Bool) (y : Fin (F.inB.eval n) → Bool),
       distAdv (F.realA π n x y) (F.idealA SA n x y) (D.distinguisherL n) ≤ ε n ∧
         distAdv (F.realB π n x y) (F.idealB SB n x y) (D.distinguisherL n) ≤ ε n

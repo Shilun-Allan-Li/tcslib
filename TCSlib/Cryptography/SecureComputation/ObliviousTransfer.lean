@@ -54,8 +54,10 @@ needs only `Asymptotic/Collections`).
 
 * `SecureComputation.otProtocol_outV`, `otProtocol_outP`: correctness: Bob outputs `a_b` and
   Alice outputs `⊥ = []`, on every coin string.
+* `SecureComputation.otProtocol_polyTime` (the parties run in polynomial time, stated; a `sorry`
+  under its sketch).
 * `SecureComputation.otProtocol_simulators` (Prop 161.5 with the explicit simulators, stated; a
-  `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from it).
+  `sorry` under its sketch), and `otProtocol_hbcSecure` (Prop 161.5, proved from the two).
 
 ## References
 
@@ -137,7 +139,14 @@ variable {h : ∀ i, T.D i → Bool} (H : List Bool → List Bool)
   (hspec : ∀ i w x, T.decD i w = some x → H (pairEncode i w) = [h i x])
 
 include hspec in
-/-- **Bob outputs `a_b`** on every coin string (the output clause of Proposition 161.5). -/
+/-- **Bob outputs `a_b`** on every coin string (the output clause of Proposition 161.5).
+
+**Proof sketch.**
+1. Unfold the five moves. Bob's known element `w` is the sampler on his first coin block, and it
+   decodes to some `x` with `eval ⟨i, w⟩ = encD(perm x)` (`sample_spec`, `f_perm`).
+2. So `y_b = encD(perm x)`, and Alice's trapdoor inverter maps it back to an encoding of `x`
+   (`inv_spec`), whence `H` gives `[h(x)]` on both sides (`hspec`).
+3. Bob outputs `h(x) ⊕ z_b = h(x) ⊕ h(x) ⊕ a_b = a_b`, by cases on `b` and on `h(x)`. -/
 theorem otProtocol_outV (x : List Bool) (a : Fin 2 → Bool) (b : Fin 1 → Bool)
     (r : (otProtocol T H).ExecCoins (otProtocol T H).P x) :
     (otProtocol T H).outV (otProtocol T H).P x (List.ofFn a) (List.ofFn b) r =
@@ -298,7 +307,12 @@ def otSimBFun (H : List Bool → List Bool) (z : List Bool) : List Bool :=
     (pairEncode (coinSeg T.gen.coins (.add T.sample.coins T.sample.coins) z)
       (pairEncode (simIdx T z) (pairEncode (otSimZ T H z) (pairEncode [] []))))
 
-/-- `S_B` is polynomial-time when `H` is. -/
+/-- `S_B` is polynomial-time when `H` is.
+
+**Proof sketch.** `S_B` is built from polynomial-time pieces by pairing: the parameter and input
+readers, the coin segments (`polyTimeComputable_coinSeg`), the simulated index and sample, `H`,
+one XOR, and a branch on `b` (`polyTimeComputable_ite`). Each piece is matched to its definition
+by `funext`. -/
 theorem polyTimeComputable_otSimBFun {H : List Bool → List Bool} (hH : PolyTimeComputable H) :
     PolyTimeComputable (otSimBFun T H) := by
   have hzb : PolyTimeComputable (otSimZb T H) := by
@@ -389,13 +403,31 @@ theorem otProtocol_simulators (hT : T.OneWay) (hHC : T.toCollection.HardCore h)
             (otFunctionality.idealB (otSimB T hH) n x y) (D.distinguisherL n) ≤ ε n := by
   sorry
 
+include hH in
+/-- **Protocol 160.4 runs in polynomial time** (Definition 155.1's efficiency requirement,
+`Functionality.PolyTime`).
+
+**Proof sketch.**
+1. *Alice.* On the empty history she outputs `Gen`'s index; on one message, the two masks (the
+   trapdoor inverter, `H` and one XOR each, paired); otherwise `[]`. `Gen` and the inverter are
+   uniform machines and `H` is polynomial-time, so a uniform machine computes her next-message
+   function by composition, as for Algorithm 104.3's machines.
+2. *Bob.* His sampler twice, `eval` and a pairing on one message; `[]` on two; `H` and one XOR on
+   his complete history. The same composition gives a uniform machine.
+3. *Messages.* The index has at most `Gen`'s output length (`NUPPT.runLenPoly`). Bob's pair is
+   two sampler outputs or evaluations, polynomial in `n` and the index. The masks have one bit
+   each, paired, and the fillers are empty. Their maximum is a polynomial `B`. -/
+theorem otProtocol_polyTime : otFunctionality.PolyTime (otProtocol T H) := by
+  sorry
+
 include hspec hH in
 /-- **Proposition 161.5** [PS10]: Protocol 160.4 is an honest-but-curious one-out-of-two
 oblivious transfer (Definition 155.1 for `otFunctionality`), for a collection of trapdoor
 permutations with a hard-core predicate whose sampler outputs canonical encodings. -/
 theorem otProtocol_hbcSecure (hT : T.OneWay) (hHC : T.toCollection.HardCore h)
     (hcanon : SamplerCanonical T) : HBCSecure (otProtocol T H) otFunctionality :=
-  ⟨otSimA T, otSimB T hH, otProtocol_simulators T H hH hspec hT hHC hcanon⟩
+  ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
+    otProtocol_simulators T H hH hspec hT hHC hcanon⟩
 
 end Security
 
