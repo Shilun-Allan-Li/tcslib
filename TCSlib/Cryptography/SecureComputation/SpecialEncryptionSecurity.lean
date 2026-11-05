@@ -60,6 +60,12 @@ structure PRFOut (ℓ₂ : PolyExpr)
   pseudorandom : (OracleEnsemble.keyed (ℓ₁ := .var) (ℓ₂ := ℓ₂) G).Indist
     (OracleEnsemble.random .var ℓ₂)
 
+/-- With `n`-bit outputs, `PRFOut` is the ch. 2–4 layer's `PRF` (duplication-ledger item DL-8:
+`PRFOut` generalizes `PRF`, and agrees with it at `ℓ₂ = n`). -/
+theorem prfOut_var_iff (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin n → Bool)) :
+    PRFOut .var F ↔ PRF F :=
+  ⟨fun h => ⟨h.easy, h.pseudorandom⟩, fun h => ⟨h.easy, h.pseudorandom⟩⟩
+
 variable (G : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (Fin (n + n) → Bool))
   (E : List Bool → List Bool) (hE : PolyTimeComputable E)
   (hGE : ∀ n (s x : Fin n → Bool), E (pairEncode (List.ofFn s) (List.ofFn x)) =
