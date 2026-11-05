@@ -1,0 +1,39 @@
+From 5732d5bd3186391ca8561e4333e9f82f8a9373ad Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 23:31:12 -0800
+Subject: [PATCH] NDNormalForm: nf_tag converts the tagged stream start through
+ Cfg.mapState_eq_of_fields
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index c528e375..bf180b5e 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -1302,13 +1302,13 @@ private theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List B
+ private theorem nf_tag {N : FinNDTM Bool} {SL : Type} (x s : List Bool) (i : nf_Ph N.k)
+     (q : nf_St N SL i) :
+     streamStartCfg x (0 : Fin 2) (⟨i, q⟩ : Σ i, nf_St N SL i) s =
+-      (streamStartCfg x (0 : Fin 2) q s).mapState (Sigma.mk i) := by
+-  apply Cfg.ext
+-  · rw [Cfg.mapState_state, streamStartCfg_state, streamStartCfg_state]; rfl
+-  · rw [Cfg.mapState_inputPos, streamStartCfg_inputPos, streamStartCfg_inputPos]
+-  · funext i p; rw [Cfg.mapState_workTapes, streamStartCfg_workTapes, streamStartCfg_workTapes]
+-  · funext i; rw [Cfg.mapState_workTapePos, streamStartCfg_workTapePos, streamStartCfg_workTapePos]
+-  · rw [Cfg.mapState_output, streamStartCfg_output, streamStartCfg_output]
++      (streamStartCfg x (0 : Fin 2) q s).mapState (Sigma.mk i) :=
++  (Cfg.mapState_eq_of_fields _ _ _
++    (by rw [streamStartCfg_state, streamStartCfg_state]; rfl)
++    (by rw [streamStartCfg_inputPos, streamStartCfg_inputPos])
++    (by funext j p; rw [streamStartCfg_workTapes, streamStartCfg_workTapes])
++    (by funext j; rw [streamStartCfg_workTapePos, streamStartCfg_workTapePos])
++    (by rw [streamStartCfg_output, streamStartCfg_output])).symm
+ 
+ /-- After a record's first `2k + 3` bits the parser is at the last position with the control
+ unchanged; the record's last bit completes the full record array, and the parser's step there
+-- 
+2.50.1 (Apple Git-155)
+
