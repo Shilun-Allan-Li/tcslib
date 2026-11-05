@@ -465,6 +465,8 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.pairwise_sampling_ineq
 -- Ruling G3-7a: `negligible_zero` now lives in `Foundations/Negligible.lean` (name unchanged).
 #print axioms TCSlib.Cryptography.negligible_zero
+-- Finding 3: the parameter-aware closure under pre- and post-processing.
+#print axioms Complexity.NUPPT.exists_compParam
 
 -- Note 21: `Ensemble.Indist` can fail (the distinguisher semantics is not trivial).
 namespace PassShelatChecks
