@@ -36,6 +36,19 @@ branch as for [PS10].
 `cryptography/pass-shelat-ch5-8-prong-c` (fast-forwarded). **Recommended: delete it.** I have not
 deleted it, because deleting a remote branch is yours to approve.
 
+## Q-4. The PAC layer's PR to `main`: gate or not (decision)
+
+[Shilun-Allan-Li/tcslib#194](https://github.com/Shilun-Allan-Li/tcslib/pull/194) adds S3d layer 1
+(per ruling R-3). It is 646 lines, sorry-free, with standard axioms only, and was checked by the
+maintainer (`evidence/pac-2026-11-05/`).
+
+**Options.**
+1. **An external gate, as P0 had (gate 01) (recommended).** It lands on `main` and defines notions
+   that Thm 179.1 will rest on. I would stage a small pack (the three files, S3d, and [PS10]
+   §8.1) for you to dispatch.
+2. **Merge on the maintainer's checks.** Faster, since it is information-theoretic and fully proved.
+   But nothing outside the campaign has read the definitions.
+
 ## Dispatches and merges
 
 To be added as they become ready: the gate 03 packs, the S2b PR and gate 04, and the PAC layer's
