@@ -70,10 +70,14 @@ that contains them). Most are superseded deliveries or landings:
 - `local/eq-cp1-landing`, `local/eq-cp1-landing-v2`;
 - `dedup/ch34-d4`, which has no Lean.
 
-Two October re-points may still be 12.2c material:
-- `local/canon-mapcomp-repoint`: `CodeSimulator`'s grammar-stage relabeling as
+Two October re-points may still be 12.2c material. The user had them pushed as archive branches
+(2026-11-05):
+- `archive/mac/canon-mapcomp-repoint` (`e4c5d015`): `CodeSimulator`'s grammar-stage relabeling as
   `Cfg.mapState_mapState`;
-- `local/r-leaf-repoint`: `NDCodeSimulator`'s input rewinds as `Build/InputRewind`'s.
+- `archive/mac/r-leaf-repoint` (`89bf6acb`): `NDCodeSimulator`'s input rewinds as
+  `Build/InputRewind`'s.
+
+The rest stay on the Mac.
 
 `maint/12.2c-t2a` (2026-10-12) is the T2a facade wiring.
 
