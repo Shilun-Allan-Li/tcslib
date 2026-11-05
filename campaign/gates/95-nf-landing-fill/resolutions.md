@@ -45,3 +45,12 @@ at #191's head `ac934f99cc5d5009b8027fc0516ab2fd5be0042d` (the repair, then a me
 that changes no `.lean` file).
 
 **Round 2 (2026-11-05):** `pack-r2.md`, at #191's head `ac934f99cc5d5009b8027fc0516ab2fd5be0042d`.
+
+**Round 2 staged (2026-11-05)** on the exchange at
+`arora-barak-ch3-4/outbox/gates/95-nf-landing-fill-r2-gate/` (exchange commit `1e3a07d8`): bundle
+`95-nf-landing-fill-r2-bundle.md`, 84 sections, SHA-256
+`cf64d82283e92c74a2a1577ea4aef911664019658a476af2596d0fb4a585b91b`. Lean files from #191's head
+`ac934f99cc5d5009b8027fc0516ab2fd5be0042d`, everything else from the records commit
+`3db74cec40daa103128d90754940571f47b348a1`. Findings file `nf-landing-fill-r2-findings.md`.
+
+**Not yet clear to merge: #191** (gate 95's round 2 is staged, not yet dispatched).

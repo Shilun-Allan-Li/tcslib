@@ -51,3 +51,12 @@ exchange commit `ad00d747c47c5cdbe3c1453fc49e07e553d084e2`), SHA-256
 the existing 30 `sorry`s, chained from `oleans-cloud0` (`evidence/round2/merged-tree/`).
 
 **Round 2 (2026-11-05):** `pack-r2.md`, at #196's head `ce9d63f4afcf549bff1bcb920254a8c05dc31d1c`.
+
+**Round 2 staged (2026-11-05)** on the exchange at
+`arora-barak-ch3-4/outbox/gates/96-deepen-api-r2-gate/` (exchange commit `dd3dad21`): bundle
+`96-deepen-api-r2-bundle.md`, 149 sections, SHA-256
+`0a6c59a30aab3354024cc792c9325e5d9ac9faa7c37fa8ce9878d9488b53a08b`. Lean files from #196's head
+`ce9d63f4afcf549bff1bcb920254a8c05dc31d1c`, everything else from the records commit
+`4558427c98b6205a3d5ed0d49251b5d3895b5cad`. Findings file `deepen-api-r2-findings.md`.
+
+**Not yet clear to merge: #196** (gate 96's round 2 is staged, not yet dispatched).
