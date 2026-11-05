@@ -17,3 +17,9 @@
 | 9 | note | The final merged tree is not yet certified. | Agreed: `replay-lcf3` (86 modules from `oleans-led4`, at `a5d448e3`) is the certifying replay. |
 
 **Gate 94 closes (round 1, CLOSE, 2026-11-05).** #190 is clear to merge once `replay-lcf3` passes.
+
+**Replay (2026-11-05): `replay-lcf3` passed.** #190's head `a5d448e3` (the campaign after #188 merged in; no
+Lean change on the campaign since), the downstream closure of #190's six files, 86 modules chained from `oleans-led4`:
+`# modules=86 failed=0`; the static check 86 modules, 0 mismatches (`evidence/merged-tree/replay-lcf3.log`,
+`replay-lcf3-static.txt`, `down-lcf3.txt`, the script as `replay-lcf3.sh.txt`). The snapshot `oleans-lcf3` is #191's
+replay base. **#190 is clear to merge.**
