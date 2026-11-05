@@ -1,7 +1,7 @@
 # Addendum to the S1 note for Frederick Dehmel (draft for Seyoon to forward)
 
 Drafted 2026-11-04 by the ch. 5–8 maintainer session, after the S1 note
-(`S1-note-frederick.md`) went out. Status: **draft, not sent.** It adds the requests that follow
+(`S1-note-frederick.md`) went out. Status: **superseded, never sent** (2026-11-05: Frederick has left the branch, and the ch. 5–8 maintainer owns ch. 2–4; its requests became the maintainer's own work items, listed in `PassShelatChapter5-8Plan.md`, "Ch. 2–4 ownership"). It adds the requests that follow
 from Seyoon's later rulings and corrects one fact.
 
 ---

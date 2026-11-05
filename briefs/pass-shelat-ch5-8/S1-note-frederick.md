@@ -1,6 +1,6 @@
 # S1 coordination note to Frederick Dehmel (draft for Seyoon to forward)
 
-Drafted 2026-11-04 by the ch. 5–8 maintainer session. Status: **draft, not sent.** Every name below
+Drafted 2026-11-04 by the ch. 5–8 maintainer session. Status: **superseded, never sent** (2026-11-05: Frederick has left the branch, and the ch. 5–8 maintainer owns ch. 2–4; its requests became the maintainer's own work items, listed in `PassShelatChapter5-8Plan.md`, "Ch. 2–4 ownership"). Every name below
 was resolved by a text-level scan (namespaces tracked) of the ch. 2–4 Lean at
 `a7a3e0af0ecd261bd8643fcf96a2cfcbaa5757b7`, the last commit touching `TCSlib/Cryptography` or
 `TCSlib/Complexity/Randomized`. A Lean import probe follows once the base builds.
