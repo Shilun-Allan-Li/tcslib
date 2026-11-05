@@ -25,15 +25,19 @@ set_option autoImplicit false
 
 ## Main results
 
+* `rvLpNorm_const`, `rvLpNorm_const_mul`: constant norms and homogeneity.
 * `rvLpNorm_rpow`: the positive finite-exponent norm raised to its exponent is its absolute
   moment.
 * `rvLpNorm_affine_sq`: the second norm of an affine perturbation of a centered variable.
 * `IsRademacherRV.map_eq`: the uniform law on the two signs.
+* `IsHypercontractive.identDistrib`: transport under equality in distribution.
+* `IsHypercontractive.affine_three_norm_sq`: the standardized affine third-norm bound.
 * `IsHypercontractive.conjugate`: affine contraction at conjugate exponents.
 * `IsHypercontractive.const_mul`: preservation under scalar multiplication.
 * `IsHypercontractive.mono_radius`: contraction at smaller radii for centered variables.
 * `HasAtomLowerBound.memLp`: integrability at every exponent from finite support.
-* `evalMultilinearRV_memLp`: finite fourth moments for independent multilinear inputs.
+* `evalMultilinearRV_memLp_nat`: finite natural-order moments for independent polynomials.
+* `evalMultilinearRV_memLp`: the fourth-order specialization.
 * `reasonable_moment_algebra`: the algebraic step for the generalized Bonami recurrence.
 * `multilinear_sum_insert`: the finite-sum decomposition that splits off one input.
 * `integrable_mul_pow_of_memLp`: integrability of mixed monomials up to the available order.
@@ -59,6 +63,24 @@ def IsHypercontractive (X : Ω → ℝ) (μ : Measure Ω) (p q : ℝ≥0∞) (ρ
   1 ≤ p ∧ p ≤ q ∧ 0 ≤ ρ ∧ ρ < 1 ∧ MemLp X q μ ∧
     ∀ a b : ℝ, eLpNorm (fun ω => a + ρ * b * X ω) q μ ≤
       eLpNorm (fun ω => a + b * X ω) p μ
+
+/-- Hypercontractivity is preserved by equality in distribution.
+[OD14, Def. 9.13, dependence only on the input law] -/
+theorem IsHypercontractive.identDistrib
+    {Ξ : Type*} [MeasurableSpace Ξ] {μ : Measure Ω} {ν : Measure Ξ}
+    {X : Ω → ℝ} {Y : Ξ → ℝ} {p q : ℝ≥0∞} {ρ : ℝ}
+    (hX : IsHypercontractive X μ p q ρ) (hXY : IdentDistrib X Y μ ν) :
+    IsHypercontractive Y ν p q ρ := by
+  rcases hX with ⟨hp, hpq, hρ0, hρ1, hmem, hnorm⟩
+  refine ⟨hp, hpq, hρ0, hρ1, hXY.memLp_snd hmem, ?_⟩
+  intro a b
+  have hleft := hXY.comp (show Measurable (fun x : ℝ => a + ρ * b * x) by fun_prop)
+  have hright := hXY.comp (show Measurable (fun x : ℝ => a + b * x) by fun_prop)
+  have eleft := hleft.eLpNorm_eq q
+  have eright := hright.eLpNorm_eq p
+  simp only [Function.comp_def] at eleft eright
+  rw [← eleft, ← eright]
+  exact hnorm a b
 
 /-- The real-valued `q`-norm is used with finite-norm hypotheses to avoid totalizing
 an infinite norm to zero. [OD14, §10.2] -/
@@ -89,6 +111,23 @@ source's positive minimum probability, without restricting the sample space.
 def HasAtomLowerBound (X : Ω → ℝ) (μ : Measure Ω) (lam : ℝ) : Prop :=
   ∃ s : Finset ℝ, (∀ᵐ ω ∂μ, X ω ∈ s) ∧
     ∀ x ∈ s, ENNReal.ofReal lam ≤ μ {ω | X ω = x}
+
+/-- A constant on a probability space has real finite-exponent norm equal to
+its absolute value. [OD14, §9.1, probability-space norms] -/
+theorem rvLpNorm_const (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (c q : ℝ) (hq : 0 < q) : rvLpNorm (fun _ : Ω => c) μ q = |c| := by
+  unfold rvLpNorm
+  rw [eLpNorm_const' c (by positivity) (by simp)]
+  simp [← ofReal_norm_eq_enorm, Real.norm_eq_abs]
+
+/-- Scalar multiplication scales the real random-variable norm by the scalar's
+absolute value. [OD14, §9.1, homogeneity of norms] -/
+theorem rvLpNorm_const_mul (X : Ω → ℝ) (μ : Measure Ω) (c q : ℝ) :
+    rvLpNorm (fun ω => c * X ω) μ q = |c| * rvLpNorm X μ q := by
+  change (eLpNorm (c • X) (ENNReal.ofReal q) μ).toReal = _
+  rw [eLpNorm_const_smul, ENNReal.toReal_mul]
+  simp only [← ofReal_norm_eq_enorm, Real.norm_eq_abs, ENNReal.toReal_ofReal (abs_nonneg _)]
+  rfl
 
 /-- For positive `q`, the `q`-th power of the finite real-valued `q`-norm equals the
 `q`-th absolute moment. [OD14, §10.2] This norm identity is stated for an arbitrary
@@ -147,6 +186,41 @@ theorem rvLpNorm_affine_sq (X : Ω → ℝ) (μ : Measure Ω) [IsProbabilityMeas
           (integral_add (integrable_const (a ^ 2)) (hXint.const_mul (2 * a * b)))
     _ = a ^ 2 + b ^ 2 * rvLpNorm X μ 2 ^ 2 := by
       simp [integral_const_mul, hmean, hXsecond]
+
+/-- A standardized hypercontractive input bounds the squared third norm of an
+affine function by its rescaled second moment. [OD14, Remark 11.66 (proof)]
+
+**Proof sketch.** Apply hypercontractivity with the linear coefficient divided
+by the radius. Square the resulting norm inequality and expand the second
+moment, using the vanishing mean and unit second moment. -/
+theorem IsHypercontractive.affine_three_norm_sq
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {X : Ω → ℝ} {ρ : ℝ}
+    (hX : IsHypercontractive X μ 2 3 ρ) (hρ : 0 < ρ)
+    (hmean : (∫ ω, X ω ∂μ) = 0) (hsecond : (∫ ω, X ω ^ 2 ∂μ) = 1)
+    (a b : ℝ) :
+    rvLpNorm (fun ω => a + b * X ω) μ 3 ^ 2 ≤ a ^ 2 + (b / ρ) ^ 2 := by
+  rcases hX with ⟨_, _, _, _, hmem, hcontract⟩
+  have hmem2 : MemLp X 2 μ := hmem.mono_exponent (by norm_num)
+  have hnormX : rvLpNorm X μ 2 ^ 2 = 1 := by
+    simpa only [Real.rpow_two, sq_abs, hsecond] using
+      rvLpNorm_rpow X μ 2 (by norm_num) (by simpa using hmem2)
+  have hright : MemLp (fun ω => a + (b / ρ) * X ω) 2 μ :=
+    (memLp_const a).add (hmem2.const_mul (b / ρ))
+  have hscaled : (fun ω => a + ρ * (b / ρ) * X ω) =
+      (fun ω => a + b * X ω) := by
+    funext ω
+    congr 1
+    field_simp [hρ.ne']
+  have hnorm := ENNReal.toReal_mono hright.2.ne (hcontract a (b / ρ))
+  rw [hscaled] at hnorm
+  have hnorm' : rvLpNorm (fun ω => a + b * X ω) μ 3 ≤
+      rvLpNorm (fun ω => a + (b / ρ) * X ω) μ 2 := by
+    simpa [rvLpNorm] using hnorm
+  calc
+    _ ≤ rvLpNorm (fun ω => a + (b / ρ) * X ω) μ 2 ^ 2 :=
+      pow_le_pow_left₀ ENNReal.toReal_nonneg hnorm' 2
+    _ = a ^ 2 + (b / ρ) ^ 2 := by
+      rw [rvLpNorm_affine_sq X μ hmem2 hmean, hnormX, mul_one]
 
 /-- A Rademacher random variable has the uniform probability law on the two signs
 [OD14, §10.2, Lem. 10.15].
@@ -442,28 +516,23 @@ theorem HasAtomLowerBound.memLp
   filter_upwards [hs] with ω hω
   exact Finset.single_le_sum (fun x _ => norm_nonneg x) hω
 
-/-- Every multilinear polynomial evaluated on mutually independent real random variables
-with finite fourth moments on a probability space belongs to `L⁴`.
-[OD14, Cor. 9.6] This establishes integrability only, isolating the finite-moment component
-of the source's stronger reasonability bound. The degree, vanishing first and third
-moments, and input reasonability assumptions needed for that bound are omitted here.
+/-- A multilinear polynomial in independent inputs with finite natural-order
+moments has a finite moment of the same order. [OD14, Cor. 9.6 (proof)]
+This isolates the integrability argument from any hypercontractive estimate.
 
-**Proof sketch.** Induct over each monomial's finite set of inputs. Mutual independence
-makes the fourth power of the new input's norm independent of the fourth power of the
-preceding product's norm. Apply `IndepFun.integrable_mul` and
-`integrable_norm_rpow_iff` to obtain membership in `L⁴` without requiring higher moments.
-Scalar multiplication by each coefficient and a finite sum finish the argument. -/
-theorem evalMultilinearRV_memLp {n : ℕ}
+**Proof sketch.** Independence makes the absolute moments of a monomial factor.
+Induct over its coordinates, then take the finite linear combination of monomials. -/
+theorem evalMultilinearRV_memLp_nat {n p : ℕ} (hp : 0 < p)
     (F : ThresholdFunctions.MultilinearPolynomial n) (X : Fin n → Ω → ℝ)
     (μ : Measure Ω) [IsProbabilityMeasure μ] (hindep : iIndepFun X μ)
-    (hX : ∀ i, MemLp (X i) 4 μ) :
-    MemLp (evalMultilinearRV F X) 4 μ := by
+    (hX : ∀ i, MemLp (X i) (p : ℝ≥0∞) μ) :
+    MemLp (evalMultilinearRV F X) (p : ℝ≥0∞) μ := by
   classical
-  have hprod : ∀ S : Finset (Fin n), MemLp (∏ i ∈ S, X i) 4 μ := by
+  have hprod : ∀ S : Finset (Fin n), MemLp (∏ i ∈ S, X i) (p : ℝ≥0∞) μ := by
     intro S
     induction S using Finset.induction_on with
     | empty =>
-        simpa using (memLp_const (μ := μ) (p := 4) (1 : ℝ))
+        simpa using (memLp_const (μ := μ) (p := p) (1 : ℝ))
     | insert i S hi hS =>
         rw [Finset.prod_insert hi]
         have hm : AEStronglyMeasurable (X i * ∏ j ∈ S, X j) μ :=
@@ -471,23 +540,32 @@ theorem evalMultilinearRV_memLp {n : ℕ}
         have hind : IndepFun (X i) (∏ j ∈ S, X j) μ :=
           (hindep.indepFun_finset_prod_of_notMem₀
             (fun j => (hX j).aestronglyMeasurable.aemeasurable) hi).symm
-        have hp := hind.comp
-          (φ := fun x : ℝ => ‖x‖ ^ (4 : ℕ))
-          (ψ := fun x : ℝ => ‖x‖ ^ (4 : ℕ))
+        have hpowInd := hind.comp
+          (φ := fun x : ℝ => ‖x‖ ^ p)
+          (ψ := fun x : ℝ => ‖x‖ ^ p)
           (by fun_prop) (by fun_prop)
-        have hI := hp.integrable_mul
-          ((hX i).integrable_norm_pow' (p := 4))
-          (hS.integrable_norm_pow' (p := 4))
+        have hI := hpowInd.integrable_mul
+          ((hX i).integrable_norm_pow' (p := p))
+          (hS.integrable_norm_pow' (p := p))
         change Integrable (fun ω =>
-          ‖X i ω‖ ^ (4 : ℕ) * ‖(∏ j ∈ S, X j) ω‖ ^ (4 : ℕ)) μ at hI
+          ‖X i ω‖ ^ p * ‖(∏ j ∈ S, X j) ω‖ ^ p) μ at hI
         apply (integrable_norm_rpow_iff hm
-          (by norm_num : (4 : ℝ≥0∞) ≠ 0)
-          (by norm_num : (4 : ℝ≥0∞) ≠ ⊤)).mp
-        simpa only [ENNReal.toReal_ofNat, Real.rpow_ofNat,
+          (by exact_mod_cast hp.ne' : (p : ℝ≥0∞) ≠ 0)
+          (by norm_num : (p : ℝ≥0∞) ≠ ⊤)).mp
+        simpa only [ENNReal.toReal_natCast, Real.rpow_natCast,
           Pi.mul_apply, norm_mul, mul_pow] using hI
   unfold evalMultilinearRV
   refine memLp_finset_sum Finset.univ (fun S _ => ?_)
   simpa only [Finset.prod_apply] using (hprod S).const_mul (F S)
+
+/-- Every multilinear polynomial in independent inputs with finite fourth moments
+has a finite fourth moment. [OD14, Cor. 9.6 (proof)] -/
+theorem evalMultilinearRV_memLp {n : ℕ}
+    (F : ThresholdFunctions.MultilinearPolynomial n) (X : Fin n → Ω → ℝ)
+    (μ : Measure Ω) [IsProbabilityMeasure μ] (hindep : iIndepFun X μ)
+    (hX : ∀ i, MemLp (X i) 4 μ) :
+    MemLp (evalMultilinearRV F X) 4 μ :=
+  evalMultilinearRV_memLp_nat (by decide : 0 < 4) F X μ hindep hX
 
 /-- If `R ≥ 9`, `a`, `b`, `C`, and `D` are nonnegative, and
 `A ≤ R a²`, `D ≤ b²`, and `C² ≤ A D`, then

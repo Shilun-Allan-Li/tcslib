@@ -18,10 +18,13 @@ notion that the library's control combinators speak, plus the pure list/
 arithmetic functions that the primitive contracts in
 `TCSlib.Complexity.TuringMachine.Build.Primitives` are stated against.
 
-**Status: spec phase.** This module is fully proved (definitions and two
-glue lemmas); the sibling `Build` modules state sorried contracts against
-it. The whole `Build` surface is new Chapter-1 growth, flagged for the
-shared infrastructure audit round (with the `Universal` bridge export).
+**Status: proved.** This module is fully proved (definitions, two glue
+lemmas, and the two `incFixed` laws promoted at CH34-D4), and the sibling
+`Build` modules' contracts stated against
+it are now all proved as well (library fill batches and the emitter
+increment; zero sorries). The `Build` surface was new Chapter-1 growth,
+audited in the shared infrastructure and emitter rounds
+(`audits/ch1-infra-*`, `audits/emitter-*`).
 
 ## The seam notion
 
@@ -43,12 +46,16 @@ generic clearing pass.
 * `Turing.Cfg.ofWords` — the canonical seam configuration: anchor state,
   input head at 1, work tape `i` holding word `w i` from the origin, heads
   at the origin, empty output.
+* `Turing.Cfg.ofWords_state`, `_inputPos`, `_workTapePos`, `_output` — the seam's fields beside
+  `Turing.Cfg.ofWords_workTapes` (the ND inventory API, C1's pre-ship inventory, 2026-10-17).
 * `Turing.splitAtLastTrue` — strip a marker suffix: the prefix before the
   last `true`, or `none` if the word is all `false` (the audited marker
   discipline of the Chapter-2 Exercise-2.1 construction).
 * `Turing.solveSplit` — least solution `i ≤ n` of the padding length
   equation `i + C·(i+1)^e = n`, or `none` (the split-search discipline of
   the padding constructions).
+* `Turing.incFixed_replicate_true_append`, `Turing.incFixed_eq_none_iff_replicate` — the
+  increment's carry through a `true` prefix and its overflow criterion (CH34-D4).
 * `Turing.incFixed` — little-endian fixed-width binary increment with
   explicit overflow (`none`), width preserved (the enumerator's counter
   discipline; width zero overflows immediately).
@@ -93,6 +100,27 @@ lemma Cfg.ofWords_workTapes {input : List Bool} (q : State)
     (Cfg.ofWords (input := input) q w).workTapes i = FinTM.bufferTape (w i) :=
   rfl
 
+/-- The seam's other fields (the ND inventory API, 2026-10-17; C1 wave 1's route inventory): the
+state is `some q`, `(Cfg.ofWords q w).state = some q`. -/
+theorem Cfg.ofWords_state {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).state = some q :=
+  rfl
+
+/-- At a seam the input head is at its initial position: `(Cfg.ofWords q w).inputPos = 1`. -/
+theorem Cfg.ofWords_inputPos {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).inputPos = 1 :=
+  rfl
+
+/-- At a seam every work head is at the origin: `(Cfg.ofWords q w).workTapePos i = 0`. -/
+theorem Cfg.ofWords_workTapePos {input : List Bool} (q : State) (w : Fin k → List Bool)
+    (i : Fin k) : (Cfg.ofWords (input := input) q w).workTapePos i = 0 :=
+  rfl
+
+/-- At a seam the output is empty: `(Cfg.ofWords q w).output = []`. -/
+theorem Cfg.ofWords_output {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords (input := input) q w).output = [] :=
+  rfl
+
 /-- Strip a marker suffix: the prefix of `v` before its **last** `true`, or
 `none` when `v` is all `false`. This is the Chapter-2 Exercise-2.1 marker
 discipline (split at the last `true`; an all-`false` certificate region is
@@ -119,7 +147,76 @@ def incFixed : List Bool → Option (List Bool)
   | false :: rest => some (true :: rest)
   | true :: rest => (incFixed rest).map (false :: ·)
 
-/-- **Emitter-increment vocabulary** (design §11, spec phase): least
+/-- The empty word overflows: `incFixed [] = none`. -/
+theorem incFixed_nil : incFixed [] = none :=
+  rfl
+
+/-- A low `false` absorbs the carry: `incFixed (false :: w) = some (true :: w)`. -/
+theorem incFixed_false_cons (w : List Bool) : incFixed (false :: w) = some (true :: w) :=
+  rfl
+
+/-- A low `true` passes the carry on: `incFixed (true :: w) = (incFixed w).map (false :: ·)`. -/
+theorem incFixed_true_cons (w : List Bool) :
+    incFixed (true :: w) = (incFixed w).map (false :: ·) :=
+  rfl
+
+/-- **The increment keeps the width:** `incFixed w = some v → |v| = |w|`.
+
+**Proof sketch.** Induct on `w` through the three case equations: the empty word overflows, a
+low `false` becomes `true`, and a low `true` becomes `false` before the incremented tail. -/
+theorem incFixed_length {w v : List Bool} (h : incFixed w = some v) : v.length = w.length := by
+  induction w generalizing v with
+  | nil =>
+    rw [incFixed_nil] at h
+    exact absurd h (by simp)
+  | cons b w ih =>
+    cases b with
+    | false =>
+      rw [incFixed_false_cons, Option.some.injEq] at h
+      subst v
+      rfl
+    | true =>
+      rw [incFixed_true_cons] at h
+      cases he : incFixed w with
+      | none =>
+        rw [he] at h
+        exact absurd h (by simp)
+      | some z =>
+        rw [he, Option.map_some, Option.some.injEq] at h
+        subst v
+        rw [List.length_cons, List.length_cons, ih he]
+
+/-- `Turing.incFixed` carries through a prefix of `true` bits: the prefix
+`1ⁿ` becomes `0ⁿ` and the remainder `w` is incremented, the width is kept,
+and the whole word overflows exactly when `w` does. Shared by the catalog's
+increment routine and the `EXPCOM` deadline guard (CH34-D4).
+
+**Proof sketch.** Induct on `n`. Each leading `true` is one step of the carry
+clause of `incFixed`, which prepends one `false` to the incremented tail. -/
+theorem incFixed_replicate_true_append (n : ℕ) (w : List Bool) :
+    incFixed (List.replicate n true ++ w) =
+      (incFixed w).map (List.replicate n false ++ ·) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    simp [List.replicate_succ, incFixed, ih, Option.map_map, Function.comp_def]
+
+/-- **The overflow criterion of `Turing.incFixed`**: the increment overflows
+exactly on the all-`true` word (the empty word included). The public home of
+the criterion, promoted per the fills-6 request F6-1(e) (CH34-D4).
+
+**Proof sketch.** Induct on `u`. The empty word overflows. A leading `false`
+never overflows, and the word is then not all `true`. After a leading `true`,
+the word overflows exactly when its tail does, and is all `true` exactly when
+its tail is. -/
+theorem incFixed_eq_none_iff_replicate (u : List Bool) :
+    incFixed u = none ↔ u = List.replicate u.length true := by
+  induction u with
+  | nil => simp [incFixed]
+  | cons b u ih =>
+    cases b <;> simp [incFixed, ih, List.replicate_succ]
+
+/-- **Emitter-increment vocabulary** (design §11): least
 solution `i ≤ n` of the width-parametric split equation `i + f i = n`, or
 `none` — the generalization of `Turing.solveSplit` from the hardwired
 polynomial family to an arbitrary width function. At
@@ -130,7 +227,7 @@ arguments. No machine content: `List.range` search, first match. -/
 def solveSplitWith (f : ℕ → ℕ) (n : ℕ) : Option ℕ :=
   (List.range (n + 1)).find? fun i => i + f i == n
 
-/-- **Emitter-increment vocabulary** (design §11, spec phase): split off
+/-- **Emitter-increment vocabulary** (design §11): split off
 the leading unary token — the maximal `true`-prefix together with its
 terminating `false` delimiter — returning the token and the remainder. A
 word with no delimiter yields the whole word as an unterminated token with

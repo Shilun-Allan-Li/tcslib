@@ -1,23 +1,25 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean :: exp_neg_eventually_small -->
+<!-- lean-source: TCSlib/BooleanAnalysis/LMN/BernoulliCost.lean :: BernoulliCost.exp_neg_eventually_small -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The tail term `e^{−mp/3}` is eventually below any `ε`
+# Exponential Tails Eventually Fall Below Any Threshold
 
-**Claim.** For `p : ℝ` with `0 < p` and `ε : ℝ` with `0 < ε`, there is `N : ℕ`
-such that `Real.exp (-(m · p / 3)) < ε` for all `m : ℕ` with `N ≤ m`.
+**Claim.** For every real $p > 0$ and every $\varepsilon > 0$ there is a natural number $N$ such that $\exp\!\left(-\tfrac{mp}{3}\right) < \varepsilon$ for all natural numbers $m \ge N$. In words: as the index $m$ grows, the exponential tail $\exp(-mp/3)$ is eventually smaller than any prescribed positive bound.
 
-**Proof.** One `simpa` over a composed limit — no case analysis.
+**Proof.** The Lean proof does not estimate $N$ explicitly. Instead it shows that the sequence $m \mapsto \exp(-mp/3)$ converges to $0$ as $m \to \infty$, and then reads off the required $N$ from what convergence to $0$ means. The convergence is built up by chaining together the limiting behaviour of each operation applied to $m$.
 
-1. `tendsto_natCast_atTop_atTop.atTop_mul_const hp` gives `m · p → ∞`,
-   `Filter.Tendsto.atTop_div_const (by positivity)` divides by `3`,
-   `Filter.tendsto_neg_atTop_atBot` negates to `−∞`, and
-   `Real.tendsto_exp_atBot` composes to `exp (−(m p / 3)) → 0` along
-   `atTop`.
-2. `.eventually (gt_mem_nhds hε)` says the values are eventually in `{x | x < ε}`;
-   `Filter.eventually_atTop.mp` extracts the threshold `N` and the bound for all
-   `m ≥ N`.
-3. `simpa [neg_div]` reconciles `−(m p / 3)` with the form produced by the limit
-   composition.
+1. **The index tends to infinity.** As a natural number $m$ grows without bound, so does its real-number image: the cast $m \mapsto (m : \mathbb{R})$ tends to $+\infty$ along the "eventually larger" filter on $\mathbb{N}$ (`tendsto_natCast_atTop_atTop`).
 
-**Used in.** `bernoulli_restriction_asymptotic`, which picks its `N` from here.
+2. **Scaling and dividing by positive constants preserve this.** Multiplying by the fixed positive constant $p$ keeps a quantity tending to $+\infty$ (since $p > 0$), so $mp \to +\infty$; dividing by the fixed positive constant $3$ likewise preserves the limit (the proof discharges $3 > 0$ by a routine positivity check), so $\tfrac{mp}{3} \to +\infty$.
+
+3. **Negation flips the direction.** Negating a quantity that tends to $+\infty$ gives one tending to $-\infty$ (`Filter.tendsto_neg_atTop_atBot`), so $-\tfrac{mp}{3} \to -\infty$. A small rewriting step reconciles the two equivalent ways of placing the sign, $-\tfrac{mp}{3}$ versus $\tfrac{-mp}{3}$, so that this fact matches the expression in the statement.
+
+4. **The exponential vanishes at $-\infty$.** Since $\exp(x) \to 0$ as $x \to -\infty$ (`Real.tendsto_exp_atBot`), composing with the previous step yields
+\[
+\exp\!\left(-\tfrac{mp}{3}\right) \longrightarrow 0 \qquad (m \to \infty).
+\]
+
+5. **Convergence to $0$ forces the tail below $\varepsilon$.** Because $\varepsilon > 0$, the open half-line $\{x : x < \varepsilon\}$ is a neighbourhood of $0$ (`gt_mem_nhds`). By definition of convergence, a sequence tending to $0$ eventually lands in every neighbourhood of $0$; hence $\exp(-mp/3)$ is eventually less than $\varepsilon$.
+
+6. **Unpacking "eventually".** For the filter of large indices, "eventually $P(m)$" means precisely that there is some $N$ with $P(m)$ holding for all $m \ge N$ (`Filter.eventually_atTop`). Extracting this $N$ gives exactly the claimed statement: $\exp(-mp/3) < \varepsilon$ whenever $m \ge N$.

@@ -1,24 +1,16 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching/BernoulliRestriction.lean :: bernoulliRestrWeight_nonneg' -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching/BernoulliRestriction.lean :: SwitchingLemma.bernoulliRestrWeight_nonneg' -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# Bernoulli restriction weights are nonnegative
+# Nonnegativity of the Bernoulli restriction weight
 
-**Claim.** For `p : ℝ` with `0 ≤ p` and `p ≤ 1`, and any restriction
-`ρ : Restriction n`, we have `0 ≤ bernoulliRestrWeight p ρ`.
+**Claim.** Fix a real number $p$ with $0 \le p \le 1$, and let $\rho$ be a restriction on $n$ variables, exactly $f$ of which it leaves free. Then the Bernoulli weight assigned to $\rho$, namely $p^{f}\,\bigl(\tfrac{1-p}{2}\bigr)^{\,n-f}$, is nonnegative.
 
-**Proof.** A two-line computation after `unfold bernoulliRestrWeight`, which
-exposes the product `p ^ ρ.freeVars.card * ((1 - p) / 2) ^ (n - ρ.freeVars.card)`.
+**Proof.** The weight is, by definition, the product of two factors, $p^{f}$ and $\bigl(\tfrac{1-p}{2}\bigr)^{\,n-f}$, where $f$ is the number of free variables of $\rho$. A product of two nonnegative reals is nonnegative, so it suffices to show each factor is nonnegative.
 
-1. `apply mul_nonneg` splits the product into its two factors.
-2. First factor: `pow_nonneg hp _`.
-3. Second factor: `pow_nonneg (div_nonneg (sub_nonneg.mpr hp1) (by norm_num)) _`
-   — `hp1 : p ≤ 1` gives `0 ≤ 1 - p`, and `0 ≤ 2` by `norm_num`. ∎
+The first factor is a power of $p$. Since $p \ge 0$ by hypothesis and any power of a nonnegative real is again nonnegative, we get $p^{f} \ge 0$.
 
-**Used in.** `bernoulliRestrProb_le_one'` (nonnegativity side condition of
-`mul_le_mul_of_nonneg_left` when the indicator is discarded), and as the
-standard positivity side goal throughout `TCSlib/BooleanAnalysis/LMN/` —
-`FourierConcentration`, `RestrictionCompose`, `RestrictionMonotonicity`,
-`IterativeReduction`, `CircuitLayerReduction`, `RestrictionCardTail`,
-`GateSwitching`. There is no unprimed `bernoulliRestrWeight_nonneg` in the
-library.
+The second factor is a power of the base $\tfrac{1-p}{2}$. This base is a quotient of two nonnegative reals: its numerator $1-p$ is nonnegative because $p \le 1$, and its denominator $2$ is positive. A quotient of nonnegatives is nonnegative, so $\tfrac{1-p}{2} \ge 0$, and hence so is its $(n-f)$-th power.
+
+Multiplying the two nonnegative factors yields $0 \le p^{f}\,\bigl(\tfrac{1-p}{2}\bigr)^{\,n-f}$, which is the claim. (The exponent $n-f$ is truncated natural-number subtraction, but this plays no role: a nonnegative base raised to any natural power stays nonnegative.)

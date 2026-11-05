@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.tail_fourier_weight_bound",
- "key": "6387c98031e7b92d",
+ "key": "12ff01d0dbd68809",
  "kind": "lemma",
- "title": "Fourier tail weight bound above level $k$",
- "statement": "Let $f : \\{0,1\\}^n \\to \\bbr$ be a Boolean function, and let $k$ be a positive integer. Then the total Fourier weight of $f$ carried by frequencies of size strictly greater than $k$ is bounded by the total influence divided by $k$:\n\\[\n  \\sum_{\\substack{S \\subseteq [n] \\\\ \\abs{S} > k}} \\hat f(S)^2 \\;\\le\\; \\frac{I[f]}{k}.\n\\]",
+ "title": "Fourier tail influence bound",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube and a positive integer $k$. Then $\\sum_{|S|>k}\\widehat f(S)^2\\le I(f)/k$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$.",
  "hypotheses_covered": [
   "f is a Boolean function of arity n",
   "k is a natural number with 0 < k"
