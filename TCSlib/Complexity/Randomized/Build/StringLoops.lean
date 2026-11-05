@@ -67,6 +67,10 @@ namespace MajLoop
 /-- The initial state `⟨w, ⟨[], []⟩⟩`: the whole word remains, both counters empty. -/
 def start (w : List Bool) : List Bool := pairEncode w (pairEncode [] [])
 
+/-- The initial state is `start w = ⟨w, ⟨[], []⟩⟩`. -/
+theorem start_eq (w : List Bool) : start w = pairEncode w (pairEncode [] []) :=
+  rfl
+
 /-- The step on `⟨w, ⟨rest, ⟨t, f⟩⟩⟩`: drop the first bit of `rest` and append a token to the
 counter of its value. -/
 def step (v : List Bool) : List Bool :=
@@ -75,13 +79,35 @@ def step (v : List Bool) : List Bool :=
       pairEncode (true :: pairFstD (pairSndD (pairSndD v))) (pairSndD (pairSndD (pairSndD v)))
     else pairEncode (pairFstD (pairSndD (pairSndD v))) (true :: pairSndD (pairSndD (pairSndD v))))
 
+/-- The step on `v = ⟨w, ⟨rest, ⟨t, f⟩⟩⟩` is `⟨rest.tail, ⟨true :: t, f⟩⟩` if the head bit of
+`rest` is `true` (`false` on the empty word), and `⟨rest.tail, ⟨t, true :: f⟩⟩` otherwise. -/
+theorem step_eq (v : List Bool) :
+    step v =
+      pairEncode (pairFstD (pairSndD v)).tail
+        (if (pairFstD (pairSndD v)).headD false then
+          pairEncode (true :: pairFstD (pairSndD (pairSndD v))) (pairSndD (pairSndD (pairSndD v)))
+        else
+          pairEncode (pairFstD (pairSndD (pairSndD v)))
+            (true :: pairSndD (pairSndD (pairSndD v)))) :=
+  rfl
+
 /-- The acceptance test: the remaining word is empty. -/
 def acc (v : List Bool) : Bool := decide (pairFstD (pairSndD v) = [])
+
+/-- The acceptance test is `acc v = decide (rest = [])` for `v = ⟨w, ⟨rest, ⟨t, f⟩⟩⟩`. -/
+theorem acc_eq (v : List Bool) : acc v = decide (pairFstD (pairSndD v) = []) :=
+  rfl
 
 /-- The output: the verdict `#false + 1 ≤ #true`, i.e. a strict majority of `true`. -/
 def out (v : List Bool) : List Bool :=
   [decide ((true :: pairSndD (pairSndD (pairSndD v))).length ≤
     (pairFstD (pairSndD (pairSndD v))).length)]
+
+/-- The output is `out v = [decide (|f| + 1 ≤ |t|)]` for `v = ⟨w, ⟨rest, ⟨t, f⟩⟩⟩`. -/
+theorem out_eq (v : List Bool) :
+    out v = [decide ((true :: pairSndD (pairSndD (pairSndD v))).length ≤
+      (pairFstD (pairSndD (pairSndD v))).length)] :=
+  rfl
 
 /-- The remaining word of the state word. -/
 theorem rest_poly : PolyTimeComputable fun v => pairFstD (pairSndD v) :=
@@ -150,7 +176,8 @@ theorem acc_orbit_false (w : List Bool) (i : ℕ) (hi : i < w.length) :
   simp [acc, List.drop_eq_nil_iff, hi]
 
 /-- At round `|w|` the remaining word is empty, so `acc` is `true`. -/
-theorem acc_orbit_true (w : List Bool) : acc (pairEncode w (orbit start step w w.length)) = true := by
+theorem acc_orbit_true (w : List Bool) :
+    acc (pairEncode w (orbit start step w w.length)) = true := by
   rw [orbit_eq w w.length le_rfl]
   simp [acc]
 
@@ -174,6 +201,10 @@ namespace XorLoop
 /-- The initial state `⟨fst z, ⟨snd z, []⟩⟩`: both components remain, empty accumulator. -/
 def start (z : List Bool) : List Bool := pairEncode (pairFstD z) (pairEncode (pairSndD z) [])
 
+/-- The initial state is `start z = ⟨fst z, ⟨snd z, []⟩⟩`. -/
+theorem start_eq (z : List Bool) : start z = pairEncode (pairFstD z) (pairEncode (pairSndD z) []) :=
+  rfl
+
 /-- The step on `⟨z, ⟨a, ⟨b, c⟩⟩⟩`: `⟨a.tail, ⟨b.tail, c ++ [xor (head a) (head b)]⟩⟩`. -/
 def step (v : List Bool) : List Bool :=
   pairEncode (pairFstD (pairSndD v)).tail
@@ -182,15 +213,41 @@ def step (v : List Bool) : List Bool :=
         [xor ((pairFstD (pairSndD v)).headD false)
           ((pairFstD (pairSndD (pairSndD v))).headD false)]))
 
+/-- The step on `v = ⟨z, ⟨a, ⟨b, c⟩⟩⟩` is `⟨a.tail, ⟨b.tail, c ++ [xor (head a) (head b)]⟩⟩`,
+the heads read with default `false`. -/
+theorem step_eq (v : List Bool) :
+    step v =
+      pairEncode (pairFstD (pairSndD v)).tail
+        (pairEncode (pairFstD (pairSndD (pairSndD v))).tail
+          (pairSndD (pairSndD (pairSndD v)) ++
+            [xor ((pairFstD (pairSndD v)).headD false)
+              ((pairFstD (pairSndD (pairSndD v))).headD false)])) :=
+  rfl
+
 /-- The acceptance test: one of the two remaining components is empty. -/
 def acc (v : List Bool) : Bool :=
   decide (pairFstD (pairSndD v) = []) || decide (pairFstD (pairSndD (pairSndD v)) = [])
 
+/-- The acceptance test is `acc v = decide (a = []) || decide (b = [])` for
+`v = ⟨z, ⟨a, ⟨b, c⟩⟩⟩`. -/
+theorem acc_eq (v : List Bool) :
+    acc v =
+      (decide (pairFstD (pairSndD v) = []) || decide (pairFstD (pairSndD (pairSndD v)) = [])) :=
+  rfl
+
 /-- The output: the accumulator. -/
 def out (v : List Bool) : List Bool := pairSndD (pairSndD (pairSndD v))
 
+/-- The output is the accumulator: `out v = c` for `v = ⟨z, ⟨a, ⟨b, c⟩⟩⟩`. -/
+theorem out_eq (v : List Bool) : out v = pairSndD (pairSndD (pairSndD v)) :=
+  rfl
+
 /-- The number of rounds: the length of the shorter component. -/
 def rounds (z : List Bool) : ℕ := min (pairFstD z).length (pairSndD z).length
+
+/-- The number of rounds is `rounds z = min |fst z| |snd z|`. -/
+theorem rounds_eq (z : List Bool) : rounds z = min (pairFstD z).length (pairSndD z).length :=
+  rfl
 
 /-- The remaining first component of the state word. -/
 theorem fstRest_poly : PolyTimeComputable fun v => pairFstD (pairSndD v) :=
@@ -206,7 +263,8 @@ theorem accum_poly : PolyTimeComputable fun v => pairSndD (pairSndD (pairSndD v)
 
 /-- The xor of the two head bits of the state word, as a one-bit output. -/
 theorem xorBit_poly : PolyTimeComputable fun v =>
-    [xor ((pairFstD (pairSndD v)).headD false) ((pairFstD (pairSndD (pairSndD v))).headD false)] := by
+    [xor ((pairFstD (pairSndD v)).headD false)
+      ((pairFstD (pairSndD (pairSndD v))).headD false)] := by
   have hpa : PolyTimeComputable fun v => [(pairFstD (pairSndD v)).headD false] :=
     headBit_poly.comp fstRest_poly
   have hpb : PolyTimeComputable fun v => [(pairFstD (pairSndD (pairSndD v))).headD false] :=
@@ -271,7 +329,8 @@ theorem acc_orbit_false (z : List Bool) (i : ℕ) (hi : i < rounds z) :
   omega
 
 /-- At round `rounds z` one remaining component is empty, so `acc` is `true`. -/
-theorem acc_orbit_true (z : List Bool) : acc (pairEncode z (orbit start step z (rounds z))) = true := by
+theorem acc_orbit_true (z : List Bool) :
+    acc (pairEncode z (orbit start step z (rounds z))) = true := by
   rw [orbit_eq z _ le_rfl]
   simp only [acc, pairFstD_pairEncode, pairSndD_pairEncode, Bool.or_eq_true_iff,
     decide_eq_true_eq, List.drop_eq_nil_iff, rounds]
@@ -302,13 +361,37 @@ def step (v : List Bool) : List Bool :=
           ((pairFstD (pairSndD (pairSndD v))).headD false) then [true]
         else pairSndD (pairSndD (pairSndD v))))
 
+/-- The step on `v = ⟨z, ⟨a, ⟨b, flag⟩⟩⟩` is `⟨a.tail, ⟨b.tail, flag'⟩⟩` with `flag' = [true]`
+if `xor (head a) (head b)` (heads read with default `false`) and `flag' = flag` otherwise. -/
+theorem step_eq (v : List Bool) :
+    step v =
+      pairEncode (pairFstD (pairSndD v)).tail
+        (pairEncode (pairFstD (pairSndD (pairSndD v))).tail
+          (if xor ((pairFstD (pairSndD v)).headD false)
+              ((pairFstD (pairSndD (pairSndD v))).headD false) then [true]
+            else pairSndD (pairSndD (pairSndD v)))) :=
+  rfl
+
 /-- The output: both remaining components are empty and no mismatch was recorded. -/
 def out (v : List Bool) : List Bool :=
   [decide (pairFstD (pairSndD v) = []) && decide (pairFstD (pairSndD (pairSndD v)) = []) &&
     decide (pairSndD (pairSndD (pairSndD v)) = [])]
 
+/-- The output is `out v = [decide (a = []) && decide (b = []) && decide (flag = [])]` for
+`v = ⟨z, ⟨a, ⟨b, flag⟩⟩⟩`. -/
+theorem out_eq (v : List Bool) :
+    out v =
+      [decide (pairFstD (pairSndD v) = []) && decide (pairFstD (pairSndD (pairSndD v)) = []) &&
+        decide (pairSndD (pairSndD (pairSndD v)) = [])] :=
+  rfl
+
 /-- The mismatch flag after `i` rounds: `[]` if the first `i` bits agree, `[true]` otherwise. -/
 def flag (a b : List Bool) (i : ℕ) : List Bool := if a.take i = b.take i then [] else [true]
+
+/-- The flag is `flag a b i = []` if `a.take i = b.take i`, and `[true]` otherwise. -/
+theorem flag_eq (a b : List Bool) (i : ℕ) :
+    flag a b i = if a.take i = b.take i then [] else [true] :=
+  rfl
 
 /-- The step is polynomial-time. -/
 theorem step_poly : PolyTimeComputable step :=
@@ -429,24 +512,55 @@ namespace BlockMapLoop
 /-- The initial state `⟨snd z, []⟩`: the whole second component remains, empty accumulator. -/
 def start (z : List Bool) : List Bool := pairEncode (pairSndD z) []
 
+/-- The initial state is `start z = ⟨snd z, []⟩`. -/
+theorem start_eq (z : List Bool) : start z = pairEncode (pairSndD z) [] :=
+  rfl
+
 /-- The block length read off the state word `⟨z, s⟩`: `b(|fst z|)`. -/
-def blk (b : PolyExpr) (v : List Bool) : ℕ := b.eval (pairFstD (pairFstD v)).length
+private def blk (b : PolyExpr) (v : List Bool) : ℕ := b.eval (pairFstD (pairFstD v)).length
 
 /-- The step on `⟨z, ⟨rest, c⟩⟩`: `⟨rest.drop k, c ++ g (rest.take k)⟩` with `k = b(|fst z|)`. -/
 def step (b : PolyExpr) (g : List Bool → List Bool) (v : List Bool) : List Bool :=
   pairEncode ((pairFstD (pairSndD v)).drop (blk b v))
     (pairSndD (pairSndD v) ++ g ((pairFstD (pairSndD v)).take (blk b v)))
 
+/-- The step on `v = ⟨z, ⟨rest, c⟩⟩` is `⟨rest.drop k, c ++ g (rest.take k)⟩` with the block
+length `k = b(|fst z|)`. -/
+theorem step_eq (b : PolyExpr) (g : List Bool → List Bool) (v : List Bool) :
+    step b g v =
+      pairEncode ((pairFstD (pairSndD v)).drop (b.eval (pairFstD (pairFstD v)).length))
+        (pairSndD (pairSndD v) ++
+          g ((pairFstD (pairSndD v)).take (b.eval (pairFstD (pairFstD v)).length))) :=
+  rfl
+
 /-- The acceptance test: fewer than `k` bits remain, or `k = 0`. -/
 def acc (b : PolyExpr) (v : List Bool) : Bool :=
   decide ((true :: pairFstD (pairSndD v)).length ≤ blk b v) || decide (blk b v ≤ 0)
 
+/-- The acceptance test on `v = ⟨z, ⟨rest, c⟩⟩` is `decide (|rest| + 1 ≤ k) || decide (k ≤ 0)`
+with the block length `k = b(|fst z|)`. -/
+theorem acc_eq (b : PolyExpr) (v : List Bool) :
+    acc b v =
+      (decide ((true :: pairFstD (pairSndD v)).length ≤ b.eval (pairFstD (pairFstD v)).length) ||
+        decide (b.eval (pairFstD (pairFstD v)).length ≤ 0)) :=
+  rfl
+
 /-- The output: the accumulator. -/
 def out (v : List Bool) : List Bool := pairSndD (pairSndD v)
+
+/-- The output is the accumulator: `out v = c` for `v = ⟨z, ⟨rest, c⟩⟩`. -/
+theorem out_eq (v : List Bool) : out v = pairSndD (pairSndD v) :=
+  rfl
 
 /-- The number of rounds: the number of full blocks `|snd z| / b(|fst z|)`. -/
 def rounds (b : PolyExpr) (z : List Bool) : ℕ :=
   (pairSndD z).length / b.eval (pairFstD z).length
+
+/-- The number of rounds is `rounds b z = |snd z| / b(|fst z|)` (natural division, `0` when
+`b(|fst z|) = 0`). -/
+theorem rounds_eq (b : PolyExpr) (z : List Bool) :
+    rounds b z = (pairSndD z).length / b.eval (pairFstD z).length :=
+  rfl
 
 /-- The unary parameter `fst z` of the state word. -/
 theorem param_poly : PolyTimeComputable fun v => pairFstD (pairFstD v) :=
@@ -480,7 +594,8 @@ theorem step_poly (b : PolyExpr) {g : List Bool → List Bool} (hg : PolyTimeCom
 
 /-- The acceptance test is polynomial-time (two length tests against `1^{k}`). -/
 theorem acc_poly (b : PolyExpr) : PolyTimeComputable fun v => [acc b v] := by
-  have h1 : PolyTimeComputable fun v => [decide ((true :: pairFstD (pairSndD v)).length ≤ blk b v)] := by
+  have h1 : PolyTimeComputable fun v =>
+      [decide ((true :: pairFstD (pairSndD v)).length ≤ blk b v)] := by
     convert lenLe_comp (unaryPoly_comp b param_poly) ((cons_poly true).comp rest_poly) using 1
     funext v
     simp [blk]

@@ -228,7 +228,10 @@ theorem polyTimeComputable_iterateFind {g : List Bool → List Bool} (hg : PolyT
   have h := IterateFind.polyTimeComputable_find hg hacc hout R P horbit
   convert h using 1
   funext x
-  have hstep : IterateFind.step g P x = guardedStep g P x := rfl
+  have hstep : IterateFind.step g P x = guardedStep g P x := by
+    funext w
+    rw [IterateFind.step_eq]
+    rfl
   have hfind : (List.range (R.eval x.length + 1)).find? (fun i => acc (g^[i] x)) =
       (List.range (R.eval x.length + 1)).find?
         (fun i => acc (pairSndD ((IterateFind.step g P x)^[i] (pairEncode x x)))) := by
@@ -321,19 +324,19 @@ theorem polyTimeComputable_iterate {g : List Bool → List Bool} (hg : PolyTimeC
       IterLoop.acc R (pairEncode x (orbit IterLoop.start (IterLoop.step g) x i)) = false := by
     intro x i hi
     rw [IterLoop.orbit_eq]
-    simp [IterLoop.acc, hi]
+    simp [IterLoop.acc_eq, hi]
   have hlast : ∀ x, IterLoop.acc R
       (pairEncode x (orbit IterLoop.start (IterLoop.step g) x (R.eval x.length))) = true := by
     intro x
     rw [IterLoop.orbit_eq]
-    simp [IterLoop.acc]
+    simp [IterLoop.acc_eq]
   have h := polyTimeComputable_stateFind IterLoop.start_poly (IterLoop.step_poly hg)
     (IterLoop.acc_poly R) IterLoop.out_poly R _ (fun x => R.eval x.length) (fun _ => le_rfl)
     hbound hfirst hlast
   convert h using 1
   funext x
   rw [IterLoop.orbit_eq]
-  simp [IterLoop.out]
+  simp [IterLoop.out_eq]
 
 /-- **Polynomially many iterations with concatenated emissions:** under the orbit bound,
 `x ↦ emit x ++ emit (g x) ++ ⋯ ++ emit (g^[R|x|] x)` is polynomial-time computable (the
@@ -377,19 +380,19 @@ theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
       IterLoop.acc R (pairEncode x (orbit EmitLoop.start (EmitLoop.step g emit) x i)) = false := by
     intro x i hi
     rw [EmitLoop.orbit_eq]
-    simp [IterLoop.acc, hi]
+    simp [IterLoop.acc_eq, hi]
   have hlast : ∀ x, IterLoop.acc R (pairEncode x
       (orbit EmitLoop.start (EmitLoop.step g emit) x (R.eval x.length))) = true := by
     intro x
     rw [EmitLoop.orbit_eq]
-    simp [IterLoop.acc]
+    simp [IterLoop.acc_eq]
   have h := polyTimeComputable_stateFind EmitLoop.start_poly (EmitLoop.step_poly hg hemit)
     (IterLoop.acc_poly R) (EmitLoop.out_poly hemit) R _ (fun x => R.eval x.length)
     (fun _ => le_rfl) hbound hfirst hlast
   convert h using 1
   funext x
   rw [EmitLoop.orbit_eq]
-  simp [EmitLoop.out, List.range_succ]
+  simp [EmitLoop.out_eq, List.range_succ]
 
 /-- **Majority vote** on a bit string: `w ↦ [decide (|w| < 2 · #true w)]` (strict majority of
 `true`) is polynomial-time computable (the vote of the Goldreich–Levin inverter
@@ -433,7 +436,7 @@ theorem polyTimeComputable_pairXor :
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
-    unfold XorLoop.rounds
+    rw [XorLoop.rounds_eq]
     simp only [PolyExpr.eval_var]
     omega
   have h := polyTimeComputable_stateFind XorLoop.start_poly XorLoop.step_poly XorLoop.acc_poly
@@ -463,7 +466,7 @@ theorem polyTimeComputable_pairEq :
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
-    unfold XorLoop.rounds
+    rw [XorLoop.rounds_eq]
     simp only [PolyExpr.eval_var]
     omega
   have h := polyTimeComputable_stateFind XorLoop.start_poly EqLoop.step_poly XorLoop.acc_poly
@@ -498,6 +501,7 @@ theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
   have hN : ∀ z, BlockMapLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
+    rw [BlockMapLoop.rounds_eq]
     exact (Nat.div_le_self _ _).trans (by simp only [PolyExpr.eval_var]; omega)
   have h := polyTimeComputable_stateFind BlockMapLoop.start_poly (BlockMapLoop.step_poly b hg)
     (BlockMapLoop.acc_poly b) BlockMapLoop.out_poly .var _ (BlockMapLoop.rounds b) hN
@@ -505,6 +509,6 @@ theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
     (BlockMapLoop.acc_orbit_true b g)
   convert h using 1
   funext z
-  exact (BlockMapLoop.out_orbit b g z).symm
+  rw [BlockMapLoop.out_orbit, BlockMapLoop.rounds_eq]
 
 end Complexity
