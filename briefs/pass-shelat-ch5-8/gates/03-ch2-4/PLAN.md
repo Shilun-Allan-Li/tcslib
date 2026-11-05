@@ -56,14 +56,15 @@ go first, because a statement change here would ripple into ch. 5–8.
   0 blockers and 0 majors.
 - **Repairs to statements cited by ch. 5–8** are re-synced there in the same PR.
 
-## Raised with the user
+## Raised with the user (settled)
 
 The branch carries pdftotext extracts of ch. 2–4 and the appendix
-(`blueprint/src/references/pass-shelat-2010-*.raw.md`, about 220 kB, committed by Frederick on
-2026-10-28). The ch. 5–8 brief says not to commit the source's text. Should these stay on the branch
-and go to `main`?
+(`blueprint/src/references/pass-shelat-2010-*.raw.md`). Settled by the ruling of 2026-11-05: [PS10]'s
+text follows `policy.md` §2, ingested at the main landing.
 
 ## Drafts
 
-All 13 packs are drafted (`03a-pack.md` to `03l-pack.md`). Each pins its head when the dedup PR
-lands, except 03d and 03j, which pin when the F-1 restatement lands.
+All 13 packs are drafted (`03a-pack.md` to `03l-pack.md`). The dedup (#192) and the `Dec` guard
+(#193) have landed, so 03a–03c, 03e–03i, 03k and 03l pin to the merged head
+`a3c5fa8b72e50939822f22364647dc844a3914a0`, after a fresh replay there (in progress, 2026-11-05).
+03d and 03j pin when the F-1 restatement (S2b) lands.

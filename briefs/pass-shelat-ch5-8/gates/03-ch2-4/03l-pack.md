@@ -1,10 +1,9 @@
 # Gate 03l ([PS10] ch. 2–4, machine infrastructure): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup PR has landed
-(`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/l/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the machine constructions under the randomized machine model: pair splitting, unary multiplication, the iterate-and-find loop, the state loop, and the string loops. Run 3b proved them, and every frozen machine-layer statement was checked unchanged against the freeze (56/56).
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the machine constructions under the randomized machine model: pair splitting, unary multiplication, the iterate-and-find loop, the state loop, and the string loops. Run 3b proved them, and every frozen machine-layer statement was checked unchanged against the freeze (56/56).
 - **This is a "rest" pack.** Its files mostly hold the proofs of headline theorems stated in
   earlier packs, so its trusted surface is their **auxiliary statements**, definitions and
   sketches. A wrong auxiliary statement can make a proof hold for the wrong reason, or hide a
@@ -44,7 +43,18 @@ Attempt at least **two adversarial instantiations**. Do not give a blanket appro
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head: elaboration (a fresh replay of the closure); the axiom prints of
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/l/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 26 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   17 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 0 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 0 use only the standard axioms, and
+   0 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 0 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 6 files.
+
+Pack-specific notes (as drafted): elaboration (a fresh replay of the closure); the axiom prints of
 the headlines whose proofs live here; admissions (none in these files); lint.
 
 ## Specific questions

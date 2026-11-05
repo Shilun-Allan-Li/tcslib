@@ -8,6 +8,7 @@ import TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas
 import TCSlib.Cryptography.ZeroKnowledge.Interaction
 import TCSlib.Cryptography.Pseudorandom.Indistinguishability
 import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
+import TCSlib.Cryptography.Asymptotic.HardCorePermutation
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -71,15 +72,16 @@ argument, colours padded to `n` bits (DQ4). In the string form `Com ⟨v, r⟩` 
   `BitHiding.owpComStr_hides` — the bitwise hybrid (Claim-127.d).
 * `TCSlib.Cryptography.owp_commitment` — **[PS10, Theorem 126.4]**: a one-way permutation
   with a hard-core predicate gives a commitment scheme; `exists_commitment_of_owp_hardCore` —
-  the existential headline; `bitCom_false_eq_owpGenPRG` — `Com(0, ·)` is the generator of
-  [PS10, Theorem 79.4]; `owpComStr_polyTimeComputable` — its `Com` is polynomial-time
-  (the bitwise loop `CommitmentLemmas.ComLoop`).
+  the existential headline; `exists_commitment_of_owp` — the text's form, from a one-way
+  permutation alone (Goldreich–Levin, `exists_owp_hardCore`); `bitCom_false_eq_owpGenPRG` —
+  `Com(0, ·)` is the generator of [PS10, Theorem 79.4]; `owpComStr_polyTimeComputable` — its
+  `Com` is polynomial-time (the bitwise loop `CommitmentLemmas.ComLoop`).
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§4.7.1: Definition 126.3, Theorem 126.4; §3.3.3–3.3.4: Definition 78.3, Theorem 79.4;
-  §3.5.2: Theorem 104.4.)
+  §3.5.2: Theorem 104.4; Theorem 87.3, Goldreich–Levin.)
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026, §3.3.2 (Construction 3.2, Theorem 3.2) and Lemma 3.3 (the
   multicopy hybrid argument).
@@ -102,7 +104,10 @@ parameter `n`) distinguishes `{r ← {0,1}^{ℓ(n)} : Com(v₀, r)}` from
 **Deviation:** `Commitment`: binding clause with `v₀ ≠ v₁` (source error); `n` an explicit
 argument, colours padded to `n` bits (DQ4). As printed, binding is unsatisfiable (`v₀ = v₁`,
 `r₀ = r₁`); the string form's parameter is `n = |v|`, typed users supply `n` explicitly; the
-distinguisher's verdict is the string `[true]` (`NUPPT.distinguisherL`, Deviation 4). -/
+distinguisher's verdict is the string `[true]` (`NUPPT.distinguisherL`, Deviation 4). Binding
+constrains only values of the same length `n` with randomness of length exactly `ℓ(n)`, as in
+the text, so a protocol that opens a general `Commitment` must check those lengths, as the
+3-colouring verifier `colVerify` does (gate 03e, note 12). -/
 structure Commitment (Com : List Bool → List Bool) (ℓ : PolyExpr) : Prop where
   /-- `Com` is computable in deterministic polynomial time. -/
   easy : PolyTimeComputable Com
@@ -896,5 +901,13 @@ theorem exists_commitment_of_owp_hardCore
     ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ := by
   obtain ⟨P, h, hP, hh⟩ := hex
   exact ⟨owpComStr P h, owpComLen, owp_commitment P h hP hh⟩
+
+/-- **[PS10, Theorem 126.4], the text's form: if one-way permutations exist, then commitment
+schemes exist** (gate 03e, note 13): the hard-core predicate of Goldreich–Levin for a padded
+one-way permutation (`exists_owp_hardCore`, [PS10, Theorem 87.3]) plugged into
+`exists_commitment_of_owp_hardCore`. -/
+theorem exists_commitment_of_owp (h : ∃ P : PermFamily, OneWayPermutation P) :
+    ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ :=
+  exists_commitment_of_owp_hardCore (exists_owp_hardCore h)
 
 end TCSlib.Cryptography

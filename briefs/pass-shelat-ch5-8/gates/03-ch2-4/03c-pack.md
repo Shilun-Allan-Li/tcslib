@@ -1,10 +1,9 @@
 # Gate 03c ([PS10] ch. 2–4, hard-core bits and PRGs): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/c/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers pseudorandom ensembles, next-bit unpredictability, pseudorandom generators and their expansion, and hard-core predicates up to the Goldreich–Levin theorem.
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers pseudorandom ensembles, next-bit unpredictability, pseudorandom generators and their expansion, and hard-core predicates up to the Goldreich–Levin theorem.
 - **Gate type:** an external **statement gate** (`workflow.md` §3; user's ruling of 2026-11-05),
   over a layer written in another campaign (Frederick Dehmel's, now closed). That layer had only
   an internal audit (run 3a, summary in the bundle).
@@ -41,7 +40,18 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/c/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 338 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   22 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 22 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 22 use only the standard axioms, and
+   0 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 0 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 4 files.
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
 - the axiom prints for this pack's headline theorems (`audits/pass-shelat/Checks.lean`);
 - admissions: none in these four files;

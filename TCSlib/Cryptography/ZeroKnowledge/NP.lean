@@ -32,9 +32,11 @@ deferred).
 
 **Deviations:**
 * a Levin reduction is taken *length-regular* with `|f x| = p(|x|)` for a `PolyExpr p ≥ id`
-  (every Levin reduction to `3COL` can be padded to this form by adding isolated vertices),
-  which makes the coin and round polynomials of the pulled-back protocol `subst p` of the
-  original ones and the error bounds `ε(p(|x|))`, negligible in `|x|` (`Negligible.comp_of_le`);
+  (assumed: padding a Levin reduction to `3COL` with isolated vertices should give this form
+  with `p = q²` for a polynomial `q`, the lengths of `encGraph` being perfect squares, but the
+  padding is not formalized; gate 03e, note 14), which makes the coin and round polynomials
+  of the pulled-back protocol `subst p` of the original ones and the error bounds
+  `ε(p(|x|))`, negligible in `|x|` (`Negligible.comp_of_le`);
 * the text's "execute protocol `(P, V)` on `x'`" is read as `(P', V')`; the hypothesis of a
   hard-core predicate for the one-way permutation is made explicit (as in Theorem 126.4).
 
@@ -46,6 +48,22 @@ verifier `liftVerifier V'` and the view re-encoder `postView` of the zero-knowle
 the machines `exists_liftSimulator`/`exists_liftDistinguisher`, and the strict monotonicity of
 a length polynomial `p ≥ id` (`polyExpr_strictMono_of_le`, which gives the left inverse of
 `p.eval` along which the distinguisher is re-parametrized).
+
+**Bounded prover messages (ruling G3-3 of gate 03):** the bound on the honest prover's
+messages transfers along a Levin reduction with bound `B.subst p`
+(`Protocol.ProverBounded.pullback`).
+
+**Scope of Theorem 124.1 (DQ5; gate 03e, minor 3).** The text's Theorem 124.1 asserts one
+zero-knowledge proof with negligible soundness error. Here the zero-knowledge protocol is one
+iteration of the 3-colouring protocol, with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}`, and
+the interactive proof with negligible error is its `n|E|`-fold repetition; that the repetition
+is also zero-knowledge, with negligible soundness error, is sequential repetition
+[PS10, §7.2.1], which ch. 7 supplies (ruling G3-7(d)), and is not stated here. In the
+existential forms the conjunct `∃ π, EfficientProverProof π L R` says nothing about the
+zero-knowledge protocol (`npProtocol` already witnesses it, `npProtocol_interactiveProof`);
+the tied forms `exists_commitment_zk_proof_of_owp_levinReduction`,
+`zk_proof_of_witnessRelation` and `zk_proof_of_witnessRelation_of_owp` state both protocols for
+one commitment scheme and one Levin reduction, as `zk_proof_of_levinReduction` does.
 
 **Run-3 repairs (audit P11-1, P11-2):** the transfer lemmas and both forms of Theorem 124.1
 take the hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` (`L ⊆ witnessLanguage R`): no field of
@@ -71,14 +89,22 @@ length polynomial `p ≥ id` (the run-2 `∃ s, EfficientProverProofErr π L R s
 * `TCSlib.Cryptography.LevinReduction.efficientProverProof`,
   `TCSlib.Cryptography.LevinReduction.efficientProverProofErr`,
   `TCSlib.Cryptography.LevinReduction.zk` — interactive proofs with efficient prover and
-  zero-knowledge transfer along Levin reductions (Claim-124.d).
+  zero-knowledge transfer along Levin reductions (Claim-124.d);
+  `TCSlib.Cryptography.Protocol.ProverBounded.pullback` — so does the bound on the prover's
+  messages.
 * `TCSlib.Cryptography.zk_proof_of_levinReduction` — **[PS10, Theorem 124.1], form (A)**:
-  a commitment scheme and a Levin reduction to `3COL` give a zero-knowledge proof for `L`;
-  `TCSlib.Cryptography.zk_proof_of_owp_levinReduction` — the same from a one-way permutation
-  with a hard-core predicate (Thm-124.1).
-* `TCSlib.Cryptography.zk_proof_of_mem_NP`, `TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp` —
-  the "every language in NP" form under `LevinNPHard L3COL R3COL`, with the explicit soundness
-  error of the Levin reduction's length polynomial
+  a commitment scheme and a Levin reduction to `3COL` give a zero-knowledge protocol for `L`
+  with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}` whose `n|E|`-fold repetition is an
+  interactive proof; `TCSlib.Cryptography.zk_proof_of_owp_levinReduction`,
+  `TCSlib.Cryptography.exists_commitment_zk_proof_of_owp_levinReduction` — the same from a
+  one-way permutation with a hard-core predicate, untied and tied (Thm-124.1).
+* `TCSlib.Cryptography.zk_proof_of_witnessRelation`,
+  `TCSlib.Cryptography.zk_proof_of_witnessRelation_of_owp` — the "every language in NP" form
+  for every witness relation, under `LevinNPHard L3COL R3COL` (the second from a one-way
+  permutation, the text's hypothesis); `TCSlib.Cryptography.zk_proof_of_mem_NP`,
+  `TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp` — the corollaries for `L ∈ NP` with the
+  witness relation of `exists_witnessRelation_of_mem_NP`, with the explicit soundness error of
+  the Levin reduction's length polynomial
   (`TCSlib.Cryptography.one_sub_inv_add_half_pow_lt_one`: the error is below `1`).
 
 ## References
@@ -86,7 +112,7 @@ length polynomial `p ≥ id` (the run-2 `∃ s, EfficientProverProofErr π L R s
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§4.7: Theorem 124.1; Appendix B, Definition 191.11.)
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
-  University Press, 2009. (Definition 2.7, Karp reductions; §2.3.3, Levin reductions.)
+  University Press, 2009. (Definition 2.7, Karp reductions; §2.3, Levin reductions.)
 -/
 
 namespace TCSlib.Cryptography
@@ -102,8 +128,9 @@ polynomial-time Karp reduction (`x ∈ L ↔ f x ∈ L'`), `w` is polynomial-tim
 length-regular: `|f x| = p(|x|)` for the polynomial `p ≥ id`.
 
 **Deviation:** the text never defines Levin reductions; length-regularity with `p ≥ id` is
-assumed (achievable by padding) so that the pulled-back protocol's polynomials are `subst p`
-of the original ones and its error bounds `ε(p(|x|))` are negligible in `|x|`. -/
+assumed (padding with isolated vertices should achieve it for `3COL`, with `p = q²`; not
+formalized) so that the pulled-back protocol's polynomials are `subst p` of the original ones
+and its error bounds `ε(p(|x|))` are negligible in `|x|`. -/
 structure LevinReduction (L L' : Language Bool) (R R' : List Bool → List Bool → Prop)
     (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr) : Prop where
   /-- The instance map is polynomial-time. -/
@@ -239,6 +266,19 @@ theorem Strategy.pullback_efficient {S : Strategy} (hS : S.Efficient) {f : List 
     rw [hnext, Strategy.ofNUPPT_next, ← hx x]
     simp only [id, pairFstD_pairEncode, pairSndD_pairEncode]
 
+/-- **Bounded prover messages transfer along a Levin reduction** with bound `B.subst p`
+(ruling G3-3 of gate 03): the pulled-back prover runs `π.P` on `(f x, w x y)`, `R x y` gives
+`R' (f x) (w x y)` (`LevinReduction.witness`), and `|f x| = p(|x|)`
+(`LevinReduction.length_eq`, `PolyExpr.eval_subst`). -/
+theorem Protocol.ProverBounded.pullback {L L' : Language Bool}
+    {R R' : List Bool → List Bool → Prop} {f : List Bool → List Bool}
+    {w : List Bool → List Bool → List Bool} {p : PolyExpr} (h : LevinReduction L L' R R' f w p)
+    {π : Protocol} {B : PolyExpr} (hB : π.ProverBounded R' B) :
+    (π.pullback f w p).ProverBounded R (B.subst p) := by
+  intro x y r hist hxy
+  rw [PolyExpr.eval_subst, ← h.length_eq x]
+  exact hB (f x) (w x y) r hist (h.witness x y hxy)
+
 /-! ### Negligibility along polynomial reparametrization -/
 
 /-- A negligible function composed with a map `φ ≥ id` is negligible: for `N ≥ max n₀ 1`,
@@ -354,11 +394,14 @@ execution of the pulled-back protocol on `(x, y, z)` with coins `r` is the execu
 functions are those of `π` on `(f x, w x y)` and `(f x, z)` by definition — with the move
 count `π.rounds.eval (p |x|) = π.rounds.eval |f x|` by `h.length_eq`); the cast is a uniform
 projection (`LevinTransfer.unifProj_coinTrunc`, `UnifProj.uprob_comp`), so
-`hπ.completeWitness` gives probability one. Completeness:
-`complete x hx := let ⟨y, hy⟩ := hLR x hx; ⟨y, completeWitness x y hy⟩`. Soundness: for
-`x ∉ L`, `f x ∉ L'` (`h.mem_iff`); a prover `P'` for the pulled-back protocol on `x` is the
-prover `P* := ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen |x|)⟩` for `π` on
-`f x` with the same coins (`outV_pullback_cheat`, `P*.coinLen |f x| = P'.coinLen |x|`), and
+`hπ.completeWitness` gives probability one. Bounded prover messages:
+`Protocol.ProverBounded.pullback` with the bound `B.subst p` of `hπ.boundedP`. Completeness:
+for `x ∈ L` take `y` with `R x y` (`hLR`); the honest messages have at most `B(p(|x|))` bits
+and the verifier accepts with probability one (`Protocol.ProverBounded.exists_complete`).
+Soundness: for `x ∉ L`, `f x ∉ L'` (`h.mem_iff`); a prover `P'` for the pulled-back protocol
+on `x` is the prover `P* := ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen |x|)⟩`
+for `π` on `f x` with the same coins (`outV_pullback_cheat`,
+`P*.coinLen |f x| = P'.coinLen |x|`), and
 `hπ.sound (f x) _ P* z` gives `1 - s |f x| ≤ Pr[out = [false]]`, i.e. `1 - s (p |x|)` by
 `h.length_eq`. -/
 theorem LevinReduction.efficientProverProofErr {L L' : Language Bool}
@@ -380,11 +423,11 @@ theorem LevinReduction.efficientProverProofErr {L L' : Language Bool}
     congr 1
     funext r
     rw [outV_pullback_honest π f w hx]
+  obtain ⟨B, hB⟩ := hπ.boundedP
   refine ⟨⟨Strategy.pullback_efficient hπ.efficientV h.f_poly polyTimeComputable_pairSndD
-    h.length_eq, fun x hx => ?_, fun x hx P' z => ?_⟩,
-    Strategy.pullback_efficient hπ.efficientP h.f_poly h.w_poly h.length_eq, hcompl⟩
-  · obtain ⟨y, hy⟩ := hLR x hx
-    exact ⟨y, hcompl x y hy⟩
+    h.length_eq, (hB.pullback h).exists_complete hLR hcompl, fun x hx P' z => ?_⟩,
+    Strategy.pullback_efficient hπ.efficientP h.f_poly h.w_poly h.length_eq,
+    ⟨B.subst p, hB.pullback h⟩, hcompl⟩
   · have hlen := h.length_eq x
     have hfx : f x ∉ L' := fun hfx => hx ((h.mem_iff x).2 hfx)
     have hU : UnifProj (Prod.map (coinTrunc le_rfl)
@@ -518,8 +561,10 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
 /-! ### Theorem 124.1 -/
 
 /-- **[PS10, Theorem 124.1], form (A): a commitment scheme and a Levin reduction to `3COL`
-give a zero-knowledge proof for `L`** (Thm-124.1): for a commitment scheme `(Com, ℓ)` and a
-Levin reduction `(f, w)` of `(L, R)` to `(3COL, R_3COL)` with `L ⊆ witnessLanguage R` (`hLR`),
+give a zero-knowledge protocol for `L` with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}` whose
+`n|E|`-fold repetition is an interactive proof** (Thm-124.1): for a commitment scheme
+`(Com, ℓ)` and a Levin reduction `(f, w)` of `(L, R)` to `(3COL, R_3COL)` with
+`L ⊆ witnessLanguage R` (`hLR`),
 the pulled-back `n|E|`-fold 3-colouring protocol is an interactive proof for `L` with
 efficient prover w.r.t. `R`, and the pulled-back one-iteration protocol is zero-knowledge for
 `R` and an interactive proof with efficient prover and soundness error
@@ -527,8 +572,9 @@ efficient prover w.r.t. `R`, and the pulled-back one-iteration protocol is zero-
 
 **Deviation (DQ5):** the proof and the zero-knowledge statements are for the repeated and
 the single-iteration protocols respectively (sequential composition, [PS10, §7.2.1], is out
-of scope); the reduction is an explicit hypothesis (the text's "Cook's reduction applied to
-the witness" is a Levin reduction, never defined there).
+of scope; the text's single zero-knowledge proof with negligible soundness error is debt that
+ch. 7 discharges, ruling G3-7(d)); the reduction is an explicit hypothesis (the text's
+"Cook's reduction applied to the witness" is a Levin reduction, never defined there).
 
 **Repair (run-3 audit P11-1):** hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` added — the first and
 third conjuncts are instances of `LevinReduction.efficientProverProofErr`, and without it
@@ -547,15 +593,19 @@ theorem zk_proof_of_levinReduction {Com : List Bool → List Bool} {ℓ : PolyEx
     h.efficientProverProofErr hLR (col_efficientProverProofErr hC)⟩
 
 /-- **[PS10, Theorem 124.1]: if one-way permutations (with a hard-core predicate) exist, every
-language with a Levin reduction to `3COL` has a zero-knowledge proof** (Thm-124.1, headline):
-for `L ⊆ witnessLanguage R` (`hLR`) there is a protocol that is an interactive proof for `L`
-with efficient prover w.r.t. `R`, and a protocol that is zero-knowledge for `R` and an
-interactive proof with efficient prover and soundness error `1 - 1/p(|x|) + (1/2)^{p(|x|)}` —
-the commitment scheme of [PS10, Theorem 126.4] (`exists_commitment_of_owp_hardCore`) plugged
-into `zk_proof_of_levinReduction`.
+language with a Levin reduction to `3COL` has a zero-knowledge protocol with soundness error
+`1 - 1/p(|x|) + 2^{-p(|x|)}`** (Thm-124.1, untied existential form): for `L ⊆ witnessLanguage R`
+(`hLR`) there is a protocol that is an interactive proof for `L` with efficient prover w.r.t.
+`R`, and a protocol that is zero-knowledge for `R` and an interactive proof with efficient
+prover and soundness error `1 - 1/p(|x|) + (1/2)^{p(|x|)}` — the commitment scheme of
+[PS10, Theorem 126.4] (`exists_commitment_of_owp_hardCore`) plugged into
+`zk_proof_of_levinReduction`.
 
 **Deviation:** hard-core predicate explicit (source error 47); single OWP rather than a
-collection; see `zk_proof_of_levinReduction` for the two-protocol form (DQ5).
+collection; see `zk_proof_of_levinReduction` for the two-protocol form (DQ5). The first
+conjunct alone says nothing about the zero-knowledge protocol (gate 03e, minor 3:
+`npProtocol` pulled back along `(f, w)` already witnesses it); the tied form, both protocols
+from one commitment scheme, is `exists_commitment_zk_proof_of_owp_levinReduction`.
 
 **Repair (run-3 audit P11-1):** hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` added (see
 `zk_proof_of_levinReduction`). -/
@@ -571,6 +621,28 @@ theorem zk_proof_of_owp_levinReduction
   obtain ⟨Com, ℓ, hC⟩ := exists_commitment_of_owp_hardCore how
   obtain ⟨h1, h2, h3⟩ := zk_proof_of_levinReduction hC h hLR
   exact ⟨⟨_, h1⟩, _, h2, h3⟩
+
+/-- **[PS10, Theorem 124.1], tied form: if one-way permutations exist, every language with a
+Levin reduction to `3COL` has a zero-knowledge protocol with soundness error
+`1 - 1/p(|x|) + 2^{-p(|x|)}` whose `n|E|`-fold repetition is an interactive proof**
+(Thm-124.1; gate 03e, minor 3): from the text's hypothesis, a single one-way permutation, there
+is a commitment scheme `(Com, ℓ)` (`exists_commitment_of_owp`, [PS10, Theorem 126.4] with the
+hard-core predicate of Goldreich–Levin) for which the conclusion of
+`zk_proof_of_levinReduction` holds: both protocols are built from `Com` and the reduction.
+
+**Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
+theorem exists_commitment_zk_proof_of_owp_levinReduction
+    (how : ∃ P : PermFamily, OneWayPermutation P)
+    {L : Language Bool} {R : List Bool → List Bool → Prop} {f : List Bool → List Bool}
+    {w : List Bool → List Bool → List Bool} {p : PolyExpr}
+    (h : LevinReduction L L3COL R R3COL f w p) (hLR : ∀ x ∈ L, ∃ y, R x y) :
+    ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧
+      EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
+      ZK ((colProtocol Com ℓ).pullback f w p) R ∧
+      EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
+        (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
+  obtain ⟨Com, ℓ, hC⟩ := exists_commitment_of_owp how
+  exact ⟨Com, ℓ, hC, zk_proof_of_levinReduction hC h hLR⟩
 
 /-- Sanity (run-3 audit P11-2): the soundness error `1 - 1/k + (1/2)^k` of the one-iteration
 protocols is strictly below `1` for `k ≥ 1`, since `k < 2^k` (`Nat.lt_two_pow_self`). Hence
@@ -595,13 +667,59 @@ def LevinNPHard (L' : Language Bool) (R' : List Bool → List Bool → Prop) : P
     ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
       LevinReduction L L' R R' f w p
 
-/-- **[PS10, Theorem 124.1], "every language in NP"**, under NP-hardness of `3COL` with Levin
-reductions: for a commitment scheme and every `L ∈ NP` there is a witness relation `R` for
+/-- **[PS10, Theorem 124.1], "every language in NP", for every witness relation** (Thm-124.1;
+gate 03e, minors 3 and 4): under NP-hardness of `3COL` with Levin reductions, for a commitment
+scheme `(Com, ℓ)` and every witness relation `R` of `L` there is a Levin reduction `(f, w)` of
+`(L, R)` to `(3COL, R_3COL)` with length polynomial `p ≥ id` for which the pulled-back
+one-iteration 3-colouring protocol is zero-knowledge for `R` with soundness error
+`1 - 1/p(|x|) + 2^{-p(|x|)}`, and its `n|E|`-fold repetition is an interactive proof with
+efficient prover (`zk_proof_of_levinReduction`, with `hLR` from `WitnessRelation.mem_iff`).
+
+**Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
+theorem zk_proof_of_witnessRelation (h3 : LevinNPHard L3COL R3COL)
+    {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) {L : Language Bool}
+    {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) :
+    ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
+      (∀ N, N ≤ p.eval N) ∧
+      EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
+      ZK ((colProtocol Com ℓ).pullback f w p) R ∧
+      EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
+        (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
+  obtain ⟨f, w, p, h⟩ := h3 L R hR
+  exact ⟨f, w, p, h.le_eval, zk_proof_of_levinReduction hC h fun x hx => (hR.mem_iff x).1 hx⟩
+
+/-- **[PS10, Theorem 124.1], "if one-way permutations exist then every language in NP has a
+zero-knowledge proof", for every witness relation** (Thm-124.1; gate 03e, minors 3 and 4):
+from the text's hypothesis, a one-way permutation, there is a commitment scheme
+(`exists_commitment_of_owp`) for which the conclusion of `zk_proof_of_witnessRelation` holds,
+under NP-hardness of `3COL` with Levin reductions.
+
+**Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
+theorem zk_proof_of_witnessRelation_of_owp (h3 : LevinNPHard L3COL R3COL)
+    (how : ∃ P : PermFamily, OneWayPermutation P) {L : Language Bool}
+    {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) :
+    ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧
+      ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
+        (∀ N, N ≤ p.eval N) ∧
+        EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
+        ZK ((colProtocol Com ℓ).pullback f w p) R ∧
+        EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
+          (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
+  obtain ⟨Com, ℓ, hC⟩ := exists_commitment_of_owp how
+  exact ⟨Com, ℓ, hC, zk_proof_of_witnessRelation h3 hC hR⟩
+
+/-- **[PS10, Theorem 124.1], "every language in NP", one-iteration form: a zero-knowledge
+protocol with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}`**, under NP-hardness of `3COL` with
+Levin reductions: for a commitment scheme and every `L ∈ NP` there is a witness relation `R` for
 `L` with an interactive proof with efficient prover, and a protocol that is zero-knowledge
 for `R` and an interactive proof with efficient prover and soundness error
 `1 - 1/p(|x|) + (1/2)^{p(|x|)}`, where `p ≥ id` is the length polynomial of the Levin
 reduction (the two protocols of `zk_proof_of_levinReduction`; the witness relation from
-`exists_witnessRelation_of_mem_NP`, [PS10, Definition 191.11], supplies `hLR`).
+`exists_witnessRelation_of_mem_NP`, [PS10, Definition 191.11], supplies `hLR`). This is the
+corollary of `zk_proof_of_witnessRelation`, which holds for every witness relation (gate 03e,
+minor 4) and ties the two protocols together; here the conjunct
+`∃ π, EfficientProverProof π L R` alone says nothing about the zero-knowledge protocol
+(`npProtocol` witnesses it, minor 3).
 
 **Repair (run-3 audit P11-2):** the run-2 conclusion `∃ s, EfficientProverProofErr π L R s`
 asserted no soundness (`s := 1` turns the clause into `0 ≤ uprob …`, so it followed from the
@@ -616,18 +734,20 @@ theorem zk_proof_of_mem_NP (h3 : LevinNPHard L3COL R3COL) {Com : List Bool → L
         EfficientProverProofErr π L R
           (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
   obtain ⟨R, hR⟩ := exists_witnessRelation_of_mem_NP hL
-  obtain ⟨f, w, p, h⟩ := h3 L R hR
-  obtain ⟨h1, h2, h3'⟩ := zk_proof_of_levinReduction hC h fun x hx => (hR.mem_iff x).1 hx
-  exact ⟨R, hR, ⟨_, h1⟩, _, p, h.le_eval, h2, h3'⟩
+  obtain ⟨_, _, p, hp, h1, h2, h3'⟩ := zk_proof_of_witnessRelation h3 hC hR
+  exact ⟨R, hR, ⟨_, h1⟩, _, p, hp, h2, h3'⟩
 
 /-- **[PS10, Theorem 124.1], "if one-way permutations exist then every language in NP has a
-zero-knowledge proof"**, under NP-hardness of `3COL` with Levin reductions and with the
+zero-knowledge proof", one-iteration form: a zero-knowledge protocol with soundness error
+`1 - 1/p(|x|) + 2^{-p(|x|)}`**, under NP-hardness of `3COL` with Levin reductions and with the
 hard-core predicate explicit (`exists_commitment_of_owp_hardCore`, `zk_proof_of_mem_NP`):
 the zero-knowledge protocol has the explicit soundness error `1 - 1/p(|x|) + (1/2)^{p(|x|)}`
 of the Levin reduction's length polynomial `p ≥ id`.
 
 **Repair (run-3 audit P11-2):** explicit soundness error instead of the vacuous
-`∃ s, EfficientProverProofErr π L R s` (see `zk_proof_of_mem_NP`). -/
+`∃ s, EfficientProverProofErr π L R s` (see `zk_proof_of_mem_NP`). The form for every witness
+relation, from the text's hypothesis (a one-way permutation) and with the two protocols tied,
+is `zk_proof_of_witnessRelation_of_owp` (gate 03e, minors 3 and 4). -/
 theorem zk_proof_of_mem_NP_of_owp (h3 : LevinNPHard L3COL R3COL)
     (how : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool),
       OneWayPermutation P ∧ HardCore P.toFunFamily h)

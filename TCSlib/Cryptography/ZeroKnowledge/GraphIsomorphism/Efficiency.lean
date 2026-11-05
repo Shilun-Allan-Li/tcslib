@@ -51,7 +51,7 @@ malformed inputs).
   count is polynomial-time.
 * `TCSlib.Cryptography.GI.Riso_decidable` — the decider clause of `Riso_witnessRelation`.
 * `TCSlib.Cryptography.GI.giProver_efficient`, `GI.giVerifier_efficient`,
-  `GI.gniVerifier_efficient` — the single-iteration parties are PPT strategies.
+  `GI.gniVerifier_efficient` — the single-iteration parties are efficient (D8).
 
 ## References
 
@@ -469,7 +469,7 @@ theorem Riso_decidable : ∃ T : List Bool → Bool, PolyTimeComputable (fun z =
 
 /-! ### Efficiency of the single-iteration parties -/
 
-/-- The honest prover of the graph isomorphism protocol is a PPT strategy
+/-- The honest prover of the graph isomorphism protocol is efficient (D8)
 [PS10, Proposition 120.7] (Inf-4.2).
 
 **Proof sketch.** `efficient_of_polyTime` with the layout function: message `1` is
@@ -505,7 +505,7 @@ theorem giProver_efficient : giProver.Efficient := by
     rw [sampleStr, mulInvStr_encPerm]
     split_ifs <;> rfl
 
-/-- The verifier of the graph isomorphism protocol is a PPT strategy [PS10, Definition 116.1
+/-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
 for Proposition 120.7] (Inf-4.2).
 
 **Proof sketch.** `efficient_of_polyTime`: the challenge is the first coin (`coinBit_poly`),
@@ -555,7 +555,7 @@ theorem giVerifier_efficient : giVerifier.Efficient := by
     simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
       Bool.false_eq_true, if_false, pairSndD_pairEncode]
 
-/-- The verifier of one iteration of the graph non-isomorphism protocol is a PPT strategy
+/-- The verifier of one iteration of the graph non-isomorphism protocol is efficient (D8)
 [PS10, Proposition 118.4] (Inf-4.2).
 
 **Proof sketch.** `efficient_of_polyTime`: the first message is `relabel_poly` of `G_b` by

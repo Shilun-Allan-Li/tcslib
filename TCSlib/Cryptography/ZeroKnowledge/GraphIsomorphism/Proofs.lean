@@ -53,6 +53,9 @@ need (Lem-119.a, Lem-120.b–c, the honest replies).
   two graphs.
 * `TCSlib.Cryptography.GI.efficient_of_polyTime` — a strategy whose next-message function is a
   polynomial-time function of the machine layout is efficient.
+* `TCSlib.Cryptography.GI.giProver_length_le`, `GI.giProverRep_length_le`,
+  `GI.gniProver_length_le` — the honest provers' messages have at most `|x|` bits (one bit for
+  graph non-isomorphism), whatever the tape and history (ruling G3-3).
 * `TCSlib.Cryptography.GI.gniProtocol_outV`, `GI.giProtocol_outV` and the `*_next_*` lemmas —
   the verdicts of the single-iteration protocols on encoded instances.
 * `TCSlib.Cryptography.GI.pushesUniform_castLE`, `GI.statClose_samplePerm_long` — a prefix of a
@@ -236,6 +239,36 @@ noncomputable def giProtocolRep : Protocol where
   V := giVerifierRep
   rounds := .mul (.const 4) .var
   verifierFirst := false
+
+/-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
+
+/-- The honest prover of one graph-isomorphism iteration sends `n²`-bit words (`encGraph`,
+`encPerm`) with `n = Nat.sqrt` of the length of the first component of `x`, hence at most
+`|x|` bits, whatever its auxiliary input, tape and history (`Nat.sqrt_le`,
+`length_pairFstD_le`). -/
+theorem giProver_length_le (x y r : List Bool) (hist : List (List Bool)) :
+    (giProver.next x y r hist).length ≤ x.length := by
+  have h : (giProver.next x y r hist).length =
+      Nat.sqrt (pairFstD x).length * Nat.sqrt (pairFstD x).length := by
+    cases hist <;> simp [giProver, decGraph]
+  rw [h]
+  exact (Nat.sqrt_le _).trans (length_pairFstD_le x)
+
+/-- The honest prover of the `|x|`-fold graph-isomorphism protocol sends at most `|x|` bits per
+message, as in one iteration (`giProver_length_le`). -/
+theorem giProverRep_length_le (x y r : List Bool) (hist : List (List Bool)) :
+    (giProverRep.next x y r hist).length ≤ x.length := by
+  have h : (giProverRep.next x y r hist).length =
+      Nat.sqrt (pairFstD x).length * Nat.sqrt (pairFstD x).length := by
+    simp only [giProverRep]
+    split_ifs <;> simp [instanceVertexCount]
+  rw [h]
+  exact (Nat.sqrt_le _).trans (length_pairFstD_le x)
+
+/-- The honest prover of the graph non-isomorphism protocol sends one bit per message. -/
+theorem gniProver_length_le (x y r : List Bool) (hist : List (List Bool)) :
+    (gniProver.next x y r hist).length ≤ 1 := by
+  simp [gniProver]
 
 /-! ### Isomorphism algebra (shadow copies of the main file's lemmas) -/
 

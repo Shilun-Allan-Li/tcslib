@@ -413,8 +413,9 @@ theorem gni_interactiveProofErrRep (hV : gniVerifierRep.Efficient) :
       (fun N => (2 : ℝ)⁻¹ ^ N + N * permFailBound (instanceVertices N)) where
   efficientV := hV
   complete := by
+    refine ⟨.const 1, ?_⟩
     rintro x ⟨n, G₀, G₁, rfl, hni⟩
-    exact ⟨[], fun z => gniRep_complete hni [] z⟩
+    exact ⟨[], gniProver_length_le _ [], fun z => gniRep_complete hni [] z⟩
   sound := by
     intro x hx P' z
     by_cases hwf : wellFormedInstance x = true

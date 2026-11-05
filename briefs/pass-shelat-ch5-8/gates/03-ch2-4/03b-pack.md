@@ -1,10 +1,9 @@
 # Gate 03b ([PS10] ch. 2–4, one-wayness and collections): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/b/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the definitions of one-way functions and of
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the definitions of one-way functions and of
 collections of one-way functions, permutations and trapdoor permutations, and the statements of
 the theorems that relate them.
 - **Gate type:** an external **statement gate** (`workflow.md` §3; user's ruling of 2026-11-05),
@@ -46,7 +45,18 @@ Def 26.1, the canonical default pair) instead of re-finding them. Do not give a 
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/b/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 65 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   17 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 21 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 21 use only the standard axioms, and
+   0 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 0 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 4 files.
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
 - the axiom prints for this pack's headline theorems (`audits/pass-shelat/Checks.lean`);
 - admissions: none in these four files;
