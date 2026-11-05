@@ -41,14 +41,21 @@ needs only `Asymptotic/Collections`).
   `y_{1−b}` must be one too, or Alice tells the two apart and learns `b`. A total decoder may
   accept non-canonical strings, so Proposition 161.5 assumes that the sampler outputs canonical
   encodings (`SamplerCanonical`).
-- **Bob knows no preimage of `y_{1−b}`.** It is a raw sample: Bob knows the element, not its
-  preimage under the permutation.
+- **An enhanced hard-core predicate** (gate 03b review; ruling of 2026-11-05). `y_{1−b}` is a
+  raw sample, and Bob's view holds the coins that produced it. If the sampler computes its
+  output as `f_i(u)` from a uniform `u`, those coins reveal `u = f_i⁻¹(y_{1−b})` and so
+  `a_{1−b}`; the hard-core property of [PS10] (from `⟨i, f_i(u)⟩` alone) does not exclude this,
+  and the proposition is not provable under it. Proposition 161.5 therefore assumes that `h` is
+  **enhanced** hard-core (`EnhancedHardCore`): unpredictable on the preimage of a sampled element
+  even given the sampler's coins. This is the standard repair of this protocol (enhanced trapdoor
+  permutations, [Gol04, Appendix C.1]).
 
 ## Main definitions
 
 * `SecureComputation.otSender`, `otReceiver`, `otProtocol`: Protocol 160.4.
 * `SecureComputation.otSimA`, `otSimB`: the simulators of Proposition 161.5.
 * `SecureComputation.SamplerCanonical`: the sampler outputs canonical encodings.
+* `SecureComputation.EnhancedHardCore`: an enhanced hard-core predicate.
 
 ## Main results
 
@@ -63,6 +70,8 @@ needs only `Asymptotic/Collections`).
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   §6.2.4, Protocol 160.4 and Proposition 161.5 (book pp. 160–162).
+* [Gol04] O. Goldreich, *Foundations of Cryptography, Volume 2*, Cambridge University Press,
+  2004, Appendix C.1 (enhanced trapdoor permutations).
 -/
 
 namespace TCSlib.Cryptography.SecureComputation
@@ -130,6 +139,21 @@ domain sampler is `encD i x` for some `x ∈ D_i`. -/
 def SamplerCanonical : Prop :=
   ∀ n (r : T.gen.Coins n) (s : T.sample.Coins n), ∃ x,
     T.sample.runAt n (T.index n r) s = T.encD (T.index n r) x
+
+/-- **An enhanced hard-core predicate** [Gol04, Appendix C.1] (a declared strengthening of
+[PS10, Proposition 161.5]'s hypothesis; see the module docstring): for every non-uniform PPT `A`,
+predicting `h(f_i⁻¹(y))` for a sampled element `y`, given the index `i` and **the sampler's
+coins** that produced `y`, succeeds with probability at most `½` plus a negligible amount, on
+average over the generated indices. The element `y` is read through the decoder (a sampled
+string decodes, `Collection.sample_spec`), and its preimage is `perm⁻¹` of it (`f_perm`). -/
+def EnhancedHardCore (h : ∀ i, T.D i → Bool) : Prop :=
+  ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+    uexp (fun r : T.gen.Coins n =>
+      uprob fun z : T.sample.Coins n × A.Coins n =>
+        A.distinguisherL n (pairEncode (T.index n r) (List.ofFn z.1)) z.2 =
+          h (T.index n r) ((T.perm (T.index n r)).symm
+            ((T.decD (T.index n r) (T.sample.runAt n (T.index n r) z.1)).getD default)))
+      ≤ 1 / 2 + ε n
 
 /-! ### Correctness -/
 
@@ -381,18 +405,19 @@ advantage, uniformly over the inputs.
    - Bob's real view is his tape, `i`, and `(z₁, z₂)` with `z_b = h(x) ⊕ a_b` and
      `z_{1−b} = h(u) ⊕ a_{1−b}`, where `u = perm⁻¹(x')` for Bob's raw element `x'`.
    - `S_B` produces the same, but with `z_{1−b}` a fresh coin.
-   - A distinguisher of the two gives a predictor of `h(u)` from `⟨i, encD(x')⟩ = ⟨i, f_i(u)⟩`:
-     run it on the view built around the challenge, and flip according to `a_{1−b}` (the
-     signed-predictor identity `exists_pkPredictor` of Algorithm 104.3).
-   - `x'` is within `δ(n)` of uniform, so `u` is too, and the advantage is at most
-     `2(ε_HC(n) + δ(n))` by `hHC`.
+   - A distinguisher of the two gives a predictor of `h(u)` from `⟨i, s'⟩`, where `s'` are the
+     sampler coins of `x'`: build the view around the challenge (Bob's tape contains `s'`), run
+     the distinguisher, and flip according to `a_{1−b}` (the signed-predictor identity
+     `exists_pkPredictor` of Algorithm 104.3).
+   - Its advantage is at most `2 ε_EHC(n)` by `hEHC` (enhanced hard-core: the predictor sees the
+     sampler's coins, which the plain hard-core property would not allow).
    - The predictor depends on `(b, a_{1−b})`, four cases, so the bound is uniform over the
      inputs: take the maximum of the four negligible functions.
 4. *Efficiency.* The predictor runs Bob's sampler, the distinguisher, and one XOR: a machine by
    composition (`NUPPT.exists_comp`).
 
 The source writes out `S_A` only and leaves `S_B` "as an exercise"; step 3 is that exercise. -/
-theorem otProtocol_simulators (hT : T.OneWay) (hHC : T.toCollection.HardCore h)
+theorem otProtocol_simulators (hT : T.OneWay) (hEHC : EnhancedHardCore T h)
     (hcanon : SamplerCanonical T) :
     ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
       ∀ n (x : Fin (otFunctionality.inA.eval n) → Bool)
@@ -424,10 +449,10 @@ include hspec hH in
 /-- **Proposition 161.5** [PS10]: Protocol 160.4 is an honest-but-curious one-out-of-two
 oblivious transfer (Definition 155.1 for `otFunctionality`), for a collection of trapdoor
 permutations with a hard-core predicate whose sampler outputs canonical encodings. -/
-theorem otProtocol_hbcSecure (hT : T.OneWay) (hHC : T.toCollection.HardCore h)
+theorem otProtocol_hbcSecure (hT : T.OneWay) (hEHC : EnhancedHardCore T h)
     (hcanon : SamplerCanonical T) : HBCSecure (otProtocol T H) otFunctionality :=
   ⟨otProtocol_polyTime T H hH, otSimA T, otSimB T hH,
-    otProtocol_simulators T H hH hspec hT hHC hcanon⟩
+    otProtocol_simulators T H hH hspec hT hEHC hcanon⟩
 
 end Security
 

@@ -66,8 +66,8 @@ noncomputable def yaoProtocol : Protocol := (yaoHybrid Y E₁ E₂).compose (otP
 /-- **Theorem 163.7** [PS10]: Protocol 162.6, with Protocol 160.4 for the transfers, is an
 honest-but-curious secure protocol for the circuit's function. The hypotheses are those of
 Theorem 163.7 in the OT-hybrid model (the PRFs of the garbling, jointly as well) and of
-Proposition 161.5 (a collection of trapdoor permutations with a hard-core predicate evaluated by
-`H`).
+Proposition 161.5 (a collection of trapdoor permutations with an enhanced hard-core predicate
+evaluated by `H`).
 
 **Proof sketch.** The composition theorem (`HybridProtocol.hbcSecure_compose`) applied to
 `yaoHybrid_hbcSecure` and `otProtocol_hbcSecure`. Its side condition, that the message phase has
@@ -86,11 +86,11 @@ theorem yaoProtocol_hbcSecure
       (fun n s x => Fin.append (G₁ n s x) (G₂ n s x)))
     {h : ∀ i, T.D i → Bool} (hH : PolyTimeComputable H)
     (hspec : ∀ i w x, T.decD i w = some x → H (pairEncode i w) = [h i x])
-    (hT : T.OneWay) (hHC : T.toCollection.HardCore h) (hcanon : SamplerCanonical T) :
+    (hT : T.OneWay) (hEHC : EnhancedHardCore T h) (hcanon : SamplerCanonical T) :
     HBCSecure (yaoProtocol Y E₁ E₂ T H) (yaoFunctionality Y) :=
   (yaoHybrid Y E₁ E₂).hbcSecure_compose (otProtocol T H)
     (fun n => by show 0 < (PolyExpr.const 2).eval n; simp)
     (yaoHybrid_hbcSecure Y E₁ E₂ G₁ G₂ hGE₁ hGE₂ hE₁ hE₂ hG₁ hG₂ hG₁₂)
-    (otProtocol_hbcSecure T H hH hspec hT hHC hcanon)
+    (otProtocol_hbcSecure T H hH hspec hT hEHC hcanon)
 
 end TCSlib.Cryptography.SecureComputation
