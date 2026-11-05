@@ -328,6 +328,12 @@ output (`emitAction`-style) and rewind; `O(ab + a + b)` steps, ≈ 300–500 lin
 `pairTakePoly p` = `pairFstD ∘ pairSplitAt ∘ pairEncode (unaryPoly p ∘ pairFstD) pairSndD`
 by `polyTimeComputable_of_linear`, `PolyTimeComputable.pairEncode`, `.comp`.
 
+**As-built note (2026-11-05, gate 03l; the sketch above is unchanged).** The `pairSplitAt`
+machine (`Randomized/Build/PairSplit.lean`) uses one work tape, not two: the parser stores `u`,
+and the copy scan of `b` doubles each bit while the work head walks across the stored `u`. Its
+buffered aligned parser is public (`Turing.PairParse`) and is shared by the `unaryMul` machine
+(`Randomized/Build/UnaryMul.lean`), which stores `u` and replays it once per symbol of `v`.
+
 ### 2.5 `TCSlib/Complexity/Randomized/Closure.lean` — closure catalogue
 
 Every lemma is `NUPPT.ofPolyTime` of an FP function built from
@@ -448,6 +454,35 @@ three panel repairs built in.**
 Estimated size 1 200–1 800 lines; private precedent for the module gluing: `satClean_install`,
 `satStopTM`, `sat_run_agree` in `ClassNP/SAT.lean` (private copies, not edits). If the lemma is
 not closed in run 4 it is the single named admission of D11.
+
+**As-built erratum (2026-11-05, gate 03l, minor 2; the frozen text above is unchanged).** The
+machine of `polyTimeComputable_iterateFind` (`Randomized/Build/IterateFind.lean`, with
+`Randomized/Build/IterateFindHost.lean` and the public host `TuringMachine/Build/ModuleHost.lean`)
+departs from steps 1–5 and 7 as follows. The frozen signatures and decisions are unchanged.
+- *Step 1: the guard and the invariant.* The guard tests the **new** point:
+  `stepF x w := if |g (pairSndD w)| ≤ P|x| then pairEncode x (g (pairSndD w)) else w`. The guard
+  on the old length written above does not close `Inv`: for `x = []`, `P = var` and
+  `g s = true :: s`, the word `⟨[], []⟩` satisfies `Inv`, passes the guard `0 ≤ 0`, and steps to
+  `⟨[], [true]⟩`, which does not. The machine's invariant is the actual-pair invariant
+  `Inv x w := ∃ s, w = pairEncode x s ∧ |s| ≤ P|x|`, which, unlike `pairFstD w = x ∧ …`, excludes
+  malformed words and gives the length bound `|w| ≤ 2|x| + 2 + P|x|` that the budget needs.
+  (`Repetition.lean`'s `guardedStep` is the same step; its `LoopInv` is the pure invariant above,
+  not the machine's.)
+- *Steps 2–3: the gluing.* No transition is redirected. A release flag halts each clean-call
+  module one silent step after its first positive exit, and the run is cut at its first halt
+  (the clean-module contract `Turing.ModuleHost.Clean`, `clean_install`, `clean_emit`). The
+  modules are padded to a common bank of tapes and run in one finite host with states
+  `Fin 3 ⊕ Σ i, (M i).State` over five modules (copier, startup install `x ↦ ⟨x, x⟩`, verdict
+  install, step install, payload emit): the anchor `inl 0`, the branch `inl 1` and the halt
+  `inl 2`. This host is now the public clean-module host `Turing.ModuleHost.hostTM`
+  (`machine-library-design.md` §14, row H14), harvested on 2026-11-05 from `ClassNP/SAT.lean`'s
+  private module layer and this machine's copy of it.
+- *Step 4: the startup.* The input is copied onto tape 0 by a two-state copier (`copyTM`: copy and
+  turn, then rewind both heads), not by a one-state scan and `timed_rewind`.
+- *Step 5: the budget.* Every request has length at most `2n + 6 + P n`, and the common budget is
+  `T n = A·(2n + 7 + P n)^D` (`IterateFind.lean`), with `A` and `D` collected from the modules'
+  budgets and the fuel machine.
+- *Step 7.* `iterate`'s counter test is `R|x| ≤ |cnt|` (`StateLoop.IterLoop.acc`), not `lenEq`.
 
 ### 2.7 `TCSlib/Cryptography/Asymptotic/Sampling.lean`
 

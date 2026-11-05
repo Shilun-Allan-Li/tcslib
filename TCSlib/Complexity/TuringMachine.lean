@@ -60,6 +60,7 @@ import TCSlib.Complexity.TuringMachine.Build.InputDevice
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.Build.StepBlockLoop
 import TCSlib.Complexity.TuringMachine.Build.StepBlockForward
+import TCSlib.Complexity.TuringMachine.Build.ModuleHost
 import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
@@ -214,6 +215,12 @@ for the local modifications.
   H2-F, `machine-library-design.md` §14): any `k`-tape table simulated in macro-step lockstep with
   its emissions forwarded, per-step cost bounded by the table's length, and a space ledger.
   Statement gate passed 2026-10-15; the contract is sorried.
+* `Build/ModuleHost` — the clean-module host (host H14, `machine-library-design.md` §14): the
+  first-halting clean-module contract `Turing.ModuleHost.Clean` with the install and emit modules
+  of every polynomial-time word function, and the finite host running such modules over a
+  shared tape bank with consumer-supplied control states (`host_call`, `host_clean`). Proved;
+  harvested 2026-11-05 from `ClassNP/SAT`'s private module layer and its copy in
+  `Randomized/Build/IterateFindHost` (gate 03l, R-03l-1).
 * `CodeSimulator` — the format-parameterized uniform simulator over item 8's code formats
   (B5a): one bounded-acceptance interpreter and canonizer whose one- and two-tape instances are
   the EXPCOM and Codes2Tape code schemes. Fills in progress; the module header carries its

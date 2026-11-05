@@ -91,6 +91,7 @@ Conventions:
 | `StepBlockForward` | The step block run until the simulated machine halts, its output forwarded (`StepBlock.exists_forwardLoopTM`). |
 | `SeamLayout` | From a captured serialization of a machine to the step block's starting layout (`exists_seamLayoutTM`). |
 | `InterpreterStartup` | An interpreter's start, as reusable steps: the seam between two verified phases with its one dispatch transition (`seamCompTM_step`); the capture of a header with a first live return (`headerCapture_run`); the window `x.take t` of the input after the header (`exists_windowCall`); the install call as a released phase (`installCall_releasePhase`); the layout of an installed serialization (`exists_layoutCall`). |
+| `ModuleHost` | Run a finite family of clean modules (`Turing.ModuleHost.Clean`: a first halt within a budget of the argument length, at the seam holding a result word, with a declared emission) inside one finite machine with consumer-supplied control states (`Turing.ModuleHost.hostTM`, `host_call`, `host_clean`); every polynomial-time word function has clean install and emit modules (`clean_install`, `clean_emit`). |
 | `StepClock` | Run a machine under a countdown of its physical steps, exiting when it stops or when the count runs out (`exists_stepClockTMVia`, `exists_stepClockTM`). |
 | `CfgRecord` | Configurations inside a radius-`s` window written as records over a rich alphabet (`cfgRecord`), and the record rows: one simulated step, equality, and a test of the state (`exists_recordStepTM`, `exists_recordEqTM`, `exists_recordTestTM`). |
 | `RecordTable` | Tables of records (find, append, field-list copy, return to the start), the record template and the initial record. |
@@ -123,7 +124,8 @@ The modules outside this directory that import a component directly:
 | The nondeterministic interpreter and time hierarchy (`NDCodeSimulator`, `Diagonalization/NTimeHierarchy`) [AB09, Theorem 3.2] | `NDHost`, `InterpreterStartup`, `InputWindow`, `InputRewind`, `Rewind`, `SeamLayout` |
 | Space complexity (`SpaceComplexity/WindowClock`, `Constructible`, `ConfigGraph`, `Inclusions`) | `WindowRun`, `InputLength`, `RecordTable`, `Seam`, `VirtualInput`, `CounterLoop` |
 | Oracle classes (`ClassOracle/Classes`, `Diagonalization/EXPCOM`) [AB09, §3.4] | `OracleCall`, `OracleSim`, `CertShell` |
-| NP and its reductions (`ClassNP/*`, `CookLevin/Hardness`) | `Primitives`, `Loop`, `EmitIterBody`, `Seam`, `StepClock` |
+| NP and its reductions (`ClassNP/*`, `CookLevin/Hardness`) | `Primitives`, `Loop`, `EmitIterBody`, `Seam`, `StepClock`, `ModuleHost` |
+| The repetition lemma (`Randomized/Build/IterateFindHost`, `IterateFind`) | `ModuleHost`, `Primitives` |
 | The two-tape code scheme (`Codes2Tape`) | `Catalog`, `VirtualInput` |
 
 The zone layer has no consumer yet. It is built for the two-tape simulation with logarithmic

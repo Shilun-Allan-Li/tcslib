@@ -65,8 +65,8 @@ for `|⟨x, start x⟩|` rounds and reading `out` is polynomial-time (instance o
 `Complexity.polyTimeComputable_iterate`, the orbit bound being `StateLoop.length_gstep_iterate_le`).
 On inputs whose genuine orbit stays within `B|x|` the guard never fires
 (`StateLoop.gstep_iterate_eq`), which is how each loop below is identified with its closed
-form. (The pattern of `Complexity.polyTimeComputable_stateFind`, `Randomized/Repetition.lean`,
-with a fixed round count instead of an acceptance test.) -/
+form. (A variant of the public state-loop form `Complexity.polyTimeComputable_stateFind` of
+`Randomized/Repetition.lean`, with a fixed round count instead of an acceptance test.) -/
 theorem polyTimeComputable_stateIterate {start step out : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
     (hout : PolyTimeComputable out) (B : PolyExpr) :

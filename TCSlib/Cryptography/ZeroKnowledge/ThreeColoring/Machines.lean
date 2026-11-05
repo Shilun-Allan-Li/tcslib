@@ -123,8 +123,9 @@ theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
     intro x
     rw [CountLoop.orbit_eq]
     simp [CountLoop.acc]
-  have h := polyTimeComputable_stateFind (CountLoop.start_poly hinit) (CountLoop.step_poly hupd)
-    (CountLoop.acc_poly hN) CountLoop.out_poly (PolyExpr.normal C c) _ N hNR hbound hfirst hlast
+  have h := EncodingMachines.polyTimeComputable_stateFind (CountLoop.start_poly hinit)
+    (CountLoop.step_poly hupd) (CountLoop.acc_poly hN) CountLoop.out_poly (PolyExpr.normal C c) _ N
+    hNR hbound hfirst hlast
   convert h using 1
   funext x
   rw [CountLoop.orbit_eq]
