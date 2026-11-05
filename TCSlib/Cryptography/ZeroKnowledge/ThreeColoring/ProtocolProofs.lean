@@ -33,7 +33,7 @@ main file makes the main file fail to type-check, so it cannot go unnoticed.
   when the graph has an edge.
 * `TCSlib.Cryptography.ColProofs.colProver_efficient`, `ColProofs.colVerifier_efficient`,
   `ColProofs.colProverRep_efficient`, `ColProofs.colVerifierRep_efficient` — the (shadow)
-  parties are PPT strategies (Inf-4.2).
+  parties are efficient (D8) (Inf-4.2).
 * `TCSlib.Cryptography.ColProofs.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`,
   `ColProofs.finOneEquiv`, `ColProofs.two_le_of_edge` — helpers of the soundness proof of
   Proposition 127.6.
@@ -316,22 +316,22 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) 
 
 /-! ### Efficiency of the (shadow) parties -/
 
-/-- The honest prover of one iteration is a PPT strategy when `Com` is (shadow form). -/
+/-- The honest prover of one iteration is efficient (D8) when `Com` is (shadow form). -/
 theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
   efficient_of_polyTime _ (proverStr_poly Com ℓ hCom) (colProver_next_eq Com ℓ)
 
-/-- The verifier of one iteration is a PPT strategy when `Com` is (shadow form). -/
+/-- The verifier of one iteration is efficient (D8) when `Com` is (shadow form). -/
 theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
   efficient_of_polyTime _ (verifierStr_poly Com ℓ hCom) (colVerifier_next_eq Com ℓ)
 
-/-- The prover of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
+/-- The prover of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
 theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
   efficient_of_polyTime _ (proverRepStr_poly Com ℓ hCom) (colProverRep_next_eq Com ℓ)
 
-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
+/-- The verifier of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
 theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
   efficient_of_polyTime _ (verifierRepStr_poly Com ℓ hCom) (colVerifierRep_next_eq Com ℓ)

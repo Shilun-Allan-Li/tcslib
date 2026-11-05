@@ -33,10 +33,21 @@ read as the output string `[false]`, the negligible `ε` quantified before the i
 cheating prover and its auxiliary input; cheating provers are arbitrary strategies with a
 polynomial random tape (unbounded computation; polynomial coin tapes lose nothing by
 averaging, `Protocol.exists_proverCoins_le`). Completeness is `uprob = 1`, i.e. acceptance on
-every pair of random tapes. The verifier's efficiency is `Strategy.Efficient`, polynomial time
-in `|x| + |z| + |messages|` (D8), so `InteractiveProof` alone does not bound the verifier's
-work in `|x|` against an unbounded prover sending long messages; the class `IP` adds the
-message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1).
+every pair of random tapes. The parties' efficiency (the text's "p.p.t.") is
+`Strategy.Efficient`, polynomial time in `|x| + |z| + |messages|` (D8), together with a
+polynomial bound `B(|x|)` on the honest prover's messages (ruling G3-3 of gate 03, the
+convention of ch. 6): in the completeness clause of `InteractiveProof` and
+`InteractiveProofErr` for the completeness witness, and as the field `boundedP`
+(`Protocol.ProverBounded`) of `EfficientProverProof` and `EfficientProverProofErr` for every
+witness. The residual deviation is that against a cheating prover the verifier's work is
+polynomial in the length of the messages it receives, not in `|x|`. Since the honest messages
+are short, the verifier can always be capped: `V` reading only the first `B(|x|)` bits of each
+message is still complete (the honest messages are untouched) and sound (against `P*` it acts
+as `V` against `P*` with truncated messages, another prover strategy). So the proof systems
+hold only for languages of the text's class IP — undecidable languages such as the halting
+problem, whose computation histories are not polynomially bounded, are excluded — while
+`IP` itself is stated with the message-prefix cap `Strategy.ReadsPrefix` of the verifier
+(run-3 audit P9-1). The capping argument is not formalized as a lemma.
 
 ## Main definitions
 
@@ -58,13 +69,18 @@ message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1).
 * `TCSlib.Cryptography.InteractiveProofErr.interactiveProof`,
   `TCSlib.Cryptography.InteractiveProof.exists_err` — a negligible soundness error gives an
   interactive proof and conversely.
+* `TCSlib.Cryptography.InteractiveProof.exists_accept`,
+  `TCSlib.Cryptography.Protocol.ProverBounded.exists_complete` — completeness without the
+  message bound, and completeness with the bound from bounded messages and completeness for
+  every witness.
 * `TCSlib.Cryptography.InteractiveProof.exists_uprob_accept_lt` — the acceptance form of
   soundness, `Pr[out_V = [true]] < ε(|x|)`.
 * `TCSlib.Cryptography.WitnessRelation.mem_NP`,
   `TCSlib.Cryptography.exists_witnessRelation_of_mem_NP` — witness relations characterize
   `Complexity.NP` (the bridge to the certificate definition of `ClassNP/NP.lean`).
 * `TCSlib.Cryptography.npProtocol_interactiveProof` — non-vacuity: sending a witness is an
-  interactive proof with efficient prover; `TCSlib.Cryptography.npProtocol_readsPrefix`,
+  interactive proof with efficient prover (`TCSlib.Cryptography.npProtocol_proverBounded`: its
+  prover's message is the witness); `TCSlib.Cryptography.npProtocol_readsPrefix`,
   `TCSlib.Cryptography.WitnessRelation.mem_IP`, `TCSlib.Cryptography.NP_subset_IP` — its
   verifier reads a polynomial prefix, hence `NP ⊆ IP` (Claim-117.c).
 
@@ -83,25 +99,33 @@ open Complexity Turing
 /-! ### Interactive proofs -/
 
 /-- An interactive proof system for `L` [PS10, Definition 116.1] (Def-116.1): the verifier is
-efficient; completeness — for every `x ∈ L` there is an auxiliary input `y` such that for every
+efficient; completeness — for a polynomial `B` and every `x ∈ L` there is an auxiliary input
+`y` on which the honest prover's messages have at most `B(|x|)` bits and such that for every
 `z` the honest execution `P(x, y) ↔ V(x, z)` makes `V` output `1` with probability one;
 soundness — there is a negligible `ε` such that for every `x ∉ L`, every (unbounded) prover
 strategy `P'` and every `z`, `V` outputs `0` in `P'(x) ↔ V(x, z)` with probability greater than
 `1 - ε(|x|)`.
 
-**Deviation (D8):** `out_V = 0` is the literal output string `[false]` on the complete
-history of the fixed-alternation execution; `P'` ranges over strategies with polynomial
-random tapes and receives no auxiliary input (the text's `P*(x)`); completeness is `uprob = 1`
-(every pair of random tapes). The verifier is `Strategy.Efficient`, i.e. polynomial-time in
-`|x| + |z| + |messages|` (D8), so this predicate alone does not bound the verifier's work in
-`|x|` against an unbounded prover sending long messages; the class `IP` adds the
-message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1). -/
+**Deviation (D8; ruling G3-3 of gate 03):** `out_V = 0` is the literal output string `[false]`
+on the complete history of the fixed-alternation execution; `P'` ranges over strategies with
+polynomial random tapes and receives no auxiliary input (the text's `P*(x)`); completeness is
+`uprob = 1` (every pair of random tapes). The verifier's "p.p.t." is `Strategy.Efficient`,
+polynomial-time in `|x| + |z| + |messages|` (D8), and the honest messages on the completeness
+witness are bounded by `B(|x|)` (the text's p.p.t. prover writes at most `t(|x|)` bits; the
+convention of ch. 6). Against a cheating prover the verifier's work is polynomial in the
+length of the messages it receives, not in `|x|`; because the honest messages are short the
+verifier can be capped to their length without losing completeness or soundness (module
+docstring), so the predicate holds only for languages of the text's class IP. The class `IP`
+is stated with the message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1). -/
 structure InteractiveProof (π : Protocol) (L : Language Bool) : Prop where
-  /-- The verifier is a PPT strategy. -/
+  /-- The verifier is efficient (`Strategy.Efficient`, D8). -/
   efficientV : π.V.Efficient
-  /-- Completeness: some auxiliary input makes the honest verifier accept with probability one. -/
-  complete : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
-    uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
+  /-- Completeness: for a polynomial `B`, every `x ∈ L` has an auxiliary input on which the
+  honest prover's messages have at most `B(|x|)` bits and the honest verifier accepts with
+  probability one. -/
+  complete : ∃ B : PolyExpr, ∀ x ∈ L, ∃ y : List Bool,
+    (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧
+    ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
   /-- Soundness: against every prover strategy the verifier rejects with probability
   `> 1 - ε(|x|)` for a negligible `ε`. -/
   sound : ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ x ∉ L, ∀ (P' : Strategy) (z : List Bool),
@@ -112,15 +136,19 @@ structure InteractiveProof (π : Protocol) (L : Language Bool) : Prop where
 function `s` (for instance the constant `1/2` of the single-iteration graph-isomorphism
 protocol).
 
-**Deviation (D8):** as for `InteractiveProof` (literal `[false]`, provers with polynomial
-tapes, `uprob = 1` completeness; verifier time in the total input length — the message-prefix
-cap is added in `IP`, run-3 audit P9-1). -/
+**Deviation (D8; ruling G3-3 of gate 03):** as for `InteractiveProof` (literal `[false]`,
+provers with polynomial tapes, `uprob = 1` completeness with honest messages of at most
+`B(|x|)` bits; verifier time in the total input length — the message-prefix cap is added in
+`IP`, run-3 audit P9-1). -/
 structure InteractiveProofErr (π : Protocol) (L : Language Bool) (s : ℕ → ℝ) : Prop where
-  /-- The verifier is a PPT strategy. -/
+  /-- The verifier is efficient (`Strategy.Efficient`, D8). -/
   efficientV : π.V.Efficient
-  /-- Completeness: some auxiliary input makes the honest verifier accept with probability one. -/
-  complete : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
-    uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
+  /-- Completeness: for a polynomial `B`, every `x ∈ L` has an auxiliary input on which the
+  honest prover's messages have at most `B(|x|)` bits and the honest verifier accepts with
+  probability one. -/
+  complete : ∃ B : PolyExpr, ∀ x ∈ L, ∃ y : List Bool,
+    (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧
+    ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
   /-- Soundness error `s`: the verifier rejects with probability at least `1 - s(|x|)`. -/
   sound : ∀ x ∉ L, ∀ (P' : Strategy) (z : List Bool),
     1 - s x.length ≤ uprob (fun r : π.ExecCoins P' x => π.outV P' x [] z r = [false])
@@ -172,6 +200,40 @@ theorem InteractiveProof.exists_uprob_accept_lt {π : Protocol} {L : Language Bo
   rw [uprob_not] at h2
   linarith
 
+/-- Completeness without the message bound (the form in which consumers use it): every
+`x ∈ L` has an auxiliary input on which the honest verifier accepts with probability one. -/
+theorem InteractiveProof.exists_accept {π : Protocol} {L : Language Bool}
+    (h : InteractiveProof π L) : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
+      uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 := fun x hx =>
+  let ⟨_, hB⟩ := h.complete
+  let ⟨y, _, hy⟩ := hB x hx
+  ⟨y, hy⟩
+
+/-- Completeness without the message bound, for an interactive proof with soundness error. -/
+theorem InteractiveProofErr.exists_accept {π : Protocol} {L : Language Bool} {s : ℕ → ℝ}
+    (h : InteractiveProofErr π L s) : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
+      uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 := fun x hx =>
+  let ⟨_, hB⟩ := h.complete
+  let ⟨y, _, hy⟩ := hB x hx
+  ⟨y, hy⟩
+
+/-- The completeness clause of `InteractiveProof` from bounded honest messages: if the honest
+prover's messages have at most `B(|x|)` bits on instances with an `R`-witness
+(`Protocol.ProverBounded`), every witness makes the honest verifier accept with probability
+one, and every `x ∈ L` has a witness, then the clause holds with the bound `B` and the
+witnesses as auxiliary inputs. -/
+theorem Protocol.ProverBounded.exists_complete {π : Protocol} {L : Language Bool}
+    {R : List Bool → List Bool → Prop} {B : PolyExpr} (hB : π.ProverBounded R B)
+    (hLR : ∀ x ∈ L, ∃ y, R x y)
+    (hc : ∀ x y, R x y → ∀ z : List Bool,
+      uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1) :
+    ∃ B : PolyExpr, ∀ x ∈ L, ∃ y : List Bool,
+      (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧
+      ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 :=
+  ⟨B, fun x hx =>
+    let ⟨y, hy⟩ := hLR x hx
+    ⟨y, fun r hist => hB x y r hist hy, hc x y hy⟩⟩
+
 /-! ### Witness relations -/
 
 /-- A witness relation for `L` [PS10, Appendix B, Definition 191.11] (Def-191.11): `x ∈ L` iff
@@ -180,7 +242,11 @@ decidable in polynomial time on the pair `⟨x, y⟩`.
 
 **Deviation:** the text's `R_L(x) = {y : (x, y) ∈ L}` is a typo for `∈ R_L`; the witness-length
 bound is an explicit `PolyExpr` and the decider a polynomial-time string function
-(`PolyTimeComputable`). -/
+(`PolyTimeComputable`). The bound is on the relation itself (every `y` with `R x y` is short),
+whereas Definition 191.11 bounds only the witnesses that count (`∃ y, |y| ≤ p(|x|) ∧
+(x, y) ∈ R_L`); the two agree on languages (intersect `R_L` with the bound), and the bounded
+form suits Definition 119.5's "for every `y ∈ R_L(x)`", since a time-`t(|x|)` prover cannot
+read a longer `y` (gate 03e, note 11). -/
 structure WitnessRelation (L : Language Bool) (R : List Bool → List Bool → Prop) : Prop where
   /-- `x ∈ L` iff `x` has a witness. -/
   mem_iff : ∀ x, x ∈ L ↔ ∃ y, R x y
@@ -263,23 +329,36 @@ theorem exists_witnessRelation_of_mem_NP {L : Language Bool} (h : L ∈ NP) :
 /-! ### Efficient provers -/
 
 /-- An interactive proof for `L` with efficient prover with respect to the witness relation
-`R` [PS10, Definition 119.5] (Def-119.5): an interactive proof whose prover is a PPT strategy
-(the witness is its auxiliary input) and which is complete for **every** witness `y` of `x`
-(Definition 116.1 only asks for some auxiliary input). -/
+`R` [PS10, Definition 119.5] (Def-119.5): an interactive proof whose prover is efficient (the
+witness is its auxiliary input) and which is complete for **every** witness `y` of `x`
+(Definition 116.1 only asks for some auxiliary input).
+
+**Deviation (D8; ruling G3-3 of gate 03):** the text's "P is p.p.t." is `Strategy.Efficient`
+(time polynomial in the total input length, D8) together with a polynomial bound `B(|x|)` on
+the prover's messages on every instance with a witness (`Protocol.ProverBounded`: the text's
+p.p.t. machine writes at most `t(|x|)` bits per message, the convention of ch. 6); the
+verifier is as in `InteractiveProof`. -/
 structure EfficientProverProof (π : Protocol) (L : Language Bool)
     (R : List Bool → List Bool → Prop) : Prop extends InteractiveProof π L where
-  /-- The prover is a PPT strategy. -/
+  /-- The prover is efficient (`Strategy.Efficient`, D8). -/
   efficientP : π.P.Efficient
+  /-- The prover's messages have at most `B(|x|)` bits on instances with a witness. -/
+  boundedP : ∃ B : PolyExpr, π.ProverBounded R B
   /-- Completeness for every witness. -/
   completeWitness : ∀ x y, R x y → ∀ z : List Bool,
     uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
 
 /-- An interactive proof with soundness error `s` and efficient prover with respect to `R`
-[PS10, Definition 119.5 with the soundness error of §4.5] (Def-119.5, Def-117.a). -/
+[PS10, Definition 119.5 with the soundness error of §4.5] (Def-119.5, Def-117.a).
+
+**Deviation (D8; ruling G3-3 of gate 03):** as for `EfficientProverProof` (`Efficient` prover
+with messages of at most `B(|x|)` bits on instances with a witness). -/
 structure EfficientProverProofErr (π : Protocol) (L : Language Bool)
     (R : List Bool → List Bool → Prop) (s : ℕ → ℝ) : Prop extends InteractiveProofErr π L s where
-  /-- The prover is a PPT strategy. -/
+  /-- The prover is efficient (`Strategy.Efficient`, D8). -/
   efficientP : π.P.Efficient
+  /-- The prover's messages have at most `B(|x|)` bits on instances with a witness. -/
+  boundedP : ∃ B : PolyExpr, π.ProverBounded R B
   /-- Completeness for every witness. -/
   completeWitness : ∀ x y, R x y → ∀ z : List Bool,
     uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
@@ -290,6 +369,7 @@ theorem EfficientProverProofErr.efficientProverProof {π : Protocol} {L : Langua
     (h : EfficientProverProofErr π L R s) : EfficientProverProof π L R where
   toInteractiveProof := h.toInteractiveProofErr.interactiveProof hs
   efficientP := h.efficientP
+  boundedP := h.boundedP
   completeWitness := h.completeWitness
 
 /-- An interactive proof with efficient prover has a negligible soundness error. -/
@@ -297,7 +377,7 @@ theorem EfficientProverProof.exists_err {π : Protocol} {L : Language Bool}
     {R : List Bool → List Bool → Prop} (h : EfficientProverProof π L R) :
     ∃ ε : ℕ → ℝ, Negligible ε ∧ EfficientProverProofErr π L R ε := by
   obtain ⟨ε, hε, herr⟩ := h.toInteractiveProof.exists_err
-  exact ⟨ε, hε, herr, h.efficientP, h.completeWitness⟩
+  exact ⟨ε, hε, herr, h.efficientP, h.boundedP, h.completeWitness⟩
 
 /-! ### The trivial NP protocol -/
 
@@ -381,6 +461,13 @@ theorem npProtocol_efficientP (T : List Bool → Bool) (p : PolyExpr) :
     fun x z r hist => ?_⟩
   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput]
 
+/-- The prover of `npProtocol T p` sends its auxiliary input, so on witnesses of length at most
+`p(|x|)` its message has at most `p(|x|)` bits (ruling G3-3 of gate 03). -/
+theorem npProtocol_proverBounded (T : List Bool → Bool) (p : PolyExpr)
+    {R : List Bool → List Bool → Prop} (hp : ∀ x y, R x y → y.length ≤ p.eval x.length) :
+    (npProtocol T p).ProverBounded R p :=
+  fun x y _ _ hxy => hp x y hxy
+
 /-- Non-vacuity of Definitions 116.1 and 119.5 [PS10, §4.5, "`NP ⊆ IP`"]: for a witness relation
 `R` of `L` decided by the polynomial-time predicate `T`, with witnesses of length at most
 `p(|x|)`, the one-message protocol in which the prover sends a witness is an interactive proof
@@ -392,9 +479,11 @@ probability one).
 
 **Proof sketch.** The verifier's output is `[T ⟨x, m.take (p(|x|))⟩]` for the message `m` sent
 (`npProtocol_outV`); the honest prover sends `y`, which the truncation leaves unchanged since
-`|y| ≤ p(|x|)` (`hp`, `List.take_of_length_le`). Completeness: for `x ∈ L` take a witness `y`
-(`hR.mem_iff`); then `T ⟨x, y⟩ = true` (`hTR`) on every coin pair, so the probability is one
-(`HardcoreBit.uprob_eq_one_of_forall`). Soundness with `ε n := 2⁻¹ ^ n`
+`|y| ≤ p(|x|)` (`hp`, `List.take_of_length_le`). Completeness for every witness `y`:
+`T ⟨x, y⟩ = true` (`hTR`) on every coin pair, so the probability is one
+(`HardcoreBit.uprob_eq_one_of_forall`); the prover's message `y` has at most `p(|x|)` bits
+(`npProtocol_proverBounded`), and completeness follows for `x ∈ L` with a witness from
+`hR.mem_iff` (`Protocol.ProverBounded.exists_complete`). Soundness with `ε n := 2⁻¹ ^ n`
 (`negligible_two_pow_neg`; the literal clause is strict, so `ε = 0` is not admissible): for
 `x ∉ L` no string — in particular no truncated message — is a witness, so `T ⟨x, ·⟩ = false`
 and the verifier outputs `[false]` on every coin pair, with probability `1 > 1 - ε(|x|)`.
@@ -404,35 +493,36 @@ theorem npProtocol_interactiveProof {L : Language Bool} {R : List Bool → List 
     (hT : PolyTimeComputable fun z => [T z])
     (hTR : ∀ x y, T (pairEncode x y) = true ↔ R x y)
     (hp : ∀ x y, R x y → y.length ≤ p.eval x.length) :
-    EfficientProverProof (npProtocol T p) L R where
-  efficientV := npProtocol_efficientV T p hT
-  complete := by
-    intro x hx
-    obtain ⟨y, hy⟩ := (hR.mem_iff x).1 hx
-    refine ⟨y, fun z => HardcoreBit.uprob_eq_one_of_forall fun r => ?_⟩
-    rw [npProtocol_outV]
-    simp [npProtocol, List.take_of_length_le (hp x y hy), (hTR x y).2 hy]
-  sound := by
-    refine ⟨fun n => (2 : ℝ)⁻¹ ^ n, negligible_two_pow_neg, fun x hx P' z => ?_⟩
-    have hall : ∀ r : (npProtocol T p).ExecCoins P' x,
-        (npProtocol T p).outV P' x [] z r = [false] := by
-      intro r
-      rw [npProtocol_outV]
-      have hno : ¬ R x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length)) :=
-        fun hw => hx ((hR.mem_iff x).2 ⟨_, hw⟩)
-      have hfalse :
-          T (pairEncode x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length))) = false := by
-        rw [← Bool.not_eq_true, hTR]
-        exact hno
-      rw [hfalse]
-    rw [HardcoreBit.uprob_eq_one_of_forall hall]
-    exact sub_lt_self _ (by positivity)
-  efficientP := npProtocol_efficientP T p
-  completeWitness := by
+    EfficientProverProof (npProtocol T p) L R := by
+  have hcw : ∀ x y, R x y → ∀ z : List Bool,
+      uprob (fun r : (npProtocol T p).ExecCoins (npProtocol T p).P x =>
+        (npProtocol T p).outV (npProtocol T p).P x y z r = [true]) = 1 := by
     intro x y hy z
     refine HardcoreBit.uprob_eq_one_of_forall fun r => ?_
     rw [npProtocol_outV]
     simp [npProtocol, List.take_of_length_le (hp x y hy), (hTR x y).2 hy]
+  refine
+    { efficientV := npProtocol_efficientV T p hT
+      complete := (npProtocol_proverBounded T p hp).exists_complete
+        (fun x hx => (hR.mem_iff x).1 hx) hcw
+      sound := ?_
+      efficientP := npProtocol_efficientP T p
+      boundedP := ⟨p, npProtocol_proverBounded T p hp⟩
+      completeWitness := hcw }
+  refine ⟨fun n => (2 : ℝ)⁻¹ ^ n, negligible_two_pow_neg, fun x hx P' z => ?_⟩
+  have hall : ∀ r : (npProtocol T p).ExecCoins P' x,
+      (npProtocol T p).outV P' x [] z r = [false] := by
+    intro r
+    rw [npProtocol_outV]
+    have hno : ¬ R x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length)) :=
+      fun hw => hx ((hR.mem_iff x).2 ⟨_, hw⟩)
+    have hfalse :
+        T (pairEncode x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length))) = false := by
+      rw [← Bool.not_eq_true, hTR]
+      exact hno
+    rw [hfalse]
+  rw [HardcoreBit.uprob_eq_one_of_forall hall]
+  exact sub_lt_self _ (by positivity)
 
 /-- Every language with a witness relation is in `IP` [PS10, §4.5, "`NP ⊆ IP`"] (Claim-117.c):
 the one-message protocol `npProtocol T p`, with the relation's decider `T` and witness-length

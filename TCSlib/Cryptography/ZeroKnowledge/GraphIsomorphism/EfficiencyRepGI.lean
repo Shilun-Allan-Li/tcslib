@@ -28,7 +28,7 @@ current iteration (`coinSlice_poly`), and the verdict scan over the `|x|` iterat
 ## Main results
 
 * `TCSlib.Cryptography.GI.giProverRep_efficient`, `GI.giVerifierRep_efficient` — the parties of
-  the `|x|`-fold graph isomorphism protocol are PPT strategies.
+  the `|x|`-fold graph isomorphism protocol are efficient (D8).
 
 ## References
 
@@ -98,7 +98,7 @@ theorem lastBit_poly : PolyTimeComputable fun w =>
     [(pairFstD (pairSndD^[lastSteps (argM w)] (argM w))).headD false] :=
   headBit_poly.comp (lastMsg_poly.comp argM_poly)
 
-/-- The prover of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2).
+/-- The prover of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
 
 **Proof sketch.** `efficient_of_polyTime`: the half count `|hist| / 2` and the parity by the
 half loop (`halfLoop_poly`), the coin block of the current iteration (`giSlice_poly`), the
@@ -304,7 +304,7 @@ theorem gi_verdict_iff (x : List Bool) (hist : List (List Bool)) (r : List Bool)
     ← getD_eq_headD_drop, ← getD_eq_headD_drop]
   cases r.getD j false <;> exact Iff.rfl
 
-/-- The verifier of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2).
+/-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
 
 **Proof sketch.** `efficient_of_polyTime`: the parity of the message count (`odd_poly`), the
 challenge `r_{|hist|/2}` (`challenge_poly`), the test `|hist| < 2|x|` (`ltLen2_poly`), and the
