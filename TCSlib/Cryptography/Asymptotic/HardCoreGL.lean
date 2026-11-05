@@ -325,7 +325,7 @@ theorem drop_drop_coins (t : ℕ) :
 /-- The closed form of the orbit on the well-formed input, for `t ≤ m (2^k − 1)` rounds:
 `⟨table.drop (t · entry), ⟨coins.drop (t · |ρ|), votes of the first t rounds⟩⟩`. 
 
-**Proof sketch.** Induction on `t`. The table is not exhausted before round `m(2^k − 1)` (`List.drop_eq_nil_iff`, `length_blocksStr`), so the step consumes the entry `t` (`take_drop_blocksStr`, `ofFn_glEntryFn`), whose components are `e_i` and `β_j`; the vote is `wfVote` by `ipFun_ofFn`, `selXorFun_input`, `zipWith_xor_ofFn`, `take_drop_coins` and `NUPPT.runAtL_eq_output_layout`; the table and coin components advance by `List.drop_drop` (`drop_drop_coins`) and the votes by `List.ofFn_succ'`. -/
+**Proof sketch.** Induction on `t`. The table is not exhausted before round `m(2^k − 1)` (`List.drop_eq_nil_iff`, `length_blocksStr`), so the step consumes the entry `t` (`take_drop_blocksStr`, `ofFn_glEntryFn`), whose components are `e_i` and `β_j`; the vote is `wfVote` by `ipFun_ofFn`, `selXorFun_input`, `zipWith_xor_ofFn_add`, `take_drop_coins` and `NUPPT.runAtL_eq_output_layout`; the table and coin components advance by `List.drop_drop` (`drop_drop_coins`) and the votes by `List.ofFn_succ'`. -/
 theorem orbit_eq (t : ℕ) (ht : t ≤ m * (2 ^ k - 1)) :
     orbit start (step A) (wfInput A n m k Y s b cs ex) t =
       pairEncode ((glTable m k).drop (t * (2 * m + 2 + k)))
@@ -366,7 +366,7 @@ theorem orbit_eq (t : ℕ) (ht : t ≤ m * (2 ^ k - 1)) :
       have hin : pairEncode (pairEncode (List.replicate m true)
           (List.ofFn (betaOf (Fin.modNat ⟨t, ht'⟩)))) (blocksStr s) =
           SelXor.input m (betaOf (Fin.modNat ⟨t, ht'⟩)) s := rfl
-      rw [hin, selXorFun_input, zipWith_xor_ofFn, ← NUPPT.runAtL_eq_output_layout]
+      rw [hin, selXorFun_input, zipWith_xor_ofFn_add, ← NUPPT.runAtL_eq_output_layout]
       rfl
     unfold step
     rw [if_neg (by simpa [ptbl] using hne), hvote]
