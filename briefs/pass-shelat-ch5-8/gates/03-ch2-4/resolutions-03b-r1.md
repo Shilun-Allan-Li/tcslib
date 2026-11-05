@@ -49,6 +49,6 @@
 | M3 | (review) the lenient fix breaks GL for collections | **No change:** the lenient alternative was not adopted. |
 | M4 | (review) the infidelity is in Def 41.1 (2), 56.1 (6) | **Recorded** here and in the field docstring (`Collections.lean:141–146`) and DESIGN §5 item 24: the auditor's inventory row Def-41.1 should read "(2) and Def 56.1 (6) were decode-level only; repaired by `encD_decD`", and (3) was faithful. |
 | M5 | (review) `fUniversal` is the in-repo instance of #2 | **No change:** the lossy padding is harmless there; a pointer for 03h. |
-| M6 | (review) third copy of `decodeFin_eq_some_iff` | **Scheduled:** DL-15 (part 2). The ledger row calls the `GGMRed` copy private; it is public (`GGMReductionEval.lean:163`), which is what makes the namespace collision. |
+| M6 | (review) third copy of `decodeFin_eq_some_iff` | **Scheduled:** DL-15 (part 2). The `GGMRed` copy is public (`GGMReductionEval.lean:163`), which is what makes the namespace collision; the ledger row now says so (corrected 2026-11-05; gate 03b round 2, R2-3). |
 | M7 | (review) split `Collections.lean` first | **Fixed:** the split precedes the field (#12b, #12d). |
 | M8 | (review) the † items | **No change:** resolved by the review against the extract (#3, #8, #11). |
