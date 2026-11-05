@@ -108,15 +108,24 @@ The rest stay on the Mac.
 
 `maint/12.2c-t2a` (2026-10-12) is the T2a facade wiring.
 
-**Update (2026-11-05, cloud session).** All three gates have reported:
-- **Gate 95 (#191): does not close**, 0/1/4 (F1, inline `BufferWords` re-derivations). The user
-  ruled **repair**.
-- **Gate 96 (#196): does not close**, 0/2/4 (F1, `NoEdge` without `_iff`; F2, `apply_of_lt`
-  re-derives `recordStep_window`). The user ruled **harvest** (public `Cfg.InWindow.apply_iff` and
-  `.mono`), **acknowledged by kind** the window-step family for 12.2c, and ruled F11's pair an
-  **idiom** with a 12.2c item for codec-level query predicates.
-- **Gate 97 (#197): PASS**, 0/0/6. The user ruled **publish** `zoneRowPre_congr` and
-  `zoneRowPre_mapState_iff` (F5). The minors are swept in one closing commit.
+**Update (2026-11-05, cloud session, about 14:30 PST).** The first cloud snapshot is
+**`oleans-cloud0`**: 869 modules (the root's import closure less the 20 PFR modules), at
+`dfed8b1f`'s Lean tree, `$TCSLIB_SCRATCH/fills/replay/bootstrap-oleans-cloud0.log`. Each PR's
+replay below chained from it with only its own PR.
+
+| PR | Head | Replay | Gate | Next |
+|---|---|---|---|---|
+| #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 1 does not close (0/1/4); **round 2 staged** (`outbox/gates/95-nf-landing-fill-r2-gate/`, 84 sections) | dispatch round 2; merge when it closes |
+| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 round 1 does not close (0/2/4); **round 2 staged** (`outbox/gates/96-deepen-api-r2-gate/`, 149 sections) | dispatch round 2; merge when it closes; then the deepening fill (Claude) |
+| #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **clear to merge**; then G5's fill brief |
+
+**Merging several of these:** each replay chained from `oleans-cloud0` with only its own PR. Once a
+second one merges, replay the downstream closure of every `.lean` file changed since `dfed8b1f`'s
+tree, on the merged tree, chained from `oleans-cloud0` (WORKFLOW §2).
+
+**The user's rulings (2026-11-05):** gate 95 F1 repair; gate 96 F2 harvest; WS-1 acknowledged by
+kind and widened; QL-X1 an idiom and CQ-1 opened; gate 97 F5 publish; CE-1 acknowledged; PFR left
+out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resolutions.md`.
 
 **Duplication rulings of 2026-11-05 (the user)**, recorded in `duplication-ledger.md`:
 - **WS-1**, acknowledged by kind and then **widened**: every proof that one step keeps a
@@ -130,10 +139,6 @@ The rest stay on the Mac.
   inline sites re-pointed in 12.2c.
 - Maintainer records with them: RN-1 accounting (`nf_pack`), RC-4 (F8's row candidates), WL-1,
   WC-1 (optional), RP-1 (definitional reads #196's equations can replace).
-
-The repairs are local commits on `wt-191`, `wt-196`, `wt-197` until each elaborates on the first
-cloud snapshot `oleans-cloud0` (the bootstrap at `dfed8b1f`'s Lean tree); then pushed, replayed,
-and gates 95 and 96 go to round 2. Each gate's `resolutions.md` holds the details.
 
 ## 3. Queue after the PRs
 
