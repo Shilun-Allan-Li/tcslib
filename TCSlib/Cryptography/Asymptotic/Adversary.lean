@@ -97,7 +97,15 @@ theorem padFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : padFin ℓ (List.ofFn x
   simp [padFin]
 
 /-- `A(1^n, y)` as an inverter: output decoded as an `ℓ`-bit string, wrong length = failure
-[PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`]. -/
+[PS10, Definitions 27.3 and 28.4, the experiment `f(A(1^n, y)) = y`].
+
+**Deviation:** wrong-length output = failure (D5). For a typed family this loses nothing. For
+a string function `f : {0,1}* → {0,1}*` the text's experiment also accepts a preimage of
+another length, so the typed experiment can count fewer successes and typed one-wayness is
+implied by, but weaker than, the text's, unless `|f(x)|` determines `|x|` (length-regular `f`
+with non-constant output length; with constant output length neither notion is
+satisfiable). The proviso is stated where string functions enter the typed world,
+`FunFamily.ofString` (`Asymptotic/OneWay.lean`; gate 03a, note 15). -/
 def _root_.Complexity.NUPPT.inverter (A : NUPPT) (n ℓ m : ℕ) :
     (Fin m → Bool) → A.Coins n → Option (Fin ℓ → Bool) :=
   fun y r => decodeFin ℓ (A.runAt n (List.ofFn y) r)

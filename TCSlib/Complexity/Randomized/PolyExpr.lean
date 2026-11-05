@@ -63,7 +63,13 @@ open Turing
 campaign (coins, advice, input/output lengths, query and round budgets) is one of these,
 never an abstract `ℕ → ℕ`. `normal C c` is the campaign normal form `C * (n + 1) ^ c`.
 [PS10, §2.1] writes such bounds as "a polynomial `p(n)`"; foundation decision D9 of
-`PassShelatChapter2-4Plan.md` fixes the syntactic representation. -/
+`PassShelatChapter2-4Plan.md` fixes the syntactic representation.
+
+Cost of D9: an expression is a polynomial with natural-number coefficients and no
+subtraction, so lengths such as `n − 1`, `⌊n/2⌋`, `n(n − 1)/2` or `⌈log₂ n⌉` are not
+expressible. A consumer pads to a `PolyExpr` majorant or reparametrizes with
+`Complexity.NUPPT.exists_reparam_advice` (an abstract `φ : ℕ → ℕ` with a `PolyExpr`
+majorant, the one place such a function appears). -/
 inductive PolyExpr : Type
   | const : ℕ → PolyExpr
   | var : PolyExpr

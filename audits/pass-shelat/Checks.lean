@@ -11,6 +11,10 @@ import TCSlib.Cryptography.NumberTheory
 import TCSlib.Cryptography.Candidates
 import TCSlib.Cryptography.ZeroKnowledge
 
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
 /-!
 # Pass–shelat Chapters 2–4 verification (run 2, statement phase)
 
@@ -18,6 +22,20 @@ Axiom prints for the sanity theorems and for every headline theorem of the campa
 (every theorem whose name corresponds to a numbered result of [PS10]). In the statement
 phase most headlines are sorried under their proof sketches and print `sorryAx`; proved
 results must print exactly `[propext, Classical.choice, Quot.sound]`.
+
+## Main definitions
+
+* `PassShelatChecks.zeros` — the constant ensemble `{0^{ℓ(n)}}` (gate 03a, note 21).
+
+## Main results
+
+* `PassShelatChecks.not_indist_uniform_zeros` — non-vacuity of `Ensemble.Indist`: `{U_n}` and
+  `{0^n}` are distinguishable (gate 03a, note 21).
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (Definition 69.4, computational indistinguishability.)
 -/
 
 -- ## Sanity theorems (plan §6, workstream A)
@@ -392,3 +410,105 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.not_weakOneWay_id
 #print axioms TCSlib.Cryptography.not_worstCaseOneWay_id
 #print axioms TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id
+
+-- ## Gate 03a repairs (pack 03a: machines and probability)
+-- Note 19: interface lemmas that had no axiom print.
+#print axioms TCSlib.Cryptography.statClose_iff_epsClose_map
+#print axioms Complexity.NUPPT.computes_iff_uprob
+#print axioms Complexity.NUPPT.Computes.polyTimeComputable
+#print axioms Complexity.NUPPT.exists_uniform_computes
+#print axioms TCSlib.Cryptography.Ensemble.uniform_samplable
+#print axioms TCSlib.Cryptography.Ensemble.indist_iff_exists_negligible
+#print axioms TCSlib.Cryptography.invProbOpt_le_invProb
+#print axioms TCSlib.Cryptography.invProbOpt_some
+#print axioms TCSlib.Cryptography.statClose_firstHit
+#print axioms TCSlib.Cryptography.pushesUniform_of_card_fiber
+#print axioms TCSlib.Cryptography.pairwise_sampling_ineq
+-- Ruling G3-7a: `negligible_zero` now lives in `Foundations/Negligible.lean` (name unchanged).
+#print axioms TCSlib.Cryptography.negligible_zero
+
+-- Note 21: `Ensemble.Indist` can fail (the distinguisher semantics is not trivial).
+namespace PassShelatChecks
+
+open TCSlib.Cryptography Complexity Turing
+
+/-- The constant ensemble `{0^{ℓ(n)}}`: one seed, the all-`false` string. -/
+def zeros (ℓ : PolyExpr) : Ensemble ℓ where
+  σ _ := Unit
+  X _ _ := fun _ => false
+
+/-- A uniformly random bit string of positive length has its first bit set with probability
+`1/2`: flipping that bit is a bijection that exchanges the event and its complement. -/
+theorem uprob_first_bit (m : ℕ) :
+    uprob (fun t : Fin (m + 1) → Bool => t 0 = true) = 1 / 2 := by
+  have hinv : Function.Involutive fun t : Fin (m + 1) → Bool => Function.update t 0 (!t 0) := by
+    intro t
+    funext j
+    by_cases hj : j = 0
+    · subst hj
+      simp
+    · simp [hj]
+  have h := uprob_comp_equiv hinv.toPerm (fun t : Fin (m + 1) → Bool => t 0 = true)
+  have hne : (fun t : Fin (m + 1) → Bool => hinv.toPerm _ t 0 = true) =
+      fun t => ¬ (t 0 = true) := by
+    funext t
+    simp [Function.Involutive.coe_toPerm]
+  rw [hne, uprob_not] at h
+  linarith
+
+/-- **Non-vacuity of `Ensemble.Indist`** [PS10, Definition 69.4] (gate 03a, note 21): the
+uniform ensemble `{U_n}` is not indistinguishable from the constant ensemble `{0^n}`.
+
+**Proof sketch.** The distinguisher `D` outputs the first bit of its sample: it is
+`ofPolyTimeUniform` of `polyTimeComputable_pairTakePoly` with the constant cut `1` applied to
+the slot `⟨1^n, t⟩` of the raw layout, so `D(1^n, t) = t.take 1`. At every `n = m + 1` it
+accepts `U_n` with probability `1/2` (`uprob_fst`, `uprob_first_bit`) and `0^n` never
+(`uprob_false`), so its advantage is `1/2`. Negligibility with exponent `1` would give
+`1/2 < 1/n` for all large `n`, false at any `n ≥ 2`. -/
+theorem not_indist_uniform_zeros : ¬ (Ensemble.uniform .var).Indist (zeros .var) := by
+  intro h
+  have hF : PolyTimeComputable fun z =>
+      (pairSndD (pairFstD (pairFstD z))).take
+        ((PolyExpr.const 1).eval (pairFstD (pairFstD (pairFstD z))).length) :=
+    (polyTimeComputable_pairTakePoly (.const 1)).comp
+      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD)
+  let D := NUPPT.ofPolyTimeUniform hF (.const 0)
+  have hrun : ∀ n (y : List Bool) (r : D.Coins n), D.runAt n y r = y.take 1 := by
+    intro n y r
+    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+    simp [NUPPT.advInput]
+  have hacc : ∀ m (t : Fin (m + 1) → Bool) (r : D.Coins (m + 1)),
+      D.distinguisher (m + 1) (m + 1) t r = t 0 := by
+    intro m t r
+    simp only [NUPPT.distinguisher, hrun, List.ofFn_succ]
+    cases t 0 <;> simp
+  have hadv : ∀ m, distAdv ((Ensemble.uniform .var).X (m + 1)) ((zeros .var).X (m + 1))
+      (D.distinguisher (m + 1) ((PolyExpr.var).eval (m + 1))) = 1 / 2 := by
+    intro m
+    have hU : acceptProb ((Ensemble.uniform .var).X (m + 1))
+        (D.distinguisher (m + 1) ((PolyExpr.var).eval (m + 1))) = 1 / 2 := by
+      show uprob (fun z : (Fin (m + 1) → Bool) × D.Coins (m + 1) =>
+        D.distinguisher (m + 1) (m + 1) z.1 z.2 = true) = 1 / 2
+      simp only [hacc]
+      exact (uprob_fst (fun t : Fin (m + 1) → Bool => t 0 = true)).trans (uprob_first_bit m)
+    have hZ : acceptProb ((zeros .var).X (m + 1))
+        (D.distinguisher (m + 1) ((PolyExpr.var).eval (m + 1))) = 0 := by
+      show uprob (fun z : Unit × D.Coins (m + 1) =>
+        D.distinguisher (m + 1) (m + 1) (fun _ => false) z.2 = true) = 0
+      simp only [hacc, Bool.false_eq_true]
+      exact uprob_false
+    rw [distAdv, hU, hZ]
+    norm_num
+  obtain ⟨n₀, hn₀⟩ := h D 1
+  have hlt := hn₀ (max n₀ 2 - 1 + 1) (by omega)
+  simp only at hlt
+  rw [hadv] at hlt
+  have h2 : (2 : ℝ) ≤ ((max n₀ 2 - 1 + 1 : ℕ) : ℝ) := by
+    exact_mod_cast (show 2 ≤ max n₀ 2 - 1 + 1 by omega)
+  rw [abs_of_pos (by norm_num), pow_one] at hlt
+  have : 1 / ((max n₀ 2 - 1 + 1 : ℕ) : ℝ) ≤ 1 / 2 := one_div_le_one_div_of_le (by norm_num) h2
+  linarith
+
+end PassShelatChecks
+
+#print axioms PassShelatChecks.not_indist_uniform_zeros
