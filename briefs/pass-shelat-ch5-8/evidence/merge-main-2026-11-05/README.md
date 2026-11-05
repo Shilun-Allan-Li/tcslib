@@ -45,3 +45,17 @@ then checked `ProtocolProofs` and the 10 modules after it in the replay order:
 
 So, with that fix, the merge adds no failure to the branch. The file is Frederick Dehmel's: the
 request goes to him through the user (`S1-note-frederick-addendum-2.md`, F-5).
+
+## Round 2: the merge with the base repair (`replay-2.log`, `replay-2-order.txt`)
+
+Frederick has left, so this campaign made the fix itself: the base repair,
+[Shilun-Allan-Li/tcslib#187](https://github.com/Shilun-Allan-Li/tcslib/pull/187), at
+`63b93c6b224427c829994f9c5596afa7c9639bc1`. It also ends the `zipWith_xor_ofFn` clash. The repair
+was merged into the merge branch as `09509fffd4f2401f2eaa28ea4743d2bacf06e861`, whose `.lean` files
+differ from `87b5b37c` in three files only (`HardCoreLoops`, `HardCoreGL`, `ProtocolProofs`).
+- **The 28 modules of the 418-module order downstream of those three files were re-checked:
+  28 of 28 pass, with 0 errors.** They include all 12 earlier failures. The only `sorry`
+  warnings are the three inherited 3-colouring ones.
+- The other 390 modules are byte-identical to the first replay, where all 390 passed (checked by
+  script).
+- **The merged tree therefore passes 418 of 418.**
