@@ -78,3 +78,7 @@ blockers, 1 major, 3 minors, 5 notes.**
 | 3 | minor | The searches' coverage claim is too strong; the sweep does not reproduce (189/132 against 191/133). | **Fixed:** the classification describes both searches as candidate enumeration with inspection. `bitsweep.sh` no longer uses `\b`, which macOS's `git grep` had dropped, and now reproduces the auditor's 191 rows at round 4's head (`evidence/round5/ls1-search/`). |
 | 4 | minor | The screen's population lists `ISCountGenCorrect` twice; the body lengths omitted `by`. | **Fixed:** round 5's population has 33 distinct files. The screen's own lengths, `by` included, are `logSpace_le_ell` 144 → 57 and `size_le_logSpace` 59 → 63 (round 4). |
 | 5–9 | note | Provenance and the change table, the move and re-points, retirement and the name search, lint and elaboration, the replay. | Agreed. On note 9, `replay-lsm4` passed (above) but no longer certifies the PR; round 5's `replay-lsm5` replaces it. |
+
+**Round 5 staged (2026-11-04):** `pack-r5.md`, at #181's head `98912ab2`. Bundle SHA-256
+`cbe627e2bd21840c9e95569cbec884853a948e51dde6929b2104aae5bdb46161` (345 sections), the records at `72fed536`.
+`replay-lsm5` is written (209 modules from `oleans-leqc3`, 25 blobs pinned; precheck passed); not yet run.
