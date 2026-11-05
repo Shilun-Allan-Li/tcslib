@@ -35,17 +35,16 @@ definitions wrap with "negligible for every efficient adversary".
 
 * `advantage_triangle`, `advantage_hybrid`, `exists_advantage_hybrid_gap`: the hybrid argument;
   the advantage between the ends of a chain of games is at most the sum of the advantages between
-  neighbours, so some neighbouring pair carries a `1/n` share of it ([PS10, Lemma 71.6]).
+  neighbours, so some neighbouring pair carries a `1/n` share of it, for `n` hops
+  ([PS10, Lemma 71.6]).
 * `guessAdv_eq_half_advantage`: the guess-the-bit advantage is half the distinguishing advantage
-  between the games for `b = 1` and `b = 0`.
+  between the games for `b = 1` and `b = 0` (the identity behind [PS10, Lemma 73.8]).
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
-  §3.1 (computational indistinguishability), Lemma 71.6 (the hybrid lemma) and Definition 168.1
-  (the challenge bit of the indistinguishability games).
-* [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*,
-  IACR ePrint 2004/332.
+  §3.1 (Def 69.4, computational indistinguishability), Lemma 71.6 (the hybrid lemma), Lemma 73.8
+  (the prediction lemma) and Definition 168.1 (the experiments `IND_b` for a fixed challenge bit).
 * [VCVio] D. Tuma and the VCVio contributors, *VCVio: machine-checked cryptographic proofs in
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
@@ -103,8 +102,12 @@ theorem advantage_hybrid (G : ℕ → ProbComp Bool) (n : ℕ) :
     advantage (G 0) (G n) ≤ ∑ i ∈ range n, advantage (G i) (G (i + 1)) :=
   abs_sub_le_sum_hybrids (fun i => accept (G i)) n
 
-/-- **The hybrid lemma:** along a chain of `n > 0` games, some neighbouring pair has advantage at
-least a `1/n` share of the advantage between the ends. [PS10, Lemma 71.6] It is the concrete
+/-- **The hybrid lemma:** along a chain `G 0, …, G n` of `n > 0` hops (`n + 1` games), some
+neighbouring pair has advantage at least `advantage (G 0) (G n) / n`. [PS10, Lemma 71.6]
+
+**Deviation:** sharper than the source, which takes `m` distributions (`m − 1` hops), a threshold
+`ε < |g₁ − g_m|`, and concludes `> ε/m`. Here the divisor is the number of hops and the bound is
+the exact endpoint advantage; the source's form follows with `m = n + 1`. It is the concrete
 layer's `exists_hybrid_gap` for the acceptance probabilities. -/
 theorem exists_advantage_hybrid_gap (G : ℕ → ProbComp Bool) {n : ℕ} (hn : 0 < n) :
     ∃ i < n, advantage (G 0) (G n) / n ≤ advantage (G i) (G (i + 1)) :=
@@ -113,7 +116,8 @@ theorem exists_advantage_hybrid_gap (G : ℕ → ProbComp Bool) {n : ℕ} (hn : 
 /-! ### Guess-the-bit games -/
 
 /-- The **guess-the-bit game** over `G`: draw a uniform bit `b`, run `G b`, and win if its output
-is `b`. The challenge bit of the indistinguishability games of [PS10, Def 168.1]. -/
+is `b`: the prediction experiment `b ← {0,1}; t ← X^b : A(t) = b` of [PS10, Lemma 73.8], with
+`G b` the whole game for challenge bit `b`. -/
 noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
   (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))
 
@@ -121,7 +125,7 @@ noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
 noncomputable def guessAdv (G : Bool → ProbComp Bool) : ℝ := |accept (guessGame G) - 1 / 2|
 
 /-- The winning probability of the guess-the-bit game is the average of `Pr[G 1 = 1]` and
-`Pr[G 0 = 0]`.
+`Pr[G 0 = 0]`. [PS10, proof of Lemma 73.8]
 
 **Proof sketch.** Total probability over the uniform bit (two equally likely values), and
 `Pr[G 0 = 0] = 1 − Pr[G 0 = 1]`. -/
@@ -146,9 +150,15 @@ theorem accept_guessGame (G : Bool → ProbComp Bool) :
   push_cast
   ring
 
-/-- **Guessing versus distinguishing:** the guess-the-bit advantage is half the distinguishing
-advantage between `G 1` and `G 0`. The standard relation between the two forms of
-indistinguishability; [PS10] uses both (§3.1 and Def 168.1) without stating it. -/
+/-- **Guessing versus distinguishing:** `|Pr[win] − ½| = |Pr[G 1 = 1] − Pr[G 0 = 1]| / 2`. This
+is the identity behind [PS10, §3.1.1, Lemma 73.8]: a predictor with success `½ + δ` is a
+distinguisher with advantage `2δ`, and conversely.
+
+**Deviation:** stated exactly, at one value of the security parameter, for whole games; the
+absolute value replaces the source's "without loss of generality" complement of the distinguisher.
+[PS10, Def 168.1] is stated in the distinguishing form only, with its experiments `IND_0`, `IND_1`
+as the games `G false`, `G true`. The concrete layer's counterpart is `predict_eq`
+(`TCSlib.Cryptography.Asymptotic.Ensembles`). -/
 theorem guessAdv_eq_half_advantage (G : Bool → ProbComp Bool) :
     guessAdv G = advantage (G true) (G false) / 2 := by
   unfold guessAdv advantage

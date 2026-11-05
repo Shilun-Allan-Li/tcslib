@@ -39,8 +39,9 @@ the interaction model `Strategy`.
   advantages, the hybrid argument.
 * `TCSlib.Cryptography.Games.Hopping`: the difference lemma, identical until bad, the collision
   bound.
-* `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions with D8's
-  reading of the end, and traced executions recording views.
+* `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions in a
+  coroutine model that contains D8's (bridge B4), and traced executions recording received
+  messages and coin draws.
 
 ## References
 
@@ -54,7 +55,7 @@ the interaction model `Strategy`.
   simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
   `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 * [BR06] M. Bellare, P. Rogaway, *The security of triple encryption and a framework for
-  code-based game-playing proofs*, EUROCRYPT 2006.
+  code-based game-playing proofs*, EUROCRYPT 2006; full version IACR ePrint 2004/331.
 * [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*, IACR
-  ePrint 2004/332.
+  ePrint 2004/332, revision of 18 January 2006.
 -/

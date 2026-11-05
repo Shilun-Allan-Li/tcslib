@@ -33,7 +33,7 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
 
 * `ProbComp.prob_eq_one_of_allOutputs`, `ProbComp.expect_mono_of_allOutputs`: reasoning on the
   possible outputs only.
-* `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04].
+* `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04, §1.1, Lemma 1].
 * `ProbComp.prob_mem_le`: the collision bound.
 * `Games.prob_eq_until_bad`, `Games.identical_until_bad`, `Games.identical_until_bad_init`: the
   code-based fundamental lemma [BR06], in semantic form, from a fixed or a sampled initial
@@ -42,10 +42,11 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
 ## References
 
 * [BR06] M. Bellare, P. Rogaway, *The security of triple encryption and a framework for
-  code-based game-playing proofs*, EUROCRYPT 2006 (the fundamental lemma of game playing).
+  code-based game-playing proofs*, EUROCRYPT 2006; full version IACR ePrint 2004/331 (the
+  fundamental lemma of game playing).
 * [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*,
-  IACR ePrint 2004/332 (the difference lemma). Section and lemma numbers are not cited: they vary
-  between revisions, and the revision could not be inspected.
+  IACR ePrint 2004/332, revision of 18 January 2006 (https://www.shoup.net/papers/games.pdf),
+  §1.1, Lemma 1 (the difference lemma).
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   Thm 168.2 (proof sketch: the bad events of the CPA analysis).
 * [VCVio] D. Tuma and the VCVio contributors, *VCVio: machine-checked cryptographic proofs in
@@ -124,7 +125,7 @@ theorem prob_eq_zero_of_allOutputs {c : ProbComp α} {p : α → Prop}
   linarith
 
 /-- **The difference lemma:** if the events `A` and `B` agree at every output where `F` fails,
-their probabilities differ by at most the probability of `F`. [Sho04] (the difference lemma)
+their probabilities differ by at most the probability of `F`. [Sho04, §1.1, Lemma 1]
 
 **Proof sketch.** Pointwise, the indicators of `A` and `B` differ by at most the indicator of
 `F`; take expectations in both directions (linearity and monotonicity). -/
@@ -285,7 +286,7 @@ same oracles give, from every good state, the same law to good successors, and l
 once it holds (every possible new state of a bad state is bad). Then, from a good state, for any
 computation `c` and event `p` on its output, the probabilities of `p` under the two simulations
 differ by at most the probability that the first simulation ends in a bad state.
-[BR06] (the fundamental lemma); [Sho04]
+[BR06] (the fundamental lemma)
 
 **Deviation:** [BR06] assumes the two games' code is syntactically identical up to `bad ← true`.
 Here the hypothesis is semantic: from a good state the two implementations give the same law to
