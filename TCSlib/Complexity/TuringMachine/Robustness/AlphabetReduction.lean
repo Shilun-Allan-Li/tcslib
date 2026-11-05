@@ -603,8 +603,9 @@ output `w.map e`, within `c · t` steps for a run of `t` steps. Conversely, when
 `x` with output `w`, `M` halts on `x.map e` with some output `o`, and if `o` is the image `v.map e`
 of a binary word then `v = w`.
 
-The converse cannot say more: `M'` decodes each emitted symbol through a total decoder, so an
-output of `M` outside the image of `e` is decoded too. A machine that writes only images of bits
+Without an image hypothesis the converse cannot in general assert `o = w.map e`: `M'` decodes
+each emitted symbol through a total decoder, so an output of `M` outside the image of `e` is
+decoded too. A machine that writes only images of bits
 (as every machine computing a binary function via `e` does) has `o = w.map e`.
 
 **Proof sketch.** `M'` is the block simulation of `Turing.FinTM.alphabet_reduction`, whose

@@ -719,6 +719,14 @@ noncomputable def FinTM.stateEquivFin {Symbol : Type} (M : FinTM Symbol) :
     have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
     omega)
 
+/-- `Turing.FinTM.stateEquivFin` is the bijection that `Fintype.equivFinOfCardEq` gives for the
+state count, which the start state makes positive (its defining equation). -/
+theorem FinTM.stateEquivFin_eq {Symbol : Type} (M : FinTM Symbol) :
+    M.stateEquivFin = Fintype.equivFinOfCardEq (by
+      have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
+      omega) :=
+  rfl
+
 /-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
 to a coded machine `M'` that halts with the same outputs at the same times
 (`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space

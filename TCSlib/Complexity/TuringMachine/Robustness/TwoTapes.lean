@@ -80,6 +80,7 @@ theorem two_work_tapes_binary (M : FinTM Bool) (f : List Bool → List Bool) (T 
     ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
       M'.ComputesFunInTime f fun n => c * ((T n + 1) * (Nat.log 2 (T n + 1) + 1)) := by
   obtain ⟨M', c, hk, h, -⟩ := two_work_tapes_run M
-  exact ⟨M', c, hk, fun x => h x (f x) _ (hM x)⟩
+  exact ⟨M', c, hk, (computesFunInTime_iff _ _ _).2 fun x =>
+    h x (f x) _ ((computesFunInTime_iff _ _ _).1 hM x)⟩
 
 end Turing.FinTM
