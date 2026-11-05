@@ -14,7 +14,7 @@ spot-checked, `audits/pass-shelat/Checks.lean` recompiled into `run3-axioms.log`
   them), so the replayed warnings are a complete census.
 * `declaration uses 'sorry'` warnings: 213 in the whole library, of which **149 in the campaign
   files** (run 2: 157) and 64 pre-existing (`BooleanAnalysis/*`, `ErrorCorrectingCodes/MRRW.lean`,
-  unchanged from run 2). The `TCSlib/Complexity/TuringMachine/Build/*` files of run 3b print 0.
+  unchanged from run 2). The `TCSlib/Complexity/TuringMachine/Build/*` files of run 3b print 0. *[Erratum, 2026-11-05 (gate 03e, finding 5): read `TCSlib/Complexity/Randomized/Build/*`, the six run-3b files. Of the 22 `sorry` warnings outside the ZK files in pack 03e's closure, 21 are `main`'s (`TuringMachine/Build/Loop.lean` and its neighbours) and one is the optional admission in `Randomized/NonUniform.lean`.]*
 * No integration breakage found; nothing had to be fixed.
 * `python3 scripts/style_lint.py` over all 61 campaign files (56 modules + 5 facades): **0 findings**.
 * Campaign size: 61 files, 27 291 lines (run 2: 52 files, 21 546 lines; new modules

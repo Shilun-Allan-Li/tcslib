@@ -54,7 +54,10 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 
 - **Prong C:** after the ch. 2–4 ZK repair lands, take `ProverBounded` from `Interaction.lean`
   (G3-3), derive Thm 175.1's hypothesis from `EfficientProverProof`, and cite `StatZK.seqRep` via
-  `PerfectZKAbort.statZK` for the perfect case (G3-4). Add the 3-colouring corollary of G3-7d.
+  `PerfectZKAbort.statZK` for the perfect case (G3-4), rewriting `SequentialZK.lean:41–45` and
+  `:397–399` accordingly (gate 03e, finding 2). Add the 3-colouring corollary of G3-7d. Tag
+  Goldreich's vol. 1 as `[Gol01]` in `SequentialZK.lean`'s references and sketches (gate 03e,
+  finding 6 (a); ch. 2–4 already uses the tag).
 - **Prong B:** after the collections repair (G3-1), derive `SamplerCanonical` and OT's `hspec`
   from canonical decoding, and drop them from Prop 161.5. Replace the local `rfl` copies in
   `Yao.lean` and `Compose*.lean` with the equation lemmas of the gate 04 repair (D8's
