@@ -70,6 +70,8 @@ module is admitted.
 
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
 * `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
+* `Turing.Cfg.InWindow.apply_of_lt` — a step from a window configuration whose heads are
+  strictly inside a radius stays in that radius's window.
 * `Turing.cfgRecord_inj` — on windowed configurations, records agree exactly
   when configuration cores and tags do (proved; fill-C status update).
 * `Turing.recordValid_iff` — validity as a field-by-field shape condition
@@ -5688,5 +5690,33 @@ theorem Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
     (x : List Symbol) (s : ℕ) : (Cfg.init q₀ x : Cfg k Symbol State x).InWindow s :=
   ⟨fun i => by rw [Cfg.init_workTapePos]; simp,
    fun i z _ => by rw [Cfg.init_workTapes]⟩
+
+/-! ### One step from a window -/
+
+/-- **A step stays in a window when the heads are strictly inside it**: if `C` lies in the
+radius-`s` window, `s ≤ s'`, and every work head of `C` is strictly inside `[-s', s']`, then any
+action applied to `C` gives a configuration in the radius-`s'` window. Heads move by at most one
+cell (`Turing.workTapePos_apply_le`), and the write lands under the old head
+(`Turing.Action.apply_workTapes`). At `s' = s + 1` every configuration of the radius-`s` window
+qualifies. [AB09, §4.1.1]
+
+**Proof sketch.** A head at `p` with `|p| < s'` ends within one cell of `p`, so within
+`[-s', s']`. A cell `z` with `s' < |z|` is not the old head position, so the action leaves it as
+it was, and it was blank because `s ≤ s' < |z|`. -/
+theorem Cfg.InWindow.apply_of_lt {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' := by
+  refine ⟨fun i => ?_, fun i z hz => ?_⟩
+  · have h1 := workTapePos_apply_le a C i
+    have h2 := hlt i
+    rw [abs_le] at h1 ⊢
+    rw [abs_lt] at h2
+    constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
+  · rw [Action.apply_workTapes]
+    have hzp : z ≠ C.workTapePos i := by
+      rintro rfl
+      exact absurd (hlt i) (not_lt.mpr hz.le)
+    rw [Function.update_of_ne hzp]
+    exact hC.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)
 
 end Turing
