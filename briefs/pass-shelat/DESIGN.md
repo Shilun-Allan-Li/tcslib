@@ -1007,14 +1007,21 @@ Issues found in this synthesis and resolved here (not raised by the panel):
 7. `OracleEnsemble.Indist`: next-query machines with an explicit universally quantified
    budget; no oracle tapes; forced verdict `false` after `q n` queries.
 8. `Protocol`: fixed number of messages `rounds.eval |x|`, verdict on the complete history
-   (halting = sending `[]`); `Efficient` time polynomial in the total input length.
+   (halting = sending `[]`); `Efficient` time polynomial in the total input length. The honest
+   messages are polynomially bounded in `|x|` (`Protocol.ProverBounded`, in
+   `InteractiveProof(Err).complete` and the field `EfficientProverProof(Err).boundedP`): the
+   source's p.p.t. prover writes at most `t(|x|)` bits. Against a cheating prover the verifier's
+   work is polynomial in the message length, not in `|x|` (gate 03e, finding 1; ruling G3-3).
 9. Soundness `1 − ε < Pr[out = [false]]` literal; provers have polynomial coin tapes (no loss by
    averaging); completeness `uprob = 1` (every coin pair).
 10. `ZK`/`HVZK`: strict PPT simulators; auxiliary inputs bounded by `∀ Lz : PolyExpr`;
     simulator and distinguisher at parameter `|x|`; views encoded as `⟨⟨x, z⟩, ⟨r, msgs⟩⟩`.
 11. GI/3COL: statistical ZK (truncated simulators, rejection-sampled permutations / edges /
     colour permutations); one-iteration ZK, `n`-fold protocols get soundness only (sequential
-    composition is §7.2.1, out of scope); `PerfectZKAbort` stated as the perfect form.
+    composition is §7.2.1, out of scope). `PerfectZK` and `PerfectZKAbort` are stated, but no
+    source protocol attains them under D8/D10; GI is `StatZK` with negligible δ, and
+    `PerfectZKAbort.statZK` turns the abort form into statistical ZK with error `2^{-|x|}`
+    (gate 03e, finding 2; ruling G3-4).
 12. `Commitment`: binding clause with `v₀ ≠ v₁` (source error); `n` an explicit argument,
     colours padded to `n` bits (DQ4).
 13. `PublicKeyScheme`: clause (4) (message enumerator) dropped; `0^n` is the canonical message.
@@ -1244,6 +1251,12 @@ Outright errors (to replace the plan's seeded list):
     literal `Pr[out_V = 0]` of Definition 116.1 unsatisfiable against a prover that halts at
     once; time complexity `t(|x|)` "regardless of messages" leaves the simulator's call to `V*`
     on long `z` ill-defined (D8 reading).
+51. Definition 121.2 read literally (`∀ z ∈ {0,1}*`, the distinguisher polynomial-time in its
+    input) fails for every protocol whose hiding is only computational: with `|z| ≥ 2^n` the
+    distinguisher, whose input (the view) contains `z`, may run in time `2^n`, invert the OWP on
+    `n`-bit inputs and open the unopened commitments. So the bound `∀ Lz : PolyExpr` on `|z|`, and
+    indexing the distinguisher's advice by `|x|` rather than by its input length, are necessary,
+    not only convenient (gate 03e, finding 9; `ZeroKnowledge/Defs.lean`'s module docstring).
 
 Gaps the formalization fills (not errors): Theorem 42.2 (⇒) and Theorem 57.2 ("exercises");
 the PKE single ⇒ multi-message theorem and the bitwise theorem (p. 103); Theorem 107.3
