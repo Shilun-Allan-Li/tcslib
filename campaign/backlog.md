@@ -4195,6 +4195,14 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   **`replay-lsm4` passed** (137 of 137, static-equal; `oleans-lsm4`). **Gate 89 round 4
   dispatched** (user, 2026-11-04). #181 is clear to merge on a PASS. After it merges, #182 takes a
   merged-tree replay from `oleans-lsm4`.
+  **Round 4: OPEN 0/1/3** (BL-1's site list missed five files). **Ruled: "Re-point now in #181"**;
+  round 5 (head `98912ab2`) re-points 15 sites and moves `two_pow_bits_le` to `Machines/Bin`.
+  **Round 5: OPEN 0/2/1** (2026-11-04). The majors are five more pre-existing BL-1 copies outside
+  the site list: `QueryReshape`, `UniformSample`, two in `Hardness`, and `Word`'s
+  `bitsVal_lt_two_pow`. **Ruled (user, 2026-11-04): acknowledge, with BL-1's scope by kind.** No
+  Lean change; the minor is fixed in the records. **Gate 89 closed.** `replay-lsm5` (209 modules)
+  was started by the user and is monitored. **#181 is clear to merge once it passes.** After that
+  merge, #182 takes its merged-tree replay from `oleans-lsm5`, not `oleans-lsm4`.
 * **#184 (the codec's edge mode, `edgeLang_mem : edgeLang N ∈ LOGSPACE`), gate 91.** The edge
   decider's home was decided at pre-ship by the user's rule: a fifth mode of `CA` (design note
   §7). It is stacked on #182, head `8d43e126`, seven `Codec` files, +646 −20, additive. Checks:
@@ -4206,6 +4214,9 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
     **CL-1** for 12.2c (user, 2026-11-04).
 
   **Gate 91 dispatched** (user, 2026-11-04; `exchange/archive/gates/91-codec-edge-api-gate/`).
+  **Round 1: OPEN 0/1/4** (`upd_le` re-proved `register_update_le`); fixed at `b360808c`.
+  **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Two minors are open on #184: seven
+  label docstrings (minor 2), and the chain re-run at the head with source hashes (minor 1).
   After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
   deepening fill's brief issues once #182 and #184 have both merged.
 

@@ -842,6 +842,32 @@ a canonical lemma:
   to the dedup window with the rest;
 - `CircuitComplexity` comes under its own authorization.
 
+**Scope by kind (gate 89, round 5, majors 1 and 2; ruled by the user, 2026-11-04: "Acknowledge,
+scope by kind").** BL-1's acknowledged scope is every re-derivation of kinds (i)–(vi) anywhere in
+TCSlib, whether or not a sweep lists it. A member found later is an accounting correction (a minor,
+TEMPLATE failure mode 5), unless it pushes a file past one fifth. The kinds are:
+- (i)–(v), above;
+- **(vi)**, new: the word-value bound `bitsVal w < 2 ^ |w|` (`LogProg.bitsVal_lt_two_pow`,
+  `Machines/Bin`).
+
+Round 5's audit found five members outside the site lists, all predating #181 and all acknowledged:
+- (v) `Logspace/QueryReshape`'s private `query_index_bound` (sweep group 90) and
+  `Randomized/UniformSample`'s `le_two_pow_size_pred` (group 62), whose positive branches derive
+  `2 ^ size n ≤ 2n` natively. Both files reach `Machines/Bin`. `UniformSample` is Hydroxyi's;
+- (i) `CookLevin/Hardness`'s private `clCount_width`, by binary induction, and (iii) its
+  `clElapsed_width`, through `clCount_width`. `Hardness` reaches `Encoding` but not `Bin`;
+- (vi) `Codec/Word`'s `Complexity.Codec.bitsVal_lt_two_pow`, an exact copy of `Bin`'s, which
+  `Word` imports. `Word` is Hydroxyi's. Its users would resolve to `Bin`'s through `open LogProg`.
+
+**Census:**
+- `QueryReshape` 1/120, `UniformSample` 1/19, `Hardness` 2/545, `Word` 1/47;
+- `Bin`'s five members (`length_bits_le`, `length_bits_mono`, `two_pow_bits_le`,
+  `length_bits_le_log`, `bitsVal_lt_two_pow`) are the canonical statements the copies re-point to,
+  not copies. That makes 5/15, recorded as the one-fifth review item.
+
+**Disposition:** the dedup window, with the rest. The one home below both layers re-points them
+once.
+
 **CL-1, the codec languages' sibling idiom** (gate 91, the edge-mode PR's screen; ruled with it,
 user, 2026-11-04). Each code language of `SpaceComplexity/Codec` has its own definition, its own
 membership lemma at an encoded input (`mem_validLang`, …), its own characterization through the

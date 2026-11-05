@@ -83,3 +83,19 @@ blockers, 1 major, 3 minors, 5 notes.**
 `cbe627e2bd21840c9e95569cbec884853a948e51dde6929b2104aae5bdb46161` (345 sections), the records at `72fed536`.
 `replay-lsm5` is written (209 modules from `oleans-leqc3`, 25 blobs pinned; precheck passed); not yet run.
 **Dispatched (user, 2026-11-04).** `replay-lsm5` deferred by the user until after a relocation.
+
+**Round 5** (`pack-r5.md`, head `98912ab2`). **Findings** (`findings-r5.md`, verbatim, SHA-256
+`ea99d908e6176a3ace4c23ed7d5d844a2bda4fc8b4c3c477fe1d117b3da0d282`; received 2026-11-04): **OPEN, 0
+blockers, 2 majors, 1 minor, 7 notes.**
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | major | BL-1's residual omits four declarations in three files: `QueryReshape`'s `query_index_bound` (sweep group 90; (v) in its positive branch), `UniformSample`'s `le_two_pow_size_pred` (group 62; (v)), and `CookLevin/Hardness`'s `clCount_width` ((i), by binary induction) and `clElapsed_width` ((iii), through it). | **True** (checked: the four bodies, unchanged since `711f5444`; `QueryReshape` and `UniformSample` reach `Machines/Bin`, `Hardness` reaches `TuringMachine/Encoding` but not `Bin`). **Ruled (user, 2026-11-04): acknowledge, with BL-1's scope by kind.** No Lean change. BL-1's acknowledged scope is now every re-derivation of its kinds anywhere in TCSlib, whether or not a sweep lists it, so a member found later is an accounting minor. The four join the dedup window (12.2c), whose named home below both layers (beside `Turing.length_bits_le_self`) re-points them once. Classification corrected (`evidence/round5-resolution/`): groups 62 and 90 are BL-1 (v) members; the two `Hardness` declarations were outside the sweep's patterns. |
+| 2 | major | `Codec/Word`'s `bitsVal_lt_two_pow` is an exact copy of `Machines/Bin`'s, outside LS-3, BL-1 and CL-1. | **True** (checked: identical statement, both by induction on the word; `Word` imports `Bin`). **Ruled (user, 2026-11-04): acknowledged into BL-1 as kind (vi)**, the word-value bound `bitsVal w < 2 ^ |w|`, for the dedup window; there `Word`'s copy is removed and its users resolve to `Bin`'s through `open LogProg`. Census: `Word` 1/47. On `Bin`'s 5/15: its five members are the family's canonical statements, the targets of the re-points, not copies; recorded here as the one-fifth review item. |
+| 3 | minor | Group 57 (`SpaceAmplifyPoly`'s `logSpace_le_ell`) is classed "a stronger bound" through a short-name key shared with `PathHard`'s; the pack says two merges where `227d92ee..98912ab2` has one. | **Fixed in the records:** `evidence/round5-resolution/bitclasses.py` keys the recurring name by file and declaration (`logSpace_le_ell` is the only named group in two files); group 57 is a citation (citations 62 → 63, "a stronger bound" 2 → 1). The range has one merge, `b0f95123`, which changes no Lean; `pack-r5.md` stays as dispatched. |
+| 4–9 | note | Provenance and freeze, the move and replacements, the round-4 repairs, the name search, the screen, lint. | Agreed. On note 8, the screen's population is unchanged: the acknowledged members carry no proof edit. |
+| 10 | note | The audited head lacks a completed merged-tree replay; the chain identifies round 4's commit plus working-tree changes. | Agreed. `replay-lsm5` (209 modules, 25 blobs pinned at `98912ab2`) was started by the user on 2026-11-04 and is monitored; it builds every changed file at the head from `oleans-leqc3`, which supersedes the chain as the head's certificate. Then #182 and #184 take their merged-tree replays, in that order. |
+
+**Gate 89 closes (round 5, 2026-11-04):** 0 blockers; the two majors are debt majors, closed by
+the user's acknowledgment (TEMPLATE, failure mode 5, as gates 18 and 54); the minor is fixed in
+the records. **#181 is clear to merge once `replay-lsm5` passes.**

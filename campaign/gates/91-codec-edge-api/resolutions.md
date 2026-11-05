@@ -43,3 +43,17 @@ after the evidence's freeze copies were renamed `.lean.txt`). **Dispatched (user
 - the screen: 171 → 185 declarations, 58 → 83 pairs, the same 25 new;
 - lint: 0 FAIL and 83 WARN, the list unchanged; the policy linter gives 0 findings on all seven
   files.
+
+**Round 2** (`pack-r2.md`, head `b360808c`). **Findings** (`findings-r2.md`, verbatim, SHA-256
+`2597887bada7ad29839af904003071b05fbb89ecb4d20f85754cbae252ae9de3`; received 2026-11-04): **PASS, 0
+blockers, 0 majors, 3 minors, 9 notes.**
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | `evidence/round2/elab-chain/chain.log` records `8d43e126`, not the head `b360808c`, and ends before the repair's commit time; no source-hash manifest ties the run to the committed files. | **True:** the chain ran on the repaired working tree before the commit, and its header names the checked-out commit. **To fix:** re-run the 16-module chain at #184's head after minor 2's commit, with every source's blob hash and the clone's provenance in the log. |
+| 2 | minor | Seven PR-new docstrings are labels, not statements (`mem_edgeLang_iff`, `mem_edgeLang`, `edgeChk_def`, `edgeLang_iff`, `CA_acc`, `CA_rej`, `CA_vDone_edge`). | **True. To fix** on #184, docstrings only: each states its equivalence, returned bit or conditional destination. |
+| 3 | minor | The pack's inventory omits `edge_loop` (13 calls: 6 in `edge_round`, 2 in `edge_loop`, 5 in `edge_tail`) and says 24 site equations where there are 25 (9 copy, 4 scale, 12 increment). | **True; corrected here.** `pack-r2.md` stays as dispatched. |
+| 4–12 | note | Integrity and scope, `upd_le`'s removal, CL-1's census, rule 10, the language's meaning, the machine, the census and axioms, lint, the replay order. | Agreed. On note 12, the replay order stands: #181, then #182 with its merged-tree replay, then #184 retargeted, merged with the campaign and replayed. |
+
+**Gate 91 closes (round 2, PASS, 2026-11-04).** **#184 is not yet clear to merge:** minors 1–2
+are open, it is stacked on #182, and its merged-tree replay comes after #181 and #182 merge.
