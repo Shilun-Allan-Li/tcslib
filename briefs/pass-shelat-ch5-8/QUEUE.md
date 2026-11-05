@@ -49,6 +49,32 @@ maintainer (`evidence/pac-2026-11-05/`).
 2. **Merge on the maintainer's checks.** Faster, since it is information-theoretic and fully proved.
    But nothing outside the campaign has read the definitions.
 
+## Q-5. How to state Yao's protocol and Thm 163.7 (decision)
+
+**Context.** Prong B now has Def 155.1, OT (Prot 160.4, Prop 161.5), the special encryption
+(Alg 157.2, Claim 157.a) and garbling (Constr 158.a, Claim 159.a). Two points remain open.
+- **Yao needs OT of `n`-bit keys.** The OT of Prot 160.4 transfers bits; the source says the
+  generalization to `n` bits is "straightforward".
+- **The security proof composes.** It runs the OT simulators inside the larger protocol, a
+  composition step the notes never state (inventory: use [Gol04] §7.3). D8's protocols have no
+  composition operator yet.
+
+**Options.**
+1. **The OT-hybrid model first (recommended).** State Yao with an ideal OT for the key transfer,
+   and Thm 163.7 in that model (garbling simulator plus Claims 157.a and 159.a). Separately, state
+   [Gol04] §7.3's composition theorem for honest-but-curious protocols, which yields the real
+   protocol with the bitwise OT of Prot 160.4, run per key bit. This is the standard modular
+   route; each piece stays small and auditable.
+2. **The real protocol directly.** Build the sequential composition of D8 protocols (like Thm
+   175.1's `seqRep`, but for different sub-protocols), then state Thm 163.7 for Yao with the real
+   OT. Closer to the source's single statement, but larger, and the composition argument hides
+   inside the theorem.
+3. **Defer Thm 163.7.** State Prot 162.6 only, and leave the security theorem for after the
+   statement gate.
+
+Also: `HBCSecure` does not require the honest parties to be efficient. **Recommended:** add a
+`Protocol.Efficient` side condition to the protocols' theorems (OT, Yao), not to the definition.
+
 ## Dispatches and merges
 
 - **Gate 03 (ch. 2–4): Ready to dispatch** (11 packs). They are pinned to
