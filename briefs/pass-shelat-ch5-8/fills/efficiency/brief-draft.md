@@ -11,7 +11,8 @@ coordination point F-4.
     repair re-freezes the targets below, and their quotes are refreshed;
   - the **ch. 2–4 clean-up PR** lands with the two prerequisites (below), and this brief names
     their final lemma names;
-  - two rulings: file layout and sketch edits (route note, "Decisions before issue");
+  - ~~two rulings~~ **ruled (user, 2026-11-05):** EF-1, helper files allowed; EF-2, sketch edits
+    allowed (below);
   - pre-ship probes at the issue tree:
     - an import probe of every name cited here;
     - a route probe: `GGMRed.stateLoopFun_eval` on a toy handler, and T4's move correspondence at
@@ -267,11 +268,16 @@ The private `decodeOracleMove_eq` (PRF.lean) is not citable (rule 11). The same 
 
 **Allowed:**
 - Replace the four `sorry` bodies.
-- Add `private` declarations in `namespace EffFill` (inside `TCSlib.Cryptography.Games`). If the
-  layout ruling allows them, also add the helper files it names, with their one import line in
-  `Efficiency.lean`.
+- Add `private` declarations in `namespace EffFill` (inside `TCSlib.Cryptography.Games`).
+- Add helper files under `TCSlib/Cryptography/Games/Efficiency/` (ruling EF-1), each imported by
+  one line in `Efficiency.lean` and at most 1000 lines. Their declarations are used across files,
+  so they are public, in `namespace TCSlib.Cryptography.Games.EffFill`, and follow policy §1–§3:
+  every public `def` lands with its equation lemma(s), every declaration has a docstring that
+  states its result, and every nontrivial proof has a `**Proof sketch.**`. No `@[simp]`.
 - Edit the `**Proof sketch.**` paragraph of a target's docstring to match your proof, for example
-  to add the advice for `init`, if the sketch-edit ruling allows it. Report every such edit.
+  to add the advice for `init` (ruling EF-2: a sketch describes the proof actually written). The
+  statement prose of the docstring stays byte-identical. Report every such edit; the fill's gate
+  re-audits them.
 
 **Forbidden:**
 - **Statement changes of any kind.** The four statements, every T0 definition and field, every
