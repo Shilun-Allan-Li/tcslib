@@ -31,9 +31,10 @@ edge `γ'` and confidence `δ` with `γ + δ < γ' ≤ ½` (`not_weakLearnsUnder
 **Use in layer 2.** Layer 2 applies this to each efficient learner, turning [PS10, Thm 179.1]
 into a statement at a confidence `δ` below the gap `γ' − γ`. A weak learner of
 [KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that is, at the
-confidence `δ = 1 − 1/q(n, size(c))`. To reach a small `δ` it must first be amplified
-([KV94, §4.2, pp. 76–77]), which gives a different learner; layer 2 must account for that
-learner's sample count, running time and edge before applying the bridge.
+confidence `δ = 1 − 1/q(n, size(c))`. Starting only from that guarantee, the required small `δ`
+is obtained by amplification ([KV94, §4.2, pp. 76–77]), unless the learner is already certified
+at it; amplification gives a different learner, and layer 2 must account for that learner's
+sample count, running time and edge before applying the bridge.
 Information-theoretically the class is learnable; the hardness is computational.
 
 **Source notes.** [PS10] leaves the sample distribution and "a new sample" implicit; uniform
@@ -201,10 +202,11 @@ advantage can satisfy `WeakLearnsUnder`.
 
 A weak learner of [KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that
 is, at the confidence `δ = 1 − 1/q(n, size(c))`, which in general is not below the gap. Starting
-from that definition, applying this lemma at a small `δ` needs confidence amplification
-([KV94, §4.2, pp. 76–77]), which gives a different learner, with its own sample count, running
-time and edge. It is that learner's certified edge `γ'`, sample count `m` and prediction
-advantage `γ` that enter here. -/
+only from that guarantee, the small `δ` this lemma needs is obtained by confidence amplification
+([KV94, §4.2, pp. 76–77]), unless the learner is already certified at it; amplification gives a
+different learner, with its own sample count, running time and edge. It is the certified edge
+`γ'`, sample count `m` and prediction advantage `γ` of the learner actually used that enter
+here. -/
 theorem not_weakLearnsUnder_of_predictAdv_le {C : I → X → Bool} {m : ℕ}
     {L : (Fin m → X × Bool) → ρ → X → Bool} {γ γ' δ : ℝ} (hadv : predictAdv C m L ≤ γ)
     (hlt : γ + δ < γ') (hγ' : γ' ≤ 1 / 2) :

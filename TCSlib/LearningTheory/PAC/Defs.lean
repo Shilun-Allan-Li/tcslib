@@ -193,16 +193,20 @@ def PACLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ
 theorem pacLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
     (ε δ : ℝ) : PACLearns C m L ε δ ↔ ∀ D, PACLearnsUnder D C m L ε δ := Iff.rfl
 
-/-- **The weak-learning condition under `D`**, for the learner `L` at fixed `m`, `γ`, `δ`: with
-probability at least `1 − δ` over `m` examples from `D` labelled by `C i` and the learner's coins,
+/-- **The weak-learning condition under `D`**, for the learner `L` at fixed `m`, `γ`, `δ`: for
+every concept `C i`, with probability at least `1 − δ` over `m` examples from `D` labelled by
+`C i` and the learner's coins,
 the hypothesis has error at most `½ − γ` under `D`, so it beats a fair coin by the edge `γ`. This
 is `PACLearnsUnder` at accuracy `½ − γ`, an accuracy/confidence condition at fixed parameters.
 
 **Comparison with [KV94, §4.1, p. 74].** There a weak learner must, under every distribution,
 output with probability at least `1/q(n, size(c))` a hypothesis of error at most
-`½ − 1/p(n, size(c))`, for polynomials `p` and `q`. Run on a sufficient sample count `m`, such a
-learner satisfies this predicate at its certified edge `γ = 1/p(n, size(c))` and the confidence
-`δ = 1 − 1/q(n, size(c))`; fixing `D` only weakens that requirement. It need not satisfy the
+`½ − 1/p(n, size(c))`, for polynomials `p` and `q`. On a slice of the class where the instance
+dimension `n` and the target size are fixed (so one sample count `m`, edge and confidence serve
+every concept `C i` of the slice), such a learner run on a sufficient `m` satisfies this predicate
+at the edge `γ = 1/p(n, size(c))` and the confidence `δ = 1 − 1/q(n, size(c))`; fixing `D` only
+weakens that requirement. Across target sizes, common values must first be obtained (e.g. from
+a bound on the size). It need not satisfy the
 predicate at a smaller `δ`: for the same learner, a smaller `δ` is a stronger requirement, not a
 relaxation. Asking a weak learner for every `δ` is the confidence-amplified convention, not
 [KV94, §4.1]'s definition: confidence amplification ([KV94, §4.2, pp. 76–77]) builds a different
@@ -221,15 +225,16 @@ theorem weakLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
     WeakLearnsUnder D C m L γ δ ↔ PACLearnsUnder D C m L (1 / 2 - γ) δ := Iff.rfl
 
-/-- **The weak-learning condition**, for the learner `L` at fixed `m`, `γ`, `δ`: under every
-distribution `D` on `X`, with probability at least `1 − δ` the hypothesis has error at most
+/-- **The weak-learning condition**, for the learner `L` at fixed `m`, `γ`, `δ`: for every
+concept `C i` and under every distribution `D` on `X`, with probability at least `1 − δ` the
+hypothesis has error at most
 `½ − γ` (`WeakLearnsUnder`), an accuracy/confidence condition at fixed parameters. A weak
 learner of [KV94, §4.1, p. 74], which outputs with probability at least `1/q(n, size(c))` a
 hypothesis of error at most `½ − 1/p(n, size(c))`, satisfies it on a sufficient sample count `m`
 at its certified edge `γ = 1/p(n, size(c))` and the confidence `δ = 1 − 1/q(n, size(c))`. It need
 not satisfy it at a smaller `δ`. Asking for every `δ` is the confidence-amplified convention, which
 concerns a different learner, built by confidence amplification ([KV94, §4.2, pp. 76–77]; see
-`WeakLearnsUnder`).
+`WeakLearnsUnder`, including the uniformity over the concepts `C i`).
 
 Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
 predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` or `X` is empty; no learner
