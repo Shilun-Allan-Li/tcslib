@@ -35,9 +35,11 @@ independent examples, and PAC, weak and fixed-distribution learning.
   learner's `m`, `ε`, `δ` (`Prediction.lean`; for efficient learners, layer 2 and
   [PS10, Thm 179.1]). This is faithful: a source learner run on `m ≥ m_H(ε, δ)` examples is
   such an `L`.
-- **Unrestricted parameters.** `ε`, `δ` and the weak-learning edge `γ` are arbitrary reals, where
-  the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) and `γ > 0`. The docstrings of the
-  predicates list the degenerate cases.
+- **Unrestricted parameters.** `ε`, `δ` and the weak-learning edge `γ` are arbitrary reals. For
+  PAC learning the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`). The weak learner of
+  [KV94, §4.1, p. 74] has the edge `1/p(n, size(c))` and succeeds with probability
+  `1/q(n, size(c))`, which is the confidence `δ = 1 − 1/q(n, size(c))` here. The docstrings of
+  the predicates list the degenerate cases.
 - **Improper hypotheses.** A learner may output any `X → Bool` (representation-independent
   learning). [KV94, §1.2.1] requires `h ∈ C`; [SSBD14, Def 3.1] does not. A refutation is
   stronger without the restriction.
@@ -57,8 +59,9 @@ independent examples, and PAC, weak and fixed-distribution learning.
   the learner's hypothesis has error at most `ε`.
 * `PAC.PACLearnsUnder D C m L ε δ`, `PAC.PACLearns C m L ε δ`: the learner `L` PAC-learns `C`
   under a fixed distribution and under every distribution, at fixed `m`, `ε`, `δ`.
-* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: weak learning at a fixed edge `γ`, accuracy `½ − γ`
-  [KV94, §4.1].
+* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: the accuracy/confidence condition at accuracy
+  `½ − γ` (edge `γ`) and confidence `δ`, at fixed `m`, `γ`, `δ`; their docstrings compare it with
+  weak learning in [KV94, §4.1].
 
 ## Main results
 
@@ -75,7 +78,8 @@ independent examples, and PAC, weak and fixed-distribution learning.
 ## References
 
 * [KV94] M. Kearns, U. Vazirani, *An Introduction to Computational Learning Theory*, MIT Press,
-  1994, §1.2 (PAC learning) and §4 (weak learning).
+  1994, §1.2 (PAC learning), §4.1 (weak learning, p. 74) and §4.2 (confidence amplification,
+  pp. 76–77).
 * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
   Algorithms*, Cambridge University Press, 2014, ch. 3 (Definition 3.1).
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
@@ -189,12 +193,20 @@ def PACLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ
 theorem pacLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
     (ε δ : ℝ) : PACLearns C m L ε δ ↔ ∀ D, PACLearnsUnder D C m L ε δ := Iff.rfl
 
-/-- **Weak learning under `D`** [KV94, §4.1], by the learner `L` at fixed `m`, `γ`, `δ`: PAC
-learning under `D` with accuracy `½ − γ`, a hypothesis better than a fair coin by the edge `γ`.
-[KV94] asks for this under every distribution, at an edge `γ = 1/p(n, size(c))`, and for every
-confidence `δ`, in time polynomial in `1/δ`; here `D`, the real edge `γ` and the confidence `δ`
-are fixed. Each relaxation makes the predicate weaker, so a refutation for a given learner is
-stronger.
+/-- **The weak-learning condition under `D`**, for the learner `L` at fixed `m`, `γ`, `δ`: with
+probability at least `1 − δ` over `m` examples from `D` labelled by `C i` and the learner's coins,
+the hypothesis has error at most `½ − γ` under `D`, so it beats a fair coin by the edge `γ`. This
+is `PACLearnsUnder` at accuracy `½ − γ`, an accuracy/confidence condition at fixed parameters.
+
+**Comparison with [KV94, §4.1, p. 74].** There a weak learner must, under every distribution,
+output with probability at least `1/q(n, size(c))` a hypothesis of error at most
+`½ − 1/p(n, size(c))`, for polynomials `p` and `q`. Run on a sufficient sample count `m`, such a
+learner satisfies this predicate at its certified edge `γ = 1/p(n, size(c))` and the confidence
+`δ = 1 − 1/q(n, size(c))`; fixing `D` only weakens that requirement. It need not satisfy the
+predicate at a smaller `δ`: for the same learner, a smaller `δ` is a stronger requirement, not a
+relaxation. Asking a weak learner for every `δ` is the confidence-amplified convention, not
+[KV94, §4.1]'s definition: confidence amplification ([KV94, §4.2, pp. 76–77]) builds a different
+learner, with its own sample count, running time and edge.
 
 Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
 predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` is empty; no learner satisfies it
@@ -209,11 +221,15 @@ theorem weakLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
     WeakLearnsUnder D C m L γ δ ↔ PACLearnsUnder D C m L (1 / 2 - γ) δ := Iff.rfl
 
-/-- **Weak learning** [KV94, §4.1], by the learner `L` at fixed `m`, `γ`, `δ`: under every
-distribution `D` on `X`, PAC learning with accuracy `½ − γ` (`WeakLearnsUnder`). [KV94] takes
-the edge `γ = 1/p(n, size(c))` and asks for every confidence `δ`, in time polynomial in `1/δ`;
-here the real edge `γ` and the confidence `δ` are fixed. Each relaxation makes the predicate
-weaker, so a refutation for a given learner is stronger.
+/-- **The weak-learning condition**, for the learner `L` at fixed `m`, `γ`, `δ`: under every
+distribution `D` on `X`, with probability at least `1 − δ` the hypothesis has error at most
+`½ − γ` (`WeakLearnsUnder`), an accuracy/confidence condition at fixed parameters. A weak
+learner of [KV94, §4.1, p. 74], which outputs with probability at least `1/q(n, size(c))` a
+hypothesis of error at most `½ − 1/p(n, size(c))`, satisfies it on a sufficient sample count `m`
+at its certified edge `γ = 1/p(n, size(c))` and the confidence `δ = 1 − 1/q(n, size(c))`. It need
+not satisfy it at a smaller `δ`. Asking for every `δ` is the confidence-amplified convention, which
+concerns a different learner, built by confidence amplification ([KV94, §4.2, pp. 76–77]; see
+`WeakLearnsUnder`).
 
 Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
 predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` or `X` is empty; no learner

@@ -22,11 +22,18 @@ probability of a correct prediction is `1 − err_U(h, C_i)` for the hypothesis 
 So the prediction success is `1 − E_{i,s,r}[err_U(L(s, r), C_i)]`
 (`predictSuccess_eq_one_sub_expectedErr`), with no collision issue between the fresh point and
 the sample. A learner that PAC-learns under the uniform distribution with accuracy `ε ≥ 0` and
-confidence `δ` has expected error at most `ε + δ`, hence prediction success at least `1 − ε − δ`.
-So a learner whose prediction advantage is at most `γ` cannot weakly learn under the uniform
-distribution with `γ + δ < γ' ≤ ½` at confidence `δ` (`not_weakLearnsUnder_of_predictAdv_le`).
-This is how layer 2 turns [PS10, Thm 179.1] into "no efficient learner weakly learns the class
-under the uniform distribution" (for each learner, at a confidence below the edge).
+confidence `δ` has expected error at most `ε + δ`: split the expectation over the accuracy event,
+where the error is at most `ε`, and its complement, of probability at most `δ`, where the error is
+at most `1`. Hence its prediction success is at least `1 − ε − δ`, and a learner whose prediction
+advantage is at most `γ` does not satisfy `WeakLearnsUnder` under the uniform distribution at an
+edge `γ'` and confidence `δ` with `γ + δ < γ' ≤ ½` (`not_weakLearnsUnder_of_predictAdv_le`).
+
+**Use in layer 2.** Layer 2 applies this to each efficient learner, turning [PS10, Thm 179.1]
+into a statement at a confidence `δ` below the gap `γ' − γ`. A weak learner of
+[KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that is, at the
+confidence `δ = 1 − 1/q(n, size(c))`. To reach a small `δ` it must first be amplified
+([KV94, §4.2, pp. 76–77]), which gives a different learner; layer 2 must account for that
+learner's sample count, running time and edge before applying the bridge.
 Information-theoretically the class is learnable; the hardness is computational.
 
 **Source notes.** [PS10] leaves the sample distribution and "a new sample" implicit; uniform
@@ -46,9 +53,9 @@ and independent is the reading (design note S3d). "Better than `½ + ε`" is the
 * `PAC.expectedErr_le_of_pacLearnsUnder`, `PAC.one_sub_sub_le_predictSuccess`: PAC learning
   under the uniform distribution with accuracy `ε ≥ 0` gives expected error at most `ε + δ` and
   success at least `1 − ε − δ`.
-* `PAC.sub_le_predictAdv_of_weakLearnsUnder`, `PAC.not_weakLearnsUnder_of_predictAdv_le`: weak
-  learning with `γ' ≤ ½` gives advantage at least `γ' − δ`; so advantage at most `γ` rules out
-  weak learning with `γ + δ < γ' ≤ ½` at confidence `δ`.
+* `PAC.sub_le_predictAdv_of_weakLearnsUnder`, `PAC.not_weakLearnsUnder_of_predictAdv_le`: the
+  weak-learning condition at edge `γ' ≤ ½` and confidence `δ` gives advantage at least `γ' − δ`;
+  so advantage at most `γ` rules it out when `γ + δ < γ' ≤ ½`.
 * `PAC.predictSuccess_coin`: the learner that outputs its coin succeeds with probability exactly
   `½` (non-vacuity).
 
@@ -57,7 +64,7 @@ and independent is the reading (design note S3d). "Better than `½ + ε`" is the
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   §8.1 (book p. 179).
 * [KV94] M. Kearns, U. Vazirani, *An Introduction to Computational Learning Theory*, MIT Press,
-  1994, §1.2 and §4.
+  1994, §1.2, §4.1 (p. 74) and §4.2 (pp. 76–77).
 * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
   Algorithms*, Cambridge University Press, 2014, ch. 3.
 -/
@@ -186,12 +193,18 @@ theorem sub_le_predictAdv_of_weakLearnsUnder {C : I → X → Bool} {m : ℕ}
   rw [predictAdv_eq]
   exact le_trans (by linarith) (le_abs_self _)
 
-/-- **Small prediction advantage rules out weak learning**: if the learner's prediction
-advantage is at most `γ`, it does not weakly learn the class under the uniform distribution with
-any `γ' ≤ ½` such that `γ + δ < γ'`, at confidence `δ`. The confidence must be below the gap:
-at a constant confidence such as `δ = ½`, a learner with zero prediction advantage can satisfy
-`WeakLearnsUnder`. To refute weak learning in the sense of [KV94, §4.1], apply this at some
-`δ < γ' − γ`. -/
+/-- **Small prediction advantage rules out the weak-learning condition below the gap**: if the
+learner's prediction advantage is at most `γ`, it does not satisfy `WeakLearnsUnder` under the
+uniform distribution at any edge `γ' ≤ ½` and confidence `δ` with `γ + δ < γ'`. The confidence
+must be below the gap: at a constant confidence such as `δ = ½`, a learner with zero prediction
+advantage can satisfy `WeakLearnsUnder`.
+
+A weak learner of [KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that
+is, at the confidence `δ = 1 − 1/q(n, size(c))`, which in general is not below the gap. Starting
+from that definition, applying this lemma at a small `δ` needs confidence amplification
+([KV94, §4.2, pp. 76–77]), which gives a different learner, with its own sample count, running
+time and edge. It is that learner's certified edge `γ'`, sample count `m` and prediction
+advantage `γ` that enter here. -/
 theorem not_weakLearnsUnder_of_predictAdv_le {C : I → X → Bool} {m : ℕ}
     {L : (Fin m → X × Bool) → ρ → X → Bool} {γ γ' δ : ℝ} (hadv : predictAdv C m L ≤ γ)
     (hlt : γ + δ < γ') (hγ' : γ' ≤ 1 / 2) :

@@ -34,7 +34,8 @@ an iterated expectation.
 ## References
 
 * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
-  Algorithms*, Cambridge University Press, 2014, §3.1 (the i.i.d. sample `S ~ D^m`).
+  Algorithms*, Cambridge University Press, 2014, §2.3.1 (product sampling) and §3.1,
+  Definition 3.1 (i.i.d. examples).
 -/
 
 namespace TCSlib.InformationTheory
@@ -133,7 +134,8 @@ theorem expect_le_add_of_le_one (p : FinDist α) {f : α → ℝ} (hf : ∀ a, f
 /-! ### Independent samples -/
 
 /-- **`m` independent samples** of `p`: the distribution on `Fin m → α` with
-`Pr[s] = ∏ j, p (s j)` ([SSBD14, §3.1], `S ~ D^m`). -/
+`Pr[s] = ∏ j, p (s j)`: the product sampling of [SSBD14, §2.3.1], used for the i.i.d. examples
+of [SSBD14, §3.1, Def 3.1]. -/
 def iid (p : FinDist α) (m : ℕ) : FinDist (Fin m → α) where
   prob s := ∏ j, p (s j)
   nonneg s := Finset.prod_nonneg fun j _ => p.nonneg (s j)
