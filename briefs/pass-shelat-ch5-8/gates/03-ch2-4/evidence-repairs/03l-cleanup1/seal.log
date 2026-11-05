@@ -1,0 +1,135 @@
+# Seal check (check 4, item E): rule 10, `attribute [local irreducible]` on the other files'
+# definitions each consumer reads (g03l-fix/seal.py, adapted from g04r2/seal.py; scratch outputs in
+# g03l-fix/sealrun/, never in the olean tree). Head f29be161cd86cfc3a9c38bd203bfa095b4974086, tree g03l-oleans after the replay.
+#
+# Per file: the sealed current version must PASS; a control must FAIL where it unfolded (and the same
+# control must PASS unsealed, so that its failure is the seal's), or, where the file had nothing to
+# re-point, the base version must PASS sealed. Controls:
+#   Repetition: the base file (only the BlockLoop -> BlockMapLoop rename applied): fails at :229
+#     (IterateFind.step by rfl) and in polyTimeComputable_blockMap (BlockMapLoop.rounds read by
+#     definitional equality, :500 and :507 of the sealed copy); the IterLoop/EmitLoop/XorLoop sites
+#     of the base used `simp [d]`/`unfold d`, which the seal cannot see (equation lemmas), and are
+#     covered by the syntactic check below (0 hits in the current file).
+#   IterateFind: the current file with the five hostRet_* reads reverted to `rfl` (Lean reports
+#     the first failing read in each of the two proofs, hstart and hround).
+#   UnaryMul: mul_round's step read as in the old file (`unfold step; change`).
+#   SAT, IterateFindHost: the base files never read the host's definitions, so the control is the
+#     current file plus one `rfl` read of ModuleHost.entry (seal-active check).
+#   StringLoops, HardCoreLoops, ThreeColoring/Machines: no site to re-point (base passes sealed).
+# Limits: (1) `simp [d]`, `rw [d]`, `unfold d` use equation lemmas and pass any seal, hence the
+#   line "explicit simp/rw/unfold of a sealed name" (a syntactic scan of the current file: 0 hits
+#   everywhere). (2) Machines (`ModuleHost.hostTM`, `IterateFind.copyTM`) cannot be sealed: a
+#   consumer states configurations of the machine, whose type reads `.k` and `.State`; with them
+#   sealed, IterateFind fails at elaboration (`.inl` has no expected type), see "with the machines
+#   also sealed". Their value-level reads go through `hostTM_k`, `hostTM_tm_q₀`, `copyTM_k`.
+#   (3) Reducible abbreviations (`ModuleHost.State`, `IterateFind.hostTM`) are notation and cannot
+#   be sealed (policy §1); they land with `state_eq`, `hostTM_eq`.
+#
+TCSlib/Complexity/Randomized/Build/IterateFind.lean
+  seal: Clean entry hostRet hostCtrl
+  sealed current: PASS
+  control (current version with the five hostRet_* reads reverted to `rfl`): FAIL (2 error lines); expected fail: as expected
+    ctl: TCSlib_Complexity_Randomized_Build_IterateFind_sealed_control.lean:364:53: error: Type mismatch
+    ctl: TCSlib_Complexity_Randomized_Build_IterateFind_sealed_control.lean:409:39: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+  with the machines also sealed (Turing.ModuleHost.hostTM, Complexity.IterateFind.copyTM): FAIL (8 error lines)
+    mach: TCSlib_Complexity_Randomized_Build_IterateFind_sealed_machines.lean:336:26: error(lean.unknownIdentifier): Unknown constant `Turing.FinTM.State.inl`
+    mach: TCSlib_Complexity_Randomized_Build_IterateFind_sealed_machines.lean:336:26: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inl`
+    mach: TCSlib_Complexity_Randomized_Build_IterateFind_sealed_machines.lean:354:68: error: Application type mismatch: The argument
+TCSlib/Complexity/Randomized/Build/IterateFindHost.lean
+  seal: Clean entry
+  sealed current: PASS
+  control (current version plus one `rfl` read of `ModuleHost.entry` (seal-active check)): FAIL (1 error lines); expected fail: as expected
+    ctl: TCSlib_Complexity_Randomized_Build_IterateFindHost_sealed_control.lean:365:71: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Complexity/ClassNP/SAT.lean
+  seal: Clean entry
+  sealed current: PASS
+  control (current version plus one `rfl` read of `ModuleHost.entry` (seal-active check)): FAIL (1 error lines); expected fail: as expected
+    ctl: TCSlib_Complexity_ClassNP_SAT_sealed_control.lean:4073:71: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Complexity/Randomized/Build/UnaryMul.lean
+  seal: cfg
+  sealed current: PASS
+  control (current version with mul_round's step read as in the old file (`unfold step; change`, the state reduced through `cfg`)): FAIL (1 error lines); expected fail: as expected
+    ctl: TCSlib_Complexity_Randomized_Build_UnaryMul_sealed_control.lean:209:4: error: 'change' tactic failed, pattern
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Complexity/Randomized/Repetition.lean
+  seal: step orbit gstep gstepBound start step acc out start step out start step acc out start step acc out rounds step out flag start step acc out rounds
+  sealed current: PASS
+  control (base version (rename BlockLoop -> BlockMapLoop applied)): FAIL (3 error lines); expected fail: as expected
+    ctl: TCSlib_Complexity_Randomized_Repetition_sealed_control.lean:230:61: error: Type mismatch
+    ctl: TCSlib_Complexity_Randomized_Repetition_sealed_control.lean:500:42: error: `simp` made no progress
+    ctl: TCSlib_Complexity_Randomized_Repetition_sealed_control.lean:507:2: error: Type mismatch
+  the same control unsealed: PASS (so its sealed failure is due to the seal)
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Complexity/Randomized/Build/StringLoops.lean
+  seal: orbit
+  sealed current: PASS
+  control (base version (no unfolding sites to re-point)): PASS (0 error lines); expected pass: as expected
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean
+  seal: orbit gstep gstepBound
+  sealed current: PASS
+  control (base version (no unfolding sites to re-point)): PASS (0 error lines); expected pass: as expected
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean
+  seal: orbit gstep gstepBound
+  sealed current: PASS
+  control (base version with item D's qualification applied): PASS (0 error lines); expected pass: as expected
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+
+## Outside the brief's scope (not touched here; informational)
+
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
+  seal: orbit gstep gstepBound
+  sealed current: PASS
+  control (base version (no unfolding sites to re-point)): PASS (0 error lines); expected pass: as expected
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean
+  seal: orbit gstep gstepBound
+  sealed current: PASS
+  control (base version (no unfolding sites to re-point)): PASS (0 error lines); expected pass: as expected
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean
+  seal: orbit gstep gstepBound
+  sealed current: FAIL
+    cur: TCSlib_Cryptography_Asymptotic_GGMReductionEval_sealed_new.lean:535:2: error: Type mismatch
+  control (base version (no unfolding sites to re-point)): FAIL (1 error lines); expected pass: UNEXPECTED
+    ctl: TCSlib_Cryptography_Asymptotic_GGMReductionEval_sealed_control.lean:535:2: error: Type mismatch
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean
+  seal: orbit gstep gstepBound
+  sealed current: FAIL
+    cur: TCSlib_Cryptography_ZeroKnowledge_EncodingMachines_sealed_new.lean:573:12: error: Tactic `rfl` failed: 
+  control (base version (no unfolding sites to re-point)): FAIL (1 error lines); expected pass: UNEXPECTED
+    ctl: TCSlib_Cryptography_ZeroKnowledge_EncodingMachines_sealed_control.lean:573:12: error: Tactic `rfl` failed: The left-hand side
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
+  seal: orbit gstep gstepBound
+  sealed current: FAIL
+    cur: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency_sealed_new.lean:142:12: error: Tactic `rf
+  control (base version (no unfolding sites to re-point)): FAIL (1 error lines); expected pass: UNEXPECTED
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_Efficiency_sealed_control.lean:142:12: error: Tactic `rfl` failed: The left-hand side
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+  seal: orbit gstep gstepBound
+  sealed current: FAIL
+    cur: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep_sealed_new.lean:195:14: error: Tactic 
+    cur: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep_sealed_new.lean:389:14: error: Tactic 
+  control (base version (no unfolding sites to re-point)): FAIL (2 error lines); expected pass: UNEXPECTED
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep_sealed_control.lean:195:14: error: Tactic `rfl` failed: The left-hand side
+    ctl: TCSlib_Cryptography_ZeroKnowledge_GraphIsomorphism_EfficiencyRep_sealed_control.lean:389:14: error: Tactic `rfl` failed: The left-hand side
+  explicit simp/rw/unfold of a sealed name in the current file: 0
+exit=0
+
+# Outside the scope (informational): five pre-existing definitional reads of `StateLoop.orbit` at
+# round 0 (`| zero => rfl` in place of `orbit_zero`) in files not touched here, identical at base:
+#   ZeroKnowledge/EncodingMachines.lean:572, ZeroKnowledge/GraphIsomorphism/Efficiency.lean:141,
+#   ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:194 and :388, Asymptotic/GGMReductionEval.lean:534
+#   (source lines; the sealed copies are one line longer). Left for part 2 (these files hold or use
+#   the stateFind copies that part 2 re-points).
