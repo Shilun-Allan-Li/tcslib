@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -559,17 +560,6 @@ private theorem recordStep_fieldOffset_congr {Γ : Type*} (as : List (List Γ)) 
         simp only [List.take_succ_cons, List.map_cons, List.cons.injEq] at h
         rw [fieldOffset_cons_succ, fieldOffset_cons_succ, h.1, ih bs j h.2]
 
-/-- A tagged phase cannot be a verdict at a different index. -/
-private theorem record_tag_ne {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
-    (i : I) (v : Σ i, Ph i) (hi : i ≠ v.1) (c : Cfg K Γ (Ph i) x) :
-    (c.mapState (Sigma.mk i)).state ≠ some v := by
-  cases hs : c.state with
-  | none => simp [Cfg.mapState_state, hs]
-  | some s =>
-    intro h
-    have he : (⟨i, s⟩ : Σ i, Ph i) = v := by simpa [Cfg.mapState_state, hs] using h
-    exact hi (congrArg Sigma.fst he)
-
 /-- Package the tagged prefix and dispatched endpoint supplied by `phaseHostTM_run`.
 No transition or phase-host induction is repeated here. -/
 private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
@@ -585,7 +575,7 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
   refine ⟨he, ?_, ?_⟩
   · intro u hu
     rw [hp u (by omega)]
-    exact ⟨record_tag_ne i yes hy _, record_tag_ne i no hn _⟩
+    exact ⟨Cfg.mapState_sigma_state_ne i yes hy _, Cfg.mapState_sigma_state_ne i no hn _⟩
   · intro u hu j
     by_cases ht : u ≤ t
     · rw [hp u ht, Cfg.mapState_workTapePos]

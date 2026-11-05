@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Configuration
 import TCSlib.Complexity.TuringMachine.Deterministic
 import TCSlib.Complexity.TuringMachine.StateRenaming
+import TCSlib.Complexity.TuringMachine.CfgFacts
 import TCSlib.Complexity.TuringMachine.Finite
 import TCSlib.Complexity.TuringMachine.Nondeterministic
 import TCSlib.Complexity.TuringMachine.NondeterministicSpace
@@ -113,6 +114,9 @@ for the local modifications.
   (vendored).
 * `StateRenaming` — transport of actions, configurations, and machines along maps
   of the state type; shared by the oracle embedding and the code normal form.
+* `CfgFacts` — four elementary configuration facts: the input read depends on the input head
+  only, a redirected live configuration is a phase's tagged configuration, a tagged configuration
+  is at no other phase's state, and equal-length chunks have the expected total length.
 * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
   all headline definitions are stated over it.
 * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
