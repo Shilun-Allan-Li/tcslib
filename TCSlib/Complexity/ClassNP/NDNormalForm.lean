@@ -8,6 +8,8 @@ import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.TuringMachine.Build.NDHost
 import TCSlib.Complexity.TuringMachine.Build.StepBlock
 import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -1289,10 +1291,7 @@ private theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List B
       by_cases hp : (0 : ℤ) ≤ p ∧ p < 0 + (s.length : ℤ)
       · rw [if_pos hp, sub_zero]
       · rw [if_neg hp, Cfg.init_workTapes]
-        by_cases hneg : p < 0
-        · rw [FinTM.bufferTape_of_neg s hneg]
-        · rw [FinTM.bufferTape_eq, if_pos (by omega)]
-          exact (List.getElem?_eq_none (by omega)).symm
+        rw [FinTM.bufferTape_eq_none_of_not_mem s (by omega)]
     · rw [Function.update_of_ne hi, if_neg hi, Cfg.init_workTapes]
   · funext i
     rw [guessRunCfg_workTapePos, streamStartCfg_workTapePos, Cfg.init_workTapePos]
@@ -3203,12 +3202,22 @@ private theorem nf_backward_host (N : FinNDTM Bool) (x w : List Bool)
   obtain ⟨rs, hne, rfl, hflag⟩ := nf_split N.k s hslive hsstop
   obtain ⟨TQ', hv', hf', hacc', -⟩ := nf_V_char N x rs hne hflag
   have hTQ : TQ = TQ' := by
-    rcases lt_trichotomy TQ TQ' with h | h | h
-    · exact absurd hacc (hf' TQ h true)
-    · exact h
-    · rcases hv' with h' | h'
-      · exact absurd h' (hfirst TQ' h).1
-      · exact absurd h' (hfirst TQ' h).2
+    let V := nf_V N (nf_leaf N) (nf_leafExit N)
+    let st : Cfg 2 Bool (Σ i, nf_St N (nf_LeafSt N) i) x := streamStartCfg x 0
+      (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i) (rs.flatMap List.ofFn)
+    let F : Set (Option (Σ i, nf_St N (nf_LeafSt N) i)) :=
+      {some ⟨.park, true⟩, some ⟨.park, false⟩}
+    have h1 : Segment V F (fun _ => True) st (V.runFrom st TQ) TQ :=
+      (segment_iff _ _ _ _ _ _).mpr ⟨rfl, fun u hu hm => by
+        rcases hm with hm | hm
+        · exact (hfirst u hu).1 hm
+        · exact (hfirst u hu).2 hm, fun _ _ => trivial⟩
+    have h2 : Segment V F (fun _ => True) st (V.runFrom st TQ') TQ' :=
+      (segment_iff _ _ _ _ _ _).mpr ⟨rfl, fun u hu hm => by
+        rcases hm with hm | hm
+        · exact hf' u hu true hm
+        · exact hf' u hu false hm, fun _ _ => trivial⟩
+    exact Segment.time_eq h1 (Or.inl hacc) h2 hv'
   subst hTQ
   exact ⟨rs.length, nf_backward N x rs (hacc'.mp hacc)⟩
 
