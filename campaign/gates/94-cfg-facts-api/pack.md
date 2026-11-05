@@ -15,21 +15,24 @@ The user ruled on 2026-11-04: **publish homes first**. This PR gives each fact o
 re-points the private copies in the campaign's files. NF's landing will then cite the four lemmas.
 The ledger entry is "NF cont1's delivery, F2" in `campaign/duplication-ledger.md`.
 
-**The PR:** #190 on `lean/cfg-facts`, head `d198d9072353151f59173dca302778eda51b83d5`
+**The PR:** #190 on `lean/cfg-facts`, head `3cc6c9ee4837f03a27446c4a64e17078b9b63876`
 (`evidence/patches/`). Its commits:
 - `74ef5df2`, the change;
 - a merge of the campaign after #184;
 - `95d54ce2`, which renames the chunk-length lemma (see question 5);
 - `8c0a85c7`, which adds the module docstring's References section (campaign lint's one FAIL);
 - `d198d907`, which publishes the general fact behind (ii), `Cfg.mapState_eq_of_fields` (see
-  question 4).
+  question 4);
+- `f76e3eac` and `3cc6c9ee`: `ExhaustiveReplay`'s `xr_phase_step` (two blocks) and `xr_halt_fixed`
+  (two blocks) convert renamed configurations through it. At `d198d907` the screen paired them
+  with it at 93% and 78%.
 
 ## What changed (verify)
 
 | File | Change |
 |---|---|
 | `TuringMachine/CfgFacts` (new) | (i) `Turing.Cfg.inputSymbol_congr`; (ii) `Turing.Cfg.mapState_const_eq_mapState_sigma`, derived from the general `Turing.Cfg.mapState_eq_of_fields` (a renamed configuration is any configuration with its data fields and the renamed state); (iii) `Turing.Cfg.mapState_sigma_state_ne`; (iv) `Turing.length_flatMap_uniform`. It imports only `StateRenaming` |
-| `ClassNP/ExhaustiveReplay` | the private `xr_inputSymbol_congr` is removed; its one use cites (i) |
+| `ClassNP/ExhaustiveReplay` | the private `xr_inputSymbol_congr` is removed, and its one use cites (i); `xr_phase_step` and `xr_halt_fixed` cite `Cfg.mapState_eq_of_fields` for their four field-by-field conversions |
 | `TuringMachine/Build/ZoneRebalance` | the private `zr_inputSymbol_congr` is removed; its one use cites (i) (`Cfg.inputSymbol_congr _ _ rfl`), and its docstring mention is updated |
 | `TuringMachine/Build/CfgRecord` | the private `record_tag_ne` is removed, and its use cites (iii); the private `recordStep_mapState_eq` is removed, and its three uses cite `Cfg.mapState_eq_of_fields` |
 | `TuringMachine/Build/SeamLayout` | the privates `sl_rewrap` and `sl_tagged_ne_done` keep their statements (seven call sites each), and their bodies now cite (ii) and (iii) |
@@ -54,14 +57,23 @@ The ledger entry is "NF cont1's delivery, F2" in `campaign/duplication-ledger.md
    4 of 4 pass unsealed, and 0 of 4 pass sealed. The re-pointed sites cite and unfold nothing new.
 3. **The re-points:** are they faithful, and statement-preserving for `sl_rewrap` and
    `sl_tagged_ne_done`?
-4. **Duplication** (`evidence/screen/`): the screen at the head against the campaign tip, over the
-   five changed files and the files with the copies:
+4. **Duplication** (`evidence/screen/`): the v3 screen of 10 files at the head against the campaign
+   tip `057da7a7`: 953 declarations on both sides, 745 → 740 pairs, 3 new and 8 gone
+   (`pairdiff-cf.txt`). The new pairs are `CfgFacts`' retag lemma against
+   `Cfg.mapState_eq_of_fields`, which it cites (74%, in-file), and two RN-1 members,
+   `SeamLayout.exists_seamLayoutTM` (67%) and `ZoneRebalance.zr_short_fields` (61%). The gone pairs
+   are those of the removed private copies. The ten files are the five changed ones and the files
+   with the copies:
    - `Configuration`, `StateRenaming` and `Seam`;
    - NF's `NDNormalForm`, whose four copies remain until its landing;
    - `CircuitComplexity/PSubsetPPolyTableau`, with the public
      `Complexity.CfgTableau.length_flatMap_const`.
 
-   The remaining members of (ii), 15 inline retag steps, are ledgered for the dedup window (12.2c).
+   The remaining inline field-by-field conversions of renamed configurations, the content of
+   `Cfg.mapState_eq_of_fields`, form the family **RN-1, acknowledged by the user by kind**
+   (2026-11-04) for the dedup window (12.2c). Under TEMPLATE failure mode 5 a further member is an
+   accounting minor. Among them are `SeamLayout.exists_seamLayoutTM`, `ZoneRebalance.zr_short_fields`
+   and NF's 15 inline retag steps.
    So is the `CircuitComplexity` lemma, which needs its own authorization because the file is
    colleague-owned. Is anything else re-derived?
 5. **Names** (`evidence/names/`): no ref declares the new names. The chunk lemma was first named
@@ -73,12 +85,15 @@ The ledger entry is "NF cont1's delivery, F2" in `campaign/duplication-ledger.md
 
 - **Compilation** (`evidence/chain/`): the new file and the four changed files compiled with
   `lean -o`, in dependency order, into a copy-on-write clone of `oleans-larm2`, all with no output.
-  After the rename the new file was re-elaborated, again with no output.
+  After each later commit the changed files were recompiled into the same clone, again with no
+  output: `CfgFacts`, `CfgRecord`, `SeamLayout` and `ExhaustiveReplay`; `ZoneRebalance` is
+  unchanged since the chain.
 - **Axioms** (`evidence/axioms/`): all five lemmas within `[propext, Classical.choice, Quot.sound]`;
   `mapState_sigma_state_ne` uses none, and `mapState_eq_of_fields` only `Quot.sound`.
 - **Replay:** `replay-lcf2` (`evidence/merged-tree/`), the six files' downstream closure,
-  83 modules, chained from `oleans-ledge`, at `95d54ce2`. The head differs from that commit only
-  in `CfgFacts`' module docstring. #190's closure overlaps #189's, and #190 is to merge second.
+  83 modules, chained from `oleans-ledge`, at `95d54ce2`. **It passed:** 83 of 83, static-equal.
+  The head adds `Cfg.mapState_eq_of_fields`, `CfgRecord`'s and `ExhaustiveReplay`'s re-points and
+  the docstring. #190's closure overlaps #189's, and #190 is to merge second.
   Its certifying replay is therefore the merged-tree replay of the head on the campaign after
   #189, which covers the docstring commit.
 

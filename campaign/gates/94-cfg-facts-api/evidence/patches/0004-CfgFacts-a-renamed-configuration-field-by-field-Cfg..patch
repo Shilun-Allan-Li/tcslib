@@ -1,0 +1,133 @@
+From d198d9072353151f59173dca302778eda51b83d5 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 22:24:34 -0800
+Subject: [PATCH 4/6] CfgFacts: a renamed configuration, field by field
+ (Cfg.mapState_eq_of_fields); the retag lemma derives from it, and CfgRecord's
+ private recordStep_mapState_eq is removed for it
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../TuringMachine/Build/CfgRecord.lean        | 22 ++----------
+ TCSlib/Complexity/TuringMachine/CfgFacts.lean | 35 ++++++++++++++-----
+ 2 files changed, 29 insertions(+), 28 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+index f05a7a82..c82b5bc6 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+@@ -494,29 +494,13 @@ private theorem recordStep_seekPost_eq {K : ℕ} {Γ S : Type} {x : List Γ} (do
+     rw [seekPost_workTapePos]
+   · rw [seekPost_output]
+ 
+-/-- A renamed configuration equals any target that shares its four data fields and carries
+-the renamed state, read field by field through the renaming's published equations. -/
+-private theorem recordStep_mapState_eq {K : ℕ} {Γ S S' : Type} {x : List Γ}
+-    (c : Cfg K Γ S x) (f : S → S') (d : Cfg K Γ S' x)
+-    (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
+-    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
+-    (ho : c.output = d.output) : c.mapState f = d := by
+-  apply Cfg.ext
+-  · rw [Cfg.mapState_state, hs]
+-  · rw [Cfg.mapState_inputPos, hi]
+-  · funext j q
+-    rw [Cfg.mapState_workTapes, hw]
+-  · funext j
+-    rw [Cfg.mapState_workTapePos, hp]
+-  · rw [Cfg.mapState_output, ho]
+-
+ /-- Renaming the states of an explicit configuration record maps its state and keeps the
+ other four fields, as a rewrite rule for the endpoint conversions below. -/
+ private theorem recordStep_mapState_mk {K : ℕ} {Γ S S' : Type} {x : List Γ}
+     (f : S → S') (st : Option S) (ip : Fin (x.length + 2))
+     (wt : Fin K → ℤ → Option Γ) (wp : Fin K → ℤ) (o : List Γ) :
+     (Cfg.mapState f ⟨st, ip, wt, wp, o⟩ : Cfg K Γ S' x) = ⟨st.map f, ip, wt, wp, o⟩ :=
+-  recordStep_mapState_eq _ _ _ rfl rfl rfl rfl rfl
++  Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
+ 
+ /-- A one-step run is one machine step, by the published run equations. -/
+ private theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}
+@@ -1674,7 +1658,7 @@ private theorem recordStep_state_run {k : ℕ} {Q T S : Type}
+       | bwd a => rfl
+       | done a => exact (hcut u hu a ha).elim)
+   have hin : c.mapState (Sigma.mk i) = d :=
+-    recordStep_mapState_eq _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
++    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
+   rw [hin] at phase
+   have hend : (recordStepMachine M upd seek start finish).runFrom d 5 =
+       {d with state := some out} := by
+@@ -1810,7 +1794,7 @@ compositions rewrite with at their seams. -/
+ private theorem recordStep_mapState_snapshot {Γ A B P : Type} {x : List Γ}
+     (d : Cfg 4 Γ P x) (q : A) (p : ℤ) (b e : List Γ) (f : A → B) :
+     (recordStepSnapshot d q p b e).mapState f = recordStepSnapshot d (f q) p b e :=
+-  recordStep_mapState_eq _ _ _ rfl rfl rfl rfl rfl
++  Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
+ 
+ /-- The first five read phases reach the position skip with both digit copies installed.
+ The finite data correctly records the source state and the position width/zero tests.
+diff --git a/TCSlib/Complexity/TuringMachine/CfgFacts.lean b/TCSlib/Complexity/TuringMachine/CfgFacts.lean
+index 69366b9c..6d6b4727 100644
+--- a/TCSlib/Complexity/TuringMachine/CfgFacts.lean
++++ b/TCSlib/Complexity/TuringMachine/CfgFacts.lean
+@@ -25,6 +25,8 @@ No new definitions.
+ 
+ * `Turing.Cfg.inputSymbol_congr` — configurations whose input heads agree read the same input
+   symbol, across machines.
++* `Turing.Cfg.mapState_eq_of_fields` — a renamed configuration is any configuration with its four
++  data fields and the renamed state.
+ * `Turing.Cfg.mapState_const_eq_mapState_sigma` — redirecting a live configuration to `⟨i, q⟩`
+   gives phase `i`'s tagged configuration at `q`.
+ * `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
+@@ -58,13 +60,30 @@ theorem Cfg.inputSymbol_congr {Symbol : Type*} {k k' : ℕ} {S S' : Type*} {inpu
+       rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
+         inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
+ 
++/-- **A renamed configuration, field by field.** Renaming the states of `c` by `f` gives any
++configuration `d` that has `c`'s input head, tapes, work heads and output and whose state is `c`'s
++state renamed.
++
++**Proof sketch.** Compare the five fields through the state-renaming equations
++(`Turing.Cfg.mapState_state` and the others). -/
++theorem Cfg.mapState_eq_of_fields {k : ℕ} {Γ S S' : Type*} {x : List Γ} (c : Cfg k Γ S x)
++    (f : S → S') (d : Cfg k Γ S' x) (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
++    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
++    (ho : c.output = d.output) : c.mapState f = d := by
++  apply Cfg.ext
++  · rw [Cfg.mapState_state, hs]
++  · rw [Cfg.mapState_inputPos, hi]
++  · funext j p; rw [Cfg.mapState_workTapes, hw]
++  · funext j; rw [Cfg.mapState_workTapePos, hp]
++  · rw [Cfg.mapState_output, ho]
++
+ /-- **Redirecting a live configuration to a phase's state.** If `c` is live and `c₂` is a
+ configuration of phase `i` at state `q` with `c`'s tapes, heads and output, then sending every
+ state of `c` to `⟨i, q⟩` gives `c₂` tagged by `i`.
+ 
+-**Proof sketch.** Compare the five fields through the state-renaming equations
+-(`Turing.Cfg.mapState_state` and the others): the states are both `some ⟨i, q⟩` since `c` is
+-live, and the remaining fields are the hypotheses. -/
++**Proof sketch.** Both sides are renamings; by `Turing.Cfg.mapState_eq_of_fields` it suffices to
++compare the left side's fields with the right side's: the states are both `some ⟨i, q⟩` since `c`
++is live, and the remaining fields are the hypotheses. -/
+ theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I → Type*}
+     {x : List Γ} {i : I} (c : Cfg k Γ S x) (c₂ : Cfg k Γ (Ph i) x) {q : Ph i}
+     (hc : c.state.isSome) (hstate : c₂.state = some q) (hin : c.inputPos = c₂.inputPos)
+@@ -72,12 +91,10 @@ theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I
+     (ho : c.output = c₂.output) :
+     c.mapState (fun _ => (⟨i, q⟩ : Σ j, Ph j)) = c₂.mapState (Sigma.mk i) := by
+   obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
+-  apply Cfg.ext
+-  · rw [Cfg.mapState_state, Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]
+-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
+-  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
+-  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
+-  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
++  refine Cfg.mapState_eq_of_fields c _ _ ?_ (by rw [Cfg.mapState_inputPos, hin])
++    (by funext j p; rw [Cfg.mapState_workTapes, hw])
++    (by funext j; rw [Cfg.mapState_workTapePos, hp]) (by rw [Cfg.mapState_output, ho])
++  rw [Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]
+ 
+ /-- **A tagged configuration is at no other phase's state.** A configuration tagged by phase `i`
+ (its states sent into the sum by `Sigma.mk i`) is never at a state `v` of a phase `v.1 ≠ i`. -/
+-- 
+2.50.1 (Apple Git-155)
+
