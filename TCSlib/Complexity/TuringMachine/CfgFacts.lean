@@ -30,6 +30,11 @@ No new definitions.
 * `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
   another phase.
 * `Turing.length_flatMap_uniform` — a list of equal-length chunks has length count × chunk length.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§1.2, Turing machines and their configurations.)
 -/
 
 namespace Turing
