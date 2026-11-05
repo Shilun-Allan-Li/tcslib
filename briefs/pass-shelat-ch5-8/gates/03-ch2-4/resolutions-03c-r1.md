@@ -16,8 +16,10 @@
 - **Repair:** commit `bc2aab59333e27729c9fbac3052cd650bf62c3aa` (on #198's head
   `c10ed6ace0b991146c0be769313fbbe52d36e25a`), in PR #201 with 03a's
   `e8f45ca3ca7246d1379c4b66ce5a7a72d0b2d820`; #201's head
-  `0c348ff94cacf24d96d99078c9dd9e328530c8d2` is **not yet merged**, so every "Fixed" below except
-  #3 is on #201's branch only. #3 (G3-7 (c)) was done in #198 (`c10ed6ac…`, merged by
+  `0c348ff94cacf24d96d99078c9dd9e328530c8d2` was not yet merged when this file was drafted (a
+  pre-merge snapshot; **update, gate 03c round 2, R2-1:** #201 was merged by
+  `02951926d9c9cea1d3596afa71c252176ca9de1d`, and round 2's pin
+  `e79397eaf68b156b9db091f464741f6eb75b9c28` contains every fix below). #3 (G3-7 (c)) was done in #198 (`c10ed6ac…`, merged by
   `cdff8890ee4af8eec7d6682963c02041390f52f2`). Evidence `evidence-repairs/03ac/` (replay of the
   97 downstream modules plus `Checks`, the `Checks` axiom print at #201's head, lint 0). Line numbers
   are at #201's head; Lean paths are under `TCSlib/Cryptography/Asymptotic/`.
