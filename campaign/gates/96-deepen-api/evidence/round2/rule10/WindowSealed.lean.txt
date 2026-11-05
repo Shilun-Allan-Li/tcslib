@@ -1,0 +1,70 @@
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+
+set_option autoImplicit false
+
+namespace Turing
+
+section Sealed
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible]
+  Turing.Action.apply
+  Turing.Cfg.workTapeSymbols
+
+theorem Cfg.InWindow.mono_sealed {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {c : Cfg k Symbol State x} (hc : c.InWindow s) (hs : s ≤ s') : c.InWindow s' :=
+  ⟨fun i => (hc.1 i).trans (by exact_mod_cast hs),
+    fun i z hz => hc.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)⟩
+
+/-- **One step from a window**: if `c` lies in the radius-`s` window, then applying an action `a`
+keeps it there exactly when, for every work tape `i`, the head is not at `-s` with `a` moving it
+left, and not at `s` with `a` moving it right. The write lands under the old head, which is inside
+the window, so it cannot create a nonblank cell outside.
+
+**Proof sketch.** Split the three possible moves. Interior positions stay inside; at each
+boundary only its outward move fails. Outside cells are unchanged by the point update. -/
+theorem Cfg.InWindow.apply_iff_sealed {k : ℕ} {Symbol State : Type} {x : List Symbol} {s : ℕ}
+    {c : Cfg k Symbol State x} (hc : c.InWindow s) (a : Action k Symbol State) :
+    (a.apply c).InWindow s ↔ ∀ i,
+      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
+      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
+  have heads (i : Fin k) : |c.workTapePos i + ((a.workTapes i).2 : ℤ)| ≤ (s : ℤ) ↔
+      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
+      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
+    have h := hc.1 i
+    rw [abs_le] at h ⊢
+    cases hm : (a.workTapes i).2 <;>
+      simp only [SignType.zero_eq_zero, SignType.neg_eq_neg_one, SignType.pos_eq_one,
+        SignType.coe_zero, SignType.coe_neg, SignType.coe_one, Int.reduceNeg, add_zero,
+        le_add_neg_iff_add_le, neg_add_le_iff_le_add, add_neg_le_iff_le_add,
+        SignType.neg_eq_self_iff, SignType.self_eq_neg_iff, reduceCtorEq, zero_ne_one, one_ne_zero,
+        and_false, and_true, true_and, and_self, not_false_eq_true, iff_true] at * <;>
+      omega
+  constructor
+  · intro h i
+    have hi := h.1 i
+    rw [Action.apply_workTapePos] at hi
+    exact (heads i).mp hi
+  · intro h
+    refine ⟨fun i => ?_, ?_⟩
+    · rw [Action.apply_workTapePos]
+      exact (heads i).mpr (h i)
+    intro i z hz
+    have hne : z ≠ c.workTapePos i := by
+      intro he
+      subst z
+      have := hc.1 i
+      omega
+    rw [Action.apply_workTapes, Function.update_of_ne hne]
+    exact hc.2 i z hz
+
+theorem Cfg.InWindow.apply_of_lt_sealed {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' :=
+  ((hC.mono_sealed hs).apply_iff_sealed a).mpr fun i => by
+    have h := abs_lt.mp (hlt i)
+    exact ⟨fun h' => by have := h'.1; omega, fun h' => by have := h'.1; omega⟩
+
+end Sealed
+
+end Turing

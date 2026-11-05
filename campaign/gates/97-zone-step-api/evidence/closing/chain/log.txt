@@ -1,0 +1,12 @@
+# chain check of #197 at 16e9244976c17111d5403c1cfcf2ce52b0f4c916 (5 modules) into oleans-chk197; Thu Nov  5 21:45:15 UTC 2026
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic exit=0 errors=0 sorry=0 secs=35
+TCSlib/Complexity/TuringMachine/Build/Contract/Catalog exit=0 errors=0 sorry=0 secs=4
+TCSlib/Complexity/TuringMachine/Build/Contract/Seam exit=0 errors=0 sorry=0 secs=4
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance exit=0 errors=0 sorry=0 secs=484
+TCSlib/Complexity/TuringMachine/Build/ZoneStep exit=1 errors=2 sorry=0 secs=4
+TCSlib/Complexity/TuringMachine/Build/ZoneStep.lean:318:73: error(lean.unknownIdentifier): Unknown identifier `smul_eq_mul`
+TCSlib/Complexity/TuringMachine/Build/ZoneStep.lean:317:39: error: unsolved goals
+# stopped at TCSlib/Complexity/TuringMachine/Build/ZoneStep
+# fixed in the closing commit (amended, now 20e7fc756c8298ba043913eb60657fde84472c5d): minor 2's simp list names nsmul_eq_mul and Nat.cast_id (smul_eq_mul does not apply to the ℕ-scalar k • c)
+TCSlib/Complexity/TuringMachine/Build/ZoneStep exit=0 errors=0 sorry=0 (re-run on the amended head; no output)
+# chain passed; Thu Nov  5 21:54:53 UTC 2026

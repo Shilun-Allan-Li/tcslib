@@ -1,0 +1,191 @@
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
+
+/-! The deepening machine's block fit (maintainer pre-ship, 2026-11-05): the search block
+`A E`, embedded in a five-decider machine `D` with decider `2` rerouted (to the edge language, or
+kept on the accepting language), answers the deepening's questions in the codec's terms. It cites the
+deepening window API's equations. A probe, not library code.
+
+Extended for gate 96 (finding 1) at #196's repaired head `f2616fee`: with
+`Complexity.LogProg.SavitchARM.NoEdge` sealed beside the fit's other definitions, the two loop
+steps of the deepening follow from `fit_edge_block`, `noEdge_iff`, `noEdge_of_lt` and
+`mem_iff_reach_of_noEdge` (section `Loop`). -/
+
+set_option autoImplicit false
+
+open Turing Complexity Complexity.Codec Complexity.LogProg Complexity.LogProg.SavitchARM
+
+/-! ## The fit (sealed) -/
+
+section Fit
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+  Turing.NDTM.initCfg
+attribute [local irreducible] Complexity.LogProg.SavitchARM.InitO
+  Complexity.LogProg.SavitchARM.AccO Complexity.LogProg.SavitchARM.Rel
+  Complexity.LogProg.SavitchARM.outerSt Complexity.LogProg.SavitchARM.setSt
+  Complexity.LogProg.SavitchARM.St.toV Complexity.LogProg.SavitchARM.St.zero
+  Complexity.LogProg.SavitchARM.rs Complexity.LogProg.SavitchARM.rw
+  Complexity.LogProg.SavitchARM.rK Complexity.LogProg.SavitchARM.A
+  Complexity.LogProg.SavitchARM.Reach Complexity.Codec.StepRel Complexity.Codec.initLang
+  Complexity.Codec.acceptLang Complexity.Codec.edgeLang Complexity.Codec.stepLang
+  Turing.MultiTapeTM.indicator Complexity.LogProg.Ins.embed Complexity.LogProg.AHalt
+  Complexity.LogProg.AReach Complexity.LogProg.PreS Complexity.LogProg.SavitchARM.NoEdge
+
+/-- The deciders of the deepening machine. -/
+def fitAs (N : FinNDTM Bool) : Fin 5 → Language Bool :=
+  ![inputLenLang, initLang N, acceptLang N, stepLang N, edgeLang N]
+
+/-- Their answers. -/
+noncomputable def fitOrc (N : FinNDTM Bool) : Fin 5 → List Bool → Bool :=
+  fun j V => MultiTapeTM.indicator (fitAs N j : Set (List Bool)) V
+
+/-- The edge block's rerouting: decider `2` of the search reads the edge language. -/
+def σEdge : Fin 4 → Fin 5 := ![0, 1, 4, 3]
+
+/-- The accept block's rerouting: the identity on `0 … 3`. -/
+def σAcc : Fin 4 → Fin 5 := ![0, 1, 2, 3]
+
+theorem fit_mem (N : FinNDTM Bool) (j : Fin 5) (V : List Bool) :
+    fitOrc N j V = true ↔ V ∈ fitAs N j := by
+  rw [fitOrc, indicator_eq_decide]
+  exact ⟨fun h => @of_decide_eq_true _ (Classical.dec _) h,
+    fun h => @decide_eq_true _ (Classical.dec _) h⟩
+
+theorem fit_rel (N : FinNDTM Bool) (σ : Fin 4 → Fin 5) (hσ : σ 3 = 3) (x : List Bool) (s : ℕ) :
+    Rel (fitOrc N ∘ σ) x s = StepRel N x s := by
+  funext u v
+  apply propext
+  rw [rel_iff_orc, stepRel_iff_mem, Function.comp_apply, hσ, fit_mem]
+  rfl
+
+theorem fit_initO (N : FinNDTM Bool) (σ : Fin 4 → Fin 5) (hσ : σ 1 = 1) (x : List Bool)
+    (s u : ℕ) : InitO (fitOrc N ∘ σ) x s u ↔
+      pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N := by
+  rw [initO_iff_orc, Function.comp_apply, hσ, fit_mem]
+  rfl
+
+theorem fit_edgeO (N : FinNDTM Bool) (x : List Bool) (s v : ℕ) :
+    AccO (fitOrc N ∘ σEdge) x s v ↔
+      pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N := by
+  rw [accO_iff_orc, Function.comp_apply, show σEdge 2 = 4 from rfl, fit_mem]
+  rfl
+
+theorem fit_accO (N : FinNDTM Bool) (x : List Bool) (s v : ℕ) :
+    AccO (fitOrc N ∘ σAcc) x s v ↔
+      pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N := by
+  rw [accO_iff_orc, Function.comp_apply, show σAcc 2 = 2 from rfl, fit_mem]
+  rfl
+
+open Classical in
+/-- **The edge block's fit**: entered at the outer search with the entry registers, the embedded
+search exits through `k b`, where `b` says whether some edge code is a midpoint-reachability
+target of an initial code at radius `s` and level `w`. -/
+theorem fit_edge_block (N : FinNDTM Bool) (E : ℕ) (x : List Bool) (s w : ℕ) (hsw : s ≤ w)
+    {m' : ℕ} {Λ' : Type} {D : ARM m' 5 Λ'} {ρ : Fin 18 → Fin m'} (hρ : Function.Injective ρ)
+    {ι : Lb E → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hD : ∀ l, D (ι l) = (A E l).embed ρ σEdge ι k r₀) {e : Fin m' → ℕ}
+    (he : ∀ r', e r' ≤ 2 ^ (w * w)) {v' : Fin m' → ℕ}
+    (hv : RegExt ρ e (Function.update (Function.update (Function.update (Function.update
+      (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w)) rU 0) rV 0) rM 0) v') :
+    ∃ v₂', (∀ r', (∀ r, ρ r ≠ r') → v₂' r' = e r') ∧ (∀ r, v₂' (ρ r) ≤ 2 ^ (w * w)) ∧
+      AReach D (fitOrc N) x (GuardLe D x (2 ^ (w * w))) (some (ι .OU), v', none)
+        (some (k (decide (∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈
+            initLang N ∧ ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈
+              edgeLang N ∧ Reach (2 ^ w) (StepRel N x s) w u v))), v₂', none) := by
+  rw [← setSt_toV, ← outerSt_toV] at hv
+  have hrun := outerU_run (E := E) (orc := fitOrc N ∘ σEdge) (x := x) hsw (2 ^ w) 0 0
+    (by omega) (Nat.zero_le _)
+  obtain ⟨v₂', h1, h2, h3⟩ := AHalt.embed_guardLe hρ hD (A_noVal E) le_rfl he hrun hv
+  have hiff : (∃ u', 0 ≤ u' ∧ u' < 2 ^ w ∧ InitO (fitOrc N ∘ σEdge) x s u' ∧
+      ∃ v < 2 ^ w, AccO (fitOrc N ∘ σEdge) x s v ∧
+        Reach (2 ^ w) (Rel (fitOrc N ∘ σEdge) x s) w u' v) ↔
+      (∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+        ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+          Reach (2 ^ w) (StepRel N x s) w u v) := by
+    rw [fit_rel N σEdge rfl]
+    constructor
+    · rintro ⟨u, -, hu, hi, v, hv, he, hr⟩
+      exact ⟨u, hu, (fit_initO N σEdge rfl x s u).mp hi, v, hv, (fit_edgeO N x s v).mp he, hr⟩
+    · rintro ⟨u, hu, hi, v, hv, he, hr⟩
+      exact ⟨u, Nat.zero_le _, hu, (fit_initO N σEdge rfl x s u).mpr hi, v, hv,
+        (fit_edgeO N x s v).mpr he, hr⟩
+  rw [decide_eq_decide.mpr hiff] at h3
+  exact ⟨v₂', h1, h2, h3⟩
+
+/-! ## The deepening's two loop steps (sealed)
+
+`NoEdge` is sealed with the fit's other definitions (the section's `[local irreducible]` list), so
+these proofs read it only through `noEdge_iff`; the window lemmas `noEdge_of_lt` and
+`mem_iff_reach_of_noEdge` are applied, not unfolded. The extra seals below cover the definitions
+the window lemmas' hypotheses name. -/
+
+section Loop
+
+attribute [local irreducible] Turing.FinNDTM.DecidesInSpace Complexity.Codec.codeK
+  Complexity.logSpace Turing.pairEncode
+
+open Classical in
+/-- **The join**: the edge block's exit bit (`fit_edge_block`) is `false` exactly when no edge
+code is reachable at radius `s`, level `w` (`noEdge_iff`). -/
+theorem fit_edge_bit_eq_false_iff (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) :
+    decide (∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+        ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+          Reach (2 ^ w) (StepRel N x s) w u v) = false ↔ NoEdge N x s w := by
+  -- `decide_eq_false_iff_not` takes its `Decidable` instance as an implicit argument, so `rw`
+  -- matches the classical instance of the statement by unification
+  rw [decide_eq_false_iff_not, noEdge_iff]
+
+open Classical in
+/-- **Loop step (i), window exactness at the exit**: the edge block exits through `k b`, and when
+`b = false` membership is midpoint reachability at radius `s`, from an initial code to an
+accepting code (`mem_iff_reach_of_noEdge`), whatever the space bound. -/
+theorem deepen_step_exit_false (N : FinNDTM Bool) {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (E : ℕ) (x : List Bool) (s w : ℕ) (hsw : s ≤ w)
+    (hw : codeK N * (s + logSpace x.length + 1) ≤ w)
+    {m' : ℕ} {Λ' : Type} {D : ARM m' 5 Λ'} {ρ : Fin 18 → Fin m'} (hρ : Function.Injective ρ)
+    {ι : Lb E → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hD : ∀ l, D (ι l) = (A E l).embed ρ σEdge ι k r₀) {e : Fin m' → ℕ}
+    (he : ∀ r', e r' ≤ 2 ^ (w * w)) {v' : Fin m' → ℕ}
+    (hv : RegExt ρ e (Function.update (Function.update (Function.update (Function.update
+      (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w)) rU 0) rV 0) rM 0) v') :
+    ∃ b v₂', (∀ r', (∀ r, ρ r ≠ r') → v₂' r' = e r') ∧ (∀ r, v₂' (ρ r) ≤ 2 ^ (w * w)) ∧
+      AReach D (fitOrc N) x (GuardLe D x (2 ^ (w * w))) (some (ι .OU), v', none)
+        (some (k b), v₂', none) ∧
+      (b = false → (x ∈ L ↔ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈
+        initLang N ∧ ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈
+          acceptLang N ∧ Reach (2 ^ w) (StepRel N x s) w u v)) := by
+  obtain ⟨v₂', h1, h2, h3⟩ := fit_edge_block N E x s w hsw hρ hD he hv
+  -- the bit `b` is the `decide` that `h3` carries; `_` takes it by unification
+  refine ⟨_, v₂', h1, h2, h3, fun hb => mem_iff_reach_of_noEdge h x s w hw ?_⟩
+  rw [noEdge_iff]
+  -- UNSURE (not elaborated): this `exact` needs `fit_edge_block`'s predicate and `noEdge_iff`'s
+  -- right side to elaborate to the same term (same text, both in `Complexity.LogProg.SavitchARM`
+  -- names). If it fails, `simpa only [decide_eq_false_iff_not] using hb` shows the difference.
+  exact decide_eq_false_iff_not.mp hb
+
+open Classical in
+/-- **Loop step (ii), termination**: beyond the space bound (`sp |x| < s`), the edge block exits
+through `k false` (`noEdge_of_lt`), so the deepening stops by radius `sp |x| + 1`. -/
+theorem deepen_step_exit_of_lt (N : FinNDTM Bool) {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (E : ℕ) (x : List Bool) (s w : ℕ) (hsw : s ≤ w)
+    (hs : sp x.length < s)
+    {m' : ℕ} {Λ' : Type} {D : ARM m' 5 Λ'} {ρ : Fin 18 → Fin m'} (hρ : Function.Injective ρ)
+    {ι : Lb E → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+    (hD : ∀ l, D (ι l) = (A E l).embed ρ σEdge ι k r₀) {e : Fin m' → ℕ}
+    (he : ∀ r', e r' ≤ 2 ^ (w * w)) {v' : Fin m' → ℕ}
+    (hv : RegExt ρ e (Function.update (Function.update (Function.update (Function.update
+      (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w)) rU 0) rV 0) rM 0) v') :
+    ∃ v₂', (∀ r', (∀ r, ρ r ≠ r') → v₂' r' = e r') ∧ (∀ r, v₂' (ρ r) ≤ 2 ^ (w * w)) ∧
+      AReach D (fitOrc N) x (GuardLe D x (2 ^ (w * w))) (some (ι .OU), v', none)
+        (some (k false), v₂', none) := by
+  obtain ⟨v₂', h1, h2, h3⟩ := fit_edge_block N E x s w hsw hρ hD he hv
+  -- UNSURE (not elaborated): the rewrite's left side `decide P = false` leaves its `Decidable`
+  -- instance as a metavariable, which `rw` assigns by matching `h3`'s classical instance; the
+  -- same caveat as in step (i) on `P` applies.
+  rw [decide_eq_false_iff_not.mpr (noEdge_iff.mp (noEdge_of_lt h x s w hs))] at h3
+  exact ⟨v₂', h1, h2, h3⟩
+
+end Loop
+
+end Fit

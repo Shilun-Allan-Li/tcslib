@@ -1,0 +1,74 @@
+"""Gate 96 (#196), finding 1: the seal controls that go with BlockFitDeepen.
+
+usage: python3 -I mkctl_noedge.py <evidence/rule10/ctl_header.lean.part.txt> <out dir>
+
+Writes (the gate's control style: `#ctl_rfl` a delta goal, `#ctl_eqn` the first equation lemma by
+`intros; rfl`, and `#ctl_stmt`, new here, a published equation's statement by reduction):
+  SealControl_NoEdge_{unsealed,sealed}.lean.txt  `NoEdge`'s delta goal, its equation goal, and
+      `noEdge_iff`'s statement by `Iff.rfl` (3 controls);
+  SealControl_Fit_{unsealed,sealed}.lean.txt     every definition BlockFitDeepen seals (the Fit
+      section's 22, `NoEdge`, the Loop section's 4), two goals each, and `noEdge_iff` (55)."""
+import sys, pathlib
+
+hdr_f, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+ERASE = ('attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg '
+         'Turing.NDTM.initCfg')
+FIT = """Complexity.LogProg.SavitchARM.InitO Complexity.LogProg.SavitchARM.AccO
+Complexity.LogProg.SavitchARM.Rel Complexity.LogProg.SavitchARM.outerSt
+Complexity.LogProg.SavitchARM.setSt Complexity.LogProg.SavitchARM.St.toV
+Complexity.LogProg.SavitchARM.St.zero Complexity.LogProg.SavitchARM.rs
+Complexity.LogProg.SavitchARM.rw Complexity.LogProg.SavitchARM.rK Complexity.LogProg.SavitchARM.A
+Complexity.LogProg.SavitchARM.Reach Complexity.Codec.StepRel Complexity.Codec.initLang
+Complexity.Codec.acceptLang Complexity.Codec.edgeLang Complexity.Codec.stepLang
+Turing.MultiTapeTM.indicator Complexity.LogProg.Ins.embed Complexity.LogProg.AHalt
+Complexity.LogProg.AReach Complexity.LogProg.PreS""".split()
+NOEDGE = ['Complexity.LogProg.SavitchARM.NoEdge']
+LOOP = ['Turing.FinNDTM.DecidesInSpace', 'Complexity.Codec.codeK', 'Complexity.logSpace',
+        'Turing.pairEncode']
+STMT = ['Complexity.LogProg.SavitchARM.noEdge_iff']
+hdr = hdr_f.read_text(encoding='utf-8').rstrip('\n')
+stmt_cmd = r'''
+
+-- `#ctl_stmt`: a published equation's statement, re-proved by reduction (`intros` and `rfl`, or
+-- `Iff.rfl`): it passes while the definition can be unfolded and fails once it is sealed.
+open Lean Elab Command Meta in
+elab "#ctl_stmt " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ty := (← getConstInfo n).type
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; first | rfl | exact Iff.rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} stmt {n}"
+'''
+
+
+def seal(names):
+    return ERASE + '\nattribute [local irreducible]\n' + ''.join(f'  {n}\n' for n in names)
+
+
+def write(tag, imports, names, expect):
+    ctl = (''.join(f'#ctl_rfl {n}\n' for n in names) + ''.join(f'#ctl_eqn {n}\n' for n in names)
+           + ''.join(f'#ctl_stmt {n}\n' for n in STMT))
+    total = 2 * len(names) + len(STMT)
+    for name, block in (('unsealed', ''), ('sealed', seal(names))):
+        doc = (f'/-\nSeal controls for the deepening block-fit probe (BlockFitDeepen, gate 96 finding 1), '
+               f'{name}: {len(names)} definition{"s" if len(names) > 1 else ""}, a delta goal and an equation goal each, and '
+               f'`noEdge_iff`\'s statement by reduction ({total} controls).\nExpected: {expect} '
+               f'A probe record, not library code.\n-/\n')
+        (out / f'SealControl_{tag}_{name}.lean.txt').write_text(
+            doc + imports + hdr + stmt_cmd + '\n\nsection Controls\n\n' + block + '\n' + ctl
+            + '\nend Controls\n', encoding='utf-8')
+    return total
+
+
+n1 = write('NoEdge', 'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window\n', NOEDGE,
+           'unsealed, all three pass; sealed, none does.')
+n2 = write('Fit', 'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct\n'
+           'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window\n', FIT + NOEDGE + LOOP,
+           'unsealed, every control passes except the delta goals of recursive definitions '
+           '(`SavitchARM.Reach`, as in the gate\'s rule10 controls); sealed, none does.')
+print('controls:', n1, 'NoEdge,', n2, 'Fit')

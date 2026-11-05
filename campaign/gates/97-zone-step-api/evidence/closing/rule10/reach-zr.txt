@@ -1,0 +1,44 @@
+== region '/-! Equations for the data maps, the endpoints'
+Turing.Cfg.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.StateRenaming	field notation; via Turing.Cfg.mapState_workTapePos; via Turing.Cfg.mapState_workTapes
+Turing.Contract.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	field notation
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+Turing.zoneShiftIndex	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Zone	named; via Turing.zoneShiftIndex_le
+Turing.zonedTape	red=semireducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+== region "/-- The anchor phase's stationary leaf: the zero-time"
+Turing.Contract.zero	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	field notation; named
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+== region '/-- **The dispatch step**: from the anchor'
+Turing.Cfg.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.StateRenaming	via Turing.Cfg.mapState_inputPos; via Turing.Cfg.mapState_output; via Turing.Cfg.mapState_state; via Turing.Cfg.mapState
+Turing.Contract.inPhase	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Seam	via Turing.Contract.inPhase_post; via Turing.Contract.inPhase_pre; via Turing.Contract.inPhase_time
+Turing.Contract.zero	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.zero_post; via Turing.Contract.zero_pre; via Turing.Contract.zero_time
+Turing.MultiTapeTM.runFrom	red=semireducible	TCSlib.Complexity.TuringMachine.Deterministic	field notation
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+== region "/-- The scan's inner branch: on an empty"
+Turing.Cfg.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.StateRenaming	via Turing.Cfg.mapState_workTapePos; via Turing.Cfg.mapState_workTapes
+Turing.Contract.branch	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Seam	field notation; named; via Turing.Contract.branch_pre
+Turing.Contract.ofSegment	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.ofSegment_pre
+Turing.Contract.zero	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.zero_pre
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+Turing.skipTM_contract	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Catalog	named; via Turing.skipTM_contract_pre
+== region "/-- **The scan body's fields**, by the zoned cell"
+Turing.Cfg.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.StateRenaming	field notation; via Turing.Cfg.mapState_inputPos; via Turing.Cfg.mapState_output; via Turing.Cfg.mapState_state; via Tur
+Turing.Cfg.workTapeSymbols	red=semireducible	TCSlib.Complexity.TuringMachine.Configuration	via Turing.Cfg.workTapeSymbols_eq
+Turing.Contract.branch	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Seam	via Turing.Contract.branch_post; via Turing.Contract.branch_time
+Turing.Contract.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	field notation
+Turing.Contract.ofSegment	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.ofSegment_post; via Turing.Contract.ofSegment_pre; via Turing.Contract.ofSegment_time
+Turing.Contract.seq	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Seam	via Turing.Contract.seq_post; via Turing.Contract.seq_pre; via Turing.Contract.seq_time
+Turing.Contract.zero	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.zero_post; via Turing.Contract.zero_time
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+Turing.seekPost	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Catalog	via Turing.seekPost_inputPos; via Turing.seekPost_output; via Turing.seekPost_state; via Turing.seekPost_workTapePos; vi
+Turing.skipTM_contract	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Catalog	via Turing.skipTM_contract_post; via Turing.skipTM_contract_time
+== region "/-- The scan body's zoned head stays between its start"
+Turing.Cfg.mapState	red=semireducible	TCSlib.Complexity.TuringMachine.StateRenaming	via Turing.Cfg.mapState_workTapePos
+Turing.Contract.branch	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Seam	via Turing.Contract.branch_hi; via Turing.Contract.branch_lo
+Turing.Contract.ofSegment	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.ofSegment_hi; via Turing.Contract.ofSegment_lo; via Turing.Contract.ofSegment_post
+Turing.Contract.seq	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Seam	via Turing.Contract.seq_hi; via Turing.Contract.seq_lo
+Turing.Contract.zero	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.zero_hi; via Turing.Contract.zero_lo
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
+Turing.skipTM_contract	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Catalog	via Turing.skipTM_contract_hi; via Turing.skipTM_contract_lo
+== region '/-- The stationary anchor leaf as a pinned zero-time step'
+Turing.Contract.zero	red=semireducible	TCSlib.Complexity.TuringMachine.Build.Contract.Basic	via Turing.Contract.zero_hi; via Turing.Contract.zero_lo; via Turing.Contract.zero_post; via Turing.Contract.zero_pre; v
+Turing.ZoneSym	red=reducible	TCSlib.Complexity.TuringMachine.Build.ZoneTape	named
