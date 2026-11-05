@@ -1,10 +1,12 @@
 /-
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.Sampling
 import TCSlib.InformationTheory.Extractors
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -17,6 +19,10 @@ between two finite distributions by distinguishers (`EpsClose`,
 `InformationTheory/Extractors.lean`).
 On a finite sample space the two agree: two samplers are `δ`-close exactly when the laws they push
 the uniform seed distribution to are `δ`-close. This closes duplication-ledger item DL-4.
+
+## Main definitions
+
+None.
 
 ## Main results
 

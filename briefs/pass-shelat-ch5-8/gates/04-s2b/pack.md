@@ -1,10 +1,10 @@
 # Gate 04 (Pass–shelat ch. 5–8, S2b): external API audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in when the S2b PR
-is opened (after the dedup PR lands).
+**Status: ready to dispatch** (staged 2026-11-05; the evidence is under `evidence/`). The S2b PR is
+open into `cryptography/pass-shelat-ch2-4` ([Shilun-Allan-Li/tcslib#195](https://github.com/Shilun-Allan-Li/tcslib/pull/195)) and merges after this gate closes.
 
 **What is audited:** the S2b layer of the `Games` framework on `cryptography/pass-shelat-ch5-8-s2b`,
-at `<HEAD, 40 hex>`. It connects the framework core (S2a, gate 02, closed) to the machine model and
+at `afe5982f612081bba2fbcec9ab41adcbbc118b13`. It connects the framework core (S2a, gate 02, closed) to the machine model and
 to the ch. 2–4 layer.
 - **Gate type:** an **API gate** (user's ruling of 2026-11-04: one API gate each for S2a and S2b).
   Every statement of prongs A–D will be written against this layer.
@@ -22,7 +22,7 @@ The bundle holds this pack, then every file named below under a `## ===== <path>
 | **B2:** the concrete experiments as games, read through the new defining equations (F-3). | `Games/Bridges/Experiments.lean`, `Foundations/{Experiments, Probability}.lean` | R-2 |
 | **B3:** machines as oracle computations: `Move`, `MachineCodec`, `buildComp`, `NUPPT.toComp`/`toCompOn`; the ch. 2–4 next-query machines are an instance. | `Games/Machines.lean`, `Games/Bridges/Machines.lean` | — |
 | **The bit-string codec:** the shared codec of every prong's security games (efficiency T0). | `Games/BitCodec.lean` | — |
-| **The efficiency layer:** `PolyHandler` and its semantics; T1 stated, for the efficiency fill. | `Games/Efficiency.lean` | 2026-11-05 (fill after gate 02) |
+| **The efficiency layer:** `PolyHandler` and its semantics; T1 stated; `InteractiveHandler` (a handler that queries outer oracles, at most `perCall(n)` times per call) and T2 stated, for the efficiency fill. | `Games/Efficiency.lean` | 2026-11-05 (fill after gate 02; T2 added the same day, needed by the reductions of Thms 135.4, 144.1, 168.2, 170.4) |
 | **B4:** next-message strategies embedded as parties. The embedded execution is D8's (`exec_strategies`). | `Games/Bridges/Strategies.lean` | 2026-11-05 (strategies define, the framework proves) |
 | **Trace invariants** of `execT` (gate 02, round 2, note 5) | `Games/Protocols.lean` (`execT_trace`), `Games/OracleComp.lean` (`AllOutputs`) | — |
 
@@ -37,8 +37,9 @@ approval. Also:
    `pre-F1/…`). The universe restriction to `Type` is a declared deviation.
 2. **The codec must be faithful.** Check that `bitCodec` decodes exactly the well-formed moves,
    that its defaults are harmless, and that `decodeIdx`'s unary index cannot be gamed.
-3. **T1 must be a usable contract.** Check that `exists_handlerMachine` says what a reduction
-   needs:
+3. **T1 and T2 must be usable contracts.** Check that `exists_handlerMachine` (and its
+   interactive form `exists_interactiveHandlerMachine`, with an oracle machine `B` of budget
+   `q(n) · perCall(n)`) says what a reduction needs:
    - `B` is a machine;
    - its coins split as `(seed, A's coins)` by a bijection;
    - its output is the simulation's.
@@ -49,14 +50,22 @@ approval. Also:
 
 ## Attestations (maintainer execution claims; evidence under `evidence/`)
 
-To be filled at the pinned head. Already measured on the S2b work-in-progress head
-`e72acc2ad7275bcb459705a2fce19427b42a9138`:
-- **Elaboration:** a fresh-tree ladder over the 371 modules downstream of the changed files (with
-  upstream), then the 5 new S2b modules and the facade: all pass, with 0 errors.
-- **`sorry`:** one, `Games.exists_handlerMachine` (T1, the efficiency fill's target).
-- **Axioms:** 87 theorems across the S2b files. Only T1 depends on `sorryAx`; the other 86 use only
-  `propext`, `Classical.choice` and `Quot.sound`.
-- **Lint:** 0 findings on the new files.
+At the pinned head `afe5982f612081bba2fbcec9ab41adcbbc118b13` (the S2b branch after the base merge `827ad8e1`, which brought in #192
+and #193, and the T2 commits):
+1. **Elaboration** (`replay.log`, `replay-order.txt`): every module downstream of the 14 files the
+   base merge changed, every `Games` module, and their upstream, then `Checks.lean`: 772 modules,
+   each checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`. **All pass, with 0
+   errors.** The run was stopped twice by the session's two-hour limit for background jobs and
+   resumed from the next module each time (the log marks it).
+2. **`sorry`:** two in S2b's files: `Games.exists_handlerMachine` (T1) and
+   `Games.exists_interactiveHandlerMachine` (T2), the efficiency fill's targets.
+3. **Axioms** (`axioms.log`): `#print axioms` for every theorem in the 22 Lean files S2b changes
+   against the base (`changed-files.txt`): 236 theorems. 234 use only `propext`,
+   `Classical.choice` and `Quot.sound`. T1 and T2 depend on `sorryAx`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on those files: 0 findings in 22 files.
+5. **Restatement baseline:** the files F-1 rewrote are also in the bundle at the base
+   `a3c5fa8b72e50939822f22364647dc844a3914a0`, labelled `pre-F1/…`, for the meaning-preservation
+   check (brief, point 1).
 
 ## Findings format (auditor fills)
 

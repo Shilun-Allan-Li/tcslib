@@ -35,7 +35,7 @@ Run 1 (understand & design), 2026-10-27. Source: `blueprint/src/references/pass-
 | Label | Meaning | Where it will live |
 | --- | --- | --- |
 | `Machine-PPT` | D3: `PPT` structure, run/sampler semantics `run M n : (Fin (coins n) → Bool) → List Bool`, `ComputesFun` (same output for every coin string), typed decoding of outputs (`List Bool` → `Fin m → Bool`, wrong length = failure/`false`) | `TCSlib/Complexity/Randomized/PPT.lean` |
-| `Machine-NUPPT` | D4: nuPPT = PPT + advice `α n` of length `Cα (n+1)^cα`, run on `pairEncode (pairEncode x (α |x|)) r`; Boolean output `decide (out = [true])` | `Randomized/NonUniform.lean` |
+| `Machine-NUPPT` | *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* D4: nuPPT = PPT + advice `α n` of length `Cα (n+1)^cα`, run on `pairEncode (pairEncode x (α |x|)) r`; Boolean output `decide (out = [true])` | `Randomized/NonUniform.lean` |
 | `Machine-Closure` | pre/post-composition with a PPT, pairing of inputs, hard-wiring a per-`n` constant (index `i`, message `m_n`, sign bit) into advice, drawing extra coins, a PPT is an nuPPT | `Randomized/Closure.lean` |
 | `Machine-Repetition` | polynomially many calls of an nuPPT with fresh coins and a post-processing (majority, list, XOR) — the load-bearing lemma for GL, DL, multi-message | `Randomized/Repetition.lean` |
 | `Machine-Loop` | iterate a PPT-computable function `poly(n)` times (PRG expansion, GGM evaluation, Shamir/Blum–Micali) | `Randomized/Repetition.lean` (or Closure) |
@@ -192,7 +192,7 @@ unbounded distinguisher (membership in the image of `G`) has advantage `≥ 1/2`
 distinguisher; `acceptProb` on `G` is `1`, on `U_m` is `|image|/2^m ≤ 2^{n−m}`). Optional,
 difficulty 2. (The text argues via Shannon's theorem from ch. 1; the pigeonhole form is simpler.)
 
-**Def-69.3** — *Ensemble.* A sequence `{X_n}` with `X_n` a distribution over `{0,1}^*`. D6 reading:
+**Def-69.3** — *Ensemble.* *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* A sequence `{X_n}` with `X_n` a distribution over `{0,1}^*`. D6 reading:
 `structure Ensemble` with `seedLen outLen : ℕ → ℕ` (explicit `C(n+1)^c` formulas, or at least
 `PolyBound`) and `sample n : (Fin (seedLen n) → Bool) → (Fin (outLen n) → Bool)`; the distribution
 `X_n` is the pushforward of uniform seeds (dyadic). `Samplable X` := the sampler family is computed
@@ -201,7 +201,7 @@ arbitrary distributions over `{0,1}^*`; the text's own ensembles are all of this
 DDH/El Gamal ones that sample primes and `Z_q` — see Asm-105.1).
 Reuse: samplers `σ → γ` of `Foundations/Experiments.lean` are the one-`n` slices.
 
-**Def-69.4** — *Computational indistinguishability.* `X ≈ Y` iff for every nuPPT `D` there is a
+**Def-69.4** — *Computational indistinguishability.* *[Superseded by DESIGN D3–D6 (gate 03a, note 23): the frozen form is in `DESIGN.md` §1–§2 and the Lean files.]* `X ≈ Y` iff for every nuPPT `D` there is a
 negligible `ε` with `|Pr[t ← X_n : D(t)=1] − Pr[t ← Y_n : D(t)=1]| < ε(n)` for all `n`. Formal:
 `CompIndist X Y := ∀ D : NUPPT, Negligible (fun n => distAdv (X.sample n) (Y.sample n) (D.dist n))`
 where `D.dist n : (Fin (outLen n) → Bool) → (Fin (coins n) → Bool) → Bool` runs the machine on

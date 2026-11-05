@@ -30,7 +30,11 @@ no information — and it is the layout of the literal forms of Definition 26.1
 (`WorstCaseOneWay`, `inverterLit`) and Definition 69.4 (`Ensemble.IndistLit`). The
 machine-sequence form is reflected only as a sanity statement here: at every parameter `n`
 the activation is a deterministic polynomial-time function of `(y, r)`
-(`NUPPT.polyTimeComputable_runAtL`), i.e. each "`A_n`" is a polynomial-size machine.
+(`NUPPT.polyTimeComputable_runAtL`). The machine of that statement hard-wires `1^n` and
+`advice n`, so its size and its time constants depend on `n`: the lemma bounds neither the
+size of "`A_n`" nor its running time uniformly in `n` (it would hold equally with
+exponentially long advice). The polynomial size of Definition 26.8's `A_n` comes from
+`|advice n| ≤ adv.eval n` (the field `NUPPT.advice_length`), not from this lemma.
 
 **Deviation:** `NUPPT`: Def 26.8's machine-sequence formulation not formalized in the core
 (optional module). The equivalence of the two forms (`NUPPTSeq`, `nuppt_seq_iff_advice`, with
@@ -55,8 +59,8 @@ construction `NUPPT.ofPartial` and is off every critical path).
 * `Complexity.NUPPT.Uniform.advice_eq`, `NUPPT.Uniform.runAtL_eq`, `NUPPT.Uniform.runAt_eq`,
   `NUPPT.ofPolyTime_uniform` — uniform machines run on `⟨⟨⟨1^n, y⟩, []⟩, r⟩`.
 * `Complexity.NUPPT.polyTimeComputable_runAtL` — at a fixed parameter the activation is a
-  deterministic polynomial-time function of `(y, r)` (the "`A_n`" of the machine-sequence
-  form).
+  deterministic polynomial-time function of `(y, r)`, with constants that depend on `n` (not a
+  uniform size bound on the "`A_n`" of the machine-sequence form).
 * `Complexity.NUPPT.decides_of_decidesWithAdviceInTime` — (optional, sorried) a language
   decided with polynomial advice in polynomial time [AB09, Definition 6.16] is decided by an
   `NUPPT` at the input length.
@@ -115,10 +119,13 @@ theorem runLit_ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeCom
       f (pairEncode (pairEncode (advInput y.length y) []) (List.ofFn r)) := by
   rw [runLit_eq_runAtL, runAtL_ofPolyTimeUniform]
 
-/-- **The machine-sequence view, sanity direction.** At a fixed parameter `n`, the activation
-of `A` is a deterministic polynomial-time function of the pair `⟨y, r⟩`: the "`A_n`" of
-[PS10, Definition 26.8]'s first formulation is a polynomial-size machine (the advice `advice n`
-and the prefix `1^n` are hard-wired constants).
+/-- **The machine-sequence view, sanity direction.** At each fixed parameter `n`, the
+activation of `A` is a deterministic polynomial-time function of the pair `⟨y, r⟩`
+[PS10, Definition 26.8, first formulation, the "`A_n`"]. The machine hard-wires `1^n` and
+`advice n`, so its size and its time constants depend on `n`: the statement is per `n` and
+would hold equally with exponentially long advice. It is **not** the polynomial-size half of
+Definition 26.8; that half comes from `|advice n| ≤ adv.eval n` (`NUPPT.advice_length`), not
+from this lemma.
 
 **Proof sketch.** The raw input `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` is assembled from `⟨y, r⟩` by
 `PolyTimeComputable.pairEncode` with the constant strings `1^n` and `advice n`

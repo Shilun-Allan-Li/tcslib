@@ -40,7 +40,12 @@ perfect zero-knowledge with an expected polynomial-time simulator); only one ite
 treated (the text defers the `n`-fold protocol to its §7.2.1); the Goldreich abort form
 `PerfectZKAbort` holds for the one-attempt simulator at the concrete layer
 (`giSimAttempt_perfectAbort`) but is not claimed for `giProtocol` itself, whose honest
-prover's rejection-sampled `π` is not exactly uniform.
+prover's rejection-sampled `π` is not exactly uniform. No honest prover drawing its
+permutation from polynomially many fair coins could do better (`n! ∤ 2^c` for `n ≥ 3`), so
+neither `PerfectZK` nor `PerfectZKAbort` has a source instance under D8 and D10 (ruling G3-4
+of gate 03; see their docstrings in `ZeroKnowledge/Defs.lean`); `gi_statZK` is the form in
+which [PS10, Theorem 122.3] is stated, and `PerfectZKAbort.statZK` relates the abort form to
+it.
 
 ## Contents
 
@@ -79,8 +84,8 @@ prover's rejection-sampled `π` is not exactly uniform.
   (§4.6 Zero-knowledge proofs, pp. 122–124.)
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
   draft of 22 January 2026 (the concrete probability layer).
-* O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge University
-  Press, 2001, Definition 4.3.1 (perfect zero-knowledge with abort).
+* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
+  University Press, 2001, Definition 4.3.1 (perfect zero-knowledge with abort).
 -/
 
 namespace TCSlib.Cryptography
@@ -281,7 +286,7 @@ theorem uprob_giSimAttempt_some {n : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ :
   linarith
 
 /-- The abort form of perfect zero-knowledge for one attempt of the simulator
-[Goldreich, Definition 4.3.1; PS10, Algorithm 123.4] (Claim-123.b, `PerfectZKAbort` shape at
+[Gol01, Definition 4.3.1; PS10, Algorithm 123.4] (Claim-123.b, `PerfectZKAbort` shape at
 the concrete layer): the attempt aborts with probability at most `1/2`, and for every test
 set `T`, `Pr[T(view)] · Pr[attempt ≠ ⊥] = Pr[attempt ≠ ⊥ ∧ T(attempt)]`. -/
 theorem giSimAttempt_perfectAbort {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}

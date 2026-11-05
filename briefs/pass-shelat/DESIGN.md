@@ -44,7 +44,11 @@ D2. **Two layers, as in the Garg plan.** Concrete reductions are reused verbatim
     `ClassNP/PolyTimePairing.lean` with `NUPPT.polyTimeComputable_output` as a black box, plus
     the two new machine lemmas of D11, (iii) negligible-function arithmetic through
     `not_negligible_iff`. New concrete lemmas go into campaign-owned files, never into the
-    frozen Garg files.
+    frozen Garg files. *Exception* (gate 03a, ruling G3-7a, user 2026-11-05): the general
+    helper `negligible_zero` moved from `Asymptotic/Ensembles.lean` into
+    `Foundations/Negligible.lean`, full name `TCSlib.Cryptography.negligible_zero` unchanged; its
+    copy `negligible_const_zero` (`ZeroKnowledge/Defs.lean`) is left to the duplicate clean-up
+    (ruling G3-5).
 
 D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     `TCSlib/Complexity/Randomized/PPT.lean`): a `Turing.FinTM Bool` that halts on **every** input
@@ -57,7 +61,10 @@ D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     `runAt n y r := output ⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` with `r : Fin (coins.eval n) → Bool`; the
     random tape is part of the input, the time bound holds for every coin string
     ([PS10, Def 23.5], worst case), and "`A` computes `f` with probability 1" ([PS10, Def 24.6])
-    is `Computes`: equality for every coin string. Honest evaluators ("easy to compute") are
+    is `Computes`: equality for every coin string. `Computes` does not require `Uniform`: Def
+    24.6 proper is the case `A.Uniform ∧ A.Computes f`; for a non-uniform `A` it is the advice
+    analogue and holds for uncomputable `f` (advice `[h n]`), so `∃ A, A.Computes f` is not "a
+    PPT computes `f`" (gate 03a, finding 1). Honest evaluators ("easy to compute") are
     stated as `PolyTimeComputable` string functions on `⟨1^n, x⟩`. Recorded deviations:
     totality on all inputs (behaviour class unchanged: a machine polynomial-time on well-formed
     inputs is clocked by `timed_universal`; the optional lemma `NUPPT.ofPartial` is not needed
@@ -86,7 +93,9 @@ D5. **Domains are typed at each parameter.** A function family is
     Def 69.4: `D(t)`) the frozen definition is the literal one (`WorstCaseOneWay` with
     `inverterLit`, `Ensemble.IndistLit`), and the `1^n` form (`Ensemble.Indist`) is the headline
     form of the theorems, related by `Indist.toLit` (always) and `IndistLit.toIndist`
-    (injective `ℓ`, i.e. every ensemble of the text). The two are never unified silently.
+    (injective `ℓ`, i.e. every ensemble of the text; for constant `ℓ` the two forms coincide
+    as well, by point tests, which is not formalized: gate 03a, note 14). The two are never
+    unified silently.
 
 D6. **Ensembles** ([PS10, Def 69.3]) are `Ensemble ℓ := ⟨σ : ℕ → Type, Fintype, X n : σ n → (Fin (ℓ.eval n) → Bool)⟩`
     with arbitrary finite seed types (the uniform ensemble has seeds `Fin (ℓ n) → Bool`, the
@@ -160,6 +169,12 @@ D11. **Admissions policy.** `Complexity.polyTimeComputable_iterateFind`
     audit P7-1 added `add`/`sub`/bit length) are explicit hypotheses
     (`Candidates/Arithmetic.lean` bundle), never axioms; `#print axioms` of every headline must
     show `[propext, Classical.choice, Quot.sound]` plus, at most, the admissions named here.
+    *Status* (gate 03a, note 20; decision log 2026-10-28): run 3b proved
+    `polyTimeComputable_iterateFind`, so the permitted machine admission is unused.
+    `NUPPT.ofPartial` was never written; the only machine-layer `sorry` is the optional bridge
+    `NUPPT.decides_of_decidesWithAdviceInTime` (`Randomized/NonUniform.lean`), whose sketch does
+    `ofPartial`'s clocking inline. It is the named admission of that optional module (open
+    question 5, ruled outside the core on 2026-10-27).
 
 ---
 
@@ -985,7 +1000,8 @@ Issues found in this synthesis and resolved here (not raised by the panel):
    computing with probability one (equivalent by `Computes` + `ofPolyTimeUniform`).
 4. `inverter`: wrong-length output = failure (D5); verdict `= [true]` (normalisable by `ifEq`).
 5. `Ensemble`: dyadic samplable distributions; `Indist` gives `D` the input `1^n` (literal form
-   `IndistLit`, equivalent for injective `ℓ`).
+   `IndistLit`, equivalent for every `PolyExpr ℓ`: proved for injective `ℓ`, the constant case
+   by point tests, not formalized; gate 03a, note 14).
 6. `WeakOneWay`: `0 < q n` made explicit; Theorem 35.1 with the text's `m = 2nq(n)` and a
    rejection-sampled position (statistical term absorbed).
 7. `OracleEnsemble.Indist`: next-query machines with an explicit universally quantified
@@ -1264,7 +1280,9 @@ message sampler (`0^n`); Theorem 124.1's string-level Levin reduction to 3COL (h
 5. **Optional literal modules.** `NUPPTSeq` (Def 26.8 verbatim), `exists_queryTree`
    (`OracleTM` bridge) and `NUPPT.ofPartial` are specified as optional modules with one named
    admission each; confirm they are out of the mandatory core (they are not needed by any
-   chapter 2–4 theorem).
+   chapter 2–4 theorem). **Ruled** (decision log 2026-10-27): outside the mandatory core.
+   The one admission in this area is the optional bridge
+   `NUPPT.decides_of_decidesWithAdviceInTime` (decision log 2026-10-28; see D11).
 6. **Encoding scheme for Theorem 63.1 (run-3 audit P3-4).** `theorem_63_1` and `fUniversal_*`
    are stated for schemes with an at most exponential canonizer (`CanonizerExp c`); the only
    scheme in the library (`Turing.exists_effectiveMachineCode`) has no bound on its canonizer,

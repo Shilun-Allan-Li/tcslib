@@ -1,10 +1,9 @@
 # Gate 03f1 ([PS10] ch. 2–4, discrete log, its hard-core bit, ElGamal): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
-PR has landed (`PLAN.md`).
+**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/f1/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`<HEAD, 40 hex, from git rev-parse>`. This pack covers the discrete-log candidate (the assumption
+`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the discrete-log candidate (the assumption
 and the collection), its hard-core bit, ElGamal, and the concrete samplers they use.
 - **This pack gates fills.** Its files hold **21 `sorry`s**. By the user's ruling of 2026-11-05 they
   will be filled after this pack closes, discrete log first, because ch. 5–8 cites the DL candidate
@@ -56,7 +55,18 @@ Do not give a blanket approval.
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-To be filled at the pinned head:
+### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/f1/`)
+
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 333 modules, each
+   checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
+   43 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 24 headline prints from `audits/pass-shelat/Checks.lean` for
+   declarations in this pack's files: 9 use only the standard axioms, and
+   15 depend on `sorryAx`.
+3. **Admissions** (`admissions.txt`): 21 declarations in this pack's files contain `sorry`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 0 findings in 5 files.
+
+Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
 - the axiom prints of this pack's headlines;
 - **admissions:** the 21 `sorry`s, listed by declaration:

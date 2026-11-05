@@ -36,15 +36,24 @@ activation has exactly the arguments of the activation that produced its last me
 last message *is* its verdict (`Protocol.outV_eq_getLast_of_moverIsV`); the chapter's protocols
 are stated with the prover moving last, and the `n`-fold protocols read the verifier's last
 message as the verdict.
+Repetition convention (gate 03e, note 8): an iteration with an odd number of messages (prover,
+verifier, prover) is repeated under strict alternation by appending one dummy empty verifier
+message to each iteration, so that every iteration starts with the prover; the fourth move of
+`giProtocolRep` and of `colProtocolRep`, and the filler moves of the sequential repetition of
+[PS10, §7.2.1] in ch. 7, follow this convention.
 `Strategy.Efficient` ([PS10, §4.4], time complexity of an interactive machine) is one
 activation of a uniform `Complexity.NUPPT` at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the
 whole random tape; the time is polynomial in the total input length rather than in `|x|`
-alone (the text's `t(|x|)` "regardless of messages" would leave the simulator's call to `V*`
-on long auxiliary inputs ill-defined; see D8). Consequently `Efficient` alone does not bound a
-party's work in `|x|` against a counterparty that sends long messages; the message-prefix cap
-`Strategy.ReadsPrefix m` — the strategy depends only on the first `m(|x|)` bits of each received
-message, as a time-`t(|x|)` machine of the text necessarily does — restores the text's bound,
-and the class `IP` (`InteractiveProofs.lean`) requires it of the verifier (run-3 audit P9-1).
+alone (the text's bound `t(|x|)`, which holds whatever the messages received, would leave the
+simulator's call to `V*` on long auxiliary inputs ill-defined; see D8). Consequently
+`Efficient` alone bounds neither a party's work in `|x|` against a counterparty that sends long
+messages nor the length of its own messages. The proof systems (`InteractiveProofs.lean`)
+therefore add the bound on the honest prover's messages, `Protocol.ProverBounded` (ruling G3-3
+of gate 03, the convention of ch. 6: `Efficient` plus polynomially bounded honest messages);
+the message-prefix cap `Strategy.ReadsPrefix m` — the strategy depends only on the first
+`m(|x|)` bits of each received message, as a time-`t(|x|)` machine of the text necessarily
+does — is the text's bound on the reading side, and the class `IP` (`InteractiveProofs.lean`)
+requires it of the verifier (run-3 audit P9-1).
 
 ## Main definitions
 
@@ -59,6 +68,9 @@ and the class `IP` (`InteractiveProofs.lean`) requires it of the verifier (run-3
   (Def-114.b); `Protocol.transcriptWith`, `Protocol.transcript` (Def-115.c), `Protocol.outV`,
   `Protocol.outP`, `Strategy.out` (Def-115.d), `Protocol.viewV`, `Protocol.viewP`,
   `Protocol.execution` (Def-115.a/b), `Protocol.withV`.
+* `TCSlib.Cryptography.Protocol.ProverBounded` — the honest prover's messages have at most
+  `B(|x|)` bits on instances with a witness (Def-116.b, the writing half of the text's bound
+  in `|x|`; ruling G3-3).
 
 ## Main results
 
@@ -140,17 +152,21 @@ theorem ofNUPPT_next (A : NUPPT) (x z r : List Bool) (hist : List (List Bool)) :
     (ofNUPPT A).next x z r hist =
       A.runAtL x.length (pairEncode (pairEncode x z) (encodeMsgs hist)) r := rfl
 
-/-- A PPT strategy [PS10, §4.4, time complexity of an interactive machine] (Def-116.b): the
-next-message function is computed by a uniform `NUPPT` with the same coin polynomial, one
-activation per message at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the whole random tape.
+/-- An efficient strategy, the formal counterpart of the text's PPT interactive machine
+[PS10, §4.4, time complexity of an interactive machine] (Def-116.b): the next-message function
+is computed by a uniform `NUPPT` with the same coin polynomial, one activation per message at
+parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the whole random tape.
 
 **Deviation (D8):** per-activation time polynomial in the total input length `|x| + |z| +
-|messages|` instead of the text's `t(|x|)` "regardless of the messages". The number of
-activations is bounded by the protocol's `rounds`, but the messages of an unbounded
-counterparty may be arbitrarily long, so `Efficient` alone does not bound a party's work in
-`|x|` (run-3 audit P9-1). The text's bound is recovered by adding the message-prefix cap
-`ReadsPrefix m`: an efficient strategy that reads only `m(|x|)` bits of each message runs in
-time polynomial in `|x| + |z|`, and the class `IP` requires the cap of the verifier. -/
+|messages|` instead of the text's `t(|x|)`, which bounds the running time whatever the
+messages received. The number of activations is bounded by the protocol's `rounds`, but the
+messages of an unbounded counterparty may be arbitrarily long, so `Efficient` alone does not
+bound a party's work in `|x|` (run-3 audit P9-1), nor the length of the messages it writes.
+The text's bound is recovered on the reading side by the message-prefix cap `ReadsPrefix m`
+(an efficient strategy that reads only `m(|x|)` bits of each message runs in time polynomial
+in `|x| + |z|`; the class `IP` requires it of the verifier) and on the writing side, for the
+honest prover, by `Protocol.ProverBounded` (its messages have at most `B(|x|)` bits; the proof
+systems require it, ruling G3-3 of gate 03). -/
 def Efficient (S : Strategy) : Prop :=
   ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
     ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist
@@ -298,6 +314,27 @@ prover's and the verifier's random tapes at parameter `|x|` [PS10, §4.4, random
 (Def-116.a). -/
 abbrev ExecCoins (π : Protocol) (P' : Strategy) (x : List Bool) : Type :=
   P'.Coins x.length × π.V.Coins x.length
+
+/-- **The honest prover's messages are short** with respect to the witness relation `R` and
+the polynomial `B` [PS10, §4.4, time complexity: a machine of time complexity `t(|x|)` halts
+within `t(|x|)` steps whatever it receives, so each of its messages has at most `t(|x|)` bits]:
+on every instance `x` with a witness `y` (`R x y`), whatever its random tape and whatever it
+has received, the honest prover's message has at most `B(|x|)` bits.
+
+**Deviation (D8; ruling G3-3 of gate 03, the convention of ch. 6):** `Strategy.Efficient`
+bounds a party's work, hence its messages, only in the total length of its input, which
+contains the messages it has received; the bound in `|x|` is this separate condition, a field
+of `EfficientProverProof` (and, for the completeness witness, part of the completeness clause
+of `InteractiveProof`). Without it an honest prover that echoes the verifier's messages —
+zero-knowledge for one run — lets a cheating verifier that doubles its messages build a view
+of length `2^{rounds}`, which the composition theorems of ch. 7 cannot simulate. -/
+def ProverBounded (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : Prop :=
+  ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
+
+/-- A message bound `B` implies every pointwise larger bound `B'`. -/
+theorem ProverBounded.mono {π : Protocol} {R : List Bool → List Bool → Prop} {B B' : PolyExpr}
+    (h : π.ProverBounded R B) (hle : ∀ n, B.eval n ≤ B'.eval n) : π.ProverBounded R B' :=
+  fun x y r hist hxy => (h x y r hist hxy).trans (hle _)
 
 /-- The protocol with the verifier replaced by `V'` (the cheating verifier `V*` of the
 zero-knowledge definitions), same prover, round count and first mover. -/
