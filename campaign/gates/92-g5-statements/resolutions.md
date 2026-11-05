@@ -18,3 +18,6 @@ the remaining Hennie–Stearns admission is authorized for this statement gate.
 | 3 | minor | "The converse cannot say more" overstates the limitation. | **True; reworded** as the auditor proposed: without an image hypothesis the converse cannot in general assert `o = w.map e`. |
 | 4 | minor | The bundle lacked the replay's log. | **True:** `replay-lg5` passed after staging (325/325; `evidence/merged-tree/`, now with its log). Round 2's replay is `replay-lg5b`. |
 | 5–10 | note | Integrity and freeze; the two-tape contract; the coding semantics; `universal_TlogT`'s relaxed quantifier; axioms and seals; homes, screen, names, lint. | Agreed. On note 9, `universal_TlogT` is not claimed admission-free: it reaches `sorryAx` through `two_work_tapes_run` until G5's fill. |
+
+**Round 2 staged (2026-11-04):** `pack-r2.md`, at #189's head `9e96f646`. Bundle SHA-256
+`11256fb77c7abb76f0f4a893801add70741a9946e0a0145e29468dd38426f64d` (39 sections), the records at `de1069da`.
