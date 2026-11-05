@@ -68,3 +68,11 @@ modules 73, mismatches 0, static total 30), at #196's head
 `97adec6962e55c3a8ff191e602627674697fef18` (the campaign after #197 merged in; no file of the PR
 changed), chained from `oleans-lzsa2` (`evidence/round2/merged-tree-after-197/`). It is the replay
 of record for the merge while the campaign's Lean stays at #197's.
+
+## Round 2 findings (received 2026-11-05)
+
+`findings-r2.md`, verbatim from the exchange inbox (`arora-barak-ch3-4/inbox/deepen-api-r2-findings.md`,
+exchange commit `bacfe4e2636a0d2a1b6f90da8a99d04719e597f1`), SHA-256 `f2d5a138512f8b515e9c0f652c08b985c028f48a87c0ff0592ff95f098dd6dfa`.
+
+**Verdict: PASS.** 0 blockers, 0 majors, 1 minor (F1, accounting), 7 notes. Both round-1 majors are
+resolved (notes 2–3), and minors 3–6 (notes 4–7).
