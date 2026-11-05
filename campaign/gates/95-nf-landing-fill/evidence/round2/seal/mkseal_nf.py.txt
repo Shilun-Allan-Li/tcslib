@@ -1,0 +1,125 @@
+"""Gate 95 (#191), finding 2: the rule-10 seal of `NDNormalForm` regenerated on the repaired head.
+
+The gate's `evidence/seal/mkseal.py` (the review's generator, its anchor found rather than fixed),
+re-run on the repaired head's blob with candidates regenerated at its seven imports, and extended:
+  * the candidates may be the Lean audit's SEAL_CANDIDATES block (`name inst=...` lines, the
+    review's format), the textual list `seal-candidates-textual.txt`, or bare names;
+  * a whole-file variant (`NFSealWhole`) seals from the top of `namespace FinNDTM`, so that the
+    landing's edits before the continuation's section (`nf_pack`'s `hinit`, finding 3) are covered;
+  * the source controls are the review's 41 plus the new ones for `Build/Contract/Basic`
+    (`Turing.Segment`, `Turing.HeadBox`);
+  * `NFAx` is written from the same blob.
+
+usage: python3 -I mkseal_nf.py <NDNormalForm.lean at 10c01517> <candidates> <old src controls part>
+           <new src controls part> <out dir> [<brief NFSealDefs.txt>]
+Outputs (`.lean.txt`, the evidence naming; copy to `.lean` to elaborate): NFSeal, NFSealWhole,
+NFSealCtl_unsealed, NFSealCtl_sealed, NFSrcCtl_unsealed, NFSrcCtl_sealed, NFAx, and seal-set.txt."""
+import sys, re
+
+mod, candf, srcold, srcnew, outd = sys.argv[1:6]
+brieff = sys.argv[6] if len(sys.argv) > 6 else None
+L = open(mod, encoding='utf-8').read().split('\n')
+assert L[-1] == '' and L[-2] == 'end Turing' and L[-3] == '' and L[-4] == 'end FinNDTM', L[-4:]
+# the continuation's section: the one bare `section` line, followed by the file's own erasure
+ks = [i for i, l in enumerate(L) if l == 'section']
+assert len(ks) == 1, ks
+K = ks[0]
+assert L[K - 1] == '' and L[K + 2].startswith('attribute [-simp] '), L[K - 1:K + 3]
+ERASE = L[K + 2]
+NS = L.index('namespace FinNDTM')
+assert L[NS + 1] == '' and L[NS + 2].startswith('/-- '), L[NS:NS + 3]
+
+cand = []
+for l in open(candf, encoding='utf-8'):
+    l = l.strip()
+    if not l or l.startswith('#') or l.startswith('SEAL_CANDIDATES') or l.startswith('SIMP_DEFS'):
+        continue
+    parts = l.split()
+    n = parts[0]
+    inst = len(parts) > 1 and parts[1] == 'inst=true'
+    if re.search(r'(_sizeOf_\d+|_sizeOf_inst|\._flat_ctor|\._sunfold|\._unsafe_rec)$', n):
+        continue
+    cand.append((n, inst))
+names = sorted(dict.fromkeys(n for n, _ in cand))
+insts = [n for n, i in cand if i]
+if brieff:
+    brief = [l.strip() for l in open(brieff, encoding='utf-8') if l.strip() and not l.startswith('#')]
+    assert set(brief) <= set(names), set(brief) - set(names)
+print('seal size', len(names), '| of which instances', len(insts))
+open(outd + '/seal-set.txt', 'w', encoding='utf-8').write('\n'.join(names) + '\n')
+
+
+def seal_lines(header):
+    out = [header]
+    for i in range(0, len(names), 4):
+        out.append('attribute [local irreducible] ' + ' '.join(names[i:i + 4]))
+    return out
+
+
+block = seal_lines('-- ===== review seal (reviewer-written): every other-file TCSlib definition in scope =====') + ['']
+# 1. the review's placement: before the continuation's section (its own erasure covers it)
+sealed = L[:K] + block + L[K:]
+open(outd + '/NFSeal.lean.txt', 'w', encoding='utf-8').write('\n'.join(sealed))
+# 2. whole file: the seal at the top of `namespace FinNDTM`; the part before the continuation's
+# section moved into its own section with the same erasure (a second erasure inside the file's
+# own section would only warn, so the two erasures do not overlap)
+whole = (L[:NS + 2]
+         + seal_lines('-- ===== maintainer seal (gate 95 F2): the whole file, from the top of the namespace =====')
+         + ['', 'section RV_BeforeContinuation', '', ERASE, '']
+         + L[NS + 2:K]
+         + ['end RV_BeforeContinuation', '']
+         + L[K:])
+open(outd + '/NFSealWhole.lean.txt', 'w', encoding='utf-8').write('\n'.join(whole))
+
+ctl = r'''
+-- ===== review controls (reviewer-written) =====
+open Lean Elab Command Meta in
+elab "#rv_ctl " ids:ident* : command => do
+  let mut nR := 0
+  let mut nE := 0
+  let mut lines : Array String := #[]
+  for id in ids do
+    let n ← liftCoreM (realizeGlobalConstNoOverload id)
+    let ci ← getConstInfo n
+    let lvls := ci.levelParams.map mkLevelParam
+    let r ← liftTermElabM <| (do
+      try isDefEq (mkConst n lvls) ci.value! catch _ => pure false)
+    let e ← liftTermElabM <| (do
+      try
+        match ← getEqnsFor? n with
+        | some eqs =>
+          if h : 0 < eqs.size then
+            let ty := (← getConstInfo eqs[0]).type
+            forallTelescope ty fun _ body => do
+              match body.eq? with
+              | some (_, l, r) => isDefEq l r
+              | none => pure false
+          else pure false
+        | none => pure false
+      catch _ => pure false)
+    if r then nR := nR + 1
+    if e then nE := nE + 1
+    lines := lines.push s!"CTL {n} rfl={r} eqn={e}"
+  logInfo m!"CONTROLS {ids.size}: rfl closes {nR}, eqn closes {nE}\n{String.intercalate "\n" lines.toList}"
+'''
+ctl_call = '#rv_ctl ' + ' '.join(names)
+uns = L + [ctl, ctl_call, '']
+open(outd + '/NFSealCtl_unsealed.lean.txt', 'w', encoding='utf-8').write('\n'.join(uns))
+reapply = [''] + seal_lines('-- the seal again, at top level, for the controls')
+sea = sealed + reapply + [ctl, ctl_call, '']
+open(outd + '/NFSealCtl_sealed.lean.txt', 'w', encoding='utf-8').write('\n'.join(sea))
+
+src = open(srcold, encoding='utf-8').read().rstrip('\n') + '\n' + open(srcnew, encoding='utf-8').read()
+src_lines = src.rstrip('\n').split('\n')
+open(outd + '/NFSrcCtl_unsealed.lean.txt', 'w', encoding='utf-8').write('\n'.join(L[:-1] + src_lines + ['']))
+open(outd + '/NFSrcCtl_sealed.lean.txt', 'w', encoding='utf-8').write(
+    '\n'.join(sealed[:-1] + reapply + [''] + src_lines + ['']))
+
+AX = ['Turing.FinNDTM.exists_codeNDTM_accepts_linear',
+      # the module's other public constants: `nf_Ph`'s derived instances (review F5)
+      'Turing.FinNDTM.instDecidableEqNf_Ph', 'Turing.FinNDTM.instDecidableEqNf_Ph.decEq',
+      'Turing.FinNDTM.instFintypeNf_Ph']
+ax = L[:-2] + [f'#print axioms {n}' for n in AX] + [''] + L[-2:]
+open(outd + '/NFAx.lean.txt', 'w', encoding='utf-8').write('\n'.join(ax))
+print('wrote', outd, '| controls', len(names), '| source controls',
+      len(re.findall(r'^-- C\d+ ', src, flags=re.M)))
