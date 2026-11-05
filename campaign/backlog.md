@@ -4287,3 +4287,21 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   static-equal; `oleans-ledge`). **#184 is clear to merge.** The
   deepening fill's brief issues once #182 and #184 have both merged.
 
+* **Cloud session (2026-11-05; the maintainer moved to a cloud VM, `HANDOFF.md` §1).** The first
+  cloud snapshot `oleans-cloud0` (869 modules; the 20 PFR modules left out, the user's ruling) was
+  built with a resumable, two-worker bootstrap (`devtools/seyoon/bootstrap_par.py`).
+  - **Gate 95 (#191, NF's landing): round 1 OPEN 0/1/4** (inline `BufferWords` re-derivations).
+    **Ruled: repair.** Repaired at `10c01517`; `replay-lnf2` passed (4 modules); round 2
+    dispatched (2026-11-05).
+  - **Gate 96 (#196, the deepening's API): round 1 OPEN 0/2/4** (`NoEdge` without `_iff`;
+    `apply_of_lt` re-derived `recordStep_window`). **Ruled: harvest** (`Cfg.InWindow.apply_iff`,
+    `.mono`), WS-1 acknowledged by kind and widened, QL-X1 an idiom, CQ-1 opened. Repaired at
+    `b1b5199b`; `replay-ldwa2` passed (73 modules); round 2 dispatched (2026-11-05).
+  - **Gate 97 (#197, G5's consumer API): PASS 0/0/6**; the minors swept at `20e7fc75`
+    (`zoneRowPre_congr` published, the user's ruling); `replay-lzsa2` passed (111 modules).
+    **Gate 97 closed; #197 merged (user, 2026-11-05, `33ceeed1`).** `oleans-lzsa2` is the
+    campaign's snapshot; #191's and #196's replays are re-run on the merged tree from it.
+  - CE-1 acknowledged for 12.2c. The ledger records WS-1, RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1,
+    WC-1 and QL-X1 (`duplication-ledger.md`).
+  - Next: G5's fill brief (drafting; issues after its pre-ship on the merged tree), the deepening
+    fill's brief after #196 merges, and H's brief after NF lands.
