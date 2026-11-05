@@ -765,9 +765,16 @@ own file's `lgv_le_succ` for `hv |x| ≤ |x|` instead of re-deriving it (`252bbc
 - `Diagonalization/NTimeDiagonalizer`'s `qy_log_bits`, with `Nat.size n = Nat.log 2 n + 1` also
   inline in its `qy_two_pow_bits_le` (E-D's file, in flight).
 
-Each is 1 declaration of its file's hundreds, so the one-fifth rule is not in question. **Accepted
-(user, 2026-11-04)** as debt. **Disposition:** the dedup window (12.2c): publish the equality
-beside `LogProg.length_bits_le_log` and re-point the three after E-D lands.
+**Census** (gate 89, round 4's minor 2; members over all declarations, private included):
+- `Constructible` 1/28;
+- `QuasiPolyHierarchy` 1/25;
+- `NTimeDiagonalizer` 2/236 (`qy_log_bits` and `qy_two_pow_bits_le`'s inline equality).
+
+None reaches one fifth. The halves of these equalities also prove LS-2's converse
+(`QuasiPolyHierarchy:63`, `NTimeDiagonalizer:430`, `:446`); they stay within LS-3, and the one
+public converse lemma is `LogProg.length_bits_le_log`. **Accepted (user, 2026-11-04)** as debt.
+**Disposition:** the dedup window (12.2c): publish the equality beside `LogProg.length_bits_le_log`
+and re-point all four occurrences (the three privates and the inline step) after E-D lands.
 
 **BL-1, elementary bounds on the binary length** (gate 89, round 4's binary-length sweep,
 `campaign/gates/89-space-facts-api/evidence/round4/ls1-search/bitsweep.tsv`). One- and two-line
@@ -793,6 +800,47 @@ colleague-owned `CircuitComplexity/Meyer*`. `Machines/Bin` sits above the `Circu
 rule is not in question. **Accepted (user, 2026-11-04)** as debt. **Disposition:** the dedup window
 (12.2c): one home for the five bounds below both layers (beside `Turing.length_bits_le_self`), then
 re-points where the imports allow. `CircuitComplexity` needs its own authorization.
+**Scope corrected (gate 89, round 4, major 1).** The list above missed:
+- `Codec/Layout`'s `wP_le` (iii, through logarithms);
+- `PathHard`'s `two_pow_ell_le` (v) and `ell_mono` (ii);
+- `RandomWalkPad`'s `padDegree_le` (v);
+- `PrimeFind:204`, `:318` and `TQBFHardParams`' `wP_le` (iii).
+
+With `Layout`'s `wP_le`, `Layout` stood at 2 of 9 declarations. **Ruled (user, 2026-11-04): "Re-point
+now in #181."** Round 5 of #181 (`d789d6db`, `98912ab2`) re-points every site whose file can reach
+a canonical lemma:
+- (v) `two_pow_bits_le` moves from `Codec/Layout` to `Machines/Bin`. `Parse:90`, `PathHard`'s
+  `two_pow_ell_le`, `RandomWalkPad`'s `padDegree_le`, `BPLInP:399` and `PolyAmp.two_pow_bits_le`
+  cite it;
+- (iii) `Layout`'s `wP_le` cites `Turing.length_bits_le_self` through the new `Codec.wP_eq`, and
+  `TQBFHardParams`' `wP_le`, a restatement of `Codec.wP_le`, is removed. `PrimeFind:204`, `:318`,
+  `CodeSimulator:1448`, `RecordTable:2764`, `:4256` and `SpaceAmplifyPoly`'s `ell_le` cite
+  `length_bits_le_self`;
+- (i) `ISCountGenCorrect`'s `bits_succ_le` cites `length_bits_le`;
+- (ii) `PathHard`'s `ell_mono` cites `length_bits_mono`;
+- (iv) `WindowClock:119` cites `record_pos_lt`.
+
+`Layout` now has no member. **The residual**, every member of the sweep's classification at
+#181's round-5 head (`campaign/gates/89-space-facts-api/evidence/round5/ls1-search/bitsweep-classes.md`):
+- (i) `Meyer:189` and `MeyerTableau:437`: colleague-owned `CircuitComplexity`;
+- (ii) `RecordTable:2762`, `InputLength:418`, `:420` and `Catalog:4125`: `Machines/Bin` is above
+  these files;
+- (iv) `Mult:254`, `:255`: no (iv) lemma that this file can reach. `PolyAmp.lt_two_pow_bits` and
+  `Turing.record_pos_lt` are two public statements of (iv) in different layers and forms;
+- `NTimeDiagonalizer`, E-D's file in flight:
+  - (ii) `qy_bits_len_mono`;
+  - (iii) `qy_call_bound:455`, which E-D's landing already re-points;
+  - (iv) `qy_lt_two_pow_bits`;
+  - (v) `qy_two_pow_bits_le`;
+  - (iv) **`qy_ones_ge:415–417`, new in round 5's sweep** (two inline `Nat.lt_size_self` steps); **acknowledged (user, 2026-11-04)**. The acknowledgment was asked on the
+    premise that E-D's landing re-points it. That premise was wrong: the file does not reach `Machines/Bin`,
+    so its disposition is the dedup window.
+
+**Disposition of the residual:**
+- E-D's landing PR re-points `qy_call_bound:455` (iii), since the file reaches `Encoding`;
+- `NTimeDiagonalizer`'s other four members cannot reach `Machines/Bin`, like `RecordTable`'s, and go
+  to the dedup window with the rest;
+- `CircuitComplexity` comes under its own authorization.
 
 **CL-1, the codec languages' sibling idiom** (gate 91, the edge-mode PR's screen; ruled with it,
 user, 2026-11-04). Each code language of `SpaceComplexity/Codec` has its own definition, its own

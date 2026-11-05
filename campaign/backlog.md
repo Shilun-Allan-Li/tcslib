@@ -4154,7 +4154,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 * **E-D issued (2026-11-04):** `campaign/fills/eq/briefs/eq-fill-diagonalizer.md` at the issue commit
   `c8b0711408c02a2c7e254663511ecdb65516ae88` (the campaign tip after #176, Lean `711f5444`), Claude. The
   dispatch copy `exchange/outbox/fills/eq-fill-diagonalizer.md` (SHA-256
-  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2).
+  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2). (Gate 89, round 5: `NTimeDiagonalizer` does not reach `Machines/Bin`, so its other BL-1 members — `qy_bits_len_mono`,
+  `qy_lt_two_pow_bits`, `qy_ones_ge`, `qy_two_pow_bits_le` — wait for the dedup window.)
 * **The general `savitch`: the deepening design** (`campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md`,
   2026-11-04; probes `probes/`): Hydroxyi's search needs no restating. A generic embedding
   theorem (`AHalt.embed`, proved in the probe) transports any halting run of `A` into a larger

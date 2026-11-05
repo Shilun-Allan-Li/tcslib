@@ -1,0 +1,180 @@
+# rev 98912ab293dc329b3f7274ee27977fa19789ce78; pattern: Nat\.size_le([^_[:alnum:]]|$)|size_le\.m|Nat\.size_le\]|size_le_size|lt_pow_succ_log_self|length_bits_le|size_eq_bits_len|Nat\.lt_size([^_[:alnum:]]|$)|lt_size\.m|lt_size_self|size_le_logSpace|logSpace_le_size
+TCSlib/Complexity/CircuitComplexity/Lupanov.lean:215	lupanov_arith	have hn1 : n < 2 ^ (L + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
+TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:553	value_func	have hL2 : t < 2 ^ (L + 1) := Nat.lt_pow_succ_log_self (by norm_num) t
+TCSlib/Complexity/CircuitComplexity/Meyer.lean:189	lenAll_inst	rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hjW
+TCSlib/Complexity/CircuitComplexity/MeyerTableau.lean:437	bits_pad	rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr hj
+TCSlib/Complexity/CircuitComplexity/Parity.lean:350	parityCircuit_depth_le	exact Nat.le_of_lt (Nat.lt_pow_succ_log_self (by norm_num) n)
+TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:470	clog_poly_le	(Nat.pow_le_pow_left (Nat.lt_pow_succ_log_self (by norm_num) m) k)
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:70	length_bits_bitsVal_le	length_bits_le (bitsVal_lt_two_pow w)
+TCSlib/Complexity/ClassP/BinaryArith/Basic.lean:73	length_bits_le_of_le	theorem length_bits_le_of_le {n m : ℕ} (w : List Bool) (h : n ≤ bitsVal w) (hw : w.length ≤ m) :
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:434	length_bits_le_of_lt_Q	theorem length_bits_le_of_lt_Q {p K x : ℕ} (hp : p < 2 ^ K) (hx : x < p + 2 ^ K + 2) :
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:436	length_bits_le_of_lt_Q	length_bits_le (by
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:442	length_bits_le_of_lt_Q	**Proof sketch.** Entries have at most `|z| + 2` bits (`length_bits_le_of_lt_Q`), rows at most
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:460	length_encState_le	exact length_bits_le_of_lt_Q hpK (h4 r hr x hx))
+TCSlib/Complexity/ClassP/BinaryArith/DetMod.lean:472	length_encState_le	have hbd := length_bits_le_of_lt_Q hpK h5
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:157	divInv_step	· have := length_bits_le_of_le (c :: r) (n := bitsVal (c :: r) - bitsVal (pairSndD z))
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:181	jacInv_step	refine ⟨_, A, _, rfl, (length_bits_le_of_le A (Nat.mod_lt _ hApos).le le_rfl).trans hA, hA,
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:192	jacInv_step	refine ⟨_, A, _, rfl, (length_bits_le_of_le A (Nat.mod_lt _ hApos).le le_rfl).trans hA, hA,
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:257	jacMeasure_step	Nat.size_le_size (by
+TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean:340	jacobiAlg_eq	rw [Nat.size_le]
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:116	length_bits_mod_le	length_bits_le_of_le w (Nat.mod_lt _ hw).le le_rfl
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:291	size_lt_of_two_mul_le	have h1 := Nat.lt_size_self P
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:297	size_lt_of_two_mul_le	have := Nat.size_le.mpr h3
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:319	gcdInv_step	· exact (length_bits_le_of_le y hlt.le le_rfl).trans hy
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:365	polyTimeComputable_gcd	rw [Nat.size_le]
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:191	length_le_of_mulInv	apply length_bits_le
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:204	polyTimeComputable_countLoop	rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:317	polyTimeComputable_dblLoop	have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:470	polyTimeComputable_lovaszPrime	length_bits_le (by
+TCSlib/Complexity/ClassP/TimeConstructible.lean:486	timeConstructible_id	have hl := Turing.length_bits_le_self x.length
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:415	qy_ones_ge	rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len, pow_add]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:416	qy_ones_ge	have hn := Nat.lt_size_self n
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:417	qy_ones_ge	have hD := Nat.lt_size_self D
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:427	qy_two_pow_bits_le	· rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:430	qy_two_pow_bits_le	· exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:433	qy_two_pow_bits_le	Nat.size_le.mp (by omega)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:441	qy_log_bits	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:444	qy_log_bits	have hlt : n < 2 ^ Nat.log 2 n := Nat.size_le.mp (by omega)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:446	qy_log_bits	· exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:454	qy_call_bound	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:455	qy_call_bound	exact Nat.size_le.mpr (Nat.lt_two_pow_self)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2294	qy_pow_mono	(`Turing.length_bits_le_self`), the outputs' lengths are at most the time's polynomial, and
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2345	qy_kit_exists	have hb := length_bits_le_self x.length
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2376	qy_kit_exists	have hb := length_bits_le_self y.length
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2383	qy_kit_exists	have hb := length_bits_le_self ((y.length + 1) ^ 2)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:2396	qy_kit_exists	have hb := length_bits_le_self (g x.length)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3189	qy_setup_long	have hbn := length_bits_le_self n
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3243	qy_setup_short	have hbn := length_bits_le_self n
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3253	qy_bits_len_mono	rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3254	qy_bits_len_mono	exact Nat.size_le_size h
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3258	qy_lt_two_pow_bits	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3259	qy_lt_two_pow_bits	exact Nat.lt_size_self n
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3658	qy_rnd_tests	have hbF := length_bits_le_self F
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4295	qy_round	have hbF := length_bits_le_self (f a)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4386	qy_rndS_le	have hLn := length_bits_le_self n
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4934	qy_mid_run	· have hbg := length_bits_le_self (g x.length)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:4935	qy_mid_run	have hbj := length_bits_le_self (j + 1)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5024	qy_top_run	· have hbX := length_bits_le_self ((f a + a + 1) ^ 2)
+TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5025	qy_top_run	have hbj := length_bits_le_self (j + 1)
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:608	un_step'	`Turing.counterOverhead_le` and `Turing.length_bits_le_self`. -/
+TCSlib/Complexity/Diagonalization/NTimeHierarchy.lean:749	un_setup	have hbtt : bt.length ≤ t := length_bits_le_self t
+TCSlib/Complexity/Randomized/BPLInP.lean:316	length_vecW_le	apply LogProg.length_bits_le
+TCSlib/Complexity/Randomized/BPLInP.lean:326	length_ctxOf_le	have h1 := Turing.length_bits_le_self s
+TCSlib/Complexity/Randomized/BPLInP.lean:350	polyTimeComputable_dpRun	Nat.mul_le_mul_left _ (by have := Turing.length_bits_le_self n; omega)
+TCSlib/Complexity/Randomized/BPLInP.lean:389	polyTimeComputable_bplTest	**Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` (`Complexity.logSpace_le_size_succ`)
+TCSlib/Complexity/Randomized/BPLInP.lean:397	two_pow_codes_le	have := logSpace_le_size_succ n
+TCSlib/Complexity/Randomized/BPLInP.lean:398	two_pow_codes_le	rwa [← Nat.size_eq_bits_len] at this
+TCSlib/Complexity/Randomized/BPLInP.lean:439	BPL_subset_P	have := logSpace_le_size_succ x.length
+TCSlib/Complexity/Randomized/BPLInP.lean:440	BPL_subset_P	rwa [← Nat.size_eq_bits_len] at this
+TCSlib/Complexity/Randomized/BPLInPWords.lean:135	polyTimeComputable_sumW	have hb := LogProg.length_bits_le hsum
+TCSlib/Complexity/Randomized/BPLInPWords.lean:172	length_encWords_range_le	exact (Turing.length_bits_le_self j).trans (List.mem_range.mp hj).le)
+TCSlib/Complexity/Randomized/BPLInPWords.lean:187	polyTimeComputable_codesW	have h1 := Turing.length_bits_le_self i
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:60	length_bits_eq	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:63	length_bits_eq	· refine le_antisymm (Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)) ?_
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:64	length_bits_eq	exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:68	le_quasiPolyBudget	have h1 := Nat.lt_pow_succ_log_self (b := 2) (by norm_num) n
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:101	succ_pow_le_quasiPoly	have h1 : n + 1 ≤ 2 ^ (m + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
+TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:293	pow_add_one_le_pow_log	(Nat.lt_pow_succ_log_self (by norm_num) n).trans_le
+TCSlib/Complexity/Randomized/RandomWalkPad.lean:149	le_padDegree	theorem le_padDegree (n : ℕ) : n ≤ padDegree n := (Nat.lt_size_self n).le
+TCSlib/Complexity/Randomized/RandomWalkPad.lean:154	padDegree_le	rw [← Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:250	lt_two_pow_bits	rw [Nat.size_eq_bits_len]; exact Nat.lt_size_self n
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:254	logSpace_le_ell	rw [ell, Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:255	logSpace_le_ell	exact logSpace_le_size_succ n
+TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean:281	ell_le	have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+TCSlib/Complexity/Randomized/UPathRL.lean:126	ups_start	have hjb := length_bits_le_self j
+TCSlib/Complexity/Randomized/UPathSearch.lean:251	ups_ssearch	have hjb := length_bits_le_self σ.u
+TCSlib/Complexity/Randomized/UPathWalk.lean:117	size_eq_succ	rw [← Nat.size_eq_bits_len, ← Nat.size_eq_bits_len, bits_eq_cons h, List.length_cons]
+TCSlib/Complexity/Randomized/UniformSample.lean:95	le_two_pow_size_pred	refine ⟨by have := Nat.lt_size_self (N - 1); omega, ?_⟩
+TCSlib/Complexity/Randomized/UniformSample.lean:98	le_two_pow_size_pred	· have h2 : 2 ^ (Nat.size (N - 1) - 1) ≤ N - 1 := Nat.lt_size.mp (by omega)
+TCSlib/Complexity/Randomized/UniformSample.lean:264	uniformSampleAlg_pairEncode	simp [BinArith.sub, bitsVal, Nat.size_eq_bits_len]
+TCSlib/Complexity/Randomized/ZeroPRun.lean:239	length_valW_le	refine length_bits_le_of_le (sRaw D) ?_ le_rfl
+TCSlib/Complexity/SpaceComplexity/Basic.lean:56	?	* `Complexity.logSpace_le_size_succ` — the logarithmic bound is at most one more than the
+TCSlib/Complexity/SpaceComplexity/Basic.lean:209	logSpace_le_succ	(`Nat.pow_log_le_self`, `Nat.lt_size_self`), so `Nat.log 2 n < Nat.size n`. -/
+TCSlib/Complexity/SpaceComplexity/Basic.lean:210	logSpace_le_size_succ	lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
+TCSlib/Complexity/SpaceComplexity/Basic.lean:215	logSpace_le_size_succ	have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
+TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:49	wP_le	exact Turing.length_bits_le_self (n + 1)
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:437	length_cfgWord_le	have e := length_bits_le_log (x.length + 1)
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:79	b3a_bits_length	have lower := Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn)
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:80	b3a_bits_length	have upper := LogProg.length_bits_le_log n
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:81	b3a_bits_length	rw [← Nat.size_eq_bits_len] at lower
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:442	b3a_log_machine	rw [← Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:443	b3a_log_machine	exact length_bits_le_self _
+TCSlib/Complexity/SpaceComplexity/Constructible.lean:444	b3a_log_machine	have width := LogProg.length_bits_le_log x.length
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:527	time_bound	have hn : n + 1 ≤ 2 ^ logSpace n := Nat.lt_pow_succ_log_self (by decide : 1 < 2) n
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:609	NSPACE_subset_exp_dtime_of_le	have e1 := length_bits_le_log (c.1.2.1 r + 1)
+TCSlib/Complexity/SpaceComplexity/Hierarchy.lean:145	?	(`Turing.length_bits_le_self`), so `ℓ ≤ 2s + 2|α| + 4 ≤ (2|α| + 6) · s`, and
+TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:308	ImplicitlyLogspaceComputable.computesInSpace	(LogProg.length_bits_le_log i).trans (by have := Nat.log_mono_right (b := 2) hi; omega)
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:66	code_le_gKv	have hl := logSpace_le_size_succ x.length
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:210	bits_succ_le	apply length_bits_le
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:216	size_le_logSpace	private lemma size_le_logSpace (n : ℕ) : Nat.size n ≤ logSpace n := by
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:217	size_le_logSpace	rw [← Nat.size_eq_bits_len, logSpace_eq]
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:218	size_le_logSpace	exact length_bits_le_log n
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:258	compl_mem_NSPACE	have := size_le_logSpace n; have := hS n; simp only [lgv]; omega
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:273	compl_mem_NSPACE	have hn : n + 1 ≤ 2 ^ logSpace n := Nat.lt_pow_succ_log_self (by norm_num) n
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:61	size_half	rw [← Nat.size_eq_bits_len, ← Nat.size_eq_bits_len, ← Nat.div2_val, Nat.div2_bits_eq_tail,
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:63	size_half	have : 0 < m.bits.length := by rw [Nat.size_eq_bits_len]; exact Nat.size_pos.mpr (by omega)
+TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean:68	lt_two_pow_size_succ	(Nat.lt_size_self n).trans (Nat.pow_lt_pow_right (by norm_num) (by omega))
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:996	access_width_half	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:2117	access_mem	have hw := length_bits_le_log (y.length + 1)
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:252	mult_product_length	apply length_bits_le
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:254	mult_product_length	have ha : a < 2 ^ (Nat.bits a).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self a
+TCSlib/Complexity/SpaceComplexity/Logspace/Mult.lean:255	mult_product_length	have hb : b < 2 ^ (Nat.bits b).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self b
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:75	ell_eq_size	rw [ell, Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:82	logSpace_le_ell	· have h1 : m + 1 < 2 ^ Nat.size (m + 1) := Nat.lt_size_self _
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:288	ps_sphase	have hjb := length_bits_le_self j
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof.lean:548	ps_start	have hjb := length_bits_le_self j
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:780	mem_LOGSPACE_preimage	have hw := LogProg.length_bits_le_log ((f x).length + 1)
+TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:787	mem_LOGSPACE_preimage	(LogProg.length_bits_le_log _).trans (by
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:194	query_index_bound	rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len] at hwidth
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:195	query_index_bound	have hr := Nat.size_le.mp hwidth
+TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape.lean:201	query_index_bound	have htop : 2 ^ (n.size - 1) ≤ n := Nat.lt_size.mp (by omega)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean:86	arm_decides_poly	have e1 := length_bits_le_log (a.2.1 r + 1)
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:281	arm_decides_pspace_of_logspace	≤ (C₀ + 2)(|x| + 1)^{c₀}` (`Complexity.LogProg.length_bits_le`). -/
+TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:297	arm_decides_pspace_val	have h3 := length_bits_le hlt
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:33	?	* `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:124	length_bits_le	lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m := by
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:125	length_bits_le	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:126	length_bits_le	exact Nat.size_le.mpr h
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:130	length_bits_le	**Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:133	two_pow_bits_le	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:136	two_pow_bits_le	rw [← Nat.size_le]; omega
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:143	length_bits_mono	rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]; exact Nat.size_le_size h
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:146	length_bits_le_log	lemma length_bits_le_log (n : ℕ) : (Nat.bits n).length ≤ Nat.log 2 n + 1 :=
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:147	length_bits_le_log	length_bits_le (Nat.lt_pow_succ_log_self (by norm_num) n)
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:177	succ_le_two_pow_log	Nat.lt_pow_succ_log_self (by norm_num) n
+TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean:352	dblLang_mem	have e1 := length_bits_le_log y.length
+TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:353	count_bound	have hn : n + 1 ≤ 2 ^ L := Nat.lt_pow_succ_log_self (by decide : 1 < 2) n
+TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean:97	validPlainLang_mem_NL	have : (Nat.bits (0 + 1)).length ≤ 1 := length_bits_le (by norm_num)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:122	narm_logspace_ptm	have e1 := length_bits_le_log (a.2.1 r + 1)
+TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:258	narm_decides_poly	have e1 := length_bits_le_log (a.2.1 r + 1)
+TCSlib/Complexity/TimeHierarchy/Diagonal.lean:200	diagLangOf_mem_DTIME	have h1 := length_bits_le_self (g x.length)
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4072	f2_counter_computes	have hl := Turing.length_bits_le_self x.length
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4124	f2_counter_count_space	rw [f2_counterInc_bits, Nat.size_eq_bits_len] at hcarry
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4125	f2_counter_count_space	have hwidth := Nat.size_le_size hi
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4166	f2_counter_heads	have hlen := Nat.size_eq_bits_len x.length
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:189	record_pos_lt	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:190	record_pos_lt	exact Nat.lt_size_self _
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:600	recordStep_width_one	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:604	recordStep_width_one	have : 1 < Nat.size (n + 1) := Nat.lt_size.mpr (by simpa using hn)
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:418	inputLength_count	simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (show n ≤ x.length by omega)
+TCSlib/Complexity/TuringMachine/Build/InputLength.lean:420	inputLength_count	simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ n)
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2417	computesFunInTime_polyUnary	`|Nat.bits C| + 1 ≤ C + 1` steps (`Turing.length_bits_le_self`). Otherwise the buffered
+TCSlib/Complexity/TuringMachine/Build/Primitives.lean:2436	polyBitsTM_computes	have := Turing.length_bits_le_self C
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:193	cfgRecord_field_ne_nil	simpa only [posWidth, Nat.size_eq_bits_len] using
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2762	rt_exists_boundTM	simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ x.length)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:2763	rt_exists_boundTM	have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4253	rt_exists_boundFieldTM	have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:4686	rt_initRecord_fields	simpa only [posWidth, Nat.size_eq_bits_len] using
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:5910	exists_recordInitTM	simpa [wb, Nat.size_eq_bits_len] using Nat.size_pos.mpr (Nat.succ_pos x.length)
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:1446	canonOffset_spec	· have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+TCSlib/Complexity/TuringMachine/CodeSimulator.lean:9120	exists_uniformSimulator	(by omega) hs (us_table_le F α) (length_bits_le_self t) hT₁ hT₂) halt out hans
+TCSlib/Complexity/TuringMachine/Encoding.lean:75	?	* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+TCSlib/Complexity/TuringMachine/Encoding.lean:290	length_bits_le_self	lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+TCSlib/Complexity/TuringMachine/Encoding.lean:291	length_bits_le_self	rw [Nat.size_eq_bits_len]
+TCSlib/Complexity/TuringMachine/Encoding.lean:292	length_bits_le_self	exact Nat.size_le.mpr Nat.lt_two_pow_self
+TCSlib/Complexity/TuringMachine/NDCodeSimulator.lean:832	ic_time_ledger	· exact length_bits_le_self t
+TCSlib/Complexity/TuringMachine/Universal.lean:2763	timed_computes	apply timed_cost_bound _ _ _ _ _ _ (length_bits_le_self t) hs
+TCSlib/Programs/Light/Lib/Emod.lean:106	mul_two_pow_le_iff	rw [emodRounds, Nat.lt_size, Nat.le_div_iff_mul_le (by omega), Nat.mul_comm]
+TCSlib/Programs/Light/Lib/Emod.lean:110	emodRounds_le	rw [emodRounds, Nat.size_le]
+TCSlib/Programs/Light/Lib/Emod.lean:113	emodRounds_le	_ < 2 ^ (Nat.log 2 (V + 1) + 1) := Nat.lt_pow_succ_log_self (by norm_num) _
+TCSlib/Programs/Light/Lib/Logs.lean:84	log2_meets	have hlt : x < 2 ^ (Nat.log 2 x + 1) := Nat.lt_pow_succ_log_self (by norm_num) x
