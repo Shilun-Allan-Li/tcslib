@@ -1,0 +1,81 @@
+sorry: 0
+admit: 0
+axiom: 0
+native_decide: 0
+implemented_by: 0
+unsafe: 0
+extern: 0
+set_option: 0
+deriving: 0
+open: 0
+section: 0
+end: 0
+variable: 0
+attribute: 1
+   632: attribute [local instance] DzKit.SRf DzKit.SRd DzKit.QRf DzKit.QRd DzKit.QBf DzKit.QBd
+local instance: 1
+   632: attribute [local instance] DzKit.SRf DzKit.SRd DzKit.QRf DzKit.QRd DzKit.QBf DzKit.QBd
+instance (all): 9
+   632: attribute [local instance] DzKit.SRf DzKit.SRd DzKit.QRf DzKit.QRd DzKit.QBf DzKit.QBd
+   921: private noncomputable instance dzPKDecEq : DecidableEq DzPK := Classical.decEq _
+   924: private noncomputable instance dzPKFintype : Fintype DzPK :=
+   940: private instance dzPPhFintype {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+   945: private instance dzPPhDecEq {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+   1302: private noncomputable instance dzQKDecEq : DecidableEq DzQK := Classical.decEq _
+   1305: private noncomputable instance dzQKFintype : Fintype DzQK :=
+   1327: private instance dzQPhFintype {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+   1332: private instance dzQPhDecEq {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+macro/notation/syntax/elab: 0
+@[simp]: 0
+@[reducible]/irreducible: 0
+decide: 69
+aesop: 0
+delta: 0
+convert: 0
+unfold: 26
+   532: unfold dzAlpha
+   785: unfold DzKit.K
+   813: unfold dzLay
+   820: unfold dzLay
+   841: unfold dzLay
+   854: qyBank (κ.tp 0) 14 κ.qc.k (by unfold DzKit.K; omega) (by rw [κ.tp_val]; decide)
+   859: qyBank (κ.tp 1) (14 + κ.qc.k) κ.gc.k (by unfold DzKit.K; omega)
+   865: qyBank (κ.tp 2) (14 + κ.qc.k + κ.gc.k) κ.pc.k (by unfold DzKit.K; omega)
+   871: qyBank (κ.tp 10) (14 + κ.qc.k + κ.gc.k + κ.pc.k) κ.lc.k (by unfold DzKit.K; omega)
+   877: qyBank (κ.tp 8) (14 + κ.qc.k + κ.gc.k + κ.pc.k + κ.lc.k) κ.ac.k (by unfold DzKit.K; omega)
+   885: (by unfold DzKit.K; omega) (by rw [κ.tp_val]; simp; omega))
+   891: (by unfold DzKit.K; omega) (by rw [κ.tp_val]; simp; omega)
+   896: unfold DzKit.bR
+   903: unfold DzKit.bR
+   998: unfold dzBlk
+   1242: unfold dzSetB
+   1272: unfold DzKit.bB
+   1898: unfold qyBody
+   2234: unfold DzKit.bB
+   2243: unfold DzKit.bB
+   2396: · unfold dzQB
+   2465: unfold dzQB
+   2623: unfold dzQB
+   2637: unfold dzQB
+   2791: unfold dzSetB at hTP
+   2792: unfold dzK dzQB
+show: 45
+change: 0
+Classical: 2
+   921: private noncomputable instance dzPKDecEq : DecidableEq DzPK := Classical.decEq _
+   1302: private noncomputable instance dzQKDecEq : DecidableEq DzQK := Classical.decEq _
+noncomputable: 5
+   921: private noncomputable instance dzPKDecEq : DecidableEq DzPK := Classical.decEq _
+   924: private noncomputable instance dzPKFintype : Fintype DzPK :=
+   1302: private noncomputable instance dzQKDecEq : DecidableEq DzQK := Classical.decEq _
+   1305: private noncomputable instance dzQKFintype : Fintype DzQK :=
+   2644: private noncomputable def dzD {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+opaque: 0
+partial: 0
+#: 0
+mutual: 0
+public decl (no private): 0
+protected: 0
+lines over 100 chars: 0 []
+double blank lines: 0 []
+trailing whitespace lines: 0 []

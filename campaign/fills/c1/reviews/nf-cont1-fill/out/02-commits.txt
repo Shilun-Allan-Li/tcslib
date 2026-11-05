@@ -1,0 +1,106 @@
+== 15fd6cf7 2026-11-04T22:17:50Z NDNormalForm: the verifier's layout, the replay leaf and the input's replay
+ 1 file changed, 1050 insertions(+)
+NDNormalForm: the verifier's layout, the replay leaf and the input's replay
+
+Checkpoint 3 of the linear normal form's continuation: the verifier's phase
+layout over a generic replay leaf (phase index, state family with named
+instances, phase machines, redirect table, the phase host), the replay leaf
+(one two-tape machine parameterized by the replayed tape, with private
+instances for its states), the read of a record, one record of the input's
+replay, the decoded virtual run of the original machine, and the input's
+replay over a stream of records. The return of tape 0 after any replay and
+the clear of tape 1 are chained through the phase host's phase lemma.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
+== b76f4fb7 2026-11-04T22:36:17Z NDNormalForm: a work tape's replay on tape 1, its exit invariant and clear
+ 1 file changed, 662 insertions(+), 31 deletions(-)
+NDNormalForm: a work tape's replay on tape 1, its exit invariant and clear
+
+Checkpoint 4 of the linear normal form's continuation: one block of a work
+tape's replay (read, check against the decoded claim, rewrite with the new
+content, move two cells per simulated move, skipping the move after the
+end-flagged record), the read of one record by a work-tape instance, the block
+representation of a replayed work tape on tape 1 with its decode, write and
+support lemmas, the work-tape replay over a stream of records with the exit
+invariant (tape 1 blank outside a nonempty contiguous nonblank region holding
+its head), and the region read as the clear's blank-delimited word. The two
+run lemmas now share the split of a stream's checks at its first record, the
+flags of its tail, and the control's agreement with the virtual run.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
+== 59737ab6 2026-11-04T22:50:34Z NDNormalForm: the verifier's characterization, hV and its verdict on a display
+ 1 file changed, 730 insertions(+)
+NDNormalForm: the verifier's characterization, hV and its verdict on a display
+
+Checkpoint 5 of the linear normal form's continuation: the verifier over the
+work tapes from any entry (replay, return of tape 0, clear of tape 1, by
+induction on the remaining tapes), the verifier's characterization from the
+stream start (its first verdict, accepting exactly when every check passes,
+with an empty output and a linear time bound then), the split of a stream that
+first stops the controller into records, the backward lemma's obligation hV
+in the host's terms, and the verifier's acceptance of a genuine display, whose
+decoded virtual run is the genuine run.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
+== 62890cc4 2026-11-04T22:54:13Z NDNormalForm: the forward transfer and the ledger
+ 1 file changed, 103 insertions(+)
+NDNormalForm: the forward transfer and the ledger
+
+Checkpoint 6 of the linear normal form's continuation: the normal form's
+constant nf_C k = 6(2k+4) + k(2(2k+4)+12) + 21 + 15k, the host machine over the
+verifier, the ledger (the host's budget 0 + 2|s| + TQ + 11 is at most
+nf_C k (t + 1) for every t at least the first halting time), and the forward
+transfer: an accepting branch of N within t steps, cut at its first halting
+time, has its display accepted by the verifier, so the host accepts within
+exactly nf_C k (t + 1) choices.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
+== d8b264ed 2026-11-04T22:58:06Z NDNormalForm: the backward transfer
+ 1 file changed, 105 insertions(+)
+NDNormalForm: the backward transfer
+
+Checkpoint 7 of the linear normal form's continuation: a stream of records on
+which every check passes is a genuine accepting run of N (the decoded virtual
+run is N's run under the records' choice bits, halted with output exactly
+[true] by the control sweep's pass), and the host-level backward transfer:
+the host's backward acceptance lemma with hV gives a first-stopped stream whose
+first verdict is acc, which the characterization's first verdict matches.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
+== ba46b709 2026-11-04T23:01:30Z NDNormalForm: the linear-overhead coded normal form, proved
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+NDNormalForm: the linear-overhead coded normal form, proved
+
+Checkpoint 8 of the linear normal form's continuation: the target
+Turing.FinNDTM.exists_codeNDTM_accepts_linear, from the packaging of the host
+(nf_pack), the forward transfer at the constant nf_C N.k, and the backward
+transfer; and the status phrases of the module and target docstrings. The
+target depends on propext, Classical.choice and Quot.sound only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
+== 825ee3f5 2026-11-04T23:30:42Z NDNormalForm: one proof per shared argument in the continuation
+ 1 file changed, 114 insertions(+), 165 deletions(-)
+NDNormalForm: one proof per shared argument in the continuation
+
+After the after-screen of the completed fill: the decoded virtual run's
+genuineness under checked claims is one lemma (nf_vrun_of_ok), used by both
+the backward transfer and the verdict on a display, in place of two parallel
+inductions; the record read up to its last bit is one lemma (nf_leaf_toLast),
+used by both instances' record lemmas; and the continuation is one section
+with one simp-attribute line. No statement of the target changes.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+
