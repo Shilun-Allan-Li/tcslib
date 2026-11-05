@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.SymbolLift
 import TCSlib.Complexity.TuringMachine.Build.InputCall
 import TCSlib.Complexity.TuringMachine.Build.Contract
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -493,29 +494,13 @@ private theorem recordStep_seekPost_eq {K : ℕ} {Γ S : Type} {x : List Γ} (do
     rw [seekPost_workTapePos]
   · rw [seekPost_output]
 
-/-- A renamed configuration equals any target that shares its four data fields and carries
-the renamed state, read field by field through the renaming's published equations. -/
-private theorem recordStep_mapState_eq {K : ℕ} {Γ S S' : Type} {x : List Γ}
-    (c : Cfg K Γ S x) (f : S → S') (d : Cfg K Γ S' x)
-    (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
-    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
-    (ho : c.output = d.output) : c.mapState f = d := by
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, hs]
-  · rw [Cfg.mapState_inputPos, hi]
-  · funext j q
-    rw [Cfg.mapState_workTapes, hw]
-  · funext j
-    rw [Cfg.mapState_workTapePos, hp]
-  · rw [Cfg.mapState_output, ho]
-
 /-- Renaming the states of an explicit configuration record maps its state and keeps the
 other four fields, as a rewrite rule for the endpoint conversions below. -/
 private theorem recordStep_mapState_mk {K : ℕ} {Γ S S' : Type} {x : List Γ}
     (f : S → S') (st : Option S) (ip : Fin (x.length + 2))
     (wt : Fin K → ℤ → Option Γ) (wp : Fin K → ℤ) (o : List Γ) :
     (Cfg.mapState f ⟨st, ip, wt, wp, o⟩ : Cfg K Γ S' x) = ⟨st.map f, ip, wt, wp, o⟩ :=
-  recordStep_mapState_eq _ _ _ rfl rfl rfl rfl rfl
+  Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
 
 /-- A one-step run is one machine step, by the published run equations. -/
 private theorem recordStep_runFrom_one {K : ℕ} {Γ S : Type} {x : List Γ}
@@ -559,17 +544,6 @@ private theorem recordStep_fieldOffset_congr {Γ : Type*} (as : List (List Γ)) 
         simp only [List.take_succ_cons, List.map_cons, List.cons.injEq] at h
         rw [fieldOffset_cons_succ, fieldOffset_cons_succ, h.1, ih bs j h.2]
 
-/-- A tagged phase cannot be a verdict at a different index. -/
-private theorem record_tag_ne {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
-    (i : I) (v : Σ i, Ph i) (hi : i ≠ v.1) (c : Cfg K Γ (Ph i) x) :
-    (c.mapState (Sigma.mk i)).state ≠ some v := by
-  cases hs : c.state with
-  | none => simp [Cfg.mapState_state, hs]
-  | some s =>
-    intro h
-    have he : (⟨i, s⟩ : Σ i, Ph i) = v := by simpa [Cfg.mapState_state, hs] using h
-    exact hi (congrArg Sigma.fst he)
-
 /-- Package the tagged prefix and dispatched endpoint supplied by `phaseHostTM_run`.
 No transition or phase-host induction is repeated here. -/
 private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
@@ -585,7 +559,7 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
   refine ⟨he, ?_, ?_⟩
   · intro u hu
     rw [hp u (by omega)]
-    exact ⟨record_tag_ne i yes hy _, record_tag_ne i no hn _⟩
+    exact ⟨Cfg.mapState_sigma_state_ne i yes hy _, Cfg.mapState_sigma_state_ne i no hn _⟩
   · intro u hu j
     by_cases ht : u ≤ t
     · rw [hp u ht, Cfg.mapState_workTapePos]
@@ -1684,7 +1658,7 @@ private theorem recordStep_state_run {k : ℕ} {Q T S : Type}
       | bwd a => rfl
       | done a => exact (hcut u hu a ha).elim)
   have hin : c.mapState (Sigma.mk i) = d :=
-    recordStep_mapState_eq _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
+    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   rw [hin] at phase
   have hend : (recordStepMachine M upd seek start finish).runFrom d 5 =
       {d with state := some out} := by
@@ -1820,7 +1794,7 @@ compositions rewrite with at their seams. -/
 private theorem recordStep_mapState_snapshot {Γ A B P : Type} {x : List Γ}
     (d : Cfg 4 Γ P x) (q : A) (p : ℤ) (b e : List Γ) (f : A → B) :
     (recordStepSnapshot d q p b e).mapState f = recordStepSnapshot d (f q) p b e :=
-  recordStep_mapState_eq _ _ _ rfl rfl rfl rfl rfl
+  Cfg.mapState_eq_of_fields _ _ _ rfl rfl rfl rfl rfl
 
 /-- The first five read phases reach the position skip with both digit copies installed.
 The finite data correctly records the source state and the position width/zero tests.

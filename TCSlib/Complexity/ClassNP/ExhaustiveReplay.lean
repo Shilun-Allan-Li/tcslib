@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.TuringMachine.ChoiceReplay
 import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -196,26 +197,6 @@ private def xr_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ) (
   ⟨c.state, c.inputPos, fun i p => c.workTapes i (p - δ i), fun i => c.workTapePos i + δ i,
     c.output⟩
 
-/-- Two configurations with the same input head read the same input symbol. -/
-private theorem xr_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
-    (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
-    c.inputSymbol = c'.inputSymbol := by
-  by_cases h0 : c.inputPos.val = 0
-  · have hc : c.inputPos = 0 := by
-      apply Fin.ext
-      rw [h0]
-      simp
-    have hc' : c'.inputPos = 0 := by
-      apply Fin.ext
-      rw [← h, h0]
-      simp
-    rw [Cfg.inputSymbol_of_zero hc, Cfg.inputSymbol_of_zero hc']
-  · by_cases hend : c.inputPos.val = x.length + 1
-    · rw [Cfg.inputSymbol_of_end hend, Cfg.inputSymbol_of_end (by omega)]
-    · have hlt : c.inputPos.val - 1 < x.length := by have := c.inputPos.isLt; omega
-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) hlt,
-        inputSymbolInner (c.inputPos.val - 1) (by omega) hlt]
-
 /-- A translated configuration reads the same work symbols. -/
 private theorem xr_workTapeSymbols_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ)
     (c : Cfg k Bool S x) : (xr_shift δ c).workTapeSymbols = c.workTapeSymbols := by
@@ -261,7 +242,7 @@ private theorem xr_stepWith_shift {k : ℕ} {S : Type} {x : List Bool} (N : NDTM
   | some q =>
     rw [NDTM.stepWith_of_some hq,
       NDTM.stepWith_of_some (show (xr_shift δ c).state = some q from hq),
-      xr_inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
+      Cfg.inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
 
 /-- A branch commutes with translation: the branch along `w` from a translated configuration
 is the translated branch. -/
@@ -2058,25 +2039,16 @@ private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
       ⟨some q', c'.inputPos, c'.workTapes, c'.workTapePos, []⟩ := by
   have hstart : (⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) =
       (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z).mapState
-        (Sigma.mk i) := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state]; rfl
-    · rw [Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output]
+        (Sigma.mk i) :=
+    (Cfg.mapState_eq_of_fields (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z)
+      (Sigma.mk i) _ rfl rfl rfl rfl rfl).symm
   have hhost := (phaseHostTM_run (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C) i _
     c' T h s' hs' q' hred hguard).2
   rw [hstart]
   show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
     (T + 1) = _
   rw [hhost]
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, hs']; rfl
-  · rw [Cfg.mapState_inputPos]
-  · funext j p; rw [Cfg.mapState_workTapes]
-  · funext j; rw [Cfg.mapState_workTapePos]
-  · rw [Cfg.mapState_output, hout]
+  exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hs']; rfl) rfl rfl rfl hout
 
 /-! #### One cycle: the phases of one replay, on the host
 
@@ -2996,22 +2968,12 @@ private theorem xr_halt_fixed {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
   rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] at hhost
   have hd' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState (Sigma.mk (.halt, a, l)) =
-        d := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, hd]; rfl
-    · rw [Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output]
+        d :=
+    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   have hd'' : (⟨some xr_St.start, d.inputPos, d.workTapes, d.workTapePos, d.output⟩ :
       Cfg (N.k + 2 + 2) Bool (xr_PhSt C (.halt, a, l)) z).mapState
-        (fun _ => (⟨(.halt, a, l), xr_St.start⟩ : Σ i, xr_PhSt C i)) = d := by
-    apply Cfg.ext
-    · rw [Cfg.mapState_state, hd]; rfl
-    · rw [Cfg.mapState_inputPos]
-    · funext j p; rw [Cfg.mapState_workTapes]
-    · funext j; rw [Cfg.mapState_workTapePos]
-    · rw [Cfg.mapState_output]
+        (fun _ => (⟨(.halt, a, l), xr_St.start⟩ : Σ i, xr_PhSt C i)) = d :=
+    Cfg.mapState_eq_of_fields _ _ _ (by rw [hd]; rfl) rfl rfl rfl rfl
   rw [hd', hd''] at hhost
   exact hhost
 

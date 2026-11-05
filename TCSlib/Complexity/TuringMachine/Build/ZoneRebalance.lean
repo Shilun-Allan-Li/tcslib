@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Build.ZoneTape
 import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
 import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
 import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -14739,19 +14740,6 @@ private lemma zr_mir_mir {k : ℕ} {S : Type} {x : List (ZoneSym k)} (c : Cfg 2 
       simp only [zr_mir, if_true, neg_neg]
     · simp only [zr_mir, hj, if_false]
 
-/-- The input head reads the same cell in configurations with the same input position. -/
-private lemma zr_inputSymbol_congr {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
-    {c : Cfg 2 (ZoneSym k) S x} {c' : Cfg 2 (ZoneSym k) S' x} (h : c.inputPos = c'.inputPos) :
-    c.inputSymbol = c'.inputSymbol := by
-  by_cases h0 : c.inputPos = 0
-  · rw [Cfg.inputSymbol_of_zero h0, Cfg.inputSymbol_of_zero (h.symm.trans h0)]
-  · by_cases h1 : c.inputPos.val = x.length + 1
-    · rw [Cfg.inputSymbol_of_end h1, Cfg.inputSymbol_of_end (by rw [← h]; exact h1)]
-    · have h0' : c.inputPos.val ≠ 0 := fun hv => h0 (Fin.ext hv)
-      have hlt := c.inputPos.isLt
-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
-        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by rw [← h]; omega) (by omega)]
-
 /-- **The mirrored machine**: tape `0`'s moves reversed, everything else as `M`'s. -/
 private def zr_mirTM {k : ℕ} {S : Type} (M : MultiTapeTM 2 (ZoneSym k) S) :
     MultiTapeTM 2 (ZoneSym k) S where
@@ -14764,7 +14752,7 @@ private def zr_mirTM {k : ℕ} {S : Type} (M : MultiTapeTM 2 (ZoneSym k) S) :
 /-- **The mirrored machine's step is the mirrored step.**
 
 **Proof sketch.** By the control state. A halted configuration is fixed by both machines. Otherwise
-the mirrored configuration reads the same input cell (`zr_inputSymbol_congr`) and the same work-tape
+the mirrored configuration reads the same input cell (`Turing.Cfg.inputSymbol_congr`) and the same work-tape
 symbols, since tape `0` and its head are both reflected, so both machines take the same transition.
 Applying it, field by field (`Action.apply_*`): the state, input head and output agree, the other
 tape is unchanged by the mirror, and on tape `0` the reversed move of the reflected head lands on
@@ -14778,7 +14766,7 @@ private lemma zr_mir_step {k : ℕ} {S : Type} {x : List (ZoneSym k)}
     rw [MultiTapeTM.step_of_halt hq', MultiTapeTM.step_of_halt hq]
   | some q =>
     have hq' : (zr_mir c).state = some q := hq
-    have hin : (zr_mir c).inputSymbol = c.inputSymbol := zr_inputSymbol_congr rfl
+    have hin : (zr_mir c).inputSymbol = c.inputSymbol := Cfg.inputSymbol_congr _ _ rfl
     have hw : (zr_mir c).workTapeSymbols = c.workTapeSymbols := by
       funext j
       rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq]
