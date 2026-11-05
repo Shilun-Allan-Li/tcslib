@@ -40,7 +40,8 @@ the log.
 * `Authentication.SignatureScheme`, `SignatureScheme.forgeGame`, `SignatureScheme.Secure`,
   `SignatureScheme.OneTimeSecure`: [PS10, Defs 135.1, 136.2, and the one-time notion after
   Def 136.2].
-* `Authentication.CRH`, `CRH.collisionGame`, `CRH.CollisionResistant`: [PS10, Def 140.1].
+* `Authentication.CRH`, `CRH.Compresses`, `CRH.collisionGame`, `CRH.CollisionResistant`:
+  [PS10, Def 140.1].
 
 ## Main results
 
@@ -225,9 +226,16 @@ end SignatureScheme
 /-! ### Collision-resistant hashing -/
 
 /-- A **family of collision-resistant hash functions**, in its syntax [PS10, Definition 140.1]:
-an index generator `Gen(1^n)`, a deterministic polynomial-time evaluation `h_i(x)` on
-`⟨1^n, ⟨i, x⟩⟩` from `d(n)`-bit to `r(n)`-bit strings, and compression `r(n) < d(n)`. Collision
-resistance is `CRH.CollisionResistant`. -/
+an index generator `Gen(1^n)`; for each index `i`, a domain `D_i` of `d(n)`-bit strings and a
+range `R_i` of `r(n)`-bit strings, given by membership tests; and a deterministic polynomial-time
+evaluation `h_i(x)` on `⟨1^n, ⟨i, x⟩⟩`. The source's remaining clauses are properties a
+construction is proved to have: compression `|R_i| < |D_i|` (`CRH.Compresses`) and collision
+resistance (`CRH.CollisionResistant`).
+
+**Deviation:** domains and ranges are sets of fixed-length strings, given by membership tests,
+for the source's index-dependent `h_i : D_i → R_i`. The tests are needed: in Construction 142.2
+the exponents range over `Z_{p−1}`, and an `n`-bit exponent domain would contain the trivial
+collisions `x`, `x + (p − 1)`. -/
 structure CRH where
   /-- The domain length `d(n)`. -/
   domLen : PolyExpr
@@ -237,12 +245,14 @@ structure CRH where
   gen : NUPPT
   /-- The evaluation `⟨1^n, ⟨i, x⟩⟩ ↦ h_i(x)`. -/
   eval : List Bool → List Bool
+  /-- Membership in the domain `D_i`. -/
+  inDom : ∀ n, List Bool → (Fin (domLen.eval n) → Bool) → Bool
+  /-- Membership in the range `R_i`. -/
+  inRange : ∀ n, List Bool → (Fin (rangeLen.eval n) → Bool) → Bool
   /-- `Gen` is a PPT ("ease of sampling"). -/
   gen_uniform : gen.Uniform
   /-- Evaluation is polynomial-time ("ease of evaluation"). -/
   eval_poly : PolyTimeComputable eval
-  /-- Compression: the range is shorter than the domain. -/
-  compress : ∀ n, rangeLen.eval n < domLen.eval n
 
 namespace CRH
 
@@ -253,15 +263,28 @@ def hash (n : ℕ) (i : List Bool) (x : Fin (H.domLen.eval n) → Bool) :
     Fin (H.rangeLen.eval n) → Bool :=
   padFin (H.rangeLen.eval n) (H.eval (atParam n (pairEncode i (List.ofFn x))))
 
+/-- **Compression** [PS10, Definition 140.1, "compression"]: from some parameter on, at every
+generated index `i`, `h_i` maps `D_i` into `R_i` and `|R_i| < |D_i|`.
+
+**Deviation:** from a threshold on, since the ch. 2–4 instance generators are degenerate below
+one (their deviation D10). -/
+def Compresses : Prop :=
+  ∃ n₀ : ℕ, ∀ n, n₀ ≤ n → ∀ rg : H.gen.Coins n,
+    (∀ x, H.inDom n (H.gen.runAt n [] rg) x = true →
+      H.inRange n (H.gen.runAt n [] rg) (H.hash n (H.gen.runAt n [] rg) x) = true) ∧
+    Fintype.card {y // H.inRange n (H.gen.runAt n [] rg) y = true} <
+      Fintype.card {x // H.inDom n (H.gen.runAt n [] rg) x = true}
+
 /-- **The collision game** [PS10, Definition 140.1] at parameter `n`, for the machine `A`: sample
 `i ← Gen(1^n)` and `A`'s coins, run `A(1^n, i)`, read its output as `(x, x')`, and win when
-`x ≠ x'` and `h_i(x) = h_i(x')`. -/
+`x, x' ∈ D_i`, `x ≠ x'` and `h_i(x) = h_i(x')`. -/
 noncomputable def collisionGame (A : NUPPT) (n : ℕ) : ProbComp Bool :=
   (ProbComp.sample (H.gen.Coins n)).bind fun rg =>
   (ProbComp.sample (A.Coins n)).bind fun r =>
     let i := H.gen.runAt n [] rg
     let xx := splitBits (padFin (H.domLen.eval n + H.domLen.eval n) (A.runAt n i r))
-    .pure (decide (xx.1 ≠ xx.2 ∧ H.hash n i xx.1 = H.hash n i xx.2))
+    .pure (decide (H.inDom n i xx.1 = true ∧ H.inDom n i xx.2 = true ∧ xx.1 ≠ xx.2 ∧
+      H.hash n i xx.1 = H.hash n i xx.2))
 
 /-- **Collision resistance** [PS10, Definition 140.1]: for every non-uniform PPT `A`, the collision
 probability is negligible. -/
