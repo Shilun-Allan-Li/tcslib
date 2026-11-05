@@ -201,8 +201,9 @@ pre-ship on the merged tree.
 
 ## 9. The pre-ship on the merged tree (2026-11-05, after #182, #184, #188, #189 and #190)
 
-The snapshot is `oleans-led4`, whose Lean tree is the campaign's after #190 (no `.lean` change
-since `52331982` but #190's, which the fill does not import). The probes are in `probes/`.
+The probes are in `probes/`. They were elaborated against `oleans-led4` (the campaign's Lean
+after #188 and #189), then again against `oleans-lcf3` (after #190, which changed
+`Build/CfgRecord`, in the fill's import closure), with identical outputs (`probes/lcf3/`).
 
 1. **§8's route probe is unchanged on the merged tree** (`DeepenRoute-merged.lean.txt`, `.out`):
    exactly its four `sorry` warnings.

@@ -14,7 +14,8 @@ code. The landed lemmas sit beside those definitions (design §1).
 ## The pre-ship on the merged tree (2026-11-05)
 
 Elaborated with `leanelab.sh` in the records worktree at the campaign tip, against `oleans-led4`
-(the campaign's Lean after #188 and #189; #190 changed nothing these probes import).
+(the campaign's Lean after #188 and #189), and again against `oleans-lcf3` (after #190, which
+changed `Build/CfgRecord`): identical outputs, in `lcf3/`.
 
 | Probe | Output | Result |
 |---|---|---|
