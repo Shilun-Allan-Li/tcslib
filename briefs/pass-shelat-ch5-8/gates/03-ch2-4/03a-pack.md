@@ -46,7 +46,7 @@ resolved unless the resolution is wrong. Do not give a blanket approval.
 
 | Item | Where |
 |---|---|
-| Under audit | `TCSlib/Complexity/Randomized/{PolyExpr, PPT, Primitives, Closure, Repetition, NonUniform}.lean`, `TCSlib/Cryptography/Asymptotic/{Adversary, Sampling, Ensembles}.lean` |
+| Under audit | `TCSlib/Complexity/Randomized/{PolyExpr, PPT, Primitives, Closure, Repetition, NonUniform}.lean`, `TCSlib/Cryptography/Asymptotic/{Adversary, Sampling, Ensembles}.lean`, and the new bridge `TCSlib/Cryptography/Asymptotic/SamplingFinDist.lean` (`StatClose` of samplers is `EpsClose` of their laws; duplication-ledger item DL-4) |
 | Context, not under audit | `TCSlib/Cryptography/Foundations/Negligible.lean` (audited in the Garg ch. 1–3 campaign) |
 | Design record (states the intent and the declared deviations) | `briefs/pass-shelat/DESIGN.md` |
 | Inventories | `briefs/pass-shelat/inventory-ch2.md`, `briefs/pass-shelat/inventory-ch3.md` |
@@ -86,8 +86,10 @@ To be filled at the pinned head:
    - Is each closure lemma of `Closure.lean` and `Repetition.lean` what the reductions of ch. 2–4
      need: pre- and post-composition, pairing, hard-wiring, polynomially many calls with fresh coins?
    - Is any hypothesis stronger than the uses can meet?
-5. **Statistical closeness** (`Sampling.lean`). Is `StatClose` the source's statistical distance
-   (or an equivalent form) for samplers? Is it preserved by the operations stated?
+5. **Statistical closeness** (`Sampling.lean`, `SamplingFinDist.lean`). Is `StatClose` the source's
+   statistical distance, or an equivalent form, for samplers? Is it preserved by the operations
+   stated? Does `statClose_iff_epsClose_map` make it exactly `main`'s `EpsClose` ([PS10, Def 181.1])
+   on finite sample spaces?
 6. **Ensembles and indistinguishability** (Defs 69.3, 69.4; Lems 71.5, 71.6).
    - Is `Ensemble.Indist` "for every n.u.p.p.t. distinguisher, the advantage is negligible", with
      the source's quantifier order?
