@@ -45,7 +45,7 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 - Def 173.7 and Thm 174.8 wait for [PSV06] (Q-2).
 - Prong B: Yao (Prot 162.6, Thm 163.7). Its composition step for the OT simulators needs [Gol04]
   §7.3 (inventory). Also whether `HBCSecure` should require efficient honest parties.
-- Prong D: Thm 179.1 (layer 2 of S3d, after #194); Thm 180.1 (S3c; a worker is on it).
+- The PAC layer (#194) must reach the base before 06D: it lands on `main` (Q-4), and `main` is merged in again.
 - The duplication-ledger items DL-6 and DL-7 are resolved before the integration replay.
 
 ## Integration dry run (2026-11-05)
