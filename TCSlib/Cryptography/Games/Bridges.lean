@@ -25,7 +25,9 @@ model and to the ch. 2–4 layer.
 
 * `Games.Machines`: machines as oracle computations (`NUPPT.toComp`, `NUPPT.toCompOn`).
 * `Games.BitCodec`: bit-string oracles and their machine codec (`bitSpec`, `bitCodec`).
-* `Games.Efficiency`: polynomial-time handlers and the efficiency target T1 (the efficiency fill).
+* `Games.Efficiency`: polynomial-time handlers (adversary input, queries, finalization) and the
+  efficiency targets T1 and T2, with their companions (adversaries without input; T4, the bridge
+  to the ch. 2–4 next-query machines) (the efficiency fill).
 * `Games.Bridges.QueryTree`: the concrete layer's query trees, which *are* one-oracle computations
   (item F-1); their evaluation, simulation and query bounds are the framework's.
 * `Games.Bridges.Experiments`: the concrete layer's experiments (`invProb`, `predProb`,
