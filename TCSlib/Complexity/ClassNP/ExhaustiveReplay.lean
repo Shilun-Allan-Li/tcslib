@@ -2048,12 +2048,7 @@ private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
   show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
     (T + 1) = _
   rw [hhost]
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, hs']; rfl
-  · rw [Cfg.mapState_inputPos]
-  · funext j p; rw [Cfg.mapState_workTapes]
-  · funext j; rw [Cfg.mapState_workTapePos]
-  · rw [Cfg.mapState_output, hout]
+  exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hs']; rfl) rfl rfl rfl hout
 
 /-! #### One cycle: the phases of one replay, on the host
 
