@@ -1,0 +1,765 @@
+From 59737ab66de27f0c0c2996b27a2cf3497298a372 Mon Sep 17 00:00:00 2001
+From: "Claude (fill agent)" <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 22:50:34 +0000
+Subject: [PATCH 3/7] NDNormalForm: the verifier's characterization, hV and its
+ verdict on a display
+
+Checkpoint 5 of the linear normal form's continuation: the verifier over the
+work tapes from any entry (replay, return of tape 0, clear of tape 1, by
+induction on the remaining tapes), the verifier's characterization from the
+stream start (its first verdict, accepting exactly when every check passes,
+with an empty output and a linear time bound then), the split of a stream that
+first stops the controller into records, the backward lemma's obligation hV
+in the host's terms, and the verifier's acceptance of a genuine display, whose
+decoded virtual run is the genuine run.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 730 ++++++++++++++++++++
+ 1 file changed, 730 insertions(+)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index 1bf86ae8..cb157ffc 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -2384,6 +2384,736 @@ private theorem nf_region (B : ℤ → Option Bool) (S E h : ℤ)
+       have := (hB q).mp hne
+       omega
+ 
++/-! ### The verifier's characterization -/
++
++/-- A stream of records has `2k + 4` cells per record. -/
++private theorem nf_stream_length (k : ℕ) (rs : List (Fin (2 * k + 4) → Bool)) :
++    (rs.flatMap List.ofFn).length = (2 * k + 4) * rs.length := by
++  induction rs with
++  | nil => rfl
++  | cons r rs ih =>
++    rw [List.flatMap_cons, List.length_append, List.length_ofFn, ih, List.length_cons]
++    ring
++
++/-- The entry of the verifier's phases for work tape `m`: its replay, or the passing verdict once
++every work tape has been replayed. -/
++private def nf_tapeEntry (N : FinNDTM Bool) {SL : Type}
++    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (m : ℕ) : Σ i, nf_St N SL i :=
++  if h : m < N.k then ⟨.rep (some ⟨m, h⟩), (L (some ⟨m, h⟩)).q₀⟩ else ⟨.park, true⟩
++
++/-- Every check of the verifier passes on a stream of records: the control sweep's, and every
++record's claim on every replayed tape along the decoded virtual run from `N`'s start. -/
++private def nf_allPass (N : FinNDTM Bool) (x : List Bool)
++    (rs : List (Fin (2 * N.k + 4) → Bool)) : Prop :=
++  nf_sweepPass N ((rs.flatMap List.ofFn).foldl (nf_sweepStep N) (nf_sweepInit N)) = true ∧
++    ∀ (i : Fin (N.k + 1)) (r : ℕ) (h : r < rs.length),
++      nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] i
++
++section VChar
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **The verifier over the work tapes from `m` on.** From the entry of work tape `m`, with tape
++`0` holding the stream from cell `0` and its head there, tape `1` blank and the output empty, the
++verifier reaches a first verdict at some time `T`. It accepts exactly when every record's claim
++on every work tape `t ≥ m` is checked along the decoded virtual run; then the output is empty and
++`T ≤ (k - m)((2(2k + 4) + 12)n + 15)`.
++
++**Proof sketch.** Induct on `k - m`. With every work tape replayed the entry is the passing
++verdict. Otherwise run the replay of tape `m` from tape `1`'s head: a failed check rejects one
++dispatch later; a pass is followed by the return of tape `0` and the clear of tape `1`, which the
++exit invariant feeds and which leaves tape `1` blank again, at the next work tape's entry, where
++the induction hypothesis applies. Inside each phase the verifier is at no verdict. The time adds
++the replay's `(2k + 8)n - 2`, the dispatches, the return's `|s| + 6` and the clear's at most
++`4|R| + 9` with `|R| ≤ 2n`. -/
++private theorem nf_V_tail (N : FinNDTM Bool) {x : List Bool}
++    (rs : List (Fin (2 * N.k + 4) → Bool)) (hne : rs ≠ [])
++    (hflag : ∀ r (h : r < rs.length), rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length)) :
++    ∀ (d m : ℕ), m + d = N.k → ∀ {S : Type} (c : Cfg 2 Bool S x), c.state.isSome →
++      c.workTapes 0 = FinTM.bufferTape (rs.flatMap List.ofFn) → c.workTapePos 0 = 0 →
++      c.workTapes 1 = (fun _ => none) → c.output = [] →
++      ∃ T, (((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++            (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) T).state = some ⟨.park, true⟩ ∨
++          ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++            (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) T).state =
++              some ⟨.park, false⟩) ∧
++        (∀ u < T, ∀ b, ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) u).state ≠ some ⟨.park, b⟩) ∧
++        (((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++            (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) T).state = some ⟨.park, true⟩ ↔
++          ∀ (t : Fin N.k), m ≤ t.val → ∀ (r : ℕ) (h : r < rs.length),
++            nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] t.succ) ∧
++        ((∀ (t : Fin N.k), m ≤ t.val → ∀ (r : ℕ) (h : r < rs.length),
++            nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] t.succ) →
++          ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++            (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) T).output = [] ∧
++          T ≤ d * ((2 * (2 * N.k + 4) + 12) * rs.length + 15))
++  | 0, m, hm, S, c, hcs, _, _, _, hout => by
++    have hk : ¬ m < N.k := by omega
++    have he : nf_tapeEntry N (nf_leaf N) m = ⟨.park, true⟩ := by
++      unfold nf_tapeEntry
++      rw [dif_neg hk]
++    have hst : (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)).state = some ⟨.park, true⟩ := by
++      rw [Cfg.mapState_state, he]
++      obtain ⟨q, hq⟩ := Option.isSome_iff_exists.mp hcs
++      rw [hq]
++      rfl
++    refine ⟨0, Or.inl (by rw [MultiTapeTM.runFrom_zero]; exact hst), fun u hu => absurd hu
++      (Nat.not_lt_zero u), ⟨fun _ t ht => absurd t.isLt (by omega),
++      fun _ => by rw [MultiTapeTM.runFrom_zero]; exact hst⟩, fun _ => ⟨?_, Nat.zero_le _⟩⟩
++    rw [MultiTapeTM.runFrom_zero, Cfg.mapState_output, hout]
++  | d + 1, m, hm, S, c, hcs, hA, hA0, hB, hout => by
++    have hk : m < N.k := by omega
++    set t : Fin N.k := ⟨m, hk⟩ with ht
++    set s := rs.flatMap List.ofFn with hs
++    have hslen : s.length = (2 * N.k + 4) * rs.length := nf_stream_length N.k rs
++    have he : nf_tapeEntry N (nf_leaf N) m =
++        ⟨.rep (some t), (nf_leaf N (some t)).q₀⟩ := by
++      unfold nf_tapeEntry
++      rw [dif_pos hk]
++    -- the replay of work tape `m`, from tape `1`'s head
++    have hre := nf_retag (N := N) (SL := nf_LeafSt N) c (nf_Ph.rep (some t))
++      (nf_leaf N (some t)).q₀ hcs
++    set dL : Cfg 2 Bool (nf_LeafSt N) x :=
++      { state := some (nf_leaf N (some t)).q₀, inputPos := c.inputPos, workTapes := c.workTapes,
++        workTapePos := c.workTapePos, output := c.output } with hdL
++    have hinit_state : (N.tm.initCfg x).state = some N.tm.q₀ := by
++      rw [NDTM.initCfg_eq, Cfg.init_state]
++    have hinit_tape : (N.tm.initCfg x).workTapes t = fun _ => none := by
++      funext p
++      rw [NDTM.initCfg_eq, Cfg.init_workTapes]
++    have hinit_pos : (N.tm.initCfg x).workTapePos t = 0 := by
++      rw [NDTM.initCfg_eq, Cfg.init_workTapePos]
++    have hblk0 : nf_blocks (dL.workTapes 1) (c.workTapePos 1) 0 (-1)
++        ((N.tm.initCfg x).workTapes t) := by
++      show nf_blocks (c.workTapes 1) _ _ _ _
++      rw [hB, hinit_tape]
++      refine ⟨fun y => ?_, fun y _ => rfl⟩
++      rw [if_neg (by omega), if_neg (by omega)]
++      exact ⟨rfl, rfl⟩
++    obtain ⟨T₁, hpre₁, hpass₁, hrej₁⟩ := nf_leaf_run_wk N t (c.workTapePos 1) rs dL
++      (some N.tm.q₀, none, false) (N.tm.initCfg x) 0 (-1) hne hflag rfl hinit_state.symm hblk0
++      (by show c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)
++      (by rw [hinit_pos]; omega) (by
++        intro p hp
++        show c.workTapes 0 (c.workTapePos 0 + p) = _
++        rw [hA, hA0, zero_add, FinTM.bufferTape_nat])
++    have hguard₁ : ∀ u < T₁, ∀ q, ((nf_M N (nf_leaf N) (nf_Ph.rep (some t))).runFrom dL u).state =
++        some q → nf_red N (nf_leaf N) (nf_leafExit N) (nf_Ph.rep (some t)) q = none := by
++      intro u hu q hq
++      have h := hpre₁ u hu q hq
++      show (match nf_leafExit N q with
++        | some true => _ | some false => _ | none => none) = none
++      rw [h]
++    have hwin₁ : ∀ u ≤ T₁, ∀ b, ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++        (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) u).state ≠ some ⟨.park, b⟩ := by
++      intro u hu b
++      rw [he, hre]
++      unfold nf_V
++      rw [phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))
++        (nf_Ph.rep (some t)) dL T₁ hguard₁ u hu]
++      exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++    by_cases hok : ∀ r (h : r < rs.length),
++        nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] t.succ
++    · obtain ⟨hT₁, B, lo', hi', y, hcfg, hsupp, hy1, hy2, hsz⟩ := hpass₁ hok
++      set p₁ := c.workTapePos 1 with hp₁
++      -- the replay passes: one dispatch to the return of tape `0`
++      set c₁ : Cfg 2 Bool (nf_LeafSt N) x := { dL with
++          state := some .pass
++          workTapes := Function.update dL.workTapes 1 B
++          workTapePos := Function.update (Function.update dL.workTapePos 0
++            (dL.workTapePos 0 + ((2 * N.k + 4) * rs.length : ℕ))) 1 (p₁ + 2 * y + 1) } with hc₁
++      obtain ⟨-, hR⟩ := phaseHostTM_run (nf_M N (nf_leaf N)) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++        (nf_red N (nf_leaf N) (nf_leafExit N)) (nf_Ph.rep (some t)) dL c₁ T₁ hcfg
++        nf_LeafSt.pass rfl ⟨.aFwd (some t), .run⟩ rfl hguard₁
++      have hre1 := nf_retag (N := N) (SL := nf_LeafSt N)
++        (S := nf_St N (nf_LeafSt N) (nf_Ph.rep (some t))) c₁ (nf_Ph.aFwd (some t)) SeekPhase.run
++        (by rw [hc₁]; rfl)
++      set c₁' : Cfg 2 Bool SeekPhase x :=
++        { state := some .run, inputPos := c₁.inputPos, workTapes := c₁.workTapes,
++          workTapePos := c₁.workTapePos, output := c₁.output } with hc₁'
++      have hA1 : c₁'.workTapePos 0 = s.length := by
++        simp only [hc₁', hc₁, hdL]
++        rw [Function.update_of_ne (by decide), Function.update_self, hA0, zero_add, hslen]
++      have htape1 : ∀ p, c₁'.workTapes 0 p = FinTM.bufferTape s p := by
++        intro p
++        simp only [hc₁', hc₁, hdL]
++        rw [Function.update_of_ne (by decide), hA]
++      obtain ⟨c₃, h3, h3s, h3p0, h3p1, h3w, h3i, h3o, h3win⟩ := nf_aReturn N (nf_leaf N)
++        (nf_leafExit N) (some t) s c₁' rfl hA1 htape1
++      have h3' : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          ((c₁' : Cfg 2 Bool (nf_St N (nf_LeafSt N) (nf_Ph.aFwd (some t))) x).mapState
++            (Sigma.mk (nf_Ph.aFwd (some t)))) (s.length + 6) =
++          c₃.mapState (fun _ => (⟨nf_Ph.bFwd t, SeekPhase.run⟩ :
++            Σ i, nf_St N (nf_LeafSt N) i)) := h3
++      have hre3 := nf_retag (N := N) (SL := nf_LeafSt N) (S := SeekPhase) c₃ (nf_Ph.bFwd t)
++        SeekPhase.run h3s
++      set c₃' : Cfg 2 Bool SeekPhase x :=
++        { state := some .run, inputPos := c₃.inputPos, workTapes := c₃.workTapes,
++          workTapePos := c₃.workTapePos, output := c₃.output } with hc₃'
++      have hB3 : c₃'.workTapes 1 = B := by
++        simp only [hc₃']
++        rw [h3w]
++        simp only [hc₁', hc₁]
++        rw [Function.update_self]
++      have hP3 : c₃'.workTapePos 1 = p₁ + 2 * y + 1 := by
++        simp only [hc₃']
++        rw [h3p1]
++        simp only [hc₁', hc₁]
++        rw [Function.update_self]
++      -- the region of tape `1`, and its clear
++      obtain ⟨R, i, hiR, hRlen, hieq, hRt, hclr⟩ := nf_region B (p₁ + 2 * lo') (p₁ + 2 * hi' + 1)
++        (p₁ + 2 * y + 1) hsupp (by omega) (by omega)
++      obtain ⟨c₅, h5, h5s, h5p1, h5p0, h5w0, h5i, h5o, h5w1, h5win⟩ := nf_bClear N (nf_leaf N)
++        (nf_leafExit N) t R i hiR c₃' rfl (by
++          intro p hp1 hp2
++          rw [hB3, hP3]
++          exact hRt p hp1 hp2)
++      have h5' : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          ((c₃' : Cfg 2 Bool (nf_St N (nf_LeafSt N) (nf_Ph.bFwd t)) x).mapState
++            (Sigma.mk (nf_Ph.bFwd t)))
++          ((R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1)) =
++          c₅.mapState (fun _ => nf_tapeEntry N (nf_leaf N) (m + 1)) := h5
++      have hc5A : c₅.workTapes 0 = FinTM.bufferTape s := by
++        rw [h5w0]
++        simp only [hc₃']
++        rw [h3w]
++        simp only [hc₁', hc₁, hdL]
++        rw [Function.update_of_ne (by decide), hA]
++      have hc5A0 : c₅.workTapePos 0 = 0 := by
++        rw [h5p0]
++        simp only [hc₃']
++        exact h3p0
++      have hc5B : c₅.workTapes 1 = fun _ => none := by
++        funext q
++        rw [h5w1 q, hB3, hP3]
++        exact hclr q
++      have hc5o : c₅.output = [] := by
++        rw [h5o]
++        simp only [hc₃']
++        rw [h3o]
++        simp only [hc₁', hc₁, hdL]
++        exact hout
++      obtain ⟨T₂, hv2, hf2, hacc2, hb2⟩ := nf_V_tail N rs hne hflag d (m + 1) (by omega) c₅ h5s
++        hc5A hc5A0 hc5B hc5o
++      -- the chain
++      set TC := (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1) with hTC
++      have hrun1 : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) (T₁ + 1) =
++          (c₁' : Cfg 2 Bool (nf_St N (nf_LeafSt N) (nf_Ph.aFwd (some t))) x).mapState
++            (Sigma.mk (nf_Ph.aFwd (some t))) := by
++        rw [he, hre]
++        unfold nf_V
++        rw [hR, hre1]
++      have hrun2 : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) (T₁ + 1 + (s.length + 6)) =
++          (c₃' : Cfg 2 Bool (nf_St N (nf_LeafSt N) (nf_Ph.bFwd t)) x).mapState
++            (Sigma.mk (nf_Ph.bFwd t)) := by
++        rw [MultiTapeTM.runFrom_add, hrun1, h3', hre3]
++      have hrun3 : (nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) (T₁ + 1 + (s.length + 6) + TC) =
++          c₅.mapState (fun _ => nf_tapeEntry N (nf_leaf N) (m + 1)) := by
++        rw [MultiTapeTM.runFrom_add, hrun2, h5']
++      have hall : (∀ (t' : Fin N.k), m ≤ t'.val → ∀ (r : ℕ) (h : r < rs.length),
++            nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] t'.succ) ↔
++          (∀ (t' : Fin N.k), m + 1 ≤ t'.val → ∀ (r : ℕ) (h : r < rs.length),
++            nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] t'.succ) := by
++        constructor
++        · exact fun h t' ht' => h t' (by omega)
++        · intro h t' ht'
++          by_cases he' : t'.val = m
++          · have : t' = t := Fin.ext he'
++            subst this
++            exact hok
++          · exact h t' (by omega)
++      refine ⟨T₁ + 1 + (s.length + 6) + TC + T₂, ?_, fun u hu b => ?_, ?_, fun h => ?_⟩
++      · rw [MultiTapeTM.runFrom_add, hrun3]
++        exact hv2
++      · by_cases hu1 : u ≤ T₁
++        · exact hwin₁ u hu1 b
++        obtain ⟨v, rfl⟩ : ∃ v, u = (T₁ + 1) + v := ⟨u - (T₁ + 1), by omega⟩
++        rw [MultiTapeTM.runFrom_add, hrun1]
++        by_cases hv1 : v < s.length + 6
++        · exact h3win v hv1 b
++        obtain ⟨w, rfl⟩ : ∃ w, v = (s.length + 6) + w := ⟨v - (s.length + 6), by omega⟩
++        rw [MultiTapeTM.runFrom_add, h3', hre3]
++        by_cases hw1 : w < TC
++        · exact h5win w hw1 b
++        obtain ⟨z, rfl⟩ : ∃ z, w = TC + z := ⟨w - TC, by omega⟩
++        rw [MultiTapeTM.runFrom_add, h5']
++        exact hf2 z (by omega) b
++      · rw [MultiTapeTM.runFrom_add, hrun3, hacc2]
++        exact hall.symm
++      · obtain ⟨ho, hT₂⟩ := hb2 (hall.mp h)
++        refine ⟨by rw [MultiTapeTM.runFrom_add, hrun3]; exact ho, ?_⟩
++        have hRle : R.length ≤ 2 * rs.length := by omega
++        have e1 : (2 * N.k + 8) * rs.length = 2 * (N.k * rs.length) + 8 * rs.length := by ring
++        have e2 : (2 * N.k + 4) * rs.length = 2 * (N.k * rs.length) + 4 * rs.length := by ring
++        have e3 : (d + 1) * ((2 * (2 * N.k + 4) + 12) * rs.length + 15) =
++            d * ((2 * (2 * N.k + 4) + 12) * rs.length + 15) +
++              (4 * (N.k * rs.length) + 20 * rs.length + 15) := by ring
++        rw [e3]
++        rw [e1] at hT₁
++        rw [e2] at hslen
++        omega
++    · -- a failed check rejects one dispatch after the replay's exit
++      have hrj := hrej₁ hok
++      obtain ⟨-, hR⟩ := phaseHostTM_run (nf_M N (nf_leaf N)) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++        (nf_red N (nf_leaf N) (nf_leafExit N)) (nf_Ph.rep (some t)) dL _ T₁ rfl
++        nf_LeafSt.rej hrj ⟨.park, false⟩ rfl hguard₁
++      have hver : ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom
++          (c.mapState (fun _ => nf_tapeEntry N (nf_leaf N) m)) (T₁ + 1)).state =
++            some ⟨.park, false⟩ := by
++        rw [he, hre]
++        unfold nf_V
++        rw [hR, Cfg.mapState_state, hrj]
++        rfl
++      refine ⟨T₁ + 1, Or.inr hver, fun u hu b => hwin₁ u (by omega) b,
++        ⟨fun h => ?_, fun h => absurd (h t le_rfl) hok⟩, fun h => absurd (h t le_rfl) hok⟩
++      rw [hver] at h
++      exact absurd (Sigma.mk.inj_iff.mp (Option.some.inj h)).2 (by simp)
++
++end VChar
++
++/-- Every check passes exactly when the control sweep passes, every input claim is checked, and
++every work-tape claim is checked. -/
++private theorem nf_allPass_iff (N : FinNDTM Bool) (x : List Bool)
++    (rs : List (Fin (2 * N.k + 4) → Bool)) :
++    nf_allPass N x rs ↔
++      nf_sweepPass N ((rs.flatMap List.ofFn).foldl (nf_sweepStep N) (nf_sweepInit N)) = true ∧
++      (∀ (r : ℕ) (h : r < rs.length),
++        nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] 0) ∧
++      ∀ (t : Fin N.k), 0 ≤ t.val → ∀ (r : ℕ) (h : r < rs.length),
++        nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] t.succ := by
++  constructor
++  · rintro ⟨hc, h⟩
++    exact ⟨hc, h 0, fun t _ => h t.succ⟩
++  · rintro ⟨hc, h0, ht⟩
++    exact ⟨hc, fun i => Fin.cases h0 (fun t => ht t (Nat.zero_le _)) i⟩
++
++section VChar2
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **The verifier's characterization.** From the stream start of a stream of `n ≥ 1` records
++(only the last end-flagged), the verifier reaches a first verdict, `acc` or `rej`, at some time
++`TQ`. It accepts exactly when every check passes (`nf_allPass`); then its output is empty and
++`TQ ≤ 4|s| + 10 + k((2(2k + 4) + 12)n + 15)`.
++
++**Proof sketch.** The control sweep is the scan fold, `2|s| + 2` steps, and a failed sweep
++rejects at the dispatch. Otherwise the input's replay runs from the stream start: a failed check
++rejects at its dispatch, a pass is followed by the return of tape `0` to the first work tape's
++entry, with tape `0` holding the stream, its head at `0`, tape `1` blank and the output empty.
++The work tapes' part is `nf_V_tail` from there. -/
++private theorem nf_V_char (N : FinNDTM Bool) (x : List Bool)
++    (rs : List (Fin (2 * N.k + 4) → Bool)) (hne : rs ≠ [])
++    (hflag : ∀ r (h : r < rs.length), rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length)) :
++    ∃ TQ, (((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (rs.flatMap List.ofFn)) TQ).state = some ⟨.park, true⟩ ∨
++        ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (rs.flatMap List.ofFn)) TQ).state = some ⟨.park, false⟩) ∧
++      (∀ u < TQ, ∀ b, ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (rs.flatMap List.ofFn)) u).state ≠ some ⟨.park, b⟩) ∧
++      (((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (rs.flatMap List.ofFn)) TQ).state = some ⟨.park, true⟩ ↔ nf_allPass N x rs) ∧
++      (nf_allPass N x rs →
++        ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (rs.flatMap List.ofFn)) TQ).output = [] ∧
++        TQ ≤ 4 * (rs.flatMap List.ofFn).length + 10 +
++          N.k * ((2 * (2 * N.k + 4) + 12) * rs.length + 15)) := by
++  set s := rs.flatMap List.ofFn with hs
++  have hslen : s.length = (2 * N.k + 4) * rs.length := nf_stream_length N.k rs
++  set V := nf_V N (nf_leaf N) (nf_leafExit N) with hV
++  rw [nf_tag]
++  -- the control sweep
++  obtain ⟨hs1, hs2⟩ := nf_sweep_run N x s
++  have hguard0 : ∀ u < 2 * s.length + 2, ∀ q,
++      ((nf_M N (nf_leaf N) nf_Ph.ctl).runFrom
++        (streamStartCfg x 0 (ScanPhase.fwd (nf_sweepInit N)) s) u).state = some q →
++      nf_red N (nf_leaf N) (nf_leafExit N) nf_Ph.ctl q = none := by
++    intro u hu q hq
++    cases q with
++    | done a => exact absurd hq (hs2 u hu a)
++    | fwd a => rfl
++    | bwd a => rfl
++  obtain ⟨hp0, hD⟩ := phaseHostTM_run (nf_M N (nf_leaf N)) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N (nf_leaf N) (nf_leafExit N)) nf_Ph.ctl _ _ (2 * s.length + 2) hs1
++    (ScanPhase.done (s.foldl (nf_sweepStep N) (nf_sweepInit N))) (streamStartCfg_state _ _ _ _)
++    _ rfl hguard0
++  have hwin0 : ∀ u ≤ 2 * s.length + 2, ∀ b, (V.runFrom ((streamStartCfg x 0
++      (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++        (Sigma.mk nf_Ph.ctl)) u).state ≠ some ⟨.park, b⟩ := by
++    intro u hu b
++    rw [hV]
++    unfold nf_V
++    rw [hp0 u hu]
++    exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++  by_cases hpass : nf_sweepPass N (s.foldl (nf_sweepStep N) (nf_sweepInit N)) = true
++  swap
++  · -- a failed control sweep rejects at the dispatch
++    have hver : (V.runFrom ((streamStartCfg x 0
++        (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++          (Sigma.mk nf_Ph.ctl)) (2 * s.length + 2 + 1)).state = some ⟨.park, false⟩ := by
++      rw [hV]
++      unfold nf_V
++      rw [hD, Cfg.mapState_state, streamStartCfg_state]
++      simp only [Option.map_some]
++      rw [if_neg hpass]
++    refine ⟨2 * s.length + 2 + 1, Or.inr hver, fun u hu b => hwin0 u (by omega) b,
++      ⟨fun h => ?_, fun h => absurd h.1 hpass⟩, fun h => absurd h.1 hpass⟩
++    rw [hver] at h
++    exact absurd (Sigma.mk.inj_iff.mp (Option.some.inj h)).2 (by simp)
++  -- the input's replay
++  set dS := streamStartCfg x (0 : Fin 2)
++    (ScanPhase.done (s.foldl (nf_sweepStep N) (nf_sweepInit N)) :
++      nf_St N (nf_LeafSt N) nf_Ph.ctl) s with hdS
++  have hre := nf_retag (N := N) (SL := nf_LeafSt N) (S := nf_St N (nf_LeafSt N) nf_Ph.ctl) dS
++    (nf_Ph.rep none) (nf_leaf N none).q₀ (by rw [hdS, streamStartCfg_state]; rfl)
++  set dL : Cfg 2 Bool (nf_LeafSt N) x :=
++    { state := some (nf_leaf N none).q₀, inputPos := dS.inputPos, workTapes := dS.workTapes,
++      workTapePos := dS.workTapePos, output := dS.output } with hdL
++  have hinit_state : (N.tm.initCfg x).state = some N.tm.q₀ := by
++    rw [NDTM.initCfg_eq, Cfg.init_state]
++  obtain ⟨T₁, hpre₁, hpass₁, hrej₁⟩ := nf_leaf_run_in N rs dL (some N.tm.q₀, none, false)
++    (N.tm.initCfg x) hne hflag rfl hinit_state.symm
++    (by
++      show dS.inputPos = _
++      rw [hdS, streamStartCfg_inputPos, NDTM.initCfg_eq, Cfg.init_inputPos])
++    (by
++      intro p hp
++      show dS.workTapes 0 (dS.workTapePos 0 + p) = _
++      rw [hdS, streamStartCfg_workTapes, streamStartCfg_workTapePos, if_pos rfl, zero_add,
++        FinTM.bufferTape_nat])
++  have hguard₁ : ∀ u < T₁, ∀ q, ((nf_M N (nf_leaf N) (nf_Ph.rep none)).runFrom dL u).state =
++      some q → nf_red N (nf_leaf N) (nf_leafExit N) (nf_Ph.rep none) q = none := by
++    intro u hu q hq
++    have h := hpre₁ u hu q hq
++    show (match nf_leafExit N q with
++      | some true => _ | some false => _ | none => none) = none
++    rw [h]
++  have hrun0 : V.runFrom ((streamStartCfg x 0
++      (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++        (Sigma.mk nf_Ph.ctl)) (2 * s.length + 2 + 1) =
++      dL.mapState (Sigma.mk (nf_Ph.rep none)) := by
++    rw [hV]
++    unfold nf_V
++    rw [hD]
++    simp only [hpass, if_true]
++    exact hre
++  have hwin1 : ∀ u ≤ T₁, ∀ b, (V.runFrom (dL.mapState (Sigma.mk (nf_Ph.rep none))) u).state ≠
++      some ⟨.park, b⟩ := by
++    intro u hu b
++    rw [hV]
++    unfold nf_V
++    rw [phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))
++      (nf_Ph.rep none) dL T₁ hguard₁ u hu]
++    exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++  have hwin01 : ∀ u ≤ 2 * s.length + 2 + 1 + T₁, ∀ b, (V.runFrom ((streamStartCfg x 0
++      (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++        (Sigma.mk nf_Ph.ctl)) u).state ≠ some ⟨.park, b⟩ := by
++    intro u hu b
++    by_cases hu0 : u ≤ 2 * s.length + 2
++    · exact hwin0 u hu0 b
++    obtain ⟨v, rfl⟩ : ∃ v, u = (2 * s.length + 2 + 1) + v := ⟨u - (2 * s.length + 2 + 1), by omega⟩
++    rw [MultiTapeTM.runFrom_add, hrun0]
++    exact hwin1 v (by omega) b
++  by_cases hin : ∀ r (h : r < rs.length),
++      nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] 0
++  swap
++  · -- a failed input check rejects at the dispatch
++    have hrj := hrej₁ hin
++    obtain ⟨-, hR⟩ := phaseHostTM_run (nf_M N (nf_leaf N)) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++      (nf_red N (nf_leaf N) (nf_leafExit N)) (nf_Ph.rep none) dL _ T₁ rfl
++      nf_LeafSt.rej hrj ⟨.park, false⟩ rfl hguard₁
++    have hver : (V.runFrom ((streamStartCfg x 0
++        (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++          (Sigma.mk nf_Ph.ctl)) (2 * s.length + 2 + 1 + (T₁ + 1))).state =
++            some ⟨.park, false⟩ := by
++      rw [MultiTapeTM.runFrom_add, hrun0, hV]
++      unfold nf_V
++      rw [hR, Cfg.mapState_state, hrj]
++      rfl
++    have hnp : ¬ nf_allPass N x rs := fun h => hin ((nf_allPass_iff N x rs).mp h).2.1
++    refine ⟨2 * s.length + 2 + 1 + (T₁ + 1), Or.inr hver, fun u hu b => hwin01 u (by omega) b,
++      ⟨fun h => ?_, fun h => absurd h hnp⟩, fun h => absurd h hnp⟩
++    rw [hver] at h
++    exact absurd (Sigma.mk.inj_iff.mp (Option.some.inj h)).2 (by simp)
++  -- the input passes: the return of tape `0`, then the work tapes
++  obtain ⟨hT₁, ip, hcfg⟩ := hpass₁ hin
++  set c₁ : Cfg 2 Bool (nf_LeafSt N) x := { dL with
++      state := some .pass
++      inputPos := ip
++      workTapePos := Function.update dL.workTapePos 0
++        (dL.workTapePos 0 + ((2 * N.k + 4) * rs.length : ℕ)) } with hc₁
++  obtain ⟨-, hR⟩ := phaseHostTM_run (nf_M N (nf_leaf N)) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N (nf_leaf N) (nf_leafExit N)) (nf_Ph.rep none) dL c₁ T₁ hcfg
++    nf_LeafSt.pass rfl ⟨.aFwd none, .run⟩ rfl hguard₁
++  have hre1 := nf_retag (N := N) (SL := nf_LeafSt N)
++    (S := nf_St N (nf_LeafSt N) (nf_Ph.rep none)) c₁ (nf_Ph.aFwd none) SeekPhase.run
++    (by rw [hc₁]; rfl)
++  set c₁' : Cfg 2 Bool SeekPhase x :=
++    { state := some .run, inputPos := c₁.inputPos, workTapes := c₁.workTapes,
++      workTapePos := c₁.workTapePos, output := c₁.output } with hc₁'
++  have hA1 : c₁'.workTapePos 0 = s.length := by
++    simp only [hc₁', hc₁, hdL, hdS]
++    rw [Function.update_self, streamStartCfg_workTapePos, zero_add, hslen]
++  have htape1 : ∀ p, c₁'.workTapes 0 p = FinTM.bufferTape s p := by
++    intro p
++    simp only [hc₁', hc₁, hdL, hdS]
++    rw [streamStartCfg_workTapes, if_pos rfl]
++  obtain ⟨c₃, h3, h3s, h3p0, -, h3w, -, h3o, h3win⟩ := nf_aReturn N (nf_leaf N)
++    (nf_leafExit N) none s c₁' rfl hA1 htape1
++  have h3' : V.runFrom
++      ((c₁' : Cfg 2 Bool (nf_St N (nf_LeafSt N) (nf_Ph.aFwd none)) x).mapState
++        (Sigma.mk (nf_Ph.aFwd none))) (s.length + 6) =
++      c₃.mapState (fun _ => nf_tapeEntry N (nf_leaf N) 0) := h3
++  have hc3A : c₃.workTapes 0 = FinTM.bufferTape s := by
++    rw [h3w]
++    funext p
++    exact htape1 p
++  have hc3B : c₃.workTapes 1 = fun _ => none := by
++    rw [h3w]
++    funext p
++    simp only [hc₁', hc₁, hdL, hdS]
++    rw [streamStartCfg_workTapes, if_neg (by decide)]
++  have hc3o : c₃.output = [] := by
++    rw [h3o]
++    simp only [hc₁', hc₁, hdL, hdS]
++    rw [streamStartCfg_output]
++  obtain ⟨T₂, hv2, hf2, hacc2, hb2⟩ := nf_V_tail N rs hne hflag N.k 0 (by omega) c₃ h3s
++    hc3A h3p0 hc3B hc3o
++  have hrun1 : V.runFrom ((streamStartCfg x 0
++      (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++        (Sigma.mk nf_Ph.ctl)) (2 * s.length + 2 + 1 + (T₁ + 1)) =
++      (c₁' : Cfg 2 Bool (nf_St N (nf_LeafSt N) (nf_Ph.aFwd none)) x).mapState
++        (Sigma.mk (nf_Ph.aFwd none)) := by
++    rw [MultiTapeTM.runFrom_add, hrun0, hV]
++    unfold nf_V
++    rw [hR, hre1]
++  have hrun2 : V.runFrom ((streamStartCfg x 0
++      (ScanPhase.fwd (nf_sweepInit N) : nf_St N (nf_LeafSt N) nf_Ph.ctl) s).mapState
++        (Sigma.mk nf_Ph.ctl)) (2 * s.length + 2 + 1 + (T₁ + 1) + (s.length + 6)) =
++      c₃.mapState (fun _ => nf_tapeEntry N (nf_leaf N) 0) := by
++    rw [MultiTapeTM.runFrom_add, hrun1, h3']
++  refine ⟨2 * s.length + 2 + 1 + (T₁ + 1) + (s.length + 6) + T₂, ?_, fun u hu b => ?_, ?_,
++    fun h => ?_⟩
++  · rw [MultiTapeTM.runFrom_add, hrun2]
++    exact hv2
++  · by_cases hu1 : u ≤ 2 * s.length + 2 + 1 + T₁
++    · exact hwin01 u hu1 b
++    obtain ⟨v, rfl⟩ : ∃ v, u = (2 * s.length + 2 + 1 + (T₁ + 1)) + v :=
++      ⟨u - (2 * s.length + 2 + 1 + (T₁ + 1)), by omega⟩
++    rw [MultiTapeTM.runFrom_add, hrun1]
++    by_cases hv1 : v < s.length + 6
++    · exact h3win v hv1 b
++    obtain ⟨w, rfl⟩ : ∃ w, v = (s.length + 6) + w := ⟨v - (s.length + 6), by omega⟩
++    rw [MultiTapeTM.runFrom_add, h3']
++    exact hf2 w (by omega) b
++  · rw [MultiTapeTM.runFrom_add, hrun2, hacc2, nf_allPass_iff]
++    exact ⟨fun h => ⟨hpass, hin, h⟩, fun h => h.2.2⟩
++  · obtain ⟨ho, hT₂⟩ := hb2 ((nf_allPass_iff N x rs).mp h).2.2
++    refine ⟨by rw [MultiTapeTM.runFrom_add, hrun2]; exact ho, ?_⟩
++    rw [hT₁]
++    have e2 : (2 * N.k + 4) * rs.length = s.length := hslen.symm
++    rw [e2]
++    omega
++
++end VChar2
++
++/-- **A stream that first stops the controller is a stream of records**: `n ≥ 1` records of width
++`2k + 4`, only the last end-flagged.
++
++**Proof sketch.** The first-stop criterion gives the length `(2k + 4)n` and the flags. Cut the
++stream into `n` records of `2k + 4` cells by the product law of `List.ofFn`; the end flag of record
++`r` is the stream's cell `(2k + 4)(r + 1) - 1`. -/
++private theorem nf_split (k : ℕ) (s : List Bool)
++    (hlive : ∀ i < s.length, nf_ctlStop k ((s.take i).foldl (nf_ctlStep k) (0, false)) = false)
++    (hstop : nf_ctlStop k (s.foldl (nf_ctlStep k) (0, false)) = true) :
++    ∃ rs : List (Fin (2 * k + 4) → Bool), rs ≠ [] ∧ s = rs.flatMap List.ofFn ∧
++      ∀ r (h : r < rs.length), rs[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = rs.length) := by
++  obtain ⟨n, hn, hlen, hfl⟩ := nf_firstStop_records k s hlive hstop
++  have hidx : ∀ (r : Fin n) (p : Fin (2 * k + 4)), (2 * k + 4) * r.val + p.val < s.length := by
++    intro r p
++    rw [hlen]
++    have h1 := p.isLt
++    have h2 : (2 * k + 4) * (r.val + 1) ≤ (2 * k + 4) * n := Nat.mul_le_mul_left _ r.isLt
++    rw [Nat.mul_add, Nat.mul_one] at h2
++    omega
++  refine ⟨List.ofFn fun r : Fin n => fun p : Fin (2 * k + 4) =>
++    s[(2 * k + 4) * r.val + p.val]'(hidx r p), ?_, ?_, ?_⟩
++  · intro h
++    have := congrArg List.length h
++    rw [List.length_ofFn, List.length_nil] at this
++    omega
++  · have h := List.ofFn_mul' (m := 2 * k + 4) (n := n)
++      (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt))
++    have h0 : List.ofFn (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt)) =
++        s := by
++      apply List.ext_getElem (by rw [List.length_ofFn, hlen])
++      intro i h1 h2
++      rw [List.getElem_ofFn]
++    rw [List.flatMap_def, List.map_ofFn]
++    exact h0.symm.trans h
++  · intro r hr
++    rw [List.length_ofFn] at hr ⊢
++    rw [List.getElem_ofFn]
++    have hf := hfl r hr
++    have e : (2 * k + 4) * (r + 1) - 1 = (2 * k + 4) * r + (2 * k + 3) := by
++      rw [Nat.mul_add, Nat.mul_one]
++      omega
++    rw [e, List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)] at hf
++    exact Option.some.inj hf
++
++/-- The trivial setup: one state, its own exit. -/
++private def nf_P : MultiTapeTM 2 Bool Unit :=
++  ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, some ()⟩⟩
++
++section VChar3
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **The backward lemma's obligation `hV`.** For every stream that first stops the controller at
++its end, well formed or not in content, the verifier reaches a verdict, `acc` or `rej`, from the
++host's entry configuration after the trivial setup, and is at neither before.
++
++**Proof sketch.** The entry configuration is the stream start; the stream is a stream of records;
++the characterization gives the first verdict. -/
++private theorem nf_hV (N : FinNDTM Bool) (x s : List Bool)
++    (hlive : ∀ i < s.length,
++      nf_ctlStop N.k ((s.take i).foldl (nf_ctlStep N.k) (0, false)) = false)
++    (hstop : nf_ctlStop N.k (s.foldl (nf_ctlStep N.k) (0, false)) = true) :
++    ∃ TQ : ℕ,
++      (((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (guessRunCfg (nf_P.initCfg x) 0 s
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)) TQ).state =
++            some ⟨.park, true⟩ ∨
++        ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (guessRunCfg (nf_P.initCfg x) 0 s
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)) TQ).state =
++            some ⟨.park, false⟩) ∧
++      ∀ u < TQ,
++        ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (guessRunCfg (nf_P.initCfg x) 0 s
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)) u).state ≠
++            some ⟨.park, true⟩ ∧
++        ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (guessRunCfg (nf_P.initCfg x) 0 s
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)) u).state ≠
++            some ⟨.park, false⟩ := by
++  rw [nf_entry]
++  obtain ⟨rs, hne, rfl, hflag⟩ := nf_split N.k s hlive hstop
++  obtain ⟨TQ, hv, hf, -, -⟩ := nf_V_char N x rs hne hflag
++  exact ⟨TQ, hv, fun u hu => ⟨hf u hu true, hf u hu false⟩⟩
++
++/-- **On a genuine branch the decoded virtual run is the genuine run.** Along the records of a
++branch's display, the decoded virtual run from `N`'s start after `r` records is `N`'s run under the
++branch's first `r` choice bits, as long as the branch is live before its end.
++
++**Proof sketch.** Induct on `r`. A genuine record decodes to the configuration's reads and carries
++the step's choice bit, so the recomputed action is the table's action at the configuration, and the
++virtual step is `N`'s step. -/
++private theorem nf_vrun_genuine (N : FinNDTM Bool) (x w : List Bool)
++    (hlive : ∀ r < w.length, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state ≠ none) :
++    ∀ r ≤ w.length,
++      ((List.ofFn fun r : Fin w.length =>
++        let c := N.tm.runWith (w.take r.val) (N.tm.initCfg x)
++        nf_record N.k w[r.val] (Fin.cases c.inputSymbol c.workTapeSymbols)
++          (decide (r.val + 1 = w.length))).take r).foldl (nf_vstep N) (N.tm.initCfg x) =
++        N.tm.runWith (w.take r) (N.tm.initCfg x)
++  | 0, _ => by rw [List.take_zero, List.foldl_nil, List.take_zero, NDTM.runWith_nil]
++  | r + 1, hr => by
++    have hlt : r < w.length := by omega
++    rw [List.take_succ_eq_append_getElem (by rw [List.length_ofFn]; exact hlt), List.foldl_append,
++      nf_vrun_genuine N x w hlive r (by omega), List.foldl_cons, List.foldl_nil,
++      List.take_succ_eq_append_getElem hlt, NDTM.runWith_append, NDTM.runWith_cons,
++      NDTM.runWith_nil, List.getElem_ofFn]
++    obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp (hlive r hlt)
++    have hd : nf_decode N.k (fun p => some (nf_record N.k w[r]
++        (Fin.cases (N.tm.runWith (w.take r) (N.tm.initCfg x)).inputSymbol
++          (N.tm.runWith (w.take r) (N.tm.initCfg x)).workTapeSymbols)
++        (decide (r + 1 = w.length)) p)) =
++        Fin.cases (N.tm.runWith (w.take r) (N.tm.initCfg x)).inputSymbol
++          (N.tm.runWith (w.take r) (N.tm.initCfg x)).workTapeSymbols := by
++      funext i
++      exact nf_decode_record N.k _ _ _ i
++    simp only [nf_vstep, hq]
++    rw [NDTM.stepWith_of_some hq]
++    unfold nf_act
++    rw [hd, Option.getD_some, nf_record_choice]
++    simp only [Fin.cases_zero, Fin.cases_succ]
++
++/-- **The verifier accepts a genuine display.** The display of a branch that is live before its
++end, halts at its end and outputs exactly `[true]` passes every check; so the verifier's first
++verdict on it is `acc`, with an empty output, within the characterization's bound.
++
++**Proof sketch.** The display is a stream of genuine records, only the last end-flagged. The
++control sweep passes it. Along it the decoded virtual run is the genuine run, live before the end,
++and every record's claims are the genuine configuration's reads. -/
++private theorem nf_V_display (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ [])
++    (hlive : ∀ r < w.length, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state ≠ none)
++    (hhalt : (N.tm.runWith w (N.tm.initCfg x)).state = none)
++    (hout : (N.tm.runWith w (N.tm.initCfg x)).output = [true]) :
++    ∃ TQ, ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (nf_display N x w)) TQ).state = some ⟨.park, true⟩ ∧
++      (∀ u < TQ, ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (nf_display N x w)) u).state ≠ some ⟨.park, true⟩ ∧
++        ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (nf_display N x w)) u).state ≠ some ⟨.park, false⟩) ∧
++      ((nf_V N (nf_leaf N) (nf_leafExit N)).runFrom (streamStartCfg x 0
++          (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i)
++          (nf_display N x w)) TQ).output = [] ∧
++      TQ ≤ 4 * (nf_display N x w).length + 10 +
++        N.k * ((2 * (2 * N.k + 4) + 12) * w.length + 15) := by
++  obtain ⟨rs, hrs⟩ : ∃ rs, rs = List.ofFn fun r : Fin w.length =>
++      let c := N.tm.runWith (w.take r.val) (N.tm.initCfg x)
++      nf_record N.k w[r.val] (Fin.cases c.inputSymbol c.workTapeSymbols)
++        (decide (r.val + 1 = w.length)) := ⟨_, rfl⟩
++  have hdisp : nf_display N x w = rs.flatMap List.ofFn := by
++    rw [hrs]
++    exact nf_display_records N x w
++  have hrlen : rs.length = w.length := by rw [hrs, List.length_ofFn]
++  have hget : ∀ r (h : r < rs.length), rs[r] =
++      nf_record N.k (w[r]'(by rw [hrlen] at h; exact h))
++        (Fin.cases (N.tm.runWith (w.take r) (N.tm.initCfg x)).inputSymbol
++          (N.tm.runWith (w.take r) (N.tm.initCfg x)).workTapeSymbols)
++        (decide (r + 1 = w.length)) := by
++    subst hrs
++    intro r h
++    rw [List.getElem_ofFn]
++  have hne : rs ≠ [] := by
++    intro h
++    have := congrArg List.length h
++    rw [hrlen, List.length_nil] at this
++    exact hw (List.eq_nil_of_length_eq_zero this)
++  have hflag : ∀ r (h : r < rs.length),
++      rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length) := by
++    intro r hr
++    rw [hget r hr]
++    exact (nf_record_last N.k _ _ _).trans (congrArg (fun n => decide (r + 1 = n)) hrlen.symm)
++  have hall : nf_allPass N x rs := by
++    refine ⟨?_, fun i r hr => ?_⟩
++    · rw [← hdisp]
++      exact nf_sweep_display_pass N x w hlive hhalt hout
++    · have hrw : r < w.length := by rw [← hrlen]; exact hr
++      have hv := nf_vrun_genuine N x w hlive r hrw.le
++      rw [← hrs] at hv
++      rw [hv]
++      refine ⟨hlive r hrw, ?_⟩
++      rw [hget r hr]
++      exact nf_decode_record N.k _ _ _ i
++  rw [hdisp]
++  obtain ⟨TQ, -, hf, hacc, hb⟩ := nf_V_char N x rs hne hflag
++  obtain ⟨ho, hT⟩ := hb hall
++  refine ⟨TQ, hacc.mpr hall, fun u hu => ⟨hf u hu true, hf u hu false⟩, ho, ?_⟩
++  rw [hrlen] at hT
++  exact hT
++
++end VChar3
++
+ /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+ cited through [AB09, §3.2]; statement; proof incomplete): every
+ nondeterministic machine has a coded (two-work-tape) equivalent whose
+-- 
+2.43.0
+

@@ -1,0 +1,76 @@
+## nf_retag :: pattern: theorem [A-Za-z_]*retag
+
+## nf_tagged_ne_park :: pattern: mapState \(Sigma\.mk [a-z]\)\)\.state ≠
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:408:    (c.mapState (Sigma.mk i)).state ≠ some v := by
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:409:    (c.mapState (Sigma.mk i)).state ≠ some v := by
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:410:    (c.mapState (Sigma.mk i)).state ≠ some v := by
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:424:    (c.mapState (Sigma.mk i)).state ≠ some v := by
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:439:    (c.mapState (Sigma.mk i)).state ≠ some v := by
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:565:    (c.mapState (Sigma.mk i)).state ≠ some v := by
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:840:    (c.mapState (Sigma.mk i)).state ≠
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:867:    (c.mapState (Sigma.mk i)).state ≠
+
+## nf_aReturn_nf_bClear :: pattern: skipBackTM_run_ofCfg .*\(0 : Fin 2\)|skipBackTM_run_ofCfg \(k := 2\)
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:1002:      obtain ⟨hr₄, hc₄, hb₄⟩ := skipBackTM_run_ofCfg (0 : Fin 2) u a₈ rfl
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:990:      obtain ⟨hr₄, hc₄, hb₄⟩ := skipBackTM_run_ofCfg (0 : Fin 2) u a₈ rfl
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:991:      obtain ⟨hr₄, hc₄, hb₄⟩ := skipBackTM_run_ofCfg (0 : Fin 2) u a₈ rfl
+TCSlib/Complexity/TuringMachine/Build/RecordTable.lean:993:      obtain ⟨hr₄, hc₄, hb₄⟩ := skipBackTM_run_ofCfg (0 : Fin 2) u a₈ rfl
+
+## nf_inputSymbol_congr :: pattern: inputSymbol = [a-z']*\.inputSymbol|theorem [A-Za-z_]*inputSymbol_congr
+TCSlib/Complexity/ClassNP/EXP.lean:1371:    have hin : (enumCont_padCfg (K := K) emb c).inputSymbol = c.inputSymbol := rfl
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:200:private theorem xr_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:202:    c.inputSymbol = c'.inputSymbol := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1168:    have hi : (contGuessCfg M c u).inputSymbol = c.inputSymbol := rfl
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1169:    have hi : (contGuessCfg M c u).inputSymbol = c.inputSymbol := rfl
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1185:    have hi : (contGuessCfg M c u).inputSymbol = c.inputSymbol := rfl
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1342:    (b2UnaryCfg c).inputSymbol = c.inputSymbol.map (fun _ => true) := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1343:    (b2UnaryCfg c).inputSymbol = c.inputSymbol.map (fun _ => true) := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1359:    (b2UnaryCfg c).inputSymbol = c.inputSymbol.map (fun _ => true) := by
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1549:    have hi : (b2GuessCfg S V c u).inputSymbol = g.inputSymbol := rfl
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1550:    have hi : (b2GuessCfg S V c u).inputSymbol = g.inputSymbol := rfl
+TCSlib/Complexity/ClassNP/Nondeterminism.lean:1566:    have hi : (b2GuessCfg S V c u).inputSymbol = g.inputSymbol := rfl
+
+## nf_entry :: pattern: guessRunCfg \(P\.initCfg x\) 0 s q = streamStartCfg|guessRunCfg .*= streamStartCfg
+
+## nf_tag :: pattern: streamStartCfg .*mapState \(Sigma\.mk
+
+## nf_stream_length :: pattern: \(.*\.flatMap List\.ofFn\)\.length
+
+## nf_stream_cons_nf_split :: pattern: flatMap List\.ofFn
+
+## nf_signType_bound :: pattern: SignType\) : ℤ\) ≤ 1|\(m : ℤ\) ≤ 1
+
+## nf_blocks :: pattern: two-bit block|twoBit|blockDecode|blockWrite
+TCSlib/Complexity/Randomized/Build/PairSplit.lean:31:* **Phase 1, `parse`.** The buffered aligned parser: aligned two-bit blocks `00`/`11` of the
+TCSlib/Complexity/Randomized/Build/PairSplit.lean:424:**Proof sketch.** Induct over aligned two-bit blocks while carrying the already-decoded
+TCSlib/Complexity/Randomized/Build/UnaryMul.lean:33:* **Phase 1, `parse`.** The buffered aligned parser: aligned two-bit blocks `00`/`11` of the
+TCSlib/Complexity/Randomized/Build/UnaryMul.lean:353:**Proof sketch.** Induct over aligned two-bit blocks while carrying the already-decoded
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:1839:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2029:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2134:**Proof sketch.** Induct over aligned two-bit blocks while carrying the
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2221:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2224:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2252:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2265:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:2276:**Proof sketch.** Induct in aligned two-bit blocks. The empty and singleton
+
+## nf_region :: pattern: List\.ofFn fun m : Fin [A-Za-z]* => \(B
+
+## nf_vstep :: pattern: Fin\.cases [a-z]*\.inputSymbol [a-z]*\.workTapeSymbols
+
+## nf_first_halt :: pattern: Nat\.find .*runWith|first halting
+TCSlib/Complexity/ClassNP/EXP.lean:810:/-- Any known halted endpoint is reached at the first halting time, with a
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2189:  · -- the branch halts: the `finish` exit at the first halting time
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:2206:  · -- the branch halts: the `finish` exit at the first halting time
+TCSlib/Complexity/ClassNP/SAT.lean:684:/-- Select the actual first halting transition, retaining its final emission. -/
+TCSlib/Complexity/ClassNP/SAT.lean:757:**Proof sketch.** Choose the catalog certificate extractor once. Capture its first halting run, establish
+TCSlib/Complexity/ClassNP/SAT.lean:913:/-- Select the actual first halting transition, retaining its final emission. -/
+TCSlib/Complexity/ClassNP/SAT.lean:986:**Proof sketch.** Choose the catalog certificate extractor once. Capture its first halting run, establish
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:102:/-- Before the first halting time, no core repeats.
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:105:/-- Before the first halting time, no core repeats.
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:106:with `p = t₂ - t₁`. At the first halting time `T = t₁ + r` the state is `none`, but
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:109:with `p = t₂ - t₁`. At the first halting time `T = t₁ + r` the state is `none`, but
+TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:110:/-- Before the first halting time, no core repeats.
+
+## nf_ledger :: pattern: 6 \* \(2 \* [a-z]* \+ 4\)
+

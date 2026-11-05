@@ -1,0 +1,45 @@
+/-
+Audit probe for the E-D fill (a probe record, not library code). For every declaration of the owned
+module whose name (private or not) has a final component starting with `dz`, `Dz` (the new
+privates) or is the target: its axioms (`Lean.collectAxioms`), and the constants of other TCSlib
+modules its value or type mentions directly, with their kind; then the union of those constants.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+open Lean Meta Elab Command
+
+def dzKind (ci : ConstantInfo) : String :=
+  match ci with
+  | .defnInfo _ => "def" | .thmInfo _ => "theorem" | .inductInfo _ => "inductive"
+  | .ctorInfo _ => "ctor" | .recInfo _ => "rec" | .axiomInfo _ => "axiom"
+  | .opaqueInfo _ => "opaque" | .quotInfo _ => "quot"
+
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let own := `TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+  let some ownIdx := env.getModuleIdx? own | throwError "no module"
+  let mut targets : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    if env.getModuleIdxFor? n != some ownIdx then continue
+    let base := (privateToUserName? n).getD n
+    let isDz := base.components.any fun c => c.toString.startsWith "dz" || c.toString.startsWith "Dz"
+    if isDz || base == `Turing.NTimeDiag.exists_diagonalizer then
+      targets := targets.push n
+  -- also the projections and auxiliary declarations of `DzKit` are included by the prefix test
+  let mut external : Std.HashMap Name String := {}
+  let mut nAx := 0
+  for n in targets.qsort (fun a b => a.toString < b.toString) do
+    let axs ← liftCoreM <| collectAxioms n
+    let ok := axs.all fun a => a == ``propext || a == ``Classical.choice || a == ``Quot.sound
+    if !ok then IO.println s!"AXIOMS-BAD {n} {axs}"
+    nAx := nAx + 1
+    let ci := env.find? n |>.get!
+    let used := ci.type.getUsedConstants ++ ((ci.value?.map Expr.getUsedConstants).getD #[])
+    for u in used do
+      let some idx := env.getModuleIdxFor? u | continue
+      let mod := env.header.moduleNames[idx.toNat]!
+      if (`TCSlib).isPrefixOf mod && mod != own then
+        external := external.insert u s!"{dzKind (env.find? u).get!} {mod}{if isPrivateName u then " PRIVATE" else ""}"
+  IO.println s!"DECLS-WALKED {nAx} (every one's axioms within [propext, Classical.choice, Quot.sound] unless AXIOMS-BAD is printed)"
+  for (u, k) in external.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    IO.println s!"EXT {u} : {k}"
+  IO.println s!"EXT-COUNT {external.size}"

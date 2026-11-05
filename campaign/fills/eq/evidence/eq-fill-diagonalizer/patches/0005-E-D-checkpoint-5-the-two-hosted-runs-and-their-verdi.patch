@@ -1,0 +1,290 @@
+From 54552c0c6c515bd437733845ac94c1dd7c292a5f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 21:17:34 +0000
+Subject: [PATCH 05/11] E-D checkpoint 5: the two hosted runs and their verdict
+ readers
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTn8RSd7d1nwPtgvzcC
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 264 ++++++++++++++++++
+ 1 file changed, 264 insertions(+)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index b2e64bbd..80c4f8aa 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -7427,6 +7427,270 @@ private theorem dz_rewrite {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF
+   simp only [List.length_cons, List.length_nil, List.length_append] at ht2 ht3 ht4 hlen ⊢
+   nlinarith
+ 
++/-! ### The two hosted runs and their verdicts -/
++
++/-- **The middle's hosted run.** From the hosted core's entry over a layout with the core's input
++`z'` on tape `11`, the stream `s₁` on the block tape, the capture tape blank, the clock's counter
++`bits G` on tape `3`, these heads and every block tape's at `0`: if the core first reaches its
++verdict `v` (`accept` or `reject`) at `TR`, the run accepts when `TR ≤ G` and `v` is `accept`, and
++rejects otherwise, within `5G + 2|bits G| + 3` steps.
++
++**Proof sketch.** The hosted clock's clause `κ.cR` at the core's start configuration
++`Turing.streamStartCfg z' jR rE s₁` (read through its field equations), the counter worth `G`
++(`qy_bits_val`). The core stops (at `accept`, `reject` or a halt) first at `TR`: before it, it is
++live (`MultiTapeTM.runFrom_state_ne_none_of_le`) and off both verdicts. If `TR ≤ G`, the finish
++clause gives `fR` of the verdict, which the dispatch sends to the matching verdict (`fR` injective,
++`accept ≠ reject`); otherwise the timeout clause gives some `oR r`, rejected. The guard is the
++clock's cut. -/
++private theorem dz_runR {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
++    (z' s₁ : List Bool) (G : ℕ) (h3 : L 3 = FinTM.bufferTape (Nat.bits G))
++    (h6 : L 6 = FinTM.bufferTape s₁) (h11 : L 11 = FinTM.bufferTape z')
++    (h12 : L 12 = FinTM.bufferTape []) (hP3 : Pn 3 = 0) (hP6 : Pn 6 = 0) (hP11 : Pn 11 = 0)
++    (hP12 : Pn 12 = 0) (TR : ℕ) (v : κ.SR) (hv : v = κ.rA ∨ v = κ.rJ)
++    (hTR : (κ.R.runFrom (streamStartCfg z' κ.jR κ.rE s₁) TR).state = some v)
++    (hcut : ∀ u < TR, (κ.R.runFrom (streamStartCfg z' κ.jR κ.rE s₁) u).state ≠ some κ.rA ∧
++      (κ.R.runFrom (streamStartCfg z' κ.jR κ.rE s₁) u).state ≠ some κ.rJ) :
++    ∃ t ≤ 5 * G + 2 * (Nat.bits G).length + 3, ∃ (T' : Fin κ.K → ℤ → Option Bool)
++      (P' : Fin κ.K → ℤ), Segment (dzQ κ) (dzQF κ) (fun _ => True)
++        (qyC (x := z) ⟨.runR, κ.iR (κ.rE, true)⟩ 1 (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [])
++        (qyC (if TR ≤ G ∧ v = κ.rA then dzAcc κ else dzRej κ) 1 T' P' []) t := by
++  set c0 := streamStartCfg z' κ.jR κ.rE s₁ with hc0
++  set stop : κ.SR → Bool := fun q => decide (q = κ.rA ∨ q = κ.rJ) with hstop
++  have hlive : ∀ u ≤ TR, (κ.R.runFrom c0 u).state ≠ none :=
++    MultiTapeTM.runFrom_state_ne_none_of_le _ _ TR (by rw [hTR]; exact Option.some_ne_none _)
++  have hstopTR : (κ.R.runFrom c0 TR).Stopped stop := by
++    rw [Cfg.stopped_iff]
++    refine Or.inr ⟨v, hTR, ?_⟩
++    rw [hstop]
++    exact decide_eq_true hv
++  have hnot : ∀ u < TR, ¬(κ.R.runFrom c0 u).Stopped stop := by
++    intro u hu h
++    rw [Cfg.stopped_iff] at h
++    rcases h with h | ⟨s, hs, hst⟩
++    · exact hlive u hu.le h
++    · rw [hstop] at hst
++      rcases of_decide_eq_true hst with rfl | rfl
++      · exact (hcut u hu).1 hs
++      · exact (hcut u hu).2 hs
++  have hbits := qy_bits_val G
++  have hspec := κ.cR (x := z) (κ.tp 11) (κ.tp 12) (κ.tp 3) κ.bR (κ.tp_ne (by decide))
++    (κ.tp_ne (by decide)) (κ.tp_ne (by decide)) (fun ⟨i, h⟩ => κ.bR_ne i 11 (by decide) h)
++    (fun ⟨i, h⟩ => κ.bR_ne i 12 (by decide) h) (fun ⟨i, h⟩ => κ.bR_ne i 3 (by decide) h)
++    (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [] c0 κ.rE (Nat.bits G)
++    (by rw [hc0, streamStartCfg_state]) (by rw [hc0, streamStartCfg_inputPos])
++    (by rw [hc0, streamStartCfg_output]) (by rw [dzLay_tp, h11]) (by rw [dzLay_tp, hP11])
++    (fun i => by
++      rw [hc0]
++      constructor
++      · funext a
++        rw [streamStartCfg_workTapes]
++        by_cases hi : i = κ.jR
++        · rw [if_pos hi, hi, κ.bR_j, dzLay_tp, h6]
++        · rw [if_neg hi, dzLay_off _ _ _ (κ.bR_off i hi), FinTM.bufferTape_nil]
++      · rw [streamStartCfg_workTapePos]
++        by_cases hi : i = κ.jR
++        · rw [hi, κ.bR_j, dzLay_tp, hP6]
++        · rw [dzLay_off _ _ _ (κ.bR_off i hi)])
++    (by rw [dzLay_tp, h12]) (by rw [dzLay_tp, hP12]) (by rw [dzLay_tp, h3]) (by rw [dzLay_tp, hP3])
++  rw [hbits] at hspec
++  obtain ⟨hfin, hto⟩ := hspec
++  have hguard : ∀ (t : ℕ), (∀ u < t, ∀ r,
++      ((embedEmitTM κ.sR κ.HR).runFrom (qyC (x := z) (κ.iR (κ.rE, true)) 1
++        (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []) u).state ≠ some (κ.fR r) ∧
++      ((embedEmitTM κ.sR κ.HR).runFrom (qyC (x := z) (κ.iR (κ.rE, true)) 1
++        (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []) u).state ≠ some (κ.oR r)) →
++      ∀ u < t, ∀ s, ((dzQM κ .runR).runFrom (qyC (x := z) (κ.iR (κ.rE, true)) 1
++        (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []) u).state = some s →
++          dzQRed κ .runR s = none := by
++    intro t hc u hu s hs
++    have h1 : ¬∃ b, s = κ.fR (some (κ.rA, b)) := fun ⟨b, hb⟩ =>
++      (hc u hu (some (κ.rA, b))).1 (hs.trans (by rw [hb]))
++    have h2 : ¬∃ r, s = κ.fR r := fun ⟨r, hr⟩ => (hc u hu r).1 (hs.trans (by rw [hr]))
++    have h3 : ¬∃ r, s = κ.oR r := fun ⟨r, hr⟩ => (hc u hu r).2 (hs.trans (by rw [hr]))
++    simp only [dzQRed, if_neg h1, if_neg h2, if_neg h3]
++  by_cases hTG : TR ≤ G
++  · obtain ⟨t, ht, b, T', P', hrun, -, -, hcutH⟩ := hfin TR hTG hstopTR hnot
++    rw [hTR, Option.map_some] at hrun
++    have hred : dzQRed κ .runR (κ.fR (some (v, b))) =
++        some (if TR ≤ G ∧ v = κ.rA then dzAcc κ else dzRej κ) := by
++      rcases hv with rfl | rfl
++      · rw [if_pos ⟨hTG, rfl⟩]
++        simp only [dzQRed]
++        rw [if_pos ⟨b, rfl⟩]
++      · rw [if_neg (fun h => κ.hAJ h.2.symm)]
++        simp only [dzQRed]
++        rw [if_neg (fun ⟨b', hb'⟩ =>
++            κ.hAJ (congrArg Prod.fst (Option.some_inj.mp (κ.fRi hb'))).symm),
++          if_pos ⟨_, rfl⟩]
++    exact ⟨t + 1, by omega, T', P', qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .runR
++      (κ.iR (κ.rE, true)) _ _ 1 1 _ _ _ _ [] [] t hrun hred (hguard t hcutH) (dzQF κ)
++      (fun s => dz_notF κ .runR s (by simp) (by simp))⟩
++  · obtain ⟨t, ht, r, T', P', hrun, hcutH⟩ := hto (fun u hu h => by
++      rcases Nat.lt_or_ge u TR with h' | h'
++      · exact hnot u h' h
++      · omega)
++    have hred : dzQRed κ .runR (κ.oR r) =
++        some (if TR ≤ G ∧ v = κ.rA then dzAcc κ else dzRej κ) := by
++      rw [if_neg (fun h => hTG h.1)]
++      simp only [dzQRed]
++      rw [if_neg (fun ⟨b, hb⟩ => κ.fRo _ _ hb.symm), if_neg (fun ⟨r', hr'⟩ => κ.fRo _ _ hr'.symm),
++        if_pos ⟨r, rfl⟩]
++    exact ⟨t + 1, by omega, T', P', qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .runR
++      (κ.iR (κ.rE, true)) _ _ 1 1 _ _ _ _ [] [] t hrun hred (hguard t hcutH) (dzQF κ)
++      (fun s => dz_notF κ .runR s (by simp) (by simp))⟩
++
++/-- **The top's hosted run and its read.** From the hosted decider's entry over a layout with the
++query's tail on tape `8`, the capture tape and the decider's tapes blank, the clock's counter
++`bits G` on tape `3`, these heads at `0`, the run reaches a verdict within `6G + 2|bits G| + 10`
++steps; whenever the decider has halted on the tail by some `τ ≤ G`, the verdict is the acceptance
++exactly when the decider's output at `τ` starts with `false`.
++
++**Proof sketch.** The hosted clock's clause `κ.cB` at `BF`'s initial configuration on the tail
++(read through `MultiTapeTM.initCfg_eq` and `Cfg.init`'s equations), stopping at the halt. If the
++decider halts by `G`, at its first halt `τ₀` (`Nat.find`) the finish clause leaves its output on the
++capture tape (at most `τ₀` symbols, `MultiTapeTM.output_length_le`); the dispatch rewinds it
++(`qy_rewind`) and the take (`dz_take_run`) reads its first cell: `false` accepts, anything else
++rejects. A halted run is fixed (`MultiTapeTM.runFrom_of_halt`), so the output at every later
++`τ ≤ G` is the same. Otherwise the timeout clause gives some `oB r`, rejected. -/
++private theorem dz_top_run {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
++    (tail : List Bool) (G : ℕ) (h3 : L 3 = FinTM.bufferTape (Nat.bits G))
++    (h8 : L 8 = FinTM.bufferTape tail) (h12 : L 12 = FinTM.bufferTape [])
++    (h13 : L 13 = FinTM.bufferTape []) (hP3 : Pn 3 = 0) (hP8 : Pn 8 = 0) (hP12 : Pn 12 = 0)
++    (hP13 : Pn 13 = 0) :
++    ∃ t ≤ 6 * G + 2 * (Nat.bits G).length + 10, ∃ (v : Σ i, DzQPh κ i)
++      (T' : Fin κ.K → ℤ → Option Bool) (P' : Fin κ.K → ℤ), (v = dzAcc κ ∨ v = dzRej κ) ∧
++      Segment (dzQ κ) (dzQF κ) (fun _ => True)
++        (qyC (x := z) ⟨.runB, κ.iB (BF.tm.q₀, true)⟩ 1 (dzLay L (FinTM.bufferTape []))
++          (dzLay Pn 0) [])
++        (qyC v 1 T' P' []) t ∧
++      ∀ τ ≤ G, (BF.tm.runFrom (BF.tm.initCfg tail) τ).state = none →
++        (v = dzAcc κ ↔ (BF.tm.runFrom (BF.tm.initCfg tail) τ).output.head? = some false) := by
++  set c0 := BF.tm.initCfg tail with hc0
++  have hbits := qy_bits_val G
++  have hspec := κ.cB (x := z) (κ.tp 8) (κ.tp 12) (κ.tp 3) κ.bB (κ.tp_ne (by decide))
++    (κ.tp_ne (by decide)) (κ.tp_ne (by decide)) (fun ⟨i, h⟩ => κ.bB_ne i 8 (by decide) h)
++    (fun ⟨i, h⟩ => κ.bB_ne i 12 (by decide) h) (fun ⟨i, h⟩ => κ.bB_ne i 3 (by decide) h)
++    (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [] c0 BF.tm.q₀ (Nat.bits G)
++    (by rw [hc0, MultiTapeTM.initCfg_eq, Cfg.init_state])
++    (by rw [hc0, MultiTapeTM.initCfg_eq, Cfg.init_inputPos])
++    (by rw [hc0, MultiTapeTM.initCfg_eq, Cfg.init_output]) (by rw [dzLay_tp, h8])
++    (by rw [dzLay_tp, hP8])
++    (fun i => by
++      rw [hc0, MultiTapeTM.initCfg_eq]
++      constructor
++      · funext a
++        rw [Cfg.init_workTapes]
++        by_cases hi : (i : ℕ) = 0
++        · have hk : 0 < BF.k := by have := i.isLt; omega
++          rw [show i = ⟨0, hk⟩ from Fin.ext hi, show κ.bB ⟨0, hk⟩ = κ.tp 13 from rfl, dzLay_tp,
++            h13, FinTM.bufferTape_nil]
++        · have : 14 ≤ (κ.bB i : ℕ) := by
++            unfold DzKit.bB
++            exact dz_bank_off _ _ _ _ _ (by omega) i hi
++          rw [dzLay_off _ _ _ this, FinTM.bufferTape_nil]
++      · rw [Cfg.init_workTapePos]
++        by_cases hi : (i : ℕ) = 0
++        · have hk : 0 < BF.k := by have := i.isLt; omega
++          rw [show i = ⟨0, hk⟩ from Fin.ext hi, show κ.bB ⟨0, hk⟩ = κ.tp 13 from rfl, dzLay_tp,
++            hP13]
++        · have : 14 ≤ (κ.bB i : ℕ) := by
++            unfold DzKit.bB
++            exact dz_bank_off _ _ _ _ _ (by omega) i hi
++          rw [dzLay_off _ _ _ this])
++    (by rw [dzLay_tp, h12]) (by rw [dzLay_tp, hP12]) (by rw [dzLay_tp, h3]) (by rw [dzLay_tp, hP3])
++  rw [hbits] at hspec
++  obtain ⟨hfin, hto⟩ := hspec
++  have hstopped : ∀ u, (BF.tm.runFrom c0 u).Stopped (fun _ => false) ↔
++      (BF.tm.runFrom c0 u).state = none := by
++    intro u
++    rw [Cfg.stopped_iff]
++    constructor
++    · rintro (h | ⟨s, -, hs⟩)
++      · exact h
++      · exact absurd hs (by simp)
++    · exact Or.inl
++  have hguard : ∀ (t : ℕ), (∀ u < t, ∀ r,
++      ((embedEmitTM κ.sB κ.HB).runFrom (qyC (x := z) (κ.iB (BF.tm.q₀, true)) 1
++        (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []) u).state ≠ some (κ.fB r) ∧
++      ((embedEmitTM κ.sB κ.HB).runFrom (qyC (x := z) (κ.iB (BF.tm.q₀, true)) 1
++        (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []) u).state ≠ some (κ.oB r)) →
++      ∀ u < t, ∀ s, ((dzQM κ .runB).runFrom (qyC (x := z) (κ.iB (BF.tm.q₀, true)) 1
++        (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []) u).state = some s →
++          dzQRed κ .runB s = none := by
++    intro t hc u hu s hs
++    have h1 : ¬∃ r, s = κ.fB r := fun ⟨r, hr⟩ => (hc u hu r).1 (hs.trans (by rw [hr]))
++    have h2 : ¬∃ r, s = κ.oB r := fun ⟨r, hr⟩ => (hc u hu r).2 (hs.trans (by rw [hr]))
++    simp only [dzQRed, if_neg h1, if_neg h2]
++  by_cases hh : ∃ τ ≤ G, (BF.tm.runFrom c0 τ).state = none
++  · have h0 : ∃ τ, (BF.tm.runFrom c0 τ).state = none := by
++      obtain ⟨τ, -, h⟩ := hh
++      exact ⟨τ, h⟩
++    set τ₀ := Nat.find h0 with hτ₀
++    have hτ₀G : τ₀ ≤ G := by
++      obtain ⟨τ, hτ, h⟩ := hh
++      exact (Nat.find_min' h0 h).trans hτ
++    have hst0 : (BF.tm.runFrom c0 τ₀).state = none := Nat.find_spec h0
++    obtain ⟨t, ht, b, T', P', hrun, hcap, hpos, hcutH⟩ := hfin τ₀ hτ₀G ((hstopped τ₀).mpr hst0)
++      (fun u hu h => Nat.find_min h0 hu ((hstopped u).mp h))
++    rw [hst0, Option.map_none] at hrun
++    set out := (BF.tm.runFrom c0 τ₀).output with hout
++    have seg1 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .runB (κ.iB (BF.tm.q₀, true))
++      (κ.fB none) ⟨.rwK, RewindPhase.start⟩ 1 1 _ _ _ _ [] [] t hrun
++      (by simp only [dzQRed]; rw [if_pos ⟨none, rfl⟩]) (hguard t hcutH) (dzQF κ)
++      (fun s => dz_notF κ .runB s (by simp) (by simp))
++    -- rwK: rewind the captured output
++    have c2 := qy_rewind (x := z) (κ.tp 12) 1 T' P' [] out out.length le_rfl hcap hpos
++    have seg2 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .rwK .start .done ⟨.rd, none⟩
++      1 1 _ _ _ _ [] [] _ c2.1 (by simp [dzQRed])
++      (qy_guard_of_cut RewindPhase.done (dzQRed κ .rwK) (fun s hs => by simp [dzQRed, hs]) c2.2)
++      (dzQF κ) (fun s => dz_notF κ .rwK s (by simp) (by simp))
++    -- rd: read the captured output's first cell
++    have c3 := dz_take_run (x := z) (κ.tp 12) 1 T' (Function.update P' (κ.tp 12) 0) []
++    rw [Function.update_self, hcap] at c3
++    set v : Σ i, DzQPh κ i := if out.head? = some false then dzAcc κ else dzRej κ with hv
++    have hred : dzQRed κ .rd (some (FinTM.bufferTape out 0)) = some v := by
++      rw [hv]
++      rcases out with _ | ⟨b0, out'⟩
++      · simp [dzQRed, FinTM.bufferTape_nil]
++      · have e : FinTM.bufferTape (b0 :: out') 0 = some b0 := by
++          rw [FinTM.bufferTape_eq, if_pos le_rfl]
++          rfl
++        rw [e]
++        cases b0 <;> simp [dzQRed]
++    have seg3 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .rd none
++      (some (FinTM.bufferTape out 0)) v 1 1 _ _ _ _ [] [] 1 c3 hred (fun u hu s hs => by
++        obtain rfl : u = 0 := by omega
++        rw [MultiTapeTM.runFrom_zero] at hs
++        cases Option.some.inj hs
++        simp [dzQRed]) (dzQF κ) (fun s => dz_notF κ .rd s (by simp) (by simp))
++    refine ⟨_, ?_, v, _, _, ?_, seg1.trans (seg2.trans seg3), fun τ hτ hstτ => ?_⟩
++    · have hlen : out.length ≤ τ₀ := by
++        rw [hout, hc0]
++        exact MultiTapeTM.output_length_le _ _ _
++      omega
++    · rw [hv]
++      split_ifs
++      · exact Or.inl rfl
++      · exact Or.inr rfl
++    · have hle : τ₀ ≤ τ := Nat.find_min' h0 hstτ
++      have hsame : BF.tm.runFrom c0 τ = BF.tm.runFrom c0 τ₀ := by
++        obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
++        rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hst0]
++      rw [hsame, ← hout, hv]
++      split_ifs with hf
++      · exact ⟨fun _ => hf, fun _ => rfl⟩
++      · exact ⟨fun h => absurd h (dz_acc_ne_rej κ).symm, fun h => absurd h hf⟩
++  · obtain ⟨t, ht, r, T', P', hrun, hcutH⟩ := hto (fun u hu h => hh ⟨u, hu, (hstopped u).mp h⟩)
++    have hred : dzQRed κ .runB (κ.oB r) = some (dzRej κ) := by
++      simp only [dzQRed]
++      rw [if_neg (fun ⟨r', hr'⟩ => κ.fBo _ _ hr'.symm), if_pos ⟨r, rfl⟩]
++    refine ⟨t + 1, by omega, dzRej κ, T', P', Or.inr rfl, qy_hosted (dzQM κ) ⟨.flag, none⟩
++      (dzQRed κ) .runB (κ.iB (BF.tm.q₀, true)) _ _ 1 1 _ _ _ _ [] [] t hrun hred (hguard t hcutH)
++      (dzQF κ) (fun s => dz_notF κ .runB s (by simp) (by simp)), fun τ hτ hstτ => ?_⟩
++    exact absurd ⟨τ, hτ, hstτ⟩ hh
++
+ /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
+ P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
+ deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
+-- 
+2.43.0
+

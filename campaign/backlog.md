@@ -4196,7 +4196,9 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
     the commit subjects reworded and the `Claude-Session:` trailers dropped.
   - **PR #188** (`lean/ed-diagonalizer`, head `f77abee9`): the 11 commits (authorship kept), plus
     the landing edits.
-  - **Next:** after #182 merges, the replay (3 modules from `oleans-larm2`) and a light fill gate.
+  - `replay-led` **passed** (3/3, static-equal, no sorry warning; `oleans-led`). **Gate 93** (the fill
+    gate) staged on the shared exchange (bundle `1c85d709…`, 376 sections) and **dispatched (user,
+    2026-11-04)**.
 
   With NF, this closes `NTimeHierarchy`'s two inputs; landing both should make that theorem
   admission-free, to be checked at landing.
@@ -4279,6 +4281,9 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Its two Lean-side minors are fixed: seven
   label docstrings rewritten (`e6eaaf94`), and the chain re-run at that head with source hashes
   (22/22 clean, from a fresh `oleans-larm` clone).
-  After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
+  **Merged (user, 2026-11-04)** after `replay-ledge` passed (61/61; `oleans-ledge`).
+  After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay.
+  **Done (2026-11-04):** retargeted; campaign merged (`23659a09`); `replay-ledge` passed (61/61,
+  static-equal; `oleans-ledge`). **#184 is clear to merge.** The
   deepening fill's brief issues once #182 and #184 have both merged.
 
