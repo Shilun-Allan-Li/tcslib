@@ -243,6 +243,7 @@ after #188 and #189), then again against `oleans-lcf3` (after #190, which change
 5. **What is left for the fill:** the machine `D` of §2, `deepen_contract`, and the two window
    lemmas in their probed form, about 1.0–2.0k lines (ESTIMATE).
 
-**Decision 4 (the user's):** extend the exception to these four `Iff.rfl` equations in
-`Logspace/PathWalk` and `ExpBFS/Radius`, FYI only, or have the deepening re-derive the two
-arguments under an acknowledged family.
+**Decision 4, ruled by the user (2026-11-05): "Four Iff.rfl equations".** The exception extends
+to the four `Iff.rfl` equations in `Logspace/PathWalk` and `ExpBFS/Radius`, FYI only. The six
+lemmas land in one maintainer API PR with its gate and replay; the fill's brief issues after it
+merges.

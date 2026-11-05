@@ -30,6 +30,9 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - mechanical dedup edits (copy deletions, re-points) in Hydroxyi's ARM files, with an FYI only;
   - the general Savitch's generalization of `SpaceComplexity/SavitchARM/*`, `Machines/*` and
     `Codec/*`, with an FYI only;
+  - four `Iff.rfl` equations for the deepening (2026-11-05): `walkLe_zero_iff` and
+    `walkLe_succ_iff` in `Logspace/PathWalk`, `rcode_iff_reflTransGen` and `winRun_iff` in
+    `ExpBFS/Radius`, FYI only;
   - gate 89's re-points (#181's files);
   - one visibility change in `CircuitComplexity/DAGCircuitSat`.
 
