@@ -64,6 +64,7 @@ import TCSlib.Complexity.TuringMachine.CodeSimulator
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
 import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+import TCSlib.Complexity.TuringMachine.Robustness.TwoTapes
 import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule
 import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
@@ -77,6 +78,7 @@ import TCSlib.Complexity.TuringMachine.Codes2Tape
 import TCSlib.Complexity.TuringMachine.MathlibBridge
 import TCSlib.Complexity.TuringMachine.UniversalStartup
 import TCSlib.Complexity.TuringMachine.UniversalK
+import TCSlib.Complexity.TuringMachine.UniversalTlogT
 import TCSlib.Complexity.TuringMachine.SelfUniversal
 import TCSlib.Complexity.TuringMachine.UniversalInterpreter
 import TCSlib.Complexity.TuringMachine.UniversalBlock
@@ -250,6 +252,8 @@ for the local modifications.
   all-`true` word, in the form the timed conditional takes as its test. Proved.
 * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
 * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
+* `Robustness/TwoTapes` — two work tapes suffice, with logarithmic overhead, run by run
+  (Hennie–Stearns; the simulation is stated, and its proof is open).
 * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
 * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
@@ -263,6 +267,8 @@ for the local modifications.
   scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
   the self-application universal machine with time and space ledgers, and the code-first
   evaluator, all proved.
+* `UniversalTlogT` — the efficient universal machine [AB09, Theorem 1.9] at `T log T`, per run
+  and with the converse, proved from `Robustness/TwoTapes`'s reduction and `UniversalK`.
 * `SelfUniversal` — the self-application universal machine `U₀` and its startup
   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
   Both are proved, as the `k = 1` cases of `UniversalK`'s statements.

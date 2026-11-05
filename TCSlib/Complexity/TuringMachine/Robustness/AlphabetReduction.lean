@@ -48,6 +48,7 @@ defining `DTIME` over binary-alphabet machines (see
 ## Main results
 
 * `Turing.FinTM.alphabet_reduction` — [AB09, Claim 1.5].
+* `Turing.FinTM.alphabet_reduction_run` — the same, run by run, with the converse.
 
 ## References
 
@@ -594,6 +595,57 @@ theorem alphabet_reduction {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool �
   intro x
   exact (arTM_computes E hE e M x (f x) (T x.length) (hM x)).mono
     (Nat.mul_le_mul_left _ (Nat.le_succ _))
+
+/-- **Alphabet reduction, run by run** [AB09, Claim 1.5]: for every machine `M` over a finite
+alphabet `Γ` and every embedding `e : Bool ↪ Γ`, a binary machine `M'` with the same number of
+work tapes reproduces each halting run of `M` on an encoded input `x.map e` with an encoded
+output `w.map e`, within `c · t` steps for a run of `t` steps. Conversely, whenever `M'` halts on
+`x` with output `w`, `M` halts on `x.map e` with some output `o`, and if `o` is the image `v.map e`
+of a binary word then `v = w`.
+
+The converse cannot say more: `M'` decodes each emitted symbol through a total decoder, so an
+output of `M` outside the image of `e` is decoded too. A machine that writes only images of bits
+(as every machine computing a binary function via `e` does) has `o = w.map e`.
+
+**Proof sketch.** `M'` is the block simulation of `Turing.FinTM.alphabet_reduction`, whose
+run correspondence maps `M`'s configuration after `t` steps to `M'`'s after `c · t`. The
+forward direction is that correspondence at the halting time. For the converse, let `M'`
+halt at `t`. Since `c ≥ 1` and a halted run is stationary, `M'`'s configuration at `c · t` is
+the one at `t`, so the correspondence says that `M`'s configuration after `t` steps is
+halted, and that `w` is its output decoded. If that output is `v.map e`, decoding returns
+`v`. -/
+theorem alphabet_reduction_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool ↪ Γ)
+    (M : FinTM Γ) :
+    ∃ (c : ℕ) (M' : FinTM Bool), M'.k = M.k ∧
+      (∀ (x w : List Bool) (t : ℕ), M.ComputesInTime (x.map e) (w.map e) t →
+        M'.ComputesInTime x w (c * t)) ∧
+      ∀ (x w : List Bool), (∃ t, M'.ComputesInTime x w t) →
+        ∃ (t : ℕ) (o : List Γ), M.ComputesInTime (x.map e) o t ∧
+          ∀ v : List Bool, o = v.map e → v = w := by
+  let E := arCode (Γ := Γ)
+  have hE : E none = fun _ => none := rfl
+  refine ⟨3 * (Fintype.card Γ + 1) + 2, arTM E e M, rfl,
+    fun x w t h => arTM_computes E hE e M x w t h, ?_⟩
+  rintro x w ⟨t, ht⟩
+  obtain ⟨hs, ho⟩ := (computesInTime_iff _ _ _ _).1 ht
+  have hrun := arCfg_run E e M (M.tm.initCfg (x.map e)) t
+  rw [← arCfg_init E hE] at hrun
+  have hle : t ≤ (3 * (Fintype.card Γ + 1) + 2) * t := by
+    calc t = 1 * t := (one_mul t).symm
+      _ ≤ _ := Nat.mul_le_mul_right t (by omega)
+  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hle
+  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at hrun
+  refine ⟨t, (M.tm.runFrom (M.tm.initCfg (x.map e)) t).output, ?_, fun v hv => ?_⟩
+  · rw [computesInTime_iff]
+    refine ⟨?_, rfl⟩
+    have h1 := congrArg Cfg.state hrun
+    rw [hs] at h1
+    simp only [arCfg] at h1
+    exact Option.map_eq_none_iff.1 h1.symm
+  · have h2 := congrArg Cfg.output hrun
+    rw [ho] at h2
+    simp only [arCfg, hv, List.map_map, Function.comp_def, arBit_embed, List.map_id'] at h2
+    exact h2.symm
 
 end
 
