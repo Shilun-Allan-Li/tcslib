@@ -1,0 +1,35 @@
+"""Sealed copy and seal controls for the deepening window route probe (rule 10).
+Usage: python3 -I mkseal_dw.py <probe dir>
+The route section of Window.lean runs under a seal of every other-file TCSlib definition it
+reaches, with the usual simp erasures. Controls: a delta and an equation goal per sealed
+definition, unsealed and sealed."""
+import sys, pathlib
+d = pathlib.Path(sys.argv[1]); out = d / 'seal'
+ERASE = ('attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg '
+         'Turing.NDTM.initCfg')
+SEAL = ['Complexity.LogProg.SavitchARM.Reach', 'Complexity.Codec.StepRel',
+        'Complexity.Codec.initLang', 'Complexity.Codec.acceptLang', 'Complexity.Codec.edgeLang',
+        'Complexity.Codec.stepLang', 'Complexity.Codec.cfgCode', 'Complexity.Codec.codeK',
+        'Complexity.Codec.effAct', 'Complexity.logSpace', 'Turing.pairEncode',
+        'Complexity.ExpBFS.RCode', 'Complexity.ExpBFS.WinRun', 'Turing.Cfg.InWindow',
+        'Turing.NDTM.runWith', 'Turing.NDTM.initCfg', 'Turing.NDTM.stepWith', 'Turing.Action.apply',
+        'Turing.FinNDTM.AcceptsWithin', 'Turing.FinNDTM.DecidesInSpace',
+        'Turing.FinNDTM.configBound', 'Turing.NDTM.coreSum', 'Turing.Cfg.init',
+        'Turing.MultiTapeTM.initCfg']
+def seal(names):
+    return ERASE + '\nattribute [local irreducible]\n' + '\n'.join('  ' + n for n in names) + '\n'
+t = (d / 'Window.lean').read_text()
+a = '\nsection Route\n\nvariable {N : FinNDTM Bool} {x : List Bool}\n'
+assert t.count(a) == 1
+t = t.replace(a, a + '\n' + seal(SEAL), 1)
+(out / 'WindowSealed.lean').write_text(t)
+hdr = (out / 'ctl_header.lean.part.txt').read_text()
+imports = ''.join(l + '\n' for l in (d / 'Window.lean').read_text().split('\n') if l.startswith('import '))
+doc = ("/-\nSeal controls for the deepening window route probe: a delta and an equation goal for each "
+       "sealed\ndefinition. Expected: unsealed, every control passes except recursive definitions' "
+       "delta goals;\nsealed, every control fails. A probe record, not library code.\n-/\n")
+ctl = ''.join(f'#ctl_rfl {n}\n' for n in SEAL) + ''.join(f'#ctl_eqn {n}\n' for n in SEAL)
+for name, s in (('unsealed', ''), ('sealed', seal(SEAL))):
+    (out / f'SealControl_{name}.lean').write_text(doc + imports + hdr + '\n\nsection Controls\n\n' + s
+                                                   + '\n' + ctl + '\nend Controls\n')
+print(len(SEAL), 'sealed definitions')

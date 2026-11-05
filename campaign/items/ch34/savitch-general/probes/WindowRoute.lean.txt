@@ -1,0 +1,135 @@
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
+import TCSlib.Complexity.SpaceComplexity.Codec.Step
+
+/-! The deepening fill's window route probe (maintainer, pre-ship, 2026-11-05): window exactness
+and termination from published lemmas plus four API statements (`api_*`), each standing in for a
+lemma at its home. A probe, not library code. -/
+
+set_option autoImplicit false
+
+open Turing Complexity Complexity.Codec Complexity.LogProg.SavitchARM
+
+/-! ## API stand-ins (each would sit beside its definition) -/
+
+/-- (ExpBFS/Radius) `RCode`'s equation. -/
+theorem api_rcode_iff {N : FinNDTM Bool} {x : List Bool} {s u : ℕ} :
+    ExpBFS.RCode N x s u ↔
+      Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u := Iff.rfl
+
+/-- (ExpBFS/Radius) `WinRun`'s equation. -/
+theorem api_winRun_iff {N : FinNDTM Bool} {x : List Bool} {s : ℕ} {w : List Bool} :
+    ExpBFS.WinRun N x s w ↔
+      ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) := Iff.rfl
+
+/-- (Codec/Bridge) `StepRel`'s equation. -/
+theorem api_stepRel_iff {N : FinNDTM Bool} {x : List Bool} {s a b : ℕ} :
+    StepRel N x s a b ↔
+      pairEncode x (pairEncode (Nat.bits a) (pairEncode (Nat.bits b) (Nat.bits s))) ∈
+        stepLang N := Iff.rfl
+
+/-- (SavitchARM/Reach) Path shortening into a midpoint witness: a path of a relation whose
+steps stay below `K` is a `Reach` witness at any level `i` with `K ≤ 2 ^ i`. -/
+theorem api_reach_of_reflTransGen (K : ℕ) (R : ℕ → ℕ → Prop)
+    (hR : ∀ a b, R a b → a < K ∧ b < K) {u v : ℕ} (hu : u < K)
+    (h : Relation.ReflTransGen R u v) (i : ℕ) (hi : K ≤ 2 ^ i) : Reach K R i u v := sorry
+
+/-- (Build/CfgRecord) A step from a window configuration whose heads lie strictly inside `s'`
+lands in the window `s'`. -/
+theorem api_inWindow_apply {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' := sorry
+
+/-! ## The route -/
+
+section Route
+
+variable {N : FinNDTM Bool} {x : List Bool}
+
+/-- No edge code is reachable from an initial code at radius `s` and level `w`. -/
+def NoEdge (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) : Prop :=
+  ¬ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+    ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+      Reach (2 ^ w) (StepRel N x s) w u v
+
+theorem rt_code_lt {s w : ℕ} (hw : codeK N * (s + logSpace x.length + 1) ≤ w)
+    (C : Cfg N.k Bool N.State x) : cfgCode s C < 2 ^ w :=
+  (cfgCode_lt s C).trans_le (Nat.pow_le_pow_right (by norm_num) hw)
+
+theorem rt_stepRel_lt {s w : ℕ} (hw : codeK N * (s + logSpace x.length + 1) ≤ w) :
+    ∀ a b, StepRel N x s a b → a < 2 ^ w ∧ b < 2 ^ w := by
+  intro a b h
+  obtain ⟨C, -, rfl, C', -, -, rfl⟩ := (mem_stepLang N x a b s).mp (api_stepRel_iff.mp h)
+  exact ⟨rt_code_lt hw C, rt_code_lt hw C'⟩
+
+theorem rt_reach_of_rcode {s w v : ℕ} (hw : codeK N * (s + logSpace x.length + 1) ≤ w)
+    (h : ExpBFS.RCode N x s v) :
+    Reach (2 ^ w) (StepRel N x s) w (cfgCode s (N.tm.initCfg x)) v :=
+  api_reach_of_reflTransGen _ _ (rt_stepRel_lt hw) (rt_code_lt hw _) (api_rcode_iff.mp h) w le_rfl
+
+/-- Termination: beyond the space bound no edge code is reachable. -/
+theorem noEdge_of_lt {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (x : List Bool) (s w : ℕ) (hs : sp x.length < s) :
+    NoEdge N x s w := by
+  rintro ⟨u, -, hu, v, -, hv, hr⟩
+  rw [mem_initLang] at hu
+  subst hu
+  obtain ⟨C, hC, hcC, i, hi⟩ := (mem_edgeLang N x v s).mp hv
+  have hrc : ExpBFS.RCode N x s v := api_rcode_iff.mpr (reflTransGen_of_reach _ _ w _ v hr)
+  obtain ⟨w', hw', hcode⟩ := (ExpBFS.rcode_iff s v).mp hrc
+  have hcore := ExpBFS.coreSum_eq_of_code_eq hC hw'.last (hcC.trans hcode.symm)
+  have hCw : Cfg.InWindow (sp x.length) C :=
+    NDTM.inWindow_of_coreSum_eq hcore (ExpBFS.inWin_runWith_of_decides h w')
+  have hb := ((Cfg.InWindow.core_bounds hCw) i).1
+  rw [hi] at hb
+  exact absurd (by exact_mod_cast hb : s ≤ sp x.length) (not_le.mpr hs)
+
+/-- Window exactness: with no reachable edge code, membership is midpoint reachability at
+radius `s`, without `sp |x| ≤ s`. -/
+theorem mem_iff_reach_of_noEdge {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (x : List Bool) (s w : ℕ)
+    (hw : codeK N * (s + logSpace x.length + 1) ≤ w) (hne : NoEdge N x s w) :
+    x ∈ L ↔ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+      ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N ∧
+        Reach (2 ^ w) (StepRel N x s) w u v := by
+  constructor
+  · intro hx
+    obtain ⟨wd, -, hhalt, hout⟩ :=
+      FinNDTM.acceptsWithin_iff.mp ((h.mem_iff_acceptsWithin_configBound x).mp hx)
+    have key : ∀ j ≤ wd.length, ExpBFS.WinRun N x s (wd.take j) := by
+      intro j
+      induction j with
+      | zero =>
+        intro _
+        refine api_winRun_iff.mpr fun i _ => ?_
+        rw [List.take_zero, List.take_nil, NDTM.runWith_nil]
+        exact ExpBFS.inWin_init s
+      | succ j ih =>
+        intro hj
+        have hW := ih (by omega)
+        have hlt : ∀ i, |(N.tm.runWith (wd.take j) (N.tm.initCfg x)).workTapePos i| < (s : ℤ) := by
+          intro i
+          rcases lt_or_eq_of_le ((Cfg.InWindow.core_bounds hW.last) i).1 with h1 | h1
+          · exact h1
+          · exfalso
+            exact hne ⟨_, rt_code_lt hw _, (mem_initLang N x _ s).mpr rfl, _, rt_code_lt hw _,
+              (mem_edgeLang N x _ s).mpr ⟨_, hW.last, rfl, i, h1⟩,
+              rt_reach_of_rcode hw ((ExpBFS.rcode_iff s _).mpr ⟨_, hW, rfl⟩)⟩
+        have hstep : wd.take (j + 1) = wd.take j ++ [wd[j]'(by omega)] :=
+          (List.take_concat_get' wd j (by omega)).symm
+        have hnext : Cfg.InWindow s (N.tm.runWith (wd.take j ++ [wd[j]'(by omega)])
+            (N.tm.initCfg x)) := by
+          rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil, stepWith_eq_apply]
+          exact api_inWindow_apply hW.last hlt le_rfl _
+        rw [hstep]
+        exact hW.snoc _ hnext
+    have hW := key wd.length le_rfl
+    rw [List.take_length] at hW
+    exact ⟨_, rt_code_lt hw _, (mem_initLang N x _ s).mpr rfl, _, rt_code_lt hw _,
+      (mem_acceptLang N x _ s).mpr ⟨_, hW.last, rfl, hhalt, hout⟩,
+      rt_reach_of_rcode hw ((ExpBFS.rcode_iff s _).mpr ⟨wd, hW, rfl⟩)⟩
+  · rintro ⟨u, -, hinit, v, -, hacc, hr⟩
+    exact mem_of_codePath h x s u v hinit (reflTransGen_of_reach _ _ w u v hr) hacc
+
+end Route

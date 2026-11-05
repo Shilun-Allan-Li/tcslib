@@ -198,3 +198,50 @@ machine `D` of §2, built from `AHalt.embed_guardLe` (#182), the `ARMLoops` loop
 `s ≤ sp |x| + 1`, where `w = C_w (s + logSpace |x| + 1)` and every register is at most
 `2 ^ (w · w)`. ESTIMATE: 1.2–2.2k lines. The brief issues once #182 and #184 have merged, with its
 pre-ship on the merged tree.
+
+## 9. The pre-ship on the merged tree (2026-11-05, after #182, #184, #188, #189 and #190)
+
+The snapshot is `oleans-led4`, whose Lean tree is the campaign's after #190 (no `.lean` change
+since `52331982` but #190's, which the fill does not import). The probes are in `probes/`.
+
+1. **§8's route probe is unchanged on the merged tree** (`DeepenRoute-merged.lean.txt`, `.out`):
+   exactly its four `sorry` warnings.
+2. **The window lemmas are mostly published already, in `ExpBFS/Radius` (Hydroxyi's).** That file
+   searches growing radii for the exponential-time simulation. It proves that reachable codes are
+   the codes of window runs (`rcode_iff`), that every run of a space-`sp` decider stays in the
+   window `sp |x|` (`inWin_runWith_of_decides`), and the window run's extension laws
+   (`WinRun.snoc`, `WinRun.last`, `inWin_init`, `coreSum_eq_of_code_eq`). The window route probe
+   (`WindowRoute.lean.txt`) proves `noEdge_of_lt` and `mem_iff_reach_of_noEdge` from those lemmas,
+   `mem_*Lang`, `cfgCode_lt`, `reflTransGen_of_reach`, `mem_of_codePath`,
+   `Cfg.InWindow.core_bounds`, `inWindow_of_coreSum_eq`, `stepWith_eq_apply` and
+   `DecidesInSpace.mem_iff_acceptsWithin_configBound`, plus six API statements (below). Sealed
+   over 24 other-file definitions (`window-seal/`), it elaborates with only the two non-equation
+   API stand-ins' `sorry` warnings. Its 48 controls all fail sealed; unsealed, 46 pass, and the two
+   others are the recursive definitions' delta goals (`Reach`, `NDTM.runWith`).
+3. **Revised pins.** Path shortening is done on codes, which lie below `2 ^ w` once
+   `codeK N (s + logSpace |x| + 1) ≤ w`, so the configuration count is not needed:
+   - `mem_iff_reach_of_noEdge` drops `hcb : N.configBound x.length s ≤ 2 ^ w`;
+   - `configBound_le_pow` is dropped from the fill (it would also have had to read `configBound`'s
+     value, which has no published equation);
+   - `D`'s width is then `w = codeK N (s + ℓ + 1)` exactly.
+4. **The API the route needs (six lemmas).** Each is proved at its home in
+   `WindowApi.lean.txt` (0 diagnostics); `reach_of_reflTransGen` is proved there under a seal of
+   `WalkLe` and `Reach`.
+
+   | Home | Lemma | Owner | Covered by the 2026-10-27 exception? |
+   |---|---|---|---|
+   | `Build/CfgRecord` | `Cfg.InWindow.apply_of_lt`: an action applied to a window-`s` configuration whose heads are strictly inside `[-s', s']` (`s ≤ s'`) lands in the window `s'` (it also gives `ExpBFS`'s `inWin_stepWith`, at `s' = s + 1`) | the campaign | not needed |
+   | `Codec/Bridge` | `stepRel_iff` (`Iff.rfl`) | Hydroxyi | yes (`Codec/*`) |
+   | `SavitchARM/Reach` | `reach_of_reflTransGen`: a path of a relation whose steps stay below `K` is a `Reach K R i` witness when `K ≤ 2 ^ i`; from `reach_iff_walkLe` (one shortening argument in TCSlib, `walkLe_short`) and `reach_of_chain` | Hydroxyi | yes (`SavitchARM/*`) |
+   | `Logspace/PathWalk` | `walkLe_zero_iff`, `walkLe_succ_iff` (`Iff.rfl`) | Hydroxyi | **no** |
+   | `ExpBFS/Radius` | `rcode_iff_reflTransGen`, `winRun_iff` (`Iff.rfl`) | Hydroxyi | **no** |
+
+   Without the last two rows, the fill would have to re-derive `rcode_iff` (path to run) and
+   `walkLe_short` (shortening), because rule 10 forbids reading `RCode`, `WinRun` and `WalkLe`
+   by their definitions. That is a ruling for the user (decision 4 below).
+5. **What is left for the fill:** the machine `D` of §2, `deepen_contract`, and the two window
+   lemmas in their probed form, about 1.0–2.0k lines (ESTIMATE).
+
+**Decision 4 (the user's):** extend the exception to these four `Iff.rfl` equations in
+`Logspace/PathWalk` and `ExpBFS/Radius`, FYI only, or have the deepening re-derive the two
+arguments under an acknowledged family.
