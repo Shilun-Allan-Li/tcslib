@@ -1,0 +1,159 @@
+/-
+Seal controls for the deepening block-fit probe (BlockFitDeepen, gate 96 finding 1), sealed: 27 definitions, a delta goal and an equation goal each, and `noEdge_iff`'s statement by reduction (55 controls).
+Expected: unsealed, every control passes except the delta goals of recursive definitions (`SavitchARM.Reach`, as in the gate's rule10 controls); sealed, none does. A probe record, not library code.
+-/
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+-- `#ctl_stmt`: a published equation's statement, re-proved by reduction (`intros` and `rfl`, or
+-- `Iff.rfl`): it passes while the definition can be unfolded and fails once it is sealed.
+open Lean Elab Command Meta in
+elab "#ctl_stmt " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ty := (← getConstInfo n).type
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; first | rfl | exact Iff.rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} stmt {n}"
+
+
+section Controls
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible]
+  Complexity.LogProg.SavitchARM.InitO
+  Complexity.LogProg.SavitchARM.AccO
+  Complexity.LogProg.SavitchARM.Rel
+  Complexity.LogProg.SavitchARM.outerSt
+  Complexity.LogProg.SavitchARM.setSt
+  Complexity.LogProg.SavitchARM.St.toV
+  Complexity.LogProg.SavitchARM.St.zero
+  Complexity.LogProg.SavitchARM.rs
+  Complexity.LogProg.SavitchARM.rw
+  Complexity.LogProg.SavitchARM.rK
+  Complexity.LogProg.SavitchARM.A
+  Complexity.LogProg.SavitchARM.Reach
+  Complexity.Codec.StepRel
+  Complexity.Codec.initLang
+  Complexity.Codec.acceptLang
+  Complexity.Codec.edgeLang
+  Complexity.Codec.stepLang
+  Turing.MultiTapeTM.indicator
+  Complexity.LogProg.Ins.embed
+  Complexity.LogProg.AHalt
+  Complexity.LogProg.AReach
+  Complexity.LogProg.PreS
+  Complexity.LogProg.SavitchARM.NoEdge
+  Turing.FinNDTM.DecidesInSpace
+  Complexity.Codec.codeK
+  Complexity.logSpace
+  Turing.pairEncode
+
+#ctl_rfl Complexity.LogProg.SavitchARM.InitO
+#ctl_rfl Complexity.LogProg.SavitchARM.AccO
+#ctl_rfl Complexity.LogProg.SavitchARM.Rel
+#ctl_rfl Complexity.LogProg.SavitchARM.outerSt
+#ctl_rfl Complexity.LogProg.SavitchARM.setSt
+#ctl_rfl Complexity.LogProg.SavitchARM.St.toV
+#ctl_rfl Complexity.LogProg.SavitchARM.St.zero
+#ctl_rfl Complexity.LogProg.SavitchARM.rs
+#ctl_rfl Complexity.LogProg.SavitchARM.rw
+#ctl_rfl Complexity.LogProg.SavitchARM.rK
+#ctl_rfl Complexity.LogProg.SavitchARM.A
+#ctl_rfl Complexity.LogProg.SavitchARM.Reach
+#ctl_rfl Complexity.Codec.StepRel
+#ctl_rfl Complexity.Codec.initLang
+#ctl_rfl Complexity.Codec.acceptLang
+#ctl_rfl Complexity.Codec.edgeLang
+#ctl_rfl Complexity.Codec.stepLang
+#ctl_rfl Turing.MultiTapeTM.indicator
+#ctl_rfl Complexity.LogProg.Ins.embed
+#ctl_rfl Complexity.LogProg.AHalt
+#ctl_rfl Complexity.LogProg.AReach
+#ctl_rfl Complexity.LogProg.PreS
+#ctl_rfl Complexity.LogProg.SavitchARM.NoEdge
+#ctl_rfl Turing.FinNDTM.DecidesInSpace
+#ctl_rfl Complexity.Codec.codeK
+#ctl_rfl Complexity.logSpace
+#ctl_rfl Turing.pairEncode
+#ctl_eqn Complexity.LogProg.SavitchARM.InitO
+#ctl_eqn Complexity.LogProg.SavitchARM.AccO
+#ctl_eqn Complexity.LogProg.SavitchARM.Rel
+#ctl_eqn Complexity.LogProg.SavitchARM.outerSt
+#ctl_eqn Complexity.LogProg.SavitchARM.setSt
+#ctl_eqn Complexity.LogProg.SavitchARM.St.toV
+#ctl_eqn Complexity.LogProg.SavitchARM.St.zero
+#ctl_eqn Complexity.LogProg.SavitchARM.rs
+#ctl_eqn Complexity.LogProg.SavitchARM.rw
+#ctl_eqn Complexity.LogProg.SavitchARM.rK
+#ctl_eqn Complexity.LogProg.SavitchARM.A
+#ctl_eqn Complexity.LogProg.SavitchARM.Reach
+#ctl_eqn Complexity.Codec.StepRel
+#ctl_eqn Complexity.Codec.initLang
+#ctl_eqn Complexity.Codec.acceptLang
+#ctl_eqn Complexity.Codec.edgeLang
+#ctl_eqn Complexity.Codec.stepLang
+#ctl_eqn Turing.MultiTapeTM.indicator
+#ctl_eqn Complexity.LogProg.Ins.embed
+#ctl_eqn Complexity.LogProg.AHalt
+#ctl_eqn Complexity.LogProg.AReach
+#ctl_eqn Complexity.LogProg.PreS
+#ctl_eqn Complexity.LogProg.SavitchARM.NoEdge
+#ctl_eqn Turing.FinNDTM.DecidesInSpace
+#ctl_eqn Complexity.Codec.codeK
+#ctl_eqn Complexity.logSpace
+#ctl_eqn Turing.pairEncode
+#ctl_stmt Complexity.LogProg.SavitchARM.noEdge_iff
+
+end Controls

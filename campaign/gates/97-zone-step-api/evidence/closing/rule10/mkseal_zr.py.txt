@@ -1,0 +1,138 @@
+"""Rule-10 seal for #197's changes to Build/ZoneRebalance (gate 97, finding 1 and note 13).
+
+Usage: python3 -I mkseal_zr.py <ZoneRebalance.lean at 16e92449> <ctl_header.lean.part.txt> <out dir>
+
+Writes into <out dir>:
+  ZoneRebalanceSealed.lean.txt   the whole module, sealed in two layers (below)
+  SealControl_ZR_unsealed.lean.txt, SealControl_ZR_sealed.lean.txt
+                                 a delta goal and an equation goal per sealed definition, and the
+                                 statements of Contract.zero's five published field equations
+                                 re-proved by reduction (they pass unsealed and fail sealed)
+  seal-set-zr.txt                the sealed definitions, one per line
+
+The sealed copy is the full file. A restricted copy cannot work here: every proof the PR changed
+is private and rests on ~8k lines of the file's own private definitions (`zr_reindexContract`,
+`zr_PinStep`, `zr_pinRe_step`, the host and scan contracts), which another module cannot name.
+
+Layer 1, file-wide (right after `namespace Turing`): `Turing.Contract.zero`. It is the one
+other-file definition that this PR makes newly reachable from the file's unchanged text, through
+the re-pointed private `zr_anchorContract`; finding 1 is exactly an unchanged-text proof
+(`zr_pinAnchor_step` at 0a1b64d5) that reduced it. Every reader of `zr_anchorContract`, changed
+or not (`zr_hostDispatchContract`, the scan's branch contracts, `zr_pinAnchorContract`, and every
+proof that reads those), lies below the seal.
+
+Layer 2, per changed declaration: each stretch of text the PR changed is moved into its own
+`section` that erases the closure's `@[simp]` definitions and seals every other-file TCSlib
+definition those stretches name or read through an equation lemma (SEAL below; derived with
+reach.py over tcsdefs.py's index of ZoneRebalance's import closure at 16e92449, then reviewed by
+hand). The unchanged rest of the file is not sealed beyond layer 1: its pre-existing proofs are
+not this PR's, and a file-wide seal of the whole list would test them too.
+
+The section boundaries are fixed text anchors, each asserted to occur exactly once."""
+import sys, pathlib
+
+src, hdr_f, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), pathlib.Path(sys.argv[3])
+
+FILE_WIDE = ['Turing.Contract.zero']
+SEAL = """Turing.Contract.zero Turing.Contract.ofSegment Turing.Contract.seq Turing.Contract.branch
+Turing.Contract.inPhase Turing.HeadBox Turing.Segment Turing.Cfg.mapState Turing.Cfg.bindState
+Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.phaseHostTM Turing.seamCompTM
+Turing.seamCompTM₂ Turing.skipTM Turing.skipTM_contract Turing.seekPost Turing.FinTM.bufferTape
+Turing.zonedTape Turing.zoneShiftIndex Turing.zoneRebalance Turing.ZoneContents.extend""".split()
+# Lean refuses `[local irreducible]` on a definition that is already irreducible ("`[semireducible]`
+# expected"), so the sections do not repeat the file-wide seal.
+SEAL_SECTION = [n for n in SEAL if n not in FILE_WIDE]
+# the @[simp] TCSlib definitions of ZoneRebalance's import closure (tcsdefs.py, simp=true)
+ERASE = ['Turing.Action.apply', 'Turing.Cfg.init', 'Turing.MultiTapeTM.initCfg']
+# the stretches #197 changed (git diff 683e2adf..16e92449), as [start, stop) anchors
+REGIONS = [
+    ('Equations', '/-! Equations for the data maps, the endpoints',
+     "/-- Restate a contract's exit set by an equality"),
+    ('AnchorContract', "/-- The anchor phase's stationary leaf: the zero-time",
+     "/-- The anchor's dispatch inside a loop host"),
+    ('DispatchRun', '/-- **The dispatch step**: from the anchor',
+     "/-- The body's exits are exactly its verdict states"),
+    ('ScanBranches', "/-- The scan's inner branch: on an empty",
+     "/-- **The scan's body**: mark one scratch cell"),
+    ('ScanBodyFields', "/-- **The scan body's fields**, by the zoned cell",
+     "/-- The scan body's states:"),
+    ('ScanBodyBounds', '/-- The scan body\'s zoned head stays between its start',
+     '/-- **One round of the scan**'),
+    ('PinAnchor', '/-- The stationary anchor leaf as a pinned zero-time step',
+     '/-- **A pinned peek**'),
+]
+
+s = src.read_text(encoding='utf-8')
+head = '# Machine-construction library: the rebalance and extension rows (§13d G4)'
+assert s.count(head) == 1
+anchor = 'namespace Turing\n'
+assert s.count(anchor) == 1
+
+
+def block(names, indent='  '):
+    return 'attribute [local irreducible]\n' + ''.join(f'{indent}{n}\n' for n in names)
+
+
+erase = 'attribute [-simp] ' + ' '.join(ERASE) + '\n'
+
+# layer 2 first (anchors are located in the original text), from the bottom up
+pieces = []
+pos = []
+for tag, a, b in REGIONS:
+    assert s.count(a) == 1, a
+    i = s.index(a)
+    j = s.index(b, i)
+    pos.append((i, j, tag))
+pos.sort()
+for (i, j, _), (i2, _, _) in zip(pos, pos[1:]):
+    assert j <= i2, 'regions overlap'
+sealed = s
+for i, j, tag in sorted(pos, reverse=True):
+    body = sealed[i:j].rstrip('\n') + '\n'
+    sec = (f'section RV_{tag}\n\n-- rule-10 seal (scratch): the other-file definitions this changed '
+           f'stretch reaches\n-- (`Turing.Contract.zero` too, already sealed file-wide above)\n'
+           + erase + block(SEAL_SECTION) + '\n' + body + f'\nend RV_{tag}\n\n')
+    sealed = sealed[:i] + sec + sealed[j:]
+# layer 1
+sealed = sealed.replace(anchor, anchor + '\n-- rule-10 seal (scratch), file-wide: the definition this PR newly '
+                        'makes reachable\n-- through `zr_anchorContract` from unchanged text\n'
+                        + block(FILE_WIDE), 1)
+sealed = sealed.replace(head, head + ' (rule-10 sealed copy of `Build/ZoneRebalance`, scratch)', 1)
+(out / 'ZoneRebalanceSealed.lean.txt').write_text(sealed, encoding='utf-8')
+(out / 'seal-set-zr.txt').write_text(''.join(n + '\n' for n in SEAL), encoding='utf-8')
+
+# controls
+imports = ''.join(l + '\n' for l in s.splitlines() if l.startswith('import '))
+hdr = hdr_f.read_text(encoding='utf-8')
+stmt_cmd = r'''
+
+-- `#ctl_stmt`: a published equation's statement, re-proved by reduction (`intros` and `rfl`, or
+-- `Iff.rfl`): it passes while the definition can be unfolded and fails once it is sealed.
+open Lean Elab Command Meta in
+elab "#ctl_stmt " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ty := (← getConstInfo n).type
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; first | rfl | exact Iff.rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} stmt {n}"
+'''
+ZERO_EQNS = ['Turing.Contract.zero_pre', 'Turing.Contract.zero_time', 'Turing.Contract.zero_post',
+             'Turing.Contract.zero_lo', 'Turing.Contract.zero_hi']
+ctl = (''.join(f'#ctl_rfl {n}\n' for n in SEAL) + ''.join(f'#ctl_eqn {n}\n' for n in SEAL)
+       + ''.join(f'#ctl_stmt {n}\n' for n in ZERO_EQNS))
+n_ctl = 2 * len(SEAL) + len(ZERO_EQNS)
+for name, seal_block in (('sealed', erase + block(SEAL)), ('unsealed', '')):
+    doc = (f'/-! Rule-10 controls for #197\'s changes to `Build/ZoneRebalance` ({name}): '
+           f'{len(SEAL)} definitions, a delta goal and an equation goal each, and the statements '
+           f'of `Turing.Contract.zero`\'s five field equations by reduction ({n_ctl} controls). '
+           f'Expected: unsealed, every control passes; sealed, none does. A probe record, not '
+           f'library code. -/\n\n')
+    (out / f'SealControl_ZR_{name}.lean.txt').write_text(
+        imports + '\n' + doc + hdr.rstrip('\n') + stmt_cmd + '\n\nsection Controls\n\n' + seal_block
+        + '\n' + ctl + '\nend Controls\n', encoding='utf-8')
+print(len(FILE_WIDE), 'file-wide,', len(SEAL_SECTION), 'more per changed stretch;', len(REGIONS), 'stretches;', n_ctl, 'controls')

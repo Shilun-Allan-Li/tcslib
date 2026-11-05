@@ -1,0 +1,150 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
+
+/-! Rule-10 controls for #197's changes to `Build/ZoneRebalance` (sealed): 22 definitions, a delta goal and an equation goal each, and the statements of `Turing.Contract.zero`'s five field equations by reduction (49 controls). Expected: unsealed, every control passes; sealed, none does. A probe record, not library code. -/
+
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+-- `#ctl_stmt`: a published equation's statement, re-proved by reduction (`intros` and `rfl`, or
+-- `Iff.rfl`): it passes while the definition can be unfolded and fails once it is sealed.
+open Lean Elab Command Meta in
+elab "#ctl_stmt " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ty := (← getConstInfo n).type
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; first | rfl | exact Iff.rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} stmt {n}"
+
+
+section Controls
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible]
+  Turing.Contract.zero
+  Turing.Contract.ofSegment
+  Turing.Contract.seq
+  Turing.Contract.branch
+  Turing.Contract.inPhase
+  Turing.HeadBox
+  Turing.Segment
+  Turing.Cfg.mapState
+  Turing.Cfg.bindState
+  Turing.Cfg.workTapeSymbols
+  Turing.MultiTapeTM.runFrom
+  Turing.phaseHostTM
+  Turing.seamCompTM
+  Turing.seamCompTM₂
+  Turing.skipTM
+  Turing.skipTM_contract
+  Turing.seekPost
+  Turing.FinTM.bufferTape
+  Turing.zonedTape
+  Turing.zoneShiftIndex
+  Turing.zoneRebalance
+  Turing.ZoneContents.extend
+
+#ctl_rfl Turing.Contract.zero
+#ctl_rfl Turing.Contract.ofSegment
+#ctl_rfl Turing.Contract.seq
+#ctl_rfl Turing.Contract.branch
+#ctl_rfl Turing.Contract.inPhase
+#ctl_rfl Turing.HeadBox
+#ctl_rfl Turing.Segment
+#ctl_rfl Turing.Cfg.mapState
+#ctl_rfl Turing.Cfg.bindState
+#ctl_rfl Turing.Cfg.workTapeSymbols
+#ctl_rfl Turing.MultiTapeTM.runFrom
+#ctl_rfl Turing.phaseHostTM
+#ctl_rfl Turing.seamCompTM
+#ctl_rfl Turing.seamCompTM₂
+#ctl_rfl Turing.skipTM
+#ctl_rfl Turing.skipTM_contract
+#ctl_rfl Turing.seekPost
+#ctl_rfl Turing.FinTM.bufferTape
+#ctl_rfl Turing.zonedTape
+#ctl_rfl Turing.zoneShiftIndex
+#ctl_rfl Turing.zoneRebalance
+#ctl_rfl Turing.ZoneContents.extend
+#ctl_eqn Turing.Contract.zero
+#ctl_eqn Turing.Contract.ofSegment
+#ctl_eqn Turing.Contract.seq
+#ctl_eqn Turing.Contract.branch
+#ctl_eqn Turing.Contract.inPhase
+#ctl_eqn Turing.HeadBox
+#ctl_eqn Turing.Segment
+#ctl_eqn Turing.Cfg.mapState
+#ctl_eqn Turing.Cfg.bindState
+#ctl_eqn Turing.Cfg.workTapeSymbols
+#ctl_eqn Turing.MultiTapeTM.runFrom
+#ctl_eqn Turing.phaseHostTM
+#ctl_eqn Turing.seamCompTM
+#ctl_eqn Turing.seamCompTM₂
+#ctl_eqn Turing.skipTM
+#ctl_eqn Turing.skipTM_contract
+#ctl_eqn Turing.seekPost
+#ctl_eqn Turing.FinTM.bufferTape
+#ctl_eqn Turing.zonedTape
+#ctl_eqn Turing.zoneShiftIndex
+#ctl_eqn Turing.zoneRebalance
+#ctl_eqn Turing.ZoneContents.extend
+#ctl_stmt Turing.Contract.zero_pre
+#ctl_stmt Turing.Contract.zero_time
+#ctl_stmt Turing.Contract.zero_post
+#ctl_stmt Turing.Contract.zero_lo
+#ctl_stmt Turing.Contract.zero_hi
+
+end Controls
