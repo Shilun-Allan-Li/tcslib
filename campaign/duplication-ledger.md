@@ -1020,9 +1020,26 @@ renamed configuration equals any configuration with its data fields and the rena
 - **Re-pointed in #190:** `CfgRecord`'s `recordStep_mapState_eq` (removed), `SeamLayout`'s
   `sl_rewrap`, and `ExhaustiveReplay`'s `xr_phase_step` (two blocks) and `xr_halt_fixed` (two
   blocks).
-- **Remaining, for the dedup window:** among others `SeamLayout.exists_seamLayoutTM` and
-  `ZoneRebalance.zr_short_fields` (screen pairs at 67% and 61%), and the 15 inline retag steps of
-  NF's F2.
+- **Remaining, for the dedup window** (gate 94's minors 1–2, 2026-11-05; counted as conversions
+  inside declarations, not copies of their statements). By file:
+  - `CodeSimulator`: `canonStageLeg0`–`6`, `canonStageOuterSpec`, `canonStageInnerSpec`,
+    `us_start` (10);
+  - `ZoneRebalance`: 21 of about 870 (2.4%). These are `zr_short_fields`,
+    `zr_rightSeekBack_post`, `zr_rightRuler_post`, `zr_adjustedWalk_post`,
+    `zr_adjustedBack_post`, `zr_writeHalves_post`, `zr_rightPass_post`, `zr_test_post`,
+    `zr_body_post`, `zr_return_post`, `zr_rightReturn_post`, `zr_rightLeft_post`,
+    `zr_twoSteps_fields`, `zr_leftMove_fields`, `zr_leftWrite_fields`, `zr_leftPass_fields`,
+    `zr_final_fields`, `zr_extend_fields`, `zr_scanBody_fields`, `zr_scan_fields` and
+    `zr_countClear_fields`. RI-1's `zr_pinLoop` is retired and not counted;
+  - `NDHost`: `gr_handoff`, `guessCtlRunTM_stop_of_halted`;
+  - one each in `ExhaustiveReplay` (`xr_E_initCfg`), `NDCodeSimulator`
+    (`exists_ndInterpreterCore`), `Seam` (`phaseHostTM_run`), `InputRewind`
+    (`Cfg.mapState_mapState`), `NTimeHierarchy` (`un_setup`; NF-X1's pair too) and `SeamLayout`
+    (`exists_seamLayoutTM`).
+
+  The NF review's F2 list has 19 names, not 15; its `xr_phase_step` and `xr_halt_fixed` are
+  re-pointed. No file crosses one fifth. NF's own copies (`nf_retag`, `nf_tag`, …) are checked at
+  NF's landing (#191), where they cite `CfgFacts`.
 The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
 its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
 `Nat.forall_lt_succ_left'` (E1).
