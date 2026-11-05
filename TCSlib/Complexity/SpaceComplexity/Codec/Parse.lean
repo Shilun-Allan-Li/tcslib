@@ -193,6 +193,14 @@ check. -/
 def Shape1 (y x w : List Bool) (s : ℕ) : Prop :=
   y = pairEncode x (pairEncode w (Nat.bits s)) ∧ (Nat.bits s).length ≤ (Nat.bits y.length).length
 
+/-- A well-shaped input is the pair `⟨x, ⟨w, bits s⟩⟩`. -/
+lemma Shape1.eq {y x w : List Bool} {s : ℕ} (h : Shape1 y x w s) :
+    y = pairEncode x (pairEncode w (Nat.bits s)) := h.1
+
+/-- A well-shaped input passes the width check of its radius field. -/
+lemma Shape1.width {y x w : List Bool} {s : ℕ} (h : Shape1 y x w s) :
+    (Nat.bits s).length ≤ (Nat.bits y.length).length := h.2
+
 /-- The well-shaped step inputs `⟨x, ⟨w, ⟨w', bits s⟩⟩⟩` whose radius field fits the width
 check. -/
 def Shape2 (y x w w' : List Bool) (s : ℕ) : Prop :=
