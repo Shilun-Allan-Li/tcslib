@@ -1,0 +1,97 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Ring.GeomSum
+
+/-! Rule-10 controls for `Build/ZoneStep` (unsealed): 18 definitions. -/
+
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+
+
+section Controls
+
+
+#ctl_rfl Turing.zoneRowPre
+#ctl_rfl Turing.zoneRebalanceIndex
+#ctl_rfl Turing.zoneRebalanceData
+#ctl_rfl Turing.zoneExtendData
+#ctl_rfl Turing.zoneRebalancePost
+#ctl_rfl Turing.zoneExtendPost
+#ctl_rfl Turing.zoneShiftIndex
+#ctl_rfl Turing.zoneRebalance
+#ctl_rfl Turing.ZoneContents.extend
+#ctl_rfl Turing.zonedTape
+#ctl_rfl Turing.Contract.seq
+#ctl_rfl Turing.Contract.branch
+#ctl_rfl Turing.Contract.ofSegment
+#ctl_rfl Turing.HeadBox
+#ctl_rfl Turing.seamCompTM
+#ctl_rfl Turing.seamCompTM₂
+#ctl_rfl Turing.Cfg.mapState
+#ctl_rfl Turing.Contract.zero
+#ctl_eqn Turing.zoneRowPre
+#ctl_eqn Turing.zoneRebalanceIndex
+#ctl_eqn Turing.zoneRebalanceData
+#ctl_eqn Turing.zoneExtendData
+#ctl_eqn Turing.zoneRebalancePost
+#ctl_eqn Turing.zoneExtendPost
+#ctl_eqn Turing.zoneShiftIndex
+#ctl_eqn Turing.zoneRebalance
+#ctl_eqn Turing.ZoneContents.extend
+#ctl_eqn Turing.zonedTape
+#ctl_eqn Turing.Contract.seq
+#ctl_eqn Turing.Contract.branch
+#ctl_eqn Turing.Contract.ofSegment
+#ctl_eqn Turing.HeadBox
+#ctl_eqn Turing.seamCompTM
+#ctl_eqn Turing.seamCompTM₂
+#ctl_eqn Turing.Cfg.mapState
+#ctl_eqn Turing.Contract.zero
+
+end Controls

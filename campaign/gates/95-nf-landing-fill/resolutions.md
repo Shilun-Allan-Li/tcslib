@@ -9,3 +9,18 @@ mismatches (`evidence/merged-tree/`). `NTimeHierarchy`'s theorems are on the sta
 (`evidence/axioms/NTHAx.out`).
 
 #191 is clear to merge once gate 95 closes with zero blockers and zero majors.
+
+**Dispatched (2026-11-05, the user)**, bundle SHA-256 `15b5843f…`, findings file
+`nf-landing-fill-findings.md`.
+
+## Round 1 findings (received 2026-11-05)
+
+`findings.md`, verbatim from the exchange inbox (`arora-barak-ch3-4/inbox/nf-landing-fill-findings.md`,
+exchange commit `4da7789c395d2bad6d86d1520d7faf3709d13af9`), SHA-256
+`7aa285060b2bd9d5a5c7c6f957f78c00bd7ea5098f9c8a160565650c6a4413f8`.
+
+**Verdict: does not close.** 0 blockers, 1 major (F1, three inline re-derivations of
+`BufferWords` identities in `NDNormalForm`), 4 minors (F2–F5), 4 notes (F6–F9). Dispositions
+follow below as the repairs land.
+
+**Not yet clear to merge: #191** (gate 95 has a major open).

@@ -1,0 +1,349 @@
+"""tcsdefs.py: a textual index of the constants that TCSlib source files declare (no Lean run).
+
+Usage: python3 -I tcsdefs.py <commit> <root module>... [--all]
+Prints, for every module in the TCSlib import closure of the roots (read with `git show`), one
+line per declared constant:  <full name> <kind> red=<reducible|semireducible|irreducible>
+inst=<true|false> simp=<true|false> private=<true|false> <module>:<line>
+Generated constants are included where the generator's naming is known: derived instances
+(DecidableEq, Fintype, Inhabited, Repr, BEq, Hashable) and their auxiliaries.
+
+This is an approximation of the Lean environment, for planning seals; the authoritative list is
+the one a Lean audit prints (see the gate's README)."""
+import sys, re, subprocess
+
+REPO = '/home/user/tcslib'
+
+
+def git_show(commit, path):
+    return subprocess.run(['git', '-C', REPO, 'show', f'{commit}:{path}'],
+                          capture_output=True, text=True, check=True).stdout
+
+
+def mod_path(mod):
+    return mod.replace('.', '/') + '.lean'
+
+
+def strip_comments(s):
+    """Blank out comments (nested block comments, docstrings, line comments) and string
+    literals, keeping newlines so that line numbers survive."""
+    out, i, n, depth = [], 0, len(s), 0
+    while i < n:
+        c = s[i]
+        if depth == 0 and c == '"':
+            j = i + 1
+            while j < n and s[j] != '"':
+                j += 2 if s[j] == '\\' else 1
+            out.append('"' + ''.join('\n' if ch == '\n' else ' ' for ch in s[i + 1:j]) + '"')
+            i = j + 1
+            continue
+        if s.startswith('/-', i):
+            depth += 1
+            out.append('  ')
+            i += 2
+            continue
+        if depth > 0 and s.startswith('-/', i):
+            depth -= 1
+            out.append('  ')
+            i += 2
+            continue
+        if depth > 0:
+            out.append('\n' if c == '\n' else ' ')
+            i += 1
+            continue
+        if s.startswith('--', i):
+            j = s.find('\n', i)
+            j = n if j < 0 else j
+            out.append(' ' * (j - i))
+            i = j
+            continue
+        out.append(c)
+        i += 1
+    return ''.join(out)
+
+
+def imports(text):
+    res = []
+    for l in text.splitlines():
+        t = l.strip()
+        if t.startswith('import '):
+            res += t.split()[1:]
+    return res
+
+
+def closure(commit, roots):
+    seen, stack = [], list(roots)
+    while stack:
+        m = stack.pop()
+        if m in seen or not m.startswith('TCSlib.'):
+            continue
+        seen.append(m)
+        stack += imports(git_show(commit, mod_path(m)))
+    return sorted(seen)
+
+
+MODS = r'(?:(?:private|protected|noncomputable|partial|unsafe|nonrec)\s+)*'
+DECL = re.compile(r'^(?P<attrs>(?:@\[[^\]]*\]\s*)*)(?P<mods>' + MODS + r')'
+                  r'(?P<kw>def|abbrev|instance|structure|class inductive|class|inductive|theorem|lemma|'
+                  r'opaque|axiom|example)\b(?P<rest>.*)$')
+IDENT = r'[^\s:({\[⦃]+'
+
+
+def cap(s):
+    return s[:1].upper() + s[1:]
+
+
+class Decl:
+    def __init__(self, name, kind, red, inst, simp, private, where):
+        self.name, self.kind, self.red, self.inst = name, kind, red, inst
+        self.simp, self.private, self.where = simp, private, where
+
+    def line(self):
+        return (f'{self.name} {self.kind} red={self.red} inst={str(self.inst).lower()} '
+                f'simp={str(self.simp).lower()} private={str(self.private).lower()} {self.where}')
+
+
+def resolve(ns, name):
+    if name.startswith('_root_.'):
+        return name[len('_root_.'):]
+    return f'{ns}.{name}' if ns else name
+
+
+def index_module(commit, mod):
+    raw = git_show(commit, mod_path(mod))
+    text = strip_comments(raw)
+    lines = text.split('\n')
+    scopes = []          # (kind, name)
+    decls = {}
+    order = []
+    pending_attrs = ''
+    last_type = None     # (full name, is_enum, ns) of the latest structure/inductive
+    ctor_lines = []
+
+    def ns():
+        return '.'.join(n for k, n in scopes if k == 'namespace' and n)
+
+    def add(d):
+        if d.name not in decls:
+            order.append(d.name)
+        decls[d.name] = d
+
+    def derive(cls, tname, is_enum, nspace, where, priv):
+        # a derived instance of a private type is a public constant; the auxiliaries named
+        # after the type (`T.ofNat`, `T.enumList`, `T.proxyTypeEquiv`) stay private with it
+        short = tname.split('.')[-1]
+        inst = resolve(nspace, f'inst{cls}{cap(short)}')
+        w = where + ' (derived)'
+        if cls == 'DecidableEq':
+            add(Decl(inst, 'def', 'semireducible', True, False, False, w))
+            if is_enum:
+                add(Decl(f'{tname}.ofNat', 'def', 'semireducible', False, False, priv, w))
+            else:
+                add(Decl(f'{inst}.decEq', 'def', 'semireducible', False, False, False, w))
+        elif cls == 'Fintype':
+            add(Decl(inst, 'def', 'semireducible', True, False, False, w))
+            aux = 'enumList' if is_enum else 'proxyTypeEquiv'
+            add(Decl(f'{tname}.{aux}', 'def', 'semireducible', False, False, priv, w))
+        elif cls == 'Inhabited':
+            add(Decl(inst, 'def', 'semireducible', True, False, False, w))
+            add(Decl(f'{inst}.default', 'def', 'semireducible', False, False, False, w))
+        else:
+            add(Decl(inst, 'def', 'semireducible', True, False, False,
+                     where + f' (derived {cls}, naming and reducibility unverified)'))
+
+    i = 0
+    while i < len(lines):
+        l = lines[i]
+        s = l.rstrip()
+        st = s.strip()
+        lineno = i + 1
+        where = f'{mod}:{lineno}'
+        if not st:
+            i += 1
+            continue
+        # deriving clauses attach to the latest type
+        m = re.match(r'^\s*deriving\s+(?!instance)(.*)$', s)
+        if m and last_type:
+            for cls in [c.strip() for c in m.group(1).split(',') if c.strip()]:
+                derive(cls, last_type[0], last_type[1], last_type[2], where, last_type[3])
+            i += 1
+            continue
+        m = re.match(r'^deriving\s+instance\s+(.*?)\s+for\s+(.*)$', st)
+        if m:
+            for t in [x.strip() for x in m.group(2).split(',')]:
+                tn = resolve(ns(), t)
+                for cls in [c.strip() for c in m.group(1).split(',')]:
+                    derive(cls, tn, False, ns(), where + ' (deriving instance; enum-ness unknown)', False)
+            i += 1
+            continue
+        if s.startswith(' ') or s.startswith('\t') or s.startswith('|'):
+            # constructor lines of the latest inductive decide enum-ness
+            if last_type and last_type[4] and st.startswith('|'):
+                ctor_lines.append(st)
+                for seg in st.split('|')[1:]:
+                    seg = re.sub(r'\bderiving\b.*$', '', seg).strip()
+                    if seg and len(seg.split()) > 1:
+                        last_type = (last_type[0], False, last_type[2], last_type[3], last_type[4])
+            # trailing `deriving` on an indented line
+            m = re.search(r'\bderiving\s+(.*)$', s)
+            if m and last_type and not s.strip().startswith('deriving instance'):
+                for cls in [c.strip() for c in m.group(1).split(',') if c.strip()]:
+                    derive(cls, last_type[0], last_type[1], last_type[2], where, last_type[3])
+            i += 1
+            continue
+        # scope commands
+        m = re.match(r'^(noncomputable\s+)?section\b\s*(\S*)', st)
+        if m and not st.startswith('section_'):
+            scopes.append(('section', m.group(2)))
+            last_type = None
+            i += 1
+            continue
+        m = re.match(r'^namespace\s+(\S+)', st)
+        if m:
+            scopes.append(('namespace', m.group(1)))
+            last_type = None
+            i += 1
+            continue
+        if st == 'mutual':
+            scopes.append(('mutual', ''))
+            i += 1
+            continue
+        m = re.match(r'^end\b\s*(\S*)$', st)
+        if m:
+            nm = m.group(1)
+            if scopes:
+                if scopes[-1][0] == 'mutual' and not nm:
+                    scopes.pop()
+                else:
+                    # `end A.B` may close a `namespace A.B` or `namespace A` + `namespace B`
+                    k = len(nm.split('.')) if nm else 1
+                    if scopes[-1][1] == nm or not nm:
+                        scopes.pop()
+                    else:
+                        for _ in range(k):
+                            if scopes:
+                                scopes.pop()
+            last_type = None
+            i += 1
+            continue
+        if st.startswith('@[') and not DECL.match(st):
+            pending_attrs += ' ' + st
+            i += 1
+            continue
+        m = re.match(r'^(?:@\[[^\]]*\]\s*)*attribute\s+\[([^\]]*)\]\s+(.*)$', st)
+        if m:
+            attrs, names = m.group(1), m.group(2).split()
+            j = i + 1
+            while j < len(lines) and lines[j].startswith('  ') and not lines[j].strip().startswith(('/', '@')):
+                names += lines[j].split()
+                j += 1
+            for a in [x.strip() for x in attrs.split(',')]:
+                local = a.startswith('local ') or a.startswith('scoped ')
+                if local:
+                    continue
+                for nm in names:
+                    cands = [resolve(ns(), nm), nm]
+                    for c in cands:
+                        if c in decls:
+                            if a == 'simp':
+                                decls[c].simp = True
+                            elif a == '-simp':
+                                decls[c].simp = False
+                            elif a == 'irreducible':
+                                decls[c].red = 'irreducible'
+                            elif a == 'reducible':
+                                decls[c].red = 'reducible'
+                            elif a == 'instance':
+                                decls[c].inst = True
+                            break
+            i = j
+            continue
+        m = DECL.match(re.sub(r'^(open\s.*?\sin\s+|set_option\s+\S+\s+\S+\s+in\s+)+', '', st))
+        if m:
+            attrs = pending_attrs + ' ' + m.group('attrs')
+            pending_attrs = ''
+            mods, kw, rest = m.group('mods'), m.group('kw'), m.group('rest').strip()
+            priv = 'private' in mods
+            if kw == 'example':
+                i += 1
+                continue
+            if kw == 'instance':
+                r = re.sub(r'^\(priority\s*:=\s*[^)]*\)\s*', '', rest)
+                mm = re.match(r'^(' + IDENT + r')', r)
+                name = None
+                if mm and not r.startswith(':'):
+                    name = mm.group(1)
+                if name is None:
+                    # anonymous instance: Lean's generated name, approximated from the class and
+                    # the type's head
+                    tm = re.search(r':\s*(.*?)(?::=|\bwhere\b|$)', r)
+                    ty = tm.group(1).strip() if tm else ''
+                    toks = re.findall(r"[A-Za-z_][\w'.₀-₉]*", ty)
+                    toks = [t.split('.')[-1] for t in toks]
+                    nm2 = 'inst' + ''.join(cap(t) for t in toks[:2])
+                    name = nm2
+                    w = where + ' (anonymous instance, name approximated)'
+                else:
+                    w = where
+                full = resolve(ns(), name)
+                red = 'reducible' if re.search(r'\breducible\b', attrs) else 'semireducible'
+                add(Decl(full, 'def', red, True, 'simp' in re.findall(r'\b[-\w]+\b', attrs), priv, w))
+                i += 1
+                continue
+            mm = re.match(r'^(' + IDENT + r')', rest)
+            if not mm:
+                i += 1
+                continue
+            name = mm.group(1)
+            full = resolve(ns(), name)
+            if kw in ('structure', 'class', 'inductive', 'class inductive'):
+                is_ind = kw in ('inductive', 'class inductive')
+                add(Decl(full, kw.replace(' ', '_'), 'n/a', kw.startswith('class'), False, priv, where))
+                last_type = (full, is_ind, ns(), priv, is_ind)
+                if re.search(r'\bderiving\s+(.*)$', rest):
+                    pass  # handled below with indented/own lines; a same-line deriving is rare
+                i += 1
+                continue
+            if kw in ('theorem', 'lemma'):
+                add(Decl(full, 'theorem', 'n/a', False, False, priv, where))
+                i += 1
+                continue
+            if kw in ('opaque', 'axiom'):
+                add(Decl(full, kw, 'n/a', False, False, priv, where))
+                i += 1
+                continue
+            # def / abbrev: look ahead for the body's end to spot well-founded recursion
+            j = i + 1
+            body = [rest]
+            while j < len(lines) and (lines[j].startswith((' ', '\t', '|')) or not lines[j].strip()):
+                body.append(lines[j])
+                j += 1
+            btxt = '\n'.join(body)
+            alist = re.findall(r'[-\w]+', attrs)
+            if kw == 'abbrev' or 'reducible' in alist:
+                red = 'reducible'
+            elif 'irreducible' in alist or 'irreducible_def' in alist:
+                red = 'irreducible'
+            elif re.search(r'\b(termination_by|decreasing_by)\b', btxt):
+                red = 'irreducible'
+            else:
+                red = 'semireducible'
+            if 'partial' in mods:
+                red = 'opaque(partial)'
+            add(Decl(full, 'def', red, 'instance' in alist, 'simp' in alist, priv, where))
+            i += 1
+            continue
+        pending_attrs = ''
+        i += 1
+    return [decls[n] for n in order]
+
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith('--')]
+    commit, roots = args[0], args[1:]
+    for mod in closure(commit, roots):
+        for d in index_module(commit, mod):
+            print(d.line())
+
+
+if __name__ == '__main__':
+    main()
