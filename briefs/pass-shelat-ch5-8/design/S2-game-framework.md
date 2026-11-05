@@ -46,10 +46,22 @@ Ch. 5–8 needs several things that model cannot express directly:
 
 **Synchronized with the code after gate 02 (2026-11-05).** The framework lives in namespace
 `TCSlib.Cryptography.Games`, with `OracleSpec` inside `OracleComp.lean`. Query bounds are
-`OracleComp.CostBoundedBy cost c q`. Executions follow D8's reading (`Party.exec`, `ExecOutcome`;
-fuel counts messages). Views are recorded by the executor (`Party.execT`), not read from a
-party's log. Identical-until-bad has a semantic hypothesis (same law to good successors). The
-sketches below are the pre-gate draft; where they differ, the code and this paragraph rule.
+`OracleComp.CostBoundedBy cost c q`.
+- **Executions** (`Party.exec`, `ExecOutcome`; fuel counts messages) run in a coroutine model that
+  contains D8's. It is broader in two respects: early returns, and a return value separate from
+  the last message. Agreement with D8 holds for embedded strategies, through bridge B4 (gate 02
+  round 2, finding 1).
+- **The executor records traces** (`Party.execT`): received messages and executed draws, not
+  read from a party's log. Full [PS10] views come only from parties that sample their whole tape
+  first (finding 2).
+- **Interaction is defined by strategies** (ruled 2026-11-05): Frederick's `Strategy`/`View`
+  remain the definitions of IP, ZK and two-party computation, and this executor is the proof
+  calculus.
+- **Identical-until-bad** has a semantic hypothesis: the same law to good successors.
+
+The sketches below are the pre-gate draft; where they differ, the code and this paragraph rule.
+Since gate 02 closed (2026-11-05), the round 2 findings and review are in
+`gates/02-s2a/`.
 **Thm 175.1 (ruled 2026-11-05):** strict or truncated simulators, a declared deviation carrying D8
 into ch. 7 (`PerfectZKAbort` composes to statistical ZK with error `Q·2^-k`).
 
@@ -261,6 +273,14 @@ and §6.2.
 | P-S2-5 | B3: his `toOracleAdversary` as an instance of `NUPPT.toComp`, at the level of definitions |
 
 ## Coordination with Frederick (adds to the S1 note)
+
+**Superseded 2026-11-05.** Frederick has left the branch, and these items are now this campaign's
+own work, as ruled:
+- F-1: the root restatement of oracle adversaries;
+- F-2: the strategies define, and B4 proves;
+- F-3: the equations, done in S2b.
+
+The list below is kept as written.
 
 - **F-1 (D-2):** `OracleEnsemble` and `toOracleAdversary` restated over `Games`, or bridged by
   B3; who does it, and when relative to his external gate.

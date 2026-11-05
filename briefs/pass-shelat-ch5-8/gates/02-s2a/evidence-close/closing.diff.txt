@@ -1,0 +1,244 @@
+diff --git a/TCSlib/Cryptography/Games.lean b/TCSlib/Cryptography/Games.lean
+index d61091be..bed038ad 100644
+--- a/TCSlib/Cryptography/Games.lean
++++ b/TCSlib/Cryptography/Games.lean
+@@ -39,8 +39,9 @@ the interaction model `Strategy`.
+   advantages, the hybrid argument.
+ * `TCSlib.Cryptography.Games.Hopping`: the difference lemma, identical until bad, the collision
+   bound.
+-* `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions with D8's
+-  reading of the end, and traced executions recording views.
++* `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions in a
++  coroutine model that contains D8's (bridge B4), and traced executions recording received
++  messages and coin draws.
+ 
+ ## References
+ 
+@@ -54,7 +55,7 @@ the interaction model `Strategy`.
+   simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+   `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
+ * [BR06] M. Bellare, P. Rogaway, *The security of triple encryption and a framework for
+-  code-based game-playing proofs*, EUROCRYPT 2006.
++  code-based game-playing proofs*, EUROCRYPT 2006; full version IACR ePrint 2004/331.
+ * [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*, IACR
+-  ePrint 2004/332.
++  ePrint 2004/332, revision of 18 January 2006.
+ -/
+diff --git a/TCSlib/Cryptography/Games/Advantage.lean b/TCSlib/Cryptography/Games/Advantage.lean
+index 74ff64ea..79d2107f 100644
+--- a/TCSlib/Cryptography/Games/Advantage.lean
++++ b/TCSlib/Cryptography/Games/Advantage.lean
+@@ -35,17 +35,16 @@ definitions wrap with "negligible for every efficient adversary".
+ 
+ * `advantage_triangle`, `advantage_hybrid`, `exists_advantage_hybrid_gap`: the hybrid argument;
+   the advantage between the ends of a chain of games is at most the sum of the advantages between
+-  neighbours, so some neighbouring pair carries a `1/n` share of it ([PS10, Lemma 71.6]).
++  neighbours, so some neighbouring pair carries a `1/n` share of it, for `n` hops
++  ([PS10, Lemma 71.6]).
+ * `guessAdv_eq_half_advantage`: the guess-the-bit advantage is half the distinguishing advantage
+-  between the games for `b = 1` and `b = 0`.
++  between the games for `b = 1` and `b = 0` (the identity behind [PS10, Lemma 73.8]).
+ 
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+-  §3.1 (computational indistinguishability), Lemma 71.6 (the hybrid lemma) and Definition 168.1
+-  (the challenge bit of the indistinguishability games).
+-* [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*,
+-  IACR ePrint 2004/332.
++  §3.1 (Def 69.4, computational indistinguishability), Lemma 71.6 (the hybrid lemma), Lemma 73.8
++  (the prediction lemma) and Definition 168.1 (the experiments `IND_b` for a fixed challenge bit).
+ * [VCVio] D. Tuma and the VCVio contributors, *VCVio: machine-checked cryptographic proofs in
+   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
+   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
+@@ -103,8 +102,12 @@ theorem advantage_hybrid (G : ℕ → ProbComp Bool) (n : ℕ) :
+     advantage (G 0) (G n) ≤ ∑ i ∈ range n, advantage (G i) (G (i + 1)) :=
+   abs_sub_le_sum_hybrids (fun i => accept (G i)) n
+ 
+-/-- **The hybrid lemma:** along a chain of `n > 0` games, some neighbouring pair has advantage at
+-least a `1/n` share of the advantage between the ends. [PS10, Lemma 71.6] It is the concrete
++/-- **The hybrid lemma:** along a chain `G 0, …, G n` of `n > 0` hops (`n + 1` games), some
++neighbouring pair has advantage at least `advantage (G 0) (G n) / n`. [PS10, Lemma 71.6]
++
++**Deviation:** sharper than the source, which takes `m` distributions (`m − 1` hops), a threshold
++`ε < |g₁ − g_m|`, and concludes `> ε/m`. Here the divisor is the number of hops and the bound is
++the exact endpoint advantage; the source's form follows with `m = n + 1`. It is the concrete
+ layer's `exists_hybrid_gap` for the acceptance probabilities. -/
+ theorem exists_advantage_hybrid_gap (G : ℕ → ProbComp Bool) {n : ℕ} (hn : 0 < n) :
+     ∃ i < n, advantage (G 0) (G n) / n ≤ advantage (G i) (G (i + 1)) :=
+@@ -113,7 +116,8 @@ theorem exists_advantage_hybrid_gap (G : ℕ → ProbComp Bool) {n : ℕ} (hn :
+ /-! ### Guess-the-bit games -/
+ 
+ /-- The **guess-the-bit game** over `G`: draw a uniform bit `b`, run `G b`, and win if its output
+-is `b`. The challenge bit of the indistinguishability games of [PS10, Def 168.1]. -/
++is `b`: the prediction experiment `b ← {0,1}; t ← X^b : A(t) = b` of [PS10, Lemma 73.8], with
++`G b` the whole game for challenge bit `b`. -/
+ noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
+   (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))
+ 
+@@ -121,7 +125,7 @@ noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
+ noncomputable def guessAdv (G : Bool → ProbComp Bool) : ℝ := |accept (guessGame G) - 1 / 2|
+ 
+ /-- The winning probability of the guess-the-bit game is the average of `Pr[G 1 = 1]` and
+-`Pr[G 0 = 0]`.
++`Pr[G 0 = 0]`. [PS10, proof of Lemma 73.8]
+ 
+ **Proof sketch.** Total probability over the uniform bit (two equally likely values), and
+ `Pr[G 0 = 0] = 1 − Pr[G 0 = 1]`. -/
+@@ -146,9 +150,15 @@ theorem accept_guessGame (G : Bool → ProbComp Bool) :
+   push_cast
+   ring
+ 
+-/-- **Guessing versus distinguishing:** the guess-the-bit advantage is half the distinguishing
+-advantage between `G 1` and `G 0`. The standard relation between the two forms of
+-indistinguishability; [PS10] uses both (§3.1 and Def 168.1) without stating it. -/
++/-- **Guessing versus distinguishing:** `|Pr[win] − ½| = |Pr[G 1 = 1] − Pr[G 0 = 1]| / 2`. This
++is the identity behind [PS10, §3.1.1, Lemma 73.8]: a predictor with success `½ + δ` is a
++distinguisher with advantage `2δ`, and conversely.
++
++**Deviation:** stated exactly, at one value of the security parameter, for whole games; the
++absolute value replaces the source's "without loss of generality" complement of the distinguisher.
++[PS10, Def 168.1] is stated in the distinguishing form only, with its experiments `IND_0`, `IND_1`
++as the games `G false`, `G true`. The concrete layer's counterpart is `predict_eq`
++(`TCSlib.Cryptography.Asymptotic.Ensembles`). -/
+ theorem guessAdv_eq_half_advantage (G : Bool → ProbComp Bool) :
+     guessAdv G = advantage (G true) (G false) / 2 := by
+   unfold guessAdv advantage
+diff --git a/TCSlib/Cryptography/Games/Hopping.lean b/TCSlib/Cryptography/Games/Hopping.lean
+index 3c6c96e4..25f300e8 100644
+--- a/TCSlib/Cryptography/Games/Hopping.lean
++++ b/TCSlib/Cryptography/Games/Hopping.lean
+@@ -33,7 +33,7 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
+ 
+ * `ProbComp.prob_eq_one_of_allOutputs`, `ProbComp.expect_mono_of_allOutputs`: reasoning on the
+   possible outputs only.
+-* `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04].
++* `ProbComp.abs_prob_sub_le_of_agree`: the difference lemma [Sho04, §1.1, Lemma 1].
+ * `ProbComp.prob_mem_le`: the collision bound.
+ * `Games.prob_eq_until_bad`, `Games.identical_until_bad`, `Games.identical_until_bad_init`: the
+   code-based fundamental lemma [BR06], in semantic form, from a fixed or a sampled initial
+@@ -42,10 +42,11 @@ The hybrid argument itself is `advantage_hybrid` (`TCSlib.Cryptography.Games.Adv
+ ## References
+ 
+ * [BR06] M. Bellare, P. Rogaway, *The security of triple encryption and a framework for
+-  code-based game-playing proofs*, EUROCRYPT 2006 (the fundamental lemma of game playing).
++  code-based game-playing proofs*, EUROCRYPT 2006; full version IACR ePrint 2004/331 (the
++  fundamental lemma of game playing).
+ * [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*,
+-  IACR ePrint 2004/332 (the difference lemma). Section and lemma numbers are not cited: they vary
+-  between revisions, and the revision could not be inspected.
++  IACR ePrint 2004/332, revision of 18 January 2006 (https://www.shoup.net/papers/games.pdf),
++  §1.1, Lemma 1 (the difference lemma).
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+   Thm 168.2 (proof sketch: the bad events of the CPA analysis).
+ * [VCVio] D. Tuma and the VCVio contributors, *VCVio: machine-checked cryptographic proofs in
+@@ -124,7 +125,7 @@ theorem prob_eq_zero_of_allOutputs {c : ProbComp α} {p : α → Prop}
+   linarith
+ 
+ /-- **The difference lemma:** if the events `A` and `B` agree at every output where `F` fails,
+-their probabilities differ by at most the probability of `F`. [Sho04] (the difference lemma)
++their probabilities differ by at most the probability of `F`. [Sho04, §1.1, Lemma 1]
+ 
+ **Proof sketch.** Pointwise, the indicators of `A` and `B` differ by at most the indicator of
+ `F`; take expectations in both directions (linearity and monotonicity). -/
+@@ -285,7 +286,7 @@ same oracles give, from every good state, the same law to good successors, and l
+ once it holds (every possible new state of a bad state is bad). Then, from a good state, for any
+ computation `c` and event `p` on its output, the probabilities of `p` under the two simulations
+ differ by at most the probability that the first simulation ends in a bad state.
+-[BR06] (the fundamental lemma); [Sho04]
++[BR06] (the fundamental lemma)
+ 
+ **Deviation:** [BR06] assumes the two games' code is syntactically identical up to `bad ← true`.
+ Here the hypothesis is semantic: from a good state the two implementations give the same law to
+diff --git a/TCSlib/Cryptography/Games/Protocols.lean b/TCSlib/Cryptography/Games/Protocols.lean
+index e26e6135..6f79bf4e 100644
+--- a/TCSlib/Cryptography/Games/Protocols.lean
++++ b/TCSlib/Cryptography/Games/Protocols.lean
+@@ -19,21 +19,30 @@ most `fuel` messages.
+ 
+ **When a party returns.** [PS10, §4.4] ends the protocol when the active machine halts, and gives
+ a machine an output only on halting, so the waiting party has none. Yet Definitions 116.1 and
+-155.1 use both parties' outputs. As in the ch. 2–4 layer's reading (its foundation decision D8,
+-`TCSlib.Cryptography.ZeroKnowledge.Interaction`), the waiting party is activated **once more**:
+-its pending send is answered `none` ("the other party has finished"), it may draw coins, and it
+-must then return without sending. A send after the end is reported (`ExecOutcome.sentAfterEnd`),
+-never hidden. Either party may return early.
+-
+-**Views.** A party's view (its input and auxiliary input, which are Lean parameters of the party,
+-its coins, and the messages delivered to it, starting with the second mover's first message) is
+-recorded by the executor: `Party.execT` returns, beside the outcome, each party's received
+-messages and coin draws (`Party.Obs`), and its outcome is that of `Party.exec`
+-(`Party.execT_outcome`). A party's own oracle log would miss the second mover's first message,
++155.1 use both parties' outputs. Following the ch. 2–4 layer's foundation decision D8
++(`TCSlib.Cryptography.ZeroKnowledge.Interaction`), both parties have outputs: the waiting party is
++activated **once more**. Its pending send is answered `none` ("the other party has finished"), it
++may draw coins, and it must then return without sending. A send after the end is reported
++(`ExecOutcome.sentAfterEnd`), never hidden.
++
++**A broader model than D8's.** The executor is a coroutine model that contains D8's. It is broader
++in two respects. A party may return early (D8 fixes the number of messages). And a party's output
++is a separate return value (in D8 it is the next-message function on the complete history, so the
++last sender's output equals its last message). D8's executions are those of *embedded strategies*:
++each samples its whole tape first, sends `next` on its scheduled turns, and returns `next` on its
++complete history. Agreement with D8 is claimed only for that class (bridge B4, S2b).
++
++**Traces.** `Party.execT` returns, beside the outcome, each party's received messages (the second
++mover's first message first) and the coin draws it executed (`Party.Obs`). Its outcome is that of
++`Party.exec` (`Party.execT_outcome`). A [PS10, §4.4] view `(x, z, r, M)` contains the whole random
++tape `r`, including bits never read. It is recovered from the trace only for parties that sample
++their whole tape first, as an embedded strategy does. Inputs and auxiliary inputs are Lean
++parameters of the party. A party's own oracle log would miss the second mover's first message,
+ which reaches it as an argument.
+ 
+-The bridge to the next-message strategies of the ch. 2–4 layer (`TCSlib.Cryptography.Strategy`,
+-`TCSlib.Cryptography.exec`) is part of the S2b layer.
++The ch. 2–4 layer's strategies (`TCSlib.Cryptography.Strategy`, `TCSlib.Cryptography.exec`) remain
++the definitions of interaction for IP, ZK and two-party computation (ruling of 2026-11-05). This
++executor is the calculus in which their properties are proved, through B4.
+ 
+ ## Main definitions
+ 
+@@ -124,9 +133,16 @@ active party returns, the waiting party is activated once more and closed (`endW
+ 
+ **Deviation from [PS10, §4.4]:** the source ends the protocol when the active machine halts and
+ defines outputs only on halting, so the waiting party would have none, while Definitions 116.1
+-and 155.1 use both outputs. As in the ch. 2–4 layer's D8, the waiting party is activated once
+-more; it may draw coins, but a send is reported as `sentAfterEnd`. Unlike D8, which fixes the
+-number of messages, a party may return early. -/
++and 155.1 use both outputs. Following the ch. 2–4 layer's D8, the waiting party is activated once
++more; it may draw coins, but a send is reported as `sentAfterEnd`.
++
++**Relation to D8.** This executor is broader than D8 in two respects. A party may return early
++(D8 fixes the number of messages). And a party's output is a separate return value, computed after
++its last activation and possibly after fresh coins on closure. In D8 a party's output is its
++next-message function on its complete history, so the last sender's output equals its last
++message (`Protocol.outV_eq_getLast_of_moverIsV`). D8's executions are the executions of embedded
++strategies (each samples its whole tape first, sends `next` on its scheduled turns, and returns
++`next` on its complete history). Agreement with D8 is claimed only for that class (bridge B4). -/
+ def exec : ℕ → ∀ {M₁ M₂ α β : Type},
+     Party M₁ M₂ α → (Option M₁ → Party M₂ M₁ β) → ProbComp (ExecOutcome α β)
+   | 0, _, _, _, _, A, B =>
+@@ -135,8 +151,11 @@ def exec : ℕ → ∀ {M₁ M₂ α β : Type},
+     (step A).bind (Sum.elim (fun a => endWith a B)
+       (fun mk => (exec fuel (B (some mk.1)) mk.2).bind fun r => .pure r.swap))
+ 
+-/-- With no fuel, the execution ends at the first mover's first send. -/
+-theorem exec_zero {M₁ M₂ : Type} (A : Party M₁ M₂ α) (B : Option M₁ → Party M₂ M₁ β) :
++/-- With no fuel, the first mover runs until it returns or tries to send. If it returns, the
++waiting party is closed (`endWith`): activated with `none`, it may draw coins, and the outcome is
++`done` if it returns and `sentAfterEnd` if it sends. If the first mover tries to send, the outcome
++is `outOfFuel` and the waiting party never runs. -/
++@[simp] theorem exec_zero {M₁ M₂ : Type} (A : Party M₁ M₂ α) (B : Option M₁ → Party M₂ M₁ β) :
+     exec 0 A B = (step A).bind (Sum.elim (fun a => endWith a B) (fun _ => .pure .outOfFuel)) :=
+   rfl
+ 
+@@ -195,7 +214,8 @@ def endWithT {M₁ M₂ α β : Type} (a : α) (B : Option M₁ → Party M₂ M
+ /-- The **traced execution**: `exec`, also returning what each party observed. The first component
+ of the result is the outcome, the second the first mover's observations, and the third the second
+ mover's. When the active party sends `m`, `m` is the first message the other party receives in the
+-rest of the run. [PS10, §4.4] (views) -/
++rest of the run. [PS10, §4.4] (the received messages of a view; its random tape for parties that
++sample it first) -/
+ def execT : ℕ → ∀ {M₁ M₂ α β : Type},
+     Party M₁ M₂ α → (Option M₁ → Party M₂ M₁ β) →
+       ProbComp (ExecOutcome α β × Obs M₂ × Obs M₁)
