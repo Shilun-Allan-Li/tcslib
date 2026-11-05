@@ -78,14 +78,14 @@ inductive Attack : Type where
   | cca2
   deriving DecidableEq
 
-/-- A **private-key encryption scheme with fixed-length ciphertexts**: every ciphertext at
-parameter `n` has exactly `ct(n)` bits. -/
+/-- A **private-key encryption scheme with fixed-length ciphertexts**: every encryption of an
+`n`-bit message under a generated key has exactly `ct(n)` bits. -/
 structure FixedLengthScheme extends PrivateKeyScheme where
   /-- The ciphertext length `ct(n)`. -/
   ctLen : PolyExpr
-  /-- Every ciphertext has `ct(n)` bits. -/
-  enc_length : ∀ n (k m : List Bool) (r : enc.Coins n),
-    (enc.runAt n (pairEncode k m) r).length = ctLen.eval n
+  /-- Ciphertexts of `n`-bit messages under generated keys have `ct(n)` bits. -/
+  enc_length : ∀ n (rg : gen.Coins n) (m : Fin n → Bool) (r : enc.Coins n),
+    (enc.runAt n (pairEncode (gen.runAt n [] rg) (List.ofFn m)) r).length = ctLen.eval n
 
 namespace FixedLengthScheme
 
