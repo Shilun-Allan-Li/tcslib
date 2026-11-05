@@ -478,11 +478,11 @@ mapped, a partial last block is dropped). This evaluates `prodFun f q` blockwise
 [PS10, Theorem 35.1, Algorithm 38.5] and decodes tuples of `n`-bit strings.
 
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
-`Complexity.StateLoop.BlockLoop`) with `R := var` (at most `|z|` blocks) on the state
+`Complexity.StateLoop.BlockMapLoop`) with `R := var` (at most `|z|` blocks) on the state
 `⟨rest, c⟩` from `⟨snd z, []⟩`, with `k := b(|fst z|)` read off the retained input: each step
 drops `k` bits of `rest` and appends `g (rest.take k)` to `c` (`polyTimeComputable_pairDropPoly b`,
 `polyTimeComputable_pairTakePoly b` on `⟨fst z, rest⟩`), so after `i` rounds the state is
-`⟨(snd z).drop (i k), g (block 0) ++ ⋯ ++ g (block (i − 1))⟩` (`BlockLoop.orbit_eq`,
+`⟨(snd z).drop (i k), g (block 0) ++ ⋯ ++ g (block (i − 1))⟩` (`BlockMapLoop.orbit_eq`,
 `List.drop_drop`); `acc` is "`|rest| < k` or `k = 0`" (two length tests against `1^k`), `false`
 below round `|snd z| / k` and `true` there (`Nat.le_div_iff_mul_le`, `Nat.lt_mul_div_succ`),
 where `out` returns `c`, the statement's `flatMap`. States have length at most
@@ -493,16 +493,16 @@ theorem polyTimeComputable_blockMap (b : PolyExpr) {g : List Bool → List Bool}
       (List.range ((pairSndD z).length / b.eval (pairFstD z).length)).flatMap fun i =>
         g (((pairSndD z).drop (i * b.eval (pairFstD z).length)).take (b.eval (pairFstD z).length)) := by
   obtain ⟨C, c, hC⟩ := hg.output_length_le
-  have hN : ∀ z, BlockLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
+  have hN : ∀ z, BlockMapLoop.rounds b z ≤ PolyExpr.var.eval z.length := by
     intro z
     have := length_pairFstD_add_pairSndD_le z
     exact (Nat.div_le_self _ _).trans (by simp only [PolyExpr.eval_var]; omega)
-  have h := polyTimeComputable_stateFind BlockLoop.start_poly (BlockLoop.step_poly b hg)
-    (BlockLoop.acc_poly b) BlockLoop.out_poly .var _ (BlockLoop.rounds b) hN
-    (BlockLoop.orbit_length_le b g C c hC) (BlockLoop.acc_orbit_false b g)
-    (BlockLoop.acc_orbit_true b g)
+  have h := polyTimeComputable_stateFind BlockMapLoop.start_poly (BlockMapLoop.step_poly b hg)
+    (BlockMapLoop.acc_poly b) BlockMapLoop.out_poly .var _ (BlockMapLoop.rounds b) hN
+    (BlockMapLoop.orbit_length_le b g C c hC) (BlockMapLoop.acc_orbit_false b g)
+    (BlockMapLoop.acc_orbit_true b g)
   convert h using 1
   funext z
-  exact (BlockLoop.out_orbit b g z).symm
+  exact (BlockMapLoop.out_orbit b g z).symm
 
 end Complexity

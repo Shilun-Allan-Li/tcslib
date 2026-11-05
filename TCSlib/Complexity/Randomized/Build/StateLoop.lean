@@ -37,7 +37,7 @@ This file supplies everything that does not depend on the repetition lemma itsel
   their polynomial-time proofs and the closed forms of the orbits (namespaces
   `Complexity.StateLoop.IterLoop` and `Complexity.StateLoop.EmitLoop`).
 
-The four string loops (`MajLoop`, `XorLoop`, `EqLoop`, `BlockLoop`) are in
+The four string loops (`MajLoop`, `XorLoop`, `EqLoop`, `BlockMapLoop`) are in
 `TCSlib.Complexity.Randomized.Build.StringLoops`; the assembly through
 `Complexity.polyTimeComputable_iterateFind` and the six public theorems live in
 `TCSlib.Complexity.Randomized.Repetition`.

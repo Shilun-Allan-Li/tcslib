@@ -30,7 +30,7 @@ length bound and the values of `acc` and `out` along it:
 * `Complexity.StateLoop.MajLoop` — state `⟨rest, ⟨1^{#true}, 1^{#false}⟩⟩`, one bit per round;
 * `Complexity.StateLoop.XorLoop` — state `⟨a', ⟨b', c⟩⟩`, one xor bit appended per round;
 * `Complexity.StateLoop.EqLoop` — state `⟨a', ⟨b', flag⟩⟩`, the flag recording a mismatch;
-* `Complexity.StateLoop.BlockLoop` — state `⟨rest, c⟩`, one block of `b(|fst z|)` bits per
+* `Complexity.StateLoop.BlockMapLoop` — state `⟨rest, c⟩`, one block of `b(|fst z|)` bits per
   round, the accumulator extended by `g` of the block.
 
 The assembly through `Complexity.polyTimeComputable_iterateFind` (the private state-loop form
@@ -40,7 +40,7 @@ The assembly through `Complexity.polyTimeComputable_iterateFind` (the private st
 ## Main definitions
 
 * `Complexity.StateLoop.MajLoop`, `Complexity.StateLoop.XorLoop`, `Complexity.StateLoop.EqLoop`,
-  `Complexity.StateLoop.BlockLoop` — the state-loop data of the four string functions.
+  `Complexity.StateLoop.BlockMapLoop` — the state-loop data of the four string functions.
 
 ## Main results
 
@@ -424,7 +424,7 @@ end EqLoop
 
 /-! ### `blockMap`: consume the second component block by block -/
 
-namespace BlockLoop
+namespace BlockMapLoop
 
 /-- The initial state `⟨snd z, []⟩`: the whole second component remains, empty accumulator. -/
 def start (z : List Bool) : List Bool := pairEncode (pairSndD z) []
@@ -582,6 +582,6 @@ theorem out_orbit (b : PolyExpr) (g : List Bool → List Bool) (z : List Bool) :
   rw [orbit_eq]
   simp [out]
 
-end BlockLoop
+end BlockMapLoop
 
 end Complexity.StateLoop
