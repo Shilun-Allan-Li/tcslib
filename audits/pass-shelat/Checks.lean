@@ -378,3 +378,17 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.Candidates.statClose_sampleBelowL
 -- P9-1 (zk-model): the prefix-reading verifier of the sanity protocol (proved).
 #print axioms TCSlib.Cryptography.npProtocol_readsPrefix
+
+-- ## Gate 03b repairs (pack 03b: OneWay, Collections, Permutations, Arithmetic)
+-- Finding 1 (ruling G3-1): canonical decoding `Collection.encD_decD`; the string-level consequences
+-- and the evaluator-free text reading of Thm 104.4 (`henc` still assumed).
+#print axioms TCSlib.Cryptography.Collection.sample_eq_encD
+#print axioms TCSlib.Cryptography.Collection.HardCore.evaluator
+#print axioms TCSlib.Cryptography.TrapdoorCollection.inv_eq_encD
+#print axioms TCSlib.Cryptography.TrapdoorCollection.eval_inv
+#print axioms TCSlib.Cryptography.Collection.HardCore.nonempty_predEvaluator
+#print axioms TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure
+-- Finding 13: non-vacuity of weak and worst-case one-wayness and of collection one-wayness.
+#print axioms TCSlib.Cryptography.not_weakOneWay_id
+#print axioms TCSlib.Cryptography.not_worstCaseOneWay_id
+#print axioms TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id

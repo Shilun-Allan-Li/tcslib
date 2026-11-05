@@ -473,6 +473,9 @@ noncomputable def rabinCollection (H : ArithmeticFP) : Collection where
   encD := rabinEnc
   decD := rabinDec
   decD_encD := rabinDec_rabinEnc
+  encD_decD i w x h := by -- canonical decoding (gate 03b, finding 1)
+    rw [rabinDec] at h; split_ifs at h with hw
+    rw [← Option.some.inj h, rabinEnc, ZMod.coe_unitOfCoprime, natToList_val_natCast hw.1 hw.2.1]
   f := rabinF
   gen := oddGen H
   gen_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
@@ -849,6 +852,10 @@ noncomputable def rabinBlumTrapdoor (H : ArithmeticFP) : TrapdoorCollection wher
   encD := blumEnc
   decD := blumDec
   decD_encD := blumDec_blumEnc
+  encD_decD i w x h := by -- canonical decoding (gate 03b, finding 1)
+    rw [blumDec] at h; split_ifs at h with hv hw hq hw' <;> rw [← Option.some.inj h, blumEnc, blumEncVal]
+    · rw [if_pos hv, ZMod.coe_unitOfCoprime, natToList_val_natCast hw.1 hw.2.1]
+    · rw [if_neg hv, hw']
   f := blumF
   gen := blumGen H
   gen_uniform := NUPPT.ofPolyTimeUniform_uniform _ _

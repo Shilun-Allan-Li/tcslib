@@ -570,7 +570,7 @@ theorem factoringSampler_spec (H : ArithmeticFP) (n : ℕ) (r : factoringGen.Coi
 no coins, `factoringGen`), domains `D_{1^n} = {(p, q) ∈ Π_n × Π_n : p ≠ q}` encoded as `⟨p, q⟩`
 with `n`-bit numerals, `f(p, q) = pq` as a `2n`-bit numeral, the sampler `factoringSampler`
 (whose outputs always decode, `factoringSampler_spec`) and the evaluator `mulStr` of the
-arithmetic bundle.
+arithmetic bundle; decoding is canonical (`encodeDistinctPrimes_of_decode`).
 
 **Deviation:** `Π_n` and distinct primes instead of the text's "`|p| = |q| = i/2`" (source
 error 24); at parameters `n < 2` the domain is that of `n = 2` (`max n 2`), since `Π_n`
@@ -582,6 +582,7 @@ noncomputable def factoringCollection (H : ArithmeticFP) : Collection where
   encD i z := encodeDistinctPrimes (max i.length 2) z
   decD i w := decodeDistinctPrimes (max i.length 2) w
   decD_encD i z := decodeDistinctPrimes_encode _ z
+  encD_decD _ _ _ h := encodeDistinctPrimes_of_decode h
   f i z := natToList (2 * max i.length 2) (z.p * z.q)
   gen := factoringGen
   gen_uniform := NUPPT.ofPolyTimeUniform_uniform _ _

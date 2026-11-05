@@ -8,6 +8,7 @@ import TCSlib.Cryptography.NumberTheory.Chebyshev
 import TCSlib.Cryptography.NumberTheory.Units
 import TCSlib.Cryptography.Asymptotic.Sampling
 import TCSlib.Cryptography.Asymptotic.Adversary
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Candidates.Arithmetic
 import Mathlib.Logic.Equiv.Prod
 
@@ -472,6 +473,36 @@ theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :
     bitsToNat_natToBits z.p_lt, bitsToNat_natToBits z.q_lt]
   rw [dif_pos ⟨z.p_prime, z.q_prime, z.p_ne_q⟩]
   congr 1
+
+/-- **Decoding is canonical**: a string that `decodeDistinctPrimes m` decodes to `z` is
+`encodeDistinctPrimes m z` (the clause `Collection.encD_decD` of the factoring collection;
+gate 03b, finding 1).
+
+**Proof sketch.** Both components decode as `m`-bit strings `a`, `b`, so they are `List.ofFn a`,
+`List.ofFn b` (`ofFn_of_decodeFin_eq_some`), the numerals of `p = bitsToNat a`, `q = bitsToNat b`
+at width `m` (`natToList_length_listToNat`); the first is nonempty (`Π_m` has two distinct
+primes only for `m ≥ 2`, `DistinctPrimes.isEmpty_of_lt`), so the string is the pair of its
+components (`eq_pairEncode_of_pairFstD_ne`). -/
+theorem encodeDistinctPrimes_of_decode {m : ℕ} {w : List Bool} {z : DistinctPrimes m}
+    (h : decodeDistinctPrimes m w = some z) : encodeDistinctPrimes m z = w := by
+  have hm : 2 ≤ m := by
+    by_contra hm
+    exact (DistinctPrimes.isEmpty_of_lt (not_le.1 hm)).false z
+  have hnum : ∀ a : Fin m → Bool, natToList m (bitsToNat a) = List.ofFn a := fun a => by
+    have := natToList_length_listToNat (List.ofFn a)
+    rwa [List.length_ofFn, ← bitsToNat_eq_listToNat] at this
+  unfold decodeDistinctPrimes at h
+  rcases ha : decodeFin m (pairFstD w) with _ | a <;> rcases hb : decodeFin m (pairSndD w) with _ | b <;>
+    simp only [ha, hb, reduceCtorEq] at h
+  split_ifs at h with hc
+  obtain rfl := Option.some.inj h
+  have hne : pairFstD w ≠ [] := fun h0 => by
+    have := length_eq_of_decodeFin_eq_some ha
+    rw [h0, List.length_nil] at this
+    omega
+  show pairEncode (natToList m (bitsToNat a)) (natToList m (bitsToNat b)) = w
+  rw [hnum, hnum, ofFn_of_decodeFin_eq_some ha, ofFn_of_decodeFin_eq_some hb]
+  exact (eq_pairEncode_of_pairFstD_ne hne).symm
 
 /-! ## Block rejection sampling on coin lists (run-3 audit P7-6) -/
 
