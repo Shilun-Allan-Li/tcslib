@@ -4279,6 +4279,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Its two Lean-side minors are fixed: seven
   label docstrings rewritten (`e6eaaf94`), and the chain re-run at that head with source hashes
   (22/22 clean, from a fresh `oleans-larm` clone).
-  After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
+  After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay.
+  **Done (2026-11-04):** retargeted; campaign merged (`23659a09`); `replay-ledge` passed (61/61,
+  static-equal; `oleans-ledge`). **#184 is clear to merge.** The
   deepening fill's brief issues once #182 and #184 have both merged.
 

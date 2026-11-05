@@ -1,0 +1,35 @@
+
+/-! Verification tail (scratch only): the elaborated-constant walk of the new declarations and
+their axioms. -/
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let first39 : List String := ["nf_pack", "nf_setup", "nf_ctlStep", "nf_ctlStop", "nf_ctl_position", "nf_ctl_stop_iff", "nf_record", "nf_record_last", "nf_record_choice", "nf_record_read", "nf_display", "nf_display_length", "nf_display_flag", "nf_display_firstStop", "nf_firstStop_records", "nf_display_prefix_length", "nf_decode", "nf_decode_record", "nf_decode_absent", "nf_Control", "nf_SweepState", "nf_complete", "nf_sweepStep", "nf_sweepInit", "nf_sweepPass", "nf_complete_record", "nf_complete_failed", "nf_complete_other", "nf_sweep_prefix", "nf_sweep_record", "nf_complete_output", "nf_sweepPass_output", "nf_sweep_run", "nf_sweep_records", "nf_display_records", "nf_sweep_display", "nf_complete_step", "nf_sweep_control_prefix", "nf_sweep_display_pass"]
+  let mut news : Array Name := #[]
+  for (n, _) in env.constants.map₂.toList do
+    let u := (privateToUserName? n).getD n
+    let s := u.toString
+    if (s.startsWith "Turing.FinNDTM.nf_" || s.startsWith "Turing.FinNDTM.instDecidableEqNf_"
+        || s.startsWith "Turing.FinNDTM.instFintypeNf_"
+        || s.startsWith "Turing.FinNDTM.exists_codeNDTM_accepts_linear") then
+      let base := (s.drop "Turing.FinNDTM.".length).takeWhile (· != '.')
+      if !(first39.contains base) then news := news.push n
+  let newsS := news.qsort (fun a b => a.toString < b.toString)
+  let mut ext : Std.HashSet Name := {}
+  for n in newsS do
+    let some ci := env.find? n | continue
+    for c in ci.type.getUsedConstants ++ ((ci.value?.map Expr.getUsedConstants).getD #[]) do
+      if (env.getModuleIdxFor? c).isSome then ext := ext.insert c
+  let mut lines : Array String := #[]
+  for c in ext.toArray do
+    let some idx := env.getModuleIdxFor? c | continue
+    let m := env.header.moduleNames[idx.toNat]!
+    let some ci := env.find? c | continue
+    let kind := match ci with
+      | .defnInfo _ => "def" | .thmInfo _ => "thm" | .axiomInfo _ => "axiom"
+      | .opaqueInfo _ => "opaque" | .quotInfo _ => "quot" | .inductInfo _ => "induct"
+      | .ctorInfo _ => "ctor" | .recInfo _ => "rec"
+    lines := lines.push s!"{c}\t{kind}\t{m}"
+  let linesS := lines.qsort (· < ·)
+  logInfo m!"WALK_NEW {newsS.size}\n{"\n".intercalate (newsS.toList.map toString)}"
+  logInfo m!"WALK_EXT {linesS.size}\n{"\n".intercalate linesS.toList}"

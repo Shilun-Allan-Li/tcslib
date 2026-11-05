@@ -1,0 +1,9 @@
+controls: sealed 704 unsealed 704
+sealed passes (must be 0): 0
+unsealed failures: [('rfl', 'Turing.FinTM.sweepFold'), ('rfl', 'Turing.NDTM.runWith'), ('rfl', 'Turing.codeReadUnary'), ('rfl', 'Turing.codeReadVec'), ('rfl', 'Turing.codeSkipRepeat'), ('rfl', 'Turing.decFixed'), ('rfl', 'Turing.incFixed'), ('rfl', 'Turing.mealyRun'), ('rfl', 'Turing.pairDecode'), ('rfl', 'Turing.unaryTokenSplit'), ('rfl', 'Turing.workReadsK'), ('rfl', 'Turing.NTimeDiag.ladder'), ('eqn', 'Turing.StepBlock.summaryEmit')]
+sealed definitions: 350 ; each with a control failing sealed and closing unsealed: 350
+uncovered: []
+simp Turing.Action.apply sealed FAIL unsealed PASS
+simp Turing.Cfg.init sealed FAIL unsealed PASS
+simp Turing.MultiTapeTM.initCfg sealed FAIL unsealed PASS
+simp Turing.NDTM.initCfg sealed FAIL unsealed PASS

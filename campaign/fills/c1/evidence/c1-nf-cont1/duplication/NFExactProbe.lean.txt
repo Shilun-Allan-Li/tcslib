@@ -1,0 +1,53 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! Semantic duplication probe for the continuation's new lemmas whose statements mention no
+definition of the owned file: each statement is posed to `exact?` at the module's imports. A probe
+record, not library code. -/
+
+open Turing
+
+set_option maxHeartbeats 400000
+
+-- nf_entry
+example {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List Bool) (q : S) :
+    guessRunCfg (P.initCfg x) 0 s q = streamStartCfg x 0 q s := by
+  exact?
+
+-- nf_inputSymbol_congr
+example {k k' : ℕ} {S S' : Type} {x : List Bool} (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x)
+    (h : c.inputPos.val = c'.inputPos.val) : c.inputSymbol = c'.inputSymbol := by
+  exact?
+
+-- nf_stream_length
+example (k : ℕ) (rs : List (Fin (2 * k + 4) → Bool)) :
+    (rs.flatMap List.ofFn).length = (2 * k + 4) * rs.length := by
+  exact?
+
+-- nf_signType_bound
+example (m : SignType) : -1 ≤ (m : ℤ) ∧ (m : ℤ) ≤ 1 := by
+  exact?
+
+-- nf_stream_cons (first half)
+example (k : ℕ) (rec : Fin (2 * k + 4) → Bool) (rs : List (Fin (2 * k + 4) → Bool))
+    (T : ℤ → Option Bool) (h : ℤ)
+    (hT : ∀ p : ℕ, p < ((rec :: rs).flatMap List.ofFn).length →
+      T (h + p) = ((rec :: rs).flatMap List.ofFn)[p]?) :
+    ∀ p : Fin (2 * k + 4), T (h + (p.val : ℤ)) = some (rec p) := by
+  exact?
+
+-- nf_flags_cons (second half)
+example {k : ℕ} (rec : Fin (2 * k + 4) → Bool) (rs : List (Fin (2 * k + 4) → Bool))
+    (hflag : ∀ r (h : r < (rec :: rs).length),
+      (rec :: rs)[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = (rec :: rs).length)) :
+    ∀ r (h : r < rs.length), rs[r] ⟨2 * k + 3, by omega⟩ = decide (r + 1 = rs.length) := by
+  exact?
+
+-- nf_region (its tape clause)
+example (B : ℤ → Option Bool) (S E h : ℤ)
+    (hB : ∀ q, B q ≠ none ↔ S ≤ q ∧ q ≤ E) (hS : S ≤ h) (hE : h ≤ E) :
+    ∃ (R : List Bool) (i : ℕ), i ≤ R.length ∧
+      ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) → B (h - i + p) = FinTM.bufferTape R p := by
+  exact?

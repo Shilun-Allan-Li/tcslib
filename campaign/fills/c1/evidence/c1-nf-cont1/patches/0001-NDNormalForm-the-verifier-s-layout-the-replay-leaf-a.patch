@@ -1,0 +1,1085 @@
+From 15fd6cf7a52f94cf8221fe323f2675fa14cb1fe8 Mon Sep 17 00:00:00 2001
+From: "Claude (fill agent)" <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 22:17:50 +0000
+Subject: [PATCH 1/7] NDNormalForm: the verifier's layout, the replay leaf and
+ the input's replay
+
+Checkpoint 3 of the linear normal form's continuation: the verifier's phase
+layout over a generic replay leaf (phase index, state family with named
+instances, phase machines, redirect table, the phase host), the replay leaf
+(one two-tape machine parameterized by the replayed tape, with private
+instances for its states), the read of a record, one record of the input's
+replay, the decoded virtual run of the original machine, and the input's
+replay over a stream of records. The return of tape 0 after any replay and
+the clear of tape 1 are chained through the phase host's phase lemma.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 1050 +++++++++++++++++++
+ 1 file changed, 1050 insertions(+)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index e6432b1e..119275af 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -703,6 +703,1056 @@ private theorem nf_sweep_display_pass (N : FinNDTM Bool) (x w : List Bool)
+   rw [ho]
+   rfl
+ 
++/-! ### The verifier's layout
++
++The verifier is a deterministic two-tape machine composed by `Turing.phaseHostTM`. It runs the
++control sweep (a fold by `Turing.scanTM` over the stream on tape `0`), then one replay per
++replayed tape (the input first, then each work tape on tape `1`), each followed by the return of
++tape `0` (`Turing.skipTM`, `Turing.skipBackTM`) and, for a work tape, the clear of tape `1`
++(`Turing.skipTM`, `Turing.skipBackTM`, `Turing.clearTM`), and ends in a stationary verdict
++park. It is silent: no phase emits output. -/
++
++/-- The verifier's phases for `k` work tapes. -/
++private inductive nf_Ph (k : ℕ) where
++  /-- the control sweep, a scan fold over the stream on tape `0` -/
++  | ctl
++  /-- the replay of tape `j` (`none`: the input; `some j`: work tape `j`, on tape `1`) -/
++  | rep (j : Option (Fin k))
++  /-- the return of tape `0`, first step: from the blank after the stream, one cell right -/
++  | aFwd (j : Option (Fin k))
++  /-- the return of tape `0`, second step: back to cell `0` -/
++  | aBack (j : Option (Fin k))
++  /-- the clear of tape `1`, first step: to one past the visited region's right blank -/
++  | bFwd (j : Fin k)
++  /-- the clear of tape `1`, second step: back to the visited region's first cell -/
++  | bBack (j : Fin k)
++  /-- the clear of tape `1`, third step: blank the visited region -/
++  | bClr (j : Fin k)
++  /-- the verdict park -/
++  | park
++  deriving DecidableEq, Fintype
++
++/-- The states of each phase, over the replay leaf's state type `SL`. -/
++private def nf_St (N : FinNDTM Bool) (SL : Type) : nf_Ph N.k → Type
++  | .ctl => ScanPhase (nf_SweepState N)
++  | .rep _ => SL
++  | .aFwd _ => SeekPhase
++  | .aBack _ => SeekPhase
++  | .bFwd _ => SeekPhase
++  | .bBack _ => SeekPhase
++  | .bClr _ => SweepPhase
++  | .park => Bool
++
++/-- Decidable equality of each phase's states, named: default synthesis does not reach
++`ScanPhase (nf_SweepState N)` at the default instance size. -/
++private instance nf_stDecEq (N : FinNDTM Bool) (SL : Type) [DecidableEq SL] :
++    (i : nf_Ph N.k) → DecidableEq (nf_St N SL i)
++  | .ctl => @instDecidableEqScanPhase _ inferInstance
++  | .rep _ => (inferInstance : DecidableEq SL)
++  | .aFwd _ => (inferInstance : DecidableEq SeekPhase)
++  | .aBack _ => (inferInstance : DecidableEq SeekPhase)
++  | .bFwd _ => (inferInstance : DecidableEq SeekPhase)
++  | .bBack _ => (inferInstance : DecidableEq SeekPhase)
++  | .bClr _ => (inferInstance : DecidableEq SweepPhase)
++  | .park => (inferInstance : DecidableEq Bool)
++
++/-- Finiteness of each phase's states, named as `nf_stDecEq` is. -/
++private instance nf_stFintype (N : FinNDTM Bool) (SL : Type) [Fintype SL] :
++    (i : nf_Ph N.k) → Fintype (nf_St N SL i)
++  | .ctl => @instFintypeScanPhase _ inferInstance
++  | .rep _ => (inferInstance : Fintype SL)
++  | .aFwd _ => (inferInstance : Fintype SeekPhase)
++  | .aBack _ => (inferInstance : Fintype SeekPhase)
++  | .bFwd _ => (inferInstance : Fintype SeekPhase)
++  | .bBack _ => (inferInstance : Fintype SeekPhase)
++  | .bClr _ => (inferInstance : Fintype SweepPhase)
++  | .park => (inferInstance : Fintype Bool)
++
++/-- The verdict park: it stays at its state and moves nothing. -/
++private def nf_park : MultiTapeTM 2 Bool Bool :=
++  ⟨true, fun q _ _ => ⟨0, fun _ => (none, 0), none, some q⟩⟩
++
++/-- The phase machines, over a replay leaf `L` per replayed tape. -/
++private def nf_M (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) :
++    (i : nf_Ph N.k) → MultiTapeTM 2 Bool (nf_St N SL i)
++  | .ctl => scanTM 2 0 (scanFold (nf_sweepStep N)) scanKeep (nf_sweepInit N)
++  | .rep j => L j
++  | .aFwd _ => skipTM 2 0
++  | .aBack _ => skipBackTM 2 0
++  | .bFwd _ => skipTM 2 1
++  | .bBack _ => skipBackTM 2 1
++  | .bClr _ => clearTM 2 1
++  | .park => nf_park
++
++/-- After tape `j`'s phases: the next work tape's replay, or the passing verdict. -/
++private def nf_after (N : FinNDTM Bool) {SL : Type}
++    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) : Option (Fin N.k) → Σ i, nf_St N SL i
++  | none => if h : 0 < N.k then ⟨.rep (some ⟨0, h⟩), (L (some ⟨0, h⟩)).q₀⟩ else ⟨.park, true⟩
++  | some j =>
++    if h : j.val + 1 < N.k then ⟨.rep (some ⟨j.val + 1, h⟩), (L (some ⟨j.val + 1, h⟩)).q₀⟩
++    else ⟨.park, true⟩
++
++/-- The redirect table: each phase's exit to the next phase's start, a failure to the rejecting
++park. `exit` reads the replay leaf's verdict states (`some true` passed, `some false` failed). -/
++private def nf_red (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL)
++    (exit : SL → Option Bool) : (i : nf_Ph N.k) → nf_St N SL i → Option (Σ i, nf_St N SL i)
++  | .ctl, .done a =>
++    some (if nf_sweepPass N a then ⟨.rep none, (L none).q₀⟩ else ⟨.park, false⟩)
++  | .ctl, .fwd _ => none
++  | .ctl, .bwd _ => none
++  | .rep j, q =>
++    match exit q with
++    | some true => some ⟨.aFwd j, .run⟩
++    | some false => some ⟨.park, false⟩
++    | none => none
++  | .aFwd j, .done => some ⟨.aBack j, .run⟩
++  | .aFwd _, .run => none
++  | .aFwd _, .gap => none
++  | .aFwd _, .back => none
++  | .aBack none, .done => some (nf_after N L none)
++  | .aBack (some j), .done => some ⟨.bFwd j, .run⟩
++  | .aBack _, .run => none
++  | .aBack _, .gap => none
++  | .aBack _, .back => none
++  | .bFwd j, .done => some ⟨.bBack j, .run⟩
++  | .bFwd _, .run => none
++  | .bFwd _, .gap => none
++  | .bFwd _, .back => none
++  | .bBack j, .done => some ⟨.bClr j, .sweep⟩
++  | .bBack _, .run => none
++  | .bBack _, .gap => none
++  | .bBack _, .back => none
++  | .bClr j, .done => some (nf_after N L (some j))
++  | .bClr _, .sweep => none
++  | .bClr _, .rewind => none
++  | .park, _ => none
++
++/-- The verifier: the phase host over the phases, entered at the control sweep. -/
++private def nf_V (N : FinNDTM Bool) {SL : Type} (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL)
++    (exit : SL → Option Bool) : MultiTapeTM 2 Bool (Σ i, nf_St N SL i) :=
++  phaseHostTM (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ (nf_red N L exit)
++
++/-! ### The replay leaf
++
++One two-tape machine, parameterized by the replayed tape (`none` the input, `some j` work tape
++`j`). It reads tape `0` one cell per step with the control sweep's own record parser and control
++(`nf_sweepStep`), so its simulated state is the control sweep's, and at each completed record
++recomputes the action of `N`'s table on the record's decoded claims (`nf_decode`). The input
++instance compares the decoded input claim with the cell under the native input head and performs
++the recomputed input move. A work-tape instance keeps the replayed tape on tape `1` as two-bit
++blocks, two nonblank bits per visited cell (`nf_record`'s code) and two blanks per unvisited
++cell: at each record it checks the decoded claim against the block under its head, rewrites the
++block with the cell's new content, and moves two cells per simulated move, except after the
++end-flagged record. -/
++
++/-- The replay leaf's states. -/
++private inductive nf_LeafSt (N : FinNDTM Bool) : Type
++  /-- reading the stream on tape `0`, with the control sweep's parser and control -/
++  | read (σ : nf_SweepState N)
++  /-- at the first cell of the replayed cell's block on tape `1`, with the record's claim, the
++  cell's new content, the simulated move and the end flag -/
++  | blk₁ (σ : nf_SweepState N) (claim new : Option Bool) (mv : SignType) (last : Bool)
++  /-- at the block's second cell, with its first cell's old content `β` -/
++  | blk₂ (σ : nf_SweepState N) (claim new : Option Bool) (mv : SignType) (last : Bool)
++      (β : Option Bool)
++  /-- the first of the two head adjustments on tape `1` after a block -/
++  | adj₁ (σ : nf_SweepState N) (mv : SignType)
++  /-- the second head adjustment -/
++  | adj₂ (σ : nf_SweepState N) (mv : SignType)
++  /-- the passing exit -/
++  | pass
++  /-- the rejecting exit -/
++  | rej
++
++/-- The replay leaf's states as a sum of finite types, for its instances. -/
++private def nf_leafEquiv (N : FinNDTM Bool) : nf_LeafSt N ≃
++    nf_SweepState N ⊕ (nf_SweepState N × Option Bool × Option Bool × SignType × Bool) ⊕
++      (nf_SweepState N × Option Bool × Option Bool × SignType × Bool × Option Bool) ⊕
++      (nf_SweepState N × SignType) ⊕ (nf_SweepState N × SignType) ⊕ Bool where
++  toFun
++    | .read σ => .inl σ
++    | .blk₁ σ c n m l => .inr (.inl (σ, c, n, m, l))
++    | .blk₂ σ c n m l β => .inr (.inr (.inl (σ, c, n, m, l, β)))
++    | .adj₁ σ m => .inr (.inr (.inr (.inl (σ, m))))
++    | .adj₂ σ m => .inr (.inr (.inr (.inr (.inl (σ, m)))))
++    | .pass => .inr (.inr (.inr (.inr (.inr true))))
++    | .rej => .inr (.inr (.inr (.inr (.inr false))))
++  invFun
++    | .inl σ => .read σ
++    | .inr (.inl (σ, c, n, m, l)) => .blk₁ σ c n m l
++    | .inr (.inr (.inl (σ, c, n, m, l, β))) => .blk₂ σ c n m l β
++    | .inr (.inr (.inr (.inl (σ, m)))) => .adj₁ σ m
++    | .inr (.inr (.inr (.inr (.inl (σ, m))))) => .adj₂ σ m
++    | .inr (.inr (.inr (.inr (.inr b)))) => if b then .pass else .rej
++  left_inv s := by cases s <;> rfl
++  right_inv s := by
++    rcases s with σ | ⟨σ, c, n, m, l⟩ | ⟨σ, c, n, m, l, β⟩ | ⟨σ, m⟩ | ⟨σ, m⟩ | b
++    · rfl
++    · rfl
++    · rfl
++    · rfl
++    · rfl
++    · cases b <;> rfl
++
++/-- Decidable equality of the replay leaf's states. -/
++private instance nf_leafStDecEq (N : FinNDTM Bool) : DecidableEq (nf_LeafSt N) :=
++  letI : DecidableEq (nf_SweepState N) := inferInstance
++  letI : DecidableEq (Option Bool × Option Bool × SignType × Bool × Option Bool) :=
++    inferInstance
++  letI : DecidableEq (nf_SweepState N × Option Bool × Option Bool × SignType × Bool) :=
++    inferInstance
++  letI : DecidableEq
++      (nf_SweepState N × Option Bool × Option Bool × SignType × Bool × Option Bool) :=
++    inferInstance
++  letI : DecidableEq (nf_SweepState N × SignType) := inferInstance
++  (nf_leafEquiv N).decidableEq
++
++/-- Finiteness of the replay leaf's states. -/
++private instance nf_leafStFintype (N : FinNDTM Bool) : Fintype (nf_LeafSt N) :=
++  letI : Fintype (nf_SweepState N) := inferInstance
++  letI : Fintype (Option Bool × Option Bool × SignType × Bool × Option Bool) :=
++    inferInstance
++  letI : Fintype (nf_SweepState N × Option Bool × Option Bool × SignType × Bool) :=
++    inferInstance
++  letI : Fintype
++      (nf_SweepState N × Option Bool × Option Bool × SignType × Bool × Option Bool) :=
++    inferInstance
++  letI : Fintype (nf_SweepState N × SignType) := inferInstance
++  Fintype.ofEquiv _ (nf_leafEquiv N).symm
++
++/-- The action of `N`'s table on a completed record at a live simulated state, read through the
++record's decoded claims: the action `nf_complete` recomputes. -/
++private def nf_act (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Option Bool) (q : N.State) :
++    Action N.k Bool N.State :=
++  N.tm.tr ((r 0).getD false) q (nf_decode N.k r 0) (fun j => nf_decode N.k r j.succ)
++
++/-- A block of tape `1` decodes as `nf_decode` reads a claim: a false or blank first cell is a
++blank cell. -/
++private def nf_blockDecode (β₁ β₂ : Option Bool) : Option Bool :=
++  if β₁.getD false then some (β₂.getD false) else none
++
++/-- **The replay leaf** for the replayed tape `j` (`none` the input, `some j` work tape `j`).
++It is a hand-built machine because no public row reads fixed-width records off one tape while
++checking them against another: `Turing.scanTM` reads one tape, and the record reader of
++`Turing.StepBlock` reads records on `k + 2` tapes. -/
++private def nf_leaf (N : FinNDTM Bool) (j : Option (Fin N.k)) :
++    MultiTapeTM 2 Bool (nf_LeafSt N) where
++  q₀ := .read (nf_sweepInit N)
++  tr := fun st inp w =>
++    match st with
++    | .read σ =>
++      if σ.1.1.val = 2 * N.k + 3 then
++        match σ.2.1, j with
++        | none, _ => tapeAction 0 0 none 0 .rej
++        | some q, none =>
++          if nf_decode N.k (Function.update σ.1.2 σ.1.1 (some ((w 0).getD false))) 0 = inp then
++            tapeAction 0
++              (nf_act N (Function.update σ.1.2 σ.1.1 (some ((w 0).getD false))) q).inputTape none 1
++              (if (w 0).getD false then .pass else .read (nf_sweepStep N σ ((w 0).getD false)))
++          else tapeAction 0 0 none 0 .rej
++        | some q, some t =>
++          tapeAction 0 0 none 1 (.blk₁ (nf_sweepStep N σ ((w 0).getD false))
++            (nf_decode N.k (Function.update σ.1.2 σ.1.1 (some ((w 0).getD false))) t.succ)
++            (((nf_act N (Function.update σ.1.2 σ.1.1 (some ((w 0).getD false))) q).workTapes
++              t).1.getD
++              (nf_decode N.k (Function.update σ.1.2 σ.1.1 (some ((w 0).getD false))) t.succ))
++            ((nf_act N (Function.update σ.1.2 σ.1.1 (some ((w 0).getD false))) q).workTapes t).2
++            ((w 0).getD false))
++      else tapeAction 0 0 none 1 (.read (nf_sweepStep N σ ((w 0).getD false)))
++    | .blk₁ σ c n m l => tapeAction 1 0 (some (some n.isSome)) 1 (.blk₂ σ c n m l (w 1))
++    | .blk₂ σ c n m l β =>
++      if nf_blockDecode β (w 1) = c then
++        tapeAction 1 0 (some (some (n.getD false))) (if l then 0 else if m = 1 then 1 else -1)
++          (if l then .pass else .adj₁ σ m)
++      else tapeAction 1 0 none 0 .rej
++    | .adj₁ σ m => tapeAction 1 0 none (if m = -1 then -1 else 0) (.adj₂ σ m)
++    | .adj₂ σ m => tapeAction 1 0 none (if m = -1 then -1 else 0) (.read σ)
++    | .pass => tapeAction 0 0 none 0 .pass
++    | .rej => tapeAction 0 0 none 0 .rej
++
++/-- The replay leaf's verdict states: `pass` passed, `rej` failed, every other state live. -/
++private def nf_leafExit (N : FinNDTM Bool) : nf_LeafSt N → Option Bool
++  | .pass => some true
++  | .rej => some false
++  | _ => none
++
++-- the verifier's state type is finite with decidable equality, by the named instances
++example (N : FinNDTM Bool) : DecidableEq (Σ i, nf_St N (nf_LeafSt N) i) := inferInstance
++example (N : FinNDTM Bool) : Fintype (Σ i, nf_St N (nf_LeafSt N) i) := inferInstance
++
++/-! ### Chaining the verifier's phases -/
++
++/-- A configuration whose state is redirected to `⟨i, q⟩` is the tagged configuration of phase
++`i` at `q`. -/
++private theorem nf_retag {N : FinNDTM Bool} {SL S : Type} {x : List Bool}
++    (c : Cfg 2 Bool S x) (i : nf_Ph N.k) (q : nf_St N SL i) (hc : c.state.isSome) :
++    c.mapState (fun _ => (⟨i, q⟩ : Σ i, nf_St N SL i)) =
++      ({ state := some q, inputPos := c.inputPos, workTapes := c.workTapes,
++          workTapePos := c.workTapePos, output := c.output } : Cfg 2 Bool (nf_St N SL i) x).mapState
++        (Sigma.mk i) := by
++  apply Cfg.ext
++  · rw [Cfg.mapState_state, Cfg.mapState_state]
++    obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
++    rw [hs]; rfl
++  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
++  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
++  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
++  · rw [Cfg.mapState_output, Cfg.mapState_output]
++
++/-- A configuration tagged by a phase other than the park is at no verdict. -/
++private theorem nf_tagged_ne_park {N : FinNDTM Bool} {SL : Type} {x : List Bool}
++    {i : nf_Ph N.k} (hi : i ≠ .park) (c : Cfg 2 Bool (nf_St N SL i) x) (b : Bool) :
++    (c.mapState (Sigma.mk i)).state ≠ some ⟨.park, b⟩ := by
++  rw [Cfg.mapState_state]
++  cases hs : c.state with
++  | none => exact Option.noConfusion
++  | some q =>
++    intro h
++    exact hi (Sigma.mk.inj_iff.mp (Option.some.inj h)).1
++
++/-- The redirect after the return of tape `0`: the next tape's replay or the verdict after the
++input, the clear of tape `1` after a work tape. -/
++private def nf_aNext (N : FinNDTM Bool) {SL : Type}
++    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) : Option (Fin N.k) → Σ i, nf_St N SL i
++  | none => nf_after N L none
++  | some j => ⟨.bFwd j, .run⟩
++
++section Chain
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **The return of tape `0` after a replay.** From the head of tape `0` on the blank after the
++stream `s` (tape `0` holding `s` from cell `0`), the verifier's phases `aFwd j` (`Turing.skipTM`
++at `w := []`) and `aBack j` (`Turing.skipBackTM` at `u := s`) bring that head to cell `0` and
++redirect to `nf_aNext N L j`, in `|s| + 6` steps, with the tapes, the head of tape `1`, the input
++head and the output unchanged, and at no verdict on the way.
++
++**Proof sketch.** Chain the two framed seek runs through the phase lemma of the phase host,
++reading the redirected configuration as the second phase's start. Inside each phase the host's
++run is the phase's run tagged by that phase, which is not the park. -/
++private theorem nf_aReturn (N : FinNDTM Bool) {SL : Type}
++    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool) {x : List Bool}
++    (j : Option (Fin N.k)) (s : List Bool) (c : Cfg 2 Bool SeekPhase x)
++    (hst : c.state = some .run) (hpos : c.workTapePos 0 = s.length)
++    (htape : ∀ p, c.workTapes 0 p = FinTM.bufferTape s p) :
++    ∃ c₃ : Cfg 2 Bool SeekPhase x,
++      (nf_V N L exit).runFrom
++          ((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd j)) x).mapState (Sigma.mk (nf_Ph.aFwd j)))
++          (s.length + 6) = c₃.mapState (fun _ => nf_aNext N L j) ∧
++        c₃.state.isSome ∧
++        c₃.workTapePos 0 = 0 ∧ c₃.workTapePos 1 = c.workTapePos 1 ∧ c₃.workTapes = c.workTapes ∧
++        c₃.inputPos = c.inputPos ∧ c₃.output = c.output ∧
++        ∀ u < s.length + 6, ∀ b, ((nf_V N L exit).runFrom
++          ((c : Cfg 2 Bool (nf_St N SL (nf_Ph.aFwd j)) x).mapState (Sigma.mk (nf_Ph.aFwd j)))
++            u).state ≠ some ⟨.park, b⟩ := by
++  -- phase `aFwd j`: one step right, over the blank
++  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ (([] : List Bool).length : ℤ) →
++      c.workTapes 0 (c.workTapePos 0 + p) = FinTM.bufferTape [] p := by
++    intro p h0 h1
++    simp only [List.length_nil, Nat.cast_zero] at h1
++    obtain rfl : p = 0 := le_antisymm h1 h0
++    rw [htape, hpos, add_zero, FinTM.bufferTape_nat, FinTM.bufferTape_nil, List.getElem?_eq_none
++      (le_refl _)]
++  obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (0 : Fin 2) [] c hst hw
++  set c₁ : Cfg 2 Bool SeekPhase x := { c with
++      state := some .done
++      workTapePos :=
++        Function.update c.workTapePos 0 (c.workTapePos 0 + ([] : List Bool).length + 1) }
++    with hc₁
++  obtain ⟨hpA, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N L exit) (nf_Ph.aFwd j) (c := c) (c' := c₁) (([] : List Bool).length + 1) h1
++    SeekPhase.done rfl ⟨.aBack j, .run⟩ rfl (by
++      intro u hu q hq
++      obtain rfl : u = 0 := by simp at hu; omega
++      rw [MultiTapeTM.runFrom_zero, hst] at hq
++      cases hq
++      rfl)
++  -- the redirected configuration is phase `aBack j`'s start
++  have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.aFwd j)) c₁ (nf_Ph.aBack j)
++    SeekPhase.run (by simp [hc₁])
++  set c₂ : Cfg 2 Bool SeekPhase x := { c₁ with state := some .run } with hc₂
++  -- phase `aBack j`: back over the stream to cell `0`
++  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
++      c₂.workTapes 0 (c₂.workTapePos 0 - s.length - 1 + p) = FinTM.bufferTape s p := by
++    intro p _ _
++    simp only [hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
++    rw [htape]
++    congr 1
++    ring
++  obtain ⟨h3, h4, -⟩ := skipBackTM_run_ofCfg (k := 2) (0 : Fin 2) s c₂ rfl hu
++  set c₃ : Cfg 2 Bool SeekPhase x := { c₂ with
++      state := some .done
++      workTapePos := Function.update c₂.workTapePos 0 (c₂.workTapePos 0 - s.length - 1) }
++    with hc₃
++  have hred : nf_red N L exit (nf_Ph.aBack j) SeekPhase.done = some (nf_aNext N L j) := by
++    cases j <;> rfl
++  obtain ⟨hpB, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N L exit) (nf_Ph.aBack j) (c := c₂) (c' := c₃) (s.length + 3) h3
++    SeekPhase.done rfl (nf_aNext N L j) hred (by
++      intro u hu q hq
++      cases q with
++      | done => exact absurd hq (h4 u hu)
++      | run => cases j <;> rfl
++      | gap => cases j <;> rfl
++      | back => cases j <;> rfl)
++  have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
++  refine ⟨c₃, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
++  · rw [e, MultiTapeTM.runFrom_add]
++    unfold nf_V
++    rw [hA, hre]
++    exact hB
++  · simp [hc₃]
++  · simp only [hc₃, hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
++    ring
++  · simp only [hc₃, hc₂, hc₁]
++    rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
++  · simp only [hc₃, hc₂, hc₁]
++  · simp only [hc₃, hc₂, hc₁]
++  · simp only [hc₃, hc₂, hc₁]
++  · intro u hu b
++    unfold nf_V
++    by_cases hu1 : u ≤ ([] : List Bool).length + 1
++    · rw [hpA u hu1]
++      exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++    · obtain ⟨v, rfl⟩ : ∃ v, u = (([] : List Bool).length + 1 + 1) + v :=
++        ⟨u - (([] : List Bool).length + 1 + 1), by omega⟩
++      rw [MultiTapeTM.runFrom_add, hA, hre, hpB v (by simp at hu ⊢; omega)]
++      exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++
++/-- **The clear of tape `1` after a work tape's replay.** From the head of tape `1` at any offset
++`i ≤ |R|` into a region `R` delimited by blanks (so `i = |R|`, the right delimiter, is allowed),
++the phases `bFwd j` (`Turing.skipTM` over `R.drop i`), `bBack j` (`Turing.skipBackTM` at
++`u := R`) and `bClr j` (`Turing.clearTM` over `R`) reach `nf_after N L (some j)` with tape `1`
++blank on the region and its head on the region's first cell, everything else unchanged, and at no
++verdict on the way.
++
++**Proof sketch.** Chain the three framed runs through the phase lemma of the phase host,
++reading each redirected configuration as the next phase's start. The region's suffix from the
++head, the whole region from one past its right delimiter, and the region from its first cell are
++read off the buffer of `R`. Inside each phase the host's run is tagged by that phase, which is
++not the park. -/
++private theorem nf_bClear (N : FinNDTM Bool) {SL : Type}
++    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool) {x : List Bool}
++    (j : Fin N.k) (R : List Bool) (i : ℕ) (hi : i ≤ R.length)
++    (c : Cfg 2 Bool SeekPhase x) (hst : c.state = some .run)
++    (htape : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
++      c.workTapes 1 (c.workTapePos 1 - i + p) = FinTM.bufferTape R p) :
++    ∃ c₅ : Cfg 2 Bool SweepPhase x,
++      (nf_V N L exit).runFrom
++          ((c : Cfg 2 Bool (nf_St N SL (nf_Ph.bFwd j)) x).mapState (Sigma.mk (nf_Ph.bFwd j)))
++          ((R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1)) =
++        c₅.mapState (fun _ => nf_after N L (some j)) ∧
++      c₅.state.isSome ∧
++      c₅.workTapePos 1 = c.workTapePos 1 - i ∧ c₅.workTapePos 0 = c.workTapePos 0 ∧
++      c₅.workTapes 0 = c.workTapes 0 ∧ c₅.inputPos = c.inputPos ∧ c₅.output = c.output ∧
++      (∀ q, c₅.workTapes 1 q = if c.workTapePos 1 - i ≤ q ∧ q < c.workTapePos 1 - i + R.length
++        then none else c.workTapes 1 q) ∧
++      ∀ u < (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1), ∀ b,
++        ((nf_V N L exit).runFrom
++          ((c : Cfg 2 Bool (nf_St N SL (nf_Ph.bFwd j)) x).mapState (Sigma.mk (nf_Ph.bFwd j)))
++            u).state ≠ some ⟨.park, b⟩ := by
++  have hdl : ((R.drop i).length : ℤ) = (R.length : ℤ) - i := by
++    rw [List.length_drop]; push_cast [Nat.cast_sub hi]; ring
++  -- phase `bFwd j`: over the region's suffix from the head
++  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ ((R.drop i).length : ℤ) →
++      c.workTapes 1 (c.workTapePos 1 + p) = FinTM.bufferTape (R.drop i) p := by
++    intro p h0 h1
++    have h := htape (p + i) (by omega) (by omega)
++    rw [show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h
++    rw [h]
++    obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le h0
++    rw [show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat,
++      FinTM.bufferTape_nat, List.getElem?_drop]
++    congr 1
++    omega
++  obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (1 : Fin 2) (R.drop i) c hst hw
++  set c₁ : Cfg 2 Bool SeekPhase x := { c with
++      state := some .done
++      workTapePos := Function.update c.workTapePos 1 (c.workTapePos 1 + (R.drop i).length + 1) }
++    with hc₁
++  obtain ⟨hpA, hA⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N L exit) (nf_Ph.bFwd j) (c := c) (c' := c₁) ((R.drop i).length + 1) h1
++    SeekPhase.done rfl ⟨.bBack j, .run⟩ rfl (by
++      intro u hu q hq
++      cases q with
++      | done => exact absurd hq (h2 u hu)
++      | run => rfl
++      | gap => rfl
++      | back => rfl)
++  have hre := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.bFwd j)) c₁ (nf_Ph.bBack j)
++    SeekPhase.run (by simp [hc₁])
++  set c₂ : Cfg 2 Bool SeekPhase x := { c₁ with state := some .run } with hc₂
++  -- phase `bBack j`: back over the whole region to its first cell
++  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
++      c₂.workTapes 1 (c₂.workTapePos 1 - R.length - 1 + p) = FinTM.bufferTape R p := by
++    intro p h0 h1
++    simp only [hc₂, hc₁, Function.update_self]
++    rw [← htape p h0 h1]
++    congr 1
++    rw [hdl]
++    ring
++  obtain ⟨h3, h4, -⟩ := skipBackTM_run_ofCfg (k := 2) (1 : Fin 2) R c₂ rfl hu
++  set c₃ : Cfg 2 Bool SeekPhase x := { c₂ with
++      state := some .done
++      workTapePos := Function.update c₂.workTapePos 1 (c₂.workTapePos 1 - R.length - 1) }
++    with hc₃
++  obtain ⟨hpB, hB⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N L exit) (nf_Ph.bBack j) (c := c₂) (c' := c₃) (R.length + 3) h3
++    SeekPhase.done rfl ⟨.bClr j, .sweep⟩ rfl (by
++      intro u hu q hq
++      cases q with
++      | done => exact absurd hq (h4 u hu)
++      | run => rfl
++      | gap => rfl
++      | back => rfl)
++  have hpos3 : c₃.workTapePos 1 = c.workTapePos 1 - i := by
++    simp only [hc₃, hc₂, hc₁, Function.update_self]
++    rw [hdl]
++    ring
++  -- the redirected configuration is phase `bClr j`'s start
++  have hre2 := nf_retag (N := N) (SL := SL) (S := nf_St N SL (nf_Ph.bBack j)) c₃ (nf_Ph.bClr j)
++    SweepPhase.sweep (by simp [hc₃])
++  set c₄ : Cfg 2 Bool SweepPhase x :=
++    { state := some SweepPhase.sweep, inputPos := c₃.inputPos, workTapes := c₃.workTapes,
++      workTapePos := c₃.workTapePos, output := c₃.output } with hc₄
++  -- phase `bClr j`: blank the region
++  have hcw : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
++      c₄.workTapes 1 (c₄.workTapePos 1 + p) = FinTM.bufferTape R p := by
++    intro p h0 h1
++    have e : c₄.workTapePos 1 = c.workTapePos 1 - i := by simp only [hc₄]; exact hpos3
++    rw [e]
++    simp only [hc₄, hc₃, hc₂, hc₁]
++    exact htape p h0 h1
++  obtain ⟨h5, h6, -⟩ := clearTM_run_ofCfg (k := 2) (1 : Fin 2) R c₄ rfl hcw
++  set c₅ : Cfg 2 Bool SweepPhase x := { c₄ with
++      state := some SweepPhase.done
++      workTapes := fun j q =>
++        if j = 1 ∧ c₄.workTapePos j ≤ q ∧ q < c₄.workTapePos j + (R.length : ℤ)
++          then none
++        else c₄.workTapes j q } with hc₅
++  obtain ⟨hpC, hC⟩ := phaseHostTM_run (nf_M N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
++    (nf_red N L exit) (nf_Ph.bClr j) (c := c₄) (c' := c₅) (2 * R.length + 2) h5
++    SweepPhase.done rfl (nf_after N L (some j)) rfl (by
++      intro u hu q hq
++      cases q with
++      | done => exact absurd hq (h6 u hu)
++      | sweep => rfl
++      | rewind => rfl)
++  have e : (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1) =
++      ((R.drop i).length + 1 + 1) + ((R.length + 3 + 1) + (2 * R.length + 2 + 1)) := by
++    rw [List.length_drop]; omega
++  refine ⟨c₅, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
++  · rw [e, MultiTapeTM.runFrom_add]
++    unfold nf_V
++    rw [hA, hre, MultiTapeTM.runFrom_add, hB, hre2]
++    exact hC
++  · simp [hc₅]
++  · simp only [hc₅, hc₄]
++    exact hpos3
++  · simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
++    rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
++  · simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
++    funext q
++    rw [if_neg (fun h => absurd h.1 (by decide))]
++  · simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
++  · simp only [hc₅, hc₄, hc₃, hc₂, hc₁]
++  · intro q
++    have e4 : c₄.workTapePos 1 = c.workTapePos 1 - i := by simp only [hc₄]; exact hpos3
++    have ew : c₄.workTapes 1 q = c.workTapes 1 q := by simp only [hc₄, hc₃, hc₂, hc₁]
++    have hq : c₅.workTapes 1 q = if (1 : Fin 2) = 1 ∧ c₄.workTapePos 1 ≤ q ∧
++        q < c₄.workTapePos 1 + (R.length : ℤ) then none else c₄.workTapes 1 q := rfl
++    rw [hq, e4, ew]
++    by_cases h : c.workTapePos 1 - i ≤ q ∧ q < c.workTapePos 1 - i + R.length
++    · rw [if_pos ⟨rfl, h⟩, if_pos h]
++    · rw [if_neg (fun h' => h h'.2), if_neg h]
++  · intro u hu b
++    unfold nf_V
++    by_cases hu1 : u ≤ (R.drop i).length + 1
++    · rw [hpA u hu1]
++      exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++    · obtain ⟨v, rfl⟩ : ∃ v, u = ((R.drop i).length + 1 + 1) + v :=
++        ⟨u - ((R.drop i).length + 1 + 1), by omega⟩
++      rw [MultiTapeTM.runFrom_add, hA, hre]
++      by_cases hv1 : v ≤ R.length + 3
++      · rw [hpB v hv1]
++        exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++      · obtain ⟨w, rfl⟩ : ∃ w, v = (R.length + 3 + 1) + w := ⟨v - (R.length + 3 + 1), by omega⟩
++        rw [MultiTapeTM.runFrom_add, hB, hre2, hpC w (by rw [List.length_drop] at hu; omega)]
++        exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
++
++end Chain
++
++/-- **The verifier's entry is the stream start.** After the trivial setup, the run's entry
++configuration is `streamStartCfg x 0 q s`: state `q`, the input head at `1`, `s` on tape `0`
++from cell `0` (blank elsewhere), tape `1` blank, both heads at `0`, empty output.
++
++**Proof sketch.** Compare the two configurations field by field through their field equations.
++On tape `0` the guessed block over the blank initial tape is the buffer of `s`: inside the block
++by definition, and outside it both are blank (left of cell `0`, and past the end of `s`). -/
++private theorem nf_entry {SP S : Type} (P : MultiTapeTM 2 Bool SP) (x s : List Bool) (q : S) :
++    guessRunCfg (P.initCfg x) 0 s q = streamStartCfg x 0 q s := by
++  rw [MultiTapeTM.initCfg_eq]
++  apply Cfg.ext
++  · rw [guessRunCfg_state, streamStartCfg_state]
++  · rw [guessRunCfg_inputPos, streamStartCfg_inputPos, Cfg.init_inputPos]
++  · funext i p
++    rw [guessRunCfg_workTapes, streamStartCfg_workTapes, Cfg.init_workTapePos]
++    by_cases hi : i = 0
++    · subst hi
++      rw [Function.update_self, if_pos rfl]
++      by_cases hp : (0 : ℤ) ≤ p ∧ p < 0 + (s.length : ℤ)
++      · rw [if_pos hp, sub_zero]
++      · rw [if_neg hp, Cfg.init_workTapes]
++        by_cases hneg : p < 0
++        · rw [FinTM.bufferTape_of_neg s hneg]
++        · rw [FinTM.bufferTape_eq, if_pos (by omega)]
++          exact (List.getElem?_eq_none (by omega)).symm
++    · rw [Function.update_of_ne hi, if_neg hi, Cfg.init_workTapes]
++  · funext i
++    rw [guessRunCfg_workTapePos, streamStartCfg_workTapePos, Cfg.init_workTapePos]
++  · rw [guessRunCfg_output, streamStartCfg_output, Cfg.init_output]
++
++/-- A stream-start configuration with a tagged state is the tagged stream start. -/
++private theorem nf_tag {N : FinNDTM Bool} {SL : Type} (x s : List Bool) (i : nf_Ph N.k)
++    (q : nf_St N SL i) :
++    streamStartCfg x (0 : Fin 2) (⟨i, q⟩ : Σ i, nf_St N SL i) s =
++      (streamStartCfg x (0 : Fin 2) q s).mapState (Sigma.mk i) := by
++  apply Cfg.ext
++  · rw [Cfg.mapState_state, streamStartCfg_state, streamStartCfg_state]; rfl
++  · rw [Cfg.mapState_inputPos, streamStartCfg_inputPos, streamStartCfg_inputPos]
++  · funext i p; rw [Cfg.mapState_workTapes, streamStartCfg_workTapes, streamStartCfg_workTapes]
++  · funext i; rw [Cfg.mapState_workTapePos, streamStartCfg_workTapePos, streamStartCfg_workTapePos]
++  · rw [Cfg.mapState_output, streamStartCfg_output, streamStartCfg_output]
++
++/-- **The input read depends on the input head only**, across machines with any work tapes and
++states: a claim checked against the verifier's input head transfers to `N`'s configuration. -/
++private theorem nf_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
++    (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
++    c.inputSymbol = c'.inputSymbol := by
++  by_cases h0 : c.inputPos.val = 0
++  · have h0' : c'.inputPos = 0 := Fin.ext (by rw [← h]; exact h0)
++    rw [Cfg.inputSymbol_of_zero (Fin.ext h0), Cfg.inputSymbol_of_zero h0']
++  · by_cases he : c.inputPos.val = x.length + 1
++    · rw [Cfg.inputSymbol_of_end he, Cfg.inputSymbol_of_end (by omega)]
++    · have hlt := c.inputPos.isLt
++      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
++        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
++
++section Leaf
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- After a record's first `2k + 3` bits the parser is at the last position with the control
++unchanged; the record's last bit completes the full record array, and the parser's step there
++resets the parser and applies the completion rule to that record.
++
++**Proof sketch.** The prefix law of the parser gives the position and the stored prefix. Storing
++the last bit fills the only missing entry, and the whole-record law, split at its last bit, is
++the parser's last step. -/
++private theorem nf_prefix_last (N : FinNDTM Bool) (rec : Fin (2 * N.k + 4) → Bool)
++    (ctl : nf_Control N) (σ : nf_SweepState N)
++    (hσ : σ = (List.ofFn fun i : Fin (2 * N.k + 3) => rec ⟨i.val, by omega⟩).foldl
++      (nf_sweepStep N) ((0, fun _ => none), ctl)) :
++    σ.1.1.val = 2 * N.k + 3 ∧ σ.2 = ctl ∧
++      Function.update σ.1.2 σ.1.1 (some (rec ⟨2 * N.k + 3, by omega⟩)) =
++        (fun p => some (rec p)) ∧
++      nf_sweepStep N σ (rec ⟨2 * N.k + 3, by omega⟩) =
++        ((0, fun _ => none), nf_complete N (fun p => some (rec p)) ctl) := by
++  have hp := nf_sweep_prefix N rec ctl (2 * N.k + 3) (by omega)
++  rw [← hσ] at hp
++  refine ⟨by rw [hp], by rw [hp], ?_, ?_⟩
++  · rw [hp]
++    funext p
++    by_cases he : p = ⟨2 * N.k + 3, by omega⟩
++    · subst he
++      rw [Function.update_self]
++    · have hne : p.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
++      have hlt := p.isLt
++      rw [Function.update_of_ne he]
++      show (if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)
++      rw [if_pos (by omega)]
++  · have h := nf_sweep_record N rec ctl
++    rw [List.ofFn_succ_last, List.foldl_append, List.foldl_cons, List.foldl_nil] at h
++    rw [hσ]
++    exact h
++
++/-- **The replay leaf reads a record's bits.** From a record boundary, with the record's bits on
++tape `0` from its head, the leaf takes one step per bit, moving that head right and storing the
++bit in the control sweep's parser, and changes nothing else, for every instance.
++
++**Proof sketch.** Induct on the number of bits read. Before the record's last bit the parser's
++position is not the last one, so the leaf's table is a one-tape right move on tape `0` that
++stores the scanned bit; the stored prefix grows by that bit, and the head of tape `0` by one
++cell. -/
++private theorem nf_leaf_prefix (N : FinNDTM Bool) (j : Option (Fin N.k)) {x : List Bool}
++    (d : Cfg 2 Bool (nf_LeafSt N) x) (rec : Fin (2 * N.k + 4) → Bool) (ctl : nf_Control N)
++    (hst : d.state = some (.read ((0, fun _ => none), ctl)))
++    (hA : ∀ p : Fin (2 * N.k + 4), d.workTapes 0 (d.workTapePos 0 + (p.val : ℤ)) = some (rec p)) :
++    ∀ (m : ℕ) (hm : m < 2 * N.k + 4), (nf_leaf N j).runFrom d m = { d with
++      state := some (.read ((List.ofFn fun i : Fin m => rec ⟨i.val, by omega⟩).foldl
++        (nf_sweepStep N) ((0, fun _ => none), ctl)))
++      workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + m) }
++  | 0, _ => by
++    rw [MultiTapeTM.runFrom_zero]
++    apply Cfg.ext
++    · rw [hst]
++      rfl
++    · rfl
++    · rfl
++    · funext i
++      show d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : ℤ)) i
++      rw [Nat.cast_zero, add_zero, Function.update_eq_self]
++    · rfl
++  | m + 1, hm => by
++    rw [MultiTapeTM.runFrom_succ_eq_step', nf_leaf_prefix N j d rec ctl hst hA m (by omega)]
++    have hp := nf_sweep_prefix N rec ctl m (by omega)
++    have hm1 : ((List.ofFn fun i : Fin m => rec ⟨i.val, by omega⟩).foldl
++        (nf_sweepStep N) ((0, fun _ => none), ctl)).1.1.val = m := by rw [hp]
++    have hsym : ({ d with
++        state := some (.read ((List.ofFn fun i : Fin m => rec ⟨i.val, by omega⟩).foldl
++          (nf_sweepStep N) ((0, fun _ => none), ctl)))
++        workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + m) } :
++          Cfg 2 Bool (nf_LeafSt N) x).workTapeSymbols 0 = some (rec ⟨m, by omega⟩) := by
++      rw [Cfg.workTapeSymbols_eq]
++      show d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _
++      rw [Function.update_self]
++      exact hA ⟨m, by omega⟩
++    rw [step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by
++      simp only [nf_leaf]
++      rw [if_neg (by rw [hm1]; omega), hsym, Option.getD_some])]
++    apply Cfg.ext
++    · show some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read
++        ((List.ofFn fun i : Fin (m + 1) => rec ⟨i.val, by omega⟩).foldl
++          (nf_sweepStep N) ((0, fun _ => none), ctl)))
++      rw [List.ofFn_succ_last, List.foldl_append]
++      simp only [Fin.coe_castSucc, Fin.val_last, List.foldl_cons, List.foldl_nil, hp]
++    · exact moveInputPos_zero _
++    · rfl
++    · funext i
++      dsimp only
++      by_cases hi : i = 0
++      · subst hi
++        rw [Function.update_self, Function.update_self, Function.update_self, SignType.coe_one]
++        push_cast
++        ring
++      · rw [Function.update_of_ne hi, Function.update_of_ne hi, Function.update_of_ne hi]
++    · rfl
++
++end Leaf
++
++section LeafRecord
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **One record of the input's replay.** From a record boundary, with the record on tape `0`
++from its head, the input instance reads the record in `2k + 4` steps, at no exit before. At a
++live control whose decoded input claim is the cell under the native input head, it performs the
++recomputed input move, its head on tape `0` is one cell past the record, and it is at the next
++record boundary, or passes if the record is end-flagged; otherwise it rejects.
++
++**Proof sketch.** The first `2k + 3` steps read the record's first bits. At the last bit the
++parser completes the record, and the leaf's table, read at the control's state and at the native
++input cell (which depends on the input head only), is a one-tape action: a move of the input head
++and of the head of tape `0`, or a stationary rejection. -/
++private theorem nf_leaf_record_in (N : FinNDTM Bool) {x : List Bool}
++    (d : Cfg 2 Bool (nf_LeafSt N) x) (rec : Fin (2 * N.k + 4) → Bool) (ctl : nf_Control N)
++    (hst : d.state = some (.read ((0, fun _ => none), ctl)))
++    (hA : ∀ p : Fin (2 * N.k + 4), d.workTapes 0 (d.workTapePos 0 + (p.val : ℤ)) = some (rec p)) :
++    (∀ u < 2 * N.k + 4, ∀ s, ((nf_leaf N none).runFrom d u).state = some s →
++      nf_leafExit N s = none) ∧
++    (∀ q, ctl.1 = some q → nf_decode N.k (fun p => some (rec p)) 0 = d.inputSymbol →
++      (nf_leaf N none).runFrom d (2 * N.k + 4) = { d with
++        state := some (if rec ⟨2 * N.k + 3, by omega⟩ then .pass
++          else .read ((0, fun _ => none), nf_complete N (fun p => some (rec p)) ctl))
++        inputPos := moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape
++        workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) }) ∧
++    ((ctl.1 = none ∨ nf_decode N.k (fun p => some (rec p)) 0 ≠ d.inputSymbol) →
++      ((nf_leaf N none).runFrom d (2 * N.k + 4)).state = some .rej) := by
++  have hpre := nf_leaf_prefix N none d rec ctl hst hA
++  refine ⟨fun u hu s hs => ?_, ?_⟩
++  · rw [hpre u hu] at hs
++    cases hs
++    rfl
++  set σ := (List.ofFn fun i : Fin (2 * N.k + 3) => rec ⟨i.val, by omega⟩).foldl
++    (nf_sweepStep N) ((0, fun _ => none), ctl) with hσ
++  obtain ⟨h1, h2, h3, h4⟩ := nf_prefix_last N rec ctl σ hσ
++  set c : Cfg 2 Bool (nf_LeafSt N) x := { d with
++      state := some (.read σ)
++      workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) }
++    with hc
++  have hrun : (nf_leaf N none).runFrom d (2 * N.k + 4) = (nf_leaf N none).step c := by
++    rw [show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
++      hpre (2 * N.k + 3) (by omega)]
++  have hsym : c.workTapeSymbols 0 = some (rec ⟨2 * N.k + 3, by omega⟩) := by
++    rw [Cfg.workTapeSymbols_eq]
++    show d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) 0) = _
++    rw [Function.update_self]
++    exact hA ⟨2 * N.k + 3, by omega⟩
++  have hinp : c.inputSymbol = d.inputSymbol := nf_inputSymbol_congr c d rfl
++  refine ⟨fun q hq hdec => ?_, fun hbad => ?_⟩
++  · rw [hrun, step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by
++      simp only [nf_leaf]
++      rw [if_pos h1, h2, hq]
++      dsimp only
++      rw [hsym, Option.getD_some, h3, hinp, if_pos hdec])]
++    apply Cfg.ext
++    · show some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass
++        else nf_LeafSt.read (nf_sweepStep N σ (rec ⟨2 * N.k + 3, by omega⟩))) = _
++      rw [h4]
++    · rfl
++    · rfl
++    · funext i
++      by_cases hi : i = 0
++      · subst hi
++        simp only [hc, Function.update_self, SignType.coe_one]
++        push_cast
++        ring
++      · simp only [hc, Function.update_of_ne hi]
++    · rfl
++  · rw [hrun]
++    rcases hbad with hn | hdec
++    · rw [step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl (by
++        simp only [nf_leaf]
++        rw [if_pos h1, h2, hn])]
++    · cases hq : ctl.1 with
++      | none =>
++        rw [step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl (by
++          simp only [nf_leaf]
++          rw [if_pos h1, h2, hq])]
++      | some q =>
++        rw [step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl (by
++          simp only [nf_leaf]
++          rw [if_pos h1, h2, hq]
++          dsimp only
++          rw [hsym, Option.getD_some, h3, hinp, if_neg hdec])]
++
++end LeafRecord
++
++/-- **The decoded virtual step of `N`.** At a live state, apply the action recomputed from a
++record's decoded claims (`nf_act`); a halted configuration stays. When every claim is the
++configuration's read, it is `N`'s step under the record's choice bit (`nf_vstep_genuine`). -/
++private def nf_vstep (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
++    (rec : Fin (2 * N.k + 4) → Bool) : Cfg N.k Bool N.State x :=
++  match c.state with
++  | none => c
++  | some q => (nf_act N (fun p => some (rec p)) q).apply c
++
++/-- A record's claim on replayed tape `i` (`0` the input, `j.succ` work tape `j`) is checked: the
++virtual configuration is live and the decoded claim is its read on that tape. -/
++private def nf_ok (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
++    (rec : Fin (2 * N.k + 4) → Bool) (i : Fin (N.k + 1)) : Prop :=
++  c.state ≠ none ∧
++    nf_decode N.k (fun p => some (rec p)) i =
++      (Fin.cases c.inputSymbol c.workTapeSymbols : Fin (N.k + 1) → Option Bool) i
++
++/-- The control fold's state and output summary follow the decoded virtual run.
++
++**Proof sketch.** Case on the virtual state. Halted, both stay. Live, the completion rule and
++the virtual step apply the same recomputed action, and appending the action's emission updates
++the output summary as the completion rule does. -/
++private theorem nf_vstep_ctl (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
++    (ctl : nf_Control N) (rec : Fin (2 * N.k + 4) → Bool) (h1 : ctl.1 = c.state)
++    (h2 : ctl.2.1 = StepBlock.outputSummary c.output) :
++    (nf_complete N (fun p => some (rec p)) ctl).1 = (nf_vstep N c rec).state ∧
++      (nf_complete N (fun p => some (rec p)) ctl).2.1 =
++        StepBlock.outputSummary (nf_vstep N c rec).output := by
++  obtain ⟨cs, o, f⟩ := ctl
++  simp only at h1 h2
++  subst h1 h2
++  cases hc : c.state with
++  | none =>
++    simp only [nf_complete, nf_vstep, hc, and_self]
++  | some q =>
++    simp only [nf_complete, nf_vstep, hc]
++    refine ⟨(Action.apply_state _ _).symm, ?_⟩
++    rw [Action.apply_output, StepBlock.outputSummary_append]
++    rfl
++
++/-- The control fold's state follows the decoded virtual run, over a list of records. -/
++private theorem nf_vrun_ctl (N : FinNDTM Bool) {x : List Bool} :
++    ∀ (rs : List (Fin (2 * N.k + 4) → Bool)) (c : Cfg N.k Bool N.State x) (ctl : nf_Control N),
++      ctl.1 = c.state → ctl.2.1 = StepBlock.outputSummary c.output →
++      (rs.foldl (fun d r => nf_complete N (fun p => some (r p)) d) ctl).1 =
++          (rs.foldl (nf_vstep N) c).state ∧
++        (rs.foldl (fun d r => nf_complete N (fun p => some (r p)) d) ctl).2.1 =
++          StepBlock.outputSummary (rs.foldl (nf_vstep N) c).output
++  | [], _, _, h1, h2 => ⟨h1, h2⟩
++  | rec :: rs, c, ctl, h1, h2 => by
++    obtain ⟨e1, e2⟩ := nf_vstep_ctl N c ctl rec h1 h2
++    exact nf_vrun_ctl N rs _ _ e1 e2
++
++/-- A stream of records, one record and the rest: its cells from a head are the record's bits
++and then the rest's cells one record further.
++
++**Proof sketch.** The stream is the record's bits followed by the rest's stream; read a cell
++before the record's end in the first part and a later cell in the second, shifted by the record
++width. -/
++private theorem nf_stream_cons (k : ℕ) (rec : Fin (2 * k + 4) → Bool)
++    (rs : List (Fin (2 * k + 4) → Bool)) (T : ℤ → Option Bool) (h : ℤ)
++    (hT : ∀ p : ℕ, p < ((rec :: rs).flatMap List.ofFn).length →
++      T (h + p) = ((rec :: rs).flatMap List.ofFn)[p]?) :
++    (∀ p : Fin (2 * k + 4), T (h + (p.val : ℤ)) = some (rec p)) ∧
++      ∀ p : ℕ, p < (rs.flatMap List.ofFn).length →
++        T (h + ((2 * k + 4 : ℕ) : ℤ) + p) = (rs.flatMap List.ofFn)[p]? := by
++  rw [List.flatMap_cons] at hT
++  refine ⟨fun p => ?_, fun p hp => ?_⟩
++  · have hlt : p.val < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
++      rw [List.length_append, List.length_ofFn]; omega
++    rw [hT p.val hlt, List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt),
++      List.getElem?_ofFn]
++    simp
++  · have hlt : (2 * k + 4) + p < (List.ofFn rec ++ rs.flatMap List.ofFn).length := by
++      rw [List.length_append, List.length_ofFn]; omega
++    have e := hT ((2 * k + 4) + p) hlt
++    rw [List.getElem?_append_right (by rw [List.length_ofFn]; omega), List.length_ofFn,
++      Nat.add_sub_cancel_left] at e
++    rw [← e]
++    congr 1
++    push_cast
++    ring
++
++section LeafRun
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **The input's replay.** From a record boundary with a stream of `n ≥ 1` records on tape `0`
++from its head, only the last end-flagged, at a control that follows the virtual configuration
++`c` whose input head is the native one, the input instance reaches an exit at some time `T`, at
++no exit before. It passes exactly when every record's input claim is checked along the decoded
++virtual run; then `T = (2k + 4)n`, its head on tape `0` is one cell past the stream, and only
++that head, the input head and the state have changed. Otherwise it rejects.
++
++**Proof sketch.** Induct over the records, one record at a time: a failed check rejects at the
++record's end; a passed check of the end-flagged record passes; a passed check of an unflagged
++record moves the input head as the virtual step does, keeps the control equal to the virtual
++run's state, and leaves the rest of the stream one record further on, where the induction
++hypothesis applies. -/
++private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
++    ∀ (rs : List (Fin (2 * N.k + 4) → Bool)) (d : Cfg 2 Bool (nf_LeafSt N) x)
++      (ctl : nf_Control N) (c : Cfg N.k Bool N.State x),
++    rs ≠ [] →
++    (∀ r (h : r < rs.length), rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length)) →
++    d.state = some (.read ((0, fun _ => none), ctl)) → ctl.1 = c.state →
++    d.inputPos = c.inputPos →
++    (∀ p : ℕ, p < (rs.flatMap List.ofFn).length →
++      d.workTapes 0 (d.workTapePos 0 + p) = (rs.flatMap List.ofFn)[p]?) →
++    ∃ T, (∀ u < T, ∀ s, ((nf_leaf N none).runFrom d u).state = some s →
++        nf_leafExit N s = none) ∧
++      ((∀ r (h : r < rs.length), nf_ok N ((rs.take r).foldl (nf_vstep N) c) rs[r] 0) →
++        T = (2 * N.k + 4) * rs.length ∧ ∃ ip, (nf_leaf N none).runFrom d T = { d with
++          state := some .pass
++          inputPos := ip
++          workTapePos := Function.update d.workTapePos 0
++            (d.workTapePos 0 + ((2 * N.k + 4) * rs.length : ℕ)) }) ∧
++      (¬ (∀ r (h : r < rs.length), nf_ok N ((rs.take r).foldl (nf_vstep N) c) rs[r] 0) →
++        ((nf_leaf N none).runFrom d T).state = some .rej)
++  | [], _, _, _, hne, _, _, _, _, _ => absurd rfl hne
++  | rec :: rs, d, ctl, c, _, hflag, hst, hc, hip, hA => by
++    obtain ⟨hA0, hA1⟩ := nf_stream_cons N.k rec rs (d.workTapes 0) (d.workTapePos 0) hA
++    obtain ⟨hpre, hpass, hrej⟩ := nf_leaf_record_in N d rec ctl hst hA0
++    have hinp : d.inputSymbol = c.inputSymbol := nf_inputSymbol_congr d c (by rw [hip])
++    have hall : (∀ r (h : r < (rec :: rs).length),
++        nf_ok N (((rec :: rs).take r).foldl (nf_vstep N) c) (rec :: rs)[r] 0) ↔
++        nf_ok N c rec 0 ∧ ∀ r (h : r < rs.length),
++          nf_ok N ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] 0 := by
++      constructor
++      · intro h
++        exact ⟨h 0 (by simp), fun r hr => h (r + 1) (by simp; omega)⟩
++      · rintro ⟨h0, h⟩ r hr
++        cases r with
++        | zero => exact h0
++        | succ r => exact h r (by simp at hr; omega)
++    by_cases hok : nf_ok N c rec 0
++    · obtain ⟨hlive, hdec⟩ := hok
++      obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlive
++      have hdec' : nf_decode N.k (fun p => some (rec p)) 0 = d.inputSymbol := by
++        rw [hinp, hdec]; rfl
++      have hrun := hpass q (hc.trans hq) hdec'
++      cases rs with
++      | nil =>
++        have hl : rec ⟨2 * N.k + 3, by omega⟩ = true := by
++          have := hflag 0 (by simp)
++          simpa using this
++        refine ⟨2 * N.k + 4, hpre, fun _ => ⟨by simp,
++          moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape, ?_⟩,
++          fun hn => absurd ?_ hn⟩
++        · rw [hrun, if_pos hl]
++          simp
++        · intro r hr
++          simp at hr
++          subst hr
++          exact ⟨hlive, hdec⟩
++      | cons rec' rs' =>
++        have hl : rec ⟨2 * N.k + 3, by omega⟩ = false := by
++          have := hflag 0 (by simp)
++          simpa using this
++        rw [if_neg (by simp [hl])] at hrun
++        set d' : Cfg 2 Bool (nf_LeafSt N) x := { d with
++          state := some (.read ((0, fun _ => none),
++            nf_complete N (fun p => some (rec p)) ctl))
++          inputPos := moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape
++          workTapePos := Function.update d.workTapePos 0
++            (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) } with hd'
++        have hvc : (nf_complete N (fun p => some (rec p)) ctl).1 = (nf_vstep N c rec).state := by
++          obtain ⟨cs, o, f⟩ := ctl
++          simp only at hc
++          subst hc
++          simp only [nf_complete, nf_vstep, hq]
++          exact (Action.apply_state _ _).symm
++        have hvip : d'.inputPos = (nf_vstep N c rec).inputPos := by
++          show moveInputPos d.inputPos _ = _
++          simp only [nf_vstep, hq]
++          rw [Action.apply_inputPos, hip]
++        have hA' : ∀ p : ℕ, p < ((rec' :: rs').flatMap List.ofFn).length →
++            d'.workTapes 0 (d'.workTapePos 0 + p) = ((rec' :: rs').flatMap List.ofFn)[p]? := by
++          intro p hp
++          show d.workTapes 0 (Function.update d.workTapePos 0
++            (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) 0 + p) = _
++          rw [Function.update_self]
++          exact hA1 p hp
++        have hflag' : ∀ r (h : r < (rec' :: rs').length),
++            (rec' :: rs')[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = (rec' :: rs').length) := by
++          intro r hr
++          have := hflag (r + 1) (by simp at hr ⊢; omega)
++          simpa using this
++        obtain ⟨T', hpre', hpass', hrej'⟩ := nf_leaf_run_in N (rec' :: rs') d'
++          (nf_complete N (fun p => some (rec p)) ctl) (nf_vstep N c rec) (by simp) hflag' rfl hvc
++          hvip hA'
++        refine ⟨(2 * N.k + 4) + T', fun u hu s hs => ?_, fun h => ?_, fun h => ?_⟩
++        · by_cases hu1 : u < 2 * N.k + 4
++          · exact hpre u hu1 s hs
++          · obtain ⟨v, rfl⟩ : ∃ v, u = (2 * N.k + 4) + v := ⟨u - (2 * N.k + 4), by omega⟩
++            rw [MultiTapeTM.runFrom_add, hrun] at hs
++            exact hpre' v (by omega) s hs
++        · obtain ⟨hT, ip, hcfg⟩ := hpass' ((hall.mp h).2)
++          refine ⟨by rw [hT]; simp; ring, ip, ?_⟩
++          rw [MultiTapeTM.runFrom_add, hrun, hcfg]
++          apply Cfg.ext
++          · rfl
++          · rfl
++          · rfl
++          · funext i
++            by_cases hi : i = 0
++            · subst hi
++              simp only [hd', Function.update_self, List.length_cons]
++              push_cast
++              ring
++            · simp only [hd', Function.update_of_ne hi]
++          · rfl
++        · have hn : ¬ ∀ r (h : r < (rec' :: rs').length),
++              nf_ok N (((rec' :: rs').take r).foldl (nf_vstep N) (nf_vstep N c rec))
++                (rec' :: rs')[r] 0 := fun h' => h (hall.mpr ⟨⟨hlive, hdec⟩, h'⟩)
++          rw [MultiTapeTM.runFrom_add, hrun]
++          exact hrej' hn
++    · refine ⟨2 * N.k + 4, hpre, fun h => absurd ((hall.mp h).1) hok, fun _ => hrej ?_⟩
++      by_cases hl : c.state = none
++      · exact Or.inl (hc.trans hl)
++      · refine Or.inr fun hdec => hok ⟨hl, ?_⟩
++        rw [hdec, hinp]
++        rfl
++
++end LeafRun
++
+ /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+ cited through [AB09, §3.2]; statement; proof incomplete): every
+ nondeterministic machine has a coded (two-work-tape) equivalent whose
+-- 
+2.43.0
+

@@ -1,0 +1,32 @@
+From 5fb814cfe523a6e8c771b1f3916edc510167c5a8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 22:11:39 +0000
+Subject: [PATCH 09/12] NTimeDiagonalizer: a proof sketch in dz_setup_facts's
+ docstring
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index aa550388..cdaf1535 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -8118,7 +8118,12 @@ private theorem dz_hQ {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : Fin
+ 
+ /-- The setup's facts for `Turing.guessRunTM`'s lemmas: its run to the exit, the exit's first
+ arrival, and the block, nonblank on its `|dzBlk (g n)|` cells from the head and blank on both
+-sides. -/
++sides.
++
++**Proof sketch.** `dz_setup`'s segment, read through `Turing.segment_iff` from the initial
++configuration (`dz_initCfg`): its run gives the exit and its avoided set the first arrival. The
++block tape holds `bufferTape (dzBlk (g n))` with its head at `0` (`dzLay_tp`), so its cells
++`0, …, |dzBlk (g n)| - 1` are nonblank and the cells `-1` and `|dzBlk (g n)|` blank. -/
+ private theorem dz_setup_facts {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) (z : List Bool) :
+     ∃ TP ≤ dzSetB κ (g z.length),
+-- 
+2.50.1 (Apple Git-155)
+

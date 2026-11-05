@@ -58,3 +58,9 @@ blockers, 0 majors, 3 minors, 9 notes.**
 **Gate 91 closes (round 2, PASS, 2026-11-04).** Minors 1–2 fixed (#184 at `e6eaaf94`). **#184 is not
 yet clear to merge:** it is stacked on #182, and its merged-tree replay comes after #181 and #182
 merge.
+
+**Merged-tree replay after #182 (2026-11-04):** #184 retargeted to the campaign branch; the
+campaign merged into it (`23659a09`; `Parse` and `Word` auto-merged with #181's edits, in other
+hunks). `replay-ledge` **passed**: 61 of 61, 0 failed, static-equal (22, all pre-existing), chained
+from `oleans-larm2`; snapshot `oleans-ledge` (`evidence/merged-tree-ledge/`). **#184 is clear to
+merge.**

@@ -1,0 +1,289 @@
+From 3b310a910f99773bc50b219a310e664729722fec Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 21:54:23 +0000
+Subject: [PATCH 07/12] NTimeDiagonalizer: the middle, both directions, and the
+ top
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 264 ++++++++++++++++++
+ 1 file changed, 264 insertions(+)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 925022e7..ba9fbd3f 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -8174,6 +8174,270 @@ private theorem dz_halts {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF :
+   unfold dzK dzQB
+   nlinarith
+ 
++/-! ### The middle and the top -/
++
++/-- **`D`'s acceptance, read on its streams.** `D` accepts `z` within `K (g |z| + 1)` iff some
++stream as wide as the block makes the run's first verdict the acceptance, with nothing emitted.
++
++**Proof sketch.** `Turing.FinNDTM.acceptsWithin_iff` and `Turing.guessRunTM_accepts_iff` at the
++budget `K (g |z| + 1)`, which is at least `TP + 2m + T + 11` (as in `dz_halts`); the entry
++configuration is `dz_handoff`'s. -/
++private theorem dz_accepts_iff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (z : List Bool) :
++    (dzD κ).AcceptsWithin z (dzK κ * (g z.length + 1)) ↔
++      ∃ s : List Bool, s.length = (dzBlk (g z.length)).length ∧ ∃ TQ : ℕ,
++        ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
++          (FinTM.bufferTape s)) (FinTM.bufferTape [])) (fun _ => 0) []) TQ).state =
++          some (dzAcc κ) ∧
++        (∀ u < TQ,
++          ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
++            (FinTM.bufferTape s)) (FinTM.bufferTape [])) (fun _ => 0) []) u).state ≠
++            some (dzAcc κ) ∧
++          ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
++            (FinTM.bufferTape s)) (FinTM.bufferTape [])) (fun _ => 0) []) u).state ≠
++            some (dzRej κ)) ∧
++        ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
++          (FinTM.bufferTape s)) (FinTM.bufferTape [])) (fun _ => 0) []) TQ).output = [] := by
++  obtain ⟨TP, hTP, hP, hPfirst, hblock, hend, hleft⟩ := dz_setup_facts κ z
++  have hB : TP + 2 * (dzBlk (g z.length)).length + dzQB κ (g z.length) + 11 ≤
++      dzK κ * (g z.length + 1) := by
++    have hb := length_bits_le_self (g z.length)
++    rw [dzBlk_length]
++    unfold dzSetB at hTP
++    unfold dzK dzQB
++    nlinarith
++  have h := guessRunTM_accepts_iff (dzSet κ) (dzPexit κ) (κ.tp 6) (dzQ κ) ⟨.flag, none⟩
++    (dzAcc κ) (dzRej κ) TP _ hP rfl hPfirst _ hblock hend hleft (dzQB κ (g z.length))
++    (fun s hs => dz_hQ κ z s hs) _ hB
++  rw [FinNDTM.acceptsWithin_iff]
++  refine h.trans ?_
++  constructor
++  · rintro ⟨s, hs, TQ, h1, h2, h3⟩
++    rw [dz_handoff κ z s hs] at h1 h2 h3
++    exact ⟨s, hs, TQ, h1, h2, h3⟩
++  · rintro ⟨s, hs, TQ, h1, h2, h3⟩
++    refine ⟨s, hs, TQ, ?_⟩
++    rw [dz_handoff κ z s hs]
++    exact ⟨h1, h2, h3⟩
++
++/-- **The first verdict is unique.** If the run's first verdict is the acceptance at `TQ`, and a
++segment avoiding both verdicts reaches the verdict `v` at `t`, then `v` is the acceptance. -/
++private theorem dz_first {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {z : List Bool} (st : Cfg κ.K Bool (Σ i, DzQPh κ i) z) (TQ t : ℕ)
++    (v : Σ i, DzQPh κ i) (T' : Fin κ.K → ℤ → Option Bool) (P' : Fin κ.K → ℤ)
++    (hacc : ((dzQ κ).runFrom st TQ).state = some (dzAcc κ))
++    (hcut : ∀ u < TQ, ((dzQ κ).runFrom st u).state ≠ some (dzAcc κ) ∧
++      ((dzQ κ).runFrom st u).state ≠ some (dzRej κ))
++    (hv : v = dzAcc κ ∨ v = dzRej κ)
++    (seg : Segment (dzQ κ) (dzQF κ) (fun _ => True) st (qyC v 1 T' P' []) t) : v = dzAcc κ := by
++  obtain ⟨hrun, havoid, -⟩ := (segment_iff _ _ _ _ _ _).mp seg
++  rcases lt_trichotomy TQ t with h | rfl | h
++  · exact absurd (Or.inl hacc) (havoid TQ h)
++  · rw [hrun] at hacc
++    exact Option.some_inj.mp hacc
++  · have hs : ((dzQ κ).runFrom st t).state = some v := by rw [hrun]; rfl
++    rcases hv with rfl | rfl
++    · exact absurd hs (hcut t h).1
++    · exact absurd hs (hcut t h).2
++
++/-- The middle's query: on `1ⁿ` with `n ≥ 3` off the stage's top, the query is `false` and the
++pair `⟨⟨bits (g n), α⟩, 1^{n + 1}⟩` (`Turing.NTimeDiag.query_eq`), `α` its stage's code, which the
++extractor recovers (`dz_alpha_eq`). -/
++private theorem dz_query_mid (f g : ℕ → ℕ) {n : ℕ} (hn : 3 ≤ n)
++    (hmid : n ≠ ladder f (stage f n + 1)) :
++    query f g (List.replicate n true) = false :: pairEncode (pairEncode (Nat.bits (g n))
++      (stageCode (stage f n))) (List.replicate (n + 1) true) := by
++  rw [query_eq f g hn, if_neg hmid]
++
++/-- `1^{n + 1}` is `true` prepended to `1ⁿ`. -/
++private theorem dz_ones_succ (n : ℕ) :
++    [true] ++ List.replicate n true = List.replicate (n + 1) true := by
++  rw [List.replicate_succ]
++  rfl
++
++/-- **The middle, soundness.** On `1ⁿ` off its stage's top, if `D` accepts within `K (g n + 1)`,
++the code `α` of the stage accepts `1^{n + 1}` within `g n`.
++
++**Proof sketch.** An accepting stream (`dz_accepts_iff`) splits as `s₁ ++ [sp] ++ w`
++(`dz_split_stream`); its run's first verdict is `dz_qmid`'s (`dz_first`), so `b ≤ g n` and the
++branch along `s₁.take b` halts with `[true]`: acceptance within `b`
++(`Turing.FinNDTM.acceptsWithin_iff`), hence within `g n` (`Turing.FinNDTM.AcceptsWithin.mono`). -/
++private theorem dz_mid_sound {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (hmid : n ≠ ladder f (stage f n + 1))
++    (h : (dzD κ).AcceptsWithin (List.replicate n true) (dzK κ * (g n + 1))) :
++    (c.decode (stageCode (stage f n))).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true)
++      (g n) := by
++  have hz : (List.replicate n true).length = n := List.length_replicate
++  have hd := (dz_accepts_iff κ (List.replicate n true)).mp (by rw [hz]; exact h)
++  obtain ⟨s, hs, TQ, hacc, hcut, -⟩ := hd
++  have hq := dz_query_mid f g hn hmid
++  have hα : dzAlpha (pairEncode (pairEncode (Nat.bits (g n)) (stageCode (stage f n)))
++      (List.replicate (n + 1) true)) = stageCode (stage f n) := dz_alpha_eq _ _ _
++  have hlen : g (List.replicate n true).length < s.length := by
++    rw [hs, dzBlk_length]
++    omega
++  have hsplit := dz_split_stream s _ hlen
++  obtain ⟨C, hC⟩ := κ.hR (dzAlpha (pairEncode (pairEncode (Nat.bits (g n))
++    (stageCode (stage f n))) (List.replicate (n + 1) true)))
++  have hw : (s.drop (g (List.replicate n true).length + 1)).length =
++      (Nat.bits (g (List.replicate n true).length)).length := by
++    rw [List.length_drop, hs, dzBlk_length]
++    omega
++  obtain ⟨t, -, v, T', P', hv, seg, hsound, -⟩ := dz_qmid κ (List.replicate n true) _ hq C hC
++    (s.take (g (List.replicate n true).length)) (s.drop (g (List.replicate n true).length + 1))
++    s[g (List.replicate n true).length] (by rw [List.length_take]; omega) hw
++  rw [← hsplit] at seg
++  obtain ⟨hbG, h1, h2⟩ := hsound (dz_first κ _ TQ t v T' P' hacc hcut hv seg)
++  rw [hα, dz_ones_succ] at h1 h2
++  have hbG' := hbG.trans (le_of_eq (congrArg g hz))
++  have hlt : (List.take (Nat.ofDigits 2 ((s.drop (g (List.replicate n true).length + 1)).map
++      Bool.toNat)) (s.take (g (List.replicate n true).length))).length =
++      Nat.ofDigits 2 ((s.drop (g (List.replicate n true).length + 1)).map Bool.toNat) := by
++    rw [List.length_take, List.length_take]
++    omega
++  exact (FinNDTM.acceptsWithin_iff.mpr ⟨_, hlt, h1, h2⟩).mono hbG'
++
++/-- A segment of the run to the acceptance gives `D`'s acceptance condition on that stream: the
++first verdict is the acceptance, with nothing emitted. -/
++private theorem dz_seg_acc {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {z : List Bool} (st : Cfg κ.K Bool (Σ i, DzQPh κ i) z) (t : ℕ)
++    (T' : Fin κ.K → ℤ → Option Bool) (P' : Fin κ.K → ℤ)
++    (seg : Segment (dzQ κ) (dzQF κ) (fun _ => True) st (qyC (dzAcc κ) 1 T' P' []) t) :
++    ((dzQ κ).runFrom st t).state = some (dzAcc κ) ∧
++      (∀ u < t, ((dzQ κ).runFrom st u).state ≠ some (dzAcc κ) ∧
++        ((dzQ κ).runFrom st u).state ≠ some (dzRej κ)) ∧
++      ((dzQ κ).runFrom st t).output = [] := by
++  obtain ⟨hrun, havoid, -⟩ := (segment_iff _ _ _ _ _ _).mp seg
++  refine ⟨by rw [hrun]; rfl, fun u hu => ⟨fun h => havoid u hu (by rw [h]; exact Or.inl rfl),
++    fun h => havoid u hu (by rw [h]; exact Or.inr rfl)⟩, by rw [hrun]; rfl⟩
++
++/-- **The middle, completeness.** On `1ⁿ` off its stage's top, with the core's constant `C` for the
++stage's code `α`: if `α` accepts `1^{n + 1}` within `t'` with `C (t' + 1) ≤ g n` and `t' ≤ g n`,
++`D` accepts `1ⁿ` within `K (g n + 1)`.
++
++**Proof sketch.** Take the accepting word `v₀` (`Turing.FinNDTM.acceptsWithin_iff`), the stream
++`v₀` padded with `false` to `g n` cells, any separator, and the budget word `bits t'` padded with
++zeros to the width `|bits (g n)|` (`qy_bits_len_mono`), worth `t'` (`dz_padded_value`). The stream's
++first `t'` bits are `v₀`, so `dz_qmid`'s completeness clause gives the acceptance, and its segment
++gives `D`'s acceptance condition (`dz_seg_acc`, `dz_accepts_iff`). -/
++private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (hmid : n ≠ ladder f (stage f n + 1)) (C : ℕ)
++    (hC : ∀ (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
++      ∃ T, T ≤ C * (t + 1) ∧
++        (κ.R.runFrom (streamStartCfg (pairEncode (pairEncode (Nat.bits t)
++            (stageCode (stage f n))) x) κ.jR κ.rE s) T).state =
++          some (if ((c.decode (stageCode (stage f n))).toFinNDTM.tm.runWith (s.take t)
++                ((c.decode (stageCode (stage f n))).toFinNDTM.tm.initCfg x)).state = none ∧
++              ((c.decode (stageCode (stage f n))).toFinNDTM.tm.runWith (s.take t)
++                ((c.decode (stageCode (stage f n))).toFinNDTM.tm.initCfg x)).output = [true]
++            then κ.rA else κ.rJ) ∧
++        ∀ u < T,
++          (κ.R.runFrom (streamStartCfg (pairEncode (pairEncode (Nat.bits t)
++              (stageCode (stage f n))) x) κ.jR κ.rE s) u).state ≠ some κ.rA ∧
++            (κ.R.runFrom (streamStartCfg (pairEncode (pairEncode (Nat.bits t)
++              (stageCode (stage f n))) x) κ.jR κ.rE s) u).state ≠ some κ.rJ)
++    (t' : ℕ) (hacc : (c.decode (stageCode (stage f n))).toFinNDTM.AcceptsWithin
++      (List.replicate (n + 1) true) t') (hCt : C * (t' + 1) ≤ g n) (ht' : t' ≤ g n) :
++    (dzD κ).AcceptsWithin (List.replicate n true) (dzK κ * (g n + 1)) := by
++  have hz : (List.replicate n true).length = n := List.length_replicate
++  have hq := dz_query_mid f g hn hmid
++  have hα : dzAlpha (pairEncode (pairEncode (Nat.bits (g n)) (stageCode (stage f n)))
++      (List.replicate (n + 1) true)) = stageCode (stage f n) := dz_alpha_eq _ _ _
++  rw [← hα] at hC hacc
++  obtain ⟨v₀, hv₀, h1, h2⟩ := FinNDTM.acceptsWithin_iff.mp hacc
++  have hgz : g (List.replicate n true).length = g n := congrArg g hz
++  set s₁ := v₀ ++ List.replicate (g n - t') false with hs₁
++  set w := Nat.bits t' ++ List.replicate ((Nat.bits (g n)).length - (Nat.bits t').length) false
++    with hw
++  have hs₁l : s₁.length = g (List.replicate n true).length := by
++    rw [hs₁, hgz, List.length_append, List.length_replicate]
++    omega
++  have hwl : w.length = (Nat.bits (g (List.replicate n true).length)).length := by
++    have := qy_bits_len_mono ht'
++    rw [hw, hgz, List.length_append, List.length_replicate]
++    omega
++  have hb : Nat.ofDigits 2 (w.map Bool.toNat) = t' := dz_padded_value _ _
++  have htake : s₁.take t' = v₀ := by
++    rw [hs₁, ← hv₀]
++    exact List.take_left' rfl
++  obtain ⟨t, -, v, T', P', -, seg, -, hcomp⟩ := dz_qmid κ (List.replicate n true) _ hq C hC s₁ w
++    false hs₁l hwl
++  rw [hb] at hcomp
++  have hv := hcomp (by rw [hgz]; exact ht') (by rw [hgz]; exact hCt)
++    (by rw [htake, dz_ones_succ]; exact h1) (by rw [htake, dz_ones_succ]; exact h2)
++  subst hv
++  have hfin := (dz_accepts_iff κ (List.replicate n true)).mpr ⟨s₁ ++ [false] ++ w, by
++    rw [dzBlk_length, List.length_append, List.length_append, hs₁l, hwl, List.length_singleton],
++    t, dz_seg_acc κ _ t T' P' seg⟩
++  rwa [hz] at hfin
++
++/-- **The top.** On `1ⁿ` at its stage's top, with `BF`'s constant `CB` for the stage's code `α`
++(`hBF`'s clause at the stage's budget and bottom), when `CB 2^{CB (T* + 1)} ≤ g n`: `D` accepts
++`1ⁿ` within `K (g n + 1)` iff `α` does not accept the bottom `1^{ℓ + 1}` within `T*`.
++
++**Proof sketch.** The query is `true :: ⟨⟨bits T*, α⟩, 1^{ℓ + 1}⟩` (`Turing.NTimeDiag.query_eq`),
++`hBF`'s input. `BF` computes `[b]`, `b` the acceptance's truth, by its time
++`CB 2^{CB (T* + 1)} ≤ g n` (`Turing.FinTM.computesInTime_iff`), so every stream's run
++(`dz_qtop`) accepts iff `b = false`. Forward: an accepting stream's first verdict is `dz_qtop`'s
++(`dz_first`). Backward: any stream (the block itself) gives `D`'s acceptance condition
++(`dz_seg_acc`, `dz_accepts_iff`). -/
++private theorem dz_top_iff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (htop : n = ladder f (stage f n + 1)) (CB : ℕ)
++    (hCB : ((c.decode (stageCode (stage f n))).toFinNDTM.AcceptsWithin
++        (List.replicate (ladder f (stage f n) + 1) true) (budget f (ladder f (stage f n))) →
++        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits (budget f (ladder f (stage f n))))
++          (stageCode (stage f n))) (List.replicate (ladder f (stage f n) + 1) true)) [true]
++          (CB * 2 ^ (CB * (budget f (ladder f (stage f n)) + 1)))) ∧
++      (¬(c.decode (stageCode (stage f n))).toFinNDTM.AcceptsWithin
++        (List.replicate (ladder f (stage f n) + 1) true) (budget f (ladder f (stage f n))) →
++        BF.ComputesInTime (pairEncode (pairEncode (Nat.bits (budget f (ladder f (stage f n))))
++          (stageCode (stage f n))) (List.replicate (ladder f (stage f n) + 1) true)) [false]
++          (CB * 2 ^ (CB * (budget f (ladder f (stage f n)) + 1)))))
++    (hle : CB * 2 ^ (CB * (budget f (ladder f (stage f n)) + 1)) ≤ g n) :
++    (dzD κ).AcceptsWithin (List.replicate n true) (dzK κ * (g n + 1)) ↔
++      ¬(c.decode (stageCode (stage f n))).toFinNDTM.AcceptsWithin
++        (List.replicate (ladder f (stage f n) + 1) true) (budget f (ladder f (stage f n))) := by
++  have hz : (List.replicate n true).length = n := List.length_replicate
++  have hgz : g (List.replicate n true).length = g n := congrArg g hz
++  have hq : query f g (List.replicate n true) = true :: pairEncode (pairEncode
++      (Nat.bits (budget f (ladder f (stage f n)))) (stageCode (stage f n)))
++      (List.replicate (ladder f (stage f n) + 1) true) := by
++    rw [query_eq f g hn, if_pos htop]
++  -- the decider's answer on the tail, inside the allowance
++  have hans : ∀ b : Bool, BF.ComputesInTime (pairEncode (pairEncode
++      (Nat.bits (budget f (ladder f (stage f n)))) (stageCode (stage f n)))
++      (List.replicate (ladder f (stage f n) + 1) true)) [b]
++      (CB * 2 ^ (CB * (budget f (ladder f (stage f n)) + 1))) →
++      ∀ (v : Σ i, DzQPh κ i), (∀ τ ≤ g (List.replicate n true).length,
++        (BF.tm.runFrom (BF.tm.initCfg (pairEncode (pairEncode
++          (Nat.bits (budget f (ladder f (stage f n)))) (stageCode (stage f n)))
++          (List.replicate (ladder f (stage f n) + 1) true))) τ).state = none →
++        (v = dzAcc κ ↔ (BF.tm.runFrom (BF.tm.initCfg (pairEncode (pairEncode
++          (Nat.bits (budget f (ladder f (stage f n)))) (stageCode (stage f n)))
++          (List.replicate (ladder f (stage f n) + 1) true))) τ).output.head? = some false)) →
++      (v = dzAcc κ ↔ b = false) := by
++    intro b hb v hsem
++    obtain ⟨hst, hout⟩ := (FinTM.computesInTime_iff _ _ _ _).mp hb
++    rw [hsem _ (by rw [hgz]; exact hle) hst, hout]
++    cases b <;> simp
++  constructor
++  · intro hD
++    obtain ⟨s, hs, TQ, hacc, hcut, -⟩ := (dz_accepts_iff κ (List.replicate n true)).mp
++      (by rw [hz]; exact hD)
++    obtain ⟨t, -, v, T', P', hv, seg, hsem⟩ := dz_qtop κ (List.replicate n true) _ s hq
++    have hvacc := dz_first κ _ TQ t v T' P' hacc hcut hv seg
++    intro hA
++    have := (hans true (hCB.1 hA) v hsem).mp hvacc
++    exact Bool.noConfusion this
++  · intro hA
++    obtain ⟨t, -, v, T', P', -, seg, hsem⟩ := dz_qtop κ (List.replicate n true) _
++      (dzBlk (g (List.replicate n true).length)) hq
++    have hv := (hans false (hCB.2 hA) v hsem).mpr rfl
++    subst hv
++    have hfin := (dz_accepts_iff κ (List.replicate n true)).mpr
++      ⟨dzBlk (g (List.replicate n true).length), rfl, t, dz_seg_acc κ _ t T' P' seg⟩
++    rwa [hz] at hfin
++
+ /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
+ P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
+ deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
+-- 
+2.50.1 (Apple Git-155)
+
