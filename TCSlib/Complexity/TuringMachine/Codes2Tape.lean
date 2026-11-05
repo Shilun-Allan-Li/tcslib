@@ -339,29 +339,17 @@ theorem exists_uniformMachineCode2 : Nonempty UniformMachineCode2 := by
 /-- Every two-work-tape binary machine is equivalent, input by input and step for step, to a
 coded two-tape machine (the two-tape counterpart of `Turing.exists_codeTM`). [AB09, §1.4]
 
-**Proof sketch.** The state type is finite and inhabited by the start state, so
-`Fintype.equivFinOfCardEq` gives a bijection `e : State ≃ Fin (n + 1)`. The coded machine is the
-original one with its states renamed along `e` (`Turing.MultiTapeTM.relabelState`). Its
-initialized runs are the original runs with renamed states
-(`Turing.MultiTapeTM.relabelState_runFrom_init`), and renaming changes neither halting nor the
-output, so the two machines compute the same outputs in the same times. -/
+**Proof sketch.** The coded machine is the original one with its states renamed along
+`Turing.FinTM.stateEquivFin` (`State ≃ Fin (n + 1)`); by
+`Turing.FinTM.computesInTime_relabelState` it computes the same outputs in the same times. -/
 theorem exists_code2TM (M : FinTM Bool) (hk : M.k = 2) :
     ∃ M' : Code2TM, ∀ (x output : List Bool) (t : ℕ),
       M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
-  classical
   rcases M with @⟨k, Q, hQ, dQ, tm⟩
   dsimp only at hk
   subst k
-  letI : Fintype Q := hQ
-  letI : DecidableEq Q := dQ
-  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
-    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
-    omega
-  let e := Fintype.equivFinOfCardEq hcard
-  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, fun x output t => ?_⟩
-  rw [FinTM.computesInTime_iff, FinTM.computesInTime_iff]
-  dsimp only [Code2TM.toFinTM]
-  rw [MultiTapeTM.relabelState_runFrom_init, Cfg.mapState_state, Cfg.mapState_output,
-    Option.map_eq_none_iff]
+  let M₀ : FinTM Bool := ⟨2, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin⟩
 
 end Turing
