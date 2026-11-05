@@ -14,6 +14,7 @@ import TCSlib.Cryptography.Asymptotic.Universal
 import TCSlib.Cryptography.Asymptotic.Pseudorandom
 import TCSlib.Cryptography.Asymptotic.NextBit
 import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
+import TCSlib.Cryptography.Asymptotic.HardCoreCollection
 import TCSlib.Cryptography.Asymptotic.HardCore
 import TCSlib.Cryptography.Asymptotic.HardCorePermutation
 import TCSlib.Cryptography.Asymptotic.Encryption
@@ -63,6 +64,8 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
   Algorithm 76.5].
 * `GoldreichLevinDomain` — the concrete Goldreich–Levin bound for `x` uniform on an encoded
   finite domain (the collection form of [PS10, Theorem 87.3]; run-3 audit P4-2).
+* `HardCoreCollection` — Goldreich–Levin for collections of one-way functions and of
+  (trapdoor) permutations [PS10, Theorem 87.3, collection form, as used in Theorem 104.4].
 * `HardCore` — hard-core predicates, the PRG from a one-way permutation, expansion and
   Goldreich–Levin [PS10, Definition 78.3, Theorems 79.4, 87.3, Lemma 80.5, Corollary 81.7].
 * `HardCorePermutation` — the balanced Goldreich–Levin permutation `PermFamily.glHalf`:

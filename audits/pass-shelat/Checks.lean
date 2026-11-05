@@ -392,3 +392,30 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.not_weakOneWay_id
 #print axioms TCSlib.Cryptography.not_worstCaseOneWay_id
 #print axioms TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id
+
+-- ## Gate 03c repairs (pack 03c: Pseudorandom, NextBit, HardCore, HardCoreClaims, HardCoreCollection)
+-- Finding 2 (ruling G3-7b): Thm 75.4 restated without `0 < ℓ(n)` (its print is above, C3b:
+-- `Ensemble.NextBitUnpredictable.pseudorandom`); the case `ℓ(n) = 0`.
+#print axioms TCSlib.Cryptography.prgAdv_eq_zero_of_length_eq_zero
+-- Finding 6: the claims of `HardCoreClaims.lean`, the pack's two non-vacuity theorems and the
+-- permutation-collection hard-core form.
+#print axioms TCSlib.Cryptography.fact_88_4
+#print axioms TCSlib.Cryptography.thm_87_3_1
+#print axioms TCSlib.Cryptography.thm_87_3_2
+#print axioms TCSlib.Cryptography.thm_87_3_3
+#print axioms TCSlib.Cryptography.thm_87_3_6
+#print axioms TCSlib.Cryptography.thm_87_3_7
+#print axioms TCSlib.Cryptography.thm_87_3_8
+#print axioms TCSlib.Cryptography.thm_87_3_9
+#print axioms TCSlib.Cryptography.not_hardCore_const
+#print axioms TCSlib.Cryptography.Ensemble.uniform_nextBitUnpredictable
+#print axioms TCSlib.Cryptography.PermCollection.OneWay.glPad_hardCore
+-- Finding 11: the unfolding lemmas of the pack's definitions.
+#print axioms TCSlib.Cryptography.PRG.easy_iff
+#print axioms TCSlib.Cryptography.hardCore_iff
+#print axioms TCSlib.Cryptography.PRG.oneBit_stretch
+#print axioms TCSlib.Cryptography.PRG.oneBit_G
+#print axioms TCSlib.Cryptography.owpPredictorSnoc_eq
+#print axioms TCSlib.Cryptography.oneBitStep_eq
+#print axioms TCSlib.Cryptography.expandRed_eq
+#print axioms TCSlib.Cryptography.Collection.glBit_eq

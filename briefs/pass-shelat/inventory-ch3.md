@@ -316,6 +316,9 @@ distinguisher `D : (Fin ℓ → Bool) → ρ → Bool`, there exist `i : Fin ℓ
   equals `X s i` or `¬X s i` each with probability `1/2` independently of everything else
   (`uprob_bool_prod` after the bijection `(b, s, u) ↦ (s, update u i (xor b (X s i)))`, as in
   `acceptProb_id_owp`). Hence `|P(H^{i+1}) − P(H̃^{i+1})| ≥ 2 prgAdv/ℓ`.
+  *[Annotation, gate 03c finding 5: that map is 2-to-1 (the original `u_i` is lost), not a
+  bijection; the formal proof adjoins an ignored uniform bit and uses the involution of
+  `uprob_split_bit` in `NextBit.lean` (the run-3 repair labelled P2-3 there).]*
 * predictor analysis: `nextBitProb X i (nextBitPred D i false) = 1/2 + (P(H^{i+1}) − P(H̃^{i+1}))/2`
   — the completed string is a sample of `H^{i+1}` when `u_{i+1} = t_{i+1}` and of `H̃^{i+1}`
   otherwise (Claim-73.a's identity with `X¹ = H^{i+1}`, `X⁰ = H̃^{i+1}`); `flip = true` gives

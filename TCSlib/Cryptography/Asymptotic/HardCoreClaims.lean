@@ -14,11 +14,16 @@ set_option autoImplicit false
 
 The concrete claims of the proof of [PS10, Theorem 87.3] (§3.4.3): the oversimplified case,
 the `3/4 + ε` case, the good set, Fact 88.4, the pairwise-independence and union-bound
-claims about Algorithm 89.6, and the final bound — each the family-level instance
-(`FunFamily.glPad`, `FunFamily.glBit`, `FunFamily.glInverter` of
-`TCSlib.Cryptography.Asymptotic.HardCore`) of the corresponding concrete lemma of the Garg
-layer (`TCSlib/Cryptography/HardcoreBit/*`), through the bridges `FunFamily.predProb_glPad`
-and `FunFamily.invProb_glInverter`. (Moved out of `Asymptotic/HardCore.lean` for size; the
+claims about Algorithm 89.6, and the final bound — each a re-export of the corresponding
+concrete lemma of the Garg layer (`TCSlib/Cryptography/HardcoreBit/*`). The claims about
+the prediction and inversion experiments of `g` (`thm_87_3_1`, `thm_87_3_2`, `thm_87_3_3`,
+`thm_87_3_9`) are stated at the family level (`FunFamily.glPad`, `FunFamily.glBit`,
+`FunFamily.glInverter` of `TCSlib.Cryptography.Asymptotic.HardCore`), through the bridges
+`FunFamily.predProb_glPad` and `FunFamily.invProb_glInverter`; the claims about the inner
+product and the samples of Algorithm 89.6 (`fact_88_4`, `thm_87_3_6`, `thm_87_3_7`,
+`thm_87_3_8`) do not involve the family and are stated concretely, for an arbitrary
+`f : {0,1}^n → β` (gate 03c, finding 7). The declaration names encode the inventory ids
+(Thm-87.3.x), not [PS10] numbers. (Moved out of `Asymptotic/HardCore.lean` for size; the
 statements are those of the audited statement phase.)
 
 ## Main definitions
@@ -54,8 +59,9 @@ The setting (inventory Thm-87.3.c) is `FunFamily.glPad`, `FunFamily.glBit`,
 `secProb` (`Pr_r[A(f(x), r) = ⟨x, r⟩]` for a fixed `x`). Algorithm 88.5 is
 `HardcoreBit.majorityInverter` (`majorityRecover`, `trialBit`); Algorithm 89.6 is
 `HardcoreBit.guessInverter` (`guessRecover`, the subroutine `C` realised by guessing the
-`k = log m` bits `b'_j` and forming subset sums). Each claim below is the family-level
-instance of the corresponding concrete lemma. -/
+`k = log m` bits `b'_j` and forming subset sums). Each claim below re-exports the
+corresponding concrete lemma: at the family level for the claims about `g`, concretely for
+`fact_88_4` and `thm_87_3_6/7/8`. -/
 
 /-- **Fact 88.4** [PS10]: `⟨a, b ⊕ c⟩ = ⟨a, b⟩ ⊕ ⟨a, c⟩` (bit strings as a Boolean ring, `+` is
 XOR); the concrete `HardcoreBit.ip_add`. -/
@@ -102,9 +108,13 @@ theorem thm_87_3_3 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ)
 
 /-- **Pairwise-independent samples suffice** [PS10, §3.4.3; inventory Thm-87.3.6]: for a good
 `x` (`secProb ≥ 1/2 + ε/2`) and `k ≥ 1`, each bit of the ideal recovery procedure (correct
-guesses `b_L = ⟨x, S_L⟩`) is wrong with probability at most `1/(ε²(2^k − 1))` — the text's
-`1/(mε'²)` with `m = 2^k − 1` nonempty subsets and `ε' = ε/2`, by the pairwise-independent
-sampling inequality (`chebyshev_pairwise`); the concrete `uprob_idealRecover_ne_le`. -/
+guesses `b_L = ⟨x, S_L⟩`) is wrong with probability at most `1/(ε²(2^k − 1))`, by the
+pairwise-independent sampling inequality (`chebyshev_pairwise`); the concrete
+`uprob_idealRecover_ne_le`, stated for an arbitrary `f`. The text bounds this probability by
+`(1 − 4ε'²)/(4mε'²) ≤ 1/(mε'²)` with `ε' = ε/2`; the formal `1/(ε²(2^k − 1)) = 1/(4mε'²)` lies
+between the two, with `m` read as the number `2^k − 1` of samples, one per nonempty `L ⊆ [k]`
+(the text draws the `m − 1` samples `r_1, …, r_{m−1}` from `log m` seeds and writes `m`; its
+`m` is the `2^k` of `thm_87_3_8`). -/
 theorem thm_87_3_6 {n : ℕ} {β ρ : Type*} [Fintype ρ] [Nonempty ρ] (f : (Fin n → Bool) → β)
     (A : β × (Fin n → Bool) → ρ → Bool) {k : ℕ} (hk : 0 < k) (x : Fin n → Bool) (i : Fin n)
     {ε : ℝ} (hε : 0 < ε) (hx : 1 / 2 + ε / 2 ≤ HardcoreBit.secProb f A x) :
@@ -125,7 +135,8 @@ theorem thm_87_3_7 {n k : ℕ} :
 [PS10, §3.4.3; inventory Thm-87.3.8]: the guessed bits `b'_1 ⋯ b'_k` equal `⟨x, s_1⟩ ⋯ ⟨x, s_k⟩`
 with probability `1/2^k` (`uprob_guess_eq`), and under that event the recovery procedure
 computes `b_L = ⟨x, S_L⟩` for every `L`, i.e. it is the ideal procedure
-(`guessRecover_correct_guess`). -/
+(`guessRecover_correct_guess`); stated for an arbitrary `f`. Here `m = 2^k` is the text's `m`
+(`log m` guessed bits), while `thm_87_3_6` counts the `2^k − 1` samples. -/
 theorem thm_87_3_8 {n : ℕ} {β ρ : Type*} [Fintype ρ] (f : (Fin n → Bool) → β)
     (A : β × (Fin n → Bool) → ρ → Bool) {k : ℕ} (x : Fin n → Bool) (s : Fin k → Fin n → Bool)
     (cs : Fin n → HardcoreBit.NESubset k → ρ) :
