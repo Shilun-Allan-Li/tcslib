@@ -31,10 +31,12 @@ adversary's final output is `ℓ(n)` ciphertexts of `ctLen(n)` bits. Each decryp
 - The source leaves the oracles `O₁, O₂` open; they are parametrized by the attack, as in
   Definition 171.5. Theorem 175.9's "CCA2 non-malleability" is the CCA2 instance.
 - The adversary chooses `m₀, m₁`, so the definition's closing "for all `m₀, m₁ ∈ {0,1}^n`" is
-  dropped. The adaptive form is the one of [PSV06], the source of this section (ruling of
-  2026-11-05).
-- Definition 173.7 and Theorem 174.8 follow [PSV06] (same ruling) and are stated in a separate
-  module.
+  dropped. At CPA this is [PSV06, Definition 3], by the source's authors (ruling of 2026-11-05):
+  the adversary picks `m₀, m₁` after seeing `pk`, `D` sees only the decryptions, and a copy of
+  the challenge and an invalid ciphertext both decrypt to `⊥`. [PSV07, Definition 3] (IND-NME′)
+  is its many-message form.
+- Definition 173.7 and Theorem 174.8 follow [PSV07] (same ruling), in
+  `Composability/SimNonMalleable.lean`.
 
 ## Main definitions
 
@@ -50,7 +52,9 @@ adversary's final output is `ℓ(n)` ciphertexts of `ctLen(n)` bits. Each decryp
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
   §7.1.5 and §7.1.7, Definition 172.6 and Theorem 175.9 (book pp. 172–175).
 * [PSV06] R. Pass, a. shelat, V. Vaikuntanathan, *Construction of a non-malleable encryption
-  scheme from any semantically secure one*, CRYPTO 2006, LNCS 4117, pp. 271–289.
+  scheme from any semantically secure one*, CRYPTO 2006, LNCS 4117, pp. 271–289: Definition 3.
+* [PSV07] R. Pass, a. shelat, V. Vaikuntanathan, *Relations among notions of non-malleability for
+  encryption*, ASIACRYPT 2007, LNCS 4833, pp. 519–535: Definition 3.
 -/
 
 namespace TCSlib.Cryptography.Composability
