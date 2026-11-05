@@ -142,3 +142,4 @@ R-04-1 strict unary; R-04-2 all equation lemmas in #195; R-04-3 extend T0–T2 b
 - **#199 (gate 03e repairs): merged by the user.** After it merges, 03g and 03k pin and dispatch (03k also waits for the G3-5 clean-up).
 - **Gate 04 round 2 (closing; #195 at `243598b7`): dispatched by the user (2026-11-05).** Folder `outbox/gates/04-s2b-r2-gate/` on `exchange/pass-shelat-ch5-8` (commit `ffefb8f97b0a7ff507f5a47e96a142cf5643261e`); bundle SHA-256 `82bf3e91…`, 32 sections; prompt in `README.md`.
 - **03f1, 03f2, 03g:** being re-pinned at `af91d53a` (replay running).
+- **Gate 05 round 3 (#194 at `f0385dac`, docstring repair of round 2): Ready to dispatch.** Folder `outbox/gates/05-pac-r3-gate/` (exchange `a36de8a5`); bundle SHA-256 `d91f950f…`, 10 sections.
