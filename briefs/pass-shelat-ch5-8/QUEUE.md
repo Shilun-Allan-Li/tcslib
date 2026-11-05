@@ -106,7 +106,8 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
 - **#195 (S2b): Not yet clear to merge — gate 04 first.** After it merges, gate 03's packs 03d and
   03j pin to the merged head, and the prongs (all stacked on S2b) can be integrated for gate 06.
 - **Gate 05 (PAC layer, #194): Ready to dispatch.** The folder is `outbox/gates/05-pac-gate/` on
-  `exchange/pass-shelat-ch5-8`.
+  `exchange/pass-shelat-ch5-8` (commit `34f3f1202146babb64b3bdccf8859ddc030bb8f4`), with the
+  bundle (SHA-256 `451a101b…`, 11 sections) and the dispatch prompt in `README.md`.
 - **#194 (PAC layer, to `main`): Not yet clear to merge — gate 05 first.**
 - **Lean branches (no PRs; for the ch. 5–8 statement gate later):** prong A
   `cryptography/pass-shelat-ch5-8-prong-a`, prong B `…-prong-b`, prong C `…-prong-c`, prong D

@@ -19,7 +19,7 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 |---|---|---|---|
 | 06A | authentication (ch. 5) | `Authentication/{Defs, PRFMAC, Lamport, DLHash, HashAndSign}` (prong A, `2d7b5441`, complete) | Defs 134.1, 134.2, 135.1, 136.2, 136.a, 140.1; Prot 134.3, 137.1, 142.2, 144.2; Thms 135.4, 137.2, 142.3, 144.1 |
 | 06B | secure computation (§6.2) | `SecureComputation/{Defs, ObliviousTransfer, SpecialEncryption, SpecialEncryptionSecurity, Garbling, GarblingSpecial, GarblingSecurity}` (prong B, `d8ef9b40`; Yao waits for Q-5) | Def 155.1; Alg 157.2, Claim 157.a; Constr 158.a, Claim 159.a; Def 160.a, Prot 160.4, Prop 161.5; Prot 162.6, Thm 163.7 |
-| 06C | composability (ch. 7) | `Composability/{Defs, PRFScheme, CCA2Scheme, PublicKey, NonMalleable, SequentialZK}` (prong C, `61c06756`) | Defs 168.1, 171.5, 172.6, 173.7; Thm 168.2, Claim 169.a, Alg 169.3, Thm 170.4, Claim 172.a, Thm 174.8, Thm 175.9 (optional), Thm 175.1 |
+| 06C | composability (ch. 7) | `Composability/{Defs, PRFScheme, CCA2Scheme, PublicKey, NonMalleable, SimNonMalleable, SequentialZK}` (prong C, `aa71d0e7`, complete; attach [PSV06] and [PSV07]) | Defs 168.1, 171.5, 172.6, 173.7; Thm 168.2, Claim 169.a, Alg 169.3, Thm 170.4, Claim 172.a, Thm 174.8, Thm 175.9 (optional), Thm 175.1 |
 | 06D | randomness (ch. 8) | `Randomness/{Extraction, Learning, BPPBridge, Derandomization}` and the PAC layer (prong D, `6ea900ae`, complete) | Def 179.a (with the PAC layer, #194), Thm 179.1, Thm 180.1, Thm 183.6 |
 
 ## Findings already made in the statement phase (the auditor should check the repairs)
@@ -43,8 +43,8 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 
 ## Open before dispatch
 
-- Def 173.7 and Thm 174.8: the sources are in hand ([PSV06], [PSV07]; Q-2 done); being stated.
-  Pack 06C attaches both PDFs.
+- Def 173.7 and Thm 174.8: stated after [PSV07] (prong C `aa71d0e7`). Pack 06C attaches both
+  PDFs, and asks the auditor to check the maintainer's sketches, since [PSV07] defers its proofs.
 - Prong B: Yao (Prot 162.6, Thm 163.7). Its composition step for the OT simulators needs [Gol04]
   §7.3 (inventory). Also whether `HBCSecure` should require efficient honest parties.
 - The PAC layer (#194) must reach the base before 06D: it lands on `main` (Q-4), and `main` is merged in again.
