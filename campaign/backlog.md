@@ -4217,8 +4217,8 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
     exports `base/` and `head/` are in place.
   - **#182's merged-tree replay `replay-larm2`:** written and prechecked. The campaign was merged
     into #182 (`a199760e`; `ARMProof` auto-merged with #181's edit). 138 modules from
-    `oleans-lsm5`, five blobs pinned. **To be run by the user.** On a pass #182 is clear to merge
-    (gate 90 PASS); then #184 is retargeted, merged with the campaign and replayed.
+    `oleans-lsm5`, five blobs pinned. **Passed** (138 of 138, static-equal at 22; `oleans-larm2`).
+    **#182 is clear to merge**; then #184 is retargeted, merged with the campaign and replayed.
   - **G5:** `lean/g5-statements` at `6bd12e68`, local (not pushed). After the screen: merge the
     campaign, push, open the PR, then gate 92's pack. Its replay is the 325-module closure,
     chained from the newest snapshot.
