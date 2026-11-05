@@ -2,10 +2,9 @@
 
 > **DRAFT, not issued** (maintainer, 2026-11-05 overnight). It issues after the deepening API PR
 > (gate 96) merges, with its pre-ship re-run on the merged tree and the measured items (`@TBD@`)
-> filled in. Open for the user:
-> - **decision 5:** does `SavitchARM/Window` land with the API PR, or ship as an input this fill
->   lands as is? This draft assumes the API PR;
-> - **the agent:** by the soft rule, Codex for a first attempt.
+> filled in. Ruled by the user, 2026-11-05:
+> - **decision 5:** `SavitchARM/Window` lands with the API PR (#196), so this fill cites it;
+> - **the agent:** Claude.
 >
 > **A single fill** (addendum v2.6, Parts 1 and 2; of Part 3 only its one-Lean rule and its
 > no-stop rule, items 5 and 7). Deliver a checkpoint zip after each checkpoint: the session may
@@ -24,12 +23,12 @@
     `preS_embed`, `AHalt.embed`, `AHalt.embed_guardLe`, and the step equations `astep_inc` …
     `astep_jeqSnd` (`Machines/ARM`);
   - **the edge language** (#184): `Complexity.Codec.edgeLang`, `mem_edgeLang`, `edgeLang_mem`;
-  - **the deepening API** (#@PR@, gate 96):
+  - **the deepening API** (#196, gate 96):
     - `Cfg.InWindow.apply_of_lt`, `stepRel_iff_mem`, `walkLe_zero_iff`, `winRun_iff`,
       `rcode_iff_reflTransGen` and `reach_of_reflTransGen`;
     - `rel_iff_orc`, `initO_iff_orc` and `accO_iff_orc`;
     - `setSt_toV` and `outerSt_toV`;
-    - and (decision 5) `SavitchARM/Window`: `NoEdge`, `noEdge_of_lt`, `mem_iff_reach_of_noEdge`;
+    - the window module `SavitchARM/Window`: `NoEdge`, `noEdge_of_lt`, `mem_iff_reach_of_noEdge`;
   - the generic loops of `Machines/ARMLoops` (`move_run`, `move2_run`, `dmove_run`, `sub_run`,
     `halve_run`, `copy_run`, `shl_run`), `inputLength_loop` (`Logspace/InputAccess`), the run
     algebra of `Machines/ARMProof` (`AReach.refl`, `.trans`, `.step`, `.single`, `.halt`,
@@ -39,7 +38,6 @@
   - **this round's inputs** (`campaign/fills/ch34/inputs/ch34-fill-deepen/`):
     - the route probe with the pins and the assembly (`DeepenRoute.lean.txt`);
     - the block fit (`BlockFit.lean.txt`): the template for both blocks;
-    - the window route (`WindowRoute.lean.txt`);
     - the import probe, the order list, the base sorry set and the screen base (`@TBD@`).
 
   The design note is `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` (§2, §8–§10).
@@ -79,7 +77,7 @@ space is `O((sp |x| + logSpace |x| + 1)²)`.
 - The design's pieces are in place:
   - the search proved for any oracle (Hydroxyi);
   - the embedding of a block into a larger machine (#182) and the edge language (#184);
-  - the API (#@PR@).
+  - the API (#196).
 - The maintainer's probes prove the window lemmas and the block fit outright, and `savitch` from
   `deepen_contract`.
 

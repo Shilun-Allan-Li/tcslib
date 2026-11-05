@@ -1,0 +1,192 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Windows without a known space bound (rule-10 sealed copy of `SavitchARM/Window`, scratch)
+
+Savitch's search (`TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach`) decides membership by
+midpoint reachability over the configuration codes at a radius `s` that bounds the decider's
+space, `sp |x| ≤ s` (`Complexity.LogProg.SavitchARM.mem_iff_reach`). When the space bound is not
+computable, the radius is found by iterative deepening: at `s = 1, 2, …`, ask whether some
+configuration with a work head on the window's edge (`±s`) is reachable. This file proves the two
+facts the deepening needs:
+
+* **window exactness** (`mem_iff_reach_of_noEdge`): if no edge code is reachable at radius `s`,
+  membership is midpoint reachability at radius `s`, whatever the space bound. Every run then
+  keeps its heads strictly inside the window, so it never leaves it;
+* **termination** (`noEdge_of_lt`): beyond the space bound, no edge code is reachable.
+
+Reachability of codes is that of `Complexity.ExpBFS.RCode`, whose codes are those of the
+window runs (`Complexity.ExpBFS.rcode_iff`); a path through codes below `2 ^ w` is a midpoint
+witness at level `w` (`Complexity.LogProg.SavitchARM.reach_of_reflTransGen`).
+
+Configuration-graph infrastructure for [AB09, §4.2.1, Theorem 4.14] without space
+constructibility; not itself a result of the book (the book assumes `S` space-constructible and
+computes the radius instead).
+
+## Main definitions
+
+* `Complexity.LogProg.SavitchARM.NoEdge` — no edge code is reachable at radius `s`, level `w`.
+
+## Main results
+
+* `Complexity.LogProg.SavitchARM.mem_iff_reach_of_noEdge` — window exactness.
+* `Complexity.LogProg.SavitchARM.noEdge_of_lt` — termination.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
+  Cambridge University Press, 2009. (§4.1.1; §4.2.1, Theorem 4.14.)
+-/
+
+namespace Complexity.LogProg.SavitchARM
+
+open Turing Codec
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible]
+  Complexity.LogProg.SavitchARM.Reach
+  Complexity.Codec.StepRel
+  Complexity.Codec.initLang
+  Complexity.Codec.acceptLang
+  Complexity.Codec.edgeLang
+  Complexity.Codec.stepLang
+  Complexity.Codec.cfgCode
+  Complexity.Codec.codeK
+  Complexity.Codec.effAct
+  Complexity.logSpace
+  Turing.pairEncode
+  Complexity.ExpBFS.RCode
+  Complexity.ExpBFS.WinRun
+  Turing.Cfg.InWindow
+  Turing.NDTM.runWith
+  Turing.NDTM.initCfg
+  Turing.NDTM.stepWith
+  Turing.Action.apply
+  Turing.FinNDTM.AcceptsWithin
+  Turing.FinNDTM.DecidesInSpace
+  Turing.FinNDTM.configBound
+  Turing.NDTM.coreSum
+  Turing.Cfg.init
+  Turing.MultiTapeTM.initCfg
+
+variable {N : FinNDTM Bool} {x : List Bool}
+
+/-- **No reachable edge code**: no code `v < 2 ^ w` of a configuration with a work head at `±s`
+(a member of `Complexity.Codec.edgeLang`) is a midpoint-reachability target, at level `w`, of an
+initial code `u < 2 ^ w`, at radius `s`. -/
+def NoEdge (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) : Prop :=
+  ¬ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+    ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+      Reach (2 ^ w) (StepRel N x s) w u v
+
+/-- Codes at radius `s` lie below `2 ^ w` once `w` is at least the code width. -/
+private theorem window_code_lt {s w : ℕ} (hw : codeK N * (s + logSpace x.length + 1) ≤ w)
+    (C : Cfg N.k Bool N.State x) : cfgCode s C < 2 ^ w :=
+  (cfgCode_lt s C).trans_le (Nat.pow_le_pow_right (by norm_num) hw)
+
+/-- A reachable code is a midpoint witness from the initial code at level `w`, once `w` is at
+least the code width. -/
+private theorem window_reach_of_rcode {s w v : ℕ}
+    (hw : codeK N * (s + logSpace x.length + 1) ≤ w) (h : ExpBFS.RCode N x s v) :
+    Reach (2 ^ w) (StepRel N x s) w (cfgCode s (N.tm.initCfg x)) v := by
+  refine reach_of_reflTransGen _ _ (fun a b hab => ?_) (window_code_lt hw _)
+    (ExpBFS.rcode_iff_reflTransGen.mp h) w le_rfl
+  obtain ⟨C, -, rfl, C', -, -, rfl⟩ := (mem_stepLang N x a b s).mp (stepRel_iff_mem.mp hab)
+  exact ⟨window_code_lt hw C, window_code_lt hw C'⟩
+
+/-- **Termination** [AB09, §4.1.1]: if `N` decides `L` in space `sp` and `sp |x| < s`, no edge
+code is reachable at radius `s`, at any level.
+
+**Proof sketch.** A midpoint witness is a path of step pairs (`reflTransGen_of_reach`), so its
+end is a reachable code, the code of some window run (`Complexity.ExpBFS.rcode_iff`). An edge
+configuration with that code has the run's vertex (`Complexity.ExpBFS.coreSum_eq_of_code_eq`),
+and every run of `N` lies in the window `sp |x|`
+(`Complexity.ExpBFS.inWin_runWith_of_decides`), so its heads are within `sp |x| < s`
+(`Turing.NDTM.inWindow_of_coreSum_eq`, `Turing.Cfg.InWindow.core_bounds`): none is at `±s`. -/
+theorem noEdge_of_lt {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpace L sp)
+    (x : List Bool) (s w : ℕ) (hs : sp x.length < s) : NoEdge N x s w := by
+  rintro ⟨u, -, hu, v, -, hv, hr⟩
+  rw [mem_initLang] at hu
+  subst hu
+  obtain ⟨C, hC, hcC, i, hi⟩ := (mem_edgeLang N x v s).mp hv
+  have hrc : ExpBFS.RCode N x s v :=
+    ExpBFS.rcode_iff_reflTransGen.mpr (reflTransGen_of_reach _ _ w _ v hr)
+  obtain ⟨w', hw', hcode⟩ := (ExpBFS.rcode_iff s v).mp hrc
+  have hcore := ExpBFS.coreSum_eq_of_code_eq hC hw'.last (hcC.trans hcode.symm)
+  have hCw : Cfg.InWindow (sp x.length) C :=
+    NDTM.inWindow_of_coreSum_eq hcore (ExpBFS.inWin_runWith_of_decides h w')
+  have hb := ((Cfg.InWindow.core_bounds hCw) i).1
+  rw [hi] at hb
+  exact absurd (by exact_mod_cast hb : s ≤ sp x.length) (not_le.mpr hs)
+
+/-- **Window exactness** [AB09, §4.2.1, proof of Theorem 4.14]: let `N` decide `L` in space `sp`,
+and let `w` be at least the code width at radius `s`. If no edge code is reachable at radius `s`
+(`NoEdge`), then `x ∈ L` iff some initial code `u < 2 ^ w` and some accepting code `v < 2 ^ w`
+have `Reach (2 ^ w) (StepRel N x s) w u v`. Unlike `mem_iff_reach`, no bound `sp |x| ≤ s` is
+assumed.
+
+**Proof sketch.** (⇒) Take an accepting branch (`DecidesInSpace.mem_iff_acceptsWithin_configBound`).
+By induction on its prefixes, each is a window run at `s` (`Complexity.ExpBFS.WinRun`): the
+current configuration's code is reachable (`Complexity.ExpBFS.rcode_iff`), hence a midpoint
+witness (`reach_of_reflTransGen`), so by `NoEdge` it is not an edge code and its heads are strictly
+inside `[-s, s]`; one more step then stays in the window (`Turing.Cfg.InWindow.apply_of_lt`,
+through `Complexity.Codec.stepWith_eq_apply`). The last configuration is accepting and its code is
+reachable. (⇐) Unfold the witness into a path (`reflTransGen_of_reach`) and realize it by a
+branch (`Complexity.Codec.mem_of_codePath`). -/
+theorem mem_iff_reach_of_noEdge {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (x : List Bool) (s w : ℕ)
+    (hw : codeK N * (s + logSpace x.length + 1) ≤ w) (hne : NoEdge N x s w) :
+    x ∈ L ↔ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+      ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N ∧
+        Reach (2 ^ w) (StepRel N x s) w u v := by
+  constructor
+  · intro hx
+    obtain ⟨wd, -, hhalt, hout⟩ :=
+      FinNDTM.acceptsWithin_iff.mp ((h.mem_iff_acceptsWithin_configBound x).mp hx)
+    have key : ∀ j ≤ wd.length, ExpBFS.WinRun N x s (wd.take j) := by
+      intro j
+      induction j with
+      | zero =>
+        intro _
+        refine ExpBFS.winRun_iff.mpr fun i _ => ?_
+        rw [List.take_zero, List.take_nil, NDTM.runWith_nil]
+        exact ExpBFS.inWin_init s
+      | succ j ih =>
+        intro hj
+        have hW := ih (by omega)
+        have hlt : ∀ i,
+            |(N.tm.runWith (wd.take j) (N.tm.initCfg x)).workTapePos i| < (s : ℤ) := by
+          intro i
+          rcases lt_or_eq_of_le ((Cfg.InWindow.core_bounds hW.last) i).1 with h1 | h1
+          · exact h1
+          · exfalso
+            exact hne ⟨_, window_code_lt hw _, (mem_initLang N x _ s).mpr rfl, _,
+              window_code_lt hw _, (mem_edgeLang N x _ s).mpr ⟨_, hW.last, rfl, i, h1⟩,
+              window_reach_of_rcode hw ((ExpBFS.rcode_iff s _).mpr ⟨_, hW, rfl⟩)⟩
+        have hstep : wd.take (j + 1) = wd.take j ++ [wd[j]'(by omega)] :=
+          (List.take_concat_get' wd j (by omega)).symm
+        have hnext : Cfg.InWindow s (N.tm.runWith (wd.take j ++ [wd[j]'(by omega)])
+            (N.tm.initCfg x)) := by
+          rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil, stepWith_eq_apply]
+          exact hW.last.apply_of_lt hlt le_rfl _
+        rw [hstep]
+        exact hW.snoc _ hnext
+    have hW := key wd.length le_rfl
+    rw [List.take_length] at hW
+    exact ⟨_, window_code_lt hw _, (mem_initLang N x _ s).mpr rfl, _, window_code_lt hw _,
+      (mem_acceptLang N x _ s).mpr ⟨_, hW.last, rfl, hhalt, hout⟩,
+      window_reach_of_rcode hw ((ExpBFS.rcode_iff s _).mpr ⟨wd, hW, rfl⟩)⟩
+  · rintro ⟨u, -, hinit, v, -, hacc, hr⟩
+    exact mem_of_codePath h x s u v hinit (reflTransGen_of_reach _ _ w u v hr) hacc
+
+end Complexity.LogProg.SavitchARM

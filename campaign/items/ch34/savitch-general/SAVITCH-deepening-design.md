@@ -285,3 +285,14 @@ on `sp |x| + 1 - s`, the register bound, and `deepen_contract`; `savitch_of_logS
 
 **Decision 5 (the user's):** land `SavitchARM/Window` with the API PR (the maintainer's proof,
 gated with it), or give it to the fill as an input to land as is.
+
+**Ruled, 2026-11-05 (morning).**
+- **Decision 5:** the window module lands with the API PR. It is
+  `SpaceComplexity/SavitchARM/Window.lean` on #196 (`lean/deepen-window-api`, head `89f4ebbc`),
+  the draft of `probes/WindowModuleDraft.lean.txt` with the header options moved above the module
+  docstring as in its siblings, and one import line plus one module-list entry in the facade
+  `SpaceComplexity.lean`. Sealed over the window route's 24 definitions, it elaborates with 0
+  diagnostics; `noEdge_of_lt` and `mem_iff_reach_of_noEdge` are on the standard axioms.
+- **The fill's agent:** Claude (the user). The brief `ch34-fill-deepen-DRAFT.md` records both.
+- **The API branch is pushed** and #196 is open against the campaign. Its replay, `replay-ldwa`, is
+  the ten files' downstream closure, 73 modules chained from `oleans-lcf3`.
