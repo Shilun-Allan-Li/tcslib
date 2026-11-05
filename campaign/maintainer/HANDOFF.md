@@ -118,6 +118,20 @@ The rest stay on the Mac.
 - **Gate 97 (#197): PASS**, 0/0/6. The user ruled **publish** `zoneRowPre_congr` and
   `zoneRowPre_mapState_iff` (F5). The minors are swept in one closing commit.
 
+**Duplication rulings of 2026-11-05 (the user)**, to enter `duplication-ledger.md` with the pushed
+repairs (the draft is `$TCSLIB_SCRATCH/agents/ledger/duplication-ledger.proposed.md`):
+- **WS-1**, acknowledged by kind and then **widened**: every proof that one step keeps a
+  configuration within a window of any shape, and window monotonicity; canonical
+  `Cfg.InWindow.apply_iff`, `Cfg.InWindow.mono`, and the tape half (to be published in 12.2c;
+  `Oracle`'s private `apply_workTapes_eq_of_ne` is its source).
+- **CE-1**, acknowledged for 12.2c: `coreSum_eq_of_code_eq`, public in both `ExpBFS/Radius` and
+  `Randomized/BPLInPCount`.
+- **QL-X1**: the `NoEdge`/`Rel` pair is an idiom; **CQ-1** opened (codec-level query predicates).
+- **ZP-1**: `zoneRowPre_congr` and `zoneRowPre_mapState_iff` published; `ZoneRebalance`'s twelve
+  inline sites re-pointed in 12.2c.
+- Maintainer records with them: RN-1 accounting (`nf_pack`), RC-4 (F8's row candidates), WL-1,
+  WC-1 (optional), RP-1 (definitional reads #196's equations can replace).
+
 The repairs are local commits on `wt-191`, `wt-196`, `wt-197` until each elaborates on the first
 cloud snapshot `oleans-cloud0` (the bootstrap at `dfed8b1f`'s Lean tree); then pushed, replayed,
 and gates 95 and 96 go to round 2. Each gate's `resolutions.md` holds the details.
