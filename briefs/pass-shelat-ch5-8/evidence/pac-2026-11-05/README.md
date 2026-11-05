@@ -11,5 +11,5 @@
 - **The root facade** `TCSlib.lean` gains one import. It was not built, since its closure is the
   whole library. A search found no fully qualified name of the new files elsewhere on `main`.
   The matches by short name (`expect`, `label`, …) are in other namespaces.
-- **Axioms:** per the worker, every main result prints only `propext`, `Classical.choice` and
-  `Quot.sound`.
+- **Axioms** (`axioms.log`, run by the maintainer): all 38 theorems of the new files print within
+  `propext`, `Classical.choice` and `Quot.sound`.
