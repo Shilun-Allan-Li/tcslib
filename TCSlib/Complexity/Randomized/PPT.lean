@@ -41,9 +41,13 @@ empty advice (`NUPPT.Uniform`); `Complexity.PPT` is the subtype. `Computes` does
 `Uniform`: [PS10, Definition 24.6] is about a randomized algorithm, i.e. a PPT, and is the case
 `A.Uniform ∧ A.Computes f`; for a non-uniform `A`, `Computes` is the advice analogue and holds
 for uncomputable `f` (advice `[h n]` for an arbitrary `h : ℕ → Bool`, read back by the machine).
-So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`; efficient computation is
-`∃ A, A.Uniform ∧ A.Computes f` (`NUPPT.exists_uniform_computes`, and conversely
-`NUPPT.Computes.polyTimeComputable` of `TCSlib.Complexity.Randomized.Closure`). The
+So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`. Efficient computation of
+`f` on the encodings `⟨1^n, y⟩` is `∃ A, A.Uniform ∧ A.Computes f`
+(`NUPPT.exists_uniform_computes`, and conversely `NUPPT.Computes.polyTimeComputable` of
+`TCSlib.Complexity.Randomized.Closure`, which gives polynomial-time computability of
+`z ↦ f ⟨1^{|fst z|}, snd z⟩`). `Computes` says nothing about `f` off those encodings, so it is
+not [PS10, Definition 24.6] for an arbitrary `f : {0,1}* → {0,1}*`, which constrains every
+input string (gate 03a, round 2, R2-1). The
 input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8] is `NUPPT.runLit`; the
 lemmas about it and about uniformity are in `TCSlib.Complexity.Randomized.NonUniform`.
 
@@ -238,7 +242,12 @@ parameter `n` for an arbitrary `h : ℕ → Bool` (`ofPolyTime` of the advice pr
 computes `w ↦ [h |fst w|]`. So `∃ A : NUPPT, A.Computes f` does **not** mean "a PPT computes
 `f`"; where the text means efficient computation, the form is `A.Uniform ∧ A.Computes f`
 (`exists_uniform_computes`; conversely `NUPPT.Computes.polyTimeComputable` of
-`TCSlib.Complexity.Randomized.Closure`, which assumes `Uniform`). -/
+`TCSlib.Complexity.Randomized.Closure`, which assumes `Uniform`).
+
+`Computes f` constrains `f` only on the encodings `advInput n y = ⟨1^n, y⟩`: off them `f` is
+arbitrary, even uncomputable, so `A.Uniform ∧ A.Computes f` is efficient computation of `f` on
+those encodings, not of `f` on every string (the converse gives polynomial-time computability of
+`z ↦ f ⟨1^{|fst z|}, snd z⟩`; gate 03a, round 2, R2-1). -/
 def Computes (f : List Bool → List Bool) : Prop :=
   ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y)
 

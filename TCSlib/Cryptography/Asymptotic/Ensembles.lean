@@ -117,8 +117,10 @@ the `ℓ(n)`-bit strings, the distribution `X_n` being the pushforward of the un
 length `ℓ` is a syntactic polynomial (D9).
 
 **Deviation:** each `X_n` is the pushforward of the uniform distribution on a finite nonempty
-seed set, so its probabilities are rational (not necessarily dyadic: seeds `Fin 3` give mass
-`1/3`; the efficiently samplable ensembles, `Samplable`, are the dyadic ones, D6), and it lives
+seed set, so its probabilities are rational (not necessarily dyadic: three seeds mapped to
+distinct strings give masses `1/3`; every efficiently samplable ensemble, `Samplable`, has dyadic
+laws, D6, but not every dyadic ensemble is samplable, e.g. the point mass at an uncomputable bit;
+gate 03a, round 2, R2-3), and it lives
 on strings of the fixed length `ℓ(n)` that Definition 69.4 requires (Definition 69.3 allows
 arbitrary distributions over `{0,1}^*`). Every ensemble of chapters 3 and 4 is of this form;
 the non-dyadic ideal distributions (primes, `Z_q`, permutations) appear only inside
@@ -188,7 +190,8 @@ and coins for `M`, run `M(1^n, X_n)` and pad or truncate the output to `ℓ'(n)`
 output length `ℓ'` is an explicit syntactic polynomial so that the padding is itself
 polynomial-time (`polyTimeComputable_unaryPoly`). The padding (`padFin`: `false`-padding or
 truncation) is lossless when `M` outputs exactly `ℓ'(n)` bits, the only case Definition 69.4
-can type, and lossy otherwise (`[1]` and `[1, 0]` both pad to `[1, 0, …]`): variable-length
+can type (a sufficient condition), and can be lossy otherwise (`[1]` and `[1, 0]` both pad to
+`[1, 0, …]`; gate 03a, round 2, R2-5): variable-length
 outputs (ciphertexts, views, transcripts) are not ensembles of this kind. -/
 def push (M : NUPPT) (ℓ' : PolyExpr) (X : Ensemble ℓ) : Ensemble ℓ' where
   σ n := X.σ n × M.Coins n
