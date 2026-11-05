@@ -32,3 +32,32 @@ after #184). Checks at the fix:
 `15ce490ba941df5345e6585b2e0da96cd9f5d17c8e7f066cda0f54b4b29ff69e` (22 sections), the records at `330ba0dc`.
 **Dispatched (user, 2026-11-04);** the folder archived.
 **`replay-led2` passed** (2026-11-04): 3 of 3 at `02030b70`, 0 failed, static-equal; snapshot `oleans-led2`.
+
+**Round 2** (`pack-r2.md`, head `02030b70`). **Findings** (`findings-r2.md`, verbatim, SHA-256
+`3b4bd408aadbb46a901229f7e1d7c5cc5695be5d674e7d59528aa422b00b4918`; received 2026-11-04): **DO NOT CLOSE, 0
+blockers, 2 majors, 0 minors, 6 notes.** Round 1's two repairs and both record corrections are
+accepted.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | major | `dz_split_tape`'s prefix branch re-derives `FinTM.bufferTape_take`. | **True. Ruled (user, 2026-11-04): fix both, and acknowledge the kind.** `49ffc047`: the branch cites `bufferTape_take` with `List.take_left'`. |
+| 2 | major | `dz_top_run`'s `hsame` re-derives `MultiTapeTM.runFrom_output_eq_of_halt`. | **True; fixed** (`49ffc047`): `have hsame := MultiTapeTM.runFrom_output_eq_of_halt BF.tm c0 hle hst0`. |
+| 3–7 | note | Round 1's repairs; the records; integrity; the seal evidence. | Agreed. |
+| 8 | note | The round-2 bundle lacked the replay's log. | Agreed: `replay-led2` passed after the bundle was staged; its log is in `evidence/round2/merged-tree/`. Round 3 attaches its own replay's log. |
+
+**The kind, acknowledged by the user (2026-11-04):** any further inline step in
+`NTimeDiagonalizer` that re-derives a published run, buffer or segment lemma is a member of one
+family, **ED-IN**, for the dedup window (12.2c), scoped by kind. A later find is an accounting
+minor. **A sweep for the kind at round 3's head** (`evidence/round3/sweep.txt`): every
+`bufferTape_eq` unfolding, `Nat.exists_eq_add_of_le`, `runFrom_add`, `lt_trichotomy` and
+`Nat.find` in the 106 new declarations. It found three more instances of `bufferTape_nat`
+(`dz_cell0`, the top's flag cell, the setup's block cell), now cited in `49ffc047`.
+
+**Round 3 (2026-11-04):** #188 at `935245f4` (the fix `49ffc047`, then a merge of campaign records).
+Checks at the fix:
+- the file elaborates against `oleans-led` with no output;
+- the seal re-run: 350 of 350 definitions discriminated, none passing sealed;
+- axioms: `dz_split_tape`, `dz_top_run`, `dz_cell0`, `dz_first`, `dz_split` and
+  `exists_diagonalizer` on the standard three.
+
+`replay-led3` is written (3 modules from `oleans-ledge`).

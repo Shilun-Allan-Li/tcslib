@@ -4,3 +4,4 @@
 SHA-256 `8fbe17172056ae669d35253e70b77f3bc31d1abc1fd3c37fa294dad2578cd954` (257 sections), the records at
 `48275d52`; in the exchange `arora-barak-ch3-4/outbox/gates/92-g5-statements-gate/`. `replay-lg5` running.
 **Dispatched (user, 2026-11-04);** the folder archived.
+**`replay-lg5` passed** (2026-11-04): 325 of 325 at `2339d2df`, 0 failed, static-equal (73, all pre-existing); snapshot `oleans-lg5`.

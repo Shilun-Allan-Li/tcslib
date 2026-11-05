@@ -982,6 +982,12 @@ ruled by the user, 2026-11-04):
   deduplicated: RO-1's one, the five distinct NB-1/BL-1/LS-3 members, `dz_word_lt` and
   `dz_split_stream`. E1 retires `qy_call_bound`'s BL-1 (iii) step. Row candidates (RC-3) and
   in-file factorings (QF-1) are not counted as debt.
+- **ED-IN, inline re-derivations, scoped by kind (ruled by the user, 2026-11-04, gate 93 round
+  2):** any inline step in `NTimeDiagonalizer` that re-derives a published run, buffer or segment
+  lemma belongs to this family, for the dedup window; a later find is an accounting minor. The
+  members found so far are all removed: `dz_first` (`Segment.time_eq`), `dz_split`'s separator
+  (`bufferTape_append_mid`), `dz_split_tape`'s prefix (`bufferTape_take`), `dz_top_run`'s output
+  (`runFrom_output_eq_of_halt`), and three natural cells (`bufferTape_nat`).
 - **Removed in round 2 (gate 93, findings 1–2):** `dz_first` re-proved `Segment.time_eq`, and
   `dz_split`'s separator cell re-proved `FinTM.bufferTape_append_mid`. Both now cite them (#188
   `a64f513d`).
