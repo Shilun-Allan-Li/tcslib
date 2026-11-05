@@ -17,10 +17,10 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 
 | Pack | Content | Files (branch head at drafting) | Items |
 |---|---|---|---|
-| 06A | authentication (ch. 5) | `Authentication/{Defs, PRFMAC, Lamport, DLHash, HashAndSign}` (prong A, `2d7b5441`) | Defs 134.1, 134.2, 135.1, 136.2, 136.a, 140.1; Prot 134.3, 137.1, 142.2, 144.2; Thms 135.4, 137.2, 142.3, 144.1 |
-| 06B | secure computation (§6.2) | `SecureComputation/{Defs, ObliviousTransfer, …}` (prong B, `d631ea85`, in progress) | Def 155.1; Alg 157.2, Claim 157.a; Constr 158.a, Claim 159.a; Def 160.a, Prot 160.4, Prop 161.5; Prot 162.6, Thm 163.7 |
+| 06A | authentication (ch. 5) | `Authentication/{Defs, PRFMAC, Lamport, DLHash, HashAndSign}` (prong A, `2d7b5441`, complete) | Defs 134.1, 134.2, 135.1, 136.2, 136.a, 140.1; Prot 134.3, 137.1, 142.2, 144.2; Thms 135.4, 137.2, 142.3, 144.1 |
+| 06B | secure computation (§6.2) | `SecureComputation/{Defs, ObliviousTransfer, SpecialEncryption, SpecialEncryptionSecurity, Garbling, GarblingSpecial, GarblingSecurity}` (prong B, `d8ef9b40`; Yao waits for Q-5) | Def 155.1; Alg 157.2, Claim 157.a; Constr 158.a, Claim 159.a; Def 160.a, Prot 160.4, Prop 161.5; Prot 162.6, Thm 163.7 |
 | 06C | composability (ch. 7) | `Composability/{Defs, PRFScheme, CCA2Scheme, PublicKey, NonMalleable, SequentialZK}` (prong C, `61c06756`) | Defs 168.1, 171.5, 172.6, 173.7; Thm 168.2, Claim 169.a, Alg 169.3, Thm 170.4, Claim 172.a, Thm 174.8, Thm 175.9 (optional), Thm 175.1 |
-| 06D | randomness (ch. 8) | `Randomness/{Extraction, BPPBridge, …}` (prong D, `2d8652d7`, in progress) | Def 179.a (with the PAC layer, #194), Thm 179.1, Thm 180.1, Thm 183.6 |
+| 06D | randomness (ch. 8) | `Randomness/{Extraction, Learning, BPPBridge, Derandomization}` and the PAC layer (prong D, `6ea900ae`, complete) | Def 179.a (with the PAC layer, #194), Thm 179.1, Thm 180.1, Thm 183.6 |
 
 ## Findings already made in the statement phase (the auditor should check the repairs)
 
@@ -47,3 +47,15 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
   §7.3 (inventory). Also whether `HBCSecure` should require efficient honest parties.
 - Prong D: Thm 179.1 (layer 2 of S3d, after #194); Thm 180.1 (S3c; a worker is on it).
 - The duplication-ledger items DL-6 and DL-7 are resolved before the integration replay.
+
+## Integration dry run (2026-11-05)
+
+On a scratch worktree (never pushed), S2b at `afe5982f` merged with the four prong heads (A
+`2d7b5441`, B `d8ef9b40`, C `61c06756`, D `6ea900ae`):
+- no conflicts;
+- `Asymptotic/MultiMessage.lean` comes out identical to S2b's (prong C's mirrored `Dec` guard
+  merges away);
+- no fully qualified name is declared twice in the ch. 5–8 files.
+
+The real integration waits for #195 (S2b) and Q-5 (Yao).
+
