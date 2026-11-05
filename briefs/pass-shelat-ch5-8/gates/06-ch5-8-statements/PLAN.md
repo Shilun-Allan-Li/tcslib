@@ -50,6 +50,19 @@ prongs A–D, stated with a sketch and compiling, before any fill brief is issue
 - The PAC layer (#194) must reach the base before 06D: it lands on `main` (Q-4), and `main` is merged in again.
 - The duplication-ledger items DL-6 and DL-7 are resolved before the integration replay.
 
+## Integration to-do from the gate 03, 04 and 05 rulings (2026-11-05)
+
+- **Prong C:** after the ch. 2–4 ZK repair lands, take `ProverBounded` from `Interaction.lean`
+  (G3-3), derive Thm 175.1's hypothesis from `EfficientProverProof`, and cite `StatZK.seqRep` via
+  `PerfectZKAbort.statZK` for the perfect case (G3-4). Add the 3-colouring corollary of G3-7d.
+- **Prong B:** after the collections repair (G3-1), derive `SamplerCanonical` and OT's `hspec`
+  from canonical decoding, and drop them from Prop 161.5. Replace the local `rfl` copies in
+  `Yao.lean` and `Compose*.lean` with the equation lemmas of the gate 04 repair (D8's
+  `transcriptWith`, `outP`, `outV`, `viewP`, `viewV`) where they apply.
+- **Prong D:** merge #194's repaired branch (`6b781240`): `PACLearnable` is removed;
+  `Learning.lean` does not use it.
+- **All prongs:** re-cite T1/T2 per the R-04-3 extension (the worker's list of the eight sketches).
+
 ## Integration dry run (2026-11-05)
 
 On a scratch worktree (never pushed), S2b at `afe5982f` merged with the four prong heads (A
