@@ -30,7 +30,8 @@ every register stays below `2 ^ (w · w)`.
 
 ## Main definitions
 
-* `Complexity.LogProg.SavitchARM.Rel` — the step relation read from the oracle.
+* `Complexity.LogProg.SavitchARM.Rel` — the step relation read from the oracle, with its
+  defining equation `rel_iff_orc`.
 * `Complexity.LogProg.SavitchARM.Inv` — the register invariant at a level.
 
 ## Main results
@@ -53,6 +54,14 @@ open Turing
 `⟨x, ⟨bits u, ⟨bits v, bits s⟩⟩⟩`. -/
 def Rel (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u v : ℕ) : Prop :=
   orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) = true
+
+/-- `Rel orc x s u v` holds exactly when decider `3` accepts `⟨x, ⟨bits u, ⟨bits v, bits s⟩⟩⟩`:
+`orc 3 (pairEncode x (pairEncode (bits u) (pairEncode (bits v) (bits s)))) = true`. -/
+theorem rel_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u v : ℕ} :
+    Rel orc x s u v ↔
+      orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) =
+        true :=
+  Iff.rfl
 
 /-- **The register invariant at level `i`**: the setup registers and the scratch registers
 are clear, the radius, width and code bound are in place, the node's codes are below

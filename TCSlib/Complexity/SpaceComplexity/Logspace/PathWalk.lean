@@ -39,6 +39,8 @@ length `n²`), so that it does not depend on `TCSlib.Complexity.SpaceComplexity.
 ## Main results
 
 * `Complexity.walkLe_short`, `Complexity.reach_iff_walkLe` — path shortening.
+* `Complexity.walkLe_zero_iff` — a walk of no edges stays put.
+* `Complexity.walkLe_succ_iff_head` — a longer walk stays put or begins with an edge.
 * `Complexity.eq_pathRaw_iff` — the layout of a raw instance.
 * `Complexity.pathAcc_iff` — what the machine checks is membership in `pathRawLang`.
 
@@ -65,6 +67,14 @@ def WalkLe : ℕ → ℕ → ℕ → Prop
   | j + 1, c, t => c = t ∨ ∃ v, v < n ∧ E c v ∧ WalkLe j v t
 
 variable {E n}
+
+/-- `Complexity.WalkLe` with no edge allowed: the endpoints are equal. -/
+lemma walkLe_zero_iff {c t : ℕ} : WalkLe E n 0 c t ↔ c = t := Iff.rfl
+
+/-- `Complexity.WalkLe` with at most `j + 1` edges, read at the front: the endpoints are equal,
+or an edge from `c` to some `v < n` is followed by a walk of at most `j` edges from `v` to `t`. -/
+lemma walkLe_succ_iff_head {j c t : ℕ} :
+    WalkLe E n (j + 1) c t ↔ c = t ∨ ∃ v, v < n ∧ E c v ∧ WalkLe E n j v t := Iff.rfl
 
 /-- Every vertex reaches itself. -/
 lemma walkLe_refl (j c : ℕ) : WalkLe E n j c c := by
