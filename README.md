@@ -1,5 +1,10 @@
 # Exchange: Pass–shelat ch. 5–8
 
+**Shared since 2026-11-04 with the Arora–Barak ch. 3–4 campaign**, whose folders are under
+`arora-barak-ch3-4/` (its own README). Each campaign's maintainer changes only its own folders and
+runs `git pull --rebase` before every push. The rest of this README describes the Pass–Shelat
+folders at the top level.
+
 The hand-off folders between the maintainer session (a cloud VM) and the user, who dispatches
 briefs and audit packs to external agents and brings back what they deliver. This is an **orphan
 branch**: it shares no history with the library and is never merged anywhere. Records (plans,
