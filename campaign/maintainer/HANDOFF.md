@@ -42,19 +42,21 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
 
-## 2. State (updated 2026-11-05, about 00:40 PST)
+## 2. State (updated 2026-11-05, about 01:30 PST)
 
 **Merged on 2026-11-04/05:** #181 (space facts), #182 (ARM embedding), #184 (the codec's edge mode),
-#189 (G5's statements; gate 92 closed), #188 (E-D's landing, `exists_diagonalizer`; gate 93 closed
-in round 3).
+#189 (G5's statements; gate 92), #188 (E-D's landing, `exists_diagonalizer`; gate 93), #190 (the
+configuration facts; gate 94, `replay-lcf3`).
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #190 | the configuration facts (`CfgFacts`, five lemmas; RN-1 by kind) | `replay-lcf3` **running** (86 modules from `oleans-led4`, at `a5d448e3`) | 94 **closed** (CLOSE 0/0/2) | merge when `lcf3` passes |
-| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | after #190 merges: retarget to the campaign, merge it, replay from `oleans-lcf3` (`NDNormalForm`, the `ClassNP` facade, `NTimeHierarchy`, `Diagonalization`) | 95: pack drafted (`campaign/gates/95-nf-landing-fill/`), staged after the retarget with its landing screen re-run | merge on a pass and a PASS |
+| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | `replay-lnf` **passed** (4 modules from `oleans-lcf3`, at `e8994dc1`; 0 `sorry`) | 95 **staged** (`outbox/gates/95-nf-landing-fill-gate/`, 415 sections); the dispatch prompt is in the session | merge when gate 95 closes |
+| (local) | the deepening's window API, `lean/deepen-window-api` (not pushed): six lemmas in `CfgRecord`, `Codec/Bridge`, `PathWalk`, `ExpBFS/Radius`, `SavitchARM/Reach` (design §9, decision 4) | 13-module chain compiled; a 72-module replay after the push | 96 drafted locally | push, PR and gate after the user's go-ahead |
 
-With #191 merged, the headline count is expected to reach **21 of 26**. Check `NTimeHierarchy` with
-`#print axioms`; the status record is `campaign/status/2026-11-05-headlines/`.
+On #191's merged tree the nondeterministic time hierarchy is admission-free:
+`ntime_hierarchy`, `ntime_hierarchy_of_pos` and `NTIME_linear_ssubset_square` rest on the
+standard axioms (gate 95's `evidence/axioms/NTHAx.out`). With #191 merged, the headline count is
+expected to reach **21 of 26**; the status record is `campaign/status/2026-11-05-headlines/`.
 
 ## 3. Queue after the PRs
 
