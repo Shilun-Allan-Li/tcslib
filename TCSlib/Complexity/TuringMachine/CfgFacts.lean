@@ -25,6 +25,8 @@ No new definitions.
 
 * `Turing.Cfg.inputSymbol_congr` — configurations whose input heads agree read the same input
   symbol, across machines.
+* `Turing.Cfg.mapState_eq_of_fields` — a renamed configuration is any configuration with its four
+  data fields and the renamed state.
 * `Turing.Cfg.mapState_const_eq_mapState_sigma` — redirecting a live configuration to `⟨i, q⟩`
   gives phase `i`'s tagged configuration at `q`.
 * `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
@@ -58,13 +60,30 @@ theorem Cfg.inputSymbol_congr {Symbol : Type*} {k k' : ℕ} {S S' : Type*} {inpu
       rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
         inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
 
+/-- **A renamed configuration, field by field.** Renaming the states of `c` by `f` gives any
+configuration `d` that has `c`'s input head, tapes, work heads and output and whose state is `c`'s
+state renamed.
+
+**Proof sketch.** Compare the five fields through the state-renaming equations
+(`Turing.Cfg.mapState_state` and the others). -/
+theorem Cfg.mapState_eq_of_fields {k : ℕ} {Γ S S' : Type*} {x : List Γ} (c : Cfg k Γ S x)
+    (f : S → S') (d : Cfg k Γ S' x) (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
+    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
+    (ho : c.output = d.output) : c.mapState f = d := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hs]
+  · rw [Cfg.mapState_inputPos, hi]
+  · funext j p; rw [Cfg.mapState_workTapes, hw]
+  · funext j; rw [Cfg.mapState_workTapePos, hp]
+  · rw [Cfg.mapState_output, ho]
+
 /-- **Redirecting a live configuration to a phase's state.** If `c` is live and `c₂` is a
 configuration of phase `i` at state `q` with `c`'s tapes, heads and output, then sending every
 state of `c` to `⟨i, q⟩` gives `c₂` tagged by `i`.
 
-**Proof sketch.** Compare the five fields through the state-renaming equations
-(`Turing.Cfg.mapState_state` and the others): the states are both `some ⟨i, q⟩` since `c` is
-live, and the remaining fields are the hypotheses. -/
+**Proof sketch.** Both sides are renamings; by `Turing.Cfg.mapState_eq_of_fields` it suffices to
+compare the left side's fields with the right side's: the states are both `some ⟨i, q⟩` since `c`
+is live, and the remaining fields are the hypotheses. -/
 theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I → Type*}
     {x : List Γ} {i : I} (c : Cfg k Γ S x) (c₂ : Cfg k Γ (Ph i) x) {q : Ph i}
     (hc : c.state.isSome) (hstate : c₂.state = some q) (hin : c.inputPos = c₂.inputPos)
@@ -72,12 +91,10 @@ theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I 
     (ho : c.output = c₂.output) :
     c.mapState (fun _ => (⟨i, q⟩ : Σ j, Ph j)) = c₂.mapState (Sigma.mk i) := by
   obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]
-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
-  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
-  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
-  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
+  refine Cfg.mapState_eq_of_fields c _ _ ?_ (by rw [Cfg.mapState_inputPos, hin])
+    (by funext j p; rw [Cfg.mapState_workTapes, hw])
+    (by funext j; rw [Cfg.mapState_workTapePos, hp]) (by rw [Cfg.mapState_output, ho])
+  rw [Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]
 
 /-- **A tagged configuration is at no other phase's state.** A configuration tagged by phase `i`
 (its states sent into the sum by `Sigma.mk i`) is never at a state `v` of a phase `v.1 ≠ i`. -/
