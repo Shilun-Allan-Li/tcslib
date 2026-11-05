@@ -79,9 +79,11 @@ genuine run (GGM's `length_encState_pureAt_le` pattern). Do not generalize to va
   `B` and, for each `n`, a bijection `φ` from (seed, `A`'s coins) to `B`'s coins, such that `B`'s
   output at `n` on coins `φ (ω, r)` equals the output of the simulation of
   `A.toComp bitCodec n (q.eval n) r` by `H`'s implementation under `ω`.
-- **T2 (interactive):** the same, with `B` an oracle machine: `B.toComp bitCodec' n (q'.eval n)
-  (φ (ω, r))` equals the simulation (outputs only). The target budget is `q'(n) = q(n) · c(n)`,
-  where `c` bounds the handler's queries per call.
+- **T2 (interactive):** the same, with `B` an oracle machine: `B.toCompOn bitCodec' n
+  (q(n) · perCall(n)) z (φ (ω, r))` equals the simulation (outputs only). Stated in Lean on S2b
+  (`Games.InteractiveHandler`, `Games.exists_interactiveHandlerMachine`, commit
+  `592ed2ba0104c00a57e1e4d957656c23f07e0f6f`); `perCall` bounds the handler's outer queries per
+  inner query. Needed by the reductions of Thms 135.4, 144.1, 168.2 and 170.4.
 - **T3:** `GGMRed`'s machine is an instance of T1. It is stated, **not proved** in this fill, and
   goes to the integration of ch. 2–4, coordination point F-4. Leave it as `sorry` under its
   sketch only if the skeleton contains it.
