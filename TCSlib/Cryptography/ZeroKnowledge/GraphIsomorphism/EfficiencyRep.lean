@@ -39,7 +39,7 @@ and one **unary-count loop** (`iterUnary_poly`: iterate a step `|u|` times for a
 * `TCSlib.Cryptography.GI.unaryMul_poly`, `GI.coinSlice_poly` — unary multiplication and the
   coin block of a given iteration.
 * `TCSlib.Cryptography.GI.gniVerifierRep_efficient` — the `|x|`-fold graph non-isomorphism
-  verifier is a PPT strategy.
+  verifier is efficient (D8).
 
 ## References
 
@@ -584,7 +584,7 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
   rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinSlice, headD_take hc, Fin.val_mk,
     getD_eq_headD_drop]
 
-/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is a PPT strategy (Inf-4.2).
+/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8) (Inf-4.2).
 
 **Proof sketch.** `efficient_of_polyTime`: the message count `1^{|hist|}` (`cnt_poly`), the
 test `|hist| < |x|` (`ltLen_poly`), the coin block of the current iteration (`gniSlice_poly`)

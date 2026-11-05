@@ -78,6 +78,8 @@ the commitment.
 * `TCSlib.Cryptography.col_efficientProverProofErr`,
   `TCSlib.Cryptography.colRep_efficientProverProof` — **[PS10, Proposition 127.6]**, the
   interactive-proof half (Prop-127.6).
+* `TCSlib.Cryptography.colProver_length_le`, `TCSlib.Cryptography.colProtocol_proverBounded`
+  — the honest provers' messages are polynomially bounded in `|x|` (ruling G3-3).
 * `TCSlib.Cryptography.R3COL_witnessRelation` — `R_3COL` is a witness relation for `3COL`.
 
 ## References
@@ -503,7 +505,7 @@ noncomputable def colProtocolRep (Com : List Bool → List Bool) (ℓ : PolyExpr
 
 /-! ### Efficiency of the honest parties (Inf-4.2) -/
 
-/-- The honest prover of one iteration is a PPT strategy when `Com` is polynomial-time
+/-- The honest prover of one iteration is efficient (D8) when `Com` is polynomial-time
 [PS10, Proposition 127.6, efficient prover] (Inf-4.2).
 
 **Proof sketch.** `Strategy.Efficient` with `NUPPT.ofPolyTimeUniform` of the string function
@@ -522,7 +524,7 @@ theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComp
     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
   ColProofs.colProver_efficient hCom ℓ
 
-/-- The verifier of one iteration is a PPT strategy when `Com` is polynomial-time
+/-- The verifier of one iteration is efficient (D8) when `Com` is polynomial-time
 [PS10, Definition 116.1 for Proposition 127.6] (Inf-4.2).
 
 **Proof sketch.** As `colProver_efficient`: the edge index by `polyTimeComputable_iterateFind`
@@ -537,20 +539,78 @@ theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeCo
     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
   ColProofs.colVerifier_efficient hCom ℓ
 
-/-- The prover of the `n|E|`-fold protocol is a PPT strategy (Inf-4.2): `colProver_efficient`
+/-- The prover of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): `colProver_efficient`
 on the coin block `hist.length / 2` cut by `pairTakePoly`/`pairDropPoly`, with the parity and
 iteration tests by `polyTimeComputable_lenLe` on unary counters. -/
 theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
   ColProofs.colProverRep_efficient hCom ℓ
 
-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy (Inf-4.2): the challenge as in
+/-- The verifier of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): the challenge as in
 `colVerifier_efficient` on the block `hist.length / 2`, and the verdict a loop over the
 `n|E|` pairs of the history (`polyTimeComputable_iterate` with an accumulated conjunction of
 `colVerify` checks). -/
 theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
   ColProofs.colVerifierRep_efficient hCom ℓ
+
+/-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
+
+/-- A vector of `q` commitments to `n`-bit values with `m`-bit randomness has at most
+`q (2 C (2n + 3 + m)^c + 2)` bits when `C (|w| + 1)^c` bounds `|Com w|`
+(`CommitmentLemmas.length_encodeMsgs_le`, `length_pairEncode`). -/
+theorem length_multiCom_le {Com : List Bool → List Bool} {C c : ℕ}
+    (hC : ∀ w, (Com w).length ≤ C * (w.length + 1) ^ c) {q n m : ℕ} (v : Fin q → Fin n → Bool)
+    (r : Fin q → Fin m → Bool) :
+    (multiCom Com v r).length ≤ q * (2 * (C * (2 * n + 3 + m) ^ c) + 2) := by
+  unfold multiCom
+  refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
+    fun msg hmsg => ?_).trans (by simp)
+  obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hmsg
+  refine (hC _).trans (le_of_eq ?_)
+  rw [length_pairEncode, List.length_ofFn, List.length_ofFn]
+  ring_nf
+
+/-- **The honest prover of one iteration sends polynomially bounded messages** (ruling G3-3 of
+gate 03): for `C (|w| + 1)^c` bounding `|Com w|` and `n = (decGraph x).1 ≤ |x|`, the
+commitment message has at most `n (2 C (2n + 3 + ℓ(n))^c + 2)` bits (`length_multiCom_le`),
+the opening `3 ℓ(n) + 20` (`length_pairEncode`, `length_encColoring`) and the empty reply none;
+`ℓ` is monotone (`PolyExpr.eval_mono`). The bound holds for every tape and history, since
+`colCommit` and `colOpen` have a fixed shape. -/
+theorem colProver_length_le {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+    (ℓ : PolyExpr) : ∃ B : PolyExpr, ∀ x y r hist,
+      ((colProver Com ℓ).next x y r hist).length ≤ B.eval x.length := by
+  obtain ⟨C, c, hC⟩ := hCom.output_length_le
+  refine ⟨.add (.mul .var (.add (.mul (.const 2) (.mul (.const C)
+    (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) ℓ) c))) (.const 2)))
+    (.add (.mul (.const 3) ℓ) (.const 20)), fun x y r hist => ?_⟩
+  have hn : (decGraph x).1 ≤ x.length := Nat.sqrt_le_self _
+  have hℓ : ℓ.eval (decGraph x).1 ≤ ℓ.eval x.length := ℓ.eval_mono hn
+  have hcom : (decGraph x).1 * (2 * (C * (2 * (decGraph x).1 + 3 + ℓ.eval (decGraph x).1) ^ c) + 2)
+      ≤ x.length * (2 * (C * (2 * x.length + 3 + ℓ.eval x.length) ^ c) + 2) := by
+    gcongr
+  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+    PolyExpr.eval_var, colProver]
+  split
+  · exact (length_multiCom_le hC _ _).trans (hcom.trans (Nat.le_add_right _ _))
+  · split
+    · simp only [colOpen, length_pairEncode, List.length_ofFn, encColor, length_encColoring]
+      omega
+    · simp
+
+/-- **The honest provers of [PS10, Protocol 127.5] send polynomially bounded messages**, one
+iteration and `n|E|`-fold, on every instance (ruling G3-3 of gate 03): the bound of
+`colProver_length_le` from the commitment's polynomial-time evaluator; the repeated prover
+runs `colProver` on a coin block or sends `[]`. -/
+theorem colProtocol_proverBounded {Com : List Bool → List Bool} {ℓ : PolyExpr}
+    (hC : Commitment Com ℓ) (R : List Bool → List Bool → Prop) :
+    ∃ B : PolyExpr, (colProtocol Com ℓ).ProverBounded R B ∧
+      (colProtocolRep Com ℓ).ProverBounded R B := by
+  obtain ⟨B, hB⟩ := colProver_length_le hC.easy ℓ
+  refine ⟨B, fun x y r hist _ => hB x y r hist, fun x y r hist _ => ?_⟩
+  show ((colProverRep Com ℓ).next x y r hist).length ≤ B.eval x.length
+  simp only [colProverRep]
+  split_ifs <;> first | exact hB _ _ _ _ | exact Nat.zero_le _
 
 /-! ### Proposition 127.6, interactive-proof half -/
 
@@ -815,12 +875,14 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
       (fun N => 1 - 1 / (N : ℝ) + (1 / 2 : ℝ) ^ N) where
   efficientV := colVerifier_efficient hC.easy ℓ
   complete := by
-    intro x hx
+    obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
+    refine ⟨B, fun x hx => ?_⟩
     obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
-    exact ⟨encColoring c, fun z => HardcoreBit.uprob_eq_one_of_forall fun r =>
-      colProtocol_outV_honest hc z r⟩
+    exact ⟨encColoring c, fun r hist => hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
+      fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
   efficientP := colProver_efficient hC.easy ℓ
+  boundedP := (colProtocol_proverBounded hC R3COL).imp fun _ h => h.1
   completeWitness := by
     rintro x y ⟨n, G, c, rfl, rfl, hc⟩ z
     exact HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r
@@ -847,7 +909,8 @@ probability is at most `(1 - 1/|E|)^{n|E|} ≤ e^{-n}` (`one_sub_inv_pow_mul_le_
 `n = Nat.sqrt |x|` (`length_encGraph`, `Nat.sqrt_eq`). Negligibility:
 `negligible_exp_neg_sqrt_div` with `C = 1`, `Negligible.mul_pow negligible_two_pow_neg 2`,
 `negligible_two_pow_neg`, `Negligible.add`. Efficiency: `colProverRep_efficient`,
-`colVerifierRep_efficient`. -/
+`colVerifierRep_efficient`. Bounded prover messages (and the bound in the completeness
+clause): `colProtocol_proverBounded`. -/
 theorem colRep_efficientProverProof {Com : List Bool → List Bool} {ℓ : PolyExpr}
     (hC : Commitment Com ℓ) : EfficientProverProof (colProtocolRep Com ℓ) L3COL R3COL := by
   sorry

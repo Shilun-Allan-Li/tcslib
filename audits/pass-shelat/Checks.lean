@@ -300,6 +300,10 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.col_zk
 #print axioms TCSlib.Cryptography.col_hvzk
 #print axioms TCSlib.Cryptography.col_zeroKnowledgeProof
+-- The four Theorem 124.1 forms below print `sorryAx`. Gate 03e, minor 5(a): the sorried
+-- declarations they reach are exactly `colRep_efficientProverProof` and `col_zk` (the 3-colouring
+-- stubs of pack 03g); the transfer lemmas `LevinReduction.zk`, `.efficientProverProof(Err)`
+-- print clean (gate 03e section below).
 #print axioms TCSlib.Cryptography.zk_proof_of_levinReduction
 #print axioms TCSlib.Cryptography.zk_proof_of_owp_levinReduction
 #print axioms TCSlib.Cryptography.zk_proof_of_mem_NP
@@ -378,3 +382,39 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
 #print axioms TCSlib.Cryptography.Candidates.statClose_sampleBelowL
 -- P9-1 (zk-model): the prefix-reading verifier of the sanity protocol (proved).
 #print axioms TCSlib.Cryptography.npProtocol_readsPrefix
+
+-- ## Gate 03e (ch. 2–4 interaction, proof systems, ZK definitions, commitments, NP layer)
+-- Minor 5(b): the pack's headlines that had no print.
+#print axioms TCSlib.Cryptography.LevinReduction.zk
+#print axioms TCSlib.Cryptography.LevinReduction.efficientProverProof
+#print axioms TCSlib.Cryptography.LevinReduction.efficientProverProofErr
+#print axioms TCSlib.Cryptography.Strategy.pullback_efficient
+#print axioms TCSlib.Cryptography.Commitment.multiHiding
+-- Ruling G3-3: bounded honest prover messages in the proof systems.
+#print axioms TCSlib.Cryptography.Protocol.ProverBounded.mono
+#print axioms TCSlib.Cryptography.Protocol.ProverBounded.exists_complete
+#print axioms TCSlib.Cryptography.Protocol.ProverBounded.pullback
+#print axioms TCSlib.Cryptography.InteractiveProof.exists_accept
+#print axioms TCSlib.Cryptography.InteractiveProofErr.exists_accept
+#print axioms TCSlib.Cryptography.npProtocol_proverBounded
+#print axioms TCSlib.Cryptography.npProtocol_interactiveProof
+#print axioms TCSlib.Cryptography.giProtocol_proverBounded
+#print axioms TCSlib.Cryptography.giProtocolRep_proverBounded
+#print axioms TCSlib.Cryptography.gniProtocol_proverBounded
+#print axioms TCSlib.Cryptography.gni_interactiveProofErr
+#print axioms TCSlib.Cryptography.gi_efficientProverProofErr
+#print axioms TCSlib.Cryptography.colProver_length_le
+#print axioms TCSlib.Cryptography.colProtocol_proverBounded
+-- Ruling G3-4: perfect zero-knowledge with abort implies statistical ZK (error 2^{-|x|}).
+#print axioms TCSlib.Cryptography.AbortRetry.statClose_retry
+#print axioms TCSlib.Cryptography.AbortRetry.exists_retrySimulator
+#print axioms TCSlib.Cryptography.PerfectZKAbort.statZK
+#print axioms TCSlib.Cryptography.PerfectZKAbort.zk
+#print axioms TCSlib.Cryptography.perfectZK_zeroRounds
+-- Minors 3 and 4, note 13: the text's Theorem 126.4, and Theorem 124.1 for every witness
+-- relation with the two protocols tied (the last three print `sorryAx`, reaching exactly
+-- `colRep_efficientProverProof` and `col_zk`, like the four forms above).
+#print axioms TCSlib.Cryptography.exists_commitment_of_owp
+#print axioms TCSlib.Cryptography.exists_commitment_zk_proof_of_owp_levinReduction
+#print axioms TCSlib.Cryptography.zk_proof_of_witnessRelation
+#print axioms TCSlib.Cryptography.zk_proof_of_witnessRelation_of_owp
