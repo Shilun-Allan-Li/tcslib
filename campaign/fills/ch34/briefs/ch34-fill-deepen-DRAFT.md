@@ -24,11 +24,15 @@
     `astep_jeqSnd` (`Machines/ARM`);
   - **the edge language** (#184): `Complexity.Codec.edgeLang`, `mem_edgeLang`, `edgeLang_mem`;
   - **the deepening API** (#196, gate 96):
-    - `Cfg.InWindow.apply_of_lt`, `stepRel_iff_mem`, `walkLe_zero_iff`, `winRun_iff`,
+    - `Cfg.InWindow.apply_of_lt` (with `Cfg.InWindow.mono` and `Cfg.InWindow.apply_iff`, gate 96's
+      harvest), `stepRel_iff_mem`, `walkLe_zero_iff`, `walkLe_succ_iff_head`, `winRun_iff`,
       `rcode_iff_reflTransGen` and `reach_of_reflTransGen`;
     - `rel_iff_orc`, `initO_iff_orc` and `accO_iff_orc`;
     - `setSt_toV` and `outerSt_toV`;
-    - the window module `SavitchARM/Window`: `NoEdge`, `noEdge_of_lt`, `mem_iff_reach_of_noEdge`;
+    - the window module `SavitchARM/Window`: `NoEdge`, its equation `noEdge_iff`, `noEdge_of_lt`,
+      `mem_iff_reach_of_noEdge`; gate 96's round-2 probe
+      `campaign/gates/96-deepen-api/evidence/round2/route/BlockFitDeepen.lean.txt` derives both
+      loop steps from them with `NoEdge` sealed;
   - the generic loops of `Machines/ARMLoops` (`move_run`, `move2_run`, `dmove_run`, `sub_run`,
     `halve_run`, `copy_run`, `shl_run`), `inputLength_loop` (`Logspace/InputAccess`), the run
     algebra of `Machines/ARMProof` (`AReach.refl`, `.trans`, `.step`, `.single`, `.halt`,
@@ -150,7 +154,8 @@ proof's shape for both blocks:
 **Never re-prove the search, and never unfold `A`, `outerSt`, `InitO`, `AccO` or `Rel`.**
 
 **The entry registers.** Before each block, clear all eighteen block registers, then write `rs`,
-`rw`, `rK`, `rU`, `rV`, `rM` in that order: `s`, `w`, `2 ^ w`, `0`, `0`, `0`. The register file
+`rw`, `rK`, `rU`, `rV`, `rM` in that order, onto `fun _ => 0`: `s`, `w`, `2 ^ w`, `0`, `0`, `0`
+(the match is syntactic, gate 96's note 8). The register file
 is then `setSt_toV`'s and `outerSt_toV`'s `Function.update` chain through `ρ`, pointwise, by
 `Function.update_apply` and `ρ`'s injectivity, with no register-distinctness facts needed. Keep
 `n`, `ℓ`, `s` and `w` in `D`'s own registers, off `ρ`'s range: a block may change every register
@@ -174,8 +179,10 @@ unfolding `astep` or `PreS`.
 - `noEdge_of_lt`: for `sp |x| < s`, `NoEdge N x s w`;
 - `mem_iff_reach_of_noEdge`: under `NoEdge`, the accept block's question is `x ∈ L`.
 
-The edge block's answer is `false` exactly when `NoEdge` holds (its proposition is `NoEdge`'s
-body). So by induction on `sp |x| + 1 - s`, `D` answers `decide (x ∈ L)` from the body at any
+The edge block's answer is `false` exactly when `NoEdge` holds: its proposition is `NoEdge`'s
+body, read through `noEdge_iff` (never by unfolding `NoEdge`). `BlockFitDeepen.lean.txt`'s
+`fit_edge_bit_eq_false_iff`, `deepen_step_exit_false` and `deepen_step_exit_of_lt` are the
+route. So by induction on `sp |x| + 1 - s`, `D` answers `decide (x ∈ L)` from the body at any
 `s ≥ 1`, and the loop runs at most `sp |x| + 1` times.
 
 **The register bound.** Every radius reached has `s ≤ sp |x| + 1`, so
@@ -231,7 +238,8 @@ contract's form.
       passed to `simp`, `rw` or `unfold`;
     - your own `D` may be unfolded, but prefer its table equations;
     - **self-check by both methods:**
-      - a seal test with controls, extending `BlockFit.lean.txt`'s 19-definition seal by
+      - a seal test with controls, extending `BlockFitDeepen.lean.txt`'s seal (22 definitions in
+        `BlockFit`, gate 96's erratum, and `NoEdge`) by
         `astep`, `arun`, `GuardLe`'s components and the loops' definitions;
       - an inspection table of every `rw`/`simp`/`unfold`/`show` argument.
 
