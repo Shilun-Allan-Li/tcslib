@@ -694,6 +694,39 @@ theorem CodeTM.one_le_spaceUsed (M : CodeTM) (x : List Bool) (t : ℕ) :
   exact (Finset.card_pos.mpr hne).trans_le
     (M.toFinTM.tm.spaceUsedByTape_le_spaceUsed _ t i₀)
 
+/-- **Renaming a machine's states preserves its computations.** Renaming the states of a bundled
+machine along an equivalence `e` gives a machine that halts on the same inputs at the same times,
+with the same outputs.
+
+**Proof sketch.** The renamed machine's initialized runs are the original runs with renamed
+states (`Turing.MultiTapeTM.relabelState_runFrom_init`), and renaming changes neither halting nor
+the output. -/
+theorem FinTM.computesInTime_relabelState {Symbol : Type} (M : FinTM Symbol) {Q : Type}
+    [Fintype Q] [DecidableEq Q] (e : M.State ≃ Q) (x output : List Symbol) (t : ℕ) :
+    (FinTM.mk (k := M.k) (State := Q) (M.tm.relabelState e)).ComputesInTime x output t ↔
+      M.ComputesInTime x output t := by
+  rw [FinTM.computesInTime_iff, FinTM.computesInTime_iff]
+  dsimp only
+  rw [MultiTapeTM.relabelState_runFrom_init, Cfg.mapState_state, Cfg.mapState_output,
+    Option.map_eq_none_iff]
+
+/-- **A machine's states as an initial segment of `ℕ`.** The states of a bundled machine are in
+bijection with `Fin (n + 1)` for `n = |State| - 1`: the state type is finite, and inhabited by the
+start state. Noncomputable, through `Fintype.equivFinOfCardEq`. -/
+noncomputable def FinTM.stateEquivFin {Symbol : Type} (M : FinTM Symbol) :
+    M.State ≃ Fin (Fintype.card M.State - 1 + 1) :=
+  Fintype.equivFinOfCardEq (by
+    have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
+    omega)
+
+/-- `Turing.FinTM.stateEquivFin` is the bijection that `Fintype.equivFinOfCardEq` gives for the
+state count, which the start state makes positive (its defining equation). -/
+theorem FinTM.stateEquivFin_eq {Symbol : Type} (M : FinTM Symbol) :
+    M.stateEquivFin = Fintype.equivFinOfCardEq (by
+      have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
+      omega) :=
+  rfl
+
 /-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
 to a coded machine `M'` that halts with the same outputs at the same times
 (`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space
@@ -712,41 +745,21 @@ theorem exists_codeTM_spaceUsed (M : FinTM Bool) (hk : M.k = 1) :
       ∀ (x : List Bool) (t : ℕ),
         M'.toFinTM.tm.spaceUsed (M'.toFinTM.tm.initCfg x) t =
           M.tm.spaceUsed (M.tm.initCfg x) t := by
-  classical
   rcases M with @⟨k, Q, hQ, dQ, tm⟩
   dsimp only at hk
   subst k
-  letI : Fintype Q := hQ
-  letI : DecidableEq Q := dQ
-  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
-    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
-    omega
-  let e := Fintype.equivFinOfCardEq hcard
-  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, ?_, ?_⟩
-  · intro x output t
-    simp only [CodeTM.toFinTM, FinTM.ComputesInTime, MultiTapeTM.ComputesInTimeAndSpace,
-      MultiTapeTM.relabelState_runFrom_init, Cfg.mapState, Option.map_eq_none_iff]
-    constructor
-    · rintro ⟨s, hhalt, hout, -⟩
-      exact ⟨_, hhalt, hout, rfl⟩
-    · rintro ⟨s, hhalt, hout, -⟩
-      exact ⟨_, hhalt, hout, rfl⟩
-  · intro x t
-    exact MultiTapeTM.relabelState_spaceUsed tm e x t
+  let M₀ : FinTM Bool := ⟨1, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin,
+    fun x t => MultiTapeTM.relabelState_spaceUsed tm M₀.stateEquivFin x t⟩
 
 /-- **The code normal form of a one-work-tape machine**. For a binary machine `M` with one work
 tape, the coded machine with `|Q| - 1` as its state index bound, whose transition function is `M`'s
-transported along the canonical bijection `Q ≃ Fin |Q|` (`Fintype.equivFinOfCardEq`; `Q` is
+transported along the canonical bijection `Q ≃ Fin |Q|` (`Turing.FinTM.stateEquivFin`; `Q` is
 inhabited by the start state). [AB09, §1.4] Noncomputable, through `Fintype.equivFinOfCardEq`. -/
 noncomputable def FinTM.toCodeTM : (M : FinTM Bool) → M.k = 1 → CodeTM
-  | @FinTM.mk _ _ Q hQ dQ tm, rfl =>
-    letI : Fintype Q := hQ
-    letI : DecidableEq Q := dQ
-    have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
-      have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
-      omega
-    let e := Fintype.equivFinOfCardEq hcard
-    ⟨Fintype.card Q - 1, tm.relabelState e⟩
+  | @FinTM.mk _ _ Q _hQ _dQ tm, rfl =>
+    ⟨Fintype.card Q - 1, tm.relabelState (FinTM.stateEquivFin ⟨1, Q, tm⟩)⟩
 
 /-- **The code normal form is equivalent**. For a one-work-tape binary machine `M`, its code normal
 form halts on `x` with output `w` within `t` steps if and only if `M` does. [AB09, §1.4]
@@ -759,14 +772,7 @@ theorem FinTM.toCodeTM_computesInTime_iff (M : FinTM Bool) (hk : M.k = 1)
   rcases M with @⟨k, Q, hQ, dQ, tm⟩
   dsimp only at hk
   subst k
-  simp only [FinTM.toCodeTM, CodeTM.toFinTM, FinTM.ComputesInTime,
-    MultiTapeTM.ComputesInTimeAndSpace, MultiTapeTM.relabelState_runFrom_init, Cfg.mapState,
-    Option.map_eq_none_iff]
-  constructor
-  · rintro ⟨s, hhalt, hout, -⟩
-    exact ⟨_, hhalt, hout, rfl⟩
-  · rintro ⟨s, hhalt, hout, -⟩
-    exact ⟨_, hhalt, hout, rfl⟩
+  exact FinTM.computesInTime_relabelState ⟨1, Q, tm⟩ _ x output t
 
 /-- Every one-work-tape binary machine is equivalent, input by input and step for
 step, to a coded machine.

@@ -59,6 +59,7 @@ two work tapes.
 * `Turing.exists_effectiveMachineCode2`,
   `Turing.exists_uniformMachineCode2` — proved existence statements (the latter
   modulo the uniform simulator).
+* `Turing.exists_code2TM` — every two-work-tape binary machine has a coded equivalent.
 
 ## References
 
@@ -334,5 +335,21 @@ theorem exists_uniformMachineCode2 : Nonempty UniformMachineCode2 := by
     simDegree := d
     simulator_accepts := fun α x t h => (hS α x t).1 h
     simulator_rejects := fun α x t h => (hS α x t).2 h }⟩
+
+/-- Every two-work-tape binary machine is equivalent, input by input and step for step, to a
+coded two-tape machine (the two-tape counterpart of `Turing.exists_codeTM`). [AB09, §1.4]
+
+**Proof sketch.** The coded machine is the original one with its states renamed along
+`Turing.FinTM.stateEquivFin` (`State ≃ Fin (n + 1)`); by
+`Turing.FinTM.computesInTime_relabelState` it computes the same outputs in the same times. -/
+theorem exists_code2TM (M : FinTM Bool) (hk : M.k = 2) :
+    ∃ M' : Code2TM, ∀ (x output : List Bool) (t : ℕ),
+      M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  rcases M with @⟨k, Q, hQ, dQ, tm⟩
+  dsimp only at hk
+  subst k
+  let M₀ : FinTM Bool := ⟨2, Q, tm⟩
+  exact ⟨⟨Fintype.card Q - 1, tm.relabelState M₀.stateEquivFin⟩,
+    M₀.computesInTime_relabelState M₀.stateEquivFin⟩
 
 end Turing
