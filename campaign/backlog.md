@@ -2009,6 +2009,17 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     - **dispatch copy** `exchange/outbox/fills/c1-fill-nf-cont1.md`, SHA-256
       `7853cd44b1f5c6aac7e260a7a6fcca9e1471faae96f1dbd06e4dca273da44c72`, 553 lines. **Dispatched
       (user, 2026-11-04).**
+    **Delivered (complete, 2026-11-04; Claude):** the target is proved on the standard axioms
+    (claimed). `fill-c1-nf-cont1.zip`, SHA-256
+    `9dd14763b67d41fb0e86220f4e2a51028d65a7ced51d5d787240bcf2ec498184`, archived in
+    `exchange/archive/deliveries/`; branch `refs/deliv/c1-nf-cont1` at `825ee3f5`.
+    - **Commits:** seven on the base `348781a3` (checkpoints 3–8, then a consolidation); 65 new
+      privates; owned file only, +2574 −4.
+    - **Intake clean:** 90/90 sums; the bundle on the base; patch-ids equal the commits'; the zip's
+      source equals the head blob `d767cc72`; the only deleted lines are the `sorry` and two status
+      phrases.
+    - **Missing:** the per-checkpoint zips (only the final zip arrived).
+    - **Under review** (a sub-agent, `$S/review/nf-cont1-fill/`).
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -4156,6 +4167,19 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   dispatch copy `exchange/outbox/fills/eq-fill-diagonalizer.md` (SHA-256
   `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2). (Gate 89, round 5: `NTimeDiagonalizer` does not reach `Machines/Bin`, so its other BL-1 members — `qy_bits_len_mono`,
   `qy_lt_two_pow_bits`, `qy_ones_ge`, `qy_two_pow_bits_le` — wait for the dedup window.)
+  **Delivered (complete, 2026-11-04; Claude):** `exists_diagonalizer` is proved on the standard
+  axioms (claimed). `fill-eq-diagonalizer.zip`, SHA-256
+  `9f0aeec1b6f02349b571bdb25f2aa621720fec97b90ce48ec1ce389b769dd2c4`, archived in
+  `exchange/archive/deliveries/`; branch `refs/deliv/eq-diagonalizer` at `7b1b9353`.
+  - **Commits:** eleven on the base `c8b07114` (checkpoints 1–8 and three finishing commits);
+    106 new privates (claimed); owned file only, +3078 −5.
+  - **Intake clean:** 80/80 sums; the bundle on the base; patch-ids equal the commits'; the zip's
+    source equals the head blob `4b72d525`; the deleted lines are the `sorry`, one status line and
+    three label-bearing docstring lines.
+  - **Under review** (a sub-agent, `$S/review/ed-fill/`).
+
+  With NF, this closes `NTimeHierarchy`'s two inputs; landing both should make that theorem
+  admission-free, to be checked at landing.
 * **The general `savitch`: the deepening design** (`campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md`,
   2026-11-04; probes `probes/`): Hydroxyi's search needs no restating. A generic embedding
   theorem (`AHalt.embed`, proved in the probe) transports any halting run of `A` into a larger
