@@ -31,7 +31,7 @@ blockers, 1 major, 4 minors, 10 notes.**
 
 **Round 2 staged (2026-11-04)** at #184's head `b360808c`. Pack `pack-r2.md`; bundle SHA-256
 `dc714b814eb7addd38ecc6c0a4da79a05c587107b70d23907b5c2670f02c28d7` (237 sections), the records at `2a202794` (rebuilt
-after the evidence's freeze copies were renamed `.lean.txt`). Evidence `evidence/round2/`:
+after the evidence's freeze copies were renamed `.lean.txt`). **Dispatched (user, 2026-11-04).** Evidence `evidence/round2/`:
 - the elaboration chain: all 16 `Codec` modules at 0 diagnostics, in a fresh clone of #182's
   compiled head;
 - the three sealed copies at 0 diagnostics; controls 73/74 unsealed and 0/74 sealed;

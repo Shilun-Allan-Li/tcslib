@@ -82,3 +82,4 @@ blockers, 1 major, 3 minors, 5 notes.**
 **Round 5 staged (2026-11-04):** `pack-r5.md`, at #181's head `98912ab2`. Bundle SHA-256
 `cbe627e2bd21840c9e95569cbec884853a948e51dde6929b2104aae5bdb46161` (345 sections), the records at `72fed536`.
 `replay-lsm5` is written (209 modules from `oleans-leqc3`, 25 blobs pinned; precheck passed); not yet run.
+**Dispatched (user, 2026-11-04).** `replay-lsm5` deferred by the user until after a relocation.
