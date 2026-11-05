@@ -1,8 +1,8 @@
 Gate 89 round 5's evidence (maintainer, 2026-11-04). PR #181 on lean/logspace-move, head
 98912ab293dc329b3f7274ee27977fa19789ce78. Round 5's Lean commits (patches/): d789d6db (the BL-1
 re-points, the move of two_pow_bits_le to Machines/Bin, wP_eq, the removal of TQBFHard.wP_le) and
-98912ab2 (one docstring). The merges b0f95123 and 98912ab2's parent bring in campaign records and change
-no Lean.
+98912ab2 (one docstring). The merge b0f95123 between them brings in campaign records and changes no
+Lean.
 
 elab/        elab_chain.sh: the round-5 files and the moved lemma's unchanged users, in dependency order,
              compiled with -o into a copy-on-write clone of oleans-lsm4 (tools/leanelab-o.sh); PrimeFind and
