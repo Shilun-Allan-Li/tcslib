@@ -159,7 +159,10 @@ Three choices avoided clashes:
   are all on `[propext, Classical.choice, Quot.sound]` or fewer.
 - **The route on this tree** (`evidence/route/`): the two probes above.
 - **Replay:** `replay-ldwa` (`evidence/merged-tree/`), the downstream closure of the PR's ten
-  files, 73 modules, chained from `oleans-lcf3`. @REPLAY-RESULT@
+  files, 73 modules, chained from `oleans-lcf3`. It passed: 73 modules, 0 failed. The static
+  check found 0 mismatches, and the only `sorry`s are the campaign's existing 30 (`RecordTable`
+  4, `TQBF` 21, `Hierarchy` 4, `Savitch` 1, the general `savitch` that the deepening fill
+  proves).
 
 ## Findings format
 

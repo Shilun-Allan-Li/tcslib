@@ -7,3 +7,5 @@
   - the branch was pushed and #196 opened, head `89f4ebbc6b0d007c981f907e3353d72fa84fa787`;
   - the pack is `pack.md`; its replay result (`@REPLAY-RESULT@`) is filled when `replay-ldwa`
     passes. The gate is staged after that.
+- 2026-11-05: `replay-ldwa` passed (73 modules, 0 failed; static 0 mismatches, the existing 30
+  `sorry`s). The pack's replay line is filled; the gate is staged.

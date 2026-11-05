@@ -9,3 +9,6 @@ mismatches (`evidence/merged-tree/`). `NTimeHierarchy`'s theorems are on the sta
 (`evidence/axioms/NTHAx.out`).
 
 #191 is clear to merge once gate 95 closes with zero blockers and zero majors.
+
+**Dispatched (2026-11-05, the user)**, bundle SHA-256 `15b5843f…`, findings file
+`nf-landing-fill-findings.md`.
