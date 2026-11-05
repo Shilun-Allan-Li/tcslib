@@ -33,8 +33,8 @@ length bound and the values of `acc` and `out` along it:
 * `Complexity.StateLoop.BlockMapLoop` — state `⟨rest, c⟩`, one block of `b(|fst z|)` bits per
   round, the accumulator extended by `g` of the block.
 
-The assembly through `Complexity.polyTimeComputable_iterateFind` (the private state-loop form
-`polyTimeComputable_stateFind`) and the four public theorems live in
+The assembly through `Complexity.polyTimeComputable_iterateFind` (the public state-loop form
+`Complexity.polyTimeComputable_stateFind`) and the four public theorems live in
 `TCSlib.Complexity.Randomized.Repetition`.
 
 ## Main definitions

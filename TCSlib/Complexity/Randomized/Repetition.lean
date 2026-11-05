@@ -37,7 +37,7 @@ a single named one. **Status (run 3b):** `polyTimeComputable_iterateFind` is clo
 machine is built in `TCSlib.Complexity.Randomized.Build.IterateFindHost` (clean modules and
 the finite host) and `TCSlib.Complexity.Randomized.Build.IterateFind` (assembly through
 `Turing.FinTM.exists_loopFindTM`), and its axiom print is `[propext, Classical.choice, Quot.sound]`.
-The six derived lemmas are closed too, as instances of one private **state-loop** form
+The six derived lemmas are closed too, as instances of one public **state-loop** form
 `polyTimeComputable_stateFind` of the repetition lemma (a state word `⟨x, s⟩` retaining the
 input, a step on the state, a test firing first at round `N x ≤ R|x|`, an output read off the
 final state), whose loop data, orbit closed forms and bounds live in
@@ -111,6 +111,8 @@ Estimated size 1 200–1 800 lines; private precedent for the module gluing: `sa
 * `Complexity.polyTimeComputable_iterate`, `Complexity.polyTimeComputable_iterateEmit` —
   `R(|x|)`-fold iteration and concatenated emissions (proved; state loops with a unary round
   counter).
+* `Complexity.polyTimeComputable_stateFind` — the state-loop form of the repetition lemma, of
+  which the six derived lemmas are instances (proved, from `polyTimeComputable_iterateFind`).
 * `Complexity.polyTimeComputable_majority`, `polyTimeComputable_pairXor`,
   `polyTimeComputable_pairEq`, `polyTimeComputable_blockMap` — string tests and the block
   map used by the reductions (proved; state loops consuming the input).
@@ -261,7 +263,7 @@ the genuine orbit the guard never fires (`StateLoop.gstep_iterate_eq`, from the 
 first `N x` states), so the loop's `find?` over `List.range (R|⟨x, start x⟩| + 1)` — a range
 containing `N x`, as `R` is monotone (`PolyExpr.eval_mono`) — returns `some (N x)`
 (`StateLoop.find?_range_eq_some`), and the payload is `out ⟨x, orbit x (N x)⟩`. -/
-private theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
+theorem polyTimeComputable_stateFind {start step : List Bool → List Bool}
     {acc : List Bool → Bool} {out : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
     (hacc : PolyTimeComputable fun w => [acc w]) (hout : PolyTimeComputable out)
