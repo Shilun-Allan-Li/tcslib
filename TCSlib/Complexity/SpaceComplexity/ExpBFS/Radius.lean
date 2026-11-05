@@ -93,6 +93,11 @@ lemma inWin_stepWith {s : ℕ} {C : Cfg N.k Bool N.State x} (h : Cfg.InWindow s 
 def WinRun (N : FinNDTM Bool) (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
   ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x))
 
+/-- `Complexity.ExpBFS.WinRun`'s defining equation. -/
+lemma winRun_iff {s : ℕ} {w : List Bool} :
+    WinRun N x s w ↔ ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) :=
+  Iff.rfl
+
 /-- The initial configuration is in every window. -/
 lemma inWin_init (s : ℕ) : Cfg.InWindow s (N.tm.initCfg x) := Cfg.inWindow_init _ x s
 
@@ -121,6 +126,12 @@ lemma WinRun.last {s : ℕ} {w : List Bool} (h : WinRun N x s w) :
 pairs at radius `s`. -/
 def RCode (N : FinNDTM Bool) (x : List Bool) (s u : ℕ) : Prop :=
   Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u
+
+/-- `Complexity.ExpBFS.RCode`'s defining equation: a reachable code is a step-pair path's end
+from the initial code. -/
+lemma rcode_iff_reflTransGen {s u : ℕ} :
+    RCode N x s u ↔ Relation.ReflTransGen (StepRel N x s) (cfgCode s (N.tm.initCfg x)) u :=
+  Iff.rfl
 
 /-- Equal codes of window configurations are equal vertices. -/
 lemma coreSum_eq_of_code_eq {s : ℕ} {C D : Cfg N.k Bool N.State x} (hC : Cfg.InWindow s C)
