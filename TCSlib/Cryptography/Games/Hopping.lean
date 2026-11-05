@@ -82,10 +82,13 @@ then the expectation of `f` over `c` is at most that of `g`. -/
 theorem expect_mono_of_allOutputs {c : ProbComp α} {P : α → Prop} (hc : c.AllOutputs P)
     {f g : α → ℝ} (h : ∀ a, P a → f a ≤ g a) : expect c f ≤ expect c g := by
   induction c with
-  | pure a => exact h a hc
+  | pure a =>
+    rw [expect_pure, expect_pure]
+    exact h a (OracleComp.allOutputs_pure.1 hc)
   | query m x k ih =>
     simp only [expect_query]
-    exact mul_le_mul_of_nonneg_left (sum_le_sum fun j _ => ih j (hc j)) (by positivity)
+    exact mul_le_mul_of_nonneg_left
+      (sum_le_sum fun j _ => ih j (OracleComp.allOutputs_query.1 hc j)) (by positivity)
 
 /-- An event holding at every possible output has probability one. -/
 theorem prob_eq_one_of_allOutputs {c : ProbComp α} {p : α → Prop} (hc : c.AllOutputs p) :
@@ -165,7 +168,9 @@ theorem simulate_allOutputs_bad {spec : OracleSpec ι} {impl : QueryImpl spec σ
     (c : OracleComp spec α) {s : σ} (hs : bad s) :
     (simulate impl c s).AllOutputs fun r => bad r.2 := by
   induction c generalizing s with
-  | pure a => exact hs
+  | pure a =>
+    rw [simulate_pure, OracleComp.allOutputs_pure]
+    exact hs
   | query i x k ih =>
     rw [simulate_query]
     exact OracleComp.AllOutputs.bind (hstick i x s hs) fun ys hys => ih ys.1 hys
@@ -210,7 +215,7 @@ theorem prob_eq_until_bad {spec : OracleSpec ι} {impl₀ impl₁ : QueryImpl sp
       ProbComp.prob (simulate impl₀ c s) (fun r => bad r.2) =
         ProbComp.prob (simulate impl₁ c s) (fun r => bad r.2) := by
   induction c generalizing s with
-  | pure a => exact ⟨rfl, rfl⟩
+  | pure a => simp only [simulate_pure, and_self]
   | query i x k ih =>
     simp only [simulate_query, ProbComp.prob_bind]
     constructor

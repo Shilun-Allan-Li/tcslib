@@ -144,7 +144,7 @@ def multiMsgAdv (m : Fin (q + 1) → Fin n → Bool)
   fun c => chainTree (q + 1) c.1 fun ans => D (fun j => (c.1 j, m j + ans j)) c.2
 
 omit [Fintype ρ] in
-/-- `multiMsgAdv m D` makes exactly `q + 1` queries. -/
+/-- `multiMsgAdv m D` makes at most `q + 1` queries. -/
 theorem multiMsgAdv_boundedBy (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     (multiMsgAdv m D).BoundedBy (q + 1) :=
@@ -464,8 +464,8 @@ theorem runAt_prfDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
   simp [prfDecFun, prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, hr, hc]
 
-/-- On a ciphertext `w` that is not a pair of `n`-bit strings, the decryption machine outputs
-`⊥`: a string that decodes to no `n`-bit message. -/
+/-- On a ciphertext `w` whose two projections `pairFstD w` and `pairSndD w` are not both `n` bits
+long, the decryption machine outputs `⊥`: a string that decodes to no `n`-bit message. -/
 theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : PolyTimeComputable E)
     (coins : PolyExpr) (n : ℕ) (k w : List Bool)
     (hw : ¬ ((pairFstD w).length = n ∧ (pairSndD w).length = n))

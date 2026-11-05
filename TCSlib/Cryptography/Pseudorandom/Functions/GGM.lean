@@ -191,7 +191,8 @@ the `j`-th distinct prefix (0-indexed, in order of first appearance) by
 `G_{x_n}(⋯ G_{x_{i+2}}(z_{x_{i+1}}) ⋯)`, earlier prefixes as in `H_{i+1}` and later
 prefixes as in `H_i`, and outputs what `A` outputs.
 
-*Cost.* One run of `A`; per query at most `n` evaluations of `G`; `q` fresh seeds and
+*Cost*, for `A` bounded by `q` queries (`OracleAdversary.BoundedBy`; the definition itself
+runs any `A`). One run of `A`; per query at most `n` evaluations of `G`; `q` fresh seeds and
 `q` fresh pairs of seeds as coins together with `A`'s coins, which is lazy sampling of
 `R_i` and `R_{i+1}` [Gar26, footnote 9]: no exponential table is sampled; maintaining the
 list of at most `q` distinct prefixes. The indices `i, j` are non-uniform advice

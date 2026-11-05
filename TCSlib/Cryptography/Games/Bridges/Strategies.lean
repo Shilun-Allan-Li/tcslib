@@ -74,6 +74,12 @@ def turnParty (next : List Msg → Msg) : ℕ → List Msg → Party Msg Msg Msg
         | 0 => .pure (next M)
         | k' + 1 => turnParty next k' (M ++ [y])
 
+/-- With no moves left, the embedded party returns `next M`: `turnParty next 0 M = pure (next M)`.
+-/
+theorem turnParty_zero (next : List Msg → Msg) (M : List Msg) :
+    turnParty next 0 M = .pure (next M) :=
+  rfl
+
 /-- The embedded party **while waiting**, with `k` moves left (the other party's next one
 included) and received history `M`. On the other party's message `y` it takes its turn with
 `k − 1` moves left; on `none` (the other party has returned) it returns `next M`. -/
@@ -82,6 +88,22 @@ def waitParty (next : List Msg → Msg) (k : ℕ) (M : List Msg) : Option Msg �
   | some y => match k with
     | 0 => .pure (next M)
     | k' + 1 => turnParty next k' (M ++ [y])
+
+/-- Waiting, on `none` (the other party has returned), the embedded party returns `next M`. -/
+theorem waitParty_none (next : List Msg → Msg) (k : ℕ) (M : List Msg) :
+    waitParty next k M none = .pure (next M) :=
+  rfl
+
+/-- Waiting with no moves left, a reply off schedule is ignored and the party returns `next M`. -/
+theorem waitParty_some_zero (next : List Msg → Msg) (M : List Msg) (y : Msg) :
+    waitParty next 0 M (some y) = .pure (next M) :=
+  rfl
+
+/-- Waiting with `k + 1` moves left, on the reply `y` the party appends it and takes its turn with
+`k` moves left: `waitParty next (k + 1) M (some y) = turnParty next k (M ++ [y])`. -/
+theorem waitParty_some_succ (next : List Msg → Msg) (k : ℕ) (M : List Msg) (y : Msg) :
+    waitParty next (k + 1) M (some y) = turnParty next k (M ++ [y]) :=
+  rfl
 
 /-- On its turn with `k + 1` moves left, the embedded party sends `next M` and then waits with
 `k` moves left. -/
@@ -95,6 +117,16 @@ moves from `(MF, MG)`, with `F` to move. `F` sends `nF MF`, which `G` receives; 
 def alt (nF nG : List Msg → Msg) : ℕ → List Msg → List Msg → List Msg × List Msg
   | 0, MF, MG => (MF, MG)
   | k + 1, MF, MG => (alt nG nF k (MG ++ [nF MF]) MF).swap
+
+/-- With no moves left, the histories are unchanged: `alt nF nG 0 MF MG = (MF, MG)`. -/
+theorem alt_zero (nF nG : List Msg → Msg) (MF MG : List Msg) : alt nF nG 0 MF MG = (MF, MG) :=
+  rfl
+
+/-- `alt`'s step at the front: `F` sends `nF MF` to `G`, then the roles are exchanged:
+`alt nF nG (k + 1) MF MG = (alt nG nF k (MG ++ [nF MF]) MF).swap`. -/
+theorem alt_succ (nF nG : List Msg → Msg) (k : ℕ) (MF MG : List Msg) :
+    alt nF nG (k + 1) MF MG = (alt nG nF k (MG ++ [nF MF]) MF).swap :=
+  rfl
 
 /-- `alt`'s step at the back: after `k + 1` moves, the last move is `F`'s when `k` is even (its
 message, computed on its history, is appended to `G`'s), and `G`'s when `k` is odd. This is D8's
@@ -135,14 +167,16 @@ theorem exec_turnParty : ∀ (k : ℕ) (nF nG : List Msg → Msg) (MF MG : List 
       .pure (.done (nF (alt nF nG k MF MG).1) (nG (alt nF nG k MF MG).2)) := by
   intro k
   induction k with
-  | zero => intro nF nG MF MG; rfl
+  | zero =>
+    intro nF nG MF MG
+    simp only [turnParty_zero, Party.exec_zero, Party.step_pure, OracleComp.pure_bind,
+      Sum.elim_inl, Party.endWith_eq, waitParty_none, Party.close_pure, Option.elim_some,
+      alt_zero]
   | succ k ih =>
     intro nF nG MF MG
-    rw [turnParty_succ, Party.exec_succ]
-    show (Party.exec k (turnParty nG k (MG ++ [nF MF])) (waitParty nF k MF)).bind
-      (fun r => .pure r.swap) = _
-    rw [ih nG nF (MG ++ [nF MF]) MF]
-    rfl
+    simp only [turnParty_succ, Party.exec_succ, Party.step_send, OracleComp.pure_bind,
+      Sum.elim_inr, waitParty_some_succ, ih, ExecOutcome.swap_done, alt_succ, Prod.fst_swap,
+      Prod.snd_swap]
 
 /-- **D8's `exec` is `alt`:** after `k` moves from the empty histories, the messages received by
 `P` and by `V` are `alt`'s, with the first mover chosen by `vFirst`.
@@ -156,11 +190,13 @@ theorem exec_eq_alt (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
       if vFirst then (alt (V.next x zV rV) (P.next x zP rP) k [] []).swap
       else alt (P.next x zP rP) (V.next x zV rV) k [] [] := by
   induction k with
-  | zero => cases vFirst <;> rfl
+  | zero =>
+    cases vFirst <;>
+      simp only [exec_zero, alt_zero, Bool.false_eq_true, ↓reduceIte, Prod.swap_prod_mk]
   | succ k ih =>
     rw [exec_succ, ih]
     cases vFirst <;> simp only [Bool.false_eq_true, ↓reduceIte] <;> rw [alt_succ_last] <;>
-      rcases Nat.mod_two_eq_zero_or_one k with h | h <;> simp [moverIsV, h]
+      rcases Nat.mod_two_eq_zero_or_one k with h | h <;> simp [moverIsV_true, moverIsV_false, h]
 
 /-- **A protocol's embedded execution returns D8's outputs:** for fixed tapes, running the first
 mover's embedding on its turn against the other's waiting embedding, with fuel the number of
@@ -180,12 +216,11 @@ theorem exec_strategies (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π
         else .done (π.outP x y z r) (π.outV π.P x y z r)) := by
   have hT := exec_eq_alt π.P π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
     (π.rounds.eval x.length)
-  simp only [Protocol.outP, Protocol.outV, Protocol.transcriptWith]
+  simp only [Protocol.outP_eq, Protocol.outV_eq, Protocol.transcriptWith_eq]
   cases hv : π.verifierFirst
   · simp only [hv, Bool.false_eq_true, ↓reduceIte] at hT ⊢
     rw [exec_turnParty, hT]
   · simp only [hv, ↓reduceIte] at hT ⊢
-    rw [exec_turnParty, hT]
-    rfl
+    rw [exec_turnParty, hT, Prod.fst_swap, Prod.snd_swap]
 
 end TCSlib.Cryptography.Games.Bridge

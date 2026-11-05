@@ -100,7 +100,8 @@ Theorem 3.3, the outer adversary `B`]. On a challenge `z ∈ V` and coins
 answers the `k`-th distinct query by `W₁ k` if `k < j`, by `z` if `k = j`, and by
 `G (W₀ k)` if `k > j`, and outputs what `A` outputs.
 
-*Cost.* One run of `A`; at most `q` evaluations of `G`; `q` seeds and `q` values of
+*Cost*, for `A` bounded by `q` queries (`OracleAdversary.BoundedBy`; the definition itself
+runs any `A`). One run of `A`; at most `q` evaluations of `G`; `q` seeds and `q` values of
 fresh randomness (lazy sampling, [Gar26, footnote 9]: no exponential table is sampled);
 bookkeeping of the list of at most `q` distinct queries (membership and position
 lookups). -/

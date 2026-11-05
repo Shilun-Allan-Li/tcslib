@@ -266,6 +266,11 @@ def View.encode (v : View) : List Bool :=
 function on the complete history. -/
 def Strategy.out (S : Strategy) (v : View) : List Bool := S.next v.x v.z v.r v.received
 
+/-- The output on a view is the next-message function on the view's complete history:
+`S.out v = S.next v.x v.z v.r v.received`. -/
+theorem Strategy.out_eq (S : Strategy) (v : View) : S.out v = S.next v.x v.z v.r v.received :=
+  rfl
+
 /-! ### Protocols -/
 
 /-- A protocol [PS10, §4.4] (Def-114.b): a prover strategy, a verifier strategy, the number of
@@ -327,10 +332,25 @@ def transcriptWith (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.E
     List (List Bool) × List (List Bool) :=
   exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
 
+/-- The transcript against `P'` is `exec` with all `rounds.eval |x|` moves, on the encoded tapes:
+`π.transcriptWith P' x y z r =
+exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)`. -/
+theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool)
+    (r : π.ExecCoins P' x) :
+    π.transcriptWith P' x y z r =
+      exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length) :=
+  rfl
+
 /-- The transcript of the honest execution `P(x, y) ↔ V(x, z)` (Def-115.c). -/
 def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
     List (List Bool) × List (List Bool) :=
   π.transcriptWith π.P x y z r
+
+/-- The honest transcript is the transcript against the honest prover:
+`π.transcript x y z r = π.transcriptWith π.P x y z r`. -/
+theorem transcript_eq_transcriptWith (π : Protocol) (x y z : List Bool)
+    (r : π.ExecCoins π.P x) : π.transcript x y z r = π.transcriptWith π.P x y z r :=
+  rfl
 
 /-- The verifier's output in `P'_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `out_V`] (Def-115.d):
 `V.next` on the complete history.
@@ -340,19 +360,45 @@ last message it sent (`outV_eq_getLast_of_moverIsV`); see `Protocol`. -/
 def outV (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : List Bool :=
   π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
 
+/-- The verifier's output against `P'` is `V.next` on the messages it received:
+`π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2`. -/
+theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
+    π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2 :=
+  rfl
+
 /-- The honest prover's output in `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` (Def-115.d). -/
 def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bool :=
   π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1
+
+/-- The honest prover's output is `P.next` on the messages it received:
+`π.outP x y z r = π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1`. -/
+theorem outP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.outP x y z r = π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1 :=
+  rfl
 
 /-- The honest verifier's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_V`]
 (Def-115.b). -/
 def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
   ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
 
+/-- The honest verifier's view consists of `x`, its auxiliary input `z`, its tape and the
+messages it received: `π.viewV x y z r = ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩`.
+-/
+theorem viewV_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.viewV x y z r = ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩ :=
+  rfl
+
 /-- The honest prover's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_P`]
 (Def-115.b). -/
 def viewP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
   ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩
+
+/-- The honest prover's view consists of `x`, its auxiliary input `y`, its tape and the
+messages it received: `π.viewP x y z r = ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩`.
+-/
+theorem viewP_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.viewP x y z r = ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩ :=
+  rfl
 
 /-- The execution `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` as the pair of views (the joint view)
 [PS10, §4.4] (Def-115.a). -/

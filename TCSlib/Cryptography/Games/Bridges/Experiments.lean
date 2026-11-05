@@ -108,6 +108,13 @@ noncomputable def acceptGame [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty �
     (D : γ → ρ → Bool) : ProbComp Bool :=
   (sample σ).bind fun s => (sample ρ).bind fun r => .pure (D (X s) r)
 
+/-- The acceptance game samples the seed `s`, then the coins `r`, and outputs `D (X s) r`:
+`acceptGame X D = (sample σ).bind fun s => (sample ρ).bind fun r => .pure (D (X s) r)`. -/
+theorem acceptGame_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X : σ → γ)
+    (D : γ → ρ → Bool) :
+    acceptGame X D = (sample σ).bind fun s => (sample ρ).bind fun r => .pure (D (X s) r) :=
+  rfl
+
 /-- **Acceptance as a game:** `acceptProb X D` is the acceptance probability of `acceptGame X D`.
 [Gar26, Defs 3.2 and 3.4] -/
 theorem acceptProb_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X : σ → γ)
@@ -115,8 +122,8 @@ theorem acceptProb_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X :
   have h : acceptGame X D =
       (fun z : σ × ρ => D (X z.1) z.2) <$>
         ((sample σ).bind fun s => (sample ρ).bind fun r => .pure (s, r)) := by
-    simp only [acceptGame, OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
-  rw [acceptProb_def, accept, h, prob_eq_expect, expect_map, ← prob_eq_expect
+    simp only [acceptGame_eq, OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
+  rw [acceptProb_def, accept_eq, h, prob_eq_expect, expect_map, ← prob_eq_expect
     (p := fun z : σ × ρ => D (X z.1) z.2 = true), prob_sample_pair, prob_sample_eq_uprob]
 
 /-- **Distinguishing as a game:** `distAdv X Y D` is the advantage between the acceptance games
@@ -124,6 +131,6 @@ of `X` and of `Y`. [Gar26, Defs 3.2 and 3.4] -/
 theorem distAdv_eq [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ] [Fintype ρ] [Nonempty ρ]
     (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
     distAdv X Y D = advantage (acceptGame X D) (acceptGame Y D) := by
-  rw [distAdv_def, advantage, acceptProb_eq, acceptProb_eq]
+  rw [distAdv_def, advantage_eq, acceptProb_eq, acceptProb_eq]
 
 end TCSlib.Cryptography.Games.Bridge

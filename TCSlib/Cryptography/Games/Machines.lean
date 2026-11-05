@@ -89,6 +89,17 @@ variable {spec : OracleSpec ι}
 def encodeLog (codec : MachineCodec spec α) (h : QueryLog spec) : List Bool :=
   h.foldr (fun e acc => pairEncode (codec.encodeEntry e) acc) []
 
+/-- The empty log is encoded as the empty string: `codec.encodeLog [] = []`. -/
+theorem encodeLog_nil (codec : MachineCodec spec α) : codec.encodeLog [] = [] :=
+  rfl
+
+/-- A log is encoded entry by entry:
+`codec.encodeLog (e :: h) = pairEncode (codec.encodeEntry e) (codec.encodeLog h)`. -/
+theorem encodeLog_cons (codec : MachineCodec spec α) (e : Σ i, spec.dom i × spec.rng i)
+    (h : QueryLog spec) :
+    codec.encodeLog (e :: h) = pairEncode (codec.encodeEntry e) (codec.encodeLog h) :=
+  rfl
+
 end MachineCodec
 
 /-- The computation of a next-move function `next` with query budget `q`, started from the log
@@ -103,18 +114,55 @@ def buildComp {spec : OracleSpec ι} (next : QueryLog spec → Move spec α) (ti
     | .ret a => .pure a
     | .query i x => .query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩]))
 
+section BuildComp
+
+variable {spec : OracleSpec ι} {next : QueryLog spec → Move spec α} {timeout : α}
+  {hist : QueryLog spec}
+
+/-- With the budget spent, a final output stops the computation:
+`buildComp next timeout 0 hist = pure a` when `next hist = ret a`. -/
+theorem buildComp_zero_of_ret {a : α} (h : next hist = .ret a) :
+    buildComp next timeout 0 hist = .pure a := by
+  rw [buildComp, h]
+
+/-- With the budget spent, a query gives the output `timeout` and asks nothing:
+`buildComp next timeout 0 hist = pure timeout` when `next hist = query i x`. -/
+theorem buildComp_zero_of_query {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+    buildComp next timeout 0 hist = .pure timeout := by
+  rw [buildComp, h]
+
+/-- Within budget, a final output stops the computation:
+`buildComp next timeout (q + 1) hist = pure a` when `next hist = ret a`. -/
+theorem buildComp_succ_of_ret {q : ℕ} {a : α} (h : next hist = .ret a) :
+    buildComp next timeout (q + 1) hist = .pure a := by
+  rw [buildComp, h]
+
+/-- Within budget, a query asks the oracle and continues with the entry appended to the log:
+`buildComp next timeout (q + 1) hist =
+query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩]))` when `next hist = query i x`.
+-/
+theorem buildComp_succ_of_query {q : ℕ} {i : ι} {x : spec.dom i} (h : next hist = .query i x) :
+    buildComp next timeout (q + 1) hist =
+      .query i x (fun y => buildComp next timeout q (hist ++ [⟨i, x, y⟩])) := by
+  rw [buildComp, h]
+
+end BuildComp
+
 /-- The computation built with budget `q` makes at most `q` queries, from every log. -/
 theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec → Move spec α)
     (timeout : α) : ∀ (q : ℕ) (hist : QueryLog spec),
       (buildComp next timeout q hist).CostBoundedBy (fun _ => 1) q
   | 0, hist => by
-    unfold buildComp
-    cases next hist <;> exact trivial
+    cases h : next hist with
+    | ret a => rw [buildComp_zero_of_ret h]; exact OracleComp.costBoundedBy_pure _ _ _
+    | query i x => rw [buildComp_zero_of_query h]; exact OracleComp.costBoundedBy_pure _ _ _
   | q + 1, hist => by
-    unfold buildComp
-    cases next hist with
-    | ret a => exact trivial
-    | query i x => exact ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
+    cases h : next hist with
+    | ret a => rw [buildComp_succ_of_ret h]; exact OracleComp.costBoundedBy_pure _ _ _
+    | query i x =>
+      rw [buildComp_succ_of_query h]
+      exact (OracleComp.costBoundedBy_query _ _ _ _ _).2
+        ⟨Nat.le_add_left 1 q, fun y => buildComp_costBoundedBy next timeout q _⟩
 
 /-- The oracle computation of the machine `D` at parameter `n`, with coins `r` and query budget
 `q`: the machine's next-move function is one activation of `D` on the encoded log.
@@ -122,6 +170,17 @@ theorem buildComp_costBoundedBy {spec : OracleSpec ι} (next : QueryLog spec →
 def _root_.Complexity.NUPPT.toComp {spec : OracleSpec ι} (D : NUPPT) (codec : MachineCodec spec α)
     (n q : ℕ) (r : D.Coins n) : OracleComp spec α :=
   buildComp (fun hist => codec.decodeMove (D.runAt n (codec.encodeLog hist) r)) codec.timeout q []
+
+/-- The computation of `D` is built from the empty log, the next move being `D`'s output on the
+encoded log, decoded: `D.toComp codec n q r =
+buildComp (fun hist => codec.decodeMove (D.runAt n (codec.encodeLog hist) r)) codec.timeout q []`.
+-/
+theorem _root_.Complexity.NUPPT.toComp_eq {spec : OracleSpec ι} (D : NUPPT)
+    (codec : MachineCodec spec α) (n q : ℕ) (r : D.Coins n) :
+    D.toComp codec n q r =
+      buildComp (fun hist => codec.decodeMove (D.runAt n (codec.encodeLog hist) r)) codec.timeout
+        q [] :=
+  rfl
 
 /-- A machine's computation makes at most `q` queries. -/
 theorem _root_.Complexity.NUPPT.toComp_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)
@@ -136,6 +195,17 @@ def _root_.Complexity.NUPPT.toCompOn {spec : OracleSpec ι} (D : NUPPT)
     (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) : OracleComp spec α :=
   buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
     codec.timeout q []
+
+/-- The computation of `D` on the input `x` is built from the empty log, the next move being
+`D`'s output on `⟨x, encoded log⟩`, decoded: `D.toCompOn codec n q x r =
+buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
+codec.timeout q []`. -/
+theorem _root_.Complexity.NUPPT.toCompOn_eq {spec : OracleSpec ι} (D : NUPPT)
+    (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) :
+    D.toCompOn codec n q x r =
+      buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
+        codec.timeout q [] :=
+  rfl
 
 /-- A machine's computation on an input makes at most `q` queries. -/
 theorem _root_.Complexity.NUPPT.toCompOn_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)

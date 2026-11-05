@@ -62,6 +62,12 @@ variable {k : ℕ}
 abbrev bitSpecAt (din dout : Fin k → PolyExpr) (n : ℕ) : OracleSpec (Fin k) :=
   bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)
 
+/-- The bit-string oracles at parameter `n` are `bitSpec` of the evaluated lengths:
+`bitSpecAt din dout n = bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n)`. -/
+theorem bitSpecAt_eq (din dout : Fin k → PolyExpr) (n : ℕ) :
+    bitSpecAt din dout n = bitSpec (fun i => (din i).eval n) (fun i => (dout i).eval n) :=
+  rfl
+
 /-- A **polynomial-time handler** for `k` bit-string oracles with query lengths `din` and answer
 lengths `dout`. The function `run` is polynomial-time. On `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩` (the
 parameter, the reduction's input `z`, its seed `ω`, the state `s`, and the query `x` to oracle
@@ -88,8 +94,17 @@ def input (n : ℕ) (z : List Bool) (ω : List Bool) (s : List Bool) (i : Fin k)
   pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
     (pairEncode s (pairEncode (List.replicate i true) x))
 
-/-- The handler's answer and new state, decoded with fixed lengths. A malformed output gives the
-all-`false` answer and state (a total default; well-behaved handlers never produce one). -/
+/-- The handler's input string is `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨1^i, x⟩⟩⟩`. -/
+theorem input_eq (n : ℕ) (z ω s : List Bool) (i : Fin k) (x : List Bool) :
+    input n z ω s i x =
+      pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
+        (pairEncode s (pairEncode (List.replicate i true) x)) :=
+  rfl
+
+/-- The handler's answer and new state, decoded with fixed lengths. If `run`'s output is not a
+pair, both are all-`false`; otherwise each component of the wrong length is replaced by
+all-`false` independently (a total default; well-behaved handlers never produce one). An
+interactive handler defaults jointly instead (`InteractiveHandler`). -/
 def answer (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
     (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
     (x : Fin ((din i).eval n) → Bool) :
@@ -99,6 +114,44 @@ def answer (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
     ((decodeFin _ yw).getD (zeroBits _), (decodeFin _ sw).getD (zeroBits _))
   | none => (zeroBits _, zeroBits _)
 
+section Answer
+
+variable (H : PolyHandler k din dout) {n : ℕ} {z : List Bool} {ω : Fin (H.seedLen.eval n) → Bool}
+  {s : Fin (H.stateLen.eval n) → Bool} {i : Fin k} {x : Fin ((din i).eval n) → Bool}
+
+/-- If `run`'s output is not a pair, the answer and the new state are all-`false`. -/
+theorem answer_of_pairDecode_eq_none
+    (h : pairDecode (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x))) = none) :
+    H.answer n z ω s i x = (zeroBits _, zeroBits _) := by
+  unfold answer
+  rw [h]
+
+/-- If `run`'s output is the pair `⟨yw, sw⟩`, the answer is `yw` and the new state `sw`, each
+decoded with its fixed length and all-`false` if that length is wrong:
+`H.answer n z ω s i x = ((decodeFin _ yw).getD (zeroBits _), (decodeFin _ sw).getD (zeroBits _))`.
+-/
+theorem answer_of_pairDecode_eq_some {yw sw : List Bool}
+    (h : pairDecode (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x))) =
+      some (yw, sw)) :
+    H.answer n z ω s i x =
+      ((decodeFin _ yw).getD (zeroBits _), (decodeFin _ sw).getD (zeroBits _)) := by
+  unfold answer
+  rw [h]
+
+/-- **A well-formed output:** if `run` returns `⟨y, s'⟩` with `y` and `s'` of the fixed lengths,
+the answer is `y` and the new state `s'`. -/
+theorem answer_of_run_eq {y : Fin ((dout i).eval n) → Bool} {s' : Fin (H.stateLen.eval n) → Bool}
+    (h : H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)) =
+      pairEncode (List.ofFn y) (List.ofFn s')) :
+    H.answer n z ω s i x = (y, s') := by
+  have h' : pairDecode (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x))) =
+      some (List.ofFn y, List.ofFn s') := by
+    rw [h, pairDecode_pairEncode]
+  rw [answer_of_pairDecode_eq_some H h', decodeFin_ofFn, decodeFin_ofFn, Option.getD_some,
+    Option.getD_some]
+
+end Answer
+
 /-- The handler as an implementation of the bit-string oracles at parameter `n`, for the
 reduction input `z` and seed `ω`: it keeps its state and asks no oracle (the non-interactive
 case). -/
@@ -106,6 +159,14 @@ def impl (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
     (ω : Fin (H.seedLen.eval n) → Bool) :
     QueryImpl (bitSpecAt din dout n) (Fin (H.stateLen.eval n) → Bool) unifSpec :=
   fun i x s => .pure (H.answer n z ω s i x)
+
+/-- The handler answers the query `x` to oracle `i` in state `s` with no coins and no queries:
+`H.impl n z ω i x s = pure (H.answer n z ω s i x)`. -/
+theorem impl_apply (H : PolyHandler k din dout) (n : ℕ) (z : List Bool)
+    (ω : Fin (H.seedLen.eval n) → Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+    (s : Fin (H.stateLen.eval n) → Bool) :
+    H.impl n z ω i x s = .pure (H.answer n z ω s i x) :=
+  rfl
 
 end PolyHandler
 
@@ -143,11 +204,15 @@ theorem exists_handlerMachine (A : NUPPT) (q : PolyExpr) (din dout : Fin k → P
 variable {k' : ℕ}
 
 /-- A **polynomial-time interactive handler** for `k` inner bit-string oracles that may itself
-query `k'` outer bit-string oracles. One inner query `x` to oracle `i` is answered in up to
-`perCall(n)` rounds of `run`. In each round, `run` sees
+query `k'` outer bit-string oracles. One inner query `x` to oracle `i` is answered with at most
+`perCall(n)` outer queries, in at most `perCall(n) + 1` rounds of `run` (the last returns the
+answer or, with the budget spent, is cut off with the default). In each round, `run` sees
 `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, where `L` is the outer log of the call so far (encoded as
 `bitCodec` encodes logs), and returns a move in `bitCodec`'s format: a query `⟨[false], ⟨1^j, x'⟩⟩`
-to outer oracle `j`, or the answer `⟨[true], y ‖ s'⟩` (the inner answer, then the new state). -/
+to outer oracle `j`, or the answer `⟨[true], y ‖ s'⟩` (the inner answer, then the new state).
+A malformed round output, including a payload `y ‖ s'` of the wrong total length, gives the
+all-`false` answer and state together (a joint default, unlike `PolyHandler.answer`, which
+defaults each component separately). -/
 structure InteractiveHandler (k : ℕ) (din dout : Fin k → PolyExpr) (k' : ℕ)
     (din' dout' : Fin k' → PolyExpr) where
   /-- The length of the state. -/
@@ -172,9 +237,16 @@ def input (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) : List Bo
   pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
     (pairEncode s (pairEncode (pairEncode (List.replicate i true) x) L))
 
-/-- **One call** of the handler on the inner query `x` to oracle `i` in state `s`: up to
-`perCall(n)` rounds against the outer oracles. A malformed round output is the all-`false`
-answer and state (`decodeBitMove`'s default), and so is an exhausted budget. -/
+/-- The handler's input string for one round is `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`. -/
+theorem input_eq (n : ℕ) (z ω s : List Bool) (i : Fin k) (x L : List Bool) :
+    input n z ω s i x L =
+      pairEncode (pairEncode (List.replicate n true) (pairEncode z ω))
+        (pairEncode s (pairEncode (pairEncode (List.replicate i true) x) L)) :=
+  rfl
+
+/-- **One call** of the handler on the inner query `x` to oracle `i` in state `s`: at most
+`perCall(n)` outer queries, in at most `perCall(n) + 1` rounds of `run`. A malformed round output
+is the all-`false` answer and state (`decodeBitMove`'s default), and so is an exhausted budget. -/
 def call (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
     (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
     (x : Fin ((din i).eval n) → Bool) :
@@ -184,6 +256,21 @@ def call (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List B
         ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))
     (zeroBits _) (H.perCall.eval n) []
 
+/-- One call is `buildComp` of the handler's rounds, from the empty outer log, with budget
+`perCall(n)` and the all-`false` result when it runs out: `H.call n z ω s i x =
+buildComp (fun L => decodeBitMove _ _ _ (H.run (input … L))) (zeroBits _) (H.perCall.eval n) []`.
+-/
+theorem call_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
+    (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
+    (x : Fin ((din i).eval n) → Bool) :
+    H.call n z ω s i x =
+      buildComp (fun L => decodeBitMove (fun j => (din' j).eval n) (fun j => (dout' j).eval n)
+          ((dout i).eval n + H.stateLen.eval n)
+          (H.run (input n z (List.ofFn ω) (List.ofFn s) i (List.ofFn x)
+            ((bitCodec (fun j => (din' j).eval n) (fun j => (dout' j).eval n) 0).encodeLog L))))
+        (zeroBits _) (H.perCall.eval n) [] :=
+  rfl
+
 /-- The interactive handler as an implementation of the inner oracles by the outer ones, at
 parameter `n`, reduction input `z` and seed `ω`: one `call` per inner query, its result split
 into the answer and the new state. -/
@@ -192,6 +279,18 @@ def impl (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List B
     QueryImpl (bitSpecAt din dout n) (Fin (H.stateLen.eval n) → Bool) (bitSpecAt din' dout' n) :=
   fun i x s => (H.call n z ω s i x).bind fun w =>
     .pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j))
+
+/-- The inner query `x` to oracle `i` in state `s` is answered by one `call`, whose result is
+split into the answer (its first `dout i` bits) and the new state (the rest):
+`H.impl n z ω i x s = (H.call n z ω s i x).bind fun w =>
+pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j))`. -/
+theorem impl_apply (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
+    (ω : Fin (H.seedLen.eval n) → Bool) (i : Fin k) (x : Fin ((din i).eval n) → Bool)
+    (s : Fin (H.stateLen.eval n) → Bool) :
+    H.impl n z ω i x s =
+      (H.call n z ω s i x).bind fun w =>
+        .pure (fun j => w (Fin.castAdd _ j), fun j => w (Fin.natAdd _ j)) :=
+  rfl
 
 end InteractiveHandler
 

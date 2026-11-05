@@ -296,7 +296,8 @@ theorem flatMap_const_replicate {α : Type*} (n : ℕ) : ∀ L : List α,
     rw [List.flatMap_cons, flatMap_const_replicate n L, List.length_cons, Nat.succ_mul, add_comm,
       List.replicate_add]
 
-/-- The two components of a history block: the query and the answer. -/
+/-- The query component of a history block: `pairFstD (pairFstD (histBlock p))` is the query
+`p.1`. -/
 theorem pairFstD_pairFstD_histBlock {n : ℕ} (p : (Fin n → Bool) × (Fin n → Bool)) :
     pairFstD (pairFstD (histBlock p)) = List.ofFn p.1 := by
   simp [histBlock]
@@ -375,7 +376,8 @@ theorem zipWith_xor_flatten_ofFn : ∀ {k : ℕ} (F G : Fin k → List Bool),
       zipWith_xor_flatten_ofFn (fun j => F j.succ) (fun j => G j.succ) fun j => h j.succ]
 
 /-- A string of `q·s` bits read as `q` chunks of `s` bits: chunk `i` is block `i` of
-`FunFamily.blocks` (private copy of the lemma of `Asymptotic/EnsemblesLemmas.lean`). -/
+`FunFamily.blocks` (a public duplicate of `EnsembleLemmas.take_drop_ofFn_blocks` in
+`Asymptotic/EnsemblesLemmas.lean`). -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
     ((List.ofFn w).drop (i * s)).take s = List.ofFn (FunFamily.blocks q s w ⟨i, hi⟩) := by
   have hle : i * s + s ≤ q * s := by
@@ -616,8 +618,9 @@ by closure under efficient operations we contradict the pseudorandomness propert
 non-uniform PPT `D` (a distinguisher of encoded ciphertext tuples), a budget polynomial `q` and
 message vectors `v n ∈ ({0,1}^n)^{q(n)+1}`, there is a non-uniform PPT `B` whose coins at `n`
 are, up to a bijection `φ`, the `q(n) + 1` points `ρ` and the coins `c` of `D`, and whose
-query tree with budget `q(n) + 1` run against any oracle `g` asks `ρ₀, …, ρ_{q(n)}` and
-outputs `D`'s verdict on the encoded tuple `(ρ_j, v_j ⊕ g(ρ_j))_j` with coins `c`.
+query tree with budget `q(n) + 1`, evaluated against any oracle `g`, gives `D`'s verdict on the
+encoded tuple `(ρ_j, v_j ⊕ g(ρ_j))_j` with coins `c` (an equality of outputs; the sequence of
+queries is not part of the statement).
 
 **Proof sketch.** `B` is `exists_split` (the first `(q(n)+1) n` coins are the points) of
 `exists_withAdvice` (advice `⟨maskOf (v n), 1^{q(n)+1}⟩`) of `exists_seq` of `D ∘ preFun`

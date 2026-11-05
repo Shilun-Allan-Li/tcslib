@@ -99,6 +99,21 @@ from all the subtrees of a query to the query. Use it as `induction t using Quer
   | Games.OracleComp.pure a => ret a
   | Games.OracleComp.query () x k => query x k fun o => induct ret query (k o)
 
+/-- `induct` computes on a leaf by its leaf case: `induct hret hquery (ret a) = hret a`. -/
+theorem induct_ret {motive : QueryTree I O α → Sort _} (hret : ∀ a, motive (ret a))
+    (hquery : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) (a : α) :
+    induct (motive := motive) hret hquery (ret a) = hret a :=
+  rfl
+
+/-- `induct` computes on a query node by its query case, applied to the inductions on the
+subtrees: `induct hret hquery (query x k) = hquery x k (fun o => induct hret hquery (k o))`. -/
+theorem induct_query {motive : QueryTree I O α → Sort _} (hret : ∀ a, motive (ret a))
+    (hquery : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) (x : I)
+    (k : O → QueryTree I O α) :
+    induct (motive := motive) hret hquery (query x k) =
+      hquery x k fun o => induct (motive := motive) hret hquery (k o) :=
+  rfl
+
 /-- The output of the query tree `t` when every query `x` is answered by `f x`. -/
 def eval (f : I → O) : QueryTree I O α → α
   | ret a => a
@@ -151,6 +166,18 @@ def simulate (π : I → I') (ans : I → O' → O) : QueryTree I O α → Query
   | ret a => ret a
   | query x k => query (π x) (fun o' => simulate π ans (k (ans x o')))
 
+/-- Simulating a leaf leaves it unchanged: `(ret a).simulate π ans = ret a`. -/
+theorem simulate_ret (π : I → I') (ans : I → O' → O) (a : α) :
+    (ret a : QueryTree I O α).simulate π ans = ret a :=
+  rfl
+
+/-- Simulating a query node asks `π x` and continues, on the answer `o'`, with the simulation of
+the subtree for `ans x o'`:
+`(query x k).simulate π ans = query (π x) (fun o' => (k (ans x o')).simulate π ans)`. -/
+theorem simulate_query (π : I → I') (ans : I → O' → O) (x : I) (k : O → QueryTree I O α) :
+    (query x k).simulate π ans = query (π x) (fun o' => (k (ans x o')).simulate π ans) :=
+  rfl
+
 /-- Running the simulated tree against `g` is running the original tree against the
 oracle that answers `x` by `ans x (g (π x))`. -/
 @[simp] theorem eval_simulate (π : I → I') (ans : I → O' → O) (g : I' → O')
@@ -191,5 +218,11 @@ def OracleAdversary.BoundedBy {ρ : Type*} {I O : Type}
 def oracleDist {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O) :
     (I → O) → ρ → Bool :=
   fun f r => (A r).eval f
+
+/-- The distinguisher of `A` on the oracle `f` and coins `r` is the run of `A r` against `f`:
+`oracleDist A f r = (A r).eval f`. -/
+theorem oracleDist_apply {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O) (f : I → O)
+    (r : ρ) : oracleDist A f r = (A r).eval f :=
+  rfl
 
 end TCSlib.Cryptography

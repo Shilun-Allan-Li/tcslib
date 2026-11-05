@@ -66,6 +66,18 @@ def OracleComp.evalFn {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng
   | .pure a => a
   | .query i x k => evalFn f (k (f i x))
 
+/-- A return evaluates to its value: `(pure a).evalFn f = a`. -/
+theorem OracleComp.evalFn_pure {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng i) (a : α) :
+    (OracleComp.pure a : OracleComp spec α).evalFn f = a :=
+  rfl
+
+/-- A query evaluates as its continuation on the answer `f i x`:
+`(query i x k).evalFn f = (k (f i x)).evalFn f`. -/
+theorem OracleComp.evalFn_query {spec : OracleSpec ι} (f : ∀ i, spec.dom i → spec.rng i)
+    (i : ι) (x : spec.dom i) (k : spec.rng i → OracleComp spec α) :
+    (OracleComp.query i x k).evalFn f = (k (f i x)).evalFn f :=
+  rfl
+
 /-- **Deterministic implementations evaluate:** simulating `c` with the stateless implementation
 that answers by the function `f` returns `c`'s output under `f` and leaves the state unchanged. -/
 theorem simulate_ofComp_pure {ι' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
@@ -73,8 +85,11 @@ theorem simulate_ofComp_pure {ι' : Type} {spec : OracleSpec ι} {spec' : Oracle
     simulate (QueryImpl.ofComp (σ := σ) (spec' := spec') fun i x => .pure (f i x)) c s =
       .pure (c.evalFn f, s) := by
   induction c with
-  | pure a => rfl
-  | query i x k ih => exact ih (f i x)
+  | pure a => rw [simulate_pure, OracleComp.evalFn_pure]
+  | query i x k ih =>
+    rw [simulate_query, QueryImpl.ofComp_apply, OracleComp.pure_bind, OracleComp.pure_bind,
+      OracleComp.evalFn_query]
+    exact ih (f i x)
 
 namespace Bridge
 
@@ -83,13 +98,23 @@ a one-oracle computation, with `f`. -/
 theorem eval_eq_evalFn (f : I → O) (t : TCSlib.Cryptography.QueryTree I O α) :
     t.eval f = OracleComp.evalFn (fun _ => f) t := by
   induction t using TCSlib.Cryptography.QueryTree.induct with
-  | ret a => rfl
-  | query x k ih => exact ih (f x)
+  | ret a => rw [TCSlib.Cryptography.QueryTree.eval_ret, OracleComp.evalFn_pure]
+  | query x k ih =>
+    rw [TCSlib.Cryptography.QueryTree.eval_query, OracleComp.evalFn_query]
+    exact ih (f x)
 
 /-- The implementation corresponding to `QueryTree.simulate π ans`: a query `x` is answered by
 asking `π x` of the new oracle and returning `ans x` of the answer; no state is used. -/
 def treeImpl (π : I → I') (ans : I → O' → O) : QueryImpl (singleSpec I O) σ (singleSpec I' O') :=
   QueryImpl.ofComp fun _ x => (OracleComp.call () (π x)).bind fun o' => .pure (ans x o')
+
+/-- The implementation answers the query `x` by asking `π x` and returning `ans x` of the answer,
+with the state `s` unchanged:
+`treeImpl π ans u x s = query () (π x) (fun o' => pure (ans x o', s))`. -/
+theorem treeImpl_apply (π : I → I') (ans : I → O' → O) (u : Unit) (x : I) (s : σ) :
+    treeImpl (σ := σ) π ans u x s = OracleComp.query () (π x) fun o' => .pure (ans x o', s) := by
+  rw [treeImpl, QueryImpl.ofComp_apply, OracleComp.bind_assoc, OracleComp.call_bind]
+  simp only [OracleComp.pure_bind]
 
 /-- **Garg's simulation is the framework's:** the tree `t.simulate π ans` is the framework's
 simulation of `t` by `treeImpl π ans`, with the (unchanged) state dropped.
@@ -100,12 +125,11 @@ theorem simulate_eq (π : I → I') (ans : I → O' → O) (t : TCSlib.Cryptogra
     (s : σ) :
     t.simulate π ans = (simulate (treeImpl π ans) t s).bind fun p => .pure p.1 := by
   induction t using TCSlib.Cryptography.QueryTree.induct with
-  | ret a => rfl
+  | ret a =>
+    rw [TCSlib.Cryptography.QueryTree.simulate_ret, simulate_pure, OracleComp.pure_bind]
   | query x k ih =>
-    show OracleComp.query () (π x) (fun o' => (k (ans x o')).simulate π ans) = _
-    simp only [simulate_query, treeImpl, QueryImpl.ofComp, ih, OracleComp.bind_assoc,
-      OracleComp.pure_bind]
-    rfl
+    rw [TCSlib.Cryptography.QueryTree.simulate_query, simulate_query, treeImpl_apply]
+    simp only [OracleComp.query_bind, OracleComp.pure_bind, ih]
 
 /-- **Query bounds are the framework's:** a tree makes at most `q` queries exactly when it is
 cost-bounded by `q` with every query costing one. -/

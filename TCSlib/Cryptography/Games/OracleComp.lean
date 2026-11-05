@@ -154,6 +154,12 @@ end OracleComp
 layer's query trees are the computations over it (`TCSlib.Cryptography.QueryTree`). -/
 abbrev singleSpec (I O : Type) : OracleSpec Unit := ⟨fun _ => I, fun _ => O⟩
 
+/-- The single oracle of `singleSpec I O` takes queries in `I`. -/
+theorem singleSpec_dom (I O : Type) (u : Unit) : (singleSpec I O).dom u = I := rfl
+
+/-- The single oracle of `singleSpec I O` answers in `O`. -/
+theorem singleSpec_rng (I O : Type) (u : Unit) : (singleSpec I O).rng u = O := rfl
+
 /-- The **disjoint union** of two oracle families: oracle `.inl i` is oracle `i` of `s₁`, and
 oracle `.inr j` is oracle `j` of `s₂`. [VCVio, OracleComp/OracleSpec] -/
 def OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
@@ -268,6 +274,18 @@ continuation of a query does, whatever the answer. -/
 def AllOutputs {spec : OracleSpec ι} (P : α → Prop) : OracleComp spec α → Prop
   | .pure a => P a
   | .query _ _ k => ∀ y, AllOutputs P (k y)
+
+/-- The only possible output of a return is its value: `(pure a).AllOutputs P ↔ P a`. -/
+theorem allOutputs_pure {spec : OracleSpec ι} {P : α → Prop} {a : α} :
+    (OracleComp.pure (spec := spec) a).AllOutputs P ↔ P a :=
+  Iff.rfl
+
+/-- The possible outputs of a query are those of its continuations, whatever the answer:
+`(query i x k).AllOutputs P ↔ ∀ y, (k y).AllOutputs P`. -/
+theorem allOutputs_query {spec : OracleSpec ι} {P : α → Prop} {i : ι} {x : spec.dom i}
+    {k : spec.rng i → OracleComp spec α} :
+    (OracleComp.query i x k).AllOutputs P ↔ ∀ y, (k y).AllOutputs P :=
+  Iff.rfl
 
 /-- Every computation satisfies the trivial predicate at every possible output. -/
 theorem allOutputs_true {spec : OracleSpec ι} (c : OracleComp spec α) :

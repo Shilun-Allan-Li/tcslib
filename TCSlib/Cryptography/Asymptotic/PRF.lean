@@ -201,6 +201,18 @@ nested pair `⟨⟨x₁, y₁⟩, ⟨⟨x₂, y₂⟩, ⟨…, []⟩⟩⟩`. -/
 def encodeHist {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) : List Bool :=
   h.foldr (fun p acc => pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) acc) []
 
+/-- The empty history is encoded as the empty string: `encodeHist [] = []`. -/
+theorem encodeHist_nil {ℓ₁ ℓ₂ : ℕ} :
+    encodeHist ([] : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) = [] :=
+  rfl
+
+/-- A history is encoded pair by pair:
+`encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h)`. -/
+theorem encodeHist_cons {ℓ₁ ℓ₂ : ℕ} (p : (Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))
+    (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))) :
+    encodeHist (p :: h) = pairEncode (pairEncode (List.ofFn p.1) (List.ofFn p.2)) (encodeHist h) :=
+  rfl
+
 /-- The query tree of a next-query function `next` (the machine's move on a history) with the
 query budget `q`, started from the history `hist`: a verdict stops; a query within budget
 becomes a `query` node whose continuation appends the answer to the history; a query when the
@@ -213,6 +225,38 @@ def buildTree {ℓ₁ ℓ₂ : ℕ} (next : List ((Fin ℓ₁ → Bool) × (Fin 
   | q + 1, hist => match next hist with
     | .ret b => .ret b
     | .query x => .query x (fun o => buildTree next q (hist ++ [(x, o)]))
+
+section BuildTree
+
+variable {ℓ₁ ℓ₂ : ℕ} {next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁}
+  {hist : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))}
+
+/-- With the budget spent, a verdict stops the tree: `buildTree next 0 hist = ret b` when
+`next hist = ret b`. -/
+theorem buildTree_zero_of_ret {b : Bool} (h : next hist = .ret b) :
+    buildTree next 0 hist = .ret b := by
+  rw [buildTree, h]
+
+/-- With the budget spent, a query gives the forced verdict `false`:
+`buildTree next 0 hist = ret false` when `next hist = query x`. -/
+theorem buildTree_zero_of_query {x : Fin ℓ₁ → Bool} (h : next hist = .query x) :
+    buildTree next 0 hist = .ret false := by
+  rw [buildTree, h]
+
+/-- Within budget, a verdict stops the tree: `buildTree next (q + 1) hist = ret b` when
+`next hist = ret b`. -/
+theorem buildTree_succ_of_ret {q : ℕ} {b : Bool} (h : next hist = .ret b) :
+    buildTree next (q + 1) hist = .ret b := by
+  rw [buildTree, h]
+
+/-- Within budget, a query becomes a query node whose continuation appends the answer:
+`buildTree next (q + 1) hist = query x (fun o => buildTree next q (hist ++ [(x, o)]))` when
+`next hist = query x`. -/
+theorem buildTree_succ_of_query {q : ℕ} {x : Fin ℓ₁ → Bool} (h : next hist = .query x) :
+    buildTree next (q + 1) hist = .query x (fun o => buildTree next q (hist ++ [(x, o)])) := by
+  rw [buildTree, h]
+
+end BuildTree
 
 /-- The tree built with budget `q` makes at most `q` queries, from every starting history. -/
 theorem buildTree_boundedBy {ℓ₁ ℓ₂ : ℕ}
@@ -235,6 +279,16 @@ encoded history; its output is decoded as a query or a verdict. -/
 def _root_.Complexity.NUPPT.toOracleAdversary (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) :
     OracleAdversary (D.Coins n) (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool) :=
   fun r => buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []
+
+/-- The tree of `D` on the coins `r` is built from the empty history, the next move being `D`'s
+output on the encoded history, decoded:
+`D.toOracleAdversary n ℓ₁ ℓ₂ q r =
+buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []`. -/
+theorem _root_.Complexity.NUPPT.toOracleAdversary_eq (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ)
+    (r : D.Coins n) :
+    D.toOracleAdversary n ℓ₁ ℓ₂ q r =
+      buildTree (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q [] :=
+  rfl
 
 /-- The oracle adversary of a next-query machine with budget `q` makes at most `q` queries on
 every coin string (the hypothesis `BoundedBy` of `ggm_prfAdv_le` and `exists_ggmBits_dist`).
