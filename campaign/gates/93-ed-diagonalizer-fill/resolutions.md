@@ -65,3 +65,4 @@ Checks at the fix:
 **Round 3 staged (2026-11-04):** `pack-r3.md`, at #188's head `935245f4`. Bundle SHA-256
 `7b82b58654eb9ed1edb625c5fc2896b2f6a192b3222b561c33341f3472d2ba96` (27 sections), the records at `50809827`.
 **Dispatched (user, 2026-11-04);** the folder archived.
+**`replay-led3` passed** (2026-11-04): 3 of 3 at `935245f4`, 0 failed, static-equal (no sorry warning); snapshot `oleans-led3`.

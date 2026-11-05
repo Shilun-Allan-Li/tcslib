@@ -1007,6 +1007,19 @@ cites them:
   NF cannot import).
 
 The existing private copies are re-pointed in the API PR where the files are the campaign's.
+
+**RN-1, renamed configurations converted field by field, scoped by kind** (ruled by the user,
+2026-11-04, with gate 94). #190 publishes the general fact, `Turing.Cfg.mapState_eq_of_fields`: a
+renamed configuration equals any configuration with its data fields and the renamed state.
+- **The family:** every inline proof of that fact anywhere in TCSlib (the five-line
+  `Cfg.ext`/`Cfg.mapState_*` block), with the retag (ii) as an instance. A later find is an
+  accounting minor.
+- **Re-pointed in #190:** `CfgRecord`'s `recordStep_mapState_eq` (removed), `SeamLayout`'s
+  `sl_rewrap`, and `ExhaustiveReplay`'s `xr_phase_step` (two blocks) and `xr_halt_fixed` (two
+  blocks).
+- **Remaining, for the dedup window:** among others `SeamLayout.exists_seamLayoutTM` and
+  `ZoneRebalance.zr_short_fields` (screen pairs at 67% and 61%), and the 15 inline retag steps of
+  NF's F2.
 The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
 its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
 `Nat.forall_lt_succ_left'` (E1).
