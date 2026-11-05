@@ -97,6 +97,9 @@ def decode (x : List Bool) : DNF :=
 def serialize (φ : DNF) : List Bool :=
   CNF.serialize φ.terms
 
+/-- Decoding inverts serialization for DNFs: through the shared clause-list
+serialization, a serialized DNF decodes to itself (the DNF face of
+`Std.Sat.CNF.decode_serialize`). -/
 theorem decode_serialize (φ : DNF) : decode (serialize φ) = φ := by
   simp [decode, serialize, CNF.decode_serialize]
 

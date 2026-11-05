@@ -34,6 +34,9 @@ gadget needs.
   `moveInputPos_neg_val`, `rewind_scan`, `rewind_from_any`): reading at a
   position, the clamped left move, and the audited rewind-to-start procedure
   (one unconditional left move, left while reading a symbol, one right move).
+  The rewind head bounds `Turing.FinTM.rewind_scan_heads` and `rewind_heads` (every
+  work head stays put throughout the rewind) moved here from `Build/Catalog` at
+  MIG-1 stage S (2026-10-14).
 * **Disjoint tape-block embeddings** (`Turing.FinTM.leftAction`/`rightAction`,
   `leftCfg`/`rightCfg`, their `apply`/`step`/`run` lemmas): run a machine on
   the left or right block of a `k + l`-tape machine, in lockstep, with the
@@ -44,7 +47,10 @@ gadget needs.
   top.
 * **Branch union** (`Turing.FinTM.branchTM`, `branchTM_computes`): two
   machines in disjoint tape and state blocks; the Boolean chooses only the
-  initial state.
+  initial state. Its space, `Turing.FinTM.branchTM_spaceUsed` (MIG-1; sorried until
+  the fill F-A): the selected machine's space plus one origin cell per idle tape.
+* **Space from time** (`Turing.FinTM.ComputesInTime.spaceUsed_le`, MIG-1): a machine
+  that halts within `T` steps visits at most `k · (T + 1)` work cells at every time.
 * **Optional-write normalization** (`Turing.Action.apply_workTapes`): the raw
   action-application identity for work tapes, promoted at the epoch-2/epoch-3
   boundary.
@@ -53,6 +59,16 @@ gadget needs.
   reads and clamping invariant, first- and second-phase run correspondence,
   and an exact `|y| + 2` rewind-and-dispatch ledger. These extend the scope of
   the native-input embeddings above without changing their statements.
+* **Machine agreement** (`Turing.MultiTapeTM.AgreeOn`, `step_eq_of_agreeOn`,
+  `runFrom_eq_of_agreeOn`): two tables agreeing on a set of control states run identically while
+  the control stays inside it. `Turing.MultiTapeTM.agreeOn_iff` states the agreement as an
+  equivalence (the ND inventory API, round 2).
+* **Buffers** (`Turing.FinTM.bufferTape`): a word stored from cell `0`, blank elsewhere;
+  `Turing.FinTM.bufferTape_eq` and `bufferTape_of_neg` (the ND inventory API, round 2).
+
+**The specification API** (user, 2026-10-16): the fields of the buffered composite's two
+configuration shapes, `Turing.FinTM.bufferedFirstCfg_*` and `bufferedSecondCfg_*`, as
+equations.
 
 ## References
 
@@ -334,6 +350,53 @@ lemma branchTM_computes (M₁ M₂ : FinTM Bool) (b : Bool) (x w : List Bool) (t
       leftCfg_run M₁.tm (branchTM M₁ M₂ true).tm Sum.inl (fun _ _ _ => rfl)]
     simp only [leftCfg, Option.map_eq_none_iff]
 
+/-- **Space from time**. If `M` halts on `x` with output `y` within `T` steps, then at every time
+`t` its work tapes have visited at most `M.k · (T + 1)` cells in all. [AB09, Definition 4.1, and the
+remark opening the proof of Theorem 4.2: a machine running in time `T` visits at most `T + 1` cells
+of each tape.]
+
+**Proof sketch.** After the halt the configuration no longer changes, so every head position at
+any time `t` already occurs at some time `u ≤ T`. Each tape's visited set is therefore contained
+in the image of `{0, …, T}`, which has at most `T + 1` elements; sum over the `k` tapes. -/
+theorem ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ}
+    (h : M.ComputesInTime x y T) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (T + 1) := by
+  have hh := ((computesInTime_iff _ _ _ _).mp h).1
+  have hsub (i : Fin M.k) :
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i ⊆
+        M.tm.visitedByTapeHead (M.tm.initCfg x) T i := by
+    intro z hz
+    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
+    by_cases hu : u ≤ T
+    · exact Finset.mem_image.mpr ⟨u, Finset.mem_range.mpr (by omega), rfl⟩
+    · have hr : M.tm.runFrom (M.tm.initCfg x) u =
+          M.tm.runFrom (M.tm.initCfg x) T := by
+        rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ hh]
+      exact Finset.mem_image.mpr ⟨T, Finset.mem_range.mpr (by omega),
+        congrArg (fun c => c.workTapePos i) hr.symm⟩
+  calc
+    _ ≤ ∑ _i : Fin M.k, (T + 1) := by
+      apply Finset.sum_le_sum
+      intro i _
+      exact (Finset.card_le_card (hsub i)).trans (by
+        unfold MultiTapeTM.visitedByTapeHead
+        exact (Finset.card_image_le).trans (by rw [Finset.card_range]))
+    _ = _ := by simp
+
+/-- **The branch union's space**. The branch union selecting `b` uses exactly the selected machine's
+space plus one origin cell for each tape of the idle bank.
+
+**Proof sketch.** Catalog's `f2_branch_space`: the branch union runs the selected machine on its
+own bank (`leftCfg_run`, `rightCfg_run`) and never moves the other bank's heads, whose visited
+sets stay the origin singletons; split the sum over the two banks with `Fin.sum_univ_add`, which
+replaces the copied `f2_sum_add`. -/
+theorem branchTM_spaceUsed (M₁ M₂ : FinTM Bool) (b : Bool) (x : List Bool) (t : ℕ) :
+    (branchTM M₁ M₂ b).tm.spaceUsed ((branchTM M₁ M₂ b).tm.initCfg x) t =
+      if b then M₁.tm.spaceUsed (M₁.tm.initCfg x) t + M₂.k
+      else M₂.tm.spaceUsed (M₂.tm.initCfg x) t + M₁.k := by
+  sorry
+
 /-- A control action leaves all work tapes, work heads, and output unchanged. -/
 lemma controlAction_apply {k : ℕ} {S : Type} {x : List Bool}
     (cfg : Cfg k Bool S x) (m : SignType) (q : Option S) :
@@ -468,6 +531,79 @@ lemma timed_rewind {k : ℕ} {S : Type} {x : List Bool}
     change tm.runFrom (tm.step c) _ = _
     rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
 
+/-- **A native input rewind keeps every work head fixed** (public since the §12.8 fill), at
+every prefix, including its dispatch step.
+
+**Proof sketch.** Induct on the input position; each step is a `controlAction`. -/
+theorem rewind_scan_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
+    (htr : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest) :
+    ∀ (j : ℕ) (cfg : Cfg k Bool S x), cfg.state = some scan →
+      cfg.inputPos.val = j → j ≤ x.length →
+      ∀ u ≤ j + 1, (tm.runFrom cfg u).workTapePos = cfg.workTapePos := by
+  intro j
+  induction j with
+  | zero =>
+    intro cfg hs hj hp u hu
+    rcases Nat.le_one_iff_eq_zero_or_eq_one.mp hu with rfl | rfl
+    · rfl
+    · have hz : cfg.inputPos = 0 := Fin.ext hj
+      have hi : cfg.inputSymbol = none := by simp [Cfg.inputSymbol, hz]
+      change (tm.step cfg).workTapePos = _
+      simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+  | succ j ih =>
+    intro cfg hs hj hp u hu
+    cases u with
+    | zero => rfl
+    | succ u =>
+      have hi : cfg.inputSymbol = some (x[j]'(by omega)) :=
+        inputSymbolInner j (by omega) (by omega)
+      have he : tm.step cfg =
+          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+        simp only [MultiTapeTM.step, hs, htr, hi, controlAction_apply]
+      rw [MultiTapeTM.runFrom_succ_eq_step, he]
+      apply ih _ rfl _ (by omega) u (by omega)
+      simp only [moveInputPos_neg_val]
+      omega
+
+/-- **The bounded rewind with its work heads fixed** (public since the §12.8 fill): it
+reaches its destination with the input head at `1` within `pos + 2` steps, and every work head
+stays put throughout.
+
+**Proof sketch.** One start step, then `Turing.FinTM.rewind_scan` for the run and
+`Turing.FinTM.rewind_scan_heads` for the heads. -/
+theorem rewind_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work = match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (c : Cfg k Bool S x) (hs : c.state = some start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      tm.runFrom c r = {c with state := dest, inputPos := 1} ∧
+      ∀ u ≤ r, (tm.runFrom c u).workTapePos = c.workTapePos := by
+  have hstep : tm.step c =
+      {c with state := some scan, inputPos := moveInputPos c.inputPos .neg} := by
+    simp only [MultiTapeTM.step, hs, hstart, controlAction_apply]
+  have hp : (moveInputPos c.inputPos .neg).val ≤ x.length := by
+    rw [moveInputPos_neg_val]
+    have := c.inputPos.isLt
+    omega
+  refine ⟨1 + ((moveInputPos c.inputPos .neg).val + 1), ?_, ?_, ?_⟩
+  · rw [moveInputPos_neg_val]; omega
+  · rw [MultiTapeTM.runFrom_add]
+    change tm.runFrom (tm.step c) _ = _
+    rw [hstep, rewind_scan tm scan dest hscan _ rfl hp]
+  · intro u hu
+    cases u with
+    | zero => rfl
+    | succ u =>
+      rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+      exact rewind_scan_heads tm scan dest hscan (moveInputPos c.inputPos .neg).val _ rfl rfl hp u
+        (by omega)
+
 /-- Assemble the left work block, one buffer tape, and the right work block.
 All three projections use the same nested `Fin.addCases` partition. -/
 def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)
@@ -491,29 +627,41 @@ def tapeBlocks {α : Type} {k l : ℕ} (left : Fin k → α) (buffer : α)
     tapeBlocks a b c (Fin.natAdd k (Fin.natAdd 1 i)) = c i := by simp [tapeBlocks]
 
 /-- A word stored contiguously from cell zero, blank at every other integer cell. -/
-def bufferTape (w : List Bool) (z : ℤ) : Option Bool :=
+def bufferTape {Symbol : Type*} (w : List Symbol) (z : ℤ) : Option Symbol :=
   if 0 ≤ z then w[z.toNat]? else none
 
 /-- An empty buffer is blank everywhere. -/
-@[simp] lemma bufferTape_nil : bufferTape [] = fun _ => none := by
+@[simp] lemma bufferTape_nil {Symbol : Type*} : bufferTape (Symbol := Symbol) [] = fun _ => none := by
   funext z
   simp [bufferTape]
 
 /-- The buffer cell at any nonnegative natural position reads the corresponding
 optional word entry, so position `w.length` is the right blank. -/
-@[simp] lemma bufferTape_nat (w : List Bool) (i : ℕ) :
+@[simp] lemma bufferTape_nat {Symbol : Type*} (w : List Symbol) (i : ℕ) :
     bufferTape w i = w[i]? := by simp [bufferTape]
 
 /-- Cell minus one is the left blank, including for an empty word. -/
-@[simp] lemma bufferTape_left (w : List Bool) : bufferTape w (-1) = none := by
+@[simp] lemma bufferTape_left {Symbol : Type*} (w : List Symbol) : bufferTape w (-1) = none := by
   simp [bufferTape]
 
-/-- Appending one emitted bit changes just the old right-blank cell.
+/-- **The buffer, unfolded** (the ND inventory API, round 2; G2's consumer): cell `z` reads
+`w[z.toNat]?` when `0 ≤ z`, and is blank otherwise. -/
+theorem bufferTape_eq {Symbol : Type*} (w : List Symbol) (z : ℤ) :
+    bufferTape w z = if 0 ≤ z then w[z.toNat]? else none :=
+  rfl
+
+/-- **Every negative cell is blank** (the ND inventory API, round 2): `bufferTape w z = none` for
+`z < 0`. -/
+theorem bufferTape_of_neg {Symbol : Type*} (w : List Symbol) {z : ℤ} (hz : z < 0) :
+    bufferTape w z = none := by
+  rw [bufferTape_eq, if_neg (by omega)]
+
+/-- Appending one emitted symbol changes just the old right-blank cell.
 
 **Proof sketch.** At that cell the appended singleton is read. At a smaller
 nonnegative cell, list lookup stays in the old prefix. Larger cells and all
 negative cells remain blank. -/
-lemma bufferTape_append (w : List Bool) (b : Bool) :
+lemma bufferTape_append {Symbol : Type*} (w : List Symbol) (b : Symbol) :
     bufferTape (w ++ [b]) = Function.update (bufferTape w) (w.length : ℤ) (some b) := by
   funext z
   by_cases hz : z = (w.length : ℤ)
@@ -533,6 +681,13 @@ lemma bufferTape_append (w : List Bool) (b : Bool) :
 true at the right blank. Interior positions admit either direction-of-arrival tag. -/
 def VirtualTag {n : ℕ} (p : Fin (n + 2)) (b : Bool) : Prop :=
   (p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true)
+
+/-- A boundary tag holds exactly when it is `false` at the left blank and `true` at the right blank:
+`VirtualTag p b ↔ (p = 0 → b = false) ∧ (p = n + 1 → b = true)` (the specification API, the briefs'
+pre-ship inventories, 2026-10-16). -/
+theorem VirtualTag_iff {n : ℕ} (p : Fin (n + 2)) (b : Bool) :
+    VirtualTag p b ↔ (p.val = 0 → b = false) ∧ (p.val = n + 1 → b = true) :=
+  Iff.rfl
 
 /-- Suppress an outward move at a blank whose boundary is identified by the tag.
 The real buffer head otherwise takes the simulated input movement. -/
@@ -643,6 +798,11 @@ def bufferedCompTM (M₁ M₂ : FinTM Bool) : FinTM Bool where
           ⟨0, tapeBlocks (fun _ => (none, 0)) (none, m) a.workTapes,
             a.output, a.state.map (fun q => .inr (.inr (q, virtualNextTag b m)))⟩ }
 
+/-! The buffered composite's tape count `M₁.k + (1 + M₂.k)` and state type, as equations (the
+specification API, the briefs' pre-ship inventories, 2026-10-16): generated by `simps` without the
+`simp` attribute, so that a consumer places the composite inside a host without unfolding it. -/
+attribute [simps (config := { isSimp := false }) k State] bufferedCompTM
+
 /-- Embed phase one with its exact emitted prefix on the buffer and the buffer
 head on its right blank. The real output and the second work block are empty. -/
 def bufferedFirstCfg (M₁ M₂ : FinTM Bool) {x : List Bool}
@@ -732,6 +892,10 @@ lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}
     rw [MultiTapeTM.runFrom_succ_eq_step', ih (fun s hs => h s (by omega)),
       bufferedFirstCfg_step M₁ M₂ _ (h t (by omega)), MultiTapeTM.runFrom_succ_eq_step']
 
+/-! The specification API (user, 2026-10-16): `Turing.FinTM.bufferedFirstCfg`'s fields as
+equations, without the `simp` attribute. -/
+attribute [simps (config := { isSimp := false })] bufferedFirstCfg
+
 /-- Embed a configuration on virtual input `y` while the physical input remains
 `x`. The buffer head represents virtual position minus one. The left block and
 native input head retain arbitrary inactive contents from phase one. -/
@@ -744,6 +908,33 @@ def bufferedSecondCfg (M₁ M₂ : FinTM Bool) {x y : List Bool}
   workTapes := tapeBlocks tapes (bufferTape y) c.workTapes
   workTapePos := tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
   output := c.output
+
+/-! The specification API (user, 2026-10-16): `Turing.FinTM.bufferedSecondCfg`'s fields as
+equations, without the `simp` attribute. -/
+attribute [simps (config := { isSimp := false })] bufferedSecondCfg
+
+/-- **The second phase's work tapes at a composite index**: at an index `i` of the buffered
+composite's own tape type, `bufferedSecondCfg`'s work tape is the block layout read at
+`Fin.cast (bufferedCompTM_k M₁ M₂) i`. -/
+theorem bufferedSecondCfg_workTapes_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin M₁.k → ℤ → Option Bool) (heads : Fin M₁.k → ℤ)
+    (i : Fin (bufferedCompTM M₁ M₂).k) :
+    (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapes i =
+      tapeBlocks tapes (bufferTape y) c.workTapes (Fin.cast (bufferedCompTM_k M₁ M₂) i) :=
+  rfl
+
+/-- **The second phase's heads at a composite index**: at an index `i` of the buffered
+composite's own tape type, `bufferedSecondCfg`'s head is the block layout read at
+`Fin.cast (bufferedCompTM_k M₁ M₂) i`. -/
+theorem bufferedSecondCfg_workTapePos_cast (M₁ M₂ : FinTM Bool) {x y : List Bool}
+    (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (p : Fin (x.length + 2))
+    (tapes : Fin M₁.k → ℤ → Option Bool) (heads : Fin M₁.k → ℤ)
+    (i : Fin (bufferedCompTM M₁ M₂).k) :
+    (bufferedSecondCfg M₁ M₂ c b p tapes heads).workTapePos i =
+      tapeBlocks heads ((c.inputPos.val : ℤ) - 1) c.workTapePos
+        (Fin.cast (bufferedCompTM_k M₁ M₂) i) :=
+  rfl
 
 /-- One second-phase step simulates one native step, with a valid new arrival
 tag. The statement includes the absorbing halting case.
@@ -946,3 +1137,76 @@ lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
   exact hf
 
 end Turing.FinTM
+
+/-! ### Machine-agreement transfer (§13, Z5)
+
+Two machines over the same tape count and state type whose transition
+tables agree on a set of control states run identically for as long as the
+run's control stays inside that set. This is the `hagree` genre of
+`Turing.capture_run`/`Turing.emit_run` made standalone: those lemmas carry
+a per-state agreement hypothesis for one specific wrapper, re-proved ad hoc
+at every host; the standalone form transfers whole runs between any two
+agreeing tables (design `machine-library-design.md` §13, item Z5; decision
+D-R3). First customers: the forwarding loop host of `Build/Loop.lean`
+(whose fourteen phase lemmas are verbatim re-proofs of the capturing
+host's, since the two tables agree on every non-body state) and the
+guarded `clSlot_run` agreement sites of `CookLevin/Hardness.lean`. -/
+
+namespace Turing.MultiTapeTM
+
+/-- The two transition tables agree on every control state in `Q`: from any
+such state, both machines take the identical action on identical reads.
+Nothing is assumed about states outside `Q`, about `q₀`, or about
+halting. -/
+def AgreeOn {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)
+    (Q : Set State) : Prop :=
+  ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work
+
+/-- **The agreement, unfolded** (the ND inventory API, round 2; C1-WC's review): the tables agree
+on `Q` iff `M.tr q inp work = N.tr q inp work` for every `q ∈ Q` and all reads. -/
+theorem agreeOn_iff {k : ℕ} {Symbol State : Type*} (M N : MultiTapeTM k Symbol State)
+    (Q : Set State) :
+    M.AgreeOn N Q ↔ ∀ q ∈ Q, ∀ inp work, M.tr q inp work = N.tr q inp work :=
+  Iff.rfl
+
+/-- One step transfers across an agreement: if the configuration's control
+state (when live) lies in the agreement set, both machines step it to the
+same configuration. Halted configurations step to themselves on both sides.
+
+**Proof sketch.** On `c.state = none` both steps are the identity. On
+`c.state = some q` with `q ∈ Q`, unfold `step`: both sides apply the same
+action `M.tr q c.inputSymbol c.workTapeSymbols = N.tr q …` to `c`. -/
+theorem step_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (hq : ∀ q, c.state = some q → q ∈ Q) :
+    N.step c = M.step c := by
+  cases hs : c.state with
+  | none => simp only [step_of_halt hs]
+  | some q =>
+    simp only [step, hs]
+    rw [h q (hq q hs)]
+
+/-- A whole run transfers across an agreement: if every control state the
+`M`-run visits strictly before time `t` lies in the agreement set, the two
+runs coincide at time `t` (and hence at every earlier time, by
+instantiating `t`). The endpoint itself may leave the set or halt; no
+liveness is assumed, and `t = 0` is the trivial case.
+
+**Proof sketch.** Induct on `t`. The inductive hypothesis transfers the
+run at `t`; the visit hypothesis at `u = t` puts its live control in `Q`,
+so `step_eq_of_agreeOn` transfers the final step. Halted intermediate
+configurations step identically on both sides without the hypothesis. -/
+theorem runFrom_eq_of_agreeOn {k : ℕ} {Symbol State : Type*}
+    {M N : MultiTapeTM k Symbol State} {Q : Set State}
+    (h : M.AgreeOn N Q) {input : List Symbol} (c : Cfg k Symbol State input)
+    (t : ℕ) (hq : ∀ u < t, ∀ q, (M.runFrom c u).state = some q → q ∈ Q) :
+    N.runFrom c t = M.runFrom c t := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [runFrom_succ_eq_step', ih (fun u hu => hq u (by omega)),
+      runFrom_succ_eq_step']
+    exact step_eq_of_agreeOn h _ (hq t (by omega))
+
+end Turing.MultiTapeTM

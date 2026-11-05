@@ -12,8 +12,10 @@ tag usable at declaration level, and in every design document and blueprint entr
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 ```
 
 ## Declaration level
@@ -37,5 +39,11 @@ docstring, for example `[VCVio, OracleComp/OracleSpec]`, after the source citati
 
 ## Authors seen in the consulted modules (from their headers)
 
-Devon Tuma (most of `OracleComp`, `OracleSpec`), with Quang Dao, Alexander Hicks and James Waters
-in neighbouring modules. The file headers say "VCVio Contributors".
+Checked at the pinned commit (gate 02, finding 7):
+- `OracleComp.lean`, `ProbComp/Basic.lean`, `SimSemantics/QueryImpl/Compose.lean`: Devon Tuma,
+  Quang Dao;
+- `OracleSpec.lean`, `OracleQuery.lean`: Devon Tuma;
+- `QueryTracking/LoggingOracle/Core.lean`: Devon Tuma, Quang Dao, Alexander Hicks.
+
+The repository has since moved to `https://github.com/Verified-zkEVM/VCVio`; the old URL
+redirects, and the citation keeps it, with the pinned commit.

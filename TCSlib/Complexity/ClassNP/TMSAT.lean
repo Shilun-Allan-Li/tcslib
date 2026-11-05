@@ -5,6 +5,7 @@ Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.TuringMachine.Encoding
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 import TCSlib.Complexity.ClassP.TimeConstructible
 import TCSlib.Complexity.ClassNP.PolyTimePairing
 import TCSlib.Complexity.ClassNP.Reductions
@@ -868,39 +869,13 @@ private def tmsatConcat (z : List Bool) : List Bool :=
 
 /-- Equality with an entire fixed answer is a polynomial-time bit test. -/
 private lemma tmsat_pt_eq (w : List Bool) :
-    PolyTimeComputable (fun x => [decide (x = w)]) := by
-  have h := polyTimeComputable_of_linear (FinTM.computesFunInTime_ifEq w [true] [false])
-  convert h using 1
-  funext x
-  by_cases hx : x = w <;> simp [hx]
+    PolyTimeComputable (fun x => [decide (x = w)]) :=
+  polyTimeComputable_of_linear (FinTM.computesFunInTime_decideEq w)
 
-/-- A fixed-width increment never successfully returns the empty word. -/
-private lemma tmsat_inc_nonempty (w : List Bool) : incFixed w ≠ some [] := by
-  cases w with
-  | nil => simp [incFixed]
-  | cons b w => cases b <;> cases h : incFixed w <;> simp [incFixed, h]
-
-/-- Overflow is exactly the all-true unary shape, including length zero. -/
-private lemma tmsat_inc_none (w : List Bool) :
-    incFixed w = none ↔ w = List.replicate w.length true := by
-  induction w with
-  | nil => simp [incFixed]
-  | cons b w ih => cases b <;> simp [incFixed, List.replicate_succ, ih]
-
-/-- The exact all-true shape is decided by P11 overflow and whole-word equality. -/
+/-- The exact all-true shape is a polynomial-time bit test. -/
 private lemma tmsat_pt_unary :
-    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
-  have h := (tmsat_pt_eq []).comp (polyTimeComputable_of_linear FinTM.computesFunInTime_incFixed)
-  convert h using 1
-  funext x
-  have he : (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
-    rw [← tmsat_inc_none]
-    cases hi : incFixed x with
-    | none => simp
-    | some w =>
-      have hw : w ≠ [] := by intro hw; subst w; exact tmsat_inc_nonempty x hi
-      simp [hw]
-  simp only [Function.comp_apply, he]
+    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) :=
+  polyTimeComputable_of_linear FinTM.computesFunInTime_allTrue
 
 /-- Count doubled prefix cells on a unary work tape, then emit at most that
 many native payload bits while moving the work head left. The output stays

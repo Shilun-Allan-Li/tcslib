@@ -1,0 +1,97 @@
+# Exact transcription of Games' OracleComp / ProbComp / simulate / Party.exec on small instances.
+from fractions import Fraction as F
+# Computation trees: ('pure', a) | ('query', i, x, k)  where k is a python function answer -> tree
+def pure(a): return ('pure', a)
+def query(i, x, k): return ('query', i, x, k)
+def bind(c, f):
+    if c[0] == 'pure': return f(c[1])
+    _, i, x, k = c
+    return query(i, x, lambda y: bind(k(y), f))
+# ProbComp: oracle m answers Fin(m+1) uniformly
+def expect(c, g):
+    if c[0] == 'pure': return F(g(c[1]))
+    _, m, _, k = c
+    return F(1, m + 1) * sum(expect(k(j), g) for j in range(m + 1))
+def prob(c, p): return expect(c, lambda a: 1 if p(a) else 0)
+def flip(): return query(1, (), pure)  # sampleFin 1 : Fin 2
+# simulate
+def simulate(impl, c, s):
+    if c[0] == 'pure': return pure((c[1], s))
+    _, i, x, k = c
+    return bind(impl(i, x, s), lambda ys: simulate(impl, k(ys[0]), ys[1]))
+# Party: query index ('ex',) for exchange, ('u', m) for coins
+def step(P):
+    if P[0] == 'pure': return pure(('inl', P[1]))
+    _, i, x, k = P
+    if i == 'ex': return pure(('inr', (x, k)))
+    return query(i[1], x, lambda y: step(k(y)))
+def finish(P):
+    if P[0] == 'pure': return pure(P[1])
+    _, i, x, k = P
+    if i == 'ex': return finish(k(None))
+    return query(i[1], x, lambda y: finish(k(y)))
+def close(P):  # proposed: a send after the end is a violation
+    if P[0] == 'pure': return pure(('done', P[1]))
+    _, i, x, k = P
+    if i == 'ex': return pure(('sentAfterEnd',))
+    return query(i[1], x, lambda y: close(k(y)))
+def swap(r): return None if r is None else (r[1], r[0])
+def exec_(fuel, A, B, fin=finish):
+    if fuel == 0: return pure(None)
+    def on(s):
+        if s[0] == 'inl':
+            return bind(fin(B(None)), lambda b: pure((s[1], b)))
+        m, k = s[1]
+        return bind(exec_(fuel - 1, B(m), k, fin), lambda r: pure(swap(r)))
+    return bind(step(A), on)
+def send(m, k): return query('ex', m, k)
+def run(c):  # deterministic tree -> value
+    assert c[0] == 'pure', c
+    return c[1]
+# A4
+A = send('m', lambda _: pure('a')); B = lambda _: pure('b')
+print('A4 exec1', run(exec_(1, A, B)), 'exec2', run(exec_(2, A, B)))
+print('A4 exec0 ret', run(exec_(0, pure('a'), B)), 'exec1 ret', run(exec_(1, pure('a'), B)))
+# A5
+def K(j, N):
+    return pure(N) if j == 0 else send(j - 1, lambda _: K(j - 1, N))
+print('A5 N=100', run(exec_(1, pure('a'), lambda _: K(100, 100))))
+print('A5 with close', run(exec_(1, pure('a'), lambda _: K(100, 100), fin=close)))
+# A6: B's first message is a function argument, not an oracle answer
+# A7: one unit query, Boolean answer, Boolean state
+def impl0(i, x, s):
+    if s: return pure((False, True))
+    return bind(flip(), lambda b: pure((False, bool(b))))
+def impl1(i, x, s):
+    if s: return pure((False, True))
+    return bind(flip(), lambda b: pure((bool(b), bool(b))))
+adv = query('o', (), pure)
+for nm, im in (('impl0', impl0), ('impl1', impl1)):
+    c = simulate(im, adv, False)
+    print('A7', nm, 'Pr[ans]', prob(c, lambda r: r[0]), 'Pr[bad]', prob(c, lambda r: r[1]))
+# proposed off-bad-law hypothesis at the good state: E[1_{not bad'} g] equal for all g;
+# it suffices to compare the off-bad sub-distributions (finite support here)
+def offbad(c):
+    out = {}
+    def go(c, w):
+        if c[0] == 'pure':
+            ys = c[1]
+            if not ys[1]: out[ys] = out.get(ys, 0) + w
+            return
+        _, m, _, k = c
+        for j in range(m + 1): go(k(j), w * F(1, m + 1))
+    go(c, F(1)); return out
+print('A7 off-bad laws', offbad(impl0('o', (), False)), offbad(impl1('o', (), False)))
+# A8: non-sticky bad; states 0,1,2, bad <-> s==1
+def j0(i, x, s):
+    if i == 'raise': return pure((False, 1))
+    if s == 1: return pure((False, 2))
+    return pure((False, s))
+def j1(i, x, s):
+    if i == 'raise': return pure((False, 1))
+    if s == 1: return pure((True, 2))
+    return pure((False, s))
+adv8 = query('raise', (), lambda _: query('differ', (), pure))
+for nm, im in (('g0', j0), ('g1', j1)):
+    c = simulate(im, adv8, 0)
+    print('A8', nm, 'Pr[true]', prob(c, lambda r: r[0]), 'Pr[final bad]', prob(c, lambda r: r[1] == 1))

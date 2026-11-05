@@ -1,38 +1,45 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/ErrorCorrectingCodes/ListDecoding.lean :: exists_listDecodable_code -->
+<!-- lean-source: TCSlib/ErrorCorrectingCodes/ListDecoding.lean :: ErrorCorrectingCodes.Codeword.exists_listDecodable_code -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
 # Existence of list-decodable codes by counting
 
-**Claim.** Fix `n`, `1 ≤ L < M ≤ q^n` with `q = Fintype.card α`, and `p : ℝ`
-with `0 ≤ p ≤ 1`. Suppose `V` bounds every Hamming ball,
-`(hamming_ball ⌊p*n⌋₊ y).card ≤ V` for all `y`, and the counting inequality
-`q^n · C(V, L+1) · C(q^n - (L+1), M - (L+1)) < C(q^n, M)` holds. Then some code
-`C : Code n α` has `C.card = M` and is `(p, L)`-list-decodable.
+**Claim.** Let $\alpha$ be a finite field and write $N = |\alpha|^n$ for the number of words in the space $\alpha^n$. Fix $n, L, M \in \mathbb{N}$ and $p \in [0,1]$ with $1 \le L$, $L < M$ and $M \le N$. Suppose $V \in \mathbb{N}$ bounds the volume of every Hamming ball of radius $\lfloor pn\rfloor$ — that is, for every center $y \in \alpha^n$ the ball $B(y) := \{\,x : d(x,y) \le \lfloor pn\rfloor\,\}$ has $|B(y)| \le V$ — and that
+\[
+N \cdot \binom{V}{L+1} \cdot \binom{N-(L+1)}{\,M-(L+1)\,} \;<\; \binom{N}{M}.
+\]
+Then there is a code $C \subseteq \alpha^n$ with exactly $M$ codewords that is $(p,L)$-list-decodable: for every $y \in \alpha^n$ one has $|B(y) \cap C| \le L$.
 
-**Proof.** `contrapose h_ineq`: assume no `M`-element subset is
-`(p, L)`-list-decodable and derive the reverse inequality by counting bad
-subsets inside `Finset.powersetCard M univ`.
+**Proof.** The proof is a counting argument run through the contrapositive, exactly as in the probabilistic method: rather than exhibit a good code, it shows that the bad codes are too few to exhaust all $M$-subsets.
 
-1. `h_bad_codes`: for a fixed centre `y`, the `M`-subsets `C` with
-   `|ball(y) ∩ C| ≥ L + 1` number at most
-   `|powersetCard (L+1) (ball y)| · C(q^n - (L+1), M - (L+1))`. Each such `C`
-   splits as `S ∪ (C \ S)` for some `(L+1)`-subset `S` of the ball
-   (`Finset.exists_subset_card_eq`), so the family injects into a
-   `Finset.biUnion` of images `fun T => S ∪ T` over
-   `powersetCard (M - (L+1)) (univ \ S)`; `Finset.card_le_card`,
-   `card_biUnion_le`, `card_image_le`, `card_powersetCard`, `card_sdiff` give
-   the bound, then `Nat.choose_le_choose` with `hV y` replaces `|ball y|` by
-   `V`.
-2. `h_bad_codes_count`: union-bound over centres. The `M`-subsets bad for
-   *some* `y` sit inside the `biUnion` over `y : Codeword n α`
-   (`Finset.card_le_card`, `Finset.card_biUnion_le`), so summing step 1 over
-   all `q^n` centres (`Finset.sum_le_sum`, `Fintype.card_pi`) bounds them by
-   `q^n · C(V, L+1) · C(q^n - (L+1), M - (L+1))`.
-3. By the contrapositive hypothesis every `M`-subset is bad, so the filter is
-   all of `powersetCard M univ` (`Finset.filter_true_of_mem` after unfolding
-   `list_decodable`), whose cardinality is `C(q^n, M)`
-   (`simp [Finset.card_univ]`). Chaining with step 2 contradicts `h_ineq`. ∎
+Throughout write $N = |\alpha|^n$ (the cardinality of $\alpha^n$, computed from the product structure) and $B(y)$ for the Hamming ball of radius $\lfloor pn\rfloor$ about $y$.
 
-**Used in.** `list_decoding_capacity` (hypothesis supplied by
-`listDecoding_counting_ineq`).
+1. **Contrapositive.** It suffices to prove
+\[
+\binom{N}{M} \;\le\; N \cdot \binom{V}{L+1} \cdot \binom{N-(L+1)}{M-(L+1)}
+\]
+under the assumption that *no* $M$-element code is $(p,L)$-list-decodable. Indeed, this is the negation of the displayed strict inequality, and the negation of the conclusion is precisely the assumption just stated.
+
+2. **What failure means.** Unfolding list-decodability, a code $C$ fails to be $(p,L)$-list-decodable exactly when there is a center $y$ with $|B(y)\cap C| \ge L+1$. Call such a $C$ *bad for $y$*. The standing assumption thus says: every $M$-subset of $\alpha^n$ is bad for at least one center $y$.
+
+3. **Counting the codes bad for a fixed center.** Fix $y$. We bound the number of $M$-subsets $C$ with $|B(y)\cap C| \ge L+1$. Any such $C$ can be described (not uniquely — we only need an upper bound) as follows: since $B(y)\cap C$ has at least $L+1$ elements, choose a subset $S \subseteq B(y)\cap C$ with $|S| = L+1$ (`Finset.exists_subset_card_eq`); then $S \subseteq B(y)$, $S \subseteq C$, and $C = S \cup (C\setminus S)$, where $T := C\setminus S$ is an $(M-(L+1))$-subset of the complement $\alpha^n\setminus S$. Hence $C$ lies in the image of the map $(S,T)\mapsto S\cup T$ as $S$ ranges over the $(L+1)$-subsets of $B(y)$ and $T$ over the $(M-(L+1))$-subsets of $\alpha^n\setminus S$. Since these images cover every code bad for $y$, the count of such codes is at most the number of pairs $(S,T)$ (`Finset.card_biUnion_le` for the union over $S$, `Finset.card_image_le` for each image, `Finset.card_sdiff` to compute $|\alpha^n\setminus S| = N-(L+1)$):
+\[
+\#\{C \text{ bad for } y\} \;\le\; \binom{|B(y)|}{L+1}\cdot\binom{N-(L+1)}{M-(L+1)}.
+\]
+Finally $|B(y)| \le V$ by the volume hypothesis, and the binomial coefficient is monotone in its upper argument (`Nat.choose_le_choose`), so
+\[
+\#\{C \text{ bad for } y\} \;\le\; \binom{V}{L+1}\cdot\binom{N-(L+1)}{M-(L+1)}.
+\]
+(The counts of $(L+1)$- and $(M-(L+1))$-subsets are read off from `Finset.card_powersetCard`.)
+
+4. **Union bound over centers.** A code is bad iff it is bad for *some* $y$, so the set of bad $M$-subsets is contained in the union, over all $y\in\alpha^n$, of the sets in Step 3. There are exactly $N$ centers, so summing the bound of Step 3 over all $y$ (again `Finset.card_biUnion_le`) gives
+\[
+\#\{\text{bad } M\text{-subsets}\} \;\le\; N\cdot \binom{V}{L+1}\cdot\binom{N-(L+1)}{M-(L+1)}.
+\]
+
+5. **Every code is bad.** By the assumption of Step 2, *every* $M$-subset of $\alpha^n$ is bad, so the set of bad $M$-subsets is the whole collection of $M$-subsets, which has cardinality $\binom{N}{M}$ (`Finset.card_powersetCard`, with $|\alpha^n| = N$). Substituting this into Step 4 yields
+\[
+\binom{N}{M} \;\le\; N\cdot \binom{V}{L+1}\cdot\binom{N-(L+1)}{M-(L+1)},
+\]
+which is exactly the inequality required in Step 1. This completes the contrapositive, and with it the proof. $\qquad\blacksquare$

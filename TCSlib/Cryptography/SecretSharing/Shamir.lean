@@ -38,6 +38,8 @@ literally translation by a fixed polynomial.
 
 * [Sha79] A. Shamir, *How to share a secret*, Communications of the ACM 22(11), 1979, §2–3.
 * [Bei11] A. Beimel, *Secret-sharing schemes: a survey*, IWCC 2011, §2.1.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+  §6.1.2–6.1.3 (Lemma 153.2, Fact 153.3, Protocol 154.4, Proposition 154.5).
 -/
 
 namespace TCSlib.Shamir
@@ -83,7 +85,19 @@ theorem degree_poly_lt (hk : 0 < k) (sec : F) (q : degreeLT F (k - 1)) :
   exact lt_of_le_of_lt degree_C_le (by exact_mod_cast hk)
 
 /-- Shamir's scheme: share `sec` as the evaluations of a random degree-`< k` polynomial with
-constant term `sec`, and reconstruct by Lagrange interpolation at `0`. [Sha79, §2] -/
+constant term `sec`, and reconstruct by Lagrange interpolation at `0`. [Sha79, §2],
+[PS10, Prot 154.4]; the interpolation step is [PS10, Lem 153.2] (Mathlib's
+`Lagrange.interpolate`).
+
+**Deviations from [PS10, Prot 154.4].** [PS10] works over `ℤ_p` for a prime `p > n` and gives
+shares only to the parties `1, …, n`; here the field is arbitrary and every nonzero element is a
+party. For `F = ℤ_p` and `1 ≤ k`, [PS10]'s `n`-party scheme is this one with the other parties'
+shares discarded, and its correctness and privacy claims, which concern sets of those parties,
+are special cases of `correct` (which needs `0 < k`), `localReconstruct` and `perfectPrivacy`.
+[PS10] draws `n − 1` random coefficients and writes the polynomial up to `a_n tⁿ`, a typo:
+threshold `k` needs degree at most `k − 1`, that is, the `k − 1` random coefficients that the
+coins `q` carry here. [PS10, Lem 153.2] says "the unique degree-`n` polynomial"; the interpolant
+is the unique one of degree *at most* `n`, as its proof uses. -/
 noncomputable def scheme (k : ℕ) (F : Type*) [Field F] [DecidableEq F] :
     Scheme (Party F) F F (degreeLT F (k - 1)) where
   share sec q a := (poly sec q).eval (label a)
@@ -100,7 +114,8 @@ theorem localReconstruct [DecidableEq F] : (scheme k F).LocalReconstruct := by
   exact Lagrange.interpolate_eq_of_values_eq_on _ _ hfg
 
 /-- **Correctness.** Any `k` (or more) parties reconstruct the secret exactly, whatever the
-dealer's coins were. [Sha79, §2]
+dealer's coins were. [Sha79, §2]; the reconstruction half of [PS10, Prop 154.5], which [PS10]
+leaves as an exercise.
 
 **Proof sketch.** The dealer's polynomial `p` has degree `< k ≤ #A`, and it agrees with the
 shares on the `#A` distinct nodes of `A`, so by uniqueness of Lagrange interpolation it *is*
@@ -118,7 +133,8 @@ theorem correct [DecidableEq F] (hk : 0 < k) :
 
 /-- **Perfect privacy.** For any set `B` of at most `k - 1` parties and any two secrets there is
 a bijection of the dealer's coins carrying one secret's `B`-view to the other's; so the shares
-held by `B` carry no information whatsoever about the secret. [Sha79, §3]
+held by `B` carry no information whatsoever about the secret. [Sha79, §3]; the privacy half of
+[PS10, Prop 154.5], in its perfect form (see `Scheme.PerfectPrivacy`).
 
 **Proof sketch.** Let `δ = sec - sec'`. Interpolate through the `#B ≤ k - 1` points
 `(b, δ / b)` (legitimate: party labels are nonzero) to get `r` of degree `< #B ≤ k - 1`, and

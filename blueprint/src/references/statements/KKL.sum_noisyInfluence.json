@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.sum_noisyInfluence",
- "key": "20859c996ff25aef",
+ "key": "3f270a111303e089",
  "kind": "lemma",
  "title": "Sum of noisy influences",
- "statement": "Fix an integer $n$ and a real number $\\rho$, and let $f:\\{0,1\\}^n\\to\\bbr$ be a Boolean function. Summing the noisy influence at noise rate $\\rho$ over all coordinates $i\\in[n]$ gives\n\\[\n  \\sum_{i=1}^{n} \\mathrm{Inf}_i^{\\rho}[f]\n  \\;=\\; \\sum_{S\\subseteq[n]} \\abs{S}\\,\\rho^{\\,\\abs{S}-1}\\,\\hat f(S)^2,\n\\]\nwhere the right-hand sum ranges over all subsets $S$ of $[n]$.",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube and $\\rho\\in\\mathbb R$. Then $\\sum_iI_i^{(\\rho)}(f)=\\sum_{S\\subseteq[n]}|S|\\rho^{|S|-1}\\widehat f(S)^2$, using natural powers.",
  "hypotheses_covered": [
   "arity n and a Boolean function f : {0,1}^n → ℝ",
   "a real noise rate ρ (no constraint imposed)",

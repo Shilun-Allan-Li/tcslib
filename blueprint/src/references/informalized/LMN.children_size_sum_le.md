@@ -1,21 +1,22 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/LMN/RecursiveReduction.lean :: children_size_sum_le -->
+<!-- lean-source: TCSlib/BooleanAnalysis/LMN/RecursiveReduction.lean :: LMN.children_size_sum_le -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# The children of a size-`s` node have total size at most `s − 1`
+# The Children of a Gate Are Strictly Smaller
 
-**Claim.** If `(Circuit.node isAnd cs).size ≤ s`, then
-`cs.foldr (fun c acc => c.size + acc) 0 ≤ s - 1`.
+**Claim.** Let $g = \mathrm{node}(\mathit{isAnd}, cs)$ be an internal gate of a Boolean circuit on $n$ variables, where $cs$ is the list of its child subcircuits, and let $s$ be a natural number with $\mathrm{size}(g) \le s$. Then the total size of the children, $\sum_{c \in cs} \mathrm{size}(c)$, is at most $s - 1$, where the subtraction is truncated natural-number subtraction.
 
-**Proof.** One line: `exact Nat.le_sub_one_of_lt (lt_of_lt_of_le _ hs)`.
-
-1. The inner `by cases cs <;> simp +decide [Circuit.size]` proves the strict
-   inequality `cs.foldr (fun c acc => c.size + acc) 0 < (Circuit.node isAnd cs).size`,
-   since by definition `(Circuit.node isAnd cs).size = 1 + cs.foldr …` — the `+1`
-   accounts for the gate itself, and holds for both the empty and non-empty list.
-2. `lt_of_lt_of_le` chains that with `hs` to get `fold < s`.
-3. `Nat.le_sub_one_of_lt` converts `fold < s` to `fold ≤ s - 1`.
-
-**Used in.** `child_size_le_parent` (same file) and the size bookkeeping in
-`circuit_layer_reduction`
-(`TCSlib/BooleanAnalysis/LMN/CircuitLayerReduction.lean`).
+**Proof.** The whole argument rests on the definition of size for an internal gate: a node counts itself once and then adds the sizes of its children, so
+\[
+\mathrm{size}(g) \;=\; \mathrm{size}\bigl(\mathrm{node}(\mathit{isAnd}, cs)\bigr) \;=\; 1 + \sum_{c \in cs} \mathrm{size}(c).
+\]
+(Here $\sum_{c \in cs} \mathrm{size}(c)$ denotes the right fold `cs.foldr (fun c acc => c.size + acc) 0`.) Because the gate contributes its own unit $1$ on top of the children, the total size of the children is *strictly* smaller than the size of $g$:
+\[
+\sum_{c \in cs} \mathrm{size}(c) \;<\; 1 + \sum_{c \in cs} \mathrm{size}(c) \;=\; \mathrm{size}(g).
+\]
+This strict inequality is just $m < 1 + m$ for a natural number $m$; the Lean proof discharges it by splitting on whether $cs$ is empty or not, purely so that the definition of size unfolds in each shape, after which the arithmetic is immediate — no mathematical content hides in that case split. Chaining this strict bound with the hypothesis $\mathrm{size}(g) \le s$ by transitivity gives
+\[
+\sum_{c \in cs} \mathrm{size}(c) \;<\; s.
+\]
+Finally, for natural numbers $a < b$ implies $a \le b - 1$ even under truncated subtraction: if $a < b$ then $b \ge 1$, so passing to $b - 1$ loses nothing. Applying this with $a = \sum_{c \in cs} \mathrm{size}(c)$ and $b = s$ yields the claim, $\sum_{c \in cs} \mathrm{size}(c) \le s - 1$.

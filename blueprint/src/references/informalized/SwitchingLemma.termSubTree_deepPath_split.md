@@ -1,29 +1,30 @@
 <!-- generated-by: proofmatch informalization (uncited) -->
-<!-- lean-source: TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean :: termSubTree_deepPath_split -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Switching/CanonicalDTree.lean :: SwitchingLemma.termSubTree_deepPath_split -->
 <!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: claude-opus-4-8; confidence: high -->
 
-# Deepest path of `termSubTree` is a prefix followed by the continuation's path
+# Deepest-path splitting for a term's sub-tree
 
-**Claim.** For `lits` with pairwise distinct variables there exist a list
-`prefix_dp` and a restriction `ρ'` with
-`(termSubTree lits ρ cont).deepPath = prefix_dp ++ (cont ρ').deepPath`,
-`prefix_dp.length = (lits.filter (fun l => decide (l.var ∈ ρ.freeVars))).length`,
-and `ρ' v = ρ v` for every `v` outside `(lits.map Literal.var).toFinset`. This is
-the list-level form of `termSubTree_deepPath_append`, which records only lengths.
+**Claim.** Let $\mathit{lits}$ be a list of literals on $n$ variables whose variables are pairwise distinct, let $\rho$ be a restriction on those $n$ variables, and let $c$ be a continuation, a map sending each restriction to a decision tree. Then one can split the deepest path of the sub-tree $\mathrm{termSubTree}(\mathit{lits},\rho,c)$ into a prefix $P$ coming from the literals and a tail coming from the continuation: there exist a list $P$ of (variable, direction) pairs and a restriction $\rho'$ with $\mathrm{deepPath}\big(\mathrm{termSubTree}(\mathit{lits},\rho,c)\big) = P \mathbin{+\!\!+} \mathrm{deepPath}(c(\rho'))$, where the length of $P$ is exactly the number of literals of $\mathit{lits}$ whose variable is free under $\rho$, and where $\rho'$ agrees with $\rho$ on every variable not occurring among the variables of $\mathit{lits}$.
 
-**Proof.** `induction' lits` generalizing `ρ`, `cont`.
+**Proof.** Throughout, write $\rho[v\mapsto b]$ for the restriction that fixes variable $v$ to $b$ and otherwise agrees with $\rho$, and write $\mathrm{free}(\rho)$ for the set of variables left free by $\rho$. Recall how $\mathrm{termSubTree}(\mathit{lits},\rho,c)$ is built: it processes the literals one at a time, and on a literal $l$ it branches on $l.\mathrm{var}$ — recursing on the tail under $\rho[l.\mathrm{var}\mapsto\mathrm{false}]$ and $\rho[l.\mathrm{var}\mapsto\mathrm{true}]$ — precisely when $l.\mathrm{var}$ is still free under $\rho$; if $l.\mathrm{var}$ is already fixed, the literal is skipped and processing continues under the same $\rho$. When the list is exhausted it returns $c(\rho)$. The proof is by induction on $\mathit{lits}$, with the restriction $\rho$ and the continuation $c$ both generalised so that the inductive hypothesis may be re-used at a modified restriction.
 
-1. `nil`: take `prefix_dp := []`, `ρ' := ρ` — `⟨[], ρ, rfl, rfl, fun _ _ => rfl⟩`.
-2. `cons l lits`: `by_cases hfree : l.var ∈ ρ.freeVars`.
-   - Free: `termSubTree_deepPath_head_free` gives `b` with
-     `deepPath = (l.var, b) :: _`. Apply `ih` at
-     `Function.update ρ l.var (some b)` (tail pairwiseness via
-     `List.pairwise_cons`) and take `(l.var, b) :: prefix_dp` with the same `ρ'`.
-     The prefix-length goal matches after `filter_free_update_eq`, whose
-     side condition `x.var ≠ l.var` is `hdistinct.1`.
-   - Not free: `termSubTree_cons_nonfree` rewrites the tree to the tail's and
-     `ih ρ cont` transfers all three components unchanged.
+1. **Base case: $\mathit{lits}=[\,]$.** Here $\mathrm{termSubTree}([\,],\rho,c)=c(\rho)$ by definition, so take the empty prefix $P=[\,]$ and $\rho'=\rho$. The path equation reads $\mathrm{deepPath}(c(\rho))=\mathrm{deepPath}(c(\rho))$; the length claim reads $0=0$, since no literals are present to be free; and $\rho'=\rho$ agrees with $\rho$ everywhere.
 
-**Note.** Currently unreferenced elsewhere in `TCSlib/`; the analogous splitting
-step for `canonicalDTree` is done inline in
-`TCSlib/BooleanAnalysis/Switching.lean` (`hdp_drop`).
+2. **Inductive step, free head.** Suppose $\mathit{lits}=l::\mathit{rest}$ and first consider the case $l.\mathrm{var}\in\mathrm{free}(\rho)$. The key structural fact is that building on a free head produces a branch whose deepest path simply records the direction taken into the deeper child and then continues down the corresponding recursive sub-tree: there is a direction $b$ with
+\[
+\mathrm{deepPath}\big(\mathrm{termSubTree}(l::\mathit{rest},\rho,c)\big)=(l.\mathrm{var},b)::\mathrm{deepPath}\big(\mathrm{termSubTree}(\mathit{rest},\rho[l.\mathrm{var}\mapsto b],c)\big),
+\]
+which is the content of the deepest-path-on-a-free-head lemma (`termSubTree_deepPath_head_free`). Apply the inductive hypothesis to the tail $\mathit{rest}$ at the restriction $\rho[l.\mathrm{var}\mapsto b]$ (the tail inherits pairwise-distinct variables), obtaining a prefix $P_0$ and a restriction $\rho'$ with
+\[
+\mathrm{deepPath}\big(\mathrm{termSubTree}(\mathit{rest},\rho[l.\mathrm{var}\mapsto b],c)\big)=P_0\mathbin{+\!\!+}\mathrm{deepPath}(c(\rho')),
+\]
+and with $|P_0|$ equal to the number of literals of $\mathit{rest}$ free under $\rho[l.\mathrm{var}\mapsto b]$, and $\rho'$ agreeing with $\rho[l.\mathrm{var}\mapsto b]$ off the variables of $\mathit{rest}$. Take $P=(l.\mathrm{var},b)::P_0$ and the same $\rho'$. The path equation then holds by prepending the single pair.
+
+3. **Length count for the free head.** The prefix has length $|P|=1+|P_0|$. For the right-hand side, since $l.\mathrm{var}$ is free under $\rho$ the head $l$ survives the "free under $\rho$" filter, so the count of free literals in $l::\mathit{rest}$ equals $1$ plus the count in $\mathit{rest}$. It remains to see that counting free literals of $\mathit{rest}$ gives the same answer under $\rho$ and under $\rho[l.\mathrm{var}\mapsto b]$. This is exactly the filter-invariance-under-update fact (`filter_free_update_eq`): fixing a variable $v$ changes the free-variable set only at $v$, so the freeness of any literal whose variable differs from $v$ is unaffected. Its side condition — that every literal of $\mathit{rest}$ has variable $\neq l.\mathrm{var}$ — is supplied by pairwise distinctness of $l::\mathit{rest}$ (read off the head-versus-tail clause, with the inequality taken symmetrically). Hence $|P_0|$ equals the number of free literals of $\mathit{rest}$ under $\rho$ as well, and $|P|$ equals the number of free literals of $l::\mathit{rest}$ under $\rho$, as required.
+
+4. **Agreement for the free head.** For any variable $v$ not among the variables of $l::\mathit{rest}$, we have both $v\neq l.\mathrm{var}$ and $v$ outside the variables of $\mathit{rest}$. The inductive hypothesis gives $\rho'(v)=\rho[l.\mathrm{var}\mapsto b](v)$, and since $v\neq l.\mathrm{var}$ the update is invisible at $v$, so $\rho'(v)=\rho(v)$.
+
+5. **Inductive step, fixed head.** Now suppose instead $l.\mathrm{var}\notin\mathrm{free}(\rho)$. Then building on a fixed head simply skips it: $\mathrm{termSubTree}(l::\mathit{rest},\rho,c)=\mathrm{termSubTree}(\mathit{rest},\rho,c)$, the skip-a-fixed-head lemma (`termSubTree_cons_nonfree`). Apply the inductive hypothesis to $\mathit{rest}$ at the same $\rho$ and $c$, obtaining $P$ and $\rho'$, and keep both unchanged. The path equation transports directly across the equality of sub-trees. For the length, $l.\mathrm{var}$ is not free, so $l$ fails the "free under $\rho$" filter and the free-literal counts of $l::\mathit{rest}$ and of $\mathit{rest}$ coincide, matching $|P|$. For agreement, any $v$ outside the variables of $l::\mathit{rest}$ is in particular outside the variables of $\mathit{rest}$, so $\rho'(v)=\rho(v)$ by the inductive hypothesis. This completes the induction.
+
+**Key facts.** `SwitchingLemma.termSubTree_deepPath_head_free`, `SwitchingLemma.filter_free_update_eq`, `SwitchingLemma.termSubTree_cons_nonfree`.
