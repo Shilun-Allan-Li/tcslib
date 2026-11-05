@@ -134,3 +134,21 @@ The consumer side is published by PR `lean/zone-step-api` and gate 97
 
 G5's fill then writes the controller, its invariant and the count bound, citing these. Its brief
 follows the merge.
+
+## 8. The fill brief's decisions (the user, 2026-11-05)
+
+The brief's first draft (`campaign/fills/u2s/drafts/u2s-fill-g5.DRAFT.md`, drafted by a sub-agent of
+the cloud maintainer session and reviewed by the maintainer) raised three questions, ruled:
+- **The iteration: API first.** The controller chains one segment per simulated step, from a
+  different control state each time (`zoneRowPre` fixes both tapes, so the simulated state is in
+  the finite control). `Round.iterate_seq` iterates rounds back to one anchor only, and no lemma
+  composed a sequence of segments with varying endpoints. A maintainer PR and gate add
+  `Turing.Segment.iterate_seq` to `Build/Contract/Basic` (a sequence of segments composes into one
+  segment over the summed time), with `Round.iterate_seq` re-proved from it, before the brief
+  issues.
+- **`k = 0`: separate, via R1.** As §2 and the frozen sketch say: the zero-tape case goes through
+  R1's published `embedEmitTM` (with its `q₀` override), not a copy of `SingleTape`'s private
+  idle-tape family; the zone route assumes `0 < k`.
+- **The agent: Claude** (the user's choice, over the soft rule's Codex-first).
+
+The controller itself stays the fill's (decision G5-F1).
