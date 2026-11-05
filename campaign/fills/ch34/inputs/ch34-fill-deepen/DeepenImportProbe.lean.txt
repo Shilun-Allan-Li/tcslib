@@ -1,0 +1,74 @@
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMLoops
+
+/-! The deepening fill's import probe (2026-11-05, on the campaign after #196): `Deepen`'s three
+imports resolve every name the brief cites. A probe, not library code. -/
+
+open Complexity Complexity.LogProg Complexity.LogProg.SavitchARM Complexity.Codec Turing
+
+#check @A
+#check @outerU_run
+#check @A_noVal
+#check @initLang_mem
+#check @acceptLang_mem
+#check @stepLang_mem
+#check @edgeLang_mem
+#check @inputLenLang_mem
+#check @Ins.embed
+#check @RegExt
+#check @preS_of_ins
+#check @preS_embed
+#check @AHalt.embed
+#check @AHalt.embed_guardLe
+#check @astep_inc
+#check @astep_jeqSnd
+#check @edgeLang
+#check @mem_edgeLang
+#check @Cfg.InWindow.apply_of_lt
+#check @Cfg.InWindow.mono
+#check @Cfg.InWindow.apply_iff
+#check @stepRel_iff_mem
+#check @walkLe_zero_iff
+#check @walkLe_succ_iff_head
+#check @ExpBFS.winRun_iff
+#check @ExpBFS.rcode_iff_reflTransGen
+#check @reach_of_reflTransGen
+#check @rel_iff_orc
+#check @initO_iff_orc
+#check @accO_iff_orc
+#check @setSt_toV
+#check @outerSt_toV
+#check @NoEdge
+#check @noEdge_iff
+#check @noEdge_of_lt
+#check @mem_iff_reach_of_noEdge
+#check @move_run
+#check @move2_run
+#check @dmove_run
+#check @sub_run
+#check @halve_run
+#check @copy_run
+#check @shl_run
+#check @inputLength_loop
+#check @AReach.refl
+#check @AReach.trans
+#check @AReach.step
+#check @AReach.single
+#check @AReach.halt
+#check @AReach.mono
+#check @AHalt.step
+#check @AHalt.ret
+#check @AHalt.mono
+#check @arm_decides_SPACE
+#check @logSpace_eq
+#check @indicator_eq_decide
+#check @decide_eq_decide
+#check @GuardLe
+#check @PreS
+#check @LOGSPACE
+#check @FinNDTM.DecidesInSpace
+#check @codeK
+#check @MultiTapeTM.indicator
+#check @ARM
+#check @AConf

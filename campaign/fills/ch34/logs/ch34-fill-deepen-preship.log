@@ -1,0 +1,386 @@
+# ch34-fill-deepen: pre-ship elaborations against oleans-ldwa3 (the campaign's snapshot: #196's merged-tree replay), maintainer, 2026-11-05
+
+Base Lean tree: bdc73ab1 (#196's merge; the campaign at 6d9bbc0e has the same Lean tree). Each probe was elaborated with `devtools/seyoon/leanelab.sh`, one module at a time.
+
+## The screen base (`ch34-fill-deepen-screen-base.txt`)
+
+The v3 screen at the base (a `git archive` of the campaign at 6d9bbc0e) over `screen-population.txt` less `Deepen` (19 files): 269 declarations, 96 pairs, 27,259 characters; no pair on `Savitch.lean`. Exit 0, 22 s.
+
+## DeepenOverlay.out (the owned file at the overlay: the three imports and the pins)
+
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Deepen.lean:25:8: warning: declaration uses 'sorry'
+exit 0
+
+The overlay also adds `import TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen` to `Savitch.lean` and to the facade `SpaceComplexity.lean`, after `SavitchARM.Correct`'s line. From that tree, `fillinputs.py` gives the order list (196 modules: `orders/ch34-fill-deepen.txt`), 63 Mathlib roots (below) and the base sorry set (`ch34-fill-deepen-base-sorries.txt`: 26 entries in 10 modules, matching the warnings in the snapshot chain's replay logs, module by module).
+
+## DeepenRoute.out (the pins and the assembly of `savitch`)
+
+rvprobe/deepen/DeepenRoute.lean:27:8: warning: declaration uses 'sorry'
+exit 0
+
+## BlockFitDeepen.out (gate 96's round-2 block fit and loop steps, re-run on the merged tree)
+
+exit 0
+
+## DeepenImportProbe.out (`Deepen`'s three imports; 65 `#check`s, 0 errors)
+
+A : (E : ℕ) → ARM 18 4 (Lb E)
+@outerU_run : ∀ {E : ℕ} {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s w : ℕ},
+  s ≤ w →
+    ∀ (k u M : ℕ),
+      u + k = 2 ^ w →
+        M ≤ 2 ^ w →
+          AHalt (A E) orc x (GuardLe (A E) x (2 ^ (w * w))) (some Lb.OU, (outerSt s w u 0 M).toV, none)
+            (decide
+              (∃ u',
+                u ≤ u' ∧
+                  u' < 2 ^ w ∧
+                    InitO orc x s u' ∧ ∃ v < 2 ^ w, AccO orc x s v ∧ SavitchARM.Reach (2 ^ w) (Rel orc x s) w u' v))
+A_noVal : ∀ (E : ℕ) (l : Lb E) (r : Fin 18) (l' : Lb E), A E l ≠ Ins.valP r l' ∧ A E l ≠ Ins.valQ r l'
+@initLang_mem : ∀ {N : FinNDTM Bool}, initLang N ∈ LOGSPACE
+@acceptLang_mem : ∀ {N : FinNDTM Bool}, acceptLang N ∈ LOGSPACE
+@stepLang_mem : ∀ {N : FinNDTM Bool}, stepLang N ∈ LOGSPACE
+@edgeLang_mem : ∀ {N : FinNDTM Bool}, edgeLang N ∈ LOGSPACE
+inputLenLang_mem : inputLenLang ∈ LOGSPACE
+@Ins.embed : {m d : ℕ} →
+  {Λ : Type} →
+    {m' d' : ℕ} →
+      {Λ' : Type} → (Fin m → Fin m') → (Fin d → Fin d') → (Λ → Λ') → (Bool → Λ') → Fin m' → Ins m d Λ → Ins m' d' Λ'
+@RegExt : {m m' : ℕ} → (Fin m → Fin m') → (Fin m' → ℕ) → (Fin m → ℕ) → (Fin m' → ℕ) → Prop
+@preS_of_ins : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {l : Λ} {v : Fin m → ℕ} {res : Option Bool},
+  (∀ (r s : Fin m) (l₁ l₀ : Λ), A l = Ins.jeq r s l₁ l₀ → r ≠ s) →
+    (∀ (j : Fin d) (md : Mode) (args : List (Fin m)) (l₁ l₀ : Λ), A l = Ins.call j md args l₁ l₀ → args.Nodup) →
+      (∀ (r : Fin m) (l₁ l₀ : Λ), A l = Ins.jeqIn r l₁ l₀ → ValidPlain x) →
+        (∀ (r : Fin m) (l₁ l₀ : Λ), A l = Ins.jeqFst r l₁ l₀ → ValidPair x) →
+          (∀ (r : Fin m) (l₁ l₀ : Λ), A l = Ins.jeqSnd r l₁ l₀ → ValidPair x) → PreS A x (some l, v, res)
+@preS_embed : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {m' d' : ℕ} {Λ' : Type} {A : ARM m d Λ} {D : ARM m' d' Λ'}
+  {ρ : Fin m → Fin m'} {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'},
+  Function.Injective ρ →
+    (∀ (l : Λ), D (ι l) = Ins.embed ρ σ ι k r₀ (A l)) →
+      ∀ {l : Λ} {v : Fin m → ℕ} {v' : Fin m' → ℕ}, PreS A x (some l, v, none) → PreS D x (some (ι l), v', none)
+@AHalt.embed : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {m' d' : ℕ} {Λ' : Type} {A : ARM m d Λ} {D : ARM m' d' Λ'}
+  {ρ : Fin m → Fin m'} {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'},
+  Function.Injective ρ →
+    (∀ (l : Λ), D (ι l) = Ins.embed ρ σ ι k r₀ (A l)) →
+      (∀ (l : Λ) (r : Fin m) (l' : Λ), A l ≠ Ins.valP r l' ∧ A l ≠ Ins.valQ r l') →
+        ∀ {oracle : Fin d' → List Bool → Bool} {G : AConf m Λ → Prop} {G' : AConf m' Λ' → Prop} {e : Fin m' → ℕ},
+          (∀ (l : Λ) (v : Fin m → ℕ) (v' : Fin m' → ℕ),
+              G (some l, v, none) → RegExt ρ e v v' → G' (some (ι l), v', none)) →
+            ∀ {l : Λ} {v : Fin m → ℕ} {b : Bool},
+              AHalt A (oracle ∘ σ) x G (some l, v, none) b →
+                ∀ {v' : Fin m' → ℕ},
+                  RegExt ρ e v v' →
+                    ∃ v₂ v₂',
+                      (∃ l₂, G (some l₂, v₂, none)) ∧
+                        RegExt ρ e v₂ v₂' ∧ AReach D oracle x G' (some (ι l), v', none) (some (k b), v₂', none)
+@AHalt.embed_guardLe : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {x : List Bool} {B m' d' : ℕ} {Λ' : Type}
+  {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'} {σ : Fin d → Fin d'} {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'},
+  Function.Injective ρ →
+    (∀ (l : Λ), D (ι l) = Ins.embed ρ σ ι k r₀ (A l)) →
+      (∀ (l : Λ) (r : Fin m) (l' : Λ), A l ≠ Ins.valP r l' ∧ A l ≠ Ins.valQ r l') →
+        ∀ {oracle' : Fin d' → List Bool → Bool} {B' : ℕ},
+          B ≤ B' →
+            ∀ {e : Fin m' → ℕ},
+              (∀ (r' : Fin m'), e r' ≤ B') →
+                ∀ {l : Λ} {v : Fin m → ℕ} {b : Bool},
+                  AHalt A (oracle' ∘ σ) x (GuardLe A x B) (some l, v, none) b →
+                    ∀ {v' : Fin m' → ℕ},
+                      RegExt ρ e v v' →
+                        ∃ v₂',
+                          (∀ (r' : Fin m'), (∀ (r : Fin m), ρ r ≠ r') → v₂' r' = e r') ∧
+                            (∀ (r : Fin m), v₂' (ρ r) ≤ B) ∧
+                              AReach D oracle' x (GuardLe D x B') (some (ι l), v', none) (some (k b), v₂', none)
+@astep_inc : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {l : Λ}
+  {v : Fin m → ℕ} {res : Option Bool} {r : Fin m} {l' : Λ},
+  A l = Ins.inc r l' → astep A oracle x (some l, v, res) = (some l', Function.update v r (v r + 1), res)
+@astep_jeqSnd : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {l : Λ}
+  {v : Fin m → ℕ} {res : Option Bool} {r : Fin m} {l₁ l₀ : Λ},
+  A l = Ins.jeqSnd r l₁ l₀ →
+    astep A oracle x (some l, v, res) = (some (if (v r).bits = (pairWords x).2 then l₁ else l₀), v, res)
+edgeLang : FinNDTM Bool → Language Bool
+mem_edgeLang : ∀ (N : FinNDTM Bool) (x : List Bool) (c s : ℕ),
+  pairEncode x (pairEncode c.bits s.bits) ∈ edgeLang N ↔
+    ∃ C, Cfg.InWindow s C ∧ cfgCode s C = c ∧ ∃ i, |C.workTapePos i| = ↑s
+@Cfg.InWindow.apply_of_lt : ∀ {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ} {C : Cfg k Symbol State x},
+  Cfg.InWindow s C →
+    (∀ (i : Fin k), |C.workTapePos i| < ↑s') → s ≤ s' → ∀ (a : Action k Symbol State), Cfg.InWindow s' (a.apply C)
+@Cfg.InWindow.mono : ∀ {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ} {c : Cfg k Symbol State x},
+  Cfg.InWindow s c → s ≤ s' → Cfg.InWindow s' c
+@Cfg.InWindow.apply_iff : ∀ {k : ℕ} {Symbol State : Type} {x : List Symbol} {s : ℕ} {c : Cfg k Symbol State x},
+  Cfg.InWindow s c →
+    ∀ (a : Action k Symbol State),
+      Cfg.InWindow s (a.apply c) ↔
+        ∀ (i : Fin k),
+          ¬(c.workTapePos i = -↑s ∧ (a.workTapes i).2 = -1) ∧ ¬(c.workTapePos i = ↑s ∧ (a.workTapes i).2 = 1)
+@stepRel_iff_mem : ∀ {N : FinNDTM Bool} {x : List Bool} {s a b : ℕ},
+  StepRel N x s a b ↔ pairEncode x (pairEncode a.bits (pairEncode b.bits s.bits)) ∈ stepLang N
+@walkLe_zero_iff : ∀ {E : ℕ → ℕ → Prop} {n c t : ℕ}, WalkLe E n 0 c t ↔ c = t
+@walkLe_succ_iff_head : ∀ {E : ℕ → ℕ → Prop} {n j c t : ℕ},
+  WalkLe E n (j + 1) c t ↔ c = t ∨ ∃ v < n, E c v ∧ WalkLe E n j v t
+@ExpBFS.winRun_iff : ∀ {N : FinNDTM Bool} {x : List Bool} {s : ℕ} {w : List Bool},
+  ExpBFS.WinRun N x s w ↔ ∀ j ≤ w.length, Cfg.InWindow s (NDTM.runWith (List.take j w) (NDTM.initCfg x))
+@ExpBFS.rcode_iff_reflTransGen : ∀ {N : FinNDTM Bool} {x : List Bool} {s u : ℕ},
+  ExpBFS.RCode N x s u ↔ Relation.ReflTransGen (StepRel N x s) (cfgCode s (NDTM.initCfg x)) u
+reach_of_reflTransGen : ∀ (K : ℕ) (R : ℕ → ℕ → Prop),
+  (∀ (a b : ℕ), R a b → a < K ∧ b < K) →
+    ∀ {u v : ℕ}, u < K → Relation.ReflTransGen R u v → ∀ (i : ℕ), K ≤ 2 ^ i → SavitchARM.Reach K R i u v
+@rel_iff_orc : ∀ {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u v : ℕ},
+  Rel orc x s u v ↔ orc 3 (pairEncode x (pairEncode u.bits (pairEncode v.bits s.bits))) = true
+@initO_iff_orc : ∀ {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u : ℕ},
+  InitO orc x s u ↔ orc 1 (pairEncode x (pairEncode u.bits s.bits)) = true
+@accO_iff_orc : ∀ {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s v : ℕ},
+  AccO orc x s v ↔ orc 2 (pairEncode x (pairEncode v.bits s.bits)) = true
+setSt_toV : ∀ (s w : ℕ),
+  (setSt s w).toV = Function.update (Function.update (Function.update (fun x => 0) rs s) rw w) rK (2 ^ w)
+outerSt_toV : ∀ (s w u v M : ℕ),
+  (outerSt s w u v M).toV =
+    Function.update (Function.update (Function.update (setSt s w).toV SavitchARM.rU u) rV v) rM M
+NoEdge : FinNDTM Bool → List Bool → ℕ → ℕ → Prop
+@noEdge_iff : ∀ {N : FinNDTM Bool} {x : List Bool} {s w : ℕ},
+  NoEdge N x s w ↔
+    ¬∃ u < 2 ^ w,
+        pairEncode x (pairEncode u.bits s.bits) ∈ initLang N ∧
+          ∃ v < 2 ^ w,
+            pairEncode x (pairEncode v.bits s.bits) ∈ edgeLang N ∧ SavitchARM.Reach (2 ^ w) (StepRel N x s) w u v
+@noEdge_of_lt : ∀ {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ},
+  N.DecidesInSpace L sp → ∀ (x : List Bool) (s w : ℕ), sp x.length < s → NoEdge N x s w
+@mem_iff_reach_of_noEdge : ∀ {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ},
+  N.DecidesInSpace L sp →
+    ∀ (x : List Bool) (s w : ℕ),
+      codeK N * (s + logSpace x.length + 1) ≤ w →
+        NoEdge N x s w →
+          (x ∈ L ↔
+            ∃ u < 2 ^ w,
+              pairEncode x (pairEncode u.bits s.bits) ∈ initLang N ∧
+                ∃ v < 2 ^ w,
+                  pairEncode x (pairEncode v.bits s.bits) ∈ acceptLang N ∧
+                    SavitchARM.Reach (2 ^ w) (StepRel N x s) w u v)
+@move_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l lx l1 l2 : Λ} {r t : Fin m},
+  r ≠ t →
+    A l = Ins.jz r lx l1 →
+      A l1 = Ins.dec r l2 →
+        A l2 = Ins.inc t l →
+          ∀ (k : ℕ) (v : Fin m → ℕ),
+            v r = k →
+              (∀ (s : Fin m), v s ≤ B) →
+                v t + v r ≤ B →
+                  AReach A oracle x (GuardLe A x B) (some l, v, none)
+                    (some lx, Function.update (Function.update v r 0) t (v t + v r), none)
+@move2_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l lx l1 l2 l3 : Λ} {r t t' : Fin m},
+  r ≠ t →
+    r ≠ t' →
+      t ≠ t' →
+        A l = Ins.jz r lx l1 →
+          A l1 = Ins.dec r l2 →
+            A l2 = Ins.inc t l3 →
+              A l3 = Ins.inc t' l →
+                ∀ (k : ℕ) (v : Fin m → ℕ),
+                  v r = k →
+                    (∀ (s : Fin m), v s ≤ B) →
+                      v t + v r ≤ B →
+                        v t' + v r ≤ B →
+                          AReach A oracle x (GuardLe A x B) (some l, v, none)
+                            (some lx,
+                              Function.update (Function.update (Function.update v r 0) t (v t + v r)) t' (v t' + v r),
+                              none)
+@dmove_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l lx l1 l2 l3 : Λ} {r t : Fin m},
+  r ≠ t →
+    A l = Ins.jz r lx l1 →
+      A l1 = Ins.dec r l2 →
+        A l2 = Ins.inc t l3 →
+          A l3 = Ins.inc t l →
+            ∀ (k : ℕ) (v : Fin m → ℕ),
+              v r = k →
+                (∀ (s : Fin m), v s ≤ B) →
+                  v t + 2 * v r ≤ B →
+                    AReach A oracle x (GuardLe A x B) (some l, v, none)
+                      (some lx, Function.update (Function.update v r 0) t (v t + 2 * v r), none)
+@sub_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l lx l1 l2 : Λ} {q r : Fin m},
+  q ≠ r →
+    A l = Ins.jz q lx l1 →
+      A l1 = Ins.dec q l2 →
+        A l2 = Ins.dec r l →
+          ∀ (k : ℕ) (v : Fin m → ℕ),
+            v q = k →
+              (∀ (s : Fin m), v s ≤ B) →
+                AReach A oracle x (GuardLe A x B) (some l, v, none)
+                  (some lx, Function.update (Function.update v q 0) r (v r - v q), none)
+@halve_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l lx l1 l2 : Λ} {c r : Fin m},
+  c ≠ r →
+    A l = Ins.jz c lx l1 →
+      A l1 = Ins.dec c l2 →
+        A l2 = Ins.half r l →
+          ∀ (k : ℕ) (v : Fin m → ℕ),
+            v c = k →
+              (∀ (s : Fin m), v s ≤ B) →
+                AReach A oracle x (GuardLe A x B) (some l, v, none)
+                  (some lx, Function.update (Function.update v c 0) r (v r / 2 ^ v c), none)
+@copy_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l l1 l2 l3 l4 l5 l6 lx : Λ} {src dst z : Fin m},
+  src ≠ dst →
+    src ≠ z →
+      dst ≠ z →
+        A l = Ins.jz src l4 l1 →
+          A l1 = Ins.dec src l2 →
+            A l2 = Ins.inc dst l3 →
+              A l3 = Ins.inc z l →
+                A l4 = Ins.jz z lx l5 →
+                  A l5 = Ins.dec z l6 →
+                    A l6 = Ins.inc src l4 →
+                      ∀ (v : Fin m → ℕ),
+                        v z = 0 →
+                          (∀ (s : Fin m), v s ≤ B) →
+                            v dst + v src ≤ B →
+                              AReach A oracle x (GuardLe A x B) (some l, v, none)
+                                (some lx, Function.update v dst (v dst + v src), none)
+@shl_run : ∀ {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool} {x : List Bool} {B : ℕ}
+  {l l1 l2 l3 l4 l5 l6 l7 l8 lx : Λ} {c r z : Fin m},
+  c ≠ r →
+    c ≠ z →
+      r ≠ z →
+        A l = Ins.jz c lx l1 →
+          A l1 = Ins.dec c l2 →
+            A l2 = Ins.jz r l6 l3 →
+              A l3 = Ins.dec r l4 →
+                A l4 = Ins.inc z l5 →
+                  A l5 = Ins.inc z l2 →
+                    A l6 = Ins.jz z l l7 →
+                      A l7 = Ins.dec z l8 →
+                        A l8 = Ins.inc r l6 →
+                          ∀ (k : ℕ) (v : Fin m → ℕ),
+                            v c = k →
+                              v z = 0 →
+                                (∀ (s : Fin m), v s ≤ B) →
+                                  v r * 2 ^ v c ≤ B →
+                                    AReach A oracle x (GuardLe A x B) (some l, v, none)
+                                      (some lx, Function.update (Function.update v c 0) r (v r * 2 ^ v c), none)
+@inputLength_loop : ∀ {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool) (x : List Bool)
+  (r : Fin m) (j : Fin d) (scan inc done : Λ),
+  A scan = Ins.call j Mode.whole [r] inc done →
+    A inc = Ins.inc r scan →
+      (∀ n ≤ x.length, oracle j (pairEncode x n.bits) = decide (n < x.length)) →
+        ∀ (B : ℕ),
+          x.length ≤ B →
+            ∀ (v : Fin m → ℕ),
+              (∀ (s : Fin m), v s ≤ B) →
+                v r ≤ x.length →
+                  AReach A oracle x (fun a => PreS A x a ∧ ∀ (s : Fin m), a.2.1 s ≤ B) (some scan, v, none)
+                    (some done, Function.update v r x.length, none)
+@AReach.refl : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} (a : AConf m Λ), AReach A oracle x G a a
+@AReach.trans : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} {a b c : AConf m Λ},
+  AReach A oracle x G a b → AReach A oracle x G b c → AReach A oracle x G a c
+@AReach.step : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} {a c : AConf m Λ}, G a → AReach A oracle x G (astep A oracle x a) c → AReach A oracle x G a c
+@AReach.single : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} {a : AConf m Λ}, G a → AReach A oracle x G a (astep A oracle x a)
+@AReach.halt : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} {a b : AConf m Λ} {r : Bool},
+  AReach A oracle x G a b → AHalt A oracle x G b r → AHalt A oracle x G a r
+@AReach.mono : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G G' : AConf m Λ → Prop} {a b : AConf m Λ},
+  AReach A oracle x G a b → (∀ (c : AConf m Λ), G c → G' c) → AReach A oracle x G' a b
+@AHalt.step : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} {a : AConf m Λ} {r : Bool},
+  G a → AHalt A oracle x G (astep A oracle x a) r → AHalt A oracle x G a r
+@AHalt.ret : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G : AConf m Λ → Prop} {l : Λ} {v : Fin m → ℕ} {r : Bool},
+  A l = Ins.ret r → G (some l, v, none) → AHalt A oracle x G (some l, v, none) r
+@AHalt.mono : ∀ {m d : ℕ} {Λ : Type} {x : List Bool} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {G G' : AConf m Λ → Prop} {a : AConf m Λ} {r : Bool},
+  AHalt A oracle x G a r → (∀ (c : AConf m Λ), G c → G' c) → AHalt A oracle x G' a r
+@arm_decides_SPACE : ∀ {m d : ℕ} {Λ : Type} {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : ARM m d Λ) (l₀ : Λ)
+  (As : Fin d → Language Bool),
+  (∀ (j : Fin d), As j ∈ LOGSPACE) →
+    ∀ (S : ℕ → ℕ),
+      (∀ (n : ℕ), logSpace n ≤ S n) →
+        ∀ (K : ℕ),
+          (∀ (x : List Bool),
+              AHalt A (fun j V => MultiTapeTM.indicator (As j) V) x
+                (fun a => PreS A x a ∧ ∀ (r : Fin m), (a.2.1 r + 1).bits.length ≤ K * S x.length)
+                (some l₀, fun x => 0, none) (MultiTapeTM.indicator L x)) →
+            L ∈ SPACE S
+logSpace_eq : ∀ (n : ℕ), logSpace n = Nat.log 2 n + 1
+@indicator_eq_decide : ∀ {α : Type} (S : Set α) (a : α), MultiTapeTM.indicator S a = decide (a ∈ S)
+@decide_eq_decide : ∀ {p q : Prop} {x : Decidable p} {x_1 : Decidable q}, decide p = decide q ↔ (p ↔ q)
+@GuardLe : {m d : ℕ} → {Λ : Type} → ARM m d Λ → List Bool → ℕ → AConf m Λ → Prop
+@PreS : {m d : ℕ} → {Λ : Type} → ARM m d Λ → List Bool → AConf m Λ → Prop
+LOGSPACE : Set (Language Bool)
+FinNDTM.DecidesInSpace : FinNDTM Bool → Language Bool → (ℕ → ℕ) → Prop
+codeK : FinNDTM Bool → ℕ
+@MultiTapeTM.indicator : {α : Type u_1} → Set α → α → Bool
+ARM : ℕ → ℕ → Type → Type
+AConf : ℕ → Type → Type
+exit 0
+
+## The Mathlib roots (63)
+
+Mathlib.Algebra.BigOperators.Field
+Mathlib.Algebra.BigOperators.Fin
+Mathlib.Algebra.BigOperators.Group.Finset.Basic
+Mathlib.Algebra.BigOperators.Intervals
+Mathlib.Algebra.BigOperators.Ring.Finset
+Mathlib.Algebra.Order.Archimedean.Basic
+Mathlib.Algebra.Order.BigOperators.Group.Finset
+Mathlib.Algebra.Order.BigOperators.Group.List
+Mathlib.Algebra.Order.BigOperators.Group.Multiset
+Mathlib.Algebra.Order.Field.Basic
+Mathlib.Algebra.Order.Group.Abs
+Mathlib.Algebra.Order.Group.Int
+Mathlib.Algebra.Order.Group.Nat
+Mathlib.Computability.Language
+Mathlib.Computability.TMToPartrec
+Mathlib.Data.Fin.VecNotation
+Mathlib.Data.Finset.Dedup
+Mathlib.Data.Finset.Max
+Mathlib.Data.Fintype.Basic
+Mathlib.Data.Fintype.BigOperators
+Mathlib.Data.Fintype.EquivFin
+Mathlib.Data.Fintype.Fin
+Mathlib.Data.Fintype.Option
+Mathlib.Data.Fintype.Pi
+Mathlib.Data.Fintype.Prod
+Mathlib.Data.Fintype.Sigma
+Mathlib.Data.Fintype.Sum
+Mathlib.Data.Fintype.Vector
+Mathlib.Data.Int.Interval
+Mathlib.Data.List.FinRange
+Mathlib.Data.List.GetD
+Mathlib.Data.List.Induction
+Mathlib.Data.List.MinMax
+Mathlib.Data.List.OfFn
+Mathlib.Data.List.Sort
+Mathlib.Data.List.Zip
+Mathlib.Data.Nat.Bits
+Mathlib.Data.Nat.Bitwise
+Mathlib.Data.Nat.Choose.Sum
+Mathlib.Data.Nat.Count
+Mathlib.Data.Nat.Digits.Defs
+Mathlib.Data.Nat.Log
+Mathlib.Data.Nat.Notation
+Mathlib.Data.Nat.Size
+Mathlib.Data.Rat.Defs
+Mathlib.Data.Set.Operations
+Mathlib.Data.Sigma.Basic
+Mathlib.Data.Sign.Defs
+Mathlib.Logic.Embedding.Basic
+Mathlib.Logic.Equiv.Bool
+Mathlib.Logic.Equiv.Fin.Basic
+Mathlib.Logic.Function.Basic
+Mathlib.Logic.Relation
+Mathlib.Order.Interval.Finset.Nat
+Mathlib.Order.Monotone.Defs
+Mathlib.Tactic.DeriveFintype
+Mathlib.Tactic.FieldSimp
+Mathlib.Tactic.FinCases
+Mathlib.Tactic.IntervalCases
+Mathlib.Tactic.Linarith
+Mathlib.Tactic.Positivity
+Mathlib.Tactic.Ring
+Mathlib.Tactic.SplitIfs
