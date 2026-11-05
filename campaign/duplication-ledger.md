@@ -1143,9 +1143,12 @@ major.
   own statement and cites the canonical ones for its step. Eight of the members re-prove the tape
   half.
 
-Census (members over all declarations, as the style lint counts them; source-inclusive):
-`Build/CfgRecord` 2 of 130 at `b1b5199b` (1.5%; the canonical pair), 3 of 130 (2.3%) with RO-1's
-`recordStep_runFrom_one`; `ExpBFS/Radius` 2 of 27 (7.4%); `Codec/Step` 1 of 30 (3.3%); one
+Census (members over **all source declarations**, public and private, anonymous instances
+included, as `devtools/seyoon/declfreeze.py` counts them at #196's repair `b1b5199b`; corrected
+by gate 96's round-2 minor 1, which found the style lint's count, without the seven anonymous
+private instances, used before): `Build/CfgRecord` 2 of 137 (1.5%; the canonical pair), 3 of 137
+(2.2%) with RO-1's `recordStep_runFrom_one`; `ExpBFS/Radius` 2 of 27 (7.4%) for WS-1, and **3 of
+27 (11.1%) cumulatively** with CE-1's `coreSum_eq_of_code_eq`; `Codec/Step` 1 of 30 (3.3%); one
 member each in `TQBF`, `ExhaustiveReplay`, `Sweep`, `Oracle` (`step_radius`; its private
 `apply_workTapes_eq_of_ne` is the tape half's harvest source, not a copy) and
 `Robustness/SingleTape`, and two declarations in `Build/Loop`. The one-fifth rule is not
