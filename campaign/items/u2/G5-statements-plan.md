@@ -57,3 +57,33 @@ writes only images of bits.
    separate. ESTIMATE: 1.0–2.0k lines, Codex first (the soft rule).
 3. After the fill: Diagonal Part 1's `f log f` layer, U2 design §6 item 7, one PR and gate, under
    the 2026-10-14 authorization.
+
+## 5. Status (2026-11-04)
+
+**Drafted on `lean/g5-statements`** at `6bd12e68` (local, on the campaign at `e66b714e`, Lean `711f5444`):
+- `alphabet_reduction_run`, proved (about 25 lines, from `arCfg_init`, `arCfg_run`, `arTM_computes`
+  and `arBit_embed`; the converse uses the halted run's stationarity);
+- **added to the plan: `Turing.exists_code2TM`** in `Codes2Tape`, the two-tape counterpart of
+  `exists_codeTM`, which `universal_TlogT` needs and the probe had proposed there. It is proved
+  through `FinTM.computesInTime_iff` and `relabelState_runFrom_init` rather than the probe's
+  unfolding of `ComputesInTime`;
+- `TwoTapes.lean`: `two_work_tapes_run` (sorried) and `two_work_tapes_binary`;
+- `UniversalTlogT.lean`: `universal_TlogT`, via `universalK 2 c.toK`. `universalK` is now
+  admission-free, so `sorryAx` reaches `universal_TlogT` only through `two_work_tapes_run`;
+- the facade imports both new modules.
+
+**Checks (`$S/g5ps/`):**
+- **chain:** 39 modules from a clone of `oleans-leqc3`, all exit 0; `TwoTapes`' one `sorry`;
+- **axioms:** `alphabet_reduction_run` and `exists_code2TM` standard; `two_work_tapes_*` and
+  `universal_TlogT` add `sorryAx`; `universalK` is standard;
+- **rule 10 sealed:** 3 copies, 13 definitions, 0 diagnostics; controls 26/26 unsealed, 0/26
+  sealed;
+- **lint:** `style_lint` 0 findings on the new files, and the base's on the edited ones; campaign
+  lint 0 FAIL / 71 WARN at base and head;
+- **names:** none on 514 refs.
+
+**Cost:** `AlphabetReduction` sits below `Encoding` (through `SingleTape`), so its downstream is
+325 of 922 modules, against 5 for `Codes2Tape`. The PR's replay is that closure. Moving the theorem
+elsewhere is not possible: it needs the file's private run lemmas.
+
+**Next:** the screen; the PR and gate 92's pack; the replay, after #181 merges, from `oleans-lsm5`.
