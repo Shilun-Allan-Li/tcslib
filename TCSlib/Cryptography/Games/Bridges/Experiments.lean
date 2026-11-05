@@ -24,9 +24,8 @@ probability `uprob` of the event. It reads `uprob` only through its published eq
 `uprob_eq_card_filter`. Sampling a pair one component at a time is sampling the product
 (`prob_sample_pair`), so the games may sample the seed and the coins in sequence.
 
-**Disclosure.** The four experiments are one-line definitions of `uprob` with no published
-equation in `Foundations/Experiments.lean`. Their bridges read the definitions' bodies (`rfl` and
-`unfold`); a request to publish equations is recorded (coordination point F-3).
+The four experiments are read through their published defining equations (`invProb_def`,
+`predProb_def`, `acceptProb_def`, `distAdv_def` in `Foundations/Experiments.lean`).
 
 ## Main definitions
 
@@ -92,8 +91,7 @@ theorem invProb_eq [Fintype α] [Nonempty α] [Fintype ρ] [Nonempty ρ] (f : α
     invProb f A =
       prob ((sample α).bind fun x => (sample ρ).bind fun r => .pure (x, r))
         (fun z => f (A (f z.1) z.2) = f z.1) := by
-  rw [prob_sample_pair, prob_sample_eq_uprob]
-  rfl
+  rw [invProb_def, prob_sample_pair, prob_sample_eq_uprob]
 
 /-- **Prediction as a game:** `predProb f B A` is the probability that `A`, given `f x` and its
 coins, outputs `B x`. [Gar26, Def 2.3] -/
@@ -102,8 +100,7 @@ theorem predProb_eq [Fintype α] [Nonempty α] [Fintype ρ] [Nonempty ρ] (f : �
     predProb f B A =
       prob ((sample α).bind fun x => (sample ρ).bind fun r => .pure (x, r))
         (fun z => A (f z.1) z.2 = B z.1) := by
-  rw [prob_sample_pair, prob_sample_eq_uprob]
-  rfl
+  rw [predProb_def, prob_sample_pair, prob_sample_eq_uprob]
 
 /-- The acceptance game of a sampler `X` and a distinguisher `D`: sample the seed and the coins,
 and output `D`'s verdict on the sample. -/
@@ -119,16 +116,14 @@ theorem acceptProb_eq [Fintype σ] [Nonempty σ] [Fintype ρ] [Nonempty ρ] (X :
       (fun z : σ × ρ => D (X z.1) z.2) <$>
         ((sample σ).bind fun s => (sample ρ).bind fun r => .pure (s, r)) := by
     simp only [acceptGame, OracleComp.map_eq_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
-  rw [accept, h, prob_eq_expect, expect_map, ← prob_eq_expect (p := fun z : σ × ρ =>
-    D (X z.1) z.2 = true), prob_sample_pair, prob_sample_eq_uprob]
-  rfl
+  rw [acceptProb_def, accept, h, prob_eq_expect, expect_map, ← prob_eq_expect
+    (p := fun z : σ × ρ => D (X z.1) z.2 = true), prob_sample_pair, prob_sample_eq_uprob]
 
 /-- **Distinguishing as a game:** `distAdv X Y D` is the advantage between the acceptance games
 of `X` and of `Y`. [Gar26, Defs 3.2 and 3.4] -/
 theorem distAdv_eq [Fintype σ] [Nonempty σ] [Fintype τ] [Nonempty τ] [Fintype ρ] [Nonempty ρ]
     (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
     distAdv X Y D = advantage (acceptGame X D) (acceptGame Y D) := by
-  unfold distAdv advantage
-  rw [acceptProb_eq, acceptProb_eq]
+  rw [distAdv_def, advantage, acceptProb_eq, acceptProb_eq]
 
 end TCSlib.Cryptography.Games.Bridge

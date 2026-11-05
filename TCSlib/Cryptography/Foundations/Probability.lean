@@ -64,6 +64,9 @@ uniform distribution. -/
 noncomputable def uexp (f : α → ℝ) : ℝ :=
   (∑ a, f a) / Fintype.card α
 
+/-- The defining equation of `uexp`: the sum of the values divided by the number of points. -/
+theorem uexp_def (f : α → ℝ) : uexp f = (∑ a, f a) / Fintype.card α := rfl
+
 /-- With decidable `p`, the probability counts the elements of the filter. -/
 theorem uprob_eq_card_filter (p : α → Prop) [DecidablePred p] :
     uprob p = ((univ.filter p).card : ℝ) / Fintype.card α := by

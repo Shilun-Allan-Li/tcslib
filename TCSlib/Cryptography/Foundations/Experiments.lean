@@ -78,6 +78,27 @@ noncomputable def acceptProb (X : σ → γ) (D : γ → ρ → Bool) : ℝ :=
 noncomputable def distAdv (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) : ℝ :=
   |acceptProb X D - acceptProb Y D|
 
+/-! ### Defining equations
+
+Published so that other layers (the `Games` bridges) read the experiments through stated
+equations rather than through their bodies. -/
+
+/-- The defining equation of `invProb`. -/
+theorem invProb_def (f : α → β) (A : β → ρ → α) :
+    invProb f A = uprob fun z : α × ρ => f (A (f z.1) z.2) = f z.1 := rfl
+
+/-- The defining equation of `predProb`. -/
+theorem predProb_def (f : α → β) (B : α → Bool) (A : β → ρ → Bool) :
+    predProb f B A = uprob fun z : α × ρ => A (f z.1) z.2 = B z.1 := rfl
+
+/-- The defining equation of `acceptProb`. -/
+theorem acceptProb_def (X : σ → γ) (D : γ → ρ → Bool) :
+    acceptProb X D = uprob fun z : σ × ρ => D (X z.1) z.2 = true := rfl
+
+/-- The defining equation of `distAdv`. -/
+theorem distAdv_def (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool) :
+    distAdv X Y D = |acceptProb X D - acceptProb Y D| := rfl
+
 /-- Relabelling the seed space of a sampler by a bijection does not change the probability
 that a distinguisher accepts: a bijective image of a uniform seed is uniform. -/
 theorem acceptProb_comp_equiv (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool) :
