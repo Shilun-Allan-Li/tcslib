@@ -1,0 +1,17 @@
+rvprobe/NFExact.lean:13:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:15:43: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:17:44: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:21:41: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:25:41: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:30:92: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:34:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:38:40: error: `exact?` could not close the goal.
+rvprobe/NFExact.lean:41:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:46:53: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:49:79: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/NFExact.lean:52:61: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] exact Nat.forall_lt_succ_left'
+@Nat.forall_lt_succ_left' : ∀ {n : ℕ} {p : (m : ℕ) → m < n + 1 → Prop},
+  (∀ (m : ℕ) (h : m < n + 1), p m h) ↔ p 0 ⋯ ∧ ∀ (m : ℕ) (h : m < n), p (m + 1) ⋯
+exit=1

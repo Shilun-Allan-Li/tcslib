@@ -2019,7 +2019,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       source equals the head blob `d767cc72`; the only deleted lines are the `sorry` and two status
       phrases.
     - **Missing:** the per-checkpoint zips (only the final zip arrived).
-    - **Under review** (a sub-agent, `$S/review/nf-cont1-fill/`).
+    - **Reviewed** (`campaign/fills/c1/reviews/nf-cont1-fill/`, a sub-agent): **land with edits,
+      0/2/2/10.** The target is on the standard axioms, the seal covers 257 definitions, and the
+      constant `C = 4k² + 47k + 45` was checked. F1 (`nf_all_cons` re-derives Mathlib's
+      `Nat.forall_lt_succ_left'`) is fixed by E1. F2 is four kinds of fact re-stated (see the
+      ledger). The landing edits are E1–E6, landed blob `5723152d`.
+    - **Ruled (user, 2026-11-04):**
+      - **F2: publish homes first.** An API PR places the facts beside their definitions and
+        re-points the campaign's private copies, then NF's landing cites them;
+      - E6 lands;
+      - the missing checkpoint zips are accepted as absent.
+    - **NF's landing therefore waits for that API PR's gate and replay.** It re-takes H's screen
+      base: the new pair `un_setup` ← `nf_retag` is an idiom.
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -4176,7 +4187,16 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   - **Intake clean:** 80/80 sums; the bundle on the base; patch-ids equal the commits'; the zip's
     source equals the head blob `4b72d525`; the deleted lines are the `sorry`, one status line and
     three label-bearing docstring lines.
-  - **Under review** (a sub-agent, `$S/review/ed-fill/`).
+  - **Reviewed** (`campaign/fills/eq/reviews/ed-fill/`, a sub-agent): **land with edits, 0/3/4/11.**
+    The proof is sound: 1,846 constants, all on the standard three; `K` is uniform; the
+    `g n = n` boundary holds. F1 is `dz_word_lt`, new BL-1 (vi) debt. F2 and F3 re-derived
+    imported lemmas; E3 and E4 remove them. The landing edits are E1–E7 (E1 re-points
+    `qy_call_bound`'s `hb`), landed blob `fc65a848`.
+  - **Ruled (user, 2026-11-04):** F1 acknowledged for 12.2c; all the review's recommendations;
+    the commit subjects reworded and the `Claude-Session:` trailers dropped.
+  - **PR #188** (`lean/ed-diagonalizer`, head `f77abee9`): the 11 commits (authorship kept), plus
+    the landing edits.
+  - **Next:** after #182 merges, the replay (3 modules from `oleans-larm2`) and a light fill gate.
 
   With NF, this closes `NTimeHierarchy`'s two inputs; landing both should make that theorem
   admission-free, to be checked at landing.

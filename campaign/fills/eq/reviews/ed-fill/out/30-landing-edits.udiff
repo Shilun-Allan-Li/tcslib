@@ -1,0 +1,168 @@
+--- wt-head/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean	2026-11-04 19:37:24
++++ land/NTimeDiagonalizer.lean.txt	2026-11-04 20:13:34
+@@ -453,9 +453,7 @@
+ `c' (c + 2) (n + 1)`. -/
+ private theorem qy_call_bound (f : ℕ → ℕ) (c c' a n : ℕ) (ha : a ≤ n) (hfa : f a ≤ n) :
+     c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * (c + 2) * (n + 1) := by
+-  have hb : (Nat.bits (f a)).length ≤ f a := by
+-    rw [Nat.size_eq_bits_len]
+-    exact Nat.size_le.mpr (Nat.lt_two_pow_self)
++  have hb := Turing.length_bits_le_self (f a)
+   have h1 : c * (f a + 1) ≤ c * (n + 1) := Nat.mul_le_mul_left c (by omega)
+   have h2 : c * (f a + 1) + a + (Nat.bits (f a)).length + 1 ≤ (c + 2) * (n + 1) := by nlinarith
+   calc c' * (c * (f a + 1) + a + (Nat.bits (f a)).length + 1) ≤ c' * ((c + 2) * (n + 1)) :=
+@@ -5979,8 +5977,9 @@
+ 
+ **Proof sketch.** Read `g`'s witness through `Complexity.timeConstructible_iff`. The input calls
+ (`Turing.FinTM.exists_inputCallTM`, through `qy_inputSpec`) of the stage query
+-(`Turing.NTimeDiag.exists_queryTM`), of `g`'s witness and of the published prepend row; the install
+-calls (`qy_installSpec`) of `computesFunInTime_lengthBits` and of the composite extractor
++(`Turing.NTimeDiag.exists_queryTM`), of `g`'s witness and of the prepend row
++(`Turing.FinTM.computesFunInTime_prepend`); the install calls (`qy_installSpec`) of
++`computesFunInTime_lengthBits` and of the composite extractor
+ (`Turing.FinTM.computesFunInTime_comp` of `pairExtractTM_fst` and `pairExtractTM_snd`); the
+ interpreter core (`Turing.exists_ndInterpreterCore`, its start being `Turing.streamStartCfg` by the
+ field equations); and the hosted clocks (`dz_clock_exists`). Each call's bound
+@@ -6123,7 +6122,7 @@
+     (κ : DzKit f g c BF) : ℕ :=
+   14 + κ.qc.k + κ.gc.k + κ.pc.k + κ.lc.k + κ.ac.k + κ.kR + BF.k
+ 
+-/-- The named tapes come first. -/
++/-- The diagonalizer has at least the fourteen named tapes: `14 ≤ κ.K`. -/
+ private theorem DzKit.le_K {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) : 14 ≤ κ.K := by
+   unfold DzKit.K
+@@ -6137,7 +6136,7 @@
+     (κ : DzKit f g c BF) (i : Fin 14) : Fin κ.K :=
+   Fin.castLE κ.le_K i
+ 
+-/-- The value of a named tape. -/
++/-- The named tape `i` is the tape of index `i`. -/
+ private theorem DzKit.tp_val {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) (i : Fin 14) : (κ.tp i : ℕ) = i := rfl
+ 
+@@ -6150,7 +6149,7 @@
+ private def dzLay {K : ℕ} {α : Type} (L : Fin 14 → α) (d : α) : Fin K → α :=
+   fun t => if h : (t : ℕ) < 14 then L ⟨t, h⟩ else d
+ 
+-/-- A layout on a named tape. -/
++/-- A layout holds its named value on a named tape: `dzLay L d (κ.tp i) = L i`. -/
+ private theorem dzLay_tp {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) {α : Type} (L : Fin 14 → α) (d : α) (i : Fin 14) :
+     dzLay L d (κ.tp i) = L i := by
+@@ -6158,7 +6157,7 @@
+   rw [dif_pos (by rw [κ.tp_val]; exact i.isLt)]
+   rfl
+ 
+-/-- A layout off the named tapes. -/
++/-- A layout holds the default `d` on every tape of index at least `14`. -/
+ private theorem dzLay_off {K : ℕ} {α : Type} (L : Fin 14 → α) (d : α) (t : Fin K)
+     (ht : 14 ≤ (t : ℕ)) : dzLay L d t = d := by
+   unfold dzLay
+@@ -7178,7 +7177,7 @@
+     by_cases hbs : b ≤ s₁.length
+     · rw [if_pos hbs]
+       have : compare b s₁.length ≠ .gt := by
+-        rw [Ne, compare_gt_iff_gt]
++        rw [ne_eq, compare_gt_iff_gt]
+         omega
+       simp [dzQRed, this]
+     · rw [if_neg hbs]
+@@ -7536,8 +7535,9 @@
+ 
+ **Proof sketch.** The hosted clock's clause `κ.cB` at `BF`'s initial configuration on the tail
+ (read through `MultiTapeTM.initCfg_eq` and `Cfg.init`'s equations), stopping at the halt. If the
+-decider halts by `G`, at its first halt `τ₀` (`Nat.find`) the finish clause leaves its output on the
+-capture tape (at most `τ₀` symbols, `MultiTapeTM.output_length_le`); the dispatch rewinds it
++decider halts by `G`, at its first halt `τ₀` (`Turing.MultiTapeTM.exists_first_halt`) the finish
++clause leaves its output on the capture tape (at most `τ₀` symbols,
++`MultiTapeTM.output_length_le`); the dispatch rewinds it
+ (`qy_rewind`) and the take (`dz_take_run`) reads its first cell: `false` accepts, anything else
+ rejects. A halted run is fixed (`MultiTapeTM.runFrom_of_halt`), so the output at every later
+ `τ ≤ G` is the same. Otherwise the timeout clause gives some `oB r`, rejected. -/
+@@ -7612,16 +7612,12 @@
+     have h2 : ¬∃ r, s = κ.oB r := fun ⟨r, hr⟩ => (hc u hu r).2 (hs.trans (by rw [hr]))
+     simp only [dzQRed, if_neg h1, if_neg h2]
+   by_cases hh : ∃ τ ≤ G, (BF.tm.runFrom c0 τ).state = none
+-  · have h0 : ∃ τ, (BF.tm.runFrom c0 τ).state = none := by
+-      obtain ⟨τ, -, h⟩ := hh
+-      exact ⟨τ, h⟩
+-    set τ₀ := Nat.find h0 with hτ₀
+-    have hτ₀G : τ₀ ≤ G := by
+-      obtain ⟨τ, hτ, h⟩ := hh
+-      exact (Nat.find_min' h0 h).trans hτ
+-    have hst0 : (BF.tm.runFrom c0 τ₀).state = none := Nat.find_spec h0
++  · obtain ⟨τw, hτw, hstw⟩ := hh
++    obtain ⟨τ₀, hτ₀w, hlive0, heq0⟩ := MultiTapeTM.exists_first_halt BF.tm c0 hstw
++    have hτ₀G : τ₀ ≤ G := hτ₀w.trans hτw
++    have hst0 : (BF.tm.runFrom c0 τ₀).state = none := by rw [heq0]; exact hstw
+     obtain ⟨t, ht, b, T', P', hrun, hcap, hpos, hcutH⟩ := hfin τ₀ hτ₀G ((hstopped τ₀).mpr hst0)
+-      (fun u hu h => Nat.find_min h0 hu ((hstopped u).mp h))
++      (fun u hu h => hlive0 u hu ((hstopped u).mp h))
+     rw [hst0, Option.map_none] at hrun
+     set out := (BF.tm.runFrom c0 τ₀).output with hout
+     have seg1 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .runB (κ.iB (BF.tm.q₀, true))
+@@ -7662,7 +7658,7 @@
+       split_ifs
+       · exact Or.inl rfl
+       · exact Or.inr rfl
+-    · have hle : τ₀ ≤ τ := Nat.find_min' h0 hstτ
++    · have hle : τ₀ ≤ τ := Nat.le_of_not_lt fun hlt => hlive0 τ hlt hstτ
+       have hsame : BF.tm.runFrom c0 τ = BF.tm.runFrom c0 τ₀ := by
+         obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
+         rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hst0]
+@@ -7698,17 +7694,11 @@
+   rw [hw] at h1
+   omega
+ 
+-/-- The zero-padded bits of `t` are worth `t`. -/
++/-- The zero-padded bits of `t` are worth `t` (`Nat.ofDigits_append_replicate_zero`). -/
+ private theorem dz_padded_value (t r : ℕ) :
+     Nat.ofDigits 2 ((Nat.bits t ++ List.replicate r false).map Bool.toNat) = t := by
+-  have h0 : ∀ r : ℕ, Nat.ofDigits 2 ((List.replicate r false).map Bool.toNat) = 0 := by
+-    intro r
+-    induction r with
+-    | zero => rfl
+-    | succ r ih =>
+-      rw [List.replicate_succ, List.map_cons, Nat.ofDigits_cons, ih]
+-      rfl
+-  rw [List.map_append, Nat.ofDigits_append, h0, mul_zero, add_zero, qy_bits_val]
++  rw [List.map_append, List.map_replicate, Bool.toNat_false, Nat.ofDigits_append_replicate_zero,
++    qy_bits_val]
+ 
+ /-- The run's time bound for `g n = G`. -/
+ private def dzQB {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+@@ -7744,7 +7734,7 @@
+   · rw [hq, FinTM.bufferTape_nil]
+     rfl
+ 
+-/-- The query's first cell after its flag. -/
++/-- The buffer of `b :: tail` holds `b` at cell `0`: the query's flag, which the take reads. -/
+ private theorem dz_cell0 (b : Bool) (tail : List Bool) :
+     FinTM.bufferTape (b :: tail) 0 = some b := by
+   rw [FinTM.bufferTape_eq, if_pos le_rfl]
+@@ -8454,7 +8444,23 @@
+ Fill obligations, named: the assembly; the budget's guess, test, normalization and rewrite (a
+ private leaf in `O(g n + 1)`); the transfer to every branch
+ (`Turing.NDTM.runWith_mapState_of_agreeOn_det`); the clock's two exits per rung; the per-code
+-constant `C = max 1 (max C_R C_BF)`. -/
++constant `C = max 1 (max C_R C_BF)`.
++
++**Implementation.** `D` is `Turing.guessRunTM` over a deterministic setup and a deterministic
++run. The setup calls the stage query, `g`'s witness and `x ↦ true :: x` on the native input
++(released input calls), and writes the block `1^{g n} ++ [true] ++ bits (g n)` (two expansions and
++a copy), the ruler `1^{g n}` and the clock's counter `bits (g n)`. The guess overwrites the block
++with a stream, a separator and a budget word. The run is a phase host: a one-cell take reads the
++query's flag; in the middle it splits the block (a skip back, the lockstep walk over the ruler, a
++take of the separator, a move of the budget word), tests the budget `b ≤ g n` (its expansion and
++the length comparison with the stream), normalizes it to `bits b` (an install call), extracts `α`
++from the query's tail (the install call of the composite pair extractor), writes the core's input
++`⟨⟨bits b, α⟩, 1^{n + 1}⟩` by three emissions under the capture wrapper, and runs the interpreter
++core under the step clock over the virtual-input host, accepting at its `accept` within the
++allowance `g n`; at a top it runs the decider of `hBF` on the query's tail under the same clocked
++host and accepts iff its captured output starts with `false`. All-branch halting is
++`Turing.guessRunTM_haltsWithin` and acceptance `Turing.guessRunTM_accepts_iff`; `K` is uniform and,
++per code, `C = max 1 (max C_R C_BF)`. -/
+ theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     (hg : Complexity.TimeConstructible g) (c : EffectiveNDMachineCode)
+     (hBF : ∃ BF : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, ∀ (x : List Bool) (t : ℕ),

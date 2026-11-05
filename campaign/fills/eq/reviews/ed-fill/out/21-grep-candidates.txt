@@ -1,0 +1,63 @@
+== first-stop/halt lemmas (public, TCSlib)
+TCSlib/Complexity/CircuitComplexity/Hierarchy.lean:171:theorem restrictCircuit_eval_of_onFirst {h : m ≤ n} {pad : Fin n → Bool} {c : TreeCircuit n}
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:124:theorem embedSilentRetTM_firstReturn {k : ℕ} (M : FinTM Bool) (x : List Bool)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:375:theorem seamCompTM_firstReturn [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:572:theorem seamCompTM_firstReturn_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:776:theorem seamReleaseTM_firstReturn {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:3494:theorem roundTM_firstExit_unique {k n : ℕ} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Finite.lean:218:theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+TCSlib/Complexity/TuringMachine/Simulation.lean:818:lemma bufferedFirstCfg_init (M₁ M₂ : FinTM Bool) (x : List Bool) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:839:lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
+TCSlib/Complexity/TuringMachine/Simulation.lean:884:lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}
+TCSlib/Complexity/TuringMachine/Simulation.lean:1087:lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
+== output length lemmas
+TCSlib/Complexity/ClassP/BinaryArith/Div.lean:178:theorem length_le_of_divInv {z S : List Bool} (h : DivInv z S) :
+TCSlib/Complexity/ClassP/BinaryArith/ModPow.lean:196:theorem length_le_of_powInv {z S : List Bool} (h : PowInv z S) :
+TCSlib/Complexity/ClassP/BinaryArith/Mul.lean:187:theorem length_le_of_mulInv {z S : List Bool} (h : MulInv z S) : S.length ≤ 4 * (z.length + 1) := by
+TCSlib/Complexity/ClassP/BinaryArith/Words.lean:130:theorem length_le_of_mem_decWords {w x : List Bool} (hx : x ∈ decWords w) :
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11814:theorem fieldsTape_of_length_le {Γ : Type*} (fs : List (List Γ)) {z : ℤ}
+TCSlib/Complexity/TuringMachine/Build/Catalog.lean:11891:theorem fieldOffset_add_length_le {Γ : Type*} (fs : List (List Γ)) (j : ℕ)
+TCSlib/Complexity/TuringMachine/Build/OracleSim.lean:163:theorem OracleTM.queryString_runFrom_length_le_of_blank {k : ℕ} {Symbol State : Type*}
+TCSlib/Complexity/TuringMachine/CodeFormat.lean:388:theorem serialize_decode_length_le (α : List Bool) :
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:428:theorem step_out_le (s : St R Λ) (K : ℕ) (h : ∀ r, s.regs r ≤ K) :
+TCSlib/Complexity/TuringMachine/CounterProgRun.lean:435:theorem run_init_out_le (l₀ : Λ) (t : ℕ) : (run P x (init l₀) t).out.length ≤ t * (t + 1) := by
+TCSlib/Complexity/TuringMachine/Finite.lean:112:theorem output_length_le (tm : MultiTapeTM k Symbol State) (input : List Symbol) (t : ℕ) :
+TCSlib/Complexity/TuringMachine/Oracle.lean:400:theorem queryString_length_le_of_blank (cfg : Cfg (k + 1) Symbol State input)
+TCSlib/Complexity/TuringMachine/Oracle.lean:461:theorem queryString_length_le (M : OracleTM k Symbol State) (O : Language Symbol)
+TCSlib/Complexity/TuringMachine/OracleAgreement.lean:256:theorem length_le_of_mem_queriesWithin {M : OracleTM k Symbol State}
+TCSlib/Complexity/TuringMachine/OracleAgreement.lean:271:theorem queriesWithin_length_le (M : OracleTM k Symbol State)
+TCSlib/Complexity/TuringMachine/OracleAgreement.lean:364:theorem length_le_of_mem_queriesAlong {N : OracleNDTM k Symbol State}
+TCSlib/Complexity/TuringMachine/OracleNondeterministic.lean:396:theorem OracleNDTM.queryString_runWith_length_le (N : OracleNDTM k Symbol State)
+== ComputesFunInTime + length
+== embedSilentCfg lemmas
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:983:theorem embedSilentCfg_selected_tape (ι : Fin m ↪ Fin k) (cap : Fin k)
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:992:theorem embedSilentCfg_selected_pos (ι : Fin m ↪ Fin k) (cap : Fin k)
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:1025:theorem embedSilentCfg_cap (ι : Fin m ↪ Fin k) (cap : Fin k)
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:1041:theorem embedSilentCfg_unselected (ι : Fin m ↪ Fin k) (cap : Fin k)
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:151:theorem embedSilentCfg_initCfg {m n : ℕ} {S : Type} (M : MultiTapeTM m Bool S)
+== bufferTape lemmas
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:352:theorem bufferTape_write (w : List Bool) (b : Bool) :
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:219:theorem bufferTape_at (w : List Bool) (i : ℕ) (hi : i < w.length) :
+TCSlib/Complexity/CircuitComplexity/MeyerMachineSetup.lean:208:theorem bufferTape_pred (w : List Bool) (j : ℕ) (hj : j < w.length) :
+TCSlib/Complexity/SpaceComplexity/Machines/FragDec.lean:96:lemma bufferTape_erase_last (pre : List Bool) (b : Bool) :
+TCSlib/Complexity/TimeHierarchy/ClockLoop.lean:49:lemma bufferTape_update_mid (l m : List Bool) (a b : Bool) :
+TCSlib/Complexity/TuringMachine/BufferWords.lean:47:theorem bufferTape_append_shift {Symbol : Type*} (u w : List Symbol) {z : ℤ} (hz : 0 ≤ z) :
+TCSlib/Complexity/TuringMachine/BufferWords.lean:58:theorem bufferTape_append_mid {Symbol : Type*} (u w v : List Symbol) (r : ℕ) (hr : r < w.length) :
+TCSlib/Complexity/TuringMachine/BufferWords.lean:69:theorem bufferTape_drop {Symbol : Type*} (w : List Symbol) (r : ℕ) {z : ℤ} (hz : 0 ≤ z) :
+TCSlib/Complexity/TuringMachine/BufferWords.lean:83:theorem bufferTape_take {Symbol : Type*} (w : List Symbol) (n : ℕ) {z : ℤ} (hz : z < n) :
+TCSlib/Complexity/TuringMachine/BufferWords.lean:94:theorem bufferTape_eq_none_of_not_mem {Symbol : Type*} (w : List Symbol) {z : ℤ}
+TCSlib/Complexity/TuringMachine/BufferWords.lean:107:theorem bufferTape_unary (q r : ℕ) (hr : r ≤ q) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:649:theorem bufferTape_eq {Symbol : Type*} (w : List Symbol) (z : ℤ) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:655:theorem bufferTape_of_neg {Symbol : Type*} (w : List Symbol) {z : ℤ} (hz : z < 0) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:664:lemma bufferTape_append {Symbol : Type*} (w : List Symbol) (b : Symbol) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:706:lemma bufferTape_inputSymbol {k : ℕ} {S : Type} {w : List Bool}
+TCSlib/Complexity/TuringMachine/SymbolLift.lean:260:theorem FinTM.bufferTape_map {Γ : Type} (e : Bool ↪ Γ) (w : List Bool) (p : ℤ) :
+TCSlib/Complexity/TuringMachine/SymbolLift.lean:267:theorem FinTM.bufferTape_map_decode {Γ : Type} [DecidableEq Γ] (e : Bool ↪ Γ)
+== Segment first/unique
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:428:theorem segment_iff {S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (F : Set (Option S))
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:552:theorem safeSegment_iff {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {F : Set (Option S)}
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:605:theorem segment (C : Contract M entry exits ι x) (i : ι) (d : Cfg k Γ S x)
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:711:theorem segment {c c' : Cfg k Γ S x} {t : ℕ} (h : Round M a E P c c' t) (ha : some a ∉ E) :
+TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean:1089:theorem Traj.segment {C : Contract M entry exits ι x}
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1882:theorem counterLoopTMVia_done_segment {S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean:1970:theorem counterLoopTMVia_escape_segment {S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ}

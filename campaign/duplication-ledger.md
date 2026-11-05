@@ -959,5 +959,44 @@ is three invocations of the published initial-configuration field equations
 (`MultiTapeTM.initCfg_eq`, `Cfg.init_state`, `Cfg.init_workTapes`): the idiom of reading the
 initial configuration, not a re-derived composite. **Disposition:** excluded; not counted.
 
+**E-D's delivery** (`exists_diagonalizer`, #188; review `campaign/fills/eq/reviews/ed-fill/`;
+ruled by the user, 2026-11-04):
+- **BL-1 (vi):** `dz_word_lt` (`Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ |w|`) is a new member,
+  **acknowledged** for the dedup window's single home below both layers; `NTimeDiagonalizer`
+  cannot reach `Machines/Bin`. Census `NTimeDiagonalizer` (vi) 1.
+- **Removed at landing:** `dz_padded_value`'s inline re-derivation of Mathlib's
+  `Nat.ofDigits_append_replicate_zero` (E3), and `dz_top_run`'s inline first halt, FH-1's
+  `MultiTapeTM.exists_first_halt` (E4). Recorded so that the ledger shows them caught.
+- **Promotion requests:** `dz_split_stream` restates `Build/NDHost`'s private `guessRun_split`
+  (98%), to be promoted or given a public `List` form; `dz_word_lt` restates `ExhaustiveReplay`'s
+  private `xr_val_lt` (65%), with BL-1 (vi)'s home.
+- **QF-1, extended:** `dz_initCfg` and `qy_initCfg` state one fact for different machines ("a
+  phase host's initial configuration is the blank seam in normal form"); one generic lemma over
+  `phaseHostTM_q₀` and `initCfg_ofWords`.
+- **RC-3, row candidates:** the clocked hosted run (`DzClockSpec`, `dz_clock_exists`); the
+  silent-transport reconstruction (`dz_silentCfg_eq`), beside `embedEmitCfg_eq`; and the output
+  length of a computed function (`dz_out_le`, `|F y| ≤ T |y|`), also inline in `SAT`,
+  `Nondeterminism`, `TMSAT` and `Build/Loop`'s private `loop_fuel_width`. **Disposition:** the
+  dedup window.
+
+**NF cont1's delivery, F2: four kinds re-stated** (review
+`campaign/fills/c1/reviews/nf-cont1-fill/`; ruled by the user, 2026-11-04: **publish homes
+first**). An API PR publishes each fact beside its definitions before NF lands, and NF's landing
+cites them:
+- (i) the input read depends on the input head only (`nf_inputSymbol_congr`; privates
+  `ExhaustiveReplay.xr_inputSymbol_congr`, `ZoneRebalance.zr_inputSymbol_congr`);
+- (ii) a live configuration redirected to `⟨i, q⟩` is phase `i`'s tagged configuration at `q`
+  (`nf_retag`; `SeamLayout`'s private `sl_rewrap`, and inline in 15 declarations);
+- (iii) a configuration tagged by phase `i` is at no state of another phase (`nf_tagged_ne_park`;
+  privates `CfgRecord.record_tag_ne`, `SeamLayout.sl_tagged_ne_done`);
+- (iv) the length of a list of equal-length chunks (`nf_stream_length`; public as
+  `Complexity.CfgTableau.length_flatMap_const` in colleague-owned `CircuitComplexity`, which
+  NF cannot import).
+
+The existing private copies are re-pointed in the API PR where the files are the campaign's.
+The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
+its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
+`Nat.forall_lt_succ_left'` (E1).
+
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.

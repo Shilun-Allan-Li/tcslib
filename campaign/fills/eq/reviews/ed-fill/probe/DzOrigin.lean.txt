@@ -1,0 +1,49 @@
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import Lean
+/-! Reviewer probe: resolve the identifiers named in the new code's rw/simp/unfold lists and show
+terms (kind, reducibility, simp status, module). -/
+open Lean Elab Command
+
+elab "#dz_origin " ids:ident* : command => do
+  let env ← getEnv
+  let sth ← liftCoreM Meta.getSimpTheorems
+  let mut out := ""
+  for id in ids do
+    let r : Option (List Name) ← try (some <$> resolveGlobalConst id) catch _ => pure none
+    match r with
+    | none => out := out ++ s!"UNRESOLVED\t{id.getId}\n"
+    | some ns =>
+      for n in ns do
+        let mod := match env.getModuleIdxFor? n with
+          | some i => toString (env.header.moduleNames[i.toNat]!)
+          | none => "(this file)"
+        let kind := match env.find? n with
+          | some (.thmInfo _) => "theorem" | some (.defnInfo _) => "def"
+          | some (.axiomInfo _) => "axiom" | some (.opaqueInfo _) => "opaque"
+          | some (.inductInfo _) => "inductive" | some (.ctorInfo _) => "ctor"
+          | some (.recInfo _) => "recursor" | some (.quotInfo _) => "quot" | none => "?"
+        let red ← getReducibilityStatus n
+        let redS := match red with | .reducible => "reducible" | .semireducible => "semireducible" | .irreducible => "irreducible"
+        let simpS := (if sth.isLemma (.decl n) then "simp-lemma " else "") ++
+          (if sth.isDeclToUnfold n then "simp-unfold" else "")
+        out := out ++ s!"{id.getId}\t{n}\t{kind}\t{redS}\t{simpS}\t{mod}\n"
+  logInfo out
+
+namespace Turing.NTimeDiag
+
+#dz_origin Action.apply_inputPos Action.apply_output Action.apply_state Action.apply_workTapePos Action.apply_workTapes Bl Bool Bool.toNat_true Cfg.init_inputPos Cfg.init_output Cfg.init_state Cfg.init_workTapePos
+#dz_origin Cfg.init_workTapes Cfg.stopped_iff Cfg.workTapeSymbols_eq Equiv.swap_apply_eq_iff Equiv.swap_apply_left Equiv.swap_apply_right Equiv.toEmbedding_apply Fin.addCases_left Fin.addCases_right Fin.castAdd Fin.last Fin.lastCases_castSucc
+#dz_origin Fin.lastCases_last Fin.natAdd FinNDTM.acceptsWithin_iff FinTM.VirtualTag_iff FinTM.bufferTape FinTM.bufferTape_eq FinTM.bufferTape_eq_none_of_not_mem FinTM.bufferTape_nil FinTM.bufferTape_of_neg Function.Embedding.coeFn_mk Function.Embedding.coe_refl Function.Embedding.trans_apply
+#dz_origin Function.update Function.update_apply Function.update_eq_self Function.update_idem Function.update_of_ne Function.update_self G L L3 L4 List List.append_assoc
+#dz_origin List.append_nil List.cons_append List.dropLast_concat List.drop_eq_getElem_cons List.getElem?_append_left List.getElem?_append_right List.getElem?_eq_getElem List.length_append List.length_cons List.length_drop List.length_map List.length_nil
+#dz_origin List.length_replicate List.length_singleton List.length_take List.map_append List.map_cons List.map_id List.map_id' List.map_nil List.nil_append List.replicate_succ List.singleton_append List.take_append_drop
+#dz_origin MultiTapeTM.initCfg_eq MultiTapeTM.runFrom_add MultiTapeTM.runFrom_of_halt MultiTapeTM.runFrom_zero MultiTapeTM.step_of_some Nat.cast_one Nat.ofDigits_append Nat.ofDigits_cons Nat.ofDigits_singleton Nat.sub_self Ne Option
+#dz_origin Option.getD_none Option.getD_some Option.map_none Option.map_some Option.some_inj Option.toList_none P P1 P3 Pn Set.mem_singleton_iff Sigma.mk.inj_iff
+#dz_origin SignType SignType.coe_zero SignType.pos Subsingleton.elim T a a0 add_zero and_self b dif_neg dif_pos
+#dz_origin f g guessRunCfg_inputPos guessRunCfg_output guessRunCfg_state guessRunCfg_workTapePos guessRunCfg_workTapes hL4' hZ1' hZ3' i if_neg
+#dz_origin if_pos ih implies_true initCfg_ofWords j m moveInputPos_zero mul_assoc mul_comm mul_zero none o
+#dz_origin one_mul p pairDecode_pairEncode pre q r1 r2 r4 r5 src streamStartCfg_inputPos streamStartCfg_output
+#dz_origin streamStartCfg_state streamStartCfg_workTapePos streamStartCfg_workTapes sub_zero vhostCap_eq vhostCfg_inputPos vhostCfg_output vhostCfg_state vhostCfg_workTapePos vhostCfg_workTapes vhostSilentCfg_eq z
+#dz_origin zero_add
+
+end Turing.NTimeDiag

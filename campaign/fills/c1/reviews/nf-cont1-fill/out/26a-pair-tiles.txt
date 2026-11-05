@@ -1,0 +1,328 @@
+pairs 38
+=== NDNormalForm.lean::nf_entry reproduces CodeSimulator.lean::canonStageBuffer_none (67/84)
+nf_entry (706 chars) reproduces canonStageBuffer_none (84 chars): 67/84 = 80%
+  source body: byrw[FinTM.bufferTape_eq,if_pos(byomega:(0:ℤ)≤q)]exactList.getElem?_eq_none(byomega)
+  tile 37: rw[FinTM.bufferTape_eq,if_pos(byomega
+  tile 30: List.getElem?_eq_none(byomega)
+
+=== NDNormalForm.lean::nf_leafStDecEq reproduces NDNormalForm.lean::nf_leafStFintype (299/375)
+nf_leafStDecEq (386 chars) reproduces nf_leafStFintype (375 chars): 299/375 = 80%
+  source body: letI:Fintype(nf_SweepStateN):=inferInstanceletI:Fintype(OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:Fintype(nf_SweepStateN×OptionBool×OptionBool×SignType×Bool):=inferInstanceletI:Fintype(nf_SweepStateN×OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:Fintype(nf_SweepStateN×SignType):=inferInstanceFintype.ofEquiv_(nf_leafEquivN).symm
+  tile 83: (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+  tile 72: (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool):=inferInstanceletI:
+  tile 68: (OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+  tile 40: (nf_SweepStateN×SignType):=inferInstance
+  tile 36: (nf_SweepStateN):=inferInstanceletI:
+
+=== NDNormalForm.lean::nf_leafStFintype reproduces NDNormalForm.lean::nf_leafStDecEq (299/386)
+nf_leafStFintype (375 chars) reproduces nf_leafStDecEq (386 chars): 299/386 = 77%
+  source body: letI:DecidableEq(nf_SweepStateN):=inferInstanceletI:DecidableEq(OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:DecidableEq(nf_SweepStateN×OptionBool×OptionBool×SignType×Bool):=inferInstanceletI:DecidableEq(nf_SweepStateN×OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:DecidableEq(nf_SweepStateN×SignType):=inferInstance(nf_leafEquivN).decidableEq
+  tile 83: (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+  tile 72: (nf_SweepStateN×OptionBool×OptionBool×SignType×Bool):=inferInstanceletI:
+  tile 68: (OptionBool×OptionBool×SignType×Bool×OptionBool):=inferInstanceletI:
+  tile 40: (nf_SweepStateN×SignType):=inferInstance
+  tile 36: (nf_SweepStateN):=inferInstanceletI:
+
+=== NDNormalForm.lean::nf_stDecEq reproduces NDNormalForm.lean::nf_stFintype (245/318)
+
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/nf-cont1-fill/scripts/tiles.py", line 47, in <module>
+    print(f'{da} ({len(ta)} chars) reproduces {db} ({len(tb)} chars): {c}/{len(tb)} = {c/len(tb):.0%}')
+                                                                                       ~^~~~~~~~
+ZeroDivisionError: division by zero
+=== NDNormalForm.lean::nf_vstep_ctl reproduces NDNormalForm.lean::nf_vstep_state (131/172)
+nf_vstep_ctl (236 chars) reproduces nf_vstep_state (172 chars): 131/172 = 76%
+  source body: byobtain⟨cs,o,f⟩:=ctlsimponlyath1substh1caseshc:c.statewith|none=>simponly[nf_complete,nf_vstep,hc]|someq=>simponly[nf_complete,nf_vstep,hc]exact(Action.apply_state__).symm
+  tile 100: caseshc:c.statewith|none=>simponly[nf_complete,nf_vstep,hc]|someq=>simponly[nf_complete,nf_vstep,hc]
+  tile 31: obtain⟨cs,o,f⟩:=ctlsimponlyath1
+
+=== CodeSimulator.lean::canonStageLeg6 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg6 (2547 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== CodeSimulator.lean::canonStageLeg5 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg5 (2178 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== CodeSimulator.lean::canonStageLeg4 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg4 (2585 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== CodeSimulator.lean::canonStageLeg3 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg3 (2692 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== CodeSimulator.lean::canonStageLeg2 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg2 (2121 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== CodeSimulator.lean::canonStageLeg1 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg1 (1928 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== CodeSimulator.lean::canonStageLeg0 reproduces NDNormalForm.lean::nf_retag (239/322)
+canonStageLeg0 (2064 chars) reproduces nf_retag (322 chars): 239/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 53: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 51: rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 49: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]
+  tile 44: ·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 42: ·rw[Cfg.mapState_state,Cfg.mapState_state]
+
+=== InputRewind.lean::Cfg.mapState_mapState reproduces NDNormalForm.lean::nf_retag (238/322)
+Cfg.mapState_mapState (402 chars) reproduces nf_retag (322 chars): 238/322 = 74%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 93: Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output
+  tile 53: Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funext
+  tile 51: Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funext
+  tile 41: ·rw[Cfg.mapState_state,Cfg.mapState_state
+
+=== ExhaustiveReplay.lean::xr_phase_step reproduces NDNormalForm.lean::nf_retag (231/322)
+xr_phase_step (693 chars) reproduces nf_retag (322 chars): 231/322 = 72%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 59: Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos
+  tile 57: Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes
+  tile 49: Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,
+  tile 36: byapplyCfg.ext·rw[Cfg.mapState_state
+  tile 30: ];rfl·rw[Cfg.mapState_inputPos
+
+=== ExhaustiveReplay.lean::xr_halt_fixed reproduces NDNormalForm.lean::nf_retag (231/322)
+xr_halt_fixed (1072 chars) reproduces nf_retag (322 chars): 231/322 = 72%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 59: Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos
+  tile 57: Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes
+  tile 48: Cfg.mapState_workTapePos]·rw[Cfg.mapState_output
+  tile 37: byapplyCfg.ext·rw[Cfg.mapState_state,
+  tile 30: ];rfl·rw[Cfg.mapState_inputPos
+
+=== NDNormalForm.lean::nf_V_tail reproduces NDNormalForm.lean::nf_setup (154/218)
+nf_V_tail (7729 chars) reproduces nf_setup (218 chars): 154/218 = 71%
+  source body: byrefine⟨MultiTapeTM.runFrom_zero,?_,funuhu=>absurdhu(Nat.not_lt_zerou),funp=>?_,?_⟩·rw[MultiTapeTM.initCfg_eq,Cfg.init_state]·rw[MultiTapeTM.initCfg_eq,Cfg.init_workTapes]·rw[MultiTapeTM.initCfg_eq,Cfg.init_workTapes]
+  tile 36: ,funuhu=>absurdhu(Nat.not_lt_zerou),
+  tile 33: TM.initCfg_eq,Cfg.init_workTapes]
+  tile 31: TM.initCfg_eq,Cfg.init_workTape
+  tile 29: TM.initCfg_eq,Cfg.init_state]
+  tile 25: MultiTapeTM.runFrom_zero,
+
+=== CodeSimulator.lean::canonStageOuterSpec reproduces NDNormalForm.lean::nf_retag (227/322)
+canonStageOuterSpec (14001 chars) reproduces nf_retag (322 chars): 227/322 = 70%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 97: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 57: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj
+  tile 41: ·rw[Cfg.mapState_state,Cfg.mapState_state
+  tile 32: s⟩:=Option.isSome_iff_exists.mph
+
+=== NDNormalForm.lean::nf_stFintype reproduces NDNormalForm.lean::nf_stDecEq (245/350)
+
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/nf-cont1-fill/scripts/tiles.py", line 47, in <module>
+    print(f'{da} ({len(ta)} chars) reproduces {db} ({len(tb)} chars): {c}/{len(tb)} = {c/len(tb):.0%}')
+                                                                                       ~^~~~~~~~
+ZeroDivisionError: division by zero
+=== Seam.lean::phaseHostTM_run reproduces NDNormalForm.lean::nf_retag (221/322)
+phaseHostTM_run (1060 chars) reproduces nf_retag (322 chars): 221/322 = 69%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 54: Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj
+  tile 52: Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextj
+  tile 50: Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 40: Cfg.mapState_output,Cfg.mapState_output]
+  tile 25: _state,Cfg.mapState_state
+
+=== NTimeHierarchy.lean::un_setup reproduces NDNormalForm.lean::nf_retag (216/322)
+un_setup (31091 chars) reproduces nf_retag (322 chars): 216/322 = 67%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 50: Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]
+  tile 47: rw[Cfg.mapState_workTapes,Cfg.mapState_workTape
+  tile 43: Cfg.mapState_inputPos,Cfg.mapState_inputPos
+  tile 39: Cfg.mapState_output,Cfg.mapState_output
+  tile 37: Cfg.mapState_state,Cfg.mapState_state
+
+=== ExhaustiveReplay.lean::xr_inputSymbol_congr reproduces NDNormalForm.lean::nf_inputSymbol_congr (255/384)
+xr_inputSymbol_congr (445 chars) reproduces nf_inputSymbol_congr (384 chars): 255/384 = 66%
+  source body: byby_casesh0:c.inputPos.val=0·haveh0':c'.inputPos=0:=Fin.ext(byrw[←h];exacth0)rw[Cfg.inputSymbol_of_zero(Fin.exth0),Cfg.inputSymbol_of_zeroh0']·by_caseshe:c.inputPos.val=x.length+1·rw[Cfg.inputSymbol_of_endhe,Cfg.inputSymbol_of_end(byomega)]·havehlt:=c.inputPos.isLtrw[inputSymbolInner(c.inputPos.val-1)(byomega)(byomega),inputSymbolInner(cfg:=c')(c.inputPos.val-1)(byomega)(byomega)]
+  tile 54: :c.inputPos.val=x.length+1·rw[Cfg.inputSymbol_of_endhe
+  tile 46: rw[inputSymbolInner(c.inputPos.val-1)(byomega)
+  tile 42: ,Cfg.inputSymbol_of_end(byomega)]·havehlt:
+  tile 35: byby_casesh0:c.inputPos.val=0·haveh
+  tile 27: (c.inputPos.val-1)(byomega)
+  tile 26: rw[Cfg.inputSymbol_of_zero
+  tile 25: ,Cfg.inputSymbol_of_zeroh
+
+=== NDNormalForm.lean::nf_retag reproduces CodeSimulator.lean::us_start (182/281)
+nf_retag (322 chars) reproduces us_start (281 chars): 182/281 = 65%
+  source body: byrw[MultiTapeTM.initCfg_with_q₀]applyCfg.ext·rw[Cfg.init_state,Cfg.mapState_state]rfl·rw[Cfg.init_inputPos,Cfg.mapState_inputPos]·funextjqrw[Cfg.init_workTapes,Cfg.mapState_workTapes]·funextjrw[Cfg.init_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.init_output,Cfg.mapState_output]
+  tile 46: _workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.
+  tile 42: _workTapes,Cfg.mapState_workTapes]·funextj
+  tile 40: _inputPos,Cfg.mapState_inputPos]·funextj
+  tile 28: _output,Cfg.mapState_output]
+  tile 26: _state,Cfg.mapState_state]
+
+=== NDCodeSimulator.lean::exists_ndInterpreterCore reproduces NDNormalForm.lean::nf_retag (198/322)
+exists_ndInterpreterCore (17520 chars) reproduces nf_retag (322 chars): 198/322 = 61%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 48: Cfg.mapState_workTapePos]·rw[Cfg.mapState_output
+  tile 36: byapplyCfg.ext·rw[Cfg.mapState_state
+  tile 31: _inputPos,Cfg.mapState_inputPos
+  tile 31: Cfg.mapState_workTapes]·funextj
+  tile 27: rw[Cfg.mapState_workTapePos
+  tile 25: rw[Cfg.mapState_workTapes
+
+=== NDNormalForm.lean::nf_leaf_record_in reproduces NDNormalForm.lean::nf_leaf_record_wk (567/929)
+nf_leaf_record_in (1180 chars) reproduces nf_leaf_record_wk (929 chars): 567/929 = 61%
+  source body: byobtain⟨hpre,σ,h1,h2,h3,h4,hrun,hsym⟩:=nf_leaf_toLastN(somet)drecctlhsthArefine⟨hpre,?_⟩setc:Cfg2Bool(nf_LeafStN)x:={dwithstate:=some(.readσ)workTapePos:=Function.updated.workTapePos0(d.workTapePos0+(2*N.k+3:ℕ))}withhcrefine⟨funqhq=>?_,funhn=>?_⟩·rw[hrun,step_of_tapeAction_move(nf_leafN(somet))c(q:=.readσ)(q':=.blk₁((0,fun_=>none),nf_completeN(funp=>some(recp))ctl)(nf_decodeN.k(funp=>some(recp))t.succ)(((nf_actN(funp=>some(recp))q).workTapest).1.getD(nf_decodeN.k(funp=>some(recp))t.succ))((nf_actN(funp=>some(recp))q).workTapest).2(rec⟨2*N.k+3,byomega⟩))001rfl(bysimponly[nf_leaf]rw[if_posh1,hsym,Option.getD_some,h3,h4,h2,hq])]applyCfg.ext·rfl·exactmoveInputPos_zero_·rfl·funextiby_caseshi:i=0·substhisimponly[hc,Function.update_self,SignType.coe_one]push_castring·simponly[hc,Function.update_of_nehi]·rfl·rw[hrun,step_of_tapeAction_move(nf_leafN(somet))c(q:=.readσ)(q':=.rej)000rfl(bysimponly[nf_leaf]rw[if_posh1,h2,hn])]
+  tile 157: drecctlhsthArefine⟨hpre,?_⟩setc:Cfg2Bool(nf_LeafStN)x:={dwithstate:=some(.readσ)workTapePos:=Function.updated.workTapePos0(d.workTapePos0+(2*N.k+3:ℕ))}withhc
+  tile 146: ·rfl·funextiby_caseshi:i=0·substhisimponly[hc,Function.update_self,SignType.coe_one]push_castring·simponly[hc,Function.update_of_nehi]·rfl·rw[hrun
+  tile 69: )c(q:=.readσ)(q':=.rej)000rfl(bysimponly[nf_leaf]rw[if_posh1,h2,hn])]
+  tile 55: byobtain⟨hpre,σ,h1,h2,h3,h4,hrun,hsym⟩:=nf_leaf_toLastN
+  tile 46: =>?_⟩·rw[hrun,step_of_tapeAction_move(nf_leafN
+  tile 37: 1rfl(bysimponly[nf_leaf]rw[if_posh1,h
+  tile 32: step_of_tapeAction_move(nf_leafN
+  tile 25: sym,Option.getD_some,h3,h
+
+=== CodeSimulator.lean::canonStageInnerSpec reproduces NDNormalForm.lean::nf_retag (195/322)
+canonStageInnerSpec (20031 chars) reproduces nf_retag (322 chars): 195/322 = 61%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 97: rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 57: rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj
+  tile 41: ·rw[Cfg.mapState_state,Cfg.mapState_state
+
+=== NDHost.lean::gr_handoff reproduces NDNormalForm.lean::nf_retag (194/322)
+gr_handoff (6095 chars) reproduces nf_retag (322 chars): 194/322 = 60%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 44: Cfg.mapState_workTapes,Cfg.mapState_workTape
+  tile 41: _workTapePos]·rw[Cfg.mapState_output,Cfg.
+  tile 39: applyCfg.ext·rw[Cfg.mapState_state,Cfg.
+  tile 37: Cfg.mapState_workTapePos,Cfg.mapState
+  tile 33: rfl·rw[Cfg.mapState_inputPos,Cfg.
+
+=== ExhaustiveReplay.lean::xr_E_initCfg reproduces NDNormalForm.lean::nf_retag (194/322)
+xr_E_initCfg (642 chars) reproduces nf_retag (322 chars): 194/322 = 60%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 44: Cfg.mapState_inputPos,Cfg.mapState_inputPos]
+  tile 40: Cfg.mapState_output,Cfg.mapState_output]
+  tile 38: Cfg.mapState_state,Cfg.mapState_state]
+  tile 38: _workTapePos,Cfg.mapState_workTapePos]
+  tile 34: _workTapes,Cfg.mapState_workTapes]
+
+=== NDCodeSimulator.lean::ic_loopHost_run reproduces NDNormalForm.lean::nf_tagged_ne_park (80/135)
+ic_loopHost_run (2838 chars) reproduces nf_tagged_ne_park (135 chars): 80/135 = 59%
+  source body: byrw[Cfg.mapState_state]caseshs:c.statewith|none=>exactOption.noConfusion|someq=>introhexacthi(Sigma.mk.inj_iff.mp(Option.some.injh)).1
+  tile 53: .statewith|none=>exactOption.noConfusion|someq=>intro
+  tile 27: Cfg.mapState_state]caseshs:
+
+=== NDNormalForm.lean::nf_retag reproduces InputRewind.lean::Cfg.mapState_mapState (238/402)
+nf_retag (322 chars) reproduces Cfg.mapState_mapState (402 chars): 238/402 = 59%
+  source body: byrefineCfg.ext?_?_?_?_?_·rw[Cfg.mapState_state,Cfg.mapState_state,Cfg.mapState_state,Option.map_map]·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextiqrw[Cfg.mapState_workTapes,Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextirw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output,Cfg.mapState_output]
+  tile 93: Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output
+  tile 53: Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funext
+  tile 51: Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funext
+  tile 41: ·rw[Cfg.mapState_state,Cfg.mapState_state
+
+=== NDNormalForm.lean::nf_bClear reproduces NDNormalForm.lean::nf_aReturn (1353/2357)
+nf_bClear (4132 chars) reproduces nf_aReturn (2357 chars): 1353/2357 = 57%
+  source body: byhavehw:∀p:ℤ,0≤p→p≤(([]:ListBool).length:ℤ)→c.workTapes0(c.workTapePos0+p)=FinTM.bufferTape[]p:=byintroph0h1simponly[List.length_nil,Nat.cast_zero]ath1obtainrfl:p=0:=le_antisymmh1h0rw[htape,hpos,add_zero,FinTM.bufferTape_nat,FinTM.bufferTape_nil,List.getElem?_eq_none(le_refl_)]obtain⟨h1,h2,-⟩:=skipTM_run_ofCfg(k:=2)(0:Fin2)[]chsthwsetc₁:Cfg2BoolSeekPhasex:={cwithstate:=some.doneworkTapePos:=Function.updatec.workTapePos0(c.workTapePos0+([]:ListBool).length+1)}withhc₁obtain⟨hpA,hA⟩:=phaseHostTM_run(nf_MNL)⟨.ctl,ScanPhase.fwd(nf_sweepInitN)⟩(nf_redNLexit)(nf_Ph.aFwdj)(c:=c)(c':=c₁)(([]:ListBool).length+1)h1SeekPhase.donerfl⟨.aBackj,.run⟩rfl(byintrouhuqhqobtainrfl:u=0:=bysimpathu;omegarw[MultiTapeTM.runFrom_zero,hst]athqcaseshqrfl)havehre:=nf_retag(N:=N)(SL:=SL)(S:=nf_StNSL(nf_Ph.aFwdj))c₁(nf_Ph.aBackj)SeekPhase.run(bysimp[hc₁])setc₂:Cfg2BoolSeekPhasex:={c₁withstate:=some.run}withhc₂havehu:∀p:ℤ,-1≤p→p≤(s.length:ℤ)→c₂.workTapes0(c₂.workTapePos0-s.length-1+p)=FinTM.bufferTapesp:=byintrop__simponly[hc₂,hc₁,Function.update_self,List.length_nil,Nat.cast_zero,hpos]rw[htape]congr1ringobtain⟨h3,h4,-⟩:=skipBackTM_run_ofCfg(k:=2)(0:Fin2)sc₂rflhusetc₃:Cfg2BoolSeekPhasex:={c₂withstate:=some.doneworkTapePos:=Function.updatec₂.workTapePos0(c₂.workTapePos0-s.length-1)}withhc₃havehred:nf_redNLexit(nf_Ph.aBackj)SeekPhase.done=some(nf_aNextNLj):=bycasesj<;>rflobtain⟨hpB,hB⟩:=phaseHostTM_run(nf_MNL)⟨.ctl,ScanPhase.fwd(nf_sweepInitN)⟩(nf_redNLexit)(nf_Ph.aBackj)(c:=c₂)(c':=c₃)(s.length+3)h3SeekPhase.donerfl(nf_aNextNLj)hred(byintrouhuqhqcasesqwith|done=>exactabsurdhq(h4uhu)|run=>casesj<;>rfl|gap=>casesj<;>rfl|back=>casesj<;>rfl)havee:s.length+6=(([]:ListBool).length+1+1)+(s.length+3+1):=bysimp;omegarefine⟨c₃,?_,?_,?_,?_,?_,?_,?_,?_⟩·rw[e,MultiTapeTM.runFrom_add]unfoldnf_Vrw[hA,hre]exacthB·simp[hc₃]·simponly[hc₃,hc₂,hc₁,Function.update_self,List.length_nil,Nat.cast_zero,hpos]ring·simponly[hc₃,hc₂,hc₁]rw[Function.update_of_ne(bydecide),Function.update_of_ne(bydecide)]·simponly[hc₃,hc₂,hc₁]·simponly[hc₃,hc₂,hc₁]·simponly[hc₃,hc₂,hc₁]·introuhubunfoldnf_Vby_caseshu1:u≤([]:ListBool).length+1·rw[hpAuhu1]exactnf_tagged_ne_park(funh=>nf_Ph.noConfusionh)_b·obtain⟨v,rfl⟩:∃v,u=(([]:ListBool).length+1+1)+v:=⟨u-(([]:ListBool).length+1+1),byomega⟩rw[MultiTapeTM.runFrom_add,hA,hre,hpBv(bysimpathu⊢;omega)]exactnf_tagged_ne_park(funh=>nf_Ph.noConfusionh)_b
+  tile 114: ).length+1)}withhc₁obtain⟨hpA,hA⟩:=phaseHostTM_run(nf_MNL)⟨.ctl,ScanPhase.fwd(nf_sweepInitN)⟩(nf_redNLexit)(nf_Ph.
+  tile 108: Backj)SeekPhase.run(bysimp[hc₁])setc₂:Cfg2BoolSeekPhasex:={c₁withstate:=some.run}withhc₂havehu:∀p:ℤ,-1≤p→p≤(
+  tile 98: c₂rflhusetc₃:Cfg2BoolSeekPhasex:={c₂withstate:=some.doneworkTapePos:=Function.updatec₂.workTapePos
+  tile 95: chsthwsetc₁:Cfg2BoolSeekPhasex:={cwithstate:=some.doneworkTapePos:=Function.updatec.workTapePos
+  tile 95: obtain⟨hpB,hB⟩:=phaseHostTM_run(nf_MNL)⟨.ctl,ScanPhase.fwd(nf_sweepInitN)⟩(n
+
+=== NDNormalForm.lean::nf_inputSymbol_congr reproduces ExhaustiveReplay.lean::xr_inputSymbol_congr (255/445)
+nf_inputSymbol_congr (384 chars) reproduces xr_inputSymbol_congr (445 chars): 255/445 = 57%
+  source body: byby_casesh0:c.inputPos.val=0·havehc:c.inputPos=0:=byapplyFin.extrw[h0]simphavehc':c'.inputPos=0:=byapplyFin.extrw[←h,h0]simprw[Cfg.inputSymbol_of_zerohc,Cfg.inputSymbol_of_zerohc']·by_caseshend:c.inputPos.val=x.length+1·rw[Cfg.inputSymbol_of_endhend,Cfg.inputSymbol_of_end(byomega)]·havehlt:c.inputPos.val-1<x.length:=byhave:=c.inputPos.isLt;omegarw[inputSymbolInner(c.inputPos.val-1)(byomega)hlt,inputSymbolInner(c.inputPos.val-1)(byomega)hlt]
+  tile 54: :c.inputPos.val=x.length+1·rw[Cfg.inputSymbol_of_endhe
+  tile 46: rw[inputSymbolInner(c.inputPos.val-1)(byomega)
+  tile 42: ,Cfg.inputSymbol_of_end(byomega)]·havehlt:
+  tile 35: byby_casesh0:c.inputPos.val=0·haveh
+  tile 27: (c.inputPos.val-1)(byomega)
+  tile 26: rw[Cfg.inputSymbol_of_zero
+  tile 25: ,Cfg.inputSymbol_of_zeroh
+
+=== CodeSimulator.lean::us_start reproduces NDNormalForm.lean::nf_retag (182/322)
+us_start (281 chars) reproduces nf_retag (322 chars): 182/322 = 57%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 46: _workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.
+  tile 42: _workTapes,Cfg.mapState_workTapes]·funextj
+  tile 40: _inputPos,Cfg.mapState_inputPos]·funextj
+  tile 28: _output,Cfg.mapState_output]
+  tile 26: _state,Cfg.mapState_state]
+
+=== NDNormalForm.lean::nf_vstep_state reproduces NDNormalForm.lean::nf_vstep_ctl (131/236)
+nf_vstep_state (172 chars) reproduces nf_vstep_ctl (236 chars): 131/236 = 56%
+  source body: byrefine⟨nf_vstep_stateNcctlrech1,?_⟩obtain⟨cs,o,f⟩:=ctlsimponlyath1h2substh1h2caseshc:c.statewith|none=>simponly[nf_complete,nf_vstep,hc]|someq=>simponly[nf_complete,nf_vstep,hc]rw[Action.apply_output,StepBlock.outputSummary_append]rfl
+  tile 100: caseshc:c.statewith|none=>simponly[nf_complete,nf_vstep,hc]|someq=>simponly[nf_complete,nf_vstep,hc]
+  tile 31: obtain⟨cs,o,f⟩:=ctlsimponlyath1
+
+=== NDHost.lean::guessCtlRunTM_stop_of_halted reproduces NDNormalForm.lean::nf_retag (175/322)
+guessCtlRunTM_stop_of_halted (4534 chars) reproduces nf_retag (322 chars): 175/322 = 54%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 41: _workTapePos]·rw[Cfg.mapState_output,Cfg.
+  tile 39: applyCfg.ext·rw[Cfg.mapState_state,Cfg.
+  tile 33: rfl·rw[Cfg.mapState_inputPos,Cfg.
+  tile 32: rw[Cfg.mapState_workTapePos,Cfg.
+  tile 30: rw[Cfg.mapState_workTapes,Cfg.
+
+=== NDNormalForm.lean::nf_sweep_run reproduces NDNormalForm.lean::nf_tag (216/402)
+nf_sweep_run (1113 chars) reproduces nf_tag (402 chars): 216/402 = 54%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,streamStartCfg_state,streamStartCfg_state];rfl·rw[Cfg.mapState_inputPos,streamStartCfg_inputPos,streamStartCfg_inputPos]·funextip;rw[Cfg.mapState_workTapes,streamStartCfg_workTapes,streamStartCfg_workTapes]·funexti;rw[Cfg.mapState_workTapePos,streamStartCfg_workTapePos,streamStartCfg_workTapePos]·rw[Cfg.mapState_output,streamStartCfg_output,streamStartCfg_output]
+  tile 59: _workTapes,streamStartCfg_workTapes,streamStartCfg_workTape
+  tile 58: streamStartCfg_workTapePos,streamStartCfg_workTapePos]·rw[
+  tile 55: streamStartCfg_inputPos,streamStartCfg_inputPos]·funext
+  tile 44: streamStartCfg_output,streamStartCfg_output]
+
+=== NDNormalForm.lean::nf_leaf_run_wk reproduces NDNormalForm.lean::nf_leaf_run_in (1296/2435)
+nf_leaf_run_wk (5850 chars) reproduces nf_leaf_run_in (2435 chars): 1296/2435 = 53%
+  source body: nf_stream_consN.krecrs(d.workTapes0)(d.workTapePos0)hAobtain⟨hpre,hpass,hrej⟩:=nf_leaf_record_inNdrecctlhsthA0havehinp:d.inputSymbol=c.inputSymbol:=nf_inputSymbol_congrdc(byrw[hip])havehall:=nf_all_consNcrecrs(funcrec=>nf_okNcrec0)obtain⟨hfl,hflag'⟩:=nf_flags_consrecrshflagby_caseshok:nf_okNcrec0·obtain⟨hlive,hdec⟩:=hokobtain⟨q,hq⟩:=Option.ne_none_iff_exists'.mphlivehavehdec':nf_decodeN.k(funp=>some(recp))0=d.inputSymbol:=byrw[hinp,hdec];rflhavehrun:=hpassq(hc.transhq)hdec'casesrswith|nil=>havehl:rec⟨2*N.k+3,byomega⟩=true:=bysimpausinghflrefine⟨2*N.k+4,hpre,fun_=>⟨bysimp,moveInputPosd.inputPos(nf_actN(funp=>some(recp))q).inputTape,?_⟩,funhn=>absurd?_hn⟩·rw[hrun,if_poshl]simp·introrhrsimpathrsubsthrexact⟨hlive,hdec⟩|consrec'rs'=>havehl:rec⟨2*N.k+3,byomega⟩=false:=bysimpausinghflrw[if_neg(bysimp[hl])]athrunsetd':Cfg2Bool(nf_LeafStN)x:={dwithstate:=some(.read((0,fun_=>none),nf_completeN(funp=>some(recp))ctl))inputPos:=moveInputPosd.inputPos(nf_actN(funp=>some(recp))q).inputTapeworkTapePos:=Function.updated.workTapePos0(d.workTapePos0+(2*N.k+4:ℕ))}withhd'havehvc:=nf_vstep_stateNcctlrechchavehvip:d'.inputPos=(nf_vstepNcrec).inputPos:=byshowmoveInputPosd.inputPos_=_simponly[nf_vstep,hq]rw[Action.apply_inputPos,hip]havehA':∀p:ℕ,p<((rec'::rs').flatMapList.ofFn).length→d'.workTapes0(d'.workTapePos0+p)=((rec'::rs').flatMapList.ofFn)[p]?:=byintrophpshowd.workTapes0(Function.updated.workTapePos0(d.workTapePos0+(2*N.k+4:ℕ))0+p)=_rw[Function.update_self]exacthA1phpobtain⟨T',hpre',hpass',hrej'⟩:=nf_leaf_run_inN(rec'::rs')d'(nf_completeN(funp=>some(recp))ctl)(nf_vstepNcrec)(bysimp)hflag'rflhvchviphA'refine⟨(2*N.k+4)+T',funuhushs=>?_,funh=>?_,funh=>?_⟩·by_caseshu1:u<2*N.k+4·exacthpreuhu1shs·obtain⟨v,rfl⟩:∃v,u=(2*N.k+4)+v:=⟨u-(2*N.k+4),byomega⟩rw[MultiTapeTM.runFrom_add,hrun]athsexacthpre'v(byomega)shs·obtain⟨hT,ip,hcfg⟩:=hpass'((hall.mph).2)refine⟨byrw[hT];simp;ring,ip,?_⟩rw[MultiTapeTM.runFrom_add,hrun,hcfg]applyCfg.ext·rfl·rfl·rfl·funextiby_caseshi:i=0·substhisimponly[hd',Function.update_self,List.length_cons]push_castring·simponly[hd',Function.update_of_nehi]·rfl·havehn:¬∀r(h:r<(rec'::rs').length),nf_okN(((rec'::rs').taker).foldl(nf_vstepN)(nf_vstepNcrec))(rec'::rs')[r]0:=funh'=>h(hall.mpr⟨⟨hlive,hdec⟩,h'⟩)rw[MultiTapeTM.runFrom_add,hrun]exacthrej'hn·refine⟨2*N.k+4,hpre,funh=>absurd((hall.mph).1)hok,fun_=>hrej?_⟩by_caseshl:c.state=none·exactOr.inl(hc.transhl)·refineOr.inrfunhdec=>hok⟨hl,?_⟩rw[hdec,hinp]rfl
+  tile 132: havehA':∀p:ℕ,p<((rec'::rs').flatMapList.ofFn).length→d'.workTapes0(d'.workTapePos0+p)=((rec'::rs').flatMapList.ofFn)[p]?:=byintrophp
+  tile 106: uhu1shs·obtain⟨v,rfl⟩:∃v,u=(2*N.k+4)+v:=⟨u-(2*N.k+4),byomega⟩rw[MultiTapeTM.runFrom_add,hrun]athsexacthpre
+  tile 102: :¬∀r(h:r<(rec'::rs').length),nf_okN(((rec'::rs').taker).foldl(nf_vstepN)(nf_vstepNcrec))(rec'::rs')[r]
+  tile 76: workTapePos:=Function.updated.workTapePos0(d.workTapePos0+(2*N.k+4:ℕ))}with
+
+=== NDNormalForm.lean::nf_tag reproduces NDNormalForm.lean::nf_retag (162/322)
+nf_tag (402 chars) reproduces nf_retag (322 chars): 162/322 = 50%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 37: byapplyCfg.ext·rw[Cfg.mapState_state,
+  tile 37: _workTapePos]·rw[Cfg.mapState_output,
+  tile 31: ];rfl·rw[Cfg.mapState_inputPos,
+  tile 29: ;rw[Cfg.mapState_workTapePos,
+  tile 28: p;rw[Cfg.mapState_workTapes,
+
+=== NDNormalForm.lean::nf_pack reproduces NDNormalForm.lean::nf_retag (162/322)
+nf_pack (1090 chars) reproduces nf_retag (322 chars): 162/322 = 50%
+  source body: byapplyCfg.ext·rw[Cfg.mapState_state,Cfg.mapState_state]obtain⟨s,hs⟩:=Option.isSome_iff_exists.mphcrw[hs];rfl·rw[Cfg.mapState_inputPos,Cfg.mapState_inputPos]·funextjp;rw[Cfg.mapState_workTapes,Cfg.mapState_workTapes]·funextj;rw[Cfg.mapState_workTapePos,Cfg.mapState_workTapePos]·rw[Cfg.mapState_output,Cfg.mapState_output]
+  tile 41: _workTapePos]·rw[Cfg.mapState_output,Cfg.
+  tile 33: ;rw[Cfg.mapState_workTapePos,Cfg.
+  tile 32: p;rw[Cfg.mapState_workTapes,Cfg.
+  tile 31: _inputPos,Cfg.mapState_inputPos
+  tile 25: _state,Cfg.mapState_state
+

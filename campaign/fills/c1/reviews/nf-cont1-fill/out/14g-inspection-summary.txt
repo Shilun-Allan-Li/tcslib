@@ -1,0 +1,82 @@
+argument rows (excluding the attribute line): 952 | identifier occurrences: 1580
+by class: Counter({'local': 944, 'core/mathlib:thm': 264, 'tcslib:thm': 173, 'own:def': 86, 'core/mathlib:def': 48, 'core/mathlib:ctor': 27, 'tcslib:rec': 10, 'own:thm': 8, 'core/mathlib:def:proj': 7, 'own:ctor': 5, 'tcslib:def': 5, 'core/mathlib:induct': 2, 'tcslib:def:reducible:proj': 1})
+by tactic: Counter({'rw': 657, 'simp only': 197, 'simp': 29, 'show': 29, 'unfold': 22, 'push_cast': 9, 'simpa': 5, 'dsimp only': 3, 'rwa': 1})
+
+== other-file TCSlib definitions as an argument, by tactic:
+   (1743, 'show', 'moveInputPos d.inputPos _ = _', 'moveInputPos', 'tcslib:def')
+   (1940, 'show', 'moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _', 'moveInputPos', 'tcslib:def')
+   (1940, 'show', 'moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _', 'moveInputPos', 'tcslib:def')
+   (1940, 'show', 'moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _', 'moveInputPos', 'tcslib:def')
+   (1940, 'show', 'moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _', 'moveInputPos', 'tcslib:def')
+   (2947, 'rw', 'List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)', 'k', 'tcslib:def:reducible:proj')
+
+== core/Mathlib definitions as an argument of rw/simp/unfold (not show/change):
+   (1108, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (1108, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (1253, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (1253, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (1256, 'rw', 'if_neg (fun h => absurd h.1 (by decide))', 'absurd', 'core/mathlib:def')
+   (1256, 'rw', 'if_neg (fun h => absurd h.1 (by decide))', 'decide', 'core/mathlib:def')
+   (1266, 'rw', 'if_pos ⟨rfl, h⟩', 'rfl', 'core/mathlib:def')
+   (1301, 'rw', 'if_pos rfl', 'rfl', 'core/mathlib:def')
+   (1416, 'rw', 'step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp ', 'read', 'core/mathlib:def:proj')
+   (1416, 'rw', 'step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp ', 'rfl', 'core/mathlib:def')
+   (1470, 'rw', 'show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl', 'rfl', 'core/mathlib:def')
+   (1510, 'rw', 'step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si', 'read', 'core/mathlib:def:proj')
+   (1510, 'rw', 'step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si', 'rfl', 'core/mathlib:def')
+   (1531, 'rw', "step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl", 'read', 'core/mathlib:def:proj')
+   (1531, 'rw', "step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl", 'rfl', 'core/mathlib:def')
+   (1536, 'rw', "step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl", 'read', 'core/mathlib:def:proj')
+   (1536, 'rw', "step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl", 'rfl', 'core/mathlib:def')
+   (1540, 'rw', "step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl", 'read', 'core/mathlib:def:proj')
+   (1540, 'rw', "step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl", 'rfl', 'core/mathlib:def')
+   (1839, 'rw', 'show (1 : ℕ) = 0 + 1 from rfl', 'rfl', 'core/mathlib:def')
+   (1839, 'rw', 'step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1', 'rfl', 'core/mathlib:def')
+   (1871, 'rw', 'step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  ', 'rfl', 'core/mathlib:def')
+   (1886, 'rw', 'hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos', 'rfl', 'core/mathlib:def')
+   (1919, 'rw', 'show (3 : ℕ) = 2 + 1 from rfl', 'rfl', 'core/mathlib:def')
+   (1919, 'rw', 'step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl', 'rfl', 'core/mathlib:def')
+   (1919, 'rw', 'step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl', 'rfl', 'core/mathlib:def')
+   (1926, 'rw', 'show (4 : ℕ) = 3 + 1 from rfl', 'rfl', 'core/mathlib:def')
+   (1926, 'rw', 'step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl', 'rfl', 'core/mathlib:def')
+   (1926, 'rw', 'step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl', 'rfl', 'core/mathlib:def')
+   (1954, 'rw', 'step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   ', 'rfl', 'core/mathlib:def')
+   (1993, 'rw', "step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁", 'read', 'core/mathlib:def:proj')
+   (1993, 'rw', "step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁", 'rfl', 'core/mathlib:def')
+   (2014, 'rw', "step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0", 'read', 'core/mathlib:def:proj')
+   (2014, 'rw', "step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0", 'rfl', 'core/mathlib:def')
+   (2262, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (2300, 'simp only', 'Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide)', 'decide', 'core/mathlib:def')
+   (2520, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (2524, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (2565, 'rw', 'Function.update_of_ne (by decide)', 'decide', 'core/mathlib:def')
+   (2769, 'rw', 'if_pos rfl', 'rfl', 'core/mathlib:def')
+   (2847, 'rw', 'if_pos rfl', 'rfl', 'core/mathlib:def')
+   (2862, 'rw', 'if_neg (by decide)', 'decide', 'core/mathlib:def')
+
+== own-file definitions as an argument:
+   ('rw', 'nf_M') 2
+   ('rw', 'nf_P') 1
+   ('rw', 'nf_act') 2
+   ('rw', 'nf_complete') 1
+   ('rw', 'nf_decode') 2
+   ('rw', 'nf_display') 1
+   ('rw', 'nf_leaf') 25
+   ('rw', 'nf_leafExit') 2
+   ('rw', 'nf_red') 2
+   ('show', 'nf_blockWrite') 1
+   ('show', 'nf_blocks') 2
+   ('show', 'nf_leafExit') 2
+   ('show', 'nf_sweepStep') 1
+   ('simp only', 'nf_complete') 4
+   ('simp only', 'nf_leaf') 10
+   ('simp only', 'nf_vstep') 8
+   ('unfold', 'nf_C') 1
+   ('unfold', 'nf_V') 13
+   ('unfold', 'nf_act') 1
+   ('unfold', 'nf_blockDecode') 1
+   ('unfold', 'nf_blockWrite') 1
+   ('unfold', 'nf_sweepPass') 1
+   ('unfold', 'nf_tapeEntry') 2
+
+== unfold/delta targets: ['at local', 'hctl local', 'nf_C own:def', 'nf_V own:def', 'nf_act own:def', 'nf_blockDecode own:def', 'nf_blockWrite own:def', 'nf_sweepPass own:def', 'nf_tapeEntry own:def']
