@@ -1,0 +1,88 @@
+/-
+Seal controls for the deepening window API PR: a delta and an equation goal for each sealed definition.
+Expected: unsealed, every control passes except recursive definitions' delta goals; sealed, every
+control fails. A probe record, not library code.
+-/
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+
+
+section Controls
+
+
+#ctl_rfl Turing.Action.apply
+#ctl_rfl Turing.Cfg.workTapeSymbols
+#ctl_rfl Complexity.WalkLe
+#ctl_rfl Complexity.LogProg.SavitchARM.Reach
+#ctl_rfl Complexity.LogProg.SavitchARM.St.toV
+#ctl_rfl Complexity.LogProg.SavitchARM.St.zero
+#ctl_rfl Complexity.LogProg.SavitchARM.rs
+#ctl_rfl Complexity.LogProg.SavitchARM.rw
+#ctl_rfl Complexity.LogProg.SavitchARM.rK
+#ctl_rfl Complexity.LogProg.SavitchARM.rU
+#ctl_rfl Complexity.LogProg.SavitchARM.rV
+#ctl_rfl Complexity.LogProg.SavitchARM.rM
+#ctl_rfl Complexity.LogProg.SavitchARM.setSt
+#ctl_eqn Turing.Action.apply
+#ctl_eqn Turing.Cfg.workTapeSymbols
+#ctl_eqn Complexity.WalkLe
+#ctl_eqn Complexity.LogProg.SavitchARM.Reach
+#ctl_eqn Complexity.LogProg.SavitchARM.St.toV
+#ctl_eqn Complexity.LogProg.SavitchARM.St.zero
+#ctl_eqn Complexity.LogProg.SavitchARM.rs
+#ctl_eqn Complexity.LogProg.SavitchARM.rw
+#ctl_eqn Complexity.LogProg.SavitchARM.rK
+#ctl_eqn Complexity.LogProg.SavitchARM.rU
+#ctl_eqn Complexity.LogProg.SavitchARM.rV
+#ctl_eqn Complexity.LogProg.SavitchARM.rM
+#ctl_eqn Complexity.LogProg.SavitchARM.setSt
+
+end Controls

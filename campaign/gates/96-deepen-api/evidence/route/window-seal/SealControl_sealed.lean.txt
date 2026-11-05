@@ -1,0 +1,138 @@
+/-
+Seal controls for the deepening window route probe: a delta and an equation goal for each sealed
+definition. Expected: unsealed, every control passes except recursive definitions' delta goals;
+sealed, every control fails. A probe record, not library code.
+-/
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach
+import TCSlib.Complexity.SpaceComplexity.ExpBFS.Radius
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
+import TCSlib.Complexity.SpaceComplexity.Codec.Step
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+
+
+section Controls
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible]
+  Complexity.LogProg.SavitchARM.Reach
+  Complexity.Codec.StepRel
+  Complexity.Codec.initLang
+  Complexity.Codec.acceptLang
+  Complexity.Codec.edgeLang
+  Complexity.Codec.stepLang
+  Complexity.Codec.cfgCode
+  Complexity.Codec.codeK
+  Complexity.Codec.effAct
+  Complexity.logSpace
+  Turing.pairEncode
+  Complexity.ExpBFS.RCode
+  Complexity.ExpBFS.WinRun
+  Turing.Cfg.InWindow
+  Turing.NDTM.runWith
+  Turing.NDTM.initCfg
+  Turing.NDTM.stepWith
+  Turing.Action.apply
+  Turing.FinNDTM.AcceptsWithin
+  Turing.FinNDTM.DecidesInSpace
+  Turing.FinNDTM.configBound
+  Turing.NDTM.coreSum
+  Turing.Cfg.init
+  Turing.MultiTapeTM.initCfg
+
+#ctl_rfl Complexity.LogProg.SavitchARM.Reach
+#ctl_rfl Complexity.Codec.StepRel
+#ctl_rfl Complexity.Codec.initLang
+#ctl_rfl Complexity.Codec.acceptLang
+#ctl_rfl Complexity.Codec.edgeLang
+#ctl_rfl Complexity.Codec.stepLang
+#ctl_rfl Complexity.Codec.cfgCode
+#ctl_rfl Complexity.Codec.codeK
+#ctl_rfl Complexity.Codec.effAct
+#ctl_rfl Complexity.logSpace
+#ctl_rfl Turing.pairEncode
+#ctl_rfl Complexity.ExpBFS.RCode
+#ctl_rfl Complexity.ExpBFS.WinRun
+#ctl_rfl Turing.Cfg.InWindow
+#ctl_rfl Turing.NDTM.runWith
+#ctl_rfl Turing.NDTM.initCfg
+#ctl_rfl Turing.NDTM.stepWith
+#ctl_rfl Turing.Action.apply
+#ctl_rfl Turing.FinNDTM.AcceptsWithin
+#ctl_rfl Turing.FinNDTM.DecidesInSpace
+#ctl_rfl Turing.FinNDTM.configBound
+#ctl_rfl Turing.NDTM.coreSum
+#ctl_rfl Turing.Cfg.init
+#ctl_rfl Turing.MultiTapeTM.initCfg
+#ctl_eqn Complexity.LogProg.SavitchARM.Reach
+#ctl_eqn Complexity.Codec.StepRel
+#ctl_eqn Complexity.Codec.initLang
+#ctl_eqn Complexity.Codec.acceptLang
+#ctl_eqn Complexity.Codec.edgeLang
+#ctl_eqn Complexity.Codec.stepLang
+#ctl_eqn Complexity.Codec.cfgCode
+#ctl_eqn Complexity.Codec.codeK
+#ctl_eqn Complexity.Codec.effAct
+#ctl_eqn Complexity.logSpace
+#ctl_eqn Turing.pairEncode
+#ctl_eqn Complexity.ExpBFS.RCode
+#ctl_eqn Complexity.ExpBFS.WinRun
+#ctl_eqn Turing.Cfg.InWindow
+#ctl_eqn Turing.NDTM.runWith
+#ctl_eqn Turing.NDTM.initCfg
+#ctl_eqn Turing.NDTM.stepWith
+#ctl_eqn Turing.Action.apply
+#ctl_eqn Turing.FinNDTM.AcceptsWithin
+#ctl_eqn Turing.FinNDTM.DecidesInSpace
+#ctl_eqn Turing.FinNDTM.configBound
+#ctl_eqn Turing.NDTM.coreSum
+#ctl_eqn Turing.Cfg.init
+#ctl_eqn Turing.MultiTapeTM.initCfg
+
+end Controls

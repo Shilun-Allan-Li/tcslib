@@ -247,3 +247,41 @@ after #188 and #189), then again against `oleans-lcf3` (after #190, which change
 to the four `Iff.rfl` equations in `Logspace/PathWalk` and `ExpBFS/Radius`, FYI only. The six
 lemmas land in one maintainer API PR with its gate and replay; the fill's brief issues after it
 merges.
+
+## 10. The block fit, and the API completed (2026-11-05, overnight)
+
+**The fit.** `probes/BlockFit.lean.txt` (0 diagnostics, on the API branch's tree, sealed over 19
+definitions) embeds `A E` in an abstract five-decider machine `D` with decider `2` rerouted to the
+edge language. Entered at the outer search with the setup's registers, the block exits through
+`k b`, with `b` exactly the deepening's question: whether some initial code reaches some edge code
+by midpoint reachability at radius `s` and level `w`, in the codec's terms. It reads the search
+through four more equations, which are the API's last rows:
+
+| Home (Hydroxyi's, 2026-10-27 exception) | Lemma |
+|---|---|
+| `SavitchARM/Search` | `initO_iff_orc`, `accO_iff_orc` (`Iff.rfl`); `outerSt_toV` (the outer search's register file as `Function.update`s of `setSt`'s) |
+| `SavitchARM/Recursion` | `rel_iff_orc` (`Iff.rfl`) |
+| `SavitchARM/Setup` | `setSt_toV` (the setup's register file as `Function.update`s of zero) |
+
+The register-file equations are proved through `Machine`'s published `St.toV_zero` and `St.upd_*`,
+so they read `Machine`'s definitions under rule 10. With them, the fill's machine sets the
+block's registers by clearing all eighteen and writing `rs`, `rw`, `rK`, `rU`, `rV`, `rM` in
+that order. Its register file then matches `RegExt`'s target pointwise, with no register-distinctness
+facts needed.
+
+**The window lemmas are proved.** On the API branch, `probes/WindowRoute.lean.txt`'s two lemmas
+close with no `sorry`. `probes/WindowModuleDraft.lean.txt` (163 lines, 0 diagnostics) is the module
+`SavitchARM/Window` as library text, with docstrings and sketches. Whether it lands with the API PR
+or goes to the fill as an input is for the user (decision 5).
+
+**The API branch** (`lean/deepen-window-api`, local, eight commits, one per file): eleven lemmas
+and one private helper, additive. Gate 96's pack and evidence are drafted in
+`campaign/gates/96-deepen-api/`. The downstream replay is 72 modules.
+
+**What remains for the fill:** the machine `D` (its own loops: the input length through decider
+`0`, `ℓ`, the radius loop, the width and `2 ^ w`, the register resets), its run lemma by induction
+on `sp |x| + 1 - s`, the register bound, and `deepen_contract`; `savitch_of_logSpace_le` and
+`savitch` as probed in §8. ESTIMATE: 0.8–1.6k lines.
+
+**Decision 5 (the user's):** land `SavitchARM/Window` with the API PR (the maintainer's proof,
+gated with it), or give it to the fill as an input to land as is.

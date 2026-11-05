@@ -1,0 +1,35 @@
+From 7323e77b3ad62a3b4353f6d48776654a07b831ee Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Thu, 5 Nov 2026 00:57:17 -0800
+Subject: [PATCH 3/8] PathWalk: WalkLe's zero-edge equation, walkLe_zero_iff
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
+index 31531dc7..5591f207 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk.lean
+@@ -39,6 +39,7 @@ length `n²`), so that it does not depend on `TCSlib.Complexity.SpaceComplexity.
+ ## Main results
+ 
+ * `Complexity.walkLe_short`, `Complexity.reach_iff_walkLe` — path shortening.
++* `Complexity.walkLe_zero_iff` — a walk of no edges stays put.
+ * `Complexity.eq_pathRaw_iff` — the layout of a raw instance.
+ * `Complexity.pathAcc_iff` — what the machine checks is membership in `pathRawLang`.
+ 
+@@ -66,6 +67,9 @@ def WalkLe : ℕ → ℕ → ℕ → Prop
+ 
+ variable {E n}
+ 
++/-- `Complexity.WalkLe` with no edge allowed: the endpoints are equal. -/
++lemma walkLe_zero_iff {c t : ℕ} : WalkLe E n 0 c t ↔ c = t := Iff.rfl
++
+ /-- Every vertex reaches itself. -/
+ lemma walkLe_refl (j c : ℕ) : WalkLe E n j c c := by
+   cases j
+-- 
+2.50.1 (Apple Git-155)
+

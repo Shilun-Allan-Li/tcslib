@@ -1,0 +1,32 @@
+import TCSlib.Complexity.TuringMachine.Build.CfgRecord
+
+set_option autoImplicit false
+
+namespace Turing
+
+section Sealed
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible]
+  Turing.Action.apply
+  Turing.Cfg.workTapeSymbols
+
+theorem Cfg.InWindow.apply_of_lt_sealed {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' := by
+  refine ⟨fun i => ?_, fun i z hz => ?_⟩
+  · have h1 := workTapePos_apply_le a C i
+    have h2 := hlt i
+    rw [abs_le] at h1 ⊢
+    rw [abs_lt] at h2
+    constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
+  · rw [Action.apply_workTapes]
+    have hzp : z ≠ C.workTapePos i := by
+      rintro rfl
+      exact absurd (hlt i) (not_lt.mpr hz.le)
+    rw [Function.update_of_ne hzp]
+    exact hC.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)
+
+end Sealed
+
+end Turing
