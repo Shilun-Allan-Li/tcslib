@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 One abstract register machine (`Complexity.LogProg.ARM`) over 21 registers, calling the
 logspace length and bit oracles of its input (`Complexity.inputLenLang`,
-`Complexity.inputBitLang`), decides each of the four code languages; the `mode` selects the
+`Complexity.inputBitLang`), decides each of the five code languages; the `mode` selects the
 language. On an input `⟨x, ⟨w, s⟩⟩` (or `⟨x, ⟨w, ⟨w', s⟩⟩⟩` for steps) it
 
 1. measures the input and parses its fields with aligned pair scans, rejecting malformed
@@ -29,9 +29,10 @@ language. On an input `⟨x, ⟨w, s⟩⟩` (or `⟨x, ⟨w, ⟨w', s⟩⟩⟩` 
 4. runs the validity scan over the chunk region of `w` — the finite-state device of
    `TCSlib.Complexity.SpaceComplexity.Codec.Valid`, letter by letter through the scan engine;
 5. finishes per mode: valid and accepting codes answer from the scan state; the initial code
-   also tests the position field and the middle cell; a step moves the input position by the
-   action of each choice bit and compares it with that of `w'`, then runs the double sliding
-   scan of the two chunk regions.
+   also tests the position field and the middle cell; an edge code also tests, tape by tape,
+   the head flags of the first and last cells; a step moves the input position by the action of
+   each choice bit and compares it with that of `w'`, then runs the double sliding scan of the
+   two chunk regions.
 
 All registers hold pointers into the input, lengths, or values bounded by a constant times
 the input length, so `Complexity.LogProg.arm_decides_poly` makes the languages logspace
@@ -48,6 +49,8 @@ Logspace machine infrastructure for the codec; not a result of [AB09].
 
 * `Complexity.Codec.dcStride_le`, `Complexity.Codec.scFactor_le`,
   `Complexity.Codec.icCount_le` — the label families are finite.
+* `Complexity.Codec.CA_vDone_edge`, `Complexity.Codec.CA_eRd1`, … — the table at the labels of
+  the edge-code tail, and its sites' registers, factors, counts and exits (`cpDst_Ue`, …).
 
 ## References
 
@@ -77,6 +80,8 @@ inductive CMode where
   | accept
   /-- step pairs -/
   | step
+  /-- codes with a work head on the window's boundary -/
+  | edge
   deriving DecidableEq
 
 /-! ## Labels -/
@@ -85,16 +90,17 @@ inductive CMode where
 inductive CpId where
   | A | B | Q1s | Cap | Q2 | N1 | Tn | E | Ts | F | Tw | U | Q1f
   | E2 | Ts2 | F2 | Tw2 | U2 | Q1f2 | Tpos | Q3 | Q4 | Q1a | Q2a | Uc | Tsc
+  | Ue | Qe | Te
   deriving DecidableEq, Fintype
 
 /-- The scale loops of the machine (`scDst += scFactor · scSrc`). -/
 inductive ScId where
-  | E | F | E2 | F2 | In | C
+  | E | F | E2 | F2 | In | C | Ee
   deriving DecidableEq, Fintype
 
 /-- The increment chains of the machine (`icReg += icCount`). -/
 inductive IcId where
-  | E | U | E2 | U2 | C
+  | E | U | E2 | U2 | C | Eh | Ke | S1 | S2
   deriving DecidableEq, Fintype
 
 /-- The decoding loops of the machine: the radius, and the two input positions. -/
@@ -141,6 +147,7 @@ inductive Lab where
   | vTest (st : VAd N) | vRd1 (st : VAd N) | vRd2 (st : VAd N) (b : Bool)
   | vAdv1 (st : VAd N) (i : Fin 2) | vAdv2 (st : VAd N) (i : Fin 2) | vDone (st : VAd N)
   | iz1 | iz2 | iz3 | icen | clrUc | cenRead
+  | eStart | eK | eRd1 | eFar | eRd2 | eNext | eTest
   | zA (σ : VSt N) | zB (σ : VSt N) | zC (σ : VSt N)
   | pm (I : SInfo N) (b f : Bool) (ph : PmPh)
   | sTest (I : SInfo N) (f₀ f₁ : Bool) (st : SAd N) | sRd1 (I : SInfo N) (f₀ f₁ : Bool) (st : SAd N)
@@ -169,6 +176,7 @@ def cpDst : CpId → Fin 21
   | .E => rE | .Ts => rT | .F => rF | .Tw => rT | .U => rU | .Q1f => rQ1 | .E2 => rE2
   | .Ts2 => rT | .F2 => rF2 | .Tw2 => rT | .U2 => rU | .Q1f2 => rQ1 | .Tpos => rT
   | .Q3 => rQ3 | .Q4 => rQ4 | .Q1a => rQ1 | .Q2a => rQ2 | .Uc => rU | .Tsc => rT
+  | .Ue => rU | .Qe => rQ1 | .Te => rT
 
 /-- Source register of a copy loop. -/
 def cpSrc : CpId → Fin 21
@@ -176,6 +184,7 @@ def cpSrc : CpId → Fin 21
   | .E => rA | .Ts => rS | .F => rE | .Tw => rWp | .U => rF | .Q1f => rF | .E2 => rB
   | .Ts2 => rS | .F2 => rE2 | .Tw2 => rWp | .U2 => rF2 | .Q1f2 => rF2 | .Tpos => rPos
   | .Q3 => rA | .Q4 => rB | .Q1a => rA | .Q2a => rA | .Uc => rA | .Tsc => rS
+  | .Ue => rA | .Qe => rU | .Te => rS
 
 /-- The initial validity-scan state. -/
 def vAd0 : VAd N := (vInit N, 0, fun _ => (false, false))
@@ -192,6 +201,7 @@ def cpNext : CpId → Lab N
   | .U2 => .ic .U2 ⟨0, by simp [W]⟩ | .Q1f2 => .dcTest .Pos2 | .Tpos => .inDec
   | .Q3 => .cp .Q4 | .Q4 => .clrQ1v | .Q1a => .cp .Q2a | .Q2a => .vTest (vAd0 N)
   | .Uc => .cp .Tsc | .Tsc => .sc .C
+  | .Ue => .ic .Eh ⟨0, by rw [W_eq]; omega⟩ | .Qe => .cp .Te | .Te => .sc .Ee
 
 /-- Pointer, base, accumulator, temporary of a decoding loop. -/
 def dcPtr : DcId → Fin 21 | .S => rQ2 | .Pos => rQ1 | .Pos2 => rQ1
@@ -220,10 +230,11 @@ def dcNext : DcId → Lab N | .S => .cp .N1 | .Pos => .leT1 | .Pos2 => .inZ
 def scSrc : ScId → Fin 21 | _ => rT
 /-- Destination of a scale loop. -/
 def scDst : ScId → Fin 21
-  | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU
+  | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU | .Ee => rQ1
 /-- Factor of a scale loop. -/
 def scFactor : ScId → ℕ
   | .E => 4 * W N | .F => 2 | .E2 => 4 * W N | .F2 => 2 | .In => 2 | .C => 2 * W N
+  | .Ee => 4 * W N
 
 /-- Factors are at most `4 W`. -/
 lemma scFactor_le (c : ScId) : scFactor N c ≤ 4 * W N := by
@@ -239,12 +250,16 @@ def scNext : ScId → Lab N
   | .E => .ic .E ⟨0, by simp [W]⟩ | .F => .clrU
   | .E2 => .ic .E2 ⟨0, by simp [W]⟩ | .F2 => .clrU2 | .In => .inRead
   | .C => .ic .C ⟨0, by simp [W]⟩
+  | .Ee => .eRd2
 
 /-- Register of an increment chain. -/
-def icReg : IcId → Fin 21 | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+def icReg : IcId → Fin 21
+  | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+  | .Eh => rU | .Ke => rQ3 | .S1 => rU | .S2 => rU
 /-- Length of an increment chain. -/
 def icCount : IcId → ℕ
   | .E => 2 * W N | .U => 4 | .E2 => 2 * W N | .U2 => 4 | .C => 2 * (hH N + 2)
+  | .Eh => 2 * (hH N + 2) | .Ke => N.k - 1 + 1 | .S1 => 3 | .S2 => 3
 
 /-- Chain lengths are at most `4 W`. -/
 lemma icCount_le (c : IcId) : icCount N c ≤ 4 * W N := by
@@ -254,6 +269,7 @@ lemma icCount_le (c : IcId) : icCount N c ≤ 4 * W N := by
 /-- Successor of an increment chain. -/
 def icNext : IcId → Lab N
   | .E => .cp .F | .U => .lenChk | .E2 => .cp .F2 | .U2 => .lenChk2 | .C => .cenRead
+  | .Eh => .eK | .Ke => .eRd1 | .S1 => .ic .S2 ⟨0, by rw [W_eq]; omega⟩ | .S2 => .eRd1
 
 /-- The labels of an increment chain. -/
 def icL (c : IcId) (i : ℕ) : Lab N :=
@@ -372,12 +388,20 @@ noncomputable def CA (mode : CMode) : ARM 21 2 (Lab N)
     | .init => goto N (if VAcc N st.1 ∧ st.1.2.1 = some (some N.tm.q₀, 0) ∧
         st.1.2.2.2.2.2 = true then .iz1 else .rej)
     | .step => goto N (if VAcc N st.1 then .zA st.1 else .rej)
+    | .edge => goto N (if VAcc N st.1 then .eStart else .rej)
   | .iz1 => .jz rPos .rej .iz2
   | .iz2 => .dec rPos .iz3
   | .iz3 => .jz rPos .icen .rej
   | .icen => if N.k = 0 then .ret true else goto N .clrUc
   | .clrUc => .clr rU (.cp .Uc)
   | .cenRead => .call jBit .whole [rU] .acc .rej
+  | .eStart => if N.k = 0 then .ret false else .clr rU (.cp .Ue)
+  | .eK => .clr rQ3 (icL N .Ke 0)
+  | .eRd1 => .call jBit .whole [rU] .acc .eFar
+  | .eFar => .clr rQ1 (.cp .Qe)
+  | .eRd2 => .call jBit .whole [rQ1] .acc .eNext
+  | .eNext => .dec rQ3 .eTest
+  | .eTest => .jz rQ3 .rej (icL N .S1 0)
   | .zA σ => .jz rZ (.pm (σ, none) false false .start) (.zB σ)
   | .zB σ => .dec rZ (.zC σ)
   | .zC σ => .jz rZ (.pm (σ, some false) false false .start) (.pm (σ, some true) false false .start)
@@ -403,5 +427,98 @@ noncomputable def CA (mode : CMode) : ARM 21 2 (Lab N)
   | .sAdv2 I f₀ f₁ st i => .inc rQ4 (sA2 N I f₀ f₁ st (i + 1))
   | .sFin I f₀ f₁ st =>
     .ret ((f₀ && sDone N (Gs N I false) st.1.1) || (f₁ && sDone N (Gs N I true) st.1.2))
+
+/-! ## The edge-code tail, instruction by instruction
+
+The table of `CA` at the labels of the edge-code mode, stated so that its runs can be proved
+outside this file. -/
+
+section EdgeTable
+
+variable {N}
+
+/-- In every mode, the label `acc` returns `true`. -/
+lemma CA_acc (mode : CMode) : CA N mode .acc = .ret true := rfl
+/-- In every mode, the label `rej` returns `false`. -/
+lemma CA_rej (mode : CMode) : CA N mode .rej = .ret false := rfl
+/-- In the edge-code mode, the end of the validity scan jumps to `eStart` if the scan accepted
+(`VAcc`), and to `rej` otherwise. -/
+lemma CA_vDone_edge (st : VAd N) :
+    CA N .edge (.vDone st) = goto N (if VAcc N st.1 then .eStart else .rej) := rfl
+/-- `goto` is a zero test of `Z` with equal branches. -/
+lemma goto_eq (l : Lab N) : goto N l = .jz rZ l l := rfl
+/-- The edge tail's start without work tapes: no head, no edge. -/
+lemma CA_eStart_of_zero (mode : CMode) (hk : N.k = 0) : CA N mode .eStart = .ret false := by
+  simp [CA, hk]
+/-- The edge tail's start with work tapes: clear `U` for the address of the first flag. -/
+lemma CA_eStart_of_pos (mode : CMode) (hk : N.k ≠ 0) :
+    CA N mode .eStart = .clr rU (.cp .Ue) := by
+  simp [CA, hk]
+/-- Clear the tape counter `Q3`. -/
+lemma CA_eK (mode : CMode) : CA N mode .eK = .clr rQ3 (icL N .Ke 0) := rfl
+/-- Read the flag in the first cell. -/
+lemma CA_eRd1 (mode : CMode) : CA N mode .eRd1 = .call jBit .whole [rU] .acc .eFar := rfl
+/-- Clear `Q1` for the address of the flag in the last cell. -/
+lemma CA_eFar (mode : CMode) : CA N mode .eFar = .clr rQ1 (.cp .Qe) := rfl
+/-- Read the flag in the last cell. -/
+lemma CA_eRd2 (mode : CMode) : CA N mode .eRd2 = .call jBit .whole [rQ1] .acc .eNext := rfl
+/-- Count one tape down. -/
+lemma CA_eNext (mode : CMode) : CA N mode .eNext = .dec rQ3 .eTest := rfl
+/-- After the last tape, no edge; otherwise advance `U` to the next tape. -/
+lemma CA_eTest (mode : CMode) : CA N mode .eTest = .jz rQ3 .rej (icL N .S1 0) := rfl
+
+/-- The copy site `Ue` writes `U`. -/
+lemma cpDst_Ue : cpDst .Ue = rU := rfl
+/-- The copy site `Ue` reads `A`, the end of the input field. -/
+lemma cpSrc_Ue : cpSrc .Ue = rA := rfl
+/-- After `U := A`, add `2 (hH + 2)`: the first tape's flag, at the doubled word offset `hH + 2`. -/
+lemma cpNext_Ue : cpNext N .Ue = .ic .Eh ⟨0, by rw [W_eq]; omega⟩ := rfl
+/-- The copy site `Qe` writes `Q1`. -/
+lemma cpDst_Qe : cpDst .Qe = rQ1 := rfl
+/-- The copy site `Qe` reads `U`, the current near address. -/
+lemma cpSrc_Qe : cpSrc .Qe = rU := rfl
+/-- After `Q1 := U`, copy the radius. -/
+lemma cpNext_Qe : cpNext N .Qe = .cp .Te := rfl
+/-- The copy site `Te` writes `T`. -/
+lemma cpDst_Te : cpDst .Te = rT := rfl
+/-- The copy site `Te` reads `S`, the radius. -/
+lemma cpSrc_Te : cpSrc .Te = rS := rfl
+/-- After `T := S`, scale it into `Q1`. -/
+lemma cpNext_Te : cpNext N .Te = .sc .Ee := rfl
+/-- The scale site `Ee` consumes `T`. -/
+lemma scSrc_Ee : scSrc .Ee = rT := rfl
+/-- The scale site `Ee` adds into `Q1`. -/
+lemma scDst_Ee : scDst .Ee = rQ1 := rfl
+/-- The scale site `Ee` adds `4W` per unit of `T`: chunk `2s` lies `2 · 2s · W` input positions
+further on. -/
+lemma scFactor_Ee : scFactor N .Ee = 4 * W N := rfl
+/-- After `Q1 += 4W · s`, read the far flag. -/
+lemma scNext_Ee : scNext N .Ee = .eRd2 := rfl
+/-- The increment site `Eh` increments `U`. -/
+lemma icReg_Eh : icReg .Eh = rU := rfl
+/-- The increment site `Eh` adds `2 (hH + 2)`. -/
+lemma icCount_Eh : icCount N .Eh = 2 * (hH N + 2) := rfl
+/-- After the first address, set the tape counter. -/
+lemma icNext_Eh : icNext N .Eh = .eK := rfl
+/-- The increment site `Ke` increments `Q3`, the tape counter. -/
+lemma icReg_Ke : icReg .Ke = rQ3 := rfl
+/-- The increment site `Ke` adds `N.k - 1 + 1`, which is `N.k` on its branch (`N.k ≠ 0`). -/
+lemma icCount_Ke : icCount N .Ke = N.k - 1 + 1 := rfl
+/-- After the counter, read the near flag. -/
+lemma icNext_Ke : icNext N .Ke = .eRd1 := rfl
+/-- The increment site `S1` increments `U`. -/
+lemma icReg_S1 : icReg .S1 = rU := rfl
+/-- The increment site `S1` adds `3`. -/
+lemma icCount_S1 : icCount N .S1 = 3 := rfl
+/-- After `S1`, three more: the next tape's flag is `2 · 3` input positions further on. -/
+lemma icNext_S1 : icNext N .S1 = .ic .S2 ⟨0, by rw [W_eq]; omega⟩ := rfl
+/-- The increment site `S2` increments `U`. -/
+lemma icReg_S2 : icReg .S2 = rU := rfl
+/-- The increment site `S2` adds `3`. -/
+lemma icCount_S2 : icCount N .S2 = 3 := rfl
+/-- After the stride, read the next tape's near flag. -/
+lemma icNext_S2 : icNext N .S2 = .eRd1 := rfl
+
+end EdgeTable
 
 end Complexity.Codec
