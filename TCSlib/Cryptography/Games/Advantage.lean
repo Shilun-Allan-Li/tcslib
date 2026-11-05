@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
 import TCSlib.Cryptography.Games.Probability
+import TCSlib.Cryptography.Foundations.Probability
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -32,23 +33,27 @@ definitions wrap with "negligible for every efficient adversary".
 
 ## Main results
 
-* `advantage_triangle`, `advantage_hybrid`: the hybrid argument; the advantage between the ends of a
-  chain of games is at most the sum of the advantages between neighbours.
+* `advantage_triangle`, `advantage_hybrid`, `exists_advantage_hybrid_gap`: the hybrid argument;
+  the advantage between the ends of a chain of games is at most the sum of the advantages between
+  neighbours, so some neighbouring pair carries a `1/n` share of it ([PS10, Lemma 71.6]).
 * `guessAdv_eq_half_advantage`: the guess-the-bit advantage is half the distinguishing advantage
   between the games for `b = 1` and `b = 0`.
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
-  §3.1 (computational indistinguishability) and Lemma 70.2 (the hybrid lemma).
+  §3.1 (computational indistinguishability), Lemma 71.6 (the hybrid lemma) and Definition 168.1
+  (the challenge bit of the indistinguishability games).
 * [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*,
-  IACR ePrint 2004/332, §3.
+  IACR ePrint 2004/332.
 * [VCVio] D. Tuma and the VCVio contributors, *VCVio: machine-checked cryptographic proofs in
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 -/
 
 namespace TCSlib.Cryptography.Games
@@ -62,7 +67,7 @@ noncomputable def accept (G : ProbComp Bool) : ℝ := prob G (· = true)
 [PS10, §3.1] -/
 noncomputable def advantage (G₀ G₁ : ProbComp Bool) : ℝ := |accept G₀ - accept G₁|
 
-/-- An acceptance probability is between zero and one. -/
+/-- An acceptance probability is nonnegative. -/
 theorem accept_nonneg (G : ProbComp Bool) : 0 ≤ accept G := prob_nonneg G _
 
 /-- An acceptance probability is at most one. -/
@@ -91,21 +96,24 @@ theorem advantage_triangle (G₀ G₁ G₂ : ProbComp Bool) :
   abs_sub_le _ _ _
 
 /-- **The hybrid argument:** along a chain of games `G 0, …, G n`, the advantage between the ends
-is at most the sum of the advantages between neighbours. [PS10, Lemma 70.2], [Sho04, §3]
-
-**Proof sketch.** Induction on `n`, one game hop (`advantage_triangle`) per step. -/
+is at most the sum of the advantages between neighbours: the telescoping inequality in the proof of
+[PS10, Lemma 71.6]. It is the concrete layer's `abs_sub_le_sum_hybrids` for the acceptance
+probabilities. -/
 theorem advantage_hybrid (G : ℕ → ProbComp Bool) (n : ℕ) :
-    advantage (G 0) (G n) ≤ ∑ i ∈ range n, advantage (G i) (G (i + 1)) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [sum_range_succ]
-    exact (advantage_triangle _ (G n) _).trans (by linarith)
+    advantage (G 0) (G n) ≤ ∑ i ∈ range n, advantage (G i) (G (i + 1)) :=
+  abs_sub_le_sum_hybrids (fun i => accept (G i)) n
+
+/-- **The hybrid lemma:** along a chain of `n > 0` games, some neighbouring pair has advantage at
+least a `1/n` share of the advantage between the ends. [PS10, Lemma 71.6] It is the concrete
+layer's `exists_hybrid_gap` for the acceptance probabilities. -/
+theorem exists_advantage_hybrid_gap (G : ℕ → ProbComp Bool) {n : ℕ} (hn : 0 < n) :
+    ∃ i < n, advantage (G 0) (G n) / n ≤ advantage (G i) (G (i + 1)) :=
+  exists_hybrid_gap (fun i => accept (G i)) hn
 
 /-! ### Guess-the-bit games -/
 
 /-- The **guess-the-bit game** over `G`: draw a uniform bit `b`, run `G b`, and win if its output
-is `b`. -/
+is `b`. The challenge bit of the indistinguishability games of [PS10, Def 168.1]. -/
 noncomputable def guessGame (G : Bool → ProbComp Bool) : ProbComp Bool :=
   (sample Bool).bind fun b => (G b).bind fun b' => .pure (decide (b' = b))
 
@@ -139,7 +147,8 @@ theorem accept_guessGame (G : Bool → ProbComp Bool) :
   ring
 
 /-- **Guessing versus distinguishing:** the guess-the-bit advantage is half the distinguishing
-advantage between `G 1` and `G 0`. -/
+advantage between `G 1` and `G 0`. The standard relation between the two forms of
+indistinguishability; [PS10] uses both (§3.1 and Def 168.1) without stating it. -/
 theorem guessAdv_eq_half_advantage (G : Bool → ProbComp Bool) :
     guessAdv G = advantage (G true) (G false) / 2 := by
   unfold guessAdv advantage

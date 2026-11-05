@@ -50,8 +50,10 @@ information-theory layer, so statistical distance and closeness (`EpsClose`) app
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
   Uniform sampling as an oracle follows VCVio's uniform-selection oracle; the real-valued
   finite-sum semantics here is not VCVio's (which is measure-valued).
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
@@ -67,14 +69,14 @@ element of `Fin (m + 1)`. [VCVio, OracleComp/ProbComp] -/
 abbrev unifSpec : OracleSpec ℕ := ⟨fun _ => Unit, fun m => Fin (m + 1)⟩
 
 /-- **Probabilistic computations**: oracle computations whose only oracles draw uniform samples.
--/
+[VCVio, OracleComp/ProbComp/Basic] -/
 abbrev ProbComp := OracleComp unifSpec
 
 namespace ProbComp
 
 variable {α β : Type}
 
-/-- A uniformly random element of `Fin (m + 1)`. -/
+/-- A uniformly random element of `Fin (m + 1)`. [VCVio, OracleComp/ProbComp/Basic (uniformFin)] -/
 def sampleFin (m : ℕ) : ProbComp (Fin (m + 1)) := .query m () .pure
 
 /-- A uniformly random element of the nonempty finite type `T`, through its enumeration
