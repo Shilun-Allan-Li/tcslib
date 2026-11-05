@@ -26,6 +26,7 @@ probability, the `ℓ¹`–`ℓ²` bound, the leftover hash lemma) are all diffe
 * `FinDist.collision`: the collision probability `∑ p a ^ 2`, i.e. the chance that two
   independent samples agree.
 * `FinDist.HasMinEntropy p k`: every outcome has probability at most `2 ^ (-k)`.
+* `FinDist.probTrue p D`: the probability that the test `D` accepts a sample of `p`.
 
 ## Main results
 
@@ -153,5 +154,25 @@ theorem collision_le_of_hasMinEntropy {p : FinDist α} {k : ℝ} (h : HasMinEntr
     _ = (2 : ℝ) ^ (-k) := by rw [← Finset.mul_sum, p.sum_prob, mul_one]
 
 end FinDist
+
+/-! ### Acceptance probability of a test -/
+
+variable {α : Type*} [Fintype α]
+
+/-- The probability that the test `D` outputs `1` (`true`) on a sample of `p`:
+`Pr[x ← p : D(x) = 1]`. -/
+noncomputable def FinDist.probTrue (p : FinDist α) (D : α → Bool) : ℝ :=
+  ∑ a ∈ univ.filter (fun a => D a = true), p a
+
+/-- The signed difference of two acceptance probabilities, `Pr_p[D = 1] - Pr_q[D = 1]`, is the
+sum of the probability differences `p a - q a` over the points `D` accepts. -/
+theorem FinDist.probTrue_sub_probTrue (p q : FinDist α) (D : α → Bool) :
+    p.probTrue D - q.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by
+  simp only [FinDist.probTrue, sum_sub_distrib]
+
+/-- `probTrue p D` is the total probability of the points that `D` accepts. -/
+theorem FinDist.probTrue_eq (p : FinDist α) (D : α → Bool) :
+    p.probTrue D = ∑ a ∈ univ.filter (fun a => D a = true), p a :=
+  rfl
 
 end TCSlib.InformationTheory
