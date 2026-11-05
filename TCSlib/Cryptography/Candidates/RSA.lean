@@ -317,6 +317,18 @@ theorem rsaDec_rsaEnc (i : List Bool) (x : (ZMod (rsaMod i))ˣ) : rsaDec i (rsaE
     congr 1
     exact Units.ext (Subsingleton.elim _ _)
 
+/-- **Decoding is canonical** (the clause `Collection.encD_decD` of `rsaTrapdoor`; gate 03b,
+finding 1): a string that `rsaDec i` decodes to `x` is `rsaEnc i x`. At a valid index it is a
+numeral of the modulus width reading as `x.val < N` (`natToList_val_natCast`); at an invalid
+index it is the canonical string of `1 mod N`. -/
+theorem rsaEnc_of_rsaDec {i w : List Bool} {x : (ZMod (rsaMod i))ˣ} (h : rsaDec i w = some x) :
+    rsaEnc i x = w := by
+  rw [rsaDec] at h
+  split_ifs at h with hv hw hw'
+  · rw [← Option.some.inj h, rsaEnc, rsaEncVal, if_pos hv, ZMod.coe_unitOfCoprime]
+    exact natToList_val_natCast hw.1 hw.2.1
+  · rw [← Option.some.inj h, rsaEnc, rsaEncVal, if_neg hv, hw']
+
 /-! ## The generator, the domain sampler and the inverter -/
 
 /-- The width `B(n) = 2(n + 2)` of a coin block of the rejection samplers (at least the bit
@@ -633,6 +645,7 @@ noncomputable def rsaTrapdoor (H : ArithmeticFP) : TrapdoorCollection where
   encD := rsaEnc
   decD := rsaDec
   decD_encD := rsaDec_rsaEnc
+  encD_decD _ _ _ := rsaEnc_of_rsaDec
   f := rsaF
   gen := rsaGen H
   gen_uniform := NUPPT.ofPolyTimeUniform_uniform _ _

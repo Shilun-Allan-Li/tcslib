@@ -77,7 +77,8 @@ D4. **Non-uniform PPT** ([PS10, Def 26.8]) in the advice formulation: `advice n`
 
 D5. **Domains are typed at each parameter.** A function family is
     `FunFamily := ⟨inLen outLen : PolyExpr, f n : (Fin (inLen.eval n) → Bool) → (Fin (outLen.eval n) → Bool)⟩`;
-    the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p` (`inLen = var`). An
+    the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p` (`inLen = var`; exact for
+    length-regular `f`, `ofFn_ofString_f`, otherwise the `false`-padding is lossy). An
     inverter's output is decoded by `decodeFin` as an `inLen n`-bit string and a wrong length is
     a failure (`invProbOpt`, bridged to the concrete `invProb` by `invProbOpt_le_invProb` and
     `invProbOpt_some`). Adversaries receive `1^n` exactly where the text gives it
@@ -568,6 +569,7 @@ structure Collection where                      -- [PS10, Def 41.1]; Gen(1^n) = 
   encD : ∀ i, D i → List Bool
   decD : ∀ i, List Bool → Option (D i)
   decD_encD : ∀ i x, decD i (encD i x) = some x
+  encD_decD : ∀ i w x, decD i w = some x → encD i x = w                     -- canonical decoding; gate 03b, G3-1
   f : ∀ i, D i → List Bool
   gen : NUPPT     gen_uniform : gen.Uniform
   sample : NUPPT  sample_uniform : sample.Uniform
@@ -609,6 +611,19 @@ the RSA/Rabin/Blum/exponentiation candidates by sorried `*Sampler_spec` stubs;
 `expCollection H G hV` takes the validity bridge and its generator outputs `dlDefaultIndex`
 below `n₀`). Run-3 audit (P3-5): the literal `Inv(1^n, ⟨⟨i, t⟩, y⟩)` form of Def 56.1 (6) was
 not adopted; the Deviation is recorded on `TrapdoorCollection`, `rsaGen` and `blumGen`.
+
+Gate 03b (finding 1, ruling G3-1): the field `encD_decD` (canonical decoding) was added. Without
+it the sampler's and the trapdoor inverter's outputs were pinned only up to a possibly lenient
+decoder, so `eval` and a hard-core evaluator (constrained on encodings) could misbehave on them.
+Every instance discharges it by a decoder lemma (`ofFn_of_decodeFin_eq_some` for
+`FunFamily.toCollection` and the padding of `Collection.glPad`; `expEnc_of_expDec`,
+`encodeDistinctPrimes_of_decode`, `rsaEnc_of_rsaDec`; inline for `rabinCollection` and
+`rabinBlumTrapdoor`). Derived: `Collection.decD_eq_some_iff`, `apply_of_decD`, `eval_of_decD`,
+`sample_eq_encD`, `HardCore.evaluator`, `TrapdoorCollection.inv_eq_encD`, `eval_inv`,
+`Collection.HardCore.nonempty_predEvaluator` and the evaluator-free
+`TrapdoorCollection.OneWay.exists_glPad_singleBitSecure`. The helpers of Thm 42.2
+(`NUPPT.withIndexParam`, `NUPPT.runLenPoly`, `splitCoins`, the marker padding) moved, names
+unchanged, to `Asymptotic/CollectionsHelpers.lean`, which `Collections.lean` imports.
 
 ### 2.11 `TCSlib/Cryptography/Asymptotic/Ensembles.lean`
 
@@ -983,14 +998,27 @@ Issues found in this synthesis and resolved here (not raised by the panel):
     uniform (`SampleClose`), hardness on the ideal uniform `x ← D_i` (`uexp` over `Gen`'s coins).
 15. Candidates: `A` receives `1^n` in Assumptions 30.1/52.2/53.1; `Π_n` throughout; `p ≠ q`
     (odd / Blum) in RSA and Rabin; expected time replaced by strict PPT with `2^{-n}` failure.
-16. `WorstCaseOneWayLit` (run-3 audit P3-2): satisfied by every length-shrinking family whose
-    output length does not determine `n` (e.g. the constant family), an artefact of D5's typed
-    inverse; the `1^n` form `WorstCaseOneWay` is the headline.
+16. `WorstCaseOneWayLit` (run-3 audit P3-2; reworded at gate 03b, finding 9): when `outLen` is
+    constant, so that `|f(x)|` does not determine `n`, the literal form can hold for families
+    that are trivially invertible given `1^n` (e.g. the constant family, or `f n b = b ⊕ [n odd]`
+    on one bit), an artefact of D5's typed inverse; the `1^n` form `WorstCaseOneWay` is the
+    headline, and `toParam` applies whenever `outLen` is non-constant (for `PolyExpr`,
+    injective ⇔ non-constant).
 17. `TrapdoorCollection.inv_spec` (run-3 audit P3-5): the inverter receives `⟨t, y⟩` without the
-    index, so RSA's trapdoor is `⟨N, d⟩` (text: `d`) and Rabin's inverter recomputes `N = pq`.
+    index. The classes coincide (gate 03b, finding 6): a text TDP becomes one of this shape with
+    `t' := ⟨i, t⟩` (`Gen'` outputs `⟨i, ⟨i, t⟩⟩`; the trapdoor never reaches the adversary), and
+    this shape is a text TDP whose `Inv` ignores `i`. RSA's trapdoor is `⟨N, d⟩` (text: `d`) and
+    Rabin's inverter recomputes `N = pq`.
 18. `Collection.glPad m henc`, `expCollection H G hV` (run-3 audit P3-1): the encoding-length
     hypothesis resp. the validity bridge are arguments of the definitions; `expGen` outputs the
-    fixed valid instance `dlDefaultIndex` below the instance generator's threshold `n₀`.
+    fixed valid instance `dlDefaultIndex` below the instance generator's threshold `n₀`. Cost of
+    `henc` (gate 03c, finding 3; ruling G3-7c): a non-constant `PolyExpr` is strictly
+    increasing, so an index generated at two parameters forces `m` constant, and no candidate of
+    the library satisfies `henc` as parametrized (`rsaTrapdoor`: `2·max(n, 2)`-bit elements,
+    `rabinBlumTrapdoor`: `2·max(n, 3)`, `expCollection`: `dlDefaultIndex` below `n₀`); Thm 104.4's
+    reading "from trapdoor permutations" (`glPad_hardCore`, `exists_glPad_singleBitSecure`) holds
+    for TDPs whose generated indices encode elements in exactly `m(n)` bits. A per-index form
+    (`|encD_i x| = |encD_i default| ≤ m(n)`) would admit the candidates; not formalized.
 19. Theorem 63.1 (run-3 audit P3-4): `theorem_63_1`, `fUniversal_*` are conditional on an
     encoding scheme with `CanonizerExp c`; no instance proved (`exists_canonizerExp`).
 20. `ddhReal`/`ddhRandom` (run-3 audit P8-1): the DDH exponents `a, b, z` are read from
@@ -1003,6 +1031,16 @@ Issues found in this synthesis and resolved here (not raised by the panel):
 22. `uprob_adaptive_guess`, `uprob_gni_rep_cheat` (run-3 audit P10-1/P10-2): the auxiliary coin
     type (`W`, `ρ`) is assumed nonempty — `uprob` on an empty type is `0`, so the exact `2^{-m}`
     fails for `Empty`; every consumer passes a tape type `Fin k → Bool`.
+23. Thms 35.1, 35.2 and Claim 38.2 (gate 03b, finding 8): the direct products are families at
+    parameter `n` whose adversaries receive `1^n` (the text: `1^{n·m(n)}`, `1^{2n}`;
+    interderivable, so negligibility in `n` and in `n·m(n)` coincide); Claim 38.2 runs
+    `T(n) + 1 = 2n·m(n)·n^c + 1` rounds with Garg's threshold `μ₀/(2m)` (the text: `2nm²p(n)`
+    rounds, threshold `1/(2m²p(n))`), with the margin `(T + 1)·2^{-n}` for the rejection-sampled
+    positions.
+24. `Collection.encD_decD` (gate 03b, finding 1; ruling G3-1): decoders are canonical — a string
+    decodes only if it is the encoding of its value — so the outputs of the sampler and of the
+    trapdoor inverter are encodings ([PS10, Defs 41.1 (2), 56.1 (6)]: "an element of `D_i`",
+    "computes `f_i^{-1}(y)`"); every decoder of the library is canonical.
 
 ---
 

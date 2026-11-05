@@ -25,8 +25,8 @@ permutation of `Fin n` (`permFromCoins_uniform_of_some`), it fails with probabil
 `n (1 - 1/2^k)^T` (`uprob_permFromCoins_none_le`), and with any default on failure it is
 `StatClose` to a uniform permutation within that term (`statClose_permFromCoins`, an instance
 of `statClose_getD_of_uniform_of_some`). The campaign parameters are `permBits n = Nat.size n`
-bits per trial (so `n ≤ 2^k ≤ 2n`) and `permTrials n = 2n²` trials per position, for which
-the failure term has the closed form `n · 2^{-n}` (`uprob_permFromCoins_none_le_two_pow`,
+bits per trial (so `n ≤ 2^k ≤ 2n` for `n ≥ 1`) and `permTrials n = 2n²` trials per position,
+for which the failure term has the closed form `n · 2^{-n}` (`uprob_permFromCoins_none_le_two_pow`,
 `statClose_permFromCoins_two_pow`). These are the permutations `σ, π ← S_n` of the honest
 parties and simulators of [PS10, Protocols 118.3 and 120.6] and the colour permutations of
 [PS10, Protocol 127.5]; the string-level parties read their coins into the `n × T × k` table
@@ -75,7 +75,7 @@ range `1` and `n` bits per trial), so this file now owns the campaign parameters
   `TCSlib.Cryptography.statClose_permFromCoins` — the permutation sampler: uniform
   conditioned on success, failure at most `n (1 - 1/2^k)^T`, `StatClose` form.
 * `TCSlib.Cryptography.le_two_pow_permBits`, `TCSlib.Cryptography.two_pow_permBits_le` —
-  `n ≤ 2^{permBits n} ≤ 2n`.
+  `n ≤ 2^{permBits n} ≤ 2n` (the second for `n ≥ 1`).
 * `TCSlib.Cryptography.uprob_permFromCoins_none_le_two_pow`,
   `TCSlib.Cryptography.statClose_permFromCoins_two_pow` — the closed form `n · 2^{-n}` at the
   campaign parameters.
@@ -423,8 +423,8 @@ theorem statClose_permFromCoins (n k T : ℕ) (hk : n ≤ 2 ^ k) (d : Equiv.Perm
 /-! ### The campaign parameters of the permutation sampler -/
 
 /-- Bits per trial of the campaign's permutation sampler: `Nat.size n`, the least `k` with
-`n < 2^k`, so that `n ≤ 2^k ≤ 2n` (`le_two_pow_permBits`, `two_pow_permBits_le`) and every
-rejection trial of every position accepts with probability at least `1/(2n)` (D10).
+`n < 2^k`, so that `n ≤ 2^k ≤ 2n` for `n ≥ 1` (`le_two_pow_permBits`, `two_pow_permBits_le`)
+and every rejection trial of every position accepts with probability at least `1/(2n)` (D10).
 
 **Repair (run-3 audit P2-1):** the frozen parameters (`n` bits per trial) accept a trial of
 position `i` with probability `(n - i)/2^n`, so the frozen sampler `permFromCoins n n n`

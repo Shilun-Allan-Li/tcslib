@@ -27,7 +27,8 @@ D5 of `PassShelatChapter2-4Plan.md`).
 
 A *function family* `FunFamily` is `f n : {0,1}^{inLen n} → {0,1}^{outLen n}` with syntactic
 polynomial lengths (the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p`, parameter =
-input length); `FunFamily.invProbAt 𝓕 A n` is the experiment
+input length; exact for length-regular `f`, `ofFn_ofString_f`, otherwise the `false`-padding to
+`p(n)` bits is lossy); `FunFamily.invProbAt 𝓕 A n` is the experiment
 `Pr[x ← {0,1}^n; y ← f(x) : f(A(1^n, y)) = y]` for the machine `A`, its output decoded as an
 `inLen n`-bit string. The three one-wayness notions of [PS10, Definitions 26.1, 27.3, 28.4]
 follow — Definition 26.1 in its `1^n` form `FunFamily.WorstCaseOneWay` (headline) and its
@@ -37,8 +38,10 @@ then the direct product `FunFamily.prod` with the parameters `yaoBlocks`/`yaoRou
 (`m = 2nq(n)`, `T = 2nm(n)n^c`) of [PS10, §2.4.3], the theorems `weak_to_strong`
 [PS10, Theorem 35.1], `strong_prod_two` [PS10, Theorem 35.2], `claim_38_2` (the parameter
 instantiation of the concrete `OneWay.yao_amplification_exp` [Gar26, Theorem 2.1]), the sanity
-results `FunFamily.StrongOneWay.weak` and `not_strongOneWay_id` (the adversary class is not
-vacuous), and `PermFamily`/`OneWayPermutation` [PS10, Theorems 79.4 and 126.4]. Every
+results `FunFamily.StrongOneWay.weak` and `not_strongOneWay_id`, `not_weakOneWay_id`,
+`not_worstCaseOneWay_id` (the adversary classes are not vacuous), and
+`PermFamily`/`OneWayPermutation` (the single-function form of [PS10, Definition 55.1], as used
+in Theorems 79.4 and 126.4). Every
 asymptotic theorem is proved by (i) instantiating the concrete reduction at every `n`,
 (ii) exhibiting the reduction as a `Complexity.NUPPT` by the closure calculus of
 `TCSlib/Complexity/Randomized/`, (iii) negligible-function arithmetic (`not_negligible_iff`).
@@ -64,8 +67,9 @@ deviations of `Easy`, `invProbAt` and `WeakOneWay` are recorded on the declarati
 * `TCSlib.Cryptography.weak_to_strong` [PS10, Theorem 35.1], `strong_prod_two`
   [PS10, Theorem 35.2], `claim_38_2` (parameter instantiation, [PS10, §2.4.3]),
   `OneWay.invProb_prodFun_le_yaoTry` (concrete one-call planting, lemma C2 of the inventory).
-* `TCSlib.Cryptography.FunFamily.StrongOneWay.weak`, `TCSlib.Cryptography.not_strongOneWay_id`
-  — sanity and non-vacuity.
+* `TCSlib.Cryptography.FunFamily.StrongOneWay.weak`, `TCSlib.Cryptography.not_strongOneWay_id`,
+  `not_weakOneWay_id`, `not_worstCaseOneWay_id`,
+  `TCSlib.Cryptography.FunFamily.invProbAt_ofString_id_eq_one` — sanity and non-vacuity.
 * `TCSlib.Cryptography.FunFamily.WorstCaseOneWay.toLit`,
   `TCSlib.Cryptography.FunFamily.WorstCaseOneWayLit.toParam` — the two forms of
   [PS10, Definition 26.1] (always / for injective `outLen`).
@@ -85,7 +89,8 @@ open Complexity Turing Finset
 
 /-- A family `f n : {0,1}^{inLen n} → {0,1}^{outLen n}` with explicit polynomial lengths: the
 typed reading (D5) of the textbook `f : {0,1}* → {0,1}*` at security parameter `n`
-[PS10, §2.2]. -/
+[PS10, §2.2]. A string function `f` gives the family `ofString f p`, exact for length-regular
+`f` (`ofFn_ofString_f`); otherwise the `false`-padding to `p(n)` bits is lossy. -/
 structure FunFamily where
   /-- The input length at parameter `n`. -/
   inLen : PolyExpr
@@ -143,8 +148,8 @@ receives `f(x)` only) is `WorstCaseOneWayLit`, and the two are related by
 `Ensemble.Indist`/`Ensemble.IndistLit` for [PS10, Definition 69.4].
 
 Repair (run-3 audit P3-2): the frozen headline was the literal form (now `WorstCaseOneWayLit`),
-which is vacuously satisfied by length-shrinking families whose output length does not
-determine `n` (e.g. the constant family `x ↦ ε`, trivially invertible in the text); the `1^n`
+which can be vacuously satisfied by families whose output length does not determine `n` (e.g.
+the constant family `x ↦ ε`, trivially invertible in the text); the `1^n`
 form is now the headline, mirroring D5's treatment of Definition 69.4.
 
 **Deviation:** the adversary receives `1^n` where the text writes `A(f(x))` (D5; the literal
@@ -167,11 +172,14 @@ returning an `inLen n`-bit preimage.
 Repair (run-3 audit P3-2): renamed from `WorstCaseOneWay`; the `1^n` form `WorstCaseOneWay` is
 the headline, and `WorstCaseOneWay.toLit`/`WorstCaseOneWayLit.toParam` relate the two.
 
-**Deviation:** satisfied by every length-shrinking family whose output length does not
-determine `n` (e.g. the constant family `x ↦ ε` with `inLen = var`, `outLen = 0`), an artefact
-of D5's typed inverse: when `|f(x)|` does not determine `n`, the literal adversary cannot know
-the required output length `inLen n`. The `1^n` form is the headline; for injective `outLen`
-(every family of the text) the two coincide (`toLit`, `toParam`). -/
+**Deviation:** when `outLen` is constant, so that `|f(x)|` does not determine `n`, the literal
+form can hold for families that are trivially invertible given `1^n`, an artefact of D5's
+typed inverse (the literal adversary cannot know `n`): e.g. the constant family `x ↦ ε` with
+`inLen = var`, `outLen = 0` (the adversary cannot know the required output length `inLen n`),
+or `f n b = b ⊕ [n odd]` on one bit (it cannot know the parity of `n`; gate 03b, finding 9).
+The `1^n` form is the headline; `toParam` applies whenever `outLen` is non-constant (for
+`PolyExpr` lengths, injective ⇔ non-constant), so for every family of the text the two forms
+coincide (`toLit`, `toParam`). -/
 structure WorstCaseOneWayLit (𝓕 : FunFamily) : Prop where
   /-- Easy to compute. -/
   easy : 𝓕.Easy
@@ -586,64 +594,41 @@ is a family at parameter `n` whose adversaries receive `1^n` (module docstring);
 (`m(n) = 2nq_w(n)`). *Easy:* `FunFamily.Easy.prod`. *Hard:* fix `A' : NUPPT` and suppose
 `fun n => (𝓕.prod m).invProbAt A' n` is not negligible; `not_negligible_iff` gives `c` with
 `1/n^c ≤ (𝓕.prod m).invProbAt A' n` for infinitely many `n` (the function is nonnegative,
-`invProbAt_nonneg`). Put `T := yaoRounds q_w c`, `k(n) := Nat.size (m(n))` (so
-`m(n) ≤ 2^{k(n)} ≤ 2m(n)`, `k(n) ≤ m(n)`) and `ρ := add (mul var m) (add (mul m inLen) A'.coins)`,
-the coins of one round: `n` rejection trials of `m(n)` bits (`k(n)` of them read) for the
-position, `m(n)` fresh inputs of `inLen(n)` bits, and the coins of `A'`.
+`invProbAt_nonneg`). Put `T := yaoRounds q_w c`.
 
-*The reduction `A`* (Algorithm 38.5 repeated) is `NUPPT.ofPolyTime` of an FP function of
-the raw input `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` with coins `mul (add T (const 1)) ρ` and advice
-`advice n := ⟨A'.advice n, ⟨1^{m n}, ⟨1^{T n}, ⟨1^{k n}, ⟨1^{inLen n}, 1^{A'.coinLen n}⟩⟩⟩⟩⟩`
-(length bounded by the `PolyExpr` `2·A'.adv + 2·m + 2·T + 2·m + 2·inLen + 2·A'.coins + 12`,
-`eval_mono`; every component but `A'.advice n` is computable from `1^n`, by
-`polyTimeComputable_unaryPoly` and `computesFunInTime_lengthBits` for `1^{k n}`, so uniformity
-is preserved). It is an instance of `Complexity.polyTimeComputable_iterateFind` with
-`R := T`, `P := var` on the state word `w = ⟨⟨⟨1^n, y⟩, advice n⟩, rest⟩`: the step `g` drops
-one round of coins (`polyTimeComputable_pairDropPoly ρ` on `⟨1^n, rest⟩`, re-paired by
-`polyTimeComputable_layout`; the orbit never grows, so `horbit` holds); the test `acc w` first
-checks that `ρ(n)` coins remain (`polyTimeComputable_lenLe` on `⟨1^{ρ n}, rest⟩`,
-`polyTimeComputable_unaryPoly ρ`: `R := T` is evaluated at the raw input length `≥ n`, so at
-least `T(n) + 1` rounds are run and the rounds without coins fail), cuts the round's coins
-(`polyTimeComputable_pairTakePoly ρ`), reads the position
-`i := (rejectionSample (m n) (k n) n (first n·m(n) bits, grouped by `blockMap`)).getD 0`
-(each `k(n)`-bit trial compared with `1^{m n}` by `polyTimeComputable_lenLe` after unary
-conversion, `polyTimeComputable_ite`), evaluates `ỹ_j := F ⟨1^n, x_j⟩` on the `m(n)` fresh
-blocks (iteration as in `Easy.prod`), plants `y` at block `i` (`take`/`drop` at the unary
-offset `1^{i·outLen n}`, `Turing.FinTM.computesFunInTime_unaryMul`), calls `A'.output` on the
-layout `⟨⟨⟨1^n, ỹ⟩, A'.advice n⟩, r'⟩` (`A'.polyTimeComputable_output`,
-`polyTimeComputable_layout`), takes block `i` of the answer when its length is `m(n)·inLen(n)`
-and `1^{inLen n}` otherwise (`polyTimeComputable_lenEq`, `polyTimeComputable_ite`), and tests
-`F ⟨1^n, z_i⟩ = y` (`Complexity.polyTimeComputable_pairEq`); `out w := z_i`; on exhaustion the
-`[]` of `iterateFind` is replaced by `1^{inLen n}` (`polyTimeComputable_lenEq`, `_ite`).
+*The reduction `A`* (Algorithm 38.5 repeated) is the machine of `OneWay.exists_yaoReduction`
+(`TCSlib.Cryptography.Asymptotic.OneWayYao`, sub-machines in `OneWayLemmas`), applied to the
+evaluator `F` of `h.easy` and to `A'`. It is `NUPPT.ofPolyTime` of the loop
+`YaoMachine.yaoRaw'` (`Complexity.polyTimeComputable_iterateFind`) with coins
+`(T + 1)·ρ`, `ρ(n) = n·m(n) + m(n)·inLen(n) + A'.coins(n)` the coins of one round, and advice
+`⟨A'.advice n, 1^{kk}⟩`, `kk = kkOf (m n) = ⌊log₂ m(n)⌋ + 1` (so `m(n) < 2^{kk} ≤ 2m(n)`).
+Round `t` consumes the `t`-th block of `ρ(n)` coins: it reads `n·kk` of its `n·m(n)` position
+bits and samples the
+position `i ← [m(n)]` by rejection (`n` trials of `kk` bits, D10), evaluates `f` on the `m(n)`
+fresh inputs, plants `y` at block `i`, calls `A'` on the planted tuple, takes block `i` of the
+answer padded with `true` to `inLen(n)` bits (the total inverter `OneWay.yaoB`), and tests
+`f(z_i) = y`; the machine returns the first success and `1^{inLen n}` on exhaustion.
 
-*Functional identity.* With the `Inhabited` instance `default := fun _ => true` on
-`Fin (inLen n) → Bool`, `B n ỹ r' := blocks ((A'.inverter n _ _ (blocks⁻¹ ỹ) r').getD default)`
-and the typed coin sampler `S n : A.Coins n → (Fin (T n + 1) → Fin (m n) × (Fin (m n) → _) × A'.Coins n)`
-(per round: position by `(rejectionSample …).getD 0`, inputs by `blocks`, coins verbatim), for
-every `y`, `r`: `A.inverter n _ _ y r = some (OneWay.yaoInverter (𝓕.f n) (B n) (T n + 1) y (S n r))`
-(`NUPPT.inverter_eq_some_iff`, `runAtL_ofPolyTime`, the `find?` of `iterateFind` against the
-`foldr` of `yaoInverter` by induction on the round list, `decodeFin_ofFn`).
+*Functional identity.* On `⟨⟨⟨1^n, y⟩, ⟨A'.advice n, 1^{kk}⟩⟩, r⟩` the machine returns
+`OneWay.yaoInverter (𝓕.f n) (yaoB … A' n) (T n + 1) y (sampleAll r)` (`YaoMachine.yaoRaw'_layout`),
+where `sampleAll r` reads the typed coins of the `T(n) + 1` rounds (position, inputs, coins of
+`A'`) off `r`.
 
-*Probability.* `statClose_rejectionSample (m n) (k n) n 0` puts each round's position within
-`(1 - m/2^k)^n ≤ (1/2)^n` of uniform (`uprob_rejectionSample_none_le_half_pow`), the other
-components are `StatClose.refl`; `StatClose.prod` over the components and the `T n + 1` rounds
-(`StatClose.comp_equiv_left` for the coin-string bijection) gives
-`StatClose (S n) id ((T n + 1)·(1/2)^n)`, and `StatClose.abs_uprob_sub_le_prod` with the
-auxiliary coins `x` yields `𝓕.invProbAt A n ≥ invProb (𝓕.f n) (yaoInverter (𝓕.f n) (B n)
-(T n + 1)) - (T n + 1)(1/2)^n` (`invProbAt_eq_uprob`, `invProbOpt_some`).
+*Probability.* Each round's position is within `(1 − m/2^{kk})^n ≤ 2^{-n}` of uniform
+(`statClose_rejectionSample`); `YaoMachine.statClose_sampleAll` and
+`StatClose.abs_uprob_sub_le_prod` give, for `n ≥ 1`,
+`𝓕.invProbAt A n ≥ invProb (𝓕.f n) (yaoInverter (𝓕.f n) (yaoB … A' n) (T n + 1)) − (T n + 1)·2^{-n}`
+(`exists_yaoReduction`).
 
-*Conclusion.* At the infinitely many `n` with `1/n^c ≤ (𝓕.prod m).invProbAt A' n`:
-`invProbAt_prod_eq` and `invProbOpt_le_invProb` give `1/n^c ≤ invProb (prodFun (𝓕.f n) (m n)) (B n)`,
-so `claim_38_2` (which packages `OneWay.yao_amplification_exp` with `α' = 1/q_w(n)`,
-`μ₀ = 1/n^c`, `T' = T n + 1`) gives `𝓕.invProbAt A n > 1 - 1/q_w(n)` for infinitely many
-`n`, contradicting `h.hard` for `A` (`∃ n₀, ∀ n ≥ n₀, … ≤ 1 - 1/q_w(n)`).
-
-*Implementation.* The machine, its functional identity and the statistical step are the theorem
-`OneWay.exists_yaoReduction` of `TCSlib.Cryptography.Asymptotic.OneWayYao` (sub-machines in
-`OneWayLemmas`): the trial length is `kkOf (m n) = ⌊log₂ m(n)⌋ + 1` (carried as `1^{kk}` in the
-advice `⟨A'.advice n, 1^{kk}⟩`), each round reads `n·kk` of its `n·m(n)` position bits, and `B n`
-is the total inverter `OneWay.yaoB` (block `i` of `A'`'s answer, padded with `true`), which inverts
-the direct product at least as often as `A'`. -/
+*Conclusion.* `yaoB` inverts the direct product at least as often as `A'` (when `A'`'s answer
+decodes, `yaoB` returns its blocks: `invProbAt_prod_eq`, `NUPPT.inverter_eq_some_iff`,
+`OneWay.padTrue_drop_ofFn`), so at the infinitely many `n` with
+`1/n^c ≤ (𝓕.prod m).invProbAt A' n`, also `1/n^c ≤ invProb (prodFun (𝓕.f n) (m n)) (yaoB … A' n)`.
+There `claim_38_2` (which packages `OneWay.yao_amplification_exp` with `α' = 1/q_w(n)`,
+`μ₀ = 1/n^c`, `T' = T n + 1`) gives
+`invProb (𝓕.f n) (yaoInverter …) > 1 − 1/q_w(n) + (T n + 1)·2^{-n}`, hence
+`𝓕.invProbAt A n > 1 − 1/q_w(n)` for infinitely many `n`, contradicting `h.hard` for `A`
+(`∃ n₀, ∀ n ≥ n₀, … ≤ 1 − 1/q_w(n)`). -/
 theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
     ∃ q : PolyExpr, FunFamily.StrongOneWay (𝓕.prod q) := by
   obtain ⟨qw, hqw, hhard⟩ := h.hard
@@ -823,37 +808,84 @@ theorem FunFamily.StrongOneWay.weak {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
   simp only [PolyExpr.eval_const, Nat.cast_ofNat]
   linarith [le_abs_self (𝓕.invProbAt A n)]
 
+/-- A machine that returns its argument exists: `A(1^n, y; r) = y` (`ofPolyTimeUniform` of the
+argument projection, no coins). -/
+private theorem exists_runAt_eq_arg : ∃ A : NUPPT, ∀ n y (r : A.Coins n), A.runAt n y r = y :=
+  ⟨NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inArg (.const 0), fun n y r => by
+    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+    exact NUPPT.inArg_layout _ _ _ _⟩
+
+/-- **A machine that returns its argument inverts the identity with probability one**: if
+`A(1^n, y; r) = y` for all `n`, `y`, `r`, then `(ofString id var).invProbAt A n = 1` at every
+parameter `n` (the common step of the non-vacuity results below and of
+`FunFamily.not_toCollection_oneWay_id`).
+
+**Proof sketch.** By `invProbAt_eq_uprob` the event is that `A(1^n, x)` is the encoding of a
+preimage of `x`; it holds for every `(x, r)` with the preimage `x` itself (`ofString_id_f`), so
+the probability is `uprob True = 1`. -/
+theorem FunFamily.invProbAt_ofString_id_eq_one {A : NUPPT}
+    (hA : ∀ n y (r : A.Coins n), A.runAt n y r = y) (n : ℕ) :
+    (FunFamily.ofString id .var).invProbAt A n = 1 := by
+  rw [FunFamily.invProbAt_eq_uprob]
+  have hp : (fun z : (Fin ((FunFamily.ofString id .var).inLen.eval n) → Bool) × A.Coins n =>
+      ∃ x', A.runAt n (List.ofFn ((FunFamily.ofString id .var).f n z.1)) z.2 = List.ofFn x' ∧
+        (FunFamily.ofString id .var).f n x' = (FunFamily.ofString id .var).f n z.1) =
+      fun _ => True := by
+    funext z
+    refine propext ⟨fun _ => trivial, fun _ => ⟨z.1, ?_, rfl⟩⟩
+    rw [hA, FunFamily.ofString_id_f]
+  rw [hp, uprob_true]
+
 /-- **The identity is not one-way** (non-vacuity of the adversary class, [PS10, §2.2]): the
 machine that returns its argument inverts `FunFamily.ofString id var` with probability one at
 every parameter, and the constant `1` is not negligible.
 
 **Proof sketch.** `A := NUPPT.ofPolyTimeUniform polyTimeComputable_inArg (const 0)` returns
-`y` on `⟨⟨⟨1^n, y⟩, []⟩, r⟩` (`runAtL_ofPolyTimeUniform`, `inArg_layout`); its inverter
-decodes `List.ofFn y` to `some y` (`decodeFin_ofFn`), and `(ofString id var).f n` is the
-identity (`ofString_id_f`), so `invProbAt … A n = uprob True = 1`; `Negligible (fun _ => 1)`
+`y` on `⟨⟨⟨1^n, y⟩, []⟩, r⟩` (`runAtL_ofPolyTimeUniform`, `inArg_layout`), so
+`invProbAt … A n = 1` (`FunFamily.invProbAt_ofString_id_eq_one`); `Negligible (fun _ => 1)`
 fails at `c = 0`. -/
 theorem not_strongOneWay_id : ¬ FunFamily.StrongOneWay (FunFamily.ofString id .var) := by
   intro h
-  let A : NUPPT := NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inArg (.const 0)
-  have hrun : ∀ n (y : List Bool) (r : A.Coins n), A.runAt n y r = y := by
-    intro n y r
-    rw [NUPPT.runAt_eq]
-    show (NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inArg (.const 0)).runAtL n y _ = y
-    rw [NUPPT.runAtL_ofPolyTimeUniform]; exact NUPPT.inArg_layout _ _ _ _
-  have hone : ∀ n, (FunFamily.ofString id .var).invProbAt A n = 1 := by
-    intro n
-    rw [FunFamily.invProbAt_eq_uprob]
-    have hp : (fun z : (Fin ((FunFamily.ofString id .var).inLen.eval n) → Bool) × A.Coins n =>
-        ∃ x', A.runAt n (List.ofFn ((FunFamily.ofString id .var).f n z.1)) z.2 = List.ofFn x' ∧
-          (FunFamily.ofString id .var).f n x' = (FunFamily.ofString id .var).f n z.1) =
-        fun _ => True := by
-      funext z
-      refine propext ⟨fun _ => trivial, fun _ => ⟨z.1, ?_, rfl⟩⟩
-      rw [hrun, FunFamily.ofString_id_f]
-    rw [hp, uprob_true]
+  obtain ⟨A, hA⟩ := exists_runAt_eq_arg
   obtain ⟨n₀, hn₀⟩ := h.hard A 0
   have := hn₀ n₀ le_rfl
-  simp [hone] at this
+  simp [FunFamily.invProbAt_ofString_id_eq_one hA] at this
+
+/-- **The identity is not weakly one-way** (non-vacuity of [PS10, Definition 28.4]; gate 03b,
+finding 13): the machine that returns its argument inverts `FunFamily.ofString id var` with
+probability `1 > 1 − 1/q(n)` at every parameter, for every positive polynomial `q`.
+
+**Proof sketch.** As `not_strongOneWay_id`: `invProbAt … A n = 1`
+(`FunFamily.invProbAt_ofString_id_eq_one`), and `1 ≤ 1 − 1/q(n₀)` contradicts `q(n₀) > 0`. -/
+theorem not_weakOneWay_id : ¬ FunFamily.WeakOneWay (FunFamily.ofString id .var) := by
+  intro h
+  obtain ⟨q, hq, hhard⟩ := h.hard
+  obtain ⟨A, hA⟩ := exists_runAt_eq_arg
+  obtain ⟨n₀, hn₀⟩ := hhard A
+  have h1 := hn₀ n₀ le_rfl
+  rw [FunFamily.invProbAt_ofString_id_eq_one hA] at h1
+  have h2 : (0 : ℝ) < 1 / (q.eval n₀ : ℝ) := one_div_pos.mpr (Nat.cast_pos.mpr (hq n₀))
+  linarith
+
+/-- **The identity is not worst-case one-way** (non-vacuity of [PS10, Definition 26.1], `1^n`
+form; gate 03b, finding 13): the machine that returns its argument inverts
+`FunFamily.ofString id var` on every input with probability one.
+
+**Proof sketch.** On `⟨1^n, x⟩` the machine returns `x`, which the inverter decodes to `x`
+(`NUPPT.inverter_eq_some_iff`), a preimage of `x` (`ofString_id_f`); so the event holds for
+every coin string and its probability is `uprob True = 1`. -/
+theorem not_worstCaseOneWay_id : ¬ FunFamily.WorstCaseOneWay (FunFamily.ofString id .var) := by
+  intro h
+  obtain ⟨A, hA⟩ := exists_runAt_eq_arg
+  refine h.hard ⟨A, fun n x => ?_⟩
+  have hp : (fun r : A.Coins n => ∃ x', A.inverter n ((FunFamily.ofString id .var).inLen.eval n)
+      ((FunFamily.ofString id .var).outLen.eval n) ((FunFamily.ofString id .var).f n x) r =
+        some x' ∧ (FunFamily.ofString id .var).f n x' = (FunFamily.ofString id .var).f n x) =
+      fun _ => True := by
+    funext r
+    refine propext ⟨fun _ => trivial, fun _ => ⟨x, ?_, rfl⟩⟩
+    rw [NUPPT.inverter_eq_some_iff, hA, FunFamily.ofString_id_f]
+  rw [hp, uprob_true]
 
 /-! ## One-way permutations -/
 
@@ -871,7 +903,7 @@ def PermFamily.toFunFamily (P : PermFamily) : FunFamily where
   f n := P.f n
 
 /-- `P` is a *one-way permutation* when its underlying family is strongly one-way
-[PS10, §2.12 and Theorem 79.4]. -/
+[PS10, §2.10, Definition 55.1, single-function form, as used in Theorems 79.4 and 126.4]. -/
 def OneWayPermutation (P : PermFamily) : Prop := P.toFunFamily.StrongOneWay
 
 /-- The function of a permutation family is the permutation. -/
