@@ -59,6 +59,12 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
      `devtools/seyoon/staticsorry.py`. `$TCSLIB_SCRATCH/api/chain.py` lists a change's pre-replay
      compile chain.
    - **Sub-agents:** at most five at once, for independent tasks (WORKFLOW §5).
+   - **PFR is left out** (ruled by the user, 2026-11-05: option B). The Mathlib cache does not
+     provide the `PFR` package's oleans, so the twenty `CommunicationComplexity/NewmanTheorem`
+     modules that import it (directly or not) are left out of cloud snapshots
+     (`bootstrap_order.py`; `skipped-<name>.txt`). They are outside WORKFLOW §2's snapshot areas,
+     and no open PR's replay reached them. Building them would need a direct `lean` run over 31
+     PFR modules, which the rules do not cover: ask the user first.
 
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
