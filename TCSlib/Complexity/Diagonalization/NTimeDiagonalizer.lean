@@ -7008,9 +7008,8 @@ private theorem dz_split {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : 
   -- sep: take the separator
   have e3 := dz_take_run (x := z) (κ.tp 6) 1 (dzLay L Bl) (dzLay P2 0) []
   have hsep : FinTM.bufferTape (s₁ ++ [sp] ++ w) (G : ℤ) = some sp := by
-    rw [FinTM.bufferTape_eq, if_pos (by omega), show (G : ℤ).toNat = G by omega,
-      List.append_assoc, List.getElem?_append_right (by omega), hG, Nat.sub_self]
-    rfl
+    have h := FinTM.bufferTape_append_mid s₁ [sp] w 0 Nat.one_pos
+    simpa only [hG, Nat.add_zero, List.getElem_cons_zero] using h
   have hP2_6 : P2 6 = (G : ℤ) := by rw [hP2, Function.update_self]
   rw [dzLay_tp, dzLay_tp, h6, hP2_6, hsep, dzLay_update, dzLay_update] at e3
   have seg3 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .sep none (some (some sp))
@@ -8191,15 +8190,19 @@ private theorem dz_first {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : 
       ((dzQ κ).runFrom st u).state ≠ some (dzRej κ))
     (hv : v = dzAcc κ ∨ v = dzRej κ)
     (seg : Segment (dzQ κ) (dzQF κ) (fun _ => True) st (qyC v 1 T' P' []) t) : v = dzAcc κ := by
-  obtain ⟨hrun, havoid, -⟩ := (segment_iff _ _ _ _ _ _).mp seg
-  rcases lt_trichotomy TQ t with h | rfl | h
-  · exact absurd (Or.inl hacc) (havoid TQ h)
-  · rw [hrun] at hacc
-    exact Option.some_inj.mp hacc
-  · have hs : ((dzQ κ).runFrom st t).state = some v := by rw [hrun]; rfl
+  have hq : Segment (dzQ κ) (dzQF κ) (fun _ => True) st ((dzQ κ).runFrom st TQ) TQ :=
+    (segment_iff _ _ _ _ _ _).mpr ⟨rfl, fun u hu hmem => by
+      rcases hmem with h | h
+      · exact (hcut u hu).1 h
+      · exact (hcut u hu).2 h, fun _ _ => trivial⟩
+  have hvF : (qyC v 1 T' P' [] : Cfg κ.K Bool (Σ i, DzQPh κ i) z).state ∈ dzQF κ := by
     rcases hv with rfl | rfl
-    · exact absurd hs (hcut t h).1
-    · exact absurd hs (hcut t h).2
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  have ht : t = TQ := Segment.time_eq seg hvF hq (Or.inl hacc)
+  subst ht
+  rw [(segment_iff _ _ _ _ _ _).mp seg |>.1] at hacc
+  exact Option.some_inj.mp hacc
 
 /-- The middle's query: on `1ⁿ` with `n ≥ 3` off the stage's top, the query is `false` and the
 pair `⟨⟨bits (g n), α⟩, 1^{n + 1}⟩` (`Turing.NTimeDiag.query_eq`), `α` its stage's code, which the
