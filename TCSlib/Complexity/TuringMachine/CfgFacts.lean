@@ -29,7 +29,7 @@ No new definitions.
   gives phase `i`'s tagged configuration at `q`.
 * `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
   another phase.
-* `Turing.length_flatMap_const` — a list of equal-length chunks has length count × chunk length.
+* `Turing.length_flatMap_uniform` — a list of equal-length chunks has length count × chunk length.
 -/
 
 namespace Turing
@@ -88,7 +88,7 @@ theorem Cfg.mapState_sigma_state_ne {k : ℕ} {Γ I : Type*} {Ph : I → Type*} 
 
 /-- **Equal-length chunks.** If every chunk `f a` has length `c`, the concatenation of the chunks
 of a list `l` has length `|l| · c`. -/
-theorem length_flatMap_const {α β : Type*} (l : List α) (f : α → List β) {c : ℕ}
+theorem length_flatMap_uniform {α β : Type*} (l : List α) (f : α → List β) {c : ℕ}
     (hf : ∀ a, (f a).length = c) : (l.flatMap f).length = l.length * c := by
   rw [List.length_flatMap, List.map_congr_left (fun a _ => hf a), List.map_const',
     List.sum_replicate]
