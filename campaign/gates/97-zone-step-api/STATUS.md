@@ -9,3 +9,4 @@
     `evidence/`. The pack's PR, head, base and replay fields are filled at the push and the
     replay.
 - 2026-11-05: pushed; #197 opened at `0a1b64d5` (rebased onto the campaign at `683e2adf`, records only since `a8b27271`). `replay-lzsa` written: 111 modules, the closure of `Contract/Basic`, precheck passed.
+- 2026-11-05: `replay-lzsa` passed (111 modules, 0 failed; static 0 mismatches, the existing 45 `sorry`s). The changed-files screen (22 files) found no new pair. The pack is complete; the gate is staged.

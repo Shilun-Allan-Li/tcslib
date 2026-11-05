@@ -12,3 +12,18 @@
   public `Turing.Contract.zero`, which both now use.
 - **At the final head:** `screen-head-zonestep-pairs.txt`, 1,991 declarations, **no pair**.
 - `status.txt`: each run's exit status, commit and time.
+
+## The changed-files screen (`changed-files/`)
+
+The screen above keeps only `ZoneStep`'s pairs, so it does not cover `Contract.zero` in
+`Contract/Basic` or the new equations in `ZoneRebalance`. This one widens both the restriction
+and the population:
+- **Restriction:** pairs with a declaration of any of the three changed Lean files on one side
+  (`screen-changed-pairs.py.txt`).
+- **Population:** 22 files, the 20 above and the cited `Deterministic` (`runFrom_zero`) and
+  `Configuration`.
+- **Commits:** base `683e2adf`, head `0a1b64d5`.
+
+**Result** (`pairdiff.txt`): 562 pairs at base and 559 at head, **no new pair**. Three pairs are
+gone, all inside `ZoneRebalance`. The anchor's re-point shortened `zr_pinAnchorContract` and
+`zr_host_dispatch_run`, which had paired with `zr_pinTestContract` and `zr_scan_round`.

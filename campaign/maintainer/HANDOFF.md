@@ -63,6 +63,20 @@ expected to reach **21 of 26**; the status record is `campaign/status/2026-11-05
 PR. Once two or more have merged, the merged campaign's first snapshot (§1, item 4) is the replay
 of record for the combination.
 
+**Mac-only branches with commits not in the campaign** (checked 2026-11-05; none has an upstream
+that contains them). Most are superseded deliveries or landings:
+- `deliver/fill-eq-query-in`, `deliver/fill-s13d-g4-cont4-in`, `deliver/fill-u2s-universal-in`;
+- `lean/g4-cont1-partial`, `lean/ntime-diag-bf`, `lean/seam-layout`;
+- `local/eq-cp1-landing`, `local/eq-cp1-landing-v2`;
+- `dedup/ch34-d4`, which has no Lean.
+
+Two October re-points may still be 12.2c material:
+- `local/canon-mapcomp-repoint`: `CodeSimulator`'s grammar-stage relabeling as
+  `Cfg.mapState_mapState`;
+- `local/r-leaf-repoint`: `NDCodeSimulator`'s input rewinds as `Build/InputRewind`'s.
+
+`maint/12.2c-t2a` (2026-10-12) is the T2a facade wiring.
+
 ## 3. Queue after the PRs
 
 1. **The general `savitch`'s deepening fill** (agent: Claude, the user's 2026-11-05 choice). The

@@ -86,13 +86,18 @@ every PR head). They include the `simps`-generated equations and `Contract.zero`
    - `ZoneStep` is a new module above `ZoneRebalance` rather than an addition to it. Is that
      right? It keeps the 15k-line rows file unchanged apart from its equations, and only
      `Robustness/TwoTapes` and its consumers will import the new module.
-5. **Duplication** (`evidence/screen/`): the v3 screen over 20 files (`population.txt`),
-   restricted to pairs with a `ZoneStep` declaration on one side, as for gate 95. The module is
-   new, so every such pair is new.
-   - **At the first head:** one pair, `ZoneStep`'s private zero-time contract against
-     `ZoneRebalance`'s private `zr_anchorContract` (99%). **Fixed** by the public
-     `Contract.zero`, which both now use.
-   - **At the final head:** no pair (1,991 declarations screened).
+5. **Duplication** (`evidence/screen/`, its `README.md`).
+   - **The `ZoneStep` screen:** the v3 screen over 20 files (`population.txt`), restricted to
+     pairs with a `ZoneStep` declaration on one side, as for gate 95. The module is new, so every
+     such pair is new.
+     - **At the first head:** one pair, `ZoneStep`'s private zero-time contract against
+       `ZoneRebalance`'s private `zr_anchorContract` (99%). **Fixed** by the public
+       `Contract.zero`, which both now use.
+     - **At the final head:** no pair (1,991 declarations screened).
+   - **The changed-files screen** (`changed-files/`): pairs with a declaration of any of the
+     three changed Lean files on one side, over 22 files (adding the cited `Deterministic` and
+     `Configuration`), at base and head. 562 pairs at base and 559 at head, **no new pair**. The
+     three gone are inside `ZoneRebalance`, shortened by the anchor's re-point.
 
    Does anything else re-derive existing material, including inline steps?
    - `zs_rowPre_mapState` (the zone rows' precondition does not read the state) against
@@ -118,7 +123,10 @@ every PR head). They include the `simps`-generated equations and `Contract.zero`
     `zr_anchorContract`'s body and the six private proofs re-pointed to `Contract.zero_*`.
   - `Contract/Basic` gains `Contract.zero` and its five equations.
 - **Replay:** `replay-lzsa` (`evidence/merged-tree/`), the downstream closure of the changed
-  files, 111 modules, chained from `oleans-lcf3`. @REPLAY-RESULT@
+  files, 111 modules, chained from `oleans-lcf3`. It passed: 111 modules, 0 failed. The static
+  check found 0 mismatches, and the only `sorry`s are the campaign's existing 45 (`RecordTable` 4,
+  `TQBF` 21, `RAMSimulation` 14, `Hierarchy` 4, `Savitch` 1, and `TwoTapes` 1, G5's own
+  `two_work_tapes_run`).
 
 ## Findings format
 

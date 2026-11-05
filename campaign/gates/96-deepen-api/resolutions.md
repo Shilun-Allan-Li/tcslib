@@ -10,3 +10,10 @@
 mismatches, the campaign's existing 30 `sorry`s (`evidence/merged-tree/`).
 
 #196 is clear to merge once gate 96 closes with zero blockers and zero majors.
+
+**Dispatched (2026-11-05, the user).**
+
+**Maintainer's supplementary check (after staging):** the pack cites four files outside the
+18-file screen population (`Simulation`, `ARMLoops`, `ARMProof`, `Codec/Langs`). A screen widened
+to 29 files and restricted to pairs touching the PR's files finds no pair beyond the pack's
+`NoEdge`/`Rel` idiom (`evidence/screen/supplementary-29files/`).
