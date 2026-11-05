@@ -39,6 +39,27 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 5. **Copy-text screens:** `scripts/copy-text-screen-v3.py`, one at a time under
    `$TCSLIB_SCRATCH/locks/screen`.
 
+6. **Cloud specifics, learned 2026-11-05** (the first cloud session):
+   - **Profile edits are refused**, so the variables live in `$TCSLIB_SCRATCH/env.sh` (with elan's
+     `bin` on `PATH`); source it at the start of every command. elan is installed with
+     `--no-modify-path` and no default toolchain; the pin comes from `lean-toolchain`.
+   - **The cache:** narrowed to the Mathlib roots of the bootstrap set plus the open PR heads
+     (355 roots, 3,605 files, from the Azure host `lakecache.blob.core.windows.net`, 0 failures).
+     `mathlib4.lean-cache.cloud` is refused by the proxy, but this Mathlib uses it only under
+     `USE_FRO_CACHE=1`. A new Mathlib import needs a narrowed fetch for its root.
+   - **A worker restart ends every process**, detached ones included, and restarts came while the
+     session waited on the user. Long jobs must be resumable: `bootstrap-snapshot.sh <wt> <name>
+     --resume` continues a killed bootstrap after its checks. After a restart, check
+     `$TCSLIB_SCRATCH/fills/replay/*.log` and resume.
+   - **`lean_check_tree.sh` takes no lock slot**, so a running bootstrap or replay holds slot 2 by
+     hand: `mkdir $TCSLIB_SCRATCH/locks/lean-slot-2 && echo <its bash pid> > …/pid` (freed by the
+     stale check when it dies).
+   - **ext4 has no copy-on-write:** `cp -R` copies a snapshot in full (about 1 GB). Prune.
+   - `mkreplay.py` calls `$TCSLIB_SCRATCH/api/staticsorry.py`: a copy of
+     `devtools/seyoon/staticsorry.py`. `$TCSLIB_SCRATCH/api/chain.py` lists a change's pre-replay
+     compile chain.
+   - **Sub-agents:** at most five at once, for independent tasks (WORKFLOW §5).
+
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
 
@@ -80,6 +101,20 @@ Two October re-points may still be 12.2c material. The user had them pushed as a
 The rest stay on the Mac.
 
 `maint/12.2c-t2a` (2026-10-12) is the T2a facade wiring.
+
+**Update (2026-11-05, cloud session).** All three gates have reported:
+- **Gate 95 (#191): does not close**, 0/1/4 (F1, inline `BufferWords` re-derivations). The user
+  ruled **repair**.
+- **Gate 96 (#196): does not close**, 0/2/4 (F1, `NoEdge` without `_iff`; F2, `apply_of_lt`
+  re-derives `recordStep_window`). The user ruled **harvest** (public `Cfg.InWindow.apply_iff` and
+  `.mono`), **acknowledged by kind** the window-step family for 12.2c, and ruled F11's pair an
+  **idiom** with a 12.2c item for codec-level query predicates.
+- **Gate 97 (#197): PASS**, 0/0/6. The user ruled **publish** `zoneRowPre_congr` and
+  `zoneRowPre_mapState_iff` (F5). The minors are swept in one closing commit.
+
+The repairs are local commits on `wt-191`, `wt-196`, `wt-197` until each elaborates on the first
+cloud snapshot `oleans-cloud0` (the bootstrap at `dfed8b1f`'s Lean tree); then pushed, replayed,
+and gates 95 and 96 go to round 2. Each gate's `resolutions.md` holds the details.
 
 ## 3. Queue after the PRs
 
