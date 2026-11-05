@@ -6915,8 +6915,9 @@ private theorem dz_split_tape (s₁ w : List Bool) (b : Bool) :
     · rw [h2, Function.update_self, FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
     · rw [Function.update_of_ne h2]
       by_cases h3 : 0 ≤ q ∧ q < (s₁.length : ℤ)
-      · rw [FinTM.bufferTape_eq, FinTM.bufferTape_eq, if_pos h3.1, if_pos h3.1, List.append_assoc,
-          List.getElem?_append_left (by omega)]
+      · have ht : (s₁ ++ [b] ++ w).take s₁.length = s₁ := by
+          rw [List.append_assoc]; exact List.take_left' rfl
+        rw [← FinTM.bufferTape_take (s₁ ++ [b] ++ w) s₁.length h3.2, ht]
       · rw [FinTM.bufferTape_eq_none_of_not_mem _ h3, FinTM.bufferTape_eq_none_of_not_mem _ (by
           simp only [List.length_append, List.length_singleton]
           push_cast
@@ -7638,8 +7639,7 @@ private theorem dz_top_run {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF 
       rcases out with _ | ⟨b0, out'⟩
       · simp [dzQRed, FinTM.bufferTape_nil]
       · have e : FinTM.bufferTape (b0 :: out') 0 = some b0 := by
-          rw [FinTM.bufferTape_eq, if_pos le_rfl]
-          rfl
+          simpa using FinTM.bufferTape_nat (b0 :: out') 0
         rw [e]
         cases b0 <;> simp [dzQRed]
     have seg3 := qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .rd none
@@ -7658,9 +7658,7 @@ private theorem dz_top_run {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF 
       · exact Or.inl rfl
       · exact Or.inr rfl
     · have hle : τ₀ ≤ τ := Nat.le_of_not_lt fun hlt => hlive0 τ hlt hstτ
-      have hsame : BF.tm.runFrom c0 τ = BF.tm.runFrom c0 τ₀ := by
-        obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hle
-        rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hst0]
+      have hsame := MultiTapeTM.runFrom_output_eq_of_halt BF.tm c0 hle hst0
       rw [hsame, ← hout, hv]
       split_ifs with hf
       · exact ⟨fun _ => hf, fun _ => rfl⟩
@@ -7736,8 +7734,7 @@ private theorem dz_qoff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : F
 /-- The buffer of `b :: tail` holds `b` at cell `0`: the query's flag, which the take reads. -/
 private theorem dz_cell0 (b : Bool) (tail : List Bool) :
     FinTM.bufferTape (b :: tail) 0 = some b := by
-  rw [FinTM.bufferTape_eq, if_pos le_rfl]
-  rfl
+  simpa using FinTM.bufferTape_nat (b :: tail) 0
 
 /-- **The run at a top.** When the query is `true :: tail`, the run copies the tail and runs the
 hosted decider on it (`dz_top_run`): it reaches a verdict within `dzQB κ (g n)` steps, the
@@ -8105,8 +8102,7 @@ private theorem dz_setup_facts {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} 
     rw [h]
     rfl
   · show dzLay (dzSetL f g z) (FinTM.bufferTape []) (κ.tp 6) (0 + p) ≠ none
-    rw [dzLay_tp, h6, zero_add, FinTM.bufferTape_eq, if_pos (by omega),
-      show ((p : ℤ)).toNat = p by omega, List.getElem?_eq_getElem hp]
+    rw [dzLay_tp, h6, zero_add, FinTM.bufferTape_nat, List.getElem?_eq_getElem hp]
     exact Option.some_ne_none _
   · show dzLay (dzSetL f g z) (FinTM.bufferTape []) (κ.tp 6)
       (0 + ((dzBlk (g z.length)).length : ℤ)) = none
