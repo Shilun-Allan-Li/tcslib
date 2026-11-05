@@ -42,17 +42,17 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
 
-## 2. State (updated 2026-11-04, about 22:40 PST)
+## 2. State (updated 2026-11-04, about 23:30 PST)
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #188 | E-D's landing: `exists_diagonalizer` proved | `replay-led2` **passed** (3/3, at `02030b70`) | 93, round 2 **dispatched** | merge on a PASS |
-| #189 | G5's statements: `two_work_tapes_run` (`sorry`), `alphabet_reduction_run`, `exists_code2TM`, the `Encoding` renaming lemma, `universal_TlogT` | `replay-lg5` **running** (325 modules from `oleans-ledge`) | 92 **dispatched** | merge on a pass and a PASS; then G5's fill brief |
-| #190 | the configuration facts (`CfgFacts`, five lemmas; private copies re-pointed) | `replay-lcf2` passed at `95d54ce2`; the certifying replay is the merged-tree one after #189 | 94 to stage | merge after #189 |
-| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | after #190 merges | a light fill gate (95) to stage | retarget from `lean/cfg-facts` to the campaign once #190 merges; merge the campaign; replay |
+| #189 | G5's statements: `two_work_tapes_run` (`sorry`), `alphabet_reduction_run`, `exists_code2TM`, the `Encoding` renaming lemma and `stateEquivFin_eq`, `universal_TlogT` | `replay-lg5b` running (325 modules from `oleans-ledge`, at `9e96f646`) | 92 **closed** (round 2, CLOSE 0/0/2) | **merge first** when `lg5b` passes; then G5's fill brief |
+| #188 | E-D's landing: `exists_diagonalizer` proved | `replay-led3` **passed** (3/3, at `935245f4`) | 93 **closed** (round 3, CLOSE 0/0/2) | after #189 merges: a 3-module merged-tree re-replay from `oleans-lg5b`, then merge. Its file sits in #189's closure, so the other order would re-replay 325 modules |
+| #190 | the configuration facts (`CfgFacts`, five lemmas; private copies re-pointed; RN-1 by kind) | `replay-lcf2` passed at `95d54ce2`; certifying replay is the merged-tree one after #189 and #188 (83 modules) | 94 **dispatched** | merge after #188 |
+| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | after #190 merges (4 modules) | 95: pack drafted, to stage after the retarget | retarget from `lean/cfg-facts`; merge the campaign; re-point `nf_tag` (RN-1, 83% to `Cfg.mapState_eq_of_fields`); replay; stage gate 95 |
 
 With #188 and #191 merged, `NTimeHierarchy`'s three theorems should be free of `sorryAx`.
-Confirm this with `#print axioms` at that tree.
+Confirm with `#print axioms` at that tree.
 
 ## 3. Queue after the PRs
 
