@@ -1,7 +1,7 @@
 # Gate 03f1 ([PS10] ch. 2–4, discrete log, its hard-core bit, ElGamal): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the base
-repair has landed (`PLAN.md`).
+**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
+PR has landed (`PLAN.md`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
 `<HEAD, 40 hex, from git rev-parse>`. This pack covers the discrete-log candidate (the assumption
