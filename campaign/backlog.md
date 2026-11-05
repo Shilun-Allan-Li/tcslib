@@ -4239,8 +4239,9 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 
   **Gate 91 dispatched** (user, 2026-11-04; `exchange/archive/gates/91-codec-edge-api-gate/`).
   **Round 1: OPEN 0/1/4** (`upd_le` re-proved `register_update_le`); fixed at `b360808c`.
-  **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Two minors are open on #184: seven
-  label docstrings (minor 2), and the chain re-run at the head with source hashes (minor 1).
+  **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Its two Lean-side minors are fixed: seven
+  label docstrings rewritten (`e6eaaf94`), and the chain re-run at that head with source hashes
+  (22/22 clean, from a fresh `oleans-larm` clone).
   After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
   deepening fill's brief issues once #182 and #184 have both merged.
 
