@@ -89,8 +89,10 @@ PR head). Three choices avoided clashes:
    `Reach`, `reach_of_chain` and `reflTransGen_of_reach`; its new import of `ISCountMath` adds
    `PathWalk` and `ISCountMath` to `Reach`'s closure. Is there a better home?
 5. **Duplication** (`evidence/screen/`): the v3 screen over the eight files and nine neighbors, 17
-   in all, base the campaign tip and head the PR, with the new pairs. Does anything re-derive
-   existing material? In particular:
+   in all, at base (the campaign tip, 321 declarations, 64 pairs) and head (the PR, 323
+   declarations, 64 pairs), with **no new pair** (`pairdiff.txt`). The `Iff.rfl` equations are
+   too short to screen. An earlier 12-file run at the five-commit head also found none
+   (`round1-12files/`). Does anything re-derive existing material? In particular:
    - `reach_of_reflTransGen` against `ISGen.mem_ball_iff_rcode` (a ball of the walk relation as
      the reachable codes) and against `mem_iff_reach`'s chain cut;
    - `apply_of_lt` against `inWin_stepWith`.
