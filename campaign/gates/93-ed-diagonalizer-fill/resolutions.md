@@ -78,3 +78,5 @@ Checks at the fix:
 | 3–8 | note | Integrity; the five replacements; the sweep; ED-IN; the seal. | Agreed. On note 6, two of the three `bufferTape_nat` sites use `simpa`, and the third an explicit `rw`. |
 
 **Gate 93 closes (round 3, CLOSE, 2026-11-04).**
+
+**Merged-tree replay after #189 (2026-11-05):** the campaign merged into #188 (`52331982`). `replay-led4` **passed**: 3 of 3, 0 failed, static-equal (no sorry warning), chained from `oleans-lg5b`; snapshot `oleans-led4` (`evidence/merged-tree-led4/`). **#188 is clear to merge.**
