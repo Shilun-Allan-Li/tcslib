@@ -1,8 +1,8 @@
 # Ch3–4 fill campaign — the general Savitch theorem by iterative deepening (`Complexity.savitch`, `SpaceComplexity/Savitch.lean`, new `SavitchARM/Deepen.lean`)
 
-> **DRAFT, not issued** (maintainer, 2026-11-05 overnight). It issues after the deepening API PR
-> (gate 96) merges, with its pre-ship re-run on the merged tree and the measured items (`@TBD@`)
-> filled in. Ruled by the user, 2026-11-05:
+> **Issued** (maintainer, 2026-11-05) after the deepening API PR (#196, gate 96) merged, with its
+> pre-ship re-run on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
+> Ruled by the user, 2026-11-05:
 > - **decision 5:** `SavitchARM/Window` lands with the API PR (#196), so this fill cites it;
 > - **the agent:** Claude.
 >
@@ -14,7 +14,8 @@
 
 - Clone `https://github.com/Shilun-Allan-Li/tcslib` and check out branch
   **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it fails, **stop**.
+- Confirm that `git merge-base --is-ancestor fd97df61f74851db82a0b68e1913a14ca5e77eac HEAD`
+  succeeds. If it fails, **stop**.
   That commit contains:
   - **the search** you embed: `Complexity.LogProg.SavitchARM.A E : ARM 18 4 (Lb E)`, its outer
     search `outerU_run`, `A_noVal`, and the codec's deciders and their memberships
@@ -30,9 +31,8 @@
     - `rel_iff_orc`, `initO_iff_orc` and `accO_iff_orc`;
     - `setSt_toV` and `outerSt_toV`;
     - the window module `SavitchARM/Window`: `NoEdge`, its equation `noEdge_iff`, `noEdge_of_lt`,
-      `mem_iff_reach_of_noEdge`; gate 96's round-2 probe
-      `campaign/gates/96-deepen-api/evidence/round2/route/BlockFitDeepen.lean.txt` derives both
-      loop steps from them with `NoEdge` sealed;
+      `mem_iff_reach_of_noEdge`; gate 96's round-2 probe (`BlockFitDeepen.lean.txt`, among this
+      round's inputs) derives both loop steps from them with `NoEdge` sealed;
   - the generic loops of `Machines/ARMLoops` (`move_run`, `move2_run`, `dmove_run`, `sub_run`,
     `halve_run`, `copy_run`, `shl_run`), `inputLength_loop` (`Logspace/InputAccess`), the run
     algebra of `Machines/ARMProof` (`AReach.refl`, `.trans`, `.step`, `.single`, `.halt`,
@@ -41,15 +41,26 @@
     the copy-text screen v3 `scripts/copy-text-screen-v3.py`;
   - **this round's inputs** (`campaign/fills/ch34/inputs/ch34-fill-deepen/`):
     - the route probe with the pins and the assembly (`DeepenRoute.lean.txt`);
-    - the block fit (`BlockFit.lean.txt`): the template for both blocks;
-    - the import probe, the order list, the base sorry set and the screen base (`@TBD@`).
+    - the block fit (`BlockFitDeepen.lean.txt`, re-run on the merged tree): the template for
+      both blocks, and the loop's two steps;
+    - the overlay (`DeepenOverlay.lean.txt`: your file with its three imports and the pins), the
+      import probe (`DeepenImportProbe.lean.txt`) and the screen population;
+    - the order list `campaign/fills/ch34/orders/ch34-fill-deepen.txt`, the base sorry set, the
+      screen base and the pre-ship log (`campaign/fills/ch34/logs/ch34-fill-deepen-*`).
 
   The design note is `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` (§2, §8–§10).
 - **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule. Fetch
-  the cache for your roots only; never the unfiltered `lake exe cache get`. If Lean never runs, do
-  not draft proofs blind: deliver the environment report only.
-- **Branch at exactly that commit**: `git checkout -b fill/ch34-deepen @ANCESTOR@`;
-  `git rev-parse HEAD` must print `@ANCESTOR@`. Never rebase, merge or cherry-pick.
+  the cache for your roots only (63 Mathlib roots, listed in the pre-ship log); never the
+  unfiltered `lake exe cache get`. If Lean never runs, do not draft proofs blind: deliver the
+  environment report only.
+- **Branch at exactly that commit**, not at the campaign tip:
+
+  ```sh
+  git checkout -b fill/ch34-deepen fd97df61f74851db82a0b68e1913a14ca5e77eac
+  git rev-parse HEAD        # must print fd97df61f74851db82a0b68e1913a14ca5e77eac
+  ```
+
+  Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
 - **Delivery is by zip** (`workflow.md` §4): `fill-ch34-deepen.zip`, with the same contents as
   NF's fill:
   - `REPORT.md`, the full modified source, a `git format-patch` series against your base and a
@@ -82,8 +93,8 @@ space is `O((sp |x| + logSpace |x| + 1)²)`.
   - the search proved for any oracle (Hydroxyi);
   - the embedding of a block into a larger machine (#182) and the edge language (#184);
   - the API (#196).
-- The maintainer's probes prove the window lemmas and the block fit outright, and `savitch` from
-  `deepen_contract`.
+- The maintainer's probes prove the block fit and the loop's two steps outright, and `savitch`
+  from `deepen_contract`, on the merged tree.
 
 **This fill writes one machine, `D`, and its correctness.** **Proved modulo, exactly:** none. A
 complete delivery has no `sorryAx` in `Complexity.savitch`.
@@ -144,7 +155,7 @@ dead code):
 
 Each block is the image of `Ins.embed ρ σ ι k r₀`, with `ρ` an injective register map and `k`
 the block's two exits into `D`'s own labels. **Each block's run is one `AHalt.embed_guardLe` of
-`outerU_run`, with `A_noVal`, exactly as `BlockFit.lean.txt`'s `fit_edge_block`.** Copy that
+`outerU_run`, with `A_noVal`, exactly as `BlockFitDeepen.lean.txt`'s `fit_edge_block`.** Copy that
 proof's shape for both blocks:
 - the oracle reads through `initO_iff_orc`, `accO_iff_orc`, `rel_iff_orc`, `stepRel_iff_mem`
   and `indicator_eq_decide`;
@@ -217,7 +228,7 @@ contract's form.
    record the obstruction mathematically, and continue with every item that does not depend on it.
 5. **No touching other sorries.** Cite proved material; never re-prove it.
 6. **Imports:** `Deepen` imports exactly `SavitchARM.Correct`, `SavitchARM.Window` and
-   `Machines.ARMLoops` (`@TBD@`: the import probe fixes the list).
+   `Machines.ARMLoops`; the import probe resolves every name this brief cites through them.
 7. **One proof per shared argument.** These are models to read, not to copy:
    - the search's own setup (`setup_run`, `ld_run`, `pw_run`, `mul_run`, `sh_run`), which is
      `A`'s;
@@ -261,12 +272,18 @@ Add no new admission: a helper is inserted only once proved.
 ## Duplication governance (binding)
 
 Run the v3 screen before and after, one run at a time, under `nice -n 10`, each on a frozen copy
-of its commit. The population (`@TBD@` files) is:
+of its commit. The population (`screen-population.txt`: 20 files, 19 at your base, where
+`Deepen` does not exist yet) is:
 - your files;
 - `SavitchARM/*`;
 - `Machines/ARM`, `ARMProof`, `ARMLoops` and `ARMWidth`;
 - `Logspace/InputAccess`, `Codec/Bridge` and `ExpBFS/Radius`;
 - the hazards `ExpBFS/Main`, `ExpBFS/Run` and `ExpBFS/Machine`.
+
+The base is `campaign/fills/ch34/logs/ch34-fill-deepen-screen-base.txt` (MEASURED at your base,
+over the 19 files that exist there): 269 declarations, 96 pairs, 27,259 characters, none on
+`Savitch.lean`. Your before screen, on a frozen copy of your base over those 19 files, must
+equal it. **No new cross-file pair** with a declaration of your files on one side.
 
 The semantic search is required: for every new private lemma, search the tree and every open PR
 branch by name and statement, and pose it to `exact?`.
@@ -275,15 +292,17 @@ branch by name and statement, and pose it to `exact?`.
 
 - Lean 4 v4.25.0; the cache for your roots only; **never `lake build`**;
   `scripts/lean_check_tree.sh` for every check, one Lean process at a time.
-- **Bootstrap:** the order list (`@TBD@` modules); the base sorry set (`@TBD@`), where yours is
-  `savitch`'s.
+- **Bootstrap:** after your first edit (which creates `Deepen`), the order list (196 modules, 63
+  Mathlib roots); the base sorry set has 26 entries in 10 modules
+  (`campaign/fills/ch34/logs/ch34-fill-deepen-base-sorries.txt`), where yours is `savitch`'s.
 - **Final checks:**
   - every module of the order list: zero errors, sorry warnings exactly the base's less
     `savitch`'s;
   - the axiom prints: `savitch`, `savitch_of_logSpace_le` and `deepen_contract` on
     `[propext, Classical.choice, Quot.sound]`;
-  - lint: `campaign_style_lint.py` 0 FAIL on `SpaceComplexity`, and the policy linter on your
-    files.
+  - lint: `python3 -I scripts/campaign_style_lint.py TCSlib/Complexity/SpaceComplexity`, 0 FAIL
+    (base: 0 FAIL, 80 WARN over 111 files), and `python3 -I scripts/style_lint.py` on your two
+    files, 0 findings (base: `Savitch.lean`, 0).
 
 ## REPORT.md checklist
 
