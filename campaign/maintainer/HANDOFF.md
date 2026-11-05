@@ -42,21 +42,24 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
 
-## 2. State (updated 2026-11-04, about 23:30 PST)
+## 2. State (updated 2026-11-05, about 00:40 PST)
+
+**Merged on 2026-11-04/05:** #181 (space facts), #182 (ARM embedding), #184 (the codec's edge mode),
+#189 (G5's statements; gate 92 closed), #188 (E-D's landing, `exists_diagonalizer`; gate 93 closed
+in round 3).
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #189 | G5's statements: `two_work_tapes_run` (`sorry`), `alphabet_reduction_run`, `exists_code2TM`, the `Encoding` renaming lemma and `stateEquivFin_eq`, `universal_TlogT` | `replay-lg5b` running (325 modules from `oleans-ledge`, at `9e96f646`) | 92 **closed** (round 2, CLOSE 0/0/2) | **merge first** when `lg5b` passes; then G5's fill brief |
-| #188 | E-D's landing: `exists_diagonalizer` proved | `replay-led3` **passed** (3/3, at `935245f4`) | 93 **closed** (round 3, CLOSE 0/0/2) | after #189 merges: a 3-module merged-tree re-replay from `oleans-lg5b`, then merge. Its file sits in #189's closure, so the other order would re-replay 325 modules |
-| #190 | the configuration facts (`CfgFacts`, five lemmas; private copies re-pointed; RN-1 by kind) | `replay-lcf2` passed at `95d54ce2`; certifying replay is the merged-tree one after #189 and #188 (83 modules) | 94 **dispatched** | merge after #188 |
-| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | after #190 merges (4 modules) | 95: pack drafted, to stage after the retarget | retarget from `lean/cfg-facts`; merge the campaign; re-point `nf_tag` (RN-1, 83% to `Cfg.mapState_eq_of_fields`); replay; stage gate 95 |
+| #190 | the configuration facts (`CfgFacts`, five lemmas; RN-1 by kind) | `replay-lcf3` **running** (86 modules from `oleans-led4`, at `a5d448e3`) | 94 **closed** (CLOSE 0/0/2) | merge when `lcf3` passes |
+| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | after #190 merges: retarget to the campaign, merge it, replay from `oleans-lcf3` (`NDNormalForm`, the `ClassNP` facade, `NTimeHierarchy`, `Diagonalization`) | 95: pack drafted (`campaign/gates/95-nf-landing-fill/`), staged after the retarget with its landing screen re-run | merge on a pass and a PASS |
 
-With #188 and #191 merged, `NTimeHierarchy`'s three theorems should be free of `sorryAx`.
-Confirm with `#print axioms` at that tree.
+With #191 merged, the headline count is expected to reach **21 of 26**. Check `NTimeHierarchy` with
+`#print axioms`; the status record is `campaign/status/2026-11-05-headlines/`.
 
 ## 3. Queue after the PRs
 
-1. **G5's fill brief:** Hennie–Stearns over G2–G4's zone contracts. The two carried minors of
+1. **The general `savitch`'s deepening fill brief** (now unblocked: #182 and #184 merged); then
+   **G5's fill brief:** Hennie–Stearns over G2–G4's zone contracts. The two carried minors of
    gate 22 are pinned (plan §2), and `k = 0` is handled separately. Codex first.
 2. **The general `savitch`'s deepening fill:** its brief is due now that #182 and #184 have
    merged. The route is pinned in
