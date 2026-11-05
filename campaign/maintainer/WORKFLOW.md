@@ -101,6 +101,17 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 - Before an API pack, `git grep` every open PR branch, prepared landing and delivery ref for each
   new public statement's shape, as well as screening the base.
 - Screen populations include every file the brief or pack cites.
+- **Search inline steps, not only statements.** A whole-statement `exact?` misses a `have` that
+  re-proves a published lemma inside a longer proof. Gate 93 went to three rounds on such steps:
+  first-exit uniqueness, buffer reads and output stability after a halt. Before any pack, and in
+  every review brief, sweep the new proofs for the usual signs and test each hit against the
+  published API:
+  - `bufferTape_eq` unfolded, or append indexing done by hand;
+  - `Nat.exists_eq_add_of_le` with `runFrom_add` and `runFrom_of_halt`;
+  - `lt_trichotomy` or `Nat.find` over runs;
+  - five-line `Cfg.ext` blocks.
+
+  Once a family is acknowledged by kind, a later find is a minor.
 
 ## 4. Gates and bundles
 

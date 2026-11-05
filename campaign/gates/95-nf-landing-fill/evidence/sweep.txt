@@ -1,0 +1,23 @@
+# The sweep at #191's head 4354cbeb (NDNormalForm), after the fixes
+== bufferTape_eq[],]: 0
+== Nat.exists_eq_add_of_le: 0
+== runFrom_of_halt: 0
+== lt_trichotomy: 0
+== Nat.find: 4
+3101:  set t₀ := Nat.find hex with ht₀
+3102:  have hspec : (N.tm.runWith (w.take t₀) (N.tm.initCfg x)).state = none := Nat.find_spec hex
+3104:    fun r hr => Nat.find_min hex hr
+3105:  have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
+== apply Cfg.ext: 12
+64:    apply Cfg.ext
+571:  apply Cfg.ext
+1283:  apply Cfg.ext
+1364:    apply Cfg.ext
+1390:    apply Cfg.ext
+1485:    apply Cfg.ext
+1728:          apply Cfg.ext
+1851:    apply Cfg.ext
+1899:      apply Cfg.ext
+1961:    apply Cfg.ext
+2179:        apply Cfg.ext
+2246:            apply Cfg.ext

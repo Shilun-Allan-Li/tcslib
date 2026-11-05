@@ -1,0 +1,12 @@
+head pairs 740; union of earlier 745; new at head 3; earlier-only 8
+  NEW   CfgFacts.lean::Cfg.mapState_const_eq_mapState_sigma  reproduces  CfgFacts.lean::Cfg.mapState_eq_of_fields: 130/175 = 74%
+  NEW   SeamLayout.lean::exists_seamLayoutTM  reproduces  CfgFacts.lean::Cfg.mapState_eq_of_fields: 117/175 = 67%
+  NEW   ZoneRebalance.lean::zr_short_fields  reproduces  CfgFacts.lean::Cfg.mapState_eq_of_fields: 106/175 = 61%
+  GONE  SeamLayout.lean::sl_rewrap  reproduces  CfgRecord.lean::recordStep_mapState_eq: 153/173 = 88%
+  GONE  ExhaustiveReplay.lean::xr_phase_step  reproduces  CfgRecord.lean::recordStep_mapState_eq: 141/173 = 82%
+  GONE  SeamLayout.lean::exists_seamLayoutTM  reproduces  CfgRecord.lean::recordStep_mapState_eq: 126/173 = 73%
+  GONE  ZoneRebalance.lean::zr_short_fields  reproduces  CfgRecord.lean::recordStep_mapState_eq: 125/173 = 72%
+  GONE  ExhaustiveReplay.lean::xr_halt_fixed  reproduces  CfgRecord.lean::recordStep_mapState_eq: 115/173 = 66%
+  GONE  ExhaustiveReplay.lean::xr_halt_fixed  reproduces  ExhaustiveReplay.lean::xr_phase_step: 437/693 = 63%
+  GONE  Seam.lean::phaseHostTM_run  reproduces  SeamLayout.lean::sl_rewrap: 203/322 = 63%
+  GONE  ExhaustiveReplay.lean::xr_E_initCfg  reproduces  SeamLayout.lean::sl_rewrap: 189/322 = 59%

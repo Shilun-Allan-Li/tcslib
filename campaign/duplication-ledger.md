@@ -982,6 +982,15 @@ ruled by the user, 2026-11-04):
   deduplicated: RO-1's one, the five distinct NB-1/BL-1/LS-3 members, `dz_word_lt` and
   `dz_split_stream`. E1 retires `qy_call_bound`'s BL-1 (iii) step. Row candidates (RC-3) and
   in-file factorings (QF-1) are not counted as debt.
+- **ED-IN, inline re-derivations, scoped by kind (ruled by the user, 2026-11-04, gate 93 round
+  2):** any inline step in `NTimeDiagonalizer` that re-derives a published run, buffer or segment
+  lemma belongs to this family, for the dedup window; a later find is an accounting minor. The
+  members found so far are all removed: `dz_first` (`Segment.time_eq`), `dz_split`'s separator
+  (`bufferTape_append_mid`), `dz_split_tape`'s prefix (`bufferTape_take`), `dz_top_run`'s output
+  (`runFrom_output_eq_of_halt`), and three natural cells (`bufferTape_nat`).
+  **Further member (gate 93 round 3, finding 1):** `qy_patch_end`'s prefix branch re-derives
+  `FinTM.bufferTape_take` (and so `_take` has a counterpart, against BW-1's note); re-pointed in the
+  dedup window. Census 9 of 342.
 - **Removed in round 2 (gate 93, findings 1–2):** `dz_first` re-proved `Segment.time_eq`, and
   `dz_split`'s separator cell re-proved `FinTM.bufferTape_append_mid`. Both now cite them (#188
   `a64f513d`).
@@ -1001,6 +1010,19 @@ cites them:
   NF cannot import).
 
 The existing private copies are re-pointed in the API PR where the files are the campaign's.
+
+**RN-1, renamed configurations converted field by field, scoped by kind** (ruled by the user,
+2026-11-04, with gate 94). #190 publishes the general fact, `Turing.Cfg.mapState_eq_of_fields`: a
+renamed configuration equals any configuration with its data fields and the renamed state.
+- **The family:** every inline proof of that fact anywhere in TCSlib (the five-line
+  `Cfg.ext`/`Cfg.mapState_*` block), with the retag (ii) as an instance. A later find is an
+  accounting minor.
+- **Re-pointed in #190:** `CfgRecord`'s `recordStep_mapState_eq` (removed), `SeamLayout`'s
+  `sl_rewrap`, and `ExhaustiveReplay`'s `xr_phase_step` (two blocks) and `xr_halt_fixed` (two
+  blocks).
+- **Remaining, for the dedup window:** among others `SeamLayout.exists_seamLayoutTM` and
+  `ZoneRebalance.zr_short_fields` (screen pairs at 67% and 61%), and the 15 inline retag steps of
+  NF's F2.
 The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
 its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
 `Nat.forall_lt_succ_left'` (E1).
