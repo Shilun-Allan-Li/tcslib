@@ -6,7 +6,7 @@
 WT="$1"; OL="$2"; F="$3"; LP="$OL"
 for d in "$WT"/.lake/packages/*/.lake/build/lib/lean; do [ -d "$d" ] && LP="$LP:$d"; done
 export LEAN_PATH="$LP"
-LOCKS=/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/locks
+LOCKS="${TCSLIB_SCRATCH:-$HOME/.tcslib-scratch}"/locks
 mkdir -p "$LOCKS"
 SLOT=""
 release() { if [ -n "$SLOT" ]; then rm -f "$SLOT/pid"; rmdir "$SLOT" 2>/dev/null; SLOT=""; fi; }
