@@ -1,0 +1,37 @@
+"""Gate 96 (#196), finding 1: extend the block-fit probe to the deepening's two loop steps.
+
+usage: python3 -I mkblockfit.py <evidence/route/BlockFitReal.lean.txt> <deepen-steps.lean.part.txt>
+           <out BlockFitDeepen.lean.txt>
+
+Four edits to the gate's BlockFitReal probe, each at an anchor asserted to occur once:
+  1. import `SavitchARM.Window` beside `SavitchARM.Correct`;
+  2. the module note says what was added;
+  3. `Complexity.LogProg.SavitchARM.NoEdge` joins the Fit section's `[local irreducible]` list;
+  4. the `Loop` section (the join and the two steps) goes in before `end Fit`, under that seal."""
+import sys
+
+src, part, out = sys.argv[1:4]
+s = open(src, encoding='utf-8').read()
+
+
+def once(old, new):
+    global s
+    assert s.count(old) == 1, old
+    s = s.replace(old, new, 1)
+
+
+once('import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct\n',
+     'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct\n'
+     'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window\n')
+once('deepening window API\'s equations. A probe, not library code. -/',
+     'deepening window API\'s equations. A probe, not library code.\n\n'
+     'Extended for gate 96 (finding 1) at #196\'s repaired head `f2616fee`: with\n'
+     '`Complexity.LogProg.SavitchARM.NoEdge` sealed beside the fit\'s other definitions, the two loop\n'
+     'steps of the deepening follow from `fit_edge_block`, `noEdge_iff`, `noEdge_of_lt` and\n'
+     '`mem_iff_reach_of_noEdge` (section `Loop`). -/')
+once('  Complexity.LogProg.AReach Complexity.LogProg.PreS\n',
+     '  Complexity.LogProg.AReach Complexity.LogProg.PreS Complexity.LogProg.SavitchARM.NoEdge\n')
+steps = open(part, encoding='utf-8').read()
+once('\nend Fit\n', steps.rstrip('\n') + '\n\nend Fit\n')
+open(out, 'w', encoding='utf-8').write(s)
+print('wrote', out)

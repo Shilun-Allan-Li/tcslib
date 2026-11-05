@@ -1,0 +1,20 @@
+# chain check of #196 at f2616fee1d41f75600bc9070db149d32a0c69acc (16 modules) into oleans-chk196; Thu Nov  5 21:45:05 UTC 2026
+TCSlib/Complexity/TuringMachine/Build/CfgRecord exit=0 errors=0 sorry=0 secs=563
+TCSlib/Complexity/TuringMachine/Build/RecordTable exit=0 errors=0 sorry=4 secs=56
+TCSlib/Complexity/SpaceComplexity/ConfigGraph exit=0 errors=0 sorry=0 secs=3
+TCSlib/Complexity/SpaceComplexity/Codec/Word exit=0 errors=0 sorry=0 secs=3
+TCSlib/Complexity/SpaceComplexity/Codec/Valid exit=0 errors=0 sorry=0 secs=4
+TCSlib/Complexity/SpaceComplexity/Codec/Step exit=0 errors=0 sorry=0 secs=3
+TCSlib/Complexity/SpaceComplexity/Codec/Langs exit=0 errors=0 sorry=0 secs=1
+TCSlib/Complexity/SpaceComplexity/Codec/Checks exit=0 errors=0 sorry=0 secs=4
+TCSlib/Complexity/SpaceComplexity/Codec/Bridge exit=0 errors=0 sorry=0 secs=2
+TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius exit=0 errors=0 sorry=0 secs=3
+TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk exit=0 errors=0 sorry=0 secs=4
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach exit=0 errors=0 sorry=0 secs=3
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Recursion exit=0 errors=0 sorry=0 secs=10
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup exit=0 errors=0 sorry=0 secs=4
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Search exit=0 errors=0 sorry=0 secs=2
+TCSlib/Complexity/SpaceComplexity/SavitchARM/Window exit=0 errors=0 sorry=0 secs=1
+# chain passed; Thu Nov  5 21:56:13 UTC 2026
+# amended (now b1b5199bd946df834e38eefe4e58600f59a1a01b): Cfg.InWindow.apply_iff's per-move step is simp only with the lemmas simp? reports (core and Mathlib only), in place of the harvested bare simp
+TCSlib/Complexity/TuringMachine/Build/CfgRecord exit=0 errors=0 sorry=0 (re-run on the amended head; no output; its downstream oleans in the overlay predate the change, a proof body only, and the replay recompiles them)

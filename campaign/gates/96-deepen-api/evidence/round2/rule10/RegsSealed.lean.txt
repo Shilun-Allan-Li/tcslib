@@ -1,0 +1,40 @@
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
+
+set_option autoImplicit false
+
+namespace Complexity.LogProg.SavitchARM
+
+section SetupHome
+
+attribute [local irreducible]
+  Complexity.LogProg.SavitchARM.St.toV
+  Complexity.LogProg.SavitchARM.St.zero
+  Complexity.LogProg.SavitchARM.rs
+  Complexity.LogProg.SavitchARM.rw
+  Complexity.LogProg.SavitchARM.rK
+
+theorem setSt_toV_sealed (s w : ℕ) : (setSt s w).toV =
+    Function.update (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w) := by
+  rw [St.toV_zero, St.upd_s, St.upd_w, St.upd_K]
+  rfl
+
+end SetupHome
+
+section SearchHome
+
+attribute [local irreducible]
+  Complexity.LogProg.SavitchARM.St.toV
+  Complexity.LogProg.SavitchARM.St.zero
+  Complexity.LogProg.SavitchARM.rU
+  Complexity.LogProg.SavitchARM.rV
+  Complexity.LogProg.SavitchARM.rM
+  Complexity.LogProg.SavitchARM.setSt
+
+theorem outerSt_toV_sealed (s w u v M : ℕ) : (outerSt s w u v M).toV =
+    Function.update (Function.update (Function.update (setSt s w).toV rU u) rV v) rM M := by
+  rw [St.upd_U, St.upd_V, St.upd_M]
+  rfl
+
+end SearchHome
+
+end Complexity.LogProg.SavitchARM

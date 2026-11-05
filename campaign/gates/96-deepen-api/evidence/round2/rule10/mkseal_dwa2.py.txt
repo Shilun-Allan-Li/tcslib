@@ -1,0 +1,93 @@
+"""Gate 96, round 2: seal copies and controls for #196's repaired head (rule 10).
+Usage: python3 -I mkseal_dwa2.py <worktree> <round-1 rule10 dir> <outdir>
+Round 1's mkseal_dwa.py, re-anchored for the repair: the window copy now carries
+`Cfg.InWindow.mono`, `Cfg.InWindow.apply_iff` and `Cfg.InWindow.apply_of_lt` (the harvest), and the
+window module's whole-file sealed copy is regenerated from the repaired `SavitchARM/Window` (with
+`noEdge_iff`) by inserting round 1's seal block after the `variable` line, as round 1's copy did.
+The seals, erasures and controls are round 1's."""
+import pathlib
+import sys
+
+wt, r1, out = (pathlib.Path(a) for a in sys.argv[1:4])
+out.mkdir(parents=True, exist_ok=True)
+ERASE_W = 'attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg'
+ERASE = ERASE_W + ' Turing.NDTM.initCfg'
+SEAL_W = ['Turing.Action.apply', 'Turing.Cfg.workTapeSymbols']
+SEAL_R = ['Complexity.WalkLe', 'Complexity.LogProg.SavitchARM.Reach']
+SEAL_SET = ['Complexity.LogProg.SavitchARM.St.toV', 'Complexity.LogProg.SavitchARM.St.zero',
+            'Complexity.LogProg.SavitchARM.rs', 'Complexity.LogProg.SavitchARM.rw',
+            'Complexity.LogProg.SavitchARM.rK']
+SEAL_OUT = ['Complexity.LogProg.SavitchARM.St.toV', 'Complexity.LogProg.SavitchARM.St.zero',
+            'Complexity.LogProg.SavitchARM.rU', 'Complexity.LogProg.SavitchARM.rV',
+            'Complexity.LogProg.SavitchARM.rM', 'Complexity.LogProg.SavitchARM.setSt']
+
+
+def seal(names, erase=None):
+    return (erase or ERASE) + '\nattribute [local irreducible]\n' + '\n'.join('  ' + n for n in names) + '\n'
+
+
+def grab(rel, start, stop):
+    t = (wt / rel).read_text(encoding='utf-8')
+    assert t.count(start) == 1, (rel, start)
+    i = t.index(start)
+    j = t.index(stop, i)
+    return t[i:j]
+
+
+CR = 'TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean'
+w1 = grab(CR, 'theorem Cfg.InWindow.mono', '\n/-! ### The record alphabet -/')
+w1 = w1.replace('theorem Cfg.InWindow.mono', 'theorem Cfg.InWindow.mono_sealed', 1)
+w1 = w1.replace('theorem Cfg.InWindow.apply_iff', 'theorem Cfg.InWindow.apply_iff_sealed', 1)
+w2 = grab(CR, 'theorem Cfg.InWindow.apply_of_lt', '\nend Turing')
+w2 = w2.replace('theorem Cfg.InWindow.apply_of_lt', 'theorem Cfg.InWindow.apply_of_lt_sealed', 1)
+w2 = w2.replace('((hC.mono hs).apply_iff a)', '((hC.mono_sealed hs).apply_iff_sealed a)')
+assert 'mono_sealed hs' in w2
+(out / 'WindowSealed.lean').write_text(
+    'import TCSlib.Complexity.TuringMachine.Build.CfgRecord\n\nset_option autoImplicit false\n\n'
+    'namespace Turing\n\nsection Sealed\n\n' + seal(SEAL_W, ERASE_W) + '\n' + w1.rstrip() + '\n\n'
+    + w2 + '\nend Sealed\n\nend Turing\n', encoding='utf-8')
+r = grab('TCSlib/Complexity/SpaceComplexity/SavitchARM/Reach.lean', 'private theorem chain_of_walkLe',
+         '\n/-! ## The size bounds -/')
+r = r.replace('private theorem chain_of_walkLe', 'theorem chain_of_walkLe_sealed')
+r = r.replace('chain_of_walkLe K R u', 'chain_of_walkLe_sealed K R u')
+r = r.replace('theorem reach_of_reflTransGen', 'theorem reach_of_reflTransGen_sealed', 1)
+assert 'chain_of_walkLe_sealed K R u' in r
+(out / 'ReachSealed.lean').write_text(
+    'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Reach\n\nset_option autoImplicit false\n\n'
+    'namespace Complexity.LogProg.SavitchARM\n\nsection Sealed\n\n' + seal(SEAL_R) + '\n' + r
+    + '\nend Sealed\n\nend Complexity.LogProg.SavitchARM\n', encoding='utf-8')
+st = grab('TCSlib/Complexity/SpaceComplexity/SavitchARM/Setup.lean', 'theorem setSt_toV', '\n/--')
+st = st.replace('theorem setSt_toV', 'theorem setSt_toV_sealed', 1)
+ot = grab('TCSlib/Complexity/SpaceComplexity/SavitchARM/Search.lean', 'theorem outerSt_toV', '\n/--')
+ot = ot.replace('theorem outerSt_toV', 'theorem outerSt_toV_sealed', 1)
+(out / 'RegsSealed.lean').write_text(
+    'import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search\n\nset_option autoImplicit false\n\n'
+    'namespace Complexity.LogProg.SavitchARM\n\nsection SetupHome\n\n'
+    'attribute [local irreducible]\n' + '\n'.join('  ' + n for n in SEAL_SET) + '\n\n' + st.rstrip()
+    + '\n\nend SetupHome\n\nsection SearchHome\n\nattribute [local irreducible]\n'
+    + '\n'.join('  ' + n for n in SEAL_OUT) + '\n\n' + ot.rstrip()
+    + '\n\nend SearchHome\n\nend Complexity.LogProg.SavitchARM\n', encoding='utf-8')
+hdr = (r1 / 'ctl_header.lean.part.txt').read_text(encoding='utf-8')
+SEAL = list(dict.fromkeys(SEAL_W + SEAL_R + SEAL_SET + SEAL_OUT))
+doc = ("/-\nSeal controls for the deepening window API PR: a delta and an equation goal for each sealed "
+       "definition.\nExpected: unsealed, every control passes except recursive definitions' delta goals; "
+       "sealed, every\ncontrol fails. A probe record, not library code.\n-/\n"
+       "import TCSlib.Complexity.TuringMachine.Build.CfgRecord\nimport TCSlib.Complexity.SpaceComplexity.SavitchARM.Search\n")
+ctl = ''.join(f'#ctl_rfl {n}\n' for n in SEAL) + ''.join(f'#ctl_eqn {n}\n' for n in SEAL)
+for name, s in (('unsealed', ''), ('sealed', seal(SEAL))):
+    (out / f'SealControl_{name}.lean').write_text(doc + hdr + '\n\nsection Controls\n\n' + s + '\n' + ctl
+                                                  + '\nend Controls\n', encoding='utf-8')
+# the window module, whole file, with round 1's seal block after the `variable` line
+r1w = (r1 / 'WindowModuleSealed.lean.txt').read_text(encoding='utf-8')
+a = r1w.index('\nattribute [-simp] Turing.Action.apply')
+b = r1w.index('  Turing.MultiTapeTM.initCfg\n', a) + len('  Turing.MultiTapeTM.initCfg\n')
+block = r1w[a:b]
+win = (wt / 'TCSlib/Complexity/SpaceComplexity/SavitchARM/Window.lean').read_text(encoding='utf-8')
+anchor = 'variable {N : FinNDTM Bool} {x : List Bool}\n'
+assert win.count(anchor) == 1
+win = win.replace(anchor, anchor + block, 1)
+t0 = '# Windows without a known space bound\n'
+assert win.count(t0) == 1
+win = win.replace(t0, '# Windows without a known space bound (rule-10 sealed copy of `SavitchARM/Window`, scratch)\n', 1)
+(out / 'WindowModuleSealed.lean').write_text(win, encoding='utf-8')
+print(len(SEAL), 'sealed definitions in the controls;', block.count('\n  '), 'in the window module seal')

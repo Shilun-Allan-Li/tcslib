@@ -1,0 +1,69 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+
+/-! Axiom prints for every new public constant of #197 at `16e92449` against its base
+`origin/complexity/arora-barak-ch3-4` (merge base `683e2adf`), and a prefix sweep that
+cross-checks the `simps`-generated names. A probe record, not library code. -/
+
+-- `Build/Contract/Basic`: the zero-time contract and its five field equations
+#print axioms Turing.Contract.zero
+#print axioms Turing.Contract.zero_pre
+#print axioms Turing.Contract.zero_time
+#print axioms Turing.Contract.zero_post
+#print axioms Turing.Contract.zero_lo
+#print axioms Turing.Contract.zero_hi
+
+-- `Build/ZoneRebalance`: `attribute [simps (config := { isSimp := false })] zoneRebalanceData
+-- zoneExtendData zoneRebalancePost zoneExtendPost`, no explicit projections. `ZoneData k` is the
+-- reducible `Σ ℓ, Fin k → ZoneContents ℓ` (projections `fst`, `snd`); the endpoints are
+-- `{ d with … }` over `Turing.Cfg` (fields `state inputPos workTapes workTapePos output`)
+#print axioms Turing.zoneRebalanceData_fst
+#print axioms Turing.zoneRebalanceData_snd
+#print axioms Turing.zoneExtendData_fst
+#print axioms Turing.zoneExtendData_snd
+#print axioms Turing.zoneRebalancePost_state
+#print axioms Turing.zoneRebalancePost_inputPos
+#print axioms Turing.zoneRebalancePost_workTapes
+#print axioms Turing.zoneRebalancePost_workTapePos
+#print axioms Turing.zoneRebalancePost_output
+#print axioms Turing.zoneExtendPost_state
+#print axioms Turing.zoneExtendPost_inputPos
+#print axioms Turing.zoneExtendPost_workTapes
+#print axioms Turing.zoneExtendPost_workTapePos
+#print axioms Turing.zoneExtendPost_output
+
+-- `Build/ZoneRebalance`: the declared equations
+#print axioms Turing.zoneRowPre_iff
+#print axioms Turing.zoneRowPre_congr
+#print axioms Turing.zoneRowPre_mapState_iff
+#print axioms Turing.zoneRebalanceIndex_eq
+#print axioms Turing.zoneRebalanceIndex_le
+
+-- `Build/ZoneStep` (a new module): its public declarations
+#print axioms Turing.zoneTrackStepData
+#print axioms Turing.zoneTrackStepData_of_lt
+#print axioms Turing.zoneTrackStepData_of_not_lt
+#print axioms Turing.exists_zoneTrackStepTM
+#print axioms Turing.sum_two_pow_le_of_count
+#print axioms Turing.sum_cost_le_of_count
+
+-- Cross-check of the generated names: every public, non-internal constant whose name begins
+-- with the prefix, in name order. Beside the 23 names above that carry these prefixes, the sweep
+-- prints the base's `zoneRebalancePost_state_done`, `zoneRebalancePost_frames`,
+-- `zoneExtendPost_frames` and `zoneRebalanceData_of_short`; auxiliaries (`proof_N`, `match_N`,
+-- `eq_N`) are skipped. A `simps` name above that the sweep does not print is a misnamed entry.
+open Lean Elab Command in
+elab "#ax_prefix " s:str : command => do
+  let env ← getEnv
+  let pre := s.getString
+  let names := env.constants.map₁.toList.filterMap fun (n, _) =>
+    if pre.isPrefixOf n.toString && !n.isInternalDetail && !isPrivateName n then some n else none
+  for n in names.toArray.qsort (fun a b => a.toString < b.toString) do
+    let axs ← collectAxioms n
+    logInfo m!"SWEEP '{n}' depends on axioms: {axs.qsort (fun a b => a.toString < b.toString)}"
+
+#ax_prefix "Turing.Contract.zero"
+#ax_prefix "Turing.zoneRebalanceData_"
+#ax_prefix "Turing.zoneExtendData_"
+#ax_prefix "Turing.zoneRebalancePost_"
+#ax_prefix "Turing.zoneExtendPost_"
+#ax_prefix "Turing.zoneTrackStep"
