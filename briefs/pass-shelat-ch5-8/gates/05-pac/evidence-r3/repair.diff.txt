@@ -1,0 +1,204 @@
+diff --git a/TCSlib/InformationTheory/Samples.lean b/TCSlib/InformationTheory/Samples.lean
+index a416dd85..668b9c31 100644
+--- a/TCSlib/InformationTheory/Samples.lean
++++ b/TCSlib/InformationTheory/Samples.lean
+@@ -34,7 +34,8 @@ an iterated expectation.
+ ## References
+ 
+ * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
+-  Algorithms*, Cambridge University Press, 2014, §3.1 (the i.i.d. sample `S ~ D^m`).
++  Algorithms*, Cambridge University Press, 2014, §2.3.1 (product sampling) and §3.1,
++  Definition 3.1 (i.i.d. examples).
+ -/
+ 
+ namespace TCSlib.InformationTheory
+@@ -133,7 +134,8 @@ theorem expect_le_add_of_le_one (p : FinDist α) {f : α → ℝ} (hf : ∀ a, f
+ /-! ### Independent samples -/
+ 
+ /-- **`m` independent samples** of `p`: the distribution on `Fin m → α` with
+-`Pr[s] = ∏ j, p (s j)` ([SSBD14, §3.1], `S ~ D^m`). -/
++`Pr[s] = ∏ j, p (s j)`: the product sampling of [SSBD14, §2.3.1], used for the i.i.d. examples
++of [SSBD14, §3.1, Def 3.1]. -/
+ def iid (p : FinDist α) (m : ℕ) : FinDist (Fin m → α) where
+   prob s := ∏ j, p (s j)
+   nonneg s := Finset.prod_nonneg fun j _ => p.nonneg (s j)
+diff --git a/TCSlib/LearningTheory/PAC.lean b/TCSlib/LearningTheory/PAC.lean
+index 94807ae1..ae7e3376 100644
+--- a/TCSlib/LearningTheory/PAC.lean
++++ b/TCSlib/LearningTheory/PAC.lean
+@@ -21,8 +21,9 @@ bridge to PAC learning.
+ * `TCSlib.LearningTheory.PAC.Defs`: error, labelled samples, PAC, weak and fixed-distribution
+   learning, for a given learner at fixed parameters.
+ * `TCSlib.LearningTheory.PAC.Prediction`: the prediction game; success `= 1 − E[err]`, so
+-  a small prediction advantage rules out weak learning under the uniform distribution, for that
+-  learner, at confidence below the gap.
++  a small prediction advantage rules out the weak-learning condition under the uniform
++  distribution, for that learner, at a confidence below the gap (for a weak learner of
++  [KV94, §4.1], only after confidence amplification, [KV94, §4.2], which changes the learner).
+ 
+ ## References
+ 
+diff --git a/TCSlib/LearningTheory/PAC/Defs.lean b/TCSlib/LearningTheory/PAC/Defs.lean
+index 00f04897..4d939688 100644
+--- a/TCSlib/LearningTheory/PAC/Defs.lean
++++ b/TCSlib/LearningTheory/PAC/Defs.lean
+@@ -35,9 +35,11 @@ independent examples, and PAC, weak and fixed-distribution learning.
+   learner's `m`, `ε`, `δ` (`Prediction.lean`; for efficient learners, layer 2 and
+   [PS10, Thm 179.1]). This is faithful: a source learner run on `m ≥ m_H(ε, δ)` examples is
+   such an `L`.
+-- **Unrestricted parameters.** `ε`, `δ` and the weak-learning edge `γ` are arbitrary reals, where
+-  the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) and `γ > 0`. The docstrings of the
+-  predicates list the degenerate cases.
++- **Unrestricted parameters.** `ε`, `δ` and the weak-learning edge `γ` are arbitrary reals. For
++  PAC learning the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`). The weak learner of
++  [KV94, §4.1, p. 74] has the edge `1/p(n, size(c))` and succeeds with probability
++  `1/q(n, size(c))`, which is the confidence `δ = 1 − 1/q(n, size(c))` here. The docstrings of
++  the predicates list the degenerate cases.
+ - **Improper hypotheses.** A learner may output any `X → Bool` (representation-independent
+   learning). [KV94, §1.2.1] requires `h ∈ C`; [SSBD14, Def 3.1] does not. A refutation is
+   stronger without the restriction.
+@@ -57,8 +59,9 @@ independent examples, and PAC, weak and fixed-distribution learning.
+   the learner's hypothesis has error at most `ε`.
+ * `PAC.PACLearnsUnder D C m L ε δ`, `PAC.PACLearns C m L ε δ`: the learner `L` PAC-learns `C`
+   under a fixed distribution and under every distribution, at fixed `m`, `ε`, `δ`.
+-* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: weak learning at a fixed edge `γ`, accuracy `½ − γ`
+-  [KV94, §4.1].
++* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: the accuracy/confidence condition at accuracy
++  `½ − γ` (edge `γ`) and confidence `δ`, at fixed `m`, `γ`, `δ`; their docstrings compare it with
++  weak learning in [KV94, §4.1].
+ 
+ ## Main results
+ 
+@@ -75,7 +78,8 @@ independent examples, and PAC, weak and fixed-distribution learning.
+ ## References
+ 
+ * [KV94] M. Kearns, U. Vazirani, *An Introduction to Computational Learning Theory*, MIT Press,
+-  1994, §1.2 (PAC learning) and §4 (weak learning).
++  1994, §1.2 (PAC learning), §4.1 (weak learning, p. 74) and §4.2 (confidence amplification,
++  pp. 76–77).
+ * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
+   Algorithms*, Cambridge University Press, 2014, ch. 3 (Definition 3.1).
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+@@ -189,12 +193,20 @@ def PACLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ
+ theorem pacLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
+     (ε δ : ℝ) : PACLearns C m L ε δ ↔ ∀ D, PACLearnsUnder D C m L ε δ := Iff.rfl
+ 
+-/-- **Weak learning under `D`** [KV94, §4.1], by the learner `L` at fixed `m`, `γ`, `δ`: PAC
+-learning under `D` with accuracy `½ − γ`, a hypothesis better than a fair coin by the edge `γ`.
+-[KV94] asks for this under every distribution, at an edge `γ = 1/p(n, size(c))`, and for every
+-confidence `δ`, in time polynomial in `1/δ`; here `D`, the real edge `γ` and the confidence `δ`
+-are fixed. Each relaxation makes the predicate weaker, so a refutation for a given learner is
+-stronger.
++/-- **The weak-learning condition under `D`**, for the learner `L` at fixed `m`, `γ`, `δ`: with
++probability at least `1 − δ` over `m` examples from `D` labelled by `C i` and the learner's coins,
++the hypothesis has error at most `½ − γ` under `D`, so it beats a fair coin by the edge `γ`. This
++is `PACLearnsUnder` at accuracy `½ − γ`, an accuracy/confidence condition at fixed parameters.
++
++**Comparison with [KV94, §4.1, p. 74].** There a weak learner must, under every distribution,
++output with probability at least `1/q(n, size(c))` a hypothesis of error at most
++`½ − 1/p(n, size(c))`, for polynomials `p` and `q`. Run on a sufficient sample count `m`, such a
++learner satisfies this predicate at its certified edge `γ = 1/p(n, size(c))` and the confidence
++`δ = 1 − 1/q(n, size(c))`; fixing `D` only weakens that requirement. It need not satisfy the
++predicate at a smaller `δ`: for the same learner, a smaller `δ` is a stronger requirement, not a
++relaxation. Asking a weak learner for every `δ` is the confidence-amplified convention, not
++[KV94, §4.1]'s definition: confidence amplification ([KV94, §4.2, pp. 76–77]) builds a different
++learner, with its own sample count, running time and edge.
+ 
+ Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
+ predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` is empty; no learner satisfies it
+@@ -209,11 +221,15 @@ theorem weakLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
+     (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
+     WeakLearnsUnder D C m L γ δ ↔ PACLearnsUnder D C m L (1 / 2 - γ) δ := Iff.rfl
+ 
+-/-- **Weak learning** [KV94, §4.1], by the learner `L` at fixed `m`, `γ`, `δ`: under every
+-distribution `D` on `X`, PAC learning with accuracy `½ − γ` (`WeakLearnsUnder`). [KV94] takes
+-the edge `γ = 1/p(n, size(c))` and asks for every confidence `δ`, in time polynomial in `1/δ`;
+-here the real edge `γ` and the confidence `δ` are fixed. Each relaxation makes the predicate
+-weaker, so a refutation for a given learner is stronger.
++/-- **The weak-learning condition**, for the learner `L` at fixed `m`, `γ`, `δ`: under every
++distribution `D` on `X`, with probability at least `1 − δ` the hypothesis has error at most
++`½ − γ` (`WeakLearnsUnder`), an accuracy/confidence condition at fixed parameters. A weak
++learner of [KV94, §4.1, p. 74], which outputs with probability at least `1/q(n, size(c))` a
++hypothesis of error at most `½ − 1/p(n, size(c))`, satisfies it on a sufficient sample count `m`
++at its certified edge `γ = 1/p(n, size(c))` and the confidence `δ = 1 − 1/q(n, size(c))`. It need
++not satisfy it at a smaller `δ`. Asking for every `δ` is the confidence-amplified convention, which
++concerns a different learner, built by confidence amplification ([KV94, §4.2, pp. 76–77]; see
++`WeakLearnsUnder`).
+ 
+ Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
+ predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` or `X` is empty; no learner
+diff --git a/TCSlib/LearningTheory/PAC/Prediction.lean b/TCSlib/LearningTheory/PAC/Prediction.lean
+index d3abde33..016ac0ed 100644
+--- a/TCSlib/LearningTheory/PAC/Prediction.lean
++++ b/TCSlib/LearningTheory/PAC/Prediction.lean
+@@ -22,11 +22,18 @@ probability of a correct prediction is `1 − err_U(h, C_i)` for the hypothesis
+ So the prediction success is `1 − E_{i,s,r}[err_U(L(s, r), C_i)]`
+ (`predictSuccess_eq_one_sub_expectedErr`), with no collision issue between the fresh point and
+ the sample. A learner that PAC-learns under the uniform distribution with accuracy `ε ≥ 0` and
+-confidence `δ` has expected error at most `ε + δ`, hence prediction success at least `1 − ε − δ`.
+-So a learner whose prediction advantage is at most `γ` cannot weakly learn under the uniform
+-distribution with `γ + δ < γ' ≤ ½` at confidence `δ` (`not_weakLearnsUnder_of_predictAdv_le`).
+-This is how layer 2 turns [PS10, Thm 179.1] into "no efficient learner weakly learns the class
+-under the uniform distribution" (for each learner, at a confidence below the edge).
++confidence `δ` has expected error at most `ε + δ`: split the expectation over the accuracy event,
++where the error is at most `ε`, and its complement, of probability at most `δ`, where the error is
++at most `1`. Hence its prediction success is at least `1 − ε − δ`, and a learner whose prediction
++advantage is at most `γ` does not satisfy `WeakLearnsUnder` under the uniform distribution at an
++edge `γ'` and confidence `δ` with `γ + δ < γ' ≤ ½` (`not_weakLearnsUnder_of_predictAdv_le`).
++
++**Use in layer 2.** Layer 2 applies this to each efficient learner, turning [PS10, Thm 179.1]
++into a statement at a confidence `δ` below the gap `γ' − γ`. A weak learner of
++[KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that is, at the
++confidence `δ = 1 − 1/q(n, size(c))`. To reach a small `δ` it must first be amplified
++([KV94, §4.2, pp. 76–77]), which gives a different learner; layer 2 must account for that
++learner's sample count, running time and edge before applying the bridge.
+ Information-theoretically the class is learnable; the hardness is computational.
+ 
+ **Source notes.** [PS10] leaves the sample distribution and "a new sample" implicit; uniform
+@@ -46,9 +53,9 @@ and independent is the reading (design note S3d). "Better than `½ + ε`" is the
+ * `PAC.expectedErr_le_of_pacLearnsUnder`, `PAC.one_sub_sub_le_predictSuccess`: PAC learning
+   under the uniform distribution with accuracy `ε ≥ 0` gives expected error at most `ε + δ` and
+   success at least `1 − ε − δ`.
+-* `PAC.sub_le_predictAdv_of_weakLearnsUnder`, `PAC.not_weakLearnsUnder_of_predictAdv_le`: weak
+-  learning with `γ' ≤ ½` gives advantage at least `γ' − δ`; so advantage at most `γ` rules out
+-  weak learning with `γ + δ < γ' ≤ ½` at confidence `δ`.
++* `PAC.sub_le_predictAdv_of_weakLearnsUnder`, `PAC.not_weakLearnsUnder_of_predictAdv_le`: the
++  weak-learning condition at edge `γ' ≤ ½` and confidence `δ` gives advantage at least `γ' − δ`;
++  so advantage at most `γ` rules it out when `γ + δ < γ' ≤ ½`.
+ * `PAC.predictSuccess_coin`: the learner that outputs its coin succeeds with probability exactly
+   `½` (non-vacuity).
+ 
+@@ -57,7 +64,7 @@ and independent is the reading (design note S3d). "Better than `½ + ε`" is the
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
+   §8.1 (book p. 179).
+ * [KV94] M. Kearns, U. Vazirani, *An Introduction to Computational Learning Theory*, MIT Press,
+-  1994, §1.2 and §4.
++  1994, §1.2, §4.1 (p. 74) and §4.2 (pp. 76–77).
+ * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
+   Algorithms*, Cambridge University Press, 2014, ch. 3.
+ -/
+@@ -186,12 +193,18 @@ theorem sub_le_predictAdv_of_weakLearnsUnder {C : I → X → Bool} {m : ℕ}
+   rw [predictAdv_eq]
+   exact le_trans (by linarith) (le_abs_self _)
+ 
+-/-- **Small prediction advantage rules out weak learning**: if the learner's prediction
+-advantage is at most `γ`, it does not weakly learn the class under the uniform distribution with
+-any `γ' ≤ ½` such that `γ + δ < γ'`, at confidence `δ`. The confidence must be below the gap:
+-at a constant confidence such as `δ = ½`, a learner with zero prediction advantage can satisfy
+-`WeakLearnsUnder`. To refute weak learning in the sense of [KV94, §4.1], apply this at some
+-`δ < γ' − γ`. -/
++/-- **Small prediction advantage rules out the weak-learning condition below the gap**: if the
++learner's prediction advantage is at most `γ`, it does not satisfy `WeakLearnsUnder` under the
++uniform distribution at any edge `γ' ≤ ½` and confidence `δ` with `γ + δ < γ'`. The confidence
++must be below the gap: at a constant confidence such as `δ = ½`, a learner with zero prediction
++advantage can satisfy `WeakLearnsUnder`.
++
++A weak learner of [KV94, §4.1, p. 74] need only succeed with probability `1/q(n, size(c))`, that
++is, at the confidence `δ = 1 − 1/q(n, size(c))`, which in general is not below the gap. Starting
++from that definition, applying this lemma at a small `δ` needs confidence amplification
++([KV94, §4.2, pp. 76–77]), which gives a different learner, with its own sample count, running
++time and edge. It is that learner's certified edge `γ'`, sample count `m` and prediction
++advantage `γ` that enter here. -/
+ theorem not_weakLearnsUnder_of_predictAdv_le {C : I → X → Bool} {m : ℕ}
+     {L : (Fin m → X × Bool) → ρ → X → Bool} {γ γ' δ : ℝ} (hadv : predictAdv C m L ≤ γ)
+     (hlt : γ + δ < γ') (hγ' : γ' ≤ 1 / 2) :
