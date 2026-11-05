@@ -36,7 +36,7 @@ result, stated in a later module.
 * `Games.MachineCodec spec α`: decoding of moves and encoding of log entries.
 * `Games.buildComp next timeout q hist`: the computation of a next-move function with budget `q`.
 * `Complexity.NUPPT.toComp D codec n q r`: the computation of the machine `D` at parameter `n`
-  with coins `r`.
+  with coins `r`; `Complexity.NUPPT.toCompOn D codec n q x r`, the same on the input `x`.
 
 ## Main results
 
@@ -127,6 +127,20 @@ def _root_.Complexity.NUPPT.toComp {spec : OracleSpec ι} (D : NUPPT) (codec : M
 theorem _root_.Complexity.NUPPT.toComp_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)
     (codec : MachineCodec spec α) (n q : ℕ) (r : D.Coins n) :
     (D.toComp codec n q r).CostBoundedBy (fun _ => 1) q :=
+  buildComp_costBoundedBy _ _ q []
+
+/-- The oracle computation of the machine `D` **on input `x`** (for example a public key or a
+challenge) at parameter `n`, with coins `r` and query budget `q`: the next-move function is one
+activation of `D` on `⟨x, encoded log⟩`. -/
+def _root_.Complexity.NUPPT.toCompOn {spec : OracleSpec ι} (D : NUPPT)
+    (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) : OracleComp spec α :=
+  buildComp (fun hist => codec.decodeMove (D.runAt n (pairEncode x (codec.encodeLog hist)) r))
+    codec.timeout q []
+
+/-- A machine's computation on an input makes at most `q` queries. -/
+theorem _root_.Complexity.NUPPT.toCompOn_costBoundedBy {spec : OracleSpec ι} (D : NUPPT)
+    (codec : MachineCodec spec α) (n q : ℕ) (x : List Bool) (r : D.Coins n) :
+    (D.toCompOn codec n q x r).CostBoundedBy (fun _ => 1) q :=
   buildComp_costBoundedBy _ _ q []
 
 end TCSlib.Cryptography.Games
