@@ -28,6 +28,7 @@ Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result o
 ## Main results
 
 * `Complexity.LogProg.SavitchARM.setup_run` — the setup.
+* `Complexity.LogProg.SavitchARM.setSt_toV` — the register file after the setup, as registers.
 * `Complexity.LogProg.SavitchARM.outerU_run` — the outer search answers whether an initial
   and an accepting code are joined by midpoint reachability at level `w`.
 
@@ -122,6 +123,13 @@ theorem pw_run : ∀ (j : ℕ) (st : St), st.X = j → st.C = 0 → st.T = 0 →
 /-- **The register file after the setup**: radius `s`, width `w`, code bound `2 ^ w`, every
 other register clear. -/
 def setSt (s w : ℕ) : St := { St.zero with s := s, w := w, K := 2 ^ w }
+
+/-- **The register file after the setup, as registers**: `s`, `w` and `2 ^ w` in the radius,
+width and code-bound registers, every other register clear. -/
+theorem setSt_toV (s w : ℕ) : (setSt s w).toV =
+    Function.update (Function.update (Function.update (fun _ => 0) rs s) rw w) rK (2 ^ w) := by
+  rw [St.toV_zero, St.upd_s, St.upd_w, St.upd_K]
+  rfl
 
 /-- **The setup** [AB09, §4.2.1: the radius and the vertex-code width are computed first]:
 from `scan` with all registers clear, the machine reaches `OU` with radius
