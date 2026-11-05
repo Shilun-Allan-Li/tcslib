@@ -3,7 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
-import TCSlib.Complexity.Randomized
+import TCSlib.Complexity.Randomized.Closure
+import TCSlib.Complexity.Randomized.NonUniform
+import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Cryptography.Candidates.Arithmetic
 import TCSlib.Cryptography.Candidates.Concrete
 import TCSlib.Cryptography.Asymptotic.Collections

@@ -35,9 +35,11 @@ The file has two layers (foundation decision D2 of `PassShelatChapter2-4Plan.md`
   two hybrids).
 * **Asymptotic**: `Ensemble.NextBitUnpredictable` [PS10, Definition 75.2] and the
   completeness theorem `Ensemble.NextBitUnpredictable.pseudorandom` [PS10, Theorem 75.4],
-  proved by instantiating the concrete reduction at each `n`, hard-wiring the sign into the
-  advice of the predictor machine (the position is read off the length of the prefix), and
-  finishing with the contradiction idiom `not_negligible_iff_exists_polyExpr`.
+  proved by instantiating the concrete reduction at each `n` with `ℓ(n) > 0` (where
+  `ℓ(n) = 0` no distinguisher has an advantage, `prgAdv_eq_zero_of_length_eq_zero`),
+  hard-wiring the sign into the advice of the predictor machine (the position is read off the
+  length of the prefix), and finishing with the contradiction idiom
+  `not_negligible_iff_exists_polyExpr`.
 
 The implicit converse ("a pseudorandom ensemble passes the next-bit test", the soundness of
 the test the text takes for granted) is `nextBitDist` / `prgAdv_nextBitDist` concretely and
@@ -57,6 +59,12 @@ shape (DESIGN.md §2.12); the run-2 hypothesis `hσ : ∀ n, Nonempty (X.σ n)` 
 `Ensemble.nonempty` (with an empty seed type the experiment has probability `0`, the ensemble
 passes the next-bit test vacuously, and the always-accepting distinguisher has advantage `1`).
 
+**Repair (gate 03c, finding 2; ruling G3-7b):** `NextBitUnpredictable.pseudorandom` no longer
+assumes `0 < ℓ(n)` for every `n` (a hypothesis the text does not have, which excluded every
+ensemble with `ℓ(0) = 0`); it is now the source's statement. Where `ℓ(n) = 0` both `X_n` and
+`U_0` are the point mass on the empty string, and the proof needs a position only where
+`ℓ(n) > 0`.
+
 ## Main definitions
 
 * `TCSlib.Cryptography.nextBitProb` — the next-bit experiment at one parameter.
@@ -73,7 +81,8 @@ passes the next-bit test vacuously, and the always-accepting distinguisher has a
 ## Main results
 
 * `TCSlib.Cryptography.exists_nextBitPred` — the concrete next-bit reduction
-  (`1/2 + prgAdv X D / ℓ ≤` predictor success for some `i < ℓ` and some sign).
+  (`1/2 + prgAdv X D / ℓ ≤` predictor success for some `i < ℓ` and some sign);
+  `TCSlib.Cryptography.prgAdv_eq_zero_of_length_eq_zero` — no advantage on `{0,1}^0`.
 * `TCSlib.Cryptography.acceptProb_nextBitHybrid_zero`,
   `TCSlib.Cryptography.acceptProb_nextBitHybrid_self`,
   `TCSlib.Cryptography.acceptProb_nextBitHybrid_mix` — the hybrid identities
@@ -230,7 +239,8 @@ every event `p` on `(σ × {0,1}^ℓ) × ρ` and every bit `g s` depending on th
 "`H^i` is sampled by drawing from `H^{i+1}` or from `H̃^{i+1}` with probability `1/2`" step of
 the proof of [PS10, Theorem 75.4], in a form shared by the mixing identity and the predictor
 analysis. (The planting map `(b, (s, u), r) ↦ ((s, update u i (b ⊕ g s)), r)` is 2-to-1, not a
-bijection — run-3 audit P2-3 — so the proof adjoins an ignored uniform bit instead.)
+bijection — a run-3 repair, labelled P2-3 here and noted at gate 03c, finding 5 — so the
+proof adjoins an ignored uniform bit instead.)
 
 **Proof sketch.** Adjoin an ignored uniform bit `b` (`uprob_fst` after `Equiv.prodComm`),
 then apply the involution `ψ (b, (s, u), r) := (u_i ⊕ g s, (s, update u i (b ⊕ g s)), r)` of
@@ -356,14 +366,17 @@ from the prefix of length `i` with probability exactly
 [PS10, Theorem 75.4] (which writes `A(t) = 1` for `A(t) = b`), i.e. the identity of
 [PS10, Lemma 73.8] (`predict_eq`) with `X¹ := H^{i+1}` and `X⁰ := H̃^{i+1}`.
 
-**Proof sketch.** Split on whether the drawn bit `u_i` equals `x_i` (each case has
-probability `1/2`, independently of `s`, the other bits of `u`, and `c`: the bijection
-`(b, (s, u), c) ↦ (s, (update u i (xor b (X s i)), c))` followed by `uprob_bool_prod`, as in
-`predProb_owpPredictor_false`). If `u_i = x_i`, the completed string
-`completePrefix i (prefixOf i (X s)) u` is `nextBitHybrid X (i+1) (s, u)`
-(`completePrefix_prefixOf`) and the predictor is right iff `D` accepts; if `u_i = x̄_i`, the
-completed string is `nextBitHybridFlip X i (s, u)` and the predictor is right iff `D`
-rejects (`uprob_not`, which needs the nonemptiness hypotheses). Average the two. -/
+**Proof sketch.** Reassociate the sample space to `(σ × {0,1}^ℓ) × ρ` (`Equiv.prodAssoc`) and
+apply `uprob_split_bit` at position `i` with the bit `x_i = X s i` (an adjoined uniform bit and
+the involution `ψ`): the success probability is the average of the success event with `x_i`
+planted at bit `i` of `u` and with `x̄_i` planted there. With `x_i` planted, the completed
+string `completePrefix i (prefixOf i (X s)) u` is `nextBitHybrid X (i+1) (s, u)`
+(`completePrefix_prefixOf_eq`, `nextBitHybrid_update_eq`) and the predictor, which outputs
+`u_i = x_i` on acceptance, is right iff `D` accepts; with `x̄_i` planted the completed string is
+`nextBitHybridFlip X i (s, u)` (`nextBitHybrid_update_not_eq`) and the predictor is right iff
+`D` rejects (`uprob_not`, which needs the nonemptiness hypotheses). Average the two:
+`(Pr[D(H^{i+1}) = 1] + 1 − Pr[D(H̃^{i+1}) = 1]) / 2`. (The run-2 sketch transported the event
+along the 2-to-1 map `(b, (s, u), c) ↦ (s, (update u i (b ⊕ x_i), c))`; see `uprob_split_bit`.) -/
 theorem nextBitProb_nextBitPred_false {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
     [Nonempty ρ] {ℓ : ℕ} (X : σ → Fin ℓ → Bool) (i : Fin ℓ) (D : (Fin ℓ → Bool) → ρ → Bool) :
     nextBitProb X i (nextBitPred D i false) =
@@ -421,6 +434,28 @@ theorem nextBitProb_nextBitPred_true {σ ρ : Type*} [Fintype σ] [Fintype ρ] [
   rw [h, nextBitProb_nextBitPred_false]
   ring
 
+/-- The PRG advantage is the gap between the extreme hybrids: `prgAdv X D =
+|Pr[D(H^0) = 1] − Pr[D(H^ℓ) = 1]|`, by `H^0 = U_ℓ` (`acceptProb_nextBitHybrid_zero`) and
+`H^ℓ = X` (`acceptProb_nextBitHybrid_self`). -/
+private theorem prgAdv_eq_abs_nextBitHybrid {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
+    {ℓ : ℕ} (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
+    prgAdv X D = |acceptProb (nextBitHybrid X 0) D - acceptProb (nextBitHybrid X ℓ) D| := by
+  unfold prgAdv distAdv
+  rw [acceptProb_nextBitHybrid_zero, acceptProb_nextBitHybrid_self, abs_sub_comm]
+
+/-- **No advantage on the empty string**: if `ℓ = 0`, then every distinguisher `D` has PRG
+advantage `0` against every sampler `X` into `{0,1}^ℓ` (both `X` and the uniform `U_0` are the
+point mass on the empty string). This is the case `ℓ(n) = 0` of [PS10, Theorem 75.4], which
+needs no position.
+
+**Proof sketch.** With `ℓ = 0` the two extreme hybrids `H^0` and `H^ℓ` coincide, so the gap
+`prgAdv_eq_abs_nextBitHybrid` is `|a − a| = 0`. -/
+theorem prgAdv_eq_zero_of_length_eq_zero {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
+    {ℓ : ℕ} (hℓ : ℓ = 0) (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
+    prgAdv X D = 0 := by
+  subst hℓ
+  rw [prgAdv_eq_abs_nextBitHybrid, sub_self, abs_zero]
+
 /-- **The next-bit reduction, concrete form** (the content of the proof of
 [PS10, Theorem 75.4] at one parameter): for every sampler `X` into `{0,1}^ℓ` with `ℓ > 0` and
 every distinguisher `D` with PRG advantage `ε = prgAdv X D` against `X`, there are a position
@@ -428,8 +463,8 @@ every distinguisher `D` with PRG advantage `ε = prgAdv X D` against `X`, there 
 [PS10, Algorithm 76.5] predicts bit `i` of `X` from the prefix of length `i` with probability
 at least `1/2 + ε/ℓ`. (The text obtains `1/2 + 1/(p(n)ℓ(n))` from `ε = 1/p(n)`.)
 
-**Proof sketch.** `prgAdv X D = |Pr[D(H^ℓ) = 1] − Pr[D(H^0) = 1]|` by
-`acceptProb_nextBitHybrid_self` and `acceptProb_nextBitHybrid_zero`; the hybrid lemma
+**Proof sketch.** `prgAdv X D = |Pr[D(H^0) = 1] − Pr[D(H^ℓ) = 1]|`
+(`prgAdv_eq_abs_nextBitHybrid`); the hybrid lemma
 `hybrid_lemma` (`exists_hybrid_gap`) over `i ↦ acceptProb (nextBitHybrid X i) D` gives
 `i < ℓ` with `ε/ℓ ≤ |Pr[D(H^i) = 1] − Pr[D(H^{i+1}) = 1]|`. By the mixing identity
 `acceptProb_nextBitHybrid_mix`, `Pr[D(H^i) = 1] − Pr[D(H^{i+1}) = 1] =
@@ -442,10 +477,7 @@ theorem exists_nextBitPred {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty �
     {ℓ : ℕ} (hℓ : 0 < ℓ) (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
     ∃ (i : Fin ℓ) (flip : Bool),
       1 / 2 + prgAdv X D / ℓ ≤ nextBitProb X i (nextBitPred D i flip) := by
-  have hadv : prgAdv X D =
-      |acceptProb (nextBitHybrid X 0) D - acceptProb (nextBitHybrid X ℓ) D| := by
-    unfold prgAdv distAdv
-    rw [acceptProb_nextBitHybrid_zero, acceptProb_nextBitHybrid_self, abs_sub_comm]
+  have hadv := prgAdv_eq_abs_nextBitHybrid X D
   obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun j => acceptProb (nextBitHybrid X j) D) hℓ
   have hmix := acceptProb_nextBitHybrid_mix X ⟨k, hk⟩ D
   have hδ : prgAdv X D / ℓ ≤ |acceptProb (nextBitHybrid X (k + 1)) D -
@@ -517,13 +549,14 @@ private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fint
 /-! ### Completeness of the next-bit test [PS10, Theorem 75.4] -/
 
 /-- **The next-bit predictor as a machine** [PS10, Algorithm 76.5]: for a distinguisher
-machine `D`, positions `i n < ℓ(n)` and signs `flip n`, a non-uniform PPT `A` with coins
-`ℓ + D.coins` and advice `⟨D.advice n, [flip n]⟩` such that, at parameter `n` and position
-`i n`, `A` on the prefix `t` with coins `(u, c)` (split by `e n`) is exactly the concrete
-predictor `nextBitPred (D.distinguisher n (ℓ n)) (i n) (flip n) t (u, c)`: it runs
+machine `D` and signs `flip n`, a non-uniform PPT `A` with coins `ℓ + D.coins` and advice
+`⟨D.advice n, [flip n]⟩` such that, at every parameter `n` and every position `i < ℓ(n)`, `A`
+on the prefix `t` with coins `(u, c)` (split by `e n`) is exactly the concrete predictor
+`nextBitPred (D.distinguisher n (ℓ n)) i (flip n) t (u, c)`: it runs
 `D(1^n, t ++ u.drop |t|; c)` and outputs `u_{|t|}` or its negation according to the verdict,
-negated once more if `flip n`. The position is read off the prefix length `|t| = i n`, so
-only the sign is hard-wired.
+negated once more if `flip n`. The position is read off the prefix length `|t| = i`, so only
+the sign is hard-wired, and the identity holds at every position (restated so at gate 03c,
+finding 2: no choice of position is needed where `ℓ(n) = 0`).
 
 **Proof sketch.** The raw function on the layout `⟨⟨⟨1^n, y⟩, ⟨D.advice n, [flip n]⟩⟩, r⟩`
 cuts `r` into `u := r.take (ℓ n)` and `c := r.drop (ℓ n)` (`polyTimeComputable_pairTakePoly`/
@@ -537,12 +570,11 @@ it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3` (`length_pairEnc
 split is `Fin.appendEquiv` composed with `finCongr`, and the identity is `runAtL_ofPolyTime`,
 the projection identities of the layout, `List.take_left'`/`List.drop_left'`,
 `ofFn_completePrefix` and `headD_drop_ofFn`. -/
-private theorem exists_nextBitPredMachine {ℓ : PolyExpr} (D : NUPPT) (i : ∀ n, Fin (ℓ.eval n))
-    (flip : ℕ → Bool) :
+private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : ℕ → Bool) :
     ∃ (A : NUPPT) (e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n),
-      ∀ n (t : Fin (i n) → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
-        A.predictor n (i n) t (e n (u, c)) =
-          nextBitPred (D.distinguisher n (ℓ.eval n)) (i n) (flip n) t (u, c) := by
+      ∀ n (i : Fin (ℓ.eval n)) (t : Fin i → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
+        A.predictor n i t (e n (u, c)) =
+          nextBitPred (D.distinguisher n (ℓ.eval n)) i (flip n) t (u, c) := by
   -- the coin cut `⟨1^n, r⟩ ↦ u = r.take (ℓ n)`, `c = r.drop (ℓ n)`
   have hcut := NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
   have hu : PolyTimeComputable fun z =>
@@ -604,7 +636,7 @@ private theorem exists_nextBitPredMachine {ℓ : PolyExpr} (D : NUPPT) (i : ∀ 
   let e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n := fun n =>
     (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)).trans
       (Equiv.arrowCongr (finCongr (hlen n).symm) (Equiv.refl Bool))
-  refine ⟨A, e, fun n t u c => ?_⟩
+  refine ⟨A, e, fun n i t u c => ?_⟩
   have hofn : List.ofFn (e n (u, c)) = List.ofFn u ++ List.ofFn c := by
     rw [← List.ofFn_fin_append]
     exact (List.ofFn_congr (hlen n).symm (Fin.append u c)).symm
@@ -612,71 +644,97 @@ private theorem exists_nextBitPredMachine {ℓ : PolyExpr} (D : NUPPT) (i : ∀ 
   rw [NUPPT.runAtL_ofPolyTime]
   simp [NUPPT.advInput, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
     NUPPT.runAtL, List.take_left', List.drop_left', ofFn_completePrefix]
-  split_ifs <;> cases u (i n) <;> cases flip n <;> rfl
+  split_ifs <;> cases u i <;> cases flip n <;> rfl
 
 /-- **Completeness of the next-bit test** [PS10, Theorem 75.4]: if the ensemble `{X_n}` over
-`{0,1}^{ℓ(n)}` (with `ℓ(n) > 0`) passes the next-bit test, then it is pseudorandom.
+`{0,1}^{ℓ(n)}` passes the next-bit test, then it is pseudorandom.
 
 **Repair (run-3 audit P2-2):** the run-2 hypothesis `hσ : ∀ n, Nonempty (X.σ n)` was dropped
 (it is the field `Ensemble.nonempty`; with an empty seed type the experiment has probability
 `0`, the ensemble passes the next-bit test vacuously, and the always-accepting distinguisher
 has advantage `1`); the frozen shape of DESIGN.md §2.12 is restored.
 
+**Repair (gate 03c, finding 2; ruling G3-7b):** the hypothesis `hℓ : ∀ n, 0 < ℓ.eval n`, which
+the text does not have, was dropped; the theorem now applies to every ensemble, `ℓ(0) = 0`
+included (e.g. `ℓ = n`, `2n`, `n²`).
+
 **Proof sketch.** By contradiction, as in the text. Fix a distinguisher `D` with
 `¬ Negligible (fun n => prgAdv (X_n) (D.distinguisher n (ℓ n)))`
 (`Ensemble.pseudorandom_iff_prgAdv`); by `not_negligible_iff_exists_polyExpr` there is a
 positive syntactic polynomial `p` with `1/p(n) ≤ prgAdv` for infinitely many `n`. At every
-`n`, `exists_nextBitPred (hℓ n)` (with the instance `X.nonempty n`) gives a position
+`n` with `ℓ(n) > 0`, `exists_nextBitPred` (with the instance `X.nonempty n`) gives a position
 `i_n < ℓ(n)` and a sign `flip_n` with
-`1/2 + prgAdv/ℓ(n) ≤ nextBitProb (X_n) i_n (nextBitPred (D.distinguisher n (ℓ n)) i_n flip_n)`
-(`choose`). The predictor machine `A` is `exists_nextBitPredMachine D i flip` (advice
+`1/2 + prgAdv/ℓ(n) ≤ nextBitProb (X_n) i_n (nextBitPred (D.distinguisher n (ℓ n)) i_n flip_n)`;
+where `ℓ(n) = 0` put `flip_n := false` (`choose` on "a sign, and a position if `ℓ(n) > 0`").
+The predictor machine `A` is `exists_nextBitPredMachine ℓ D flip` (advice
 `⟨D.advice n, [flip_n]⟩`, coins `ℓ + D.coins`; on `⟨1^n, t⟩` with coins `u ++ c` it runs
 `D(1^n, t ++ u.drop |t|; c)` and outputs `xor (if g then u_{|t|} else !u_{|t|}) flip_n`, the
-position being read off the prefix length). Its functional identity
-`A.predictor n i_n t (e (u, c)) = nextBitPred (D.distinguisher n (ℓ n)) i_n flip_n t (u, c)`
+position being read off the prefix length). Its functional identity, at every position `i`,
+`A.predictor n i t (e (u, c)) = nextBitPred (D.distinguisher n (ℓ n)) i flip_n t (u, c)`
 along the coin split `e : (Fin (ℓ n) → Bool) × D.Coins n ≃ A.Coins n` (`Fin.appendEquiv`)
-gives `nextBitProb (X_n) i_n (A.predictor n i_n) = nextBitProb (X_n) i_n (nextBitPred …)`
+gives `nextBitProb (X_n) i (A.predictor n i) = nextBitProb (X_n) i (nextBitPred …)`
 (`uprob_comp_equiv`). Now `h A` gives a negligible `ε` with `nextBitProb … ≤ 1/2 + ε n` for
-all `n, i`; hence `1/(p(n) ℓ(n)) ≤ prgAdv/ℓ(n) ≤ ε n` for infinitely many `n`, i.e.
-`¬ Negligible ε` by `not_negligible_iff_exists_polyExpr` with the polynomial `mul p ℓ`
-(positive by `hℓ` and `0 < p`), a contradiction. -/
+all `n, i`. At every `n` of the infinite set, `ℓ(n) > 0`, since at `ℓ(n) = 0` the advantage is
+`0 < 1/p(n)` (`prgAdv_eq_zero_of_length_eq_zero`); there
+`1/(p(n)(ℓ(n) + 1)) ≤ 1/(p(n) ℓ(n)) ≤ prgAdv/ℓ(n) ≤ ε n`, i.e. `¬ Negligible ε` by
+`not_negligible_iff_exists_polyExpr` with the positive polynomial `mul p (ℓ + 1)`, a
+contradiction. -/
 theorem Ensemble.NextBitUnpredictable.pseudorandom {ℓ : PolyExpr} {X : Ensemble ℓ}
-    (hℓ : ∀ n, 0 < ℓ.eval n) (h : X.NextBitUnpredictable) :
-    X.Pseudorandom := by
+    (h : X.NextBitUnpredictable) : X.Pseudorandom := by
   rw [Ensemble.pseudorandom_iff_prgAdv]
   intro D
   by_contra hneg
   obtain ⟨p, hp, hinf⟩ := not_negligible_iff_exists_polyExpr.mp hneg
-  have hex : ∀ n, ∃ (i : Fin (ℓ.eval n)) (flip : Bool),
+  -- a sign at every `n`, and a position where `ℓ(n) > 0` (the concrete reduction)
+  have hex : ∀ n, ∃ flip : Bool, 0 < ℓ.eval n → ∃ i : Fin (ℓ.eval n),
       1 / 2 + prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) / (ℓ.eval n) ≤
-        nextBitProb (X.X n) i (nextBitPred (D.distinguisher n (ℓ.eval n)) i flip) :=
-    fun n => exists_nextBitPred (hℓ n) (X.X n) (D.distinguisher n (ℓ.eval n))
-  choose i flip hif using hex
-  obtain ⟨A, e, hA⟩ := exists_nextBitPredMachine D i flip
-  obtain ⟨ε, hε, hbound⟩ := h A
-  have hprob : ∀ n, nextBitProb (X.X n) (i n) (A.predictor n (i n)) =
-      nextBitProb (X.X n) (i n) (nextBitPred (D.distinguisher n (ℓ.eval n)) (i n) (flip n)) := by
+        nextBitProb (X.X n) i (nextBitPred (D.distinguisher n (ℓ.eval n)) i flip) := by
     intro n
+    by_cases hn : 0 < ℓ.eval n
+    · obtain ⟨i, flip, hif⟩ := exists_nextBitPred hn (X.X n) (D.distinguisher n (ℓ.eval n))
+      exact ⟨flip, fun _ => ⟨i, hif⟩⟩
+    · exact ⟨false, fun hn' => absurd hn' hn⟩
+  choose flip hif using hex
+  -- the predictor machine, and its identity with the concrete predictor at every position
+  obtain ⟨A, e, hA⟩ := exists_nextBitPredMachine ℓ D flip
+  obtain ⟨ε, hε, hbound⟩ := h A
+  have hprob : ∀ n (i : Fin (ℓ.eval n)), nextBitProb (X.X n) i (A.predictor n i) =
+      nextBitProb (X.X n) i (nextBitPred (D.distinguisher n (ℓ.eval n)) i (flip n)) := by
+    intro n i
     unfold nextBitProb
     rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (X.σ n)) (e n))]
     apply OneWay.uprob_congr
     rintro ⟨s, u, c⟩
     simp [hA]
-  refine (not_negligible_iff_exists_polyExpr.mpr ⟨.mul p ℓ, fun n => ?_, fun n₀ => ?_⟩) hε
-  · simp only [PolyExpr.eval_mul]
-    exact Nat.mul_pos (hp n) (hℓ n)
+  -- `ε` is not negligible, with the positive polynomial `p · (ℓ + 1)`
+  refine (not_negligible_iff_exists_polyExpr.mpr
+    ⟨.mul p (.add ℓ (.const 1)), fun n => ?_, fun n₀ => ?_⟩) hε
+  · simp only [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const]
+    exact Nat.mul_pos (hp n) (Nat.succ_pos _)
   · obtain ⟨n, hn, hpn⟩ := hinf n₀
     refine ⟨n, hn, ?_⟩
-    have h1 := hif n
-    have h2 := hbound n (i n)
-    rw [hprob n] at h2
-    have hℓpos : (0 : ℝ) < ℓ.eval n := by exact_mod_cast hℓ n
     have hppos : (0 : ℝ) < p.eval n := by exact_mod_cast hp n
     have h0 : 0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
     rw [abs_of_nonneg h0] at hpn
-    calc (1 : ℝ) / ((PolyExpr.mul p ℓ).eval n : ℝ)
-        = (1 / (p.eval n : ℝ)) / (ℓ.eval n : ℝ) := by
-          rw [PolyExpr.eval_mul, Nat.cast_mul, div_div]
+    -- on the infinite set `ℓ(n) > 0`: at `ℓ(n) = 0` the advantage is `0`
+    have hℓn : 0 < ℓ.eval n := by
+      rcases Nat.eq_zero_or_pos (ℓ.eval n) with hz | hz
+      · have hzero := prgAdv_eq_zero_of_length_eq_zero hz (X.X n) (D.distinguisher n (ℓ.eval n))
+        have := one_div_pos.mpr hppos
+        linarith
+      · exact hz
+    obtain ⟨i, h1⟩ := hif n hℓn
+    have h2 := hbound n i
+    rw [hprob n i] at h2
+    have hℓpos : (0 : ℝ) < ℓ.eval n := by exact_mod_cast hℓn
+    have hstep : (1 : ℝ) / ((PolyExpr.mul p (.add ℓ (.const 1))).eval n : ℝ) ≤
+        (1 / (p.eval n : ℝ)) / (ℓ.eval n : ℝ) := by
+      rw [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, div_div]
+      push_cast
+      exact one_div_le_one_div_of_le (mul_pos hppos hℓpos)
+        (mul_le_mul_of_nonneg_left (by linarith) hppos.le)
+    calc (1 : ℝ) / ((PolyExpr.mul p (.add ℓ (.const 1))).eval n : ℝ)
+        ≤ (1 / (p.eval n : ℝ)) / (ℓ.eval n : ℝ) := hstep
       _ ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) / (ℓ.eval n : ℝ) := by gcongr
       _ ≤ ε n := by linarith
       _ ≤ |ε n| := le_abs_self _

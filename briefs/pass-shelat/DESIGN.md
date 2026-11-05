@@ -44,7 +44,11 @@ D2. **Two layers, as in the Garg plan.** Concrete reductions are reused verbatim
     `ClassNP/PolyTimePairing.lean` with `NUPPT.polyTimeComputable_output` as a black box, plus
     the two new machine lemmas of D11, (iii) negligible-function arithmetic through
     `not_negligible_iff`. New concrete lemmas go into campaign-owned files, never into the
-    frozen Garg files.
+    frozen Garg files. *Exception* (gate 03a, ruling G3-7a, user 2026-11-05): the general
+    helper `negligible_zero` moved from `Asymptotic/Ensembles.lean` into
+    `Foundations/Negligible.lean`, full name `TCSlib.Cryptography.negligible_zero` unchanged; its
+    copy `negligible_const_zero` (`ZeroKnowledge/Defs.lean`) is left to the duplicate clean-up
+    (ruling G3-5).
 
 D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     `TCSlib/Complexity/Randomized/PPT.lean`): a `Turing.FinTM Bool` that halts on **every** input
@@ -57,7 +61,10 @@ D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     `runAt n y r := output ⟨⟨⟨1^n, y⟩, advice n⟩, r⟩` with `r : Fin (coins.eval n) → Bool`; the
     random tape is part of the input, the time bound holds for every coin string
     ([PS10, Def 23.5], worst case), and "`A` computes `f` with probability 1" ([PS10, Def 24.6])
-    is `Computes`: equality for every coin string. Honest evaluators ("easy to compute") are
+    is `Computes`: equality for every coin string. `Computes` does not require `Uniform`: Def
+    24.6 proper is the case `A.Uniform ∧ A.Computes f`; for a non-uniform `A` it is the advice
+    analogue and holds for uncomputable `f` (advice `[h n]`), so `∃ A, A.Computes f` is not "a
+    PPT computes `f`" (gate 03a, finding 1). Honest evaluators ("easy to compute") are
     stated as `PolyTimeComputable` string functions on `⟨1^n, x⟩`. Recorded deviations:
     totality on all inputs (behaviour class unchanged: a machine polynomial-time on well-formed
     inputs is clocked by `timed_universal`; the optional lemma `NUPPT.ofPartial` is not needed
@@ -86,7 +93,9 @@ D5. **Domains are typed at each parameter.** A function family is
     Def 69.4: `D(t)`) the frozen definition is the literal one (`WorstCaseOneWay` with
     `inverterLit`, `Ensemble.IndistLit`), and the `1^n` form (`Ensemble.Indist`) is the headline
     form of the theorems, related by `Indist.toLit` (always) and `IndistLit.toIndist`
-    (injective `ℓ`, i.e. every ensemble of the text). The two are never unified silently.
+    (injective `ℓ`, i.e. every ensemble of the text; for constant `ℓ` the two forms coincide
+    as well, by point tests, which is not formalized: gate 03a, note 14). The two are never
+    unified silently.
 
 D6. **Ensembles** ([PS10, Def 69.3]) are `Ensemble ℓ := ⟨σ : ℕ → Type, Fintype, X n : σ n → (Fin (ℓ.eval n) → Bool)⟩`
     with arbitrary finite seed types (the uniform ensemble has seeds `Fin (ℓ n) → Bool`, the
@@ -160,6 +169,12 @@ D11. **Admissions policy.** `Complexity.polyTimeComputable_iterateFind`
     audit P7-1 added `add`/`sub`/bit length) are explicit hypotheses
     (`Candidates/Arithmetic.lean` bundle), never axioms; `#print axioms` of every headline must
     show `[propext, Classical.choice, Quot.sound]` plus, at most, the admissions named here.
+    *Status* (gate 03a, note 20; decision log 2026-10-28): run 3b proved
+    `polyTimeComputable_iterateFind`, so the permitted machine admission is unused.
+    `NUPPT.ofPartial` was never written; the only machine-layer `sorry` is the optional bridge
+    `NUPPT.decides_of_decidesWithAdviceInTime` (`Randomized/NonUniform.lean`), whose sketch does
+    `ofPartial`'s clocking inline. It is the named admission of that optional module (open
+    question 5, ruled outside the core on 2026-10-27).
 
 ---
 
@@ -689,11 +704,14 @@ once with `uprob_bool_prod`.
 
 ### 2.12 `Asymptotic/{Pseudorandom,NextBit,HardCore}.lean` — definition shapes
 
+(The collection form of Thm 87.3, `Collection.glPad` … `goldreich_levin_coll`, moved unchanged to
+`Asymptotic/HardCoreCollection.lean`, which `HardCore.lean` imports; gate 03c, finding 11.)
+
 ```lean
 structure PRG where                                           -- [PS10, Def 77.1], length-regular
   stretch : PolyExpr
   G : ∀ n, (Fin n → Bool) → (Fin (stretch.eval n) → Bool)
-  expands : ∀ n, n < stretch.eval n
+  expands : ∀ n, n < stretch.eval n                           -- every n, n = 0 included: 2n, n^c excluded (§5.25; gate 03c, G3-2)
 def PRG.Easy (P : PRG) : Prop := ∃ F, PolyTimeComputable F ∧ ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s)
 def PRG.ensemble (P : PRG) : Ensemble P.stretch               -- seeds Fin n → Bool
 def PRG.Secure (P : PRG) : Prop := P.Easy ∧ P.ensemble.Pseudorandom
@@ -702,7 +720,7 @@ noncomputable def nextBitProb {ℓ} (X : σ → Fin ℓ → Bool) (i : Fin ℓ) 
   uprob fun z : σ × ρ => A (fun j => X z.1 (Fin.castLE i.isLt.le j)) z.2 = X z.1 i
 def Ensemble.NextBitUnpredictable (X : Ensemble ℓ) : Prop :=   -- [PS10, Def 75.2], i < ℓ n, A gets 1^n and the prefix
   ∀ A : NUPPT, ∃ ε, Negligible ε ∧ ∀ n (i : Fin (ℓ.eval n)), nextBitProb (X.X n) i (A.predictor n i) ≤ 1/2 + ε n
-theorem Ensemble.NextBitUnpredictable.pseudorandom (hℓ : ∀ n, 0 < ℓ.eval n) (h : X.NextBitUnpredictable) : X.Pseudorandom   -- [75.4]
+theorem Ensemble.NextBitUnpredictable.pseudorandom (h : X.NextBitUnpredictable) : X.Pseudorandom   -- [75.4]; the source's statement (hℓ : ∀ n, 0 < ℓ.eval n dropped at gate 03c, G3-7b)
 
 def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) → Bool) : Prop :=   -- [PS10, Def 78.3]
   (∃ H, PolyTimeComputable H ∧ ∀ n x, H (NUPPT.advInput n (List.ofFn x)) = [h n x]) ∧
@@ -711,7 +729,12 @@ def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) �
 
 Theorem shapes of the HardCore file (statement phase): `owp_hardcore_prg (P : PermFamily) (h) : OneWayPermutation P → HardCore P.toFunFamily h → (PRG with G n s = f n s ‖ h n s).Secure`
 (79.4, via `exists_owpPredictorBits`); `prg_expand (P : PRG) (ℓ : PolyExpr) : P.Secure → (prgExtBits-based PRG of stretch ℓ).Secure`
-(80.5, via `exists_prgExtBitsRed_ge`, hybrid index as advice, `iterate` for the evaluator);
+(80.5, via `exists_prgExtBitsRed_ge`, hybrid index as advice, `iterate` for the evaluator; **as shipped**
+(gate 03c, finding 4): `prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+(hℓ : ∀ n, n < ℓ.eval n) (h : (PRG.oneBit G).Secure) : (PRG.expand G ℓ hℓ).Secure`, the one-bit input of the
+text's Lemma 80.5 ("Let `G : {0,1}^n → {0,1}^{n+1}` be a PRG"); a general secure `P : PRG` reaches it through
+`PRG.truncate` with `PRG.Secure.truncate : (PRG.oneBit P.truncate).Secure` in `Asymptotic/PRF.lean`, and `hℓ`
+carries the cost of §5.25);
 `cor_81_7` (closed form `prgExt_succ`); `goldreich_levin (𝓕) : StrongOneWay 𝓕 → StrongOneWay (glPad 𝓕) ∧ HardCore (glPad 𝓕) glBit`
 (87.3, via `invProb_guessInverter`, `k(n) := ⌈log₂(2n^{2c+1}+1)⌉` hard-wired, `iterateFind`
 for the `n(2^k−1)` calls, `majority`, `pairXor`); `goldreich_levin_coll (F : Collection) …`
@@ -977,7 +1000,8 @@ Issues found in this synthesis and resolved here (not raised by the panel):
    computing with probability one (equivalent by `Computes` + `ofPolyTimeUniform`).
 4. `inverter`: wrong-length output = failure (D5); verdict `= [true]` (normalisable by `ifEq`).
 5. `Ensemble`: dyadic samplable distributions; `Indist` gives `D` the input `1^n` (literal form
-   `IndistLit`, equivalent for injective `ℓ`).
+   `IndistLit`, equivalent for every `PolyExpr ℓ`: proved for injective `ℓ`, the constant case
+   by point tests, not formalized; gate 03a, note 14).
 6. `WeakOneWay`: `0 < q n` made explicit; Theorem 35.1 with the text's `m = 2nq(n)` and a
    rejection-sampled position (statistical term absorbed).
 7. `OracleEnsemble.Indist`: next-query machines with an explicit universally quantified
@@ -1041,6 +1065,17 @@ Issues found in this synthesis and resolved here (not raised by the panel):
     decodes only if it is the encoding of its value — so the outputs of the sampler and of the
     trapdoor inverter are encodings ([PS10, Defs 41.1 (2), 56.1 (6)]: "an element of `D_i`",
     "computes `f_i^{-1}(y)`"); every decoder of the library is canonical.
+25. `PRG.expands` (gate 03c, finding 1; ruling G3-2): expansion at every seed length, `n = 0`
+    included (Def 77.1 (2)'s `|G(x)| > |x|` read literally at `x = ε`). A `PolyExpr` stretch has
+    coefficients in ℕ, so stretches with `ℓ(0) = 0` (exactly `2n`) or `ℓ(1) = 1` (`n^c`) are not
+    `PRG`s, although the text uses them (the length-doubling `G` of Alg 92.1 and Thm 97.3; Lem 80.5's
+    "for any polynomial `ℓ`"); `PRG.expand`/`prg_expand` take the same `hℓ : ∀ n, n < ℓ(n)`. Thm 97.3
+    uses the separate predicate `DoublingPRG`, produced from any secure `PRG` by `PRG.doubling`
+    (`PRG.Secure.doubling`, `Asymptotic/PRF.lean`); elsewhere `2n + 1`, `n^c + 1` are reached by
+    `prg_expand` from the one-bit truncation `PRG.truncate`, and shorter outputs by truncation
+    (`PRG.Secure.truncateTo_easy`/`_negligible`). Alg 92.1 needs only `n ≤ ℓ(n)`. "PRGs exist" has the
+    same meaning under every reading (truncate to `n + 1` bits, change below `n₀`), and no statement
+    of ch. 2–8 is vacuous by it.
 
 ---
 
@@ -1245,7 +1280,9 @@ message sampler (`0^n`); Theorem 124.1's string-level Levin reduction to 3COL (h
 5. **Optional literal modules.** `NUPPTSeq` (Def 26.8 verbatim), `exists_queryTree`
    (`OracleTM` bridge) and `NUPPT.ofPartial` are specified as optional modules with one named
    admission each; confirm they are out of the mandatory core (they are not needed by any
-   chapter 2–4 theorem).
+   chapter 2–4 theorem). **Ruled** (decision log 2026-10-27): outside the mandatory core.
+   The one admission in this area is the optional bridge
+   `NUPPT.decides_of_decidesWithAdviceInTime` (decision log 2026-10-28; see D11).
 6. **Encoding scheme for Theorem 63.1 (run-3 audit P3-4).** `theorem_63_1` and `fUniversal_*`
    are stated for schemes with an at most exponential canonizer (`CanonizerExp c`); the only
    scheme in the library (`Turing.exists_effectiveMachineCode`) has no bound on its canonizer,

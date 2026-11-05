@@ -901,7 +901,8 @@ namespace TCSlib.Cryptography
 
 open Complexity Turing Finset
 
-/-! ## Helpers of the padded families and collections (`Asymptotic/HardCore.lean`) -/
+/-! ## Helpers of the padded families and collections (`Asymptotic/HardCore.lean`,
+`Asymptotic/HardCoreCollection.lean`) -/
 
 /-- The re-encoding `(x ‖ r, c) ↦ ((x, r), c)` of the experiments. -/
 def splitPair (a b : ℕ) (ρ : Type*) :

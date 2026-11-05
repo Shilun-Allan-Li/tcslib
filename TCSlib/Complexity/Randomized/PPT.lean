@@ -37,9 +37,15 @@ convention of [PS10, Definition 23.5]; "`A` computes `f` with probability 1"
 [PS10, Definition 24.6] is `NUPPT.Computes`: equality for every coin string (on the finite
 uniform coin space, probability one is the same as every coin string, see
 `TCSlib.Cryptography.Asymptotic.Adversary`). A PPT [PS10, Definition 23.4] is an `NUPPT` with
-empty advice (`NUPPT.Uniform`); `Complexity.PPT` is the subtype. The input-length-indexed
-activation `A_{|y|}(y)` of [PS10, Definition 26.8] is `NUPPT.runLit`; the lemmas about it
-and about uniformity are in `TCSlib.Complexity.Randomized.NonUniform`.
+empty advice (`NUPPT.Uniform`); `Complexity.PPT` is the subtype. `Computes` does not require
+`Uniform`: [PS10, Definition 24.6] is about a randomized algorithm, i.e. a PPT, and is the case
+`A.Uniform ∧ A.Computes f`; for a non-uniform `A`, `Computes` is the advice analogue and holds
+for uncomputable `f` (advice `[h n]` for an arbitrary `h : ℕ → Bool`, read back by the machine).
+So `∃ A : NUPPT, A.Computes f` does not say that a PPT computes `f`; efficient computation is
+`∃ A, A.Uniform ∧ A.Computes f` (`NUPPT.exists_uniform_computes`, and conversely
+`NUPPT.Computes.polyTimeComputable` of `TCSlib.Complexity.Randomized.Closure`). The
+input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8] is `NUPPT.runLit`; the
+lemmas about it and about uniformity are in `TCSlib.Complexity.Randomized.NonUniform`.
 
 ## Deviations (DESIGN.md §5, items 1–2)
 
@@ -60,10 +66,8 @@ the machine input" coincide.
 text indexes advice and coins by the input length (`A_{|x|}(x)`), while `NUPPT` indexes
 them by the parameter `n` read from the unary prefix `1^n`. The two are interdefinable in
 every experiment of the text: (i) an `NUPPT` run at `n := |y|` is exactly the text's
-`A_{|y|}(y)` (`NUPPT.runLit`; the prefix `1^{|y|}` carries no information, so the
-input-length-indexed machine is obtained by ignoring it, see
-`Complexity.NUPPT.exists_reparam_advice` in `TCSlib.Complexity.Randomized.Closure` with
-`φ := length`); (ii) conversely, every experiment of the text hands the adversary strings
+`A_{|y|}(y)`, by definition (`NUPPT.runLit`; the prefix `1^{|y|}` carries no information);
+(ii) conversely, every experiment of the text hands the adversary strings
 whose length is a fixed polynomial `ℓ(n)` of the parameter, and an input-length-indexed
 machine at length `ℓ(n)` becomes a `1^n`-indexed one by hard-wiring its advice at `ℓ(n)` and
 evaluating its coin polynomial at `ℓ(n)` (`exists_reparam_advice` with `φ := ℓ.eval`); for
@@ -82,7 +86,8 @@ one (Definitions 26.1 and 69.4) and are related by explicit lemmas, never unifie
 * `Complexity.NUPPT.advInput` — the adversary input `⟨1^n, y⟩`; `NUPPT.Coins` — the coin type
   at parameter `n`; `NUPPT.runAt`, `NUPPT.runAtL`, `NUPPT.runLit` — activations.
 * `Complexity.NUPPT.Uniform` — no advice (a PPT); `Complexity.PPT` — the subtype.
-* `Complexity.NUPPT.Computes` — computes `f` with probability one [PS10, Definition 24.6].
+* `Complexity.NUPPT.Computes` — computes `f` with probability one: [PS10, Definition 24.6] for a
+  uniform `A` (`NUPPT.Uniform`), the advice analogue otherwise.
 * `Complexity.NUPPT.ofPolyTime`, `Complexity.NUPPT.ofPolyTimeUniform` — the `NUPPT` with a
   given polynomial-time output function, with and without advice.
 
@@ -224,7 +229,16 @@ def Uniform : Prop := ∀ n, A.advice n = []
 /-- `A` computes `f` with probability one [PS10, Definition 24.6]: at every parameter `n`,
 on every argument `y` and for **every** coin string `r`, `A(1^n, y; r) = f(⟨1^n, y⟩)`. On
 the finite uniform coin space "probability one" is the same as "every coin string"
-(`TCSlib.Cryptography.Asymptotic.Adversary`, `NUPPT.computes_iff_uprob`). -/
+(`TCSlib.Cryptography.Asymptotic.Adversary`, `NUPPT.computes_iff_uprob`).
+
+The definition does not require `A.Uniform`. [PS10, Definition 24.6] is about a randomized
+algorithm, i.e. a PPT, and is the case `A.Uniform ∧ A.Computes f`. For a non-uniform `A` this
+is the advice analogue, which holds for uncomputable functions: with advice `[h n]` at
+parameter `n` for an arbitrary `h : ℕ → Bool` (`ofPolyTime` of the advice projection), `A`
+computes `w ↦ [h |fst w|]`. So `∃ A : NUPPT, A.Computes f` does **not** mean "a PPT computes
+`f`"; where the text means efficient computation, the form is `A.Uniform ∧ A.Computes f`
+(`exists_uniform_computes`; conversely `NUPPT.Computes.polyTimeComputable` of
+`TCSlib.Complexity.Randomized.Closure`, which assumes `Uniform`). -/
 def Computes (f : List Bool → List Bool) : Prop :=
   ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y)
 

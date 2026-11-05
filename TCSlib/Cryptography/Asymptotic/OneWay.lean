@@ -193,7 +193,17 @@ structure WorstCaseOneWayLit (𝓕 : FunFamily) : Prop where
 def strOutLen (f : List Bool → List Bool) (n : ℕ) : ℕ := (f (List.replicate n false)).length
 
 /-- The textbook `f : {0,1}* → {0,1}*` with the output length `p`: parameter = input length,
-the output padded or truncated to `p(n)` bits (exact when `f` is `LengthRegular f p`). -/
+the output padded or truncated to `p(n)` bits (exact when `f` is `LengthRegular f p`).
+
+Inversion is typed (D5, `NUPPT.inverter`): an inverter of `ofString f p` at parameter `n` must
+return a preimage of length `n`, while [PS10, Definition 27.3] accepts a preimage of any
+length. The two experiments agree when `f` is length-regular with non-constant `p` (then
+`|f(x)|` determines `|x|`); with constant `p` neither notion is satisfiable. Otherwise the typed
+notion can be strictly weaker: for a length-preserving one-way `g`, the function
+`f(0^k ‖ w) := w` (`|w| = k`), `f(x) := g(x)` elsewhere is inverted with probability one by
+`y ↦ 0^{|y|} ‖ y` in the text's experiment, while in the typed one every inverter succeeds
+with probability at most its inversion probability against `g` plus `2^{-n/2}` (gate 03a,
+note 15). -/
 def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
   inLen := .var
   outLen := p
