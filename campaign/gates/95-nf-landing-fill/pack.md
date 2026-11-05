@@ -110,9 +110,14 @@ it (`e8994dc1`, a merge commit; the file is unchanged by it).
   `[propext, Classical.choice, Quot.sound]`.
 - **Replay:** `replay-lnf` (`evidence/merged-tree/`), the downstream closure of the one changed
   file on the merged tree: `NDNormalForm`, the `ClassNP` facade, `NTimeHierarchy` and
-  `Diagonalization`, 4 modules chained from `oleans-lcf3` (the campaign after #190). With #188
-  merged too, `NTimeHierarchy`'s three theorems should be free of `sorryAx`; their axiom prints
-  are in `evidence/axioms/`.
+  `Diagonalization`, 4 modules chained from `oleans-lcf3` (the campaign after #190):
+  **`# modules=4 failed=0`**, every module with 0 `sorry` warnings; the static check 4 modules,
+  0 mismatches.
+- **The headlines** (`evidence/axioms/NTHAx.lean.txt`, `.out`, on `replay-lnf`'s snapshot): the
+  target, `exists_diagonalizer`, `exists_timed_universal_NDTM`, `exists_ndAcceptsWithin_decider`,
+  `ntime_hierarchy`, `ntime_hierarchy_of_pos` and `NTIME_linear_ssubset_square` all on
+  `[propext, Classical.choice, Quot.sound]`: the nondeterministic time hierarchy is free of
+  `sorryAx` once #191 merges.
 
 ## Findings format
 
