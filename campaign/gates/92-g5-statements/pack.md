@@ -53,15 +53,31 @@ This PR lands G5's interface. The Hennie–Stearns simulation itself (`two_work_
      `[propext, Classical.choice, Quot.sound]`;
    - `two_work_tapes_*` and `universal_TlogT` add `sorryAx`, which must come only through
      `two_work_tapes_run` (`universalK` is admission-free).
-4. **Rule 10** (`evidence/rule10/`): the sealed copies of the four proof sites, and the controls.
-   Is any other-file definition unfolded or closed by reduction?
+4. **Rule 10** (`evidence/rule10/`): four sealed copies (`AlphabetReduction`'s new theorem,
+   `Encoding`'s relabelling section, `exists_code2TM` and `UniversalTlogT`) under a seal of 14
+   definitions, with `attribute [-simp]` on three. Each copy elaborates with 0 errors; the only
+   output is `Encoding`'s pre-existing `sorry`. Controls: 28 of 28 pass unsealed, and 0 of 28 pass
+   sealed. Is any other-file definition unfolded or closed by reduction?
 5. **Homes (D1):** `TwoTapes` beside `SingleTape`; `UniversalTlogT` as a sibling, since the
    `Robustness` layer does not import `UniversalK`. `alphabet_reduction_run` must be in
    `AlphabetReduction`, since it uses the file's private run lemmas. Its downstream is 325
    modules, the replay below.
-6. **Duplication** (`evidence/screen/`): the screen of 13 files at the head against the campaign
-   tip; every new pair, and the factoring's effect on `exists_codeTM_spaceUsed` and
-   `exists_code2TM`. Does anything else re-derive existing material?
+6. **Duplication** (`evidence/screen/`): the v3 screen of 13 files, base the campaign tip
+   `057da7a7` (1,004 declarations, 692 pairs), head `2339d2df` (1,010, 697): 5 new pairs, none gone
+   (`pairdiff.txt`).
+   - `exists_codeTM_spaceUsed` and `exists_code2TM` (94% and 73%), and `exists_code2TM` against
+     `toCodeTM_computesInTime_iff` (74%). **Disposition: idiom.** After the factoring, each is a
+     four-line invocation of `FinTM.computesInTime_relabelState` (with `stateEquivFin`) around its
+     own code type's constructor. The renaming argument is stated once; nothing is re-derived.
+     Before the factoring, the pair was 67% of a re-derived argument
+     (`evidence/superseded-6bd12e68/screen/`).
+   - `alphabet_reduction_run` against `Universal`'s `timedCut_live_before` (70%) and
+     `timedPrefix_live` (50%). **Disposition: idiom.** The shared text is the invocation of
+     `Nat.exists_eq_add_of_le`, `MultiTapeTM.runFrom_add` and `MultiTapeTM.runFrom_of_halt` (a
+     halted run is stationary). No published lemma states the whole configuration's stationarity
+     past a halt; `runFrom_output_eq_of_halt` states its output only.
+
+   Does anything else re-derive existing material?
 7. **Names** (`evidence/names/`): the new names on every ref.
 8. **Public-facing text and lint** (`evidence/lint/`): the docstrings' sketches and references
    (`[HS66]`, `[AB09, Theorem 1.9]`).

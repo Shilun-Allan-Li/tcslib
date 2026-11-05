@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Robustness.TwoTapes
 import TCSlib.Complexity.TuringMachine.UniversalK
 
+set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
@@ -23,6 +24,10 @@ overhead `C · T log T` for a run of `T` steps, where `C` depends on `M` but not
 * The statement is per run and includes the converse: every completed output of `U` on
   `⟨α, x⟩` is an output of `M` on `x`.
 * The overhead is `C · (t + 1)(log₂(t + 1) + 1)`, padded so that it covers `t = 0`.
+
+## Main definitions
+
+No new definitions: the universal machine is an existential contract.
 
 ## Main results
 
