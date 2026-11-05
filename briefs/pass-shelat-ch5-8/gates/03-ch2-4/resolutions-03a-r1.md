@@ -15,19 +15,20 @@
   `c10ed6ace0b991146c0be769313fbbe52d36e25a`), merged with the ch. 2–4 head as
   `956c595f2584532899aac1fb6fbe3d0aab9fa370`, in PR #201 with 03c's
   `bc2aab59333e27729c9fbac3052cd650bf62c3aa`. #201's head is
-  `0c348ff94cacf24d96d99078c9dd9e328530c8d2` and is **not yet merged**, so every "Fixed" below is
-  on #201's branch only. Evidence `evidence-repairs/03ac/` (replay of the 97 downstream modules
+  `0c348ff94cacf24d96d99078c9dd9e328530c8d2`, merged by `02951926d9c9cea1d3596afa71c252176ca9de1d`.
+  Gate 03 clean-up part 1 is PR #203 (head `f29be161cd86cfc3a9c38bd203bfa095b4974086`, merged by
+  `8ec28f130eaca5f7d7dc756953bde0807d41b7df`; evidence `evidence-repairs/03l-cleanup1/`). Evidence `evidence-repairs/03ac/` (replay of the 97 downstream modules
   plus `Checks`, the full `Checks` axiom print at #201's head, lint 0). Line numbers are at #201's
-  head; Lean paths are under `TCSlib/`.
-- **Scheduled work** goes to the gate 03 clean-up PR: part 1 is in progress (stacked on #201);
+  head unless a row says otherwise; Lean paths are under `TCSlib/`.
+- **Scheduled work** goes to the gate 03 clean-up: part 1 is merged (#203);
   part 2 follows #195 (`duplication-ledger.md` DL-9 to DL-15; `QUEUE.md:147`).
 
 | Finding | Severity (after review) | Resolution |
 |---|---|---|
 | 1 | minor | **Fixed.** `NUPPT.Computes` (`Complexity/Randomized/PPT.lean:229–241`), the module docstring (:40–48, :89–90) and DESIGN D3 (`briefs/pass-shelat/DESIGN.md:64–67`) say that Def 24.6 proper is `A.Uniform ∧ A.Computes f` and that the non-uniform form holds for uncomputable `f`. No `PPT.Computes` wrapper (no consumer); the downstream check is clean (review: 0 uses in ch. 5–8). |
 | 2 | note (was minor) | **Fixed** (docstring). `Ensemble.Indist.copies` (`Cryptography/Asymptotic/Ensembles.lean:456–460`) says the samplability hypotheses are [Gar26, Lemma 3.3]'s uniform reduction and can be dropped against non-uniform distinguishers (not proved, no consumer). D6 unchanged; the optional `Indist.copies'` is not added. |
-| 3 | minor | **Scheduled** (found missing while drafting these resolutions): the review's additive `NUPPT.exists_compParam` (`pre` and `post` see `1^n`) is item H of the gate 03 clean-up, part 1 (stacked on #201), with a `Checks` print. Meanwhile the scope is stated: `exists_comp`'s docstring (`Complexity/Randomized/Closure.lean:195–200`) and the module list (:56–57). |
-| 4 | major (was minor) | **Scheduled** (G3-5, DL-11). `polyTimeComputable_stateFind` is still `private` (`Complexity/Randomized/Repetition.lean:264`). Clean-up part 1 (in progress) makes it public and fixes the prose that calls it private (`Repetition.lean:40–46`, `Build/StringLoops.lean:36–38`, `Asymptotic/HardCoreLoops.lean:68`); part 2 re-points the copies `GI.stateFind`, `EncodingMachines.polyTimeComputable_stateFind` (`ZeroKnowledge/EncodingMachines.lean:482`), `GGMRed.stateLoopFun` and the variant `stateIterate`. |
+| 3 | minor | **Fixed** (#203, item H; found missing while drafting these resolutions). `NUPPT.exists_compParam` (`Complexity/Randomized/Closure.lean:209`, at #203's head): closure under polynomial-time pre- and post-processing that see `1^n`, with the review's statement. `exists_comp` is re-derived as its special case (statement unchanged), and its Scope paragraph points to the new theorem; `Checks.lean` prints it (standard axioms). Its proof, like `exists_comp`'s, reads `PPT.lean`'s `runAtL` and `advInput` by `simp`; the equation lemmas `runAtL_eq` and `advInput_eq` are **scheduled** for part 2. |
+| 4 | major (was minor) | **Fixed** in its first half (#203, item D): `Complexity.polyTimeComputable_stateFind` is public (`Complexity/Randomized/Repetition.lean:241`, at #203's head), with its statement unchanged, and the prose calling it private is fixed (`Repetition.lean`, `Build/StringLoops.lean`, `Asymptotic/HardCoreLoops.lean:68`). **Scheduled:** part 2 re-points the copies `GI.stateFind`, `EncodingMachines.polyTimeComputable_stateFind`, `GGMRed.stateLoopFun` and the variant `stateIterate`, and their "private" docstrings (DL-11). Meanwhile `ThreeColoring/Machines.lean:126` names the `EncodingMachines` copy explicitly, since the public name made the call ambiguous. |
 | 5 | minor | **Fixed.** `polyTimeComputable_runAtL` (`Complexity/Randomized/NonUniform.lean:122–128`), the module docstring (:33–37) and its main-results line (:61–62) say the machine's size and constants depend on `n`, and that Def 26.8's polynomial size comes from `advice_length`. |
 | 6 | note (was minor, src) | **Fixed.** `pairwise_sampling_ineq`'s deviation (`Ensembles.lean:691–696`) states that `1/4 > 1 − p²` exactly when `p > √3/2`, and that the variance form implies both bounds. The review checked the source (p. 189). |
 | 7 | minor | **Fixed.** `Ensemble`'s deviation (`Ensembles.lean:119–125`): rational laws (seeds `Fin 3` give mass `1/3`; the samplable ensembles are the dyadic ones, D6) on strings of the fixed length `ℓ(n)` (missed item M5). |
@@ -55,6 +56,6 @@
 | M3 | (review) `exists_reparam_advice` untagged | **Fixed** (`Closure.lean:245`). |
 | M4 | (review) `Samplable` misattributed | **Fixed.** `Ensemble.Samplable` (`Ensembles.lean:157–158`) cites [PS10, p. 72, Example] and [Gar26, Lemma 3.3] for the multicopy lemma. |
 | M5 | (review) fixed length not declared | **Fixed** with #7 (`Ensembles.lean:122–123`). |
-| M6 | (review) prose calls `stateFind` private | **Scheduled:** clean-up part 1 (DL-11's first half); see #4. |
+| M6 | (review) prose calls `stateFind` private | **Fixed** (#203, item D); see #4. |
 | M7 | (review) 03b #12b's `NUPPT` helpers | **Fixed** in #198: moved to `Cryptography/Asymptotic/CollectionsHelpers.lean:58–115` (not 03a's directory) with the full names `Complexity.NUPPT.*` unchanged, so 03a's closing diff does not include them. |
 | M8 | (review) downstream check for #1 | **No change:** clean (no ch. 5–8 use of `NUPPT.Computes`). |
