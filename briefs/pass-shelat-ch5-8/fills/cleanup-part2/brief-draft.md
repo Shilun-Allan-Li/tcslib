@@ -18,8 +18,9 @@
 - **DL-9 `blocks`:**
   - one public coin-block bijection `FunFamily.blocks` (`Fin (m · c) → Bool ≃ Fin m → Fin c →
     Bool`), with its lemmas, in a low file;
-  - the copies `OneWayYao.blocksE`, `blocksEquiv`, `blocksEquivX`, `EnsembleLemmas.blocks` and
-    `SoundnessRep.blocksEquiv` deleted, and their users re-pointed;
+  - the copies `OneWayYao.blocksE`, `blocksEquiv`, `blocksEquivX`, `EnsembleLemmas.blocks`,
+    `SoundnessRep.blocksEquiv` and the private `Ensemble.blocks` (`Asymptotic/Ensembles.lean`,
+    gate 03a round 2, R2-4) deleted, and their users re-pointed;
   - S2b's public duplicate `take_drop_ofFn_blocks` folded into
     `EnsembleLemmas.take_drop_ofFn_blocks` (gate 04 N4).
 

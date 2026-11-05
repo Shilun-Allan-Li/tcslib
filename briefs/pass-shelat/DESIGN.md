@@ -62,7 +62,8 @@ D3. **Probabilistic machines.** One structure `Complexity.NUPPT` (file
     random tape is part of the input, the time bound holds for every coin string
     ([PS10, Def 23.5], worst case), and "`A` computes `f` with probability 1" ([PS10, Def 24.6])
     is `Computes`: equality for every coin string. `Computes` does not require `Uniform`: Def
-    24.6 proper is the case `A.Uniform ∧ A.Computes f`; for a non-uniform `A` it is the advice
+    24.6 (on the encodings `⟨1^n, y⟩`, which is all `Computes` constrains; gate 03a, round 2,
+    R2-1) is the case `A.Uniform ∧ A.Computes f`; for a non-uniform `A` it is the advice
     analogue and holds for uncomputable `f` (advice `[h n]`), so `∃ A, A.Computes f` is not "a
     PPT computes `f`" (gate 03a, finding 1). Honest evaluators ("easy to compute") are
     stated as `PolyTimeComputable` string functions on `⟨1^n, x⟩`. Recorded deviations:

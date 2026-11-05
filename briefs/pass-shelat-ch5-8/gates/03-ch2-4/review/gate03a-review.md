@@ -63,7 +63,7 @@ Types of fix used below:
 - **Verdict: partly true.**
 - **True:**
   - Against non-uniform distinguishers the hypotheses are unnecessary. Use the advice hybrid: fix `k` and the other `t − 1` coordinates `w*` that keep the gap, and hard-wire them with `exists_withAdvice`.
-  - An `Ensemble` with `σ n = Fin 3` is never `Samplable`. `Samplable` (`Ensembles.lean:149–152`) demands an exact law over `2^{s(n)}` seeds, so the law is dyadic.
+  - An `Ensemble` with `σ n = Fin 3` is never `Samplable`. *[Erratum, gate 03a round 2, R2-3: wrong as stated; a constant map from `Fin 3` is a samplable point mass. The obstruction is a law with a non-dyadic atom, e.g. three seeds mapped to distinct strings.]* `Samplable` (`Ensembles.lean:149–152`) demands an exact law over `2^{s(n)}` seeds, so the law is dyadic.
 - **Not true:** "stronger than the uses can meet".
   - There are no uses: 0 in ch. 2–4 statements and 0 in ch. 5–8. The one intended use, PRG outputs, gets `Samplable` from `Easy.samplable` (`Pseudorandom.lean:60,167,169`).
   - The hypothesis is faithful to the cited source. [Gar26, Lemma 3.3]'s reduction samples the other copies; `Pseudorandom/Indistinguishability.lean:193–197` says "this is where efficient samplability of X and Y is used".
