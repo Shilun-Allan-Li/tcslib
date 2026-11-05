@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.OneWay
+import TCSlib.Cryptography.Asymptotic.CollectionsHelpers
 import TCSlib.Cryptography.Asymptotic.CollectionsLemmas
 import TCSlib.Cryptography.Asymptotic.Sampling
 import TCSlib.Complexity.PolyHierarchy.Padding
@@ -22,11 +23,12 @@ clause `Pr[i ← Gen(1^n); x ← D_i; y ← f_i(x) : f_i(A(1^n, i, y)) = y] ≤ 
 [PS10, Definition 41.1]; collections of one-way permutations [PS10, Definition 55.1]; trapdoor
 permutations with their inverter [PS10, Definition 56.1]; the hard-core predicate for a
 collection (the unnumbered collection form of [PS10, Definition 78.3], used by Lemma 84.1,
-Theorem 104.4 and Theorem 126.4); and the equivalence with single strong one-way functions
+Algorithm 104.3 and Theorem 104.4); and the equivalence with single strong one-way functions
 [PS10, Theorem 42.2].
 
 A `Collection` (foundation decisions D3–D5, D10) has string indices `i : List Bool`, at each
-index a finite inhabited domain `D i` with an encoding `encD i` and a total decoder `decD i`,
+index a finite inhabited domain `D i` with an encoding `encD i` and a total, canonical decoder
+`decD i` (a string decodes only if it is an encoding, `encD_decD`),
 the string function `f i`, two uniform `NUPPT`s `gen` (`Gen(1^n) = ⟨i, t⟩`, `index`/`trap`)
 and `sample`, and a polynomial-time evaluator `eval` agreeing with `f` on encoded elements.
 The sampler is required to be within a negligible statistical distance of uniform on `D i`
@@ -58,19 +60,24 @@ on non-canonical strings, so [PS10, Theorem 42.2 ⇒] was unprovable; the member
 `Collection.sample_spec`, from which `Collection.EvalSampled` (every sampled string decodes and
 `eval` agrees with `f` on it) is derived (`Collection.evalSampled`).
 
+Repair (gate 03b, finding 1; ruling G3-1): decoding is canonical (`Collection.encD_decD`), so
+the outputs of the sampler and of the trapdoor inverter are encodings, on which every function
+correct on encodings is right (`Collection.apply_of_decD`). The helpers of Theorem 42.2 are in
+`TCSlib.Cryptography.Asymptotic.CollectionsHelpers` (names unchanged).
+
 ## Main definitions
 
-* `TCSlib.Cryptography.Collection` (`sample_spec`, `index`, `trap`, `SampleClose`,
+* `TCSlib.Cryptography.Collection` (`encD_decD`, `sample_spec`, `index`, `trap`, `SampleClose`,
   `invProbAt`), `TCSlib.Cryptography.Collection.OneWay` — collections of one-way functions
   [PS10, Definition 41.1]; `TCSlib.Cryptography.Collection.HardCore` — hard-core predicate
   for a collection [PS10, Definition 78.3, collection form].
 * `TCSlib.Cryptography.PermCollection`, `PermCollection.OneWay` [PS10, Definition 55.1];
   `TCSlib.Cryptography.TrapdoorCollection`, `TrapdoorCollection.OneWay`
   [PS10, Definition 56.1].
-* `TCSlib.Cryptography.FunFamily.toCollection`, `Complexity.NUPPT.withIndexParam`
-  [PS10, Theorem 42.2 ⇐]; `TCSlib.Cryptography.Collection.owfRaw`, `Collection.owfFamily`,
-  `Collection.OutLenBound`, `Collection.EvalSampled`, `TCSlib.Cryptography.splitCoins`
-  [PS10, Theorem 42.2 ⇒].
+* `TCSlib.Cryptography.FunFamily.toCollection` [PS10, Theorem 42.2 ⇐] (with
+  `Complexity.NUPPT.withIndexParam` of `CollectionsHelpers`);
+  `TCSlib.Cryptography.Collection.owfRaw`, `Collection.owfFamily`, `Collection.OutLenBound`,
+  `Collection.EvalSampled` [PS10, Theorem 42.2 ⇒] (with `splitCoins` of `CollectionsHelpers`).
 
 ## Main results
 
@@ -78,14 +85,17 @@ on non-canonical strings, so [PS10, Theorem 42.2 ⇒] was unprovable; the member
   `FunFamily.StrongOneWay.exists_collection_oneWay` — [PS10, Theorem 42.2 ⇐] (proved).
 * `TCSlib.Cryptography.Collection.OneWay.exists_strongOneWay` (proved from the explicit
   form), `Collection.OneWay.owfFamily_strongOneWay` — [PS10, Theorem 42.2 ⇒] (proved).
-* `TCSlib.Cryptography.ofFn_splitCoins_fst`, `ofFn_splitCoins_snd`, `ofFn_splitCoins_symm` —
-  the coin split `splitCoins` is `List.take`/`List.drop` on the encoded coin string.
 * `TCSlib.Cryptography.Collection.evalSampled` — honest evaluation on sampled strings, from
   `sample_spec`.
-* `TCSlib.Cryptography.Collection.exists_outLenBound`,
-  `Collection.padFin_append_true_injective` — `g` has a polynomial, losslessly padded output.
-* `TCSlib.Cryptography.TrapdoorCollection.inv_preimage`,
-  `TCSlib.Cryptography.PermCollection.f_injective` — sanity for Definitions 55.1 and 56.1.
+* `TCSlib.Cryptography.Collection.decD_eq_some_iff`, `Collection.apply_of_decD`,
+  `Collection.eval_of_decD`, `Collection.sample_eq_encD`, `Collection.HardCore.evaluator` —
+  canonical decoding and its consequences.
+* `TCSlib.Cryptography.Collection.exists_outLenBound` — `g` has a polynomial output length.
+* `TCSlib.Cryptography.TrapdoorCollection.inv_preimage`, `TrapdoorCollection.inv_eq_encD`,
+  `TrapdoorCollection.eval_inv`, `TCSlib.Cryptography.PermCollection.f_injective` — sanity for
+  Definitions 55.1 and 56.1 (decode level and string level).
+* `TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id` — non-vacuity: the collection of
+  the identity is not one-way.
 
 ## References
 
@@ -103,15 +113,18 @@ open Complexity Turing Finset
 /-! ## Collections -/
 
 /-- A *collection of functions* `{f_i : D_i → R_i}_{i ∈ I}` [PS10, Definition 41.1 (1)–(3)]:
-string indices, finite inhabited domains with encoding and total decoder, the string function
-`f i`, a uniform `NUPPT` index generator `Gen(1^n) = ⟨i, t⟩` (`t` ignored by plain
+string indices, finite inhabited domains with an encoding and a total decoder that is
+canonical (a string decodes to `x` only if it is the encoding of `x`, `encD_decD`), the string
+function `f i`, a uniform `NUPPT` index generator `Gen(1^n) = ⟨i, t⟩` (`t` ignored by plain
 collections), a uniform `NUPPT` domain sampler `Sample(1^n, i)` whose outputs at generated
 indices are elements of `D_i` on which the evaluator computes `f_i` (`sample_spec`, the
 membership half of clause (2)), and a polynomial-time evaluator `eval ⟨i, x⟩ = f i x` on
 encoded elements. The uniformity and hardness clauses are the predicates `SampleClose` and
 `OneWay`.
 
-Repair (run-3 audit P3-1): the field `sample_spec` was added (see its docstring). -/
+Repair (run-3 audit P3-1): the field `sample_spec` was added (see its docstring).
+Repair (gate 03b, finding 1; ruling G3-1): the field `encD_decD` was added (see its
+docstring). -/
 structure Collection where
   /-- The domain `D_i` at the index `i`. -/
   D : List Bool → Type
@@ -125,6 +138,13 @@ structure Collection where
   decD : ∀ i, List Bool → Option (D i)
   /-- Decoding inverts encoding. -/
   decD_encD : ∀ i x, decD i (encD i x) = some x
+  /-- Decoding is canonical: a string decodes only if it is the encoding of its value, so the
+  sampler's outputs (`sample_spec`) and the trapdoor inverter's (`inv_spec`) are encodings
+  [PS10, Definitions 41.1 (2), 56.1 (6): "an element of `D_i`", "computes `f_i^{-1}(y)`"].
+  Repair (gate 03b, finding 1; ruling G3-1): with a lenient decoder the sampler and the inverter
+  could output strings on which `eval` and a hard-core evaluator (pinned on encodings) misbehave;
+  the inversion game is now the text's, whose adversary answers with an element. -/
+  encD_decD : ∀ i w x, decD i w = some x → encD i x = w
   /-- The function `f_i : D_i → {0,1}*`. -/
   f : ∀ i, D i → List Bool
   /-- The index generator `Gen`. -/
@@ -198,8 +218,9 @@ structure OneWay (F : Collection) : Prop where
   hard : ∀ A : NUPPT, Negligible fun n => F.invProbAt A n
 
 /-- `{h_i}` is a *hard-core predicate for the collection* `F` (the collection form of
-[PS10, Definition 78.3], unnumbered, used by Lemma 84.1, Algorithm 104.3, Theorem 126.4):
-`h_i(x)` is polynomial-time computable from `⟨i, x⟩`, and for every non-uniform PPT `A` there
+[PS10, Definition 78.3], unnumbered, used by Lemma 84.1, Algorithm 104.3 and Theorem 104.4):
+`h_i(x)` is polynomial-time computable from `⟨i, x⟩` (on the encoding of `x`, hence on every
+string decoding to `x`, `HardCore.evaluator`), and for every non-uniform PPT `A` there
 is a negligible `ε` with `Pr[i ← Gen(1^n); x ← D_i : A(1^n, ⟨i, f_i(x)⟩) = h_i(x)] ≤ 1/2 + ε(n)`
 for all `n` (average over `Gen`'s coins, ideal uniform `x`).
 
@@ -230,13 +251,56 @@ theorem invProbAt_le_one (F : Collection) (A : NUPPT) (n : ℕ) : F.invProbAt A 
   unfold invProbAt
   exact (OneWay.uexp_mono fun r => uprob_le_one _).trans (OneWay.uexp_const 1).le
 
+/-! ### Canonical decoding (gate 03b, finding 1) -/
+
+/-- **A string decodes to `x` iff it is the encoding of `x`** (`decD_encD` and the canonicity
+field `encD_decD`). -/
+theorem decD_eq_some_iff (F : Collection) {i w : List Bool} {x : F.D i} :
+    F.decD i w = some x ↔ w = F.encD i x :=
+  ⟨fun h => (F.encD_decD i w x h).symm, fun h => h ▸ F.decD_encD i x⟩
+
+/-- **A function correct on encodings is correct on every decodable string**: if
+`g ⟨i, encD_i x⟩ = v_i(x)` for every `i` and `x`, then `g ⟨i, w⟩ = v_i(x)` whenever `w`
+decodes to `x` (canonical decoding, `encD_decD`). -/
+theorem apply_of_decD (F : Collection) {β : Type*} {g : List Bool → β} {v : ∀ i, F.D i → β}
+    (hg : ∀ i x, g (pairEncode i (F.encD i x)) = v i x) {i w : List Bool} {x : F.D i}
+    (h : F.decD i w = some x) : g (pairEncode i w) = v i x := by
+  rw [← F.encD_decD i w x h]
+  exact hg i x
+
+/-- **The evaluator computes `f_i` on every decodable string**: `eval ⟨i, w⟩ = f_i(x)` whenever
+`w` decodes to `x` ([PS10, Definition 41.1 (3)] on every representation of `x`). -/
+theorem eval_of_decD (F : Collection) {i w : List Bool} {x : F.D i} (h : F.decD i w = some x) :
+    F.eval (pairEncode i w) = F.f i x :=
+  F.apply_of_decD F.eval_spec h
+
+/-- **The sampler outputs encodings** ([PS10, Definition 41.1 (2)], "returns an element of
+`D_i`"): at every generated index, every output of `Sample(1^n, i)` is `encD_i x` for some
+`x ∈ D_i` (`sample_spec` and canonical decoding). -/
+theorem sample_eq_encD (F : Collection) (n : ℕ) (r : F.gen.Coins n) (s : F.sample.Coins n) :
+    ∃ x, F.sample.runAt n (F.index n r) s = F.encD (F.index n r) x :=
+  let ⟨x, hx, _⟩ := F.sample_spec n r s
+  ⟨x, (F.encD_decD _ _ x hx).symm⟩
+
+/-- **A hard-core predicate is evaluable on every decodable string**: the evaluator `H` of
+`HardCore` (correct on encodings) satisfies `H ⟨i, w⟩ = [h_i(x)]` whenever `w` decodes to `x`,
+in particular on the outputs of the sampler and of a trapdoor inverter
+(`Collection.apply_of_decD`). -/
+theorem HardCore.evaluator {F : Collection} {h : ∀ i, F.D i → Bool} (hh : F.HardCore h) :
+    ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+      ∀ i w x, F.decD i w = some x → H (pairEncode i w) = [h i x] :=
+  let ⟨H, hH, hHx⟩ := hh.1
+  ⟨H, hH, fun _ _ _ hw => F.apply_of_decD (v := fun i x => [h i x]) hHx hw⟩
+
 end Collection
 
 /-! ## Permutations and trapdoor permutations -/
 
 /-- A *collection of permutations* [PS10, Definition 55.1]: every `f_i` is a permutation of
 `D_i` (`f_i = encD_i ∘ perm_i`, `perm_i : D_i ≃ D_i`, so `R_i = D_i` up to encoding);
-one-wayness is `PermCollection.OneWay`. -/
+one-wayness is `PermCollection.OneWay`. `perm` and `f_perm` hold at every index string, which
+is stronger than the text's `i ∈ I` and harmless: at indices outside `Gen`'s range `D i` may be
+a one-element domain (as in the RSA and Blum candidates). -/
 structure PermCollection extends Collection where
   /-- The permutation of `D_i`. -/
   perm : ∀ i, D i ≃ D i
@@ -256,15 +320,19 @@ theorem PermCollection.f_injective (P : PermCollection) (i : List Bool) :
 
 /-- A *collection of trapdoor permutations* [PS10, Definition 56.1 (1)–(4), (6)]: a collection
 of permutations with a uniform `NUPPT` inverter `Inv(1^n, ⟨t, y⟩)` that, for every
-`⟨i, t⟩ ← Gen(1^n)` and `y ∈ D_i`, decodes to `f_i^{-1}(y)` for every coin string; the
+`⟨i, t⟩ ← Gen(1^n)` and `y ∈ D_i`, decodes to `f_i^{-1}(y)` for every coin string (so, by
+canonical decoding, outputs its encoding: `TrapdoorCollection.inv_eq_encD`); the
 hardness clause (5) is `TrapdoorCollection.OneWay`.
 
 **Deviation:** the inverter receives `1^n` and the trapdoor `t` only, where the text gives it
-"`(i, t)` from `Gen`"; the index is recoverable from the trapdoor in every candidate, which
-therefore packs it into `t` (RSA's `Gen` outputs `⟨⟨N, e⟩, ⟨N, d⟩⟩` for the text's
-`[(N, e), d]`, Rabin's trapdoor `⟨p, q⟩` determines `N`) — run-3 audit P3-5, the literal
-`Inv(1^n, ⟨⟨i, t⟩, y⟩)` form was not adopted. "`f_i^{-1}(y)`, `y ∈ R_i`" is
-`(perm i).symm y`, `y ∈ D_i` (the range is `D_i` up to encoding). -/
+"`(i, t)` from `Gen`" — run-3 audit P3-5, the literal `Inv(1^n, ⟨⟨i, t⟩, y⟩)` form was not
+adopted. The two classes coincide: a text TDP becomes one of this shape with the trapdoor
+`t' := ⟨i, t⟩` (`Gen'` outputs `⟨i, ⟨i, t⟩⟩`, efficient, and harmless because the trapdoor never
+reaches the adversary, who receives `⟨i, f_i(x)⟩` only in `Collection.invProbAt`), and this
+shape is a text TDP whose `Inv` ignores `i`. (The candidates pack the index into `t`: RSA's
+`Gen` outputs `⟨⟨N, e⟩, ⟨N, d⟩⟩` for the text's `[(N, e), d]`, Rabin's trapdoor `⟨p, q⟩`
+determines `N`.) "`f_i^{-1}(y)`, `y ∈ R_i`" is `(perm i).symm y`, `y ∈ D_i` (the range is
+`D_i` up to encoding). -/
 structure TrapdoorCollection extends PermCollection where
   /-- The trapdoor inverter `Inv`. -/
   inv : NUPPT
@@ -280,39 +348,35 @@ bound "`≤ e(k)`" is `ε(n)` (source error). -/
 def TrapdoorCollection.OneWay (T : TrapdoorCollection) : Prop := T.toCollection.OneWay
 
 /-- **The trapdoor inverter wins the inversion game on every `y`** (sanity for
-[PS10, Definition 56.1 (6)]): its decoded answer `x'` satisfies `f_i(x') = encD i y`. -/
+[PS10, Definition 56.1 (6)], decode level; the string level is `TrapdoorCollection.eval_inv`):
+its decoded answer `x'` satisfies `f_i(x') = encD i y`. -/
 theorem TrapdoorCollection.inv_preimage (T : TrapdoorCollection) (n : ℕ) (r : T.gen.Coins n)
     (y : T.D (T.index n r)) (s : T.inv.Coins n) :
     ∃ x', T.decD _ (T.inv.runAt n (pairEncode (T.trap n r) (T.encD _ y)) s) = some x' ∧
       T.f (T.index n r) x' = T.encD (T.index n r) y :=
   ⟨(T.perm _).symm y, T.inv_spec n r y s, by rw [T.f_perm, Equiv.apply_symm_apply]⟩
 
+/-- **The trapdoor inverter outputs the encoding of `f_i^{-1}(y)`** ([PS10, Definition 56.1 (6)],
+"computes `f_i^{-1}(y)`"): `Inv(1^n, ⟨t, encD_i y⟩) = encD_i (perm_i⁻¹ y)` for every generated
+`⟨i, t⟩`, every `y ∈ D_i` and every coin string (`inv_spec` and canonical decoding). -/
+theorem TrapdoorCollection.inv_eq_encD (T : TrapdoorCollection) (n : ℕ) (r : T.gen.Coins n)
+    (y : T.D (T.index n r)) (s : T.inv.Coins n) :
+    T.inv.runAt n (pairEncode (T.trap n r) (T.encD _ y)) s = T.encD _ ((T.perm _).symm y) :=
+  (T.encD_decD _ _ _ (T.inv_spec n r y s)).symm
+
+/-- **The evaluator maps the inverter's output back to `y`** (string-level sanity for
+[PS10, Definition 56.1 (6)]): `eval ⟨i, Inv(1^n, ⟨t, encD_i y⟩)⟩ = encD_i y`.
+
+**Proof sketch.** The inverter's output is `encD_i (perm_i⁻¹ y)` (`inv_eq_encD`), on which
+`eval` computes `f_i (perm_i⁻¹ y) = encD_i (perm_i (perm_i⁻¹ y)) = encD_i y` (`eval_spec`,
+`f_perm`). -/
+theorem TrapdoorCollection.eval_inv (T : TrapdoorCollection) (n : ℕ) (r : T.gen.Coins n)
+    (y : T.D (T.index n r)) (s : T.inv.Coins n) :
+    T.eval (pairEncode (T.index n r) (T.inv.runAt n (pairEncode (T.trap n r) (T.encD _ y)) s)) =
+      T.encD _ y := by
+  rw [T.inv_eq_encD n r y s, T.eval_spec, T.f_perm, Equiv.apply_symm_apply]
+
 /-! ## Theorem 42.2 (⇐): a strong one-way function is a collection -/
-
-/-- The machine `B(1^n, y) = A(1^n, ⟨1^n, y⟩)`: `A` with the unary parameter prepended to its
-argument as the index of `FunFamily.toCollection`; same coins, same advice. -/
-noncomputable def _root_.Complexity.NUPPT.withIndexParam (A : NUPPT) : NUPPT :=
-  NUPPT.ofPolyTime (f := fun z => A.output (NUPPT.layout (NUPPT.inParam z)
-      (pairEncode (NUPPT.inParam z) (NUPPT.inArg z)) (NUPPT.inAdvice z) (NUPPT.inCoins z)))
-    (A.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout
-      NUPPT.polyTimeComputable_inParam
-      (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inArg)
-      NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins))
-    A.coins A.adv A.advice A.advice_length
-
-/-- `withIndexParam` has the coins of `A`. -/
-@[simp] theorem _root_.Complexity.NUPPT.coins_withIndexParam (A : NUPPT) :
-    A.withIndexParam.coins = A.coins := rfl
-
-/-- The activation of `withIndexParam`: `B(1^n, y; r) = A(1^n, ⟨1^n, y⟩; r)`. -/
-theorem _root_.Complexity.NUPPT.withIndexParam_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
-    (r : A.withIndexParam.Coins n) :
-    A.withIndexParam.runAt n y r = A.runAt n (pairEncode (List.replicate n true) y) r := by
-  rw [NUPPT.runAt_eq]
-  unfold NUPPT.withIndexParam
-  rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
 
 namespace FunFamily
 
@@ -343,7 +407,8 @@ private theorem toCollection_sample_runAt (n : ℕ) (i : List Bool)
 (`Gen(1^n) = ⟨1^n, []⟩`, no coins), domains `D_i = {0,1}^{inLen |i|}` encoded by `List.ofFn`
 and decoded by `decodeFin`, `f_i = f_{|i|}`, the sampler returning its `inLen n` coins, and
 the evaluator `F` of `𝓕.Easy` on `⟨1^{|i|}, x⟩`. The sampler's output `List.ofFn s` decodes to
-`s` and `F` computes `f n s` on it (`sample_spec`, by `decodeFin_ofFn` and `hspec`).
+`s` and `F` computes `f n s` on it (`sample_spec`, by `decodeFin_ofFn` and `hspec`); decoding is
+canonical (`encD_decD`, by `ofFn_of_decodeFin_eq_some`).
 
 **Deviation:** the text's "`I = {0}`, `D_0 = ℕ`" becomes the unary parameter as the index
 with the domain `{0,1}^{inLen n}` at `i = 1^n` (the domain must depend on `n`, D5). -/
@@ -352,6 +417,7 @@ noncomputable def toCollection : Collection where
   encD _ x := List.ofFn x
   decD i w := decodeFin (𝓕.inLen.eval i.length) w
   decD_encD _ x := decodeFin_ofFn x
+  encD_decD _ _ _ h := ofFn_of_decodeFin_eq_some h
   f i x := List.ofFn (𝓕.f i.length x)
   gen := NUPPT.ofPolyTimeUniform
     (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const [])) (.const 0)
@@ -466,41 +532,38 @@ theorem StrongOneWay.exists_collection_oneWay {𝓕 : FunFamily} (h : 𝓕.Stron
 
 end FunFamily
 
+/-- **The collection of the identity is not one-way** (non-vacuity of `Collection.OneWay`,
+[PS10, Definition 41.1]; gate 03b, finding 13): for every evaluator `F` of
+`FunFamily.ofString id var`, the collection `toCollection F` is inverted with probability one by
+the machine that returns the second component of its argument.
+
+**Proof sketch.** Let `B(1^n, ⟨i, y⟩; r) := y` (`ofPolyTimeUniform` of `pairSndD ∘ inArg`).
+Then `B.withIndexParam` returns its argument (`withIndexParam_runAt`, `pairSndD_pairEncode`),
+so the collection's inversion probability against `B` is `1` at every `n`
+(`toCollection_invProbAt`, `FunFamily.invProbAt_ofString_id_eq_one`), and the constant `1` is
+not negligible (`c = 0`). -/
+theorem FunFamily.not_toCollection_oneWay_id (F : List Bool → List Bool)
+    (hF : PolyTimeComputable F)
+    (hspec : ∀ n (x : Fin ((ofString id .var).inLen.eval n) → Bool),
+      F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((ofString id .var).f n x)) :
+    ¬ ((ofString id .var).toCollection F hF hspec).OneWay := by
+  intro h
+  let B : NUPPT := NUPPT.ofPolyTimeUniform (f := fun z => pairSndD (NUPPT.inArg z))
+    (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg) (.const 0)
+  have hB : ∀ n y (r : B.withIndexParam.Coins n), B.withIndexParam.runAt n y r = y := by
+    intro n y r
+    rw [NUPPT.withIndexParam_runAt, NUPPT.runAt_eq]
+    show (NUPPT.ofPolyTimeUniform (f := fun z => pairSndD (NUPPT.inArg z)) _ (.const 0)).runAtL n
+      (pairEncode (List.replicate n true) y) (List.ofFn r) = y
+    rw [NUPPT.runAtL_ofPolyTimeUniform]
+    show pairSndD (NUPPT.inArg (NUPPT.layout (List.replicate n true)
+      (pairEncode (List.replicate n true) y) [] (List.ofFn r))) = y
+    rw [NUPPT.inArg_layout, pairSndD_pairEncode]
+  obtain ⟨n₀, hn₀⟩ := h.hard B 0
+  have := hn₀ n₀ le_rfl
+  simp [toCollection_invProbAt, invProbAt_ofString_id_eq_one hB] at this
+
 /-! ## Theorem 42.2 (⇒): a collection gives a strong one-way function -/
-
-/-- A string of `a + b` bits as an `a`-bit and a `b`-bit string: the coins `(r₁, r₂)` of
-[PS10, Theorem 42.2]. -/
-def splitCoins (a b : ℕ) : (Fin (a + b) → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
-  (Equiv.arrowCongr finSumFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
-
-/-- The first half of `splitCoins a b r` is the first `a` bits of the encoding of `r`. -/
-theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
-    List.ofFn (splitCoins a b r).1 = (List.ofFn r).take a := by
-  refine List.ext_get ?_ fun i h₁ h₂ => ?_
-  · simp
-  · simp only [List.length_ofFn] at h₁
-    rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_take,
-      List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow, Fin.castAdd, Fin.castLE]
-
-/-- The second half of `splitCoins a b r` is the encoding of `r` after its first `a` bits. -/
-theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
-    List.ofFn (splitCoins a b r).2 = (List.ofFn r).drop a := by
-  refine List.ext_get ?_ fun i h₁ h₂ => ?_
-  · simp
-  · simp only [List.length_ofFn] at h₁
-    rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_drop,
-      List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow, Fin.natAdd]
-
-/-- The encoding of the coin string assembled from two halves is the concatenation of the
-encodings of the halves. -/
-theorem ofFn_splitCoins_symm (a b : ℕ) (r₁ : Fin a → Bool) (r₂ : Fin b → Bool) :
-    List.ofFn ((splitCoins a b).symm (r₁, r₂)) = List.ofFn r₁ ++ List.ofFn r₂ := by
-  set r := (splitCoins a b).symm (r₁, r₂) with hr
-  have h1 : (splitCoins a b r).1 = r₁ := by rw [hr, Equiv.apply_symm_apply]
-  have h2 : (splitCoins a b r).2 = r₂ := by rw [hr, Equiv.apply_symm_apply]
-  rw [← h1, ← h2, ofFn_splitCoins_fst, ofFn_splitCoins_snd, List.take_append_drop]
 
 namespace Collection
 
@@ -545,67 +608,6 @@ def owfFamily (L : PolyExpr) : FunFamily where
   f n r := padFin (L.eval n)
     (G.owfRaw n (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) r).1
       (splitCoins (G.gen.coinLen n) (G.sample.coinLen n) r).2 ++ [true])
-
-/-- The padding of a short string is the string followed by zeros. -/
-theorem ofFn_padFin_of_le {ℓ : ℕ} {w : List Bool} (hw : w.length ≤ ℓ) :
-    List.ofFn (padFin ℓ w) = w ++ List.replicate (ℓ - w.length) false := by
-  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD]
-  rw [List.getElem_append]
-  split_ifs with h
-  · rw [List.getElem?_eq_getElem h]
-    rfl
-  · rw [List.getElem?_eq_none (by omega)]
-    simp
-
-/-- **Marker padding is injective** on strings shorter than the padding length: the family
-`owfFamily` loses no information about `⟨i, f_i(x)⟩`. -/
-theorem padFin_append_true_injective {ℓ : ℕ} {s s' : List Bool} (hs : s.length < ℓ)
-    (hs' : s'.length < ℓ) (h : padFin ℓ (s ++ [true]) = padFin ℓ (s' ++ [true])) : s = s' := by
-  have h1 := congrArg List.ofFn h
-  rw [ofFn_padFin_of_le (by simp; omega), ofFn_padFin_of_le (by simp; omega)] at h1
-  have h2 := congrArg splitAtLastTrue h1
-  simp only [List.append_assoc, List.singleton_append, PolyHierarchy.splitAtLastTrue_marker,
-    Option.some.injEq] at h2
-  exact h2
-
-/-- `|A(1^n, y; r)|` is bounded by the time bound at the length
-`8n + 14 + 4|y| + 2·adv(n) + coins(n)` of the raw input `⟨⟨⟨1^n, y⟩, advice n⟩, r⟩`. -/
-theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List Bool)
-    (r : A.Coins n) :
-    (A.runAt n y r).length ≤
-      A.Ct * (8 * n + 14 + 4 * y.length + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct := by
-  refine (A.output_length_le _).trans ?_
-  unfold NUPPT.timeBound
-  apply Nat.mul_le_mul_left
-  apply Nat.pow_le_pow_left
-  have := A.advice_length n
-  simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen]
-  omega
-
-/-- The syntactic polynomial bounding `|A(1^n, y)|` when `|y| ≤ Y(n)` (`length_runAt_le`). -/
-def _root_.Complexity.NUPPT.runLenPoly (A : NUPPT) (Y : PolyExpr) : PolyExpr :=
-  (PolyExpr.normal A.Ct A.ct).subst
-    (.add (.add (.mul (.const 8) .var) (.const 14))
-      (.add (.mul (.const 4) Y) (.add (.mul (.const 2) A.adv) A.coins)))
-
-/-- Evaluation of `runLenPoly`. -/
-theorem _root_.Complexity.NUPPT.eval_runLenPoly (A : NUPPT) (Y : PolyExpr) (n : ℕ) :
-    (A.runLenPoly Y).eval n =
-      A.Ct * (8 * n + 14 + 4 * Y.eval n + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct := by
-  rw [NUPPT.runLenPoly, PolyExpr.eval_subst, PolyExpr.eval_normal]
-  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
-  ring
-
-/-- `|A(1^n, y)| ≤ runLenPoly A Y (n)` whenever `|y| ≤ Y(n)`. -/
-theorem _root_.Complexity.NUPPT.length_runAt_le_runLenPoly (A : NUPPT) {Y : PolyExpr} (n : ℕ)
-    {y : List Bool} (hy : y.length ≤ Y.eval n) (r : A.Coins n) :
-    (A.runAt n y r).length ≤ (A.runLenPoly Y).eval n := by
-  rw [NUPPT.eval_runLenPoly]
-  refine (A.length_runAt_le n y r).trans ?_
-  apply Nat.mul_le_mul_left
-  apply Nat.pow_le_pow_left
-  omega
 
 /-- **The output of `g` has polynomial length**: a syntactic polynomial `L` with
 `|⟨i, eval ⟨i, w⟩⟩| < L(n)` for all coins, from the time bounds of `Gen`, `Sample` and `eval`.
@@ -921,28 +923,35 @@ Repair (run-3 audit P3-1): the former hypothesis `hG : G.EvalSampled` is dropped
 
 **Deviation (Theorem 42.2 ⇒):** the explicit output length `L` (D9).
 
-**Proof sketch.** *Easy.* The evaluator on `⟨1^n, r⟩` is an FP function: cut `r` into
-`r₁`/`r₂` (`polyTimeComputable_pairTakePoly`/`_pairDropPoly G.gen.coins`), run `G.gen.output`
-on the layout `⟨⟨⟨1^n, []⟩, []⟩, r₁⟩` (`NUPPT.polyTimeComputable_layout`, `gen_uniform`),
-project `i` (`pairFstD`), run `G.sample.output` on `⟨⟨⟨1^n, i⟩, []⟩, r₂⟩`, apply `G.eval_poly`
-to `⟨i, w⟩`, pair, append the marker `[true]` and `0^{L n}` (`PolyTimeComputable.append`,
-`polyTimeComputable_unaryPoly L` mapped to zeros by `polyTimeComputable_blockMap (const 1)`
-with the constant `[false]`), keep the first `L n` bits (`polyTimeComputable_pairTakePoly L`
-on `⟨1^n, ·⟩`); the result is `List.ofFn (padFin (L n) (owfRaw ++ [true]))` by
-`ofFn_padFin_of_le` and `OutLenBound`. *Hard.* Fix `A' : NUPPT`. The reduction
-`A(1^n, ⟨i, y⟩; ρ)` (advice and coins of `A'`) pads `⟨i, y⟩ ++ [true]` to `L n` bits as above,
-calls `A'.output` on `⟨⟨⟨1^n, t⟩, A'.advice n⟩, ρ⟩`, checks that the answer `z` has length
-`gen.coins(n) + sample.coins(n)` (`polyTimeComputable_lenEq`, `_ite`), splits it into
-`(r₁', r₂')` and outputs `G.sample.output ⟨⟨⟨1^n, i⟩, []⟩, r₂'⟩`. Functional identity: when
-`A'` returns `z` with `g(z) = padFin (L n) (⟨i, y⟩ ++ [true])`, `padFin_append_true_injective`
-and `pairEncode_injective` give `index n r₁' = i` and `eval ⟨i, w'⟩ = y` for
-`w' := sample(1^n, i; r₂')`, and `G.evalSampled` decodes `w'` to an `x'` with `f_i(x') = y`.
-Probability: for fixed `r₁` (index `i`) the `g`-experiment on `(r₂, ρ)` is the collection
-experiment on `(x, ρ)` with `x := decD i (sample(i; r₂))` (`G.evalSampled` gives
-`y = f_i(x)`), so `uprob_prod` over `r₁`, `uprob_comp_equiv (splitCoins …)`, `uprob_mono` (the
-pointwise implication) and `StatClose.abs_uprob_sub_le_prod` with `h.sampleClose` give
-`(G.owfFamily L).invProbAt A' n ≤ G.invProbAt A n + δ n` (`invProbAt_eq_uprob`); conclude by
-`h.hard A`, `Negligible.add` and `Negligible.mono` (`invProbAt_nonneg`). -/
+**Proof sketch.** *Easy* (`owfFamily_easy`). The evaluator on `⟨1^n, r⟩` pads
+`owfRawStr 1^n r ++ [true]` to `L(n)` bits (`polyTimeComputable_padStr L`), where
+`owfRawStr 1^n r` computes `i := pairFstD (Gen.output ⟨⟨⟨1^n, []⟩, []⟩, r.take (gen.coins n)⟩)`
+and `⟨i, eval ⟨i, Sample.output ⟨⟨⟨1^n, i⟩, []⟩, r.drop (gen.coins n)⟩⟩⟩`
+(`polyTimeComputable_pairTakePoly`/`_pairDropPoly G.gen.coins`, `NUPPT.polyTimeComputable_layout`,
+the output functions of `Gen` and `Sample`, `G.eval_poly`, pairing). On `⟨1^n, List.ofFn r⟩` it
+returns `List.ofFn (g n r)`: `Gen` and `Sample` are uniform, so their activations are their
+outputs on these layouts (`owfRawStr_eq`), the cut is `splitCoins` (`ofFn_splitCoins_fst/snd`),
+and `ofFn_padFin_eq_padStr`.
+*Hard.* Fix `A' : NUPPT`. The reduction `collInverter L A'` (the advice and coins of `A'`) on
+`⟨1^n, ⟨i, y⟩⟩` with coins `ρ` pads `⟨i, y⟩ ++ [true]` to `L(n)` bits (`padStr L`), runs `A'`
+on it, drops the first `gen.coins(n)` bits of the answer, and runs `Sample(1^n, i)` on the rest
+(`collInvRaw`, polynomial-time by `collInvRaw_poly`; activation `collInverter_runAt`). No length
+check is needed: an answer of the wrong length already fails `g`'s typed experiment.
+*Functional identity* (`collInverter_success`): if `A'` returns the encoding of `z'` with
+`g(z') = g(r₁, r₂)`, then `G.evalSampled` gives `x` with `owfRaw n r₁ r₂ = ⟨i, f_i(x)⟩`,
+`i = index n r₁`; `padFin_append_true_injective` (with `OutLenBound`) turns `g(z') = g(r₁, r₂)`
+into `owfRaw n z'₁ z'₂ = owfRaw n r₁ r₂`, whose components give `index n z'₁ = i` and
+`eval ⟨i, w'⟩ = f_i(x)` for `w' := Sample(1^n, i; z'₂)`; the reduction's answer on
+`⟨i, f_i(x)⟩` is `w'` (the dropped prefix is `z'₁`, `ofFn_splitCoins_snd`), which decodes to
+an `x'` with `f_i(x') = eval ⟨i, w'⟩ = f_i(x)` (`exists_decD_of_index_eq`).
+*Probability* (`fiber_le`, `invProbAt_owfFamily_le`): for fixed `r₁` (index `i`), the
+functional identity is a pointwise implication from the `g`-event on `(r₂, ρ)` to the event
+"the sampled `x` is inverted by the reduction" (`uprob_mono`), and
+`StatClose.abs_uprob_sub_le_prod` with `h.sampleClose` moves the sampled `x` to the ideal
+uniform `x ∈ D_i` at the cost `δ(n)`; averaging over `r₁` (`uprob_comp_equiv` on `splitCoins`,
+`uprob_prod`, `OneWay.uexp_add`, `OneWay.uexp_const`) gives
+`(G.owfFamily L).invProbAt A' n ≤ G.invProbAt (collInverter L A') n + δ(n)`. Conclude by
+`h.hard (collInverter L A')`, `Negligible.add` and `Negligible.mono` (`invProbAt_nonneg`). -/
 theorem OneWay.owfFamily_strongOneWay {G : Collection} (h : G.OneWay)
     {L : PolyExpr} (hL : G.OutLenBound L) : (G.owfFamily L).StrongOneWay where
   easy := G.owfFamily_easy L

@@ -727,7 +727,12 @@ now an argument of the definition, since without it the padding of the sampled s
 have the length the decoder expects and `Collection.sample_spec` would fail.
 
 **Deviation:** the text's "`|x| = |r|`" presupposes that all elements of `D_i` have the same
-encoding length; `glPad` assumes `|encD_i x| = m(n)` at generated indices (`henc`). -/
+encoding length; `glPad` assumes `|encD_i x| = m(n)` at generated indices (`henc`). Cost (gate
+03c, finding 3; ruling G3-7c): a non-constant `PolyExpr` is strictly increasing, so an index
+generated at two parameters forces `m` constant, and no candidate of the library satisfies `henc`
+as parametrized (`rsaTrapdoor`: `2·max(n, 2)`-bit elements; `rabinBlumTrapdoor`: `2·max(n, 3)`;
+`expCollection`: `dlDefaultIndex` below `n₀`). A per-index form (`|encD_i x| = |encD_i default|
+≤ m(n)`) would admit them; it is not formalized. -/
 noncomputable def glPad (m : PolyExpr)
     (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
     Collection where
@@ -739,6 +744,11 @@ noncomputable def glPad (m : PolyExpr)
       | _, _ => none
     | none => none
   decD_encD i z := by simp [pairDecode_pairEncode, F.decD_encD, decodeFin_ofFn]
+  encD_decD i w z h := by
+    rcases hw : pairDecode w with _ | ⟨a, b⟩
+    · simp [hw] at h
+    cases ha : F.decD i a <;> cases hb : decodeFin (F.encD i default).length b <;> simp [hw, ha, hb] at h
+    rw [eq_pairEncode_of_pairDecode w a b hw, ← h, F.encD_decD i a _ ha, ofFn_of_decodeFin_eq_some hb]
   f i z := pairEncode (F.f i z.1) (List.ofFn z.2)
   gen := F.gen
   gen_uniform := F.gen_uniform
@@ -971,8 +981,9 @@ theorem TrapdoorCollection.OneWay.glPad {T : TrapdoorCollection} (m : PolyExpr)
   Collection.OneWay.glPad m henc h
 
 /-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**: the hypothesis "trapdoor
-permutations with a hard-core predicate" of [PS10, Theorem 104.4] is satisfiable from
-trapdoor permutations alone. -/
+permutations with a hard-core predicate" of [PS10, Theorem 104.4] is satisfiable from trapdoor
+permutations whose generated indices encode elements in exactly `m(n)` bits (`henc`; no
+candidate of the library satisfies it as parametrized, see `Collection.glPad`). -/
 theorem TrapdoorCollection.OneWay.glPad_hardCore {T : TrapdoorCollection} (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
     (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore T.glBit :=

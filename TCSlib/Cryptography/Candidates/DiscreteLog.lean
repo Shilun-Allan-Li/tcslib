@@ -215,6 +215,15 @@ theorem expDec_expEnc (i : List Bool) (x : ZMod (expOrd i)) : expDec i (expEnc i
   rw [expDec, if_pos ⟨by simp [expEnc], by rw [hl]; exact ZMod.val_lt x⟩, hl,
     ZMod.natCast_zmod_val]
 
+/-- **Decoding is canonical** (the clause `Collection.encD_decD` of `expCollection`; gate 03b,
+finding 1): a string that `expDec i` decodes to `x` is `expEnc i x`, since it is a numeral of
+the index width reading below `m` (`natToList_val_natCast`). -/
+theorem expEnc_of_expDec {i w : List Bool} {x : ZMod (expOrd i)} (h : expDec i w = some x) :
+    expEnc i x = w := by
+  rw [expDec] at h
+  split_ifs at h with hw
+  rw [← Option.some.inj h, expEnc, natToList_val_natCast hw.1 hw.2]
+
 /-- **The function `f_{q,g}(x) = g^x mod p`** [PS10, Theorem 52.3] as a string function on
 `Z_m`: the numeral of `g^x mod p` of the index width (the evaluator `modExpStr` mirrored). -/
 noncomputable def expF (i : List Bool) (x : ZMod (expOrd i)) : List Bool :=
@@ -557,6 +566,7 @@ noncomputable def expCollection {V : List Bool → Prop} (H : ArithmeticFP) (G :
   encD := expEnc
   decD := expDec
   decD_encD := expDec_expEnc
+  encD_decD _ _ _ := expEnc_of_expDec
   f := expF
   gen := expGen G
   gen_uniform := NUPPT.ofPolyTimeUniform_uniform _ _

@@ -56,6 +56,9 @@ computability on strings is a hypothesis, discharged by a future machine-buildin
   `TCSlib.Cryptography.Candidates.natToBits_bitsToNat` — the encodings are mutually
   inverse on numbers below `2^k`.
 * `TCSlib.Cryptography.Candidates.natToBits_injOn` — `natToBits k` is injective below `2^k`.
+* `TCSlib.Cryptography.Candidates.natToList_length_listToNat`,
+  `TCSlib.Cryptography.Candidates.natToList_val_natCast` — a numeral is the numeral of its
+  value at its own width (canonicity of the candidates' decoders).
 * `TCSlib.Cryptography.Candidates.listToNat_addStr`,
   `TCSlib.Cryptography.Candidates.listToNat_subStr` — addition and truncated subtraction of
   numerals are lossless at the widths of the bundle.
@@ -148,6 +151,19 @@ theorem listToNat_lt_two_pow (w : List Bool) : listToNat w < 2 ^ w.length := by
   have h := bitsToNat_lt (fun i : Fin w.length => w.get i)
   rw [bitsToNat_eq_listToNat] at h
   simpa using h
+
+/-- **A numeral rewritten at its own width is unchanged**: `natToList |w| (listToNat w) = w`
+(the numeral decoders of the candidates are canonical; gate 03b, finding 1). -/
+theorem natToList_length_listToNat (w : List Bool) : natToList w.length (listToNat w) = w := by
+  have h := natToBits_bitsToNat w.get
+  rw [bitsToNat_eq_listToNat, List.ofFn_get] at h
+  rw [natToList, h, List.ofFn_get]
+
+/-- **A numeral of width `k` reading below `M` is the `k`-bit numeral of its residue in
+`Z_M`**: `natToList k ((listToNat w : Z_M).val) = w` for `|w| = k` and `listToNat w < M`. -/
+theorem natToList_val_natCast {k M : ℕ} {w : List Bool} (hk : w.length = k)
+    (hM : listToNat w < M) : natToList k ((listToNat w : ZMod M).val) = w := by
+  rw [ZMod.val_cast_of_lt hM, ← hk, natToList_length_listToNat]
 
 /-! ## The string functions of the bundle -/
 
