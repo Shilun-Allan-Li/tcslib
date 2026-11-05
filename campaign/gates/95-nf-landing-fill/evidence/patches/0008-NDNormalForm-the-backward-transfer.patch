@@ -1,0 +1,136 @@
+From 9bf947357b0ca184cc573e65f6016d6e37eb8f09 Mon Sep 17 00:00:00 2001
+From: "Claude (fill agent)" <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 22:58:06 +0000
+Subject: [PATCH 08/12] NDNormalForm: the backward transfer
+
+A stream of records on
+which every check passes is a genuine accepting run of N (the decoded virtual
+run is N's run under the records' choice bits, halted with output exactly
+[true] by the control sweep's pass), and the host-level backward transfer:
+the host's backward acceptance lemma with hV gives a first-stopped stream whose
+first verdict is acc, which the characterization's first verdict matches.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 105 ++++++++++++++++++++
+ 1 file changed, 105 insertions(+)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index a8bd6e0c..c1268ca2 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -3217,6 +3217,111 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
+ 
+ end Transfers
+ 
++section Backward
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **A passing stream of records is a genuine accepting run.** If every check passes on `n`
++records, then `N` accepts `x` within `n` steps, with the records' choice bits as the word.
++
++**Proof sketch.** By induction on records, passed checks make every decoded read the virtual
++configuration's read, so every recomputed action is `N`'s action there and the decoded virtual run
++is `N`'s run under the choice bits. The control fold follows the virtual run's state and output
++summary; the control sweep's pass then says the run has halted with output summary `[true]`, so
++with output exactly `[true]`. Claims are read through `nf_decode` throughout: a record whose
++presence bit is false reads as blank whatever its value bit, so the code `01` is no loophole. -/
++private theorem nf_backward (N : FinNDTM Bool) (x : List Bool)
++    (rs : List (Fin (2 * N.k + 4) → Bool)) (h : nf_allPass N x rs) :
++    N.AcceptsWithin x rs.length := by
++  obtain ⟨hctl, hok⟩ := h
++  set w := rs.map (fun r => r 0) with hw
++  have hwlen : w.length = rs.length := List.length_map _
++  -- the decoded virtual run is the genuine run
++  have hgen : ∀ r ≤ rs.length, (rs.take r).foldl (nf_vstep N) (N.tm.initCfg x) =
++      N.tm.runWith (w.take r) (N.tm.initCfg x) := by
++    intro r
++    induction r with
++    | zero =>
++      intro _
++      rw [List.take_zero, List.foldl_nil, List.take_zero, NDTM.runWith_nil]
++    | succ r ih =>
++      intro hr
++      have hlt : r < rs.length := by omega
++      have hok' : ∀ i, nf_ok N (N.tm.runWith (w.take r) (N.tm.initCfg x)) rs[r] i := by
++        intro i
++        have := hok i r hlt
++        rwa [ih (by omega)] at this
++      rw [List.take_succ_eq_append_getElem hlt, List.foldl_append, ih (by omega),
++        List.foldl_cons, List.foldl_nil,
++        List.take_succ_eq_append_getElem (by rw [hwlen]; exact hlt), NDTM.runWith_append,
++        NDTM.runWith_cons, NDTM.runWith_nil]
++      obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp (hok' 0).1
++      have hd0 : nf_decode N.k (fun p => some (rs[r] p)) 0 =
++          (N.tm.runWith (w.take r) (N.tm.initCfg x)).inputSymbol := (hok' 0).2
++      have hds : (fun j : Fin N.k => nf_decode N.k (fun p => some (rs[r] p)) j.succ) =
++          (N.tm.runWith (w.take r) (N.tm.initCfg x)).workTapeSymbols := by
++        funext j
++        exact (hok' j.succ).2
++      simp only [nf_vstep, hq]
++      rw [NDTM.stepWith_of_some hq]
++      unfold nf_act
++      rw [Option.getD_some, hd0, hds, List.getElem_map]
++  have hfin := hgen rs.length le_rfl
++  rw [List.take_length, ← hwlen, List.take_length] at hfin
++  -- the control fold follows the virtual run
++  have hinit_state : (N.tm.initCfg x).state = some N.tm.q₀ := by
++    rw [NDTM.initCfg_eq, Cfg.init_state]
++  have hinit_out : StepBlock.outputSummary (N.tm.initCfg x).output = none := by
++    rw [NDTM.initCfg_eq, Cfg.init_output, StepBlock.outputSummary_nil]
++  obtain ⟨hc1, hc2⟩ := nf_vrun_ctl N rs (N.tm.initCfg x) (some N.tm.q₀, none, false)
++    hinit_state.symm hinit_out.symm
++  rw [hfin] at hc1 hc2
++  have hsw : (rs.flatMap List.ofFn).foldl (nf_sweepStep N) (nf_sweepInit N) =
++      ((0, fun _ => none),
++        rs.foldl (fun d r => nf_complete N (fun p => some (r p)) d) (some N.tm.q₀, none, false)) :=
++    nf_sweep_records N rs _
++  rw [hsw] at hctl
++  have hout := nf_sweepPass_output N _ _ hc2 hctl
++  have hhalt : (rs.foldl (fun d r => nf_complete N (fun p => some (r p)) d)
++      (some N.tm.q₀, none, false)).1 = none := by
++    unfold nf_sweepPass at hctl
++    rw [Bool.and_eq_true, Bool.and_eq_true, Bool.and_eq_true] at hctl
++    exact Option.isNone_iff_eq_none.mp hctl.1.1.2
++  rw [hc1] at hhalt
++  exact FinNDTM.acceptsWithin_iff.mpr ⟨w, hwlen, hhalt, hout⟩
++
++/-- **The backward transfer.** If some choice word halts the normal form's host with output
++exactly `[true]`, then `N` accepts `x` at some length.
++
++**Proof sketch.** The host's backward acceptance lemma, with `hV`, gives a stream that first stops
++the controller and on which the verifier's first verdict is `acc`. The stream is a stream of
++records, and the characterization's first verdict is the same time, since the verifier is at no
++verdict before either; so every check passes, and the passing stream is a genuine accepting run. -/
++private theorem nf_backward_host (N : FinNDTM Bool) (x w : List Bool)
++    (hh : ((nf_host N).runWith w ((nf_host N).initCfg x)).state = none)
++    (ho : ((nf_host N).runWith w ((nf_host N).initCfg x)).output = [true]) :
++    ∃ t', N.AcceptsWithin x t' := by
++  obtain ⟨h0, hst, hfi, hbl, hlf⟩ := nf_setup nf_P x 0
++  obtain ⟨s, hslive, hsstop, TQ, hacc, hfirst, -⟩ := guessCtlRunTM_stream_of_accepts nf_P nf_P.q₀ 0
++    ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k)
++    (nf_V N (nf_leaf N) (nf_leafExit N)) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ ⟨.park, true⟩
++    ⟨.park, false⟩ 0 (nf_P.initCfg x) h0 hst hfi hbl hlf (fun s hl hs => nf_hV N x s hl hs) w hh
++    ho
++  rw [nf_entry] at hacc hfirst
++  obtain ⟨rs, hne, rfl, hflag⟩ := nf_split N.k s hslive hsstop
++  obtain ⟨TQ', hv', hf', hacc', -⟩ := nf_V_char N x rs hne hflag
++  have hTQ : TQ = TQ' := by
++    rcases lt_trichotomy TQ TQ' with h | h | h
++    · exact absurd hacc (hf' TQ h true)
++    · exact h
++    · rcases hv' with h' | h'
++      · exact absurd h' (hfirst TQ' h).1
++      · exact absurd h' (hfirst TQ' h).2
++  subst hTQ
++  exact ⟨rs.length, nf_backward N x rs (hacc'.mp hacc)⟩
++
++end Backward
++
+ /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+ cited through [AB09, §3.2]; statement; proof incomplete): every
+ nondeterministic machine has a coded (two-work-tape) equivalent whose
+-- 
+2.50.1 (Apple Git-155)
+

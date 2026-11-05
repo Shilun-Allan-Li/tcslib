@@ -1,0 +1,65 @@
+From caa6bf534653796aaee098bcb9b88fb7a17a1cec Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 23:05:48 -0800
+Subject: [PATCH] Two work tapes: the function-level form reads
+ ComputesFunInTime through computesFunInTime_iff; stateEquivFin's defining
+ equation; the per-run converse's limitation stated exactly
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/TuringMachine/Encoding.lean             | 8 ++++++++
+ .../TuringMachine/Robustness/AlphabetReduction.lean       | 5 +++--
+ TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean  | 3 ++-
+ 3 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Complexity/TuringMachine/Encoding.lean b/TCSlib/Complexity/TuringMachine/Encoding.lean
+index c0fe6784..11ed81df 100644
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -719,6 +719,14 @@ noncomputable def FinTM.stateEquivFin {Symbol : Type} (M : FinTM Symbol) :
+     have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
+     omega)
+ 
++/-- `Turing.FinTM.stateEquivFin` is the bijection that `Fintype.equivFinOfCardEq` gives for the
++state count, which the start state makes positive (its defining equation). -/
++theorem FinTM.stateEquivFin_eq {Symbol : Type} (M : FinTM Symbol) :
++    M.stateEquivFin = Fintype.equivFinOfCardEq (by
++      have : 0 < Fintype.card M.State := Fintype.card_pos_iff.mpr ⟨M.tm.q₀⟩
++      omega) :=
++  rfl
++
+ /-- **The space-faithful coding step.** Every one-work-tape binary machine `M` is equivalent
+ to a coded machine `M'` that halts with the same outputs at the same times
+ (`Turing.exists_codeTM`'s clause) **and uses the same space at every time**. This is the space
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean b/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean
+index e95cd630..7a62c01f 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean
+@@ -603,8 +603,9 @@ output `w.map e`, within `c · t` steps for a run of `t` steps. Conversely, when
+ `x` with output `w`, `M` halts on `x.map e` with some output `o`, and if `o` is the image `v.map e`
+ of a binary word then `v = w`.
+ 
+-The converse cannot say more: `M'` decodes each emitted symbol through a total decoder, so an
+-output of `M` outside the image of `e` is decoded too. A machine that writes only images of bits
++Without an image hypothesis the converse cannot in general assert `o = w.map e`: `M'` decodes
++each emitted symbol through a total decoder, so an output of `M` outside the image of `e` is
++decoded too. A machine that writes only images of bits
+ (as every machine computing a binary function via `e` does) has `o = w.map e`.
+ 
+ **Proof sketch.** `M'` is the block simulation of `Turing.FinTM.alphabet_reduction`, whose
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+index 6cf70886..cc357673 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+@@ -80,6 +80,7 @@ theorem two_work_tapes_binary (M : FinTM Bool) (f : List Bool → List Bool) (T
+     ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
+       M'.ComputesFunInTime f fun n => c * ((T n + 1) * (Nat.log 2 (T n + 1) + 1)) := by
+   obtain ⟨M', c, hk, h, -⟩ := two_work_tapes_run M
+-  exact ⟨M', c, hk, fun x => h x (f x) _ (hM x)⟩
++  exact ⟨M', c, hk, (computesFunInTime_iff _ _ _).2 fun x =>
++    h x (f x) _ ((computesFunInTime_iff _ _ _).1 hM x)⟩
+ 
+ end Turing.FinTM
+-- 
+2.50.1 (Apple Git-155)
+

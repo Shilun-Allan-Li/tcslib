@@ -1,0 +1,109 @@
+/-
+Seal controls for G5's statement PR's rule-10 checks: a delta goal (`#ctl_rfl`) and an equation
+goal (`#ctl_eqn`) for each of the 15 definitions sealed in the five sealed copies (the
+union). Expected: unsealed, every control passes except recursive definitions' delta goals;
+sealed, every control fails. A probe record, not library code.
+-/
+import TCSlib.Complexity.TuringMachine.UniversalTlogT
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+
+
+section Controls
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible]
+  Turing.Cfg.init
+  Turing.Cfg.mapState
+  Turing.Code2TM.toFinTM
+  Turing.EffectiveCodeK.ofSerialize
+  Turing.EffectiveCodeK.toFinTM
+  Turing.EffectiveMachineCode2.toK
+  Turing.FinTM.ComputesFunInTime
+  Turing.FinTM.ComputesInTime
+  Turing.FinTM.stateEquivFin
+  Turing.MultiTapeTM.ComputesInTimeAndSpace
+  Turing.MultiTapeTM.initCfg
+  Turing.MultiTapeTM.relabelState
+  Turing.MultiTapeTM.runFrom
+  Turing.MultiTapeTM.step
+  Turing.pairEncode
+
+#ctl_rfl Turing.Cfg.init
+#ctl_rfl Turing.Cfg.mapState
+#ctl_rfl Turing.Code2TM.toFinTM
+#ctl_rfl Turing.EffectiveCodeK.ofSerialize
+#ctl_rfl Turing.EffectiveCodeK.toFinTM
+#ctl_rfl Turing.EffectiveMachineCode2.toK
+#ctl_rfl Turing.FinTM.ComputesFunInTime
+#ctl_rfl Turing.FinTM.ComputesInTime
+#ctl_rfl Turing.FinTM.stateEquivFin
+#ctl_rfl Turing.MultiTapeTM.ComputesInTimeAndSpace
+#ctl_rfl Turing.MultiTapeTM.initCfg
+#ctl_rfl Turing.MultiTapeTM.relabelState
+#ctl_rfl Turing.MultiTapeTM.runFrom
+#ctl_rfl Turing.MultiTapeTM.step
+#ctl_rfl Turing.pairEncode
+#ctl_eqn Turing.Cfg.init
+#ctl_eqn Turing.Cfg.mapState
+#ctl_eqn Turing.Code2TM.toFinTM
+#ctl_eqn Turing.EffectiveCodeK.ofSerialize
+#ctl_eqn Turing.EffectiveCodeK.toFinTM
+#ctl_eqn Turing.EffectiveMachineCode2.toK
+#ctl_eqn Turing.FinTM.ComputesFunInTime
+#ctl_eqn Turing.FinTM.ComputesInTime
+#ctl_eqn Turing.FinTM.stateEquivFin
+#ctl_eqn Turing.MultiTapeTM.ComputesInTimeAndSpace
+#ctl_eqn Turing.MultiTapeTM.initCfg
+#ctl_eqn Turing.MultiTapeTM.relabelState
+#ctl_eqn Turing.MultiTapeTM.runFrom
+#ctl_eqn Turing.MultiTapeTM.step
+#ctl_eqn Turing.pairEncode
+
+end Controls

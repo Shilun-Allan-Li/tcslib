@@ -1,0 +1,336 @@
+From 74ef5df284dfdbcb38e77d46d3d9b5f9d58bafe0 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 21:43:12 -0800
+Subject: [PATCH 1/6] Configuration facts: input-read congruence, retagging,
+ tag separation and chunk lengths, one public home each
+
+- New TuringMachine/CfgFacts: Turing.Cfg.inputSymbol_congr, Cfg.mapState_const_eq_mapState_sigma,
+  Cfg.mapState_sigma_state_ne and length_flatMap_const, each from published equations.
+- Re-pointed: ExhaustiveReplay's xr_inputSymbol_congr and ZoneRebalance's zr_inputSymbol_congr
+  (removed; their uses cite Cfg.inputSymbol_congr), CfgRecord's record_tag_ne (removed; its use
+  cites Cfg.mapState_sigma_state_ne), SeamLayout's sl_rewrap and sl_tagged_ne_done (their bodies
+  cite the new lemmas).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Complexity/ClassNP/ExhaustiveReplay.lean  | 23 +----
+ TCSlib/Complexity/TuringMachine.lean          |  4 +
+ .../TuringMachine/Build/CfgRecord.lean        | 14 +--
+ .../TuringMachine/Build/SeamLayout.lean       | 22 +----
+ .../TuringMachine/Build/ZoneRebalance.lean    | 18 +---
+ TCSlib/Complexity/TuringMachine/CfgFacts.lean | 97 +++++++++++++++++++
+ 6 files changed, 113 insertions(+), 65 deletions(-)
+ create mode 100644 TCSlib/Complexity/TuringMachine/CfgFacts.lean
+
+diff --git a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+index e02289c2..d0317a6b 100644
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.NDCodes
+ import TCSlib.Complexity.TuringMachine.ChoiceReplay
+ import TCSlib.Complexity.TuringMachine.Build.StepClock
+ import TCSlib.Complexity.TuringMachine.Build.Seam
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -196,26 +197,6 @@ private def xr_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ) (
+   ⟨c.state, c.inputPos, fun i p => c.workTapes i (p - δ i), fun i => c.workTapePos i + δ i,
+     c.output⟩
+ 
+-/-- Two configurations with the same input head read the same input symbol. -/
+-private theorem xr_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
+-    (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
+-    c.inputSymbol = c'.inputSymbol := by
+-  by_cases h0 : c.inputPos.val = 0
+-  · have hc : c.inputPos = 0 := by
+-      apply Fin.ext
+-      rw [h0]
+-      simp
+-    have hc' : c'.inputPos = 0 := by
+-      apply Fin.ext
+-      rw [← h, h0]
+-      simp
+-    rw [Cfg.inputSymbol_of_zero hc, Cfg.inputSymbol_of_zero hc']
+-  · by_cases hend : c.inputPos.val = x.length + 1
+-    · rw [Cfg.inputSymbol_of_end hend, Cfg.inputSymbol_of_end (by omega)]
+-    · have hlt : c.inputPos.val - 1 < x.length := by have := c.inputPos.isLt; omega
+-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) hlt,
+-        inputSymbolInner (c.inputPos.val - 1) (by omega) hlt]
+-
+ /-- A translated configuration reads the same work symbols. -/
+ private theorem xr_workTapeSymbols_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ)
+     (c : Cfg k Bool S x) : (xr_shift δ c).workTapeSymbols = c.workTapeSymbols := by
+@@ -261,7 +242,7 @@ private theorem xr_stepWith_shift {k : ℕ} {S : Type} {x : List Bool} (N : NDTM
+   | some q =>
+     rw [NDTM.stepWith_of_some hq,
+       NDTM.stepWith_of_some (show (xr_shift δ c).state = some q from hq),
+-      xr_inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
++      Cfg.inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
+ 
+ /-- A branch commutes with translation: the branch along `w` from a translated configuration
+ is the translated branch. -/
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 4de54c73..1db25237 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
+ import TCSlib.Complexity.TuringMachine.Configuration
+ import TCSlib.Complexity.TuringMachine.Deterministic
+ import TCSlib.Complexity.TuringMachine.StateRenaming
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ import TCSlib.Complexity.TuringMachine.Finite
+ import TCSlib.Complexity.TuringMachine.Nondeterministic
+ import TCSlib.Complexity.TuringMachine.NondeterministicSpace
+@@ -113,6 +114,9 @@ for the local modifications.
+   (vendored).
+ * `StateRenaming` — transport of actions, configurations, and machines along maps
+   of the state type; shared by the oracle embedding and the code normal form.
++* `CfgFacts` — four elementary configuration facts: the input read depends on the input head
++  only, a redirected live configuration is a phase's tagged configuration, a tagged configuration
++  is at no other phase's state, and equal-length chunks have the expected total length.
+ * `Finite` — the bundled `FinTM` layer carrying `Fintype`/`DecidableEq` state instances;
+   all headline definitions are stated over it.
+ * `Nondeterministic` — binary-choice nondeterministic machines [AB09, §2.1.2]:
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+index 986ab6b2..f05a7a82 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean
+@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.Build.Catalog
+ import TCSlib.Complexity.TuringMachine.SymbolLift
+ import TCSlib.Complexity.TuringMachine.Build.InputCall
+ import TCSlib.Complexity.TuringMachine.Build.Contract
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -559,17 +560,6 @@ private theorem recordStep_fieldOffset_congr {Γ : Type*} (as : List (List Γ))
+         simp only [List.take_succ_cons, List.map_cons, List.cons.injEq] at h
+         rw [fieldOffset_cons_succ, fieldOffset_cons_succ, h.1, ih bs j h.2]
+ 
+-/-- A tagged phase cannot be a verdict at a different index. -/
+-private theorem record_tag_ne {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
+-    (i : I) (v : Σ i, Ph i) (hi : i ≠ v.1) (c : Cfg K Γ (Ph i) x) :
+-    (c.mapState (Sigma.mk i)).state ≠ some v := by
+-  cases hs : c.state with
+-  | none => simp [Cfg.mapState_state, hs]
+-  | some s =>
+-    intro h
+-    have he : (⟨i, s⟩ : Σ i, Ph i) = v := by simpa [Cfg.mapState_state, hs] using h
+-    exact hi (congrArg Sigma.fst he)
+-
+ /-- Package the tagged prefix and dispatched endpoint supplied by `phaseHostTM_run`.
+ No transition or phase-host induction is repeated here. -/
+ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
+@@ -585,7 +575,7 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
+   refine ⟨he, ?_, ?_⟩
+   · intro u hu
+     rw [hp u (by omega)]
+-    exact ⟨record_tag_ne i yes hy _, record_tag_ne i no hn _⟩
++    exact ⟨Cfg.mapState_sigma_state_ne i yes hy _, Cfg.mapState_sigma_state_ne i no hn _⟩
+   · intro u hu j
+     by_cases ht : u ≤ t
+     · rw [hp u ht, Cfg.mapState_workTapePos]
+diff --git a/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean b/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean
+index a9f7d1e3..aa46f400 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean
+@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
+ import TCSlib.Complexity.TuringMachine.Build.Catalog
+ import TCSlib.Complexity.TuringMachine.Build.Seam
+ import TCSlib.Complexity.TuringMachine.BufferWords
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -841,15 +842,8 @@ private lemma sl_rewrap {k : ℕ} {x : List Bool} {S : Type} {i' : sl_Key}
+     (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
+     (ho : c.output = c₂.output) :
+     c.mapState (fun _ => (⟨i', ent⟩ : (j : sl_Key) × sl_Ph j)) =
+-      c₂.mapState (Sigma.mk i') := by
+-  apply Cfg.ext
+-  · rw [Cfg.mapState_state, Cfg.mapState_state, hc, hstate, Option.map_some, Option.map_some]
+-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
+-  · funext j p
+-    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
+-  · funext j
+-    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
+-  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
++      c₂.mapState (Sigma.mk i') :=
++  Cfg.mapState_const_eq_mapState_sigma c c₂ (by rw [hc]; rfl) hstate hin hw hp ho
+ 
+ /-- A phase guard from a row's first-visit cut: strictly before the exit, every live control
+ state of the phase leaves the dispatch table silent. -/
+@@ -865,14 +859,8 @@ private lemma sl_guard {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (i : sl_Ke
+ private lemma sl_tagged_ne_done {k : ℕ} {x : List Bool} (i : sl_Key) (hi : i ≠ .clearHead)
+     (c : Cfg k Bool (sl_Ph i) x) :
+     (c.mapState (Sigma.mk i)).state ≠
+-      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
+-  rw [Cfg.mapState_state]
+-  cases hc : c.state with
+-  | none => simp
+-  | some st =>
+-    simp only [Option.map_some, ne_eq, Option.some.injEq]
+-    intro hcon
+-    exact hi (congrArg Sigma.fst hcon)
++      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) :=
++  Cfg.mapState_sigma_state_ne i _ hi c
+ 
+ /-- Phase 1, hosted: the skip over the suffix `s.drop r` of the source word, one dispatch into
+ phase 2; no state of its window is the exit.
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index 8b01a3b9..9e687b16 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -7,6 +7,7 @@ import TCSlib.Complexity.TuringMachine.Build.ZoneTape
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Catalog
+ import TCSlib.Complexity.TuringMachine.Build.Contract.Seam
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -14739,19 +14740,6 @@ private lemma zr_mir_mir {k : ℕ} {S : Type} {x : List (ZoneSym k)} (c : Cfg 2
+       simp only [zr_mir, if_true, neg_neg]
+     · simp only [zr_mir, hj, if_false]
+ 
+-/-- The input head reads the same cell in configurations with the same input position. -/
+-private lemma zr_inputSymbol_congr {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
+-    {c : Cfg 2 (ZoneSym k) S x} {c' : Cfg 2 (ZoneSym k) S' x} (h : c.inputPos = c'.inputPos) :
+-    c.inputSymbol = c'.inputSymbol := by
+-  by_cases h0 : c.inputPos = 0
+-  · rw [Cfg.inputSymbol_of_zero h0, Cfg.inputSymbol_of_zero (h.symm.trans h0)]
+-  · by_cases h1 : c.inputPos.val = x.length + 1
+-    · rw [Cfg.inputSymbol_of_end h1, Cfg.inputSymbol_of_end (by rw [← h]; exact h1)]
+-    · have h0' : c.inputPos.val ≠ 0 := fun hv => h0 (Fin.ext hv)
+-      have hlt := c.inputPos.isLt
+-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
+-        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by rw [← h]; omega) (by omega)]
+-
+ /-- **The mirrored machine**: tape `0`'s moves reversed, everything else as `M`'s. -/
+ private def zr_mirTM {k : ℕ} {S : Type} (M : MultiTapeTM 2 (ZoneSym k) S) :
+     MultiTapeTM 2 (ZoneSym k) S where
+@@ -14764,7 +14752,7 @@ private def zr_mirTM {k : ℕ} {S : Type} (M : MultiTapeTM 2 (ZoneSym k) S) :
+ /-- **The mirrored machine's step is the mirrored step.**
+ 
+ **Proof sketch.** By the control state. A halted configuration is fixed by both machines. Otherwise
+-the mirrored configuration reads the same input cell (`zr_inputSymbol_congr`) and the same work-tape
++the mirrored configuration reads the same input cell (`Turing.Cfg.inputSymbol_congr`) and the same work-tape
+ symbols, since tape `0` and its head are both reflected, so both machines take the same transition.
+ Applying it, field by field (`Action.apply_*`): the state, input head and output agree, the other
+ tape is unchanged by the mirror, and on tape `0` the reversed move of the reflected head lands on
+@@ -14778,7 +14766,7 @@ private lemma zr_mir_step {k : ℕ} {S : Type} {x : List (ZoneSym k)}
+     rw [MultiTapeTM.step_of_halt hq', MultiTapeTM.step_of_halt hq]
+   | some q =>
+     have hq' : (zr_mir c).state = some q := hq
+-    have hin : (zr_mir c).inputSymbol = c.inputSymbol := zr_inputSymbol_congr rfl
++    have hin : (zr_mir c).inputSymbol = c.inputSymbol := Cfg.inputSymbol_congr _ _ rfl
+     have hw : (zr_mir c).workTapeSymbols = c.workTapeSymbols := by
+       funext j
+       rw [Cfg.workTapeSymbols_eq, Cfg.workTapeSymbols_eq]
+diff --git a/TCSlib/Complexity/TuringMachine/CfgFacts.lean b/TCSlib/Complexity/TuringMachine/CfgFacts.lean
+new file mode 100644
+index 00000000..828c3788
+--- /dev/null
++++ b/TCSlib/Complexity/TuringMachine/CfgFacts.lean
+@@ -0,0 +1,97 @@
++/-
++Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: Seyoon Ragavan
++-/
++import TCSlib.Complexity.TuringMachine.StateRenaming
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Elementary facts about configurations
++
++Four small facts that machine constructions over several phases use repeatedly: the input read
++depends on the input head only; a live configuration redirected to a state of phase `i` is the
++tagged configuration of phase `i`; a configuration tagged by one phase is never at a state of
++another; and a list of equal-length chunks has the expected length.
++
++## Main definitions
++
++No new definitions.
++
++## Main results
++
++* `Turing.Cfg.inputSymbol_congr` — configurations whose input heads agree read the same input
++  symbol, across machines.
++* `Turing.Cfg.mapState_const_eq_mapState_sigma` — redirecting a live configuration to `⟨i, q⟩`
++  gives phase `i`'s tagged configuration at `q`.
++* `Turing.Cfg.mapState_sigma_state_ne` — a configuration tagged by phase `i` is at no state of
++  another phase.
++* `Turing.length_flatMap_const` — a list of equal-length chunks has length count × chunk length.
++-/
++
++namespace Turing
++
++/-- **The input read depends on the input head only.** Two configurations on the same input,
++of machines with any numbers of work tapes and any states, read the same input symbol when their
++input heads are at the same position.
++
++**Proof sketch.** At position `0` and at `|input| + 1` both read blank
++(`Turing.Cfg.inputSymbol_of_zero`, `Turing.Cfg.inputSymbol_of_end`); at an inner position `1 + p`
++both read `input[p]` (`Turing.inputSymbolInner`). -/
++theorem Cfg.inputSymbol_congr {Symbol : Type*} {k k' : ℕ} {S S' : Type*} {input : List Symbol}
++    (c : Cfg k Symbol S input) (c' : Cfg k' Symbol S' input)
++    (h : c.inputPos.val = c'.inputPos.val) : c.inputSymbol = c'.inputSymbol := by
++  by_cases h0 : c.inputPos.val = 0
++  · have h0' : c'.inputPos = 0 := Fin.ext (by rw [← h]; exact h0)
++    rw [Cfg.inputSymbol_of_zero (Fin.ext h0), Cfg.inputSymbol_of_zero h0']
++  · by_cases he : c.inputPos.val = input.length + 1
++    · rw [Cfg.inputSymbol_of_end he, Cfg.inputSymbol_of_end (by omega)]
++    · have hlt := c.inputPos.isLt
++      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
++        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
++
++/-- **Redirecting a live configuration to a phase's state.** If `c` is live and `c₂` is a
++configuration of phase `i` at state `q` with `c`'s tapes, heads and output, then sending every
++state of `c` to `⟨i, q⟩` gives `c₂` tagged by `i`.
++
++**Proof sketch.** Compare the five fields through the state-renaming equations
++(`Turing.Cfg.mapState_state` and the others): the states are both `some ⟨i, q⟩` since `c` is
++live, and the remaining fields are the hypotheses. -/
++theorem Cfg.mapState_const_eq_mapState_sigma {k : ℕ} {Γ I S : Type*} {Ph : I → Type*}
++    {x : List Γ} {i : I} (c : Cfg k Γ S x) (c₂ : Cfg k Γ (Ph i) x) {q : Ph i}
++    (hc : c.state.isSome) (hstate : c₂.state = some q) (hin : c.inputPos = c₂.inputPos)
++    (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
++    (ho : c.output = c₂.output) :
++    c.mapState (fun _ => (⟨i, q⟩ : Σ j, Ph j)) = c₂.mapState (Sigma.mk i) := by
++  obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
++  apply Cfg.ext
++  · rw [Cfg.mapState_state, Cfg.mapState_state, hs, hstate, Option.map_some, Option.map_some]
++  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
++  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
++  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
++  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
++
++/-- **A tagged configuration is at no other phase's state.** A configuration tagged by phase `i`
++(its states sent into the sum by `Sigma.mk i`) is never at a state `v` of a phase `v.1 ≠ i`. -/
++theorem Cfg.mapState_sigma_state_ne {k : ℕ} {Γ I : Type*} {Ph : I → Type*} {x : List Γ}
++    (i : I) (v : Σ j, Ph j) (hi : i ≠ v.1) (c : Cfg k Γ (Ph i) x) :
++    (c.mapState (Sigma.mk i)).state ≠ some v := by
++  rw [Cfg.mapState_state]
++  cases hs : c.state with
++  | none => exact Option.noConfusion
++  | some s =>
++    intro h
++    exact hi (congrArg Sigma.fst (Option.some.inj h))
++
++/-- **Equal-length chunks.** If every chunk `f a` has length `c`, the concatenation of the chunks
++of a list `l` has length `|l| · c`. -/
++theorem length_flatMap_const {α β : Type*} (l : List α) (f : α → List β) {c : ℕ}
++    (hf : ∀ a, (f a).length = c) : (l.flatMap f).length = l.length * c := by
++  rw [List.length_flatMap, List.map_congr_left (fun a _ => hf a), List.map_const',
++    List.sum_replicate]
++  rfl
++
++end Turing
+-- 
+2.50.1 (Apple Git-155)
+

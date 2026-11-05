@@ -978,6 +978,22 @@ ruled by the user, 2026-11-04):
   length of a computed function (`dz_out_le`, `|F y| ≤ T |y|`), also inline in `SAT`,
   `Nondeterminism`, `TMSAT` and `Build/Loop`'s private `loop_fuel_width`. **Disposition:** the
   dedup window.
+- **Census, landed (gate 93, finding 4):** 8 of `NTimeDiagonalizer`'s 342 declarations (2.3%),
+  deduplicated: RO-1's one, the five distinct NB-1/BL-1/LS-3 members, `dz_word_lt` and
+  `dz_split_stream`. E1 retires `qy_call_bound`'s BL-1 (iii) step. Row candidates (RC-3) and
+  in-file factorings (QF-1) are not counted as debt.
+- **ED-IN, inline re-derivations, scoped by kind (ruled by the user, 2026-11-04, gate 93 round
+  2):** any inline step in `NTimeDiagonalizer` that re-derives a published run, buffer or segment
+  lemma belongs to this family, for the dedup window; a later find is an accounting minor. The
+  members found so far are all removed: `dz_first` (`Segment.time_eq`), `dz_split`'s separator
+  (`bufferTape_append_mid`), `dz_split_tape`'s prefix (`bufferTape_take`), `dz_top_run`'s output
+  (`runFrom_output_eq_of_halt`), and three natural cells (`bufferTape_nat`).
+  **Further member (gate 93 round 3, finding 1):** `qy_patch_end`'s prefix branch re-derives
+  `FinTM.bufferTape_take` (and so `_take` has a counterpart, against BW-1's note); re-pointed in the
+  dedup window. Census 9 of 342.
+- **Removed in round 2 (gate 93, findings 1–2):** `dz_first` re-proved `Segment.time_eq`, and
+  `dz_split`'s separator cell re-proved `FinTM.bufferTape_append_mid`. Both now cite them (#188
+  `a64f513d`).
 
 **NF cont1's delivery, F2: four kinds re-stated** (review
 `campaign/fills/c1/reviews/nf-cont1-fill/`; ruled by the user, 2026-11-04: **publish homes
@@ -994,6 +1010,36 @@ cites them:
   NF cannot import).
 
 The existing private copies are re-pointed in the API PR where the files are the campaign's.
+
+**RN-1, renamed configurations converted field by field, scoped by kind** (ruled by the user,
+2026-11-04, with gate 94). #190 publishes the general fact, `Turing.Cfg.mapState_eq_of_fields`: a
+renamed configuration equals any configuration with its data fields and the renamed state.
+- **The family:** every inline proof of that fact anywhere in TCSlib (the five-line
+  `Cfg.ext`/`Cfg.mapState_*` block), with the retag (ii) as an instance. A later find is an
+  accounting minor.
+- **Re-pointed in #190:** `CfgRecord`'s `recordStep_mapState_eq` (removed), `SeamLayout`'s
+  `sl_rewrap`, and `ExhaustiveReplay`'s `xr_phase_step` (two blocks) and `xr_halt_fixed` (two
+  blocks).
+- **Remaining, for the dedup window** (gate 94's minors 1–2, 2026-11-05; counted as conversions
+  inside declarations, not copies of their statements). By file:
+  - `CodeSimulator`: `canonStageLeg0`–`6`, `canonStageOuterSpec`, `canonStageInnerSpec`,
+    `us_start` (10);
+  - `ZoneRebalance`: 21 of about 870 (2.4%). These are `zr_short_fields`,
+    `zr_rightSeekBack_post`, `zr_rightRuler_post`, `zr_adjustedWalk_post`,
+    `zr_adjustedBack_post`, `zr_writeHalves_post`, `zr_rightPass_post`, `zr_test_post`,
+    `zr_body_post`, `zr_return_post`, `zr_rightReturn_post`, `zr_rightLeft_post`,
+    `zr_twoSteps_fields`, `zr_leftMove_fields`, `zr_leftWrite_fields`, `zr_leftPass_fields`,
+    `zr_final_fields`, `zr_extend_fields`, `zr_scanBody_fields`, `zr_scan_fields` and
+    `zr_countClear_fields`. RI-1's `zr_pinLoop` is retired and not counted;
+  - `NDHost`: `gr_handoff`, `guessCtlRunTM_stop_of_halted`;
+  - one each in `ExhaustiveReplay` (`xr_E_initCfg`), `NDCodeSimulator`
+    (`exists_ndInterpreterCore`), `Seam` (`phaseHostTM_run`), `InputRewind`
+    (`Cfg.mapState_mapState`), `NTimeHierarchy` (`un_setup`; NF-X1's pair too) and `SeamLayout`
+    (`exists_seamLayoutTM`).
+
+  The NF review's F2 list has 19 names, not 15; its `xr_phase_step` and `xr_halt_fixed` are
+  re-pointed. No file crosses one fifth. NF's own copies (`nf_retag`, `nf_tag`, …) are checked at
+  NF's landing (#191), where they cite `CfgFacts`.
 The 15 inline (ii) steps and `CircuitComplexity`'s lemma go to the dedup window (the latter under
 its own authorization). Also removed at NF's landing: `nf_all_cons`'s re-derivation of Mathlib's
 `Nat.forall_lt_succ_left'` (E1).
