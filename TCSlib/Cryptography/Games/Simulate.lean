@@ -51,8 +51,10 @@ queried" are predicates on that log. Logging never changes the computation
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley, draft of
   22 January 2026, Definition 3.9 (answering an adversary's queries in a reduction).
 -/
@@ -133,7 +135,8 @@ end QueryImpl
 /-- **Composition:** answer the queries of `spec` with `impl₁`, whose own queries (to `spec'`)
 are answered by `impl₂`; the state is the pair of the two states. This is how a reduction that
 answers its adversary's queries by querying its own oracles becomes, after its oracles are
-implemented, a single implementation of the adversary's oracles. -/
+implemented, a single implementation of the adversary's oracles.
+[VCVio, SimSemantics/QueryImpl/Compose (QueryImpl.compose)] -/
 def QueryImpl.comp {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     {spec'' : OracleSpec ι''} {σ₁ σ₂ : Type} (impl₂ : QueryImpl spec' σ₂ spec'')
     (impl₁ : QueryImpl spec σ₁ spec') : QueryImpl spec (σ₁ × σ₂) spec'' :=
@@ -141,6 +144,7 @@ def QueryImpl.comp {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec ι'}
 
 /-- **Simulation composes:** simulating with `impl₂` a simulation by `impl₁` is simulating once
 with the composed implementation, up to regrouping the states.
+[VCVio, SimSemantics/QueryImpl/Compose (simulateQ_compose)]
 
 **Proof sketch.** Induction on the computation. At a query, both sides first run `impl₁`'s answer
 under `impl₂` (`simulate_bind` on the left, the definition of `comp` on the right), and the

@@ -39,7 +39,8 @@ the interaction model `Strategy`.
   advantages, the hybrid argument.
 * `TCSlib.Cryptography.Games.Hopping`: the difference lemma, identical until bad, the collision
   bound.
-* `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions.
+* `TCSlib.Cryptography.Games.Protocols`: parties, the message exchange, executions with D8's
+  reading of the end, and traced executions recording views.
 
 ## References
 
@@ -48,8 +49,10 @@ the interaction model `Strategy`.
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 * [BR06] M. Bellare, P. Rogaway, *The security of triple encryption and a framework for
   code-based game-playing proofs*, EUROCRYPT 2006.
 * [Sho04] V. Shoup, *Sequences of games: a tool for taming complexity in security proofs*, IACR

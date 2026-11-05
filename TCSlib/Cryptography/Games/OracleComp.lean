@@ -14,8 +14,9 @@ set_option autoImplicit false
 The syntax of security games and protocols. An *oracle specification* names a family of oracles,
 each with a type of queries and a type of answers. An *oracle computation* over it asks one
 oracle a query, looks at the answer, chooses what to do next, and eventually returns a value. It
-is the free monad over the specification: a finite tree whose inner nodes are queries, with one
-subtree per possible answer.
+is the free monad over the specification: a well-founded tree (every run makes finitely many
+queries) whose inner nodes are queries, with one subtree per possible answer. With finite answer
+types, as for probabilistic computations, the tree is finite.
 
 Everything else in the framework is built on this file:
 - uniform sampling is one more oracle (`TCSlib.Cryptography.Games.Probability`);
@@ -51,8 +52,10 @@ layer ([Gar26]); the bridge between the two is in the S2b layer.
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley, draft of
   22 January 2026, Definition 3.9 (oracle adversaries).
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
