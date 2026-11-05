@@ -83,6 +83,7 @@ theorem buildComp_singleCodec {ℓ₁ ℓ₂ : ℕ}
     cases hn : next (toHist hist) with
     | ret b => rfl
     | query x =>
+      dsimp only
       congr 1
       funext y
       rw [buildComp_singleCodec next q]
