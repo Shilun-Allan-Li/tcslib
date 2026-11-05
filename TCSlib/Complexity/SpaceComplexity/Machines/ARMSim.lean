@@ -26,7 +26,10 @@ register head in `[-1, W]` when `W` bounds the binary lengths of the values invo
 
 ## Main results
 
-* `Complexity.LogProg.arm_step` — one abstract step is simulated.
+* the per-instruction simulation lemmas `Complexity.LogProg.sim_jodd`, `sim_jeq`,
+  `sim_call`, `sim_ret`, `sim_valP`, `sim_valQ`, `sim_jeqIn`, `sim_jeqSnd`, `sim_jeqFst`:
+  each abstract step is simulated by its fragment; the whole-run assembly is
+  `Complexity.LogProg.arm_run` (`TCSlib.Complexity.SpaceComplexity.Machines.ARMRun`).
 
 ## References
 

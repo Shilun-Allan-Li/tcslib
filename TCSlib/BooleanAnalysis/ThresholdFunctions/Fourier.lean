@@ -1,5 +1,11 @@
+/-
+Copyright (c) 2026 TCSlib Contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Owen McGinty
+-/
+
 import Mathlib.Algebra.Order.Floor.Ring
-import TCSlib.BooleanAnalysis.KKL
+import TCSlib.BooleanAnalysis.Hypercontractivity.Applications.KKL.Basic
 import TCSlib.BooleanAnalysis.ThresholdFunctions.AffineKhintchine
 import TCSlib.BooleanAnalysis.ThresholdFunctions.LowDegreeNorm
 import TCSlib.BooleanAnalysis.ThresholdFunctions.SparseSampling
@@ -11,7 +17,7 @@ set_option autoImplicit false
 /-!
 # Fourier theory of threshold functions
 
-This file states the Chapter 5 results relating polynomial threshold representations to low-degree
+This file proves Chapter 5 results relating polynomial threshold representations to low-degree
 Fourier coefficients, Fourier weight, and polynomial sparsity.
 
 ## Main definitions
@@ -20,6 +26,7 @@ The representation and Fourier-weight definitions are imported from `ThresholdFu
 
 ## Main results
 
+* `fourierWeightAbove_le_three_mul_noiseSensitivity`: reciprocal-noise cutoffs bound spectral tails.
 * `chow_theorem`: an LTF is determined by its degree-zero and degree-one coefficients.
 * `ptf_chow_theorem`: a degree-`k` PTF is determined by coefficients through degree `k`.
 * `ptf_low_degree_weight`: a degree-`k` PTF has low-degree weight at least `exp (-2k)`.
@@ -119,6 +126,51 @@ private lemma one_sub_two_mul_pow_le_third {δ : ℝ} (hδ' : δ ≤ 1 / 2) {m :
     exact pow_le_one₀ (mul_nonneg hρ (by linarith)) (by nlinarith)
   nlinarith [mul_le_mul_of_nonneg_left hbern (pow_nonneg hρ m), pow_nonneg hρ m]
 
+/-- For a ±1-valued cube function and `0 < δ ≤ 1/2`, the squared Fourier weight
+above degree `⌊1/δ⌋` is at most three times its noise sensitivity at scale `δ`.
+[OD14, Prop. 5.6, proof]
+This includes constant functions and the zero-dimensional cube.
+
+**Proof sketch.** Above the reciprocal-noise cutoff, the geometric noise multiplier
+is at most one third. Each discarded squared coefficient is therefore bounded by
+three halves of its contribution to the loss of noise stability. Sum over Fourier
+sets and use the Fourier formula for Boolean noise sensitivity. -/
+lemma fourierWeightAbove_le_three_mul_noiseSensitivity {n : ℕ}
+    (f : BooleanFunc n) (hf : isPmOne f) {δ : ℝ}
+    (hδ : 0 < δ) (hδ' : δ ≤ 1 / 2) :
+    fourierWeightAbove (Nat.floor δ⁻¹) f ≤ 3 * noiseSensitivity δ f :=
+  (by
+  classical
+  let d := Nat.floor δ⁻¹
+  have hρ : 0 ≤ 1 - 2 * δ := by linarith only [hδ']
+  have hρ' : 1 - 2 * δ ≤ 1 := by linarith only [hδ]
+  have hdecay (m : ℕ) (hm : d < m) :
+      (1 - 2 * δ) ^ m ≤ (1 : ℝ) / 3 :=
+    one_sub_two_mul_pow_le_third hδ' (by
+      calc
+        1 = δ * δ⁻¹ := (mul_inv_cancel₀ hδ.ne').symm
+        _ < δ * m := mul_lt_mul_of_pos_left (Nat.lt_of_floor_lt hm) hδ)
+  change (∑ S : Finset (Fin n),
+    if d < S.card then fourierCoeff f S ^ 2 else 0) ≤ 3 * noiseSensitivity δ f
+  calc
+    (∑ S : Finset (Fin n), if d < S.card then fourierCoeff f S ^ 2 else 0) ≤
+        ∑ S : Finset (Fin n),
+          (3 / 2 : ℝ) * ((1 - (1 - 2 * δ) ^ S.card) * fourierCoeff f S ^ 2) := by
+      refine Finset.sum_le_sum fun S _ => ?_
+      split_ifs with hS
+      · have h := mul_le_mul_of_nonneg_right (hdecay S.card hS)
+          (sq_nonneg (fourierCoeff f S))
+        nlinarith only [h]
+      · exact mul_nonneg (by norm_num)
+          (mul_nonneg (sub_nonneg.mpr (pow_le_one₀ hρ hρ')) (sq_nonneg _))
+    _ = 3 * noiseSensitivity δ f := by
+      rw [← Finset.mul_sum]
+      simp_rw [sub_mul, one_mul]
+      rw [Finset.sum_sub_distrib, parseval_pm_one f hf]
+      simp only [noiseSensitivity, noiseStability, stability_formula]
+      ring
+)
+
 /-- Every Boolean function is close to a PTF whose degree is the reciprocal noise scale.
 [OD14, Prop. 5.6]
 
@@ -129,7 +181,7 @@ theorem close_to_low_degree_ptf (f : BooleanFunc n) (hf : isPmOne f) {δ : ℝ}
     (hδ : 0 < δ) (hδ' : δ ≤ 1 / 2) :
     ∃ g : BooleanFunc n,
       IsPolynomialThreshold g (Nat.floor δ⁻¹) ∧
-        IsClose f g (3 * noiseSensitivity δ f) := by
+        IsClose f g (3 * noiseSensitivity δ f) := (by
   classical
   let d := Nat.floor δ⁻¹
   let p : MultilinearPolynomial n := fun S ↦ if S.card ≤ d then fourierCoeff f S else 0
@@ -139,33 +191,10 @@ theorem close_to_low_degree_ptf (f : BooleanFunc n) (hf : isPmOne f) {δ : ℝ}
   refine ⟨p.threshold, ⟨p, ?_, rfl⟩, ?_⟩
   · intro S hS
     exact if_neg (Nat.not_le.mpr hS)
-  have hρ : 0 ≤ 1 - 2 * δ := by linarith
-  have hρ' : 1 - 2 * δ ≤ 1 := by linarith
-  -- Bernoulli's inequality bounds the noise multiplier on the discarded levels.
-  have hdecay (m : ℕ) (hm : d < m) : (1 - 2 * δ) ^ m ≤ (1 : ℝ) / 3 :=
-    one_sub_two_mul_pow_le_third hδ' (by
-      calc 1 = δ * δ⁻¹ := (mul_inv_cancel₀ hδ.ne').symm
-        _ < δ * m := mul_lt_mul_of_pos_left (Nat.lt_of_floor_lt hm) hδ)
   have htail : KKL.l2DistSq f (KKL.lowDegreePart f d) ≤
       3 * noiseSensitivity δ f := by
-    rw [KKL.lowDegree_l2_error]
-    calc
-      (∑ S : Finset (Fin n), if d < S.card then fourierCoeff f S ^ 2 else 0) ≤
-          ∑ S : Finset (Fin n),
-            (3 / 2 : ℝ) * ((1 - (1 - 2 * δ) ^ S.card) * fourierCoeff f S ^ 2) := by
-        refine Finset.sum_le_sum fun S _ ↦ ?_
-        split_ifs with hS
-        · have h := mul_le_mul_of_nonneg_right (hdecay S.card hS)
-            (sq_nonneg (fourierCoeff f S))
-          nlinarith
-        · exact mul_nonneg (by norm_num)
-            (mul_nonneg (sub_nonneg.mpr (pow_le_one₀ hρ hρ')) (sq_nonneg _))
-      _ = 3 * noiseSensitivity δ f := by
-        rw [← Finset.mul_sum]
-        simp_rw [sub_mul, one_mul]
-        rw [Finset.sum_sub_distrib, parseval_pm_one f hf]
-        simp only [noiseSensitivity, noiseStability, stability_formula]
-        ring
+    simpa only [KKL.lowDegree_l2_error, fourierWeightAbove, d] using
+      fourierWeightAbove_le_three_mul_noiseSensitivity f hf hδ hδ'
   -- Taking the sign costs at most the squared approximation error at each point.
   unfold IsClose disagreementProbability
   calc
@@ -180,6 +209,8 @@ theorem close_to_low_degree_ptf (f : BooleanFunc n) (hf : isPmOne f) {δ : ℝ}
         rcases hf x with hf | hf <;> rw [hf] at hx ⊢ <;>
           split_ifs at hx <;> norm_num at hx <;> nlinarith [sq_nonneg (p.eval x)]
     _ ≤ 3 * noiseSensitivity δ f := heval ▸ htail
+)
+
 
 /-- The correlation step of the low-degree weight bounds: if `p` has degree at most `k` and
 represents `f`, then `‖p‖₁² ≤ ‖p‖₂² · W^{≤k}[f]`. [OD14, proofs of Thm. 5.2 and Thm. 5.9]

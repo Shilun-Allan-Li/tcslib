@@ -233,105 +233,6 @@ private lemma taut_syntax_done (x : List Bool) :
   | nil => rfl
   | cons b x => exact taut_syntax_bad x
 
-/-- The unary scanner preserves precisely the suffix after the leading run. -/
-private lemma taut_takeTrues_shape (x : List Bool) :
-    x = List.replicate (CNF.takeTrues x).1 true ++ (CNF.takeTrues x).2 := by
-  induction x with
-  | nil => rfl
-  | cons b x ih =>
-    cases b with
-    | false => rfl
-    | true => simpa [CNF.takeTrues, List.replicate_succ] using congrArg (true :: ·) ih
-
-/-- A successful literal parse consumes exactly the serialized literal. -/
-private lemma taut_parseLit_shape {x r : List Bool} {ℓ : Std.Sat.Literal ℕ}
-    (h : CNF.parseLit x = some (ℓ, r)) : x = CNF.serializeLit ℓ ++ r := by
-  have hs := taut_takeTrues_shape x
-  unfold CNF.parseLit at h
-  split at h
-  · cases h
-  · rename_i k b rest ht
-    cases h
-    simpa only [ht, CNF.serializeLit, List.append_assoc,
-      List.cons_append, List.nil_append] using hs
-  · cases h
-
-/-- Successful clause parsing accounts for every consumed input bit.
-
-**Proof sketch.** Induct on parser fuel. The closing marker is the empty
-clause. Otherwise a successful literal parse consumes its exact serialization
-and the induction hypothesis accounts for the remaining clause body. -/
-private lemma taut_parseClause_shape {fuel : ℕ} {x r : List Bool} {C : CNF.Clause ℕ}
-    (h : CNF.parseClause fuel x = some (C, r)) : x = CNF.serializeClause C ++ r := by
-  induction fuel generalizing x C r with
-  | zero =>
-    cases x with
-    | nil => cases h
-    | cons b x =>
-      cases b with
-      | false => cases h; rfl
-      | true => cases h
-  | succ fuel ih =>
-    cases x with
-    | nil => cases h
-    | cons b x =>
-      cases b with
-      | false => cases h; rfl
-      | true =>
-        cases hl : CNF.parseLit (true :: x) with
-        | none => simp only [CNF.parseClause, hl] at h; cases h
-        | some p =>
-          obtain ⟨ℓ, s⟩ := p
-          cases hc : CNF.parseClause fuel s with
-          | none => simp only [CNF.parseClause, hl, hc] at h; cases h
-          | some p =>
-            obtain ⟨D, t⟩ := p
-            simp only [CNF.parseClause, hl, hc, Option.some.injEq, Prod.mk.injEq] at h
-            rcases h with ⟨rfl, rfl⟩
-            rw [taut_parseLit_shape hl, ih hc]
-            simp [CNF.serializeClause, List.append_assoc]
-
-/-- Successful formula parsing accounts for every consumed input bit. -/
-private lemma taut_parseClauses_shape {fuel : ℕ} {x r : List Bool} {φ : CNF ℕ}
-    (h : CNF.parseClauses fuel x = some (φ, r)) : x = CNF.serialize φ ++ r := by
-  induction fuel generalizing x φ r with
-  | zero =>
-    cases x with
-    | nil => cases h
-    | cons b x =>
-      cases b with
-      | false => cases h; rfl
-      | true => cases h
-  | succ fuel ih =>
-    cases x with
-    | nil => cases h
-    | cons b x =>
-      cases b with
-      | false => cases h; rfl
-      | true =>
-        cases hc : CNF.parseClause fuel x with
-        | none => simp only [CNF.parseClauses, hc] at h; cases h
-        | some p =>
-          obtain ⟨C, s⟩ := p
-          cases hp : CNF.parseClauses fuel s with
-          | none => simp only [CNF.parseClauses, hc, hp] at h; cases h
-          | some p =>
-            obtain ⟨ψ, t⟩ := p
-            simp only [CNF.parseClauses, hc, hp, Option.some.injEq, Prod.mk.injEq] at h
-            rcases h with ⟨rfl, rfl⟩
-            rw [taut_parseClause_shape hc, ih hp]
-            simp [CNF.serialize, List.append_assoc]
-
-/-- Every accepted string is the serialization of its exact parsed formula. -/
-private lemma taut_parse_shape {x : List Bool} {φ : CNF ℕ}
-    (h : CNF.parse x = some φ) : x = CNF.serialize φ := by
-  unfold CNF.parse at h
-  split at h
-  · rename_i ψ hp
-    cases h
-    simpa only [List.append_nil] using taut_parseClauses_shape hp
-  · cases h
-
 /-- The syntax-only unary pass is the parser's leading-run scan followed by
 its terminator and polarity requirements. -/
 private lemma taut_syntax_unary (x : List Bool) :
@@ -382,7 +283,7 @@ private lemma taut_syntax_clause (fuel : ℕ) (x : List Bool) (hf : x.length ≤
         | none => simp [CNF.parseClause, hl]
         | some p =>
           obtain ⟨ℓ, r⟩ := p
-          have hs := congrArg List.length (taut_parseLit_shape hl)
+          have hs := congrArg List.length (CNF.parseLit_repr hl)
           simp only [List.length_cons, List.length_append, CNF.serializeLit,
             List.length_replicate, List.length_nil] at hs
           have hr : r.length ≤ fuel := by simp only [List.length_cons] at hf; omega
@@ -418,7 +319,7 @@ private lemma taut_syntax_formula (fuel : ℕ) (x : List Bool) (hf : x.length �
         | none => simp [CNF.parseClauses, hc]
         | some p =>
           obtain ⟨C, r⟩ := p
-          have hs := congrArg List.length (taut_parseClause_shape hc)
+          have hs := congrArg List.length (CNF.parseClause_repr hc)
           simp only [List.length_append] at hs
           have hr : r.length ≤ fuel := by omega
           cases hp : CNF.parseClauses fuel r with
@@ -1094,7 +995,7 @@ private lemma taut_machine_pair (x u : List Bool) (hu : u.length = x.length+1) :
       rw [universal_pair_length]; omega)
     simpa only [DNF.decode, CNF.decode, hp, Option.getD_none] using hm
   | some φ =>
-    have hx := taut_parse_shape hp
+    have hx := CNF.parse_repr hp
     subst x
     have hvars : ∀ C ∈ φ, ∀ ℓ ∈ C, ℓ.1 < u.length := by
       intro C hC ℓ hℓ
@@ -1318,7 +1219,7 @@ private lemma tautDual_output (x : List Bool) :
       simpa [tautSyntaxAccept, hx] using hp
     rw [tautDualOutput, if_pos hy]
     simp only [CNF.decode, hx, Option.getD_some]
-    rw [taut_parse_shape hx]
+    rw [CNF.parse_repr hx]
     exact tautDual_serialize φ
 
 /-- The finite controller separates validation, emission, and silent rewinds.

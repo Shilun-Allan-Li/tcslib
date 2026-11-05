@@ -1,9 +1,9 @@
 {
  "lean_name": "KKL.noisyInfluence_power_bound",
- "key": "9f79804709cf99ca",
+ "key": "866c1ceab610451e",
  "kind": "lemma",
- "title": "Noisy influence bounded by influence",
- "statement": "Let $f:\\{0,1\\}^n\\to\\bbr$ be a $\\pm 1$-valued Boolean function, let $i\\in[n]$ be a coordinate, and let $\\rho$ be a noise rate with $0<\\rho\\le 1$. Then the noisy influence of $i$ on $f$ at rate $\\rho$ is at most the ordinary influence of $i$ on $f$:\n\\[\n  \\mathrm{Inf}_i^{\\rho}[f]\\;=\\;\\sum_{S\\ni i}\\rho^{\\abs{S}-1}\\,\\hat f(S)^2\\;\\le\\;\\mathrm{Inf}_i[f].\n\\]",
+ "title": "Boolean noisy influence upper bound",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube, $i\\in[n]$, and $0<\\rho\\le1$. Then $I_i^{(\\rho)}(f)\\le I_i(f)$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation.",
  "hypotheses_covered": [
   "$f$ is $\\pm 1$-valued",
   "$i$ is a coordinate in $[n]$",

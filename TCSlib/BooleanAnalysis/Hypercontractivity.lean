@@ -6,6 +6,7 @@ Authors: TCSlib Contributors
 
 import TCSlib.BooleanAnalysis.Hypercontractivity.Parameters
 import TCSlib.BooleanAnalysis.Hypercontractivity.MomentBounds
+import TCSlib.BooleanAnalysis.Hypercontractivity.Concentration
 import TCSlib.BooleanAnalysis.Hypercontractivity.Cube
 import TCSlib.BooleanAnalysis.Hypercontractivity.RandomVariables
 import TCSlib.BooleanAnalysis.Hypercontractivity.Products
@@ -34,6 +35,7 @@ This facade exports the complete development in its folder.
 
 * `Parameters`: Shared reasonability parameters.
 * `MomentBounds`: Probability moments, integrability, and reasonability estimates.
+* `Concentration`: Shared scalar parameters and optimized concentration moments.
 * `Cube`: Uniform-cube definitions and forward and reverse noise inequalities.
 * `RandomVariables`: General, symmetric, multilinear, and discrete random-variable bounds.
 * `Products`: Finite-product spaces, hypercontractivity, and applications.
