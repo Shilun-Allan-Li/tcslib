@@ -138,3 +138,4 @@ R-04-1 strict unary; R-04-2 all equation lemmas in #195; R-04-3 extend T0–T2 b
 - **Gate 03, 03l: dispatched by the user (2026-11-05)** (folder `outbox/gates/03l-ch2-4-gate/`; its one stale prose line, `StringLoops.lean:36–38` calling `stateFind` private, changes in the G3-5 clean-up).
 - **Gate 05 round 2 (closing; #194 at `6b781240`): dispatched by the user (2026-11-05).** The folder is `outbox/gates/05-pac-r2-gate/` on `exchange/pass-shelat-ch5-8` (commit `984ba6b82644d8fe81b9cf450fb0b9e2bdddeb57`), with the bundle (SHA-256 `3e5dd418…`, 11 sections) and the prompt in `README.md`.
 - **Prong D** carries the old PAC files (from `44d27f39`); it merges #194's branch again before gate 06.
+- **#198 (gate 03b repairs: canonical decoding, G3-1): Clear to merge.** Maintainer checks recorded in the decision log; 03b's closing round audits the delta after the merge, as for #193. After it merges, 03f1 and 03f2 pin to the new head and dispatch.
