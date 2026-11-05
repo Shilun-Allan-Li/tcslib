@@ -33,10 +33,12 @@ It shows four things:
 1. **`Games/OracleComp.lean`:** gains `singleSpec`, moved from S2b's `Bridges/QueryTree.lean`.
 2. **`Pseudorandom/Functions/OracleAdversary.lean`** (the concrete layer):
    - `QueryTree` becomes the abbreviation above, with its constructors and `QueryTree.induct`.
-   - `eval`, `BoundedBy` and `simulate` keep their definitions. Their links to the framework are
-     proved here: `eval` is `OracleComp.evalFn`; `BoundedBy q` is `CostBoundedBy (fun _ => 1) · q`;
-     `simulate π ans` is `Games.simulate` with a stateless implementation. These were B1's results.
-     B1's bijection `treeEquiv` becomes the identity and is removed.
+   - `eval`, `BoundedBy` and `simulate` keep their definitions.
+   - Their links to the framework stay in `Games/Bridges/QueryTree.lean`, so that the concrete
+     layer imports only `Games/OracleComp`: `eval` is `OracleComp.evalFn`; `BoundedBy q` is
+     `CostBoundedBy (fun _ => 1) · q`; `simulate π ans` is `Games.simulate` with a stateless
+     implementation. These were B1's results.
+   - B1's translation and bijection `treeEquiv` become the identity and are removed.
    - **Universe change:** from `Type u` to `Type`, a disclosed deviation. Every use in ch. 2–8 is at
      `Type`.
 3. **Users** (`LazySampling`, `SubHybrids`, `GGM`; `Asymptotic/PRF`, `GGMReduction`,
