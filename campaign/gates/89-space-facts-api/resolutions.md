@@ -98,4 +98,6 @@ blockers, 2 majors, 1 minor, 7 notes.**
 
 **Gate 89 closes (round 5, 2026-11-04):** 0 blockers; the two majors are debt majors, closed by
 the user's acknowledgment (TEMPLATE, failure mode 5, as gates 18 and 54); the minor is fixed in
-the records. **#181 is clear to merge once `replay-lsm5` passes.**
+the records. **`replay-lsm5` passed** (2026-11-04, monitored): 209 of 209 at `98912ab2`, 0 failed,
+static-equal (44 sorry warnings, all pre-existing); snapshot `oleans-lsm5`
+(`evidence/round5/merged-tree/replay-lsm5.log`). **#181 is clear to merge.**

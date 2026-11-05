@@ -4225,7 +4225,7 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   the site list: `QueryReshape`, `UniformSample`, two in `Hardness`, and `Word`'s
   `bitsVal_lt_two_pow`. **Ruled (user, 2026-11-04): acknowledge, with BL-1's scope by kind.** No
   Lean change; the minor is fixed in the records. **Gate 89 closed.** `replay-lsm5` (209 modules)
-  was started by the user and is monitored. **#181 is clear to merge once it passes.** After that
+  **passed** (209 of 209, 0 failed, static-equal at 44; `oleans-lsm5`). **#181 is clear to merge.** After that
   merge, #182 takes its merged-tree replay from `oleans-lsm5`, not `oleans-lsm4`.
 * **#184 (the codec's edge mode, `edgeLang_mem : edgeLang N ∈ LOGSPACE`), gate 91.** The edge
   decider's home was decided at pre-ship by the user's rule: a fifth mode of `CA` (design note
