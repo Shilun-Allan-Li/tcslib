@@ -113,3 +113,24 @@ elsewhere is not possible: it needs the file's private run lemmas.
 The recommendation is API first. It fixes the interface under rule 10 before the fill starts,
 and the three are statements another consumer (a later `k → 1` or `k → 2` variant) would reuse.
 Size: about 300–400 lines (ESTIMATE), and the replay is `ZoneRebalance`'s downstream.
+
+## 7. Decision G5-F1 ruled: API first (the user, 2026-11-05)
+
+The consumer side is published by PR `lean/zone-step-api` and gate 97
+(`campaign/gates/97-zone-step-api/`):
+- **`Build/ZoneStep` (new):**
+  - `exists_zoneTrackStepTM`, one track's step. It meets gate 22's minor 2 (`Fintype S`, and the
+    endpoint's scratch head, input head and output), has one constant for every direction and
+    track, and has live exits (`none ∉ X`) for the phase host;
+  - `sum_two_pow_le_of_count`, the layer cake, through Mathlib's geometric sums;
+  - `sum_cost_le_of_count`, with the fixed overhead `B` of minor 1, sound at `k = 0`;
+  - `zoneTrackStepData`.
+- **`Build/ZoneRebalance`:**
+  - `zoneRowPre_iff`, `zoneRebalanceIndex_eq` and `zoneRebalanceIndex_le`;
+  - the data maps' and endpoints' fields (`simps`).
+- **`Build/Contract/Basic`:** `Contract.zero`, the zero-time contract.
+  - The screen paired the step's private stop contract with `ZoneRebalance`'s private anchor
+    (99%), so both now use `Contract.zero` (homes first).
+
+G5's fill then writes the controller, its invariant and the count bound, citing these. Its brief
+follows the merge.

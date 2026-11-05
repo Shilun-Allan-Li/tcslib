@@ -1,0 +1,27 @@
+"""Rule-10 seal for Build/ZoneStep: a sealed copy of the module (every other-file definition its
+proofs could reach made irreducible) and the controls (a delta goal and an equation goal per
+sealed definition), sealed and unsealed. Usage: mkseal_zsa.py <ZoneStep.lean> <out dir>"""
+import sys, pathlib
+src, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+SEAL = """Turing.zoneRowPre Turing.zoneRebalanceIndex Turing.zoneRebalanceData Turing.zoneExtendData
+Turing.zoneRebalancePost Turing.zoneExtendPost Turing.zoneShiftIndex Turing.zoneRebalance
+Turing.ZoneContents.extend Turing.zonedTape Turing.Contract.seq Turing.Contract.branch
+Turing.Contract.ofSegment Turing.HeadBox Turing.seamCompTM Turing.seamCompTM₂
+Turing.Cfg.mapState Turing.Contract.zero""".split()
+block = "attribute [local irreducible]\n" + "".join(f"  {n}\n" for n in SEAL)
+s = src.read_text()
+anchor = "namespace Turing\n"
+assert s.count(anchor) == 1
+sealed = s.replace(anchor, anchor + "\n" + block, 1)
+head = "/-!\n# Machine-construction library: one track's step and the amortized cost of the zones"
+assert sealed.count(head) == 1
+sealed = sealed.replace(head, head + " (rule-10 sealed copy of `Build/ZoneStep`, scratch)", 1)
+(out / "ZoneStepSealed.lean").write_text(sealed)
+imports = "".join(l + "\n" for l in s.splitlines() if l.startswith("import "))
+hdr = (out / "ctl_header.lean.part.txt").read_text()
+ctl = "".join(f"#ctl_rfl {n}\n" for n in SEAL) + "".join(f"#ctl_eqn {n}\n" for n in SEAL)
+for name, seal_block in (("sealed", block), ("unsealed", "")):
+    doc = f"/-! Rule-10 controls for `Build/ZoneStep` ({name}): {len(SEAL)} definitions. -/\n\n"
+    (out / f"SealControl_{name}.lean").write_text(imports + "\n" + doc + hdr +
+        "\n\nsection Controls\n\n" + seal_block + "\n" + ctl + "\nend Controls\n")
+print(len(SEAL), "definitions")

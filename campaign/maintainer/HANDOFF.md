@@ -42,7 +42,7 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 The local Mac's snapshots (`oleans-*`) and review folders are not carried over. Every record the
 gates cite is in the repository: packs, evidence, reviews, reports and deliveries' evidence.
 
-## 2. State (updated 2026-11-05, about 01:30 PST)
+## 2. State (updated 2026-11-05, about 10:05 PST)
 
 **Merged on 2026-11-04/05:** #181 (space facts), #182 (ARM embedding), #184 (the codec's edge mode),
 #189 (G5's statements; gate 92), #188 (E-D's landing, `exists_diagonalizer`; gate 93), #190 (the
@@ -50,23 +50,28 @@ configuration facts; gate 94, `replay-lcf3`).
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | `replay-lnf` **passed** (4 modules from `oleans-lcf3`, at `e8994dc1`; 0 `sorry`) | 95 **staged** (`outbox/gates/95-nf-landing-fill-gate/`, 415 sections); the dispatch prompt is in the session | merge when gate 95 closes |
-| (local) | the deepening's window API, `lean/deepen-window-api` (not pushed): six lemmas in `CfgRecord`, `Codec/Bridge`, `PathWalk`, `ExpBFS/Radius`, `SavitchARM/Reach` (design §9, decision 4) | 13-module chain compiled; a 72-module replay after the push | 96 drafted locally | push, PR and gate after the user's go-ahead |
+| #191 | NF's landing: `exists_codeNDTM_accepts_linear` proved | `replay-lnf` **passed** (4 modules from `oleans-lcf3`, at `e8994dc1`; 0 `sorry`) | 95 **dispatched** 2026-11-05 (`outbox/gates/95-nf-landing-fill-gate/`, 415 sections) | merge when gate 95 closes |
+| #196 | the deepening's API: `SavitchARM/Window` (window exactness, termination) and eleven facts in eight files (design §9–§10; decisions 4 and 5) | `replay-ldwa` **passed** (73 modules from `oleans-lcf3`, at `89f4ebbc`; the existing 30 `sorry`s) | 96 **staged** (`outbox/gates/96-deepen-api-gate/`, 209 sections) | dispatch gate 96; merge when it closes; then issue the deepening fill (Claude) |
+| #197 | G5's consumer API (decision G5-F1, API first): `Build/ZoneStep` (`exists_zoneTrackStepTM`, the amortization), `Contract.zero`, `ZoneRebalance`'s equations | `replay-lzsa` **ready to run** (111 modules from `oleans-lcf3`, at `0a1b64d5`) | 97 drafted (`campaign/gates/97-zone-step-api/`) | replay; stage gate 97; then G5's fill brief |
 
 On #191's merged tree the nondeterministic time hierarchy is admission-free:
 `ntime_hierarchy`, `ntime_hierarchy_of_pos` and `NTIME_linear_ssubset_square` rest on the
 standard axioms (gate 95's `evidence/axioms/NTHAx.out`). With #191 merged, the headline count is
 expected to reach **21 of 26**; the status record is `campaign/status/2026-11-05-headlines/`.
 
+**Merging several of these:** each replay above chained from `oleans-lcf3` with only its own
+PR. Once two or more have merged, the merged campaign's first snapshot (§1, item 4) is the replay
+of record for the combination.
+
 ## 3. Queue after the PRs
 
-1. **The general `savitch`'s deepening fill brief** (now unblocked: #182 and #184 merged); then
-   **G5's fill brief:** Hennie–Stearns over G2–G4's zone contracts. The two carried minors of
-   gate 22 are pinned (plan §2), and `k = 0` is handled separately. Codex first.
-2. **The general `savitch`'s deepening fill:** its brief is due now that #182 and #184 have
-   merged. The route is pinned in
-   `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` §8, and the route probe is
-   `probes/DeepenRoute.lean.txt`.
+1. **The general `savitch`'s deepening fill** (agent: Claude, the user's 2026-11-05 choice). The
+   brief `campaign/fills/ch34/briefs/ch34-fill-deepen-DRAFT.md` issues after #196 merges, with
+   its pre-ship re-run on the merged tree and its `@TBD@` items measured. The design is
+   `campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md` §8–§10.
+2. **G5's fill brief**, after #197 merges: Hennie–Stearns over the zone layer, citing
+   `Build/ZoneStep`. The fill writes the controller, its invariant and the count bound; `k = 0`
+   is handled separately (plan §2). Codex first, by the soft rule.
 3. **H's brief:** re-take its pre-ship after NF and E-D land. Its screen population includes both
    files, and NF-X1's `un_setup` pair.
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1

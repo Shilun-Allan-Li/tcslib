@@ -1,0 +1,352 @@
+/-
+Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Seyoon Ragavan
+-/
+import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.Ring.GeomSum
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Machine-construction library: one track's step and the amortized cost of the zones (rule-10 sealed copy of `Build/ZoneStep`, scratch)
+
+The Hennie–Stearns simulation of `k` work tapes on two ([AB09, §1.7]) keeps every simulated head
+at the home cell of its track and moves the track's contents instead, by shifting zones toward
+home. This file packages the zone rows of `TCSlib.Complexity.TuringMachine.Build.ZoneRebalance`
+into what one simulated step consumes, and proves the arithmetic of the amortized bound.
+
+* **One track's step** (`Turing.exists_zoneTrackStepTM`): run the rebalance row of a track; on a
+  short exit, run the extension row and then the rebalance again. The composite is one machine
+  with a finite state type and live exits, and a `Turing.Contract` whose precondition is
+  `Turing.zoneRowPre`. Its endpoint satisfies the precondition at the new data
+  (`Turing.zoneTrackStepData`) and keeps the scratch head, the input head and the output. Its
+  time is `O(2^{i₀} + 1)` for the scanned index `i₀`, with one constant for every direction and
+  track.
+* **The amortization** (`Turing.sum_two_pow_le_of_count`): if, for each level `i`, at most
+  `T / 2^i + 1` of `T` rebalances on a track scan beyond level `i`, their costs `2^{i₀}` sum to at
+  most `(L + 1) · T + 2^L`, where `L` bounds every scanned index.
+* **The cost of a run** (`Turing.sum_cost_le_of_count`): if each simulated step costs a fixed
+  overhead `B` plus its per-track steps, then `T` simulated steps cost at most
+  `B · T + k · (A · ((L + 2) · T + 2^L) + T)`.
+
+The count hypothesis is the simulation's fullness invariant, and the level bound
+`L ≤ log₂ T + O(1)` follows from its extension rule; both belong to the simulation, not to this
+file.
+
+## Main definitions
+
+* `Turing.zoneTrackStepData`: the data after one track's step.
+
+## Main results
+
+* `Turing.exists_zoneTrackStepTM`: one track's step as a contract.
+* `Turing.sum_two_pow_le_of_count`, `Turing.sum_cost_le_of_count`: the amortized cost.
+
+## References
+
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University
+  Press, 2009. (§1.7, the Hennie–Stearns simulation: zones, shifts and the amortized bound.)
+-/
+
+namespace Turing
+
+attribute [local irreducible]
+  Turing.zoneRowPre
+  Turing.zoneRebalanceIndex
+  Turing.zoneRebalanceData
+  Turing.zoneExtendData
+  Turing.zoneRebalancePost
+  Turing.zoneExtendPost
+  Turing.zoneShiftIndex
+  Turing.zoneRebalance
+  Turing.ZoneContents.extend
+  Turing.zonedTape
+  Turing.Contract.seq
+  Turing.Contract.branch
+  Turing.Contract.ofSegment
+  Turing.HeadBox
+  Turing.seamCompTM
+  Turing.seamCompTM₂
+  Turing.Cfg.mapState
+  Turing.Contract.zero
+
+/-! ### One track's step -/
+
+/-- **The data after one track's step**: the rebalance of track `t` in direction `dir` when its
+scanned index is below the level count; otherwise the extension by one level, followed by the
+rebalance of the extended data. -/
+def zoneTrackStepData {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) : ZoneData k :=
+  if zoneRebalanceIndex dir t D < D.1 then zoneRebalanceData dir t D
+  else zoneRebalanceData dir t (zoneExtendData D)
+
+/-- One track's step when the scanned index is below the level count: the rebalance. -/
+theorem zoneTrackStepData_of_lt {k : ℕ} (dir : Bool) (t : Fin k) {D : ZoneData k}
+    (h : zoneRebalanceIndex dir t D < D.1) :
+    zoneTrackStepData dir t D = zoneRebalanceData dir t D := by
+  rw [zoneTrackStepData, if_pos h]
+
+/-- One track's step when every feeding zone is empty: the extension, then the rebalance. -/
+theorem zoneTrackStepData_of_not_lt {k : ℕ} (dir : Bool) (t : Fin k) {D : ZoneData k}
+    (h : ¬ zoneRebalanceIndex dir t D < D.1) :
+    zoneTrackStepData dir t D = zoneRebalanceData dir t (zoneExtendData D) := by
+  rw [zoneTrackStepData, if_neg h]
+
+/-- The zone rows' precondition does not read the control state. -/
+private theorem zs_rowPre_mapState {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
+    (D : ZoneData k) (f : S → S') (d : Cfg 2 (ZoneSym k) S x) :
+    zoneRowPre D (d.mapState f) ↔ zoneRowPre D d := by
+  have hw : (d.mapState f).workTapes = d.workTapes :=
+    funext fun _ => funext fun _ => by rw [Cfg.mapState_workTapes]
+  simp only [zoneRowPre_iff, hw, Cfg.mapState_workTapePos]
+
+/-- The rebalance row's endpoint satisfies the precondition at the rebalanced data. -/
+private theorem zs_rowPre_rebalancePost {k : ℕ} (dir : Bool) (t : Fin k) {S : Type}
+    {x : List (ZoneSym k)} (done short : S) (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x)
+    (hp : zoneRowPre D d) :
+    zoneRowPre (zoneRebalanceData dir t D) (zoneRebalancePost dir t done short D d) :=
+  (zs_rowPre_mapState _ (fun s => s) _).mp (zoneRowPre_rebalancePost dir t done short D d hp _)
+
+/-- **One track's step** ([AB09, §1.7]; the zone rows of
+`TCSlib.Complexity.TuringMachine.Build.ZoneRebalance`). For every track count `k` there is a
+constant `A` such that for every direction `dir` and track `t` there is one two-tape machine over
+`Turing.ZoneSym k`, with a finite state type, an entry and a set `X` of live exits, whose run is a
+`Turing.Contract` with index `Turing.ZoneData k`:
+
+* **precondition** `Turing.zoneRowPre`;
+* from an admissible start `d` at the entry with data `D`:
+  * **time** at most `A · (2^{i₀} + 1)`, where `i₀ = Turing.zoneRebalanceIndex dir t D`;
+  * **endpoint**: it satisfies `Turing.zoneRowPre` at `Turing.zoneTrackStepData dir t D`, and
+    has `d`'s scratch head, input head and output.
+
+Together with the precondition, the endpoint fixes every field except the exit state: the zoned
+tape of the new data with its head at home, the scratch tape blank.
+
+**Proof sketch.** Compose the rows with `Turing.Contract.branch` on the rebalance row's two exits.
+On `done`, stop (`Turing.Contract.zero`). On `short`, run the extension row and the
+rebalance row again (`Turing.Contract.seq`), linked through `Turing.zoneRowPre_extendPost`. A
+short exit leaves the data unchanged (`Turing.zoneRebalanceData_of_short`) and means a scanned
+index of `ℓ` (`Turing.zoneRebalanceIndex_le`); the retry scans to `ℓ` as well
+(`Turing.zoneRebalanceIndex_extend_of_short`). So with the rows' constants `C` and `C'` the time is
+at most `C (2^{i₀} + 1) + 1` or `2C (2^ℓ + 1) + C' (2^ℓ + 1) + 2` with `i₀ = ℓ`, and
+`A = 2C + C' + 2` serves. The endpoint's fields are the rows' endpoints'
+(`Turing.zoneRebalancePost_workTapePos` and the rest), through the seams' state renamings. -/
+theorem exists_zoneTrackStepTM (k : ℕ) :
+    ∃ A : ℕ, ∀ (dir : Bool) (t : Fin k),
+      ∃ (S : Type) (_ : Fintype S) (_ : DecidableEq S) (M : MultiTapeTM 2 (ZoneSym k) S)
+        (entry : S) (X : Set (Option S)), none ∉ X ∧ ∀ x : List (ZoneSym k),
+        ∃ R : Contract M entry X (ZoneData k) x,
+          R.pre = zoneRowPre ∧
+          ∀ D d, d.state = some entry → zoneRowPre D d →
+            R.time D d ≤ A * (2 ^ zoneRebalanceIndex dir t D + 1) ∧
+            zoneRowPre (zoneTrackStepData dir t D) (R.post D d) ∧
+            (R.post D d).workTapePos 1 = d.workTapePos 1 ∧
+            (R.post D d).inputPos = d.inputPos ∧ (R.post D d).output = d.output := by
+  obtain ⟨C, hC⟩ := exists_zoneRebalanceTM k
+  obtain ⟨C', S', _, _, M', e', d', hE⟩ := exists_zoneExtendTM k
+  refine ⟨2 * C + C' + 2, fun dir t => ?_⟩
+  obtain ⟨S, _, _, M, entry, done, short, hds, hR⟩ := hC dir t
+  refine ⟨_, inferInstance, inferInstance, seamCompTM₂ M done short M done
+    (seamCompTM M' d' M entry) (Sum.inl e'), Sum.inl (Sum.inl entry),
+    (Option.map (Sum.inl ∘ Sum.inr) '' {some done}) ∪
+      (Option.map Sum.inr '' (Option.map Sum.inr '' {some done, some short})), ?_,
+    fun x => ?_⟩
+  · simp only [Set.image_singleton, Option.map_some, Function.comp_apply, Set.singleton_union,
+      Set.mem_insert_iff, reduceCtorEq, Set.mem_image, Set.mem_singleton_iff, exists_eq_or_imp,
+      ↓existsAndEq, true_and, Option.map_eq_none_iff, exists_eq_right, or_self, not_false_eq_true]
+  obtain ⟨R, hpre, hpost, -, -, htime⟩ := hR x
+  obtain ⟨E, hEpre, hEpost, -, -, hEtime⟩ := hE x
+  -- the retry: the extension, a seam, the rebalance row again at the extended data
+  have hlink : ∀ D d, d.state = some e' → E.pre D d →
+      R.pre (zoneExtendData D) ((E.post D d).mapState fun _ => entry) := by
+    intro D d _ hp
+    rw [hEpre] at hp
+    rw [hpre, hEpost]
+    exact zoneRowPre_extendPost d' D d hp _
+  let retry := Contract.seq E R zoneExtendData hlink
+  let stop := Contract.zero M done (ZoneData k) x
+  have h₁ : ∀ D d, d.state = some entry → R.pre D d → (R.post D d).state = some done →
+      stop.pre (id D) ((R.post D d).mapState fun _ => done) := by
+    intro _ _ _ _ _
+    simp only [stop, Contract.zero_pre]
+  have h₂ : ∀ D d, d.state = some entry → R.pre D d → (R.post D d).state = some short →
+      retry.pre (zoneRebalanceData dir t D) ((R.post D d).mapState fun _ => Sum.inl e') := by
+    intro D d _ hp _
+    rw [hpre] at hp
+    simp only [retry, Contract.seq_pre, hEpre, hpost, zs_rowPre_mapState]
+    exact zs_rowPre_rebalancePost dir t done short D d hp
+  refine ⟨Contract.branch hds R stop retry id (zoneRebalanceData dir t) h₁ h₂, ?_, ?_⟩
+  · funext D d
+    rw [Contract.branch_pre, hpre]
+    exact propext (zs_rowPre_mapState D _ d)
+  intro D d hd hp
+  -- the rebalance row's start
+  have hd₀ : (d.mapState fun _ => entry).state = some entry := by
+    rw [Cfg.mapState_state, hd]
+    rfl
+  have hp₀ : zoneRowPre D (d.mapState fun _ => entry) := (zs_rowPre_mapState D _ d).mpr hp
+  have hpR : R.pre D (d.mapState fun _ => entry) := by rw [hpre]; exact hp₀
+  have ht₀ := htime D _ hd₀ hpR
+  have hstate := zoneRebalancePost_state_done dir t hds D (d.mapState fun _ => entry)
+  by_cases hlt : zoneRebalanceIndex dir t D < D.1
+  · -- the rebalance exits at `done`: stop
+    have hdone : (R.post D (d.mapState fun _ => entry)).state = some done := by
+      rw [hpost]
+      exact hstate.mpr hlt
+    have hpostEq : (Contract.branch hds R stop retry id (zoneRebalanceData dir t) h₁ h₂).post D d =
+        ((((zoneRebalancePost dir t done short D (d.mapState fun _ => entry)).mapState
+          fun _ => done).mapState Sum.inr).mapState Sum.inl) := by
+      rw [Contract.branch_post, if_pos hdone]
+      simp only [stop, Contract.zero_post, hpost]
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · rw [Contract.branch_time, if_pos hdone]
+      simp only [stop, Contract.zero_time, add_zero]
+      nlinarith [Nat.one_le_two_pow (n := zoneRebalanceIndex dir t D)]
+    · rw [hpostEq, zs_rowPre_mapState, zs_rowPre_mapState, zs_rowPre_mapState,
+        zoneTrackStepData_of_lt dir t hlt]
+      exact zs_rowPre_rebalancePost dir t done short D _ hp₀
+    · rw [hpostEq]
+      simp only [Cfg.mapState_workTapePos, zoneRebalancePost_workTapePos]
+    · rw [hpostEq]
+      simp only [Cfg.mapState_inputPos, zoneRebalancePost_inputPos]
+    · rw [hpostEq]
+      simp only [Cfg.mapState_output, zoneRebalancePost_output]
+  · -- the rebalance exits at `short`: extend and retry
+    have hnd : ¬ (R.post D (d.mapState fun _ => entry)).state = some done := by
+      rw [hpost]
+      exact fun h => hlt (hstate.mp h)
+    have hD : zoneRebalanceData dir t D = D := zoneRebalanceData_of_short dir t D hlt
+    have hidx : zoneRebalanceIndex dir t D = D.1 :=
+      le_antisymm (zoneRebalanceIndex_le dir t D) (not_lt.mp hlt)
+    -- the configurations along the retry
+    set c₂ := ((zoneRebalancePost dir t done short D (d.mapState fun _ => entry)).mapState
+      fun _ => (Sum.inl e' : S' ⊕ S)).mapState fun _ => e' with hc₂
+    set c₃ := (zoneExtendPost d' (zoneRebalanceData dir t D) c₂).mapState fun _ => entry
+      with hc₃
+    have hpostEq : (Contract.branch hds R stop retry id (zoneRebalanceData dir t) h₁ h₂).post D d =
+        ((zoneRebalancePost dir t done short (zoneExtendData (zoneRebalanceData dir t D)) c₃).mapState
+          Sum.inr).mapState Sum.inr := by
+      rw [Contract.branch_post, if_neg hnd]
+      simp only [retry, Contract.seq_post, hpost, hEpost, hc₂, hc₃]
+    have hc₂s : c₂.state = some e' := by
+      rw [hc₂, Cfg.mapState_state, Cfg.mapState_state, zoneRebalancePost_state]
+      rfl
+    have hc₂p : zoneRowPre (zoneRebalanceData dir t D) c₂ := by
+      rw [hc₂, zs_rowPre_mapState, zs_rowPre_mapState]
+      exact zs_rowPre_rebalancePost dir t done short D _ hp₀
+    have hc₃s : c₃.state = some entry := by
+      rw [hc₃, Cfg.mapState_state, zoneExtendPost_state]
+      rfl
+    have hc₃p : zoneRowPre (zoneExtendData (zoneRebalanceData dir t D)) c₃ :=
+      zoneRowPre_extendPost d' _ c₂ hc₂p _
+    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    · rw [Contract.branch_time, if_neg hnd]
+      have htE := hEtime (zoneRebalanceData dir t D) c₂ hc₂s (by rw [hEpre]; exact hc₂p)
+      have htR := htime _ c₃ hc₃s (by rw [hpre]; exact hc₃p)
+      rw [zoneRebalanceData_fst] at htE
+      rw [hD, zoneRebalanceIndex_extend_of_short dir t D hlt] at htR
+      rw [hidx] at ht₀ ⊢
+      simp only [retry, Contract.seq_time, hpost, hEpost, ← hc₂, ← hc₃]
+      rw [hD] at htE ⊢
+      nlinarith [Nat.one_le_two_pow (n := D.1)]
+    · rw [hpostEq, zs_rowPre_mapState, zs_rowPre_mapState, zoneTrackStepData_of_not_lt dir t hlt]
+      have h := zs_rowPre_rebalancePost dir t done short _ c₃ hc₃p
+      rwa [hD] at h ⊢
+    · rw [hpostEq]
+      simp only [hc₃, hc₂, Cfg.mapState_workTapePos, zoneRebalancePost_workTapePos,
+        zoneExtendPost_workTapePos]
+    · rw [hpostEq]
+      simp only [hc₃, hc₂, Cfg.mapState_inputPos, zoneRebalancePost_inputPos,
+        zoneExtendPost_inputPos]
+    · rw [hpostEq]
+      simp only [hc₃, hc₂, Cfg.mapState_output, zoneRebalancePost_output,
+        zoneExtendPost_output]
+
+/-! ### The amortized cost -/
+
+/-- **The amortization, layer-cake form** ([AB09, §1.7]: at most `T / 2^{i-1}` shifts of index
+`i`, each `O(2^i)`, so `Σ_i T / 2^{i-1} · 2^i = O(T log T)`). If every one of `T` scanned indices
+`idx s` is at most `L`, and for each level `i < L` at most `T / 2^i + 1` of them exceed `i`, then
+`Σ_s 2^{idx s} ≤ (L + 1) · T + 2^L`.
+
+**Proof sketch.** Write `2^{idx s} = 1 + Σ_{i < idx s} 2^i` (`Nat.geomSum_eq`), exchange the
+sums, and bound each level's term `2^i · #{s | i < idx s}` by `2^i · (T / 2^i + 1) ≤ T + 2^i`;
+the geometric sum of the `2^i` is below `2^L` (`Nat.geomSum_lt`). -/
+theorem sum_two_pow_le_of_count (T L : ℕ) (idx : ℕ → ℕ) (hL : ∀ s < T, idx s ≤ L)
+    (hcount : ∀ i < L,
+      ((Finset.range T).filter (fun s => i < idx s)).card ≤ T / 2 ^ i + 1) :
+    ∑ s ∈ Finset.range T, 2 ^ idx s ≤ (L + 1) * T + 2 ^ L := by
+  have hgeo : ∀ n : ℕ, 2 ^ n = 1 + ∑ i ∈ Finset.range n, 2 ^ i := by
+    intro n
+    rw [Nat.geomSum_eq le_rfl n, Nat.div_one]
+    have := Nat.one_le_two_pow (n := n)
+    omega
+  have hsplit : ∀ s ∈ Finset.range T, 2 ^ idx s =
+      1 + ∑ i ∈ Finset.range L, if i < idx s then 2 ^ i else 0 := by
+    intro s hs
+    rw [hgeo, ← Finset.sum_filter]
+    congr 2
+    ext i
+    simp only [Finset.mem_range, Finset.mem_filter]
+    have := hL s (Finset.mem_range.mp hs)
+    omega
+  rw [Finset.sum_congr rfl hsplit, Finset.sum_add_distrib, Finset.sum_comm]
+  simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul, Nat.cast_id, mul_one]
+  have hlev : ∀ i ∈ Finset.range L,
+      (∑ s ∈ Finset.range T, if i < idx s then 2 ^ i else 0) ≤ T + 2 ^ i := by
+    intro i hi
+    rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, Nat.cast_id]
+    have hc := hcount i (Finset.mem_range.mp hi)
+    have hd : T / 2 ^ i * 2 ^ i ≤ T := Nat.div_mul_le_self T (2 ^ i)
+    calc ((Finset.range T).filter (fun s => i < idx s)).card * 2 ^ i
+        ≤ (T / 2 ^ i + 1) * 2 ^ i := Nat.mul_le_mul_right _ hc
+      _ = T / 2 ^ i * 2 ^ i + 2 ^ i := by ring
+      _ ≤ T + 2 ^ i := by omega
+  have hsum := Finset.sum_le_sum hlev
+  rw [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
+    Nat.cast_id] at hsum
+  have hlt : ∑ i ∈ Finset.range L, 2 ^ i < 2 ^ L :=
+    Nat.geomSum_lt le_rfl fun i hi => Finset.mem_range.mp hi
+  nlinarith
+
+/-- **The cost of a run, `O(B · T + k · T log T)`** ([AB09, §1.7]). Let one simulated step `s`
+cost at most a fixed overhead `B` plus, on each of the `k` tracks, one dispatch and a track step
+of cost at most `A · (2^{idx t s} + 1)` (`Turing.exists_zoneTrackStepTM`). If every track
+satisfies the count hypothesis of `Turing.sum_two_pow_le_of_count` with level bound `L`, then `T`
+steps cost at most `B · T + k · (A · ((L + 2) · T + 2^L) + T)`. With `L ≤ log₂ T + O(1)` this is
+`O(B · T + k · T log T)`. The overhead is kept apart from the tracks' term, so the bound holds at
+`k = 0` as well.
+
+**Proof sketch.** Sum the step bound over the run, exchange the sums over steps and tracks, and
+apply `Turing.sum_two_pow_le_of_count` to each track. -/
+theorem sum_cost_le_of_count (k T L A B : ℕ) (idx : Fin k → ℕ → ℕ) (cost : ℕ → ℕ)
+    (hstep : ∀ s < T, cost s ≤ B + A * ∑ t, (2 ^ idx t s + 1) + k)
+    (hL : ∀ t, ∀ s < T, idx t s ≤ L)
+    (hcount : ∀ t, ∀ i < L,
+      ((Finset.range T).filter (fun s => i < idx t s)).card ≤ T / 2 ^ i + 1) :
+    ∑ s ∈ Finset.range T, cost s ≤ B * T + k * (A * ((L + 2) * T + 2 ^ L) + T) := by
+  have h1 : ∑ s ∈ Finset.range T, cost s ≤
+      ∑ s ∈ Finset.range T, (B + A * ∑ t, (2 ^ idx t s + 1) + k) :=
+    Finset.sum_le_sum fun s hs => hstep s (Finset.mem_range.mp hs)
+  have h2 : ∑ s ∈ Finset.range T, (B + A * ∑ t, (2 ^ idx t s + 1) + k) =
+      B * T + A * ∑ t, ∑ s ∈ Finset.range T, 2 ^ idx t s + A * (k * T) + T * k := by
+    rw [Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_comm]
+    simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, Finset.card_univ,
+      Fintype.card_fin, nsmul_eq_mul, Nat.cast_id, mul_one]
+    ring
+  have h3 : ∑ t, ∑ s ∈ Finset.range T, 2 ^ idx t s ≤ k * ((L + 1) * T + 2 ^ L) := by
+    calc ∑ t, ∑ s ∈ Finset.range T, 2 ^ idx t s
+        ≤ ∑ _t : Fin k, ((L + 1) * T + 2 ^ L) :=
+          Finset.sum_le_sum fun t _ => sum_two_pow_le_of_count T L (idx t) (hL t) (hcount t)
+      _ = k * ((L + 1) * T + 2 ^ L) := by simp
+  calc ∑ s ∈ Finset.range T, cost s ≤ _ := h1
+    _ = _ := h2
+    _ ≤ B * T + A * (k * ((L + 1) * T + 2 ^ L)) + A * (k * T) + T * k := by
+        have := Nat.mul_le_mul_left A h3
+        omega
+    _ = B * T + k * (A * ((L + 2) * T + 2 ^ L) + T) := by ring
+
+end Turing
