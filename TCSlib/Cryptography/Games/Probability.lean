@@ -123,7 +123,7 @@ average the same continuations. -/
 theorem expect_bind (c : ProbComp α) (f : α → ProbComp β) (g : β → ℝ) :
     expect (c.bind f) g = expect c (fun a => expect (f a) g) := by
   induction c with
-  | pure a => rfl
+  | pure a => simp only [OracleComp.pure_bind, expect_pure]
   | query m x k ih => simp only [OracleComp.query_bind, expect_query, ih]
 
 /-- The expectation over a mapped computation is the expectation of the composite. -/

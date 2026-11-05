@@ -109,8 +109,12 @@ theorem eval_chainTree {I O α : Type} (g : I → O) :
 /-- A chain of `k` queries makes at most `k` queries. -/
 theorem boundedBy_chainTree {I O α : Type} :
     ∀ (k : ℕ) (xs : Fin k → I) (f : (Fin k → O) → α), (chainTree k xs f).BoundedBy k
-  | 0, _, _ => trivial
-  | k + 1, xs, f => fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
+  | 0, _, _ => by
+    rw [chainTree]
+    exact QueryTree.boundedBy_ret _ _
+  | k + 1, xs, f => by
+    rw [chainTree, QueryTree.boundedBy_query_succ]
+    exact fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
 
 /-! ### The hybrids of [PS10, Theorem 99.2], concrete -/
 

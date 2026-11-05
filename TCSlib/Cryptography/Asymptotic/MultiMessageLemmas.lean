@@ -189,7 +189,7 @@ theorem acceptProb_oracleDist_congr_equiv {σ : Type*} {I O : Type} {ρ ρ' : Ty
     [Fintype ρ'] (X : σ → I → O) (A : OracleAdversary ρ I O) (A' : OracleAdversary ρ' I O)
     (φ : ρ' ≃ ρ) (h : ∀ (g : I → O) (w : ρ'), (A (φ w)).eval g = (A' w).eval g) :
     acceptProb X (oracleDist A) = acceptProb X (oracleDist A') := by
-  unfold acceptProb oracleDist
+  simp only [acceptProb_def, oracleDist_apply]
   rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr φ)]
   congr 1
   funext z
@@ -202,9 +202,10 @@ theorem prfAdv_congr_equiv {K : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype K]
     (A' : OracleAdversary ρ' I O) (φ : ρ' ≃ ρ)
     (h : ∀ (g : I → O) (w : ρ'), (A (φ w)).eval g = (A' w).eval g) :
     prfAdv F A = prfAdv F A' := by
-  unfold prfAdv distAdv
-  rw [acceptProb_oracleDist_congr_equiv F A A' φ h,
-    acceptProb_oracleDist_congr_equiv (randomFunction I O) A A' φ h]
+  have hF := acceptProb_oracleDist_congr_equiv F A A' φ h
+  have hR := acceptProb_oracleDist_congr_equiv (id : (I → O) → I → O) A A' φ h
+  simp only [acceptProb_def, oracleDist_apply, id_eq] at hF hR
+  rw [prfAdv_eq, prfAdv_eq, hF, hR]
 
 /-! ### Strings: chunked encodings, history blocks, mask blocks -/
 

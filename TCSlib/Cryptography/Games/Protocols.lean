@@ -229,15 +229,21 @@ theorem exec_succ {M₁ M₂ : Type} (fuel : ℕ) (A : Party M₁ M₂ α)
 /-! ### Sanity checks: fuel counts messages; a send after the end is reported -/
 
 example (a b : Bool) :
-    exec 0 (M₁ := Unit) (M₂ := Unit) (.pure a) (fun _ => .pure b) = .pure (.done a b) := rfl
+    exec 0 (M₁ := Unit) (M₂ := Unit) (.pure a) (fun _ => .pure b) = .pure (.done a b) := by
+  simp only [exec_zero, step_pure, OracleComp.pure_bind, Sum.elim_inl, endWith_eq, close_pure,
+    Option.elim_some]
 
 example (m : Unit) (a b : Bool) :
     exec 1 (M₂ := Unit) (.query (.inl ()) m fun _ => .pure a) (fun _ => .pure b) =
-      .pure (.done a b) := rfl
+      .pure (.done a b) := by
+  simp only [exec_succ, step_send, OracleComp.pure_bind, Sum.elim_inr, exec_zero, step_pure,
+    Sum.elim_inl, endWith_eq, close_pure, Option.elim_some, ExecOutcome.swap_done]
 
 example (m : Unit) (a b : Bool) :
     exec 1 (M₁ := Unit) (.pure a) (fun _ => .query (.inl ()) m fun _ => .pure b) =
-      .pure .sentAfterEnd := rfl
+      .pure .sentAfterEnd := by
+  simp only [exec_succ, step_pure, OracleComp.pure_bind, Sum.elim_inl, endWith_eq, close_send,
+    Option.elim_none]
 
 /-! ### The traced execution -/
 
@@ -338,10 +344,10 @@ theorem execT_trace : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M₁ 
 /-- `stepT` projects to `step`. -/
 theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) = step A := by
   induction A with
-  | pure a => rfl
+  | pure a => simp only [stepT, step, OracleComp.pure_bind]
   | query i x k ih =>
     cases i with
-    | inl u => cases u; rfl
+    | inl u => cases u; simp only [stepT, step, OracleComp.pure_bind]
     | inr j =>
       simp only [stepT, step, OracleComp.query_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
       congr 1
@@ -351,10 +357,10 @@ theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) = 
 /-- `closeT` projects to `close`. -/
 theorem closeT_fst (A : Party Out In α) : (closeT A).bind (fun p => .pure p.1) = close A := by
   induction A with
-  | pure a => rfl
+  | pure a => simp only [closeT, close, OracleComp.pure_bind]
   | query i x k ih =>
     cases i with
-    | inl u => cases u; rfl
+    | inl u => cases u; simp only [closeT, close, OracleComp.pure_bind]
     | inr j =>
       simp only [closeT, close, OracleComp.query_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
       congr 1
@@ -386,7 +392,7 @@ theorem execT_outcome : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M�
     rcases p with ⟨_ | _, c⟩
     · simp only [Sum.elim_inl, OracleComp.bind_assoc, OracleComp.pure_bind]
       rw [← endWithT_fst]
-    · rfl
+    · simp only [Sum.elim_inr, OracleComp.pure_bind]
   | fuel + 1, _, _, _, _, A, B => by
     simp only [execT, exec, OracleComp.bind_assoc]
     rw [← stepT_fst A, OracleComp.bind_assoc]
