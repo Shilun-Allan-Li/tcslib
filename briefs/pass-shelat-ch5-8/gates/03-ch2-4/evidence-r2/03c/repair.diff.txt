@@ -1,0 +1,1479 @@
+# Gate 03c, round 2: the repair diff
+#
+# Section A: every change to this pack's Lean files between the round 1 head a3c5fa8b72e50939822f22364647dc844a3914a0 and the round 2 pin e79397eaf68b156b9db091f464741f6eb75b9c28, whichever repair made it.
+# Section B: the rest of the 03c repair commit bc2aab59333e27729c9fbac3052cd650bf62c3aa (in #201): its changes outside this pack's files (consumers, Checks.lean, records).
+
+## ===== A: this pack's files, a3c5fa8b72e50939822f22364647dc844a3914a0..e79397eaf68b156b9db091f464741f6eb75b9c28 =====
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCore.lean b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+index e7e9f538..6e88eaf1 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCore.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+@@ -7,7 +7,7 @@ import TCSlib.Cryptography.Asymptotic.NextBit
+ import TCSlib.Cryptography.Asymptotic.Collections
+ import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
+ import TCSlib.Cryptography.Asymptotic.HardCoreGL
+-import TCSlib.Cryptography.Asymptotic.HardCoreGLColl
++import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+ import TCSlib.Cryptography.Asymptotic.HardCoreGLFamily
+ import TCSlib.Cryptography.Asymptotic.HardCoreLemmas
+ import TCSlib.Cryptography.Asymptotic.HardCoreLoops
+@@ -30,8 +30,10 @@ one-bit-stretch generator to `ℓ(n)` bits [PS10, Lemma 80.5]; the iterated gene
+ for every one-way function `f`, `g(x, r) = (f(x), r)` is one-way and `⟨x, r⟩` is hard-core for
+ `g` [PS10, Theorem 87.3], together with the concrete claims of its proof (the oversimplified
+ case, the `3/4 + ε` case, the good set, Fact 88.4, Algorithms 88.5 and 89.6, the
+-pairwise-independence and union-bound claims, the final bound) and the version for
+-collections of (trapdoor) permutations needed by [PS10, Theorem 104.4].
++pairwise-independence and union-bound claims, the final bound; in
++`Asymptotic/HardCoreClaims.lean`) and the version for collections of (trapdoor) permutations
++needed by [PS10, Theorem 104.4] (in `Asymptotic/HardCoreCollection.lean`, which this file
++imports).
+ 
+ Two layers (foundation decision D2 of `PassShelatChapter2-4Plan.md`). The *concrete* layer is
+ the frozen Garg development reused verbatim: `owpPredictor`/`exists_owpPredictor`
+@@ -59,17 +61,25 @@ rather than through the next-bit test (Theorem 75.4), which would lose a factor
+ **Deviation:** [PS10, Lemma 80.5]: the generator `G'` outputs the bits only (the final seed is
+ dropped, as in the text); `G(X_i)` is read seed-first/bit-last as in the text (the concrete
+ `prgExt` reads bit-first; `oneBitStep` is the fixed re-encoding); the expansion clause
+-`ℓ(n) > n` is an explicit hypothesis. [PS10, Corollary 81.7] lists `ℓ(n) + 1` bits
+-`i = 0, …, ℓ(n)` (source error 38) and needs `n ≤ ℓ(n)`.
+-
+-**Deviation:** [PS10, Theorem 87.3] for collections (unnumbered): the padded collection
+-`Collection.glPad F m` pads each element by `|encD_i(default)|` uniform bits; its one-wayness
+-and hard-core theorems assume length-regular encodings at generated indices
+-(`∀ n r x, |encD_{index n r} x| = m(n)`), which the text's "`|x| = |r|`" presupposes. Its
+-hard-core proof uses the encoded-domain Goldreich–Levin lemma
+-`HardcoreBit.invProb_guessInverter_enc_pad` (`Asymptotic/GoldreichLevinDomain.lean`): the
+-cube lemma does not transfer to a domain `D_i` whose encoding is a strict subset of the cube
+-(run-3 audit P4-2).
++`ℓ(n) > n` at every `n` is an explicit hypothesis, see `PRG` (the text's "for any polynomial
++`ℓ`": stretches with `ℓ(0) = 0` or `ℓ(1) = 1` are excluded; gate 03c, finding 1, ruling G3-2).
++[PS10, Corollary 81.7] lists `ℓ(n) + 1` bits `i = 0, …, ℓ(n)` (source error 38) and needs
++`n ≤ ℓ(n)`.
++
++The collection form of [PS10, Theorem 87.3] and its Deviation (the encoding-length hypothesis
++`henc` of `Collection.glPad`) are in `Asymptotic/HardCoreCollection.lean` (moved out of this
++file for size; gate 03c, finding 11).
++
++**Remarks (not formalized; [PS10, §3.3.2], inventory Constr-77.a, Claim-78.a, Claim-78.b).**
++Shamir's generator `G(s) = f^n(s) ‖ ⋯ ‖ f(s) ‖ s` (Constr-77.a) motivates the construction
++and is not formalized. Claim-78.a (for a permutation `f` and a uniform `x`, `f^k(x)` is
++uniform) is an instance of `uprob_comp_equiv` (the uniform distribution is invariant under a
++bijection) applied to the `k`-th iterate of the permutation; it is not stated separately.
++Claim-78.b (unpredictable blocks need not have unpredictable bits: a one-way permutation may
++leave input bits unchanged) has the concrete witness of [Gar26, Claim 2.3] in
++`HardcoreBit/NoFixedBit.lean`: `g(x, y) = f(x_{-y}) ‖ x_y ‖ y` reveals the bits of `y` with
++certainty (`predProb_positionBit`) and each fixed input bit `x_i` with advantage
++`1/(2(n + 1))` (`predProb_fixedBitPredictor`).
+ 
+ ## Main definitions
+ 
+@@ -85,7 +95,7 @@ cube lemma does not transfer to a domain `D_i` whose encoding is a strict subset
+ * `TCSlib.Cryptography.FunFamily.glPad`, `FunFamily.glBit`, `FunFamily.glInverter` — the
+   Goldreich–Levin setting `g(x, r) = (f(x), r)`, `h(x, r) = ⟨x, r⟩` [PS10, Theorem 87.3].
+ * `TCSlib.Cryptography.Collection.glPad`, `Collection.glBit`, `PermCollection.glPad`,
+-  `TrapdoorCollection.glPad` — the collection form.
++  `TrapdoorCollection.glPad` — the collection form (in `Asymptotic/HardCoreCollection.lean`).
+ 
+ ## Main results
+ 
+@@ -106,9 +116,13 @@ cube lemma does not transfer to a domain `D_i` whose encoding is a strict subset
+   `Asymptotic/HardCorePermutation.lean` (run-3 audit P4-1).
+ * `TCSlib.Cryptography.goldreich_levin_coll`, `Collection.OneWay.glPad`,
+   `Collection.OneWay.glPad_hardCore`, `PermCollection.OneWay.glPad`,
+-  `TrapdoorCollection.OneWay.glPad` [PS10, Theorem 87.3, collection form].
++  `TrapdoorCollection.OneWay.glPad` [PS10, Theorem 87.3, collection form] (in
++  `Asymptotic/HardCoreCollection.lean`).
+ * `TCSlib.Cryptography.not_hardCore_const` — a constant predicate is never hard-core
+   (non-vacuity of the hardness clause of Definition 78.3).
++* `TCSlib.Cryptography.hardCore_iff`, `PRG.oneBit_stretch`, `PRG.oneBit_G`,
++  `owpPredictorSnoc_eq`, `oneBitStep_eq`, `expandRed_eq` — the unfoldings of the definitions
++  of this file (gate 03c, finding 11).
+ 
+ ## References
+ 
+@@ -141,6 +155,17 @@ def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) 
+   ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
+     ∀ n, predProb (𝓕.f n) (h n) (A.predictor n (𝓕.outLen.eval n)) ≤ 1 / 2 + ε n
+ 
++/-- **Hard-core unfolded** [PS10, Definition 78.3]: `h` is hard-core for `f` iff some
++polynomial-time `H` computes `[h n x]` from `⟨1^n, x⟩`, and for every non-uniform PPT `A` some
++negligible `ε` bounds `Pr[x ← {0,1}^{inLen n} : A(1^n, f(x)) = h(x)] ≤ 1/2 + ε(n)` for all `n`. -/
++theorem hardCore_iff (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) → Bool) :
++    HardCore 𝓕 h ↔
++      (∃ H : List Bool → List Bool, PolyTimeComputable H ∧
++        ∀ n x, H (NUPPT.advInput n (List.ofFn x)) = [h n x]) ∧
++      ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧
++        ∀ n, predProb (𝓕.f n) (h n) (A.predictor n (𝓕.outLen.eval n)) ≤ 1 / 2 + ε n :=
++  Iff.rfl
++
+ /-- The efficiency clause of a hard-core predicate [PS10, Definition 78.3 (1)]. -/
+ theorem HardCore.easy {𝓕 : FunFamily} {h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) → Bool}
+     (hh : HardCore 𝓕 h) :
+@@ -192,6 +217,14 @@ def PRG.oneBit (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) : PRG wh
+   G := G
+   expands n := Nat.lt_succ_self n
+ 
++/-- Field equation: the stretch of `PRG.oneBit G` is `n + 1`. -/
++theorem PRG.oneBit_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) :
++    (PRG.oneBit G).stretch = .add .var (.const 1) := rfl
++
++/-- Field equation: the generator of `PRG.oneBit G` at seed length `n` is `G n`. -/
++theorem PRG.oneBit_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (n : ℕ)
++    (s : Fin n → Bool) : (PRG.oneBit G).G n s = G n s := rfl
++
+ /-- The generator `G(s) = f(s) ‖ h(s)` of [PS10, Theorem 79.4] for a permutation family `f`
+ and a predicate `h`: output length `n + 1`, the bit `h(s)` in the last position. -/
+ def owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) : PRG :=
+@@ -215,6 +248,14 @@ def owpPredictorSnoc {ρ : Type*} {n : ℕ} (D : (Fin (n + 1) → Bool) → ρ 
+   fun y c => owpPredictor (fun z : (Fin n → Bool) × Unit × Bool => fun r => D (Fin.snoc z.1 z.2.2) r)
+     flip (y, ()) c
+ 
++/-- Unfolding: `owpPredictorSnoc D flip` is the concrete `owpPredictor` [Gar26, proof of
++Theorem 3.2] for the distinguisher `(y, (), σ) ↦ D(y ‖ σ)`, at the point `(y, ())`. -/
++theorem owpPredictorSnoc_eq {ρ : Type*} {n : ℕ} (D : (Fin (n + 1) → Bool) → ρ → Bool)
++    (flip : Bool) (y : Fin n → Bool) (c : Bool × ρ) :
++    owpPredictorSnoc D flip y c = owpPredictor
++      (fun z : (Fin n → Bool) × Unit × Bool => fun r => D (Fin.snoc z.1 z.2.2) r) flip (y, ()) c :=
++  rfl
++
+ /-- **PRG from a one-way permutation, concrete form** [PS10, Theorem 79.4; Gar26, Theorem 3.2]:
+ if `D` distinguishes `f(s) ‖ B(s)` from a uniform `(n+1)`-bit string with advantage `ε`, then
+ for one sign `flip` the predictor `owpPredictorSnoc D flip` predicts `B(s)` from `f(s)` with
+@@ -321,13 +362,21 @@ def oneBitStep {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) :
+     (Fin n → Bool) → Bool × (Fin n → Bool) :=
+   fun s => (G s (Fin.last n), Fin.init (G s))
+ 
++/-- Unfolding: one step outputs the last bit of `G(s)` and the next seed `init G(s)`. -/
++theorem oneBitStep_eq {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) (s : Fin n → Bool) :
++    oneBitStep G s = (G s (Fin.last n), Fin.init (G s)) := rfl
++
+ /-- The **expanded generator** `G'(s) = b_1 ⋯ b_{ℓ(n)}` of [PS10, Lemma 80.5]: `X_0 = s`,
+ `X_{i+1} ‖ b_{i+1} ← G(X_i)`, output the `ℓ(n)` bits (the final seed is dropped). Formally
+ the first component of the concrete `prgExt (oneBitStep (G n)) (ℓ n)` [Gar26,
+-Construction 3.1]; the expansion clause `n < ℓ(n)` is the hypothesis `hℓ`.
++Construction 3.1]; the expansion clause `n < ℓ(n)`, at every `n` (see `PRG`), is the
++hypothesis `hℓ`.
+ 
+ **Deviation:** `G(X_i)` is read seed-first/bit-last as in the text; the output drops the
+-final seed (as in the text), the concrete `prgExt` keeps it. -/
++final seed (as in the text), the concrete `prgExt` keeps it. The text's "for any polynomial
++`ℓ`" is restricted to `ℓ(n) > n` at every `n`, `n = 0` included (the cost of `PRG.expands`:
++`2n` and `n^c` are excluded, `2n + 1` and `n^c + 1` are not; gate 03c, finding 1, ruling
++G3-2). -/
+ def PRG.expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
+     (hℓ : ∀ n, n < ℓ.eval n) : PRG where
+   stretch := ℓ
+@@ -350,6 +399,14 @@ def expandRed {ρ : Type*} {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) →
+     (D : (Fin l → Bool) → ρ → Bool) : (Fin (n + 1) → Bool) → (Fin l → Bool) × ρ → Bool :=
+   fun T c => prgExtRed (oneBitStep G) l k (fun z r => D z.1 r) (T (Fin.last n), Fin.init T) c
+ 
++/-- Unfolding: `expandRed G l k D` on `T` is the concrete hybrid-`k` reduction `prgExtRed`
++[Gar26, Theorem 3.1] of `oneBitStep G` against `D ∘ fst`, on the re-encoded input
++`(T_{n+1}, T_1 ⋯ T_n)`. -/
++theorem expandRed_eq {ρ : Type*} {n : ℕ} (G : (Fin n → Bool) → (Fin (n + 1) → Bool)) (l k : ℕ)
++    (D : (Fin l → Bool) → ρ → Bool) (T : Fin (n + 1) → Bool) (c : (Fin l → Bool) × ρ) :
++    expandRed G l k D T c =
++      prgExtRed (oneBitStep G) l k (fun z r => D z.1 r) (T (Fin.last n), Fin.init T) c := rfl
++
+ /-- Dropping an independent uniform component from a generator's output does not change
+ PRG advantages: `prgAdv (fst ∘ X) D = prgAdv X (D ∘ fst)` (the projection is a deterministic
+ post-processing and the projection of a uniform pair is uniform). -/
+@@ -381,11 +438,19 @@ theorem exists_expandRed_ge {ρ : Type*} [Fintype ρ] {n : ℕ}
+     (prgExtRed (oneBitStep G) l k fun z r => D z.1 r)
+ 
+ /-- **Expansion of a PRG** [PS10, Lemma 80.5]: if the one-bit-stretch generator `G` is a PRG
+-then so is its `ℓ(n)`-bit expansion `G'` (`ℓ(n) > n`).
++then so is its `ℓ(n)`-bit expansion `G'` (`ℓ(n) > n` at every `n`, see `PRG`).
++
++The input is a one-bit-stretch `G : {0,1}^n → {0,1}^{n+1}`, as in the text ("Let
++`G : {0,1}^n → {0,1}^{n+1}` be a PRG"), not a general `P : PRG` (the shape recorded at DESIGN
++§2.12); a general secure `P` reaches it through its truncation to `n + 1` bits, `PRG.truncate`
++with `PRG.Secure.truncate : (PRG.oneBit P.truncate).Secure` (`Asymptotic/PRF.lean`; gate 03c,
++finding 4).
+ 
+ **Deviation:** `G'` drops the final seed and reads `G(X_i)` seed-first, as the text; the
+ text's proof interchanges `m(n)` and `ℓ(n)`, starts the hybrids at `i = 1` (they must start
+-at `0`) and reads `M(y)` bit-first against the construction (source error 34).
++at `0`) and reads `M(y)` bit-first against the construction (source error 34). The text's
++"for any polynomial `ℓ`" is restricted to `ℓ(n) > n` at every `n`, `n = 0` included (the cost
++of `PRG.expands`; gate 03c, finding 1, ruling G3-2); the security half uses only `ℓ(n) > 0`.
+ 
+ **Proof sketch.** *Easy:* from `h.1 = ⟨F, hF, hFs⟩`, `G'` is computed by
+ `polyTimeComputable_iterateEmit` with step `x ↦ (F x).dropLast` (the next seed,
+@@ -707,275 +772,4 @@ theorem goldreich_levin {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
+     𝓕.glPad.StrongOneWay ∧ HardCore 𝓕.glPad 𝓕.glBit :=
+   ⟨h.glPad, h.glPad_hardCore⟩
+ 
+-/-! ## Goldreich–Levin for collections [PS10, Theorem 87.3, collection form] -/
+-
+-namespace Collection
+-
+-variable (F : Collection)
+-
+-/-- The **padded collection** `g_i(x, r) = (f_i(x), r)` of [PS10, Theorem 87.3] for a
+-collection `{f_i : D_i → R_i}` whose elements have encoding length `m(n)` at the indices
+-generated at parameter `n` (`henc`): the domain `D'_i = D_i × {0,1}^{|encD_i(default)|}` (the
+-padding has the length of the encoded elements), elements encoded as `⟨encD_i x, r⟩`, the
+-same index generator `Gen`, the sampler `Sample'(1^n, i) = ⟨Sample(1^n, i), r⟩` with `m(n)`
+-fresh coins `r`, and the evaluator `⟨i, ⟨x, r⟩⟩ ↦ ⟨eval ⟨i, x⟩, r⟩`. The sampler's outputs
+-decode (`sample_spec`): the first component by `F.sample_spec`, the padding because it has
+-exactly `m(n) = |encD_i(default)|` bits by `henc`.
+-
+-Repair (run-3 audit P3-1): the hypothesis `henc` (previously carried by the theorems only) is
+-now an argument of the definition, since without it the padding of the sampled string need not
+-have the length the decoder expects and `Collection.sample_spec` would fail.
+-
+-**Deviation:** the text's "`|x| = |r|`" presupposes that all elements of `D_i` have the same
+-encoding length; `glPad` assumes `|encD_i x| = m(n)` at generated indices (`henc`). -/
+-noncomputable def glPad (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
+-    Collection where
+-  D i := F.D i × (Fin (F.encD i default).length → Bool)
+-  encD i z := pairEncode (F.encD i z.1) (List.ofFn z.2)
+-  decD i w := match pairDecode w with
+-    | some (a, b) => match F.decD i a, decodeFin (F.encD i default).length b with
+-      | some x, some r => some (x, r)
+-      | _, _ => none
+-    | none => none
+-  decD_encD i z := by simp [pairDecode_pairEncode, F.decD_encD, decodeFin_ofFn]
+-  f i z := pairEncode (F.f i z.1) (List.ofFn z.2)
+-  gen := F.gen
+-  gen_uniform := F.gen_uniform
+-  sample := NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)
+-  sample_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
+-  eval w := pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w))))
+-    (pairSndD (pairSndD w))
+-  eval_poly := (F.eval_poly.comp (polyTimeComputable_pairFstD.pairEncode
+-    (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))).pairEncode
+-    (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
+-  eval_spec i z := by simp [F.eval_spec]
+-  sample_spec n r s := by
+-    obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective s
+-    have hofn : List.ofFn s = List.ofFn s₁ ++ List.ofFn s₂ := by
+-      rw [← hs]
+-      exact List.ofFn_fin_append s₁ s₂
+-    have hA : (List.ofFn s).take (F.sample.coinLen n) = List.ofFn s₁ := by
+-      rw [hofn, List.take_left' List.length_ofFn]
+-    have hB : (List.ofFn s).drop (F.sample.coinLen n) = List.ofFn s₂ := by
+-      rw [hofn, List.drop_left' List.length_ofFn]
+-    obtain ⟨x, hx, hev⟩ := F.sample_spec n r s₁
+-    have hL : (F.encD (pairFstD (F.gen.runAt n [] r)) default).length = m.eval n := henc n r default
+-    have hs₂ : List.ofFn s₂ = List.ofFn
+-        fun j : Fin (F.encD (pairFstD (F.gen.runAt n [] r)) default).length => s₂ (Fin.cast hL j) :=
+-      List.ofFn_congr hL.symm s₂
+-    refine ⟨(x, fun j => s₂ (Fin.cast hL j)), ?_, ?_⟩
+-    · simp only [glPadSample_runAt, hA, hB, pairDecode_pairEncode, ← NUPPT.runAt_eq, hx, hs₂,
+-        decodeFin_ofFn]
+-    · simp only [glPadSample_runAt, hA, hB, pairFstD_pairEncode, pairSndD_pairEncode,
+-        ← NUPPT.runAt_eq, hev, hs₂]
+-
+-/-- The predicate `h_i(x, r) = ⟨x, r⟩` for the padded collection: the inner product of the
+-encoding of `x` (padded or truncated to the padding length) with `r`. -/
+-def glBit : ∀ i, F.D i × (Fin (F.encD i default).length → Bool) → Bool :=
+-  fun i z => HardcoreBit.ip (padFin _ (F.encD i z.1)) z.2
+-
+-variable {F} in
+-/-- Unfolding: the padded collection keeps the index generator. -/
+-theorem glPad_gen (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
+-    (F.glPad m henc).gen = F.gen := rfl
+-
+-variable {F} in
+-/-- Unfolding: `g_i(x, r) = ⟨f_i(x), r⟩`. -/
+-theorem glPad_f (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+-    (i : List Bool) (z : (F.glPad m henc).D i) :
+-    (F.glPad m henc).f i z = pairEncode (F.f i z.1) (List.ofFn z.2) := rfl
+-
+-variable {F} in
+-/-- Unfolding: the sampler of the padded collection runs `Sample(1^n, i)` on its first
+-`|Sample's coins|` coins and appends the remaining coins. -/
+-theorem glPad_sample_runAtL (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+-    (n : ℕ) (i r : List Bool) :
+-    (F.glPad m henc).sample.runAtL n i r =
+-      pairEncode (F.sample.runAtL n i (r.take (F.sample.coinLen n))) (r.drop (F.sample.coinLen n)) := by
+-  simp only [glPad, NUPPT.runAtL, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+-    glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+-    NUPPT.coinLen]
+-
+-variable {F} in
+-/-- Unfolding: the decoder of the padded collection is `glPadDecode` at the padding length
+-`|encD_i(default)|` (propositional: the two `match` expressions are compiled separately). -/
+-theorem glPad_decD_eq (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+-    (i : List Bool) : (F.glPad m henc).decD i = glPadDecode F i (F.encD i default).length := by
+-  funext w
+-  unfold Collection.glPad glPadDecode
+-  dsimp only
+-  cases pairDecode w with
+-  | none => rfl
+-  | some ab =>
+-    obtain ⟨a, b⟩ := ab
+-    dsimp only
+-    cases F.decD i a <;> cases decodeFin (F.encD i default).length b <;> rfl
+-
+-/-- **The padded collection is one-way** ([PS10, Theorem 87.3], collection form, first clause):
+-if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at the
+-indices generated at parameter `n`, then `F.glPad m` is a collection of one-way functions.
+-
+-**Proof sketch.** *Sampling:* with `h.sampleClose = ⟨δ, hδ, hS⟩`, at index `i = index n r`
+-the decoded sampler output is `(decD i (Sample(1^n, i; s₁)), decodeFin _ (ofFn s₂))` on the
+-coin split `splitCoins (Sample.coins n) (m n)` (`glPad_sample_runAtL`, `List.ofFn` of the
+-split, `uprob_comp_equiv`); `henc` gives `(encD i default).length = m n`, so the second
+-component decodes exactly (`decodeFin_ofFn`) and `StatClose.prod (hS n r) (StatClose.refl _)`
+-with `StatClose.map` to the pair gives `SampleClose δ`. *Hard:* for `A : NUPPT` against
+-`F.glPad m`, the inverter `B` against `F`: coins `m + A.coins` (`NUPPT.exists_split m`, the
+-first `m n` coins are `r`), on `⟨1^n, ⟨i, y⟩⟩` it calls `A` once on `⟨1^n, ⟨i, ⟨y, r⟩⟩⟩`
+-(`NUPPT.exists_comp`, `NUPPT.exists_seq`) and returns the first component of the answer
+-(`pairFstD`). Then `(F.glPad m).invProbAt A n ≤ F.invProbAt B n`: unfold both `uexp` over
+-`Gen`'s coins (`OneWay.uexp_mono`), split the inner `uprob` over `D_i × ({0,1}^{m n} × A.Coins n)`
+-against `D_i × B.Coins n` by `uprob_comp_equiv` on `splitCoins`, and `uprob_mono`: a decoded
+-answer `(x', r')` with `⟨f_i(x'), r'⟩ = ⟨f_i(x), r⟩` has `f_i(x') = f_i(x)`
+-(`pairEncode_injective`). `Negligible.mono` with `h.hard B`. -/
+-theorem OneWay.glPad {F : Collection} (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+-    (h : F.OneWay) : (F.glPad m henc).OneWay := by
+-  obtain ⟨δ, hδ, hS⟩ := h.sampleClose
+-  refine ⟨⟨δ, hδ, fun n r => ?_⟩, fun A => ?_⟩
+-  · have key := statClose_glPadSampler F m (F.glPad m henc).sample rfl (glPad_sample_runAtL m henc)
+-      hS n r _ (henc n r default)
+-    simp only [glPad_decD_eq] at key ⊢
+-    exact key
+-  · refine (h.hard (glPadCollInvMachine A m)).mono ⟨0, fun n _ => ?_⟩
+-    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
+-    have key := glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
+-      (fun r => henc n r default)
+-    unfold Collection.invProbAt at key ⊢
+-    simp only [glPad_decD_eq]
+-    exact key
+-
+-/-- **`⟨x, r⟩` is hard-core for the padded collection** ([PS10, Theorem 87.3], collection form,
+-second clause; inventory Thm-87.3.coll, needed by Theorem 104.4): if `F` is a collection of
+-one-way functions with encoding length `m(n)` at generated indices, then
+-`h_i(x, r) = ⟨encD_i x, r⟩` is a hard-core predicate for `F.glPad m` (`Collection.HardCore`).
+-
+-Repair (run-3 audit P4-2): statement unchanged. The run-2 sketch transferred the cube lemma
+-`HardcoreBit.invProb_guessInverter` to `D_i` by "identifying `D_i` with `{0,1}^{m n}` through
+-the injective encoding"; that step is invalid — the image of `encD_i` is in general a strict
+-subset of the cube (`Z_N^*`, `QR_N`), the uniform `x ∈ D_i` is not a uniform cube element and
+-the predictor's behaviour off the image is uncontrolled. The transfer is replaced by the
+-encoded-domain lemma `HardcoreBit.invProb_guessInverter_enc_pad`
+-(`Asymptotic/GoldreichLevinDomain.lean`), stated for `x` uniform on an arbitrary finite type
+-with an arbitrary encoding into `{0,1}^m`.
+-
+-**Proof sketch.** *Easy:* `⟨i, ⟨a, b⟩⟩ ↦ ipFun ⟨padToLen a b, b⟩` — pad `a = encD_i x` to the
+-length of `b = r` and apply the inner-product evaluator (`exists_glBitCollEvaluator`,
+-`Asymptotic/HardCoreGLColl.lean`). *Hard:* `glColl_negligible` with the padding length
+-`L n r = |encD_i(default)| = m(n)` (`henc`) and the one-wayness of the padded collection
+-(`OneWay.glPad`, its inversion experiment rewritten by `glPad_decD_eq`): by contradiction,
+-`not_negligible_iff` gives `c` with `1/2 + n^{−c} ≤ E_r[Pr[A(1^n, ⟨i, ⟨f_i x, r⟩⟩) = ⟨encD_i x, r⟩]]`
+-infinitely often; the good indices (`HardcoreBit.half_le_uprob_threshold`) have per-index
+-success `≥ 1/2 + n^{−c}/2`, where `HardcoreBit.invProb_guessInverter_enc_pad` with
+-`enc := padFin (m n) ∘ encD_i` and the hard-wired `k(n) = size (8 m(n) n^{2c})` (`glKc`) makes
+-the recovery procedure of [PS10, Algorithm 89.6] output `encD_i x` with probability
+-`≥ ε/(4·2^{k(n)})`, `ε = n^{−c}/2`; the inverter `glCollMachine` (the recovery machine `glMachine`
+-on the pre-processed predictor `⟨⟨i, y⟩, q⟩ ↦ ⟨i, ⟨y, q⟩⟩`, output `⟨x', r⟩`) realises it
+-(`glColl_uprob_le`); averaging over the good indices (`HardcoreBit.uprob_mul_le_uexp`) gives
+-inversion probability `≥ ε²/(4·2^{k(n)})`, inverse polynomial infinitely often, contradicting
+-`(OneWay.glPad m henc h).hard`. -/
+-theorem OneWay.glPad_hardCore {F : Collection} (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+-    (h : F.OneWay) : (F.glPad m henc).HardCore F.glBit := by
+-  refine ⟨?_, fun A => ?_⟩
+-  · obtain ⟨H, hH, hHx⟩ := exists_glBitCollEvaluator F
+-    exact ⟨H, hH, fun i x => hHx i x.1 x.2⟩
+-  · have hmax : ∀ x : ℝ, x ≤ 1 / 2 + max 0 (x - 1 / 2) := fun x => by
+-      linarith [le_max_right (0 : ℝ) (x - 1 / 2)]
+-    refine ⟨_, glColl_negligible F m (fun n r => (F.encD (F.index n r) default).length)
+-      (fun n r => henc n r default) henc A (fun B => ?_), fun n => hmax _⟩
+-    have key := (OneWay.glPad m henc h).hard B
+-    unfold Collection.invProbAt at key
+-    simp only [glPad_decD_eq] at key
+-    exact key
+-
+-end Collection
+-
+-/-- **Goldreich–Levin for collections** ([PS10, Theorem 87.3], the collection form the text
+-uses for Theorem 104.4 and Chapter 4): for a collection `F` of one-way functions with
+-encoding length `m(n)` at generated indices, `g_i(x, r) = (f_i(x), r)` is a collection of
+-one-way functions and `⟨x, r⟩` is hard-core for it. -/
+-theorem goldreich_levin_coll {F : Collection} (m : PolyExpr)
+-    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+-    (h : F.OneWay) : (F.glPad m henc).OneWay ∧ (F.glPad m henc).HardCore F.glBit :=
+-  ⟨Collection.OneWay.glPad m henc h, Collection.OneWay.glPad_hardCore m henc h⟩
+-
+-/-- The padded collection of a collection of permutations is a collection of permutations
+-[PS10, Theorem 87.3, "(OWP)"]: `g_i = perm_i × id` on `D_i × {0,1}^{|encD_i default|}`. -/
+-noncomputable def PermCollection.glPad (P : PermCollection) (m : PolyExpr)
+-    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) :
+-    PermCollection :=
+-  { P.toCollection.glPad m henc with
+-    perm := fun i => (P.perm i).prodCongr (Equiv.refl _)
+-    f_perm := fun i z => by simp [Collection.glPad, P.f_perm] }
+-
+-/-- Unfolding: the underlying collection of `P.glPad m henc` is `P.toCollection.glPad m henc`. -/
+-theorem PermCollection.glPad_toCollection (P : PermCollection) (m : PolyExpr)
+-    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) :
+-    (P.glPad m henc).toCollection = P.toCollection.glPad m henc := rfl
+-
+-/-- **The padded permutation collection is one-way** when the original is (collection form of
+-[PS10, Theorem 87.3] for Definition 55.1). -/
+-theorem PermCollection.OneWay.glPad {P : PermCollection} (m : PolyExpr)
+-    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
+-    (h : P.OneWay) : (P.glPad m henc).OneWay :=
+-  Collection.OneWay.glPad m henc h
+-
+-/-- **`⟨x, r⟩` is hard-core for the padded permutation collection**. -/
+-theorem PermCollection.OneWay.glPad_hardCore {P : PermCollection} (m : PolyExpr)
+-    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
+-    (h : P.OneWay) : (P.glPad m henc).toCollection.HardCore P.glBit :=
+-  Collection.OneWay.glPad_hardCore m henc h
+-
+-/-- The padded collection of a collection of trapdoor permutations is a collection of
+-trapdoor permutations [PS10, Theorem 87.3 for Definition 56.1, as used in Theorem 104.4]:
+-`Inv'(1^n, ⟨t, ⟨y, r⟩⟩) = ⟨Inv(1^n, ⟨t, y⟩), r⟩`.
+-
+-**Proof sketch** (of `inv_spec`). Unfold the activation of the `ofPolyTimeUniform` machine
+-(`NUPPT.output_ofPolyTime`, the layout projections); `T.inv` is uniform so its activation is
+-its output on the layout with empty advice; `T.inv_spec` decodes the first component to
+-`(perm i).symm y.1` and `decodeFin_ofFn` the second to `y.2`. -/
+-noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExpr)
+-    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
+-    TrapdoorCollection :=
+-  { T.toPermCollection.glPad m henc with
+-    inv := NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins
+-    inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
+-    inv_spec := fun n r y s => by
+-      have hspec := T.inv_spec n r y.1 s
+-      simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime, glPadInvFun,
+-        NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+-        pairFstD_pairEncode, pairSndD_pairEncode, PermCollection.glPad, Collection.glPad,
+-        pairDecode_pairEncode, decodeFin_ofFn, T.inv_uniform n] at hspec ⊢
+-      rw [hspec]
+-      rfl }
+-
+-/-- Unfolding: the underlying permutation collection of `T.glPad m henc` is
+-`T.toPermCollection.glPad m henc`. -/
+-theorem TrapdoorCollection.glPad_toPermCollection (T : TrapdoorCollection) (m : PolyExpr)
+-    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
+-    (T.glPad m henc).toPermCollection = T.toPermCollection.glPad m henc := rfl
+-
+-/-- **The padded trapdoor collection is one-way** when the original is ([PS10, Theorem 87.3]
+-for Definition 56.1 (5)). -/
+-theorem TrapdoorCollection.OneWay.glPad {T : TrapdoorCollection} (m : PolyExpr)
+-    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+-    (h : T.OneWay) : (T.glPad m henc).OneWay :=
+-  Collection.OneWay.glPad m henc h
+-
+-/-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**: the hypothesis "trapdoor
+-permutations with a hard-core predicate" of [PS10, Theorem 104.4] is satisfiable from
+-trapdoor permutations alone. -/
+-theorem TrapdoorCollection.OneWay.glPad_hardCore {T : TrapdoorCollection} (m : PolyExpr)
+-    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+-    (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore T.glBit :=
+-  Collection.OneWay.glPad_hardCore m henc h
+-
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean b/TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean
+index 7dcd070b..d7f7e716 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean
+@@ -14,11 +14,16 @@ set_option autoImplicit false
+ 
+ The concrete claims of the proof of [PS10, Theorem 87.3] (§3.4.3): the oversimplified case,
+ the `3/4 + ε` case, the good set, Fact 88.4, the pairwise-independence and union-bound
+-claims about Algorithm 89.6, and the final bound — each the family-level instance
+-(`FunFamily.glPad`, `FunFamily.glBit`, `FunFamily.glInverter` of
+-`TCSlib.Cryptography.Asymptotic.HardCore`) of the corresponding concrete lemma of the Garg
+-layer (`TCSlib/Cryptography/HardcoreBit/*`), through the bridges `FunFamily.predProb_glPad`
+-and `FunFamily.invProb_glInverter`. (Moved out of `Asymptotic/HardCore.lean` for size; the
++claims about Algorithm 89.6, and the final bound — each a re-export of the corresponding
++concrete lemma of the Garg layer (`TCSlib/Cryptography/HardcoreBit/*`). The claims about
++the prediction and inversion experiments of `g` (`thm_87_3_1`, `thm_87_3_2`, `thm_87_3_3`,
++`thm_87_3_9`) are stated at the family level (`FunFamily.glPad`, `FunFamily.glBit`,
++`FunFamily.glInverter` of `TCSlib.Cryptography.Asymptotic.HardCore`), through the bridges
++`FunFamily.predProb_glPad` and `FunFamily.invProb_glInverter`; the claims about the inner
++product and the samples of Algorithm 89.6 (`fact_88_4`, `thm_87_3_6`, `thm_87_3_7`,
++`thm_87_3_8`) do not involve the family and are stated concretely, for an arbitrary
++`f : {0,1}^n → β` (gate 03c, finding 7). The declaration names encode the inventory ids
++(Thm-87.3.x), not [PS10] numbers. (Moved out of `Asymptotic/HardCore.lean` for size; the
+ statements are those of the audited statement phase.)
+ 
+ ## Main definitions
+@@ -54,8 +59,9 @@ The setting (inventory Thm-87.3.c) is `FunFamily.glPad`, `FunFamily.glBit`,
+ `secProb` (`Pr_r[A(f(x), r) = ⟨x, r⟩]` for a fixed `x`). Algorithm 88.5 is
+ `HardcoreBit.majorityInverter` (`majorityRecover`, `trialBit`); Algorithm 89.6 is
+ `HardcoreBit.guessInverter` (`guessRecover`, the subroutine `C` realised by guessing the
+-`k = log m` bits `b'_j` and forming subset sums). Each claim below is the family-level
+-instance of the corresponding concrete lemma. -/
++`k = log m` bits `b'_j` and forming subset sums). Each claim below re-exports the
++corresponding concrete lemma: at the family level for the claims about `g`, concretely for
++`fact_88_4` and `thm_87_3_6/7/8`. -/
+ 
+ /-- **Fact 88.4** [PS10]: `⟨a, b ⊕ c⟩ = ⟨a, b⟩ ⊕ ⟨a, c⟩` (bit strings as a Boolean ring, `+` is
+ XOR); the concrete `HardcoreBit.ip_add`. -/
+@@ -102,9 +108,13 @@ theorem thm_87_3_3 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ)
+ 
+ /-- **Pairwise-independent samples suffice** [PS10, §3.4.3; inventory Thm-87.3.6]: for a good
+ `x` (`secProb ≥ 1/2 + ε/2`) and `k ≥ 1`, each bit of the ideal recovery procedure (correct
+-guesses `b_L = ⟨x, S_L⟩`) is wrong with probability at most `1/(ε²(2^k − 1))` — the text's
+-`1/(mε'²)` with `m = 2^k − 1` nonempty subsets and `ε' = ε/2`, by the pairwise-independent
+-sampling inequality (`chebyshev_pairwise`); the concrete `uprob_idealRecover_ne_le`. -/
++guesses `b_L = ⟨x, S_L⟩`) is wrong with probability at most `1/(ε²(2^k − 1))`, by the
++pairwise-independent sampling inequality (`chebyshev_pairwise`); the concrete
++`uprob_idealRecover_ne_le`, stated for an arbitrary `f`. The text bounds this probability by
++`(1 − 4ε'²)/(4mε'²) ≤ 1/(mε'²)` with `ε' = ε/2`; the formal `1/(ε²(2^k − 1)) = 1/(4mε'²)` lies
++between the two, with `m` read as the number `2^k − 1` of samples, one per nonempty `L ⊆ [k]`
++(the text draws the `m − 1` samples `r_1, …, r_{m−1}` from `log m` seeds and writes `m`; its
++`m` is the `2^k` of `thm_87_3_8`). -/
+ theorem thm_87_3_6 {n : ℕ} {β ρ : Type*} [Fintype ρ] [Nonempty ρ] (f : (Fin n → Bool) → β)
+     (A : β × (Fin n → Bool) → ρ → Bool) {k : ℕ} (hk : 0 < k) (x : Fin n → Bool) (i : Fin n)
+     {ε : ℝ} (hε : 0 < ε) (hx : 1 / 2 + ε / 2 ≤ HardcoreBit.secProb f A x) :
+@@ -125,7 +135,8 @@ theorem thm_87_3_7 {n k : ℕ} :
+ [PS10, §3.4.3; inventory Thm-87.3.8]: the guessed bits `b'_1 ⋯ b'_k` equal `⟨x, s_1⟩ ⋯ ⟨x, s_k⟩`
+ with probability `1/2^k` (`uprob_guess_eq`), and under that event the recovery procedure
+ computes `b_L = ⟨x, S_L⟩` for every `L`, i.e. it is the ideal procedure
+-(`guessRecover_correct_guess`). -/
++(`guessRecover_correct_guess`); stated for an arbitrary `f`. Here `m = 2^k` is the text's `m`
++(`log m` guessed bits), while `thm_87_3_6` counts the `2^k − 1` samples. -/
+ theorem thm_87_3_8 {n : ℕ} {β ρ : Type*} [Fintype ρ] (f : (Fin n → Bool) → β)
+     (A : β × (Fin n → Bool) → ρ → Bool) {k : ℕ} (x : Fin n → Bool) (s : Fin k → Fin n → Bool)
+     (cs : Fin n → HardcoreBit.NESubset k → ρ) :
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+new file mode 100644
+index 00000000..cf45e6d0
+--- /dev/null
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
+@@ -0,0 +1,353 @@
++/-
++Copyright (c) 2026 TCSlib contributors. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: TCSlib contributors
++-/
++import TCSlib.Cryptography.Asymptotic.HardCoreGLColl
++import TCSlib.Cryptography.Asymptotic.HardCoreLemmas
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Goldreich–Levin for collections
++
++The collection form of the Goldreich–Levin theorem [PS10, Theorem 87.3], the one the text uses
++for [PS10, Theorem 104.4] and Chapter 4: for a collection `{f_i : D_i → R_i}` of one-way
++functions, the padded collection `g_i(x, r) = (f_i(x), r)` is a collection of one-way functions
++and `⟨x, r⟩` is hard-core for it; and the same for collections of permutations and of trapdoor
++permutations. The machine side is `Asymptotic/HardCoreGLColl.lean` and
++`Asymptotic/HardCoreLemmas.lean`. (Moved out of `Asymptotic/HardCore.lean` for size, gate 03c,
++finding 11; the declarations, their names and statements are unchanged, and `HardCore.lean`
++imports this file, so its importers see them as before.)
++
++**Deviation:** [PS10, Theorem 87.3] for collections (unnumbered): the padded collection
++`Collection.glPad F m` pads each element by `|encD_i(default)|` uniform bits; its one-wayness
++and hard-core theorems assume length-regular encodings at generated indices
++(`∀ n r x, |encD_{index n r} x| = m(n)`), which the text's "`|x| = |r|`" presupposes, at the
++cost stated at `Collection.glPad` (no candidate of the library satisfies it as parametrized;
++gate 03c, finding 3, ruling G3-7c). Its hard-core proof uses the encoded-domain
++Goldreich–Levin lemma `HardcoreBit.invProb_guessInverter_enc_pad`
++(`Asymptotic/GoldreichLevinDomain.lean`): the cube lemma does not transfer to a domain `D_i`
++whose encoding is a strict subset of the cube (run-3 audit P4-2).
++
++## Main definitions
++
++* `TCSlib.Cryptography.Collection.glPad`, `TCSlib.Cryptography.Collection.glBit` — the padded
++  collection `g_i(x, r) = (f_i(x), r)` and the predicate `⟨x, r⟩`.
++* `TCSlib.Cryptography.PermCollection.glPad`, `TCSlib.Cryptography.TrapdoorCollection.glPad` —
++  the padded collection of (trapdoor) permutations.
++
++## Main results
++
++* `TCSlib.Cryptography.goldreich_levin_coll`, `TCSlib.Cryptography.Collection.OneWay.glPad`,
++  `TCSlib.Cryptography.Collection.OneWay.glPad_hardCore` [PS10, Theorem 87.3, collection form].
++* `TCSlib.Cryptography.PermCollection.OneWay.glPad`,
++  `TCSlib.Cryptography.PermCollection.OneWay.glPad_hardCore`,
++  `TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad`,
++  `TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore` — the (trapdoor) permutation
++  forms, for [PS10, Theorem 104.4].
++
++## References
++
++* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
++  (§2.5: Definition 41.1; §2.10: Definition 55.1; §2.11: Definition 56.1; §3.4.2–3.4.3:
++  Theorem 87.3; §3.10: Theorem 104.4.)
++* [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
++  draft of 22 January 2026, §2.5 (Theorem 2.3).
++* [GL89] O. Goldreich, L. Levin, *A hard-core predicate for all one-way functions*, STOC 1989.
++-/
++
++namespace TCSlib.Cryptography
++
++open Complexity Turing Finset
++
++/-! ## Goldreich–Levin for collections [PS10, Theorem 87.3, collection form] -/
++
++namespace Collection
++
++variable (F : Collection)
++
++/-- The **padded collection** `g_i(x, r) = (f_i(x), r)` of [PS10, Theorem 87.3] for a
++collection `{f_i : D_i → R_i}` whose elements have encoding length `m(n)` at the indices
++generated at parameter `n` (`henc`): the domain `D'_i = D_i × {0,1}^{|encD_i(default)|}` (the
++padding has the length of the encoded elements), elements encoded as `⟨encD_i x, r⟩`, the
++same index generator `Gen`, the sampler `Sample'(1^n, i) = ⟨Sample(1^n, i), r⟩` with `m(n)`
++fresh coins `r`, and the evaluator `⟨i, ⟨x, r⟩⟩ ↦ ⟨eval ⟨i, x⟩, r⟩`. The sampler's outputs
++decode (`sample_spec`): the first component by `F.sample_spec`, the padding because it has
++exactly `m(n) = |encD_i(default)|` bits by `henc`.
++
++Repair (run-3 audit P3-1): the hypothesis `henc` (previously carried by the theorems only) is
++now an argument of the definition, since without it the padding of the sampled string need not
++have the length the decoder expects and `Collection.sample_spec` would fail.
++
++**Deviation:** the text's "`|x| = |r|`" presupposes that all elements of `D_i` have the same
++encoding length; `glPad` assumes `|encD_i x| = m(n)` at generated indices (`henc`). Cost (gate
++03c, finding 3; ruling G3-7c): a non-constant `PolyExpr` is strictly increasing, so an index
++generated at two parameters forces `m` constant, and no candidate of the library satisfies `henc`
++as parametrized (`rsaTrapdoor`: `2·max(n, 2)`-bit elements; `rabinBlumTrapdoor`: `2·max(n, 3)`;
++`expCollection`: `dlDefaultIndex` below `n₀`). A per-index form (`|encD_i x| = |encD_i default|
++≤ m(n)`) would admit them; it is not formalized. -/
++noncomputable def glPad (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
++    Collection where
++  D i := F.D i × (Fin (F.encD i default).length → Bool)
++  encD i z := pairEncode (F.encD i z.1) (List.ofFn z.2)
++  decD i w := match pairDecode w with
++    | some (a, b) => match F.decD i a, decodeFin (F.encD i default).length b with
++      | some x, some r => some (x, r)
++      | _, _ => none
++    | none => none
++  decD_encD i z := by simp [pairDecode_pairEncode, F.decD_encD, decodeFin_ofFn]
++  encD_decD i w z h := by
++    rcases hw : pairDecode w with _ | ⟨a, b⟩
++    · simp [hw] at h
++    cases ha : F.decD i a <;> cases hb : decodeFin (F.encD i default).length b <;> simp [hw, ha, hb] at h
++    rw [eq_pairEncode_of_pairDecode w a b hw, ← h, F.encD_decD i a _ ha, ofFn_of_decodeFin_eq_some hb]
++  f i z := pairEncode (F.f i z.1) (List.ofFn z.2)
++  gen := F.gen
++  gen_uniform := F.gen_uniform
++  sample := NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)
++  sample_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
++  eval w := pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w))))
++    (pairSndD (pairSndD w))
++  eval_poly := (F.eval_poly.comp (polyTimeComputable_pairFstD.pairEncode
++    (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))).pairEncode
++    (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
++  eval_spec i z := by simp [F.eval_spec]
++  sample_spec n r s := by
++    obtain ⟨⟨s₁, s₂⟩, hs⟩ := (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)).surjective s
++    have hofn : List.ofFn s = List.ofFn s₁ ++ List.ofFn s₂ := by
++      rw [← hs]
++      exact List.ofFn_fin_append s₁ s₂
++    have hA : (List.ofFn s).take (F.sample.coinLen n) = List.ofFn s₁ := by
++      rw [hofn, List.take_left' List.length_ofFn]
++    have hB : (List.ofFn s).drop (F.sample.coinLen n) = List.ofFn s₂ := by
++      rw [hofn, List.drop_left' List.length_ofFn]
++    obtain ⟨x, hx, hev⟩ := F.sample_spec n r s₁
++    have hL : (F.encD (pairFstD (F.gen.runAt n [] r)) default).length = m.eval n := henc n r default
++    have hs₂ : List.ofFn s₂ = List.ofFn
++        fun j : Fin (F.encD (pairFstD (F.gen.runAt n [] r)) default).length => s₂ (Fin.cast hL j) :=
++      List.ofFn_congr hL.symm s₂
++    refine ⟨(x, fun j => s₂ (Fin.cast hL j)), ?_, ?_⟩
++    · simp only [glPadSample_runAt, hA, hB, pairDecode_pairEncode, ← NUPPT.runAt_eq, hx, hs₂,
++        decodeFin_ofFn]
++    · simp only [glPadSample_runAt, hA, hB, pairFstD_pairEncode, pairSndD_pairEncode,
++        ← NUPPT.runAt_eq, hev, hs₂]
++
++/-- The predicate `h_i(x, r) = ⟨x, r⟩` for the padded collection: the inner product of the
++encoding of `x` (padded or truncated to the padding length) with `r`. -/
++def glBit : ∀ i, F.D i × (Fin (F.encD i default).length → Bool) → Bool :=
++  fun i z => HardcoreBit.ip (padFin _ (F.encD i z.1)) z.2
++
++/-- Unfolding: `h_i(x, r)` is the inner product `⟨padFin(encD_i x), r⟩`, the encoding of `x`
++padded or truncated to the padding length `|encD_i(default)|`. -/
++theorem glBit_eq (i : List Bool) (z : F.D i × (Fin (F.encD i default).length → Bool)) :
++    F.glBit i z = HardcoreBit.ip (padFin _ (F.encD i z.1)) z.2 := rfl
++
++variable {F} in
++/-- Unfolding: the padded collection keeps the index generator. -/
++theorem glPad_gen (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
++    (F.glPad m henc).gen = F.gen := rfl
++
++variable {F} in
++/-- Unfolding: `g_i(x, r) = ⟨f_i(x), r⟩`. -/
++theorem glPad_f (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i : List Bool) (z : (F.glPad m henc).D i) :
++    (F.glPad m henc).f i z = pairEncode (F.f i z.1) (List.ofFn z.2) := rfl
++
++variable {F} in
++/-- Unfolding: the sampler of the padded collection runs `Sample(1^n, i)` on its first
++`|Sample's coins|` coins and appends the remaining coins. -/
++theorem glPad_sample_runAtL (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (n : ℕ) (i r : List Bool) :
++    (F.glPad m henc).sample.runAtL n i r =
++      pairEncode (F.sample.runAtL n i (r.take (F.sample.coinLen n))) (r.drop (F.sample.coinLen n)) := by
++  simp only [glPad, NUPPT.runAtL, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
++    glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
++    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
++    NUPPT.coinLen]
++
++variable {F} in
++/-- Unfolding: the decoder of the padded collection is `glPadDecode` at the padding length
++`|encD_i(default)|` (propositional: the two `match` expressions are compiled separately). -/
++theorem glPad_decD_eq (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (i : List Bool) : (F.glPad m henc).decD i = glPadDecode F i (F.encD i default).length := by
++  funext w
++  unfold Collection.glPad glPadDecode
++  dsimp only
++  cases pairDecode w with
++  | none => rfl
++  | some ab =>
++    obtain ⟨a, b⟩ := ab
++    dsimp only
++    cases F.decD i a <;> cases decodeFin (F.encD i default).length b <;> rfl
++
++/-- **The padded collection is one-way** ([PS10, Theorem 87.3], collection form, first clause):
++if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at the
++indices generated at parameter `n`, then `F.glPad m` is a collection of one-way functions.
++
++**Proof sketch.** *Sampling:* with `h.sampleClose = ⟨δ, hδ, hS⟩`, at index `i = index n r`
++the decoded sampler output is `(decD i (Sample(1^n, i; s₁)), decodeFin _ (ofFn s₂))` on the
++coin split `splitCoins (Sample.coins n) (m n)` (`glPad_sample_runAtL`, `List.ofFn` of the
++split, `uprob_comp_equiv`); `henc` gives `(encD i default).length = m n`, so the second
++component decodes exactly (`decodeFin_ofFn`) and `StatClose.prod (hS n r) (StatClose.refl _)`
++with `StatClose.map` to the pair gives `SampleClose δ`. *Hard:* for `A : NUPPT` against
++`F.glPad m`, the inverter `B` against `F`: coins `m + A.coins` (`NUPPT.exists_split m`, the
++first `m n` coins are `r`), on `⟨1^n, ⟨i, y⟩⟩` it calls `A` once on `⟨1^n, ⟨i, ⟨y, r⟩⟩⟩`
++(`NUPPT.exists_comp`, `NUPPT.exists_seq`) and returns the first component of the answer
++(`pairFstD`). Then `(F.glPad m).invProbAt A n ≤ F.invProbAt B n`: unfold both `uexp` over
++`Gen`'s coins (`OneWay.uexp_mono`), split the inner `uprob` over `D_i × ({0,1}^{m n} × A.Coins n)`
++against `D_i × B.Coins n` by `uprob_comp_equiv` on `splitCoins`, and `uprob_mono`: a decoded
++answer `(x', r')` with `⟨f_i(x'), r'⟩ = ⟨f_i(x), r⟩` has `f_i(x') = f_i(x)`
++(`pairEncode_injective`). `Negligible.mono` with `h.hard B`. -/
++theorem OneWay.glPad {F : Collection} (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (h : F.OneWay) : (F.glPad m henc).OneWay := by
++  obtain ⟨δ, hδ, hS⟩ := h.sampleClose
++  refine ⟨⟨δ, hδ, fun n r => ?_⟩, fun A => ?_⟩
++  · have key := statClose_glPadSampler F m (F.glPad m henc).sample rfl (glPad_sample_runAtL m henc)
++      hS n r _ (henc n r default)
++    simp only [glPad_decD_eq] at key ⊢
++    exact key
++  · refine (h.hard (glPadCollInvMachine A m)).mono ⟨0, fun n _ => ?_⟩
++    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
++    have key := glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
++      (fun r => henc n r default)
++    unfold Collection.invProbAt at key ⊢
++    simp only [glPad_decD_eq]
++    exact key
++
++/-- **`⟨x, r⟩` is hard-core for the padded collection** ([PS10, Theorem 87.3], collection form,
++second clause; inventory Thm-87.3.coll, needed by Theorem 104.4): if `F` is a collection of
++one-way functions with encoding length `m(n)` at generated indices, then
++`h_i(x, r) = ⟨encD_i x, r⟩` is a hard-core predicate for `F.glPad m` (`Collection.HardCore`).
++
++Repair (run-3 audit P4-2): statement unchanged. The run-2 sketch transferred the cube lemma
++`HardcoreBit.invProb_guessInverter` to `D_i` by "identifying `D_i` with `{0,1}^{m n}` through
++the injective encoding"; that step is invalid — the image of `encD_i` is in general a strict
++subset of the cube (`Z_N^*`, `QR_N`), the uniform `x ∈ D_i` is not a uniform cube element and
++the predictor's behaviour off the image is uncontrolled. The transfer is replaced by the
++encoded-domain lemma `HardcoreBit.invProb_guessInverter_enc_pad`
++(`Asymptotic/GoldreichLevinDomain.lean`), stated for `x` uniform on an arbitrary finite type
++with an arbitrary encoding into `{0,1}^m`.
++
++**Proof sketch.** *Easy:* `⟨i, ⟨a, b⟩⟩ ↦ ipFun ⟨padToLen a b, b⟩` — pad `a = encD_i x` to the
++length of `b = r` and apply the inner-product evaluator (`exists_glBitCollEvaluator`,
++`Asymptotic/HardCoreGLColl.lean`). *Hard:* `glColl_negligible` with the padding length
++`L n r = |encD_i(default)| = m(n)` (`henc`) and the one-wayness of the padded collection
++(`OneWay.glPad`, its inversion experiment rewritten by `glPad_decD_eq`): by contradiction,
++`not_negligible_iff` gives `c` with `1/2 + n^{−c} ≤ E_r[Pr[A(1^n, ⟨i, ⟨f_i x, r⟩⟩) = ⟨encD_i x, r⟩]]`
++infinitely often; the good indices (`HardcoreBit.half_le_uprob_threshold`) have per-index
++success `≥ 1/2 + n^{−c}/2`, where `HardcoreBit.invProb_guessInverter_enc_pad` with
++`enc := padFin (m n) ∘ encD_i` and the hard-wired `k(n) = size (8 m(n) n^{2c})` (`glKc`) makes
++the recovery procedure of [PS10, Algorithm 89.6] output `encD_i x` with probability
++`≥ ε/(4·2^{k(n)})`, `ε = n^{−c}/2`; the inverter `glCollMachine` (the recovery machine `glMachine`
++on the pre-processed predictor `⟨⟨i, y⟩, q⟩ ↦ ⟨i, ⟨y, q⟩⟩`, output `⟨x', r⟩`) realises it
++(`glColl_uprob_le`); averaging over the good indices (`HardcoreBit.uprob_mul_le_uexp`) gives
++inversion probability `≥ ε²/(4·2^{k(n)})`, inverse polynomial infinitely often, contradicting
++`(OneWay.glPad m henc h).hard`. -/
++theorem OneWay.glPad_hardCore {F : Collection} (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (h : F.OneWay) : (F.glPad m henc).HardCore F.glBit := by
++  refine ⟨?_, fun A => ?_⟩
++  · obtain ⟨H, hH, hHx⟩ := exists_glBitCollEvaluator F
++    exact ⟨H, hH, fun i x => hHx i x.1 x.2⟩
++  · have hmax : ∀ x : ℝ, x ≤ 1 / 2 + max 0 (x - 1 / 2) := fun x => by
++      linarith [le_max_right (0 : ℝ) (x - 1 / 2)]
++    refine ⟨_, glColl_negligible F m (fun n r => (F.encD (F.index n r) default).length)
++      (fun n r => henc n r default) henc A (fun B => ?_), fun n => hmax _⟩
++    have key := (OneWay.glPad m henc h).hard B
++    unfold Collection.invProbAt at key
++    simp only [glPad_decD_eq] at key
++    exact key
++
++end Collection
++
++/-- **Goldreich–Levin for collections** ([PS10, Theorem 87.3], the collection form the text
++uses for Theorem 104.4 and Chapter 4): for a collection `F` of one-way functions with
++encoding length `m(n)` at generated indices, `g_i(x, r) = (f_i(x), r)` is a collection of
++one-way functions and `⟨x, r⟩` is hard-core for it. -/
++theorem goldreich_levin_coll {F : Collection} (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
++    (h : F.OneWay) : (F.glPad m henc).OneWay ∧ (F.glPad m henc).HardCore F.glBit :=
++  ⟨Collection.OneWay.glPad m henc h, Collection.OneWay.glPad_hardCore m henc h⟩
++
++/-- The padded collection of a collection of permutations is a collection of permutations
++[PS10, Theorem 87.3, "(OWP)"]: `g_i = perm_i × id` on `D_i × {0,1}^{|encD_i default|}`. -/
++noncomputable def PermCollection.glPad (P : PermCollection) (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) :
++    PermCollection :=
++  { P.toCollection.glPad m henc with
++    perm := fun i => (P.perm i).prodCongr (Equiv.refl _)
++    f_perm := fun i z => by simp [Collection.glPad, P.f_perm] }
++
++/-- Unfolding: the underlying collection of `P.glPad m henc` is `P.toCollection.glPad m henc`. -/
++theorem PermCollection.glPad_toCollection (P : PermCollection) (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) :
++    (P.glPad m henc).toCollection = P.toCollection.glPad m henc := rfl
++
++/-- **The padded permutation collection is one-way** when the original is (collection form of
++[PS10, Theorem 87.3] for Definition 55.1). -/
++theorem PermCollection.OneWay.glPad {P : PermCollection} (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
++    (h : P.OneWay) : (P.glPad m henc).OneWay :=
++  Collection.OneWay.glPad m henc h
++
++/-- **`⟨x, r⟩` is hard-core for the padded permutation collection**. -/
++theorem PermCollection.OneWay.glPad_hardCore {P : PermCollection} (m : PolyExpr)
++    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
++    (h : P.OneWay) : (P.glPad m henc).toCollection.HardCore P.glBit :=
++  Collection.OneWay.glPad_hardCore m henc h
++
++/-- The padded collection of a collection of trapdoor permutations is a collection of
++trapdoor permutations [PS10, Theorem 87.3 for Definition 56.1, as used in Theorem 104.4]:
++`Inv'(1^n, ⟨t, ⟨y, r⟩⟩) = ⟨Inv(1^n, ⟨t, y⟩), r⟩`.
++
++**Proof sketch** (of `inv_spec`). Unfold the activation of the `ofPolyTimeUniform` machine
++(`NUPPT.output_ofPolyTime`, the layout projections); `T.inv` is uniform so its activation is
++its output on the layout with empty advice; `T.inv_spec` decodes the first component to
++`(perm i).symm y.1` and `decodeFin_ofFn` the second to `y.2`. -/
++noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
++    TrapdoorCollection :=
++  { T.toPermCollection.glPad m henc with
++    inv := NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins
++    inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
++    inv_spec := fun n r y s => by
++      have hspec := T.inv_spec n r y.1 s
++      simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime, glPadInvFun,
++        NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
++        pairFstD_pairEncode, pairSndD_pairEncode, PermCollection.glPad, Collection.glPad,
++        pairDecode_pairEncode, decodeFin_ofFn, T.inv_uniform n] at hspec ⊢
++      rw [hspec]
++      rfl }
++
++/-- Unfolding: the underlying permutation collection of `T.glPad m henc` is
++`T.toPermCollection.glPad m henc`. -/
++theorem TrapdoorCollection.glPad_toPermCollection (T : TrapdoorCollection) (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
++    (T.glPad m henc).toPermCollection = T.toPermCollection.glPad m henc := rfl
++
++/-- **The padded trapdoor collection is one-way** when the original is ([PS10, Theorem 87.3]
++for Definition 56.1 (5)). -/
++theorem TrapdoorCollection.OneWay.glPad {T : TrapdoorCollection} (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
++    (h : T.OneWay) : (T.glPad m henc).OneWay :=
++  Collection.OneWay.glPad m henc h
++
++/-- **`⟨x, r⟩` is hard-core for the padded trapdoor collection**: the hypothesis "trapdoor
++permutations with a hard-core predicate" of [PS10, Theorem 104.4] is satisfiable from trapdoor
++permutations whose generated indices encode elements in exactly `m(n)` bits (`henc`; no
++candidate of the library satisfies it as parametrized, see `Collection.glPad`). -/
++theorem TrapdoorCollection.OneWay.glPad_hardCore {T : TrapdoorCollection} (m : PolyExpr)
++    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
++    (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore T.glBit :=
++  Collection.OneWay.glPad_hardCore m henc h
++
++end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/Asymptotic/NextBit.lean b/TCSlib/Cryptography/Asymptotic/NextBit.lean
+index 1c452569..911552d6 100644
+--- a/TCSlib/Cryptography/Asymptotic/NextBit.lean
++++ b/TCSlib/Cryptography/Asymptotic/NextBit.lean
+@@ -35,9 +35,11 @@ The file has two layers (foundation decision D2 of `PassShelatChapter2-4Plan.md`
+   two hybrids).
+ * **Asymptotic**: `Ensemble.NextBitUnpredictable` [PS10, Definition 75.2] and the
+   completeness theorem `Ensemble.NextBitUnpredictable.pseudorandom` [PS10, Theorem 75.4],
+-  proved by instantiating the concrete reduction at each `n`, hard-wiring the sign into the
+-  advice of the predictor machine (the position is read off the length of the prefix), and
+-  finishing with the contradiction idiom `not_negligible_iff_exists_polyExpr`.
++  proved by instantiating the concrete reduction at each `n` with `ℓ(n) > 0` (where
++  `ℓ(n) = 0` no distinguisher has an advantage, `prgAdv_eq_zero_of_length_eq_zero`),
++  hard-wiring the sign into the advice of the predictor machine (the position is read off the
++  length of the prefix), and finishing with the contradiction idiom
++  `not_negligible_iff_exists_polyExpr`.
+ 
+ The implicit converse ("a pseudorandom ensemble passes the next-bit test", the soundness of
+ the test the text takes for granted) is `nextBitDist` / `prgAdv_nextBitDist` concretely and
+@@ -57,6 +59,12 @@ shape (DESIGN.md §2.12); the run-2 hypothesis `hσ : ∀ n, Nonempty (X.σ n)`
+ `Ensemble.nonempty` (with an empty seed type the experiment has probability `0`, the ensemble
+ passes the next-bit test vacuously, and the always-accepting distinguisher has advantage `1`).
+ 
++**Repair (gate 03c, finding 2; ruling G3-7b):** `NextBitUnpredictable.pseudorandom` no longer
++assumes `0 < ℓ(n)` for every `n` (a hypothesis the text does not have, which excluded every
++ensemble with `ℓ(0) = 0`); it is now the source's statement. Where `ℓ(n) = 0` both `X_n` and
++`U_0` are the point mass on the empty string, and the proof needs a position only where
++`ℓ(n) > 0`.
++
+ ## Main definitions
+ 
+ * `TCSlib.Cryptography.nextBitProb` — the next-bit experiment at one parameter.
+@@ -73,7 +81,8 @@ passes the next-bit test vacuously, and the always-accepting distinguisher has a
+ ## Main results
+ 
+ * `TCSlib.Cryptography.exists_nextBitPred` — the concrete next-bit reduction
+-  (`1/2 + prgAdv X D / ℓ ≤` predictor success for some `i < ℓ` and some sign).
++  (`1/2 + prgAdv X D / ℓ ≤` predictor success for some `i < ℓ` and some sign);
++  `TCSlib.Cryptography.prgAdv_eq_zero_of_length_eq_zero` — no advantage on `{0,1}^0`.
+ * `TCSlib.Cryptography.acceptProb_nextBitHybrid_zero`,
+   `TCSlib.Cryptography.acceptProb_nextBitHybrid_self`,
+   `TCSlib.Cryptography.acceptProb_nextBitHybrid_mix` — the hybrid identities
+@@ -230,7 +239,8 @@ every event `p` on `(σ × {0,1}^ℓ) × ρ` and every bit `g s` depending on th
+ "`H^i` is sampled by drawing from `H^{i+1}` or from `H̃^{i+1}` with probability `1/2`" step of
+ the proof of [PS10, Theorem 75.4], in a form shared by the mixing identity and the predictor
+ analysis. (The planting map `(b, (s, u), r) ↦ ((s, update u i (b ⊕ g s)), r)` is 2-to-1, not a
+-bijection — run-3 audit P2-3 — so the proof adjoins an ignored uniform bit instead.)
++bijection — a run-3 repair, labelled P2-3 here and noted at gate 03c, finding 5 — so the
++proof adjoins an ignored uniform bit instead.)
+ 
+ **Proof sketch.** Adjoin an ignored uniform bit `b` (`uprob_fst` after `Equiv.prodComm`),
+ then apply the involution `ψ (b, (s, u), r) := (u_i ⊕ g s, (s, update u i (b ⊕ g s)), r)` of
+@@ -356,14 +366,17 @@ from the prefix of length `i` with probability exactly
+ [PS10, Theorem 75.4] (which writes `A(t) = 1` for `A(t) = b`), i.e. the identity of
+ [PS10, Lemma 73.8] (`predict_eq`) with `X¹ := H^{i+1}` and `X⁰ := H̃^{i+1}`.
+ 
+-**Proof sketch.** Split on whether the drawn bit `u_i` equals `x_i` (each case has
+-probability `1/2`, independently of `s`, the other bits of `u`, and `c`: the bijection
+-`(b, (s, u), c) ↦ (s, (update u i (xor b (X s i)), c))` followed by `uprob_bool_prod`, as in
+-`predProb_owpPredictor_false`). If `u_i = x_i`, the completed string
+-`completePrefix i (prefixOf i (X s)) u` is `nextBitHybrid X (i+1) (s, u)`
+-(`completePrefix_prefixOf`) and the predictor is right iff `D` accepts; if `u_i = x̄_i`, the
+-completed string is `nextBitHybridFlip X i (s, u)` and the predictor is right iff `D`
+-rejects (`uprob_not`, which needs the nonemptiness hypotheses). Average the two. -/
++**Proof sketch.** Reassociate the sample space to `(σ × {0,1}^ℓ) × ρ` (`Equiv.prodAssoc`) and
++apply `uprob_split_bit` at position `i` with the bit `x_i = X s i` (an adjoined uniform bit and
++the involution `ψ`): the success probability is the average of the success event with `x_i`
++planted at bit `i` of `u` and with `x̄_i` planted there. With `x_i` planted, the completed
++string `completePrefix i (prefixOf i (X s)) u` is `nextBitHybrid X (i+1) (s, u)`
++(`completePrefix_prefixOf_eq`, `nextBitHybrid_update_eq`) and the predictor, which outputs
++`u_i = x_i` on acceptance, is right iff `D` accepts; with `x̄_i` planted the completed string is
++`nextBitHybridFlip X i (s, u)` (`nextBitHybrid_update_not_eq`) and the predictor is right iff
++`D` rejects (`uprob_not`, which needs the nonemptiness hypotheses). Average the two:
++`(Pr[D(H^{i+1}) = 1] + 1 − Pr[D(H̃^{i+1}) = 1]) / 2`. (The run-2 sketch transported the event
++along the 2-to-1 map `(b, (s, u), c) ↦ (s, (update u i (b ⊕ x_i), c))`; see `uprob_split_bit`.) -/
+ theorem nextBitProb_nextBitPred_false {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
+     [Nonempty ρ] {ℓ : ℕ} (X : σ → Fin ℓ → Bool) (i : Fin ℓ) (D : (Fin ℓ → Bool) → ρ → Bool) :
+     nextBitProb X i (nextBitPred D i false) =
+@@ -421,6 +434,28 @@ theorem nextBitProb_nextBitPred_true {σ ρ : Type*} [Fintype σ] [Fintype ρ] [
+   rw [h, nextBitProb_nextBitPred_false]
+   ring
+ 
++/-- The PRG advantage is the gap between the extreme hybrids: `prgAdv X D =
++|Pr[D(H^0) = 1] − Pr[D(H^ℓ) = 1]|`, by `H^0 = U_ℓ` (`acceptProb_nextBitHybrid_zero`) and
++`H^ℓ = X` (`acceptProb_nextBitHybrid_self`). -/
++private theorem prgAdv_eq_abs_nextBitHybrid {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
++    {ℓ : ℕ} (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
++    prgAdv X D = |acceptProb (nextBitHybrid X 0) D - acceptProb (nextBitHybrid X ℓ) D| := by
++  unfold prgAdv distAdv
++  rw [acceptProb_nextBitHybrid_zero, acceptProb_nextBitHybrid_self, abs_sub_comm]
++
++/-- **No advantage on the empty string**: if `ℓ = 0`, then every distinguisher `D` has PRG
++advantage `0` against every sampler `X` into `{0,1}^ℓ` (both `X` and the uniform `U_0` are the
++point mass on the empty string). This is the case `ℓ(n) = 0` of [PS10, Theorem 75.4], which
++needs no position.
++
++**Proof sketch.** With `ℓ = 0` the two extreme hybrids `H^0` and `H^ℓ` coincide, so the gap
++`prgAdv_eq_abs_nextBitHybrid` is `|a − a| = 0`. -/
++theorem prgAdv_eq_zero_of_length_eq_zero {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
++    {ℓ : ℕ} (hℓ : ℓ = 0) (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
++    prgAdv X D = 0 := by
++  subst hℓ
++  rw [prgAdv_eq_abs_nextBitHybrid, sub_self, abs_zero]
++
+ /-- **The next-bit reduction, concrete form** (the content of the proof of
+ [PS10, Theorem 75.4] at one parameter): for every sampler `X` into `{0,1}^ℓ` with `ℓ > 0` and
+ every distinguisher `D` with PRG advantage `ε = prgAdv X D` against `X`, there are a position
+@@ -428,8 +463,8 @@ every distinguisher `D` with PRG advantage `ε = prgAdv X D` against `X`, there
+ [PS10, Algorithm 76.5] predicts bit `i` of `X` from the prefix of length `i` with probability
+ at least `1/2 + ε/ℓ`. (The text obtains `1/2 + 1/(p(n)ℓ(n))` from `ε = 1/p(n)`.)
+ 
+-**Proof sketch.** `prgAdv X D = |Pr[D(H^ℓ) = 1] − Pr[D(H^0) = 1]|` by
+-`acceptProb_nextBitHybrid_self` and `acceptProb_nextBitHybrid_zero`; the hybrid lemma
++**Proof sketch.** `prgAdv X D = |Pr[D(H^0) = 1] − Pr[D(H^ℓ) = 1]|`
++(`prgAdv_eq_abs_nextBitHybrid`); the hybrid lemma
+ `hybrid_lemma` (`exists_hybrid_gap`) over `i ↦ acceptProb (nextBitHybrid X i) D` gives
+ `i < ℓ` with `ε/ℓ ≤ |Pr[D(H^i) = 1] − Pr[D(H^{i+1}) = 1]|`. By the mixing identity
+ `acceptProb_nextBitHybrid_mix`, `Pr[D(H^i) = 1] − Pr[D(H^{i+1}) = 1] =
+@@ -442,10 +477,7 @@ theorem exists_nextBitPred {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty 
+     {ℓ : ℕ} (hℓ : 0 < ℓ) (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
+     ∃ (i : Fin ℓ) (flip : Bool),
+       1 / 2 + prgAdv X D / ℓ ≤ nextBitProb X i (nextBitPred D i flip) := by
+-  have hadv : prgAdv X D =
+-      |acceptProb (nextBitHybrid X 0) D - acceptProb (nextBitHybrid X ℓ) D| := by
+-    unfold prgAdv distAdv
+-    rw [acceptProb_nextBitHybrid_zero, acceptProb_nextBitHybrid_self, abs_sub_comm]
++  have hadv := prgAdv_eq_abs_nextBitHybrid X D
+   obtain ⟨k, hk, hgap⟩ := exists_hybrid_gap (fun j => acceptProb (nextBitHybrid X j) D) hℓ
+   have hmix := acceptProb_nextBitHybrid_mix X ⟨k, hk⟩ D
+   have hδ : prgAdv X D / ℓ ≤ |acceptProb (nextBitHybrid X (k + 1)) D -
+@@ -517,13 +549,14 @@ private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fint
+ /-! ### Completeness of the next-bit test [PS10, Theorem 75.4] -/
+ 
+ /-- **The next-bit predictor as a machine** [PS10, Algorithm 76.5]: for a distinguisher
+-machine `D`, positions `i n < ℓ(n)` and signs `flip n`, a non-uniform PPT `A` with coins
+-`ℓ + D.coins` and advice `⟨D.advice n, [flip n]⟩` such that, at parameter `n` and position
+-`i n`, `A` on the prefix `t` with coins `(u, c)` (split by `e n`) is exactly the concrete
+-predictor `nextBitPred (D.distinguisher n (ℓ n)) (i n) (flip n) t (u, c)`: it runs
++machine `D` and signs `flip n`, a non-uniform PPT `A` with coins `ℓ + D.coins` and advice
++`⟨D.advice n, [flip n]⟩` such that, at every parameter `n` and every position `i < ℓ(n)`, `A`
++on the prefix `t` with coins `(u, c)` (split by `e n`) is exactly the concrete predictor
++`nextBitPred (D.distinguisher n (ℓ n)) i (flip n) t (u, c)`: it runs
+ `D(1^n, t ++ u.drop |t|; c)` and outputs `u_{|t|}` or its negation according to the verdict,
+-negated once more if `flip n`. The position is read off the prefix length `|t| = i n`, so
+-only the sign is hard-wired.
++negated once more if `flip n`. The position is read off the prefix length `|t| = i`, so only
++the sign is hard-wired, and the identity holds at every position (restated so at gate 03c,
++finding 2: no choice of position is needed where `ℓ(n) = 0`).
+ 
+ **Proof sketch.** The raw function on the layout `⟨⟨⟨1^n, y⟩, ⟨D.advice n, [flip n]⟩⟩, r⟩`
+ cuts `r` into `u := r.take (ℓ n)` and `c := r.drop (ℓ n)` (`polyTimeComputable_pairTakePoly`/
+@@ -537,12 +570,11 @@ it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3` (`length_pairEnc
+ split is `Fin.appendEquiv` composed with `finCongr`, and the identity is `runAtL_ofPolyTime`,
+ the projection identities of the layout, `List.take_left'`/`List.drop_left'`,
+ `ofFn_completePrefix` and `headD_drop_ofFn`. -/
+-private theorem exists_nextBitPredMachine {ℓ : PolyExpr} (D : NUPPT) (i : ∀ n, Fin (ℓ.eval n))
+-    (flip : ℕ → Bool) :
++private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : ℕ → Bool) :
+     ∃ (A : NUPPT) (e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n),
+-      ∀ n (t : Fin (i n) → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
+-        A.predictor n (i n) t (e n (u, c)) =
+-          nextBitPred (D.distinguisher n (ℓ.eval n)) (i n) (flip n) t (u, c) := by
++      ∀ n (i : Fin (ℓ.eval n)) (t : Fin i → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
++        A.predictor n i t (e n (u, c)) =
++          nextBitPred (D.distinguisher n (ℓ.eval n)) i (flip n) t (u, c) := by
+   -- the coin cut `⟨1^n, r⟩ ↦ u = r.take (ℓ n)`, `c = r.drop (ℓ n)`
+   have hcut := NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
+   have hu : PolyTimeComputable fun z =>
+@@ -604,7 +636,7 @@ private theorem exists_nextBitPredMachine {ℓ : PolyExpr} (D : NUPPT) (i : ∀
+   let e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n := fun n =>
+     (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)).trans
+       (Equiv.arrowCongr (finCongr (hlen n).symm) (Equiv.refl Bool))
+-  refine ⟨A, e, fun n t u c => ?_⟩
++  refine ⟨A, e, fun n i t u c => ?_⟩
+   have hofn : List.ofFn (e n (u, c)) = List.ofFn u ++ List.ofFn c := by
+     rw [← List.ofFn_fin_append]
+     exact (List.ofFn_congr (hlen n).symm (Fin.append u c)).symm
+@@ -612,71 +644,97 @@ private theorem exists_nextBitPredMachine {ℓ : PolyExpr} (D : NUPPT) (i : ∀
+   rw [NUPPT.runAtL_ofPolyTime]
+   simp [NUPPT.advInput, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
+     NUPPT.runAtL, List.take_left', List.drop_left', ofFn_completePrefix]
+-  split_ifs <;> cases u (i n) <;> cases flip n <;> rfl
++  split_ifs <;> cases u i <;> cases flip n <;> rfl
+ 
+ /-- **Completeness of the next-bit test** [PS10, Theorem 75.4]: if the ensemble `{X_n}` over
+-`{0,1}^{ℓ(n)}` (with `ℓ(n) > 0`) passes the next-bit test, then it is pseudorandom.
++`{0,1}^{ℓ(n)}` passes the next-bit test, then it is pseudorandom.
+ 
+ **Repair (run-3 audit P2-2):** the run-2 hypothesis `hσ : ∀ n, Nonempty (X.σ n)` was dropped
+ (it is the field `Ensemble.nonempty`; with an empty seed type the experiment has probability
+ `0`, the ensemble passes the next-bit test vacuously, and the always-accepting distinguisher
+ has advantage `1`); the frozen shape of DESIGN.md §2.12 is restored.
+ 
++**Repair (gate 03c, finding 2; ruling G3-7b):** the hypothesis `hℓ : ∀ n, 0 < ℓ.eval n`, which
++the text does not have, was dropped; the theorem now applies to every ensemble, `ℓ(0) = 0`
++included (e.g. `ℓ = n`, `2n`, `n²`).
++
+ **Proof sketch.** By contradiction, as in the text. Fix a distinguisher `D` with
+ `¬ Negligible (fun n => prgAdv (X_n) (D.distinguisher n (ℓ n)))`
+ (`Ensemble.pseudorandom_iff_prgAdv`); by `not_negligible_iff_exists_polyExpr` there is a
+ positive syntactic polynomial `p` with `1/p(n) ≤ prgAdv` for infinitely many `n`. At every
+-`n`, `exists_nextBitPred (hℓ n)` (with the instance `X.nonempty n`) gives a position
++`n` with `ℓ(n) > 0`, `exists_nextBitPred` (with the instance `X.nonempty n`) gives a position
+ `i_n < ℓ(n)` and a sign `flip_n` with
+-`1/2 + prgAdv/ℓ(n) ≤ nextBitProb (X_n) i_n (nextBitPred (D.distinguisher n (ℓ n)) i_n flip_n)`
+-(`choose`). The predictor machine `A` is `exists_nextBitPredMachine D i flip` (advice
++`1/2 + prgAdv/ℓ(n) ≤ nextBitProb (X_n) i_n (nextBitPred (D.distinguisher n (ℓ n)) i_n flip_n)`;
++where `ℓ(n) = 0` put `flip_n := false` (`choose` on "a sign, and a position if `ℓ(n) > 0`").
++The predictor machine `A` is `exists_nextBitPredMachine ℓ D flip` (advice
+ `⟨D.advice n, [flip_n]⟩`, coins `ℓ + D.coins`; on `⟨1^n, t⟩` with coins `u ++ c` it runs
+ `D(1^n, t ++ u.drop |t|; c)` and outputs `xor (if g then u_{|t|} else !u_{|t|}) flip_n`, the
+-position being read off the prefix length). Its functional identity
+-`A.predictor n i_n t (e (u, c)) = nextBitPred (D.distinguisher n (ℓ n)) i_n flip_n t (u, c)`
++position being read off the prefix length). Its functional identity, at every position `i`,
++`A.predictor n i t (e (u, c)) = nextBitPred (D.distinguisher n (ℓ n)) i flip_n t (u, c)`
+ along the coin split `e : (Fin (ℓ n) → Bool) × D.Coins n ≃ A.Coins n` (`Fin.appendEquiv`)
+-gives `nextBitProb (X_n) i_n (A.predictor n i_n) = nextBitProb (X_n) i_n (nextBitPred …)`
++gives `nextBitProb (X_n) i (A.predictor n i) = nextBitProb (X_n) i (nextBitPred …)`
+ (`uprob_comp_equiv`). Now `h A` gives a negligible `ε` with `nextBitProb … ≤ 1/2 + ε n` for
+-all `n, i`; hence `1/(p(n) ℓ(n)) ≤ prgAdv/ℓ(n) ≤ ε n` for infinitely many `n`, i.e.
+-`¬ Negligible ε` by `not_negligible_iff_exists_polyExpr` with the polynomial `mul p ℓ`
+-(positive by `hℓ` and `0 < p`), a contradiction. -/
++all `n, i`. At every `n` of the infinite set, `ℓ(n) > 0`, since at `ℓ(n) = 0` the advantage is
++`0 < 1/p(n)` (`prgAdv_eq_zero_of_length_eq_zero`); there
++`1/(p(n)(ℓ(n) + 1)) ≤ 1/(p(n) ℓ(n)) ≤ prgAdv/ℓ(n) ≤ ε n`, i.e. `¬ Negligible ε` by
++`not_negligible_iff_exists_polyExpr` with the positive polynomial `mul p (ℓ + 1)`, a
++contradiction. -/
+ theorem Ensemble.NextBitUnpredictable.pseudorandom {ℓ : PolyExpr} {X : Ensemble ℓ}
+-    (hℓ : ∀ n, 0 < ℓ.eval n) (h : X.NextBitUnpredictable) :
+-    X.Pseudorandom := by
++    (h : X.NextBitUnpredictable) : X.Pseudorandom := by
+   rw [Ensemble.pseudorandom_iff_prgAdv]
+   intro D
+   by_contra hneg
+   obtain ⟨p, hp, hinf⟩ := not_negligible_iff_exists_polyExpr.mp hneg
+-  have hex : ∀ n, ∃ (i : Fin (ℓ.eval n)) (flip : Bool),
++  -- a sign at every `n`, and a position where `ℓ(n) > 0` (the concrete reduction)
++  have hex : ∀ n, ∃ flip : Bool, 0 < ℓ.eval n → ∃ i : Fin (ℓ.eval n),
+       1 / 2 + prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) / (ℓ.eval n) ≤
+-        nextBitProb (X.X n) i (nextBitPred (D.distinguisher n (ℓ.eval n)) i flip) :=
+-    fun n => exists_nextBitPred (hℓ n) (X.X n) (D.distinguisher n (ℓ.eval n))
+-  choose i flip hif using hex
+-  obtain ⟨A, e, hA⟩ := exists_nextBitPredMachine D i flip
+-  obtain ⟨ε, hε, hbound⟩ := h A
+-  have hprob : ∀ n, nextBitProb (X.X n) (i n) (A.predictor n (i n)) =
+-      nextBitProb (X.X n) (i n) (nextBitPred (D.distinguisher n (ℓ.eval n)) (i n) (flip n)) := by
++        nextBitProb (X.X n) i (nextBitPred (D.distinguisher n (ℓ.eval n)) i flip) := by
+     intro n
++    by_cases hn : 0 < ℓ.eval n
++    · obtain ⟨i, flip, hif⟩ := exists_nextBitPred hn (X.X n) (D.distinguisher n (ℓ.eval n))
++      exact ⟨flip, fun _ => ⟨i, hif⟩⟩
++    · exact ⟨false, fun hn' => absurd hn' hn⟩
++  choose flip hif using hex
++  -- the predictor machine, and its identity with the concrete predictor at every position
++  obtain ⟨A, e, hA⟩ := exists_nextBitPredMachine ℓ D flip
++  obtain ⟨ε, hε, hbound⟩ := h A
++  have hprob : ∀ n (i : Fin (ℓ.eval n)), nextBitProb (X.X n) i (A.predictor n i) =
++      nextBitProb (X.X n) i (nextBitPred (D.distinguisher n (ℓ.eval n)) i (flip n)) := by
++    intro n i
+     unfold nextBitProb
+     rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl (X.σ n)) (e n))]
+     apply OneWay.uprob_congr
+     rintro ⟨s, u, c⟩
+     simp [hA]
+-  refine (not_negligible_iff_exists_polyExpr.mpr ⟨.mul p ℓ, fun n => ?_, fun n₀ => ?_⟩) hε
+-  · simp only [PolyExpr.eval_mul]
+-    exact Nat.mul_pos (hp n) (hℓ n)
++  -- `ε` is not negligible, with the positive polynomial `p · (ℓ + 1)`
++  refine (not_negligible_iff_exists_polyExpr.mpr
++    ⟨.mul p (.add ℓ (.const 1)), fun n => ?_, fun n₀ => ?_⟩) hε
++  · simp only [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const]
++    exact Nat.mul_pos (hp n) (Nat.succ_pos _)
+   · obtain ⟨n, hn, hpn⟩ := hinf n₀
+     refine ⟨n, hn, ?_⟩
+-    have h1 := hif n
+-    have h2 := hbound n (i n)
+-    rw [hprob n] at h2
+-    have hℓpos : (0 : ℝ) < ℓ.eval n := by exact_mod_cast hℓ n
+     have hppos : (0 : ℝ) < p.eval n := by exact_mod_cast hp n
+     have h0 : 0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
+     rw [abs_of_nonneg h0] at hpn
+-    calc (1 : ℝ) / ((PolyExpr.mul p ℓ).eval n : ℝ)
+-        = (1 / (p.eval n : ℝ)) / (ℓ.eval n : ℝ) := by
+-          rw [PolyExpr.eval_mul, Nat.cast_mul, div_div]
++    -- on the infinite set `ℓ(n) > 0`: at `ℓ(n) = 0` the advantage is `0`
++    have hℓn : 0 < ℓ.eval n := by
++      rcases Nat.eq_zero_or_pos (ℓ.eval n) with hz | hz
++      · have hzero := prgAdv_eq_zero_of_length_eq_zero hz (X.X n) (D.distinguisher n (ℓ.eval n))
++        have := one_div_pos.mpr hppos
++        linarith
++      · exact hz
++    obtain ⟨i, h1⟩ := hif n hℓn
++    have h2 := hbound n i
++    rw [hprob n i] at h2
++    have hℓpos : (0 : ℝ) < ℓ.eval n := by exact_mod_cast hℓn
++    have hstep : (1 : ℝ) / ((PolyExpr.mul p (.add ℓ (.const 1))).eval n : ℝ) ≤
++        (1 / (p.eval n : ℝ)) / (ℓ.eval n : ℝ) := by
++      rw [PolyExpr.eval_mul, PolyExpr.eval_add, PolyExpr.eval_const, div_div]
++      push_cast
++      exact one_div_le_one_div_of_le (mul_pos hppos hℓpos)
++        (mul_le_mul_of_nonneg_left (by linarith) hppos.le)
++    calc (1 : ℝ) / ((PolyExpr.mul p (.add ℓ (.const 1))).eval n : ℝ)
++        ≤ (1 / (p.eval n : ℝ)) / (ℓ.eval n : ℝ) := hstep
+       _ ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) / (ℓ.eval n : ℝ) := by gcongr
+       _ ≤ ε n := by linarith
+       _ ≤ |ε n| := le_abs_self _
+diff --git a/TCSlib/Cryptography/Asymptotic/Pseudorandom.lean b/TCSlib/Cryptography/Asymptotic/Pseudorandom.lean
+index 9f34c952..1baff478 100644
+--- a/TCSlib/Cryptography/Asymptotic/Pseudorandom.lean
++++ b/TCSlib/Cryptography/Asymptotic/Pseudorandom.lean
+@@ -35,6 +35,11 @@ polynomial `stretch`, so that `G` is a typed family `G n : {0,1}^n → {0,1}^{
+ concrete layer's convention [Gar26, Definition 3.5]); the text's `G : {0,1}* → {0,1}*` with
+ `|G(x)| > |x|` admits irregular lengths, which no construction of the book uses.
+ 
++**Deviation:** the expansion clause `PRG.expands` holds at every seed length, `n = 0` included
++(the text's `|G(x)| > |x|` read literally at `x = ε`), so no `PolyExpr` stretch with `ℓ(0) = 0`
++(exactly `2n`) or `ℓ(1) = 1` (`n^c`) is a `PRG`; the length-doubling generators of the text are
++`DoublingPRG` (`Asymptotic/PRF.lean`). See `PRG` (gate 03c, finding 1; ruling G3-2).
++
+ **Deviation:** `PRG.Easy`: a deterministic polynomial-time evaluator on the seed string
+ instead of a PPT computing `G` with probability one (equivalent by `Complexity.NUPPT.Computes`
+ and `ofPolyTimeUniform`, as for `FunFamily.Easy`); the seed is not prefixed by `1^n` since
+@@ -55,12 +60,13 @@ its length is the parameter.
+   "`prgAdv` negligible for every `D`" (the concrete quantity of [Gar26, Definition 3.5]).
+ * `TCSlib.Cryptography.Ensemble.uniform_pseudorandom` — the uniform ensemble is pseudorandom
+   (non-vacuity of Definition 74.1).
+-* `TCSlib.Cryptography.PRG.secure_iff` — unfolding of `PRG.Secure` to the `prgAdv` form.
++* `TCSlib.Cryptography.PRG.easy_iff`, `TCSlib.Cryptography.PRG.secure_iff` — unfoldings of
++  `PRG.Easy` and of `PRG.Secure` (the latter to the `prgAdv` form).
+ * `TCSlib.Cryptography.PRG.Easy.samplable` — the output ensemble of an efficiently
+   computable generator is efficiently samplable (D6), so that `Ensemble.Indist.copies`
+   applies to it.
+-* `TCSlib.Cryptography.PRG.stretch_pos` — the output length is positive (the hypothesis of
+-  [PS10, Theorem 75.4] holds for every generator).
++* `TCSlib.Cryptography.PRG.stretch_pos` — the output length of a generator is positive at
++  every seed length (from the expansion clause).
+ 
+ ## References
+ 
+@@ -101,20 +107,35 @@ theorem Ensemble.Indist.pseudorandom {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h :
+ /-! ### Pseudorandom generators [PS10, Definition 77.1] -/
+ 
+ /-- A **(length-regular) generator** with explicit stretch: at every seed length `n`, a
+-function `G n : {0,1}^n → {0,1}^{ℓ(n)}` with `ℓ(n) > n` — the expansion clause
++function `G n : {0,1}^n → {0,1}^{ℓ(n)}` with `ℓ(n) > n` (at every `n`, `n = 0` included; see
++the second Deviation) — the expansion clause
+ [PS10, Definition 77.1 (2)] with the output length a syntactic polynomial `stretch` (D9).
+ The efficiency and pseudorandomness clauses are `PRG.Easy` and `PRG.Secure`.
+ 
+ **Deviation:** `PRG` is *length-regular*: `|G(x)|` depends only on `|x|` and is the syntactic
+ polynomial `stretch`, so that `G` is a typed family `G n : {0,1}^n → {0,1}^{ℓ(n)}` (the
+ concrete layer's convention [Gar26, Definition 3.5]); the text's `G : {0,1}* → {0,1}*` with
+-`|G(x)| > |x|` admits irregular lengths, which no construction of the book uses. -/
++`|G(x)| > |x|` admits irregular lengths, which no construction of the book uses.
++
++**Deviation:** the expansion clause holds at every seed length, `n = 0` included, as the text's
++`|G(x)| > |x|` says literally for `x = ε`. A `PolyExpr` stretch is a polynomial with coefficients
++in ℕ, so a stretch with `ℓ(0) = 0` (exactly `2n`) or `ℓ(1) = 1` (`n^c`) is not a `PRG`, although
++the text uses such generators (the length-doubling `G` of Algorithm 92.1 and Theorem 97.3;
++Lemma 80.5's "for any polynomial `ℓ`"). They are reached up to one bit (`2n + 1`, `n^c + 1`, by
++`prg_expand` from the one-bit truncation `PRG.truncate` of `Asymptotic/PRF.lean`) or by truncation
++(`PRG.Secure.truncateTo_easy`/`_negligible`, `Asymptotic/PRFLemmas.lean`); the length-doubling
++generator of Theorem 97.3 is the separate predicate `DoublingPRG` (`Asymptotic/PRF.lean`),
++produced from any secure `PRG` by `PRG.doubling` (`PRG.Secure.doubling`). "PRGs exist" means the
++same under either reading, since a generator expanding only from some `n₀` on is made to expand
++everywhere by truncating to `n + 1` bits and changing it below `n₀` (a remark, not formalized).
++(Gate 03c, finding 1; ruling G3-2; DESIGN §5.25.) -/
+ structure PRG where
+   /-- The output length `ℓ(n)` at seed length `n`. -/
+   stretch : PolyExpr
+   /-- The generator at seed length `n`. -/
+   G : ∀ n, (Fin n → Bool) → (Fin (stretch.eval n) → Bool)
+-  /-- Expansion: `|G(x)| > |x|` [PS10, Definition 77.1 (2)]. -/
++  /-- Expansion: `|G(x)| > |x|` [PS10, Definition 77.1 (2)], at every seed length `n`,
++  `n = 0` included (see the Deviation above). -/
+   expands : ∀ n, n < stretch.eval n
+ 
+ namespace PRG
+@@ -130,6 +151,13 @@ def Easy (P : PRG) : Prop :=
+   ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+     ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s)
+ 
++/-- **Efficiency unfolded** [PS10, Definition 77.1 (1)]: `G` is easy iff some polynomial-time
++string function `F` sends every seed string `s` of length `n` to `G n s`. -/
++theorem easy_iff (P : PRG) :
++    P.Easy ↔ ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
++      ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s) :=
++  Iff.rfl
++
+ /-- The **output ensemble** `{x ← U_n : G(x)}_n` of a generator [PS10, Definition 77.1 (3)]:
+ seeds are the uniform `n`-bit strings and the sampler is `G n`. -/
+ def ensemble (P : PRG) : Ensemble P.stretch where
+@@ -147,9 +175,8 @@ def Secure (P : PRG) : Prop := P.Easy ∧ P.ensemble.Pseudorandom
+ /-- Unfolding of the output ensemble: the seed type at `n` is `{0,1}^n`. -/
+ theorem ensemble_σ (P : PRG) (n : ℕ) : P.ensemble.σ n = (Fin n → Bool) := rfl
+ 
+-/-- The output length of a generator is positive at every seed length (from the expansion
+-clause); this is the hypothesis `0 < ℓ(n)` of [PS10, Theorem 75.4] for output ensembles of
+-generators. -/
++/-- The output length of a generator is positive at every seed length: `0 < ℓ(n)` for all `n`
++(from the expansion clause `n < ℓ(n)` of [PS10, Definition 77.1 (2)]). -/
+ theorem stretch_pos (P : PRG) (n : ℕ) : 0 < P.stretch.eval n :=
+   lt_of_le_of_lt (Nat.zero_le n) (P.expands n)
+ 
+
+## ===== B: the 03c repair commit bc2aab59333e27729c9fbac3052cd650bf62c3aa (in #201), outside this pack's files =====
+diff --git a/TCSlib/Cryptography/Asymptotic.lean b/TCSlib/Cryptography/Asymptotic.lean
+index b49fcc04..15206d5c 100644
+--- a/TCSlib/Cryptography/Asymptotic.lean
++++ b/TCSlib/Cryptography/Asymptotic.lean
+@@ -14,6 +14,7 @@ import TCSlib.Cryptography.Asymptotic.Universal
+ import TCSlib.Cryptography.Asymptotic.Pseudorandom
+ import TCSlib.Cryptography.Asymptotic.NextBit
+ import TCSlib.Cryptography.Asymptotic.GoldreichLevinDomain
++import TCSlib.Cryptography.Asymptotic.HardCoreCollection
+ import TCSlib.Cryptography.Asymptotic.HardCore
+ import TCSlib.Cryptography.Asymptotic.HardCorePermutation
+ import TCSlib.Cryptography.Asymptotic.Encryption
+@@ -63,6 +64,8 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
+   Algorithm 76.5].
+ * `GoldreichLevinDomain` — the concrete Goldreich–Levin bound for `x` uniform on an encoded
+   finite domain (the collection form of [PS10, Theorem 87.3]; run-3 audit P4-2).
++* `HardCoreCollection` — Goldreich–Levin for collections of one-way functions and of
++  (trapdoor) permutations [PS10, Theorem 87.3, collection form, as used in Theorem 104.4].
+ * `HardCore` — hard-core predicates, the PRG from a one-way permutation, expansion and
+   Goldreich–Levin [PS10, Definition 78.3, Theorems 79.4, 87.3, Lemma 80.5, Corollary 81.7].
+ * `HardCorePermutation` — the balanced Goldreich–Levin permutation `PermFamily.glHalf`:
+diff --git a/TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean b/TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean
+index 3f212d16..a5ece521 100644
+--- a/TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean
++++ b/TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain.lean
+@@ -45,7 +45,7 @@ None: the file proves lemmas about the existing `HardcoreBit.guessRecover`.
+ * `TCSlib.Cryptography.HardcoreBit.invProb_guessInverter_enc_pad` — the same bound on the
+   sample space `(α × {0,1}^m) × coins` of the padded collection (the padding `r` is carried
+   along unused), the form consumed by `Collection.OneWay.glPad_hardCore`
+-  (`Asymptotic/HardCore.lean`).
++  (`Asymptotic/HardCoreCollection.lean`).
+ 
+ ## References
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean b/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
+index 08830e54..2b655080 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
+@@ -17,7 +17,7 @@ The collection form of [PS10, Theorem 87.3] (needed by [PS10, Theorem 104.4] and
+ if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at
+ generated indices, then `⟨encD_i x, r⟩` is hard-core for the padded collection
+ `g_i(x, r) = ⟨f_i(x), r⟩`. This file supplies the machine side for
+-`Collection.OneWay.glPad_hardCore` (`Asymptotic/HardCore.lean`):
++`Collection.OneWay.glPad_hardCore` (`Asymptotic/HardCoreCollection.lean`):
+ 
+ * the evaluator of the bit `⟨padFin(encD_i x), r⟩` on `⟨i, ⟨encD_i x, r⟩⟩` (`padToLen`, `ipFun`);
+ * the recovery machine `glMachine` of `Asymptotic/HardCoreGL.lean` applied to the predictor
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+index 1676781e..8ecd4575 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+@@ -901,7 +901,8 @@ namespace TCSlib.Cryptography
+ 
+ open Complexity Turing Finset
+ 
+-/-! ## Helpers of the padded families and collections (`Asymptotic/HardCore.lean`) -/
++/-! ## Helpers of the padded families and collections (`Asymptotic/HardCore.lean`,
++`Asymptotic/HardCoreCollection.lean`) -/
+ 
+ /-- The re-encoding `(x ‖ r, c) ↦ ((x, r), c)` of the experiments. -/
+ def splitPair (a b : ℕ) (ρ : Type*) :
+diff --git a/audits/pass-shelat/Checks.lean b/audits/pass-shelat/Checks.lean
+index db0e077b..c8459c16 100644
+--- a/audits/pass-shelat/Checks.lean
++++ b/audits/pass-shelat/Checks.lean
+@@ -392,3 +392,30 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ #print axioms TCSlib.Cryptography.not_weakOneWay_id
+ #print axioms TCSlib.Cryptography.not_worstCaseOneWay_id
+ #print axioms TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id
++
++-- ## Gate 03c repairs (pack 03c: Pseudorandom, NextBit, HardCore, HardCoreClaims, HardCoreCollection)
++-- Finding 2 (ruling G3-7b): Thm 75.4 restated without `0 < ℓ(n)` (its print is above, C3b:
++-- `Ensemble.NextBitUnpredictable.pseudorandom`); the case `ℓ(n) = 0`.
++#print axioms TCSlib.Cryptography.prgAdv_eq_zero_of_length_eq_zero
++-- Finding 6: the claims of `HardCoreClaims.lean`, the pack's two non-vacuity theorems and the
++-- permutation-collection hard-core form.
++#print axioms TCSlib.Cryptography.fact_88_4
++#print axioms TCSlib.Cryptography.thm_87_3_1
++#print axioms TCSlib.Cryptography.thm_87_3_2
++#print axioms TCSlib.Cryptography.thm_87_3_3
++#print axioms TCSlib.Cryptography.thm_87_3_6
++#print axioms TCSlib.Cryptography.thm_87_3_7
++#print axioms TCSlib.Cryptography.thm_87_3_8
++#print axioms TCSlib.Cryptography.thm_87_3_9
++#print axioms TCSlib.Cryptography.not_hardCore_const
++#print axioms TCSlib.Cryptography.Ensemble.uniform_nextBitUnpredictable
++#print axioms TCSlib.Cryptography.PermCollection.OneWay.glPad_hardCore
++-- Finding 11: the unfolding lemmas of the pack's definitions.
++#print axioms TCSlib.Cryptography.PRG.easy_iff
++#print axioms TCSlib.Cryptography.hardCore_iff
++#print axioms TCSlib.Cryptography.PRG.oneBit_stretch
++#print axioms TCSlib.Cryptography.PRG.oneBit_G
++#print axioms TCSlib.Cryptography.owpPredictorSnoc_eq
++#print axioms TCSlib.Cryptography.oneBitStep_eq
++#print axioms TCSlib.Cryptography.expandRed_eq
++#print axioms TCSlib.Cryptography.Collection.glBit_eq
+diff --git a/briefs/pass-shelat/DESIGN.md b/briefs/pass-shelat/DESIGN.md
+index 65a36662..5bacfec9 100644
+--- a/briefs/pass-shelat/DESIGN.md
++++ b/briefs/pass-shelat/DESIGN.md
+@@ -689,11 +689,14 @@ once with `uprob_bool_prod`.
+ 
+ ### 2.12 `Asymptotic/{Pseudorandom,NextBit,HardCore}.lean` — definition shapes
+ 
++(The collection form of Thm 87.3, `Collection.glPad` … `goldreich_levin_coll`, moved unchanged to
++`Asymptotic/HardCoreCollection.lean`, which `HardCore.lean` imports; gate 03c, finding 11.)
++
+ ```lean
+ structure PRG where                                           -- [PS10, Def 77.1], length-regular
+   stretch : PolyExpr
+   G : ∀ n, (Fin n → Bool) → (Fin (stretch.eval n) → Bool)
+-  expands : ∀ n, n < stretch.eval n
++  expands : ∀ n, n < stretch.eval n                           -- every n, n = 0 included: 2n, n^c excluded (§5.25; gate 03c, G3-2)
+ def PRG.Easy (P : PRG) : Prop := ∃ F, PolyTimeComputable F ∧ ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (P.G n s)
+ def PRG.ensemble (P : PRG) : Ensemble P.stretch               -- seeds Fin n → Bool
+ def PRG.Secure (P : PRG) : Prop := P.Easy ∧ P.ensemble.Pseudorandom
+@@ -702,7 +705,7 @@ noncomputable def nextBitProb {ℓ} (X : σ → Fin ℓ → Bool) (i : Fin ℓ)
+   uprob fun z : σ × ρ => A (fun j => X z.1 (Fin.castLE i.isLt.le j)) z.2 = X z.1 i
+ def Ensemble.NextBitUnpredictable (X : Ensemble ℓ) : Prop :=   -- [PS10, Def 75.2], i < ℓ n, A gets 1^n and the prefix
+   ∀ A : NUPPT, ∃ ε, Negligible ε ∧ ∀ n (i : Fin (ℓ.eval n)), nextBitProb (X.X n) i (A.predictor n i) ≤ 1/2 + ε n
+-theorem Ensemble.NextBitUnpredictable.pseudorandom (hℓ : ∀ n, 0 < ℓ.eval n) (h : X.NextBitUnpredictable) : X.Pseudorandom   -- [75.4]
++theorem Ensemble.NextBitUnpredictable.pseudorandom (h : X.NextBitUnpredictable) : X.Pseudorandom   -- [75.4]; the source's statement (hℓ : ∀ n, 0 < ℓ.eval n dropped at gate 03c, G3-7b)
+ 
+ def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) → Bool) : Prop :=   -- [PS10, Def 78.3]
+   (∃ H, PolyTimeComputable H ∧ ∀ n x, H (NUPPT.advInput n (List.ofFn x)) = [h n x]) ∧
+@@ -711,7 +714,12 @@ def HardCore (𝓕 : FunFamily) (h : ∀ n, (Fin (𝓕.inLen.eval n) → Bool) 
+ 
+ Theorem shapes of the HardCore file (statement phase): `owp_hardcore_prg (P : PermFamily) (h) : OneWayPermutation P → HardCore P.toFunFamily h → (PRG with G n s = f n s ‖ h n s).Secure`
+ (79.4, via `exists_owpPredictorBits`); `prg_expand (P : PRG) (ℓ : PolyExpr) : P.Secure → (prgExtBits-based PRG of stretch ℓ).Secure`
+-(80.5, via `exists_prgExtBitsRed_ge`, hybrid index as advice, `iterate` for the evaluator);
++(80.5, via `exists_prgExtBitsRed_ge`, hybrid index as advice, `iterate` for the evaluator; **as shipped**
++(gate 03c, finding 4): `prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
++(hℓ : ∀ n, n < ℓ.eval n) (h : (PRG.oneBit G).Secure) : (PRG.expand G ℓ hℓ).Secure`, the one-bit input of the
++text's Lemma 80.5 ("Let `G : {0,1}^n → {0,1}^{n+1}` be a PRG"); a general secure `P : PRG` reaches it through
++`PRG.truncate` with `PRG.Secure.truncate : (PRG.oneBit P.truncate).Secure` in `Asymptotic/PRF.lean`, and `hℓ`
++carries the cost of §5.25);
+ `cor_81_7` (closed form `prgExt_succ`); `goldreich_levin (𝓕) : StrongOneWay 𝓕 → StrongOneWay (glPad 𝓕) ∧ HardCore (glPad 𝓕) glBit`
+ (87.3, via `invProb_guessInverter`, `k(n) := ⌈log₂(2n^{2c+1}+1)⌉` hard-wired, `iterateFind`
+ for the `n(2^k−1)` calls, `majority`, `pairXor`); `goldreich_levin_coll (F : Collection) …`
+@@ -1041,6 +1049,17 @@ Issues found in this synthesis and resolved here (not raised by the panel):
+     decodes only if it is the encoding of its value — so the outputs of the sampler and of the
+     trapdoor inverter are encodings ([PS10, Defs 41.1 (2), 56.1 (6)]: "an element of `D_i`",
+     "computes `f_i^{-1}(y)`"); every decoder of the library is canonical.
++25. `PRG.expands` (gate 03c, finding 1; ruling G3-2): expansion at every seed length, `n = 0`
++    included (Def 77.1 (2)'s `|G(x)| > |x|` read literally at `x = ε`). A `PolyExpr` stretch has
++    coefficients in ℕ, so stretches with `ℓ(0) = 0` (exactly `2n`) or `ℓ(1) = 1` (`n^c`) are not
++    `PRG`s, although the text uses them (the length-doubling `G` of Alg 92.1 and Thm 97.3; Lem 80.5's
++    "for any polynomial `ℓ`"); `PRG.expand`/`prg_expand` take the same `hℓ : ∀ n, n < ℓ(n)`. Thm 97.3
++    uses the separate predicate `DoublingPRG`, produced from any secure `PRG` by `PRG.doubling`
++    (`PRG.Secure.doubling`, `Asymptotic/PRF.lean`); elsewhere `2n + 1`, `n^c + 1` are reached by
++    `prg_expand` from the one-bit truncation `PRG.truncate`, and shorter outputs by truncation
++    (`PRG.Secure.truncateTo_easy`/`_negligible`). Alg 92.1 needs only `n ≤ ℓ(n)`. "PRGs exist" has the
++    same meaning under every reading (truncate to `n + 1` bits, change below `n₀`), and no statement
++    of ch. 2–8 is vacuous by it.
+ 
+ ---
+ 
+diff --git a/briefs/pass-shelat/inventory-ch3.md b/briefs/pass-shelat/inventory-ch3.md
+index 1730a3a1..681ab7d3 100644
+--- a/briefs/pass-shelat/inventory-ch3.md
++++ b/briefs/pass-shelat/inventory-ch3.md
+@@ -316,6 +316,9 @@ distinguisher `D : (Fin ℓ → Bool) → ρ → Bool`, there exist `i : Fin ℓ
+   equals `X s i` or `¬X s i` each with probability `1/2` independently of everything else
+   (`uprob_bool_prod` after the bijection `(b, s, u) ↦ (s, update u i (xor b (X s i)))`, as in
+   `acceptProb_id_owp`). Hence `|P(H^{i+1}) − P(H̃^{i+1})| ≥ 2 prgAdv/ℓ`.
++  *[Annotation, gate 03c finding 5: that map is 2-to-1 (the original `u_i` is lost), not a
++  bijection; the formal proof adjoins an ignored uniform bit and uses the involution of
++  `uprob_split_bit` in `NextBit.lean` (the run-3 repair labelled P2-3 there).]*
+ * predictor analysis: `nextBitProb X i (nextBitPred D i false) = 1/2 + (P(H^{i+1}) − P(H̃^{i+1}))/2`
+   — the completed string is a sample of `H^{i+1}` when `u_{i+1} = t_{i+1}` and of `H̃^{i+1}`
+   otherwise (Claim-73.a's identity with `X¹ = H^{i+1}`, `X⁰ = H̃^{i+1}`); `flip = true` gives

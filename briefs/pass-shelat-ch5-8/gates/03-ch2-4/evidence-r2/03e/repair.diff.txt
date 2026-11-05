@@ -1,0 +1,1862 @@
+# Gate 03e, round 2: the repair diff
+#
+# Section A: every change to this pack's Lean files between the round 1 head a3c5fa8b72e50939822f22364647dc844a3914a0 and the round 2 pin e79397eaf68b156b9db091f464741f6eb75b9c28, whichever repair made it.
+# Section B: the rest of the 03e repair commit 30f90d36ab23d8f6b9ac99e4608c38174f3bfcb1 (on a3c5fa8b72e50939822f22364647dc844a3914a0; in #199): its changes outside this pack's files (consumers, Checks.lean, records).
+
+## ===== A: this pack's files, a3c5fa8b72e50939822f22364647dc844a3914a0..e79397eaf68b156b9db091f464741f6eb75b9c28 =====
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean b/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
+index 0e00e38e..f9b9bc52 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
+@@ -8,6 +8,7 @@ import TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas
+ import TCSlib.Cryptography.ZeroKnowledge.Interaction
+ import TCSlib.Cryptography.Pseudorandom.Indistinguishability
+ import TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation
++import TCSlib.Cryptography.Asymptotic.HardCorePermutation
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -71,15 +72,16 @@ argument, colours padded to `n` bits (DQ4). In the string form `Com ⟨v, r⟩`
+   `BitHiding.owpComStr_hides` — the bitwise hybrid (Claim-127.d).
+ * `TCSlib.Cryptography.owp_commitment` — **[PS10, Theorem 126.4]**: a one-way permutation
+   with a hard-core predicate gives a commitment scheme; `exists_commitment_of_owp_hardCore` —
+-  the existential headline; `bitCom_false_eq_owpGenPRG` — `Com(0, ·)` is the generator of
+-  [PS10, Theorem 79.4]; `owpComStr_polyTimeComputable` — its `Com` is polynomial-time
+-  (the bitwise loop `CommitmentLemmas.ComLoop`).
++  the existential headline; `exists_commitment_of_owp` — the text's form, from a one-way
++  permutation alone (Goldreich–Levin, `exists_owp_hardCore`); `bitCom_false_eq_owpGenPRG` —
++  `Com(0, ·)` is the generator of [PS10, Theorem 79.4]; `owpComStr_polyTimeComputable` — its
++  `Com` is polynomial-time (the bitwise loop `CommitmentLemmas.ComLoop`).
+ 
+ ## References
+ 
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (§4.7.1: Definition 126.3, Theorem 126.4; §3.3.3–3.3.4: Definition 78.3, Theorem 79.4;
+-  §3.5.2: Theorem 104.4.)
++  §3.5.2: Theorem 104.4; Theorem 87.3, Goldreich–Levin.)
+ * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
+   draft of 22 January 2026, §3.3.2 (Construction 3.2, Theorem 3.2) and Lemma 3.3 (the
+   multicopy hybrid argument).
+@@ -102,7 +104,10 @@ parameter `n`) distinguishes `{r ← {0,1}^{ℓ(n)} : Com(v₀, r)}` from
+ **Deviation:** `Commitment`: binding clause with `v₀ ≠ v₁` (source error); `n` an explicit
+ argument, colours padded to `n` bits (DQ4). As printed, binding is unsatisfiable (`v₀ = v₁`,
+ `r₀ = r₁`); the string form's parameter is `n = |v|`, typed users supply `n` explicitly; the
+-distinguisher's verdict is the string `[true]` (`NUPPT.distinguisherL`, Deviation 4). -/
++distinguisher's verdict is the string `[true]` (`NUPPT.distinguisherL`, Deviation 4). Binding
++constrains only values of the same length `n` with randomness of length exactly `ℓ(n)`, as in
++the text, so a protocol that opens a general `Commitment` must check those lengths, as the
++3-colouring verifier `colVerify` does (gate 03e, note 12). -/
+ structure Commitment (Com : List Bool → List Bool) (ℓ : PolyExpr) : Prop where
+   /-- `Com` is computable in deterministic polynomial time. -/
+   easy : PolyTimeComputable Com
+@@ -897,4 +902,12 @@ theorem exists_commitment_of_owp_hardCore
+   obtain ⟨P, h, hP, hh⟩ := hex
+   exact ⟨owpComStr P h, owpComLen, owp_commitment P h hP hh⟩
+ 
++/-- **[PS10, Theorem 126.4], the text's form: if one-way permutations exist, then commitment
++schemes exist** (gate 03e, note 13): the hard-core predicate of Goldreich–Levin for a padded
++one-way permutation (`exists_owp_hardCore`, [PS10, Theorem 87.3]) plugged into
++`exists_commitment_of_owp_hardCore`. -/
++theorem exists_commitment_of_owp (h : ∃ P : PermFamily, OneWayPermutation P) :
++    ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ :=
++  exists_commitment_of_owp_hardCore (exists_owp_hardCore h)
++
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+index 39e32c86..f6c4bc5f 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Defs.lean
+@@ -7,6 +7,8 @@ import TCSlib.Cryptography.ZeroKnowledge.Interaction
+ import TCSlib.Cryptography.Asymptotic.Adversary
+ import TCSlib.Cryptography.Asymptotic.Sampling
+ import TCSlib.Cryptography.Foundations.Negligible
++import TCSlib.Cryptography.ZeroKnowledge.EncodingMachines
++import TCSlib.Complexity.Randomized.Closure
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -37,6 +39,22 @@ and what the non-uniform reduction of [PS10, Proposition 128.8] needs); the erro
+ a function of `|x|` (the text's `e(n)` leaves `n` undefined); the honest-verifier notion is
+ stated for a protocol and a witness relation without assuming the proof property, which the
+ theorems add separately.
++The bound `Lz` is necessary, not only convenient (gate 03e, note 9): the distinguisher runs in
++time polynomial in its input, the encoded view, which contains `z`; with `|z| ≥ 2^n` it could
++invert a one-way permutation on `n`-bit inputs and open the unopened commitments of the
++3-colouring protocol, so computational zero-knowledge would fail for every protocol whose
++hiding is only computational. Read literally, [PS10, Definition 121.2] (every
++`z ∈ {0,1}*`, with `D` polynomial-time in its input) has the same defect. For the same reason
++the distinguisher's advice is indexed by the parameter `|x|`, not by its input length.
++
++**Perfect zero-knowledge (ruling G3-4 of gate 03).** With strict simulators and honest parties
++drawing polynomially many fair coins (D8, D10), no protocol of the source attains `PerfectZK`
++or `PerfectZKAbort` (see their docstrings). The source's perfect zero-knowledge protocol,
++graph isomorphism [PS10, Theorem 122.3], is formalized as `StatZK` with negligible error
++(`gi_statZK`, `ZeroKnowledge/GraphIsomorphismZK.lean`), the substantive instance of the
++notions of this file; `perfectZK_zeroRounds` is a degenerate one. The abort form implies
++statistical zero-knowledge with error `2^{-|x|}` (`PerfectZKAbort.statZK`), by running the
++aborting simulator `|x|` times on fresh coins (`AbortRetry.retry`).
+ 
+ ## Main definitions
+ 
+@@ -47,7 +65,10 @@ theorems add separately.
+ * `TCSlib.Cryptography.StatZK`, `TCSlib.Cryptography.PerfectZK`,
+   `TCSlib.Cryptography.PerfectZKAbort` — statistical zero-knowledge with error `δ(|x|)`,
+   perfect zero-knowledge (`δ = 0`), and the abort form of perfect zero-knowledge
+-  [Goldreich, *Foundations of Cryptography I*, Definition 4.3.1] (Def-122.a).
++  [Gol01, Definition 4.3.1] (Def-122.a).
++* `TCSlib.Cryptography.AbortRetry.attempt`, `TCSlib.Cryptography.AbortRetry.retry` — one
++  attempt of an aborting simulator on a coin block, and the simulator that retries it `|x|`
++  times (as functions of the machine layout).
+ 
+ ## Main results
+ 
+@@ -57,6 +78,15 @@ theorems add separately.
+ * `TCSlib.Cryptography.ZK.hvzk` — zero-knowledge implies honest-verifier zero-knowledge.
+ * `TCSlib.Cryptography.PerfectZK.zk`, `TCSlib.Cryptography.StatZK.mono` — perfect
+   zero-knowledge is zero-knowledge; weakening the error.
++* `TCSlib.Cryptography.perfectZK_zeroRounds` — non-vacuity: the protocol with no messages is
++  perfectly zero-knowledge.
++* `TCSlib.Cryptography.PerfectZKAbort.statZK`, `TCSlib.Cryptography.PerfectZKAbort.zk` — the
++  abort form implies statistical zero-knowledge with error `2^{-|x|}`, hence zero-knowledge
++  (`TCSlib.Cryptography.AbortRetry.statClose_retry`: the first non-`⊥` output of `K`
++  independent runs of an aborting sampler is `2^{-K}`-close to its conditional law;
++  `TCSlib.Cryptography.AbortRetry.exists_retrySimulator`: the retrying simulator is a uniform
++  PPT, by `EncodingMachines.polyTimeComputable_firstIdx`, an instance of
++  `Complexity.polyTimeComputable_iterateFind`).
+ * `TCSlib.Cryptography.negligible_inv_pow_sqrt_div`,
+   `TCSlib.Cryptography.negligible_two_pow_neg_sqrt_div`,
+   `TCSlib.Cryptography.negligible_exp_neg_sqrt_div`,
+@@ -69,8 +99,8 @@ theorems add separately.
+   (§4.6 Zero-knowledge, pp. 120–122.)
+ * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
+   draft of 22 January 2026, Lemma 3.1 (statistical distance bounds every advantage).
+-* O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge University
+-  Press, 2001, Definition 4.3.1 (perfect zero-knowledge with abort).
++* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
++  University Press, 2001, Definition 4.3.1 (perfect zero-knowledge with abort).
+ -/
+ 
+ namespace TCSlib.Cryptography
+@@ -114,7 +144,12 @@ the advantage of `D` between the view of `V'` in `P(x, y) ↔ V'(x, z)` and `S(x
+ `ε(|x|)`.
+ 
+ **Deviation (D8):** strict PPT simulator; auxiliary inputs bounded by `∀ Lz : PolyExpr`;
+-simulator and distinguisher at parameter `|x|`; views encoded as `⟨⟨x, z⟩, ⟨r, msgs⟩⟩`. -/
++simulator and distinguisher at parameter `|x|`; views encoded as `⟨⟨x, z⟩, ⟨r, msgs⟩⟩`. The
++cheating verifier `V'` is only `Efficient`, with no message-prefix cap (question Q-1 of
++gate 03, ruled: no cap on `V*`), so its class is larger than the text's. Since the honest
++prover's messages are polynomially bounded in `|x|` in the proof systems
++(`Protocol.ProverBounded`, ruling G3-3 of gate 03), the view of every efficient `V'` — `x`,
++`z`, its tape and the honest prover's messages — is polynomially bounded all the same. -/
+ def ZK (π : Protocol) (R : List Bool → List Bool → Prop) : Prop :=
+   ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧
+     ∀ (Lz : PolyExpr) (D : NUPPT), ∃ ε : ℕ → ℝ, Negligible ε ∧
+@@ -134,15 +169,31 @@ def StatZK (π : Protocol) (R : List Bool → List Bool → Prop) (δ : ℕ →
+     StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S.simulate x z) (δ x.length)
+ 
+ /-- Perfect zero-knowledge [PS10, §4.6, "perfect zero-knowledge"] (Def-122.a): statistical
+-zero-knowledge with error `0`, i.e. the simulator's output has exactly the law of the view. -/
++zero-knowledge with error `0`, i.e. the simulator's output has exactly the law of the view.
++
++**Cost (D8, D10; ruling G3-4 of gate 03):** no protocol of the source attains this notion. A
++strict simulator with bit coins outputs every string with a dyadic probability, and an
++honest prover drawing polynomially many fair coins cannot draw a uniform permutation of
++`n ≥ 3` points (`n! ∤ 2^c`), so the reply of the honest graph-isomorphism prover
++[PS10, Protocol 120.6] depends on the witness. [PS10, Theorem 122.3] is formalized as
++`StatZK` with negligible error (`gi_statZK`); the instances of this notion are degenerate
++(`perfectZK_zeroRounds`). -/
+ def PerfectZK (π : Protocol) (R : List Bool → List Bool → Prop) : Prop :=
+   StatZK π R (fun _ => 0)
+ 
+-/-- Perfect zero-knowledge with abort [Goldreich, Definition 4.3.1] (Def-122.a, the GMR form):
++/-- Perfect zero-knowledge with abort [Gol01, Definition 4.3.1] (Def-122.a, the GMR form):
+ for every efficient `V'` there is a uniform PPT simulator that outputs `⊥ = []` with
+ probability at most `1/2` and whose output, conditioned on not aborting, has exactly the law
+ of the view of `V'`: for every test set `T`,
+-`Pr[T(view)] · Pr[S ≠ ⊥] = Pr[S ≠ ⊥ ∧ T(S)]`. -/
++`Pr[T(view)] · Pr[S ≠ ⊥] = Pr[S ≠ ⊥ ∧ T(S)]` (`⊥ = []` is never a view encoding).
++
++**Cost (D8, D10; ruling G3-4 of gate 03):** no protocol of the source attains this notion:
++as for `PerfectZK`, the honest graph-isomorphism prover's permutation, drawn from fair coins,
++is not uniform, so its reply depends on the witness, which no simulator sees. The abort form
++holds for ideal permutations at the concrete layer (`giSimAttempt_perfectAbort`). It implies
++statistical zero-knowledge with error `2^{-|x|}` (`PerfectZKAbort.statZK`), hence
++zero-knowledge (`PerfectZKAbort.zk`); the source's "perfect" results are stated as `StatZK`
++with negligible error. -/
+ def PerfectZKAbort (π : Protocol) (R : List Bool → List Bool → Prop) : Prop :=
+   ∀ V' : Strategy, V'.Efficient → ∃ S : NUPPT, S.Uniform ∧ ∀ x y z, R x y →
+     uprob (fun r : S.Coins x.length => S.simulate x z r = []) ≤ 1 / 2 ∧
+@@ -208,6 +259,344 @@ theorem PerfectZK.zk {π : Protocol} {R : List Bool → List Bool → Prop} (h :
+     ZK π R :=
+   StatZK.zk negligible_const_zero h
+ 
++/-- Non-vacuity (gate 03e, note 10): the protocol with no messages is perfectly
++zero-knowledge for every relation.
++
++**Proof sketch.** The view of any `V'` is `⟨x, z, r, []⟩` (no moves, `exec_zero`), and the
++simulator `NUPPT.ofPolyTimeUniform` of the layout map `w ↦ ⟨inArg w, ⟨inCoins w, []⟩⟩` with
++`V'`'s coin polynomial outputs `⟨⟨x, z⟩, ⟨r, []⟩⟩` on its own tape `r`; the prover's tape does
++not enter the view (`uprob_fst` after `Equiv.prodComm`), so the two laws coincide. -/
++theorem perfectZK_zeroRounds (P V : Strategy) (b : Bool) (R : List Bool → List Bool → Prop) :
++    PerfectZK ⟨P, V, .const 0, b⟩ R := by
++  intro V' _
++  have hF : PolyTimeComputable fun w =>
++      pairEncode (NUPPT.inArg w) (pairEncode (NUPPT.inCoins w) []) :=
++    NUPPT.polyTimeComputable_inArg.pairEncode
++      (NUPPT.polyTimeComputable_inCoins.pairEncode (polyTimeComputable_const []))
++  refine ⟨NUPPT.ofPolyTimeUniform hF V'.coins, NUPPT.ofPolyTimeUniform_uniform hF _,
++    fun x y z _ T => ?_⟩
++  have h1 : uprob (fun r : (Protocol.withV ⟨P, V, .const 0, b⟩ V').ExecCoins P x =>
++      T ((Protocol.withV ⟨P, V, .const 0, b⟩ V').viewV x y z r).encode) =
++      uprob (fun ρ : V'.Coins x.length =>
++        T (pairEncode (pairEncode x z) (pairEncode (List.ofFn ρ) []))) := by
++    rw [← uprob_comp_equiv (Equiv.prodComm _ _)]
++    exact uprob_fst (fun ρ : V'.Coins x.length =>
++      T (pairEncode (pairEncode x z) (pairEncode (List.ofFn ρ) [])))
++  have h2 : uprob (fun ρ : (NUPPT.ofPolyTimeUniform hF V'.coins).Coins x.length =>
++      T ((NUPPT.ofPolyTimeUniform hF V'.coins).simulate x z ρ)) =
++      uprob (fun ρ : V'.Coins x.length =>
++        T (pairEncode (pairEncode x z) (pairEncode (List.ofFn ρ) []))) := by
++    refine OneWay.uprob_congr fun ρ => ?_
++    rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
++    simp [NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
++  simp only [h2]
++  rw [abs_nonpos_iff, sub_eq_zero]
++  exact h1
++
++/-! ### Retrying an aborting simulator -/
++
++namespace AbortRetry
++
++open EncodingMachines Finset Complexity.StateLoop
++
++/-- One attempt of the retrying simulator on its machine layout
++`w = ⟨⟨⟨1^n, y⟩, α⟩, r⟩` at the index `t`: the simulator `S` at parameter `n = |1^n|` on the
++argument `y`, with empty advice and the `t`-th block of `S.coinLen n` coins of `r`. -/
++def attempt (S : NUPPT) (w : List Bool) (t : ℕ) : List Bool :=
++  S.output (NUPPT.layout (NUPPT.inParam w) (NUPPT.inArg w) []
++    (((NUPPT.inCoins w).drop (t * S.coinLen (NUPPT.inParam w).length)).take
++      (S.coinLen (NUPPT.inParam w).length)))
++
++/-- The retrying simulator on its machine layout `w = ⟨⟨⟨1^n, y⟩, α⟩, r⟩`
++(for the abort form of [Gol01, Definition 4.3.1], amplified by repetition): the
++first of the `n` attempts that does not output `⊥ = []` (the first accepted index,
++`EncodingMachines.firstIdx`), or `⊥` if every attempt aborts. -/
++noncomputable def retry (S : NUPPT) (w : List Bool) : List Bool :=
++  if firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length <
++      (NUPPT.inParam w).length then
++    attempt S w (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length)
++  else []
++
++/-- One attempt is polynomial-time on the indexed layout `⟨1^t, w⟩`.
++
++**Proof sketch.** The block `(r.drop (t · c)).take c` with `c = S.coinLen n` in unary
++(`unaryPoly_comp`, `unaryMul_poly`, `polyTimeComputable_pairDropPoly`, `truncate_poly`), the
++layout (`NUPPT.polyTimeComputable_layout`) and the machine of `S`
++(`NUPPT.polyTimeComputable_output`). -/
++theorem attempt_poly (S : NUPPT) :
++    PolyTimeComputable fun u => attempt S (pairSndD u) (pairFstD u).length := by
++  have congr : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → (∀ w, g w = f w) →
++      PolyTimeComputable g := fun hf h => by rw [show _ = _ from funext h]; exact hf
++  have hpar : PolyTimeComputable fun u => NUPPT.inParam (pairSndD u) :=
++    NUPPT.polyTimeComputable_inParam.comp polyTimeComputable_pairSndD
++  have hr : PolyTimeComputable fun u => NUPPT.inCoins (pairSndD u) :=
++    NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairSndD
++  have hc : PolyTimeComputable fun u =>
++      List.replicate (S.coinLen (NUPPT.inParam (pairSndD u)).length) true :=
++    unaryPoly_comp S.coins hpar
++  have ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true :=
++    unaryLength_poly polyTimeComputable_pairFstD
++  have hdrop : PolyTimeComputable fun u => (NUPPT.inCoins (pairSndD u)).drop
++      ((pairFstD u).length * S.coinLen (NUPPT.inParam (pairSndD u)).length) :=
++    congr ((polyTimeComputable_pairDropPoly .var).comp ((unaryMul_poly ht hc).pairEncode hr))
++      fun u => by simp
++  have hblk := truncate_poly hdrop hc
++  have hlay := NUPPT.polyTimeComputable_layout hpar
++    (NUPPT.polyTimeComputable_inArg.comp polyTimeComputable_pairSndD)
++    (polyTimeComputable_const []) hblk
++  exact congr (S.polyTimeComputable_output.comp hlay) fun u => rfl
++
++/-- **The retrying simulator is polynomial-time** as a function of its layout: the first
++non-aborting index is `EncodingMachines.polyTimeComputable_firstIdx` (an instance of the
++repetition lemma `Complexity.polyTimeComputable_iterateFind`) with the test of
++`attempt_poly`, and the output is that attempt (`attempt_poly` at the found index) or `[]`
++(`polyTimeComputable_ite`). -/
++theorem retry_poly (S : NUPPT) : PolyTimeComputable (retry S) := by
++  have congr : ∀ {f g : List Bool → List Bool}, PolyTimeComputable f → (∀ w, g w = f w) →
++      PolyTimeComputable g := fun hf h => by rw [show _ = _ from funext h]; exact hf
++  have hatt := attempt_poly S
++  have hp : PolyTimeComputable fun u =>
++      [decide (attempt S (pairSndD u) (pairFstD u).length ≠ [])] :=
++    congr (ltTest_poly (unaryConst_poly 0) (unaryLength_poly hatt)) fun u => by
++      simp [List.length_pos_iff]
++  have hN : PolyTimeComputable fun w => List.replicate (NUPPT.inParam w).length true :=
++    unaryLength_poly NUPPT.polyTimeComputable_inParam
++  have hidx := polyTimeComputable_firstIdx (p := fun w t => decide (attempt S w t ≠ [])) hp hN
++  have hsel : PolyTimeComputable fun w => attempt S w
++      (firstIdx (fun t => decide (attempt S w t ≠ [])) (NUPPT.inParam w).length) :=
++    congr (hatt.comp (hidx.pairEncode polyTimeComputable_id)) fun w => by simp
++  refine congr (polyTimeComputable_ite (ltTest_poly hidx hN) hsel (polyTimeComputable_const []))
++    fun w => ?_
++  simp only [retry, decide_eq_true_eq]
++
++/-- **The retrying simulator is a uniform PPT**: `NUPPT.ofPolyTimeUniform` of `retry_poly`
++with `|x|` blocks of `S.coinLen |x|` coins; on `(x, z)` it computes `retry S` on the layout
++`⟨⟨⟨1^{|x|}, ⟨x, z⟩⟩, []⟩, r⟩` (`NUPPT.runAtL_ofPolyTimeUniform`). -/
++theorem exists_retrySimulator (S : NUPPT) :
++    ∃ S' : NUPPT, S'.Uniform ∧ S'.coins = .mul .var S.coins ∧
++      ∀ x z (r : S'.Coins x.length), S'.simulate x z r =
++        retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) :=
++  ⟨NUPPT.ofPolyTimeUniform (retry_poly S) (.mul .var S.coins),
++    NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun x z r => by
++      rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
++      rfl⟩
++
++/-- The first hit of `K` draws read through `EncodingMachines.firstIdx`: if `a t` is `g` of
++the `t`-th draw and `q t` tests `E` on it (for `t < K`), then the first hit mapped by `g` and
++defaulted to `d` is `a` at the first index accepted by `q`, or `d` if there is none.
++
++**Proof sketch.** If `i := firstIdx q K < K`, the draw `i` is in `E` (`q_firstIdx`) and no
++earlier draw is (`firstIdx_min`); splitting `List.finRange K` at `i`
++(`List.drop_eq_getElem_cons`, `List.take_append_drop`, `List.getElem_finRange`) gives
++`firstHit E xs = some (xs i)` by `List.findSome?_eq_some_iff`. Otherwise no draw is in `E`
++(`firstIdx_eq_iff`) and `firstHit E xs = none` (`firstHit_eq_none_iff`). -/
++theorem firstHit_map_getD_eq {α β : Type*} (E : α → Prop) [DecidablePred E] {K : ℕ}
++    (xs : Fin K → α) (g : α → β) (d : β) (a : ℕ → β) (q : ℕ → Bool)
++    (ha : ∀ t (ht : t < K), a t = g (xs ⟨t, ht⟩))
++    (hq : ∀ t (ht : t < K), q t = decide (E (xs ⟨t, ht⟩))) :
++    ((firstHit E xs).map g).getD d = if firstIdx q K < K then a (firstIdx q K) else d := by
++  split_ifs with h
++  · set i := firstIdx q K with hi_def
++    have hEi : E (xs ⟨i, h⟩) := by
++      have := q_firstIdx h
++      rw [hq i h] at this
++      exact of_decide_eq_true this
++    have hmin : ∀ j (hj : j < i), ¬ E (xs ⟨j, hj.trans h⟩) := fun j hj hE => by
++      have := firstIdx_min hj
++      rw [hq j (hj.trans h)] at this
++      exact absurd (decide_eq_true hE) (by rw [this]; decide)
++    have hsome : firstHit E xs = some (xs ⟨i, h⟩) := by
++      unfold firstHit
++      rw [List.findSome?_eq_some_iff]
++      refine ⟨(List.finRange K).take i, ⟨i, h⟩, (List.finRange K).drop (i + 1), ?_, ?_, ?_⟩
++      · have hlen : i < (List.finRange K).length := by simpa using h
++        have hsplit : List.finRange K = (List.finRange K).take i ++
++            (List.finRange K)[i] :: (List.finRange K).drop (i + 1) := by
++          rw [← List.drop_eq_getElem_cons hlen, List.take_append_drop]
++        rw [List.getElem_finRange] at hsplit
++        exact hsplit
++      · simp [hEi]
++      · intro j hj
++        obtain ⟨k, hk, rfl⟩ := List.mem_take_iff_getElem.1 hj
++        have hki : k < i := lt_of_lt_of_le hk (min_le_left _ _)
++        simp [hmin k hki]
++    rw [hsome, ha i h]
++    rfl
++  · have hall := firstIdx_eq_iff.1 (le_antisymm firstIdx_le (not_lt.1 h))
++    have hnone : firstHit E xs = none := (firstHit_eq_none_iff E xs).2 fun t hE => by
++      have := hall t t.isLt
++      rw [hq t t.isLt] at this
++      exact absurd (decide_eq_true hE) (by rw [this]; decide)
++    rw [hnone]
++    rfl
++
++/-- **Retrying an aborting sampler** (amplification by repetition): let `g` be a
++sampler on a finite uniform space `Ω`, `E` the event "`g` does not abort", with
++`Pr[¬ E] ≤ 1/2`, and suppose the output of `g` conditioned on `E` has the law of the sampler
++`Y`. Then the output of `g` on the first of `K` independent draws in `E` (the default `d₀` if
++there is none) is within `2^{-K}` of `Y`.
++
++**Proof sketch.** Let `p := Pr[E] ≥ 1/2` and `f := (1 - p)^K`, the probability that no draw
++is in `E` (`uprob_firstHit_none`). Each `a ∈ E` is the first hit with the same probability
++`q₀` (`firstHit_uniform_of_some`), so for a test set `T`, splitting over the fibres of
++`firstHit` (`uprob_comp_eq_sum_fiber`, `Fintype.sum_option`),
++`Pr[T(retry)] = [T d₀] · f + q₀ · #{a ∈ E : T (g a)}`, and with `T := ⊤`,
++`1 = f + q₀ · #E`. The conditional-law hypothesis times `|Ω|` is
++`Pr[T(Y)] · #E = #{a ∈ E : T (g a)}`, so `Pr[T(retry)] = [T d₀] · f + (1 - f) · Pr[T(Y)]`
++(`linear_combination`) and `|Pr[T(Y)] - Pr[T(retry)]| = f · |Pr[T(Y)] - [T d₀]| ≤ f ≤ 2^{-K}`. -/
++theorem statClose_retry {Ω τ : Type*} [Fintype Ω] [DecidableEq Ω] [Nonempty Ω] [Fintype τ]
++    (E : Ω → Prop) [DecidablePred E] (g : Ω → List Bool) (Y : τ → List Bool) (d₀ : List Bool)
++    (habort : uprob (fun ω => ¬ E ω) ≤ 1 / 2)
++    (hcond : ∀ T : List Bool → Prop,
++      uprob (fun t => T (Y t)) * uprob E = uprob (fun ω => E ω ∧ T (g ω)))
++    (K : ℕ) :
++    StatClose Y (fun ws : Fin K → Ω => ((firstHit E ws).map g).getD d₀) ((2 : ℝ)⁻¹ ^ K) := by
++  classical
++  intro T
++  have hpE : uprob E = 1 - uprob (fun ω => ¬ E ω) := by rw [uprob_not]; ring
++  obtain ⟨d, hd⟩ : ∃ d, E d := by
++    by_contra hne
++    push_neg at hne
++    have h0 : uprob E = 0 := by
++      rw [← uprob_false (α := Ω)]
++      exact OneWay.uprob_congr fun ω => ⟨fun h => hne ω h, False.elim⟩
++    linarith
++  have hsome : ∀ a, E a → uprob (fun xs : Fin K → Ω => firstHit E xs = some a) =
++      uprob (fun xs : Fin K → Ω => firstHit E xs = some d) :=
++    fun a ha => firstHit_uniform_of_some E K ha hd
++  have hnot : ∀ a, ¬ E a → uprob (fun xs : Fin K → Ω => firstHit E xs = some a) = 0 := by
++    intro a ha
++    rw [← uprob_false (α := Fin K → Ω)]
++    exact OneWay.uprob_congr fun xs => ⟨fun h => ha (firstHit_eq_some_imp E h), False.elim⟩
++  have hdec : ∀ S' : Option Ω → Prop, uprob (fun xs : Fin K → Ω => S' (firstHit E xs)) =
++      (if S' none then (1 - uprob E) ^ K else 0) +
++        uprob (fun xs : Fin K → Ω => firstHit E xs = some d) *
++          (univ.filter fun a => E a ∧ S' (some a)).card := by
++    intro S'
++    rw [uprob_comp_eq_sum_fiber (firstHit E) S', sum_filter, Fintype.sum_option,
++      uprob_firstHit_none E K]
++    congr 1
++    rw [mul_comm, ← nsmul_eq_mul, ← sum_const, sum_filter]
++    refine sum_congr rfl fun a _ => ?_
++    by_cases hSa : S' (some a)
++    · by_cases hEa : E a
++      · simp [hSa, hEa, hsome a hEa]
++      · simp [hSa, hEa, hnot a hEa]
++    · simp [hSa]
++  have hsim := hdec fun o => T ((o.map g).getD d₀)
++  have htot := hdec fun _ => True
++  rw [uprob_true] at htot
++  simp only [Option.map_none, Option.getD_none, Option.map_some, Option.getD_some, if_true,
++    and_true] at hsim htot
++  -- the conditional law in counting form
++  have hcard : (Fintype.card Ω : ℝ) ≠ 0 := Nat.cast_ne_zero.2 Fintype.card_ne_zero
++  have hc := hcond T
++  rw [uprob_eq_card_filter E, uprob_eq_card_filter (fun ω => E ω ∧ T (g ω)), mul_div_assoc',
++    div_left_inj' hcard] at hc
++  generalize uprob (fun xs : Fin K → Ω => firstHit E xs = some d) = q₀ at hsim htot
++  generalize hf : (1 - uprob E) ^ K = f at hsim htot
++  have hY0 := uprob_nonneg (fun t => T (Y t))
++  have hY1 := uprob_le_one (fun t => T (Y t))
++  have hsimeq : uprob (fun xs : Fin K → Ω => T (((firstHit E xs).map g).getD d₀)) =
++      (if T d₀ then f else 0) + (1 - f) * uprob (fun t => T (Y t)) := by
++    rw [hsim]
++    linear_combination (-q₀) * hc + (-uprob (fun t => T (Y t))) * htot
++  have hf0 : 0 ≤ f := hf ▸ pow_nonneg (by linarith [uprob_le_one E]) K
++  have hfK : f ≤ (2 : ℝ)⁻¹ ^ K :=
++    hf ▸ pow_le_pow_left₀ (by linarith [uprob_le_one E]) (by linarith) K
++  show |uprob (fun t => T (Y t)) -
++    uprob (fun xs : Fin K → Ω => T (((firstHit E xs).map g).getD d₀))| ≤ (2 : ℝ)⁻¹ ^ K
++  rw [hsimeq, abs_le]
++  split_ifs <;> constructor <;> nlinarith
++
++/-- The probability that the retrying simulator's attempt aborts is the complement of its
++success probability (a restatement of `PerfectZKAbort`'s first clause for
++`AbortRetry.statClose_retry`). -/
++theorem uprob_not_ne_nil_le {Ω : Type*} [Fintype Ω] (g : Ω → List Bool)
++    (h : uprob (fun ω => g ω = []) ≤ 1 / 2) : uprob (fun ω => ¬ g ω ≠ []) ≤ 1 / 2 := by
++  simpa using h
++
++end AbortRetry
++
++open AbortRetry in
++/-- **Perfect zero-knowledge with abort implies statistical zero-knowledge with error
++`2^{-|x|}`** (the abort form of [Gol01, Definition 4.3.1], amplified by repetition)
++(ruling G3-4 of gate 03): retry the aborting simulator on `|x|` disjoint coin blocks and
++output the first non-`⊥` result.
++
++**Proof sketch.** For an efficient `V'` take the aborting simulator `S` of `h`; the
++retrying simulator `S'` of `AbortRetry.exists_retrySimulator` is a uniform PPT with `|x|`
++blocks of `S.coinLen |x|` coins. Read its tape as `|x|` independent blocks (the bijection
++`e` built from `finCongr`, `finProdFinEquiv` and `Equiv.curry`, through
++`StatClose.comp_equiv_right`): the `t`-th slice of the tape is `List.ofFn` of block `t`, so
++attempt `t` is `S` on block `t` (`S` is uniform, so its advice is `[]`), and the retrying
++simulator is the first non-`⊥` attempt (`AbortRetry.firstHit_map_getD_eq`). The two clauses
++of `h` are the hypotheses of `AbortRetry.statClose_retry` with `K = |x|`. -/
++theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → Prop}
++    (h : PerfectZKAbort π R) : StatZK π R (fun n => (2 : ℝ)⁻¹ ^ n) := by
++  intro V' hV'
++  obtain ⟨S, hSu, hS⟩ := h V' hV'
++  obtain ⟨S', hS'u, hS'c, hS'⟩ := exists_retrySimulator S
++  refine ⟨S', hS'u, fun x y z hxy => ?_⟩
++  obtain ⟨habort, hcond⟩ := hS x y z hxy
++  have hlen : S'.coinLen x.length = x.length * S.coinLen x.length := by
++    simp only [NUPPT.coinLen, hS'c, PolyExpr.eval_mul, PolyExpr.eval_var]
++  -- the tape of `S'` as `|x|` blocks of `S.coinLen |x|` coins
++  let e : S'.Coins x.length ≃ (Fin x.length → S.Coins x.length) :=
++    ((Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans
++      (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool))).trans (Equiv.curry _ _ _)
++  have hblock : ∀ (r : S'.Coins x.length) (t : ℕ) (ht : t < x.length),
++      ((List.ofFn r).drop (t * S.coinLen x.length)).take (S.coinLen x.length) =
++        List.ofFn (e r ⟨t, ht⟩) := by
++    intro r t ht
++    have hle : t * S.coinLen x.length + S.coinLen x.length ≤ x.length * S.coinLen x.length := by
++      rw [← Nat.succ_mul]
++      exact Nat.mul_le_mul_right _ ht
++    refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
++    · simp only [List.length_take, List.length_drop, List.length_ofFn, hlen]
++      omega
++    · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
++      simp only [e, Equiv.trans_apply, Equiv.arrowCongr_apply, Equiv.coe_refl,
++        Function.comp_apply, Equiv.symm_symm, Equiv.curry_apply, Function.curry_apply]
++      congr 1
++      ext
++      simp [finProdFinEquiv]
++      ring
++  have hatt : ∀ (r : S'.Coins x.length) (t : ℕ) (ht : t < x.length),
++      attempt S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) t =
++        S.simulate x z (e r ⟨t, ht⟩) := by
++    intro r t ht
++    simp only [attempt, NUPPT.inParam_layout, NUPPT.inArg_layout, NUPPT.inCoins_layout,
++      List.length_replicate]
++    rw [hblock r t ht, NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_eq_output_layout, hSu]
++  have heq : ∀ r : S'.Coins x.length, S'.simulate x z r =
++      ((firstHit (fun ω => S.simulate x z ω ≠ []) (e r)).map (S.simulate x z)).getD [] := by
++    intro r
++    rw [hS' x z r, firstHit_map_getD_eq (fun ω => S.simulate x z ω ≠ []) (e r)
++      (S.simulate x z) []
++      (attempt S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)))
++      (fun t => decide (attempt S
++        (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) t ≠ []))
++      (hatt r) (fun t ht => by simp only [hatt r t ht])]
++    simp only [retry, NUPPT.inParam_layout, List.length_replicate]
++  have key := (statClose_retry (fun ω => S.simulate x z ω ≠ []) (S.simulate x z)
++    (fun r : (π.withV V').ExecCoins π.P x => ((π.withV V').viewV x y z r).encode) []
++    (uprob_not_ne_nil_le _ habort) hcond x.length).comp_equiv_right e
++  intro T
++  have hu : uprob (fun t : S'.Coins x.length => T (S'.simulate x z t)) =
++      uprob (fun t : S'.Coins x.length => T (((firstHit (fun ω => S.simulate x z ω ≠ []) (e t)).map
++        (S.simulate x z)).getD [])) :=
++    OneWay.uprob_congr fun t => by rw [heq t]
++  rw [hu]
++  exact key T
++
++/-- **Perfect zero-knowledge with abort implies zero-knowledge** (ruling G3-4 of gate 03):
++`PerfectZKAbort.statZK` and `StatZK.zk` with the negligible error `2^{-n}`
++(`negligible_two_pow_neg`). -/
++theorem PerfectZKAbort.zk {π : Protocol} {R : List Bool → List Bool → Prop}
++    (h : PerfectZKAbort π R) : ZK π R :=
++  h.statZK.zk negligible_two_pow_neg
++
+ /-! ### Negligibility in the instance length (Inf-4.4) -/
+ 
+ /-- For `a > 1` and `C > 0` the function `N ↦ a^{-√(N / C)}` (with `Nat.sqrt` and natural
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+index 8fdeb8bf..23519614 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
+@@ -36,15 +36,24 @@ activation has exactly the arguments of the activation that produced its last me
+ last message *is* its verdict (`Protocol.outV_eq_getLast_of_moverIsV`); the chapter's protocols
+ are stated with the prover moving last, and the `n`-fold protocols read the verifier's last
+ message as the verdict.
++Repetition convention (gate 03e, note 8): an iteration with an odd number of messages (prover,
++verifier, prover) is repeated under strict alternation by appending one dummy empty verifier
++message to each iteration, so that every iteration starts with the prover; the fourth move of
++`giProtocolRep` and of `colProtocolRep`, and the filler moves of the sequential repetition of
++[PS10, §7.2.1] in ch. 7, follow this convention.
+ `Strategy.Efficient` ([PS10, §4.4], time complexity of an interactive machine) is one
+ activation of a uniform `Complexity.NUPPT` at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the
+ whole random tape; the time is polynomial in the total input length rather than in `|x|`
+-alone (the text's `t(|x|)` "regardless of messages" would leave the simulator's call to `V*`
+-on long auxiliary inputs ill-defined; see D8). Consequently `Efficient` alone does not bound a
+-party's work in `|x|` against a counterparty that sends long messages; the message-prefix cap
+-`Strategy.ReadsPrefix m` — the strategy depends only on the first `m(|x|)` bits of each received
+-message, as a time-`t(|x|)` machine of the text necessarily does — restores the text's bound,
+-and the class `IP` (`InteractiveProofs.lean`) requires it of the verifier (run-3 audit P9-1).
++alone (the text's bound `t(|x|)`, which holds whatever the messages received, would leave the
++simulator's call to `V*` on long auxiliary inputs ill-defined; see D8). Consequently
++`Efficient` alone bounds neither a party's work in `|x|` against a counterparty that sends long
++messages nor the length of its own messages. The proof systems (`InteractiveProofs.lean`)
++therefore add the bound on the honest prover's messages, `Protocol.ProverBounded` (ruling G3-3
++of gate 03, the convention of ch. 6: `Efficient` plus polynomially bounded honest messages);
++the message-prefix cap `Strategy.ReadsPrefix m` — the strategy depends only on the first
++`m(|x|)` bits of each received message, as a time-`t(|x|)` machine of the text necessarily
++does — is the text's bound on the reading side, and the class `IP` (`InteractiveProofs.lean`)
++requires it of the verifier (run-3 audit P9-1).
+ 
+ ## Main definitions
+ 
+@@ -59,6 +68,9 @@ and the class `IP` (`InteractiveProofs.lean`) requires it of the verifier (run-3
+   (Def-114.b); `Protocol.transcriptWith`, `Protocol.transcript` (Def-115.c), `Protocol.outV`,
+   `Protocol.outP`, `Strategy.out` (Def-115.d), `Protocol.viewV`, `Protocol.viewP`,
+   `Protocol.execution` (Def-115.a/b), `Protocol.withV`.
++* `TCSlib.Cryptography.Protocol.ProverBounded` — the honest prover's messages have at most
++  `B(|x|)` bits on instances with a witness (Def-116.b, the writing half of the text's bound
++  in `|x|`; ruling G3-3).
+ 
+ ## Main results
+ 
+@@ -140,17 +152,21 @@ theorem ofNUPPT_next (A : NUPPT) (x z r : List Bool) (hist : List (List Bool)) :
+     (ofNUPPT A).next x z r hist =
+       A.runAtL x.length (pairEncode (pairEncode x z) (encodeMsgs hist)) r := rfl
+ 
+-/-- A PPT strategy [PS10, §4.4, time complexity of an interactive machine] (Def-116.b): the
+-next-message function is computed by a uniform `NUPPT` with the same coin polynomial, one
+-activation per message at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the whole random tape.
++/-- An efficient strategy, the formal counterpart of the text's PPT interactive machine
++[PS10, §4.4, time complexity of an interactive machine] (Def-116.b): the next-message function
++is computed by a uniform `NUPPT` with the same coin polynomial, one activation per message at
++parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the whole random tape.
+ 
+ **Deviation (D8):** per-activation time polynomial in the total input length `|x| + |z| +
+-|messages|` instead of the text's `t(|x|)` "regardless of the messages". The number of
+-activations is bounded by the protocol's `rounds`, but the messages of an unbounded
+-counterparty may be arbitrarily long, so `Efficient` alone does not bound a party's work in
+-`|x|` (run-3 audit P9-1). The text's bound is recovered by adding the message-prefix cap
+-`ReadsPrefix m`: an efficient strategy that reads only `m(|x|)` bits of each message runs in
+-time polynomial in `|x| + |z|`, and the class `IP` requires the cap of the verifier. -/
++|messages|` instead of the text's `t(|x|)`, which bounds the running time whatever the
++messages received. The number of activations is bounded by the protocol's `rounds`, but the
++messages of an unbounded counterparty may be arbitrarily long, so `Efficient` alone does not
++bound a party's work in `|x|` (run-3 audit P9-1), nor the length of the messages it writes.
++The text's bound is recovered on the reading side by the message-prefix cap `ReadsPrefix m`
++(an efficient strategy that reads only `m(|x|)` bits of each message runs in time polynomial
++in `|x| + |z|`; the class `IP` requires it of the verifier) and on the writing side, for the
++honest prover, by `Protocol.ProverBounded` (its messages have at most `B(|x|)` bits; the proof
++systems require it, ruling G3-3 of gate 03). -/
+ def Efficient (S : Strategy) : Prop :=
+   ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
+     ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist
+@@ -299,6 +315,27 @@ prover's and the verifier's random tapes at parameter `|x|` [PS10, §4.4, random
+ abbrev ExecCoins (π : Protocol) (P' : Strategy) (x : List Bool) : Type :=
+   P'.Coins x.length × π.V.Coins x.length
+ 
++/-- **The honest prover's messages are short** with respect to the witness relation `R` and
++the polynomial `B` [PS10, §4.4, time complexity: a machine of time complexity `t(|x|)` halts
++within `t(|x|)` steps whatever it receives, so each of its messages has at most `t(|x|)` bits]:
++on every instance `x` with a witness `y` (`R x y`), whatever its random tape and whatever it
++has received, the honest prover's message has at most `B(|x|)` bits.
++
++**Deviation (D8; ruling G3-3 of gate 03, the convention of ch. 6):** `Strategy.Efficient`
++bounds a party's work, hence its messages, only in the total length of its input, which
++contains the messages it has received; the bound in `|x|` is this separate condition, a field
++of `EfficientProverProof` (and, for the completeness witness, part of the completeness clause
++of `InteractiveProof`). Without it an honest prover that echoes the verifier's messages —
++zero-knowledge for one run — lets a cheating verifier that doubles its messages build a view
++of length `2^{rounds}`, which the composition theorems of ch. 7 cannot simulate. -/
++def ProverBounded (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : Prop :=
++  ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
++
++/-- A message bound `B` implies every pointwise larger bound `B'`. -/
++theorem ProverBounded.mono {π : Protocol} {R : List Bool → List Bool → Prop} {B B' : PolyExpr}
++    (h : π.ProverBounded R B) (hle : ∀ n, B.eval n ≤ B'.eval n) : π.ProverBounded R B' :=
++  fun x y r hist hxy => (h x y r hist hxy).trans (hle _)
++
+ /-- The protocol with the verifier replaced by `V'` (the cheating verifier `V*` of the
+ zero-knowledge definitions), same prover, round count and first mover. -/
+ def withV (π : Protocol) (V' : Strategy) : Protocol := { π with V := V' }
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean b/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
+index 2886aa2a..6b774497 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs.lean
+@@ -33,10 +33,21 @@ read as the output string `[false]`, the negligible `ε` quantified before the i
+ cheating prover and its auxiliary input; cheating provers are arbitrary strategies with a
+ polynomial random tape (unbounded computation; polynomial coin tapes lose nothing by
+ averaging, `Protocol.exists_proverCoins_le`). Completeness is `uprob = 1`, i.e. acceptance on
+-every pair of random tapes. The verifier's efficiency is `Strategy.Efficient`, polynomial time
+-in `|x| + |z| + |messages|` (D8), so `InteractiveProof` alone does not bound the verifier's
+-work in `|x|` against an unbounded prover sending long messages; the class `IP` adds the
+-message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1).
++every pair of random tapes. The parties' efficiency (the text's "p.p.t.") is
++`Strategy.Efficient`, polynomial time in `|x| + |z| + |messages|` (D8), together with a
++polynomial bound `B(|x|)` on the honest prover's messages (ruling G3-3 of gate 03, the
++convention of ch. 6): in the completeness clause of `InteractiveProof` and
++`InteractiveProofErr` for the completeness witness, and as the field `boundedP`
++(`Protocol.ProverBounded`) of `EfficientProverProof` and `EfficientProverProofErr` for every
++witness. The residual deviation is that against a cheating prover the verifier's work is
++polynomial in the length of the messages it receives, not in `|x|`. Since the honest messages
++are short, the verifier can always be capped: `V` reading only the first `B(|x|)` bits of each
++message is still complete (the honest messages are untouched) and sound (against `P*` it acts
++as `V` against `P*` with truncated messages, another prover strategy). So the proof systems
++hold only for languages of the text's class IP — undecidable languages such as the halting
++problem, whose computation histories are not polynomially bounded, are excluded — while
++`IP` itself is stated with the message-prefix cap `Strategy.ReadsPrefix` of the verifier
++(run-3 audit P9-1). The capping argument is not formalized as a lemma.
+ 
+ ## Main definitions
+ 
+@@ -58,13 +69,18 @@ message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1).
+ * `TCSlib.Cryptography.InteractiveProofErr.interactiveProof`,
+   `TCSlib.Cryptography.InteractiveProof.exists_err` — a negligible soundness error gives an
+   interactive proof and conversely.
++* `TCSlib.Cryptography.InteractiveProof.exists_accept`,
++  `TCSlib.Cryptography.Protocol.ProverBounded.exists_complete` — completeness without the
++  message bound, and completeness with the bound from bounded messages and completeness for
++  every witness.
+ * `TCSlib.Cryptography.InteractiveProof.exists_uprob_accept_lt` — the acceptance form of
+   soundness, `Pr[out_V = [true]] < ε(|x|)`.
+ * `TCSlib.Cryptography.WitnessRelation.mem_NP`,
+   `TCSlib.Cryptography.exists_witnessRelation_of_mem_NP` — witness relations characterize
+   `Complexity.NP` (the bridge to the certificate definition of `ClassNP/NP.lean`).
+ * `TCSlib.Cryptography.npProtocol_interactiveProof` — non-vacuity: sending a witness is an
+-  interactive proof with efficient prover; `TCSlib.Cryptography.npProtocol_readsPrefix`,
++  interactive proof with efficient prover (`TCSlib.Cryptography.npProtocol_proverBounded`: its
++  prover's message is the witness); `TCSlib.Cryptography.npProtocol_readsPrefix`,
+   `TCSlib.Cryptography.WitnessRelation.mem_IP`, `TCSlib.Cryptography.NP_subset_IP` — its
+   verifier reads a polynomial prefix, hence `NP ⊆ IP` (Claim-117.c).
+ 
+@@ -83,25 +99,33 @@ open Complexity Turing
+ /-! ### Interactive proofs -/
+ 
+ /-- An interactive proof system for `L` [PS10, Definition 116.1] (Def-116.1): the verifier is
+-efficient; completeness — for every `x ∈ L` there is an auxiliary input `y` such that for every
++efficient; completeness — for a polynomial `B` and every `x ∈ L` there is an auxiliary input
++`y` on which the honest prover's messages have at most `B(|x|)` bits and such that for every
+ `z` the honest execution `P(x, y) ↔ V(x, z)` makes `V` output `1` with probability one;
+ soundness — there is a negligible `ε` such that for every `x ∉ L`, every (unbounded) prover
+ strategy `P'` and every `z`, `V` outputs `0` in `P'(x) ↔ V(x, z)` with probability greater than
+ `1 - ε(|x|)`.
+ 
+-**Deviation (D8):** `out_V = 0` is the literal output string `[false]` on the complete
+-history of the fixed-alternation execution; `P'` ranges over strategies with polynomial
+-random tapes and receives no auxiliary input (the text's `P*(x)`); completeness is `uprob = 1`
+-(every pair of random tapes). The verifier is `Strategy.Efficient`, i.e. polynomial-time in
+-`|x| + |z| + |messages|` (D8), so this predicate alone does not bound the verifier's work in
+-`|x|` against an unbounded prover sending long messages; the class `IP` adds the
+-message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1). -/
++**Deviation (D8; ruling G3-3 of gate 03):** `out_V = 0` is the literal output string `[false]`
++on the complete history of the fixed-alternation execution; `P'` ranges over strategies with
++polynomial random tapes and receives no auxiliary input (the text's `P*(x)`); completeness is
++`uprob = 1` (every pair of random tapes). The verifier's "p.p.t." is `Strategy.Efficient`,
++polynomial-time in `|x| + |z| + |messages|` (D8), and the honest messages on the completeness
++witness are bounded by `B(|x|)` (the text's p.p.t. prover writes at most `t(|x|)` bits; the
++convention of ch. 6). Against a cheating prover the verifier's work is polynomial in the
++length of the messages it receives, not in `|x|`; because the honest messages are short the
++verifier can be capped to their length without losing completeness or soundness (module
++docstring), so the predicate holds only for languages of the text's class IP. The class `IP`
++is stated with the message-prefix cap `Strategy.ReadsPrefix` (run-3 audit P9-1). -/
+ structure InteractiveProof (π : Protocol) (L : Language Bool) : Prop where
+-  /-- The verifier is a PPT strategy. -/
++  /-- The verifier is efficient (`Strategy.Efficient`, D8). -/
+   efficientV : π.V.Efficient
+-  /-- Completeness: some auxiliary input makes the honest verifier accept with probability one. -/
+-  complete : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
+-    uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
++  /-- Completeness: for a polynomial `B`, every `x ∈ L` has an auxiliary input on which the
++  honest prover's messages have at most `B(|x|)` bits and the honest verifier accepts with
++  probability one. -/
++  complete : ∃ B : PolyExpr, ∀ x ∈ L, ∃ y : List Bool,
++    (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧
++    ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
+   /-- Soundness: against every prover strategy the verifier rejects with probability
+   `> 1 - ε(|x|)` for a negligible `ε`. -/
+   sound : ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ x ∉ L, ∀ (P' : Strategy) (z : List Bool),
+@@ -112,15 +136,19 @@ structure InteractiveProof (π : Protocol) (L : Language Bool) : Prop where
+ function `s` (for instance the constant `1/2` of the single-iteration graph-isomorphism
+ protocol).
+ 
+-**Deviation (D8):** as for `InteractiveProof` (literal `[false]`, provers with polynomial
+-tapes, `uprob = 1` completeness; verifier time in the total input length — the message-prefix
+-cap is added in `IP`, run-3 audit P9-1). -/
++**Deviation (D8; ruling G3-3 of gate 03):** as for `InteractiveProof` (literal `[false]`,
++provers with polynomial tapes, `uprob = 1` completeness with honest messages of at most
++`B(|x|)` bits; verifier time in the total input length — the message-prefix cap is added in
++`IP`, run-3 audit P9-1). -/
+ structure InteractiveProofErr (π : Protocol) (L : Language Bool) (s : ℕ → ℝ) : Prop where
+-  /-- The verifier is a PPT strategy. -/
++  /-- The verifier is efficient (`Strategy.Efficient`, D8). -/
+   efficientV : π.V.Efficient
+-  /-- Completeness: some auxiliary input makes the honest verifier accept with probability one. -/
+-  complete : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
+-    uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
++  /-- Completeness: for a polynomial `B`, every `x ∈ L` has an auxiliary input on which the
++  honest prover's messages have at most `B(|x|)` bits and the honest verifier accepts with
++  probability one. -/
++  complete : ∃ B : PolyExpr, ∀ x ∈ L, ∃ y : List Bool,
++    (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧
++    ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
+   /-- Soundness error `s`: the verifier rejects with probability at least `1 - s(|x|)`. -/
+   sound : ∀ x ∉ L, ∀ (P' : Strategy) (z : List Bool),
+     1 - s x.length ≤ uprob (fun r : π.ExecCoins P' x => π.outV P' x [] z r = [false])
+@@ -172,6 +200,40 @@ theorem InteractiveProof.exists_uprob_accept_lt {π : Protocol} {L : Language Bo
+   rw [uprob_not] at h2
+   linarith
+ 
++/-- Completeness without the message bound (the form in which consumers use it): every
++`x ∈ L` has an auxiliary input on which the honest verifier accepts with probability one. -/
++theorem InteractiveProof.exists_accept {π : Protocol} {L : Language Bool}
++    (h : InteractiveProof π L) : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
++      uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 := fun x hx =>
++  let ⟨_, hB⟩ := h.complete
++  let ⟨y, _, hy⟩ := hB x hx
++  ⟨y, hy⟩
++
++/-- Completeness without the message bound, for an interactive proof with soundness error. -/
++theorem InteractiveProofErr.exists_accept {π : Protocol} {L : Language Bool} {s : ℕ → ℝ}
++    (h : InteractiveProofErr π L s) : ∀ x ∈ L, ∃ y : List Bool, ∀ z : List Bool,
++      uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 := fun x hx =>
++  let ⟨_, hB⟩ := h.complete
++  let ⟨y, _, hy⟩ := hB x hx
++  ⟨y, hy⟩
++
++/-- The completeness clause of `InteractiveProof` from bounded honest messages: if the honest
++prover's messages have at most `B(|x|)` bits on instances with an `R`-witness
++(`Protocol.ProverBounded`), every witness makes the honest verifier accept with probability
++one, and every `x ∈ L` has a witness, then the clause holds with the bound `B` and the
++witnesses as auxiliary inputs. -/
++theorem Protocol.ProverBounded.exists_complete {π : Protocol} {L : Language Bool}
++    {R : List Bool → List Bool → Prop} {B : PolyExpr} (hB : π.ProverBounded R B)
++    (hLR : ∀ x ∈ L, ∃ y, R x y)
++    (hc : ∀ x y, R x y → ∀ z : List Bool,
++      uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1) :
++    ∃ B : PolyExpr, ∀ x ∈ L, ∃ y : List Bool,
++      (∀ r hist, (π.P.next x y r hist).length ≤ B.eval x.length) ∧
++      ∀ z : List Bool, uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1 :=
++  ⟨B, fun x hx =>
++    let ⟨y, hy⟩ := hLR x hx
++    ⟨y, fun r hist => hB x y r hist hy, hc x y hy⟩⟩
++
+ /-! ### Witness relations -/
+ 
+ /-- A witness relation for `L` [PS10, Appendix B, Definition 191.11] (Def-191.11): `x ∈ L` iff
+@@ -180,7 +242,11 @@ decidable in polynomial time on the pair `⟨x, y⟩`.
+ 
+ **Deviation:** the text's `R_L(x) = {y : (x, y) ∈ L}` is a typo for `∈ R_L`; the witness-length
+ bound is an explicit `PolyExpr` and the decider a polynomial-time string function
+-(`PolyTimeComputable`). -/
++(`PolyTimeComputable`). The bound is on the relation itself (every `y` with `R x y` is short),
++whereas Definition 191.11 bounds only the witnesses that count (`∃ y, |y| ≤ p(|x|) ∧
++(x, y) ∈ R_L`); the two agree on languages (intersect `R_L` with the bound), and the bounded
++form suits Definition 119.5's "for every `y ∈ R_L(x)`", since a time-`t(|x|)` prover cannot
++read a longer `y` (gate 03e, note 11). -/
+ structure WitnessRelation (L : Language Bool) (R : List Bool → List Bool → Prop) : Prop where
+   /-- `x ∈ L` iff `x` has a witness. -/
+   mem_iff : ∀ x, x ∈ L ↔ ∃ y, R x y
+@@ -263,23 +329,36 @@ theorem exists_witnessRelation_of_mem_NP {L : Language Bool} (h : L ∈ NP) :
+ /-! ### Efficient provers -/
+ 
+ /-- An interactive proof for `L` with efficient prover with respect to the witness relation
+-`R` [PS10, Definition 119.5] (Def-119.5): an interactive proof whose prover is a PPT strategy
+-(the witness is its auxiliary input) and which is complete for **every** witness `y` of `x`
+-(Definition 116.1 only asks for some auxiliary input). -/
++`R` [PS10, Definition 119.5] (Def-119.5): an interactive proof whose prover is efficient (the
++witness is its auxiliary input) and which is complete for **every** witness `y` of `x`
++(Definition 116.1 only asks for some auxiliary input).
++
++**Deviation (D8; ruling G3-3 of gate 03):** the text's "P is p.p.t." is `Strategy.Efficient`
++(time polynomial in the total input length, D8) together with a polynomial bound `B(|x|)` on
++the prover's messages on every instance with a witness (`Protocol.ProverBounded`: the text's
++p.p.t. machine writes at most `t(|x|)` bits per message, the convention of ch. 6); the
++verifier is as in `InteractiveProof`. -/
+ structure EfficientProverProof (π : Protocol) (L : Language Bool)
+     (R : List Bool → List Bool → Prop) : Prop extends InteractiveProof π L where
+-  /-- The prover is a PPT strategy. -/
++  /-- The prover is efficient (`Strategy.Efficient`, D8). -/
+   efficientP : π.P.Efficient
++  /-- The prover's messages have at most `B(|x|)` bits on instances with a witness. -/
++  boundedP : ∃ B : PolyExpr, π.ProverBounded R B
+   /-- Completeness for every witness. -/
+   completeWitness : ∀ x y, R x y → ∀ z : List Bool,
+     uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
+ 
+ /-- An interactive proof with soundness error `s` and efficient prover with respect to `R`
+-[PS10, Definition 119.5 with the soundness error of §4.5] (Def-119.5, Def-117.a). -/
++[PS10, Definition 119.5 with the soundness error of §4.5] (Def-119.5, Def-117.a).
++
++**Deviation (D8; ruling G3-3 of gate 03):** as for `EfficientProverProof` (`Efficient` prover
++with messages of at most `B(|x|)` bits on instances with a witness). -/
+ structure EfficientProverProofErr (π : Protocol) (L : Language Bool)
+     (R : List Bool → List Bool → Prop) (s : ℕ → ℝ) : Prop extends InteractiveProofErr π L s where
+-  /-- The prover is a PPT strategy. -/
++  /-- The prover is efficient (`Strategy.Efficient`, D8). -/
+   efficientP : π.P.Efficient
++  /-- The prover's messages have at most `B(|x|)` bits on instances with a witness. -/
++  boundedP : ∃ B : PolyExpr, π.ProverBounded R B
+   /-- Completeness for every witness. -/
+   completeWitness : ∀ x y, R x y → ∀ z : List Bool,
+     uprob (fun r : π.ExecCoins π.P x => π.outV π.P x y z r = [true]) = 1
+@@ -290,6 +369,7 @@ theorem EfficientProverProofErr.efficientProverProof {π : Protocol} {L : Langua
+     (h : EfficientProverProofErr π L R s) : EfficientProverProof π L R where
+   toInteractiveProof := h.toInteractiveProofErr.interactiveProof hs
+   efficientP := h.efficientP
++  boundedP := h.boundedP
+   completeWitness := h.completeWitness
+ 
+ /-- An interactive proof with efficient prover has a negligible soundness error. -/
+@@ -297,7 +377,7 @@ theorem EfficientProverProof.exists_err {π : Protocol} {L : Language Bool}
+     {R : List Bool → List Bool → Prop} (h : EfficientProverProof π L R) :
+     ∃ ε : ℕ → ℝ, Negligible ε ∧ EfficientProverProofErr π L R ε := by
+   obtain ⟨ε, hε, herr⟩ := h.toInteractiveProof.exists_err
+-  exact ⟨ε, hε, herr, h.efficientP, h.completeWitness⟩
++  exact ⟨ε, hε, herr, h.efficientP, h.boundedP, h.completeWitness⟩
+ 
+ /-! ### The trivial NP protocol -/
+ 
+@@ -381,6 +461,13 @@ theorem npProtocol_efficientP (T : List Bool → Bool) (p : PolyExpr) :
+     fun x z r hist => ?_⟩
+   simp [npProtocol, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput]
+ 
++/-- The prover of `npProtocol T p` sends its auxiliary input, so on witnesses of length at most
++`p(|x|)` its message has at most `p(|x|)` bits (ruling G3-3 of gate 03). -/
++theorem npProtocol_proverBounded (T : List Bool → Bool) (p : PolyExpr)
++    {R : List Bool → List Bool → Prop} (hp : ∀ x y, R x y → y.length ≤ p.eval x.length) :
++    (npProtocol T p).ProverBounded R p :=
++  fun x y _ _ hxy => hp x y hxy
++
+ /-- Non-vacuity of Definitions 116.1 and 119.5 [PS10, §4.5, "`NP ⊆ IP`"]: for a witness relation
+ `R` of `L` decided by the polynomial-time predicate `T`, with witnesses of length at most
+ `p(|x|)`, the one-message protocol in which the prover sends a witness is an interactive proof
+@@ -392,9 +479,11 @@ probability one).
+ 
+ **Proof sketch.** The verifier's output is `[T ⟨x, m.take (p(|x|))⟩]` for the message `m` sent
+ (`npProtocol_outV`); the honest prover sends `y`, which the truncation leaves unchanged since
+-`|y| ≤ p(|x|)` (`hp`, `List.take_of_length_le`). Completeness: for `x ∈ L` take a witness `y`
+-(`hR.mem_iff`); then `T ⟨x, y⟩ = true` (`hTR`) on every coin pair, so the probability is one
+-(`HardcoreBit.uprob_eq_one_of_forall`). Soundness with `ε n := 2⁻¹ ^ n`
++`|y| ≤ p(|x|)` (`hp`, `List.take_of_length_le`). Completeness for every witness `y`:
++`T ⟨x, y⟩ = true` (`hTR`) on every coin pair, so the probability is one
++(`HardcoreBit.uprob_eq_one_of_forall`); the prover's message `y` has at most `p(|x|)` bits
++(`npProtocol_proverBounded`), and completeness follows for `x ∈ L` with a witness from
++`hR.mem_iff` (`Protocol.ProverBounded.exists_complete`). Soundness with `ε n := 2⁻¹ ^ n`
+ (`negligible_two_pow_neg`; the literal clause is strict, so `ε = 0` is not admissible): for
+ `x ∉ L` no string — in particular no truncated message — is a witness, so `T ⟨x, ·⟩ = false`
+ and the verifier outputs `[false]` on every coin pair, with probability `1 > 1 - ε(|x|)`.
+@@ -404,35 +493,36 @@ theorem npProtocol_interactiveProof {L : Language Bool} {R : List Bool → List
+     (hT : PolyTimeComputable fun z => [T z])
+     (hTR : ∀ x y, T (pairEncode x y) = true ↔ R x y)
+     (hp : ∀ x y, R x y → y.length ≤ p.eval x.length) :
+-    EfficientProverProof (npProtocol T p) L R where
+-  efficientV := npProtocol_efficientV T p hT
+-  complete := by
+-    intro x hx
+-    obtain ⟨y, hy⟩ := (hR.mem_iff x).1 hx
+-    refine ⟨y, fun z => HardcoreBit.uprob_eq_one_of_forall fun r => ?_⟩
+-    rw [npProtocol_outV]
+-    simp [npProtocol, List.take_of_length_le (hp x y hy), (hTR x y).2 hy]
+-  sound := by
+-    refine ⟨fun n => (2 : ℝ)⁻¹ ^ n, negligible_two_pow_neg, fun x hx P' z => ?_⟩
+-    have hall : ∀ r : (npProtocol T p).ExecCoins P' x,
+-        (npProtocol T p).outV P' x [] z r = [false] := by
+-      intro r
+-      rw [npProtocol_outV]
+-      have hno : ¬ R x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length)) :=
+-        fun hw => hx ((hR.mem_iff x).2 ⟨_, hw⟩)
+-      have hfalse :
+-          T (pairEncode x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length))) = false := by
+-        rw [← Bool.not_eq_true, hTR]
+-        exact hno
+-      rw [hfalse]
+-    rw [HardcoreBit.uprob_eq_one_of_forall hall]
+-    exact sub_lt_self _ (by positivity)
+-  efficientP := npProtocol_efficientP T p
+-  completeWitness := by
++    EfficientProverProof (npProtocol T p) L R := by
++  have hcw : ∀ x y, R x y → ∀ z : List Bool,
++      uprob (fun r : (npProtocol T p).ExecCoins (npProtocol T p).P x =>
++        (npProtocol T p).outV (npProtocol T p).P x y z r = [true]) = 1 := by
+     intro x y hy z
+     refine HardcoreBit.uprob_eq_one_of_forall fun r => ?_
+     rw [npProtocol_outV]
+     simp [npProtocol, List.take_of_length_le (hp x y hy), (hTR x y).2 hy]
++  refine
++    { efficientV := npProtocol_efficientV T p hT
++      complete := (npProtocol_proverBounded T p hp).exists_complete
++        (fun x hx => (hR.mem_iff x).1 hx) hcw
++      sound := ?_
++      efficientP := npProtocol_efficientP T p
++      boundedP := ⟨p, npProtocol_proverBounded T p hp⟩
++      completeWitness := hcw }
++  refine ⟨fun n => (2 : ℝ)⁻¹ ^ n, negligible_two_pow_neg, fun x hx P' z => ?_⟩
++  have hall : ∀ r : (npProtocol T p).ExecCoins P' x,
++      (npProtocol T p).outV P' x [] z r = [false] := by
++    intro r
++    rw [npProtocol_outV]
++    have hno : ¬ R x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length)) :=
++      fun hw => hx ((hR.mem_iff x).2 ⟨_, hw⟩)
++    have hfalse :
++        T (pairEncode x ((P'.next x [] (List.ofFn r.1) []).take (p.eval x.length))) = false := by
++      rw [← Bool.not_eq_true, hTR]
++      exact hno
++    rw [hfalse]
++  rw [HardcoreBit.uprob_eq_one_of_forall hall]
++  exact sub_lt_self _ (by positivity)
+ 
+ /-- Every language with a witness relation is in `IP` [PS10, §4.5, "`NP ⊆ IP`"] (Claim-117.c):
+ the one-message protocol `npProtocol T p`, with the relation's decider `T` and witness-length
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/NP.lean b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+index eab0b408..8ad8b9c0 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/NP.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+@@ -32,9 +32,11 @@ deferred).
+ 
+ **Deviations:**
+ * a Levin reduction is taken *length-regular* with `|f x| = p(|x|)` for a `PolyExpr p ≥ id`
+-  (every Levin reduction to `3COL` can be padded to this form by adding isolated vertices),
+-  which makes the coin and round polynomials of the pulled-back protocol `subst p` of the
+-  original ones and the error bounds `ε(p(|x|))`, negligible in `|x|` (`Negligible.comp_of_le`);
++  (assumed: padding a Levin reduction to `3COL` with isolated vertices should give this form
++  with `p = q²` for a polynomial `q`, the lengths of `encGraph` being perfect squares, but the
++  padding is not formalized; gate 03e, note 14), which makes the coin and round polynomials
++  of the pulled-back protocol `subst p` of the original ones and the error bounds
++  `ε(p(|x|))`, negligible in `|x|` (`Negligible.comp_of_le`);
+ * the text's "execute protocol `(P, V)` on `x'`" is read as `(P', V')`; the hypothesis of a
+   hard-core predicate for the one-way permutation is made explicit (as in Theorem 126.4).
+ 
+@@ -47,6 +49,22 @@ the machines `exists_liftSimulator`/`exists_liftDistinguisher`, and the strict m
+ a length polynomial `p ≥ id` (`polyExpr_strictMono_of_le`, which gives the left inverse of
+ `p.eval` along which the distinguisher is re-parametrized).
+ 
++**Bounded prover messages (ruling G3-3 of gate 03):** the bound on the honest prover's
++messages transfers along a Levin reduction with bound `B.subst p`
++(`Protocol.ProverBounded.pullback`).
++
++**Scope of Theorem 124.1 (DQ5; gate 03e, minor 3).** The text's Theorem 124.1 asserts one
++zero-knowledge proof with negligible soundness error. Here the zero-knowledge protocol is one
++iteration of the 3-colouring protocol, with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}`, and
++the interactive proof with negligible error is its `n|E|`-fold repetition; that the repetition
++is also zero-knowledge, with negligible soundness error, is sequential repetition
++[PS10, §7.2.1], which ch. 7 supplies (ruling G3-7(d)), and is not stated here. In the
++existential forms the conjunct `∃ π, EfficientProverProof π L R` says nothing about the
++zero-knowledge protocol (`npProtocol` already witnesses it, `npProtocol_interactiveProof`);
++the tied forms `exists_commitment_zk_proof_of_owp_levinReduction`,
++`zk_proof_of_witnessRelation` and `zk_proof_of_witnessRelation_of_owp` state both protocols for
++one commitment scheme and one Levin reduction, as `zk_proof_of_levinReduction` does.
++
+ **Run-3 repairs (audit P11-1, P11-2):** the transfer lemmas and both forms of Theorem 124.1
+ take the hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` (`L ⊆ witnessLanguage R`): no field of
+ `LevinReduction` relates `L` to `R` (with `R = ∅` the `witness` field is vacuous), and without
+@@ -71,14 +89,22 @@ length polynomial `p ≥ id` (the run-2 `∃ s, EfficientProverProofErr π L R s
+ * `TCSlib.Cryptography.LevinReduction.efficientProverProof`,
+   `TCSlib.Cryptography.LevinReduction.efficientProverProofErr`,
+   `TCSlib.Cryptography.LevinReduction.zk` — interactive proofs with efficient prover and
+-  zero-knowledge transfer along Levin reductions (Claim-124.d).
++  zero-knowledge transfer along Levin reductions (Claim-124.d);
++  `TCSlib.Cryptography.Protocol.ProverBounded.pullback` — so does the bound on the prover's
++  messages.
+ * `TCSlib.Cryptography.zk_proof_of_levinReduction` — **[PS10, Theorem 124.1], form (A)**:
+-  a commitment scheme and a Levin reduction to `3COL` give a zero-knowledge proof for `L`;
+-  `TCSlib.Cryptography.zk_proof_of_owp_levinReduction` — the same from a one-way permutation
+-  with a hard-core predicate (Thm-124.1).
+-* `TCSlib.Cryptography.zk_proof_of_mem_NP`, `TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp` —
+-  the "every language in NP" form under `LevinNPHard L3COL R3COL`, with the explicit soundness
+-  error of the Levin reduction's length polynomial
++  a commitment scheme and a Levin reduction to `3COL` give a zero-knowledge protocol for `L`
++  with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}` whose `n|E|`-fold repetition is an
++  interactive proof; `TCSlib.Cryptography.zk_proof_of_owp_levinReduction`,
++  `TCSlib.Cryptography.exists_commitment_zk_proof_of_owp_levinReduction` — the same from a
++  one-way permutation with a hard-core predicate, untied and tied (Thm-124.1).
++* `TCSlib.Cryptography.zk_proof_of_witnessRelation`,
++  `TCSlib.Cryptography.zk_proof_of_witnessRelation_of_owp` — the "every language in NP" form
++  for every witness relation, under `LevinNPHard L3COL R3COL` (the second from a one-way
++  permutation, the text's hypothesis); `TCSlib.Cryptography.zk_proof_of_mem_NP`,
++  `TCSlib.Cryptography.zk_proof_of_mem_NP_of_owp` — the corollaries for `L ∈ NP` with the
++  witness relation of `exists_witnessRelation_of_mem_NP`, with the explicit soundness error of
++  the Levin reduction's length polynomial
+   (`TCSlib.Cryptography.one_sub_inv_add_half_pow_lt_one`: the error is below `1`).
+ 
+ ## References
+@@ -86,7 +112,7 @@ length polynomial `p ≥ id` (the run-2 `∃ s, EfficientProverProofErr π L R s
+ * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+   (§4.7: Theorem 124.1; Appendix B, Definition 191.11.)
+ * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+-  University Press, 2009. (Definition 2.7, Karp reductions; §2.3.3, Levin reductions.)
++  University Press, 2009. (Definition 2.7, Karp reductions; §2.3, Levin reductions.)
+ -/
+ 
+ namespace TCSlib.Cryptography
+@@ -102,8 +128,9 @@ polynomial-time Karp reduction (`x ∈ L ↔ f x ∈ L'`), `w` is polynomial-tim
+ length-regular: `|f x| = p(|x|)` for the polynomial `p ≥ id`.
+ 
+ **Deviation:** the text never defines Levin reductions; length-regularity with `p ≥ id` is
+-assumed (achievable by padding) so that the pulled-back protocol's polynomials are `subst p`
+-of the original ones and its error bounds `ε(p(|x|))` are negligible in `|x|`. -/
++assumed (padding with isolated vertices should achieve it for `3COL`, with `p = q²`; not
++formalized) so that the pulled-back protocol's polynomials are `subst p` of the original ones
++and its error bounds `ε(p(|x|))` are negligible in `|x|`. -/
+ structure LevinReduction (L L' : Language Bool) (R R' : List Bool → List Bool → Prop)
+     (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr) : Prop where
+   /-- The instance map is polynomial-time. -/
+@@ -239,6 +266,19 @@ theorem Strategy.pullback_efficient {S : Strategy} (hS : S.Efficient) {f : List
+     rw [hnext, Strategy.ofNUPPT_next, ← hx x]
+     simp only [id, pairFstD_pairEncode, pairSndD_pairEncode]
+ 
++/-- **Bounded prover messages transfer along a Levin reduction** with bound `B.subst p`
++(ruling G3-3 of gate 03): the pulled-back prover runs `π.P` on `(f x, w x y)`, `R x y` gives
++`R' (f x) (w x y)` (`LevinReduction.witness`), and `|f x| = p(|x|)`
++(`LevinReduction.length_eq`, `PolyExpr.eval_subst`). -/
++theorem Protocol.ProverBounded.pullback {L L' : Language Bool}
++    {R R' : List Bool → List Bool → Prop} {f : List Bool → List Bool}
++    {w : List Bool → List Bool → List Bool} {p : PolyExpr} (h : LevinReduction L L' R R' f w p)
++    {π : Protocol} {B : PolyExpr} (hB : π.ProverBounded R' B) :
++    (π.pullback f w p).ProverBounded R (B.subst p) := by
++  intro x y r hist hxy
++  rw [PolyExpr.eval_subst, ← h.length_eq x]
++  exact hB (f x) (w x y) r hist (h.witness x y hxy)
++
+ /-! ### Negligibility along polynomial reparametrization -/
+ 
+ /-- A negligible function composed with a map `φ ≥ id` is negligible: for `N ≥ max n₀ 1`,
+@@ -354,11 +394,14 @@ execution of the pulled-back protocol on `(x, y, z)` with coins `r` is the execu
+ functions are those of `π` on `(f x, w x y)` and `(f x, z)` by definition — with the move
+ count `π.rounds.eval (p |x|) = π.rounds.eval |f x|` by `h.length_eq`); the cast is a uniform
+ projection (`LevinTransfer.unifProj_coinTrunc`, `UnifProj.uprob_comp`), so
+-`hπ.completeWitness` gives probability one. Completeness:
+-`complete x hx := let ⟨y, hy⟩ := hLR x hx; ⟨y, completeWitness x y hy⟩`. Soundness: for
+-`x ∉ L`, `f x ∉ L'` (`h.mem_iff`); a prover `P'` for the pulled-back protocol on `x` is the
+-prover `P* := ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen |x|)⟩` for `π` on
+-`f x` with the same coins (`outV_pullback_cheat`, `P*.coinLen |f x| = P'.coinLen |x|`), and
++`hπ.completeWitness` gives probability one. Bounded prover messages:
++`Protocol.ProverBounded.pullback` with the bound `B.subst p` of `hπ.boundedP`. Completeness:
++for `x ∈ L` take `y` with `R x y` (`hLR`); the honest messages have at most `B(p(|x|))` bits
++and the verifier accepts with probability one (`Protocol.ProverBounded.exists_complete`).
++Soundness: for `x ∉ L`, `f x ∉ L'` (`h.mem_iff`); a prover `P'` for the pulled-back protocol
++on `x` is the prover `P* := ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen |x|)⟩`
++for `π` on `f x` with the same coins (`outV_pullback_cheat`,
++`P*.coinLen |f x| = P'.coinLen |x|`), and
+ `hπ.sound (f x) _ P* z` gives `1 - s |f x| ≤ Pr[out = [false]]`, i.e. `1 - s (p |x|)` by
+ `h.length_eq`. -/
+ theorem LevinReduction.efficientProverProofErr {L L' : Language Bool}
+@@ -380,11 +423,11 @@ theorem LevinReduction.efficientProverProofErr {L L' : Language Bool}
+     congr 1
+     funext r
+     rw [outV_pullback_honest π f w hx]
++  obtain ⟨B, hB⟩ := hπ.boundedP
+   refine ⟨⟨Strategy.pullback_efficient hπ.efficientV h.f_poly polyTimeComputable_pairSndD
+-    h.length_eq, fun x hx => ?_, fun x hx P' z => ?_⟩,
+-    Strategy.pullback_efficient hπ.efficientP h.f_poly h.w_poly h.length_eq, hcompl⟩
+-  · obtain ⟨y, hy⟩ := hLR x hx
+-    exact ⟨y, hcompl x y hy⟩
++    h.length_eq, (hB.pullback h).exists_complete hLR hcompl, fun x hx P' z => ?_⟩,
++    Strategy.pullback_efficient hπ.efficientP h.f_poly h.w_poly h.length_eq,
++    ⟨B.subst p, hB.pullback h⟩, hcompl⟩
+   · have hlen := h.length_eq x
+     have hfx : f x ∉ L' := fun hfx => hx ((h.mem_iff x).2 hfx)
+     have hU : UnifProj (Prod.map (coinTrunc le_rfl)
+@@ -518,8 +561,10 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
+ /-! ### Theorem 124.1 -/
+ 
+ /-- **[PS10, Theorem 124.1], form (A): a commitment scheme and a Levin reduction to `3COL`
+-give a zero-knowledge proof for `L`** (Thm-124.1): for a commitment scheme `(Com, ℓ)` and a
+-Levin reduction `(f, w)` of `(L, R)` to `(3COL, R_3COL)` with `L ⊆ witnessLanguage R` (`hLR`),
++give a zero-knowledge protocol for `L` with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}` whose
++`n|E|`-fold repetition is an interactive proof** (Thm-124.1): for a commitment scheme
++`(Com, ℓ)` and a Levin reduction `(f, w)` of `(L, R)` to `(3COL, R_3COL)` with
++`L ⊆ witnessLanguage R` (`hLR`),
+ the pulled-back `n|E|`-fold 3-colouring protocol is an interactive proof for `L` with
+ efficient prover w.r.t. `R`, and the pulled-back one-iteration protocol is zero-knowledge for
+ `R` and an interactive proof with efficient prover and soundness error
+@@ -527,8 +572,9 @@ efficient prover w.r.t. `R`, and the pulled-back one-iteration protocol is zero-
+ 
+ **Deviation (DQ5):** the proof and the zero-knowledge statements are for the repeated and
+ the single-iteration protocols respectively (sequential composition, [PS10, §7.2.1], is out
+-of scope); the reduction is an explicit hypothesis (the text's "Cook's reduction applied to
+-the witness" is a Levin reduction, never defined there).
++of scope; the text's single zero-knowledge proof with negligible soundness error is debt that
++ch. 7 discharges, ruling G3-7(d)); the reduction is an explicit hypothesis (the text's
++"Cook's reduction applied to the witness" is a Levin reduction, never defined there).
+ 
+ **Repair (run-3 audit P11-1):** hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` added — the first and
+ third conjuncts are instances of `LevinReduction.efficientProverProofErr`, and without it
+@@ -547,15 +593,19 @@ theorem zk_proof_of_levinReduction {Com : List Bool → List Bool} {ℓ : PolyEx
+     h.efficientProverProofErr hLR (col_efficientProverProofErr hC)⟩
+ 
+ /-- **[PS10, Theorem 124.1]: if one-way permutations (with a hard-core predicate) exist, every
+-language with a Levin reduction to `3COL` has a zero-knowledge proof** (Thm-124.1, headline):
+-for `L ⊆ witnessLanguage R` (`hLR`) there is a protocol that is an interactive proof for `L`
+-with efficient prover w.r.t. `R`, and a protocol that is zero-knowledge for `R` and an
+-interactive proof with efficient prover and soundness error `1 - 1/p(|x|) + (1/2)^{p(|x|)}` —
+-the commitment scheme of [PS10, Theorem 126.4] (`exists_commitment_of_owp_hardCore`) plugged
+-into `zk_proof_of_levinReduction`.
++language with a Levin reduction to `3COL` has a zero-knowledge protocol with soundness error
++`1 - 1/p(|x|) + 2^{-p(|x|)}`** (Thm-124.1, untied existential form): for `L ⊆ witnessLanguage R`
++(`hLR`) there is a protocol that is an interactive proof for `L` with efficient prover w.r.t.
++`R`, and a protocol that is zero-knowledge for `R` and an interactive proof with efficient
++prover and soundness error `1 - 1/p(|x|) + (1/2)^{p(|x|)}` — the commitment scheme of
++[PS10, Theorem 126.4] (`exists_commitment_of_owp_hardCore`) plugged into
++`zk_proof_of_levinReduction`.
+ 
+ **Deviation:** hard-core predicate explicit (source error 47); single OWP rather than a
+-collection; see `zk_proof_of_levinReduction` for the two-protocol form (DQ5).
++collection; see `zk_proof_of_levinReduction` for the two-protocol form (DQ5). The first
++conjunct alone says nothing about the zero-knowledge protocol (gate 03e, minor 3:
++`npProtocol` pulled back along `(f, w)` already witnesses it); the tied form, both protocols
++from one commitment scheme, is `exists_commitment_zk_proof_of_owp_levinReduction`.
+ 
+ **Repair (run-3 audit P11-1):** hypothesis `hLR : ∀ x ∈ L, ∃ y, R x y` added (see
+ `zk_proof_of_levinReduction`). -/
+@@ -572,6 +622,28 @@ theorem zk_proof_of_owp_levinReduction
+   obtain ⟨h1, h2, h3⟩ := zk_proof_of_levinReduction hC h hLR
+   exact ⟨⟨_, h1⟩, _, h2, h3⟩
+ 
++/-- **[PS10, Theorem 124.1], tied form: if one-way permutations exist, every language with a
++Levin reduction to `3COL` has a zero-knowledge protocol with soundness error
++`1 - 1/p(|x|) + 2^{-p(|x|)}` whose `n|E|`-fold repetition is an interactive proof**
++(Thm-124.1; gate 03e, minor 3): from the text's hypothesis, a single one-way permutation, there
++is a commitment scheme `(Com, ℓ)` (`exists_commitment_of_owp`, [PS10, Theorem 126.4] with the
++hard-core predicate of Goldreich–Levin) for which the conclusion of
++`zk_proof_of_levinReduction` holds: both protocols are built from `Com` and the reduction.
++
++**Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
++theorem exists_commitment_zk_proof_of_owp_levinReduction
++    (how : ∃ P : PermFamily, OneWayPermutation P)
++    {L : Language Bool} {R : List Bool → List Bool → Prop} {f : List Bool → List Bool}
++    {w : List Bool → List Bool → List Bool} {p : PolyExpr}
++    (h : LevinReduction L L3COL R R3COL f w p) (hLR : ∀ x ∈ L, ∃ y, R x y) :
++    ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧
++      EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
++      ZK ((colProtocol Com ℓ).pullback f w p) R ∧
++      EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
++        (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
++  obtain ⟨Com, ℓ, hC⟩ := exists_commitment_of_owp how
++  exact ⟨Com, ℓ, hC, zk_proof_of_levinReduction hC h hLR⟩
++
+ /-- Sanity (run-3 audit P11-2): the soundness error `1 - 1/k + (1/2)^k` of the one-iteration
+ protocols is strictly below `1` for `k ≥ 1`, since `k < 2^k` (`Nat.lt_two_pow_self`). Hence
+ `EfficientProverProofErr π L R (fun N => 1 - 1/(p N) + (1/2)^{p N})` with `p N ≥ N ≥ 1`
+@@ -595,13 +667,59 @@ def LevinNPHard (L' : Language Bool) (R' : List Bool → List Bool → Prop) : P
+     ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
+       LevinReduction L L' R R' f w p
+ 
+-/-- **[PS10, Theorem 124.1], "every language in NP"**, under NP-hardness of `3COL` with Levin
+-reductions: for a commitment scheme and every `L ∈ NP` there is a witness relation `R` for
++/-- **[PS10, Theorem 124.1], "every language in NP", for every witness relation** (Thm-124.1;
++gate 03e, minors 3 and 4): under NP-hardness of `3COL` with Levin reductions, for a commitment
++scheme `(Com, ℓ)` and every witness relation `R` of `L` there is a Levin reduction `(f, w)` of
++`(L, R)` to `(3COL, R_3COL)` with length polynomial `p ≥ id` for which the pulled-back
++one-iteration 3-colouring protocol is zero-knowledge for `R` with soundness error
++`1 - 1/p(|x|) + 2^{-p(|x|)}`, and its `n|E|`-fold repetition is an interactive proof with
++efficient prover (`zk_proof_of_levinReduction`, with `hLR` from `WitnessRelation.mem_iff`).
++
++**Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
++theorem zk_proof_of_witnessRelation (h3 : LevinNPHard L3COL R3COL)
++    {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) {L : Language Bool}
++    {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) :
++    ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
++      (∀ N, N ≤ p.eval N) ∧
++      EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
++      ZK ((colProtocol Com ℓ).pullback f w p) R ∧
++      EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
++        (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
++  obtain ⟨f, w, p, h⟩ := h3 L R hR
++  exact ⟨f, w, p, h.le_eval, zk_proof_of_levinReduction hC h fun x hx => (hR.mem_iff x).1 hx⟩
++
++/-- **[PS10, Theorem 124.1], "if one-way permutations exist then every language in NP has a
++zero-knowledge proof", for every witness relation** (Thm-124.1; gate 03e, minors 3 and 4):
++from the text's hypothesis, a one-way permutation, there is a commitment scheme
++(`exists_commitment_of_owp`) for which the conclusion of `zk_proof_of_witnessRelation` holds,
++under NP-hardness of `3COL` with Levin reductions.
++
++**Deviation (DQ5):** as for `zk_proof_of_levinReduction`. -/
++theorem zk_proof_of_witnessRelation_of_owp (h3 : LevinNPHard L3COL R3COL)
++    (how : ∃ P : PermFamily, OneWayPermutation P) {L : Language Bool}
++    {R : List Bool → List Bool → Prop} (hR : WitnessRelation L R) :
++    ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ ∧
++      ∃ (f : List Bool → List Bool) (w : List Bool → List Bool → List Bool) (p : PolyExpr),
++        (∀ N, N ≤ p.eval N) ∧
++        EfficientProverProof ((colProtocolRep Com ℓ).pullback f w p) L R ∧
++        ZK ((colProtocol Com ℓ).pullback f w p) R ∧
++        EfficientProverProofErr ((colProtocol Com ℓ).pullback f w p) L R
++          (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
++  obtain ⟨Com, ℓ, hC⟩ := exists_commitment_of_owp how
++  exact ⟨Com, ℓ, hC, zk_proof_of_witnessRelation h3 hC hR⟩
++
++/-- **[PS10, Theorem 124.1], "every language in NP", one-iteration form: a zero-knowledge
++protocol with soundness error `1 - 1/p(|x|) + 2^{-p(|x|)}`**, under NP-hardness of `3COL` with
++Levin reductions: for a commitment scheme and every `L ∈ NP` there is a witness relation `R` for
+ `L` with an interactive proof with efficient prover, and a protocol that is zero-knowledge
+ for `R` and an interactive proof with efficient prover and soundness error
+ `1 - 1/p(|x|) + (1/2)^{p(|x|)}`, where `p ≥ id` is the length polynomial of the Levin
+ reduction (the two protocols of `zk_proof_of_levinReduction`; the witness relation from
+-`exists_witnessRelation_of_mem_NP`, [PS10, Definition 191.11], supplies `hLR`).
++`exists_witnessRelation_of_mem_NP`, [PS10, Definition 191.11], supplies `hLR`). This is the
++corollary of `zk_proof_of_witnessRelation`, which holds for every witness relation (gate 03e,
++minor 4) and ties the two protocols together; here the conjunct
++`∃ π, EfficientProverProof π L R` alone says nothing about the zero-knowledge protocol
++(`npProtocol` witnesses it, minor 3).
+ 
+ **Repair (run-3 audit P11-2):** the run-2 conclusion `∃ s, EfficientProverProofErr π L R s`
+ asserted no soundness (`s := 1` turns the clause into `0 ≤ uprob …`, so it followed from the
+@@ -616,18 +734,20 @@ theorem zk_proof_of_mem_NP (h3 : LevinNPHard L3COL R3COL) {Com : List Bool → L
+         EfficientProverProofErr π L R
+           (fun N => 1 - 1 / (p.eval N : ℝ) + (1 / 2 : ℝ) ^ p.eval N) := by
+   obtain ⟨R, hR⟩ := exists_witnessRelation_of_mem_NP hL
+-  obtain ⟨f, w, p, h⟩ := h3 L R hR
+-  obtain ⟨h1, h2, h3'⟩ := zk_proof_of_levinReduction hC h fun x hx => (hR.mem_iff x).1 hx
+-  exact ⟨R, hR, ⟨_, h1⟩, _, p, h.le_eval, h2, h3'⟩
++  obtain ⟨_, _, p, hp, h1, h2, h3'⟩ := zk_proof_of_witnessRelation h3 hC hR
++  exact ⟨R, hR, ⟨_, h1⟩, _, p, hp, h2, h3'⟩
+ 
+ /-- **[PS10, Theorem 124.1], "if one-way permutations exist then every language in NP has a
+-zero-knowledge proof"**, under NP-hardness of `3COL` with Levin reductions and with the
++zero-knowledge proof", one-iteration form: a zero-knowledge protocol with soundness error
++`1 - 1/p(|x|) + 2^{-p(|x|)}`**, under NP-hardness of `3COL` with Levin reductions and with the
+ hard-core predicate explicit (`exists_commitment_of_owp_hardCore`, `zk_proof_of_mem_NP`):
+ the zero-knowledge protocol has the explicit soundness error `1 - 1/p(|x|) + (1/2)^{p(|x|)}`
+ of the Levin reduction's length polynomial `p ≥ id`.
+ 
+ **Repair (run-3 audit P11-2):** explicit soundness error instead of the vacuous
+-`∃ s, EfficientProverProofErr π L R s` (see `zk_proof_of_mem_NP`). -/
++`∃ s, EfficientProverProofErr π L R s` (see `zk_proof_of_mem_NP`). The form for every witness
++relation, from the text's hypothesis (a one-way permutation) and with the two protocols tied,
++is `zk_proof_of_witnessRelation_of_owp` (gate 03e, minors 3 and 4). -/
+ theorem zk_proof_of_mem_NP_of_owp (h3 : LevinNPHard L3COL R3COL)
+     (how : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool),
+       OneWayPermutation P ∧ HardCore P.toFunFamily h)
+
+## ===== B: the 03e repair commit 30f90d36ab23d8f6b9ac99e4608c38174f3bfcb1 (on a3c5fa8b72e50939822f22364647dc844a3914a0; in #199), outside this pack's files =====
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+index ea63a690..9869c680 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+@@ -127,7 +127,9 @@ malformed `x ∉ L` could decode to a pair of isomorphic graphs and soundness wo
+   `TCSlib.Cryptography.uprob_gi_rep_cheat_le` (Lem-120.d, proved from Lem-119.c).
+ * `TCSlib.Cryptography.gni_interactiveProofErr`, `TCSlib.Cryptography.gni_interactiveProof`
+   — [PS10, Proposition 118.4]; `TCSlib.Cryptography.gi_efficientProverProofErr`,
+-  `TCSlib.Cryptography.gi_rep_efficientProverProof` — [PS10, Proposition 120.7].
++  `TCSlib.Cryptography.gi_rep_efficientProverProof` — [PS10, Proposition 120.7];
++  `TCSlib.Cryptography.giProtocol_proverBounded`, `TCSlib.Cryptography.gniProtocol_proverBounded`
++  (and the `Rep` forms) — the honest messages are bounded (ruling G3-3).
+ * `TCSlib.Cryptography.Riso_witnessRelation` — `Riso` is a witness relation for `Liso`.
+ 
+ ## References
+@@ -826,7 +828,7 @@ theorem gni_honest_reply {n : ℕ} {G₀ G₁ : Graph n} (h : ¬ Isomorphic G₀
+ 
+ /-! ### Efficiency of the honest parties (Inf-4.2) -/
+ 
+-/-- The honest prover of the graph isomorphism protocol is a PPT strategy
++/-- The honest prover of the graph isomorphism protocol is efficient (D8)
+ [PS10, Proposition 120.7, efficient prover] (Inf-4.2).
+ 
+ **Proof sketch.** `Strategy.Efficient` with `NUPPT.ofPolyTimeUniform` of the string function
+@@ -839,7 +841,7 @@ the case split on `msgs = []` by `polyTimeComputable_lenEq`; the equation with `
+ by `NUPPT.runAtL_ofPolyTimeUniform`, `Strategy.pairFstD_encodeMsgs`, `decPerm_encPerm`. -/
+ theorem giProver_efficient : giProver.Efficient := GI.giProver_efficient
+ 
+-/-- The verifier of the graph isomorphism protocol is a PPT strategy [PS10, Definition 116.1
++/-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
+ for Proposition 120.7] (Inf-4.2).
+ 
+ **Proof sketch.** As `giProver_efficient`: the challenge is the first coin
+@@ -849,24 +851,24 @@ conjoined (`polyTimeComputable_and`) with the well-formedness test (`polyTimeCom
+ against the squared vertex count in unary and `computesFunInTime_pairValid`). -/
+ theorem giVerifier_efficient : giVerifier.Efficient := GI.giVerifier_efficient
+ 
+-/-- The verifier of one iteration of the graph non-isomorphism protocol is a PPT strategy
++/-- The verifier of one iteration of the graph non-isomorphism protocol is efficient (D8)
+ [PS10, Proposition 118.4] (Inf-4.2): as `giVerifier_efficient`, with the first message
+ `polyTimeComputable_encPermGraph` on `⟨G_b, encPerm σ⟩` for `σ` from
+ `polyTimeComputable_encSamplePerm` and the verdict a one-bit comparison. -/
+ theorem gniVerifier_efficient : gniVerifier.Efficient := GI.gniVerifier_efficient
+ 
+-/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is a PPT strategy
++/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8)
+ (Inf-4.2): the coin block of iteration `hist.length` is cut by `pairTakePoly`/`pairDropPoly`
+ with the unary block length, the message as in `gniVerifier_efficient`, and the verdict is a
+ loop over the `|x|` replies (`polyTimeComputable_iterate` with an accumulated conjunction). -/
+ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := GI.gniVerifierRep_efficient
+ 
+-/-- The prover of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2): as
++/-- The prover of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2): as
+ `giProver_efficient` with the coin block of iteration `hist.length / 2` cut by
+ `pairTakePoly`/`pairDropPoly` and the parity test of the history length. -/
+ theorem giProverRep_efficient : giProverRep.Efficient := GI.giProverRep_efficient
+ 
+-/-- The verifier of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2):
++/-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2):
+ the challenge is coin `hist.length / 2`, and the verdict is a loop over the `|x|` pairs
+ `(H_j, γ_j)` of the history (`polyTimeComputable_iterate` over `polyTimeComputable_encPermGraph`
+ and `polyTimeComputable_pairEq`). -/
+@@ -918,6 +920,23 @@ Efficiency: `gniVerifierRep_efficient`. -/
+ theorem gni_interactiveProof : InteractiveProof gniProtocolRep Lniso :=
+   GI.gni_interactiveProof gniVerifierRep_efficient
+ 
++/-- The honest provers of the graph-isomorphism protocols send `n²`-bit words with
++`n² ≤ |x|`, so at most `|x|` bits per message, on every instance (ruling G3-3 of gate 03;
++`GI.giProver_length_le`). -/
++theorem giProtocol_proverBounded (R : List Bool → List Bool → Prop) :
++    giProtocol.ProverBounded R .var := fun x y r hist _ => GI.giProver_length_le x y r hist
++
++/-- The `|x|`-fold form of `giProtocol_proverBounded` (`GI.giProverRep_length_le`). -/
++theorem giProtocolRep_proverBounded (R : List Bool → List Bool → Prop) :
++    giProtocolRep.ProverBounded R .var := fun x y r hist _ => GI.giProverRep_length_le x y r hist
++
++/-- The honest graph non-isomorphism prover sends one bit per message (ruling G3-3 of gate 03;
++`GI.gniProver_length_le`), in one iteration and in the `|x|`-fold protocol. -/
++theorem gniProtocol_proverBounded (R : List Bool → List Bool → Prop) :
++    gniProtocol.ProverBounded R (.const 1) ∧ gniProtocolRep.ProverBounded R (.const 1) :=
++  ⟨fun x y r hist _ => GI.gniProver_length_le x y r hist,
++    fun x y r hist _ => GI.gniProver_length_le x y r hist⟩
++
+ /-- One iteration of the graph isomorphism protocol is an interactive proof for `L_iso`
+ with soundness error `1/2` and efficient prover with respect to `R_iso`
+ [PS10, Proposition 120.7, corrected: for `L_iso`, not `L_niso`] (Prop-120.7).
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
+index 55508abf..e7048422 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
+@@ -51,7 +51,7 @@ malformed inputs).
+   count is polynomial-time.
+ * `TCSlib.Cryptography.GI.Riso_decidable` — the decider clause of `Riso_witnessRelation`.
+ * `TCSlib.Cryptography.GI.giProver_efficient`, `GI.giVerifier_efficient`,
+-  `GI.gniVerifier_efficient` — the single-iteration parties are PPT strategies.
++  `GI.gniVerifier_efficient` — the single-iteration parties are efficient (D8).
+ 
+ ## References
+ 
+@@ -469,7 +469,7 @@ theorem Riso_decidable : ∃ T : List Bool → Bool, PolyTimeComputable (fun z =
+ 
+ /-! ### Efficiency of the single-iteration parties -/
+ 
+-/-- The honest prover of the graph isomorphism protocol is a PPT strategy
++/-- The honest prover of the graph isomorphism protocol is efficient (D8)
+ [PS10, Proposition 120.7] (Inf-4.2).
+ 
+ **Proof sketch.** `efficient_of_polyTime` with the layout function: message `1` is
+@@ -505,7 +505,7 @@ theorem giProver_efficient : giProver.Efficient := by
+     rw [sampleStr, mulInvStr_encPerm]
+     split_ifs <;> rfl
+ 
+-/-- The verifier of the graph isomorphism protocol is a PPT strategy [PS10, Definition 116.1
++/-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
+ for Proposition 120.7] (Inf-4.2).
+ 
+ **Proof sketch.** `efficient_of_polyTime`: the challenge is the first coin (`coinBit_poly`),
+@@ -555,7 +555,7 @@ theorem giVerifier_efficient : giVerifier.Efficient := by
+     simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
+       Bool.false_eq_true, if_false, pairSndD_pairEncode]
+ 
+-/-- The verifier of one iteration of the graph non-isomorphism protocol is a PPT strategy
++/-- The verifier of one iteration of the graph non-isomorphism protocol is efficient (D8)
+ [PS10, Proposition 118.4] (Inf-4.2).
+ 
+ **Proof sketch.** `efficient_of_polyTime`: the first message is `relabel_poly` of `G_b` by
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+index cdac6fc5..56bfb24b 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean
+@@ -39,7 +39,7 @@ and one **unary-count loop** (`iterUnary_poly`: iterate a step `|u|` times for a
+ * `TCSlib.Cryptography.GI.unaryMul_poly`, `GI.coinSlice_poly` — unary multiplication and the
+   coin block of a given iteration.
+ * `TCSlib.Cryptography.GI.gniVerifierRep_efficient` — the `|x|`-fold graph non-isomorphism
+-  verifier is a PPT strategy.
++  verifier is efficient (D8).
+ 
+ ## References
+ 
+@@ -584,7 +584,7 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
+   rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinSlice, headD_take hc, Fin.val_mk,
+     getD_eq_headD_drop]
+ 
+-/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is a PPT strategy (Inf-4.2).
++/-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8) (Inf-4.2).
+ 
+ **Proof sketch.** `efficient_of_polyTime`: the message count `1^{|hist|}` (`cnt_poly`), the
+ test `|hist| < |x|` (`ltLen_poly`), the coin block of the current iteration (`gniSlice_poly`)
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
+index aaee9471..143e3bbf 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean
+@@ -28,7 +28,7 @@ current iteration (`coinSlice_poly`), and the verdict scan over the `|x|` iterat
+ ## Main results
+ 
+ * `TCSlib.Cryptography.GI.giProverRep_efficient`, `GI.giVerifierRep_efficient` — the parties of
+-  the `|x|`-fold graph isomorphism protocol are PPT strategies.
++  the `|x|`-fold graph isomorphism protocol are efficient (D8).
+ 
+ ## References
+ 
+@@ -98,7 +98,7 @@ theorem lastBit_poly : PolyTimeComputable fun w =>
+     [(pairFstD (pairSndD^[lastSteps (argM w)] (argM w))).headD false] :=
+   headBit_poly.comp (lastMsg_poly.comp argM_poly)
+ 
+-/-- The prover of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2).
++/-- The prover of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
+ 
+ **Proof sketch.** `efficient_of_polyTime`: the half count `|hist| / 2` and the parity by the
+ half loop (`halfLoop_poly`), the coin block of the current iteration (`giSlice_poly`), the
+@@ -304,7 +304,7 @@ theorem gi_verdict_iff (x : List Bool) (hist : List (List Bool)) (r : List Bool)
+     ← getD_eq_headD_drop, ← getD_eq_headD_drop]
+   cases r.getD j false <;> exact Iff.rfl
+ 
+-/-- The verifier of the `|x|`-fold graph isomorphism protocol is a PPT strategy (Inf-4.2).
++/-- The verifier of the `|x|`-fold graph isomorphism protocol is efficient (D8) (Inf-4.2).
+ 
+ **Proof sketch.** `efficient_of_polyTime`: the parity of the message count (`odd_poly`), the
+ challenge `r_{|hist|/2}` (`challenge_poly`), the test `|hist| < 2|x|` (`ltLen2_poly`), and the
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+index 77ad5854..154c9cd0 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+@@ -53,6 +53,9 @@ need (Lem-119.a, Lem-120.b–c, the honest replies).
+   two graphs.
+ * `TCSlib.Cryptography.GI.efficient_of_polyTime` — a strategy whose next-message function is a
+   polynomial-time function of the machine layout is efficient.
++* `TCSlib.Cryptography.GI.giProver_length_le`, `GI.giProverRep_length_le`,
++  `GI.gniProver_length_le` — the honest provers' messages have at most `|x|` bits (one bit for
++  graph non-isomorphism), whatever the tape and history (ruling G3-3).
+ * `TCSlib.Cryptography.GI.gniProtocol_outV`, `GI.giProtocol_outV` and the `*_next_*` lemmas —
+   the verdicts of the single-iteration protocols on encoded instances.
+ * `TCSlib.Cryptography.GI.pushesUniform_castLE`, `GI.statClose_samplePerm_long` — a prefix of a
+@@ -237,6 +240,36 @@ noncomputable def giProtocolRep : Protocol where
+   rounds := .mul (.const 4) .var
+   verifierFirst := false
+ 
++/-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
++
++/-- The honest prover of one graph-isomorphism iteration sends `n²`-bit words (`encGraph`,
++`encPerm`) with `n = Nat.sqrt` of the length of the first component of `x`, hence at most
++`|x|` bits, whatever its auxiliary input, tape and history (`Nat.sqrt_le`,
++`length_pairFstD_le`). -/
++theorem giProver_length_le (x y r : List Bool) (hist : List (List Bool)) :
++    (giProver.next x y r hist).length ≤ x.length := by
++  have h : (giProver.next x y r hist).length =
++      Nat.sqrt (pairFstD x).length * Nat.sqrt (pairFstD x).length := by
++    cases hist <;> simp [giProver, decGraph]
++  rw [h]
++  exact (Nat.sqrt_le _).trans (length_pairFstD_le x)
++
++/-- The honest prover of the `|x|`-fold graph-isomorphism protocol sends at most `|x|` bits per
++message, as in one iteration (`giProver_length_le`). -/
++theorem giProverRep_length_le (x y r : List Bool) (hist : List (List Bool)) :
++    (giProverRep.next x y r hist).length ≤ x.length := by
++  have h : (giProverRep.next x y r hist).length =
++      Nat.sqrt (pairFstD x).length * Nat.sqrt (pairFstD x).length := by
++    simp only [giProverRep]
++    split_ifs <;> simp [instanceVertexCount]
++  rw [h]
++  exact (Nat.sqrt_le _).trans (length_pairFstD_le x)
++
++/-- The honest prover of the graph non-isomorphism protocol sends one bit per message. -/
++theorem gniProver_length_le (x y r : List Bool) (hist : List (List Bool)) :
++    (gniProver.next x y r hist).length ≤ 1 := by
++  simp [gniProver]
++
+ /-! ### Isomorphism algebra (shadow copies of the main file's lemmas) -/
+ 
+ /-- Every graph is isomorphic to itself. -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+index f05c284f..a8918e97 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+@@ -173,8 +173,9 @@ theorem gni_interactiveProofErr (hV : gniVerifier.Efficient) :
+     InteractiveProofErr gniProtocol Lniso (fun N => 1 / 2 + permFailBound (instanceVertices N)) where
+   efficientV := hV
+   complete := by
++    refine ⟨.const 1, ?_⟩
+     rintro x ⟨n, G₀, G₁, rfl, hni⟩
+-    exact ⟨[], fun z => gni_complete hni [] z⟩
++    exact ⟨[], gniProver_length_le _ [], fun z => gni_complete hni [] z⟩
+   sound := by
+     intro x hx P' z
+     by_cases hwf : wellFormedInstance x = true
+@@ -293,8 +294,9 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
+     EfficientProverProofErr giProtocol Liso Riso (fun _ => 1 / 2) where
+   efficientV := hV
+   complete := by
++    refine ⟨.var, ?_⟩
+     rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
+-    exact ⟨encPerm σ, fun z => gi_complete hσ z⟩
++    exact ⟨encPerm σ, giProver_length_le _ _, fun z => gi_complete hσ z⟩
+   sound := by
+     intro x hx P' z
+     by_cases hwf : wellFormedInstance x = true
+@@ -316,6 +318,7 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
+       rw [HardcoreBit.uprob_eq_one_of_forall hall]
+       norm_num
+   efficientP := hP
++  boundedP := ⟨.var, fun x y r hist _ => giProver_length_le x y r hist⟩
+   completeWitness := by
+     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
+     exact gi_complete hσ z
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean
+index 4647fec0..b5affdac 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean
+@@ -413,8 +413,9 @@ theorem gni_interactiveProofErrRep (hV : gniVerifierRep.Efficient) :
+       (fun N => (2 : ℝ)⁻¹ ^ N + N * permFailBound (instanceVertices N)) where
+   efficientV := hV
+   complete := by
++    refine ⟨.const 1, ?_⟩
+     rintro x ⟨n, G₀, G₁, rfl, hni⟩
+-    exact ⟨[], fun z => gniRep_complete hni [] z⟩
++    exact ⟨[], gniProver_length_le _ [], fun z => gniRep_complete hni [] z⟩
+   sound := by
+     intro x hx P' z
+     by_cases hwf : wellFormedInstance x = true
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+index 28202b3a..4aeed143 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+@@ -446,8 +446,9 @@ theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVeri
+     EfficientProverProofErr giProtocolRep Liso Riso (fun N => (2 : ℝ)⁻¹ ^ N) where
+   efficientV := hV
+   complete := by
++    refine ⟨.var, ?_⟩
+     rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
+-    exact ⟨encPerm σ, fun z => giRep_complete hσ z⟩
++    exact ⟨encPerm σ, giProverRep_length_le _ _, fun z => giRep_complete hσ z⟩
+   sound := by
+     intro x hx P' z
+     by_cases hwf : wellFormedInstance x = true
+@@ -473,6 +474,7 @@ theorem gi_rep_efficientProverProofErr (hP : giProverRep.Efficient) (hV : giVeri
+       have : (0 : ℝ) ≤ (2 : ℝ)⁻¹ ^ x.length := by positivity
+       linarith
+   efficientP := hP
++  boundedP := ⟨.var, fun x y r hist _ => giProverRep_length_le x y r hist⟩
+   completeWitness := by
+     rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
+     exact giRep_complete hσ z
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean
+index 575ba2ae..ff43a6b3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean
+@@ -40,7 +40,12 @@ perfect zero-knowledge with an expected polynomial-time simulator); only one ite
+ treated (the text defers the `n`-fold protocol to its §7.2.1); the Goldreich abort form
+ `PerfectZKAbort` holds for the one-attempt simulator at the concrete layer
+ (`giSimAttempt_perfectAbort`) but is not claimed for `giProtocol` itself, whose honest
+-prover's rejection-sampled `π` is not exactly uniform.
++prover's rejection-sampled `π` is not exactly uniform. No honest prover drawing its
++permutation from polynomially many fair coins could do better (`n! ∤ 2^c` for `n ≥ 3`), so
++neither `PerfectZK` nor `PerfectZKAbort` has a source instance under D8 and D10 (ruling G3-4
++of gate 03; see their docstrings in `ZeroKnowledge/Defs.lean`); `gi_statZK` is the form in
++which [PS10, Theorem 122.3] is stated, and `PerfectZKAbort.statZK` relates the abort form to
++it.
+ 
+ ## Contents
+ 
+@@ -79,8 +84,8 @@ prover's rejection-sampled `π` is not exactly uniform.
+   (§4.6 Zero-knowledge proofs, pp. 122–124.)
+ * [Gar26] S. Garg, *A Course in Theory of Cryptography*, lecture notes, UC Berkeley,
+   draft of 22 January 2026 (the concrete probability layer).
+-* O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge University
+-  Press, 2001, Definition 4.3.1 (perfect zero-knowledge with abort).
++* [Gol01] O. Goldreich, *Foundations of Cryptography, Volume I: Basic Tools*, Cambridge
++  University Press, 2001, Definition 4.3.1 (perfect zero-knowledge with abort).
+ -/
+ 
+ namespace TCSlib.Cryptography
+@@ -281,7 +286,7 @@ theorem uprob_giSimAttempt_some {n : ℕ} {ρ : Type*} [Fintype ρ] {G₀ G₁ :
+   linarith
+ 
+ /-- The abort form of perfect zero-knowledge for one attempt of the simulator
+-[Goldreich, Definition 4.3.1; PS10, Algorithm 123.4] (Claim-123.b, `PerfectZKAbort` shape at
++[Gol01, Definition 4.3.1; PS10, Algorithm 123.4] (Claim-123.b, `PerfectZKAbort` shape at
+ the concrete layer): the attempt aborts with probability at most `1/2`, and for every test
+ set `T`, `Pr[T(view)] · Pr[attempt ≠ ⊥] = Pr[attempt ≠ ⊥ ∧ T(attempt)]`. -/
+ theorem giSimAttempt_perfectAbort {n : ℕ} {ρ : Type*} [Fintype ρ] [Nonempty ρ] {G₀ G₁ : Graph n}
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index 94818e32..e8cb2fe1 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -78,6 +78,8 @@ the commitment.
+ * `TCSlib.Cryptography.col_efficientProverProofErr`,
+   `TCSlib.Cryptography.colRep_efficientProverProof` — **[PS10, Proposition 127.6]**, the
+   interactive-proof half (Prop-127.6).
++* `TCSlib.Cryptography.colProver_length_le`, `TCSlib.Cryptography.colProtocol_proverBounded`
++  — the honest provers' messages are polynomially bounded in `|x|` (ruling G3-3).
+ * `TCSlib.Cryptography.R3COL_witnessRelation` — `R_3COL` is a witness relation for `3COL`.
+ 
+ ## References
+@@ -503,7 +505,7 @@ noncomputable def colProtocolRep (Com : List Bool → List Bool) (ℓ : PolyExpr
+ 
+ /-! ### Efficiency of the honest parties (Inf-4.2) -/
+ 
+-/-- The honest prover of one iteration is a PPT strategy when `Com` is polynomial-time
++/-- The honest prover of one iteration is efficient (D8) when `Com` is polynomial-time
+ [PS10, Proposition 127.6, efficient prover] (Inf-4.2).
+ 
+ **Proof sketch.** `Strategy.Efficient` with `NUPPT.ofPolyTimeUniform` of the string function
+@@ -522,7 +524,7 @@ theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComp
+     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
+   ColProofs.colProver_efficient hCom ℓ
+ 
+-/-- The verifier of one iteration is a PPT strategy when `Com` is polynomial-time
++/-- The verifier of one iteration is efficient (D8) when `Com` is polynomial-time
+ [PS10, Definition 116.1 for Proposition 127.6] (Inf-4.2).
+ 
+ **Proof sketch.** As `colProver_efficient`: the edge index by `polyTimeComputable_iterateFind`
+@@ -537,14 +539,14 @@ theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeCo
+     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
+   ColProofs.colVerifier_efficient hCom ℓ
+ 
+-/-- The prover of the `n|E|`-fold protocol is a PPT strategy (Inf-4.2): `colProver_efficient`
++/-- The prover of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): `colProver_efficient`
+ on the coin block `hist.length / 2` cut by `pairTakePoly`/`pairDropPoly`, with the parity and
+ iteration tests by `polyTimeComputable_lenLe` on unary counters. -/
+ theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
+   ColProofs.colProverRep_efficient hCom ℓ
+ 
+-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy (Inf-4.2): the challenge as in
++/-- The verifier of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): the challenge as in
+ `colVerifier_efficient` on the block `hist.length / 2`, and the verdict a loop over the
+ `n|E|` pairs of the history (`polyTimeComputable_iterate` with an accumulated conjunction of
+ `colVerify` checks). -/
+@@ -552,6 +554,64 @@ theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTim
+     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
+   ColProofs.colVerifierRep_efficient hCom ℓ
+ 
++/-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
++
++/-- A vector of `q` commitments to `n`-bit values with `m`-bit randomness has at most
++`q (2 C (2n + 3 + m)^c + 2)` bits when `C (|w| + 1)^c` bounds `|Com w|`
++(`CommitmentLemmas.length_encodeMsgs_le`, `length_pairEncode`). -/
++theorem length_multiCom_le {Com : List Bool → List Bool} {C c : ℕ}
++    (hC : ∀ w, (Com w).length ≤ C * (w.length + 1) ^ c) {q n m : ℕ} (v : Fin q → Fin n → Bool)
++    (r : Fin q → Fin m → Bool) :
++    (multiCom Com v r).length ≤ q * (2 * (C * (2 * n + 3 + m) ^ c) + 2) := by
++  unfold multiCom
++  refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
++    fun msg hmsg => ?_).trans (by simp)
++  obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hmsg
++  refine (hC _).trans (le_of_eq ?_)
++  rw [length_pairEncode, List.length_ofFn, List.length_ofFn]
++  ring_nf
++
++/-- **The honest prover of one iteration sends polynomially bounded messages** (ruling G3-3 of
++gate 03): for `C (|w| + 1)^c` bounding `|Com w|` and `n = (decGraph x).1 ≤ |x|`, the
++commitment message has at most `n (2 C (2n + 3 + ℓ(n))^c + 2)` bits (`length_multiCom_le`),
++the opening `3 ℓ(n) + 20` (`length_pairEncode`, `length_encColoring`) and the empty reply none;
++`ℓ` is monotone (`PolyExpr.eval_mono`). The bound holds for every tape and history, since
++`colCommit` and `colOpen` have a fixed shape. -/
++theorem colProver_length_le {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
++    (ℓ : PolyExpr) : ∃ B : PolyExpr, ∀ x y r hist,
++      ((colProver Com ℓ).next x y r hist).length ≤ B.eval x.length := by
++  obtain ⟨C, c, hC⟩ := hCom.output_length_le
++  refine ⟨.add (.mul .var (.add (.mul (.const 2) (.mul (.const C)
++    (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) ℓ) c))) (.const 2)))
++    (.add (.mul (.const 3) ℓ) (.const 20)), fun x y r hist => ?_⟩
++  have hn : (decGraph x).1 ≤ x.length := Nat.sqrt_le_self _
++  have hℓ : ℓ.eval (decGraph x).1 ≤ ℓ.eval x.length := ℓ.eval_mono hn
++  have hcom : (decGraph x).1 * (2 * (C * (2 * (decGraph x).1 + 3 + ℓ.eval (decGraph x).1) ^ c) + 2)
++      ≤ x.length * (2 * (C * (2 * x.length + 3 + ℓ.eval x.length) ^ c) + 2) := by
++    gcongr
++  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
++    PolyExpr.eval_var, colProver]
++  split
++  · exact (length_multiCom_le hC _ _).trans (hcom.trans (Nat.le_add_right _ _))
++  · split
++    · simp only [colOpen, length_pairEncode, List.length_ofFn, encColor, length_encColoring]
++      omega
++    · simp
++
++/-- **The honest provers of [PS10, Protocol 127.5] send polynomially bounded messages**, one
++iteration and `n|E|`-fold, on every instance (ruling G3-3 of gate 03): the bound of
++`colProver_length_le` from the commitment's polynomial-time evaluator; the repeated prover
++runs `colProver` on a coin block or sends `[]`. -/
++theorem colProtocol_proverBounded {Com : List Bool → List Bool} {ℓ : PolyExpr}
++    (hC : Commitment Com ℓ) (R : List Bool → List Bool → Prop) :
++    ∃ B : PolyExpr, (colProtocol Com ℓ).ProverBounded R B ∧
++      (colProtocolRep Com ℓ).ProverBounded R B := by
++  obtain ⟨B, hB⟩ := colProver_length_le hC.easy ℓ
++  refine ⟨B, fun x y r hist _ => hB x y r hist, fun x y r hist _ => ?_⟩
++  show ((colProverRep Com ℓ).next x y r hist).length ≤ B.eval x.length
++  simp only [colProverRep]
++  split_ifs <;> first | exact hB _ _ _ _ | exact Nat.zero_le _
++
+ /-! ### Proposition 127.6, interactive-proof half -/
+ 
+ section OneIteration
+@@ -815,12 +875,14 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
+       (fun N => 1 - 1 / (N : ℝ) + (1 / 2 : ℝ) ^ N) where
+   efficientV := colVerifier_efficient hC.easy ℓ
+   complete := by
+-    intro x hx
++    obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
++    refine ⟨B, fun x hx => ?_⟩
+     obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
+-    exact ⟨encColoring c, fun z => HardcoreBit.uprob_eq_one_of_forall fun r =>
+-      colProtocol_outV_honest hc z r⟩
++    exact ⟨encColoring c, fun r hist => hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
++      fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
+   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
+   efficientP := colProver_efficient hC.easy ℓ
++  boundedP := (colProtocol_proverBounded hC R3COL).imp fun _ h => h.1
+   completeWitness := by
+     rintro x y ⟨n, G, c, rfl, rfl, hc⟩ z
+     exact HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r
+@@ -847,7 +909,8 @@ probability is at most `(1 - 1/|E|)^{n|E|} ≤ e^{-n}` (`one_sub_inv_pow_mul_le_
+ `n = Nat.sqrt |x|` (`length_encGraph`, `Nat.sqrt_eq`). Negligibility:
+ `negligible_exp_neg_sqrt_div` with `C = 1`, `Negligible.mul_pow negligible_two_pow_neg 2`,
+ `negligible_two_pow_neg`, `Negligible.add`. Efficiency: `colProverRep_efficient`,
+-`colVerifierRep_efficient`. -/
++`colVerifierRep_efficient`. Bounded prover messages (and the bound in the completeness
++clause): `colProtocol_proverBounded`. -/
+ theorem colRep_efficientProverProof {Com : List Bool → List Bool} {ℓ : PolyExpr}
+     (hC : Commitment Com ℓ) : EfficientProverProof (colProtocolRep Com ℓ) L3COL R3COL := by
+   sorry
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+index 49577820..ab4796e9 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+@@ -33,7 +33,7 @@ main file makes the main file fail to type-check, so it cannot go unnoticed.
+   when the graph has an edge.
+ * `TCSlib.Cryptography.ColProofs.colProver_efficient`, `ColProofs.colVerifier_efficient`,
+   `ColProofs.colProverRep_efficient`, `ColProofs.colVerifierRep_efficient` — the (shadow)
+-  parties are PPT strategies (Inf-4.2).
++  parties are efficient (D8) (Inf-4.2).
+ * `TCSlib.Cryptography.ColProofs.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`,
+   `ColProofs.finOneEquiv`, `ColProofs.two_le_of_edge` — helpers of the soundness proof of
+   Proposition 127.6.
+@@ -316,22 +316,22 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr)
+ 
+ /-! ### Efficiency of the (shadow) parties -/
+ 
+-/-- The honest prover of one iteration is a PPT strategy when `Com` is (shadow form). -/
++/-- The honest prover of one iteration is efficient (D8) when `Com` is (shadow form). -/
+ theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
+   efficient_of_polyTime _ (proverStr_poly Com ℓ hCom) (colProver_next_eq Com ℓ)
+ 
+-/-- The verifier of one iteration is a PPT strategy when `Com` is (shadow form). -/
++/-- The verifier of one iteration is efficient (D8) when `Com` is (shadow form). -/
+ theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
+   efficient_of_polyTime _ (verifierStr_poly Com ℓ hCom) (colVerifier_next_eq Com ℓ)
+ 
+-/-- The prover of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
++/-- The prover of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
+ theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
+   efficient_of_polyTime _ (proverRepStr_poly Com ℓ hCom) (colProverRep_next_eq Com ℓ)
+ 
+-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
++/-- The verifier of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
+ theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
+   efficient_of_polyTime _ (verifierRepStr_poly Com ℓ hCom) (colVerifierRep_next_eq Com ℓ)
+diff --git a/audits/pass-shelat/Checks.lean b/audits/pass-shelat/Checks.lean
+index 8eb0368d..ed7c52c4 100644
+--- a/audits/pass-shelat/Checks.lean
++++ b/audits/pass-shelat/Checks.lean
+@@ -300,6 +300,10 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ #print axioms TCSlib.Cryptography.col_zk
+ #print axioms TCSlib.Cryptography.col_hvzk
+ #print axioms TCSlib.Cryptography.col_zeroKnowledgeProof
++-- The four Theorem 124.1 forms below print `sorryAx`. Gate 03e, minor 5(a): the sorried
++-- declarations they reach are exactly `colRep_efficientProverProof` and `col_zk` (the 3-colouring
++-- stubs of pack 03g); the transfer lemmas `LevinReduction.zk`, `.efficientProverProof(Err)`
++-- print clean (gate 03e section below).
+ #print axioms TCSlib.Cryptography.zk_proof_of_levinReduction
+ #print axioms TCSlib.Cryptography.zk_proof_of_owp_levinReduction
+ #print axioms TCSlib.Cryptography.zk_proof_of_mem_NP
+@@ -378,3 +382,39 @@ results must print exactly `[propext, Classical.choice, Quot.sound]`.
+ #print axioms TCSlib.Cryptography.Candidates.statClose_sampleBelowL
+ -- P9-1 (zk-model): the prefix-reading verifier of the sanity protocol (proved).
+ #print axioms TCSlib.Cryptography.npProtocol_readsPrefix
++
++-- ## Gate 03e (ch. 2–4 interaction, proof systems, ZK definitions, commitments, NP layer)
++-- Minor 5(b): the pack's headlines that had no print.
++#print axioms TCSlib.Cryptography.LevinReduction.zk
++#print axioms TCSlib.Cryptography.LevinReduction.efficientProverProof
++#print axioms TCSlib.Cryptography.LevinReduction.efficientProverProofErr
++#print axioms TCSlib.Cryptography.Strategy.pullback_efficient
++#print axioms TCSlib.Cryptography.Commitment.multiHiding
++-- Ruling G3-3: bounded honest prover messages in the proof systems.
++#print axioms TCSlib.Cryptography.Protocol.ProverBounded.mono
++#print axioms TCSlib.Cryptography.Protocol.ProverBounded.exists_complete
++#print axioms TCSlib.Cryptography.Protocol.ProverBounded.pullback
++#print axioms TCSlib.Cryptography.InteractiveProof.exists_accept
++#print axioms TCSlib.Cryptography.InteractiveProofErr.exists_accept
++#print axioms TCSlib.Cryptography.npProtocol_proverBounded
++#print axioms TCSlib.Cryptography.npProtocol_interactiveProof
++#print axioms TCSlib.Cryptography.giProtocol_proverBounded
++#print axioms TCSlib.Cryptography.giProtocolRep_proverBounded
++#print axioms TCSlib.Cryptography.gniProtocol_proverBounded
++#print axioms TCSlib.Cryptography.gni_interactiveProofErr
++#print axioms TCSlib.Cryptography.gi_efficientProverProofErr
++#print axioms TCSlib.Cryptography.colProver_length_le
++#print axioms TCSlib.Cryptography.colProtocol_proverBounded
++-- Ruling G3-4: perfect zero-knowledge with abort implies statistical ZK (error 2^{-|x|}).
++#print axioms TCSlib.Cryptography.AbortRetry.statClose_retry
++#print axioms TCSlib.Cryptography.AbortRetry.exists_retrySimulator
++#print axioms TCSlib.Cryptography.PerfectZKAbort.statZK
++#print axioms TCSlib.Cryptography.PerfectZKAbort.zk
++#print axioms TCSlib.Cryptography.perfectZK_zeroRounds
++-- Minors 3 and 4, note 13: the text's Theorem 126.4, and Theorem 124.1 for every witness
++-- relation with the two protocols tied (the last three print `sorryAx`, reaching exactly
++-- `colRep_efficientProverProof` and `col_zk`, like the four forms above).
++#print axioms TCSlib.Cryptography.exists_commitment_of_owp
++#print axioms TCSlib.Cryptography.exists_commitment_zk_proof_of_owp_levinReduction
++#print axioms TCSlib.Cryptography.zk_proof_of_witnessRelation
++#print axioms TCSlib.Cryptography.zk_proof_of_witnessRelation_of_owp
