@@ -702,7 +702,7 @@ private theorem nf_sweep_display_pass (N : FinNDTM Bool) (x w : List Bool)
   rw [ho]
   rfl
 
-section Continuation
+section
 
 attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
 
@@ -1020,7 +1020,6 @@ private def nf_aNext (N : FinNDTM Bool) {SL : Type}
   | none => nf_after N L none
   | some j => ⟨.bFwd j, .run⟩
 
-
 /-- **The return of tape `0` after a replay.** From the head of tape `0` on the blank after the
 stream `s` (tape `0` holding `s` from cell `0`), the verifier's phases `aFwd j` (`Turing.skipTM`
 at `w := []`) and `aBack j` (`Turing.skipBackTM` at `u := s`) bring that head to cell `0` and
@@ -1280,7 +1279,6 @@ private theorem nf_bClear (N : FinNDTM Bool) {SL : Type}
         rw [MultiTapeTM.runFrom_add, hB, hre2, hpC w (by rw [List.length_drop] at hu; omega)]
         exact nf_tagged_ne_park (fun h => nf_Ph.noConfusion h) _ b
 
-
 /-- **The verifier's entry is the stream start.** After the trivial setup, the run's entry
 configuration is `streamStartCfg x 0 q s`: state `q`, the input head at `1`, `s` on tape `0`
 from cell `0` (blank elsewhere), tape `1` blank, both heads at `0`, empty output.
@@ -1336,7 +1334,6 @@ private theorem nf_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
     · have hlt := c.inputPos.isLt
       rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
         inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
-
 
 /-- After a record's first `2k + 3` bits the parser is at the last position with the control
 unchanged; the record's last bit completes the full record array, and the parser's step there
@@ -1474,7 +1471,6 @@ private theorem nf_leaf_toLast (N : FinNDTM Bool) (j : Option (Fin N.k)) {x : Li
     rw [Function.update_self]
     exact hA ⟨2 * N.k + 3, by omega⟩
 
-
 /-- **One record of the input's replay.** From a record boundary, with the record on tape `0`
 from its head, the input instance reads the record in `2k + 4` steps, at no exit before. At a
 live control whose decoded input claim is the cell under the native input head, it performs the
@@ -1543,10 +1539,9 @@ private theorem nf_leaf_record_in (N : FinNDTM Bool) {x : List Bool}
           dsimp only
           rw [hsym, Option.getD_some, h3, hinp, if_neg hdec])]
 
-
 /-- **The decoded virtual step of `N`.** At a live state, apply the action recomputed from a
 record's decoded claims (`nf_act`); a halted configuration stays. When every claim is the
-configuration's read, it is `N`'s step under the record's choice bit (`nf_vstep_genuine`). -/
+configuration's read, it is `N`'s step under the record's choice bit (`nf_vrun_of_ok`). -/
 private def nf_vstep (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool N.State x)
     (rec : Fin (2 * N.k + 4) → Bool) : Cfg N.k Bool N.State x :=
   match c.state with
@@ -1596,7 +1591,8 @@ private theorem nf_vstep_ctl (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Boo
     rw [Action.apply_output, StepBlock.outputSummary_append]
     rfl
 
-/-- The control fold's state follows the decoded virtual run, over a list of records. -/
+/-- The control fold's state and output summary follow the decoded virtual run, over a list of
+records. -/
 private theorem nf_vrun_ctl (N : FinNDTM Bool) {x : List Bool} :
     ∀ (rs : List (Fin (2 * N.k + 4) → Bool)) (c : Cfg N.k Bool N.State x) (ctl : nf_Control N),
       ctl.1 = c.state → ctl.2.1 = StepBlock.outputSummary c.output →
@@ -1647,14 +1643,8 @@ private theorem nf_all_cons (N : FinNDTM Bool) {x : List Bool} (c : Cfg N.k Bool
     (∀ r (h : r < (rec :: rs).length),
       P (((rec :: rs).take r).foldl (nf_vstep N) c) (rec :: rs)[r]) ↔
       P c rec ∧ ∀ r (h : r < rs.length),
-        P ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] := by
-  constructor
-  · intro h
-    exact ⟨h 0 (by simp), fun r hr => h (r + 1) (by simp; omega)⟩
-  · rintro ⟨h0, h⟩ r hr
-    cases r with
-    | zero => exact h0
-    | succ r => exact h r (by simp at hr; omega)
+        P ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] :=
+  Nat.forall_lt_succ_left'
 
 /-- In a stream of records whose end flags mark exactly the last, the first record's flag says
 whether it is the only one, and the rest's flags mark exactly the rest's last. -/
@@ -1671,7 +1661,6 @@ private theorem nf_flags_cons {k : ℕ} (rec : Fin (2 * k + 4) → Bool)
     cases rs <;> simp
   · have := hflag (r + 1) (by simp; omega)
     simpa using this
-
 
 /-- **The input's replay.** From a record boundary with a stream of `n ≥ 1` records on tape `0`
 from its head, only the last end-flagged, at a control that follows the virtual configuration
@@ -1786,12 +1775,10 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
         rw [hdec, hinp]
         rfl
 
-
 /-- Tape `1` with the block at cell `b` rewritten to hold the content `n`: two nonblank bits,
 `nf_record`'s code of `n`. -/
 private def nf_blockWrite (B : ℤ → Option Bool) (b : ℤ) (n : Option Bool) : ℤ → Option Bool :=
   Function.update (Function.update B b (some n.isSome)) (b + 1) (some (n.getD false))
-
 
 /-- **One block of a work tape's replay.** At the first cell `b` of the block on tape `1`, the
 work-tape instance reads the block's two cells, rewriting them to the cell's new content `n`, in
@@ -1956,8 +1943,6 @@ private theorem nf_leaf_block (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool}
         simp only [nf_leaf]
         rw [hsym1, if_neg hdec])]
 
-
-
 /-- **The read of one record by a work-tape instance.** From a record boundary, with the record on
 tape `0` from its head, the instance for work tape `t` reads the record in `2k + 4` steps, at no
 exit before. At a live control it is then at the first cell of the block on tape `1`, carrying
@@ -2104,8 +2089,6 @@ private theorem nf_blocks_support {B : ℤ → Option Bool} {p₀ lo hi : ℤ} {
       exact ⟨fun _ => by omega, fun _ => Option.some_ne_none _⟩
     · rw [if_neg hzi]
       exact ⟨fun h' => absurd rfl h', fun h' => absurd ⟨by omega, by omega⟩ hzi⟩
-
-
 
 /-- A simulated move is at most one cell. -/
 private theorem nf_signType_bound (m : SignType) : -1 ≤ (m : ℤ) ∧ (m : ℤ) ≤ 1 := by
@@ -2321,7 +2304,6 @@ private theorem nf_leaf_run_wk (N : FinNDTM Bool) (t : Fin N.k) {x : List Bool} 
       rw [MultiTapeTM.runFrom_add, hrun]
       exact hrejB (fun h => hok0 (h.symm.trans hdecB))
 
-
 /-- **The exit invariant on tape `1` gives its clear's input.** If tape `1`'s nonblank cells are
 exactly the interval `[S, E]` and its head is at `h ∈ [S, E]`, then from `h - i` (with
 `i = h - S`) it holds a blank-delimited word `R` of length `E - S + 1`, and blanking `R`'s cells
@@ -2394,7 +2376,6 @@ private def nf_allPass (N : FinNDTM Bool) (x : List Bool)
   nf_sweepPass N ((rs.flatMap List.ofFn).foldl (nf_sweepStep N) (nf_sweepInit N)) = true ∧
     ∀ (i : Fin (N.k + 1)) (r : ℕ) (h : r < rs.length),
       nf_ok N ((rs.take r).foldl (nf_vstep N) (N.tm.initCfg x)) rs[r] i
-
 
 /-- **The verifier over the work tapes from `m` on.** From the entry of work tape `m`, with tape
 `0` holding the stream from cell `0` and its head there, tape `1` blank and the output empty, the
@@ -2656,7 +2637,6 @@ private theorem nf_V_tail (N : FinNDTM Bool) {x : List Bool}
       rw [hver] at h
       exact absurd (Sigma.mk.inj_iff.mp (Option.some.inj h)).2 (by simp)
 
-
 /-- Every check passes exactly when the control sweep passes, every input claim is checked, and
 every work-tape claim is checked. -/
 private theorem nf_allPass_iff (N : FinNDTM Bool) (x : List Bool)
@@ -2672,7 +2652,6 @@ private theorem nf_allPass_iff (N : FinNDTM Bool) (x : List Bool)
     exact ⟨hc, h 0, fun t _ => h t.succ⟩
   · rintro ⟨hc, h0, ht⟩
     exact ⟨hc, fun i => Fin.cases h0 (fun t => ht t (Nat.zero_le _)) i⟩
-
 
 /-- **The verifier's characterization.** From the stream start of a stream of `n ≥ 1` records
 (only the last end-flagged), the verifier reaches a first verdict, `acc` or `rej`, at some time
@@ -2902,7 +2881,6 @@ private theorem nf_V_char (N : FinNDTM Bool) (x : List Bool)
     rw [e2]
     omega
 
-
 /-- **A stream that first stops the controller is a stream of records**: `n ≥ 1` records of width
 `2k + 4`, only the last end-flagged.
 
@@ -2950,7 +2928,6 @@ private theorem nf_split (k : ℕ) (s : List Bool)
 /-- The trivial setup: one state, its own exit. -/
 private def nf_P : MultiTapeTM 2 Bool Unit :=
   ⟨(), fun _ _ _ => ⟨0, fun _ => (none, 0), none, some ()⟩⟩
-
 
 /-- **The backward lemma's obligation `hV`.** For every stream that first stops the controller at
 its end, well formed or not in content, the verifier reaches a verdict, `acc` or `rej`, from the
@@ -3096,7 +3073,6 @@ private theorem nf_V_display (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ []
   rw [hrlen] at hT
   exact hT
 
-
 /-! ### The transfers -/
 
 /-- The normal form's constant for `k` work tapes, with the record width `W = 2k + 4`:
@@ -3111,7 +3087,6 @@ private def nf_host (N : FinNDTM Bool) :=
     false (nf_V N (nf_leaf N) (nf_leafExit N))
     (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i) ⟨.park, true⟩
     ⟨.park, false⟩
-
 
 /-- **The ledger.** With `|s| = (2k + 4)t₀` and the verifier's time at most
 `4|s| + 10 + k((2(2k + 4) + 12)t₀ + 15)`, the host's budget `0 + 2|s| + TQ + 11` is at most
@@ -3195,8 +3170,6 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
     ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ ⟨.park, true⟩ ⟨.park, false⟩ 0 (nf_P.initCfg x)
     h0 hst hfi hbl hlf (nf_display N x w₀) hslive hsstop TQ hacc hfirst hnil _ hB
 
-
-
 /-- **A passing stream of records is a genuine accepting run.** If every check passes on `n`
 records, then `N` accepts `x` within `n` steps, with the records' choice bits as the word.
 
@@ -3268,7 +3241,7 @@ private theorem nf_backward_host (N : FinNDTM Bool) (x w : List Bool)
   subst hTQ
   exact ⟨rs.length, nf_backward N x rs (hacc'.mp hacc)⟩
 
-end Continuation
+end
 
 /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
 cited through [AB09, §3.2]): every
@@ -3314,8 +3287,12 @@ setup; its controller stops at the first record boundary after a set end
 flag. The verifier is deterministic and silent: a control sweep (a fold by
 `Turing.scanTM`) checks the recomputed states, the end flags and the output,
 and replay sweeps check the claimed reads against the input and, on the
-second work tape, against each replayed work tape, which `Turing.skipTM`,
-`Turing.skipBackTM` and `Turing.clearTM` then erase. -/
+second work tape, against each replayed work tape. That tape is kept there as
+one two-cell block per visited cell, rewritten at every record; the last
+record's head move is not performed, so the blocks stay contiguous around the
+head. Between sweeps `Turing.skipTM` and `Turing.skipBackTM` return the heads
+and `Turing.clearTM` erases the blocks. The constant is
+`C = 6W + k(2W + 12) + 21 + 15k` with `W = 2k + 4`, for `N`'s `k` work tapes. -/
 theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
     ∃ (M : CodeNDTM) (C : ℕ),
       (∀ (x : List Bool) (t : ℕ),
