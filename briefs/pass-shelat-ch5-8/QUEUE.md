@@ -93,8 +93,14 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
   - **the rest:** 03i (`fb94694c…`), 03k (`2fb353c2…`), 03l (`d43f8e31…`).
 
   Each pack attaches its bundle and the PDF (`Pass–Shelat.pdf`, SHA-256 `76245560…`).
-- **S2b PR and gate 04:** after S2b's post-merge replay (running). S2b now also carries T2, and
-  gate 04's pack covers it.
+- **Gate 04 (S2b): Ready to dispatch.** It audits PR
+  [Shilun-Allan-Li/tcslib#195](https://github.com/Shilun-Allan-Li/tcslib/pull/195) at
+  `afe5982f612081bba2fbcec9ab41adcbbc118b13`. Its replay passes (772 modules); axioms are standard
+  except T1 and T2; lint is clean. The folder is `outbox/gates/04-s2b-gate/` on
+  `exchange/pass-shelat-ch5-8` (commit `9e3305b2f47352f279f642526c3bf25fcc7c9b0f`), with the
+  bundle (SHA-256 `d64276ef…`) and the dispatch prompt in `README.md`.
+- **#195 (S2b): Not yet clear to merge — gate 04 first.** After it merges, gate 03's packs 03d and
+  03j pin to the merged head, and the prongs (all stacked on S2b) can be integrated for gate 06.
 - **#194 (PAC layer, to `main`):** see Q-4.
 - **Lean branches (no PRs; for the ch. 5–8 statement gate later):** prong A
   `cryptography/pass-shelat-ch5-8-prong-a`, prong B `…-prong-b`, prong C `…-prong-c`, prong D
