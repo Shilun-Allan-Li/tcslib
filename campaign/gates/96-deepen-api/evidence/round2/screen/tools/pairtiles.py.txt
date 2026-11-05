@@ -1,0 +1,49 @@
+"""Print the shared tiles of selected copy-text-screen pairs, for inspection.
+
+Usage: python3 -I pairtiles.py <copy-text-screen-v3.py> <repo-root> <pairs file> <file.lean> [...]
+
+Executes the v3 script's own source up to its declaration loop (so `strip`, `DECL`, `scopes`,
+`qualify`, `body` and `lcs` are v3's verbatim), rebuilds v3's labelled declarations for the given
+files, and for each line `A  reproduces  B` of the pairs file (v3 output lines) repeats v3's greedy
+tiling of B's body by A's, printing each tile (at least 25 characters) in tiling order. Only the
+listed pairs are tiled; this is not a screen.
+"""
+import re, sys
+v3, root, pairsfile, files = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4:]
+src = open(v3, encoding='utf-8').read()
+cut = src.index('\ndecls = []\n')
+sys.argv = [v3, root] + files
+g = {'__name__': 'v3prefix'}
+exec(compile(src[:cut], v3, 'exec'), g)
+strip, DECL, scopes, qualify, body, lcs, label = (g[k] for k in
+    ('strip', 'DECL', 'scopes', 'qualify', 'body', 'lcs', 'label'))
+by = {}
+for p in g['paths']:
+    t = strip(open(f'{root}/{p}', encoding='utf-8').read()); ms = list(DECL.finditer(t))
+    ev = scopes(p, t); found = []
+    for i, m in enumerate(ms):
+        end = ms[i + 1].start() if i + 1 < len(ms) else len(t)
+        bd = re.sub(r'\s+', '', body(t[m.start():end]))
+        ns = [n for off, n in ev if off <= m.start()][-1]
+        if len(bd) >= 60: found.append((m.start(), m.group(3), qualify(ns, m.group(3)), bd))
+    short = {}; qual = {}
+    for (_, nm, qn, _) in found: short[nm] = short.get(nm, 0) + 1; qual[qn] = qual.get(qn, 0) + 1
+    seen = {}
+    for (pos, nm, qn, bd) in found:
+        if short[nm] == 1: name = nm
+        elif qual[qn] == 1: name = qn
+        else: seen[qn] = seen.get(qn, 0) + 1; name = f'{qn}#{seen[qn]}'
+        by[f'{label(p)}::{name}'] = bd
+P = re.compile(r'^\s+(\S+::\S+)\s+reproduces\s+(\S+::\S+): (\d+)/(\d+)')
+for line in open(pairsfile, encoding='utf-8'):
+    m = P.match(line)
+    if not m: continue
+    a, b = by[m.group(1)], by[m.group(2)]
+    print(line.rstrip())
+    tiles = []
+    while True:
+        n, seg = lcs(b, a)
+        if n < 25: break
+        tiles.append(seg); a = a.replace(seg, '\x00', 1); b = b.replace(seg, '\x01', 1)
+    for s in tiles: print(f'      [{len(s)}] {s}')
+    print(f'      total {sum(map(len, tiles))} (screen: {m.group(3)})')
