@@ -84,7 +84,7 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
 
 ## Dispatches and merges
 
-- **Gate 03 (ch. 2–4): 03a, 03b, 03c, 03e dispatched by the user (2026-11-05); the other seven Ready to dispatch** (11 packs). They are pinned to
+- **Gate 03 (ch. 2–4): 03a, 03b, 03c, 03e dispatched and returned (2026-11-05); the other seven: Not yet clear to dispatch — the interface packs' repairs first.** 03b, 03c and 03e have four majors between them (the `Collection` interface, `PRG` expansion at `n = 0`, the proof systems' efficiency, perfect ZK); their repairs change what 03d, 03f1, 03f2, 03g, 03i, 03j and 03k audit. Reviews are in progress; rulings follow as questions. (11 packs.) They are pinned to
   `a3c5fa8b72e50939822f22364647dc844a3914a0`, after a fresh replay of their closure there (415
   modules with `Checks.lean`, all pass; `gates/03-ch2-4/evidence/replay/`). The records are at
   `fed6c2fb9dd35fcceda878ab36f3dc2a34cd3a5c`. Each folder on `exchange/pass-shelat-ch5-8`
@@ -105,7 +105,7 @@ Also: `HBCSecure` does not require the honest parties to be efficient. **Recomme
   bundle (SHA-256 `d64276ef…`) and the dispatch prompt in `README.md`.
 - **#195 (S2b): Not yet clear to merge — gate 04 first.** After it merges, gate 03's packs 03d and
   03j pin to the merged head, and the prongs (all stacked on S2b) can be integrated for gate 06.
-- **Gate 05 (PAC layer, #194): Ready to dispatch.** The folder is `outbox/gates/05-pac-gate/` on
+- **Gate 05 (PAC layer, #194): dispatched by the user (2026-11-05).** The folder is `outbox/gates/05-pac-gate/` on
   `exchange/pass-shelat-ch5-8` (commit `34f3f1202146babb64b3bdccf8859ddc030bb8f4`), with the
   bundle (SHA-256 `451a101b…`, 11 sections) and the dispatch prompt in `README.md`.
 - **#194 (PAC layer, to `main`): Not yet clear to merge — gate 05 first.**
