@@ -86,7 +86,7 @@ campaign branch, merged with the campaign, and replayed.
    - two inline re-derivations, now fixed (above);
    - `Nat.find` in `nf_forward`: the first halt of a nondeterministic branch (`runWith` over word
      prefixes), with no published lemma, as NF's report notes;
-   - eleven `Cfg.ext` blocks, which are configuration-equation idioms or RN-1 members, under the
+   - twelve `Cfg.ext` blocks, which are configuration-equation idioms or RN-1 members, under the
      user's by-kind acknowledgment.
 
    Is anything else re-derived, including inline sub-steps?
