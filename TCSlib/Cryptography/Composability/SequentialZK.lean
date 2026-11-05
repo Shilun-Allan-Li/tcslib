@@ -74,6 +74,9 @@ the `2k` moves `2kj, …, 2kj + 2k − 1`.
   source's sketch), and `PerfectZK.seqRep` (proved from `StatZK.seqRep`).
 * `InteractiveProof.seqRep` (stated; a `sorry` under its sketch): the repetition is an
   interactive proof.
+* `InteractiveProofErr.seqRep`, `EfficientProverProofErr.seqRep` (stated; `sorry`s under their
+  sketches): sequential repetition multiplies the soundness error, `s ↦ s^Q` (ruling G3-7d, for
+  the text's form of Thm 124.1).
 
 ## References
 
@@ -425,6 +428,40 @@ theorem PerfectZKAbort.seqRep {B : PolyExpr} (h : PerfectZKAbort π R)
    exists since `1 ≤ Q(|x|)`. -/
 theorem InteractiveProof.seqRep {L : Language Bool} (h : InteractiveProof π L) (Q : PolyExpr)
     (hQ : ∀ n, 1 ≤ Q.eval n) : InteractiveProof (π.seqRep Q) L := by
+  sorry
+
+/-- **Sequential repetition multiplies the soundness error** [PS10, p. 120: the protocol "can be
+repeated many times … to drive the probability of error as low as desired"; and p. 127, the
+`O(n|E|)` repetitions of the 3-colouring protocol]: if `π` has soundness error `s`, its
+`Q`-phase sequential repetition (which accepts iff every phase does) has soundness error
+`s(|x|)^{Q(|x|)}`, with perfect completeness kept.
+
+**Proof sketch.**
+1. *Efficiency and completeness* as in `InteractiveProof.seqRep`: every phase of the honest
+   execution is an honest execution of `π` with independent coin slices
+   (`seqRep_exec_phase`), accepted with probability one.
+2. *Soundness:* fix `x ∉ L`, a prover `P'` and `z`. Condition on the prover's coins and on the
+   transcript of phases `0, …, j − 1`. Phase `j` is then an execution, against `π.V` on a fresh
+   uniform coin slice, of the prover strategy that `P'` induces with that prefix hard-wired (the
+   verifier reads only phase `j`'s messages). By `π`'s soundness it accepts with probability at
+   most `s(|x|)`, whatever the prefix. By induction on `j`, all `Q(|x|)` phases accept with
+   probability at most `s(|x|)^{Q(|x|)}`, so `V_Q` outputs `[false]` with probability at least
+   `1 − s(|x|)^{Q(|x|)}`. -/
+theorem InteractiveProofErr.seqRep {L : Language Bool} {s : ℕ → ℝ} (h : InteractiveProofErr π L s)
+    (Q : PolyExpr) (hQ : ∀ n, 1 ≤ Q.eval n) :
+    InteractiveProofErr (π.seqRep Q) L (fun n => s n ^ Q.eval n) := by
+  sorry
+
+/-- **The efficient-prover form**: the sequential repetition of an interactive proof with an
+efficient prover and soundness error `s` is one with soundness error `s^Q`; the repeated prover
+is efficient and complete for every witness.
+
+**Proof sketch.** `InteractiveProofErr.seqRep` for the proof system; `P_Q` runs `π.P`'s machine
+on its coin slice and a suffix of its history, so a uniform machine computes it; completeness for
+every witness phase by phase, as in `InteractiveProof.seqRep`. -/
+theorem EfficientProverProofErr.seqRep {L : Language Bool} {s : ℕ → ℝ}
+    (h : EfficientProverProofErr π L R s) (Q : PolyExpr) (hQ : ∀ n, 1 ≤ Q.eval n) :
+    EfficientProverProofErr (π.seqRep Q) L R (fun n => s n ^ Q.eval n) := by
   sorry
 
 end TCSlib.Cryptography
