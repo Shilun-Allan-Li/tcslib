@@ -89,6 +89,7 @@ import TCSlib.Complexity.SpaceComplexity.SavitchARM.Recursion
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Setup
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Search
 import TCSlib.Complexity.SpaceComplexity.SavitchARM.Correct
+import TCSlib.Complexity.SpaceComplexity.SavitchARM.Window
 import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
 import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountRegs
 import TCSlib.Complexity.SpaceComplexity.Machines.MARM
@@ -230,6 +231,9 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.SavitchARM.{Recursion, Setup, Search, Correct}`: the machine evaluates the
   midpoint recursion with an explicit stack; `NPSPACE ⊆ PSPACE` (Thm 4.14 at polynomial
   bounds, consumed by `PSPACE = NPSPACE` in `SpaceComplexity.Savitch`)
+- `SpaceComplexity.SavitchARM.Window`: windows without a known space bound; no reachable
+  edge code makes membership midpoint reachability at that radius, and none is reachable beyond
+  the space bound (the iterative deepening of Thm 4.14 for `S ≥ logSpace`)
 - `SpaceComplexity.Machines.{MARM, MARMCompile, MARMTime}`: abstract register machines with
   a monotone memory tape, their compilation, and their time bound by configuration counting
   (`marm_dtime`)
