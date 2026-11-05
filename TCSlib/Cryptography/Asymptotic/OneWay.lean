@@ -178,8 +178,9 @@ typed inverse (the literal adversary cannot know `n`): e.g. the constant family 
 `inLen = var`, `outLen = 0` (the adversary cannot know the required output length `inLen n`),
 or `f n b = b ⊕ [n odd]` on one bit (it cannot know the parity of `n`; gate 03b, finding 9).
 The `1^n` form is the headline; `toParam` applies whenever `outLen` is non-constant (for
-`PolyExpr` lengths, injective ⇔ non-constant), so for every family of the text the two forms
-coincide (`toLit`, `toParam`). -/
+`PolyExpr` lengths, injective ⇔ non-constant), so for families with non-constant `outLen` the two
+forms coincide (`toLit`, `toParam`); with constant `outLen` they can differ, as above (gate 03b,
+round 2, R2-2). -/
 structure WorstCaseOneWayLit (𝓕 : FunFamily) : Prop where
   /-- Easy to compute. -/
   easy : 𝓕.Easy
@@ -199,11 +200,16 @@ Inversion is typed (D5, `NUPPT.inverter`): an inverter of `ofString f p` at para
 return a preimage of length `n`, while [PS10, Definition 27.3] accepts a preimage of any
 length. The two experiments agree when `f` is length-regular with non-constant `p` (then
 `|f(x)|` determines `|x|`); with constant `p` neither notion is satisfiable. Otherwise the typed
-notion can be strictly weaker: for a length-preserving one-way `g`, the function
-`f(0^k ‖ w) := w` (`|w| = k`), `f(x) := g(x)` elsewhere is inverted with probability one by
-`y ↦ 0^{|y|} ‖ y` in the text's experiment, while in the typed one every inverter succeeds
-with probability at most its inversion probability against `g` plus `2^{-n/2}` (gate 03a,
-note 15). -/
+notion can be strictly weaker. An informal example (not formalized; gate 03a, note 15): let `h` be
+a length-preserving one-way function and `g(x ‖ b) := h(x) ‖ 1` on non-empty inputs (again
+length-preserving and one-way, with every output ending in `1`); put `f(0^k ‖ w) := w` for
+`|w| = k ≥ 1` and `f(x) := g(x)` elsewhere, and take `p = var`. In the text's experiment
+`y ↦ 0^{|y|} ‖ y` inverts `f` with probability one. In the typed experiment on `ofString f .var`
+the special outputs are padded with zeros, so they end in `0` and cannot equal an ordinary output;
+an inverter succeeds on an ordinary challenge only by inverting `g`, so its success is at most
+its success against `g` plus `O(2^{-n/2})`. The final `1` matters: without it the zero padding can
+make special outputs collide with ordinary ones, and the typed experiment is then not harder
+(gate 03b, round 2, R2-1). -/
 def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
   inLen := .var
   outLen := p
