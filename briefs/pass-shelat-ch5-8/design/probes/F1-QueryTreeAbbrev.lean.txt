@@ -1,0 +1,70 @@
+import TCSlib.Cryptography.Games.OracleComp
+open TCSlib.Cryptography.Games
+
+namespace Probe
+
+/-- The one-oracle specification (as in S2b's `singleSpec`). -/
+abbrev singleSpec (I O : Type) : OracleSpec Unit := ⟨fun _ => I, fun _ => O⟩
+
+abbrev QueryTree (I O α : Type) : Type := OracleComp (singleSpec I O) α
+
+namespace QueryTree
+variable {I O α I' O' : Type}
+
+@[match_pattern] abbrev ret (a : α) : QueryTree I O α := OracleComp.pure a
+@[match_pattern] abbrev query (x : I) (k : O → QueryTree I O α) : QueryTree I O α :=
+  OracleComp.query () x k
+
+/-- The custom eliminator: one case per old constructor. -/
+@[elab_as_elim] def induct {motive : QueryTree I O α → Sort _}
+    (ret : ∀ a, motive (ret a)) (query : ∀ x k, (∀ o, motive (k o)) → motive (query x k)) :
+    ∀ t, motive t
+  | OracleComp.pure a => ret a
+  | OracleComp.query () x k => query x k fun o => induct ret query (k o)
+
+def eval (f : I → O) : QueryTree I O α → α
+  | ret a => a
+  | query x k => eval f (k (f x))
+
+@[simp] theorem eval_ret (f : I → O) (a : α) : (ret a : QueryTree I O α).eval f = a := rfl
+@[simp] theorem eval_query (f : I → O) (x : I) (k : O → QueryTree I O α) :
+    (query x k).eval f = (k (f x)).eval f := rfl
+
+def BoundedBy : QueryTree I O α → ℕ → Prop
+  | ret _, _ => True
+  | query _ _, 0 => False
+  | query _ k, q + 1 => ∀ o, BoundedBy (k o) q
+
+@[simp] theorem boundedBy_query_zero (x : I) (k : O → QueryTree I O α) :
+    ¬ (query x k).BoundedBy 0 := id
+
+theorem BoundedBy.mono {t : QueryTree I O α} {q q' : ℕ} (h : t.BoundedBy q)
+    (hq : q ≤ q') : t.BoundedBy q' := by
+  induction t using QueryTree.induct generalizing q q' with
+  | ret a => trivial
+  | query x k ih =>
+    cases q with
+    | zero => exact absurd h (boundedBy_query_zero x k)
+    | succ q =>
+      obtain ⟨q', rfl⟩ : ∃ q'', q' = q'' + 1 := ⟨q' - 1, by omega⟩
+      exact fun o => ih o (h o) (by omega)
+
+def simulate (π : I → I') (ans : I → O' → O) : QueryTree I O α → QueryTree I' O' α
+  | ret a => ret a
+  | query x k => query (π x) (fun o' => simulate π ans (k (ans x o')))
+
+@[simp] theorem eval_simulate (π : I → I') (ans : I → O' → O) (g : I' → O')
+    (t : QueryTree I O α) :
+    (t.simulate π ans).eval g = t.eval (fun x => ans x (g (π x))) := by
+  induction t using QueryTree.induct with
+  | ret a => rfl
+  | query x k ih => exact ih _
+
+/-- Old-style `cases` also has to work: by the eliminator, or by `match`. -/
+example (t : QueryTree I O α) (f : I → O) : t.eval f = t.eval f := by
+  match t with
+  | ret a => rfl
+  | query x k => rfl
+
+end QueryTree
+end Probe
