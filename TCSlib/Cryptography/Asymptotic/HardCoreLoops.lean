@@ -141,7 +141,7 @@ theorem blocksStr_one {k : ℕ} (r : Fin k → Bool) :
 
 /-- Bitwise XOR of two encoded strings is the encoding of the pointwise sum (`Bool` as a
 Boolean ring, `+` is XOR). -/
-theorem zipWith_xor_ofFn {m : ℕ} (a b : Fin m → Bool) :
+theorem zipWith_xor_ofFn_add {m : ℕ} (a b : Fin m → Bool) :
     List.zipWith xor (List.ofFn a) (List.ofFn b) = List.ofFn (a + b) := by
   refine List.ext_getElem (by simp) fun j hj₁ hj₂ => ?_
   simp only [List.getElem_zipWith, List.getElem_ofFn, Pi.add_apply]
@@ -264,7 +264,7 @@ def input (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m → Boo
 /-- The closed form of the orbit on a well-formed input, for `i ≤ k` rounds:
 `⟨β.drop i, ⟨s.drop (i·m), partialSum β s i⟩⟩`. 
 
-**Proof sketch.** Induction on `i`: the initial accumulator `1^m ⊕ 1^m` is `0^m` (`List.zipWith_replicate`, `List.ofFn_const`); at round `i < k` the head of `β.drop i` is `β_i` (`List.drop_eq_getElem_cons`), the block is `take_drop_blocksStr`, and the accumulator update is `zipWith_xor_ofFn` against the recursion of `partialSum`. -/
+**Proof sketch.** Induction on `i`: the initial accumulator `1^m ⊕ 1^m` is `0^m` (`List.zipWith_replicate`, `List.ofFn_const`); at round `i < k` the head of `β.drop i` is `β_i` (`List.drop_eq_getElem_cons`), the block is `take_drop_blocksStr`, and the accumulator update is `zipWith_xor_ofFn_add` against the recursion of `partialSum`. -/
 theorem orbit_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m → Bool) (i : ℕ) (hi : i ≤ k) :
     orbit start step (input m β s) i =
       pairEncode ((List.ofFn β).drop i)
@@ -290,7 +290,7 @@ theorem orbit_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m 
     · rw [Nat.succ_mul]
     · rw [partialSum, dif_pos hi']
       by_cases hb : β ⟨i, hi'⟩ = true
-      · rw [if_pos hb, if_pos hb, zipWith_xor_ofFn]
+      · rw [if_pos hb, if_pos hb, zipWith_xor_ofFn_add]
       · rw [if_neg hb, if_neg hb, add_zero]
 
 /-- After `k` rounds the loop is stationary (`β'` is exhausted). -/

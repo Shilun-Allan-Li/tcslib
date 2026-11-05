@@ -225,235 +225,6 @@ private lemma sat3_verifier_equiv (x : List Bool) :
       simpa [satVerdict_append true x u hu] using hv
     exact ⟨(satWidth_spec _).mp hh.1, u, hu, hh.2⟩
 
-/-- The unary scanner partitions its input into the counted run and its suffix. -/
-private lemma sat_takeTrues_repr (x : List Bool) :
-    List.replicate (CNF.takeTrues x).1 true ++ (CNF.takeTrues x).2 = x := by
-  induction x with
-  | nil => rfl
-  | cons b x ih =>
-    cases b with
-    | false => rfl
-    | true => simpa [CNF.takeTrues, List.replicate_succ] using congrArg (true :: ·) ih
-
-/-- A successful literal parse reconstructs exactly the consumed input. -/
-private lemma sat_parseLit_repr {x r : List Bool} {ℓ : Std.Sat.Literal ℕ}
-    (h : CNF.parseLit x = some (ℓ, r)) : x = CNF.serializeLit ℓ ++ r := by
-  have ht := sat_takeTrues_repr x
-  unfold CNF.parseLit at h
-  split at h
-  · cases h
-  · rename_i k b rest he
-    cases h
-    simpa [he, CNF.serializeLit, List.append_assoc] using ht.symm
-  · cases h
-
-/-- Clause parsing reconstructs its terminator as well as every literal.
-
-**Proof sketch.** Induct on fuel. The leading zero case succeeds even at
-zero fuel. Otherwise invert both successful subparses and concatenate their
-reconstruction equalities; no premature end of the input can succeed. -/
-private lemma sat_parseClause_repr {fuel : ℕ} {x r : List Bool} {C : CNF.Clause ℕ}
-    (h : CNF.parseClause fuel x = some (C, r)) : x = CNF.serializeClause C ++ r := by
-  induction fuel generalizing x C r with
-  | zero =>
-    cases x with
-    | nil => cases h
-    | cons b s =>
-      cases b with
-      | false => cases h; rfl
-      | true => cases h
-  | succ fuel ih =>
-    cases x with
-    | nil => cases h
-    | cons b s =>
-      cases b with
-      | false => cases h; rfl
-      | true =>
-        cases hl : CNF.parseLit (true :: s) with
-        | none => simp [CNF.parseClause, hl] at h
-        | some p =>
-          obtain ⟨ℓ, t⟩ := p
-          cases hc : CNF.parseClause fuel t with
-          | none => simp [CNF.parseClause, hl, hc] at h
-          | some p =>
-            obtain ⟨D, v⟩ := p
-            simp only [CNF.parseClause, hl, hc, Option.some.injEq, Prod.mk.injEq] at h
-            rcases h with ⟨rfl, rfl⟩
-            rw [sat_parseLit_repr hl, ih hc]
-            simp [CNF.serializeClause, List.append_assoc]
-
-/-- Formula parsing reconstructs every clause marker and the final terminator.
-
-**Proof sketch.** Induct on fuel, retaining the unconsumed suffix. A clause
-marker spends one unit of fuel before the clause and formula subparses.
-The leading zero case works independently of the remaining fuel. -/
-private lemma sat_parseClauses_repr {fuel : ℕ} {x r : List Bool} {φ : CNF ℕ}
-    (h : CNF.parseClauses fuel x = some (φ, r)) : x = CNF.serialize φ ++ r := by
-  induction fuel generalizing x φ r with
-  | zero =>
-    cases x with
-    | nil => cases h
-    | cons b s =>
-      cases b with
-      | false => cases h; rfl
-      | true => cases h
-  | succ fuel ih =>
-    cases x with
-    | nil => cases h
-    | cons b s =>
-      cases b with
-      | false => cases h; rfl
-      | true =>
-        cases hc : CNF.parseClause fuel s with
-        | none => simp [CNF.parseClauses, hc] at h
-        | some p =>
-          obtain ⟨C, t⟩ := p
-          cases ht : CNF.parseClauses fuel t with
-          | none => simp [CNF.parseClauses, hc, ht] at h
-          | some p =>
-            obtain ⟨ψ, v⟩ := p
-            simp only [CNF.parseClauses, hc, ht, Option.some.injEq, Prod.mk.injEq] at h
-            rcases h with ⟨rfl, rfl⟩
-            rw [sat_parseClause_repr hc, ih ht]
-            simp [CNF.serialize, CNF.serializeClause, List.append_assoc]
-
-/-- Exact-consumption parsing is inverse serialization on every successful input. -/
-private lemma sat_parse_repr {x : List Bool} {φ : CNF ℕ}
-    (h : CNF.parse x = some φ) : x = CNF.serialize φ := by
-  unfold CNF.parse at h
-  split at h
-  · rename_i ψ hp
-    cases h
-    simpa using sat_parseClauses_repr hp
-  · cases h
-
-/-- The six LL(1) positions: formula, clause, unary index, polarity, exact
-end, and error. The end position becomes error on any trailing bit. -/
-private def satSyntaxStep (q : Fin 6) (b : Bool) : Fin 6 :=
-  match q.val with
-  | 0 => if b then 1 else 4
-  | 1 => if b then 2 else 0
-  | 2 => if b then 2 else 3
-  | 3 => 1
-  | _ => 5
-
-/-- Residual grammar at each finite-control position. Unary indices remain
-unbounded strings; the finite control stores only their grammar position. -/
-private def satSyntaxSuffix (q : Fin 6) (x : List Bool) : Prop :=
-  match q.val with
-  | 0 => ∃ φ : CNF ℕ, x = CNF.serialize φ
-  | 1 => ∃ (C : CNF.Clause ℕ) (φ : CNF ℕ), x = CNF.serializeClause C ++ CNF.serialize φ
-  | 2 => ∃ (v : ℕ) (b : Bool) (C : CNF.Clause ℕ) (φ : CNF ℕ),
-      x = List.replicate v true ++ [false, b] ++ CNF.serializeClause C ++ CNF.serialize φ
-  | 3 => ∃ (b : Bool) (C : CNF.Clause ℕ) (φ : CNF ℕ),
-      x = b :: (CNF.serializeClause C ++ CNF.serialize φ)
-  | 4 => x = []
-  | _ => False
-
-/-- Each transition consumes exactly one grammar bit.
-
-**Proof sketch.** Invert the first clause, literal, or unary-run constructor
-as appropriate. Formula and clause zero-markers are distinct states; the
-polarity state consumes its bit unconditionally. No bit can follow the
-exact-end state, which is how trailing garbage forces the fallback. -/
-private lemma satSyntaxSuffix_cons (q : Fin 6) (b : Bool) (x : List Bool) :
-    satSyntaxSuffix q (b :: x) ↔ satSyntaxSuffix (satSyntaxStep q b) x := by
-  fin_cases q <;> cases b
-  · change (∃ φ, false :: x = CNF.serialize φ) ↔ x = []
-    constructor
-    · rintro ⟨φ, h⟩; cases φ <;> simpa [CNF.serialize] using h
-    · rintro rfl; exact ⟨[], rfl⟩
-  · change (∃ φ, true :: x = CNF.serialize φ) ↔
-      ∃ C φ, x = CNF.serializeClause C ++ CNF.serialize φ
-    constructor
-    · rintro ⟨φ, h⟩
-      cases φ with
-      | nil => simp [CNF.serialize] at h
-      | cons C φ => exact ⟨C, φ, by simpa [CNF.serialize, List.append_assoc] using h⟩
-    · rintro ⟨C, φ, rfl⟩
-      exact ⟨C :: φ, by simp [CNF.serialize, List.append_assoc]⟩
-  · change (∃ C φ, false :: x = CNF.serializeClause C ++ CNF.serialize φ) ↔
-      ∃ φ, x = CNF.serialize φ
-    constructor
-    · rintro ⟨C, φ, h⟩
-      cases C with
-      | nil => exact ⟨φ, by simpa [CNF.serializeClause] using h⟩
-      | cons ℓ C => simp [CNF.serializeClause, CNF.serializeLit, List.replicate_succ] at h
-    · rintro ⟨φ, rfl⟩; exact ⟨[], φ, rfl⟩
-  · change (∃ C φ, true :: x = CNF.serializeClause C ++ CNF.serialize φ) ↔
-      ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
-        CNF.serializeClause C ++ CNF.serialize φ
-    constructor
-    · rintro ⟨C, φ, h⟩
-      cases C with
-      | nil => simp [CNF.serializeClause] at h
-      | cons ℓ C =>
-        exact ⟨ℓ.1, ℓ.2, C, φ, by simpa [CNF.serializeClause, CNF.serializeLit,
-          List.replicate_succ, List.append_assoc] using h⟩
-    · rintro ⟨v, b, C, φ, rfl⟩
-      exact ⟨(v, b) :: C, φ, by simp [CNF.serializeClause, CNF.serializeLit,
-        List.replicate_succ, List.append_assoc]⟩
-  · change (∃ v b C φ, false :: x = List.replicate v true ++ [false, b] ++
-      CNF.serializeClause C ++ CNF.serialize φ) ↔
-        ∃ b C φ, x = b :: (CNF.serializeClause C ++ CNF.serialize φ)
-    constructor
-    · rintro ⟨v, b, C, φ, h⟩
-      cases v with
-      | zero => exact ⟨b, C, φ, by simpa [List.append_assoc] using h⟩
-      | succ v => simp [List.replicate_succ] at h
-    · rintro ⟨b, C, φ, rfl⟩; exact ⟨0, b, C, φ, by simp⟩
-  · change (∃ v b C φ, true :: x = List.replicate v true ++ [false, b] ++
-      CNF.serializeClause C ++ CNF.serialize φ) ↔
-        ∃ v b C φ, x = List.replicate v true ++ [false, b] ++
-          CNF.serializeClause C ++ CNF.serialize φ
-    constructor
-    · rintro ⟨v, b, C, φ, h⟩
-      cases v with
-      | zero => simp at h
-      | succ v => exact ⟨v, b, C, φ, by simpa [List.replicate_succ] using h⟩
-    · rintro ⟨v, b, C, φ, rfl⟩
-      exact ⟨v + 1, b, C, φ, by simp [List.replicate_succ]⟩
-  · change (∃ b C φ, false :: x = b :: (CNF.serializeClause C ++ CNF.serialize φ)) ↔
-      ∃ C φ, x = CNF.serializeClause C ++ CNF.serialize φ
-    simp
-  · change (∃ b C φ, true :: x = b :: (CNF.serializeClause C ++ CNF.serialize φ)) ↔
-      ∃ C φ, x = CNF.serializeClause C ++ CNF.serialize φ
-    simp
-  all_goals simp [satSyntaxSuffix, satSyntaxStep]
-
-/-- At end of input, exactly the exact-end grammar state accepts. -/
-private lemma satSyntaxSuffix_nil (q : Fin 6) : satSyntaxSuffix q [] ↔ q = 4 := by
-  fin_cases q <;> simp [satSyntaxSuffix, CNF.serialize, CNF.serializeClause,
-    List.append_eq_nil_iff]
-
-/-- The complete finite-state scan recognizes precisely the residual grammar. -/
-private lemma satSyntaxSuffix_run (q : Fin 6) (x : List Bool) :
-    satSyntaxSuffix q x ↔ x.foldl satSyntaxStep q = 4 := by
-  induction x generalizing q with
-  | nil => exact satSyntaxSuffix_nil q
-  | cons b x ih => rw [satSyntaxSuffix_cons, List.foldl_cons, ← ih]
-
-/-- Boolean result of the complete syntax pass. -/
-private def satSyntax (x : List Bool) : Bool := decide (x.foldl satSyntaxStep 0 = 4)
-
-/-- The machine grammar and the audited parser agree on every string, including
-empty input, unfinished literals, and trailing garbage.
-
-**Proof sketch.** The residual-language invariant identifies scan acceptance
-with the range of serialization. Successful parsing reconstructs its entire
-input, and the existing parser round trip proves the converse. -/
-private lemma satSyntax_spec (x : List Bool) : satSyntax x = (CNF.parse x).isSome := by
-  apply Bool.eq_iff_iff.mpr
-  simp only [satSyntax, decide_eq_true_eq]
-  rw [← satSyntaxSuffix_run]
-  change (∃ φ, x = CNF.serialize φ) ↔ (CNF.parse x).isSome = true
-  constructor
-  · rintro ⟨φ, rfl⟩; simp [CNF.parse_serialize]
-  · intro h
-    cases hp : CNF.parse x with
-    | none => simp [hp] at h
-    | some φ => exact ⟨φ, sat_parse_repr hp⟩
-
 /-- One-way finite-state scanners use no work tapes and emit only the final
 verdict, after inspecting the right boundary. -/
 private def satScanTM {S : Type} [Fintype S] [DecidableEq S]
@@ -531,10 +302,10 @@ private lemma satScan_computes {S : Type} [Fintype S] [DecidableEq S]
 
 /-- The complete CNF syntax pass is realized by an actual finite machine.
 The result concerns every input, not merely serialized formulas. -/
-private lemma satSyntax_poly : PolyTimeComputable (fun x => [satSyntax x]) := by
-  refine ⟨satScanTM satSyntaxStep 0 (fun q => decide (q = 4)), 1, 1, ?_⟩
-  simpa only [Nat.pow_one, Nat.one_mul, satSyntax] using
-    satScan_computes satSyntaxStep 0 (fun q => decide (q = 4))
+private lemma satSyntax_poly : PolyTimeComputable (fun x => [CNF.syntaxOK x]) := by
+  refine ⟨satScanTM CNF.syntaxStep 0 (fun q => decide (q = 4)), 1, 1, ?_⟩
+  simpa only [Nat.pow_one, Nat.one_mul, CNF.syntaxOK] using
+    satScan_computes CNF.syntaxStep 0 (fun q => decide (q = 4))
 
 /-- Administrative states, or a streaming phase (formula, clause, index,
 polarity, rewind) with formula/clause truth bits and a doubled-bit skip flag. -/
@@ -1031,7 +802,7 @@ private def satWitness (z : List Bool) : List Bool :=
 private def satSplitValid (z : List Bool) : Bool := (pairDecode (satSplit z)).isSome
 
 /-- Full syntax validation runs only after successful split recovery. -/
-private def satGood (z : List Bool) : Bool := satSplitValid z && satSyntax (satInstance z)
+private def satGood (z : List Bool) : Bool := satSplitValid z && CNF.syntaxOK (satInstance z)
 
 /-- Safe evaluator input: malformed formulas are replaced by the empty formula
 before the evaluator runs. Thus no semantic rejection can precede validation. -/
@@ -1067,7 +838,7 @@ private lemma satSafe_spec (z : List Bool) :
     | some i =>
       have hsyntax : (CNF.parse (z.take i)).isSome = true := by
         simpa [satGood, satSplitValid, satInstance, satSplit, hs,
-          pairDecode_pairEncode, satSyntax_spec] using hg
+          pairDecode_pairEncode, CNF.syntaxOK_spec] using hg
       cases hp : CNF.parse (z.take i) with
       | none => simp [hp] at hsyntax
       | some φ =>
@@ -1078,7 +849,7 @@ private lemma satSafe_spec (z : List Bool) :
         have hvars : φ.numVars ≤ (z.take i).length := by
           rw [← hdecode]; exact CNF.numVars_decode_le _
         refine ⟨φ, z.drop i, ?_, ?_, ?_⟩
-        · simp only [satSafe, hg, ↓reduceIte, satSplit, hs, sat_parse_repr hp]
+        · simp only [satSafe, hg, ↓reduceIte, satSplit, hs, CNF.parse_repr hp]
         · intro C hC ℓ hℓ
           have hv := sat_literal_lt_numVars φ C ℓ hC hℓ
           omega
@@ -1094,7 +865,7 @@ are all realized by the audited catalog and the complete syntax scanner. -/
 private lemma sat_pipeline_poly :
     PolyTimeComputable (fun z => [satSplitValid z]) ∧
     PolyTimeComputable satInstance ∧
-    PolyTimeComputable (fun z => [satSyntax (satInstance z)]) ∧
+    PolyTimeComputable (fun z => [CNF.syntaxOK (satInstance z)]) ∧
     PolyTimeComputable satSafe := by
   obtain ⟨M, A, hM⟩ := FinTM.computesFunInTime_splitSolve 1 1
   have hs : PolyTimeComputable satSplit := ⟨M, A, 3, hM⟩
@@ -1102,7 +873,7 @@ private lemma sat_pipeline_poly :
     (polyTimeComputable_of_linear FinTM.computesFunInTime_pairValid).comp hs
   have hx : PolyTimeComputable satInstance :=
     (polyTimeComputable_of_linear FinTM.computesFunInTime_pairFst).comp hs
-  have hp : PolyTimeComputable (fun z => [satSyntax (satInstance z)]) := satSyntax_poly.comp hx
+  have hp : PolyTimeComputable (fun z => [CNF.syntaxOK (satInstance z)]) := satSyntax_poly.comp hx
   exact ⟨hv, hx, hp, polyTimeComputable_ite (polyTimeComputable_and hv hp) hs (polyTimeComputable_const _)⟩
 
 /-- The evaluator is polynomial on all safe requests.
@@ -1143,7 +914,7 @@ private lemma satVerdict_false_poly : PolyTimeComputable (fun z => [satVerdict f
   | some i =>
     cases hp : CNF.parse (z.take i) <;>
       simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
-        satSafeValue, satGood, satInstance, satWitness, satSyntax_spec, hp, CNF.decode, CNF.fallback]
+        satSafeValue, satGood, satInstance, satWitness, CNF.syntaxOK_spec, hp, CNF.decode, CNF.fallback]
 
 /-- A computed singleton Boolean verdict decides its verifier language. -/
 private lemma satVerifier_of_poly (three : Bool)
@@ -1193,17 +964,17 @@ fourth literal clears the flag; scanning continues without emitting. -/
 private def satWidthStep (s : Fin 6 × Fin 4 × Bool) (b : Bool) : Fin 6 × Fin 4 × Bool :=
   let (q, c, good) := s
   match q.val with
-  | 0 => (satSyntaxStep q b, 0, good)
+  | 0 => (CNF.syntaxStep q b, 0, good)
   | 1 => if b then (2, satWidthCap (c.val + 1), good && decide (c.val < 3))
       else (0, 0, good)
-  | _ => (satSyntaxStep q b, c, good)
+  | _ => (CNF.syntaxStep q b, c, good)
 
 /-- Unary index bits do not increment the literal counter. -/
 private lemma satWidth_index (n : ℕ) (c : Fin 4) (good : Bool) :
     (List.replicate n true).foldl satWidthStep (2, c, good) = (2, c, good) := by
   induction n with
   | zero => rfl
-  | succ n ih => simpa [List.replicate_succ, satWidthStep, satSyntaxStep] using ih
+  | succ n ih => simpa [List.replicate_succ, satWidthStep, CNF.syntaxStep] using ih
 
 /-- A complete literal increments the width counter exactly once, independently
 of its variable index and polarity. -/
@@ -1244,7 +1015,7 @@ private lemma satWidth_clause (C : CNF.Clause ℕ) (c : Fin 4) (good : Bool) :
 private lemma satWidth_formula (φ : CNF ℕ) (good : Bool) :
     (CNF.serialize φ).foldl satWidthStep (0, 0, good) = (4, 0, good && satWidth φ) := by
   induction φ generalizing good with
-  | nil => simp [CNF.serialize, satWidthStep, satSyntaxStep, satWidth]
+  | nil => simp [CNF.serialize, satWidthStep, CNF.syntaxStep, satWidth]
   | cons C φ ih =>
     have hs : CNF.serialize (C :: φ) = true :: (CNF.serializeClause C ++ CNF.serialize φ) := by
       simp [CNF.serialize, List.append_assoc]
@@ -1286,12 +1057,12 @@ private lemma satVerdict_true_poly : PolyTimeComputable (fun z => [satVerdict tr
     cases hp : CNF.parse (z.take i) with
     | none =>
       simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
-        satSafeValue, satGood, satInstance, satWitness, satSyntax_spec, hp,
+        satSafeValue, satGood, satInstance, satWitness, CNF.syntaxOK_spec, hp,
         CNF.decode, CNF.fallback, satWidth]
     | some φ =>
-      have hx := sat_parse_repr hp
+      have hx := CNF.parse_repr hp
       simp [satVerdict, satSplitValid, satSplit, hs, pairDecode_pairEncode,
-        satSafeValue, satGood, satInstance, satWitness, satSyntax_spec, hx,
+        satSafeValue, satGood, satInstance, satWitness, CNF.syntaxOK_spec, hx,
         CNF.parse_serialize, CNF.decode_serialize, satWidthScan_serialize]
 
 /-- **`3SAT ∈ NP`** [AB09, Theorem 2.10, membership].
@@ -2566,7 +2337,7 @@ private lemma satStreamRound_bound (x : List Bool) (s : SatStreamState)
           | none => exact ⟨hp, hj⟩
           | some lr =>
             rcases lr with ⟨l, rest⟩
-            have he := congrArg List.length (sat_parseLit_repr hparse)
+            have he := congrArg List.length (CNF.parseLit_repr hparse)
             have hpos : 0 < (CNF.serializeLit l).length := by simp [CNF.serializeLit]
             simp only [List.length_cons, List.length_append] at he
             simp only
@@ -2586,7 +2357,7 @@ private lemma satStreamBound_size (x : List Bool) (s : SatStreamState)
 parse starts at the right boundary in formula control; its first round emits
 only the fallback terminator and then becomes finished, even at input length zero. -/
 private def satStreamStart (x : List Bool) : SatStreamState :=
-  if satSyntax x then ⟨(CNF.decode x).numVars, 0, 0⟩ else ⟨0, x.length, 0⟩
+  if CNF.syntaxOK x then ⟨(CNF.decode x).numVars, 0, 0⟩ else ⟨0, x.length, 0⟩
 
 /-- Both the valid and fallback startup states satisfy the loop invariant. -/
 private lemma satStreamStart_bound (x : List Bool) : satStreamBound x (satStreamStart x) := by
@@ -2610,13 +2381,13 @@ private lemma satStreamRun_correct (x : List Bool) :
     (satStreamRun x (x.length + 1) (satStreamStart x)).2 = satReduction x := by
   cases hp : CNF.parse x with
   | none =>
-    have hs : satSyntax x = false := by simp [satSyntax_spec, hp]
+    have hs : CNF.syntaxOK x = false := by simp [CNF.syntaxOK_spec, hp]
     rw [satStreamStart, hs]
     simpa [satReduction_fallback x hp] using satStreamRun_fallback x x.length
   | some φ =>
-    have hx := sat_parse_repr hp
+    have hx := CNF.parse_repr hp
     have hd : CNF.decode x = φ := by simp [CNF.decode, hp]
-    have hs : satSyntax x = true := by simp [satSyntax_spec, hp]
+    have hs : CNF.syntaxOK x = true := by simp [CNF.syntaxOK_spec, hp]
     simp only [satStreamStart, hs, ↓reduceIte, satReduction, hd]
     rw [hx]
     exact satStreamRun_serialize φ
@@ -3249,15 +3020,16 @@ private lemma satMax_computes (φ : CNF ℕ) :
 /-- Canonicalization uses the full syntax test; invalid strings become the
 serialization of the fixed empty-formula fallback. -/
 private def satStreamCanonical (x : List Bool) : List Bool :=
-  if satSyntax x then x else [false]
+  if CNF.syntaxOK x then x else [false]
 
 /-- The guard implements `serialize ∘ decode` on every input, including
 trailing-data failures; it is an actual polynomial-time computation. -/
 private lemma satStreamCanonical_spec (x : List Bool) :
     satStreamCanonical x = CNF.serialize (CNF.decode x) := by
   cases hp : CNF.parse x with
-  | none => simp [satStreamCanonical, satSyntax_spec, CNF.decode, hp, CNF.fallback, CNF.serialize]
-  | some φ => simp [satStreamCanonical, satSyntax_spec, CNF.decode, hp, sat_parse_repr hp, CNF.parse_serialize]
+  | none => simp [satStreamCanonical, CNF.syntaxOK_spec, CNF.decode, hp, CNF.fallback,
+      CNF.serialize]
+  | some φ => simp [satStreamCanonical, CNF.syntaxOK_spec, CNF.decode, hp, CNF.parse_repr hp, CNF.parse_serialize]
 
 /-- The canonicalizer is a captured conditional over the proved full scanner. -/
 private lemma satStreamCanonical_poly : PolyTimeComputable satStreamCanonical :=
@@ -3301,7 +3073,7 @@ private lemma satStreamStart_poly : PolyTimeComputable (fun x => satStreamWord (
   have h := sat_pt_cond satSyntax_poly hv hf
   convert h using 1
   funext x
-  cases hs : satSyntax x <;> simp [satStreamStart, satStreamWord, hs]
+  cases hs : CNF.syntaxOK x <;> simp [satStreamStart, satStreamWord, hs]
 
 /-- A nonnegative native offset clamped at the right boundary. -/
 private def satStreamPos (x : List Bool) (i : ℕ) : Fin (x.length + 2) :=
@@ -3781,7 +3553,7 @@ private lemma satReq_round (x : List Bool) (s : SatStreamState) :
               fin_cases q <;> simp_all [satReqStep, satReqEmit, satReqPack, satStreamWord, satStreamRound]
             | some lr =>
               rcases lr with ⟨l, rest⟩
-              have hrepr := sat_parseLit_repr hp
+              have hrepr := CNF.parseLit_repr hp
               have htok := satToken_literal l rest
               rw [← hrepr] at htok
               have hpol : satReqPol (pairEncode (satStreamWord ⟨j, p, q⟩) x) = l.2 :: rest := by

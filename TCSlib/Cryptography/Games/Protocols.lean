@@ -19,21 +19,30 @@ most `fuel` messages.
 
 **When a party returns.** [PS10, §4.4] ends the protocol when the active machine halts, and gives
 a machine an output only on halting, so the waiting party has none. Yet Definitions 116.1 and
-155.1 use both parties' outputs. As in the ch. 2–4 layer's reading (its foundation decision D8,
-`TCSlib.Cryptography.ZeroKnowledge.Interaction`), the waiting party is activated **once more**:
-its pending send is answered `none` ("the other party has finished"), it may draw coins, and it
-must then return without sending. A send after the end is reported (`ExecOutcome.sentAfterEnd`),
-never hidden. Either party may return early.
+155.1 use both parties' outputs. Following the ch. 2–4 layer's foundation decision D8
+(`TCSlib.Cryptography.ZeroKnowledge.Interaction`), both parties have outputs: the waiting party is
+activated **once more**. Its pending send is answered `none` ("the other party has finished"), it
+may draw coins, and it must then return without sending. A send after the end is reported
+(`ExecOutcome.sentAfterEnd`), never hidden.
 
-**Views.** A party's view (its input and auxiliary input, which are Lean parameters of the party,
-its coins, and the messages delivered to it, starting with the second mover's first message) is
-recorded by the executor: `Party.execT` returns, beside the outcome, each party's received
-messages and coin draws (`Party.Obs`), and its outcome is that of `Party.exec`
-(`Party.execT_outcome`). A party's own oracle log would miss the second mover's first message,
+**A broader model than D8's.** The executor is a coroutine model that contains D8's. It is broader
+in two respects. A party may return early (D8 fixes the number of messages). And a party's output
+is a separate return value (in D8 it is the next-message function on the complete history, so the
+last sender's output equals its last message). D8's executions are those of *embedded strategies*:
+each samples its whole tape first, sends `next` on its scheduled turns, and returns `next` on its
+complete history. Agreement with D8 is claimed only for that class (bridge B4, S2b).
+
+**Traces.** `Party.execT` returns, beside the outcome, each party's received messages (the second
+mover's first message first) and the coin draws it executed (`Party.Obs`). Its outcome is that of
+`Party.exec` (`Party.execT_outcome`). A [PS10, §4.4] view `(x, z, r, M)` contains the whole random
+tape `r`, including bits never read. It is recovered from the trace only for parties that sample
+their whole tape first, as an embedded strategy does. Inputs and auxiliary inputs are Lean
+parameters of the party. A party's own oracle log would miss the second mover's first message,
 which reaches it as an argument.
 
-The bridge to the next-message strategies of the ch. 2–4 layer (`TCSlib.Cryptography.Strategy`,
-`TCSlib.Cryptography.exec`) is part of the S2b layer.
+The ch. 2–4 layer's strategies (`TCSlib.Cryptography.Strategy`, `TCSlib.Cryptography.exec`) remain
+the definitions of interaction for IP, ZK and two-party computation (ruling of 2026-11-05). This
+executor is the calculus in which their properties are proved, through B4.
 
 ## Main definitions
 
@@ -124,9 +133,16 @@ active party returns, the waiting party is activated once more and closed (`endW
 
 **Deviation from [PS10, §4.4]:** the source ends the protocol when the active machine halts and
 defines outputs only on halting, so the waiting party would have none, while Definitions 116.1
-and 155.1 use both outputs. As in the ch. 2–4 layer's D8, the waiting party is activated once
-more; it may draw coins, but a send is reported as `sentAfterEnd`. Unlike D8, which fixes the
-number of messages, a party may return early. -/
+and 155.1 use both outputs. Following the ch. 2–4 layer's D8, the waiting party is activated once
+more; it may draw coins, but a send is reported as `sentAfterEnd`.
+
+**Relation to D8.** This executor is broader than D8 in two respects. A party may return early
+(D8 fixes the number of messages). And a party's output is a separate return value, computed after
+its last activation and possibly after fresh coins on closure. In D8 a party's output is its
+next-message function on its complete history, so the last sender's output equals its last
+message (`Protocol.outV_eq_getLast_of_moverIsV`). D8's executions are the executions of embedded
+strategies (each samples its whole tape first, sends `next` on its scheduled turns, and returns
+`next` on its complete history). Agreement with D8 is claimed only for that class (bridge B4). -/
 def exec : ℕ → ∀ {M₁ M₂ α β : Type},
     Party M₁ M₂ α → (Option M₁ → Party M₂ M₁ β) → ProbComp (ExecOutcome α β)
   | 0, _, _, _, _, A, B =>
@@ -135,8 +151,11 @@ def exec : ℕ → ∀ {M₁ M₂ α β : Type},
     (step A).bind (Sum.elim (fun a => endWith a B)
       (fun mk => (exec fuel (B (some mk.1)) mk.2).bind fun r => .pure r.swap))
 
-/-- With no fuel, the execution ends at the first mover's first send. -/
-theorem exec_zero {M₁ M₂ : Type} (A : Party M₁ M₂ α) (B : Option M₁ → Party M₂ M₁ β) :
+/-- With no fuel, the first mover runs until it returns or tries to send. If it returns, the
+waiting party is closed (`endWith`): activated with `none`, it may draw coins, and the outcome is
+`done` if it returns and `sentAfterEnd` if it sends. If the first mover tries to send, the outcome
+is `outOfFuel` and the waiting party never runs. -/
+@[simp] theorem exec_zero {M₁ M₂ : Type} (A : Party M₁ M₂ α) (B : Option M₁ → Party M₂ M₁ β) :
     exec 0 A B = (step A).bind (Sum.elim (fun a => endWith a B) (fun _ => .pure .outOfFuel)) :=
   rfl
 
@@ -195,7 +214,8 @@ def endWithT {M₁ M₂ α β : Type} (a : α) (B : Option M₁ → Party M₂ M
 /-- The **traced execution**: `exec`, also returning what each party observed. The first component
 of the result is the outcome, the second the first mover's observations, and the third the second
 mover's. When the active party sends `m`, `m` is the first message the other party receives in the
-rest of the run. [PS10, §4.4] (views) -/
+rest of the run. [PS10, §4.4] (the received messages of a view; its random tape for parties that
+sample it first) -/
 def execT : ℕ → ∀ {M₁ M₂ α β : Type},
     Party M₁ M₂ α → (Option M₁ → Party M₂ M₁ β) →
       ProbComp (ExecOutcome α β × Obs M₂ × Obs M₁)

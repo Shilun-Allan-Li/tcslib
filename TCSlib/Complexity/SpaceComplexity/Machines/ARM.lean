@@ -66,9 +66,12 @@ inductive Ins (m d : ℕ) (Λ : Type) where
   | call (j : Fin d) (mode : Mode) (args : List (Fin m)) (l₁ l₀ : Λ)
   /-- answer `b` and halt -/
   | ret (b : Bool)
-  /-- check that the input is `⟨1ⁿ, w⟩` (else answer `0`); `r` is any register -/
+  /-- check that the input is `⟨1ⁿ, w⟩` with `w` a canonical binary payload (a `Nat.bits`
+  word — `pairEncode [] [false]` has the pair shape but is rejected); else answer `0`;
+  `r` is any register -/
   | valP (r : Fin m) (l : Λ)
-  /-- check that the input is `⟨1ⁿ, ⟨u, w⟩⟩` (else answer `0`) -/
+  /-- check that the input is `⟨1ⁿ, ⟨u, w⟩⟩` with both inner payloads canonical binary
+  words (else answer `0`) -/
   | valQ (r : Fin m) (l : Λ)
   /-- branch on `Nat.bits r = w` for the input `⟨1ⁿ, w⟩` -/
   | jeqIn (r : Fin m) (l₁ l₀ : Λ)

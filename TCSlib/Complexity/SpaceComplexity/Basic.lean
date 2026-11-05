@@ -46,7 +46,14 @@ shape of [AB09, Fig. 4.1]:
 
 ## Main results
 
+* `Turing.FinTM.computesInSpace_iff`, `Complexity.logSpace_eq` — the definitions of
+  `ComputesInSpace` and `logSpace` as an equivalence and an equation.
+* `Turing.FinTM.decidesInSpace_iff`, `Complexity.mem_SPACE_iff`, `Complexity.LOGSPACE_eq` —
+  the definitions of `DecidesInSpace`, `SPACE` and `LOGSPACE`, unfolded.
 * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
+* `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
+* `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
+  2026-10-10).
 
 ## Divergences from [AB09]
 
@@ -64,6 +71,23 @@ shape of [AB09, Fig. 4.1]:
 * **Halting.** Deciding (resp. computing) includes halting on every input, as in [AB09]
   ("a TM M deciding L"); the space bound is checked at the halting time, and since space is
   monotone in time and frozen after halting this is the space of the whole computation.
+* **One measure for both classes.** [AB09, Def 4.1]'s own wording splits: *visited*
+  work-tape locations for `SPACE` (the clause quoted above) but *nonblank* locations for
+  `NSPACE`. The campaign convention is the visited-cells measure for both; the planned
+  `NSPACE` (`AroraBarakChapters3-4Plan.md`, phase P4.1) counts visited cells along every
+  choice word, with all branches halting.
+* **Zero bounds collapse the class** (P0 reception audit, round 1, finding 1): every
+  work tape's visited set contains its origin, so every machine satisfies
+  `M.k ≤ spaceUsed` on every input at every time. A single length with `s n = 0`
+  therefore forces a deciding machine to have **no work tapes at all** — and then it
+  has zero space on *every* input — so `SPACE s = SPACE (fun _ => 0)` (semantically
+  the two-way-finite-automaton class) whenever `s` has a zero; multiplicative
+  absorption cannot repair this, since `c * 0 = 0`. In particular the literal
+  `SPACE (fun n => n)` is **not** linear space: `n = 0` collapses it. **Campaign
+  convention:** every asymptotic chapter statement uses an everywhere-positive bound —
+  `fun n => n + 1`, `fun n => n ^ c + 1`, `Complexity.logSpace` — never a bound with a
+  zero. The characterization and the harmless-normalization identities are the sanity
+  layer `TCSlib.Complexity.SpaceComplexity.ZeroSpace`.
 
 ## References
 
@@ -81,10 +105,26 @@ def ComputesInSpace (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ → 
   ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
     M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length
 
+/-- **Computing in space, unfolded**: `M` computes `f` in space `s` exactly when on every input
+`x` there is a time `t` at which `M` has halted with output `f x`
+(`Turing.FinTM.ComputesInTime`), having visited at most `s |x|` work-tape cells by then. -/
+theorem computesInSpace_iff (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ → ℕ) :
+    M.ComputesInSpace f s ↔
+      ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length :=
+  Iff.rfl
+
 /-- The machine `M` decides `L` in space `s`: it computes the indicator `[x ∈ L]` (a
 one-bit output) in space `s`. [AB09, Def 4.1] -/
 def DecidesInSpace (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) : Prop :=
   M.ComputesInSpace (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) s
+
+/-- **Deciding in space, unfolded**: `M` decides `L` in space `s` exactly when it computes the
+one-bit indicator `x ↦ [x ∈ L]` in space `s`. -/
+theorem decidesInSpace_iff (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) :
+    M.DecidesInSpace L s ↔
+      M.ComputesInSpace (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) s :=
+  Iff.rfl
 
 /-- A space bound can be weakened. -/
 theorem ComputesInSpace.mono {M : FinTM Bool} {f : List Bool → List Bool} {s s' : ℕ → ℕ}
@@ -92,6 +132,19 @@ theorem ComputesInSpace.mono {M : FinTM Bool} {f : List Bool → List Bool} {s s
   intro x
   obtain ⟨t, ht, hsp⟩ := h x
   exact ⟨t, ht, hsp.trans (hs _)⟩
+
+/-- A machine with no work tapes computes in zero space whatever it computes at all: the
+space measure counts only work-tape cells. (Shared by the zero-space layer; added
+2026-10-10.)
+
+**Proof sketch.** With `M.k = 0` the space measure is an empty sum
+(`Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero`), at every halting time. -/
+theorem computesInSpace_zero_of_k_eq_zero {M : FinTM Bool} {f : List Bool → List Bool}
+    (hk : M.k = 0) (h : ∀ x, ∃ t, M.ComputesInTime x (f x) t) :
+    M.ComputesInSpace f fun _ => 0 := by
+  intro x
+  obtain ⟨t, ht⟩ := h x
+  exact ⟨t, ht, (MultiTapeTM.spaceUsed_zero_tapes_eq_zero (tm := M.tm) _ t hk).le⟩
 
 end Turing.FinTM
 
@@ -105,19 +158,45 @@ constant `c`. -/
 def SPACE (s : ℕ → ℕ) : Set (Language Bool) :=
   {L | ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * s n}
 
+/-- **Membership in `SPACE`, unfolded**: `L ∈ SPACE s` exactly when some machine decides `L` in
+space `c · s` for some constant `c`. -/
+theorem mem_SPACE_iff {s : ℕ → ℕ} {L : Language Bool} :
+    L ∈ SPACE s ↔ ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * s n :=
+  Iff.rfl
+
 /-- `SPACE` is monotone in the space bound. -/
 theorem SPACE.mono {s₁ s₂ : ℕ → ℕ} (h : ∀ n, s₁ n ≤ s₂ n) : SPACE s₁ ⊆ SPACE s₂ := by
   rintro L ⟨c, M, hM⟩
   exact ⟨c, M, hM.mono fun n => Nat.mul_le_mul_left c (h n)⟩
 
+/-- `SPACE` absorbs constant factors: if `s₁ ≤ a · s₂` pointwise, then
+`SPACE s₁ ⊆ SPACE s₂`. [AB09, Def 4.1: the constant `c` absorbs `a`] (Shared by the
+zero-space layer and the hierarchy arguments; added 2026-10-10.)
+
+**Proof sketch.** A witness at constant `c` for `s₁` is a witness at constant `c · a`
+for `s₂`, since `c · s₁ n ≤ c · (a · s₂ n) = (c · a) · s₂ n`
+(`Turing.FinTM.ComputesInSpace.mono`). -/
+theorem SPACE.mono_const {s₁ s₂ : ℕ → ℕ} {a : ℕ} (h : ∀ n, s₁ n ≤ a * s₂ n) :
+    SPACE s₁ ⊆ SPACE s₂ := by
+  rintro L ⟨c, M, hM⟩
+  refine ⟨c * a, M, hM.mono fun n => ?_⟩
+  calc c * s₁ n ≤ c * (a * s₂ n) := Nat.mul_le_mul_left c (h n)
+    _ = c * a * s₂ n := (Nat.mul_assoc c a (s₂ n)).symm
+
 /-- The logarithmic space bound `⌊log₂ n⌋ + 1`: `Θ(log n)`, and at least `1`, following the
 convention `s(n) ≥ log n` of [AB09, p. 79]. -/
 def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
+
+/-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
+theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
 
 /-- **The class `L`** [AB09, Def 4.5]: `L = SPACE(log n)`, the languages decidable by a
 machine visiting `O(log n)` work-tape cells. (Named `LOGSPACE` to keep the letter `L` free
 for language variables.) -/
 def LOGSPACE : Set (Language Bool) := SPACE logSpace
+
+/-- `LOGSPACE` is `SPACE logSpace`. -/
+theorem LOGSPACE_eq : LOGSPACE = SPACE logSpace := rfl
 
 /-- The language `{⟨x, i⟩ | p x i}`, the pair encoded as `Turing.pairEncode x (Nat.bits i)`
 (index in little-endian binary). The shape of the two languages of [AB09, Def 4.16]. -/

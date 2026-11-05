@@ -2,6 +2,8 @@ import Mathlib.Combinatorics.SimpleGraph.Matching
 import Mathlib.Combinatorics.SimpleGraph.Tutte
 import Mathlib.Combinatorics.SimpleGraph.UniversalVerts
 import Mathlib.Combinatorics.Hall.Basic
+import Mathlib.Combinatorics.SimpleGraph.Hall
+import Mathlib.Combinatorics.Enumerative.DoubleCounting
 import Mathlib.Combinatorics.SimpleGraph.Bipartite
 import Mathlib.Combinatorics.SimpleGraph.Finite
 import Mathlib.Combinatorics.SimpleGraph.Subgraph
@@ -257,16 +259,17 @@ definitionally so, and neither imports the other.
 
 ## Status
 
-The `Adj` field is fully defined; only the `symm` and `loopless` *proof* fields
-are `sorry`.  Since `Adj` has content, results about `cube` are still provable —
-unlike a `def := sorry`, this does not block anything.  Both proofs are short:
-`symm` needs `∃!` to transport across `Ne.symm`, and `loopless` follows since
-`x i ≠ x i` is false.
+Fully defined — `symm` and `loopless` were proved this session (previously `sorry`
+proof fields; `Adj` always had content).
 -/
 def cube (k : ℕ) : SimpleGraph (Fin k → Bool) where
   Adj x y := ∃! i, x i ≠ y i
-  symm := by sorry
-  loopless := by sorry
+  symm := by
+    rintro x y ⟨i, hi, huniq⟩
+    exact ⟨i, Ne.symm hi, fun j hj => huniq j (Ne.symm hj)⟩
+  loopless := by
+    rintro x ⟨i, hi, -⟩
+    exact hi rfl
 
 /-- The **Petersen graph** as the Kneser graph on 2-subsets of `Fin 5`.  ⚠ MISSING (0 hits).
 
@@ -299,14 +302,17 @@ matchings.  It therefore separates "has a 1-factor" from "is 1-factorable".
 
 ## Status
 
-`Adj` is fully defined; only `symm` and `loopless` are `sorry`.  Both are short:
-`symm` is `Disjoint.symm`, and `loopless` follows since a 2-element set is not
-disjoint from itself.  As with `cube`, this does not block downstream results.
+Fully defined — `symm` and `loopless` were proved this session (previously `sorry`
+proof fields).
 -/
 def petersenGraph : SimpleGraph {s : Finset (Fin 5) // s.card = 2} where
   Adj a b := Disjoint (a : Finset (Fin 5)) (b : Finset (Fin 5))
-  symm := by sorry
-  loopless := by sorry
+  symm := fun _ _ h => h.symm
+  loopless := by
+    rintro ⟨a, ha⟩ h
+    have : (a : Finset (Fin 5)) = ⊥ := disjoint_self.mp h
+    simp [Finset.bot_eq_empty] at this
+    simp [this] at ha
 
 /-- The `m × n` **grid graph**.  ⚠ MISSING. Honest def.
 
@@ -332,15 +338,20 @@ join the last column to the first.
 
 ## Status
 
-`Adj` is fully defined; `symm` and `loopless` are `sorry`.  `symm` is a
-disjunction-swap plus `Or.symm` on each inner disjunct; `loopless` follows since
-`n + 1 = n` is false.
+Fully defined — `symm` and `loopless` were proved this session (previously `sorry`
+proof fields).
 -/
 def gridGraph (m n : ℕ) : SimpleGraph (Fin m × Fin n) where
   Adj p q := (p.1 = q.1 ∧ (p.2.val + 1 = q.2.val ∨ q.2.val + 1 = p.2.val)) ∨
              (p.2 = q.2 ∧ (p.1.val + 1 = q.1.val ∨ q.1.val + 1 = p.1.val))
-  symm := by sorry
-  loopless := by sorry
+  symm := by
+    rintro p q (⟨h1, h2 | h2⟩ | ⟨h1, h2 | h2⟩)
+    · exact Or.inl ⟨h1.symm, Or.inr h2⟩
+    · exact Or.inl ⟨h1.symm, Or.inl h2⟩
+    · exact Or.inr ⟨h1.symm, Or.inr h2⟩
+    · exact Or.inr ⟨h1.symm, Or.inl h2⟩
+  loopless := by
+    rintro p (⟨-, h | h⟩ | ⟨-, h | h⟩) <;> omega
 
 /-- Local edge-cut predicate (repo `Connectivity.lean` idiom); the outline's
 `import TCSlib.GraphTheory.Connectivity.Defs` is unavailable, so it is inlined for Ex 5.3.2.
@@ -531,15 +542,74 @@ alternating-reachability construction — much more work for the same statement.
 
 ## Status
 
-`sorry`.  Probably the best value-per-effort target in the file: the hard
-mathematics is already in Mathlib and only the interface work remains.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`).
+Exactly the planned bridge: (⇐) feeds the subtype-indexed neighbourhood family
+to `Finset.all_card_le_biUnion_card_iff_exists_injective` and assembles the
+matching subgraph by hand from the transversal `f` (uniqueness from injectivity
+of `f` plus `hbip.disjoint`); (⇒) injects `S` into `N(S)` via matching partners.
+The pinned Mathlib also has this bridge as
+`SimpleGraph.exists_isMatching_of_forall_ncard_le`
+(`Mathlib/Combinatorics/SimpleGraph/Hall.lean`), but that file is a leaf module
+not imported here; the `ncard`/`card` reconciliation step follows its script.
 -/
 theorem hall_bipartite_matching
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {X Y : Set V} (hbip : G.IsBipartiteWith X Y) :
     (∃ M : G.Subgraph, M.IsMatching ∧ X ⊆ M.verts) ↔
-      ∀ S ⊆ X, S.ncard ≤ (⋃ v ∈ S, G.neighborSet v).ncard := by
-  sorry
+      ∀ S ⊆ X, S.ncard ≤ (⋃ v ∈ S, G.neighborSet v).ncard := (by
+  classical
+  constructor
+  · -- (⇒): the M-partner map injects S into ⋃ v ∈ S, N(v)
+    rintro ⟨M, hM, hMX⟩ S hSX
+    have hpick : ∀ v ∈ S, ∃ w, M.Adj v w := fun v hv => (hM (hMX (hSX hv))).exists
+    choose! g hg using hpick
+    have hmem : ∀ v ∈ S, g v ∈ ⋃ u ∈ S, G.neighborSet u := fun v hv =>
+      Set.mem_biUnion hv (M.adj_sub (hg v hv))
+    have hinj : Set.InjOn g S := by
+      intro v₁ hv₁ v₂ hv₂ heq
+      have h1 : M.Adj (g v₁) v₁ := (hg v₁ hv₁).symm
+      have h2 : M.Adj (g v₁) v₂ := by rw [heq]; exact (hg v₂ hv₂).symm
+      exact hM.eq_of_adj_left h1 h2
+    exact Set.ncard_le_ncard_of_injOn g hmem hinj (Set.toFinite _)
+  · -- (⇐): Hall transversal, then hand-built matching subgraph
+    intro hhall
+    obtain ⟨f, hf₁, hf₂⟩ :=
+      (Finset.all_card_le_biUnion_card_iff_exists_injective
+          (fun x : ↥X => G.neighborFinset ↑x)).mp
+        (fun s => by
+          have := hhall ↑(s.image Subtype.val) (by simp)
+          rw [Set.ncard_coe_finset,
+            Finset.card_image_of_injective _ Subtype.val_injective] at this
+          simpa [← Set.ncard_coe_finset, neighborFinset_def])
+    have hadjf : ∀ x : ↥X, G.Adj ↑x (f x) := fun x => by simpa using hf₂ x
+    have hfY : ∀ x : ↥X, f x ∈ Y := fun x =>
+      isBipartiteWith_neighborSet_subset hbip x.2 (by simpa using hf₂ x)
+    have hfX : ∀ x : ↥X, f x ∉ X := fun x => hbip.disjoint.notMem_of_mem_right (hfY x)
+    refine ⟨⟨X ∪ Set.range f,
+        fun a b => (∃ x : ↥X, a = ↑x ∧ b = f x) ∨ (∃ x : ↥X, b = ↑x ∧ a = f x),
+        ?_, ?_, ?_⟩, ?_, ?_⟩
+    · rintro v w (⟨x, rfl, rfl⟩ | ⟨x, rfl, rfl⟩)
+      · exact hadjf x
+      · exact (hadjf x).symm
+    · rintro v w (⟨x, rfl, -⟩ | ⟨x, -, rfl⟩)
+      · exact Set.mem_union_left _ x.2
+      · exact Set.mem_union_right _ (Set.mem_range_self x)
+    · rintro v w (⟨x, rfl, rfl⟩ | ⟨x, rfl, rfl⟩)
+      · exact Or.inr ⟨x, rfl, rfl⟩
+      · exact Or.inl ⟨x, rfl, rfl⟩
+    · intro v hv
+      have hv' : v ∈ X ∨ v ∈ Set.range f := hv
+      rcases hv' with hvX | ⟨x, rfl⟩
+      · refine ⟨f ⟨v, hvX⟩, Or.inl ⟨⟨v, hvX⟩, rfl, rfl⟩, ?_⟩
+        rintro w (⟨x', hvx', rfl⟩ | ⟨x', rfl, hvf'⟩)
+        · exact congrArg f (Subtype.ext hvx'.symm)
+        · exact absurd (hvf' ▸ hvX) (hfX x')
+      · refine ⟨↑x, Or.inr ⟨x, rfl, rfl⟩, ?_⟩
+        rintro w (⟨x', hfx', rfl⟩ | ⟨x', rfl, hff'⟩)
+        · exact absurd (hfx'.symm ▸ x'.2) (hfX x)
+        · exact congrArg Subtype.val (hf₁ hff').symm
+    · exact fun v hv => Set.mem_union_left _ hv
+)
 
 /-! ## Corollary 5.2: The marriage theorem — grade 56 -/
 
@@ -585,16 +655,48 @@ restatement, from which the name comes (§5.2, p. 81):
 
 ## Status
 
-`sorry`, and depends on `hall_bipartite_matching`.  Step 4 is easy to
-under-estimate: the book's "since `|X| = |Y|`, `M` is perfect" hides a surjectivity
-argument.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`), by a
+shorter route than the plan above: one double count
+(`Finset.card_nsmul_le_card_nsmul` shows k-regularity gives the *global* Hall
+condition `∀ s : Set V, s.ncard ≤ N(s).ncard` — each vertex of `s` sends `k`
+edge-ends into `N(s)`, each vertex of `N(s)` absorbs at most `k`), then direct
+reuse of Mathlib's `exists_isPerfectMatching_of_forall_ncard_le`
+(`Mathlib/Combinatorics/SimpleGraph/Hall.lean`), which subsumes steps 1, 3 and 4
+— including the saturation→spanning upgrade flagged above.  Neither
+bipartiteness side of the plan's `|X| = |Y|` count is needed explicitly.
 -/
 theorem marriage_theorem
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {X Y : Set V} (hbip : G.IsBipartiteWith X Y)
     {k : ℕ} (hk : 0 < k) (hreg : G.IsRegularOfDegree k) :
-    ∃ M : G.Subgraph, M.IsPerfectMatching := by
-  sorry
+    ∃ M : G.Subgraph, M.IsPerfectMatching := (by
+  classical
+  have hglobal : ∀ s : Set V, s.ncard ≤ (⋃ x ∈ s, G.neighborSet x).ncard := by
+    intro s
+    have hsfin : s.Finite := Set.toFinite s
+    have hNfin : (⋃ x ∈ s, G.neighborSet x).Finite := Set.toFinite _
+    have hmain : hsfin.toFinset.card • k ≤ hNfin.toFinset.card • k := by
+      refine Finset.card_nsmul_le_card_nsmul G.Adj (fun a ha => ?_) (fun b hb => ?_)
+      · have hsub : G.neighborFinset a ⊆ hNfin.toFinset.bipartiteAbove G.Adj a := by
+          intro b hb
+          rw [SimpleGraph.mem_neighborFinset] at hb
+          rw [Finset.mem_bipartiteAbove]
+          exact ⟨hNfin.mem_toFinset.mpr (Set.mem_biUnion (hsfin.mem_toFinset.mp ha) hb), hb⟩
+        have hcard := Finset.card_le_card hsub
+        rwa [SimpleGraph.card_neighborFinset_eq_degree, hreg a] at hcard
+      · have hsub : hsfin.toFinset.bipartiteBelow G.Adj b ⊆ G.neighborFinset b := by
+          intro a ha
+          rw [Finset.mem_bipartiteBelow] at ha
+          rw [SimpleGraph.mem_neighborFinset]
+          exact ha.2.symm
+        have hcard := Finset.card_le_card hsub
+        rwa [SimpleGraph.card_neighborFinset_eq_degree, hreg b] at hcard
+    have hmul : hsfin.toFinset.card * k ≤ hNfin.toFinset.card * k := by
+      simpa only [smul_eq_mul, nsmul_eq_mul] using hmain
+    rw [Set.ncard_eq_toFinset_card s hsfin, Set.ncard_eq_toFinset_card _ hNfin]
+    exact Nat.le_of_mul_le_mul_right hmul hk
+  exact SimpleGraph.exists_isPerfectMatching_of_forall_ncard_le hbip hglobal
+)
 
 /-! ## (5.5): Every matching is at most every covering — grade 47, build first -/
 
@@ -642,8 +744,32 @@ on it, and the file header marks it "build first".
 theorem matching_card_le_covering_card
     {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
     {M : G.Subgraph} (hM : M.IsMatching) {K : Set V} (hK : G.IsCovering K) :
-    M.edgeSet.ncard ≤ K.ncard := by
-  sorry
+    M.edgeSet.ncard ≤ K.ncard := (by
+  classical
+  rcases Set.eq_empty_or_nonempty M.edgeSet with hME | ⟨e₀, -⟩
+  · simp [hME]
+  · haveI : Nonempty V := ⟨e₀.out.1⟩
+    have hpick : ∀ e ∈ M.edgeSet, ∃ x, x ∈ K ∧ x ∈ e :=
+      Sym2.ind (f := fun e => e ∈ M.edgeSet → ∃ x, x ∈ K ∧ x ∈ e) fun u v he => by
+        have hadj : M.Adj u v := Subgraph.mem_edgeSet.mp he
+        rcases hK (M.adj_sub hadj) with hu | hv
+        · exact ⟨u, hu, Sym2.mem_mk_left u v⟩
+        · exact ⟨v, hv, Sym2.mem_mk_right u v⟩
+    choose! f hfK hfe using hpick
+    have hinj : Set.InjOn f M.edgeSet := by
+      intro e₁ he₁ e₂ he₂ hfeq
+      have hx₁ : f e₁ ∈ e₁ := hfe e₁ he₁
+      have hx₂ : f e₁ ∈ e₂ := by rw [hfeq]; exact hfe e₂ he₂
+      have hs₁ : s(f e₁, Sym2.Mem.other hx₁) = e₁ := Sym2.other_spec hx₁
+      have hs₂ : s(f e₁, Sym2.Mem.other hx₂) = e₂ := Sym2.other_spec hx₂
+      have hadj₁ : M.Adj (f e₁) (Sym2.Mem.other hx₁) := by
+        rw [← Subgraph.mem_edgeSet, hs₁]; exact he₁
+      have hadj₂ : M.Adj (f e₁) (Sym2.Mem.other hx₂) := by
+        rw [← Subgraph.mem_edgeSet, hs₂]; exact he₂
+      have hy : Sym2.Mem.other hx₁ = Sym2.Mem.other hx₂ := hM.eq_of_adj_left hadj₁ hadj₂
+      rw [← hs₁, ← hs₂, hy]
+    exact Set.ncard_le_ncard_of_injOn f hfK hinj (Set.toFinite K)
+)
 
 /-! ## Lemma 5.3: Matching/covering of equal size are both extremal — grade 51 -/
 
@@ -686,8 +812,13 @@ theorem isMaximumMatching_and_isMinimumCovering_of_card_eq
     {V : Type*} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
     {M : G.Subgraph} (hM : M.IsMatching) {K : Set V} (hK : G.IsCovering K)
     (hcard : M.edgeSet.ncard = K.ncard) :
-    M.IsMaximumMatching ∧ G.IsMinimumCovering K := by
-  sorry
+    M.IsMaximumMatching ∧ G.IsMinimumCovering K := (by
+  refine ⟨⟨hM, fun M' hM' => ?_⟩, ⟨hK, fun K' hK' => ?_⟩⟩
+  · calc M'.edgeSet.ncard ≤ K.ncard := matching_card_le_covering_card hM' hK
+      _ = M.edgeSet.ncard := hcard.symm
+  · calc K.ncard = M.edgeSet.ncard := hcard.symm
+      _ ≤ K'.ncard := matching_card_le_covering_card hM hK'
+)
 
 /-! ## Theorem 5.3: König's theorem (König, 1931) — grade 82 -/
 
@@ -739,16 +870,173 @@ and concludes their sizes agree, rather than constructing `K̃` as the book does
 
 ## Status
 
-`sorry`.  Step 2 is the real work and is the one place the book's alternating-path
-machinery cannot be avoided.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`) — and
+contrary to the warning above, the alternating-path machinery *was* avoided.
+The landed proof uses a different route than the book: `≤` is weak duality
+(`matching_card_le_covering_card`); for `≥`, minimality of `K` first forces
+every `K`-vertex to meet an edge (so `K ⊆ X ∪ Y`), then an `aux` block applies
+the in-file `hall_bipartite_matching` once per side of the cover to an
+auxiliary crossing graph (`K ∩ W` vs `Z \ K`), where Hall's condition holds
+because a deficient `S` would yield the strictly smaller covering
+`(K \ S) ∪ N(S)` — minimality of `K` again.  The two matchings have supports in
+disjoint vertex sets, so their `⊔` is a matching (`IsMatching.sup`) saturating
+`K` with no edge inside `K`, and `v ↦ s(v, partner v)` injects `K` into its
+edge set; maximality of `M` finishes.
 -/
 theorem konig_matching_covering
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {X Y : Set V} (hbip : G.IsBipartiteWith X Y)
     {M : G.Subgraph} (hM : M.IsMaximumMatching)
     {K : Set V} (hK : G.IsMinimumCovering K) :
-    M.edgeSet.ncard = K.ncard := by
-  sorry
+    M.edgeSet.ncard = K.ncard := (by
+  classical
+  refine le_antisymm (matching_card_le_covering_card hM.1 hK.1) ?_
+  rcases Set.eq_empty_or_nonempty K with hKe | ⟨v₀, hv₀⟩
+  · simp [hKe]
+  · haveI : Nonempty V := ⟨v₀⟩
+    -- Step 1: every vertex of the minimum covering K meets an edge of G
+    have hKedge : ∀ v ∈ K, ∃ w, G.Adj v w := by
+      intro v hv
+      by_contra hno
+      push_neg at hno
+      have hcov : G.IsCovering (K \ {v}) := by
+        intro a b hab
+        rcases hK.1 hab with h | h
+        · exact Or.inl (Set.mem_diff_singleton.mpr ⟨h, fun hav => hno b (hav ▸ hab)⟩)
+        · exact Or.inr (Set.mem_diff_singleton.mpr ⟨h, fun hbv => hno a (hbv ▸ hab.symm)⟩)
+      have h1 := hK.2 _ hcov
+      have h2 := Set.ncard_diff_singleton_lt_of_mem hv (Set.toFinite K)
+      omega
+    -- Step 2: K lies in X ∪ Y
+    have hKXY : ∀ v ∈ K, v ∈ X ∨ v ∈ Y := by
+      intro v hv
+      obtain ⟨w, hw⟩ := hKedge v hv
+      rcases hbip.mem_of_adj hw with ⟨h, -⟩ | ⟨h, -⟩
+      · exact Or.inl h
+      · exact Or.inr h
+    -- Steps 3–6 (one Hall application per side, done symmetrically):
+    -- a matching saturating K ∩ W whose edges all cross from K ∩ W to Z \ K
+    have aux : ∀ W Z : Set V, G.IsBipartiteWith W Z →
+        ∃ N : G.Subgraph, N.IsMatching ∧ K ∩ W ⊆ N.verts ∧
+          ∀ ⦃a b : V⦄, N.Adj a b → a ∈ K ∩ W ∧ b ∈ Z \ K ∨ b ∈ K ∩ W ∧ a ∈ Z \ K := by
+      intro W Z hWZ
+      let G₁ : SimpleGraph V :=
+        { Adj := fun a b =>
+            G.Adj a b ∧ a ∈ K ∩ W ∧ b ∈ Z \ K ∨ G.Adj b a ∧ b ∈ K ∩ W ∧ a ∈ Z \ K
+          symm := fun a b h => h.symm
+          loopless := fun a h => by
+            rcases h with ⟨hh, -⟩ | ⟨hh, -⟩ <;> exact G.loopless a hh }
+      have hG₁adj : ∀ a b : V, G₁.Adj a b ↔
+          (G.Adj a b ∧ a ∈ K ∩ W ∧ b ∈ Z \ K ∨ G.Adj b a ∧ b ∈ K ∩ W ∧ a ∈ Z \ K) :=
+        fun a b => Iff.rfl
+      haveI : DecidableRel G₁.Adj := fun a b => Classical.propDecidable _
+      have hbip₁ : G₁.IsBipartiteWith (K ∩ W) (Z \ K) := by
+        refine ⟨Set.disjoint_left.mpr fun a ha hb => hb.2 ha.1, ?_⟩
+        intro a b hab
+        rcases (hG₁adj a b).mp hab with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩
+        · exact Or.inl ⟨h1, h2⟩
+        · exact Or.inr ⟨h2, h1⟩
+      -- Step 4: the Hall condition, by minimality of K
+      have hall₁ : ∀ S ⊆ K ∩ W, S.ncard ≤ (⋃ v ∈ S, G₁.neighborSet v).ncard := by
+        intro S hS
+        by_contra hlt
+        push_neg at hlt
+        have hSK : S ⊆ K := fun v hv => (hS hv).1
+        have key : ∀ u v : V, G.Adj u v → u ∈ K →
+            u ∈ (K \ S) ∪ (⋃ x ∈ S, G₁.neighborSet x) ∨
+              v ∈ (K \ S) ∪ (⋃ x ∈ S, G₁.neighborSet x) := by
+          intro u v huv huK
+          by_cases huS : u ∈ S
+          · have hvZ : v ∈ Z := hWZ.mem_of_mem_adj (hS huS).2 huv
+            by_cases hvK : v ∈ K
+            · refine Or.inr (Set.mem_union_left _ ⟨hvK, fun hvS => ?_⟩)
+              exact Set.disjoint_left.mp hWZ.disjoint (hS hvS).2 hvZ
+            · refine Or.inr (Set.mem_union_right _ (Set.mem_biUnion huS ?_))
+              exact (G₁.mem_neighborSet u v).mpr
+                ((hG₁adj u v).mpr (Or.inl ⟨huv, hS huS, hvZ, hvK⟩))
+          · exact Or.inl (Set.mem_union_left _ ⟨huK, huS⟩)
+        have hcov : G.IsCovering ((K \ S) ∪ (⋃ x ∈ S, G₁.neighborSet x)) := by
+          intro a b hab
+          rcases hK.1 hab with h | h
+          · exact key a b hab h
+          · exact (key b a hab.symm h).symm
+        have h1 := hK.2 _ hcov
+        have h2 := Set.ncard_union_le (K \ S) (⋃ x ∈ S, G₁.neighborSet x)
+        have h3 := Set.ncard_diff_add_ncard_of_subset hSK (Set.toFinite K)
+        omega
+      obtain ⟨M₁, hM₁m, hM₁v⟩ := (hall_bipartite_matching G₁ hbip₁).mpr hall₁
+      have hsub : ∀ ⦃a b : V⦄, M₁.Adj a b → G.Adj a b := by
+        intro a b hab
+        rcases (hG₁adj a b).mp (M₁.adj_sub hab) with ⟨h, -⟩ | ⟨h, -⟩
+        · exact h
+        · exact h.symm
+      refine ⟨⟨M₁.verts, M₁.Adj, fun hab => hsub hab, M₁.edge_vert, M₁.symm⟩, ?_, ?_, ?_⟩
+      · intro v hv
+        exact hM₁m hv
+      · exact hM₁v
+      · intro a b hab
+        rcases (hG₁adj a b).mp (M₁.adj_sub hab) with ⟨-, h1, h2⟩ | ⟨-, h1, h2⟩
+        · exact Or.inl ⟨h1, h2⟩
+        · exact Or.inr ⟨h1, h2⟩
+    obtain ⟨N₁, hN₁m, hN₁v, hN₁adj⟩ := aux X Y hbip
+    obtain ⟨N₂, hN₂m, hN₂v, hN₂adj⟩ := aux Y X hbip.symm
+    -- Step 6: the two matchings live on disjoint vertex sets, so their sup is a matching
+    have hN₁verts : N₁.verts ⊆ (K ∩ X) ∪ (Y \ K) := by
+      intro v hv
+      obtain ⟨w, hw, -⟩ := hN₁m hv
+      rcases hN₁adj hw with ⟨h1, -⟩ | ⟨-, h2⟩
+      · exact Set.mem_union_left _ h1
+      · exact Set.mem_union_right _ h2
+    have hN₂verts : N₂.verts ⊆ (K ∩ Y) ∪ (X \ K) := by
+      intro v hv
+      obtain ⟨w, hw, -⟩ := hN₂m hv
+      rcases hN₂adj hw with ⟨h1, -⟩ | ⟨-, h2⟩
+      · exact Set.mem_union_left _ h1
+      · exact Set.mem_union_right _ h2
+    have hdisj : Disjoint N₁.support N₂.support := by
+      have hbig : Disjoint ((K ∩ X) ∪ (Y \ K)) ((K ∩ Y) ∪ (X \ K)) := by
+        rw [Set.disjoint_left]
+        intro a ha hb
+        simp only [Set.mem_union] at ha hb
+        rcases ha with h1 | h1 <;> rcases hb with h2 | h2
+        · exact Set.disjoint_left.mp hbip.disjoint h1.2 h2.2
+        · exact h2.2 h1.1
+        · exact h1.2 h2.1
+        · exact Set.disjoint_left.mp hbip.disjoint h2.1 h1.1
+      exact hbig.mono (N₁.support_subset_verts.trans hN₁verts)
+        (N₂.support_subset_verts.trans hN₂verts)
+    have hM₀ : (N₁ ⊔ N₂).IsMatching := hN₁m.sup hN₂m hdisj
+    have hKsub : K ⊆ (N₁ ⊔ N₂).verts := by
+      intro v hv
+      rw [Subgraph.verts_sup]
+      rcases hKXY v hv with hX | hY
+      · exact Set.mem_union_left _ (hN₁v ⟨hv, hX⟩)
+      · exact Set.mem_union_right _ (hN₂v ⟨hv, hY⟩)
+    -- Step 7: no edge of N₁ ⊔ N₂ has both ends in K, so partners inject K into the edges
+    have hedgeK : ∀ a b : V, (N₁ ⊔ N₂).Adj a b → a ∈ K → b ∈ K → False := by
+      intro a b hab haK hbK
+      rcases Subgraph.sup_adj.mp hab with h | h
+      · rcases hN₁adj h with ⟨-, h2⟩ | ⟨-, h2⟩
+        · exact h2.2 hbK
+        · exact h2.2 haK
+      · rcases hN₂adj h with ⟨-, h2⟩ | ⟨-, h2⟩
+        · exact h2.2 hbK
+        · exact h2.2 haK
+    have hpick : ∀ v ∈ K, ∃ w, (N₁ ⊔ N₂).Adj v w := fun v hv => (hM₀ (hKsub hv)).exists
+    choose! p hp using hpick
+    have hinj : Set.InjOn (fun v => s(v, p v)) K := by
+      intro v₁ h₁ v₂ h₂ he
+      have he' : s(v₁, p v₁) = s(v₂, p v₂) := he
+      rcases Sym2.eq_iff.mp he' with ⟨h, -⟩ | ⟨ha, -⟩
+      · exact h
+      · exfalso
+        have hadj : (N₁ ⊔ N₂).Adj v₂ v₁ := by rw [ha]; exact hp v₂ h₂
+        exact hedgeK v₂ v₁ hadj h₂ h₁
+    have hle1 : K.ncard ≤ (N₁ ⊔ N₂).edgeSet.ncard :=
+      Set.ncard_le_ncard_of_injOn (fun v => s(v, p v))
+        (fun v hv => Subgraph.mem_edgeSet.mpr (hp v hv)) hinj (Set.toFinite _)
+    exact hle1.trans (hM.2 _ hM₀)
+)
 
 /-! ## Theorem 5.4: Tutte's theorem (Tutte, 1947) — WRAPPER over `SimpleGraph.tutte`, grade 7 -/
 
@@ -815,8 +1103,14 @@ extra case is harmless.
 -/
 theorem tutte_perfect_matching {V : Type*} [Finite V] (G : SimpleGraph V) :
     (∃ M : G.Subgraph, M.IsPerfectMatching) ↔
-      ∀ S : Set V, ((⊤ : G.Subgraph).deleteVerts S).coe.oddComponents.ncard ≤ S.ncard := by
-  sorry
+      ∀ S : Set V, ((⊤ : G.Subgraph).deleteVerts S).coe.oddComponents.ncard ≤ S.ncard := (by
+  rw [SimpleGraph.tutte]
+  constructor
+  · intro h S
+    exact not_lt.mp (h S)
+  · intro h u
+    exact not_lt.mpr (h u)
+)
 
 /-! ## Corollary 5.4: Petersen's theorem (Petersen, 1891) — grade 58 -/
 
@@ -936,15 +1230,16 @@ Representing weights as `Sym2 V → ℝ` makes `l x + l y = w s(x,y)` symmetric 
 
 ## Status
 
-`Adj` is fully defined; `symm` and `loopless` are `sorry`.  `symm` follows from
-`G.symm` plus `Sym2.eq_swap` and `add_comm`; `loopless` from `G.loopless`.
-Neither blocks anything downstream.
+Fully defined — `symm` and `loopless` were proved this session (previously `sorry`
+proof fields).
 -/
 def equalitySubgraph {V : Type*} (w : Sym2 V → ℝ) (G : SimpleGraph V) (l : V → ℝ) :
     SimpleGraph V where
   Adj x y := G.Adj x y ∧ l x + l y = w s(x, y)
-  symm := by sorry
-  loopless := by sorry
+  symm := by
+    rintro x y ⟨hadj, heq⟩
+    exact ⟨hadj.symm, by rw [add_comm, Sym2.eq_swap]; exact heq⟩
+  loopless := fun x h => G.loopless x h.1
 
 /-- Weight of a matching.
 
@@ -1047,7 +1342,9 @@ respectively before `hl` applies.
 
 ## Status
 
-`sorry`, and the statement carries a second `sorry` in its type (step 1).
+`sorry`.  ✅ The former second `sorry` *inside the statement's type* (the
+`Hom.ofLE` obligation) was replaced with the real proof `fun _ _ h => h.1` this
+session, so the statement itself is now `sorryAx`-free and means what it says.
 -/
 theorem optimal_of_perfectMatching_equalitySubgraph
     {V : Type*} [Fintype V] [DecidableEq V] (w : Sym2 V → ℝ) (G : SimpleGraph V)
@@ -1055,7 +1352,7 @@ theorem optimal_of_perfectMatching_equalitySubgraph
     (l : V → ℝ) (hl : IsFeasibleLabelling w X Y l)
     {M : (equalitySubgraph w G l).Subgraph} (hM : M.IsPerfectMatching) :
     IsOptimalMatching w G
-      (M.map (Hom.ofLE (by sorry : equalitySubgraph w G l ≤ G))) := by
+      (M.map (Hom.ofLE (fun _ _ h => h.1 : equalitySubgraph w G l ≤ G))) := by
   sorry
 
 /-! ## Key Exercises -/
@@ -1217,6 +1514,185 @@ theorem isTree_subsingleton_perfectMatching
     M = M' := by
   sorry
 
+-- NOTE (this session): the Ex 5.2.3(a) block below was relocated verbatim from its
+-- exercise-number position (after Ex 5.2.2(a)) because `completeBipartite_one_factorable`
+-- (Ex 5.1.5(a)(i), next declaration) uses it and Lean has no forward references.
+
+/-- Ex 5.2.3(a): every `k`-regular bipartite graph (`k > 0`) is 1-factorable.
+
+## Book statement (§5.2, p. 83) — verbatim
+
+> **5.2.3** For $k > 0$, show that
+>
+> *(a)* every $k$-regular bipartite graph is 1-factorable;
+
+An exercise, so the book gives no proof.
+
+## In Lean notation
+
+Corollary 5.2 gives a perfect matching `M`.  Deleting its edges lowers every
+degree by one, leaving a `(k-1)`-regular bipartite graph; iterate `k` times.
+
+In chapter 6's language this is `χ'(G) = Δ(G)` for bipartite graphs — König's
+edge-colouring theorem.  In scheduling terms, a balanced workload always splits
+into `k` conflict-free rounds.
+
+## Proof plan
+
+Induction on `k`, generalising `G`:
+1. `k = 0` — no edges, so the empty family works.  ⚠ The hypothesis `0 < k`
+   blocks this base case, so the induction must be on an auxiliary statement
+   allowing `k = 0`, with `hk` used only to rule out the degenerate conclusion.
+2. `k > 0` — `marriage_theorem` gives a perfect matching `M`.
+3. `G.deleteEdges M.edgeSet` is `(k-1)`-regular and still bipartite; apply the
+   inductive hypothesis.
+4. Assemble: `M` together with the `k-1` factors from step 3, checking pairwise
+   disjointness and that the supremum is `⊤`.
+
+## Status
+
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`),
+exactly by the planned induction, with two technical refinements: the inner
+induction is phrased over `(G.neighborSet v).ncard = t + 1` (instance-free
+regularity, shifted so no `0 < k` side condition threads through), and the
+factors of `G.deleteEdges M.edgeSet` are lifted back to `G.Subgraph` through an
+existential packaged with `rfl`-transfer equations, so nothing downstream has to
+unfold the lift.  Produces exactly `k` factors: `Fin.cons` of the deleted
+perfect matching onto the `k − 1` lifted ones; `⨆ = ⊤` by per-edge case split.
+-/
+theorem regular_bipartite_one_factorable
+    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
+    {X Y : Set V} (hbip : G.IsBipartiteWith X Y) {k : ℕ} (hk : 0 < k)
+    (hreg : G.IsRegularOfDegree k) : G.IsKFactorable 1 := (by
+  classical
+  obtain ⟨n, rfl⟩ : ∃ n : ℕ, k = n + 1 := ⟨k - 1, by omega⟩
+  have hncard : ∀ v, (G.neighborSet v).ncard = n + 1 := fun v =>
+    (Set.ncard_eq_toFinset_card' (G.neighborSet v)).trans (hreg v)
+  have main : ∀ t : ℕ, ∀ Gc : SimpleGraph V, Gc.IsBipartiteWith X Y →
+      (∀ v, (Gc.neighborSet v).ncard = t + 1) →
+      ∃ H : Fin (t + 1) → Gc.Subgraph, (∀ i, (H i).IsKFactor 1) ∧
+        (∀ i j, i ≠ j → Disjoint (H i).edgeSet (H j).edgeSet) ∧ (⨆ i, H i) = ⊤ := by
+    intro t
+    induction t with
+    | zero =>
+      intro Gc hbipc hncardc
+      refine ⟨fun _ => ⊤, fun i => ⟨fun v => Set.mem_univ v, fun v => ?_⟩,
+        fun i j hij => absurd ((Fin.fin_one_eq_zero i).trans (Fin.fin_one_eq_zero j).symm) hij,
+        le_antisymm le_top (le_iSup (fun _ : Fin (0 + 1) => (⊤ : Gc.Subgraph)) 0)⟩
+      show ((⊤ : Gc.Subgraph).neighborSet v).ncard = 1
+      rw [Subgraph.neighborSet_top]
+      exact hncardc v
+    | succ m ih =>
+      intro Gc hbipc hncardc
+      haveI : DecidableRel Gc.Adj := Classical.decRel _
+      have hregc : Gc.IsRegularOfDegree (m + 1 + 1) := fun v =>
+        (Set.ncard_eq_toFinset_card' (Gc.neighborSet v)).symm.trans (hncardc v)
+      obtain ⟨M, hMpf⟩ := marriage_theorem Gc hbipc (Nat.succ_pos (m + 1)) hregc
+      have hM1 : ∀ v : V, ∃ w, M.Adj v w ∧ ∀ y, M.Adj v y → y = w := fun v =>
+        hMpf.1 (hMpf.2 v)
+      choose p hp hup using hM1
+      have hMns : ∀ v, M.neighborSet v = {p v} := by
+        intro v
+        ext w
+        simp only [Subgraph.mem_neighborSet, Set.mem_singleton_iff]
+        exact ⟨fun h => hup v w h, fun h => by rw [h]; exact hp v⟩
+      have hM1fac : ∀ v, (M.neighborSet v).ncard = 1 := by
+        intro v
+        rw [hMns v]
+        exact Set.ncard_singleton _
+      have hbip' : (Gc.deleteEdges M.edgeSet).IsBipartiteWith X Y :=
+        ⟨hbipc.disjoint, fun v w h => hbipc.mem_of_adj (deleteEdges_adj.mp h).1⟩
+      have hNS : ∀ v, (Gc.deleteEdges M.edgeSet).neighborSet v
+          = Gc.neighborSet v \ {p v} := by
+        intro v
+        ext w
+        simp only [mem_neighborSet, deleteEdges_adj, Set.mem_diff, Set.mem_singleton_iff]
+        constructor
+        · rintro ⟨hadj, hnM⟩
+          exact ⟨hadj, fun hw => hnM (by rw [hw]; exact Subgraph.mem_edgeSet.mpr (hp v))⟩
+        · rintro ⟨hadj, hne⟩
+          exact ⟨hadj, fun hmem => hne (hup v w (Subgraph.mem_edgeSet.mp hmem))⟩
+      have hncard' : ∀ v, ((Gc.deleteEdges M.edgeSet).neighborSet v).ncard = m + 1 := by
+        intro v
+        have hpv : p v ∈ Gc.neighborSet v := M.adj_sub (hp v)
+        have h1 : (Gc.neighborSet v \ {p v}).ncard + 1 = (Gc.neighborSet v).ncard :=
+          Set.ncard_diff_singleton_add_one hpv (Set.toFinite _)
+        have h2 := hncardc v
+        rw [hNS v]
+        omega
+      obtain ⟨H', hH'fac, hH'disj, hH'top⟩ := ih (Gc.deleteEdges M.edgeSet) hbip' hncard'
+      have hdisjM : ∀ N : (Gc.deleteEdges M.edgeSet).Subgraph,
+          Disjoint M.edgeSet N.edgeSet := by
+        intro N
+        rw [Set.disjoint_left]
+        intro e
+        induction e using Sym2.ind with
+        | _ a b =>
+          intro heM heN
+          exact (deleteEdges_adj.mp (N.adj_sub (Subgraph.mem_edgeSet.mp heN))).2 heM
+      obtain ⟨L, hLverts, hLns, hLedge, hLadj⟩ :
+          ∃ L : Fin (m + 1) → Gc.Subgraph,
+            (∀ i, (L i).verts = (H' i).verts) ∧
+            (∀ i v, (L i).neighborSet v = (H' i).neighborSet v) ∧
+            (∀ i, (L i).edgeSet = (H' i).edgeSet) ∧
+            (∀ i a b, (L i).Adj a b ↔ (H' i).Adj a b) :=
+        ⟨fun i =>
+          ⟨(H' i).verts, (H' i).Adj,
+            fun h => (deleteEdges_adj.mp ((H' i).adj_sub h)).1,
+            fun h => (H' i).edge_vert h, (H' i).symm⟩,
+          fun _ => rfl, fun _ _ => rfl, fun _ => rfl, fun _ _ _ => Iff.rfl⟩
+      refine ⟨Fin.cons M L, ?_, ?_, ?_⟩
+      · intro i
+        refine Fin.cases ?_ (fun i' => ?_) i
+        · simp only [Fin.cons_zero]
+          exact ⟨hMpf.2, hM1fac⟩
+        · simp only [Fin.cons_succ]
+          refine ⟨fun v => ?_, fun v => ?_⟩
+          · rw [hLverts i']
+            exact (hH'fac i').1 v
+          · rw [hLns i' v]
+            exact (hH'fac i').2 v
+      · intro i j
+        refine Fin.cases ?_ (fun i' => ?_) i
+        · refine Fin.cases ?_ (fun j' => ?_) j
+          · intro hij
+            exact absurd rfl hij
+          · intro hij
+            simp only [Fin.cons_zero, Fin.cons_succ]
+            rw [hLedge j']
+            exact hdisjM (H' j')
+        · refine Fin.cases ?_ (fun j' => ?_) j
+          · intro hij
+            simp only [Fin.cons_zero, Fin.cons_succ]
+            rw [hLedge i']
+            exact (hdisjM (H' i')).symm
+          · intro hij
+            simp only [Fin.cons_succ]
+            rw [hLedge i', hLedge j']
+            exact hH'disj i' j' fun h => hij (congrArg Fin.succ h)
+      · refine le_antisymm le_top ⟨fun v _ => ?_, fun a b hab => ?_⟩
+        · rw [Subgraph.verts_iSup]
+          refine Set.mem_iUnion.mpr ⟨0, ?_⟩
+          simp only [Fin.cons_zero]
+          exact hMpf.2 v
+        · rw [Subgraph.iSup_adj]
+          have habG : Gc.Adj a b := (⊤ : Gc.Subgraph).adj_sub hab
+          by_cases hMe : s(a, b) ∈ M.edgeSet
+          · refine ⟨0, ?_⟩
+            simp only [Fin.cons_zero]
+            exact Subgraph.mem_edgeSet.mp hMe
+          · have h1 : (Gc.deleteEdges M.edgeSet).Adj a b := deleteEdges_adj.mpr ⟨habG, hMe⟩
+            have h2 : (⨆ i, H' i).Adj a b := by
+              rw [hH'top]
+              exact Subgraph.top_adj.mpr h1
+            obtain ⟨i, hi⟩ := Subgraph.iSup_adj.mp h2
+            refine ⟨i.succ, ?_⟩
+            simp only [Fin.cons_succ]
+            exact (hLadj i a b).mpr hi
+  obtain ⟨H, hfac, hdisj, htop⟩ := main n G hbip hncard
+  exact ⟨n + 1, H, hfac, hdisj, htop⟩
+)
+
 /-- Ex 5.1.5(a)(i): `K_{n,n}` is 1-factorable.
 
 ## Book statement (§5.1, p. 79) — verbatim
@@ -1247,13 +1723,63 @@ value — the round-robin schedule for `n` workers and `n` jobs.
 
 ## Status
 
-`sorry`.  Conceptually the cleanest of the factorability exercises — the
-construction is explicit and the three obligations are all one-liners once the
-indexing is set up.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`) — but
+as a corollary of `regular_bipartite_one_factorable` (relocated above, see NOTE)
+rather than by the explicit construction sketched below: `K_{n,n}` is `n`-regular
+with bipartition `(range Sum.inl, range Sum.inr)`, so for `n > 0` the general
+theorem applies; `n = 0` is the vacuous single-`⊤`-factor family on the empty
+vertex type.
 -/
 theorem completeBipartite_one_factorable (n : ℕ) :
-    (completeBipartiteGraph (Fin n) (Fin n)).IsKFactorable 1 := by
-  sorry
+    (completeBipartiteGraph (Fin n) (Fin n)).IsKFactorable 1 := (by
+  classical
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · exact ⟨1, fun _ => ⊤,
+      fun i => ⟨fun v => Set.mem_univ v, fun v => isEmptyElim v⟩,
+      fun i j hij => absurd ((Fin.fin_one_eq_zero i).trans (Fin.fin_one_eq_zero j).symm) hij,
+      le_antisymm le_top
+        (le_iSup (fun _ : Fin 1 => (⊤ : (completeBipartiteGraph (Fin 0) (Fin 0)).Subgraph)) 0)⟩
+  · haveI : DecidableRel (completeBipartiteGraph (Fin n) (Fin n)).Adj := fun a b =>
+      decidable_of_iff _ (completeBipartiteGraph_adj _ _ a b).to_iff.symm
+    have hbip : (completeBipartiteGraph (Fin n) (Fin n)).IsBipartiteWith
+        (Set.range Sum.inl) (Set.range Sum.inr) := by
+      constructor
+      · rw [Set.disjoint_left]
+        rintro v ⟨a, rfl⟩ ⟨b, hb⟩
+        exact Sum.noConfusion hb
+      · intro v w hvw
+        cases v with
+        | inl a =>
+          cases w with
+          | inl b => simp at hvw
+          | inr b => exact Or.inl ⟨⟨a, rfl⟩, ⟨b, rfl⟩⟩
+        | inr a =>
+          cases w with
+          | inl b => exact Or.inr ⟨⟨a, rfl⟩, ⟨b, rfl⟩⟩
+          | inr b => simp at hvw
+    have hreg : (completeBipartiteGraph (Fin n) (Fin n)).IsRegularOfDegree n := by
+      intro v
+      cases v with
+      | inl a =>
+        have hfin : (completeBipartiteGraph (Fin n) (Fin n)).neighborFinset (Sum.inl a)
+            = Finset.univ.map ⟨Sum.inr, Sum.inr_injective⟩ := by
+          ext w
+          cases w with
+          | inl b => simp [mem_neighborFinset]
+          | inr b => simp [mem_neighborFinset]
+        rw [← card_neighborFinset_eq_degree, hfin, Finset.card_map, Finset.card_univ,
+          Fintype.card_fin]
+      | inr a =>
+        have hfin : (completeBipartiteGraph (Fin n) (Fin n)).neighborFinset (Sum.inr a)
+            = Finset.univ.map ⟨Sum.inl, Sum.inl_injective⟩ := by
+          ext w
+          cases w with
+          | inl b => simp [mem_neighborFinset]
+          | inr b => simp [mem_neighborFinset]
+        rw [← card_neighborFinset_eq_degree, hfin, Finset.card_map, Finset.card_univ,
+          Fintype.card_fin]
+    exact regular_bipartite_one_factorable _ hbip hn hreg
+)
 
 /-- Ex 5.1.5(a)(i): `K_{2n}` is 1-factorable.
 
@@ -1426,57 +1952,34 @@ miss vertices that no matching could ever saturate.
 
 ## Status
 
-`sorry`, depends on `hall_bipartite_matching`.
+Proved (kernel-checked, axioms `[propext, Classical.choice, Quot.sound]`).
+(⇒) is the partner-injection idiom from `hall_bipartite_matching`, with
+saturation supplied by `IsSpanning`; (⇐) is Mathlib's
+`exists_isPerfectMatching_of_forall_ncard_le` directly.  Note `hcov` turned out
+to be **unused**: the global Hall condition itself rules out isolated vertices,
+which with `hbip` recovers coverage, so the ⚠ above was overcautious.  The
+hypothesis is kept (frozen statement); a future simplify pass could drop it.
 -/
 theorem bipartite_perfectMatching_iff
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
     {X Y : Set V} (hbip : G.IsBipartiteWith X Y) (hcov : X ∪ Y = Set.univ) :
     (∃ M : G.Subgraph, M.IsPerfectMatching) ↔
-      ∀ S : Set V, S.ncard ≤ (⋃ v ∈ S, G.neighborSet v).ncard := by
-  sorry
-
-/-- Ex 5.2.3(a): every `k`-regular bipartite graph (`k > 0`) is 1-factorable.
-
-## Book statement (§5.2, p. 83) — verbatim
-
-> **5.2.3** For $k > 0$, show that
->
-> *(a)* every $k$-regular bipartite graph is 1-factorable;
-
-An exercise, so the book gives no proof.
-
-## In Lean notation
-
-Corollary 5.2 gives a perfect matching `M`.  Deleting its edges lowers every
-degree by one, leaving a `(k-1)`-regular bipartite graph; iterate `k` times.
-
-In chapter 6's language this is `χ'(G) = Δ(G)` for bipartite graphs — König's
-edge-colouring theorem.  In scheduling terms, a balanced workload always splits
-into `k` conflict-free rounds.
-
-## Proof plan
-
-Induction on `k`, generalising `G`:
-1. `k = 0` — no edges, so the empty family works.  ⚠ The hypothesis `0 < k`
-   blocks this base case, so the induction must be on an auxiliary statement
-   allowing `k = 0`, with `hk` used only to rule out the degenerate conclusion.
-2. `k > 0` — `marriage_theorem` gives a perfect matching `M`.
-3. `G.deleteEdges M.edgeSet` is `(k-1)`-regular and still bipartite; apply the
-   inductive hypothesis.
-4. Assemble: `M` together with the `k-1` factors from step 3, checking pairwise
-   disjointness and that the supremum is `⊤`.
-
-## Status
-
-`sorry`, depends on `marriage_theorem`.  Step 3's "still bipartite and regularity
-drops by exactly one" is routine but needs `M` perfect, which is what makes the
-degree bookkeeping exact.
--/
-theorem regular_bipartite_one_factorable
-    {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    {X Y : Set V} (hbip : G.IsBipartiteWith X Y) {k : ℕ} (hk : 0 < k)
-    (hreg : G.IsRegularOfDegree k) : G.IsKFactorable 1 := by
-  sorry
+      ∀ S : Set V, S.ncard ≤ (⋃ v ∈ S, G.neighborSet v).ncard := (by
+  classical
+  constructor
+  · rintro ⟨M, hM⟩ S
+    have hpick : ∀ v ∈ S, ∃ w, M.Adj v w := fun v _ => (hM.1 (hM.2 v)).exists
+    choose! g hg using hpick
+    have hmem : ∀ v ∈ S, g v ∈ ⋃ u ∈ S, G.neighborSet u := fun v hv =>
+      Set.mem_biUnion hv (M.adj_sub (hg v hv))
+    have hinj : Set.InjOn g S := by
+      intro v₁ hv₁ v₂ hv₂ heq
+      have h1 : M.Adj (g v₁) v₁ := (hg v₁ hv₁).symm
+      have h2 : M.Adj (g v₁) v₂ := by rw [heq]; exact (hg v₂ hv₂).symm
+      exact hM.1.eq_of_adj_left h1 h2
+    exact Set.ncard_le_ncard_of_injOn g hmem hinj (Set.toFinite _)
+  · exact fun h => exists_isPerfectMatching_of_forall_ncard_le hbip h
+)
 
 /-- Ex 5.2.3(b)*: every `2k`-regular graph is 2-factorable (Petersen; blocked on ch4 Euler tours).
 
@@ -1512,10 +2015,17 @@ subgraph with one in-edge and one out-edge per vertex — a 2-factor.
 `sorry`, and doubly blocked: on chapter 4's Euler theorem and on part (a).  The
 orientation step at 2 has no supporting infrastructure in this file at all,
 making this the most infrastructure-hungry exercise in the chapter.
+
+⚠ **Statement repaired (this session, user-authorized)** — `hk : 0 < k` added.
+Without it the statement was **false at `k = 0`**: an edgeless graph on a nonempty
+carrier is `0`-regular (hence `2·0`-regular), but `IsKFactorable 2` fails — with
+zero factors `⨆ (i : Fin 0), H i = ⊥` whose `verts = ∅ ≠ Set.univ = ⊤.verts`, and
+any factor would need degree `2` in an edgeless graph.  Petersen's theorem is the
+`k ≥ 1` content.
 -/
 theorem regular_two_factorable
     {V : Type*} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
-    {k : ℕ} (hreg : G.IsRegularOfDegree (2 * k)) : G.IsKFactorable 2 := by
+    {k : ℕ} (hk : 0 < k) (hreg : G.IsRegularOfDegree (2 * k)) : G.IsKFactorable 2 := by
   sorry
 
 /-- Ex 5.2.5: König's theorem, matrix (line-cover) form.
@@ -1698,8 +2208,15 @@ using `Finset.sum_comm` for the middle step and `hrow`/`hcol` at the ends.
 -/
 theorem doublyStochastic_card_eq {m n : Type*} [Fintype m] [Fintype n]
     (Q : Matrix m n ℝ) (hrow : ∀ i, ∑ j, Q i j = 1) (hcol : ∀ j, ∑ i, Q i j = 1) :
-    Fintype.card m = Fintype.card n := by
-  sorry
+    Fintype.card m = Fintype.card n := (by
+  have h : (Fintype.card m : ℝ) = (Fintype.card n : ℝ) := by
+    calc (Fintype.card m : ℝ) = ∑ _i : m, (1 : ℝ) := by simp
+      _ = ∑ i, ∑ j, Q i j := Finset.sum_congr rfl fun i _ => (hrow i).symm
+      _ = ∑ j, ∑ i, Q i j := Finset.sum_comm
+      _ = ∑ _j : n, (1 : ℝ) := Finset.sum_congr rfl fun j _ => hcol j
+      _ = (Fintype.card n : ℝ) := by simp
+  exact Nat.cast_injective h
+)
 
 /-- Ex 5.2.9: a common transversal of the left and right cosets of a subgroup (P. Hall).
 NOTE: this is one of several faithful renderings; the outline flags the exact shape as
@@ -1726,12 +2243,13 @@ to `Kb` when they intersect.  All cosets having size `|K|` makes this graph
 regular, so Corollary 5.2 gives a perfect matching; choosing an element from each
 matched intersection is the common transversal.
 
-⚠ The Lean rendering states the two conclusions as `Function.Bijective` of the
-maps `i ↦ hᵢ • K` and `i ↦ op hᵢ • K` into `Set H`.  The note in the file flags
-this shape as provisional, and it is worth scrutiny: bijectivity onto *what*
-codomain is left implicit (it is `Set H`, not the set of cosets), so as written
-the maps are into a far larger type than intended and the statement may be
-stronger — or simply wrong — relative to the exercise.  Recheck before proving.
+⚠ **Statement repaired (this session, user-authorized).**  The previous rendering
+asserted `Function.Bijective` of the coset maps *into the full type `Set H`* —
+surjectivity onto every subset of `H`, including `∅`, which no coset is.  Even the
+trivial group refuted it.  The repaired form says exactly what P. Hall's exercise
+says: the `n` maps `i ↦ hᵢ • K` are injective with range the set of left cosets,
+and simultaneously `i ↦ op hᵢ • K` are injective with range the set of right
+cosets.
 
 ## Proof plan
 
@@ -1751,8 +2269,11 @@ first.
 theorem exists_common_coset_transversal {H : Type*} [Group H] [Fintype H] [DecidableEq H]
     (K : Subgroup H) [DecidablePred (· ∈ K)] :
     ∃ (n : ℕ) (h : Fin n → H),
-      Function.Bijective (fun i => (h i : H) • (K : Set H)) ∧
-      Function.Bijective (fun i => MulOpposite.op (h i : H) • (K : Set H)) := by
+      Function.Injective (fun i => (h i : H) • (K : Set H)) ∧
+      Set.range (fun i => (h i : H) • (K : Set H)) = {C : Set H | ∃ a : H, C = a • (K : Set H)} ∧
+      Function.Injective (fun i => MulOpposite.op (h i : H) • (K : Set H)) ∧
+      Set.range (fun i => MulOpposite.op (h i : H) • (K : Set H))
+        = {C : Set H | ∃ a : H, C = MulOpposite.op a • (K : Set H)} := by
   sorry
 
 /-- Ex 5.3.2: a `(k−1)`-edge-connected `k`-regular graph with `ν` even has a perfect matching.

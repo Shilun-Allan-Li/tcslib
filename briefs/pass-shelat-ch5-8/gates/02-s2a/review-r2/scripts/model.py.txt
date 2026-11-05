@@ -1,0 +1,139 @@
+"""Exact-rational transcription of Protocols.lean (commit 586510c1) step/close/endWith/exec
+and stepT/closeT/endWithT/execT. A party is a tree:
+  ('pure', a) | ('send', m, k) with k : Option -> tree (None = 'none') | ('draw', m, k) with k : int in 0..m -> tree.
+A ProbComp result is a list of (Fraction prob, value)."""
+from fractions import Fraction as F
+import random, itertools, sys
+
+def bind(dist, f):
+    out = []
+    for p, v in dist:
+        for q, w in f(v):
+            out.append((p * q, w))
+    return out
+
+def pure(v): return [(F(1), v)]
+
+def step(A):
+    if A[0] == 'pure': return pure(('inl', A[1]))
+    if A[0] == 'send': return pure(('inr', (A[1], A[2])))
+    m, k = A[1], A[2]
+    return [(F(1, m + 1) * p, v) for y in range(m + 1) for p, v in step(k(y))]
+
+def close(A):
+    if A[0] == 'pure': return pure(('some', A[1]))
+    if A[0] == 'send': return pure(('none',))
+    m, k = A[1], A[2]
+    return [(F(1, m + 1) * p, v) for y in range(m + 1) for p, v in close(k(y))]
+
+def swap(o):
+    return ('done', o[2], o[1]) if o[0] == 'done' else o
+
+def endWith(a, B):
+    return bind(close(B(None)), lambda ob: pure(('sentAfterEnd',) if ob[0] == 'none' else ('done', a, ob[1])))
+
+def exec_(fuel, A, B):
+    def br(r):
+        if r[0] == 'inl': return endWith(r[1], B)
+        if fuel == 0: return pure(('outOfFuel',))
+        m, k = r[1]
+        return bind(exec_(fuel - 1, B(m), k), lambda o: pure(swap(o)))
+    return bind(step(A), br)
+
+def stepT(A):
+    if A[0] == 'pure': return pure((('inl', A[1]), ()))
+    if A[0] == 'send': return pure((('inr', (A[1], A[2])), ()))
+    m, k = A[1], A[2]
+    return [(F(1, m + 1) * p, (v[0], ((m, y),) + v[1])) for y in range(m + 1) for p, v in stepT(k(y))]
+
+def closeT(A):
+    if A[0] == 'pure': return pure((('some', A[1]), ()))
+    if A[0] == 'send': return pure((('none',), ()))
+    m, k = A[1], A[2]
+    return [(F(1, m + 1) * p, (v[0], ((m, y),) + v[1])) for y in range(m + 1) for p, v in closeT(k(y))]
+
+def endWithT(a, B):
+    return bind(closeT(B(None)), lambda p: pure((('sentAfterEnd',) if p[0][0] == 'none' else ('done', a, p[0][1]), p[1])))
+
+def execT(fuel, A, B):
+    # returns (outcome, obsA=(received, coins), obsB=(received, coins))
+    def br(p):
+        r, cA = p
+        if r[0] == 'inl':
+            return bind(endWithT(r[1], B), lambda q: pure((q[0], ((), cA), ((), q[1]))))
+        if fuel == 0:
+            return pure((('outOfFuel',), ((), cA), ((), ())))
+        m, k = r[1]
+        return bind(execT(fuel - 1, B(m), k),
+                    lambda rr: pure((swap(rr[0]), (rr[2][0], cA + rr[2][1]), ((m,) + rr[1][0], rr[1][1]))))
+    return bind(stepT(A), br)
+
+def norm(d):
+    acc = {}
+    for p, v in d: acc[v] = acc.get(v, 0) + p
+    return acc
+
+# ---------- random parties ----------
+def make_party(seed, tag, depth, hist=()):
+    """Deterministic random party: its behaviour is a function of (seed, its own history)."""
+    def build(h, d):
+        r = random.Random(repr((seed, h, d)))
+        c = r.random()
+        if d == 0 or c < 0.3:
+            return ('pure', (tag, h))
+        if c < 0.75:
+            msg = (tag, len(h), r.randrange(2))
+            return ('send', msg, lambda reply, h=h, d=d: build(h + (('rx', reply),), d - 1))
+        m = r.randrange(3)
+        return ('draw', m, lambda y, h=h, d=d: build(h + (('coin', y),), d - 1))
+    return build(hist, depth)
+
+def check_invariants(trials=4000, seed=1):
+    rng = random.Random(seed)
+    bad = []
+    n_cases = 0
+    stats = {}
+    for t in range(trials):
+        fuel = rng.randrange(0, 6)
+        sa, sb = rng.random(), rng.random()
+        A = make_party(sa, 'A', 7)
+        Bfun = lambda first, sb=sb: make_party(sb, 'B', 7, (('rx', first),))
+        dT = execT(fuel, A, Bfun)
+        d = exec_(fuel, A, Bfun)
+        if norm([(p, v[0]) for p, v in dT]) != norm(d):
+            bad.append(('erasure', t))
+        tot = sum(p for p, _ in dT)
+        if tot != 1: bad.append(('mass', t, tot))
+        for p, (o, oa, ob) in dT:
+            n_cases += 1
+            la, lb = len(oa[0]), len(ob[0])
+            key = (o[0], la + lb == fuel, lb - la)
+            stats[key] = stats.get(key, 0) + 1
+            if not (la + lb <= fuel): bad.append(('sum', t, fuel, la, lb, o))
+            if lb not in (la, la + 1): bad.append(('alt', t, la, lb, o))
+            if o[0] == 'outOfFuel' and la + lb != fuel: bad.append(('oof', t, fuel, la, lb))
+            # each party's received messages are tagged by the other party
+            if any(m[0] != 'B' for m in oa[0]) or any(m[0] != 'A' for m in ob[0]):
+                bad.append(('route', t))
+    return n_cases, bad, stats
+
+if __name__ == '__main__':
+    # Finding 1 counterexample
+    A = ('send', False, lambda reply: ('pure', True))
+    B = lambda first: ('pure', False)
+    print('F1 exec 1:', norm(exec_(1, A, B)))
+    print('F1 execT 1:', norm(execT(1, A, B)))
+    # Finding 3: exec 0 with an immediate return
+    print('F3 exec 0 return:', norm(exec_(0, ('pure', 'a'), lambda _: ('pure', 'b'))))
+    print('F3 exec 0 return, waiting party draws then sends on one branch:',
+          norm(exec_(0, ('pure', 'a'), lambda _: ('draw', 1, lambda y: ('pure', 'b') if y == 0 else ('send', 'x', lambda _: ('pure', 'b'))))))
+    # Q2 example 8: coin order
+    A8 = ('draw', 1, lambda u: ('send', u, lambda rep: ('draw', 2, lambda v: ('pure', (u, v)))))
+    B8 = lambda first: ('draw', 0, lambda z: ('send', 'r', lambda rep: ('draw', 1, lambda w: ('pure', w))))
+    r8 = norm(execT(2, A8, B8))
+    print('Q2.8:', len(r8), set(r8.values()), list(r8.items())[:2])
+    # Note 5 invariants on random parties
+    n, bad, stats = check_invariants()
+    print('random cases:', n, 'violations:', len(bad), bad[:5])
+    for k in sorted(stats): print('  ', k, stats[k])
+    # tightness: is sum = fuel ever attained on done / sentAfterEnd? and alt both cases?

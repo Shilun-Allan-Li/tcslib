@@ -6,11 +6,13 @@ import TCSlib.InformationTheory.FinDist
 import TCSlib.InformationTheory.StatisticalDistance
 import TCSlib.InformationTheory.UniversalHashing
 import TCSlib.InformationTheory.LeftoverHash
+import TCSlib.InformationTheory.Entropy
+import TCSlib.InformationTheory.Extractors
 
 /-!
 # Information theory
 
-Finite distributions, statistical distance, and randomness extraction.
+Finite distributions, statistical distance, entropy, and randomness extraction.
 
 ## Contents
 
@@ -19,10 +21,14 @@ Finite distributions, statistical distance, and randomness extraction.
 * `TCSlib.InformationTheory.StatisticalDistance`: statistical distance and the `ℓ¹`–`ℓ²` bound.
 * `TCSlib.InformationTheory.UniversalHashing`: universal hash families.
 * `TCSlib.InformationTheory.LeftoverHash`: the leftover hash lemma.
+* `TCSlib.InformationTheory.Entropy`: Shannon entropy, min-entropy, `k`-sources and flat sources.
+* `TCSlib.InformationTheory.Extractors`: `ε`-closeness (equivalent to a statistical-distance
+  bound), deterministic and strong extractors, and the leftover hash lemma as an extractor.
 
 ## References
 
 * [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012.
 * [HILL99] J. Håstad, R. Impagliazzo, L. Levin, M. Luby, *A pseudorandom generator from any
   one-way function*, SICOMP 28(4), 1999.
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
 -/

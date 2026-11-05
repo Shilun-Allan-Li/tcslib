@@ -114,6 +114,7 @@ def main():
                 continue
             entries.append({
                 "name": name,
+                "module": rec["module"],
                 "proof_source": "\n".join(rec["slice"]),
             })
 

@@ -15,8 +15,10 @@ Open decisions for the user are marked **R-n**; points needing Frederick's agree
   Lean*, https://github.com/dtumad/VCV-io, commit 9054989327a7185ff19ef9ff0f119cccea479501
   (2026-11-04), Apache License 2.0. Design adapted (no code transcribed): oracle specifications
   indexed by a type of oracle names (`VCVio/OracleComp/OracleSpec.lean`), oracle computations as
-  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), and simulation of oracles by
-  stateful handlers with query logging (`SimSemantics/`, `QueryTracking/LoggingOracle`).
+  a free monad over them (`OracleComp.lean`, `OracleQuery.lean`), probabilistic computations as
+  computations over the uniform-selection oracles (`OracleComp/ProbComp/Basic.lean`), and
+  simulation of oracles by stateful handlers with query logging and composition (`SimSemantics/`,
+  `SimSemantics/QueryImpl/Compose.lean`, `QueryTracking/LoggingOracle`).
 ```
 
 The source of every mathematical notion stays [PS10] (with [KL] and [Gol04] where [PS10] is
@@ -41,6 +43,27 @@ Ch. 5–8 needs several things that model cannot express directly:
 - **two-party executions with views:** Def 155.1, OT, Yao, ZK composition.
 
 ## Design
+
+**Synchronized with the code after gate 02 (2026-11-05).** The framework lives in namespace
+`TCSlib.Cryptography.Games`, with `OracleSpec` inside `OracleComp.lean`. Query bounds are
+`OracleComp.CostBoundedBy cost c q`.
+- **Executions** (`Party.exec`, `ExecOutcome`; fuel counts messages) run in a coroutine model that
+  contains D8's. It is broader in two respects: early returns, and a return value separate from
+  the last message. Agreement with D8 holds for embedded strategies, through bridge B4 (gate 02
+  round 2, finding 1).
+- **The executor records traces** (`Party.execT`): received messages and executed draws, not
+  read from a party's log. Full [PS10] views come only from parties that sample their whole tape
+  first (finding 2).
+- **Interaction is defined by strategies** (ruled 2026-11-05): Frederick's `Strategy`/`View`
+  remain the definitions of IP, ZK and two-party computation, and this executor is the proof
+  calculus.
+- **Identical-until-bad** has a semantic hypothesis: the same law to good successors.
+
+The sketches below are the pre-gate draft; where they differ, the code and this paragraph rule.
+Since gate 02 closed (2026-11-05), the round 2 findings and review are in
+`gates/02-s2a/`.
+**Thm 175.1 (ruled 2026-11-05):** strict or truncated simulators, a declared deviation carrying D8
+into ch. 7 (`PerfectZKAbort` composes to statistical ZK with error `Q·2^-k`).
 
 ### 1. Oracle specifications and computations (after [VCVio, OracleComp/OracleSpec])
 
@@ -204,6 +227,12 @@ abbrev Party (Out In α : Type) := OracleComp (exchangeSpec Out In + unifSpec) �
 
 ### 8. Bridges to existing code (all in our files; nothing of his edited without agreement)
 
+**Status (2026-11-04, S2b branch `cryptography/pass-shelat-ch5-8-s2b`, stacked on #185):**
+- **B1 proved** (`Games/Bridges/QueryTree.lean`): a bijection `QueryTree I O α ≃ OracleComp (singleSpec I O) α`, under which evaluation, Garg's `simulate` and `BoundedBy` (as `CostBoundedBy` with unit costs) are preserved.
+- **B2 proved** (`Games/Bridges/Experiments.lean`): `Pr[x ← $ α : p x] = uprob p` (through the published `uprob_eq_card_filter`), sequential sampling equals product sampling, and `invProb`, `predProb`, `acceptProb` and `distAdv` as one-line games. It reads the four definitions' bodies (F-3).
+- **B3 decoder drafted** (`Games/Machines.lean`): `Move`, `MachineCodec`, `buildComp`, `NUPPT.toComp` with its query bound, and `toComp_singleCodec`, which shows that `toOracleAdversary` is the one-oracle instance. The efficiency lemma is not started.
+- **B4, B5 not started:** B4 waits for gate 02's findings on `Protocols`; B5's asymptotic part needs B3.
+
 | Bridge | Relates | Purpose |
 |---|---|---|
 | B1 | `QueryTree I O α` ≃ one-oracle `OracleComp`; `eval`, `simulate`, `BoundedBy` | reuse Garg's PRF/GGM/lazy-sampling results |
@@ -244,6 +273,14 @@ and §6.2.
 | P-S2-5 | B3: his `toOracleAdversary` as an instance of `NUPPT.toComp`, at the level of definitions |
 
 ## Coordination with Frederick (adds to the S1 note)
+
+**Superseded 2026-11-05.** Frederick has left the branch, and these items are now this campaign's
+own work, as ruled:
+- F-1: the root restatement of oracle adversaries;
+- F-2: the strategies define, and B4 proves;
+- F-3: the equations, done in S2b.
+
+The list below is kept as written.
 
 - **F-1 (D-2):** `OracleEnsemble` and `toOracleAdversary` restated over `Games`, or bridged by
   B3; who does it, and when relative to his external gate.
