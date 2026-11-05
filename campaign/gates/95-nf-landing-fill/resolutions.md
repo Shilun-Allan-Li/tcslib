@@ -56,3 +56,20 @@ that changes no `.lean` file).
 **Not yet clear to merge: #191** (gate 95's round 2 is staged, not yet dispatched).
 
 **Round 2 dispatched (2026-11-05, the user).**
+
+**Replay on the merged tree after #197 (2026-11-05):** `replay-lnf3` passed (4 modules, 0 failed;
+modules 4, mismatches 0, static total 0), at #191's head `86cec90d0d46254d1ef3ba01c63f616c970d8072`
+(the campaign after #197 merged in; no file of the PR changed), chained from `oleans-lzsa2`
+(`evidence/round2/merged-tree-after-197/`). It is the replay of record for the merge while the
+campaign's Lean stays at #197's.
+
+## Round 2 findings (received 2026-11-05)
+
+`findings-r2.md`, verbatim from the exchange inbox (`arora-barak-ch3-4/inbox/nf-landing-fill-r2-findings.md`,
+exchange commit `bacfe4e2636a0d2a1b6f90da8a99d04719e597f1`), SHA-256 `0d59af4db4d8a71e3f35ecf7e24fb938226858740a9eb44c3b9ca25cec7ad6cb`.
+
+**Verdict: does not close.** 0 blockers, 1 major (F1, `nf_split`'s `h0` re-proves
+`List.ofFn_getElem`), 2 minors (F2, the sketch's wording; F3, RC-4's use count), 4 notes. Round 1's
+major is repaired (notes 4–7).
+
+**Not yet clear to merge: #191** (gate 95's round-2 major is open).

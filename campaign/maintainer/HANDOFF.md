@@ -115,8 +115,8 @@ replay below chained from it with only its own PR.
 
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 1 does not close (0/1/4); **round 2 dispatched** 2026-11-05 (84 sections) | merge when it closes, after a replay on the merged tree |
-| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 round 1 does not close (0/2/4); **round 2 dispatched** 2026-11-05 (149 sections) | merge when it closes, after a replay on the merged tree; then the deepening fill (Claude) |
+| #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 2 does not close (0/1/2: `nf_split` re-proves `List.ofFn_getElem`); `replay-lnf3` passed | repair, round 3; merge when it closes |
+| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **clear to merge** at `97adec69`; then the deepening fill (Claude) |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
 **After #197's merge** the campaign's Lean tree is #197's head's, and `oleans-lzsa2` is its

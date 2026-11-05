@@ -26,11 +26,13 @@ Infrastructure for [AB09, §4.2.1, proof of Theorem 4.14]; not itself a result o
 ## Main definitions
 
 * `Complexity.LogProg.SavitchARM.outerSt` — the register files of the outer search.
-* `Complexity.LogProg.SavitchARM.InitO`, `AccO` — the code tests read from the oracle.
+* `Complexity.LogProg.SavitchARM.InitO`, `AccO` — the code tests read from the oracle, with
+  their defining equations `initO_iff_orc`, `accO_iff_orc`.
 
 ## Main results
 
 * `Complexity.LogProg.SavitchARM.outerU_run` — the outer search.
+* `Complexity.LogProg.SavitchARM.outerSt_toV` — the outer search's register files, as registers.
 * `Complexity.LogProg.SavitchARM.savitch_halts` — the whole run.
 
 ## References
@@ -53,10 +55,22 @@ def outerSt (s w u v M : ℕ) : St := { setSt s w with U := u, V := v, M := M }
 def InitO (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u : ℕ) : Prop :=
   orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true
 
+/-- `InitO orc x s u` holds exactly when decider `1` accepts `⟨x, ⟨bits u, bits s⟩⟩`:
+`orc 1 (pairEncode x (pairEncode (bits u) (bits s))) = true`. -/
+theorem initO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u : ℕ} :
+    InitO orc x s u ↔ orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true :=
+  Iff.rfl
+
 /-- The accepting-code test read from the oracle: decider `2` accepts
 `⟨x, ⟨bits v, bits s⟩⟩`. -/
 def AccO (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s v : ℕ) : Prop :=
   orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true
+
+/-- `AccO orc x s v` holds exactly when decider `2` accepts `⟨x, ⟨bits v, bits s⟩⟩`:
+`orc 2 (pairEncode x (pairEncode (bits v) (bits s))) = true`. -/
+theorem accO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s v : ℕ} :
+    AccO orc x s v ↔ orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true :=
+  Iff.rfl
 
 section Outer
 
@@ -76,6 +90,13 @@ variable {s w u v M : ℕ}
 @[simp] lemma outerSt_w : (outerSt s w u v M).w = w := rfl
 /-- The `s` register of an outer-search file. -/
 @[simp] lemma outerSt_s : (outerSt s w u v M).s = s := rfl
+
+/-- **The outer search's register files, as registers**: the setup's file with the candidate
+registers `U`, `V` and `M` written. -/
+theorem outerSt_toV (s w u v M : ℕ) : (outerSt s w u v M).toV =
+    Function.update (Function.update (Function.update (setSt s w).toV rU u) rV v) rM M := by
+  rw [St.upd_U, St.upd_V, St.upd_M]
+  rfl
 
 /-- The register files of the outer search are bounded by `2 ^ (w · w)`. -/
 lemma outerSt_bd (hsw : s ≤ w) (hu : u ≤ 2 ^ w) (hv : v ≤ 2 ^ w) (hM : M ≤ 2 ^ w) :

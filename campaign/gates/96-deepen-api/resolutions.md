@@ -62,3 +62,32 @@ the existing 30 `sorry`s, chained from `oleans-cloud0` (`evidence/round2/merged-
 **Not yet clear to merge: #196** (gate 96's round 2 is staged, not yet dispatched).
 
 **Round 2 dispatched (2026-11-05, the user).**
+
+**Replay on the merged tree after #197 (2026-11-05):** `replay-ldwa3` passed (73 modules, 0 failed;
+modules 73, mismatches 0, static total 30), at #196's head
+`97adec6962e55c3a8ff191e602627674697fef18` (the campaign after #197 merged in; no file of the PR
+changed), chained from `oleans-lzsa2` (`evidence/round2/merged-tree-after-197/`). It is the replay
+of record for the merge while the campaign's Lean stays at #197's.
+
+## Round 2 findings (received 2026-11-05)
+
+`findings-r2.md`, verbatim from the exchange inbox (`arora-barak-ch3-4/inbox/deepen-api-r2-findings.md`,
+exchange commit `bacfe4e2636a0d2a1b6f90da8a99d04719e597f1`), SHA-256 `f2d5a138512f8b515e9c0f652c08b985c028f48a87c0ff0592ff95f098dd6dfa`.
+
+**Verdict: PASS.** 0 blockers, 0 majors, 1 minor (F1, accounting), 7 notes. Both round-1 majors are
+resolved (notes 2–3), and minors 3–6 (notes 4–7).
+
+## Round 2 dispositions
+
+| # | Severity | Disposition |
+|---|---|---|
+| 1 | minor | **Fixed in the records.** WS-1's census now counts all source declarations (`declfreeze.py`'s convention, anonymous instances included): `CfgRecord` 3 of 137 (2.2%), and `Radius` 3 of 27 (11.1%) cumulatively with CE-1 (`duplication-ledger.md`). **Pack erratum:** `pack-r2.md` says the repair changes the PR's ten files; the repair commit `b1b5199b` changes **eight** (`Codec/Bridge` and `SavitchARM/Setup` are unchanged by it), and ten is the whole PR's scope. |
+| 2–8 | note | Recorded. Note 6's page (Sipser, 3rd ed., printed p. 335) is recorded here; the docstring cites the theorem, and adding the page is left to the deferred docstring pass. |
+
+**Gate 96: CLOSE (2026-11-05).** Round 2 has 0 blockers and 0 majors; its minor is fixed in the
+records. The merged-tree replay after #197, `replay-ldwa3`, passed (73 modules, 0 failed), at
+#196's head `97adec6962e55c3a8ff191e602627674697fef18`, and the campaign's Lean is unchanged since
+(#197's). #196's base is the campaign branch.
+
+**Clear to merge: #196** at `97adec6962e55c3a8ff191e602627674697fef18` (gate 96 closed;
+`replay-ldwa3` passed).

@@ -5,6 +5,7 @@ Authors: Hydroxyi
 -/
 import TCSlib.Complexity.SpaceComplexity.Codec.Bridge
 import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -37,6 +38,8 @@ is at most `2 ^ w`: chains of length at most `2 ^ w` are cut at midpoints
 
 * `Complexity.LogProg.SavitchARM.reach_of_chain`, `reflTransGen_of_reach` — the two
   directions of midpoint reachability.
+* `Complexity.LogProg.SavitchARM.reach_of_reflTransGen` — a path through vertices below `K` is
+  a midpoint witness at every level `i` with `K ≤ 2 ^ i` (path shortening).
 * `Complexity.LogProg.SavitchARM.configBound_le` — the configuration count at radius
   `(n + 2) ^ E` is below `2 ^ ((n + 2) ^ (2 E))`.
 * `Complexity.LogProg.SavitchARM.mem_iff_reach` — membership as midpoint reachability.
@@ -103,6 +106,71 @@ theorem reflTransGen_of_reach (K : ℕ) (R : ℕ → ℕ → Prop) :
   | succ i ih =>
     rintro u v ⟨m, -, h1, h2⟩
     exact (ih u m h1).trans (ih m v h2)
+
+/-- A walk of at most `j` edges from `c < K` (`Complexity.WalkLe`) is a chain of at most `j`
+steps with every member below `K`.
+
+**Proof sketch.** Induction on `j`, generalizing the start, reading the walk through
+`Complexity.walkLe_zero_iff` and the head form `Complexity.walkLe_succ_iff_head`: a walk of at
+most `j + 1` edges is empty, or an edge from `c` to some `v < K` followed by a walk of at most `j`
+edges from `v`, whose chain gains `c` in front. -/
+private theorem chain_of_walkLe (K : ℕ) (R : ℕ → ℕ → Prop) (c : ℕ) (hc : c < K) :
+    ∀ j t, WalkLe R K j c t → ∃ T ≤ j, ∃ f : ℕ → ℕ, f 0 = c ∧ f T = t ∧
+      (∀ i < T, R (f i) (f (i + 1))) ∧ ∀ i ≤ T, f i < K := by
+  intro j
+  induction j generalizing c with
+  | zero =>
+    intro t h
+    rw [walkLe_zero_iff] at h
+    exact ⟨0, le_rfl, fun _ => c, rfl, h, fun i hi => absurd hi (Nat.not_lt_zero _),
+      fun _ _ => hc⟩
+  | succ j ih =>
+    intro t h
+    rcases walkLe_succ_iff_head.mp h with rfl | ⟨v, hv, hcv, hvt⟩
+    · exact ⟨0, Nat.zero_le _, fun _ => c, rfl, rfl, fun i hi => absurd hi (Nat.not_lt_zero _),
+        fun _ _ => hc⟩
+    · obtain ⟨T, hT, f, h0, hTt, hstep, hlt⟩ := ih v hv t hvt
+      refine ⟨T + 1, by omega, fun i => if i = 0 then c else f (i - 1), if_pos rfl, ?_, ?_, ?_⟩
+      · show (if T + 1 = 0 then c else f (T + 1 - 1)) = t
+        rw [if_neg (Nat.succ_ne_zero T), Nat.add_sub_cancel, hTt]
+      · intro i hi
+        rcases Nat.eq_zero_or_pos i with rfl | hi0
+        · show R (if 0 = 0 then c else f (0 - 1)) (if 0 + 1 = 0 then c else f (0 + 1 - 1))
+          rw [if_pos rfl, if_neg (Nat.succ_ne_zero 0), Nat.add_sub_cancel, h0]
+          exact hcv
+        · show R (if i = 0 then c else f (i - 1)) (if i + 1 = 0 then c else f (i + 1 - 1))
+          rw [if_neg (Nat.pos_iff_ne_zero.mp hi0), if_neg (Nat.succ_ne_zero i),
+            Nat.add_sub_cancel]
+          have h := hstep (i - 1) (by omega)
+          rwa [Nat.sub_add_cancel hi0] at h
+      · intro i hi
+        show (if i = 0 then c else f (i - 1)) < K
+        split_ifs
+        · exact hc
+        · exact hlt (i - 1) (by omega)
+
+/-- **Path shortening into a midpoint witness**: if every step of `R` joins vertices below
+`K`, a path from `u < K` to `v` is a midpoint witness `Reach K R i u v` at every level `i` with
+`K ≤ 2 ^ i`. This is the converse of `reflTransGen_of_reach` under a vertex bound. [AB09,
+§4.2.1, proof of Theorem 4.14: a path in a graph of at most `2 ^ i` vertices has at most
+`2 ^ i` steps]
+
+**Proof sketch.** The path runs through vertices below `K`, so it is a walk of at most `K`
+edges (`Complexity.reach_iff_walkLe`, from the shortening `Complexity.walkLe_short`), hence a
+chain of at most `K ≤ 2 ^ i` steps, which `reach_of_chain` cuts at midpoints. -/
+theorem reach_of_reflTransGen (K : ℕ) (R : ℕ → ℕ → Prop) (hR : ∀ a b, R a b → a < K ∧ b < K)
+    {u v : ℕ} (hu : u < K) (h : Relation.ReflTransGen R u v) (i : ℕ) (hi : K ≤ 2 ^ i) :
+    Reach K R i u v := by
+  have hv : v < K := by
+    rcases Relation.ReflTransGen.cases_tail h with rfl | ⟨b, -, hb⟩
+    · exact hu
+    · exact (hR _ _ hb).2
+  have h' : Relation.ReflTransGen (fun a b => a < K ∧ b < K ∧ R a b) u v :=
+    Relation.ReflTransGen.mono (fun a b hab => ⟨(hR a b hab).1, (hR a b hab).2, hab⟩) h
+  obtain ⟨T, hT, f, h0, hTv, hstep, hlt⟩ :=
+    chain_of_walkLe K R u hu K v ((reach_iff_walkLe hu hv).mp h')
+  have := reach_of_chain K R f T hstep hlt i 0 T (by omega) (hT.trans hi)
+  rwa [h0, zero_add, hTv] at this
 
 /-! ## The size bounds -/
 
