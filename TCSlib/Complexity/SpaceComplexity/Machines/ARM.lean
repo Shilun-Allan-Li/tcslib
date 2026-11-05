@@ -35,6 +35,11 @@ running counter program is simulated by an abstract register machine in
 * `Complexity.LogProg.armProg` — the compiled register-tape program.
 * `Complexity.LogProg.aseam` — the program configuration of an abstract configuration.
 
+## Main results
+
+* `Complexity.LogProg.astep_inc`, …, `Complexity.LogProg.astep_jeqSnd` — one step at each
+  instruction.
+
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
@@ -137,6 +142,102 @@ noncomputable def astep {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d
 noncomputable def arun {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
     (x : List Bool) (a : AConf m Λ) (n : ℕ) : AConf m Λ :=
   (astep A oracle x)^[n] a
+
+/-- Running no steps stays put. -/
+lemma arun_zero {m d : ℕ} {Λ : Type} (A : ARM m d Λ) (oracle : Fin d → List Bool → Bool)
+    (x : List Bool) (a : AConf m Λ) : arun A oracle x a 0 = a := rfl
+
+/-! ## One step, instruction by instruction
+
+The value semantics of each instruction, stated as an equation for a live configuration
+whose label holds it. -/
+
+section Steps
+
+variable {m d : ℕ} {Λ : Type} {A : ARM m d Λ} {oracle : Fin d → List Bool → Bool}
+  {x : List Bool} {l : Λ} {v : Fin m → ℕ} {res : Option Bool}
+
+/-- A step at an increment. -/
+lemma astep_inc {r : Fin m} {l' : Λ} (h : A l = .inc r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r (v r + 1), res) := by
+  simp [astep, h]
+
+/-- A step at a decrement. -/
+lemma astep_dec {r : Fin m} {l' : Λ} (h : A l = .dec r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r (v r - 1), res) := by
+  simp [astep, h]
+
+/-- A step at a clear. -/
+lemma astep_clr {r : Fin m} {l' : Λ} (h : A l = .clr r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r 0, res) := by
+  simp [astep, h]
+
+/-- A step at a halving. -/
+lemma astep_half {r : Fin m} {l' : Λ} (h : A l = .half r l') :
+    astep A oracle x (some l, v, res) = (some l', Function.update v r (v r / 2), res) := by
+  simp [astep, h]
+
+/-- A step at a zero test. -/
+lemma astep_jz {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jz r l₁ l₀) :
+    astep A oracle x (some l, v, res) = (some (if v r = 0 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a parity test. -/
+lemma astep_jodd {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jodd r l₁ l₀) :
+    astep A oracle x (some l, v, res) = (some (if v r % 2 = 1 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at an equality test. -/
+lemma astep_jeq {r s : Fin m} {l₁ l₀ : Λ} (h : A l = .jeq r s l₁ l₀) :
+    astep A oracle x (some l, v, res) = (some (if v r = v s then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a call: the decider's answer on the call's virtual input picks the branch. -/
+lemma astep_call {j : Fin d} {md : Mode} {args : List (Fin m)} {l₁ l₀ : Λ}
+    (h : A l = .call j md args l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if oracle j (vword (callSegs ⟨j, md, args, l₁, l₀⟩ x fun r => Nat.bits (v r)))
+        then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at an answer halts with it. -/
+lemma astep_ret {b : Bool} (h : A l = .ret b) :
+    astep A oracle x (some l, v, res) = (none, v, some b) := by
+  simp [astep, h]
+
+open Classical in
+/-- A step at the plain-input check. -/
+lemma astep_valP {r : Fin m} {l' : Λ} (h : A l = .valP r l') :
+    astep A oracle x (some l, v, res) =
+      if ValidPlain x then (some l', v, res) else (none, v, some false) := by
+  simp [astep, h]
+
+open Classical in
+/-- A step at the pair-input check. -/
+lemma astep_valQ {r : Fin m} {l' : Λ} (h : A l = .valQ r l') :
+    astep A oracle x (some l, v, res) =
+      if ValidPair x then (some l', v, res) else (none, v, some false) := by
+  simp [astep, h]
+
+/-- A step at a comparison with the word of a plain input. -/
+lemma astep_jeqIn {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jeqIn r l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if Nat.bits (v r) = plainWord x then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a comparison with the first word of a pair input. -/
+lemma astep_jeqFst {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jeqFst r l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if Nat.bits (v r) = (pairWords x).1 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+/-- A step at a comparison with the second word of a pair input. -/
+lemma astep_jeqSnd {r : Fin m} {l₁ l₀ : Λ} (h : A l = .jeqSnd r l₁ l₀) :
+    astep A oracle x (some l, v, res) =
+      (some (if Nat.bits (v r) = (pairWords x).2 then l₁ else l₀), v, res) := by
+  simp [astep, h]
+
+end Steps
 
 /-! ## Compilation -/
 

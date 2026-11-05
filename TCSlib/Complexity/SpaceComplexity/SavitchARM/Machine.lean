@@ -42,6 +42,7 @@ bookkeeping lemmas; the run lemmas are in `TCSlib.Complexity.SpaceComplexity.Sav
 
 * `Complexity.LogProg.SavitchARM.St.Bd.toV` — a register file bounded field by field is
   bounded as a valuation (the form of the guard `Complexity.LogProg.GuardLe`).
+* `Complexity.LogProg.SavitchARM.A_noVal` — the machine has no input-format check.
 
 ## References
 
@@ -619,6 +620,15 @@ def A (E : ℕ) : ARM 18 4 (Lb E)
   | .hv b j => hvI rC rT (.cp (.popT b) 0) (.hv b) j
   | .cp k j => cpI (cpSrc k) (cpDst k) (cpExit k) (.cp k) j
   | .sh k j => shI (shReg k) (shExit k) (.sh k) j
+
+/-- The Savitch machine has no input-format check (`valP`, `valQ`), so it halts only by
+answering; this is the hypothesis of `Complexity.LogProg.AHalt.embed`. -/
+theorem A_noVal (E : ℕ) (l : Lb E) (r : Fin 18) (l' : Lb E) :
+    A E l ≠ .valP r l' ∧ A E l ≠ .valQ r l' := by
+  cases l <;> simp only [A, mvI, dmI, sbI, hvI, cpI, shI, ne_eq] <;>
+    first
+    | exact ⟨Ins.noConfusion, Ins.noConfusion⟩
+    | (split <;> exact ⟨Ins.noConfusion, Ins.noConfusion⟩)
 
 end SavitchARM
 
