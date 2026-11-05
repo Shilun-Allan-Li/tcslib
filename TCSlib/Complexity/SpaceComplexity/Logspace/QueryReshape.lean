@@ -108,8 +108,8 @@ theorem mem_indexLang_compQ_iff (f : List Bool → List Bool) (p : List Bool →
         simp only [Prod.mk.injEq] at this
         obtain ⟨rfl, rfl⟩ := this
         exact ⟨x, i, eq_pairEncode_of_pairDecode _ _ _ hw, hp⟩
-      · exact absurd h.symm (pairEncode_ne_nil _ _)
-    · exact absurd h.symm (pairEncode_ne_nil _ _)
+      · exact absurd h.symm (Turing.pairEncode_ne_nil _ _)
+    · exact absurd h.symm (Turing.pairEncode_ne_nil _ _)
 
 /-- `compQ f` is polynomially bounded when `f` is: `|compQ f w| ≤ (2C + 3)(|w| + 1)^{c+1}`
 from `|f x| ≤ C (|x| + 1)^c`. -/

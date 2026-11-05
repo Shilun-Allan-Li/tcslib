@@ -173,7 +173,7 @@ theorem colProver_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x y 
     rfl
   | cons w hist' =>
     rw [proverStr, if_neg (by
-        rw [argM_ilayout, Strategy.encodeMsgs_cons]; exact ColMachines.pairEncode_ne_nil _ _),
+        rw [argM_ilayout, Strategy.encodeMsgs_cons]; exact Turing.pairEncode_ne_nil _ _),
       mOf_ilayout]
     by_cases hm : edgeCount (decGraph x).2 = 0
     · rw [if_pos hm]
@@ -209,7 +209,7 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     rfl
   · have c1 : argM (ilayout x z [com] r) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons]
-      exact ColMachines.pairEncode_ne_nil _ _
+      exact Turing.pairEncode_ne_nil _ _
     have c2 : pairSndD (argM (ilayout x z [com] r)) = [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode]
       rfl
@@ -217,10 +217,10 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     rfl
   · have c1 : argM (ilayout x z [com, opn] r) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons]
-      exact ColMachines.pairEncode_ne_nil _ _
+      exact Turing.pairEncode_ne_nil _ _
     have c2 : pairSndD (argM (ilayout x z [com, opn] r)) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons]
-      exact ColMachines.pairEncode_ne_nil _ _
+      exact Turing.pairEncode_ne_nil _ _
     have c3 : pairSndD (pairSndD (argM (ilayout x z [com, opn] r))) = [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons,
         pairSndD_pairEncode]
@@ -237,14 +237,14 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     · rw [colVerify_eq_checkStr Com _ x com opn _ (Nat.pos_of_ne_zero hm)]
   · have c1 : argM (ilayout x z (com :: opn :: m3 :: t) r) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons]
-      exact ColMachines.pairEncode_ne_nil _ _
+      exact Turing.pairEncode_ne_nil _ _
     have c2 : pairSndD (argM (ilayout x z (com :: opn :: m3 :: t) r)) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons]
-      exact ColMachines.pairEncode_ne_nil _ _
+      exact Turing.pairEncode_ne_nil _ _
     have c3 : pairSndD (pairSndD (argM (ilayout x z (com :: opn :: m3 :: t) r))) ≠ [] := by
       rw [argM_ilayout, Strategy.encodeMsgs_cons, pairSndD_pairEncode, Strategy.encodeMsgs_cons,
         pairSndD_pairEncode, Strategy.encodeMsgs_cons]
-      exact ColMachines.pairEncode_ne_nil _ _
+      exact Turing.pairEncode_ne_nil _ _
     rw [verifierStr, if_neg c1, if_neg c2, if_neg c3]
     rfl
 

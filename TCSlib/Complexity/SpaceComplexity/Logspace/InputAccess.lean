@@ -45,7 +45,6 @@ not in `Machines/`, by decision D3; it is built only from received fragments.
 * `Complexity.LogProg.vword_whole₁` — a `whole` call with one argument presents `⟨u, V r⟩`.
 * `Complexity.indicator_indexLang_pairEncode` — the answer of an `indexLang` decider on a
   genuine pair.
-* `Complexity.pairEncode_ne_nil` — no pair is empty (so `[]` lies in no `indexLang`).
 * `Complexity.pairEncode_getD` — a shared bit-address formula for doubled fields,
   separators, and suffixes of paired inputs.
 * `Complexity.LogProg.alignedPair_loop` — a bounded ARM pair scan at any positive stride.
@@ -78,12 +77,6 @@ not in `Machines/`, by decision D3; it is built only from received fragments.
 namespace Complexity
 
 open Turing
-
-/-- No pair encoding is the empty word: `pairEncode x y` contains the separator. -/
-theorem pairEncode_ne_nil (x y : List Bool) : pairEncode x y ≠ [] := by
-  intro h
-  have := congrArg List.length h
-  simp [length_pairEncode] at this
 
 /-- **The answer of an index-language decider on a genuine pair**: the indicator of
 `indexLang p` at `⟨u, bits v⟩` is the decision of `p u v`. -/

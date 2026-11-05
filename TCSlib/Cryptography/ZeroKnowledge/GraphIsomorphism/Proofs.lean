@@ -385,13 +385,6 @@ theorem decPerm_nil (n : ℕ) : decPerm n [] = 1 := by
   rw [dif_pos Function.bijective_id]
   exact Equiv.ext fun _ => rfl
 
-/-- A pair is never the empty word. -/
-theorem pairEncode_ne_nil (a b : List Bool) : pairEncode a b ≠ [] := by
-  intro h
-  have := congrArg List.length h
-  rw [length_pairEncode] at this
-  simp at this
-
 /-! ### Efficiency from a polynomial-time layout function -/
 
 /-- The interactive machine layout of a strategy activation,

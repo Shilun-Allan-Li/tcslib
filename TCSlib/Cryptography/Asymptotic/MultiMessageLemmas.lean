@@ -325,14 +325,6 @@ theorem zipWith_xor_replicate_false : ∀ l : List Bool,
     rw [List.length_cons, List.replicate_succ, List.zipWith_cons_cons, zipWith_xor_replicate_false l,
       Bool.xor_false]
 
-/-- The string exclusive-or of two `n`-bit strings is the encoding of their sum in the Boolean
-group `Fin n → Bool` (`+` on `Bool` is `xor`). -/
-theorem zipWith_xor_ofFn_eq_add {n : ℕ} (a b : Fin n → Bool) :
-    List.zipWith xor (List.ofFn a) (List.ofFn b) = List.ofFn (a + b) := by
-  refine List.ext_getElem (by simp) fun i h₁ h₂ => ?_
-  simp only [List.getElem_zipWith, List.getElem_ofFn, Pi.add_apply]
-  cases a ⟨i, by simpa using h₂⟩ <;> cases b ⟨i, by simpa using h₂⟩ <;> rfl
-
 /-- Exclusive-or commutes with doubling. -/
 theorem zipWith_xor_dbl : ∀ a b : List Bool,
     List.zipWith xor (dbl a) (dbl b) = dbl (List.zipWith xor a b)
@@ -352,7 +344,7 @@ theorem zipWith_xor_histBlock_maskBlock {n : ℕ} (x y w : Fin n → Bool) :
     List.zipWith xor (histBlock (x, y)) (maskBlock w) =
       pairEncode (pairEncode (List.ofFn x) (List.ofFn (w + y))) [] := by
   have hyw : List.zipWith xor (List.ofFn y) (List.ofFn w) = List.ofFn (w + y) := by
-    rw [zipWith_xor_ofFn_eq_add, add_comm]
+    rw [zipWith_xor_ofFn_add, add_comm]
   have h1 : histBlock (x, y) =
       (dbl (dbl (List.ofFn x)) ++ [false, false, true, true]) ++
         (dbl (List.ofFn y) ++ [false, true]) := by
