@@ -1,0 +1,98 @@
+== preflight 2026-11-04T19:45:36Z
+== nproc
+4
+== cgroup
+9:name=systemd:/
+8:pids:/
+7:blkio:/
+6:freezer:/
+5:devices:/
+4:memory:/process_api/01a1a816-d3a3-75b9-be84-62994afd46e9/claude-code-bash
+3:cpuset:/
+2:cpuacct:/
+1:cpu:/
+0::/
+-- memory.max
+cat: /sys/fs/cgroup/memory.max: No such file or directory
+-- memory.current
+cat: /sys/fs/cgroup/memory.current: No such file or directory
+-- memory.events
+cat: /sys/fs/cgroup/memory.events: No such file or directory
+-- memory.stat
+cat: /sys/fs/cgroup/memory.stat: No such file or directory
+-- /proc/meminfo
+MemTotal:       16477348 kB
+MemFree:        15232976 kB
+MemAvailable:   15938464 kB
+Buffers:           20948 kB
+Cached:           881976 kB
+== df -B1 clone
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/vda       270553174016 9750548480 31532986368  24% /
+== df -T clone
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9522020  30793932  24% /
+== df -B1 scratch
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/vda       270553174016 9750548480 31532986368  24% /
+== df -T scratch
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9522020  30793932  24% /
+== TMPDIR=unset
+== cgroup v1 (this process's memory cgroup): /sys/fs/cgroup/memory/process_api/01a1a816-d3a3-75b9-be84-62994afd46e9/claude-code-bash
+-- memory.limit_in_bytes
+14341881856
+-- memory.usage_in_bytes
+752541696
+-- memory.oom_control
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+-- memory.failcnt
+0
+-- memory.stat
+cache 704479232
+rss 958464
+rss_huge 0
+shmem 0
+mapped_file 131072
+dirty 358191104
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 404259
+pgpgout 282601
+pgfault 292159
+pgmajfault 167
+inactive_anon 835584
+active_anon 32768
+inactive_file 503619584
+active_file 200859648
+unevictable 0
+hierarchical_memory_limit 14341881856
+hierarchical_memsw_limit 9223372036854771712
+total_cache 704479232
+total_rss 958464
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 131072
+total_dirty 358191104
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 404259
+total_pgpgout 282601
+total_pgfault 292159
+total_pgmajfault 167
+total_inactive_anon 835584
+total_active_anon 32768
+total_inactive_file 503619584
+total_active_file 200859648
+total_unevictable 0
+== headroom (v1): in_use = usage(753160192) - total_cache(704479232) + total_shmem(0) = 48680960; headroom = limit(14341881856) - in_use = 14293200896 bytes = 13.31 GiB
+== disk free on clone fs: 31532965888 bytes = 29.37 GiB (floor 12 GiB)
+== verdict: PASS

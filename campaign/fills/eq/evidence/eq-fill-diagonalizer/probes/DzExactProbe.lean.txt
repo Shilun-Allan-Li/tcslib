@@ -1,0 +1,49 @@
+/-
+Semantic duplication probe for the E-D fill (a probe record, not library code): each new private
+whose statement involves only public definitions, restated, closed by `exact?` if a library lemma
+states it. "exact? could not close the goal" means no single lemma does.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+open Turing
+set_option maxHeartbeats 1000000
+
+-- dz_split_tape
+example (s₁ w : List Bool) (b : Bool) :
+    (fun q => if (s₁.length : ℤ) + 1 ≤ q ∧ q < (s₁.length : ℤ) + 1 + (w.length : ℤ) then
+        (FinTM.bufferTape w (q - ((s₁.length : ℤ) + 1))).bind fun _ => none
+      else Function.update (FinTM.bufferTape (s₁ ++ [b] ++ w)) (s₁.length : ℤ) none q) =
+      FinTM.bufferTape s₁ := by exact?
+-- dz_word_lt
+example (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by exact?
+-- dz_budget_le
+example (G : ℕ) (w : List Bool) (hw : w.length = (Nat.bits G).length) :
+    Nat.ofDigits 2 (w.map Bool.toNat) ≤ 2 * G := by exact?
+-- dz_padded_value
+example (t r : ℕ) :
+    Nat.ofDigits 2 ((Nat.bits t ++ List.replicate r false).map Bool.toNat) = t := by exact?
+-- dz_pairEncode_length
+example (x α : List Bool) : (pairEncode x α).length = 2 * x.length + 2 + α.length := by exact?
+-- dz_split_stream
+example (s : List Bool) (G : ℕ) (h : G < s.length) :
+    s = s.take G ++ [s[G]] ++ s.drop (G + 1) := by exact?
+-- dz_cell0
+example (b : Bool) (tail : List Bool) : FinTM.bufferTape (b :: tail) 0 = some b := by exact?
+-- dz_ones_succ
+example (n : ℕ) : [true] ++ List.replicate n true = List.replicate (n + 1) true := by exact?
+-- dz_out_le
+example {M : FinTM Bool} {F : List Bool → List Bool} {T : ℕ → ℕ}
+    (h : M.ComputesFunInTime F T) (y : List Bool) : (F y).length ≤ T y.length := by exact?
+-- dz_alpha_eq (dzAlpha unfolded)
+example (B α N : List Bool) :
+    ((pairDecode (((pairDecode (pairEncode (pairEncode B α) N)).map Prod.fst).getD [])).map
+      Prod.snd).getD [] = α := by exact?
+-- dz_silentCfg_eq
+example {m K : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin K)
+    (cap : Fin K) (hcap : cap ∉ Set.range ι) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)
+    (pre o : List Bool) (c : Cfg m Bool S x) (d : Cfg K Bool S x) (hs : c.state = d.state)
+    (hin : c.inputPos = d.inputPos) (hout : o = d.output)
+    (hsel : ∀ i, c.workTapes i = d.workTapes (ι i) ∧ c.workTapePos i = d.workTapePos (ι i))
+    (hc : FinTM.bufferTape (pre ++ c.output) = d.workTapes cap ∧
+      ((pre ++ c.output).length : ℤ) = d.workTapePos cap)
+    (hfr : ∀ j, j ∉ Set.range ι → j ≠ cap → T j = d.workTapes j ∧ P j = d.workTapePos j) :
+    embedSilentCfg ι cap T P pre o c = d := by exact?

@@ -1,0 +1,351 @@
+From 6d66cc266591c1d049830cce1a90ea679787315f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 23:47:02 +0000
+Subject: [PATCH 11/12] NTimeDiagonalizer: factor in-file near-copies
+
+One equation lemma for the hosted clock's tape map (dzClkEmb_eqs) instead of
+four; a term-mode dz_initCfg; the branch budget dz_K_bound shared by dz_halts
+and dz_accepts_iff; one segment reading dz_seg_read for dz_hQ and the
+acceptance lemmas.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 180 +++++++-----------
+ 1 file changed, 71 insertions(+), 109 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index 21bd9309..4b72d525 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -5582,33 +5582,19 @@ private def dzClkEmb {m K : ℕ} (buf cap ctr : Fin K) (β : Fin m ↪ Fin K) (h
+         rw [Fin.lastCases_castSucc, Fin.lastCases_castSucc] at h
+         rw [hinj2 h]
+ 
+-/-- The hosted clock's map sends the counter to `ctr`. -/
+-private theorem dzClkEmb_ctr {m K : ℕ} (buf cap ctr : Fin K) (β : Fin m ↪ Fin K) (h1 : buf ≠ cap)
++/-- The hosted clock's map, tape by tape: the counter to `ctr`, the capture tape to `cap`, the
++buffer to `buf` and the hosted machine's tape `i` to `β i`. -/
++private theorem dzClkEmb_eqs {m K : ℕ} (buf cap ctr : Fin K) (β : Fin m ↪ Fin K) (h1 : buf ≠ cap)
+     (h2 : buf ≠ ctr) (h3 : cap ≠ ctr) (hb : buf ∉ Set.range β) (hc : cap ∉ Set.range β)
+     (hk : ctr ∉ Set.range β) :
+-    dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.last _) = ctr := by
+-  simp only [dzClkEmb, Function.Embedding.coeFn_mk, Fin.lastCases_last]
+-
+-/-- The hosted clock's map sends the capture tape to `cap`. -/
+-private theorem dzClkEmb_cap {m K : ℕ} (buf cap ctr : Fin K) (β : Fin m ↪ Fin K) (h1 : buf ≠ cap)
+-    (h2 : buf ≠ ctr) (h3 : cap ≠ ctr) (hb : buf ∉ Set.range β) (hc : cap ∉ Set.range β)
+-    (hk : ctr ∉ Set.range β) :
+-    dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.last _).castSucc = cap := by
+-  simp only [dzClkEmb, Function.Embedding.coeFn_mk, Fin.lastCases_castSucc, Fin.lastCases_last]
+-
+-/-- The hosted clock's map sends the buffer to `buf`. -/
+-private theorem dzClkEmb_buf {m K : ℕ} (buf cap ctr : Fin K) (β : Fin m ↪ Fin K) (h1 : buf ≠ cap)
+-    (h2 : buf ≠ ctr) (h3 : cap ≠ ctr) (hb : buf ∉ Set.range β) (hc : cap ∉ Set.range β)
+-    (hk : ctr ∉ Set.range β) (a : Fin 1) :
+-    dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.castAdd m a).castSucc.castSucc = buf := by
+-  simp only [dzClkEmb, Function.Embedding.coeFn_mk, Fin.lastCases_castSucc, Fin.addCases_left]
+-
+-/-- The hosted clock's map sends the hosted machine's tape `i` to `β i`. -/
+-private theorem dzClkEmb_bank {m K : ℕ} (buf cap ctr : Fin K) (β : Fin m ↪ Fin K) (h1 : buf ≠ cap)
+-    (h2 : buf ≠ ctr) (h3 : cap ≠ ctr) (hb : buf ∉ Set.range β) (hc : cap ∉ Set.range β)
+-    (hk : ctr ∉ Set.range β) (i : Fin m) :
+-    dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.natAdd 1 i).castSucc.castSucc = β i := by
+-  simp only [dzClkEmb, Function.Embedding.coeFn_mk, Fin.lastCases_castSucc, Fin.addCases_right]
++    dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.last _) = ctr ∧
++      dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.last _).castSucc = cap ∧
++      (∀ a : Fin 1, dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.castAdd m a).castSucc.castSucc =
++        buf) ∧
++      ∀ i : Fin m, dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk (Fin.natAdd 1 i).castSucc.castSucc =
++        β i := by
++  simp only [dzClkEmb, Function.Embedding.coeFn_mk, Fin.lastCases_last, Fin.lastCases_castSucc,
++    Fin.addCases_left, Fin.addCases_right, implies_true, and_self]
+ 
+ /-- **The hosted clock's clause** for a machine `M`, a stop predicate `stop` and a step clock `H`
+ over `Turing.vhostSilentTM M` (with the stop predicate read on the hosted state): embedded along
+@@ -5684,6 +5670,7 @@ private theorem dz_clock_exists {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+   refine ⟨Qc, hQ, hdQ, H, inj, fin, tmo, hfi, hft, ?_⟩
+   intro K x y buf cap ctr β h1 h2 h3 hb hc hk T P o c q w hcs hci hco hTb hPb hβ hTc hPc hTk hPk
+   set σ := dzClkEmb buf cap ctr β h1 h2 h3 hb hc hk with hσ
++  obtain ⟨eCtr, eCap, eBuf, eBank⟩ := dzClkEmb_eqs buf cap ctr β h1 h2 h3 hb hc hk
+   have hcapL : (Fin.last (1 + m) : Fin ((1 + m) + 1)) = vhostCap m := by
+     rw [vhostCap_eq]
+     exact Fin.ext (by simp)
+@@ -5743,46 +5730,46 @@ private theorem dz_clock_exists {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+       | last =>
+         rw [Fin.lastCases_last]
+         show T (σ (Fin.last _)) a = _
+-        rw [hσ, dzClkEmb_ctr]
++        rw [hσ, eCtr]
+       | cast j =>
+         rw [Fin.lastCases_castSucc]
+         induction j using Fin.lastCases with
+         | last =>
+           show T (σ (Fin.last _).castSucc) a = _
+-          rw [hσ, dzClkEmb_cap, hTc, (hVcap c true).1, hco]
++          rw [hσ, eCap, hTc, (hVcap c true).1, hco]
+         | cast j =>
+           rw [(hVsel c true j).1, vhostCfg_workTapes]
+           induction j using Fin.addCases with
+           | left a0 =>
+             show T (σ (Fin.castAdd m a0).castSucc.castSucc) a = _
+-            rw [hσ, dzClkEmb_buf, Fin.addCases_left, hTb]
++            rw [hσ, eBuf, Fin.addCases_left, hTb]
+           | right i =>
+             show T (σ (Fin.natAdd 1 i).castSucc.castSucc) a = _
+-            rw [hσ, dzClkEmb_bank, Fin.addCases_right, (hβ i).1]
++            rw [hσ, eBank, Fin.addCases_right, (hβ i).1]
+     · funext j
+       rw [clockCfg_workTapePos]
+       induction j using Fin.lastCases with
+       | last =>
+         rw [Fin.lastCases_last]
+         show P (σ (Fin.last _)) = _
+-        rw [hσ, dzClkEmb_ctr, hPk]
++        rw [hσ, eCtr, hPk]
+       | cast j =>
+         rw [Fin.lastCases_castSucc]
+         induction j using Fin.lastCases with
+         | last =>
+           show P (σ (Fin.last _).castSucc) = _
+-          rw [hσ, dzClkEmb_cap, hPc, (hVcap c true).2, hco]
++          rw [hσ, eCap, hPc, (hVcap c true).2, hco]
+           rfl
+         | cast j =>
+           rw [(hVsel c true j).2, vhostCfg_workTapePos]
+           induction j using Fin.addCases with
+           | left a0 =>
+             show P (σ (Fin.castAdd m a0).castSucc.castSucc) = _
+-            rw [hσ, dzClkEmb_buf, Fin.addCases_left, hPb, hci]
++            rw [hσ, eBuf, Fin.addCases_left, hPb, hci]
+             rfl
+           | right i =>
+             show P (σ (Fin.natAdd 1 i).castSucc.castSucc) = _
+-            rw [hσ, dzClkEmb_bank, Fin.addCases_right, (hβ i).2]
++            rw [hσ, eBank, Fin.addCases_right, (hβ i).2]
+     · rw [clockCfg_output, hV, hVout]
+       rfl
+   -- the hosted run is `M`'s run, and it stops when `M` does
+@@ -5853,7 +5840,7 @@ private theorem dz_clock_exists {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+       (clockCfg (some (fin (vhostSilentCfg (M.runFrom c τ) b (1 : Fin (x.length + 2)) [] []).state))
+         (vhostSilentCfg (M.runFrom c τ) b (1 : Fin (x.length + 2)) [] [])
+         (wordPatch (T ctr) 0 (w'.map (Function.Embedding.refl Bool))) 0) (Fin.last _).castSucc
+-    rw [← hE, hσ, dzClkEmb_cap] at ecap epos
++    rw [← hE, hσ, eCap] at ecap epos
+     refine ⟨t, ht, b, E.workTapes, E.workTapePos, ?_, ?_, ?_, fun u hu r => ?_⟩
+     · rw [qy_embed_gen, hstart, hrunH, hread, ← hE, hVst]
+     · funext a
+@@ -8013,22 +8000,11 @@ private theorem dz_initCfg {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF
+     (κ : DzKit f g c BF) (z : List Bool) :
+     (dzSet κ).initCfg z =
+       qyC ⟨.q, Sum.inl ()⟩ 1 (fun _ => FinTM.bufferTape []) (fun _ => 0) [] := by
+-  rw [initCfg_ofWords]
+-  show Cfg.ofWords (phaseHostTM (dzSetM κ) ⟨.q, Sum.inl ()⟩ (dzSetRed κ)).q₀ (fun _ => []) = _
+-  rw [phaseHostTM_q₀]
+-  apply Cfg.ext
+-  · rw [Cfg.ofWords_state]
+-    rfl
+-  · rw [Cfg.ofWords_inputPos]
+-    rfl
+-  · funext j q
+-    rw [Cfg.ofWords_workTapes]
+-    rfl
+-  · funext j
+-    rw [Cfg.ofWords_workTapePos]
+-    rfl
+-  · rw [Cfg.ofWords_output]
+-    rfl
++  have hq : (dzSet κ).q₀ = ⟨.q, Sum.inl ()⟩ := phaseHostTM_q₀ _ _ _
++  rw [initCfg_ofWords, hq]
++  exact Cfg.ext (Cfg.ofWords_state _ _) (Cfg.ofWords_inputPos _ _)
++    (funext fun j => Cfg.ofWords_workTapes _ _ j) (funext fun j => Cfg.ofWords_workTapePos _ _ j)
++    (Cfg.ofWords_output _ _)
+ 
+ /-- A word longer than `G` is its first `G` symbols, one symbol and the rest. -/
+ private theorem dz_split_stream (s : List Bool) (G : ℕ) (h : G < s.length) :
+@@ -8036,6 +8012,21 @@ private theorem dz_split_stream (s : List Bool) (G : ℕ) (h : G < s.length) :
+   rw [List.append_assoc, List.singleton_append, ← List.drop_eq_getElem_cons h,
+     List.take_append_drop]
+ 
++/-- **A segment's verdict.** A segment of the run, avoiding both verdicts, to a configuration in the
++verdict `v` with nothing emitted: the run's state at its end is `v`, neither verdict is reached
++earlier, and the output is empty. -/
++private theorem dz_seg_read {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {z : List Bool} (st : Cfg κ.K Bool (Σ i, DzQPh κ i) z) (t : ℕ)
++    (v : Σ i, DzQPh κ i) (T' : Fin κ.K → ℤ → Option Bool) (P' : Fin κ.K → ℤ)
++    (seg : Segment (dzQ κ) (dzQF κ) (fun _ => True) st (qyC v 1 T' P' []) t) :
++    ((dzQ κ).runFrom st t).state = some v ∧
++      (∀ u < t, ((dzQ κ).runFrom st u).state ≠ some (dzAcc κ) ∧
++        ((dzQ κ).runFrom st u).state ≠ some (dzRej κ)) ∧
++      ((dzQ κ).runFrom st t).output = [] := by
++  obtain ⟨hrun, havoid, -⟩ := (segment_iff _ _ _ _ _ _).mp seg
++  refine ⟨by rw [hrun]; rfl, fun u hu => ⟨fun h => havoid u hu (by rw [h]; exact Or.inl rfl),
++    fun h => havoid u hu (by rw [h]; exact Or.inr rfl)⟩, by rw [hrun]; rfl⟩
++
+ /-- **Every stream's run reaches a verdict** within `dzQB κ (g |z|)` steps, and none earlier: the
+ run's condition of `Turing.guessRunTM`'s lemmas.
+ 
+@@ -8062,34 +8053,19 @@ private theorem dz_hQ {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : Fin
+           some (dzRej κ) := by
+   rw [dz_handoff κ z s hs]
+   have fin : ∀ (t : ℕ) (v : Σ i, DzQPh κ i) (T' : Fin κ.K → ℤ → Option Bool) (P' : Fin κ.K → ℤ)
+-      (s' : List Bool), (v = dzAcc κ ∨ v = dzRej κ) →
+-      Segment (dzQ κ) (dzQF κ) (fun _ => True)
+-        (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
+-          (FinTM.bufferTape s')) (FinTM.bufferTape [])) (fun _ => 0) []) (qyC v 1 T' P' []) t →
+-      (((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
+-          (FinTM.bufferTape s')) (FinTM.bufferTape [])) (fun _ => 0) []) t).state =
+-          some (dzAcc κ) ∨
+-        ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
+-          (FinTM.bufferTape s')) (FinTM.bufferTape [])) (fun _ => 0) []) t).state =
+-          some (dzRej κ)) ∧
+-      ∀ u < t,
+-        ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
+-          (FinTM.bufferTape s')) (FinTM.bufferTape [])) (fun _ => 0) []) u).state ≠
+-          some (dzAcc κ) ∧
+-        ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
+-          (FinTM.bufferTape s')) (FinTM.bufferTape [])) (fun _ => 0) []) u).state ≠
+-          some (dzRej κ) := by
+-    intro t v T' P' s' hv seg
+-    obtain ⟨hrun, havoid, -⟩ := (segment_iff _ _ _ _ _ _).mp seg
+-    refine ⟨?_, fun u hu => ⟨fun h => havoid u hu (by rw [h]; exact Or.inl rfl),
+-      fun h => havoid u hu (by rw [h]; exact Or.inr rfl)⟩⟩
+-    rw [hrun]
+-    rcases hv with rfl | rfl
+-    · exact Or.inl rfl
+-    · exact Or.inr rfl
++      (st : Cfg κ.K Bool (Σ i, DzQPh κ i) z), (v = dzAcc κ ∨ v = dzRej κ) →
++      Segment (dzQ κ) (dzQF κ) (fun _ => True) st (qyC v 1 T' P' []) t →
++      (((dzQ κ).runFrom st t).state = some (dzAcc κ) ∨
++        ((dzQ κ).runFrom st t).state = some (dzRej κ)) ∧
++      ∀ u < t, ((dzQ κ).runFrom st u).state ≠ some (dzAcc κ) ∧
++        ((dzQ κ).runFrom st u).state ≠ some (dzRej κ) := by
++    intro t v T' P' st hv seg
++    obtain ⟨h1, h2, -⟩ := dz_seg_read κ st t v T' P' seg
++    rw [h1]
++    exact ⟨hv.imp (congrArg some) (congrArg some), h2⟩
+   rcases hq : query f g z with _ | ⟨b, tail⟩
+   · obtain ⟨t, ht, T', P', seg⟩ := dz_qoff κ z s hq
+-    exact ⟨t, ht, fin t _ T' P' s (Or.inr rfl) seg⟩
++    exact ⟨t, ht, fin t _ T' P' _ (Or.inr rfl) seg⟩
+   · cases b
+     · have hlen : g z.length < s.length := by
+         rw [hs, dzBlk_length]
+@@ -8102,9 +8078,9 @@ private theorem dz_hQ {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : Fin
+       obtain ⟨t, ht, v, T', P', hv, seg, -, -⟩ := dz_qmid κ z tail hq C hC (s.take (g z.length))
+         (s.drop (g z.length + 1)) s[g z.length] (by rw [List.length_take]; omega) hw
+       rw [← hsplit] at seg
+-      exact ⟨t, ht, fin t v T' P' s hv seg⟩
++      exact ⟨t, ht, fin t v T' P' _ hv seg⟩
+     · obtain ⟨t, ht, v, T', P', hv, seg, -⟩ := dz_qtop κ z tail s hq
+-      exact ⟨t, ht, fin t v T' P' s hv seg⟩
++      exact ⟨t, ht, fin t v T' P' _ hv seg⟩
+ 
+ /-- The setup's facts for `Turing.guessRunTM`'s lemmas: its run to the exit, the exit's first
+ arrival, and the block, nonblank on its `|dzBlk (g n)|` cells from the head and blank on both
+@@ -8149,6 +8125,17 @@ private theorem dz_setup_facts {f g : ℕ → ℕ} {c : EffectiveNDMachineCode}
+   · show dzLay (dzSetL f g z) (FinTM.bufferTape []) (κ.tp 6) (0 - 1) = none
+     rw [dzLay_tp, h6, FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
+ 
++/-- **The budget covers the branch**: `TP + 2m + T + 11 ≤ K (g n + 1)` for the setup's time
++`TP ≤ dzSetB κ G`, the block's width `m = |dzBlk G|` and the run's bound `T = dzQB κ G`. -/
++private theorem dz_K_bound {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (G TP : ℕ) (hTP : TP ≤ dzSetB κ G) :
++    TP + 2 * (dzBlk G).length + dzQB κ G + 11 ≤ dzK κ * (G + 1) := by
++  have hb := length_bits_le_self G
++  rw [dzBlk_length]
++  unfold dzSetB at hTP
++  unfold dzK dzQB
++  nlinarith
++
+ /-- **All-branch halting.** Every branch of `D` on every input `z` halts within
+ `K (g |z| + 1)`, `K = dzK κ` uniform.
+ 
+@@ -8162,12 +8149,7 @@ private theorem dz_halts {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF :
+   have h := guessRunTM_haltsWithin (dzSet κ) (dzPexit κ) (κ.tp 6) (dzQ κ) ⟨.flag, none⟩ (dzAcc κ)
+     (dzRej κ) TP _ hP rfl hPfirst _ hblock hend hleft (dzQB κ (g z.length))
+     (fun s hs => dz_hQ κ z s hs)
+-  refine h.mono ?_
+-  have hb := length_bits_le_self (g z.length)
+-  rw [dzBlk_length]
+-  unfold dzSetB at hTP
+-  unfold dzK dzQB
+-  nlinarith
++  exact h.mono (dz_K_bound κ _ TP hTP)
+ 
+ /-! ### The middle and the top -/
+ 
+@@ -8194,13 +8176,7 @@ private theorem dz_accepts_iff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode}
+         ((dzQ κ).runFrom (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
+           (FinTM.bufferTape s)) (FinTM.bufferTape [])) (fun _ => 0) []) TQ).output = [] := by
+   obtain ⟨TP, hTP, hP, hPfirst, hblock, hend, hleft⟩ := dz_setup_facts κ z
+-  have hB : TP + 2 * (dzBlk (g z.length)).length + dzQB κ (g z.length) + 11 ≤
+-      dzK κ * (g z.length + 1) := by
+-    have hb := length_bits_le_self (g z.length)
+-    rw [dzBlk_length]
+-    unfold dzSetB at hTP
+-    unfold dzK dzQB
+-    nlinarith
++  have hB := dz_K_bound κ _ TP hTP
+   have h := guessRunTM_accepts_iff (dzSet κ) (dzPexit κ) (κ.tp 6) (dzQ κ) ⟨.flag, none⟩
+     (dzAcc κ) (dzRej κ) TP _ hP rfl hPfirst _ hblock hend hleft (dzQB κ (g z.length))
+     (fun s hs => dz_hQ κ z s hs) _ hB
+@@ -8292,20 +8268,6 @@ private theorem dz_mid_sound {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {B
+     omega
+   exact (FinNDTM.acceptsWithin_iff.mpr ⟨_, hlt, h1, h2⟩).mono hbG'
+ 
+-/-- A segment of the run to the acceptance gives `D`'s acceptance condition on that stream: the
+-first verdict is the acceptance, with nothing emitted. -/
+-private theorem dz_seg_acc {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+-    (κ : DzKit f g c BF) {z : List Bool} (st : Cfg κ.K Bool (Σ i, DzQPh κ i) z) (t : ℕ)
+-    (T' : Fin κ.K → ℤ → Option Bool) (P' : Fin κ.K → ℤ)
+-    (seg : Segment (dzQ κ) (dzQF κ) (fun _ => True) st (qyC (dzAcc κ) 1 T' P' []) t) :
+-    ((dzQ κ).runFrom st t).state = some (dzAcc κ) ∧
+-      (∀ u < t, ((dzQ κ).runFrom st u).state ≠ some (dzAcc κ) ∧
+-        ((dzQ κ).runFrom st u).state ≠ some (dzRej κ)) ∧
+-      ((dzQ κ).runFrom st t).output = [] := by
+-  obtain ⟨hrun, havoid, -⟩ := (segment_iff _ _ _ _ _ _).mp seg
+-  refine ⟨by rw [hrun]; rfl, fun u hu => ⟨fun h => havoid u hu (by rw [h]; exact Or.inl rfl),
+-    fun h => havoid u hu (by rw [h]; exact Or.inr rfl)⟩, by rw [hrun]; rfl⟩
+-
+ /-- **The middle, completeness.** On `1ⁿ` off its stage's top, with the core's constant `C` for the
+ stage's code `α`: if `α` accepts `1^{n + 1}` within `t'` with `C (t' + 1) ≤ g n` and `t' ≤ g n`,
+ `D` accepts `1ⁿ` within `K (g n + 1)`.
+@@ -8314,7 +8276,7 @@ stage's code `α`: if `α` accepts `1^{n + 1}` within `t'` with `C (t' + 1) ≤
+ `v₀` padded with `false` to `g n` cells, any separator, and the budget word `bits t'` padded with
+ zeros to the width `|bits (g n)|` (`qy_bits_len_mono`), worth `t'` (`dz_padded_value`). The stream's
+ first `t'` bits are `v₀`, so `dz_qmid`'s completeness clause gives the acceptance, and its segment
+-gives `D`'s acceptance condition (`dz_seg_acc`, `dz_accepts_iff`). -/
++gives `D`'s acceptance condition (`dz_seg_read`, `dz_accepts_iff`). -/
+ private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (hmid : n ≠ ladder f (stage f n + 1)) (C : ℕ)
+     (hC : ∀ (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
+@@ -8363,7 +8325,7 @@ private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode}
+   subst hv
+   have hfin := (dz_accepts_iff κ (List.replicate n true)).mpr ⟨s₁ ++ [false] ++ w, by
+     rw [dzBlk_length, List.length_append, List.length_append, hs₁l, hwl, List.length_singleton],
+-    t, dz_seg_acc κ _ t T' P' seg⟩
++    t, dz_seg_read κ _ t _ T' P' seg⟩
+   rwa [hz] at hfin
+ 
+ /-- **The top.** On `1ⁿ` at its stage's top, with `BF`'s constant `CB` for the stage's code `α`
+@@ -8375,7 +8337,7 @@ private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode}
+ `CB 2^{CB (T* + 1)} ≤ g n` (`Turing.FinTM.computesInTime_iff`), so every stream's run
+ (`dz_qtop`) accepts iff `b = false`. Forward: an accepting stream's first verdict is `dz_qtop`'s
+ (`dz_first`). Backward: any stream (the block itself) gives `D`'s acceptance condition
+-(`dz_seg_acc`, `dz_accepts_iff`). -/
++(`dz_seg_read`, `dz_accepts_iff`). -/
+ private theorem dz_top_iff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
+     (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (htop : n = ladder f (stage f n + 1)) (CB : ℕ)
+     (hCB : ((c.decode (stageCode (stage f n))).toFinNDTM.AcceptsWithin
+@@ -8430,7 +8392,7 @@ private theorem dz_top_iff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF
+     have hv := (hans false (hCB.2 hA) v hsem).mpr rfl
+     subst hv
+     have hfin := (dz_accepts_iff κ (List.replicate n true)).mpr
+-      ⟨dzBlk (g (List.replicate n true).length), rfl, t, dz_seg_acc κ _ t T' P' seg⟩
++      ⟨dzBlk (g (List.replicate n true).length), rfl, t, dz_seg_read κ _ t _ T' P' seg⟩
+     rwa [hz] at hfin
+ 
+ /-- **The diagonalizer** ([AB09, proof of Theorem 3.2 and Figure 3.1]: the lazy diagonalization
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,82 @@
+# preflight (addendum v2.6 Part 1 item 1) 2026-11-04T21:40:47Z
+## nproc
+4
+## cgroup (v1) memory: /sys/fs/cgroup/memory/process_api/01a1a87f-5f5d-721d-a10f-13e2ce49d8c1/claude-code-bash
+memory.limit_in_bytes: 14341881856
+memory.usage_in_bytes: 757764096
+memory.memsw.limit_in_bytes: 9223372036854771712
+memory.failcnt: 0
+memory.oom_control:
+oom_kill_disable 0
+under_oom 0
+oom_kill 0
+memory.stat:
+cache 708927488
+rss 983040
+rss_huge 0
+shmem 0
+mapped_file 147456
+dirty 351252480
+writeback 0
+workingset_refault_anon 0
+workingset_refault_file 0
+swap 0
+swapcached 0
+pgpgin 415864
+pgpgout 293475
+pgfault 303929
+pgmajfault 171
+inactive_anon 712704
+active_anon 28672
+inactive_file 372600832
+active_file 336322560
+unevictable 0
+hierarchical_memory_limit 14341881856
+hierarchical_memsw_limit 9223372036854771712
+total_cache 708927488
+total_rss 983040
+total_rss_huge 0
+total_shmem 0
+total_mapped_file 147456
+total_dirty 351252480
+total_writeback 0
+total_workingset_refault_anon 0
+total_workingset_refault_file 0
+total_swap 0
+total_swapcached 0
+total_pgpgin 415864
+total_pgpgout 293475
+total_pgfault 303929
+total_pgmajfault 171
+total_inactive_anon 712704
+total_active_anon 28672
+total_inactive_file 372600832
+total_active_file 336322560
+total_unevictable 0
+## parent cgroup limit: 9223372036854771712
+## /proc/meminfo
+MemTotal:       16477348 kB
+MemFree:        15245136 kB
+MemAvailable:   15956044 kB
+Buffers:           21188 kB
+Cached:           886592 kB
+## headroom (v1): in_use = usage_in_bytes - total_cache + total_shmem = 758661120 - 708964352 + 0 = 49696768
+headroom = limit - in_use = 14341881856 - 49696768 = 14292185088 bytes = 13.31 GiB (floor 4 GiB)
+## df -B1 / df -T (clone dir and scratch dir)
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/vda       270553174016 9754685440 31528849408  24% /
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9526060  30789892  24% /
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/vda       270553174016 9754685440 31528849408  24% /
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9526060  30789892  24% /
+Filesystem     Type 1K-blocks    Used Available Use% Mounted on
+/dev/vda       ext4 264212084 9526060  30789892  24% /
+clone free = 31528849408 bytes = 29.36 GiB (floor 12 GiB)
+PREFLIGHT: PASS
+# re-check after toolchain install 2026-11-04T21:41:47Z (floor 8 GiB)
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/vda       270553174016 12340248576 28943286272  30% /
+free = 26.96 GiB
+lean on PATH: Lean (version 4.25.0, x86_64-unknown-linux-gnu, commit cdd38ac5115bdeec5f609e9126cce00f51ae88b3, Release)

@@ -1,0 +1,44 @@
+- `ClockLoop.lean::clockTM_loop` ← `NTimeDiagonalizer.lean::dzBlk_length` (73%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `ExhaustiveReplay.lean::xr_val_lt` ← `NTimeDiagonalizer.lean::dz_word_lt` (64%): re-derivation of another file's private (ExhaustiveReplay `xr_val_lt`, for its own `xr_val`): keep, promotion requested
+- `NDHost.lean::guessRun_split` ← `NTimeDiagonalizer.lean::dz_split_stream` (98%): copy of another file's private (NDHost `guessRun_split`, the three-line list split): keep, promotion requested
+- `NTimeDiagonalizer.lean::DzKit.bA` ← `NTimeDiagonalizer.lean::DzKit.bB` (75%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bA` ← `NTimeDiagonalizer.lean::DzKit.bL` (82%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bB` ← `NTimeDiagonalizer.lean::DzKit.bA` (83%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bB` ← `NTimeDiagonalizer.lean::DzKit.bL` (81%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bB` ← `NTimeDiagonalizer.lean::DzKit.bR` (53%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bB_ne` ← `NTimeDiagonalizer.lean::DzKit.bR_ne` (63%): idiom: bank-tape disjointness facts
+- `NTimeDiagonalizer.lean::DzKit.bL` ← `NTimeDiagonalizer.lean::DzKit.bA` (77%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bL` ← `NTimeDiagonalizer.lean::DzKit.bB` (69%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bR` ← `NTimeDiagonalizer.lean::DzKit.bA` (81%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bR` ← `NTimeDiagonalizer.lean::DzKit.bB` (79%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bR` ← `NTimeDiagonalizer.lean::DzKit.bL` (79%): idiom: bank maps, `qyBank` at different offsets (as E-Q's `QyKit.bCb`, …)
+- `NTimeDiagonalizer.lean::DzKit.bR_off` ← `NTimeDiagonalizer.lean::DzKit.bR_j` (73%): idiom: bank-tape disjointness facts
+- `NTimeDiagonalizer.lean::DzKit.sB` ← `NTimeDiagonalizer.lean::DzKit.sR` (68%): idiom: the two instances of `dzClkEmb` (core, decider)
+- `NTimeDiagonalizer.lean::DzKit.sR` ← `NTimeDiagonalizer.lean::DzKit.sB` (69%): idiom: the two instances of `dzClkEmb` (core, decider)
+- `NTimeDiagonalizer.lean::dzSetL` ← `NTimeDiagonalizer.lean::qySetT5` (57%): idiom: a layout as a `Function.update` chain
+- `NTimeDiagonalizer.lean::dzSetL` ← `NTimeDiagonalizer.lean::qyTB` (63%): idiom: a layout as a `Function.update` chain
+- `NTimeDiagonalizer.lean::dz_accepts_iff` ← `NTimeDiagonalizer.lean::dz_halts` (78%): idiom: the setup's facts fed to the host's halting and acceptance lemmas
+- `NTimeDiagonalizer.lean::dz_clock_exists` ← `NTimeDiagonalizer.lean::qy_clock_start` (53%): idiom: the clock configuration's field reading, over `vhostSilentCfg` (the brief: state the clock's clauses afresh over `vhostSilentTM`)
+- `NTimeDiagonalizer.lean::dz_qmid` ← `NTimeDiagonalizer.lean::dz_qtop` (61%): idiom: the two branches' shared flag and tail preamble
+- `NTimeDiagonalizer.lean::dz_split` ← `NTimeDiagonalizer.lean::dz_tail_run` (51%): idiom: a framed row's endpoint read cell by cell
+- `NTimeDiagonalizer.lean::dz_split` ← `NTimeDiagonalizer.lean::qy_wordPatch_ones` (51%): idiom: a framed row's endpoint read cell by cell
+- `NTimeDiagonalizer.lean::dz_split_stream` ← `NDHost.lean::guessRun_split` (65%): copy of another file's private (NDHost `guessRun_split`, the three-line list split): keep, promotion requested
+- `NTimeDiagonalizer.lean::dz_tail_run` ← `NTimeDiagonalizer.lean::qy_copy` (54%): required by the brief: `copyMapTM_run_ofCfg` directly from cell 1 (`qy_copy` assumes the word at cell 0)
+- `NTimeDiagonalizer.lean::dz_tail_run` ← `NTimeDiagonalizer.lean::qy_copy_over` (59%): required by the brief: `copyMapTM_run_ofCfg` directly from cell 1 (`qy_copy` assumes the word at cell 0)
+- `NTimeDiagonalizer.lean::dz_take_run` ← `NTimeDiagonalizer.lean::qy_emit_halt` (62%): required by the brief: the leaf's own step lemma (`qy_step` covers only steps that write nothing)
+- `NTimeDiagonalizer.lean::dz_take_run` ← `NTimeDiagonalizer.lean::qy_step` (57%): required by the brief: the leaf's own step lemma (`qy_step` covers only steps that write nothing)
+- `NTimeDiagonalizer.lean::dz_top_run` ← `NTimeDiagonalizer.lean::DzKit.bB_ne` (67%): idiom: bank-tape disjointness facts
+- `NTimeDiagonalizer.lean::dz_top_run` ← `NTimeDiagonalizer.lean::dz_flag` (54%): idiom: a hosted phase and a bank fact
+- `NTimeDiagonalizer.lean::dz_word_lt` ← `ExhaustiveReplay.lean::xr_val_lt` (65%): re-derivation of another file's private (ExhaustiveReplay `xr_val_lt`, for its own `xr_val`): keep, promotion requested
+- `NTimeDiagonalizer.lean::dz_zero_bank` ← `NTimeDiagonalizer.lean::dz_arg_bank` (64%): idiom: the bank's heads beside the bank's tapes
+- `NTimeDiagonalizer.lean::qyLocRed` ← `NTimeDiagonalizer.lean::dzSetRed` (50%): idiom: a phase host's dispatch table
+- `NTimeDiagonalizer.lean::qy_main` ← `NTimeDiagonalizer.lean::dz_out_le` (54%): idiom: the `computesFunInTime_iff`/`computesInTime_iff` reading
+- `NTimeDiagonalizer.lean::qy_setup_short` ← `NTimeDiagonalizer.lean::dzBlk_length` (73%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `Nondeterminism.lean::a3n_poly_pair` ← `NTimeDiagonalizer.lean::dz_alpha_eq` (86%): idiom: the rewrite chain `pairDecode_pairEncode`/`Option.map_some`/`getD_some`; different statements
+- `Primitives.lean::incFixedTM_computes` ← `NTimeDiagonalizer.lean::dzBlk_length` (85%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `SeamLayout.lean::sl_read_table` ← `NTimeDiagonalizer.lean::dzBlk_length` (73%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `SeamLayout.lean::sl_reverse_read` ← `NTimeDiagonalizer.lean::dzBlk_length` (73%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `SeamLayout.lean::sl_sm_word` ← `NTimeDiagonalizer.lean::dzBlk_length` (73%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `Catalog.lean::clearTM` ← `NTimeDiagonalizer.lean::dzTakeTM` (61%): idiom: a one-tape row's transition-table shape; `dzTakeTM` is the ruled own leaf (no row writes a blank at one cell)
+- `Catalog.lean::f2_incFixed_computes` ← `NTimeDiagonalizer.lean::dzBlk_length` (85%): idiom: a `simp only [List.length_append, List.length_replicate, List.length_singleton]` length computation
+- `Catalog.lean::incrementTM` ← `NTimeDiagonalizer.lean::dzTakeTM` (59%): idiom: a one-tape row's transition-table shape; `dzTakeTM` is the ruled own leaf (no row writes a blank at one cell)
