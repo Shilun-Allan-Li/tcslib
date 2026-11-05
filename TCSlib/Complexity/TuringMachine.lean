@@ -177,7 +177,7 @@ for the local modifications.
 * `Build/ZoneRebalance` — the rebalance and extension rows (§13d, G4), as contracts.
   Proved.
 * `Build/ZoneStep` — one track's step from the rows, as a contract, and the amortized
-  `O(T log T)` cost of a run (§13d). Proved.
+  `O(T log T)` cost of a run ([AB09, §1.7]). Proved.
 * `Build/OracleCall` — the oracle-machine rows (`machine-library-design.md` §12.9):
   W1 capture onto the query tape, landing in `qQuery`, and the two-step answer tail.
 * `SymbolLift` — the embedding transport (`machine-library-design.md` §12.8, R8.0): a

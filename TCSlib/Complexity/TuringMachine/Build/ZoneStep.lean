@@ -75,20 +75,12 @@ theorem zoneTrackStepData_of_not_lt {k : ℕ} (dir : Bool) (t : Fin k) {D : Zone
     zoneTrackStepData dir t D = zoneRebalanceData dir t (zoneExtendData D) := by
   rw [zoneTrackStepData, if_neg h]
 
-/-- The zone rows' precondition does not read the control state. -/
-private theorem zs_rowPre_mapState {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
-    (D : ZoneData k) (f : S → S') (d : Cfg 2 (ZoneSym k) S x) :
-    zoneRowPre D (d.mapState f) ↔ zoneRowPre D d := by
-  have hw : (d.mapState f).workTapes = d.workTapes :=
-    funext fun _ => funext fun _ => by rw [Cfg.mapState_workTapes]
-  simp only [zoneRowPre_iff, hw, Cfg.mapState_workTapePos]
-
 /-- The rebalance row's endpoint satisfies the precondition at the rebalanced data. -/
 private theorem zs_rowPre_rebalancePost {k : ℕ} (dir : Bool) (t : Fin k) {S : Type}
     {x : List (ZoneSym k)} (done short : S) (D : ZoneData k) (d : Cfg 2 (ZoneSym k) S x)
     (hp : zoneRowPre D d) :
     zoneRowPre (zoneRebalanceData dir t D) (zoneRebalancePost dir t done short D d) :=
-  (zs_rowPre_mapState _ (fun s => s) _).mp (zoneRowPre_rebalancePost dir t done short D d hp _)
+  (zoneRowPre_mapState_iff _ (fun s => s) _).mp (zoneRowPre_rebalancePost dir t done short D d hp _)
 
 /-- **One track's step** ([AB09, §1.7]; the zone rows of
 `TCSlib.Complexity.TuringMachine.Build.ZoneRebalance`). For every track count `k` there is a
@@ -156,18 +148,18 @@ theorem exists_zoneTrackStepTM (k : ℕ) :
       retry.pre (zoneRebalanceData dir t D) ((R.post D d).mapState fun _ => Sum.inl e') := by
     intro D d _ hp _
     rw [hpre] at hp
-    simp only [retry, Contract.seq_pre, hEpre, hpost, zs_rowPre_mapState]
+    simp only [retry, Contract.seq_pre, hEpre, hpost, zoneRowPre_mapState_iff]
     exact zs_rowPre_rebalancePost dir t done short D d hp
   refine ⟨Contract.branch hds R stop retry id (zoneRebalanceData dir t) h₁ h₂, ?_, ?_⟩
   · funext D d
     rw [Contract.branch_pre, hpre]
-    exact propext (zs_rowPre_mapState D _ d)
+    exact propext (zoneRowPre_mapState_iff D _ d)
   intro D d hd hp
   -- the rebalance row's start
   have hd₀ : (d.mapState fun _ => entry).state = some entry := by
     rw [Cfg.mapState_state, hd]
     rfl
-  have hp₀ : zoneRowPre D (d.mapState fun _ => entry) := (zs_rowPre_mapState D _ d).mpr hp
+  have hp₀ : zoneRowPre D (d.mapState fun _ => entry) := (zoneRowPre_mapState_iff D _ d).mpr hp
   have hpR : R.pre D (d.mapState fun _ => entry) := by rw [hpre]; exact hp₀
   have ht₀ := htime D _ hd₀ hpR
   have hstate := zoneRebalancePost_state_done dir t hds D (d.mapState fun _ => entry)
@@ -185,7 +177,7 @@ theorem exists_zoneTrackStepTM (k : ℕ) :
     · rw [Contract.branch_time, if_pos hdone]
       simp only [stop, Contract.zero_time, add_zero]
       nlinarith [Nat.one_le_two_pow (n := zoneRebalanceIndex dir t D)]
-    · rw [hpostEq, zs_rowPre_mapState, zs_rowPre_mapState, zs_rowPre_mapState,
+    · rw [hpostEq, zoneRowPre_mapState_iff, zoneRowPre_mapState_iff, zoneRowPre_mapState_iff,
         zoneTrackStepData_of_lt dir t hlt]
       exact zs_rowPre_rebalancePost dir t done short D _ hp₀
     · rw [hpostEq]
@@ -215,7 +207,7 @@ theorem exists_zoneTrackStepTM (k : ℕ) :
       rw [hc₂, Cfg.mapState_state, Cfg.mapState_state, zoneRebalancePost_state]
       rfl
     have hc₂p : zoneRowPre (zoneRebalanceData dir t D) c₂ := by
-      rw [hc₂, zs_rowPre_mapState, zs_rowPre_mapState]
+      rw [hc₂, zoneRowPre_mapState_iff, zoneRowPre_mapState_iff]
       exact zs_rowPre_rebalancePost dir t done short D _ hp₀
     have hc₃s : c₃.state = some entry := by
       rw [hc₃, Cfg.mapState_state, zoneExtendPost_state]
@@ -232,7 +224,8 @@ theorem exists_zoneTrackStepTM (k : ℕ) :
       simp only [retry, Contract.seq_time, hpost, hEpost, ← hc₂, ← hc₃]
       rw [hD] at htE ⊢
       nlinarith [Nat.one_le_two_pow (n := D.1)]
-    · rw [hpostEq, zs_rowPre_mapState, zs_rowPre_mapState, zoneTrackStepData_of_not_lt dir t hlt]
+    · rw [hpostEq, zoneRowPre_mapState_iff, zoneRowPre_mapState_iff,
+        zoneTrackStepData_of_not_lt dir t hlt]
       have h := zs_rowPre_rebalancePost dir t done short _ c₃ hc₃p
       rwa [hD] at h ⊢
     · rw [hpostEq]
@@ -321,7 +314,8 @@ theorem sum_cost_le_of_count (k T L A B : ℕ) (idx : Fin k → ℕ → ℕ) (co
     calc ∑ t, ∑ s ∈ Finset.range T, 2 ^ idx t s
         ≤ ∑ _t : Fin k, ((L + 1) * T + 2 ^ L) :=
           Finset.sum_le_sum fun t _ => sum_two_pow_le_of_count T L (idx t) (hL t) (hcount t)
-      _ = k * ((L + 1) * T + 2 ^ L) := by simp
+      _ = k * ((L + 1) * T + 2 ^ L) := by
+        simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_id]
   calc ∑ s ∈ Finset.range T, cost s ≤ _ := h1
     _ = _ := h2
     _ ≤ B * T + A * (k * ((L + 1) * T + 2 ^ L)) + A * (k * T) + T * k := by
