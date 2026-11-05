@@ -91,3 +91,8 @@ records. The merged-tree replay after #197, `replay-ldwa3`, passed (73 modules, 
 
 **Clear to merge: #196** at `97adec6962e55c3a8ff191e602627674697fef18` (gate 96 closed;
 `replay-ldwa3` passed).
+
+**Merged (2026-11-05, the user):** #196 at `bdc73ab1790803f99c64fce7ce2707bcbe9eb087`. The campaign's
+Lean tree is now #196's head `97adec69`'s, so `replay-ldwa3`'s snapshot `oleans-ldwa3` (chained
+`oleans-cloud0` → `oleans-lzsa2` → `oleans-ldwa3`) is the campaign's snapshot and the replay of
+record.

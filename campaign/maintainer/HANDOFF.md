@@ -116,13 +116,15 @@ replay below chained from it with only its own PR.
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
 | #191 | `ac934f99` (the repair `10c01517` + a records-only merge) | `replay-lnf2` **passed** (4 modules, 0 `sorry`) | 95 round 2 does not close (0/1/2: `nf_split` re-proves `List.ofFn_getElem`); `replay-lnf3` passed | repair, round 3; merge when it closes |
-| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **clear to merge** at `97adec69`; then the deepening fill (Claude) |
+| #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
-**After #197's merge** the campaign's Lean tree is #197's head's, and `oleans-lzsa2` is its
-snapshot (the replay of record). #191's and #196's replays above chained from `oleans-cloud0`
-without #197, so each is re-run on the merged tree, chained from `oleans-lzsa2`, before it is clear
-to merge.
+**After #197's and #196's merges** the campaign's Lean tree is #196's head's (`97adec69`), and
+`oleans-ldwa3` is its snapshot (chained `oleans-cloud0` → `oleans-lzsa2` → `oleans-ldwa3`). Every
+open PR's replay chains from it on the merged tree.
+
+**#202** (`Segment.iterate_seq`, G5's iteration; the user's ruling API first): gate 98, its replay
+`replay-lsi2` on the merged tree.
 
 **The user's rulings (2026-11-05):** gate 95 F1 repair; gate 96 F2 harvest; WS-1 acknowledged by
 kind and widened; QL-X1 an idiom and CQ-1 opened; gate 97 F5 publish; CE-1 acknowledged; PFR left
