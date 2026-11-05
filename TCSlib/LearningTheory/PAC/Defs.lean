@@ -23,13 +23,29 @@ independent examples, and PAC, weak and fixed-distribution learning.
   `L : (Fin m → X × Bool) → ρ → (X → Bool)`; its coins are uniform on the finite type `ρ`.
 - Distributions are `InformationTheory.FinDist`: real-valued, on a finite type.
 
-**Deviations from [KV94, §1.2] and [SSBD14, Def 3.1].**
-- **Fixed parameters.** `PACLearns C m L ε δ` fixes the sample size `m`, the accuracy `ε` and
-  the confidence `δ`. The sources ask for one algorithm that works for all `ε, δ`, with a sample
-  size polynomial in `1/ε`, `1/δ` (and, in [KV94], in the instance size), and efficiency is part
-  of [KV94]'s definition. Here `PACLearnable C m ε δ` asks only for some learner at the given
-  parameters. That notion is weaker, so impossibility results stated with it are stronger.
-  Efficiency is layer 2's (the cryptographic statement of [PS10, Thm 179.1]).
+**Deviations from [KV94, §1.2.1] and [SSBD14, Def 3.1].**
+- **Learners at fixed parameters, not learnability of a class.** `PACLearns C m L ε δ` is the
+  condition the sources place on one learner `L` at one sample size `m`, accuracy `ε` and
+  confidence `δ`. Their learnability asks for one algorithm that meets it for every
+  `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) on `m ≥ m_H(ε, δ)` examples, for some function `m_H`;
+  [KV94] also bounds the running time, and so `m`, by a polynomial in `1/ε`, `1/δ` and the
+  instance size. That class-level notion is not defined here: over a finite `X` every class has
+  it, since a learner that outputs a concept of the class consistent with its sample succeeds
+  once `m ≥ (|X| ln 2 + ln (1/δ)) / ε`. Impossibility is therefore stated per learner, at that
+  learner's `m`, `ε`, `δ` (`Prediction.lean`; for efficient learners, layer 2 and
+  [PS10, Thm 179.1]). This is faithful: a source learner run on `m ≥ m_H(ε, δ)` examples is
+  such an `L`.
+- **Unrestricted parameters.** `ε`, `δ` and the weak-learning edge `γ` are arbitrary reals, where
+  the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) and `γ > 0`. The docstrings of the
+  predicates list the degenerate cases.
+- **Improper hypotheses.** A learner may output any `X → Bool` (representation-independent
+  learning). [KV94, §1.2.1] requires `h ∈ C`; [SSBD14, Def 3.1] does not. A refutation is
+  stronger without the restriction.
+- **Coins.** A learner's coins are uniform on a finite type. This models every fair-coin
+  algorithm with bounded running time ([KV94]), and [SSBD14]'s deterministic learners are the
+  case `ρ = Unit`. A learner that needs an irrational mixing probability is not of this form. At
+  a fixed `D` and an exactly tight `δ` this can matter, so a statement `¬ ∃ ρ L, …` rules out
+  fair-coin learners, not every randomized learner.
 - **Finite domains.** `X` is a finite type, so the "instance size" of [KV94] is not modelled.
   With `X` empty there is no distribution on `X`, so every PAC statement holds vacuously.
 
@@ -39,19 +55,22 @@ independent examples, and PAC, weak and fixed-distribution learning.
 * `PAC.label c s`: the sample `s` labelled by `c`.
 * `PAC.accuracyProb D c m L ε`: the probability, over `m` examples from `D` and the coins, that
   the learner's hypothesis has error at most `ε`.
-* `PAC.PACLearnsUnder D C m L ε δ`, `PAC.PACLearns C m L ε δ`: PAC learning under a fixed
-  distribution and under every distribution.
-* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: weak learning, accuracy `½ − γ` [KV94, §4].
-* `PAC.PACLearnable C m ε δ`: some learner PAC-learns `C` at these parameters.
+* `PAC.PACLearnsUnder D C m L ε δ`, `PAC.PACLearns C m L ε δ`: the learner `L` PAC-learns `C`
+  under a fixed distribution and under every distribution, at fixed `m`, `ε`, `δ`.
+* `PAC.WeakLearnsUnder`, `PAC.WeakLearns`: weak learning at a fixed edge `γ`, accuracy `½ − γ`
+  [KV94, §4.1].
 
 ## Main results
 
 * `PAC.err_nonneg`, `PAC.err_le_one`, `PAC.err_self`, `PAC.err_not`: basic properties; `err_not`
   says the complementary hypothesis has the complementary error.
-* `PAC.pacLearns_const`: a class with one concept is PAC-learnable from no examples
-  (non-vacuity).
+* `PAC.pacLearns_const`: the constant learner PAC-learns a class with one concept from no
+  examples, at every `ε, δ ≥ 0` (non-vacuity).
 * `PAC.not_pacLearnsUnder_of_neg`: no learner reaches a negative accuracy with confidence
-  `δ < 1` (the definition does not hold trivially).
+  `δ < 1` (a witness outside the sources' range).
+* `PAC.not_pacLearnsUnder_const_pair`: with no examples, no learner learns the two constant
+  concepts on a one-point domain at accuracy `ε < 1` and confidence `δ < ½` (a witness inside
+  the sources' range).
 
 ## References
 
@@ -124,73 +143,94 @@ noncomputable def accuracyProb (D : FinDist X) (c : X → Bool) (m : ℕ)
   ((D.iid m).prod (FinDist.uniform ρ)).probTrue
     fun sr => decide (err D (L (label c sr.1) sr.2) c ≤ ε)
 
-/-- The accuracy probability as a probability over the examples and the coins. -/
+/-- The accuracy probability is the probability, over examples `s ← D^m` and uniform coins
+`r ← ρ`, of the event `err_D(L(s labelled by c, r), c) ≤ ε`. -/
 theorem accuracyProb_eq (D : FinDist X) (c : X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (ε : ℝ) :
     accuracyProb D c m L ε = ((D.iid m).prod (FinDist.uniform ρ)).probTrue
       (fun sr => decide (err D (L (label c sr.1) sr.2) c ≤ ε)) := rfl
 
-/-- **PAC learning under the distribution `D`** (fixed-distribution learning): for every concept
-of the class, with probability at least `1 − δ` the hypothesis has error at most `ε`. -/
+/-- **PAC learning under the distribution `D`** (fixed-distribution learning), by the learner `L`
+at fixed `m`, `ε`, `δ`: for every concept `C i` of the class, with probability at least `1 − δ`
+over `m` examples from `D` labelled by `C i` and the learner's coins, the hypothesis has error at
+most `ε` under `D`. This is the fixed-distribution variant of [KV94, §1.2.1] /
+[SSBD14, Def 3.1] (the case [PS10, §8.1] needs); it is weaker than distribution-free learning.
+
+The parameters are unrestricted reals; the sources take `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`).
+Outside that range the predicate is degenerate: every learner satisfies it when `δ ≥ 1`, when
+`ε ≥ 1` and `δ ≥ 0`, or when `I` is empty; no learner satisfies it when `I` is nonempty and
+either `δ < 0`, or `ε < 0` and `δ < 1`. -/
 def PACLearnsUnder (D : FinDist X) (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (ε δ : ℝ) : Prop :=
   ∀ i, 1 - δ ≤ accuracyProb D (C i) m L ε
 
-/-- `PACLearnsUnder` unfolded. -/
+/-- `PACLearnsUnder D C m L ε δ` holds iff `1 − δ ≤ accuracyProb D (C i) m L ε` for every
+index `i`. -/
 theorem pacLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (ε δ : ℝ) :
     PACLearnsUnder D C m L ε δ ↔ ∀ i, 1 - δ ≤ accuracyProb D (C i) m L ε := Iff.rfl
 
-/-- **PAC learning** [KV94, §1.2], [SSBD14, Def 3.1], at fixed `m`, `ε`, `δ`: for every
+/-- **A PAC learner at fixed parameters** [KV94, §1.2.1], [SSBD14, Def 3.1]: for every
 distribution `D` on `X` and every concept `C i`, with probability at least `1 − δ` over `m`
 examples from `D` labelled by `C i` and the learner's coins, the hypothesis has error at most `ε`
-under `D`. -/
+under `D`. The sources require this of one algorithm for every `ε, δ` and every large enough `m`.
+Here `m`, `ε`, `δ` are fixed, `ε` and `δ` are unrestricted reals, the hypothesis may be any
+`X → Bool`, and the coins are uniform on the finite type `ρ` (module deviations).
+
+Outside the sources' range `ε, δ ∈ (0, 1)` ([KV94]: `(0, ½)`) the predicate is degenerate: every
+learner satisfies it when `δ ≥ 1`, when `ε ≥ 1` and `δ ≥ 0`, or when `I` or `X` is empty; no
+learner satisfies it when `I` and `X` are nonempty and either `δ < 0`, or `ε < 0` and `δ < 1`. -/
 def PACLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) (ε δ : ℝ) :
     Prop :=
   ∀ D : FinDist X, PACLearnsUnder D C m L ε δ
 
-/-- `PACLearns` unfolded. -/
+/-- `PACLearns C m L ε δ` holds iff `PACLearnsUnder D C m L ε δ` holds for every distribution
+`D` on `X`. -/
 theorem pacLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
     (ε δ : ℝ) : PACLearns C m L ε δ ↔ ∀ D, PACLearnsUnder D C m L ε δ := Iff.rfl
 
-/-- **Weak learning under `D`** [KV94, §4]: PAC learning under `D` with accuracy `½ − γ`, a
-hypothesis better than a fair coin by `γ`. -/
+/-- **Weak learning under `D`** [KV94, §4.1], by the learner `L` at fixed `m`, `γ`, `δ`: PAC
+learning under `D` with accuracy `½ − γ`, a hypothesis better than a fair coin by the edge `γ`.
+[KV94] asks for this under every distribution, at an edge `γ = 1/p(n, size(c))`, and for every
+confidence `δ`, in time polynomial in `1/δ`; here `D`, the real edge `γ` and the confidence `δ`
+are fixed. Each relaxation makes the predicate weaker, so a refutation for a given learner is
+stronger.
+
+Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
+predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` is empty; no learner satisfies it
+when `I` is nonempty and either `δ < 0`, or `γ > ½` and `δ < 1`. -/
 def WeakLearnsUnder (D : FinDist X) (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) : Prop :=
   PACLearnsUnder D C m L (1 / 2 - γ) δ
 
-/-- `WeakLearnsUnder` unfolded. -/
+/-- `WeakLearnsUnder D C m L γ δ` holds iff `PACLearnsUnder D C m L (½ − γ) δ`: PAC learning
+under `D` at accuracy `½ − γ`. -/
 theorem weakLearnsUnder_iff (D : FinDist X) (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
     WeakLearnsUnder D C m L γ δ ↔ PACLearnsUnder D C m L (1 / 2 - γ) δ := Iff.rfl
 
-/-- **Weak learning** [KV94, §4]: under every distribution, accuracy `½ − γ`. -/
+/-- **Weak learning** [KV94, §4.1], by the learner `L` at fixed `m`, `γ`, `δ`: under every
+distribution `D` on `X`, PAC learning with accuracy `½ − γ` (`WeakLearnsUnder`). [KV94] takes
+the edge `γ = 1/p(n, size(c))` and asks for every confidence `δ`, in time polynomial in `1/δ`;
+here the real edge `γ` and the confidence `δ` are fixed. Each relaxation makes the predicate
+weaker, so a refutation for a given learner is stronger.
+
+Only `γ > 0` is weak learning. The parameters are unrestricted reals: every learner satisfies the
+predicate when `δ ≥ 1`, when `γ ≤ −½` and `δ ≥ 0`, or when `I` or `X` is empty; no learner
+satisfies it when `I` and `X` are nonempty and either `δ < 0`, or `γ > ½` and `δ < 1`. -/
 def WeakLearns (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) (γ δ : ℝ) :
     Prop :=
   ∀ D : FinDist X, WeakLearnsUnder D C m L γ δ
 
-/-- `WeakLearns` unfolded. -/
+/-- `WeakLearns C m L γ δ` holds iff `WeakLearnsUnder D C m L γ δ` holds for every distribution
+`D` on `X`. -/
 theorem weakLearns_iff (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool)
     (γ δ : ℝ) : WeakLearns C m L γ δ ↔ ∀ D, WeakLearnsUnder D C m L γ δ := Iff.rfl
 
-omit [Fintype ρ] [Nonempty ρ] in
-/-- **PAC-learnability at fixed parameters**: some learner, with finite nonempty coins, learns `C`
-from `m` examples with accuracy `ε` and confidence `δ`. -/
-def PACLearnable (C : I → X → Bool) (m : ℕ) (ε δ : ℝ) : Prop :=
-  ∃ (ρ' : Type) (_ : Fintype ρ') (_ : Nonempty ρ') (L : (Fin m → X × Bool) → ρ' → X → Bool),
-    PACLearns C m L ε δ
-
-omit [Fintype ρ] [Nonempty ρ] in
-/-- `PACLearnable` unfolded. -/
-theorem pacLearnable_iff (C : I → X → Bool) (m : ℕ) (ε δ : ℝ) :
-    PACLearnable C m ε δ ↔
-      ∃ (ρ' : Type) (_ : Fintype ρ') (_ : Nonempty ρ')
-        (L : (Fin m → X × Bool) → ρ' → X → Bool), PACLearns C m L ε δ := Iff.rfl
-
 /-! ### Non-vacuity -/
 
-/-- **A class with one concept is PAC-learnable from no examples** (non-vacuity of
-`PACLearns`): if every `C i` is `c₀`, the learner that outputs `c₀` has error `0`, so it learns
+/-- **The constant learner PAC-learns a class with one concept from no examples** (non-vacuity
+of `PACLearns`): if every `C i` is `c₀`, the learner that outputs `c₀` has error `0`, so it learns
 at every accuracy `ε ≥ 0` and confidence `δ ≥ 0`. -/
 theorem pacLearns_const {C : I → X → Bool} {c₀ : X → Bool} (hC : ∀ i, C i = c₀) {ε δ : ℝ}
     (hε : 0 ≤ ε) (hδ : 0 ≤ δ) :
@@ -206,8 +246,8 @@ theorem pacLearns_const {C : I → X → Bool} {c₀ : X → Bool} (hC : ∀ i, 
   linarith
 
 /-- **No learner reaches a negative accuracy with confidence `δ < 1`**: the error is
-nonnegative, so the accuracy event is empty and its probability `0 < 1 − δ`. `PACLearns` is
-therefore not trivially satisfied. -/
+nonnegative, so the accuracy event is empty and its probability `0 < 1 − δ`. So
+`PACLearnsUnder` fails at every negative accuracy (a witness outside the sources' range). -/
 theorem not_pacLearnsUnder_of_neg (D : FinDist X) {C : I → X → Bool} [Nonempty I] {m : ℕ}
     (L : (Fin m → X × Bool) → ρ → X → Bool) {ε δ : ℝ} (hε : ε < 0) (hδ : δ < 1) :
     ¬ PACLearnsUnder D C m L ε δ := by
@@ -223,6 +263,53 @@ theorem not_pacLearnsUnder_of_neg (D : FinDist X) {C : I → X → Bool} [Nonemp
     linarith
   rw [h0, FinDist.probTrue_eq] at h1
   simp at h1
+  linarith
+
+/-- **With no examples, no learner tells two concepts apart** (non-vacuity in the sources'
+range): on a one-point domain with the two constant concepts, every learner with `m = 0` fails to
+PAC-learn them under the distribution `D`, at every accuracy `ε < 1` and confidence `δ < ½`.
+
+**Proof sketch.** With no examples the labelled sample is the same for both targets, so the
+hypothesis depends on the coins only. Its error against the constant `b` is `0` when it outputs
+`b` and `1` otherwise, so on every draw it is accurate (error at most `ε < 1`) for at most one of
+the two targets. The two accuracy probabilities therefore sum to at most `1`, while learning
+would make each at least `1 − δ > ½`. -/
+theorem not_pacLearnsUnder_const_pair (D : FinDist Unit)
+    (L : (Fin 0 → Unit × Bool) → ρ → Unit → Bool) {ε δ : ℝ} (hε : ε < 1) (hδ : δ < 1 / 2) :
+    ¬ PACLearnsUnder D (fun (b : Bool) (_ : Unit) => b) 0 L ε δ := by
+  intro h
+  -- an accurate hypothesis agrees with the target at the single point
+  have hagree : ∀ h' c : Unit → Bool, err D h' c ≤ ε → h' () = c () := by
+    intro h' c hle
+    by_contra hne
+    have hall : (fun x => h' x != c x) = fun _ => true := by
+      funext x
+      cases x
+      simpa using hne
+    rw [err_eq, hall, FinDist.probTrue_true] at hle
+    linarith
+  -- with no examples, the labelled sample does not depend on the target
+  have hlab : ∀ (c : Unit → Bool) (s : Fin 0 → Unit), label c s = label (fun _ => true) s :=
+    fun _ _ => Subsingleton.elim _ _
+  -- on every draw, at most one of the two targets is learned accurately
+  have hsum :
+      accuracyProb D (fun _ => true) 0 L ε + accuracyProb D (fun _ => false) 0 L ε ≤ 1 := by
+    rw [accuracyProb_eq, accuracyProb_eq, FinDist.probTrue_eq_expect,
+      FinDist.probTrue_eq_expect, ← FinDist.expect_add]
+    calc _ ≤ ((D.iid 0).prod (FinDist.uniform ρ)).expect (fun _ => 1) :=
+          FinDist.expect_le_expect _ fun sr => ?_
+      _ = 1 := FinDist.expect_const _ _
+    dsimp only
+    rw [hlab (fun _ => false)]
+    generalize L (label (fun _ => true) sr.1) sr.2 = g
+    by_cases ht : err D g (fun _ => true) ≤ ε
+    · have hf : ¬ err D g (fun _ => false) ≤ ε := fun hf => by
+        have := (hagree _ _ ht).symm.trans (hagree _ _ hf)
+        simp at this
+      simp [ht, hf]
+    · by_cases hf : err D g (fun _ => false) ≤ ε <;> simp [ht, hf]
+  have h1 : 1 - δ ≤ accuracyProb D (fun _ => true) 0 L ε := h true
+  have h0 : 1 - δ ≤ accuracyProb D (fun _ => false) 0 L ε := h false
   linarith
 
 end TCSlib.LearningTheory.PAC

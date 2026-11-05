@@ -21,11 +21,13 @@ independent; the learner wins when `L(s labelled by C_i, r)(x) = C_i(x)`.
 probability of a correct prediction is `1 − err_U(h, C_i)` for the hypothesis `h = L(s, r)`.
 So the prediction success is `1 − E_{i,s,r}[err_U(L(s, r), C_i)]`
 (`predictSuccess_eq_one_sub_expectedErr`), with no collision issue between the fresh point and
-the sample. A learner that PAC-learns under the uniform distribution with accuracy `ε` and
+the sample. A learner that PAC-learns under the uniform distribution with accuracy `ε ≥ 0` and
 confidence `δ` has expected error at most `ε + δ`, hence prediction success at least `1 − ε − δ`.
 So a learner whose prediction advantage is at most `γ` cannot weakly learn under the uniform
-distribution with `γ' > γ + δ` at confidence `δ` (`not_weakLearnsUnder_of_predictAdv_le`). This is
-how layer 2 turns [PS10, Thm 179.1] into "the class is not weakly learnable".
+distribution with `γ + δ < γ' ≤ ½` at confidence `δ` (`not_weakLearnsUnder_of_predictAdv_le`).
+This is how layer 2 turns [PS10, Thm 179.1] into "no efficient learner weakly learns the class
+under the uniform distribution" (for each learner, at a confidence below the edge).
+Information-theoretically the class is learnable; the hardness is computational.
 
 **Source notes.** [PS10] leaves the sample distribution and "a new sample" implicit; uniform
 and independent is the reading (design note S3d). "Better than `½ + ε`" is the advantage
@@ -42,11 +44,11 @@ and independent is the reading (design note S3d). "Better than `½ + ε`" is the
 
 * `PAC.predictSuccess_eq_one_sub_expectedErr`: **the bridge**, success `= 1 − E[err]`.
 * `PAC.expectedErr_le_of_pacLearnsUnder`, `PAC.one_sub_sub_le_predictSuccess`: PAC learning
-  under the uniform distribution gives expected error at most `ε + δ` and success at least
-  `1 − ε − δ`.
+  under the uniform distribution with accuracy `ε ≥ 0` gives expected error at most `ε + δ` and
+  success at least `1 − ε − δ`.
 * `PAC.sub_le_predictAdv_of_weakLearnsUnder`, `PAC.not_weakLearnsUnder_of_predictAdv_le`: weak
-  learning with `γ'` gives advantage at least `γ' − δ`; so advantage at most `γ` rules out weak
-  learning with `γ' > γ + δ`.
+  learning with `γ' ≤ ½` gives advantage at least `γ' − δ`; so advantage at most `γ` rules out
+  weak learning with `γ + δ < γ' ≤ ½` at confidence `δ`.
 * `PAC.predictSuccess_coin`: the learner that outputs its coin succeeds with probability exactly
   `½` (non-vacuity).
 
@@ -83,18 +85,21 @@ theorem trialDist_eq (m : ℕ) :
 
 /-- **The prediction game** [PS10, §8.1]: the probability that the learner `L`, given `m`
 uniform examples labelled by a uniform concept `C_i` and uniform coins, predicts the label of a
-fresh uniform point. -/
+fresh uniform point. [PS10] leaves the sample law and "a new sample" implicit. Here both are
+uniform and independent, so the fresh point may coincide with an example. -/
 noncomputable def predictSuccess (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) : ℝ :=
   ((trialDist X I ρ m).prod (FinDist.uniform X)).probTrue
     fun w => L (label (C w.1.1) w.1.2.1) w.1.2.2 w.2 == C w.1.1 w.2
 
-/-- The success probability as a probability over a trial and a fresh point. -/
+/-- The success probability is the probability, over a trial `(i, (s, r)) ← trialDist` and an
+independent uniform point `x`, of the event `L(s labelled by C_i, r)(x) = C_i(x)`. -/
 theorem predictSuccess_eq (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
     predictSuccess C m L = ((trialDist X I ρ m).prod (FinDist.uniform X)).probTrue
       (fun w => L (label (C w.1.1) w.1.2.1) w.1.2.2 w.2 == C w.1.1 w.2) := rfl
 
-/-- The **prediction advantage** `|Pr[correct] − ½|`. -/
+/-- The **prediction advantage** `|Pr[correct] − ½|` [PS10, §8.1, proof of Thm 179.1]: "better
+than `½ + ε`", read two-sidedly. An upper bound on it bounds the one-sided success. -/
 noncomputable def predictAdv (C : I → X → Bool) (m : ℕ)
     (L : (Fin m → X × Bool) → ρ → X → Bool) : ℝ :=
   |predictSuccess C m L - 1 / 2|
@@ -110,7 +115,8 @@ noncomputable def expectedErr (C : I → X → Bool) (m : ℕ)
   (trialDist X I ρ m).expect
     fun t => err (FinDist.uniform X) (L (label (C t.1) t.2.1) t.2.2) (C t.1)
 
-/-- The expected error as an expectation over a trial. -/
+/-- The expected error is the expectation, over a trial `(i, (s, r)) ← trialDist`, of the
+uniform error `err_U(L(s labelled by C_i, r), C_i)`. -/
 theorem expectedErr_eq (C : I → X → Bool) (m : ℕ) (L : (Fin m → X × Bool) → ρ → X → Bool) :
     expectedErr C m L = (trialDist X I ρ m).expect
       (fun t => err (FinDist.uniform X) (L (label (C t.1) t.2.1) t.2.2) (C t.1)) := rfl
@@ -182,7 +188,10 @@ theorem sub_le_predictAdv_of_weakLearnsUnder {C : I → X → Bool} {m : ℕ}
 
 /-- **Small prediction advantage rules out weak learning**: if the learner's prediction
 advantage is at most `γ`, it does not weakly learn the class under the uniform distribution with
-any `γ' ≤ ½` such that `γ + δ < γ'`, at confidence `δ`. -/
+any `γ' ≤ ½` such that `γ + δ < γ'`, at confidence `δ`. The confidence must be below the gap:
+at a constant confidence such as `δ = ½`, a learner with zero prediction advantage can satisfy
+`WeakLearnsUnder`. To refute weak learning in the sense of [KV94, §4.1], apply this at some
+`δ < γ' − γ`. -/
 theorem not_weakLearnsUnder_of_predictAdv_le {C : I → X → Bool} {m : ℕ}
     {L : (Fin m → X × Bool) → ρ → X → Bool} {γ γ' δ : ℝ} (hadv : predictAdv C m L ≤ γ)
     (hlt : γ + δ < γ') (hγ' : γ' ≤ 1 / 2) :

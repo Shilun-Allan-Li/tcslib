@@ -19,9 +19,10 @@ bridge to PAC learning.
 ## Contents
 
 * `TCSlib.LearningTheory.PAC.Defs`: error, labelled samples, PAC, weak and fixed-distribution
-  learning, PAC-learnability at fixed parameters.
+  learning, for a given learner at fixed parameters.
 * `TCSlib.LearningTheory.PAC.Prediction`: the prediction game; success `= 1 − E[err]`, so
-  a small prediction advantage rules out weak learning under the uniform distribution.
+  a small prediction advantage rules out weak learning under the uniform distribution, for that
+  learner, at confidence below the gap.
 
 ## References
 

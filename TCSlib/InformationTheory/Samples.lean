@@ -28,14 +28,13 @@ an iterated expectation.
 * `FinDist.expect_le_expect`, `FinDist.expect_const`, `FinDist.expect_add`,
   `FinDist.expect_const_mul`, `FinDist.expect_one_sub`: linearity and monotonicity.
 * `FinDist.probTrue_not`: the complement rule `Pr[¬D] = 1 − Pr[D]`.
-* `FinDist.expect_le_add_of_le_one`: a function with values in `[0, 1]` has expectation at most
+* `FinDist.expect_le_add_of_le_one`: a function with values at most `1` has expectation at most
   `ε + Pr[f > ε]`, for `ε ≥ 0`.
 
 ## References
 
 * [SSBD14] S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning: From Theory to
   Algorithms*, Cambridge University Press, 2014, §3.1 (the i.i.d. sample `S ~ D^m`).
-* [Vad12] S. Vadhan, *Pseudorandomness*, FnTTCS 7(1–3), 2012, §6.1.
 -/
 
 namespace TCSlib.InformationTheory
@@ -110,8 +109,9 @@ theorem expect_prod (p : FinDist α) (q : FinDist β) (f : α × β → ℝ) :
   simp only [expect_eq, Fintype.sum_prod_type, prod_apply, Finset.mul_sum]
   exact Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => by ring
 
-/-- **A `[0, 1]`-valued function has expectation at most `ε + Pr[f > ε]`**, for `ε ≥ 0`: on the
-event `f ≤ ε` it contributes at most `ε`, elsewhere at most `1`.
+/-- **A function with values at most `1` has expectation at most `ε + Pr[f > ε]`**, for
+`ε ≥ 0`: on the event `f ≤ ε` it contributes at most `ε`, elsewhere at most `1`. No lower bound
+on `f` is needed.
 
 **Proof sketch.** Pointwise `f a ≤ ε + 1_{f a > ε}`, since `f a ≤ 1` and `ε ≥ 0`; take expectations
 (`expect_le_expect`, `expect_add`, `expect_const`, `probTrue_eq_expect`). -/
