@@ -35,7 +35,8 @@ computation of the `Games` framework with one oracle: `QueryTree I O α` abbrevi
 `Games.OracleComp (Games.singleSpec I O) α`, and `ret` and `query` are its two constructors (the
 oracle index is the unit). Definitions by cases on `ret`/`query` are unchanged; proofs by
 induction use `QueryTree.induct`. The links of `eval`, `BoundedBy` and `simulate` to the
-framework's evaluation, query costs and simulation are in `TCSlib.Cryptography.Games.Bridges.QueryTree`.
+framework's evaluation, query costs and simulation are in
+`TCSlib.Cryptography.Games.Bridges.QueryTree`.
 
 **Deviation:** query, answer and output types are in `Type` (universe 0), as the framework's are;
 every use in [Gar26] and [PS10] is at `Type`.
