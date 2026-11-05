@@ -1,0 +1,955 @@
+@NTimeDiag.exists_diagonalizer : ∀ {f g : ℕ → ℕ},
+  TimeConstructible f →
+    TimeConstructible g →
+      ∀ (c : EffectiveNDMachineCode),
+        (∃ BF,
+            ∀ (α : List Bool),
+              ∃ C,
+                ∀ (x : List Bool) (t : ℕ),
+                  ((c.decode α).toFinNDTM.AcceptsWithin x t →
+                      BF.ComputesInTime (pairEncode (pairEncode t.bits α) x) [true] (C * 2 ^ (C * (t + 1)))) ∧
+                    (¬(c.decode α).toFinNDTM.AcceptsWithin x t →
+                      BF.ComputesInTime (pairEncode (pairEncode t.bits α) x) [false] (C * 2 ^ (C * (t + 1))))) →
+          ∃ D K,
+            (∀ (x : List Bool), D.tm.HaltsWithin x (K * (g x.length + 1))) ∧
+              ∀ (α : List Bool),
+                ∃ C,
+                  ∀ (n : ℕ),
+                    3 ≤ n →
+                      NTimeDiag.stageCode (NTimeDiag.stage f n) = α →
+                        (n ≠ NTimeDiag.ladder f (NTimeDiag.stage f n + 1) →
+                            (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) →
+                                (c.decode α).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true) (g n)) ∧
+                              ∀ (t' : ℕ),
+                                (c.decode α).toFinNDTM.AcceptsWithin (List.replicate (n + 1) true) t' →
+                                  C * (t' + 1) ≤ g n → D.AcceptsWithin (List.replicate n true) (K * (g n + 1))) ∧
+                          (n = NTimeDiag.ladder f (NTimeDiag.stage f n + 1) →
+                            C * 2 ^ (C * (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n)) + 1)) ≤ n →
+                              (D.AcceptsWithin (List.replicate n true) (K * (g n + 1)) ↔
+                                ¬(c.decode α).toFinNDTM.AcceptsWithin
+                                    (List.replicate (NTimeDiag.ladder f (NTimeDiag.stage f n) + 1) true)
+                                    (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n)))))
+@NTimeDiag.exists_queryTM : ∀ {f g : ℕ → ℕ},
+  TimeConstructible f → TimeConstructible g → ∃ G C, G.ComputesFunInTime (NTimeDiag.query f g) fun n => C * (g n + 1)
+NTimeDiag.query : (ℕ → ℕ) → (ℕ → ℕ) → List Bool → List Bool
+NTimeDiag.query_eq : ∀ (f g : ℕ → ℕ) {n : ℕ},
+  3 ≤ n →
+    NTimeDiag.query f g (List.replicate n true) =
+      if n = NTimeDiag.ladder f (NTimeDiag.stage f n + 1) then
+        true ::
+          pairEncode
+            (pairEncode (NTimeDiag.budget f (NTimeDiag.ladder f (NTimeDiag.stage f n))).bits
+              (NTimeDiag.stageCode (NTimeDiag.stage f n)))
+            (List.replicate (NTimeDiag.ladder f (NTimeDiag.stage f n) + 1) true)
+      else
+        false ::
+          pairEncode (pairEncode (g n).bits (NTimeDiag.stageCode (NTimeDiag.stage f n))) (List.replicate (n + 1) true)
+NTimeDiag.query_of_not_guard : ∀ (f g : ℕ → ℕ) {x : List Bool},
+  ¬(x = List.replicate x.length true ∧ 3 ≤ x.length) → NTimeDiag.query f g x = []
+NTimeDiag.budget_eq : ∀ (f : ℕ → ℕ) (ℓ : ℕ), NTimeDiag.budget f ℓ = (f (ℓ + 1) + (ℓ + 1) + 1) ^ 2
+NTimeDiag.ladder_zero : ∀ (f : ℕ → ℕ), NTimeDiag.ladder f 0 = 2
+NTimeDiag.ladder_succ : ∀ (f : ℕ → ℕ) (i : ℕ),
+  NTimeDiag.ladder f (i + 1) = 2 ^ NTimeDiag.budget f (NTimeDiag.ladder f i) ^ 2
+NTimeDiag.two_mul_lt_ladder_succ : ∀ (f : ℕ → ℕ) (i : ℕ), 2 * NTimeDiag.ladder f i < NTimeDiag.ladder f (i + 1)
+NTimeDiag.le_ladder : ∀ (f : ℕ → ℕ) (i : ℕ), i + 2 ≤ NTimeDiag.ladder f i
+NTimeDiag.ladder_strictMono : ∀ (f : ℕ → ℕ), StrictMono (NTimeDiag.ladder f)
+NTimeDiag.stage_spec : ∀ (f : ℕ → ℕ) {n : ℕ},
+  3 ≤ n → NTimeDiag.ladder f (NTimeDiag.stage f n) < n ∧ n ≤ NTimeDiag.ladder f (NTimeDiag.stage f n + 1)
+NTimeDiag.stage_eq : ∀ (f : ℕ → ℕ) {n i : ℕ},
+  NTimeDiag.ladder f i < n → n ≤ NTimeDiag.ladder f (i + 1) → NTimeDiag.stage f n = i
+NTimeDiag.stage_of_le_two : ∀ (f : ℕ → ℕ) {n : ℕ}, n ≤ 2 → NTimeDiag.stage f n = 0
+NTimeDiag.stageCode_eq : ∀ (i : ℕ), NTimeDiag.stageCode i = ((Nat.unpair i).1 + 1).bits.dropLast
+@guessRunTM : {k : ℕ} →
+  {SP SQ : Type} →
+    [DecidableEq SP] →
+      [DecidableEq SQ] →
+        MultiTapeTM k Bool SP →
+          SP →
+            Fin k →
+              MultiTapeTM k Bool SQ → SQ → SQ → SQ → NDTM k Bool ((i : GuessRunPhase) × GuessRunPhase.State SP SQ i)
+@guessRunCfg : {k : ℕ} → {S S' : Type} → {z : List Bool} → Cfg k Bool S z → Fin k → List Bool → S' → Cfg k Bool S' z
+@guessRunCfg_state : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool) (q : S'),
+  (guessRunCfg c j s q).state = some q
+@guessRunCfg_inputPos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S'), (guessRunCfg c j s q).inputPos = c.inputPos
+@guessRunCfg_workTapes : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S') (a : Fin k) (a_1 : ℤ),
+  (guessRunCfg c j s q).workTapes a a_1 =
+    Function.update c.workTapes j
+      (fun p =>
+        if c.workTapePos j ≤ p ∧ p < c.workTapePos j + ↑s.length then bufferTape s (p - c.workTapePos j)
+        else c.workTapes j p)
+      a a_1
+@guessRunCfg_workTapePos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S') (a : Fin k), (guessRunCfg c j s q).workTapePos a = c.workTapePos a
+@guessRunCfg_output : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool) (q : S'),
+  (guessRunCfg c j s q).output = c.output
+@guessRunTM_haltsWithin : ∀ {k : ℕ} {SP SQ : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool}
+  (TP : ℕ) (cP : Cfg k Bool SP z),
+  runFrom (initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (runFrom (initCfg z) u).state ≠ some pexit) →
+        ∀ (m : ℕ),
+          (∀ p < m, cP.workTapes j (cP.workTapePos j + ↑p) ≠ none) →
+            cP.workTapes j (cP.workTapePos j + ↑m) = none →
+              cP.workTapes j (cP.workTapePos j - 1) = none →
+                ∀ (T : ℕ),
+                  (∀ (s : List Bool),
+                      s.length = m →
+                        ∃ TQ ≤ T,
+                          ((runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+                              (runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+                            ∀ u < TQ,
+                              (runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                (runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+                    (guessRunTM P pexit j Q qentry acc rej).HaltsWithin z (TP + 2 * m + T + 11)
+@guessRunTM_accepts_iff : ∀ {k : ℕ} {SP SQ : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool}
+  (TP : ℕ) (cP : Cfg k Bool SP z),
+  runFrom (initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (runFrom (initCfg z) u).state ≠ some pexit) →
+        ∀ (m : ℕ),
+          (∀ p < m, cP.workTapes j (cP.workTapePos j + ↑p) ≠ none) →
+            cP.workTapes j (cP.workTapePos j + ↑m) = none →
+              cP.workTapes j (cP.workTapePos j - 1) = none →
+                ∀ (T : ℕ),
+                  (∀ (s : List Bool),
+                      s.length = m →
+                        ∃ TQ ≤ T,
+                          ((runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+                              (runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+                            ∀ u < TQ,
+                              (runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                (runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+                    ∀ (B : ℕ),
+                      TP + 2 * m + T + 11 ≤ B →
+                        ((∃ w,
+                            w.length = B ∧
+                              (NDTM.runWith w (NDTM.initCfg z)).state = none ∧
+                                (NDTM.runWith w (NDTM.initCfg z)).output = [true]) ↔
+                          ∃ s,
+                            s.length = m ∧
+                              ∃ TQ,
+                                (runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∧
+                                  (∀ u < TQ,
+                                      (runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                        (runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) ∧
+                                    (runFrom (guessRunCfg cP j s qentry) TQ).output = [])
+@guessRunTM_silent_spec : ∀ {K k : ℕ} {SP SR : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SR]
+  (ι : Fin K ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (jR : Fin K) (R : MultiTapeTM K Bool SR) (entry acc rej : SR) (P : MultiTapeTM k Bool SP) (pexit : SP)
+      {z : List Bool} (TP m : ℕ) (blk : ℤ → Option Bool),
+      (∀ (p : ℤ), blk p ≠ none ↔ 0 ≤ p ∧ p < ↑m) →
+        runFrom (initCfg z) TP =
+            { state := some pexit, inputPos := 1, workTapes := Function.update (fun x x_1 => none) (ι jR) blk,
+              workTapePos := fun x => 0, output := [] } →
+          (∀ u < TP, (runFrom (initCfg z) u).state ≠ some pexit) →
+            ∀ (T : ℕ),
+              (∀ (s : List Bool),
+                  s.length = m →
+                    ∃ TR ≤ T,
+                      ((runFrom (streamStartCfg z jR entry s) TR).state = some acc ∨
+                          (runFrom (streamStartCfg z jR entry s) TR).state = some rej) ∧
+                        ∀ u < TR,
+                          (runFrom (streamStartCfg z jR entry s) u).state ≠ some acc ∧
+                            (runFrom (streamStartCfg z jR entry s) u).state ≠ some rej) →
+                have N := guessRunTM P pexit (ι jR) (embedSilentTM ι cap R) entry acc rej;
+                N.HaltsWithin z (TP + 2 * m + T + 11) ∧
+                  ∀ (B : ℕ),
+                    TP + 2 * m + T + 11 ≤ B →
+                      ((∃ w,
+                          w.length = B ∧
+                            (NDTM.runWith w (NDTM.initCfg z)).state = none ∧
+                              (NDTM.runWith w (NDTM.initCfg z)).output = [true]) ↔
+                        ∃ s,
+                          s.length = m ∧
+                            ∃ TR,
+                              (runFrom (streamStartCfg z jR entry s) TR).state = some acc ∧
+                                ∀ u < TR,
+                                  (runFrom (streamStartCfg z jR entry s) u).state ≠ some acc ∧
+                                    (runFrom (streamStartCfg z jR entry s) u).state ≠ some rej)
+@streamStartCfg : {K : ℕ} → {S : Type} → (z : List Bool) → Fin K → S → List Bool → Cfg K Bool S z
+exists_ndInterpreterCore : ∀ (c : EffectiveNDMachineCode),
+  ∃ K Q x x R j entry accept reject,
+    accept ≠ reject ∧
+      ∀ (α : List Bool),
+        ∃ C,
+          ∀ (x : List Bool) (t : ℕ) (s : List Bool),
+            t ≤ s.length →
+              have z := pairEncode (pairEncode t.bits α) x;
+              have N := (c.decode α).toFinNDTM;
+              have start :=
+                { state := some entry, inputPos := 1,
+                  workTapes := fun i => if i = j then bufferTape s else fun x => none, workTapePos := fun x => 0,
+                  output := [] };
+              have e := NDTM.runWith (List.take t s) (NDTM.initCfg x);
+              ∃ T,
+                (∀ t' ≤ t,
+                    (NDTM.runWith (List.take t' s) (NDTM.initCfg x)).state = none →
+                      T ≤ C * (t' + x.length + t.bits.length + 1)) ∧
+                  T ≤ C * (t + 1) ∧
+                    (runFrom start T).state = some (if e.state = none ∧ e.output = [true] then accept else reject) ∧
+                      ∀ u < T, (runFrom start u).state ≠ some accept ∧ (runFrom start u).state ≠ some reject
+@exists_stepClockTMVia : ∀ {k : ℕ} {Γ S : Type} [Fintype S] [DecidableEq S] [DecidableEq Γ] (e : Bool ↪ Γ)
+  (M : MultiTapeTM k Γ S) (stopAt : S → Bool),
+  ∃ Q x x H inj finish timeout,
+    Function.Injective finish ∧
+      Function.Injective timeout ∧
+        (∀ (a b : Option S), finish a ≠ timeout b) ∧
+          (∀ (s : S) (r : Option S), inj s ≠ finish r ∧ inj s ≠ timeout r) ∧
+            ∀ {x : List Γ} (c : Cfg k Γ S x) (q : S),
+              c.state = some q →
+                ∀ (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ),
+                  (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape (List.map (⇑e) w) p) →
+                    (∀ τ ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                        Cfg.Stopped stopAt (runFrom c τ) →
+                          (∀ u < τ, ¬Cfg.Stopped stopAt (runFrom c u)) →
+                            ∃ T ≤ 5 * τ + 2 * w.length + 2,
+                              ∃ w',
+                                w'.length = w.length ∧
+                                  runFrom (clockCfg (some (inj q)) c ct cp) T =
+                                      clockCfg (some (finish (runFrom c τ).state)) (runFrom c τ)
+                                        (wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                    (∀ u < T,
+                                        ∀ (r : Option S),
+                                          (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+                                      ∀ u ≤ T,
+                                        ∃ v ≤ τ,
+                                          (∀ (j : Fin k),
+                                              (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                                                  (runFrom c v).workTapes j ∧
+                                                (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                                                  (runFrom c v).workTapePos j) ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                                                (runFrom c v).inputPos ∧
+                                              (runFrom (clockCfg (some (inj q)) c ct cp) u).output =
+                                                  (runFrom c v).output ∧
+                                                (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                                                  Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                      ((∀ u ≤ Nat.ofDigits 2 (List.map Bool.toNat w), ¬Cfg.Stopped stopAt (runFrom c u)) →
+                        ∃ T ≤ 5 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 2,
+                          ∃ w',
+                            w'.length = w.length ∧
+                              runFrom (clockCfg (some (inj q)) c ct cp) T =
+                                  clockCfg (some (timeout (runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w))).state))
+                                    (runFrom c (Nat.ofDigits 2 (List.map Bool.toNat w)))
+                                    (wordPatch ct cp (List.map (⇑e) w')) cp ∧
+                                (∀ u < T,
+                                    ∀ (r : Option S),
+                                      (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                                        (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+                                  ∀ u ≤ T,
+                                    ∃ v ≤ Nat.ofDigits 2 (List.map Bool.toNat w),
+                                      (∀ (j : Fin k),
+                                          (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapes j.castSucc =
+                                              (runFrom c v).workTapes j ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos j.castSucc =
+                                              (runFrom c v).workTapePos j) ∧
+                                        (runFrom (clockCfg (some (inj q)) c ct cp) u).inputPos =
+                                            (runFrom c v).inputPos ∧
+                                          (runFrom (clockCfg (some (inj q)) c ct cp) u).output = (runFrom c v).output ∧
+                                            (runFrom (clockCfg (some (inj q)) c ct cp) u).workTapePos (Fin.last k) ∈
+                                              Finset.Icc (cp - 1) (cp + ↑w.length))
+@exists_stepClockTM : ∀ {k : ℕ} {S : Type} [Fintype S] [DecidableEq S] (M : MultiTapeTM k Bool S) (stopAt : S → Bool),
+  ∃ Q x x H inj finish timeout,
+    ∀ {x : List Bool} (c : Cfg k Bool S x) (q : S),
+      c.state = some q →
+        ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+          (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape w p) →
+            have d := Nat.ofDigits 2 (List.map Bool.toNat w);
+            have stopped := fun e => e.state = none ∨ ∃ s, e.state = some s ∧ stopAt s = true;
+            (∀ τ ≤ d,
+                stopped (runFrom c τ) →
+                  (∀ u < τ, ¬stopped (runFrom c u)) →
+                    ∃ T ≤ 5 * τ + 2 * w.length + 2,
+                      ∃ ct',
+                        runFrom (clockCfg (some (inj q)) c ct cp) T =
+                            clockCfg (some (finish (runFrom c τ).state)) (runFrom c τ) ct' cp ∧
+                          ∀ u < T,
+                            ∀ (r : Option S),
+                              (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                                (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r)) ∧
+              ((∀ u ≤ d, ¬stopped (runFrom c u)) →
+                ∃ T ≤ 5 * d + 2 * w.length + 2,
+                  ∃ ct',
+                    runFrom (clockCfg (some (inj q)) c ct cp) T =
+                        clockCfg (some (timeout (runFrom c d).state)) (runFrom c d) ct' cp ∧
+                      ∀ u < T,
+                        ∀ (r : Option S),
+                          (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (finish r) ∧
+                            (runFrom (clockCfg (some (inj q)) c ct cp) u).state ≠ some (timeout r))
+@vhostSilentTM : {m : ℕ} → {S : Type u_1} → MultiTapeTM m Bool S → MultiTapeTM (1 + m + 1) Bool (S × Bool)
+@vhostSilentCfg : {m : ℕ} →
+  {S : Type u_1} →
+    {x y : List Bool} →
+      Cfg m Bool S y → Bool → Fin (x.length + 2) → List Bool → List Bool → Cfg (1 + m + 1) Bool (S × Bool) x
+@vhostSilentTM_runFrom : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (M : MultiTapeTM m Bool S) (c : Cfg m Bool S y)
+  (b : Bool),
+  VirtualTag c.inputPos b →
+    ∀ (p : Fin (x.length + 2)) (capPre out₀ : List Bool) (t : ℕ),
+      ∃ b',
+        VirtualTag (runFrom c t).inputPos b' ∧
+          runFrom (vhostSilentCfg c b p capPre out₀) t = vhostSilentCfg (runFrom c t) b' p capPre out₀
+@embedSilentTM : {m k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → (Fin m ↪ Fin k) → Fin k → MultiTapeTM m Symbol S → MultiTapeTM k Symbol S
+@embedSilentCfg : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} →
+      {x : List Symbol} →
+        (Fin m ↪ Fin k) →
+          Fin k →
+            (Fin k → ℤ → Option Symbol) → (Fin k → ℤ) → List Symbol → List Symbol → Cfg m Symbol S x → Cfg k Symbol S x
+@embedSilentTM_runFrom : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (M : MultiTapeTM m Symbol S) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol)
+      (c : Cfg m Symbol S x) (t : ℕ),
+      runFrom (embedSilentCfg ι cap tapes heads pre out₀ c) t = embedSilentCfg ι cap tapes heads pre out₀ (runFrom c t)
+exists_inputCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x : List Bool),
+          ∃ t ≤ c * (T x.length + x.length + (f x).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ), 0 < t' → t' < t → (runFrom (Cfg.ofWords entry fun x => []) t').state ≠ some exit) ∧
+                runFrom (Cfg.ofWords entry fun x => []) t = Cfg.ofWords exit (stateWord C.k (f x))
+exists_installCallTM : ∀ (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T →
+    ∃ C entry exit c,
+      0 < C.k ∧
+        ∀ (x arg : List Bool),
+          ∃ t ≤ c * (T arg.length + arg.length + (f arg).length + 1),
+            0 < t ∧
+              (∀ (t' : ℕ), 0 < t' → t' < t → (runFrom (Cfg.ofWords entry (stateWord C.k arg)) t').state ≠ some exit) ∧
+                runFrom (Cfg.ofWords entry (stateWord C.k arg)) t = Cfg.ofWords exit (stateWord C.k (f arg))
+@seamReleaseTM : {k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → MultiTapeTM k Symbol S → S → MultiTapeTM k Symbol (Unit ⊕ S)
+computesFunInTime_lengthBits : ∃ M c, M.ComputesFunInTime (fun x => x.length.bits) fun n => c * (n + 1)
+expandTM : (k : ℕ) → Fin k → (pat : List Bool) → MultiTapeTM (k + 1) Bool (CounterLoopState (Fin (pat.length + 1)))
+@expandTM_run_ofCfg : ∀ {k : ℕ} {x : List Bool} (i : Fin k) (pat : List Bool) (c : Cfg k Bool (Fin (pat.length + 1)) x),
+  c.state = some 0 →
+    ∀ (w : List Bool) (ct : ℤ → Option Bool) (cp : ℤ),
+      (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → ct (cp + p) = bufferTape w p) →
+        ∀ (d : ℕ),
+          Nat.ofDigits 2 (List.map Bool.toNat w) = d →
+            runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp)
+                  (d * (pat.length + 1) + counterOverhead w (d + 1)) =
+                counterLoopCfg (some CounterLoopState.done)
+                  { state := c.state, inputPos := c.inputPos,
+                    workTapes := fun j q =>
+                      if j = i ∧ c.workTapePos j ≤ q ∧ q < c.workTapePos j + ↑(d * pat.length) then
+                        bufferTape (List.replicate d pat).flatten (q - c.workTapePos j)
+                      else c.workTapes j q,
+                    workTapePos := Function.update c.workTapePos i (c.workTapePos i + ↑(d * pat.length)),
+                    output := c.output }
+                  (fun q => if cp ≤ q ∧ q < cp + ↑w.length then some true else ct q) cp ∧
+              (∀ t < d * (pat.length + 1) + counterOverhead w (d + 1),
+                  (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).state ≠
+                      some CounterLoopState.done ∧
+                    (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).state ≠
+                      some CounterLoopState.escape) ∧
+                (∀ t ≤ d * (pat.length + 1) + counterOverhead w (d + 1),
+                    (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).workTapePos
+                        (Fin.last k) ∈
+                      Finset.Icc (cp - 1) (cp + ↑w.length)) ∧
+                  ∀ t ≤ d * (pat.length + 1) + counterOverhead w (d + 1),
+                    ∀ (j : Fin k),
+                      if j = i then
+                        (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).workTapePos
+                            j.castSucc ∈
+                          Finset.Icc (c.workTapePos j) (c.workTapePos j + ↑(d * pat.length))
+                      else
+                        (runFrom (counterLoopCfg (some (CounterLoopState.dec FlagPhase.run)) c ct cp) t).workTapePos
+                            j.castSucc =
+                          c.workTapePos j
+@copyMapTM_run_ofCfg : ∀ {Symbol : Type u_1} {Δ : Type u_2} {k : ℕ} {x : List Symbol} (src dst : Fin k),
+  src ≠ dst →
+    ∀ (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol) (w : List Symbol) (d : Cfg k Symbol SweepPhase x),
+      d.state = some SweepPhase.sweep →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = bufferTape w p) →
+          runFrom d (2 * w.length + 2) =
+              { state := some SweepPhase.done, inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (bufferTape w (q - d.workTapePos j))
+                  else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, (runFrom d t).state ≠ some SweepPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = src ∨ j = dst then
+                    (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (runFrom d t).workTapePos j = d.workTapePos j
+@transferMapTM_run_ofCfg : ∀ {Symbol : Type u_1} {Δ : Type u_2} {k : ℕ} {x : List Symbol} (src dst : Fin k),
+  src ≠ dst →
+    ∀ (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol) (rest : Symbol → Option Symbol) (w : List Symbol)
+      (d : Cfg k Symbol SweepPhase x),
+      d.state = some SweepPhase.sweep →
+        (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes src (d.workTapePos src + p) = bufferTape w p) →
+          runFrom d (2 * w.length + 2) =
+              { state := some SweepPhase.done, inputPos := d.inputPos,
+                workTapes := fun j q =>
+                  if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                    (bufferTape w (q - d.workTapePos j)).bind rest
+                  else
+                    if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                      Option.map (fun γ => merge (d.workTapes j q) (extract γ)) (bufferTape w (q - d.workTapePos j))
+                    else d.workTapes j q,
+                workTapePos := d.workTapePos, output := d.output } ∧
+            (∀ t < 2 * w.length + 2, (runFrom d t).state ≠ some SweepPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ 2 * w.length + 2,
+                  if j = src ∨ j = dst then
+                    (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+                  else (runFrom d t).workTapePos j = d.workTapePos j
+@clearTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SweepPhase x),
+  d.state = some SweepPhase.sweep →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = bufferTape w p) →
+      runFrom d (2 * w.length + 2) =
+          { state := some SweepPhase.done, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, (runFrom d t).state ≠ some SweepPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (runFrom d t).workTapePos j = d.workTapePos j
+@skipBackTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (u : List Symbol)
+  (d : Cfg k Symbol SeekPhase x),
+  d.state = some SeekPhase.run →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑u.length → d.workTapes i (d.workTapePos i - ↑u.length - 1 + p) = bufferTape u p) →
+      runFrom d (u.length + 3) =
+          { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+            workTapePos := Function.update d.workTapePos i (d.workTapePos i - ↑u.length - 1), output := d.output } ∧
+        (∀ t < u.length + 3, (runFrom d t).state ≠ some SeekPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ u.length + 3,
+              if j = i then (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - ↑u.length - 2) (d.workTapePos j)
+              else (runFrom d t).workTapePos j = d.workTapePos j
+@rewindTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (u : List Symbol),
+  ∀ n ≤ u.length,
+    ∀ (d : Cfg k Symbol RewindPhase x),
+      d.state = some RewindPhase.start →
+        (∀ (p : ℤ), -1 ≤ p → p < ↑n → d.workTapes i (d.workTapePos i - ↑n + p) = bufferTape u p) →
+          runFrom d (n + 2) =
+              { state := some RewindPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+                workTapePos := Function.update d.workTapePos i (d.workTapePos i - ↑n), output := d.output } ∧
+            (∀ t < n + 2, (runFrom d t).state ≠ some RewindPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ n + 2,
+                  if j = i then (runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - ↑n - 1) (d.workTapePos j)
+                  else (runFrom d t).workTapePos j = d.workTapePos j
+pairExtractTM : Bool → Bool → FinTM Bool
+@phaseHostTM : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → MultiTapeTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → MultiTapeTM k Γ ((i : I) × Ph i)
+timeConstructible_iff : ∀ (T : ℕ → ℕ),
+  TimeConstructible T ↔
+    (∀ (n : ℕ), n ≤ T n) ∧
+      ∃ c, 0 < c ∧ ∃ M, ∀ (x : List Bool), M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))
+AcceptsWithin : FinNDTM Bool → List Bool → ℕ → Prop
+@AcceptsWithin.mono : ∀ {N : FinNDTM Bool} {x : List Bool} {t t' : ℕ},
+  N.AcceptsWithin x t → t ≤ t' → N.AcceptsWithin x t'
+@NDTM.HaltsWithin : {k : ℕ} → {State : Type u_1} → {Symbol : Type u_2} → NDTM k Symbol State → List Symbol → ℕ → Prop
+EffectiveNDMachineCode : Type 1
+@step_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
+  {cfg : Cfg k Symbol State input} {q : State},
+  cfg.state = some q → step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+length_bits_le_self : ∀ (m : ℕ), m.bits.length ≤ m
+pairEncode_eq : ∀ (x α : List Bool), pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+@acceptsWithin_iff : ∀ {N : FinNDTM Bool} {x : List Bool} {t : ℕ},
+  N.AcceptsWithin x t ↔
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+counterValue_eq : ∀ (w : List Bool), counterValue w = Nat.ofDigits 2 (List.map Bool.toNat w)
+counterValue_bits : ∀ (t : ℕ), counterValue t.bits = t
+TimeConstructible : (ℕ → ℕ) → Prop
+Action : ℕ → Type u_1 → Type u_2 → Type (max u_1 u_2)
+@Action.apply : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} → Action k Symbol State → Cfg k Symbol State input → Cfg k Symbol State input
+@Action.apply_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input),
+  (action.apply cfg).inputPos = moveInputPos cfg.inputPos action.inputTape
+@Action.apply_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input),
+  (action.apply cfg).output = cfg.output ++ action.output.toList
+@Action.apply_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input), (action.apply cfg).state = action.state
+@Action.apply_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) (i : Fin k),
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+@Action.apply_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k),
+  (a.apply c).workTapes i =
+    Function.update (c.workTapes i) (c.workTapePos i) ((a.workTapes i).1.getD (c.workTapeSymbols i))
+@Action.inputTape : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → Action k Symbol State → SignType
+@Action.mk : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      SignType → (Fin k → Option (Option Symbol) × SignType) → Option Symbol → Option State → Action k Symbol State
+@Action.output : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → Action k Symbol State → Option Symbol
+@Action.state : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → Action k Symbol State → Option State
+@Action.workTapes : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → Action k Symbol State → Fin k → Option (Option Symbol) × SignType
+Cfg : ℕ → (Symbol : Type u_1) → Type u_2 → List Symbol → Type (max u_1 u_2)
+@Cfg.Stopped : {k : ℕ} → {Γ : Type u_1} → {S : Type u_2} → {x : List Γ} → (S → Bool) → Cfg k Γ S x → Prop
+@Cfg.ext : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol} {x y : Cfg k Symbol State input},
+  x.state = y.state →
+    x.inputPos = y.inputPos → x.workTapes = y.workTapes → x.workTapePos = y.workTapePos → x.output = y.output → x = y
+@Cfg.init : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → State → (input : List Symbol) → Cfg k Symbol State input
+@Cfg.init_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).inputPos = 1
+@Cfg.init_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).output = []
+@Cfg.init_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).state = some q₀
+@Cfg.init_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol) (x : Fin k),
+  (Cfg.init q₀ input).workTapePos x = 0
+@Cfg.init_workTapes : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol) (x : Fin k)
+  (x_1 : ℤ), (Cfg.init q₀ input).workTapes x x_1 = none
+@Cfg.inputPos : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin (input.length + 2)
+@Cfg.inputSymbol : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Option Symbol
+@Cfg.mk : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      {input : List Symbol} →
+        Option State →
+          Fin (input.length + 2) → (Fin k → ℤ → Option Symbol) → (Fin k → ℤ) → List Symbol → Cfg k Symbol State input
+@Cfg.ofWords : {k : ℕ} → {State : Type u_1} → {input : List Bool} → State → (Fin k → List Bool) → Cfg k Bool State input
+@Cfg.ofWords_inputPos : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool),
+  (Cfg.ofWords q w).inputPos = 1
+@Cfg.ofWords_output : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool),
+  (Cfg.ofWords q w).output = []
+@Cfg.ofWords_state : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool),
+  (Cfg.ofWords q w).state = some q
+@Cfg.ofWords_workTapePos : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool)
+  (i : Fin k), (Cfg.ofWords q w).workTapePos i = 0
+@Cfg.ofWords_workTapes : ∀ {k : ℕ} {State : Type u_1} {input : List Bool} (q : State) (w : Fin k → List Bool)
+  (i : Fin k), (Cfg.ofWords q w).workTapes i = bufferTape (w i)
+@Cfg.output : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → List Symbol
+@Cfg.state : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Option State
+@Cfg.stopped_iff : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {x : List Γ} {stopAt : S → Bool} {c : Cfg k Γ S x},
+  Cfg.Stopped stopAt c ↔ c.state = none ∨ ∃ s, c.state = some s ∧ stopAt s = true
+@Cfg.workTapePos : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin k → ℤ
+@Cfg.workTapeSymbols : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin k → Option Symbol
+@Cfg.workTapeSymbols_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (cfg : Cfg k Symbol State input) (i : Fin k), cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i)
+@Cfg.workTapes : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin k → ℤ → Option Symbol
+CodeNDTM.toFinNDTM : CodeNDTM → FinNDTM Bool
+CounterLoopState : Type → Type
+@CounterLoopState.dec : {S : Type} → FlagPhase → CounterLoopState S
+@CounterLoopState.done : {S : Type} → CounterLoopState S
+EffectiveNDMachineCode.toNDMachineCode : EffectiveNDMachineCode → NDMachineCode
+FinNDTM : Type → Type 1
+@FinNDTM.State : {Symbol : Type} → FinNDTM Symbol → Type
+@FinNDTM.decEqState : {Symbol : Type} → (self : FinNDTM Symbol) → DecidableEq self.State
+@FinNDTM.k : {Symbol : Type} → FinNDTM Symbol → ℕ
+@FinNDTM.mk : {Symbol : Type} →
+  (k : ℕ) →
+    (State : Type) →
+      [fintypeState : Fintype State] → [decEqState : DecidableEq State] → NDTM k Symbol State → FinNDTM Symbol
+@FinNDTM.tm : {Symbol : Type} → (self : FinNDTM Symbol) → NDTM self.k Symbol self.State
+FinTM : Type → Type 1
+@ComputesFunInTime : {Symbol : Type} → FinTM Symbol → (List Symbol → List Symbol) → (ℕ → ℕ) → Prop
+@ComputesInTime : {Symbol : Type} → FinTM Symbol → List Symbol → List Symbol → ℕ → Prop
+@FinTM.State : {Symbol : Type} → FinTM Symbol → Type
+@VirtualTag : {n : ℕ} → Fin (n + 2) → Bool → Prop
+@VirtualTag_iff : ∀ {n : ℕ} (p : Fin (n + 2)) (b : Bool),
+  VirtualTag p b ↔ (↑p = 0 → b = false) ∧ (↑p = n + 1 → b = true)
+FinTM._sizeOf_inst : (Symbol : Type) → [SizeOf Symbol] → SizeOf (FinTM Symbol)
+@bufferTape : {Symbol : Type u_1} → List Symbol → ℤ → Option Symbol
+@bufferTape_append_shift : ∀ {Symbol : Type u_1} (u w : List Symbol) {z : ℤ},
+  0 ≤ z → bufferTape (u ++ w) (↑u.length + z) = bufferTape w z
+@bufferTape_eq : ∀ {Symbol : Type u_1} (w : List Symbol) (z : ℤ), bufferTape w z = if 0 ≤ z then w[z.toNat]? else none
+@bufferTape_eq_none_of_not_mem : ∀ {Symbol : Type u_1} (w : List Symbol) {z : ℤ},
+  ¬(0 ≤ z ∧ z < ↑w.length) → bufferTape w z = none
+@bufferTape_nil : ∀ {Symbol : Type u_1}, bufferTape [] = fun x => none
+@bufferTape_of_neg : ∀ {Symbol : Type u_1} (w : List Symbol) {z : ℤ}, z < 0 → bufferTape w z = none
+@computesFunInTime_comp : ∀ {M₁ M₂ : FinTM Bool} {f g : List Bool → List Bool} {T₁ T₂ : ℕ → ℕ},
+  M₁.ComputesFunInTime f T₁ →
+    M₂.ComputesFunInTime g T₂ → Monotone T₂ → ∃ M c, M.ComputesFunInTime (g ∘ f) fun n => c * (T₁ n + T₂ (T₁ n) + 1)
+@computesFunInTime_iff : ∀ {Symbol : Type} (M : FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ),
+  M.ComputesFunInTime f T ↔ ∀ (input : List Symbol), M.ComputesInTime input (f input) (T input.length)
+computesFunInTime_prepend : ∀ (w : List Bool), ∃ M c, M.ComputesFunInTime (fun x => w ++ x) fun n => c * (n + 1)
+@computesInTime_iff : ∀ {Symbol : Type} (M : FinTM Symbol) (x w : List Symbol) (t : ℕ),
+  M.ComputesInTime x w t ↔ (runFrom (initCfg x) t).state = none ∧ (runFrom (initCfg x) t).output = w
+@FinTM.decEqState : {Symbol : Type} → (self : FinTM Symbol) → DecidableEq self.State
+@FinTM.fintypeState : {Symbol : Type} → (self : FinTM Symbol) → Fintype self.State
+@FinTM.k : {Symbol : Type} → FinTM Symbol → ℕ
+pairExtractTM_fst : (pairExtractTM true false).ComputesFunInTime (fun x => (Option.map Prod.fst (pairDecode x)).getD [])
+  fun n => 5 * (n + 1)
+pairExtractTM_snd : (pairExtractTM false true).ComputesFunInTime (fun x => (Option.map Prod.snd (pairDecode x)).getD [])
+  fun n => 5 * (n + 1)
+@FinTM.tm : {Symbol : Type} → (self : FinTM Symbol) → MultiTapeTM self.k Symbol self.State
+FlagPhase.run : FlagPhase
+GuessRunPhase : Type
+GuessRunPhase.State : Type → Type → GuessRunPhase → Type
+@GuessRunPhase.instDecidableEqState : {SP SQ : Type} →
+  [DecidableEq SP] → [DecidableEq SQ] → (i : GuessRunPhase) → DecidableEq (GuessRunPhase.State SP SQ i)
+@GuessRunPhase.instFintypeState : {SP SQ : Type} →
+  [Fintype SP] → [Fintype SQ] → (i : GuessRunPhase) → Fintype (GuessRunPhase.State SP SQ i)
+MultiTapeTM : ℕ → Type u_1 → Type u_2 → Type (max u_1 u_2)
+MultiTapeTM._sizeOf_inst : (k : ℕ) →
+  (Symbol : Type u_1) → (State : Type u_2) → [SizeOf Symbol] → [SizeOf State] → SizeOf (MultiTapeTM k Symbol State)
+@initCfg : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} → {tm : MultiTapeTM k Symbol State} → (input : List Symbol) → Cfg k Symbol State input
+@initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : MultiTapeTM k Symbol State} (input : List Symbol),
+  initCfg input = Cfg.init tm.q₀ input
+@MultiTapeTM.mk : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      State → (State → Option Symbol → (Fin k → Option Symbol) → Action k Symbol State) → MultiTapeTM k Symbol State
+@output_length_le : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} (tm : MultiTapeTM k Symbol State)
+  (input : List Symbol) (t : ℕ), (runFrom (initCfg input) t).output.length ≤ t
+@q₀ : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → MultiTapeTM k Symbol State → State
+@runFrom : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : MultiTapeTM k Symbol State} → Cfg k Symbol State input → ℕ → Cfg k Symbol State input
+@runFrom_add : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
+  (cfg : Cfg k Symbol State input) (a b : ℕ), runFrom cfg (a + b) = runFrom (runFrom cfg a) b
+@runFrom_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} (cfg : Cfg k Symbol State input), cfg.state = none → ∀ {n : ℕ}, runFrom cfg n = cfg
+@runFrom_state_ne_none_of_le : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input) (t : ℕ),
+  (runFrom cfg t).state ≠ none → ∀ u ≤ t, (runFrom cfg u).state ≠ none
+@runFrom_zero : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
+  {cfg : Cfg k Symbol State input}, runFrom cfg 0 = cfg
+@step : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} → {tm : MultiTapeTM k Symbol State} → Cfg k Symbol State input → Cfg k Symbol State input
+@tr : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      MultiTapeTM k Symbol State → State → Option Symbol → (Fin k → Option Symbol) → Action k Symbol State
+NDMachineCode.decode : NDMachineCode → List Bool → CodeNDTM
+@NDTM.HaltsWithin.mono : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : NDTM k Symbol State}
+  {input : List Symbol} {t t' : ℕ}, tm.HaltsWithin input t → t ≤ t' → tm.HaltsWithin input t'
+@NDTM.initCfg : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} → {tm : NDTM k Symbol State} → (input : List Symbol) → Cfg k Symbol State input
+@NDTM.runWith : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : NDTM k Symbol State} → List Bool → Cfg k Symbol State input → Cfg k Symbol State input
+RewindPhase : Type
+RewindPhase.done : RewindPhase
+RewindPhase.start : RewindPhase
+SeekPhase : Type
+SeekPhase.done : SeekPhase
+SeekPhase.run : SeekPhase
+@Segment : {k : ℕ} →
+  {Γ S : Type} →
+    {x : List Γ} → MultiTapeTM k Γ S → Set (Option S) → ((Fin k → ℤ) → Prop) → Cfg k Γ S x → Cfg k Γ S x → ℕ → Prop
+@Segment.trans : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {F : Set (Option S)}
+  {P : (Fin k → ℤ) → Prop} {a b c : Cfg k Γ S x} {t v : ℕ},
+  Segment M F P a b t → Segment M F P b c v → Segment M F P a c (t + v)
+SweepPhase : Type
+SweepPhase.done : SweepPhase
+SweepPhase.sweep : SweepPhase
+WritePhase : ℕ → Type
+@WritePhase.done : {n : ℕ} → WritePhase n
+@WritePhase.wr : {n : ℕ} → Fin (n + 1) → WritePhase n
+@clearTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → MultiTapeTM k Symbol SweepPhase
+@clockCfg : {k : ℕ} → {Γ S Q : Type} → {x : List Γ} → Option Q → Cfg k Γ S x → (ℤ → Option Γ) → ℤ → Cfg (k + 1) Γ Q x
+@copyMapTM : {Symbol : Type u_1} →
+  {Δ : Type u_2} →
+    (k : ℕ) → Fin k → Fin k → (Symbol → Δ) → (Option Symbol → Δ → Symbol) → MultiTapeTM k Symbol SweepPhase
+counterLoopStateFintype : (S : Type) → [Fintype S] → Fintype (CounterLoopState S)
+counterOverhead : List Bool → ℕ → ℕ
+counterOverhead_le : ∀ (w : List Bool),
+  counterOverhead w (Nat.ofDigits 2 (List.map Bool.toNat w) + 1) ≤
+    4 * Nat.ofDigits 2 (List.map Bool.toNat w) + 2 * w.length + 2
+@embedEmitCfg : {m k : ℕ} →
+  {S : Type u_1} →
+    {Symbol : Type u_2} →
+      {x : List Symbol} →
+        (Fin m ↪ Fin k) → (Fin k → ℤ → Option Symbol) → (Fin k → ℤ) → List Symbol → Cfg m Symbol S x → Cfg k Symbol S x
+@embedEmitCfg_inputPos : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x),
+  (embedEmitCfg ι tapes heads pre c).inputPos = c.inputPos
+@embedEmitCfg_output : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x),
+  (embedEmitCfg ι tapes heads pre c).output = pre ++ c.output
+@embedEmitCfg_selected_pos : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x) (i : Fin m),
+  (embedEmitCfg ι tapes heads pre c).workTapePos (ι i) = c.workTapePos i
+@embedEmitCfg_selected_tape : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x) (i : Fin m),
+  (embedEmitCfg ι tapes heads pre c).workTapes (ι i) = c.workTapes i
+@embedEmitCfg_state : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre : List Symbol) (c : Cfg m Symbol S x),
+  (embedEmitCfg ι tapes heads pre c).state = c.state
+@embedEmitTM : {m k : ℕ} →
+  {S : Type u_1} → {Symbol : Type u_2} → (Fin m ↪ Fin k) → MultiTapeTM m Symbol S → MultiTapeTM k Symbol S
+@embedSilentCfg_inputPos : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x),
+  (embedSilentCfg ι cap tapes heads pre out₀ c).inputPos = c.inputPos
+@embedSilentCfg_output : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x),
+  (embedSilentCfg ι cap tapes heads pre out₀ c).output = out₀
+@embedSilentCfg_state : ∀ {m k : ℕ} {S : Type u_1} {Symbol : Type u_2} {x : List Symbol} (ι : Fin m ↪ Fin k)
+  (cap : Fin k) (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ) (pre out₀ : List Symbol) (c : Cfg m Symbol S x),
+  (embedSilentCfg ι cap tapes heads pre out₀ c).state = c.state
+@instDecidableEqCounterLoopState : {S : Type} → [DecidableEq S] → DecidableEq (CounterLoopState S)
+instDecidableEqGuessRunPhase : DecidableEq GuessRunPhase
+instDecidableEqRewindPhase : DecidableEq RewindPhase
+instDecidableEqSeekPhase : DecidableEq SeekPhase
+instDecidableEqSweepPhase : DecidableEq SweepPhase
+@instDecidableEqWritePhase : {n : ℕ} → DecidableEq (WritePhase n)
+instFintypeGuessRunPhase : Fintype GuessRunPhase
+instFintypeRewindPhase : Fintype RewindPhase
+instFintypeSeekPhase : Fintype SeekPhase
+instFintypeSweepPhase : Fintype SweepPhase
+@instFintypeWritePhase : {n : ℕ} → Fintype (WritePhase n)
+@instInhabitedCfg.default._proof_1 : ∀ {a : Type u_1} {a_1 : List a}, NeZero (a_1.length + 2)
+length_pairEncode : ∀ (x y : List Bool), (pairEncode x y).length = 2 * x.length + 2 + y.length
+@moveInputPos : {n : ℕ} → Fin (n + 2) → SignType → Fin (n + 2)
+@moveInputPos_zero : ∀ {n : ℕ} (pos : Fin (n + 2)), moveInputPos pos 0 = pos
+pairDecode : List Bool → Option (List Bool × List Bool)
+pairDecode_pairEncode : ∀ (x α : List Bool), pairDecode (pairEncode x α) = some (x, α)
+pairEncode : List Bool → List Bool → List Bool
+@rewindTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → MultiTapeTM k Symbol RewindPhase
+@segment_iff : ∀ {k : ℕ} {Γ S : Type} {x : List Γ} (M : MultiTapeTM k Γ S) (F : Set (Option S)) (P : (Fin k → ℤ) → Prop)
+  (a b : Cfg k Γ S x) (t : ℕ),
+  Segment M F P a b t ↔ runFrom a t = b ∧ (∀ u < t, (runFrom a u).state ∉ F) ∧ ∀ u ≤ t, P (runFrom a u).workTapePos
+@skipBackTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → MultiTapeTM k Symbol SeekPhase
+stateWord : (k : ℕ) → List Bool → Fin k → List Bool
+streamStartCfg._proof_1 : ∀ (z : List Bool), NeZero (z.length + 2)
+@streamStartCfg_inputPos : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (streamStartCfg z j q s).inputPos = 1
+@streamStartCfg_output : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (streamStartCfg z j q s).output = []
+@streamStartCfg_state : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (streamStartCfg z j q s).state = some q
+@streamStartCfg_workTapePos : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) (x : Fin K),
+  (streamStartCfg z j q s).workTapePos x = 0
+@streamStartCfg_workTapes : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) (i : Fin K)
+  (a : ℤ), (streamStartCfg z j q s).workTapes i a = (if i = j then bufferTape s else fun x => none) a
+@transferMapTM : {Symbol : Type u_1} →
+  {Δ : Type u_2} →
+    (k : ℕ) →
+      Fin k →
+        Fin k → (Symbol → Δ) → (Option Symbol → Δ → Symbol) → (Symbol → Option Symbol) → MultiTapeTM k Symbol SweepPhase
+vhostCap : (m : ℕ) → Fin (1 + m + 1)
+@vhostCfg : {m : ℕ} →
+  {S : Type u_1} →
+    {x y : List Bool} → Cfg m Bool S y → Bool → Fin (x.length + 2) → List Bool → Cfg (1 + m) Bool (S × Bool) x
+@vhostCfg_inputPos : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+  (pre : List Bool), (vhostCfg c b p pre).inputPos = p
+@vhostCfg_output : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+  (pre : List Bool), (vhostCfg c b p pre).output = pre ++ c.output
+@vhostCfg_state : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool) (p : Fin (x.length + 2))
+  (pre : List Bool), (vhostCfg c b p pre).state = Option.map (fun q => (q, b)) c.state
+@vhostCfg_workTapePos : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) (i : Fin (1 + m)),
+  (vhostCfg c b p pre).workTapePos i = Fin.addCases (fun x => ↑↑c.inputPos - 1) c.workTapePos i
+@vhostCfg_workTapes : ∀ {m : ℕ} {S : Type u_1} {x y : List Bool} (c : Cfg m Bool S y) (b : Bool)
+  (p : Fin (x.length + 2)) (pre : List Bool) (i : Fin (1 + m)) (a : ℤ),
+  (vhostCfg c b p pre).workTapes i a =
+    Fin.addCases (motive := fun x => ℤ → Option Bool) (fun x => bufferTape y) c.workTapes i a
+@walkTM : {Symbol : Type u_1} →
+  (k : ℕ) → Fin k → (moved : Fin k → Prop) → [DecidablePred moved] → SignType → MultiTapeTM k Symbol SeekPhase
+@walkTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (src : Fin k) (moved : Fin k → Prop)
+  [inst : DecidablePred moved],
+  moved src →
+    ∀ (dir : SignType) (w : List Symbol) (d : Cfg k Symbol SeekPhase x),
+      d.state = some SeekPhase.run →
+        (∀ p ≤ w.length, d.workTapes src (d.workTapePos src + ↑dir * ↑p) = bufferTape w ↑p) →
+          runFrom d (w.length + 1) =
+              { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+                workTapePos := fun j => d.workTapePos j + if moved j then ↑dir * ↑(w.length + 1) else 0,
+                output := d.output } ∧
+            (∀ t < w.length + 1, (runFrom d t).state ≠ some SeekPhase.done) ∧
+              ∀ (j : Fin k),
+                ∀ t ≤ w.length + 1, (runFrom d t).workTapePos j = d.workTapePos j + if moved j then ↑dir * ↑t else 0
+@wordPatch : {Γ : Type u_1} → (ℤ → Option Γ) → ℤ → List Γ → ℤ → Option Γ
+@writeConstTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → (w₀ : List Symbol) → MultiTapeTM k Symbol (WritePhase w₀.length)
+'Complexity.TimeConstructible' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.Action' does not depend on any axioms
+'Turing.Action.apply' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_inputPos' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_output' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_state' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_workTapePos' depends on axioms: [propext, Quot.sound]
+'Turing.Action.apply_workTapes' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.Action.inputTape' does not depend on any axioms
+'Turing.Action.mk' does not depend on any axioms
+'Turing.Action.output' does not depend on any axioms
+'Turing.Action.state' does not depend on any axioms
+'Turing.Action.workTapes' does not depend on any axioms
+'Turing.Cfg' does not depend on any axioms
+'Turing.Cfg.Stopped' does not depend on any axioms
+'Turing.Cfg.ext' does not depend on any axioms
+'Turing.Cfg.init' depends on axioms: [propext]
+'Turing.Cfg.init_inputPos' depends on axioms: [propext]
+'Turing.Cfg.init_output' depends on axioms: [propext]
+'Turing.Cfg.init_state' depends on axioms: [propext]
+'Turing.Cfg.init_workTapePos' depends on axioms: [propext]
+'Turing.Cfg.init_workTapes' depends on axioms: [propext]
+'Turing.Cfg.inputPos' does not depend on any axioms
+'Turing.Cfg.inputSymbol' depends on axioms: [propext, Quot.sound]
+'Turing.Cfg.mk' does not depend on any axioms
+'Turing.Cfg.ofWords' depends on axioms: [propext]
+'Turing.Cfg.ofWords_inputPos' depends on axioms: [propext]
+'Turing.Cfg.ofWords_output' depends on axioms: [propext]
+'Turing.Cfg.ofWords_state' depends on axioms: [propext]
+'Turing.Cfg.ofWords_workTapePos' depends on axioms: [propext]
+'Turing.Cfg.ofWords_workTapes' depends on axioms: [propext]
+'Turing.Cfg.output' does not depend on any axioms
+'Turing.Cfg.state' does not depend on any axioms
+'Turing.Cfg.stopped_iff' does not depend on any axioms
+'Turing.Cfg.workTapePos' does not depend on any axioms
+'Turing.Cfg.workTapeSymbols' does not depend on any axioms
+'Turing.Cfg.workTapeSymbols_eq' does not depend on any axioms
+'Turing.Cfg.workTapes' does not depend on any axioms
+'Turing.CodeNDTM.toFinNDTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.CounterLoopState' does not depend on any axioms
+'Turing.CounterLoopState.dec' does not depend on any axioms
+'Turing.CounterLoopState.done' does not depend on any axioms
+'Turing.EffectiveNDMachineCode.toNDMachineCode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinNDTM' depends on axioms: [propext, Quot.sound]
+'Turing.FinNDTM.State' depends on axioms: [propext, Quot.sound]
+'Turing.FinNDTM.decEqState' depends on axioms: [propext, Quot.sound]
+'Turing.FinNDTM.k' depends on axioms: [propext, Quot.sound]
+'Turing.FinNDTM.mk' depends on axioms: [propext, Quot.sound]
+'Turing.FinNDTM.tm' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.ComputesFunInTime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.ComputesInTime' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.State' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.VirtualTag' does not depend on any axioms
+'Turing.FinTM.VirtualTag_iff' does not depend on any axioms
+'Turing.FinTM._sizeOf_inst' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.bufferTape' does not depend on any axioms
+'Turing.FinTM.bufferTape_append_shift' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.bufferTape_eq' does not depend on any axioms
+'Turing.FinTM.bufferTape_eq_none_of_not_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.bufferTape_nil' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.bufferTape_of_neg' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.computesFunInTime_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesFunInTime_prepend' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.computesInTime_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.decEqState' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.fintypeState' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.k' depends on axioms: [propext, Quot.sound]
+'Turing.FinTM.pairExtractTM_fst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.pairExtractTM_snd' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.FinTM.tm' depends on axioms: [propext, Quot.sound]
+'Turing.FlagPhase.run' does not depend on any axioms
+'Turing.GuessRunPhase' does not depend on any axioms
+'Turing.GuessRunPhase.State' does not depend on any axioms
+'Turing.GuessRunPhase.instDecidableEqState' does not depend on any axioms
+'Turing.GuessRunPhase.instFintypeState' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.MultiTapeTM' does not depend on any axioms
+'Turing.MultiTapeTM._sizeOf_inst' does not depend on any axioms
+'Turing.MultiTapeTM.initCfg' depends on axioms: [propext]
+'Turing.MultiTapeTM.initCfg_eq' depends on axioms: [propext]
+'Turing.MultiTapeTM.mk' does not depend on any axioms
+'Turing.MultiTapeTM.output_length_le' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.q₀' does not depend on any axioms
+'Turing.MultiTapeTM.runFrom' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.runFrom_add' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.runFrom_of_halt' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.runFrom_state_ne_none_of_le' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.runFrom_zero' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.step' depends on axioms: [propext, Quot.sound]
+'Turing.MultiTapeTM.tr' does not depend on any axioms
+'Turing.NDMachineCode.decode' does not depend on any axioms
+'Turing.NDTM.HaltsWithin.mono' depends on axioms: [propext, Quot.sound]
+'Turing.NDTM.initCfg' depends on axioms: [propext]
+'Turing.NDTM.runWith' depends on axioms: [propext, Quot.sound]
+'Turing.RewindPhase' does not depend on any axioms
+'Turing.RewindPhase.done' does not depend on any axioms
+'Turing.RewindPhase.start' does not depend on any axioms
+'Turing.SeekPhase' does not depend on any axioms
+'Turing.SeekPhase.done' does not depend on any axioms
+'Turing.SeekPhase.run' does not depend on any axioms
+'Turing.Segment' depends on axioms: [propext, Quot.sound]
+'Turing.Segment.trans' depends on axioms: [propext, Quot.sound]
+'Turing.SweepPhase' does not depend on any axioms
+'Turing.SweepPhase.done' does not depend on any axioms
+'Turing.SweepPhase.sweep' does not depend on any axioms
+'Turing.WritePhase' does not depend on any axioms
+'Turing.WritePhase.done' does not depend on any axioms
+'Turing.WritePhase.wr' does not depend on any axioms
+'Turing.clearTM' does not depend on any axioms
+'Turing.clockCfg' depends on axioms: [propext, Quot.sound]
+'Turing.copyMapTM' does not depend on any axioms
+'Turing.counterLoopStateFintype' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterOverhead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.counterOverhead_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.embedEmitCfg' does not depend on any axioms
+'Turing.embedEmitCfg_inputPos' does not depend on any axioms
+'Turing.embedEmitCfg_output' does not depend on any axioms
+'Turing.embedEmitCfg_selected_pos' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitCfg_selected_tape' depends on axioms: [propext, Quot.sound]
+'Turing.embedEmitCfg_state' does not depend on any axioms
+'Turing.embedEmitTM' does not depend on any axioms
+'Turing.embedSilentCfg_inputPos' does not depend on any axioms
+'Turing.embedSilentCfg_output' does not depend on any axioms
+'Turing.embedSilentCfg_state' does not depend on any axioms
+'Turing.instDecidableEqCounterLoopState' does not depend on any axioms
+'Turing.instDecidableEqGuessRunPhase' does not depend on any axioms
+'Turing.instDecidableEqRewindPhase' does not depend on any axioms
+'Turing.instDecidableEqSeekPhase' does not depend on any axioms
+'Turing.instDecidableEqSweepPhase' does not depend on any axioms
+'Turing.instDecidableEqWritePhase' does not depend on any axioms
+'Turing.instFintypeGuessRunPhase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.instFintypeRewindPhase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.instFintypeSeekPhase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.instFintypeSweepPhase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.instFintypeWritePhase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.instInhabitedCfg.default._proof_1' depends on axioms: [propext]
+'Turing.length_pairEncode' depends on axioms: [propext, Quot.sound]
+'Turing.moveInputPos' depends on axioms: [propext, Quot.sound]
+'Turing.moveInputPos_zero' depends on axioms: [propext, Quot.sound]
+'Turing.pairDecode' does not depend on any axioms
+'Turing.pairDecode_pairEncode' depends on axioms: [propext, Quot.sound]
+'Turing.pairEncode' does not depend on any axioms
+'Turing.rewindTM' does not depend on any axioms
+'Turing.segment_iff' depends on axioms: [propext, Quot.sound]
+'Turing.skipBackTM' does not depend on any axioms
+'Turing.stateWord' does not depend on any axioms
+'Turing.streamStartCfg._proof_1' depends on axioms: [propext]
+'Turing.streamStartCfg_inputPos' depends on axioms: [propext]
+'Turing.streamStartCfg_output' depends on axioms: [propext]
+'Turing.streamStartCfg_state' depends on axioms: [propext]
+'Turing.streamStartCfg_workTapePos' depends on axioms: [propext]
+'Turing.streamStartCfg_workTapes' depends on axioms: [propext]
+'Turing.transferMapTM' does not depend on any axioms
+'Turing.vhostCap' depends on axioms: [propext]
+'Turing.vhostCfg' depends on axioms: [propext, Quot.sound]
+'Turing.vhostCfg_inputPos' depends on axioms: [propext, Quot.sound]
+'Turing.vhostCfg_output' depends on axioms: [propext, Quot.sound]
+'Turing.vhostCfg_state' depends on axioms: [propext, Quot.sound]
+'Turing.vhostCfg_workTapePos' depends on axioms: [propext, Quot.sound]
+'Turing.vhostCfg_workTapes' depends on axioms: [propext, Quot.sound]
+'Turing.walkTM' does not depend on any axioms
+'Turing.walkTM_run_ofCfg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Turing.wordPatch' does not depend on any axioms
+'Turing.writeConstTM' depends on axioms: [propext, Quot.sound]

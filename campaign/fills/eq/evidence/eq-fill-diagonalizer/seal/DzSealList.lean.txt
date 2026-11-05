@@ -1,0 +1,29 @@
+/-
+Seal-list generator (a probe record, not library code): every TCSlib definition outside the owned
+module that is semireducible, not an instance, not a projection, not private and not a matcher or
+auxiliary declaration, over the owned module's import closure. One name per output line.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+open Lean Meta Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let own := `TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+  let mut out : Array String := #[]
+  for (n, ci) in env.constants.toList do
+    let some idx := env.getModuleIdxFor? n | continue
+    let mod := env.header.moduleNames[idx.toNat]!
+    unless (`TCSlib).isPrefixOf mod do continue
+    if mod == own then continue
+    unless ci matches .defnInfo _ do continue
+    if isPrivateName n then continue
+    if n.isInternal then continue
+    if isInstanceCore env n then continue
+    if (env.getProjectionFnInfo? n).isSome then continue
+    if (← liftTermElabM <| Meta.isMatcher n) then continue
+    let s := n.toString
+    if s.endsWith "._sunfold" || s.endsWith "._unsafe_rec" then continue
+    if (n.components.any fun c => (c.toString.startsWith "match_") || c.toString.startsWith "proof_" || c.toString.startsWith "eq_") then continue
+    unless getReducibilityStatusCore env n == .semireducible do continue
+    out := out.push s
+  for s in out.qsort (· < ·) do
+    IO.println s!"SEAL {s}"

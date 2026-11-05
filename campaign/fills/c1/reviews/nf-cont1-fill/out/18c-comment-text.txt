@@ -1,0 +1,357 @@
+709: ! ### The verifier's layout
+711: The verifier is a deterministic two-tape machine composed by `Turing.phaseHostTM`. It runs the
+712: control sweep (a fold by `Turing.scanTM` over the stream on tape `0`), then one replay per
+713: replayed tape (the input first, then each work tape on tape `1`), each followed by the return of
+714: tape `0` (`Turing.skipTM`, `Turing.skipBackTM`) and, for a work tape, the clear of tape `1`
+715: (`Turing.skipTM`, `Turing.skipBackTM`, `Turing.clearTM`), and ends in a stationary verdict
+716: park. It is silent: no phase emits output. 
+718: - The verifier's phases for `k` work tapes. 
+720: - the control sweep, a scan fold over the stream on tape `0` 
+722: - the replay of tape `j` (`none`: the input; `some j`: work tape `j`, on tape `1`) 
+724: - the return of tape `0`, first step: from the blank after the stream, one cell right 
+726: - the return of tape `0`, second step: back to cell `0` 
+728: - the clear of tape `1`, first step: to one past the visited region's right blank 
+730: - the clear of tape `1`, second step: back to the visited region's first cell 
+732: - the clear of tape `1`, third step: blank the visited region 
+734: - the verdict park 
+738: - The states of each phase, over the replay leaf's state type `SL`. 
+749: - Decidable equality of each phase's states, named: default synthesis does not reach
+750: `ScanPhase (nf_SweepState N)` at the default instance size. 
+762: - Finiteness of each phase's states, named as `nf_stDecEq` is. 
+774: - The verdict park: it stays at its state and moves nothing. 
+778: - The phase machines, over a replay leaf `L` per replayed tape. 
+790: - After tape `j`'s phases: the next work tape's replay, or the passing verdict. 
+798: - The redirect table: each phase's exit to the next phase's start, a failure to the rejecting
+799: park. `exit` reads the replay leaf's verdict states (`some true` passed, `some false` failed). 
+833: - The verifier: the phase host over the phases, entered at the control sweep. 
+838: ! ### The replay leaf
+840: One two-tape machine, parameterized by the replayed tape (`none` the input, `some j` work tape
+841: `j`). It reads tape `0` one cell per step with the control sweep's own record parser and control
+842: (`nf_sweepStep`), so its simulated state is the control sweep's, and at each completed record
+843: recomputes the action of `N`'s table on the record's decoded claims (`nf_decode`). The input
+844: instance compares the decoded input claim with the cell under the native input head and performs
+845: the recomputed input move. A work-tape instance keeps the replayed tape on tape `1` as two-bit
+846: blocks, two nonblank bits per visited cell (`nf_record`'s code) and two blanks per unvisited
+847: cell: at each record it checks the decoded claim against the block under its head, rewrites the
+848: block with the cell's new content, and moves two cells per simulated move, except after the
+849: end-flagged record. 
+851: - The replay leaf's states. 
+853: - reading the stream on tape `0`, with the control sweep's parser and control 
+855: - at the first cell of the replayed cell's block on tape `1`, with the record's claim, the
+856:   cell's new content, the simulated move and the end flag 
+858: - at the block's second cell, with its first cell's old content `β` 
+861: - the first of the two head adjustments on tape `1` after a block 
+863: - the second head adjustment 
+865: - the passing exit 
+867: - the rejecting exit 
+870: - The replay leaf's states as a sum of finite types, for its instances. 
+900: - Decidable equality of the replay leaf's states. 
+913: - Finiteness of the replay leaf's states. 
+926: - The action of `N`'s table on a completed record at a live simulated state, read through the
+927: record's decoded claims: the action `nf_complete` recomputes. 
+932: - A block of tape `1` decodes as `nf_decode` reads a claim: a false or blank first cell is a
+933: blank cell. 
+937: - **The replay leaf** for the replayed tape `j` (`none` the input, `some j` work tape `j`).
+938: It is a hand-built machine because no public row reads fixed-width records off one tape while
+939: checking them against another: `Turing.scanTM` reads one tape, and the record reader of
+940: `Turing.StepBlock` reads records on `k + 2` tapes. 
+976: - The replay leaf's verdict states: `pass` passed, `rej` failed, every other state live. 
+982: -- the verifier's state type is finite with decidable equality, by the named instances
+986: ! ### Chaining the verifier's phases 
+988: - A configuration whose state is redirected to `⟨i, q⟩` is the tagged configuration of phase
+989: `i` at `q`. 
+1005: - A configuration tagged by a phase other than the park is at no verdict. 
+1016: - The redirect after the return of tape `0`: the next tape's replay or the verdict after the
+1017: input, the clear of tape `1` after a work tape. 
+1024: - **The return of tape `0` after a replay.** From the head of tape `0` on the blank after the
+1025: stream `s` (tape `0` holding `s` from cell `0`), the verifier's phases `aFwd j` (`Turing.skipTM`
+1026: at `w := []`) and `aBack j` (`Turing.skipBackTM` at `u := s`) bring that head to cell `0` and
+1027: redirect to `nf_aNext N L j`, in `|s| + 6` steps, with the tapes, the head of tape `1`, the input
+1028: head and the output unchanged, and at no verdict on the way.
+1030: **Proof sketch.** Chain the two framed seek runs through the phase lemma of the phase host,
+1031: reading the redirected configuration as the second phase's start. Inside each phase the host's
+1032: run is the phase's run tagged by that phase, which is not the park. 
+1048: -- phase `aFwd j`: one step right, over the blank
+1070: -- the redirected configuration is phase `aBack j`'s start
+1074: -- phase `aBack j`: back over the stream to cell `0`
+1122: - **The clear of tape `1` after a work tape's replay.** From the head of tape `1` at any offset
+1123: `i ≤ |R|` into a region `R` delimited by blanks (so `i = |R|`, the right delimiter, is allowed),
+1124: the phases `bFwd j` (`Turing.skipTM` over `R.drop i`), `bBack j` (`Turing.skipBackTM` at
+1125: `u := R`) and `bClr j` (`Turing.clearTM` over `R`) reach `nf_after N L (some j)` with tape `1`
+1126: blank on the region and its head on the region's first cell, everything else unchanged, and at no
+1127: verdict on the way.
+1129: **Proof sketch.** Chain the three framed runs through the phase lemma of the phase host,
+1130: reading each redirected configuration as the next phase's start. The region's suffix from the
+1131: head, the whole region from one past its right delimiter, and the region from its first cell are
+1132: read off the buffer of `R`. Inside each phase the host's run is tagged by that phase, which is
+1133: not the park. 
+1156: -- phase `bFwd j`: over the region's suffix from the head
+1185: -- phase `bBack j`: back over the whole region to its first cell
+1212: -- the redirected configuration is phase `bClr j`'s start
+1218: -- phase `bClr j`: blank the region
+1284: - **The verifier's entry is the stream start.** After the trivial setup, the run's entry
+1285: configuration is `streamStartCfg x 0 q s`: state `q`, the input head at `1`, `s` on tape `0`
+1286: from cell `0` (blank elsewhere), tape `1` blank, both heads at `0`, empty output.
+1288: **Proof sketch.** Compare the two configurations field by field through their field equations.
+1289: On tape `0` the guessed block over the blank initial tape is the buffer of `s`: inside the block
+1290: by definition, and outside it both are blank (left of cell `0`, and past the end of `s`). 
+1314: - A stream-start configuration with a tagged state is the tagged stream start. 
+1326: - **The input read depends on the input head only**, across machines with any work tapes and
+1327: states: a claim checked against the verifier's input head transfers to `N`'s configuration. 
+1341: - After a record's first `2k + 3` bits the parser is at the last position with the control
+1342: unchanged; the record's last bit completes the full record array, and the parser's step there
+1343: resets the parser and applies the completion rule to that record.
+1345: **Proof sketch.** The prefix law of the parser gives the position and the stored prefix. Storing
+1346: the last bit fills the only missing entry, and the whole-record law, split at its last bit, is
+1347: the parser's last step. 
+1375: - **The replay leaf reads a record's bits.** From a record boundary, with the record's bits on
+1376: tape `0` from its head, the leaf takes one step per bit, moving that head right and storing the
+1377: bit in the control sweep's parser, and changes nothing else, for every instance.
+1379: **Proof sketch.** Induct on the number of bits read. Before the record's last bit the parser's
+1380: position is not the last one, so the leaf's table is a one-tape right move on tape `0` that
+1381: stores the scanned bit; the stored prefix grows by that bit, and the head of tape `0` by one
+1382: cell. 
+1437: - **The replay leaf at a record's last bit.** From a record boundary, with the record on tape `0`
+1438: from its head, every instance is at no exit for the record's first `2k + 4` steps; after `2k + 3`
+1439: of them it reads the last bit with the parser at its last position, the record's array complete
+1440: once that bit is stored, and the parser's step there the completion rule.
+1442: **Proof sketch.** The read of the first `2k + 3` bits, then the parser's last-position facts. 
+1478: - **One record of the input's replay.** From a record boundary, with the record on tape `0`
+1479: from its head, the input instance reads the record in `2k + 4` steps, at no exit before. At a
+1480: live control whose decoded input claim is the cell under the native input head, it performs the
+1481: recomputed input move, its head on tape `0` is one cell past the record, and it is at the next
+1482: record boundary, or passes if the record is end-flagged; otherwise it rejects.
+1484: **Proof sketch.** Up to the record's last bit the leaf reads the record, and there the parser
+1485: completes it. The leaf's table, read at the control's state and at the native input cell (which
+1486: depends on the input head only), is then a one-tape action: a move of the input head and of the
+1487: head of tape `0`, or a stationary rejection. 
+1547: - **The decoded virtual step of `N`.** At a live state, apply the action recomputed from a
+1548: record's decoded claims (`nf_act`); a halted configuration stays. When every claim is the
+1549: configuration's read, it is `N`'s step under the record's choice bit (`nf_vstep_genuine`). 
+1556: - A record's claim on replayed tape `i` (`0` the input, `j.succ` work tape `j`) is checked: the
+1557: virtual configuration is live and the decoded claim is its read on that tape. 
+1564: - The control fold's state follows the decoded virtual run, one record at a time. 
+1577: - The control fold's state and output summary follow the decoded virtual run.
+1579: **Proof sketch.** Case on the virtual state. Halted, both stay. Live, the completion rule and
+1580: the virtual step apply the same recomputed action, and appending the action's emission updates
+1581: the output summary as the completion rule does. 
+1599: - The control fold's state follows the decoded virtual run, over a list of records. 
+1612: - A stream of records, one record and the rest: its cells from a head are the record's bits
+1613: and then the rest's cells one record further.
+1615: **Proof sketch.** The stream is the record's bits followed by the rest's stream; read a cell
+1616: before the record's end in the first part and a later cell in the second, shifted by the record
+1617: width. 
+1642: - Every record of `rec :: rs` meets a check along the virtual run from `c` exactly when `rec`
+1643: meets it at `c` and every record of `rs` meets it along the run from the virtual step. 
+1659: - In a stream of records whose end flags mark exactly the last, the first record's flag says
+1660: whether it is the only one, and the rest's flags mark exactly the rest's last. 
+1676: - **The input's replay.** From a record boundary with a stream of `n ≥ 1` records on tape `0`
+1677: from its head, only the last end-flagged, at a control that follows the virtual configuration
+1678: `c` whose input head is the native one, the input instance reaches an exit at some time `T`, at
+1679: no exit before. It passes exactly when every record's input claim is checked along the decoded
+1680: virtual run; then `T = (2k + 4)n`, its head on tape `0` is one cell past the stream, and only
+1681: that head, the input head and the state have changed. Otherwise it rejects.
+1683: **Proof sketch.** Induct over the records, one record at a time: a failed check rejects at the
+1684: record's end; a passed check of the end-flagged record passes; a passed check of an unflagged
+1685: record moves the input head as the virtual step does, keeps the control equal to the virtual
+1686: run's state, and leaves the rest of the stream one record further on, where the induction
+1687: hypothesis applies. 
+1790: - Tape `1` with the block at cell `b` rewritten to hold the content `n`: two nonblank bits,
+1791: `nf_record`'s code of `n`. 
+1796: - **One block of a work tape's replay.** At the first cell `b` of the block on tape `1`, the
+1797: work-tape instance reads the block's two cells, rewriting them to the cell's new content `n`, in
+1798: two steps. If the block decodes to the claim, then after the end-flagged record it passes, its
+1799: head on the block's second cell; after any other record two more steps leave that head at
+1800: `b + 2 mv`, at the next record boundary. Otherwise it rejects. Tape `0`, its head, the input head
+1801: and the output do not change, and there is no exit before.
+1803: **Proof sketch.** Each of the four steps is a one-tape action of the leaf's table on tape `1`:
+1804: two writing steps, the second of which checks the block read off the first step's old cell and
+1805: the second cell (unchanged by the first write), then two moves. The head of tape `1` moves by
+1806: `+1`, then `+1` or `−1`, then `0` or `−1` twice, which sums to two cells per simulated move. 
+1831: -- the first block step: read the first cell, write the content's first bit, move right
+1902: -- the second block step, then the two head adjustments
+1961: - **The read of one record by a work-tape instance.** From a record boundary, with the record on
+1962: tape `0` from its head, the instance for work tape `t` reads the record in `2k + 4` steps, at no
+1963: exit before. At a live control it is then at the first cell of the block on tape `1`, carrying
+1964: the decoded claim on tape `t`, the cell's new content under the recomputed action, the simulated
+1965: move and the end flag, with the head of tape `0` one cell past the record and nothing else
+1966: changed; at a halted control it rejects.
+1968: **Proof sketch.** Up to the record's last bit the leaf reads the record, and there the parser
+1969: completes it. The leaf's table at a live control is then a right move on tape `0` into the block's
+1970: first state, with the record's decoded claims and recomputed action. 
+2019: - **The block representation of a replayed work tape.** Tape `1` holds the replayed tape's cells
+2020: `[lo, hi]` as two-bit blocks from cell `p₀` (cell `y` at `p₀ + 2y` and `p₀ + 2y + 1`), with the
+2021: contents `v`, and is blank elsewhere; and `v` is blank outside `[lo, hi]`. 
+2027: - A represented cell's block decodes to the cell's content, visited or not. 
+2041: - Rewriting the block of a cell next to or inside the represented interval extends the
+2042: interval by that cell and updates its content.
+2044: **Proof sketch.** The rewritten cells are the block of `y`; every other cell is unchanged, and a
+2045: cell other than `y` is in the new interval exactly when it is in the old one, since `y` is at most
+2046: one cell outside it. 
+2084: - The nonblank cells of a represented interval `[lo, hi]` are exactly its blocks'.
+2086: **Proof sketch.** Every cell is the first or the second cell of some block; a block's cells are
+2087: nonblank exactly when its cell is in the interval. 
+2110: - A simulated move is at most one cell. 
+2114: - **A work tape's replay.** From a record boundary with a stream of `n ≥ 1` records on tape `0`
+2115: from its head (only the last end-flagged), at a control that follows the virtual configuration
+2116: `c`, and with tape `1` holding `c`'s work tape `t` as blocks from `p₀` over an interval
+2117: `[lo, hi]` within one cell of `c`'s head (and the head of tape `1` on the head's block), the
+2118: instance for work tape `t` reaches an exit at some time `T`, at no exit before. It passes exactly
+2119: when every record's claim on tape `t` is checked along the decoded virtual run; then
+2120: `T + 2 = (2k + 8)n`, its head on tape `0` is one cell past the stream, and tape `1` is blank
+2121: outside a nonempty contiguous region of nonblank cells `[p₀ + 2lo', p₀ + 2hi' + 1]`, of at most
+2122: `hi - lo + 1 + n` blocks, holding the head of tape `1` on its block `y`'s second cell. Otherwise it
+2123: rejects.
+2125: **Proof sketch.** Induct over the records. One record is its read, then its block: a dead control
+2126: rejects after the read, a failed check rejects after the block's second step. A passed check
+2127: writes the block of the virtual head with the cell's new content, which is the virtual step's,
+2128: so the block representation extends by that cell; after the end-flagged record the leaf passes
+2129: there, and after any other the head of tape `1` moves to the next virtual head's block, within one
+2130: cell of the extended interval, where the induction hypothesis applies. 
+2198: -- the virtual step on work tape `t`
+2325: - **The exit invariant on tape `1` gives its clear's input.** If tape `1`'s nonblank cells are
+2326: exactly the interval `[S, E]` and its head is at `h ∈ [S, E]`, then from `h - i` (with
+2327: `i = h - S`) it holds a blank-delimited word `R` of length `E - S + 1`, and blanking `R`'s cells
+2328: leaves tape `1` blank everywhere.
+2330: **Proof sketch.** Read `R` off the interval's cells. Inside the interval every cell is nonblank,
+2331: so it is `R`'s letter there; the cells just left and right of the interval are blank, as is the
+2332: buffer of `R` there; and every cell outside the interval was blank already. 
+2373: ! ### The verifier's characterization 
+2375: - A stream of records has `2k + 4` cells per record. 
+2384: - The entry of the verifier's phases for work tape `m`: its replay, or the passing verdict once
+2385: every work tape has been replayed. 
+2390: - Every check of the verifier passes on a stream of records: the control sweep's, and every
+2391: record's claim on every replayed tape along the decoded virtual run from `N`'s start. 
+2399: - **The verifier over the work tapes from `m` on.** From the entry of work tape `m`, with tape
+2400: `0` holding the stream from cell `0` and its head there, tape `1` blank and the output empty, the
+2401: verifier reaches a first verdict at some time `T`. It accepts exactly when every record's claim
+2402: on every work tape `t ≥ m` is checked along the decoded virtual run; then the output is empty and
+2403: `T ≤ (k - m)((2(2k + 4) + 12)n + 15)`.
+2405: **Proof sketch.** Induct on `k - m`. With every work tape replayed the entry is the passing
+2406: verdict. Otherwise run the replay of tape `m` from tape `1`'s head: a failed check rejects one
+2407: dispatch later; a pass is followed by the return of tape `0` and the clear of tape `1`, which the
+2408: exit invariant feeds and which leaves tape `1` blank again, at the next work tape's entry, where
+2409: the induction hypothesis applies. Inside each phase the verifier is at no verdict. The time adds
+2410: the replay's `(2k + 8)n - 2`, the dispatches, the return's `|s| + 6` and the clear's at most
+2411: `4|R| + 9` with `|R| ≤ 2n`. 
+2457: -- the replay of work tape `m`, from tape `1`'s head
+2503: -- the replay passes: one dispatch to the return of tape `0`
+2547: -- the region of tape `1`, and its clear
+2582: -- the chain
+2642: -- a failed check rejects one dispatch after the replay's exit
+2660: - Every check passes exactly when the control sweep passes, every input claim is checked, and
+2661: every work-tape claim is checked. 
+2677: - **The verifier's characterization.** From the stream start of a stream of `n ≥ 1` records
+2678: (only the last end-flagged), the verifier reaches a first verdict, `acc` or `rej`, at some time
+2679: `TQ`. It accepts exactly when every check passes (`nf_allPass`); then its output is empty and
+2680: `TQ ≤ 4|s| + 10 + k((2(2k + 4) + 12)n + 15)`.
+2682: **Proof sketch.** The control sweep is the scan fold, `2|s| + 2` steps, and a failed sweep
+2683: rejects at the dispatch. Otherwise the input's replay runs from the stream start: a failed check
+2684: rejects at its dispatch, a pass is followed by the return of tape `0` to the first work tape's
+2685: entry, with tape `0` holding the stream, its head at `0`, tape `1` blank and the output empty.
+2686: The work tapes' part is `nf_V_tail` from there. 
+2712: -- the control sweep
+2737: -- a failed control sweep rejects at the dispatch
+2750: -- the input's replay
+2807: -- a failed input check rejects at the dispatch
+2825: -- the input passes: the return of tape `0`, then the work tapes
+2906: - **A stream that first stops the controller is a stream of records**: `n ≥ 1` records of width
+2907: `2k + 4`, only the last end-flagged.
+2909: **Proof sketch.** The first-stop criterion gives the length `(2k + 4)n` and the flags. Cut the
+2910: stream into `n` records of `2k + 4` cells by the product law of `List.ofFn`; the end flag of record
+2911: `r` is the stream's cell `(2k + 4)(r + 1) - 1`. 
+2950: - The trivial setup: one state, its own exit. 
+2955: - **The backward lemma's obligation `hV`.** For every stream that first stops the controller at
+2956: its end, well formed or not in content, the verifier reaches a verdict, `acc` or `rej`, from the
+2957: host's entry configuration after the trivial setup, and is at neither before.
+2959: **Proof sketch.** The entry configuration is the stream start; the stream is a stream of records;
+2960: the characterization gives the first verdict. 
+2984: - **Checked claims make the decoded virtual run genuine.** If every claim of every record before
+2985: the `r`th is checked along the decoded virtual run, then the run after `r` records is `N`'s run
+2986: under the records' first `r` choice bits.
+2988: **Proof sketch.** Induct on `r`. A record whose claims are all checked decodes to the
+2989: configuration's reads at a live state, so the recomputed action is the table's action there under
+2990: the record's choice bit, and the virtual step is `N`'s step. 
+3022: - **The verifier accepts a genuine display.** The display of a branch that is live before its
+3023: end, halts at its end and outputs exactly `[true]` passes every check; so the verifier's first
+3024: verdict on it is `acc`, with an empty output, within the characterization's bound.
+3026: **Proof sketch.** The display is a stream of genuine records, only the last end-flagged. The
+3027: control sweep passes it. By strong induction on records, the claims checked so far make the decoded
+3028: virtual run the genuine run, live before the end, whose reads the next record's claims are. 
+3100: ! ### The transfers 
+3102: - The normal form's constant for `k` work tapes, with the record width `W = 2k + 4`:
+3103: `6W + k(2W + 12) + 21 + 15k`. 
+3107: - The normal form's machine: the controller-stopped host over the trivial setup, the display
+3108: controller, and the verifier, guessing on tape `0`. 
+3116: - **The ledger.** With `|s| = (2k + 4)t₀` and the verifier's time at most
+3117: `4|s| + 10 + k((2(2k + 4) + 12)t₀ + 15)`, the host's budget `0 + 2|s| + TQ + 11` is at most
+3118: `nf_C k · (t + 1)` for every `t ≥ t₀`.
+3120: **Proof sketch.** Collect the budget as `(6(2k + 4) + k(2(2k + 4) + 12))t₀ + 21 + 15k`, raise `t₀`
+3121: to `t`, and bound the constant term by `(21 + 15k)(t + 1)`. 
+3138: - **The forward transfer.** If `N` accepts `x` within `t` steps, the normal form's machine accepts
+3139: `x` within exactly `nf_C N.k · (t + 1)` choices.
+3141: **Proof sketch.** Cut the accepting word at its first halting time `t₀ ≥ 1`, at most `t`; the
+3142: branch is live before `t₀`, halted at `t₀` and outputs `[true]` there, as at `t`. Its display first
+3143: stops the controller at its end, and the verifier accepts it at its first verdict, with an empty
+3144: output, within the characterization's bound. The host's forward acceptance lemma, after the
+3145: trivial setup, accepts at every budget past the ledger's. 
+3152: -- the first halting time
+3184: -- the verifier on the branch's display
+3200: - **A passing stream of records is a genuine accepting run.** If every check passes on `n`
+3201: records, then `N` accepts `x` within `n` steps, with the records' choice bits as the word.
+3203: **Proof sketch.** Passed checks make the decoded virtual run `N`'s run under the choice bits.
+3204: The control fold follows the virtual run's state and output summary; the control sweep's pass then
+3205: says the run has halted with output summary `[true]`, so with output exactly `[true]`. Claims are
+3206: read through `nf_decode` throughout: a record whose presence bit is false reads as blank whatever
+3207: its value bit, so the code `01` is no loophole. 
+3219: -- the control fold follows the virtual run
+3241: - **The backward transfer.** If some choice word halts the normal form's host with output
+3242: exactly `[true]`, then `N` accepts `x` at some length.
+3244: **Proof sketch.** The host's backward acceptance lemma, with `hV`, gives a stream that first stops
+3245: the controller and on which the verifier's first verdict is `acc`. The stream is a stream of
+3246: records, and the characterization's first verdict is the same time, since the verifier is at no
+3247: verdict before either; so every check passes, and the passing stream is a genuine accepting run. 
+3273: - **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+3274: cited through [AB09, §3.2]): every
+3275: nondeterministic machine has a coded (two-work-tape) equivalent whose
+3276: acceptance tracks the original's at linear time overhead — forward with the
+3277: explicit constant, backward in unbounded form (the consumer recovers the
+3278: budgeted form from the original's all-branch halting by the truncation
+3279: argument, `Turing.NDTM.runWith_of_halt`).
+3281: **Proof sketch.** Guess-then-verify, the reason codes carry **two** work
+3282: tapes: on tape A the simulator guesses, left to right and one choice bit per
+3283: guessed bit, the full display sequence of a `k`-tape run of `N` — per step
+3284: the choice bit, the state, the `k + 1` scanned symbols, and the action record
+3285: (`O_N(1)` cells per step) — checking the **control-local** part on the fly
+3286: (each record must follow from its predecessor by `N`'s table, hardwired in
+3287: the simulator's finite control). Then the non-local reads are verified in
+3288: `k + 1` sweeps: the input claims by replaying the claimed input-head moves
+3289: against the real input tape, and each work tape `j` by replaying tape `j` on
+3290: tape B — B's head tracks tape `j`'s claimed head, so each step checks the
+3291: claimed read against B's cell and applies the claimed write at unit cost —
+3292: rewinding A and clearing B between sweeps. Total `O_N((k+1)·(t+1)) =
+3293: C·(t+1)` — the `k+1` covers the zero-work-tape case, where the display
+3294: guess and the input sweep remain.
+3295: Forward transfer: a genuine accepting run of length `t` yields the accepting
+3296: display, guessed and verified within `C·(t+1)`. Backward: a verified display
+3297: **is** a genuine run (the sweeps force consistency), so an accepting branch
+3298: of the simulator exhibits an accepting branch of `N` at some length —
+3299: unbounded on purpose: runaway guessing branches never accept, and no
+3300: all-branch-halting claim is made for the simulator. State-space finiteness
+3301: packages as `Fin` by the relabeling `Turing.NDTM.relabelState` (the
+3302: nondeterministic mirror of `Turing.MultiTapeTM.relabelState`, as in the
+3303: `exists_codeTM` precedent). Fill obligations, named: the display format and
+3304: its on-the-fly control check; the `k + 1` verification sweeps; the two
+3305: transfer directions; the relabeling packaging.
+3307: **Implementation.** The display refines the sketch: one record of `2k + 4`
+3308: bits per step of `N`, holding the step's choice bit, the claimed input and
+3309: work-tape reads (two bits each: `00` blank, `10` false, `11` true) and an end
+3310: flag, set on the last record only. States and actions are not guessed: the
+3311: verifier recomputes them from `N`'s table in its finite control. The guess
+3312: runs under the controller-stopped host `Turing.guessCtlRunTM` with a trivial
+3313: setup; its controller stops at the first record boundary after a set end
+3314: flag. The verifier is deterministic and silent: a control sweep (a fold by
+3315: `Turing.scanTM`) checks the recomputed states, the end flags and the output,
+3316: and replay sweeps check the claimed reads against the input and, on the
+3317: second work tape, against each replayed work tape, which `Turing.skipTM`,
+3318: `Turing.skipBackTM` and `Turing.clearTM` then erase. 

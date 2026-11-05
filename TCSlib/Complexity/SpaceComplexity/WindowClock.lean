@@ -115,10 +115,7 @@ theorem FinTM.configBound_le_two_pow (M : FinTM Bool) (n s : ℕ) :
       2 ^ (Fintype.card M.State + posWidth n + 3 * M.k * (2 * s + 1)) := by
   have hQ : Fintype.card M.State + 1 ≤ 2 ^ Fintype.card M.State :=
     Nat.lt_two_pow_self
-  have hn : n + 2 ≤ 2 ^ posWidth n := by
-    have h := Nat.lt_size_self (n + 1)
-    rw [← Nat.size_eq_bits_len] at h
-    exact h
+  have hn : n + 2 ≤ 2 ^ posWidth n := record_pos_lt n
   have h3 : 3 ^ (M.k * (2 * s + 1)) ≤ 2 ^ (2 * (M.k * (2 * s + 1))) :=
     calc 3 ^ (M.k * (2 * s + 1)) ≤ 4 ^ (M.k * (2 * s + 1)) :=
           Nat.pow_le_pow_left (by norm_num) _

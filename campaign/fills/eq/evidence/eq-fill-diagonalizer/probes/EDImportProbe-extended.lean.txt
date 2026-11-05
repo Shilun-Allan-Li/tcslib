@@ -1,0 +1,423 @@
+/-
+The import probe for the fill E-D, `Turing.NTimeDiag.exists_diagonalizer`
+(`Diagonalization/NTimeDiagonalizer.lean`). A probe record, not library code.
+
+It imports exactly what the fill's file sees after its overlay (the file itself and the overlay's
+three imports) and checks that every declaration the brief cites outside the file is public and
+resolves to one declaration. `#check @` prints each full name and statement.
+-/
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+
+open Turing Turing.FinTM Turing.FinNDTM Turing.MultiTapeTM Complexity
+
+-- The target and E-Q's public results in the same file.
+#check @Turing.NTimeDiag.exists_diagonalizer
+#check @Turing.NTimeDiag.exists_queryTM
+#check @Turing.NTimeDiag.query
+#check @Turing.NTimeDiag.query_eq
+#check @Turing.NTimeDiag.query_of_not_guard
+#check @Turing.NTimeDiag.budget_eq
+#check @Turing.NTimeDiag.ladder_zero
+#check @Turing.NTimeDiag.ladder_succ
+#check @Turing.NTimeDiag.two_mul_lt_ladder_succ
+#check @Turing.NTimeDiag.le_ladder
+#check @Turing.NTimeDiag.ladder_strictMono
+#check @Turing.NTimeDiag.stage_spec
+#check @Turing.NTimeDiag.stage_eq
+#check @Turing.NTimeDiag.stage_of_le_two
+#check @Turing.NTimeDiag.stageCode_eq
+
+-- The guess-then-run host (`Build/NDHost`).
+#check @Turing.guessRunTM
+#check @Turing.guessRunCfg
+#check @Turing.guessRunCfg_state
+#check @Turing.guessRunCfg_inputPos
+#check @Turing.guessRunCfg_workTapes
+#check @Turing.guessRunCfg_workTapePos
+#check @Turing.guessRunCfg_output
+#check @Turing.guessRunTM_haltsWithin
+#check @Turing.guessRunTM_accepts_iff
+#check @Turing.guessRunTM_silent_spec
+#check @Turing.streamStartCfg
+
+-- The interpreter core (`NDCodeSimulator`).
+#check @Turing.exists_ndInterpreterCore
+
+-- The step clock (`Build/StepClock`).
+#check @Turing.exists_stepClockTMVia
+#check @Turing.exists_stepClockTM
+
+-- The virtual-input host and the capture wrapper (`Build/VirtualInput`, `Build/Embed`).
+#check @Turing.vhostSilentTM
+#check @Turing.vhostSilentCfg
+#check @Turing.vhostSilentTM_runFrom
+#check @Turing.embedSilentTM
+#check @Turing.embedSilentCfg
+#check @Turing.embedSilentTM_runFrom
+
+-- The calls.
+#check @Turing.FinTM.exists_inputCallTM
+#check @Turing.FinTM.exists_installCallTM
+#check @Turing.seamReleaseTM
+#check @Turing.FinTM.computesFunInTime_lengthBits
+
+-- The rows: expansion, copy, transfer, clear, rewinds, the pair extractor, the phase host.
+#check @Turing.expandTM
+#check @Turing.expandTM_run_ofCfg
+#check @copyMapTM_run_ofCfg
+#check @transferMapTM_run_ofCfg
+#check @clearTM_run_ofCfg
+#check @skipBackTM_run_ofCfg
+#check @rewindTM_run_ofCfg
+#check @Turing.FinTM.pairExtractTM
+#check @Turing.phaseHostTM
+
+-- The readings and the machine model.
+#check @Complexity.timeConstructible_iff
+#check @Turing.FinNDTM.AcceptsWithin
+#check @Turing.FinNDTM.AcceptsWithin.mono
+#check @Turing.NDTM.HaltsWithin
+#check @Turing.EffectiveNDMachineCode
+#check @Turing.MultiTapeTM.step_of_some
+#check @Turing.length_bits_le_self
+#check @Turing.pairEncode_eq
+#check @Turing.FinNDTM.acceptsWithin_iff
+#check @Turing.counterValue_eq
+#check @Turing.counterValue_bits
+
+/-! ### E-D fill: names cited beyond the probes (from the audit walk) -/
+
+#check @Complexity.TimeConstructible
+#check @Turing.Action
+#check @Turing.Action.apply
+#check @Turing.Action.apply_inputPos
+#check @Turing.Action.apply_output
+#check @Turing.Action.apply_state
+#check @Turing.Action.apply_workTapePos
+#check @Turing.Action.apply_workTapes
+#check @Turing.Action.inputTape
+#check @Turing.Action.mk
+#check @Turing.Action.output
+#check @Turing.Action.state
+#check @Turing.Action.workTapes
+#check @Turing.Cfg
+#check @Turing.Cfg.Stopped
+#check @Turing.Cfg.ext
+#check @Turing.Cfg.init
+#check @Turing.Cfg.init_inputPos
+#check @Turing.Cfg.init_output
+#check @Turing.Cfg.init_state
+#check @Turing.Cfg.init_workTapePos
+#check @Turing.Cfg.init_workTapes
+#check @Turing.Cfg.inputPos
+#check @Turing.Cfg.inputSymbol
+#check @Turing.Cfg.mk
+#check @Turing.Cfg.ofWords
+#check @Turing.Cfg.ofWords_inputPos
+#check @Turing.Cfg.ofWords_output
+#check @Turing.Cfg.ofWords_state
+#check @Turing.Cfg.ofWords_workTapePos
+#check @Turing.Cfg.ofWords_workTapes
+#check @Turing.Cfg.output
+#check @Turing.Cfg.state
+#check @Turing.Cfg.stopped_iff
+#check @Turing.Cfg.workTapePos
+#check @Turing.Cfg.workTapeSymbols
+#check @Turing.Cfg.workTapeSymbols_eq
+#check @Turing.Cfg.workTapes
+#check @Turing.CodeNDTM.toFinNDTM
+#check @Turing.CounterLoopState
+#check @Turing.CounterLoopState.dec
+#check @Turing.CounterLoopState.done
+#check @Turing.EffectiveNDMachineCode.toNDMachineCode
+#check @Turing.FinNDTM
+#check @Turing.FinNDTM.State
+#check @Turing.FinNDTM.decEqState
+#check @Turing.FinNDTM.k
+#check @Turing.FinNDTM.mk
+#check @Turing.FinNDTM.tm
+#check @Turing.FinTM
+#check @Turing.FinTM.ComputesFunInTime
+#check @Turing.FinTM.ComputesInTime
+#check @Turing.FinTM.State
+#check @Turing.FinTM.VirtualTag
+#check @Turing.FinTM.VirtualTag_iff
+#check @Turing.FinTM._sizeOf_inst
+#check @Turing.FinTM.bufferTape
+#check @Turing.FinTM.bufferTape_append_shift
+#check @Turing.FinTM.bufferTape_eq
+#check @Turing.FinTM.bufferTape_eq_none_of_not_mem
+#check @Turing.FinTM.bufferTape_nil
+#check @Turing.FinTM.bufferTape_of_neg
+#check @Turing.FinTM.computesFunInTime_comp
+#check @Turing.FinTM.computesFunInTime_iff
+#check @Turing.FinTM.computesFunInTime_prepend
+#check @Turing.FinTM.computesInTime_iff
+#check @Turing.FinTM.decEqState
+#check @Turing.FinTM.fintypeState
+#check @Turing.FinTM.k
+#check @Turing.FinTM.pairExtractTM_fst
+#check @Turing.FinTM.pairExtractTM_snd
+#check @Turing.FinTM.tm
+#check @Turing.FlagPhase.run
+#check @Turing.GuessRunPhase
+#check @Turing.GuessRunPhase.State
+#check @Turing.GuessRunPhase.instDecidableEqState
+#check @Turing.GuessRunPhase.instFintypeState
+#check @Turing.MultiTapeTM
+#check @Turing.MultiTapeTM._sizeOf_inst
+#check @Turing.MultiTapeTM.initCfg
+#check @Turing.MultiTapeTM.initCfg_eq
+#check @Turing.MultiTapeTM.mk
+#check @Turing.MultiTapeTM.output_length_le
+#check @Turing.MultiTapeTM.q₀
+#check @Turing.MultiTapeTM.runFrom
+#check @Turing.MultiTapeTM.runFrom_add
+#check @Turing.MultiTapeTM.runFrom_of_halt
+#check @Turing.MultiTapeTM.runFrom_state_ne_none_of_le
+#check @Turing.MultiTapeTM.runFrom_zero
+#check @Turing.MultiTapeTM.step
+#check @Turing.MultiTapeTM.tr
+#check @Turing.NDMachineCode.decode
+#check @Turing.NDTM.HaltsWithin.mono
+#check @Turing.NDTM.initCfg
+#check @Turing.NDTM.runWith
+#check @Turing.RewindPhase
+#check @Turing.RewindPhase.done
+#check @Turing.RewindPhase.start
+#check @Turing.SeekPhase
+#check @Turing.SeekPhase.done
+#check @Turing.SeekPhase.run
+#check @Turing.Segment
+#check @Turing.Segment.trans
+#check @Turing.SweepPhase
+#check @Turing.SweepPhase.done
+#check @Turing.SweepPhase.sweep
+#check @Turing.WritePhase
+#check @Turing.WritePhase.done
+#check @Turing.WritePhase.wr
+#check @Turing.clearTM
+#check @Turing.clockCfg
+#check @Turing.copyMapTM
+#check @Turing.counterLoopStateFintype
+#check @Turing.counterOverhead
+#check @Turing.counterOverhead_le
+#check @Turing.embedEmitCfg
+#check @Turing.embedEmitCfg_inputPos
+#check @Turing.embedEmitCfg_output
+#check @Turing.embedEmitCfg_selected_pos
+#check @Turing.embedEmitCfg_selected_tape
+#check @Turing.embedEmitCfg_state
+#check @Turing.embedEmitTM
+#check @Turing.embedSilentCfg_inputPos
+#check @Turing.embedSilentCfg_output
+#check @Turing.embedSilentCfg_state
+#check @Turing.instDecidableEqCounterLoopState
+#check @Turing.instDecidableEqGuessRunPhase
+#check @Turing.instDecidableEqRewindPhase
+#check @Turing.instDecidableEqSeekPhase
+#check @Turing.instDecidableEqSweepPhase
+#check @Turing.instDecidableEqWritePhase
+#check @Turing.instFintypeGuessRunPhase
+#check @Turing.instFintypeRewindPhase
+#check @Turing.instFintypeSeekPhase
+#check @Turing.instFintypeSweepPhase
+#check @Turing.instFintypeWritePhase
+#check @Turing.instInhabitedCfg.default._proof_1
+#check @Turing.length_pairEncode
+#check @Turing.moveInputPos
+#check @Turing.moveInputPos_zero
+#check @Turing.pairDecode
+#check @Turing.pairDecode_pairEncode
+#check @Turing.pairEncode
+#check @Turing.rewindTM
+#check @Turing.segment_iff
+#check @Turing.skipBackTM
+#check @Turing.stateWord
+#check @Turing.streamStartCfg._proof_1
+#check @Turing.streamStartCfg_inputPos
+#check @Turing.streamStartCfg_output
+#check @Turing.streamStartCfg_state
+#check @Turing.streamStartCfg_workTapePos
+#check @Turing.streamStartCfg_workTapes
+#check @Turing.transferMapTM
+#check @Turing.vhostCap
+#check @Turing.vhostCfg
+#check @Turing.vhostCfg_inputPos
+#check @Turing.vhostCfg_output
+#check @Turing.vhostCfg_state
+#check @Turing.vhostCfg_workTapePos
+#check @Turing.vhostCfg_workTapes
+#check @Turing.walkTM
+#check @Turing.walkTM_run_ofCfg
+#check @Turing.wordPatch
+#check @Turing.writeConstTM
+
+#print axioms Complexity.TimeConstructible
+#print axioms Turing.Action
+#print axioms Turing.Action.apply
+#print axioms Turing.Action.apply_inputPos
+#print axioms Turing.Action.apply_output
+#print axioms Turing.Action.apply_state
+#print axioms Turing.Action.apply_workTapePos
+#print axioms Turing.Action.apply_workTapes
+#print axioms Turing.Action.inputTape
+#print axioms Turing.Action.mk
+#print axioms Turing.Action.output
+#print axioms Turing.Action.state
+#print axioms Turing.Action.workTapes
+#print axioms Turing.Cfg
+#print axioms Turing.Cfg.Stopped
+#print axioms Turing.Cfg.ext
+#print axioms Turing.Cfg.init
+#print axioms Turing.Cfg.init_inputPos
+#print axioms Turing.Cfg.init_output
+#print axioms Turing.Cfg.init_state
+#print axioms Turing.Cfg.init_workTapePos
+#print axioms Turing.Cfg.init_workTapes
+#print axioms Turing.Cfg.inputPos
+#print axioms Turing.Cfg.inputSymbol
+#print axioms Turing.Cfg.mk
+#print axioms Turing.Cfg.ofWords
+#print axioms Turing.Cfg.ofWords_inputPos
+#print axioms Turing.Cfg.ofWords_output
+#print axioms Turing.Cfg.ofWords_state
+#print axioms Turing.Cfg.ofWords_workTapePos
+#print axioms Turing.Cfg.ofWords_workTapes
+#print axioms Turing.Cfg.output
+#print axioms Turing.Cfg.state
+#print axioms Turing.Cfg.stopped_iff
+#print axioms Turing.Cfg.workTapePos
+#print axioms Turing.Cfg.workTapeSymbols
+#print axioms Turing.Cfg.workTapeSymbols_eq
+#print axioms Turing.Cfg.workTapes
+#print axioms Turing.CodeNDTM.toFinNDTM
+#print axioms Turing.CounterLoopState
+#print axioms Turing.CounterLoopState.dec
+#print axioms Turing.CounterLoopState.done
+#print axioms Turing.EffectiveNDMachineCode.toNDMachineCode
+#print axioms Turing.FinNDTM
+#print axioms Turing.FinNDTM.State
+#print axioms Turing.FinNDTM.decEqState
+#print axioms Turing.FinNDTM.k
+#print axioms Turing.FinNDTM.mk
+#print axioms Turing.FinNDTM.tm
+#print axioms Turing.FinTM
+#print axioms Turing.FinTM.ComputesFunInTime
+#print axioms Turing.FinTM.ComputesInTime
+#print axioms Turing.FinTM.State
+#print axioms Turing.FinTM.VirtualTag
+#print axioms Turing.FinTM.VirtualTag_iff
+#print axioms Turing.FinTM._sizeOf_inst
+#print axioms Turing.FinTM.bufferTape
+#print axioms Turing.FinTM.bufferTape_append_shift
+#print axioms Turing.FinTM.bufferTape_eq
+#print axioms Turing.FinTM.bufferTape_eq_none_of_not_mem
+#print axioms Turing.FinTM.bufferTape_nil
+#print axioms Turing.FinTM.bufferTape_of_neg
+#print axioms Turing.FinTM.computesFunInTime_comp
+#print axioms Turing.FinTM.computesFunInTime_iff
+#print axioms Turing.FinTM.computesFunInTime_prepend
+#print axioms Turing.FinTM.computesInTime_iff
+#print axioms Turing.FinTM.decEqState
+#print axioms Turing.FinTM.fintypeState
+#print axioms Turing.FinTM.k
+#print axioms Turing.FinTM.pairExtractTM_fst
+#print axioms Turing.FinTM.pairExtractTM_snd
+#print axioms Turing.FinTM.tm
+#print axioms Turing.FlagPhase.run
+#print axioms Turing.GuessRunPhase
+#print axioms Turing.GuessRunPhase.State
+#print axioms Turing.GuessRunPhase.instDecidableEqState
+#print axioms Turing.GuessRunPhase.instFintypeState
+#print axioms Turing.MultiTapeTM
+#print axioms Turing.MultiTapeTM._sizeOf_inst
+#print axioms Turing.MultiTapeTM.initCfg
+#print axioms Turing.MultiTapeTM.initCfg_eq
+#print axioms Turing.MultiTapeTM.mk
+#print axioms Turing.MultiTapeTM.output_length_le
+#print axioms Turing.MultiTapeTM.q₀
+#print axioms Turing.MultiTapeTM.runFrom
+#print axioms Turing.MultiTapeTM.runFrom_add
+#print axioms Turing.MultiTapeTM.runFrom_of_halt
+#print axioms Turing.MultiTapeTM.runFrom_state_ne_none_of_le
+#print axioms Turing.MultiTapeTM.runFrom_zero
+#print axioms Turing.MultiTapeTM.step
+#print axioms Turing.MultiTapeTM.tr
+#print axioms Turing.NDMachineCode.decode
+#print axioms Turing.NDTM.HaltsWithin.mono
+#print axioms Turing.NDTM.initCfg
+#print axioms Turing.NDTM.runWith
+#print axioms Turing.RewindPhase
+#print axioms Turing.RewindPhase.done
+#print axioms Turing.RewindPhase.start
+#print axioms Turing.SeekPhase
+#print axioms Turing.SeekPhase.done
+#print axioms Turing.SeekPhase.run
+#print axioms Turing.Segment
+#print axioms Turing.Segment.trans
+#print axioms Turing.SweepPhase
+#print axioms Turing.SweepPhase.done
+#print axioms Turing.SweepPhase.sweep
+#print axioms Turing.WritePhase
+#print axioms Turing.WritePhase.done
+#print axioms Turing.WritePhase.wr
+#print axioms Turing.clearTM
+#print axioms Turing.clockCfg
+#print axioms Turing.copyMapTM
+#print axioms Turing.counterLoopStateFintype
+#print axioms Turing.counterOverhead
+#print axioms Turing.counterOverhead_le
+#print axioms Turing.embedEmitCfg
+#print axioms Turing.embedEmitCfg_inputPos
+#print axioms Turing.embedEmitCfg_output
+#print axioms Turing.embedEmitCfg_selected_pos
+#print axioms Turing.embedEmitCfg_selected_tape
+#print axioms Turing.embedEmitCfg_state
+#print axioms Turing.embedEmitTM
+#print axioms Turing.embedSilentCfg_inputPos
+#print axioms Turing.embedSilentCfg_output
+#print axioms Turing.embedSilentCfg_state
+#print axioms Turing.instDecidableEqCounterLoopState
+#print axioms Turing.instDecidableEqGuessRunPhase
+#print axioms Turing.instDecidableEqRewindPhase
+#print axioms Turing.instDecidableEqSeekPhase
+#print axioms Turing.instDecidableEqSweepPhase
+#print axioms Turing.instDecidableEqWritePhase
+#print axioms Turing.instFintypeGuessRunPhase
+#print axioms Turing.instFintypeRewindPhase
+#print axioms Turing.instFintypeSeekPhase
+#print axioms Turing.instFintypeSweepPhase
+#print axioms Turing.instFintypeWritePhase
+#print axioms Turing.instInhabitedCfg.default._proof_1
+#print axioms Turing.length_pairEncode
+#print axioms Turing.moveInputPos
+#print axioms Turing.moveInputPos_zero
+#print axioms Turing.pairDecode
+#print axioms Turing.pairDecode_pairEncode
+#print axioms Turing.pairEncode
+#print axioms Turing.rewindTM
+#print axioms Turing.segment_iff
+#print axioms Turing.skipBackTM
+#print axioms Turing.stateWord
+#print axioms Turing.streamStartCfg._proof_1
+#print axioms Turing.streamStartCfg_inputPos
+#print axioms Turing.streamStartCfg_output
+#print axioms Turing.streamStartCfg_state
+#print axioms Turing.streamStartCfg_workTapePos
+#print axioms Turing.streamStartCfg_workTapes
+#print axioms Turing.transferMapTM
+#print axioms Turing.vhostCap
+#print axioms Turing.vhostCfg
+#print axioms Turing.vhostCfg_inputPos
+#print axioms Turing.vhostCfg_output
+#print axioms Turing.vhostCfg_state
+#print axioms Turing.vhostCfg_workTapePos
+#print axioms Turing.vhostCfg_workTapes
+#print axioms Turing.walkTM
+#print axioms Turing.walkTM_run_ofCfg
+#print axioms Turing.wordPatch
+#print axioms Turing.writeConstTM

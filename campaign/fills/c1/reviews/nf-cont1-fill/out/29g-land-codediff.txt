@@ -1,0 +1,18 @@
+comment-stripped, blank-free code lines: head 2669 landed 2663
+@@ -524 +524 @@
+-section Continuation
++section
+@@ -1267,8 +1267,2 @@
+-        P ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] := by
+-  constructor
+-  · intro h
+-    exact ⟨h 0 (by simp), fun r hr => h (r + 1) (by simp; omega)⟩
+-  · rintro ⟨h0, h⟩ r hr
+-    cases r with
+-    | zero => exact h0
+-    | succ r => exact h r (by simp at hr; omega)
++        P ((rs.take r).foldl (nf_vstep N) (nf_vstep N c rec)) rs[r] :=
++  Nat.forall_lt_succ_left'
+@@ -2657 +2651 @@
+-end Continuation
++end

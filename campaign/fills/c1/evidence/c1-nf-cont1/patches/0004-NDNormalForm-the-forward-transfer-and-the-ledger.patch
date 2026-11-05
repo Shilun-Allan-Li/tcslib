@@ -1,0 +1,136 @@
+From 62890cc46c955f02872efe70fadefaa52f6715a4 Mon Sep 17 00:00:00 2001
+From: "Claude (fill agent)" <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 22:54:13 +0000
+Subject: [PATCH 4/7] NDNormalForm: the forward transfer and the ledger
+
+Checkpoint 6 of the linear normal form's continuation: the normal form's
+constant nf_C k = 6(2k+4) + k(2(2k+4)+12) + 21 + 15k, the host machine over the
+verifier, the ledger (the host's budget 0 + 2|s| + TQ + 11 is at most
+nf_C k (t + 1) for every t at least the first halting time), and the forward
+transfer: an accepting branch of N within t steps, cut at its first halting
+time, has its display accepted by the verifier, so the host accepts within
+exactly nf_C k (t + 1) choices.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5qcRVhBWkPW4edje
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 103 ++++++++++++++++++++
+ 1 file changed, 103 insertions(+)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index cb157ffc..a8bd6e0c 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -3114,6 +3114,109 @@ private theorem nf_V_display (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ []
+ 
+ end VChar3
+ 
++/-! ### The transfers -/
++
++/-- The normal form's constant for `k` work tapes, with the record width `W = 2k + 4`:
++`6W + k(2W + 12) + 21 + 15k`. -/
++private def nf_C (k : ℕ) : ℕ :=
++  6 * (2 * k + 4) + k * (2 * (2 * k + 4) + 12) + 21 + 15 * k
++
++/-- The normal form's machine: the controller-stopped host over the trivial setup, the display
++controller, and the verifier, guessing on tape `0`. -/
++private def nf_host (N : FinNDTM Bool) :=
++  guessCtlRunTM nf_P nf_P.q₀ 0 ((0 : Fin (2 * N.k + 4)), false) (nf_ctlStep N.k) (nf_ctlStop N.k)
++    false (nf_V N (nf_leaf N) (nf_leafExit N))
++    (⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ : Σ i, nf_St N (nf_LeafSt N) i) ⟨.park, true⟩
++    ⟨.park, false⟩
++
++section Transfers
++
++attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
++
++/-- **The ledger.** With `|s| = (2k + 4)t₀` and the verifier's time at most
++`4|s| + 10 + k((2(2k + 4) + 12)t₀ + 15)`, the host's budget `0 + 2|s| + TQ + 11` is at most
++`nf_C k · (t + 1)` for every `t ≥ t₀`.
++
++**Proof sketch.** Collect the budget as `(6(2k + 4) + k(2(2k + 4) + 12))t₀ + 21 + 15k`, raise `t₀`
++to `t`, and bound the constant term by `(21 + 15k)(t + 1)`. -/
++private theorem nf_ledger (k t₀ t s TQ : ℕ) (ht : t₀ ≤ t) (hs : s = (2 * k + 4) * t₀)
++    (hT : TQ ≤ 4 * s + 10 + k * ((2 * (2 * k + 4) + 12) * t₀ + 15)) :
++    0 + 2 * s + TQ + 11 ≤ nf_C k * (t + 1) := by
++  set A := 6 * (2 * k + 4) + k * (2 * (2 * k + 4) + 12) with hA
++  have e1 : 2 * s + (4 * s + 10 + k * ((2 * (2 * k + 4) + 12) * t₀ + 15)) + 11 =
++      A * t₀ + (21 + 15 * k) := by
++    rw [hs, hA]
++    ring
++  have h2 : A * t₀ ≤ A * t := Nat.mul_le_mul_left A ht
++  have h3 : 21 + 15 * k ≤ (21 + 15 * k) * (t + 1) := Nat.le_mul_of_pos_right _ (Nat.succ_pos t)
++  have e4 : nf_C k * (t + 1) = A * t + A + (21 + 15 * k) * (t + 1) := by
++    unfold nf_C
++    rw [hA]
++    ring
++  omega
++
++/-- **The forward transfer.** If `N` accepts `x` within `t` steps, the normal form's machine accepts
++`x` within exactly `nf_C N.k · (t + 1)` choices.
++
++**Proof sketch.** Cut the accepting word at its first halting time `t₀ ≥ 1`, at most `t`; the
++branch is live before `t₀`, halted at `t₀` and outputs `[true]` there, as at `t`. Its display first
++stops the controller at its end, and the verifier accepts it at its first verdict, with an empty
++output, within the characterization's bound. The host's forward acceptance lemma, after the
++trivial setup, accepts at every budget past the ledger's. -/
++private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
++    (hN : N.AcceptsWithin x t) :
++    ∃ w : List Bool, w.length = nf_C N.k * (t + 1) ∧
++      ((nf_host N).runWith w ((nf_host N).initCfg x)).state = none ∧
++      ((nf_host N).runWith w ((nf_host N).initCfg x)).output = [true] := by
++  obtain ⟨w, hw, hh, ho⟩ := FinNDTM.acceptsWithin_iff.mp hN
++  -- the first halting time
++  have hex : ∃ r, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state = none :=
++    ⟨t, by rw [← hw, List.take_length]; exact hh⟩
++  classical
++  set t₀ := Nat.find hex with ht₀
++  have hspec : (N.tm.runWith (w.take t₀) (N.tm.initCfg x)).state = none := Nat.find_spec hex
++  have hmin : ∀ r < t₀, (N.tm.runWith (w.take r) (N.tm.initCfg x)).state ≠ none :=
++    fun r hr => Nat.find_min hex hr
++  have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
++  have hpos : 0 < t₀ := by
++    by_contra h0
++    have h00 : t₀ = 0 := by omega
++    have := hspec
++    rw [h00, List.take_zero, NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at this
++    exact Option.noConfusion this
++  set w₀ := w.take t₀ with hw₀
++  have hw₀len : w₀.length = t₀ := by rw [hw₀, List.length_take]; omega
++  have hw₀ne : w₀ ≠ [] := by
++    intro h
++    have := congrArg List.length h
++    rw [hw₀len, List.length_nil] at this
++    omega
++  have hlive : ∀ r < w₀.length, (N.tm.runWith (w₀.take r) (N.tm.initCfg x)).state ≠ none := by
++    intro r hr
++    rw [hw₀len] at hr
++    rw [hw₀, List.take_take, Nat.min_eq_left hr.le]
++    exact hmin r hr
++  have hout : (N.tm.runWith w₀ (N.tm.initCfg x)).output = [true] := by
++    have hsplit := NDTM.runWith_append (tm := N.tm) w₀ (w.drop t₀) (N.tm.initCfg x)
++    rw [hw₀, List.take_append_drop, NDTM.runWith_of_halt _ hspec] at hsplit
++    rw [hw₀, ← hsplit]
++    exact ho
++  -- the verifier on the branch's display
++  obtain ⟨TQ, hacc, hfirst, hnil, hTQ⟩ := nf_V_display N x w₀ hw₀ne hlive hspec hout
++  obtain ⟨hslive, hsstop⟩ := nf_display_firstStop N x w₀ hw₀ne
++  obtain ⟨h0, hst, hfi, hbl, hlf⟩ := nf_setup nf_P x 0
++  have hB : 0 + 2 * (nf_display N x w₀).length + TQ + 11 ≤ nf_C N.k * (t + 1) := by
++    refine nf_ledger N.k t₀ t _ TQ hle (by rw [nf_display_length, hw₀len]) ?_
++    rw [hw₀len] at hTQ
++    exact hTQ
++  rw [← nf_entry nf_P x (nf_display N x w₀)] at hacc hfirst hnil
++  exact guessCtlRunTM_accepts_of nf_P nf_P.q₀ 0 ((0 : Fin (2 * N.k + 4)), false)
++    (nf_ctlStep N.k) (nf_ctlStop N.k) (nf_V N (nf_leaf N) (nf_leafExit N))
++    ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩ ⟨.park, true⟩ ⟨.park, false⟩ 0 (nf_P.initCfg x)
++    h0 hst hfi hbl hlf (nf_display N x w₀) hslive hsstop TQ hacc hfirst hnil _ hB
++
++end Transfers
++
+ /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+ cited through [AB09, §3.2]; statement; proof incomplete): every
+ nondeterministic machine has a coded (two-work-tape) equivalent whose
+-- 
+2.43.0
+

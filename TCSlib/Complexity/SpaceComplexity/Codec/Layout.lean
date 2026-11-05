@@ -26,7 +26,7 @@ Logspace machine infrastructure for the codec; not a result of [AB09].
 
 ## Main results
 
-* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
+* `Complexity.Codec.wP_le` — width arithmetic.
 * `Complexity.Codec.layout_run` — the layout phase of the first code word.
 * `Complexity.Codec.le_phase` — the position comparison.
 * `Complexity.Codec.vscan_run` — the validity scan.
@@ -43,22 +43,10 @@ open Turing LogProg
 
 variable {N : FinNDTM Bool} {mode : CMode}
 
-/-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`. -/
-lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
-  rw [Nat.size_eq_bits_len]
-  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
-  have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
-    rw [← Nat.size_le]; omega
-  have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
-    rw [← pow_succ']; congr 1; omega
-  omega
-
 /-- The position-field width is at most `n + 1`. -/
 lemma wP_le (n : ℕ) : wP n ≤ n + 1 := by
-  have h1 := length_bits_le_log (n + 1)
-  have h2 := Nat.log_lt_self 2 (show n + 1 ≠ 0 by omega)
-  simp only [wP]
-  omega
+  rw [wP_eq]
+  exact Turing.length_bits_le_self (n + 1)
 
 /-- Letters of the first code word inside the input. -/
 lemma getD_w (x w rest : List Bool) (i : ℕ) (hi : i < w.length) :

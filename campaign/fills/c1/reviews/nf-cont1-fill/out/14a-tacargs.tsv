@@ -1,0 +1,954 @@
+line	tactic	argument	identifiers
+707	simp	(no list)	
+997	rw	Cfg.mapState_state	Cfg.mapState_state
+997	rw	Cfg.mapState_state	Cfg.mapState_state
+999	rw	hs	hs
+1000	rw	Cfg.mapState_inputPos	Cfg.mapState_inputPos
+1000	rw	Cfg.mapState_inputPos	Cfg.mapState_inputPos
+1001	rw	Cfg.mapState_workTapes	Cfg.mapState_workTapes
+1001	rw	Cfg.mapState_workTapes	Cfg.mapState_workTapes
+1002	rw	Cfg.mapState_workTapePos	Cfg.mapState_workTapePos
+1002	rw	Cfg.mapState_workTapePos	Cfg.mapState_workTapePos
+1003	rw	Cfg.mapState_output	Cfg.mapState_output
+1003	rw	Cfg.mapState_output	Cfg.mapState_output
+1009	rw	Cfg.mapState_state	Cfg.mapState_state
+1052	simp only	List.length_nil	List.length_nil
+1052	simp only	Nat.cast_zero	Nat.cast_zero
+1054	rw	htape	htape
+1054	rw	hpos	hpos
+1054	rw	add_zero	add_zero
+1054	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+1054	rw	FinTM.bufferTape_nil	FinTM.bufferTape_nil
+1054	rw	List.getElem?_eq_none       (le_refl _)	List.getElem?_eq_none le_refl _
+1066	simp	(no list)	
+1067	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+1067	rw	hst	hst
+1072	simp	hc₁	hc₁
+1078	simp only	hc₂	hc₂
+1078	simp only	hc₁	hc₁
+1078	simp only	Function.update_self	Function.update_self
+1078	simp only	List.length_nil	List.length_nil
+1078	simp only	Nat.cast_zero	Nat.cast_zero
+1078	simp only	hpos	hpos
+1079	rw	htape	htape
+1098	simp	(no list)	
+1100	rw	e	e
+1100	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1101	unfold	nf_V	nf_V
+1102	rw	hA	hA
+1102	rw	hre	hre
+1104	simp	hc₃	hc₃
+1105	simp only	hc₃	hc₃
+1105	simp only	hc₂	hc₂
+1105	simp only	hc₁	hc₁
+1105	simp only	Function.update_self	Function.update_self
+1105	simp only	List.length_nil	List.length_nil
+1105	simp only	Nat.cast_zero	Nat.cast_zero
+1105	simp only	hpos	hpos
+1107	simp only	hc₃	hc₃
+1107	simp only	hc₂	hc₂
+1107	simp only	hc₁	hc₁
+1108	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+1108	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+1109	simp only	hc₃	hc₃
+1109	simp only	hc₂	hc₂
+1109	simp only	hc₁	hc₁
+1110	simp only	hc₃	hc₃
+1110	simp only	hc₂	hc₂
+1110	simp only	hc₁	hc₁
+1111	simp only	hc₃	hc₃
+1111	simp only	hc₂	hc₂
+1111	simp only	hc₁	hc₁
+1113	unfold	nf_V	nf_V
+1115	rw	hpA u hu1	hpA u hu1
+1119	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1119	rw	hA	hA
+1119	rw	hre	hre
+1119	rw	hpB v (by simp at hu ⊢; omega)	hpB v simp hu omega
+1119	simp	(no list)	
+1155	rw	List.length_drop	List.length_drop
+1155	push_cast	Nat.cast_sub hi	Nat.cast_sub hi
+1161	rw	show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring	c.workTapePos i p i c.workTapePos p ring
+1161	show	c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h	c.workTapePos i p i c.workTapePos p ring h
+1162	rw	h	h
+1164	rw	show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring	n ℤ i ℤ n i ℕ ℤ push_cast ring
+1164	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+1164	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+1164	rw	List.getElem?_drop	List.getElem?_drop
+1164	show	((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat	n ℤ i ℤ n i ℕ ℤ push_cast ring FinTM.bufferTape_nat
+1164	push_cast	(no list)	
+1183	simp	hc₁	hc₁
+1189	simp only	hc₂	hc₂
+1189	simp only	hc₁	hc₁
+1189	simp only	Function.update_self	Function.update_self
+1190	rw	← htape p h0 h1	htape p h0 h1
+1192	rw	hdl	hdl
+1209	simp only	hc₃	hc₃
+1209	simp only	hc₂	hc₂
+1209	simp only	hc₁	hc₁
+1209	simp only	Function.update_self	Function.update_self
+1210	rw	hdl	hdl
+1214	simp	hc₃	hc₃
+1222	simp only	hc₄	hc₄
+1223	rw	e	e
+1224	simp only	hc₄	hc₄
+1224	simp only	hc₃	hc₃
+1224	simp only	hc₂	hc₂
+1224	simp only	hc₁	hc₁
+1243	rw	List.length_drop	List.length_drop
+1245	rw	e	e
+1245	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1246	unfold	nf_V	nf_V
+1247	rw	hA	hA
+1247	rw	hre	hre
+1247	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1247	rw	hB	hB
+1247	rw	hre2	hre2
+1249	simp	hc₅	hc₅
+1250	simp only	hc₅	hc₅
+1250	simp only	hc₄	hc₄
+1252	simp only	hc₅	hc₅
+1252	simp only	hc₄	hc₄
+1252	simp only	hc₃	hc₃
+1252	simp only	hc₂	hc₂
+1252	simp only	hc₁	hc₁
+1253	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+1253	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+1254	simp only	hc₅	hc₅
+1254	simp only	hc₄	hc₄
+1254	simp only	hc₃	hc₃
+1254	simp only	hc₂	hc₂
+1254	simp only	hc₁	hc₁
+1256	rw	if_neg (fun h => absurd h.1 (by decide))	if_neg h absurd h.1 decide
+1257	simp only	hc₅	hc₅
+1257	simp only	hc₄	hc₄
+1257	simp only	hc₃	hc₃
+1257	simp only	hc₂	hc₂
+1257	simp only	hc₁	hc₁
+1258	simp only	hc₅	hc₅
+1258	simp only	hc₄	hc₄
+1258	simp only	hc₃	hc₃
+1258	simp only	hc₂	hc₂
+1258	simp only	hc₁	hc₁
+1260	simp only	hc₄	hc₄
+1261	simp only	hc₄	hc₄
+1261	simp only	hc₃	hc₃
+1261	simp only	hc₂	hc₂
+1261	simp only	hc₁	hc₁
+1264	rw	hq	hq
+1264	rw	e4	e4
+1264	rw	ew	ew
+1266	rw	if_pos ⟨rfl, h⟩	if_pos rfl h
+1266	rw	if_pos h	if_pos h
+1267	rw	if_neg (fun h' => h h'.2)	if_neg h' h h'.2
+1267	rw	if_neg h	if_neg h
+1269	unfold	nf_V	nf_V
+1271	rw	hpA u hu1	hpA u hu1
+1275	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1275	rw	hA	hA
+1275	rw	hre	hre
+1277	rw	hpB v hv1	hpB v hv1
+1280	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1280	rw	hB	hB
+1280	rw	hre2	hre2
+1280	rw	hpC w (by rw [List.length_drop] at hu; omega)	hpC w rw List.length_drop hu omega
+1280	rw	List.length_drop	List.length_drop
+1293	rw	MultiTapeTM.initCfg_eq	MultiTapeTM.initCfg_eq
+1295	rw	guessRunCfg_state	guessRunCfg_state
+1295	rw	streamStartCfg_state	streamStartCfg_state
+1296	rw	guessRunCfg_inputPos	guessRunCfg_inputPos
+1296	rw	streamStartCfg_inputPos	streamStartCfg_inputPos
+1296	rw	Cfg.init_inputPos	Cfg.init_inputPos
+1298	rw	guessRunCfg_workTapes	guessRunCfg_workTapes
+1298	rw	streamStartCfg_workTapes	streamStartCfg_workTapes
+1298	rw	Cfg.init_workTapePos	Cfg.init_workTapePos
+1301	rw	Function.update_self	Function.update_self
+1301	rw	if_pos rfl	if_pos rfl
+1303	rw	if_pos hp	if_pos hp
+1303	rw	sub_zero	sub_zero
+1304	rw	if_neg hp	if_neg hp
+1304	rw	Cfg.init_workTapes	Cfg.init_workTapes
+1306	rw	FinTM.bufferTape_of_neg s hneg	FinTM.bufferTape_of_neg s hneg
+1307	rw	FinTM.bufferTape_eq	FinTM.bufferTape_eq
+1307	rw	if_pos (by omega)	if_pos omega
+1309	rw	Function.update_of_ne hi	Function.update_of_ne hi
+1309	rw	if_neg hi	if_neg hi
+1309	rw	Cfg.init_workTapes	Cfg.init_workTapes
+1311	rw	guessRunCfg_workTapePos	guessRunCfg_workTapePos
+1311	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos
+1311	rw	Cfg.init_workTapePos	Cfg.init_workTapePos
+1312	rw	guessRunCfg_output	guessRunCfg_output
+1312	rw	streamStartCfg_output	streamStartCfg_output
+1312	rw	Cfg.init_output	Cfg.init_output
+1320	rw	Cfg.mapState_state	Cfg.mapState_state
+1320	rw	streamStartCfg_state	streamStartCfg_state
+1320	rw	streamStartCfg_state	streamStartCfg_state
+1321	rw	Cfg.mapState_inputPos	Cfg.mapState_inputPos
+1321	rw	streamStartCfg_inputPos	streamStartCfg_inputPos
+1321	rw	streamStartCfg_inputPos	streamStartCfg_inputPos
+1322	rw	Cfg.mapState_workTapes	Cfg.mapState_workTapes
+1322	rw	streamStartCfg_workTapes	streamStartCfg_workTapes
+1322	rw	streamStartCfg_workTapes	streamStartCfg_workTapes
+1323	rw	Cfg.mapState_workTapePos	Cfg.mapState_workTapePos
+1323	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos
+1323	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos
+1324	rw	Cfg.mapState_output	Cfg.mapState_output
+1324	rw	streamStartCfg_output	streamStartCfg_output
+1324	rw	streamStartCfg_output	streamStartCfg_output
+1332	rw	← h	h
+1333	rw	Cfg.inputSymbol_of_zero (Fin.ext h0)	Cfg.inputSymbol_of_zero Fin.ext h0
+1333	rw	Cfg.inputSymbol_of_zero h0'	Cfg.inputSymbol_of_zero h0'
+1335	rw	Cfg.inputSymbol_of_end he	Cfg.inputSymbol_of_end he
+1335	rw	Cfg.inputSymbol_of_end (by omega)	Cfg.inputSymbol_of_end omega
+1337	rw	inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega)	inputSymbolInner c.inputPos.val omega omega
+1337	rw	inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)	inputSymbolInner cfg c' c.inputPos.val omega omega
+1358	rw	← hσ	hσ
+1359	rw	hp	hp
+1359	rw	hp	hp
+1360	rw	hp	hp
+1364	rw	Function.update_self	Function.update_self
+1367	rw	Function.update_of_ne he	Function.update_of_ne he
+1368	show	(if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)	p.val N.k some rec p none some rec p
+1369	rw	if_pos (by omega)	if_pos omega
+1371	rw	List.ofFn_succ_last	List.ofFn_succ_last
+1371	rw	List.foldl_append	List.foldl_append
+1371	rw	List.foldl_cons	List.foldl_cons
+1371	rw	List.foldl_nil	List.foldl_nil
+1372	rw	hσ	hσ
+1392	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+1394	rw	hst	hst
+1399	show	d.workTapePos i = Function.update d.workTapePos 0 (d.workTapePos 0 + ((0 : ℕ) : 	d.workTapePos i Function.update d.workTapePos d.workTapePos ℕ ℤ i
+1400	rw	Nat.cast_zero	Nat.cast_zero
+1400	rw	add_zero	add_zero
+1400	rw	Function.update_eq_self	Function.update_eq_self
+1403	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'
+1403	rw	nf_leaf_prefix N j d rec ctl hst hA m (by omega)	nf_leaf_prefix N j d rec ctl hst hA m omega
+1406	rw	hp	hp
+1412	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq
+1413	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + m) 0) = _	d.workTapes Function.update d.workTapePos d.workTapePos m _
+1414	rw	Function.update_self	Function.update_self
+1416	rw	step_of_tapeAction_move (nf_leaf N j) _ (q := .read _) 0 0 1 rfl (by       simp 	step_of_tapeAction_move nf_leaf N j _ q read _ rfl simp nf_leaf rw if_neg rw hm1 omega hsym Option.getD_some
+1417	simp only	nf_leaf	nf_leaf
+1418	rw	if_neg (by rw [hm1]; omega)	if_neg rw hm1 omega
+1418	rw	hsym	hsym
+1418	rw	Option.getD_some	Option.getD_some
+1418	rw	hm1	hm1
+1420	show	some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read	some nf_LeafSt.read nf_sweepStep N _ _ some nf_LeafSt.read
+1423	rw	List.ofFn_succ_last	List.ofFn_succ_last
+1423	rw	List.foldl_append	List.foldl_append
+1424	simp only	Fin.coe_castSucc	Fin.coe_castSucc
+1424	simp only	Fin.val_last	Fin.val_last
+1424	simp only	List.foldl_cons	List.foldl_cons
+1424	simp only	List.foldl_nil	List.foldl_nil
+1424	simp only	hp	hp
+1428	dsimp only	(no list)	
+1431	rw	Function.update_self	Function.update_self
+1431	rw	Function.update_self	Function.update_self
+1431	rw	Function.update_self	Function.update_self
+1431	rw	SignType.coe_one	SignType.coe_one
+1432	push_cast	(no list)	
+1434	rw	Function.update_of_ne hi	Function.update_of_ne hi
+1434	rw	Function.update_of_ne hi	Function.update_of_ne hi
+1434	rw	Function.update_of_ne hi	Function.update_of_ne hi
+1463	rw	hpre u hu	hpre u hu
+1470	rw	show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl	N.k N.k rfl
+1470	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'
+1470	rw	hpre (2 * N.k + 3) (by omega)	hpre N.k omega
+1470	show	2 * N.k + 4 = (2 * N.k + 3) + 1	N.k N.k
+1472	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq
+1473	show	d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 :	d.workTapes Function.update d.workTapePos d.workTapePos N.k ℕ _
+1474	rw	Function.update_self	Function.update_self
+1510	rw	hrun	hrun
+1510	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by       si	step_of_tapeAction_move nf_leaf N none c q read σ _ rfl simp nf_leaf rw if_pos h1 h2 hq dsimp rw hsym Option.getD_some h3 hinp if_pos hdec
+1511	simp only	nf_leaf	nf_leaf
+1512	rw	if_pos h1	if_pos h1
+1512	rw	h2	h2
+1512	rw	hq	hq
+1513	dsimp only	(no list)	
+1514	rw	hsym	hsym
+1514	rw	Option.getD_some	Option.getD_some
+1514	rw	h3	h3
+1514	rw	hinp	hinp
+1514	rw	if_pos hdec	if_pos hdec
+1516	show	some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass	some rec N.k omega nf_LeafSt.pass
+1518	rw	h4	h4
+1524	simp only	hc	hc
+1524	simp only	Function.update_self	Function.update_self
+1524	simp only	SignType.coe_one	SignType.coe_one
+1525	push_cast	(no list)	
+1527	simp only	hc	hc
+1527	simp only	Function.update_of_ne hi	Function.update_of_ne hi
+1529	rw	hrun	hrun
+1531	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	step_of_tapeAction_move nf_leaf N none c q read σ q' rej rfl simp nf_leaf rw if_pos h1 h2 hn
+1532	simp only	nf_leaf	nf_leaf
+1533	rw	if_pos h1	if_pos h1
+1533	rw	h2	h2
+1533	rw	hn	hn
+1536	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	step_of_tapeAction_move nf_leaf N none c q read σ q' rej rfl simp nf_leaf rw if_pos h1 h2 hq
+1537	simp only	nf_leaf	nf_leaf
+1538	rw	if_pos h1	if_pos h1
+1538	rw	h2	h2
+1538	rw	hq	hq
+1540	rw	step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl	step_of_tapeAction_move nf_leaf N none c q read σ q' rej rfl simp nf_leaf rw if_pos h1 h2 hq dsimp rw hsym Option.getD_some h3 hinp if_neg hdec
+1541	simp only	nf_leaf	nf_leaf
+1542	rw	if_pos h1	if_pos h1
+1542	rw	h2	h2
+1542	rw	hq	hq
+1543	dsimp only	(no list)	
+1544	rw	hsym	hsym
+1544	rw	Option.getD_some	Option.getD_some
+1544	rw	h3	h3
+1544	rw	hinp	hinp
+1544	rw	if_neg hdec	if_neg hdec
+1569	simp only	(no list)	
+1572	simp only	nf_complete	nf_complete
+1572	simp only	nf_vstep	nf_vstep
+1572	simp only	hc	hc
+1574	simp only	nf_complete	nf_complete
+1574	simp only	nf_vstep	nf_vstep
+1574	simp only	hc	hc
+1590	simp only	(no list)	
+1593	simp only	nf_complete	nf_complete
+1593	simp only	nf_vstep	nf_vstep
+1593	simp only	hc	hc
+1595	simp only	nf_complete	nf_complete
+1595	simp only	nf_vstep	nf_vstep
+1595	simp only	hc	hc
+1596	rw	Action.apply_output	Action.apply_output
+1596	rw	StepBlock.outputSummary_append	StepBlock.outputSummary_append
+1625	rw	List.flatMap_cons	List.flatMap_cons
+1628	rw	List.length_append	List.length_append
+1628	rw	List.length_ofFn	List.length_ofFn
+1629	rw	hT p.val hlt	hT p.val hlt
+1629	rw	List.getElem?_append_left (by rw [List.length_ofFn]; exact p.isLt)	List.getElem?_append_left rw List.length_ofFn exact p.isLt
+1629	rw	List.getElem?_ofFn	List.getElem?_ofFn
+1629	rw	List.length_ofFn	List.length_ofFn
+1631	simp	(no list)	
+1633	rw	List.length_append	List.length_append
+1633	rw	List.length_ofFn	List.length_ofFn
+1635	rw	List.getElem?_append_right (by rw [List.length_ofFn]; omega)	List.getElem?_append_right rw List.length_ofFn omega
+1635	rw	List.length_ofFn	List.length_ofFn
+1635	rw	Nat.add_sub_cancel_left	Nat.add_sub_cancel_left
+1635	rw	List.length_ofFn	List.length_ofFn
+1637	rw	← e	e
+1639	push_cast	(no list)	
+1653	simp	(no list)	
+1653	simp	(no list)	
+1657	simp	(no list)	
+1668	simp	(no list)	
+1669	simp only	List.getElem_cons_zero	List.getElem_cons_zero
+1669	simp only	List.length_cons	List.length_cons
+1669	simp only	zero_add	zero_add
+1670	rw	this	
+1671	simp	(no list)	
+1672	simp	(no list)	
+1673	simpa	(no list)	
+1711	rw	hip	hip
+1718	rw	hinp	hinp
+1718	rw	hdec	hdec
+1722	simpa	(no list)	
+1723	simp	(no list)	
+1726	rw	hrun	hrun
+1726	rw	if_pos hl	if_pos hl
+1727	simp	(no list)	
+1729	simp	(no list)	
+1733	simpa	(no list)	
+1734	rw	if_neg (by simp [hl])	if_neg simp hl
+1734	simp	hl	hl
+1743	show	moveInputPos d.inputPos _ = _	moveInputPos d.inputPos _ _
+1744	simp only	nf_vstep	nf_vstep
+1744	simp only	hq	hq
+1745	rw	Action.apply_inputPos	Action.apply_inputPos
+1745	rw	hip	hip
+1749	show	d.workTapes 0 (Function.update d.workTapePos 0	d.workTapes Function.update d.workTapePos
+1751	rw	Function.update_self	Function.update_self
+1754	simp	(no list)	
+1760	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1760	rw	hrun	hrun
+1763	rw	hT	hT
+1763	simp	(no list)	
+1764	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1764	rw	hrun	hrun
+1764	rw	hcfg	hcfg
+1772	simp only	hd'	hd'
+1772	simp only	Function.update_self	Function.update_self
+1772	simp only	List.length_cons	List.length_cons
+1773	push_cast	(no list)	
+1775	simp only	hd'	hd'
+1775	simp only	Function.update_of_ne hi	Function.update_of_ne hi
+1780	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+1780	rw	hrun	hrun
+1786	rw	hdec	hdec
+1786	rw	hinp	hinp
+1839	rw	show (1 : ℕ) = 0 + 1 from rfl	ℕ rfl
+1839	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'
+1839	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+1839	rw	step_of_tapeAction_write (nf_leaf N (some t)) e (q := .blk₁ σ claim n mv last) 1	step_of_tapeAction_write nf_leaf N some t e q blk₁ σ claim n mv last some n.isSome hst rfl
+1839	rw	SignType.coe_one	SignType.coe_one
+1839	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq
+1839	show	(1 : ℕ) = 0 + 1	ℕ
+1843	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq
+1844	show	Function.update e.workTapes 1	Function.update e.workTapes
+1847	rw	Function.update_self	Function.update_self
+1847	rw	Function.update_self	Function.update_self
+1847	rw	Function.update_of_ne (by omega)	Function.update_of_ne omega
+1852	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+1852	rw	hst	hst
+1855	rw	h1	h1
+1871	rw	e2	e2
+1871	rw	h1	h1
+1871	rw	step_of_tapeAction_write (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last  	step_of_tapeAction_write nf_leaf N some t e₁ q blk₂ σ claim n mv last e.workTapes b some v m rfl htr
+1877	show	Function.update (Function.update e.workTapes 1	Function.update Function.update e.workTapes
+1882	rw	Function.update_self	Function.update_self
+1882	rw	Function.update_self	Function.update_self
+1882	rw	Function.update_idem	Function.update_idem
+1886	rw	hw2 .pass 0 (n.getD false) (by       simp only [nf_leaf]       rw [hsym1, if_pos	hw2 pass n.getD simp nf_leaf rw hsym1 if_pos hdec rfl
+1886	rw	htape2	htape2
+1887	simp only	nf_leaf	nf_leaf
+1888	rw	hsym1	hsym1
+1888	rw	if_pos hdec	if_pos hdec
+1897	simp only	he₁	he₁
+1897	simp only	Function.update_self	Function.update_self
+1897	simp only	SignType.coe_zero	SignType.coe_zero
+1897	simp only	add_zero	add_zero
+1899	simp only	he₁	he₁
+1899	simp only	Function.update_of_ne hi	Function.update_of_ne hi
+1906	simp only	nf_leaf	nf_leaf
+1907	rw	hsym1	hsym1
+1907	rw	if_pos hdec	if_pos hdec
+1909	rw	htape2	htape2
+1919	rw	show (3 : ℕ) = 2 + 1 from rfl	ℕ rfl
+1919	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'
+1919	rw	h2	h2
+1919	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₂ (q := .adj₁ σ mv) 1 0 m₃ rfl rfl	step_of_tapeAction_move nf_leaf N some t e₂ q adj₁ σ mv m₃ rfl rfl
+1919	show	(3 : ℕ) = 2 + 1	ℕ
+1926	rw	show (4 : ℕ) = 3 + 1 from rfl	ℕ rfl
+1926	rw	MultiTapeTM.runFrom_succ_eq_step'	MultiTapeTM.runFrom_succ_eq_step'
+1926	rw	h3	h3
+1926	rw	step_of_tapeAction_move (nf_leaf N (some t)) _ (q := .adj₂ σ mv) 1 0 m₃ rfl rfl	step_of_tapeAction_move nf_leaf N some t _ q adj₂ σ mv m₃ rfl rfl
+1926	show	(4 : ℕ) = 3 + 1	ℕ
+1931	rw	h2	h2
+1934	rw	h3	h3
+1937	rw	h4	h4
+1940	show	moveInputPos (moveInputPos (moveInputPos (moveInputPos e.inputPos 0) 0) 0) 0 = _	moveInputPos moveInputPos moveInputPos moveInputPos e.inputPos _
+1941	rw	moveInputPos_zero	moveInputPos_zero
+1941	rw	moveInputPos_zero	moveInputPos_zero
+1941	rw	moveInputPos_zero	moveInputPos_zero
+1941	rw	moveInputPos_zero	moveInputPos_zero
+1946	simp only	he₂	he₂
+1946	simp only	he₁	he₁
+1946	simp only	Function.update_self	Function.update_self
+1947	rw	hm₂	hm₂
+1947	rw	hm₃	hm₃
+1948	simp	(no list)	
+1949	simp only	he₂	he₂
+1949	simp only	he₁	he₁
+1949	simp only	Function.update_of_ne hi	Function.update_of_ne hi
+1954	rw	e2	e2
+1954	rw	h1	h1
+1954	rw	step_of_tapeAction_move (nf_leaf N (some t)) e₁ (q := .blk₂ σ claim n mv last   	step_of_tapeAction_move nf_leaf N some t e₁ q blk₂ σ claim n mv last e.workTapes b q' rej rfl simp nf_leaf rw hsym1 if_neg hdec
+1956	simp only	nf_leaf	nf_leaf
+1957	rw	hsym1	hsym1
+1957	rw	if_neg hdec	if_neg hdec
+1993	rw	hrun	hrun
+1993	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ)       (q' := .blk₁	step_of_tapeAction_move nf_leaf N some t c q read σ q' blk₁ _ none nf_complete N p some rec p ctl nf_decode N.k p some rec p t.succ nf_act N p some rec p q workTapes t getD nf_decode N.k p some rec p t.succ nf_act N p some rec p q workTapes t rec N.k omega rfl simp nf_leaf rw if_pos h1 hsym Option.getD_some h3 h4 h2 hq
+2000	simp only	nf_leaf	nf_leaf
+2001	rw	if_pos h1	if_pos h1
+2001	rw	hsym	hsym
+2001	rw	Option.getD_some	Option.getD_some
+2001	rw	h3	h3
+2001	rw	h4	h4
+2001	rw	h2	h2
+2001	rw	hq	hq
+2009	simp only	hc	hc
+2009	simp only	Function.update_self	Function.update_self
+2009	simp only	SignType.coe_one	SignType.coe_one
+2010	push_cast	(no list)	
+2012	simp only	hc	hc
+2012	simp only	Function.update_of_ne hi	Function.update_of_ne hi
+2014	rw	hrun	hrun
+2014	rw	step_of_tapeAction_move (nf_leaf N (some t)) c (q := .read σ) (q' := .rej) 0 0 0	step_of_tapeAction_move nf_leaf N some t c q read σ q' rej rfl simp nf_leaf rw if_pos h1 h2 hn
+2016	simp only	nf_leaf	nf_leaf
+2017	rw	if_pos h1	if_pos h1
+2017	rw	h2	h2
+2017	rw	hn	hn
+2031	rw	(h.1 y).1	h.1 y
+2031	rw	(h.1 y).2	h.1 y
+2033	rw	if_pos hy	if_pos hy
+2033	rw	if_pos hy	if_pos hy
+2034	unfold	nf_blockDecode	nf_blockDecode
+2038	rw	if_neg hy	if_neg hy
+2038	rw	if_neg hy	if_neg hy
+2038	rw	h.2 y hy	h.2 y hy
+2055	rw	min_le_iff	min_le_iff
+2056	rw	le_max_iff	le_max_iff
+2062	unfold	nf_blockWrite	nf_blockWrite
+2064	rw	hzy	hzy
+2066	rw	Function.update_of_ne e2	Function.update_of_ne e2
+2067	simp only	Function.update_self	Function.update_self
+2067	simp only	if_pos hy	if_pos hy
+2067	simp only	and_self	and_self
+2072	rw	Function.update_of_ne e2	Function.update_of_ne e2
+2072	rw	Function.update_of_ne e1	Function.update_of_ne e1
+2072	rw	Function.update_of_ne e4	Function.update_of_ne e4
+2072	rw	Function.update_of_ne e3	Function.update_of_ne e3
+2072	rw	Function.update_of_ne hzy	Function.update_of_ne hzy
+2072	rw	(h.1 z).1	h.1 z
+2072	rw	(h.1 z).2	h.1 z
+2075	rw	if_pos hz'	if_pos hz'
+2075	rw	if_pos hz'	if_pos hz'
+2075	rw	if_pos ((hin z hzy).mpr hz')	if_pos hin z hzy mpr hz'
+2075	rw	if_pos ((hin z hzy).mpr hz')	if_pos hin z hzy mpr hz'
+2077	rw	if_neg hz'	if_neg hz'
+2077	rw	if_neg hz'	if_neg hz'
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	if_neg h' hz' hin z hzy mp h'
+2077	rw	if_neg (fun h' => hz' ((hin z hzy).mp h'))	if_neg h' hz' hin z hzy mp h'
+2081	rw	Function.update_of_ne hzy	Function.update_of_ne hzy
+2094	rw	(h.1 z).1	h.1 z
+2096	rw	if_pos hzi	if_pos hzi
+2098	rw	if_neg hzi	if_neg hzi
+2101	rw	(h.1 z).2	h.1 z
+2103	rw	if_pos hzi	if_pos hzi
+2105	rw	if_neg hzi	if_neg hzi
+2112	simp	(no list)	
+2180	simp only	he	he
+2184	rw	hew1	hew1
+2184	rw	hep1	hep1
+2184	rw	hpos	hpos
+2184	rw	Cfg.workTapeSymbols_eq	Cfg.workTapeSymbols_eq
+2192	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2192	rw	hrun	hrun
+2201	simp only	nf_vstep	nf_vstep
+2201	simp only	hq	hq
+2202	rw	Action.apply_workTapes	Action.apply_workTapes
+2202	rw	← hok0	hok0
+2204	simp only	nf_vstep	nf_vstep
+2204	simp only	hq	hq
+2205	rw	Action.apply_workTapePos	Action.apply_workTapePos
+2209	rw	hvt	hvt
+2214	simpa	(no list)	
+2216	simp only	List.length_singleton	List.length_singleton
+2219	simp	(no list)	
+2220	simp	(no list)	
+2221	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2221	rw	hrun	hrun
+2221	rw	h2s	h2s
+2225	show	Function.update d.workTapes 1 (nf_blockWrite (e.workTapes 1) (e.workTapePos 1) n	Function.update d.workTapes nf_blockWrite e.workTapes e.workTapePos n _
+2226	rw	hew1	hew1
+2226	rw	hep1	hep1
+2226	rw	hpos	hpos
+2230	simp only	Function.update_self	Function.update_self
+2231	rw	hep1	hep1
+2231	rw	hpos	hpos
+2232	simp only	he	he
+2232	simp only	Function.update_of_ne hi	Function.update_of_ne hi
+2232	simp only	List.length_singleton	List.length_singleton
+2232	simp only	Nat.mul_one	Nat.mul_one
+2235	simpa	(no list)	
+2246	show	nf_blocks (Function.update e.workTapes 1	nf_blocks Function.update e.workTapes
+2248	rw	Function.update_self	Function.update_self
+2248	rw	hew1	hew1
+2248	rw	hep1	hep1
+2248	rw	hpos	hpos
+2251	show	Function.update e.workTapePos 1 (e.workTapePos 1 + 2 * ((a.workTapes t).2 : ℤ)) 	Function.update e.workTapePos e.workTapePos a.workTapes t ℤ _
+2252	rw	Function.update_self	Function.update_self
+2252	rw	hep1	hep1
+2252	rw	hpos	hpos
+2252	rw	hvp	hvp
+2258	simp only	hd'	hd'
+2258	simp only	he	he
+2261	simp only	hd'	hd'
+2261	simp only	he	he
+2262	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+2262	rw	Function.update_self	Function.update_self
+2263	rw	hw0	hw0
+2263	rw	hp0	hp0
+2267	simp	(no list)	
+2270	rw	hvp	hvp
+2271	rw	hvp	hvp
+2273	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2273	rw	hrun	hrun
+2273	rw	h4s	h4s
+2279	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2279	rw	hrun	hrun
+2283	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2283	rw	hrun4	hrun4
+2286	simp only	List.length_cons	List.length_cons
+2286	rw	Nat.mul_add	Nat.mul_add
+2286	rw	← hT	hT
+2288	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2288	rw	hrun4	hrun4
+2288	rw	hcfg	hcfg
+2292	show	Function.update (Function.update d.workTapes 1 _) 1 B = _	Function.update Function.update d.workTapes _ B _
+2293	rw	Function.update_idem	Function.update_idem
+2297	simp only	Function.update_self	Function.update_self
+2300	simp only	hd'	hd'
+2300	simp only	he	he
+2300	simp only	Function.update_self	Function.update_self
+2300	simp only	Function.update_of_ne (show (0 : Fin 2) ≠ 1 by decide)	Function.update_of_ne Fin decide
+2300	simp only	List.length_cons	List.length_cons
+2301	show	(0 : Fin 2) ≠ 1 by decide), List.length_cons]	Fin decide List.length_cons
+2302	push_cast	(no list)	
+2305	simp only	List.length_cons	List.length_cons
+2308	rw	min_le_iff	min_le_iff
+2309	rw	le_max_iff	le_max_iff
+2310	push_cast	(no list)	
+2317	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2317	rw	hrun4	hrun4
+2321	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2321	rw	hrun	hrun
+2339	rw	hL	hL
+2341	rw	List.length_ofFn	List.length_ofFn
+2341	rw	List.length_ofFn	List.length_ofFn
+2343	rw	List.length_ofFn	List.length_ofFn
+2345	rw	hs	hs
+2348	rw	FinTM.bufferTape_left	FinTM.bufferTape_left
+2353	rw	hpL	hpL
+2353	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+2353	rw	List.getElem?_eq_none (by rw [List.length_ofFn])	List.getElem?_eq_none rw List.length_ofFn
+2353	rw	List.length_ofFn	List.length_ofFn
+2359	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+2359	rw	List.getElem?_ofFn	List.getElem?_ofFn
+2360	simp only	hm	hm
+2360	simp only	dite_true	dite_true
+2363	rw	hb	hb
+2365	rw	List.length_ofFn	List.length_ofFn
+2367	rw	if_pos hq	if_pos hq
+2368	rw	if_neg hq	if_neg hq
+2381	rw	List.flatMap_cons	List.flatMap_cons
+2381	rw	List.length_append	List.length_append
+2381	rw	List.length_ofFn	List.length_ofFn
+2381	rw	ih	ih
+2381	rw	List.length_cons	List.length_cons
+2437	unfold	nf_tapeEntry	nf_tapeEntry
+2438	rw	dif_neg hk	dif_neg hk
+2440	rw	Cfg.mapState_state	Cfg.mapState_state
+2440	rw	he	he
+2442	rw	hq	hq
+2444	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+2446	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+2447	rw	MultiTapeTM.runFrom_zero	MultiTapeTM.runFrom_zero
+2447	rw	Cfg.mapState_output	Cfg.mapState_output
+2447	rw	hout	hout
+2455	unfold	nf_tapeEntry	nf_tapeEntry
+2456	rw	dif_pos hk	dif_pos hk
+2464	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+2464	rw	Cfg.init_state	Cfg.init_state
+2467	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+2467	rw	Cfg.init_workTapes	Cfg.init_workTapes
+2469	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+2469	rw	Cfg.init_workTapePos	Cfg.init_workTapePos
+2472	show	nf_blocks (c.workTapes 1) _ _ _ _	nf_blocks c.workTapes _ _ _ _
+2473	rw	hB	hB
+2473	rw	hinit_tape	hinit_tape
+2475	rw	if_neg (by omega)	if_neg omega
+2475	rw	if_neg (by omega)	if_neg omega
+2479	show	c.workTapePos 1 = _; rw [hinit_pos]; ring) (by omega) (by rw [hinit_pos]; omega)	c.workTapePos _ rw hinit_pos ring omega rw hinit_pos omega
+2479	rw	hinit_pos	hinit_pos
+2479	rw	hinit_pos	hinit_pos
+2480	rw	hinit_pos	hinit_pos
+2482	show	c.workTapes 0 (c.workTapePos 0 + p) = _	c.workTapes c.workTapePos p _
+2483	rw	hA	hA
+2483	rw	hA0	hA0
+2483	rw	zero_add	zero_add
+2483	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+2488	show	(match nf_leafExit N q with	nf_leafExit N q
+2490	rw	h	h
+2494	rw	he	he
+2494	rw	hre	hre
+2495	unfold	nf_V	nf_V
+2496	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	phaseHostTM_run_le nf_M N nf_leaf N _ nf_red N nf_leaf N nf_leafExit N nf_Ph.rep some t dL T₁ hguard₁ u hu
+2514	rw	hc₁	hc₁
+2519	simp only	hc₁'	hc₁'
+2519	simp only	hc₁	hc₁
+2519	simp only	hdL	hdL
+2520	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+2520	rw	Function.update_self	Function.update_self
+2520	rw	hA0	hA0
+2520	rw	zero_add	zero_add
+2520	rw	hslen	hslen
+2523	simp only	hc₁'	hc₁'
+2523	simp only	hc₁	hc₁
+2523	simp only	hdL	hdL
+2524	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+2524	rw	hA	hA
+2538	simp only	hc₃'	hc₃'
+2539	rw	h3w	h3w
+2540	simp only	hc₁'	hc₁'
+2540	simp only	hc₁	hc₁
+2541	rw	Function.update_self	Function.update_self
+2543	simp only	hc₃'	hc₃'
+2544	rw	h3p1	h3p1
+2545	simp only	hc₁'	hc₁'
+2545	simp only	hc₁	hc₁
+2546	rw	Function.update_self	Function.update_self
+2553	rw	hB3	hB3
+2553	rw	hP3	hP3
+2561	rw	h5w0	h5w0
+2562	simp only	hc₃'	hc₃'
+2563	rw	h3w	h3w
+2564	simp only	hc₁'	hc₁'
+2564	simp only	hc₁	hc₁
+2564	simp only	hdL	hdL
+2565	rw	Function.update_of_ne (by decide)	Function.update_of_ne decide
+2565	rw	hA	hA
+2567	rw	h5p0	h5p0
+2568	simp only	hc₃'	hc₃'
+2572	rw	h5w1 q	h5w1 q
+2572	rw	hB3	hB3
+2572	rw	hP3	hP3
+2575	rw	h5o	h5o
+2576	simp only	hc₃'	hc₃'
+2577	rw	h3o	h3o
+2578	simp only	hc₁'	hc₁'
+2578	simp only	hc₁	hc₁
+2578	simp only	hdL	hdL
+2588	rw	he	he
+2588	rw	hre	hre
+2589	unfold	nf_V	nf_V
+2590	rw	hR	hR
+2590	rw	hre1	hre1
+2595	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2595	rw	hrun1	hrun1
+2595	rw	h3'	h3'
+2595	rw	hre3	hre3
+2599	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2599	rw	hrun2	hrun2
+2599	rw	h5'	h5'
+2613	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2613	rw	hrun3	hrun3
+2618	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2618	rw	hrun1	hrun1
+2622	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2622	rw	h3'	h3'
+2622	rw	hre3	hre3
+2626	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2626	rw	h5'	h5'
+2628	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2628	rw	hrun3	hrun3
+2628	rw	hacc2	hacc2
+2631	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2631	rw	hrun3	hrun3
+2638	rw	e3	e3
+2639	rw	e1	e1
+2640	rw	e2	e2
+2650	rw	he	he
+2650	rw	hre	hre
+2651	unfold	nf_V	nf_V
+2652	rw	hR	hR
+2652	rw	Cfg.mapState_state	Cfg.mapState_state
+2652	rw	hrj	hrj
+2656	rw	hver	hver
+2657	simp	(no list)	
+2711	rw	nf_tag	nf_tag
+2731	rw	hV	hV
+2732	unfold	nf_V	nf_V
+2733	rw	hp0 u hu	hp0 u hu
+2741	rw	hV	hV
+2742	unfold	nf_V	nf_V
+2743	rw	hD	hD
+2743	rw	Cfg.mapState_state	Cfg.mapState_state
+2743	rw	streamStartCfg_state	streamStartCfg_state
+2744	simp only	Option.map_some	Option.map_some
+2745	rw	if_neg hpass	if_neg hpass
+2748	rw	hver	hver
+2749	simp	(no list)	
+2755	rw	hdS	hdS
+2755	rw	streamStartCfg_state	streamStartCfg_state
+2760	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+2760	rw	Cfg.init_state	Cfg.init_state
+2764	show	dS.inputPos = _	dS.inputPos _
+2765	rw	hdS	hdS
+2765	rw	streamStartCfg_inputPos	streamStartCfg_inputPos
+2765	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+2765	rw	Cfg.init_inputPos	Cfg.init_inputPos
+2768	show	dS.workTapes 0 (dS.workTapePos 0 + p) = _	dS.workTapes dS.workTapePos p _
+2769	rw	hdS	hdS
+2769	rw	streamStartCfg_workTapes	streamStartCfg_workTapes
+2769	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos
+2769	rw	if_pos rfl	if_pos rfl
+2769	rw	zero_add	zero_add
+2769	rw	FinTM.bufferTape_nat	FinTM.bufferTape_nat
+2775	show	(match nf_leafExit N q with	nf_leafExit N q
+2777	rw	h	h
+2782	rw	hV	hV
+2783	unfold	nf_V	nf_V
+2784	rw	hD	hD
+2785	simp only	hpass	hpass
+2785	simp only	if_true	if_true
+2790	rw	hV	hV
+2791	unfold	nf_V	nf_V
+2792	rw	phaseHostTM_run_le (nf_M N (nf_leaf N)) _ (nf_red N (nf_leaf N) (nf_leafExit N))	phaseHostTM_run_le nf_M N nf_leaf N _ nf_red N nf_leaf N nf_leafExit N nf_Ph.rep none dL T₁ hguard₁ u hu
+2802	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2802	rw	hrun0	hrun0
+2816	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2816	rw	hrun0	hrun0
+2816	rw	hV	hV
+2817	unfold	nf_V	nf_V
+2818	rw	hR	hR
+2818	rw	Cfg.mapState_state	Cfg.mapState_state
+2818	rw	hrj	hrj
+2823	rw	hver	hver
+2824	simp	(no list)	
+2837	rw	hc₁	hc₁
+2842	simp only	hc₁'	hc₁'
+2842	simp only	hc₁	hc₁
+2842	simp only	hdL	hdL
+2842	simp only	hdS	hdS
+2843	rw	Function.update_self	Function.update_self
+2843	rw	streamStartCfg_workTapePos	streamStartCfg_workTapePos
+2843	rw	zero_add	zero_add
+2843	rw	hslen	hslen
+2846	simp only	hc₁'	hc₁'
+2846	simp only	hc₁	hc₁
+2846	simp only	hdL	hdL
+2846	simp only	hdS	hdS
+2847	rw	streamStartCfg_workTapes	streamStartCfg_workTapes
+2847	rw	if_pos rfl	if_pos rfl
+2855	rw	h3w	h3w
+2859	rw	h3w	h3w
+2861	simp only	hc₁'	hc₁'
+2861	simp only	hc₁	hc₁
+2861	simp only	hdL	hdL
+2861	simp only	hdS	hdS
+2862	rw	streamStartCfg_workTapes	streamStartCfg_workTapes
+2862	rw	if_neg (by decide)	if_neg decide
+2864	rw	h3o	h3o
+2865	simp only	hc₁'	hc₁'
+2865	simp only	hc₁	hc₁
+2865	simp only	hdL	hdL
+2865	simp only	hdS	hdS
+2866	rw	streamStartCfg_output	streamStartCfg_output
+2874	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2874	rw	hrun0	hrun0
+2874	rw	hV	hV
+2875	unfold	nf_V	nf_V
+2876	rw	hR	hR
+2876	rw	hre1	hre1
+2881	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2881	rw	hrun1	hrun1
+2881	rw	h3'	h3'
+2884	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2884	rw	hrun2	hrun2
+2890	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2890	rw	hrun1	hrun1
+2894	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2894	rw	h3'	h3'
+2896	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2896	rw	hrun2	hrun2
+2896	rw	hacc2	hacc2
+2896	rw	nf_allPass_iff	nf_allPass_iff
+2899	rw	MultiTapeTM.runFrom_add	MultiTapeTM.runFrom_add
+2899	rw	hrun2	hrun2
+2900	rw	hT₁	hT₁
+2902	rw	e2	e2
+2920	rw	hlen	hlen
+2923	rw	Nat.mul_add	Nat.mul_add
+2923	rw	Nat.mul_one	Nat.mul_one
+2929	rw	List.length_ofFn	List.length_ofFn
+2929	rw	List.length_nil	List.length_nil
+2932	rw	hlen	hlen
+2933	rw	hlen	hlen
+2935	rw	List.length_ofFn	List.length_ofFn
+2935	rw	hlen	hlen
+2937	rw	List.getElem_ofFn	List.getElem_ofFn
+2938	rw	List.flatMap_def	List.flatMap_def
+2938	rw	List.map_ofFn	List.map_ofFn
+2941	rw	List.length_ofFn	List.length_ofFn
+2942	rw	List.getElem_ofFn	List.getElem_ofFn
+2945	rw	Nat.mul_add	Nat.mul_add
+2945	rw	Nat.mul_one	Nat.mul_one
+2947	rw	e	e
+2947	rw	List.getElem?_eq_getElem (hidx ⟨r, hr⟩ ⟨2 * k + 3, by omega⟩)	List.getElem?_eq_getElem hidx r hr k omega
+2979	rw	nf_entry	nf_entry
+2997	rw	List.take_zero	List.take_zero
+2997	rw	List.foldl_nil	List.foldl_nil
+2997	rw	List.take_zero	List.take_zero
+2997	rw	NDTM.runWith_nil	NDTM.runWith_nil
+3005	rwa	ih	ih
+3006	rw	List.take_succ_eq_append_getElem hlt	List.take_succ_eq_append_getElem hlt
+3006	rw	List.foldl_append	List.foldl_append
+3006	rw	ih	ih
+3006	rw	List.foldl_cons	List.foldl_cons
+3006	rw	List.foldl_nil	List.foldl_nil
+3006	rw	List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt)	List.take_succ_eq_append_getElem rw List.length_map exact hlt
+3006	rw	NDTM.runWith_append	NDTM.runWith_append
+3006	rw	NDTM.runWith_cons	NDTM.runWith_cons
+3006	rw	NDTM.runWith_nil	NDTM.runWith_nil
+3007	rw	List.length_map	List.length_map
+3017	simp only	nf_vstep	nf_vstep
+3017	simp only	hq	hq
+3018	rw	NDTM.stepWith_of_some hq	NDTM.stepWith_of_some hq
+3019	unfold	nf_act	nf_act
+3020	rw	Option.getD_some	Option.getD_some
+3020	rw	hd0	hd0
+3020	rw	hds	hds
+3020	rw	List.getElem_map	List.getElem_map
+3052	rw	hrs	hrs
+3054	rw	hrs	hrs
+3054	rw	List.length_ofFn	List.length_ofFn
+3056	rw	hrlen	hrlen
+3062	rw	List.getElem_ofFn	List.getElem_ofFn
+3066	rw	hrlen	hrlen
+3066	rw	List.length_nil	List.length_nil
+3071	rw	hget r hr	hget r hr
+3074	rw	List.length_map	List.length_map
+3074	rw	hrlen	hrlen
+3076	rw	List.getElem_map	List.getElem_map
+3076	rw	hget r (by rw [List.length_map] at h1; exact h1)	hget r rw List.length_map h1 exact h1
+3076	rw	List.length_map	List.length_map
+3084	rw	nf_vrun_of_ok N x rs r hr.le (fun r' h' i' => ih r' h' (by omega) i')	nf_vrun_of_ok N x rs r hr.le r' h' i' ih r' h' omega i'
+3084	rw	hmap	hmap
+3085	rw	← hrlen	hrlen
+3086	rw	hget r hr	hget r hr
+3090	rw	← hdisp	hdisp
+3092	rw	hdisp	hdisp
+3096	rw	hrlen	hrlen
+3128	rw	hs	hs
+3128	rw	hA	hA
+3133	unfold	nf_C	nf_C
+3134	rw	hA	hA
+3154	rw	← hw	hw
+3154	rw	List.take_length	List.take_length
+3160	rw	← hw	hw
+3160	rw	List.take_length	List.take_length
+3165	rw	h00	h00
+3165	rw	List.take_zero	List.take_zero
+3165	rw	NDTM.runWith_nil	NDTM.runWith_nil
+3165	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+3165	rw	Cfg.init_state	Cfg.init_state
+3168	rw	hw₀	hw₀
+3168	rw	List.length_take	List.length_take
+3172	rw	hw₀len	hw₀len
+3172	rw	List.length_nil	List.length_nil
+3176	rw	hw₀len	hw₀len
+3177	rw	hw₀	hw₀
+3177	rw	List.take_take	List.take_take
+3177	rw	Nat.min_eq_left hr.le	Nat.min_eq_left hr.le
+3181	rw	hw₀	hw₀
+3181	rw	List.take_append_drop	List.take_append_drop
+3181	rw	NDTM.runWith_of_halt _ hspec	NDTM.runWith_of_halt _ hspec
+3182	rw	hw₀	hw₀
+3182	rw	← hsplit	hsplit
+3189	rw	nf_display_length	nf_display_length
+3189	rw	hw₀len	hw₀len
+3190	rw	hw₀len	hw₀len
+3192	rw	← nf_entry nf_P x (nf_display N x w₀)	nf_entry nf_P x nf_display N x w₀
+3218	rw	List.take_length	List.take_length
+3218	rw	← hwlen	hwlen
+3218	rw	List.take_length	List.take_length
+3221	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+3221	rw	Cfg.init_state	Cfg.init_state
+3223	rw	NDTM.initCfg_eq	NDTM.initCfg_eq
+3223	rw	Cfg.init_output	Cfg.init_output
+3223	rw	StepBlock.outputSummary_nil	StepBlock.outputSummary_nil
+3226	rw	hfin	hfin
+3231	rw	hsw	hsw
+3235	unfold	nf_sweepPass	nf_sweepPass
+3235	unfold	at	at
+3235	unfold	hctl	hctl
+3236	rw	Bool.and_eq_true	Bool.and_eq_true
+3236	rw	Bool.and_eq_true	Bool.and_eq_true
+3236	rw	Bool.and_eq_true	Bool.and_eq_true
+3238	rw	hc1	hc1
+3258	rw	nf_entry	nf_entry

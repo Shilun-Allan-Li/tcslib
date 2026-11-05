@@ -51,6 +51,10 @@ shape of [AB09, Fig. 4.1]:
 * `Turing.FinTM.decidesInSpace_iff`, `Complexity.mem_SPACE_iff`, `Complexity.LOGSPACE_eq` —
   the definitions of `DecidesInSpace`, `SPACE` and `LOGSPACE`, unfolded.
 * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
+* `Complexity.logSpace_le_succ`, `Complexity.logSpace_le_of_le_mul_two_pow` — the logarithmic
+  bound is at most linear, and at most `(A + 1) s` below `A · 2^s`.
+* `Complexity.logSpace_le_size_succ` — the logarithmic bound is at most one more than the
+  binary length.
 * `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
 * `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
   2026-10-10).
@@ -189,6 +193,44 @@ def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
 
 /-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
 theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+
+/-- The logarithmic bound is at most linear: `logSpace n ≤ n + 1`.
+
+**Proof sketch.** `Nat.log 2 n ≤ n` (`Nat.log_le_self`), then `Complexity.logSpace_eq`. -/
+theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
+  have := Nat.log_le_self 2 n
+  rw [logSpace_eq]
+  omega
+
+/-- The logarithmic width is at most one more than the binary length:
+`logSpace n ≤ Nat.size n + 1`.
+
+**Proof sketch.** At `n = 0` both sides are `1`. Otherwise `2 ^ Nat.log 2 n ≤ n < 2 ^ Nat.size n`
+(`Nat.pow_log_le_self`, `Nat.lt_size_self`), so `Nat.log 2 n < Nat.size n`. -/
+lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
+  unfold logSpace
+  rcases Nat.eq_zero_or_pos n with h | h
+  · subst h; simp
+  · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+    have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
+    have : Nat.log 2 n < Nat.size n :=
+      (Nat.pow_lt_pow_iff_right (show 1 < 2 by norm_num)).mp (lt_of_le_of_lt h1 h2)
+    omega
+
+/-- A number at most `A · 2^s` (with `s ≥ 1`) has `logSpace` at most `(A + 1) s`. -/
+theorem logSpace_le_of_le_mul_two_pow {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) :
+    logSpace v ≤ (A + 1) * s := by
+  have hA : A < 2 ^ A := Nat.lt_two_pow_self
+  have hlt : v < 2 ^ (A + s) := by
+    rw [pow_add]
+    exact lt_of_le_of_lt h (Nat.mul_lt_mul_of_pos_right hA (Nat.two_pow_pos s))
+  have hle : A + s ≤ (A + 1) * s := by
+    have := Nat.le_mul_of_pos_right A (show 0 < s by omega)
+    rw [Nat.add_mul, Nat.one_mul]; omega
+  rcases Nat.eq_zero_or_pos v with rfl | hv
+  · simp only [logSpace, Nat.log_zero_right]; omega
+  · have := Nat.log_lt_of_lt_pow (by omega) hlt
+    simp only [logSpace]; omega
 
 /-- **The class `L`** [AB09, Def 4.5]: `L = SPACE(log n)`, the languages decidable by a
 machine visiting `O(log n)` work-tape cells. (Named `LOGSPACE` to keep the letter `L` free

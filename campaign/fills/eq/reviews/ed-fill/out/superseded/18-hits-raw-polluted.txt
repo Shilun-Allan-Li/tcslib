@@ -1,0 +1,501 @@
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4351:      let K := A + 6 * C + 7
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4354:          (fun n => K * (n + 1) ^ (d + 1)) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4364:          5 * (C * (x.length + 1) ^ (d + 1) + 1) ≤ K * (x.length + 1) ^ (d + 1)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4370:          _ = _ := by dsimp only [K]; ring
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4371:      refine ⟨M, M.k * (K + 1) + K, ?_, ?_⟩
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4380:        have hb : K * (x.length + 1) ^ (d + 1) + 1 ≤
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4381:            (K + 1) * (C * (x.length + 1) ^ (d + 1) + 1) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4382:          have hh := Nat.mul_le_mul_left K hp
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4598:  let K := a + 13
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4603:      (fun n => K * ((n + 1) ^ e + n + 1)) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4607:        K * ((x.length + 1) ^ e + x.length + 1) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4608:      dsimp only [K]
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4615:  refine ⟨M, 2 * K + M.k * (K + 1), ?_, ?_⟩
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4624:      K * ((x.length + 1) ^ e + x.length + 1) ≤
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4625:          K * (2 * (x.length + 1) ^ (e + 1)) := Nat.mul_le_mul_left _ (by omega)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4626:      _ = (2 * K) * (x.length + 1) ^ (e + 1) := by ring
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4630:    have hb : K * ((x.length + 1) ^ e + x.length + 1) + 1 ≤
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4631:        (K + 1) * ((x.length + 1) ^ e + x.length + 1) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:4633:        _ ≤ K * ((x.length + 1) ^ e + x.length + 1) +
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8433:  let K := E.k * (2 * (c + 1) + 1)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8434:  refine ⟨E, c + K, ?_, ?_⟩
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Catalog.lean:8457:      _ = K * (T x.length + 1) := by dsimp [K]; ring
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:219:def RecordAt {K : ℕ} {Γ S : Type*} {x : List Γ} (d : Cfg K Γ S x) (r : Fin K)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:263:    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:264:      (R : MultiTapeTM (K + 1) (RecSym Q T) P) (entry yes no : P) (C : ℕ), yes ≠ no ∧
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:266:      ∀ d : Cfg (K + 1) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:268:        (∀ j : Fin (K + 1), j ≠ 0 → ∀ p, d.workTapes j p = none) →
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:271:          (∀ u ≤ t, ∀ j : Fin (K + 1),
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:887:  set K₀ : ℕ := cF + 4 + cEcall * (2 * CE * (b + 1) ^ cE + b + 2) +
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:889:  refine ⟨M, c * (K₀ + 1) * (a' + 2), D + k', fun w => ?_⟩
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:893:  have hT1 : T n + 1 ≤ (K₀ + 1) * (n + 1) ^ D := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:896:    calc T n + 1 ≤ K₀ * (n + 1) ^ D + (n + 1) ^ D := by omega
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:897:      _ = (K₀ + 1) * (n + 1) ^ D := by ring
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:903:        c * ((K₀ + 1) * (n + 1) ^ D) * ((a' + 2) * (n + 1) ^ k') :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean:905:    _ = c * (K₀ + 1) * (a' + 2) * (n + 1) ^ (D + k') := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Loop.lean:4514:shape, with `K = 6` (so `6 + 13 M.k + 3K = 24 + 13 M.k`).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Build/Loop.lean:4910:`6 + 13 * M.k + 3 * K` with `K = 6`). `emCall_first` cuts at the first visit
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:251:theorem step_some (q : TSt R Λ) (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:253:    (toTM P l₀).tm.step (⟨some q, p, tp, hd, out⟩ : Cfg R Bool (TSt R Λ) x) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:254:      (tr P q (Cfg.inputSymbol (⟨some q, p, tp, hd, out⟩ : Cfg R Bool (TSt R Λ) x))
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:255:        (fun i => tp i (hd i))).apply ⟨some q, p, tp, hd, out⟩ := rfl
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:261:    (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool) (hd : Fin R → ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:263:    (act t im wr m o q).apply (⟨q', p, tp, hd, out⟩ : Cfg R Bool (TSt R Λ) x) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:264:      ⟨q, moveInputPos p im, Function.update tp t (wrT (tp t) (hd t) wr),
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:279:    (q : Option (TSt R Λ)) (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:281:    (ctl im o q).apply (⟨q', p, tp, hd, out⟩ : Cfg R Bool (TSt R Λ) x) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:282:      ⟨q, moveInputPos p im, tp, hd, out ++ o.toList⟩ := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:295:theorem print_walk (r : Fin R) (l : Λ) (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:296:    (hd : Fin R → ℤ) (m : ℕ) (htp : tp r = ones m) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:298:      (toTM P l₀).tm.runFrom (⟨some (.prW r l), p, tp, Function.update hd r ((j : ℤ) - 1),
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:300:        ⟨some (.prB r l), p, tp, Function.update hd r 0, out ++ List.replicate j true⟩ := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:306:    have hb : tp r (Function.update hd r ((0 : ℕ) - 1 : ℤ) r) = none := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:314:    have hb : tp r (Function.update hd r (((j + 1 : ℕ) : ℤ) - 1) r) = some true := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:331:theorem back_walk (r : Fin R) (l : Λ) (p : Fin (x.length + 2)) (tp : Fin R → ℤ → Option Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:332:    (hd : Fin R → ℤ) (m : ℕ) (htp : tp r = ones m) (out : List Bool) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:334:      (toTM P l₀).tm.runFrom (⟨some (.prB r l), p, tp,
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:336:        ⟨some (.main l), p, tp, Function.update hd r (m : ℤ), out⟩ := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:342:    have hb : tp r (Function.update hd r (((m - 0 : ℕ) : ℤ)) r) = none := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProg.lean:350:    have hb : tp r (Function.update hd r (((m - (d + 1) : ℕ) : ℤ)) r) = some true := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:160:otherwise decrements it and runs the body, which returns to `head`.  If iteration `j < K`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:161:of the body takes the registers `st j` (with `r` already decremented to `K - j - 1`) to
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:162:`st (j + 1)` printing `em j`, and `st j r = K - j`, then the loop takes `st 0` to `st K`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:163:printing `em 0 ++ … ++ em (K - 1)`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:167:    (hd : P dl = .dec r body) (K : ℕ) (st : ℕ → Fin R → ℕ) (ps : ℕ → ℕ) (em : ℕ → List Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:168:    (b : ℕ) (hr : ∀ j ≤ K, st j r = K - j)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:169:    (hbody : ∀ j < K, Goes P x body (Function.update (st j) r (K - j - 1)) (ps j) (some head)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:171:    Goes P x head (st 0) (ps 0) (some exit) (st K) (ps K) ((List.range K).flatMap em)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:172:      (K * (b + 2) + 1) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:173:  have key : ∀ i ≤ K, Goes P x head (st (K - i)) (ps (K - i)) (some exit) (st K) (ps K)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:174:      (((List.range i).map (fun j => K - i + j)).flatMap em) (i * (b + 2) + 1) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:179:      simpa using goes_jz_zero (ρ := st K) (p := ps K) hh (by simpa using hr K le_rfl)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:182:      have h1 : st (K - (i + 1)) r ≠ 0 := by rw [hr _ (by omega)]; omega
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:183:      have hj : K - (i + 1) + 1 = K - i := by omega
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:184:      have hb := hbody (K - (i + 1)) (by omega)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:185:      rw [hj, show K - (K - (i + 1)) - 1 = i by omega] at hb
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:186:      have hdec : Function.update (st (K - (i + 1))) r (st (K - (i + 1)) r - 1) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:187:          Function.update (st (K - (i + 1))) r i := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:189:      have := (((goes_jz_pos (p := ps (K - (i + 1))) hh h1).trans
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:190:        (goes_dec (p := ps (K - (i + 1))) hd)).trans
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:199:  simpa using key K le_rfl
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:428:theorem step_out_le (s : St R Λ) (K : ℕ) (h : ∀ r, s.regs r ≤ K) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/CounterProgRun.lean:429:    (step P x s).out.length ≤ s.out.length + K + 1 := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:311:private def bridgeIndex : PartrecToTM2.K' → Fin 4
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:357:private def bridgeKey : Fin 4 → PartrecToTM2.K' :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:360:private lemma bridgeKey_index (k : PartrecToTM2.K') : bridgeKey (bridgeIndex k) = k := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:455:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:462:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:463:    (k : PartrecToTM2.K') :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:486:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:493:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:494:    (k : PartrecToTM2.K') (a : PartrecToTM2.Γ') (xs : List PartrecToTM2.Γ')
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:529:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:530:    (k : PartrecToTM2.K') (a : PartrecToTM2.Γ') :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:566:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:567:    (k : PartrecToTM2.K') :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:601:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:618:    ∀ (v : Option PartrecToTM2.Γ') (st : PartrecToTM2.K' → List PartrecToTM2.Γ')
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:789:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:790:    (k : PartrecToTM2.K') (a : PartrecToTM2.Γ') (d : SignType) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:802:private def bridgeStore (xs : List PartrecToTM2.Γ') : PartrecToTM2.K' → List PartrecToTM2.Γ' :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:803:  PartrecToTM2.K'.elim xs [] [] []
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:808:  cases k <;> simp [bridgeStore, PartrecToTM2.K'.elim]
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:878:    cases h : bridgeKey i <;> simp [bridgeStore, PartrecToTM2.K'.elim, hi, hk, h] at *
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:958:    (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:959:    (k : PartrecToTM2.K') (a : PartrecToTM2.Γ') (xs : List PartrecToTM2.Γ')
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:973:    (p : Fin (x.length + 2)) (st : PartrecToTM2.K' → List PartrecToTM2.Γ')
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/MathlibBridge.lean:991:    ∀ (st : PartrecToTM2.K' → List PartrecToTM2.Γ') (out : List BridgeAlphabet) (carry : Option Bool),
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:203:    (q : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:205:    (universalEvalCfg base q table tp state sp).workTapeSymbols =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:206:      universalFour (bufferTape table tp) (state sp)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:216:    (q q' : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:218:    (universalAdmin q' dt (w, ds)).apply (universalEvalCfg base q table tp state sp) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:219:      universalEvalCfg base q' table (tp + (dt : ℤ))
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:235:    (q q' : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:238:      (universalFour (bufferTape table tp) (state sp)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:240:    timedCutInterpreter.step (universalEvalCfg base q table tp state sp) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:241:      universalEvalCfg base q' table (tp + (dt : ℤ))
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:248:  cases w <;> exact timedCut_Admin_apply base q q' table tp state sp dt ds _
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:384:    (table : List Bool) (tp : ℤ) (state : ℤ → Option Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:392:      (universalEvalCfg base q table tp state j) (j + 1) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:393:      universalEvalCfg base q' table tp state 1 := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:398:    have he := timedCut_Eval_step base q q' table tp state 0 0 .pos none
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:403:    have he := timedCut_Eval_step base q q table tp state (j + 1) 0 .neg none
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:597:    ∀ (n : ℕ) (field : Fin 8) (tp : ℤ), field.val + n = 7 →
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:599:        (universalEvalCfg base (.skipFixed dest rem field) table tp state sp) (n + 1) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:600:      universalEvalCfg base (.skipUnary dest rem) table (tp + n + 1) state sp := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:604:    intro field tp hf
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:607:      table tp state sp .pos 0 none (by simp [timedCutInterpreter, universalInterpreter, show field.val = 7 by omega])
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:610:    intro field tp hf
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:613:      (.skipFixed dest rem ⟨field.val + 1, by omega⟩) table tp state sp .pos 0 none
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/Universal.lean:617:    convert ih ⟨field.val + 1, by omega⟩ (tp + 1) (by simp; omega) using 1 <;>
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:207:    (q : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:212:    workTapePos := universalFour tp sp (base.workTapePos 2) (base.workTapePos 3) }
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:216:    (q : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:218:    (universalEvalCfg base q table tp state sp).workTapeSymbols =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:219:      universalFour (bufferTape table tp) (state sp)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:229:    (q q' : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:231:    (universalAdmin q' dt (w, ds)).apply (universalEvalCfg base q table tp state sp) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:232:      universalEvalCfg base q' table (tp + (dt : ℤ))
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:255:    (q q' : UniversalControl) (table : List Bool) (tp : ℤ)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:258:      (universalFour (bufferTape table tp) (state sp)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:260:    universalInterpreter.step (universalEvalCfg base q table tp state sp) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:261:      universalEvalCfg base q' table (tp + (dt : ℤ))
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:268:  cases w <;> exact universalAdmin_apply base q q' table tp state sp dt ds _
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:467:    (table : List Bool) (tp : ℤ) (state : ℤ → Option Bool)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:475:      (universalEvalCfg base q table tp state j) (j + 1) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:476:      universalEvalCfg base q' table tp state 1 := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:481:    have he := universalEval_step base q q' table tp state 0 0 .pos none
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:486:    have he := universalEval_step base q q table tp state (j + 1) 0 .neg none
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1000:    ∀ (n : ℕ) (field : Fin 8) (tp : ℤ), field.val + n = 7 →
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1002:        (universalEvalCfg base (.skipFixed dest rem field) table tp state sp) (n + 1) =
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1003:      universalEvalCfg base (.skipUnary dest rem) table (tp + n + 1) state sp := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1007:    intro field tp hf
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1010:      table tp state sp .pos 0 none (by simp [universalInterpreter, show field.val = 7 by omega])
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1013:    intro field tp hf
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1016:      (.skipFixed dest rem ⟨field.val + 1, by omega⟩) table tp state sp .pos 0 none
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Complexity/TuringMachine/UniversalInterpreter.lean:1020:    convert ih ⟨field.val + 1, by omega⟩ (tp + 1) (by simp; omega) using 1 <;>
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/Entropy.lean:672:  rw [Nat.cast_choose (K := ℝ) ha_le, Real.rpow_sub hq', Real.rpow_add hq',
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/JohnsonBound.lean:616:If every admissible code has size at most K, then A0(n,d,w) is at most K.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/JohnsonBound.lean:621:    {n d w K : ℕ}
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/JohnsonBound.lean:622:    (h : ∀ C : Finset (CodingTheory.Johnson.BitVec n), AdmissibleCode n d w C → C.card ≤ K) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/JohnsonBound.lean:623:    A0 n d w ≤ K := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/SingletonBound.lean:83:  let K : (Finset (Codeword (n-d+1) α)) := Finset.univ
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/SingletonBound.lean:84:  have h_f_to_K : ∀ c ∈ C, f c ∈ K := by intros c _ ; exact Finset.mem_univ (f c)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/ErrorCorrectingCodes/SingletonBound.lean:86:  have h_Kcard: K.card = Fintype.card α ^ (n- d + 1) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Connectivity.lean:1208:`ν ≥ 3` is needed to exclude the degenerate blocks `K₁` and `K₂`, which have no
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:220:/-- The standard dot-product bilinear form on `K → K` (here `A → F`).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:240:def dotForm (K ι : Type*) [Field K] [Fintype ι] :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:241:    LinearMap.BilinForm K (ι → K) :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:242:  LinearMap.mk₂ K (fun x y => ∑ i, x i * y i)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:249:theorem dotForm_apply {K ι : Type*} [Field K] [Fintype ι] (x y : ι → K) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:250:    dotForm K ι x y = ∑ i, x i * y i := rfl
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1213:-- Matrix-tree theorem: for connected D, τ(G) = det(K Kᵀ) where K deletes one row of M.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1215:where `K` is obtained from the incidence matrix `M` by deleting any one row.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1219:In particular, a matrix `K` obtained by deleting any one row of the incidence matrix
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1224:**Skeleton** (for `(τ : ℤ) = det (K * Kᵀ)`, `K` = `M` with row `y` deleted).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1225:1. **`K` is a basis matrix of `𝓑`** — exercise 12.1.3, which is where `hconn` is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1227:2. **`K` is unimodular** — exercise 12.2.1(a).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1235:4. Apply the generalised 12.4 to `K`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1255:-- Ex 12.2.1(a)*: deleting one row of M gives a unimodular matrix K.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1256:/-- **Exercise 12.2.1(a)***.  *A matrix `K` obtained from `M` by deleting any one row
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1261:**Skeleton** (for `K.IsUnimodular`).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1263:2. **If `S` contains a cycle**, the columns are dependent (theorem 12.2(i), `K` being
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1266:   `u ≠ y`, whose row in `K | S` has exactly one nonzero entry, `±1`.  Expand the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1273:*directly*, not via theorem 12.3 — `K` is not a tree-basis matrix.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1277:connectivity hypothesis, unlike `isBasisMatrix_deleteRow`; step 2 uses that `K` is a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1330:   `(M * Mᵀ)` restricted to `{v // v ≠ y}` on both sides equals `K * Kᵀ`, where
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1331:   `K` is `M` with row `y` deleted.  This is the only computational step —
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/CycleSpaceBondSpace.lean:1333:3. **The matrix-tree theorem** gives `τ = det (K * Kᵀ)`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EdgeColourings.lean:557:/-! ## Theorem 6.1: König's edge-colouring theorem — bipartite ⇒ χ′ = Δ ⚠ BLOCKED -/
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EdgeColourings.lean:559:/-- Theorem 6.1 (König) ⚠ BLOCKED: if `G` is bipartite then `χ′ = Δ`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EdgeColourings.lean:1347:/-- Ex 6.2.6(a) ⚠ BLOCKED (Vizing): `χ′(G □ K₂) = Δ(G □ K₂)`.  B&M's "product" is `boxProd`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EdgeColourings.lean:1365:`G □ K₂` is two disjoint copies of `G` plus a perfect matching joining
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EdgeColourings.lean:1367:`Δ(G □ K₂) = Δ(G) + 1`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EdgeColourings.lean:1376:1. `Δ(G □ K₂) = Δ(G) + 1` — a `boxProd` degree computation.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EulerHamilton.lean:71:> was impossible to cross each of the seven bridges of Königsberg once and only
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EulerHamilton.lean:498:This is the precise answer to the Königsberg question and to exercise 4.1.1: a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EulerHamilton.lean:845:In `Kₙ` every pair of distinct vertices is adjacent, so any enumeration
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EulerHamilton.lean:847:a cycle must have length at least three — `K₁` and `K₂` have no cycle at all.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EulerHamilton.lean:1678:-- (ideally the Kneser graph `K(5,2)`). It is a placeholder `def … := sorry` here; the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/EulerHamilton.lean:1694:The 3-regular graph on ten vertices, most conveniently the Kneser graph `K(5,2)`:
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:102:graph `Kₙ` is `completeGraph (Fin n) = ⊤`; the complete bipartite graph `K_{m,n}`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:121:denoted `Kₙ`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:697:exercise, not stated here, notes the edge graph of `K₅` is the complement of the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:860:/-- **Component count is antitone in the subgraph order.**  If `H ≤ K` then
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:861:`ω(K) ≤ ω(H)` — adding edges can only merge components.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:866:`H ≤ K → ω(K) ≤ ω(H)` is used here and is worth a standalone lemma — chapter 1's
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:871:1. **The induced map on components.**  `h : H ≤ K` means every `H`-edge is a `K`-edge,
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:872:   so `H.Reachable u v → K.Reachable u v`; this descends to a map
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:873:   `f : H.ConnectedComponent → K.ConnectedComponent` via
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:874:   `ConnectedComponent.lift (K.connectedComponentMk ·)`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:875:2. **`f` is surjective.**  Every `K`-component is `K.connectedComponentMk v` for some
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:885:theorem card_connectedComponent_le_of_le {H K : SimpleGraph V} (h : H ≤ K) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/GraphsAndSubgraphs.lean:886:    Nat.card K.ConnectedComponent ≤ Nat.card H.ConnectedComponent := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:57:/-- A **covering** `K`: every edge has an end in `K`. (Repo `Matchings/Defs.lean:130`.)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:61:> Recall that a subset $K$ of $V$ such that every edge of $G$ has at least one end
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:62:> in $K$ is called a covering of $G$.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:72:def IsCovering {V : Type*} (G : SimpleGraph V) (K : Set V) : Prop :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:73:  ∀ ⦃u v : V⦄, G.Adj u v → u ∈ K ∨ v ∈ K
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:234:  sInf {n | ∃ K : Set V, G.IsCovering K ∧ K.ncard = n}
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:243:> Let $S$ be a maximum independent set of $G$, and let $K$ be a minimum covering
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:244:> of $G$. Then, by theorem 7.1, $V \backslash K$ is an independent set and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:246:> $$\nu - \beta = |V \backslash K| \le \alpha \tag{7.1}$$
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:397:-- Thm 7.3 (BLOCKED on König): in a bipartite graph with δ > 0, α = β′.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:414:König's min-max equality transported across the two Gallai identities.  The book
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:417:> We can now prove a theorem that bears a striking formal resemblance to König's
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:424:3. König gives `α' = β` for bipartite `G`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:435:`sorry`, blocked on König.  Steps 1–2 and 4 are mechanical once Cor 7.1 and Thm
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:494:-- Ex 7.1.1(b) (BLOCKED on König): G bipartite ↔ α(H) = β′(H) for every subgraph H with δ(H) > 0.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:529:`sorry`, blocked on Theorem 7.3 and hence on König.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1353:Four vertices pairwise differing by quadratic residues would be a `K₄`; the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1382:book notes this), so a 4-element independent set would be a `K₄` in the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1612:/-- An `m`-edge-colouring of `Kₙ`: a total function on unordered pairs.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1633:here the host graph is `Kₙ`, so every pair is an edge and a total function is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1643:/-- `IsRamseyBoundMulti n c`: every `m`-edge-colouring of `Kₙ` has, for some `i`, a set of `c i`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1670:The least `n` for which every `m`-edge colouring of `Kₙ` yields a monochromatic
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1705:Generalises Theorem 7.4's recursion.  Fix `v` in a large `Kₙ` and classify the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:1841:Theorem 7.7 with all targets `3`.  Fix `v` in a `Kₙ` on `n(r_{n-1}-1) + 2`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2108:A *small* graph with no `K₆` in which every 2-edge colouring still forces a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2109:monochromatic triangle — so "contains `K₆`" is not necessary for the Ramsey
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2241:-- Ex 7.2.6(c)* (Chvátal): r(T, Kₙ) = (m−1)(n−1) + 1.  (Same heterogeneous-vector NOTE as above.)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2243:`r(T, Kₙ) = (m-1)(n-1) + 1`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2261:clique has `n-1` vertices — no `Kₙ`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2263:*Upper bound.*  On `(m-1)(n-1) + 1` points, if blue has no `Kₙ` then Turán-type
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2662:The prototype for Kővári–Sós–Turán (exercise 7.3.5).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2806:-- Ex 7.3.5 (Kővári–Sós–Turán): edge bound forcing K_{m,m} (variable `rpow` exponent).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2807:/-- **Exercise 7.3.5** (the Kővári–Sós–Turán theorem).  *If `G` is simple and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:2816:An exercise, so the book gives no proof.  This is the **Kővári–Sós–Turán
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:3060:forbids `K₄`, which is what lets Turán bound the number of far pairs.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/IndependentSetsCliques.lean:3117:Given those, `farGraph` is `K₄`-free and `turan_edge_bound` at `m = 3` finishes.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:139:/-- A (vertex) **covering** `K`: every edge has an end in `K`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:144:> A *covering* of a graph $G$ is a subset $K$ of $V$ such that every edge of $G$
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:145:> has at least one end in $K$.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:150:`∀ u v, G.Adj u v → u ∈ K ∨ v ∈ K`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:159:> If $K$ is a covering of $G$, and $M$ is a matching of $G$, then $K$ contains at
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:161:> covering $K$, $|M| \le |K|$.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:163:König's Theorem 5.3 says the two optima coincide for bipartite graphs — and, as
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:166:def IsCovering {V : Type*} (G : SimpleGraph V) (K : Set V) : Prop :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:167:  ∀ ⦃u v : V⦄, G.Adj u v → u ∈ K ∨ v ∈ K
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:173:> A covering $K$ is a *minimum covering* if $G$ has no covering $K'$ with
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:174:> $|K'| < |K|$ (see figure 5.4).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:182:def IsMinimumCovering {V : Type*} (G : SimpleGraph V) (K : Set V) : Prop :=
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:183:  G.IsCovering K ∧ ∀ K' : Set V, G.IsCovering K' → K.ncard ≤ K'.ncard
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:282:Realised as the Kneser graph `K(5,2)`: vertices are the ten 2-element subsets of
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:601:/-- (5.5): for any matching `M` and covering `K`, `|M| ≤ |K|`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:605:> If $K$ is a covering of $G$, and $M$ is a matching of $G$, then $K$ contains at
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:607:> covering $K$, $|M| \le |K|$. Indeed, if $M^*$ is a maximum matching and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:608:> $\tilde{K}$ is a minimum covering, then
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:609:> $$|M^*| \le |\tilde{K}| \tag{5.5}$$
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:617:endpoints are distinct, so `K` has at least `|M|` elements.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:622:> However, if $G$ is bipartite we do have $|M^*| = |\tilde{K}|$.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:624:which is König's Theorem 5.3.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:628:Injection from `M.edgeSet` into `K`:
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:629:1. For each `e ∈ M.edgeSet`, `hK` picks an endpoint lying in `K`.  ⚠ This is a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:639:endpoint choice at step 1.  Worth doing early — Lemma 5.3 and König both depend
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:644:    {M : G.Subgraph} (hM : M.IsMatching) {K : Set V} (hK : G.IsCovering K) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:645:    M.edgeSet.ncard ≤ K.ncard := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:650:/-- Lem 5.3: if `|M| = |K|` then `M` is a maximum matching and `K` a minimum covering.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:654:> **Lemma 5.3** Let $M$ be a matching and $K$ be a covering such that
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:655:> $|M| = |K|$. Then $M$ is a maximum matching and $K$ is a minimum covering.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:659:> If $M^*$ is a maximum matching and $\tilde{K}$ is a minimum covering then, by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:661:> $$|M| \le |M^*| \le |\tilde{K}| \le |K|$$
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:662:> Since $|M| = |K|$, it follows that $|M| = |M^*|$ and $|K| = |\tilde{K}|$.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:672:1. ⚠ The book's chain needs a maximum matching `M*` and a minimum covering `K̃`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:677:2. Chain `|M| ≤ |M*| ≤ |K̃| ≤ |K|` using `matching_card_le_covering_card` for the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:687:    {M : G.Subgraph} (hM : M.IsMatching) {K : Set V} (hK : G.IsCovering K)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:688:    (hcard : M.edgeSet.ncard = K.ncard) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:689:    M.IsMaximumMatching ∧ G.IsMinimumCovering K := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:692:/-! ## Theorem 5.3: König's theorem (König, 1931) — grade 82 -/
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:694:/-- Thm 5.3 (König): in a bipartite graph, max-matching size = min-covering size.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:708:> $N(S) = T$. Define $\tilde{K} = (X \backslash S) \cup T$ (see figure 5.5). Every
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:709:> edge of $G$ must have at least one of its ends in $\tilde{K}$. For, otherwise,
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:711:> contradicting $N(S) = T$. Thus $\tilde{K}$ is a covering of $G$ and clearly
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:712:> $$|M^*| = |\tilde{K}|$$
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:713:> By lemma 5.3, $\tilde{K}$ is a minimum covering, and the theorem follows.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:719:Hall from König, and its matrix form is exercise 5.2.5.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:722:and concludes their sizes agree, rather than constructing `K̃` as the book does.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:726:1. Build the book's `K̃ = (X \ S) ∪ T` from `M`:
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:734:3. `K̃` is a covering: an edge escaping it would run `S → Y \ T`, contradicting
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:736:4. `|M| = |K̃|` by counting: each `M`-edge contributes exactly one end to `K̃`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:737:5. `isMaximumMatching_and_isMinimumCovering_of_card_eq` makes `K̃` minimum, and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:738:   `hK` then forces `|K| = |K̃| = |M|`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:749:    {K : Set V} (hK : G.IsMinimumCovering K) :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:750:    M.edgeSet.ncard = K.ncard := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1453:In chapter 6's language this is `χ'(G) = Δ(G)` for bipartite graphs — König's
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1521:/-- Ex 5.2.5: König's theorem, matrix (line-cover) form.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1533:König's Theorem 5.3 in matrix dress.  A vertex per row and per column, joining
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1568:/-- Ex 5.2.6(a): the König–Ore defect formula (stated additively to avoid ℕ subtraction).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1576:> (D. König, O. Ore)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1633:Equivalently, via König: a covering of size `< k` caps `ε` at `(k-1)n`, since
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1638:The König route is shorter than the defect route:
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1641:2. `konig_matching_covering` gives a covering `K` with `|K| = |M| ≤ k - 1`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1642:3. Every edge meets `K`, and each vertex of `K` has degree `≤ n` (its neighbours
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1710:> 5.2.9 Let $H$ be a finite group and let $K$ be a subgroup of $H$. Show that
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1712:> $h_1K, h_2K, \ldots, h_nK$ are the left cosets of $K$ and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1713:> $Kh_1, Kh_2, \ldots, Kh_n$ are the right cosets of $K$.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1721:Left and right cosets each partition `H` into `n = [H : K]` blocks of size `|K|`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1725:to `Kb` when they intersect.  All cosets having size `|K|` makes this graph
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1730:maps `i ↦ hᵢ • K` and `i ↦ op hᵢ • K` into `Set H`.  The note in the file flags
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1741:   exactly `|K|` right cosets counted with multiplicity — this is the group-theory
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1752:    (K : Subgroup H) [DecidablePred (· ∈ K)] :
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1754:      Function.Bijective (fun i => (h i : H) • (K : Set H)) ∧
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1755:      Function.Bijective (fun i => MulOpposite.op (h i : H) • (K : Set H)) := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Matchings.lean:1875:`d = 0` recovers Theorem 5.4.  The general-graph analogue of the König–Ore defect
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:191:`K ⊆ A`, we denote `∑_{a ∈ K} f(a)` by `f(K)`.  Furthermore, if `K` is a set of
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:295:**Book definition** (B&M §11.2, verbatim).  *The capacity of a cut `K` is the sum of
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:296:the capacities of its arcs.  We denote the capacity of `K` by `cap K`; thus
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:297:`cap K = ∑_{a ∈ K} c(a)`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:324:**Book definition** (B&M §11.2, verbatim).  *A cut `K` in `N` is a minimum cut if
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:325:there is no cut `K'` in `N` such that `cap K' < cap K`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:329:first: *If `f*` is a maximum flow and `K̃` is a minimum cut, we have, as a special
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:330:case of theorem 11.1, that `val f* ≤ cap K̃`* (11.8).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:956:-- Thm 11.1: `val f ≤ cap K`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:957:/-- **Theorem 11.1.**  *For any flow `f` and any cut `K = (S, S̄)` in `N`,
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:958:`val f ≤ cap K`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:962:    f⁺(S) ≤ cap K                                                    (11.6)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:984:attained.  B&M record the special case immediately: `val f* ≤ cap K̃` (11.8). -/
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:991:/-- **Theorem 11.1** (equality condition).  *Equality holds in `val f ≤ cap K` if
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1030:/-- **Corollary 11.1.**  *Let `f` be a flow and `K` a cut such that
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1031:`val f = cap K`.  Then `f` is a maximum flow and `K` is a minimum cut.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1033:**Book proof** (B&M §11.2, verbatim).  *Let `f*` be a maximum flow and `K̃` a minimum
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1036:    val f ≤ val f* ≤ cap K̃ ≤ cap K
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1038:*Since, by hypothesis, `val f = cap K`, it follows that `val f = val f*` and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1039:`cap K = cap K̃`.  Thus `f` is a maximum flow and `K` is a minimum cut.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1046:1. `exists_maxFlow` and `exists_minCut` supply `f*` and `K̃`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1048:   `val f* ≤ cap K̃` (theorem 11.1 applied to `f*`, `K̃`), `cap K̃ ≤ cap S`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1049:   (minimality of `K̃`).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1053:   maximality to bound any other flow), and `cap S = cap K̃` gives `IsMinCut S`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1092:**Book proof.**  None — again taken for granted, as in *let `K̃` be a minimum cut*.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1189:`f`-incrementing path, `y ∈ S̄`.  Thus `K = (S, S̄)` is a cut in `N`.  We shall show
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1198:*On applying theorem 11.1, we obtain `val f = cap K`.  It now follows from corollary
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1199:11.1 that `f` is a maximum flow (and that `K` is a minimum cut).*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1234:`f`-incrementing path, then there is a cut `K` with `val f = cap K`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1238:existence of a maximum flow `f` and a minimum cut `K` such that `val f = cap K`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1267:established the existence of a maximum flow `f` and a minimum cut `K` such that
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1268:`val f = cap K`.  We thus have the following theorem, due to Ford and Fulkerson
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1283:**Reading.**  Theorem 11.1 gave the easy half — `val f ≤ cap K` for every flow and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1369:**Book proof** (B&M §11.4, verbatim).  *Let `K̃ = (S, S̄)` be a minimum cut in `N`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1370:Then, in `N - K̃`, no vertex of `S̄` is reachable from any vertex in `S`; in
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1371:particular, `y` is not reachable from `x`.  Thus `K̃` is a set of arcs whose deletion
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1372:destroys all directed `(x, y)`-paths, and we have `cap K̃ = |K̃| ≥ n` (11.12).*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1376:`N - Z`.  Since `x ∈ S` and `y ∈ S̄`, `K = (S, S̄)` is a cut in `N`.  Moreover, by the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1377:definition of `S`, `N - Z` can contain no arc of `(S, S̄)`, and so `K ⊆ Z`.  Since
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1378:`K̃` is a minimum cut, we conclude that `cap K̃ ≤ cap K = |K| ≤ |Z| = n` (11.13).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1379:Together, (11.12) and (11.13) now yield `cap K̃ = n`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1966:* **Ex 11.4.2** — derive König from Thm 11.7; an alternative derivation of ch5's Thm 5.3, not new.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Networks.lean:1991:*Exercise 11.4.2.*  Derive König's theorem (5.3) from theorem 11.7.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:80:  `hoff`, that bridge's defining property.  A `K₅` counterexample to the old form is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:952:*Counterexample.*  `G = K₅`, `c` the 5-cycle `v₁v₂v₃v₄v₅v₁`, which is a longest
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:956:`v₁, v₃`.  Then `v_{i+1} = v₂` and `v_{j+1} = v₄`, and `G.Adj v₂ v₄` holds in `K₅` —
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:961:than one of the same length, which is precisely what the `K₅` example defeats.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1002:-- ⚠ `3 ≤ ν` is LOAD-BEARING (B&M omit it; false without it — see K₂).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1036:B&M — the statement is false without it.  `K₂` has `α = 1` and `κ = 1`, so `α ≤ κ`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1037:holds, yet `K₂` has no Hamilton cycle, there being no cycle of length two.  (`K₁` is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1116:*Theorem 9.1 / exercise 9.1.1.*  `K₅` and `K_{3,3}` are nonplanar.  The proof of theorem
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1138:`K₅`, `K_{3,3}` are nonplanar (9.5.4, 9.5.5).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1147:no subdivision of `K₅` or `K_{3,3}`.  The proof (Dirac and Schuster, 1954) takes a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/PlanarGraphs.lean:1151:then extracts a `K₅` or `K_{3,3}` subdivision in each of four cases.  Wagner
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:85:definition; the trivial graph `K₁` has no cut vertex since deleting its only vertex
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:98:convention at the trivial graph: for `K₁`, `ω(G) = 1` while `G - v` is empty with
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:99:`ω = 0`, so `1 < 0` fails and `K₁` has no cut vertex — which is what the book
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:155:non-isomorphic ones.  B&M stress the difference: `K₆` has six non-isomorphic spanning
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:236:`G ≅ K₁` and `ε = 0 = ν - 1`.*  The step deletes an edge `uv`, which by theorem 2.1 is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:540:**Book proof** (B&M §2.3).  *If `d(v) = 0`, `G ≅ K₁` and, clearly, `v` is not a cut
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:580:   monotonicity `H ≤ K → ω(K) ≤ ω(H)` is used here and is worth a standalone lemma —
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:638:-- Thm 2.9 (Cayley): τ(Kₙ) = n^(n−2).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:639:-- Mathlib has no Cayley's formula; `⊤ : SimpleGraph (Fin n)` is the complete graph Kₙ.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:640:/-- **Theorem 2.9** (Cayley's formula).  *`τ(Kₙ) = n^(n-2)`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:642:**Book proof** (B&M §2.4, verbatim).  *Let the vertex set of `Kₙ` be
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:645:one–one correspondence between the set of spanning trees of `Kₙ` and the set of such
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:665:**Skeleton** (for `τ(Kₙ) = n^(n-2)`, assuming `1 ≤ n`).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:666:1. **Build the Prüfer map** `spanning trees of Kₙ → (Fin (n-2) → Fin n)` by the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/Trees.lean:673:non-isomorphic ones: `K₆` has six non-isomorphic ones but `6⁴ = 1296` distinct.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:136:exercise 8.1.7, which says the only 1-critical graph is `K₁`. -/
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:148:1-critical graph is `K₁`, the only 2-critical graph is `K₂`, and the 3-critical
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:287:/-- `G` contains a **subdivision of `K₄`**: four distinct branch vertices joined pairwise by six
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:293:`K₄` is shown in figure 8.5.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:301:condition is not sufficient; for example, a 4-cycle is a subdivision of `K₃`, but
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:304:subdivision of `K₃`*.  Theorem 8.5 (Dirac, 1952) settles `k = 4`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:306:**Reading.**  A "topological `K₄`": four **branch vertices**, each of the six pairs
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:308:with the branch vertices.  Drawn on paper it is `K₄` with beads threaded onto its
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:311:**Formalisation.**  The book says "obtainable from `K₄` by subdividing edges",
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:339:is `K₂` then `G₃` is the 5-cycle and `G₄` the Grötzsch graph (see figure 8.10).*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:344:chromatic number by exactly one; starting from `K₂` it yields the 5-cycle, then
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:386:/-- The **wheel** with `n` spokes: `C_n ∨ K₁`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:393:**Reading.**  A hub joined to every vertex of a rim cycle.  As a join `C_n ∨ K₁`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:476:/-- The Mycielski **tower** `G₂ = K₂, G₃, G₄, …`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:479:obtained from `G₂ = K₂`, using Mycielski's construction.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:481:§8.5 adds: *By starting with the 2-chromatic graph `K₂`, the above construction
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:486:records the first few: `G₂ = K₂`, `G₃` is the 5-cycle, `G₄` is the Grötzsch graph
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:523:4. Second half: given `K : H.coe.Subgraph` with `K < ⊤`, transport `K` to a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:524:   `G.Subgraph` `K'` with `K' < H` and `K'.coe ≃g K.coe` — subgraphs-of-a-subgraph
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:526:5. Minimality of `H` gives `K' ∉ S`, i.e. `χ(K'.coe) ≠ k`.  Monotonicity
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:528:   gives `χ(K'.coe) ≤ χ(H.coe) = k`.  Together, `χ(K.coe) < k = χ(H.coe)`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1009:`χ(Kₙ) = n` and `χ(Kₙᶜ) = 1`.  This is the archetypal Nordhaus–Gaddum inequality,
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1114:1-critical graph is `K₁`, the only 2-critical graph is `K₂`, and the only
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1155:-- Ex 8.1.7 (cont.): the only 1-critical graph is K₁, the only 2-critical graph is K₂ (up to iso)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1157:1-critical graph is `K₁` …*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1172:*(←).*  `K₁` is 1-chromatic, and its only proper subgraph is the empty one, with
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1179:**Formalisation.**  `⊤ : SimpleGraph (Fin 1)` is `K₁`; on a single vertex the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1190:graph is `K₂` …*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1205:*(←).*  `K₂` is 2-chromatic, and each proper subgraph is edgeless (drop the edge)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1211:**Formalisation.**  `⊤ : SimpleGraph (Fin 2)` is `K₂`.  Step 3 is the shared
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1350:`C_n ∨ K₁` needs `χ(C_n) + 1` colours.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1371:1. Given `G' < ⊤` in `G.Subgraph`, build `K : (G.join H).Subgraph` as the join of
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1373:   `K < ⊤` because `G' < ⊤`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1374:2. Part (a) applied to `K.coe` gives `χ(K.coe) = χ(G'.coe) + χ(H)`; criticality of
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1375:   the join gives `χ(K.coe) < χ(G) + χ(H)`; cancel `χ(H)`.  Symmetrically for `H`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1377:*(←).*  Given `K < ⊤` in `(G.join H).Subgraph`, split on *how* `K` is proper.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1378:3. **`K` omits a vertex or a within-side edge.**  Then its restriction to that side
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1380:   `K ≤ (restriction to α) ∨ (restriction to β)`, gives the strict drop.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1381:4. **`K` has every vertex and every within-side edge, but omits a cross edge
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1387:   of `K.coe` with `χ(G) + χ(H) - 1` colours.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1391:large chromatic number: join known critical graphs.  For instance `K₁ ∨ C₅` is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1425:   2-critical graph is `K₂`, so `Ĝ` is a single edge plus an isolated vertex).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1427:3. **`Ĝ` is critical.**  For `K < ⊤` in `Ĝ.Subgraph`, split on what is missing:
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1428:   * *the edge `v₁v₂`*: then `K ≤ (G₁ - vv₁) ∪ (G₂ - vv₂)`.  Criticality of `G₁`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1470:1. **`n = 4`.**  Take `G = ⊤`, i.e. `K₄`.  It is 4-chromatic, and every proper
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1471:   subgraph either drops a vertex (leaving `K₃`) or an edge, and is 3-colourable.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1472:2. **`n` even, `n ≥ 6`.**  Take `K₁ ∨ C_{n-1}`, the wheel with an odd rim (`n - 1`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1473:   is odd and `≥ 5`).  It is 4-critical by exercise 8.1.10(b): `K₁` is 1-critical
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1476:3. **`n` odd, `n ≥ 7`.**  Apply the Hajós construction (exercise 8.1.11) to `K₄`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1724:     vertices, and the case `K₅` is excluded because `K₅` is not a line graph of a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1748:/-! ## §8.3 — 2-vertex cut structure and K₄-subdivisions (Thm 8.3, Thm 8.5 route to orchestrator) -/
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1886:-- Thm 8.5 (Dirac 1952): 4-chromatic ⇒ contains a subdivision of K₄
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1888:subdivision of `K₄`* — the case `k = 4` of Hajós' conjecture.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1891:some subgraph of `G` contains a subdivision of `K₄`, then so, too, does `G`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1893:hence that `G` is a block with `δ ≥ 3`.  If `ν = 4`, then `G` is `K₄` and the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1900:`G₁ + uv` contains a subdivision of `K₄`.  It follows that, if `P` is a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1901:`(u, v)`-path in `G₂`, then `G₁ ∪ P` contains a subdivision of `K₄`.  Hence so,
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1911:*If `P` and `Q` have no vertex in common, then `C ∪ P ∪ Q` is a subdivision of `K₄`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1913:denote the `(x, w)`-section of `P`.  Then `C ∪ P' ∪ Q` is a subdivision of `K₄`
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1914:(figure 8.6b).  Hence, in both cases, `G` contains a subdivision of `K₄`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1923:   forces `G = K₄`; take the six edges themselves as the six paths, all interiors
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1926:   4-critical on fewer vertices; the induction hypothesis puts a `K₄`-subdivision
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1960:-- Ex 8.3.1*: ≤ 1 vertex of degree < 3 ⇒ K₄-subdivision
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1963:`K₄`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1982:2. **The core (`δ ≥ 3` ⟹ `K₄`-subdivision).**  This is exactly case B of theorem
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1993:force a topological `K₄`, with no colouring hypothesis at all.  So this is a purely
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1995:Neither is necessary: a subdivision of `K₄` can occur in graphs that are only
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:1996:3-chromatic — the book's own example, a 4-cycle being a subdivision of `K₃`, makes
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2009:-- Ex 8.3.2(a)*: ν ≥ 4, ε ≥ 2ν − 2 ⇒ K₄-subdivision  (restated additively: 2ν ≤ ε + 2)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2011:`ν ≥ 4` and `ε ≥ 2ν - 2`, then `G` contains a subdivision of `K₄`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2022:     gives `ε ≥ 6`, so `G = K₄` and the base case is immediate — the process cannot
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2292:1. **Base `n = 3`.**  `π_k(C₃) = π_k(K₃) = k(k-1)(k-2)`, and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2324:-- Ex 8.4.5(a): π_k(G ∨ K₁) = k · π_{k−1}(G)  (`1 ≤ k` load-bearing)
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2325:/-- **Exercise 8.4.5(a)** (B&M §8.4, verbatim).  *Show that `π_k(G ∨ K₁) = kπ_{k-1}(G)`.*
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2344:counterpart of `χ(G ∨ K₁) = χ(G) + 1`, the `K₁` case of exercise 8.1.10(a).
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2374:**Reading.**  A wheel with `n` spokes is `C_n ∨ K₁` — a rim cycle plus a hub joined
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2514:**Book proof** (B&M §8.5, verbatim).  *For `k = 1` and `k = 2`, the graphs `K₁` and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2515:`K₂` have the required property.  We proceed by induction on `k`.  Suppose that we
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2538:1. **Induct on `k`.**  Bases `k = 1` (`K₁`) and `k = 2` (`K₂`): triangle-freeness is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2564:all.  Starting from `K₂`, the construction gives a triangle-free `k`-chromatic graph
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2582:-- Ex 8.5.1: each graph Gₖ in the Mycielski tower (G₂ = K₂) is k-critical
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2584:from `G₂ = K₂`, using Mycielski's construction.  Show that each `G_k` is
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2590:1. **Induct on `k` from `2`.**  Base: `G₂ = K₂` is 2-critical by exercise 8.1.7.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/GraphTheory/Core/VertexColourings.lean:2689:2. **Base `k = 2`.**  `K₂` has `χ = 2` and no cycles at all, so `girth = ⊤ ≥ 6`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/JohnsonLindenstrauss/Bernstein.lean:52:[Ver18, Prop 2.7.1(e)] (`E exp(λX) ≤ exp(K²λ²)` for `|λ| ≤ 1/K`), with `c = K²` and
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/JohnsonLindenstrauss/Bernstein.lean:53:`tmax = 1/K`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/JohnsonLindenstrauss/Bernstein.lean:56:of each other (the source ties both to a single sub-exponential norm `K`), and the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:295:there is a row `x̄ ∈ X` with `f x̄ y ≤ K + ε` for every `y ∈ v`, where
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:296:`K = sup_{y ∈ Y} inf_i f (x i) y` is the indexed sampled lower value.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:299:**Proof sketch.** Let `c := K + ε`. Step 0: if `v` is empty, any point of `X` works.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:302:Step 2: `finite_minimax_value` gives `lower(G) = upper(G)`, and `1 − K ≤ upper(G)`: for
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:304:`inf_i f (x i) ȳ ≤ K` by definition of `K`, and for a minimizing row `i₀` concavity in
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:305:the column variable (Jensen) gives `Σ_j q j · f (x i₀) (y j) ≤ f (x i₀) ȳ ≤ K`, i.e. the
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:306:payoff of `i₀` against `q` is at least `1 − K`. Hence `1 − c < lower(G)`. Step 3: pick a
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:322:  let K : ℝ := finiteIndexedRowSampleLowerValue (X := X) (Y := Y) f x
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:323:  let c : ℝ := K + ε
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:342:    have hupper_ge : 1 - K ≤ finiteUpperValue G := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:359:          (⨅ i : Fin M, f (x i : X) ybar) ≤ K := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:375:      have hpure_ge : 1 - K ≤ pureVsPayoff G i₀ q := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:396:        have hi_le_K : f (x i₀ : X) ybar ≤ K := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:404:    have hlower_ge : 1 - K ≤ finiteLowerValue G := by
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:483:**Proof sketch.** Fix `ε > 0`, let `K` be the sampled lower value and `c := K + ε`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:501:  let K : ℝ := finiteIndexedRowSampleLowerValue (X := X) (Y := Y) f x
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:502:  let c : ℝ := K + ε
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:516:  -- Step 4: the point obtained by compactness bounds `sup_y f x₀ y` by `K + ε`.
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/Minimax/ConvexMinimaxNoRegret.lean:519:  dsimp [c, K] at hsup_le ⊢
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/LearningTheory/MistakeBounds/WeightedMajority.lean:47:* [LW94] N. Littlestone, M. K. Warmuth, "The Weighted Majority Algorithm",
+014dc314015d67e55119c75c9a6027b6a83be6ac:TCSlib/Tactics/ExtractHavesFile.lean:4348:          -- Fintype Kˣ synthesize failures + whnf timeout shipping 12

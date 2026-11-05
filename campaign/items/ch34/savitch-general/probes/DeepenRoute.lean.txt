@@ -1,0 +1,80 @@
+import TCSlib.Complexity.SpaceComplexity.Savitch
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
+import TCSlib.Complexity.SpaceComplexity.Machines.ARMLoops
+
+/-! The deepening fill's route probe (maintainer, 2026-11-04): the pinned statements, `sorry`
+where the fill proves them, and `savitch` assembled from them. A probe, not library code. -/
+
+set_option autoImplicit false
+
+namespace Complexity.LogProg.SavitchARM
+
+open Turing Codec
+
+/-- No edge code is reachable from an initial code at radius `s` and level `w`. -/
+def NoEdge (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) : Prop :=
+  ¬ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+    ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+      Reach (2 ^ w) (StepRel N x s) w u v
+
+/-- Window exactness (pinned): with no reachable edge code, `mem_iff_reach` holds at radius `s`
+without `sp |x| ≤ s`. -/
+theorem mem_iff_reach_of_noEdge {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (x : List Bool) (s w : ℕ)
+    (hw : codeK N * (s + logSpace x.length + 1) ≤ w)
+    (hcb : N.configBound x.length s ≤ 2 ^ w) (hne : NoEdge N x s w) :
+    x ∈ L ↔ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+      ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ acceptLang N ∧
+        Reach (2 ^ w) (StepRel N x s) w u v := sorry
+
+/-- Termination (pinned): beyond the space bound no edge code is reachable. -/
+theorem noEdge_of_lt {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) (x : List Bool) (s w : ℕ) (hs : sp x.length < s) :
+    NoEdge N x s w := sorry
+
+/-- The configuration count is singly exponential in `s + logSpace n` (pinned). -/
+theorem configBound_le_pow (N : FinNDTM Bool) (n s : ℕ) :
+    N.configBound n s ≤ 2 ^ ((Fintype.card N.State + 3 + 9 * N.k) * (s + logSpace n + 1)) :=
+  sorry
+
+/-- The deepening machine's contract: the hypothesis of `arm_decides_SPACE`, with registers of
+`O((sp |x| + logSpace |x| + 1)²)` digits. -/
+def DeepenContract (L : Language Bool) (sp : ℕ → ℕ) : Prop :=
+  ∃ (m d : ℕ) (Λ : Type) (_ : Fintype Λ) (_ : DecidableEq Λ) (D : ARM m d Λ) (l₀ : Λ)
+    (As : Fin d → Language Bool), (∀ j, As j ∈ LOGSPACE) ∧ ∃ C : ℕ, ∀ x : List Bool,
+      AHalt D (fun j V => MultiTapeTM.indicator (As j : Set (List Bool)) V) x
+        (fun a => PreS D x a ∧ ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤
+          C * (sp x.length + logSpace x.length + 1) ^ 2)
+        (some l₀, fun _ => 0, none) (MultiTapeTM.indicator (L : Set (List Bool)) x)
+
+/-- The fill's main theorem (pinned): the deepening machine meets the contract. -/
+theorem deepen_contract {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
+    (h : N.DecidesInSpace L sp) : DeepenContract L sp := sorry
+
+end Complexity.LogProg.SavitchARM
+
+namespace Complexity
+
+open Turing LogProg LogProg.SavitchARM
+
+/-- The assembly, proved here: any `S ≥ logSpace` (constructibility is not used beyond it). -/
+theorem savitch_of_logSpace_le (S : ℕ → ℕ) (hS : ∀ n, logSpace n ≤ S n) :
+    NSPACE S ⊆ SPACE fun n => S n * S n := by
+  rintro L ⟨c, N, hN⟩
+  obtain ⟨m, d, Λ, _, _, D, l₀, As, hAs, C, hcorr⟩ := deepen_contract hN
+  have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by simp [logSpace]) (hS n)
+  refine arm_decides_SPACE D l₀ As hAs (fun n => S n * S n)
+    (fun n => (hS n).trans (Nat.le_mul_of_pos_right _ (hS1 n))) (C * (c + 2) ^ 2) (fun x => ?_)
+  refine (hcorr x).mono fun a ha => ⟨ha.1, fun r => (ha.2 r).trans ?_⟩
+  have h1 : c * S x.length + logSpace x.length + 1 ≤ (c + 2) * S x.length := by
+    have := hS x.length; have := hS1 x.length; nlinarith
+  calc C * (c * S x.length + logSpace x.length + 1) ^ 2
+      ≤ C * ((c + 2) * S x.length) ^ 2 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 2)
+    _ = C * (c + 2) ^ 2 * (S x.length * S x.length) := by ring
+
+/-- `savitch` from the pinned pieces. -/
+theorem savitch' (S : ℕ → ℕ) (hS : SpaceConstructible S) :
+    NSPACE S ⊆ SPACE fun n => S n * S n :=
+  savitch_of_logSpace_le S hS.1
+
+end Complexity

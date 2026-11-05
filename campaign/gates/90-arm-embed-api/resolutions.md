@@ -28,3 +28,8 @@ blockers, 0 majors, 3 minors, 9 notes.** The gate closes.
 the five blobs; precheck passed. **Passed** (user, 2026-11-04): 138 of 138 at `8fd6f91a`, 0 failed; the static sorry
 check equal (22, all pre-existing); snapshot `oleans-larm` (`evidence/merged-tree/replay-larm.log`,
 `replay-larm-static.txt`).
+
+**Merged-tree replay after #181 (2026-11-04):** the campaign merged into #182 (`a199760e`;
+`ARMProof` auto-merged with #181's edit to `arm_decides`). `replay-larm2` **passed**: 138 of 138,
+0 failed, static-equal (22 sorry warnings, all pre-existing), chained from `oleans-lsm5`; snapshot
+`oleans-larm2` (`evidence/merged-tree-larm2/`). **#182 is clear to merge.**

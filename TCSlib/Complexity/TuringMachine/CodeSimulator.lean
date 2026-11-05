@@ -1443,9 +1443,7 @@ private lemma canonOffset_spec (w : List Bool) :
     rw [codeBitsNat_bits]
     simp [Nat.bit]
     omega
-  · have small : w.length.bits.length ≤ w.length := by
-      rw [Nat.size_eq_bits_len]
-      exact Nat.size_le.mpr Nat.lt_two_pow_self
+  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
     simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]
     omega
 

@@ -1,0 +1,8 @@
+sealed copy: exit 0, 0 errors (out/24-seal-sealed.out/.time); unsealed copy: exit 0, 0 errors
+definitions controlled: 350 350
+definitions with a control that passes unsealed and fails sealed: 350 of 350
+any control passing sealed: []
+unsealed delta fails (equation control discriminates): ['Turing.FinTM.sweepFold', 'Turing.NDTM.runWith', 'Turing.NTimeDiag.ladder', 'Turing.codeReadUnary', 'Turing.codeReadVec', 'Turing.codeSkipRepeat', 'Turing.decFixed', 'Turing.incFixed', 'Turing.mealyRun', 'Turing.pairDecode', 'Turing.unaryTokenSplit', 'Turing.workReadsK']
+unsealed equation fails (delta control discriminates): ['Turing.StepBlock.summaryEmit']
+simp controls sealed: {'Turing.Action.apply': 'fail', 'Turing.Cfg.init': 'fail', 'Turing.MultiTapeTM.initCfg': 'fail', 'Turing.NDTM.initCfg': 'fail'}
+simp controls unsealed: {'Turing.Action.apply': 'pass', 'Turing.Cfg.init': 'pass', 'Turing.MultiTapeTM.initCfg': 'pass', 'Turing.NDTM.initCfg': 'pass'}

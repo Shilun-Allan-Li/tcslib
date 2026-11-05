@@ -6,6 +6,7 @@ Authors: Seyoon Ragavan
 import TCSlib.Complexity.TuringMachine.Build.Catalog
 import TCSlib.Complexity.TuringMachine.Build.Seam
 import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -841,15 +842,8 @@ private lemma sl_rewrap {k : ℕ} {x : List Bool} {S : Type} {i' : sl_Key}
     (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
     (ho : c.output = c₂.output) :
     c.mapState (fun _ => (⟨i', ent⟩ : (j : sl_Key) × sl_Ph j)) =
-      c₂.mapState (Sigma.mk i') := by
-  apply Cfg.ext
-  · rw [Cfg.mapState_state, Cfg.mapState_state, hc, hstate, Option.map_some, Option.map_some]
-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
-  · funext j p
-    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
-  · funext j
-    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
-  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]
+      c₂.mapState (Sigma.mk i') :=
+  Cfg.mapState_const_eq_mapState_sigma c c₂ (by rw [hc]; rfl) hstate hin hw hp ho
 
 /-- A phase guard from a row's first-visit cut: strictly before the exit, every live control
 state of the phase leaves the dispatch table silent. -/
@@ -865,14 +859,8 @@ private lemma sl_guard {k : ℕ} {x : List Bool} (src tbl sm : Fin k) (i : sl_Ke
 private lemma sl_tagged_ne_done {k : ℕ} {x : List Bool} (i : sl_Key) (hi : i ≠ .clearHead)
     (c : Cfg k Bool (sl_Ph i) x) :
     (c.mapState (Sigma.mk i)).state ≠
-      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) := by
-  rw [Cfg.mapState_state]
-  cases hc : c.state with
-  | none => simp
-  | some st =>
-    simp only [Option.map_some, ne_eq, Option.some.injEq]
-    intro hcon
-    exact hi (congrArg Sigma.fst hcon)
+      some (⟨.clearHead, .done⟩ : (j : sl_Key) × sl_Ph j) :=
+  Cfg.mapState_sigma_state_ne i _ hi c
 
 /-- Phase 1, hosted: the skip over the suffix `s.drop r` of the source word, one dispatch into
 phase 2; no state of its window is the exit.

@@ -1,0 +1,92 @@
+# rev 227d92ee4a91fa86860d1d1ddf3a98130fa674b9; 91 lines: A 48, B 43
+B	TCSlib/CommunicationComplexity/DeterministicCC/DetRectangle.lean:561	clog_ncard_le_communicationComplexity	exact_mod_cast (Nat.clog_le_iff_le_pow (by norm_num)).mpr
+B	TCSlib/CommunicationComplexity/DeterministicCC/Rank.lean:208	clog_boolFunctionRank_le_communicationComplexity	exact_mod_cast (Nat.clog_le_iff_le_pow (by norm_num)).mpr
+B	TCSlib/Complexity/CircuitComplexity/Lupanov.lean:213	lupanov_arith	have hLn : L ≤ n := Nat.log_le_self 2 n
+B	TCSlib/Complexity/CircuitComplexity/Lupanov.lean:228	lupanov_arith	have h2 : 2 ^ L ≤ n := Nat.pow_log_le_self 2 h0.ne'
+B	TCSlib/Complexity/CircuitComplexity/Lupanov.lean:237	lupanov_arith	· have h2 : 2 ^ L ≤ n := Nat.pow_log_le_self 2 (by
+B	TCSlib/Complexity/CircuitComplexity/Lupanov.lean:269	exists_dagCircuit_faninTwo_mul_size_le	have hk : Nat.log 2 n - 1 ≤ n := by have := Nat.log_le_self 2 n; omega
+B	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:230	log_le_of_lt_two_pow_succ	· exact Nat.lt_succ_iff.mp (Nat.log_lt_of_lt_pow hq.ne' h)
+B	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:287	gateAt_args_lt	have hl : Nat.log 2 t < 2 ^ k := Nat.log_lt_of_lt_pow ht (by omega)
+B	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:289	gateAt_args_lt	have hp' : 2 ^ Nat.log 2 t ≤ t := Nat.pow_log_le_self 2 ht
+B	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:338	gateAt_faninTwo	have hl : Nat.log 2 t < 2 ^ k := Nat.log_lt_of_lt_pow ht (by omega)
+A	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:496	value_heap	show Nat.log 2 (q / 2) + 1 - 1 = Nat.log 2 (q / 2) by omega]
+B	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:552	value_func	have hL1 : 2 ^ L ≤ t := Nat.pow_log_le_self 2 ht0
+B	TCSlib/Complexity/CircuitComplexity/LupanovGates.lean:554	value_func	have hLk : L < 2 ^ k := Nat.log_lt_of_lt_pow ht0 ht
+B	TCSlib/Complexity/CircuitComplexity/NCAC.lean:184	three_pow_log_le	· exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+B	TCSlib/Complexity/CircuitComplexity/Parity.lean:349	parityCircuit_depth_le	rw [Nat.clog_le_iff_le_pow (by norm_num)]
+B	TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean:466	clog_poly_le	rw [Nat.clog_le_iff_le_pow (by norm_num)]
+B	TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:68	lovaszBits_le	refine (Nat.clog_le_iff_le_pow one_lt_two).mpr ?_
+B	TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:76	two_pow_lovaszBits_lt	have hpred := Nat.pow_pred_clog_lt_self one_lt_two h1
+B	TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:122	two_pow_clog_le	have hpred := Nat.pow_pred_clog_lt_self one_lt_two (by omega : 1 < 2 * n)
+B	TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean:268	dblInv_step	have hj2 : Nat.clog 2 (2 * n) ≤ j := (Nat.clog_le_iff_le_pow one_lt_two).mpr (by omega)
+B	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:434	qy_two_pow_bits_le	exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+B	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:436	qy_two_pow_bits_le	have := Nat.pow_log_le_self 2 (show n ≠ 0 by omega)
+B	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:445	qy_log_bits	exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+B	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:3780	qy_rnd_tests	have h2 := Nat.pow_log_le_self 2 hn0
+B	TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean:5164	qy_main_long	have hlogn := Nat.log_le_self 2 x.length
+B	TCSlib/Complexity/Randomized/BiasedCoinHalting.lean:337	hlD_le	· have := Nat.pow_log_le_self 4 h.ne'
+B	TCSlib/Complexity/Randomized/BiasedCoinHalting.lean:445	length_hlDWord	rw [min_eq_right (Nat.log_le_self _ _)]
+B	TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:64	length_bits_eq	exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
+B	TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean:83	two_pow_log_sq_le	exact Nat.pow_le_pow_left (Nat.pow_log_le_self 2 hn.ne') _
+A	TCSlib/Complexity/SpaceComplexity/Basic.lean:195	logSpace_eq	theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+B	TCSlib/Complexity/SpaceComplexity/Basic.lean:201	logSpace_le_succ	have := Nat.log_le_self 2 n
+A	TCSlib/Complexity/SpaceComplexity/Basic.lean:202	logSpace_le_succ	rw [logSpace_eq]
+A	TCSlib/Complexity/SpaceComplexity/Basic.lean:211	logSpace_le_size_succ	unfold logSpace
+B	TCSlib/Complexity/SpaceComplexity/Basic.lean:214	logSpace_le_size_succ	· have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+A	TCSlib/Complexity/SpaceComplexity/Basic.lean:231	logSpace_le_of_le_mul_two_pow	· simp only [logSpace, Nat.log_zero_right]; omega
+B	TCSlib/Complexity/SpaceComplexity/Basic.lean:232	logSpace_le_of_le_mul_two_pow	· have := Nat.log_lt_of_lt_pow (by omega) hlt
+A	TCSlib/Complexity/SpaceComplexity/Basic.lean:233	logSpace_le_of_le_mul_two_pow	simp only [logSpace]; omega
+A	TCSlib/Complexity/SpaceComplexity/Basic.lean:261	logSpace_mono	unfold logSpace
+B	TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean:59	wP_le	have h2 := Nat.log_lt_self 2 (show n + 1 ≠ 0 by omega)
+A	TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:441	length_cfgWord_le	simp only [wP, logSpace]; omega
+B	TCSlib/Complexity/SpaceComplexity/ConfigCount.lean:430	configBound_logSpace_le	· exact (Nat.pow_log_le_self 2 (by omega)).trans (Nat.le_succ n)
+B	TCSlib/Complexity/SpaceComplexity/Constructible.lean:79	b3a_bits_length	have lower := Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn)
+A	TCSlib/Complexity/SpaceComplexity/Constructible.lean:82	b3a_bits_length	unfold logSpace
+A	TCSlib/Complexity/SpaceComplexity/Constructible.lean:92	b3a_word_length	simp [b3a_word, logSpace, Nat.bits]
+A	TCSlib/Complexity/SpaceComplexity/Constructible.lean:94	b3a_word_length	unfold logSpace
+A	TCSlib/Complexity/SpaceComplexity/Constructible.lean:503	spaceConstructible_logSpace	unfold logSpace
+B	TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean:544	time_bound	have := Nat.log_lt_of_lt_pow (b := 2) (by omega) hlt
+A	TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:374	logSpace_le_lgv	unfold lgv hv logSpace
+A	TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:381	lgv_le	unfold lgv hv logSpace
+B	TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean:389	lgv_le_succ	· have := Nat.log_lt_self 2 h
+B	TCSlib/Complexity/SpaceComplexity/ExpTime.lean:95	NL_subset_P	· exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+A	TCSlib/Complexity/SpaceComplexity/ExpTime.lean:100	NL_subset_P	simp only [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:368	ImplicitlyLogspaceComputable.computesInSpace	set L := logSpace n with hL
+A	TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:369	ImplicitlyLogspaceComputable.computesInSpace	have hL1 : 1 ≤ L := by simp [hL, logSpace]
+A	TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:374	ImplicitlyLogspaceComputable.computesInSpace	simp only [logSpace] at hL
+A	TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:380	ImplicitlyLogspaceComputable.computesInSpace	rw [Complexity.logSpace_eq] at this
+A	TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:393	ImplicitlyLogspaceComputable.computesInSpace	simp only [logSpace] at hm this ⊢
+A	TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean:394	ImplicitlyLogspaceComputable.computesInSpace	simp only [hL, logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:217	size_le_logSpace	rw [← Nat.size_eq_bits_len, logSpace_eq]
+A	TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:250	compl_mem_NSPACE	have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by simp [logSpace]) (hS n)
+A	TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean:281	compl_mem_NSPACE	have hlog := logSpace_le_of_le_mul_two_pow hv' (by simp only [logSpace]; omega)
+A	TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean:2120	access_mem	unfold logSpace
+A	TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:79	logSpace_le_ell	rw [ell_eq_size, logSpace]
+B	TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean:83	logSpace_le_ell	have h2 : 2 ^ Nat.log 2 m ≤ m := Nat.pow_log_le_self 2 (by omega)
+A	TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:771	mem_LOGSPACE_preimage	let L := logSpace x.length
+A	TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:772	mem_LOGSPACE_preimage	have hL : 1 ≤ L := by simp [L, logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:777	mem_LOGSPACE_preimage	dsimp [L, logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:783	mem_LOGSPACE_preimage	dsimp [W, L, logSpace] at *
+A	TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean:789	mem_LOGSPACE_preimage	rw [Complexity.logSpace_eq] at this
+A	TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean:90	arm_decides_poly	simp only [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:247	arm_decides	set Ls := logSpace n with hLs
+A	TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:248	arm_decides	have hL1 : 1 ≤ Ls := by simp [hLs, logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean:306	arm_decides	simp only [logSpace, hLs] at h hm' ⊢
+A	TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean:173	arm_decides_SPACE	have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by simp [logSpace]) (hS n)
+B	TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:188	log_poly_bound	· exact Nat.log_lt_of_lt_pow (by omega) hy
+A	TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean:355	dblLang_mem	simp only [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:351	count_bound	set L := logSpace n with hL
+A	TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:356	count_bound	have hL1 : 1 ≤ L := by simp [hL, logSpace]
+B	TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:375	count_bound	have h4 := Nat.log_lt_of_lt_pow (b := 2) (by omega : y ≠ 0) h3
+A	TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:376	count_bound	simp only [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean:512	marm_dtime	simp only [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean:98	validPlainLang_mem_NL	have : 1 ≤ logSpace x.length := by simp [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:92	narm_logspace_ptm	have hS1 : 1 ≤ logSpace n := by simp [logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:114	narm_logspace_ptm	simp only [logSpace] at h hm' ⊢
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean:126	narm_logspace_ptm	simp only [hW, logSpace]
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:213	narm_decides	logSpace (fun n => K * logSpace n) (K + cs * K2) (fun n => by simp [logSpace])
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:232	narm_decides	simp only [logSpace] at h hm' ⊢
+A	TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean:262	narm_decides_poly	simp only [logSpace]
+B	TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean:319	gv_bound	exact (Nat.clog_le_iff_le_pow hq_gt1').mp hc
+B	TCSlib/LearningTheory/MistakeBounds/Halving.lean:161	log_succ_le_log_of_double_le	Nat.pow_log_le_self 2 hbne
+B	TCSlib/Programs/Light/Lib/Logs.lean:99	log2_meets	(Nat.pow_le_pow_right (by norm_num) (by omega)).trans (Nat.pow_log_le_self 2 hx)

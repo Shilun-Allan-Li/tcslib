@@ -1,0 +1,347 @@
+From d789d6db492fd12b1ec1abb3f699fff5dd662287 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 15:58:02 -0800
+Subject: [PATCH] Binary-length bounds: one home each; the inline transports
+ cite it
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+two_pow_bits_le (2^|bits L| ≤ 2L for L ≥ 1) moves from Codec/Layout to Machines/Bin, beside
+length_bits_le; Codec/Parse, Logspace/PathHard, Randomized/RandomWalkPad, Randomized/BPLInP and
+Randomized/SpaceAmplifyPoly's two_pow_bits_le now cite it. Codec/Word publishes wP_eq, and
+Codec/Layout's wP_le cites Turing.length_bits_le_self through it; TQBFHardParams' restatement
+of Codec.wP_le is removed. PrimeFind, CodeSimulator, RecordTable and SpaceAmplifyPoly's ell_le
+cite length_bits_le_self; ISCountGenCorrect's bits_succ_le cites length_bits_le, PathHard's
+ell_mono length_bits_mono, and WindowClock record_pos_lt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../ClassP/BinaryArith/PrimeFind.lean          |  5 ++---
+ .../Complexity/ClassPSPACE/TQBFHardParams.lean |  4 ----
+ TCSlib/Complexity/Randomized/BPLInP.lean       |  6 +-----
+ .../Complexity/Randomized/RandomWalkPad.lean   | 10 ++--------
+ .../Randomized/SpaceAmplifyPoly.lean           | 10 ++--------
+ .../SpaceComplexity/Codec/Layout.lean          | 18 +++---------------
+ .../SpaceComplexity/Codec/Parse.lean           |  9 +--------
+ .../Complexity/SpaceComplexity/Codec/Word.lean |  3 +++
+ .../Logspace/ISCountGenCorrect.lean            |  2 +-
+ .../SpaceComplexity/Logspace/PathHard.lean     | 14 ++++----------
+ .../SpaceComplexity/Machines/Bin.lean          | 16 +++++++++++++++-
+ .../SpaceComplexity/WindowClock.lean           |  5 +----
+ .../TuringMachine/Build/RecordTable.lean       |  8 ++------
+ .../TuringMachine/CodeSimulator.lean           |  4 +---
+ 14 files changed, 38 insertions(+), 76 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean b/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean
+index 4cc2cdf6..77949047 100644
+--- a/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean
++++ b/TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean
+@@ -201,7 +201,7 @@ theorem polyTimeComputable_countLoop : PolyTimeComputable countLoop := by
+       obtain ⟨acc, rest, he, ha, hv⟩ :=
+         iterate_invariant (CountInv z) (fun _ h => (countInv_step h).1) i (h0 z)
+       have hacc : acc.length ≤ z.length := by
+-        rw [ha]; exact length_bits_le ((Nat.lt_two_pow_self).trans_le' (by omega))
++        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
+       rw [he, length_pairEncode]; simp; omega)
+ 
+ /-! ### The power `2^k` -/
+@@ -314,8 +314,7 @@ theorem polyTimeComputable_dblLoop : PolyTimeComputable dblLoop := by
+     obtain ⟨j, he, hj⟩ :=
+       iterate_invariant (DblInv z.length) (fun _ h => (dblInv_step h).1) i (h0 z)
+     have h1 : Nat.clog 2 (2 * z.length) ≤ z.length + 1 := lovaszBits_le z.length
+-    have h2 : (Nat.bits z.length).length ≤ z.length :=
+-      length_bits_le (Nat.lt_two_pow_self)
++    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
+     rw [he, length_pairEncode]; simp; omega)
+ 
+ /-! ### Trial division -/
+diff --git a/TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean b/TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean
+index 8e6029e5..0471b42c 100644
+--- a/TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean
++++ b/TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean
+@@ -54,10 +54,6 @@ variable (N : FinNDTM Bool) (d c : ℕ)
+ /-- **The width coefficient** of a machine `N` with space constant `d`. -/
+ def wCoef : ℕ := 4 * d * W N + W N + 12 * N.k * d + 3 * N.k + 2 * Fintype.card N.State + 8
+ 
+-/-- The binary length of `n + 1` is at most `n + 1`. -/
+-theorem wP_le (n : ℕ) : wP n ≤ n + 1 :=
+-  LogProg.length_bits_le (Nat.lt_two_pow_self)
+-
+ /-- **The width holds a code word**: `codeLen ≤ wCoef · (n + 1)^(c + 1)`. -/
+ theorem vlen_le_vwid (n : ℕ) : vlen N d c n ≤ vwid (wCoef N d) (c + 1) n := by
+   have hQP : (n + 1) ^ c ≤ (n + 1) ^ (c + 1) := Nat.pow_le_pow_right (by omega) (by omega)
+diff --git a/TCSlib/Complexity/Randomized/BPLInP.lean b/TCSlib/Complexity/Randomized/BPLInP.lean
+index 7852de45..bc402ede 100644
+--- a/TCSlib/Complexity/Randomized/BPLInP.lean
++++ b/TCSlib/Complexity/Randomized/BPLInP.lean
+@@ -399,11 +399,7 @@ theorem two_pow_codes_le (n : ℕ) :
+   have hpow : 2 ^ m ≤ 2 * (n + 1) := by
+     rcases Nat.eq_zero_or_pos n with rfl | hn
+     · simp [m]
+-    · have hm : m = n.size := Nat.size_eq_bits_len n
+-      have hpos : 0 < m := by rw [hm]; exact Nat.size_pos.mpr hn
+-      have : 2 ^ (m - 1) ≤ n := by rw [hm] at hpos ⊢; exact Nat.lt_size.mp (by omega)
+-      calc 2 ^ m = 2 * 2 ^ (m - 1) := by rw [← pow_succ']; congr 1; omega
+-        _ ≤ 2 * (n + 1) := by omega
++    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
+   set e := codeK N * (c + 1)
+   calc 2 ^ (codeK N * (c * (m + 1) + logSpace n + 1)) ≤ 2 ^ (e * (m + 2)) := by
+         refine Nat.pow_le_pow_right (by norm_num) ?_
+diff --git a/TCSlib/Complexity/Randomized/RandomWalkPad.lean b/TCSlib/Complexity/Randomized/RandomWalkPad.lean
+index 5936ea71..c98002ab 100644
+--- a/TCSlib/Complexity/Randomized/RandomWalkPad.lean
++++ b/TCSlib/Complexity/Randomized/RandomWalkPad.lean
+@@ -151,14 +151,8 @@ theorem le_padDegree (n : ℕ) : n ≤ padDegree n := (Nat.lt_size_self n).le
+ /-- The padding degree is at most `2n` for `n ≥ 1`. -/
+ theorem padDegree_le (hn : 0 < n) : padDegree n ≤ 2 * n := by
+   unfold padDegree
+-  have hs : 0 < Nat.size n := Nat.size_pos.mpr hn
+-  have h : 2 ^ (Nat.size n - 1) ≤ n := by
+-    by_contra h
+-    push_neg at h
+-    exact absurd (Nat.size_le.mpr h) (by omega)
+-  calc 2 ^ Nat.size n = 2 * 2 ^ (Nat.size n - 1) := by
+-        rw [← pow_succ']; congr 1; omega
+-    _ ≤ 2 * n := by omega
++  rw [← Nat.size_eq_bits_len]
++  exact Complexity.LogProg.two_pow_bits_le n hn
+ 
+ instance (n : ℕ) : NeZero (padDegree n) := ⟨pow_ne_zero _ two_ne_zero⟩
+ 
+diff --git a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+index ce34fbdc..699403b5 100644
+--- a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
++++ b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+@@ -241,14 +241,9 @@ theorem two_mul_pow_le {K n d : ℕ} (hK : 32 * (n + 1) ^ d ≤ K) :
+ 
+ /-- `2^{|bits n|} ≤ 2n + 1`. -/
+ theorem two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
+-  rw [Nat.size_eq_bits_len]
+   rcases Nat.eq_zero_or_pos n with rfl | hn
+   · simp
+-  · have hs : 0 < n.size := Nat.size_pos.mpr hn
+-    have := Nat.lt_size.mp (show n.size - 1 < n.size by omega)
+-    have e : 2 ^ n.size = 2 * 2 ^ (n.size - 1) := by
+-      rw [← pow_succ']; congr 1; omega
+-    omega
++  · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (Nat.le_succ _)
+ 
+ /-- `n < 2^{|bits n|}`. -/
+ theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+@@ -283,8 +278,7 @@ theorem bigK_le (F n : ℕ) : bigK F n ≤ 4 ^ F * (n + 1) ^ F := by
+ /-- `ℓ ≤ n + 1`. -/
+ theorem ell_le (n : ℕ) : ell n ≤ n + 1 := by
+   have := lt_two_pow_bits n
+-  have h : (Nat.bits n).length ≤ n := by
+-    rw [Nat.size_eq_bits_len]; exact Nat.size_le.mpr (Nat.lt_two_pow_self)
++  have h : (Nat.bits n).length ≤ n := Turing.length_bits_le_self n
+   simp only [ell]; omega
+ 
+ /-- The register bound is polynomial. -/
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
+index ba4eea2b..ed566da2 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Layout.lean
+@@ -26,7 +26,7 @@ Logspace machine infrastructure for the codec; not a result of [AB09].
+ 
+ ## Main results
+ 
+-* `Complexity.Codec.two_pow_bits_le`, `Complexity.Codec.wP_le` — width arithmetic.
++* `Complexity.Codec.wP_le` — width arithmetic.
+ * `Complexity.Codec.layout_run` — the layout phase of the first code word.
+ * `Complexity.Codec.le_phase` — the position comparison.
+ * `Complexity.Codec.vscan_run` — the validity scan.
+@@ -43,22 +43,10 @@ open Turing LogProg
+ 
+ variable {N : FinNDTM Bool} {mode : CMode}
+ 
+-/-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`. -/
+-lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+-  rw [Nat.size_eq_bits_len]
+-  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
+-  have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
+-    rw [← Nat.size_le]; omega
+-  have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
+-    rw [← pow_succ']; congr 1; omega
+-  omega
+-
+ /-- The position-field width is at most `n + 1`. -/
+ lemma wP_le (n : ℕ) : wP n ≤ n + 1 := by
+-  have h1 := length_bits_le_log (n + 1)
+-  have h2 := Nat.log_lt_self 2 (show n + 1 ≠ 0 by omega)
+-  simp only [wP]
+-  omega
++  rw [wP_eq]
++  exact Turing.length_bits_le_self (n + 1)
+ 
+ /-- Letters of the first code word inside the input. -/
+ lemma getD_w (x w rest : List Bool) (i : ℕ) (hi : i < w.length) :
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
+index e857152c..a11799a4 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Parse.lean
+@@ -87,14 +87,7 @@ lemma bitsVal_le_of_width (w : List Bool) (L : ℕ) (hL : 1 ≤ L)
+     (hw : w.length ≤ (Nat.bits L).length) (i : ℕ) : bitsVal (w.drop i) ≤ 2 * L := by
+   have h1 : bitsVal (w.drop i) < 2 ^ (w.drop i).length := bitsVal_lt_two_pow _
+   have h2 : (w.drop i).length ≤ (Nat.bits L).length := by simp; omega
+-  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := by
+-    rw [Nat.size_eq_bits_len]
+-    have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
+-    have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
+-      rw [← Nat.size_le]; omega
+-    have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
+-      rw [← pow_succ']; congr 1; omega
+-    omega
++  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
+   have := Nat.pow_le_pow_right (show 0 < 2 by norm_num) h2
+   omega
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+index 640850f9..fc2ba916 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Codec/Word.lean
+@@ -271,6 +271,9 @@ def cellOf (s : ℕ) (C : Cfg N.k Bool N.State x) (j : ℕ) : CellV N :=
+ /-- The width of the input-position field on inputs of length `n`: `|bits (n + 1)|`. -/
+ def wP (n : ℕ) : ℕ := (Nat.bits (n + 1)).length
+ 
++/-- The position-field width is the binary length of `n + 1`. -/
++lemma wP_eq (n : ℕ) : wP n = (Nat.bits (n + 1)).length := rfl
++
+ /-- The binary word of `v` padded with `0`s to width `w`. -/
+ def padBits (w v : ℕ) : List Bool := Nat.bits v ++ List.replicate (w - (Nat.bits v).length) false
+ 
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+index 490cfb04..e885abda 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean
+@@ -207,7 +207,7 @@ open Turing LogProg LogProg.ISCount LogProg.ISGen LogProg.SavitchARM
+ /-- A number `m ≤ 2 ^ e + 1` has a binary expansion of at most `e + 2` digits after one
+ increment. -/
+ private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
+-  rw [Nat.size_eq_bits_len, Nat.size_le]
++  apply length_bits_le
+   have : 2 ^ e + 2 < 2 ^ (e + 2) := by
+     rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
+   omega
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
+index 4214ee81..a1f376ee 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean
+@@ -86,18 +86,12 @@ lemma logSpace_le_ell (m : ℕ) : logSpace m ≤ ell m := by
+     omega
+ 
+ /-- `2 ^ ℓ ≤ 2 (m + 1)`. -/
+-lemma two_pow_ell_le (m : ℕ) : 2 ^ ell m ≤ 2 * (m + 1) := by
+-  rw [ell_eq_size]
+-  have hpos : 0 < Nat.size (m + 1) := Nat.size_pos.mpr (by omega)
+-  have h : ¬ (m + 1 < 2 ^ (Nat.size (m + 1) - 1)) := fun h =>
+-    absurd (Nat.size_le.mpr h) (by omega)
+-  have e : 2 ^ Nat.size (m + 1) = 2 * 2 ^ (Nat.size (m + 1) - 1) := by
+-    rw [← pow_succ']; congr 1; omega
+-  omega
++lemma two_pow_ell_le (m : ℕ) : 2 ^ ell m ≤ 2 * (m + 1) :=
++  two_pow_bits_le (m + 1) (by omega)
+ 
+ /-- `ℓ` is monotone. -/
+-lemma ell_mono {m m' : ℕ} (h : m ≤ m') : ell m ≤ ell m' := by
+-  rw [ell_eq_size, ell_eq_size]; exact Nat.size_le_size (by omega)
++lemma ell_mono {m m' : ℕ} (h : m ≤ m') : ell m ≤ ell m' :=
++  length_bits_mono (by omega)
+ 
+ /-- The vertex count is monotone in the input length. -/
+ lemma nV_mono (K c₀ : ℕ) {m m' : ℕ} (h : m ≤ m') : nV K c₀ m ≤ nV K c₀ m' := by
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean b/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
+index d816baa0..1a1b72c3 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean
+@@ -31,7 +31,8 @@ the increment (`Complexity.LogProg.bits_succ`), and length bounds.
+   value is below `2^{length}` and determines the word among words of its length.
+ * `Complexity.LogProg.bits_succ` — `Nat.bits (n + 1) = incW (Nat.bits n)`.
+ * `Complexity.LogProg.length_bits_le` — `|Nat.bits n| ≤ m` when `n < 2^m`;
+-  `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`.
++  `Complexity.LogProg.length_bits_mono` — `|Nat.bits n|` is monotone in `n`;
++  `Complexity.LogProg.two_pow_bits_le` — `2^{|Nat.bits L|} ≤ 2L` for `L ≥ 1`.
+ 
+ ## References
+ 
+@@ -124,6 +125,19 @@ lemma length_bits_le {n m : ℕ} (h : n < 2 ^ m) : (Nat.bits n).length ≤ m :=
+   rw [Nat.size_eq_bits_len]
+   exact Nat.size_le.mpr h
+ 
++/-- `2 ^ |bits L| ≤ 2L` for `L ≥ 1`.
++
++**Proof sketch.** `|bits L| = Nat.size L ≥ 1`, and `2 ^ (Nat.size L - 1) ≤ L` (`Nat.size_le`), so
++`2 ^ |bits L| = 2 · 2 ^ (Nat.size L - 1) ≤ 2L`. -/
++lemma two_pow_bits_le (L : ℕ) (hL : 1 ≤ L) : 2 ^ (Nat.bits L).length ≤ 2 * L := by
++  rw [Nat.size_eq_bits_len]
++  have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
++  have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
++    rw [← Nat.size_le]; omega
++  have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
++    rw [← pow_succ']; congr 1; omega
++  omega
++
+ /-- Binary words of larger numbers are not shorter. -/
+ lemma length_bits_mono {a b : ℕ} (h : a ≤ b) : (Nat.bits a).length ≤ (Nat.bits b).length := by
+   rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]; exact Nat.size_le_size h
+diff --git a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+index 85de9ad5..09e189b4 100644
+--- a/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
++++ b/TCSlib/Complexity/SpaceComplexity/WindowClock.lean
+@@ -115,10 +115,7 @@ theorem FinTM.configBound_le_two_pow (M : FinTM Bool) (n s : ℕ) :
+       2 ^ (Fintype.card M.State + posWidth n + 3 * M.k * (2 * s + 1)) := by
+   have hQ : Fintype.card M.State + 1 ≤ 2 ^ Fintype.card M.State :=
+     Nat.lt_two_pow_self
+-  have hn : n + 2 ≤ 2 ^ posWidth n := by
+-    have h := Nat.lt_size_self (n + 1)
+-    rw [← Nat.size_eq_bits_len] at h
+-    exact h
++  have hn : n + 2 ≤ 2 ^ posWidth n := record_pos_lt n
+   have h3 : 3 ^ (M.k * (2 * s + 1)) ≤ 2 ^ (2 * (M.k * (2 * s + 1))) :=
+     calc 3 ^ (M.k * (2 * s + 1)) ≤ 4 ^ (M.k * (2 * s + 1)) :=
+           Nat.pow_le_pow_left (by norm_num) _
+diff --git a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+index ea8065c1..6338fe14 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/RecordTable.lean
+@@ -2760,9 +2760,7 @@ private theorem rt_exists_boundTM :
+   obtain ⟨u, ub, ucut, uheads, urun⟩ := rt_succ_run (0 : Fin (K + 1)) x.length.bits c rfl framed
+   have monotone : x.length.bits.length ≤ (x.length + 1).bits.length := by
+     simpa only [Nat.size_eq_bits_len] using Nat.size_le_size (Nat.le_succ x.length)
+-  have short : x.length.bits.length ≤ x.length + 1 := by
+-    rw [Nat.size_eq_bits_len, Nat.size_le]
+-    exact lt_trans (Nat.lt_succ_self _) Nat.lt_two_pow_self
++  have short : x.length.bits.length ≤ x.length + 1 := (length_bits_le_self _).trans (Nat.le_succ _)
+   let B : ℤ := ((C + 20) * ((x.length + 1).bits.length + 1) : ℕ)
+   have firstBound : (C * (x.length.bits.length + 1) : ℕ) ≤
+       (C + 20) * ((x.length + 1).bits.length + 1) := by nlinarith
+@@ -4252,9 +4250,7 @@ private theorem rt_exists_boundFieldTM (Q T : Type) [DecidableEq Q] [DecidableEq
+       (d.workTapePos (ι 0) + p - d.workTapePos (ι 0)) else _) = _
+     rw [if_pos rfl]; congr 1; omega
+   obtain ⟨move, moveCut, moveHeads⟩ := rt_moveWord_run (ι 0) dst different w b rfl frame
+-  have short : (x.length + 1).bits.length ≤ x.length + 1 := by
+-    rw [Nat.size_eq_bits_len, Nat.size_le]
+-    exact Nat.lt_two_pow_self
++  have short : (x.length + 1).bits.length ≤ x.length + 1 := length_bits_le_self _
+   let B : ℤ := ((C + 10) * ((x.length + 1).bits.length + 1) : ℕ)
+   have radA : ∀ u ≤ t, ∀ j,
+       |((embedEmitTM ι R).runFrom a u).workTapePos j - d.workTapePos j| ≤ B := by
+diff --git a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+index f71f4002..0d232852 100644
+--- a/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
++++ b/TCSlib/Complexity/TuringMachine/CodeSimulator.lean
+@@ -1443,9 +1443,7 @@ private lemma canonOffset_spec (w : List Bool) :
+     rw [codeBitsNat_bits]
+     simp [Nat.bit]
+     omega
+-  · have small : w.length.bits.length ≤ w.length := by
+-      rw [Nat.size_eq_bits_len]
+-      exact Nat.size_le.mpr Nat.lt_two_pow_self
++  · have small : w.length.bits.length ≤ w.length := length_bits_le_self _
+     simp only [canonOffset, List.length_cons, (canonCount_spec w.length.bits).2.1]
+     omega
+ 
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,0 +1,416 @@
+From f6b2261f76aea505f7d4a3cb508bbf712074891d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 20:40:04 +0000
+Subject: [PATCH 02/11] E-D checkpoint 2: Q's phases and dispatch, the handoff,
+ the flag and the tail's copy
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTn8RSd7d1nwPtgvzcC
+---
+ .../Diagonalization/NTimeDiagonalizer.lean    | 334 +++++++++++++++++-
+ 1 file changed, 324 insertions(+), 10 deletions(-)
+
+diff --git a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+index f01fb051..ba2ed686 100644
+--- a/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
++++ b/TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean
+@@ -5660,8 +5660,8 @@ new host): for every finite machine `M` and stop predicate there is a step clock
+ `Turing.vhostSilentTM M` whose `fin` is injective and distinct from its `tmo`, with the hosted
+ clock's clause `DzClockSpec`. Both of the diagonalizer's simulators run through it.
+ 
+-**Proof sketch.** Take `Turing.exists_stepClockTMVia` over `Turing.vhostSilentTM M` with the identity
+-digit embedding and the stop predicate read on the hosted state. The selected bank of the
++**Proof sketch.** Take `Turing.exists_stepClockTMVia` over `Turing.vhostSilentTM M` with the
++identity digit embedding and the stop predicate read on the hosted state. The selected bank of the
+ normal-form configuration is the clock's start over `Turing.vhostSilentCfg c true 1 [] []`, field by
+ field (`Turing.clockCfg`'s equations, `Turing.vhostSilentCfg_eq`, the silent transport's and
+ `Turing.vhostCfg`'s field equations, split by `Fin.lastCases` and `Fin.addCases`). The hosted run is
+@@ -5695,7 +5695,8 @@ private theorem dz_clock_exists {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+     omega
+   -- the fields of a hosted configuration
+   have hVst : ∀ (c' : Cfg m Bool S y) (b : Bool),
+-      (vhostSilentCfg c' b (1 : Fin (x.length + 2)) [] []).state = c'.state.map fun s => (s, b) := by
++      (vhostSilentCfg c' b (1 : Fin (x.length + 2)) [] []).state =
++        c'.state.map fun s => (s, b) := by
+     intro c' b
+     rw [vhostSilentCfg_eq, embedSilentCfg_state, vhostCfg_state]
+   have hVin : ∀ (c' : Cfg m Bool S y) (b : Bool),
+@@ -5840,7 +5841,8 @@ private theorem dz_clock_exists {m : ℕ} {S : Type} [Fintype S] [DecidableEq S]
+     obtain ⟨b, hb⟩ := hrunV τ
+     rw [hb] at hrunH
+     obtain ⟨E, hE⟩ : ∃ E, E = embedEmitCfg σ T P o
+-        (clockCfg (some (fin (vhostSilentCfg (M.runFrom c τ) b (1 : Fin (x.length + 2)) [] []).state))
++        (clockCfg (some (fin
++            (vhostSilentCfg (M.runFrom c τ) b (1 : Fin (x.length + 2)) [] []).state))
+           (vhostSilentCfg (M.runFrom c τ) b (1 : Fin (x.length + 2)) [] [])
+           (wordPatch (T ctr) 0 (w'.map (Function.Embedding.refl Bool))) 0) := ⟨_, rfl⟩
+     have ecap := embedEmitCfg_selected_tape σ T P o
+@@ -6034,7 +6036,8 @@ private theorem dz_kit_exists {f g : ℕ → ℕ} (hf : Complexity.TimeConstruct
+     have hn := hgle x.length
+     try dsimp only at hL ⊢
+     nlinarith
+-  have qcL : ∀ x : List Bool, (query f g x).length ≤ (qcc + 1) * (2 * CG + 1) * (g x.length + 1) := by
++  have qcL : ∀ x : List Bool,
++      (query f g x).length ≤ (qcc + 1) * (2 * CG + 1) * (g x.length + 1) := by
+     intro x
+     have hL := dz_out_le hG x
+     try dsimp only at hL
+@@ -6344,7 +6347,7 @@ private theorem dzBlk_length (G : ℕ) : (dzBlk G).length = G + 1 + (Nat.bits G)
+ /-- The named tapes at the setup's exit: the query, the consumed counters (all `true`), the word
+ `1^{n + 1}`, the clock's counter `bits (g n)`, the block and the ruler; every other named tape
+ blank. -/
+-private def dzSetL {f g : ℕ → ℕ} (z : List Bool) : Fin 14 → ℤ → Option Bool :=
++private def dzSetL (f g : ℕ → ℕ) (z : List Bool) : Fin 14 → ℤ → Option Bool :=
+   Function.update (Function.update (Function.update (Function.update (Function.update
+     (Function.update (Function.update (Function.update (fun _ => FinTM.bufferTape [])
+       0 (FinTM.bufferTape (query f g z)))
+@@ -6403,7 +6406,7 @@ private theorem dz_setup {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF :
+     ∃ TP ≤ dzSetB κ (g z.length),
+       Segment (dzSet κ) {some (dzPexit κ)} (fun _ => True)
+         (qyC (x := z) ⟨.q, Sum.inl ()⟩ 1 (fun _ => FinTM.bufferTape []) (fun _ => 0) [])
+-        (qyC (dzPexit κ) 1 (dzLay (dzSetL (f := f) (g := g) z) (FinTM.bufferTape []))
++        (qyC (dzPexit κ) 1 (dzLay (dzSetL f g z) (FinTM.bufferTape []))
+           (fun _ => 0) []) TP := by
+   set G := g z.length with hG
+   set F : Set (Option (Σ i, DzPPh κ i)) := {some (dzPexit κ)} with hF
+@@ -6521,8 +6524,8 @@ private theorem dz_setup {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF :
+     (by rw [dzLay_tp]; rfl) (by rw [dzLay_tp]; rfl) (by rw [dzLay_tp]; rfl)
+     (by rw [dzLay_tp]; simp [hZ8])
+   rw [dzLay_update, List.map_id'] at c9
+-  set L9 := Function.update L8 6 (FinTM.bufferTape (List.replicate G true ++ List.replicate 1 true ++
+-    Nat.bits G)) with hL9
++  set L9 := Function.update L8 6
++    (FinTM.bufferTape (List.replicate G true ++ List.replicate 1 true ++ Nat.bits G)) with hL9
+   have seg9 := qy_hosted (dzSetM κ) ⟨.q, Sum.inl ()⟩ (dzSetRed κ) .cb .sweep .done
+     ⟨.rb, RewindPhase.start⟩ 1 1 (dzLay L8 Bl) (dzLay L9 Bl) (dzLay Z8 0) (dzLay Z8 0) [] [] _
+     c9.1 (by simp [dzSetRed])
+@@ -6561,7 +6564,7 @@ private theorem dz_setup {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF :
+     funext i
+     simp only [hZ11, hZ10, hZ8, hZ6, hZ0, Function.update_apply]
+     split_ifs <;> rfl
+-  have hL : L11 = dzSetL (f := f) (g := g) z := by
++  have hL : L11 = dzSetL f g z := by
+     funext i
+     fin_cases i <;> rfl
+   rw [hZ] at c12
+@@ -6586,6 +6589,317 @@ private theorem dz_setup {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF :
+   simp only [List.length_cons, List.length_nil] at hco2 ⊢
+   nlinarith
+ 
++/-! ### The run `Q` -/
++
++/-- A single tape, as a one-tape bank. -/
++private def dzOne {K : ℕ} (t : Fin K) : Fin 1 ↪ Fin K :=
++  ⟨fun _ => t, fun a b _ => Subsingleton.elim a b⟩
++
++/-- The core's tapes avoid every named tape but the block. -/
++private theorem DzKit.bR_ne {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (i : Fin κ.kR) (j : Fin 14) (hj : j ≠ 6) : κ.bR i ≠ κ.tp j := by
++  intro h
++  by_cases hi : i = κ.jR
++  · rw [hi, κ.bR_j] at h
++    exact hj (Fin.castLE_injective κ.le_K h).symm
++  · have := κ.bR_off i hi
++    rw [h, κ.tp_val] at this
++    omega
++
++/-- The decider's tapes avoid every named tape but tape `13`. -/
++private theorem DzKit.bB_ne {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (i : Fin BF.k) (j : Fin 14) (hj : j ≠ 13) : κ.bB i ≠ κ.tp j := by
++  intro h
++  by_cases hi : (i : ℕ) = 0
++  · have hk : 0 < BF.k := by have := i.isLt; omega
++    rw [show i = ⟨0, hk⟩ from Fin.ext hi] at h
++    exact hj (Fin.castLE_injective κ.le_K h).symm
++  · have : 14 ≤ (κ.bB i : ℕ) := by
++      unfold DzKit.bB
++      exact dz_bank_off _ _ _ _ _ (by omega) i hi
++    rw [h, κ.tp_val] at this
++    omega
++
++/-- The hosted core's tape map: buffer on tape `11`, the core's tapes along `bR`, capture on tape
++`12`, counter on tape `3`. -/
++private def DzKit.sR {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : Fin (((1 + κ.kR) + 1) + 1) ↪ Fin κ.K :=
++  dzClkEmb (κ.tp 11) (κ.tp 12) (κ.tp 3) κ.bR (κ.tp_ne (by decide)) (κ.tp_ne (by decide))
++    (κ.tp_ne (by decide)) (fun ⟨i, h⟩ => κ.bR_ne i 11 (by decide) h)
++    (fun ⟨i, h⟩ => κ.bR_ne i 12 (by decide) h) (fun ⟨i, h⟩ => κ.bR_ne i 3 (by decide) h)
++
++/-- The hosted decider's tape map: buffer on tape `8`, the decider's tapes along `bB`, capture on
++tape `12`, counter on tape `3`. -/
++private def DzKit.sB {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : Fin (((1 + BF.k) + 1) + 1) ↪ Fin κ.K :=
++  dzClkEmb (κ.tp 8) (κ.tp 12) (κ.tp 3) κ.bB (κ.tp_ne (by decide)) (κ.tp_ne (by decide))
++    (κ.tp_ne (by decide)) (fun ⟨i, h⟩ => κ.bB_ne i 8 (by decide) h)
++    (fun ⟨i, h⟩ => κ.bB_ne i 12 (by decide) h) (fun ⟨i, h⟩ => κ.bB_ne i 3 (by decide) h)
++
++/-- The run's phases: the flag; the middle's tail copy, split (skip back, walk, take the
++separator, move the budget word, skip back), test (expansion, rewind, comparison), normalization,
++`α`, the three emissions, the capture's rewind and the hosted core; the top's tail copy, the hosted
++decider, the capture's rewind and its read; the two verdicts. -/
++private inductive DzQK
++  | flag | mt | sb0 | walk | sep | xfer | sb1 | exp | rwU | cmp | lb | al | e1 | e2 | e3 | rwZ
++  | runR | tt | runB | rwK | rd | acc | rej
++
++/-- The run's phases have decidable equality (classically). -/
++private noncomputable instance dzQKDecEq : DecidableEq DzQK := Classical.decEq _
++
++/-- The run's phases are finite. -/
++private noncomputable instance dzQKFintype : Fintype DzQK :=
++  Fintype.ofList [.flag, .mt, .sb0, .walk, .sep, .xfer, .sb1, .exp, .rwU, .cmp, .lb, .al, .e1, .e2,
++    .e3, .rwZ, .runR, .tt, .runB, .rwK, .rd, .acc, .rej] (by intro x; cases x <;> simp)
++
++/-- The run's phase carriers. -/
++private abbrev DzQPh {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : DzQK → Type
++  | .flag | .sep | .rd => Option (Option Bool)
++  | .mt | .xfer | .tt | .acc | .rej => SweepPhase
++  | .sb0 | .walk | .sb1 => SeekPhase
++  | .exp => CounterLoopState (Fin ([true].length + 1))
++  | .rwU | .rwZ | .rwK => RewindPhase
++  | .cmp => QyCmp
++  | .lb => Unit ⊕ κ.lc.State
++  | .al => Unit ⊕ κ.ac.State
++  | .e1 => QyEm ([] : List Bool).length ([false, false, true, true] : List Bool).length 3
++  | .e2 => QyEm ([] : List Bool).length ([false, true] : List Bool).length 1
++  | .e3 => QyEm ([] : List Bool).length ([] : List Bool).length 0
++  | .runR => κ.QR
++  | .runB => κ.QB
++
++/-- The run's phase carriers are finite. -/
++private instance dzQPhFintype {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (i : DzQK) : Fintype (DzQPh κ i) := by
++  cases i <;> dsimp only [DzQPh] <;> infer_instance
++
++/-- The run's phase carriers have decidable equality. -/
++private instance dzQPhDecEq {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (i : DzQK) : DecidableEq (DzQPh κ i) := by
++  cases i <;> dsimp only [DzQPh] <;> infer_instance
++
++/-- The run's phase machines. -/
++private def dzQM {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : (i : DzQK) → MultiTapeTM κ.K Bool (DzQPh κ i)
++  | .flag => dzTakeTM κ.K (κ.tp 0)
++  | .mt => copyMapTM κ.K (κ.tp 0) (κ.tp 8) (fun b => b) (fun _ b => b)
++  | .sb0 => skipBackTM κ.K (κ.tp 6)
++  | .walk => walkTM κ.K (κ.tp 7) (fun i => i = κ.tp 7 ∨ i = κ.tp 6) .pos
++  | .sep => dzTakeTM κ.K (κ.tp 6)
++  | .xfer => transferMapTM κ.K (κ.tp 6) (κ.tp 9) (fun b => b) (fun _ b => b) (fun _ => none)
++  | .sb1 => skipBackTM κ.K (κ.tp 6)
++  | .exp => embedEmitTM (qyEmb2 (κ.tp 10) (κ.tp 9) (κ.tp_ne (by decide))) (expandTM 1 0 [true])
++  | .rwU => rewindTM κ.K (κ.tp 10)
++  | .cmp => qyCmpTM κ.K (κ.tp 10) (κ.tp 6)
++  | .lb => embedEmitTM κ.bL (seamReleaseTM κ.lc.tm κ.lcE)
++  | .al => embedEmitTM κ.bA (seamReleaseTM κ.ac.tm κ.acE)
++  | .e1 =>
++    embedSilentTM (dzOne (κ.tp 10)) (κ.tp 11) (qyEmitTM 1 0 [] [false, false, true, true] 3 false)
++  | .e2 => embedSilentTM (dzOne (κ.tp 8)) (κ.tp 11) (qyEmitTM 1 0 [] [false, true] 1 false)
++  | .e3 => embedSilentTM (dzOne (κ.tp 2)) (κ.tp 11) (qyEmitTM 1 0 [] [] 0 false)
++  | .rwZ => rewindTM κ.K (κ.tp 11)
++  | .runR => embedEmitTM κ.sR κ.HR
++  | .tt => copyMapTM κ.K (κ.tp 0) (κ.tp 8) (fun b => b) (fun _ b => b)
++  | .runB => embedEmitTM κ.sB κ.HB
++  | .rwK => rewindTM κ.K (κ.tp 12)
++  | .rd => dzTakeTM κ.K (κ.tp 12)
++  | .acc => clearTM κ.K (κ.tp 13)
++  | .rej => clearTM κ.K (κ.tp 13)
++
++/-- The run's accepting verdict. -/
++private def dzAcc {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : Σ i, DzQPh κ i := ⟨.acc, SweepPhase.sweep⟩
++
++/-- The run's rejecting verdict. -/
++private def dzRej {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : Σ i, DzQPh κ i := ⟨.rej, SweepPhase.sweep⟩
++
++/-- The run's dispatch table: the flag selects the branch (`none` rejects); in the middle each
++exit enters the next phase, the comparison rejects a budget above `g n`, and the hosted core's
++`finish` at `accept` accepts, every other `finish` or `timeout` rejects; at the top the hosted
++decider's `finish` goes to the capture's rewind, its `timeout` rejects, and the captured
++`false` accepts, anything else rejects. -/
++private def dzQRed {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : (i : DzQK) → DzQPh κ i → Option (Σ j, DzQPh κ j)
++  | .flag, s =>
++    match s with
++    | none => none
++    | some none => some (dzRej κ)
++    | some (some true) => some ⟨.tt, SweepPhase.sweep⟩
++    | some (some false) => some ⟨.mt, SweepPhase.sweep⟩
++  | .mt, s => if s = .done then some ⟨.sb0, SeekPhase.run⟩ else none
++  | .sb0, s => if s = .done then some ⟨.walk, SeekPhase.run⟩ else none
++  | .walk, s => if s = .done then some ⟨.sep, none⟩ else none
++  | .sep, s => if s = none then none else some ⟨.xfer, SweepPhase.sweep⟩
++  | .xfer, s => if s = .done then some ⟨.sb1, SeekPhase.run⟩ else none
++  | .sb1, s => if s = .done then some ⟨.exp, CounterLoopState.dec .run⟩ else none
++  | .exp, s => if s = .done then some ⟨.rwU, RewindPhase.start⟩ else none
++  | .rwU, s => if s = .done then some ⟨.cmp, QyCmp.scan⟩ else none
++  | .cmp, s =>
++    match s with
++    | .done v => if v = .gt then some (dzRej κ) else some ⟨.lb, Sum.inl ()⟩
++    | _ => none
++  | .lb, s => if s = Sum.inr κ.lcX then some ⟨.al, Sum.inl ()⟩ else none
++  | .al, s => if s = Sum.inr κ.acX then some ⟨.e1, QyEm.pre 0⟩ else none
++  | .e1, s => if s = .done then some ⟨.e2, QyEm.pre 0⟩ else none
++  | .e2, s => if s = .done then some ⟨.e3, QyEm.pre 0⟩ else none
++  | .e3, s => if s = .done then some ⟨.rwZ, RewindPhase.start⟩ else none
++  | .rwZ, s => if s = .done then some ⟨.runR, κ.iR (κ.rE, true)⟩ else none
++  | .runR, s =>
++    if ∃ b, s = κ.fR (some (κ.rA, b)) then some (dzAcc κ)
++    else if ∃ r, s = κ.fR r then some (dzRej κ)
++    else if ∃ r, s = κ.oR r then some (dzRej κ) else none
++  | .tt, s => if s = .done then some ⟨.runB, κ.iB (BF.tm.q₀, true)⟩ else none
++  | .runB, s =>
++    if ∃ r, s = κ.fB r then some ⟨.rwK, RewindPhase.start⟩
++    else if ∃ r, s = κ.oB r then some (dzRej κ) else none
++  | .rwK, s => if s = .done then some ⟨.rd, none⟩ else none
++  | .rd, s =>
++    match s with
++    | none => none
++    | some (some false) => some (dzAcc κ)
++    | some _ => some (dzRej κ)
++  | .acc, _ => none
++  | .rej, _ => none
++
++/-- **The run** `Q`: the phase host over the run's phases, entered at the flag. -/
++private def dzQ {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : MultiTapeTM κ.K Bool (Σ i, DzQPh κ i) :=
++  phaseHostTM (dzQM κ) ⟨.flag, none⟩ (dzQRed κ)
++
++/-- The run's verdicts, as the avoided set of its segments. -/
++private def dzQF {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : Set (Option (Σ i, DzQPh κ i)) :=
++  {some (dzAcc κ), some (dzRej κ)}
++
++/-- Only the verdict phases' states are verdicts. -/
++private theorem dz_notF {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (i : DzQK) (s : DzQPh κ i) (h1 : i ≠ .acc) (h2 : i ≠ .rej) :
++    some ⟨i, s⟩ ∉ dzQF κ := by
++  intro h
++  rcases h with h | h
++  · exact h1 (congrArg Sigma.fst (Option.some_inj.mp h))
++  · exact h2 (congrArg Sigma.fst (Option.some_inj.mp h))
++
++/-- The accepting and rejecting verdicts differ. -/
++private theorem dz_acc_ne_rej {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) : dzAcc κ ≠ dzRej κ := by
++  intro h
++  have := congrArg Sigma.fst h
++  exact absurd this (by simp [dzAcc, dzRej])
++
++/-- **The handoff.** After the setup and the guess of a word `s` as wide as the block, the run's
++entry configuration is the setup's layout with the block tape holding `s`, in normal form.
++
++**Proof sketch.** Field by field through `Turing.guessRunCfg`'s equations: the block tape's head
++is at `0`, so its cells `[0, |s|)` are overwritten by `s`, and the block is blank outside them,
++as is the buffer of `s` (`FinTM.bufferTape_eq_none_of_not_mem`); the update is a layout update
++(`dzLay_update`). -/
++private theorem dz_handoff {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) (z s : List Bool) (hs : s.length = (dzBlk (g z.length)).length) :
++    guessRunCfg (qyC (x := z) (dzPexit κ) 1 (dzLay (dzSetL f g z)
++        (FinTM.bufferTape [])) (fun _ => 0) []) (κ.tp 6) s (⟨.flag, none⟩ : Σ i, DzQPh κ i) =
++      qyC ⟨.flag, none⟩ 1 (dzLay (Function.update (dzSetL f g z) 6
++        (FinTM.bufferTape s)) (FinTM.bufferTape [])) (fun _ => 0) [] := by
++  apply Cfg.ext
++  · rw [guessRunCfg_state]
++    rfl
++  · rw [guessRunCfg_inputPos]
++    rfl
++  · funext j a
++    rw [guessRunCfg_workTapes]
++    show Function.update (dzLay (dzSetL f g z) (FinTM.bufferTape [])) (κ.tp 6) (fun p =>
++        if (0 : ℤ) ≤ p ∧ p < 0 + (s.length : ℤ) then FinTM.bufferTape s (p - 0)
++        else dzLay (dzSetL f g z) (FinTM.bufferTape []) (κ.tp 6) p) j a =
++      dzLay (Function.update (dzSetL f g z) 6 (FinTM.bufferTape s))
++        (FinTM.bufferTape []) j a
++    rw [← dzLay_update κ]
++    by_cases hj : j = κ.tp 6
++    · subst hj
++      rw [Function.update_self, Function.update_self, dzLay_tp]
++      by_cases ha : (0 : ℤ) ≤ a ∧ a < 0 + (s.length : ℤ)
++      · rw [if_pos ha, sub_zero]
++      · rw [if_neg ha]
++        have h6 : dzSetL f g z 6 = FinTM.bufferTape (dzBlk (g z.length)) := by
++          simp [dzSetL]
++        rw [h6, FinTM.bufferTape_eq_none_of_not_mem _ (by omega),
++          FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
++    · rw [Function.update_of_ne hj, Function.update_of_ne hj]
++  · funext j
++    rw [guessRunCfg_workTapePos]
++    rfl
++  · rw [guessRunCfg_output]
++    rfl
++
++/-- **The flag.** From the run's entry over a layout whose tape `0` holds the query `q` with its
++head at `0`, the run takes the query's first cell (`dzTakeTM`), blanking it and moving that head
++to `1`, and dispatches on it in one more step, to the target `q'` of that cell's redirect.
++
++**Proof sketch.** `dz_take_run` gives the take's step; it is the flag phase's exit, redirected to
++`q'` (`qy_hosted`, the guard holding at the reading state). The updates are layout updates. -/
++private theorem dz_flag {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
++    (κ : DzKit f g c BF) {z : List Bool} (L : Fin 14 → ℤ → Option Bool) (Pn : Fin 14 → ℤ)
++    (q : List Bool) (hL : L 0 = FinTM.bufferTape q) (hP : Pn 0 = 0) (q' : Σ i, DzQPh κ i)
++    (hq' : dzQRed κ .flag (some (FinTM.bufferTape q 0)) = some q') :
++    Segment (dzQ κ) (dzQF κ) (fun _ => True)
++      (qyC (x := z) ⟨.flag, none⟩ 1 (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) [])
++      (qyC q' 1 (dzLay (Function.update L 0 (Function.update (FinTM.bufferTape q) 0 none))
++        (FinTM.bufferTape [])) (dzLay (Function.update Pn 0 1) 0) []) 2 := by
++  have h := dz_take_run (x := z) (κ.tp 0) 1 (dzLay L (FinTM.bufferTape [])) (dzLay Pn 0) []
++  rw [dzLay_tp, dzLay_tp, hL, hP, zero_add, dzLay_update, dzLay_update] at h
++  exact qy_hosted (dzQM κ) ⟨.flag, none⟩ (dzQRed κ) .flag none (some (FinTM.bufferTape q 0)) q' 1
++    1 _ _ _ _ [] [] 1 h hq' (fun u hu s hs => by
++      obtain rfl : u = 0 := by omega
++      rw [MultiTapeTM.runFrom_zero] at hs
++      cases Option.some.inj hs
++      rfl) _ (fun s => dz_notF κ .flag s (by simp) (by simp))
++
++/-- **The tail's copy.** With the query `b :: tail` on tape `src`, its first cell blanked and its
++head at `1`, `Turing.copyMapTM` copies `tail` onto the blank tape `dst` from cell `0`; nothing else
++changes. The framed row applies directly: the blanked flag is the tail's left delimiter.
++
++**Proof sketch.** `Turing.copyMapTM_run_ofCfg` with the word `tail`: its delimiter hypothesis holds
++at relative position `-1` (the blanked cell) and on the tail's cells
++(`FinTM.bufferTape_append_shift` over `[b]`). Its endpoint patches `dst` from cell `0` with `tail`,
++which is the buffer of `tail`, the destination being blank. -/
++private theorem dz_tail_run {K : ℕ} {x : List Bool} (src dst : Fin K) (hne : src ≠ dst)
++    (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ) (o : List Bool)
++    (b : Bool) (tail : List Bool)
++    (hT : T src = Function.update (FinTM.bufferTape (b :: tail)) 0 none)
++    (hP : P src = 1) (hd : T dst = FinTM.bufferTape []) (hPd : P dst = 0) :
++    (copyMapTM K src dst (fun b => b) (fun _ b => b)).runFrom (qyC .sweep ip T P o)
++        (2 * tail.length + 2) =
++      qyC SweepPhase.done ip (Function.update T dst (FinTM.bufferTape tail)) P o ∧
++    ∀ t < 2 * tail.length + 2,
++      ((copyMapTM K src dst (fun b => b) (fun _ b => b)).runFrom (qyC .sweep ip T P o) t).state ≠
++        some .done := by
++  obtain ⟨hrun, hcut, -⟩ := copyMapTM_run_ofCfg src dst hne (fun b => b) (fun _ b => b) tail
++    (qyC .sweep ip T P o) rfl (fun p hp1 hp2 => by
++      show T src (P src + p) = _
++      rw [hT, hP]
++      by_cases hp : p = -1
++      · subst hp
++        rw [show (1 : ℤ) + -1 = 0 by norm_num, Function.update_self,
++          FinTM.bufferTape_of_neg _ (by norm_num)]
++      · rw [Function.update_of_ne (by omega)]
++        have := FinTM.bufferTape_append_shift [b] tail (z := p) (by omega)
++        rw [List.length_singleton, Nat.cast_one] at this
++        exact this)
++  refine ⟨hrun.trans ?_, hcut⟩
++  dsimp only [qyC]
++  congr 1
++  funext j a
++  by_cases hj : j = dst
++  · subst hj
++    rw [Function.update_self, hPd]
++    by_cases ha : (0 : ℤ) ≤ a ∧ a < 0 + (tail.length : ℤ)
++    · rw [if_pos ⟨rfl, ha⟩, sub_zero]
++      cases FinTM.bufferTape tail a <;> rfl
++    · rw [if_neg (fun h => ha h.2), hd, FinTM.bufferTape_nil,
++        FinTM.bufferTape_eq_none_of_not_mem _ (by omega)]
++  · rw [if_neg (fun h => hj h.1), Function.update_of_ne hj]
++
+ /-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
+ P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
+ deterministic decider of the coded machines' bounded acceptance in exponential time (`hBF`, the
+-- 
+2.43.0
+

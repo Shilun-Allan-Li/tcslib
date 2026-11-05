@@ -6,7 +6,9 @@ H=$S/wt-hk; NAME=$1; B=$2; L=$(git -C $H rev-parse $3); O=$(git -C $H rev-parse 
 # a round-N folder (<gate>-rN-gate) records its findings as <gate>/findings-rN.md
 GD=${NAME%-gate}; GR=""
 case "$GD" in *-r[0-9]*) GR="-${GD##*-}"; GD="${GD%-r[0-9]*}";; esac
-W=$S/stage/$NAME; F=${TCSLIB_REPO:-$HOME/tcslib}/exchange/outbox/gates/$NAME
+W=$S/stage/$NAME; # the exchange: since 2026-11-04 the arora-barak-ch3-4/ folder of the orphan branch exchange/pass-shelat-ch5-8
+X="${TCSLIB_EXCHANGE:-${TCSLIB_REPO:-$HOME/tcslib}/exchange}"
+F=$X/outbox/gates/$NAME
 [ ! -e "$F" ] || { echo "exists: $F" >&2; exit 2; }
 mkdir -p $W; cp $LIST $W/BUNDLE-FILES.txt
 while read -r p; do r=$O; [ "${p#TCSlib/}" != "$p" ] && r=$L; git -C $H cat-file -e $r:$p 2>/dev/null || { echo "MISSING $p" >&2; exit 2; }; done < $W/BUNDLE-FILES.txt

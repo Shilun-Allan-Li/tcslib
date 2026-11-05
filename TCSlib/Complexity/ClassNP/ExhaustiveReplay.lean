@@ -8,6 +8,7 @@ import TCSlib.Complexity.TuringMachine.NDCodes
 import TCSlib.Complexity.TuringMachine.ChoiceReplay
 import TCSlib.Complexity.TuringMachine.Build.StepClock
 import TCSlib.Complexity.TuringMachine.Build.Seam
+import TCSlib.Complexity.TuringMachine.CfgFacts
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -196,26 +197,6 @@ private def xr_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ) (
   ⟨c.state, c.inputPos, fun i p => c.workTapes i (p - δ i), fun i => c.workTapePos i + δ i,
     c.output⟩
 
-/-- Two configurations with the same input head read the same input symbol. -/
-private theorem xr_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
-    (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
-    c.inputSymbol = c'.inputSymbol := by
-  by_cases h0 : c.inputPos.val = 0
-  · have hc : c.inputPos = 0 := by
-      apply Fin.ext
-      rw [h0]
-      simp
-    have hc' : c'.inputPos = 0 := by
-      apply Fin.ext
-      rw [← h, h0]
-      simp
-    rw [Cfg.inputSymbol_of_zero hc, Cfg.inputSymbol_of_zero hc']
-  · by_cases hend : c.inputPos.val = x.length + 1
-    · rw [Cfg.inputSymbol_of_end hend, Cfg.inputSymbol_of_end (by omega)]
-    · have hlt : c.inputPos.val - 1 < x.length := by have := c.inputPos.isLt; omega
-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) hlt,
-        inputSymbolInner (c.inputPos.val - 1) (by omega) hlt]
-
 /-- A translated configuration reads the same work symbols. -/
 private theorem xr_workTapeSymbols_shift {k : ℕ} {S : Type} {x : List Bool} (δ : Fin k → ℤ)
     (c : Cfg k Bool S x) : (xr_shift δ c).workTapeSymbols = c.workTapeSymbols := by
@@ -261,7 +242,7 @@ private theorem xr_stepWith_shift {k : ℕ} {S : Type} {x : List Bool} (N : NDTM
   | some q =>
     rw [NDTM.stepWith_of_some hq,
       NDTM.stepWith_of_some (show (xr_shift δ c).state = some q from hq),
-      xr_inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
+      Cfg.inputSymbol_congr (xr_shift δ c) c rfl, xr_workTapeSymbols_shift, xr_apply_shift]
 
 /-- A branch commutes with translation: the branch along `w` from a translated configuration
 is the translated branch. -/

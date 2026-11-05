@@ -1,0 +1,37 @@
+From a7c2a655691b3937eff9f0325cd4fa4e3191c0fb Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 14:09:51 -0800
+Subject: [PATCH] Abstract register machines: cite logSpace_le_succ for the
+ linear bound in arm_decides
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+arm_decides re-derived logSpace n ≤ n + 1 inline (through a local alias and Nat.log_lt_self);
+it now reads it from Complexity.logSpace_le_succ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean b/TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean
+index 9e41e3c3..3dd1bdec 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean
+@@ -246,11 +246,7 @@ theorem arm_decides {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : ARM m
+   set n := x.length with hn
+   set Ls := logSpace n with hLs
+   have hL1 : 1 ≤ Ls := by simp [hLs, logSpace]
+-  have hLn : Ls ≤ n + 1 := by
+-    simp only [hLs, logSpace]
+-    rcases Nat.eq_zero_or_pos n with h | h
+-    · rw [h]; simp
+-    · have := Nat.log_lt_self 2 (show n ≠ 0 by omega); omega
++  have hLn : Ls ≤ n + 1 := by rw [hLs]; exact logSpace_le_succ n
+   set W := K * Ls with hW
+   set B := cs * K2 * Ls + 1 with hB
+   obtain ⟨N, h1, h2, hm⟩ := hcorr x
+-- 
+2.50.1 (Apple Git-155)
+

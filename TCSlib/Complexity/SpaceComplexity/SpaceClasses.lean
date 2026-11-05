@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Seyoon Ragavan
 -/
 import TCSlib.Complexity.SpaceComplexity.NSPACE
+import TCSlib.Complexity.ClassP.P
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -33,6 +34,9 @@ claimed here.
 
 * `Complexity.space_poly_subset_PSPACE`, `Complexity.PSPACE_subset_NPSPACE`,
   `Complexity.LOGSPACE_subset_NL` — the definitional inclusions.
+* `Complexity.LOGSPACE_subset_PSPACE` — `L ⊆ PSPACE`.
+* `Complexity.SPACE_succ_pow_subset_PSPACE` — the shifted polynomial bounds `(n + 1)^k` give
+  polynomial space.
 
 ## References
 
@@ -68,6 +72,25 @@ def coNL : Set (Language Bool) := {L | Lᶜ ∈ NL}
 `Complexity.dtime_poly_subset_P`. -/
 theorem space_poly_subset_PSPACE (c : ℕ) : SPACE (fun n => n ^ c + 1) ⊆ PSPACE := by
   exact Set.subset_iUnion (fun d : ℕ => SPACE fun n => n ^ d + 1) c
+
+/-- **`L ⊆ PSPACE`** [AB09, §4.1.2, the chain `L ⊆ … ⊆ PSPACE` of p. 92 (its first and
+last members)]: a logspace decider uses at most `c · (n + 1)` cells.
+
+**Proof sketch.** `logSpace n ≤ n + 1 = n ^ 1 + 1` (`Complexity.logSpace_le_succ`), so
+`SPACE (logSpace) ⊆ SPACE (n ^ 1 + 1)` (`Complexity.SPACE.mono`), which lies in `PSPACE` at degree
+one. -/
+theorem LOGSPACE_subset_PSPACE : LOGSPACE ⊆ PSPACE := by
+  rw [LOGSPACE_eq]
+  exact (SPACE.mono fun n => by simpa only [pow_one] using logSpace_le_succ n).trans
+    (space_poly_subset_PSPACE 1)
+
+/-- `SPACE ((n + 1)^k) ⊆ PSPACE`: the shifted polynomial bound gives polynomial space.
+
+**Proof sketch.** `(n + 1)^k ≤ 2^k (n^k + 1)` (`Complexity.succ_pow_le`), so
+`Complexity.SPACE.mono_const` and `Complexity.space_poly_subset_PSPACE` at degree `k`. -/
+theorem SPACE_succ_pow_subset_PSPACE (k : ℕ) : SPACE (fun n => (n + 1) ^ k) ⊆ PSPACE :=
+  (SPACE.mono_const (a := 2 ^ k) fun n => succ_pow_le n k).trans
+    (space_poly_subset_PSPACE k)
 
 /-- `PSPACE ⊆ NPSPACE`: determinism is a special case, degree by degree.
 

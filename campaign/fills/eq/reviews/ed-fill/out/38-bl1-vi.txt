@@ -1,0 +1,23 @@
+== public statements of BL-1 kind (vi) in the tree
+TCSlib/Complexity/SpaceComplexity/Codec/Word.lean:452:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean:86:lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+  induction w with
+lemma bitsVal_lt_two_pow (w : List Bool) : bitsVal w < 2 ^ w.length := by
+  induction w with
+== closure membership
+NOT-IN-CLOSURE TCSlib/Complexity/SpaceComplexity/Machines/Bin
+== Mathlib
+
+@[simp]
+theorem ofDigits_append_replicate_zero {b k : ℕ} (l : List ℕ) :
+    ofDigits b (l ++ List.replicate k 0) = ofDigits b l := by
+  rw [ofDigits_append]
+  simp
+
+
+/-- an n-digit number in base b is less than b^n if b > 1 -/
+theorem ofDigits_lt_base_pow_length {b : ℕ} {l : List ℕ} (hb : 1 < b) (hl : ∀ x ∈ l, x < b) :
+    ofDigits b l < b ^ l.length := by
+  rcases b with (_ | _ | b) <;> try simp_all
+  exact ofDigits_lt_base_pow_length' hl
