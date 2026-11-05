@@ -55,7 +55,8 @@ open Turing
 def Rel (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u v : ℕ) : Prop :=
   orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) = true
 
-/-- `Complexity.LogProg.SavitchARM.Rel`'s defining equation. -/
+/-- `Rel orc x s u v` holds exactly when decider `3` accepts `⟨x, ⟨bits u, ⟨bits v, bits s⟩⟩⟩`:
+`orc 3 (pairEncode x (pairEncode (bits u) (pairEncode (bits v) (bits s)))) = true`. -/
 theorem rel_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u v : ℕ} :
     Rel orc x s u v ↔
       orc 3 (pairEncode x (pairEncode (Nat.bits u) (pairEncode (Nat.bits v) (Nat.bits s)))) =

@@ -44,6 +44,8 @@ the book (the book assumes `S` space-constructible and computes the radius inste
 * `Complexity.ExpBFS.card_rset_le_succ` — the count does not drop when the radius grows.
 * `Complexity.ExpBFS.mem_iff_of_card_eq` — equal counts decide membership.
 * `Complexity.ExpBFS.card_rset_succ_of_le` — above the space bound the counts agree.
+* `Complexity.ExpBFS.winRun_iff`, `Complexity.ExpBFS.rcode_iff_reflTransGen` — the two
+  definitions as equations.
 
 ## References
 
@@ -93,7 +95,9 @@ lemma inWin_stepWith {s : ℕ} {C : Cfg N.k Bool N.State x} (h : Cfg.InWindow s 
 def WinRun (N : FinNDTM Bool) (x : List Bool) (s : ℕ) (w : List Bool) : Prop :=
   ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x))
 
-/-- `Complexity.ExpBFS.WinRun`'s defining equation. -/
+/-- A choice word `w` is a window run at radius `s` exactly when, for every `j ≤ |w|`, the
+configuration that `N` reaches on `x` after the first `j` choices of `w` lies in the window
+`[-s, s]` (`Turing.Cfg.InWindow s`). -/
 lemma winRun_iff {s : ℕ} {w : List Bool} :
     WinRun N x s w ↔ ∀ j ≤ w.length, Cfg.InWindow s (N.tm.runWith (w.take j) (N.tm.initCfg x)) :=
   Iff.rfl

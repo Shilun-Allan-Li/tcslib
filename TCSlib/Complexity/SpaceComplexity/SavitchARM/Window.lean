@@ -29,13 +29,16 @@ Reachability of codes is that of `Complexity.ExpBFS.RCode`, whose codes are thos
 window runs (`Complexity.ExpBFS.rcode_iff`); a path through codes below `2 ^ w` is a midpoint
 witness at level `w` (`Complexity.LogProg.SavitchARM.reach_of_reflTransGen`).
 
-Configuration-graph infrastructure for [AB09, §4.2.1, Theorem 4.14] without space
-constructibility; not itself a result of the book (the book assumes `S` space-constructible and
-computes the radius instead).
+The deepening is that of [Sip13, §8.1, proof of Theorem 8.5]: when the space bound is not
+known, try the bounds `1, 2, …`; at each, test acceptance and test whether any configuration one
+cell longer is reachable, and reject once none is. This is configuration-graph infrastructure for
+Savitch's theorem without space constructibility (cf. [AB09, §4.2.1, Theorem 4.14], which assumes
+`S` space-constructible and computes the radius instead).
 
 ## Main definitions
 
-* `Complexity.LogProg.SavitchARM.NoEdge` — no edge code is reachable at radius `s`, level `w`.
+* `Complexity.LogProg.SavitchARM.NoEdge` — no edge code is reachable at radius `s`, level `w`,
+  with its defining equation `noEdge_iff`.
 
 ## Main results
 
@@ -46,6 +49,9 @@ computes the radius instead).
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§4.1.1; §4.2.1, Theorem 4.14.)
+* [Sip13] M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage Learning,
+  2013. (§8.1, the proof of Theorem 8.5, Savitch's theorem: the space bound found by trying
+  `1, 2, …`.)
 -/
 
 namespace Complexity.LogProg.SavitchARM
@@ -62,6 +68,16 @@ def NoEdge (N : FinNDTM Bool) (x : List Bool) (s w : ℕ) : Prop :=
     ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
       Reach (2 ^ w) (StepRel N x s) w u v
 
+/-- `NoEdge N x s w` holds exactly when there are no `u < 2 ^ w` and `v < 2 ^ w` such that
+`⟨x, ⟨bits u, bits s⟩⟩` is in `Complexity.Codec.initLang N`, `⟨x, ⟨bits v, bits s⟩⟩` is in
+`Complexity.Codec.edgeLang N`, and `Reach (2 ^ w) (StepRel N x s) w u v` holds. -/
+theorem noEdge_iff {s w : ℕ} :
+    NoEdge N x s w ↔
+      ¬ ∃ u < 2 ^ w, pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ initLang N ∧
+        ∃ v < 2 ^ w, pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ edgeLang N ∧
+          Reach (2 ^ w) (StepRel N x s) w u v :=
+  Iff.rfl
+
 /-- Codes at radius `s` lie below `2 ^ w` once `w` is at least the code width. -/
 private theorem window_code_lt {s w : ℕ} (hw : codeK N * (s + logSpace x.length + 1) ≤ w)
     (C : Cfg N.k Bool N.State x) : cfgCode s C < 2 ^ w :=
@@ -77,8 +93,8 @@ private theorem window_reach_of_rcode {s w v : ℕ}
   obtain ⟨C, -, rfl, C', -, -, rfl⟩ := (mem_stepLang N x a b s).mp (stepRel_iff_mem.mp hab)
   exact ⟨window_code_lt hw C, window_code_lt hw C'⟩
 
-/-- **Termination** [AB09, §4.1.1]: if `N` decides `L` in space `sp` and `sp |x| < s`, no edge
-code is reachable at radius `s`, at any level.
+/-- **Termination** ([Sip13, §8.1, proof of Theorem 8.5]; cf. [AB09, §4.1.1]): if `N` decides
+`L` in space `sp` and `sp |x| < s`, no edge code is reachable at radius `s`, at any level.
 
 **Proof sketch.** A midpoint witness is a path of step pairs (`reflTransGen_of_reach`), so its
 end is a reachable code, the code of some window run (`Complexity.ExpBFS.rcode_iff`). An edge
@@ -102,11 +118,12 @@ theorem noEdge_of_lt {L : Language Bool} {sp : ℕ → ℕ} (h : N.DecidesInSpac
   rw [hi] at hb
   exact absurd (by exact_mod_cast hb : s ≤ sp x.length) (not_le.mpr hs)
 
-/-- **Window exactness** [AB09, §4.2.1, proof of Theorem 4.14]: let `N` decide `L` in space `sp`,
+/-- **Window exactness** ([Sip13, §8.1, proof of Theorem 8.5]; cf. [AB09, §4.2.1, proof of
+Theorem 4.14]): let `N` decide `L` in space `sp`,
 and let `w` be at least the code width at radius `s`. If no edge code is reachable at radius `s`
 (`NoEdge`), then `x ∈ L` iff some initial code `u < 2 ^ w` and some accepting code `v < 2 ^ w`
-have `Reach (2 ^ w) (StepRel N x s) w u v`. Unlike `mem_iff_reach`, no bound `sp |x| ≤ s` is
-assumed.
+have `Reach (2 ^ w) (StepRel N x s) w u v`. Unlike `mem_iff_reach`, neither a bound
+`sp |x| ≤ s` nor a configuration-count bound is assumed.
 
 **Proof sketch.** (⇒) Take an accepting branch (`DecidesInSpace.mem_iff_acceptsWithin_configBound`).
 By induction on its prefixes, each is a window run at `s` (`Complexity.ExpBFS.WinRun`): the

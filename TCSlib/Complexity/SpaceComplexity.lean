@@ -233,7 +233,8 @@ running counter program is simulated by an abstract register machine in
   bounds, consumed by `PSPACE = NPSPACE` in `SpaceComplexity.Savitch`)
 - `SpaceComplexity.SavitchARM.Window`: windows without a known space bound; no reachable
   edge code makes membership midpoint reachability at that radius, and none is reachable beyond
-  the space bound (the iterative deepening of Thm 4.14 for `S ≥ logSpace`)
+  the space bound (iterative deepening for Thm 4.14 without constructibility, after
+  [Sip13, Thm 8.5])
 - `SpaceComplexity.Machines.{MARM, MARMCompile, MARMTime}`: abstract register machines with
   a monotone memory tape, their compilation, and their time bound by configuration counting
   (`marm_dtime`)

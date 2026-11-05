@@ -55,7 +55,8 @@ def outerSt (s w u v M : ℕ) : St := { setSt s w with U := u, V := v, M := M }
 def InitO (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s u : ℕ) : Prop :=
   orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true
 
-/-- `Complexity.LogProg.SavitchARM.InitO`'s defining equation. -/
+/-- `InitO orc x s u` holds exactly when decider `1` accepts `⟨x, ⟨bits u, bits s⟩⟩`:
+`orc 1 (pairEncode x (pairEncode (bits u) (bits s))) = true`. -/
 theorem initO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u : ℕ} :
     InitO orc x s u ↔ orc 1 (pairEncode x (pairEncode (Nat.bits u) (Nat.bits s))) = true :=
   Iff.rfl
@@ -65,7 +66,8 @@ theorem initO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s u 
 def AccO (orc : Fin 4 → List Bool → Bool) (x : List Bool) (s v : ℕ) : Prop :=
   orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true
 
-/-- `Complexity.LogProg.SavitchARM.AccO`'s defining equation. -/
+/-- `AccO orc x s v` holds exactly when decider `2` accepts `⟨x, ⟨bits v, bits s⟩⟩`:
+`orc 2 (pairEncode x (pairEncode (bits v) (bits s))) = true`. -/
 theorem accO_iff_orc {orc : Fin 4 → List Bool → Bool} {x : List Bool} {s v : ℕ} :
     AccO orc x s v ↔ orc 2 (pairEncode x (pairEncode (Nat.bits v) (Nat.bits s))) = true :=
   Iff.rfl

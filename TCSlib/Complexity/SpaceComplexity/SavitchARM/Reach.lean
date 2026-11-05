@@ -5,7 +5,7 @@ Authors: Hydroxyi
 -/
 import TCSlib.Complexity.SpaceComplexity.Codec.Bridge
 import TCSlib.Complexity.SpaceComplexity.Machines.ARMWidth
-import TCSlib.Complexity.SpaceComplexity.Logspace.ISCountMath
+import TCSlib.Complexity.SpaceComplexity.Logspace.PathWalk
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -110,15 +110,15 @@ theorem reflTransGen_of_reach (K : ℕ) (R : ℕ → ℕ → Prop) :
 /-- A walk of at most `j` edges from `c < K` (`Complexity.WalkLe`) is a chain of at most `j`
 steps with every member below `K`.
 
-**Proof sketch.** Induction on `j`, reading the walk through `Complexity.walkLe_zero_iff` and the
-last-edge form `Complexity.LogProg.ISCount.walkLe_succ_iff`: a walk of at most `j + 1` edges is
-one of at most `j` edges, or one of at most `j` edges to some `w` followed by an edge from `w` to
-`t < K`, which extends the chain by one member. -/
+**Proof sketch.** Induction on `j`, generalizing the start, reading the walk through
+`Complexity.walkLe_zero_iff` and the head form `Complexity.walkLe_succ_iff_head`: a walk of at
+most `j + 1` edges is empty, or an edge from `c` to some `v < K` followed by a walk of at most `j`
+edges from `v`, whose chain gains `c` in front. -/
 private theorem chain_of_walkLe (K : ℕ) (R : ℕ → ℕ → Prop) (c : ℕ) (hc : c < K) :
     ∀ j t, WalkLe R K j c t → ∃ T ≤ j, ∃ f : ℕ → ℕ, f 0 = c ∧ f T = t ∧
       (∀ i < T, R (f i) (f (i + 1))) ∧ ∀ i ≤ T, f i < K := by
   intro j
-  induction j with
+  induction j generalizing c with
   | zero =>
     intro t h
     rw [walkLe_zero_iff] at h
@@ -126,24 +126,28 @@ private theorem chain_of_walkLe (K : ℕ) (R : ℕ → ℕ → Prop) (c : ℕ) (
       fun _ _ => hc⟩
   | succ j ih =>
     intro t h
-    rcases (ISCount.walkLe_succ_iff j c t).mp h with h | ⟨w, hw, hwt, ht⟩
-    · obtain ⟨T, hT, f, hf⟩ := ih t h
-      exact ⟨T, by omega, f, hf⟩
-    · obtain ⟨T, hT, f, h0, hTw, hstep, hlt⟩ := ih w hw
-      refine ⟨T + 1, by omega, fun i => if i ≤ T then f i else t, by simp [h0], by simp, ?_, ?_⟩
+    rcases walkLe_succ_iff_head.mp h with rfl | ⟨v, hv, hcv, hvt⟩
+    · exact ⟨0, Nat.zero_le _, fun _ => c, rfl, rfl, fun i hi => absurd hi (Nat.not_lt_zero _),
+        fun _ _ => hc⟩
+    · obtain ⟨T, hT, f, h0, hTt, hstep, hlt⟩ := ih v hv t hvt
+      refine ⟨T + 1, by omega, fun i => if i = 0 then c else f (i - 1), if_pos rfl, ?_, ?_, ?_⟩
+      · show (if T + 1 = 0 then c else f (T + 1 - 1)) = t
+        rw [if_neg (Nat.succ_ne_zero T), Nat.add_sub_cancel, hTt]
       · intro i hi
-        rcases Nat.lt_or_ge i T with hiT | hiT
-        · simp only [show i ≤ T by omega, show i + 1 ≤ T by omega, if_true]
-          exact hstep i hiT
-        · obtain rfl : i = T := by omega
-          simp only [le_rfl, if_true, show ¬ i + 1 ≤ i by omega, if_false, hTw]
-          exact hwt
+        rcases Nat.eq_zero_or_pos i with rfl | hi0
+        · show R (if 0 = 0 then c else f (0 - 1)) (if 0 + 1 = 0 then c else f (0 + 1 - 1))
+          rw [if_pos rfl, if_neg (Nat.succ_ne_zero 0), Nat.add_sub_cancel, h0]
+          exact hcv
+        · show R (if i = 0 then c else f (i - 1)) (if i + 1 = 0 then c else f (i + 1 - 1))
+          rw [if_neg (Nat.pos_iff_ne_zero.mp hi0), if_neg (Nat.succ_ne_zero i),
+            Nat.add_sub_cancel]
+          have h := hstep (i - 1) (by omega)
+          rwa [Nat.sub_add_cancel hi0] at h
       · intro i hi
-        by_cases hiT : i ≤ T
-        · simp only [hiT, if_true]
-          exact hlt i hiT
-        · simp only [hiT, if_false]
-          exact ht
+        show (if i = 0 then c else f (i - 1)) < K
+        split_ifs
+        · exact hc
+        · exact hlt (i - 1) (by omega)
 
 /-- **Path shortening into a midpoint witness**: if every step of `R` joins vertices below
 `K`, a path from `u < K` to `v` is a midpoint witness `Reach K R i u v` at every level `i` with

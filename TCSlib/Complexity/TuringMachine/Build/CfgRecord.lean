@@ -70,6 +70,9 @@ module is admitted.
 
 * `Turing.cfgRecord_length` — a record has `k + 3` fields.
 * `Turing.Cfg.inWindow_init` — the initial configuration is in every window.
+* `Turing.Cfg.InWindow.mono`, `Turing.Cfg.InWindow.apply_iff` — windows grow with the
+  radius; one action keeps a window configuration in its window exactly when no head
+  crosses a boundary.
 * `Turing.Cfg.InWindow.apply_of_lt` — a step from a window configuration whose heads are
   strictly inside a radius stays in that radius's window.
 * `Turing.cfgRecord_inj` — on windowed configurations, records agree exactly
@@ -109,6 +112,55 @@ def Cfg.InWindow {k : ℕ} {Symbol State : Type} {x : List Symbol} (s : ℕ)
     (c : Cfg k Symbol State x) : Prop :=
   (∀ i, |c.workTapePos i| ≤ (s : ℤ)) ∧
   ∀ (i : Fin k) (z : ℤ), (s : ℤ) < |z| → c.workTapes i z = none
+
+/-- **Windows grow with the radius**: a configuration in the radius-`s` window is in the
+radius-`s'` window whenever `s ≤ s'`. -/
+theorem Cfg.InWindow.mono {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
+    {c : Cfg k Symbol State x} (hc : c.InWindow s) (hs : s ≤ s') : c.InWindow s' :=
+  ⟨fun i => (hc.1 i).trans (by exact_mod_cast hs),
+    fun i z hz => hc.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)⟩
+
+/-- **One step from a window**: if `c` lies in the radius-`s` window, then applying an action `a`
+keeps it there exactly when, for every work tape `i`, the head is not at `-s` with `a` moving it
+left, and not at `s` with `a` moving it right. The write lands under the old head, which is inside
+the window, so it cannot create a nonblank cell outside.
+
+**Proof sketch.** Split the three possible moves. Interior positions stay inside; at each
+boundary only its outward move fails. Outside cells are unchanged by the point update. -/
+theorem Cfg.InWindow.apply_iff {k : ℕ} {Symbol State : Type} {x : List Symbol} {s : ℕ}
+    {c : Cfg k Symbol State x} (hc : c.InWindow s) (a : Action k Symbol State) :
+    (a.apply c).InWindow s ↔ ∀ i,
+      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
+      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
+  have heads (i : Fin k) : |c.workTapePos i + ((a.workTapes i).2 : ℤ)| ≤ (s : ℤ) ↔
+      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
+      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
+    have h := hc.1 i
+    rw [abs_le] at h ⊢
+    cases hm : (a.workTapes i).2 <;>
+      simp only [SignType.zero_eq_zero, SignType.neg_eq_neg_one, SignType.pos_eq_one,
+        SignType.coe_zero, SignType.coe_neg, SignType.coe_one, Int.reduceNeg, add_zero,
+        le_add_neg_iff_add_le, neg_add_le_iff_le_add, add_neg_le_iff_le_add,
+        SignType.neg_eq_self_iff, SignType.self_eq_neg_iff, reduceCtorEq, zero_ne_one, one_ne_zero,
+        and_false, and_true, true_and, and_self, not_false_eq_true, iff_true] at * <;>
+      omega
+  constructor
+  · intro h i
+    have hi := h.1 i
+    rw [Action.apply_workTapePos] at hi
+    exact (heads i).mp hi
+  · intro h
+    refine ⟨fun i => ?_, ?_⟩
+    · rw [Action.apply_workTapePos]
+      exact (heads i).mpr (h i)
+    intro i z hz
+    have hne : z ≠ c.workTapePos i := by
+      intro he
+      subst z
+      have := hc.1 i
+      omega
+    rw [Action.apply_workTapes, Function.update_of_ne hne]
+    exact hc.2 i z hz
 
 /-! ### The record alphabet -/
 
@@ -671,39 +723,6 @@ private theorem recordStep_saved_digits (w : List Bool) (q : ℕ)
   have he := recordStep_word_of_value ((counterWord w (q + 1)).map not) (q + 1)
     (by simpa [counterWord_length] using hq) (by omega)
   simpa [counterWord_length] using he
-
-/-- A source transition leaves the window exactly when a head crosses a boundary.
-Writing at a head that was inside the window cannot create an exterior nonblank cell.
-**Proof sketch.** Split the three possible moves. Interior positions stay inside; at each
-boundary only its outward move fails. Outside cells are unchanged by the point update. -/
-private theorem recordStep_window {k : ℕ} {Q : Type} {x : List Bool}
-    (s : ℕ) (c : Cfg k Bool Q x) (hc : c.InWindow s) (a : Action k Bool Q) :
-    (a.apply c).InWindow s ↔ ∀ i,
-      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
-      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
-  have heads (i : Fin k) : |c.workTapePos i + ((a.workTapes i).2 : ℤ)| ≤ (s : ℤ) ↔
-      ¬ (c.workTapePos i = -(s : ℤ) ∧ (a.workTapes i).2 = -1) ∧
-      ¬ (c.workTapePos i = (s : ℤ) ∧ (a.workTapes i).2 = 1) := by
-    have h := hc.1 i
-    rw [abs_le] at h ⊢
-    cases hm : (a.workTapes i).2 <;> simp at * <;> omega
-  constructor
-  · intro h i
-    have hi := h.1 i
-    rw [Action.apply_workTapePos] at hi
-    exact (heads i).mp hi
-  · intro h
-    refine ⟨fun i => ?_, ?_⟩
-    · rw [Action.apply_workTapePos]
-      exact (heads i).mpr (h i)
-    intro i z hz
-    have hne : z ≠ c.workTapePos i := by
-      intro he
-      subst z
-      have := hc.1 i
-      omega
-    rw [Action.apply_workTapes, Function.update_of_ne hne]
-    exact hc.2 i z hz
 
 /-- Re-embedding the decoded bank with only its control and native position changed yields
 the host with those fields changed, through the published embedding and lift equations.
@@ -3619,7 +3638,7 @@ private theorem recordStep_observed_action {k : ℕ} {Q T : Type} {x : List Bool
     rw [action, MultiTapeTM.step_of_some hq]
   refine ⟨step, ?_, ?_⟩
   · rw [action, MultiTapeTM.outputSymbol_of_some hq]
-  · rw [← step, recordStep_window s c hc]
+  · rw [← step, hc.apply_iff]
     simp [recordStepOutside, data, recordStepReadData, not_exists, not_or]
 
 
@@ -5695,28 +5714,17 @@ theorem Cfg.inWindow_init {k : ℕ} {Symbol State : Type} (q₀ : State)
 
 /-- **A step stays in a window when the heads are strictly inside it**: if `C` lies in the
 radius-`s` window, `s ≤ s'`, and every work head of `C` is strictly inside `[-s', s']`, then any
-action applied to `C` gives a configuration in the radius-`s'` window. Heads move by at most one
-cell (`Turing.workTapePos_apply_le`), and the write lands under the old head
-(`Turing.Action.apply_workTapes`). At `s' = s + 1` every configuration of the radius-`s` window
-qualifies. [AB09, §4.1.1]
+action applied to `C` gives a configuration in the radius-`s'` window. At `s' = s + 1` every
+configuration of the radius-`s` window qualifies. [AB09, §4.1.1]
 
-**Proof sketch.** A head at `p` with `|p| < s'` ends within one cell of `p`, so within
-`[-s', s']`. A cell `z` with `s' < |z|` is not the old head position, so the action leaves it as
-it was, and it was blank because `s ≤ s' < |z|`. -/
+**Proof sketch.** The radius-`s` window lies inside the radius-`s'` one
+(`Turing.Cfg.InWindow.mono`), and a head strictly inside `[-s', s']` is on neither boundary, so
+`Turing.Cfg.InWindow.apply_iff` at `s'` applies. -/
 theorem Cfg.InWindow.apply_of_lt {k : ℕ} {Symbol State : Type} {x : List Symbol} {s s' : ℕ}
     {C : Cfg k Symbol State x} (hC : C.InWindow s) (hlt : ∀ i, |C.workTapePos i| < (s' : ℤ))
-    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' := by
-  refine ⟨fun i => ?_, fun i z hz => ?_⟩
-  · have h1 := workTapePos_apply_le a C i
-    have h2 := hlt i
-    rw [abs_le] at h1 ⊢
-    rw [abs_lt] at h2
-    constructor <;> linarith [h1.1, h1.2, h2.1, h2.2]
-  · rw [Action.apply_workTapes]
-    have hzp : z ≠ C.workTapePos i := by
-      rintro rfl
-      exact absurd (hlt i) (not_lt.mpr hz.le)
-    rw [Function.update_of_ne hzp]
-    exact hC.2 i z (lt_of_le_of_lt (by exact_mod_cast hs) hz)
+    (hs : s ≤ s') (a : Action k Symbol State) : (a.apply C).InWindow s' :=
+  ((hC.mono hs).apply_iff a).mpr fun i => by
+    have h := abs_lt.mp (hlt i)
+    exact ⟨fun h' => by have := h'.1; omega, fun h' => by have := h'.1; omega⟩
 
 end Turing
