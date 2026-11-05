@@ -51,9 +51,19 @@ maintainer (`evidence/pac-2026-11-05/`).
 
 ## Dispatches and merges
 
-- **Gate 03 (ch. 2–4):** packs 03a–03c, 03e–03i, 03k, 03l, pinned to `a3c5fa8b`, after a fresh replay
-  of their closure there. The replay is running; the bundles are staged when it finishes (status
-  added below).
+- **Gate 03 (ch. 2–4): Ready to dispatch** (11 packs). They are pinned to
+  `a3c5fa8b72e50939822f22364647dc844a3914a0`, after a fresh replay of their closure there (415
+  modules with `Checks.lean`, all pass; `gates/03-ch2-4/evidence/replay/`). The records are at
+  `fed6c2fb9dd35fcceda878ab36f3dc2a34cd3a5c`. Each folder on `exchange/pass-shelat-ch5-8`
+  (commit `d3dc9633db52e95e4fb5ff8a80e97dc29bff7400`), `outbox/gates/03<pack>-ch2-4-gate/`, has the
+  bundle, its SHA-256 and the dispatch prompt in `README.md`. Order (PLAN.md): the interface
+  packs first, which may run in parallel.
+  - **Interface:** 03a (`024b285f…`), 03b (`cbc2550b…`), 03c (`4747cbdc…`), 03e (`a01c936f…`);
+  - **sorried statements:** 03f1 (`76cae3ff…`), 03f2 (`3357df40…`), 03g (`c0e37b33…`), 03h
+    (`976b7d72…`);
+  - **the rest:** 03i (`fb94694c…`), 03k (`2fb353c2…`), 03l (`d43f8e31…`).
+
+  Each pack attaches its bundle and the PDF (`Pass–Shelat.pdf`, SHA-256 `76245560…`).
 - **S2b PR and gate 04:** after S2b's post-merge replay (running). S2b now also carries T2, and
   gate 04's pack covers it.
 - **#194 (PAC layer, to `main`):** see Q-4.
