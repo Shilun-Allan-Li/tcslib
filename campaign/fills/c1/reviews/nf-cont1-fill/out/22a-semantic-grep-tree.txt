@@ -1,0 +1,46 @@
+== inputSymbol congruence lemmas (tree)
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:200:private theorem xr_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:1328:private theorem nf_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean:14743:private lemma zr_inputSymbol_congr {k : ℕ} {S S' : Type} {x : List (ZoneSym k)}
+== mapState with a constant / retag / rewrap / tag_ne (tree)
+TCSlib/Complexity/ClassNP/NDNormalForm.lean:990:private theorem nf_retag {N : FinNDTM Bool} {SL S : Type} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:498:private theorem recordStep_mapState_eq {K : ℕ} {Γ S S' : Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean:563:private theorem record_tag_ne {K : ℕ} {Γ I : Type} {Ph : I → Type} {x : List Γ}
+TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean:73:private lemma mapState_const_inl {S₁ S₂ : Type} {x : List Γ} {e : S₁}
+TCSlib/Complexity/TuringMachine/Build/Contract/Seam.lean:313:private lemma mapState_const_inl_inl {S₀ S₁ S₂ : Type} {x : List Γ} {e : S₀}
+TCSlib/Complexity/TuringMachine/Build/Embed.lean:1132:theorem embedEmitCfg_mapState_eq {m : ℕ} {S H : Type*} {x : List Γ} (σ : Fin m ↪ Fin k)
+TCSlib/Complexity/TuringMachine/Build/InputRewind.lean:49:theorem Cfg.mapState_mapState {k : ℕ} {Symbol : Type*} {S₁ S₂ S₃ : Type*} {x : List Symbol}
+TCSlib/Complexity/TuringMachine/Build/SeamLayout.lean:838:private lemma sl_rewrap {k : ℕ} {x : List Bool} {S : Type} {i' : sl_Key}
+== flatMap ofFn length (tree)
+== SignType cast bounds (tree)
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean:118:theorem apply_act {w : List Bool} {q' : Option St} (t : Fin 3) (im : SignType)
+TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachineTapes.lean:136:theorem apply_ctl {w : List Bool} {q' : Option St} (im : SignType) (o : Option Bool) (q : Option St)
+TCSlib/Complexity/CircuitComplexity/MeyerMachine.lean:314:theorem tact_apply {y : List Bool} (im : SignType)
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:165:theorem tact_idle_apply {y : List Bool} (im : SignType)
+TCSlib/Complexity/CircuitComplexity/MeyerMachineParse.lean:181:@[simp] theorem idle_apply {n : ℕ} (j : Fin n) : (idle j : Option (Option Bool) × SignType) = (none, 0) := rfl
+TCSlib/Complexity/CircuitComplexity/MeyerMachineRun.lean:86:theorem lcfg_apply_aux {y x : List Bool} (aw : Fin 3 → Option (Option Bool) × SignType)
+TCSlib/Complexity/ClassNP/EXP.lean:478:private lemma enumCont_unmove_cast (d : SignType) :
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:345:private theorem xr_cast_pos : ((SignType.pos : SignType) : ℤ) = 1 := rfl
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:346:private theorem xr_cast_neg : ((SignType.neg : SignType) : ℤ) = -1 := rfl
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:388:private theorem xr_mv1_apply_none {K : ℕ} {x : List Bool} (r : Fin K) (m : SignType)
+== Nat.find first halting (tree, public)
+TCSlib/Complexity/ClassNP/EXP.lean:819:  let t := Nat.find hex
+TCSlib/Complexity/ClassNP/EXP.lean:820:  have ht : t ≤ T := Nat.find_min' hex hh
+TCSlib/Complexity/ClassNP/EXP.lean:821:  refine ⟨t, ht, fun j hj => Nat.find_min hex hj, ?_⟩
+TCSlib/Complexity/ClassNP/EXP.lean:823:  rw [hr, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+TCSlib/Complexity/ClassNP/EXP.lean:2039:  let t := Nat.find hex
+TCSlib/Complexity/ClassNP/EXP.lean:2040:  have ht : t ≤ T := Nat.find_min' hex hT
+TCSlib/Complexity/ClassNP/EXP.lean:2041:  have hend : (stop.runFrom c t).state = some qa := Nat.find_spec hex
+TCSlib/Complexity/ClassNP/EXP.lean:2042:  have hn : ∀ j < t, (stop.runFrom c j).state ≠ some qa := fun j hj => Nat.find_min hex hj
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:155:  refine ⟨Nat.find hex, ?_, Nat.find_min' hex hT, Nat.find_spec hex,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:156:    fun L' hL' => Nat.find_min hex hL', xr_accepts_iff_of_halts N z (Nat.find_spec hex)
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:157:      (Nat.find_min' hex hT)⟩
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:158:  rcases Nat.eq_zero_or_pos (Nat.find hex) with h0 | h0
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:159:  · exact absurd (h0 ▸ Nat.find_spec hex) (xr_not_haltsWithin_zero N z)
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:305:  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_, fun u hu => Nat.find_min hex hu⟩
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:306:  have hsplit : tm.runFrom c T = tm.runFrom (tm.runFrom c (Nat.find hex)) (T - Nat.find hex) := by
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:307:    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_cancel' (Nat.find_min' hex hT')]
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:308:  rw [xr_runFrom_fixed tm _ (hstat _ (Nat.find_spec hex))] at hsplit
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1626:  refine ⟨Nat.find hex, Nat.find_min' hex hT', ?_,
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1627:    fun u hu a' ha' hA => Nat.find_min hex hu ⟨a', ha', hA⟩⟩
+TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean:1628:  obtain ⟨a'', ha'', hA''⟩ := Nat.find_spec hex

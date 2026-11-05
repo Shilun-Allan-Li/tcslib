@@ -1,0 +1,50 @@
+== statements mentioning runWith (w.take ...) state ≠ none (first halting shapes), any visibility
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:342:        (A.tm.runWith (w.take m) (A.tm.initCfg x)).state = none ∧
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:370:    (∀ v, (A.tm.runWith (w.take m) (A.tm.initCfg x)).state = none →
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:374:    (¬ ((A.tm.runWith (w.take m) (A.tm.initCfg x)).state = none ∧
+
+== public theorems whose name mentions first/halt in ClassNP / TuringMachine (non-private)
+TCSlib/BooleanAnalysis/GaussianSpace/ProductBounds.lean:52:lemma gaussianCoordinate_first_kernel_integrable_bound {ι : Type*} [Fintype ι]
+TCSlib/BooleanAnalysis/Switching/EncodingProperties.lean:714:lemma encode_go_not_kills_first_clause {n : ℕ} (f : DNF n) (w : ℕ)
+TCSlib/BooleanAnalysis/Switching/Restriction.lean:169:lemma first_clause_preserved {n : ℕ} (f : DNF n) (ρ σ : Restriction n)
+TCSlib/Complexity/CircuitComplexity/Hierarchy.lean:171:theorem restrictCircuit_eval_of_onFirst {h : m ≤ n} {pad : Fin n → Bool} {c : TreeCircuit n}
+TCSlib/Complexity/TuringMachine/Build/InterpreterStartup.lean:124:theorem embedSilentRetTM_firstReturn {k : ℕ} (M : FinTM Bool) (x : List Bool)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:375:theorem seamCompTM_firstReturn [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁)
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:572:theorem seamCompTM_firstReturn_ofCfg {Symbol : Type*} {x : List Symbol} [DecidableEq S₁]
+TCSlib/Complexity/TuringMachine/Build/Seam.lean:776:theorem seamReleaseTM_firstReturn {Symbol : Type*} {x : List Symbol} (M : MultiTapeTM k Symbol S) (anchor : S)
+TCSlib/Complexity/TuringMachine/Build/StepBlock.lean:3494:theorem roundTM_firstExit_unique {k n : ℕ} {x : List Bool}
+TCSlib/Complexity/TuringMachine/Finite.lean:218:theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+TCSlib/Complexity/TuringMachine/Simulation.lean:818:lemma bufferedFirstCfg_init (M₁ M₂ : FinTM Bool) (x : List Bool) :
+TCSlib/Complexity/TuringMachine/Simulation.lean:839:lemma bufferedFirstCfg_step (M₁ M₂ : FinTM Bool) {x : List Bool}
+TCSlib/Complexity/TuringMachine/Simulation.lean:884:lemma bufferedFirstCfg_run (M₁ M₂ : FinTM Bool) {x : List Bool}
+TCSlib/Complexity/TuringMachine/Simulation.lean:1087:lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
+
+== ExhaustiveReplay 140-160
+  obtain ⟨w, hw, hhalt, hout⟩ := FinNDTM.acceptsWithin_iff.mp h
+  have htake : (w.take L).length = L := by rw [List.length_take, hw]; omega
+  have hstop := NDTM.haltsWithin_iff.mp hL (w.take L) htake
+  have hsplit : N.tm.runWith w (N.tm.initCfg z) = N.tm.runWith (w.take L) (N.tm.initCfg z) := by
+    conv_lhs => rw [← List.take_append_drop L w]
+    rw [NDTM.runWith_append, NDTM.runWith_of_halt _ hstop]
+  rw [hsplit] at hout
+  exact FinNDTM.acceptsWithin_iff.mpr ⟨w.take L, htake, hstop, hout⟩
+
+/-- The first all-halting depth exists below any all-halting bound, is positive, and answers
+as the bound does: the deepening terminates by depth `T`, never at depth `0`. -/
+private theorem xr_first_depth (N : FinNDTM Bool) (z : List Bool) (T : ℕ)
+    (hT : N.tm.HaltsWithin z T) :
+
+== ic_loopHost_run head
+678:private theorem ic_loopHost_run {z : List Bool}
+806:  obtain ⟨correct, first⟩ := ic_loopHost_run _ T (!branch.state.isSome) b' branch.output
+== flatMap length lemmas (tree, any)
+TCSlib/BooleanAnalysis/LMN/CircuitHelpers.lean:517:      have h_maxFanin_ge_length : ∀ t ∈ List.flatMap (fun c =>
+TCSlib/Complexity/CircuitComplexity/Advice.lean:172:    (x.flatMap fun b => [b, b]).length = 2 * x.length := by
+TCSlib/Complexity/CircuitComplexity/Advice.lean:175:  | cons b x ih => simp only [List.flatMap_cons, List.length_append, ih]; simp; ring
+TCSlib/Complexity/CircuitComplexity/CircuitSat.lean:390:          (ds.flatMap fun d => d.tseitin).length + ds.length ≤
+TCSlib/Complexity/CircuitComplexity/CircuitSat.lean:398:            simp only [List.flatMap_cons, List.length_append, List.length_cons,
+TCSlib/Complexity/CircuitComplexity/Encoding.lean:389:          (ds.flatMap fun d => d.tseitin).flatten.length + 3 * ds.length ≤
+TCSlib/Complexity/CircuitComplexity/Encoding.lean:397:            simp only [List.flatMap_cons, List.flatten_append, List.length_append,
+TCSlib/Complexity/CircuitComplexity/KarpLiptonSearchFamily.lean:139:  simp [querySrcs, List.length_flatMap]
+TCSlib/Complexity/CircuitComplexity/PAdviceSubsetPPoly.lean:92:    length_flatMap_const _ _ (c := 2) (fun _ => by simp)]
+TCSlib/Complexity/CircuitComplexity/PPolyAdvice.lean:206:    simp only [hw, pairEncode, List.length_append, List.length_flatMap, List.length_cons,

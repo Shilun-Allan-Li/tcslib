@@ -1,0 +1,59 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+
+/-! Review probe (reviewer-written): does a published lemma state a generic form of the new
+privates? Each `exact?` either names one or fails. -/
+
+set_option maxHeartbeats 1000000
+
+-- X01 nf_stream_length, generic width
+example (n : ℕ) (rs : List (Fin n → Bool)) : (rs.flatMap List.ofFn).length = n * rs.length := by
+  exact?
+-- X02 nf_signType_bound, upper
+example (m : SignType) : (m : ℤ) ≤ 1 := by exact?
+-- X03 nf_signType_bound, lower
+example (m : SignType) : -1 ≤ (m : ℤ) := by exact?
+-- X04 nf_inputSymbol_congr, as stated
+example {k k' : ℕ} {S S' : Type} {x : List Bool} (c : Turing.Cfg k Bool S x)
+    (c' : Turing.Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
+    c.inputSymbol = c'.inputSymbol := by exact?
+-- X05 the input read's congruence, same tape count, `Fin` equality
+example {k : ℕ} {S S' : Type} {x : List Bool} (c : Turing.Cfg k Bool S x)
+    (c' : Turing.Cfg k Bool S' x) (h : c.inputPos = c'.inputPos) :
+    c.inputSymbol = c'.inputSymbol := by exact?
+-- X06 nf_retag's core: a live configuration renamed by a constant
+example {k : ℕ} {S T : Type} {x : List Bool} (c : Turing.Cfg k Bool S x) (q : T)
+    (hc : c.state.isSome) : c.mapState (fun _ => q) =
+      ({ state := some q, inputPos := c.inputPos, workTapes := c.workTapes,
+          workTapePos := c.workTapePos, output := c.output } : Turing.Cfg k Bool T x) := by exact?
+-- X07 nf_tagged_ne_park, generic family
+example {k : ℕ} {I : Type} {F : I → Type} {x : List Bool} {i : I} (v : Σ i, F i)
+    (h : i ≠ v.1) (c : Turing.Cfg k Bool (F i) x) : (c.mapState (Sigma.mk i)).state ≠ some v := by
+  exact?
+-- X08 nf_vrun_ctl's shape: two folds kept related by an invariant
+example {α β γ : Type} (f : α → γ → α) (g : β → γ → β) (R : α → β → Prop)
+    (h : ∀ a b x, R a b → R (f a x) (g b x)) (l : List γ) (a : α) (b : β) (hab : R a b) :
+    R (l.foldl f a) (l.foldl g b) := by exact?
+-- X09 a buffer is blank past its end (nf_entry's inline step; CodeSimulator's private row)
+example (w : List Bool) (q : ℤ) (h : (w.length : ℤ) ≤ q) : Turing.FinTM.bufferTape w q = none := by
+  exact?
+-- X10 nf_forward's first-halting cut, for a choice word
+example {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.NDTM k Bool S) (c : Turing.Cfg k Bool S x)
+    (w : List Bool) (h : (tm.runWith w c).state = none) :
+    ∃ u ≤ w.length, (∀ v < u, (tm.runWith (w.take v) c).state ≠ none) ∧
+      tm.runWith (w.take u) c = tm.runWith w c := by exact?
+-- X11 nf_split's cut of a list into fixed-width records
+example (W n : ℕ) (s : List Bool) (h : s.length = W * n) :
+    ∃ rs : List (Fin W → Bool), rs.length = n ∧ s = rs.flatMap List.ofFn := by exact?
+-- X12 nf_stream_cons's first part
+example (n : ℕ) (r : Fin n → Bool) (rs : List (Fin n → Bool)) (p : Fin n) :
+    ((r :: rs).flatMap List.ofFn)[p.val]? = some (r p) := by exact?
+-- X13 nf_flags_cons / nf_all_cons shape: a statement over the indices of a cons
+example {α : Type} (P : ℕ → α → Prop) (a : α) (l : List α) :
+    (∀ r (h : r < (a :: l).length), P r (a :: l)[r]) ↔ P 0 a ∧ ∀ r (h : r < l.length), P (r + 1) l[r] := by
+  exact?
+
+-- X14 the Mathlib lemma X13 names
+#check @Nat.forall_lt_succ_left'

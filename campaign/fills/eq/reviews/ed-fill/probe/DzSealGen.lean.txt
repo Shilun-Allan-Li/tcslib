@@ -1,0 +1,48 @@
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import Lean
+/-! Reviewer's sealL generator: every TCSlib definition in the owned file's import closure outside
+the owned module that is semireducible (not an abbrev, not already irreducible), not an instance,
+not a projection, not a matcher, not private and not an internal detail; the owned module's public
+definitions; and every TCSlib definition that `simp` unfolds. Reads oleans only. -/
+open Lean Elab Command Meta
+
+private def modN : Name := `TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+
+elab "#dz_sealgen" : command => do
+  let env ← getEnv
+  let some mi := env.getModuleIdx? modN | throwError "module not loaded"
+  let sth ← liftCoreM Meta.getSimpTheorems
+  let mut sealL : Array String := #[]
+  let mut simpU : Array String := #[]
+  let mut skipped : Array String := #[]
+  let mut nTC := 0
+  for (n, ci) in env.constants.map₁.toList do
+    let some i := env.getModuleIdxFor? n | continue
+    let mod := env.header.moduleNames[i.toNat]!
+    unless (`TCSlib).isPrefixOf mod do continue
+    let .defnInfo _ := ci | continue
+    nTC := nTC + 1
+    let own := i == mi
+    if sth.isDeclToUnfold n then simpU := simpU.push s!"{n}\t{mod}"
+    let red ← getReducibilityStatus n
+    let why : Option String :=
+      if isPrivateName n then some "private"
+      else if n.isInternalDetail then some "internal"
+      else if isInstanceCore env n then some "instance"
+      else if env.isProjectionFn n then some "projection"
+      else if isMatcherCore env n then some "matcher"
+      else if red == .reducible then some "reducible"
+      else if red == .irreducible then some "irreducible"
+      else if own && !(n == ``Turing.NTimeDiag.query || n == ``Turing.NTimeDiag.budget ||
+          n == ``Turing.NTimeDiag.ladder || n == ``Turing.NTimeDiag.stage ||
+          n == ``Turing.NTimeDiag.stageCode) then some "own-file"
+      else none
+    match why with
+    | some w => skipped := skipped.push s!"{w}\t{n}\t{mod}"
+    | none => sealL := sealL.push s!"{n}\t{mod}"
+  logInfo m!"TCSlib defs in closure: {nTC}; sealed: {sealL.size}; simp-unfold: {simpU.size}; skipped: {skipped.size}"
+  logInfo ("SEAL\n" ++ "\n".intercalate (sealL.qsort (· < ·)).toList)
+  logInfo ("SIMPU\n" ++ "\n".intercalate (simpU.qsort (· < ·)).toList)
+  logInfo ("SKIP\n" ++ "\n".intercalate (skipped.qsort (· < ·)).toList)
+
+#dz_sealgen

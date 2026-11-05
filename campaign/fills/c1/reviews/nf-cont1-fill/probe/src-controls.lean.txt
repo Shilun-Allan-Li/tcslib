@@ -1,0 +1,96 @@
+
+-- ===== review source controls (reviewer-written): each closes unsealed and must fail sealed =====
+private def rvC : Turing.Cfg 2 Bool Bool [] := ⟨some true, 0, fun _ _ => none, fun _ => 0, []⟩
+-- C01 Turing.instFintypeSeekPhase
+example : (Finset.univ : Finset Turing.SeekPhase).card = 4 := by decide
+-- C02 Turing.instFintypeSweepPhase
+example : (Finset.univ : Finset Turing.SweepPhase).card = 3 := by decide
+-- C03 Turing.instFintypeInputRewindPhase
+example : (Finset.univ : Finset Turing.InputRewindPhase).card = 3 := by decide
+-- C04 Turing.instFintypeGuessRunPhase
+example : (Finset.univ : Finset Turing.GuessRunPhase).card = 6 := by decide
+-- C05 Turing.instInhabitedCfg
+example : (default : Turing.Cfg 1 Bool Bool []).output = [] := rfl
+-- C06 Turing.instFintypeScanPhase
+example : (Finset.univ : Finset (Turing.ScanPhase Bool)).card = 6 := by decide
+-- C07 Turing.instDecidableEqScanPhase
+example : (Turing.ScanPhase.fwd true : Turing.ScanPhase Bool) ≠ Turing.ScanPhase.bwd true := by decide
+-- C08 Turing.instDecidableEqSeekPhase
+example : Turing.SeekPhase.run ≠ Turing.SeekPhase.gap := by decide
+-- C09 Turing.instDecidableEqSweepPhase
+example : Turing.SweepPhase.sweep ≠ Turing.SweepPhase.done := by decide
+-- C10 Turing.instDecidableEqGuessRunPhase
+example : Turing.GuessRunPhase.pre ≠ Turing.GuessRunPhase.run := by decide
+-- C11 Turing.instDecidableEqInputRewindPhase
+example : Turing.InputRewindPhase.start ≠ Turing.InputRewindPhase.done := by decide
+-- C12 Turing.GuessRunPhase.instFintypeCtlState
+example : Fintype.card (Turing.GuessRunPhase.CtlState Bool Bool Bool .skip) = 4 := by decide
+-- C13 Turing.GuessRunPhase.CtlState
+example : Turing.GuessRunPhase.CtlState Bool Bool Bool .pre = Bool := rfl
+-- C14 Turing.FinTM.bufferTape
+example : Turing.FinTM.bufferTape [true, false] 1 = some false := rfl
+-- C15 Turing.moveInputPos
+example : Turing.moveInputPos (n := 1) 0 1 = 1 := by decide
+-- C16 Turing.StepBlock.outputSummary
+example : Turing.StepBlock.outputSummary [true] = some true := rfl
+-- C17 Turing.StepBlock.summaryEmit
+example : Turing.StepBlock.summaryEmit none (some true) = some true := rfl
+-- C18 Turing.scanKeep
+example : Turing.scanKeep (A := ℕ) (Γ := Bool) 3 true = (3, true) := rfl
+-- C19 Turing.scanFold
+example : Turing.scanFold (fun (a : ℕ) (_ : Bool) => a + 1) 3 true = (4, true) := rfl
+-- C20 Turing.tapeAction
+example : (Turing.tapeAction (k := 1) (Symbol := Bool) (0 : Fin 1) 1 none 0 true).state = some true := rfl
+-- C21 Turing.Cfg.inputSymbol
+example : (⟨none, 1, fun _ _ => none, fun _ => 0, []⟩ : Turing.Cfg 1 Bool Bool [true]).inputSymbol =
+    some true := rfl
+-- C22 Turing.Cfg.workTapeSymbols
+example : (⟨none, 0, fun _ _ => some true, fun _ => 0, []⟩ : Turing.Cfg 1 Bool Bool []).workTapeSymbols 0 =
+    some true := rfl
+-- C23 Turing.Cfg.mapState
+example : (Turing.Cfg.mapState (fun b : Bool => !b) rvC).state = some false := rfl
+-- C24 Turing.Cfg.init
+example : (Turing.Cfg.init (k := 1) true ([] : List Bool) : Turing.Cfg 1 Bool Bool []).inputPos = 1 := rfl
+-- C25 Turing.MultiTapeTM.initCfg
+example : (Turing.FinNDTM.nf_park.initCfg ([] : List Bool)).output = [] := rfl
+-- C26 Turing.MultiTapeTM.step
+example : (Turing.FinNDTM.nf_park.step rvC).state = some true := rfl
+-- C27 Turing.MultiTapeTM.runFrom
+example : (Turing.FinNDTM.nf_park.runFrom rvC 2).state = some true := rfl
+-- C28 Turing.Action.apply
+example : (({ inputTape := 0, workTapes := fun _ => (none, 1), output := none, state := some false } :
+    Turing.Action 2 Bool Bool).apply rvC).state = some false := rfl
+-- C29 Turing.skipTM
+example : (Turing.skipTM (Symbol := Bool) 2 0).q₀ = Turing.SeekPhase.run := rfl
+-- C30 Turing.skipBackTM
+example : (Turing.skipBackTM (Symbol := Bool) 2 0).q₀ = Turing.SeekPhase.run := rfl
+-- C31 Turing.clearTM
+example : (Turing.clearTM (Symbol := Bool) 2 1).q₀ = Turing.SweepPhase.sweep := rfl
+-- C32 Turing.scanTM
+example : (Turing.scanTM 2 0 (Turing.scanFold (fun (a : Bool) (_ : Bool) => a)) Turing.scanKeep false).q₀ =
+    Turing.ScanPhase.fwd false := rfl
+-- C33 Turing.phaseHostTM
+example (N : Turing.FinNDTM Bool) : (Turing.FinNDTM.nf_V N (Turing.FinNDTM.nf_leaf N)
+    (Turing.FinNDTM.nf_leafExit N)).q₀ = ⟨.ctl, Turing.ScanPhase.fwd (Turing.FinNDTM.nf_sweepInit N)⟩ := rfl
+-- C34 Turing.streamStartCfg
+example : (Turing.streamStartCfg [] (0 : Fin 2) true [true]).inputPos = 1 := rfl
+-- C35 Turing.guessRunCfg
+example : (Turing.guessRunCfg rvC 0 [true] false).state = some false := rfl
+-- C36 Turing.NDTM.stepWith
+example (N : Turing.FinNDTM Bool) : (Turing.FinNDTM.nf_host N).stepWith true
+    (⟨none, 0, fun _ _ => none, fun _ => 0, []⟩ : Turing.Cfg 2 Bool _ ([] : List Bool)) =
+      ⟨none, 0, fun _ _ => none, fun _ => 0, []⟩ := rfl
+-- C37 Turing.NDTM.runWith
+example (N : Turing.FinNDTM Bool) : (Turing.FinNDTM.nf_host N).runWith []
+    (⟨none, 0, fun _ _ => none, fun _ => 0, []⟩ : Turing.Cfg 2 Bool _ ([] : List Bool)) =
+      ⟨none, 0, fun _ _ => none, fun _ => 0, []⟩ := rfl
+-- C38 Turing.NDTM.initCfg
+example (N : Turing.FinNDTM Bool) : ((Turing.FinNDTM.nf_host N).initCfg ([] : List Bool)).output = [] := rfl
+-- C39 Turing.guessCtlRunTM
+example (N : Turing.FinNDTM Bool) : (Turing.FinNDTM.nf_host N).q₀.1 = Turing.GuessRunPhase.pre := rfl
+-- C40 Turing.CodeNDTM.toFinNDTM
+example (M : Turing.CodeNDTM) : M.toFinNDTM.k = 2 := rfl
+-- C41 Turing.FinNDTM.AcceptsWithin
+example (N : Turing.FinNDTM Bool) (x : List Bool) (t : ℕ) : N.AcceptsWithin x t ↔
+    ∃ w : List Bool, w.length = t ∧ (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
+      (N.tm.runWith w (N.tm.initCfg x)).output = [true] := Iff.rfl

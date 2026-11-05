@@ -25,8 +25,7 @@ This is infrastructure — the register-machine description of space-bounded alg
 
 ## Main definitions
 
-* none (wrapper theorems for `Complexity.LogProg.ARM`, and the inclusions `L ⊆ PSPACE` and
-  `SPACE ((n + 1)^k) ⊆ PSPACE`).
+* none (wrapper theorems for `Complexity.LogProg.ARM`).
 
 ## Main results
 
@@ -37,53 +36,12 @@ This is infrastructure — the register-machine description of space-bounded alg
 * `Complexity.LogProg.arm_decides_pspace` — registers of polynomially many binary digits with
   `PSPACE` deciders give `PSPACE`; `Complexity.LogProg.arm_decides_pspace_of_logspace` and
   `Complexity.LogProg.arm_decides_pspace_val` are its logspace-decider and value-bound forms.
-* `Complexity.LOGSPACE_subset_PSPACE` — `L ⊆ PSPACE`.
 
 ## References
 
 * [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
   Cambridge University Press, 2009. (§4.1, Definitions 4.1 and 4.5.)
 -/
-
-namespace Complexity
-
-/-- The logarithmic bound is at most linear: `logSpace n ≤ n + 1`. -/
-lemma logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
-  have := Nat.log_le_self 2 n
-  simp only [logSpace]; omega
-
-/-- **`L ⊆ PSPACE`** [AB09, §4.1.2, the chain `L ⊆ … ⊆ PSPACE` of p. 92 (its first and
-last members)]: a logspace decider uses at most `c · (n + 1)` cells.
-
-**Proof sketch.** `logSpace n ≤ n + 1 = n ^ 1 + 1`, so `SPACE (logSpace) ⊆ SPACE (n ^ 1 + 1)`
-(`Complexity.SPACE.mono`), which lies in `PSPACE` at degree one. -/
-theorem LOGSPACE_subset_PSPACE : LOGSPACE ⊆ PSPACE :=
-  (SPACE.mono fun n => by simpa using logSpace_le_succ n).trans (space_poly_subset_PSPACE 1)
-
-/-- `SPACE ((n + 1)^k) ⊆ PSPACE`: the shifted polynomial bound gives polynomial space.
-
-**Proof sketch.** `(n + 1)^k ≤ 2^k (n^k + 1)` (`Complexity.succ_pow_le`), so
-`Complexity.SPACE.mono_const` and `Complexity.space_poly_subset_PSPACE` at degree `k`. -/
-theorem SPACE_succ_pow_subset_PSPACE (k : ℕ) : SPACE (fun n => (n + 1) ^ k) ⊆ PSPACE :=
-  (SPACE.mono_const (a := 2 ^ k) fun n => succ_pow_le n k).trans
-    (space_poly_subset_PSPACE k)
-
-/-- A number at most `A · 2^s` (with `s ≥ 1`) has `logSpace` at most `(A + 1) s`. -/
-lemma logSpace_le_of_le_mul_two_pow {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) :
-    logSpace v ≤ (A + 1) * s := by
-  have hA : A < 2 ^ A := Nat.lt_two_pow_self
-  have hlt : v < 2 ^ (A + s) := by
-    rw [pow_add]
-    exact lt_of_le_of_lt h (Nat.mul_lt_mul_of_pos_right hA (Nat.two_pow_pos s))
-  have hle : A + s ≤ (A + 1) * s := by
-    have := Nat.le_mul_of_pos_right A (show 0 < s by omega)
-    rw [Nat.add_mul, Nat.one_mul]; omega
-  rcases Nat.eq_zero_or_pos v with rfl | hv
-  · simp only [logSpace, Nat.log_zero_right]; omega
-  · have := Nat.log_lt_of_lt_pow (by omega) hlt
-    simp only [logSpace]; omega
-
-end Complexity
 
 namespace Complexity.LogProg
 

@@ -1,0 +1,2728 @@
+module constants: 1292; public: 130; private: 1162
+PUB Turing.NTimeDiag.acceptLang_mem_NTIME
+PUB Turing.NTimeDiag.budget
+PUB Turing.NTimeDiag.budget_eq
+PUB Turing.NTimeDiag.exists_diagonalizer
+PUB Turing.NTimeDiag.exists_le_ladder_succ
+PUB Turing.NTimeDiag.exists_le_ladder_succ._proof_1_1
+PUB Turing.NTimeDiag.exists_queryTM
+PUB Turing.NTimeDiag.instDecidableEqQyCmp
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_10
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_2
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_3
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_4
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_5
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_6
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_7
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_8
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_9
+PUB Turing.NTimeDiag.instDecidableEqQyCmp.decEq.match_1
+PUB Turing.NTimeDiag.instDecidableEqQyEm
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_10
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_11
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_12
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_13
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_14
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_15
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_16
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_17
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_18
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_19
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_2
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_20
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_21
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_22
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_23
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_24
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_25
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_26
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_27
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_28
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_29
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_3
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_30
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_31
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_32
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_33
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_34
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_35
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_36
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_37
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_38
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_39
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_4
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_40
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_41
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_5
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_6
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_7
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_8
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_9
+PUB Turing.NTimeDiag.instDecidableEqQyEm.decEq.match_1
+PUB Turing.NTimeDiag.instDecidableEqQyLK
+PUB Turing.NTimeDiag.instDecidableEqQyLK._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQyLK._proof_2
+PUB Turing.NTimeDiag.instDecidableEqQyMK
+PUB Turing.NTimeDiag.instDecidableEqQyMK._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQyMK._proof_2
+PUB Turing.NTimeDiag.instDecidableEqQyMain
+PUB Turing.NTimeDiag.instDecidableEqQyMain._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQyMain._proof_2
+PUB Turing.NTimeDiag.instDecidableEqQySK
+PUB Turing.NTimeDiag.instDecidableEqQySK._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQySK._proof_2
+PUB Turing.NTimeDiag.instDecidableEqQyTK
+PUB Turing.NTimeDiag.instDecidableEqQyTK._proof_1
+PUB Turing.NTimeDiag.instDecidableEqQyTK._proof_2
+PUB Turing.NTimeDiag.instFintypeQyCmp
+PUB Turing.NTimeDiag.instFintypeQyCmp.match_3
+PUB Turing.NTimeDiag.instFintypeQyCmp.match_5
+PUB Turing.NTimeDiag.instFintypeQyEm
+PUB Turing.NTimeDiag.instFintypeQyEm.match_3
+PUB Turing.NTimeDiag.instFintypeQyEm.match_5
+PUB Turing.NTimeDiag.instFintypeQyLK
+PUB Turing.NTimeDiag.instFintypeQyLK._proof_1
+PUB Turing.NTimeDiag.instFintypeQyMK
+PUB Turing.NTimeDiag.instFintypeQyMK._proof_1
+PUB Turing.NTimeDiag.instFintypeQyMain
+PUB Turing.NTimeDiag.instFintypeQyMain._proof_1
+PUB Turing.NTimeDiag.instFintypeQySK
+PUB Turing.NTimeDiag.instFintypeQySK._proof_1
+PUB Turing.NTimeDiag.instFintypeQyTK
+PUB Turing.NTimeDiag.instFintypeQyTK._proof_1
+PUB Turing.NTimeDiag.ladder
+PUB Turing.NTimeDiag.ladder._sunfold
+PUB Turing.NTimeDiag.ladder._unsafe_rec
+PUB Turing.NTimeDiag.ladder.match_1
+PUB Turing.NTimeDiag.ladder_strictMono
+PUB Turing.NTimeDiag.ladder_strictMono._proof_1_1
+PUB Turing.NTimeDiag.ladder_succ
+PUB Turing.NTimeDiag.ladder_zero
+PUB Turing.NTimeDiag.le_ladder
+PUB Turing.NTimeDiag.le_ladder._proof_1_1
+PUB Turing.NTimeDiag.query
+PUB Turing.NTimeDiag.query.eq_1
+PUB Turing.NTimeDiag.query_eq
+PUB Turing.NTimeDiag.query_of_not_guard
+PUB Turing.NTimeDiag.stage
+PUB Turing.NTimeDiag.stageCode
+PUB Turing.NTimeDiag.stageCode.eq_1
+PUB Turing.NTimeDiag.stageCode_eq
+PUB Turing.NTimeDiag.stageCode_frequently
+PUB Turing.NTimeDiag.stageCode_frequently._proof_1_1
+PUB Turing.NTimeDiag.stageCode_frequently._proof_1_2
+PUB Turing.NTimeDiag.stageCode_frequently._proof_1_3
+PUB Turing.NTimeDiag.stage_eq
+PUB Turing.NTimeDiag.stage_eq._proof_1_1
+PUB Turing.NTimeDiag.stage_eq._proof_1_2
+PUB Turing.NTimeDiag.stage_of_le_two
+PUB Turing.NTimeDiag.stage_of_le_two._proof_1_1
+PUB Turing.NTimeDiag.stage_spec
+PUB Turing.NTimeDiag.stage_spec._proof_1_1
+PUB Turing.NTimeDiag.stage_spec._proof_1_2
+PUB Turing.NTimeDiag.stage_spec._proof_1_3
+PUB Turing.NTimeDiag.two_mul_lt_ladder_succ
+PUB Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_1
+PUB Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_2
+PUB Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_3
+HASH Turing.NTimeDiag.QyClockSpec priv type=73823770 value=2968882797
+HASH Turing.NTimeDiag.QyCmp priv type=3931117990 value=-
+HASH Turing.NTimeDiag.QyCmp._sizeOf_1 priv type=1574049445 value=732548824
+HASH Turing.NTimeDiag.QyCmp._sizeOf_inst priv type=323552555 value=2163089747
+HASH Turing.NTimeDiag.QyCmp.back priv type=4028922010 value=-
+HASH Turing.NTimeDiag.QyCmp.back.elim priv type=954926920 value=256625807
+HASH Turing.NTimeDiag.QyCmp.back.inj priv type=3990164786 value=887369979
+HASH Turing.NTimeDiag.QyCmp.back.injEq priv type=1181941379 value=169502144
+HASH Turing.NTimeDiag.QyCmp.back.noConfusion priv type=3043908004 value=2700836510
+HASH Turing.NTimeDiag.QyCmp.back.sizeOf_spec priv type=1518177110 value=1346675684
+HASH Turing.NTimeDiag.QyCmp.casesOn priv type=3825653128 value=3363504021
+HASH Turing.NTimeDiag.QyCmp.ctorElim priv type=2285281898 value=4035631153
+HASH Turing.NTimeDiag.QyCmp.ctorElimType priv type=2104941624 value=444504757
+HASH Turing.NTimeDiag.QyCmp.ctorIdx priv type=1574049445 value=3108571982
+HASH Turing.NTimeDiag.QyCmp.done priv type=4028922010 value=-
+HASH Turing.NTimeDiag.QyCmp.done.elim priv type=2953160287 value=2112830351
+HASH Turing.NTimeDiag.QyCmp.done.inj priv type=776289387 value=1300589333
+HASH Turing.NTimeDiag.QyCmp.done.injEq priv type=2643827453 value=1636104509
+HASH Turing.NTimeDiag.QyCmp.done.noConfusion priv type=411566132 value=1396142659
+HASH Turing.NTimeDiag.QyCmp.done.sizeOf_spec priv type=3109381750 value=1346675684
+HASH Turing.NTimeDiag.QyCmp.noConfusion priv type=1912335898 value=719052040
+HASH Turing.NTimeDiag.QyCmp.noConfusionType priv type=1450404495 value=270811439
+HASH Turing.NTimeDiag.QyCmp.proxyType priv type=3931117990 value=833983492
+HASH Turing.NTimeDiag.QyCmp.proxyTypeEquiv priv type=1937037190 value=3329317279
+HASH Turing.NTimeDiag.QyCmp.rec priv type=3064465907 value=-
+HASH Turing.NTimeDiag.QyCmp.recOn priv type=3825653128 value=189798669
+HASH Turing.NTimeDiag.QyCmp.scan priv type=1866267760 value=-
+HASH Turing.NTimeDiag.QyCmp.scan.elim priv type=714108336 value=1460478267
+HASH Turing.NTimeDiag.QyCmp.scan.sizeOf_spec priv type=3500487581 value=4023243988
+HASH Turing.NTimeDiag.QyEm priv type=1735472581 value=-
+HASH Turing.NTimeDiag.QyEm._sizeOf_1 priv type=108239466 value=2353981168
+HASH Turing.NTimeDiag.QyEm._sizeOf_inst priv type=4263581289 value=500347540
+HASH Turing.NTimeDiag.QyEm.casesOn priv type=639005802 value=3021889872
+HASH Turing.NTimeDiag.QyEm.ctorElim priv type=4178125800 value=366705326
+HASH Turing.NTimeDiag.QyEm.ctorElimType priv type=475662577 value=1503522601
+HASH Turing.NTimeDiag.QyEm.ctorIdx priv type=108239466 value=2985993328
+HASH Turing.NTimeDiag.QyEm.done priv type=2645709889 value=-
+HASH Turing.NTimeDiag.QyEm.done.elim priv type=2817678099 value=17679317
+HASH Turing.NTimeDiag.QyEm.done.sizeOf_spec priv type=2470025848 value=1656794851
+HASH Turing.NTimeDiag.QyEm.em priv type=4252420246 value=-
+HASH Turing.NTimeDiag.QyEm.em.elim priv type=1631846231 value=2629468909
+HASH Turing.NTimeDiag.QyEm.em.inj priv type=3511477076 value=2483492005
+HASH Turing.NTimeDiag.QyEm.em.injEq priv type=3130335328 value=3538136566
+HASH Turing.NTimeDiag.QyEm.em.noConfusion priv type=3152550982 value=1023492253
+HASH Turing.NTimeDiag.QyEm.em.sizeOf_spec priv type=1514308735 value=575318780
+HASH Turing.NTimeDiag.QyEm.got priv type=4278130261 value=-
+HASH Turing.NTimeDiag.QyEm.got.elim priv type=2940472552 value=4004170150
+HASH Turing.NTimeDiag.QyEm.got.inj priv type=2659206496 value=4172813362
+HASH Turing.NTimeDiag.QyEm.got.injEq priv type=3242385271 value=2180793198
+HASH Turing.NTimeDiag.QyEm.got.noConfusion priv type=1995374155 value=2592833002
+HASH Turing.NTimeDiag.QyEm.got.sizeOf_spec priv type=3242730534 value=54989648
+HASH Turing.NTimeDiag.QyEm.noConfusion priv type=1702474122 value=2997189088
+HASH Turing.NTimeDiag.QyEm.noConfusionType priv type=3412153049 value=1535161880
+HASH Turing.NTimeDiag.QyEm.pre priv type=3783951554 value=-
+HASH Turing.NTimeDiag.QyEm.pre.elim priv type=1368838434 value=1053158565
+HASH Turing.NTimeDiag.QyEm.pre.inj priv type=1933871738 value=1687253776
+HASH Turing.NTimeDiag.QyEm.pre.injEq priv type=839517798 value=1476398551
+HASH Turing.NTimeDiag.QyEm.pre.noConfusion priv type=1526129762 value=1500891353
+HASH Turing.NTimeDiag.QyEm.pre.sizeOf_spec priv type=429755738 value=4070050645
+HASH Turing.NTimeDiag.QyEm.proxyType priv type=1735472581 value=580771502
+HASH Turing.NTimeDiag.QyEm.proxyTypeEquiv priv type=2901645687 value=2771754172
+HASH Turing.NTimeDiag.QyEm.rd priv type=2645709889 value=-
+HASH Turing.NTimeDiag.QyEm.rd.elim priv type=3983261052 value=1837595756
+HASH Turing.NTimeDiag.QyEm.rd.sizeOf_spec priv type=3102001190 value=1656794851
+HASH Turing.NTimeDiag.QyEm.rec priv type=2111932038 value=-
+HASH Turing.NTimeDiag.QyEm.recOn priv type=639005802 value=2254858130
+HASH Turing.NTimeDiag.QyEm.suf priv type=1005788772 value=-
+HASH Turing.NTimeDiag.QyEm.suf.elim priv type=2643891184 value=3268192451
+HASH Turing.NTimeDiag.QyEm.suf.inj priv type=80684278 value=2089580173
+HASH Turing.NTimeDiag.QyEm.suf.injEq priv type=2219716223 value=3846259548
+HASH Turing.NTimeDiag.QyEm.suf.noConfusion priv type=3443449212 value=1531804190
+HASH Turing.NTimeDiag.QyEm.suf.sizeOf_spec priv type=3479686779 value=3846325100
+HASH Turing.NTimeDiag.QyEscT priv type=3413401521 value=856354540
+HASH Turing.NTimeDiag.QyEscT.bank priv type=1510742081 value=2181245996
+HASH Turing.NTimeDiag.QyEscT.bank._proof_1_1 priv type=2233801519 value=3462786596
+HASH Turing.NTimeDiag.QyEscT.tp priv type=3194997714 value=4157204424
+HASH Turing.NTimeDiag.QyInSpec priv type=2040336479 value=1221797246
+HASH Turing.NTimeDiag.QyKit priv type=4284289987 value=-
+HASH Turing.NTimeDiag.QyKit.H priv type=1547590970 value=131976037
+HASH Turing.NTimeDiag.QyKit.K priv type=314615179 value=3616650964
+HASH Turing.NTimeDiag.QyKit.Q priv type=2074597806 value=654650305
+HASH Turing.NTimeDiag.QyKit.Qd priv type=732634474 value=2520772448
+HASH Turing.NTimeDiag.QyKit.Qf priv type=3971432117 value=1877214835
+HASH Turing.NTimeDiag.QyKit.R priv type=1436331012 value=4012335699
+HASH Turing.NTimeDiag.QyKit.S priv type=2074597806 value=298156530
+HASH Turing.NTimeDiag.QyKit.Sd priv type=2709340661 value=3251735958
+HASH Turing.NTimeDiag.QyKit.Sf priv type=3440959661 value=3841664684
+HASH Turing.NTimeDiag.QyKit._sizeOf_1 priv type=314615179 value=2641750170
+HASH Turing.NTimeDiag.QyKit._sizeOf_inst priv type=493124300 value=3397004447
+HASH Turing.NTimeDiag.QyKit.ab priv type=1061616880 value=719462203
+HASH Turing.NTimeDiag.QyKit.abA priv type=314615179 value=2568985771
+HASH Turing.NTimeDiag.QyKit.abE priv type=2232932492 value=1067456444
+HASH Turing.NTimeDiag.QyKit.abK priv type=3823155041 value=1793016936
+HASH Turing.NTimeDiag.QyKit.abS priv type=3695892424 value=2239173719
+HASH Turing.NTimeDiag.QyKit.abX priv type=2232932492 value=1484617314
+HASH Turing.NTimeDiag.QyKit.bAb0 priv type=2421620050 value=472068898
+HASH Turing.NTimeDiag.QyKit.bAb0._proof_1 priv type=1705671608 value=559698148
+HASH Turing.NTimeDiag.QyKit.bAb0._proof_2 priv type=4198476144 value=1894068208
+HASH Turing.NTimeDiag.QyKit.bAb0._proof_3 priv type=706794031 value=714066511
+HASH Turing.NTimeDiag.QyKit.bAb0._proof_4 priv type=3857697680 value=444463466
+HASH Turing.NTimeDiag.QyKit.bAb0_ne priv type=2664857279 value=1641106862
+HASH Turing.NTimeDiag.QyKit.bAb0_ne._proof_1_1 priv type=3572820804 value=2922779238
+HASH Turing.NTimeDiag.QyKit.bAbJ priv type=2421620050 value=1123444588
+HASH Turing.NTimeDiag.QyKit.bAbJ._proof_1 priv type=3771154571 value=2475085114
+HASH Turing.NTimeDiag.QyKit.bAbJ._proof_2 priv type=3241428384 value=2093223811
+HASH Turing.NTimeDiag.QyKit.bAbJ._proof_3 priv type=4219978522 value=4091525411
+HASH Turing.NTimeDiag.QyKit.bAbJ._proof_4 priv type=1095790133 value=346959237
+HASH Turing.NTimeDiag.QyKit.bAbJ_ne priv type=589344982 value=3733397142
+HASH Turing.NTimeDiag.QyKit.bAbJ_ne._proof_1_1 priv type=2586863197 value=2753946752
+HASH Turing.NTimeDiag.QyKit.bAbK priv type=2421620050 value=3926490306
+HASH Turing.NTimeDiag.QyKit.bAbK._proof_1 priv type=1984612905 value=1639856801
+HASH Turing.NTimeDiag.QyKit.bAbK._proof_2 priv type=2284883114 value=733049294
+HASH Turing.NTimeDiag.QyKit.bAbK._proof_3 priv type=1155260868 value=1911891039
+HASH Turing.NTimeDiag.QyKit.bAbK._proof_4 priv type=712473289 value=2423411111
+HASH Turing.NTimeDiag.QyKit.bAbK_ne priv type=3843119032 value=572279673
+HASH Turing.NTimeDiag.QyKit.bAbK_ne._proof_1_1 priv type=2689493518 value=854262715
+HASH Turing.NTimeDiag.QyKit.bCb priv type=203527992 value=3189040957
+HASH Turing.NTimeDiag.QyKit.bCb._proof_1 priv type=3267944014 value=2437393739
+HASH Turing.NTimeDiag.QyKit.bCb._proof_2 priv type=3707658102 value=1004731970
+HASH Turing.NTimeDiag.QyKit.bCb._proof_3 priv type=2748830223 value=411076848
+HASH Turing.NTimeDiag.QyKit.bCb._proof_4 priv type=211631454 value=2314839068
+HASH Turing.NTimeDiag.QyKit.bCf priv type=802695263 value=3276558202
+HASH Turing.NTimeDiag.QyKit.bCf._proof_1 priv type=532833826 value=1201308282
+HASH Turing.NTimeDiag.QyKit.bCf._proof_2 priv type=3499882286 value=2916895996
+HASH Turing.NTimeDiag.QyKit.bCf._proof_3 priv type=2595527317 value=2539917647
+HASH Turing.NTimeDiag.QyKit.bCf._proof_4 priv type=3983362332 value=543027226
+HASH Turing.NTimeDiag.QyKit.bCf_ne priv type=488628391 value=392357479
+HASH Turing.NTimeDiag.QyKit.bCf_ne._proof_1_1 priv type=1296926625 value=1867274914
+HASH Turing.NTimeDiag.QyKit.bCg priv type=56193724 value=3244010094
+HASH Turing.NTimeDiag.QyKit.bCg._proof_1 priv type=1220401668 value=1676873351
+HASH Turing.NTimeDiag.QyKit.bCg._proof_2 priv type=3828059183 value=631074313
+HASH Turing.NTimeDiag.QyKit.bCg._proof_3 priv type=1874773105 value=1704148595
+HASH Turing.NTimeDiag.QyKit.bCg._proof_4 priv type=774683511 value=2788404319
+HASH Turing.NTimeDiag.QyKit.bCg_ne priv type=3902885861 value=3570287696
+HASH Turing.NTimeDiag.QyKit.bCg_ne._proof_1_1 priv type=2990903003 value=2288572095
+HASH Turing.NTimeDiag.QyKit.bCl priv type=2082794365 value=2567431204
+HASH Turing.NTimeDiag.QyKit.bCl._proof_1 priv type=893794022 value=3870692838
+HASH Turing.NTimeDiag.QyKit.bCl._proof_2 priv type=515641999 value=2385701296
+HASH Turing.NTimeDiag.QyKit.bCl._proof_3 priv type=1727384394 value=496331745
+HASH Turing.NTimeDiag.QyKit.bCl._proof_4 priv type=3571823870 value=3586912071
+HASH Turing.NTimeDiag.QyKit.bCl_ne priv type=10132708 value=4237986138
+HASH Turing.NTimeDiag.QyKit.bCl_ne._proof_1_1 priv type=3570206595 value=1570548282
+HASH Turing.NTimeDiag.QyKit.bClk priv type=3944154648 value=4062810647
+HASH Turing.NTimeDiag.QyKit.bClk._proof_1 priv type=1738260050 value=470749576
+HASH Turing.NTimeDiag.QyKit.bClk._proof_2 priv type=4137269023 value=3467527414
+HASH Turing.NTimeDiag.QyKit.bClk._proof_3 priv type=2571660376 value=3378651574
+HASH Turing.NTimeDiag.QyKit.bClk._proof_4 priv type=2429361208 value=1941346072
+HASH Turing.NTimeDiag.QyKit.bClk_castSucc priv type=792624780 value=2176215615
+HASH Turing.NTimeDiag.QyKit.bClk_last priv type=2178213850 value=3196554961
+HASH Turing.NTimeDiag.QyKit.bPb priv type=767127619 value=1441447940
+HASH Turing.NTimeDiag.QyKit.bPb._proof_1 priv type=3680195966 value=348946747
+HASH Turing.NTimeDiag.QyKit.bPb._proof_2 priv type=1381686171 value=3080452787
+HASH Turing.NTimeDiag.QyKit.bPb._proof_3 priv type=151424010 value=2519193926
+HASH Turing.NTimeDiag.QyKit.bPb._proof_4 priv type=1179037403 value=2884599687
+HASH Turing.NTimeDiag.QyKit.bPb_ne priv type=3791781178 value=2538044882
+HASH Turing.NTimeDiag.QyKit.bPb_ne._proof_1_1 priv type=2427582504 value=679212819
+HASH Turing.NTimeDiag.QyKit.bPr priv type=2217731529 value=3963661322
+HASH Turing.NTimeDiag.QyKit.bPr._proof_1 priv type=3501736016 value=1426071729
+HASH Turing.NTimeDiag.QyKit.bPr._proof_2 priv type=3894457200 value=2611126608
+HASH Turing.NTimeDiag.QyKit.bPr._proof_3 priv type=973871831 value=2196702334
+HASH Turing.NTimeDiag.QyKit.bPr._proof_4 priv type=3773203020 value=643760401
+HASH Turing.NTimeDiag.QyKit.bPr_ne priv type=867312638 value=1304197274
+HASH Turing.NTimeDiag.QyKit.bPr_ne._proof_1_1 priv type=4262915923 value=360247889
+HASH Turing.NTimeDiag.QyKit.bPu priv type=2821139787 value=4127335484
+HASH Turing.NTimeDiag.QyKit.bPu._proof_1 priv type=2163990648 value=2657753424
+HASH Turing.NTimeDiag.QyKit.bPu._proof_2 priv type=4243725446 value=2587826774
+HASH Turing.NTimeDiag.QyKit.bPu._proof_3 priv type=382702204 value=2905746395
+HASH Turing.NTimeDiag.QyKit.bPu._proof_4 priv type=3951810389 value=4091742605
+HASH Turing.NTimeDiag.QyKit.bPu_ne priv type=1146232099 value=2117363475
+HASH Turing.NTimeDiag.QyKit.bPu_ne._proof_1_1 priv type=2626122871 value=330680070
+HASH Turing.NTimeDiag.QyKit.casesOn priv type=2124865099 value=3473168975
+HASH Turing.NTimeDiag.QyKit.cb priv type=1061616880 value=2139134434
+HASH Turing.NTimeDiag.QyKit.cbA priv type=314615179 value=293688136
+HASH Turing.NTimeDiag.QyKit.cbE priv type=3416625199 value=1595417404
+HASH Turing.NTimeDiag.QyKit.cbK priv type=273078473 value=1210502668
+HASH Turing.NTimeDiag.QyKit.cbS priv type=2379275159 value=852907691
+HASH Turing.NTimeDiag.QyKit.cbX priv type=3416625199 value=2095803488
+HASH Turing.NTimeDiag.QyKit.cf priv type=1061616880 value=3118039571
+HASH Turing.NTimeDiag.QyKit.cfA priv type=314615179 value=2934115112
+HASH Turing.NTimeDiag.QyKit.cfE priv type=521773838 value=2987931711
+HASH Turing.NTimeDiag.QyKit.cfK priv type=2233916529 value=3745180306
+HASH Turing.NTimeDiag.QyKit.cfS priv type=847336307 value=214548198
+HASH Turing.NTimeDiag.QyKit.cfX priv type=521773838 value=1236427603
+HASH Turing.NTimeDiag.QyKit.cfc priv type=314615179 value=1838868492
+HASH Turing.NTimeDiag.QyKit.cg priv type=1061616880 value=1253646745
+HASH Turing.NTimeDiag.QyKit.cgA priv type=314615179 value=3158486570
+HASH Turing.NTimeDiag.QyKit.cgE priv type=1889218739 value=2913630462
+HASH Turing.NTimeDiag.QyKit.cgK priv type=2244207506 value=1476067773
+HASH Turing.NTimeDiag.QyKit.cgS priv type=3157384005 value=2774726874
+HASH Turing.NTimeDiag.QyKit.cgX priv type=1889218739 value=3068496579
+HASH Turing.NTimeDiag.QyKit.cl priv type=1061616880 value=3164720857
+HASH Turing.NTimeDiag.QyKit.clA priv type=314615179 value=492439682
+HASH Turing.NTimeDiag.QyKit.clE priv type=3576554426 value=2726507961
+HASH Turing.NTimeDiag.QyKit.clK priv type=2972387097 value=2893226709
+HASH Turing.NTimeDiag.QyKit.clS priv type=1447014754 value=3765018504
+HASH Turing.NTimeDiag.QyKit.clX priv type=3576554426 value=3167412509
+HASH Turing.NTimeDiag.QyKit.ctorIdx priv type=314615179 value=2724888375
+HASH Turing.NTimeDiag.QyKit.fsh priv type=386006623 value=3073767958
+HASH Turing.NTimeDiag.QyKit.hH priv type=2429744186 value=2295285704
+HASH Turing.NTimeDiag.QyKit.hft priv type=591747356 value=494303759
+HASH Turing.NTimeDiag.QyKit.inj priv type=4068114638 value=3393868454
+HASH Turing.NTimeDiag.QyKit.le_K priv type=4134853310 value=1649125257
+HASH Turing.NTimeDiag.QyKit.le_K._proof_1_1 priv type=3878481488 value=2359155863
+HASH Turing.NTimeDiag.QyKit.m priv type=2484411703 value=4130748997
+HASH Turing.NTimeDiag.QyKit.mk priv type=880575545 value=-
+HASH Turing.NTimeDiag.QyKit.mk._flat_ctor priv type=880575545 value=4191124494
+HASH Turing.NTimeDiag.QyKit.mk.inj priv type=1471302421 value=3576322444
+HASH Turing.NTimeDiag.QyKit.mk.injEq priv type=1796308972 value=4137982702
+HASH Turing.NTimeDiag.QyKit.mk.noConfusion priv type=2232889436 value=4041550321
+HASH Turing.NTimeDiag.QyKit.mk.sizeOf_spec priv type=3327565630 value=2774073729
+HASH Turing.NTimeDiag.QyKit.noConfusion priv type=3986420628 value=3464615292
+HASH Turing.NTimeDiag.QyKit.noConfusionType priv type=2915643450 value=1039924273
+HASH Turing.NTimeDiag.QyKit.pb priv type=1061616880 value=2083388428
+HASH Turing.NTimeDiag.QyKit.pbA priv type=314615179 value=484112929
+HASH Turing.NTimeDiag.QyKit.pbE priv type=321330549 value=606169006
+HASH Turing.NTimeDiag.QyKit.pbK priv type=28482857 value=3662466297
+HASH Turing.NTimeDiag.QyKit.pbS priv type=1536997646 value=3404107119
+HASH Turing.NTimeDiag.QyKit.pbX priv type=321330549 value=1223934419
+HASH Turing.NTimeDiag.QyKit.pr priv type=1061616880 value=2082754903
+HASH Turing.NTimeDiag.QyKit.prA priv type=314615179 value=2559075746
+HASH Turing.NTimeDiag.QyKit.prE priv type=559677754 value=1315872116
+HASH Turing.NTimeDiag.QyKit.prK priv type=1181564567 value=4211688728
+HASH Turing.NTimeDiag.QyKit.prS priv type=2636562918 value=288348345
+HASH Turing.NTimeDiag.QyKit.prX priv type=559677754 value=66858450
+HASH Turing.NTimeDiag.QyKit.pu priv type=1061616880 value=420972
+HASH Turing.NTimeDiag.QyKit.puA priv type=314615179 value=1712992456
+HASH Turing.NTimeDiag.QyKit.puE priv type=425472845 value=2473127680
+HASH Turing.NTimeDiag.QyKit.puK priv type=4019727459 value=809392000
+HASH Turing.NTimeDiag.QyKit.puS priv type=30210494 value=373116028
+HASH Turing.NTimeDiag.QyKit.puX priv type=425472845 value=1548428552
+HASH Turing.NTimeDiag.QyKit.rC priv type=314615179 value=3099787293
+HASH Turing.NTimeDiag.QyKit.rE priv type=3308238207 value=1938920429
+HASH Turing.NTimeDiag.QyKit.rS priv type=339548966 value=3094448380
+HASH Turing.NTimeDiag.QyKit.rX priv type=3308238207 value=974724823
+HASH Turing.NTimeDiag.QyKit.rec priv type=2325329761 value=-
+HASH Turing.NTimeDiag.QyKit.recOn priv type=2124865099 value=2029205070
+HASH Turing.NTimeDiag.QyKit.tape_cases priv type=4213705323 value=4089283709
+HASH Turing.NTimeDiag.QyKit.tmo priv type=386006623 value=3716814066
+HASH Turing.NTimeDiag.QyKit.tp priv type=770260767 value=1730675035
+HASH Turing.NTimeDiag.QyKit.tp_inj priv type=1449972084 value=3791482440
+HASH Turing.NTimeDiag.QyKit.tp_ne priv type=2390823860 value=575426113
+HASH Turing.NTimeDiag.QyKit.tp_val priv type=3003247541 value=2882073653
+HASH Turing.NTimeDiag.QyLK priv type=3931117990 value=-
+HASH Turing.NTimeDiag.QyLK._sizeOf_1 priv type=3239492996 value=38140635
+HASH Turing.NTimeDiag.QyLK._sizeOf_inst priv type=4036840672 value=680048712
+HASH Turing.NTimeDiag.QyLK.ab priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.ab.elim priv type=81958385 value=2387961143
+HASH Turing.NTimeDiag.QyLK.ab.sizeOf_spec priv type=37628002 value=4023243988
+HASH Turing.NTimeDiag.QyLK.anc priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.anc.elim priv type=1010217284 value=2395194020
+HASH Turing.NTimeDiag.QyLK.anc.sizeOf_spec priv type=2760516539 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c1 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c1.elim priv type=1601541701 value=3826778344
+HASH Turing.NTimeDiag.QyLK.c1.sizeOf_spec priv type=599748237 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c2 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c2.elim priv type=1738195040 value=2917861568
+HASH Turing.NTimeDiag.QyLK.c2.sizeOf_spec priv type=4232164423 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c3 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c3.elim priv type=3040484350 value=1495497732
+HASH Turing.NTimeDiag.QyLK.c3.sizeOf_spec priv type=1599068705 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c4 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c4.elim priv type=3425321749 value=3956050073
+HASH Turing.NTimeDiag.QyLK.c4.sizeOf_spec priv type=221708744 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c5 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c5.elim priv type=2582253137 value=1152653542
+HASH Turing.NTimeDiag.QyLK.c5.sizeOf_spec priv type=3348173426 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c6 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c6.elim priv type=2990757802 value=4219595386
+HASH Turing.NTimeDiag.QyLK.c6.sizeOf_spec priv type=2980900877 value=4023243988
+HASH Turing.NTimeDiag.QyLK.c7 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.c7.elim priv type=2077128086 value=3005083931
+HASH Turing.NTimeDiag.QyLK.c7.sizeOf_spec priv type=1515304004 value=4023243988
+HASH Turing.NTimeDiag.QyLK.casesOn priv type=2189365264 value=2103220702
+HASH Turing.NTimeDiag.QyLK.clk priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.clk.elim priv type=3955708292 value=2754826732
+HASH Turing.NTimeDiag.QyLK.clk.sizeOf_spec priv type=1468804057 value=4023243988
+HASH Turing.NTimeDiag.QyLK.clrJ priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.clrJ.elim priv type=2460959410 value=592131993
+HASH Turing.NTimeDiag.QyLK.clrJ.sizeOf_spec priv type=3346451554 value=4023243988
+HASH Turing.NTimeDiag.QyLK.clrK priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.clrK.elim priv type=4037278928 value=3144172406
+HASH Turing.NTimeDiag.QyLK.clrK.sizeOf_spec priv type=4012763811 value=4023243988
+HASH Turing.NTimeDiag.QyLK.ctorElim priv type=3492261185 value=1975461650
+HASH Turing.NTimeDiag.QyLK.ctorElimType priv type=2068308777 value=4097651218
+HASH Turing.NTimeDiag.QyLK.ctorIdx priv type=3239492996 value=723272904
+HASH Turing.NTimeDiag.QyLK.enumList priv type=233563001 value=2872630621
+HASH Turing.NTimeDiag.QyLK.enumList_getElem?_ctorIdx_eq priv type=3131835618 value=2034298899
+HASH Turing.NTimeDiag.QyLK.enumList_nodup priv type=4102201141 value=1646164968
+HASH Turing.NTimeDiag.QyLK.escI priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.escI.elim priv type=2991560310 value=2821988656
+HASH Turing.NTimeDiag.QyLK.escI.sizeOf_spec priv type=2232416143 value=4023243988
+HASH Turing.NTimeDiag.QyLK.escTO priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.escTO.elim priv type=3154324687 value=781276936
+HASH Turing.NTimeDiag.QyLK.escTO.sizeOf_spec priv type=907679651 value=4023243988
+HASH Turing.NTimeDiag.QyLK.escTop priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.escTop.elim priv type=2359633311 value=4046901833
+HASH Turing.NTimeDiag.QyLK.escTop.sizeOf_spec priv type=1400530784 value=4023243988
+HASH Turing.NTimeDiag.QyLK.incJ priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.incJ.elim priv type=1097142784 value=600094881
+HASH Turing.NTimeDiag.QyLK.incJ.sizeOf_spec priv type=568873 value=4023243988
+HASH Turing.NTimeDiag.QyLK.incK priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.incK.elim priv type=2333890549 value=1196693592
+HASH Turing.NTimeDiag.QyLK.incK.sizeOf_spec priv type=4118563532 value=4023243988
+HASH Turing.NTimeDiag.QyLK.isEsc priv type=869164065 value=4082632703
+HASH Turing.NTimeDiag.QyLK.isEsc.eq_1 priv type=1505242353 value=1694896647
+HASH Turing.NTimeDiag.QyLK.isEsc.eq_2 priv type=3743815310 value=4119148052
+HASH Turing.NTimeDiag.QyLK.isEsc.eq_3 priv type=3176349540 value=3606698854
+HASH Turing.NTimeDiag.QyLK.isEsc.eq_4 priv type=3982893202 value=3106227092
+HASH Turing.NTimeDiag.QyLK.isEsc.match_1 priv type=913876244 value=2928996780
+HASH Turing.NTimeDiag.QyLK.isEsc.match_1.eq_1 priv type=2079761087 value=2443325958
+HASH Turing.NTimeDiag.QyLK.isEsc.match_1.eq_2 priv type=547593643 value=2858810465
+HASH Turing.NTimeDiag.QyLK.isEsc.match_1.eq_3 priv type=2652903378 value=1353516541
+HASH Turing.NTimeDiag.QyLK.isEsc.match_1.eq_4 priv type=3398976955 value=1143317785
+HASH Turing.NTimeDiag.QyLK.isEsc.match_1.splitter priv type=1294997796 value=2189009079
+HASH Turing.NTimeDiag.QyLK.noConfusion priv type=1902900418 value=3898690901
+HASH Turing.NTimeDiag.QyLK.noConfusionType priv type=981311102 value=558802947
+HASH Turing.NTimeDiag.QyLK.ofNat priv type=3174389813 value=3078956508
+HASH Turing.NTimeDiag.QyLK.ofNat_ctorIdx priv type=1874710400 value=2353552720
+HASH Turing.NTimeDiag.QyLK.pu priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.pu.elim priv type=2847376818 value=4284945224
+HASH Turing.NTimeDiag.QyLK.pu.sizeOf_spec priv type=2586811059 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r1 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r1.elim priv type=2420748828 value=2968439919
+HASH Turing.NTimeDiag.QyLK.r1.sizeOf_spec priv type=888958309 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r10 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r10.elim priv type=4252722181 value=2992780008
+HASH Turing.NTimeDiag.QyLK.r10.sizeOf_spec priv type=3086515065 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r11 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r11.elim priv type=4016129490 value=34670867
+HASH Turing.NTimeDiag.QyLK.r11.sizeOf_spec priv type=1260922585 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r13 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r13.elim priv type=3937108243 value=920770139
+HASH Turing.NTimeDiag.QyLK.r13.sizeOf_spec priv type=3132056347 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r14 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r14.elim priv type=1341467765 value=2394648282
+HASH Turing.NTimeDiag.QyLK.r14.sizeOf_spec priv type=1847088353 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r15 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r15.elim priv type=4201694277 value=735656825
+HASH Turing.NTimeDiag.QyLK.r15.sizeOf_spec priv type=2762008225 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r16 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r16.elim priv type=825796828 value=652364357
+HASH Turing.NTimeDiag.QyLK.r16.sizeOf_spec priv type=3989752993 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r3 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r3.elim priv type=3140308407 value=682976290
+HASH Turing.NTimeDiag.QyLK.r3.sizeOf_spec priv type=486427169 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r4 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r4.elim priv type=460074626 value=1323254365
+HASH Turing.NTimeDiag.QyLK.r4.sizeOf_spec priv type=1354891202 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r5 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r5.elim priv type=1069030171 value=1041868874
+HASH Turing.NTimeDiag.QyLK.r5.sizeOf_spec priv type=434805369 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r6 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r6.elim priv type=1118803719 value=218163503
+HASH Turing.NTimeDiag.QyLK.r6.sizeOf_spec priv type=3492054659 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r7 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r7.elim priv type=2222047073 value=347147724
+HASH Turing.NTimeDiag.QyLK.r7.sizeOf_spec priv type=4247187903 value=4023243988
+HASH Turing.NTimeDiag.QyLK.r8 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.r8.elim priv type=4241855565 value=924910204
+HASH Turing.NTimeDiag.QyLK.r8.sizeOf_spec priv type=517297849 value=4023243988
+HASH Turing.NTimeDiag.QyLK.rec priv type=1195516135 value=-
+HASH Turing.NTimeDiag.QyLK.recOn priv type=2189365264 value=2103220702
+HASH Turing.NTimeDiag.QyLK.toCtorIdx priv type=3239492996 value=2963459422
+HASH Turing.NTimeDiag.QyLK.u1 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.u1.elim priv type=1184725188 value=1901048063
+HASH Turing.NTimeDiag.QyLK.u1.sizeOf_spec priv type=1390148663 value=4023243988
+HASH Turing.NTimeDiag.QyLK.u2 priv type=549368095 value=-
+HASH Turing.NTimeDiag.QyLK.u2.elim priv type=2025158714 value=267801943
+HASH Turing.NTimeDiag.QyLK.u2.sizeOf_spec priv type=1826516953 value=4023243988
+HASH Turing.NTimeDiag.QyLPh priv type=2019743226 value=1828076524
+HASH Turing.NTimeDiag.QyLPh.match_1 priv type=1050267640 value=3916220166
+HASH Turing.NTimeDiag.QyMK priv type=3931117990 value=-
+HASH Turing.NTimeDiag.QyMK._sizeOf_1 priv type=4242356252 value=3799635961
+HASH Turing.NTimeDiag.QyMK._sizeOf_inst priv type=3475079886 value=419377757
+HASH Turing.NTimeDiag.QyMK.casesOn priv type=849333118 value=1425021906
+HASH Turing.NTimeDiag.QyMK.ctorElim priv type=316946544 value=920340610
+HASH Turing.NTimeDiag.QyMK.ctorElimType priv type=3025764249 value=1720718144
+HASH Turing.NTimeDiag.QyMK.ctorIdx priv type=4242356252 value=3520288382
+HASH Turing.NTimeDiag.QyMK.enumList priv type=1068629855 value=3677927398
+HASH Turing.NTimeDiag.QyMK.enumList_getElem?_ctorIdx_eq priv type=593747681 value=3430152121
+HASH Turing.NTimeDiag.QyMK.enumList_nodup priv type=1794871612 value=988735569
+HASH Turing.NTimeDiag.QyMK.m0 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m0.elim priv type=739349441 value=3500821577
+HASH Turing.NTimeDiag.QyMK.m0.sizeOf_spec priv type=482741459 value=4023243988
+HASH Turing.NTimeDiag.QyMK.m1 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m1.elim priv type=2105261097 value=4044249760
+HASH Turing.NTimeDiag.QyMK.m1.sizeOf_spec priv type=4002442796 value=4023243988
+HASH Turing.NTimeDiag.QyMK.m2 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m2.elim priv type=4289932479 value=3616743875
+HASH Turing.NTimeDiag.QyMK.m2.sizeOf_spec priv type=3829247474 value=4023243988
+HASH Turing.NTimeDiag.QyMK.m3 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m3.elim priv type=68243662 value=3240360508
+HASH Turing.NTimeDiag.QyMK.m3.sizeOf_spec priv type=2684647892 value=4023243988
+HASH Turing.NTimeDiag.QyMK.m4 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m4.elim priv type=3308608730 value=2992424173
+HASH Turing.NTimeDiag.QyMK.m4.sizeOf_spec priv type=2980756673 value=4023243988
+HASH Turing.NTimeDiag.QyMK.m5 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m5.elim priv type=2830905702 value=1963638297
+HASH Turing.NTimeDiag.QyMK.m5.sizeOf_spec priv type=3683686618 value=4023243988
+HASH Turing.NTimeDiag.QyMK.m6 priv type=2360044350 value=-
+HASH Turing.NTimeDiag.QyMK.m6.elim priv type=3211830366 value=2195878792
+HASH Turing.NTimeDiag.QyMK.m6.sizeOf_spec priv type=801857289 value=4023243988
+HASH Turing.NTimeDiag.QyMK.noConfusion priv type=706860381 value=3601695602
+HASH Turing.NTimeDiag.QyMK.noConfusionType priv type=2715431385 value=634775234
+HASH Turing.NTimeDiag.QyMK.ofNat priv type=1673675062 value=45194539
+HASH Turing.NTimeDiag.QyMK.ofNat_ctorIdx priv type=2992456684 value=3631131556
+HASH Turing.NTimeDiag.QyMK.rec priv type=612922415 value=-
+HASH Turing.NTimeDiag.QyMK.recOn priv type=849333118 value=1425021906
+HASH Turing.NTimeDiag.QyMK.toCtorIdx priv type=4242356252 value=417751235
+HASH Turing.NTimeDiag.QyMPh priv type=1221402590 value=1907459897
+HASH Turing.NTimeDiag.QyMPh.match_1 priv type=305576487 value=683278481
+HASH Turing.NTimeDiag.QyMain priv type=3931117990 value=-
+HASH Turing.NTimeDiag.QyMain._sizeOf_1 priv type=2961425906 value=4241039705
+HASH Turing.NTimeDiag.QyMain._sizeOf_inst priv type=1870817913 value=3654921087
+HASH Turing.NTimeDiag.QyMain.casesOn priv type=1380299307 value=3927226911
+HASH Turing.NTimeDiag.QyMain.ctorElim priv type=2844908611 value=1759919266
+HASH Turing.NTimeDiag.QyMain.ctorElimType priv type=1450141793 value=1171731064
+HASH Turing.NTimeDiag.QyMain.ctorIdx priv type=2961425906 value=1544805403
+HASH Turing.NTimeDiag.QyMain.enumList priv type=975475680 value=1962374284
+HASH Turing.NTimeDiag.QyMain.enumList_getElem?_ctorIdx_eq priv type=2623911271 value=3093355377
+HASH Turing.NTimeDiag.QyMain.enumList_nodup priv type=1654380027 value=1129245339
+HASH Turing.NTimeDiag.QyMain.halt priv type=2747001056 value=-
+HASH Turing.NTimeDiag.QyMain.halt.elim priv type=2992873416 value=438041488
+HASH Turing.NTimeDiag.QyMain.halt.sizeOf_spec priv type=371624949 value=4023243988
+HASH Turing.NTimeDiag.QyMain.loc priv type=2747001056 value=-
+HASH Turing.NTimeDiag.QyMain.loc.elim priv type=1332360154 value=4124499224
+HASH Turing.NTimeDiag.QyMain.loc.sizeOf_spec priv type=551865839 value=4023243988
+HASH Turing.NTimeDiag.QyMain.mid priv type=2747001056 value=-
+HASH Turing.NTimeDiag.QyMain.mid.elim priv type=1106512219 value=1504136463
+HASH Turing.NTimeDiag.QyMain.mid.sizeOf_spec priv type=1924020517 value=4023243988
+HASH Turing.NTimeDiag.QyMain.noConfusion priv type=1139802455 value=3446260372
+HASH Turing.NTimeDiag.QyMain.noConfusionType priv type=1992708958 value=2477228544
+HASH Turing.NTimeDiag.QyMain.ofNat priv type=4229507483 value=2502249216
+HASH Turing.NTimeDiag.QyMain.ofNat_ctorIdx priv type=3797137885 value=1494442765
+HASH Turing.NTimeDiag.QyMain.rec priv type=780340262 value=-
+HASH Turing.NTimeDiag.QyMain.recOn priv type=1380299307 value=3927226911
+HASH Turing.NTimeDiag.QyMain.setup priv type=2747001056 value=-
+HASH Turing.NTimeDiag.QyMain.setup.elim priv type=1104515844 value=2031910285
+HASH Turing.NTimeDiag.QyMain.setup.sizeOf_spec priv type=2987132656 value=4023243988
+HASH Turing.NTimeDiag.QyMain.toCtorIdx priv type=2961425906 value=2441701735
+HASH Turing.NTimeDiag.QyMain.top priv type=2747001056 value=-
+HASH Turing.NTimeDiag.QyMain.top.elim priv type=1575968192 value=1222818731
+HASH Turing.NTimeDiag.QyMain.top.sizeOf_spec priv type=3888823240 value=4023243988
+HASH Turing.NTimeDiag.QyMainPh priv type=835277604 value=2529032195
+HASH Turing.NTimeDiag.QyMainPh.match_1 priv type=1973457741 value=3275158059
+HASH Turing.NTimeDiag.QySK priv type=3931117990 value=-
+HASH Turing.NTimeDiag.QySK._sizeOf_1 priv type=3468782134 value=368185167
+HASH Turing.NTimeDiag.QySK._sizeOf_inst priv type=227356395 value=1330580892
+HASH Turing.NTimeDiag.QySK.casesOn priv type=2396204814 value=2323596664
+HASH Turing.NTimeDiag.QySK.ctorElim priv type=2682621107 value=3366275766
+HASH Turing.NTimeDiag.QySK.ctorElimType priv type=2960300983 value=1723992084
+HASH Turing.NTimeDiag.QySK.ctorIdx priv type=3468782134 value=2957765477
+HASH Turing.NTimeDiag.QySK.enumList priv type=2980360978 value=1496060066
+HASH Turing.NTimeDiag.QySK.enumList_getElem?_ctorIdx_eq priv type=3110482065 value=628756014
+HASH Turing.NTimeDiag.QySK.enumList_nodup priv type=1816495948 value=1374029635
+HASH Turing.NTimeDiag.QySK.noConfusion priv type=1648495237 value=2448738722
+HASH Turing.NTimeDiag.QySK.noConfusionType priv type=2196629763 value=1370128725
+HASH Turing.NTimeDiag.QySK.ofNat priv type=350137397 value=3795640472
+HASH Turing.NTimeDiag.QySK.ofNat_ctorIdx priv type=466719774 value=4113865233
+HASH Turing.NTimeDiag.QySK.rec priv type=2826430887 value=-
+HASH Turing.NTimeDiag.QySK.recOn priv type=2396204814 value=2323596664
+HASH Turing.NTimeDiag.QySK.s1 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s1.elim priv type=109807195 value=1518654121
+HASH Turing.NTimeDiag.QySK.s1.sizeOf_spec priv type=526203182 value=4023243988
+HASH Turing.NTimeDiag.QySK.s10 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s10.elim priv type=996315450 value=1392982473
+HASH Turing.NTimeDiag.QySK.s10.sizeOf_spec priv type=3269625869 value=4023243988
+HASH Turing.NTimeDiag.QySK.s2 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s2.elim priv type=2194450808 value=4284492584
+HASH Turing.NTimeDiag.QySK.s2.sizeOf_spec priv type=1770183449 value=4023243988
+HASH Turing.NTimeDiag.QySK.s3 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s3.elim priv type=2115685857 value=3988584297
+HASH Turing.NTimeDiag.QySK.s3.sizeOf_spec priv type=2477576042 value=4023243988
+HASH Turing.NTimeDiag.QySK.s4 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s4.elim priv type=3170922495 value=2029299006
+HASH Turing.NTimeDiag.QySK.s4.sizeOf_spec priv type=1603972239 value=4023243988
+HASH Turing.NTimeDiag.QySK.s5 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s5.elim priv type=2959987569 value=3918586540
+HASH Turing.NTimeDiag.QySK.s5.sizeOf_spec priv type=1884939115 value=4023243988
+HASH Turing.NTimeDiag.QySK.s6 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s6.elim priv type=3953930722 value=2984724854
+HASH Turing.NTimeDiag.QySK.s6.sizeOf_spec priv type=2614500155 value=4023243988
+HASH Turing.NTimeDiag.QySK.s7 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s7.elim priv type=2592751410 value=3986876226
+HASH Turing.NTimeDiag.QySK.s7.sizeOf_spec priv type=22546326 value=4023243988
+HASH Turing.NTimeDiag.QySK.s8 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s8.elim priv type=44113256 value=1119523307
+HASH Turing.NTimeDiag.QySK.s8.sizeOf_spec priv type=1118863503 value=4023243988
+HASH Turing.NTimeDiag.QySK.s9 priv type=2336802769 value=-
+HASH Turing.NTimeDiag.QySK.s9.elim priv type=3082418051 value=2117146215
+HASH Turing.NTimeDiag.QySK.s9.sizeOf_spec priv type=155602664 value=4023243988
+HASH Turing.NTimeDiag.QySK.toCtorIdx priv type=3468782134 value=3825751659
+HASH Turing.NTimeDiag.QySPh priv type=1458238346 value=2549536344
+HASH Turing.NTimeDiag.QySPh.match_1 priv type=3181470698 value=3962637979
+HASH Turing.NTimeDiag.QySpec priv type=205299769 value=3897603298
+HASH Turing.NTimeDiag.QySpec.mono priv type=2419358051 value=849873558
+HASH Turing.NTimeDiag.QyTK priv type=3931117990 value=-
+HASH Turing.NTimeDiag.QyTK._sizeOf_1 priv type=1230606954 value=1259518205
+HASH Turing.NTimeDiag.QyTK._sizeOf_inst priv type=3200261580 value=3728174287
+HASH Turing.NTimeDiag.QyTK.casesOn priv type=2222377460 value=2327343857
+HASH Turing.NTimeDiag.QyTK.ctorElim priv type=4150414532 value=2276615305
+HASH Turing.NTimeDiag.QyTK.ctorElimType priv type=49793164 value=3346841731
+HASH Turing.NTimeDiag.QyTK.ctorIdx priv type=1230606954 value=995672385
+HASH Turing.NTimeDiag.QyTK.enumList priv type=1813781085 value=1865333257
+HASH Turing.NTimeDiag.QyTK.enumList_getElem?_ctorIdx_eq priv type=2674925355 value=1929510691
+HASH Turing.NTimeDiag.QyTK.enumList_nodup priv type=754075018 value=3296145097
+HASH Turing.NTimeDiag.QyTK.noConfusion priv type=58070186 value=4095454277
+HASH Turing.NTimeDiag.QyTK.noConfusionType priv type=4046892832 value=960313854
+HASH Turing.NTimeDiag.QyTK.ofNat priv type=1566534025 value=827652010
+HASH Turing.NTimeDiag.QyTK.ofNat_ctorIdx priv type=4104742010 value=1854546696
+HASH Turing.NTimeDiag.QyTK.rec priv type=656918433 value=-
+HASH Turing.NTimeDiag.QyTK.recOn priv type=2222377460 value=2327343857
+HASH Turing.NTimeDiag.QyTK.t1 priv type=3885672267 value=-
+HASH Turing.NTimeDiag.QyTK.t1.elim priv type=811006518 value=3101832112
+HASH Turing.NTimeDiag.QyTK.t1.sizeOf_spec priv type=866220518 value=4023243988
+HASH Turing.NTimeDiag.QyTK.t2 priv type=3885672267 value=-
+HASH Turing.NTimeDiag.QyTK.t2.elim priv type=43913444 value=1374914988
+HASH Turing.NTimeDiag.QyTK.t2.sizeOf_spec priv type=1911801342 value=4023243988
+HASH Turing.NTimeDiag.QyTK.t3 priv type=3885672267 value=-
+HASH Turing.NTimeDiag.QyTK.t3.elim priv type=2832675525 value=2092658812
+HASH Turing.NTimeDiag.QyTK.t3.sizeOf_spec priv type=3834861311 value=4023243988
+HASH Turing.NTimeDiag.QyTK.t4 priv type=3885672267 value=-
+HASH Turing.NTimeDiag.QyTK.t4.elim priv type=3830460557 value=3515721363
+HASH Turing.NTimeDiag.QyTK.t4.sizeOf_spec priv type=2477591058 value=4023243988
+HASH Turing.NTimeDiag.QyTK.t5 priv type=3885672267 value=-
+HASH Turing.NTimeDiag.QyTK.t5.elim priv type=215022419 value=1022027872
+HASH Turing.NTimeDiag.QyTK.t5.sizeOf_spec priv type=435499689 value=4023243988
+HASH Turing.NTimeDiag.QyTK.t6 priv type=3885672267 value=-
+HASH Turing.NTimeDiag.QyTK.t6.elim priv type=1376391647 value=3888790553
+HASH Turing.NTimeDiag.QyTK.t6.sizeOf_spec priv type=3230742227 value=4023243988
+HASH Turing.NTimeDiag.QyTK.toCtorIdx priv type=1230606954 value=117324263
+HASH Turing.NTimeDiag.QyTPh priv type=1851288639 value=3390018469
+HASH Turing.NTimeDiag.QyTPh.match_1 priv type=2598945351 value=3017275877
+HASH Turing.NTimeDiag.acceptLang_mem_NTIME pub type=3252912452 value=2413155990
+HASH Turing.NTimeDiag.budget pub type=1272646107 value=3679807410
+HASH Turing.NTimeDiag.budget_eq pub type=3193323208 value=349848307
+HASH Turing.NTimeDiag.exists_diagonalizer pub type=3242087769 value=293149901
+HASH Turing.NTimeDiag.exists_le_ladder_succ pub type=828801429 value=3629421282
+HASH Turing.NTimeDiag.exists_le_ladder_succ._proof_1_1 pub type=4261260012 value=1379218017
+HASH Turing.NTimeDiag.exists_queryTM pub type=3303891923 value=516844932
+HASH Turing.NTimeDiag.instDecidableEqQyCmp pub type=1978144113 value=1614195233
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq pub type=101419263 value=3685081829
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_1 pub type=1872911142 value=3071379515
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_10 pub type=27208415 value=740275553
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_2 pub type=4264719231 value=1407759872
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_3 pub type=242070186 value=2353997408
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_4 pub type=4292634168 value=186880062
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_5 pub type=4241564643 value=2403074701
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_6 pub type=766331992 value=209382888
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_7 pub type=3208720205 value=207768103
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_8 pub type=3791344584 value=1354611724
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_9 pub type=1912574822 value=608115480
+HASH Turing.NTimeDiag.instDecidableEqQyCmp.decEq.match_1 pub type=1291846162 value=3218086529
+HASH Turing.NTimeDiag.instDecidableEqQyEm pub type=1784815374 value=1836019762
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq pub type=63084827 value=3663209175
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_1 pub type=466411156 value=2337501065
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_10 pub type=4115479209 value=190712736
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_11 pub type=965611802 value=3236911586
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_12 pub type=6327120 value=3218453509
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_13 pub type=3330639942 value=3355370112
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_14 pub type=79909367 value=2681931596
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_15 pub type=2600752820 value=2527190933
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_16 pub type=4228964311 value=3781569729
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_17 pub type=4163133575 value=1055457589
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_18 pub type=2142346192 value=3350064742
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_19 pub type=866184392 value=824813763
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_2 pub type=3222833062 value=3661136948
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_20 pub type=2691412791 value=3431678050
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_21 pub type=1071452060 value=1635391334
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_22 pub type=781379887 value=2163019946
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_23 pub type=2805053684 value=716886654
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_24 pub type=267601725 value=1444021710
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_25 pub type=1262277287 value=1290011761
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_26 pub type=1181201161 value=4232843037
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_27 pub type=3291585190 value=3660701747
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_28 pub type=972754296 value=3938705341
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_29 pub type=564045501 value=2104953589
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_3 pub type=3496610411 value=1326986507
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_30 pub type=1938793764 value=2887077649
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_31 pub type=3020574993 value=1673188896
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_32 pub type=1394152323 value=728439671
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_33 pub type=2960147169 value=2139748986
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_34 pub type=1953248887 value=492513887
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_35 pub type=1408281458 value=2633434172
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_36 pub type=1335877144 value=623201067
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_37 pub type=1949785860 value=1591278030
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_38 pub type=1485681170 value=4272083047
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_39 pub type=646136478 value=728354567
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_4 pub type=3126386415 value=3149990613
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_40 pub type=816949178 value=2087857715
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_41 pub type=2706839189 value=2995190684
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_5 pub type=1513810198 value=1947953731
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_6 pub type=736108525 value=1841349523
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_7 pub type=762012147 value=2457894862
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_8 pub type=2173395023 value=1672928938
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_9 pub type=3551614973 value=1118575119
+HASH Turing.NTimeDiag.instDecidableEqQyEm.decEq.match_1 pub type=2174451125 value=3905572372
+HASH Turing.NTimeDiag.instDecidableEqQyLK pub type=2298959002 value=1267763198
+HASH Turing.NTimeDiag.instDecidableEqQyLK._proof_1 pub type=1932874860 value=1692821758
+HASH Turing.NTimeDiag.instDecidableEqQyLK._proof_2 pub type=2130539299 value=2950300333
+HASH Turing.NTimeDiag.instDecidableEqQyMK pub type=725146644 value=3040476898
+HASH Turing.NTimeDiag.instDecidableEqQyMK._proof_1 pub type=1217298473 value=1232369821
+HASH Turing.NTimeDiag.instDecidableEqQyMK._proof_2 pub type=3390058493 value=435826776
+HASH Turing.NTimeDiag.instDecidableEqQyMain pub type=441698195 value=3851723702
+HASH Turing.NTimeDiag.instDecidableEqQyMain._proof_1 pub type=196971585 value=3049895598
+HASH Turing.NTimeDiag.instDecidableEqQyMain._proof_2 pub type=4267900471 value=798378048
+HASH Turing.NTimeDiag.instDecidableEqQySK pub type=251445681 value=236541891
+HASH Turing.NTimeDiag.instDecidableEqQySK._proof_1 pub type=3702302909 value=3322884901
+HASH Turing.NTimeDiag.instDecidableEqQySK._proof_2 pub type=466596418 value=4008638635
+HASH Turing.NTimeDiag.instDecidableEqQyTK pub type=202900582 value=2166887896
+HASH Turing.NTimeDiag.instDecidableEqQyTK._proof_1 pub type=307255380 value=3051351312
+HASH Turing.NTimeDiag.instDecidableEqQyTK._proof_2 pub type=3797391054 value=1241014350
+HASH Turing.NTimeDiag.instFintypeQyCmp pub type=3383355931 value=526096421
+HASH Turing.NTimeDiag.instFintypeQyCmp.match_3 pub type=1169385278 value=3675280303
+HASH Turing.NTimeDiag.instFintypeQyCmp.match_5 pub type=2945900962 value=1044750019
+HASH Turing.NTimeDiag.instFintypeQyCmp.match_5.eq_1 priv type=857974033 value=2534158872
+HASH Turing.NTimeDiag.instFintypeQyCmp.match_5.eq_2 priv type=2179425396 value=968830194
+HASH Turing.NTimeDiag.instFintypeQyCmp.match_5.eq_3 priv type=3529691546 value=1484497029
+HASH Turing.NTimeDiag.instFintypeQyCmp.match_5.splitter priv type=3888285588 value=1417607292
+HASH Turing.NTimeDiag.instFintypeQyEm pub type=4281484694 value=4143391030
+HASH Turing.NTimeDiag.instFintypeQyEm.match_3 pub type=1804750065 value=2177162237
+HASH Turing.NTimeDiag.instFintypeQyEm.match_5 pub type=1965469284 value=1070397861
+HASH Turing.NTimeDiag.instFintypeQyLK pub type=3894914544 value=2465451440
+HASH Turing.NTimeDiag.instFintypeQyLK._proof_1 pub type=2752910163 value=760941541
+HASH Turing.NTimeDiag.instFintypeQyMK pub type=3879470526 value=1337291114
+HASH Turing.NTimeDiag.instFintypeQyMK._proof_1 pub type=272554554 value=2725327309
+HASH Turing.NTimeDiag.instFintypeQyMain pub type=463401705 value=410368535
+HASH Turing.NTimeDiag.instFintypeQyMain._proof_1 pub type=1321653420 value=3565544523
+HASH Turing.NTimeDiag.instFintypeQySK pub type=3155809115 value=176964911
+HASH Turing.NTimeDiag.instFintypeQySK._proof_1 pub type=1687205883 value=2072327060
+HASH Turing.NTimeDiag.instFintypeQyTK pub type=3757568700 value=3425420309
+HASH Turing.NTimeDiag.instFintypeQyTK._proof_1 pub type=52864625 value=2942725558
+HASH Turing.NTimeDiag.ladder pub type=1272646107 value=1379212792
+HASH Turing.NTimeDiag.ladder._sunfold pub type=1272646107 value=817415803
+HASH Turing.NTimeDiag.ladder._unsafe_rec pub type=1272646107 value=3756898559
+HASH Turing.NTimeDiag.ladder.match_1 pub type=413685589 value=1344119661
+HASH Turing.NTimeDiag.ladder_strictMono pub type=523860218 value=291577655
+HASH Turing.NTimeDiag.ladder_strictMono._proof_1_1 pub type=3315655141 value=2152123893
+HASH Turing.NTimeDiag.ladder_succ pub type=2214698697 value=2499629202
+HASH Turing.NTimeDiag.ladder_zero pub type=520603911 value=3203590183
+HASH Turing.NTimeDiag.le_ladder pub type=2413961602 value=1326653810
+HASH Turing.NTimeDiag.le_ladder._proof_1_1 pub type=2381628753 value=1015348814
+HASH Turing.NTimeDiag.query pub type=3566569309 value=3619753864
+HASH Turing.NTimeDiag.query.eq_1 pub type=1141662139 value=2828792
+HASH Turing.NTimeDiag.query_eq pub type=1051866179 value=424397299
+HASH Turing.NTimeDiag.query_of_not_guard pub type=3586343115 value=2386876916
+HASH Turing.NTimeDiag.qyAnc priv type=4042809437 value=1804740526
+HASH Turing.NTimeDiag.qyAt priv type=3376409048 value=2422450725
+HASH Turing.NTimeDiag.qyAt._proof_1 priv type=157889832 value=1472620964
+HASH Turing.NTimeDiag.qyAt2 priv type=3303443840 value=3316003250
+HASH Turing.NTimeDiag.qyAt2_move priv type=1420129695 value=2352222953
+HASH Turing.NTimeDiag.qyBank priv type=1916499209 value=790335026
+HASH Turing.NTimeDiag.qyBank._proof_1 priv type=785298005 value=3865394800
+HASH Turing.NTimeDiag.qyBank._proof_2 priv type=3073567723 value=3253314489
+HASH Turing.NTimeDiag.qyBank._proof_3 priv type=739095188 value=2156021742
+HASH Turing.NTimeDiag.qyBank._proof_4 priv type=1923733914 value=4161903875
+HASH Turing.NTimeDiag.qyBank._proof_5 priv type=2480310880 value=3748950051
+HASH Turing.NTimeDiag.qyBank._proof_6 priv type=3255609842 value=3357285931
+HASH Turing.NTimeDiag.qyBank._proof_7 priv type=2353539653 value=639954974
+HASH Turing.NTimeDiag.qyBank.congr_simp priv type=2198957204 value=1760088185
+HASH Turing.NTimeDiag.qyBank.eq_1 priv type=1970566901 value=1426050963
+HASH Turing.NTimeDiag.qyBank_ne_tp priv type=1703863538 value=2046322420
+HASH Turing.NTimeDiag.qyBank_ne_tp._proof_1_1 priv type=131605918 value=290992729
+HASH Turing.NTimeDiag.qyBank_val priv type=1818048385 value=3877370504
+HASH Turing.NTimeDiag.qyBank_zero priv type=27355550 value=3268559191
+HASH Turing.NTimeDiag.qyBody priv type=3805790127 value=649022544
+HASH Turing.NTimeDiag.qyBody.eq_1 priv type=1573067042 value=452098948
+HASH Turing.NTimeDiag.qyC priv type=261839874 value=1240759102
+HASH Turing.NTimeDiag.qyC_mapState priv type=3752595880 value=2617935454
+HASH Turing.NTimeDiag.qyCk priv type=314615179 value=3666520148
+HASH Turing.NTimeDiag.qyCmpTM priv type=4264645884 value=1099433824
+HASH Turing.NTimeDiag.qyCmpTM.eq_1 priv type=3019912342 value=582207264
+HASH Turing.NTimeDiag.qyCmpTM.match_1 priv type=2427572739 value=1672964202
+HASH Turing.NTimeDiag.qyCmpTM.match_1.eq_1 priv type=3873746784 value=3297558226
+HASH Turing.NTimeDiag.qyCmpTM.match_1.eq_2 priv type=4000540104 value=45059078
+HASH Turing.NTimeDiag.qyCmpTM.match_1.eq_3 priv type=3563212952 value=1046342559
+HASH Turing.NTimeDiag.qyCmpTM.match_1.eq_4 priv type=724691438 value=393060580
+HASH Turing.NTimeDiag.qyCmpTM.match_1.splitter priv type=2513782797 value=2389277129
+HASH Turing.NTimeDiag.qyCmpTM.match_3 priv type=3553669772 value=3400113545
+HASH Turing.NTimeDiag.qyCmpTM.match_3.eq_1 priv type=2626832568 value=1369494530
+HASH Turing.NTimeDiag.qyCmpTM.match_3.eq_2 priv type=1883529931 value=1720166308
+HASH Turing.NTimeDiag.qyCmpTM.match_3.splitter priv type=1288325107 value=2892004887
+HASH Turing.NTimeDiag.qyDk priv type=314615179 value=38894978
+HASH Turing.NTimeDiag.qyEmb2 priv type=2163339820 value=171427877
+HASH Turing.NTimeDiag.qyEmb2._proof_1 priv type=2297960886 value=4053633966
+HASH Turing.NTimeDiag.qyEmb2._proof_2 priv type=1367978910 value=2005671776
+HASH Turing.NTimeDiag.qyEmb2._proof_3 priv type=876913294 value=471516911
+HASH Turing.NTimeDiag.qyEmb2._proof_4 priv type=3924341834 value=1020259414
+HASH Turing.NTimeDiag.qyEmb2._proof_5 priv type=2690219346 value=1302861932
+HASH Turing.NTimeDiag.qyEmb2._proof_6 priv type=3871685506 value=2050053328
+HASH Turing.NTimeDiag.qyEmb2._proof_7 priv type=153460817 value=4005478036
+HASH Turing.NTimeDiag.qyEmb2.congr_simp priv type=3834820606 value=3762453159
+HASH Turing.NTimeDiag.qyEmitTM priv type=354984878 value=2167780991
+HASH Turing.NTimeDiag.qyEmitTM._proof_1 priv type=3387029110 value=623504053
+HASH Turing.NTimeDiag.qyEmitTM._proof_2 priv type=3201331261 value=4024186069
+HASH Turing.NTimeDiag.qyEmitTM._proof_3 priv type=849016833 value=3532009662
+HASH Turing.NTimeDiag.qyEmitTM._proof_4 priv type=2265870426 value=123922497
+HASH Turing.NTimeDiag.qyEmitTM._proof_5 priv type=1374387624 value=2113998420
+HASH Turing.NTimeDiag.qyEmitTM._proof_6 priv type=811924349 value=3832987664
+HASH Turing.NTimeDiag.qyEmitTM.eq_1 priv type=3753296374 value=314417087
+HASH Turing.NTimeDiag.qyEmitTM.match_1 priv type=3713894539 value=654021131
+HASH Turing.NTimeDiag.qyEmitTM.match_1.eq_1 priv type=1233689015 value=2081095711
+HASH Turing.NTimeDiag.qyEmitTM.match_1.eq_2 priv type=762231555 value=3479317552
+HASH Turing.NTimeDiag.qyEmitTM.match_1.eq_3 priv type=3702582186 value=677338634
+HASH Turing.NTimeDiag.qyEmitTM.match_1.eq_4 priv type=549241405 value=3975090178
+HASH Turing.NTimeDiag.qyEmitTM.match_1.eq_5 priv type=3812012774 value=1109028485
+HASH Turing.NTimeDiag.qyEmitTM.match_1.eq_6 priv type=116040166 value=2068012619
+HASH Turing.NTimeDiag.qyEmitTM.match_1.splitter priv type=3278586030 value=3862007978
+HASH Turing.NTimeDiag.qyLPhDecEq priv type=3618218731 value=1967809924
+HASH Turing.NTimeDiag.qyLPhFintype priv type=738055005 value=1127597563
+HASH Turing.NTimeDiag.qyLay priv type=1069761538 value=423108216
+HASH Turing.NTimeDiag.qyLay.eq_1 priv type=693481385 value=2431977068
+HASH Turing.NTimeDiag.qyLayT priv type=714285080 value=4064038035
+HASH Turing.NTimeDiag.qyLayT.eq_1 priv type=2302813417 value=4103032399
+HASH Turing.NTimeDiag.qyLoc priv type=4263886774 value=4291107791
+HASH Turing.NTimeDiag.qyLocE priv type=152468818 value=364176773
+HASH Turing.NTimeDiag.qyLocM priv type=454729350 value=1341618244
+HASH Turing.NTimeDiag.qyLocM._proof_1 priv type=1212443861 value=1662998389
+HASH Turing.NTimeDiag.qyLocM._proof_2 priv type=3031492042 value=1393238396
+HASH Turing.NTimeDiag.qyLocM._proof_3 priv type=581746035 value=4201784497
+HASH Turing.NTimeDiag.qyLocM.match_1 priv type=3939758201 value=290643810
+HASH Turing.NTimeDiag.qyLocRed priv type=1651319808 value=1721628045
+HASH Turing.NTimeDiag.qyLocRed._proof_1 priv type=693360247 value=1967123427
+HASH Turing.NTimeDiag.qyLocRed.eq_1 priv type=1101474609 value=2178715633
+HASH Turing.NTimeDiag.qyLocRed.eq_10 priv type=1854678412 value=1272379104
+HASH Turing.NTimeDiag.qyLocRed.eq_11 priv type=1380727246 value=556785791
+HASH Turing.NTimeDiag.qyLocRed.eq_12 priv type=2037857353 value=2074678216
+HASH Turing.NTimeDiag.qyLocRed.eq_13 priv type=396461970 value=678074280
+HASH Turing.NTimeDiag.qyLocRed.eq_14 priv type=3837045000 value=1588229347
+HASH Turing.NTimeDiag.qyLocRed.eq_15 priv type=2213447130 value=556521568
+HASH Turing.NTimeDiag.qyLocRed.eq_16 priv type=825420928 value=1265629676
+HASH Turing.NTimeDiag.qyLocRed.eq_17 priv type=3836866136 value=3786489512
+HASH Turing.NTimeDiag.qyLocRed.eq_18 priv type=1543606864 value=1777767278
+HASH Turing.NTimeDiag.qyLocRed.eq_19 priv type=1039914143 value=1118925038
+HASH Turing.NTimeDiag.qyLocRed.eq_2 priv type=2683311101 value=1587819142
+HASH Turing.NTimeDiag.qyLocRed.eq_20 priv type=2666082462 value=1518661764
+HASH Turing.NTimeDiag.qyLocRed.eq_21 priv type=1461017299 value=54241955
+HASH Turing.NTimeDiag.qyLocRed.eq_22 priv type=1914049043 value=3215227608
+HASH Turing.NTimeDiag.qyLocRed.eq_23 priv type=2297443060 value=3388572881
+HASH Turing.NTimeDiag.qyLocRed.eq_24 priv type=3258888482 value=2094551417
+HASH Turing.NTimeDiag.qyLocRed.eq_25 priv type=2075791731 value=166969912
+HASH Turing.NTimeDiag.qyLocRed.eq_26 priv type=2020217815 value=2445527657
+HASH Turing.NTimeDiag.qyLocRed.eq_27 priv type=338560854 value=4188306451
+HASH Turing.NTimeDiag.qyLocRed.eq_28 priv type=2043907244 value=2965920475
+HASH Turing.NTimeDiag.qyLocRed.eq_29 priv type=4227925272 value=1732715430
+HASH Turing.NTimeDiag.qyLocRed.eq_3 priv type=3513972964 value=378389395
+HASH Turing.NTimeDiag.qyLocRed.eq_30 priv type=1336216704 value=59102092
+HASH Turing.NTimeDiag.qyLocRed.eq_31 priv type=1766464826 value=2985445833
+HASH Turing.NTimeDiag.qyLocRed.eq_32 priv type=1422911551 value=2142007096
+HASH Turing.NTimeDiag.qyLocRed.eq_33 priv type=2387057327 value=865075534
+HASH Turing.NTimeDiag.qyLocRed.eq_34 priv type=3609924217 value=623511632
+HASH Turing.NTimeDiag.qyLocRed.eq_35 priv type=2063524297 value=1029537207
+HASH Turing.NTimeDiag.qyLocRed.eq_36 priv type=3534349296 value=824879099
+HASH Turing.NTimeDiag.qyLocRed.eq_37 priv type=3472108860 value=4068993966
+HASH Turing.NTimeDiag.qyLocRed.eq_38 priv type=2842932264 value=917581649
+HASH Turing.NTimeDiag.qyLocRed.eq_39 priv type=3723818652 value=1667947629
+HASH Turing.NTimeDiag.qyLocRed.eq_4 priv type=444561233 value=1242413589
+HASH Turing.NTimeDiag.qyLocRed.eq_5 priv type=38418327 value=3066487990
+HASH Turing.NTimeDiag.qyLocRed.eq_6 priv type=2001721159 value=612831889
+HASH Turing.NTimeDiag.qyLocRed.eq_7 priv type=3261226041 value=3443129952
+HASH Turing.NTimeDiag.qyLocRed.eq_8 priv type=4189035894 value=3141863154
+HASH Turing.NTimeDiag.qyLocRed.eq_9 priv type=3488513444 value=268886672
+HASH Turing.NTimeDiag.qyLocRed.match_1 priv type=1386720010 value=2750145058
+HASH Turing.NTimeDiag.qyLocRed.match_1.eq_1 priv type=1245772764 value=3280597551
+HASH Turing.NTimeDiag.qyLocRed.match_1.eq_2 priv type=766670151 value=2836265931
+HASH Turing.NTimeDiag.qyLocRed.match_1.splitter priv type=2380116768 value=1805539943
+HASH Turing.NTimeDiag.qyLocRed.match_11 priv type=2212832503 value=3157801557
+HASH Turing.NTimeDiag.qyLocRed.match_11.eq_1 priv type=2829291039 value=1397485473
+HASH Turing.NTimeDiag.qyLocRed.match_11.eq_2 priv type=3747729688 value=543951213
+HASH Turing.NTimeDiag.qyLocRed.match_11.splitter priv type=3344632332 value=1753535284
+HASH Turing.NTimeDiag.qyLocRed.match_13 priv type=3385959714 value=33272106
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_1 priv type=1306377969 value=2063622212
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_10 priv type=2374907594 value=2993826812
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_11 priv type=1509768214 value=2287559931
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_12 priv type=4036435533 value=3554848614
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_13 priv type=3775718818 value=1597369975
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_14 priv type=1173814589 value=1065367693
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_15 priv type=1990261934 value=541109713
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_16 priv type=2436566054 value=3095345014
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_17 priv type=354495120 value=1941225808
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_18 priv type=272471846 value=1871018013
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_19 priv type=3293449534 value=171136210
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_2 priv type=3533612649 value=2320418978
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_20 priv type=2425037668 value=1099136315
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_21 priv type=289328858 value=2600495158
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_22 priv type=464020003 value=2336584701
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_23 priv type=3531448650 value=1957832283
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_24 priv type=3235590149 value=1565749129
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_25 priv type=2003409250 value=825336018
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_26 priv type=288984715 value=1719414781
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_27 priv type=847209510 value=1252041861
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_28 priv type=3019059432 value=2381929275
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_29 priv type=2084981503 value=2600734022
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_3 priv type=710200364 value=3773167534
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_30 priv type=2488600888 value=1190998071
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_31 priv type=3819033311 value=3065967202
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_32 priv type=3323323588 value=3219563926
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_33 priv type=4106560228 value=1818803942
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_4 priv type=1551564852 value=2367668851
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_5 priv type=3827549187 value=3992202800
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_6 priv type=112419550 value=563369665
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_7 priv type=3049132846 value=2070071929
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_8 priv type=1280275412 value=2268013312
+HASH Turing.NTimeDiag.qyLocRed.match_13.eq_9 priv type=3837068516 value=730762082
+HASH Turing.NTimeDiag.qyLocRed.match_13.splitter priv type=3385959714 value=700102838
+HASH Turing.NTimeDiag.qyLocRed.match_3 priv type=2257995677 value=3138291821
+HASH Turing.NTimeDiag.qyLocRed.match_3.eq_1 priv type=3453853799 value=1419012070
+HASH Turing.NTimeDiag.qyLocRed.match_3.eq_2 priv type=1752024557 value=153446415
+HASH Turing.NTimeDiag.qyLocRed.match_3.splitter priv type=1781274921 value=824595557
+HASH Turing.NTimeDiag.qyLocRed.match_5 priv type=4032300904 value=4285200214
+HASH Turing.NTimeDiag.qyLocRed.match_5.eq_1 priv type=2571662635 value=2329972476
+HASH Turing.NTimeDiag.qyLocRed.match_5.eq_2 priv type=3479161411 value=1132474396
+HASH Turing.NTimeDiag.qyLocRed.match_5.splitter priv type=3323554206 value=2344998804
+HASH Turing.NTimeDiag.qyLocRed.match_7 priv type=2310352025 value=1524158492
+HASH Turing.NTimeDiag.qyLocRed.match_7.eq_1 priv type=1985554948 value=4056238090
+HASH Turing.NTimeDiag.qyLocRed.match_7.eq_2 priv type=653570223 value=1576455947
+HASH Turing.NTimeDiag.qyLocRed.match_7.splitter priv type=1017514111 value=430361096
+HASH Turing.NTimeDiag.qyLocRed.match_9 priv type=2010767807 value=3230573525
+HASH Turing.NTimeDiag.qyLocRed.match_9.eq_1 priv type=1128609830 value=280594309
+HASH Turing.NTimeDiag.qyLocRed.match_9.eq_2 priv type=2437673332 value=1263365851
+HASH Turing.NTimeDiag.qyLocRed.match_9.splitter priv type=1477525715 value=2316393420
+HASH Turing.NTimeDiag.qyLoopA priv type=314615179 value=2902708608
+HASH Turing.NTimeDiag.qyMPhDecEq priv type=3623324527 value=1232076896
+HASH Turing.NTimeDiag.qyMPhFintype priv type=2694319634 value=2492838166
+HASH Turing.NTimeDiag.qyMainA priv type=314615179 value=1847959304
+HASH Turing.NTimeDiag.qyMainM priv type=233207948 value=387317159
+HASH Turing.NTimeDiag.qyMainPhDecEq priv type=3273834861 value=3282576617
+HASH Turing.NTimeDiag.qyMainPhFintype priv type=3248729097 value=2993588391
+HASH Turing.NTimeDiag.qyMainRed priv type=652997546 value=3904518899
+HASH Turing.NTimeDiag.qyMainRed.eq_1 priv type=1655179773 value=1473980457
+HASH Turing.NTimeDiag.qyMainRed.eq_10 priv type=3868245119 value=3627913519
+HASH Turing.NTimeDiag.qyMainRed.eq_2 priv type=592618807 value=2209563710
+HASH Turing.NTimeDiag.qyMainRed.eq_3 priv type=73744203 value=1075612549
+HASH Turing.NTimeDiag.qyMainRed.eq_4 priv type=546246136 value=3688707036
+HASH Turing.NTimeDiag.qyMainRed.eq_5 priv type=2828771270 value=1152423590
+HASH Turing.NTimeDiag.qyMainRed.eq_6 priv type=1845235281 value=1420365846
+HASH Turing.NTimeDiag.qyMainRed.eq_7 priv type=960278580 value=2503349136
+HASH Turing.NTimeDiag.qyMainRed.eq_8 priv type=540430623 value=4266130772
+HASH Turing.NTimeDiag.qyMainRed.eq_9 priv type=3471048451 value=848220576
+HASH Turing.NTimeDiag.qyMainRed.match_1 priv type=1943019051 value=1294290347
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_1 priv type=1530884551 value=3068991116
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_10 priv type=4132523429 value=2812795655
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_2 priv type=435367178 value=1550169129
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_3 priv type=4148093868 value=148851066
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_4 priv type=1601158787 value=1434926236
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_5 priv type=1174523544 value=2196988366
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_6 priv type=961349911 value=167489296
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_7 priv type=4260472545 value=2621973356
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_8 priv type=4034822141 value=3452408746
+HASH Turing.NTimeDiag.qyMainRed.match_1.eq_9 priv type=800382595 value=1724712269
+HASH Turing.NTimeDiag.qyMainRed.match_1.splitter priv type=1238662095 value=2487382428
+HASH Turing.NTimeDiag.qyMid priv type=2200935142 value=2788985010
+HASH Turing.NTimeDiag.qyMidB priv type=3151241693 value=698584337
+HASH Turing.NTimeDiag.qyMidM priv type=2898302142 value=1235878166
+HASH Turing.NTimeDiag.qyMidM._proof_1 priv type=2623997363 value=2305768487
+HASH Turing.NTimeDiag.qyMidRed priv type=1885599006 value=814100810
+HASH Turing.NTimeDiag.qyMidRed._proof_1 priv type=511768940 value=751386873
+HASH Turing.NTimeDiag.qyMidRed.eq_1 priv type=2843146969 value=2968174514
+HASH Turing.NTimeDiag.qyMidRed.eq_2 priv type=548870581 value=222270095
+HASH Turing.NTimeDiag.qyMidRed.eq_3 priv type=1868134171 value=2052863577
+HASH Turing.NTimeDiag.qyMidRed.eq_4 priv type=1535588584 value=77829218
+HASH Turing.NTimeDiag.qyMidRed.eq_5 priv type=2624291462 value=1845579474
+HASH Turing.NTimeDiag.qyMidRed.eq_6 priv type=3738316522 value=3251618901
+HASH Turing.NTimeDiag.qyMidRed.eq_7 priv type=3638044486 value=3185108423
+HASH Turing.NTimeDiag.qyMidRed.match_1 priv type=2199490666 value=3590822394
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_1 priv type=3577884990 value=1359038499
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_2 priv type=2725160161 value=3347028742
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_3 priv type=2197759271 value=561773630
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_4 priv type=2676882459 value=3231777207
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_5 priv type=298602079 value=1619992455
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_6 priv type=3569018767 value=2123870095
+HASH Turing.NTimeDiag.qyMidRed.match_1.eq_7 priv type=672916597 value=2334732745
+HASH Turing.NTimeDiag.qyMidRed.match_1.splitter priv type=2199490666 value=496672701
+HASH Turing.NTimeDiag.qyM₁ priv type=1061616880 value=3408945873
+HASH Turing.NTimeDiag.qyRndP priv type=3249496988 value=1094385427
+HASH Turing.NTimeDiag.qyRndS priv type=3151241693 value=1495421300
+HASH Turing.NTimeDiag.qySPhDecEq priv type=2722976708 value=1311012765
+HASH Turing.NTimeDiag.qySPhFintype priv type=1847284825 value=940698229
+HASH Turing.NTimeDiag.qyScratch priv type=3452266702 value=4093621112
+HASH Turing.NTimeDiag.qySet priv type=3358593842 value=3468154049
+HASH Turing.NTimeDiag.qySetB priv type=2484411703 value=882035823
+HASH Turing.NTimeDiag.qySetF priv type=779361461 value=2962540535
+HASH Turing.NTimeDiag.qySetF.eq_1 priv type=3329375463 value=2899996315
+HASH Turing.NTimeDiag.qySetM priv type=3759627520 value=1861597381
+HASH Turing.NTimeDiag.qySetM._proof_1 priv type=2950452273 value=3859044576
+HASH Turing.NTimeDiag.qySetM.match_1 priv type=1959360907 value=1708612468
+HASH Turing.NTimeDiag.qySetRed priv type=54824149 value=3568789615
+HASH Turing.NTimeDiag.qySetRed._proof_1 priv type=3574907798 value=241833742
+HASH Turing.NTimeDiag.qySetRed.eq_1 priv type=2367503733 value=3645050982
+HASH Turing.NTimeDiag.qySetRed.eq_10 priv type=1271693994 value=1579846096
+HASH Turing.NTimeDiag.qySetRed.eq_2 priv type=4197381284 value=1607072068
+HASH Turing.NTimeDiag.qySetRed.eq_3 priv type=1220915176 value=3372277233
+HASH Turing.NTimeDiag.qySetRed.eq_4 priv type=1346096396 value=76061347
+HASH Turing.NTimeDiag.qySetRed.eq_5 priv type=4261639674 value=2304624505
+HASH Turing.NTimeDiag.qySetRed.eq_6 priv type=2382715812 value=1757750632
+HASH Turing.NTimeDiag.qySetRed.eq_7 priv type=1568840720 value=4010966498
+HASH Turing.NTimeDiag.qySetRed.eq_8 priv type=4121206658 value=2593318942
+HASH Turing.NTimeDiag.qySetRed.eq_9 priv type=3738143688 value=2276657852
+HASH Turing.NTimeDiag.qySetRed.match_1 priv type=2569094435 value=1420430933
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_1 priv type=2284650754 value=3205210788
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_10 priv type=992706374 value=1152732863
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_2 priv type=3672664704 value=2153675904
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_3 priv type=3512370084 value=1063410529
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_4 priv type=2751889185 value=1487716146
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_5 priv type=3147127743 value=2471272144
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_6 priv type=813461875 value=2738333004
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_7 priv type=1416017942 value=157569719
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_8 priv type=484376976 value=1867597960
+HASH Turing.NTimeDiag.qySetRed.match_1.eq_9 priv type=2211572521 value=4231813985
+HASH Turing.NTimeDiag.qySetRed.match_1.splitter priv type=2569094435 value=2440680398
+HASH Turing.NTimeDiag.qySetT5 priv type=1726956190 value=1495468519
+HASH Turing.NTimeDiag.qySetT5.eq_1 priv type=256291134 value=493298078
+HASH Turing.NTimeDiag.qyTA priv type=3637059641 value=3018691264
+HASH Turing.NTimeDiag.qyTA.eq_1 priv type=3857743026 value=2389852095
+HASH Turing.NTimeDiag.qyTB priv type=3085157768 value=3799947310
+HASH Turing.NTimeDiag.qyTB.eq_1 priv type=3765017428 value=4031289781
+HASH Turing.NTimeDiag.qyTPhDecEq priv type=349176080 value=1260661286
+HASH Turing.NTimeDiag.qyTPhFintype priv type=1228885817 value=3177149330
+HASH Turing.NTimeDiag.qyTestP priv type=3151241693 value=62044873
+HASH Turing.NTimeDiag.qyTestP.eq_1 priv type=296364428 value=3407124933
+HASH Turing.NTimeDiag.qyTestS priv type=3151241693 value=2845249616
+HASH Turing.NTimeDiag.qyTestS.eq_1 priv type=2661322248 value=2032682148
+HASH Turing.NTimeDiag.qyTop priv type=532757481 value=2203960812
+HASH Turing.NTimeDiag.qyTopB priv type=3893492431 value=1560121253
+HASH Turing.NTimeDiag.qyTopM priv type=2255467012 value=2943940064
+HASH Turing.NTimeDiag.qyTopRed priv type=1216020853 value=3491932254
+HASH Turing.NTimeDiag.qyTopRed._proof_1 priv type=556423201 value=118537503
+HASH Turing.NTimeDiag.qyTopRed.eq_1 priv type=4045137756 value=2875215750
+HASH Turing.NTimeDiag.qyTopRed.eq_2 priv type=666133474 value=3718538817
+HASH Turing.NTimeDiag.qyTopRed.eq_3 priv type=2254807176 value=1162618599
+HASH Turing.NTimeDiag.qyTopRed.eq_4 priv type=850480711 value=1943961703
+HASH Turing.NTimeDiag.qyTopRed.eq_5 priv type=140168252 value=3252855225
+HASH Turing.NTimeDiag.qyTopRed.eq_6 priv type=3439277747 value=2993304891
+HASH Turing.NTimeDiag.qyTopRed.match_1 priv type=259806071 value=2290931654
+HASH Turing.NTimeDiag.qyTopRed.match_1.eq_1 priv type=2368472941 value=3368568330
+HASH Turing.NTimeDiag.qyTopRed.match_1.eq_2 priv type=3128103484 value=3760159432
+HASH Turing.NTimeDiag.qyTopRed.match_1.eq_3 priv type=3946191806 value=2585125235
+HASH Turing.NTimeDiag.qyTopRed.match_1.eq_4 priv type=2934884993 value=16411455
+HASH Turing.NTimeDiag.qyTopRed.match_1.eq_5 priv type=1222224855 value=419421262
+HASH Turing.NTimeDiag.qyTopRed.match_1.eq_6 priv type=861813366 value=1533401307
+HASH Turing.NTimeDiag.qyTopRed.match_1.splitter priv type=259806071 value=3687755570
+HASH Turing.NTimeDiag.qyWk priv type=314615179 value=3306579881
+HASH Turing.NTimeDiag.qy_arg_bank priv type=267131199 value=958286778
+HASH Turing.NTimeDiag.qy_bank_not_scratch priv type=1753248062 value=3158201415
+HASH Turing.NTimeDiag.qy_bank_not_scratch._proof_1_1 priv type=946204515 value=3615333700
+HASH Turing.NTimeDiag.qy_bits_len_mono priv type=689394319 value=2654498563
+HASH Turing.NTimeDiag.qy_bits_val priv type=4247310111 value=2742706892
+HASH Turing.NTimeDiag.qy_blank_bank priv type=1890659000 value=2014611431
+HASH Turing.NTimeDiag.qy_bufferTape_map priv type=869559228 value=1379547654
+HASH Turing.NTimeDiag.qy_call priv type=673540199 value=643732333
+HASH Turing.NTimeDiag.qy_callHost priv type=3569809014 value=1372184559
+HASH Turing.NTimeDiag.qy_call_bound priv type=3517501566 value=457814110
+HASH Turing.NTimeDiag.qy_call_bound._proof_1_1 priv type=2991555067 value=1859907151
+HASH Turing.NTimeDiag.qy_call_output_nil priv type=848161656 value=663894543
+HASH Turing.NTimeDiag.qy_clear priv type=3909385240 value=1988157483
+HASH Turing.NTimeDiag.qy_clear._proof_1_1 priv type=1914340969 value=320299257
+HASH Turing.NTimeDiag.qy_clockHost_finish priv type=2354617430 value=2856547137
+HASH Turing.NTimeDiag.qy_clockHost_timeout priv type=2189376508 value=4143430889
+HASH Turing.NTimeDiag.qy_clock_start priv type=409397783 value=1180798673
+HASH Turing.NTimeDiag.qy_clocked_call priv type=1966240846 value=2279246039
+HASH Turing.NTimeDiag.qy_clocked_call._proof_1_1 priv type=514115522 value=226472302
+HASH Turing.NTimeDiag.qy_cmp_run priv type=4211823006 value=616533573
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_1 priv type=3476450489 value=1388029729
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_10 priv type=1123405876 value=3593661672
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_11 priv type=2421991376 value=2933323700
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_12 priv type=2973519387 value=2982992476
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_13 priv type=1805789740 value=222606528
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_14 priv type=2936623787 value=3787179606
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_15 priv type=1383226407 value=2950925097
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_16 priv type=3682985630 value=2843760958
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_17 priv type=182537311 value=2257299194
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_18 priv type=2053287458 value=2596316182
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_2 priv type=2388473989 value=404186879
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_3 priv type=1359562789 value=1612733126
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_8 priv type=1989781232 value=1705083603
+HASH Turing.NTimeDiag.qy_cmp_run._proof_1_9 priv type=696764479 value=435317280
+HASH Turing.NTimeDiag.qy_code_calls priv type=2993814162 value=3568101740
+HASH Turing.NTimeDiag.qy_code_calls._proof_1_3 priv type=322545247 value=3135521387
+HASH Turing.NTimeDiag.qy_code_calls._proof_1_4 priv type=1386810715 value=146604108
+HASH Turing.NTimeDiag.qy_code_calls._simp_1_2 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_copy priv type=44807791 value=1287886109
+HASH Turing.NTimeDiag.qy_copy_over priv type=3570853161 value=3572526732
+HASH Turing.NTimeDiag.qy_copy_over._proof_1_1 priv type=3036284096 value=873130383
+HASH Turing.NTimeDiag.qy_copy_over._proof_1_2 priv type=398906754 value=3718986387
+HASH Turing.NTimeDiag.qy_embed priv type=859983842 value=1954033309
+HASH Turing.NTimeDiag.qy_embed_gen priv type=1608545500 value=524759290
+HASH Turing.NTimeDiag.qy_embed_state priv type=1931667958 value=1269154230
+HASH Turing.NTimeDiag.qy_emit_halt priv type=3004150179 value=2030894227
+HASH Turing.NTimeDiag.qy_emit_run priv type=2661848757 value=448046711
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_1 priv type=1543699213 value=1034473666
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_10 priv type=4154419309 value=144112666
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_11 priv type=1109308906 value=2272365659
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_12 priv type=777576251 value=4116156810
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_13 priv type=332680665 value=2373637576
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_14 priv type=948865743 value=1408314471
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_15 priv type=2907020208 value=2468033542
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_16 priv type=2765453400 value=346377225
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_17 priv type=266229811 value=1027557212
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_18 priv type=2309751795 value=1426384115
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_19 priv type=528829568 value=3547568497
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_2 priv type=1195597236 value=1681194302
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_20 priv type=2409329188 value=1882927427
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_21 priv type=97656670 value=790448316
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_22 priv type=2550850691 value=1611883717
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_23 priv type=3550308809 value=58684189
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_24 priv type=2716194528 value=1051551713
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_25 priv type=1381248237 value=1312040576
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_26 priv type=4292338854 value=3981688584
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_27 priv type=1264626621 value=797745979
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_28 priv type=2027369665 value=146484472
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_29 priv type=3554867195 value=2213654029
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_3 priv type=1227970117 value=3457807851
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_30 priv type=411269381 value=561582702
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_7 priv type=3854435620 value=2584741861
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_8 priv type=2252612915 value=595644960
+HASH Turing.NTimeDiag.qy_emit_run._proof_1_9 priv type=1215046467 value=293487895
+HASH Turing.NTimeDiag.qy_emit_stop priv type=2743442924 value=3447726521
+HASH Turing.NTimeDiag.qy_emit_stop._proof_1_1 priv type=1508959623 value=3117723471
+HASH Turing.NTimeDiag.qy_esc_mem priv type=3527322753 value=3048230303
+HASH Turing.NTimeDiag.qy_expandHost priv type=155250055 value=1334537105
+HASH Turing.NTimeDiag.qy_expandHost._proof_1_1 priv type=4024997818 value=1197669094
+HASH Turing.NTimeDiag.qy_expandHost._proof_1_2 priv type=995704342 value=1238878695
+HASH Turing.NTimeDiag.qy_expand_start priv type=2985200843 value=3696216569
+HASH Turing.NTimeDiag.qy_flatMap_dbl_dbl priv type=3164800562 value=961017516
+HASH Turing.NTimeDiag.qy_guard priv type=2487528663 value=3632456087
+HASH Turing.NTimeDiag.qy_guard_decider priv type=475394811 value=1922061597
+HASH Turing.NTimeDiag.qy_guard_decider._proof_1_1 priv type=1904294182 value=574152261
+HASH Turing.NTimeDiag.qy_guard_decider._proof_1_2 priv type=3195527944 value=1352664587
+HASH Turing.NTimeDiag.qy_guard_decider._proof_1_3 priv type=3179194389 value=899489697
+HASH Turing.NTimeDiag.qy_guard_decider._proof_1_4 priv type=4241237592 value=385493658
+HASH Turing.NTimeDiag.qy_guard_of_cut priv type=460766828 value=4146014717
+HASH Turing.NTimeDiag.qy_hosted priv type=1733274132 value=2207734613
+HASH Turing.NTimeDiag.qy_hosted' priv type=3293592449 value=215697140
+HASH Turing.NTimeDiag.qy_hosted'._proof_1_1 priv type=658780112 value=3955045617
+HASH Turing.NTimeDiag.qy_hosted_halt priv type=1351060413 value=3131163608
+HASH Turing.NTimeDiag.qy_hosted_last priv type=3917403223 value=4020019143
+HASH Turing.NTimeDiag.qy_hosted_run priv type=3097844657 value=3150420025
+HASH Turing.NTimeDiag.qy_initCfg priv type=3279033465 value=4051107820
+HASH Turing.NTimeDiag.qy_inputSpec priv type=3376732843 value=4058932799
+HASH Turing.NTimeDiag.qy_installSpec priv type=3025354452 value=3063553038
+HASH Turing.NTimeDiag.qy_kit_exists priv type=454678464 value=2907035320
+HASH Turing.NTimeDiag.qy_ladder_succ_eq priv type=1698954735 value=2692107326
+HASH Turing.NTimeDiag.qy_layT_pair priv type=3114534614 value=356998323
+HASH Turing.NTimeDiag.qy_layT_pair._simp_1_3 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_ledger priv type=2517572373 value=2429258145
+HASH Turing.NTimeDiag.qy_ledger._proof_1_1 priv type=4242281114 value=3023543460
+HASH Turing.NTimeDiag.qy_log_bits priv type=3797571071 value=3472896778
+HASH Turing.NTimeDiag.qy_log_bits._proof_1_1 priv type=1353384200 value=1070434640
+HASH Turing.NTimeDiag.qy_log_bits._proof_1_2 priv type=2673951271 value=3305526727
+HASH Turing.NTimeDiag.qy_loop priv type=2343111781 value=1782548504
+HASH Turing.NTimeDiag.qy_loop._proof_1_1 priv type=2454034212 value=773013347
+HASH Turing.NTimeDiag.qy_loop._proof_1_10 priv type=877378936 value=178719150
+HASH Turing.NTimeDiag.qy_loop._proof_1_11 priv type=1300020646 value=1560643909
+HASH Turing.NTimeDiag.qy_loop._proof_1_12 priv type=847279006 value=407658068
+HASH Turing.NTimeDiag.qy_loop._proof_1_13 priv type=1206925843 value=1756954019
+HASH Turing.NTimeDiag.qy_loop._proof_1_14 priv type=426786606 value=3421459197
+HASH Turing.NTimeDiag.qy_loop._proof_1_15 priv type=1773612831 value=3408715770
+HASH Turing.NTimeDiag.qy_loop._proof_1_16 priv type=2903622997 value=4059153430
+HASH Turing.NTimeDiag.qy_loop._proof_1_17 priv type=4294538423 value=3866940712
+HASH Turing.NTimeDiag.qy_loop._proof_1_4 priv type=2087685975 value=3819604241
+HASH Turing.NTimeDiag.qy_loop._proof_1_5 priv type=853374339 value=252194677
+HASH Turing.NTimeDiag.qy_loop._proof_1_6 priv type=2149775347 value=238441913
+HASH Turing.NTimeDiag.qy_loop._proof_1_7 priv type=2200443069 value=1430747427
+HASH Turing.NTimeDiag.qy_loop._proof_1_8 priv type=3196695205 value=2240352250
+HASH Turing.NTimeDiag.qy_loop._proof_1_9 priv type=2407370354 value=1065043351
+HASH Turing.NTimeDiag.qy_loop.match_1_2 priv type=2519978045 value=923586175
+HASH Turing.NTimeDiag.qy_lt_two_pow_bits priv type=41225543 value=131389977
+HASH Turing.NTimeDiag.qy_main priv type=539381888 value=3298005939
+HASH Turing.NTimeDiag.qy_main._proof_1_1 priv type=3918961960 value=2819746177
+HASH Turing.NTimeDiag.qy_mainRed_loc priv type=2483554431 value=420994094
+HASH Turing.NTimeDiag.qy_mainRed_setup priv type=2411134942 value=979938788
+HASH Turing.NTimeDiag.qy_main_long priv type=1422009725 value=3419813569
+HASH Turing.NTimeDiag.qy_main_long._proof_1_12 priv type=2996140866 value=1422419505
+HASH Turing.NTimeDiag.qy_main_long._proof_1_13 priv type=225134618 value=3644371514
+HASH Turing.NTimeDiag.qy_main_long._proof_1_14 priv type=3752368646 value=3322959946
+HASH Turing.NTimeDiag.qy_main_long._proof_1_15 priv type=4136272912 value=1628173325
+HASH Turing.NTimeDiag.qy_main_long._proof_1_16 priv type=1255301395 value=971215070
+HASH Turing.NTimeDiag.qy_main_long._proof_1_17 priv type=326167232 value=2760384808
+HASH Turing.NTimeDiag.qy_main_long._proof_1_18 priv type=320746969 value=2443468480
+HASH Turing.NTimeDiag.qy_main_long._proof_1_19 priv type=654397803 value=652555658
+HASH Turing.NTimeDiag.qy_main_long._proof_1_20 priv type=3055448550 value=1472002374
+HASH Turing.NTimeDiag.qy_main_long._proof_1_21 priv type=2273057128 value=2200138500
+HASH Turing.NTimeDiag.qy_main_long._proof_1_22 priv type=2521426795 value=4075961759
+HASH Turing.NTimeDiag.qy_main_short priv type=1949650807 value=2176426183
+HASH Turing.NTimeDiag.qy_main_short._proof_1_14 priv type=2996140866 value=297482233
+HASH Turing.NTimeDiag.qy_main_short._proof_1_15 priv type=1245370595 value=1483681657
+HASH Turing.NTimeDiag.qy_main_short._proof_1_16 priv type=3055258373 value=1311957728
+HASH Turing.NTimeDiag.qy_main_short._simp_1_13 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_midB_le priv type=3469404406 value=2207504359
+HASH Turing.NTimeDiag.qy_midB_le._proof_1_1 priv type=803352409 value=3486998477
+HASH Turing.NTimeDiag.qy_midB_le._proof_1_2 priv type=1226863585 value=638313762
+HASH Turing.NTimeDiag.qy_midB_le._proof_1_3 priv type=201081550 value=3495646707
+HASH Turing.NTimeDiag.qy_midB_le._proof_1_4 priv type=685084316 value=2431550454
+HASH Turing.NTimeDiag.qy_midB_le._proof_1_5 priv type=527062519 value=189783457
+HASH Turing.NTimeDiag.qy_mid_code priv type=3858919329 value=3387332818
+HASH Turing.NTimeDiag.qy_mid_code._proof_1_9 priv type=239123621 value=1698264994
+HASH Turing.NTimeDiag.qy_mid_run priv type=1549890463 value=2567971676
+HASH Turing.NTimeDiag.qy_mid_run._proof_1_12 priv type=2992581073 value=1159482024
+HASH Turing.NTimeDiag.qy_mid_run._proof_1_13 priv type=1584810937 value=3877656230
+HASH Turing.NTimeDiag.qy_mid_run._proof_1_14 priv type=2880017886 value=4137018274
+HASH Turing.NTimeDiag.qy_mid_run._proof_1_3 priv type=1432709819 value=2753565510
+HASH Turing.NTimeDiag.qy_mid_run._simp_1_2 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_moveOne priv type=2002323474 value=1129232797
+HASH Turing.NTimeDiag.qy_noMove priv type=1054341994 value=3640096277
+HASH Turing.NTimeDiag.qy_notStop priv type=2937819999 value=3508352135
+HASH Turing.NTimeDiag.qy_notStop.match_1_1 priv type=908453763 value=1547949353
+HASH Turing.NTimeDiag.qy_not_scratch priv type=2600319589 value=2697559162
+HASH Turing.NTimeDiag.qy_not_scratch_ge priv type=1621264939 value=1248569600
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_1 priv type=1851067990 value=428071585
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_2 priv type=3012363979 value=4055712184
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_3 priv type=2035713457 value=2420757842
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_4 priv type=1253179153 value=4198267225
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_5 priv type=2252219917 value=3672773430
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_6 priv type=3449778661 value=3515662629
+HASH Turing.NTimeDiag.qy_not_scratch_ge._proof_1_7 priv type=1706896366 value=3168991340
+HASH Turing.NTimeDiag.qy_not_scratch_tp priv type=1677303560 value=997282068
+HASH Turing.NTimeDiag.qy_not_scratch_tp._proof_1_1 priv type=1503109142 value=3476010988
+HASH Turing.NTimeDiag.qy_not_scratch_tp._proof_1_2 priv type=2543211035 value=2555815953
+HASH Turing.NTimeDiag.qy_not_scratch_tp._proof_1_3 priv type=3236226986 value=1703527154
+HASH Turing.NTimeDiag.qy_not_scratch_tp._proof_1_4 priv type=2275490478 value=1798785696
+HASH Turing.NTimeDiag.qy_not_scratch_tp._proof_1_5 priv type=1338934326 value=3214222528
+HASH Turing.NTimeDiag.qy_not_scratch_tp._proof_1_6 priv type=2568010820 value=778193145
+HASH Turing.NTimeDiag.qy_ones_ge priv type=816898293 value=439162007
+HASH Turing.NTimeDiag.qy_ones_ge._proof_1_1 priv type=145427650 value=3211637795
+HASH Turing.NTimeDiag.qy_ones_val priv type=3408865546 value=2374889610
+HASH Turing.NTimeDiag.qy_ones_val._proof_1_1 priv type=2427571036 value=2004706209
+HASH Turing.NTimeDiag.qy_patch_end priv type=1950476882 value=1417650857
+HASH Turing.NTimeDiag.qy_patch_end._proof_1_1 priv type=4227152239 value=2186475039
+HASH Turing.NTimeDiag.qy_patch_end._proof_1_2 priv type=3470095941 value=296206725
+HASH Turing.NTimeDiag.qy_patch_end._proof_1_3 priv type=4054608087 value=1827055813
+HASH Turing.NTimeDiag.qy_pow6_le priv type=1819515529 value=3397177335
+HASH Turing.NTimeDiag.qy_pow6_le._proof_1_1 priv type=1650497695 value=126280342
+HASH Turing.NTimeDiag.qy_pow_mono priv type=3701024003 value=566307917
+HASH Turing.NTimeDiag.qy_query_of_main priv type=1486609510 value=2380042550
+HASH Turing.NTimeDiag.qy_release_first_stop priv type=2268721747 value=856760612
+HASH Turing.NTimeDiag.qy_rewind priv type=2399407566 value=2173965491
+HASH Turing.NTimeDiag.qy_rndP_le priv type=2583780240 value=3537949792
+HASH Turing.NTimeDiag.qy_rndP_le._proof_1_1 priv type=2324126791 value=4113640207
+HASH Turing.NTimeDiag.qy_rndP_le._proof_1_2 priv type=1034982176 value=3466303091
+HASH Turing.NTimeDiag.qy_rndP_le._proof_1_3 priv type=3631472169 value=137381285
+HASH Turing.NTimeDiag.qy_rndS_le priv type=1174772052 value=2011462225
+HASH Turing.NTimeDiag.qy_rndS_le._proof_1_1 priv type=4090963990 value=1601291815
+HASH Turing.NTimeDiag.qy_rndS_le._proof_1_2 priv type=915487747 value=141719424
+HASH Turing.NTimeDiag.qy_rndS_le._proof_1_3 priv type=1993902057 value=2381221324
+HASH Turing.NTimeDiag.qy_rnd_call priv type=643651982 value=1089011341
+HASH Turing.NTimeDiag.qy_rnd_call._proof_1_54 priv type=4068218319 value=2260095571
+HASH Turing.NTimeDiag.qy_rnd_call._proof_1_55 priv type=1145674182 value=1056575919
+HASH Turing.NTimeDiag.qy_rnd_call._proof_1_56 priv type=3173066418 value=2658060706
+HASH Turing.NTimeDiag.qy_rnd_call._proof_1_59 priv type=3183782061 value=2823431335
+HASH Turing.NTimeDiag.qy_rnd_call._proof_1_60 priv type=1866903791 value=236180296
+HASH Turing.NTimeDiag.qy_rnd_call._proof_1_61 priv type=1134662692 value=432545100
+HASH Turing.NTimeDiag.qy_rnd_call._simp_1_3 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_rnd_call.match_1_50 priv type=8275307 value=2036067036
+HASH Turing.NTimeDiag.qy_rnd_call.match_1_52 priv type=109006265 value=2097305756
+HASH Turing.NTimeDiag.qy_rnd_call.match_1_57 priv type=1694912005 value=1670412544
+HASH Turing.NTimeDiag.qy_rnd_clean priv type=62789478 value=929222953
+HASH Turing.NTimeDiag.qy_rnd_clean._proof_1_52 priv type=2608483126 value=1566445013
+HASH Turing.NTimeDiag.qy_rnd_clean._simp_1_5 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_rnd_pair priv type=1183544208 value=858368365
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_50 priv type=875583996 value=2064430230
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_51 priv type=2792834460 value=3762561463
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_52 priv type=1992004132 value=1288171788
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_53 priv type=1316855525 value=3004127806
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_54 priv type=1495889184 value=2540872849
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_55 priv type=3162285833 value=3565773437
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_56 priv type=107398366 value=2778119645
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_57 priv type=2177896466 value=3472603032
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_58 priv type=2446464963 value=2704357342
+HASH Turing.NTimeDiag.qy_rnd_pair._proof_1_59 priv type=2113315613 value=3543829478
+HASH Turing.NTimeDiag.qy_rnd_pair._simp_1_3 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_rnd_tests priv type=1390757202 value=2126975266
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_53 priv type=4223802102 value=1237446483
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_54 priv type=174799227 value=1527126900
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_55 priv type=554898290 value=1265334815
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_56 priv type=3849521563 value=3464864659
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_57 priv type=3239852996 value=4216777004
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_59 priv type=512073369 value=1293253937
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_60 priv type=1039834670 value=3924146022
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_61 priv type=1156197354 value=3404467188
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_62 priv type=257330272 value=3991951802
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_63 priv type=3597993645 value=867660480
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_64 priv type=2190866959 value=2597403026
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_65 priv type=4138179498 value=3639012270
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_66 priv type=2833696800 value=1787057705
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_67 priv type=2380946125 value=4043901413
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_69 priv type=888995147 value=4142098750
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_70 priv type=252151517 value=3970943595
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_71 priv type=2249353255 value=2596809006
+HASH Turing.NTimeDiag.qy_rnd_tests._proof_1_72 priv type=2198241147 value=1619064039
+HASH Turing.NTimeDiag.qy_rnd_tests._simp_1_4 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_round priv type=2819722611 value=1564603110
+HASH Turing.NTimeDiag.qy_round._proof_1_47 priv type=2553361331 value=2774568898
+HASH Turing.NTimeDiag.qy_round._proof_1_48 priv type=2007738329 value=1580331538
+HASH Turing.NTimeDiag.qy_round._proof_1_49 priv type=1746966136 value=3647045475
+HASH Turing.NTimeDiag.qy_round._proof_1_50 priv type=3416389718 value=977541346
+HASH Turing.NTimeDiag.qy_round._proof_1_51 priv type=3569862662 value=1914881625
+HASH Turing.NTimeDiag.qy_round._proof_1_52 priv type=1950761036 value=96880250
+HASH Turing.NTimeDiag.qy_round._proof_1_53 priv type=1819416093 value=740671608
+HASH Turing.NTimeDiag.qy_round_of_seg priv type=2018375919 value=2330450366
+HASH Turing.NTimeDiag.qy_round_of_seg._proof_1_1 priv type=1705520108 value=411451704
+HASH Turing.NTimeDiag.qy_round_of_seg._proof_1_2 priv type=1932481519 value=1980411651
+HASH Turing.NTimeDiag.qy_round_of_seg._proof_1_3 priv type=4119771270 value=1946249496
+HASH Turing.NTimeDiag.qy_run_one priv type=3723304878 value=3624741117
+HASH Turing.NTimeDiag.qy_run_two priv type=1901438217 value=2170011845
+HASH Turing.NTimeDiag.qy_rung_val priv type=2313570596 value=1648987627
+HASH Turing.NTimeDiag.qy_seekHost priv type=3303078285 value=2802892660
+HASH Turing.NTimeDiag.qy_seekHost._proof_1_1 priv type=3608189859 value=3966862152
+HASH Turing.NTimeDiag.qy_seek_run priv type=38159871 value=392088107
+HASH Turing.NTimeDiag.qy_seek_run._proof_1_3 priv type=4106848084 value=2336699150
+HASH Turing.NTimeDiag.qy_seek_run._simp_1_2 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_setup_head priv type=351627736 value=19010022
+HASH Turing.NTimeDiag.qy_setup_head._proof_1_13 priv type=2056803514 value=279438216
+HASH Turing.NTimeDiag.qy_setup_long priv type=1845101581 value=4035682181
+HASH Turing.NTimeDiag.qy_setup_long._proof_1_18 priv type=4169336472 value=3040355145
+HASH Turing.NTimeDiag.qy_setup_long._proof_1_2 priv type=3251173084 value=1579363254
+HASH Turing.NTimeDiag.qy_setup_long._proof_1_21 priv type=556098833 value=2198546362
+HASH Turing.NTimeDiag.qy_setup_long._proof_1_22 priv type=1046106026 value=4128396759
+HASH Turing.NTimeDiag.qy_setup_long._simp_1_15 priv type=230685990 value=2333159357
+HASH Turing.NTimeDiag.qy_setup_long._simp_1_16 priv type=2978243233 value=3377494007
+HASH Turing.NTimeDiag.qy_setup_long._simp_1_17 priv type=2076402776 value=1193403348
+HASH Turing.NTimeDiag.qy_setup_long._simp_1_20 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_setup_short priv type=4157587894 value=1673581276
+HASH Turing.NTimeDiag.qy_setup_short._proof_1_2 priv type=4140202129 value=2109108100
+HASH Turing.NTimeDiag.qy_setup_short._simp_1_15 priv type=230685990 value=2333159357
+HASH Turing.NTimeDiag.qy_setup_short._simp_1_16 priv type=2978243233 value=3377494007
+HASH Turing.NTimeDiag.qy_setup_short._simp_1_17 priv type=2076402776 value=1193403348
+HASH Turing.NTimeDiag.qy_stage_lt_log priv type=189773562 value=2608417838
+HASH Turing.NTimeDiag.qy_stage_lt_log._proof_1_1 priv type=2953616949 value=3962984060
+HASH Turing.NTimeDiag.qy_stage_lt_log._proof_1_2 priv type=3144864000 value=4158573287
+HASH Turing.NTimeDiag.qy_step priv type=1758674706 value=3483715042
+HASH Turing.NTimeDiag.qy_sum_affine priv type=1707261543 value=1080170488
+HASH Turing.NTimeDiag.qy_timeout_cert priv type=4239193097 value=4215738749
+HASH Turing.NTimeDiag.qy_timeout_cert._proof_1_1 priv type=1473490217 value=536468508
+HASH Turing.NTimeDiag.qy_topB_le priv type=454204897 value=2930779457
+HASH Turing.NTimeDiag.qy_topB_le._proof_1_1 priv type=3498232799 value=3508072928
+HASH Turing.NTimeDiag.qy_topB_le._proof_1_2 priv type=781876292 value=3577148647
+HASH Turing.NTimeDiag.qy_topB_le._proof_1_3 priv type=2070316491 value=2483534637
+HASH Turing.NTimeDiag.qy_topB_le._proof_1_4 priv type=3148406145 value=960344219
+HASH Turing.NTimeDiag.qy_top_code priv type=1206697812 value=519389062
+HASH Turing.NTimeDiag.qy_top_code._proof_1_8 priv type=3348485851 value=1957972243
+HASH Turing.NTimeDiag.qy_top_run priv type=3576890946 value=3079690867
+HASH Turing.NTimeDiag.qy_top_run._proof_1_1 priv type=1699531486 value=117019411
+HASH Turing.NTimeDiag.qy_top_run._proof_1_11 priv type=3908387458 value=2586904983
+HASH Turing.NTimeDiag.qy_top_run._proof_1_12 priv type=2627524872 value=2608613983
+HASH Turing.NTimeDiag.qy_top_run._proof_1_13 priv type=1078620024 value=1100067267
+HASH Turing.NTimeDiag.qy_top_run._simp_1_9 priv type=3376504115 value=3251933623
+HASH Turing.NTimeDiag.qy_tp7_mem priv type=3060970270 value=2975668189
+HASH Turing.NTimeDiag.qy_tp8_mem priv type=2929860539 value=3854601031
+HASH Turing.NTimeDiag.qy_transfer priv type=2417098406 value=4090967771
+HASH Turing.NTimeDiag.qy_transfer._proof_1_1 priv type=1225733102 value=2629864142
+HASH Turing.NTimeDiag.qy_two_pow_bits_le priv type=28756524 value=3388050605
+HASH Turing.NTimeDiag.qy_two_pow_bits_le._proof_1_1 priv type=1353384200 value=1070434640
+HASH Turing.NTimeDiag.qy_two_pow_bits_le._proof_1_2 priv type=3199014409 value=1122710869
+HASH Turing.NTimeDiag.qy_two_pow_bits_le._proof_1_3 priv type=499697038 value=1395041473
+HASH Turing.NTimeDiag.qy_two_pow_le_ladder priv type=1560912880 value=704171384
+HASH Turing.NTimeDiag.qy_two_pow_le_ladder._proof_1_1 priv type=1027568039 value=1522867262
+HASH Turing.NTimeDiag.qy_unpair_succ_diag priv type=1547698467 value=3514082589
+HASH Turing.NTimeDiag.qy_unpair_succ_gt priv type=4066463100 value=812092530
+HASH Turing.NTimeDiag.qy_unpair_succ_gt._proof_1_1 priv type=1058217657 value=1430219543
+HASH Turing.NTimeDiag.qy_unpair_succ_gt._proof_1_2 priv type=865727933 value=1653927899
+HASH Turing.NTimeDiag.qy_unpair_succ_last priv type=1093831017 value=2044908700
+HASH Turing.NTimeDiag.qy_unpair_succ_last._proof_1_1 priv type=1870414031 value=3883459483
+HASH Turing.NTimeDiag.qy_unpair_succ_last._proof_1_2 priv type=1599073831 value=1321067846
+HASH Turing.NTimeDiag.qy_unpair_succ_lt priv type=3836859793 value=404221305
+HASH Turing.NTimeDiag.qy_unpair_succ_lt._proof_1_1 priv type=2273443692 value=3391048417
+HASH Turing.NTimeDiag.qy_unpair_succ_lt._proof_1_2 priv type=1197619794 value=4010039739
+HASH Turing.NTimeDiag.qy_wordPatch_ones priv type=505654539 value=1854760582
+HASH Turing.NTimeDiag.qy_wordPatch_ones._proof_1_1 priv type=675287223 value=2256590657
+HASH Turing.NTimeDiag.qy_wordPatch_ones._proof_1_2 priv type=3356397075 value=2640696149
+HASH Turing.NTimeDiag.qy_writeConst priv type=1427036037 value=3821504644
+HASH Turing.NTimeDiag.qy_writer_word priv type=2774634506 value=3729006188
+HASH Turing.NTimeDiag.stage pub type=1272646107 value=3763549823
+HASH Turing.NTimeDiag.stageCode pub type=3826915952 value=3106175881
+HASH Turing.NTimeDiag.stageCode.eq_1 pub type=1739179791 value=1023064073
+HASH Turing.NTimeDiag.stageCode_eq pub type=1739179791 value=894250256
+HASH Turing.NTimeDiag.stageCode_frequently pub type=450512596 value=1968706308
+HASH Turing.NTimeDiag.stageCode_frequently._proof_1_1 pub type=970403135 value=1438059901
+HASH Turing.NTimeDiag.stageCode_frequently._proof_1_2 pub type=2180950092 value=69108997
+HASH Turing.NTimeDiag.stageCode_frequently._proof_1_3 pub type=2673951271 value=1643860007
+HASH Turing.NTimeDiag.stage_eq pub type=2007143395 value=338012540
+HASH Turing.NTimeDiag.stage_eq._proof_1_1 pub type=4276097263 value=1030205643
+HASH Turing.NTimeDiag.stage_eq._proof_1_2 pub type=1269691720 value=1199346974
+HASH Turing.NTimeDiag.stage_of_le_two pub type=2646719832 value=2120226813
+HASH Turing.NTimeDiag.stage_of_le_two._proof_1_1 pub type=4261991564 value=2154996221
+HASH Turing.NTimeDiag.stage_spec pub type=574125753 value=3238026738
+HASH Turing.NTimeDiag.stage_spec._proof_1_1 pub type=1315365992 value=1734414787
+HASH Turing.NTimeDiag.stage_spec._proof_1_2 pub type=1991564338 value=2871589886
+HASH Turing.NTimeDiag.stage_spec._proof_1_3 pub type=4225538981 value=4141231350
+HASH Turing.NTimeDiag.two_mul_lt_ladder_succ pub type=15346312 value=1192071406
+HASH Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_1 pub type=3782216860 value=2485908934
+HASH Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_2 pub type=878930687 value=2728590676
+HASH Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_3 pub type=3856257956 value=2315595597
+union of axioms over all module constants: [propext, Quot.sound, Classical.choice, sorryAx]
+constants with an axiom outside the standard three: 1
+AX-OK  Turing.NTimeDiag.QyClockSpec [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.QyCmp []
+AX-OK  Turing.NTimeDiag.QyCmp._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QyCmp._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QyCmp.back []
+AX-OK  Turing.NTimeDiag.QyCmp.back.elim []
+AX-OK  Turing.NTimeDiag.QyCmp.back.inj []
+AX-OK  Turing.NTimeDiag.QyCmp.back.injEq [propext]
+AX-OK  Turing.NTimeDiag.QyCmp.back.noConfusion []
+AX-OK  Turing.NTimeDiag.QyCmp.back.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyCmp.casesOn []
+AX-OK  Turing.NTimeDiag.QyCmp.ctorElim []
+AX-OK  Turing.NTimeDiag.QyCmp.ctorElimType []
+AX-OK  Turing.NTimeDiag.QyCmp.ctorIdx []
+AX-OK  Turing.NTimeDiag.QyCmp.done []
+AX-OK  Turing.NTimeDiag.QyCmp.done.elim []
+AX-OK  Turing.NTimeDiag.QyCmp.done.inj []
+AX-OK  Turing.NTimeDiag.QyCmp.done.injEq [propext]
+AX-OK  Turing.NTimeDiag.QyCmp.done.noConfusion []
+AX-OK  Turing.NTimeDiag.QyCmp.done.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyCmp.noConfusion []
+AX-OK  Turing.NTimeDiag.QyCmp.noConfusionType []
+AX-OK  Turing.NTimeDiag.QyCmp.proxyType []
+AX-OK  Turing.NTimeDiag.QyCmp.proxyTypeEquiv []
+AX-OK  Turing.NTimeDiag.QyCmp.rec []
+AX-OK  Turing.NTimeDiag.QyCmp.recOn []
+AX-OK  Turing.NTimeDiag.QyCmp.scan []
+AX-OK  Turing.NTimeDiag.QyCmp.scan.elim []
+AX-OK  Turing.NTimeDiag.QyCmp.scan.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEm []
+AX-OK  Turing.NTimeDiag.QyEm._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QyEm._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QyEm.casesOn []
+AX-OK  Turing.NTimeDiag.QyEm.ctorElim []
+AX-OK  Turing.NTimeDiag.QyEm.ctorElimType []
+AX-OK  Turing.NTimeDiag.QyEm.ctorIdx []
+AX-OK  Turing.NTimeDiag.QyEm.done []
+AX-OK  Turing.NTimeDiag.QyEm.done.elim []
+AX-OK  Turing.NTimeDiag.QyEm.done.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEm.em []
+AX-OK  Turing.NTimeDiag.QyEm.em.elim []
+AX-OK  Turing.NTimeDiag.QyEm.em.inj []
+AX-OK  Turing.NTimeDiag.QyEm.em.injEq [propext]
+AX-OK  Turing.NTimeDiag.QyEm.em.noConfusion []
+AX-OK  Turing.NTimeDiag.QyEm.em.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEm.got []
+AX-OK  Turing.NTimeDiag.QyEm.got.elim []
+AX-OK  Turing.NTimeDiag.QyEm.got.inj []
+AX-OK  Turing.NTimeDiag.QyEm.got.injEq [propext]
+AX-OK  Turing.NTimeDiag.QyEm.got.noConfusion []
+AX-OK  Turing.NTimeDiag.QyEm.got.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEm.noConfusion []
+AX-OK  Turing.NTimeDiag.QyEm.noConfusionType []
+AX-OK  Turing.NTimeDiag.QyEm.pre []
+AX-OK  Turing.NTimeDiag.QyEm.pre.elim []
+AX-OK  Turing.NTimeDiag.QyEm.pre.inj []
+AX-OK  Turing.NTimeDiag.QyEm.pre.injEq [propext]
+AX-OK  Turing.NTimeDiag.QyEm.pre.noConfusion []
+AX-OK  Turing.NTimeDiag.QyEm.pre.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEm.proxyType []
+AX-OK  Turing.NTimeDiag.QyEm.proxyTypeEquiv []
+AX-OK  Turing.NTimeDiag.QyEm.rd []
+AX-OK  Turing.NTimeDiag.QyEm.rd.elim []
+AX-OK  Turing.NTimeDiag.QyEm.rd.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEm.rec []
+AX-OK  Turing.NTimeDiag.QyEm.recOn []
+AX-OK  Turing.NTimeDiag.QyEm.suf []
+AX-OK  Turing.NTimeDiag.QyEm.suf.elim []
+AX-OK  Turing.NTimeDiag.QyEm.suf.inj []
+AX-OK  Turing.NTimeDiag.QyEm.suf.injEq [propext]
+AX-OK  Turing.NTimeDiag.QyEm.suf.noConfusion []
+AX-OK  Turing.NTimeDiag.QyEm.suf.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyEscT [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyEscT.bank [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyEscT.bank._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyEscT.tp [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyInSpec [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.QyKit [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.H [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.K [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.Q [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.Qd [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.Qf [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.R [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.S [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.Sd [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.Sf [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit._sizeOf_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit._sizeOf_inst [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.ab [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.abA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.abE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.abK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.abS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.abX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAb0_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbJ_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bAbK_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCb [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCb._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCb._proof_2 [propext]
+AX-OK  Turing.NTimeDiag.QyKit.bCb._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCb._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCf_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCg_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bCl_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk_castSucc [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bClk_last [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPb_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPr_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu._proof_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu._proof_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.bPu_ne._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.casesOn [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cb [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cbA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cbE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cbK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cbS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cbX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cf [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cfA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cfE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cfK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cfS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cfX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cfc [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cg [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cgA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cgE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cgK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cgS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cgX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.cl [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.clA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.clE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.clK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.clS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.clX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.ctorIdx [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.fsh [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.hH [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.hft [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.inj [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.le_K [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.le_K._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.m [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.mk [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.mk._flat_ctor [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.mk.inj [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.mk.injEq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.mk.noConfusion [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.mk.sizeOf_spec [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.noConfusion [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.noConfusionType [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pb [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pbA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pbE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pbK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pbS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pbX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pr [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.prA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.prE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.prK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.prS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.prX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.pu [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.puA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.puE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.puK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.puS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.puX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.rC [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.rE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.rS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.rX [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.rec [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.recOn [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.tape_cases [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.tmo [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.tp [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.tp_inj [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.tp_ne [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyKit.tp_val [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyLK []
+AX-OK  Turing.NTimeDiag.QyLK._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QyLK._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QyLK.ab []
+AX-OK  Turing.NTimeDiag.QyLK.ab.elim []
+AX-OK  Turing.NTimeDiag.QyLK.ab.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.anc []
+AX-OK  Turing.NTimeDiag.QyLK.anc.elim []
+AX-OK  Turing.NTimeDiag.QyLK.anc.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c1 []
+AX-OK  Turing.NTimeDiag.QyLK.c1.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c1.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c2 []
+AX-OK  Turing.NTimeDiag.QyLK.c2.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c2.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c3 []
+AX-OK  Turing.NTimeDiag.QyLK.c3.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c3.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c4 []
+AX-OK  Turing.NTimeDiag.QyLK.c4.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c4.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c5 []
+AX-OK  Turing.NTimeDiag.QyLK.c5.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c5.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c6 []
+AX-OK  Turing.NTimeDiag.QyLK.c6.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c6.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.c7 []
+AX-OK  Turing.NTimeDiag.QyLK.c7.elim []
+AX-OK  Turing.NTimeDiag.QyLK.c7.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.casesOn []
+AX-OK  Turing.NTimeDiag.QyLK.clk []
+AX-OK  Turing.NTimeDiag.QyLK.clk.elim []
+AX-OK  Turing.NTimeDiag.QyLK.clk.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.clrJ []
+AX-OK  Turing.NTimeDiag.QyLK.clrJ.elim []
+AX-OK  Turing.NTimeDiag.QyLK.clrJ.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.clrK []
+AX-OK  Turing.NTimeDiag.QyLK.clrK.elim []
+AX-OK  Turing.NTimeDiag.QyLK.clrK.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.ctorElim []
+AX-OK  Turing.NTimeDiag.QyLK.ctorElimType []
+AX-OK  Turing.NTimeDiag.QyLK.ctorIdx []
+AX-OK  Turing.NTimeDiag.QyLK.enumList []
+AX-OK  Turing.NTimeDiag.QyLK.enumList_getElem?_ctorIdx_eq []
+AX-OK  Turing.NTimeDiag.QyLK.enumList_nodup [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyLK.escI []
+AX-OK  Turing.NTimeDiag.QyLK.escI.elim []
+AX-OK  Turing.NTimeDiag.QyLK.escI.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.escTO []
+AX-OK  Turing.NTimeDiag.QyLK.escTO.elim []
+AX-OK  Turing.NTimeDiag.QyLK.escTO.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.escTop []
+AX-OK  Turing.NTimeDiag.QyLK.escTop.elim []
+AX-OK  Turing.NTimeDiag.QyLK.escTop.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.incJ []
+AX-OK  Turing.NTimeDiag.QyLK.incJ.elim []
+AX-OK  Turing.NTimeDiag.QyLK.incJ.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.incK []
+AX-OK  Turing.NTimeDiag.QyLK.incK.elim []
+AX-OK  Turing.NTimeDiag.QyLK.incK.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.eq_1 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.eq_2 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.eq_3 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.eq_4 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.match_1 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.match_1.eq_1 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.match_1.eq_2 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.match_1.eq_3 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.match_1.eq_4 []
+AX-OK  Turing.NTimeDiag.QyLK.isEsc.match_1.splitter []
+AX-OK  Turing.NTimeDiag.QyLK.noConfusion []
+AX-OK  Turing.NTimeDiag.QyLK.noConfusionType []
+AX-OK  Turing.NTimeDiag.QyLK.ofNat []
+AX-OK  Turing.NTimeDiag.QyLK.ofNat_ctorIdx []
+AX-OK  Turing.NTimeDiag.QyLK.pu []
+AX-OK  Turing.NTimeDiag.QyLK.pu.elim []
+AX-OK  Turing.NTimeDiag.QyLK.pu.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r1 []
+AX-OK  Turing.NTimeDiag.QyLK.r1.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r1.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r10 []
+AX-OK  Turing.NTimeDiag.QyLK.r10.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r10.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r11 []
+AX-OK  Turing.NTimeDiag.QyLK.r11.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r11.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r13 []
+AX-OK  Turing.NTimeDiag.QyLK.r13.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r13.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r14 []
+AX-OK  Turing.NTimeDiag.QyLK.r14.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r14.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r15 []
+AX-OK  Turing.NTimeDiag.QyLK.r15.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r15.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r16 []
+AX-OK  Turing.NTimeDiag.QyLK.r16.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r16.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r3 []
+AX-OK  Turing.NTimeDiag.QyLK.r3.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r3.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r4 []
+AX-OK  Turing.NTimeDiag.QyLK.r4.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r4.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r5 []
+AX-OK  Turing.NTimeDiag.QyLK.r5.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r5.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r6 []
+AX-OK  Turing.NTimeDiag.QyLK.r6.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r6.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r7 []
+AX-OK  Turing.NTimeDiag.QyLK.r7.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r7.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.r8 []
+AX-OK  Turing.NTimeDiag.QyLK.r8.elim []
+AX-OK  Turing.NTimeDiag.QyLK.r8.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.rec []
+AX-OK  Turing.NTimeDiag.QyLK.recOn []
+AX-OK  Turing.NTimeDiag.QyLK.toCtorIdx []
+AX-OK  Turing.NTimeDiag.QyLK.u1 []
+AX-OK  Turing.NTimeDiag.QyLK.u1.elim []
+AX-OK  Turing.NTimeDiag.QyLK.u1.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLK.u2 []
+AX-OK  Turing.NTimeDiag.QyLK.u2.elim []
+AX-OK  Turing.NTimeDiag.QyLK.u2.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyLPh [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyLPh.match_1 []
+AX-OK  Turing.NTimeDiag.QyMK []
+AX-OK  Turing.NTimeDiag.QyMK._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QyMK._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QyMK.casesOn []
+AX-OK  Turing.NTimeDiag.QyMK.ctorElim []
+AX-OK  Turing.NTimeDiag.QyMK.ctorElimType []
+AX-OK  Turing.NTimeDiag.QyMK.ctorIdx []
+AX-OK  Turing.NTimeDiag.QyMK.enumList []
+AX-OK  Turing.NTimeDiag.QyMK.enumList_getElem?_ctorIdx_eq []
+AX-OK  Turing.NTimeDiag.QyMK.enumList_nodup [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyMK.m0 []
+AX-OK  Turing.NTimeDiag.QyMK.m0.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m0.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.m1 []
+AX-OK  Turing.NTimeDiag.QyMK.m1.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m1.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.m2 []
+AX-OK  Turing.NTimeDiag.QyMK.m2.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m2.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.m3 []
+AX-OK  Turing.NTimeDiag.QyMK.m3.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m3.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.m4 []
+AX-OK  Turing.NTimeDiag.QyMK.m4.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m4.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.m5 []
+AX-OK  Turing.NTimeDiag.QyMK.m5.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m5.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.m6 []
+AX-OK  Turing.NTimeDiag.QyMK.m6.elim []
+AX-OK  Turing.NTimeDiag.QyMK.m6.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMK.noConfusion []
+AX-OK  Turing.NTimeDiag.QyMK.noConfusionType []
+AX-OK  Turing.NTimeDiag.QyMK.ofNat []
+AX-OK  Turing.NTimeDiag.QyMK.ofNat_ctorIdx []
+AX-OK  Turing.NTimeDiag.QyMK.rec []
+AX-OK  Turing.NTimeDiag.QyMK.recOn []
+AX-OK  Turing.NTimeDiag.QyMK.toCtorIdx []
+AX-OK  Turing.NTimeDiag.QyMPh [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyMPh.match_1 []
+AX-OK  Turing.NTimeDiag.QyMain []
+AX-OK  Turing.NTimeDiag.QyMain._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QyMain._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QyMain.casesOn []
+AX-OK  Turing.NTimeDiag.QyMain.ctorElim []
+AX-OK  Turing.NTimeDiag.QyMain.ctorElimType []
+AX-OK  Turing.NTimeDiag.QyMain.ctorIdx []
+AX-OK  Turing.NTimeDiag.QyMain.enumList []
+AX-OK  Turing.NTimeDiag.QyMain.enumList_getElem?_ctorIdx_eq []
+AX-OK  Turing.NTimeDiag.QyMain.enumList_nodup [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyMain.halt []
+AX-OK  Turing.NTimeDiag.QyMain.halt.elim []
+AX-OK  Turing.NTimeDiag.QyMain.halt.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMain.loc []
+AX-OK  Turing.NTimeDiag.QyMain.loc.elim []
+AX-OK  Turing.NTimeDiag.QyMain.loc.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMain.mid []
+AX-OK  Turing.NTimeDiag.QyMain.mid.elim []
+AX-OK  Turing.NTimeDiag.QyMain.mid.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMain.noConfusion []
+AX-OK  Turing.NTimeDiag.QyMain.noConfusionType []
+AX-OK  Turing.NTimeDiag.QyMain.ofNat []
+AX-OK  Turing.NTimeDiag.QyMain.ofNat_ctorIdx []
+AX-OK  Turing.NTimeDiag.QyMain.rec []
+AX-OK  Turing.NTimeDiag.QyMain.recOn []
+AX-OK  Turing.NTimeDiag.QyMain.setup []
+AX-OK  Turing.NTimeDiag.QyMain.setup.elim []
+AX-OK  Turing.NTimeDiag.QyMain.setup.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMain.toCtorIdx []
+AX-OK  Turing.NTimeDiag.QyMain.top []
+AX-OK  Turing.NTimeDiag.QyMain.top.elim []
+AX-OK  Turing.NTimeDiag.QyMain.top.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyMainPh [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyMainPh.match_1 []
+AX-OK  Turing.NTimeDiag.QySK []
+AX-OK  Turing.NTimeDiag.QySK._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QySK._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QySK.casesOn []
+AX-OK  Turing.NTimeDiag.QySK.ctorElim []
+AX-OK  Turing.NTimeDiag.QySK.ctorElimType []
+AX-OK  Turing.NTimeDiag.QySK.ctorIdx []
+AX-OK  Turing.NTimeDiag.QySK.enumList []
+AX-OK  Turing.NTimeDiag.QySK.enumList_getElem?_ctorIdx_eq []
+AX-OK  Turing.NTimeDiag.QySK.enumList_nodup [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QySK.noConfusion []
+AX-OK  Turing.NTimeDiag.QySK.noConfusionType []
+AX-OK  Turing.NTimeDiag.QySK.ofNat []
+AX-OK  Turing.NTimeDiag.QySK.ofNat_ctorIdx []
+AX-OK  Turing.NTimeDiag.QySK.rec []
+AX-OK  Turing.NTimeDiag.QySK.recOn []
+AX-OK  Turing.NTimeDiag.QySK.s1 []
+AX-OK  Turing.NTimeDiag.QySK.s1.elim []
+AX-OK  Turing.NTimeDiag.QySK.s1.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s10 []
+AX-OK  Turing.NTimeDiag.QySK.s10.elim []
+AX-OK  Turing.NTimeDiag.QySK.s10.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s2 []
+AX-OK  Turing.NTimeDiag.QySK.s2.elim []
+AX-OK  Turing.NTimeDiag.QySK.s2.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s3 []
+AX-OK  Turing.NTimeDiag.QySK.s3.elim []
+AX-OK  Turing.NTimeDiag.QySK.s3.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s4 []
+AX-OK  Turing.NTimeDiag.QySK.s4.elim []
+AX-OK  Turing.NTimeDiag.QySK.s4.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s5 []
+AX-OK  Turing.NTimeDiag.QySK.s5.elim []
+AX-OK  Turing.NTimeDiag.QySK.s5.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s6 []
+AX-OK  Turing.NTimeDiag.QySK.s6.elim []
+AX-OK  Turing.NTimeDiag.QySK.s6.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s7 []
+AX-OK  Turing.NTimeDiag.QySK.s7.elim []
+AX-OK  Turing.NTimeDiag.QySK.s7.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s8 []
+AX-OK  Turing.NTimeDiag.QySK.s8.elim []
+AX-OK  Turing.NTimeDiag.QySK.s8.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.s9 []
+AX-OK  Turing.NTimeDiag.QySK.s9.elim []
+AX-OK  Turing.NTimeDiag.QySK.s9.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QySK.toCtorIdx []
+AX-OK  Turing.NTimeDiag.QySPh [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QySPh.match_1 []
+AX-OK  Turing.NTimeDiag.QySpec [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.QySpec.mono [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.QyTK []
+AX-OK  Turing.NTimeDiag.QyTK._sizeOf_1 []
+AX-OK  Turing.NTimeDiag.QyTK._sizeOf_inst []
+AX-OK  Turing.NTimeDiag.QyTK.casesOn []
+AX-OK  Turing.NTimeDiag.QyTK.ctorElim []
+AX-OK  Turing.NTimeDiag.QyTK.ctorElimType []
+AX-OK  Turing.NTimeDiag.QyTK.ctorIdx []
+AX-OK  Turing.NTimeDiag.QyTK.enumList []
+AX-OK  Turing.NTimeDiag.QyTK.enumList_getElem?_ctorIdx_eq []
+AX-OK  Turing.NTimeDiag.QyTK.enumList_nodup [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyTK.noConfusion []
+AX-OK  Turing.NTimeDiag.QyTK.noConfusionType []
+AX-OK  Turing.NTimeDiag.QyTK.ofNat []
+AX-OK  Turing.NTimeDiag.QyTK.ofNat_ctorIdx []
+AX-OK  Turing.NTimeDiag.QyTK.rec []
+AX-OK  Turing.NTimeDiag.QyTK.recOn []
+AX-OK  Turing.NTimeDiag.QyTK.t1 []
+AX-OK  Turing.NTimeDiag.QyTK.t1.elim []
+AX-OK  Turing.NTimeDiag.QyTK.t1.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyTK.t2 []
+AX-OK  Turing.NTimeDiag.QyTK.t2.elim []
+AX-OK  Turing.NTimeDiag.QyTK.t2.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyTK.t3 []
+AX-OK  Turing.NTimeDiag.QyTK.t3.elim []
+AX-OK  Turing.NTimeDiag.QyTK.t3.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyTK.t4 []
+AX-OK  Turing.NTimeDiag.QyTK.t4.elim []
+AX-OK  Turing.NTimeDiag.QyTK.t4.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyTK.t5 []
+AX-OK  Turing.NTimeDiag.QyTK.t5.elim []
+AX-OK  Turing.NTimeDiag.QyTK.t5.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyTK.t6 []
+AX-OK  Turing.NTimeDiag.QyTK.t6.elim []
+AX-OK  Turing.NTimeDiag.QyTK.t6.sizeOf_spec []
+AX-OK  Turing.NTimeDiag.QyTK.toCtorIdx []
+AX-OK  Turing.NTimeDiag.QyTPh [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.QyTPh.match_1 []
+AX-OK  Turing.NTimeDiag.acceptLang_mem_NTIME [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.budget [propext]
+AX-OK  Turing.NTimeDiag.budget_eq [propext]
+AX-BAD Turing.NTimeDiag.exists_diagonalizer [propext, Quot.sound, Classical.choice, sorryAx]
+AX-OK  Turing.NTimeDiag.exists_le_ladder_succ [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.exists_le_ladder_succ._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.exists_queryTM [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_10 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_2 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_3 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_4 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_5 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_6 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_7 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_8 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq._proof_9 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyCmp.decEq.match_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_10 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_11 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_12 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_13 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_14 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_15 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_16 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_17 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_18 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_19 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_2 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_20 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_21 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_22 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_23 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_24 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_25 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_26 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_27 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_28 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_29 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_3 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_30 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_31 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_32 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_33 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_34 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_35 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_36 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_37 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_38 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_39 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_4 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_40 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_41 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_5 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_6 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_7 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_8 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq._proof_9 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyEm.decEq.match_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyLK []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyLK._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyLK._proof_2 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyMK []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyMK._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyMK._proof_2 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyMain []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyMain._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyMain._proof_2 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQySK []
+AX-OK  Turing.NTimeDiag.instDecidableEqQySK._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQySK._proof_2 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyTK []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyTK._proof_1 []
+AX-OK  Turing.NTimeDiag.instDecidableEqQyTK._proof_2 []
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp.match_3 []
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp.match_5 []
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp.match_5.eq_1 []
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp.match_5.eq_2 []
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp.match_5.eq_3 []
+AX-OK  Turing.NTimeDiag.instFintypeQyCmp.match_5.splitter []
+AX-OK  Turing.NTimeDiag.instFintypeQyEm [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyEm.match_3 []
+AX-OK  Turing.NTimeDiag.instFintypeQyEm.match_5 []
+AX-OK  Turing.NTimeDiag.instFintypeQyLK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyLK._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyMK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyMK._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyMain [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyMain._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQySK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQySK._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyTK [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.instFintypeQyTK._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.ladder [propext]
+AX-OK  Turing.NTimeDiag.ladder._sunfold [propext]
+AX-OK  Turing.NTimeDiag.ladder._unsafe_rec [propext]
+AX-OK  Turing.NTimeDiag.ladder.match_1 []
+AX-OK  Turing.NTimeDiag.ladder_strictMono [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.ladder_strictMono._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.ladder_succ [propext]
+AX-OK  Turing.NTimeDiag.ladder_zero [propext]
+AX-OK  Turing.NTimeDiag.le_ladder [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.le_ladder._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.query [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.query.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.query_eq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.query_of_not_guard [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyAnc [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyAt [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyAt._proof_1 [propext]
+AX-OK  Turing.NTimeDiag.qyAt2 []
+AX-OK  Turing.NTimeDiag.qyAt2_move [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_4 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_5 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_6 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank._proof_7 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank.congr_simp [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank.eq_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank_ne_tp [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyBank_ne_tp._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyBank_val [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBank_zero [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyBody []
+AX-OK  Turing.NTimeDiag.qyBody.eq_1 []
+AX-OK  Turing.NTimeDiag.qyC []
+AX-OK  Turing.NTimeDiag.qyC_mapState [Quot.sound]
+AX-OK  Turing.NTimeDiag.qyCk [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyCmpTM []
+AX-OK  Turing.NTimeDiag.qyCmpTM.eq_1 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_1 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_1.eq_1 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_1.eq_2 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_1.eq_3 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_1.eq_4 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_1.splitter []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_3 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_3.eq_1 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_3.eq_2 []
+AX-OK  Turing.NTimeDiag.qyCmpTM.match_3.splitter []
+AX-OK  Turing.NTimeDiag.qyDk [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyEmb2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_4 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_5 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_6 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2._proof_7 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmb2.congr_simp [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM._proof_1 [propext]
+AX-OK  Turing.NTimeDiag.qyEmitTM._proof_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM._proof_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM._proof_4 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM._proof_5 [propext]
+AX-OK  Turing.NTimeDiag.qyEmitTM._proof_6 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM.eq_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.eq_1 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.eq_2 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.eq_3 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.eq_4 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.eq_5 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.eq_6 []
+AX-OK  Turing.NTimeDiag.qyEmitTM.match_1.splitter []
+AX-OK  Turing.NTimeDiag.qyLPhDecEq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLPhFintype [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLay [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLay.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLayT [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLayT.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLoc [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocE [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocM [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocM._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocM._proof_2 [propext]
+AX-OK  Turing.NTimeDiag.qyLocM._proof_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocM.match_1 []
+AX-OK  Turing.NTimeDiag.qyLocRed [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed._proof_1 [propext]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_11 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_12 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_14 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_15 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_16 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_17 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_18 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_19 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_20 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_21 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_22 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_23 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_24 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_25 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_26 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_27 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_28 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_29 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_30 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_31 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_32 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_33 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_34 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_35 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_36 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_37 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_38 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_39 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.eq_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_1.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_1.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_1.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_11 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_11.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_11.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_11.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_11 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_12 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_14 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_15 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_16 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_17 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_18 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_19 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_20 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_21 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_22 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_23 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_24 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_25 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_26 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_27 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_28 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_29 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_30 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_31 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_32 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_33 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.eq_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_13.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_3.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_3.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_3.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_5.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_5.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_5.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_7.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_7.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_7.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_9.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_9.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLocRed.match_9.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyLoopA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMPhDecEq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMPhFintype [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainM [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainPhDecEq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainPhFintype [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.eq_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.eq_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMainRed.match_1.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMid [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidB [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidM [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidM._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed._proof_1 [propext]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyMidRed.match_1.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyM₁ [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyRndP [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyRndS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySPhDecEq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySPhFintype [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyScratch [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySet [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetB [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetF [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetF.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetM [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetM._proof_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetM.match_1 []
+AX-OK  Turing.NTimeDiag.qySetRed [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed._proof_1 [propext]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.eq_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.eq_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetRed.match_1.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetT5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qySetT5.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTA [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTA.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTB [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTB.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTPhDecEq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTPhFintype [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTestP [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTestP.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTestS [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTestS.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTop [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopB [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopM [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed._proof_1 [propext]
+AX-OK  Turing.NTimeDiag.qyTopRed.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.eq_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.eq_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.eq_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.eq_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.eq_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.eq_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyTopRed.match_1.splitter [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qyWk [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_arg_bank []
+AX-OK  Turing.NTimeDiag.qy_bank_not_scratch [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_bank_not_scratch._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_bits_len_mono [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_bits_val [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_blank_bank []
+AX-OK  Turing.NTimeDiag.qy_bufferTape_map [propext]
+AX-OK  Turing.NTimeDiag.qy_call [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_callHost [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_call_bound [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_call_bound._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_call_output_nil [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_clear [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_clear._proof_1_1 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_clockHost_finish [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_clockHost_timeout [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_clock_start [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_clocked_call [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_clocked_call._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_10 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_11 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_12 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_13 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_14 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_15 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_16 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_17 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_18 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_8 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_cmp_run._proof_1_9 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_code_calls [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_code_calls._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_code_calls._proof_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_code_calls._simp_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_copy [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_copy_over [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_copy_over._proof_1_1 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_copy_over._proof_1_2 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_embed [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_embed_gen [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_embed_state [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_emit_halt [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_10 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_11 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_12 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_13 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_14 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_15 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_16 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_17 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_18 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_19 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_20 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_21 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_22 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_23 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_24 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_25 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_26 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_27 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_28 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_29 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_30 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_7 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_8 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_run._proof_1_9 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_emit_stop [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_emit_stop._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_esc_mem [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_expandHost [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_expandHost._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_expandHost._proof_1_2 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_expand_start [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_flatMap_dbl_dbl [propext]
+AX-OK  Turing.NTimeDiag.qy_guard [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_guard_decider [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_guard_decider._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_guard_decider._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_guard_decider._proof_1_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_guard_decider._proof_1_4 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_guard_of_cut [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_hosted [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_hosted' [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_hosted'._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_hosted_halt [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_hosted_last [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_hosted_run [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_initCfg [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_inputSpec [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_installSpec [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_kit_exists [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_ladder_succ_eq [propext]
+AX-OK  Turing.NTimeDiag.qy_layT_pair [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_layT_pair._simp_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_ledger [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_ledger._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_log_bits [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_log_bits._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_log_bits._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_loop [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_10 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_11 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_12 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_14 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_15 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_16 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_17 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop._proof_1_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_loop.match_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_lt_two_pow_bits [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_mainRed_loc [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mainRed_setup [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_12 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_14 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_15 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_16 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_17 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_18 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_19 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_20 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_21 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_long._proof_1_22 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_short [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_short._proof_1_14 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_short._proof_1_15 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_short._proof_1_16 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_main_short._simp_1_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_midB_le [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_midB_le._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_midB_le._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_midB_le._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_midB_le._proof_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_midB_le._proof_1_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_code [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_code._proof_1_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_run [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_run._proof_1_12 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_run._proof_1_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_run._proof_1_14 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_run._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_mid_run._simp_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_moveOne [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_noMove [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_notStop [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_notStop.match_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_ge._proof_1_7 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp._proof_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp._proof_1_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_not_scratch_tp._proof_1_6 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_ones_ge [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_ones_ge._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_ones_val [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_ones_val._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_patch_end [Quot.sound, propext, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_patch_end._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_patch_end._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_patch_end._proof_1_3 [propext, Classical.choice, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_pow6_le [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_pow6_le._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_pow_mono [propext]
+AX-OK  Turing.NTimeDiag.qy_query_of_main [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_release_first_stop [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rewind [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndP_le [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndP_le._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndP_le._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndP_le._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndS_le [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndS_le._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndS_le._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rndS_le._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._proof_1_54 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._proof_1_55 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._proof_1_56 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._proof_1_59 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._proof_1_60 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._proof_1_61 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call._simp_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call.match_1_50 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call.match_1_52 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_call.match_1_57 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_clean [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_clean._proof_1_52 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_clean._simp_1_5 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_50 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_51 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_52 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_53 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_54 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_55 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_56 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_57 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_58 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._proof_1_59 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_pair._simp_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_53 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_54 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_55 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_56 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_57 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_59 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_60 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_61 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_62 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_63 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_64 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_65 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_66 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_67 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_69 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_70 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_71 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._proof_1_72 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_rnd_tests._simp_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_47 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_48 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_49 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_50 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_51 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_52 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round._proof_1_53 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_round_of_seg [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_round_of_seg._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_round_of_seg._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_round_of_seg._proof_1_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_run_one [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_run_two [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_rung_val [propext]
+AX-OK  Turing.NTimeDiag.qy_seekHost [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_seekHost._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_seek_run [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_seek_run._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_seek_run._simp_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_head [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_head._proof_1_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_long [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_long._proof_1_18 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_long._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_long._proof_1_21 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_long._proof_1_22 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_long._simp_1_15 [propext]
+AX-OK  Turing.NTimeDiag.qy_setup_long._simp_1_16 [propext]
+AX-OK  Turing.NTimeDiag.qy_setup_long._simp_1_17 [propext]
+AX-OK  Turing.NTimeDiag.qy_setup_long._simp_1_20 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_short [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_short._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_setup_short._simp_1_15 [propext]
+AX-OK  Turing.NTimeDiag.qy_setup_short._simp_1_16 [propext]
+AX-OK  Turing.NTimeDiag.qy_setup_short._simp_1_17 [propext]
+AX-OK  Turing.NTimeDiag.qy_stage_lt_log [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_stage_lt_log._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_stage_lt_log._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_step [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_sum_affine [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_timeout_cert [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_timeout_cert._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_topB_le [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_topB_le._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_topB_le._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_topB_le._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_topB_le._proof_1_4 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_code [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_code._proof_1_8 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_run [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_run._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_run._proof_1_11 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_run._proof_1_12 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_run._proof_1_13 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_top_run._simp_1_9 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_tp7_mem [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_tp8_mem [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_transfer [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_transfer._proof_1_1 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_two_pow_bits_le [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_two_pow_bits_le._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_two_pow_bits_le._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_two_pow_bits_le._proof_1_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_two_pow_le_ladder [propext, Classical.choice, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_two_pow_le_ladder._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_diag [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_gt [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_gt._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_gt._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_last [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_last._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_last._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_lt [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_lt._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_unpair_succ_lt._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_wordPatch_ones [Quot.sound, propext, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_wordPatch_ones._proof_1_1 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_wordPatch_ones._proof_1_2 [Classical.choice, propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.qy_writeConst [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.qy_writer_word [propext]
+AX-OK  Turing.NTimeDiag.stage [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stageCode [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stageCode.eq_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stageCode_eq [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stageCode_frequently [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stageCode_frequently._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stageCode_frequently._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stageCode_frequently._proof_1_3 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stage_eq [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_eq._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_eq._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_of_le_two [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_of_le_two._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.stage_spec [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_spec._proof_1_1 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_spec._proof_1_2 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.stage_spec._proof_1_3 [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.two_mul_lt_ladder_succ [propext, Quot.sound, Classical.choice]
+AX-OK  Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_1 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_2 [propext, Quot.sound]
+AX-OK  Turing.NTimeDiag.two_mul_lt_ladder_succ._proof_1_3 [propext, Quot.sound]
+'Turing.NTimeDiag.exists_diagonalizer' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'Turing.NTimeDiag.exists_queryTM' depends on axioms: [propext, Classical.choice, Quot.sound]
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/ed-fill/probe/DzAuditR.lean:65:15: error: Invalid field `getUsedConstants`: The environment does not contain `Lean.ConstantInfo.getUsedConstants`
+  ci
+has type
+  ConstantInfo
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/ed-fill/probe/DzAuditR.lean:65:6: error: failed to construct 'ForIn' instance for collection
+  ?m.424
+and monad
+  ReaderT Context (StateRefT' IO.RealWorld State (EIO Exception))
+/private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/review/ed-fill/probe/DzAuditR.lean:77:0: error: elaboration function for `«command#dz_reach»` has not been implemented

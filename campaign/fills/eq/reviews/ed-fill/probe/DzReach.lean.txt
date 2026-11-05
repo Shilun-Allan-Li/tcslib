@@ -1,0 +1,42 @@
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import Lean
+/-! Reviewer probe: reachability from the target over the module's own constants (olean only). -/
+open Lean Elab Command
+
+private def modN : Name := `TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+private def userName (n : Name) : Name := (privateToUserName? n).getD n
+
+elab "#dz_reach" : command => do
+  let env ← getEnv
+  let some mi := env.getModuleIdx? modN | throwError "module not loaded"
+  let root := ``Turing.NTimeDiag.exists_diagonalizer
+  let mut seen : NameSet := {}
+  let mut stack : Array Name := #[root]
+  while stack.size > 0 do
+    let n := stack.back!
+    stack := stack.pop
+    if seen.contains n then continue
+    seen := seen.insert n
+    if let some ci := env.find? n then
+      let used := ci.type.getUsedConstants ++ ((ci.value? (allowOpaque := true)).map Expr.getUsedConstants).getD #[]
+      for m in used do
+        if env.getModuleIdxFor? m == some mi && !seen.contains m then stack := stack.push m
+      -- an inductive's constructors, a structure's projections are reached with it
+      if let .inductInfo ii := ci then
+        for c in ii.ctors do if !seen.contains c then stack := stack.push c
+  let mut out := ""
+  let mut cnt := 0
+  let mut tot := 0
+  for (n, _) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some mi then
+      let u := (userName n).toString
+      let isDz := (u.splitOn "NTimeDiag.dz").length > 1 || (u.splitOn "NTimeDiag.Dz").length > 1
+      if isDz && (userName n).isInternalDetail == false then
+        tot := tot + 1
+        if seen.contains n then
+          cnt := cnt + 1
+          out := out ++ s!"REACHED {u}\n"
+        else out := out ++ s!"NOT-REACHED {u}\n"
+  logInfo m!"dz/Dz source-level-ish constants: {tot}; reached from the target: {cnt}\n{out}"
+
+#dz_reach

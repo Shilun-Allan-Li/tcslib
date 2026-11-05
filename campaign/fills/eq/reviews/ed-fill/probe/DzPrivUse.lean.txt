@@ -1,0 +1,38 @@
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import Lean
+/-! Reviewer probe: every constant that the module's new (dz/Dz) constants mention directly, by
+origin; flags any private constant of another module (olean only). -/
+open Lean Elab Command
+
+private def modN : Name := `TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+private def userName (n : Name) : Name := (privateToUserName? n).getD n
+
+elab "#dz_privuse" : command => do
+  let env ← getEnv
+  let some mi := env.getModuleIdx? modN | throwError "module not loaded"
+  let mut used : NameSet := {}
+  let mut nsrc := 0
+  for (n, ci) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some mi then
+      let u := (userName n).toString
+      if (u.splitOn "NTimeDiag.dz").length > 1 || (u.splitOn "NTimeDiag.Dz").length > 1 ||
+          u == "Turing.NTimeDiag.exists_diagonalizer" || (u.splitOn "exists_diagonalizer.").length > 1 then
+        nsrc := nsrc + 1
+        let us := ci.type.getUsedConstants ++ ((ci.value? (allowOpaque := true)).map Expr.getUsedConstants).getD #[]
+        for m in us do used := used.insert m
+  let mut otherPriv : Array Name := #[]
+  let mut ownPriv := 0
+  let mut tcs := 0
+  for m in used.toList do
+    match env.getModuleIdxFor? m with
+    | some i =>
+      if i == mi then
+        if isPrivateName m then ownPriv := ownPriv + 1
+      else
+        let mod := env.header.moduleNames[i.toNat]!
+        if (`TCSlib).isPrefixOf mod then tcs := tcs + 1
+        if isPrivateName m then otherPriv := otherPriv.push m
+    | none => pure ()
+  logInfo m!"new constants walked: {nsrc}; distinct constants mentioned: {used.size}; other-module TCSlib constants: {tcs}; own-module privates: {ownPriv}; other modules' privates: {otherPriv.size} {otherPriv}"
+
+#dz_privuse

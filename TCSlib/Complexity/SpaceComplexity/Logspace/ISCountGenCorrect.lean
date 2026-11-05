@@ -207,15 +207,15 @@ open Turing LogProg LogProg.ISCount LogProg.ISGen LogProg.SavitchARM
 /-- A number `m ≤ 2 ^ e + 1` has a binary expansion of at most `e + 2` digits after one
 increment. -/
 private lemma bits_succ_le {m e : ℕ} (h : m ≤ 2 ^ e + 1) : (Nat.bits (m + 1)).length ≤ e + 2 := by
-  rw [Nat.size_eq_bits_len, Nat.size_le]
+  apply length_bits_le
   have : 2 ^ e + 2 < 2 ^ (e + 2) := by
     rw [pow_add]; have := Nat.one_le_two_pow (n := e); omega
   omega
 
 /-- The binary length is at most the logarithmic width. -/
 private lemma size_le_logSpace (n : ℕ) : Nat.size n ≤ logSpace n := by
-  rw [Nat.size_le]
-  exact Nat.lt_pow_succ_log_self (by norm_num) n
+  rw [← Nat.size_eq_bits_len, logSpace_eq]
+  exact length_bits_le_log n
 
 /-- **Nondeterministic space is closed under complement** [AB09, Corollary 4.21, proved by
 the inductive counting of Theorem 4.20 on the configuration graph]: for every bound

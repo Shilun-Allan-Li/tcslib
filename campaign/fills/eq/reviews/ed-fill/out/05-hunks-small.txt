@@ -1,0 +1,78 @@
+@@ -15,6 +15,9 @@ import TCSlib.Complexity.TuringMachine.Build.Primitives
+ import TCSlib.Complexity.TuringMachine.Build.Rewind
+ import TCSlib.Complexity.TuringMachine.BufferWords
+ import TCSlib.Complexity.TuringMachine.Build.WordTests
++import TCSlib.Complexity.TuringMachine.Build.NDHost
++import TCSlib.Complexity.TuringMachine.NDCodeSimulator
++import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -67,7 +70,7 @@ diagonalization, as two contracts over a pure description of its stages. C1-E's
+ * `Turing.NTimeDiag.acceptLang_mem_NTIME` — a halting NDTM's bounded language is in `NTIME`
+   (proved).
+ * `Turing.NTimeDiag.exists_queryTM` — the stage query in linear time (proved).
+-* `Turing.NTimeDiag.exists_diagonalizer` — the diagonalizer (sorried; C1-E's second fill).
++* `Turing.NTimeDiag.exists_diagonalizer` — the diagonalizer (proved).
+ 
+ ## References
+ 
+@@ -5343,8 +5346,3057 @@ theorem exists_queryTM {f g : ℕ → ℕ} (hf : Complexity.TimeConstructible f)
+     exact qy_query_of_main hg hM
+   exact qy_main hf hg
+ 
+-/-- **The diagonalizer** (C1-E; [AB09, proof of Theorem 3.2]; the route of C1's design §2.5 and the
+-P3.3 gate's round 2, §§3–5): for time-constructible `f`, `g`, an effective scheme `c` and a
++/-! ### The diagonalizer's leaf: the one-cell take -/
++
++/-- **The one-cell take**. From its reading state `none`, in one step it reads the cell under the
++head of tape `i`, writes a blank there, moves that head one cell right and enters `some o`, `o` the
++symbol read; nothing else is written or moved and nothing is emitted. A state `some o` idles (the
++host redirects it). It makes the left delimiter that every framed row needs before a word inside a
++nonblank block: no public row writes a blank at one cell (`Turing.writeConstTM` writes symbols,
++`Turing.clearTM` and `Turing.transferMapTM` blank a whole delimited word). -/
++private def dzTakeTM (K : ℕ) (i : Fin K) : MultiTapeTM K Bool (Option (Option Bool)) where
++  q₀ := none
++  tr := fun q _ w =>
++    match q with
++    | none =>
++      ⟨0, fun j => if j = i then (some none, .pos) else (none, 0), none, some (some (w i))⟩
++    | some o => ⟨0, fun _ => (none, 0), none, some (some o)⟩
+@@ -5397,7 +8449,7 @@ So `K = P + 7 + P'` bounds every branch; the body allowance and `K` are distinct
+ - **Top:** the decider's time is `C_BF · 2^{C_BF · (T* + 1)} ≤ n ≤ g n`, inside the allowance.
+ 
+ The interpreter's prefix clause is not used: its `|x|` term (`|x| = n + 1`) carries the per-code
+-constant, which the uniform `K` cannot absorb when `g n = n` (the statement gate, finding 1).
++constant, which the uniform `K` cannot absorb when `g n = n`.
+ 
+ Fill obligations, named: the assembly; the budget's guess, test, normalization and rewrite (a
+ private leaf in `O(g n + 1)`); the transfer to every branch
+@@ -5427,6 +8479,27 @@ theorem exists_diagonalizer {f g : ℕ → ℕ} (hf : Complexity.TimeConstructib
+             ¬(c.decode α).toFinNDTM.AcceptsWithin
+               (List.replicate (ladder f (stage f n) + 1) true)
+               (budget f (ladder f (stage f n))))) := by
+-  sorry
++  obtain ⟨BF, hBF⟩ := hBF
++  obtain ⟨κ⟩ := dz_kit_exists hf hg c BF
++  refine ⟨dzD κ, dzK κ, fun x => dz_halts κ x, fun α => ?_⟩
++  obtain ⟨CR, hCR⟩ := κ.hR α
++  obtain ⟨CB, hCB⟩ := hBF α
++  refine ⟨max 1 (max CR CB), fun n hn hα => ⟨fun hmid => ⟨fun hD => ?_, fun t' hacc hCt => ?_⟩,
++    fun htop hprem => ?_⟩⟩
++  · subst hα
++    exact dz_mid_sound κ hn hmid hD
++  · subst hα
++    have hCR' : CR ≤ max 1 (max CR CB) := (le_max_left _ _).trans (le_max_right _ _)
++    have h1 : 1 ≤ max 1 (max CR CB) := le_max_left _ _
++    have ht1 : t' + 1 ≤ max 1 (max CR CB) * (t' + 1) := Nat.le_mul_of_pos_left _ h1
++    exact dz_mid_complete κ hn hmid CR hCR t' hacc
++      ((Nat.mul_le_mul_right _ hCR').trans hCt) (by omega)
++  · subst hα
++    have hCB' : CB ≤ max 1 (max CR CB) := (le_max_right _ _).trans (le_max_right _ _)
++    have hpow : 2 ^ (CB * (budget f (ladder f (stage f n)) + 1)) ≤
++        2 ^ (max 1 (max CR CB) * (budget f (ladder f (stage f n)) + 1)) :=
++      Nat.pow_le_pow_right (by norm_num) (Nat.mul_le_mul_right _ hCB')
++    exact dz_top_iff κ hn htop CB (hCB _ _)
++      (((Nat.mul_le_mul hCB' hpow).trans hprem).trans (κ.hg n))
+ 
+ end Turing.NTimeDiag

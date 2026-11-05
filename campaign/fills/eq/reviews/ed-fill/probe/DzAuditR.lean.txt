@@ -1,0 +1,77 @@
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+import Lean
+/-! Reviewer's audit probe: walks the compiled module `NTimeDiagonalizer` (no source of the
+delivery is elaborated here; only its olean is read). -/
+open Lean Elab Command
+
+private def modN : Name := `TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
+private def std3 : List Name := [``propext, ``Classical.choice, ``Quot.sound]
+
+private def userName (n : Name) : Name := (privateToUserName? n).getD n
+
+elab "#dz_audit" : command => do
+  let env ← getEnv
+  let some mi := env.getModuleIdx? modN | throwError "module not loaded"
+  let mut mine : Array (Name × ConstantInfo) := #[]
+  for (n, ci) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some mi then mine := mine.push (n, ci)
+  mine := mine.qsort (fun a b => (userName a.1).toString < (userName b.1).toString)
+  let pub := mine.filter (fun p => !isPrivateName p.1)
+  logInfo m!"module constants: {mine.size}; public: {pub.size}; private: {mine.size - pub.size}"
+  -- public constant list (for a base/head diff)
+  let mut s := ""
+  for (n, _) in pub do s := s ++ s!"PUB {n}\n"
+  logInfo s
+  -- type and value hashes of every constant (for a base/head diff)
+  let mut t := ""
+  for (n, ci) in mine do
+    let vh := match ci.value? with | some v => toString v.hash | none => "-"
+    t := t ++ s!"HASH {userName n} {if isPrivateName n then "priv" else "pub"} type={ci.type.hash} value={vh}\n"
+  logInfo t
+  -- axioms: one shared walk over all module constants, then per-constant on the declaration list
+  let names := mine.map (·.1)
+  let st := (← (names.forM fun n => CollectAxioms.collect n).run env |>.run {}).2
+  logInfo m!"union of axioms over all module constants: {st.axioms}"
+  -- per-constant axioms, flag any outside the standard three
+  let mut bad := 0
+  let mut u := ""
+  for (n, _) in mine do
+    let st1 := (((CollectAxioms.collect n).run env).run {}).2
+    let ax := st1.axioms
+    let ok := ax.all (fun a => std3.contains a)
+    if !ok then bad := bad + 1
+    u := u ++ s!"{if ok then "AX-OK " else "AX-BAD"} {userName n} {ax.toList}\n"
+  logInfo m!"constants with an axiom outside the standard three: {bad}"
+  logInfo u
+
+#dz_audit
+
+#print axioms Turing.NTimeDiag.exists_diagonalizer
+#print axioms Turing.NTimeDiag.exists_queryTM
+
+/-- Reachability from the target over the module's constants. -/
+elab "#dz_reach" : command => do
+  let env ← getEnv
+  let some mi := env.getModuleIdx? modN | throwError "module not loaded"
+  let root := ``Turing.NTimeDiag.exists_diagonalizer
+  let mut seen : NameSet := {}
+  let mut stack : Array Name := #[root]
+  while h : stack.size > 0 do
+    let n := stack.back
+    stack := stack.pop
+    if seen.contains n then continue
+    seen := seen.insert n
+    if let some ci := env.find? n then
+      for m in ci.getUsedConstants do
+        if env.getModuleIdxFor? m == some mi && !seen.contains m then stack := stack.push m
+  let mut out := ""
+  let mut cnt := 0
+  for (n, _) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? n == some mi then
+      let u := userName n
+      if (u.toString.splitOn "NTimeDiag.dz").length > 1 || (u.toString.splitOn "NTimeDiag.Dz").length > 1 then
+        if seen.contains n then cnt := cnt + 1
+        else out := out ++ s!"NOT-REACHED {u}\n"
+  logInfo m!"dz/Dz module constants reached from the target: {cnt}\n{out}"
+
+#dz_reach

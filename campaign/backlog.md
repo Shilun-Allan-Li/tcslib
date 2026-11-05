@@ -2019,7 +2019,18 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
       source equals the head blob `d767cc72`; the only deleted lines are the `sorry` and two status
       phrases.
     - **Missing:** the per-checkpoint zips (only the final zip arrived).
-    - **Under review** (a sub-agent, `$S/review/nf-cont1-fill/`).
+    - **Reviewed** (`campaign/fills/c1/reviews/nf-cont1-fill/`, a sub-agent): **land with edits,
+      0/2/2/10.** The target is on the standard axioms, the seal covers 257 definitions, and the
+      constant `C = 4k² + 47k + 45` was checked. F1 (`nf_all_cons` re-derives Mathlib's
+      `Nat.forall_lt_succ_left'`) is fixed by E1. F2 is four kinds of fact re-stated (see the
+      ledger). The landing edits are E1–E6, landed blob `5723152d`.
+    - **Ruled (user, 2026-11-04):**
+      - **F2: publish homes first.** An API PR places the facts beside their definitions and
+        re-points the campaign's private copies, then NF's landing cites them;
+      - E6 lands;
+      - the missing checkpoint zips are accepted as absent.
+    - **NF's landing therefore waits for that API PR's gate and replay.** It re-takes H's screen
+      base: the new pair `un_setup` ← `nf_retag` is an idiom.
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -4176,7 +4187,16 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   - **Intake clean:** 80/80 sums; the bundle on the base; patch-ids equal the commits'; the zip's
     source equals the head blob `4b72d525`; the deleted lines are the `sorry`, one status line and
     three label-bearing docstring lines.
-  - **Under review** (a sub-agent, `$S/review/ed-fill/`).
+  - **Reviewed** (`campaign/fills/eq/reviews/ed-fill/`, a sub-agent): **land with edits, 0/3/4/11.**
+    The proof is sound: 1,846 constants, all on the standard three; `K` is uniform; the
+    `g n = n` boundary holds. F1 is `dz_word_lt`, new BL-1 (vi) debt. F2 and F3 re-derived
+    imported lemmas; E3 and E4 remove them. The landing edits are E1–E7 (E1 re-points
+    `qy_call_bound`'s `hb`), landed blob `fc65a848`.
+  - **Ruled (user, 2026-11-04):** F1 acknowledged for 12.2c; all the review's recommendations;
+    the commit subjects reworded and the `Claude-Session:` trailers dropped.
+  - **PR #188** (`lean/ed-diagonalizer`, head `f77abee9`): the 11 commits (authorship kept), plus
+    the landing edits.
+  - **Next:** after #182 merges, the replay (3 modules from `oleans-larm2`) and a light fill gate.
 
   With NF, this closes `NTimeHierarchy`'s two inputs; landing both should make that theorem
   admission-free, to be checked at landing.
@@ -4205,6 +4225,23 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   **Gate 90: PASS 0/0/3/9.** Minors 2–3 are fixed in the records. Minor 1 (`dsimp only
   [Function.comp]`) is fixed on #182 by `94093275`. **Ruled (user, 2026-11-04): #181 merges first**;
   then #182 takes one merged-tree replay from `oleans-lsm2`.
+* **In flight at the relocation (2026-11-04, evening; #181 merged as `d1ddea26`).** Each item
+  resumes from files; `$S` is the session scratchpad.
+  - **NF cont1's and E-D's fill reviews:** sub-agents writing `$S/review/nf-cont1-fill/REVIEW.md`
+    and `$S/review/ed-fill/REVIEW.md`, with all outputs under `out/` and `land/`.
+    - If an agent was lost, continue it, or relaunch it with the same brief; finished outputs stay.
+    - Check `$S/locks/screen`: if no `copy-text-screen` process runs, the lock is stale; `rmdir` it.
+    - Each agent removes its own worktrees and clones; leftovers sit under its directory.
+  - **G5's screen:** `$S/g5ps/screen/run.sh`, queued behind the screen lock. Its outputs are
+    `screen-base.txt`, `screen-head.txt` and `status.txt`. If it was lost, run it again; its
+    exports `base/` and `head/` are in place.
+  - **#182's merged-tree replay `replay-larm2`:** written and prechecked. The campaign was merged
+    into #182 (`a199760e`; `ARMProof` auto-merged with #181's edit). 138 modules from
+    `oleans-lsm5`, five blobs pinned. **Passed** (138 of 138, static-equal at 22; `oleans-larm2`).
+    **#182 is clear to merge**; then #184 is retargeted, merged with the campaign and replayed.
+  - **G5:** `lean/g5-statements` at `6bd12e68`, local (not pushed). After the screen: merge the
+    campaign, push, open the PR, then gate 92's pack. Its replay is the 325-module closure,
+    chained from the newest snapshot.
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
@@ -4225,7 +4262,7 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   the site list: `QueryReshape`, `UniformSample`, two in `Hardness`, and `Word`'s
   `bitsVal_lt_two_pow`. **Ruled (user, 2026-11-04): acknowledge, with BL-1's scope by kind.** No
   Lean change; the minor is fixed in the records. **Gate 89 closed.** `replay-lsm5` (209 modules)
-  was started by the user and is monitored. **#181 is clear to merge once it passes.** After that
+  **passed** (209 of 209, 0 failed, static-equal at 44; `oleans-lsm5`). **#181 is clear to merge.** After that
   merge, #182 takes its merged-tree replay from `oleans-lsm5`, not `oleans-lsm4`.
 * **#184 (the codec's edge mode, `edgeLang_mem : edgeLang N ∈ LOGSPACE`), gate 91.** The edge
   decider's home was decided at pre-ship by the user's rule: a fifth mode of `CA` (design note
@@ -4239,8 +4276,9 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 
   **Gate 91 dispatched** (user, 2026-11-04; `exchange/archive/gates/91-codec-edge-api-gate/`).
   **Round 1: OPEN 0/1/4** (`upd_le` re-proved `register_update_le`); fixed at `b360808c`.
-  **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Two minors are open on #184: seven
-  label docstrings (minor 2), and the chain re-run at the head with source hashes (minor 1).
+  **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Its two Lean-side minors are fixed: seven
+  label docstrings rewritten (`e6eaaf94`), and the chain re-run at that head with source hashes
+  (22/22 clean, from a fresh `oleans-larm` clone).
   After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
   deepening fill's brief issues once #182 and #184 have both merged.
 

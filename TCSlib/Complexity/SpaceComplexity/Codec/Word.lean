@@ -271,6 +271,9 @@ def cellOf (s : ℕ) (C : Cfg N.k Bool N.State x) (j : ℕ) : CellV N :=
 /-- The width of the input-position field on inputs of length `n`: `|bits (n + 1)|`. -/
 def wP (n : ℕ) : ℕ := (Nat.bits (n + 1)).length
 
+/-- The position-field width is the binary length of `n + 1`. -/
+lemma wP_eq (n : ℕ) : wP n = (Nat.bits (n + 1)).length := rfl
+
 /-- The binary word of `v` padded with `0`s to width `w`. -/
 def padBits (w v : ℕ) : List Bool := Nat.bits v ++ List.replicate (w - (Nat.bits v).length) false
 

@@ -23,11 +23,15 @@ logarithmically many binary digits — into a logspace decider.
 ## Main definitions
 
 * `Complexity.LogProg.AReach`, `Complexity.LogProg.AHalt` — runs of abstract machines.
+* `Complexity.LogProg.Ins.embed` — an instruction relabeled into a larger machine, an answer
+  becoming a jump to an exit.
 
 ## Main results
 
 * `Complexity.LogProg.arm_decides` — a correct abstract machine with logarithmic register
   values, calling logspace deciders on short virtual inputs, decides its language in `L`.
+* `Complexity.LogProg.AHalt.embed` — a halting run of a machine is a run to the exit of any
+  larger machine holding its table as a block.
 
 ## References
 
@@ -246,11 +250,7 @@ theorem arm_decides {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : ARM m
   set n := x.length with hn
   set Ls := logSpace n with hLs
   have hL1 : 1 ≤ Ls := by simp [hLs, logSpace]
-  have hLn : Ls ≤ n + 1 := by
-    simp only [hLs, logSpace]
-    rcases Nat.eq_zero_or_pos n with h | h
-    · rw [h]; simp
-    · have := Nat.log_lt_self 2 (show n ≠ 0 by omega); omega
+  have hLn : Ls ≤ n + 1 := by rw [hLs]; exact logSpace_le_succ n
   set W := K * Ls with hW
   set B := cs * K2 * Ls + 1 with hB
   obtain ⟨N, h1, h2, hm⟩ := hcorr x
@@ -329,5 +329,177 @@ theorem arm_decides {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : ARM m
     have f1 : 2 * m ≤ 2 * m * Ls := Nat.le_mul_of_pos_right _ (by omega)
     have f2 : 3 * kD ≤ 3 * kD * Ls := Nat.le_mul_of_pos_right _ (by omega)
     omega
+
+
+/-! ## A machine as a block of a larger one -/
+
+section Embed
+
+variable {m' d' : ℕ} {Λ' : Type}
+
+/-- **An instruction relabeled into a larger machine**: registers along `ρ`, deciders along `σ`,
+labels along `ι`, and an answer `b` replaced by a jump to the exit `k b` (a zero test of `r₀`
+with both targets `k b`). -/
+def Ins.embed (ρ : Fin m → Fin m') (σ : Fin d → Fin d') (ι : Λ → Λ') (k : Bool → Λ')
+    (r₀ : Fin m') : Ins m d Λ → Ins m' d' Λ'
+  | .inc r l => .inc (ρ r) (ι l)
+  | .dec r l => .dec (ρ r) (ι l)
+  | .clr r l => .clr (ρ r) (ι l)
+  | .half r l => .half (ρ r) (ι l)
+  | .jz r l₁ l₀ => .jz (ρ r) (ι l₁) (ι l₀)
+  | .jodd r l₁ l₀ => .jodd (ρ r) (ι l₁) (ι l₀)
+  | .jeq r s l₁ l₀ => .jeq (ρ r) (ρ s) (ι l₁) (ι l₀)
+  | .call j md args l₁ l₀ => .call (σ j) md (args.map ρ) (ι l₁) (ι l₀)
+  | .ret b => .jz r₀ (k b) (k b)
+  | .valP r l => .valP (ρ r) (ι l)
+  | .valQ r l => .valQ (ρ r) (ι l)
+  | .jeqIn r l₁ l₀ => .jeqIn (ρ r) (ι l₁) (ι l₀)
+  | .jeqFst r l₁ l₀ => .jeqFst (ρ r) (ι l₁) (ι l₀)
+  | .jeqSnd r l₁ l₀ => .jeqSnd (ρ r) (ι l₁) (ι l₀)
+
+/-- The registers `v'` of the larger machine extend `v` along `ρ` and equal `e` off `ρ`'s
+range. -/
+structure RegExt (ρ : Fin m → Fin m') (e : Fin m' → ℕ) (v : Fin m → ℕ) (v' : Fin m' → ℕ) :
+    Prop where
+  /-- On `ρ`'s range, `v'` is `v`. -/
+  reg : ∀ r, v' (ρ r) = v r
+  /-- Off `ρ`'s range, `v'` is `e`. -/
+  ext : ∀ r', (∀ r, ρ r ≠ r') → v' r' = e r'
+
+/-- Writing a register of the block writes its image. -/
+lemma RegExt.update {ρ : Fin m → Fin m'} (hρ : Function.Injective ρ) {e : Fin m' → ℕ}
+    {v : Fin m → ℕ} {v' : Fin m' → ℕ} (h : RegExt ρ e v v') (r : Fin m) (n : ℕ) :
+    RegExt ρ e (Function.update v r n) (Function.update v' (ρ r) n) := by
+  refine ⟨fun r₁ => ?_, fun r' hr' => ?_⟩
+  · by_cases h1 : r₁ = r
+    · subst h1; simp
+    · rw [Function.update_of_ne (hρ.ne h1), Function.update_of_ne h1, h.reg]
+  · rw [Function.update_of_ne (fun h' => hr' r h'.symm), h.ext r' hr']
+
+/-- **The syntactic preconditions from the instruction**: distinct registers in an equality
+test, distinct arguments in a call, and a well-formed input where a comparison reads it. -/
+lemma preS_of_ins {A : ARM m d Λ} {l : Λ} {v : Fin m → ℕ} {res : Option Bool}
+    (hjeq : ∀ r s l₁ l₀, A l = .jeq r s l₁ l₀ → r ≠ s)
+    (hcall : ∀ j md args l₁ l₀, A l = .call j md args l₁ l₀ → args.Nodup)
+    (hin : ∀ r l₁ l₀, A l = .jeqIn r l₁ l₀ → ValidPlain x)
+    (hfst : ∀ r l₁ l₀, A l = .jeqFst r l₁ l₀ → ValidPair x)
+    (hsnd : ∀ r l₁ l₀, A l = .jeqSnd r l₁ l₀ → ValidPair x) :
+    PreS A x (some l, v, res) := by
+  simp only [PreS]
+  cases h : A l with
+  | jeq r s l₁ l₀ => exact hjeq r s l₁ l₀ h
+  | call j md args l₁ l₀ => exact hcall j md args l₁ l₀ h
+  | jeqIn r l₁ l₀ => exact hin r l₁ l₀ h
+  | jeqFst r l₁ l₀ => exact hfst r l₁ l₀ h
+  | jeqSnd r l₁ l₀ => exact hsnd r l₁ l₀ h
+  | _ => trivial
+
+variable {A : ARM m d Λ} {D : ARM m' d' Λ'} {ρ : Fin m → Fin m'} {σ : Fin d → Fin d'}
+  {ι : Λ → Λ'} {k : Bool → Λ'} {r₀ : Fin m'}
+
+/-- The syntactic preconditions carry over to the embedded block. -/
+lemma preS_embed (hρ : Function.Injective ρ) (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    {l : Λ} {v : Fin m → ℕ} {v' : Fin m' → ℕ} (h : PreS A x (some l, v, none)) :
+    PreS D x (some (ι l), v', none) := by
+  simp only [PreS, hD] at h ⊢
+  cases hAl : A l <;> simp only [hAl, Ins.embed] at h ⊢
+  all_goals first | exact h | exact hρ.ne h | exact h.map hρ
+
+/-- **One step of the embedded block**: at an instruction other than an input check, the
+larger machine steps to the image of the block's next configuration, or, where the block
+answers `b`, jumps to the exit `k b` with its registers unchanged.
+
+**Proof sketch.** Case on the instruction at `l`, and rewrite both steps by its step equation
+(`astep_inc`, …). A register write lands on the write's image (`RegExt.update`); a test reads the
+same value through `ρ`; a call asks the same decider `σ j` the same virtual input, since its
+argument words agree (`callSegs_congr`); an answer `b` becomes the zero test of `r₀` whose two
+targets are `k b`. -/
+lemma astep_embed (hρ : Function.Injective ρ) (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    (oracle : Fin d' → List Bool → Bool) (x : List Bool) {e : Fin m' → ℕ} {l : Λ}
+    {v : Fin m → ℕ} {v' : Fin m' → ℕ} (hv : RegExt ρ e v v')
+    (hA : ∀ r l', A l ≠ .valP r l' ∧ A l ≠ .valQ r l') :
+    (∃ l₂ v₂ v₂', astep A (oracle ∘ σ) x (some l, v, none) = (some l₂, v₂, none) ∧
+        astep D oracle x (some (ι l), v', none) = (some (ι l₂), v₂', none) ∧
+        RegExt ρ e v₂ v₂') ∨
+      ∃ b, astep A (oracle ∘ σ) x (some l, v, none) = (none, v, some b) ∧
+        astep D oracle x (some (ι l), v', none) = (some (k b), v', none) := by
+  have hDl : ∀ i, A l = i → D (ι l) = i.embed ρ σ ι k r₀ := fun i hi => by rw [hD, hi]
+  cases hAl : A l with
+  | inc r l₁ =>
+    refine Or.inl ⟨l₁, _, _, astep_inc hAl, astep_inc (hDl _ hAl), ?_⟩
+    rw [hv.reg]; exact hv.update hρ r _
+  | dec r l₁ =>
+    refine Or.inl ⟨l₁, _, _, astep_dec hAl, astep_dec (hDl _ hAl), ?_⟩
+    rw [hv.reg]; exact hv.update hρ r _
+  | clr r l₁ => exact Or.inl ⟨l₁, _, _, astep_clr hAl, astep_clr (hDl _ hAl), hv.update hρ r _⟩
+  | half r l₁ =>
+    refine Or.inl ⟨l₁, _, _, astep_half hAl, astep_half (hDl _ hAl), ?_⟩
+    rw [hv.reg]; exact hv.update hρ r _
+  | jz r l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_jz hAl, ?_, hv⟩
+    rw [astep_jz (hDl _ hAl), hv.reg]; split_ifs <;> rfl
+  | jodd r l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_jodd hAl, ?_, hv⟩
+    rw [astep_jodd (hDl _ hAl), hv.reg]; split_ifs <;> rfl
+  | jeq r s l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_jeq hAl, ?_, hv⟩
+    rw [astep_jeq (hDl _ hAl), hv.reg, hv.reg]; split_ifs <;> rfl
+  | call j md args l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_call hAl, ?_, hv⟩
+    have hseg : callSegs (⟨σ j, md, args.map ρ, ι l₁, ι l₀⟩ : CallSpec m' d' Λ') x
+        (fun r' => Nat.bits (v' r')) = callSegs ⟨j, md, args, l₁, l₀⟩ x
+        (fun r => Nat.bits (v r)) :=
+      callSegs_congr rfl (by simp only [List.map_map]; congr 1; funext r; simp [hv.reg r])
+    rw [astep_call (hDl _ hAl), hseg]; simp only [Function.comp_apply]; split_ifs <;> rfl
+  | ret b =>
+    refine Or.inr ⟨b, astep_ret hAl, ?_⟩
+    rw [astep_jz (hDl _ hAl)]; split_ifs <;> rfl
+  | valP r l₁ => exact absurd hAl (hA r l₁).1
+  | valQ r l₁ => exact absurd hAl (hA r l₁).2
+  | jeqIn r l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_jeqIn hAl, ?_, hv⟩
+    rw [astep_jeqIn (hDl _ hAl), hv.reg]; split_ifs <;> rfl
+  | jeqFst r l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_jeqFst hAl, ?_, hv⟩
+    rw [astep_jeqFst (hDl _ hAl), hv.reg]; split_ifs <;> rfl
+  | jeqSnd r l₁ l₀ =>
+    refine Or.inl ⟨_, v, v', astep_jeqSnd hAl, ?_, hv⟩
+    rw [astep_jeqSnd (hDl _ hAl), hv.reg]; split_ifs <;> rfl
+
+/-- **A halting run of a block, inside a larger machine**: if `A`, its deciders read through
+`σ`, answers `b` from `l` through configurations satisfying `G`, then the larger machine runs
+from the image of `l` to the exit `k b` through configurations satisfying `G'`, provided `G`
+carries over to `G'` along register extensions. It ends at registers extending those of `A`'s
+last live configuration, which satisfies `G`; the registers off `ρ`'s range are never written.
+
+**Proof sketch.** Induction on the length of `A`'s run. Each live step of `A` is matched by one
+step of the larger machine (`astep_embed`); at the answering step the larger machine jumps to
+the exit instead. `A` has no input checks, so it halts only by answering. -/
+theorem AHalt.embed (hρ : Function.Injective ρ) (hD : ∀ l, D (ι l) = (A l).embed ρ σ ι k r₀)
+    (hA : ∀ l r l', A l ≠ .valP r l' ∧ A l ≠ .valQ r l')
+    {oracle : Fin d' → List Bool → Bool} {G : AConf m Λ → Prop} {G' : AConf m' Λ' → Prop}
+    {e : Fin m' → ℕ}
+    (hG : ∀ l v v', G (some l, v, none) → RegExt ρ e v v' → G' (some (ι l), v', none))
+    {l : Λ} {v : Fin m → ℕ} {b : Bool} (h : AHalt A (oracle ∘ σ) x G (some l, v, none) b)
+    {v' : Fin m' → ℕ} (hv : RegExt ρ e v v') :
+    ∃ v₂ v₂', (∃ l₂, G (some l₂, v₂, none)) ∧ RegExt ρ e v₂ v₂' ∧
+      AReach D oracle x G' (some (ι l), v', none) (some (k b), v₂', none) := by
+  obtain ⟨T, hT1, hT2, hT3⟩ := h
+  induction T generalizing l v v' with
+  | zero => simp [arun_zero] at hT1
+  | succ T ih =>
+    have hG0 : G (some l, v, none) := by simpa [arun_zero] using hT3 0 (Nat.succ_pos _)
+    rcases astep_embed hρ hD oracle x hv (hA l) with
+      ⟨l₂, v₂, v₂', hA1, hD1, hv₂⟩ | ⟨b', hA1, hD1⟩
+    · rw [arun_succ, hA1] at hT1 hT2
+      have hT3' : ∀ t < T, G (arun A (oracle ∘ σ) x (some l₂, v₂, none) t) := by
+        intro t ht; have := hT3 (t + 1) (by omega); rwa [arun_succ, hA1] at this
+      obtain ⟨v₃, v₃', h1, h2, h3⟩ := ih hv₂ hT1 hT2 hT3'
+      exact ⟨v₃, v₃', h1, h2, AReach.step (hG l v v' hG0 hv) (hD1 ▸ h3)⟩
+    · rw [arun_succ, hA1, arun_halted] at hT2
+      obtain rfl : b' = b := by simpa using hT2
+      exact ⟨v, v', ⟨l, hG0⟩, hv, AReach.step (hG l v v' hG0 hv) (hD1 ▸ AReach.refl _)⟩
+
+end Embed
 
 end Complexity.LogProg
