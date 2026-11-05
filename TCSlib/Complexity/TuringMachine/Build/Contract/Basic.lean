@@ -76,6 +76,7 @@ trajectories*, relations on the whole head vector.
 * `Turing.ReturnContract`: returning modules.
 * `Turing.HeadBox`, `Turing.Segment`, `Turing.SafeSegment`, `Turing.Contract.ofSegment`: the
   segment layer and its bridge to contracts.
+* `Turing.Contract.zero`: the zero-time contract of a machine started at its own exit.
 * `Turing.roundStop`, `Turing.Round`, `Turing.roundOrbit`, `Turing.RoundContract` (with
   `returning` and `escaping`), `Turing.ReturnContract.toRound`, `Turing.RoundContract.hullLo`
   and `hullHi`: the round layer.
@@ -101,6 +102,8 @@ trajectories*, relations on the whole head vector.
   `simps` without the `simp` attribute, so that consumers never unfold the definition.
 * `Turing.Contract.ofSegment_pre`, `_time`, `_post`, `_lo`, `_hi` — the segment bridge's
   fields, the same way (the specification API's gate, finding 1).
+* `Turing.Contract.zero_pre`, `_time`, `_post`, `_lo`, `_hi` — the zero-time contract's
+  fields as equations.
 * `Turing.RoundContract.returning_*`, `Turing.RoundContract.escaping_*`,
   `Turing.ReturnContract.toRound_*`, `Turing.Contract.mapState_*`, `Turing.Contract.lockstep_*`
   (`pre`, `time`, `post`, `lo`, `hi`) — the remaining constructors' fields, the same way.
@@ -629,6 +632,43 @@ def ofSegment (pre : ι → Cfg k Γ S x → Prop) (time : ι → Cfg k Γ S x �
 /-! The specification API (user, 2026-10-16; its gate, finding 1): the segment bridge's data
 fields as equations, without the `simp` attribute. -/
 attribute [simps (config := { isSimp := false }) pre time post lo hi] ofSegment
+
+/-- **The zero-time contract** of a machine started at its own exit `e`: every start is
+admissible, the run is empty (`Turing.Segment.zero`), the endpoint is the start and the envelope
+is the start's heads. It is the continuation of a branch or a phase that has nothing left to do. -/
+def zero (M : MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) : Contract M e {some e} ι x :=
+  ofSegment (fun _ _ => True) (fun _ _ => 0) (fun _ d => d) (fun _ d => d.workTapePos)
+    (fun _ d => d.workTapePos)
+    (fun _ _ _ _ => Segment.zero
+      ((headBox_iff _ _ _).mpr fun _ => Finset.mem_Icc.mpr ⟨le_rfl, le_rfl⟩))
+    (fun _ _ hd _ => by rw [hd]; exact Set.mem_singleton _)
+
+/-! The zero-time contract's data fields as equations, without the `simp` attribute. -/
+
+/-- Every start is admissible for `Turing.Contract.zero`. -/
+theorem zero_pre (M : MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+    (d : Cfg k Γ S x) : (zero M e ι x).pre i d = True :=
+  rfl
+
+/-- `Turing.Contract.zero` takes no step. -/
+theorem zero_time (M : MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+    (d : Cfg k Γ S x) : (zero M e ι x).time i d = 0 :=
+  rfl
+
+/-- `Turing.Contract.zero`'s endpoint is its start. -/
+theorem zero_post (M : MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+    (d : Cfg k Γ S x) : (zero M e ι x).post i d = d :=
+  rfl
+
+/-- `Turing.Contract.zero`'s lower envelope is its start's heads. -/
+theorem zero_lo (M : MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+    (d : Cfg k Γ S x) : (zero M e ι x).lo i d = d.workTapePos :=
+  rfl
+
+/-- `Turing.Contract.zero`'s upper envelope is its start's heads. -/
+theorem zero_hi (M : MultiTapeTM k Γ S) (e : S) (ι : Type) (x : List Γ) (i : ι)
+    (d : Cfg k Γ S x) : (zero M e ι x).hi i d = d.workTapePos :=
+  rfl
 
 /-- **The time-derived envelope of a contract**: every head stays within `time` cells of its
 start, whatever the contract's own envelope says. -/
