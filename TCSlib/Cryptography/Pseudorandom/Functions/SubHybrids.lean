@@ -81,6 +81,13 @@ noncomputable def subHybridStream {q : ℕ} (G : S → V) (j : ℕ)
 def lazyDist (A : OracleAdversary ρ P V) : (ℕ → V) → ρ → Bool :=
   fun a r => (A r).evalLazy a []
 
+omit [Fintype P] [Fintype V] [Nonempty V] [Fintype ρ] in
+/-- On the answer stream `a` and coins `r`, `lazyDist A` is the lazy run of `A r` from the empty
+list of distinct queries: `lazyDist A a r = (A r).evalLazy a []`. -/
+theorem lazyDist_apply (A : OracleAdversary ρ P V) (a : ℕ → V) (r : ρ) :
+    lazyDist A a r = (A r).evalLazy a [] :=
+  rfl
+
 /-- The probability that `A` accepts in the sub-hybrid `H_j`: `j` uniform values and
 `q - j` generator outputs answer the distinct queries in order. [Gar26, proof of
 Theorem 3.3, `H_{i,j}`] with the level `i` abstracted away; see the module docstring for

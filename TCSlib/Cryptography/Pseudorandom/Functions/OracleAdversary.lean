@@ -211,6 +211,12 @@ def OracleAdversary.BoundedBy {ρ : Type*} {I O : Type}
     (A : OracleAdversary ρ I O) (q : ℕ) : Prop :=
   ∀ r, (A r).BoundedBy q
 
+/-- `A` makes at most `q` queries iff the tree of every coin string does:
+`A.BoundedBy q ↔ ∀ r, (A r).BoundedBy q`. -/
+theorem OracleAdversary.boundedBy_iff {ρ : Type*} {I O : Type} (A : OracleAdversary ρ I O)
+    (q : ℕ) : A.BoundedBy q ↔ ∀ r, (A r).BoundedBy q :=
+  Iff.rfl
+
 /-- The oracle adversary `A` as a distinguisher for oracles: on the oracle `f` and coins
 `r` it outputs the result of running `A r` against `f`. With a sampler for the oracle,
 `acceptProb` of this distinguisher is the probability `Pr[A^f = 1]` of

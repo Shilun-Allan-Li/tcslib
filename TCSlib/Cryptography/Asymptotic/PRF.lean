@@ -164,16 +164,14 @@ theorem acceptProb_random_eq_lazy {ρ : Type*} [Fintype ρ] (ℓ₁ ℓ₂ : Pol
     (hA : A.BoundedBy q) :
     acceptProb ((OracleEnsemble.random ℓ₁ ℓ₂).O n) (oracleDist A) =
       acceptProb (fun W : Fin q → (Fin (ℓ₂.eval n) → Bool) => extendStream W) (lazyDist A) := by
-  show uprob (fun z : ((Fin (ℓ₁.eval n) → Bool) → (Fin (ℓ₂.eval n) → Bool)) × ρ =>
-      (A z.2).eval z.1 = true) =
-    uprob (fun z : (Fin q → (Fin (ℓ₂.eval n) → Bool)) × ρ =>
-      (A z.2).evalLazy (extendStream z.1) [] = true)
-  rw [uprob_prod_comm (fun R (r : ρ) => (A r).eval R = true),
-    uprob_prod_comm (fun W (r : ρ) => (A r).evalLazy (extendStream W) [] = true),
+  rw [acceptProb_def, acceptProb_def,
+    uprob_prod_comm (fun R (r : ρ) => oracleDist A ((OracleEnsemble.random ℓ₁ ℓ₂).O n R) r = true),
+    uprob_prod_comm (fun W (r : ρ) => lazyDist A (extendStream W) r = true),
     uprob_prod, uprob_prod]
   congr 1
   funext r
-  exact (QueryTree.uprob_evalLazy (· = true) (hA r)).symm
+  simp only [OracleEnsemble.random_O, oracleDist_apply, lazyDist_apply]
+  exact (QueryTree.uprob_evalLazy (· = true) ((OracleAdversary.boundedBy_iff A q).1 hA r)).symm
 
 /-! ### Next-query machines as oracle adversaries (D7) -/
 
@@ -264,13 +262,16 @@ theorem buildTree_boundedBy {ℓ₁ ℓ₂ : ℕ}
     ∀ (q : ℕ) (hist : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool))),
       (buildTree next q hist).BoundedBy q
   | 0, hist => by
-    unfold buildTree
-    cases next hist <;> exact trivial
+    cases h : next hist with
+    | ret b => rw [buildTree_zero_of_ret h]; exact QueryTree.boundedBy_ret b 0
+    | query x => rw [buildTree_zero_of_query h]; exact QueryTree.boundedBy_ret false 0
   | q + 1, hist => by
-    unfold buildTree
-    cases next hist with
-    | ret b => exact trivial
-    | query x => exact fun o => buildTree_boundedBy next q (hist ++ [(x, o)])
+    cases h : next hist with
+    | ret b => rw [buildTree_succ_of_ret h]; exact QueryTree.boundedBy_ret b (q + 1)
+    | query x =>
+      rw [buildTree_succ_of_query h]
+      exact (QueryTree.boundedBy_query_succ x _ q).2
+        fun o => buildTree_boundedBy next q (hist ++ [(x, o)])
 
 /-- The query tree of the next-query machine `D` at parameter `n` with budget `q`
 ([PS10, Definition 96.1]; D7: no oracle tapes, one activation per query on the history). The
@@ -295,7 +296,9 @@ every coin string (the hypothesis `BoundedBy` of `ggm_prfAdv_le` and `exists_ggm
 Induction on the budget (`buildTree_boundedBy`). -/
 theorem _root_.Complexity.NUPPT.toOracleAdversary_boundedBy (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) :
     (D.toOracleAdversary n ℓ₁ ℓ₂ q).BoundedBy q :=
-  fun _ => buildTree_boundedBy _ q []
+  (OracleAdversary.boundedBy_iff _ q).2 fun r => by
+    rw [NUPPT.toOracleAdversary_eq]
+    exact buildTree_boundedBy _ q []
 
 /-! ### Oracle indistinguishability [PS10, Definition 96.1] -/
 
@@ -717,15 +720,13 @@ private theorem prfAdv_toOracleAdversary_zero
     | query x => exact ⟨false, rfl⟩
   choose b hb using hA
   have key : ∀ {σ : Type} [Fintype σ] [Nonempty σ] (X : σ → (Fin n → Bool) → (Fin n → Bool)),
-      acceptProb X (oracleDist (D.toOracleAdversary n n n 0)) =
+      uprob (fun z : σ × D.Coins n => (D.toOracleAdversary n n n 0 z.2).eval (X z.1) = true) =
         uprob fun r : D.Coins n => b r = true := by
     intro σ _ _ X
-    unfold acceptProb
     rw [← uprob_snd (α := σ) (fun r : D.Coins n => b r = true)]
     refine uprob_congr fun z => ?_
-    rw [oracleDist, hb z.2]
-    rfl
-  rw [prfAdv, distAdv, key, key, sub_self, abs_zero]
+    rw [hb z.2, QueryTree.eval_ret]
+  rw [prfAdv_eq, key (F n), key (fun R => R), sub_self, abs_zero]
 
 /-- **[PS10, Theorem 97.3] (Goldreich–Goldwasser–Micali): the GGM family of a length-doubling
 pseudorandom generator is a pseudorandom function.**

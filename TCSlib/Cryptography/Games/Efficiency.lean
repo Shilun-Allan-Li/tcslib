@@ -319,8 +319,8 @@ the context `⟨1^n, ⟨z, ω⟩⟩` (`advIn`); it answers the adversary's queri
 reduction's output in a last phase (`finRun`), both with outer queries.
 
 One inner query `x` to oracle `i` is answered with at most `perCall(n)` outer queries, in at most
-`perCall(n) + 1` rounds of `run` (the last returns the answer or, with the budget spent, is cut off
-with the default). In each round, `run` sees `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, where `L` is
+`perCall(n) + 1` rounds of `run` (the last returns the answer; a further query after the budget
+is spent is cut off with the default). In each round, `run` sees `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨⟨1^i, x⟩, L⟩⟩⟩`, where `L` is
 the outer log of the call so far (encoded as `bitCodec` encodes logs), and returns a move in
 `bitCodec`'s format: a query `⟨[false], ⟨1^j, x'⟩⟩` to outer oracle `j`, or the answer
 `⟨[true], y ‖ s'⟩` (the inner answer, then the new state). A malformed round output, including a
@@ -330,7 +330,8 @@ joint default, unlike `PolyHandler.answer`, which defaults each component separa
 The finalization works the same way on `⟨⟨1^n, ⟨z, ω⟩⟩, ⟨s, ⟨a, L⟩⟩⟩` (the final state, the
 adversary's output and the outer log of the finalization so far), with at most `finCall(n)` outer
 queries; it returns the reduction's `outLen(n)`-bit output as `⟨[true], b⟩`, the all-`false`
-output on a malformed round output or a spent budget. -/
+output on a malformed round output or on a further query after the budget is spent. (A return at
+zero remaining budget is accepted: only a query then hits the timeout.) -/
 structure InteractiveHandler (k : ℕ) (din dout : Fin k → PolyExpr) (k' : ℕ)
     (din' dout' : Fin k' → PolyExpr) where
   /-- The length of the state. -/
@@ -391,7 +392,8 @@ theorem advInput_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) 
 
 /-- **One call** of the handler on the inner query `x` to oracle `i` in state `s`: at most
 `perCall(n)` outer queries, in at most `perCall(n) + 1` rounds of `run`. A malformed round output
-is the all-`false` answer and state (`decodeBitMove`'s default), and so is an exhausted budget. -/
+is the all-`false` answer and state (`decodeBitMove`'s default), and so is a further query after
+the budget is spent (a return at zero remaining budget is accepted). -/
 def call (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
     (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) (i : Fin k)
     (x : Fin ((din i).eval n) → Bool) :
@@ -402,7 +404,7 @@ def call (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List B
     (zeroBits _) (H.perCall.eval n) []
 
 /-- One call is `buildComp` of the handler's rounds, from the empty outer log, with budget
-`perCall(n)` and the all-`false` result when it runs out: `H.call n z ω s i x =
+`perCall(n)` and the all-`false` result on a query after it is spent: `H.call n z ω s i x =
 buildComp (fun L => decodeBitMove _ _ _ (H.run (input … L))) (zeroBits _) (H.perCall.eval n) []`.
 -/
 theorem call_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
@@ -451,7 +453,8 @@ theorem finInput_eq (n : ℕ) (z ω s a L : List Bool) :
 /-- **The finalization** in the final state `s`, after the adversary's output `a`: the
 reduction's `outLen(n)`-bit output, computed with at most `finCall(n)` outer queries, in at most
 `finCall(n) + 1` rounds of `finRun`. A malformed round output is the all-`false` output
-(`decodeBitMove`'s default), and so is an exhausted budget. -/
+(`decodeBitMove`'s default), and so is a further query after the budget is spent (a return at
+zero remaining budget is accepted). -/
 def finish (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)
     (ω : Fin (H.seedLen.eval n) → Bool) (s : Fin (H.stateLen.eval n) → Bool) {d : ℕ}
     (a : Fin d → Bool) : OracleComp (bitSpecAt din' dout' n) (Fin (H.outLen.eval n) → Bool) :=
@@ -462,7 +465,7 @@ def finish (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List
     (zeroBits _) (H.finCall.eval n) []
 
 /-- The finalization is `buildComp` of its rounds, from the empty outer log, with budget
-`finCall(n)` and the all-`false` output when it runs out: `H.finish n z ω s a =
+`finCall(n)` and the all-`false` output on a query after it is spent: `H.finish n z ω s a =
 buildComp (fun L => decodeBitMove _ _ _ (H.finRun (finInput … L))) (zeroBits _)
 (H.finCall.eval n) []`. -/
 theorem finish_eq (H : InteractiveHandler k din dout k' din' dout') (n : ℕ) (z : List Bool)

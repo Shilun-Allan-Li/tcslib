@@ -98,13 +98,14 @@ monad's associativity lines up the continuations. -/
 theorem simulate_bind (c : OracleComp spec α) (f : α → OracleComp spec β) (s : σ) :
     simulate impl (c.bind f) s = (simulate impl c s).bind (fun p => simulate impl (f p.1) p.2) := by
   induction c generalizing s with
-  | pure a => rfl
+  | pure a => simp only [OracleComp.pure_bind, simulate_pure]
   | query i x k ih => simp only [OracleComp.query_bind, simulate_query, OracleComp.bind_assoc, ih]
 
 /-- Simulating a single call is running the implementation. -/
 theorem simulate_call (i : ι) (x : spec.dom i) (s : σ) :
     simulate impl (OracleComp.call i x) s = impl i x s := by
-  simp only [OracleComp.call, simulate_query, simulate_pure]
+  rw [← OracleComp.bind_pure (OracleComp.call i x), OracleComp.call_bind, simulate_query]
+  simp only [simulate_pure]
   exact OracleComp.bind_pure _
 
 end Simulate
@@ -130,8 +131,8 @@ def passthrough {spec : OracleSpec ι} : QueryImpl spec σ spec :=
 /-- Forwarding asks the same oracle the same query and keeps the state:
 `passthrough i x s = .query i x (fun y => .pure (y, s))`. -/
 theorem passthrough_apply {spec : OracleSpec ι} (i : ι) (x : spec.dom i) (s : σ) :
-    passthrough (σ := σ) i x s = .query i x (fun y => .pure (y, s)) :=
-  rfl
+    passthrough (σ := σ) i x s = .query i x (fun y => .pure (y, s)) := by
+  rw [passthrough, ofComp_apply, OracleComp.call_bind]
 
 /-- Implement two oracle families **side by side**, sharing one state: `.inl i` is answered by
 `impl₁`, and `.inr j` by `impl₂`. -/
@@ -192,7 +193,7 @@ theorem simulate_comp {ι'' : Type} {spec : OracleSpec ι} {spec' : OracleSpec �
     simulate impl₂ (simulate impl₁ c s₁) s₂ =
       (simulate (impl₂.comp impl₁) c (s₁, s₂)).bind (fun p => .pure ((p.1, p.2.1), p.2.2)) := by
   induction c generalizing s₁ s₂ with
-  | pure a => rfl
+  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
   | query i x k ih =>
     simp only [simulate_query, simulate_bind, QueryImpl.comp, OracleComp.bind_assoc,
       OracleComp.pure_bind]
@@ -233,7 +234,7 @@ theorem simulate_withLog {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     (simulate impl.withLog c (s, log)).bind (fun p => .pure (p.1, p.2.1)) =
       simulate impl c s := by
   induction c generalizing s log with
-  | pure a => rfl
+  | pure a => simp only [simulate_pure, OracleComp.pure_bind]
   | query i x k ih =>
     simp only [simulate_query, QueryImpl.withLog, OracleComp.bind_assoc, OracleComp.pure_bind]
     congr 1
@@ -257,10 +258,14 @@ theorem simulate_costBoundedBy {spec : OracleSpec ι} {spec' : OracleSpec ι'}
     {c : OracleComp spec α} {q : ℕ} (hc : OracleComp.CostBoundedBy b c q) (s : σ) :
     OracleComp.CostBoundedBy cost' (simulate impl c s) q := by
   induction c generalizing q s with
-  | pure a => trivial
+  | pure a =>
+    rw [simulate_pure]
+    exact OracleComp.costBoundedBy_pure cost' (a, s) q
   | query i x k ih =>
-    obtain ⟨hi, hk⟩ := hc
+    obtain ⟨hi, hk⟩ := (OracleComp.costBoundedBy_query b i x k q).1 hc
     have h := OracleComp.CostBoundedBy.bind (himpl i x s) (fun ys => ih ys.1 (hk ys.1) ys.2)
-    rwa [Nat.add_sub_cancel' hi] at h
+    rw [Nat.add_sub_cancel' hi] at h
+    rw [simulate_query]
+    exact h
 
 end TCSlib.Cryptography.Games
