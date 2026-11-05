@@ -10,10 +10,15 @@ set_option relaxedAutoImplicit false
 set_option autoImplicit false
 
 /-!
-# The §3.9 scheme is CPA- and CCA1-secure (statement phase)
+# The §3.9 scheme under chosen-plaintext and chosen-ciphertext attacks (statement phase)
 
 [PS10, Theorem 168.2]: the scheme of Algorithm 99.1 (the ch. 2–4 layer's `prfScheme`:
 `Enc_k(m) = ⟨r, m ⊕ f_k(r)⟩` for a fresh uniform `r`) is CPA- and CCA1-secure when `F` is a PRF.
+[PS10, §7.1.3, Claim 169.a in the inventory]: it is not CCA2-secure, whatever `F`.
+
+The CCA1 statement relies on `Dec` refusing malformed ciphertexts (`prfDecWF`): the evaluator `E`
+agrees with `F` only on `⟨s, x⟩` with `|s| = |x|`, and a decryption query must not reach it
+elsewhere.
 
 ## Main definitions
 
@@ -23,11 +28,16 @@ set_option autoImplicit false
 
 * `Composability.prfFixedScheme_cpa`, `Composability.prfFixedScheme_cca1` (Thm 168.2, stated;
   `sorry`s under the source's sketch).
+* `Composability.prfFixedScheme_not_cca2` (Claim 169.a, stated; a `sorry` under its sketch): an
+  explicit adversary with advantage `1`.
+* `Composability.not_prfFixedScheme_cca2`: hence the scheme is not CCA2-secure (proved from the
+  claim).
 
 ## References
 
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010,
-  Algorithm 99.1 and Theorem 168.2 (book pp. 99, 168; the theorem calls it "construction 99.1").
+  Algorithm 99.1, Theorem 168.2 and §7.1.3 (book pp. 99, 168–169; the theorem calls the algorithm
+  "construction 99.1").
 -/
 
 namespace TCSlib.Cryptography.Composability
@@ -78,10 +88,46 @@ theorem prfFixedScheme_cpa (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure 
 is CCA1-secure.
 
 **Proof sketch** (the source's). As for CPA, with the reduction also answering decryption
-queries before the challenge with its oracle (`Dec_k(⟨r, c⟩) = c ⊕ f_k(r)`). The bad event adds
-the case that a pre-challenge decryption query used the challenge's `r*`, again at most
+queries before the challenge with its oracle (`Dec_k(⟨r, c⟩) = c ⊕ f_k(r)` on well-formed
+ciphertexts, `runAt_prfDec`; `⊥` on the others, `decodeFin_runAt_prfDec_of_not_wf`). The bad event
+adds the case that a pre-challenge decryption query used the challenge's `r*`, again at most
 `q(n)/2^n`, because `r*` is drawn after those queries. -/
 theorem prfFixedScheme_cca1 (hF : PRF F) : (prfFixedScheme F E hE hFE).INDSecure .cca1 := by
   sorry
+
+/-- **Claim 169.a: the §3.9 scheme is not CCA2-secure** [PS10, §7.1.3, p. 169], whatever the
+family `F`. Some adversary, with a constant query budget, has advantage `1` at every `n > 0`.
+
+The source's attack asks `Dec` for "`c + 1`", the challenge plus one. Read as an exclusive-or with
+a fixed nonzero string, it flips the last bit of the challenge. The result is a different, still
+well-formed ciphertext, which CCA2's `Dec` therefore answers.
+
+**Proof sketch.**
+1. The machine `A` reads its log. With an empty log, it asks the challenge on `⟨0^n, 1^n⟩`. With
+   one entry, the challenge answer `c`, it asks `Dec` on `c` with its last bit flipped. With two
+   entries, the second a `Dec` answer `⟨v, m'⟩`, it outputs `¬ m'_{n-1}`. It is polynomial-time
+   (`NUPPT.ofPolyTimeUniform`).
+2. In `IND_b` the challenge is `c = ⟨r, b^n ⊕ f_k(r)⟩`. For `n > 0` its last bit lies in the
+   second component, so the flipped string `c'` is `⟨r, b^n ⊕ e_{n-1} ⊕ f_k(r)⟩`: well-formed,
+   and not `c`. CCA2's `Dec` answers `⟨1, b^n ⊕ e_{n-1}⟩` (`runAt_prfDec`).
+3. So `A` outputs `b` with probability `1`, and the advantage is `|0 − 1| = 1`. -/
+theorem prfFixedScheme_not_cca2 :
+    ∃ (A : NUPPT) (q : PolyExpr), ∀ n, 0 < n →
+      advantage ((prfFixedScheme F E hE hFE).indGame .cca2 A (q.eval n) false n)
+        ((prfFixedScheme F E hE hFE).indGame .cca2 A (q.eval n) true n) = 1 := by
+  sorry
+
+/-- **The §3.9 scheme is not CCA2-secure** in the sense of Definition 168.1: an advantage equal
+to `1` at every positive `n` is not negligible (Claim 169.a). -/
+theorem not_prfFixedScheme_cca2 : ¬ (prfFixedScheme F E hE hFE).INDSecure .cca2 := by
+  intro h
+  obtain ⟨A, q, hA⟩ := prfFixedScheme_not_cca2 F E hE hFE
+  obtain ⟨ε, hε, hle⟩ := h A q
+  obtain ⟨n₀, hn₀⟩ := hε 0
+  have h1 := hn₀ (n₀ + 1) (by omega)
+  have h2 := hle (n₀ + 1)
+  rw [hA (n₀ + 1) (by omega)] at h2
+  simp only [pow_zero, div_one] at h1
+  linarith [le_abs_self (ε (n₀ + 1))]
 
 end TCSlib.Cryptography.Composability
