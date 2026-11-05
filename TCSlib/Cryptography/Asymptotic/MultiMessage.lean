@@ -83,13 +83,13 @@ open Complexity Turing Finset
 
 /-- The query tree that asks the fixed tuple of queries `xs : Fin k → I` in order and then
 outputs `f` applied to the tuple of answers: `k` `query` nodes in a chain. -/
-def chainTree {I O α : Type*} : ∀ (k : ℕ), (Fin k → I) → ((Fin k → O) → α) → QueryTree I O α
+def chainTree {I O α : Type} : ∀ (k : ℕ), (Fin k → I) → ((Fin k → O) → α) → QueryTree I O α
   | 0, _, f => .ret (f Fin.elim0)
   | k + 1, xs, f => .query (xs 0) fun o => chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
 
 /-- Running a query chain against the oracle `g` outputs `f` of the tuple of answers
 `g (xs j)`. -/
-theorem eval_chainTree {I O α : Type*} (g : I → O) :
+theorem eval_chainTree {I O α : Type} (g : I → O) :
     ∀ (k : ℕ) (xs : Fin k → I) (f : (Fin k → O) → α),
       (chainTree k xs f).eval g = f fun j => g (xs j)
   | 0, xs, f => by
@@ -107,7 +107,7 @@ theorem eval_chainTree {I O α : Type*} (g : I → O) :
     · simp [Fin.tail]
 
 /-- A chain of `k` queries makes at most `k` queries. -/
-theorem boundedBy_chainTree {I O α : Type*} :
+theorem boundedBy_chainTree {I O α : Type} :
     ∀ (k : ℕ) (xs : Fin k → I) (f : (Fin k → O) → α), (chainTree k xs f).BoundedBy k
   | 0, _, _ => trivial
   | k + 1, xs, f => fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)

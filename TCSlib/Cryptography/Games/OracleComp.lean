@@ -34,8 +34,11 @@ layer ([Gar26]); the bridge between the two is in the S2b layer.
 * `Games.OracleComp spec α`: computations with access to the oracles of `spec`, returning an `α`;
   a `Monad` and a `LawfulMonad`.
 * `Games.OracleComp.call i x`: ask oracle `i` the query `x` and return the answer.
+* `Games.singleSpec I O`: one oracle (index `Unit`); its computations are the concrete layer's
+  query trees.
 * `Games.OracleSpec.add`: the disjoint union of two oracle families;
   `OracleComp.liftLeft`/`liftRight` run a computation over one part in the union.
+* `Games.OracleComp.AllOutputs P c`: every possible output of `c` satisfies `P`.
 * `Games.OracleComp.CostBoundedBy cost c q`: every run of `c` spends at most `q`, oracle `i`
   costing `cost i` per query (for example, 1 for the oracle under attack and 0 for coin draws).
 
@@ -147,6 +150,10 @@ def call (i : ι) (x : spec.dom i) : OracleComp spec (spec.rng i) :=
 
 end OracleComp
 
+/-- A single oracle with queries in `I` and answers in `O` (index type `Unit`). The concrete
+layer's query trees are the computations over it (`TCSlib.Cryptography.QueryTree`). -/
+abbrev singleSpec (I O : Type) : OracleSpec Unit := ⟨fun _ => I, fun _ => O⟩
+
 /-- The **disjoint union** of two oracle families: oracle `.inl i` is oracle `i` of `s₁`, and
 oracle `.inr j` is oracle `j` of `s₂`. [VCVio, OracleComp/OracleSpec] -/
 def OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
@@ -253,6 +260,37 @@ theorem costBoundedBy_liftRight {s₁ : OracleSpec ι₂} {cost : ι₂ ⊕ ι�
   induction c generalizing q with
   | pure a => trivial
   | query j x k ih => exact ⟨h.1, fun y => ih y (h.2 y)⟩
+
+/-! ### Possible outputs -/
+
+/-- **Every possible output** of `c` satisfies `P`: a return satisfies it, and every
+continuation of a query does, whatever the answer. -/
+def AllOutputs {spec : OracleSpec ι} (P : α → Prop) : OracleComp spec α → Prop
+  | .pure a => P a
+  | .query _ _ k => ∀ y, AllOutputs P (k y)
+
+/-- Every computation satisfies the trivial predicate at every possible output. -/
+theorem allOutputs_true {spec : OracleSpec ι} (c : OracleComp spec α) :
+    c.AllOutputs fun _ => True := by
+  induction c with
+  | pure a => trivial
+  | query i x k ih => exact fun y => ih y
+
+/-- `AllOutputs` is monotone in the predicate. -/
+theorem AllOutputs.mono {spec : OracleSpec ι} {P Q : α → Prop} (hPQ : ∀ a, P a → Q a)
+    {c : OracleComp spec α} (h : c.AllOutputs P) : c.AllOutputs Q := by
+  induction c with
+  | pure a => exact hPQ a h
+  | query i x k ih => exact fun y => ih y (h y)
+
+/-- Every possible output of `c` followed by `f` satisfies `Q` when every possible output `a`
+of `c` satisfies `P` and every possible output of `f a` with `P a` satisfies `Q`. -/
+theorem AllOutputs.bind {spec : OracleSpec ι} {P : α → Prop} {Q : β → Prop}
+    {c : OracleComp spec α} {f : α → OracleComp spec β} (hc : c.AllOutputs P)
+    (hf : ∀ a, P a → (f a).AllOutputs Q) : (c.bind f).AllOutputs Q := by
+  induction c with
+  | pure a => exact hf a hc
+  | query i x k ih => exact fun y => ih y (hc y)
 
 end OracleComp
 

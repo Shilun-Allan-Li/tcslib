@@ -185,7 +185,7 @@ theorem negligible_choose_div_two_pow (q : PolyExpr) :
 
 /-- Relabelling the coins of an oracle adversary by a bijection preserves its acceptance
 probability against every oracle sampler, provided the two trees agree on every oracle. -/
-theorem acceptProb_oracleDist_congr_equiv {σ I O ρ ρ' : Type*} [Fintype σ] [Fintype ρ]
+theorem acceptProb_oracleDist_congr_equiv {σ : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype σ] [Fintype ρ]
     [Fintype ρ'] (X : σ → I → O) (A : OracleAdversary ρ I O) (A' : OracleAdversary ρ' I O)
     (φ : ρ' ≃ ρ) (h : ∀ (g : I → O) (w : ρ'), (A (φ w)).eval g = (A' w).eval g) :
     acceptProb X (oracleDist A) = acceptProb X (oracleDist A') := by
@@ -197,7 +197,7 @@ theorem acceptProb_oracleDist_congr_equiv {σ I O ρ ρ' : Type*} [Fintype σ] [
 
 /-- **Coin relabelling preserves the PRF advantage**: oracle adversaries whose trees agree on
 every oracle after a bijective relabelling of the coins have the same `prfAdv`. -/
-theorem prfAdv_congr_equiv {K I O ρ ρ' : Type*} [Fintype K] [Fintype I] [DecidableEq I]
+theorem prfAdv_congr_equiv {K : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype K] [Fintype I] [DecidableEq I]
     [Fintype O] [Fintype ρ] [Fintype ρ'] (F : K → I → O) (A : OracleAdversary ρ I O)
     (A' : OracleAdversary ρ' I O) (φ : ρ' ≃ ρ)
     (h : ∀ (g : I → O) (w : ρ'), (A (φ w)).eval g = (A' w).eval g) :

@@ -230,6 +230,52 @@ def execT : ℕ → ∀ {M₁ M₂ α β : Type},
         .pure (r.1.swap, ⟨r.2.2.received, p.2 ++ r.2.2.coins⟩,
           ⟨mk.1 :: r.2.1.received, r.2.1.coins⟩)) p.1
 
+/-- An ended execution never reports a spent budget: the outcome of `endWithT` is `done` or
+`sentAfterEnd`. -/
+theorem endWithT_ne_outOfFuel {M₁ M₂ : Type} (a : α) (B : Option M₁ → Party M₂ M₁ β) :
+    (endWithT a B).AllOutputs fun q => q.1 ≠ .outOfFuel := by
+  refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+  show Option.elim p.1 ExecOutcome.sentAfterEnd (ExecOutcome.done a) ≠ .outOfFuel
+  cases p.1 <;> simp [Option.elim]
+
+/-- **Trace invariants** (gate 02 round 2, note 5): on every possible run of
+`execT fuel A B`, write `M_A` and `M_B` for the messages delivered to the first and the second
+mover. Then `|M_A| + |M_B| ≤ fuel`; the second mover has received as many messages as the first
+or one more (it receives first); and a spent budget means exactly `fuel` messages were delivered.
+
+**Proof sketch.** Induction on `fuel`, generalizing the parties and their types. A return or a
+blocked send delivers nothing (both lists are empty), and `endWithT` never reports a spent budget.
+A delivered message adds one message to the receiver, and the recursive run, with the roles
+exchanged, satisfies the invariants with `fuel − 1`; exchanging back keeps them, since its first
+mover is the original second mover. -/
+theorem execT_trace : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M₁ M₂ α)
+    (B : Option M₁ → Party M₂ M₁ β),
+    (execT fuel A B).AllOutputs fun r =>
+      r.2.1.received.length + r.2.2.received.length ≤ fuel ∧
+      (r.2.2.received.length = r.2.1.received.length ∨
+        r.2.2.received.length = r.2.1.received.length + 1) ∧
+      (r.1 = .outOfFuel → r.2.1.received.length + r.2.2.received.length = fuel)
+  | 0, _, _, _, _, A, B => by
+    refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+    rcases p with ⟨a | mk, cs⟩
+    · exact OracleComp.AllOutputs.bind (endWithT_ne_outOfFuel a B) fun q hq =>
+        ⟨by simp, by simp, fun h => absurd h hq⟩
+    · exact ⟨by simp, by simp, fun _ => by simp⟩
+  | fuel + 1, _, _, _, _, A, B => by
+    refine OracleComp.AllOutputs.bind (OracleComp.allOutputs_true _) fun p _ => ?_
+    rcases p with ⟨a | mk, cs⟩
+    · exact OracleComp.AllOutputs.bind (endWithT_ne_outOfFuel a B) fun q hq =>
+        ⟨by simp, by simp, fun h => absurd h hq⟩
+    · refine OracleComp.AllOutputs.bind (execT_trace fuel (B (some mk.1)) mk.2) fun r hr => ?_
+      obtain ⟨h1, h2, h3⟩ := hr
+      refine ⟨?_, ?_, fun h => ?_⟩
+      · simp only [List.length_cons]; omega
+      · simp only [List.length_cons]; omega
+      · have : r.1 = .outOfFuel := by
+          cases hr1 : r.1 <;> simp_all [ExecOutcome.swap]
+        have := h3 this
+        simp only [List.length_cons]; omega
+
 /-- `stepT` projects to `step`. -/
 theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) = step A := by
   induction A with

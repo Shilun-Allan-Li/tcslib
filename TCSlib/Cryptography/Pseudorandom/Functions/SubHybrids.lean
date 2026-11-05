@@ -67,7 +67,7 @@ open Function QueryTree
 
 attribute [local irreducible] uprob acceptProb
 
-variable {P S V ρ : Type*} [Fintype P] [DecidableEq P] [Fintype S] [Nonempty S]
+variable {P S V : Type} {ρ : Type*} [Fintype P] [DecidableEq P] [Fintype S] [Nonempty S]
   [Fintype V] [Nonempty V] [Fintype ρ]
 
 /-- The answer stream of the sub-hybrid `H_j` [Gar26, proof of Theorem 3.3]: the `k`-th

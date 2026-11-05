@@ -50,7 +50,7 @@ belong to the asymptotic layer; here the only resource tracked is the query boun
 
 namespace TCSlib.Cryptography
 
-variable {K I O ρ σ σ' γ : Type*}
+variable {K ρ σ σ' γ : Type*} {I O : Type}
 
 /-- The sampler of a uniformly random function `I → O`: the seed is the function table
 itself, a uniform element of the finite type `I → O`. This is the random function

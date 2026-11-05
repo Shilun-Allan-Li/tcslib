@@ -67,7 +67,7 @@ open Function QueryTree
 
 attribute [local irreducible] uprob acceptProb
 
-variable {S ρ : Type*} {n : ℕ}
+variable {S : Type} {ρ : Type*} {n : ℕ}
 
 /-- Select the half `G_b` of a generator output: the first component for `b = false`
 (the bit `0`) and the second for `b = true`. [Gar26, Construction 3.3]. -/

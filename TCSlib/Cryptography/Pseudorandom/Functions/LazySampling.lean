@@ -119,7 +119,7 @@ end Helpers
 
 namespace QueryTree
 
-variable {I : Type*} {O : Type*} {α : Type*} [DecidableEq I]
+variable {I O α : Type} [DecidableEq I]
 
 /-- The list of distinct queries after the query `x`, given the list `L` of distinct
 queries so far: `x` is appended if it is new. -/
@@ -166,7 +166,7 @@ seen, only reads the answer stream below `L.length + m`. -/
 theorem evalLazy_congr {a b : ℕ → O} {t : QueryTree I O α} {m : ℕ} (ht : t.BoundedBy m)
     (L : List I) (hab : ∀ k < L.length + m, a k = b k) :
     evalLazy a t L = evalLazy b t L := by
-  induction t generalizing m L with
+  induction t using QueryTree.induct generalizing m L with
   | ret y => rfl
   | query x k ih =>
     cases m with
@@ -179,10 +179,10 @@ theorem evalLazy_congr {a b : ℕ → O} {t : QueryTree I O α} {m : ℕ} (ht : 
 
 /-- Post-processing every lazy answer by `g` is the same as running the tree whose
 answers are post-processed by `g`. -/
-theorem evalLazy_comp {O' : Type*} (g : O' → O) (a : ℕ → O') (t : QueryTree I O α)
+theorem evalLazy_comp {O' : Type} (g : O' → O) (a : ℕ → O') (t : QueryTree I O α)
     (L : List I) :
     evalLazy (g ∘ a) t L = evalLazy a (t.simulate id (fun _ => g)) L := by
-  induction t generalizing L with
+  induction t using QueryTree.induct generalizing L with
   | ret y => rfl
   | query x k ih => exact ih _ _
 
@@ -295,6 +295,12 @@ private theorem mergeTable_update (L : List I) (a : ℕ → O) (R : I → O) {x 
 
 end Streams
 
+end QueryTree
+
+namespace QueryTree
+
+variable {I O α : Type} [DecidableEq I]
+
 /-- The generalized lazy-sampling invariant: started with `L` already recorded, with
 answers `W₀` on `L`, the lazy run with fresh values beyond `L` and the run against a
 random function agreeing with `W₀` on `L` have the same output distribution.
@@ -309,7 +315,7 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
     t.BoundedBy m → L.length + m ≤ q →
     uprob (fun W : Fin q → O => φ (evalLazy (extendStream (combine L.length W₀ W)) t L)) =
       uprob (fun R : I → O => φ (t.eval (mergeTable L (extendStream W₀) R))) := by
-  induction t with
+  induction t using QueryTree.induct with
   | ret y => intro _ _ _ _ _; exact uprob_const_eq (β := Fin q → O) (γ := I → O) (φ y)
   | query x k ih =>
     intro m L W₀ ht hm

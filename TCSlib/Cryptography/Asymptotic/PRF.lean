@@ -311,7 +311,7 @@ the Hybrid Lemma"] (Claim-96.b), at one parameter: if the oracle adversary `A` d
 the oracle distributions `H 0` and `H m` with advantage `ε`, then it distinguishes some
 consecutive pair `H i, H (i+1)` (`i < m`) with advantage at least `ε / m`. This is the
 concrete `hybrid_lemma` (`exists_hybrid_gap`) applied to the distinguisher `oracleDist A`. -/
-theorem oracle_hybrid_lemma {σ I O ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm : 0 < m)
+theorem oracle_hybrid_lemma {σ : Type*} {I O : Type} {ρ : Type*} [Fintype σ] [Fintype ρ] {m : ℕ} (hm : 0 < m)
     (H : ℕ → σ → (I → O)) (A : OracleAdversary ρ I O) :
     ∃ i < m, distAdv (H 0) (H m) (oracleDist A) / m ≤ distAdv (H i) (H (i + 1)) (oracleDist A) :=
   hybrid_lemma hm H (oracleDist A)

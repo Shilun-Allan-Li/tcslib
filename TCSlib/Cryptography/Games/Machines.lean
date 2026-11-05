@@ -158,15 +158,15 @@ theorem encodeLog_singleCodec {ℓ₁ ℓ₂ : ℕ}
     rw [ih]
     rfl
 
-/-- One step of the correspondence: the framework's computation from a log is the translation of
-the ch. 2–4 tree from the corresponding history. -/
+/-- One step of the correspondence: the framework's computation from a log is the ch. 2–4 tree
+from the corresponding history. -/
 theorem buildComp_singleCodec {ℓ₁ ℓ₂ : ℕ}
     (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁) :
     ∀ (q : ℕ) (hist : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))),
       buildComp (fun h => match next (toHist h) with
           | .query x => .query () x
           | .ret b => .ret b) false q hist =
-        Bridge.QueryTree.toComp (buildTree next q (toHist hist))
+        buildTree next q (toHist hist)
   | 0, hist => by
     unfold buildComp buildTree
     cases next (toHist hist) <;> rfl
@@ -175,18 +175,17 @@ theorem buildComp_singleCodec {ℓ₁ ℓ₂ : ℕ}
     cases hn : next (toHist hist) with
     | ret b => rfl
     | query x =>
-      simp only [Bridge.QueryTree.toComp]
       congr 1
       funext y
       rw [buildComp_singleCodec next q]
       simp [toHist]
 
 /-- **The ch. 2–4 decoder is an instance:** the oracle adversary `D.toOracleAdversary` of a
-next-query machine is the translation of its computation under `singleCodec`. So
+next-query machine is its computation under `singleCodec`. So
 `OracleEnsemble.Indist` (via `oracleDist`) is a statement about framework computations. -/
 theorem toComp_singleCodec (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) (r : D.Coins n) :
     D.toComp (singleCodec ℓ₁ ℓ₂) n q r =
-      Bridge.QueryTree.toComp (D.toOracleAdversary n ℓ₁ ℓ₂ q r) := by
+      D.toOracleAdversary n ℓ₁ ℓ₂ q r := by
   have h := buildComp_singleCodec (ℓ₁ := ℓ₁) (ℓ₂ := ℓ₂)
     (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []
   have hnext : (fun hist => (singleCodec ℓ₁ ℓ₂).decodeMove
