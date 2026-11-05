@@ -1,10 +1,10 @@
 # Gate 04 (Pass–shelat ch. 5–8, S2b): external API audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in when the S2b PR
-is opened (after the dedup PR lands).
+**Status: ready to dispatch** (staged 2026-11-05; the evidence is under `evidence/`). The S2b PR is
+open into `cryptography/pass-shelat-ch2-4` ([Shilun-Allan-Li/tcslib#195](https://github.com/Shilun-Allan-Li/tcslib/pull/195)) and merges after this gate closes.
 
 **What is audited:** the S2b layer of the `Games` framework on `cryptography/pass-shelat-ch5-8-s2b`,
-at `<HEAD, 40 hex>`. It connects the framework core (S2a, gate 02, closed) to the machine model and
+at `afe5982f612081bba2fbcec9ab41adcbbc118b13`. It connects the framework core (S2a, gate 02, closed) to the machine model and
 to the ch. 2–4 layer.
 - **Gate type:** an **API gate** (user's ruling of 2026-11-04: one API gate each for S2a and S2b).
   Every statement of prongs A–D will be written against this layer.
@@ -50,14 +50,22 @@ approval. Also:
 
 ## Attestations (maintainer execution claims; evidence under `evidence/`)
 
-To be filled at the pinned head. Already measured on the S2b work-in-progress head
-`e72acc2ad7275bcb459705a2fce19427b42a9138`:
-- **Elaboration:** a fresh-tree ladder over the 371 modules downstream of the changed files (with
-  upstream), then the 5 new S2b modules and the facade: all pass, with 0 errors.
-- **`sorry`:** one, `Games.exists_handlerMachine` (T1, the efficiency fill's target). At the pinned head: two, with T2 (`exists_interactiveHandlerMachine`).
-- **Axioms:** 87 theorems across the S2b files. Only T1 depends on `sorryAx`; the other 86 use only
-  `propext`, `Classical.choice` and `Quot.sound`.
-- **Lint:** 0 findings on the new files.
+At the pinned head `afe5982f612081bba2fbcec9ab41adcbbc118b13` (the S2b branch after the base merge `827ad8e1`, which brought in #192
+and #193, and the T2 commits):
+1. **Elaboration** (`replay.log`, `replay-order.txt`): every module downstream of the 14 files the
+   base merge changed, every `Games` module, and their upstream, then `Checks.lean`: 772 modules,
+   each checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`. **All pass, with 0
+   errors.** The run was stopped twice by the session's two-hour limit for background jobs and
+   resumed from the next module each time (the log marks it).
+2. **`sorry`:** two in S2b's files: `Games.exists_handlerMachine` (T1) and
+   `Games.exists_interactiveHandlerMachine` (T2), the efficiency fill's targets.
+3. **Axioms** (`axioms.log`): `#print axioms` for every theorem in the 22 Lean files S2b changes
+   against the base (`changed-files.txt`): 236 theorems. 234 use only `propext`,
+   `Classical.choice` and `Quot.sound`. T1 and T2 depend on `sorryAx`.
+4. **Lint** (`lint.log`): `scripts/style_lint.py` on those files: 0 findings in 22 files.
+5. **Restatement baseline:** the files F-1 rewrote are also in the bundle at the base
+   `a3c5fa8b72e50939822f22364647dc844a3914a0`, labelled `pre-F1/…`, for the meaning-preservation
+   check (brief, point 1).
 
 ## Findings format (auditor fills)
 
