@@ -2,8 +2,8 @@
 Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import TCSlib.Cryptography.Games.Bridges.QueryTree
-import TCSlib.Cryptography.Asymptotic.PRF
+import TCSlib.Cryptography.Games.Simulate
+import TCSlib.Complexity.Randomized.PPT
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -21,9 +21,10 @@ no oracle tapes, one activation per query).
 
 This file turns such a machine into an oracle computation of the `Games` framework
 (`NUPPT.toComp`), for any oracle family and any output type, given a *codec*: how output strings
-decode into moves, and how a query-log entry encodes as a string. The ch. 2–4 layer's
+decode into moves, and how a query-log entry encodes as a string. It needs only the machine model
+and the framework, so the asymptotic layer can build on it. The ch. 2–4 layer's
 `NUPPT.toOracleAdversary` (one oracle, a Boolean verdict) is the instance with the codec built
-from its own `decodeOracleMove` and `encodeHist` (`toComp_singleCodec`).
+from its own `decodeOracleMove` and `encodeHist` (`TCSlib.Cryptography.Games.Bridges.Machines`).
 
 The efficiency counterpart (a reduction written as an implementation of polynomial-time
 computable handlers, run on a machine, is again a machine's computation) is the S2b efficiency
@@ -36,12 +37,11 @@ result, stated in a later module.
 * `Games.buildComp next timeout q hist`: the computation of a next-move function with budget `q`.
 * `Complexity.NUPPT.toComp D codec n q r`: the computation of the machine `D` at parameter `n`
   with coins `r`.
-* `Games.singleCodec ℓ₁ ℓ₂`: the codec of the ch. 2–4 next-query machines.
 
 ## Main results
 
-* `Games.buildComp_costBoundedBy`: the computation makes at most `q` queries.
-* `Games.toComp_singleCodec`: `toOracleAdversary` is the one-oracle instance of `toComp`.
+* `Games.buildComp_costBoundedBy`, `NUPPT.toComp_costBoundedBy`: the computation makes at most `q`
+  queries.
 
 ## References
 
@@ -128,76 +128,5 @@ theorem _root_.Complexity.NUPPT.toComp_costBoundedBy {spec : OracleSpec ι} (D :
     (codec : MachineCodec spec α) (n q : ℕ) (r : D.Coins n) :
     (D.toComp codec n q r).CostBoundedBy (fun _ => 1) q :=
   buildComp_costBoundedBy _ _ q []
-
-/-! ### The ch. 2–4 next-query machines are an instance -/
-
-/-- The codec of the ch. 2–4 next-query machines: one oracle on bit strings, a Boolean verdict,
-moves decoded by `decodeOracleMove`, entries encoded as in `encodeHist`, and the verdict `false`
-when the budget runs out. -/
-def singleCodec (ℓ₁ ℓ₂ : ℕ) :
-    MachineCodec (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool)) Bool where
-  decodeMove w := match decodeOracleMove ℓ₁ w with
-    | .query x => .query () x
-    | .ret b => .ret b
-  encodeEntry e := pairEncode (List.ofFn e.2.1) (List.ofFn e.2.2)
-  timeout := false
-
-/-- The ch. 2–4 history of a one-oracle log: the list of its (query, answer) pairs. -/
-def toHist {ℓ₁ ℓ₂ : ℕ} (h : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))) :
-    List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) :=
-  h.map fun e => (e.2.1, e.2.2)
-
-/-- The codec's log encoding is the ch. 2–4 history encoding. -/
-theorem encodeLog_singleCodec {ℓ₁ ℓ₂ : ℕ}
-    (h : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))) :
-    (singleCodec ℓ₁ ℓ₂).encodeLog h = encodeHist (toHist h) := by
-  induction h with
-  | nil => rfl
-  | cons e h ih =>
-    simp only [MachineCodec.encodeLog, List.foldr_cons, toHist, List.map_cons, encodeHist] at ih ⊢
-    rw [ih]
-    rfl
-
-/-- One step of the correspondence: the framework's computation from a log is the ch. 2–4 tree
-from the corresponding history. -/
-theorem buildComp_singleCodec {ℓ₁ ℓ₂ : ℕ}
-    (next : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)) → OracleMove ℓ₁) :
-    ∀ (q : ℕ) (hist : QueryLog (singleSpec (Fin ℓ₁ → Bool) (Fin ℓ₂ → Bool))),
-      buildComp (fun h => match next (toHist h) with
-          | .query x => .query () x
-          | .ret b => .ret b) false q hist =
-        buildTree next q (toHist hist)
-  | 0, hist => by
-    unfold buildComp buildTree
-    cases next (toHist hist) <;> rfl
-  | q + 1, hist => by
-    unfold buildComp buildTree
-    cases hn : next (toHist hist) with
-    | ret b => rfl
-    | query x =>
-      congr 1
-      funext y
-      rw [buildComp_singleCodec next q]
-      simp [toHist]
-
-/-- **The ch. 2–4 decoder is an instance:** the oracle adversary `D.toOracleAdversary` of a
-next-query machine is its computation under `singleCodec`. So
-`OracleEnsemble.Indist` (via `oracleDist`) is a statement about framework computations. -/
-theorem toComp_singleCodec (D : NUPPT) (n ℓ₁ ℓ₂ q : ℕ) (r : D.Coins n) :
-    D.toComp (singleCodec ℓ₁ ℓ₂) n q r =
-      D.toOracleAdversary n ℓ₁ ℓ₂ q r := by
-  have h := buildComp_singleCodec (ℓ₁ := ℓ₁) (ℓ₂ := ℓ₂)
-    (fun hist => decodeOracleMove ℓ₁ (D.runAt n (encodeHist hist) r)) q []
-  have hnext : (fun hist => (singleCodec ℓ₁ ℓ₂).decodeMove
-      (D.runAt n ((singleCodec ℓ₁ ℓ₂).encodeLog hist) r)) =
-      (fun h => match decodeOracleMove ℓ₁ (D.runAt n (encodeHist (toHist h)) r) with
-        | .query x => Move.query () x
-        | .ret b => Move.ret b) := by
-    funext hist
-    rw [encodeLog_singleCodec]
-    rfl
-  simp only [NUPPT.toComp, NUPPT.toOracleAdversary]
-  rw [hnext]
-  exact h
 
 end TCSlib.Cryptography.Games

@@ -89,8 +89,6 @@ theorem turnParty_succ (next : List Msg → Msg) (k : ℕ) (M : List Msg) :
     turnParty next (k + 1) M = .query (.inl ()) (next M) (waitParty next k M) := by
   rw [turnParty]
   congr 1
-  funext o
-  cases o <;> rfl
 
 /-- **D8's alternation from a state:** the received histories of `F` and of `G` after `k` more
 moves from `(MF, MG)`, with `F` to move. `F` sends `nF MF`, which `G` receives; then `G` moves. -/
@@ -161,15 +159,8 @@ theorem exec_eq_alt (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool)
   | zero => cases vFirst <;> rfl
   | succ k ih =>
     rw [exec_succ, ih]
-    cases vFirst
-    · rw [alt_succ_last]
-      rcases Nat.mod_two_eq_zero_or_one k with h | h
-      · simp [moverIsV, h]
-      · simp [moverIsV, h]
-    · rw [alt_succ_last]
-      rcases Nat.mod_two_eq_zero_or_one k with h | h
-      · simp [moverIsV, h]
-      · simp [moverIsV, h]
+    cases vFirst <;> simp only [Bool.false_eq_true, ↓reduceIte] <;> rw [alt_succ_last] <;>
+      rcases Nat.mod_two_eq_zero_or_one k with h | h <;> simp [moverIsV, h]
 
 /-- **A protocol's embedded execution returns D8's outputs:** for fixed tapes, running the first
 mover's embedding on its turn against the other's waiting embedding, with fuel the number of
@@ -191,9 +182,9 @@ theorem exec_strategies (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π
     (π.rounds.eval x.length)
   simp only [Protocol.outP, Protocol.outV, Protocol.transcriptWith]
   cases hv : π.verifierFirst
-  · simp only [hv, if_false] at hT ⊢
+  · simp only [hv, Bool.false_eq_true, ↓reduceIte] at hT ⊢
     rw [exec_turnParty, hT]
-  · simp only [hv, if_true] at hT ⊢
+  · simp only [hv, ↓reduceIte] at hT ⊢
     rw [exec_turnParty, hT]
     rfl
 
