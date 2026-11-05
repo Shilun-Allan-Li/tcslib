@@ -2877,10 +2877,8 @@ private theorem nf_split (k : ℕ) (s : List Bool)
   · have h := List.ofFn_mul' (m := 2 * k + 4) (n := n)
       (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt))
     have h0 : List.ofFn (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt)) =
-        s := by
-      apply List.ext_getElem (by rw [List.length_ofFn, hlen])
-      intro i h1 h2
-      rw [List.getElem_ofFn]
+        s :=
+      (List.ofFn_congr hlen (fun i : Fin s.length => s[i.val])).symm.trans (List.ofFn_getElem s)
     rw [List.flatMap_def, List.map_ofFn]
     exact h0.symm.trans h
   · intro r hr
@@ -3241,8 +3239,9 @@ argument, `Turing.NDTM.runWith_of_halt`).
    kept there as one two-cell block per visited cell and rewritten at every record. Between
    sweeps the heads return and the blocks are erased.
 3. Each phase is linear in the display, so the simulator runs within `C · (t + 1)` steps, with
-   `C = 6W + k(2W + 12) + 21 + 15k` and `W = 2k + 4`; the `+ 1` covers `k = 0`, where the guess
-   and the input sweep remain.
+   `C = 6W + k(2W + 12) + 21 + 15k` and `W = 2k + 4`: the time is at most
+   `(6W + k(2W + 12)) t + 21 + 15k`, and `t + 1` absorbs the additive terms. At `k = 0` the base
+   terms still pay for the guess and the control and input sweeps.
 4. Forward transfer: a genuine accepting run of length `t` yields an accepting display, guessed
    and verified within `C · (t + 1)`. Backward transfer: a verified display **is** a genuine run
    (the sweeps force consistency), so an accepting branch of the simulator exhibits an accepting
@@ -3251,8 +3250,8 @@ argument, `Turing.NDTM.runWith_of_halt`).
 5. The finite state space is relabeled to `Fin`.
 
 **Implementation.** The guess runs under the controller-stopped host `Turing.guessCtlRunTM` with
-a trivial setup. The control sweep is a fold by `Turing.scanTM`. A replay does not perform the
-last record's head move, so the blocks stay contiguous around the head. Between sweeps
+a trivial setup. The control sweep is a fold by `Turing.scanTM`. A work-tape replay does not
+perform the last record's head move, so the blocks stay contiguous around the head. Between sweeps
 `Turing.skipTM` and `Turing.skipBackTM` return the heads and `Turing.clearTM` erases the blocks.
 The relabeling is `Turing.NDTM.relabelState` (the nondeterministic mirror of
 `Turing.MultiTapeTM.relabelState`, as in the `exists_codeTM` precedent). -/
