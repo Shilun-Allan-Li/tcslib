@@ -54,10 +54,6 @@ variable (N : FinNDTM Bool) (d c : ℕ)
 /-- **The width coefficient** of a machine `N` with space constant `d`. -/
 def wCoef : ℕ := 4 * d * W N + W N + 12 * N.k * d + 3 * N.k + 2 * Fintype.card N.State + 8
 
-/-- The binary length of `n + 1` is at most `n + 1`. -/
-theorem wP_le (n : ℕ) : wP n ≤ n + 1 :=
-  LogProg.length_bits_le (Nat.lt_two_pow_self)
-
 /-- **The width holds a code word**: `codeLen ≤ wCoef · (n + 1)^(c + 1)`. -/
 theorem vlen_le_vwid (n : ℕ) : vlen N d c n ≤ vwid (wCoef N d) (c + 1) n := by
   have hQP : (n + 1) ^ c ≤ (n + 1) ^ (c + 1) := Nat.pow_le_pow_right (by omega) (by omega)

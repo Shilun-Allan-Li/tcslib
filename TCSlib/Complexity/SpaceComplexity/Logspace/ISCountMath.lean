@@ -63,17 +63,6 @@ lemma size_half {m : ℕ} (h : m ≠ 0) : Nat.size m = Nat.size (m / 2) + 1 := b
   have : 0 < m.bits.length := by rw [Nat.size_eq_bits_len]; exact Nat.size_pos.mpr (by omega)
   omega
 
-/-- The logarithmic width is at most one more than the binary length. -/
-lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
-  unfold logSpace
-  rcases Nat.eq_zero_or_pos n with h | h
-  · subst h; simp
-  · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
-    have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
-    have : Nat.log 2 n < Nat.size n :=
-      (Nat.pow_lt_pow_iff_right (show 1 < 2 by norm_num)).mp (lt_of_le_of_lt h1 h2)
-    omega
-
 /-- A number is below two to its binary length plus one. -/
 lemma lt_two_pow_size_succ (n : ℕ) : n < 2 ^ (Nat.size n + 1) :=
   (Nat.lt_size_self n).trans (Nat.pow_lt_pow_right (by norm_num) (by omega))

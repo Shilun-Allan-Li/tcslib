@@ -87,14 +87,7 @@ lemma bitsVal_le_of_width (w : List Bool) (L : ℕ) (hL : 1 ≤ L)
     (hw : w.length ≤ (Nat.bits L).length) (i : ℕ) : bitsVal (w.drop i) ≤ 2 * L := by
   have h1 : bitsVal (w.drop i) < 2 ^ (w.drop i).length := bitsVal_lt_two_pow _
   have h2 : (w.drop i).length ≤ (Nat.bits L).length := by simp; omega
-  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := by
-    rw [Nat.size_eq_bits_len]
-    have hpos : 1 ≤ Nat.size L := Nat.size_pos.mpr (by omega)
-    have hlt : ¬ L < 2 ^ (Nat.size L - 1) := by
-      rw [← Nat.size_le]; omega
-    have e : 2 ^ Nat.size L = 2 * 2 ^ (Nat.size L - 1) := by
-      rw [← pow_succ']; congr 1; omega
-    omega
+  have h3 : 2 ^ (Nat.bits L).length ≤ 2 * L := two_pow_bits_le L hL
   have := Nat.pow_le_pow_right (show 0 < 2 by norm_num) h2
   omega
 

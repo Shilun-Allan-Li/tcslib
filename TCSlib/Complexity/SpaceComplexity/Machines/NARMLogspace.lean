@@ -92,9 +92,7 @@ theorem narm_logspace_ptm [Fintype Λ] [DecidableEq Λ] (A : NARM m d Λ) (l₀ 
     have hS1 : 1 ≤ logSpace n := by simp [logSpace]
     set W := K * logSpace n with hW
     set B := C * logSpace n + 1 with hB
-    have hLn : logSpace n ≤ n + 1 := by
-      have := Nat.log_le_self 2 n
-      simp only [logSpace]; omega
+    have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
     have hsp : ∀ j v, v ≤ 2 * n + 2 + m * (2 * W + 2) → c j * logSpace v ≤ B := by
       intro j v hv
       rw [hW] at hv
