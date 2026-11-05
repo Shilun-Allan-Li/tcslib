@@ -213,7 +213,8 @@ state, outputs only.
    queries (`buildComp_costBoundedBy`), so `B` never meets its own timeout before `A` or a call
    does, and it mirrors both defaults.
 3. The functional equation: by induction on the outer log, the two computation trees agree node
-   by node (`simulate_query`, `buildComp`'s unfolding). Coins split as `(ω, r)` by `exists_split`. -/
+   by node (`simulate_query`, `buildComp`'s unfolding). Coins split as `(ω, r)` by
+   `exists_split`. -/
 theorem exists_interactiveHandlerMachine (A : NUPPT) (q : PolyExpr)
     (din dout : Fin k → PolyExpr) (din' dout' : Fin k' → PolyExpr) (dα : PolyExpr)
     (H : InteractiveHandler k din dout k' din' dout') :
