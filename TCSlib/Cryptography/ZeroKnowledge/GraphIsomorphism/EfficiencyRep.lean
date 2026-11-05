@@ -108,7 +108,7 @@ theorem iterate_pairSndD_encodeMsgs : ∀ (k : ℕ) (hist : List (List Bool)),
 theorem encodeMsgs_eq_nil_iff (hist : List (List Bool)) : Strategy.encodeMsgs hist = [] ↔ hist = [] := by
   cases hist with
   | nil => simp
-  | cons m h => simp [pairEncode_ne_nil]
+  | cons m h => simp [Turing.pairEncode_ne_nil]
 
 /-- The rounds of a peeling loop, with fuel: `0` once `stop` holds, else one more than from
 `f w`. -/

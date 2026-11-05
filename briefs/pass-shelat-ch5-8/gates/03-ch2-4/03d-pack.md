@@ -1,7 +1,7 @@
 # Gate 03d ([PS10] ch. 2–4, PRFs and encryption): external statement audit pack
 
-**Status: draft.** The pinned head, the attestations and the bundle are filled in once the base
-repair has landed (`PLAN.md`).
+**Status: draft.** The pinned head, the attestations and the bundle are filled in once the dedup
+PR and the F-1 restatement have landed (`PLAN.md`; ruling of 2026-11-05: 03d waits for F-1).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
 `<HEAD, 40 hex, from git rev-parse>`. This pack covers secure encryption (single- and multi-message, private- and public-key), pseudorandom functions and their oracle model, and the zero-knowledge reading of encryption (§4.2).
@@ -29,7 +29,7 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 
 | Item | Where |
 |---|---|
-| Under audit | `TCSlib/Cryptography/Asymptotic/{PRF, Encryption, MultiMessage, PublicKey, BlockEncryptor}.lean`, `TCSlib/Cryptography/ZeroKnowledge/Encryption.lean` |
+| Under audit | `TCSlib/Cryptography/Asymptotic/{PRF, Encryption, MultiMessage, PublicKey, BlockEncryptor}.lean`, `TCSlib/Cryptography/ZeroKnowledge/Encryption.lean`; and, restated by item F-1 (`design/F1-oracle-restatement.md`), the concrete layer's `TCSlib/Cryptography/Pseudorandom/Functions/{OracleAdversary, LazySampling}.lean` and `TCSlib/Cryptography/Games/Bridges/QueryTree.lean` |
 | The common brief | `briefs/pass-shelat-ch5-8/gates/03-ch2-4/03a-pack.md` (for its brief and severity guide; its questions are not this pack's) |
 | Context, not under audit | packs 03a–03c's files: earlier packs of this gate |
 | Design record | `briefs/pass-shelat/DESIGN.md` (§1 D1–D11, §2.13 and §2.14 the frozen shapes, §5 the deviations register) |
@@ -50,9 +50,10 @@ To be filled at the pinned head:
   `OracleEnsemble.Indist`, `OracleMove`, `prfAdv_toOracleAdversary`, `PrivateKeyScheme`,
   `SingleMessageSecure`, `MultiMessageSecure`, `prfScheme`, `prfScheme_multiMessageSecure`,
   `PublicKeyScheme`, `BitPublicKeyScheme`, `tdpBitScheme` and
-  `TrapdoorCollection.tdpBitScheme_singleBitSecure`. **Planned change:** `OracleEnsemble` is to be
-  restated over the `Games` framework (decision D-2, item F-1). A finding that bears on that
-  restatement is especially useful.
+  `TrapdoorCollection.tdpBitScheme_singleBitSecure`. **Restated before this pack (item F-1):**
+  `QueryTree` is the one-oracle `Games.OracleComp`, so `OracleEnsemble.Indist`'s adversaries are
+  framework computations, and `NUPPT.toOracleAdversary` is an instance of the generic decoder
+  `NUPPT.toComp`. Check that the restatement changed no meaning.
 
 ## Specific questions
 

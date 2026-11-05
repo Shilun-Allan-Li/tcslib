@@ -134,13 +134,6 @@ theorem pairEncode_append_right (a b c : List Bool) :
     pairEncode a (b ++ c) = pairEncode a b ++ c := by
   simp [pairEncode_eq_dbl]
 
-/-- A pair is never the empty word. -/
-theorem pairEncode_ne_nil (a b : List Bool) : pairEncode a b ≠ [] := by
-  intro h
-  have := congrArg List.length h
-  rw [length_pairEncode] at this
-  simp at this
-
 /-- The encoding of a history is a flat concatenation: appending one entry appends its
 encoding `⟨⟨x, y⟩, []⟩`. -/
 theorem histEnc_append_single {ℓ₁ ℓ₂ : ℕ} (h : List ((Fin ℓ₁ → Bool) × (Fin ℓ₂ → Bool)))

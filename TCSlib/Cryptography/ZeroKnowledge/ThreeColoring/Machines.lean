@@ -965,10 +965,6 @@ theorem histLen_poly : PolyTimeComputable fun M => List.replicate (histLen M) tr
       (unaryLength_poly polyTimeComputable_pairFstD)))
     (unaryAdd_poly (unaryLength_poly polyTimeComputable_id) (unaryConst_poly 1))
 
-/-- A pair is never the empty word. -/
-theorem pairEncode_ne_nil (a b : List Bool) : pairEncode a b ≠ [] := by
-  simp [pairEncode]
-
 /-- An encoded `ofFn` list is the concatenation of the self-delimiting messages
 `pairEncode (F i) []` over `i < n`, for any `ℕ`-indexed extension `F` of `f`. -/
 theorem encodeMsgs_ofFn_eq_flatMap {n : ℕ} (f : Fin n → List Bool) (F : ℕ → List Bool)

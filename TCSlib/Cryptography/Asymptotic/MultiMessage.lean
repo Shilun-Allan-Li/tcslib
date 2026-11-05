@@ -378,11 +378,25 @@ def prfEncFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
     (List.zipWith xor (pairSndD (NUPPT.inArg z))
       (E (pairEncode (pairFstD (NUPPT.inArg z)) (NUPPT.inCoins z))))
 
+/-- Whether the ciphertext `⟨r, c⟩` of the layout `⟨⟨⟨1^n, ⟨k, ⟨r, c⟩⟩⟩, α⟩, r'⟩` has `n`-bit
+components: the domain of `Dec` in [PS10, Algorithm 99.1]. -/
+def prfDecWF (z : List Bool) : Bool :=
+  decide ((pairFstD (pairSndD (NUPPT.inArg z))).length = (NUPPT.inParam z).length) &&
+    decide ((pairSndD (pairSndD (NUPPT.inArg z))).length = (NUPPT.inParam z).length)
+
 /-- The raw string function of `Dec` of [PS10, Algorithm 99.1]: on the layout
-`⟨⟨⟨1^n, ⟨k, ⟨r, c⟩⟩⟩, α⟩, r'⟩` output `c ⊕ E(⟨k, r⟩)`. -/
+`⟨⟨⟨1^n, ⟨k, ⟨r, c⟩⟩⟩, α⟩, r'⟩` with `n`-bit `r` and `c`, output `c ⊕ E(⟨k, r⟩)`; on any other
+ciphertext, output `⊥`, here the `(n + 1)`-bit string `1^{n+1}`, which decodes to no message.
+
+The source defines `Dec` on pairs of `n`-bit strings only. The guard matters under
+chosen-ciphertext attacks: `E` agrees with `F` only on `⟨s, x⟩` with `|s| = |x|`, so without it a
+malformed ciphertext would evaluate `E` where it is unconstrained, and there it may reveal the
+key. -/
 def prfDecFun (E : List Bool → List Bool) (z : List Bool) : List Bool :=
-  List.zipWith xor (pairSndD (pairSndD (NUPPT.inArg z)))
-    (E (pairEncode (pairFstD (NUPPT.inArg z)) (pairFstD (pairSndD (NUPPT.inArg z)))))
+  if prfDecWF z then
+    List.zipWith xor (pairSndD (pairSndD (NUPPT.inArg z)))
+      (E (pairEncode (pairFstD (NUPPT.inArg z)) (pairFstD (pairSndD (NUPPT.inArg z)))))
+  else true :: NUPPT.inParam z
 
 /-- `prfEncFun E` is polynomial-time when `E` is: projections, one evaluation of `E`, one
 bitwise exclusive-or (`Complexity.polyTimeComputable_pairXor`) and one pairing. -/
@@ -397,9 +411,28 @@ theorem polyTimeComputable_prfEncFun {E : List Bool → List Bool} (hE : PolyTim
   funext z
   simp [prfEncFun, Function.comp]
 
-/-- `prfDecFun E` is polynomial-time when `E` is. -/
+/-- The well-formedness test of `Dec` is polynomial-time: two length comparisons
+(`Complexity.polyTimeComputable_lenEq`). -/
+theorem polyTimeComputable_prfDecWF : PolyTimeComputable (fun z => [prfDecWF z]) := by
+  have hl : ∀ g : List Bool → List Bool, PolyTimeComputable g →
+      PolyTimeComputable (fun z => [decide ((g z).length = (NUPPT.inParam z).length)]) := by
+    intro g hg
+    convert polyTimeComputable_lenEq.comp (hg.pairEncode NUPPT.polyTimeComputable_inParam)
+      using 1
+    funext z
+    simp [Function.comp]
+  exact polyTimeComputable_and
+    (hl _ ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).comp
+      NUPPT.polyTimeComputable_inArg))
+    (hl _ ((polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD).comp
+      NUPPT.polyTimeComputable_inArg))
+
+/-- `prfDecFun E` is polynomial-time when `E` is: the guard, then the branch of the old `Dec`
+(`Complexity.polyTimeComputable_ite`). -/
 theorem polyTimeComputable_prfDecFun {E : List Bool → List Bool} (hE : PolyTimeComputable E) :
     PolyTimeComputable (prfDecFun E) := by
+  refine polyTimeComputable_ite polyTimeComputable_prfDecWF ?_
+    ((polyTimeComputable_const [true]).append NUPPT.polyTimeComputable_inParam)
   have h := polyTimeComputable_pairXor.comp
     (((polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD).comp
         NUPPT.polyTimeComputable_inArg).pairEncode
@@ -420,15 +453,33 @@ theorem runAt_prfEnc {E : List Bool → List Bool} (hE : PolyTimeComputable E) (
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
   simp [prfEncFun, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
 
-/-- The activation of the decryption machine on `⟨k, ⟨r, c⟩⟩` is `c ⊕ E(⟨k, r⟩)`. -/
+/-- The activation of the decryption machine on `⟨k, ⟨r, c⟩⟩` with `n`-bit `r` and `c` is
+`c ⊕ E(⟨k, r⟩)`. -/
 theorem runAt_prfDec {E : List Bool → List Bool} (hE : PolyTimeComputable E) (coins : PolyExpr)
-    (n : ℕ) (k r c : List Bool)
+    (n : ℕ) (k r c : List Bool) (hr : r.length = n) (hc : c.length = n)
     (r' : (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) coins).Coins n) :
     (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) coins).runAt n
         (pairEncode k (pairEncode r c)) r' =
       List.zipWith xor c (E (pairEncode k r)) := by
   rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [prfDecFun, NUPPT.inArg, NUPPT.advInput]
+  simp [prfDecFun, prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, hr, hc]
+
+/-- On a ciphertext `w` that is not a pair of `n`-bit strings, the decryption machine outputs
+`⊥`: a string that decodes to no `n`-bit message. -/
+theorem decodeFin_runAt_prfDec_of_not_wf {E : List Bool → List Bool} (hE : PolyTimeComputable E)
+    (coins : PolyExpr) (n : ℕ) (k w : List Bool)
+    (hw : ¬ ((pairFstD w).length = n ∧ (pairSndD w).length = n))
+    (r' : (NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) coins).Coins n) :
+    decodeFin n ((NUPPT.ofPolyTimeUniform (polyTimeComputable_prfDecFun hE) coins).runAt n
+        (pairEncode k w) r') = none := by
+  rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+  have hf : prfDecWF (pairEncode (pairEncode (NUPPT.advInput n (pairEncode k w)) [])
+      (List.ofFn r')) = false := by
+    simp only [prfDecWF, NUPPT.inArg, NUPPT.inParam, NUPPT.advInput, pairFstD_pairEncode,
+      pairSndD_pairEncode, List.length_replicate, Bool.and_eq_false_iff, decide_eq_false_iff_not]
+    tauto
+  rw [prfDecFun, hf]
+  simp [decodeFin, NUPPT.inParam, NUPPT.advInput]
 
 /-- Masking twice with the same pad (at least as long as the message) is the identity
 (private copy of the helper of `Asymptotic/Encryption.lean`). -/
@@ -439,13 +490,6 @@ private theorem zipWith_xor_xor_self : ∀ (m p : List Bool), m.length ≤ p.len
   | a :: m, b :: p, h => by
     simp only [List.zipWith_cons_cons, List.cons.injEq]
     exact ⟨by cases a <;> cases b <;> rfl, zipWith_xor_xor_self m p (by simpa using h)⟩
-
-/-- The string exclusive-or of two `n`-bit strings is the encoding of their sum in the Boolean
-group `Fin n → Bool`. -/
-theorem zipWith_xor_ofFn_eq_add {n : ℕ} (a b : Fin n → Bool) :
-    List.zipWith xor (List.ofFn a) (List.ofFn b) = List.ofFn (a + b) := by
-  rw [zipWith_xor_ofFn le_rfl a b]
-  exact congrArg List.ofFn (funext fun _ => rfl)
 
 /-- **The many-message encryption scheme of [PS10, Algorithm 99.1]** for a function family
 `F` with polynomial-time evaluator `E` on `⟨s, x⟩`: `Gen(1^n)` outputs a uniform `n`-bit key
@@ -468,9 +512,10 @@ noncomputable def prfScheme (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) �
   dec_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   correct := by
     intro n m rg re rd
-    rw [runAt_coinKey, runAt_prfEnc hE, runAt_prfDec hE]
+    rw [runAt_coinKey, runAt_prfEnc hE]
     have h : E (pairEncode (List.ofFn rg) (List.ofFn re)) = List.ofFn (F n rg re) := hFE n rg re
-    rw [h, zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
+    rw [h, runAt_prfDec hE _ _ _ _ _ (by rw [List.length_ofFn]; rfl) (by simp), h,
+      zipWith_xor_xor_self _ _ (by simp), decodeFin_ofFn]
 
 /-- The encoding of a tuple of ciphertext pairs `(r_j, c_j)_j` as the string handed to a
 distinguisher: `encodeList` of the pairs `⟨r_j, c_j⟩`. -/
@@ -511,7 +556,7 @@ theorem prfScheme_multiEncDist (F : ∀ n, (Fin n → Bool) → (Fin n → Bool)
   rw [runAt_coinKey, runAt_prfEnc hE]
   have h : E (pairEncode (List.ofFn r.1) (List.ofFn (r.2 j))) = List.ofFn (F n r.1 (r.2 j)) :=
     hFE n r.1 (r.2 j)
-  rw [h, zipWith_xor_ofFn_eq_add]
+  rw [h, zipWith_xor_ofFn_add]
   rfl
 
 /-- **[PS10, Theorem 99.2]: the scheme of Algorithm 99.1 is multi-message secure** when `F` is

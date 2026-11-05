@@ -30,7 +30,7 @@ go first, because a statement change here would ripple into ch. 5–8.
 | 03a | machines and probability | `Complexity/Randomized/{PolyExpr, PPT, Primitives, Closure, Repetition, NonUniform}`; `Asymptotic/{Adversary, Sampling, Ensembles}`; context: `Foundations/Negligible` | ≈ 3,800 |
 | 03b | one-wayness and collections | `Asymptotic/{OneWay, Collections, Permutations}`, `Candidates/Arithmetic` | ≈ 2,700 |
 | 03c | hard-core bits and PRGs | `Asymptotic/{Pseudorandom, NextBit, HardCore, HardCoreClaims}` | ≈ 2,200 |
-| 03d | PRFs and encryption | `Asymptotic/{PRF, Encryption, MultiMessage, PublicKey, BlockEncryptor}`, `ZeroKnowledge/Encryption` | ≈ 3,700 |
+| 03d | PRFs and encryption (after the F-1 restatement, ruled 2026-11-05) | `Asymptotic/{PRF, Encryption, MultiMessage, PublicKey, BlockEncryptor}`, `ZeroKnowledge/Encryption`; restated by F-1: `Pseudorandom/Functions/{OracleAdversary, LazySampling}`, `Games/Bridges/QueryTree` | ≈ 4,400 |
 | 03e | interaction and ZK definitions | `ZeroKnowledge/{Interaction, InteractiveProofs, Defs, Commitment, NP}` | ≈ 2,700 |
 
 **Sorried statements.** Each must close before its fills are issued.
@@ -47,7 +47,7 @@ go first, because a statement change here would ripple into ch. 5–8.
 | Pack | Content | Files | Lines |
 |---|---|---|---|
 | 03i | Goldreich–Levin and hard-core results | `Asymptotic/{HardCoreLemmas, HardCoreLoops, HardCoreGL, HardCoreGLColl, HardCoreGLFamily, GoldreichLevinDomain, HardCorePermutation, EnsemblesLemmas}` | ≈ 4,600 |
-| 03j | GGM, PRF and encryption results | `Asymptotic/{GGMReduction, GGMReductionEval, PRFLemmas, MultiMessageLemmas, PublicKeyLemmas}` | ≈ 3,600 |
+| 03j | GGM, PRF and encryption results (after F-1, which touches these files) | `Asymptotic/{GGMReduction, GGMReductionEval, PRFLemmas, MultiMessageLemmas, PublicKeyLemmas}` | ≈ 3,600 |
 | 03k | graph isomorphism ZK and encodings | `ZeroKnowledge/{GraphIsomorphism*, GraphIsomorphismZK*, Encoding*, CommitmentLemmas, NPLemmas}` | ≈ 9,300 |
 | 03l | machine infrastructure (last; internally verified in run 3b) | `Complexity/Randomized/Build/*` | ≈ 3,200 |
 
@@ -62,3 +62,8 @@ The branch carries pdftotext extracts of ch. 2–4 and the appendix
 (`blueprint/src/references/pass-shelat-2010-*.raw.md`, about 220 kB, committed by Frederick on
 2026-10-28). The ch. 5–8 brief says not to commit the source's text. Should these stay on the branch
 and go to `main`?
+
+## Drafts
+
+All 13 packs are drafted (`03a-pack.md` to `03l-pack.md`). Each pins its head when the dedup PR
+lands, except 03d and 03j, which pin when the F-1 restatement lands.

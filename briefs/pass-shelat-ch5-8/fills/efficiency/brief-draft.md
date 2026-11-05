@@ -1,9 +1,15 @@
 # Fill brief (DRAFT, not issued): the efficiency of reductions (`Games/Efficiency.lean`)
 
 Status: **draft, 2026-11-05.** Ruled: a Claude fill on the GGM reduction machine's pattern, issued
-after gate 02 closes. Still to come before issue:
-- the Lean skeleton of the targets (statements with `sorry` under literal proof sketches), written
-  by the maintainer and elaborated on the issue tree;
+after gate 02 closes (closed 2026-11-05). Progress on the S2b branch:
+- **T0, done and compiling:** `Games/BitCodec.lean` (`bitSpec`, `decodeIdx`, `decodeBitMove`,
+  `bitCodec`, with round-trip lemmas) and `Games/Efficiency.lean` (`bitSpecAt`, `PolyHandler`,
+  `PolyHandler.answer`/`impl`). At `b8d13d5559658fb140a27dcbdb26e27a4e15646b` and its successor.
+- **T1, stated and compiling:** `exists_handlerMachine`, under its proof sketch, with one `sorry`.
+
+Still to come before issue:
+- the T2 statement (interactive handlers, by log replay) and the T3 statement (GGM as an
+  instance), in the same file;
 - the pre-ship probes (import probe of every cited name; a route probe of the generic loop on a
   toy handler; a duplication probe);
 - the order list and Mathlib roots;

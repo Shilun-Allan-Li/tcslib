@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.Sampling
+import TCSlib.Cryptography.Asymptotic.SamplingFinDist
 import TCSlib.Cryptography.Asymptotic.Permutations
 import TCSlib.Cryptography.Asymptotic.Adversary
 import TCSlib.Cryptography.Asymptotic.Ensembles
@@ -42,6 +43,8 @@ machine-closure facts of `TCSlib/Complexity/Randomized`.
   (the one sampling device, D10; the concrete lemmas C4, C5, C10 of the chapter 2 inventory);
   `Permutations` — rejection-sampled permutations `permFromCoins` with the campaign
   parameters `permBits`, `permTrials` and the failure bound `n · 2^{-n}`.
+* `SamplingFinDist` — `StatClose` of samplers is `EpsClose` of their laws
+  (`statClose_iff_epsClose_map`).
 * `Adversary` — an `NUPPT` as an inverter, distinguisher or predictor of the concrete
   experiments (`decodeFin`, `padFin`, `invProbOpt`; [PS10, Definitions 24.6, 26.1, 27.3, 69.4,
   75.2, 78.3]).
