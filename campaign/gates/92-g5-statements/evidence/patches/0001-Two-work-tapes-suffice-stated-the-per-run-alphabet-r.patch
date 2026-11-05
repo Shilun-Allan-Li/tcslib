@@ -1,0 +1,362 @@
+From 6bd12e68af36280b6ce2e71bc17a92dc17ab7412 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 20:05:30 -0800
+Subject: [PATCH 1/2] Two work tapes suffice (stated), the per-run alphabet
+ reduction, and the efficient universal machine
+
+- Turing.FinTM.alphabet_reduction_run: alphabet reduction run by run, with the converse
+  (proved from the block simulation's run correspondence).
+- Turing.exists_code2TM: every two-work-tape binary machine has a coded equivalent.
+- Robustness/TwoTapes: Turing.FinTM.two_work_tapes_run (Hennie-Stearns, stated with sorry)
+  and two_work_tapes_binary (proved from it).
+- UniversalTlogT: Turing.universal_TlogT, AB09 Theorem 1.9 at T log T, per run and with the
+  converse, proved from two_work_tapes_run, exists_code2TM and universalK.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/TuringMachine.lean          |  6 ++
+ .../Complexity/TuringMachine/Codes2Tape.lean  | 29 +++++++
+ .../Robustness/AlphabetReduction.lean         | 52 ++++++++++++
+ .../TuringMachine/Robustness/TwoTapes.lean    | 85 +++++++++++++++++++
+ .../TuringMachine/UniversalTlogT.lean         | 84 ++++++++++++++++++
+ 5 files changed, 256 insertions(+)
+ create mode 100644 TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+ create mode 100644 TCSlib/Complexity/TuringMachine/UniversalTlogT.lean
+
+diff --git a/TCSlib/Complexity/TuringMachine.lean b/TCSlib/Complexity/TuringMachine.lean
+index 4de54c73..579fcc57 100644
+--- a/TCSlib/Complexity/TuringMachine.lean
++++ b/TCSlib/Complexity/TuringMachine.lean
+@@ -64,6 +64,7 @@ import TCSlib.Complexity.TuringMachine.CodeSimulator
+ import TCSlib.Complexity.TuringMachine.ChoiceWords
+ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+ import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
++import TCSlib.Complexity.TuringMachine.Robustness.TwoTapes
+ import TCSlib.Complexity.TuringMachine.Robustness.Bidirectional
+ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousSchedule
+ import TCSlib.Complexity.TuringMachine.Robustness.ObliviousCandidate
+@@ -77,6 +78,7 @@ import TCSlib.Complexity.TuringMachine.Codes2Tape
+ import TCSlib.Complexity.TuringMachine.MathlibBridge
+ import TCSlib.Complexity.TuringMachine.UniversalStartup
+ import TCSlib.Complexity.TuringMachine.UniversalK
++import TCSlib.Complexity.TuringMachine.UniversalTlogT
+ import TCSlib.Complexity.TuringMachine.SelfUniversal
+ import TCSlib.Complexity.TuringMachine.UniversalInterpreter
+ import TCSlib.Complexity.TuringMachine.UniversalBlock
+@@ -250,6 +252,8 @@ for the local modifications.
+   all-`true` word, in the form the timed conditional takes as its test. Proved.
+ * `Robustness/AlphabetReduction` — binary alphabet suffices [AB09, Claim 1.5].
+ * `Robustness/SingleTape` — one work tape suffices, quadratically [AB09, Claim 1.6].
++* `Robustness/TwoTapes` — two work tapes suffice, with logarithmic overhead, run by run
++  (Hennie–Stearns; the simulation is stated, and its proof is open).
+ * `Robustness/Bidirectional` — unidirectional tape use suffices [AB09, Claim 1.8].
+ * `Robustness/Oblivious` — oblivious machines and the quadratic oblivious simulation
+   [AB09, Remark 1.7, Exercise 1.5] (imports the `ClassP` definitions it needs).
+@@ -263,6 +267,8 @@ for the local modifications.
+   scheme interface `EffectiveCodeK` with the one- and two-tape schemes as instances, the startup,
+   the self-application universal machine with time and space ledgers, and the code-first
+   evaluator, all proved.
++* `UniversalTlogT` — the efficient universal machine [AB09, Theorem 1.9] at `T log T`, per run
++  and with the converse, proved from `Robustness/TwoTapes`'s reduction and `UniversalK`.
+ * `SelfUniversal` — the self-application universal machine `U₀` and its startup
+   [AB09, Exercise 4.1], the universal machine of the space hierarchy's window route.
+   Both are proved, as the `k = 1` cases of `UniversalK`'s statements.
+diff --git a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+index e0cab06a..52d35964 100644
+--- a/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
++++ b/TCSlib/Complexity/TuringMachine/Codes2Tape.lean
+@@ -59,6 +59,7 @@ two work tapes.
+ * `Turing.exists_effectiveMachineCode2`,
+   `Turing.exists_uniformMachineCode2` — proved existence statements (the latter
+   modulo the uniform simulator).
++* `Turing.exists_code2TM` — every two-work-tape binary machine has a coded equivalent.
+ 
+ ## References
+ 
+@@ -335,4 +336,32 @@ theorem exists_uniformMachineCode2 : Nonempty UniformMachineCode2 := by
+     simulator_accepts := fun α x t h => (hS α x t).1 h
+     simulator_rejects := fun α x t h => (hS α x t).2 h }⟩
+ 
++/-- Every two-work-tape binary machine is equivalent, input by input and step for step, to a
++coded two-tape machine (the two-tape counterpart of `Turing.exists_codeTM`). [AB09, §1.4]
++
++**Proof sketch.** The state type is finite and inhabited by the start state, so
++`Fintype.equivFinOfCardEq` gives a bijection `e : State ≃ Fin (n + 1)`. The coded machine is the
++original one with its states renamed along `e` (`Turing.MultiTapeTM.relabelState`). Its
++initialized runs are the original runs with renamed states
++(`Turing.MultiTapeTM.relabelState_runFrom_init`), and renaming changes neither halting nor the
++output, so the two machines compute the same outputs in the same times. -/
++theorem exists_code2TM (M : FinTM Bool) (hk : M.k = 2) :
++    ∃ M' : Code2TM, ∀ (x output : List Bool) (t : ℕ),
++      M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
++  classical
++  rcases M with @⟨k, Q, hQ, dQ, tm⟩
++  dsimp only at hk
++  subst k
++  letI : Fintype Q := hQ
++  letI : DecidableEq Q := dQ
++  have hcard : Fintype.card Q = (Fintype.card Q - 1) + 1 := by
++    have : 0 < Fintype.card Q := Fintype.card_pos_iff.mpr ⟨tm.q₀⟩
++    omega
++  let e := Fintype.equivFinOfCardEq hcard
++  refine ⟨⟨Fintype.card Q - 1, tm.relabelState e⟩, fun x output t => ?_⟩
++  rw [FinTM.computesInTime_iff, FinTM.computesInTime_iff]
++  dsimp only [Code2TM.toFinTM]
++  rw [MultiTapeTM.relabelState_runFrom_init, Cfg.mapState_state, Cfg.mapState_output,
++    Option.map_eq_none_iff]
++
+ end Turing
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean b/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean
+index fd0aab5d..e95cd630 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction.lean
+@@ -48,6 +48,7 @@ defining `DTIME` over binary-alphabet machines (see
+ ## Main results
+ 
+ * `Turing.FinTM.alphabet_reduction` — [AB09, Claim 1.5].
++* `Turing.FinTM.alphabet_reduction_run` — the same, run by run, with the converse.
+ 
+ ## References
+ 
+@@ -595,6 +596,57 @@ theorem alphabet_reduction {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool 
+   exact (arTM_computes E hE e M x (f x) (T x.length) (hM x)).mono
+     (Nat.mul_le_mul_left _ (Nat.le_succ _))
+ 
++/-- **Alphabet reduction, run by run** [AB09, Claim 1.5]: for every machine `M` over a finite
++alphabet `Γ` and every embedding `e : Bool ↪ Γ`, a binary machine `M'` with the same number of
++work tapes reproduces each halting run of `M` on an encoded input `x.map e` with an encoded
++output `w.map e`, within `c · t` steps for a run of `t` steps. Conversely, whenever `M'` halts on
++`x` with output `w`, `M` halts on `x.map e` with some output `o`, and if `o` is the image `v.map e`
++of a binary word then `v = w`.
++
++The converse cannot say more: `M'` decodes each emitted symbol through a total decoder, so an
++output of `M` outside the image of `e` is decoded too. A machine that writes only images of bits
++(as every machine computing a binary function via `e` does) has `o = w.map e`.
++
++**Proof sketch.** `M'` is the block simulation of `Turing.FinTM.alphabet_reduction`, whose
++run correspondence maps `M`'s configuration after `t` steps to `M'`'s after `c · t`. The
++forward direction is that correspondence at the halting time. For the converse, let `M'`
++halt at `t`. Since `c ≥ 1` and a halted run is stationary, `M'`'s configuration at `c · t` is
++the one at `t`, so the correspondence says that `M`'s configuration after `t` steps is
++halted, and that `w` is its output decoded. If that output is `v.map e`, decoding returns
++`v`. -/
++theorem alphabet_reduction_run {Γ : Type} [Fintype Γ] [DecidableEq Γ] (e : Bool ↪ Γ)
++    (M : FinTM Γ) :
++    ∃ (c : ℕ) (M' : FinTM Bool), M'.k = M.k ∧
++      (∀ (x w : List Bool) (t : ℕ), M.ComputesInTime (x.map e) (w.map e) t →
++        M'.ComputesInTime x w (c * t)) ∧
++      ∀ (x w : List Bool), (∃ t, M'.ComputesInTime x w t) →
++        ∃ (t : ℕ) (o : List Γ), M.ComputesInTime (x.map e) o t ∧
++          ∀ v : List Bool, o = v.map e → v = w := by
++  let E := arCode (Γ := Γ)
++  have hE : E none = fun _ => none := rfl
++  refine ⟨3 * (Fintype.card Γ + 1) + 2, arTM E e M, rfl,
++    fun x w t h => arTM_computes E hE e M x w t h, ?_⟩
++  rintro x w ⟨t, ht⟩
++  obtain ⟨hs, ho⟩ := (computesInTime_iff _ _ _ _).1 ht
++  have hrun := arCfg_run E e M (M.tm.initCfg (x.map e)) t
++  rw [← arCfg_init E hE] at hrun
++  have hle : t ≤ (3 * (Fintype.card Γ + 1) + 2) * t := by
++    calc t = 1 * t := (one_mul t).symm
++      _ ≤ _ := Nat.mul_le_mul_right t (by omega)
++  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le hle
++  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at hrun
++  refine ⟨t, (M.tm.runFrom (M.tm.initCfg (x.map e)) t).output, ?_, fun v hv => ?_⟩
++  · rw [computesInTime_iff]
++    refine ⟨?_, rfl⟩
++    have h1 := congrArg Cfg.state hrun
++    rw [hs] at h1
++    simp only [arCfg] at h1
++    exact Option.map_eq_none_iff.1 h1.symm
++  · have h2 := congrArg Cfg.output hrun
++    rw [ho] at h2
++    simp only [arCfg, hv, List.map_map, Function.comp_def, arBit_embed, List.map_id'] at h2
++    exact h2.symm
++
+ end
+ 
+ end Turing.FinTM
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+new file mode 100644
+index 00000000..6cf70886
+--- /dev/null
++++ b/TCSlib/Complexity/TuringMachine/Robustness/TwoTapes.lean
+@@ -0,0 +1,85 @@
++/-
++Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: Seyoon Ragavan
++-/
++import Mathlib.Data.Nat.Log
++import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
++import TCSlib.Complexity.TuringMachine.Build.ZoneRebalance
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# Reduction to two work tapes
++
++[HS66], as used in [AB09, §1.7] for the efficient universal machine: `k` work tapes are simulated
++by two work tapes with a slowdown of `O(T log T)`. Run for run, every binary machine has a
++binary two-work-tape equivalent that reproduces each halting run of `t` steps within
++`c · (t + 1)(log₂(t + 1) + 1)` steps, and whose completed outputs are outputs of the source.
++
++## Deviations from [AB09] and [HS66]
++
++* The slowdown is stated per run, with an existential constant, and padded with `+ 1` in both
++  factors so that it covers the empty run (`t = 0`).
++* The statement includes the converse (every completed output of the simulator is an output of
++  the source), which the universal machine's correctness needs.
++* The statement holds for every number of work tapes, zero and one included.
++
++## Main definitions
++
++No new definitions: the reduction is an existential contract.
++
++## Main results
++
++* `Turing.FinTM.two_work_tapes_run` — two work tapes suffice, with logarithmic overhead, run by
++  run and with the converse [HS66].
++* `Turing.FinTM.two_work_tapes_binary` — the same at the level of computed functions.
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (§1.7, the proof of Theorem 1.9.)
++* [HS66] F. C. Hennie, R. E. Stearns, *Two-tape simulation of multitape Turing machines*,
++  J. ACM 13(4), 1966, 533–546.
++-/
++
++namespace Turing.FinTM
++
++/-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
++equivalent `M'` with two work tapes that reproduces each halting run of `M` of `t` steps within
++`c · (t + 1)(log₂(t + 1) + 1)` steps, and every completed output of `M'` is an output of `M` on
++the same input.
++
++**Proof sketch.** (The Hennie–Stearns simulation.) The first work tape of `M'` holds all `k` of
++`M`'s work tapes as tracks, folded around a fixed origin cell into zones of doubling sizes
++`2^i`, so that every simulated head stays at the origin and a tape movement shifts contents
++between neighbouring zones. Each zone is kept half full. A shift that empties or fills a zone `i`
++rebalances zones `0, …, i` using the second work tape as scratch, in `O(2^i)` steps, and a zone `i`
++is rebalanced at most once every `2^(i-1)` simulated steps. Summing over the `log₂ t + 1` zones a
++run of `t` steps reaches gives `O(t log t)` steps in all. The converse holds because `M'` writes
++an output symbol exactly when `M` does, in the same order, and halts only when `M` halts. With
++no work tapes, `M` is run directly beside two idle tapes. -/
++theorem two_work_tapes_run (M : FinTM Bool) :
++    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
++      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
++        M'.ComputesInTime x output (c * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
++      ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
++        ∃ t, M.ComputesInTime x output t := by
++  sorry
++
++/-- **Two work tapes suffice** for computing a function: if a binary machine computes `f` within
++time `T`, then a binary machine with two work tapes computes `f` within
++`c · (T n + 1)(log₂(T n + 1) + 1)` for some constant `c` [HS66].
++
++**Proof sketch.** Apply `Turing.FinTM.two_work_tapes_run` to `M` and use its forward direction at
++each input `x`, with the run of `T |x|` steps that computes `f x`. -/
++theorem two_work_tapes_binary (M : FinTM Bool) (f : List Bool → List Bool) (T : ℕ → ℕ)
++    (hM : M.ComputesFunInTime f T) :
++    ∃ (M' : FinTM Bool) (c : ℕ), M'.k = 2 ∧
++      M'.ComputesFunInTime f fun n => c * ((T n + 1) * (Nat.log 2 (T n + 1) + 1)) := by
++  obtain ⟨M', c, hk, h, -⟩ := two_work_tapes_run M
++  exact ⟨M', c, hk, fun x => h x (f x) _ (hM x)⟩
++
++end Turing.FinTM
+diff --git a/TCSlib/Complexity/TuringMachine/UniversalTlogT.lean b/TCSlib/Complexity/TuringMachine/UniversalTlogT.lean
+new file mode 100644
+index 00000000..666b3f83
+--- /dev/null
++++ b/TCSlib/Complexity/TuringMachine/UniversalTlogT.lean
+@@ -0,0 +1,84 @@
++/-
++Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
++Released under Apache 2.0 license as described in the file LICENSE.
++Authors: Seyoon Ragavan
++-/
++import TCSlib.Complexity.TuringMachine.Robustness.TwoTapes
++import TCSlib.Complexity.TuringMachine.UniversalK
++
++set_option maxHeartbeats 0
++set_option relaxedAutoImplicit false
++set_option autoImplicit false
++
++/-!
++# The efficient universal machine
++
++[AB09, Theorem 1.9]: one machine `U` simulates every machine `M`, given a code `α` of `M`, with
++overhead `C · T log T` for a run of `T` steps, where `C` depends on `M` but not on the input.
++
++## Deviations from [AB09]
++
++* The code quantifier is relaxed as in `Turing.universal_quadratic`: every machine has some code
++  `α` with which `U` simulates it. [AB09] states the simulation for every code of every machine;
++  here the code is one of the two-work-tape normal form's, through the two-tape reduction.
++* The statement is per run and includes the converse: every completed output of `U` on
++  `⟨α, x⟩` is an output of `M` on `x`.
++* The overhead is `C · (t + 1)(log₂(t + 1) + 1)`, padded so that it covers `t = 0`.
++
++## Main definitions
++
++No new definitions: the universal machine is an existential contract.
++
++## Main results
++
++* `Turing.universal_TlogT` — [AB09, Theorem 1.9].
++
++## References
++
++* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*,
++  Cambridge University Press, 2009. (Theorem 1.9 and its proof, §1.7.)
++-/
++
++namespace Turing
++
++/-- **The efficient universal machine** [AB09, Theorem 1.9]: there is one binary machine `U`
++such that every binary machine `M` has a code `α` and a constant `C` with which `U` reproduces
++each halting run of `M` of `t` steps on input `x`, on the paired input `⟨α, x⟩`, within
++`C · (t + 1)(log₂(t + 1) + 1)` steps; and every completed output of `U` on `⟨α, x⟩` is an
++output of `M` on `x`.
++
++**Proof sketch.** Take `U` to be the code-first evaluator `Turing.universalK` at two work tapes,
++over the two-tape scheme `c`. Given `M`, reduce it to two work tapes
++(`Turing.FinTM.two_work_tapes_run`, overhead `c₁ · (t + 1)(log₂(t + 1) + 1)`) and code the result
++(`Turing.exists_code2TM`); `α` is that code. `U` simulates the coded machine within linear
++overhead `C (t' + 1)`, so a run of `M` of `t` steps costs at most
++`C (c₁ (t + 1)(log₂(t + 1) + 1) + 1) ≤ C (c₁ + 1)(t + 1)(log₂(t + 1) + 1)` steps of `U`. The
++converse composes the converses of the two steps. -/
++theorem universal_TlogT (c : EffectiveMachineCode2) :
++    ∃ U : FinTM Bool, ∀ M : FinTM Bool, ∃ (α : List Bool) (C : ℕ),
++      (∀ (x output : List Bool) (t : ℕ), M.ComputesInTime x output t →
++        U.ComputesInTime (pairEncode α x) output (C * ((t + 1) * (Nat.log 2 (t + 1) + 1)))) ∧
++      ∀ (x output : List Bool), (∃ t, U.ComputesInTime (pairEncode α x) output t) →
++        ∃ t, M.ComputesInTime x output t := by
++  obtain ⟨U, hU⟩ := universalK 2 c.toK
++  refine ⟨U, fun M => ?_⟩
++  obtain ⟨M', c₁, hk, hfwd, hback⟩ := FinTM.two_work_tapes_run M
++  obtain ⟨N, hN⟩ := exists_code2TM M' hk
++  have hdec : c.toK.toFinTM (c.encode N) = N.toFinTM := by
++    rw [EffectiveMachineCode2.toK_toFinTM, c.toMachineCode2.decode_encode N]
++  obtain ⟨C, hC⟩ := hU (c.encode N)
++  refine ⟨c.encode N, C * (c₁ + 1), fun x output t h => ?_, fun x output h => ?_⟩
++  · have h₁ := (hN x output _).2 (hfwd x output t h)
++    rw [← hdec] at h₁
++    apply ((hC x).1 output _ h₁).mono
++    have hpos : 1 ≤ (t + 1) * (Nat.log 2 (t + 1) + 1) :=
++      Nat.one_le_iff_ne_zero.mpr (by positivity)
++    calc C * (c₁ * ((t + 1) * (Nat.log 2 (t + 1) + 1)) + 1)
++        ≤ C * ((c₁ + 1) * ((t + 1) * (Nat.log 2 (t + 1) + 1))) := by
++          apply Nat.mul_le_mul_left; nlinarith
++      _ = C * (c₁ + 1) * ((t + 1) * (Nat.log 2 (t + 1) + 1)) := by ring
++  · obtain ⟨t, ht⟩ := (hC x).2 output h
++    rw [hdec] at ht
++    exact hback x output ⟨t, (hN x output t).1 ht⟩
++
++end Turing
+-- 
+2.50.1 (Apple Git-155)
+

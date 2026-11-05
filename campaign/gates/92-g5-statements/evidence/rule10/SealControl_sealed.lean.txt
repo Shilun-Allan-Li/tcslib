@@ -1,6 +1,6 @@
 /-
 Seal controls for G5's statement PR's rule-10 checks: a delta goal (`#ctl_rfl`) and an equation
-goal (`#ctl_eqn`) for each of the 13 definitions sealed in the three sealed copies (the
+goal (`#ctl_eqn`) for each of the 14 definitions sealed in the three sealed copies (the
 union). Expected: unsealed, every control passes except recursive definitions' delta goals;
 sealed, every control fails. A probe record, not library code.
 -/
@@ -66,6 +66,7 @@ attribute [local irreducible]
   Turing.EffectiveCodeK.toFinTM
   Turing.EffectiveMachineCode2.toK
   Turing.FinTM.ComputesInTime
+  Turing.FinTM.stateEquivFin
   Turing.MultiTapeTM.ComputesInTimeAndSpace
   Turing.MultiTapeTM.initCfg
   Turing.MultiTapeTM.relabelState
@@ -80,6 +81,7 @@ attribute [local irreducible]
 #ctl_rfl Turing.EffectiveCodeK.toFinTM
 #ctl_rfl Turing.EffectiveMachineCode2.toK
 #ctl_rfl Turing.FinTM.ComputesInTime
+#ctl_rfl Turing.FinTM.stateEquivFin
 #ctl_rfl Turing.MultiTapeTM.ComputesInTimeAndSpace
 #ctl_rfl Turing.MultiTapeTM.initCfg
 #ctl_rfl Turing.MultiTapeTM.relabelState
@@ -93,6 +95,7 @@ attribute [local irreducible]
 #ctl_eqn Turing.EffectiveCodeK.toFinTM
 #ctl_eqn Turing.EffectiveMachineCode2.toK
 #ctl_eqn Turing.FinTM.ComputesInTime
+#ctl_eqn Turing.FinTM.stateEquivFin
 #ctl_eqn Turing.MultiTapeTM.ComputesInTimeAndSpace
 #ctl_eqn Turing.MultiTapeTM.initCfg
 #ctl_eqn Turing.MultiTapeTM.relabelState

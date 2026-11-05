@@ -1,0 +1,32 @@
+From 3cc6c9ee4837f03a27446c4a64e17078b9b63876 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 23:01:29 -0800
+Subject: [PATCH 6/6] ExhaustiveReplay: xr_phase_step's endpoint conversion
+ through Cfg.mapState_eq_of_fields too
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+index a85e081d..2ce883de 100644
+--- a/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
++++ b/TCSlib/Complexity/ClassNP/ExhaustiveReplay.lean
+@@ -2048,12 +2048,7 @@ private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool
+   show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
+     (T + 1) = _
+   rw [hhost]
+-  apply Cfg.ext
+-  · rw [Cfg.mapState_state, hs']; rfl
+-  · rw [Cfg.mapState_inputPos]
+-  · funext j p; rw [Cfg.mapState_workTapes]
+-  · funext j; rw [Cfg.mapState_workTapePos]
+-  · rw [Cfg.mapState_output, hout]
++  exact Cfg.mapState_eq_of_fields _ _ _ (by rw [hs']; rfl) rfl rfl rfl hout
+ 
+ /-! #### One cycle: the phases of one replay, on the host
+ 
+-- 
+2.50.1 (Apple Git-155)
+

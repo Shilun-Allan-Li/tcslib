@@ -1,0 +1,55 @@
+From 822bdd636a2a08e258d90b8a7d25782ff120479f Mon Sep 17 00:00:00 2001
+From: "Claude (fill agent)" <noreply@anthropic.com>
+Date: Wed, 4 Nov 2026 23:01:30 +0000
+Subject: [PATCH 09/12] NDNormalForm: the linear-overhead coded normal form,
+ proved
+
+The target
+Turing.FinNDTM.exists_codeNDTM_accepts_linear, from the packaging of the host
+(nf_pack), the forward transfer at the constant nf_C N.k, and the backward
+transfer; and the status phrases of the module and target docstrings. The
+target depends on propext, Classical.choice and Quot.sound only.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index c1268ca2..4789c2c3 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -27,8 +27,7 @@ No new definitions: the normal form is an existential contract.
+ 
+ ## Main results
+ 
+-* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form
+-  (statement; proof incomplete).
++* `Turing.FinNDTM.exists_codeNDTM_accepts_linear` — the linear-overhead coded normal form.
+ 
+ ## References
+ 
+@@ -3323,7 +3322,7 @@ private theorem nf_backward_host (N : FinNDTM Bool) (x w : List Bool)
+ end Backward
+ 
+ /-- **The linear-overhead coded normal form** ([BGW70]-style guess-then-verify,
+-cited through [AB09, §3.2]; statement; proof incomplete): every
++cited through [AB09, §3.2]): every
+ nondeterministic machine has a coded (two-work-tape) equivalent whose
+ acceptance tracks the original's at linear time overhead — forward with the
+ explicit constant, backward in unbounded form (the consumer recovers the
+@@ -3374,7 +3373,10 @@ theorem exists_codeNDTM_accepts_linear (N : FinNDTM Bool) :
+         N.AcceptsWithin x t → M.toFinNDTM.AcceptsWithin x (C * (t + 1))) ∧
+       (∀ (x : List Bool) (t : ℕ),
+         M.toFinNDTM.AcceptsWithin x t → ∃ t', N.AcceptsWithin x t') := by
+-  sorry
++  obtain ⟨M, hM⟩ := nf_pack (nf_host N)
++  refine ⟨M, nf_C N.k, fun x t hN => (hM x _).2 (nf_forward N x t hN), fun x t hMt => ?_⟩
++  obtain ⟨w, -, hh, ho⟩ := (hM x t).1 hMt
++  exact nf_backward_host N x w hh ho
+ 
+ end FinNDTM
+ 
+-- 
+2.50.1 (Apple Git-155)
+

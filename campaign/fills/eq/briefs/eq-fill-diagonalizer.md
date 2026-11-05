@@ -237,7 +237,9 @@ the uniform `K` cannot absorb when `g n = n`).
 **Edge cases that must stay true:** `n ≤ 2` and non-unary inputs (the query is `[]`: `rej`); a
 budget word above `g n` (`qyCmpTM`'s `gt`: `rej`); `b = 0` (`1^0` is empty: `qyCmpTM` and the
 `lengthBits` call on the empty word); a stream shorter than an acceptance (the core rejects or times
-out: `rej`); `BF` halting with a word other than `[false]` or `[true]` (`rej`); the clock's
+out: `rej`); `BF` halting with a word other than `[false]` or `[true]` (`rej`) [**erratum, gate 93
+finding 3:** the top tests the output's first symbol only, so `[false, true]` is accepted; `hBF` makes
+every relevant output a singleton, so the target is unaffected]; the clock's
 `timeout` in either run (`rej`); and `g n = 0` (only at `n = 0`, for the halting clause): the
 block is the separator alone, the ruler, `w_b` and every counter are empty, the walk moves one
 cell, and the clock's allowance is `0`.
