@@ -4205,6 +4205,23 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   **Gate 90: PASS 0/0/3/9.** Minors 2–3 are fixed in the records. Minor 1 (`dsimp only
   [Function.comp]`) is fixed on #182 by `94093275`. **Ruled (user, 2026-11-04): #181 merges first**;
   then #182 takes one merged-tree replay from `oleans-lsm2`.
+* **In flight at the relocation (2026-11-04, evening; #181 merged as `d1ddea26`).** Each item
+  resumes from files; `$S` is the session scratchpad.
+  - **NF cont1's and E-D's fill reviews:** sub-agents writing `$S/review/nf-cont1-fill/REVIEW.md`
+    and `$S/review/ed-fill/REVIEW.md`, with all outputs under `out/` and `land/`.
+    - If an agent was lost, continue it, or relaunch it with the same brief; finished outputs stay.
+    - Check `$S/locks/screen`: if no `copy-text-screen` process runs, the lock is stale; `rmdir` it.
+    - Each agent removes its own worktrees and clones; leftovers sit under its directory.
+  - **G5's screen:** `$S/g5ps/screen/run.sh`, queued behind the screen lock. Its outputs are
+    `screen-base.txt`, `screen-head.txt` and `status.txt`. If it was lost, run it again; its
+    exports `base/` and `head/` are in place.
+  - **#182's merged-tree replay `replay-larm2`:** written and prechecked. The campaign was merged
+    into #182 (`a199760e`; `ARMProof` auto-merged with #181's edit). 138 modules from
+    `oleans-lsm5`, five blobs pinned. **To be run by the user.** On a pass #182 is clear to merge
+    (gate 90 PASS); then #184 is retargeted, merged with the campaign and replayed.
+  - **G5:** `lean/g5-statements` at `6bd12e68`, local (not pushed). After the screen: merge the
+    campaign, push, open the PR, then gate 92's pack. Its replay is the 325-module closure,
+    chained from the newest snapshot.
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
