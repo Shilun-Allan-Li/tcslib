@@ -132,3 +132,69 @@ most `2 ^ (w·w)` have `O((S|x|)²)` bits, because `logSpace ≤ S` is `hS.1`. C
    by the pre-ship probe of `cfgWord`'s published layout facts. Use (b) if they exist, otherwise
    (a).
 3. **Agent for the fill**: by the soft rule, Codex for a first attempt.
+
+## 7. Decided at pre-ship (2026-11-04): the edge decider is a codec mode
+
+The rule (decision 2, user 2026-11-04) was a separate decider if `cfgWord`'s head-flag positions
+are published, else a codec mode. The chunk-level facts are published (`getD_cfgWord_chunk`,
+`chunkBit_tape`, `cellOf`'s head field), so the check is easy to state. Deciding it in logspace is
+another matter: it needs the codec machine's parse of `⟨x, ⟨w, bits s⟩⟩` (the radius into a
+register, the layout's base address) and its validity scan. A separate decider would rebuild both,
+or embed `CA`'s partial run, which the API transports only for halting runs. So, by the rule:
+**a fifth mode `edge` of `Complexity.Codec.CA`**, a maintainer API PR in Hydroxyi's `Codec` files
+(the 2026-10-27 authorization; FYI only):
+- `Langs`: `edgeLang N`, the codes at radius `s` of window-bounded configurations with some work
+  head at `±s`;
+- `Checks`: `EdgeChk` (valid, and some tape `i` with the head flag set at chunk `0`, offset
+  `hH + 3i + 2`, or at chunk `2s`), and `edgeLang_iff`, from `validChk_iff`,
+  `getD_cfgWord_chunk`, `chunkBit_tape` and `cellOf`;
+- `Machine`: `CMode.edge`; after the validity scan, if `VAcc` holds, a loop over tapes. Set
+  `U := A + 2(hH + 2)` and a down-counter to `k`; read the bit at `U`; copy `U`, add `4W · s`, read
+  again; then `U += 6` and count down. It answers `true` at the first set flag and `false` at the
+  end. With no work tape it answers `false`. New sites: copies (`A → U`, `U → Q1`, `S → T`), a
+  scale (`Q1 += 4W · T`) and increment chains (`2(hH + 2)`, `6`, `k`), all within the label
+  families' bounds;
+- `Deciders`: `edge_tail` (as `init_tail`, by induction over tapes) and `edgeLang_mem`.
+
+ESTIMATE: 400–600 lines. *Superseded (gate 91, minor 5):* as shipped (#184), the edge proofs read
+the machine through #182's step equations and `preS_of_ins`, so #184 is stacked on #182 and lands
+after it. The deepening fill's brief issues once both have merged.
+
+
+## 8. The fill's route, pinned (2026-11-04, after #182 and #184 were staged)
+
+The route probe is `probes/DeepenRoute.lean.txt`. It was elaborated against a clone with #182 and
+#184 compiled on the campaign's Lean (`probes/DeepenRoute.out`): exactly the four `sorry` warnings
+below, nothing else. It states the fill's new pieces and proves `savitch` from them.
+
+| Statement (pinned) | What it says | Home (new files, ours) |
+|---|---|---|
+| `NoEdge N x s w` | no edge code is `Reach`able at level `w` from an initial code at radius `s` | `SavitchARM/Window` |
+| `mem_iff_reach_of_noEdge (h : N.DecidesInSpace L sp) x s w hw hcb (hne : NoEdge N x s w)` | `mem_iff_reach`'s conclusion, with `sp |x| ≤ s` replaced by `NoEdge` | `SavitchARM/Window` |
+| `noEdge_of_lt h x s w (hs : sp |x| < s)` | beyond the space bound no edge code is reachable | `SavitchARM/Window` |
+| `configBound_le_pow N n s` | `configBound n s ≤ 2 ^ ((|Q| + 3 + 9k)(s + logSpace n + 1))` | `SavitchARM/Window` |
+| `DeepenContract L sp` / `deepen_contract h` | some ARM with logspace deciders answers `x ∈ L` with register digits at most `C (sp |x| + logSpace |x| + 1)²`: `arm_decides_SPACE`'s hypothesis | `SavitchARM/Deepen` |
+| `savitch_of_logSpace_le S (hS : ∀ n, logSpace n ≤ S n)` | `NSPACE S ⊆ SPACE (S · S)`; **proved in the probe** from `deepen_contract` and `arm_decides_SPACE`, with `K = C (c + 2)²` | `Savitch` |
+
+`savitch` follows as `savitch_of_logSpace_le S hS.1`. **Constructibility is used only through
+`logSpace ≤ S`**: iterative deepening never computes `S`. The probe's proofs also check the
+arithmetic of the pins by hand:
+- **The configuration count.** Its exponents add up to
+  `|Q| + 3 + logSpace n + 6ks + 2k ≤ (|Q| + 3 + 9k)(s + logSpace n + 1)`.
+- **Window exactness (⇒).** Take an accepting branch. If no prefix configuration has a head at
+  `±s`, the prefixes form a `StepRel` path at radius `s`. Shortcut it below `configBound ≤ 2 ^ w`
+  and cut it with `reach_of_chain`. Otherwise the first configuration with a head at `±s` is still
+  window-bounded: the write lands at the old head position, which is inside. So it is a reachable
+  edge code, against `NoEdge`.
+- **Window exactness (⇐)** is `mem_of_codePath`, at any radius.
+- **Termination.** A `Reach` witness unfolds to a `CfgStep` path from the initial configuration.
+  Under `DecidesInSpace`, its heads stay at distance below `sp |x|` (visited cells, the halting
+  budget), so no head reaches `±s`.
+
+**The fill's work:** the four `sorry`s; the shortest-path lemma (check Mathlib first); and the
+machine `D` of §2, built from `AHalt.embed_guardLe` (#182), the `ARMLoops` loops (`copy_run`,
+`shl_run`, `halve_run`, …) and the deciders `inputLenLang`, `initLang`, `acceptLang`,
+`stepLang` and `edgeLang` (`edgeLang_mem`, #184). The register bound comes from the last radius
+`s ≤ sp |x| + 1`, where `w = C_w (s + logSpace |x| + 1)` and every register is at most
+`2 ^ (w · w)`. ESTIMATE: 1.2–2.2k lines. The brief issues once #182 and #184 have merged, with its
+pre-ship on the merged tree.

@@ -1,0 +1,34 @@
+From 252bbcb830767c3a41f907b78e61910ec6fadcb0 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 14:23:18 -0800
+Subject: [PATCH] =?UTF-8?q?Exponential-time=20BFS:=20setup=5Frun=20reads?=
+ =?UTF-8?q?=20hv=20|x|=20=E2=89=A4=20|x|=20from=20lgv=5Fle=5Fsucc?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean
+index 512e72d5..7fa88231 100644
+--- a/TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean
++++ b/TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean
+@@ -440,9 +440,9 @@ theorem setup_run (hq : ∀ k ≤ x.length, orc 0 (pairEncode x (Nat.bits k)) =
+   have hbd2 : St.Bd B { St.zero with N := x.length, Lg := 1 } := by
+     simp only [St.Bd, St.zero]; omega
+   have hhv : hv x.length ≤ x.length := by
+-    unfold hv; split_ifs with h0
+-    · omega
+-    · have := Nat.log_lt_self 2 h0; omega
++    have := lgv_le_succ x.length
++    unfold lgv at this
++    omega
+   exact reach_cf (lg_run x.length _ M rfl (by simpa [St.zero] using hbd2)
+     (by simp [St.zero]; omega)) (by ext <;> simp [St.zero, lgv]) rfl
+ 
+-- 
+2.50.1 (Apple Git-155)
+

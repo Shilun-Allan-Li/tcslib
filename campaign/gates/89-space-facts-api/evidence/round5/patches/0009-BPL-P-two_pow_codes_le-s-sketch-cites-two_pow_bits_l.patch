@@ -1,0 +1,32 @@
+From 98912ab293dc329b3f7274ee27977fa19789ce78 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 16:02:53 -0800
+Subject: [PATCH] =?UTF-8?q?BPL=20=E2=8A=86=20P:=20two=5Fpow=5Fcodes=5Fle's?=
+ =?UTF-8?q?=20sketch=20cites=20two=5Fpow=5Fbits=5Fle?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/Randomized/BPLInP.lean | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/Randomized/BPLInP.lean b/TCSlib/Complexity/Randomized/BPLInP.lean
+index bc402ede..689c48a1 100644
+--- a/TCSlib/Complexity/Randomized/BPLInP.lean
++++ b/TCSlib/Complexity/Randomized/BPLInP.lean
+@@ -387,8 +387,8 @@ theorem polyTimeComputable_bplTest : PolyTimeComputable (fun x => [bplTest N c B
+ `c (|bits n| + 1)` are below `8^e (n + 1)^e`.
+ 
+ **Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` (`Complexity.logSpace_le_size_succ`)
+-and `2^m ≤ 2(n + 1)` (`Nat.lt_size`), so the exponent is at most `e (m + 2)` and
+-`2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
++and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
++`e (m + 2)` and `2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
+ theorem two_pow_codes_le (n : ℕ) :
+     2 ^ (codeK N * (c * ((Nat.bits n).length + 1) + logSpace n + 1)) ≤
+       8 ^ (codeK N * (c + 1)) * (n + 1) ^ (codeK N * (c + 1)) := by
+-- 
+2.50.1 (Apple Git-155)
+

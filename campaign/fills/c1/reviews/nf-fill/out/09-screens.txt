@@ -1,0 +1,24 @@
+## screen base vs worker's before screen
+c3792f9dc6874dba2ad4c6b79a39a7aef5f8cb61e60406d94b5336e9d9d28c41  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/wt-hk/campaign/fills/c1/logs/c1-fill-nf-screen-base.txt
+c3792f9dc6874dba2ad4c6b79a39a7aef5f8cb61e60406d94b5336e9d9d28c41  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/intake/c1-nf/x/screens/screen-before.txt
+6ed6fece534aeb1c662d7215fe56fb043122ff6a5303e2eae5aed9f76b867c0f  /private/tmp/claude-501/-Users-seyoonr-phd-experiments-tcslib/8f0076bc-454a-4666-b8cf-f4c7ed13c549/scratchpad/intake/c1-nf/x/screens/screen-after.txt
+before == screen base (byte-identical)
+## summary lines
+declarations screened: 1351; copy pairs (target reproduces >= half of source): 865; reproduced text: 274,870 chars
+declarations screened: 1351; copy pairs (target reproduces >= half of source): 865; reproduced text: 274,870 chars
+declarations screened: 1379; copy pairs (target reproduces >= half of source): 866; reproduced text: 274,994 chars
+## pairs in after absent from before (pairdiff.py)
+head pairs 866; union of earlier 865; new at head 1; earlier-only 0
+  NEW   NTimeHierarchy.lean::un_setup  reproduces  NDNormalForm.lean::nf_setup: 124/218 = 57%
+## pairs in before absent from after
+head pairs 865; union of earlier 866; new at head 0; earlier-only 1
+  GONE  NTimeHierarchy.lean::un_setup  reproduces  NDNormalForm.lean::nf_setup: 124/218 = 57%
+## lines naming NDNormalForm in after
+632:   NTimeHierarchy.lean::un_setup  reproduces  NDNormalForm.lean::nf_setup: 124/218 = 57%
+## full diff before -> after
+1c1
+< declarations screened: 1351; copy pairs (target reproduces >= half of source): 865; reproduced text: 274,870 chars
+---
+> declarations screened: 1379; copy pairs (target reproduces >= half of source): 866; reproduced text: 274,994 chars
+631a632
+>    NTimeHierarchy.lean::un_setup  reproduces  NDNormalForm.lean::nf_setup: 124/218 = 57%

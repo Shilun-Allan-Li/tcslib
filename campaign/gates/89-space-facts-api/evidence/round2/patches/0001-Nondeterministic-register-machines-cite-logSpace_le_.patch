@@ -1,0 +1,51 @@
+From 1d1247a3162796b1fb20af0d25c1e67bc4b4868f Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 12:57:18 -0800
+Subject: [PATCH] Nondeterministic register machines: cite logSpace_le_succ for
+ the linear bound
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+narm_decides (NARMProof) and narm_logspace_ptm (NARMLogspace) re-derived logSpace n ≤ n + 1
+inline; both now cite Complexity.logSpace_le_succ.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean | 4 +---
+ TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean    | 4 +---
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean b/TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean
+index 33266215..9a51e018 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean
+@@ -92,9 +92,7 @@ theorem narm_logspace_ptm [Fintype Λ] [DecidableEq Λ] (A : NARM m d Λ) (l₀
+     have hS1 : 1 ≤ logSpace n := by simp [logSpace]
+     set W := K * logSpace n with hW
+     set B := C * logSpace n + 1 with hB
+-    have hLn : logSpace n ≤ n + 1 := by
+-      have := Nat.log_le_self 2 n
+-      simp only [logSpace]; omega
++    have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+     have hsp : ∀ j v, v ≤ 2 * n + 2 + m * (2 * W + 2) → c j * logSpace v ≤ B := by
+       intro j v hv
+       rw [hW] at hv
+diff --git a/TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean b/TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean
+index 059f654d..eb600666 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean
+@@ -213,9 +213,7 @@ theorem narm_decides {L : Language Bool} [Fintype Λ] [DecidableEq Λ] (A : NARM
+     logSpace (fun n => K * logSpace n) (K + cs * K2) (fun n => by simp [logSpace])
+     (fun n => Nat.mul_le_mul_right _ (by omega)) (fun j n v hv => ?_) hcorr
+   beta_reduce at hv ⊢
+-  have hLn : logSpace n ≤ n + 1 := by
+-    have := Nat.log_le_self 2 n
+-    simp only [logSpace]; omega
++  have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+   have hVQ : v ≤ Q * (n + 1) ^ 1 + 0 := by
+     have hW : K * logSpace n ≤ K * (n + 1) := Nat.mul_le_mul_left K hLn
+     have e : Q * (n + 1) ^ 1 + 0 = (4 + 2 * m) * (n + 1) + 2 * m * (K * (n + 1)) := by
+-- 
+2.50.1 (Apple Git-155)
+

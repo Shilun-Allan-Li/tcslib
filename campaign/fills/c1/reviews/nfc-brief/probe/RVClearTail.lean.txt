@@ -1,0 +1,161 @@
+
+/-! ## Review probe (appended after the route probe; not library code)
+
+B's clear chained through the pinned layout: from B's head at offset `i ≤ |R|` into a region `R`
+delimited by blanks (so `i = |R|`, the right delimiter, is allowed), the phases `bFwd j`
+(`skipTM` over `R.drop i`), `bBack j` (`skipBackTM` at `u := R`) and `bClr j` (`clearTM` over `R`)
+reach `nfcAfter N L (some j)` with B blank on the region and B's head on its first cell. Under the
+route probe's seal. -/
+
+namespace Turing
+
+namespace FinNDTM
+
+section RVClear
+
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg Turing.NDTM.initCfg
+attribute [local irreducible] Turing.Cfg.mapState Turing.MultiTapeTM.runFrom Turing.phaseHostTM
+  Turing.skipTM Turing.skipBackTM Turing.clearTM Turing.scanTM Turing.FinTM.bufferTape
+  Turing.MultiTapeTM.step Turing.Action.apply
+
+private theorem rv_bClear (N : FinNDTM Bool) {SL : Type}
+    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool) {x : List Bool}
+    (j : Fin N.k) (R : List Bool) (i : ℕ) (hi : i ≤ R.length)
+    (c : Cfg 2 Bool SeekPhase x) (hst : c.state = some .run)
+    (htape : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
+      c.workTapes 1 (c.workTapePos 1 - i + p) = FinTM.bufferTape R p) :
+    ∃ c₅ : Cfg 2 Bool SweepPhase x,
+      (nfcV N L exit).runFrom
+          ((c : Cfg 2 Bool (NfcSt N SL (NfcPh.bFwd j)) x).mapState (Sigma.mk (NfcPh.bFwd j)))
+          ((R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1)) =
+        c₅.mapState (fun _ => nfcAfter N L (some j)) ∧
+      c₅.workTapePos 1 = c.workTapePos 1 - i ∧
+      ∀ q, c₅.workTapes 1 q = if c.workTapePos 1 - i ≤ q ∧ q < c.workTapePos 1 - i + R.length
+        then none else c.workTapes 1 q := by
+  have hdl : ((R.drop i).length : ℤ) = (R.length : ℤ) - i := by
+    rw [List.length_drop]; push_cast [Nat.cast_sub hi]; ring
+  -- phase `bFwd j`: over the region's suffix from B's head
+  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ ((R.drop i).length : ℤ) →
+      c.workTapes 1 (c.workTapePos 1 + p) = FinTM.bufferTape (R.drop i) p := by
+    intro p h0 h1
+    have h := htape (p + i) (by omega) (by omega)
+    rw [show c.workTapePos 1 - i + (p + i) = c.workTapePos 1 + p by ring] at h
+    rw [h]
+    obtain ⟨n, rfl⟩ := Int.eq_ofNat_of_zero_le h0
+    rw [show ((n : ℤ) + (i : ℤ)) = ((n + i : ℕ) : ℤ) by push_cast; ring, FinTM.bufferTape_nat,
+      FinTM.bufferTape_nat, List.getElem?_drop]
+    congr 1
+    omega
+  obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (1 : Fin 2) (R.drop i) c hst hw
+  set c₁ : Cfg 2 Bool SeekPhase x := { c with
+      state := some .done
+      workTapePos := Function.update c.workTapePos 1 (c.workTapePos 1 + (R.drop i).length + 1) }
+    with hc₁
+  obtain ⟨-, hA⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.bFwd j) (c := c) (c' := c₁) ((R.drop i).length + 1) h1
+    SeekPhase.done rfl ⟨.bBack j, .run⟩ rfl (by
+      intro u hu q hq
+      cases q with
+      | done => exact absurd hq (h2 u hu)
+      | run => rfl
+      | gap => rfl
+      | back => rfl)
+  have hre := nfc_retag (N := N) (SL := SL) (i₀ := NfcPh.bFwd j) (c₁ : Cfg 2 Bool (NfcSt N SL
+    (NfcPh.bFwd j)) x) (NfcPh.bBack j) SeekPhase.run (by simp [hc₁])
+  set c₂ : Cfg 2 Bool SeekPhase x := { c₁ with state := some .run } with hc₂
+  -- phase `bBack j`: back over the whole region to its first cell
+  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
+      c₂.workTapes 1 (c₂.workTapePos 1 - R.length - 1 + p) = FinTM.bufferTape R p := by
+    intro p h0 h1
+    simp only [hc₂, hc₁, Function.update_self]
+    rw [← htape p h0 h1]
+    congr 1
+    rw [hdl]
+    ring
+  obtain ⟨h3, h4, -⟩ := skipBackTM_run_ofCfg (k := 2) (1 : Fin 2) R c₂ rfl hu
+  set c₃ : Cfg 2 Bool SeekPhase x := { c₂ with
+      state := some .done
+      workTapePos := Function.update c₂.workTapePos 1 (c₂.workTapePos 1 - R.length - 1) }
+    with hc₃
+  obtain ⟨-, hB⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.bBack j) (c := c₂) (c' := c₃) (R.length + 3) h3
+    SeekPhase.done rfl ⟨.bClr j, .sweep⟩ rfl (by
+      intro u hu q hq
+      cases q with
+      | done => exact absurd hq (h4 u hu)
+      | run => rfl
+      | gap => rfl
+      | back => rfl)
+  have hpos3 : c₃.workTapePos 1 = c.workTapePos 1 - i := by
+    simp only [hc₃, hc₂, hc₁, Function.update_self]
+    rw [hdl]
+    ring
+  -- the redirected configuration is phase `bClr j`'s start
+  have hre2 := nfc_retag (N := N) (SL := SL) (i₀ := NfcPh.bBack j) (c₃ : Cfg 2 Bool (NfcSt N SL
+    (NfcPh.bBack j)) x) (NfcPh.bClr j) SweepPhase.sweep (by simp [hc₃])
+  set c₄ : Cfg 2 Bool SweepPhase x :=
+    { state := some SweepPhase.sweep, inputPos := c₃.inputPos, workTapes := c₃.workTapes,
+      workTapePos := c₃.workTapePos, output := c₃.output } with hc₄
+  -- phase `bClr j`: blank the region
+  have hcw : ∀ p : ℤ, -1 ≤ p → p ≤ (R.length : ℤ) →
+      c₄.workTapes 1 (c₄.workTapePos 1 + p) = FinTM.bufferTape R p := by
+    intro p h0 h1
+    have e : c₄.workTapePos 1 = c.workTapePos 1 - i := by simp only [hc₄]; exact hpos3
+    rw [e]
+    simp only [hc₄, hc₃, hc₂, hc₁]
+    exact htape p h0 h1
+  obtain ⟨h5, h6, -⟩ := clearTM_run_ofCfg (k := 2) (1 : Fin 2) R c₄ rfl hcw
+  set c₅ : Cfg 2 Bool SweepPhase x := { c₄ with
+      state := some SweepPhase.done
+      workTapes := fun j q =>
+        if j = 1 ∧ c₄.workTapePos j ≤ q ∧ q < c₄.workTapePos j + (R.length : ℤ)
+          then none
+        else c₄.workTapes j q } with hc₅
+  obtain ⟨-, hC⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.bClr j) (c := c₄) (c' := c₅) (2 * R.length + 2) h5
+    SweepPhase.done rfl (nfcAfter N L (some j)) rfl (by
+      intro u hu q hq
+      cases q with
+      | done => exact absurd hq (h6 u hu)
+      | sweep => rfl
+      | rewind => rfl)
+  refine ⟨c₅, ?_, ?_, ?_⟩
+  · have e : (R.length - i + 1 + 1) + (R.length + 3 + 1) + (2 * R.length + 2 + 1) =
+        ((R.drop i).length + 1 + 1) + ((R.length + 3 + 1) + (2 * R.length + 2 + 1)) := by
+      rw [List.length_drop]; omega
+    rw [e, MultiTapeTM.runFrom_add]
+    unfold nfcV
+    rw [hA, hre, MultiTapeTM.runFrom_add, hB, hre2]
+    exact hC
+  · simp only [hc₅, hc₄]
+    exact hpos3
+  · intro q
+    have e4 : c₄.workTapePos 1 = c.workTapePos 1 - i := by simp only [hc₄]; exact hpos3
+    have ew : c₄.workTapes 1 q = c.workTapes 1 q := by simp only [hc₄, hc₃, hc₂, hc₁]
+    have hq : c₅.workTapes 1 q = if (1 : Fin 2) = 1 ∧ c₄.workTapePos 1 ≤ q ∧
+        q < c₄.workTapePos 1 + (R.length : ℤ) then none else c₄.workTapes 1 q := rfl
+    rw [hq, e4, ew]
+    by_cases h : c.workTapePos 1 - i ≤ q ∧ q < c.workTapePos 1 - i + R.length
+    · rw [if_pos ⟨rfl, h⟩, if_pos h]
+    · rw [if_neg (fun h' => h h'.2), if_neg h]
+
+end RVClear
+
+#print axioms rv_bClear
+
+-- the instances that `deriving DecidableEq, Fintype` gives the private phase index: their names
+-- and whether they are private
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let mut out : Array String := #[]
+  for (n, _) in env.constants.map₂.toList do
+    let s := toString n
+    if (s.splitOn "NfcPh").length > 1 && (s.splitOn "inst").length > 1 &&
+        (s.splitOn "._").length == 1 then
+      out := out.push s!"{n} private={isPrivateName n}"
+  logInfo m!"RV_INST {out.qsort (· < ·)}"
+
+end FinNDTM
+
+end Turing

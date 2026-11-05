@@ -1,0 +1,139 @@
+From fe4bdb677c26c0dcb139ca02fce2d0f3568c56d4 Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 14:23:18 -0800
+Subject: [PATCH] The logarithmic bound by the binary length: one lemma in
+ Basic
+
+logSpace_le_size_succ moves from Logspace/ISCountMath to SpaceComplexity/Basic, beside
+logSpace_le_succ (statement and proof unchanged). BPLInP's two_pow_codes_le and BPL_subset_P,
+which re-derived it inline, and SpaceAmplifyPoly's logSpace_le_ell now cite it.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/Randomized/BPLInP.lean      | 20 ++++++-------------
+ .../Randomized/SpaceAmplifyPoly.lean          |  6 ++----
+ TCSlib/Complexity/SpaceComplexity/Basic.lean  | 17 ++++++++++++++++
+ .../SpaceComplexity/Logspace/ISCountMath.lean | 11 ----------
+ 4 files changed, 25 insertions(+), 29 deletions(-)
+
+diff --git a/TCSlib/Complexity/Randomized/BPLInP.lean b/TCSlib/Complexity/Randomized/BPLInP.lean
+index 0761784e..7852de45 100644
+--- a/TCSlib/Complexity/Randomized/BPLInP.lean
++++ b/TCSlib/Complexity/Randomized/BPLInP.lean
+@@ -386,20 +386,16 @@ theorem polyTimeComputable_bplTest : PolyTimeComputable (fun x => [bplTest N c B
+ /-- The number of codes is polynomial: with `e = codeK N · (c + 1)`, the codes at radius
+ `c (|bits n| + 1)` are below `8^e (n + 1)^e`.
+ 
+-**Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` and `2^m ≤ 2(n + 1)`
+-(`Nat.lt_size`), so the exponent is at most `e (m + 2)` and
++**Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` (`Complexity.logSpace_le_size_succ`)
++and `2^m ≤ 2(n + 1)` (`Nat.lt_size`), so the exponent is at most `e (m + 2)` and
+ `2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
+ theorem two_pow_codes_le (n : ℕ) :
+     2 ^ (codeK N * (c * ((Nat.bits n).length + 1) + logSpace n + 1)) ≤
+       8 ^ (codeK N * (c + 1)) * (n + 1) ^ (codeK N * (c + 1)) := by
+   set m := (Nat.bits n).length
+   have hlog : logSpace n ≤ m + 1 := by
+-    rcases Nat.eq_zero_or_pos n with rfl | hn
+-    · simp [logSpace]
+-    · have : Nat.log 2 n < m := by
+-        rw [show m = n.size from Nat.size_eq_bits_len n]
+-        exact Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn.ne')
+-      simp only [logSpace]; omega
++    have := logSpace_le_size_succ n
++    rwa [← Nat.size_eq_bits_len] at this
+   have hpow : 2 ^ m ≤ 2 * (n + 1) := by
+     rcases Nat.eq_zero_or_pos n with rfl | hn
+     · simp [m]
+@@ -444,12 +440,8 @@ theorem BPL_subset_P : BPL ⊆ P := by
+     set V := 8 ^ e * (x.length + 1) ^ e
+     have hs : c * logSpace x.length ≤ s := by
+       refine Nat.mul_le_mul_left _ ?_
+-      rcases Nat.eq_zero_or_pos x.length with h0 | hn
+-      · simp [h0, logSpace]
+-      · have : Nat.log 2 x.length < (Nat.bits x.length).length := by
+-          rw [Nat.size_eq_bits_len]
+-          exact Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn.ne')
+-        simp only [logSpace]; omega
++      have := logSpace_le_size_succ x.length
++      rwa [← Nat.size_eq_bits_len] at this
+     have hV := two_pow_codes_le N c x.length
+     have hHV : N.tm.HaltsWithin x V := haltsWithin_of_codes hUS hs hV hT
+     have hdp := dpVal_init hUS hs hV hT
+diff --git a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+index 23a02456..ce34fbdc 100644
+--- a/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
++++ b/TCSlib/Complexity/Randomized/SpaceAmplifyPoly.lean
+@@ -256,10 +256,8 @@ theorem lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
+ 
+ /-- `logSpace n ≤ ℓ`. -/
+ theorem logSpace_le_ell (n : ℕ) : logSpace n ≤ ell n := by
+-  rcases Nat.eq_zero_or_pos n with rfl | hn
+-  · simp [logSpace, ell]
+-  · have := Nat.log_lt_of_lt_pow (b := 2) (by omega) (lt_two_pow_bits n)
+-    simp only [logSpace, ell]; omega
++  rw [ell, Nat.size_eq_bits_len]
++  exact logSpace_le_size_succ n
+ 
+ /-- `K ≥ 32 (n + 1)^d` when `F ≥ d + 5`. -/
+ theorem bigK_ge {F n d : ℕ} (hF : d + 5 ≤ F) : 32 * (n + 1) ^ d ≤ bigK F n := by
+diff --git a/TCSlib/Complexity/SpaceComplexity/Basic.lean b/TCSlib/Complexity/SpaceComplexity/Basic.lean
+index d4212759..0bf0cf32 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Basic.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Basic.lean
+@@ -53,6 +53,8 @@ shape of [AB09, Fig. 4.1]:
+ * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
+ * `Complexity.logSpace_le_succ`, `Complexity.logSpace_le_of_le_mul_two_pow` — the logarithmic
+   bound is at most linear, and at most `(A + 1) s` below `A · 2^s`.
++* `Complexity.logSpace_le_size_succ` — the logarithmic bound is at most one more than the
++  binary length.
+ * `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
+ * `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
+   2026-10-10).
+@@ -200,6 +202,21 @@ theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
+   rw [logSpace_eq]
+   omega
+ 
++/-- The logarithmic width is at most one more than the binary length:
++`logSpace n ≤ Nat.size n + 1`.
++
++**Proof sketch.** At `n = 0` both sides are `1`. Otherwise `2 ^ Nat.log 2 n ≤ n < 2 ^ Nat.size n`
++(`Nat.pow_log_le_self`, `Nat.lt_size_self`), so `Nat.log 2 n < Nat.size n`. -/
++lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
++  unfold logSpace
++  rcases Nat.eq_zero_or_pos n with h | h
++  · subst h; simp
++  · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
++    have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
++    have : Nat.log 2 n < Nat.size n :=
++      (Nat.pow_lt_pow_iff_right (show 1 < 2 by norm_num)).mp (lt_of_le_of_lt h1 h2)
++    omega
++
+ /-- A number at most `A · 2^s` (with `s ≥ 1`) has `logSpace` at most `(A + 1) s`. -/
+ theorem logSpace_le_of_le_mul_two_pow {v A s : ℕ} (h : v ≤ A * 2 ^ s) (hs : 1 ≤ s) :
+     logSpace v ≤ (A + 1) * s := by
+diff --git a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
+index ef966340..f25b356f 100644
+--- a/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
++++ b/TCSlib/Complexity/SpaceComplexity/Logspace/ISCountMath.lean
+@@ -63,17 +63,6 @@ lemma size_half {m : ℕ} (h : m ≠ 0) : Nat.size m = Nat.size (m / 2) + 1 := b
+   have : 0 < m.bits.length := by rw [Nat.size_eq_bits_len]; exact Nat.size_pos.mpr (by omega)
+   omega
+ 
+-/-- The logarithmic width is at most one more than the binary length. -/
+-lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
+-  unfold logSpace
+-  rcases Nat.eq_zero_or_pos n with h | h
+-  · subst h; simp
+-  · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+-    have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
+-    have : Nat.log 2 n < Nat.size n :=
+-      (Nat.pow_lt_pow_iff_right (show 1 < 2 by norm_num)).mp (lt_of_le_of_lt h1 h2)
+-    omega
+-
+ /-- A number is below two to its binary length plus one. -/
+ lemma lt_two_pow_size_succ (n : ℕ) : n < 2 ^ (Nat.size n + 1) :=
+   (Nat.lt_size_self n).trans (Nat.pow_lt_pow_right (by norm_num) (by omega))
+-- 
+2.50.1 (Apple Git-155)
+

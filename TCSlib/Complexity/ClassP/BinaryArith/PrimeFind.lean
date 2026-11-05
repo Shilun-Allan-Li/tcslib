@@ -201,7 +201,7 @@ theorem polyTimeComputable_countLoop : PolyTimeComputable countLoop := by
       obtain ⟨acc, rest, he, ha, hv⟩ :=
         iterate_invariant (CountInv z) (fun _ h => (countInv_step h).1) i (h0 z)
       have hacc : acc.length ≤ z.length := by
-        rw [ha]; exact length_bits_le ((Nat.lt_two_pow_self).trans_le' (by omega))
+        rw [ha]; exact (Turing.length_bits_le_self _).trans (by omega)
       rw [he, length_pairEncode]; simp; omega)
 
 /-! ### The power `2^k` -/
@@ -314,8 +314,7 @@ theorem polyTimeComputable_dblLoop : PolyTimeComputable dblLoop := by
     obtain ⟨j, he, hj⟩ :=
       iterate_invariant (DblInv z.length) (fun _ h => (dblInv_step h).1) i (h0 z)
     have h1 : Nat.clog 2 (2 * z.length) ≤ z.length + 1 := lovaszBits_le z.length
-    have h2 : (Nat.bits z.length).length ≤ z.length :=
-      length_bits_le (Nat.lt_two_pow_self)
+    have h2 : (Nat.bits z.length).length ≤ z.length := Turing.length_bits_le_self _
     rw [he, length_pairEncode]; simp; omega)
 
 /-! ### Trial division -/

@@ -526,7 +526,7 @@ length counter on `true :: x`, using the proved prepend and buffered-composition
 rows. Its linear running time bounds all visited work-tape cells, including
 the counter width and boundary cells. -/
 theorem spaceConstructible_linear : SpaceConstructible fun n => n + 1 := by
-  refine ⟨fun n => Nat.succ_le_succ (Nat.log_le_self 2 n), ?_⟩
+  refine ⟨logSpace_le_succ, ?_⟩
   obtain ⟨P, a, hp, _⟩ := FinTM.computesFunInTime_prepend_spaceUsed [true]
   obtain ⟨L, b, hl, _⟩ := FinTM.computesFunInTime_lengthBits_spaceUsed
   let M := FinTM.bufferedCompTM P L
@@ -621,8 +621,8 @@ bound `n ^ c + 1` is `Complexity.SpaceConstructible`. (Degree zero is excluded: 
 fails the bundled `logSpace n ≤ S n` at large `n`; consumers route degree
 zero through monotonicity into degree one.)
 
-**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_eq` and
-`Nat.log_le_self`, and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
+**Proof sketch.** Dominance: `logSpace n ≤ n + 1 ≤ n ^ c + 1` (`Complexity.logSpace_le_succ`,
+and `n ≤ n ^ c` for `1 ≤ c`). The witness machine computes
 `x ↦ (|x| ^ c + 1).bits` as a timed conditional on `x = []`
 (`Turing.FinTM.computesFunInTime_cond`, with the decider
 `Turing.FinTM.computesFunInTime_decideEq []`). On the empty input the constant
@@ -682,10 +682,7 @@ theorem spaceConstructible_poly (c : ℕ) (hc : 1 ≤ c) :
   -- time, then space from time
   refine (spaceConstructible_iff _).mpr ⟨fun n => ?_,
     M.k * (cM * (cD + c₁ + 2 * (5 * c + 20 + 3 * cL) + 2) + 1) + 1, by omega, M, ?_⟩
-  · have h1 : logSpace n ≤ n + 1 := by
-      rw [logSpace_eq]
-      have := Nat.log_le_self 2 n
-      omega
+  · have h1 := logSpace_le_succ n
     have h2 : n ≤ n ^ c := Nat.le_self_pow (by omega) n
     omega
   · apply (FinTM.computesInSpace_iff _ _ _).mpr

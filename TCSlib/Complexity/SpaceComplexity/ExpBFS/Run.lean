@@ -440,9 +440,9 @@ theorem setup_run (hq : ∀ k ≤ x.length, orc 0 (pairEncode x (Nat.bits k)) = 
   have hbd2 : St.Bd B { St.zero with N := x.length, Lg := 1 } := by
     simp only [St.Bd, St.zero]; omega
   have hhv : hv x.length ≤ x.length := by
-    unfold hv; split_ifs with h0
-    · omega
-    · have := Nat.log_lt_self 2 h0; omega
+    have := lgv_le_succ x.length
+    unfold lgv at this
+    omega
   exact reach_cf (lg_run x.length _ M rfl (by simpa [St.zero] using hbd2)
     (by simp [St.zero]; omega)) (by ext <;> simp [St.zero, lgv]) rfl
 

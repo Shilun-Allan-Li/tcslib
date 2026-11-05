@@ -1971,6 +1971,55 @@ fills, starting with MIG-12 and MIG-4, and add the mirror-pair factoring (MIG-24
     WARN). **NF issued (2026-11-04; Codex):** `campaign/fills/c1/briefs/c1-fill-nf.md`; its issue
     commit `951251f6` is the brief's `@ANCESTOR@`; in flight #176 and #177. **Dispatched (user,
     2026-11-04).**
+    **Delivered (partial, checkpoints 1–2 of 8):** `fill-c1-nf.zip` (SHA-256 `1558c81e…58ca`,
+    archived in `exchange/archive/deliveries/`), branch `refs/deliv/c1-nf` at `4af97d46`. It has two
+    commits, 39 privates and no new admission. Intake was clean: 188/188 sums, the bundle on
+    `951251f6`, and patches and source equal. **Reviewed** (`campaign/fills/c1/reviews/nf-fill/`, a
+    sub-agent, 2026-11-04):
+    - **verdict:** land the partial with edits, 0 blockers, 0 majors, 3 minors, 6 notes;
+    - **E1–E3:** docstrings only, tested; the landed file is `land/NDNormalForm.lean.txt`, blob
+      `e6432b1e`;
+    - **F3**, forward-looking: named `DecidableEq` instances for the sweep state;
+    - **F6:** the `un_setup` idiom pair;
+    - **continuation must-pins:** MP1–MP11;
+    - **replay:** 4 modules from the merged tree's snapshot.
+
+    **Ruled (user, 2026-11-04):**
+    - the partial travels with its continuation; nothing lands until the target is proved;
+    - E1–E3 go on the partial branch now;
+    - one continuation for checkpoints 3–8, **Claude**;
+    - the `un_setup` idiom pair is accepted, with a ledger exclusion;
+    - H does not wait for NF; NF's final landing re-takes H's overlap.
+
+    **`lean/c1-nf-partial`** (pushed, no PR) at `5241eb82`. It holds the two worker commits with
+    reworded subjects (`7791e6fc`, `252dea65`, trees equal to the delivery), E1–E3 (`969d221d`, the
+    review's landed file, blob `e6432b1e`), and a merge of the campaign at `cd9f1d92`. Only
+    `NDNormalForm` differs from the campaign. It elaborates against `oleans-leqc3` with exactly the
+    target's sorry. Next: NF cont1's brief, based on that commit.
+    **NF cont1's brief** (`campaign/fills/c1/briefs/c1-fill-nf-cont1.md`, checkpoints 3–8, Claude):
+    - **pre-ship at `5241eb82`:** the verifier's phase layout probe (`NfcPh`, named instances, the
+      host and packaging, `nfc_aReturn` sealed with 10 controls); import probe 588; order 112;
+      base sorries 19 in 9; screen base 1,379/866;
+    - **reviewed** (`reviews/nfc-brief/`): issue after edits, 0/1/10/4. The major, "every record
+      writes its block", was restored. **Ruled (user, 2026-11-04):** `rv_bClear` ships, and the
+      leaf skips the last record's move;
+    - **issued 2026-11-04**, at a merge of the records into `lean/c1-nf-partial`, before #181 lands
+      (review D3): `@ANCESTOR@` = `348781a383f102d971fca153c818026b4f49fbf6`, with Lean equal to
+      `5241eb82`'s;
+    - **dispatch copy** `exchange/outbox/fills/c1-fill-nf-cont1.md`, SHA-256
+      `7853cd44b1f5c6aac7e260a7a6fcca9e1471faae96f1dbd06e4dca273da44c72`, 553 lines. **Dispatched
+      (user, 2026-11-04).**
+    **Delivered (complete, 2026-11-04; Claude):** the target is proved on the standard axioms
+    (claimed). `fill-c1-nf-cont1.zip`, SHA-256
+    `9dd14763b67d41fb0e86220f4e2a51028d65a7ced51d5d787240bcf2ec498184`, archived in
+    `exchange/archive/deliveries/`; branch `refs/deliv/c1-nf-cont1` at `825ee3f5`.
+    - **Commits:** seven on the base `348781a3` (checkpoints 3–8, then a consolidation); 65 new
+      privates; owned file only, +2574 −4.
+    - **Intake clean:** 90/90 sums; the bundle on the base; patch-ids equal the commits'; the zip's
+      source equals the head blob `d767cc72`; the only deleted lines are the `sorry` and two status
+      phrases.
+    - **Missing:** the per-checkpoint zips (only the final zip arrived).
+    - **Under review** (a sub-agent, `$S/review/nf-cont1-fill/`).
   - **H's brief drafted** (`campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, Codex). **Ruled
     (user, 2026-10-27): `NP`'s closure under `≤ₚ` by a maintainer API PR first**, beside
     `mem_P_of_polyTimeReducible` (`ClassNP/Reductions`), before H issues.
@@ -4116,7 +4165,21 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
 * **E-D issued (2026-11-04):** `campaign/fills/eq/briefs/eq-fill-diagonalizer.md` at the issue commit
   `c8b0711408c02a2c7e254663511ecdb65516ae88` (the campaign tip after #176, Lean `711f5444`), Claude. The
   dispatch copy `exchange/outbox/fills/eq-fill-diagonalizer.md` (SHA-256
-  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2).
+  `959c45eceb37c7a676190d7cd09f1ea68d375d5ea956e99f618689f14554e20b`, the ancestor filled); **dispatched (user, 2026-11-04)**. The landing PR also re-points `qy_call_bound`'s `hb` (gate 87's finding 2). (Gate 89, round 5: `NTimeDiagonalizer` does not reach `Machines/Bin`, so its other BL-1 members — `qy_bits_len_mono`,
+  `qy_lt_two_pow_bits`, `qy_ones_ge`, `qy_two_pow_bits_le` — wait for the dedup window.)
+  **Delivered (complete, 2026-11-04; Claude):** `exists_diagonalizer` is proved on the standard
+  axioms (claimed). `fill-eq-diagonalizer.zip`, SHA-256
+  `9f0aeec1b6f02349b571bdb25f2aa621720fec97b90ce48ec1ce389b769dd2c4`, archived in
+  `exchange/archive/deliveries/`; branch `refs/deliv/eq-diagonalizer` at `7b1b9353`.
+  - **Commits:** eleven on the base `c8b07114` (checkpoints 1–8 and three finishing commits);
+    106 new privates (claimed); owned file only, +3078 −5.
+  - **Intake clean:** 80/80 sums; the bundle on the base; patch-ids equal the commits'; the zip's
+    source equals the head blob `4b72d525`; the deleted lines are the `sorry`, one status line and
+    three label-bearing docstring lines.
+  - **Under review** (a sub-agent, `$S/review/ed-fill/`).
+
+  With NF, this closes `NTimeHierarchy`'s two inputs; landing both should make that theorem
+  admission-free, to be checked at landing.
 * **The general `savitch`: the deepening design** (`campaign/items/ch34/savitch-general/SAVITCH-deepening-design.md`,
   2026-11-04; probes `probes/`): Hydroxyi's search needs no restating. A generic embedding
   theorem (`AHalt.embed`, proved in the probe) transports any halting run of `A` into a larger
@@ -4124,9 +4187,61 @@ no colliding name. 13 files collide today, `Build/Contract/Basic` and `Diagonal`
   deciders). Rule 10 places it beside `astep`/`PreS`/`AHalt`: an additive API in `Machines/ARM`
   (14 step equations), `Machines/ARMProof` (`Ins.embed`, `preS_of_ins`, `preS_embed`,
   `astep_embed`, `AHalt.embed`) and `SavitchARM/Machine` (`A_noVal`), about 250 lines; then a
-  fill (the edge language, window exactness, the machine, the assembly; 1.5–2.8k). **Decisions
-  pending (user):** the embedding instead of restating the search; the edge decider's home.
+  fill (the edge language, window exactness, the machine, the assembly; 1.5–2.8k). **Ruled (user,
+  2026-11-04):** the embedding API; the edge decider's home decided at the fill's pre-ship.
+  **PR #182** (`lean/arm-embed`, head `8fd6f91a`; commit `024e19bf`): 25 public declarations, about
+  330 added lines in five of Hydroxyi's files (`Machines/ARM`, `Program`, `ARMProof`, `ARMLoops`,
+  `SavitchARM/Machine`), nothing removed. Checks:
+  - rule 10 sealed: 4 copies, 16 controls; the first run caught `RegExt`'s projections, so it is
+    now a structure;
+  - axioms standard; lint the base's;
+  - the screen finds no new pair; AS-1 is ledgered;
+  - the consumer probe transports `outerU_run` sealed.
+
+  `replay-larm` is written (138 modules from `oleans-leqc3`, precheck passed). It overlaps #181's
+  closure, so whichever merges second takes a merged-tree replay of the overlap. **Gate 90 dispatched**
+  (user, 2026-11-04; `exchange/archive/gates/90-arm-embed-api-gate/`, bundle `e253274f…`, 90
+  sections); **`replay-larm` passed** (138 of 138, static-equal; `oleans-larm`).
+  **Gate 90: PASS 0/0/3/9.** Minors 2–3 are fixed in the records. Minor 1 (`dsimp only
+  [Function.comp]`) is fixed on #182 by `94093275`. **Ruled (user, 2026-11-04): #181 merges first**;
+  then #182 takes one merged-tree replay from `oleans-lsm2`.
 * **#181 (the space facts out of `ARMWidth`), gate 89:** `replay-lsm1` passed; the gate is
   **dispatched (user, 2026-11-04)** (`exchange/archive/gates/89-space-facts-api-gate/`). H's brief issues after #181
   merges, with its pre-ship re-taken (its screen population includes three of #181's files).
+  **Rounds 1–3 OPEN** (one major each: LS-1's scope, missed inline copies). **Round 4** (head
+  `227d92ee`): `arm_decides` re-pointed; a search of every `logSpace` unfolding and every Mathlib
+  upper bound of `Nat.log` finds LS-1 proved once and cited at nine sites. A binary-length sweep
+  found three more families, each ruled by the user (2026-11-04):
+  - **LS-2** fixed in #181 (`logSpace_le_size_succ` moved to `Basic`; `BPLInP`,
+    `SpaceAmplifyPoly`, `ISCountGenCorrect` and `ExpBFS/Run` re-pointed);
+  - **LS-3** and **BL-1** ledgered for 12.2c.
+
+  **`replay-lsm4` passed** (137 of 137, static-equal; `oleans-lsm4`). **Gate 89 round 4
+  dispatched** (user, 2026-11-04). #181 is clear to merge on a PASS. After it merges, #182 takes a
+  merged-tree replay from `oleans-lsm4`.
+  **Round 4: OPEN 0/1/3** (BL-1's site list missed five files). **Ruled: "Re-point now in #181"**;
+  round 5 (head `98912ab2`) re-points 15 sites and moves `two_pow_bits_le` to `Machines/Bin`.
+  **Round 5: OPEN 0/2/1** (2026-11-04). The majors are five more pre-existing BL-1 copies outside
+  the site list: `QueryReshape`, `UniformSample`, two in `Hardness`, and `Word`'s
+  `bitsVal_lt_two_pow`. **Ruled (user, 2026-11-04): acknowledge, with BL-1's scope by kind.** No
+  Lean change; the minor is fixed in the records. **Gate 89 closed.** `replay-lsm5` (209 modules)
+  **passed** (209 of 209, 0 failed, static-equal at 44; `oleans-lsm5`). **#181 is clear to merge.** After that
+  merge, #182 takes its merged-tree replay from `oleans-lsm5`, not `oleans-lsm4`.
+* **#184 (the codec's edge mode, `edgeLang_mem : edgeLang N ∈ LOGSPACE`), gate 91.** The edge
+  decider's home was decided at pre-ship by the user's rule: a fifth mode of `CA` (design note
+  §7). It is stacked on #182, head `8d43e126`, seven `Codec` files, +646 −20, additive. Checks:
+  - the 16 `Codec` modules elaborate with 0 diagnostics;
+  - rule 10 sealed: 3 copies, 37 definitions, controls 73/74 unsealed and 0/74 sealed;
+  - axioms standard;
+  - lint the base's;
+  - the screen's 25 new pairs are the edge member of the code languages' families, ledgered as
+    **CL-1** for 12.2c (user, 2026-11-04).
+
+  **Gate 91 dispatched** (user, 2026-11-04; `exchange/archive/gates/91-codec-edge-api-gate/`).
+  **Round 1: OPEN 0/1/4** (`upd_le` re-proved `register_update_le`); fixed at `b360808c`.
+  **Round 2: PASS 0/0/3/9** (2026-11-04); **gate 91 closed.** Its two Lean-side minors are fixed: seven
+  label docstrings rewritten (`e6eaaf94`), and the chain re-run at that head with source hashes
+  (22/22 clean, from a fresh `oleans-larm` clone).
+  After #182 merges: retarget #184, merge the campaign into it, and run its merged-tree replay. The
+  deepening fill's brief issues once #182 and #184 have both merged.
 

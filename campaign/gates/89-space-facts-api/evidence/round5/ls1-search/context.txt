@@ -1,0 +1,675 @@
+### TCSlib/CommunicationComplexity/DeterministicCC/DetRectangle.lean · clog_ncard_le_communicationComplexity · lines [561]
+  558   match h : communicationComplexity g with
+  559   | ⊤ => exact le_top
+  560   | (n : ℕ) =>
+  561     exact_mod_cast (Nat.clog_le_iff_le_pow (by norm_num)).mpr
+  562       (foolingSet_ncard_le_pow_of_communicationComplexity_le g S n hS (le_of_eq h))
+  563 
+### TCSlib/CommunicationComplexity/DeterministicCC/Rank.lean · clog_boolFunctionRank_le_communicationComplexity · lines [208]
+  205   match h : Deterministic.communicationComplexity f with
+  206   | ⊤ => exact le_top
+  207   | (n : ℕ) =>
+  208     exact_mod_cast (Nat.clog_le_iff_le_pow (by norm_num)).mpr
+  209       (boolFunctionRank_le_pow_of_communicationComplexity_le f n (le_of_eq h))
+  210 
+### TCSlib/Complexity/CircuitComplexity/Lupanov.lean · lupanov_arith · lines [213, 228, 237]
+  210   set k := L - 1 with hkdef
+  211   set s := 2 ^ k with hs
+  212   set M := 2 ^ (n - k) with hM
+  213   have hLn : L ≤ n := Nat.log_le_self 2 n
+  214   have hMs : M * s = 2 ^ n := by rw [hM, hs, ← pow_add]; congr 1; omega
+  215   have hn1 : n < 2 ^ (L + 1) := Nat.lt_pow_succ_log_self (by norm_num) n
+  216   have hs1 : 1 ≤ s := Nat.one_le_two_pow
+  217   -- `n + 1 ≤ 4s` and `s ≤ n + 1`
+  218   have hb : n + 1 ≤ 4 * s := by
+  219     rcases Nat.eq_zero_or_pos L with h0 | h0
+  220     · rw [h0] at hn1; simp at hn1; omega
+  221     · have : 2 ^ (L + 1) = 4 * s := by
+  222         rw [hs, show L + 1 = k + 2 by omega, pow_add]; ring
+  223       omega
+  224   have hc : s ≤ n + 1 := by
+  225     rcases Nat.eq_zero_or_pos n with h0 | h0
+  226     · subst h0; simp [hs, hkdef, hL]
+  227     · have h1 : s ≤ 2 ^ L := Nat.pow_le_pow_right (by norm_num) (by omega)
+  228       have h2 : 2 ^ L ≤ n := Nat.pow_log_le_self 2 h0.ne'
+  229       omega
+  230   -- `s · 2ˢ ≤ 2 · 2ⁿ`
+  231   have hd : s * 2 ^ s ≤ 2 * 2 ^ n := by
+  232     rcases Nat.eq_zero_or_pos L with h0 | h0
+  233     · have : s = 1 := by rw [hs, hkdef, h0]; rfl
+  234       rw [this]
+  235       have : 1 ≤ 2 ^ n := Nat.one_le_two_pow
+  236       omega
+  237     · have h2 : 2 ^ L ≤ n := Nat.pow_log_le_self 2 (by
+  238         rintro rfl; simp [hL] at h0)
+  239       have h3 : 2 ^ L = 2 * s := by
+### TCSlib/Complexity/CircuitComplexity/Lupanov.lean · exists_dagCircuit_faninTwo_mul_size_le · lines [269]
+  266 theorem exists_dagCircuit_faninTwo_mul_size_le (f : (Fin n → Bool) → Bool) :
+  267     ∃ C : DAGCircuit n, C.IsFaninTwo ∧ (∀ x, C.eval x = f x) ∧
+  268       (n + 1) * C.size ≤ 40 * 2 ^ n := by
+  269   have hk : Nat.log 2 n - 1 ≤ n := by have := Nat.log_le_self 2 n; omega
+  270   refine ⟨Lupanov.lupDAG f _ hk, Lupanov.lupDAG_isFaninTwo f _ hk,
+  271     Lupanov.lupDAG_eval f _ hk, ?_⟩
+### TCSlib/Complexity/CircuitComplexity/LupanovGates.lean · log_le_of_lt_two_pow_succ · lines [230]
+  227 private theorem log_le_of_lt_two_pow_succ {q a : ℕ} (h : q < 2 ^ (a + 1)) : Nat.log 2 q ≤ a := by
+  228   rcases Nat.eq_zero_or_pos q with rfl | hq
+  229   · simp
+  230   · exact Nat.lt_succ_iff.mp (Nat.log_lt_of_lt_pow hq.ne' h)
+  231 
+  232 /-- A fan-in-zero `∧`/`∨` gate is admissible in a fan-in-two circuit. -/
+### TCSlib/Complexity/CircuitComplexity/LupanovGates.lean · gateAt_args_lt · lines [287, 289]
+  284     split_ifs at ha with ht
+  285     · simp at ha
+  286     · set t := j - (n + (2 ^ (n - k + 1) - 1) + (2 ^ (k + 1) - 1)) with htdef
+  287       have hl : Nat.log 2 t < 2 ^ k := Nat.log_lt_of_lt_pow ht (by omega)
+  288       have hp : 1 ≤ 2 ^ Nat.log 2 t := Nat.one_le_two_pow
+  289       have hp' : 2 ^ Nat.log 2 t ≤ t := Nat.pow_log_le_self 2 ht
+  290       simp only [List.mem_cons, List.mem_nil_iff, or_false] at ha
+  291       rcases ha with rfl | rfl <;> omega
+### TCSlib/Complexity/CircuitComplexity/LupanovGates.lean · gateAt_faninTwo · lines [338]
+  335     split_ifs with ht
+  336     · exact nil_faninTwo (by decide)
+  337     · set t := j - (n + (2 ^ (n - k + 1) - 1) + (2 ^ (k + 1) - 1)) with htdef
+  338       have hl : Nat.log 2 t < 2 ^ k := Nat.log_lt_of_lt_pow ht (by omega)
+  339       exact pair_faninTwo (by decide) (by omega)
+  340   · exact pair_faninTwo (by decide) (by omega)
+### TCSlib/Complexity/CircuitComplexity/LupanovGates.lean · value_heap · lines [496]
+  493     change (vertexValue (gates f k) x (n + bj + (q / 2 - 1)) &&
+  494       vertexValue (gates f k) x (litV n _ _)) = _
+  495     rw [ih (q / 2) (by omega) (by omega) (by omega), value_litV f k hk x (by omega), hlog,
+  496       show Nat.log 2 (q / 2) + 1 - 1 = Nat.log 2 (q / 2) by omega]
+  497     simp only [heapPath]
+  498     rw [Bool.eq_iff_iff]
+### TCSlib/Complexity/CircuitComplexity/LupanovGates.lean · value_func · lines [552, 554]
+  549   split_ifs with ht0
+  550   · subst ht0; simp [DAGGate.eval]
+  551   · set L := Nat.log 2 t with hL
+  552     have hL1 : 2 ^ L ≤ t := Nat.pow_log_le_self 2 ht0
+  553     have hL2 : t < 2 ^ (L + 1) := Nat.lt_pow_succ_log_self (by norm_num) t
+  554     have hLk : L < 2 ^ k := Nat.log_lt_of_lt_pow ht0 ht
+  555     rw [two_pow_succ_eq] at hL2
+  556     rw [eval_or_pair]
+### TCSlib/Complexity/CircuitComplexity/NCAC.lean · three_pow_log_le · lines [184]
+  181   have h2 : 2 ^ Nat.log 2 n ≤ n + 1 := by
+  182     rcases Nat.eq_zero_or_pos n with rfl | hn
+  183     · simp
+  184     · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+  185   calc 3 ^ Nat.log 2 n ≤ 4 ^ Nat.log 2 n := Nat.pow_le_pow_left (by norm_num) _
+  186     _ = (2 ^ Nat.log 2 n) ^ 2 := by rw [← pow_mul, mul_comm, pow_mul]; norm_num
+### TCSlib/Complexity/CircuitComplexity/Parity.lean · parityCircuit_depth_le · lines [349]
+  346       (xorFuel_depth (parityPairs n).length (parityPairs n) (le_refl _))
+  347   rw [pairDepth_parityPairs, length_parityPairs] at h1
+  348   have hc : Nat.clog 2 n ≤ Nat.log 2 n + 1 := by
+  349     rw [Nat.clog_le_iff_le_pow (by norm_num)]
+  350     exact Nat.le_of_lt (Nat.lt_pow_succ_log_self (by norm_num) n)
+  351   omega
+### TCSlib/Complexity/CircuitComplexity/TreeNCAC.lean · clog_poly_le · lines [466]
+  463 /-- `⌈log₂⌉` of a polynomial is `O(log n)`. -/
+  464 theorem clog_poly_le (a k m : ℕ) :
+  465     Nat.clog 2 (a * (m + 1) ^ k) ≤ a + k * (Nat.log 2 m + 1) := by
+  466   rw [Nat.clog_le_iff_le_pow (by norm_num)]
+  467   calc a * (m + 1) ^ k
+  468       ≤ 2 ^ a * (2 ^ (Nat.log 2 m + 1)) ^ k :=
+### TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean · lovaszBits_le · lines [68]
+   65 
+   66 /-- `lovaszBits n ≤ n + 1`, so Lovász's test uses polynomially many coins. -/
+   67 theorem lovaszBits_le (n : ℕ) : lovaszBits n ≤ n + 1 := by
+   68   refine (Nat.clog_le_iff_le_pow one_lt_two).mpr ?_
+   69   rw [pow_succ]
+   70   have := Nat.lt_two_pow_self (n := n)
+### TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean · two_pow_lovaszBits_lt · lines [76]
+   73 /-- For `n ≥ 1`, `2^{lovaszBits n} < 4n`. -/
+   74 theorem two_pow_lovaszBits_lt {n : ℕ} (hn : n ≠ 0) : 2 ^ lovaszBits n < 4 * n := by
+   75   have h1 : 1 < 2 * n := by omega
+   76   have hpred := Nat.pow_pred_clog_lt_self one_lt_two h1
+   77   have hpos : 0 < lovaszBits n := Nat.clog_pos one_lt_two (by omega)
+   78   obtain ⟨j, hj⟩ := Nat.exists_eq_add_of_lt hpos
+### TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean · two_pow_clog_le · lines [122]
+  119 theorem two_pow_clog_le (n : ℕ) : 2 ^ Nat.clog 2 (2 * n) ≤ 4 * n + 1 := by
+  120   rcases Nat.eq_zero_or_pos n with rfl | hn
+  121   · simp
+  122   have hpred := Nat.pow_pred_clog_lt_self one_lt_two (by omega : 1 < 2 * n)
+  123   have hpos : 0 < Nat.clog 2 (2 * n) := Nat.clog_pos one_lt_two (by omega)
+  124   obtain ⟨j, hj⟩ : ∃ j, Nat.clog 2 (2 * n) = j + 1 := ⟨_, (Nat.succ_pred_eq_of_pos hpos).symm⟩
+### TCSlib/Complexity/ClassP/BinaryArith/PrimeFind.lean · dblInv_step · lines [268]
+  265     refine ⟨⟨j, rfl, hj⟩, fun hpos => ?_, fun _ => rfl⟩
+  266     exfalso
+  267     have := Nat.le_pow_clog one_lt_two (2 * n)
+  268     have hj2 : Nat.clog 2 (2 * n) ≤ j := (Nat.clog_le_iff_le_pow one_lt_two).mpr (by omega)
+  269     omega
+  270 
+### TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean · qy_two_pow_bits_le · lines [434, 436]
+  431       · by_contra h
+  432         have hlt : n < 2 ^ Nat.log 2 n :=
+  433           Nat.size_le.mp (by omega)
+  434         exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+  435     rw [hsz, pow_succ]
+  436     have := Nat.pow_log_le_self 2 (show n ≠ 0 by omega)
+  437     omega
+  438 
+### TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean · qy_log_bits · lines [445]
+  442   apply le_antisymm
+  443   · by_contra h
+  444     have hlt : n < 2 ^ Nat.log 2 n := Nat.size_le.mp (by omega)
+  445     exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
+  446   · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+  447 
+### TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean · qy_rnd_tests · lines [3780]
+ 3777       rw [h0, Nat.zero_bits, List.length_nil] at hLb
+ 3778       omega
+ 3779     have h1 := qy_log_bits (Nat.pos_of_ne_zero hn0)
+ 3780     have h2 := Nat.pow_log_le_self 2 hn0
+ 3781     have h3 : 2 ^ X4 ≤ 2 ^ Nat.log 2 n := Nat.pow_le_pow_right (by norm_num) (by omega)
+ 3782     omega
+### TCSlib/Complexity/Diagonalization/NTimeDiagonalizer.lean · qy_main_long · lines [5164]
+ 5161   obtain ⟨h2, hc2, -⟩ := (segment_iff _ _ _ _ _ _).mp seg2
+ 5162   have hs := stage_spec f hn
+ 5163   have hlog := qy_stage_lt_log f hn
+ 5164   have hlogn := Nat.log_le_self 2 x.length
+ 5165   have hj := Nat.unpair_left_le (stage f x.length)
+ 5166   have hS : qySetB κ x.length ≤
+### TCSlib/Complexity/Randomized/BiasedCoinHalting.lean · hlD_le · lines [337]
+  334   have hr := BinArith.length_uRest_le x
+  335   rcases Nat.eq_zero_or_pos (BinArith.uRest x).length with h | h
+  336   · simp [hlD, hlJ, h]
+  337   · have := Nat.pow_log_le_self 4 h.ne'
+  338     simp only [hlD, hlJ]; omega
+  339 
+### TCSlib/Complexity/Randomized/BiasedCoinHalting.lean · length_hlDWord · lines [445]
+  442 theorem length_hlDWord (x : List Bool) : (hlDWord x).length = hlD x := by
+  443   obtain ⟨w, hw, hl⟩ := iterate_pow4Step (BinArith.uRest x) (BinArith.uRest x).length
+  444   simp only [hlDWord, BinArith.forLoop_pairEncode, pairSndD_pairEncode, hw, hl, hlD, hlJ]
+  445   rw [min_eq_right (Nat.log_le_self _ _)]
+  446 
+  447 /-- The ones of a word. -/
+### TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean · length_bits_eq · lines [64]
+   61   split_ifs with hn
+   62   · subst hn; simp
+   63   · refine le_antisymm (Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)) ?_
+   64     exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
+   65 
+   66 /-- `n ≤ 2^{(log n)² + 1}`. -/
+### TCSlib/Complexity/Randomized/QuasiPolyHierarchy.lean · two_pow_log_sq_le · lines [83]
+   80   rcases Nat.eq_zero_or_pos n with rfl | hn
+   81   · simp
+   82   · rw [sq, pow_mul]
+   83     exact Nat.pow_le_pow_left (Nat.pow_log_le_self 2 hn.ne') _
+   84 
+   85 /-- `2^{(log n)² + 1} + 1 ≤ 3 n^{log n}`. -/
+### TCSlib/Complexity/SpaceComplexity/Basic.lean · logSpace_eq · lines [195]
+  192 def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
+  193 
+  194 /-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
+  195 theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+  196 
+  197 /-- The logarithmic bound is at most linear: `logSpace n ≤ n + 1`.
+### TCSlib/Complexity/SpaceComplexity/Basic.lean · logSpace_le_succ · lines [201, 202]
+  198 
+  199 **Proof sketch.** `Nat.log 2 n ≤ n` (`Nat.log_le_self`), then `Complexity.logSpace_eq`. -/
+  200 theorem logSpace_le_succ (n : ℕ) : logSpace n ≤ n + 1 := by
+  201   have := Nat.log_le_self 2 n
+  202   rw [logSpace_eq]
+  203   omega
+  204 
+### TCSlib/Complexity/SpaceComplexity/Basic.lean · logSpace_le_size_succ · lines [211, 214]
+  208 **Proof sketch.** At `n = 0` both sides are `1`. Otherwise `2 ^ Nat.log 2 n ≤ n < 2 ^ Nat.size n`
+  209 (`Nat.pow_log_le_self`, `Nat.lt_size_self`), so `Nat.log 2 n < Nat.size n`. -/
+  210 lemma logSpace_le_size_succ (n : ℕ) : logSpace n ≤ Nat.size n + 1 := by
+  211   unfold logSpace
+  212   rcases Nat.eq_zero_or_pos n with h | h
+  213   · subst h; simp
+  214   · have h1 : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
+  215     have h2 : n < 2 ^ Nat.size n := Nat.lt_size_self n
+  216     have : Nat.log 2 n < Nat.size n :=
+### TCSlib/Complexity/SpaceComplexity/Basic.lean · logSpace_le_of_le_mul_two_pow · lines [231, 232, 233]
+  228     have := Nat.le_mul_of_pos_right A (show 0 < s by omega)
+  229     rw [Nat.add_mul, Nat.one_mul]; omega
+  230   rcases Nat.eq_zero_or_pos v with rfl | hv
+  231   · simp only [logSpace, Nat.log_zero_right]; omega
+  232   · have := Nat.log_lt_of_lt_pow (by omega) hlt
+  233     simp only [logSpace]; omega
+  234 
+  235 /-- **The class `L`** [AB09, Def 4.5]: `L = SPACE(log n)`, the languages decidable by a
+### TCSlib/Complexity/SpaceComplexity/Basic.lean · logSpace_mono · lines [261]
+  258 
+  259 /-- `logSpace` is monotone. -/
+  260 lemma logSpace_mono {a b : ℕ} (h : a ≤ b) : logSpace a ≤ logSpace b := by
+  261   unfold logSpace
+  262   have := Nat.log_mono_right (b := 2) h
+  263   omega
+### TCSlib/Complexity/SpaceComplexity/Codec/Word.lean · length_cfgWord_le · lines [444]
+  441       · have := Nat.log_mul_base (b := 2) (n := x.length) (by norm_num) (by omega)
+  442         have := Nat.log_mono_right (b := 2) (show x.length + 1 ≤ x.length * 2 by omega)
+  443         omega
+  444     simp only [wP, logSpace]; omega
+  445   have hW : 1 ≤ W N := by simp [W]
+  446   simp only [codeK]
+### TCSlib/Complexity/SpaceComplexity/ConfigCount.lean · configBound_logSpace_le · lines [430]
+  427   have h2L : 2 ^ L ≤ n + 1 := by
+  428     rcases Nat.eq_zero_or_pos n with h | h
+  429     · simp [hL, h]
+  430     · exact (Nat.pow_log_le_self 2 (by omega)).trans (Nat.le_succ n)
+  431   have h3 : 3 ^ (M.k * (2 * s + 1)) ≤ 2 ^ (2 * (M.k * (2 * s + 1))) := by
+  432     rw [pow_mul 2 2]; exact Nat.pow_le_pow_left (show 3 ≤ 2 ^ 2 by decide) _
+### TCSlib/Complexity/SpaceComplexity/Constructible.lean · b3a_bits_length · lines [79, 82]
+   76 /-- Positive binary words have exactly the normalized logarithmic width. -/
+   77 private lemma b3a_bits_length {n : ℕ} (hn : n ≠ 0) :
+   78     n.bits.length = logSpace n := by
+   79   have lower := Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn)
+   80   have upper := LogProg.length_bits_le_log n
+   81   rw [← Nat.size_eq_bits_len] at lower
+   82   unfold logSpace
+   83   omega
+   84 
+### TCSlib/Complexity/SpaceComplexity/Constructible.lean · b3a_word_length · lines [92, 94]
+   89 private lemma b3a_word_length (n : ℕ) : (b3a_word n).length = logSpace n := by
+   90   by_cases hn : n = 0
+   91   · subst n
+   92     simp [b3a_word, logSpace, Nat.bits]
+   93   · simp only [b3a_word, List.length_cons, List.length_tail, b3a_bits_length hn]
+   94     unfold logSpace
+   95     omega
+   96 
+### TCSlib/Complexity/SpaceComplexity/Constructible.lean · spaceConstructible_logSpace · lines [503]
+  500   obtain ⟨t, ht, hs⟩ := hM x
+  501   refine ⟨t, ht, hs.trans ?_⟩
+  502   have hlog : logSpace x.length + 1 ≤ 2 * logSpace x.length := by
+  503     unfold logSpace
+  504     omega
+  505   calc
+### TCSlib/Complexity/SpaceComplexity/ExpBFS/Main.lean · time_bound · lines [544]
+  541   have hW : Nat.log 2 (bigB N n (c₀ * Sn) + 1) + 1 ≤ E + 3 := by
+  542     have hlt : bigB N n (c₀ * Sn) + 1 < 2 ^ (E + 3) := by
+  543       simp only [bigB, hkb]; omega
+  544     have := Nat.log_lt_of_lt_pow (b := 2) (by omega) hlt
+  545     omega
+  546   -- the memory range
+### TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean · logSpace_le_lgv · lines [374]
+  371 
+  372 /-- `Lg` bounds the logarithm of the input length. -/
+  373 lemma logSpace_le_lgv (n : ℕ) : logSpace n ≤ lgv n := by
+  374   unfold lgv hv logSpace
+  375   split_ifs with h
+  376   · subst h; simp
+### TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean · lgv_le · lines [381]
+  378 
+  379 /-- `Lg` exceeds the logarithm of the input length by at most one. -/
+  380 lemma lgv_le (n : ℕ) : lgv n ≤ logSpace n + 1 := by
+  381   unfold lgv hv logSpace
+  382   split_ifs <;> omega
+  383 
+### TCSlib/Complexity/SpaceComplexity/ExpBFS/Run.lean · lgv_le_succ · lines [389]
+  386   unfold lgv hv
+  387   split_ifs with h
+  388   · omega
+  389   · have := Nat.log_lt_self 2 h
+  390     omega
+  391 
+### TCSlib/Complexity/SpaceComplexity/ExpTime.lean · NL_subset_P · lines [95, 100]
+   92   have hlog : 2 ^ Nat.log 2 n ≤ n + 1 := by
+   93     rcases Nat.eq_zero_or_pos n with rfl | hn
+   94     · simp
+   95     · exact (Nat.pow_log_le_self 2 hn.ne').trans (Nat.le_succ n)
+   96   calc
+   97     2 ^ (c * (logSpace n + 1)) = 2 ^ (2 * c) * (2 ^ Nat.log 2 n) ^ c := by
+   98       rw [← pow_mul, ← pow_add]
+   99       congr 1
+  100       simp only [logSpace]
+  101       ring
+  102     _ ≤ 2 ^ (2 * c) * (n + 1) ^ c :=
+### TCSlib/Complexity/SpaceComplexity/ImplicitPoly.lean · ImplicitlyLogspaceComputable.computesInSpace · lines [368, 369, 374, 380, 393, 394]
+  365   simp only [Finset.univ_unique, Fin.default_eq_zero, Finset.sum_singleton]
+  366   have hW2 : (((W : ℤ) - -1 + 1).toNat) = W + 2 := by omega
+  367   rw [hW2]
+  368   set L := logSpace n with hL
+  369   have hL1 : 1 ≤ L := by simp [hL, logSpace]
+  370   have hWL : W + 2 ≤ (K1 + 2) * L := by
+  371     have := hK1 n
+  372     simp only [hWdef, hFdef]
+  373     have : (K1 + 2) * L = K1 * L + 2 * L := by ring
+  374     simp only [logSpace] at hL
+  375     rw [hL] at *
+  376     omega
+  377   have hlogW : logSpace (2 * n + 2 + W) ≤ K2 * L := by
+  378     have hWle : W ≤ F + 2 := by
+  379       have := Complexity.logSpace_le_succ (F + 1)
+  380       rw [Complexity.logSpace_eq] at this
+  381       omega
+  382     have hle : 2 * n + 2 + W ≤ (C + 2) * (n + 1) ^ (e + 1) + 2 := by
+  383       have h1 : n + 1 ≤ (n + 1) ^ (e + 1) := by
+  384         calc n + 1 = (n + 1) ^ 1 := by ring
+  385           _ ≤ (n + 1) ^ (e + 1) := Nat.pow_le_pow_right (by omega) (by omega)
+  386       have h2 : (n + 1) ^ e ≤ (n + 1) ^ (e + 1) := Nat.pow_le_pow_right (by omega) (by omega)
+  387       have h3 : F ≤ C * (n + 1) ^ (e + 1) := Nat.mul_le_mul_left C h2
+  388       have : (C + 2) * (n + 1) ^ (e + 1) = C * (n + 1) ^ (e + 1) + 2 * (n + 1) ^ (e + 1) := by
+  389         ring
+  390       omega
+  391     have := hK2 n
+  392     have hm := logSpace_mono hle
+  393     simp only [logSpace] at hm this ⊢
+  394     simp only [hL, logSpace]
+  395     omega
+  396   have hBL : 2 * B + 1 ≤ (2 * ((c0 + c1) * K2 + 1) + 1) * L := by
+### TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean · size_le_logSpace · lines [217]
+  214 
+  215 /-- The binary length is at most the logarithmic width. -/
+  216 private lemma size_le_logSpace (n : ℕ) : Nat.size n ≤ logSpace n := by
+  217   rw [← Nat.size_eq_bits_len, logSpace_eq]
+  218   exact length_bits_le_log n
+  219 
+### TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean · compl_mem_NSPACE · lines [250, 281]
+  247   set cS := ∑ j, cs j with hcS
+  248   have hcj : ∀ j, cs j ≤ cS := fun j =>
+  249     Finset.single_le_sum (f := cs) (fun _ _ => Nat.zero_le _) (Finset.mem_univ j)
+  250   have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by simp [logSpace]) (hS n)
+  251   -- the register width
+  252   set W : ℕ → ℕ := fun n => gev E (lgv n) (c * S n + 1) + 2 with hW
+  253   set CW := 6 * E + 2 * E * c + 2 with hCW
+  254   have hWle : ∀ n, W n ≤ CW * S n := by
+  255     intro n
+  256     have h1 := hS1 n
+  257     have hlg : lgv n ≤ 2 * S n := by
+  258       have := size_le_logSpace n; have := hS n; simp only [lgv]; omega
+  259     simp only [hW, hCW, gev]
+  260     have e1 : 2 * E * lgv n ≤ 2 * E * (2 * S n) := Nat.mul_le_mul_left _ hlg
+  261     have e2 : 2 * E * (c * S n + 1) ≤ 2 * E * (c * S n + S n) :=
+  262       Nat.mul_le_mul_left _ (by omega)
+  263     have e3 : (6 * E + 2 * E * c + 2) * S n =
+  264         2 * E * (2 * S n) + 2 * E * (c * S n + S n) + 2 * S n := by ring
+  265     rw [e3]; omega
+  266   refine narm_decides_space (igA E) .scan (decs N) (fun j v => cs j * logSpace v)
+  267     (fun j => ⟨Ms j, hMs j⟩) S W (CW + cS * (37 * (1 + CW))) hS1
+  268     (fun n => (hWle n).trans (Nat.mul_le_mul_right _ (by omega))) (fun j n v hv => ?_)
+  269     (fun x => ?_)
+  270   · -- the deciders' space on the virtual inputs
+  271     beta_reduce at hv ⊢
+  272     have h1 := hS1 n
+  273     have hn : n + 1 ≤ 2 ^ logSpace n := Nat.lt_pow_succ_log_self (by norm_num) n
+  274     have hw1 : W n + 1 ≤ 2 ^ W n := Nat.lt_two_pow_self
+  275     have hv' : v ≤ 36 * 2 ^ (logSpace n + W n) := by
+  276       rw [pow_add]
+  277       have := Nat.mul_le_mul hn hw1
+  278       have e : 2 * n + 2 + 17 * (2 * W n + 2) ≤ 36 * ((n + 1) * (W n + 1)) := by nlinarith
+  279       calc v ≤ 36 * ((n + 1) * (W n + 1)) := hv.trans e
+  280         _ ≤ 36 * (2 ^ logSpace n * 2 ^ W n) := Nat.mul_le_mul_left _ this
+  281     have hlog := logSpace_le_of_le_mul_two_pow hv' (by simp only [logSpace]; omega)
+  282     have hlS : logSpace n + W n ≤ (1 + CW) * S n := by
+  283       have := hS n; have := hWle n; nlinarith
+### TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess.lean · access_mem · lines [2120]
+ 2117   have hw := length_bits_le_log (y.length + 1)
+ 2118   have hc := hC y.length
+ 2119   simp only [one_mul, pow_one, add_zero] at hc
+ 2120   unfold logSpace
+ 2121   dsimp [W]
+ 2122   have hdist : (4 * C + 8) * (Nat.log 2 y.length + 1) =
+### TCSlib/Complexity/SpaceComplexity/Logspace/PathHard.lean · logSpace_le_ell · lines [79, 83]
+   76 
+   77 /-- `logSpace m ≤ ℓ`. -/
+   78 lemma logSpace_le_ell (m : ℕ) : logSpace m ≤ ell m := by
+   79   rw [ell_eq_size, logSpace]
+   80   rcases Nat.eq_zero_or_pos m with rfl | hm
+   81   · simp
+   82   · have h1 : m + 1 < 2 ^ Nat.size (m + 1) := Nat.lt_size_self _
+   83     have h2 : 2 ^ Nat.log 2 m ≤ m := Nat.pow_log_le_self 2 (by omega)
+   84     have : Nat.log 2 m < Nat.size (m + 1) :=
+   85       (Nat.pow_lt_pow_iff_right (a := 2) (by norm_num)).mp (by omega)
+### TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost.lean · mem_LOGSPACE_preimage · lines [771, 772, 777, 783, 789]
+  768     (fun i _ => pairEncode_mem_indexLang _ x i)
+  769     (fun i _ => pairEncode_mem_indexLang _ x i) t ht B hbudget
+  770   refine ⟨T, hT, hSpace.trans ?_⟩
+  771   let L := logSpace x.length
+  772   have hL : 1 ≤ L := by simp [L, logSpace]
+  773   have hlog : logSpace (f x).length ≤ K * L := by
+  774     have hm := Nat.log_mono_right (b := 2) (show (f x).length ≤ A * (x.length + 1) ^ e + 1 by
+  775       have := hlen x; omega)
+  776     have hk := hK x.length
+  777     dsimp [L, logSpace]
+  778     omega
+  779   have hW : W ≤ K * L := by
+  780     have hw := LogProg.length_bits_le_log ((f x).length + 1)
+  781     have hm := Nat.log_mono_right (b := 2) (Nat.add_le_add_right (hlen x) 1)
+  782     have hk := hK x.length
+  783     dsimp [W, L, logSpace] at *
+  784     omega
+  785   have hJx : logSpace (2 * x.length + 2 + W) ≤ J * L := by
+  786     have hw : W ≤ (f x).length + 2 :=
+  787       (LogProg.length_bits_le_log _).trans (by
+  788         have := Complexity.logSpace_le_succ ((f x).length + 1)
+  789         rw [Complexity.logSpace_eq] at this
+  790         omega)
+  791     have hp : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
+### TCSlib/Complexity/SpaceComplexity/Machines/ARMKit.lean · arm_decides_poly · lines [90]
+   87   have e2 : Nat.log 2 (a.2.1 r + 1) ≤ Nat.log 2 (C₀ * (x.length + 1) ^ c₀ + 1) :=
+   88     Nat.log_mono_right (by have := h2 r; omega)
+   89   have e3 := hK x.length
+   90   simp only [logSpace]
+   91   omega
+   92 
+### TCSlib/Complexity/SpaceComplexity/Machines/ARMProof.lean · arm_decides · lines [247, 248, 306]
+  244   refine ⟨m * K + 2 * m + kD * (2 * cs * K2 + 3),
+  245     compileFinTM (armProg A l₀) (l₀, .start) (bankTM Ms) (bankStart Ms), fun x => ?_⟩
+  246   set n := x.length with hn
+  247   set Ls := logSpace n with hLs
+  248   have hL1 : 1 ≤ Ls := by simp [hLs, logSpace]
+  249   have hLn : Ls ≤ n + 1 := by rw [hLs]; exact logSpace_le_succ n
+  250   set W := K * Ls with hW
+  251   set B := cs * K2 * Ls + 1 with hB
+  252   obtain ⟨N, h1, h2, hm⟩ := hcorr x
+  253   have hpre : ∀ t < N, Pre A oracle (bankTM Ms) (bankStart Ms) B x
+  254       (arun A oracle x (some l₀, fun _ => 0, none) t) ∧
+  255       ∀ r, ((Nat.bits ((arun A oracle x (some l₀, fun _ => 0, none) t).2.1 r + 1)).length : ℤ)
+  256         ≤ (W : ℤ) := by
+  257     intro t ht
+  258     obtain ⟨hps, hbd⟩ := hm t ht
+  259     refine ⟨?_, fun r => by exact_mod_cast hbd r⟩
+  260     generalize hat : arun A oracle x (some l₀, fun _ => 0, none) t = a at hps hbd
+  261     rcases a with ⟨_ | l, v, res⟩
+  262     · trivial
+  263     · simp only [Pre]
+  264       cases hA : A l with
+  265       | jeq r s' l₁ l₀' => simpa [PreS, hA] using hps
+  266       | jeqIn r l₁ l₀' => simpa [PreS, hA] using hps
+  267       | jeqFst r l₁ l₀' => simpa [PreS, hA] using hps
+  268       | jeqSnd r l₁ l₀' => simpa [PreS, hA] using hps
+  269       | inc => trivial
+  270       | dec => trivial
+  271       | clr => trivial
+  272       | half => trivial
+  273       | jz => trivial
+  274       | jodd => trivial
+  275       | ret => trivial
+  276       | valP => trivial
+  277       | valQ => trivial
+  278       | call j md args l₁ l₀' =>
+  279       simp only [PreS, hA] at hps
+  280       refine ⟨hps, ?_⟩
+  281       refine cleanRun_mono (bank_cleanRun Ms As (fun j n => c j * logSpace n) hMs j _) ?_
+  282       have hVl := length_callSegs_le (x := x) ⟨j, md, args, l₁, l₀'⟩ W (fun r => Nat.bits (v r))
+  283         (fun r => by
+  284           show (Nat.bits (v r)).length ≤ W
+  285           have h0 : (Nat.bits (v r + 1)).length ≤ W := hbd r
+  286           have hle : (Nat.bits (v r)).length ≤ (Nat.bits (v r + 1)).length := by
+  287             exact length_bits_mono (by omega)
+  288           omega) hps
+  289       have hVQ : (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x fun r => Nat.bits (v r))).length ≤
+  290           Q * (n + 1) ^ 1 + 0 := by
+  291         have : W ≤ K * (n + 1) := Nat.mul_le_mul_left K hLn
+  292         have e : Q * (n + 1) ^ 1 + 0 = (4 + 2 * m) * (n + 1) + 2 * m * (K * (n + 1)) := by
+  293           simp only [hQ]; ring
+  294         rw [e]
+  295         have h5 : m * (2 * W + 2) ≤ 2 * m * (K * (n + 1)) + 2 * m := by
+  296           have := Nat.mul_le_mul_left (2 * m) this
+  297           calc m * (2 * W + 2) = 2 * m * W + 2 * m := by ring
+  298             _ ≤ 2 * m * (K * (n + 1)) + 2 * m := by omega
+  299         have h6 : 2 * m ≤ 2 * m * (n + 1) := Nat.le_mul_of_pos_right _ (by omega)
+  300         have h7 : (4 + 2 * m) * (n + 1) = 4 * (n + 1) + 2 * m * (n + 1) := by ring
+  301         omega
+  302       have hlog : logSpace (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x fun r => Nat.bits (v r))).length
+  303           ≤ K2 * Ls := by
+  304         have h := hK2 n
+  305         have hm' := Nat.log_mono_right (b := 2) hVQ
+  306         simp only [logSpace, hLs] at h hm' ⊢
+  307         omega
+  308       have hcm : c j * logSpace (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x
+### TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth.lean · arm_decides_SPACE · lines [173]
+  170   have hcj : ∀ j, c j ≤ cs := fun j =>
+  171     Finset.single_le_sum (f := c) (fun _ _ => Nat.zero_le _) (Finset.mem_univ j)
+  172   set A₀ := 2 + 2 * m + 2 * m * K with hA₀
+  173   have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by simp [logSpace]) (hS n)
+  174   refine arm_decides_space A l₀ As (fun j n => c j * logSpace n) hc' S (fun n => K * S n)
+  175     (K + cs * (A₀ + 1)) hS1 (fun n => Nat.mul_le_mul_right _ (Nat.le_add_right _ _))
+### TCSlib/Complexity/SpaceComplexity/Machines/Bin.lean · log_poly_bound · lines [202]
+  199   have hlog : Nat.log 2 (A * (n + 1) ^ c + B) < A + B + c * (L + 1) + 1 := by
+  200     rcases Nat.eq_zero_or_pos (A * (n + 1) ^ c + B) with h | h
+  201     · rw [h]; simp
+  202     · exact Nat.log_lt_of_lt_pow (by omega) hy
+  203   have hle : A + B + 2 ≤ (A + B + 2) * (L + 1) := Nat.le_mul_of_pos_right _ (by omega)
+  204   have heq : (A + B + c + 2) * (L + 1) = (A + B + 2) * (L + 1) + c * (L + 1) := by ring
+### TCSlib/Complexity/SpaceComplexity/Machines/DblLang.lean · dblLang_mem · lines [355]
+  352   have e1 := length_bits_le_log y.length
+  353   have : ((W : ℤ) - -1 + 1).toNat = W + 2 := by omega
+  354   rw [this]
+  355   simp only [logSpace]
+  356   omega
+  357 
+### TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean · count_bound · lines [351, 356, 375, 376]
+  348         ((2 * P + 1) * (2 * P + 2)) ≤
+  349       2 ^ ((q + 4 + 3 * K * (2 * ((cs + 1) * (m + 3)) + 1)) * (W + logSpace n + 1)) *
+  350         (P + 1) ^ 2 := by
+  351   set L := logSpace n with hL
+  352   set y := 2 * n + 2 + m * (2 * W + 2) with hy
+  353   have hn : n + 1 ≤ 2 ^ L := Nat.lt_pow_succ_log_self (by decide : 1 < 2) n
+  354   have hW : W + 1 ≤ 2 ^ W := Nat.lt_two_pow_self (n := W)
+  355   have hm : m + 1 ≤ 2 ^ m := Nat.lt_two_pow_self (n := m)
+  356   have hL1 : 1 ≤ L := by simp [hL, logSpace]
+  357   -- the logarithm of the virtual input length
+  358   have hylog : logSpace y ≤ L + W + m + 3 := by
+  359     have h1 : y ≤ 4 * ((n + 1) * (W + 1) * (m + 1)) := by
+  360       have a1 : n + 1 ≤ (n + 1) * (W + 1) * (m + 1) := by
+  361         calc n + 1 = (n + 1) * 1 * 1 := by ring
+  362           _ ≤ (n + 1) * (W + 1) * (m + 1) := by gcongr <;> omega
+  363       have a2 : m * (W + 1) ≤ (n + 1) * (W + 1) * (m + 1) := by
+  364         calc m * (W + 1) = 1 * (W + 1) * m := by ring
+  365           _ ≤ (n + 1) * (W + 1) * (m + 1) := by gcongr <;> omega
+  366       have e : y = 2 * (n + 1) + 2 * (m * (W + 1)) := by simp only [hy]; ring
+  367       omega
+  368     have h2 : (n + 1) * (W + 1) * (m + 1) ≤ 2 ^ L * 2 ^ W * 2 ^ m := by gcongr
+  369     have h3 : y < 2 ^ (L + W + m + 3) := by
+  370       have : 2 ^ (L + W + m + 3) = 8 * (2 ^ L * 2 ^ W * 2 ^ m) := by
+  371         rw [pow_add, pow_add, pow_add]; ring
+  372       have hpos : 0 < 2 ^ L * 2 ^ W * 2 ^ m :=
+  373         Nat.mul_pos (Nat.mul_pos (Nat.two_pow_pos L) (Nat.two_pow_pos W)) (Nat.two_pow_pos m)
+  374       omega
+  375     have h4 := Nat.log_lt_of_lt_pow (b := 2) (by omega : y ≠ 0) h3
+  376     simp only [logSpace]
+  377     omega
+  378   -- the small-tape range
+### TCSlib/Complexity/SpaceComplexity/Machines/MARMTime.lean · marm_dtime · lines [512]
+  509       rw [← hn] at hVl
+  510       have hlog : logSpace (vword (callSegs ⟨j, md, args, l₁, l₀'⟩ x
+  511           fun r => Nat.bits (v r))).length ≤ logSpace (2 * n + 2 + m * (2 * Wn + 2)) := by
+  512         simp only [logSpace]
+  513         have := Nat.log_mono_right (b := 2) hVl
+  514         omega
+### TCSlib/Complexity/SpaceComplexity/Machines/NARMExample.lean · validPlainLang_mem_NL · lines [98]
+   95     fin_cases l <;> simp [NPreS, PreS, NARM.detPart, guessValidA]
+   96   have hw : (Nat.bits (0 + 1)).length ≤ 1 * logSpace x.length := by
+   97     have : (Nat.bits (0 + 1)).length ≤ 1 := length_bits_le (by norm_num)
+   98     have : 1 ≤ logSpace x.length := by simp [logSpace]
+   99     omega
+  100   exact ⟨3, guessValidA_halts x _ (fun l res => ⟨hpre l res, fun _ => hw⟩) _,
+### TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace.lean · narm_logspace_ptm · lines [92, 114, 126]
+   89       ∀ b : Bool, M.outputProb x T [b] = ansProb A oracle x (some l₀, fun _ => 0, none) N b := by
+   90     intro x N hN
+   91     set n := x.length with hn
+   92     have hS1 : 1 ≤ logSpace n := by simp [logSpace]
+   93     set W := K * logSpace n with hW
+   94     set B := C * logSpace n + 1 with hB
+   95     have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+   96     have hsp : ∀ j v, v ≤ 2 * n + 2 + m * (2 * W + 2) → c j * logSpace v ≤ B := by
+   97       intro j v hv
+   98       rw [hW] at hv
+   99       have hVQ : v ≤ Q * (n + 1) ^ 1 + 0 := by
+  100         have hW' : K * logSpace n ≤ K * (n + 1) := Nat.mul_le_mul_left K hLn
+  101         have e : Q * (n + 1) ^ 1 + 0 = (4 + 2 * m) * (n + 1) + 2 * m * (K * (n + 1)) := by
+  102           simp only [hQ]; ring
+  103         rw [e]
+  104         have h5 : m * (2 * (K * logSpace n) + 2) ≤ 2 * m * (K * (n + 1)) + 2 * m := by
+  105           have := Nat.mul_le_mul_left (2 * m) hW'
+  106           calc m * (2 * (K * logSpace n) + 2) = 2 * m * (K * logSpace n) + 2 * m := by ring
+  107             _ ≤ 2 * m * (K * (n + 1)) + 2 * m := by omega
+  108         have h6 : 2 * m ≤ 2 * m * (n + 1) := Nat.le_mul_of_pos_right _ (by omega)
+  109         have h7 : (4 + 2 * m) * (n + 1) = 4 * (n + 1) + 2 * m * (n + 1) := by ring
+  110         omega
+  111       have hlog : logSpace v ≤ K2 * logSpace n := by
+  112         have h := hK2 n
+  113         have hm' := Nat.log_mono_right (b := 2) hVQ
+  114         simp only [logSpace] at h hm' ⊢
+  115         omega
+  116       calc c j * logSpace v ≤ cs * (K2 * logSpace n) := Nat.mul_le_mul (hcj j) hlog
+  117         _ ≤ C * logSpace n := by rw [← Nat.mul_assoc]; exact Nat.mul_le_mul_right _ (by omega)
+  118         _ ≤ B := by omega
+  119     have hwid : ∀ a : AConf m Λ, (∀ r, a.2.1 r ≤ C₀ * (n + 1) ^ c₀) →
+  120         ∀ r, (Nat.bits (a.2.1 r + 1)).length ≤ W := by
+  121       intro a h2 r
+  122       have e1 := length_bits_le_log (a.2.1 r + 1)
+  123       have e2 : Nat.log 2 (a.2.1 r + 1) ≤ Nat.log 2 (C₀ * (n + 1) ^ c₀ + 1) :=
+  124         Nat.log_mono_right (by have := h2 r; omega)
+  125       have e3 := hK n
+  126       simp only [hW, logSpace]
+  127       omega
+  128     have hG : NHalts A oracle x (NGuard A oracle (bankTM Ms) (bankStart Ms) B W x)
+### TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean · narm_decides · lines [213, 232]
+  210   set Q := 4 + 2 * m + 2 * m * K with hQ
+  211   obtain ⟨K2, hK2⟩ := log_poly_bound Q 1 0
+  212   refine narm_decides_space A l₀ As (fun j n => c j * logSpace n) (fun j => ⟨Ms j, hMs j⟩)
+  213     logSpace (fun n => K * logSpace n) (K + cs * K2) (fun n => by simp [logSpace])
+  214     (fun n => Nat.mul_le_mul_right _ (by omega)) (fun j n v hv => ?_) hcorr
+  215   beta_reduce at hv ⊢
+  216   have hLn : logSpace n ≤ n + 1 := logSpace_le_succ n
+  217   have hVQ : v ≤ Q * (n + 1) ^ 1 + 0 := by
+  218     have hW : K * logSpace n ≤ K * (n + 1) := Nat.mul_le_mul_left K hLn
+  219     have e : Q * (n + 1) ^ 1 + 0 = (4 + 2 * m) * (n + 1) + 2 * m * (K * (n + 1)) := by
+  220       simp only [hQ]; ring
+  221     rw [e]
+  222     have h5 : m * (2 * (K * logSpace n) + 2) ≤ 2 * m * (K * (n + 1)) + 2 * m := by
+  223       have := Nat.mul_le_mul_left (2 * m) hW
+  224       calc m * (2 * (K * logSpace n) + 2) = 2 * m * (K * logSpace n) + 2 * m := by ring
+  225         _ ≤ 2 * m * (K * (n + 1)) + 2 * m := by omega
+  226     have h6 : 2 * m ≤ 2 * m * (n + 1) := Nat.le_mul_of_pos_right _ (by omega)
+  227     have h7 : (4 + 2 * m) * (n + 1) = 4 * (n + 1) + 2 * m * (n + 1) := by ring
+  228     omega
+  229   have hlog : logSpace v ≤ K2 * logSpace n := by
+  230     have h := hK2 n
+  231     have hm' := Nat.log_mono_right (b := 2) hVQ
+  232     simp only [logSpace] at h hm' ⊢
+  233     omega
+  234   calc c j * logSpace v ≤ cs * (K2 * logSpace n) :=
+### TCSlib/Complexity/SpaceComplexity/Machines/NARMProof.lean · narm_decides_poly · lines [262]
+  259   have e2 : Nat.log 2 (a.2.1 r + 1) ≤ Nat.log 2 (C₀ * (x.length + 1) ^ c₀ + 1) :=
+  260     Nat.log_mono_right (by have := h2 r; omega)
+  261   have e3 := hK x.length
+  262   simp only [logSpace]
+  263   omega
+  264 
+### TCSlib/ErrorCorrectingCodes/GilbertVarshamov.lean · gv_bound · lines [319]
+  316   have h_ball_le_pow_of_clog_le : ∀ c : ℕ, Nat.clog q bc ≤ c → bc ≤ (Fintype.card α)^c := by
+  317     intro c hc
+  318     rw [h_bc_def, ← h_q] at *
+  319     exact (Nat.clog_le_iff_le_pow hq_gt1').mp hc
+  320   rw [h_good_eq, Finset.card_sdiff_of_subset (Finset.subset_univ _), Finset.card_univ, h_all_card]
+  321   suffices h : bad_G.card < (Fintype.card α)^(n*k) by omega
+### TCSlib/LearningTheory/MistakeBounds/Halving.lean · log_succ_le_log_of_double_le · lines [161]
+  158     Nat.log 2 b + 1 ≤ Nat.log 2 a := by
+  159   have hbne : b ≠ 0 := by omega
+  160   have hpowlog : 2 ^ Nat.log 2 b ≤ b :=
+  161     Nat.pow_log_le_self 2 hbne
+  162   have hpow : 2 ^ (Nat.log 2 b + 1) ≤ a := by
+  163     calc
+### TCSlib/Programs/Light/Lib/Logs.lean · log2_meets · lines [99]
+   96       rintro rfl
+   97       simp at hi
+   98     have hle : 2 ^ (i + 1) ≤ x :=
+   99       (Nat.pow_le_pow_right (by norm_num) (by omega)).trans (Nat.pow_log_le_self 2 hx)
+  100     have hix : i < x := lt_of_lt_of_le (Nat.lt_pow_self (by norm_num))
+  101       ((Nat.pow_le_pow_right (by norm_num) (by omega)).trans hle)

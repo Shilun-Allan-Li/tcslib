@@ -1,0 +1,45 @@
+# Machine: each changed declaration, base 94093275 against the head; lines removed (-) and added (+)
+## CMode: +2 -0
+    +   /-- codes with a work head on the window's boundary -/
+    +   | edge
+## CpId: +1 -0
+    +   | Ue | Qe | Te
+## IcId: +1 -1
+    -   | E | U | E2 | U2 | C
+    +   | E | U | E2 | U2 | C | Eh | Ke | S1 | S2
+## ScId: +1 -1
+    -   | E | F | E2 | F2 | In | C
+    +   | E | F | E2 | F2 | In | C | Ee
+## Lab: +1 -0
+    +   | eStart | eK | eRd1 | eFar | eRd2 | eNext | eTest
+## CA: +8 -0
+    +     | .edge => goto N (if VAcc N st.1 then .eStart else .rej)
+    +   | .eStart => if N.k = 0 then .ret false else .clr rU (.cp .Ue)
+    +   | .eK => .clr rQ3 (icL N .Ke 0)
+    +   | .eRd1 => .call jBit .whole [rU] .acc .eFar
+    +   | .eFar => .clr rQ1 (.cp .Qe)
+    +   | .eRd2 => .call jBit .whole [rQ1] .acc .eNext
+    +   | .eNext => .dec rQ3 .eTest
+    +   | .eTest => .jz rQ3 .rej (icL N .S1 0)
+## cpDst: +1 -0
+    +   | .Ue => rU | .Qe => rQ1 | .Te => rT
+## cpNext: +1 -0
+    +   | .Ue => .ic .Eh ⟨0, by rw [W_eq]; omega⟩ | .Qe => .cp .Te | .Te => .sc .Ee
+## cpSrc: +1 -0
+    +   | .Ue => rA | .Qe => rU | .Te => rS
+## icCount: +1 -0
+    +   | .Eh => 2 * (hH N + 2) | .Ke => N.k - 1 + 1 | .S1 => 3 | .S2 => 3
+## icNext: +1 -0
+    +   | .Eh => .eK | .Ke => .eRd1 | .S1 => .ic .S2 ⟨0, by rw [W_eq]; omega⟩ | .S2 => .eRd1
+## icReg: +3 -1
+    + def icReg : IcId → Fin 21
+    - def icReg : IcId → Fin 21 | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+    +   | .E => rE | .U => rU | .E2 => rE2 | .U2 => rU | .C => rU
+    +   | .Eh => rU | .Ke => rQ3 | .S1 => rU | .S2 => rU
+## scDst: +1 -1
+    -   | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU
+    +   | .E => rE | .F => rF | .E2 => rE2 | .F2 => rF2 | .In => rU | .C => rU | .Ee => rQ1
+## scFactor: +1 -0
+    +   | .Ee => 4 * W N
+## scNext: +1 -0
+    +   | .Ee => .eRd2

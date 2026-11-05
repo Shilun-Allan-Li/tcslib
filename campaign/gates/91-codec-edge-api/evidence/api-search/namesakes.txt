@@ -1,0 +1,10 @@
+The all-ref search (api-copy-search.txt, 122 origin refs) finds the PR's 54 new public names declared
+only on lean/codec-edge. Four other hits, on 118 refs each, are namesakes in other namespaces, with
+other statements:
+- BoolCircuit.DAGCircuit.DAGCircuitFamily.edgeLang and .mem_edgeLang
+  (CircuitComplexity/LogspaceUniformAdjBasic): a circuit family's adjacency language;
+- BoolCircuit.AdjExample.orc_eq (CircuitComplexity/LogspaceUniformExample) and
+  Complexity.LogProg.LtM.orc_eq (SpaceComplexity/UnaryLogspace): those machines' own oracles.
+Of the 32 files that open or enter Complexity.Codec, one also opens a namesake's parent namespace:
+ClassPSPACE/TQBFHard (open Turing BoolCircuit Codec QBF Std.Sat). It uses none of the colliding
+names, and opening BoolCircuit does not expose the nested DAGCircuitFamily or AdjExample members.

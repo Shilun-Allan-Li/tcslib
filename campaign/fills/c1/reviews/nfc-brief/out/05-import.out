@@ -1,0 +1,1125 @@
+@guessCtlRunTM : {k : ℕ} →
+  {SP SQ Q : Type} →
+    [DecidableEq SP] →
+      [DecidableEq SQ] →
+        MultiTapeTM k Bool SP →
+          SP →
+            Fin k →
+              Q →
+                (Q → Bool → Q) →
+                  (Q → Bool) →
+                    Bool →
+                      MultiTapeTM k Bool SQ →
+                        SQ → SQ → SQ → NDTM k Bool ((i : GuessRunPhase) × GuessRunPhase.CtlState SP SQ Q i)
+GuessRunPhase.CtlState : Type → Type → Type → GuessRunPhase → Type
+GuessRunPhase.ctlState_pre : ∀ (SP SQ Q : Type), GuessRunPhase.CtlState SP SQ Q GuessRunPhase.pre = SP
+GuessRunPhase.ctlState_guess : ∀ (SP SQ Q : Type), GuessRunPhase.CtlState SP SQ Q GuessRunPhase.guess = NDWriterState Q
+GuessRunPhase.ctlState_skip : ∀ (SP SQ Q : Type), GuessRunPhase.CtlState SP SQ Q GuessRunPhase.skip = SeekPhase
+GuessRunPhase.ctlState_back : ∀ (SP SQ Q : Type), GuessRunPhase.CtlState SP SQ Q GuessRunPhase.back = SeekPhase
+GuessRunPhase.ctlState_run : ∀ (SP SQ Q : Type), GuessRunPhase.CtlState SP SQ Q GuessRunPhase.run = SQ
+GuessRunPhase.ctlState_out : ∀ (SP SQ Q : Type), GuessRunPhase.CtlState SP SQ Q GuessRunPhase.out = Bool
+@guessCtlRunPhases : {k : ℕ} →
+  {SP SQ Q : Type} →
+    MultiTapeTM k Bool SP →
+      Fin k →
+        Q →
+          (Q → Bool → Q) →
+            (Q → Bool) →
+              Bool → MultiTapeTM k Bool SQ → (i : GuessRunPhase) → NDTM k Bool (GuessRunPhase.CtlState SP SQ Q i)
+@guessCtlRunPhases_pre : ∀ {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q)
+  (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ),
+  guessCtlRunPhases P j q₀ δ stop bounded V GuessRunPhase.pre = P.toNDTM
+@guessCtlRunPhases_guess : ∀ {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q)
+  (δ : Q → Bool → Q) (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ),
+  guessCtlRunPhases P j q₀ δ stop bounded V GuessRunPhase.guess = ndWriterTM k j q₀ δ stop bounded
+@guessCtlRunPhases_skip : ∀ {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q)
+  (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ),
+  guessCtlRunPhases P j q₀ δ stop bounded V GuessRunPhase.skip = (skipTM k j).toNDTM
+@guessCtlRunPhases_back : ∀ {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q)
+  (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ),
+  guessCtlRunPhases P j q₀ δ stop bounded V GuessRunPhase.back = (skipBackTM k j).toNDTM
+@guessCtlRunPhases_run : ∀ {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q)
+  (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ),
+  guessCtlRunPhases P j q₀ δ stop bounded V GuessRunPhase.run = V.toNDTM
+@guessCtlRunPhases_out : ∀ {k : ℕ} {SP SQ Q : Type} (P : MultiTapeTM k Bool SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q)
+  (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ),
+  guessCtlRunPhases P j q₀ δ stop bounded V GuessRunPhase.out =
+    { q₀ := false,
+      tr := fun x b x_1 x_2 => { inputTape := 0, workTapes := fun x => (none, 0), output := some b, state := none } }
+@guessCtlRunRed : {SP SQ Q : Type} →
+  [DecidableEq SP] →
+    [DecidableEq SQ] →
+      SP →
+        Q →
+          SQ →
+            SQ →
+              SQ →
+                (i : GuessRunPhase) →
+                  GuessRunPhase.CtlState SP SQ Q i → Option ((i : GuessRunPhase) × GuessRunPhase.CtlState SP SQ Q i)
+@guessCtlRunRed_pre : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej : SQ) (s : SP),
+  guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.pre s =
+    if s = pexit then some ⟨GuessRunPhase.guess, NDWriterState.run q₀⟩ else none
+@guessCtlRunRed_guess_done : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej : SQ),
+  guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.guess NDWriterState.done =
+    some ⟨GuessRunPhase.skip, SeekPhase.run⟩
+@guessCtlRunRed_guess_run : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej : SQ) (q : Q), guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.guess (NDWriterState.run q) = none
+@guessCtlRunRed_skip : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej : SQ) (s : SeekPhase),
+  guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.skip s =
+    if s = SeekPhase.done then some ⟨GuessRunPhase.back, SeekPhase.run⟩ else none
+@guessCtlRunRed_back : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej : SQ) (s : SeekPhase),
+  guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.back s =
+    if s = SeekPhase.done then some ⟨GuessRunPhase.run, qentry⟩ else none
+@guessCtlRunRed_run : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej s : SQ),
+  guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.run s =
+    if s = acc then some ⟨GuessRunPhase.out, true⟩ else if s = rej then some ⟨GuessRunPhase.out, false⟩ else none
+@guessCtlRunRed_out : ∀ {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ] (pexit : SP) (q₀ : Q)
+  (qentry acc rej : SQ) (b : Bool), guessCtlRunRed pexit q₀ qentry acc rej GuessRunPhase.out b = none
+@guessRunCfg : {k : ℕ} → {S S' : Type} → {z : List Bool} → Cfg k Bool S z → Fin k → List Bool → S' → Cfg k Bool S' z
+@guessRunCfg_clean : ∀ {K k : ℕ} {SP SR : Type} {z : List Bool} (ι : Fin K ↪ Fin k),
+  ∀ cap ∉ Set.range ⇑ι,
+    ∀ (jR : Fin K) (blk : ℤ → Option Bool) (m : ℕ),
+      (∀ (p : ℤ), p < 0 ∨ ↑m ≤ p → blk p = none) →
+        ∀ (q : SP) (entry : SR) (s : List Bool),
+          s.length = m →
+            guessRunCfg
+                { state := some q, inputPos := 1, workTapes := Function.update (fun x x_1 => none) (ι jR) blk,
+                  workTapePos := fun x => 0, output := [] }
+                (ι jR) s entry =
+              embedSilentCfg ι cap (fun x x_1 => none) (fun x => 0) [] [] (streamStartCfg z jR entry s)
+@streamStartCfg : {K : ℕ} → {S : Type} → (z : List Bool) → Fin K → S → List Bool → Cfg K Bool S z
+@guessCtlRunTM_runWith_handoff : ∀ {k : ℕ} {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool)
+  (V : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z),
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some pexit) →
+        (∀ (p : ℕ), cP.workTapes j (cP.workTapePos j + ↑p) = none) →
+          cP.workTapes j (cP.workTapePos j - 1) = none →
+            ∀ (m : ℕ) (w : List Bool),
+              w.length = TP + 2 * m + 9 →
+                (∀ i < m, stop (List.foldl δ q₀ (List.take i (List.drop (TP + 1) w))) = false) →
+                  stop (List.foldl δ q₀ (List.take m (List.drop (TP + 1) w))) = true →
+                    NDTM.runWith w (NDTM.initCfg z) =
+                      Cfg.mapState (Sigma.mk GuessRunPhase.run)
+                        (guessRunCfg cP j (List.take m (List.drop (TP + 1) w)) qentry)
+@guessCtlRunTM_runWith : ∀ {k : ℕ} {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool)
+  (V : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z),
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some pexit) →
+        (∀ (p : ℕ), cP.workTapes j (cP.workTapePos j + ↑p) = none) →
+          cP.workTapes j (cP.workTapePos j - 1) = none →
+            ∀ (m : ℕ) (s : List Bool),
+              s.length = m →
+                (∀ i < m, stop (List.foldl δ q₀ (List.take i s)) = false) →
+                  stop (List.foldl δ q₀ s) = true →
+                    ∀ (TQ : ℕ),
+                      (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+                          (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).state = some rej →
+                        (∀ u < TQ,
+                            (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                              (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+                          ∀ (w : List Bool),
+                            List.take m (List.drop (TP + 1) w) = s →
+                              TP + 2 * m + TQ + 11 ≤ w.length →
+                                have d := MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ;
+                                NDTM.runWith w (NDTM.initCfg z) =
+                                  { state := none, inputPos := d.inputPos, workTapes := d.workTapes,
+                                    workTapePos := d.workTapePos, output := d.output ++ [decide (d.state = some acc)] }
+@guessCtlRunTM_stop_of_halted : ∀ {k : ℕ} {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool)
+  (V : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z),
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some pexit) →
+        ∀ (w : List Bool),
+          (NDTM.runWith w (NDTM.initCfg z)).state = none →
+            ∃ m,
+              TP + 1 + m < w.length ∧
+                (∀ i < m, stop (List.foldl δ q₀ (List.take i (List.drop (TP + 1) w))) = false) ∧
+                  stop (List.foldl δ q₀ (List.take m (List.drop (TP + 1) w))) = true
+@guessCtlRunTM_accepts_of : ∀ {k : ℕ} {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool)
+  (V : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z),
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some pexit) →
+        (∀ (p : ℕ), cP.workTapes j (cP.workTapePos j + ↑p) = none) →
+          cP.workTapes j (cP.workTapePos j - 1) = none →
+            ∀ (s : List Bool),
+              (∀ i < s.length, stop (List.foldl δ q₀ (List.take i s)) = false) →
+                stop (List.foldl δ q₀ s) = true →
+                  ∀ (TQ : ℕ),
+                    (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc →
+                      (∀ u < TQ,
+                          (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                            (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+                        (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).output = [] →
+                          ∀ (B : ℕ),
+                            TP + 2 * s.length + TQ + 11 ≤ B →
+                              ∃ w,
+                                w.length = B ∧
+                                  (NDTM.runWith w (NDTM.initCfg z)).state = none ∧
+                                    (NDTM.runWith w (NDTM.initCfg z)).output = [true]
+@guessCtlRunTM_stream_of_accepts : ∀ {k : ℕ} {SP SQ Q : Type} [inst : DecidableEq SP] [inst_1 : DecidableEq SQ]
+  (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool)
+  (V : MultiTapeTM k Bool SQ) (qentry acc rej : SQ) {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z),
+  MultiTapeTM.runFrom (MultiTapeTM.initCfg z) TP = cP →
+    cP.state = some pexit →
+      (∀ u < TP, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some pexit) →
+        (∀ (p : ℕ), cP.workTapes j (cP.workTapePos j + ↑p) = none) →
+          cP.workTapes j (cP.workTapePos j - 1) = none →
+            (∀ (s : List Bool),
+                (∀ i < s.length, stop (List.foldl δ q₀ (List.take i s)) = false) →
+                  stop (List.foldl δ q₀ s) = true →
+                    ∃ TQ,
+                      ((MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∨
+                          (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).state = some rej) ∧
+                        ∀ u < TQ,
+                          (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                            (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) →
+              ∀ (w : List Bool),
+                (NDTM.runWith w (NDTM.initCfg z)).state = none →
+                  (NDTM.runWith w (NDTM.initCfg z)).output = [true] →
+                    ∃ s,
+                      (∀ i < s.length, stop (List.foldl δ q₀ (List.take i s)) = false) ∧
+                        stop (List.foldl δ q₀ s) = true ∧
+                          ∃ TQ,
+                            (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).state = some acc ∧
+                              (∀ u < TQ,
+                                  (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some acc ∧
+                                    (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) u).state ≠ some rej) ∧
+                                (MultiTapeTM.runFrom (guessRunCfg cP j s qentry) TQ).output = []
+NDWriterState : Type → Type
+ndWriterTM : (k : ℕ) → Fin k → {Q : Type} → Q → (Q → Bool → Q) → (Q → Bool) → Bool → NDTM k Bool (NDWriterState Q)
+@ndWriterTM_run_controller : ∀ {k : ℕ} (j : Fin k) {Q : Type} (q₀ : Q) (δ : Q → Bool → Q) (stop : Q → Bool)
+  {x : List Bool} (c : Cfg k Bool (NDWriterState Q) x) (q : Q),
+  c.state = some (NDWriterState.run q) →
+    ∀ (w : List Bool),
+      ∀ m < w.length,
+        (∀ i < m, stop (List.foldl δ q (List.take i w)) = false) →
+          stop (List.foldl δ q (List.take m w)) = true →
+            NDTM.runWith (List.take (m + 1) w) c =
+                { state := some NDWriterState.done, inputPos := c.inputPos,
+                  workTapes :=
+                    Function.update c.workTapes j fun p =>
+                      if c.workTapePos j ≤ p ∧ p < c.workTapePos j + ↑m then
+                        FinTM.bufferTape (List.take m w) (p - c.workTapePos j)
+                      else c.workTapes j p,
+                  workTapePos := Function.update c.workTapePos j (c.workTapePos j + ↑m), output := c.output } ∧
+              ∀ i ≤ m, (NDTM.runWith (List.take i w) c).state ≠ some NDWriterState.done
+@NDTM.phaseHostND : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → NDTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → NDTM k Γ ((i : I) × Ph i)
+@NDTM.phaseHostND_run : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → NDTM k Γ (Ph i)) (q0 : (i : I) × Ph i)
+  (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ} (c c' : Cfg k Γ (Ph i) x) (w : List Bool),
+  NDTM.runWith w c = c' →
+    ∀ (s' : Ph i),
+      c'.state = some s' →
+        ∀ (q' : (i : I) × Ph i),
+          red i s' = some q' →
+            (∀ u < w.length, ∀ (s : Ph i), (NDTM.runWith (List.take u w) c).state = some s → red i s = none) →
+              ∀ (b : Bool),
+                (∀ u ≤ w.length,
+                    NDTM.runWith (List.take u w) (Cfg.mapState (Sigma.mk i) c) =
+                      Cfg.mapState (Sigma.mk i) (NDTM.runWith (List.take u w) c)) ∧
+                  NDTM.runWith (w ++ [b]) (Cfg.mapState (Sigma.mk i) c) = Cfg.mapState (fun x => q') c'
+@phaseHostTM : {k : ℕ} →
+  {Γ I : Type} →
+    {Ph : I → Type} →
+      ((i : I) → MultiTapeTM k Γ (Ph i)) →
+        (i : I) × Ph i → ((i : I) → Ph i → Option ((i : I) × Ph i)) → MultiTapeTM k Γ ((i : I) × Ph i)
+@phaseHostTM_q₀ : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i)
+  (red : (i : I) → Ph i → Option ((i : I) × Ph i)), (phaseHostTM M q0 red).q₀ = q0
+@phaseHostTM_tr_of_red_none : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) (s : Ph i),
+  red i s = none →
+    ∀ (inp : Option Γ) (w : Fin k → Option Γ),
+      (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w = Action.mapState (Sigma.mk i) ((M i).tr s inp w)
+@phaseHostTM_tr_of_red_some : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) (s : Ph i) {q' : (i : I) × Ph i},
+  red i s = some q' →
+    ∀ (inp : Option Γ) (w : Fin k → Option Γ),
+      (phaseHostTM M q0 red).tr ⟨i, s⟩ inp w =
+        { inputTape := 0, workTapes := fun x => (none, 0), output := none, state := some q' }
+@phaseHostTM_run : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i)) (q0 : (i : I) × Ph i)
+  (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ} (c c' : Cfg k Γ (Ph i) x) (T : ℕ),
+  MultiTapeTM.runFrom c T = c' →
+    ∀ (s' : Ph i),
+      c'.state = some s' →
+        ∀ (q' : (i : I) × Ph i),
+          red i s' = some q' →
+            (∀ u < T, ∀ (s : Ph i), (MultiTapeTM.runFrom c u).state = some s → red i s = none) →
+              (∀ u ≤ T,
+                  MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u =
+                    Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)) ∧
+                MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) (T + 1) = Cfg.mapState (fun x => q') c'
+@phaseHostTM_run_le : ∀ {k : ℕ} {Γ I : Type} {Ph : I → Type} (M : (i : I) → MultiTapeTM k Γ (Ph i))
+  (q0 : (i : I) × Ph i) (red : (i : I) → Ph i → Option ((i : I) × Ph i)) (i : I) {x : List Γ} (c : Cfg k Γ (Ph i) x)
+  (T : ℕ),
+  (∀ u < T, ∀ (s : Ph i), (MultiTapeTM.runFrom c u).state = some s → red i s = none) →
+    ∀ u ≤ T, MultiTapeTM.runFrom (Cfg.mapState (Sigma.mk i) c) u = Cfg.mapState (Sigma.mk i) (MultiTapeTM.runFrom c u)
+@skipTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → MultiTapeTM k Symbol SeekPhase
+@skipBackTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → MultiTapeTM k Symbol SeekPhase
+@skipTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SeekPhase x),
+  d.state = some SeekPhase.run →
+    (∀ (p : ℤ), 0 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (w.length + 1) =
+          { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+            workTapePos := Function.update d.workTapePos i (d.workTapePos i + ↑w.length + 1), output := d.output } ∧
+        (∀ t < w.length + 1, (MultiTapeTM.runFrom d t).state ≠ some SeekPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ w.length + 1,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j) (d.workTapePos j + ↑w.length + 1)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@skipBackTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (u : List Symbol)
+  (d : Cfg k Symbol SeekPhase x),
+  d.state = some SeekPhase.run →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑u.length → d.workTapes i (d.workTapePos i - ↑u.length - 1 + p) = FinTM.bufferTape u p) →
+      MultiTapeTM.runFrom d (u.length + 3) =
+          { state := some SeekPhase.done, inputPos := d.inputPos, workTapes := d.workTapes,
+            workTapePos := Function.update d.workTapePos i (d.workTapePos i - ↑u.length - 1), output := d.output } ∧
+        (∀ t < u.length + 3, (MultiTapeTM.runFrom d t).state ≠ some SeekPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ u.length + 3,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - ↑u.length - 2) (d.workTapePos j)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+inputRewindTM : (k : ℕ) → MultiTapeTM k Bool InputRewindPhase
+@inputRewindTM_run : ∀ {k : ℕ} {x : List Bool} (d : Cfg k Bool InputRewindPhase x),
+  d.state = some InputRewindPhase.start →
+    1 ≤ ↑d.inputPos →
+      MultiTapeTM.runFrom d (↑d.inputPos + 1) =
+          { state := some InputRewindPhase.done, inputPos := 1, workTapes := d.workTapes, workTapePos := d.workTapePos,
+            output := d.output } ∧
+        (∀ t < ↑d.inputPos + 1, (MultiTapeTM.runFrom d t).state ≠ some InputRewindPhase.done) ∧
+          ∀ t ≤ ↑d.inputPos + 1,
+            (MultiTapeTM.runFrom d t).workTapes = d.workTapes ∧
+              (MultiTapeTM.runFrom d t).workTapePos = d.workTapePos ∧ (MultiTapeTM.runFrom d t).output = d.output
+@inputRewindTM_step_done : ∀ {k : ℕ} {x : List Bool} (c : Cfg k Bool InputRewindPhase x),
+  c.state = some InputRewindPhase.done → MultiTapeTM.step c = c
+StepBlock.outputSummary : List Bool → Option Bool
+StepBlock.summaryEmit : Option Bool → Option Bool → Option Bool
+StepBlock.outputSummary_nil : StepBlock.outputSummary [] = none
+StepBlock.outputSummary_append : ∀ (w : List Bool) (b : Option Bool),
+  StepBlock.outputSummary (w ++ b.toList) = StepBlock.summaryEmit (StepBlock.outputSummary w) b
+StepBlock.outputSummary_true : ∀ (w : List Bool), StepBlock.outputSummary w = some true ↔ w = [true]
+StepBlock.summaryEmit_other : ∀ (b : Option Bool), StepBlock.summaryEmit (some false) b = some false
+StepBlock.summaryEmit_none : ∀ (b : Option Bool), StepBlock.summaryEmit none b = b
+@NDTM.relabelState : {k : ℕ} → {Γ : Type u_1} → {S : Type u_2} → {S' : Type u_3} → NDTM k Γ S → S ≃ S' → NDTM k Γ S'
+@NDTM.relabelState_runWith : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {S' : Type u_3} {x : List Γ} (tm : NDTM k Γ S)
+  (e : S ≃ S') (c : Cfg k Γ S x) (w : List Bool),
+  NDTM.runWith w (Cfg.mapState (⇑e) c) = Cfg.mapState (⇑e) (NDTM.runWith w c)
+@NDTM.relabelState_q₀ : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {S' : Type u_3} (tm : NDTM k Γ S) (e : S ≃ S'),
+  (tm.relabelState e).q₀ = e tm.q₀
+@NDTM.relabelState_tr : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {S' : Type u_3} (tm : NDTM k Γ S) (e : S ≃ S')
+  (b : Bool) (q : S') (inp : Option Γ) (w : Fin k → Option Γ),
+  (tm.relabelState e).tr b q inp w = Action.mapState (⇑e) (tm.tr b (e.symm q) inp w)
+@NDTM.runWith_nil : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : NDTM k Symbol State}
+  {cfg : Cfg k Symbol State input}, NDTM.runWith [] cfg = cfg
+@NDTM.runWith_cons : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : NDTM k Symbol State}
+  {b : Bool} {w : List Bool} {cfg : Cfg k Symbol State input},
+  NDTM.runWith (b :: w) cfg = NDTM.runWith w (NDTM.stepWith b cfg)
+@NDTM.runWith_append : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol} {tm : NDTM k Symbol State}
+  (w w' : List Bool) (cfg : Cfg k Symbol State input), NDTM.runWith (w ++ w') cfg = NDTM.runWith w' (NDTM.runWith w cfg)
+@NDTM.runWith_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : NDTM k Symbol State} (cfg : Cfg k Symbol State input),
+  cfg.state = none → ∀ {w : List Bool}, NDTM.runWith w cfg = cfg
+@NDTM.initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : NDTM k Symbol State} (input : List Symbol),
+  NDTM.initCfg input = Cfg.init tm.q₀ input
+@MultiTapeTM.toNDTM_initCfg : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (tm : MultiTapeTM k Symbol State)
+  (input : List Symbol), NDTM.initCfg input = MultiTapeTM.initCfg input
+@MultiTapeTM.toNDTM_runWith : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (tm : MultiTapeTM k Symbol State)
+  {input : List Symbol} (w : List Bool) (cfg : Cfg k Symbol State input),
+  NDTM.runWith w cfg = MultiTapeTM.runFrom cfg w.length
+@NDTM.runWith_mapState_of_agreeOn : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {H : Type u_3} {x : List Γ}
+  (src : NDTM k Γ S) (host : NDTM k Γ H) (emb : S ↪ H) (good : S → Prop),
+  (∀ (b : Bool) (q : S),
+      good q →
+        ∀ (inp : Option Γ) (work : Fin k → Option Γ),
+          host.tr b (emb q) inp work = Action.mapState (⇑emb) (src.tr b q inp work)) →
+    ∀ (c : Cfg k Γ S x) (w : List Bool),
+      (∀ u < w.length, ∀ (q : S), (NDTM.runWith (List.take u w) c).state = some q → good q) →
+        NDTM.runWith w (Cfg.mapState (⇑emb) c) = Cfg.mapState (⇑emb) (NDTM.runWith w c)
+FinNDTM.AcceptsWithin : FinNDTM Bool → List Bool → ℕ → Prop
+@FinNDTM.acceptsWithin_iff : ∀ {N : FinNDTM Bool} {x : List Bool} {t : ℕ},
+  N.AcceptsWithin x t ↔
+    ∃ w,
+      w.length = t ∧ (NDTM.runWith w (NDTM.initCfg x)).state = none ∧ (NDTM.runWith w (NDTM.initCfg x)).output = [true]
+CodeNDTM : Type
+CodeNDTM.toFinNDTM : CodeNDTM → FinNDTM Bool
+CodeNDTM.toFinNDTM_k : ∀ (M : CodeNDTM), M.toFinNDTM.k = 2
+CodeNDTM.toFinNDTM_State : ∀ (M : CodeNDTM), M.toFinNDTM.State = Fin (M.numStates + 1)
+CodeNDTM.toFinNDTM_tm : ∀ (M : CodeNDTM), M.toFinNDTM.tm = M.tm
+@MultiTapeTM.step_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input} {q : State},
+  cfg.state = some q → MultiTapeTM.step cfg = (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+@MultiTapeTM.initCfg_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {tm : MultiTapeTM k Symbol State}
+  (input : List Symbol), MultiTapeTM.initCfg input = Cfg.init tm.q₀ input
+@Cfg.init_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).state = some q₀
+@Cfg.init_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).inputPos = 1
+@Cfg.init_workTapes : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol) (x : Fin k)
+  (x_1 : ℤ), (Cfg.init q₀ input).workTapes x x_1 = none
+@Cfg.init_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol) (x : Fin k),
+  (Cfg.init q₀ input).workTapePos x = 0
+@Cfg.init_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (q₀ : State) (input : List Symbol),
+  (Cfg.init q₀ input).output = []
+@Action.apply_state : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input), (action.apply cfg).state = action.state
+@Action.apply_inputPos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input),
+  (action.apply cfg).inputPos = moveInputPos cfg.inputPos action.inputTape
+@Action.apply_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol}
+  (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k),
+  (a.apply c).workTapes i =
+    Function.update (c.workTapes i) (c.workTapePos i) ((a.workTapes i).1.getD (c.workTapeSymbols i))
+@Action.apply_workTapePos : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input) (i : Fin k),
+  (action.apply cfg).workTapePos i = cfg.workTapePos i + ↑(action.workTapes i).2
+@Action.apply_output : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (action : Action k Symbol State) (cfg : Cfg k Symbol State input),
+  (action.apply cfg).output = cfg.output ++ action.output.toList
+Fintype.equivFin : (α : Type u_1) → [inst : Fintype α] → α ≃ Fin (Fintype.card α)
+@GuessRunPhase.instFintypeCtlState : {SP SQ Q : Type} →
+  [Fintype SP] → [Fintype SQ] → [Fintype Q] → (i : GuessRunPhase) → Fintype (GuessRunPhase.CtlState SP SQ Q i)
+@GuessRunPhase.instDecidableEqCtlState : {SP SQ Q : Type} →
+  [DecidableEq SP] →
+    [DecidableEq SQ] → [DecidableEq Q] → (i : GuessRunPhase) → DecidableEq (GuessRunPhase.CtlState SP SQ Q i)
+@guessRunCfg_state : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool) (q : S'),
+  (guessRunCfg c j s q).state = some q
+@guessRunCfg_inputPos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S'), (guessRunCfg c j s q).inputPos = c.inputPos
+@guessRunCfg_workTapes : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S') (a : Fin k) (a_1 : ℤ),
+  (guessRunCfg c j s q).workTapes a a_1 =
+    Function.update c.workTapes j
+      (fun p =>
+        if c.workTapePos j ≤ p ∧ p < c.workTapePos j + ↑s.length then FinTM.bufferTape s (p - c.workTapePos j)
+        else c.workTapes j p)
+      a a_1
+@guessRunCfg_workTapePos : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool)
+  (q : S') (a : Fin k), (guessRunCfg c j s q).workTapePos a = c.workTapePos a
+@guessRunCfg_output : ∀ {k : ℕ} {S S' : Type} {z : List Bool} (c : Cfg k Bool S z) (j : Fin k) (s : List Bool) (q : S'),
+  (guessRunCfg c j s q).output = c.output
+@streamStartCfg_state : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (streamStartCfg z j q s).state = some q
+@streamStartCfg_inputPos : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (streamStartCfg z j q s).inputPos = 1
+@streamStartCfg_workTapes : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) (i : Fin K)
+  (a : ℤ), (streamStartCfg z j q s).workTapes i a = (if i = j then FinTM.bufferTape s else fun x => none) a
+@streamStartCfg_workTapePos : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) (x : Fin K),
+  (streamStartCfg z j q s).workTapePos x = 0
+@streamStartCfg_output : ∀ {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool),
+  (streamStartCfg z j q s).output = []
+@NDTM.stepWith_of_some : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : NDTM k Symbol State} {b : Bool} {cfg : Cfg k Symbol State input} {q : State},
+  cfg.state = some q → NDTM.stepWith b cfg = (tm.tr b q cfg.inputSymbol cfg.workTapeSymbols).apply cfg
+@NDTM.stepWith_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : NDTM k Symbol State} {b : Bool} {cfg : Cfg k Symbol State input}, cfg.state = none → NDTM.stepWith b cfg = cfg
+@MultiTapeTM.step_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input}, cfg.state = none → MultiTapeTM.step cfg = cfg
+@MultiTapeTM.runFrom_zero : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input}, MultiTapeTM.runFrom cfg 0 = cfg
+@MultiTapeTM.runFrom_succ_eq_step : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input} {t : ℕ},
+  MultiTapeTM.runFrom cfg (t + 1) = MultiTapeTM.runFrom (MultiTapeTM.step cfg) t
+@MultiTapeTM.runFrom_succ_eq_step' : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} {cfg : Cfg k Symbol State input} {t : ℕ},
+  MultiTapeTM.runFrom cfg (t + 1) = MultiTapeTM.step (MultiTapeTM.runFrom cfg t)
+@MultiTapeTM.runFrom_add : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} (cfg : Cfg k Symbol State input) (a b : ℕ),
+  MultiTapeTM.runFrom cfg (a + b) = MultiTapeTM.runFrom (MultiTapeTM.runFrom cfg a) b
+@MultiTapeTM.runFrom_of_halt : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {tm : MultiTapeTM k Symbol State} (cfg : Cfg k Symbol State input),
+  cfg.state = none → ∀ {n : ℕ}, MultiTapeTM.runFrom cfg n = cfg
+@MultiTapeTM.toNDTM_q₀ : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (tm : MultiTapeTM k Symbol State),
+  tm.toNDTM.q₀ = tm.q₀
+@MultiTapeTM.toNDTM_tr : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} (tm : MultiTapeTM k Symbol State) (x : Bool)
+  (q : State) (input : Option Symbol) (work : Fin k → Option Symbol), tm.toNDTM.tr x q input work = tm.tr q input work
+@MultiTapeTM.runFrom_mapState_of_agreeOn : ∀ {Symbol : Type u_1} {k : ℕ} {S H : Type} {x : List Symbol}
+  (src : MultiTapeTM k Symbol S) (host : MultiTapeTM k Symbol H) (emb : S ↪ H) (good : S → Prop),
+  (∀ (q : S),
+      good q →
+        ∀ (inp : Option Symbol) (work : Fin k → Option Symbol),
+          host.tr (emb q) inp work = Action.mapState (⇑emb) (src.tr q inp work)) →
+    ∀ (c : Cfg k Symbol S x) (t : ℕ),
+      (∀ u < t, ∀ (q : S), (MultiTapeTM.runFrom c u).state = some q → good q) →
+        MultiTapeTM.runFrom (Cfg.mapState (⇑emb) c) t = Cfg.mapState (⇑emb) (MultiTapeTM.runFrom c t)
+@Cfg.mapState_state : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Cfg k Symbol State input), (Cfg.mapState f cfg).state = Option.map f cfg.state
+@Cfg.mapState_inputPos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Cfg k Symbol State input), (Cfg.mapState f cfg).inputPos = cfg.inputPos
+@Cfg.mapState_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Cfg k Symbol State input) (a : Fin k) (a_1 : ℤ),
+  (Cfg.mapState f cfg).workTapes a a_1 = cfg.workTapes a a_1
+@Cfg.mapState_workTapePos : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Cfg k Symbol State input) (a : Fin k),
+  (Cfg.mapState f cfg).workTapePos a = cfg.workTapePos a
+@Cfg.mapState_output : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} {input : List Symbol}
+  (f : State → State') (cfg : Cfg k Symbol State input), (Cfg.mapState f cfg).output = cfg.output
+@Cfg.mapState_mapState : ∀ {k : ℕ} {Symbol : Type u_1} {S₁ : Type u_2} {S₂ : Type u_3} {S₃ : Type u_4} {x : List Symbol}
+  (c : Cfg k Symbol S₁ x) (f : S₁ → S₂) (g : S₂ → S₃), Cfg.mapState g (Cfg.mapState f c) = Cfg.mapState (g ∘ f) c
+@Action.mapState_state : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} (f : State → State')
+  (a : Action k Symbol State), (Action.mapState f a).state = Option.map f a.state
+@Action.mapState_inputTape : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} (f : State → State')
+  (a : Action k Symbol State), (Action.mapState f a).inputTape = a.inputTape
+@Action.mapState_workTapes : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} (f : State → State')
+  (a : Action k Symbol State) (a_1 : Fin k), (Action.mapState f a).workTapes a_1 = a.workTapes a_1
+@Action.mapState_output : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {State' : Type u_3} (f : State → State')
+  (a : Action k Symbol State), (Action.mapState f a).output = a.output
+@Cfg.inputSymbol_of_zero : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Cfg k Symbol State input}, cfg.inputPos = 0 → cfg.inputSymbol = none
+@Cfg.inputSymbol_of_end : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Cfg k Symbol State input}, ↑cfg.inputPos = input.length + 1 → cfg.inputSymbol = none
+@inputSymbolInner : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  {cfg : Cfg k Symbol State input} (p : ℕ),
+  ↑cfg.inputPos = 1 + p → ∀ (h₂ : p < input.length), cfg.inputSymbol = some input[p]
+@Cfg.workTapeSymbols_eq : ∀ {k : ℕ} {State : Type u_1} {Symbol : Type u_2} {input : List Symbol}
+  (cfg : Cfg k Symbol State input) (i : Fin k), cfg.workTapeSymbols i = cfg.workTapes i (cfg.workTapePos i)
+@moveInputPos_zero : ∀ {n : ℕ} (pos : Fin (n + 2)), moveInputPos pos 0 = pos
+@moveInputPos_leftBoundary : ∀ {n : ℕ}, moveInputPos 0 (-1) = 0
+@moveInputPos_rightBoundary : ∀ {n : ℕ}, moveInputPos ⟨n + 1, ⋯⟩ 1 = ⟨n + 1, ⋯⟩
+@moveInputPos_neg_of_ne_left : ∀ {n : ℕ} (p : Fin (n + 2)), p ≠ 0 → moveInputPos p SignType.neg = ⟨↑p - 1, ⋯⟩
+@moveInputPos_pos_of_ne_right : ∀ {n : ℕ} (p : Fin (n + 2)) (h : ↑p ≠ n + 1), moveInputPos p SignType.pos = ⟨↑p + 1, ⋯⟩
+@FinTM.bufferTape_eq : ∀ {Symbol : Type u_1} (w : List Symbol) (z : ℤ),
+  FinTM.bufferTape w z = if 0 ≤ z then w[z.toNat]? else none
+@FinTM.bufferTape_of_neg : ∀ {Symbol : Type u_1} (w : List Symbol) {z : ℤ}, z < 0 → FinTM.bufferTape w z = none
+@FinTM.bufferTape_nat : ∀ {Symbol : Type u_1} (w : List Symbol) (i : ℕ), FinTM.bufferTape w ↑i = w[i]?
+@FinTM.bufferTape_left : ∀ {Symbol : Type u_1} (w : List Symbol), FinTM.bufferTape w (-1) = none
+@scanTM : {Γ : Type u_1} →
+  {A : Type} → (k : ℕ) → Fin k → (A → Γ → A × Γ) → (A → Γ → A × Γ) → A → MultiTapeTM k Γ (ScanPhase A)
+ScanPhase : Type → Type
+@scanTM_run_ofCfg : ∀ {Γ : Type u_1} {A : Type} {k : ℕ} {x : List Γ} (i : Fin k) (δf δb : A → Γ → A × Γ) (a₀ : A)
+  (w : List Γ) (d : Cfg k Γ (ScanPhase A) x),
+  d.state = some (ScanPhase.fwd a₀) →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (2 * w.length + 2) =
+          { state := some (ScanPhase.done (scanResult δf δb a₀ w).1), inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then
+                FinTM.bufferTape (scanResult δf δb a₀ w).2 (q - d.workTapePos j)
+              else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, ∀ (a : A), (MultiTapeTM.runFrom d t).state ≠ some (ScanPhase.done a)) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@scanFold : {A : Type u_1} → {Γ : Type u_2} → (A → Γ → A) → A → Γ → A × Γ
+@scanKeep : {A : Type u_1} → {Γ : Type u_2} → A → Γ → A × Γ
+@scanResult_fold : ∀ {A : Type u_1} {Γ : Type u_2} (δ : A → Γ → A) (a₀ : A) (w : List Γ),
+  scanResult (scanFold δ) scanKeep a₀ w = (List.foldl δ a₀ w, w)
+@clearTM : {Symbol : Type u_1} → (k : ℕ) → Fin k → MultiTapeTM k Symbol SweepPhase
+@clearTM_run_ofCfg : ∀ {Symbol : Type u_1} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
+  (d : Cfg k Symbol SweepPhase x),
+  d.state = some SweepPhase.sweep →
+    (∀ (p : ℤ), -1 ≤ p → p ≤ ↑w.length → d.workTapes i (d.workTapePos i + p) = FinTM.bufferTape w p) →
+      MultiTapeTM.runFrom d (2 * w.length + 2) =
+          { state := some SweepPhase.done, inputPos := d.inputPos,
+            workTapes := fun j q =>
+              if j = i ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + ↑w.length then none else d.workTapes j q,
+            workTapePos := d.workTapePos, output := d.output } ∧
+        (∀ t < 2 * w.length + 2, (MultiTapeTM.runFrom d t).state ≠ some SweepPhase.done) ∧
+          ∀ (j : Fin k),
+            ∀ t ≤ 2 * w.length + 2,
+              if j = i then
+                (MultiTapeTM.runFrom d t).workTapePos j ∈ Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + ↑w.length)
+              else (MultiTapeTM.runFrom d t).workTapePos j = d.workTapePos j
+@FinTM.controlAction : {k : ℕ} → {S : Type} → SignType → Option S → Action k Bool S
+@FinTM.controlAction_apply : ∀ {k : ℕ} {S : Type} {x : List Bool} (cfg : Cfg k Bool S x) (m : SignType) (q : Option S),
+  (FinTM.controlAction m q).apply cfg =
+    { state := q, inputPos := moveInputPos cfg.inputPos m, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos,
+      output := cfg.output }
+@tapeAction : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} → Fin k → SignType → Option (Option Symbol) → SignType → State → Action k Symbol State
+@inputMoveAction : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → SignType → State → Action k Symbol State
+@step_of_tapeAction_move : ∀ {Symbol : Type u_1} {State : Type u_2} {k : ℕ} {x : List Symbol}
+  (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k) (inp m : SignType),
+  c.state = some q →
+    M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp none m q' →
+      MultiTapeTM.step c =
+        { state := some q', inputPos := moveInputPos c.inputPos inp, workTapes := c.workTapes,
+          workTapePos := Function.update c.workTapePos i (c.workTapePos i + ↑m), output := c.output }
+@NDTM.relabelState_tr : ∀ {k : ℕ} {Γ : Type u_1} {S : Type u_2} {S' : Type u_3} (tm : NDTM k Γ S) (e : S ≃ S')
+  (b : Bool) (q : S') (inp : Option Γ) (w : Fin k → Option Γ),
+  (tm.relabelState e).tr b q inp w = Action.mapState (⇑e) (tm.tr b (e.symm q) inp w)
+@FinNDTM.AcceptsWithin.mono : ∀ {N : FinNDTM Bool} {x : List Bool} {t t' : ℕ},
+  N.AcceptsWithin x t → t ≤ t' → N.AcceptsWithin x t'
+@AddCommGroup.toDivisionAddCommMonoid : {G : Type u_1} → [AddCommGroup G] → SubtractionCommMonoid G
+@AddCommMonoidWithOne.toAddMonoidWithOne : {R : Type u_1} → [self : AddCommMonoidWithOne R] → AddMonoidWithOne R
+@AddMonoid.toAddZeroClass : {M : Type u_1} → [self : AddMonoid M] → AddZeroClass M
+@AddZero.toAdd : {M : Type u_1} → [self : AddZero M] → Add M
+@AddZero.toZero : {M : Type u_1} → [self : AddZero M] → Zero M
+@AddZeroClass.toAddZero : {M : Type u_1} → [self : AddZeroClass M] → AddZero M
+And : Prop → Prop → Prop
+@And.casesOn : {a b : Prop} →
+  {motive : a ∧ b → Sort u_1} → (t : a ∧ b) → ((left : a) → (right : b) → motive ⋯) → motive t
+@And.intro : ∀ {a b : Prop}, a → b → a ∧ b
+@And.left : ∀ {a b : Prop}, a ∧ b → a
+@And.right : ∀ {a b : Prop}, a ∧ b → b
+Bool : Type
+and : Bool → Bool → Bool
+Bool.and_eq_true : ∀ (a b : Bool), ((a && b) = true) = (a = true ∧ b = true)
+Bool.and_false : ∀ (b : Bool), (b && false) = false
+@Bool.eq_false_iff : ∀ {b : Bool}, b = false ↔ b ≠ true
+false : Bool
+Bool.false_and : ∀ (b : Bool), (false && b) = false
+Bool.false_eq_true : (false = true) = False
+Bool.false_or : ∀ (b : Bool), (false || b) = b
+@Bool.noConfusion : {P : Sort u_1} → {x1 x2 : Bool} → x1 = x2 → Bool.noConfusionType P x1 x2
+not : Bool → Bool
+or : Bool → Bool → Bool
+true : Bool
+Bool.true_and : ∀ (b : Bool), (true && b) = b
+Bool.true_or : ∀ (b : Bool), (true || b) = true
+@CommSemiring.toSemiring : {R : Type u_1} → [self : CommSemiring R] → Semiring R
+@DFunLike.coe : {F : Sort u_1} →
+  {α : outParam (Sort u_2)} → {β : outParam (α → Sort u_3)} → [self : DFunLike F α β] → F → (a : α) → β a
+@Decidable.byContradiction : ∀ {p : Prop} [dec : Decidable p], (¬p → False) → p
+decide : (p : Prop) → [h : Decidable p] → Bool
+Decidable.decide.congr_simp : ∀ (p p_1 : Prop),
+  p = p_1 → ∀ {h : Decidable p} [h_1 : Decidable p_1], decide p = decide p_1
+@Distrib.toAdd : {R : Type u_1} → [self : Distrib R] → Add R
+@Distrib.toMul : {R : Type u_1} → [self : Distrib R] → Mul R
+@Eq : {α : Sort u_1} → α → α → Prop
+@Eq.mp : {α β : Sort u_1} → α = β → α → β
+@Eq.mpr : {α β : Sort u_1} → α = β → β → α
+@Eq.mpr_not : ∀ {p q : Prop}, p = q → ¬q → ¬p
+@Eq.ndrec : {α : Sort u_2} → {a : α} → {motive : α → Sort u_1} → motive a → {b : α} → a = b → motive b
+@Eq.rec : {α : Sort u_2} →
+  {a : α} → {motive : (a_1 : α) → a = a_1 → Sort u_1} → motive a ⋯ → {a_1 : α} → (t : a = a_1) → motive a_1 t
+@Eq.refl : ∀ {α : Sort u_1} (a : α), a = a
+@Eq.symm : ∀ {α : Sort u_1} {a b : α}, a = b → b = a
+@Eq.trans : ∀ {α : Sort u_1} {a b c : α}, a = b → b = c → a = c
+Equiv : Sort u_1 → Sort u_2 → Sort (max (max 1 u_1) u_2)
+@Equiv.instEquivLike : {α : Sort u_1} → {β : Sort u_2} → EquivLike (α ≃ β) α β
+@Equiv.trans : {α : Sort u_1} → {β : Sort u_2} → {γ : Sort u_3} → α ≃ β → β ≃ γ → α ≃ γ
+@EquivLike.toFunLike : {E : Sort u_1} → {α : Sort u_2} → {β : Sort u_3} → [EquivLike E α β] → FunLike E α β
+@Exists : {α : Sort u_1} → (α → Prop) → Prop
+@Exists.casesOn : ∀ {α : Sort u_1} {p : α → Prop} {motive : Exists p → Prop} (t : Exists p),
+  (∀ (w : α) (h : p w), motive ⋯) → motive t
+@Exists.intro : ∀ {α : Sort u_1} {p : α → Prop} (w : α), p w → Exists p
+False : Prop
+@False.elim : {C : Sort u_1} → False → C
+Fin : ℕ → Type
+@Fin.cases : {n : ℕ} →
+  {motive : Fin (n + 1) → Sort u_1} → motive 0 → ((i : Fin n) → motive i.succ) → (i : Fin (n + 1)) → motive i
+@Fin.castSucc : {n : ℕ} → Fin n → Fin (n + 1)
+@Fin.ext : ∀ {n : ℕ} {a b : Fin n}, ↑a = ↑b → a = b
+@Fin.instOfNat : {n : ℕ} → [NeZero n] → {i : ℕ} → OfNat (Fin n) i
+@Fin.isLt : ∀ {n : ℕ} (self : Fin n), ↑self < n
+Fin.last : (n : ℕ) → Fin (n + 1)
+@Fin.mk : {n : ℕ} → (val : ℕ) → val < n → Fin n
+@Fin.mk.congr_simp : ∀ {n : ℕ} (val val_1 : ℕ) (e_val : val = val_1) (isLt : val < n), ⟨val, isLt⟩ = ⟨val_1, ⋯⟩
+@Fin.prop : ∀ {n : ℕ} (a : Fin n), ↑a < n
+@Fin.succ : {n : ℕ} → Fin n → Fin (n + 1)
+@Fin.val : {n : ℕ} → Fin n → ℕ
+@Fin.val_eq_zero_iff._simp_1 : ∀ {n : ℕ} [inst : NeZero n] {a : Fin n}, (↑a = 0) = (a = 0)
+@Fin.val_lt_of_le : ∀ {n b : ℕ} (i : Fin b), b ≤ n → ↑i < n
+Finset : Type u_1 → Type u_1
+@Finset.Icc : {α : Type u_1} → [inst : Preorder α] → [LocallyFiniteOrder α] → α → α → Finset α
+@Finset.instMembership : {α : Type u_1} → Membership α (Finset α)
+Fintype : Type u_1 → Type u_1
+Fintype.card : (α : Type u_1) → [Fintype α] → ℕ
+@Fintype.card_pos_iff : ∀ {α : Type u_1} [inst : Fintype α], 0 < Fintype.card α ↔ Nonempty α
+@Function.comp : {α : Sort u_1} → {β : Sort u_2} → {δ : Sort u_3} → (β → δ) → (α → β) → α → δ
+@Function.update : {α : Sort u_1} →
+  {β : α → Sort u_2} → [DecidableEq α] → ((a : α) → β a) → (a' : α) → β a' → (a : α) → β a
+@Function.update_of_ne : ∀ {α : Sort u_1} {β : α → Sort u_2} [inst : DecidableEq α] {a a' : α},
+  a ≠ a' → ∀ (v : β a') (f : (a : α) → β a), Function.update f a' v a = f a
+@Function.update_self : ∀ {α : Sort u_1} {β : α → Sort u_2} [inst : DecidableEq α] (a : α) (v : β a)
+  (f : (a : α) → β a), Function.update f a v a = v
+@GT.gt : {α : Type u_1} → [LT α] → α → α → Prop
+@getElem : {coll : Type u_1} →
+  {idx : Type u_2} →
+    {elem : outParam (Type u_3)} →
+      {valid : outParam (coll → idx → Prop)} →
+        [self : GetElem coll idx elem valid] → (xs : coll) → (i : idx) → valid xs i → elem
+@GetElem.getElem.congr_simp : ∀ {coll : Type u_1} {idx : Type u_2} {elem : Type u_3} {valid : coll → idx → Prop}
+  [self : GetElem coll idx elem valid] (xs xs_1 : coll) (e_xs : xs = xs_1) (i i_1 : idx) (e_i : i = i_1)
+  (h : valid xs i), xs[i] = xs_1[i_1]
+@getElem? : {coll : Type u_1} →
+  {idx : Type u_2} →
+    {elem : outParam (Type u_3)} →
+      {valid : outParam (coll → idx → Prop)} → [self : GetElem? coll idx elem valid] → coll → idx → Option elem
+@HAdd.hAdd : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HAdd α β γ] → α → β → γ
+@HAppend.hAppend : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HAppend α β γ] → α → β → γ
+@HDiv.hDiv : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HDiv α β γ] → α → β → γ
+@HMod.hMod : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HMod α β γ] → α → β → γ
+@HMul.hMul : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HMul α β γ] → α → β → γ
+@HPow.hPow : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HPow α β γ] → α → β → γ
+@HSub.hSub : {α : Type u_1} → {β : Type u_2} → {γ : outParam (Type u_3)} → [self : HSub α β γ] → α → β → γ
+Iff : Prop → Prop → Prop
+@Iff.intro : ∀ {a b : Prop}, (a → b) → (b → a) → (a ↔ b)
+@Iff.mp : ∀ {a b : Prop}, (a ↔ b) → a → b
+@Iff.mpr : ∀ {a b : Prop}, (a ↔ b) → b → a
+ℤ : Type
+@Int.add_one_le_of_lt : ∀ {a b : ℤ}, a < b → a + 1 ≤ b
+Int.decLe : (a b : ℤ) → Decidable (a ≤ b)
+Int.decLt : (a b : ℤ) → Decidable (a < b)
+Int.emod_def : ∀ (a b : ℤ), a % b = a - b * (a / b)
+Int.instAdd : Add ℤ
+Int.instAddCommGroup : AddCommGroup ℤ
+Int.instAddMonoid : AddMonoid ℤ
+Int.instDecidableEq : DecidableEq ℤ
+Int.instDiv : Div ℤ
+Int.instLEInt : LE ℤ
+Int.instLTInt : LT ℤ
+Int.instLocallyFiniteOrder : LocallyFiniteOrder ℤ
+Int.instMod : Mod ℤ
+Int.instMul : Mul ℤ
+Int.instNegInt : Neg ℤ
+Int.instSub : Sub ℤ
+@Int.lt_mul_ediv_self_add : ∀ {x k : ℤ}, 0 < k → x < k * (x / k) + k
+@Int.mul_ediv_self_le : ∀ {x k : ℤ}, k ≠ 0 → k * (x / k) ≤ x
+Int.natCast_add : ∀ (n m : ℕ), ↑(n + m) = ↑n + ↑m
+Int.natCast_ediv : ∀ (m n : ℕ), ↑(m / n) = ↑m / ↑n
+Int.natCast_emod : ∀ (m n : ℕ), ↑(m % n) = ↑m % ↑n
+rvprobe/NFContImportProbe.lean:277:8: warning: `Int.ofNat_mul` has been deprecated: Use `Int.natCast_mul` instead
+Int.ofNat_mul : ∀ (n m : ℕ), ↑(n * m) = ↑n * ↑m
+rvprobe/NFContImportProbe.lean:278:8: warning: `Int.ofNat_nonneg` has been deprecated: Use `Int.natCast_nonneg` instead
+Int.ofNat_nonneg : ∀ (n : ℕ), 0 ≤ ↑n
+@Int.sub_eq_zero_of_eq : ∀ {a b : ℤ}, a = b → a - b = 0
+@Int.sub_nonneg_of_le : ∀ {a b : ℤ}, b ≤ a → 0 ≤ a - b
+@LE.le : {α : Type u_1} → [self : LE α] → α → α → Prop
+@LT.lt : {α : Type u_1} → [self : LT α] → α → α → Prop
+@LT.lt.le : ∀ {α : Type u_1} [inst : Preorder α] {a b : α}, a < b → a ≤ b
+@LT.lt.trans_eq : ∀ {α : Type u_1} {a b c : α} [inst : LT α], a < b → b = c → a < c
+@Lattice.toSemilatticeInf : {α : Type u_1} → [self : Lattice α] → SemilatticeInf α
+Lean.Omega.Coeffs.isZero : Lean.Omega.Coeffs → Prop
+Lean.Omega.Coeffs.ofList : List ℤ → Lean.Omega.Coeffs
+@Lean.Omega.Constraint.addEquality_sat : ∀ {c : ℤ} {x y : Lean.Omega.Coeffs},
+  c + x.dot y = 0 → { lowerBound := some (-c), upperBound := some (-c) }.sat' x y = true
+@Lean.Omega.Constraint.addInequality_sat : ∀ {c : ℤ} {x y : Lean.Omega.Coeffs},
+  c + x.dot y ≥ 0 → { lowerBound := some (-c), upperBound := none }.sat' x y = true
+@Lean.Omega.Constraint.combine_sat' : ∀ {s t : Lean.Omega.Constraint} {x y : Lean.Omega.Coeffs},
+  s.sat' x y = true → t.sat' x y = true → (s.combine t).sat' x y = true
+Lean.Omega.Constraint.isImpossible : Lean.Omega.Constraint → Bool
+Lean.Omega.Constraint.mk : Lean.Omega.LowerBound → Lean.Omega.UpperBound → Lean.Omega.Constraint
+@Lean.Omega.Constraint.not_sat'_of_isImpossible : ∀ {c : Lean.Omega.Constraint},
+  c.isImpossible = true → ∀ {x y : Lean.Omega.Coeffs}, ¬c.sat' x y = true
+@Lean.Omega.Int.add_congr : ∀ {a b c d : ℤ}, a = b → c = d → a + c = b + d
+@Lean.Omega.Int.mul_congr : ∀ {a b c d : ℤ}, a = b → c = d → a * c = b * d
+@Lean.Omega.Int.ofNat_congr : ∀ {a b : ℕ}, a = b → ↑a = ↑b
+@Lean.Omega.Int.ofNat_le_of_le : ∀ {x y : ℕ}, x ≤ y → ↑x ≤ ↑y
+@Lean.Omega.Int.ofNat_lt_of_lt : ∀ {x y : ℕ}, x < y → ↑x < ↑y
+@Lean.Omega.Int.ofNat_mul_nonneg : ∀ {a b : ℕ}, 0 ≤ ↑a * ↑b
+@Lean.Omega.Int.ofNat_sub_dichotomy : ∀ {a b : ℕ}, b ≤ a ∧ ↑(a - b) = ↑a - ↑b ∨ a < b ∧ ↑(a - b) = 0
+@Lean.Omega.Int.sub_congr : ∀ {a b c d : ℤ}, a = b → c = d → a - c = b - d
+Lean.Omega.LinearCombo : Type
+Lean.Omega.LinearCombo.add_eval : ∀ (l₁ l₂ : Lean.Omega.LinearCombo) (v : Lean.Omega.Coeffs),
+  (l₁ + l₂).eval v = l₁.eval v + l₂.eval v
+Lean.Omega.LinearCombo.coordinate : ℕ → Lean.Omega.LinearCombo
+@Lean.Omega.LinearCombo.coordinate_eval_0 : ∀ {a0 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 0).eval (Lean.Omega.Coeffs.ofList (a0 :: t)) = a0
+@Lean.Omega.LinearCombo.coordinate_eval_1 : ∀ {a0 a1 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 1).eval (Lean.Omega.Coeffs.ofList (a0 :: a1 :: t)) = a1
+@Lean.Omega.LinearCombo.coordinate_eval_2 : ∀ {a0 a1 a2 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 2).eval (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: t)) = a2
+@Lean.Omega.LinearCombo.coordinate_eval_3 : ∀ {a0 a1 a2 a3 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 3).eval (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: t)) = a3
+@Lean.Omega.LinearCombo.coordinate_eval_4 : ∀ {a0 a1 a2 a3 a4 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 4).eval (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: a4 :: t)) = a4
+@Lean.Omega.LinearCombo.coordinate_eval_5 : ∀ {a0 a1 a2 a3 a4 a5 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 5).eval (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: a4 :: a5 :: t)) = a5
+@Lean.Omega.LinearCombo.coordinate_eval_6 : ∀ {a0 a1 a2 a3 a4 a5 a6 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 6).eval (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: a4 :: a5 :: a6 :: t)) =
+    a6
+@Lean.Omega.LinearCombo.coordinate_eval_7 : ∀ {a0 a1 a2 a3 a4 a5 a6 a7 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 7).eval
+      (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: a4 :: a5 :: a6 :: a7 :: t)) =
+    a7
+@Lean.Omega.LinearCombo.coordinate_eval_8 : ∀ {a0 a1 a2 a3 a4 a5 a6 a7 a8 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 8).eval
+      (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: a4 :: a5 :: a6 :: a7 :: a8 :: t)) =
+    a8
+@Lean.Omega.LinearCombo.coordinate_eval_9 : ∀ {a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 : ℤ} {t : List ℤ},
+  (Lean.Omega.LinearCombo.coordinate 9).eval
+      (Lean.Omega.Coeffs.ofList (a0 :: a1 :: a2 :: a3 :: a4 :: a5 :: a6 :: a7 :: a8 :: a9 :: t)) =
+    a9
+Lean.Omega.LinearCombo.eval : Lean.Omega.LinearCombo → Lean.Omega.Coeffs → ℤ
+Lean.Omega.LinearCombo.instAdd : Add Lean.Omega.LinearCombo
+Lean.Omega.LinearCombo.instSub : Sub Lean.Omega.LinearCombo
+Lean.Omega.LinearCombo.mk : ℤ → Lean.Omega.Coeffs → Lean.Omega.LinearCombo
+Lean.Omega.LinearCombo.mul : Lean.Omega.LinearCombo → Lean.Omega.LinearCombo → Lean.Omega.LinearCombo
+Lean.Omega.LinearCombo.mul_eval : ∀ (l₁ l₂ : Lean.Omega.LinearCombo) (v : Lean.Omega.Coeffs),
+  l₁.coeffs.isZero ∨ l₂.coeffs.isZero → (l₁.mul l₂).eval v = l₁.eval v * l₂.eval v
+Lean.Omega.LinearCombo.sub_eval : ∀ (l₁ l₂ : Lean.Omega.LinearCombo) (v : Lean.Omega.Coeffs),
+  (l₁ - l₂).eval v = l₁.eval v - l₂.eval v
+Lean.Omega.combo_sat' : ∀ (s t : Lean.Omega.Constraint) (a : ℤ) (x : Lean.Omega.Coeffs) (b : ℤ)
+  (y v : Lean.Omega.Coeffs),
+  s.sat' x v = true →
+    t.sat' y v = true → (Lean.Omega.Constraint.combo a s b t).sat' (Lean.Omega.Coeffs.combo a x b y) v = true
+@Lean.Omega.tidy_sat : ∀ {s : Lean.Omega.Constraint} {x v : Lean.Omega.Coeffs},
+  s.sat' x v = true → (Lean.Omega.tidyConstraint s x).sat' (Lean.Omega.tidyCoeffs s x) v = true
+List : Type u_1 → Type u_1
+@List.append_eq_nil_iff._simp_1 : ∀ {α : Type u_1} {p q : List α}, (p ++ q = []) = (p = [] ∧ q = [])
+@List.cons : {α : Type u_1} → α → List α → List α
+@List.cons_ne_self._simp_1 : ∀ {α : Type u_1} (a : α) (l : List α), (a :: l = l) = False
+@List.decidableBAll : {α : Type u_1} → (p : α → Prop) → [DecidablePred p] → (l : List α) → Decidable (∀ x ∈ l, p x)
+@List.flatMap : {α : Type u_1} → {β : Type u_2} → (α → List β) → List α → List β
+@List.flatMap_cons : ∀ {α : Type u_1} {β : Type u_2} {x : α} {xs : List α} {f : α → List β},
+  List.flatMap f (x :: xs) = f x ++ List.flatMap f xs
+@List.flatMap_def : ∀ {α : Type u_1} {β : Type u_2} {l : List α} {f : α → List β},
+  List.flatMap f l = (List.map f l).flatten
+@List.flatMap_nil : ∀ {α : Type u_1} {β : Type u_2} {f : α → List β}, List.flatMap f [] = []
+@List.flatten : {α : Type u_1} → List (List α) → List α
+@List.foldl : {α : Type u_1} → {β : Type u_2} → (α → β → α) → α → List β → α
+@List.foldl_append : ∀ {α : Type u_1} {β : Type u_2} {f : β → α → β} {b : β} {l l' : List α},
+  List.foldl f b (l ++ l') = List.foldl f (List.foldl f b l) l'
+@List.foldl_cons : ∀ {α : Type u_1} {β : Type u_2} {a : α} {l : List α} {f : β → α → β} {b : β},
+  List.foldl f b (a :: l) = List.foldl f (f b a) l
+@List.foldl_nil : ∀ {α : Type u_1} {β : Type u_2} {f : α → β → α} {b : α}, List.foldl f b [] = b
+@List.getElem?_eq_getElem : ∀ {α : Type u_1} {l : List α} {i : ℕ} (h : i < l.length), l[i]? = some l[i]
+@List.getElem?_take_of_lt : ∀ {α : Type u_1} {l : List α} {i j : ℕ}, i < j → (List.take j l)[i]? = l[i]?
+@List.getElem_ofFn : ∀ {n : ℕ} {α : Type u_1} {i : ℕ} {f : Fin n → α} (h : i < (List.ofFn f).length),
+  (List.ofFn f)[i] = f ⟨i, ⋯⟩
+@List.getElem_ofFn._proof_1 : ∀ {n : ℕ} {α : Type u_1} {i : ℕ} {f : Fin n → α}, i < (List.ofFn f).length → i < n
+@List.getLast? : {α : Type u_1} → List α → Option α
+@List.getLast?_append : ∀ {α : Type u_1} {l l' : List α}, (l ++ l').getLast? = l'.getLast?.or l.getLast?
+@List.getLast?_eq_getElem? : ∀ {α : Type u_1} {l : List α}, l.getLast? = l[l.length - 1]?
+@List.getLastD : {α : Type u_1} → List α → α → α
+@List.getLastD_eq_getLast? : ∀ {α : Type u_1} {a : α} {l : List α}, l.getLastD a = l.getLast?.getD a
+@List.instAppend : {α : Type u_1} → Append (List α)
+@List.instGetElem?NatLtLength : {α : Type u_1} → GetElem? (List α) ℕ α fun as i => i < as.length
+@List.instGetElemNatLtLength : {α : Type u_1} → GetElem (List α) ℕ α fun as i => i < as.length
+@List.length : {α : Type u_1} → List α → ℕ
+@List.length_append : ∀ {α : Type u_1} {as bs : List α}, (as ++ bs).length = as.length + bs.length
+@List.length_ofFn : ∀ {n : ℕ} {α : Type u_1} {f : Fin n → α}, (List.ofFn f).length = n
+@List.length_pos_iff : ∀ {α : Type u_1} {l : List α}, 0 < l.length ↔ l ≠ []
+@List.length_take : ∀ {α : Type u_1} {i : ℕ} {l : List α}, (List.take i l).length = min i l.length
+@List.map : {α : Type u_1} → {β : Type u_2} → (α → β) → List α → List β
+@List.map_ofFn : ∀ {α : Type u_1} {β : Type u_2} {n : ℕ} (f : Fin n → α) (g : α → β),
+  List.map g (List.ofFn f) = List.ofFn (g ∘ f)
+@List.ne_nil_of_length_pos : ∀ {α : Type u_1} {l : List α}, 0 < l.length → l ≠ []
+@List.nil : {α : Type u_1} → List α
+@List.ofFn : {α : Type u_1} → {n : ℕ} → (Fin n → α) → List α
+@List.ofFn_mul' : ∀ {α : Type u_1} {m n : ℕ} (f : Fin (m * n) → α),
+  List.ofFn f = (List.ofFn fun i => List.ofFn fun j => f ⟨m * ↑i + ↑j, ⋯⟩).flatten
+@List.ofFn_succ_last : ∀ {α : Type u_1} {n : ℕ} {f : Fin (n + 1) → α},
+  List.ofFn f = (List.ofFn fun i => f i.castSucc) ++ [f (Fin.last n)]
+@List.ofFn_zero : ∀ {α : Type u_1} {f : Fin 0 → α}, List.ofFn f = []
+@List.rec : {α : Type u_2} →
+  {motive : List α → Sort u_1} →
+    motive [] → ((head : α) → (tail : List α) → motive tail → motive (head :: tail)) → (t : List α) → motive t
+@List.reverseRecOn : {α : Type u_1} →
+  {motive : List α → Sort u_2} →
+    (l : List α) → motive [] → ((l : List α) → (a : α) → motive l → motive (l ++ [a])) → motive l
+@List.take : {α : Type u_1} → ℕ → List α → List α
+@List.take_length : ∀ {α : Type u_1} {l : List α}, List.take l.length l = l
+@List.take_succ_eq_append_getElem : ∀ {α : Type u_1} {i : ℕ} {l : List α} (h : i < l.length),
+  List.take (i + 1) l = List.take i l ++ [l[i]]
+Mathlib.Meta.NormNum.isNat_ofNat : ∀ (α : Type u_1) [inst : AddMonoidWithOne α] {a : α} {n : ℕ},
+  ↑n = a → Mathlib.Meta.NormNum.IsNat a n
+@Mathlib.Tactic.Ring.add_congr : ∀ {R : Type u_1} [inst : CommSemiring R] {a a' b b' c : R},
+  a = a' → b = b' → a' + b' = c → a + b = c
+@Mathlib.Tactic.Ring.add_mul : ∀ {R : Type u_1} [inst : CommSemiring R] {a₁ a₂ b c₁ c₂ d : R},
+  a₁ * b = c₁ → a₂ * b = c₂ → c₁ + c₂ = d → (a₁ + a₂) * b = d
+@Mathlib.Tactic.Ring.add_pf_add_gt : ∀ {R : Type u_1} [inst : CommSemiring R] {a b₂ c : R} (b₁ : R),
+  a + b₂ = c → a + (b₁ + b₂) = b₁ + c
+@Mathlib.Tactic.Ring.add_pf_add_lt : ∀ {R : Type u_1} [inst : CommSemiring R] {a₂ b c : R} (a₁ : R),
+  a₂ + b = c → a₁ + a₂ + b = a₁ + c
+@Mathlib.Tactic.Ring.add_pf_add_zero : ∀ {R : Type u_1} [inst : CommSemiring R] (a : R), a + 0 = a
+@Mathlib.Tactic.Ring.add_pf_zero_add : ∀ {R : Type u_1} [inst : CommSemiring R] (b : R), 0 + b = b
+@Mathlib.Tactic.Ring.atom_pf : ∀ {R : Type u_1} [inst : CommSemiring R] (a : R),
+  a = a ^ Nat.rawCast 1 * Nat.rawCast 1 + 0
+@Mathlib.Tactic.Ring.cast_pos : ∀ {R : Type u_1} [inst : CommSemiring R] {a : R} {n : ℕ},
+  Mathlib.Meta.NormNum.IsNat a n → a = n.rawCast + 0
+Mathlib.Tactic.Ring.instCommSemiringNat : CommSemiring ℕ
+@Mathlib.Tactic.Ring.mul_add : ∀ {R : Type u_1} [inst : CommSemiring R] {a b₁ b₂ c₁ c₂ d : R},
+  a * b₁ = c₁ → a * b₂ = c₂ → c₁ + 0 + c₂ = d → a * (b₁ + b₂) = d
+@Mathlib.Tactic.Ring.mul_congr : ∀ {R : Type u_1} [inst : CommSemiring R] {a a' b b' c : R},
+  a = a' → b = b' → a' * b' = c → a * b = c
+@Mathlib.Tactic.Ring.mul_one : ∀ {R : Type u_1} [inst : CommSemiring R] (a : R), a * Nat.rawCast 1 = a
+@Mathlib.Tactic.Ring.mul_pf_left : ∀ {R : Type u_1} [inst : CommSemiring R] {a₃ b c : R} (a₁ : R) (a₂ : ℕ),
+  a₃ * b = c → a₁ ^ a₂ * a₃ * b = a₁ ^ a₂ * c
+@Mathlib.Tactic.Ring.mul_pf_right : ∀ {R : Type u_1} [inst : CommSemiring R] {a b₃ c : R} (b₁ : R) (b₂ : ℕ),
+  a * b₃ = c → a * (b₁ ^ b₂ * b₃) = b₁ ^ b₂ * c
+@Mathlib.Tactic.Ring.mul_zero : ∀ {R : Type u_1} [inst : CommSemiring R] (a : R), a * 0 = 0
+@Mathlib.Tactic.Ring.of_eq : ∀ {α : Sort u_1} {a b c : α}, a = c → b = c → a = b
+@Mathlib.Tactic.Ring.zero_mul : ∀ {R : Type u_1} [inst : CommSemiring R] (b : R), 0 * b = 0
+@Membership.mem : {α : outParam (Type u_1)} → {γ : Type u_2} → [self : Membership α γ] → γ → α → Prop
+@min : {α : Type u_1} → [self : Min α] → α → α → α
+@Monoid.toNatPow : {M : Type u_1} → [Monoid M] → Pow M ℕ
+@MonoidWithZero.toMonoid : {M₀ : Type u_1} → [self : MonoidWithZero M₀] → Monoid M₀
+@MulZeroClass.toZero : {M₀ : Type u_1} → [self : MulZeroClass M₀] → Zero M₀
+ℕ : Type
+@Nat.add_eq_zero._simp_1 : ∀ {m n : ℕ}, (m + n = 0) = (m = 0 ∧ n = 0)
+@Nat.add_lt_add_left : ∀ {n m : ℕ}, n < m → ∀ (k : ℕ), k + n < k + m
+Nat.add_mod : ∀ (a b n : ℕ), (a + b) % n = (a % n + b % n) % n
+Nat.add_sub_cancel : ∀ (n m : ℕ), n + m - m = n
+@Nat.cast : {R : Type u_1} → [NatCast R] → ℕ → R
+Nat.decLe : (n m : ℕ) → Decidable (n ≤ m)
+Nat.decLt : (n m : ℕ) → Decidable (n < m)
+@Nat.div_eq_of_lt : ∀ {a b : ℕ}, a < b → a / b = 0
+@Nat.div_lt_iff_lt_mul : ∀ {k x y : ℕ}, 0 < k → (x / k < y ↔ x < y * k)
+Nat.instAddMonoid : AddMonoid ℕ
+Nat.instAddMonoidWithOne : AddMonoidWithOne ℕ
+Nat.instCommSemiring : CommSemiring ℕ
+Nat.instDiv : Div ℕ
+Nat.instMod : Mod ℕ
+Nat.instMulZeroClass : MulZeroClass ℕ
+@Nat.instNeZeroSucc : ∀ {n : ℕ}, NeZero (n + 1)
+Nat.instOne : One ℕ
+Nat.instPreorder : Preorder ℕ
+Nat.instTransLtLe : Trans (fun x1 x2 => x1 < x2) (fun x1 x2 => x1 ≤ x2) fun x1 x2 => x1 < x2
+@Nat.le_of_not_lt : ∀ {a b : ℕ}, ¬a < b → b ≤ a
+Nat.le_refl : ∀ (n : ℕ), n ≤ n
+@Nat.lt_of_not_le : ∀ {a b : ℕ}, ¬a ≤ b → b < a
+@Nat.lt_or_gt_of_ne : ∀ {a b : ℕ}, a ≠ b → a < b ∨ a > b
+@Nat.min_eq_left : ∀ {a b : ℕ}, a ≤ b → min a b = a
+Nat.mod_add_div : ∀ (m k : ℕ), m % k + k * (m / k) = m
+@Nat.mod_eq_of_lt : ∀ {a b : ℕ}, a < b → a % b = a
+Nat.mod_lt : ∀ (x : ℕ) {y : ℕ}, 0 < y → x % y < y
+Nat.mod_self : ∀ (n : ℕ), n % n = 0
+Nat.mul_add : ∀ (n m k : ℕ), n * (m + k) = n * m + n * k
+@Nat.mul_add_div : ∀ {m : ℕ}, m > 0 → ∀ (x y : ℕ), (m * x + y) / m = x + y / m
+Nat.mul_add_mod : ∀ (m x y : ℕ), (m * x + y) % m = y % m
+Nat.mul_comm : ∀ (n m : ℕ), n * m = m * n
+@Nat.mul_le_mul_left : ∀ {n m : ℕ} (k : ℕ), n ≤ m → k * n ≤ k * m
+@Nat.mul_lt_mul_left : ∀ {a b c : ℕ}, 0 < a → (a * b < a * c ↔ b < c)
+@Nat.mul_lt_mul_of_pos_left : ∀ {n m k : ℕ}, n < m → k > 0 → k * n < k * m
+Nat.mul_mod_right : ∀ (m n : ℕ), m * n % m = 0
+Nat.mul_one : ∀ (n : ℕ), n * 1 = n
+@Nat.mul_pos : ∀ {n m : ℕ}, 0 < n → 0 < m → 0 < n * m
+Nat.mul_sub_div : ∀ (x n p : ℕ), x < n * p → (n * p - (x + 1)) / n = p - (x / n + 1)
+Nat.mul_zero : ∀ (n : ℕ), n * 0 = 0
+Nat.not_lt_zero : ∀ (n : ℕ), ¬n < 0
+@Nat.rawCast : {α : Type u_1} → [AddMonoidWithOne α] → ℕ → α
+@Nat.recAux : {motive : ℕ → Sort u_1} → motive 0 → ((n : ℕ) → motive n → motive (n + 1)) → (t : ℕ) → motive t
+Nat.zero_add : ∀ (n : ℕ), 0 + n = n
+Nat.zero_div : ∀ (b : ℕ), 0 / b = 0
+Nat.zero_le : ∀ (n : ℕ), 0 ≤ n
+@Ne : {α : Sort u_1} → α → α → Prop
+@NeZero : {R : Type u_1} → [Zero R] → R → Prop
+@Neg.neg : {α : Type u_1} → [self : Neg α] → α → α
+@NegZeroClass.toZero : {G : Type u_1} → [self : NegZeroClass G] → Zero G
+@NonAssocSemiring.toAddCommMonoidWithOne : {α : Type u_1} → [self : NonAssocSemiring α] → AddCommMonoidWithOne α
+@NonAssocSemiring.toNonUnitalNonAssocSemiring : {α : Type u_1} →
+  [self : NonAssocSemiring α] → NonUnitalNonAssocSemiring α
+@NonUnitalNonAssocSemiring.toDistrib : {α : Type u_1} → [self : NonUnitalNonAssocSemiring α] → Distrib α
+@NonUnitalNonAssocSemiring.toMulZeroClass : {α : Type u_1} → [self : NonUnitalNonAssocSemiring α] → MulZeroClass α
+Nonempty : Sort u_1 → Prop
+@Nonempty.intro : ∀ {α : Sort u_1} (val : α), Nonempty α
+Not : Prop → Prop
+@OfNat.ofNat : {α : Type u_1} → (x : ℕ) → [self : OfNat α x] → α
+@One.toOfNat1 : {α : Type u_1} → [One α] → OfNat α 1
+Option : Type u_1 → Type u_1
+@Option.casesOn : {α : Type u_2} →
+  {motive : Option α → Sort u_1} → (t : Option α) → motive none → ((val : α) → motive (some val)) → motive t
+@Option.getD : {α : Type u_1} → Option α → α → α
+@Option.getD_some : ∀ {α : Type u_1} {a b : α}, (some a).getD b = a
+@Option.instDecidableEq : {α : Type u_1} → [DecidableEq α] → DecidableEq (Option α)
+@Option.isNone : {α : Type u_1} → Option α → Bool
+@Option.isSome : {α : Type u_1} → Option α → Bool
+@Option.map : {α : Type u_1} → {β : Type u_2} → (α → β) → Option α → Option β
+@Option.map_eq_none_iff : ∀ {α : Type u_1} {x : Option α} {α_1 : Type u_2} {f : α → α_1},
+  Option.map f x = none ↔ x = none
+@none : {α : Type u_1} → Option α
+@Option.or : {α : Type u_1} → Option α → Option α → Option α
+@some : {α : Type u_1} → α → Option α
+@Option.toList : {α : Type u_1} → Option α → List α
+Or : Prop → Prop → Prop
+@Or.elim : ∀ {a b c : Prop}, a ∨ b → (a → c) → (b → c) → c
+@PartialOrder.toPreorder : {α : Type u_1} → [self : PartialOrder α] → Preorder α
+Prod : Type u_1 → Type u_2 → Type (max u_1 u_2)
+@Prod.fst : {α : Type u_1} → {β : Type u_2} → α × β → α
+@Prod.mk : {α : Type u_1} → {β : Type u_2} → α → β → α × β
+@Prod.snd : {α : Type u_1} → {β : Type u_2} → α × β → β
+@SemilatticeInf.toPartialOrder : {α : Type u_1} → [self : SemilatticeInf α] → PartialOrder α
+@Semiring.toMonoidWithZero : {α : Type u_1} → [self : Semiring α] → MonoidWithZero α
+@Semiring.toNonAssocSemiring : {α : Type u_1} → [self : Semiring α] → NonAssocSemiring α
+@SubNegMonoid.toSub : {G : Type u_1} → [self : SubNegMonoid G] → Sub G
+@SubNegZeroMonoid.toNegZeroClass : {G : Type u_1} → [self : SubNegZeroMonoid G] → NegZeroClass G
+@SubNegZeroMonoid.toSubNegMonoid : {G : Type u_1} → [self : SubNegZeroMonoid G] → SubNegMonoid G
+@SubtractionCommMonoid.toSubtractionMonoid : {G : Type u_1} → [self : SubtractionCommMonoid G] → SubtractionMonoid G
+@SubtractionMonoid.toSubNegZeroMonoid : {α : Type u_1} → [SubtractionMonoid α] → SubNegZeroMonoid α
+@Trans.trans : {α : Sort u_4} →
+  {β : Sort u_5} →
+    {γ : Sort u_6} →
+      {r : α → β → Sort u_1} →
+        {s : β → γ → Sort u_2} →
+          {t : outParam (α → γ → Sort u_3)} → [self : Trans r s t] → {a : α} → {b : β} → {c : γ} → r a b → s b c → t a c
+True : Prop
+Action : ℕ → Type u_1 → Type u_2 → Type (max u_1 u_2)
+@Action.apply : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} → Action k Symbol State → Cfg k Symbol State input → Cfg k Symbol State input
+@Action.output : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → Action k Symbol State → Option Symbol
+@Action.state : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → Action k Symbol State → Option State
+Cfg : ℕ → (Symbol : Type u_1) → Type u_2 → List Symbol → Type (max u_1 u_2)
+@Cfg.ext : ∀ {k : ℕ} {Symbol : Type u_1} {State : Type u_2} {input : List Symbol} {x y : Cfg k Symbol State input},
+  x.state = y.state →
+    x.inputPos = y.inputPos → x.workTapes = y.workTapes → x.workTapePos = y.workTapePos → x.output = y.output → x = y
+@Cfg.init : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → State → (input : List Symbol) → Cfg k Symbol State input
+@Cfg.inputPos : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin (input.length + 2)
+@Cfg.inputSymbol : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Option Symbol
+@Cfg.mapState : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      {State' : Type u_3} →
+        {input : List Symbol} → (State → State') → Cfg k Symbol State input → Cfg k Symbol State' input
+@Cfg.mk : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      {input : List Symbol} →
+        Option State →
+          Fin (input.length + 2) → (Fin k → ℤ → Option Symbol) → (Fin k → ℤ) → List Symbol → Cfg k Symbol State input
+@Cfg.output : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → List Symbol
+@Cfg.state : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Option State
+@Cfg.workTapePos : {k : ℕ} →
+  {Symbol : Type u_1} → {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin k → ℤ
+@Cfg.workTapeSymbols : {k : ℕ} →
+  {State : Type u_1} → {Symbol : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin k → Option Symbol
+@Cfg.workTapes : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} → {input : List Symbol} → Cfg k Symbol State input → Fin k → ℤ → Option Symbol
+CodeNDTM.mk : (numStates : ℕ) → NDTM 2 Bool (Fin (numStates + 1)) → CodeNDTM
+FinNDTM : Type → Type 1
+@FinNDTM.State : {Symbol : Type} → FinNDTM Symbol → Type
+@FinNDTM.k : {Symbol : Type} → FinNDTM Symbol → ℕ
+@FinNDTM.tm : {Symbol : Type} → (self : FinNDTM Symbol) → NDTM self.k Symbol self.State
+@FinTM.bufferTape : {Symbol : Type u_1} → List Symbol → ℤ → Option Symbol
+MultiTapeTM : ℕ → Type u_1 → Type u_2 → Type (max u_1 u_2)
+@MultiTapeTM.initCfg : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} → {tm : MultiTapeTM k Symbol State} → (input : List Symbol) → Cfg k Symbol State input
+@MultiTapeTM.q₀ : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → MultiTapeTM k Symbol State → State
+@MultiTapeTM.runFrom : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : MultiTapeTM k Symbol State} → Cfg k Symbol State input → ℕ → Cfg k Symbol State input
+NDTM : ℕ → Type u_1 → Type u_2 → Type (max u_1 u_2)
+@NDTM.initCfg : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} → {tm : NDTM k Symbol State} → (input : List Symbol) → Cfg k Symbol State input
+@NDTM.q₀ : {k : ℕ} → {Symbol : Type u_1} → {State : Type u_2} → NDTM k Symbol State → State
+@NDTM.runWith : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} →
+        {tm : NDTM k Symbol State} → List Bool → Cfg k Symbol State input → Cfg k Symbol State input
+@NDTM.stepWith : {k : ℕ} →
+  {State : Type u_1} →
+    {Symbol : Type u_2} →
+      {input : List Symbol} → {tm : NDTM k Symbol State} → Bool → Cfg k Symbol State input → Cfg k Symbol State input
+@NDTM.tr : {k : ℕ} →
+  {Symbol : Type u_1} →
+    {State : Type u_2} →
+      NDTM k Symbol State → Bool → State → Option Symbol → (Fin k → Option Symbol) → Action k Symbol State
+@ScanPhase.done : {A : Type} → A → ScanPhase A
+@ScanPhase.fwd : {A : Type} → A → ScanPhase A
+@instInhabitedCfg.default._proof_1 : ∀ {a : Type u_1} {a_1 : List a}, NeZero (a_1.length + 2)
+@scanResult : {A : Type u_1} → {Γ : Type u_2} → (A → Γ → A × Γ) → (A → Γ → A × Γ) → A → List Γ → A × List Γ
+streamStartCfg._proof_1 : ∀ (z : List Bool), NeZero (z.length + 2)
+Unit : Type
+() : Unit
+@Zero.ofOfNat0 : {α : Type u_1} → [OfNat α 0] → Zero α
+@Zero.toOfNat0 : {α : Type u_1} → [Zero α] → OfNat α 0
+@absurd : {a : Prop} → {b : Sort u_1} → a → ¬a → b
+and_false : ∀ (p : Prop), (p ∧ False) = False
+and_self : ∀ (p : Prop), (p ∧ p) = p
+@congr : ∀ {α : Sort u_1} {β : Sort u_2} {f₁ f₂ : α → β} {a₁ a₂ : α}, f₁ = f₂ → a₁ = a₂ → f₁ a₁ = f₂ a₂
+@congrArg : ∀ {α : Sort u_1} {β : Sort u_2} {a₁ a₂ : α} (f : α → β), a₁ = a₂ → f a₁ = f a₂
+@congrFun : ∀ {α : Sort u_1} {β : α → Sort u_2} {f g : (x : α) → β x}, f = g → ∀ (a : α), f a = g a
+@decide_eq_false : ∀ {p : Prop} [inst : Decidable p], ¬p → decide p = false
+@decide_eq_true : ∀ {p : Prop} [inst : Decidable p], p → decide p = true
+decide_false : ∀ (h : Decidable False), decide False = false
+decide_true : ∀ (h : Decidable True), decide True = true
+@dif_neg : ∀ {c : Prop} {h : Decidable c} (hnc : ¬c) {α : Sort u_1} {t : c → α} {e : ¬c → α}, dite c t e = e hnc
+@dif_pos : ∀ {c : Prop} {h : Decidable c} (hc : c) {α : Sort u_1} {t : c → α} {e : ¬c → α}, dite c t e = t hc
+@dite : {α : Sort u_1} → (c : Prop) → [h : Decidable c] → (c → α) → (¬c → α) → α
+@dite_congr : ∀ {b c : Prop} {α : Sort u_1} {x : Decidable b} [inst : Decidable c] {x_1 : b → α} {u : c → α}
+  {y : ¬b → α} {v : ¬c → α} (h₁ : b = c), (∀ (h : c), x_1 ⋯ = u h) → (∀ (h : ¬c), y ⋯ = v h) → dite b x_1 y = dite c u v
+@dite_true : ∀ {α : Sort u_1} {t : True → α} {e : ¬True → α}, dite True t e = t True.intro
+@eq_false : ∀ {p : Prop}, ¬p → p = False
+@eq_self : ∀ {α : Sort u_1} (a : α), (a = a) = True
+false_and : ∀ (p : Prop), (False ∧ p) = False
+@finCongr : {n m : ℕ} → n = m → Fin n ≃ Fin m
+@funext : ∀ {α : Sort u_1} {β : α → Sort u_2} {f g : (x : α) → β x}, (∀ (x : α), f x = g x) → f = g
+@id : {α : Sort u_1} → α → α
+@if_neg : ∀ {c : Prop} {h : Decidable c}, ¬c → ∀ {α : Sort u_1} {t e : α}, (if c then t else e) = e
+@if_pos : ∀ {c : Prop} {h : Decidable c}, c → ∀ {α : Sort u_1} {t e : α}, (if c then t else e) = t
+iff_self : ∀ (p : Prop), (p ↔ p) = True
+instAddNat : Add ℕ
+@instDecidableAnd : {p q : Prop} → [dp : Decidable p] → [dq : Decidable q] → Decidable (p ∧ q)
+instDecidableEqBool : DecidableEq Bool
+instDecidableEqFin : (n : ℕ) → DecidableEq (Fin n)
+instDecidableEqNat : DecidableEq ℕ
+instDecidableFalse : Decidable False
+@instDecidableNot : {p : Prop} → [dp : Decidable p] → Decidable ¬p
+@instDecidableOr : {p q : Prop} → [dp : Decidable p] → [dq : Decidable q] → Decidable (p ∨ q)
+instDecidableTrue : Decidable True
+@instHAdd : {α : Type u_1} → [Add α] → HAdd α α α
+@instHAppendOfAppend : {α : Type u_1} → [Append α] → HAppend α α α
+@instHDiv : {α : Type u_1} → [Div α] → HDiv α α α
+@instHMod : {α : Type u_1} → [Mod α] → HMod α α α
+@instHMul : {α : Type u_1} → [Mul α] → HMul α α α
+@instHPow : {α : Type u_1} → {β : Type u_2} → [Pow α β] → HPow α β α
+@instHSub : {α : Type u_1} → [Sub α] → HSub α α α
+instLENat : LE ℕ
+instLTNat : LT ℕ
+instLatticeInt : Lattice ℤ
+instMinNat : Min ℕ
+instMulNat : Mul ℕ
+instNatCastInt : NatCast ℤ
+@instNeZeroNatHAdd_1 : ∀ {n m : ℕ} [h : NeZero m], NeZero (n + m)
+@instOfNat : {n : ℕ} → OfNat ℤ n
+instOfNatNat : (n : ℕ) → OfNat ℕ n
+instSubNat : Sub ℕ
+@ite : {α : Sort u_1} → (c : Prop) → [h : Decidable c] → α → α → α
+@le_of_le_of_eq : ∀ {α : Type u_1} {a b c : α} [inst : LE α], a ≤ b → b = c → a ≤ c
+not_false_eq_true : (¬False) = True
+not_true_eq_false : (¬True) = False
+@of_decide_eq_true : ∀ {p : Prop} [inst : Decidable p], decide p = true → p
+@of_eq_true : ∀ {p : Prop}, p = True → p
+@one_ne_zero._simp_1 : ∀ {α : Type u_1} [inst : Zero α] [inst_1 : One α] [NeZero 1], (1 = 0) = False
+@propext : ∀ {a b : Prop}, (a ↔ b) → a = b
+@rfl : ∀ {α : Sort u_1} {a : α}, a = a
+@sub_zero : ∀ {G : Type u_1} [inst : SubNegZeroMonoid G] (a : G), a - 0 = a
+true_and : ∀ (p : Prop), (True ∧ p) = p
+@zero_add : ∀ {M : Type u_1} [inst : AddZeroClass M] (a : M), 0 + a = a
+@List.length_nil : ∀ {α : Type u_1}, [].length = 0
+Nat.zero_mod : ∀ (b : ℕ), 0 % b = 0
+@List.length_singleton : ∀ {α : Type u_1} {a : α}, [a].length = 1
+Fin.val_zero : ∀ (n : ℕ) [inst : NeZero n], ↑0 = 0
+@Fin.coe_castSucc : ∀ {n : ℕ} (i : Fin n), ↑i.castSucc = ↑i
+Fin.val_last : ∀ (n : ℕ), ↑(Fin.last n) = n
+Nat.add_zero : ∀ (n : ℕ), n + 0 = n
+@Fin.cases_zero : ∀ {n : ℕ} {motive : Fin (n + 1) → Sort u_1} {zero : motive 0} {succ : (i : Fin n) → motive i.succ},
+  Fin.cases zero succ 0 = zero
+@Fin.cases_succ : ∀ {n : ℕ} {motive : Fin (n + 1) → Sort u_1} {zero : motive 0} {succ : (i : Fin n) → motive i.succ}
+  (i : Fin n), Fin.cases zero succ i.succ = succ i
+@List.take_zero : ∀ {α : Type u_1} {l : List α}, List.take 0 l = []
+@instDecidableEqScanPhase : {A : Type} → [DecidableEq A] → DecidableEq (ScanPhase A)
+@instFintypeScanPhase : {A : Type} → [Fintype A] → Fintype (ScanPhase A)
+SeekPhase : Type
+SweepPhase : Type
+@FinTM.bufferTape_nil : ∀ {Symbol : Type u_1}, FinTM.bufferTape [] = fun x => none
+instDecidableEqSeekPhase : DecidableEq SeekPhase
+instFintypeSeekPhase : Fintype SeekPhase
+instDecidableEqSweepPhase : DecidableEq SweepPhase
+instFintypeSweepPhase : Fintype SweepPhase
+@moveInputPos : {n : ℕ} → Fin (n + 2) → SignType → Fin (n + 2)

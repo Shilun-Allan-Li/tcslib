@@ -1,0 +1,10 @@
+
+open NFAudit in
+/-- Every local constant that uses `sorryAx` directly. -/
+elab "#nf_sorry_users" : command => do
+  let env ← getEnv
+  let mut out : Array String := #[]
+  for (n, ci) in env.constants.map₂.toList do
+    if ci.getUsedConstantsAsSet.contains ``sorryAx then out := out.push s!"{pub n}"
+  out := out.qsort (· < ·)
+  logInfo m!"DIRECT sorryAx USERS {out.size}: {out}"

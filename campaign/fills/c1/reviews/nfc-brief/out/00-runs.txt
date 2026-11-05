@@ -1,0 +1,16 @@
+Every elaboration of this review: tools/leanelab.sh <wt> oleans-leqc3 <file>, one at a time,
+worktree reviews/nfc-brief/wt (detached at 5241eb8257bdeb5b5c274145575749dd186ec65f).
+
+| # | File (worktree-relative) | What | Exit | Output | Compared with the pre-ship |
+|---|---|---|---|---|---|
+| 1 | TCSlib/Complexity/ClassNP/NDNormalForm.lean | the module at the base | 0 | out/01-module-elab.out (2.8 s, 1.6 GB) | identical to module-elab.out |
+| 2 | rvprobe/NFContRoute.lean | the module + NFContRouteTail | 0 | out/02-route.out (3.3 s) | identical to route.out after rvprobe→NFProbe (out/02-route.normalized.out) |
+| 3 | rvprobe/NFContSealControl_unsealed.lean | 10 delta controls, unsealed | 0 | out/03-ctl-unsealed.out | identical (10 PASS) |
+| 4 | rvprobe/NFContSealControl_sealed.lean | 10 delta controls, sealed | 0 | out/04-ctl-sealed.out | identical (10 FAIL) |
+| 5 | rvprobe/NFContImportProbe.lean | 588 #check | 0 | out/05-import.out | identical after path normalization; 0 errors, 2 deprecation warnings |
+| 6 | rvprobe/RVClear.lean | route + the review's rv_bClear and instance-name probe, 10-definition seal | 0 | out/09-rv-clear.out | (review probe) |
+| 7 | rvprobe/RVClearMax.lean | the same, both seals replaced by the 223-definition NFSealDefs.txt | 0 | out/11-rv-clear-maxseal.out | (review probe) |
+
+One earlier attempt at #6 failed on the probe's own syntax (a structure instance's field
+indentation, then two follow-on errors) and was fixed before the run recorded in out/09; no other
+run failed.

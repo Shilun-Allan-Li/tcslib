@@ -386,28 +386,20 @@ theorem polyTimeComputable_bplTest : PolyTimeComputable (fun x => [bplTest N c B
 /-- The number of codes is polynomial: with `e = codeK N · (c + 1)`, the codes at radius
 `c (|bits n| + 1)` are below `8^e (n + 1)^e`.
 
-**Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` and `2^m ≤ 2(n + 1)`
-(`Nat.lt_size`), so the exponent is at most `e (m + 2)` and
-`2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
+**Proof sketch.** With `m = |bits n|`: `logSpace n ≤ m + 1` (`Complexity.logSpace_le_size_succ`)
+and `2^m ≤ 2(n + 1)` (`Complexity.LogProg.two_pow_bits_le`), so the exponent is at most
+`e (m + 2)` and `2^{e(m+2)} = (4 · 2^m)^e ≤ (8(n + 1))^e`. -/
 theorem two_pow_codes_le (n : ℕ) :
     2 ^ (codeK N * (c * ((Nat.bits n).length + 1) + logSpace n + 1)) ≤
       8 ^ (codeK N * (c + 1)) * (n + 1) ^ (codeK N * (c + 1)) := by
   set m := (Nat.bits n).length
   have hlog : logSpace n ≤ m + 1 := by
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp [logSpace]
-    · have : Nat.log 2 n < m := by
-        rw [show m = n.size from Nat.size_eq_bits_len n]
-        exact Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn.ne')
-      simp only [logSpace]; omega
+    have := logSpace_le_size_succ n
+    rwa [← Nat.size_eq_bits_len] at this
   have hpow : 2 ^ m ≤ 2 * (n + 1) := by
     rcases Nat.eq_zero_or_pos n with rfl | hn
     · simp [m]
-    · have hm : m = n.size := Nat.size_eq_bits_len n
-      have hpos : 0 < m := by rw [hm]; exact Nat.size_pos.mpr hn
-      have : 2 ^ (m - 1) ≤ n := by rw [hm] at hpos ⊢; exact Nat.lt_size.mp (by omega)
-      calc 2 ^ m = 2 * 2 ^ (m - 1) := by rw [← pow_succ']; congr 1; omega
-        _ ≤ 2 * (n + 1) := by omega
+    · exact (Complexity.LogProg.two_pow_bits_le n hn).trans (by omega)
   set e := codeK N * (c + 1)
   calc 2 ^ (codeK N * (c * (m + 1) + logSpace n + 1)) ≤ 2 ^ (e * (m + 2)) := by
         refine Nat.pow_le_pow_right (by norm_num) ?_
@@ -444,12 +436,8 @@ theorem BPL_subset_P : BPL ⊆ P := by
     set V := 8 ^ e * (x.length + 1) ^ e
     have hs : c * logSpace x.length ≤ s := by
       refine Nat.mul_le_mul_left _ ?_
-      rcases Nat.eq_zero_or_pos x.length with h0 | hn
-      · simp [h0, logSpace]
-      · have : Nat.log 2 x.length < (Nat.bits x.length).length := by
-          rw [Nat.size_eq_bits_len]
-          exact Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn.ne')
-        simp only [logSpace]; omega
+      have := logSpace_le_size_succ x.length
+      rwa [← Nat.size_eq_bits_len] at this
     have hV := two_pow_codes_le N c x.length
     have hHV : N.tm.HaltsWithin x V := haltsWithin_of_codes hUS hs hV hT
     have hdp := dpVal_init hUS hs hV hT
