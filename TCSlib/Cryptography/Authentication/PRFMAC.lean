@@ -89,9 +89,11 @@ noncomputable def prfMAC (F : ∀ n, (Fin n → Bool) → (Fin n → Bool) → (
         (pairEncode (List.ofFn rg) (List.ofFn m)) rt = List.ofFn (F n rg m) := by
       rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
       simp [prfTagFun, NUPPT.inArg, NUPPT.advInput, hFE]
+      rfl
     simp only [PolyExpr.eval_var] at m ⊢
     rw [htag, padFin_ofFn]
     simp [prfVerFun, atParam, hFE]
+    rfl
 
 /-- **Theorem 135.4: a PRF gives a secure MAC** [PS10, Theorem 135.4]: if `F` is a pseudorandom
 function family, the PRF MAC is secure.
