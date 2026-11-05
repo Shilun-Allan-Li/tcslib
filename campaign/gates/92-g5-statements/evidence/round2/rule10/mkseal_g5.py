@@ -41,7 +41,7 @@ union = sorted(set(AR + EN + C2 + TT + UT))
 hdr = (pathlib.Path(__file__).parent / 'ctl_header.lean.part.txt').read_text()
 doc = f"""/-
 Seal controls for G5's statement PR's rule-10 checks: a delta goal (`#ctl_rfl`) and an equation
-goal (`#ctl_eqn`) for each of the {len(union)} definitions sealed in the three sealed copies (the
+goal (`#ctl_eqn`) for each of the {len(union)} definitions sealed in the five sealed copies (the
 union). Expected: unsealed, every control passes except recursive definitions' delta goals;
 sealed, every control fails. A probe record, not library code.
 -/

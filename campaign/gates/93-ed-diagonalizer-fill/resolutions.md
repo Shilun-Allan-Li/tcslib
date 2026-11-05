@@ -66,3 +66,15 @@ Checks at the fix:
 `7b82b58654eb9ed1edb625c5fc2896b2f6a192b3222b561c33341f3472d2ba96` (27 sections), the records at `50809827`.
 **Dispatched (user, 2026-11-04);** the folder archived.
 **`replay-led3` passed** (2026-11-04): 3 of 3 at `935245f4`, 0 failed, static-equal (no sorry warning); snapshot `oleans-led3`.
+
+**Round 3** (`pack-r3.md`, head `935245f4`). **Findings** (`findings-r3.md`, verbatim, SHA-256
+`e2e4efda07ebc44f5b48ea1360a1a67bebdfc1f1d6fe327adce9119331c31f91`; received 2026-11-04): **CLOSE, 0 blockers,
+0 majors, 2 minors, 6 notes.** All five replacements accepted.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | `qy_patch_end`'s prefix branch re-derives `FinTM.bufferTape_take`, inside ED-IN. | **True; recorded** in the ledger as an ED-IN member, with BW-1's note that `_take` has no counterpart corrected. It is re-pointed in the dedup window, as the user's by-kind ruling sets out. Census 9 of 342. |
+| 2 | minor | The record said round 3 attaches its replay log; the bundle had only the script. | **True; corrected:** `replay-led3` passed after the bundle was staged (3/3, static-equal), and its log is now in `evidence/round3/merged-tree/`. |
+| 3–8 | note | Integrity; the five replacements; the sweep; ED-IN; the seal. | Agreed. On note 6, two of the three `bufferTape_nat` sites use `simpa`, and the third an explicit `rw`. |
+
+**Gate 93 closes (round 3, CLOSE, 2026-11-04).**

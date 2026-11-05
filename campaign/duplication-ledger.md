@@ -988,6 +988,9 @@ ruled by the user, 2026-11-04):
   members found so far are all removed: `dz_first` (`Segment.time_eq`), `dz_split`'s separator
   (`bufferTape_append_mid`), `dz_split_tape`'s prefix (`bufferTape_take`), `dz_top_run`'s output
   (`runFrom_output_eq_of_halt`), and three natural cells (`bufferTape_nat`).
+  **Further member (gate 93 round 3, finding 1):** `qy_patch_end`'s prefix branch re-derives
+  `FinTM.bufferTape_take` (and so `_take` has a counterpart, against BW-1's note); re-pointed in the
+  dedup window. Census 9 of 342.
 - **Removed in round 2 (gate 93, findings 1–2):** `dz_first` re-proved `Segment.time_eq`, and
   `dz_split`'s separator cell re-proved `FinTM.bufferTape_append_mid`. Both now cite them (#188
   `a64f513d`).

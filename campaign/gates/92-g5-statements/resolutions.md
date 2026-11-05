@@ -22,3 +22,15 @@ the remaining Hennie–Stearns admission is authorized for this statement gate.
 **Round 2 staged (2026-11-04):** `pack-r2.md`, at #189's head `9e96f646`. Bundle SHA-256
 `11256fb77c7abb76f0f4a893801add70741a9946e0a0145e29468dd38426f64d` (39 sections), the records at `de1069da`.
 **Dispatched (user, 2026-11-04);** the folder archived. `replay-lg5b` running (user).
+
+**Round 2** (`pack-r2.md`, head `9e96f646`). **Findings** (`findings-r2.md`, verbatim, SHA-256
+`d69c72954fec231b885c3f6aa44a116cea41fc34d0890c54994213a7445721ac`; received 2026-11-04): **CLOSE, 0 blockers,
+0 majors, 2 minors, 5 notes.** Round 1's findings 1–4 are resolved.
+
+| # | Severity | Finding | Resolution |
+|---|---|---|---|
+| 1 | minor | The round-2 replay's completion is not established by the bundle. | **True:** `replay-lg5b` was running when the bundle was staged; its result is recorded below when it finishes. |
+| 2 | minor | The seal controls' header says three sealed copies; there are five. | **True; corrected** in `evidence/round2/rule10/mkseal_g5.py` and the two generated headers. |
+| 3–7 | note | Integrity; the fixes; coverage; the records. | Agreed. |
+
+**Gate 92 closes (round 2, CLOSE, 2026-11-04).**
