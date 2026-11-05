@@ -1,0 +1,112 @@
+From f79b48bee45abd32857dd3b8200bd274101c788d Mon Sep 17 00:00:00 2001
+From: Seyoon Ragavan <complexzetaprime@gmail.com>
+Date: Wed, 4 Nov 2026 22:17:04 -0800
+Subject: [PATCH 12/12] NDNormalForm: cite the configuration facts
+
+nf_inputSymbol_congr is removed and its uses cite Cfg.inputSymbol_congr; nf_retag,
+nf_tagged_ne_park and nf_stream_length keep their statements, with bodies citing
+Cfg.mapState_const_eq_mapState_sigma, Cfg.mapState_sigma_state_ne and length_flatMap_uniform.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 45 ++++-----------------
+ 1 file changed, 8 insertions(+), 37 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index 5723152d..c528e375 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -7,6 +7,7 @@ import TCSlib.Complexity.ClassNP.NTIME
+ import TCSlib.Complexity.TuringMachine.NDCodes
+ import TCSlib.Complexity.TuringMachine.Build.NDHost
+ import TCSlib.Complexity.TuringMachine.Build.StepBlock
++import TCSlib.Complexity.TuringMachine.CfgFacts
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -992,26 +993,14 @@ private theorem nf_retag {N : FinNDTM Bool} {SL S : Type} {x : List Bool}
+     c.mapState (fun _ => (⟨i, q⟩ : Σ i, nf_St N SL i)) =
+       ({ state := some q, inputPos := c.inputPos, workTapes := c.workTapes,
+           workTapePos := c.workTapePos, output := c.output } : Cfg 2 Bool (nf_St N SL i) x).mapState
+-        (Sigma.mk i) := by
+-  apply Cfg.ext
+-  · rw [Cfg.mapState_state, Cfg.mapState_state]
+-    obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp hc
+-    rw [hs]; rfl
+-  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+-  · funext j p; rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+-  · funext j; rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+-  · rw [Cfg.mapState_output, Cfg.mapState_output]
++        (Sigma.mk i) :=
++  Cfg.mapState_const_eq_mapState_sigma c _ hc rfl rfl rfl rfl rfl
+ 
+ /-- A configuration tagged by a phase other than the park is at no verdict. -/
+ private theorem nf_tagged_ne_park {N : FinNDTM Bool} {SL : Type} {x : List Bool}
+     {i : nf_Ph N.k} (hi : i ≠ .park) (c : Cfg 2 Bool (nf_St N SL i) x) (b : Bool) :
+-    (c.mapState (Sigma.mk i)).state ≠ some ⟨.park, b⟩ := by
+-  rw [Cfg.mapState_state]
+-  cases hs : c.state with
+-  | none => exact Option.noConfusion
+-  | some q =>
+-    intro h
+-    exact hi (Sigma.mk.inj_iff.mp (Option.some.inj h)).1
++    (c.mapState (Sigma.mk i)).state ≠ some ⟨.park, b⟩ :=
++  Cfg.mapState_sigma_state_ne i _ hi c
+ 
+ /-- The redirect after the return of tape `0`: the next tape's replay or the verdict after the
+ input, the clear of tape `1` after a work tape. -/
+@@ -1321,20 +1310,6 @@ private theorem nf_tag {N : FinNDTM Bool} {SL : Type} (x s : List Bool) (i : nf_
+   · funext i; rw [Cfg.mapState_workTapePos, streamStartCfg_workTapePos, streamStartCfg_workTapePos]
+   · rw [Cfg.mapState_output, streamStartCfg_output, streamStartCfg_output]
+ 
+-/-- **The input read depends on the input head only**, across machines with any work tapes and
+-states: a claim checked against the verifier's input head transfers to `N`'s configuration. -/
+-private theorem nf_inputSymbol_congr {k k' : ℕ} {S S' : Type} {x : List Bool}
+-    (c : Cfg k Bool S x) (c' : Cfg k' Bool S' x) (h : c.inputPos.val = c'.inputPos.val) :
+-    c.inputSymbol = c'.inputSymbol := by
+-  by_cases h0 : c.inputPos.val = 0
+-  · have h0' : c'.inputPos = 0 := Fin.ext (by rw [← h]; exact h0)
+-    rw [Cfg.inputSymbol_of_zero (Fin.ext h0), Cfg.inputSymbol_of_zero h0']
+-  · by_cases he : c.inputPos.val = x.length + 1
+-    · rw [Cfg.inputSymbol_of_end he, Cfg.inputSymbol_of_end (by omega)]
+-    · have hlt := c.inputPos.isLt
+-      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) (by omega),
+-        inputSymbolInner (cfg := c') (c.inputPos.val - 1) (by omega) (by omega)]
+-
+ /-- After a record's first `2k + 3` bits the parser is at the last position with the control
+ unchanged; the record's last bit completes the full record array, and the parser's step there
+ resets the parser and applies the completion rule to that record.
+@@ -1501,7 +1476,7 @@ private theorem nf_leaf_record_in (N : FinNDTM Bool) {x : List Bool}
+       state := some (.read σ)
+       workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) }
+     with hc
+-  have hinp : c.inputSymbol = d.inputSymbol := nf_inputSymbol_congr c d rfl
++  have hinp : c.inputSymbol = d.inputSymbol := Cfg.inputSymbol_congr c d rfl
+   refine ⟨fun q hq hdec => ?_, fun hbad => ?_⟩
+   · rw [hrun, step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by
+       simp only [nf_leaf]
+@@ -1697,7 +1672,7 @@ private theorem nf_leaf_run_in (N : FinNDTM Bool) {x : List Bool} :
+   | rec :: rs, d, ctl, c, _, hflag, hst, hc, hip, hA => by
+     obtain ⟨hA0, hA1⟩ := nf_stream_cons N.k rec rs (d.workTapes 0) (d.workTapePos 0) hA
+     obtain ⟨hpre, hpass, hrej⟩ := nf_leaf_record_in N d rec ctl hst hA0
+-    have hinp : d.inputSymbol = c.inputSymbol := nf_inputSymbol_congr d c (by rw [hip])
++    have hinp : d.inputSymbol = c.inputSymbol := Cfg.inputSymbol_congr d c (by rw [hip])
+     have hall := nf_all_cons N c rec rs (fun c rec => nf_ok N c rec 0)
+     obtain ⟨hfl, hflag'⟩ := nf_flags_cons rec rs hflag
+     by_cases hok : nf_ok N c rec 0
+@@ -2357,11 +2332,7 @@ private theorem nf_region (B : ℤ → Option Bool) (S E h : ℤ)
+ /-- A stream of records has `2k + 4` cells per record. -/
+ private theorem nf_stream_length (k : ℕ) (rs : List (Fin (2 * k + 4) → Bool)) :
+     (rs.flatMap List.ofFn).length = (2 * k + 4) * rs.length := by
+-  induction rs with
+-  | nil => rfl
+-  | cons r rs ih =>
+-    rw [List.flatMap_cons, List.length_append, List.length_ofFn, ih, List.length_cons]
+-    ring
++  rw [length_flatMap_uniform rs List.ofFn (fun _ => List.length_ofFn), Nat.mul_comm]
+ 
+ /-- The entry of the verifier's phases for work tape `m`: its replay, or the passing verdict once
+ every work tape has been replayed. -/
+-- 
+2.50.1 (Apple Git-155)
+
