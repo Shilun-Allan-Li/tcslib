@@ -21,3 +21,4 @@ the remaining Hennie–Stearns admission is authorized for this statement gate.
 
 **Round 2 staged (2026-11-04):** `pack-r2.md`, at #189's head `9e96f646`. Bundle SHA-256
 `11256fb77c7abb76f0f4a893801add70741a9946e0a0145e29468dd38426f64d` (39 sections), the records at `de1069da`.
+**Dispatched (user, 2026-11-04);** the folder archived. `replay-lg5b` running (user).
