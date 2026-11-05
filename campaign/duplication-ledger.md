@@ -978,6 +978,13 @@ ruled by the user, 2026-11-04):
   length of a computed function (`dz_out_le`, `|F y| ≤ T |y|`), also inline in `SAT`,
   `Nondeterminism`, `TMSAT` and `Build/Loop`'s private `loop_fuel_width`. **Disposition:** the
   dedup window.
+- **Census, landed (gate 93, finding 4):** 8 of `NTimeDiagonalizer`'s 342 declarations (2.3%),
+  deduplicated: RO-1's one, the five distinct NB-1/BL-1/LS-3 members, `dz_word_lt` and
+  `dz_split_stream`. E1 retires `qy_call_bound`'s BL-1 (iii) step. Row candidates (RC-3) and
+  in-file factorings (QF-1) are not counted as debt.
+- **Removed in round 2 (gate 93, findings 1–2):** `dz_first` re-proved `Segment.time_eq`, and
+  `dz_split`'s separator cell re-proved `FinTM.bufferTape_append_mid`. Both now cite them (#188
+  `a64f513d`).
 
 **NF cont1's delivery, F2: four kinds re-stated** (review
 `campaign/fills/c1/reviews/nf-cont1-fill/`; ruled by the user, 2026-11-04: **publish homes
