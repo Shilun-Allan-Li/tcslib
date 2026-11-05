@@ -1,14 +1,17 @@
 # Gate 03f1: Pass–shelat ch. 2–4, discrete log, its hard-core bit, ElGamal
 
 External statement audit of the asymptotic layer of [PS10] ch. 2–4 on
-`cryptography/pass-shelat-ch2-4`, at the pinned head `a3c5fa8b72e50939822f22364647dc844a3914a0` (the merged head after
-Shilun-Allan-Li/tcslib#192 and #193). Records (the pack, the per-pack evidence, the full replay)
-are at `fed6c2fb9dd35fcceda878ab36f3dc2a34cd3a5c` on `cryptography/pass-shelat-ch2-4`, under
-`briefs/pass-shelat-ch5-8/gates/03-ch2-4/`.
+`cryptography/pass-shelat-ch2-4`, at the pinned head `0c348ff94cacf24d96d99078c9dd9e328530c8d2`: the head of
+Shilun-Allan-Li/tcslib#201 (the gate 03a and 03c repairs), whose Lean files are what the branch holds once #201
+merges. Records (the pack, the per-pack evidence) are at `b13af7af29f82bbaa40d29157bf4c86fa8fc7ec1` on
+`cryptography/pass-shelat-ch2-4`, under `briefs/pass-shelat-ch5-8/gates/03-ch2-4/`. Re-staged
+2026-11-05; first staged at `a3c5fa8b` (the earlier bundle of this folder is superseded).
+
+**Dispatch after #201 merges.**
 
 **Attach two files to the auditor:**
-1. `gate03f1-bundle.md` (this folder): 16 sections, listed in `BUNDLE-FILES.txt`, each verified byte-for-byte
-   against `git show` at its pinned revision. SHA-256 `76cae3ff811fbf87f715037828d11bb095188909ce9a2f2837475a22f93540aa`.
+1. `gate03f1-bundle.md` (this folder): 17 sections, listed in `BUNDLE-FILES.txt`, each verified byte-for-byte
+   against `git show` at its pinned revision. SHA-256 `051bac59bdd0f563bd4ddd8916552f77e30542daa94b51b7e4213b524bf9b534`.
 2. The source, `Pass–Shelat.pdf`, from the root of `cryptography/pass-shelat-ch2-4`
    (SHA-256 `7624556077a7a272ba0b3ddb7cd47b96574fb0b4b4947a25467d1f91bb61bda8`).
 

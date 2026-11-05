@@ -2,10 +2,10 @@
 
 # Gate 03g ([PS10] ch. 2–4, 3-colouring zero knowledge): external statement audit pack
 
-**Status: ready to dispatch** (staged 2026-11-05 at the merged head after #192 and #193; the evidence is under `evidence/g/`).
+**Status: ready to dispatch once [Shilun-Allan-Li/tcslib#201](https://github.com/Shilun-Allan-Li/tcslib/pull/201) merges** (re-staged 2026-11-05 at that PR's head, the gate 03a + 03c repairs; first staged at `a3c5fa8b`; the evidence is under `evidence/g/`).
 
 **What is audited:** the asymptotic layer of [PS10] ch. 2–4 on `cryptography/pass-shelat-ch2-4`, at
-`a3c5fa8b72e50939822f22364647dc844a3914a0`. This pack covers the graph 3-colouring language and its encodings, the commitment-based protocol of §4.7 and its parties, the soundness and efficiency of the repeated protocol, the simulator and its analysis, and the headline zero-knowledge theorem for 3COL behind Thm 124.1.
+`0c348ff94cacf24d96d99078c9dd9e328530c8d2` (the head of #201; its Lean files are what the branch holds once #201 merges). This pack covers the graph 3-colouring language and its encodings, the commitment-based protocol of §4.7 and its parties, the soundness and efficiency of the repeated protocol, the simulator and its analysis, and the headline zero-knowledge theorem for 3COL behind Thm 124.1.
 - **This pack gates fills.** Its files hold **3 `sorry`s**, to be filled after this pack
   closes (user's ruling of 2026-11-05). A statement that cannot be proved as stated, or that is
   weaker than the source, must be found **now**.
@@ -16,6 +16,17 @@
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
 **The source is attached separately:** [PS10], 3rd ed., January 2010 (PDF). Book page = PDF
 page − 12. This pack needs §4.7 (book pp. 124–129).
+
+## Changes since the first staging (repairs of the interface packs; check them, do not re-find them)
+
+The pin moved from `a3c5fa8b` to the head of the gate 03a + 03c repair PR. Changes in or near this pack's files:
+- **G3-3** (gate 03e major 1, merged in #199): proof systems carry ch. 6's efficiency convention.
+  - `InteractiveProof`'s completeness takes a message bound `B` (`Protocol.ProverBounded`, now in `Interaction.lean`), and `EfficientProverProof` has the field `boundedP`.
+  - `Protocol.lean` adds `length_multiCom_le`, `colProver_length_le` and `colProtocol_proverBounded`: the honest provers' messages are polynomially bounded in `|x|`.
+  - `ProtocolProofs.lean` uses `colProtocol_proverBounded` for the bound.
+  - The docstrings that called the parties "PPT strategies" now say "efficient (D8)".
+- **G3-4** (#199): `PerfectZKAbort.statZK` and tied Thm 124.1 forms (pack 03e). Three new `sorryAx` dependencies reach this pack's stubs through those forms.
+- **Gate 03l, major 1:** the axiom attestation below prints every public theorem and lemma of this pack's files, not only `Checks.lean`'s headlines.
 
 ## Brief for the auditor
 
@@ -46,20 +57,25 @@ Check the run-3a repairs in scope instead of re-finding them. Do not give a blan
 
 ## Attestations (maintainer execution claims; evidence under `evidence/` in the bundle)
 
-### Attestation results at `a3c5fa8b72e50939822f22364647dc844a3914a0` (evidence under `evidence/g/`)
+### Attestation results at `0c348ff94cacf24d96d99078c9dd9e328530c8d2` (evidence under `evidence/g/`)
 
-1. **Elaboration** (`replay.log`): the closure of this pack's files, 356 modules, each
+1. **Elaboration** (`replay.log`): the closure of this pack's files, 115 modules, each
    checked alone into a fresh olean tree by `scripts/lean_check_tree.sh`: all pass, 0 errors;
-   25 `sorry` warnings in the closure.
-2. **Axioms** (`axioms.log`): 13 headline prints from `audits/pass-shelat/Checks.lean` for
-   declarations in this pack's files: 7 use only the standard axioms, and
-   6 depend on `sorryAx`.
+   21 `sorry` warnings in the closure.
+2. **Axioms** (`axioms.log`): 258 prints of every public theorem and lemma in this pack's files:
+   252 use only the standard axioms, and 6 depend on `sorryAx`; any other axiom is listed
+   in the log.
 3. **Admissions** (`admissions.txt`): 3 declarations in this pack's files contain `sorry`.
 4. **Lint** (`lint.log`): `scripts/style_lint.py` on this pack's files: 20 findings in 10 files.
 
+The replay is the 416-module replay at `af91d53a` overlaid with the re-check of the 98 modules
+downstream of #201's changes at its head (`evidence-repairs/03ac/replay.log`); each line of
+`replay.log` is the newest check of its module. The closure is smaller than at the first staging
+because 03a's repair narrowed facade imports (`Randomized` → its three files).
+
 Pack-specific notes (as drafted):
 - elaboration (a fresh replay of the closure);
-- the axiom prints of this pack's headlines (`audits/pass-shelat/Checks.lean`);
+- the axiom prints of every public theorem and lemma of this pack's files;
 - admissions: the 3 `sorry`s, listed by declaration;
 - lint.
 
@@ -566,7 +582,8 @@ D4. **Non-uniform PPT** ([PS10, Def 26.8]) in the advice formulation: `advice n`
 
 D5. **Domains are typed at each parameter.** A function family is
     `FunFamily := ⟨inLen outLen : PolyExpr, f n : (Fin (inLen.eval n) → Bool) → (Fin (outLen.eval n) → Bool)⟩`;
-    the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p` (`inLen = var`). An
+    the textbook `f : {0,1}* → {0,1}*` is `FunFamily.ofString f p` (`inLen = var`; exact for
+    length-regular `f`, `ofFn_ofString_f`, otherwise the `false`-padding is lossy). An
     inverter's output is decoded by `decodeFin` as an `inLen n`-bit string and a wrong length is
     a failure (`invProbOpt`, bridged to the concrete `invProb` by `invProbOpt_le_invProb` and
     `invProbOpt_some`). Adversaries receive `1^n` exactly where the text gives it
@@ -1057,6 +1074,7 @@ structure Collection where                      -- [PS10, Def 41.1]; Gen(1^n) = 
   encD : ∀ i, D i → List Bool
   decD : ∀ i, List Bool → Option (D i)
   decD_encD : ∀ i x, decD i (encD i x) = some x
+  encD_decD : ∀ i w x, decD i w = some x → encD i x = w                     -- canonical decoding; gate 03b, G3-1
   f : ∀ i, D i → List Bool
   gen : NUPPT     gen_uniform : gen.Uniform
   sample : NUPPT  sample_uniform : sample.Uniform
@@ -1098,6 +1116,19 @@ the RSA/Rabin/Blum/exponentiation candidates by sorried `*Sampler_spec` stubs;
 `expCollection H G hV` takes the validity bridge and its generator outputs `dlDefaultIndex`
 below `n₀`). Run-3 audit (P3-5): the literal `Inv(1^n, ⟨⟨i, t⟩, y⟩)` form of Def 56.1 (6) was
 not adopted; the Deviation is recorded on `TrapdoorCollection`, `rsaGen` and `blumGen`.
+
+Gate 03b (finding 1, ruling G3-1): the field `encD_decD` (canonical decoding) was added. Without
+it the sampler's and the trapdoor inverter's outputs were pinned only up to a possibly lenient
+decoder, so `eval` and a hard-core evaluator (constrained on encodings) could misbehave on them.
+Every instance discharges it by a decoder lemma (`ofFn_of_decodeFin_eq_some` for
+`FunFamily.toCollection` and the padding of `Collection.glPad`; `expEnc_of_expDec`,
+`encodeDistinctPrimes_of_decode`, `rsaEnc_of_rsaDec`; inline for `rabinCollection` and
+`rabinBlumTrapdoor`). Derived: `Collection.decD_eq_some_iff`, `apply_of_decD`, `eval_of_decD`,
+`sample_eq_encD`, `HardCore.evaluator`, `TrapdoorCollection.inv_eq_encD`, `eval_inv`,
+`Collection.HardCore.nonempty_predEvaluator` and the evaluator-free
+`TrapdoorCollection.OneWay.exists_glPad_singleBitSecure`. The helpers of Thm 42.2
+(`NUPPT.withIndexParam`, `NUPPT.runLenPoly`, `splitCoins`, the marker padding) moved, names
+unchanged, to `Asymptotic/CollectionsHelpers.lean`, which `Collections.lean` imports.
 
 ### 2.11 `TCSlib/Cryptography/Asymptotic/Ensembles.lean`
 
@@ -1472,14 +1503,27 @@ Issues found in this synthesis and resolved here (not raised by the panel):
     uniform (`SampleClose`), hardness on the ideal uniform `x ← D_i` (`uexp` over `Gen`'s coins).
 15. Candidates: `A` receives `1^n` in Assumptions 30.1/52.2/53.1; `Π_n` throughout; `p ≠ q`
     (odd / Blum) in RSA and Rabin; expected time replaced by strict PPT with `2^{-n}` failure.
-16. `WorstCaseOneWayLit` (run-3 audit P3-2): satisfied by every length-shrinking family whose
-    output length does not determine `n` (e.g. the constant family), an artefact of D5's typed
-    inverse; the `1^n` form `WorstCaseOneWay` is the headline.
+16. `WorstCaseOneWayLit` (run-3 audit P3-2; reworded at gate 03b, finding 9): when `outLen` is
+    constant, so that `|f(x)|` does not determine `n`, the literal form can hold for families
+    that are trivially invertible given `1^n` (e.g. the constant family, or `f n b = b ⊕ [n odd]`
+    on one bit), an artefact of D5's typed inverse; the `1^n` form `WorstCaseOneWay` is the
+    headline, and `toParam` applies whenever `outLen` is non-constant (for `PolyExpr`,
+    injective ⇔ non-constant).
 17. `TrapdoorCollection.inv_spec` (run-3 audit P3-5): the inverter receives `⟨t, y⟩` without the
-    index, so RSA's trapdoor is `⟨N, d⟩` (text: `d`) and Rabin's inverter recomputes `N = pq`.
+    index. The classes coincide (gate 03b, finding 6): a text TDP becomes one of this shape with
+    `t' := ⟨i, t⟩` (`Gen'` outputs `⟨i, ⟨i, t⟩⟩`; the trapdoor never reaches the adversary), and
+    this shape is a text TDP whose `Inv` ignores `i`. RSA's trapdoor is `⟨N, d⟩` (text: `d`) and
+    Rabin's inverter recomputes `N = pq`.
 18. `Collection.glPad m henc`, `expCollection H G hV` (run-3 audit P3-1): the encoding-length
     hypothesis resp. the validity bridge are arguments of the definitions; `expGen` outputs the
-    fixed valid instance `dlDefaultIndex` below the instance generator's threshold `n₀`.
+    fixed valid instance `dlDefaultIndex` below the instance generator's threshold `n₀`. Cost of
+    `henc` (gate 03c, finding 3; ruling G3-7c): a non-constant `PolyExpr` is strictly
+    increasing, so an index generated at two parameters forces `m` constant, and no candidate of
+    the library satisfies `henc` as parametrized (`rsaTrapdoor`: `2·max(n, 2)`-bit elements,
+    `rabinBlumTrapdoor`: `2·max(n, 3)`, `expCollection`: `dlDefaultIndex` below `n₀`); Thm 104.4's
+    reading "from trapdoor permutations" (`glPad_hardCore`, `exists_glPad_singleBitSecure`) holds
+    for TDPs whose generated indices encode elements in exactly `m(n)` bits. A per-index form
+    (`|encD_i x| = |encD_i default| ≤ m(n)`) would admit the candidates; not formalized.
 19. Theorem 63.1 (run-3 audit P3-4): `theorem_63_1`, `fUniversal_*` are conditional on an
     encoding scheme with `CanonizerExp c`; no instance proved (`exists_canonizerExp`).
 20. `ddhReal`/`ddhRandom` (run-3 audit P8-1): the DDH exponents `a, b, z` are read from
@@ -1492,6 +1536,16 @@ Issues found in this synthesis and resolved here (not raised by the panel):
 22. `uprob_adaptive_guess`, `uprob_gni_rep_cheat` (run-3 audit P10-1/P10-2): the auxiliary coin
     type (`W`, `ρ`) is assumed nonempty — `uprob` on an empty type is `0`, so the exact `2^{-m}`
     fails for `Empty`; every consumer passes a tape type `Fin k → Bool`.
+23. Thms 35.1, 35.2 and Claim 38.2 (gate 03b, finding 8): the direct products are families at
+    parameter `n` whose adversaries receive `1^n` (the text: `1^{n·m(n)}`, `1^{2n}`;
+    interderivable, so negligibility in `n` and in `n·m(n)` coincide); Claim 38.2 runs
+    `T(n) + 1 = 2n·m(n)·n^c + 1` rounds with Garg's threshold `μ₀/(2m)` (the text: `2nm²p(n)`
+    rounds, threshold `1/(2m²p(n))`), with the margin `(T + 1)·2^{-n}` for the rejection-sampled
+    positions.
+24. `Collection.encD_decD` (gate 03b, finding 1; ruling G3-1): decoders are canonical — a string
+    decodes only if it is the encoding of its value — so the outputs of the sampler and of the
+    trapdoor inverter are encodings ([PS10, Defs 41.1 (2), 56.1 (6)]: "an element of `D_i`",
+    "computes `f_i^{-1}(y)`"); every decoder of the library is canonical.
 
 ---
 
@@ -2844,391 +2898,395 @@ soundness) and `ThreeColoring/Simulator.lean` (Alg-128.7 … Claim-129.d) if so.
 
 ## ===== briefs/pass-shelat-ch5-8/gates/03-ch2-4/evidence/g/replay.log =====
 
-# closure of pack 03g's files at a3c5fa8b72e50939822f22364647dc844a3914a0: 356 modules, extracted from g03-replay.log
-TCSlib/Complexity/CircuitComplexity/Advice rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/Basic rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/CircuitEval rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/CircuitEvalMachine rc=0 22s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/CircuitEvalRun rc=0 18s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/CircuitEvalSpec rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/CircuitSatReductionValid rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/DAGCircuit rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/DAGCircuitSat rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/DAGCircuitSatLang rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/DAGFanin rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/DAGTransform rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/HardWire rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/KarpLipton rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/LayeredCircuit rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/LayeredDAG rc=0 12s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/LayeredPPoly rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/MeyerSigmaEXP rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/PPoly rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/PSubsetPPoly rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/PSubsetPPolyGadget rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableau rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/PSubsetPPolyTableauCorrect rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/PairEncode rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/SizeClasses rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/TreeDAG rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/UHalt rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/UHaltMachine rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/UnaryCode rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/UnaryLanguages rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/Uniform rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/CircuitComplexity/Universal rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/CoNP rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/CounterProgPolyTime rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/EXP rc=0 40s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/ExpPoly rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/NP rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/NTIME rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/Nondeterminism rc=0 43s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PClosure rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PolyTime rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PolyTimeBlockLoop rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PolyTimeBlockMajority rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PolyTimeBlockTests rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PolyTimePairing rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/PolyTimePrefix rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/Reductions rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/SAT rc=0 70s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/TMSAT rc=0 19s errors=0 sorry=0
-TCSlib/Complexity/ClassNP/Transducer rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/AddSub rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Basic rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/DetMod rc=0 2539s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/DetModMath rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Div rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Iterate rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Jacobi rc=0 39s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Loops rc=0 12s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/ModPow rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Mul rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/PrimeFind rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/ClassP/BinaryArith/Words rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/ClassP/DTIME rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/ClassP/P rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/ClassP/TimeConstructible rc=0 6s errors=0 sorry=2
-TCSlib/Complexity/CookLevin/Hardness rc=0 565s errors=0 sorry=0
-TCSlib/Complexity/CookLevin/Snapshot rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Formulas/CNF rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Formulas/CNFEncoding rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/PolyHierarchy/Collapse rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/PolyHierarchy/Defs rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/PolyHierarchy/Levels rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/PolyHierarchy/Normalize rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/PolyHierarchy/Padding rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/Randomized rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Adleman rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/Randomized/AlgCircuit rc=0 14s errors=0 sorry=0
-TCSlib/Complexity/Randomized/AlgCircuitExample rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPLInP rc=0 14s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPLInPCount rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPLInPWords rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPOperator rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPPAmplify rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPPEqP rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPPHard rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BPTIMEThreshold rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BiasedCoin rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/Randomized/BiasedCoinHalting rc=0 38s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Build/IterateFind rc=0 11s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Build/IterateFindHost rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Build/PairSplit rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Build/StateLoop rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Build/StringLoops rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Build/UnaryMul rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Classes rc=0 30s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Closure rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Coins rc=0 16s errors=0 sorry=0
-TCSlib/Complexity/Randomized/DirectedWalk rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ErrorReduction rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ExpectedTime rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Fingerprint rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Inclusions rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Matching rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/Randomized/MatchingMath rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Median rc=0 21s errors=0 sorry=0
-TCSlib/Complexity/Randomized/NPPoly rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/Randomized/NonUniform rc=0 3s errors=0 sorry=1
-TCSlib/Complexity/Randomized/PPT rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/Randomized/PTM rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/Randomized/PTMEquiv rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/PolyExpr rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/PolyTimeModel rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Primality rc=0 11s errors=0 sorry=0
-TCSlib/Complexity/Randomized/PrimalityMath rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Primitives rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/Randomized/QuasiPolyHierarchy rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RPExpected rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomBits rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomWalk rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomWalkCover rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomWalkHitting rc=0 17s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomWalkMixing rc=0 18s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomWalkMixingPad rc=0 18s errors=0 sorry=0
-TCSlib/Complexity/Randomized/RandomWalkPad rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Reductions rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Repetition rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SchwartzZippel rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SipserGacs rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Space rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SpaceAmplify rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SpaceAmplifyPoly rc=0 32s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SpaceAmplifyPolyCode rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SpaceAmplifyPolyMachine rc=0 43s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun rc=0 12s errors=0 sorry=0
-TCSlib/Complexity/Randomized/SpaceAmplifyRun rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPath rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPathLoops rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPathMachine rc=0 56s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPathParse rc=0 26s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPathRL rc=0 22s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPathSearch rc=0 17s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UPathWalk rc=0 42s errors=0 sorry=0
-TCSlib/Complexity/Randomized/UniformSample rc=0 22s errors=0 sorry=0
-TCSlib/Complexity/Randomized/Yap rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZPPEquiv rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZPPHosts rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZPPHostsClasses rc=0 77s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZeroP rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZeroPEval rc=0 14s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZeroPPIT rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZeroPReduce rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/Randomized/ZeroPRun rc=0 43s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Basic rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Bridge rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Checks rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Deciders rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Engine rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Langs rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Layout rc=0 37s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Layout2 rc=0 35s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Machine rc=0 191s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Parse rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Regs rc=0 22s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Run rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Scan rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Step rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/StepDecider rc=0 29s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Valid rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Codec/Word rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ConfigCount rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ConfigGraph rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Constructible rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpBFS/Machine rc=0 29s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpBFS/Main rc=0 56s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpBFS/Radius rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpBFS/Relax rc=0 27s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpBFS/Run rc=0 28s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpBFS/Search rc=0 11s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ExpTime rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/ImplicitPoly rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/InputAccess rc=0 42s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/Path rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathHard rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathHardDecide rc=0 24s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathHardMachine rc=0 75s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRegs rc=0 17s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathHardRun rc=0 27s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk rc=0 22s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathWalk rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkMachine rc=0 40s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PathWalkProof rc=0 26s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/PreimageHost rc=0 16s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/QueryReshape rc=0 154s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Logspace/Reductions rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARM rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMKit rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMLoops rc=0 29s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMProof rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMReach rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMRun rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMSim rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ARMWidth rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Bank rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Bin rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Call rc=0 11s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/CallReturn rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Clean rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/CleanSweep rc=0 12s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Compile rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/DblLang rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Frag rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/FragDec rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Layout rc=0 14s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Lib rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/MARM rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/MARMTime rc=0 14s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARM rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMCompile rc=0 15s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMKit rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMLogspace rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMPSem rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMProb rc=0 369s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMProof rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/NARMRun rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Parse rc=0 11s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Parse2 rc=0 28s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp rc=0 16s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/ParsePlain rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Program rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/Sim rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/Machines/VWord rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/NSPACE rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/SpaceComplexity/SpaceClasses rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TimeHierarchy/ClockLoop rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/TimeHierarchy/ClockMachine rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/TimeHierarchy/CodePrefix rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/TimeHierarchy/Diagonal rc=0 16s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Catalog rc=0 364s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/CfgRecord rc=0 237s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract/Basic rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract/Catalog rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract/Counter rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract/Embed rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract/Lift rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Contract/Seam rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Convention rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/CounterLoop rc=0 39s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Embed rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/EmitIterBody rc=0 23s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/InputCall rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/InputLength rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Loop rc=0 102s errors=0 sorry=5
-TCSlib/Complexity/TuringMachine/Build/NDClockHost rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/NDClockHostRun rc=0 10s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/NDCombinators rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Primitives rc=0 103s errors=0 sorry=3
-TCSlib/Complexity/TuringMachine/Build/RecordTable rc=0 197s errors=0 sorry=4
-TCSlib/Complexity/TuringMachine/Build/Scan rc=0 21s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Seam rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/VirtualInput rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/WordTests rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Build/Wrappers rc=0 8s errors=0 sorry=2
-TCSlib/Complexity/TuringMachine/ChoiceWords rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/CodeFormat rc=0 7s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/CodeParser rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Composition rc=0 6s errors=0 sorry=3
-TCSlib/Complexity/TuringMachine/Configuration rc=0 6s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/CounterProg rc=0 12s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/CounterProgInput rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/CounterProgRun rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Deterministic rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Encoding rc=0 5s errors=0 sorry=1
-TCSlib/Complexity/TuringMachine/Finite rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/MathlibBridge rc=0 8s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Nondeterministic rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/NondeterministicSpace rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction rc=0 9s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/Oblivious rc=0 17s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/ObliviousCandidate rc=0 13s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/ObliviousLedger rc=0 4s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/ObliviousSchedule rc=0 18s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/ObliviousSetup rc=0 20s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Robustness/SingleTape rc=0 28s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Simulation rc=0 10s errors=0 sorry=1
-TCSlib/Complexity/TuringMachine/StateRenaming rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Sweep rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/SymbolLift rc=0 6s errors=0 sorry=0
+# closure of pack 03g's files at 0c348ff94cacf24d96d99078c9dd9e328530c8d2: 115 modules, extracted from replay-combined.log
+TCSlib/Complexity/CircuitComplexity/Advice rc=0 4s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/Basic rc=0 8s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/DAGCircuit rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/DAGFanin rc=0 5s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/DAGTransform rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/LayeredCircuit rc=0 6s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/LayeredDAG rc=0 6s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/LayeredPPoly rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/PPoly rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/SizeClasses rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/CircuitComplexity/TreeDAG rc=0 5s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/CoNP rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/CounterProgPolyTime rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/NP rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PClosure rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PolyTime rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PolyTimeBlockLoop rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PolyTimeBlockMajority rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PolyTimeBlockTests rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PolyTimePairing rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/ClassNP/PolyTimePrefix rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/ClassP/DTIME rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/ClassP/P rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/ClassP/TimeConstructible rc=0 2s errors=0 sorry=2
+TCSlib/Complexity/PolyHierarchy/Padding rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Build/IterateFind rc=0 5s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Build/IterateFindHost rc=0 4s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Build/PairSplit rc=0 4s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Build/StateLoop rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Build/StringLoops rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Build/UnaryMul rc=0 4s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Closure rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/Randomized/NonUniform rc=0 2s errors=0 sorry=1
+TCSlib/Complexity/Randomized/PPT rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/Randomized/PolyExpr rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Primitives rc=0 1s errors=0 sorry=0
+TCSlib/Complexity/Randomized/Repetition rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/Convention rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/Embed rc=0 3s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/EmitIterBody rc=0 13s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Build/Loop rc=0 50s errors=0 sorry=5
+TCSlib/Complexity/TuringMachine/Build/Primitives rc=0 54s errors=0 sorry=3
+TCSlib/Complexity/TuringMachine/Build/Wrappers rc=0 4s errors=0 sorry=2
+TCSlib/Complexity/TuringMachine/Composition rc=0 3s errors=0 sorry=3
+TCSlib/Complexity/TuringMachine/Configuration rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/CounterProg rc=0 5s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/CounterProgInput rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/CounterProgRun rc=0 4s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Deterministic rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Encoding rc=0 3s errors=0 sorry=1
+TCSlib/Complexity/TuringMachine/Finite rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Robustness/AlphabetReduction rc=0 5s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Robustness/SingleTape rc=0 11s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Simulation rc=0 6s errors=0 sorry=1
+TCSlib/Complexity/TuringMachine/StateRenaming rc=0 2s errors=0 sorry=0
+TCSlib/Complexity/TuringMachine/Sweep rc=0 2s errors=0 sorry=0
 TCSlib/Complexity/TuringMachine/UnaryTape rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/Universal rc=0 53s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/UniversalBlock rc=0 18s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/UniversalInterpreter rc=0 17s errors=0 sorry=0
-TCSlib/Complexity/TuringMachine/UniversalStartup rc=0 5s errors=0 sorry=0
-TCSlib/Complexity/Uncomputability/Computable rc=0 2s errors=0 sorry=0
-TCSlib/Complexity/Uncomputability/Diagonalization rc=0 3s errors=0 sorry=0
-TCSlib/Complexity/Uncomputability/Halting rc=0 3s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/Adversary rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/Collections rc=0 11s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/CollectionsLemmas rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/Ensembles rc=0 13s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/EnsemblesLemmas rc=0 19s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain rc=0 10s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/HardCore rc=0 18s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/HardCoreGL rc=0 33s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/HardCoreGLColl rc=0 16s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/HardCoreGLFamily rc=0 9s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas rc=0 13s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/HardCoreLoops rc=0 13s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/NextBit rc=0 19s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/OneWay rc=0 24s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/OneWayLemmas rc=0 14s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/OneWayYao rc=0 138s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/Permutations rc=0 11s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/Pseudorandom rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/Asymptotic/Sampling rc=0 26s errors=0 sorry=0
-TCSlib/Cryptography/Foundations/Experiments rc=0 8s errors=0 sorry=0
-TCSlib/Cryptography/Foundations/Negligible rc=0 9s errors=0 sorry=0
-TCSlib/Cryptography/Foundations/Probability rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/HardcoreBit/Basic rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/HardcoreBit/GoldreichLevin rc=0 12s errors=0 sorry=0
-TCSlib/Cryptography/HardcoreBit/InnerProduct rc=0 7s errors=0 sorry=0
-TCSlib/Cryptography/HardcoreBit/PairwiseIndependence rc=0 9s errors=0 sorry=0
-TCSlib/Cryptography/HardcoreBit/ThreeQuarters rc=0 8s errors=0 sorry=0
-TCSlib/Cryptography/OneWayFunctions/Amplification rc=0 11s errors=0 sorry=0
-TCSlib/Cryptography/OneWayFunctions/Basic rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/OneWayFunctions/OutputLength rc=0 5s errors=0 sorry=0
-TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/Pseudorandom/Generators rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/Pseudorandom/Indistinguishability rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/Commitment rc=0 15s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas rc=0 11s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/Defs rc=0 8s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/Encoding rc=0 13s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/EncodingMachines rc=0 6s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations rc=0 9s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/Interaction rc=0 5s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs rc=0 8s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring rc=0 7s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language rc=0 10s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines rc=0 15s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties rc=0 18s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol rc=0 16s errors=0 sorry=2
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs rc=0 10s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator rc=0 13s errors=0 sorry=1
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas rc=0 12s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine rc=0 11s errors=0 sorry=0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric rc=0 11s errors=0 sorry=0
-TCSlib/InformationTheory/FinDist rc=0 6s errors=0 sorry=0
-TCSlib/InformationTheory/StatisticalDistance rc=0 6s errors=0 sorry=0
-TCSlib/Programs/Compat rc=0 3s errors=0 sorry=0
-TCSlib/Programs/Util/List rc=0 9s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/Adversary rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/Collections rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/Ensembles rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/EnsemblesLemmas rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCore rc=0 5s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreClaims rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreCollection rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreGL rc=0 8s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl rc=0 5s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCoreLoops rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/HardCorePermutation rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/NextBit rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/OneWay rc=0 8s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/OneWayLemmas rc=0 5s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/OneWayYao rc=0 60s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/Permutations rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/Pseudorandom rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Asymptotic/Sampling rc=0 6s errors=0 sorry=0
+TCSlib/Cryptography/Foundations/Experiments rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Foundations/Negligible rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Foundations/Probability rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/HardcoreBit/Basic rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/HardcoreBit/InnerProduct rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/HardcoreBit/ThreeQuarters rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/OneWayFunctions/Amplification rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/OneWayFunctions/Basic rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/OneWayFunctions/OutputLength rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/Pseudorandom/Generators rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/Pseudorandom/Indistinguishability rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/Commitment rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/Defs rc=0 5s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/Encoding rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/EncodingMachines rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/EncodingPermutations rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/Interaction rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/InteractiveProofs rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties rc=0 4s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol rc=0 5s errors=0 sorry=2
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs rc=0 3s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator rc=0 4s errors=0 sorry=1
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine rc=0 2s errors=0 sorry=0
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric rc=0 4s errors=0 sorry=0
+TCSlib/InformationTheory/FinDist rc=0 3s errors=0 sorry=0
+TCSlib/InformationTheory/StatisticalDistance rc=0 2s errors=0 sorry=0
 
 ## ===== briefs/pass-shelat-ch5-8/gates/03-ch2-4/evidence/g/axioms.log =====
 
-# headline axiom prints (audits/pass-shelat/Checks.lean) for declarations in pack 03g's files, at a3c5fa8b72e50939822f22364647dc844a3914a0
+# axiom prints of every public theorem and lemma for declarations in pack 03g's files, at 0c348ff94cacf24d96d99078c9dd9e328530c8d2
+TCSlib.Cryptography.threeColorable_ofSimpleGraph_iff: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.mem_L3COL_iff: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.encGraph_mem_L3COL_iff: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.mem_edgeList_iff: propext, Quot.sound
+TCSlib.Cryptography.edgeOf_adj: propext, Quot.sound
+TCSlib.Cryptography.exists_edgeOf_eq: propext, Quot.sound
+TCSlib.Cryptography.edgeAt_eq_some_edgeOf: propext
+TCSlib.Cryptography.edgeAt_adj: propext, Quot.sound
+TCSlib.Cryptography.edgeAt_isSome: none
+TCSlib.Cryptography.edgeAt_eq_none_iff: propext
+TCSlib.Cryptography.threeColorable_of_edgeCount_eq_zero: propext, Quot.sound
+TCSlib.Cryptography.edgeCount_pos_of_not_threeColorable: propext, Quot.sound
 TCSlib.Cryptography.one_sub_inv_pow_mul_le_exp: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.exp_neg_le_inv_two_pow: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.decColor_encColor: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.encColor_getD_ne: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.padColor_injective: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.sampleEdgeIdx_lt: propext, Quot.sound
+TCSlib.Cryptography.edgeIdxOfMsg_edgeMsg: propext
+TCSlib.Cryptography.edgeIdxOfMsg_lt: none
+TCSlib.Cryptography.statClose_samplePerm3: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.statClose_sampleEdgeIdx: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.ptc_congr: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.ptc_comp: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.polyTimeComputable_loopState': propext,  Classical.choice,  Quot.sound
+TCSlib.Cryptography.ColMachines.flatMap_range_ite: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.polyTimeComputable_flatMap_range: propext,  Classical.choice,  Quot.sound
+TCSlib.Cryptography.ColMachines.iterSnd_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.efficient_of_polyTime: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.argX_ilayout: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.argZ_ilayout: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.argM_ilayout: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.inCoins_ilayout: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.argX_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.argZ_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.argM_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.zeros_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.padTo_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.length_padTo: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.getD_padTo: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.ofFn_padFin: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.ofFn_getD_add: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.countTrue_zero: none
+TCSlib.Cryptography.ColMachines.countTrue_succ: none
+TCSlib.Cryptography.ColMachines.countTrue_le: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.countTrue_mono: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.countTrue_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.nthTrue_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.filter_range_succ: propext
+TCSlib.Cryptography.ColMachines.length_filter_range: propext
+TCSlib.Cryptography.ColMachines.getElem?_filter_range: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.exists_nth_set: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.nthTrue_spec: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.getElem?_filter_range_nthTrue: propext,  Classical.choice,  Quot.sound
+TCSlib.Cryptography.ColMachines.flatMap_range_mul: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.map_product_finRange: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.map_edgeList: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.edgeCount_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.edgeOf_val: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.decGraph_apply: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.encGraph_decGraph_eq_take: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.natOfBits_zero: none
+TCSlib.Cryptography.ColMachines.natOfBits_succ: none
+TCSlib.Cryptography.ColMachines.natOfBits_lt: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.bitsToNat_eq_natOfBits: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.natOfBits_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.findSome?_finRange_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.map_val_sampleIdx: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.map_val_sampleIdx_getD: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.sampleVal_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.tableOfIdx_perm3Equiv: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.permTable_samplePerm3: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.tableOfIdx_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.encColor_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.colorFromTable_permTable: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.colorFromTable_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.decColoring_val: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.decColor_val: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.colorVal_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.encColor_eq_ofVal: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.encColorOfVal_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.pairEncode_eq_append_nil: propext
+TCSlib.Cryptography.ColMachines.encodeMsgs_eq_flatMap: propext
+TCSlib.Cryptography.ColMachines.ofFn_eq_map_range: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.iterate_pairSndD_encodeMsgs: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.encodeMsgs_eq_nil_iff: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.length_le_length_encodeMsgs: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.getD_eq_pairFstD_iterate: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.getLastD_eq_getD: propext
+TCSlib.Cryptography.ColMachines.histLen_encodeMsgs: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.histLen_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.encodeMsgs_ofFn_eq_flatMap: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.edgeAt_eq_some_of_pos: none
+TCSlib.Cryptography.ColMachines.ptc_apply_unary: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.length_pairSndD_le: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.length_argX_le: propext, Quot.sound
+TCSlib.Cryptography.ColMachines.nOf_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.LOf_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.mOf_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.tblOf_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.colBits_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.blk_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.comAt_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.commitStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.openStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.proverStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.eOf_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.checkStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.verdictStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.verifierStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.proverRepStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.eRep_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.checkRep_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.verdictRepStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.verifierRepStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.nOf_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.mOf_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.LOf_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.eOf_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.eRep_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.tblOf_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.colBits_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.blk_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.comAt_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.commitStr_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColMachines.openStr_ilayout: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.msgAt_encodeMsgs: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.colVerify_honest: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.committedColor_eq_some: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.exists_bad_edge: propext, Quot.sound
+TCSlib.Cryptography.uprob_adaptive_escape: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.uprob_col_cheat_le: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colWellFormed_encGraph: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colProver_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colVerifier_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colProverRep_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colVerifierRep_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.length_multiCom_le: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colProver_length_le: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colProtocol_proverBounded: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.R3COL_witnessRelation: propext, sorryAx, Classical.choice, Quot.sound
 TCSlib.Cryptography.col_efficientProverProofErr: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.colRep_efficientProverProof: propext, sorryAx, Classical.choice, Quot.sound
 TCSlib.Cryptography.colRep_interactiveProof: propext, sorryAx, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colProver_next_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colVerify_eq_checkStr: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colVerifier_next_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colProverRep_next_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colProver_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colVerifier_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colProverRep_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.colVerifierRep_efficient: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.two_le_of_edge: propext, Quot.sound
+TCSlib.Cryptography.ColProofs.pushesUniform_castLE: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColProofs.ofFn_getD_lt: propext
+TCSlib.Cryptography.ColProofs.sampleEdgeIdx_ofFn_castLE: propext, Quot.sound
+TCSlib.Cryptography.card_colorPair: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.perm3_ext_of_ne: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colorPairEquiv_apply: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.simColorsW_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.uprob_colSimAttemptW_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.firstSome_eq_none_iff: propext, Quot.sound
+TCSlib.Cryptography.uprob_colSimTruncW_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.uprob_colSimAttemptH_none: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.uprob_colSimAttemptH_some: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.uprob_colSimTruncH_none: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.statClose_colSimTruncH: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colSimHyb_zero: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.colSimHyb_self: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.exists_colSimRed_ge: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.exists_colSimulator: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.Negligible.comp_sqrt: propext, Classical.choice, Quot.sound
 TCSlib.Cryptography.col_zk: propext, sorryAx, Classical.choice, Quot.sound
 TCSlib.Cryptography.col_hvzk: propext, sorryAx, Classical.choice, Quot.sound
 TCSlib.Cryptography.col_zeroKnowledgeProof: propext, sorryAx, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_ne_idx: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_eq_idx_and: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.findSome?_finRange_cons_of_some: propext, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.findSome?_finRange_cons_of_none: propext, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_and_add_uprob_not_and: propext,  Classical.choice,  Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_prod_and: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.mergeAt_fst: propext
+TCSlib.Cryptography.ColSimLemmas.mergeAt_snd: propext
+TCSlib.Cryptography.ColSimLemmas.mergeAt_mergeAt_left: Quot.sound
+TCSlib.Cryptography.ColSimLemmas.mergeAt_mergeAt_right: Quot.sound
+TCSlib.Cryptography.ColSimLemmas.mergeAt_self: Quot.sound
+TCSlib.Cryptography.ColSimLemmas.msgAt_multiCom: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_plantEP: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_mergeAt: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_truncAttempts_succ: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.abs_uprob_truncAttempts_sub_le: propext,  Classical.choice,  Quot.sound
+TCSlib.Cryptography.ColSimLemmas.statClose_truncAttempts: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.hybGen_update: propext, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.hybGen_W: Quot.sound
+TCSlib.Cryptography.ColSimLemmas.hybGen_H: propext, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.uprob_hybGen_eq_uexp: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.acceptProb_hybGen_planted: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimLemmas.exists_hybRed_ge: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.ptc_congr: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.countBits_succ: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.countBits_le: propext
+TCSlib.Cryptography.ColSimMachine.countBits_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.table_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sampleNum_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.flatMap_range_ite: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.emitLoop_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.simX_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.simZ_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.simR_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.length_pairSndD_le: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.length_simX_le: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.blk_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.nV_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.mE_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.baseR_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.eIdx_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.vIdx_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.kPos_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.p1_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.p2_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.colA_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.colB_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.colorStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.rrStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.chunk_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.comStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.comStr0_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.rVStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.reply_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.opnStr_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.view_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.attemptNum_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.attemptAt_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sim_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sim_poly: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.exists_simulator: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.card_colorPair: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.bitsToNat_getD_eq_blockVal: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.findSome?_range_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sampleIdx_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sampleEdgeIdx_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sampleColorPair_fst: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.sampleColorPair_snd: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.getElem_product: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.finRange_product_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.edgeList_eq_map: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.map_val_filter_finRange: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.edgeCount_eq_countBits: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.countBits_lt_of_lt: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.getElem_filter_range_spec: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.getElem_filter_range_eq_edgePos: propext,  Classical.choice,  Quot.sound
+TCSlib.Cryptography.ColSimMachine.edgeOf_val_eq: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.encodeMsgs_eq_flatMap: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.encodeMsgs_ofFn_eq_flatMap: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.ofFn_getD_eq_padL: propext, Quot.sound
+TCSlib.Cryptography.ColSimMachine.colCommit_eq_comStr: propext, Classical.choice, Quot.sound
+TCSlib.Cryptography.ColSimMachine.attemptStr_eq_attemptNum: propext, Classical.choice, Quot.sound
 
 ## ===== briefs/pass-shelat-ch5-8/gates/03-ch2-4/evidence/g/admissions.txt =====
 
-# declarations with `sorry` in pack 03g's files, at a3c5fa8b72e50939822f22364647dc844a3914a0
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:778 TCSlib.Cryptography.R3COL_witnessRelation
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:851 TCSlib.Cryptography.colRep_efficientProverProof
+# declarations with `sorry` in pack 03g's files, at 0c348ff94cacf24d96d99078c9dd9e328530c8d2
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:838 TCSlib.Cryptography.R3COL_witnessRelation
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:914 TCSlib.Cryptography.colRep_efficientProverProof
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:764 TCSlib.Cryptography.col_zk
 
 ## ===== briefs/pass-shelat-ch5-8/gates/03-ch2-4/evidence/g/lint.log =====
 
-# scripts/style_lint.py on pack 03g's files, at a3c5fa8b72e50939822f22364647dc844a3914a0
+# scripts/style_lint.py on pack 03g's files, at 0c348ff94cacf24d96d99078c9dd9e328530c8d2
 
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean: module docstring missing `## Main definitions`
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:95: `polyTimeComputable_loopState'` proof is 37 lines, no **Proof sketch.**
@@ -3245,7 +3303,7 @@ TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:723: `sampleVal_po
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean: module docstring missing `## Main definitions`
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:218: `checkStr_poly` proof is 38 lines, no **Proof sketch.**
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:312: `proverRepStr_poly` proof is 23 lines, no **Proof sketch.**
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:661: `colProtocol_sound` proof is 99 lines, no **Proof sketch.**
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:721: `colProtocol_sound` proof is 99 lines, no **Proof sketch.**
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean: module docstring missing `## Main definitions`
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:204: `colVerifier_next_eq` proof is 46 lines, no **Proof sketch.**
 TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:252: `colProverRep_next_eq` proof is 25 lines, no **Proof sketch.**
@@ -5291,6 +5349,8 @@ the commitment.
 * `TCSlib.Cryptography.col_efficientProverProofErr`,
   `TCSlib.Cryptography.colRep_efficientProverProof` — **[PS10, Proposition 127.6]**, the
   interactive-proof half (Prop-127.6).
+* `TCSlib.Cryptography.colProver_length_le`, `TCSlib.Cryptography.colProtocol_proverBounded`
+  — the honest provers' messages are polynomially bounded in `|x|` (ruling G3-3).
 * `TCSlib.Cryptography.R3COL_witnessRelation` — `R_3COL` is a witness relation for `3COL`.
 
 ## References
@@ -5716,7 +5776,7 @@ noncomputable def colProtocolRep (Com : List Bool → List Bool) (ℓ : PolyExpr
 
 /-! ### Efficiency of the honest parties (Inf-4.2) -/
 
-/-- The honest prover of one iteration is a PPT strategy when `Com` is polynomial-time
+/-- The honest prover of one iteration is efficient (D8) when `Com` is polynomial-time
 [PS10, Proposition 127.6, efficient prover] (Inf-4.2).
 
 **Proof sketch.** `Strategy.Efficient` with `NUPPT.ofPolyTimeUniform` of the string function
@@ -5735,7 +5795,7 @@ theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComp
     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
   ColProofs.colProver_efficient hCom ℓ
 
-/-- The verifier of one iteration is a PPT strategy when `Com` is polynomial-time
+/-- The verifier of one iteration is efficient (D8) when `Com` is polynomial-time
 [PS10, Definition 116.1 for Proposition 127.6] (Inf-4.2).
 
 **Proof sketch.** As `colProver_efficient`: the edge index by `polyTimeComputable_iterateFind`
@@ -5750,20 +5810,78 @@ theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeCo
     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
   ColProofs.colVerifier_efficient hCom ℓ
 
-/-- The prover of the `n|E|`-fold protocol is a PPT strategy (Inf-4.2): `colProver_efficient`
+/-- The prover of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): `colProver_efficient`
 on the coin block `hist.length / 2` cut by `pairTakePoly`/`pairDropPoly`, with the parity and
 iteration tests by `polyTimeComputable_lenLe` on unary counters. -/
 theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
   ColProofs.colProverRep_efficient hCom ℓ
 
-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy (Inf-4.2): the challenge as in
+/-- The verifier of the `n|E|`-fold protocol is efficient (D8) (Inf-4.2): the challenge as in
 `colVerifier_efficient` on the block `hist.length / 2`, and the verdict a loop over the
 `n|E|` pairs of the history (`polyTimeComputable_iterate` with an accumulated conjunction of
 `colVerify` checks). -/
 theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
   ColProofs.colVerifierRep_efficient hCom ℓ
+
+/-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
+
+/-- A vector of `q` commitments to `n`-bit values with `m`-bit randomness has at most
+`q (2 C (2n + 3 + m)^c + 2)` bits when `C (|w| + 1)^c` bounds `|Com w|`
+(`CommitmentLemmas.length_encodeMsgs_le`, `length_pairEncode`). -/
+theorem length_multiCom_le {Com : List Bool → List Bool} {C c : ℕ}
+    (hC : ∀ w, (Com w).length ≤ C * (w.length + 1) ^ c) {q n m : ℕ} (v : Fin q → Fin n → Bool)
+    (r : Fin q → Fin m → Bool) :
+    (multiCom Com v r).length ≤ q * (2 * (C * (2 * n + 3 + m) ^ c) + 2) := by
+  unfold multiCom
+  refine (CommitmentLemmas.length_encodeMsgs_le _ (C * (2 * n + 3 + m) ^ c)
+    fun msg hmsg => ?_).trans (by simp)
+  obtain ⟨i, rfl⟩ := List.mem_ofFn.1 hmsg
+  refine (hC _).trans (le_of_eq ?_)
+  rw [length_pairEncode, List.length_ofFn, List.length_ofFn]
+  ring_nf
+
+/-- **The honest prover of one iteration sends polynomially bounded messages** (ruling G3-3 of
+gate 03): for `C (|w| + 1)^c` bounding `|Com w|` and `n = (decGraph x).1 ≤ |x|`, the
+commitment message has at most `n (2 C (2n + 3 + ℓ(n))^c + 2)` bits (`length_multiCom_le`),
+the opening `3 ℓ(n) + 20` (`length_pairEncode`, `length_encColoring`) and the empty reply none;
+`ℓ` is monotone (`PolyExpr.eval_mono`). The bound holds for every tape and history, since
+`colCommit` and `colOpen` have a fixed shape. -/
+theorem colProver_length_le {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
+    (ℓ : PolyExpr) : ∃ B : PolyExpr, ∀ x y r hist,
+      ((colProver Com ℓ).next x y r hist).length ≤ B.eval x.length := by
+  obtain ⟨C, c, hC⟩ := hCom.output_length_le
+  refine ⟨.add (.mul .var (.add (.mul (.const 2) (.mul (.const C)
+    (.pow (.add (.add (.mul (.const 2) .var) (.const 3)) ℓ) c))) (.const 2)))
+    (.add (.mul (.const 3) ℓ) (.const 20)), fun x y r hist => ?_⟩
+  have hn : (decGraph x).1 ≤ x.length := Nat.sqrt_le_self _
+  have hℓ : ℓ.eval (decGraph x).1 ≤ ℓ.eval x.length := ℓ.eval_mono hn
+  have hcom : (decGraph x).1 * (2 * (C * (2 * (decGraph x).1 + 3 + ℓ.eval (decGraph x).1) ^ c) + 2)
+      ≤ x.length * (2 * (C * (2 * x.length + 3 + ℓ.eval x.length) ^ c) + 2) := by
+    gcongr
+  simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_pow,
+    PolyExpr.eval_var, colProver]
+  split
+  · exact (length_multiCom_le hC _ _).trans (hcom.trans (Nat.le_add_right _ _))
+  · split
+    · simp only [colOpen, length_pairEncode, List.length_ofFn, encColor, length_encColoring]
+      omega
+    · simp
+
+/-- **The honest provers of [PS10, Protocol 127.5] send polynomially bounded messages**, one
+iteration and `n|E|`-fold, on every instance (ruling G3-3 of gate 03): the bound of
+`colProver_length_le` from the commitment's polynomial-time evaluator; the repeated prover
+runs `colProver` on a coin block or sends `[]`. -/
+theorem colProtocol_proverBounded {Com : List Bool → List Bool} {ℓ : PolyExpr}
+    (hC : Commitment Com ℓ) (R : List Bool → List Bool → Prop) :
+    ∃ B : PolyExpr, (colProtocol Com ℓ).ProverBounded R B ∧
+      (colProtocolRep Com ℓ).ProverBounded R B := by
+  obtain ⟨B, hB⟩ := colProver_length_le hC.easy ℓ
+  refine ⟨B, fun x y r hist _ => hB x y r hist, fun x y r hist _ => ?_⟩
+  show ((colProverRep Com ℓ).next x y r hist).length ≤ B.eval x.length
+  simp only [colProverRep]
+  split_ifs <;> first | exact hB _ _ _ _ | exact Nat.zero_le _
 
 /-! ### Proposition 127.6, interactive-proof half -/
 
@@ -6028,12 +6146,14 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
       (fun N => 1 - 1 / (N : ℝ) + (1 / 2 : ℝ) ^ N) where
   efficientV := colVerifier_efficient hC.easy ℓ
   complete := by
-    intro x hx
+    obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
+    refine ⟨B, fun x hx => ?_⟩
     obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
-    exact ⟨encColoring c, fun z => HardcoreBit.uprob_eq_one_of_forall fun r =>
-      colProtocol_outV_honest hc z r⟩
+    exact ⟨encColoring c, fun r hist => hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
+      fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
   efficientP := colProver_efficient hC.easy ℓ
+  boundedP := (colProtocol_proverBounded hC R3COL).imp fun _ h => h.1
   completeWitness := by
     rintro x y ⟨n, G, c, rfl, rfl, hc⟩ z
     exact HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r
@@ -6060,7 +6180,8 @@ probability is at most `(1 - 1/|E|)^{n|E|} ≤ e^{-n}` (`one_sub_inv_pow_mul_le_
 `n = Nat.sqrt |x|` (`length_encGraph`, `Nat.sqrt_eq`). Negligibility:
 `negligible_exp_neg_sqrt_div` with `C = 1`, `Negligible.mul_pow negligible_two_pow_neg 2`,
 `negligible_two_pow_neg`, `Negligible.add`. Efficiency: `colProverRep_efficient`,
-`colVerifierRep_efficient`. -/
+`colVerifierRep_efficient`. Bounded prover messages (and the bound in the completeness
+clause): `colProtocol_proverBounded`. -/
 theorem colRep_efficientProverProof {Com : List Bool → List Bool} {ℓ : PolyExpr}
     (hC : Commitment Com ℓ) : EfficientProverProof (colProtocolRep Com ℓ) L3COL R3COL := by
   sorry
@@ -6109,7 +6230,7 @@ main file makes the main file fail to type-check, so it cannot go unnoticed.
   when the graph has an edge.
 * `TCSlib.Cryptography.ColProofs.colProver_efficient`, `ColProofs.colVerifier_efficient`,
   `ColProofs.colProverRep_efficient`, `ColProofs.colVerifierRep_efficient` — the (shadow)
-  parties are PPT strategies (Inf-4.2).
+  parties are efficient (D8) (Inf-4.2).
 * `TCSlib.Cryptography.ColProofs.pushesUniform_castLE`, `ColProofs.sampleEdgeIdx_ofFn_castLE`,
   `ColProofs.finOneEquiv`, `ColProofs.two_le_of_edge` — helpers of the soundness proof of
   Proposition 127.6.
@@ -6392,22 +6513,22 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) 
 
 /-! ### Efficiency of the (shadow) parties -/
 
-/-- The honest prover of one iteration is a PPT strategy when `Com` is (shadow form). -/
+/-- The honest prover of one iteration is efficient (D8) when `Com` is (shadow form). -/
 theorem colProver_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProver Com ℓ).Efficient :=
   efficient_of_polyTime _ (proverStr_poly Com ℓ hCom) (colProver_next_eq Com ℓ)
 
-/-- The verifier of one iteration is a PPT strategy when `Com` is (shadow form). -/
+/-- The verifier of one iteration is efficient (D8) when `Com` is (shadow form). -/
 theorem colVerifier_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifier Com ℓ).Efficient :=
   efficient_of_polyTime _ (verifierStr_poly Com ℓ hCom) (colVerifier_next_eq Com ℓ)
 
-/-- The prover of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
+/-- The prover of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
 theorem colProverRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colProverRep Com ℓ).Efficient :=
   efficient_of_polyTime _ (proverRepStr_poly Com ℓ hCom) (colProverRep_next_eq Com ℓ)
 
-/-- The verifier of the `n|E|`-fold protocol is a PPT strategy when `Com` is (shadow form). -/
+/-- The verifier of the `n|E|`-fold protocol is efficient (D8) when `Com` is (shadow form). -/
 theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTimeComputable Com)
     (ℓ : PolyExpr) : (colVerifierRep Com ℓ).Efficient :=
   efficient_of_polyTime _ (verifierRepStr_poly Com ℓ hCom) (colVerifierRep_next_eq Com ℓ)
@@ -9171,3 +9292,470 @@ language with a Levin reduction to `3COL`) is `ZeroKnowledge/NP.lean`.
 * [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
   (§4.7.2, pp. 127–129.)
 -/
+
+## ===== TCSlib/Cryptography/ZeroKnowledge/Interaction.lean =====
+
+/-
+Copyright (c) 2026 TCSlib contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: TCSlib contributors
+-/
+import TCSlib.Complexity.Randomized.PPT
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+import TCSlib.Cryptography.Foundations.Probability
+
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-!
+# Interactive protocols: strategies, executions, views
+
+The interaction model of [PS10, §4.4] in the form frozen by the campaign's foundation
+decision D8 (`briefs/pass-shelat/DESIGN.md` §2.15). An interactive machine is a *next-message
+strategy* `next x z r received`: given the common input `x`, the auxiliary input `z`, the
+random tape `r` and the messages received so far, it returns the next message to send; its
+value on the complete history is the party's output. A protocol is a pair of strategies with
+an explicit polynomial number of messages (`rounds : PolyExpr`) and a first mover. The
+execution `A_{r₁}(x, z₁) ↔ B_{r₂}(x, z₂)` is the fixed alternation of `rounds.eval |x|` moves
+(`exec`), and the four derived objects of the text — the view of each party, the transcript,
+and the outputs — are projections of it.
+
+**Deviation (D8, recorded once here for the whole chapter):** no tapes, states or idle
+transitions are modelled; "entering the idle state" is returning from `next`; the number of
+messages is fixed by the protocol (a party that would halt is modelled as sending `[]`), and the
+verifier's verdict is `V.next` on the complete history, so it is always defined. The text's
+"a round ends when the active machine halts — in which case the protocol ends" makes the
+literal `Pr[out_V = 0]` of [PS10, Definition 116.1] unsatisfiable against a prover that halts
+at once; the fixed-alternation reading is the one under which that clause is satisfiable.
+Verdict convention (run-3 audit P9-3): when the verifier is the last mover, the verdict
+activation has exactly the arguments of the activation that produced its last message, so its
+last message *is* its verdict (`Protocol.outV_eq_getLast_of_moverIsV`); the chapter's protocols
+are stated with the prover moving last, and the `n`-fold protocols read the verifier's last
+message as the verdict.
+Repetition convention (gate 03e, note 8): an iteration with an odd number of messages (prover,
+verifier, prover) is repeated under strict alternation by appending one dummy empty verifier
+message to each iteration, so that every iteration starts with the prover; the fourth move of
+`giProtocolRep` and of `colProtocolRep`, and the filler moves of the sequential repetition of
+[PS10, §7.2.1] in ch. 7, follow this convention.
+`Strategy.Efficient` ([PS10, §4.4], time complexity of an interactive machine) is one
+activation of a uniform `Complexity.NUPPT` at parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the
+whole random tape; the time is polynomial in the total input length rather than in `|x|`
+alone (the text's bound `t(|x|)`, which holds whatever the messages received, would leave the
+simulator's call to `V*` on long auxiliary inputs ill-defined; see D8). Consequently
+`Efficient` alone bounds neither a party's work in `|x|` against a counterparty that sends long
+messages nor the length of its own messages. The proof systems (`InteractiveProofs.lean`)
+therefore add the bound on the honest prover's messages, `Protocol.ProverBounded` (ruling G3-3
+of gate 03, the convention of ch. 6: `Efficient` plus polynomially bounded honest messages);
+the message-prefix cap `Strategy.ReadsPrefix m` — the strategy depends only on the first
+`m(|x|)` bits of each received message, as a time-`t(|x|)` machine of the text necessarily
+does — is the text's bound on the reading side, and the class `IP` (`InteractiveProofs.lean`)
+requires it of the verifier (run-3 audit P9-1).
+
+## Main definitions
+
+* `TCSlib.Cryptography.Strategy` — a next-message strategy with an explicit coin polynomial
+  [PS10, §4.4] (Def-114.a); `Strategy.ofNUPPT`, `Strategy.Efficient` (Def-116.b, the machine
+  half), `Strategy.ReadsPrefix` (Def-116.b, the message-prefix cap of the text's bound in `|x|`).
+* `TCSlib.Cryptography.exec` — the messages received by each party after `k` moves
+  [PS10, §4.4] (Def-115.a).
+* `TCSlib.Cryptography.View`, `TCSlib.Cryptography.View.encode` — a party's view
+  `(x, z, r, received)` and its string encoding (Def-115.b).
+* `TCSlib.Cryptography.Protocol` — two strategies, the number of messages and the first mover
+  (Def-114.b); `Protocol.transcriptWith`, `Protocol.transcript` (Def-115.c), `Protocol.outV`,
+  `Protocol.outP`, `Strategy.out` (Def-115.d), `Protocol.viewV`, `Protocol.viewP`,
+  `Protocol.execution` (Def-115.a/b), `Protocol.withV`.
+* `TCSlib.Cryptography.Protocol.ProverBounded` — the honest prover's messages have at most
+  `B(|x|)` bits on instances with a witness (Def-116.b, the writing half of the text's bound
+  in `|x|`; ruling G3-3).
+
+## Main results
+
+* `TCSlib.Cryptography.exec_length` — after `k` moves exactly `k` messages have been sent.
+* `TCSlib.Cryptography.Strategy.ofNUPPT_efficient` — every uniform machine is an efficient
+  strategy (non-vacuity of Def-116.b).
+* `TCSlib.Cryptography.Strategy.ReadsPrefix.mono`,
+  `TCSlib.Cryptography.Strategy.ReadsPrefix.next_congr` — the message-prefix cap is monotone
+  in the cap and makes the next message a function of the truncated history.
+* `TCSlib.Cryptography.Protocol.outV_eq_getLast_of_moverIsV` — when the verifier is the last
+  mover, its last message is its verdict (the verdict convention of D8).
+* `TCSlib.Cryptography.Protocol.uprob_outV_eq_uexp`,
+  `TCSlib.Cryptography.Protocol.exists_proverCoins_le` — random executions are samplers on the
+  product of the two coin spaces (Def-116.a), and a prover's coins may be fixed without
+  decreasing any event's probability (the "without loss of generality deterministic `P*`"
+  remark of the soundness clause).
+
+## References
+
+* [PS10] R. Pass, a. shelat, *A Course in Cryptography*, lecture notes, 3rd ed., January 2010.
+  (§4.4 Interactive protocols, pp. 114–116.)
+* [AB09] S. Arora, B. Barak, *Computational Complexity: A Modern Approach*, Cambridge
+  University Press, 2009. (Chapter 8, interactive proofs.)
+-/
+
+namespace TCSlib.Cryptography
+
+open Complexity Turing Finset
+
+/-! ### Strategies -/
+
+/-- A next-message strategy [PS10, §4.4] (Def-114.a): `next x z r received` is the message a
+party sends on common input `x`, auxiliary input `z` and random tape `r` after having
+*received* the listed messages; on the complete history its value is the party's output. The
+random tape has the explicit polynomial length `coins.eval |x|`.
+
+**Deviation (D8):** no tapes, states or idle transitions; the output function of the text is
+the next-message function on the complete history. -/
+structure Strategy where
+  /-- The next-message function `(x, z, r, received) ↦ message`. -/
+  next : List Bool → List Bool → List Bool → List (List Bool) → List Bool
+  /-- The length of the random tape as a polynomial in `|x|`. -/
+  coins : PolyExpr
+
+namespace Strategy
+
+/-- The number of random bits of a strategy at common-input length `n`. -/
+def coinLen (S : Strategy) (n : ℕ) : ℕ := S.coins.eval n
+
+/-- The random tape of a strategy at common-input length `n`: `coinLen n` uniform bits. -/
+abbrev Coins (S : Strategy) (n : ℕ) : Type := Fin (S.coinLen n) → Bool
+
+/-- The string encoding of a list of messages: right-nested `pairEncode` pairs ending in `[]`
+(the encoding of the received-messages component of a view, Inf-4.1). -/
+def encodeMsgs (h : List (List Bool)) : List Bool := h.foldr pairEncode []
+
+/-- The encoding of the empty history is the empty string. -/
+@[simp] theorem encodeMsgs_nil : encodeMsgs [] = [] := rfl
+
+/-- The encoding of `m :: h` is the pair `⟨m, encodeMsgs h⟩`. -/
+@[simp] theorem encodeMsgs_cons (m : List Bool) (h : List (List Bool)) :
+    encodeMsgs (m :: h) = pairEncode m (encodeMsgs h) := rfl
+
+/-- The first projection of an encoded history is its first message (`[]` when empty). -/
+theorem pairFstD_encodeMsgs (h : List (List Bool)) : pairFstD (encodeMsgs h) = h.headD [] := by
+  cases h with
+  | nil => rfl
+  | cons m h => simp
+
+/-- The strategy computed by a machine `A`: one activation at parameter `|x|` on
+`⟨⟨x, z⟩, messages⟩` with the whole random tape (`A.runAtL`); the coin polynomial is `A.coins`
+[PS10, §4.4, the interactive machine as a Turing machine with a random tape]. -/
+def ofNUPPT (A : NUPPT) : Strategy where
+  next x z r hist := A.runAtL x.length (pairEncode (pairEncode x z) (encodeMsgs hist)) r
+  coins := A.coins
+
+/-- The next-message function of `ofNUPPT A` unfolds to one activation of `A`. -/
+theorem ofNUPPT_next (A : NUPPT) (x z r : List Bool) (hist : List (List Bool)) :
+    (ofNUPPT A).next x z r hist =
+      A.runAtL x.length (pairEncode (pairEncode x z) (encodeMsgs hist)) r := rfl
+
+/-- An efficient strategy, the formal counterpart of the text's PPT interactive machine
+[PS10, §4.4, time complexity of an interactive machine] (Def-116.b): the next-message function
+is computed by a uniform `NUPPT` with the same coin polynomial, one activation per message at
+parameter `|x|` on `⟨⟨x, z⟩, messages⟩` with the whole random tape.
+
+**Deviation (D8):** per-activation time polynomial in the total input length `|x| + |z| +
+|messages|` instead of the text's `t(|x|)`, which bounds the running time whatever the
+messages received. The number of activations is bounded by the protocol's `rounds`, but the
+messages of an unbounded counterparty may be arbitrarily long, so `Efficient` alone does not
+bound a party's work in `|x|` (run-3 audit P9-1), nor the length of the messages it writes.
+The text's bound is recovered on the reading side by the message-prefix cap `ReadsPrefix m`
+(an efficient strategy that reads only `m(|x|)` bits of each message runs in time polynomial
+in `|x| + |z|`; the class `IP` requires it of the verifier) and on the writing side, for the
+honest prover, by `Protocol.ProverBounded` (its messages have at most `B(|x|)` bits; the proof
+systems require it, ruling G3-3 of gate 03). -/
+def Efficient (S : Strategy) : Prop :=
+  ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins ∧
+    ∀ x z r hist, S.next x z r hist = (ofNUPPT A).next x z r hist
+
+/-- Non-vacuity of `Strategy.Efficient`: the strategy of a uniform machine is efficient. -/
+theorem ofNUPPT_efficient (A : NUPPT) (hA : A.Uniform) : (ofNUPPT A).Efficient :=
+  ⟨A, hA, rfl, fun _ _ _ _ => rfl⟩
+
+/-- An efficient strategy has the coin polynomial of some uniform machine computing it. -/
+theorem Efficient.exists_uniform {S : Strategy} (h : S.Efficient) :
+    ∃ A : NUPPT, A.Uniform ∧ S.coins = A.coins := by
+  obtain ⟨A, hA, hc, -⟩ := h
+  exact ⟨A, hA, hc⟩
+
+/-- A strategy reads at most an `m(|x|)`-bit prefix of each received message [PS10, §4.4, time
+complexity: an interactive machine of time complexity `t(|x|)` reads at most `t(|x|)` cells of
+its communication tape per activation, "independently of the content of the messages it
+receives"] (Def-116.b, the message half of the text's bound in `|x|`): the next-message
+function is unchanged when every received message is truncated to its first `m.eval |x|` bits.
+Together with `Efficient` this is the text's PPT interactive machine — the activation is
+computed in time polynomial in `|x| + |z| + rounds · m(|x|)` by truncating the messages first —
+whereas `Efficient` alone is polynomial in the total message length (D8).
+
+**Repair (run-3 audit P9-1):** added; the class `IP` requires it of the verifier. -/
+def ReadsPrefix (S : Strategy) (m : PolyExpr) : Prop :=
+  ∀ x z r hist, S.next x z r hist = S.next x z r (hist.map (List.take (m.eval x.length)))
+
+/-- Under a message-prefix cap the next message depends only on the truncated history. -/
+theorem ReadsPrefix.next_congr {S : Strategy} {m : PolyExpr} (h : S.ReadsPrefix m)
+    {x z r : List Bool} {hist hist' : List (List Bool)}
+    (he : hist.map (List.take (m.eval x.length)) = hist'.map (List.take (m.eval x.length))) :
+    S.next x z r hist = S.next x z r hist' := by
+  rw [h x z r hist, h x z r hist', he]
+
+/-- The message-prefix cap is monotone: a cap `m` implies every pointwise larger cap `m'`
+(`List.take_take`: truncating to `m'(|x|)` and then to `m(|x|) ≤ m'(|x|)` bits is truncating to
+`m(|x|)` bits). -/
+theorem ReadsPrefix.mono {S : Strategy} {m m' : PolyExpr} (h : S.ReadsPrefix m)
+    (hle : ∀ n, m.eval n ≤ m'.eval n) : S.ReadsPrefix m' := by
+  intro x z r hist
+  refine h.next_congr ?_
+  rw [List.map_map]
+  refine List.map_congr_left fun msg _ => ?_
+  simp only [Function.comp_apply, List.take_take, min_eq_left (hle _)]
+
+end Strategy
+
+/-! ### Executions -/
+
+/-- Which party moves at move `k` (0-indexed): the verifier moves at the even positions when
+it moves first, at the odd ones otherwise. -/
+def moverIsV (vFirst : Bool) (k : ℕ) : Bool :=
+  if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1)
+
+/-- With the verifier first, it moves at the even positions. -/
+@[simp] theorem moverIsV_true (k : ℕ) : moverIsV true k = decide (k % 2 = 0) := rfl
+
+/-- With the prover first, the verifier moves at the odd positions. -/
+@[simp] theorem moverIsV_false (k : ℕ) : moverIsV false k = decide (k % 2 = 1) := rfl
+
+/-- The messages received by `P` and by `V` after `k` moves of the execution
+`P_{rP}(x, zP) ↔ V_{rV}(x, zV)` [PS10, §4.4, the execution `A_{r₁}(x, z₁) ↔ B_{r₂}(x, z₂)`]
+(Def-115.a): at move `k` the active party applies its next-message function to the messages
+it has received so far and the message is appended to the other party's received list. -/
+def exec (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) :
+    ℕ → List (List Bool) × List (List Bool)
+  | 0 => ([], [])
+  | k + 1 =>
+    let e := exec P V vFirst x zP zV rP rV k
+    if moverIsV vFirst k then (e.1 ++ [V.next x zV rV e.2], e.2)
+    else (e.1, e.2 ++ [P.next x zP rP e.1])
+
+/-- Before the first move nothing has been received. -/
+@[simp] theorem exec_zero (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) :
+    exec P V vFirst x zP zV rP rV 0 = ([], []) := rfl
+
+/-- One more move: the active party's message is appended to the other party's list. -/
+theorem exec_succ (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (k : ℕ) :
+    exec P V vFirst x zP zV rP rV (k + 1) =
+      (let e := exec P V vFirst x zP zV rP rV k
+       if moverIsV vFirst k then (e.1 ++ [V.next x zV rV e.2], e.2)
+       else (e.1, e.2 ++ [P.next x zP rP e.1])) := rfl
+
+/-- After `k` moves exactly `k` messages have been sent in total. -/
+theorem exec_length (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (k : ℕ) :
+    (exec P V vFirst x zP zV rP rV k).1.length + (exec P V vFirst x zP zV rP rV k).2.length = k := by
+  induction k with
+  | zero => rfl
+  | succ k ih =>
+    rw [exec_succ]
+    split_ifs <;> simp only [List.length_append, List.length_singleton] <;> omega
+
+/-! ### Views -/
+
+/-- A party's view [PS10, §4.4] (Def-115.b): the common input, its auxiliary input, its random
+tape and the messages it received. -/
+structure View where
+  /-- The common input. -/
+  x : List Bool
+  /-- The party's auxiliary input. -/
+  z : List Bool
+  /-- The party's random tape. -/
+  r : List Bool
+  /-- The messages the party received, in order. -/
+  received : List (List Bool)
+
+/-- The string encoding of a view, `⟨⟨x, z⟩, ⟨r, messages⟩⟩` (the sample handed to
+distinguishers and produced by simulators in the zero-knowledge definitions). -/
+def View.encode (v : View) : List Bool :=
+  pairEncode (pairEncode v.x v.z) (pairEncode v.r (Strategy.encodeMsgs v.received))
+
+/-- The output of a party on a view [PS10, §4.4, `out(v)`] (Def-115.d): its next-message
+function on the complete history. -/
+def Strategy.out (S : Strategy) (v : View) : List Bool := S.next v.x v.z v.r v.received
+
+/-! ### Protocols -/
+
+/-- A protocol [PS10, §4.4] (Def-114.b): a prover strategy, a verifier strategy, the number of
+messages exchanged (an explicit polynomial in `|x|`) and the first mover (`true` = verifier
+first, as in the graph non-isomorphism protocol; `false` = prover first, as in the graph
+isomorphism and 3-colouring protocols). The verifier's verdict is its next-message function
+on the complete history.
+
+**Deviation (D8):** fixed number of messages `rounds.eval |x|`; a halting party sends `[]`.
+If the verifier is the last mover (prover first with an even number of messages, or verifier
+first with an odd number), its last message coincides with its verdict — both are `V.next` on
+the same history (`outV_eq_getLast_of_moverIsV`) — so a verifier whose final message differs
+from its verdict is not expressible; protocols are therefore stated so that the prover moves
+last, or the verifier's last message is read as the verdict (the `n`-fold protocols)
+(run-3 audit P9-3). -/
+structure Protocol where
+  /-- The prover's strategy. -/
+  P : Strategy
+  /-- The verifier's strategy. -/
+  V : Strategy
+  /-- The number of messages exchanged, as a polynomial in `|x|`. -/
+  rounds : PolyExpr
+  /-- Whether the verifier sends the first message. -/
+  verifierFirst : Bool
+
+namespace Protocol
+
+/-- The joint coin space of an execution of `π` with the prover strategy `P'` on `x`: the
+prover's and the verifier's random tapes at parameter `|x|` [PS10, §4.4, random executions]
+(Def-116.a). -/
+abbrev ExecCoins (π : Protocol) (P' : Strategy) (x : List Bool) : Type :=
+  P'.Coins x.length × π.V.Coins x.length
+
+/-- **The honest prover's messages are short** with respect to the witness relation `R` and
+the polynomial `B` [PS10, §4.4, time complexity: a machine of time complexity `t(|x|)` halts
+within `t(|x|)` steps whatever it receives, so each of its messages has at most `t(|x|)` bits]:
+on every instance `x` with a witness `y` (`R x y`), whatever its random tape and whatever it
+has received, the honest prover's message has at most `B(|x|)` bits.
+
+**Deviation (D8; ruling G3-3 of gate 03, the convention of ch. 6):** `Strategy.Efficient`
+bounds a party's work, hence its messages, only in the total length of its input, which
+contains the messages it has received; the bound in `|x|` is this separate condition, a field
+of `EfficientProverProof` (and, for the completeness witness, part of the completeness clause
+of `InteractiveProof`). Without it an honest prover that echoes the verifier's messages —
+zero-knowledge for one run — lets a cheating verifier that doubles its messages build a view
+of length `2^{rounds}`, which the composition theorems of ch. 7 cannot simulate. -/
+def ProverBounded (π : Protocol) (R : List Bool → List Bool → Prop) (B : PolyExpr) : Prop :=
+  ∀ x y r hist, R x y → (π.P.next x y r hist).length ≤ B.eval x.length
+
+/-- A message bound `B` implies every pointwise larger bound `B'`. -/
+theorem ProverBounded.mono {π : Protocol} {R : List Bool → List Bool → Prop} {B B' : PolyExpr}
+    (h : π.ProverBounded R B) (hle : ∀ n, B.eval n ≤ B'.eval n) : π.ProverBounded R B' :=
+  fun x y r hist hxy => (h x y r hist hxy).trans (hle _)
+
+/-- The protocol with the verifier replaced by `V'` (the cheating verifier `V*` of the
+zero-knowledge definitions), same prover, round count and first mover. -/
+def withV (π : Protocol) (V' : Strategy) : Protocol := { π with V := V' }
+
+/-- The verifier of `π.withV V'` is `V'`. -/
+@[simp] theorem withV_V (π : Protocol) (V' : Strategy) : (π.withV V').V = V' := rfl
+
+/-- The prover of `π.withV V'` is the prover of `π`. -/
+@[simp] theorem withV_P (π : Protocol) (V' : Strategy) : (π.withV V').P = π.P := rfl
+
+/-- The round count of `π.withV V'` is that of `π`. -/
+@[simp] theorem withV_rounds (π : Protocol) (V' : Strategy) : (π.withV V').rounds = π.rounds := rfl
+
+/-- The first mover of `π.withV V'` is that of `π`. -/
+@[simp] theorem withV_verifierFirst (π : Protocol) (V' : Strategy) :
+    (π.withV V').verifierFirst = π.verifierFirst := rfl
+
+/-- Replacing the verifier by itself changes nothing. -/
+@[simp] theorem withV_self (π : Protocol) : π.withV π.V = π := by
+  cases π
+  rfl
+
+/-- The transcript (messages received by `P'`, messages received by `V`) of the execution
+`P'_{r₁}(x, y) ↔ V_{r₂}(x, z)` with all `rounds.eval |x|` moves [PS10, §4.4] (Def-115.c). -/
+def transcriptWith (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) :
+    List (List Bool) × List (List Bool) :=
+  exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
+
+/-- The transcript of the honest execution `P(x, y) ↔ V(x, z)` (Def-115.c). -/
+def transcript (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    List (List Bool) × List (List Bool) :=
+  π.transcriptWith π.P x y z r
+
+/-- The verifier's output in `P'_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `out_V`] (Def-115.d):
+`V.next` on the complete history.
+
+**Deviation (D8, run-3 audit P9-3):** when the verifier is the last mover this is also the
+last message it sent (`outV_eq_getLast_of_moverIsV`); see `Protocol`. -/
+def outV (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : List Bool :=
+  π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
+
+/-- The honest prover's output in `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` (Def-115.d). -/
+def outP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : List Bool :=
+  π.P.next x y (List.ofFn r.1) (π.transcriptWith π.P x y z r).1
+
+/-- The honest verifier's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_V`]
+(Def-115.b). -/
+def viewV (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
+  ⟨x, z, List.ofFn r.2, (π.transcriptWith π.P x y z r).2⟩
+
+/-- The honest prover's view of `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` [PS10, §4.4, `view_P`]
+(Def-115.b). -/
+def viewP (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View :=
+  ⟨x, y, List.ofFn r.1, (π.transcriptWith π.P x y z r).1⟩
+
+/-- The execution `P_{r₁}(x, y) ↔ V_{r₂}(x, z)` as the pair of views (the joint view)
+[PS10, §4.4] (Def-115.a). -/
+def execution (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) : View × View :=
+  (π.viewP x y z r, π.viewV x y z r)
+
+/-- The verifier's output is its output function on its view (Def-115.d). -/
+theorem outV_eq_out (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.outV π.P x y z r = π.V.out (π.viewV x y z r) := rfl
+
+/-- The prover's output is its output function on its view (Def-115.d). -/
+theorem outP_eq_out (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.outP x y z r = π.P.out (π.viewP x y z r) := rfl
+
+/-- The transcript is the pair of received-message components of the two views. -/
+theorem transcript_eq (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x) :
+    π.transcript x y z r = ((π.viewP x y z r).received, (π.viewV x y z r).received) := rfl
+
+/-- The verifier's output against `P'` only depends on `P'` through the transcript. -/
+theorem outV_withV (π : Protocol) (V' P' : Strategy) (x y z : List Bool)
+    (r : (π.withV V').ExecCoins P' x) :
+    (π.withV V').outV P' x y z r =
+      V'.next x z (List.ofFn r.2)
+        (exec P' V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2)
+          (π.rounds.eval x.length)).2 := rfl
+
+/-- The verdict convention of D8 made explicit (run-3 audit P9-3): if the verifier makes the
+last of the `k + 1` moves (`moverIsV verifierFirst k`), the last message it sent — the last
+message `P'` received — is its verdict, because both are `V.next` on the messages `V` received
+in the first `k` moves (`exec_succ`, `List.getLast?_concat`). -/
+theorem outV_eq_getLast_of_moverIsV (π : Protocol) (P' : Strategy) (x y z : List Bool)
+    (r : π.ExecCoins P' x) {k : ℕ} (hk : π.rounds.eval x.length = k + 1)
+    (hV : moverIsV π.verifierFirst k = true) :
+    (π.transcriptWith P' x y z r).1.getLast? = some (π.outV P' x y z r) := by
+  unfold outV transcriptWith
+  rw [hk, exec_succ]
+  simp [hV]
+
+/-! ### Random executions -/
+
+/-- A random execution is a sampler on the product of the two coin spaces [PS10, §4.4]
+(Def-116.a): the probability of any event of the verifier's output is the average over the
+prover's coins of its conditional probability over the verifier's coins (`uprob_prod`). -/
+theorem uprob_outV_eq_uexp (π : Protocol) (P' : Strategy) (x y z : List Bool)
+    (p : List Bool → Prop) :
+    uprob (fun r : π.ExecCoins P' x => p (π.outV P' x y z r)) =
+      uexp (fun r₁ : P'.Coins x.length =>
+        uprob (fun r₂ : π.V.Coins x.length => p (π.outV P' x y z (r₁, r₂)))) :=
+  uprob_prod _
+
+/-- A cheating prover may be taken deterministic: for every event of the verifier's output
+there is a fixed prover random tape under which the event is at least as likely as on average
+(the "without loss of generality `P*` is deterministic" remark behind the soundness clause of
+[PS10, Definition 116.1]). -/
+theorem exists_proverCoins_le (π : Protocol) (P' : Strategy) (x y z : List Bool)
+    (p : List Bool → Prop) :
+    ∃ r₁ : P'.Coins x.length,
+      uprob (fun r : π.ExecCoins P' x => p (π.outV P' x y z r)) ≤
+        uprob (fun r₂ : π.V.Coins x.length => p (π.outV P' x y z (r₁, r₂))) := by
+  rw [uprob_outV_eq_uexp]
+  set f : P'.Coins x.length → ℝ :=
+    fun r₁ => uprob (fun r₂ : π.V.Coins x.length => p (π.outV P' x y z (r₁, r₂)))
+  have hcard : (0 : ℝ) < Fintype.card (P'.Coins x.length) := by
+    exact_mod_cast Fintype.card_pos
+  have hsum : ∑ _a : P'.Coins x.length, uexp f ≤ ∑ a, f a := by
+    rw [sum_const, card_univ, nsmul_eq_mul, uexp, mul_div_cancel₀ _ hcard.ne']
+  obtain ⟨a, -, ha⟩ := exists_le_of_sum_le univ_nonempty hsum
+  exact ⟨a, ha⟩
+
+end Protocol
+
+end TCSlib.Cryptography
