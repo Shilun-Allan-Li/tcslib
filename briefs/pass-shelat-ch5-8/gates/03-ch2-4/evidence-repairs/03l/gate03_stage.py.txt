@@ -67,7 +67,7 @@ for f in lean:
             adm.append(cur)
 ax = []
 txt = open(checks_log, encoding='utf-8').read()
-for m in re.finditer(r"'([^']+)' (does not depend on any axioms|depends on axioms: \[([^\]]*)\])", txt):
+for m in re.finditer(r"'(\S+?)' (does not depend on any axioms|depends on axioms: \[([^\]]*)\])", txt):
     if m.group(1) in names: ax.append((m.group(1), (m.group(3) or '').replace('\n', ' ')))
 with open(os.path.join(out, 'axioms.log'), 'w', encoding='utf-8') as f:
     f.write(f'# axiom {src_desc} for declarations in pack 03{pack}\'s files, at {head}\n')
