@@ -32,9 +32,12 @@ branch as for [PS10].
 
 ## Q-3. A merged-away remote branch (yes/no)
 
-`cryptography/pass-shelat-ch5-8-prong-c-seqcomp` (Thm 175.1's worker branch) is fully contained in
-`cryptography/pass-shelat-ch5-8-prong-c` (fast-forwarded). **Recommended: delete it.** I have not
-deleted it, because deleting a remote branch is yours to approve.
+Two merged-away branches. **Recommended: delete both.** I have not deleted them, because deleting
+a remote branch is yours to approve.
+- `cryptography/pass-shelat-ch5-8-prong-c-seqcomp` (Thm 175.1's worker branch) is fully contained
+  in `cryptography/pass-shelat-ch5-8-prong-c` (fast-forwarded).
+- `cryptography/pass-shelat-ch5-8-prong-d-learn` (Thm 179.1's side branch) is merged into
+  `cryptography/pass-shelat-ch5-8-prong-d`.
 
 ## Q-4. The PAC layer's PR to `main`: gate or not (decision)
 
