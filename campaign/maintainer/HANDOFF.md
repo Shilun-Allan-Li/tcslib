@@ -186,7 +186,15 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    in `TuringMachine/CfgFacts`; BL-1 and NB-1 share a new `TuringMachine/NatBits` module (below
    `Encoding` and `Machines/Bin`; `CircuitComplexity` excluded); mechanical re-points in Hydroxyi's
    files are allowed with an FYI line in each PR, while CL-1, CQ-1 and WL-1 (interface design)
-   wait for Hydroxyi. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
+   wait for Hydroxyi. **Ruled (the user, 2026-11-06, second round):** SG-1's two imports of
+   `Build/Contract/Basic` allowed (`Tautology`, `SingleTape`); RO-1: replace `EmitIterEmbed`'s
+   Bool-only `Turing.runFrom_one` by the general lemma and re-point **every** site, colleague-owned
+   files included; NZ-1 acknowledged, publish `NDTM.not_haltsWithin_zero` and re-point now;
+   mechanical dedup edits in colleague-owned files (`CircuitComplexity/`, Meyer) allowed in every
+   family, with an FYI line (no renames or design changes there without asking); NatBits: the
+   plan's defaults D1–D6 accepted, one PR after #208 merges, D9's families recorded for later.
+   **Next roadmap tracks, all three in parallel:** F6 (U2's harvest, then the fill), the book-form
+   Thm 3.1 statement phase, and Ladner's statement phase. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
    `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
    `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
    NZ-1 awaits acknowledgment. CE-1 is #213 (gate 104), AS-1 #214 (its in-scope member; five in
