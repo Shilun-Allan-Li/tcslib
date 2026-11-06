@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+S=/home/user/tcslib-scratch; . $S/env.sh; export TCSLIB_SCRATCH=$S
+OUT=$S/evidence/g107seal/probes-merged.out; : > $OUT
+for f in $S/wt-hk/rvprobe/rp1m/*.lean; do
+  r=${f#$S/wt-hk/}
+  o=$(bash /home/user/tcslib/devtools/seyoon/leanelab.sh $S/wt-hk $S/oleans-lcamp2 $r 2>&1); e=$?
+  echo "== $(basename $f .lean) exit=$e errors=$(echo "$o" | grep -c ': error')" >> $OUT
+  echo "$o" >> $OUT
+done
+echo DONE >> $OUT

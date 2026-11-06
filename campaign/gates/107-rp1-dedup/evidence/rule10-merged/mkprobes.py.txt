@@ -1,0 +1,38 @@
+import os,re,sys
+root='/home/user/tcslib-scratch/wt-rp1'
+out='/home/user/tcslib-scratch/wt-hk/rvprobe/rp1m'
+H='TCSlib.Complexity.SpaceComplexity.'
+homes={H+'Logspace.PathWalk':['Complexity.WalkLe'],
+       H+'Codec.Bridge':['Complexity.Codec.StepRel'],
+       H+'ExpBFS.Radius':['Complexity.ExpBFS.RCode','Complexity.ExpBFS.WinRun'],
+       H+'SavitchARM.Recursion':['Complexity.LogProg.SavitchARM.Rel'],
+       H+'SavitchARM.Search':['Complexity.LogProg.SavitchARM.InitO','Complexity.LogProg.SavitchARM.AccO']}
+mods={}
+for dp,dn,fn in os.walk(os.path.join(root,'TCSlib')):
+    for f in fn:
+        if f.endswith('.lean'):
+            p=os.path.join(dp,f)
+            m=os.path.relpath(p,root)[:-5].replace('/','.')
+            mods[m]=re.findall(r'^import\s+(\S+)',open(p,encoding='utf-8').read(),re.M)
+memo={}
+def closure(m):
+    if m in memo: return memo[m]
+    memo[m]=set()
+    s=set()
+    for i in mods.get(m,[]):
+        s.add(i); s|=closure(i)
+    memo[m]=s; return s
+targets=sys.argv[1:]
+for m in targets:
+    cl=closure(m)
+    names=[n for h,ns in homes.items() if h in cl for n in ns]
+    if not names: print('SKIP',m); continue
+    src=open(os.path.join(root,m.replace('.','/')+'.lean'),encoding='utf-8').read()
+    src=re.sub(r'(set_option maxHeartbeats) (\d+)',lambda mo: mo.group(1)+' '+('400000' if int(mo.group(2))==0 or int(mo.group(2))>400000 else mo.group(2)),src)
+    lines=src.split('\n')
+    last=max(i for i,l in enumerate(lines) if l.startswith('import '))
+    ins=['set_option maxHeartbeats 400000']+['attribute [local irreducible] '+n for n in names]
+    lines[last+1:last+1]=ins
+    fn=os.path.join(out,m.split('.',1)[1].replace('.','_')+'.lean')
+    open(fn,'w',encoding='utf-8').write('\n'.join(lines))
+    print(fn, len(names))

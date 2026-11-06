@@ -21,3 +21,6 @@
   `ebc8fc93f33feea0bbfb1057a71ba0d3d9d0a053b2d3859a515b0365c927b83c`; Lean from `e7e78aaf`.
   Findings file `g5-landing-fill-r2-findings.md`. **Ready to dispatch.**
 - 2026-11-06: **dispatched** (the user).
+- 2026-11-06: pack written (round 3, citing gate 108); staged.
+- 2026-11-06: round 3 **dispatched** by the user (32 sections, bundle `d6e3cfa3…`).
+- 2026-11-06: findings received: PASS (0 majors); **CLOSED**. The missed NZ-1 member is re-pointed in #217; the merge waits on the merged-tree replay.

@@ -147,8 +147,9 @@ theorem BPDecidesInTimeWith.one_le {N : FinNDTM Bool} {L : Language Bool} {T : �
     {p : ℕ → ℚ} (h : N.BPDecidesInTimeWith L T p) (n : ℕ) : 1 ≤ T n := by
   by_contra h0
   have hT : T (List.replicate n false).length = 0 := by simp only [List.length_replicate]; omega
-  have := (h (List.replicate n false)).1 [] (by rw [hT]; rfl)
-  simp at this
+  have hh := (h (List.replicate n false)).1
+  rw [hT] at hh
+  exact NDTM.not_haltsWithin_zero N.tm _ hh
 
 /-- **Majority of `2n + 1` runs** [AB09, §7.4.1]: a decider with success `1/2 + ε` in time `t`
 gives one with success `1 - 2 (1 - 4ε²)^n` in time `t + 2n (2t + 3) + 1`.

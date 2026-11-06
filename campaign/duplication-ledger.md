@@ -703,13 +703,15 @@ configuration is live, so no run halts within `0` steps.
   (`TuringMachine/Nondeterministic`). Its five copies, one per file: `ClassNP/ExhaustiveReplay`'s private
   `xr_not_haltsWithin_zero` (deleted), `ClassNP/NDNormalForm`'s `nf_forward` (`hpos`), `ClassNP/NTIME`'s
   `NTIME_eq_empty_of_exists_zero`, `Randomized/ExpectedTime`'s `AbortDecidesInTime.restart`,
-  `Randomized/BPTIMEThreshold`'s `BPDecidesInTimeWith.one_le`; #217 re-points all five.
+  `Randomized/BPTIMEThreshold`'s `BPDecidesInTimeWith.one_le`; #217 re-points all five. **+1 (gate 108,
+  minor 1):** `Randomized/ExpectedTime`'s `notHaltedProb_haltRun_zero` (the probability form);
+  re-pointed in #217. Census: 8 sites (6 nondeterministic in 5 files, 2 deterministic).
 
 **The search** (by kind, at `1dd510aa`): `rw`/`simp`/`change … at` forms with `runFrom_zero`,
 `runWith_nil`, `initCfg`, `Cfg.init` or `init_state`; zero-case scans (`by_contra`,
 `Nat.pos_of_ne_zero`, `eq_zero_or_pos`, `| zero`) near initial-configuration terms; `[] rfl` and
 `[] (by …)` instantiations of halting hypotheses; literal time-0 `runFrom`/`ComputesInTime`/`HaltsWithin`;
-`show`/`change`. **Not members**, each a different fact: first-halt helpers from an arbitrary `cfg`
+`show`/`change`; and, after gate 108, probability and expected-time forms and `simp` closures without `at`. **Not members**, each a different fact: first-halt helpers from an arbitrary `cfg`
 (`Loop:219`, `Catalog:6463`, `SAT:3797`, `Hardness:6176`); runs from non-initial configurations
 ending in a state mismatch (`Hardness`, `NDCodeSimulator`, `NDNormalForm`, `StepBlockLoop`,
 `Contract/Basic`, `Contract/Seam`, `NTimeDiagonalizer`); composite runs at positive times
@@ -751,6 +753,7 @@ files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equati
   with the host's blank fields;
 - `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
   at a seven-fold `Sum.inl` of the embedded blank start `c0`.
+**Partly published (the user, 2026-11-06):** the U2 harvest publishes it as `Turing.MultiTapeTM.initCfg_eq_mapState` in `Build/UniversalParts` (both of `UniversalK`'s uses now cite it). The other sites re-point to it in the dedup window, without a move to `Finite`.
 
 Census (one member per file; each count at the tree named): `CodeSimulator` 1 of 208 declarations at
 #170's head (12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79
@@ -1086,7 +1089,7 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
 
-That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+**Widened (gate 105, 2026-11-06):** 181 containing declarations in 40 files (8 excluded as machine comparisons; scope `campaign/items/dedup/as1-SCOPE.md`); **the user ruled: all in #214.** That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
 170 → 179 declarations and 46 → 46 pairs, identical
 (`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
 
@@ -1381,6 +1384,9 @@ by unfolding or by definitional equality: `WalkLe` in `Logspace/ISCountGenWalk` 
 and `ISCountGenRadius` (88–92); `Rel`, `InitO` and `AccO` in `SavitchARM/Correct` (55–71); lines
 at the campaign tip. **Disposition:** the dedup window (12.2c): re-point them to the equations.
 Not counted.
+**Widened and in PR #216** (2026-11-06; gate 107): a scoping pass and an exhaustive irreducibility
+probe (52 modules) found 23 public proof bodies in 14 files, including `SavitchARM/Reach`'s
+`mem_iff_reach` (probe only); all re-pointed (`f200144b`, `3d0f6ceb`). **Retired: #216 merged 2026-11-06 (`e4e7a419`).**
 
 **CE-1, equal codes of window configurations, copied** (found 2026-11-05 by gate 96's round-2
 screen; **acknowledged by the user for 12.2c, 2026-11-05**). `coreSum_eq_of_code_eq` (equal

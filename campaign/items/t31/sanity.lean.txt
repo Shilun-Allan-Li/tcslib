@@ -1,0 +1,70 @@
+import TCSlib.Complexity.TimeHierarchy.Separation
+import TCSlib.Complexity.ClassP.Examples
+
+/-! Gate 24's carried sanity checks (`resolutions.md`, "Suggestions recorded for later"), as
+`example`s against the head `Diagonal.lean`, plus the projections of the new instance. -/
+
+set_option autoImplicit false
+
+open Turing Turing.FinTM Complexity Complexity.TimeHierarchy
+
+/-- 1. No diagonal simulator has zero overhead: `PAL ∈ DTIME (n + 1)` forces a completed
+verdict within `A · 0 = 0` steps, against `not_computesInTime_zero`. -/
+example : ¬ Nonempty (DiagSimulator (fun _ _ => 0)) := by
+  rintro ⟨S⟩
+  obtain ⟨A, N₀, hA⟩ := S.simulates _ _ PAL_mem_DTIME_linear
+  obtain ⟨x, -, hx⟩ := hA N₀ le_rfl
+  exact not_computesInTime_zero S.W x _ (hx.mono (by simp))
+
+/-- 2. No self-simulator has zero normal-form overhead: padded, it would be a diagonal
+simulator of overhead `n + 1`, whose diagonal language at `g = 2ⁿ` lies in `DTIME (2ⁿ + 1)`
+(`diagLangOf_mem_DTIME`) and, as `A (n + 1) ≤ 2ⁿ` eventually, not in it
+(`DiagSimulator.diagLang_not_mem_DTIME`). -/
+example : ¬ Nonempty (SelfSimulator (fun _ => 0)) := by
+  rintro ⟨S⟩
+  have hin := diagLangOf_mem_DTIME S.toDiagSimulator.W timeConstructible_two_pow
+  refine S.toDiagSimulator.diagLang_not_mem_DTIME (g := fun n => 2 ^ n)
+    (T := fun n => 2 ^ n + 1) ?_ hin
+  intro A N
+  obtain ⟨M, hM⟩ := eventually_poly_le_two_pow A 1
+  exact ⟨max N M, le_max_left _ _, by simpa using hM (max N M) (le_max_right _ _)⟩
+
+/-- 3. No self-simulator has a constant `decode`: one machine would decide both `PAL` and a
+language `L ∈ DTIME (2ⁿ) \ DTIME (n + 1)` (`dtime_poly_ssubset_dtime_two_pow 1`), so `L = PAL`
+by output uniqueness, and then `L ∈ DTIME (n + 1)`. -/
+example {Ψ : ℕ → ℕ} (S : SelfSimulator Ψ) (M : FinTM Bool) : ¬ ∀ α, S.decode α = M := by
+  intro hM
+  obtain ⟨L, hL, hLn⟩ := Set.exists_of_ssubset (dtime_poly_ssubset_dtime_two_pow 1)
+  have hP : PAL ∈ DTIME (fun n => n ^ 1 + 1) := by simpa using PAL_mem_DTIME_linear
+  obtain ⟨α₁, c₁, h₁⟩ := S.normalForm _ _ hP
+  obtain ⟨α₂, c₂, h₂⟩ := S.normalForm _ _ hL
+  apply hLn
+  have hEq : L = PAL := by
+    ext x
+    have e₁ := h₁ x
+    rw [hM α₁] at e₁
+    have e₂ := h₂ x
+    rw [hM α₂] at e₂
+    have e := e₁.output_unique e₂
+    simp only [List.cons.injEq, and_true] at e
+    by_cases hx : x ∈ L <;> by_cases hy : x ∈ PAL <;> simp_all [MultiTapeTM.indicator]
+  rw [hEq]; exact hP
+
+/-- 4. The machine projections of `DiagSimulator.mono` and `SelfSimulator.toDiagSimulator`. -/
+example {Φ Φ' : ℕ → ℕ → ℕ} (S : DiagSimulator Φ) (K : ℕ) (h : ∀ t n, Φ t n ≤ K * Φ' t n) :
+    (S.mono K h).W = S.W := rfl
+
+example {Ψ : ℕ → ℕ} (S : SelfSimulator Ψ) : S.toDiagSimulator.W = S.W := rfl
+
+/-- 5. The new instance's projections, and its padded, weakened diagonal simulator's machine. -/
+example : twoTapeSelfSimulator.W = Classical.choose (exists_selfUniversalK 2 code₂.toK) :=
+  twoTapeSelfSimulator_W
+
+example (α : List Bool) : twoTapeSelfSimulator.decode α = (code₂.decode α).toFinTM :=
+  twoTapeSelfSimulator_decode α
+
+example : (twoTapeSelfSimulator.toDiagSimulator.mono 2 logOverhead_add_le).W =
+    twoTapeSelfSimulator.W := rfl
+
+-- ===== output: devtools/seyoon/leanelab.sh <wt-t31> <overlay over oleans-lcamp2> Scratch/T31Sanity.lean =====
+-- exit=0, no messages (empty output)

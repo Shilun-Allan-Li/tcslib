@@ -249,16 +249,15 @@ halted, so all-branch halting already fails at budget `c * 0 = 0`.
 
 **Proof sketch.** Given `T n = 0` and a claimed decider, instantiate
 `Turing.FinNDTM.DecidesInTime` at the input `List.replicate n false`
-(`List.length_replicate`); its `HaltsWithin` conjunct applied to the empty choice word
-(`Turing.NDTM.runWith_nil`) asserts that the initial configuration is halted,
-contradicting `Turing.Cfg.init`'s state `some q₀`. -/
+(`List.length_replicate`); its `HaltsWithin` conjunct is then all-branch halting at budget
+`0`, which no machine meets (`Turing.NDTM.not_haltsWithin_zero`: the empty choice word leaves
+the run at the initial configuration, whose state `some q₀` is live). -/
 theorem NTIME_eq_empty_of_exists_zero {T : ℕ → ℕ} (h : ∃ n, T n = 0) : NTIME T = ∅ := by
   obtain ⟨n, hn⟩ := h
   apply Set.eq_empty_iff_forall_not_mem.mpr
   rintro L ⟨c, N, hN⟩
   have hhalt := (hN (List.replicate n false)).1
   simp only [List.length_replicate, hn, Nat.mul_zero] at hhalt
-  have hzero : (some N.tm.q₀ : Option N.State) = none := hhalt [] rfl
-  cases hzero
+  exact Turing.NDTM.not_haltsWithin_zero N.tm _ hhalt
 
 end Complexity
