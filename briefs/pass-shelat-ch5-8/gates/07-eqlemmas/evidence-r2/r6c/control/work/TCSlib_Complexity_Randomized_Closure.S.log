@@ -1,0 +1,109 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:190:4: error: Tactic `rfl` failed: The left-hand side
+  pairFstD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairFstD [] = []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:198:4: error: Tactic `rfl` failed: The left-hand side
+  pairSndD []
+is not definitionally equal to the right-hand side
+  []
+
+case pos
+⊢ pairSndD [] = []
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:239:74: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.44 = ?m.44
+but is expected to have type
+  (ofPolyTime hF A.coins A.adv A.advice ⋯).advice = A.advice
+in the application
+  And.intro rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:289:21: error: Function expected at
+  hA
+but this term has type
+  A.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  _
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:289:4: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.40 = ?m.40
+but is expected to have type
+  (ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv).coins = A.coins.subst p
+in the application
+  And.intro rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:328:77: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.80 = ?m.80
+but is expected to have type
+  (ofPolyTime hF (A.coins.subst p) ((((PolyExpr.const 2).mul p).add (PolyExpr.const 2)).add (A.adv.subst p))
+        (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv).coins =
+    A.coins.subst p
+in the application
+  And.intro rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:357:81: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.64 = ?m.64
+but is expected to have type
+  (ofPolyTime hF A.coins ((((PolyExpr.const 2).mul A.adv).add (PolyExpr.const 2)).add b)
+        (fun n => pairEncode (A.advice n) (β n)) hadv).coins =
+    A.coins
+in the application
+  And.intro rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:381:78: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.44 = ?m.44
+but is expected to have type
+  (ofPolyTime hF (p.add A.coins) A.adv A.advice ⋯).advice = A.advice
+in the application
+  And.intro rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:422:66: error: Application type mismatch: The argument
+  fun hA hB n => ?m.96
+has type
+  (hA : A.Uniform) → (hB : B.Uniform) → (n : ?m.97 hA hB) → ?m.98 hA hB n
+but is expected to have type
+  A.Uniform →
+    B.Uniform →
+      (ofPolyTime hF (A.coins.add B.coins) ((((PolyExpr.const 2).mul A.adv).add (PolyExpr.const 2)).add B.adv)
+          (fun n => combineAdvice (A.advice n) (B.advice n)) hadv).Uniform
+in the application
+  And.intro fun hA hB n => ?m.96
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:422:61: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.88 = ?m.88
+but is expected to have type
+  (ofPolyTime hF (A.coins.add B.coins) ((((PolyExpr.const 2).mul A.adv).add (PolyExpr.const 2)).add B.adv)
+        (fun n => combineAdvice (A.advice n) (B.advice n)) hadv).coins =
+    A.coins.add B.coins
+in the application
+  And.intro rfl
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:448:13: error: Function expected at
+  h
+but this term has type
+  A.Computes f
+
+Note: Expected a function because this term is being applied to the argument
+  (pairFstD z).length
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Complexity_Randomized_Closure.S.lean:441:81: error: unsolved goals
+case h.e'_1.h
+A : NUPPT
+f : List Bool → List Bool
+hA : A.Uniform
+h : A.Computes f
+hF :
+  PolyTimeComputable fun z =>
+    A.output
+      (layout (List.replicate (pairFstD z).length true) (pairSndD z) []
+        (List.replicate (A.coins.eval (pairFstD z).length) true))
+z : List Bool
+⊢ f (advInput (pairFstD z).length (pairSndD z)) =
+    A.output
+      (layout (List.replicate (pairFstD z).length true) (pairSndD z) []
+        (List.replicate (A.coins.eval (pairFstD z).length) true))

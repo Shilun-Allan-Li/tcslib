@@ -1,0 +1,268 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:270:6: error: Type mismatch
+  abs_nonneg ?m.61
+has type
+  0 ≤ |?m.61|
+but is expected to have type
+  0 ≤ distAdv (S.pkEncDist n false) (S.pkEncDist n true) (D.distinguisherL n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:278:6: error: Type mismatch
+  Eq.le (abs_sub_comm ?m.167 ?m.168)
+has type
+  |?m.167 - ?m.168| ≤ |?m.168 - ?m.167|
+but is expected to have type
+  distAdv (S.pkEncDist n true) (S.pkEncDist n false) (D.distinguisherL n) ≤
+    distAdv (S.pkEncDist n false) (S.pkEncDist n true) (D.distinguisherL n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:291:4: error: Application type mismatch: The argument
+  PolyTimeComputable.pairEncode NUPPT.polyTimeComputable_inParam
+    (PolyTimeComputable.pairEncode (PolyTimeComputable.comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
+      (PolyTimeComputable.pairEncode
+        (PolyTimeComputable.comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+        NUPPT.polyTimeComputable_inCoins))
+has type
+  PolyTimeComputable fun x =>
+    pairEncode (NUPPT.inParam x)
+      (pairEncode ((pairFstD ∘ NUPPT.inArg) x) (pairEncode ((pairSndD ∘ NUPPT.inArg) x) (NUPPT.inCoins x)))
+but is expected to have type
+  PolyTimeComputable fun z =>
+    blockState (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (pairSndD (NUPPT.inArg z)) (NUPPT.inCoins z)
+in the application
+  PolyTimeComputable.comp (blockEncFun_poly (NUPPT.polyTimeComputable_output S.enc) (PolyExpr.const 1) S.enc.coins)
+    (PolyTimeComputable.pairEncode NUPPT.polyTimeComputable_inParam
+      (PolyTimeComputable.pairEncode
+        (PolyTimeComputable.comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
+        (PolyTimeComputable.pairEncode
+          (PolyTimeComputable.comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+          NUPPT.polyTimeComputable_inCoins)))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:335:2: error: Tactic `rfl` failed: The left-hand side
+  S.enc.output (NUPPT.layout (List.replicate n true) (pairEncode pk [m i]) [] (coinBlock (S.enc.coins.eval n) (↑i) r))
+is not definitionally equal to the right-hand side
+  S.enc.output
+    (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk [m i])) []) (coinBlock (S.enc.coinLen n) (↑i) r))
+
+case e_a
+S : BitPublicKeyScheme
+n : ℕ
+pk : List Bool
+m : Fin n → Bool
+r : List Bool
+i : Fin n
+⊢ S.enc.output (NUPPT.layout (List.replicate n true) (pairEncode pk [m i]) [] (coinBlock (S.enc.coins.eval n) (↑i) r)) =
+    S.enc.output
+      (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk [m i])) []) (coinBlock (S.enc.coinLen n) (↑i) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:493:45: error: Application type mismatch: The argument
+  hBε n false false
+has type
+  distAdv (S.pkEncDist n false) (S.pkEncDist n false) (B.distinguisherL n) ≤ ε n
+but is expected to have type
+  |?m.153| ≤ ε n
+in the application
+  LE.le.trans (abs_nonneg ?m.153) (hBε n false false)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:474:24: error: unsolved goals
+S : BitPublicKeyScheme
+h : S.SingleBitSecure
+D : NUPPT
+μ : (n : ℕ) → (Fin n → Bool) × (Fin n → Bool)
+hμ :
+  ∀ (n : ℕ) (q : (Fin n → Bool) × (Fin n → Bool)),
+    distAdv (S.bitwise.pkEncDist n q.1) (S.bitwise.pkEncDist n q.2) (D.distinguisherL n) ≤
+      distAdv (S.bitwise.pkEncDist n (μ n).1) (S.bitwise.pkEncDist n (μ n).2) (D.distinguisherL n)
+B : NUPPT
+hB :
+  ∀ (n : ℕ) (ε : ℝ),
+    0 ≤ ε →
+      (∀ (msg msg' : Fin ((PolyExpr.const 1).eval n) → Bool),
+          distAdv (singleDist S.gen S.enc n ((PolyExpr.const 1).eval n) msg)
+              (singleDist S.gen S.enc n ((PolyExpr.const 1).eval n) msg') (B.distinguisherL n) ≤
+            ε) →
+        distAdv (multiDist S.gen S.enc n (PolyExpr.var.eval n) ((PolyExpr.const 1).eval n) fun i x => (μ n).1 i)
+            (multiDist S.gen S.enc n (PolyExpr.var.eval n) ((PolyExpr.const 1).eval n) fun i x => (μ n).2 i)
+            (D.distinguisherL n) ≤
+          ↑(PolyExpr.var.eval n) * ε
+ε : ℕ → ℝ
+hε : Negligible ε
+hBε : ∀ (n : ℕ) (b₀ b₁ : Bool), distAdv (S.pkEncDist n b₀) (S.pkEncDist n b₁) (B.distinguisherL n) ≤ ε n
+n : ℕ
+m₀ m₁ : Fin n → Bool
+⊢ distAdv (S.bitwise.pkEncDist n (μ n).1) (S.bitwise.pkEncDist n (μ n).2) (D.distinguisherL n) ≤ (fun n => ↑n * ε n) n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:556:45: error: Application type mismatch: The argument
+  hBε n (fun x => false) fun x => false
+has type
+  distAdv (S.pkEncDist n fun x => false) (S.pkEncDist n fun x => false) (B.distinguisherL n) ≤ ε n
+but is expected to have type
+  |?m.190| ≤ ε n
+in the application
+  LE.le.trans (abs_nonneg ?m.190) (hBε n (fun x => false) fun x => false)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:532:28: error: unsolved goals
+S : PublicKeyScheme
+h : S.Secure
+D : NUPPT
+q : PolyExpr
+μ : (n : ℕ) → (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool)
+hμ :
+  ∀ (n : ℕ) (p' : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool)),
+    distAdv (S.pkMultiEncDist n (q.eval n) p'.1) (S.pkMultiEncDist n (q.eval n) p'.2) (D.distinguisherL n) ≤
+      distAdv (S.pkMultiEncDist n (q.eval n) (μ n).1) (S.pkMultiEncDist n (q.eval n) (μ n).2) (D.distinguisherL n)
+B : NUPPT
+hB :
+  ∀ (n : ℕ) (ε : ℝ),
+    0 ≤ ε →
+      (∀ (msg msg' : Fin (PolyExpr.var.eval n) → Bool),
+          distAdv (singleDist S.gen S.enc n (PolyExpr.var.eval n) msg)
+              (singleDist S.gen S.enc n (PolyExpr.var.eval n) msg') (B.distinguisherL n) ≤
+            ε) →
+        distAdv (multiDist S.gen S.enc n ((q.add (PolyExpr.const 1)).eval n) (PolyExpr.var.eval n) (μ n).1)
+            (multiDist S.gen S.enc n ((q.add (PolyExpr.const 1)).eval n) (PolyExpr.var.eval n) (μ n).2)
+            (D.distinguisherL n) ≤
+          ↑((q.add (PolyExpr.const 1)).eval n) * ε
+ε : ℕ → ℝ
+hε : Negligible ε
+hBε : ∀ (n : ℕ) (m₀ m₁ : Fin n → Bool), distAdv (S.pkEncDist n m₀) (S.pkEncDist n m₁) (B.distinguisherL n) ≤ ε n
+n : ℕ
+m m' : Fin (q.eval n + 1) → Fin n → Bool
+⊢ distAdv (S.pkMultiEncDist n (q.eval n) (μ n).1) (S.pkMultiEncDist n (q.eval n) (μ n).2) (D.distinguisherL n) ≤
+    (fun n => ↑((q.add (PolyExpr.const 1)).eval n) * ε n) n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:710:2: error: Tactic `rfl` failed: The left-hand side
+  pairEncode (pairFstD (T.gen.output (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r))))
+    (pairEncode (List.replicate n true)
+      (pairEncode (pairFstD (T.gen.output (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r))))
+        (pairSndD (T.gen.output (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r))))))
+is not definitionally equal to the right-hand side
+  pairEncode
+    (pairFstD (T.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r))))
+    (pairEncode (List.replicate n true)
+      (pairEncode
+        (pairFstD (T.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r))))
+        (pairSndD (T.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r))))))
+
+T : TrapdoorCollection
+n : ℕ
+r : T.tdpGen.Coins n
+⊢ pairEncode (pairFstD (T.gen.output (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r))))
+      (pairEncode (List.replicate n true)
+        (pairEncode (pairFstD (T.gen.output (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r))))
+          (pairSndD (T.gen.output (NUPPT.layout (List.replicate n true) [] [] (List.ofFn r)))))) =
+    pairEncode
+      (pairFstD (T.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r))))
+      (pairEncode (List.replicate n true)
+        (pairEncode
+          (pairFstD (T.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r))))
+          (pairSndD (T.gen.output (pairEncode (pairEncode (pairEncode (List.replicate n true) []) []) (List.ofFn r))))))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:725:2: error: Tactic `rfl` failed: The left-hand side
+  pairEncode (T.eval (pairEncode i (T.sample.output (NUPPT.layout (List.replicate n true) i [] (List.ofFn s)))))
+    (List.zipWith xor (E.H (pairEncode i (T.sample.output (NUPPT.layout (List.replicate n true) i [] (List.ofFn s)))))
+      [b])
+is not definitionally equal to the right-hand side
+  pairEncode
+    (T.eval
+      (pairEncode i
+        (T.sample.output (pairEncode (pairEncode (pairEncode (List.replicate n true) i) []) (List.ofFn s)))))
+    (List.zipWith xor
+      (E.H
+        (pairEncode i
+          (T.sample.output (pairEncode (pairEncode (pairEncode (List.replicate n true) i) []) (List.ofFn s)))))
+      [b])
+
+T : TrapdoorCollection
+h : (i : List Bool) → T.D i → Bool
+E : T.PredEvaluator h
+n : ℕ
+i : List Bool
+b : Bool
+s : (T.tdpEnc E).Coins n
+⊢ pairEncode (T.eval (pairEncode i (T.sample.output (NUPPT.layout (List.replicate n true) i [] (List.ofFn s)))))
+      (List.zipWith xor (E.H (pairEncode i (T.sample.output (NUPPT.layout (List.replicate n true) i [] (List.ofFn s)))))
+        [b]) =
+    pairEncode
+      (T.eval
+        (pairEncode i
+          (T.sample.output (pairEncode (pairEncode (pairEncode (List.replicate n true) i) []) (List.ofFn s)))))
+      (List.zipWith xor
+        (E.H
+          (pairEncode i
+            (T.sample.output (pairEncode (pairEncode (pairEncode (List.replicate n true) i) []) (List.ofFn s)))))
+        [b])
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:733:2: error: Tactic `rfl` failed: The left-hand side
+  List.zipWith xor
+    (H
+      (pairEncode i
+        (T.inv.output
+          (NUPPT.layout (List.replicate n true) (pairEncode t c₁) [] (List.replicate (T.inv.coins.eval n) true)))))
+    c₂
+is not definitionally equal to the right-hand side
+  List.zipWith xor (H (pairEncode i (T.inv.runAt n (pairEncode t c₁) fun x => true))) c₂
+
+T : TrapdoorCollection
+H : List Bool → List Bool
+n : ℕ
+i t c₁ c₂ : List Bool
+⊢ List.zipWith xor
+      (H
+        (pairEncode i
+          (T.inv.output
+            (NUPPT.layout (List.replicate n true) (pairEncode t c₁) [] (List.replicate (T.inv.coins.eval n) true)))))
+      c₂ =
+    List.zipWith xor (H (pairEncode i (T.inv.runAt n (pairEncode t c₁) fun x => true))) c₂
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:732:4: warning: This simp argument is unused:
+  T.inv_uniform.runAt_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [tdpDecFun, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+      T̵.̵i̵n̵v̵_̵u̵n̵i̵f̵o̵r̵m̵.̵r̵u̵n̵A̵t̵_̵e̵q̵,̵ ̵List.ofFn_const, NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:732:28: warning: This simp argument is unused:
+  List.ofFn_const
+
+Hint: Omit it from the simp argument list.
+  simp only [tdpDecFun, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+      T.inv_uniform.runAt_eq, L̵i̵s̵t̵.̵o̵f̵F̵n̵_̵c̵o̵n̵s̵t̵,̵ ̵NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:766:27: error: Function expected at
+  Collection.evalSampled T.toCollection
+but this term has type
+  T.EvalSampled
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:766:11: error: Tactic `rcases` failed: `x✝ : ?m.66` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:794:87: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.47 ↔ ?m.47
+but is expected to have type
+  pkPredictor D flip (f x✝.1) x✝.2 = B x✝.1 ↔
+    owpPredictor (fun v r => D (v.1, v.2.2) r) flip
+        (owpPair f (((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl (Bool × ρ))) x✝).1)
+        (((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl (Bool × ρ))) x✝).2 =
+      (fun w => B w.1) (((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl (Bool × ρ))) x✝).1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:802:82: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.45 ↔ ?m.45
+but is expected to have type
+  (fun v r => D (v.1, v.2.2) r) (owpGen f (fun w => B w.1) x✝.1) x✝.2 = true ↔
+    D ((fun x => (f x, B x)) (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).1)
+        (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).2 =
+      true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:810:82: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.45 ↔ ?m.45
+but is expected to have type
+  (fun v r => D (v.1, v.2.2) r) (owpGenNot f (fun w => B w.1) x✝.1) x✝.2 = true ↔
+    D ((fun x => (f x, !B x)) (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).1)
+        (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).2 =
+      true
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:873:25: error: Function expected at
+  Collection.evalSampled T.toCollection
+but this term has type
+  T.EvalSampled
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:873:9: error: Tactic `rcases` failed: `x✝ : ?m.57` is not an inductive datatype
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:918:25: error: Invalid field `sampleClose`: The environment does not contain `TCSlib.Cryptography.TrapdoorCollection.OneWay.sampleClose`
+  hT
+has type
+  T.OneWay
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/control/work/TCSlib_Cryptography_Asymptotic_PublicKey.S.lean:918:9: error: Tactic `rcases` failed: `x✝ : ?m.8` is not an inductive datatype

@@ -1,0 +1,51 @@
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver, TCSlib.Cryptography.instanceG₀	10
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.pairSndD_pairEncode, TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.instanceG₁	7
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.pairSndD, TCSlib.Cryptography.giProtocol	10
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD_pairEncode, Complexity.pairSndD_pairEncode, TCSlib.Cryptography.encInstance	12
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.Strategy.Coins, TCSlib.Cryptography.Strategy.coinLen	10
+Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver	5
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct	TCSlib.Cryptography.Negligible.add	1
+TCSlib.Cryptography.StatClose	TCSlib.Cryptography.Asymptotic.Sampling	direct	TCSlib.Cryptography.StatClose.prod, TCSlib.Cryptography.StatClose.trans	5
+TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.permFromCoins, TCSlib.Cryptography.samplePerm	10
+TCSlib.Cryptography.coinSlice	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.GIZK.sim	5
+TCSlib.Cryptography.coinTable	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.samplePerm, TCSlib.Cryptography.GIZK.sim	11
+TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	deep	TCSlib.Cryptography.decGraph_encGraph, TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver	5
+TCSlib.Cryptography.decGraphAt	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.instanceG₀, TCSlib.Cryptography.instanceG₁, TCSlib.Cryptography.GIZK.attemptStr	6
+TCSlib.Cryptography.decPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver	5
+TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.encInstance, TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver	14
+TCSlib.Cryptography.encInstance	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.length_encInstance	11
+TCSlib.Cryptography.encPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver, TCSlib.Cryptography.GIZK.attemptStr	9
+TCSlib.Cryptography.exec	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.Protocol.viewV	4
+TCSlib.Cryptography.fisherYates	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.permFromCoins, TCSlib.Cryptography.samplePerm	10
+TCSlib.Cryptography.giProtocol	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct		3
+TCSlib.Cryptography.giProver	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.giProtocol	5
+TCSlib.Cryptography.giVerifier	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	deep	TCSlib.Cryptography.giProtocol	3
+TCSlib.Cryptography.instanceG₀	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.GIZK.attemptStr, TCSlib.Cryptography.GIZK.sim	5
+TCSlib.Cryptography.instanceG₁	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.GIZK.attemptStr, TCSlib.Cryptography.GIZK.sim	5
+TCSlib.Cryptography.instanceVertexCount	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.instanceG₀, TCSlib.Cryptography.instanceG₁	8
+TCSlib.Cryptography.instanceVertices	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct		1
+TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.exec, TCSlib.Cryptography.Protocol.viewV	4
+TCSlib.Cryptography.permBits	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.samplePerm, TCSlib.Cryptography.GIZK.sim	10
+TCSlib.Cryptography.permCoinLen	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.permCoinLen_le, TCSlib.Cryptography.statClose_samplePerm	4
+TCSlib.Cryptography.permFailBound	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct		5
+TCSlib.Cryptography.permFromCoins	TCSlib.Cryptography.Asymptotic.Permutations	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.samplePerm, TCSlib.Cryptography.GIZK.sim	10
+TCSlib.Cryptography.permGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.giProver, TCSlib.Cryptography.GIZK.attemptStr	11
+TCSlib.Cryptography.permTrials	TCSlib.Cryptography.Asymptotic.Permutations	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.samplePerm, TCSlib.Cryptography.GIZK.sim	10
+TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.permFromCoins, TCSlib.Cryptography.samplePerm	10
+TCSlib.Cryptography.samplePerm	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	direct	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.GIZK.sim	10
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.HardcoreBit.PushesUniform, TCSlib.Cryptography.StatClose.comp_pushesUniform, TCSlib.Cryptography.HardcoreBit.PushesUniform.comp	4
+TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	deep	TCSlib.Cryptography.giProtocol, TCSlib.Cryptography.permFromCoins, TCSlib.Cryptography.samplePerm	10
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.StatClose, TCSlib.Cryptography.StatClose.prod, TCSlib.Cryptography.StatClose.trans	5
+TCSlib.Cryptography.wellFormedInstance	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	deep	TCSlib.Cryptography.giProtocol	3
+TCSlib.Cryptography.GIZK.attemptStr	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator	direct	TCSlib.Cryptography.GIZK.sim	4
+TCSlib.Cryptography.GIZK.blockLen	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator	deep	TCSlib.Cryptography.GIZK.sim	3
+TCSlib.Cryptography.GIZK.blockTapeEquiv	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator	direct		2
+TCSlib.Cryptography.GIZK.sim	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator	direct		3
+TCSlib.Cryptography.HardcoreBit.PushesUniform	TCSlib.Cryptography.HardcoreBit.Basic	direct	TCSlib.Cryptography.StatClose.comp_pushesUniform, TCSlib.Cryptography.HardcoreBit.PushesUniform.comp	4
+TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.Protocol.viewV	3
+TCSlib.Cryptography.Protocol.viewV	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		3
+TCSlib.Cryptography.Protocol.withV	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.Protocol.withV_vCoinsEquiv	3
+TCSlib.Cryptography.Protocol.withV_vCoinsEquiv	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct		2
+TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.Strategy.Coins	10
+TCSlib.Cryptography.Strategy.encodeMsgs	TCSlib.Cryptography.ZeroKnowledge.Interaction	deep	TCSlib.Cryptography.GIZK.attemptStr, TCSlib.Cryptography.GIZK.sim, TCSlib.Cryptography.View.encode	7
+TCSlib.Cryptography.View.encode	TCSlib.Cryptography.ZeroKnowledge.Interaction	direct	TCSlib.Cryptography.GIZK.attemptStr, TCSlib.Cryptography.GIZK.sim	7
