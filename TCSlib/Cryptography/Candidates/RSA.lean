@@ -484,7 +484,8 @@ coprime to `N`, and for `N = 1` the default `0` is coprime to `1`) and is below 
 `x ↦ (x : ZMod N).val` on `(ZMod N)ˣ` along the value-preserving bijection
 `{v : Fin (2^k) // v < N ∧ gcd(v, N) = 1} ≃ (ZMod N)ˣ` (`ZMod.unitOfCoprime`; inverse by
 `ZMod.val_lt`, `ZMod.val_coe_unit_coprime`, and `N < 2^k`; `StatClose.comp_equiv_right`).
-(3) The acceptance probability is `Φ(N)/2^k` (`uprob_eq_card_filter` and the same bijection).
+(3) The acceptance probability is `Φ(N)/2^k` (`uprob_def`, `Nat.card_congr` along the same
+bijection, `ZMod.card_units_eq_totient`; `rsa_uprob_units`).
 `2^k ≤ 2N` by the minimality of `Nat.size` (`Nat.size_le`: `N < 2^{k−1}` would give
 `Nat.size N ≤ k − 1`), and `N ≤ Φ(N) · (log₂ N + 1) ≤ Φ(N) · k`
 (`NumberTheory.le_totient_mul_log_succ`; `2^{log₂ N} ≤ N < 2^k`, `Nat.pow_log_le_self`), so
@@ -1562,10 +1563,9 @@ evaluator clause.
 
 **Proof sketch.** Unfold the activation (`NUPPT.runAtL_ofPolyTimeUniform`, `rsaSampleRaw`,
 `unitSampleStr`, `rsaGen_runAt`), case on `sampleUnitL`; `rsaDec`'s test is discharged by
-`length_natToList`, `listToNat_natToList` (`v < N < 2^{2m}`), `sampleUnitL_spec` resp.
-`Nat.coprime_one_left`; the decoded unit has value `v` (`ZMod.coe_unitOfCoprime`,
-`ZMod.val_natCast`, `Nat.mod_eq_of_lt`), so `rsaEnc i x = natToList (2m) v` and
-`rsaEval_spec` applies. -/
+`length_natToList`, `listToNat_natToList` (`v < N < 2^{2m}`), `sampleUnitL_spec` resp. the
+default `1 % N` (`rsa_getD_spec`, `rsa_dec_unitSampleStr`); the decoded unit `x` re-encodes to the
+sampler's string (`rsaEnc_of_rsaDec`), so `rsaEval_spec` applies. -/
 theorem rsaSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
     (s : (rsaSampler H).Coins n) :
     ∃ x, rsaDec (pairFstD ((rsaGen H).runAt n [] r))
@@ -1793,17 +1793,18 @@ private theorem rsa_statClose_dec {m : ℕ} (P : RSAParams m) (n : ℕ)
 easy to sample"]: the decoded output of `rsaSampler` at a generated index is within a
 negligible statistical distance of the uniform element of `Z_N^*`.
 
-**Proof sketch.** Take `δ n := 1` for `n < 2` and `δ n := e^{-n}` for `n ≥ 2`. At a generated
-index `⟨N, e⟩` (`rsaCollection_index`, valid by `rsaValid_indexOf`, `N = pq < 2^{2n}`) the
-sampler's output is `unitSampleStr` on the numeral of `N` (`NUPPT.runAtL_ofPolyTimeUniform`,
-`rsaSampleRaw`): `T(n)` trials each reading `k = Nat.size N ≤ 2n` uniform bits
-(`k ≤ B(n)`), accepted iff the value is a unit; `sampleUnitL` is `rejectBlocksL` of the unit
-predicate, so `statClose_rejectBlocksL` (default `1`) gives closeness `(1 - Pr[unit])^{T(n)}`
-to the uniform element of `{v < 2^k | v < N ∧ gcd(v, N) = 1} ≃ Z_N^*`, decoded by `rsaDec` to
-the uniform element of `Z_N^*` (`StatClose.map`, `decodeFin`-style injectivity). The acceptance rate is `Φ(N)/2^k ≥ Φ(N)/(2N) ≥ 1/(2k)`
-(`Nat.lt_size_self`, `Nat.size_le`, `NumberTheory.le_totient_mul_log_succ`) `≥ 1/(4n+8)`,
-and `(1 - 1/(4n+8))^{(4n+8)n} ≤ e^{-n}` (`one_sub_one_div_pow_le_exp_neg`). Negligibility:
-`exp_neg_le_half_pow`, `negligible_two_pow_neg`, `Negligible.mono`. -/
+**Proof sketch.** Take `δ n := 1` for `n < 2` and `δ n := e^{-n}` for `n ≥ 2`; it is negligible
+(`exp_neg_le_half_pow`, `negligible_two_pow_neg`, `Negligible.mono`). The closeness `e^{-n}`
+holds at every `n`, and `e^{-n} ≤ δ n` (`StatClose.mono`). Read the clause through
+`Collection.sampleClose_iff`. At a generated index `⟨N, e⟩` (`rsaCollection_index`, valid by
+`rsaValid_indexOf`) the sampler's output is `unitSampleStr` on the `2m`-bit numeral of `N`, with
+`m = max n 2` (`rsa_sampler_runAt`, from `NUPPT.runAtL_ofPolyTimeUniform`). As `N < 2^{2m}`,
+`Nat.size N ≤ 2m ≤ B(n)` at every `n`. So S3 (`statClose_sampleUnitL` at `N`) applies, and
+mapping both sides by `v ↦ rsaDec i ⟦v⟧_{2m}` turns the residue of a uniform unit `x` into
+`some x`, because `⟦x.val⟧_{2m} = rsaEnc i x` at a valid index (`rsaDec_rsaEnc`;
+`rsa_statClose_dec`, `StatClose.map`). Transport along the sampler's coins
+(`NUPPT.coinsEquivPoly`, `StatClose.comp_equiv_left`) and the domain
+(`rsaCollection_domEquiv`, `rsaCollection_decD`, `StatClose.comp_equiv_right`). -/
 theorem rsaCollection_sampleClose (H : ArithmeticFP) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (rsaCollection H).SampleClose δ := by
   refine ⟨fun n => if n < 2 then 1 else Real.exp (-(n : ℝ)), ?_, ?_⟩
@@ -1882,8 +1883,8 @@ theorem rsaBreaker_runAt (A : NUPPT) (n : ℕ) (N e y : List Bool) (r : (rsaBrea
 
 /-! ### The inversion experiment against the RSA experiment (helpers of `rsaCollection_invProbAt_le`) -/
 
-/-- The modulus of generated parameters is nonzero. -/
-private instance rsa_neZero_N {m : ℕ} (P : RSAParams m) : NeZero P.N := DistinctPrimes.neZero_mul P.z
+/-- The modulus of generated parameters is nonzero (a local instance: it is not exported). -/
+private local instance rsa_neZero_N {m : ℕ} (P : RSAParams m) : NeZero P.N := DistinctPrimes.neZero_mul P.z
 
 /-- The RSA event of `A` at modulus `M`, exponent `e` and challenge and coins `ρ = (y, ω)`: the
 answer of `A` on `⟨⟦M⟧, ⟨⟦e⟧, ⟦y⟧⟩⟩` (`2n`-bit numerals) decodes to a `2n`-bit `x` with
@@ -2030,17 +2031,6 @@ private theorem rsa_zOf_self {k : ℕ} (hk : 2 ≤ k) (z : DistinctPrimes k) : r
   rw [rsa_zsel, if_pos hc, Prod.mk.injEq] at h
   exact DistinctPrimes.ext h.1 h.2
 
-/-- Splitting a coin string `Fin (a + b) → Bool` into its two segments (`Fin.append`). -/
-private def rsa_appendEquiv (a b : ℕ) : (Fin a → Bool) × (Fin b → Bool) ≃ (Fin (a + b) → Bool) where
-  toFun s := Fin.append s.1 s.2
-  invFun f := (fun i => f (Fin.castAdd b i), fun j => f (Fin.natAdd a j))
-  left_inv s := by
-    obtain ⟨s1, s2⟩ := s
-    ext i
-    · exact Fin.append_left s1 s2 i
-    · exact Fin.append_right s1 s2 i
-  right_inv f := Fin.append_castAdd_natAdd
-
 /-- The coin length of the generator: `2 · 2n³ + T(n) B(n) = rsaGenCoins(n)`. -/
 private theorem rsa_genCoins_len (n : ℕ) :
     2 * (2 * n ^ 2 * n) + rsaSampleCoins.eval n = rsaGenCoins.eval n := by
@@ -2054,11 +2044,12 @@ private theorem rsa_coins_gen (H : ArithmeticFP) : (rsaCollection H).gen.coins =
 
 /-- The generator's coins are the two prime segments (`2 · 2n³` bits) followed by the exponent
 segment: the equivalence `(Fin (2 · 2n³) → Bool) × (Fin (T(n) B(n)) → Bool) ≃ (rsaGen H).Coins n`
-with `ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂`. -/
+with `ofFn (E (s₁, s₂)) = ofFn s₁ ++ ofFn s₂` (Mathlib's `Fin.appendEquiv`, then the length
+cast). -/
 private noncomputable def rsa_genCoinsEquiv (H : ArithmeticFP) (n : ℕ) :
     (Fin (2 * (2 * n ^ 2 * n)) → Bool) × (Fin (rsaSampleCoins.eval n) → Bool) ≃
       (rsaCollection H).gen.Coins n :=
-  (rsa_appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rsa_genCoins_len n)) (Equiv.refl Bool)).trans
+  (Fin.appendEquiv _ _).trans ((Equiv.arrowCongr (finCongr (rsa_genCoins_len n)) (Equiv.refl Bool)).trans
     (NUPPT.coinsEquivPoly (rsa_coins_gen H) n).symm)
 
 /-- The coin string of the split coins is the concatenation of the segments. -/
@@ -2068,7 +2059,7 @@ private theorem rsa_genCoinsEquiv_ofFn (H : ArithmeticFP) (n : ℕ)
   unfold rsa_genCoinsEquiv
   rw [Equiv.trans_apply, Equiv.trans_apply, NUPPT.coinsEquivPoly_symm_ofFn]
   rw [show ((finCongr (rsa_genCoins_len n)).arrowCongr (Equiv.refl Bool))
-      ((rsa_appendEquiv _ _) s) = fun i => (rsa_appendEquiv _ _) s (Fin.cast (rsa_genCoins_len n).symm i)
+      ((Fin.appendEquiv _ _) s) = fun i => (Fin.appendEquiv _ _) s (Fin.cast (rsa_genCoins_len n).symm i)
     from rfl, ← List.ofFn_congr (rsa_genCoins_len n)]
   exact List.ofFn_fin_append _ _
 
@@ -2241,24 +2232,26 @@ probability of `rsaBreaker A` plus the statistical error of the generator.
 
 **Proof sketch.** At a generated index `⟨N, e⟩` (`rsaCollection_index`, valid), the domain
 is `Z_N^*` (`rsaMod_indexOf`), `f_{N,e}(x)` is the numeral of `(x^e).val` (`rsaF_perm`,
-`rsaEnc`), and a decoded answer `x'` with `f x' = f x` has `x' = x` (`PermCollection.f_injective`),
-so the event is "`A(1^n, ⟨⟨N, e⟩, x^e⟩)` outputs the numeral of `x`", which implies the RSA
-event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`,
-`rsaBreaker_coinsEquiv`, `decodeFin_ofFn`, `bitsToNat_natToBits`, `val_units_pow`). Since
-`x ↦ x^e` pushes uniform to uniform (`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the
-inner probability equals the RSA inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]`
-(over `y` and `A`'s coins).
+`rsaEnc`), and a decoded answer `x'` with `f x' = f x` has `x' = x` (`rsa_rsaF_injective`:
+`rsaF_perm`, `rsaDec_rsaEnc`), so the event is "`A(1^n, ⟨⟨N, e⟩, x^e⟩)` outputs the numeral of
+`x`", which implies the RSA event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`,
+`rsaBreaker_coinsEquiv`, `decodeFin_ofFn`, `bitsToNat_natToBits`; `rsa_inv_imp`). Since
+`(x, ω) ↦ (x^e, φ⁻¹ ω)` is a bijection (`rsaPermAt`, `rsaBreaker_coinsEquiv`;
+`uprob_comp_equiv`, `uprob_mono`), the inner probability is at most the RSA inner probability
+at `(z, e)`: a number `h(z, e) ∈ [0, 1]` (over `y` and `A`'s coins; `rsa_inner_le`).
 The exponent group `Z*_{Φ(N)}` depends on `z`, so the generator's law is not compared with one
 uniform product: the comparison is a conditional expectation over `z`. Split the generator's
 coins into the two prime segments and the exponent segment (`rsaGenParams`,
-`HardcoreBit.uexp_prod`, `uprob_prod`, `HardcoreBit.uexp_comp_equiv`). (i) For each fixed prime pair `z`, the exponent drawn from the exponent segment
-(`sampleUnitL` modulo `Φ(N)`, fallback `1 = 1 mod Φ(N)` as `Φ(N) ≥ 2`) is within `e^{-n}` of
+`HardcoreBit.uexp_prod`, `uprob_prod`, `HardcoreBit.uexp_comp_equiv`). (i) For each fixed prime
+pair `z`, the exponent drawn from the exponent segment (`sampleUnitL` modulo `Φ(N)`, fallback
+`1 = 1 mod Φ(N)` as `Φ(N) ≥ 2`) is within `e^{-n}` of
 the uniform element of `Z*_{Φ(N)}` (S3, `statClose_sampleUnitL` at the modulus `Φ(N)`), so
 the conditional success at `z` exceeds `g(z) := E_{e uniform}[h(z, e)]` by at most `e^{-n}`
 (`StatClose.abs_uprob_sub_le_prod`, with `(y, r)` as the auxiliary coins). (ii) The law of `z`
 under the two prime segments is within `2 · 2^{-n} + 2n/2^n` of the uniform law on
 `DistinctPrimes n` (S2, `statClose_samplePrimeL_pair`, mapped through the validity test and
-its fallback `(2, 3)` by `StatClose.map`; a uniform pair passes the test unchanged); averaging the `[0, 1]`-valued `g` over that law instead of the uniform one costs at
+its fallback `(2, 3)` by `StatClose.map`; a uniform pair passes the test unchanged); averaging
+the `[0, 1]`-valued `g` over that law instead of the uniform one costs at
 most that distance (`StatClose.abs_uprob_sub_le_prod` again, with `g(z)` read as a probability
 over the auxiliary coins `ω : Π z', Z*_{Φ(N')} × Z_{N'}^* × A.Coins n` at `ω z`). (iii) Adding
 the conditional exponent error, the inversion probability is at most
@@ -2652,12 +2645,20 @@ private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFrom
 /-- **`A'` is polynomial-time** [PS10, Theorem 55.2, "the running time of `A'` is essentially
 the running time of `A` plus `O(log³ n)`"] given the arithmetic bundle.
 
-**Proof sketch.** `A.output` on the re-paired layout (`NUPPT.polyTimeComputable_layout`,
-`A.polyTimeComputable_output`); `q'` by `H.divMod`; the test `p' q' = N` by `H.mul` and
-`polyTimeComputable_pairEq` (`polyTimeComputable_ite`); the decrements `p' − 1`, `q' − 1`
-by `H.sub` with `[true]` (run-3 audit P7-1); `Φ` by `H.mul`; `d` as the second component of
-`xgcdStr ⟨e, Φ⟩` (`H.xgcd`); `y^d mod N` by `H.modExp`; padding to `2n` bits by
-`polyTimeComputable_unaryPoly`/`_blockMap`. -/
+**Proof sketch.** Compute `A'` word by word (`rsa_fOut_poly`), each word one bundle field:
+`p'` is `A.output` on the re-paired layout (`NUPPT.polyTimeComputable_layout`,
+`A.polyTimeComputable_output`); `q'` is the quotient of `H.divMod ⟨N, p'⟩`; the test `p' q' = N`
+is `H.mul` and two `H.le` comparisons, since the widths of `p' q'` and `N` differ
+(`polyTimeComputable_and`); `Φ = (p' − 1)(q' − 1)` is two decrements `H.sub` with `[true]`
+(run-3 audit P7-1) and `H.mul`, behind one leading zero; `d` is the second component of
+`xgcdStr ⟨e, Φ⟩` (`H.xgcd`); `y^d mod N` is `H.modExp` with `|y| + 1` leading zeros before
+`N` (the zeros are `H.sub ⟨1y, 1y⟩`). The two zero prefixes make every word read exactly, also on
+the degenerate inputs `Φ = 0` (where `d ≤ 1`) and `N = 0` (where `y^d mod N = y^d`). The
+`2n`-bit output is the truncation `(⟦0⟧_{2n} ++ v).drop |v|` of the value word `v`
+(`H.sub ⟨1^{2n}, 1^{2n}⟩`, `polyTimeComputable_pairDropPoly var`), and `polyTimeComputable_ite`
+selects it or `[]` by the test. The word computation equals `rsaFromFactorRaw A`
+(`rsa_fOut_eq`: `divModStr_pairEncode`, `xgcdStr_pairEncode`, `modExpStr_pairEncode`,
+`listToNat_subStr`, `rsa_drop_zeros_append`). -/
 theorem polyTimeComputable_rsaFromFactorRaw (H : ArithmeticFP) (A : NUPPT) :
     PolyTimeComputable (rsaFromFactorRaw A) := by
   have h := rsa_fOut_poly H A
