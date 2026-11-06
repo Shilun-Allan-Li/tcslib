@@ -458,3 +458,7 @@ bound, a polynomial unary pad) in a **new `SpaceComplexity/Padding`** module. It
 reuse by Ladner's padding. `Hierarchy.lean` may import it, and the maintainer closes
 `SPACE_linear_ne_NP` (`sph_linear_ne_NP_of_padding space_hierarchy <E-PAD>`) in a small PR with its
 own gate, not through a fill. The fill is dispatched by pasted prompt (WORKFLOW §5).
+
+**Gate 112, minor 112-01 (2026-11-06):** the harvest probe's `route_space` was false as quantified,
+being over arbitrary machines. F6's route probe must state it conditionally (`aRun`, `aCut`, `hloop`
+as hypotheses) or at F6's own witnesses.
