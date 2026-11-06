@@ -102,12 +102,6 @@ theorem inWin_run {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤
     Cfg.InWindow s (run w) := by
   simpa using NDTM.runWith_take_inWindow N.tm w ((hN x w).trans hs) w.length
 
-/-- Equal codes of window-bounded configurations give equal vertices. An alias of
-`Complexity.ExpBFS.coreSum_eq_of_code_eq`, kept for its downstream uses. -/
-theorem coreSum_eq_of_code_eq {C D : Cfg N.k Bool N.State x} (hC : Cfg.InWindow s C)
-    (hD : Cfg.InWindow s D) (h : cfgCode s C = cfgCode s D) : NDTM.coreSum C = NDTM.coreSum D :=
-  ExpBFS.coreSum_eq_of_code_eq hC hD h
-
 /-- From a reachable code, the coin-`b` step relation points exactly at the code of the
 coin-`b` successor. -/
 theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length ≤ s) (v : List Bool)
