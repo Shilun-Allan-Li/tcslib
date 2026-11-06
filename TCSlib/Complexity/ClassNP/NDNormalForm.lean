@@ -258,8 +258,7 @@ private theorem nf_display_firstStop (N : FinNDTM Bool) (x w : List Bool) (hw : 
     obtain ⟨hne, hm, hb⟩ := (nf_ctl_stop_iff N.k _).mp hs
     have hipos : 0 < i := (List.length_pos_iff.mpr hne).trans_eq (List.length_take_of_le hi.le)
     rw [List.length_take_of_le hi.le] at hm
-    have he := Nat.mod_add_div i (2 * N.k + 4)
-    rw [hm, Nat.zero_add] at he
+    have he := Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hm)
     have hn : 0 < i / (2 * N.k + 4) := Nat.pos_of_mul_pos_left (hipos.trans_eq he.symm)
     have hlt : i / (2 * N.k + 4) < w.length :=
       Nat.div_lt_of_lt_mul (hi.trans_eq (nf_display_length N x w))
