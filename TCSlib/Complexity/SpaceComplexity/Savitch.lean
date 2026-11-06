@@ -17,13 +17,14 @@ set_option autoImplicit false
 
 [AB09, Theorem 4.14] ([Sav70]): for space-constructible `S`,
 `NSPACE(S(n)) ⊆ SPACE(S(n)²)` — nondeterministic space costs only a quadratic
-deterministic overhead, via the midpoint recursion `reach?(u, v, i)` over the
-configuration graph of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`. The
+deterministic overhead, via Savitch's midpoint search `reach?(u, v, i)` over the
+machine's configurations, here realized by a register machine. The
 corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
 
-**Status.** Both results are proved. `Complexity.savitch` holds for every space bound
-`S ≥ logSpace` (`Complexity.savitch_of_logSpace_le`; constructibility is used only for this
-bound): the deepening register machine of
+**Status.** Both results are proved. `Complexity.savitch_of_logSpace_le` proves the inclusion
+for every space bound `S ≥ logSpace`, and `Complexity.savitch` follows, since
+space-constructibility includes `logSpace ≤ S` and nothing else of it is used: the deepening
+register machine of
 `TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen` decides `L` with registers of
 `O((S n)²)` digits (`Complexity.LogProg.SavitchARM.deepen_contract`), and
 `Complexity.LogProg.arm_decides_SPACE` turns it into a deterministic decider in space
@@ -44,8 +45,8 @@ Savitch register machine of `TCSlib.Complexity.SpaceComplexity.SavitchARM`
   whether a configuration with a work head on the window's edge is reachable; if none is,
   membership is reachability at that radius
   (`Complexity.LogProg.SavitchARM.mem_iff_reach_of_noEdge`), and beyond the space bound none is
-  (`Complexity.LogProg.SavitchARM.noEdge_of_lt`), so the search stops by radius
-  `sp |x| + 1`.
+  (`Complexity.LogProg.SavitchARM.noEdge_of_lt`), so for a machine deciding in space `c · S`
+  the search stops by radius `c · S(|x|) + 1`.
 * **The recursion is realized by a register machine**: the midpoint search is the Savitch
   register machine (`Complexity.LogProg.SavitchARM.A`), whose explicit stack keeps every
   register within `w · w` binary digits for a code width `w = O(S n)`; the deepening machine
@@ -59,7 +60,7 @@ None: the module states theorems only.
 
 * `Complexity.savitch_of_logSpace_le` — [AB09, Theorem 4.14] for every `S ≥ logSpace`.
 * `Complexity.savitch` — [AB09, Theorem 4.14].
-* `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1]. (Proved.)
+* `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1].
 
 ## References
 
@@ -77,7 +78,8 @@ open Turing
 
 /-- **Savitch's theorem for every bound `S ≥ logSpace`** ([AB09, Theorem 4.14]; [Sav70]):
 nondeterministic space `S` sits inside deterministic space `S²` whenever `S ≥ logSpace`; no
-constructibility is needed.
+constructibility is needed, since the space bound is found by trying `1, 2, …` ([Sip13, §8.1,
+proof of Theorem 8.5]).
 
 **Proof sketch.** Let `N` decide `L` in space `c · S`. The deepening machine
 (`Complexity.LogProg.SavitchARM.deepen_contract`) answers `x ∈ L` with logspace deciders and

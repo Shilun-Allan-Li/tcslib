@@ -56,8 +56,11 @@ namespace Complexity.LogProg.SavitchARM
 
 open Turing Codec
 
-/-- The deepening machine's contract: the hypothesis of `arm_decides_SPACE`, with registers of
-`O((sp |x| + logSpace |x| + 1)²)` digits. -/
+/-- **The deepening machine's contract** for `L` and the space bound `sp`: some register machine
+`D`, with logspace deciders `As` as its oracle, halts on every input `x` from the label `l₀` and
+the zero register file with the answer `x ∈ L`, along a run whose every register has at most
+`C · (sp |x| + logSpace |x| + 1)²` binary digits. It is the hypothesis of
+`Complexity.LogProg.arm_decides_SPACE`. -/
 def DeepenContract (L : Language Bool) (sp : ℕ → ℕ) : Prop :=
   ∃ (m d : ℕ) (Λ : Type) (_ : Fintype Λ) (_ : DecidableEq Λ) (D : ARM m d Λ) (l₀ : Λ)
     (As : Fin d → Language Bool), (∀ j, As j ∈ LOGSPACE) ∧ ∃ C : ℕ, ∀ x : List Bool,
@@ -107,11 +110,9 @@ private inductive DpLb (c : ℕ) where
   deriving DecidableEq, Fintype
 
 /-- The block's registers inside `D`. -/
-private def dpρ (r : Fin 18) : Fin 25 := ⟨r.val, by omega⟩
+private def dpρ : Fin 18 → Fin 25 := Fin.castLE (by omega)
 
-private theorem dpρ_inj : Function.Injective dpρ := fun _ _ h => by
-  have h' := congrArg Fin.val h
-  exact Fin.ext h'
+private theorem dpρ_inj : Function.Injective dpρ := Fin.castLE_injective _
 
 private theorem dpρ_ne (r : Fin 18) {r' : Fin 25} (h : 18 ≤ r'.val) : dpρ r ≠ r' := fun e => by
   have h1 : (dpρ r).val = r.val := rfl
@@ -406,10 +407,10 @@ private theorem dp_cT_run (f : Bool) : ∀ j i (hi : i < c), i + j + 1 = c → �
 `n < 2 ^ |bits n|`. -/
 private theorem dp_bits_logSpace (n : ℕ) : logSpace n ≤ 1 + (Nat.bits n).length ∧
     (Nat.bits n).length ≤ logSpace n ∧ n < 2 ^ (Nat.bits n).length := by
-  rw [Nat.size_eq_bits_len]
-  refine ⟨by have := logSpace_le_size_succ n; omega, ?_, Nat.lt_size_self n⟩
-  rw [logSpace_eq]
-  exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
+  have h2 : (Nat.bits n).length ≤ logSpace n :=
+    (length_bits_le_log n).trans_eq (logSpace_eq n).symm
+  rw [Nat.size_eq_bits_len] at h2 ⊢
+  exact ⟨by have := logSpace_le_size_succ n; omega, h2, Nat.lt_size_self n⟩
 
 end Loops
 
@@ -589,7 +590,7 @@ search exits through `k b`, where `b` says whether some initial code reaches som
 language `La` (decider `j`, through `σ 2 = j`) by midpoint reachability at radius `s` and
 level `w`.
 
-**Proof sketch.** As the block fit's `fit_edge_block`: the entry registers are
+**Proof sketch.** The entry registers are
 `(outerSt s w 0 0 0).toV` (`setSt_toV`, `outerSt_toV`), so one `AHalt.embed_guardLe` of
 `outerU_run` (with `A_noVal`) runs the block to its exit; its answer is converted to the codec's
 terms through `dp_rel`, `dp_initO` and `dp_accO` and `decide_eq_decide`. -/
@@ -654,8 +655,7 @@ private theorem dp_block (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s �
             Reach (2 ^ (c * (s + ℓ + 1))) (StepRel N x s) (c * (s + ℓ + 1)) u v))), v₂, none) ∧
       v₂ 22 = ℓ ∧ v₂ 23 = s ∧ v₂ 24 = 0 ∧ ∀ r, v₂ r ≤ B := by
   have hsw : s ≤ c * (s + ℓ + 1) := le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
-  have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B :=
-    (Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)).trans hBB
+  have hB : 2 ^ (c * (s + ℓ + 1)) ≤ B := (size_facts _).2.trans hBB
   obtain ⟨v', r1, e1, e2, e3, e4, e5⟩ := dp_prep (o := dpOrc N) (x := x) hc f hB hL hS hZ hv
   obtain ⟨v₂, f1, f2, r2⟩ := dp_fit N x s _ hsw j La hj h1 h2 h3 hD hBB e5 e1
   rw [hι] at r1
@@ -747,8 +747,7 @@ private theorem dp_body {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ
       have hsB : s + 1 ≤ 2 ^ (dpW N sp x * dpW N sp x) := by
         have h1 := hWs (s + 1) (by omega)
         have h2 : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
-        have h3 : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
-          Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)
+        have h3 : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
         have h4 : s + 1 ≤ (codeK N + 1) * (s + 1 + (1 + (Nat.bits x.length).length) + 1) :=
           le_trans (by omega) (Nat.le_mul_of_pos_left _ hc)
         omega
@@ -774,8 +773,7 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
   have hl := dp_bits_logSpace x.length
   have hW1 : 1 + (Nat.bits x.length).length ≤ dpW N sp x :=
     le_trans (by omega) (Nat.le_mul_of_pos_left _ (by omega : 0 < codeK N + 1))
-  have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) :=
-    Nat.pow_le_pow_right (by norm_num) (Nat.le_mul_self _)
+  have hWB : 2 ^ dpW N sp x ≤ 2 ^ (dpW N sp x * dpW N sp x) := (size_facts _).2
   have hn : x.length < 2 ^ dpW N sp x :=
     (dp_bits_logSpace x.length).2.2.trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
   have hWlt : dpW N sp x < 2 ^ dpW N sp x := Nat.lt_two_pow_self
@@ -810,9 +808,10 @@ private theorem dp_run {N : FinNDTM Bool} {L : Language Bool} {sp : ℕ → ℕ}
 
 /-! ## The contract -/
 
-/-- **The fill's main theorem**: the deepening machine meets the contract, with the five
-logspace deciders `inputLenLang`, `initLang N`, `acceptLang N`, `stepLang N` and
-`edgeLang N`, and `C = 9 (codeK N + 1)² + 2`.
+/-- **The deepening machine meets the contract**: if `N` decides `L` in space `sp`, a register
+machine with five logspace deciders decides `L` with every register of at most
+`C · (sp |x| + logSpace |x| + 1)²` binary digits. The deciders are `inputLenLang`,
+`initLang N`, `acceptLang N`, `stepLang N` and `edgeLang N`, and `C = 9 (codeK N + 1)² + 2`.
 
 **Proof sketch.** `D`'s run (`dp_run`) answers `x ∈ L` with every register at most
 `2 ^ (W · W)`, `W = (codeK N + 1)(sp |x| + ℓ + 2)` and `ℓ ≤ logSpace |x| + 1`
