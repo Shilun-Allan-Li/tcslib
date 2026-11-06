@@ -264,8 +264,11 @@ theorem ofFn_fUniversal_f (c : EffectiveMachineCode) (n : ℕ)
     (x : Fin ((fUniversal c).inLen.eval n) → Bool) :
     List.ofFn ((fUniversal c).f n x) =
       (fUniversalStr c (List.ofFn x) ++ List.replicate (univOutLen.eval n) false).take
-        (univOutLen.eval n) :=
-  ofFn_getD_eq_take _ _
+        (univOutLen.eval n) := by
+  refine (List.ofFn_congr (FunFamily.ofString_outLen_eval (fUniversalStr c) univOutLen n) _).trans
+    (Eq.trans ?_ (ofFn_getD_eq_take _ _))
+  exact congrArg List.ofFn
+    (funext fun i => (FunFamily.ofString_f_apply _ _ n x _).trans (by rw [Fin.coe_cast]))
 
 /-! ## The encoding hypothesis and the polynomial coefficient -/
 
@@ -655,7 +658,10 @@ private theorem padStr_eq_ofFn_fUniversal_f (c : EffectiveMachineCode) {L : Poly
     (y : Fin ((fUniversal c).inLen.eval n) → Bool) (hy : List.ofFn y = code ++ List.ofFn x) :
     padStr univOutLen (List.replicate n true) (pairEncode code (true :: List.ofFn (g _ x))) =
       List.ofFn ((fUniversal c).f n y) := by
-  rw [ofFn_fUniversal_f, fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y hy, padStr,
+  obtain ⟨y₀, hy₀⟩ := exists_ofFn_eq_of_length (m := n) (w := List.ofFn y)
+    (by rw [List.length_ofFn, fUniversal_inLen_eval])
+  rw [ofFn_fUniversal_f, ← hy₀,
+    fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy), padStr,
     List.length_replicate]
 
 /-- **Inverses on the fibre** [PS10, Theorem 63.1, "`A` outputs `⟨M_g, x'⟩` with
@@ -681,11 +687,15 @@ private theorem exists_preimage_of_fUniversal_eq (c : EffectiveMachineCode) {L :
   obtain ⟨x', hx'⟩ := exists_ofFn_eq_of_length (m := n - Nat.log 2 n)
     (w := univArg (List.ofFn y')) (by simp [fUniversal_inLen_eval])
   refine ⟨x', hx', ?_⟩
+  obtain ⟨y₀, hy₀⟩ := exists_ofFn_eq_of_length (m := n) (w := List.ofFn y)
+    (by rw [List.length_ofFn, fUniversal_inLen_eval])
   have h1 := congrArg List.ofFn h
   rw [ofFn_fUniversal_f, ofFn_fUniversal_f,
-    take_append_replicate_of_le (by simpa using length_fUniversalStr_le c (List.ofFn y')),
-    take_append_replicate_of_le (by simpa using length_fUniversalStr_le c (List.ofFn y)),
-    fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y hy] at h1
+    take_append_replicate_of_le
+      (by simpa [fUniversal_inLen_eval] using length_fUniversalStr_le c (List.ofFn y')),
+    take_append_replicate_of_le
+      (by simpa [fUniversal_inLen_eval] using length_fUniversalStr_le c (List.ofFn y)),
+    ← hy₀, fUniversalStr_ofFn_eq c g Mg c₀ hMg hcode hdec hc₀ x y₀ (hy₀.trans hy)] at h1
   unfold fUniversalStr at h1
   simp only [List.length_ofFn] at h1
   rw [show ((fUniversal c).inLen.eval n + 1) ^ 3 = (n + 1) ^ 3 by rw [fUniversal_inLen_eval]] at h1

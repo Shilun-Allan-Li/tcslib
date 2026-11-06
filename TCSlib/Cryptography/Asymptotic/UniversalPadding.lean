@@ -137,7 +137,7 @@ theorem family_inLen (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) :
 theorem ofFn_family_f (F : List Bool → List Bool) (ℓ : PolyExpr) (d : ℕ) (m : ℕ)
     (x : Fin ((family F ℓ d).inLen.eval m) → Bool) :
     List.ofFn ((family F ℓ d).f m x) = gStr F ℓ d (List.ofFn x) :=
-  FunFamily.ofFn_ofString_f (lengthRegular_gStr F ℓ d) m x
+  FunFamily.ofFn_ofString_apply (lengthRegular_gStr F ℓ d) m x
 
 /-! ## The computability clauses -/
 
@@ -192,8 +192,8 @@ theorem quadraticCode_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {
   obtain ⟨Mc, hMc⟩ := exists_codeTM M₁ hk
   refine ⟨Mc, c₁ * (c' + 1) ^ 2, fun m x => ?_⟩
   rw [ofFn_family_f, hMc]
-  refine (hM₁ (List.ofFn x)).mono ?_
-  simp only [List.length_ofFn]
+  refine ((FinTM.computesFunInTime_iff _ _ _).1 hM₁ (List.ofFn x)).mono ?_
+  simp only [List.length_ofFn, family_inLen, PolyExpr.eval_var]
   calc c₁ * (c' * (m + 1) + 1) ^ 2 ≤ c₁ * ((c' + 1) * (m + 1)) ^ 2 :=
         Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by rw [Nat.add_mul, Nat.one_mul]; omega) 2)
     _ = c₁ * (c' + 1) ^ 2 * (m + 1) ^ 2 := by ring

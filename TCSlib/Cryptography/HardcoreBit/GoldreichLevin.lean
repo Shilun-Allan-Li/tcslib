@@ -83,6 +83,11 @@ def guessInverter (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
     β × (Fin n → Bool) → GuessCoins n k ρ → (Fin n → Bool) × (Fin n → Bool) :=
   glInverter (guessRecover A k)
 
+/-- The defining equation of `guessInverter`:
+`guessInverter A k = glInverter (guessRecover A k)`. -/
+theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
+    guessInverter A k = glInverter (guessRecover A k) := rfl
+
 /-- The recovery procedure of [Gar26, Figure 2.5] for a known `x`, run with the correct
 guesses `b_ℓ = ⟨x, s_ℓ⟩`: bit `i` is the majority over `L` of
 `⟨x, S_L⟩ ⊕ A(f(x) ‖ S_L ⊕ eᵢ)`. An analysis device, not an algorithm. -/

@@ -423,7 +423,7 @@ with `c : A.Coins n ≃ Bool × D.Coins n` the coin split (`Fin.consEquiv`), so
 so `0 ≤ prgAdv ≤ ε n` for all `n` and `Negligible.mono` closes `PRG.secure_iff`. -/
 theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     (hP : OneWayPermutation P) (hh : P.HardCore h) : (owpGenPRG P h).Secure := by
-  obtain ⟨F, hF, hFx⟩ := hP.easy
+  obtain ⟨F, hF, hFx⟩ := hP.evaluator
   obtain ⟨H, hH, hHx⟩ := hh.easy
   refine ⟨exists_owpGenEvaluator P h hF hH hFx hHx, fun D => ?_⟩
   have hflip : ∀ n, ∃ flip : Bool,
@@ -439,7 +439,8 @@ theorem owp_hardcore_prg (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
   have h2 := hflip n
   have h3 : predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) (flip n)) =
       predProb (P.f n) (h n) (fun y (c : Bool × D.Coins n) =>
-        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := rfl
+        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) :=
+    congrArg _ (funext fun y => funext fun c => by rw [owpPredictorSnoc_eq, owpPredictor_apply])
   rw [← h3, h2] at h1
   show |prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1))| ≤ |ε n|
   have h4 : 0 ≤ prgAdv (fun s => Fin.snoc (P.f n s) (h n s)) (D.distinguisher n (n + 1)) :=
@@ -495,7 +496,8 @@ theorem PRG.expand_G (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (�
 theorem PRG.expand_G_stretch (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
     (hℓ : ∀ n, n < ℓ.eval n) (n : ℕ) (s : Fin n → Bool)
     (i : Fin ((PRG.expand G ℓ hℓ).stretch.eval n)) :
-    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) := rfl
+    (PRG.expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[i] s) (Fin.last n) :=
+  PRG.expand_G G ℓ hℓ n s i
 
 /-- The hybrid-`k` reduction of [PS10, Lemma 80.5] (the machine `M(y)` of the proof) in the
 text's seed-first convention: on `T ∈ {0,1}^{n+1}` read `(b, X) := (T_{n+1}, T_1 ⋯ T_n)`, draw
@@ -758,8 +760,10 @@ theorem predProb_glPad {ρ : Type*} [Fintype ρ] (n : ℕ)
       predProb (HardcoreBit.glPad (𝓕.f n)) HardcoreBit.glBit
         (fun y r => A ((𝓕.glPad_outEquiv n).symm
           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) := by
-  unfold predProb
-  exact uprob_eq_of_equiv (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) ρ) fun _ => Iff.rfl
+  rw [predProb_def, predProb_def]
+  exact uprob_eq_of_equiv
+    ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm.prodCongr (Equiv.refl ρ))
+    fun _ => Iff.rfl
 
 /-- **Bridge to the concrete setting (inversion)**: the inversion probability of the family
 inverter `glInverter n R` against the family `g` equals that of the concrete
@@ -953,6 +957,43 @@ theorem PermFamily.glPad_outEquiv_ofFn (P : PermFamily) (m : ℕ)
 theorem PermFamily.glPad_outEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (y : Fin (m + m) → Bool) :
     List.ofFn ((P.glPad_outEquiv m).symm y) = List.ofFn y := by
   rw [← P.glPad_outEquiv_ofFn m, Equiv.apply_symm_apply]
+
+/-- The input `x ‖ r` of `glPad` of a permutation family, read through the two equivalences:
+`(P.glPad_inEquiv m).symm (x ‖ r) = (glPad_inEquiv m).symm (domEquiv⁻¹ x ‖ domEquiv⁻¹ r)`. -/
+theorem PermFamily.glPad_inEquiv_symm_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    (P.glPad_inEquiv m).symm (Fin.append x r) = (P.toFunFamily.glPad_inEquiv m).symm
+      (Fin.append ((P.toFunFamily_domEquiv m).symm x) ((P.toFunFamily_domEquiv m).symm r)) := by
+  apply List.ofFn_injective
+  rw [P.glPad_inEquiv_symm_ofFn, FunFamily.glPad_inEquiv_symm_ofFn, List.ofFn_fin_append,
+    List.ofFn_fin_append, P.toFunFamily_domEquiv_symm_ofFn, P.toFunFamily_domEquiv_symm_ofFn]
+
+/-- **`g(x ‖ r) = f(x) ‖ r` for `glPad` of a permutation family**, on `{0,1}^{m+m}` through
+`PermFamily.glPad_inEquiv`/`glPad_outEquiv`. -/
+theorem PermFamily.glPad_f_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm (Fin.append x r))) =
+      Fin.append (P.f m x) r := by
+  rw [P.glPad_inEquiv_symm_append m x r]
+  apply List.ofFn_injective
+  rw [P.glPad_outEquiv_ofFn, ← FunFamily.glPad_outEquiv_ofFn P.toFunFamily m,
+    FunFamily.glPad_f_equiv, List.ofFn_fin_append, List.ofFn_fin_append,
+    ← P.toFunFamily_codEquiv_ofFn, P.toFunFamily_f_domEquiv, Equiv.apply_symm_apply,
+    P.toFunFamily_domEquiv_symm_ofFn]
+
+/-- The inner product does not see the indexing of equal strings: if `x', r'` and `x, r` have
+the same encodings (over `Fin k` and `Fin m`, `k = m`), then `⟨x', r'⟩ = ⟨x, r⟩`. -/
+theorem HardcoreBit.ip_eq_of_ofFn {k m : ℕ} (h : k = m) {x' r' : Fin k → Bool}
+    {x r : Fin m → Bool} (hx : List.ofFn x' = List.ofFn x) (hr : List.ofFn r' = List.ofFn r) :
+    HardcoreBit.ip x' r' = HardcoreBit.ip x r := by
+  subst h
+  rw [List.ofFn_injective hx, List.ofFn_injective hr]
+
+/-- **`h(x ‖ r) = ⟨x, r⟩` for `glPad` of a permutation family**, on `{0,1}^{m+m}` through
+`PermFamily.glPad_inEquiv`. -/
+theorem PermFamily.glBit_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm (Fin.append x r)) = HardcoreBit.ip x r := by
+  rw [P.glPad_inEquiv_symm_append m x r, FunFamily.glBit_equiv]
+  exact HardcoreBit.ip_eq_of_ofFn (P.toFunFamily_inLen_eval m)
+    (P.toFunFamily_domEquiv_symm_ofFn m x) (P.toFunFamily_domEquiv_symm_ofFn m r)
 
 /-- **Goldreich–Levin** [PS10, Theorem 87.3; GL89]: if `f` is a strong one-way function then
 `g(x, r) = (f(x), r)` is a strong one-way function and `h(x, r) = ⟨x, r⟩` is a hard-core

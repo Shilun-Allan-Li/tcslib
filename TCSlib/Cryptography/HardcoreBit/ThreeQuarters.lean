@@ -69,6 +69,11 @@ def majorityInverter (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
       (Fin n → Bool) × (Fin n → Bool) :=
   glInverter (majorityRecover A T)
 
+/-- The defining equation of `majorityInverter`:
+`majorityInverter A T = glInverter (majorityRecover A T)`. -/
+theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
+    majorityInverter A T = glInverter (majorityRecover A T) := rfl
+
 /-- For a good `x`, one with `secProb f A x ≥ 3/4 + ε/2`, a single trial outputs `xᵢ` with
 probability at least `1/2 + ε`. [Gar26, §2.5.1, simple case], the single-iteration bound.
 

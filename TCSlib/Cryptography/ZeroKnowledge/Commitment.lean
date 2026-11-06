@@ -655,7 +655,8 @@ theorem HardCore.bitHiding {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Boo
   rw [owpPredMachine_predProb] at h1
   have h3 : predProb (P.f n) (h n) (owpPredictorSnoc (D.distinguisher n (n + 1)) (flip n)) =
       predProb (P.f n) (h n) (fun y (c : Bool × D.Coins n) =>
-        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) := rfl
+        xor (if D.distinguisher n (n + 1) (Fin.snoc y c.1) c.2 then c.1 else !c.1) (flip n)) :=
+    congrArg _ (funext fun y => funext fun c => by rw [owpPredictorSnoc_eq, owpPredictor_apply])
   rw [← h3, hflip n] at h1
   linarith
 
@@ -889,7 +890,7 @@ Theorem 79.4), not the collection of [PS10, Definition 55.1]. Both `OneWayPermut
 theorem owp_commitment (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     (hP : OneWayPermutation P) (hh : P.HardCore h) :
     Commitment (owpComStr P h) owpComLen where
-  easy := owpComStr_polyTimeComputable P h hP.easy hh.easy
+  easy := owpComStr_polyTimeComputable P h hP.toStrongOneWay.easy hh.easy
   binding := owpComStr_binding P h
   hides := (HardCore.bitHiding hh).owpComStr_hides
 

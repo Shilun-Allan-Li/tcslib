@@ -228,9 +228,9 @@ private theorem zkSim_runAt (S : PrivateKeyScheme) (n : ℕ) (r₁ : S.gen.Coins
     (r₂ : S.enc.Coins n) :
     (zkSim S).runAt n [] (zkSimCoins S n (r₁, r₂)) = S.encDist n (fun _ => false) (r₁, r₂) := by
   have ht : (List.ofFn r₁ ++ List.ofFn r₂).take (S.gen.coins.eval n) = List.ofFn r₁ :=
-    List.take_left' (by simp [NUPPT.coinLen])
+    List.take_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])
   have hd : (List.ofFn r₁ ++ List.ofFn r₂).drop (S.gen.coins.eval n) = List.ofFn r₂ :=
-    List.drop_left' (by simp [NUPPT.coinLen])
+    List.drop_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])
   rw [NUPPT.runAt_eq, ofFn_zkSimCoins]
   unfold zkSim
   rw [NUPPT.runAtL_ofPolyTimeUniform]

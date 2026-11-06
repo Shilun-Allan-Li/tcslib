@@ -226,6 +226,16 @@ def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
 theorem ofString_inLen_eval (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ) :
     (ofString f p).inLen.eval n = n := rfl
 
+/-- The output length of `ofString f p` at `n` is `p(n)`. -/
+theorem ofString_outLen_eval (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ) :
+    (ofString f p).outLen.eval n = p.eval n := rfl
+
+/-- The defining equation of `ofString`'s function: bit `i` of `(ofString f p).f n x` is bit `i`
+of `f(x)`, `false` past its end. -/
+theorem ofString_f_apply (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ)
+    (x : Fin ((ofString f p).inLen.eval n) → Bool) (i : Fin ((ofString f p).outLen.eval n)) :
+    (ofString f p).f n x i = (f (List.ofFn x)).getD i false := rfl
+
 /-- `f` is *length-regular* with output length `p`: `|f x| = p(|x|)` for every `x`. -/
 def LengthRegular (f : List Bool → List Bool) (p : PolyExpr) : Prop :=
   ∀ x, (f x).length = p.eval x.length
@@ -365,6 +375,13 @@ theorem ofFn_ofString_f {f : List Bool → List Bool} {p : PolyExpr} (hf : Lengt
   have hlen : (f (List.ofFn x)).length = p.eval n := by rw [hf, List.length_ofFn]
   refine List.ext_get (by simp [ofString, hlen]) fun i h₁ h₂ => ?_
   simp [ofString, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h₂]
+
+/-- On a length-regular `f`, the family `ofString f p` is exactly `f` on encoded strings, for
+inputs in the family's input space `{0,1}^{inLen(n)}`. -/
+theorem ofFn_ofString_apply {f : List Bool → List Bool} {p : PolyExpr} (hf : LengthRegular f p)
+    (n : ℕ) (x : Fin ((ofString f p).inLen.eval n) → Bool) :
+    List.ofFn ((ofString f p).f n x) = f (List.ofFn x) :=
+  ofFn_ofString_f hf n x
 
 /-- The identity family is the identity at every parameter. -/
 theorem ofString_id_f (n : ℕ) (x : Fin n → Bool) : (ofString id .var).f n x = x := by
@@ -938,6 +955,23 @@ def PermFamily.toFunFamily (P : PermFamily) : FunFamily where
 /-- `P` is a *one-way permutation* when its underlying family is strongly one-way
 [PS10, §2.10, Definition 55.1, single-function form, as used in Theorems 79.4 and 126.4]. -/
 def OneWayPermutation (P : PermFamily) : Prop := P.toFunFamily.StrongOneWay
+
+/-- The defining equivalence of `OneWayPermutation`:
+`OneWayPermutation P ↔ P.toFunFamily.StrongOneWay`. -/
+theorem oneWayPermutation_iff (P : PermFamily) :
+    OneWayPermutation P ↔ P.toFunFamily.StrongOneWay := Iff.rfl
+
+/-- A one-way permutation's family is strongly one-way (`oneWayPermutation_iff`, forward). -/
+theorem OneWayPermutation.toStrongOneWay {P : PermFamily} (hP : OneWayPermutation P) :
+    P.toFunFamily.StrongOneWay := hP
+
+/-- **The evaluator of a one-way permutation**, in permutation form: some polynomial-time `F`
+computes `f_n(x)` from `⟨1^n, x⟩` for `x ∈ {0,1}^n` (the easiness clause of
+`P.toFunFamily.StrongOneWay` through `toFunFamily_domEquiv`). -/
+theorem OneWayPermutation.evaluator {P : PermFamily} (hP : OneWayPermutation P) :
+    ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
+      ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x) :=
+  (FunFamily.easy_iff _).1 hP.easy
 
 /-- The function of a permutation family is the permutation. -/
 @[simp] theorem PermFamily.toFunFamily_f (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :

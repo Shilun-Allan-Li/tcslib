@@ -178,6 +178,9 @@ theorem PermFamily.glHalf_f_even (P : PermFamily) (m : ℕ) (z : Fin (m + m) →
     P.glHalf.f (m + m) z =
       P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z)) := by
   have hm : (m + m) / 2 = m := by omega
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glPad_f_append]
   funext i
   change P.glHalfFun (m + m) z i =
     Fin.append (P.f m fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) i
@@ -198,7 +201,9 @@ halves), read through `PermFamily.glPad_inEquiv`. -/
 theorem glHalfBit_even (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
     glHalfBit (m + m) z = P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm z) := by
   have hm : (m + m) / 2 = m := by omega
-  change _ = HardcoreBit.ip (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j))
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glBit_append]
   unfold glHalfBit
   rw [HardcoreBit.ip_cast hm]
   congr 1
@@ -248,6 +253,9 @@ theorem PermFamily.glHalf_f_odd (P : PermFamily) (m : ℕ) (z : Fin (m + m) → 
     P.glHalf.f (m + m + 1) (Fin.snoc z e) =
       Fin.snoc (P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e := by
   have hm : (m + m + 1) / 2 = m := by omega
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glPad_f_append]
   funext i
   change P.glHalfFun (m + m + 1) (Fin.snoc z e) i =
     (Fin.snoc (Fin.append (P.f m fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j))) e :
@@ -281,7 +289,9 @@ theorem PermFamily.glHalf_f_odd (P : PermFamily) (m : ℕ) (z : Fin (m + m) → 
 theorem glHalfBit_odd (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) (e : Bool) :
     glHalfBit (m + m + 1) (Fin.snoc z e) = P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm z) := by
   have hm : (m + m + 1) / 2 = m := by omega
-  change _ = HardcoreBit.ip (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j))
+  have hz : z = Fin.append (fun j => z (Fin.castAdd m j)) (fun j => z (Fin.natAdd m j)) :=
+    (Fin.append_castAdd_natAdd).symm
+  conv_rhs => rw [hz, PermFamily.glBit_append]
   unfold glHalfBit
   rw [HardcoreBit.ip_cast hm]
   congr 1
@@ -543,36 +553,63 @@ private theorem glHalfOddPred_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : B
 theorem glHalf_invProbAt_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
     P.glHalf.toFunFamily.invProbAt A (m + m) =
       P.toFunFamily.glPad.invProbAt (A.reparam (.add .var .var)) m := by
+  let e₁ := (P.glHalf.toFunFamily_domEquiv (m + m)).trans (P.glPad_inEquiv m).symm
+  have he : ∀ x, List.ofFn (e₁ x) = List.ofFn x := fun x => by
+    simp only [e₁, Equiv.trans_apply]
+    rw [P.glPad_inEquiv_symm_ofFn, P.glHalf.toFunFamily_domEquiv_ofFn]
+  have hF : ∀ x, List.ofFn (P.glHalf.toFunFamily.f (m + m) x) =
+      List.ofFn (P.toFunFamily.glPad.f m (e₁ x)) := fun x => by
+    rw [← P.glHalf.toFunFamily_codEquiv_ofFn, P.glHalf.toFunFamily_f_domEquiv,
+      PermFamily.glHalf_f_even, P.glPad_outEquiv_ofFn]
+    rfl
+  have hI : ∀ x x', P.glHalf.toFunFamily.f (m + m) x' = P.glHalf.toFunFamily.f (m + m) x ↔
+      P.toFunFamily.glPad.f m (e₁ x') = P.toFunFamily.glPad.f m (e₁ x) := fun x x' => by
+    rw [← List.ofFn_inj, hF, hF, List.ofFn_inj]
   rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob]
   refine (OneWay.uprob_congr fun z => ?_).trans (uprob_comp_equiv
-    ((Equiv.refl (Fin (m + m) → Bool)).prodCongr (NUPPT.reparamCoins A (.add .var .var) m)) _)
+    (e₁.prodCongr (NUPPT.reparamCoins A (.add .var .var) m)) _)
   obtain ⟨x, c⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, NUPPT.runAt_reparam,
-    PermFamily.toFunFamily_f, PermFamily.glHalf_f_even]
-  exact Iff.rfl
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, NUPPT.runAt_reparam]
+  constructor
+  · rintro ⟨x', h1, h2⟩
+    exact ⟨e₁ x', by rw [← hF x, he x']; exact h1, (hI x x').1 h2⟩
+  · rintro ⟨x'', h1, h2⟩
+    refine ⟨e₁.symm x'', ?_, (hI x _).2 (by rw [Equiv.apply_symm_apply]; exact h2)⟩
+    rw [← he (e₁.symm x''), Equiv.apply_symm_apply, hF x]
+    exact h1
 
 /-- **Inversion at odd length**: inverting `glHalf` at `2m + 1` with `A` is at most inverting
 `glPad` at `m` with the odd-length inverter. -/
 theorem glHalf_invProbAt_odd_le (P : PermFamily) (A : NUPPT) (m : ℕ) :
     P.glHalf.toFunFamily.invProbAt A (m + m + 1) ≤
       P.toFunFamily.glPad.invProbAt (glHalfOddInv A) m := by
-  rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob]
+  let d := P.glHalf.toFunFamily_domEquiv (m + m + 1)
+  have hF : ∀ y, List.ofFn (P.glHalf.toFunFamily.f (m + m + 1) y) =
+      List.ofFn (P.glHalf.f (m + m + 1) (d y)) := fun y => by
+    rw [← P.glHalf.toFunFamily_codEquiv_ofFn, P.glHalf.toFunFamily_f_domEquiv]
+  have hI : ∀ y y', P.glHalf.toFunFamily.f (m + m + 1) y' = P.glHalf.toFunFamily.f (m + m + 1) y ↔
+      P.glHalf.f (m + m + 1) (d y') = P.glHalf.f (m + m + 1) (d y) := fun y y' => by
+    rw [← List.ofFn_inj, hF, hF, List.ofFn_inj]
+  rw [FunFamily.invProbAt_eq_uprob, FunFamily.invProbAt_eq_uprob,
+    ← uprob_comp_equiv (d.symm.prodCongr (Equiv.refl (A.Coins (m + m + 1))))]
   refine le_of_eq_of_le (uprob_comp_equiv (snocCoins m (A.Coins (m + m + 1))) _).symm ?_
   refine le_of_le_of_eq ?_ (uprob_comp_equiv
-    ((Equiv.refl (Fin (m + m) → Bool)).prodCongr (oddCoins A m glHalfInvPost_poly)) _)
+    ((P.glPad_inEquiv m).symm.prodCongr (oddCoins A m glHalfInvPost_poly)) _)
   refine uprob_mono fun w hw => ?_
   obtain ⟨z, e, c⟩ := w
   obtain ⟨x', hx', hfx'⟩ := hw
-  simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl,
-    id, PermFamily.toFunFamily_f, PermFamily.glHalf_f_odd] at hx' hfx' ⊢
-  rw [← Fin.snoc_init_self x', PermFamily.glHalf_f_odd] at hfx'
-  have hinit := congrArg Fin.init hfx'
-  simp only [Fin.init_snoc] at hinit
-  refine ⟨Fin.init x', ?_, hinit⟩
-  have hx'' : A.runAt (m + m + 1) (List.ofFn (Fin.snoc (P.toFunFamily.glPad.f m z) e)) c =
-      List.ofFn x' := hx'
-  rw [glHalfOddInv_runAt, ← ofFn_snoc_eq, hx'', List.length_ofFn, ofFn_eq_init_append,
-    List.take_left' List.length_ofFn]
+  simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply,
+    Equiv.refl_apply] at hx' hfx' ⊢
+  rw [hI, Equiv.apply_symm_apply, ← Fin.snoc_init_self (d x'), PermFamily.glHalf_f_odd,
+    PermFamily.glHalf_f_odd] at hfx'
+  have hinit := (P.glPad_outEquiv m).injective
+    (by simpa only [Fin.init_snoc] using congrArg Fin.init hfx')
+  refine ⟨(P.glPad_inEquiv m).symm (Fin.init (d x')), ?_, hinit⟩
+  rw [glHalfOddInv_runAt,
+    ← P.glPad_outEquiv_ofFn m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z)),
+    ← ofFn_snoc_eq, ← PermFamily.glHalf_f_odd, ← Equiv.apply_symm_apply d (Fin.snoc z e), ← hF,
+    hx', ← P.glHalf.toFunFamily_domEquiv_ofFn (m + m + 1) x', ofFn_eq_init_append (d x'),
+    List.length_ofFn, List.take_left' List.length_ofFn, P.glPad_inEquiv_symm_ofFn]
 
 /-- **Prediction at even length**: predicting `glHalfBit` from `glHalf` at `2m` with `A` is
 predicting `⟨x, r⟩` from `glPad` at `m` with `A.reparam (var + var)`. -/
@@ -658,11 +695,11 @@ negligible function of Definition 78.3 is `ε n := ε₁ (n/2) + ε₂ (n/2)` (`
 `Negligible.add`). -/
 theorem OneWayPermutation.glHalf {P : PermFamily} (hP : OneWayPermutation P) :
     OneWayPermutation P.glHalf ∧ P.glHalf.HardCore glHalfBit := by
-  have hG : P.toFunFamily.glPad.StrongOneWay := hP.glPad
-  have hB : HardCore P.toFunFamily.glPad P.toFunFamily.glBit := hP.glPad_hardCore
-  obtain ⟨F, hF, hFx⟩ := hP.easy
-  refine ⟨⟨P.glHalf_easy hF hFx, fun A => ?_⟩, PermFamily.HardCore.of_easy_hard glHalfBit_easy
-    fun A => ?_⟩
+  have hG : P.toFunFamily.glPad.StrongOneWay := hP.toStrongOneWay.glPad
+  have hB : HardCore P.toFunFamily.glPad P.toFunFamily.glBit := hP.toStrongOneWay.glPad_hardCore
+  obtain ⟨F, hF, hFx⟩ := hP.evaluator
+  refine ⟨(oneWayPermutation_iff _).2 ⟨P.glHalf_easy hF hFx, fun A => ?_⟩,
+    PermFamily.HardCore.of_easy_hard glHalfBit_easy fun A => ?_⟩
   · have h₁ := hG.hard (A.reparam (.add .var .var))
     have h₂ := hG.hard (glHalfOddInv A)
     refine (h₁.comp_div_two.add h₂.comp_div_two).mono ⟨0, fun n _ => ?_⟩
