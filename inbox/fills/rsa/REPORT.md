@@ -19,4 +19,4 @@
 | 6 | `polyTimeComputable_rsaFromFactorRaw` | filled |
 | 7 | `rsaCollection_invProbAt_le` | filled |
 | 8 | `factorProb_le_rsaProb` | filled |
-| 9 | `rsaCollection_oneWay`, `rsa_imp_factoring` | open |
+| 9 | `rsaCollection_oneWay`, `rsa_imp_factoring` | filled |

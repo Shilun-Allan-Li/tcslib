@@ -2285,7 +2285,14 @@ clause fix `A`: `rsaCollection_invProbAt_le H A` bounds the inversion probabilit
 `negligible_rsaGenErr` and `Negligible.add`; conclude by `Negligible.mono`
 (`Collection.invProbAt_nonneg`, threshold `2`). -/
 theorem rsaCollection_oneWay (H : ArithmeticFP) (hR : RSAAssumption) : (rsaCollection H).OneWay := by
-  sorry
+  refine ⟨rsaCollection_sampleClose H, fun A => ?_⟩
+  refine ((rsaAssumption_iff.1 hR (rsaBreaker A)).add negligible_rsaGenErr).mono ⟨2, fun n hn => ?_⟩
+  have herr : 0 ≤ rsaGenErr n := by
+    unfold rsaGenErr
+    positivity
+  rw [abs_of_nonneg (Collection.invProbAt_nonneg _ A n),
+    abs_of_nonneg (add_nonneg (rsaProb_nonneg _ n) herr)]
+  exact rsaCollection_invProbAt_le H A hn
 
 /-- **Theorem 57.2** [PS10, Theorem 57.2]: under the RSA assumption (and the arithmetic
 hypotheses), RSA with `Gen(1^n) = ((N, e), d)` and `f⁻¹_{N,d}(y) = y^d mod N` is a collection
@@ -2714,6 +2721,9 @@ assumption (under the arithmetic hypotheses).
 (`factorProb_le_rsaProb`), which is negligible by `hR`; conclude by `Negligible.mono`
 (`factorProb_nonneg`). -/
 theorem rsa_imp_factoring (H : ArithmeticFP) (hR : RSAAssumption) : FactoringAssumption := by
-  sorry
+  refine factoringAssumption_iff.2 fun A =>
+    (rsaAssumption_iff.1 hR (rsaFromFactorer H A)).mono ⟨0, fun n _ => ?_⟩
+  rw [abs_of_nonneg (factorProb_nonneg A n), abs_of_nonneg (rsaProb_nonneg _ n)]
+  exact factorProb_le_rsaProb H A n
 
 end TCSlib.Cryptography.Candidates
