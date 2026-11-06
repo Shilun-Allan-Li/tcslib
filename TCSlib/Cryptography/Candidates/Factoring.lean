@@ -537,6 +537,89 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
     PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
   sorry
 
+/-- The `T` blocks of `n` bits of a coin string as a bijection: `fac_chunkEquiv T n r = chunk T n r`
+(`chunk` is `r` read through `finProdFinEquiv`, `chunk_apply`). -/
+private noncomputable def fac_chunkEquiv (T n : ℕ) : (Fin (T * n) → Bool) ≃ (Fin T → Fin n → Bool) where
+  toFun := chunk T n
+  invFun xs k := xs (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
+  left_inv r := by
+    funext k
+    simp only [chunk_apply, Prod.mk.eta, Equiv.apply_symm_apply]
+  right_inv xs := by
+    funext t i
+    simp only [chunk_apply, Equiv.symm_apply_apply]
+
+/-- `(1 − 1/(2n))^{2n²} ≤ e^{−n} ≤ (1/2)^n` (`one_sub_one_div_pow_le_exp_neg`,
+`exp_neg_le_half_pow`): the failure bound of `SamplePrime` with `2n²` trials. -/
+private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
+    (1 - 1 / (2 * n : ℝ)) ^ (2 * n ^ 2) ≤ (1 / 2 : ℝ) ^ n := by
+  have h := one_sub_one_div_pow_le_exp_neg (2 * n) n (by omega)
+  have he : 2 * n * n = 2 * n ^ 2 := by ring
+  rw [he] at h
+  push_cast at h
+  exact h.trans (exp_neg_le_half_pow n)
+
+/-- **One run of `samplePrimeL` is close to a uniform prime**: for `n ≥ 2`, the value of
+`samplePrimeL n` on `2n² · n` uniform coins is within `(1/2)^n` of a uniform element of `Π_n`
+(steps (2)–(3) of the sketch of `statClose_samplePrimeL_pair`). -/
+private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
+    StatClose (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r)))
+      (fun p : Primes n => ((p.1 : Fin (2 ^ n)) : ℕ)) ((1 / 2 : ℝ) ^ n) := by
+  have h2 : 2 < 2 ^ n := lt_of_le_of_lt hn n.lt_two_pow_self
+  have hd : (bitsToNat (natToBits n 2)).Prime := by
+    rw [bitsToNat_natToBits h2]; exact Nat.prime_two
+  have h0 := ((statClose_samplePrime n (2 * n ^ 2) hn hd).map bitsToNat).comp_equiv_left
+    (fac_chunkEquiv (2 * n ^ 2) n)
+  let e2 : Primes n ≃ {b : Fin n → Bool // (bitsToNat b).Prime} :=
+    (Equiv.subtypeEquiv (bitsEquiv n) (fun b => by rw [bitsEquiv_val])).symm
+  have h1 := h0.comp_equiv_right e2
+  have hY : (fun p : Primes n => bitsToNat ((e2 p : {b : Fin n → Bool // (bitsToNat b).Prime}) :
+      Fin n → Bool)) = fun p : Primes n => ((p.1 : Fin (2 ^ n)) : ℕ) := by
+    funext p
+    rw [← bitsEquiv_val]
+    show ((bitsEquiv n) ((bitsEquiv n).symm p.1)).val = _
+    rw [Equiv.apply_symm_apply]
+  have hX : (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r))) =
+      fun r => bitsToNat ((samplePrime n (2 * n ^ 2) (fac_chunkEquiv (2 * n ^ 2) n r)).getD
+        (natToBits n 2)) := by
+    funext r
+    unfold samplePrimeL
+    rw [padFin_ofFn, ← bitsToNat_eq_listToNat]
+    rfl
+  rw [hX, ← hY]
+  exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
+
+/-- **Dropping the diagonal**: a uniform pair of `Π_n × Π_n` is within `2n/2^n` of a uniform pair of
+*distinct* primes (`uprob_le_uprob_subtype_add` both ways, `uprob_diag`, `one_div_card_primes_le`). -/
+private theorem fac_statClose_diag (n : ℕ) (hn : 2 ≤ n) :
+    StatClose (fun w : Primes n × Primes n => (((w.1.1 : Fin (2 ^ n)) : ℕ), ((w.2.1 : Fin (2 ^ n)) : ℕ)))
+      (fun z : DistinctPrimes n => (z.p, z.q)) (2 * n / 2 ^ n) := by
+  rw [statClose_iff]
+  intro T
+  haveI : Nonempty (Primes n) := ⟨(DistinctPrimes.default hn).1.1⟩
+  haveI : Nonempty (DistinctPrimes n) := ⟨DistinctPrimes.default hn⟩
+  let E : Primes n × Primes n → Prop := fun w => ((w.1.1 : Fin (2 ^ n)) : ℕ) ≠ w.2.1
+  let S : Primes n × Primes n → Prop := fun w => T (((w.1.1 : Fin (2 ^ n)) : ℕ), ((w.2.1 : Fin (2 ^ n)) : ℕ))
+  have hb : uprob (fun z : DistinctPrimes n => T (z.p, z.q)) = uprob (fun z : {w // E w} => S z.1) := by
+    apply OneWay.uprob_congr
+    intro z
+    rw [DistinctPrimes.p_eq, DistinctPrimes.q_eq]
+  have hd : uprob (fun w => ¬ E w) ≤ 2 * n / 2 ^ n := by
+    have : uprob (fun w => ¬ E w) = uprob (fun w : Primes n × Primes n => w.2 = w.1) := by
+      apply OneWay.uprob_congr
+      intro w
+      simp only [E, not_not]
+      constructor
+      · intro h; exact Subtype.ext (Fin.ext h.symm)
+      · intro h; rw [h]
+    rw [this, uprob_diag]
+    exact one_div_card_primes_le n hn
+  have h1 := uprob_le_uprob_subtype_add E S
+  have h2 := uprob_le_uprob_subtype_add E (fun w => ¬ S w)
+  rw [uprob_not, uprob_not (fun z : {w // E w} => S z.1)] at h2
+  rw [hb, abs_sub_le_iff]
+  constructor <;> linarith
+
 /-- **Two independent runs of `SamplePrime(n)` are close to a uniform pair of distinct primes**
 [PS10, Lemma 51.17 and Theorem 51.1, "sample two random prime numbers"]: for `n ≥ 2`, the
 values of `samplePrimeL n` on the two halves of `2 · (2n² · n)` uniform coins are within
@@ -567,7 +650,27 @@ theorem statClose_samplePrimeL_pair (n : ℕ) (hn : 2 ≤ n) :
           listToNat (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
       (fun z : DistinctPrimes n => (z.p, z.q))
       (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
-  sorry
+  set L := 2 * n ^ 2 * n with hL
+  let eS : (Fin L → Bool) × (Fin L → Bool) ≃ (Fin (2 * L) → Bool) :=
+    (Fin.appendEquiv L L).trans (Equiv.arrowCongr (finCongr (two_mul L).symm) (Equiv.refl Bool))
+  have hS : ∀ z, List.ofFn (eS z) = List.ofFn z.1 ++ List.ofFn z.2 := by
+    rintro ⟨a, b⟩
+    rw [← List.ofFn_fin_append]
+    show List.ofFn (fun i => Fin.append a b (Fin.cast (two_mul L) i)) = _
+    exact (List.ofFn_congr (two_mul L).symm (Fin.append a b)).symm
+  have h1 := fac_statClose_samplePrimeL n hn
+  have hp := ((h1.prod h1).comp_equiv_left eS.symm).trans (fac_statClose_diag n hn)
+  have hX : (fun s : Fin (2 * L) → Bool =>
+        (listToNat (samplePrimeL n ((List.ofFn s).take L)),
+          listToNat (samplePrimeL n ((List.ofFn s).drop L)))) =
+      fun s => (listToNat (samplePrimeL n (List.ofFn (eS.symm s).1)),
+        listToNat (samplePrimeL n (List.ofFn (eS.symm s).2))) := by
+    funext s
+    have hs : List.ofFn s = List.ofFn (eS.symm s).1 ++ List.ofFn (eS.symm s).2 := by
+      rw [← hS, Equiv.apply_symm_apply]
+    rw [hs, List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)]
+  rw [hX]
+  exact hp.mono (by linarith)
 
 /-- The output of the collection's sampler from two sampled blocks `a`, `b`: the pair of
 `m`-bit numerals of the two numbers they read as, when these are distinct primes below `2^m`,
@@ -779,6 +882,66 @@ theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
   rw [Collection.index_eq]
   exact (congrArg pairFstD (factoringGen_runAt n r)).trans (pairFstD_pairEncode _ _)
 
+/-- Bit strings of two equal lengths, identified (`finCongr`); it keeps the coin string
+(`fac_arrowCongr_ofFn`). -/
+private def fac_arrowCongr {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool) :=
+  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
+
+/-- `List.ofFn (fac_arrowCongr h r) = List.ofFn r`. -/
+private theorem fac_arrowCongr_ofFn {a b : ℕ} (h : a = b) (r : Fin a → Bool) :
+    List.ofFn (fac_arrowCongr h r) = List.ofFn r :=
+  (List.ofFn_congr h r).symm
+
+/-- The decoded pair read from two numbers: the pair itself when they are distinct primes below
+`2^n`, the default pair otherwise. -/
+private noncomputable def fac_pairDec (n : ℕ) (hn : 2 ≤ n) (v : ℕ × ℕ) : Option (DistinctPrimes n) :=
+  if h : v.1.Prime ∧ v.2.Prime ∧ v.1 ≠ v.2 ∧ v.1 < 2 ^ n ∧ v.2 < 2 ^ n then
+    some ⟨(⟨⟨v.1, h.2.2.2.1⟩, h.1⟩, ⟨⟨v.2, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩
+  else some (DistinctPrimes.default hn)
+
+/-- Decoding the sampler's output: `decodeDistinctPrimes n (samplePairOut n hn a b)` is
+`fac_pairDec` of the two numbers read from `a` and `b`. -/
+private theorem fac_decode_samplePairOut (n : ℕ) (hn : 2 ≤ n) (a b : List Bool) :
+    decodeDistinctPrimes n (samplePairOut n hn a b) = fac_pairDec n hn (listToNat a, listToNat b) := by
+  unfold samplePairOut fac_pairDec
+  split_ifs with h
+  · rw [← decodeDistinctPrimes_encode n ⟨(⟨⟨listToNat a, h.2.2.2.1⟩, h.1⟩,
+      ⟨⟨listToNat b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩, encodeDistinctPrimes_eq,
+      DistinctPrimes.p_eq, DistinctPrimes.q_eq]
+  · exact decodeDistinctPrimes_encode n _
+
+/-- `fac_pairDec` returns a pair of distinct primes on its own values. -/
+private theorem fac_pairDec_pq (n : ℕ) (hn : 2 ≤ n) (z : DistinctPrimes n) :
+    fac_pairDec n hn (z.p, z.q) = some z := by
+  unfold fac_pairDec
+  rw [dif_pos ⟨z.p_prime, z.q_prime, z.p_ne_q, z.p_lt, z.q_lt⟩]
+  exact congrArg some (DistinctPrimes.ext (by rw [DistinctPrimes.p_eq]) (by rw [DistinctPrimes.q_eq]))
+
+/-- **The decoded sampler output is close to uniform** (S2 mapped through `fac_pairDec`), stated
+for a width `m = n` so that it applies at `m = max n 2`. -/
+private theorem fac_statClose_decode (n m : ℕ) (hm : 2 ≤ m) (hmn : m = n) :
+    StatClose (fun s : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
+        decodeDistinctPrimes m (samplePairOut m hm
+          (samplePrimeL n ((List.ofFn s).take (2 * n ^ 2 * n)))
+          (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
+      (fun z : DistinctPrimes m => some z) (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
+  subst hmn
+  have h := (statClose_samplePrimeL_pair m hm).map (fac_pairDec m hm)
+  simp only [fac_pairDec_pq] at h
+  simpa only [fac_decode_samplePairOut] using h
+
+/-- The closeness bound of the factoring sampler, `1` for `n < 2` and `2(1/2)^n + 2n/2^n`
+otherwise, is negligible (`negligible_two_pow_neg`, `Negligible.mul_pow`, `Negligible.add`). -/
+private theorem fac_negligible_delta :
+    Negligible fun n : ℕ => if n < 2 then (1 : ℝ) else 2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n := by
+  have h := (negligible_two_pow_neg.const_mul 2).add ((negligible_two_pow_neg.mul_pow 1).const_mul 2)
+  refine h.mono ⟨2, fun n hn => ?_⟩
+  rw [if_neg (by omega)]
+  apply le_of_eq
+  congr 1
+  rw [pow_one, inv_pow, one_div_pow, one_div]
+  ring
+
 /-- **The sampler is close to uniform** [PS10, Lemma 51.17 and Theorem 51.1, "sample two
 random prime numbers"]: the decoded output of the factoring collection's sampler is within
 a negligible statistical distance of the uniform pair of distinct primes.
@@ -801,7 +964,40 @@ against the uniform `some x` on `DistinctPrimes n` the extra error is the diagon
 `StatClose.map`. -/
 theorem factoringCollection_sampleClose (H : ArithmeticFP) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (factoringCollection H).SampleClose δ := by
-  sorry
+  refine ⟨_, fac_negligible_delta, ?_⟩
+  rw [Collection.sampleClose_iff]
+  intro n r
+  by_cases hn : n < 2
+  · rw [if_pos hn, statClose_iff]
+    intro T
+    rw [abs_sub_le_iff]
+    constructor <;> linarith [uprob_nonneg (fun s : (factoringCollection H).sample.Coins n =>
+      T ((factoringCollection H).decD ((factoringCollection H).index n r)
+        ((factoringCollection H).sample.runAt n ((factoringCollection H).index n r) s))),
+      uprob_le_one (fun s : (factoringCollection H).sample.Coins n =>
+      T ((factoringCollection H).decD ((factoringCollection H).index n r)
+        ((factoringCollection H).sample.runAt n ((factoringCollection H).index n r) s))),
+      uprob_nonneg (fun x : (factoringCollection H).D ((factoringCollection H).index n r) => T (some x)),
+      uprob_le_one (fun x : (factoringCollection H).D ((factoringCollection H).index n r) => T (some x))]
+  rw [if_neg hn]
+  push_neg at hn
+  have hlen : ((factoringCollection H).index n r).length = n := by
+    rw [factoringCollection_index, List.length_replicate]
+  generalize (factoringCollection H).index n r = i at hlen ⊢
+  subst hlen
+  have hc : (factoringSampler H).coinLen i.length = 2 * (2 * i.length ^ 2 * i.length) := by
+    rw [NUPPT.coinLen_eq]
+    unfold factoringSampler
+    rw [NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_const, eval_samplePrimeCoins]
+  rw [factoringCollection_sample]
+  have h1 := (fac_statClose_decode i.length (max i.length 2) (le_max_right _ _)
+    (max_eq_left hn)).map (Option.map (factoringCollection_domEquiv H i).symm)
+  have h2 := (h1.comp_equiv_left (fac_arrowCongr hc)).comp_equiv_right
+    (factoringCollection_domEquiv H i)
+  simp only [Option.map_some, Equiv.symm_apply_apply] at h2
+  convert h2 using 1
+  · funext s
+    rw [factoringCollection_decD, factoringSampler_runAt, fac_arrowCongr_ofFn]
 
 /-- **The reduction from the collection to factoring** [PS10, proof of Theorem 51.1, "the
 factoring assumption states that inverting `f_i` is hard"]: `A_fact(1^n, N) :=
