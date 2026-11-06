@@ -148,7 +148,8 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - `outbox/gates/<NN>-<slug>-gate/` and `outbox/fills/` (staged by the maintainer);
   - `inbox/` (deliveries and findings, pushed by the agents since 2026-11-06; earlier by the
     user);
-  - `archive/` (moved there once dispatched or committed to the records).
+  - `archive/` (moved there once committed to the records; since 2026-11-06 a dispatched folder
+    stays in `outbox/`, where its agent reads it, until its findings or delivery are committed).
 
   Touch only this subtree; pull with rebase before every push. The historical archive before
   2026-11-04 stays on the user's Mac (`tcslib/exchange/archive/`, indexed in the subfolder's
