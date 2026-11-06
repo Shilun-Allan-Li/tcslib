@@ -1229,6 +1229,23 @@ theorem expCollection_sampleClose {V : List Bool → Prop} (H : ArithmeticFP) (G
     rw [hY] at h
     exact h
 
+/-- **An inverter's success is a discrete-log success** at a valid index of width `n`: if `A`'s
+answer `w` decodes under `expDec` to a preimage of `g^y`, then `w` is the `n`-bit numeral of `y`
+(`expF_injective`). -/
+private theorem dla_dl_of_inv {i w : List Bool} {n : ℕ} (hv : ExpValid i) (hw : dlW i = n)
+    {y : ZMod (expOrd i)} (h : ∃ x', expDec i w = some x' ∧ expF i x' = expF i y) :
+    ∃ x : Fin n → Bool, decodeFin n w = some x ∧ bitsToNat x = y.val := by
+  obtain ⟨x', hdec, hf⟩ := h
+  obtain rfl := expF_injective hv hf
+  rw [expDec] at hdec
+  split_ifs at hdec with hc
+  obtain ⟨hlen, hlt⟩ := hc
+  rw [hw] at hlen
+  rw [decodeFin_eq, dif_pos hlen]
+  refine ⟨_, rfl, ?_⟩
+  rw [bitsToNat_eq_listToNat, ← List.ofFn_congr hlen w.get, List.ofFn_get, ← Option.some.inj hdec,
+    ZMod.val_natCast, Nat.mod_eq_of_lt hlt]
+
 /-- **Inverting the collection is the discrete-log experiment** [PS10, proof of Theorem 52.3,
 "the discrete log assumption implies that `f_{p,g}` is hard to invert"]: for `n ≥ n₀`, the
 inversion probability of `A` against the exponentiation collection is at most its
@@ -1245,7 +1262,23 @@ identified through `expCollection_coinsEquiv` (`expCollection_index`,
 theorem expCollection_invProbAt_le {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) (A : NUPPT) {n : ℕ} (hn : G.n₀ ≤ n) :
     (expCollection H G hV).invProbAt A n ≤ G.dlProb A n := by
-  sorry
+  rw [Collection.invProbAt_eq, ExpGroupGen.dlProb_eq]
+  refine le_of_le_of_eq (OneWay.uexp_mono fun r => ?_) (expCollection_coinsEquiv_uexp H G hV n _)
+  have hv : ExpValid (G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r)) := hV _ (G.valid n _ hn)
+  have hw : dlW (G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r)) = n :=
+    (G.wellFormed n _ hn).dlW_eq
+  rw [expCollection_index H G hV n r hn]
+  generalize G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r) = i at hv hw ⊢
+  -- read the domain `D i` as `Z_m` (`expCollection_domEquiv`) and compare pointwise
+  rw [← uprob_comp_equiv
+    (Equiv.prodCongr (expCollection_domEquiv H G hV i).symm (Equiv.refl (A.Coins n)))]
+  refine uprob_mono fun z hz => ?_
+  obtain ⟨x', hdec, hf⟩ := hz
+  simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply,
+    expCollection_f, expCollection_decD, Equiv.apply_symm_apply] at hdec hf
+  obtain ⟨x'', hx'', rfl⟩ := Option.map_eq_some_iff.1 hdec
+  rw [Equiv.apply_symm_apply] at hf
+  exact dla_dl_of_inv hv hw ⟨x'', hx'', hf⟩
 
 /-- **The exponentiation collection is one-way under discrete-log hardness** (the generic
 form of [PS10, Theorem 52.3]).
