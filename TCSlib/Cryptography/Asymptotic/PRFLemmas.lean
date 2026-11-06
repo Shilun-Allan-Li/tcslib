@@ -79,9 +79,9 @@ theorem take_ofFn_castLE {ℓ m : ℕ} (h : m ≤ ℓ) (f : Fin ℓ → Bool) :
 /-- Every bit of a `q·ℓ`-bit string is a bit of one of its blocks:
 `w k = FunFamily.blocks q ℓ w k.divNat k.modNat` (read off `FunFamily.blocks_symm_apply`). -/
 theorem eq_blocks_divNat_modNat {q ℓ : ℕ} (w : Fin (q * ℓ) → Bool) (k : Fin (q * ℓ)) :
-    w k = FunFamily.blocks q ℓ w k.divNat k.modNat := by
-  conv_lhs => rw [← (FunFamily.blocks q ℓ).symm_apply_apply w]
-  exact FunFamily.blocks_symm_apply q ℓ _ k
+    w k = FunFamily.blocks q ℓ w k.divNat k.modNat :=
+  calc w k = (FunFamily.blocks q ℓ).symm (FunFamily.blocks q ℓ w) k := by rw [Equiv.symm_apply_apply]
+    _ = FunFamily.blocks q ℓ w k.divNat k.modNat := FunFamily.blocks_symm_apply q ℓ _ k
 
 /-- Block `k` of the encoding of a `q`-tuple of `ℓ`-bit strings (positions `ℓk, …, ℓk + ℓ − 1`)
 is the encoding of the `k`-th component, read through `FunFamily.blocks`. -/
