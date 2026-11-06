@@ -82,3 +82,14 @@ major is repaired (notes 4–7).
 | 2 | minor | **Fixed** (`dfc3e990`, docstring only). The sketch now says that the time is at most `(6W + k(2W + 12)) t + 21 + 15k`, that `t + 1` absorbs the additive terms, and that at `k = 0` the base terms still pay for the guess and the control and input sweeps. The replay sentence says "a work-tape replay". |
 | 3 | minor | **Fixed** in the ledger (campaign commit `c1134085`): RC-4 reads "six invocations at five locations" (lines 5203, 6422, 6566, 6778, and twice at 7022), and the 12.2c task re-points all six. |
 | 4–7 | notes | Agreed; nothing to do. Round 3 regenerates the evidence note 6 checked: the seal (278 candidates, `Turing.Contract.zero` added by #197), the axioms, the screen and the replay, on the merged tree after #196. |
+
+**Round 3 (2026-11-06):** `pack-r3.md`, at #191's head `bbf696800043c9161f4d233eb26afee32aae8de2`.
+
+**Round 3 staged (2026-11-06)** on the exchange at
+`arora-barak-ch3-4/outbox/gates/95-nf-landing-fill-r3-gate/` (exchange commit `664513ff`): bundle
+`95-nf-landing-fill-r3-bundle.md`, 96 sections, SHA-256
+`f22f8ab68cbc32520e0eb932fdf71878da02109938f4065fbc722afc11f88b08`. Lean files from #191's head
+`bbf696800043c9161f4d233eb26afee32aae8de2`, everything else from the records commit
+`9b042a84547d0ee46153112fe623599b6cb95a6f`. Findings file `nf-landing-fill-r3-findings.md`.
+
+**Not yet clear to merge: #191** (gate 95's round 3 is staged, not yet dispatched).

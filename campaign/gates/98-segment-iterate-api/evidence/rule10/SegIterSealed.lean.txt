@@ -1,0 +1,34 @@
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+set_option autoImplicit false
+
+/-! Rule-10 sealed copies of #202's two proofs (a probe record, not library code): every TCSlib
+definition they could reach is irreducible, the home's own `Segment` and `Round` included. -/
+
+namespace Turing
+
+section Sealed
+
+attribute [local irreducible] Turing.MultiTapeTM.runFrom Turing.Segment Turing.Round Turing.roundStop
+
+theorem Segment.iterate_seq_sealed {k : ℕ} {Γ S : Type} {x : List Γ} {M : MultiTapeTM k Γ S}
+    {F : Set (Option S)} {P : (Fin k → ℤ) → Prop} (cs : ℕ → Cfg k Γ S x) (τ : ℕ → ℕ)
+    (h0 : P (cs 0).workTapePos) (n : ℕ)
+    (h : ∀ r < n, Segment M F P (cs r) (cs (r + 1)) (τ r)) :
+    Segment M F P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) := by
+  induction n with
+  | zero => exact Segment.zero h0
+  | succ n ih =>
+    rw [Finset.sum_range_succ]
+    exact (ih fun r hr => h r (by omega)).trans (h n (by omega))
+
+theorem Round.iterate_seq_sealed {k : ℕ} {Γ S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a : S}
+    {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (cs : ℕ → Cfg k Γ S x) (τ : ℕ → ℕ)
+    (ha : some a ∉ E) (h0 : P (cs 0).workTapePos) (n : ℕ)
+    (hround : ∀ r < n, Round M a E P (cs r) (cs (r + 1)) (τ r)) :
+    Segment M E P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) :=
+  Segment.iterate_seq cs τ h0 n fun r hr => (hround r hr).segment ha
+
+end Sealed
+
+end Turing
