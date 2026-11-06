@@ -100,6 +100,13 @@ sketches name the lemmas to use; read them with the corrections below.
 
 ### dl-b: the headline route (`fullDLCollection_hardCore`)
 
+**Restated by the equation-lemma PR (#210, ruling R-04-5 (A)).** The target now reads
+`(fullDLCollection H G).HardCore fun i x => halfPred i (fullDLCollection_domEquiv H G i x)`:
+the predicate reaches `ZMod (expOrd i)` through the published `fullDLCollection_domEquiv`
+(`Equiv.refl`), never by reducing `expCollection`. Work through `fullDLCollection_domEquiv`,
+`fullDLCollection_domEquiv_uprob`, `fullDLCollection_f`, `fullDLCollection_encD` and
+`fullDLCollection_decD`; the mathematics below is unchanged.
+
 Follow the docstring sketch: it is the gate 03f1 review §1.4 text, landed in #206. Gate 03f1
 round 2 checked its constants. In short, for a predictor `A` with advantage at least `n^{−c}` on
 infinitely many `n`:
