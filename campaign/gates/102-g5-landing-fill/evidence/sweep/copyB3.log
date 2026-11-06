@@ -1,0 +1,21 @@
+rvprobe/g5sweep/TtB3.lean:9:8: error(lean.unknownIdentifier): Unknown constant `Fin.sum_univ_eq_sum_range`
+rvprobe/g5sweep/TtB3.lean:10:8: error(lean.unknownIdentifier): Unknown constant `Finset.sum_fin_eq_sum_range`
+Nat.nsmul_eq_mul : ∀ (m n : ℕ), m • n = m * n
+Finset.card_fin : ∀ (n : ℕ), Finset.univ.card = n
+@Finset.card_univ : ∀ {α : Type u_1} [inst : Fintype α], Finset.univ.card = Fintype.card α
+Fintype.card_fin : ∀ (n : ℕ), Fintype.card (Fin n) = n
+@nsmul_eq_mul : ∀ {α : Type u_1} [inst : NonAssocSemiring α] (n : ℕ) (a : α), n • a = ↑n * a
+Nat.cast_id : ∀ (n : ℕ), ↑n = n
+@Nat.exists_eq_add_one : ∀ {a : ℕ}, (∃ n, a = n + 1) ↔ 0 < a
+@StrictMonoOn.injOn : ∀ {α : Type u_1} {β : Type u_2} [inst : LinearOrder α] [inst_1 : Preorder β] {f : α → β}
+  {s : Set α}, StrictMonoOn f s → Set.InjOn f s
+@Finset.card_le_card_of_injOn : ∀ {α : Type u_1} {β : Type u_2} {s : Finset α} {t : Finset β} (f : α → β),
+  Set.MapsTo f ↑s ↑t → Set.InjOn f ↑s → s.card ≤ t.card
+@Option.toList_map : ∀ {α : Type u_1} {β : Type u_2} {o : Option α} {f : α → β},
+  (Option.map f o).toList = List.map f o.toList
+@ne_of_mem_of_not_mem : ∀ {α : Type u_1} {β : Type u_2} [inst : Membership α β] {s : β} {a b : α}, a ∈ s → b ∉ s → a ≠ b
+@Option.ne_none_iff_exists' : ∀ {α : Type u_1} {o : Option α}, o ≠ none ↔ ∃ x, o = some x
+@Nat.pow_succ' : ∀ {m n : ℕ}, m ^ n.succ = m * m ^ n
+@Nat.le_mul_of_pos_right : ∀ {m : ℕ} (n : ℕ), 0 < m → n ≤ n * m
+rvprobe/g5sweep/TtB3.lean:26:3: error(lean.unknownIdentifier): Unknown constant `Fin.sum_univ_eq_sum_range`
+-- exit=1, 2 s (snapshot oleans-lnth)

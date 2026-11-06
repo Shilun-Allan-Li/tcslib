@@ -1,0 +1,20 @@
+# usage: mkseal.py <module.lean> <outdir>
+import sys,re,os
+src=open(sys.argv[1]).read(); out=sys.argv[2]; os.makedirs(out,exist_ok=True)
+seal=[l.strip() for l in open('Scratch/tools/seal-list.txt') if l.strip()]
+simp=['Turing.MultiTapeTM.initCfg','Turing.Cfg.init','Turing.Action.apply']
+attr='attribute [local irreducible]\n'+''.join('  '+n+'\n' for n in seal)+'attribute [-simp] '+' '.join(simp)+'\n'
+anchor='namespace Turing.FinTM\n'
+assert src.count(anchor)==1
+open(out+'/TwoTapesSealed.lean','w').write(src.replace(anchor,anchor+'\n'+attr,1))
+imports=''.join(l+'\n' for l in src.splitlines() if l.startswith('import '))
+ctl=open('campaign/fills/u2s/inputs/u2s-fill-g5/G5RouteCtl_unsealed.lean.txt').read()
+hdr=ctl[ctl.index('open Lean Elab Command Meta in'):ctl.index('section Controls')]
+cmds=''.join(f'#ctl_rfl {n}\n' for n in seal)+''.join(f'#ctl_eqn {n}\n' for n in seal)+''.join(f'#ctl_simp {n}\n' for n in simp)
+for kind in ['unsealed','sealed']:
+    body=imports+f'\n/-! Rule-10 controls for TwoTapes ({kind}): {len(seal)} definitions, {len(simp)} of them `@[simp]`. -/\n\n'+hdr+'section Controls\n\n'+(attr if kind=='sealed' else '')+'\n'+cmds+'\nend Controls\n'
+    open(out+f'/TwoTapesCtl_{kind}.lean','w').write(body)
+names=re.findall(r'^(?:private )?(?:noncomputable )?(?:theorem|def|abbrev|structure) (\S+)',src,re.M)
+ax=src.rstrip()+'\n\n'+''.join(f'#print axioms Turing.FinTM.{n}\n' for n in names)
+open(out+'/TwoTapesAxioms.lean','w').write(ax)
+print(len(seal),'sealed;',len(names),'declarations')

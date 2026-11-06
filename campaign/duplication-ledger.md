@@ -646,6 +646,23 @@ publishes `Complexity.LogProg.length_bits_succ_le` in `Machines/Bin`, beside `le
 bounds a `Nat.log` width and a memory range, and `BinaryArith/AddSub:174` a sum of two words, both
 other statements. **Retired on #208's merge.**
 
+**IL-1, the input-length decider's answer** (gate 101's round-2 screen, 2026-11-06). The
+public `Complexity.indicator_inputLenLang` (`Logspace/InputAccess`, since the ARM dedup `56716442`)
+states that `inputLenLang` answers `decide (a < |y|)` on `pairEncode y (bits a)`. Six proofs
+unfolded their decider table and repeated its two-line proof
+(`inputLenLang`, `indicator_indexLang_pairEncode`, `decide_eq_decide.mpr Iff.rfl`):
+- `Logspace/ISCountGenCorrect`'s `gen_start` (`hq`), which the v3 screen pairs with
+  `indicator_inputLenLang` and with `ExpBFS/Main`'s `orcN_len` at 94%;
+- `ExpBFS/Main`'s `orcN_len`, `SavitchARM/Correct`'s `hq`, `Machines/ARMWidthExample`'s `hq`,
+  `Logspace/PathHardRegs`' `orc_len` and `Randomized/SpaceAmplifyPoly`'s input-length loop (each
+  under the screen's cut-off or outside its population; found by `git grep` for the closing step).
+
+All six predate #208; `Deepen` cites the lemma. Census: one member in each file. No file is past
+one fifth. **Ruled (the user, 2026-11-06): re-point all six in #208.** #208's commit `6a289c50`
+replaces each by the table's unfolding and `indicator_inputLenLang`; each file elaborates. The
+other closings by `decide_eq_decide.mpr Iff.rfl` in the library (`InputAccess:551`, the lemma
+itself) are not members. **Retired on #208's merge.**
+
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
 - `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
@@ -941,6 +958,9 @@ design that waits for him.
 `SeamLayout` 3 of 36 (8.3%), `Catalog` 4 of 505, `Primitives` 4 of 285, `Loop` 1 of 205, `Encoding`
 1 of 61. The one-fifth rule is not reached. **Disposition:** the dedup window (12.2c): a public
 `MultiTapeTM.runFrom_one` in a non-vendored module, and the 17 sites re-pointed.
+**+1 (G5's landing, #211; gate 102):** `Robustness/TwoTapes`' `tt_round` closes the one-step
+identity inline (`runFrom_succ_eq_step.trans runFrom_zero`), 1 of 104 declarations; 18 sites for
+the window.
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and
@@ -1321,6 +1341,10 @@ inline twelve times, unfolding `zoneRowPre` with `funext_iff`, `Cfg.mapState_wor
   equation, so they are this 12.2c item, with `zoneRowPre_congr` and `zoneRowPre_mapState_iff`
   as its canonical statements. (Gate 97's pre-dispatch sweep, `evidence/sweep/README.md`, called
   `zs_rowPre_mapState` "RN-1's kind"; by RN-1's scope it belongs here.)
+- **G5 (#211, gate 102; the review's F4):** `TwoTapes` does not cite the pair. Each phase starts at
+  a configuration built at the phase's own state type (`tt_cfg_rowPre`), and each endpoint is
+  converted by `tt_mapState_eq_cfg` through `zoneRowPre_iff` and RN-1's `Cfg.mapState_eq_of_fields`;
+  nothing re-derives the state-independence. Not a member; the maintainer accepts the route.
 
 Census (inline steps inside declarations, counted as RN-1's are; members over all declarations,
 as the style lint counts them, at `20e7fc75`): `ZoneRebalance` 14 of 875 (1.6%: the twelve sites

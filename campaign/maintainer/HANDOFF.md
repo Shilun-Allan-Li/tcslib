@@ -118,8 +118,8 @@ replay below chained from it with only its own PR.
 | #191 | `b2bac06f` (round 3's repair `698dcdf5` + a records-only merge) | `replay-lnf5` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 did not close (0/1/1: one more untyped re-derivation); round 4 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
 | #202 | `7b5774fb` | `replay-lsi2` **passed** (112 modules) | 98 **CLOSED** 2026-11-06 | **merged** 2026-11-06 (`8a505fc9`); `oleans-lsi2` is the campaign's snapshot; G5's brief after #207 |
 | #207 | `d01332e4` | `replay-lzde2` **passed** | 99 **CLOSED** | **merged** 2026-11-06 (`d43a1374`); G5's fill brief issues |
-| #208 | `dd8a52c5` (round 1's `a074d9b7` + the round-1 repair `9db4f2ee`: F1's harvest `length_bits_succ_le` in `Machines/Bin`, ruled by the user, and F2–F4) | `replay-ldp4` **running** (190 modules, `Machines/Bin`'s closure, from `oleans-lnth`) | 101 round 1 **HOLD** (0/1/3/3); round 2 in preparation (`pack-r2.md`) | merge when it closes |
-| #211 | `3d0d9f86` (G5's delivery `71046be0`, base `335d31d4`, merged with the campaign) | after the landing edits | G5's fill gate, after the review and the sweep (both running) | landing edits, replay from `oleans-lnth`, pack |
+| #208 | `d01c56a4` (round 1's `a074d9b7` + the round-1 repair `9db4f2ee`: F1's harvest `length_bits_succ_le` in `Machines/Bin`, and F2–F4; IL-1's six re-points `6a289c50`, both ruled by the user) | `replay-ldp5` **running** (190 modules, from `oleans-lnth`) | 101 round 1 **HOLD** (0/1/3/3); round 2 in preparation (`pack-r2.md`) | merge when it closes |
+| #211 | `f239dafd` (G5's delivery `71046be0` + the landing edits `c00340d4`, `794ffb48`, `f239dafd`: the sweep's 15 hits, the review's N2/N4/F9, F6 through `SymbolLift` and F5 through `Contract.inPhase`; both imports ruled by the user) | `replay-lg6` **passed** (3 modules from `oleans-lnth`, 0 `sorry`) | 102 **dispatched** 2026-11-06 (89 sections) | merge when it closes |
 | #209 | `0b05cc3a` | `replay-lnth` **passed** | 100 **CLOSED** | **merged** 2026-11-06 (`5761d6e0`); `oleans-lnth` is the campaign's snapshot |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
@@ -166,9 +166,12 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    at `fe5cb6fb`, ancestor `335d31d4`, staged in the exchange's `outbox/fills/u2s-fill-g5/`;
    **dispatched 2026-11-06** (the user).
 3. **B6's H, the space hierarchy** (`space_hierarchy`, `LOGSPACE_ssubset_PSPACE`,
-   `SPACE_linear_ne_NP`; agent Codex): `campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, its
-   pre-ship re-taken on the merged campaign (`preship-d43a1374/`); reviewed 2026-11-06
-   (`review-2026-11-06/`: 1 blocker, 5 majors), the draft being reworked. **Ruled (the user,
+   `SPACE_linear_ne_NP`; agent Codex): **issued 2026-11-06**, `campaign/fills/b6/briefs/b6-fill-hierarchy.md`
+   (base `e6bc1968`; inputs `campaign/fills/b6/inputs/b6-fill-hierarchy/`, the 43-file screen base,
+   pre-ship log), after the review (`drafts/b6-fill-hierarchy/review-2026-11-06/`: 1 blocker,
+   5 majors, folded in). Staged on the exchange (`outbox/fills/b6-fill-hierarchy/`, `c618ae35`);
+   **dispatched 2026-11-06** (the user). Delivery by attachment: `fill-b6-hierarchy.zip` and the
+   checkpoint zips. **Ruled (the user,
    2026-11-06):** `SPACE_linear_ne_NP` stays H's last checkpoint and may end in a named escalation
    (no published host for the padded decider or the padding map's polynomial time). (The other "H",
    `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D

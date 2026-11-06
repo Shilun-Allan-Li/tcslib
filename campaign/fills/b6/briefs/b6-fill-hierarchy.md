@@ -3,9 +3,11 @@
 Targets: `Complexity.space_hierarchy`, `LOGSPACE_ssubset_PSPACE` and `SPACE_linear_ne_NP`, in
 `TCSlib/Complexity/SpaceComplexity/Hierarchy.lean`.
 
-> **DRAFT** (maintainer, 2026-10-27; updated 2026-11-04; revised 2026-11-06 after the brief
-> review `review-2026-11-06/`: 1 blocker, 5 majors). PRs #175, #177, #181, #191, #196, #202 and
-> #207 have merged; the pre-ship was re-taken at their merge, `d43a1374`. **Ruled (user,
+> **Issued** (maintainer, 2026-11-06; drafted 2026-10-27, revised after the brief review
+> `campaign/fills/b6/drafts/b6-fill-hierarchy/review-2026-11-06/`: 1 blocker, 5 majors, all
+> folded in). PRs #175, #177, #181, #191, #196, #202, #207 and #209 have merged; the pre-ship ran
+> on the merged tree (`campaign/fills/b6/logs/b6-fill-hierarchy-preship.log`), and your base is
+> `e6bc1968`. **Ruled (user,
 > 2026-11-06):** `SPACE_linear_ne_NP` stays H's last checkpoint and may end in a named escalation
 > (see the route). **Agent: Codex** (user, 2026-10-27).
 
@@ -17,7 +19,7 @@ Targets: `Complexity.space_hierarchy`, `LOGSPACE_ssubset_PSPACE` and `SPACE_line
 
 - Clone: `https://github.com/Shilun-Allan-Li/tcslib`
 - Check out branch **`complexity/arora-barak-ch3-4`**, this exact branch, NOT `main`.
-- Before you start, confirm that `git merge-base --is-ancestor @ANCESTOR@ HEAD` succeeds. If it
+- Before you start, confirm that `git merge-base --is-ancestor e6bc196838b4e2675e4214306c730e7404624ab8 HEAD` succeeds. If it
   fails, **stop**. That commit contains:
   - **your targets as gated statements**: the P4.3 statement gate (`campaign/gates/ch4-p43/`),
     the space hierarchy's statement re-gated on the window route (2026-10-13);
@@ -52,8 +54,8 @@ Targets: `Complexity.space_hierarchy`, `LOGSPACE_ssubset_PSPACE` and `SPACE_line
 - **Branch at exactly that commit, not at the campaign tip:**
 
   ```sh
-  git checkout -b fill/b6-hierarchy @ANCESTOR@
-  git rev-parse HEAD        # must print @ANCESTOR@
+  git checkout -b fill/b6-hierarchy e6bc196838b4e2675e4214306c730e7404624ab8
+  git rev-parse HEAD        # must print e6bc196838b4e2675e4214306c730e7404624ab8
   git rev-parse HEAD:TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
   # must print 287acce8326a1de271dfa6be2cc3776f3a2caa32
   ```
@@ -84,11 +86,15 @@ Targets: `Complexity.space_hierarchy`, `LOGSPACE_ssubset_PSPACE` and `SPACE_line
   sorry warnings, at the overlay's lines 154, 271, 288 and 318 (the base's 150, 267, 284 and 314),
   nothing else. Every host this brief cites is in the overlay's import closure (the extended
   probe imports nothing else).
-- **In flight:** #208, the deepening fill's landing (`SavitchARM/Deepen`, new and not in your
-  order list, and `Savitch`, which is). It is replayed on the merged tree before it merges; cite
-  nothing it adds. If #208 merges first, `savitch` leaves the base sorry set; that is not a
-  difference you need to explain. Your base contains #209 (`NTimeHierarchy`'s
-  docstring, outside your order list); nothing in your closure changes.
+- **In flight:** #208, the deepening fill's landing: `SavitchARM/Deepen` (new, not in your order
+  list) and, in your order list, `Savitch`, `Machines/Bin` (one new lemma,
+  `length_bits_succ_le`) and proof-only re-points in `Machines/ARMWidth`,
+  `Machines/ARMWidthExample`, `ExpBFS/Main`, `SavitchARM/Correct`, `Logspace/PathHardRegs` and
+  `Logspace/ISCountGenCorrect` (no statement changes). It is replayed on the merged tree before it
+  merges; cite nothing it adds, and name no private `length_bits_succ_le`. If #208 merges first,
+  `savitch` leaves the base sorry set; that is not a difference you need to explain. #211
+  (`Robustness/TwoTapes`, G5) is outside your order list. Your base contains #209
+  (`NTimeHierarchy`'s docstring, outside your order list); nothing in your closure changes.
 
 ## Parallel batches this round
 
@@ -126,7 +132,7 @@ sealed (5 definitions) with 9 controls (9 pass unsealed, 9 fail sealed), and thr
 on the standard axioms (not `hr_sq_le_two_pow`'s); the duplication probe: of its six `exact?`
 calls, only `logSpace_le_succ` (which the route does not need) and `LOGSPACE_subset_PSPACE`
 (cited below) close; the order list 220 modules, 63 roots, 26 base sorries in 10 modules; the
-screen base 1,345 declarations, 740 pairs, none on `Hierarchy`; lint 0 FAIL, 80 WARN over 111
+screen base (over the 43 files) 1,854 declarations, 1,689 pairs, none on `Hierarchy`; lint 0 FAIL, 80 WARN over 111
 files. **This revision** (2026-11-06): the extended import probe, 171 checks, 0 errors, and 86
 axiom prints, none outside the standard three, against the campaign's snapshot after #209
 (the same closure); the review's probe (`review-2026-11-06/HRevProbe.*`) showed the seam's
@@ -461,8 +467,8 @@ frozen copy of its commit (`git worktree add <dir> HEAD`). **Semantic duplicatio
 every private lemma you add, search for a published declaration that states it or a
 generalization, in the tree and on every open PR branch, by name and by statement (`git grep`), and
 by an `exact?` or `apply?` probe; `REPORT.md` lists the search and result per private. **The
-population** is the pre-ship's 27 files (`screen-population.txt`: your file; the 22 other modules
-declaring the import probe's names, `TimeHierarchy/Diagonal` among them; `ClassNP/NP`; the known
+population** is 43 files, all listed in `screen-population.txt`: the pre-ship's 27 (your file;
+the 22 other modules declaring the import probe's names, `TimeHierarchy/Diagonal` among them; `ClassNP/NP`; the known
 hazards `TimeHierarchy/Separation`, `SpaceComplexity/Savitch`, `ClassNP/Nondeterminism` for the
 padding precedent) **plus the 16 modules this revision newly cites**:
 `TuringMachine/Build/Embed`, `Build/Contract/Basic`, `Build/Contract/Seam`,
@@ -470,9 +476,10 @@ padding precedent) **plus the 16 modules this revision newly cites**:
 `Build/Primitives`, `Build/VirtualInput`, `TuringMachine/Configuration`,
 `TuringMachine/Deterministic`, `TuringMachine/Finite`, `TuringMachine/Simulation`,
 `SpaceComplexity/Machines/Bin`, `ClassNP/PolyTime`, `ClassNP/PolyTimePairing`. **The pre-ship
-base** is `campaign/fills/b6/logs/b6-fill-hierarchy-screen-base.txt`, over the 27: 1,345
-declarations, 740 pairs, 207,247 characters, none on `Hierarchy`. Your before-screen over the 43
-files is your base for new pairs; `REPORT.md` states both counts. A new cross-file pair with an
+base** is `campaign/fills/b6/logs/b6-fill-hierarchy-screen-base.txt`, over the 43
+(`campaign/fills/b6/inputs/b6-fill-hierarchy/screen-population.txt`): 1,854 declarations, 1,689
+pairs, 534,736 characters, none on `Hierarchy`. Your before-screen over the 43 files must
+reproduce it and is your base for new pairs; `REPORT.md` states both counts. A new cross-file pair with an
 owned-file declaration on one side is listed with one disposition (idiom; re-derivation of a
 published lemma: cite it instead; re-derivation of another file's private: keep yours and request
 a promotion); a pair at 90% or more is a copy. `REPORT.md` carries **"new copies: none"** or lists

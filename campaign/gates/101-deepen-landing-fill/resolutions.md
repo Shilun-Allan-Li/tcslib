@@ -22,3 +22,11 @@
 | 5 | note | No change. |
 | 6 | note | No change. |
 | 7 | note | No change; round 2's pack keeps the distinction between repeated static checks and inspected execution records. |
+
+### Found in round 2's preparation
+
+**IL-1** (`campaign/duplication-ledger.md`): round 2's screen adds the two newly changed files
+(`ISCountGenCorrect`, `Machines/Bin`) to round 1's 20, and pairs `ISCountGenCorrect`'s `gen_start`
+with `InputAccess`'s `indicator_inputLenLang` and `ExpBFS/Main`'s `orcN_len` (94%, present at the
+base). `git grep` for the closing step found four more members. **Ruled (the user, 2026-11-06):
+re-point all six in #208**, done at `6a289c50`.
