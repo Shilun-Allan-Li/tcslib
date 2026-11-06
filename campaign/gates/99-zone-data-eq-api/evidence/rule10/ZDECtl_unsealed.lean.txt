@@ -1,0 +1,68 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+
+
+open Lean Elab Command Meta in
+elab "#ctl_rfl " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let goal ← mkEq (mkConst n (ci.levelParams.map Level.param)) value
+        let proof ← Term.elabTermEnsuringType (← `(by rfl)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} rfl {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_eqn " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ok ← liftTermElabM do
+    try
+      let some eqs ← getEqnsFor? n | return false
+      let ty := (← getConstInfo eqs[0]!).type
+      let ty ← instantiateForall ty #[]
+      Term.withoutErrToSorry do
+        let proof ← Term.elabTermEnsuringType (← `(by intros; rfl)) ty
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} eqn {n}"
+
+open Lean Elab Command Meta in
+elab "#ctl_simp " id:ident : command => do
+  let n ← liftCoreM (realizeGlobalConstNoOverload id)
+  let ci ← getConstInfo n
+  let some value := ci.value? | throwError "not a definition: {n}"
+  let ok ← liftTermElabM do
+    try
+      Term.withoutErrToSorry do
+        let c := mkConst n (ci.levelParams.map Level.param)
+        let goal ← forallTelescopeReducing ci.type fun xs _ => do
+          mkForallFVars xs (← mkEq (mkAppN c xs) (mkAppN value xs).headBeta)
+        let proof ← Term.elabTermEnsuringType (← `(by intros; simp)) goal
+        Term.synthesizeSyntheticMVarsNoPostponing
+        return !(← instantiateMVars proof).hasSorry
+    catch _ => return false
+  logInfo m!"{if ok then "CONTROL_PASS" else "CONTROL_FAIL"} simp {n}"
+
+
+
+#ctl_rfl Turing.zoneRebalanceData
+#ctl_eqn Turing.zoneRebalanceData
+#ctl_rfl Turing.zoneExtendData
+#ctl_eqn Turing.zoneExtendData
+#ctl_rfl Turing.zoneTrackStepData
+#ctl_eqn Turing.zoneTrackStepData
+#ctl_rfl Turing.zoneRebalanceIndex
+#ctl_eqn Turing.zoneRebalanceIndex
+#ctl_rfl Turing.zoneTrackTape
+#ctl_eqn Turing.zoneTrackTape
+#ctl_rfl Turing.zoneRebalance
+#ctl_eqn Turing.zoneRebalance
+#ctl_rfl Turing.zoneShiftIndex
+#ctl_eqn Turing.zoneShiftIndex
+#ctl_rfl Turing.ZoneContents.extend
+#ctl_eqn Turing.ZoneContents.extend
