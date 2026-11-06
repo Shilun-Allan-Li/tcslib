@@ -550,3 +550,10 @@ Gate 03g closes at **0 blockers and 0 majors** when:
 4. **The fill brief for the three admissions carries the corrected sketch and the ladder of M3.**
 
 No user ruling is needed.
+
+## Erratum (2026-11-06, gate 03g round 2, R2-1)
+
+§2.3's aggregation (and the `col_zk` sketch that reproduces it) applies `K ε_B(n)` to both
+branches. For `m = 0`, `K = 0`, but the edgeless branch still has one multi-value hiding gap,
+bounded by `ε_B(n)`, not by 0. The corrected term: `K ε_B(n)` for `m > 0`, and
+`ε_B(n) ≤ N² ε_B(n)` for `m = 0`, `n ≥ 1`. The final error function is unchanged.

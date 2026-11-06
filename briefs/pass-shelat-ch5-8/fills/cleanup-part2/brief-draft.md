@@ -88,6 +88,15 @@ replace "the rewinding simulators of the chapter are truncated and the theorems 
 with: expected polynomial time is not formalized; GI uses a truncated simulator and obtains
 statistical ZK, while 3COL remains computational ZK with statistical sampling and failure terms.
 
+**L. Docstrings (gate 03g round 2, R2-1; gate 03l round 3, minor 1).**
+- `ZeroKnowledge/ThreeColoring/Simulator.lean`, `col_zk`'s sketch (about lines 755–771): the
+  hiding term `K ε_B(n)` applies only for `m > 0`; for `m = 0` and `n ≥ 1` there is one hiding gap,
+  at most `ε_B(n) ≤ N² ε_B(n)`. Skip this if the 3-colouring fill has already rewritten the sketch.
+- `TuringMachine/Build/ModuleHost.lean`, `Clean.envelope`'s docstring (about line 231): replace
+  "The contract gives nothing sharper" with: this theorem deliberately publishes the coarse
+  time-derived bound and exposes no module-specific envelope (the contract implies the factor-two
+  bound `⌊B/2⌋`, since the head starts and ends at 0).
+
 **Out of scope:** DL-20 (`Loop.lean`'s `loop_first_halt`; at the `main` landing). Statements change
 only where an item says so.
 
