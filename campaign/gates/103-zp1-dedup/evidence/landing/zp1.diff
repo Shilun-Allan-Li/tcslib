@@ -1,0 +1,132 @@
+diff --git a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+index a02449e5..3d26b552 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/ZoneRebalance.lean
+@@ -861,9 +861,7 @@ private lemma zr_rightSeekBack_post {k : ℕ} {x : List (ZoneSym k)}
+       seekPost (Sum.inr SeekPhase.done) 0 ((zoneStart D.1 : ℤ) - (2 ^ D.1 : ℕ) - 1) d := by
+   have hz : zoneRowPre D d := by
+     simpa only [zr_rightSeekBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+-      zr_rightSeekContract,
+-      Contract.ofSegment_pre, zoneRowPre, funext_iff, Cfg.mapState_workTapes,
+-      Cfg.mapState_workTapePos] using hp
++      zr_rightSeekContract, zoneRowPre_mapState_iff] using hp
+   simp only [zr_rightSeekBackContract, Contract.ofSegment_post, Contract.seq_post,
+     zr_rightSeekContract, seekEndTM_contract_post, skipBackTM_contract_post,
+     zr_rightFields, zr_rightWord_length, List.length_cons, List.length_ofFn]
+@@ -915,8 +913,7 @@ private lemma zr_rightSeekBack_ruler_pre {k : ℕ} {x : List (ZoneSym k)}
+         Sum.inl SweepPhase.sweep) := by
+   have hz : zoneRowPre D d := by
+     simpa only [zr_rightSeekBackContract, Contract.ofSegment_pre, Contract.seq_pre,
+-      zr_rightSeekContract, zoneRowPre, funext_iff, Cfg.mapState_workTapes,
+-      Cfg.mapState_workTapePos] using hp
++      zr_rightSeekContract, zoneRowPre_mapState_iff] using hp
+   rw [zr_rulerSkipContract, Contract.seq_pre, zr_rulerCopyContract,
+     copyMapTM_contract_pre]
+   intro p hleft hright
+@@ -937,8 +934,7 @@ private def zr_rightRulerContract {k : ℕ} (x : List (ZoneSym k)) :=
+ private lemma zr_rightRuler_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d) :
+     (zr_rightRulerContract x).pre D d = zoneRowPre D d := by
+   simp only [zr_rightRulerContract, Contract.ofSegment_pre, Contract.seq_pre,
+-    zr_rightSeekBackContract, zr_rightSeekContract, zoneRowPre, funext_iff,
+-    Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
++    zr_rightSeekBackContract, zr_rightSeekContract, zoneRowPre_mapState_iff]
+ 
+ /-- A constant mapped copy writes exactly its destination interval. This single formula
+ covers the scratch ruler and both half-zone writes. -/
+@@ -1269,8 +1265,7 @@ private def zr_rightPassContract {k : ℕ} (x : List (ZoneSym k)) :=
+ /-- The complete right pass has exactly the original zoned-input precondition. -/
+ private lemma zr_rightPass_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d) :
+     (zr_rightPassContract x).pre D d = zoneRowPre D d := by
+-  rw [zr_rightPassContract, Contract.seq_pre, zr_rightRuler_pre]
+-  simp only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
++  rw [zr_rightPassContract, Contract.seq_pre, zr_rightRuler_pre, zoneRowPre_mapState_iff]
+ 
+ /-- The right pass's exact time includes all eight stationary seam transitions.
+ It is the seek distance plus ten half-capacities and twenty-three control steps. -/
+@@ -2305,8 +2300,8 @@ private def zr_rightReturnContract {k : ℕ} (x : List (ZoneSym k)) :=
+ private lemma zr_rightReturn_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d) :
+     (zr_rightReturnContract x).pre D d ↔ zoneRowPre D d := by
+   letI := zr_decEqRP
+-  rw [zr_rightReturnContract, Contract.seq_pre, (zr_rightPassRow_eq D _).1, zr_rightPass_pre]
+-  simp only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
++  rw [zr_rightReturnContract, Contract.seq_pre, (zr_rightPassRow_eq D _).1, zr_rightPass_pre,
++    zoneRowPre_mapState_iff]
+ 
+ /-- **After the right pass and the return home**: tape `0` is the extended zoned tape on the
+ nonnegative half-line and the original on the nonpositive one; scratch holds the ruler
+@@ -2331,9 +2326,7 @@ private lemma zr_rightReturn_post {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData
+   have hz := (zr_rightReturn_pre D d).mp hp
+   have hp' : (zr_rightPassContract x).pre D (d.mapState fun _ =>
+       Sum.inl (Sum.inl (Sum.inl SeekPhase.run))) := by
+-    rw [zr_rightPass_pre]
+-    simpa only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+-      using hz
++    rwa [zr_rightPass_pre, zoneRowPre_mapState_iff]
+   have ht := zr_rightPass_tape D _ hp'
+   rw [zr_rightReturnContract, Contract.seq_post, zr_return_post, (zr_rightPassRow_eq D _).2]
+   apply Cfg.ext
+@@ -2392,9 +2385,7 @@ private lemma zr_rightReturn_bounds {k : ℕ} {x : List (ZoneSym k)} (D : ZoneDa
+   have hz := (zr_rightReturn_pre D d).mp hp
+   have hp' : (zr_rightPassContract x).pre D (d.mapState fun _ =>
+       Sum.inl (Sum.inl (Sum.inl SeekPhase.run))) := by
+-    rw [zr_rightPass_pre]
+-    simpa only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+-      using hz
++    rwa [zr_rightPass_pre, zoneRowPre_mapState_iff]
+   have hb := zr_rightPass_bounds D _ hp'
+   have he := zr_rightPass_envelope D _ hp'
+   have hl := zr_rightReturn_link (x := x) D (d.mapState fun _ =>
+@@ -3360,8 +3351,7 @@ private lemma zr_rightLeft_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
+     (zr_rightLeftContract x).pre D d ↔ zoneRowPre D d := by
+   letI := zr_decEqRR
+   rw [zr_rightLeftContract, Contract.seq_pre, (zr_singleton_fields _ _ _ _ _).1,
+-    zr_rightReturn_pre]
+-  simp only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
++    zr_rightReturn_pre, zoneRowPre_mapState_iff]
+ 
+ /-- **After the right pass, the return home and the left pass**: tape `0` is the extended zoned
+ tape; scratch holds the ruler `[q, q + 2^ℓ)` from its start `q`, blank elsewhere; the zoned head
+@@ -3384,9 +3374,7 @@ private lemma zr_rightLeft_post {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k
+   have hz := (zr_rightLeft_pre D d).mp hp
+   have hr : (zr_rightReturnContract x).pre D
+       (d.mapState fun _ => Sum.inl (Sum.inl (Sum.inl (Sum.inl SeekPhase.run)))) := by
+-    rw [zr_rightReturn_pre]
+-    simpa only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+-      using hz
++    rwa [zr_rightReturn_pre, zoneRowPre_mapState_iff]
+   have hl := zr_rightLeft_link D _ hr
+   have hs := zoneStart_succ D.1
+   have hc : zoneCapacity D.1 = 2 * 2 ^ D.1 := zoneCapacity_eq D.1
+@@ -3462,9 +3450,7 @@ private lemma zr_rightLeft_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData
+   have hz := (zr_rightLeft_pre D d).mp hp
+   have hr : (zr_rightReturnContract x).pre D
+       (d.mapState fun _ => Sum.inl (Sum.inl (Sum.inl (Sum.inl SeekPhase.run)))) := by
+-    rw [zr_rightReturn_pre]
+-    simpa only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+-      using hz
++    rwa [zr_rightReturn_pre, zoneRowPre_mapState_iff]
+   have hl := zr_rightLeft_link D _ hr
+   have hb := zr_rightReturn_bounds D _ hr
+   have hf := zr_leftPass_fields D _ hl
+@@ -3542,8 +3528,8 @@ private def zr_extendContract {k : ℕ} (x : List (ZoneSym k)) :=
+ private lemma zr_extend_pre {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k) (d) :
+     (zr_extendContract x).pre D d ↔ zoneRowPre D d := by
+   letI := zr_decEqRL
+-  rw [zr_extendContract, Contract.seq_pre, (zr_singleton_fields _ _ _ _ _).1, zr_rightLeft_pre]
+-  simp only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
++  rw [zr_extendContract, Contract.seq_pre, (zr_singleton_fields _ _ _ _ _).1, zr_rightLeft_pre,
++    zoneRowPre_mapState_iff]
+ 
+ /-- **The extension machine's run, characterized**: its time is the right part's, one seam and
+ the final return's; its endpoint is the extension row's (`Turing.zoneExtendPost`); the zoned head
+@@ -3569,9 +3555,7 @@ private lemma zr_extend_fields {k : ℕ} {x : List (ZoneSym k)} (D : ZoneData k)
+   have hz := (zr_extend_pre D d).mp hp
+   have hr : (zr_rightLeftContract x).pre D (d.mapState fun _ =>
+       Sum.inl (Sum.inl (Sum.inl (Sum.inl (Sum.inl SeekPhase.run))))) := by
+-    rw [zr_rightLeft_pre]
+-    simpa only [zoneRowPre, funext_iff, Cfg.mapState_workTapes, Cfg.mapState_workTapePos]
+-      using hz
++    rwa [zr_rightLeft_pre, zoneRowPre_mapState_iff]
+   have hl := zr_rightLeftFinal_link D _ hr
+   have hb := zr_rightLeft_fields D _ hr
+   have hf := zr_final_fields D _ hl
