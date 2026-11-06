@@ -50,6 +50,7 @@ import TCSlib.Cryptography.SecretSharing
 import TCSlib.Cryptography.MPC
 
 import TCSlib.InformationTheory
+import TCSlib.Quantum
 
 import TCSlib.GraphTheory.Kruskal
 
