@@ -181,6 +181,11 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   data, screens one at a time, no commits or pushes, outputs only in their own scratch folder.
   The maintainer integrates the result.
 
+- **Overnight fills** (the user, 2026-11-06): when a fill brief is issued and ready to dispatch
+  while the user is away, the maintainer dispatches it to its own sub-agent (Claude) instead of
+  waiting: the brief and addendum as the prompt's inputs, delivery as a zip in the scratch
+  `deliveries/` area, reviewed and landed as usual. Gates still wait for the user's dispatch.
+
 ## 6. Scripted edits and records
 
 - Every scripted replacement asserts its occurrence count. Avoid positional splices, diff the
