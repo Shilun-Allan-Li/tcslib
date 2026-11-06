@@ -629,6 +629,23 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 
+**BL-2, the binary width of an incremented register value** (gate 101's finding 1,
+2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
+`m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:
+- `Logspace/ISCountGenCorrect`'s private `bits_succ_le` (BL-1 (i) lists it as a site that cites
+  `length_bits_le`; its successor/exponential step is this family's);
+- `Machines/ARMWidth`'s `arm_decides_pspace_val`, an inline `hlt` block at `N = C₀ (|x| + 1)^c₀`;
+- `SavitchARM/Deepen`'s `deepen_contract` (new in #208), the same block at `W · W`.
+
+Census (gate 101's, one member in each file): `Deepen` 1 of 45, `ARMWidth` 1 of 5,
+`ISCountGenCorrect` 1 of 9. No file is past one fifth (`ARMWidth`'s 1 of 5 is at it).
+**Ruled (the user, 2026-11-06): harvest in #208, all three.** `#208`'s commit `9db4f2ee`
+publishes `Complexity.LogProg.length_bits_succ_le` in `Machines/Bin`, beside `length_bits_le`;
+`bits_succ_le` is deleted, and the two inline blocks cite it. A library search for the
+`4 · 2 ^ e` step (`2 ^ (… + 2) = 4 * 2 ^ …`) finds no other member: `ExpBFS/Main:535–539`
+bounds a `Nat.log` width and a memory range, and `BinaryArith/AddSub:174` a sum of two words, both
+other statements. **Retired on #208's merge.**
+
 **TC-1, the copying transducer state** (PR #164, A1, 2026-10-25; gate 76's note 7). One fact, a
 transducer started in a state that copies every bit and is kept is the identity, in three files:
 - `Complexity.transduce_of_copy` (public, `ClassNP/Transducer`, line 83, new in #164), the general
