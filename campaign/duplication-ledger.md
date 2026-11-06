@@ -982,6 +982,25 @@ design that waits for him.
 **+1 (G5's landing, #211; gate 102):** `Robustness/TwoTapes`' `tt_round` closes the one-step
 identity inline (`runFrom_succ_eq_step.trans runFrom_zero`), 1 of 104 declarations; 18 sites for
 the window.
+**The window's first pass (2026-11-06; branch `lean/dedup-ro1` at `7c940a8a`, pushed, no PR):**
+`Turing.MultiTapeTM.runFrom_one` in `TuringMachine/CfgFacts` (the user's ruling), the four
+privates deleted and the 13 inline sites re-pointed; every changed file elaborates. **The scope is
+far larger than recorded**, and the PR is parked for the user:
+- a public Bool-only copy already exists: `Turing.runFrom_one` (`Build/EmitIterEmbed:261`,
+  `simp [MultiTapeTM.runFrom]`), used four times by `EmitIterBody`;
+- the rewrite chain `runFrom_succ_eq_step` + `runFrom_zero` (mostly induction base cases) appears
+  in about 186 further declarations in 41 files, among them `Catalog` 26, `Primitives` 23,
+  `CookLevin/Hardness` 14, `SAT` 12, `Universal` 12, `Nondeterminism` 10, `EXP` 7, and several
+  colleague-owned `CircuitComplexity`/`Meyer` files;
+- `have`/`show`/`change` forms: `EmitIterBody`'s `hone`/`honeG`, `NDNormalForm:1766`,
+  `NDCodeSimulator:632`, `Primitives`' `splitSafe_one` and `hdepart`, `Catalog`'s
+  `f2_splitSafe_one`, `hdepart`, `hfirst`, `Loop`'s `hfirst` and `hs`; and fixed-machine
+  statements in `CodeSimulator`, `InputWindow` (`iw_one`), `UniversalK`, `WindowClock`,
+  `Inclusions`, `CircuitSatReductionMachine`, `Universal` and `UniversalBlock`.
+The ledger's census undercounts accordingly. **Questions for the user:** whether the general
+lemma replaces `EmitIterEmbed`'s public `Turing.runFrom_one` (a public removal); and the scope of
+the re-points (all non-colleague sites in one PR or several; `CircuitComplexity` needs its own
+authorization).
 
 **NB-1, the `Nat.bits` arithmetic family** (PR #176; the review's F2). `NTimeDiagonalizer`'s
 `qy_two_pow_bits_le` (the statement of `SpaceAmplifyPoly`'s `two_pow_bits_le`, on `main`) and

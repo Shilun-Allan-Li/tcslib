@@ -182,7 +182,10 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    in `TuringMachine/CfgFacts`; BL-1 and NB-1 share a new `TuringMachine/NatBits` module (below
    `Encoding` and `Machines/Bin`; `CircuitComplexity` excluded); mechanical re-points in Hydroxyi's
    files are allowed with an FYI line in each PR, while CL-1, CQ-1 and WL-1 (interface design)
-   wait for Hydroxyi. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
+   wait for Hydroxyi. **Progress:** ZP-1 is #212 (gate 103). **RO-1 is parked** on
+   `lean/dedup-ro1` (`7c940a8a`, no PR): its scope is about 200 sites and a public Bool-only
+   `Turing.runFrom_one` already exists; two questions for the user in the ledger's RO-1 entry.
+   NZ-1 awaits acknowledgment. The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
    (optional), with QL-X1 an idiom exclusion.
