@@ -146,8 +146,12 @@ theorem blumFactoring_of_factoring (hD : BlumDensity) (hF : FactoringAssumption)
 
 /-! ## The symmetry lemma (Claim-62.2) -/
 
-/-- The unit `u = CRT⁻¹(1, −1)` of `Z_{pq}^*`: a square root of `1` different from `±1`
-[PS10, proof of Theorem 61.8, "it can only be that they are congruent modulo `p` and `q`"]. -/
+/-- The unit `u = CRT⁻¹(1, −1)` of `Z_{pq}^*`, for coprime moduli `p`, `q`
+[PS10, proof of Theorem 61.8, "it can only be that they are congruent modulo `p` and `q`"].
+It squares to `1` for all coprime moduli (`crtNegOne_sq`). For primes `p`, `q` it differs from
+`1` when `q` is odd and from `−1` when `p` is odd (`crtNegOne_ne_one`, `crtNegOne_ne_neg_one`),
+so for two odd primes it is a square root of `1` other than `±1`. Coprimality alone does not
+give this: for `p = 2`, `q = 3` it is `5 = −1` in `Z_6`. -/
 noncomputable def crtNegOne {p q : ℕ} (h : p.Coprime q) : (ZMod (p * q))ˣ :=
   (crtUnits h).symm (1, -1)
 
@@ -495,8 +499,9 @@ theorem rabinCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rabinCollection
 /-- The statistical error of the Rabin reductions at parameter `n`: two restricted prime
 samplers and the unit sampler of `rabinFactorer`, the latter counted twice because it enters
 through the factor `2` of the symmetry lemma (`e^{-n}` each: `4e^{-n}`), and the diagonal
-`p = q` of the restricted class: `1/(P − 1) ≤ 2/P ≤ 4n/2^n` for the `P = |Π_n| − 1 ≥ 2` odd
-primes (`one_div_card_primes_le`) and `1/B ≤ 4n/2^n` for the `B` Blum primes (`BlumDensity`).
+`p = q` of the restricted class: `1/(P − 1) ≤ 2/P ≤ 4n/2^n` with `P = |Π_n|` the total prime
+count, of which `P − 1 ≥ 2` are odd (`one_div_card_primes_le`), and `1/B ≤ 4n/2^n` for the `B`
+Blum primes (`BlumDensity`).
 
 Repair (run-3 audit P7-3): the diagonal term was `2n/2^n`, which neither the Chebyshev bound
 `2^n ≤ 2n|Π_n|` (odd class: `1/(|Π_n| − 1)`) nor `BlumDensity` (`1/B`) yields; both give

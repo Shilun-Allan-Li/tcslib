@@ -36,7 +36,8 @@ arguments by the text's monotonicity of `t / log t`.
 
 **Deviation:** [PS10, Theorem 31.3] claims the strict inequality `π(x) > x / (2 log x)` for
 every real `x > 1`; equality holds at `x = 2` (`π(2) = 1`), so the theorem is stated with `≤`,
-for natural arguments `m ≥ 2`. **Deviation:** [PS10, Claim 32.4] (`p^{ν_p(X)} < 2x`) fails at
+and for natural arguments `m ≥ 2`, which repairs and restricts the real claim (it fails even with
+`≤` at `x = 3/2`, where `π(x) = 0`). **Deviation:** [PS10, Claim 32.4] (`p^{ν_p(X)} < 2x`) fails at
 `x = 1, p = 2`; the correct form `p^{ν_p(C(2x,x))} ≤ 2x` is Mathlib's
 `Nat.pow_factorization_choose_le`. **Deviation:** the density corollary needs `n ≥ 2`
 (`Π_1 = ∅`); the text's "`n`-bit numbers" silently assumes it.
@@ -157,7 +158,9 @@ theorem chebyshev_two_mul (x : ℕ) (hx : 0 < x) :
 `m / (2 log₂ m) ≤ π(m)`.
 
 **Deviation:** stated with `≤` (the text's `>` fails at `m = 2`) and for natural arguments
-`m ≥ 2` (the text's real `x > 1`; `π` is a step function, so nothing is lost).
+`m ≥ 2`. This repairs and restricts the text's claim for every real `x > 1`, which is false even
+with `≤`: at `x = 3/2`, `π(x) = 0 < x / (2 log₂ x)`. The natural-argument form is the one the
+prime-density uses need.
 
 **Proof sketch.** Even `m = 2x`: `chebyshev_two_mul`. Odd `m = 2x − 1 ≥ 3`: `2x` is composite,
 so `π(m) = π(2x) ≥ 2x / (2 log₂(2x))`, and `t ↦ t / log₂ t` is increasing for `t ≥ 3`

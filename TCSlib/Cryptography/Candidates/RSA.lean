@@ -755,14 +755,26 @@ so the event is "`A(1^n, ⟨⟨N, e⟩, x^e⟩)` outputs the numeral of `x`", wh
 event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`, `decodeFin_ofFn`,
 `bitsToNat_natToBits`, `val_units_pow`). Since `x ↦ x^e` pushes uniform to uniform
 (`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the inner probability equals the RSA
-inner probability at `(z, e)`. The law of `(z, e)` under the generator's coins is within
-`rsaGenErr n` of the ideal uniform law on `DistinctPrimes n × Z*_{Φ(N)}`
-(`statClose_samplePrime` with the prime fallback `natToBits n 2` of `samplePrimeL` — run-3
-audit P7-7 — twice and `StatClose.prod` for `(p, q)`, `StatClose.map` through the validity
-test with `uprob_diag` and `one_div_card_primes_le` for the fallback on `p = q`,
-`statClose_rejectBlocksL` for `e` with the acceptance rate of the sampleClose sketch); `StatClose.abs_uprob_sub_le_prod` with the
-auxiliary coins `(y, r)` turns `uexp` over the generator's coins into `uexp` over `z`
-(`uexp_prod`, `uprob_prod`) up to `rsaGenErr n`. -/
+inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]` (over `y` and `A`'s coins).
+The exponent group `Z*_{Φ(N)}` depends on `z`, so the generator's law is not compared with one
+uniform product: the comparison is a conditional expectation over `z`. Split the generator's
+coins into the two prime segments and the exponent segment (`rsaGenParams`, `uexp_prod`,
+`uprob_prod`). (i) For each fixed prime pair `z`, the exponent drawn from the exponent segment
+(`sampleUnitL` modulo `Φ(N)`, fallback `1`) is within `e^{-n}` of the uniform element of
+`Z*_{Φ(N)}` (`statClose_rejectBlocksL` with the acceptance rate of the sampleClose sketch), so
+the conditional success at `z` exceeds `g(z) := E_{e uniform}[h(z, e)]` by at most `e^{-n}`
+(`StatClose.abs_uprob_sub_le_prod`, with `(y, r)` as the auxiliary coins). (ii) The law of `z`
+under the two prime segments is within `2 · 2^{-n} + 2n/2^n` of the uniform law on
+`DistinctPrimes n` (`statClose_samplePrime` with the prime fallback `natToBits n 2` of
+`samplePrimeL` — run-3 audit P7-7 — twice and `StatClose.prod` for `(p, q)`, `StatClose.map`
+through the validity test with `uprob_diag` and `one_div_card_primes_le` for the fallback on
+`p = q`); averaging the `[0, 1]`-valued `g` over that law instead of the uniform one costs at
+most that distance (`StatClose.abs_uprob_sub_le_prod` again, with `g(z)` read as a probability
+over the auxiliary coins `ω : Π z', Z*_{Φ(N')} × Z_{N'}^* × A.Coins n` at `ω z`). (iii) Adding
+the conditional exponent error, the inversion probability is at most
+`uexp g + (2 · 2^{-n} + 2n/2^n) + e^{-n} = rsaProb (rsaBreaker A) n + rsaGenErr n`, as
+`rsaProb` is the outer `uexp` over `z` of the inner probability over `(e, y, r)`. No error
+beyond `rsaGenErr n` is needed. -/
 theorem rsaCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
     (rsaCollection H).invProbAt A n ≤ rsaProb (rsaBreaker A) n + rsaGenErr n := by
   sorry
