@@ -661,13 +661,104 @@ theorem negligible_rabinErr : Negligible rabinErr := by
   rw [pow_one, one_div, inv_pow]
   field_simp
 
+/-- The Rabin sampler has `T(n) B(n)` coins: `(rabinSampler H).coins = rsaSampleCoins`. -/
+private theorem rabin_coins_sampler (H : ArithmeticFP) : (rabinSampler H).coins = rsaSampleCoins := by
+  unfold rabinSampler
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- Any two samplers are `1`-close (`statClose_iff`; both probabilities lie in `[0, 1]`): the
+`δ n := 1` branch of the closeness targets. -/
+private theorem rabin_statClose_one {σ τ γ : Type*} [Fintype σ] [Fintype τ] (X : σ → γ) (Y : τ → γ) :
+    StatClose X Y 1 := by
+  rw [statClose_iff]
+  intro T
+  have h1 := uprob_nonneg (fun s => T (X s))
+  have h2 := uprob_le_one (fun s => T (X s))
+  have h3 := uprob_nonneg (fun t => T (Y t))
+  have h4 := uprob_le_one (fun t => T (Y t))
+  rw [abs_le]
+  constructor <;> linarith
+
+/-- A generated modulus fits the unit sampler's blocks for `n ≥ 1`:
+`Nat.size (pq) ≤ 2·max(n, 3) ≤ 2(n + 2) = B(n)` (`Nat.size_le`, `eval_rsaBlock`). -/
+private theorem rabin_size_le {P : ℕ → Prop} {n : ℕ} (hn : 1 ≤ n) (R : RabinParams P (max n 3)) :
+    Nat.size (R.z.p * R.z.q) ≤ rsaBlock.eval n := by
+  rw [eval_rsaBlock]
+  exact (Nat.size_le.2 R.z.mul_lt).trans (by omega)
+
+/-- The closeness error `δ n = 1` for `n < 3`, `e^{-n}` otherwise, is negligible
+(`exp_neg_le_half_pow`, `negligible_two_pow_neg`, `Negligible.mono`). -/
+private theorem rabin_negligible_delta :
+    Negligible fun n : ℕ => if n < 3 then (1 : ℝ) else Real.exp (-(n : ℝ)) := by
+  have h1 : Negligible fun n : ℕ => (1 / 2 : ℝ) ^ n := by
+    simpa [one_div] using negligible_two_pow_neg
+  have h4 : Negligible fun n : ℕ => Real.exp (-(n : ℝ)) :=
+    h1.mono ⟨0, fun n _ => by
+      rw [abs_of_pos (Real.exp_pos _), abs_of_pos (by positivity)]
+      exact exp_neg_le_half_pow n⟩
+  exact h4.mono ⟨3, fun n hn => by rw [if_neg (by omega)]⟩
+
+/-- **S3 at a generated index, decoded**: at the index `⟦N⟧_{2m}` of Rabin parameters,
+`rabinDec i (unitSampleStr i n s)` on uniform coins is within `e^{-n}` of the uniform unit of
+`Z_N` (`statClose_sampleUnitL` at `N = rabinMod i`, then `StatClose.map` through
+`v ↦ rabinDec i ⟦v⟧_{2m}`, which sends `x.val` to `some x` by `rabinDec_rabinEnc`). -/
+private theorem rabin_statClose_dec {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) (n : ℕ)
+    (hk : Nat.size (R.z.p * R.z.q) ≤ rsaBlock.eval n) :
+    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+        rabinDec (rabinIndexOf m R) (unitSampleStr (rabinIndexOf m R) n (List.ofFn s)))
+      (fun x : (ZMod (rabinMod (rabinIndexOf m R)))ˣ => some x) (Real.exp (-(n : ℝ))) := by
+  have hM := rabin_rabinMod_indexOf m R
+  have hlen : (rabinIndexOf m R).length = 2 * m := by rw [rabinIndexOf, length_natToList]
+  have hS := (statClose_sampleUnitL n (rabinMod (rabinIndexOf m R)) (by rw [hM]; exact hk)).map
+    (fun v => rabinDec (rabinIndexOf m R) (natToList (2 * m) v))
+  have eX : (fun s : Fin (rsaSampleCoins.eval n) → Bool => rabinDec (rabinIndexOf m R)
+      (natToList (2 * m) ((sampleUnitL (rabinMod (rabinIndexOf m R)) (Nat.size (rabinMod (rabinIndexOf m R)))
+        (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD (1 % rabinMod (rabinIndexOf m R))))) =
+      fun s => rabinDec (rabinIndexOf m R) (unitSampleStr (rabinIndexOf m R) n (List.ofFn s)) := by
+    funext s
+    rw [unitSampleStr_eq, listToNat_rabinIndexOf, hlen]
+    congr 2
+    rw [hM]
+  have eY : (fun x : (ZMod (rabinMod (rabinIndexOf m R)))ˣ => rabinDec (rabinIndexOf m R)
+      (natToList (2 * m) (x : ZMod (rabinMod (rabinIndexOf m R))).val)) = fun x => some x := by
+    funext x
+    have hx : natToList (2 * m) (x : ZMod (rabinMod (rabinIndexOf m R))).val = rabinEnc (rabinIndexOf m R) x := by
+      rw [rabinEnc, hlen]
+    rw [hx, rabinDec_rabinEnc]
+  rw [eX, eY] at hS
+  exact hS
+
 /-- **The domain sampler of the Rabin collection is close to uniform** [PS10, Theorem 61.7]:
 as `rsaCollection_sampleClose` (`δ n := 1` for `n < 3`, `e^{-n}` otherwise) at the index
 `N = pq` with `N < 2^{2n}` (`rabinCollection_index`, `listToNat_rabinIndexOf`), decoding by
-`rabinDec`. -/
+`rabinDec`.
+
+**Proof sketch.** Take `δ n := 1` for `n < 3` (any two samplers are `1`-close, `statClose_iff`)
+and `e^{-n}` otherwise, negligible by `exp_neg_le_half_pow`. For `n ≥ 3`, rewrite the index
+(`rabinCollection_index`, the numeral `⟦pq⟧_{2·max(n,3)}`), the sampler
+(`rabinCollection_sample`, its activation `unitSampleStr i n s`) and the decoder
+(`rabinCollection_decD`). The modulus fits the blocks, `Nat.size (pq) ≤ 2·max(n,3) ≤ B(n)`, so
+S3 (`statClose_sampleUnitL` at `N = rabinMod i = pq`) mapped through `v ↦ rabinDec i ⟦v⟧`
+gives closeness `e^{-n}` to `x ↦ some x` (`rabinDec_rabinEnc`); the coins move along
+`NUPPT.coinsEquivPoly` and the domain along `rabinCollection_domEquiv`
+(`StatClose.comp_equiv_left`/`_right`). -/
 theorem rabinCollection_sampleClose (H : ArithmeticFP) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (rabinCollection H).SampleClose δ := by
-  sorry
+  refine ⟨fun n => if n < 3 then 1 else Real.exp (-(n : ℝ)), rabin_negligible_delta, ?_⟩
+  rw [Collection.sampleClose_iff]
+  intro n r
+  by_cases hn : n < 3
+  · rw [if_pos hn]
+    exact rabin_statClose_one _ _
+  rw [if_neg hn, rabinCollection_index, rabinCollection_sample]
+  simp only [rabinCollection_decD, rabin_sampler_runAt]
+  have h1 := ((rabin_statClose_dec _ (rabinGenParams (· ≠ 2) oddDefault n (List.ofFn r)) n
+    (rabin_size_le (by omega) _)).map
+    (Option.map (rabinCollection_domEquiv H _).symm)).comp_equiv_left
+      (NUPPT.coinsEquivPoly (rabin_coins_sampler H) n) |>.comp_equiv_right
+      (rabinCollection_domEquiv H _)
+  simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
+  exact h1
 
 /-! ## The factoring adversary `A'` [PS10, Algorithm 62.9] -/
 
@@ -1246,13 +1337,93 @@ theorem rabinBlumTrapdoor_index (H : ArithmeticFP) (n : ℕ) (r : (rabinBlumTrap
   show pairFstD ((blumGen H).runAt n [] r) = _
   rw [blumGen_runAt, rabinGenOut, pairFstD_pairEncode]
 
+/-- The Blum sampler has `T(n) B(n)` coins. -/
+private theorem rabin_coins_blumSampler (H : ArithmeticFP) : (blumSampler H).coins = rsaSampleCoins := by
+  unfold blumSampler
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- Squaring pushes uniform units to uniform residues at a modulus `M = pq`, `p ≠ q` odd primes
+(`pushesUniform_sqTo`, stated for `M` equal to `pq` so that it applies at `blumMod i`). -/
+private theorem rabin_pushesUniform_sqTo {p q : ℕ} [Fact p.Prime] [Fact q.Prime] (hpq : p ≠ q)
+    (hp2 : p ≠ 2) (hq2 : q ≠ 2) (M : ℕ) [NeZero M] (hM : M = p * q) :
+    HardcoreBit.PushesUniform (sqTo M) := by
+  subst hM
+  exact pushesUniform_sqTo hpq hp2 hq2
+
+/-- **The Blum sampler at a generated index, decoded, is within `e^{-n}` of uniform on
+`QR_N`**: S3 at `N = blumMod i = pq` mapped through `v ↦ blumDec i ⟦v² mod N⟧` sends the uniform
+unit `x` to `some (sqTo x)` (`val_units_pow`, `blumDec_blumEnc`); squaring pushes uniform units
+to uniform residues (`pushesUniform_sqTo`, `statClose_of_pushesUniform`), and
+`StatClose.trans` adds `0`. -/
+private theorem rabin_statClose_blumDec (m : ℕ) (R : RabinParams (· % 4 = 3) m) (n : ℕ)
+    (hk : Nat.size (R.z.p * R.z.q) ≤ rsaBlock.eval n) :
+    StatClose (fun s : Fin (rsaSampleCoins.eval n) → Bool =>
+        blumDec (rabinIndexOf m R) (natToList (rabinIndexOf m R).length
+          (listToNat (unitSampleStr (rabinIndexOf m R) n (List.ofFn s)) ^ 2 % listToNat (rabinIndexOf m R))))
+      (fun y : QR (blumMod (rabinIndexOf m R)) => some y) (Real.exp (-(n : ℝ))) := by
+  have hV := rabin_blumValid_indexOf m R
+  have hM := rabin_blumMod_indexOf m R
+  have hlen : (rabinIndexOf m R).length = 2 * m := by rw [rabinIndexOf, length_natToList]
+  have hS := (statClose_sampleUnitL n (blumMod (rabinIndexOf m R)) (by rw [hM]; exact hk)).map
+    (fun v => blumDec (rabinIndexOf m R) (natToList (rabinIndexOf m R).length
+      (v ^ 2 % listToNat (rabinIndexOf m R))))
+  have eX : (fun s : Fin (rsaSampleCoins.eval n) → Bool => blumDec (rabinIndexOf m R)
+      (natToList (rabinIndexOf m R).length (((sampleUnitL (blumMod (rabinIndexOf m R))
+        (Nat.size (blumMod (rabinIndexOf m R))) (rsaBlock.eval n) (rsaTrials.eval n) (List.ofFn s)).getD
+          (1 % blumMod (rabinIndexOf m R))) ^ 2 % listToNat (rabinIndexOf m R)))) =
+      fun s => blumDec (rabinIndexOf m R) (natToList (rabinIndexOf m R).length
+          (listToNat (unitSampleStr (rabinIndexOf m R) n (List.ofFn s)) ^ 2 % listToNat (rabinIndexOf m R))) := by
+    funext s
+    rw [unitSampleStr_eq, listToNat_rabinIndexOf, hlen,
+      listToNat_natToList ((rabin_getD_spec (rabin_N_pos R) _ _ _ _).1.trans R.z.mul_lt)]
+    congr 4
+    rw [hM]
+  have eY : (fun x : (ZMod (blumMod (rabinIndexOf m R)))ˣ => blumDec (rabinIndexOf m R)
+      (natToList (rabinIndexOf m R).length ((x : ZMod (blumMod (rabinIndexOf m R))).val ^ 2 %
+        listToNat (rabinIndexOf m R)))) = fun x => some (sqTo _ x) := by
+    funext x
+    have hx : natToList (rabinIndexOf m R).length ((x : ZMod (blumMod (rabinIndexOf m R))).val ^ 2 %
+        listToNat (rabinIndexOf m R)) = blumEnc (rabinIndexOf m R) (sqTo _ x) := by
+      rw [blumEnc, blumEncVal, if_pos hV, coe_sqTo, val_units_pow, ← blumMod_of_valid hV]
+    rw [hx, blumDec_blumEnc]
+  rw [eX, eY] at hS
+  have hp2 : R.z.p ≠ 2 := fun h => by have := R.hp; simp only [h] at this; omega
+  have hq2 : R.z.q ≠ 2 := fun h => by have := R.hq; simp only [h] at this; omega
+  have hT := (statClose_of_pushesUniform (rabin_pushesUniform_sqTo R.z.p_ne_q hp2 hq2 _ hM)).map
+    (fun y => some y)
+  simpa using hS.trans hT
+
 /-- **The `QR_N` sampler is close to uniform** [PS10, Theorem 63.10 (3)]: the square of a
 unit within `e^{-n}` of uniform (`rsaCollection_sampleClose`'s argument) is within `e^{-n}`
 of a uniform residue (`NumberTheory.pushesUniform_sqTo`, `statClose_of_pushesUniform`,
-`StatClose.map`, `StatClose.trans`); decoding by `blumDec` (`sq_mem_QR`). -/
+`StatClose.map`, `StatClose.trans`); decoding by `blumDec` (`sq_mem_QR`).
+
+**Proof sketch.** Take `δ n := 1` for `n < 3` (`statClose_iff`) and `e^{-n}` otherwise. For
+`n ≥ 3`, rewrite the index (`rabinBlumTrapdoor_index`), the sampler (`rabinBlumTrapdoor_sample`;
+its activation is the numeral of `u² mod N` for `u` the unit sampler's value) and the decoder
+(`rabinBlumTrapdoor_decD`). The generated index is `BlumValid` with `blumMod i = pq`. S3 at
+`N = pq` (`Nat.size (pq) ≤ B(n)`) mapped through `v ↦ blumDec i ⟦v² mod N⟧` is `e^{-n}`-close to
+`x ↦ some (sqTo x)` on uniform units (`val_units_pow`, `coe_sqTo`, `blumDec_blumEnc`), which is
+`0`-close to the uniform residue (`pushesUniform_sqTo` for the odd primes `p ≠ q`,
+`statClose_of_pushesUniform`, `StatClose.map`, `StatClose.trans`). The coins move along
+`NUPPT.coinsEquivPoly` and the domain along `rabinBlumTrapdoor_domEquiv`. -/
 theorem rabinBlumTrapdoor_sampleClose (H : ArithmeticFP) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (rabinBlumTrapdoor H).toCollection.SampleClose δ := by
-  sorry
+  refine ⟨fun n => if n < 3 then 1 else Real.exp (-(n : ℝ)), rabin_negligible_delta, ?_⟩
+  rw [Collection.sampleClose_iff]
+  intro n r
+  by_cases hn : n < 3
+  · rw [if_pos hn]
+    exact rabin_statClose_one _ _
+  rw [if_neg hn, rabinBlumTrapdoor_index, rabinBlumTrapdoor_sample]
+  simp only [rabinBlumTrapdoor_decD, rabin_blumSampler_runAt]
+  have h1 := ((rabin_statClose_blumDec _ (rabinGenParams (· % 4 = 3) blumDefault n (List.ofFn r)) n
+    (rabin_size_le (by omega) _)).map
+    (Option.map (rabinBlumTrapdoor_domEquiv H _).symm)).comp_equiv_left
+      (NUPPT.coinsEquivPoly (rabin_coins_blumSampler H) n) |>.comp_equiv_right
+      (rabinBlumTrapdoor_domEquiv H _)
+  simp only [NUPPT.coinsEquivPoly_ofFn, Option.map_some, Equiv.symm_apply_apply] at h1
+  exact h1
 
 /-- **Inverting the Blum Rabin collection factors** [PS10, Theorem 63.10 (5), via
 Algorithm 62.9]: for `n ≥ 3` and under the density hypothesis, the inversion probability of
