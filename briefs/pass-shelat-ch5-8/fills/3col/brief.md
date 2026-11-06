@@ -35,9 +35,9 @@ pp. 127–129, PDF pp. 139–141).
   - `evidence/`: the logs that this brief and the environment addendum require.
 - **Push at each checkpoint.** A checkpoint is a push of `inbox/fills/<unit>/` with the commit
   message `fill <unit>: checkpoint <n>`; the final push is `fill <unit>: final`. A session that
-  ends early leaves its last checkpoint as the delivery. Push one: col-a after the decider and
-  after `colRep_efficientProverProof`; col-b after each ladder step. Also push at least every two
-  hours of work.
+  ends early leaves its last checkpoint as the delivery. Push a checkpoint: col-a after the
+  decider and after `colRep_efficientProverProof`; col-b after each ladder step. Also push at
+  least every two hours of work.
 - **Rules for pushing:**
   - write only `inbox/fills/<unit>/`;
   - run `git pull --rebase origin exchange/pass-shelat-ch5-8` before each push;
