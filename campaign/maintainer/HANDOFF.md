@@ -116,7 +116,7 @@ replay below chained from it with only its own PR.
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
 | #191 | `b2bac06f` (round 3's repair `698dcdf5` + a records-only merge) | `replay-lnf5` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 did not close (0/1/1: one more untyped re-derivation); round 4 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
-| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 **CLOSED** 2026-11-06 (round 2, 0/0/1/4; the minor swept) | **clear to merge**; then G5's fill brief, after #207 |
+| #202 | `7b5774fb` | `replay-lsi2` **passed** (112 modules) | 98 **CLOSED** 2026-11-06 | **merged** 2026-11-06 (`8a505fc9`); `oleans-lsi2` is the campaign's snapshot; G5's brief after #207 |
 | #207 | `f866f314` (`dbad3b06` + a records-only merge): `zoneRebalanceData_eq`, `zoneExtendData_eq` (G5's brief review's blocker; the user, 2026-11-06: publish) | `replay-lzde` **passed** (5 modules from `oleans-ldwa3`; `TwoTapes`' one `sorry`) | 99 **dispatched** 2026-11-06 (36 sections) | merge when it closes; G5's brief cites them |
 | #208 | `a46e04a9` (the delivery `c7b179da` + the maintainer's landing edits: `size_facts`, `length_bits_le_log`, `Fin.castLE`, the public text) | `replay-ldp` **passed** at the delivery (3 modules, 0 `sorry`); re-run after the edits | the fill gate after a have-level library sweep (running) | merge when it closes |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
@@ -133,7 +133,7 @@ at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11
 Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
 
 **Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
-(#202's merged tree) and `oleans-lnf6` (#191's). Once #191 or #202 merges, its snapshot is the
+(#202's merged tree, **the campaign's since #202 merged**) and `oleans-lnf6` (#191's). Once #191 or #202 merges, its snapshot is the
 campaign's; delete the other when both have merged and a combined replay has passed.
 
 **G5's fill brief** issues after #202 merges. Its route probe (the frame through
