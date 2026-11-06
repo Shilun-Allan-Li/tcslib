@@ -701,8 +701,10 @@ theorem glMachine_coinsEquiv_symm_ofFn (A : NUPPT) (mP K : PolyExpr) (k : ℕ �
     List.ofFn ((glMachine_coinsEquiv A mP K k hk n).symm w) = List.ofFn w :=
   NUPPT.coinsEquivPoly_symm_ofFn (coins_glMachine A mP K k hk) n w
 
-/-- The number of coins actually read by the recovery machine at `n`. -/
-def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ :=
+/-- The number of coins actually read by the recovery machine at `n`: a length abbreviation
+(`abbrev`, read as notation, like `PolyExpr.eval` under ruling Q1; the coin types of
+`glCoinsEquiv` spell the sum out). -/
+abbrev glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ :=
   k n * mP.eval n + (k n + mP.eval n * (2 ^ k n - 1) * A.coinLen n)
 
 /-- The coins read are at most the coins available. -/
@@ -854,6 +856,11 @@ def glPredictorOf (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Boo
     β × (Fin m → Bool) → A₁.Coins n → Bool :=
   fun p c => decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true])
 
+/-- The defining equation of `glPredictorOf`: `A₁(1^n, ⟨enc y, q⟩; c) = [true]`. -/
+theorem glPredictorOf_apply (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Bool)
+    (p : β × (Fin m → Bool)) (c : A₁.Coins n) : glPredictorOf A₁ n m enc p c =
+      decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true]) := rfl
+
 /-- **The recovery machine computes `guessRecover`** on well-formed coins: for coins
 `(s, b, c)` and unread coins `ex`, the answer on `y` is the encoding of
 `guessRecover (glPredictor A n o m) k y (s, b, c)`.
@@ -876,10 +883,9 @@ theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ �
     ((glMachine_coinsEquiv_symm_ofFn A₁ iP K k hk n _).trans
       (ofFn_glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (s, b, c) ex)) hM]
   refine congrArg List.ofFn (funext fun i => ?_)
-  rw [← majority_comp_equiv (nesubsetEquiv (k n))]
-  unfold HardcoreBit.guessRecover
+  rw [← majority_comp_equiv (nesubsetEquiv (k n)), HardcoreBit.guessRecover_apply]
   refine congrArg HardcoreBit.majority (funext fun L => ?_)
-  simp only [GLLoop.wfVote, glBlocks_apply, glPredictorOf, HardcoreBit.subsetSum]
+  simp only [GLLoop.wfVote, glBlocks_apply, glPredictorOf_apply, HardcoreBit.subsetSum_eq]
   have hdiv : (finProdFinEquiv (i, nesubsetEquiv (k n) L)).divNat = i :=
     congrArg Prod.fst (finProdFinEquiv.symm_apply_apply (i, nesubsetEquiv (k n) L))
   have hmod : (finProdFinEquiv (i, nesubsetEquiv (k n) L)).modNat = nesubsetEquiv (k n) L :=

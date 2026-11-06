@@ -280,6 +280,10 @@ variable {κ G : Type*} [Fintype κ] [DecidableEq κ] [AddCommGroup G] [Fintype 
 strings, where addition is XOR, this is `⊕_{j ∈ L} s_j`. [Gar26, §2.5.1, Figure 2.5]. -/
 def subsetSum (L : Finset κ) (s : κ → G) : G := ∑ j ∈ L, s j
 
+omit [Fintype κ] [DecidableEq κ] [Fintype G] in
+/-- The defining equation of `subsetSum`: `S_L(s) = ∑_{j ∈ L} s_j`. -/
+theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j := rfl
+
 /-- The subset sum as an additive homomorphism of the tuple. -/
 def subsetSumHom (L : Finset κ) : (κ → G) →+ G where
   toFun := subsetSum L

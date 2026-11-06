@@ -234,7 +234,8 @@ theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
     (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
       (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
       polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
-  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
+  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, coins_ofPolyTime _ _ _ _ _,
+    adv_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
@@ -284,7 +285,8 @@ theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
     rw [PolyExpr.eval_subst]
     exact A.advice_length _
   refine ⟨ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv,
-    rfl, fun hA n => hA _, fun n y r => ?_⟩
+    coins_ofPolyTime _ _ _ _ _, fun hA => (uniform_iff _).2 fun n =>
+      (congrFun (advice_ofPolyTime _ _ _ _ _) n).trans ((uniform_iff A).1 hA _), fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
@@ -323,7 +325,8 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
     have h₃ := A.adv.eval_mono (hφ n)
     omega
   refine ⟨ofPolyTime hF (A.coins.subst p) _
-    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv, rfl, fun n y r => ?_⟩
+    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
   simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inArg, inAdvice, inCoins]
 
@@ -352,8 +355,8 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
     have h₁ := A.advice_length n
     have h₂ := hβ n
     omega
-  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv, rfl,
-    fun n y r => ?_⟩
+  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv,
+    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
@@ -376,8 +379,8 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
     (polyTimeComputable_layout polyTimeComputable_inParam
       (polyTimeComputable_inArg.pairEncode (ptc_comp (polyTimeComputable_pairTakePoly p) hcut))
       polyTimeComputable_inAdvice (ptc_comp (polyTimeComputable_pairDropPoly p) hcut))
-  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length, rfl, rfl,
-    fun n y r => ?_⟩
+  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length,
+    coins_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
 
@@ -417,10 +420,9 @@ theorem exists_seq (A B : NUPPT) :
     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
     omega
   refine ⟨ofPolyTime hF (.add A.coins B.coins) _
-    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, rfl, fun hA hB n => ?_,
-    fun n y r => ?_⟩
-  · show combineAdvice (A.advice n) (B.advice n) = []
-    rw [hA n, hB n, combineAdvice_nil]
+    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, coins_ofPolyTime _ _ _ _ _,
+    fun hA hB => (uniform_iff _).2 fun n => ?_, fun n y r => ?_⟩
+  · rw [advice_ofPolyTime, (uniform_iff A).1 hA n, (uniform_iff B).1 hB n, combineAdvice_nil]
   · rw [runAtL_ofPolyTime]
     simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inParam, inArg, inAdvice, inCoins]
 
@@ -443,8 +445,8 @@ theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (h
       (ptc_comp (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
   convert hF using 1
   funext z
-  have hz := h (pairFstD z).length (pairSndD z) (fun _ => true)
-  have hadv := hA (pairFstD z).length
+  have hz := Computes.runAt_eq A h (pairFstD z).length (pairSndD z) (fun _ => true)
+  have hadv := (uniform_iff A).1 hA (pairFstD z).length
   simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, List.ofFn_const] at hz
   rw [← hz]
   simp [layout, advInput_eq, coinLen_eq, hadv]

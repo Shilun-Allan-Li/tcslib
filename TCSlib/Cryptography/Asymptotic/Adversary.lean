@@ -177,6 +177,11 @@ noncomputable def invProbOpt {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : �
     (A : β → ρ → Option α) : ℝ :=
   uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
 
+/-- The defining equation of `invProbOpt`. -/
+theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β)
+    (A : β → ρ → Option α) :
+    invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1 := rfl
+
 /-- Replacing a failure by any default can only increase the inversion probability: the
 bridge from `invProbOpt` to the concrete `invProb` [Gar26, Definition 2.1]. -/
 theorem invProbOpt_le_invProb {α β ρ : Type*} [Fintype α] [Fintype ρ] [Inhabited α] (f : α → β)

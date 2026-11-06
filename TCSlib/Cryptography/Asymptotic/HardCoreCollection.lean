@@ -258,6 +258,34 @@ theorem glPad_eval (m : PolyExpr)
       pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w))))
         (pairSndD (pairSndD w)) := rfl
 
+variable {F} in
+/-- The padded collection has the indices of `F` (same generator): `index' n r = index n r`. -/
+theorem glPad_index (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)),
+      (F.encD (F.index n r) x).length = m.eval n)
+    (n : ℕ) (r : F.gen.Coins n) : (F.glPad m henc).index n r = F.index n r := by
+  rw [Collection.index_eq, Collection.index_eq]; rfl
+
+variable {F} in
+/-- The inversion experiment of the padded collection over `D_i × {0,1}^L`, `L = |encD_i(default)|`,
+with the answer decoded by `glPadDecode` and compared through `⟨f_i(x), r⟩`. -/
+theorem glPad_invProbAt (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)),
+      (F.encD (F.index n r) x).length = m.eval n)
+    (A : NUPPT) (n : ℕ) :
+    (F.glPad m henc).invProbAt A n = uexp fun r : F.gen.Coins n =>
+      uprob fun z : (F.D (F.index n r) × (Fin (F.encD (F.index n r) default).length → Bool)) ×
+          A.Coins n =>
+        ∃ x', glPadDecode F (F.index n r) (F.encD (F.index n r) default).length
+            (A.runAt n (pairEncode (F.index n r)
+              (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧
+          pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) =
+            pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2) := by
+  rw [Collection.invProbAt_eq]
+  refine congrArg uexp (funext fun r => ?_)
+  rw [glPad_index m henc n r, glPad_decD_eq]
+  rfl
+
 /-- **The padded collection is one-way** ([PS10, Theorem 87.3], collection form, first clause):
 if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at the
 indices generated at parameter `n`, then `F.glPad m` is a collection of one-way functions.
@@ -280,18 +308,17 @@ theorem OneWay.glPad {F : Collection} (m : PolyExpr)
     (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
     (h : F.OneWay) : (F.glPad m henc).OneWay := by
   obtain ⟨δ, hδ, hS⟩ := h.sampleClose
-  refine ⟨⟨δ, hδ, fun n r => ?_⟩, fun A => ?_⟩
-  · have key := statClose_glPadSampler F m (F.glPad m henc).sample rfl (glPad_sample_runAtL m henc)
+  refine ⟨⟨δ, hδ, (sampleClose_iff _ _).2 fun n r => ?_⟩, fun A => ?_⟩
+  · have key := statClose_glPadSampler F m (F.glPad m henc).sample
+      (by rw [glPad_sample, NUPPT.coins_ofPolyTimeUniform]) (glPad_sample_runAtL m henc)
       hS n r _ (henc n r default)
-    simp only [glPad_decD_eq] at key ⊢
+    rw [glPad_index m henc n r, glPad_decD_eq]
     exact key
   · refine (h.hard (glPadCollInvMachine A m)).mono ⟨0, fun n _ => ?_⟩
-    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
-    have key := glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
+    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _),
+      glPad_invProbAt m henc A n]
+    exact glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
       (fun r => henc n r default)
-    simp only [Collection.invProbAt_eq] at key ⊢
-    simp only [glPad_decD_eq]
-    exact key
 
 /-- **`⟨x, r⟩` is hard-core for the padded collection** ([PS10, Theorem 87.3], collection form,
 second clause; inventory Thm-87.3.coll, needed by Theorem 104.4): if `F` is a collection of

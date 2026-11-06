@@ -660,10 +660,8 @@ theorem FunFamily.not_toCollection_oneWay_id (F : List Bool → List Bool)
     show (NUPPT.ofPolyTimeUniform (f := fun z => pairSndD (NUPPT.inArg z)) _ (.const 0)).runAtL n
       (pairEncode (List.replicate n true) y) (List.ofFn r) = y
     rw [NUPPT.runAtL_ofPolyTimeUniform]
-    show pairSndD (NUPPT.inArg (NUPPT.layout (List.replicate n true)
-      (pairEncode (List.replicate n true) y) [] (List.ofFn r))) = y
-    rw [NUPPT.inArg_layout, pairSndD_pairEncode]
-  obtain ⟨n₀, hn₀⟩ := h.hard B 0
+    rw [NUPPT.advInput_eq, ← NUPPT.layout_eq, NUPPT.inArg_layout, pairSndD_pairEncode]
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard B) 0
   have := hn₀ n₀ le_rfl
   simp [toCollection_invProbAt, invProbAt_ofString_id_eq_one hB] at this
 
@@ -693,6 +691,13 @@ def EvalSampled : Prop :=
   ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x,
     G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧
       G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x
+
+/-- The defining property of `EvalSampled`: for every `n`, `r`, `s`, the sampled string
+`w = Sample(1^n, i; s)` at `i = index n r` has `decD i w = some x` and `eval ⟨i, w⟩ = f_i(x)`. -/
+theorem evalSampled_iff : G.EvalSampled ↔ ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x,
+    G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧
+      G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x :=
+  Iff.rfl
 
 /-- **Every collection evaluates honestly on sampled strings**: `EvalSampled` is the field
 `sample_spec` read through `index` (repair of the run-3 audit, P3-1; previously an
@@ -913,8 +918,8 @@ private theorem collInverter_runAt (L : PolyExpr) (A' : NUPPT) (n : ℕ) (y : Li
   unfold collInverter
   rw [NUPPT.runAtL_ofPolyTime]
   simp only [collInvRaw, NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq,
-    NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.coinLen_eq, G.sample_uniform n,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+    NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.coinLen_eq,
+    G.sample_uniform.advice_eq n, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- Honest evaluation on sampled strings at an index known to equal `i`
 (`Collection.evalSampled` transported along `index n r₁ = i`). -/

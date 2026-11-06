@@ -488,7 +488,7 @@ theorem SingleBitSecure.bitwise {S : BitPublicKeyScheme} (h : S.SingleBitSecure)
   obtain ⟨ε, hε, hBε⟩ := h B
   refine ⟨fun n => (n : ℝ) * ε n, EnsembleLemmas.negligible_polyExpr_mul .var hε, fun n m₀ m₁ => ?_⟩
   refine (hμ n (m₀, m₁)).trans ?_
-  have hε0 : 0 ≤ ε n := (abs_nonneg _).trans (hBε n false false)
+  have hε0 : 0 ≤ ε n := (abs_nonneg _).trans ((distAdv_def _ _ _).symm.trans_le (hBε n false false))
   have hsingle : ∀ msg msg' : Fin 1 → Bool,
       distAdv (singleDist S.gen S.enc n 1 msg) (singleDist S.gen S.enc n 1 msg')
         (B.distinguisherL n) ≤ ε n := by
@@ -705,7 +705,7 @@ theorem tdpGen_runAt (n : ℕ) (r : T.tdpGen.Coins n) :
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   simp only [tdpGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
     pairSndD_pairEncode]
-  rfl
+  rw [NUPPT.layout_eq]
 
 /-- Unfolding: `Enc(1^n, ⟨i, [b]⟩; s) = ⟨eval ⟨i, w⟩, H ⟨i, w⟩ ⊕ [b]⟩` with
 `w = Sample(1^n, i; φ s)`, the coins read through `φ = T.tdpEnc_coinsEquiv E n`. -/
@@ -720,15 +720,15 @@ theorem tdpEnc_runAt {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluat
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   simp only [tdpEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
     pairFstD_pairEncode, pairSndD_pairEncode]
-  rfl
+  rw [NUPPT.layout_eq]
 
 /-- Unfolding: `Dec(⟨⟨1^n, ⟨i, t⟩⟩, ⟨c₁, c₂⟩⟩) = H ⟨i, Inv(1^n, ⟨t, c₁⟩; 1^{coins n})⟩ ⊕ c₂`. -/
 theorem tdpDecFun_apply (H : List Bool → List Bool) (n : ℕ) (i t c₁ c₂ : List Bool) :
     T.tdpDecFun H (pairEncode (pairEncode (List.replicate n true) (pairEncode i t)) (pairEncode c₁ c₂)) =
       List.zipWith xor (H (pairEncode i (T.inv.runAt n (pairEncode t c₁) fun _ => true))) c₂ := by
+  rw [T.inv_uniform.runAt_eq, NUPPT.advInput_eq, List.ofFn_const, NUPPT.coinLen_eq]
   simp only [tdpDecFun, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
-    T.inv_uniform.runAt_eq, List.ofFn_const, NUPPT.coinLen_eq]
-  rfl
+    NUPPT.layout_eq]
 
 /-- **The single-bit scheme of [PS10, Algorithm 104.3]** from a collection of trapdoor
 permutations `T` with a predicate `h` (its hard-core bit), given a polynomial-time evaluator `E`
@@ -761,7 +761,7 @@ noncomputable def tdpBitScheme {h : ∀ i, T.D i → Bool} (E : T.toCollection.P
     rw [tdpEnc_runAt, tdpDecFun_apply]
     set rg := T.tdpGen_coinsEquiv n rg'
     set re := T.tdpEnc_coinsEquiv E n re'
-    obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n rg re
+    obtain ⟨x, hx, hev⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n rg re
     rw [hev, T.f_perm]
     have hinv : T.decD (T.index n rg) (T.inv.runAt n
         (pairEncode (T.trap n rg) (T.encD (T.index n rg) (T.perm (T.index n rg) x))) fun _ => true) =
@@ -868,7 +868,7 @@ private theorem tdpBitScheme_pkEncDist (T : TrapdoorCollection) {h : ∀ i, T.D 
   simp only [pairFstD_pairEncode]
   set r := T.tdpGen_coinsEquiv n r₀
   set s := T.tdpEnc_coinsEquiv E n s₀
-  obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n r s
+  obtain ⟨x, hx, hev⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n r s
   rw [TrapdoorCollection.tdpEnc_runAt, hev, T.f_perm, E.spec _ _ _ hx]
   simp only [tdpSampled, hx, Option.getD_some]
   rfl
@@ -913,9 +913,10 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
     (hT : T.OneWay) (hHC : T.toCollection.HardCore h) : (T.tdpBitScheme E).SingleBitSecure := by
   rw [BitPublicKeyScheme.singleBitSecure_iff]
   intro D
-  obtain ⟨δ, hδ, hδS⟩ := hT.sampleClose
-  obtain ⟨εf, hεf, hAf⟩ := hHC.2 (tdpPredictor D false)
-  obtain ⟨εt, hεt, hAt⟩ := hHC.2 (tdpPredictor D true)
+  obtain ⟨δ, hδ, hδS⟩ := ((TrapdoorCollection.oneWay_iff T).1 hT).sampleClose
+  replace hδS := (Collection.sampleClose_iff _ _).1 hδS
+  obtain ⟨εf, hεf, hAf⟩ := ((Collection.hardCore_iff _ _).1 hHC).2 (tdpPredictor D false)
+  obtain ⟨εt, hεt, hAt⟩ := ((Collection.hardCore_iff _ _).1 hHC).2 (tdpPredictor D true)
   -- the concrete distinguisher of `(f_i(x), c)` at the index `i = index n r`
   let Di : ∀ n (r : T.gen.Coins n), T.D (T.index n r) × Bool → D.Coins n → Bool :=
     fun n r yc ρ =>
@@ -954,6 +955,7 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
         D.distinguisherL n (pairEncode (T.index n r)
           (pairEncode (T.encD _ (T.perm _ (o.getD default))) [xor (h _ (o.getD default)) b])) ρ = true
     simp only [Option.getD_some] at hs
+    rw [acceptProb_def]
     exact hs
   -- the prediction experiments of the two predictor machines
   have key : ∀ n (flip : Bool) (r : T.gen.Coins n),
@@ -963,6 +965,7 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
       predProb (T.perm (T.index n r)) (h (T.index n r)) (pkPredictor (Di n r) flip) := by
     intro n flip r
     simp only [T.f_perm]
+    rw [predProb_def]
     exact uprob_tdpPredictor D flip n (T.index n r) (T.perm _) (h _) (T.encD _)
   have hf : ∀ n, uexp (fun r : T.gen.Coins n =>
       acceptProb (fun x : T.D (T.index n r) => (T.perm _ x, h _ x)) (Di n r)) -
@@ -1002,6 +1005,7 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
   have hc0 := hclose n false
   have hc1 := hclose n true
   simp only [Bool.xor_false, Bool.xor_true] at hc0 hc1
+  rw [distAdv_def]
   set A₀ := acceptProb ((T.tdpBitScheme E).pkEncDist n false) (D.distinguisherL n) with hA₀
   set A₁ := acceptProb ((T.tdpBitScheme E).pkEncDist n true) (D.distinguisherL n) with hA₁
   set Qa := uexp (fun r : T.gen.Coins n =>
