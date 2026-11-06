@@ -739,9 +739,8 @@ noncomputable def tdpBitScheme {h : ∀ i, T.D i → Bool} (E : T.toCollection.P
     have hinv : T.decD (T.index n rg) (T.inv.runAt n
         (pairEncode (T.trap n rg) (T.encD (T.index n rg) (T.perm (T.index n rg) x))) fun _ => true) =
         some x := by
-      have := T.inv_spec n rg (T.perm _ x) (fun _ => true)
-      rw [Equiv.symm_apply_apply] at this
-      exact this
+      rw [T.inv_eq_encD n rg (T.perm _ x) (fun _ => true), Equiv.symm_apply_apply]
+      exact T.decD_encD _ x
     rw [E.spec _ _ _ hinv, E.spec _ _ _ hx]
     cases h (T.index n rg) x <;> cases b <;> rfl
 
