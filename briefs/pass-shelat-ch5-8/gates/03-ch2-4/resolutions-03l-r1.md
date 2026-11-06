@@ -54,4 +54,4 @@
 
 No statement of `exists_pairSplitTM`, `exists_unaryMulTM`, `IterateFind.polyTimeComputable_find` or the `Repetition.lean` headlines changes.
 
-**Found by the repair, for part 2:** five old `| zero => rfl` reads of `StateLoop.orbit` in files that part 2 edits (`QUEUE.md`), and ledger row DL-20: `Loop.lean`'s private `loop_first_halt` is the same lemma as `ModuleHost.first_halt`.
+**Found by the repair:** for clean-up part 2, five old `| zero => rfl` reads of `StateLoop.orbit` in files that part 2 edits (`QUEUE.md`). Separately, ledger row DL-20, `Loop.lean`'s private `loop_first_halt`, is the same lemma as `ModuleHost.first_halt`. It is **noted, and paid back at the `main` landing**, not in part 2: `Loop.lean` is `main`'s file, upstream of the host, and the payback moves `first_halt` and `live_prefix` into it (corrected on gate 03l round 2, finding 4, so that this file and the ledger agree).
