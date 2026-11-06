@@ -777,8 +777,8 @@ private theorem exists_take_coins (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ
     (r : (egGroupGenMachine H G).Coins n) :
     ∃ r' : G.gen.Coins n, List.ofFn r' = (List.ofFn r).take (G.gen.coinLen n) := by
   apply exists_ofFn_eq
-  simp only [List.length_take, List.length_ofFn, NUPPT.coinLen, egGroupGenMachine,
-    NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_add]
+  rw [List.length_take, List.length_ofFn]
+  simp only [NUPPT.coinLen_eq, egGroupGenMachine, NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_add]
   omega
 
 /-- **The derived generator outputs safe-prime instances** from `G.n₀` on: the index

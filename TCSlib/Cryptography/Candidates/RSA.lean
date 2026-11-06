@@ -882,17 +882,26 @@ noncomputable def rsaBreaker (A : NUPPT) : NUPPT :=
     A.coins A.adv A.advice A.advice_length
 
 /-- `rsaBreaker` has the coins of `A`. -/
-@[simp] theorem coins_rsaBreaker (A : NUPPT) : (rsaBreaker A).coins = A.coins := rfl
+@[simp] theorem coins_rsaBreaker (A : NUPPT) : (rsaBreaker A).coins = A.coins := by
+  unfold rsaBreaker
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- The activation of `rsaBreaker`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = A(1^n, ⟨⟨N, e⟩, y⟩; r)`. -/
+/-- **`rsaBreaker` runs on the coins of `A`**: the published equivalence
+`(rsaBreaker A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along `coins_rsaBreaker`). -/
+noncomputable def rsaBreaker_coinsEquiv (A : NUPPT) (n : ℕ) : (rsaBreaker A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsEquiv (coins_rsaBreaker A) n
+
+/-- The activation of `rsaBreaker`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = A(1^n, ⟨⟨N, e⟩, y⟩; φ r)`, the
+coins read through `φ = rsaBreaker_coinsEquiv A n`. -/
 theorem rsaBreaker_runAt (A : NUPPT) (n : ℕ) (N e y : List Bool) (r : (rsaBreaker A).Coins n) :
     (rsaBreaker A).runAt n (pairEncode N (pairEncode e y)) r =
-      A.runAt n (pairEncode (pairEncode N e) y) r := by
-  rw [NUPPT.runAt_eq]
+      A.runAt n (pairEncode (pairEncode N e) y) (rsaBreaker_coinsEquiv A n r) := by
+  rw [NUPPT.runAt_eq, rsaBreaker_coinsEquiv, NUPPT.runAt_coinsEquiv]
   unfold rsaBreaker
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode]
 
 /-- **Inverting the RSA collection breaks the RSA assumption** [PS10, proof of Theorem 53.2]:
 for `n ≥ 2`, the inversion probability of `A` against the RSA collection is at most the RSA
@@ -902,10 +911,11 @@ probability of `rsaBreaker A` plus the statistical error of the generator.
 is `Z_N^*` (`rsaMod_indexOf`), `f_{N,e}(x)` is the numeral of `(x^e).val` (`rsaF_perm`,
 `rsaEnc`), and a decoded answer `x'` with `f x' = f x` has `x' = x` (`PermCollection.f_injective`),
 so the event is "`A(1^n, ⟨⟨N, e⟩, x^e⟩)` outputs the numeral of `x`", which implies the RSA
-event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`, `decodeFin_ofFn`,
-`bitsToNat_natToBits`, `val_units_pow`). Since `x ↦ x^e` pushes uniform to uniform
-(`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the inner probability equals the RSA
-inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]` (over `y` and `A`'s coins).
+event of `rsaBreaker A` on the challenge `y := x^e` (`rsaBreaker_runAt`,
+`rsaBreaker_coinsEquiv`, `decodeFin_ofFn`, `bitsToNat_natToBits`, `val_units_pow`). Since
+`x ↦ x^e` pushes uniform to uniform (`pushesUniform_rsaPerm`, `PushesUniform.uprob_eq`), the
+inner probability equals the RSA inner probability at `(z, e)`: a number `h(z, e) ∈ [0, 1]`
+(over `y` and `A`'s coins).
 The exponent group `Z*_{Φ(N)}` depends on `z`, so the generator's law is not compared with one
 uniform product: the comparison is a conditional expectation over `z`. Split the generator's
 coins into the two prime segments and the exponent segment (`rsaGenParams`, `uexp_prod`,
@@ -1035,25 +1045,36 @@ noncomputable def rsaFromFactorer (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
 
 /-- `rsaFromFactorer` has the coins of `A`. -/
 @[simp] theorem coins_rsaFromFactorer (H : ArithmeticFP) (A : NUPPT) :
-    (rsaFromFactorer H A).coins = A.coins := rfl
+    (rsaFromFactorer H A).coins = A.coins := by
+  unfold rsaFromFactorer
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- The activation of `A'`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = rsaFromFactorStep n (A(1^n, N; r)) N e y`. -/
+/-- **`A'` runs on the coins of `A`**: the published equivalence
+`(rsaFromFactorer H A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along `coins_rsaFromFactorer`). -/
+noncomputable def rsaFromFactorer_coinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
+    (rsaFromFactorer H A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsEquiv (coins_rsaFromFactorer H A) n
+
+/-- The activation of `A'`: `A'(1^n, ⟨N, ⟨e, y⟩⟩; r) = rsaFromFactorStep n (A(1^n, N; φ r)) N e y`,
+the coins read through `φ = rsaFromFactorer_coinsEquiv H A n`. -/
 theorem rsaFromFactorer_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N e y : List Bool)
     (r : (rsaFromFactorer H A).Coins n) :
     (rsaFromFactorer H A).runAt n (pairEncode N (pairEncode e y)) r =
-      rsaFromFactorStep n (A.runAt n N r) (listToNat N) (listToNat e) (listToNat y) := by
-  rw [NUPPT.runAt_eq]
+      rsaFromFactorStep n (A.runAt n N (rsaFromFactorer_coinsEquiv H A n r)) (listToNat N)
+        (listToNat e) (listToNat y) := by
+  rw [NUPPT.runAt_eq, rsaFromFactorer_coinsEquiv, NUPPT.runAt_coinsEquiv]
   unfold rsaFromFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [rsaFromFactorRaw, NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, rsaFromFactorRaw, List.length_replicate]
 
 /-- **A factorer gives an RSA breaker with the same probability** [PS10, proof of
 Theorem 55.2]: `Pr[A factors N] ≤ Pr[A' breaks RSA]`.
 
 **Proof sketch.** `rsaProb` averages over `z` the probability over `(e, y, r)`; for fixed
 `z` and `r`, if `A(1^n, N; r)` reads as `p` or `q` then `A'` succeeds for *every* `(e, y)`
-(`rsaFromFactorer_runAt`, `rsaFromFactorStep_correct`, `rsaInput`,
+(`rsaFromFactorer_runAt`, `rsaFromFactorer_coinsEquiv`, `rsaFromFactorStep_correct`, `rsaInput`,
 `listToNat_natToList`), so `Pr_{e,y,r}[A' wins | z] ≥ Pr_r[A factors | z]` (`uprob_mono`,
 `uprob_fst`-style marginalization with the coordinates reordered by `uprob_comp_equiv`);
 and `factorProb A n = uexp_z Pr_r[A factors | z]` (`uprob_prod`). -/

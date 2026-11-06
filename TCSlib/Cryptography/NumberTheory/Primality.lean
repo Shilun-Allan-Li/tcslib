@@ -904,7 +904,7 @@ theorem exists_samplePrime_nuppt
   have hpre : PolyTimeComputable fun z => pairEncode (NUPPT.inParam z) (NUPPT.inCoins z) :=
     NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
   refine ⟨NUPPT.ofPolyTimeUniform (hF.comp hpre) samplePrimeCoins,
-    NUPPT.ofPolyTimeUniform_uniform _ _, rfl, fun n r => ?_⟩
+    NUPPT.ofPolyTimeUniform_uniform _ _, NUPPT.coins_ofPolyTimeUniform _ _, fun n r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   have h1 : NUPPT.inParam (pairEncode (pairEncode (NUPPT.advInput n []) []) (List.ofFn r)) =
       List.replicate n true := by

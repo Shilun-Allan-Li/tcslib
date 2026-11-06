@@ -1060,15 +1060,31 @@ of `A`) [PS10, Theorem 61.8 ⇐]. -/
 noncomputable def rabinBlumInverter (H : ArithmeticFP) (A : NUPPT) : NUPPT :=
   NUPPT.ofPolyTime (polyTimeComputable_rabinRootRaw H A) A.coins A.adv A.advice A.advice_length
 
-/-- The activation of the root finder: `A'(1^n, ⟨N, y⟩; r) = rabinRootStep (A(1^n, N; r)) N y`. -/
+/-- The root finder has the coins of `A`. -/
+theorem coins_rabinBlumInverter (H : ArithmeticFP) (A : NUPPT) :
+    (rabinBlumInverter H A).coins = A.coins := by
+  unfold rabinBlumInverter
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- **The root finder runs on the coins of `A`**: the published equivalence
+`(rabinBlumInverter H A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along
+`coins_rabinBlumInverter`). -/
+noncomputable def rabinBlumInverter_coinsEquiv (H : ArithmeticFP) (A : NUPPT) (n : ℕ) :
+    (rabinBlumInverter H A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsEquiv (coins_rabinBlumInverter H A) n
+
+/-- The activation of the root finder: `A'(1^n, ⟨N, y⟩; r) = rabinRootStep (A(1^n, N; φ r)) N y`,
+the coins read through `φ = rabinBlumInverter_coinsEquiv H A n`. -/
 theorem rabinBlumInverter_runAt (H : ArithmeticFP) (A : NUPPT) (n : ℕ) (N y : List Bool)
     (r : (rabinBlumInverter H A).Coins n) :
-    (rabinBlumInverter H A).runAt n (pairEncode N y) r = rabinRootStep (A.runAt n N r) (listToNat N) y := by
-  rw [NUPPT.runAt_eq]
+    (rabinBlumInverter H A).runAt n (pairEncode N y) r =
+      rabinRootStep (A.runAt n N (rabinBlumInverter_coinsEquiv H A n r)) (listToNat N) y := by
+  rw [NUPPT.runAt_eq, rabinBlumInverter_coinsEquiv, NUPPT.runAt_coinsEquiv]
   unfold rabinBlumInverter
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [rabinRootRaw, NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode, rabinRootRaw]
 
 /-- **A Blum factorer inverts the Blum Rabin collection** [PS10, proof of Theorem 61.8 ⇐,
 "from the correct `p, q` we can compute the square root of `u` with probability 1"]: for
@@ -1078,9 +1094,9 @@ probability of `rabinBlumInverter A` plus the statistical error.
 **Proof sketch.** When `A(1^n, N; r)` reads as `p` or `q`, `q' = N / p'` is the other prime
 and `blumInvNat p' q' y.val = (blumSqrt y).val` (the CRT argument of `blumInv_spec`), the
 residue root of `y`, which `blumDec` decodes and which is `(blumPermAt N).symm y`; hence
-`A'` wins for every `y` (`rabinBlumInverter_runAt`, `uprob_mono`). The ideal uniform Blum
-pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the generator's law
-(`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n` from `hD`,
+`A'` wins for every `y` (`rabinBlumInverter_runAt`, `rabinBlumInverter_coinsEquiv`,
+`uprob_mono`). The ideal uniform Blum pair is within `2e^{-n} + 4n/2^n ≤ rabinErr n` of the
+generator's law (`statClose_rejectBlocksL` with `hD`, the diagonal `1/B ≤ 4n/2^n` from `hD`,
 `StatClose.abs_uprob_sub_le_prod`, `uexp_prod`; run-3 audit P7-3). -/
 theorem blumFactorProb_le_invProbAt (H : ArithmeticFP) (hD : BlumDensity) (A : NUPPT) {n : ℕ}
     (hn : 3 ≤ n) :

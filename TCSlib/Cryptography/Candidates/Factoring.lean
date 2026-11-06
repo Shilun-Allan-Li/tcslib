@@ -285,7 +285,15 @@ noncomputable def oneCallFactorer (A : NUPPT) : NUPPT :=
     A.coins A.adv A.advice A.advice_length
 
 /-- `A''` has the coins of `A` (so `(oneCallFactorer A).Coins n = A.Coins n`). -/
-@[simp] theorem coins_oneCallFactorer (A : NUPPT) : (oneCallFactorer A).coins = A.coins := rfl
+@[simp] theorem coins_oneCallFactorer (A : NUPPT) : (oneCallFactorer A).coins = A.coins := by
+  unfold oneCallFactorer
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
+
+/-- **`A''` runs on the coins of `A`**: the published equivalence
+`(oneCallFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along `coins_oneCallFactorer`). -/
+noncomputable def oneCallFactorer_coinsEquiv (A : NUPPT) (n : ℕ) :
+    (oneCallFactorer A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsEquiv (coins_oneCallFactorer A) n
 
 /-- **The activation of `A''`**: `A''(1^n, y; r) = (A(1^n, y; r)).take n`. -/
 theorem oneCallFactorer_runAtL (A : NUPPT) (n : ℕ) (y r : List Bool) :
@@ -317,7 +325,7 @@ primality test; the factoring distribution is on distinct primes (module docstri
 **Proof sketch.** *Easy:* `fmult_easy H`. *Hard:* take `q := fmultWeakPoly` (positive) and
 fix `A`. Suppose the bound fails infinitely often: `1 - 1/q(n) < fmult.invProbAt A n` for
 `n` in an infinite set, and let `A'' := oneCallFactorer A` (same coins,
-`coins_oneCallFactorer`; no reparametrisation: `invProbAt` and `factorProb` both activate
+`oneCallFactorer_coinsEquiv`; no reparametrisation: `invProbAt` and `factorProb` both activate
 at parameter `n`, run-3 audit P7-2). On the event `S(x, r)` "`A(1^n, f_mult(x); r)` decodes
 to a preimage `x'`" (`FunFamily.invProbAt_eq_uprob`, `NUPPT.inverter_eq_some_iff`) with `x`
 a `2n`-bit string whose blocks read as primes `p, q`, `fmult_inv_factor` shows that block `0`
@@ -776,17 +784,31 @@ noncomputable def collectionFactorer (A : NUPPT) : NUPPT :=
     A.coins A.adv A.advice A.advice_length
 
 /-- `collectionFactorer` has the coins of `A`. -/
-@[simp] theorem coins_collectionFactorer (A : NUPPT) : (collectionFactorer A).coins = A.coins := rfl
+@[simp] theorem coins_collectionFactorer (A : NUPPT) :
+    (collectionFactorer A).coins = A.coins := by
+  unfold collectionFactorer
+  exact NUPPT.coins_ofPolyTime _ _ _ _ _
 
-/-- **The activation of the reduction**: `A_fact(1^n, y; r) = fst(A(1^n, ⟨1^n, y⟩; r))`. -/
+/-- **The reduction runs on the coins of `A`**: the published equivalence
+`(collectionFactorer A).Coins n ≃ A.Coins n` (`NUPPT.coinsEquiv` along
+`coins_collectionFactorer`). -/
+noncomputable def collectionFactorer_coinsEquiv (A : NUPPT) (n : ℕ) :
+    (collectionFactorer A).Coins n ≃ A.Coins n :=
+  NUPPT.coinsEquiv (coins_collectionFactorer A) n
+
+/-- **The activation of the reduction**: `A_fact(1^n, y; r) = fst(A(1^n, ⟨1^n, y⟩; φ r))`, the
+coins read through `φ = collectionFactorer_coinsEquiv A n`. -/
 theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
     (r : (collectionFactorer A).Coins n) :
-    (collectionFactorer A).runAt n y r = pairFstD (A.runAt n (pairEncode (List.replicate n true) y) r) := by
-  rw [NUPPT.runAt_eq]
+    (collectionFactorer A).runAt n y r =
+      pairFstD (A.runAt n (pairEncode (List.replicate n true) y)
+        (collectionFactorer_coinsEquiv A n r)) := by
+  rw [NUPPT.runAt_eq, collectionFactorer_coinsEquiv, NUPPT.runAt_coinsEquiv]
   unfold collectionFactorer
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAt, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.advInput]
+  simp only [NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
+    pairSndD_pairEncode]
 
 /-- **Inverting the collection factors** [PS10, proof of Theorem 51.1]: for `n ≥ 2`, the
 inversion probability of `A` against the factoring collection is at most the factoring
@@ -802,7 +824,8 @@ then `p'q' = pq` (`natToList_injOn`, `DistinctPrimes.mul_lt`) and `p' ∈ {p, q}
 component of the answer is the `n`-bit numeral of `p'` (`decodeFin`,
 `length_eq_of_decodeFin_eq_some`), which `collectionFactorer_runAt` returns and
 `NUPPT.inverter` decodes to `natToBits n p'` (`natToBits_bitsToNat`); conclude by
-`uprob_mono` with the coin types identified (`coins_collectionFactorer`). -/
+`uprob_mono` with the coin types identified (`collectionFactorer_coinsEquiv`,
+`uprob_comp_equiv`). -/
 theorem factoringCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
     (factoringCollection H).invProbAt A n ≤ factorProb (collectionFactorer A) n := by
   sorry

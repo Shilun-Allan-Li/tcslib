@@ -507,17 +507,60 @@ instance generator (from `n₀` on; `dlDefaultIndex` below), same coins. -/
 noncomputable def expGen {V : List Bool → Prop} (G : ExpGroupGen V) : NUPPT :=
   NUPPT.ofPolyTimeUniform (expGenFun_poly G) G.gen.coins
 
-/-- The activation of the collection's generator: `⟨Gen(1^n; r), []⟩` for `n ≥ n₀`,
-`⟨dlDefaultIndex, []⟩` below. -/
-theorem expGen_runAt {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) (r : G.gen.Coins n) :
+/-- The collection's generator has the coins of the instance generator:
+`(expGen G).coins = G.gen.coins`. -/
+theorem expGen_coins {V : List Bool → Prop} (G : ExpGroupGen V) :
+    (expGen G).coins = G.gen.coins := by
+  unfold expGen
+  exact NUPPT.coins_ofPolyTimeUniform _ _
+
+/-- The coin length of the collection's generator is the instance generator's:
+`(expGen G).coinLen n = G.gen.coinLen n`. -/
+theorem expGen_coinLen {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) :
+    (expGen G).coinLen n = G.gen.coinLen n := by
+  rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, expGen_coins]
+
+/-- **The coins of the collection's generator are the instance generator's**: the published
+equivalence `(expGen G).Coins n ≃ G.gen.Coins n` (`NUPPT.coinsEquiv` along `expGen_coins`), the
+interface between the averages over the collection's coins (`Collection.HardCore`,
+`SampleClose`, `invProbAt`) and those over `G.gen`'s (`dlProb`, `FullLengthExcept`). -/
+noncomputable def expGen_coinsEquiv {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) :
+    (expGen G).Coins n ≃ G.gen.Coins n :=
+  NUPPT.coinsEquiv (expGen_coins G) n
+
+/-- The coin equivalence keeps the coin string:
+`List.ofFn (expGen_coinsEquiv G n r) = List.ofFn r`. -/
+theorem expGen_coinsEquiv_ofFn {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+    (r : (expGen G).Coins n) : List.ofFn (expGen_coinsEquiv G n r) = List.ofFn r :=
+  NUPPT.ofFn_coinsEquiv (expGen_coins G) n r
+
+/-- **The coin equivalence carries the uniform distribution**: for `P` on `G.gen`'s coins,
+`Pr_{r ← (expGen G).Coins n}[P (φ r)] = Pr_{r'}[P r']` with `φ = expGen_coinsEquiv G n`
+(`uprob_comp_equiv`). -/
+theorem expGen_coinsEquiv_uprob {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+    (P : G.gen.Coins n → Prop) :
+    uprob (fun r : (expGen G).Coins n => P (expGen_coinsEquiv G n r)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- **The coin equivalence carries averages**: for `F` on `G.gen`'s coins,
+`E_{r ← (expGen G).Coins n}[F (φ r)] = E_{r'}[F r']` with `φ = expGen_coinsEquiv G n`
+(`HardcoreBit.uexp_comp_equiv`). -/
+theorem expGen_coinsEquiv_uexp {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ)
+    (F : G.gen.Coins n → ℝ) :
+    uexp (fun r : (expGen G).Coins n => F (expGen_coinsEquiv G n r)) = uexp F :=
+  HardcoreBit.uexp_comp_equiv _ F
+
+/-- The activation of the collection's generator: `⟨Gen(1^n; φ r), []⟩` for `n ≥ n₀`,
+`⟨dlDefaultIndex, []⟩` below, with the coins read through `φ = expGen_coinsEquiv G n`. -/
+theorem expGen_runAt {V : List Bool → Prop} (G : ExpGroupGen V) (n : ℕ) (r : (expGen G).Coins n) :
     (expGen G).runAt n [] r =
-      if G.n₀ ≤ n then pairEncode (G.gen.runAt n [] r) [] else pairEncode dlDefaultIndex [] := by
-  rw [NUPPT.runAt_eq]
+      if G.n₀ ≤ n then pairEncode (G.gen.runAt n [] (expGen_coinsEquiv G n r)) []
+      else pairEncode dlDefaultIndex [] := by
+  rw [NUPPT.runAt_eq, NUPPT.runAt_eq, expGen_coinsEquiv_ofFn, NUPPT.Uniform.runAtL_eq G.gen_uniform]
   unfold expGen
   rw [NUPPT.runAtL_ofPolyTimeUniform]
-  simp only [expGenFun, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
-    NUPPT.Uniform.runAt_eq G.gen_uniform]
+  simp only [expGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
 
 /-- **Rejection sampling of a number below `m`** from a coin list: `T` trials, trial `t`
 reading the first `k` bits of the `t`-th block of `B` bits as a number `v`, accepted iff
@@ -699,20 +742,48 @@ theorem expCollection_sample {V : List Bool → Prop} (H : ArithmeticFP) (G : Ex
 theorem expCollection_eval {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) : (expCollection H G hV).eval = expEval := rfl
 
+/-- **The coins of the exponentiation collection's generator are the instance generator's**:
+the published equivalence `(expCollection H G hV).gen.Coins n ≃ G.gen.Coins n`
+(`expGen_coinsEquiv`), through which the collection's averages are read as averages over
+`G.gen`'s coins (`expCollection_coinsEquiv_uprob`, `expCollection_coinsEquiv_uexp`). -/
+noncomputable def expCollection_coinsEquiv {V : List Bool → Prop} (H : ArithmeticFP)
+    (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) (n : ℕ) :
+    (expCollection H G hV).gen.Coins n ≃ G.gen.Coins n :=
+  expGen_coinsEquiv G n
+
+/-- The collection's coin equivalence carries the uniform distribution:
+`Pr_r[P (φ r)] = Pr_{r'}[P r']` with `φ = expCollection_coinsEquiv H G hV n`. -/
+theorem expCollection_coinsEquiv_uprob {V : List Bool → Prop} (H : ArithmeticFP)
+    (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) (n : ℕ) (P : G.gen.Coins n → Prop) :
+    uprob (fun r : (expCollection H G hV).gen.Coins n => P (expCollection_coinsEquiv H G hV n r)) =
+      uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The collection's coin equivalence carries averages:
+`E_r[F (φ r)] = E_{r'}[F r']` with `φ = expCollection_coinsEquiv H G hV n`. -/
+theorem expCollection_coinsEquiv_uexp {V : List Bool → Prop} (H : ArithmeticFP)
+    (G : ExpGroupGen V) (hV : ∀ i, V i → ExpValid i) (n : ℕ) (F : G.gen.Coins n → ℝ) :
+    uexp (fun r : (expCollection H G hV).gen.Coins n => F (expCollection_coinsEquiv H G hV n r)) =
+      uexp F :=
+  HardcoreBit.uexp_comp_equiv _ F
+
 /-- The index generated by the exponentiation collection from `n₀` on is the instance
-generator's output. -/
+generator's output on the coins read through `expCollection_coinsEquiv`. -/
 theorem expCollection_index {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
-    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : G.gen.Coins n) (hn : G.n₀ ≤ n) :
-    (expCollection H G hV).index n r = G.gen.runAt n [] r := by
-  show pairFstD ((expGen G).runAt n [] r) = _
-  rw [expGen_runAt, if_pos hn, pairFstD_pairEncode]
+    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : (expCollection H G hV).gen.Coins n)
+    (hn : G.n₀ ≤ n) :
+    (expCollection H G hV).index n r = G.gen.runAt n [] (expCollection_coinsEquiv H G hV n r) := by
+  rw [Collection.index_eq]
+  exact (congrArg pairFstD (expGen_runAt G n r)).trans (by rw [if_pos hn, pairFstD_pairEncode]; rfl)
 
 /-- The index generated by the exponentiation collection below `n₀` is the default index. -/
 theorem expCollection_index_of_lt {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
-    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : G.gen.Coins n) (hn : n < G.n₀) :
+    (hV : ∀ i, V i → ExpValid i) (n : ℕ) (r : (expCollection H G hV).gen.Coins n)
+    (hn : n < G.n₀) :
     (expCollection H G hV).index n r = dlDefaultIndex := by
-  show pairFstD ((expGen G).runAt n [] r) = _
-  rw [expGen_runAt, if_neg (not_le.mpr hn), pairFstD_pairEncode]
+  rw [Collection.index_eq]
+  exact (congrArg pairFstD (expGen_runAt G n r)).trans
+    (by rw [if_neg (not_le.mpr hn), pairFstD_pairEncode])
 
 /-- The domain of the exponentiation collection at an index is `Z_{expOrd i}`. -/
 theorem expCollection_D {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
@@ -751,7 +822,8 @@ fix `r`; the index `i = Gen(1^n; r)` is valid and well formed (`hV`, `G.valid`,
 `expF i x' = expF i x`, then `x' = x` (`expF_injective`), `w.length = n` and
 `listToNat w = x.val`, so `decodeFin n w = some x''` with `bitsToNat x'' = listToNat w = x.val`
 (`decodeFin`, `bitsToNat_eq_listToNat`, `List.ofFn_get`); `uprob_mono` with the coin types
-identified (`expCollection_index`). -/
+identified through `expCollection_coinsEquiv` (`expCollection_index`,
+`expCollection_coinsEquiv_uexp`). -/
 theorem expCollection_invProbAt_le {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGroupGen V)
     (hV : ∀ i, V i → ExpValid i) (A : NUPPT) {n : ℕ} (hn : G.n₀ ≤ n) :
     (expCollection H G hV).invProbAt A n ≤ G.dlProb A n := by
@@ -864,9 +936,17 @@ theorem dlCollection_eval (H : ArithmeticFP) (G : SafePrimeGen) :
     (dlCollection H G).eval = expEval :=
   expCollection_eval H G (fun _ h => h.expValid)
 
-/-- The index generated by `DL` from `n₀` on is the instance generator's output `⟨p, ⟨q, g⟩⟩`. -/
-theorem dlCollection_index (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : G.gen.Coins n)
-    (hn : G.n₀ ≤ n) : (dlCollection H G).index n r = G.gen.runAt n [] r :=
+/-- **The coins of `DL`'s generator are the instance generator's**: the published equivalence
+`(dlCollection H G).gen.Coins n ≃ G.gen.Coins n` (`expCollection_coinsEquiv`). -/
+noncomputable def dlCollection_coinsEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
+    (dlCollection H G).gen.Coins n ≃ G.gen.Coins n :=
+  expCollection_coinsEquiv H G (fun _ h => h.expValid) n
+
+/-- The index generated by `DL` from `n₀` on is the instance generator's output `⟨p, ⟨q, g⟩⟩`
+on the coins read through `dlCollection_coinsEquiv`. -/
+theorem dlCollection_index (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ)
+    (r : (dlCollection H G).gen.Coins n) (hn : G.n₀ ≤ n) :
+    (dlCollection H G).index n r = G.gen.runAt n [] (dlCollection_coinsEquiv H G n r) :=
   expCollection_index H G _ n r hn
 
 /-- **Theorem 52.3** [PS10, Theorem 52.3]: under the discrete-log assumption (and the

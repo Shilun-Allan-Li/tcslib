@@ -234,6 +234,24 @@ theorem runAtL_eq (n : ℕ) (y r : List Bool) :
 theorem runAt_eq (n : ℕ) (y : List Bool) (r : A.Coins n) :
     A.runAt n y r = A.runAtL n y (List.ofFn r) := rfl
 
+/-- **The coins of two machines with the same coin polynomial**: `A.Coins n ≃ B.Coins n` when
+`A.coins = B.coins` (`finCongr` on the coin lengths). A construction that keeps the coins of the
+machine it is built from publishes its coin identification through it, so that consumers move
+between the two coin types without reducing `coinLen` or the construction. -/
+def coinsEquiv {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) : A.Coins n ≃ B.Coins n :=
+  Equiv.arrowCongr (finCongr (by rw [coinLen_eq, coinLen_eq, h])) (Equiv.refl Bool)
+
+/-- The coin equivalence keeps the coin string: `List.ofFn (coinsEquiv h n r) = List.ofFn r`. -/
+theorem ofFn_coinsEquiv {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (r : A.Coins n) :
+    List.ofFn (coinsEquiv h n r) = List.ofFn r :=
+  (List.ofFn_congr (by rw [coinLen_eq, coinLen_eq, h]) r).symm
+
+/-- Running `B` on coins carried over from `A`: `B.runAt n y (coinsEquiv h n r) =
+B.runAtL n y (List.ofFn r)`. -/
+theorem runAt_coinsEquiv {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : List Bool)
+    (r : A.Coins n) : B.runAt n y (coinsEquiv h n r) = B.runAtL n y (List.ofFn r) := by
+  rw [runAt_eq, ofFn_coinsEquiv]
+
 /-- The input-length-indexed activation `A_{|y|}(y)` of [PS10, Definition 26.8]: the
 parameter is the input length (the `1^{|y|}` prefix carries no information). It is the layout
 of the literal forms of [PS10, Definition 26.1] and [PS10, Definition 69.4] (D5). -/
