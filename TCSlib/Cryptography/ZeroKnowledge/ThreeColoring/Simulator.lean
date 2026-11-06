@@ -762,6 +762,46 @@ bits, the pair `(0, 1)` on failure (D10). -/
 noncomputable def sampleColorPair (T : ℕ) (r : List Bool) : ColorPair :=
   ((sampleIdx 6 3 T r).map pair6Equiv).getD ⟨(0, 1), by decide⟩
 
+/-- **The colour-pair sampler is within `(1/4)^T` of a uniform distinct pair** (D10), the
+colour-pair analogue of `statClose_samplePerm3`, for the simulator's guess `(c'_{i'}, c'_{j'})`
+of [PS10, Algorithm 128.7, step 1].
+
+**Proof sketch.** `statClose_rejectionSample 6 3 T` (with `6 ≤ 2³`) gives closeness
+`(1 - 6/8)^T = (1/4)^T` of `(rejectionSample 6 3 T b).getD d` to the identity on `Fin 6`; the
+tape is read as its trial table along the curried `finProdFinEquiv`
+(`sampleIdx_ofFn_eq_rejectionSample`, `StatClose.comp_equiv_left`), and `pair6Equiv` is a
+bijection carrying the default `d := pair6Equiv.symm (0, 1)` to the sampler's default
+(`StatClose.map`, `StatClose.comp_equiv_right`). -/
+theorem statClose_sampleColorPair (T : ℕ) :
+    StatClose (fun r : Fin (T * 3) → Bool => sampleColorPair T (List.ofFn r))
+      (id : ColorPair → ColorPair) ((1 / 4 : ℝ) ^ T) := by
+  set e : (Fin (T * 3) → Bool) ≃ (Fin T → Fin 3 → Bool) :=
+    (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _) with he
+  have he' : ∀ r, e r = fun t j => r (finProdFinEquiv (t, j)) := fun r => rfl
+  have h := (((statClose_rejectionSample 6 3 T (by norm_num) (by norm_num)
+    (pair6Equiv.symm ⟨(0, 1), by decide⟩)).map pair6Equiv).comp_equiv_right
+      pair6Equiv.symm).comp_equiv_left e
+  have hδ : (1 - ((6 : ℕ) : ℝ) / 2 ^ 3) ^ T = (1 / 4) ^ T := by norm_num
+  rw [hδ] at h
+  convert h using 2 with r σ
+  · unfold sampleColorPair
+    rw [sampleIdx_ofFn_eq_rejectionSample, he']
+    cases rejectionSample 6 3 T fun t j => r (finProdFinEquiv (t, j)) with
+    | none => exact (pair6Equiv.apply_symm_apply _).symm
+    | some i => rfl
+  · exact (pair6Equiv.apply_symm_apply σ).symm
+
+/-- The colour-pair sampler reads only the first `3T` bits of its tape. -/
+private theorem colZK_sampleColorPair_take (T : ℕ) (r : List Bool) :
+    sampleColorPair T r = sampleColorPair T (r.take (T * 3)) := by
+  unfold sampleColorPair
+  rw [sampleIdx_eq_rejectionSample, sampleIdx_eq_rejectionSample]
+  congr 4
+  funext t j
+  rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_take_of_lt]
+  have := ColZK.table_index_lt t j
+  omega
+
 /-- One attempt of the string simulator [PS10, Algorithm 128.7, steps 1–4] on `(x, z)` with
 the coin block `blk`: sample `e'` and the colour pair, commit to `simColors (edgeAt G e') (a, b)`
 with the randomness read from the block, run `V'` on `[com]` with the rest of the block as its

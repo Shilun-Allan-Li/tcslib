@@ -112,6 +112,87 @@ theorem pushesUniform_offsetTable {L a n k : ℕ} (h : a + n * k ≤ L) :
       (Equiv.prodCongr (Equiv.refl _) (Equiv.curry _ _ _))
   exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
 
+/-- **Four disjoint fields of a uniform tape are independent and uniform**: for offsets
+`a₁ ≤ o₂`, `o₂ + a₂ ≤ o₃`, `o₃ + n k ≤ o₄`, `o₄ + a₄ ≤ L`, the map sending a tape `t` of `L`
+bits to its first `a₁` bits, its `a₂` bits from `o₂`, the `n × k` table `(i, j) ↦ t (o₃ + i k + j)`
+and its `a₄` bits from `o₄` pushes uniform to uniform (the layout of one coin block of the
+simulator, `colSimBlock`).
+
+**Proof sketch.** The fields read the tape along an injective map
+`((Fin a₁ ⊕ Fin a₂) ⊕ (Fin n × Fin k)) ⊕ Fin a₄ → Fin L` (disjoint ranges, `table_index_inj`), so
+`pushesUniform_restrict` applies, followed by the bijection `Equiv.sumArrowEquivProdArrow` (three
+times) and `Equiv.curry`. -/
+theorem pushesUniform_blockFields {L a₁ o₂ a₂ o₃ n k o₄ a₄ : ℕ} (h₁ : a₁ ≤ o₂)
+    (h₂ : o₂ + a₂ ≤ o₃) (h₃ : o₃ + n * k ≤ o₄) (h₄ : o₄ + a₄ ≤ L) :
+    HardcoreBit.PushesUniform (fun t : Fin L → Bool =>
+      ((((fun i : Fin a₁ => t ⟨i, by have := i.isLt; omega⟩),
+        fun i : Fin a₂ => t ⟨o₂ + i, by have := i.isLt; omega⟩),
+        fun (i : Fin n) (j : Fin k) => t ⟨o₃ + (i * k + j), by
+          have := table_index_lt i j
+          omega⟩),
+        fun i : Fin a₄ => t ⟨o₄ + i, by have := i.isLt; omega⟩)) := by
+  let r : ((Fin a₁ ⊕ Fin a₂) ⊕ (Fin n × Fin k)) ⊕ Fin a₄ → Fin L :=
+    Sum.elim (Sum.elim (Sum.elim (fun i => ⟨i, by have := i.isLt; omega⟩)
+      fun i => ⟨o₂ + i, by have := i.isLt; omega⟩)
+      fun p => ⟨o₃ + (p.1 * k + p.2), by have := table_index_lt p.1 p.2; omega⟩)
+      fun i => ⟨o₄ + i, by have := i.isLt; omega⟩
+  have hr : Function.Injective r := by
+    rintro (((i | i) | ⟨i, j⟩) | i) (((i' | i') | ⟨i', j'⟩) | i') hij <;>
+      simp only [r, Sum.elim_inl, Sum.elim_inr, Fin.ext_iff] at hij <;>
+      first
+        | (have := table_index_lt i j; have := table_index_lt i' j'; omega)
+        | (have := table_index_lt i j; have := i'.isLt; omega)
+        | (have := table_index_lt i' j'; have := i.isLt; omega)
+        | (have := i.isLt; have := i'.isLt; first | (rw [Fin.ext (by omega : (i : ℕ) = i')]) | omega)
+        | skip
+    obtain ⟨rfl, rfl⟩ := table_index_inj (by omega : (i : ℕ) * k + j = (i' : ℕ) * k + j')
+    rfl
+  let e : (((Fin a₁ ⊕ Fin a₂) ⊕ (Fin n × Fin k)) ⊕ Fin a₄ → Bool) ≃
+      (((Fin a₁ → Bool) × (Fin a₂ → Bool)) × (Fin n → Fin k → Bool)) × (Fin a₄ → Bool) :=
+    (Equiv.sumArrowEquivProdArrow _ _ _).trans (Equiv.prodCongr
+      ((Equiv.sumArrowEquivProdArrow _ _ _).trans (Equiv.prodCongr
+        (Equiv.sumArrowEquivProdArrow _ _ _) (Equiv.curry _ _ _))) (Equiv.refl _))
+  exact (pushesUniform_restrict (O := Bool) hr).comp (HardcoreBit.pushesUniform_equiv e)
+
+/-! ### Tapes as lists -/
+
+/-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
+theorem ofFn_drop_take {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) :
+    ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+  apply List.ext_getElem
+  · simp only [List.length_take, List.length_drop, List.length_ofFn]
+    omega
+  · intro i h₁ h₂
+    simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+
+/-- A suffix of a tape: `(List.ofFn b).drop a` is the tape of the last `k = L − a` bits. -/
+theorem ofFn_drop_eq {L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k = L) :
+    (List.ofFn b).drop a = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩ := by
+  apply List.ext_getElem
+  · simp only [List.length_drop, List.length_ofFn]
+    omega
+  · intro i h₁ h₂
+    simp only [List.getElem_drop, List.getElem_ofFn]
+
+/-! ### Searches -/
+
+/-- Mapping the values of a search: `l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g`. -/
+theorem findSome?_map_option {α β γ : Type*} (l : List α) (f : α → Option β) (g : β → γ) :
+    l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g := by
+  induction l with
+  | nil => rfl
+  | cons a l ih =>
+    rw [List.findSome?_cons, List.findSome?_cons]
+    cases f a with
+    | none => exact ih
+    | some b => rfl
+
+/-- A search over `List.range K` is the search over `List.finRange K` of the same values. -/
+theorem findSome?_range_eq_finRange {β : Type*} (K : ℕ) (g : ℕ → Option β) :
+    (List.range K).findSome? g = (List.finRange K).findSome? fun t : Fin K => g t := by
+  rw [← List.map_coe_finRange, List.findSome?_map]
+  rfl
+
 /-! ### Splitting a search at an index -/
 
 /-- **The first success splits at `k`**: the search over `List.finRange N` is the search before
