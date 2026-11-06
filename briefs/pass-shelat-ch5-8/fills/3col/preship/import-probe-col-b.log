@@ -1,0 +1,548 @@
+# Import probe, unit col-b (owned module ThreeColoring/Simulator)
+# worktree /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-fill3col at 5f2771631fe853dae9c2aa44791ae5b0e09c95eb (git rev-parse HEAD); olean tree TCSLIB_OLEANS=/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/fill3col-oleans
+# command: PATH=$HOME/.elan/bin:$PATH TCSLIB_OLEANS=… bash scripts/lean_check_tree.sh Probe/ColBImport   (one Lean process; the FAIL lines at the end are expected: error lines are the probe's results, and no olean is written for a failing probe)
+
+## probe source
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+open TCSlib.Cryptography Complexity Turing
+-- bridge and hiding
+#check @CommitmentLemmas.exists_fixCoins
+#check @Commitment.multiHiding
+#check @Commitment.hides
+#check @multiCom
+#check @CommitmentLemmas.acceptProb_distinguisherL_of_runAtL
+#check @EnsembleLemmas.acceptProb_coins_equiv
+#check @acceptProb_comp_equiv
+#check @CommitmentLemmas.distAdv_comm
+#check @CommitmentLemmas.exists_pairSpliceRed
+#check @EnsembleLemmas.negligible_polyExpr_mul
+#check @NUPPT.exists_withAdvice
+#check @NUPPT.exists_reparam_advice
+#check @NUPPT.exists_reparam
+#check @NUPPT.exists_compParam
+#check @NUPPT.exists_comp
+#check @NUPPT.ofPolyTime
+#check @NUPPT.runAtL_ofPolyTime
+#check @NUPPT.ofPolyTimeUniform
+#check @NUPPT.polyTimeComputable_output
+#check @NUPPT.distinguisherL
+#check @NUPPT.simulate_eq
+#check @NUPPT.runAt_eq
+#check @Strategy.Efficient
+#check @Strategy.ofNUPPT_next
+#check @PolyTimeComputable.output_length_le
+-- samplers and closeness
+#check @statClose_sampleEdgeIdx
+#check @statClose_samplePerm3
+#check @statClose_rejectionSample
+#check @sampleColorPair
+#check @pair6Equiv
+#check @ColSimMachine.sampleColorPair_fst
+#check @StatClose.prod
+#check @StatClose.refl
+#check @StatClose.map
+#check @StatClose.mono
+#check @StatClose.trans
+#check @StatClose.comp_equiv_left
+#check @StatClose.comp_equiv_right
+#check @StatClose.comp_pushesUniform
+#check @distAdv_le_of_statClose
+#check @OneWay.statClose_pi
+#check @GIZK.statClose_pi
+#check @OneWay.uprob_pi_forall
+-- the simulator ladder
+#check @exists_colSimRed_ge
+#check @ColSimLemmas.exists_hybRed_ge
+#check @ColSimLemmas.statClose_truncAttempts
+#check @statClose_colSimTruncH
+#check @uprob_colSimTruncW_eq
+#check @exists_colSimulator
+#check @ColSimMachine.exists_simulator
+#check @ColSimMachine.reply_poly
+#check @ColSimMachine.comStr_poly
+#check @ColSimMachine.opnStr_poly
+#check @ColSimMachine.view_poly
+#check @colSim
+#check @colSimTrunc
+#check @colSimRed
+#check @colRealView
+#check @colSimCoins
+#check @colSimBlock
+#check @colCoinSlice
+#check @colIterations
+#check @ColSimLemmas.msgAt_multiCom
+-- real view
+#check @exec_succ
+#check @Protocol.viewV
+#check @Protocol.transcriptWith
+#check @Protocol.transcript_eq
+#check @View.encode
+#check @decGraph_encGraph
+#check @decColoring_encColoring
+#check @colProver
+#check @colProtocol_proverBounded
+#check @colProver_length_le
+#check @length_multiCom_le
+-- numerics and assembly
+#check @uprob_col_cheat_le
+#check @one_sub_inv_pow_mul_le_exp
+#check @negligible_exp_neg_sqrt_div
+#check @Negligible.comp_sqrt
+#check @Negligible.mul_pow
+#check @Negligible.add
+#check @Negligible.mono
+#check @negligible_two_pow_neg
+#check @length_encGraph
+#check @Nat.sqrt_eq
+#check @abs_sub_le
+#check @Finset.exists_max_image
+#check @polyTimeComputable_pairEq
+#check @polyTimeComputable_blockMap
+#check @polyTimeComputable_iterateEmit
+#check @polyTimeComputable_iterate
+#check @Complexity.polyTimeComputable_iterateFind
+#check @ZK
+#check @HVZK
+
+## output
+Fri Nov  6 02:15:42 UTC 2026
+@CommitmentLemmas.exists_fixCoins : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {κ : Type u_4} {ρ : Type u_5}
+  [inst : Fintype σ] [inst_1 : Fintype τ] [inst_2 : Fintype κ] [inst_3 : Fintype ρ] [Nonempty κ] (X : σ → γ) (Y : τ → γ)
+  (D : γ → κ × ρ → Bool), ∃ c₀, distAdv X Y D ≤ distAdv X Y fun z c => D z (c₀, c)
+@Commitment.multiHiding : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ →
+    ∀ (q : PolyExpr) (D : NUPPT),
+      ∃ ε,
+        Negligible ε ∧
+          ∀ (n : ℕ) (v v' : Fin (q.eval n) → Fin n → Bool),
+            distAdv (fun r => multiCom Com v r) (fun r => multiCom Com v' r) (D.distinguisherL n) ≤ ε n
+@Commitment.hides : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ →
+    ∀ (D : NUPPT),
+      ∃ ε,
+        Negligible ε ∧
+          ∀ (n : ℕ) (v₀ v₁ : Fin n → Bool),
+            distAdv (fun r => Com (pairEncode (List.ofFn v₀) (List.ofFn r)))
+                (fun r => Com (pairEncode (List.ofFn v₁) (List.ofFn r))) (D.distinguisherL n) ≤
+              ε n
+multiCom : (List Bool → List Bool) → {q n m : ℕ} → (Fin q → Fin n → Bool) → (Fin q → Fin m → Bool) → List Bool
+@CommitmentLemmas.acceptProb_distinguisherL_of_runAtL : ∀ {σ : Type u_1} [inst : Fintype σ] {B D : NUPPT},
+  B.coins = D.coins →
+    ∀ {n : ℕ} (X : σ → List Bool) (g : List Bool → List Bool),
+      (∀ (y r : List Bool), B.runAtL n y r = D.runAtL n (g y) r) →
+        acceptProb X (B.distinguisherL n) = acceptProb X fun z c => D.distinguisherL n (g z) c
+@EnsembleLemmas.acceptProb_coins_equiv : ∀ {σ : Type u_1} {γ : Type u_2} {ρ : Type u_3} {κ : Type u_4}
+  [inst : Fintype σ] [inst_1 : Fintype ρ] [inst_2 : Fintype κ] (e : κ ≃ ρ) (X : σ → γ) (D : γ → ρ → Bool),
+  (acceptProb X fun z c => D z (e c)) = acceptProb X D
+@acceptProb_comp_equiv : ∀ {ρ : Type u_1} {σ : Type u_2} {τ : Type u_3} {γ : Type u_4} [inst : Fintype ρ]
+  [inst_1 : Fintype σ] [inst_2 : Fintype τ] (e : σ ≃ τ) (X : τ → γ) (D : γ → ρ → Bool),
+  acceptProb (fun s => X (e s)) D = acceptProb X D
+@CommitmentLemmas.distAdv_comm : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {ρ : Type u_4} [inst : Fintype σ]
+  [inst_1 : Fintype τ] [inst_2 : Fintype ρ] (X : σ → γ) (Y : τ → γ) (D : γ → ρ → Bool), distAdv X Y D = distAdv Y X D
+CommitmentLemmas.exists_pairSpliceRed : ∀ (D : NUPPT) (pre suf : ℕ → List Bool) (b : PolyExpr),
+  (∀ (n : ℕ), 2 * (pre n).length + 2 + (suf n).length ≤ b.eval n) →
+    ∃ B, B.coins = D.coins ∧ ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = D.runAtL n (pre n ++ pairEncode y (suf n)) r
+EnsembleLemmas.negligible_polyExpr_mul : ∀ (p : PolyExpr) {μ : ℕ → ℝ},
+  Negligible μ → Negligible fun n => ↑(p.eval n) * μ n
+NUPPT.exists_withAdvice : ∀ (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr),
+  (∀ (n : ℕ), (β n).length ≤ b.eval n) →
+    ∃ B, B.coins = A.coins ∧ ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = A.runAtL n (pairEncode y (β n)) r
+NUPPT.exists_reparam_advice : ∀ (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr),
+  (∀ (n : ℕ), φ n ≤ p.eval n) →
+    ∃ B,
+      B.coins = A.coins.subst p ∧
+        ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = A.runAtL (φ n) y (List.take (A.coinLen (φ n)) r)
+NUPPT.exists_reparam : ∀ (A : NUPPT) (p : PolyExpr),
+  ∃ B,
+    B.coins = A.coins.subst p ∧
+      (A.Uniform → B.Uniform) ∧ ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = A.runAtL (p.eval n) y r
+NUPPT.exists_compParam : ∀ (A : NUPPT) {pre post : List Bool → List Bool},
+  PolyTimeComputable pre →
+    PolyTimeComputable post →
+      ∃ B,
+        B.coins = A.coins ∧
+          B.adv = A.adv ∧
+            B.advice = A.advice ∧
+              ∀ (n : ℕ) (y r : List Bool),
+                B.runAtL n y r = post (pairEncode (List.replicate n true) (A.runAtL n (pre (NUPPT.advInput n y)) r))
+NUPPT.exists_comp : ∀ (A : NUPPT) {pre post : List Bool → List Bool},
+  PolyTimeComputable pre →
+    PolyTimeComputable post →
+      ∃ B,
+        B.coins = A.coins ∧
+          B.adv = A.adv ∧
+            B.advice = A.advice ∧ ∀ (n : ℕ) (y r : List Bool), B.runAtL n y r = post (A.runAtL n (pre y) r)
+@NUPPT.ofPolyTime : {f : List Bool → List Bool} →
+  PolyTimeComputable f →
+    PolyExpr → (adv : PolyExpr) → (advice : ℕ → List Bool) → (∀ (n : ℕ), (advice n).length ≤ adv.eval n) → NUPPT
+@NUPPT.runAtL_ofPolyTime : ∀ {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr)
+  (advice : ℕ → List Bool) (hα : ∀ (n : ℕ), (advice n).length ≤ adv.eval n) (n : ℕ) (y r : List Bool),
+  (NUPPT.ofPolyTime hf coins adv advice hα).runAtL n y r = f (pairEncode (pairEncode (NUPPT.advInput n y) (advice n)) r)
+@NUPPT.ofPolyTimeUniform : {f : List Bool → List Bool} → PolyTimeComputable f → PolyExpr → NUPPT
+NUPPT.polyTimeComputable_output : ∀ (A : NUPPT), PolyTimeComputable A.output
+NUPPT.distinguisherL : (A : NUPPT) → (n : ℕ) → List Bool → A.Coins n → Bool
+NUPPT.simulate_eq : ∀ (S : NUPPT) (x z : List Bool) (r : S.Coins x.length),
+  S.simulate x z r = S.runAt x.length (pairEncode x z) r
+NUPPT.runAt_eq : ∀ (A : NUPPT) (n : ℕ) (y : List Bool) (r : A.Coins n), A.runAt n y r = A.runAtL n y (List.ofFn r)
+Strategy.Efficient : Strategy → Prop
+Strategy.ofNUPPT_next : ∀ (A : NUPPT) (x z r : List Bool) (hist : List (List Bool)),
+  (Strategy.ofNUPPT A).next x z r hist = A.runAtL x.length (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) r
+@PolyTimeComputable.output_length_le : ∀ {f : List Bool → List Bool},
+  PolyTimeComputable f → ∃ C c, ∀ (x : List Bool), (f x).length ≤ C * (x.length + 1) ^ c
+@statClose_sampleEdgeIdx : ∀ {m : ℕ} (hm : 0 < m) (T : ℕ),
+  StatClose (fun r => ⟨sampleEdgeIdx m T (List.ofFn r), ⋯⟩) id ((1 / 2) ^ T)
+statClose_samplePerm3 : ∀ (T : ℕ), StatClose (fun r => samplePerm3 T (List.ofFn r)) id ((1 / 4) ^ T)
+statClose_rejectionSample : ∀ (m k T : ℕ),
+  0 < m → m ≤ 2 ^ k → ∀ (d : Fin m), StatClose (fun b => (rejectionSample m k T b).getD d) id ((1 - ↑m / 2 ^ k) ^ T)
+sampleColorPair : ℕ → List Bool → ColorPair
+pair6Equiv : Fin 6 ≃ ColorPair
+ColSimMachine.sampleColorPair_fst : ∀ (T : ℕ) (r : List Bool),
+  (↑(ColSimMachine.sampleColorPair T r)).1 = ColSimMachine.colorA (ColSimMachine.sampleNum 6 3 T r)
+@StatClose.prod : ∀ {σ : Type u_1} {σ' : Type u_2} {τ : Type u_3} {τ' : Type u_4} {γ : Type u_5} {γ' : Type u_6}
+  [inst : Fintype σ] [inst_1 : Fintype σ'] [inst_2 : Fintype τ] [inst_3 : Fintype τ'] {X : σ → γ} {X' : τ → γ}
+  {Y : σ' → γ'} {Y' : τ' → γ'} {δ δ' : ℝ},
+  StatClose X X' δ → StatClose Y Y' δ' → StatClose (fun z => (X z.1, Y z.2)) (fun z => (X' z.1, Y' z.2)) (δ + δ')
+@StatClose.refl : ∀ {σ : Type u_1} {γ : Type u_2} [inst : Fintype σ] (X : σ → γ), StatClose X X 0
+@StatClose.map : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {γ' : Type u_4} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {X : σ → γ} {Y : τ → γ} {δ : ℝ}, StatClose X Y δ → ∀ (g : γ → γ'), StatClose (fun s => g (X s)) (fun t => g (Y t)) δ
+@StatClose.mono : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ] {X : σ → γ}
+  {Y : τ → γ} {δ δ' : ℝ}, StatClose X Y δ → δ ≤ δ' → StatClose X Y δ'
+@StatClose.trans : ∀ {σ : Type u_1} {τ : Type u_2} {υ : Type u_3} {γ : Type u_4} [inst : Fintype σ] [inst_1 : Fintype τ]
+  [inst_2 : Fintype υ] {X : σ → γ} {Y : τ → γ} {Z : υ → γ} {δ δ' : ℝ},
+  StatClose X Y δ → StatClose Y Z δ' → StatClose X Z (δ + δ')
+@StatClose.comp_equiv_left : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {σ' : Type u_4} [inst_2 : Fintype σ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (e : σ' ≃ σ), StatClose (fun s => X (e s)) Y δ
+@StatClose.comp_equiv_right : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {τ' : Type u_4} [inst_2 : Fintype τ'] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (e : τ' ≃ τ), StatClose X (fun t => Y (e t)) δ
+@StatClose.comp_pushesUniform : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {Ω : Type u_4} [inst_2 : Fintype Ω] {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ {π : Ω → σ}, HardcoreBit.PushesUniform π → StatClose (fun ω => X (π ω)) Y δ
+@distAdv_le_of_statClose : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} {ρ : Type u_4} [inst : Fintype σ]
+  [inst_1 : Fintype τ] [inst_2 : Fintype ρ] (X : σ → γ) (Y : τ → γ) {δ : ℝ},
+  StatClose X Y δ → ∀ (D : γ → ρ → Bool), distAdv X Y D ≤ δ
+@OneWay.statClose_pi : ∀ {σ : Type u_1} {τ : Type u_2} {γ : Type u_3} [inst : Fintype σ] [inst_1 : Fintype τ]
+  {X : σ → γ} {Y : τ → γ} {δ : ℝ},
+  StatClose X Y δ → ∀ (N : ℕ), StatClose (fun c t => X (c t)) (fun c t => Y (c t)) (↑N * δ)
+Probe/ColBImport.lean:46:8: error(lean.unknownIdentifier): Unknown identifier `GIZK.statClose_pi`
+@OneWay.uprob_pi_forall : ∀ {α : Type u_1} [inst : Fintype α] {ι : Type u_2} [inst_1 : Fintype ι]
+  [inst_2 : DecidableEq ι] (p : α → Prop), (uprob fun xs => ∀ (i : ι), p (xs i)) = uprob p ^ Fintype.card ι
+exists_colSimRed_ge : ∀ (Com : List Bool → List Bool) {n : ℕ} (ℓn : ℕ) (G : Graph n) {ρ : Type u_1} [inst : Fintype ρ]
+  {ρ' : Type u_2} [inst_1 : Fintype ρ'],
+  0 < edgeCount G →
+    ∀ (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (N : ℕ),
+      0 < N →
+        ∀ (D : Option (ColView ρ) → ρ' → Bool),
+          ∃ k e₀ π₀,
+            distAdv (colSimTruncW Com ℓn G c V N) (colSimTruncH Com ℓn G c V N) D / ↑N ≤
+              distAdv (fun r => multiCom Com (fun i => padColor n (simColorsW (edgeOf G e₀) π₀ c i)) r)
+                (fun r => multiCom Com (fun i => padColor n (π₀ (c i))) r) (colSimRed Com ℓn G c V N k e₀ π₀ D)
+@ColSimLemmas.exists_hybRed_ge : ∀ {m n ℓ : ℕ} {τ : Type u_1} {α : Type u_2} {ρ' : Type u_3} [inst : Fintype τ]
+  [inst_1 : Fintype ρ'],
+  0 < m →
+    ∀ {N : ℕ},
+      0 < N →
+        ∀ (H Wa : ColSimLemmas.AttemptCoins m (Fin n → Fin ℓ → Bool) τ → Option α) (D : Option α → ρ' → Bool)
+          (p : Fin m → Fin n × Fin n)
+          (Pl :
+            Fin m × Equiv.Perm (Fin 3) → List Bool → ColSimLemmas.AttemptCoins m (Fin n → Fin ℓ → Bool) τ → Option α)
+          (X Y : Fin m × Equiv.Perm (Fin 3) → (Fin n → Fin ℓ → Bool) → List Bool),
+          (∀ (ep : Fin m × Equiv.Perm (Fin 3)) (r' : Fin n → Fin ℓ → Bool)
+              (w : ColSimLemmas.AttemptCoins m (Fin n → Fin ℓ → Bool) τ),
+              Pl ep (X ep r') w = Wa ((ep, ColSimLemmas.mergeAt (p ep.1) w.1.2 r'), w.2)) →
+            (∀ (ep : Fin m × Equiv.Perm (Fin 3)) (r' : Fin n → Fin ℓ → Bool)
+                (w : ColSimLemmas.AttemptCoins m (Fin n → Fin ℓ → Bool) τ),
+                Pl ep (Y ep r') w = H ((ep, ColSimLemmas.mergeAt (p ep.1) w.1.2 r'), w.2)) →
+              ∃ k ep,
+                distAdv (ColSimLemmas.hybStd H Wa N 0) (ColSimLemmas.hybStd H Wa N N) D / ↑N ≤
+                  distAdv (X ep) (Y ep) fun cv z => ColSimLemmas.hybGen H Wa k (Pl ep cv) D z
+@ColSimLemmas.statClose_truncAttempts : ∀ {W : Type u_1} {U : Type u_2} {α : Type u_3} [inst : Fintype W]
+  [inst_1 : Fintype U] [Nonempty W] (att : W → Option α) (view : U → α) {θ : ℝ},
+  0 ≤ θ →
+    (uprob fun w => att w = none) = θ →
+      (∀ (T : α → Prop), (uprob fun w => ∃ v, att w = some v ∧ T v) = (1 - θ) * uprob fun u => T (view u)) →
+        ∀ (N : ℕ), StatClose (ColSimLemmas.truncAttempts att N) (fun u => some (view u)) (θ ^ N)
+statClose_colSimTruncH : ∀ (Com : List Bool → List Bool) {n : ℕ} (ℓn : ℕ) (G : Graph n) {ρ : Type u_1}
+  [inst : Fintype ρ] [Nonempty ρ],
+  0 < edgeCount G →
+    ∀ (c : Fin n → Fin 3) (V : List Bool → ρ → List Bool) (N : ℕ),
+      StatClose (colSimTruncH Com ℓn G c V N) (fun w => some (colRealView Com ℓn G c V w))
+        ((1 - 1 / ↑(edgeCount G)) ^ N)
+uprob_colSimTruncW_eq : ∀ (Com : List Bool → List Bool) {n : ℕ} (ℓn : ℕ) (G : Graph n) {ρ : Type u_1} [inst : Fintype ρ]
+  {c : Fin n → Fin 3},
+  ProperColoring G c →
+    ∀ (V : List Bool → ρ → List Bool) (N : ℕ) (T : Option (ColView ρ) → Prop),
+      (uprob fun w => T (colSimTruncW Com ℓn G c V N w)) = uprob fun w => T (colSimTrunc Com ℓn G V N w)
+@exists_colSimulator : ∀ {Com : List Bool → List Bool},
+  PolyTimeComputable Com →
+    ∀ (ℓ : PolyExpr) (V' : Strategy),
+      V'.Efficient →
+        ∃ S,
+          S.Uniform ∧
+            S.coins = colSimCoins ℓ V' ∧
+              ∀ (x z : List Bool) (r : S.Coins x.length), S.simulate x z r = colSim Com ℓ V' x z (List.ofFn r)
+@ColSimMachine.exists_simulator : ∀ {Com : List Bool → List Bool},
+  PolyTimeComputable Com →
+    ∀ (ℓ : PolyExpr) {V' : Strategy},
+      V'.Efficient →
+        ∃ S,
+          S.Uniform ∧
+            S.coins = ColSimMachine.simCoins ℓ V' ∧
+              ∀ (x z : List Bool) (r : S.Coins x.length),
+                S.simulate x z r = ColSimMachine.sim Com ℓ V' x z (List.ofFn r)
+@ColSimMachine.reply_poly : ∀ {X Z : List Bool → List Bool} (ℓ : PolyExpr) {V' : Strategy},
+  V'.Efficient →
+    PolyTimeComputable X →
+      PolyTimeComputable Z →
+        ∀ {B : List Bool → List Bool},
+          PolyTimeComputable B →
+            ∀ {C : List Bool → List Bool},
+              PolyTimeComputable C →
+                PolyTimeComputable fun w => V'.next (X w) (Z w) (ColSimMachine.rVStr ℓ (X w) (B w)) [C w]
+@ColSimMachine.comStr_poly : ∀ {X Com : List Bool → List Bool},
+  PolyTimeComputable Com →
+    ∀ (ℓ : PolyExpr),
+      PolyTimeComputable X →
+        (∀ (w : List Bool), (X w).length ≤ w.length) →
+          ∀ {B : List Bool → List Bool},
+            PolyTimeComputable B →
+              PolyTimeComputable fun w => ColSimMachine.comStr Com ℓ (X w) (B w) (ColSimMachine.colorNum (X w) (B w))
+@ColSimMachine.opnStr_poly : ∀ {X : List Bool → List Bool} (ℓ : PolyExpr),
+  PolyTimeComputable X →
+    ∀ {B : List Bool → List Bool}, PolyTimeComputable B → PolyTimeComputable fun w => ColSimMachine.opnStr ℓ (X w) (B w)
+@ColSimMachine.view_poly : ∀ {X Z : List Bool → List Bool},
+  PolyTimeComputable X →
+    PolyTimeComputable Z →
+      ∀ {Rv C O : List Bool → List Bool},
+        PolyTimeComputable Rv →
+          PolyTimeComputable C →
+            PolyTimeComputable O →
+              PolyTimeComputable fun w => { x := X w, z := Z w, r := Rv w, received := [C w, O w] }.encode
+colSim : (List Bool → List Bool) → PolyExpr → Strategy → List Bool → List Bool → List Bool → List Bool
+colSimTrunc : (List Bool → List Bool) →
+  {n : ℕ} →
+    (ℓn : ℕ) →
+      (G : Graph n) →
+        {ρ : Type u_1} →
+          (List Bool → ρ → List Bool) →
+            (N : ℕ) → (Fin N → ((Fin (edgeCount G) × ColorPair) × (Fin n → Fin ℓn → Bool)) × ρ) → Option (ColView ρ)
+colSimRed : (List Bool → List Bool) →
+  {n : ℕ} →
+    (ℓn : ℕ) →
+      (G : Graph n) →
+        {ρ : Type u_1} →
+          {ρ' : Type u_2} →
+            (Fin n → Fin 3) →
+              (List Bool → ρ → List Bool) →
+                (N : ℕ) →
+                  Fin N →
+                    Fin (edgeCount G) →
+                      Equiv.Perm (Fin 3) →
+                        (Option (ColView ρ) → ρ' → Bool) →
+                          List Bool →
+                            (Fin N → ((Fin (edgeCount G) × Equiv.Perm (Fin 3)) × (Fin n → Fin ℓn → Bool)) × ρ) × ρ' →
+                              Bool
+colRealView : (List Bool → List Bool) →
+  {n : ℕ} →
+    (ℓn : ℕ) →
+      Graph n →
+        {ρ : Type u_1} →
+          (Fin n → Fin 3) → (List Bool → ρ → List Bool) → (Equiv.Perm (Fin 3) × (Fin n → Fin ℓn → Bool)) × ρ → ColView ρ
+colSimCoins : PolyExpr → Strategy → PolyExpr
+colSimBlock : PolyExpr → Strategy → PolyExpr
+colCoinSlice : ℕ → ℕ → List Bool → List Bool
+colIterations : List Bool → ℕ
+ColSimLemmas.msgAt_multiCom : ∀ (Com : List Bool → List Bool) {q n ℓ : ℕ} (v : Fin q → Fin n → Bool)
+  (r : Fin q → Fin ℓ → Bool) (i : Fin q),
+  msgAt (multiCom Com v r) ↑i = Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i)))
+exec_succ : ∀ (P V : Strategy) (vFirst : Bool) (x zP zV rP rV : List Bool) (k : ℕ),
+  exec P V vFirst x zP zV rP rV (k + 1) =
+    have e := exec P V vFirst x zP zV rP rV k;
+    if moverIsV vFirst k = true then (e.1 ++ [V.next x zV rV e.2], e.2) else (e.1, e.2 ++ [P.next x zP rP e.1])
+Protocol.viewV : (π : Protocol) → (x : List Bool) → List Bool → List Bool → π.ExecCoins π.P x → View
+Protocol.transcriptWith : (π : Protocol) →
+  (P' : Strategy) → (x : List Bool) → List Bool → List Bool → π.ExecCoins P' x → List (List Bool) × List (List Bool)
+Protocol.transcript_eq : ∀ (π : Protocol) (x y z : List Bool) (r : π.ExecCoins π.P x),
+  π.transcript x y z r = ((π.viewP x y z r).received, (π.viewV x y z r).received)
+View.encode : View → List Bool
+@decGraph_encGraph : ∀ {n : ℕ} (G : Graph n), decGraph (encGraph G) = ⟨n, G⟩
+@decColoring_encColoring : ∀ {n : ℕ} (c : Fin n → Fin 3), decColoring n (encColoring c) = c
+colProver : (List Bool → List Bool) → PolyExpr → Strategy
+@colProtocol_proverBounded : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ →
+    ∀ (R : List Bool → List Bool → Prop),
+      ∃ B, (colProtocol Com ℓ).ProverBounded R B ∧ (colProtocolRep Com ℓ).ProverBounded R B
+@colProver_length_le : ∀ {Com : List Bool → List Bool},
+  PolyTimeComputable Com →
+    ∀ (ℓ : PolyExpr),
+      ∃ B, ∀ (x y r : List Bool) (hist : List (List Bool)), ((colProver Com ℓ).next x y r hist).length ≤ B.eval x.length
+@length_multiCom_le : ∀ {Com : List Bool → List Bool} {C c : ℕ},
+  (∀ (w : List Bool), (Com w).length ≤ C * (w.length + 1) ^ c) →
+    ∀ {q n m : ℕ} (v : Fin q → Fin n → Bool) (r : Fin q → Fin m → Bool),
+      (multiCom Com v r).length ≤ q * (2 * (C * (2 * n + 3 + m) ^ c) + 2)
+@uprob_col_cheat_le : ∀ {Com : List Bool → List Bool} {ℓ : PolyExpr},
+  Commitment Com ℓ →
+    ∀ {n : ℕ},
+      2 ≤ n →
+        ∀ {G : Graph n},
+          ¬ThreeColorable G →
+            ∀ (k : ℕ) {W : Type u_1} [inst : Fintype W]
+              (comF : (i : Fin k) → (Fin ↑i → Fin (edgeCount G)) → W → List Bool)
+              (opnF : (i : Fin k) → (Fin (↑i + 1) → Fin (edgeCount G)) → W → List Bool),
+              (uprob fun z =>
+                  ∀ (i : Fin k),
+                    colVerify Com (ℓ.eval n) G (↑(z.1 i)) (comF i (challengesBefore z.1 i) z.2)
+                        (opnF i (challengesUpTo z.1 i) z.2) =
+                      true) ≤
+                (1 - 1 / ↑(edgeCount G)) ^ k
+one_sub_inv_pow_mul_le_exp : ∀ (m n : ℕ), 0 < m → (1 - 1 / ↑m) ^ (n * m) ≤ Real.exp (-↑n)
+@negligible_exp_neg_sqrt_div : ∀ {C : ℕ}, 0 < C → Negligible fun N => Real.exp (-↑(N / C).sqrt)
+@Negligible.comp_sqrt : ∀ {μ : ℕ → ℝ}, Negligible μ → Negligible fun N => μ N.sqrt
+@Negligible.mul_pow : ∀ {μ : ℕ → ℝ}, Negligible μ → ∀ (d : ℕ), Negligible fun n => ↑n ^ d * μ n
+@Negligible.add : ∀ {μ ν : ℕ → ℝ}, Negligible μ → Negligible ν → Negligible fun n => μ n + ν n
+@Negligible.mono : ∀ {μ ν : ℕ → ℝ}, Negligible μ → (∃ n₀, ∀ n ≥ n₀, |ν n| ≤ |μ n|) → Negligible ν
+negligible_two_pow_neg : Negligible fun n => 2⁻¹ ^ n
+@length_encGraph : ∀ {n : ℕ} (G : Graph n), (encGraph G).length = n * n
+Nat.sqrt_eq : ∀ (n : ℕ), (n * n).sqrt = n
+@abs_sub_le : ∀ {G : Type u_1} [inst : AddCommGroup G] [inst_1 : LinearOrder G] [IsOrderedAddMonoid G] (a b c : G),
+  |a - c| ≤ |a - b| + |b - c|
+@Finset.exists_max_image : ∀ {α : Type u_1} {β : Type u_2} [inst : LinearOrder α] (s : Finset β) (f : β → α),
+  s.Nonempty → ∃ x ∈ s, ∀ x' ∈ s, f x' ≤ f x
+polyTimeComputable_pairEq : PolyTimeComputable fun z => [decide (pairFstD z = pairSndD z)]
+polyTimeComputable_blockMap : ∀ (b : PolyExpr) {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable fun z =>
+      List.flatMap
+        (fun i => g (List.take (b.eval (pairFstD z).length) (List.drop (i * b.eval (pairFstD z).length) (pairSndD z))))
+        (List.range ((pairSndD z).length / b.eval (pairFstD z).length))
+@polyTimeComputable_iterateEmit : ∀ {g emit : List Bool → List Bool},
+  PolyTimeComputable g →
+    PolyTimeComputable emit →
+      ∀ (R P : PolyExpr),
+        (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+          PolyTimeComputable fun x => List.flatMap (fun i => emit (g^[i] x)) (List.range (R.eval x.length + 1))
+@polyTimeComputable_iterate : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ (R P : PolyExpr),
+      (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+        PolyTimeComputable fun x => g^[R.eval x.length] x
+@polyTimeComputable_iterateFind : ∀ {g : List Bool → List Bool},
+  PolyTimeComputable g →
+    ∀ {acc : List Bool → Bool},
+      (PolyTimeComputable fun s => [acc s]) →
+        ∀ {out : List Bool → List Bool},
+          PolyTimeComputable out →
+            ∀ (R P : PolyExpr),
+              (∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length) →
+                PolyTimeComputable fun x =>
+                  match List.find? (fun i => acc (g^[i] x)) (List.range (R.eval x.length + 1)) with
+                  | some i => out (g^[i] x)
+                  | none => []
+ZK : Protocol → (List Bool → List Bool → Prop) → Prop
+HVZK : Protocol → (List Bool → List Bool → Prop) → Prop
+FAIL(Probe/ColBImport): lean exited with status 1
+FAIL(Probe/ColBImport): no fresh .olean produced
+rc=1
+Fri Nov  6 02:15:45 UTC 2026
+
+## supplementary probe (imports Simulator; names cited in the brief)
+import TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Simulator
+open TCSlib.Cryptography Complexity Turing
+#check @List.finite_length_le
+#check @Set.Finite.exists_maximal_wrt
+#check @Finset.exists_max_image
+#check @Strategy.Efficient.exists_uniform
+#check @Protocol.outV_withV
+#check @Protocol.withV_self
+#check @PolyExpr.eval_normal
+#check @PolyExpr.eval_subst
+#check @PolyExpr.eval_var
+#check @ColMachines.encGraph_decGraph_eq_take
+#check @ColMachines.decColoring_val
+#check @ColMachines.countTrue_le
+#check @edgeCount_eq
+#check @decGraph_apply
+#check @sampleEdgeIdx_lt
+#check @edgeAt_eq_some_edgeOf
+#check @edgeAt_eq_some_of_pos
+#check @colVerify_honest
+#check @Real.exp_nonneg
+#check @Real.add_one_le_exp
+#check @Nat.sqrt_le_self
+#check @CommitmentLemmas.acceptProb_eq_uexp_fst
+#check @LevinTransfer.distinguisherL_lift
+#check @PolyExpr.subst
+
+Fri Nov  6 02:30:22 UTC 2026
+Probe/ColSupp.lean:3:8: error(lean.unknownIdentifier): Unknown constant `List.finite_length_le`
+Probe/ColSupp.lean:4:8: warning: `Set.Finite.exists_maximal_wrt` has been deprecated: Use `Set.Finite.exists_maximalFor` instead
+@Set.Finite.exists_maximal_wrt : ∀ {ι : Type u_1} {α : Type u_2} [inst : LE α] [IsTrans α LE.le] (f : ι → α)
+  (s : Set ι), s.Finite → s.Nonempty → ∃ i, MaximalFor (fun x => x ∈ s) f i
+@Finset.exists_max_image : ∀ {α : Type u_1} {β : Type u_2} [inst : LinearOrder α] (s : Finset β) (f : β → α),
+  s.Nonempty → ∃ x ∈ s, ∀ x' ∈ s, f x' ≤ f x
+@Strategy.Efficient.exists_uniform : ∀ {S : Strategy}, S.Efficient → ∃ A, A.Uniform ∧ S.coins = A.coins
+Protocol.outV_withV : ∀ (π : Protocol) (V' P' : Strategy) (x y z : List Bool) (r : (π.withV V').ExecCoins P' x),
+  (π.withV V').outV P' x y z r =
+    V'.next x z (List.ofFn r.2)
+      (exec P' V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)).2
+Protocol.withV_self : ∀ (π : Protocol), π.withV π.V = π
+PolyExpr.eval_normal : ∀ (C c n : ℕ), (PolyExpr.normal C c).eval n = C * (n + 1) ^ c
+PolyExpr.eval_subst : ∀ (p q : PolyExpr) (n : ℕ), (p.subst q).eval n = p.eval (q.eval n)
+PolyExpr.eval_var : ∀ (n : ℕ), PolyExpr.var.eval n = n
+ColMachines.encGraph_decGraph_eq_take : ∀ (x : List Bool),
+  encGraph (decGraph x).snd = List.take ((decGraph x).fst * (decGraph x).fst) x
+ColMachines.decColoring_val : ∀ (n : ℕ) (y : List Bool) (u : Fin n), ↑(decColoring n y u) = ColMachines.colorVal y ↑u
+ColMachines.countTrue_le : ∀ (x : List Bool) (j : ℕ), ColMachines.countTrue x j ≤ j
+Probe/ColSupp.lean:15:8: error(lean.unknownIdentifier): Unknown identifier `edgeCount_eq`
+Probe/ColSupp.lean:16:8: error(lean.unknownIdentifier): Unknown identifier `decGraph_apply`
+@sampleEdgeIdx_lt : ∀ {m : ℕ}, 0 < m → ∀ (T : ℕ) (r : List Bool), sampleEdgeIdx m T r < m
+@edgeAt_eq_some_edgeOf : ∀ {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)), edgeAt G ↑e = some (edgeOf G e)
+Probe/ColSupp.lean:19:8: error(lean.unknownIdentifier): Unknown identifier `edgeAt_eq_some_of_pos`
+colVerify_honest : ∀ (Com : List Bool → List Bool) {n ℓn : ℕ} {G : Graph n} {c : Fin n → Fin 3},
+  ProperColoring G c →
+    ∀ (π : Equiv.Perm (Fin 3)) (r : Fin n → Fin ℓn → Bool) {e : ℕ} {p : Fin n × Fin n},
+      edgeAt G e = some p →
+        colVerify Com ℓn G e (colCommit Com n ℓn (fun i => π (c i)) r) (colOpen (fun i => π (c i)) r p) = true
+Real.exp_nonneg : ∀ (x : ℝ), 0 ≤ Real.exp x
+Real.add_one_le_exp : ∀ (x : ℝ), x + 1 ≤ Real.exp x
+Nat.sqrt_le_self : ∀ (n : ℕ), n.sqrt ≤ n
+@CommitmentLemmas.acceptProb_eq_uexp_fst : ∀ {σ : Type u_1} {γ : Type u_2} {κ : Type u_3} {ρ : Type u_4}
+  [inst : Fintype σ] [inst_1 : Fintype κ] [inst_2 : Fintype ρ] (X : σ → γ) (D : γ → κ × ρ → Bool),
+  acceptProb X D = uexp fun c₀ => acceptProb X fun z c => D z (c₀, c)
+Probe/ColSupp.lean:25:8: error(lean.unknownIdentifier): Unknown identifier `LevinTransfer.distinguisherL_lift`
+PolyExpr.subst : PolyExpr → PolyExpr → PolyExpr
+FAIL(Probe/ColSupp): lean exited with status 1
+FAIL(Probe/ColSupp): no fresh .olean produced
+rc=1
+Fri Nov  6 02:30:25 UTC 2026
+
+## Classification (col-b)
+- Present and imported by Simulator.lean: every name of the col_zk sketch, the review's §2.3 route and the M3 ladder
+  that exists today: CommitmentLemmas.exists_fixCoins, Commitment.multiHiding, Commitment.hides, multiCom,
+  CommitmentLemmas.acceptProb_distinguisherL_of_runAtL, EnsembleLemmas.acceptProb_coins_equiv, acceptProb_comp_equiv,
+  CommitmentLemmas.distAdv_comm, CommitmentLemmas.exists_pairSpliceRed, EnsembleLemmas.negligible_polyExpr_mul,
+  NUPPT.{exists_withAdvice, exists_reparam_advice, exists_reparam, exists_compParam, exists_comp, ofPolyTime,
+  runAtL_ofPolyTime, ofPolyTimeUniform, polyTimeComputable_output, distinguisherL, simulate_eq, runAt_eq},
+  Strategy.Efficient, Strategy.ofNUPPT_next, Strategy.Efficient.exists_uniform, PolyTimeComputable.output_length_le,
+  statClose_sampleEdgeIdx, statClose_samplePerm3, statClose_rejectionSample, sampleColorPair, pair6Equiv,
+  ColSimMachine.sampleColorPair_fst, StatClose.{prod, refl, map, mono, trans, comp_equiv_left, comp_equiv_right,
+  comp_pushesUniform}, distAdv_le_of_statClose, OneWay.statClose_pi, OneWay.uprob_pi_forall, exists_colSimRed_ge,
+  ColSimLemmas.exists_hybRed_ge, ColSimLemmas.statClose_truncAttempts, statClose_colSimTruncH, uprob_colSimTruncW_eq,
+  exists_colSimulator, ColSimMachine.{exists_simulator, reply_poly, comStr_poly, opnStr_poly, view_poly}, colSim,
+  colSimTrunc, colSimRed, colRealView, colSimCoins, colSimBlock, colCoinSlice, colIterations,
+  ColSimLemmas.msgAt_multiCom, exec_succ, Protocol.viewV, Protocol.transcriptWith, Protocol.transcript_eq,
+  View.encode, decGraph_encGraph, decColoring_encColoring, colProver, colProtocol_proverBounded, colProver_length_le,
+  length_multiCom_le, uprob_col_cheat_le, one_sub_inv_pow_mul_le_exp, negligible_exp_neg_sqrt_div,
+  Negligible.comp_sqrt, Negligible.mul_pow/add/mono, negligible_two_pow_neg, length_encGraph, Nat.sqrt_eq, abs_sub_le,
+  Finset.exists_max_image, polyTimeComputable_pairEq, polyTimeComputable_blockMap, polyTimeComputable_iterateEmit,
+  polyTimeComputable_iterate, Complexity.polyTimeComputable_iterateFind, ZK, HVZK;
+  supplementary: Set.Finite.exists_maximal_wrt, CommitmentLemmas.acceptProb_eq_uexp_fst, PolyExpr.subst,
+  Real.exp_nonneg, Real.add_one_le_exp, Nat.sqrt_le_self.
+- Absent (to be added by the fill, the ladder of M3): statClose_sampleColorPair, exists_colSimRed_fixCoins,
+  exists_colHidingRed (dup probe: no existing equivalent found).
+- Present but not imported: GIZK.statClose_pi (GraphIsomorphismZK/Closeness.lean) — not needed, OneWay.statClose_pi is
+  imported and has the same statement; LevinTransfer.distinguisherL_lift (NPLemmas.lean; a template for the
+  two-parameter coin transport, specific to `postView`; importing NPLemmas into a ColZK helper creates no cycle,
+  but the brief does not ask for it).
+- Absent under the probed spelling: List.finite_length_le (Mathlib has no such name; not cited).
