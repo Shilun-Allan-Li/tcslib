@@ -202,6 +202,13 @@ theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype
       distAdv X Y fun g (c : κ × ρ) => D (F g c.1) c.2 := by
   rw [distAdv_def, distAdv_def, acceptProb_seed_to_coins, acceptProb_seed_to_coins]
 
+/-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
+theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
+    (Y : τ → γ) (D : γ → ρ → Bool) : distAdv X Y D ≤ 1 :=
+  distAdv_le_of_statClose X Y (fun T => abs_sub_le_iff.2
+    ⟨by linarith [uprob_le_one fun s => T (X s), uprob_nonneg fun t => T (Y t)],
+      by linarith [uprob_le_one fun t => T (Y t), uprob_nonneg fun s => T (X s)]⟩) D
+
 /-! ### Tapes as lists -/
 
 /-- A window of a tape: `((List.ofFn b).drop a).take k` is the tape of the `k` bits from `a`. -/
