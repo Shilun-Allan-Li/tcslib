@@ -48,6 +48,11 @@ pinned Mathlib. The names to cite for this fill are in `briefs/pass-shelat-ch5-8
 section "Advice for the fill briefs" (all reachable from the owned files' current imports). Proving
 a fact Mathlib already has is a reuse finding at delivery review.
 
+
+**Authorized re-point (dl-b, equation-lemma PR finding).** `DiscreteLogHardcore.lean` (about line 516) reads
+`expEnc` and `dlP` from `DiscreteLog.lean` with `simp only [halfStr, halfPred, expEnc, dlP, …]`. Re-point
+that proof through `expEnc_eq` and `dlP_eq` (proof-only change; the statement is unchanged).
+
 ## Units (disjoint file ownership; they may run in parallel, on separate hosts)
 
 Cross-file dependencies are on **statements** only: a target may use another unit's sorried
