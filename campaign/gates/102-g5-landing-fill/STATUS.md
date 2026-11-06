@@ -25,3 +25,4 @@
 - 2026-11-06: round 3 **dispatched** by the user (32 sections, bundle `d6e3cfa3…`).
 - 2026-11-06: findings received: PASS (0 majors); **CLOSED**. The missed NZ-1 member is re-pointed in #217; the merge waits on the merged-tree replay.
 - 2026-11-06: `replay-lg8` at `7065aad1` (#211 on the campaign after #217, from `oleans-lcamp4`): **3 modules, 0 failed, 0 `sorry`**. **Clear to merge.**
+- 2026-11-06: #211 **merged** by the user (`f743ee97`); its Lean equals `replay-lg8`'s head, so `oleans-lg8` is **`oleans-lcamp5`, the campaign's snapshot**.

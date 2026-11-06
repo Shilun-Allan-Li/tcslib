@@ -42,6 +42,7 @@ import TCSlib.Complexity.SpaceComplexity.ConfigGraph
 import TCSlib.Complexity.SpaceComplexity.WindowClock
 import TCSlib.Complexity.SpaceComplexity.Savitch
 import TCSlib.Complexity.SpaceComplexity.Hierarchy
+import TCSlib.Complexity.SpaceComplexity.Padding
 import TCSlib.Complexity.SpaceComplexity.Logspace.InputAccess
 import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
 import TCSlib.Complexity.SpaceComplexity.Logspace.QueryReshape
@@ -212,6 +213,9 @@ running counter program is simulated by an abstract register machine in
 - `SpaceComplexity.Savitch`: Savitch's theorem and `PSPACE = NPSPACE` (phase P4.2)
 - `SpaceComplexity.Hierarchy`: the space-bounded universal machine, Thm 4.8,
   `L ⊊ PSPACE`, Ex 3.2 (phase P4.3)
+- `SpaceComplexity.Padding`: the padded language `padLang` and its membership
+  characterization; padding transfers space bounds down (`mem_SPACE_padLang`, stated; its
+  proof is pending), for Ex 3.2
 - `SpaceComplexity.Logspace.{InputAccess, PreimageHost, QueryReshape}`: random access to a
   general input (a register-program read fragment; `id` implicitly logspace), the
   oracle-input simulator of Fig. 4.3 (logspace preimages along implicit functions), and the
