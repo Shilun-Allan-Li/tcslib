@@ -15,3 +15,16 @@ pushed), which adds `import TCSlib.Complexity.TuringMachine.Build.ZoneStep` afte
 | `base-sorries.txt` | 22 entries in 9 modules, the target's included; equal, module by module, to the warnings of the snapshot chain's replay logs |
 | Lint at the overlay | `campaign_style_lint.py TCSlib/Complexity/TuringMachine`: 0 FAIL, 71 WARN over 92 files; `style_lint.py` on `TwoTapes`: 0 findings |
 | `screen-population.txt`, `screen-base.txt` | the draft's 21 files; the v3 screen on a `git archive` of the overlay: 1,168 declarations, 777 pairs, 272,860 characters, 0 pairs on `TwoTapes`; exit 0, 403 s |
+
+**After the brief's review (2026-11-06; `../review/REVIEW.md`):** `Simulation` joins the screen
+population (22 files), so the screen base is re-run at issue. The import probe adds
+`zoneRebalanceData_eq`, `zoneExtendData_eq` (#207), `embedEmitCfg_state` and
+`embedEmitCfg_output`; it is re-run at issue, on the tree with #202 and #207 merged.
+
+**Re-run on the campaign after #202 with #207 (2026-11-06; `oleans-lzde2`, `lzde2/`):** the
+import probe (217 checks, the four added names included) 0 errors; the route probe exit 0, no
+output; its sealed copy 0 diagnostics; controls 33 pass unsealed, 33 fail sealed. The screen base
+(`screen-base.txt`, 22 files with `Simulation`, on a `git archive` of #207's head `d01332e4` plus the
+overlay's import): 1,210 declarations, 819 pairs, 281,024 characters, 0 pairs on `TwoTapes`. The
+42 pairs beyond the 21-file base all have a `Simulation` declaration on one side (existing pairs
+the new population member brings in); none involves `TwoTapes`.

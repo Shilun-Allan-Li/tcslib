@@ -77,7 +77,7 @@ configuration facts; gate 94, `replay-lcf3`).
 
 | PR | What | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | `c8cedd9d` (round 4's repair `b4af93b7` + a records-only merge) | `replay-lnf6` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 rounds 3 and 4 did not close (one more re-derivation each); round 5 **dispatched** 2026-11-06 (89 sections) | merge when it closes |
+| #191 | `11a3a562` | `replay-lnf7` **passed** | 95 **CLOSED** (round 5) | **merged** 2026-11-06 (`a1d7fea4`); H's brief next |
 | #196 | the deepening's API: `SavitchARM/Window` (window exactness, termination) and eleven facts in eight files (design §9–§10; decisions 4 and 5) | `replay-ldwa` **passed** (73 modules from `oleans-lcf3`, at `89f4ebbc`; the existing 30 `sorry`s) | 96 **dispatched** 2026-11-05 (`outbox/gates/96-deepen-api-gate/`, 209 sections) | merge when gate 96 closes; then issue the deepening fill (Claude) |
 | #197 | G5's consumer API (decision G5-F1, API first): `Build/ZoneStep` (`exists_zoneTrackStepTM`, the amortization), `Contract.zero`, `ZoneRebalance`'s equations | `replay-lzsa` **passed** (111 modules from `oleans-lcf3`, at `0a1b64d5`; the existing 45 `sorry`s) | 97 **staged** (`outbox/gates/97-zone-step-api-gate/`, 91 sections) | dispatch gate 97; merge when it closes; then G5's fill brief |
 
@@ -116,7 +116,10 @@ replay below chained from it with only its own PR.
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
 | #191 | `b2bac06f` (round 3's repair `698dcdf5` + a records-only merge) | `replay-lnf5` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 did not close (0/1/1: one more untyped re-derivation); round 4 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
-| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 round 1 did not close (0/1/1: SG-1, acknowledged by the user for 12.2c; the screen trees); round 2 **dispatched** 2026-11-06 (39 sections) | merge when it closes; then G5's fill brief |
+| #202 | `7b5774fb` | `replay-lsi2` **passed** (112 modules) | 98 **CLOSED** 2026-11-06 | **merged** 2026-11-06 (`8a505fc9`); `oleans-lsi2` is the campaign's snapshot; G5's brief after #207 |
+| #207 | `d01332e4` | `replay-lzde2` **passed** | 99 **CLOSED** | **merged** 2026-11-06 (`d43a1374`); G5's fill brief issues |
+| #208 | `a46e04a9` (the delivery `c7b179da` + the maintainer's landing edits: `size_facts`, `length_bits_le_log`, `Fin.castLE`, the public text) | `replay-ldp` **passed** at the delivery (3 modules, 0 `sorry`); re-run after the edits | the fill gate after a have-level library sweep (running) | merge when it closes |
+| #209 | `0b05cc3a`: `NTimeHierarchy`'s Status paragraph (docstring only) | `replay-lnth` **passed** (2 modules from `oleans-lcamp1`, 0 `sorry`) | 100 **dispatched** 2026-11-06 (18 sections) | merge when it closes |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
@@ -131,7 +134,7 @@ at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11
 Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
 
 **Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
-(#202's merged tree) and `oleans-lnf6` (#191's). Once #191 or #202 merges, its snapshot is the
+(#202's merged tree, **the campaign's since #202 merged**), `oleans-lnf7` (#191 on it), `oleans-lzde2` (#207 on it) and `oleans-ldp` (#208's delivery). #191 and #207 merged 2026-11-06 (`a1d7fea4`, `d43a1374`); `replay-lcamp1` (both closures, 9 modules, from `oleans-lsi2`) **passed** (0 failed; `TwoTapes`' one `sorry`; `campaign/status/2026-11-06-campaign-replay/`): **`oleans-lcamp1` is the campaign's snapshot** (Lean `d43a1374`). Kept on the VM: `oleans-cloud0`, `oleans-lcamp1`, `oleans-ldp`. Once #191 or #202 merges, its snapshot is the
 campaign's; delete the other when both have merged and a combined replay has passed.
 
 **G5's fill brief** issues after #202 merges. Its route probe (the frame through
@@ -158,12 +161,14 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
 
 1. **The deepening fill** is dispatched (2026-11-06, Claude): `campaign/fills/ch34/briefs/ch34-fill-deepen.md`.
    Its delivery is reviewed by a sub-agent, then landed by PR and a fill gate.
-2. **G5's fill brief** (agent Claude, the user's 2026-11-05 ruling) issues after #202 merges. Its
-   draft, route probe and pre-ship on #202's tree are in `campaign/fills/u2s/drafts/u2s-fill-g5*`
-   (`preship/README.md`); at issue, re-check them on the merged tree, fill the base, the in-flight
-   list and `@ANCESTOR@`, and move the inputs to `inputs/`, `orders/` and `logs/`.
-3. **H's brief:** re-take its pre-ship after NF lands (#191; E-D landed as #188). Its screen population includes both
-   files, and NF-X1's `un_setup` pair.
+2. **G5's fill brief is issued** (2026-11-06, agent Claude): `campaign/fills/u2s/briefs/u2s-fill-g5.md`
+   at `fe5cb6fb`, ancestor `335d31d4`, staged in the exchange's `outbox/fills/u2s-fill-g5/`;
+   **dispatched 2026-11-06** (the user).
+3. **B6's H, the space hierarchy** (`space_hierarchy`, `LOGSPACE_ssubset_PSPACE`,
+   `SPACE_linear_ne_NP`; agent Codex): `campaign/fills/b6/drafts/b6-fill-hierarchy.DRAFT.md`, its
+   pre-ship to re-take on the merged tree, then a review sub-agent and issue. (The other "H",
+   `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D
+   merged it rests on the standard axioms; #209 corrects its module's Status paragraph.)
 4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1

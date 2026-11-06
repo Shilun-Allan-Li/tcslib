@@ -1,0 +1,82 @@
+import TCSlib.Complexity.TuringMachine.Build.ZoneStep
+
+set_option autoImplicit false
+
+/-! Review probe 2 (read-only scratch). U* are unsealed controls; S* run under the seal of the
+data maps and the pure layer, as the brief's rule 10 requires. -/
+
+namespace Turing
+
+/-- U1: unsealed, the Sigma-level rebalance equation holds by `rfl`. -/
+theorem rvU1 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceData dir t D = ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩ := rfl
+
+/-- U2: unsealed, the Sigma-level extension equation holds by `rfl`. -/
+theorem rvU2 {k : ℕ} (D : ZoneData k) :
+    zoneExtendData D = ⟨D.1 + 1, fun t => (D.2 t).extend⟩ := rfl
+
+/-- U3: unsealed, the pointwise field rewrite closes (by the closing `rfl` of `rw`, or `rfl`). -/
+theorem rvU3 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t) p =
+      zoneTrackTape (zoneRebalance dir (D.2 t)) p := by
+  rw [zoneRebalanceData_snd, Function.update_self]
+
+section Sealed
+
+attribute [local irreducible] zoneRebalanceData zoneExtendData zoneTrackStepData
+  zoneRebalanceIndex zoneTrackTape zoneRebalance zoneShiftIndex ZoneContents.extend
+
+/-- S1: the leftover of the pointwise rewrite, closed by `exact rfl`. -/
+theorem rvS1 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t) p =
+      zoneTrackTape (zoneRebalance dir (D.2 t)) p := by
+  rw [zoneRebalanceData_snd, Function.update_self]
+  exact rfl
+
+/-- S2: the Sigma equation from the pointwise fields, `funext` then `heq_of_eq`. -/
+theorem rvS2 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceData dir t D = ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩ :=
+  Sigma.ext (zoneRebalanceData_fst dir t D)
+    (heq_of_eq (funext (zoneRebalanceData_snd dir t D)))
+
+/-- S3: the Sigma equation by `simp only` over `Sigma.ext_iff` and the fields. -/
+theorem rvS3 {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k) :
+    zoneRebalanceData dir t D = ⟨D.1, Function.update D.2 t (zoneRebalance dir (D.2 t))⟩ := by
+  simp only [Sigma.ext_iff, zoneRebalanceData_fst, true_and]
+  exact heq_of_eq (funext (zoneRebalanceData_snd dir t D))
+
+/-- S4: another track's represented tape is kept: the pointwise rewrite, `update_of_ne`. -/
+theorem rvS4 {k : ℕ} (dir : Bool) (t t' : Fin k) (h : t' ≠ t) (D : ZoneData k) (p : ℤ) :
+    zoneTrackTape ((zoneRebalanceData dir t D).2 t') p = zoneTrackTape (D.2 t') p := by
+  rw [zoneRebalanceData_snd, Function.update_of_ne h]
+
+/-- S5: the extension keeps the represented tape: the pointwise rewrite, then the Zone lemma. -/
+theorem rvS5 {k : ℕ} (D : ZoneData k) (t : Fin k) (p : ℤ) :
+    zoneTrackTape ((zoneExtendData D).2 t) p = zoneTrackTape (D.2 t) p := by
+  rw [zoneExtendData_snd, zoneTrackTape_extend]
+
+/-- S6: with a Sigma-level equation available (the proposed fix), the rebalanced track's
+represented tape moves, sealed. -/
+theorem rvS6 {k : ℕ} (t : Fin k) (D : ZoneData k) (p : ℤ)
+    (hA : zoneRebalanceData true t D =
+      ⟨D.1, Function.update D.2 t (zoneRebalance true (D.2 t))⟩)
+    (h : zoneShiftIndex true (D.2 t) < D.1)
+    (hl : ∀ j (hj : j < zoneShiftIndex true (D.2 t)),
+      ((D.2 t).left ⟨j, by omega⟩).length = zoneCapacity j)
+    (hroom : ((D.2 t).left ⟨zoneShiftIndex true (D.2 t), h⟩).length +
+      2 ^ (zoneShiftIndex true (D.2 t) - 1) ≤ zoneCapacity (zoneShiftIndex true (D.2 t))) :
+    zoneTrackTape ((zoneRebalanceData true t D).2 t) p = zoneTrackTape (D.2 t) (p + 1) := by
+  rw [hA]
+  simp only [Function.update_self]
+  exact zoneTrackTape_rebalance_right (D.2 t) h hl hroom p
+
+/-- S7: with the extension's Sigma-level equation available, sealed. -/
+theorem rvS7 {k : ℕ} (D : ZoneData k) (t : Fin k) (p : ℤ)
+    (hE : zoneExtendData D = ⟨D.1 + 1, fun t => (D.2 t).extend⟩) :
+    zoneTrackTape ((zoneExtendData D).2 t) p = zoneTrackTape (D.2 t) p := by
+  rw [hE]
+  exact congrFun (zoneTrackTape_extend (D.2 t)) p
+
+end Sealed
+
+end Turing
