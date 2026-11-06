@@ -128,26 +128,23 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - **Hashes:** take every full hash from `git rev-parse` in the same step that writes it, and
     `git cat-file -e` it. Never complete a short hash by hand.
   - **Findings file:** every prompt asks the auditor for `<name>-findings.md` (the table and the
-    verdict line), pushed to the exchange inbox (below), and pasted in its reply too.
-  - **Agents use the exchange branch directly** (the user, 2026-11-06). Auditors and fill agents
-    have read and push access to `exchange/pass-shelat-ch5-8`. Prompts name files on it, not
-    attachments. Agents push their output to `arora-barak-ch3-4/inbox/`, and nothing else, with
-    `git pull --rebase` before every push and never a force push; no PR on the exchange. A fill
-    agent pushes its delivery zip (and checkpoint zips) there; an auditor its findings file. The
-    user still dispatches each prompt, and every change to `complexity/arora-barak-ch3-4` is
-    still a PR the user merges.
-  - **A pack's closing paragraph** (since 2026-11-06): "**Deliver your findings as
-    `<name>-findings.md`** (the findings table and the verdict line, no other wrapping): push it to
-    `arora-barak-ch3-4/inbox/` on the branch `exchange/pass-shelat-ch5-8` (`git pull --rebase`
-    first, add only that file, never force-push, no PR), and also paste its content in your reply."
+    verdict line) as an attached file, pasted in its reply too.
+  - **Agents read from the exchange branch, and deliver by attachment** (the user, 2026-11-06).
+    Auditors and fill agents can read `exchange/pass-shelat-ch5-8`, so prompts name the bundle or
+    brief by its path there rather than as an upload. They do not push: ChatGPT's GitHub connector
+    is read-only and Codex writes only through its own PRs, so findings files and delivery zips
+    are attached in chat, and the user hands them on. Every change to
+    `complexity/arora-barak-ch3-4` is still a PR the user merges.
+  - **A pack's closing paragraph** (since 2026-11-06): "**Deliver your findings as a downloadable
+    file named `<name>-findings.md`** (the findings table and the verdict line, no other
+    wrapping), and also paste its content in your reply."
     The prompt names the bundle by its path on that branch.
   - **Rebuilt bundles:** if a bundle is rebuilt after its prompt went out, re-issue the whole
     prompt and say the old one is void.
 - **The exchange** is the `arora-barak-ch3-4/` subfolder of the orphan branch
   `exchange/pass-shelat-ch5-8`:
   - `outbox/gates/<NN>-<slug>-gate/` and `outbox/fills/` (staged by the maintainer);
-  - `inbox/` (deliveries and findings, pushed by the agents since 2026-11-06; earlier by the
-    user);
+  - `inbox/` (deliveries and findings, from the user);
   - `archive/` (moved there once committed to the records; since 2026-11-06 a dispatched folder
     stays in `outbox/`, where its agent reads it, until its findings or delivery are committed).
 

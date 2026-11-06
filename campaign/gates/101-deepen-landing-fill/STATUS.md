@@ -9,3 +9,8 @@
   `0e67a7cdd8b5f1b98afe5f1748da812fef381b666605122858d7d138cdf8004a`; Lean from `a074d9b7`, records
   from `c4a5d6d2`. Findings file `deepen-landing-fill-findings.md`.
 - 2026-11-06: **dispatched** (the user).
+- 2026-11-06: #209 merged; the campaign merged into the branch (`ca0af1c085d3135e040b6a65671dee58625b3984`, no change to the PR's
+  files). `replay-ldp3` passed (3 modules, 0 failed, 0 `sorry`), chained from `oleans-lnth`
+  (`evidence/merged-tree-after-209/`): the replay of record for the merge.
+- 2026-11-06: round 1 findings received: **HOLD 0/1/3/3** (F1, the value-to-width bound in three
+  files). The user ruled: harvest in #208, all three.
