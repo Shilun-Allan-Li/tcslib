@@ -1,0 +1,206 @@
+diff --git a/TCSlib/Cryptography/Asymptotic/MultiMessage.lean b/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+index e8cde0a8..aafd190c 100644
+--- a/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
++++ b/TCSlib/Cryptography/Asymptotic/MultiMessage.lean
+@@ -109,8 +109,12 @@ theorem eval_chainTree {I O α : Type} (g : I → O) :
+ /-- A chain of `k` queries makes at most `k` queries. -/
+ theorem boundedBy_chainTree {I O α : Type} :
+     ∀ (k : ℕ) (xs : Fin k → I) (f : (Fin k → O) → α), (chainTree k xs f).BoundedBy k
+-  | 0, _, _ => trivial
+-  | k + 1, xs, f => fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
++  | 0, _, _ => by
++    rw [chainTree]
++    exact QueryTree.boundedBy_ret _ _
++  | k + 1, xs, f => by
++    rw [chainTree, QueryTree.boundedBy_query_succ]
++    exact fun o => boundedBy_chainTree k (Fin.tail xs) fun os => f (Fin.cons o os)
+ 
+ /-! ### The hybrids of [PS10, Theorem 99.2], concrete -/
+ 
+diff --git a/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean b/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
+index c89380bc..2689e3fc 100644
+--- a/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/MultiMessageLemmas.lean
+@@ -189,7 +189,7 @@ theorem acceptProb_oracleDist_congr_equiv {σ : Type*} {I O : Type} {ρ ρ' : Ty
+     [Fintype ρ'] (X : σ → I → O) (A : OracleAdversary ρ I O) (A' : OracleAdversary ρ' I O)
+     (φ : ρ' ≃ ρ) (h : ∀ (g : I → O) (w : ρ'), (A (φ w)).eval g = (A' w).eval g) :
+     acceptProb X (oracleDist A) = acceptProb X (oracleDist A') := by
+-  unfold acceptProb oracleDist
++  simp only [acceptProb_def, oracleDist_apply]
+   rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr φ)]
+   congr 1
+   funext z
+@@ -202,9 +202,10 @@ theorem prfAdv_congr_equiv {K : Type*} {I O : Type} {ρ ρ' : Type*} [Fintype K]
+     (A' : OracleAdversary ρ' I O) (φ : ρ' ≃ ρ)
+     (h : ∀ (g : I → O) (w : ρ'), (A (φ w)).eval g = (A' w).eval g) :
+     prfAdv F A = prfAdv F A' := by
+-  unfold prfAdv distAdv
+-  rw [acceptProb_oracleDist_congr_equiv F A A' φ h,
+-    acceptProb_oracleDist_congr_equiv (randomFunction I O) A A' φ h]
++  have hF := acceptProb_oracleDist_congr_equiv F A A' φ h
++  have hR := acceptProb_oracleDist_congr_equiv (id : (I → O) → I → O) A A' φ h
++  simp only [acceptProb_def, oracleDist_apply, id_eq] at hF hR
++  rw [prfAdv_eq, prfAdv_eq, hF, hR]
+ 
+ /-! ### Strings: chunked encodings, history blocks, mask blocks -/
+ 
+diff --git a/TCSlib/Cryptography/Games/OracleComp.lean b/TCSlib/Cryptography/Games/OracleComp.lean
+index f38b9fc3..c8f91d04 100644
+--- a/TCSlib/Cryptography/Games/OracleComp.lean
++++ b/TCSlib/Cryptography/Games/OracleComp.lean
+@@ -162,7 +162,7 @@ theorem singleSpec_rng (I O : Type) (u : Unit) : (singleSpec I O).rng u = O := r
+ 
+ /-- The **disjoint union** of two oracle families: oracle `.inl i` is oracle `i` of `s₁`, and
+ oracle `.inr j` is oracle `j` of `s₂`. [VCVio, OracleComp/OracleSpec] -/
+-def OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
++abbrev OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
+     OracleSpec (ι₁ ⊕ ι₂) :=
+   ⟨Sum.elim s₁.dom s₂.dom, Sum.elim s₁.rng s₂.rng⟩
+ 
+diff --git a/TCSlib/Cryptography/Games/Probability.lean b/TCSlib/Cryptography/Games/Probability.lean
+index 9b725fca..81a91dc5 100644
+--- a/TCSlib/Cryptography/Games/Probability.lean
++++ b/TCSlib/Cryptography/Games/Probability.lean
+@@ -123,7 +123,7 @@ average the same continuations. -/
+ theorem expect_bind (c : ProbComp α) (f : α → ProbComp β) (g : β → ℝ) :
+     expect (c.bind f) g = expect c (fun a => expect (f a) g) := by
+   induction c with
+-  | pure a => rfl
++  | pure a => simp only [OracleComp.pure_bind, expect_pure]
+   | query m x k ih => simp only [OracleComp.query_bind, expect_query, ih]
+ 
+ /-- The expectation over a mapped computation is the expectation of the composite. -/
+diff --git a/TCSlib/Cryptography/Games/Protocols.lean b/TCSlib/Cryptography/Games/Protocols.lean
+index 3e6d9334..cbe17b58 100644
+--- a/TCSlib/Cryptography/Games/Protocols.lean
++++ b/TCSlib/Cryptography/Games/Protocols.lean
+@@ -229,15 +229,21 @@ theorem exec_succ {M₁ M₂ : Type} (fuel : ℕ) (A : Party M₁ M₂ α)
+ /-! ### Sanity checks: fuel counts messages; a send after the end is reported -/
+ 
+ example (a b : Bool) :
+-    exec 0 (M₁ := Unit) (M₂ := Unit) (.pure a) (fun _ => .pure b) = .pure (.done a b) := rfl
++    exec 0 (M₁ := Unit) (M₂ := Unit) (.pure a) (fun _ => .pure b) = .pure (.done a b) := by
++  simp only [exec_zero, step_pure, OracleComp.pure_bind, Sum.elim_inl, endWith_eq, close_pure,
++    Option.elim_some]
+ 
+ example (m : Unit) (a b : Bool) :
+     exec 1 (M₂ := Unit) (.query (.inl ()) m fun _ => .pure a) (fun _ => .pure b) =
+-      .pure (.done a b) := rfl
++      .pure (.done a b) := by
++  simp only [exec_succ, step_send, OracleComp.pure_bind, Sum.elim_inr, exec_zero, step_pure,
++    Sum.elim_inl, endWith_eq, close_pure, Option.elim_some, ExecOutcome.swap_done]
+ 
+ example (m : Unit) (a b : Bool) :
+     exec 1 (M₁ := Unit) (.pure a) (fun _ => .query (.inl ()) m fun _ => .pure b) =
+-      .pure .sentAfterEnd := rfl
++      .pure .sentAfterEnd := by
++  simp only [exec_succ, step_pure, OracleComp.pure_bind, Sum.elim_inl, endWith_eq, close_send,
++    Option.elim_none]
+ 
+ /-! ### The traced execution -/
+ 
+@@ -338,10 +344,10 @@ theorem execT_trace : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M₁
+ /-- `stepT` projects to `step`. -/
+ theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) = step A := by
+   induction A with
+-  | pure a => rfl
++  | pure a => simp only [stepT, step, OracleComp.pure_bind]
+   | query i x k ih =>
+     cases i with
+-    | inl u => cases u; rfl
++    | inl u => cases u; simp only [stepT, step, OracleComp.pure_bind]
+     | inr j =>
+       simp only [stepT, step, OracleComp.query_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
+       congr 1
+@@ -351,10 +357,10 @@ theorem stepT_fst (A : Party Out In α) : (stepT A).bind (fun p => .pure p.1) =
+ /-- `closeT` projects to `close`. -/
+ theorem closeT_fst (A : Party Out In α) : (closeT A).bind (fun p => .pure p.1) = close A := by
+   induction A with
+-  | pure a => rfl
++  | pure a => simp only [closeT, close, OracleComp.pure_bind]
+   | query i x k ih =>
+     cases i with
+-    | inl u => cases u; rfl
++    | inl u => cases u; simp only [closeT, close, OracleComp.pure_bind]
+     | inr j =>
+       simp only [closeT, close, OracleComp.query_bind, OracleComp.bind_assoc, OracleComp.pure_bind]
+       congr 1
+@@ -386,7 +392,7 @@ theorem execT_outcome : ∀ (fuel : ℕ) {M₁ M₂ α β : Type} (A : Party M
+     rcases p with ⟨_ | _, c⟩
+     · simp only [Sum.elim_inl, OracleComp.bind_assoc, OracleComp.pure_bind]
+       rw [← endWithT_fst]
+-    · rfl
++    · simp only [Sum.elim_inr, OracleComp.pure_bind]
+   | fuel + 1, _, _, _, _, A, B => by
+     simp only [execT, exec, OracleComp.bind_assoc]
+     rw [← stepT_fst A, OracleComp.bind_assoc]
+diff --git a/TCSlib/Cryptography/Games/Simulate.lean b/TCSlib/Cryptography/Games/Simulate.lean
+index e8c957dc..acf23f38 100644
+--- a/TCSlib/Cryptography/Games/Simulate.lean
++++ b/TCSlib/Cryptography/Games/Simulate.lean
+@@ -66,7 +66,7 @@ variable {ι ι' ι₁ ι₂ : Type} {α β σ : Type}
+ /-- An **implementation** of the oracles of `spec` by computations over `spec'`, with state `σ`:
+ on oracle `i`, query `x` and state `s`, a computation returning the answer and the new state.
+ [VCVio, SimSemantics] -/
+-def QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
++abbrev QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
+   ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)
+ 
+ /-- An implementation is a function of the oracle, the query and the state:
+diff --git a/TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean b/TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean
+index c5911eb6..922c55d5 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean
+@@ -175,7 +175,7 @@ theorem evalLazy_congr {a b : ℕ → O} {t : QueryTree I O α} {m : ℕ} (ht :
+       have h1 := idxOf_noteQuery_lt L x
+       have h2 := length_noteQuery_le L x
+       rw [evalLazy_query, evalLazy_query, hab _ (by omega)]
+-      exact ih _ (ht _) _ fun j hj => hab j (by omega)
++      exact ih _ ((boundedBy_query_succ x k m).1 ht _) _ fun j hj => hab j (by omega)
+ 
+ /-- Post-processing every lazy answer by `g` is the same as running the tree whose
+ answers are post-processed by `g`. -/
+@@ -183,8 +183,10 @@ theorem evalLazy_comp {O' : Type} (g : O' → O) (a : ℕ → O') (t : QueryTree
+     (L : List I) :
+     evalLazy (g ∘ a) t L = evalLazy a (t.simulate id (fun _ => g)) L := by
+   induction t using QueryTree.induct generalizing L with
+-  | ret y => rfl
+-  | query x k ih => exact ih _ _
++  | ret y => rw [simulate_ret, evalLazy_ret, evalLazy_ret]
++  | query x k ih =>
++    rw [simulate_query, evalLazy_query, evalLazy_query]
++    exact ih _ _
+ 
+ end QueryTree
+ 
+@@ -316,7 +318,10 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
+     uprob (fun W : Fin q → O => φ (evalLazy (extendStream (combine L.length W₀ W)) t L)) =
+       uprob (fun R : I → O => φ (t.eval (mergeTable L (extendStream W₀) R))) := by
+   induction t using QueryTree.induct with
+-  | ret y => intro _ _ _ _ _; exact uprob_const_eq (β := Fin q → O) (γ := I → O) (φ y)
++  | ret y =>
++    intro _ _ _ _ _
++    simp only [evalLazy_ret, eval_ret]
++    exact uprob_const_eq (β := Fin q → O) (γ := I → O) (φ y)
+   | query x k ih =>
+     intro m L W₀ ht hm
+     cases m with
+@@ -334,7 +339,7 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
+           (k (extendStream W₀ (L.idxOf x))).eval (mergeTable L (extendStream W₀) R) := by
+         intro R; simp [mergeTable, hx]
+       simp only [hl, hr]
+-      exact ih _ m L W₀ (ht _) (by omega)
++      exact ih _ m L W₀ ((boundedBy_query_succ x k m).1 ht _) (by omega)
+     · -- a new query: split off the fresh value on both sides
+       have hℓ : L.length < q := by omega
+       have hidx : (L ++ [x]).idxOf x = L.length := by
+@@ -362,7 +367,8 @@ private theorem uprob_evalLazy_aux [Fintype I] [Fintype O] [Nonempty O] (φ : α
+           simp only [h, mergeTable_update _ _ _ (List.mem_append_right L
+             (List.mem_singleton_self x))])]
+       exact congrArg uexp (funext fun v =>
+-        ih v m (L ++ [x]) (update W₀ j v) (ht v) (by rw [hlen]; omega))
++        ih v m (L ++ [x]) (update W₀ j v) ((boundedBy_query_succ x k m).1 ht v)
++          (by rw [hlen]; omega))
+ 
+ /-- **Lazy sampling.** For a query tree making at most `q` queries, answering the `k`-th
+ distinct query by the `k`-th of `q` independent uniform values gives the same output
