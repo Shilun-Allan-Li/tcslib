@@ -3,11 +3,12 @@
 # Gate 07 (Pass–shelat ch. 2–8), round 2: the equation-lemma PR — API, statement and rule-10 audit pack
 
 **What is audited:** PR [Shilun-Allan-Li/tcslib#210](https://github.com/Shilun-Allan-Li/tcslib/pull/210)
-at its head `037075b01ca348266d50735cd22526a96fc131bf`, on base `05fe903fc736ac8036c161ad159dc8bdddcd6ee2`
+at its head `3436321ba28042549bead976dc654aab3d661f10`, on base `05fe903fc736ac8036c161ad159dc8bdddcd6ee2`
 (`cryptography/pass-shelat-ch2-4`; no Lean change on the base since). Round 1 audited
 `fff0430c7c9db136e60ed14b069e972c2ea56fc8`. This round covers the repair of round 1's findings
-and the follow-up rounds (`16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1`, `286aee54ae17ffec36225a318f0c714cf9bb7393`, `037075b01ca348266d50735cd22526a96fc131bf`):
-27 commits since round 1 (`evidence-r2/commits.txt`); 68 Lean files changed against the base, `+3063 −482` (`evidence-r2/repair.diff.txt`
+and the follow-up rounds (`16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1`, `286aee54ae17ffec36225a318f0c714cf9bb7393`, `c304994ed7a25108db7f019cf2e258a972db9b12`,
+`037075b01ca348266d50735cd22526a96fc131bf`, `3436321ba28042549bead976dc654aab3d661f10`):
+28 commits since round 1 (`evidence-r2/commits.txt`); 70 Lean files changed against the base, `+3317 −561` (`evidence-r2/repair.diff.txt`
 from `fff0430c`; `evidence-r2/full.diff.txt` from the base).
 
 **Why it exists.** Policy §1, rule 10: no proof, and no statement, may read a definition from
@@ -20,6 +21,9 @@ another file; consumers go through published lemmas beside the definition. User 
 - **Q1 (2026-11-07): `PolyExpr.eval` is notation.** It could not be made `@[reducible]` (that breaks
   `simp` on the `eval_*` lemmas; `evidence-r2/replay-eval-reducible-attempt.log`), so it stays
   semireducible, is never sealed, and its docstring records the ruling;
+- **`glNeed` is notation (user, 2026-11-07):** the length abbreviation `glNeed` (HardCoreGL) is an
+  `abbrev`, an extension of Q1: a definition that only computes a length or type may be notation,
+  recorded case by case and audited here;
 - **factoring D1 (A):** the shared statements S1–S3 (sorried here; filled by the factoring fill);
 - **size exceptions:** `Candidates/RSA.lean`, `Candidates/Rabin.lean`, `Asymptotic/Collections.lean`,
   `Asymptotic/PublicKey.lean`, `Candidates/DiscreteLog.lean`, `ZeroKnowledge/ThreeColoring/Protocol.lean`.
@@ -34,15 +38,15 @@ another file; consumers go through published lemmas beside the definition. User 
   before pushing, never force-push, no PR).
 
 The bundle holds this pack, then every file named below under a `## ===== <path> =====` header.
-You may also read the PR's branch at `037075b01ca348266d50735cd22526a96fc131bf` directly.
+You may also read the PR's branch at `3436321ba28042549bead976dc654aab3d661f10` directly.
 
 ## Brief for the auditor
 
 1. **Verify round 1's resolutions** (`resolutions-r1.md`, round 1's findings): for F01, F02 and F03,
    say fixed, recorded or not resolved, and why.
-2. **The statement changes** (`evidence-r2/decls-vs-r1.tsv`: 167 ADDED, 54 CHANGED, 2 REMOVED against round 1's head;
-   `evidence-r2/decls-vs-base.tsv`: 350 / 57 / 2 against the base; the worker's old → new table with
-   reasons for the 36 changed since `16a7d02d` is `evidence-r2/r6/statement-changes.tsv` and §
+2. **The statement changes** (`evidence-r2/decls-vs-r1.tsv`: 184 ADDED, 55 CHANGED, 2 REMOVED against round 1's head;
+   `evidence-r2/decls-vs-base.tsv`: 367 / 58 / 2 against the base; the worker's old → new table with
+   reasons for the 36 changed between `16a7d02d` and round 6 (round 6c adds one, `glNeed`, `def` → `abbrev`, same statement) is `evidence-r2/r6/statement-changes.tsv` and §
    "Restatements" of `worker-reports/E1-round5-REPORT.md`; the 18 changed between round 1 and
    `16a7d02d` are in `evidence/` of that round and `sweep/REPORT.md`). For each: is the new form the same proposition as the old (the
    predicate composed with an `Equiv.refl`/`finCongr`, a length along a proved equality, `ofFn`
@@ -65,12 +69,17 @@ You may also read the PR's branch at `037075b01ca348266d50735cd22526a96fc131bf` 
      (`evidence-r5/sweep2-*.tsv`, `evidence-r5/final-reads.tsv`; round 6's sweep of the 17 files it
      changed, `evidence-r2/r6/sweep-*.tsv`, `sweep.out`; method and tools in `sweep/`): every read left is
      either in #195's 26 files (fixed on #195, gate 04) or none;
-   - the **whole-file proof seal** (`evidence-r2/r6/proofseal/`, `touched.py`): declarations this PR adds or changes
-     have 0 reads; the 173 rows in untouched proofs (`proofseal/final-b.tsv`) are recorded for clean-up, not
-     fixed here — is that classification (`touched.py`) right?;
-   - the **explicit-unfold scan** of touched declarations (round 6b, `evidence-r2/r6b/`, #195's
-     gate-04 scanner in `r6b/tools/`): reads through equation lemmas that a seal cannot see; 18
-     hits before (`hits-touched.tsv`), 0 after (`scan-final.log`).
+   - the **whole-file proof seal** over **all 70 files**, with "touched" computed against the base
+     (round 6c, `evidence-r2/r6c/`: `classified.tsv`, `touched.tsv`, `proofseal-all.out`, tools in
+     `r6c/`): 547 touched declarations, **0 reads** in them; 764 rows in 468 untouched declarations
+     (`cleanup-b.tsv`, `cleanup-b-decls.tsv`) are recorded for clean-up, not fixed here — is the
+     classification right (round 6c fixed three tool bugs; `E1-round6c-REPORT.md`)? The control
+     (`r6c/control/`) runs the same seal on the round-6b copies of the 18 files 6c changed: 26
+     (a) hits there, 0 at the head. Round 6's 34-file run is in `r6/proofseal/`;
+   - the **explicit-unfold scan** (#195's gate-04 scanner, `r6b/tools/`): reads through equation
+     lemmas that a seal cannot see; round 6b on 34 files, 18 hits in touched declarations before
+     (`r6b/hits-touched.tsv`), 0 after; round 6c on all 70 files (`r6c/scan.log`): 446 lemma-list
+     hits and 53 generated-equation references, none in a touched declaration.
    Controls: do the sealed probes (`evidence-r2/r6/probes/` and `r6b/probes/`: `Final6Pass` 47 examples, `Final6Control` 30
    old readings each failing once sealed, `Final6OpenControl` the same unsealed; round 5's in
    `evidence-r5/probes/`)
@@ -87,21 +96,24 @@ You may also read the PR's branch at `037075b01ca348266d50735cd22526a96fc131bf` 
   round's tree, then `audits/pass-shelat/Checks`: round 5, 233 modules plus Checks
   (`evidence-r5/replay-head*.log`); round 6, 69 plus Checks, and the 18 modules round 5 could not
   replay (136 upstream modules built from source; `r6/build-missing2.log`, `r6/replay-head.log`);
-  round 6b, 64 plus Checks (`r6b/replay-head.log`). **All pass, 0 errors.** `sorry` counts of the
+  round 6b, 64 plus Checks (`r6b/replay-head.log`); round 6c, 81 plus Checks
+  (`r6c/replay-head.log`, `r6c/final-checks.log`). **All pass, 0 errors.** `sorry` counts of the
   changed files equal the base's (`evidence-r5/sorry-compare.txt`).
-- **Axioms** (`evidence-r5/probes/Axioms.log`, `r6/probes/Axioms.log`, `r6b/probes/Axioms6b.log`): every
+- **Axioms** (`evidence-r5/probes/Axioms.log`, `r6/probes/Axioms.log`, `r6b/probes/Axioms6b.log`,
+  `r6c/Axioms6c.log`): every
   added and changed declaration within `propext`, `Classical.choice`, `Quot.sound`; `sorryAx`
   only where the base has it (`zk_proof_of_mem_NP_of_owp`, `zk_proof_of_owp_levinReduction`,
   `factoringCollection_index`/`rsaCollection_index` through sorried collections in their types,
   `R3COL_witnessRelation` through its fill-target `sorry`) and in S1–S3.
 - **Lint** (`r6/style-lint-*.log`, `r6/check8b-diff.log`): no new finding except the approved size
-  lines (Collections, PublicKey, RSA, ThreeColoring/Protocol); `HardCore`, `OneWay` and
-  `HardCoreLemmas` kept at ≤ 1000 lines; check-8 FAIL count unchanged.
+  lines (Collections, PublicKey, RSA, ThreeColoring/Protocol); `HardCore`, `OneWay`,
+  `HardCoreLemmas` and `GraphIsomorphism` kept at ≤ 1000 lines; check-8 FAIL count unchanged
+  (`r6c/style-lint-head.log`, `r6c/check8b-diff.log`).
 - **Statements:** above (`decls-vs-r1.tsv`, `decls-vs-base.tsv`; `decls.py` as fixed after gate 03l
   round 3). The two REMOVED rows are the `NUPPT.Uniform` lemmas, re-added unchanged in `PPT.lean`.
 - **Rule 10:** the statement and definition-body sweep leaves only rows in #195's 26 files
   (fixed on #195 at `4d99b0cb7241b1f431476e1b7cf2f5a551d57d62`, audited by gate 04); the proof seal leaves 0 reads in
-  touched declarations; the unfold scan leaves 0. `PolyExpr.eval` is never sealed (Q1).
+  touched declarations over all 70 files; the unfold scan leaves 0. `PolyExpr.eval` is never sealed (Q1).
 
 ## Findings format (auditor fills)
 
@@ -981,6 +993,7 @@ The new head is **037075b01ca348266d50735cd22526a96fc131bf** on `wip/eqlemmas` (
 
 ## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/commits.txt =====
 
+3436321ba28042549bead976dc654aab3d661f10 Gate 07 eq-lemmas round 6c: no foreign reduction in any touched declaration
 037075b01ca348266d50735cd22526a96fc131bf Explicit unfolds of other files' definitions in #210's declarations through equation lemmas
 c304994ed7a25108db7f019cf2e258a972db9b12 Sizes and sketches: `PermFamily` `glPad` interface moved to HardCorePermutation, OneWay trimmed
 4ba1abe89d2a120edcfb93413f01cb5740a105ee Last proof reads in #210's declarations: `owp_hardcore_prg`, `quadraticCode_of_linear`, `zkSim_runAt`
@@ -1029,11 +1042,13 @@ ADDED	TCSlib/Complexity/Randomized/PPT.lean:403	Complexity.NUPPT.coinsEquiv_ofPo
 ADDED	TCSlib/Complexity/Randomized/PPT.lean:354	Complexity.NUPPT.coinsEquiv_ofPolyTime_ofFn	theorem	theorem coinsEquiv_ofPolyTime_ofFn {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins adv : PolyExpr) (advice : ℕ → List Bool) (hα : ∀ n, (advice n).length ≤ adv.eval n) (n : ℕ) (r : (ofPolyTime hf coins adv advice hα).Coins n) : List.ofFn (coinsEquiv_ofPolyTime hf coins adv advice hα n r) = List.ofFn r
 ADDED	TCSlib/Complexity/Randomized/PPT.lean:251	Complexity.NUPPT.runAt_coinsCongr	theorem	theorem runAt_coinsCongr {A B : NUPPT} (h : A.coins = B.coins) (n : ℕ) (y : List Bool) (r : A.Coins n) : B.runAt n y (coinsCongr h n r) = B.runAtL n y (List.ofFn r)
 ADDED	TCSlib/Complexity/Randomized/PPT.lean:286	Complexity.NUPPT.uniform_iff	theorem	theorem uniform_iff : A.Uniform ↔ ∀ n, A.advice n = []
+ADDED	TCSlib/Cryptography/Asymptotic/Adversary.lean:181	TCSlib.Cryptography.invProbOpt_def	theorem	theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β) (A : β → ρ → Option α) : invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
 ADDED	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:358	TCSlib.Cryptography.coinBlock_eq	theorem	theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B
 ADDED	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:276	TCSlib.Cryptography.decListFun_eq	theorem	theorem decListFun_eq (Dc : List Bool → List Bool) (x : List Bool) : decListFun Dc x = (List.range (x.length + 1)).flatMap fun i => decListEmit Dc (decListStep^[i] x)
-ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:705	TCSlib.Cryptography.Collection.owfCoinsEquiv	def	def owfCoinsEquiv (n : ℕ) : (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃ (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
-ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:711	TCSlib.Cryptography.Collection.owfCoinsEquiv_ofFn	theorem	theorem owfCoinsEquiv_ofFn (n : ℕ) (r : Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) : List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r
-ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:716	TCSlib.Cryptography.Collection.owfCoinsEquiv_symm_ofFn	theorem	theorem owfCoinsEquiv_symm_ofFn (n : ℕ) (z : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) : List.ofFn ((G.owfCoinsEquiv n).symm z) = List.ofFn z
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:697	TCSlib.Cryptography.Collection.evalSampled_iff	theorem	theorem evalSampled_iff : G.EvalSampled ↔ ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x, G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧ G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:710	TCSlib.Cryptography.Collection.owfCoinsEquiv	def	def owfCoinsEquiv (n : ℕ) : (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃ (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:716	TCSlib.Cryptography.Collection.owfCoinsEquiv_ofFn	theorem	theorem owfCoinsEquiv_ofFn (n : ℕ) (r : Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) : List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:721	TCSlib.Cryptography.Collection.owfCoinsEquiv_symm_ofFn	theorem	theorem owfCoinsEquiv_symm_ofFn (n : ℕ) (z : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) : List.ofFn ((G.owfCoinsEquiv n).symm z) = List.ofFn z
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:192	TCSlib.Cryptography.Collection.trap_eq	theorem	theorem trap_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) : F.trap n r = pairSndD (F.gen.runAt n [] r)
 ADDED	TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:75	Complexity.NUPPT.withIndexParam_coinsEquiv	def	noncomputable def _root_.Complexity.NUPPT.withIndexParam_coinsEquiv (A : NUPPT) (n : ℕ) : A.withIndexParam.Coins n ≃ A.Coins n
 ADDED	TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:81	Complexity.NUPPT.withIndexParam_coinsEquiv_ofFn	theorem	theorem _root_.Complexity.NUPPT.withIndexParam_coinsEquiv_ofFn (A : NUPPT) (n : ℕ) (r : A.withIndexParam.Coins n) : List.ofFn (A.withIndexParam_coinsEquiv n r) = List.ofFn r
@@ -1077,11 +1092,15 @@ CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean:75->75	TCSlib.Cryptog
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean:88->90	TCSlib.Cryptography.thm_87_3_2	theorem	theorem thm_87_3_2 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {T : ℕ} {ε : ℝ} (hε : 0 < ε) (hT : (𝓕.inLen.eval n : ℝ) ≤ 2 * ε ^ 2 * T) (h : 3 / 4 + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) : ε / 4 ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.majorityRecover (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) T))	=>	theorem thm_87_3_2 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {T : ℕ} {ε : ℝ} (hε : 0 < ε) (hT : (𝓕.inLen.eval n : ℝ) ≤ 2 * ε ^ 2 * T) (h : 3 / 4 + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) : ε / 4 ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.majorityRecover (fun y r => A ((𝓕.glPad_outEquiv n).symm (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) T))
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean:101->105	TCSlib.Cryptography.thm_87_3_3	theorem	theorem thm_87_3_3 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ) (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {c ε : ℝ} (hc : 0 ≤ c) (hε : 0 ≤ ε) (h : c + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) : ε / 2 ≤ uprob fun x => c + ε / 2 ≤ HardcoreBit.secProb (𝓕.f n) (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) x	=>	theorem thm_87_3_3 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ) (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {c ε : ℝ} (hc : 0 ≤ c) (hε : 0 ≤ ε) (h : c + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) : ε / 2 ≤ uprob fun x => c + ε / 2 ≤ HardcoreBit.secProb (𝓕.f n) (fun y r => A ((𝓕.glPad_outEquiv n).symm (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) x
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean:155->160	TCSlib.Cryptography.thm_87_3_9	theorem	theorem thm_87_3_9 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {k : ℕ} {ε : ℝ} (hε : 0 < ε) (hk : 2 * (𝓕.inLen.eval n : ℝ) ≤ ε ^ 2 * ((2 : ℝ) ^ k - 1)) (h : 1 / 2 + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) : ε / (4 * 2 ^ k) ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.guessRecover (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) k)) ∧ (ε ^ 2 * (2 : ℝ) ^ k ≤ 4 * 𝓕.inLen.eval n → ε ^ 3 / (16 * 𝓕.inLen.eval n) ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.guessRecover (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) k)))	=>	theorem thm_87_3_9 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {k : ℕ} {ε : ℝ} (hε : 0 < ε) (hk : 2 * (𝓕.inLen.eval n : ℝ) ≤ ε ^ 2 * ((2 : ℝ) ^ k - 1)) (h : 1 / 2 + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) : ε / (4 * 2 ^ k) ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.guessRecover (fun y r => A ((𝓕.glPad_outEquiv n).symm (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) k)) ∧ (ε ^ 2 * (2 : ℝ) ^ k ≤ 4 * 𝓕.inLen.eval n → ε ^ 3 / (16 * 𝓕.inLen.eval n) ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.guessRecover (fun y r => A ((𝓕.glPad_outEquiv n).symm (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) k)))
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:263	TCSlib.Cryptography.Collection.glPad_index	theorem	theorem glPad_index (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (n : ℕ) (r : F.gen.Coins n) : (F.glPad m henc).index n r = F.index n r
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:272	TCSlib.Cryptography.Collection.glPad_invProbAt	theorem	theorem glPad_invProbAt (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (A : NUPPT) (n : ℕ) : (F.glPad m henc).invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : (F.D (F.index n r) × (Fin (F.encD (F.index n r) default).length → Bool)) × A.Coins n => ∃ x', glPadDecode F (F.index n r) (F.encD (F.index n r) default).length (A.runAt n (pairEncode (F.index n r) (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧ pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) = pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:519	Complexity.NUPPT.precomp_coinsEquiv	def	noncomputable def precomp_coinsEquiv (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) (n : ℕ) : (A.precomp hpre).Coins n ≃ A.Coins n
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:525	Complexity.NUPPT.precomp_coinsEquiv_ofFn	theorem	theorem precomp_coinsEquiv_ofFn (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) (n : ℕ) (c : (A.precomp hpre).Coins n) : List.ofFn (A.precomp_coinsEquiv hpre n c) = List.ofFn c
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:692	TCSlib.Cryptography.glMachine_coinsEquiv	def	noncomputable def glMachine_coinsEquiv (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) : (glMachine A mP K k hk).Coins n ≃ (Fin ((glCoins mP K A).eval n) → Bool)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:699	TCSlib.Cryptography.glMachine_coinsEquiv_symm_ofFn	theorem	theorem glMachine_coinsEquiv_symm_ofFn (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (w : Fin ((glCoins mP K A).eval n) → Bool) : List.ofFn ((glMachine_coinsEquiv A mP K k hk n).symm w) = List.ofFn w
-CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:833->865	TCSlib.Cryptography.glMachine_runAt_guessRecover	theorem	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex)) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)	=>	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) ((glMachine_coinsEquiv A₁ iP K k hk n).symm (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex))) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)
+CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:833->872	TCSlib.Cryptography.glMachine_runAt_guessRecover	theorem	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex)) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)	=>	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) ((glMachine_coinsEquiv A₁ iP K k hk n).symm (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex))) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)
+CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:673->707	TCSlib.Cryptography.glNeed	abbrev	def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ	=>	abbrev glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:860	TCSlib.Cryptography.glPredictorOf_apply	theorem	theorem glPredictorOf_apply (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Bool) (p : β × (Fin m → Bool)) (c : A₁.Coins n) : glPredictorOf A₁ n m enc p c = decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true])
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:171->171	TCSlib.Cryptography.glPredictorOf_precomp_coll	theorem	theorem glPredictorOf_precomp_coll (A : NUPPT) (n m : ℕ) (i y : List Bool) (q : Fin m → Bool) (c : A.Coins n) : glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c = A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q))) c	=>	theorem glPredictorOf_precomp_coll (A : NUPPT) (n m : ℕ) (i y : List Bool) (q : Fin m → Bool) (c : (A.precomp collPre_poly).Coins n) : glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c = A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q))) (A.precomp_coinsEquiv collPre_poly n c)
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:169->169	TCSlib.Cryptography.glPredictorOf_precomp_concat	theorem	theorem glPredictorOf_precomp_concat (A : NUPPT) (n o m : ℕ) (y : Fin o → Bool) (q : Fin m → Bool) (c : A.Coins n) : glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c = A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) c	=>	theorem glPredictorOf_precomp_concat (A : NUPPT) (n o m : ℕ) (y : Fin o → Bool) (q : Fin m → Bool) (c : (A.precomp concatPre_poly).Coins n) : glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c = A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:173	Complexity.NUPPT.wrapCoinsEquiv	def	noncomputable def wrapCoinsEquiv (A : NUPPT) {pre post : List Bool → List Bool} (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool) (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) : (A.wrap hpre hpost β b hβ p).Coins n ≃ (Fin (p.eval n + A.coinLen n) → Bool)
@@ -1199,15 +1218,24 @@ ADDED	TCSlib/Cryptography/Foundations/Experiments.lean:87	TCSlib.Cryptography.in
 ADDED	TCSlib/Cryptography/Foundations/Experiments.lean:91	TCSlib.Cryptography.predProb_def	theorem	theorem predProb_def (f : α → β) (B : α → Bool) (A : β → ρ → Bool) : predProb f B A = uprob fun z : α × ρ => A (f z.1) z.2 = B z.1
 ADDED	TCSlib/Cryptography/Foundations/Probability.lean:72	TCSlib.Cryptography.uexp_def	theorem	theorem uexp_def (f : α → ℝ) : uexp f = (∑ a, f a) / Fintype.card α
 ADDED	TCSlib/Cryptography/Foundations/Probability.lean:64	TCSlib.Cryptography.uprob_def	theorem	theorem uprob_def (p : α → Prop) : uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α
-ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:88	TCSlib.Cryptography.HardcoreBit.guessInverter_eq	theorem	theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) : guessInverter A k = glInverter (guessRecover A k)
-ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:207	TCSlib.Cryptography.HardcoreBit.perfectInverter_eq	theorem	theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) : perfectInverter A = glInverter (perfectRecover A)
-ADDED	TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:74	TCSlib.Cryptography.HardcoreBit.majorityInverter_eq	theorem	theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) : majorityInverter A T = glInverter (majorityRecover A T)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:101	TCSlib.Cryptography.HardcoreBit.guessCoinsCongr	def	def guessCoinsCongr {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) : GuessCoins n k ρ' ≃ GuessCoins n k ρ
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:108	TCSlib.Cryptography.HardcoreBit.guessCoinsCongr_apply	theorem	theorem guessCoinsCongr_apply {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) (c : GuessCoins n k ρ') : guessCoinsCongr k e c = (c.1, c.2.1, fun i L => e (c.2.2 i L))
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:97	TCSlib.Cryptography.HardcoreBit.guessInverter_eq	theorem	theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) : guessInverter A k = glInverter (guessRecover A k)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:83	TCSlib.Cryptography.HardcoreBit.guessRecover_apply	theorem	theorem guessRecover_apply (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β) (c : GuessCoins n k ρ) (i : Fin n) : guessRecover A k y c i = majority fun L : NESubset k => subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:114	TCSlib.Cryptography.HardcoreBit.guessRecover_coinsCongr	theorem	theorem guessRecover_coinsCongr {ρ' : Type*} (A : β × (Fin n → Bool) → ρ → Bool) (A' : β × (Fin n → Bool) → ρ' → Bool) (e : ρ' ≃ ρ) (h : ∀ p c, A' p c = A p (e c)) (k : ℕ) (y : β) (c : GuessCoins n k ρ') : guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:119	TCSlib.Cryptography.HardcoreBit.glInverter_apply	theorem	theorem glInverter_apply (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) : glInverter R y c = (R y.1 c, y.2)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:105	TCSlib.Cryptography.HardcoreBit.glPad_apply	theorem	theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) : glPad f z = (f z.1, z.2)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:217	TCSlib.Cryptography.HardcoreBit.perfectInverter_eq	theorem	theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) : perfectInverter A = glInverter (perfectRecover A)
+ADDED	TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:285	TCSlib.Cryptography.HardcoreBit.subsetSum_eq	theorem	theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j
+ADDED	TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:75	TCSlib.Cryptography.HardcoreBit.majorityInverter_eq	theorem	theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) : majorityInverter A T = glInverter (majorityRecover A T)
 ADDED	TCSlib/Cryptography/NumberTheory/Primality.lean:667	TCSlib.Cryptography.NumberTheory.listToNat_eq	theorem	theorem listToNat_eq (w : List Bool) : listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0
 ADDED	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:94	TCSlib.Cryptography.owpPredictor_apply	theorem	theorem owpPredictor_apply (D : α × β × Bool → ρ → Bool) (flip : Bool) (y : α × β) (c : Bool × ρ) : owpPredictor D flip y c = xor (if D (y.1, y.2, c.1) c.2 then c.1 else !c.1) flip
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:642->642	TCSlib.Cryptography.HardCore.bitHiding	theorem	theorem HardCore.bitHiding {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Bool} (hh : HardCore P.toFunFamily h) : BitHiding P h	=>	theorem HardCore.bitHiding {P : PermFamily} {h : ∀ n, (Fin n → Bool) → Bool} (hh : P.HardCore h) : BitHiding P h
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:447->447	TCSlib.Cryptography.bitCom_false_eq_owpGenPRG	theorem	theorem bitCom_false_eq_owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ) (r : Fin n → Bool) (i : Fin (n + 1)) : bitCom (P.f n) (h n) false r i = (owpGenPRG P h).G n r i	=>	theorem bitCom_false_eq_owpGenPRG (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (n : ℕ) (r : Fin n → Bool) (i : Fin (n + 1)) : bitCom (P.f n) (h n) false r i = owpGenPRG_outEquiv P h n ((owpGenPRG P h).G n r) i
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:898->899	TCSlib.Cryptography.exists_commitment_of_owp_hardCore	theorem	theorem exists_commitment_of_owp_hardCore (hex : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool), OneWayPermutation P ∧ HardCore P.toFunFamily h) : ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ	=>	theorem exists_commitment_of_owp_hardCore (hex : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool), OneWayPermutation P ∧ P.HardCore h) : ∃ (Com : List Bool → List Bool) (ℓ : PolyExpr), Commitment Com ℓ
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:889->890	TCSlib.Cryptography.owp_commitment	theorem	theorem owp_commitment (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (hP : OneWayPermutation P) (hh : HardCore P.toFunFamily h) : Commitment (owpComStr P h) owpComLen	=>	theorem owp_commitment (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool) (hP : OneWayPermutation P) (hh : P.HardCore h) : Commitment (owpComStr P h) owpComLen
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:532	TCSlib.Cryptography.giProtocol_eq	theorem	theorem giProtocol_eq : giProtocol = { P := giProver, V := giVerifier, rounds := .const 3, verifierFirst := false }
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:501	TCSlib.Cryptography.giProver_coins	theorem	theorem giProver_coins : giProver.coins = .normal 1 2
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:593	TCSlib.Cryptography.GI.giProtocolRep_V_coinLen	theorem	theorem giProtocolRep_V_coinLen (N : ℕ) : giProtocolRep.V.coinLen N = N
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:587	TCSlib.Cryptography.GI.giProtocol_V_coinLen	theorem	theorem giProtocol_V_coinLen (N : ℕ) : giProtocol.V.coinLen N = 1
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:579	TCSlib.Cryptography.GI.gniProtocolRep_V_coinLen	theorem	theorem gniProtocolRep_V_coinLen (N : ℕ) : gniProtocolRep.V.coinLen N = N * (1 + 1 * (N + 1) ^ 2)
@@ -1218,13 +1246,14 @@ CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:101->1
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:268->268	TCSlib.Cryptography.GI.gniTapes	def	def gniTapes (N : ℕ) : (Fin N → Bool) × (Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) ≃ gniProtocolRep.V.Coins N	=>	noncomputable def gniTapes (N : ℕ) : (Fin N → Bool) × (Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) ≃ gniProtocolRep.V.Coins N
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:274->276	TCSlib.Cryptography.GI.gniTapes_apply	theorem	theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) : gniTapes N (b, ts) = blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j))	=>	theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) : List.ofFn (gniTapes N (b, ts)) = List.ofFn (blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j)))
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:382->382	TCSlib.Cryptography.GI.giRepCoins	def	def giRepCoins (P' : Strategy) (x : List Bool) : (Fin x.length → Bool) × P'.Coins x.length ≃ giProtocolRep.ExecCoins P' x	=>	noncomputable def giRepCoins (P' : Strategy) (x : List Bool) : (Fin x.length → Bool) × P'.Coins x.length ≃ giProtocolRep.ExecCoins P' x
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:364->364	TCSlib.Cryptography.GIZK.sim_ofFn_eq	theorem	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn r t).1.1), (readBlocks _ _ M n hn r t).1.2), (readBlocks _ _ M n hn r t).2))).getD []	=>	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.1), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.2), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).2))).getD []
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:441->443	TCSlib.Cryptography.GIZK.statClose_real_ideal	theorem	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)	=>	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:505->507	TCSlib.Cryptography.GIZK.statClose_real_sim	theorem	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)	=>	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:414->415	TCSlib.Cryptography.GIZK.viewV_encode	theorem	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), r.2))	=>	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), giProtocol.withV_vCoinsEquiv V' _ r.2))
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:364->370	TCSlib.Cryptography.GIZK.sim_ofFn_eq	theorem	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn r t).1.1), (readBlocks _ _ M n hn r t).1.2), (readBlocks _ _ M n hn r t).2))).getD []	=>	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.1), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.2), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).2))).getD []
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:441->458	TCSlib.Cryptography.GIZK.statClose_real_ideal	theorem	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)	=>	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:505->525	TCSlib.Cryptography.GIZK.statClose_real_sim	theorem	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)	=>	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:414->426	TCSlib.Cryptography.GIZK.viewV_encode	theorem	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), r.2))	=>	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), giProtocol.withV_vCoinsEquiv V' _ r.2))
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:72	TCSlib.Cryptography.GIZK.blockLen_eq	theorem	theorem blockLen_eq (V' : Strategy) (N : ℕ) : blockLen V' N = 1 + (N + 1) ^ 2 + V'.coinLen N
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:77	TCSlib.Cryptography.GIZK.blockTapeEquiv	def	def blockTapeEquiv (V' : Strategy) (N M : ℕ) : (Fin (M * blockLen V' N) → Bool) ≃ (Fin (M * (1 + (N + 1) ^ 2 + V'.coinLen N)) → Bool)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:82	TCSlib.Cryptography.GIZK.blockTapeEquiv_ofFn	theorem	theorem blockTapeEquiv_ofFn (V' : Strategy) (N M : ℕ) (r : Fin (M * blockLen V' N) → Bool) : List.ofFn (blockTapeEquiv V' N M r) = List.ofFn r
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:119	TCSlib.Cryptography.GIZK.sim_eq	theorem	theorem sim_eq (V' : Strategy) (x z r : List Bool) : sim V' x z r = ((List.range (instanceVertexCount x)).findSome? fun t => attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD []
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:422	TCSlib.Cryptography.Protocol.outV_eq	theorem	theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:403	TCSlib.Cryptography.Protocol.transcriptWith_eq	theorem	theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : π.transcriptWith P' x y z r = exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:373	TCSlib.Cryptography.Protocol.withV_vCoinsEquiv	def	def withV_vCoinsEquiv (π : Protocol) (V' : Strategy) (n : ℕ) : (π.withV V').V.Coins n ≃ V'.Coins n
@@ -1234,6 +1263,8 @@ CHANGED	TCSlib/Cryptography/ZeroKnowledge/NP.lean:613->615	TCSlib.Cryptography.z
 ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:95	TCSlib.Cryptography.ProperColoring.ne	theorem	theorem ProperColoring.ne {n : ℕ} {G : Graph n} {c : Fin n → Fin 3} (h : ProperColoring G c) {u v : Fin n} (huv : G u v = true) : c u ≠ c v
 ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:347	TCSlib.Cryptography.edgeIdxOfMsg_eq	theorem	theorem edgeIdxOfMsg_eq (m : ℕ) (w : List Bool) : edgeIdxOfMsg m w = w.length % m
 ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:106	TCSlib.Cryptography.msgAt_eq	theorem	theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w)
+ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:441	TCSlib.Cryptography.ColSimLemmas.hybGen_eq	theorem	theorem hybGen_eq (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α) (D : Option α → ρ' → Bool) (z : (Fin N → W) × ρ') : hybGen H Wa k A D z = D ((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (z.1 t) else if t = k then A (z.1 t) else Wa (z.1 t)) z.2
+ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:427	TCSlib.Cryptography.ColSimLemmas.hybStd_eq	theorem	theorem hybStd_eq (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) : hybStd H Wa N k w = (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t)
 
 ## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/decls-vs-base.tsv =====
 
@@ -1265,14 +1296,16 @@ ADDED	TCSlib/Complexity/Randomized/PPT.lean:251	Complexity.NUPPT.runAt_coinsCong
 ADDED	TCSlib/Complexity/Randomized/PPT.lean:286	Complexity.NUPPT.uniform_iff	theorem	theorem uniform_iff : A.Uniform ↔ ∀ n, A.advice n = []
 ADDED	TCSlib/Cryptography/Asymptotic/Adversary.lean:137	Complexity.NUPPT.distinguisherL_eq	theorem	theorem _root_.Complexity.NUPPT.distinguisherL_eq (A : NUPPT) (n : ℕ) (w : List Bool) (r : A.Coins n) : A.distinguisherL n w r = decide (A.runAt n w r = [true])
 ADDED	TCSlib/Cryptography/Asymptotic/Adversary.lean:82	TCSlib.Cryptography.decodeFin_eq	theorem	theorem decodeFin_eq (ℓ : ℕ) (w : List Bool) : decodeFin ℓ w = if h : w.length = ℓ then some (fun i => w.get (Fin.cast h.symm i)) else none
+ADDED	TCSlib/Cryptography/Asymptotic/Adversary.lean:181	TCSlib.Cryptography.invProbOpt_def	theorem	theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β) (A : β → ρ → Option α) : invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
 ADDED	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:358	TCSlib.Cryptography.coinBlock_eq	theorem	theorem coinBlock_eq (B i : ℕ) (r : List Bool) : coinBlock B i r = (r.drop (i * B)).take B
 ADDED	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:276	TCSlib.Cryptography.decListFun_eq	theorem	theorem decListFun_eq (Dc : List Bool → List Bool) (x : List Bool) : decListFun Dc x = (List.range (x.length + 1)).flatMap fun i => decListEmit Dc (decListStep^[i] x)
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:697	TCSlib.Cryptography.Collection.evalSampled_iff	theorem	theorem evalSampled_iff : G.EvalSampled ↔ ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x, G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧ G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:259	TCSlib.Cryptography.Collection.hardCore_iff	theorem	theorem hardCore_iff (F : Collection) (h : ∀ i, F.D i → Bool) : F.HardCore h ↔ (∃ H : List Bool → List Bool, PolyTimeComputable H ∧ ∀ i x, H (pairEncode i (F.encD i x)) = [h i x]) ∧ ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n, uexp (fun r : F.gen.Coins n => uprob fun z : F.D (F.index n r) × A.Coins n => A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 = h (F.index n r) z.1) ≤ 1 / 2 + ε n
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:185	TCSlib.Cryptography.Collection.index_eq	theorem	theorem index_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) : F.index n r = pairFstD (F.gen.runAt n [] r)
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:225	TCSlib.Cryptography.Collection.invProbAt_eq	theorem	theorem invProbAt_eq (F : Collection) (A : NUPPT) (n : ℕ) : F.invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : F.D (F.index n r) × A.Coins n => ∃ x', F.decD (F.index n r) (A.runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) = some x' ∧ F.f (F.index n r) x' = F.f (F.index n r) z.1
-ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:705	TCSlib.Cryptography.Collection.owfCoinsEquiv	def	def owfCoinsEquiv (n : ℕ) : (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃ (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
-ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:711	TCSlib.Cryptography.Collection.owfCoinsEquiv_ofFn	theorem	theorem owfCoinsEquiv_ofFn (n : ℕ) (r : Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) : List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r
-ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:716	TCSlib.Cryptography.Collection.owfCoinsEquiv_symm_ofFn	theorem	theorem owfCoinsEquiv_symm_ofFn (n : ℕ) (z : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) : List.ofFn ((G.owfCoinsEquiv n).symm z) = List.ofFn z
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:710	TCSlib.Cryptography.Collection.owfCoinsEquiv	def	def owfCoinsEquiv (n : ℕ) : (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) ≃ (Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:716	TCSlib.Cryptography.Collection.owfCoinsEquiv_ofFn	theorem	theorem owfCoinsEquiv_ofFn (n : ℕ) (r : Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) : List.ofFn (G.owfCoinsEquiv n r) = List.ofFn r
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:721	TCSlib.Cryptography.Collection.owfCoinsEquiv_symm_ofFn	theorem	theorem owfCoinsEquiv_symm_ofFn (n : ℕ) (z : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool) : List.ofFn ((G.owfCoinsEquiv n).symm z) = List.ofFn z
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:206	TCSlib.Cryptography.Collection.sampleClose_iff	theorem	theorem sampleClose_iff (F : Collection) (δ : ℕ → ℝ) : F.SampleClose δ ↔ ∀ n (r : F.gen.Coins n), StatClose (fun s : F.sample.Coins n => F.decD (F.index n r) (F.sample.runAt n (F.index n r) s)) (fun x : F.D (F.index n r) => some x) (δ n)
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:192	TCSlib.Cryptography.Collection.trap_eq	theorem	theorem trap_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) : F.trap n r = pairSndD (F.gen.runAt n [] r)
 ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:517	TCSlib.Cryptography.FunFamily.toCollection_decD	theorem	theorem toCollection_decD (i w : List Bool) : (𝓕.toCollection F hF hspec).decD i w = (decodeFin (𝓕.inLen.eval i.length) w).map (𝓕.toCollection_domEquiv F hF hspec i).symm
@@ -1345,19 +1378,23 @@ ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:209	TCSlib.Cryptogr
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:216	TCSlib.Cryptography.Collection.glPad_encD	theorem	theorem glPad_encD (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (i : List Bool) (z : (F.glPad m henc).D i) : (F.glPad m henc).encD i z = pairEncode (F.encD i (glPad_domEquiv m henc i z).1) (List.ofFn (glPad_domEquiv m henc i z).2)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:254	TCSlib.Cryptography.Collection.glPad_eval	theorem	theorem glPad_eval (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (w : List Bool) : (F.glPad m henc).eval w = pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w)))) (pairSndD (pairSndD w))
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:237	TCSlib.Cryptography.Collection.glPad_f_domEquiv	theorem	theorem glPad_f_domEquiv (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (i : List Bool) (z : (F.glPad m henc).D i) : (F.glPad m henc).f i z = pairEncode (F.f i (glPad_domEquiv m henc i z).1) (List.ofFn (glPad_domEquiv m henc i z).2)
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:263	TCSlib.Cryptography.Collection.glPad_index	theorem	theorem glPad_index (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (n : ℕ) (r : F.gen.Coins n) : (F.glPad m henc).index n r = F.index n r
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:272	TCSlib.Cryptography.Collection.glPad_invProbAt	theorem	theorem glPad_invProbAt (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (A : NUPPT) (n : ℕ) : (F.glPad m henc).invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : (F.D (F.index n r) × (Fin (F.encD (F.index n r) default).length → Bool)) × A.Coins n => ∃ x', glPadDecode F (F.index n r) (F.encD (F.index n r) default).length (A.runAt n (pairEncode (F.index n r) (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧ pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) = pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:247	TCSlib.Cryptography.Collection.glPad_sample	theorem	theorem glPad_sample (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) : (F.glPad m henc).sample = NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:367	TCSlib.Cryptography.PermCollection.glPad_domEquiv	def	def PermCollection.glPad_domEquiv (P : PermCollection) (m : PolyExpr) (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) (i : List Bool) : (P.glPad m henc).D i ≃ P.D i × (Fin (P.encD i default).length → Bool)
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:374	TCSlib.Cryptography.PermCollection.glPad_domEquiv_apply	theorem	theorem PermCollection.glPad_domEquiv_apply (P : PermCollection) (m : PolyExpr) (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) (i : List Bool) (z : (P.glPad m henc).D i) : P.glPad_domEquiv m henc i z = z
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:380	TCSlib.Cryptography.PermCollection.glPad_perm	theorem	theorem PermCollection.glPad_perm (P : PermCollection) (m : PolyExpr) (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) (i : List Bool) : (P.glPad m henc).perm i = ((P.glPad_domEquiv m henc i).trans ((P.perm i).prodCongr (Equiv.refl _))).trans (P.glPad_domEquiv m henc i).symm
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:471	TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore_domEquiv	theorem	theorem TrapdoorCollection.OneWay.glPad_hardCore_domEquiv {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore fun i z => T.glBit i (T.glPad_domEquiv m henc i z)
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:434	TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv	def	def TrapdoorCollection.glPad_domEquiv (T : TrapdoorCollection) (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (i : List Bool) : (T.glPad m henc).D i ≃ T.D i × (Fin (T.encD i default).length → Bool)
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:441	TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv_apply	theorem	theorem TrapdoorCollection.glPad_domEquiv_apply (T : TrapdoorCollection) (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (i : List Bool) (z : (T.glPad m henc).D i) : T.glPad_domEquiv m henc i z = z
-ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:447	TCSlib.Cryptography.TrapdoorCollection.glPad_inv	theorem	theorem TrapdoorCollection.glPad_inv (T : TrapdoorCollection) (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) : (T.glPad m henc).inv = NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:394	TCSlib.Cryptography.PermCollection.glPad_domEquiv	def	def PermCollection.glPad_domEquiv (P : PermCollection) (m : PolyExpr) (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) (i : List Bool) : (P.glPad m henc).D i ≃ P.D i × (Fin (P.encD i default).length → Bool)
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:401	TCSlib.Cryptography.PermCollection.glPad_domEquiv_apply	theorem	theorem PermCollection.glPad_domEquiv_apply (P : PermCollection) (m : PolyExpr) (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) (i : List Bool) (z : (P.glPad m henc).D i) : P.glPad_domEquiv m henc i z = z
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:407	TCSlib.Cryptography.PermCollection.glPad_perm	theorem	theorem PermCollection.glPad_perm (P : PermCollection) (m : PolyExpr) (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) (i : List Bool) : (P.glPad m henc).perm i = ((P.glPad_domEquiv m henc i).trans ((P.perm i).prodCongr (Equiv.refl _))).trans (P.glPad_domEquiv m henc i).symm
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:498	TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_hardCore_domEquiv	theorem	theorem TrapdoorCollection.OneWay.glPad_hardCore_domEquiv {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (h : T.OneWay) : (T.glPad m henc).toCollection.HardCore fun i z => T.glBit i (T.glPad_domEquiv m henc i z)
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:461	TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv	def	def TrapdoorCollection.glPad_domEquiv (T : TrapdoorCollection) (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (i : List Bool) : (T.glPad m henc).D i ≃ T.D i × (Fin (T.encD i default).length → Bool)
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:468	TCSlib.Cryptography.TrapdoorCollection.glPad_domEquiv_apply	theorem	theorem TrapdoorCollection.glPad_domEquiv_apply (T : TrapdoorCollection) (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (i : List Bool) (z : (T.glPad m henc).D i) : T.glPad_domEquiv m henc i z = z
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:474	TCSlib.Cryptography.TrapdoorCollection.glPad_inv	theorem	theorem TrapdoorCollection.glPad_inv (T : TrapdoorCollection) (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) : (T.glPad m henc).inv = NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:519	Complexity.NUPPT.precomp_coinsEquiv	def	noncomputable def precomp_coinsEquiv (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) (n : ℕ) : (A.precomp hpre).Coins n ≃ A.Coins n
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:525	Complexity.NUPPT.precomp_coinsEquiv_ofFn	theorem	theorem precomp_coinsEquiv_ofFn (A : NUPPT) {pre : List Bool → List Bool} (hpre : PolyTimeComputable pre) (n : ℕ) (c : (A.precomp hpre).Coins n) : List.ofFn (A.precomp_coinsEquiv hpre n c) = List.ofFn c
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:692	TCSlib.Cryptography.glMachine_coinsEquiv	def	noncomputable def glMachine_coinsEquiv (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) : (glMachine A mP K k hk).Coins n ≃ (Fin ((glCoins mP K A).eval n) → Bool)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:699	TCSlib.Cryptography.glMachine_coinsEquiv_symm_ofFn	theorem	theorem glMachine_coinsEquiv_symm_ofFn (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (w : Fin ((glCoins mP K A).eval n) → Bool) : List.ofFn ((glMachine_coinsEquiv A mP K k hk n).symm w) = List.ofFn w
-CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:833->865	TCSlib.Cryptography.glMachine_runAt_guessRecover	theorem	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex)) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)	=>	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) ((glMachine_coinsEquiv A₁ iP K k hk n).symm (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex))) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)
+CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:833->872	TCSlib.Cryptography.glMachine_runAt_guessRecover	theorem	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex)) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)	=>	theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (hM : 0 < 2 ^ k n - 1 ∨ iP.eval n = 0) {β : Type*} (enc : β → List Bool) (y : β) (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n)) (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) : (glMachine A₁ iP K k hk).runAt n (enc y) ((glMachine_coinsEquiv A₁ iP K k hk n).symm (glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (g, ex))) = List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (iP.eval n) enc) (k n) y g)
+CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:673->707	TCSlib.Cryptography.glNeed	abbrev	def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ	=>	abbrev glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:860	TCSlib.Cryptography.glPredictorOf_apply	theorem	theorem glPredictorOf_apply (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Bool) (p : β × (Fin m → Bool)) (c : A₁.Coins n) : glPredictorOf A₁ n m enc p c = decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true])
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:171->171	TCSlib.Cryptography.glPredictorOf_precomp_coll	theorem	theorem glPredictorOf_precomp_coll (A : NUPPT) (n m : ℕ) (i y : List Bool) (q : Fin m → Bool) (c : A.Coins n) : glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c = A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q))) c	=>	theorem glPredictorOf_precomp_coll (A : NUPPT) (n m : ℕ) (i y : List Bool) (q : Fin m → Bool) (c : (A.precomp collPre_poly).Coins n) : glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c = A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q))) (A.precomp_coinsEquiv collPre_poly n c)
 CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:169->169	TCSlib.Cryptography.glPredictorOf_precomp_concat	theorem	theorem glPredictorOf_precomp_concat (A : NUPPT) (n o m : ℕ) (y : Fin o → Bool) (q : Fin m → Bool) (c : A.Coins n) : glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c = A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) c	=>	theorem glPredictorOf_precomp_concat (A : NUPPT) (n o m : ℕ) (y : Fin o → Bool) (q : Fin m → Bool) (c : (A.precomp concatPre_poly).Coins n) : glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c = A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c)
 ADDED	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:173	Complexity.NUPPT.wrapCoinsEquiv	def	noncomputable def wrapCoinsEquiv (A : NUPPT) {pre post : List Bool → List Bool} (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool) (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) (n : ℕ) : (A.wrap hpre hpost β b hβ p).Coins n ≃ (Fin (p.eval n + A.coinLen n) → Bool)
@@ -1409,8 +1446,8 @@ ADDED	TCSlib/Cryptography/Asymptotic/OneWayYao.lean:553	TCSlib.Cryptography.OneW
 ADDED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:392	TCSlib.Cryptography.BitPublicKeyScheme.bitwiseEncCoins	def	noncomputable def bitwiseEncCoins (S : BitPublicKeyScheme) (n : ℕ) : (Fin n → S.enc.Coins n) ≃ S.bitwise.enc.Coins n
 ADDED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:399	TCSlib.Cryptography.BitPublicKeyScheme.bitwiseEncCoins_ofFn	theorem	theorem bitwiseEncCoins_ofFn (S : BitPublicKeyScheme) (n : ℕ) (v : Fin n → S.enc.Coins n) : List.ofFn (S.bitwiseEncCoins n v) = List.ofFn (coinBlocks n (S.enc.coinLen n) v)
 ADDED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:385	TCSlib.Cryptography.BitPublicKeyScheme.bitwise_enc_coinLen	theorem	theorem bitwise_enc_coinLen (S : BitPublicKeyScheme) (n : ℕ) : n * S.enc.coinLen n = (PolyExpr.mul .var S.enc.coins).eval n
-CHANGED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:973->1055	TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure	theorem	theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) : ∃ E : (T.glPad m henc).toCollection.PredEvaluator T.glBit, ((T.glPad m henc).tdpBitScheme E).SingleBitSecure	=>	theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) : ∃ E : (T.glPad m henc).toCollection.PredEvaluator fun i z => T.glBit i (T.glPad_domEquiv m henc i z), ((T.glPad m henc).tdpBitScheme E).SingleBitSecure
-CHANGED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:959->1037	TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure	theorem	theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) : ((T.glPad m henc).tdpBitScheme E).SingleBitSecure	=>	theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) : ((T.glPad m henc).tdpBitScheme E).SingleBitSecure
+CHANGED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:973->1059	TCSlib.Cryptography.TrapdoorCollection.OneWay.exists_glPad_singleBitSecure	theorem	theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) : ∃ E : (T.glPad m henc).toCollection.PredEvaluator T.glBit, ((T.glPad m henc).tdpBitScheme E).SingleBitSecure	=>	theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) : ∃ E : (T.glPad m henc).toCollection.PredEvaluator fun i z => T.glBit i (T.glPad_domEquiv m henc i z), ((T.glPad m henc).tdpBitScheme E).SingleBitSecure
+CHANGED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:959->1041	TCSlib.Cryptography.TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure	theorem	theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator T.glBit) : ((T.glPad m henc).tdpBitScheme E).SingleBitSecure	=>	theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure {T : TrapdoorCollection} (m : PolyExpr) (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) (hT : T.OneWay) (E : (T.glPad m henc).toCollection.PredEvaluator fun i z => T.glBit i (T.glPad_domEquiv m henc i z)) : ((T.glPad m henc).tdpBitScheme E).SingleBitSecure
 ADDED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:679	TCSlib.Cryptography.TrapdoorCollection.coins_tdpEnc	theorem	theorem coins_tdpEnc {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h) : (T.tdpEnc E).coins = T.sample.coins
 ADDED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:663	TCSlib.Cryptography.TrapdoorCollection.coins_tdpGen	theorem	theorem coins_tdpGen : T.tdpGen.coins = T.gen.coins
 ADDED	TCSlib/Cryptography/Asymptotic/PublicKey.lean:686	TCSlib.Cryptography.TrapdoorCollection.tdpEnc_coinsEquiv	def	noncomputable def tdpEnc_coinsEquiv {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h) (n : ℕ) : (T.tdpEnc E).Coins n ≃ T.sample.Coins n
@@ -1432,11 +1469,11 @@ ADDED	TCSlib/Cryptography/Candidates/Arithmetic.lean:346	TCSlib.Cryptography.Can
 ADDED	TCSlib/Cryptography/Candidates/Arithmetic.lean:92	TCSlib.Cryptography.Candidates.natToList_eq	theorem	theorem natToList_eq (k N : ℕ) : natToList k N = List.ofFn (natToBits k N)
 ADDED	TCSlib/Cryptography/Candidates/Arithmetic.lean:297	TCSlib.Cryptography.Candidates.sizeStr_eq	theorem	theorem sizeStr_eq (w : List Bool) : sizeStr w = List.replicate (Nat.size (listToNat w)) true
 ADDED	TCSlib/Cryptography/Candidates/Arithmetic.lean:353	TCSlib.Cryptography.Candidates.xgcdStr_pairEncode	theorem	theorem xgcdStr_pairEncode (a b : List Bool) : xgcdStr (pairEncode a b) = pairEncode (natToList b.length (Nat.gcd (listToNat a) (listToNat b))) (natToList b.length ((listToNat a : ZMod (listToNat b))⁻¹).val)
-ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:459	TCSlib.Cryptography.Candidates.DistinctPrimes.default_p	theorem	theorem default_p (hn : 2 ≤ n) : (DistinctPrimes.default hn).p = 2
-ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:462	TCSlib.Cryptography.Candidates.DistinctPrimes.default_q	theorem	theorem default_q (hn : 2 ≤ n) : (DistinctPrimes.default hn).q = 3
-ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:371	TCSlib.Cryptography.Candidates.DistinctPrimes.p_eq	theorem	theorem p_eq (z : DistinctPrimes n) : z.p = ((z.1.1 : Fin (2 ^ n)) : ℕ)
-ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:378	TCSlib.Cryptography.Candidates.DistinctPrimes.q_eq	theorem	theorem q_eq (z : DistinctPrimes n) : z.q = ((z.1.2 : Fin (2 ^ n)) : ℕ)
-ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:484	TCSlib.Cryptography.Candidates.encodeDistinctPrimes_eq	theorem	theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) : encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q)
+ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:461	TCSlib.Cryptography.Candidates.DistinctPrimes.default_p	theorem	theorem default_p (hn : 2 ≤ n) : (DistinctPrimes.default hn).p = 2
+ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:464	TCSlib.Cryptography.Candidates.DistinctPrimes.default_q	theorem	theorem default_q (hn : 2 ≤ n) : (DistinctPrimes.default hn).q = 3
+ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:373	TCSlib.Cryptography.Candidates.DistinctPrimes.p_eq	theorem	theorem p_eq (z : DistinctPrimes n) : z.p = ((z.1.1 : Fin (2 ^ n)) : ℕ)
+ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:380	TCSlib.Cryptography.Candidates.DistinctPrimes.q_eq	theorem	theorem q_eq (z : DistinctPrimes n) : z.q = ((z.1.2 : Fin (2 ^ n)) : ℕ)
+ADDED	TCSlib/Cryptography/Candidates/Concrete.lean:486	TCSlib.Cryptography.Candidates.encodeDistinctPrimes_eq	theorem	theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) : encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q)
 ADDED	TCSlib/Cryptography/Candidates/DiscreteLog.lean:413	TCSlib.Cryptography.Candidates.ExpGroupGen.dlHard_iff	theorem	theorem dlHard_iff : G.DLHard ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A n
 ADDED	TCSlib/Cryptography/Candidates/DiscreteLog.lean:397	TCSlib.Cryptography.Candidates.ExpGroupGen.dlProb_eq	theorem	theorem dlProb_eq (A : NUPPT) (n : ℕ) : G.dlProb A n = uexp fun r : G.gen.Coins n => uprob fun z : ZMod (expOrd (G.gen.runAt n [] r)) × A.Coins n => ∃ x : Fin n → Bool, decodeFin n (A.runAt n (pairEncode (G.gen.runAt n [] r) (expF _ z.1)) z.2) = some x ∧ bitsToNat x = z.1.val
 ADDED	TCSlib/Cryptography/Candidates/DiscreteLog.lean:375	TCSlib.Cryptography.Candidates.ExpGroupGen.fullLengthExcept_iff	theorem	theorem fullLengthExcept_iff (δ : ℕ → ℝ) : G.FullLengthExcept δ ↔ ∀ n, G.n₀ ≤ n → uprob (fun r : G.gen.Coins n => dlP (G.gen.runAt n [] r) < 2 ^ (n - 1)) ≤ δ n
@@ -1581,9 +1618,16 @@ ADDED	TCSlib/Cryptography/Foundations/Negligible.lean:62	TCSlib.Cryptography.neg
 ADDED	TCSlib/Cryptography/Foundations/Probability.lean:72	TCSlib.Cryptography.uexp_def	theorem	theorem uexp_def (f : α → ℝ) : uexp f = (∑ a, f a) / Fintype.card α
 ADDED	TCSlib/Cryptography/Foundations/Probability.lean:64	TCSlib.Cryptography.uprob_def	theorem	theorem uprob_def (p : α → Prop) : uprob p = (Nat.card {a // p a} : ℝ) / Fintype.card α
 ADDED	TCSlib/Cryptography/HardcoreBit/Basic.lean:177	TCSlib.Cryptography.HardcoreBit.pushesUniform_iff	theorem	theorem pushesUniform_iff (π : Ω → γ) : PushesUniform π ↔ ∀ F : γ → ℝ, uexp (fun ω => F (π ω)) = uexp F
-ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:88	TCSlib.Cryptography.HardcoreBit.guessInverter_eq	theorem	theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) : guessInverter A k = glInverter (guessRecover A k)
-ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:207	TCSlib.Cryptography.HardcoreBit.perfectInverter_eq	theorem	theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) : perfectInverter A = glInverter (perfectRecover A)
-ADDED	TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:74	TCSlib.Cryptography.HardcoreBit.majorityInverter_eq	theorem	theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) : majorityInverter A T = glInverter (majorityRecover A T)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:101	TCSlib.Cryptography.HardcoreBit.guessCoinsCongr	def	def guessCoinsCongr {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) : GuessCoins n k ρ' ≃ GuessCoins n k ρ
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:108	TCSlib.Cryptography.HardcoreBit.guessCoinsCongr_apply	theorem	theorem guessCoinsCongr_apply {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) (c : GuessCoins n k ρ') : guessCoinsCongr k e c = (c.1, c.2.1, fun i L => e (c.2.2 i L))
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:97	TCSlib.Cryptography.HardcoreBit.guessInverter_eq	theorem	theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) : guessInverter A k = glInverter (guessRecover A k)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:83	TCSlib.Cryptography.HardcoreBit.guessRecover_apply	theorem	theorem guessRecover_apply (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β) (c : GuessCoins n k ρ) (i : Fin n) : guessRecover A k y c i = majority fun L : NESubset k => subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:114	TCSlib.Cryptography.HardcoreBit.guessRecover_coinsCongr	theorem	theorem guessRecover_coinsCongr {ρ' : Type*} (A : β × (Fin n → Bool) → ρ → Bool) (A' : β × (Fin n → Bool) → ρ' → Bool) (e : ρ' ≃ ρ) (h : ∀ p c, A' p c = A p (e c)) (k : ℕ) (y : β) (c : GuessCoins n k ρ') : guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:119	TCSlib.Cryptography.HardcoreBit.glInverter_apply	theorem	theorem glInverter_apply (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) : glInverter R y c = (R y.1 c, y.2)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:105	TCSlib.Cryptography.HardcoreBit.glPad_apply	theorem	theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) : glPad f z = (f z.1, z.2)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:217	TCSlib.Cryptography.HardcoreBit.perfectInverter_eq	theorem	theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) : perfectInverter A = glInverter (perfectRecover A)
+ADDED	TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:285	TCSlib.Cryptography.HardcoreBit.subsetSum_eq	theorem	theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j
+ADDED	TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean:75	TCSlib.Cryptography.HardcoreBit.majorityInverter_eq	theorem	theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) : majorityInverter A T = glInverter (majorityRecover A T)
 ADDED	TCSlib/Cryptography/NumberTheory/Primality.lean:693	TCSlib.Cryptography.NumberTheory.chunk_apply	theorem	theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin n) : chunk T n r t i = r (finProdFinEquiv (t, i))
 ADDED	TCSlib/Cryptography/NumberTheory/Primality.lean:667	TCSlib.Cryptography.NumberTheory.listToNat_eq	theorem	theorem listToNat_eq (w : List Bool) : listToNat w = w.foldl (fun a c => 2 * a + if c then 1 else 0) 0
 ADDED	TCSlib/Cryptography/OneWayFunctions/Amplification.lean:79	TCSlib.Cryptography.OneWay.prodFun_apply	theorem	theorem prodFun_apply (f : α → β) (q : ℕ) (xs : Fin q → α) (i : Fin q) : prodFun f q xs i = f (xs i)
@@ -1599,6 +1643,8 @@ ADDED	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:237	TCSlib.Cryptography.en
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:244	TCSlib.Cryptography.getD_encColoring	theorem	theorem getD_encColoring {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) (b : Fin 2) : (encColoring c).getD (finProdFinEquiv (i, b)) false = if b = 0 then decide ((c i).val / 2 = 1) else decide ((c i).val % 2 = 1)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:257	TCSlib.Cryptography.getD_encColoring_two_mul	theorem	theorem getD_encColoring_two_mul {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) : (encColoring c).getD (2 * i) false = decide ((c i).val / 2 = 1)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:264	TCSlib.Cryptography.getD_encColoring_two_mul_add_one	theorem	theorem getD_encColoring_two_mul_add_one {n : ℕ} (c : Fin n → Fin 3) (i : Fin n) : (encColoring c).getD (2 * i + 1) false = decide ((c i).val % 2 = 1)
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:532	TCSlib.Cryptography.giProtocol_eq	theorem	theorem giProtocol_eq : giProtocol = { P := giProver, V := giVerifier, rounds := .const 3, verifierFirst := false }
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:501	TCSlib.Cryptography.giProver_coins	theorem	theorem giProver_coins : giProver.coins = .normal 1 2
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:593	TCSlib.Cryptography.GI.giProtocolRep_V_coinLen	theorem	theorem giProtocolRep_V_coinLen (N : ℕ) : giProtocolRep.V.coinLen N = N
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:587	TCSlib.Cryptography.GI.giProtocol_V_coinLen	theorem	theorem giProtocol_V_coinLen (N : ℕ) : giProtocol.V.coinLen N = 1
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:579	TCSlib.Cryptography.GI.gniProtocolRep_V_coinLen	theorem	theorem gniProtocolRep_V_coinLen (N : ℕ) : gniProtocolRep.V.coinLen N = N * (1 + 1 * (N + 1) ^ 2)
@@ -1609,13 +1655,14 @@ CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:101->1
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:268->268	TCSlib.Cryptography.GI.gniTapes	def	def gniTapes (N : ℕ) : (Fin N → Bool) × (Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) ≃ gniProtocolRep.V.Coins N	=>	noncomputable def gniTapes (N : ℕ) : (Fin N → Bool) × (Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) ≃ gniProtocolRep.V.Coins N
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:274->276	TCSlib.Cryptography.GI.gniTapes_apply	theorem	theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) : gniTapes N (b, ts) = blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j))	=>	theorem gniTapes_apply (N : ℕ) (b : Fin N → Bool) (ts : Fin N → (Fin (1 * (N + 1) ^ 2) → Bool)) : List.ofFn (gniTapes N (b, ts)) = List.ofFn (blocksEquiv N (1 + 1 * (N + 1) ^ 2) (fun j => tapeSplit _ (b j, ts j)))
 CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:382->382	TCSlib.Cryptography.GI.giRepCoins	def	def giRepCoins (P' : Strategy) (x : List Bool) : (Fin x.length → Bool) × P'.Coins x.length ≃ giProtocolRep.ExecCoins P' x	=>	noncomputable def giRepCoins (P' : Strategy) (x : List Bool) : (Fin x.length → Bool) × P'.Coins x.length ≃ giProtocolRep.ExecCoins P' x
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:364->364	TCSlib.Cryptography.GIZK.sim_ofFn_eq	theorem	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn r t).1.1), (readBlocks _ _ M n hn r t).1.2), (readBlocks _ _ M n hn r t).2))).getD []	=>	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.1), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.2), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).2))).getD []
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:441->443	TCSlib.Cryptography.GIZK.statClose_real_ideal	theorem	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)	=>	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:505->507	TCSlib.Cryptography.GIZK.statClose_real_sim	theorem	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)	=>	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)
-CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:414->415	TCSlib.Cryptography.GIZK.viewV_encode	theorem	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), r.2))	=>	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), giProtocol.withV_vCoinsEquiv V' _ r.2))
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:364->370	TCSlib.Cryptography.GIZK.sim_ofFn_eq	theorem	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn r t).1.1), (readBlocks _ _ M n hn r t).1.2), (readBlocks _ _ M n hn r t).2))).getD []	=>	theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M) (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) : sim V' (encInstance G₀ G₁) z (List.ofFn r) = (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t => ((samplePerm n (List.ofFn (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.1), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.2), (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).2))).getD []
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:441->458	TCSlib.Cryptography.GIZK.statClose_real_ideal	theorem	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)	=>	theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) (permFailBound n + 0)
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:505->525	TCSlib.Cryptography.GIZK.statClose_real_sim	theorem	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)	=>	theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (hclose : StatClose (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n) (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n)) (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) : StatClose (fun r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁) => ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode) (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r)) ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n)
+CHANGED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:414->426	TCSlib.Cryptography.GIZK.viewV_encode	theorem	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), r.2))	=>	theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool) (r : (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G₀ G₁)) : ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode = encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), giProtocol.withV_vCoinsEquiv V' _ r.2))
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:72	TCSlib.Cryptography.GIZK.blockLen_eq	theorem	theorem blockLen_eq (V' : Strategy) (N : ℕ) : blockLen V' N = 1 + (N + 1) ^ 2 + V'.coinLen N
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:77	TCSlib.Cryptography.GIZK.blockTapeEquiv	def	def blockTapeEquiv (V' : Strategy) (N M : ℕ) : (Fin (M * blockLen V' N) → Bool) ≃ (Fin (M * (1 + (N + 1) ^ 2 + V'.coinLen N)) → Bool)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:82	TCSlib.Cryptography.GIZK.blockTapeEquiv_ofFn	theorem	theorem blockTapeEquiv_ofFn (V' : Strategy) (N M : ℕ) (r : Fin (M * blockLen V' N) → Bool) : List.ofFn (blockTapeEquiv V' N M r) = List.ofFn r
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:119	TCSlib.Cryptography.GIZK.sim_eq	theorem	theorem sim_eq (V' : Strategy) (x z r : List Bool) : sim V' x z r = ((List.range (instanceVertexCount x)).findSome? fun t => attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD []
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:422	TCSlib.Cryptography.Protocol.outV_eq	theorem	theorem outV_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : π.outV P' x y z r = π.V.next x z (List.ofFn r.2) (π.transcriptWith P' x y z r).2
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:403	TCSlib.Cryptography.Protocol.transcriptWith_eq	theorem	theorem transcriptWith_eq (π : Protocol) (P' : Strategy) (x y z : List Bool) (r : π.ExecCoins P' x) : π.transcriptWith P' x y z r = exec P' π.V π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:436	TCSlib.Cryptography.Protocol.viewV_withV	theorem	theorem viewV_withV (π : Protocol) (V' : Strategy) (x y z : List Bool) (r : (π.withV V').ExecCoins (π.withV V').P x) : (π.withV V').viewV x y z r = ⟨x, z, List.ofFn r.2, (exec π.P V' π.verifierFirst x y z (List.ofFn r.1) (List.ofFn r.2) (π.rounds.eval x.length)).2⟩
@@ -1645,6 +1692,8 @@ ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:719	TCSlib.C
 ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:729	TCSlib.Cryptography.colProver_next_cons_of_edgeCount_eq_zero	theorem	theorem colProver_next_cons_of_edgeCount_eq_zero (Com : List Bool → List Bool) (ℓ : PolyExpr) {x : List Bool} {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (hm : edgeCount G = 0) (y r w : List Bool) (h : List (List Bool)) : (colProver Com ℓ).next x y r (w :: h) = []
 ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:710	TCSlib.Cryptography.colProver_next_nil	theorem	theorem colProver_next_nil (Com : List Bool → List Bool) (ℓ : PolyExpr) {x : List Bool} {n : ℕ} {G : Graph n} (hx : decGraph x = ⟨n, G⟩) (y r : List Bool) : (colProver Com ℓ).next x y r [] = colCommit Com n (ℓ.eval n) (fun i => samplePerm3 x.length (r.take (3 * x.length)) (decColoring n y i)) (fun i j => r.getD (3 * x.length + i * ℓ.eval n + j) false)
 ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:106	TCSlib.Cryptography.msgAt_eq	theorem	theorem msgAt_eq (w : List Bool) (i : ℕ) : msgAt w i = pairFstD (pairSndD^[i] w)
+ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:441	TCSlib.Cryptography.ColSimLemmas.hybGen_eq	theorem	theorem hybGen_eq (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α) (D : Option α → ρ' → Bool) (z : (Fin N → W) × ρ') : hybGen H Wa k A D z = D ((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (z.1 t) else if t = k then A (z.1 t) else Wa (z.1 t)) z.2
+ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:427	TCSlib.Cryptography.ColSimLemmas.hybStd_eq	theorem	theorem hybStd_eq (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) : hybStd H Wa N k w = (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t)
 ADDED	TCSlib/InformationTheory/StatisticalDistance.lean:49	TCSlib.InformationTheory.statDist_eq	theorem	theorem statDist_eq (p q : FinDist α) : statDist p q = (1 / 2) * ∑ a, |p a - q a|
 
 ## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6/statement-changes.tsv =====
@@ -1719,6 +1768,87 @@ index 9b908c6f..6044ef32 100644
  /-- The first projection of a pair is its first component. -/
  @[simp] theorem pairFstD_pairEncode (a b : List Bool) : pairFstD (pairEncode a b) = a := by
    simp [pairFstD, pairDecode_pairEncode]
+diff --git a/TCSlib/Complexity/Randomized/Closure.lean b/TCSlib/Complexity/Randomized/Closure.lean
+index 93a54b41..79f76687 100644
+--- a/TCSlib/Complexity/Randomized/Closure.lean
++++ b/TCSlib/Complexity/Randomized/Closure.lean
+@@ -234,7 +234,8 @@ theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
+     (ptc_comp A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
+       (ptc_comp hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
+       polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
+-  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, rfl, rfl, rfl, fun n y r => ?_⟩
++  refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, coins_ofPolyTime _ _ _ _ _,
++    adv_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+@@ -284,7 +285,8 @@ theorem exists_reparam (A : NUPPT) (p : PolyExpr) :
+     rw [PolyExpr.eval_subst]
+     exact A.advice_length _
+   refine ⟨ofPolyTime hF (A.coins.subst p) (A.adv.subst p) (fun n => A.advice (p.eval n)) hadv,
+-    rfl, fun hA n => hA _, fun n y r => ?_⟩
++    coins_ofPolyTime _ _ _ _ _, fun hA => (uniform_iff _).2 fun n =>
++      (congrFun (advice_ofPolyTime _ _ _ _ _) n).trans ((uniform_iff A).1 hA _), fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+@@ -323,7 +325,8 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
+     have h₃ := A.adv.eval_mono (hφ n)
+     omega
+   refine ⟨ofPolyTime hF (A.coins.subst p) _
+-    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv, rfl, fun n y r => ?_⟩
++    (fun n => pairEncode (List.replicate (φ n) true) (A.advice (φ n))) hadv,
++    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+   simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inArg, inAdvice, inCoins]
+ 
+@@ -352,8 +355,8 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
+     have h₁ := A.advice_length n
+     have h₂ := hβ n
+     omega
+-  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv, rfl,
+-    fun n y r => ?_⟩
++  refine ⟨ofPolyTime hF A.coins _ (fun n => pairEncode (A.advice n) (β n)) hadv,
++    coins_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+@@ -376,8 +379,8 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
+     (polyTimeComputable_layout polyTimeComputable_inParam
+       (polyTimeComputable_inArg.pairEncode (ptc_comp (polyTimeComputable_pairTakePoly p) hcut))
+       polyTimeComputable_inAdvice (ptc_comp (polyTimeComputable_pairDropPoly p) hcut))
+-  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length, rfl, rfl,
+-    fun n y r => ?_⟩
++  refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length,
++    coins_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
+   rw [runAtL_ofPolyTime]
+   simp [runAtL_eq, advInput_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+@@ -417,10 +420,9 @@ theorem exists_seq (A B : NUPPT) :
+     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const]
+     omega
+   refine ⟨ofPolyTime hF (.add A.coins B.coins) _
+-    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, rfl, fun hA hB n => ?_,
+-    fun n y r => ?_⟩
+-  · show combineAdvice (A.advice n) (B.advice n) = []
+-    rw [hA n, hB n, combineAdvice_nil]
++    (fun n => combineAdvice (A.advice n) (B.advice n)) hadv, coins_ofPolyTime _ _ _ _ _,
++    fun hA hB => (uniform_iff _).2 fun n => ?_, fun n y r => ?_⟩
++  · rw [advice_ofPolyTime, (uniform_iff A).1 hA n, (uniform_iff B).1 hB n, combineAdvice_nil]
+   · rw [runAtL_ofPolyTime]
+     simp [runAtL_eq, advInput_eq, coinLen_eq, layout, inParam, inArg, inAdvice, inCoins]
+ 
+@@ -443,8 +445,8 @@ theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (h
+       (ptc_comp (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
+   convert hF using 1
+   funext z
+-  have hz := h (pairFstD z).length (pairSndD z) (fun _ => true)
+-  have hadv := hA (pairFstD z).length
++  have hz := Computes.runAt_eq A h (pairFstD z).length (pairSndD z) (fun _ => true)
++  have hadv := (uniform_iff A).1 hA (pairFstD z).length
+   simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, List.ofFn_const] at hz
+   rw [← hz]
+   simp [layout, advInput_eq, coinLen_eq, hadv]
 diff --git a/TCSlib/Complexity/Randomized/NonUniform.lean b/TCSlib/Complexity/Randomized/NonUniform.lean
 index 6c186659..434a7a2a 100644
 --- a/TCSlib/Complexity/Randomized/NonUniform.lean
@@ -1879,6 +2009,22 @@ index 8fb04d06..66564bf6 100644
  def eval : PolyExpr → ℕ → ℕ
    | const c, _ => c
    | var, n => n
+diff --git a/TCSlib/Cryptography/Asymptotic/Adversary.lean b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+index 41c22632..84c089bf 100644
+--- a/TCSlib/Cryptography/Asymptotic/Adversary.lean
++++ b/TCSlib/Cryptography/Asymptotic/Adversary.lean
+@@ -177,6 +177,11 @@ noncomputable def invProbOpt {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : 
+     (A : β → ρ → Option α) : ℝ :=
+   uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
+ 
++/-- The defining equation of `invProbOpt`. -/
++theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β)
++    (A : β → ρ → Option α) :
++    invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1 := rfl
++
+ /-- Replacing a failure by any default can only increase the inversion probability: the
+ bridge from `invProbOpt` to the concrete `invProb` [Gar26, Definition 2.1]. -/
+ theorem invProbOpt_le_invProb {α β ρ : Type*} [Fintype α] [Fintype ρ] [Inhabited α] (f : α → β)
 diff --git a/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean b/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean
 index f13ab76a..49127b8d 100644
 --- a/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean
@@ -1906,7 +2052,7 @@ index f13ab76a..49127b8d 100644
  bit encryptions with the consecutive coin segments.
  
 diff --git a/TCSlib/Cryptography/Asymptotic/Collections.lean b/TCSlib/Cryptography/Asymptotic/Collections.lean
-index 6af94275..44fdca9f 100644
+index 6af94275..3894785d 100644
 --- a/TCSlib/Cryptography/Asymptotic/Collections.lean
 +++ b/TCSlib/Cryptography/Asymptotic/Collections.lean
 @@ -188,6 +188,10 @@ theorem index_eq (F : Collection) (n : ℕ) (r : F.gen.Coins n) :
@@ -1997,7 +2143,7 @@ index 6af94275..44fdca9f 100644
  
  /-- **A strong one-way function is a collection of one-way functions**
  [PS10, Theorem 42.2 ⇐], explicit form: for every strong one-way family `𝓕` with evaluator
-@@ -641,7 +656,7 @@ theorem FunFamily.not_toCollection_oneWay_id (F : List Bool → List Bool)
+@@ -641,14 +656,12 @@ theorem FunFamily.not_toCollection_oneWay_id (F : List Bool → List Bool)
      (polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg) (.const 0)
    have hB : ∀ n y (r : B.withIndexParam.Coins n), B.withIndexParam.runAt n y r = y := by
      intro n y r
@@ -2006,7 +2152,28 @@ index 6af94275..44fdca9f 100644
      show (NUPPT.ofPolyTimeUniform (f := fun z => pairSndD (NUPPT.inArg z)) _ (.const 0)).runAtL n
        (pairEncode (List.replicate n true) y) (List.ofFn r) = y
      rw [NUPPT.runAtL_ofPolyTimeUniform]
-@@ -684,19 +699,38 @@ def EvalSampled : Prop :=
+-    show pairSndD (NUPPT.inArg (NUPPT.layout (List.replicate n true)
+-      (pairEncode (List.replicate n true) y) [] (List.ofFn r))) = y
+-    rw [NUPPT.inArg_layout, pairSndD_pairEncode]
+-  obtain ⟨n₀, hn₀⟩ := h.hard B 0
++    rw [NUPPT.advInput_eq, ← NUPPT.layout_eq, NUPPT.inArg_layout, pairSndD_pairEncode]
++  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard B) 0
+   have := hn₀ n₀ le_rfl
+   simp [toCollection_invProbAt, invProbAt_ofString_id_eq_one hB] at this
+ 
+@@ -679,24 +692,50 @@ def EvalSampled : Prop :=
+     G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧
+       G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x
+ 
++/-- The defining property of `EvalSampled`: for every `n`, `r`, `s`, the sampled string
++`w = Sample(1^n, i; s)` at `i = index n r` has `decD i w = some x` and `eval ⟨i, w⟩ = f_i(x)`. -/
++theorem evalSampled_iff : G.EvalSampled ↔ ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x,
++    G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧
++      G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x :=
++  Iff.rfl
++
+ /-- **Every collection evaluates honestly on sampled strings**: `EvalSampled` is the field
+ `sample_spec` read through `index` (repair of the run-3 audit, P3-1; previously an
  underivable hypothesis). -/
  theorem evalSampled : G.EvalSampled := G.sample_spec
  
@@ -2048,7 +2215,7 @@ index 6af94275..44fdca9f 100644
  
  /-- **The output of `g` has polynomial length**: a syntactic polynomial `L` with
  `|⟨i, eval ⟨i, w⟩⟩| < L(n)` for all coins, from the time bounds of `Gen`, `Sample` and `eval`.
-@@ -795,12 +829,12 @@ private theorem owfFamily_easy (L : PolyExpr) : (G.owfFamily L).Easy := by
+@@ -795,12 +834,12 @@ private theorem owfFamily_easy (L : PolyExpr) : (G.owfFamily L).Easy := by
      convert h using 1
      funext z
      simp
@@ -2066,7 +2233,7 @@ index 6af94275..44fdca9f 100644
    rw [hx, owfRawStr_eq, ← ofFn_padFin_eq_padStr, List.length_replicate]
  
  /-! ### The collection inverter built from an inverter of `g` -/
-@@ -864,17 +898,23 @@ private noncomputable def collInverter (L : PolyExpr) (A' : NUPPT) : NUPPT :=
+@@ -864,17 +903,23 @@ private noncomputable def collInverter (L : PolyExpr) (A' : NUPPT) : NUPPT :=
  
  /-- The activation of the collection inverter: pad, call `A'`, drop `gen.coins n` bits,
  sample at the first component of the argument (`Sample` is uniform). -/
@@ -2093,12 +2260,12 @@ index 6af94275..44fdca9f 100644
 +  unfold collInverter
 +  rw [NUPPT.runAtL_ofPolyTime]
 +  simp only [collInvRaw, NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq,
-+    NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.coinLen_eq, G.sample_uniform n,
-+    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
++    NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.coinLen_eq,
++    G.sample_uniform.advice_eq n, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
  
  /-- Honest evaluation on sampled strings at an index known to equal `i`
  (`Collection.evalSampled` transported along `index n r₁ = i`). -/
-@@ -900,12 +940,16 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
+@@ -900,12 +945,16 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
      (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) (ρ : A'.Coins n)
      (z' : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool)
      (hz' : A'.runAt n (List.ofFn ((G.owfFamily L).f n
@@ -2119,7 +2286,7 @@ index 6af94275..44fdca9f 100644
          G.f (G.index n r₁) x' = G.f (G.index n r₁) x := by
    obtain ⟨x, hx1, hx2⟩ := G.evalSampled n r₁ r₂
    refine ⟨x, hx1, ?_⟩
-@@ -926,12 +970,14 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
+@@ -926,12 +975,14 @@ private theorem collInverter_success (L : PolyExpr) (hL : G.OutLenBound L) (A' :
      simp only [owfRaw, pairSndD_pairEncode] at h
      rw [hidx] at h
      rw [h, hx2]
@@ -2137,7 +2304,7 @@ index 6af94275..44fdca9f 100644
        simp only [owfFamily, Equiv.apply_symm_apply]
        rw [← ofFn_padFin_eq_padStr, List.length_replicate]
      rw [hpad, hz', NUPPT.runAt_eq, ← ofFn_splitCoins_snd]
-@@ -952,35 +998,52 @@ moves from the sampled `x` to the ideal uniform `x` at the cost `δ n`; on `some
+@@ -952,35 +1003,52 @@ moves from the sampled `x` to the ideal uniform `x` at the cost `δ n`; on `some
  `P` is the collection event (`uprob_congr`). -/
  private theorem fiber_le (L : PolyExpr) (hL : G.OutLenBound L) (A' : NUPPT) {δ : ℕ → ℝ}
      (hδ : G.SampleClose δ) (n : ℕ) (r₁ : G.gen.Coins n) :
@@ -2209,7 +2376,7 @@ index 6af94275..44fdca9f 100644
    linarith
  
  /-- **The inversion probability of `g` is at most that of the collection plus the sampling
-@@ -995,9 +1058,10 @@ private theorem invProbAt_owfFamily_le (L : PolyExpr) (hL : G.OutLenBound L) (A'
+@@ -995,9 +1063,10 @@ private theorem invProbAt_owfFamily_le (L : PolyExpr) (hL : G.OutLenBound L) (A'
    haveI : Nonempty (G.gen.Coins n) := ⟨fun _ => false⟩
    rw [FunFamily.invProbAt_eq_uprob]
    let e : G.gen.Coins n × (G.sample.Coins n × A'.Coins n) ≃
@@ -2740,7 +2907,7 @@ index d7f7e716..f5808472 100644
      fun hk' => HardcoreBit.invProb_guessInverter_cubic _ _ hε hk hk' h⟩
  
 diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
-index 68336e6a..e4315174 100644
+index 68336e6a..8f008535 100644
 --- a/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
 +++ b/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean
 @@ -117,23 +117,29 @@ noncomputable def glPad (m : PolyExpr)
@@ -2781,16 +2948,68 @@ index 68336e6a..e4315174 100644
          ← NUPPT.runAt_eq, hev, hs₂]
  
  /-- The predicate `h_i(x, r) = ⟨x, r⟩` for the padded collection: the inner product of the
-@@ -283,7 +289,7 @@ theorem OneWay.glPad {F : Collection} (m : PolyExpr)
-     rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
-     have key := glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
+@@ -252,6 +258,34 @@ theorem glPad_eval (m : PolyExpr)
+       pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w))))
+         (pairSndD (pairSndD w)) := rfl
+ 
++variable {F} in
++/-- The padded collection has the indices of `F` (same generator): `index' n r = index n r`. -/
++theorem glPad_index (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)),
++      (F.encD (F.index n r) x).length = m.eval n)
++    (n : ℕ) (r : F.gen.Coins n) : (F.glPad m henc).index n r = F.index n r := by
++  rw [Collection.index_eq, Collection.index_eq]; rfl
++
++variable {F} in
++/-- The inversion experiment of the padded collection over `D_i × {0,1}^L`, `L = |encD_i(default)|`,
++with the answer decoded by `glPadDecode` and compared through `⟨f_i(x), r⟩`. -/
++theorem glPad_invProbAt (m : PolyExpr)
++    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)),
++      (F.encD (F.index n r) x).length = m.eval n)
++    (A : NUPPT) (n : ℕ) :
++    (F.glPad m henc).invProbAt A n = uexp fun r : F.gen.Coins n =>
++      uprob fun z : (F.D (F.index n r) × (Fin (F.encD (F.index n r) default).length → Bool)) ×
++          A.Coins n =>
++        ∃ x', glPadDecode F (F.index n r) (F.encD (F.index n r) default).length
++            (A.runAt n (pairEncode (F.index n r)
++              (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧
++          pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) =
++            pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2) := by
++  rw [Collection.invProbAt_eq]
++  refine congrArg uexp (funext fun r => ?_)
++  rw [glPad_index m henc n r, glPad_decD_eq]
++  rfl
++
+ /-- **The padded collection is one-way** ([PS10, Theorem 87.3], collection form, first clause):
+ if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at the
+ indices generated at parameter `n`, then `F.glPad m` is a collection of one-way functions.
+@@ -274,18 +308,17 @@ theorem OneWay.glPad {F : Collection} (m : PolyExpr)
+     (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+     (h : F.OneWay) : (F.glPad m henc).OneWay := by
+   obtain ⟨δ, hδ, hS⟩ := h.sampleClose
+-  refine ⟨⟨δ, hδ, fun n r => ?_⟩, fun A => ?_⟩
+-  · have key := statClose_glPadSampler F m (F.glPad m henc).sample rfl (glPad_sample_runAtL m henc)
++  refine ⟨⟨δ, hδ, (sampleClose_iff _ _).2 fun n r => ?_⟩, fun A => ?_⟩
++  · have key := statClose_glPadSampler F m (F.glPad m henc).sample
++      (by rw [glPad_sample, NUPPT.coins_ofPolyTimeUniform]) (glPad_sample_runAtL m henc)
+       hS n r _ (henc n r default)
+-    simp only [glPad_decD_eq] at key ⊢
++    rw [glPad_index m henc n r, glPad_decD_eq]
+     exact key
+   · refine (h.hard (glPadCollInvMachine A m)).mono ⟨0, fun n _ => ?_⟩
+-    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _)]
+-    have key := glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
++    rw [abs_of_nonneg (invProbAt_nonneg _ _ _), abs_of_nonneg (invProbAt_nonneg _ _ _),
++      glPad_invProbAt m henc A n]
++    exact glPad_invProbAt_le F m A n (fun r => (F.encD (F.index n r) default).length)
        (fun r => henc n r default)
 -    unfold Collection.invProbAt at key ⊢
-+    simp only [Collection.invProbAt_eq] at key ⊢
-     simp only [glPad_decD_eq]
-     exact key
+-    simp only [glPad_decD_eq]
+-    exact key
  
-@@ -406,11 +412,14 @@ noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExp
+ /-- **`⟨x, r⟩` is hard-core for the padded collection** ([PS10, Theorem 87.3], collection form,
+ second clause; inventory Thm-87.3.coll, needed by Theorem 104.4): if `F` is a collection of
+@@ -406,11 +439,14 @@ noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExp
      inv := NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins
      inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
      inv_spec := fun n r y s => by
@@ -2811,7 +3030,7 @@ index 68336e6a..e4315174 100644
        rfl }
  
 diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean b/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
-index a04954f0..c1e9f85e 100644
+index a04954f0..8e3199d0 100644
 --- a/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
 +++ b/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
 @@ -510,14 +510,29 @@ noncomputable def precomp (A : NUPPT) {pre : List Bool → List Bool} (hpre : Po
@@ -2846,11 +3065,14 @@ index a04954f0..c1e9f85e 100644
  
  end Complexity.NUPPT
  
-@@ -667,7 +682,24 @@ noncomputable def glMachine (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
+@@ -667,10 +682,29 @@ noncomputable def glMachine (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
  
  /-- The coins of the recovery machine. -/
  @[simp] theorem coins_glMachine (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ)
 -    (hk : ∀ n, 2 ^ k n ≤ K.eval n) : (glMachine A mP K k hk).coins = glCoins mP K A := rfl
+-
+-/-- The number of coins actually read by the recovery machine at `n`. -/
+-def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ :=
 +    (hk : ∀ n, 2 ^ k n ≤ K.eval n) : (glMachine A mP K k hk).coins = glCoins mP K A := by
 +  unfold glMachine
 +  exact NUPPT.coins_ofPolyTime _ _ _ _ _
@@ -2869,10 +3091,15 @@ index a04954f0..c1e9f85e 100644
 +    (hk : ∀ n, 2 ^ k n ≤ K.eval n) (n : ℕ) (w : Fin ((glCoins mP K A).eval n) → Bool) :
 +    List.ofFn ((glMachine_coinsEquiv A mP K k hk n).symm w) = List.ofFn w :=
 +  NUPPT.coinsEquivPoly_symm_ofFn (coins_glMachine A mP K k hk) n w
++
++/-- The number of coins actually read by the recovery machine at `n`: a length abbreviation
++(`abbrev`, read as notation, like `PolyExpr.eval` under ruling Q1; the coin types of
++`glCoinsEquiv` spell the sum out). -/
++abbrev glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ :=
+   k n * mP.eval n + (k n + mP.eval n * (2 ^ k n - 1) * A.coinLen n)
  
- /-- The number of coins actually read by the recovery machine at `n`. -/
- def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ :=
-@@ -679,7 +711,7 @@ theorem glNeed_le (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2
+ /-- The coins read are at most the coins available. -/
+@@ -679,7 +713,7 @@ theorem glNeed_le (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : ∀ n, 2
    have hK := hk n
    have hkK : k n ≤ K.eval n := (le_two_pow (k n)).trans hK
    have hMK : 2 ^ k n - 1 ≤ K.eval n := (Nat.sub_le _ _).trans hK
@@ -2881,7 +3108,19 @@ index a04954f0..c1e9f85e 100644
    have h1 : k n * mP.eval n ≤ K.eval n * mP.eval n := Nat.mul_le_mul_right _ hkK
    have h2 : mP.eval n * (2 ^ k n - 1) * A.coins.eval n ≤ mP.eval n * (K.eval n * A.coins.eval n) := by
      rw [← Nat.mul_assoc]
-@@ -836,11 +868,13 @@ theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ 
+@@ -822,6 +856,11 @@ def glPredictorOf (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Boo
+     β × (Fin m → Bool) → A₁.Coins n → Bool :=
+   fun p c => decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true])
+ 
++/-- The defining equation of `glPredictorOf`: `A₁(1^n, ⟨enc y, q⟩; c) = [true]`. -/
++theorem glPredictorOf_apply (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Bool)
++    (p : β × (Fin m → Bool)) (c : A₁.Coins n) : glPredictorOf A₁ n m enc p c =
++      decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true]) := rfl
++
+ /-- **The recovery machine computes `guessRecover`** on well-formed coins: for coins
+ `(s, b, c)` and unread coins `ex`, the answer on `y` is the encoding of
+ `guessRecover (glPredictor A n o m) k y (s, b, c)`.
+@@ -836,16 +875,17 @@ theorem glMachine_runAt_guessRecover (A₁ : NUPPT) (iP K : PolyExpr) (k : ℕ 
      (g : HardcoreBit.GuessCoins (iP.eval n) (k n) (A₁.Coins n))
      (ex : Fin ((glCoins iP K A₁).eval n - glNeed A₁ iP k n) → Bool) :
      (glMachine A₁ iP K k hk).runAt n (enc y)
@@ -2895,10 +3134,17 @@ index a04954f0..c1e9f85e 100644
 +    ((glMachine_coinsEquiv_symm_ofFn A₁ iP K k hk n _).trans
 +      (ofFn_glCoinsEquiv A₁ n (iP.eval n) (k n) _ (glNeed_le A₁ iP K k hk n) (s, b, c) ex)) hM]
    refine congrArg List.ofFn (funext fun i => ?_)
-   rw [← majority_comp_equiv (nesubsetEquiv (k n))]
-   unfold HardcoreBit.guessRecover
+-  rw [← majority_comp_equiv (nesubsetEquiv (k n))]
+-  unfold HardcoreBit.guessRecover
++  rw [← majority_comp_equiv (nesubsetEquiv (k n)), HardcoreBit.guessRecover_apply]
+   refine congrArg HardcoreBit.majority (funext fun L => ?_)
+-  simp only [GLLoop.wfVote, glBlocks_apply, glPredictorOf, HardcoreBit.subsetSum]
++  simp only [GLLoop.wfVote, glBlocks_apply, glPredictorOf_apply, HardcoreBit.subsetSum_eq]
+   have hdiv : (finProdFinEquiv (i, nesubsetEquiv (k n) L)).divNat = i :=
+     congrArg Prod.fst (finProdFinEquiv.symm_apply_apply (i, nesubsetEquiv (k n) L))
+   have hmod : (finProdFinEquiv (i, nesubsetEquiv (k n) L)).modNat = nesubsetEquiv (k n) L :=
 diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean b/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
-index 2b655080..1915b105 100644
+index 2b655080..72846bdc 100644
 --- a/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
 +++ b/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean
 @@ -169,11 +169,12 @@ theorem collPre_poly : PolyTimeComputable collPre :=
@@ -2909,17 +3155,51 @@ index 2b655080..1915b105 100644
 +    (c : (A.precomp collPre_poly).Coins n) :
      glPredictorOf (A.precomp collPre_poly) n m (fun y : List Bool => pairEncode i y) (y, q) c =
 -      A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q))) c := by
+-  simp only [glPredictorOf, NUPPT.runAtL_precomp, collPre, pairFstD_pairEncode, pairSndD_pairEncode,
+-    NUPPT.distinguisherL, NUPPT.runAt_eq]
 +      A.distinguisherL n (pairEncode i (pairEncode y (List.ofFn q)))
 +        (A.precomp_coinsEquiv collPre_poly n c) := by
-   simp only [glPredictorOf, NUPPT.runAtL_precomp, collPre, pairFstD_pairEncode, pairSndD_pairEncode,
--    NUPPT.distinguisherL, NUPPT.runAt_eq]
-+    NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.precomp_coinsEquiv_ofFn]
++  simp only [glPredictorOf_apply, NUPPT.runAtL_precomp, collPre, pairFstD_pairEncode,
++    pairSndD_pairEncode, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, NUPPT.precomp_coinsEquiv_ofFn]
  
  /-- The pre-processing of the collection inverter: on the view of `⟨1^n, ⟨i, ⟨y, r⟩⟩⟩`, the
  string `⟨i, y⟩`. -/
-@@ -262,8 +263,11 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
+@@ -237,15 +238,21 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
+       ∃ x', glPadDecode F i L ((glCollMachine A mP K k hk).runAt n
+           (pairEncode i (pairEncode (F.f i z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧
+         pairEncode (F.f i x'.1) (List.ofFn x'.2) = pairEncode (F.f i z.1.1) (List.ofFn z.1.2)) := by
+-  have hpred : (fun (p : List Bool × (Fin (mP.eval n) → Bool)) (c : A.Coins n) =>
+-      A.distinguisherL n (pairEncode i (pairEncode p.1 (List.ofFn p.2))) c) =
+-      glPredictorOf (A.precomp collPre_poly) n (mP.eval n) (fun y : List Bool => pairEncode i y) := by
+-    funext p c
+-    obtain ⟨y, q⟩ := p
+-    exact (glPredictorOf_precomp_coll A n (mP.eval n) i y q c).symm
+-  rw [hpred]
++  have hrec : ∀ y (g : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n)),
++      HardcoreBit.guessRecover
++        (fun (p : List Bool × (Fin (mP.eval n) → Bool)) (c : A.Coins n) =>
++          A.distinguisherL n (pairEncode i (pairEncode p.1 (List.ofFn p.2))) c) (k n) y
++        (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n) g) =
++      HardcoreBit.guessRecover
++        (glPredictorOf (A.precomp collPre_poly) n (mP.eval n) (fun y : List Bool => pairEncode i y))
++        (k n) y g := fun y g =>
++    (HardcoreBit.guessRecover_coinsCongr _ _ _
++      (fun p c => glPredictorOf_precomp_coll A n (mP.eval n) i p.1 p.2 c) _ _ _).symm
++  rw [← uprob_comp_equiv ((Equiv.refl (F.D i × (Fin (mP.eval n) → Bool))).prodCongr
++    (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n)))]
+   have hcoins : (glCollMachine A mP K k hk).coinLen n = (glCoins mP K (A.precomp collPre_poly)).eval n := by
+-    simp [glCollMachine, NUPPT.coinLen]
++    rw [NUPPT.coinLen_eq, glCollMachine, NUPPT.coins_wrap, coins_glMachine, PolyExpr.eval_add,
++      PolyExpr.eval_const, zero_add]
+   let eC : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n) ×
+       (Fin ((glCoins mP K (A.precomp collPre_poly)).eval n - glNeed (A.precomp collPre_poly) mP k n) → Bool) ≃
+       (glCollMachine A mP K k hk).Coins n :=
+@@ -260,10 +267,13 @@ theorem glColl_uprob_le (F : Collection) (mP K : PolyExpr) (k : ℕ → ℕ)
+   refine uprob_mono fun w hw => ?_
+   obtain ⟨⟨⟨x, ρ⟩, g⟩, ex⟩ := w
    simp only [Equiv.trans_apply, Equiv.prodAssoc_apply, Equiv.prodCongr_apply, Prod.map_apply,
-     Equiv.coe_refl, id] at hw ⊢
+-    Equiv.coe_refl, id] at hw ⊢
++    Equiv.coe_refl, id, hrec] at hw ⊢
    rw [glCollMachine_runAt A mP K k hk n i (F.f i x) (List.ofFn (finCastEquiv hL.symm ρ))
 -      (glCoinsEquiv (A.precomp collPre_poly) n (mP.eval n) (k n) _ (glNeed_le (A.precomp collPre_poly) mP K k hk n) (g, ex)) _
 -      (by simp only [eC, Equiv.trans_apply]; exact ofFn_finCastEquiv _ _),
@@ -2932,7 +3212,7 @@ index 2b655080..1915b105 100644
      hw, ofFn_padFin_of_length (henc x), glPadDecode_pairEncode_ofFn, F.decD_encD]
    exact ⟨(x, finCastEquiv hL.symm ρ), rfl, rfl⟩
 diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean b/TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean
-index 1c34b951..896e207e 100644
+index 1c34b951..ebdd9628 100644
 --- a/TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean
 +++ b/TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean
 @@ -167,11 +167,12 @@ theorem concatPre_poly : PolyTimeComputable concatPre := polyTimeComputable_pair
@@ -2943,17 +3223,68 @@ index 1c34b951..896e207e 100644
 +    (c : (A.precomp concatPre_poly).Coins n) :
      glPredictorOf (A.precomp concatPre_poly) n m (fun y : Fin o → Bool => List.ofFn y) (y, q) c =
 -      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) c := by
-+      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c) := by
-   simp only [glPredictorOf, NUPPT.runAtL_precomp, concatPre, pairFstD_pairEncode, pairSndD_pairEncode,
+-  simp only [glPredictorOf, NUPPT.runAtL_precomp, concatPre, pairFstD_pairEncode, pairSndD_pairEncode,
 -    NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_eq, ofFn_appendEquiv]
-+    NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_eq, ofFn_appendEquiv,
-+    NUPPT.precomp_coinsEquiv_ofFn]
++      A.predictor n (o + m) (Fin.appendEquiv o m (y, q)) (A.precomp_coinsEquiv concatPre_poly n c) := by
++  simp only [glPredictorOf_apply, NUPPT.runAtL_precomp, concatPre, pairFstD_pairEncode,
++    pairSndD_pairEncode, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
++    NUPPT.runAt_eq, ofFn_appendEquiv, NUPPT.precomp_coinsEquiv_ofFn]
  
  
  /-- **The inversion probability of the family inverter is that of the concrete inverter**
-@@ -227,8 +228,10 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : 
-     rw [ofFn_appendEquiv]
-     show (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).runAt n (List.ofFn (𝓕.f n x) ++ List.ofFn r) _ = _
+@@ -194,16 +195,36 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : 
+         (fun y c => A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
+           (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (k n)) := by
+   set A₁ := A.precomp concatPre_poly with hA₁
+-  have hpred : (fun (y : (Fin (𝓕.outLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) (c : A.Coins n) =>
+-      A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) =
+-      glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y) := by
+-    funext y c
+-    obtain ⟨y, q⟩ := y
+-    exact (glPredictorOf_precomp_concat A n (𝓕.outLen.eval n) (𝓕.inLen.eval n) y q c).symm
+-  rw [hpred]
+-  unfold invProbOpt invProb
++  have hrec : ∀ y (g : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n)),
++      HardcoreBit.guessRecover
++        (fun (y : (Fin (𝓕.outLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) (c : A.Coins n) =>
++          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
++            (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (k n) y
++        (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv concatPre_poly n) g) =
++      HardcoreBit.guessRecover
++        (glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y))
++        (k n) y g := fun y g =>
++    (HardcoreBit.guessRecover_coinsCongr _ _ _
++      (fun p c => glPredictorOf_precomp_concat A n (𝓕.outLen.eval n) (𝓕.inLen.eval n) p.1 p.2 c)
++      _ _ _).symm
++  rw [invProbOpt_def, invProb_def, ← uprob_comp_equiv
++    ((Equiv.refl ((Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool))).prodCongr
++      (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv concatPre_poly n)))]
++  have hinv : ∀ y (g : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n)),
++      HardcoreBit.guessInverter
++        (fun (y : (Fin (𝓕.outLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)) (c : A.Coins n) =>
++          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n)
++            (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) c) (k n) y
++        (HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv concatPre_poly n) g) =
++      HardcoreBit.guessInverter
++        (glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y))
++        (k n) y g := fun y g => by
++    rw [HardcoreBit.guessInverter_eq, HardcoreBit.guessInverter_eq, HardcoreBit.glInverter_apply,
++      HardcoreBit.glInverter_apply, hrec]
++  simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.coe_refl, id_eq, hinv]
+   have hcoins : (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).coinLen n = (glCoins 𝓕.inLen K A₁).eval n := by
+-    simp [glFamMachine, NUPPT.coinLen]
++    rw [NUPPT.coinLen_eq, glFamMachine, NUPPT.coins_wrap, coins_glMachine, PolyExpr.eval_add,
++      PolyExpr.eval_const, zero_add]
+   let eC : HardcoreBit.GuessCoins (𝓕.inLen.eval n) (k n) (A₁.Coins n) ×
+       (Fin ((glCoins 𝓕.inLen K A₁).eval n - glNeed A₁ 𝓕.inLen k n) → Bool) ≃
+       (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).Coins n :=
+@@ -224,14 +245,21 @@ theorem invProbOpt_glFam_eq (𝓕 : FunFamily) (A : NUPPT) (K : PolyExpr) (k : 
+       (List.ofFn (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) (HardcoreBit.glPad (𝓕.f n) (x, r)))) (eC (g, ex)) =
+       List.ofFn (HardcoreBit.guessRecover (glPredictorOf A₁ n (𝓕.inLen.eval n) (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y))
+         (k n) (𝓕.f n x) g) ++ List.ofFn r := by
+-    rw [ofFn_appendEquiv]
+-    show (glFamMachine A₁ 𝓕.inLen 𝓕.outLen K k hk).runAt n (List.ofFn (𝓕.f n x) ++ List.ofFn r) _ = _
++    rw [ofFn_appendEquiv, HardcoreBit.glPad_apply]
      rw [glFamMachine_runAt A₁ 𝓕.inLen 𝓕.outLen K k hk n (𝓕.f n x) r
 -      (glCoinsEquiv A₁ n (𝓕.inLen.eval n) (k n) _ (glNeed_le A₁ 𝓕.inLen K k hk n) (g, ex)) _
 -      (by simp only [eC, Equiv.trans_apply]; exact ofFn_finCastEquiv _ _),
@@ -2963,7 +3294,17 @@ index 1c34b951..896e207e 100644
 +          exact ofFn_finCastEquiv _ _),
        glMachine_runAt_guessRecover A₁ 𝓕.inLen K k hk n hM (fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y)
          (𝓕.f n x) g ex]
-   rw [hrun]
+-  rw [hrun]
++  have hgi : HardcoreBit.guessInverter
++      (glPredictorOf A₁ n (𝓕.inLen.eval n) fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y)
++      (k n) (HardcoreBit.glPad (𝓕.f n) (x, r)) g =
++      (HardcoreBit.guessRecover (glPredictorOf A₁ n (𝓕.inLen.eval n)
++        fun y : Fin (𝓕.outLen.eval n) → Bool => List.ofFn y) (k n) (𝓕.f n x) g, r) := by
++    rw [HardcoreBit.guessInverter_eq, HardcoreBit.glInverter_apply, HardcoreBit.glPad_apply]
++  rw [hrun, hgi]
+   constructor
+   · rintro ⟨x', hx', hfx'⟩
+     rw [← ofFn_appendEquiv, List.ofFn_inj] at hx'
 diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
 index 8ecd4575..4c942110 100644
 --- a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
@@ -3649,7 +3990,7 @@ index 64fd7569..f3a68c9d 100644
      exact Nat.succ_le_succ (T.eval_mono this)
    have hfind := find?_range_eq_map_find?_finRange hR
 diff --git a/TCSlib/Cryptography/Asymptotic/PublicKey.lean b/TCSlib/Cryptography/Asymptotic/PublicKey.lean
-index 5b87580d..6c95d74e 100644
+index 5b87580d..26dc322c 100644
 --- a/TCSlib/Cryptography/Asymptotic/PublicKey.lean
 +++ b/TCSlib/Cryptography/Asymptotic/PublicKey.lean
 @@ -359,16 +359,19 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
@@ -3744,6 +4085,15 @@ index 5b87580d..6c95d74e 100644
        (Equiv.refl ρ))]
    congr 1
    funext z
+@@ -461,7 +488,7 @@ theorem SingleBitSecure.bitwise {S : BitPublicKeyScheme} (h : S.SingleBitSecure)
+   obtain ⟨ε, hε, hBε⟩ := h B
+   refine ⟨fun n => (n : ℝ) * ε n, EnsembleLemmas.negligible_polyExpr_mul .var hε, fun n m₀ m₁ => ?_⟩
+   refine (hμ n (m₀, m₁)).trans ?_
+-  have hε0 : 0 ≤ ε n := (abs_nonneg _).trans (hBε n false false)
++  have hε0 : 0 ≤ ε n := (abs_nonneg _).trans ((distAdv_def _ _ _).symm.trans_le (hBε n false false))
+   have hsingle : ∀ msg msg' : Fin 1 → Bool,
+       distAdv (singleDist S.gen S.enc n 1 msg) (singleDist S.gen S.enc n 1 msg')
+         (B.distinguisherL n) ≤ ε n := by
 @@ -471,7 +498,7 @@ theorem SingleBitSecure.bitwise {S : BitPublicKeyScheme} (h : S.SingleBitSecure)
      rw [h1, h2, ← S.pkEncDist_eq_singleDist, ← S.pkEncDist_eq_singleDist]
      exact hBε n _ _
@@ -3753,7 +4103,7 @@ index 5b87580d..6c95d74e 100644
    rw [acceptProb_bitwise_pkEncDist, acceptProb_bitwise_pkEncDist]
    exact hn
  
-@@ -632,28 +659,67 @@ noncomputable def tdpGen : NUPPT := NUPPT.ofPolyTimeUniform T.tdpGenFun_poly T.g
+@@ -632,37 +659,76 @@ noncomputable def tdpGen : NUPPT := NUPPT.ofPolyTimeUniform T.tdpGenFun_poly T.g
  noncomputable def tdpEnc {h : ∀ i, T.D i → Bool} (E : T.toCollection.PredEvaluator h) : NUPPT :=
    NUPPT.ofPolyTimeUniform (T.tdpEncFun_poly E.poly) T.sample.coins
  
@@ -3807,9 +4157,10 @@ index 5b87580d..6c95d74e 100644
    rw [NUPPT.runAtL_ofPolyTimeUniform]
 -  simp only [tdpGenFun, NUPPT.inParam, NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode,
 -    pairSndD_pairEncode, Collection.index, Collection.trap, T.gen_uniform.runAt_eq]
+-  rfl
 +  simp only [tdpGenFun, NUPPT.inParam_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
 +    pairSndD_pairEncode]
-   rfl
++  rw [NUPPT.layout_eq]
  
 -/-- Unfolding: `Enc(1^n, ⟨i, [b]⟩; s) = ⟨eval ⟨i, w⟩, H ⟨i, w⟩ ⊕ [b]⟩` with `w = Sample(1^n, i; s)`. -/
 +/-- Unfolding: `Enc(1^n, ⟨i, [b]⟩; s) = ⟨eval ⟨i, w⟩, H ⟨i, w⟩ ⊕ [b]⟩` with
@@ -3829,20 +4180,23 @@ index 5b87580d..6c95d74e 100644
    rw [NUPPT.runAtL_ofPolyTimeUniform]
 -  simp only [tdpEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
 -    pairFstD_pairEncode, pairSndD_pairEncode, T.sample_uniform.runAt_eq]
+-  rfl
 +  simp only [tdpEncFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
 +    pairFstD_pairEncode, pairSndD_pairEncode]
-   rfl
++  rw [NUPPT.layout_eq]
  
  /-- Unfolding: `Dec(⟨⟨1^n, ⟨i, t⟩⟩, ⟨c₁, c₂⟩⟩) = H ⟨i, Inv(1^n, ⟨t, c₁⟩; 1^{coins n})⟩ ⊕ c₂`. -/
-@@ -661,7 +727,7 @@ theorem tdpDecFun_apply (H : List Bool → List Bool) (n : ℕ) (i t c₁ c₂ :
+ theorem tdpDecFun_apply (H : List Bool → List Bool) (n : ℕ) (i t c₁ c₂ : List Bool) :
      T.tdpDecFun H (pairEncode (pairEncode (List.replicate n true) (pairEncode i t)) (pairEncode c₁ c₂)) =
        List.zipWith xor (H (pairEncode i (T.inv.runAt n (pairEncode t c₁) fun _ => true))) c₂ := by
++  rw [T.inv_uniform.runAt_eq, NUPPT.advInput_eq, List.ofFn_const, NUPPT.coinLen_eq]
    simp only [tdpDecFun, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
 -    T.inv_uniform.runAt_eq, List.ofFn_const, NUPPT.coinLen]
-+    T.inv_uniform.runAt_eq, List.ofFn_const, NUPPT.coinLen_eq]
-   rfl
+-  rfl
++    NUPPT.layout_eq]
  
  /-- **The single-bit scheme of [PS10, Algorithm 104.3]** from a collection of trapdoor
+ permutations `T` with a predicate `h` (its hard-core bit), given a polynomial-time evaluator `E`
 @@ -689,18 +755,19 @@ noncomputable def tdpBitScheme {h : ∀ i, T.D i → Bool} (E : T.toCollection.P
    enc_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
    dec_poly := T.tdpDecFun_poly E.poly
@@ -3852,9 +4206,10 @@ index 5b87580d..6c95d74e 100644
      rw [tdpGen_runAt]
      simp only [pairFstD_pairEncode, pairSndD_pairEncode]
      rw [tdpEnc_runAt, tdpDecFun_apply]
+-    obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n rg re
 +    set rg := T.tdpGen_coinsEquiv n rg'
 +    set re := T.tdpEnc_coinsEquiv E n re'
-     obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n rg re
++    obtain ⟨x, hx, hev⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n rg re
      rw [hev, T.f_perm]
      have hinv : T.decD (T.index n rg) (T.inv.runAt n
          (pairEncode (T.trap n rg) (T.encD (T.index n rg) (T.perm (T.index n rg) x))) fun _ => true) =
@@ -3892,11 +4247,25 @@ index 5b87580d..6c95d74e 100644
    simp only [pairFstD_pairEncode]
 +  set r := T.tdpGen_coinsEquiv n r₀
 +  set s := T.tdpEnc_coinsEquiv E n s₀
-+  obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n r s
++  obtain ⟨x, hx, hev⟩ := (Collection.evalSampled_iff _).1 T.toCollection.evalSampled n r s
    rw [TrapdoorCollection.tdpEnc_runAt, hev, T.f_perm, E.spec _ _ _ hx]
    simp only [tdpSampled, hx, Option.getD_some]
    rfl
-@@ -860,16 +931,22 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
+@@ -842,9 +913,10 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
+     (hT : T.OneWay) (hHC : T.toCollection.HardCore h) : (T.tdpBitScheme E).SingleBitSecure := by
+   rw [BitPublicKeyScheme.singleBitSecure_iff]
+   intro D
+-  obtain ⟨δ, hδ, hδS⟩ := hT.sampleClose
+-  obtain ⟨εf, hεf, hAf⟩ := hHC.2 (tdpPredictor D false)
+-  obtain ⟨εt, hεt, hAt⟩ := hHC.2 (tdpPredictor D true)
++  obtain ⟨δ, hδ, hδS⟩ := ((TrapdoorCollection.oneWay_iff T).1 hT).sampleClose
++  replace hδS := (Collection.sampleClose_iff _ _).1 hδS
++  obtain ⟨εf, hεf, hAf⟩ := ((Collection.hardCore_iff _ _).1 hHC).2 (tdpPredictor D false)
++  obtain ⟨εt, hεt, hAt⟩ := ((Collection.hardCore_iff _ _).1 hHC).2 (tdpPredictor D true)
+   -- the concrete distinguisher of `(f_i(x), c)` at the index `i = index n r`
+   let Di : ∀ n (r : T.gen.Coins n), T.D (T.index n r) × Bool → D.Coins n → Bool :=
+     fun n r yc ρ =>
+@@ -860,16 +932,22 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
            D.distinguisherL n (pairEncode (T.index n r)
              (pairEncode (T.encD _ (T.perm _ (tdpSampled T n r w.1)))
                [xor (h _ (tdpSampled T n r w.1)) b])) w.2 = true := by
@@ -3923,6 +4292,30 @@ index 5b87580d..6c95d74e 100644
      rw [e1]
      refine abs_uexp_sub_le (hδS n (fun _ => false)).nonneg fun r => ?_
      have hs := (hδS n r).abs_uprob_sub_le_prod
+@@ -877,6 +955,7 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
+         D.distinguisherL n (pairEncode (T.index n r)
+           (pairEncode (T.encD _ (T.perm _ (o.getD default))) [xor (h _ (o.getD default)) b])) ρ = true
+     simp only [Option.getD_some] at hs
++    rw [acceptProb_def]
+     exact hs
+   -- the prediction experiments of the two predictor machines
+   have key : ∀ n (flip : Bool) (r : T.gen.Coins n),
+@@ -886,6 +965,7 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
+       predProb (T.perm (T.index n r)) (h (T.index n r)) (pkPredictor (Di n r) flip) := by
+     intro n flip r
+     simp only [T.f_perm]
++    rw [predProb_def]
+     exact uprob_tdpPredictor D flip n (T.index n r) (T.perm _) (h _) (T.encD _)
+   have hf : ∀ n, uexp (fun r : T.gen.Coins n =>
+       acceptProb (fun x : T.D (T.index n r) => (T.perm _ x, h _ x)) (Di n r)) -
+@@ -925,6 +1005,7 @@ theorem TrapdoorCollection.tdpBitScheme_singleBitSecure (T : TrapdoorCollection)
+   have hc0 := hclose n false
+   have hc1 := hclose n true
+   simp only [Bool.xor_false, Bool.xor_true] at hc0 hc1
++  rw [distAdv_def]
+   set A₀ := acceptProb ((T.tdpBitScheme E).pkEncDist n false) (D.distinguisherL n) with hA₀
+   set A₁ := acceptProb ((T.tdpBitScheme E).pkEncDist n true) (D.distinguisherL n) with hA₁
+   set Qa := uexp (fun r : T.gen.Coins n =>
 diff --git a/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean b/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
 index a3474360..58a4a989 100644
 --- a/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
@@ -4127,7 +4520,7 @@ index cd006c00..8c9f7e47 100644
        have := Nat.toNat_testBit N 0
        simp only [pow_zero, Nat.div_one] at this
 diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
-index b23bae9e..c39c508a 100644
+index b23bae9e..f5b32d4f 100644
 --- a/TCSlib/Cryptography/Candidates/Concrete.lean
 +++ b/TCSlib/Cryptography/Candidates/Concrete.lean
 @@ -106,7 +106,7 @@ is the probability of `S` under the uniform distribution on the subtype `{a // E
@@ -4157,7 +4550,18 @@ index b23bae9e..c39c508a 100644
    calc uprob (fun z : (Fin m → α) × ρ =>
          prodFun f m (B (prodFun f m z.1) z.2) = prodFun f m z.1)
        ≤ uprob (fun z : (Fin m → α) × ρ => (∀ i, ¬ G (z.1 i)) ∨
-@@ -248,7 +248,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
+@@ -230,7 +230,9 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
+         · exact Or.inl hall
+         · push_neg at hall
+           obtain ⟨i, hi⟩ := hall
+-          exact Or.inr ⟨i, mem_univ _, hi, congrFun h i⟩
++          have hfi := congrFun h i
++          rw [OneWay.prodFun_apply, OneWay.prodFun_apply] at hfi
++          exact Or.inr ⟨i, mem_univ _, hi, hfi⟩
+     _ ≤ uprob (fun z : (Fin m → α) × ρ => ∀ i, ¬ G (z.1 i)) +
+           ∑ i, uprob (fun z : (Fin m → α) × ρ =>
+             G (z.1 i) ∧ f (B (prodFun f m z.1) z.2 i) = f (z.1 i)) :=
+@@ -248,7 +250,7 @@ theorem invProb_prodFun_le_plant [Nonempty α] [Nonempty ρ] (f : α → β)
                G (xs i) ∧ f (B (prodFun f m xs) r i) = f (xs i))]
              apply uprob_congr
              rintro ⟨x, xs, r⟩
@@ -4166,7 +4570,7 @@ index b23bae9e..c39c508a 100644
            simp only [hplant]
            rw [sum_uprob_eq_card_mul, Fintype.card_fin]
            let e : α × (Fin m × ((Fin m → α) × ρ)) ≃ Fin m × (α × ((Fin m → α) × ρ)) :=
-@@ -487,7 +487,8 @@ theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
+@@ -487,7 +489,8 @@ theorem encodeDistinctPrimes_eq (m : ℕ) (z : DistinctPrimes m) :
  /-- Decoding inverts encoding. -/
  theorem decodeDistinctPrimes_encode (m : ℕ) (z : DistinctPrimes m) :
      decodeDistinctPrimes m (encodeDistinctPrimes m z) = some z := by
@@ -5273,29 +5677,90 @@ index 6fd1f336..66c38df1 100644
  theorem uprob_eq_card_filter (p : α → Prop) [DecidablePred p] :
      uprob p = ((univ.filter p).card : ℝ) / Fintype.card α := by
 diff --git a/TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean b/TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean
-index 0d2801b0..1770f2cf 100644
+index 0d2801b0..284d4bc0 100644
 --- a/TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean
 +++ b/TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean
-@@ -83,6 +83,11 @@ def guessInverter (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
+@@ -77,12 +77,48 @@ def guessRecover (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β)
+   fun i => majority fun L : NESubset k =>
+     subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
+ 
++omit [Fintype ρ] in
++/-- The defining equation of `guessRecover`: bit `i` is the majority over `L` of
++`b_L ⊕ A(y, S_L ⊕ e_i)`. -/
++theorem guessRecover_apply (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β)
++    (c : GuessCoins n k ρ) (i : Fin n) :
++    guessRecover A k y c i = majority fun L : NESubset k =>
++      subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L) := rfl
++
+ /-- The inverter of [Gar26, Figure 2.5]: on `f(x) ‖ r` it outputs
+ `guessRecover A k (f(x)) ‖ r`. -/
+ def guessInverter (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
      β × (Fin n → Bool) → GuessCoins n k ρ → (Fin n → Bool) × (Fin n → Bool) :=
    glInverter (guessRecover A k)
  
++omit [Fintype ρ] in
 +/-- The defining equation of `guessInverter`:
 +`guessInverter A k = glInverter (guessRecover A k)`. -/
 +theorem guessInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) :
 +    guessInverter A k = glInverter (guessRecover A k) := rfl
 +
++/-- Reindexing the predictor's coins in `GuessCoins` along `e : ρ' ≃ ρ`. -/
++def guessCoinsCongr {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) : GuessCoins n k ρ' ≃ GuessCoins n k ρ :=
++  (Equiv.refl _).prodCongr
++    ((Equiv.refl _).prodCongr (Equiv.piCongrRight fun _ => Equiv.piCongrRight fun _ => e))
++
++omit [Fintype ρ] in
++/-- The defining equation of `guessCoinsCongr`: it keeps `(s, b)` and applies `e` to every
++predictor coin, `guessCoinsCongr k e (s, b, cs) = (s, b, fun i L => e (cs i L))`. -/
++theorem guessCoinsCongr_apply {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) (c : GuessCoins n k ρ') :
++    guessCoinsCongr k e c = (c.1, c.2.1, fun i L => e (c.2.2 i L)) := rfl
++
++omit [Fintype ρ] in
++/-- `guessRecover` with a predictor read through a coin bijection `e`: if `A' p c = A p (e c)`,
++then `guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c)`. -/
++theorem guessRecover_coinsCongr {ρ' : Type*} (A : β × (Fin n → Bool) → ρ → Bool)
++    (A' : β × (Fin n → Bool) → ρ' → Bool) (e : ρ' ≃ ρ) (h : ∀ p c, A' p c = A p (e c)) (k : ℕ)
++    (y : β) (c : GuessCoins n k ρ') :
++    guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c) := by
++  funext i
++  rw [guessRecover_apply, guessRecover_apply, guessCoinsCongr_apply]
++  simp only [h]
++
  /-- The recovery procedure of [Gar26, Figure 2.5] for a known `x`, run with the correct
  guesses `b_ℓ = ⟨x, s_ℓ⟩`: bit `i` is the majority over `L` of
  `⟨x, S_L⟩ ⊕ A(f(x) ‖ S_L ⊕ eᵢ)`. An analysis device, not an algorithm. -/
 diff --git a/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean b/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean
-index f756f987..dad63d8e 100644
+index f756f987..ef22eea9 100644
 --- a/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean
 +++ b/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean
-@@ -202,6 +202,11 @@ def perfectInverter (A : β × (Fin n → Bool) → ρ → Bool) :
+@@ -101,6 +101,10 @@ def glPad (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool
+     β × (Fin n → Bool) :=
+   (f z.1, z.2)
+ 
++/-- The defining equation of `glPad`: `glPad f (x, r) = (f x, r)`. -/
++theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) :
++    glPad f z = (f z.1, z.2) := rfl
++
+ /-- The candidate hard-concentrate bit `B(x, r) = ⟨x, r⟩ mod 2` of [Gar26, Theorem 2.3]. -/
+ def glBit (z : (Fin n → Bool) × (Fin n → Bool)) : Bool := ip z.1 z.2
+ 
+@@ -110,6 +114,11 @@ def glInverter (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (
+     (Fin n → Bool) × (Fin n → Bool) :=
+   (R y.1 c, y.2)
+ 
++omit [Fintype γ] in
++/-- The defining equation of `glInverter`: `glInverter R (y, r) c = (R y c, r)`. -/
++theorem glInverter_apply (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) :
++    glInverter R y c = (R y.1 c, y.2) := rfl
++
+ /-- The probability, for a fixed `x`, that the predictor `A` outputs `⟨x, r⟩` on
+ `f(x) ‖ r`, over uniform `r` and coins: the quantity `Pr_r[E]` defining the good set `G`
+ in [Gar26, §2.5.1]. -/
+@@ -202,6 +211,12 @@ def perfectInverter (A : β × (Fin n → Bool) → ρ → Bool) :
      β × (Fin n → Bool) → (Fin n → ρ) → (Fin n → Bool) × (Fin n → Bool) :=
    glInverter (perfectRecover A)
  
++omit [Fintype ρ] in
 +/-- The defining equation of `perfectInverter`:
 +`perfectInverter A = glInverter (perfectRecover A)`. -/
 +theorem perfectInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) :
@@ -5304,14 +5769,30 @@ index f756f987..dad63d8e 100644
  /-- The super simple case of Goldreich–Levin: if `A` predicts `B(x, r) = ⟨x, r⟩` from
  `g(x, r) = f(x) ‖ r` with probability `1`, then `perfectInverter A` inverts `g` with
  probability `1`. [Gar26, Theorem 2.3, super simple case].
+diff --git a/TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean b/TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean
+index cc7effaa..cf8c3495 100644
+--- a/TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean
++++ b/TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean
+@@ -280,6 +280,10 @@ variable {κ G : Type*} [Fintype κ] [DecidableEq κ] [AddCommGroup G] [Fintype
+ strings, where addition is XOR, this is `⊕_{j ∈ L} s_j`. [Gar26, §2.5.1, Figure 2.5]. -/
+ def subsetSum (L : Finset κ) (s : κ → G) : G := ∑ j ∈ L, s j
+ 
++omit [Fintype κ] [DecidableEq κ] [Fintype G] in
++/-- The defining equation of `subsetSum`: `S_L(s) = ∑_{j ∈ L} s_j`. -/
++theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j := rfl
++
+ /-- The subset sum as an additive homomorphism of the tuple. -/
+ def subsetSumHom (L : Finset κ) : (κ → G) →+ G where
+   toFun := subsetSum L
 diff --git a/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean b/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean
-index f6bf733d..91bd21da 100644
+index f6bf733d..9724a204 100644
 --- a/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean
 +++ b/TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean
-@@ -69,6 +69,11 @@ def majorityInverter (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
+@@ -69,6 +69,12 @@ def majorityInverter (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
        (Fin n → Bool) × (Fin n → Bool) :=
    glInverter (majorityRecover A T)
  
++omit [Fintype ρ] in
 +/-- The defining equation of `majorityInverter`:
 +`majorityInverter A T = glInverter (majorityRecover A T)`. -/
 +theorem majorityInverter_eq (A : β × (Fin n → Bool) → ρ → Bool) (T : ℕ) :
@@ -5543,6 +6024,32 @@ index d6a01231..700d7627 100644
    congr 1
    funext s
    exact zkSim_runAt S n s.1 s.2
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+index 675fa55e..093d9f33 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean
+@@ -497,6 +497,9 @@ noncomputable def giProver : Strategy where
+     | [] => encGraph (permGraph G₀ π)
+     | _ :: _ => encPerm (if (hist.headD []).headD false then π * σ⁻¹ else π)
+ 
++/-- The prover's tape: `giProver.coins = normal 1 2`, i.e. `(N + 1)²` bits at length `N`. -/
++theorem giProver_coins : giProver.coins = .normal 1 2 := rfl
++
+ /-- The verifier of the graph isomorphism protocol [PS10, Protocol 120.6]: with the single
+ coin `b` it answers the first message `H` with `[b]`, and on `[H, γ]` outputs
+ `[decide (x well formed ∧ γ(G_b) = H)]`.
+@@ -524,6 +527,11 @@ noncomputable def giProtocol : Protocol where
+   rounds := .const 3
+   verifierFirst := false
+ 
++/-- The defining equation of `giProtocol`: prover `giProver`, verifier `giVerifier`, three
++rounds, the prover moving first. -/
++theorem giProtocol_eq : giProtocol =
++    { P := giProver, V := giVerifier, rounds := .const 3, verifierFirst := false } := rfl
++
+ /-- The prover of the `|x|`-fold graph isomorphism protocol: iteration `i` (the prover has
+ received `2i` or `2i + 1` messages: the challenges and the verifier's empty fourth messages)
+ uses `π_i := samplePerm n (coinSlice (|x|+1)² i r)`; on an even history it sends `H_i`, on an
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
 index 154c9cd0..c0259842 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
@@ -5677,22 +6184,51 @@ index 22b293d7..ddd41814 100644
  /-- The decoded graph a prover with coins `r₁` sends in iteration `i` after the challenges `bs`
  (the `H_i` of `uprob_gi_rep_cheat_le`). -/
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean
-index 78176720..62952261 100644
+index 78176720..f830542f 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean
 +++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean
-@@ -366,8 +366,9 @@ theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bo
+@@ -359,22 +359,34 @@ theorem attemptStr_ofFn (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : Lis
+ 
+ /-- The string simulator on an encoded instance with a tape of `M ≥ n` blocks is the
+ encoded typed simulator on the first `n` blocks, read by `readBlocks` with the
+-rejection-sampled permutations (`instanceVertexCount_encInstance`, `List.map_coe_finRange`,
+-`List.findSome?_map`, `List.map_findSome?`, `coinSlice_ofFn`, `attemptStr_ofFn`). -/
++rejection-sampled permutations.
++
++**Proof sketch.** Unfold `sim` (`sim_eq`); the attempts run over `instanceVertexCount x = n`
++(`instanceVertexCount_encInstance`), so both sides are `findSome?` over `Fin n`
++(`List.map_coe_finRange`, `List.findSome?_map`, `List.map_findSome?`). At attempt `t`, read the
++tape through `blockTapeEquiv` (`blockTapeEquiv_ofFn`, `blockLen_eq`): its `t`-th slice is the
++block `tapeBlock` (`coinSlice_ofFn`), on which the string attempt is the encoded typed attempt
++(`attemptStr_ofFn`). -/
+ theorem sim_ofFn_eq (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : List Bool) {M : ℕ} (hn : n ≤ M)
+     (r : Fin (M * blockLen V' (encInstance G₀ G₁).length) → Bool) :
      sim V' (encInstance G₀ G₁) z (List.ofFn r) =
        (Option.map (encView V' (encInstance G₀ G₁) z)
          (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t =>
 -          ((samplePerm n (List.ofFn (readBlocks _ _ M n hn r t).1.1), (readBlocks _ _ M n hn r t).1.2),
 -            (readBlocks _ _ M n hn r t).2))).getD [] := by
+-  unfold sim
 +          ((samplePerm n (List.ofFn (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.1),
 +            (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).1.2),
 +            (readBlocks _ _ M n hn (blockTapeEquiv V' _ M r) t).2))).getD [] := by
-   unfold sim
++  rw [sim_eq]
    rw [instanceVertexCount_encInstance, ← List.map_coe_finRange, List.findSome?_map, simTrunc,
      List.map_findSome?]
-@@ -412,10 +413,11 @@ theorem exec_three_snd (P V : Strategy) (x y z rP rV : List Bool) :
+   congr 2
+   funext t
+   simp only [Function.comp_apply]
+-  rw [show ((t : Fin n) : ℕ) = ((Fin.castLE hn t : Fin M) : ℕ) from rfl, coinSlice_ofFn,
++  have hc : coinSlice (blockLen V' (encInstance G₀ G₁).length) (Fin.castLE hn t : ℕ) (List.ofFn r) =
++      coinSlice (1 + ((encInstance G₀ G₁).length + 1) ^ 2 + V'.coinLen (encInstance G₀ G₁).length)
++        (Fin.castLE hn t : ℕ) (List.ofFn (blockTapeEquiv V' _ M r)) := by
++    rw [blockTapeEquiv_ofFn]
++    exact congrArg (fun c => coinSlice c _ (List.ofFn r)) (blockLen_eq V' _)
++  rw [show ((t : Fin n) : ℕ) = ((Fin.castLE hn t : Fin M) : ℕ) from rfl, hc, coinSlice_ofFn,
+     attemptStr_ofFn]
+   rfl
+ 
+@@ -412,14 +424,19 @@ theorem exec_three_snd (P V : Strategy) (x y z rP rV : List Bool) :
  the typed real view on the rejection-sampled `π` (`exec_three_snd`, `giProver_next_nil`,
  `giProver_next_cons`). -/
  theorem viewV_encode (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)) (z : List Bool)
@@ -5701,12 +6237,24 @@ index 78176720..62952261 100644
      ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode =
        encView V' (encInstance G₀ G₁) z
 -        (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) (samplePerm n (List.ofFn r.1), r.2)) := by
+-  show View.encode ⟨encInstance G₀ G₁, z, List.ofFn r.2,
+-    (exec giProver V' false (encInstance G₀ G₁) (encPerm σ) z (List.ofFn r.1) (List.ofFn r.2) 3).2⟩ = _
+-  rw [exec_three_snd, giProver_next_nil, giProver_next_cons]
+-  rfl
 +        (realView G₀ σ (vstar V' (encInstance G₀ G₁) z)
 +          (samplePerm n (List.ofFn r.1), giProtocol.withV_vCoinsEquiv V' _ r.2)) := by
-   show View.encode ⟨encInstance G₀ G₁, z, List.ofFn r.2,
-     (exec giProver V' false (encInstance G₀ G₁) (encPerm σ) z (List.ofFn r.1) (List.ofFn r.2) 3).2⟩ = _
-   rw [exec_three_snd, giProver_next_nil, giProver_next_cons]
-@@ -441,7 +443,7 @@ theorem le_length_encInstance {n : ℕ} (G₀ G₁ : Graph n) : n ≤ (encInstan
++  have hP : giProtocol.P = giProver := by rw [giProtocol_eq]
++  have hF : giProtocol.verifierFirst = false := by rw [giProtocol_eq]
++  have hR : giProtocol.rounds = .const 3 := by rw [giProtocol_eq]
++  rw [Protocol.viewV_withV, hP, hF, hR, PolyExpr.eval_const, exec_three_snd, giProver_next_nil,
++    giProver_next_cons]
++  refine congrArg View.encode ?_
++  dsimp only [realView, vstar]
++  rw [Protocol.withV_vCoinsEquiv_ofFn]
+ 
+ /-! ### Assembly -/
+ 
+@@ -441,17 +458,20 @@ theorem le_length_encInstance {n : ℕ} (G₀ G₁ : Graph n) : n ≤ (encInstan
  theorem statClose_real_ideal (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n))
      (z : List Bool) :
      StatClose
@@ -5715,7 +6263,23 @@ index 78176720..62952261 100644
          ((giProtocol.withV V').viewV (encInstance G₀ G₁) (encPerm σ) z r).encode)
        (fun w : Equiv.Perm (Fin n) × V'.Coins (encInstance G₀ G₁).length =>
          encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w))
-@@ -508,7 +510,7 @@ theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ :
+       (permFailBound n + 0) := by
+-  have hP : permCoinLen n ≤ (PolyExpr.normal 1 2).eval (encInstance G₀ G₁).length := by
+-    rw [PolyExpr.eval_normal, one_mul]
++  have hP : permCoinLen n ≤ (giProtocol.withV V').P.coinLen (encInstance G₀ G₁).length := by
++    rw [Strategy.coinLen_eq, Protocol.withV_P, giProtocol_eq]
++    rw [giProver_coins, PolyExpr.eval_normal, one_mul]
+     exact permCoinLen_le (two_mul_sq_le_length_encInstance G₀ G₁)
+   have h := ((statClose_samplePerm_long hP).prod
+-    (StatClose.refl (fun r : V'.Coins (encInstance G₀ G₁).length => r))).map
++    ((StatClose.refl (fun r : V'.Coins (encInstance G₀ G₁).length => r)).comp_equiv_left
++      (giProtocol.withV_vCoinsEquiv V' (encInstance G₀ G₁).length))).map
+     (fun w => encView V' (encInstance G₀ G₁) z (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w))
++  rw [statClose_iff] at h ⊢
+   intro T
+   have hT := h T
+   simpa only [viewV_encode] using hT
+@@ -508,7 +528,7 @@ theorem statClose_real_sim (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (σ :
        (fun w => some (realView G₀ σ (vstar V' (encInstance G₀ G₁) z) w)) ((2 : ℝ)⁻¹ ^ n))
      (m : ℕ) (hm : m = (encInstance G₀ G₁).length * blockLen V' (encInstance G₀ G₁).length) :
      StatClose
@@ -5725,7 +6289,7 @@ index 78176720..62952261 100644
        (fun r : Fin m → Bool => sim V' (encInstance G₀ G₁) z (List.ofFn r))
        ((2 : ℝ)⁻¹ ^ n + ((n : ℝ) + 1) * permFailBound n) := by
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
-index 6c3cd48c..707448e4 100644
+index 6c3cd48c..88260af4 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
 +++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
 @@ -68,6 +68,21 @@ open Complexity Turing Complexity.StateLoop EncodingMachines
@@ -5750,6 +6314,18 @@ index 6c3cd48c..707448e4 100644
  /-- The block length as a syntactic polynomial of the instance length. -/
  def blockPoly (V' : Strategy) : PolyExpr := .add (.add (.const 1) (.normal 1 2)) V'.coins
  
+@@ -100,6 +115,11 @@ noncomputable def sim (V' : Strategy) (x z r : List Bool) : List Bool :=
+   ((List.range (instanceVertexCount x)).findSome? fun t =>
+     attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD []
+ 
++/-- The defining equation of `sim`: the first successful attempt on consecutive coin blocks. -/
++theorem sim_eq (V' : Strategy) (x z r : List Bool) :
++    sim V' x z r = ((List.range (instanceVertexCount x)).findSome? fun t =>
++      attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD [] := rfl
++
+ /-! ### An FP toolkit -/
+ 
+ /-- Polynomial-time computability transfers along pointwise equality. -/
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean b/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
 index 39321c20..13ca9a1b 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/Interaction.lean
@@ -5887,7 +6463,7 @@ index ad5cf0b0..e69919ff 100644
        PolyExpr.eval_var]
      nlinarith [Nat.zero_le n]
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
-index 955948e3..8434af2b 100644
+index 955948e3..e513b73b 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
 +++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean
 @@ -184,7 +184,7 @@ noncomputable def simCoinsEquiv {c : Fin n → Fin 3} (hc : ProperColoring G c)
@@ -5899,25 +6475,64 @@ index 955948e3..8434af2b 100644
      (Equiv.refl ρ)
  
  /-- **`S ≡ S'`, one attempt** [PS10, proof of Proposition 128.8, "it directly follows that
-@@ -569,11 +569,11 @@ theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < e
+@@ -569,17 +569,20 @@ theorem exists_colSimRed_ge [Fintype ρ] {ρ' : Type*} [Fintype ρ'] (hm : 0 < e
    refine ⟨k, ep.1, ep.2, ?_⟩
    have h0 : acceptProb (colSimTruncW Com ℓn G c V N) D =
        acceptProb (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N 0) D := by
 -    unfold acceptProb
+-    exact congrArg uprob (funext fun z => by rw [← colSimHyb_zero Com ℓn G c V N z.1]; rfl)
 +    simp only [acceptProb_def]
-     exact congrArg uprob (funext fun z => by rw [← colSimHyb_zero Com ℓn G c V N z.1]; rfl)
++    exact congrArg uprob (funext fun z => by
++      rw [← colSimHyb_zero Com ℓn G c V N z.1, ColSimLemmas.hybStd_eq]; rfl)
    have hN' : acceptProb (colSimTruncH Com ℓn G c V N) D =
        acceptProb (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N N) D := by
 -    unfold acceptProb
+-    exact congrArg uprob (funext fun z => by rw [← colSimHyb_self Com ℓn G c V N z.1]; rfl)
 +    simp only [acceptProb_def]
-     exact congrArg uprob (funext fun z => by rw [← colSimHyb_self Com ℓn G c V N z.1]; rfl)
++    exact congrArg uprob (funext fun z => by
++      rw [← colSimHyb_self Com ℓn G c V N z.1, ColSimLemmas.hybStd_eq]; rfl)
    calc distAdv (colSimTruncW Com ℓn G c V N) (colSimTruncH Com ℓn G c V N) D / N
        = distAdv (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N 0)
+           (hybStd (colSimAttemptH Com ℓn G c V) (colSimAttemptW Com ℓn G c V) N N) D / N := by
+-        rw [distAdv, distAdv, h0, hN']
+-    _ ≤ _ := h
++        rw [distAdv_def, distAdv_def, h0, hN']
++    _ ≤ _ := h.trans_eq (congrArg (distAdv _ _) (funext fun cv => funext fun z => by
++        rw [ColSimLemmas.hybGen_eq]; rfl))
+ 
+ end Typed
+ 
 diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
-index 2f22af4a..ee84e79f 100644
+index 2f22af4a..d7614478 100644
 --- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
 +++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean
-@@ -542,13 +542,13 @@ theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
+@@ -423,6 +423,11 @@ variable {W α ρ' : Type*}
+ def hybStd (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) : Option α :=
+   (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t)
+ 
++/-- The defining equation of `hybStd`: the first success, attempts `< k` of type `H`. -/
++theorem hybStd_eq (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) :
++    hybStd H Wa N k w =
++      (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t) := rfl
++
+ /-- The hybrid with an arbitrary attempt `A` at position `k`: attempts `< k` are of type `H`,
+ attempt `k` is `A`, the later attempts are of type `Wa`; `D` judges the first success
+ (the shape of `colSimRed`, with `A` the planted attempt). -/
+@@ -431,6 +436,13 @@ def hybGen (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α)
+   D ((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (z.1 t)
+     else if t = k then A (z.1 t) else Wa (z.1 t)) z.2
+ 
++/-- The defining equation of `hybGen`: `D` on the first success of attempts `< k` of type `H`,
++attempt `k` of type `A` and the later attempts of type `Wa`. -/
++theorem hybGen_eq (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α)
++    (D : Option α → ρ' → Bool) (z : (Fin N → W) × ρ') :
++    hybGen H Wa k A D z = D ((List.finRange N).findSome? fun t : Fin N =>
++      if (t : ℕ) < k then H (z.1 t) else if t = k then A (z.1 t) else Wa (z.1 t)) z.2 := rfl
++
+ /-- Replacing attempt `k`'s coins and its attempt function consistently leaves the hybrid
+ unchanged. -/
+ theorem hybGen_update (H Wa : W → Option α) {N : ℕ} (k : Fin N) {A A' : W → Option α}
+@@ -542,13 +554,13 @@ theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
    set kf : Fin N := ⟨k, hk⟩ with hkf
    have hPk : acceptProb (hybStd H Wa N k) D = uexp (hybAcc H Wa kf Wa D) := by
      rw [← uprob_hybGen_eq_uexp hm H Wa kf]
@@ -5933,6 +6548,22 @@ index 2f22af4a..ee84e79f 100644
      congr 1
      funext z
      rw [← hybGen_H H Wa kf D z.1 z.2]
+@@ -556,12 +568,13 @@ theorem exists_hybRed_ge (hm : 0 < m) {N : ℕ} (hN : 0 < N)
+     (fun ep => hybAcc H Wa kf Wa D ep - hybAcc H Wa kf H D ep)
+   refine ⟨kf, ep₀, ?_⟩
+   calc distAdv (hybStd H Wa N 0) (hybStd H Wa N N) D / N
+-      ≤ |acceptProb (hybStd H Wa N k) D - acceptProb (hybStd H Wa N (k + 1)) D| := hgap
++      ≤ |acceptProb (hybStd H Wa N k) D - acceptProb (hybStd H Wa N (k + 1)) D| := by
++        rw [distAdv_def]; exact hgap
+     _ = |uexp (fun ep => hybAcc H Wa kf Wa D ep - hybAcc H Wa kf H D ep)| := by
+         rw [hPk, hPk1, HardcoreBit.uexp_sub]
+     _ ≤ |hybAcc H Wa kf Wa D ep₀ - hybAcc H Wa kf H D ep₀| := hep₀
+     _ = _ := by
+-        rw [distAdv, acceptProb_hybGen_planted H Wa kf D (p ep₀.1) ep₀ (hX ep₀),
++        rw [distAdv_def, acceptProb_hybGen_planted H Wa kf D (p ep₀.1) ep₀ (hX ep₀),
+           acceptProb_hybGen_planted H Wa kf D (p ep₀.1) ep₀ (hY ep₀)]
+ 
+ end HybridCoins
 
 ## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r5/final-reads.tsv =====
 
@@ -7068,186 +7699,6 @@ TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem zkSim_runAt@227
 TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem ofFn_giBitEquiv@238
 TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniTapes_apply@276
 TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem outV_pullback_cheat@357
-
-## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6/proofseal/final-a.tsv =====
-
-
-
-## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6/proofseal/final-b.tsv =====
-
-TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_of_linear@64
-TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem PolyTimeComputable.pairMapSnd@94
-TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_unary@162
-TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_polyUnary@194
-TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_ite@289
-TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_lenLe@329
-TCSlib/Complexity/Randomized/NonUniform.lean	theorem runLit_eq_runAt@87
-TCSlib/Complexity/Randomized/NonUniform.lean	theorem runLit_eq_runAtL@91
-TCSlib/Complexity/Randomized/NonUniform.lean	theorem Uniform.runAtL_eq@95
-TCSlib/Complexity/Randomized/NonUniform.lean	theorem polyTimeComputable_runAtL@130
-TCSlib/Complexity/Randomized/NonUniform.lean	def toNUPPT@168
-TCSlib/Complexity/Randomized/NonUniform.lean	theorem uniform@171
-TCSlib/Complexity/Randomized/NonUniform.lean	def ofPolyTime@175
-TCSlib/Complexity/Randomized/NonUniform.lean	theorem toNUPPT_ofPolyTime@180
-TCSlib/Complexity/Randomized/PPT.lean	theorem computesFunInTime@181
-TCSlib/Complexity/Randomized/PPT.lean	theorem polyTimeComputable_output@186
-TCSlib/Complexity/Randomized/PPT.lean	def ofPolyTime@321
-TCSlib/Complexity/Randomized/PPT.lean	theorem output_ofPolyTime@334
-TCSlib/Complexity/Randomized/PPT.lean	theorem coins_ofPolyTime@342
-TCSlib/Complexity/Randomized/PPT.lean	theorem coinsEquiv_ofPolyTime_ofFn@354
-TCSlib/Complexity/Randomized/PPT.lean	theorem adv_ofPolyTime@361
-TCSlib/Complexity/Randomized/PPT.lean	theorem advice_ofPolyTime@366
-TCSlib/Complexity/Randomized/PPT.lean	theorem ofPolyTimeUniform_uniform@384
-TCSlib/Complexity/Randomized/PPT.lean	theorem output_ofPolyTimeUniform@388
-TCSlib/Complexity/Randomized/PPT.lean	theorem coins_ofPolyTimeUniform@393
-TCSlib/Complexity/Randomized/PPT.lean	theorem exists_uniform_computes@421
-TCSlib/Complexity/Randomized/PolyExpr.lean	theorem polyBound_eval@187
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_sampleClose@556
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem StrongOneWay.toCollection_oneWay@621
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem StrongOneWay.exists_collection_oneWay@632
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem FunFamily.not_toCollection_oneWay_id@649
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfIndexStr_eq@806
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfRawStr_eq@813
-TCSlib/Cryptography/Asymptotic/Collections.lean	theorem collInverter_runAt@906
-TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem distAdv_padXor_le@353
-TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgAdv_eq_of_runAtL@505
-TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgScheme_singleMessageSecure@545
-TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem not_multiMessageSecure_of_deterministic@641
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem concrete_zero@94
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem concrete_succ@104
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem start_rawInput@291
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem move_eq@379
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem orbit_eq_encState@537
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem runAt_ggmRedMachine@744
-TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem ggmRedMachine_distinguisher@764
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem not_hardCore_const@253
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem exists_owpPredictorSnoc@364
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PRG.expand_G@491
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem prgAdv_fst@524
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem prg_expand@586
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.iterPRG_eq_expand@641
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_f@730
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glBit_append@738
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_f_bijective@788
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem StrongOneWay.glPad@814
-TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem StrongOneWay.glPad_hardCore@855
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_sample_runAtL@171
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem OneWay.glPad@279
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem OneWay.glPad_hardCore@325
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem PermCollection.OneWay.glPad@389
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem PermCollection.OneWay.glPad_hardCore@395
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.OneWay.glPad@453
-TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.OneWay.glPad_hardCore@462
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem coins_wrap@166
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem owpPredMachine_predProb@344
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem invProbOpt_glPad_le@689
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem statClose_glPadSampler@770
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem glPad_invProbAt_le@844
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem coins_reparam@897
-TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem glPadSample_runAt@967
-TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem Negligible.comp_div_two@468
-TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glHalf_easy@526
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem WorstCaseOneWayLit.toParam@321
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem Easy.prod@460
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem invProb_prodFun_le_yaoTry@510
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem eventually_poly_mul_two_pow_lt_one@525
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem blocks_eq_blocksE@626
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem weak_to_strong@677
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem strong_prod_two@758
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem FunFamily.StrongOneWay.weak@841
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem exists_runAt_eq_arg@854
-TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem not_strongOneWay_id@888
-TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem length_g_iterate_le@434
-TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem ans_layout@631
-TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem statClose_sampleAll@747
-TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem exists_yaoReduction@879
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem singleBitSecure_iff@260
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwiseEncFun_poly@287
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwise_enc_runAtL@314
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem SingleBitSecure.bitwise@471
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem PublicKeyScheme.Secure.multiMessageSecure@529
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpGen_runAt@698
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpEnc_runAt@712
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpDecFun_apply@726
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	def tdpBitScheme@749
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem predProb_pkPredictor_eq@786
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem acceptProb_owpGen_unit@795
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem acceptProb_owpGenNot_unit@803
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpBitScheme_pkEncDist@857
-TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem TrapdoorCollection.tdpBitScheme_singleBitSecure@911
-TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem blockEncFun_flatten@196
-TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem distAdv_tuple_le_mul@569
-TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem exists_hybridBound@643
-TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem tdpPredictor_runAtL@757
-TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem uprob_tdpPredictor@796
-TCSlib/Cryptography/Asymptotic/Universal.lean	theorem clockedAnswer_eq_cons_of_computesInTime@128
-TCSlib/Cryptography/Asymptotic/Universal.lean	theorem clockedAnswer_eq_false_of_not_computesInTime@139
-TCSlib/Cryptography/Asymptotic/Universal.lean	theorem ofFn_getD_eq_take@257
-TCSlib/Cryptography/Asymptotic/Universal.lean	theorem polyTimeComputable_clockedAnswer@388
-TCSlib/Cryptography/Asymptotic/Universal.lean	theorem fUniversal_easy@440
-TCSlib/Cryptography/Asymptotic/Universal.lean	theorem invProbAt_reduction_ge@724
-TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem lengthRegular_gStr@123
-TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem family_inLen@133
-TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem easy_of_linear@172
-TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem invProbAt_family_le@300
-TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem strongOneWay@386
-TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem exists_family@521
-TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_oneWay@983
-TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	theorem idealTrial_correct@117
-TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem uprob_recover_le_invProb@144
-TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem invProb_perfectInverter@217
-TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean	theorem trialBit_correct@84
-TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_multiRed_bound@281
-TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_bitComPredictor@574
-TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_bitRed_bound@682
-TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem owpComStr_eq_loopOut@825
-TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem owpComStr_polyTimeComputable@865
-TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem ZeroKnowledge.singleMessageSecure@113
-TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem SingleMessageSecure.zeroKnowledge@280
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem decGraph_eq_of_sqrt@399
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem efficient_of_polyTime@433
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem statClose_samplePerm_long@673
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem permCoinLen_le@682
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem gniProver_next_encGraph@64
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem gni_interactiveProofErr@176
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem gi_efficientProverProofErr@303
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniProver_next_enc@127
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniVerifierRep_next_lt@146
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniVerifierRep_next_ge@169
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniProtocolRep_outV@178
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem statClose_pi@298
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniRep_accept_le@363
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gni_interactiveProofErrRep@417
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem exec_repViews@72
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem PsOfFin_prefixLT@145
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem PsOfFin_init_prefixLE@153
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem prefixLE_last@161
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_odd@166
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_mid@172
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_end@178
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_end_enc@189
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giProverRep_next_even@210
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giProverRep_next_odd@227
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giProtocolRep_outV@247
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giRep_accept_le@408
-TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem gi_rep_efficientProverProofErr@446
-TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem LevinReduction.polyTimeReducible@150
-TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem Strategy.pullback_efficient@249
-TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem Negligible.comp_of_le@288
-TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem LevinReduction.efficientProverProofErr@410
-TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem LevinReduction.zk@495
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem encColor_getD_ne@286
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colVerify_honest@168
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem exists_bad_edge@230
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_efficient@565
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colVerifier_efficient@580
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProverRep_efficient@587
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colVerifierRep_efficient@595
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_length_le@622
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_outV@740
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem uprob_check_uniform_le@777
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_sound@799
-TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem col_efficientProverProofErr@951
 
 ## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6/probes/Final6Pass.lean =====
 
@@ -8452,10 +8903,6 @@ TCSlib.Cryptography.Asymptotic.Universal	TCSlib.Cryptography.uprob_fiber_le_card
 TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uexp.eq_1
 TCSlib.Cryptography.ZeroKnowledge.Commitment	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.distAdv.eq_1
 TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.multiCom.eq_1
-
-## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6b/hits-touched-final.tsv =====
-
-
 
 ## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6b/scan-final.log =====
 
@@ -9778,3 +10225,2682 @@ needs Lean `v4.36.0-rc2`; our pin is `029db123ddaa7f8fd0d18cea3b1b33bf84dacd1e` 
 
 Using these needs a Mathlib bump, which is repository-wide (the `main` branch's pin, eleven Lean
 minor versions). Recorded as ledger row DL-22, to be paid at that bump.
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/worker-reports/E1-round6c-REPORT.md =====
+
+## #210 round 6c: report
+
+Round 6c is done. Across all 70 files #210 now changes, there are no (a) hits left: (a) = 0, (b) = 764. The (b) rows cover 468 untouched declarations.
+
+**New head of `wip/eqlemmas`: `3436321ba28042549bead976dc654aab3d661f10`.** It is one commit on top of 6b (`037075b0…`), and it is not pushed (the branch shows `ahead 1`).
+
+**The PR now has 70 files, not 68.** Round 6c put new equation lemmas into two files #210 had not touched before: `HardcoreBit/PairwiseIndependence.lean` (`subsetSum_eq`) and `ZeroKnowledge/GraphIsomorphism.lean` (`giProtocol_eq`, `giProver_coins`). All counts below are over the 70 files. Measured against `05fe903f`, 547 declarations are touched.
+
+**Final evidence at `3436321b`:**
+- **Proof seal:** the whole-file seal, proofs included, ran on all 70 files with `PolyExpr.eval` left unsealed. No error lands in a touched declaration.
+- **Explicit-unfold scan:** it covers 446 `unfold`/`rw`/`simp` hits and 53 references to generated equation lemmas. None is in a touched declaration.
+- **The two DL proofs are (b):** #210 doesn't touch either one.
+  - Concrete `primesPairEquiv_apply_val`: seal error at line 338.
+  - DiscreteLog `ExpGroupGen.FullLength.exists_fullLengthExcept`: seal errors at lines 442–443.
+- **Control:** I ran the same seal on the 6b copies of the 18 files 6c changed. It finds 26 (a) hits there, and all 26 are gone at head. Examples: the Closure `exists_*` lemmas, `OneWay.glPad`, the PublicKey `tdp*` lemmas, GI `sim_ofFn_eq`, `viewV_encode`, `statClose_real_ideal`, and 3-colouring `exists_colSimRed_ge` / `exists_hybRed_ge`.
+- **Replay:** all 81 modules downstream of the 18 changed files rebuilt, plus `audits/pass-shelat/Checks`. Every module returned rc=0 with 0 errors. Sorry counts match the previous replay. Every warning other than sorry was already there in 6b.
+- **Axioms:** I checked the 47 public declarations 6c added or changed. All use only the standard axioms, with no `sorryAx` and no errors.
+- **Statement diff:**
+  - Against 16a7d02d: 112 ADDED, 37 CHANGED, 2 REMOVED.
+  - Against 05fe903f: 367 ADDED, 58 CHANGED, 2 REMOVED.
+  - Against 6b: 17 ADDED. The only CHANGED entry is `glNeed`, which went from `def` to `abbrev` with the same statement.
+- **Lint:**
+  - `style_lint`: the only findings are the two approved oversize files, Collections (1141 lines) and PublicKey (1070). `GraphIsomorphism.lean` is at 993 lines.
+  - `check8b`: no new findings, and five "def without a lemma" lists got shorter.
+  - No added line is over 100 characters.
+
+**What 6c changed:**
+- **New published lemmas, each beside its definition:**
+  - `guessRecover_apply`, `guessCoinsCongr` (+ `_apply`), `guessRecover_coinsCongr`
+  - `glPad_apply`, `glInverter_apply`, `subsetSum_eq`, `invProbOpt_def`, `glPredictorOf_apply`
+  - `hybStd_eq`, `hybGen_eq`, `giProtocol_eq`, `giProver_coins`, `GIZK.sim_eq`
+  - `Collection.evalSampled_iff`, `Collection.glPad_index`, `Collection.glPad_invProbAt`
+- **Proofs fixed:** the (a) proofs in Closure, Concrete, Collections, HardCoreGL/GLColl/GLFamily, HardCoreCollection, PublicKey, and the GI and 3-colouring ZK files. They now go through published lemmas such as `Computes.runAt_eq`, `layout_eq`, `distAdv_def`, `acceptProb_def`, `predProb_def`, `negligible_iff`, `sampleClose_iff`, `hardCore_iff`, `oneWay_iff`, `blockLen_eq` and `withV_vCoinsEquiv_ofFn`.
+- **Unused-variable warnings:** I added `omit [Fintype …] in` to 6c's new lemmas and to three 6b equation lemmas (`guessInverter_eq`, `perfectInverter_eq`, `majorityInverter_eq`). Each of those lost an instance argument it never used.
+- **One extra file:** fixing those warnings also touched `HardcoreBit/ThreeQuarters.lean`.
+
+**I fixed three bugs in my own tools, and they change the counts:**
+- **Declaration comparison:** a trailing `variable … in` or `end …` line was being counted as part of the declaration above it. Seven declarations were therefore wrongly marked as touched. They match the base exactly and are now (b): `glPad_decD_eq` (its `unfold glPadDecode` is now a (b) row), `TrapdoorCollection.OneWay.glPad_hardCore`, `PermFamily.toFunFamily_f`, `yaoB`, Concrete `default`, `prodFun` and `yaoTry`.
+- **Name matching:** the (a)/(b) step now matches exact namespace-qualified names. Before, it matched on name suffix, so `PermCollection.OneWay.glPad` counted as touched because `OneWay.glPad` was.
+- **Error attribution:** an error reported at a docstring now goes to the declaration that docstring documents. Before, an `adv_ofPolyTime` error was being attributed to `coinsEquiv_ofPolyTime_ofFn`.
+
+**Ruling question:** I made `glNeed` (HardCoreGL) an `abbrev`, reading it as notation for a length abbreviation, like `PolyExpr.eval`. Without that, a coin type in `invProbOpt_glFam_eq` needs `glNeed` to reduce. If that reading isn't accepted, it needs an equation and a coin equivalence instead.
+
+I left the untracked `Probe/` directory in the worktree alone; I didn't create it. Every process I started has finished or was stopped by its recorded PID.
+
+Everything is in `/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/`:
+- `final-checks.log`, `classified.tsv`
+- `cleanup-b.tsv`, `cleanup-b-decls.tsv` (the (b) clean-up list)
+- `proofseal/all.out`, `scan.log`, `touched.tsv`
+- `control/` (the 6b control run)
+- `replay-head.log`, `full-head/`
+- `probes/Axioms6c.log`
+- `decls.tsv`, `decls-vs-05fe903f.tsv`, `decls-6c.tsv`
+- `style-lint-head.log`, `check8b-diff.log`
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/classified.tsv =====
+
+b	seal	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_of_linear	lines 68
+b	seal	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem PolyTimeComputable.pairMapSnd	lines 96
+b	seal	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_unary	lines 166, 175
+b	seal	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_polyUnary	lines 197
+b	seal	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_ite	lines 293
+b	seal	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem polyTimeComputable_lenLe	lines 335
+b	seal	TCSlib/Complexity/Randomized/Closure.lean	theorem pairFstD_combineAdvice	lines 188
+b	seal	TCSlib/Complexity/Randomized/Closure.lean	theorem pairSndD_combineAdvice	lines 196
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	theorem runLit_eq_runAt	lines 88
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	theorem runLit_eq_runAtL	lines 92
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	theorem Uniform.runAtL_eq	lines 97, 96
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	theorem polyTimeComputable_runAtL	lines 131
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	def toNUPPT	lines 168
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	theorem uniform	lines 171
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	def ofPolyTime	lines 177
+b	seal	TCSlib/Complexity/Randomized/NonUniform.lean	theorem toNUPPT_ofPolyTime	lines 180, 181
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem computesFunInTime	lines 182
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem polyTimeComputable_output	lines 187
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	def ofPolyTime	lines 324, 325, 326, 331, 331, 331
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem output_ofPolyTime	lines 339, 339, 339
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem coins_ofPolyTime	lines 342, 344
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem adv_ofPolyTime	lines 361, 363
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem advice_ofPolyTime	lines 366, 368
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem ofPolyTimeUniform_uniform	lines 385
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem coins_ofPolyTimeUniform	lines 393, 394
+b	seal	TCSlib/Complexity/Randomized/PPT.lean	theorem exists_uniform_computes	lines 425
+b	seal	TCSlib/Complexity/Randomized/PolyExpr.lean	theorem polyBound_eval	lines 187
+b	seal	TCSlib/Cryptography/Asymptotic/Adversary.lean	theorem invProbOpt_le_invProb	lines 190
+b	seal	TCSlib/Cryptography/Asymptotic/Adversary.lean	theorem _root_.Complexity.NUPPT.computes_iff_uprob	lines 238, 240
+b	seal	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	theorem encodeList_eq_flatMap	lines 63
+b	seal	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	theorem pairFstD_nil	lines 125
+b	seal	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	theorem pairSndD_nil	lines 128
+b	seal	TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_sampleClose	lines 563
+b	seal	TCSlib/Cryptography/Asymptotic/Collections.lean	theorem StrongOneWay.toCollection_oneWay	lines 623, 623
+b	seal	TCSlib/Cryptography/Asymptotic/Collections.lean	theorem StrongOneWay.exists_collection_oneWay	lines 634
+b	seal	TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfIndexStr_eq	lines 814, 814, 812
+b	seal	TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfRawStr_eq	lines 821, 823, 819
+b	seal	TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	theorem _root_.Complexity.NUPPT.length_runAt_le	lines 104
+b	seal	TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem distAdv_padXor_le	lines 358
+b	seal	TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgAdv_eq_of_runAtL	lines 513
+b	seal	TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgScheme_singleMessageSecure	lines 581, 589
+b	seal	TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem not_multiMessageSecure_of_deterministic	lines 646, 646
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem copies_X	lines 228
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem Ensemble.indist_iff_exists_negligible	lines 273
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem Ensemble.Indist.symm	lines 334
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem Ensemble.IndistLit.toIndist	lines 403
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem hybrid_lemma	lines 447
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem Ensemble.Indist.trans	lines 459
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem Ensemble.Indist.copies	lines 516, 551, 582, 585
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem predict_eq	lines 629
+b	seal	TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem prediction_lemma	lines 662, 668
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReduction.lean	theorem length_lookStep_iterate_le	lines 400
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReduction.lean	theorem lookStep_iterate_tblEnc	lines 439
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReduction.lean	theorem unaryMul_poly	lines 697
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem concrete_zero	lines 101, 101
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem concrete_succ	lines 112, 113
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem start_rawInput	lines 291
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem move_eq	lines 381
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem orbit_eq_encState	lines 541
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem runAt_ggmRedMachine	lines 752
+b	seal	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem ggmRedMachine_distinguisher	lines 784
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem not_hardCore_const	lines 263, 267, 267
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem exists_owpPredictorSnoc	lines 389, 395
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PRG.expand_G	lines 493
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem prgAdv_fst	lines 529
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem prg_expand	lines 589
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.iterPRG_eq_expand	lines 650
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_f	lines 735
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glBit_append	lines 742
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_f_bijective	lines 792
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem StrongOneWay.glPad	lines 815
+b	seal	TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem StrongOneWay.glPad_hardCore	lines 874, 874
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_sample_runAtL	lines 178, 175
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem OneWay.glPad_hardCore	lines 355, 356
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem PermCollection.OneWay.glPad	lines 419
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem PermCollection.OneWay.glPad_hardCore	lines 425
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.OneWay.glPad	lines 483
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.OneWay.glPad_hardCore	lines 492
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem orbit_eq	lines 368
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem unaryMulFun_poly	lines 488
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem glMachine_runAt	lines 752
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem ofFn_glCoinsEquiv	lines 848
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	theorem glColl_negligible	lines 322, 322
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem coins_wrap	lines 169
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem owpPredMachine_predProb	lines 345
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem invProbOpt_glPad_le	lines 695
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem statClose_glPadSampler	lines 772, 777, 770
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem glPad_invProbAt_le	lines 855
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem coins_reparam	lines 892
+b	seal	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem glPadSample_runAt	lines 968, 965
+b	seal	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem Negligible.comp_div_two	lines 470
+b	seal	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glHalf_easy	lines 532, 537
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem WorstCaseOneWayLit.toParam	lines 346
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem Easy.prod	lines 467
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem invProb_prodFun_le_yaoTry	lines 520
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem eventually_poly_mul_two_pow_lt_one	lines 542, 542
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem blocks_eq_blocksE	lines 626
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem weak_to_strong	lines 686
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem strong_prod_two	lines 783
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem FunFamily.StrongOneWay.weak	lines 843, 843
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem exists_runAt_eq_arg	lines 857
+b	seal	TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem not_strongOneWay_id	lines 891, 891
+b	seal	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem length_g_iterate_le	lines 442
+b	seal	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem ans_layout	lines 677, 690
+b	seal	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem statClose_sampleAll	lines 750
+b	seal	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem exists_yaoReduction	lines 907, 912, 916, 927, 935
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem singleBitSecure_iff	lines 268, 276
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwiseEncFun_poly	lines 289
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwise_enc_runAtL	lines 333
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem PublicKeyScheme.Secure.multiMessageSecure	lines 554, 530
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem predProb_pkPredictor_eq	lines 792
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem acceptProb_owpGen_unit	lines 800
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem acceptProb_owpGenNot_unit	lines 808
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem blockEncFun_flatten	lines 217
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem distAdv_tuple_le_mul	lines 620
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem exists_hybridBound	lines 695, 703
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem tdpPredictor_runAtL	lines 767
+b	seal	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem uprob_tdpPredictor	lines 809
+b	seal	TCSlib/Cryptography/Asymptotic/Sampling.lean	theorem pushesUniform_of_card_fiber	lines 274
+b	seal	TCSlib/Cryptography/Asymptotic/Universal.lean	theorem clockedAnswer_eq_cons_of_computesInTime	lines 132, 133
+b	seal	TCSlib/Cryptography/Asymptotic/Universal.lean	theorem clockedAnswer_eq_false_of_not_computesInTime	lines 144
+b	seal	TCSlib/Cryptography/Asymptotic/Universal.lean	theorem ofFn_getD_eq_take	lines 259
+b	seal	TCSlib/Cryptography/Asymptotic/Universal.lean	theorem polyTimeComputable_clockedAnswer	lines 391
+b	seal	TCSlib/Cryptography/Asymptotic/Universal.lean	theorem fUniversal_easy	lines 450, 451
+b	seal	TCSlib/Cryptography/Asymptotic/Universal.lean	theorem invProbAt_reduction_ge	lines 748, 749, 754, 756, 784, 786
+b	seal	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem lengthRegular_gStr	lines 124, 125
+b	seal	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem family_inLen	lines 134
+b	seal	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem easy_of_linear	lines 176, 177
+b	seal	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem invProbAt_family_le	lines 313, 346
+b	seal	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem strongOneWay	lines 463, 463
+b	seal	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem exists_family	lines 527
+b	seal	TCSlib/Cryptography/Candidates/Concrete.lean	theorem primesPairEquiv_apply_val	lines 338
+b	seal	TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem ExpGroupGen.FullLength.exists_fullLengthExcept	lines 442, 442, 443
+b	seal	TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_oneWay	lines 984
+b	seal	TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_index	lines 559
+b	seal	TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_index	lines 1011
+b	seal	TCSlib/Cryptography/HardcoreBit/Basic.lean	theorem uexp_mono	lines 82
+b	seal	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	theorem idealTrial_correct	lines 160
+b	seal	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem uprob_recover_le_invProb	lines 165
+b	seal	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem invProb_perfectInverter	lines 229, 228
+b	seal	TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean	theorem trialBit_correct	lines 92, 98
+b	seal	TCSlib/Cryptography/NumberTheory/Primality.lean	theorem bitsToNat_eq_listToNat	lines 672
+b	seal	TCSlib/Cryptography/OneWayFunctions/Amplification.lean	theorem yao_amplification_exp	lines 318
+b	seal	TCSlib/Cryptography/Pseudorandom/Generators.lean	theorem prgAdv_comp_equiv	lines 87
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_multiRed_bound	lines 308
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_bitComPredictor	lines 596, 600, 604
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_bitRed_bound	lines 712
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem owpComStr_eq_loopOut	lines 843, 844
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem owpComStr_polyTimeComputable	lines 870
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem negligible_const_zero	lines 262, 263
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem perfectZK_zeroRounds	lines 291, 292
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem attempt_poly	lines 394
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem exists_retrySimulator	lines 440, 438
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem statClose_retry	lines 513
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem PerfectZKAbort.statZK	lines 629, 641, 643
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem negligible_inv_pow_sqrt_div	lines 673
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	theorem two_pow_size_le_two_mul_succ	lines 495
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	theorem polyTimeComputable_encPermFromCoins	lines 687
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem ZeroKnowledge.singleMessageSecure	lines 116
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem SingleMessageSecure.zeroKnowledge	lines 284, 284
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem decGraph_snd	lines 216
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem Riso_witnessRelation	lines 340
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem permCoinLen_le	lines 375
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giProver_efficient	lines 852
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giVerifier_efficient	lines 862
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gniVerifier_efficient	lines 868
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gniVerifierRep_efficient	lines 874
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giProverRep_efficient	lines 879
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giVerifierRep_efficient	lines 885
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gni_interactiveProofErr	lines 912
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gni_interactiveProof	lines 931
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giProtocol_proverBounded	lines 938
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giProtocolRep_proverBounded	lines 943
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gniProtocol_proverBounded	lines 949, 950
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gi_efficientProverProofErr	lines 969
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem gi_rep_efficientProverProof	lines 986
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem decGraph_eq_of_sqrt	lines 402
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem efficient_of_polyTime	lines 435
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem statClose_samplePerm_long	lines 677
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem permCoinLen_le	lines 684
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem gniProver_next_encGraph	lines 66
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem gni_interactiveProofErr	lines 178, 181, 187
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem gi_efficientProverProofErr	lines 305, 330, 332, 308, 334
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniProver_next_enc	lines 130
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniVerifierRep_next_lt	lines 152
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniVerifierRep_next_ge	lines 173
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniProtocolRep_outV	lines 181
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem statClose_pi	lines 302, 323
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniRep_accept_le	lines 386
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gni_interactiveProofErrRep	lines 420, 423, 429
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem exec_repViews	lines 74
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem PsOfFin_prefixLT	lines 150
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem PsOfFin_init_prefixLE	lines 158
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem prefixLE_last	lines 161
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_odd	lines 168
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_mid	lines 174
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_end	lines 184
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giVerifierRep_next_end_enc	lines 197
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giProverRep_next_even	lines 215
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giProverRep_next_odd	lines 233
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giProtocolRep_outV	lines 250
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem giRep_accept_le	lines 433
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	theorem gi_rep_efficientProverProofErr	lines 448, 477, 479, 451, 481
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem samplePerm_ofFn_castLE	lines 155
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem statClose_samplePerm_long	lines 164
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem statClose_pi	lines 183
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem attemptStr_ofFn	lines 351, 348
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem giProver_next_nil	lines 398
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem giProver_next_cons	lines 407
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem statClose_typed_string	lines 511
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem negligible_delta	lines 562, 568
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem decGraphAt_padSq	lines 167
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem decGraph_eq_of_sqrt	lines 186
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem attemptAt_poly	lines 257
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem sim_poly	lines 440
+b	seal	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem exists_simulator	lines 459
+b	seal	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem pairFstD_encodeMsgs	lines 145
+b	seal	TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem LevinReduction.polyTimeReducible	lines 153
+b	seal	TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem Strategy.pullback_efficient	lines 253
+b	seal	TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem Negligible.comp_of_le	lines 290
+b	seal	TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem LevinReduction.efficientProverProofErr	lines 436
+b	seal	TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem LevinReduction.zk	lines 499
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem encColor_getD_ne	lines 290
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem iterSnd_poly	lines 200
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem efficient_of_polyTime	lines 233
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem ofFn_padFin	lines 322
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem countTrue_poly	lines 388
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem edgeOf_val	lines 570
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem decGraph_apply	lines 582
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem encGraph_decGraph_eq_take	lines 589, 596
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem bitsToNat_eq_natOfBits	lines 627
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem natOfBits_poly	lines 660
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem encColor_eq	lines 822, 822, 822
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem decColoring_val	lines 854
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem encodeMsgs_eq_flatMap	lines 905
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem iterate_pairSndD_encodeMsgs	lines 927
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem length_le_length_encodeMsgs	lines 942
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	theorem edgeAt_eq_some_of_pos	lines 995
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	theorem length_argX_le	lines 76
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	theorem nOf_ilayout	lines 456
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colVerify_honest	lines 178
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem exists_bad_edge	lines 236, 237
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_efficient	lines 567
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colVerifier_efficient	lines 582
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProverRep_efficient	lines 589
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colVerifierRep_efficient	lines 597
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_length_le	lines 629
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_outV	lines 746
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem uprob_check_uniform_le	lines 790
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_sound	lines 853
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem col_efficientProverProofErr	lines 959, 967
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	theorem colProver_next_eq	lines 180
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	theorem colVerifier_next_eq	lines 224, 231, 233, 243
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	theorem colProverRep_next_eq	lines 297
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	theorem colVerifierRep_next_eq	lines 329
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	theorem two_le_of_edge	lines 375
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem uprob_colSimAttemptH_none	lines 261
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem uprob_colSimAttemptH_some	lines 300
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem statClose_colSimTruncH	lines 356
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem colSimAttemptPlanted_W	lines 448
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem colSimAttemptPlanted_H	lines 499
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem exists_colSimulator	lines 676, 676
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem Negligible.comp_sqrt	lines 690
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem col_hvzk	lines 789
+b	seal	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	theorem statClose_truncAttempts	lines 411
+b	unfold	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	pairEncode_append	115 simp Turing.pairEncode
+b	unfold	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	splitAtLastTrue_replicate_succ	151 rw Turing.splitAtLastTrue
+b	unfold	TCSlib/Complexity/Randomized/NonUniform.lean	Uniform.runAtL_eq	97 simp Complexity.NUPPT.runAtL
+b	unfold	TCSlib/Cryptography/Asymptotic/Adversary.lean	invProbOpt_some	197 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	encodeList_eq_flatMap	64 simp Turing.pairEncode
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	pairEncode_nil_append	133 simp Turing.pairEncode
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_blockStep_le	181 simp Complexity.pairFstD
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_blockStep_le	181 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_decListStep_le	318 simp Complexity.pairFstD
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_decListStep_le	318 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_decListStep_le	318 simp Turing.pairDecode
+b	unfold	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_decListStep_le	325 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	invProbAt_nonneg	278 unfold TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	decodeFin_eq_some_iff	576 simp TCSlib.Cryptography.decodeFin
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfIndexStr_eq	813 unfold Complexity.NUPPT.runAt
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfIndexStr_eq	813 unfold Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfIndexStr_eq	813 unfold Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfIndexStr_eq	814 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfRawStr_eq	821 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfRawStr_eq	822 unfold Complexity.NUPPT.runAt
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfRawStr_eq	822 unfold Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/Collections.lean	owfRawStr_eq	822 unfold Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	_root_.Complexity.NUPPT.length_runAt_le	105 unfold Complexity.NUPPT.timeBound
+b	unfold	TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	_root_.Complexity.NUPPT.length_runAt_le	109 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	ofFn_padFin_of_le	178 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean	ofFn_padFin_eq_take	103 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	acceptProb_distinguisherL_congr	122 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	acceptProb_distinguisherL_congr	126 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	acceptProb_distinguisherL_congr	133 simp Complexity.NUPPT.distinguisherL
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	MultiMessageSecure.singleMessageSecure	292 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	runAt_prgPad	390 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	runAt_prgPad	390 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	prgAdv_eq_of_runAtL	511 unfold TCSlib.Cryptography.prgAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	prgAdv_eq_of_runAtL	511 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	prgScheme_singleMessageSecure	584 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	distinguisherL_firstTwoEq	617 rw Complexity.NUPPT.distinguisherL
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	distinguisherL_firstTwoEq	618 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	distinguisherL_firstTwoEq	618 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	not_multiMessageSecure_of_deterministic	678 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/Encryption.lean	not_multiMessageSecure_of_deterministic	717 rw TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	uniform_samplable	237 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.refl	325 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.toLit	356 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.IndistLit.toIndist	404 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.push	431 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.trans	461 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.copies	519 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.copies	538 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.copies	554 simp Complexity.NUPPT.distinguisher
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.copies	555 simp TCSlib.Cryptography.multicopyRed
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.copies	564 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Ensembles.lean	predict_eq	623 rw TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReduction.lean	length_lookStep_iterate_le	398 simp Complexity.pairFstD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReduction.lean	length_lookStep_iterate_le	399 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	decodeFin_eq_some_iff	168 simp TCSlib.Cryptography.decodeFin
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	queryOf_eq_some_iff	180 unfold TCSlib.Cryptography.GGMRed.queryOf
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	queryOf_eq_some_iff	185 unfold TCSlib.Cryptography.GGMRed.queryOf
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	ofFn_padFin_of_length	193 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	exists_queryOf_iff	202 simp Complexity.pairFstD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	exists_queryOf_iff	202 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	exists_queryOf_iff	205 simp Complexity.pairFstD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	exists_queryOf_iff	208 simp Complexity.pairFstD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	exists_queryOf_iff	208 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	pairSndD_of_queryOf	216 simp Complexity.pairSndD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	le_length_rawInput	303 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	paramU_eq	310 simp TCSlib.Cryptography.GGMRed.paramU
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	paramU_eq	310 simp TCSlib.Cryptography.GGMRed.inX
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	chal_eq	314 simp TCSlib.Cryptography.GGMRed.chal
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	chal_eq	314 simp TCSlib.Cryptography.GGMRed.inX
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	unI_eq	318 simp TCSlib.Cryptography.GGMRed.unI
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	unI_eq	318 simp TCSlib.Cryptography.GGMRed.inX
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	unJ_eq	322 simp TCSlib.Cryptography.GGMRed.unJ
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	unJ_eq	322 simp TCSlib.Cryptography.GGMRed.inX
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	advD_eq	326 simp TCSlib.Cryptography.GGMRed.advD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	advD_eq	326 simp TCSlib.Cryptography.GGMRed.inX
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsAll_eq	330 simp TCSlib.Cryptography.GGMRed.coinsAll
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsAll_eq	330 simp TCSlib.Cryptography.GGMRed.inX
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	seeds_eq	335 rw TCSlib.Cryptography.GGMRed.seeds
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsRest_eq	343 rw TCSlib.Cryptography.GGMRed.coinsRest
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	pairs_eq	350 rw TCSlib.Cryptography.GGMRed.pairs
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsD_eq	356 rw TCSlib.Cryptography.GGMRed.coinsD
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	hist_eq	362 simp TCSlib.Cryptography.GGMRed.hist
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	hist_eq	362 simp TCSlib.Cryptography.GGMRed.inS
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	tbl_eq	367 simp TCSlib.Cryptography.GGMRed.tbl
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	tbl_eq	367 simp TCSlib.Cryptography.GGMRed.inS
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	cnt_eq	372 simp TCSlib.Cryptography.GGMRed.cnt
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	cnt_eq	372 simp TCSlib.Cryptography.GGMRed.inS
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	rnd_eq	376 simp TCSlib.Cryptography.GGMRed.rnd
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	rnd_eq	376 simp TCSlib.Cryptography.GGMRed.inS
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	move_eq	380 rw TCSlib.Cryptography.GGMRed.move
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	isQ_iff	385 rw TCSlib.Cryptography.GGMRed.isQ
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	acc_eq	391 rw TCSlib.Cryptography.GGMRed.acc
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	acc_eq	391 rw TCSlib.Cryptography.GGMRed.unQ
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	out_eq	398 rw TCSlib.Cryptography.GGMRed.out
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	mul1_length	402 simp TCSlib.Cryptography.GGMRed.mul1
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	un2_length	406 simp TCSlib.Cryptography.GGMRed.un2
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	mul2_length	411 simp TCSlib.Cryptography.GGMRed.mul2
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	fresh_eq	425 simp TCSlib.Cryptography.GGMRed.ltJ
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	fresh_eq	427 simp TCSlib.Cryptography.GGMRed.eqJ
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	fresh_eq	432 simp TCSlib.Cryptography.challengeStream
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	fresh_eq	432 simp TCSlib.Cryptography.extendStream
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	fresh_eq	433 rw TCSlib.Cryptography.GGMRed.fresh
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	461 rw TCSlib.Cryptography.GGMRed.query
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	463 rw TCSlib.Cryptography.GGMRed.pfx
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	467 rw TCSlib.Cryptography.GGMRed.look
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	475 rw TCSlib.Cryptography.GGMRed.ans
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	475 rw TCSlib.Cryptography.GGMRed.lab
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	487 simp TCSlib.Cryptography.GGMRed.notFound
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	490 rw TCSlib.Cryptography.GGMRed.vstr
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	493 simp TCSlib.Cryptography.GGMRed.step
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	493 simp TCSlib.Cryptography.GGMRed.hist'
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	493 simp TCSlib.Cryptography.GGMRed.tbl'
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	493 simp TCSlib.Cryptography.GGMRed.cnt'
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	497 simp TCSlib.Cryptography.GGMRed.notFound
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	499 rw TCSlib.Cryptography.GGMRed.vstr
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	504 simp TCSlib.Cryptography.GGMRed.step
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	504 simp TCSlib.Cryptography.GGMRed.hist'
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	504 simp TCSlib.Cryptography.GGMRed.tbl'
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq	504 simp TCSlib.Cryptography.GGMRed.cnt'
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	length_encState_pureAt_le	601 simp TCSlib.Cryptography.GGMRed.bound
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	rawFun_rawInput	642 rw TCSlib.Cryptography.GGMRed.rawFun
+b	unfold	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	ggmRedMachine_distinguisher	781 rw Complexity.NUPPT.distinguisher
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	not_hardCore_const	264 simp Complexity.NUPPT.predictor
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	not_hardCore_const	264 simp Complexity.NUPPT.distinguisher
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	not_hardCore_const	264 simp Complexity.NUPPT.runAt
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	not_hardCore_const	264 simp Complexity.NUPPT.ofPolyTimeUniform
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	exists_owpPredictorSnoc	382 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	exists_owpPredictorSnoc	393 unfold TCSlib.Cryptography.prgAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	exists_owpPredictorSnoc	393 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	prgAdv_fst	527 unfold TCSlib.Cryptography.prgAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	prgAdv_fst	527 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	PermFamily.iterPRG_eq_expand	652 simp TCSlib.Cryptography.prgExt
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	invProb_glInverter	777 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCore.lean	invProb_glInverter	779 simp TCSlib.Cryptography.splitPair
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	176 simp Complexity.NUPPT.runAtL
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	176 simp Complexity.NUPPT.ofPolyTimeUniform
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	177 simp TCSlib.Cryptography.Collection.glPadSampleFun
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	177 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	177 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	177 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	177 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	177 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL	179 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_decD_eq	188 unfold TCSlib.Cryptography.glPadDecode
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	OneWay.glPad_hardCore	363 unfold TCSlib.Cryptography.Collection.invProbAt
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMajFun_blocksStr	476 rw TCSlib.Cryptography.HardcoreBit.majority
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt	742 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt	742 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt	742 simp Complexity.NUPPT.inAdvice
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt	743 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt	743 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt	761 unfold TCSlib.Cryptography.blocksStr
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	majority_comp_equiv	789 unfold TCSlib.Cryptography.HardcoreBit.majority
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	padToLen_pairEncode_ofFn	125 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	ofFn_padFin_of_length	137 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	glColl_negligible	379 unfold TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean	exists_glBitEvaluator	156 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.runAtL
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.inAdvice
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap	199 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	acceptProb_coins_equiv	228 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	prgAdv_coins_equiv	236 unfold TCSlib.Cryptography.prgAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	prgAdv_coins_equiv	236 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	predProb_coins_equiv	244 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	exists_owpGenEvaluator	266 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	owpPredMachine_predictor	321 unfold Complexity.NUPPT.predictor
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	owpPredMachine_predictor	321 unfold Complexity.NUPPT.distinguisher
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	expandRedMachine_distinguisher	611 unfold Complexity.NUPPT.distinguisher
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	exists_glPadEvaluator	640 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	exists_glPadEvaluator	642 rw Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	invProbOpt_glPad_le	690 unfold TCSlib.Cryptography.invProbOpt
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	invProbOpt_glPad_le	707 simp TCSlib.Cryptography.HardcoreBit.glPad
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	invProbOpt_glPad_le	710 simp TCSlib.Cryptography.HardcoreBit.glPad
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPad_invProbAt_le	848 unfold TCSlib.Cryptography.Collection.invProbAt
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.runAtL
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.inAdvice
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam	899 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	coinLen_reparam	904 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	966 simp Complexity.NUPPT.runAt
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	966 simp Complexity.NUPPT.ofPolyTimeUniform
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	967 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	967 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	967 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	967 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	967 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	969 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt	969 simp Complexity.NUPPT.runAtL
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	PermFamily.glHalf_easy	539 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	PermFamily.glHalf_easy	539 simp TCSlib.Cryptography.unaryHalf
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfBit_easy	555 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfBit_easy	555 simp TCSlib.Cryptography.unaryHalf
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfOddInv_runAt	618 simp TCSlib.Cryptography.owpPredPre
+b	unfold	TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfOddPred_runAt	632 simp TCSlib.Cryptography.owpPredPre
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	invProbAt_eq_uprob	274 unfold TCSlib.Cryptography.invProbOpt
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWay.toLit	297 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWay.toLit	303 simp Complexity.NUPPT.inverter
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWay.toLit	303 simp Complexity.NUPPT.inverterLit
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWayLit.toParam	345 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWayLit.toParam	361 simp Complexity.NUPPT.inverter
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWayLit.toParam	361 simp Complexity.NUPPT.inverterLit
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	invProbAt_prod_eq	434 unfold TCSlib.Cryptography.invProbOpt
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	Easy.prod	464 rw Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	invProb_prodFun_le_yaoTry	513 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	invProb_prodFun_le_yaoTry	516 simp TCSlib.Cryptography.OneWay.yaoTry
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	weak_to_strong	703 unfold TCSlib.Cryptography.invProbOpt
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	weak_to_strong	703 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	weak_to_strong	713 simp TCSlib.Cryptography.OneWay.yaoB
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	800 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	800 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	800 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	800 simp Complexity.NUPPT.inAdvice
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	801 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	801 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	807 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	818 unfold TCSlib.Cryptography.invProbOpt
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two	829 rw TCSlib.Cryptography.OneWay.prodFun
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	iterate_g_layout	470 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	iterate_g_layout	470 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	iterate_g_layout	470 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	ans_layout	696 rw TCSlib.Cryptography.OneWay.yaoTry
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	yaoInverter_eq_find?	724 unfold TCSlib.Cryptography.OneWay.yaoInverter
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	exists_yaoReduction	918 simp Complexity.NUPPT.inverter
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	exists_yaoReduction	936 unfold TCSlib.Cryptography.invProbOpt
+b	unfold	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	exists_yaoReduction	949 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	singleBitSecure_iff	274 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	singleBitSecure_iff	277 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	321 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	321 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	321 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	321 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	322 simp TCSlib.Cryptography.blockEncFun
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	325 simp TCSlib.Cryptography.blockState
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL	329 simp TCSlib.Cryptography.blockState
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	pkEncDist_eq_singleDist	412 simp TCSlib.Cryptography.singleDist
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	predProb_pkPredictor_eq	791 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	acceptProb_owpGen_unit	799 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	acceptProb_owpGenNot_unit	807 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKey.lean	exists_pkPredictor	841 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_ofFn_coinBlocks	115 simp TCSlib.Cryptography.coinBlock
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_ofFn_coinBlocks	118 simp TCSlib.Cryptography.coinBlock
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_take	129 simp TCSlib.Cryptography.coinBlock
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_drop	136 simp TCSlib.Cryptography.coinBlock
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockList_flatten	168 simp TCSlib.Cryptography.blockList
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockList_flatten	178 simp TCSlib.Cryptography.blockList
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockList_flatten	181 simp TCSlib.Cryptography.coinBlock
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockList_flatten	185 simp TCSlib.Cryptography.coinBlock
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockEncFun_flatten	205 simp TCSlib.Cryptography.blockState
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockEncFun_flatten	208 unfold TCSlib.Cryptography.blockEncFun
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	hybridPre_poly	299 simp TCSlib.Cryptography.blockState
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridMachine	344 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridMachine	360 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	hybridCoins_len	390 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	acceptProb_distinguisherL_coins	419 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	acceptProb_plant	452 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_sum	499 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_sum	533 rw TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_mul	597 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_mul	609 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_mul	609 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridBound	678 rw TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridBound	689 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridBound	689 simp TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridBound	699 simp Complexity.NUPPT.distinguisherL
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridBound	702 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	770 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	770 simp Complexity.NUPPT.inParam
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	770 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	770 simp Complexity.NUPPT.inAdvice
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	770 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	771 simp Complexity.NUPPT.layout
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL	771 simp Complexity.NUPPT.runAtL
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	uprob_tdpPredictor	814 simp Complexity.NUPPT.distinguisherL
+b	unfold	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	abs_uexp_sub_le	845 unfold TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Asymptotic/Sampling.lean	abs_uexp_sub_le	207 unfold TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Asymptotic/Sampling.lean	distAdv_le_of_statClose	239 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Asymptotic/Sampling.lean	distAdv_le_of_statClose	239 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Asymptotic/Sampling.lean	pushesUniform_of_card_fiber	283 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Asymptotic/Sampling.lean	uprob_bitsToNat_lt	385 rw TCSlib.Cryptography.uprob
+b	unfold	TCSlib/Cryptography/Asymptotic/Sampling.lean	statClose_firstHit	588 rw TCSlib.Cryptography.uprob
+b	unfold	TCSlib/Cryptography/Asymptotic/Universal.lean	exists_univCoeff_le	339 simp Turing.universalBlockBound
+b	unfold	TCSlib/Cryptography/Asymptotic/Universal.lean	fUniversal_easy	451 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/Asymptotic/Universal.lean	fUniversal_easy	453 simp TCSlib.Cryptography.padStr
+b	unfold	TCSlib/Cryptography/Asymptotic/Universal.lean	uprob_fiber_le_card_mul	587 rw TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Asymptotic/Universal.lean	fUniversal_hard	906 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	padStr_eq_gStr	271 unfold TCSlib.Cryptography.padStr
+b	unfold	TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	invProbAt_family_le	318 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/Foundations/Experiments.lean	abs_sum_sub_le_statDist	160 rw TCSlib.InformationTheory.statDist
+b	unfold	TCSlib/Cryptography/Foundations/Experiments.lean	distAdv_le_statDist	175 rw TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Foundations/Experiments.lean	distAdv_le_statDist	175 rw TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_add	58 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_sub	62 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_const_mul	66 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_const	71 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_sum	77 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_comp_equiv	86 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_prod	92 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	pushesUniform_eval	229 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/Basic.lean	pushesUniform_of_surjective	263 simp TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	guessRecover_correct_guess	140 simp TCSlib.Cryptography.HardcoreBit.subsetSum
+b	unfold	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	predProb_glPad_eq	133 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	invProb_perfectInverter	237 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/OneWayFunctions/Amplification.lean	invProb_prodFun_le	173 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/OneWayFunctions/Amplification.lean	one_sub_invProb_yaoInverter_le	234 unfold TCSlib.Cryptography.invProb
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	uprob_bool_prod	61 rw TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	acceptProb_id_owp	116 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	predProb_owpPredictor_false	140 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	predProb_owpPredictor_false	149 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	predProb_owpPredictor_false	157 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	predProb_owpPredictor_true	178 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	exists_owpPredictor	205 unfold TCSlib.Cryptography.prgAdv
+b	unfold	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	exists_owpPredictor	205 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Pseudorandom/Generators.lean	prgAdv_comp_equiv	85 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Pseudorandom/Generators.lean	exists_prgExtRed_ge	231 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/Pseudorandom/Generators.lean	prgAdv_prgExtAvgRed	253 rw TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_pairRed_ge	238 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_multiRed_bound	299 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	Commitment.multiHiding	407 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	padFin_inj	534 simpa TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitComPredictor	589 unfold TCSlib.Cryptography.predProb
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitComPredictor	608 rw TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitComPredictor	610 rw TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitRed_bound	696 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitRed_bound	709 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitRed_bound	761 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitRed_bound	764 simp TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	BitHiding.owpComStr_hides	807 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	owpComStr_eq_loopOut	834 unfold TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	owpComStr_eq_loopOut	847 simp TCSlib.Cryptography.CommitmentLemmas.ComLoop.init
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	owpComStr_eq_loopOut	847 simp TCSlib.Cryptography.CommitmentLemmas.ComLoop.st
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	perfectZK_zeroRounds	305 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	perfectZK_zeroRounds	305 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	perfectZK_zeroRounds	305 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	firstHit_map_getD_eq	467 unfold TCSlib.Cryptography.firstHit
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Defs.lean	PerfectZKAbort.statZK	601 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_map_val	399 unfold TCSlib.Cryptography.EncodingMachines.rowMap
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_map_val	399 unfold TCSlib.Cryptography.EncodingMachines.rowFirst
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_val	450 unfold TCSlib.Cryptography.EncodingMachines.permNum
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_symm_val	469 unfold TCSlib.Cryptography.EncodingMachines.permInvNum
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_symm_val	472 unfold TCSlib.Cryptography.EncodingMachines.rowInv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	ZeroKnowledge.singleMessageSecure	121 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	SingleMessageSecure.zeroKnowledge	287 unfold TCSlib.Cryptography.distAdv
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProver_length_le	253 simp TCSlib.Cryptography.decGraph
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	encGraph_decGraphAt	326 simp TCSlib.Cryptography.encGraph
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	decPerm_nil	407 unfold TCSlib.Cryptography.decPerm
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	gniProtocol_outV	448 simp TCSlib.Cryptography.Protocol.outV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	gniProtocol_outV	448 simp TCSlib.Cryptography.Protocol.transcriptWith
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	gniProtocol_outV	448 simp TCSlib.Cryptography.exec
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	gniProtocol_outV	448 simp TCSlib.Cryptography.moverIsV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProtocol_outV	457 simp TCSlib.Cryptography.Protocol.outV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProtocol_outV	457 simp TCSlib.Cryptography.Protocol.transcriptWith
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProtocol_outV	457 simp TCSlib.Cryptography.exec
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProtocol_outV	457 simp TCSlib.Cryptography.moverIsV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	exec_vfirst_length	84 simp TCSlib.Cryptography.moverIsV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	exec_vfirst_eq	111 simp TCSlib.Cryptography.moverIsV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	coinSlice_blocksEquiv	247 simp TCSlib.Cryptography.GI.coinSlice
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	samplePerm_ofFn_castLE	154 unfold TCSlib.Cryptography.samplePerm
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	coinSlice_ofFn	262 simp TCSlib.Cryptography.coinSlice
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	coinSlice_ofFn	265 simp TCSlib.Cryptography.coinSlice
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	attemptStr_ofFn	349 simp TCSlib.Cryptography.GIZK.attemptStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	attemptStr_ofFn	349 simp TCSlib.Cryptography.instanceG₀
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	attemptStr_ofFn	349 simp TCSlib.Cryptography.instanceG₁
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	attemptStr_ofFn	349 simp TCSlib.Cryptography.instanceVertexCount
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	exec_three_snd	420 simp TCSlib.Cryptography.exec
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	exec_three_snd	420 simp TCSlib.Cryptography.moverIsV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	negligible_delta	574 unfold TCSlib.Cryptography.permFailBound
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	blockPoly_eval	91 simp Complexity.PolyExpr.eval
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	blockPoly_eval	91 simp Complexity.PolyExpr.normal
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	blockPoly_eval	91 simp TCSlib.Cryptography.Strategy.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	simCoins_eval	99 simp Complexity.PolyExpr.eval
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	simCoins_eval	99 simp Complexity.PolyExpr.normal
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	simCoins_eval	99 simp TCSlib.Cryptography.Strategy.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	exists_simulator	462 simp Complexity.NUPPT.inArg
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	exists_simulator	462 simp Complexity.NUPPT.inCoins
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	exists_simulator	462 simp Complexity.NUPPT.advInput
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	exists_proverCoins_le	512 rw TCSlib.Cryptography.uexp
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	Strategy.coinLen_pullback	210 simp TCSlib.Cryptography.Strategy.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	Protocol.pullback_outV	234 simp TCSlib.Cryptography.Protocol.outV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	Protocol.pullback_outV	234 simp TCSlib.Cryptography.Protocol.transcriptWith
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	outV_pullback_honest	347 simp TCSlib.Cryptography.Protocol.outV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	outV_pullback_honest	347 simp TCSlib.Cryptography.Protocol.transcriptWith
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk	526 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk	534 simp Complexity.NUPPT.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk	545 simp TCSlib.Cryptography.Protocol.viewV
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk	545 simp TCSlib.Cryptography.Protocol.transcriptWith
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk	549 simp TCSlib.Cryptography.Strategy.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk	559 simp Complexity.NUPPT.simulate
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	padColor_injective	298 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	polyTimeComputable_loopState'	127 simp TCSlib.Cryptography.EncodingMachines.CountLoop.acc
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	polyTimeComputable_loopState'	132 simp TCSlib.Cryptography.EncodingMachines.CountLoop.acc
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	polyTimeComputable_loopState'	139 simp TCSlib.Cryptography.EncodingMachines.CountLoop.out
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	ofFn_getD_add	333 simp TCSlib.Cryptography.padFin
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	map_edgeList	544 unfold TCSlib.Cryptography.edgeList
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	encGraph_decGraph_eq_take	595 simp TCSlib.Cryptography.encGraph
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	bitsToNat_eq_natOfBits	630 unfold TCSlib.Cryptography.bitsToNat
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	map_val_sampleIdx	716 unfold TCSlib.Cryptography.sampleIdx
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	map_val_sampleIdx	716 unfold TCSlib.Cryptography.rejectionSample
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	map_val_sampleIdx	721 simp TCSlib.Cryptography.uniformFromBits
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	permTable_samplePerm3	792 unfold TCSlib.Cryptography.samplePerm3
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	decColor_val	861 rw TCSlib.Cryptography.decColor
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	pairEncode_eq_append_nil	898 simp Turing.pairEncode
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	encodeMsgs_eq_nil_iff	936 simp Turing.pairEncode
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	edgeAt_eq_some_of_pos	993 unfold TCSlib.Cryptography.edgeAt
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	eOf_ilayout	473 rw TCSlib.Cryptography.sampleEdgeIdx
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	eRep_ilayout	484 rw TCSlib.Cryptography.sampleEdgeIdx
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	comAt_ilayout	521 rw TCSlib.Cryptography.padColor
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	commitStr_ilayout	532 rw TCSlib.Cryptography.multiCom
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colVerify_honest	179 rw TCSlib.Cryptography.multiCom
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colVerify_honest	180 rw TCSlib.Cryptography.multiCom
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	length_multiCom_le	608 unfold TCSlib.Cryptography.multiCom
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colProver_length_le	639 simp TCSlib.Cryptography.encColor
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProver_next_eq	180 rw TCSlib.Cryptography.ColMachines.proverStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProver_next_eq	183 rw TCSlib.Cryptography.ColMachines.proverStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProver_next_eq	193 simp TCSlib.Cryptography.edgeIdxOfMsg
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerify_eq_checkStr	205 unfold TCSlib.Cryptography.ColMachines.checkStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerify_eq_checkStr	208 simp TCSlib.Cryptography.padColor
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifier_next_eq	224 rw TCSlib.Cryptography.ColMachines.verifierStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifier_next_eq	232 rw TCSlib.Cryptography.ColMachines.verifierStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifier_next_eq	244 rw TCSlib.Cryptography.ColMachines.verifierStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifier_next_eq	247 rw TCSlib.Cryptography.ColMachines.verdictStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifier_next_eq	264 rw TCSlib.Cryptography.ColMachines.verifierStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProverRep_next_eq	282 simp TCSlib.Cryptography.Strategy.coinLen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProverRep_next_eq	282 simp TCSlib.Cryptography.ColMachines.proverCoinsOf
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProverRep_next_eq	287 rw TCSlib.Cryptography.ColMachines.proverRepStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProverRep_next_eq	294 unfold TCSlib.Cryptography.ColMachines.ilayout
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifierRep_next_eq	322 rw TCSlib.Cryptography.ColMachines.verifierRepStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifierRep_next_eq	335 rw TCSlib.Cryptography.ColMachines.verdictRepStr
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifierRep_next_eq	342 rw TCSlib.Cryptography.ColMachines.checkRep
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	sampleEdgeIdx_ofFn_castLE	407 unfold TCSlib.Cryptography.sampleEdgeIdx
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	sampleEdgeIdx_ofFn_castLE	407 unfold TCSlib.Cryptography.sampleIdx
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_W	455 simp TCSlib.Cryptography.ColSimLemmas.mergeAt
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_W	457 simp TCSlib.Cryptography.ColSimLemmas.mergeAt
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_W	460 unfold TCSlib.Cryptography.colOpen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_H	505 simp TCSlib.Cryptography.ColSimLemmas.mergeAt
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_H	507 simp TCSlib.Cryptography.ColSimLemmas.mergeAt
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_H	510 unfold TCSlib.Cryptography.colOpen
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	msgAt_multiCom	202 rw TCSlib.Cryptography.multiCom
+b	unfold	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	acceptProb_hybGen_planted	521 unfold TCSlib.Cryptography.acceptProb
+b	unfold	TCSlib/InformationTheory/StatisticalDistance.lean	statDist_uniform_le_sqrt	79 simp TCSlib.InformationTheory.FinDist.collision
+b	eqn-term	TCSlib/Complexity/ClassNP/PolyTimePairing.lean	Complexity.splitAtLastTrue_replicate_succ	Turing.splitAtLastTrue.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	TCSlib.Cryptography.length_decListStep_le	Turing.pairDecode.eq_4
+b	eqn-term	TCSlib/Cryptography/Asymptotic/Encryption.lean	TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic	TCSlib.Cryptography.distAdv.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/Encryption.lean	TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq	Complexity.NUPPT.distinguisherL.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/Ensembles.lean	TCSlib.Cryptography.predict_eq	TCSlib.Cryptography.acceptProb.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.out_eq	TCSlib.Cryptography.GGMRed.out.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.isQ_iff	TCSlib.Cryptography.GGMRed.isQ.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.unQ.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.seeds_eq	TCSlib.Cryptography.GGMRed.seeds.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.coinsRest_eq	TCSlib.Cryptography.GGMRed.coinsRest.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.fresh_eq	TCSlib.Cryptography.GGMRed.fresh.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.coinsD_eq	TCSlib.Cryptography.GGMRed.coinsD.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.pfx.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.lab.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.query.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.ans.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.vstr.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.look.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.pairs_eq	TCSlib.Cryptography.GGMRed.pairs.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.move_eq	TCSlib.Cryptography.GGMRed.move.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.rawFun_rawInput	TCSlib.Cryptography.GGMRed.rawFun.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.ggmRedMachine_distinguisher	Complexity.NUPPT.distinguisher.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	TCSlib.Cryptography.glMajFun_blocksStr	TCSlib.Cryptography.HardcoreBit.majority.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	TCSlib.Cryptography.exists_glPadEvaluator	Complexity.NUPPT.advInput.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/OneWay.lean	TCSlib.Cryptography.FunFamily.Easy.prod	Complexity.NUPPT.advInput.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/OneWay.lean	TCSlib.Cryptography.strong_prod_two	TCSlib.Cryptography.OneWay.prodFun.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/OneWayYao.lean	TCSlib.Cryptography.OneWay.YaoMachine.ans_layout	TCSlib.Cryptography.OneWay.yaoTry.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	TCSlib.Cryptography.exists_hybridBound	TCSlib.Cryptography.distAdv.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	TCSlib.Cryptography.distAdv_tuple_le_sum	TCSlib.Cryptography.distAdv.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/Sampling.lean	TCSlib.Cryptography.statClose_firstHit	TCSlib.Cryptography.uprob.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/Sampling.lean	TCSlib.Cryptography.uprob_bitsToNat_lt	TCSlib.Cryptography.uprob.eq_1
+b	eqn-term	TCSlib/Cryptography/Asymptotic/Universal.lean	TCSlib.Cryptography.uprob_fiber_le_card_mul	TCSlib.Cryptography.uexp.eq_1
+b	eqn-term	TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.distAdv_le_statDist	TCSlib.Cryptography.uexp.eq_1
+b	eqn-term	TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.abs_sum_sub_le_statDist	TCSlib.InformationTheory.statDist.eq_1
+b	eqn-term	TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uexp.eq_1
+b	eqn-term	TCSlib/Cryptography/Pseudorandom/Generators.lean	TCSlib.Cryptography.prgAdv_prgExtAvgRed	TCSlib.Cryptography.distAdv.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.distAdv.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.exists_proverCoins_le	TCSlib.Cryptography.uexp.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	TCSlib.Cryptography.ColMachines.decColor_val	TCSlib.Cryptography.decColor.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.eRep_ilayout	TCSlib.Cryptography.sampleEdgeIdx.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.comAt_ilayout	TCSlib.Cryptography.padColor.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.commitStr_ilayout	TCSlib.Cryptography.multiCom.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.eOf_ilayout	TCSlib.Cryptography.sampleEdgeIdx.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.multiCom.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colProverRep_next_eq	TCSlib.Cryptography.ColMachines.proverRepStr.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifier_next_eq	TCSlib.Cryptography.ColMachines.verifierStr.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifier_next_eq	TCSlib.Cryptography.ColMachines.verdictStr.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colProver_next_eq	TCSlib.Cryptography.ColMachines.proverStr.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColMachines.checkRep.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColMachines.verifierRepStr.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColMachines.verdictRepStr.eq_1
+b	eqn-term	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	TCSlib.Cryptography.ColSimLemmas.msgAt_multiCom	TCSlib.Cryptography.multiCom.eq_1
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/cleanup-b-decls.tsv =====
+
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	Complexity.splitAtLastTrue_replicate_succ
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	PolyTimeComputable.pairMapSnd
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	pairEncode_append
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	polyTimeComputable_ite
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	polyTimeComputable_lenLe
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	polyTimeComputable_of_linear
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	polyTimeComputable_polyUnary
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	polyTimeComputable_unary
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	splitAtLastTrue_replicate_succ
+TCSlib/Complexity/Randomized/Closure.lean	pairFstD_combineAdvice
+TCSlib/Complexity/Randomized/Closure.lean	pairSndD_combineAdvice
+TCSlib/Complexity/Randomized/NonUniform.lean	Uniform.runAtL_eq
+TCSlib/Complexity/Randomized/NonUniform.lean	ofPolyTime
+TCSlib/Complexity/Randomized/NonUniform.lean	polyTimeComputable_runAtL
+TCSlib/Complexity/Randomized/NonUniform.lean	runLit_eq_runAt
+TCSlib/Complexity/Randomized/NonUniform.lean	runLit_eq_runAtL
+TCSlib/Complexity/Randomized/NonUniform.lean	toNUPPT
+TCSlib/Complexity/Randomized/NonUniform.lean	toNUPPT_ofPolyTime
+TCSlib/Complexity/Randomized/NonUniform.lean	uniform
+TCSlib/Complexity/Randomized/PPT.lean	adv_ofPolyTime
+TCSlib/Complexity/Randomized/PPT.lean	advice_ofPolyTime
+TCSlib/Complexity/Randomized/PPT.lean	coins_ofPolyTime
+TCSlib/Complexity/Randomized/PPT.lean	coins_ofPolyTimeUniform
+TCSlib/Complexity/Randomized/PPT.lean	computesFunInTime
+TCSlib/Complexity/Randomized/PPT.lean	exists_uniform_computes
+TCSlib/Complexity/Randomized/PPT.lean	ofPolyTime
+TCSlib/Complexity/Randomized/PPT.lean	ofPolyTimeUniform_uniform
+TCSlib/Complexity/Randomized/PPT.lean	output_ofPolyTime
+TCSlib/Complexity/Randomized/PPT.lean	polyTimeComputable_output
+TCSlib/Complexity/Randomized/PolyExpr.lean	polyBound_eval
+TCSlib/Cryptography/Asymptotic/Adversary.lean	_root_.Complexity.NUPPT.computes_iff_uprob
+TCSlib/Cryptography/Asymptotic/Adversary.lean	invProbOpt_le_invProb
+TCSlib/Cryptography/Asymptotic/Adversary.lean	invProbOpt_some
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	TCSlib.Cryptography.length_decListStep_le
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	encodeList_eq_flatMap
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_blockStep_le
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	length_decListStep_le
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	pairEncode_nil_append
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	pairFstD_nil
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	pairSndD_nil
+TCSlib/Cryptography/Asymptotic/Collections.lean	StrongOneWay.exists_collection_oneWay
+TCSlib/Cryptography/Asymptotic/Collections.lean	StrongOneWay.toCollection_oneWay
+TCSlib/Cryptography/Asymptotic/Collections.lean	decodeFin_eq_some_iff
+TCSlib/Cryptography/Asymptotic/Collections.lean	invProbAt_nonneg
+TCSlib/Cryptography/Asymptotic/Collections.lean	owfIndexStr_eq
+TCSlib/Cryptography/Asymptotic/Collections.lean	owfRawStr_eq
+TCSlib/Cryptography/Asymptotic/Collections.lean	toCollection_sampleClose
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	_root_.Complexity.NUPPT.length_runAt_le
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	ofFn_padFin_of_le
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean	ofFn_padFin_eq_take
+TCSlib/Cryptography/Asymptotic/Encryption.lean	MultiMessageSecure.singleMessageSecure
+TCSlib/Cryptography/Asymptotic/Encryption.lean	TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq
+TCSlib/Cryptography/Asymptotic/Encryption.lean	TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic
+TCSlib/Cryptography/Asymptotic/Encryption.lean	acceptProb_distinguisherL_congr
+TCSlib/Cryptography/Asymptotic/Encryption.lean	distAdv_padXor_le
+TCSlib/Cryptography/Asymptotic/Encryption.lean	distinguisherL_firstTwoEq
+TCSlib/Cryptography/Asymptotic/Encryption.lean	not_multiMessageSecure_of_deterministic
+TCSlib/Cryptography/Asymptotic/Encryption.lean	prgAdv_eq_of_runAtL
+TCSlib/Cryptography/Asymptotic/Encryption.lean	prgScheme_singleMessageSecure
+TCSlib/Cryptography/Asymptotic/Encryption.lean	runAt_prgPad
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.copies
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.push
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.refl
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.symm
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.toLit
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.Indist.trans
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.IndistLit.toIndist
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	Ensemble.indist_iff_exists_negligible
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	TCSlib.Cryptography.predict_eq
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	copies_X
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	hybrid_lemma
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	predict_eq
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	prediction_lemma
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	uniform_samplable
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean	length_lookStep_iterate_le
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean	lookStep_iterate_tblEnc
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean	unaryMul_poly
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.acc_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.coinsD_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.coinsRest_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.fresh_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.ggmRedMachine_distinguisher
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.isQ_iff
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.move_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.out_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.pairs_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.rawFun_rawInput
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.seeds_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	TCSlib.Cryptography.GGMRed.step_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	acc_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	advD_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	chal_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	cnt_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsAll_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsD_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	coinsRest_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	concrete_succ
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	concrete_zero
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	decodeFin_eq_some_iff
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	exists_queryOf_iff
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	fresh_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	ggmRedMachine_distinguisher
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	hist_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	isQ_iff
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	le_length_rawInput
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	length_encState_pureAt_le
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	move_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	mul1_length
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	mul2_length
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	ofFn_padFin_of_length
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	orbit_eq_encState
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	out_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	pairSndD_of_queryOf
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	pairs_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	paramU_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	queryOf_eq_some_iff
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	rawFun_rawInput
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	rnd_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	runAt_ggmRedMachine
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	seeds_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	start_rawInput
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	step_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	tbl_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	un2_length
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	unI_eq
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	unJ_eq
+TCSlib/Cryptography/Asymptotic/HardCore.lean	PRG.expand_G
+TCSlib/Cryptography/Asymptotic/HardCore.lean	PermFamily.iterPRG_eq_expand
+TCSlib/Cryptography/Asymptotic/HardCore.lean	StrongOneWay.glPad
+TCSlib/Cryptography/Asymptotic/HardCore.lean	StrongOneWay.glPad_hardCore
+TCSlib/Cryptography/Asymptotic/HardCore.lean	exists_owpPredictorSnoc
+TCSlib/Cryptography/Asymptotic/HardCore.lean	glBit_append
+TCSlib/Cryptography/Asymptotic/HardCore.lean	glPad_f
+TCSlib/Cryptography/Asymptotic/HardCore.lean	glPad_f_bijective
+TCSlib/Cryptography/Asymptotic/HardCore.lean	invProb_glInverter
+TCSlib/Cryptography/Asymptotic/HardCore.lean	not_hardCore_const
+TCSlib/Cryptography/Asymptotic/HardCore.lean	prgAdv_fst
+TCSlib/Cryptography/Asymptotic/HardCore.lean	prg_expand
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	OneWay.glPad_hardCore
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	PermCollection.OneWay.glPad
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	PermCollection.OneWay.glPad_hardCore
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	TrapdoorCollection.OneWay.glPad
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	TrapdoorCollection.OneWay.glPad_hardCore
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_decD_eq
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	glPad_sample_runAtL
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	TCSlib.Cryptography.glMajFun_blocksStr
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMachine_runAt
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	glMajFun_blocksStr
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	majority_comp_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	ofFn_glCoinsEquiv
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	orbit_eq
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	unaryMulFun_poly
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	glColl_negligible
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	ofFn_padFin_of_length
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	padToLen_pairEncode_ofFn
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean	exists_glBitEvaluator
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	TCSlib.Cryptography.exists_glPadEvaluator
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	acceptProb_coins_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	coinLen_reparam
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	coins_reparam
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	coins_wrap
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	exists_glPadEvaluator
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	exists_owpGenEvaluator
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	expandRedMachine_distinguisher
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPadSample_runAt
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	glPad_invProbAt_le
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	invProbOpt_glPad_le
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	owpPredMachine_predProb
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	owpPredMachine_predictor
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	predProb_coins_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	prgAdv_coins_equiv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_reparam
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	runAtL_wrap
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	statClose_glPadSampler
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	Negligible.comp_div_two
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	PermFamily.glHalf_easy
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfBit_easy
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfOddInv_runAt
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	glHalfOddPred_runAt
+TCSlib/Cryptography/Asymptotic/OneWay.lean	Easy.prod
+TCSlib/Cryptography/Asymptotic/OneWay.lean	FunFamily.StrongOneWay.weak
+TCSlib/Cryptography/Asymptotic/OneWay.lean	TCSlib.Cryptography.FunFamily.Easy.prod
+TCSlib/Cryptography/Asymptotic/OneWay.lean	TCSlib.Cryptography.strong_prod_two
+TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWay.toLit
+TCSlib/Cryptography/Asymptotic/OneWay.lean	WorstCaseOneWayLit.toParam
+TCSlib/Cryptography/Asymptotic/OneWay.lean	blocks_eq_blocksE
+TCSlib/Cryptography/Asymptotic/OneWay.lean	eventually_poly_mul_two_pow_lt_one
+TCSlib/Cryptography/Asymptotic/OneWay.lean	exists_runAt_eq_arg
+TCSlib/Cryptography/Asymptotic/OneWay.lean	invProbAt_eq_uprob
+TCSlib/Cryptography/Asymptotic/OneWay.lean	invProbAt_prod_eq
+TCSlib/Cryptography/Asymptotic/OneWay.lean	invProb_prodFun_le_yaoTry
+TCSlib/Cryptography/Asymptotic/OneWay.lean	not_strongOneWay_id
+TCSlib/Cryptography/Asymptotic/OneWay.lean	strong_prod_two
+TCSlib/Cryptography/Asymptotic/OneWay.lean	weak_to_strong
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	TCSlib.Cryptography.OneWay.YaoMachine.ans_layout
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	ans_layout
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	exists_yaoReduction
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	iterate_g_layout
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	length_g_iterate_le
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	statClose_sampleAll
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	yaoInverter_eq_find?
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	PublicKeyScheme.Secure.multiMessageSecure
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	acceptProb_owpGenNot_unit
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	acceptProb_owpGen_unit
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwiseEncFun_poly
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	bitwise_enc_runAtL
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	exists_pkPredictor
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	pkEncDist_eq_singleDist
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	predProb_pkPredictor_eq
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	singleBitSecure_iff
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	TCSlib.Cryptography.distAdv_tuple_le_sum
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	TCSlib.Cryptography.exists_hybridBound
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	abs_uexp_sub_le
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	acceptProb_distinguisherL_coins
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	acceptProb_plant
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockEncFun_flatten
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	blockList_flatten
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_drop
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_ofFn_coinBlocks
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	coinBlock_take
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_mul
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	distAdv_tuple_le_sum
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridBound
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	exists_hybridMachine
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	hybridCoins_len
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	hybridPre_poly
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	tdpPredictor_runAtL
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	uprob_tdpPredictor
+TCSlib/Cryptography/Asymptotic/Sampling.lean	TCSlib.Cryptography.statClose_firstHit
+TCSlib/Cryptography/Asymptotic/Sampling.lean	TCSlib.Cryptography.uprob_bitsToNat_lt
+TCSlib/Cryptography/Asymptotic/Sampling.lean	abs_uexp_sub_le
+TCSlib/Cryptography/Asymptotic/Sampling.lean	distAdv_le_of_statClose
+TCSlib/Cryptography/Asymptotic/Sampling.lean	pushesUniform_of_card_fiber
+TCSlib/Cryptography/Asymptotic/Sampling.lean	statClose_firstHit
+TCSlib/Cryptography/Asymptotic/Sampling.lean	uprob_bitsToNat_lt
+TCSlib/Cryptography/Asymptotic/Universal.lean	TCSlib.Cryptography.uprob_fiber_le_card_mul
+TCSlib/Cryptography/Asymptotic/Universal.lean	clockedAnswer_eq_cons_of_computesInTime
+TCSlib/Cryptography/Asymptotic/Universal.lean	clockedAnswer_eq_false_of_not_computesInTime
+TCSlib/Cryptography/Asymptotic/Universal.lean	exists_univCoeff_le
+TCSlib/Cryptography/Asymptotic/Universal.lean	fUniversal_easy
+TCSlib/Cryptography/Asymptotic/Universal.lean	fUniversal_hard
+TCSlib/Cryptography/Asymptotic/Universal.lean	invProbAt_reduction_ge
+TCSlib/Cryptography/Asymptotic/Universal.lean	ofFn_getD_eq_take
+TCSlib/Cryptography/Asymptotic/Universal.lean	polyTimeComputable_clockedAnswer
+TCSlib/Cryptography/Asymptotic/Universal.lean	uprob_fiber_le_card_mul
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	easy_of_linear
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	exists_family
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	family_inLen
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	invProbAt_family_le
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	lengthRegular_gStr
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	padStr_eq_gStr
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	strongOneWay
+TCSlib/Cryptography/Candidates/Concrete.lean	primesPairEquiv_apply_val
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	ExpGroupGen.FullLength.exists_fullLengthExcept
+TCSlib/Cryptography/Candidates/RSA.lean	rsaTrapdoor_oneWay
+TCSlib/Cryptography/Candidates/Rabin.lean	rabinBlumTrapdoor_index
+TCSlib/Cryptography/Candidates/Rabin.lean	rabinCollection_index
+TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.abs_sum_sub_le_statDist
+TCSlib/Cryptography/Foundations/Experiments.lean	TCSlib.Cryptography.distAdv_le_statDist
+TCSlib/Cryptography/Foundations/Experiments.lean	abs_sum_sub_le_statDist
+TCSlib/Cryptography/Foundations/Experiments.lean	distAdv_le_statDist
+TCSlib/Cryptography/HardcoreBit/Basic.lean	pushesUniform_eval
+TCSlib/Cryptography/HardcoreBit/Basic.lean	pushesUniform_of_surjective
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_add
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_comp_equiv
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_const
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_const_mul
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_mono
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_prod
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_sub
+TCSlib/Cryptography/HardcoreBit/Basic.lean	uexp_sum
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	guessRecover_correct_guess
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	idealTrial_correct
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	invProb_perfectInverter
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	predProb_glPad_eq
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	uprob_recover_le_invProb
+TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean	trialBit_correct
+TCSlib/Cryptography/NumberTheory/Primality.lean	bitsToNat_eq_listToNat
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean	invProb_prodFun_le
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean	one_sub_invProb_yaoInverter_le
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean	yao_amplification_exp
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	TCSlib.Cryptography.uprob_bool_prod
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	acceptProb_id_owp
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	exists_owpPredictor
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	predProb_owpPredictor_false
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	predProb_owpPredictor_true
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	uprob_bool_prod
+TCSlib/Cryptography/Pseudorandom/Generators.lean	TCSlib.Cryptography.prgAdv_prgExtAvgRed
+TCSlib/Cryptography/Pseudorandom/Generators.lean	exists_prgExtRed_ge
+TCSlib/Cryptography/Pseudorandom/Generators.lean	prgAdv_comp_equiv
+TCSlib/Cryptography/Pseudorandom/Generators.lean	prgAdv_prgExtAvgRed
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	BitHiding.owpComStr_hides
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	Commitment.multiHiding
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	TCSlib.Cryptography.exists_bitComPredictor
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitComPredictor
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_bitRed_bound
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_multiRed_bound
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	exists_pairRed_ge
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	owpComStr_eq_loopOut
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	owpComStr_polyTimeComputable
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	padFin_inj
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	PerfectZKAbort.statZK
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	attempt_poly
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	exists_retrySimulator
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	firstHit_map_getD_eq
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	negligible_const_zero
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	negligible_inv_pow_sqrt_div
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	perfectZK_zeroRounds
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	statClose_retry
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_map_val
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_symm_val
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	decPerm_val
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	polyTimeComputable_encPermFromCoins
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	two_pow_size_le_two_mul_succ
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	SingleMessageSecure.zeroKnowledge
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	ZeroKnowledge.singleMessageSecure
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	Riso_witnessRelation
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	decGraph_snd
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	giProtocolRep_proverBounded
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	giProtocol_proverBounded
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	giProverRep_efficient
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	giProver_efficient
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	giVerifierRep_efficient
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	giVerifier_efficient
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gi_efficientProverProofErr
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gi_rep_efficientProverProof
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gniProtocol_proverBounded
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gniVerifierRep_efficient
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gniVerifier_efficient
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gni_interactiveProof
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	gni_interactiveProofErr
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	permCoinLen_le
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	decGraph_eq_of_sqrt
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	decPerm_nil
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	efficient_of_polyTime
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	encGraph_decGraphAt
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProtocol_outV
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	giProver_length_le
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	gniProtocol_outV
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	permCoinLen_le
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	statClose_samplePerm_long
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	gi_efficientProverProofErr
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	gniProver_next_encGraph
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	gni_interactiveProofErr
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	coinSlice_blocksEquiv
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	exec_vfirst_eq
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	exec_vfirst_length
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	gniProtocolRep_outV
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	gniProver_next_enc
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	gniRep_accept_le
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	gniVerifierRep_next_ge
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	gniVerifierRep_next_lt
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	gni_interactiveProofErrRep
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	statClose_pi
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	PsOfFin_init_prefixLE
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	PsOfFin_prefixLT
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	exec_repViews
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giProtocolRep_outV
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giProverRep_next_even
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giProverRep_next_odd
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giRep_accept_le
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giVerifierRep_next_end
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giVerifierRep_next_end_enc
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giVerifierRep_next_mid
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	giVerifierRep_next_odd
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	gi_rep_efficientProverProofErr
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	prefixLE_last
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	attemptStr_ofFn
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	coinSlice_ofFn
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	exec_three_snd
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	giProver_next_cons
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	giProver_next_nil
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	negligible_delta
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	samplePerm_ofFn_castLE
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	statClose_pi
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	statClose_samplePerm_long
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	statClose_typed_string
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	attemptAt_poly
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	blockPoly_eval
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	decGraphAt_padSq
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	decGraph_eq_of_sqrt
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	exists_simulator
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	simCoins_eval
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	sim_poly
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	TCSlib.Cryptography.Protocol.exists_proverCoins_le
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	exists_proverCoins_le
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	pairFstD_encodeMsgs
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.efficientProverProofErr
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.polyTimeReducible
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	LevinReduction.zk
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	Negligible.comp_of_le
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	Protocol.pullback_outV
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	Strategy.coinLen_pullback
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	Strategy.pullback_efficient
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	outV_pullback_honest
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	encColor_getD_ne
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	padColor_injective
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	TCSlib.Cryptography.ColMachines.decColor_val
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	bitsToNat_eq_natOfBits
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	countTrue_poly
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	decColor_val
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	decColoring_val
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	decGraph_apply
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	edgeAt_eq_some_of_pos
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	edgeOf_val
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	efficient_of_polyTime
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	encColor_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	encGraph_decGraph_eq_take
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	encodeMsgs_eq_flatMap
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	encodeMsgs_eq_nil_iff
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	iterSnd_poly
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	iterate_pairSndD_encodeMsgs
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	length_le_length_encodeMsgs
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	map_edgeList
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	map_val_sampleIdx
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	natOfBits_poly
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	ofFn_getD_add
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	ofFn_padFin
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	pairEncode_eq_append_nil
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	permTable_samplePerm3
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean	polyTimeComputable_loopState'
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.comAt_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.commitStr_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.eOf_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	TCSlib.Cryptography.ColMachines.eRep_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	comAt_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	commitStr_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	eOf_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	eRep_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	length_argX_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean	nOf_ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	TCSlib.Cryptography.colVerify_honest
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colProtocol_outV
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colProtocol_sound
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colProverRep_efficient
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colProver_efficient
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colProver_length_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colVerifierRep_efficient
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colVerifier_efficient
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	colVerify_honest
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	col_efficientProverProofErr
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	exists_bad_edge
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	length_multiCom_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	uprob_check_uniform_le
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colProverRep_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colProver_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	TCSlib.Cryptography.ColProofs.colVerifier_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProverRep_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colProver_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifierRep_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerifier_next_eq
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	colVerify_eq_checkStr
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	sampleEdgeIdx_ofFn_castLE
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean	two_le_of_edge
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	Negligible.comp_sqrt
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_H
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	colSimAttemptPlanted_W
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	col_hvzk
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	exists_colSimulator
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	statClose_colSimTruncH
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	uprob_colSimAttemptH_none
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	uprob_colSimAttemptH_some
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	TCSlib.Cryptography.ColSimLemmas.msgAt_multiCom
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	acceptProb_hybGen_planted
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	msgAt_multiCom
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	statClose_truncAttempts
+TCSlib/InformationTheory/StatisticalDistance.lean	statDist_uniform_le_sqrt
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/touched.tsv =====
+
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem pairFstD_eq@212
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem pairSndD_eq@215
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem pairFstD_of_pairDecode_eq_none@219
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean	theorem pairSndD_of_pairDecode_eq_none@226
+TCSlib/Complexity/Randomized/Closure.lean	theorem layout_eq@109
+TCSlib/Complexity/Randomized/Closure.lean	theorem inParam_eq@113
+TCSlib/Complexity/Randomized/Closure.lean	theorem inArg_eq@116
+TCSlib/Complexity/Randomized/Closure.lean	theorem inAdvice_eq@119
+TCSlib/Complexity/Randomized/Closure.lean	theorem inCoins_eq@122
+TCSlib/Complexity/Randomized/Closure.lean	theorem runAtL_eq_output_layout@141
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_compParam@228
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_comp@257
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_reparam@277
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_reparam_advice@310
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_withAdvice@342
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_split@373
+TCSlib/Complexity/Randomized/Closure.lean	theorem exists_seq@402
+TCSlib/Complexity/Randomized/Closure.lean	theorem Computes.polyTimeComputable@439
+TCSlib/Complexity/Randomized/NonUniform.lean	theorem ofPolyTime_uniform@105
+TCSlib/Complexity/Randomized/PPT.lean	theorem coinLen_eq@163
+TCSlib/Complexity/Randomized/PPT.lean	theorem advInput_eq@206
+TCSlib/Complexity/Randomized/PPT.lean	theorem runAtL_eq@230
+TCSlib/Complexity/Randomized/PPT.lean	def coinsCongr@241
+TCSlib/Complexity/Randomized/PPT.lean	theorem coinsCongr_ofFn@245
+TCSlib/Complexity/Randomized/PPT.lean	theorem runAt_coinsCongr@251
+TCSlib/Complexity/Randomized/PPT.lean	def coinsEquivPoly@259
+TCSlib/Complexity/Randomized/PPT.lean	theorem coinsEquivPoly_ofFn@265
+TCSlib/Complexity/Randomized/PPT.lean	theorem coinsEquivPoly_symm_ofFn@271
+TCSlib/Complexity/Randomized/PPT.lean	theorem uniform_iff@286
+TCSlib/Complexity/Randomized/PPT.lean	theorem Uniform.advice_eq@289
+TCSlib/Complexity/Randomized/PPT.lean	def coinsEquiv_ofPolyTime@348
+TCSlib/Complexity/Randomized/PPT.lean	theorem coinsEquiv_ofPolyTime_ofFn@354
+TCSlib/Complexity/Randomized/PPT.lean	def coinsEquiv_ofPolyTimeUniform@398
+TCSlib/Complexity/Randomized/PPT.lean	theorem coinsEquiv_ofPolyTimeUniform_ofFn@403
+TCSlib/Cryptography/Asymptotic/Adversary.lean	theorem decodeFin_eq@82
+TCSlib/Cryptography/Asymptotic/Adversary.lean	theorem _root_.Complexity.NUPPT.distinguisherL_eq@137
+TCSlib/Cryptography/Asymptotic/Adversary.lean	theorem invProbOpt_def@181
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	theorem decListFun_eq@276
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean	theorem coinBlock_eq@358
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem index_eq@185
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem trap_eq@192
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem sampleClose_iff@206
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem invProbAt_eq@225
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem hardCore_iff@259
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem PermCollection.oneWay_iff@348
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem TrapdoorCollection.oneWay_iff@388
+TCSlib/Cryptography/Asymptotic/Collections.lean	def TrapdoorCollection.toCollection_domEquiv@395
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem TrapdoorCollection.toCollection_domEquiv_apply@399
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_gen_runAt@441
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_sample_runAt@452
+TCSlib/Cryptography/Asymptotic/Collections.lean	def toCollection@467
+TCSlib/Cryptography/Asymptotic/Collections.lean	def toCollection_domEquiv@503
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_domEquiv_apply@507
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_encD@512
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_decD@517
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_f@525
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_gen@530
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_sample_eq@534
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_eval@538
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_index@542
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_sample@549
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem toCollection_invProbAt@590
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem FunFamily.not_toCollection_oneWay_id@649
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem evalSampled_iff@697
+TCSlib/Cryptography/Asymptotic/Collections.lean	def owfCoinsEquiv@710
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfCoinsEquiv_ofFn@716
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfCoinsEquiv_symm_ofFn@721
+TCSlib/Cryptography/Asymptotic/Collections.lean	def owfFamily@733
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem owfFamily_easy@829
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem coins_collInverter@906
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem collInverter_runAt@911
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem collInverter_success@944
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem fiber_le@1004
+TCSlib/Cryptography/Asymptotic/Collections.lean	theorem invProbAt_owfFamily_le@1060
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	theorem _root_.Complexity.NUPPT.coins_withIndexParam@68
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	def _root_.Complexity.NUPPT.withIndexParam_coinsEquiv@75
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	theorem _root_.Complexity.NUPPT.withIndexParam_coinsEquiv_ofFn@81
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean	theorem _root_.Complexity.NUPPT.withIndexParam_runAt@87
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean	theorem padStr_eq@78
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem encodeList_nil@229
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem multiEncDist_apply@233
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem multiMessageSecure_iff@241
+TCSlib/Cryptography/Asymptotic/Encryption.lean	def prgScheme@419
+TCSlib/Cryptography/Asymptotic/Encryption.lean	def prgScheme_genCoinsEquiv@436
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgScheme_genCoinsEquiv_ofFn@442
+TCSlib/Cryptography/Asymptotic/Encryption.lean	def prgScheme_encCoinsEquiv@450
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgScheme_encCoinsEquiv_ofFn@456
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem prgScheme_encDist@464
+TCSlib/Cryptography/Asymptotic/Encryption.lean	theorem acceptProb_prgScheme_encDist@480
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem uniform_σ@157
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem uniform_X@161
+TCSlib/Cryptography/Asymptotic/Ensembles.lean	theorem pseudorandom_iff@197
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean	theorem queryOf_eq@97
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean	theorem verdictOf_eq@107
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean	theorem histEnc_eq@144
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem coinStr_eq@249
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem coinPoly_eq@684
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem coinPoly_eval@688
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem coins_ggmRedMachine@718
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	def ggmRedMachine_coinsEquiv@727
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean	theorem ggmRedMachine_coinsEquiv_ofFn@736
+TCSlib/Cryptography/Asymptotic/HardCore.lean	def PermFamily.HardCore@184
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.hardCore_iff@189
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.predProb_toFunFamily@197
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.HardCore.easy@211
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.HardCore.hard@223
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PermFamily.HardCore.of_easy_hard@232
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PRG.oneBit_secure_iff@298
+TCSlib/Cryptography/Asymptotic/HardCore.lean	def owpGenPRG_outEquiv@313
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem owpGenPRG_G_outEquiv@318
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem owpGenPRG_outEquiv_ofFn@324
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem owp_hardcore_prg@424
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PRG.expand_stretch@485
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem PRG.expand_G_stretch@498
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem cor_81_7@660
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_inLen_eval@695
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_outLen_eval@698
+TCSlib/Cryptography/Asymptotic/HardCore.lean	def glPad_inEquiv@703
+TCSlib/Cryptography/Asymptotic/HardCore.lean	def glPad_outEquiv@709
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_inEquiv_ofFn@714
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_inEquiv_symm_ofFn@718
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_outEquiv_ofFn@722
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_outEquiv_symm_ofFn@726
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glPad_f_equiv@746
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem glBit_equiv@752
+TCSlib/Cryptography/Asymptotic/HardCore.lean	theorem predProb_glPad@759
+TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean	theorem thm_87_3_1@75
+TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean	theorem thm_87_3_2@90
+TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean	theorem thm_87_3_3@105
+TCSlib/Cryptography/Asymptotic/HardCoreClaims.lean	theorem thm_87_3_9@160
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	def glPad@92
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	def glPad_domEquiv@201
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_domEquiv_apply@209
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_encD@216
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_decD@226
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_f_domEquiv@237
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_sample@247
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_eval@254
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_index@263
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem glPad_invProbAt@272
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem OneWay.glPad@307
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	def PermCollection.glPad_domEquiv@394
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem PermCollection.glPad_domEquiv_apply@401
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem PermCollection.glPad_perm@407
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	def TrapdoorCollection.glPad@435
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	def TrapdoorCollection.glPad_domEquiv@461
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.glPad_domEquiv_apply@468
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.glPad_inv@474
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean	theorem TrapdoorCollection.OneWay.glPad_hardCore_domEquiv@498
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem coins_precomp@512
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	def precomp_coinsEquiv@519
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem precomp_coinsEquiv_ofFn@525
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem runAtL_precomp@531
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem coins_glMachine@684
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	def glMachine_coinsEquiv@692
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem glMachine_coinsEquiv_symm_ofFn@699
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	abbrev glNeed@707
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem glNeed_le@711
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem glPredictorOf_apply@860
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean	theorem glMachine_runAt_guessRecover@872
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	theorem glPredictorOf_precomp_coll@171
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean	theorem glColl_uprob_le@227
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean	theorem glPredictorOf_precomp_concat@169
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean	theorem invProbOpt_glFam_eq@186
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	def wrapCoinsEquiv@173
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem wrapCoinsEquiv_symm_ofFn@182
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean	theorem glPadInvFun_eq@983
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_inLen_eval@174
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_outLen_eval@179
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	def PermFamily.glPad_inEquiv@186
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	def PermFamily.glPad_outEquiv@193
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_inEquiv_ofFn@198
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_inEquiv_symm_ofFn@204
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_outEquiv_ofFn@209
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_outEquiv_symm_ofFn@215
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_inEquiv_symm_append@221
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glPad_f_append@230
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem HardcoreBit.ip_eq_of_ofFn@242
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glBit_append@250
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glHalf_f_even@262
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem glHalfBit_even@286
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem predProb_glHalf_even@302
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem invProb_glHalf_even@315
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem PermFamily.glHalf_f_odd@337
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem glHalfBit_odd@374
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem predProb_glHalf_odd@409
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem invProb_glHalf_odd_le@434
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	def oddCoins@589
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem ofFn_oddCoins@599
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem glHalf_invProbAt_even@644
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem glHalf_invProbAt_odd_le@681
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem glHalf_predProb_even@714
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem glHalf_predProb_odd@726
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem OneWayPermutation.glHalf@794
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean	theorem exists_owp_hardCore@841
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem easy_iff@115
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem ofString_inLen_eval@226
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem ofString_outLen_eval@229
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem ofString_f_apply@232
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem blocks_apply@247
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem ofFn_ofString_apply@376
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem oneWayPermutation_iff@951
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem OneWayPermutation.evaluator@955
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem PermFamily.toFunFamily_inLen_eval@965
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem PermFamily.toFunFamily_outLen_eval@969
+TCSlib/Cryptography/Asymptotic/OneWay.lean	def PermFamily.toFunFamily_domEquiv@973
+TCSlib/Cryptography/Asymptotic/OneWay.lean	def PermFamily.toFunFamily_codEquiv@977
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem PermFamily.toFunFamily_domEquiv_ofFn@981
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem PermFamily.toFunFamily_domEquiv_symm_ofFn@986
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem PermFamily.toFunFamily_codEquiv_ofFn@990
+TCSlib/Cryptography/Asymptotic/OneWay.lean	theorem PermFamily.toFunFamily_f_domEquiv@995
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem yaoB_apply@553
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem ρP_eval@580
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	def ρPEquiv@588
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem ρPEquiv_ofFn@594
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem nkk_le@599
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	def sampleAll@739
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean	theorem yaoRaw'_layout@780
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	def bitwise@353
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwise_enc_coinLen@385
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	def bitwiseEncCoins@392
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwiseEncCoins_ofFn@399
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem bitwise_pkEncDist_coinBlocks@417
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem acceptProb_bitwise_pkEncDist@433
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem SingleBitSecure.bitwise@471
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem coins_tdpGen@663
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	def tdpGen_coinsEquiv@669
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpGen_coinsEquiv_ofFn@674
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem coins_tdpEnc@679
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	def tdpEnc_coinsEquiv@686
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpEnc_coinsEquiv_ofFn@692
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpGen_runAt@698
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpEnc_runAt@712
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpDecFun_apply@726
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	def tdpBitScheme@749
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem tdpBitScheme_pkEncDist@857
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem TrapdoorCollection.tdpBitScheme_singleBitSecure@911
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem TrapdoorCollection.OneWay.glPad_tdpBitScheme_singleBitSecure@1041
+TCSlib/Cryptography/Asymptotic/PublicKey.lean	theorem TrapdoorCollection.OneWay.exists_glPad_singleBitSecure@1059
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem multiDist_eq@560
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem tdpPredictor_coins@752
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem tdpPredictor_coinLen@758
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	def predCoins@774
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean	theorem ofFn_predCoins@782
+TCSlib/Cryptography/Asymptotic/Sampling.lean	theorem statClose_iff@128
+TCSlib/Cryptography/Asymptotic/Sampling.lean	theorem firstHit_eq@466
+TCSlib/Cryptography/Asymptotic/Universal.lean	theorem fUniversal_inLen_eval@251
+TCSlib/Cryptography/Asymptotic/Universal.lean	theorem ofFn_fUniversal_f@263
+TCSlib/Cryptography/Asymptotic/Universal.lean	theorem padStr_eq_ofFn_fUniversal_f@652
+TCSlib/Cryptography/Asymptotic/Universal.lean	theorem exists_preimage_of_fUniversal_eq@677
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem ofFn_family_f@137
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean	theorem quadraticCode_of_linear@185
+TCSlib/Cryptography/Candidates/Arithmetic.lean	theorem natToList_eq@92
+TCSlib/Cryptography/Candidates/Arithmetic.lean	theorem listToNat_natToList_eq_mod@115
+TCSlib/Cryptography/Candidates/Arithmetic.lean	theorem sizeStr_eq@297
+TCSlib/Cryptography/Candidates/Arithmetic.lean	theorem divModStr_pairEncode@346
+TCSlib/Cryptography/Candidates/Arithmetic.lean	theorem xgcdStr_pairEncode@353
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem uprob_and_eq_mul_subtype@107
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem one_sub_div_le_uprob_subtype@127
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem invProb_prodFun_le_plant@215
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem p_eq@373
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem q_eq@380
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem default_p@461
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem default_q@464
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem encodeDistinctPrimes_eq@486
+TCSlib/Cryptography/Candidates/Concrete.lean	theorem decodeDistinctPrimes_encode@490
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlP_eq@122
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlM_eq@130
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlG_eq@137
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem wellFormedIndex_iff@150
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expValid_iff@180
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expEnc_eq@238
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expF_eq@268
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem fullLengthExcept_iff@375
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlProb_eq@397
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlHard_iff@413
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlProb_nonneg@416
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expGen_coins@513
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expGen_coinLen@520
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	def expGen_coinsEquiv@528
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expGen_coinsEquiv_ofFn@534
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expGen_coinsEquiv_uprob@541
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expGen_coinsEquiv_uexp@549
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expGen_runAt@556
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expSampler_runAt@642
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	def expCollection_domEquiv@699
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_domEquiv_uprob@707
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_f@715
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_encD@721
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_decD@728
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_gen@735
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_sample@739
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_eval@743
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	def expCollection_coinsEquiv@750
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_coinsEquiv_uprob@757
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_coinsEquiv_uexp@765
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_index@773
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem expCollection_index_of_lt@781
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem safePrimeValid_iff@854
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	def dlCollection_domEquiv@893
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_domEquiv_uprob@900
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_f@907
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_encD@914
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_decD@921
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_gen@926
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_sample@931
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_eval@936
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	def dlCollection_coinsEquiv@942
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_coinsEquiv_ofFn@948
+TCSlib/Cryptography/Candidates/DiscreteLog.lean	theorem dlCollection_index@955
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullGroupValid_iff@465
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLAssumption_iff@487
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	def fullDLCollection_domEquiv@501
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_domEquiv_uprob@508
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_f@515
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_encD@522
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_decD@530
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_gen@535
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	def fullDLCollection_coinsEquiv@543
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_coinsEquiv_uprob@549
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_coinsEquiv_uexp@557
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_index@565
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_sample@571
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_eval@576
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem halfPred_eq@594
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem halfStr_spec@607
+TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean	theorem fullDLCollection_hardCore@692
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem statClose_of_uprob_ne@194
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem length_ddhTuple@241
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem ddhExpo_statClose@275
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem ddhAssumption_iff@332
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem constSelector_runAt@393
+TCSlib/Cryptography/Candidates/ElGamal.lean	instance constSelector_unique@403
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem GroupPKScheme.Secure.const@419
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem egGen_runAt@532
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem egEnc_runAt@580
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem egGroupGenMachine_runAt@762
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem exists_take_coins@782
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem egGroupGen_valid@797
+TCSlib/Cryptography/Candidates/ElGamal.lean	theorem egGroupGen_wellFormed@826
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem modulusBits_eq@208
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factorProb_eq@233
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringAssumption_iff@248
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factorProb_eq_zero_of_lt@259
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem coins_oneCallFactorer@293
+TCSlib/Cryptography/Candidates/Factoring.lean	def oneCallFactorer_coinsEquiv@299
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem oneCallFactorer_coinsEquiv_ofFn@305
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem oneCallFactorer_runAtL@311
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem eval_fmultWeakPoly@326
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem fmult_prod_inLen@369
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem fmult_prod_outLen@373
+TCSlib/Cryptography/Candidates/Factoring.lean	def prodInverter@382
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem prodInverter_eq@392
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem polyTimeComputable_samplePrimeL@536
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem statClose_samplePrimeL_pair@564
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem samplePairOut_eq_encode@585
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringGen_runAt@644
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringSampler_runAt@653
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringSampler_spec@669
+TCSlib/Cryptography/Candidates/Factoring.lean	def factoringCollection@699
+TCSlib/Cryptography/Candidates/Factoring.lean	def factoringCollection_domEquiv@724
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_domEquiv_uprob@732
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_f@741
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_encD@748
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_decD@756
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_gen@763
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_sample@767
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_eval@772
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem factoringCollection_index@776
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem coins_collectionFactorer@821
+TCSlib/Cryptography/Candidates/Factoring.lean	def collectionFactorer_coinsEquiv@829
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem collectionFactorer_coinsEquiv_ofFn@835
+TCSlib/Cryptography/Candidates/Factoring.lean	theorem collectionFactorer_runAt@842
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaAssumption_iff@121
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaProb_nonneg@125
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaProb_le_one@131
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaProb_eq_zero_of_lt@140
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaValid_iff@200
+TCSlib/Cryptography/Candidates/RSA.lean	theorem eval_rsaBlock@350
+TCSlib/Cryptography/Candidates/RSA.lean	theorem eval_rsaTrials@358
+TCSlib/Cryptography/Candidates/RSA.lean	theorem eval_rsaSampleCoins@364
+TCSlib/Cryptography/Candidates/RSA.lean	theorem sampleUnitL_eq@383
+TCSlib/Cryptography/Candidates/RSA.lean	theorem statClose_sampleUnitL@415
+TCSlib/Cryptography/Candidates/RSA.lean	theorem unitSampleStr_eq@434
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaGen_runAt@570
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaInv_runAt@627
+TCSlib/Cryptography/Candidates/RSA.lean	def rsaTrapdoor_domEquiv@736
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_domEquiv_uprob@743
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_f@750
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_encD@755
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_decD@760
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_perm@768
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_gen@773
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_sample@776
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_eval@779
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaTrapdoor_inv@782
+TCSlib/Cryptography/Candidates/RSA.lean	def rsaCollection_domEquiv@791
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_domEquiv_uprob@798
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_f@805
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_encD@810
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_decD@815
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_gen@820
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_sample@823
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_eval@826
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaCollection_index@829
+TCSlib/Cryptography/Candidates/RSA.lean	theorem coins_rsaBreaker@900
+TCSlib/Cryptography/Candidates/RSA.lean	def rsaBreaker_coinsEquiv@906
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaBreaker_coinsEquiv_ofFn@911
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaBreaker_runAt@918
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaFromFactorStep_correct@1010
+TCSlib/Cryptography/Candidates/RSA.lean	theorem coins_rsaFromFactorer@1069
+TCSlib/Cryptography/Candidates/RSA.lean	def rsaFromFactorer_coinsEquiv@1076
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaFromFactorer_coinsEquiv_ofFn@1082
+TCSlib/Cryptography/Candidates/RSA.lean	theorem rsaFromFactorer_runAt@1089
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem blumFactoringAssumption_iff@114
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem smallDistinctPrimes_p@296
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem smallDistinctPrimes_q@302
+TCSlib/Cryptography/Candidates/Rabin.lean	def oddDefault@308
+TCSlib/Cryptography/Candidates/Rabin.lean	def blumDefault@313
+TCSlib/Cryptography/Candidates/Rabin.lean	def rabinGenParams@321
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem oddGen_runAt@380
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem blumGen_runAt@388
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinEval_spec@446
+TCSlib/Cryptography/Candidates/Rabin.lean	def rabinCollection_domEquiv@516
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_domEquiv_uprob@523
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_f@530
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_encD@535
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_decD@541
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_gen@547
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_sample@550
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinCollection_eval@554
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinFactorer_runAt@641
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem blumValid_iff@707
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem blumEval_spec@804
+TCSlib/Cryptography/Candidates/Rabin.lean	def rabinBlumTrapdoor_domEquiv@954
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_domEquiv_uprob@961
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_f@968
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_encD@973
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_decD@980
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_perm@988
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_gen@995
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_sample@998
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_eval@1002
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumTrapdoor_inv@1005
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem coins_rabinBlumInverter@1087
+TCSlib/Cryptography/Candidates/Rabin.lean	def rabinBlumInverter_coinsEquiv@1095
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumInverter_coinsEquiv_ofFn@1101
+TCSlib/Cryptography/Candidates/Rabin.lean	theorem rabinBlumInverter_runAt@1108
+TCSlib/Cryptography/Foundations/Experiments.lean	theorem invProb_def@87
+TCSlib/Cryptography/Foundations/Experiments.lean	theorem predProb_def@91
+TCSlib/Cryptography/Foundations/Experiments.lean	theorem acceptProb_def@95
+TCSlib/Cryptography/Foundations/Experiments.lean	theorem distAdv_def@99
+TCSlib/Cryptography/Foundations/Negligible.lean	theorem negligible_iff@62
+TCSlib/Cryptography/Foundations/Probability.lean	theorem uprob_def@64
+TCSlib/Cryptography/Foundations/Probability.lean	theorem uexp_def@72
+TCSlib/Cryptography/HardcoreBit/Basic.lean	theorem pushesUniform_iff@177
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	theorem guessRecover_apply@83
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	theorem guessInverter_eq@97
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	def guessCoinsCongr@101
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	theorem guessCoinsCongr_apply@108
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean	theorem guessRecover_coinsCongr@114
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem glPad_apply@105
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem glInverter_apply@119
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean	theorem perfectInverter_eq@217
+TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean	theorem subsetSum_eq@285
+TCSlib/Cryptography/HardcoreBit/ThreeQuarters.lean	theorem majorityInverter_eq@75
+TCSlib/Cryptography/NumberTheory/Primality.lean	theorem listToNat_eq@667
+TCSlib/Cryptography/NumberTheory/Primality.lean	theorem chunk_apply@693
+TCSlib/Cryptography/NumberTheory/Primality.lean	theorem firstHit_eq_some_of_first@780
+TCSlib/Cryptography/NumberTheory/Primality.lean	theorem exists_samplePrime_nuppt@899
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean	theorem prodFun_apply@79
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean	theorem yaoTry_eq@96
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean	theorem owpPredictor_apply@94
+TCSlib/Cryptography/Pseudorandom/Generators.lean	theorem prgAdv_eq@77
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem bitCom_false_eq_owpGenPRG@447
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem HardCore.bitHiding@642
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem owp_commitment@890
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean	theorem exists_commitment_of_owp_hardCore@899
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	theorem ZK_iff@166
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean	def PerfectZKAbort@210
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	theorem encColoring_eq@237
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	theorem getD_encColoring@244
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	theorem getD_encColoring_two_mul@257
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean	theorem getD_encColoring_two_mul_add_one@264
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	def zkSimCoins@199
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem ofFn_zkSimCoins@208
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem zkSim_runAt@227
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean	theorem acceptProb_zkSim@246
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giProver_coins@501
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean	theorem giProtocol_eq@532
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem gniProtocol_V_coinLen@572
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem gniProtocolRep_V_coinLen@579
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem giProtocol_V_coinLen@587
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean	theorem giProtocolRep_V_coinLen@593
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	def vTapeSplit@101
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem ofFn_vTapeSplit@107
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	def giBitEquiv@233
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	theorem ofFn_giBitEquiv@238
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean	def giCoinEquiv@247
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	def gniTapes@268
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean	theorem gniTapes_apply@276
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean	def giRepCoins@382
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem sim_ofFn_eq@370
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem viewV_encode@426
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem statClose_real_ideal@458
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean	theorem statClose_real_sim@525
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem blockLen_eq@72
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	def blockTapeEquiv@77
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem blockTapeEquiv_ofFn@82
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean	theorem sim_eq@119
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem coinLen_eq@126
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem efficient_iff@181
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem View.encode_mk@294
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	def withV_vCoinsEquiv@373
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem withV_vCoinsEquiv_ofFn@378
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem transcriptWith_eq@403
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem outV_eq@422
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean	theorem viewV_withV@436
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem outV_pullback_cheat@357
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem zk_proof_of_owp_levinReduction@615
+TCSlib/Cryptography/ZeroKnowledge/NP.lean	theorem zk_proof_of_mem_NP_of_owp@756
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem ProperColoring_iff@90
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem ProperColoring.ne@95
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem R3COL_iff@132
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem sampleIdx_eq_rejectionSample@312
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem edgeIdxOfMsg_eq@347
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean	theorem sampleIdx_ofFn_eq_rejectionSample@390
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem msgAt_eq@106
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colCommit_eq@128
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colOpen_eq@140
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_coins@439
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_P@472
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_V@476
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_rounds@480
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProtocol_verifierFirst@484
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colCoinSlice_eq@494
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colIterations_eq@503
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_next_nil@710
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_next_cons@719
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem colProver_next_cons_of_edgeCount_eq_zero@729
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean	theorem R3COL_witnessRelation@916
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	def simCoinsEquiv@183
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean	theorem exists_colSimRed_ge@552
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	theorem hybStd_eq@427
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	theorem hybGen_eq@441
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean	theorem exists_hybRed_ge@541
+TCSlib/InformationTheory/StatisticalDistance.lean	theorem statDist_eq@49
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/scan.log =====
+
+# rule-10 source scan over 70 files; hit = name resolving to a definition of another TCSlib module
+# file:line	tactic	token	kind	foreign definition	its module	[declaration]	source line
+## (c1) unfold/delta/rw/simp/dsimp lemma-list hits: 446
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:115	simp	pairEncode	foreign-def	Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	[lemma pairEncode_append]	simp [pairEncode, List.append_assoc]
+TCSlib/Complexity/ClassNP/PolyTimePairing.lean:151	rw	splitAtLastTrue	foreign-def	Turing.splitAtLastTrue	TCSlib.Complexity.TuringMachine.Build.Convention	[lemma splitAtLastTrue_replicate_succ]	rw [splitAtLastTrue, List.reverse_replicate, List.replicate_succ]
+TCSlib/Complexity/Randomized/NonUniform.lean:97	simp	runAtL	foreign-def	Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	[theorem Uniform.runAtL_eq]	simp [runAtL, h n]
+TCSlib/Cryptography/Asymptotic/Adversary.lean:197	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem invProbOpt_some]	unfold invProbOpt invProb
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:64	simp	pairEncode	foreign-def	Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	[theorem encodeList_eq_flatMap]	| cons c cs ih => simp [encodeList, ih, pairEncode]
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:133	simp	pairEncode	foreign-def	Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	[theorem pairEncode_nil_append]	simp [pairEncode]
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:181	simp	pairFstD	foreign-def	Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_blockStep_le]	| none => exact Or.inl ⟨by simp [pairFstD, hz], by simp [pairSndD, hz]⟩
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:181	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_blockStep_le]	| none => exact Or.inl ⟨by simp [pairFstD, hz], by simp [pairSndD, hz]⟩
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:318	simp	pairFstD	foreign-def	Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_decListStep_le]	simp [pairFstD, pairSndD, hz, pairDecode]
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:318	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_decListStep_le]	simp [pairFstD, pairSndD, hz, pairDecode]
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:318	simp	pairDecode	foreign-def	Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	[theorem length_decListStep_le]	simp [pairFstD, pairSndD, hz, pairDecode]
+TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean:325	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_decListStep_le]	| none => simp [pairSndD, hb]
+TCSlib/Cryptography/Asymptotic/Collections.lean:278	unfold	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem invProbAt_nonneg]	unfold invProbAt uexp
+TCSlib/Cryptography/Asymptotic/Collections.lean:576	simp	decodeFin	foreign-def	TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem decodeFin_eq_some_iff]	simp only [decodeFin, dif_pos hw, Option.some.injEq] at h
+TCSlib/Cryptography/Asymptotic/Collections.lean:813	unfold	NUPPT.runAt	foreign-def	Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	[theorem owfIndexStr_eq]	unfold owfIndexStr Collection.index NUPPT.runAt NUPPT.layout NUPPT.advInput
+TCSlib/Cryptography/Asymptotic/Collections.lean:813	unfold	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem owfIndexStr_eq]	unfold owfIndexStr Collection.index NUPPT.runAt NUPPT.layout NUPPT.advInput
+TCSlib/Cryptography/Asymptotic/Collections.lean:813	unfold	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem owfIndexStr_eq]	unfold owfIndexStr Collection.index NUPPT.runAt NUPPT.layout NUPPT.advInput
+TCSlib/Cryptography/Asymptotic/Collections.lean:814	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem owfIndexStr_eq]	rw [List.length_replicate, List.take_left' (by simp [NUPPT.coinLen]), G.gen_uniform n]
+TCSlib/Cryptography/Asymptotic/Collections.lean:821	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem owfRawStr_eq]	rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by simp [NUPPT.coinLen])]
+TCSlib/Cryptography/Asymptotic/Collections.lean:822	unfold	NUPPT.runAt	foreign-def	Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	[theorem owfRawStr_eq]	unfold NUPPT.runAt NUPPT.layout NUPPT.advInput
+TCSlib/Cryptography/Asymptotic/Collections.lean:822	unfold	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem owfRawStr_eq]	unfold NUPPT.runAt NUPPT.layout NUPPT.advInput
+TCSlib/Cryptography/Asymptotic/Collections.lean:822	unfold	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem owfRawStr_eq]	unfold NUPPT.runAt NUPPT.layout NUPPT.advInput
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:105	unfold	NUPPT.timeBound	foreign-def	Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	[theorem _root_.Complexity.NUPPT.length_runAt_le]	unfold NUPPT.timeBound
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:109	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem _root_.Complexity.NUPPT.length_runAt_le]	simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen]
+TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean:178	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem ofFn_padFin_of_le]	simp only [List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD]
+TCSlib/Cryptography/Asymptotic/CollectionsLemmas.lean:103	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem ofFn_padFin_eq_take]	simp only [padFin, List.getD_eq_getElem?_getD]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:122	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem acceptProb_distinguisherL_congr]	have hlen : A.coinLen n = B.coinLen n := by simp only [NUPPT.coinLen, hc]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:126	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_distinguisherL_congr]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/Encryption.lean:133	simp	NUPPT.distinguisherL	foreign-def	Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	[theorem acceptProb_distinguisherL_congr]	NUPPT.distinguisherL, NUPPT.runAt_eq, h, hofn]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:292	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem MultiMessageSecure.singleMessageSecure]	unfold distAdv at this ⊢
+TCSlib/Cryptography/Asymptotic/Encryption.lean:390	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem runAt_prgPad]	simp [prgPadFun, NUPPT.inArg, NUPPT.advInput]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:390	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem runAt_prgPad]	simp [prgPadFun, NUPPT.inArg, NUPPT.advInput]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:511	unfold	prgAdv	foreign-def	TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	[theorem prgAdv_eq_of_runAtL]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/Encryption.lean:511	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem prgAdv_eq_of_runAtL]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/Encryption.lean:584	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem prgScheme_singleMessageSecure]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Encryption.lean:617	rw	NUPPT.distinguisherL	foreign-def	Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	[theorem distinguisherL_firstTwoEq]	rw [NUPPT.distinguisherL, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:618	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem distinguisherL_firstTwoEq]	simp [firstTwoEqFun, NUPPT.inArg, NUPPT.advInput]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:618	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem distinguisherL_firstTwoEq]	simp [firstTwoEqFun, NUPPT.inArg, NUPPT.advInput]
+TCSlib/Cryptography/Asymptotic/Encryption.lean:678	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem not_multiMessageSecure_of_deterministic]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/Encryption.lean:717	rw	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem not_multiMessageSecure_of_deterministic]	rw [distAdv, hone, hzero] at hadv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:237	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem uniform_samplable]	simp [NUPPT.advInput, padFin_ofFn, uniform]
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:325	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.Indist.refl]	simp [distAdv]
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:356	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.Indist.toLit]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:404	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.IndistLit.toIndist]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:431	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.Indist.push]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:461	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.Indist.trans]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:519	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.Indist.copies]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:538	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem Ensemble.Indist.copies]	simp [NUPPT.coinLen, hBc]
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:554	simp	NUPPT.distinguisher	foreign-def	Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	[theorem Ensemble.Indist.copies]	simp only [NUPPT.distinguisher, NUPPT.runAt_eq, EnsembleLemmas.ofFn_coinsEquiv, hB,
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:555	simp	multicopyRed	foreign-def	TCSlib.Cryptography.multicopyRed	TCSlib.Cryptography.Pseudorandom.Indistinguishability	[theorem Ensemble.Indist.copies]	multicopyRed, hD']
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:564	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Ensemble.Indist.copies]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/Ensembles.lean:623	rw	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predict_eq]	rw [← acceptProb_fst (τ := σ₁) X₀ D, acceptProb, ← uprob_not]
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean:398	simp	pairFstD	foreign-def	Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_lookStep_iterate_le]	have h1 : pairFstD v = [] := by simp [pairFstD, hd]
+TCSlib/Cryptography/Asymptotic/GGMReduction.lean:399	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem length_lookStep_iterate_le]	have h2 : pairSndD v = [] := by simp [pairSndD, hd]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:168	simp	decodeFin	foreign-def	TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem decodeFin_eq_some_iff]	simp only [decodeFin, dif_pos hw, Option.some.injEq] at h
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:180	unfold	queryOf	foreign-def	TCSlib.Cryptography.GGMRed.queryOf	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem queryOf_eq_some_iff]	unfold queryOf at h
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:185	unfold	queryOf	foreign-def	TCSlib.Cryptography.GGMRed.queryOf	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem queryOf_eq_some_iff]	unfold queryOf
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:193	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem ofFn_padFin_of_length]	simp [padFin, List.getElem?_eq_getElem hk₂]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:202	simp	pairFstD	foreign-def	Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem exists_queryOf_iff]	simp [pairFstD, pairSndD, hx]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:202	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem exists_queryOf_iff]	simp [pairFstD, pairSndD, hx]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:205	simp	pairFstD	foreign-def	Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem exists_queryOf_iff]	| none => simp [pairFstD, hd] at h1
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:208	simp	pairFstD	foreign-def	Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem exists_queryOf_iff]	simp only [pairFstD, pairSndD, hd, Option.map_some, Option.getD_some] at h1 h2
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:208	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem exists_queryOf_iff]	simp only [pairFstD, pairSndD, hd, Option.map_some, Option.getD_some] at h1 h2
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:216	simp	pairSndD	foreign-def	Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	[theorem pairSndD_of_queryOf]	simp [pairSndD, h]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:303	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem le_length_rawInput]	simp only [rawInput, NUPPT.layout, length_pairEncode, List.length_replicate]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:310	simp	paramU	foreign-def	TCSlib.Cryptography.GGMRed.paramU	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem paramU_eq]	simp [paramU, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:310	simp	inX	foreign-def	TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem paramU_eq]	simp [paramU, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:314	simp	chal	foreign-def	TCSlib.Cryptography.GGMRed.chal	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem chal_eq]	simp [chal, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:314	simp	inX	foreign-def	TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem chal_eq]	simp [chal, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:318	simp	unI	foreign-def	TCSlib.Cryptography.GGMRed.unI	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem unI_eq]	simp [unI, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:318	simp	inX	foreign-def	TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem unI_eq]	simp [unI, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:322	simp	unJ	foreign-def	TCSlib.Cryptography.GGMRed.unJ	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem unJ_eq]	simp [unJ, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:322	simp	inX	foreign-def	TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem unJ_eq]	simp [unJ, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:326	simp	advD	foreign-def	TCSlib.Cryptography.GGMRed.advD	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem advD_eq]	simp [advD, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:326	simp	inX	foreign-def	TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem advD_eq]	simp [advD, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:330	simp	coinsAll	foreign-def	TCSlib.Cryptography.GGMRed.coinsAll	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem coinsAll_eq]	simp [coinsAll, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:330	simp	inX	foreign-def	TCSlib.Cryptography.GGMRed.inX	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem coinsAll_eq]	simp [coinsAll, inX, rawInput]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:335	rw	seeds	foreign-def	TCSlib.Cryptography.GGMRed.seeds	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem seeds_eq]	rw [seeds, coinsAll_eq, paramU_eq, coinStr]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:343	rw	coinsRest	foreign-def	TCSlib.Cryptography.GGMRed.coinsRest	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem coinsRest_eq]	rw [coinsRest, coinsAll_eq, paramU_eq, coinStr]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:350	rw	pairs	foreign-def	TCSlib.Cryptography.GGMRed.pairs	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem pairs_eq]	rw [pairs, coinsRest_eq, paramU_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:356	rw	coinsD	foreign-def	TCSlib.Cryptography.GGMRed.coinsD	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem coinsD_eq]	rw [coinsD, coinsRest_eq, paramU_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:362	simp	hist	foreign-def	TCSlib.Cryptography.GGMRed.hist	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem hist_eq]	simp [hist, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:362	simp	inS	foreign-def	TCSlib.Cryptography.GGMRed.inS	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem hist_eq]	simp [hist, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:367	simp	tbl	foreign-def	TCSlib.Cryptography.GGMRed.tbl	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem tbl_eq]	simp [tbl, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:367	simp	inS	foreign-def	TCSlib.Cryptography.GGMRed.inS	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem tbl_eq]	simp [tbl, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:372	simp	cnt	foreign-def	TCSlib.Cryptography.GGMRed.cnt	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem cnt_eq]	simp [cnt, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:372	simp	inS	foreign-def	TCSlib.Cryptography.GGMRed.inS	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem cnt_eq]	simp [cnt, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:376	simp	rnd	foreign-def	TCSlib.Cryptography.GGMRed.rnd	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem rnd_eq]	simp [rnd, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:376	simp	inS	foreign-def	TCSlib.Cryptography.GGMRed.inS	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem rnd_eq]	simp [rnd, inS, encState]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:380	rw	move	foreign-def	TCSlib.Cryptography.GGMRed.move	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem move_eq]	rw [move, paramU_eq, hist_eq, advD_eq, coinsD_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:385	rw	isQ	foreign-def	TCSlib.Cryptography.GGMRed.isQ	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem isQ_iff]	rw [isQ, move_eq, paramU_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:391	rw	acc	foreign-def	TCSlib.Cryptography.GGMRed.acc	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem acc_eq]	rw [acc, unQ, paramU_eq, rnd_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:391	rw	unQ	foreign-def	TCSlib.Cryptography.GGMRed.unQ	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem acc_eq]	rw [acc, unQ, paramU_eq, rnd_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:398	rw	out	foreign-def	TCSlib.Cryptography.GGMRed.out	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem out_eq]	rw [out, move_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:402	simp	mul1	foreign-def	TCSlib.Cryptography.GGMRed.mul1	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem mul1_length]	simp [mul1, paramU_eq, cnt_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:406	simp	un2	foreign-def	TCSlib.Cryptography.GGMRed.un2	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem un2_length]	simp [un2, paramU_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:411	simp	mul2	foreign-def	TCSlib.Cryptography.GGMRed.mul2	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem mul2_length]	simp [mul2, un2_length, cnt_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:425	simp	ltJ	foreign-def	TCSlib.Cryptography.GGMRed.ltJ	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem fresh_eq]	simp only [ltJ, unJ_eq, cnt_eq, List.length_replicate, ← decide_not, not_le]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:427	simp	eqJ	foreign-def	TCSlib.Cryptography.GGMRed.eqJ	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem fresh_eq]	simp [eqJ, unJ_eq, cnt_eq]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:432	simp	challengeStream	foreign-def	TCSlib.Cryptography.challengeStream	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	[theorem fresh_eq]	simp [stream, challengeStream, extendStream, hk]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:432	simp	extendStream	foreign-def	TCSlib.Cryptography.extendStream	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	[theorem fresh_eq]	simp [stream, challengeStream, extendStream, hk]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:433	rw	fresh	foreign-def	TCSlib.Cryptography.GGMRed.fresh	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem fresh_eq]	rw [fresh, hlt, heq, valStr, hstream _ hk]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:461	rw	query	foreign-def	TCSlib.Cryptography.GGMRed.query	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [query, move_eq, pairSndD_of_queryOf hx]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:463	rw	pfx	foreign-def	TCSlib.Cryptography.GGMRed.pfx	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [pfx, hquery, unI_eq, List.length_replicate, ofFn_prefixAt x hi.le]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:467	rw	look	foreign-def	TCSlib.Cryptography.GGMRed.look	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [look, hpfx, tbl_eq, lookup_tblOf]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:475	rw	ans	foreign-def	TCSlib.Cryptography.GGMRed.ans	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [ans, lab, hv, hquery, unI_eq, List.length_replicate, hbit, hrest, paramU_eq, valStr,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:475	rw	lab	foreign-def	TCSlib.Cryptography.GGMRed.lab	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [ans, lab, hv, hquery, unI_eq, List.length_replicate, hbit, hrest, paramU_eq, valStr,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:487	simp	notFound	foreign-def	TCSlib.Cryptography.GGMRed.notFound	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp [notFound, hlook, hmem, Turing.pairEncode_ne_nil]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:490	rw	vstr	foreign-def	TCSlib.Cryptography.GGMRed.vstr	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [vstr, hnf, hlook, if_pos hmem]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:493	simp	step	foreign-def	TCSlib.Cryptography.GGMRed.step	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:493	simp	hist'	foreign-def	TCSlib.Cryptography.GGMRed.hist'	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:493	simp	tbl'	foreign-def	TCSlib.Cryptography.GGMRed.tbl'	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:493	simp	cnt'	foreign-def	TCSlib.Cryptography.GGMRed.cnt'	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:497	simp	notFound	foreign-def	TCSlib.Cryptography.GGMRed.notFound	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp [notFound, hlook, hmem]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:499	rw	vstr	foreign-def	TCSlib.Cryptography.GGMRed.vstr	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	rw [vstr, hnf, if_pos rfl, fresh_eq d s t E hG hk]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:504	simp	step	foreign-def	TCSlib.Cryptography.GGMRed.step	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:504	simp	hist'	foreign-def	TCSlib.Cryptography.GGMRed.hist'	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:504	simp	tbl'	foreign-def	TCSlib.Cryptography.GGMRed.tbl'	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:504	simp	cnt'	foreign-def	TCSlib.Cryptography.GGMRed.cnt'	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem step_eq]	simp only [step, hist', tbl', cnt', hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:601	simp	bound	foreign-def	TCSlib.Cryptography.GGMRed.bound	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem length_encState_pureAt_le]	simp only [bound, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:642	rw	rawFun	foreign-def	TCSlib.Cryptography.GGMRed.rawFun	TCSlib.Cryptography.Asymptotic.GGMReduction	[theorem rawFun_rawInput]	rw [rawFun, stateLoopFun_eval start (step E D q) (acc D q) (out D q) q (bound q) (rawInput d)
+TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean:781	rw	NUPPT.distinguisher	foreign-def	Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	[theorem ggmRedMachine_distinguisher]	rw [NUPPT.distinguisher, runAt_ggmRedMachine, hraw, rawFun_rawInput d E hG hi]
+TCSlib/Cryptography/Asymptotic/HardCore.lean:264	simp	NUPPT.predictor	foreign-def	Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	[theorem not_hardCore_const]	simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt, NUPPT.ofPolyTimeUniform,
+TCSlib/Cryptography/Asymptotic/HardCore.lean:264	simp	NUPPT.distinguisher	foreign-def	Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	[theorem not_hardCore_const]	simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt, NUPPT.ofPolyTimeUniform,
+TCSlib/Cryptography/Asymptotic/HardCore.lean:264	simp	NUPPT.runAt	foreign-def	Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	[theorem not_hardCore_const]	simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt, NUPPT.ofPolyTimeUniform,
+TCSlib/Cryptography/Asymptotic/HardCore.lean:264	simp	NUPPT.ofPolyTimeUniform	foreign-def	Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	[theorem not_hardCore_const]	simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt, NUPPT.ofPolyTimeUniform,
+TCSlib/Cryptography/Asymptotic/HardCore.lean:382	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_owpPredictorSnoc]	unfold predProb
+TCSlib/Cryptography/Asymptotic/HardCore.lean:393	unfold	prgAdv	foreign-def	TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	[theorem exists_owpPredictorSnoc]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/HardCore.lean:393	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_owpPredictorSnoc]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/HardCore.lean:527	unfold	prgAdv	foreign-def	TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	[theorem prgAdv_fst]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/HardCore.lean:527	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem prgAdv_fst]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/HardCore.lean:652	simp	prgExt	foreign-def	TCSlib.Cryptography.prgExt	TCSlib.Cryptography.Pseudorandom.Generators	[theorem PermFamily.iterPRG_eq_expand]	simp only [prgExt]
+TCSlib/Cryptography/Asymptotic/HardCore.lean:777	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem invProb_glInverter]	unfold invProb
+TCSlib/Cryptography/Asymptotic/HardCore.lean:779	simp	splitPair	foreign-def	TCSlib.Cryptography.splitPair	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	[theorem invProb_glInverter]	simp only [glPad, glInverter, splitPair, Equiv.coe_fn_mk, Equiv.symm_apply_apply]
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:176	simp	NUPPT.runAtL	foreign-def	Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	[theorem glPad_sample_runAtL]	simp only [glPad, NUPPT.runAtL, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:176	simp	NUPPT.ofPolyTimeUniform	foreign-def	Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	[theorem glPad_sample_runAtL]	simp only [glPad, NUPPT.runAtL, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:177	simp	glPadSampleFun	foreign-def	TCSlib.Cryptography.Collection.glPadSampleFun	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	[theorem glPad_sample_runAtL]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:177	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem glPad_sample_runAtL]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:177	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem glPad_sample_runAtL]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:177	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem glPad_sample_runAtL]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:177	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem glPad_sample_runAtL]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:177	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem glPad_sample_runAtL]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:179	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem glPad_sample_runAtL]	NUPPT.coinLen]
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:188	unfold	glPadDecode	foreign-def	TCSlib.Cryptography.glPadDecode	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	[theorem glPad_decD_eq]	unfold Collection.glPad glPadDecode
+TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:363	unfold	Collection.invProbAt	foreign-def	TCSlib.Cryptography.Collection.invProbAt	TCSlib.Cryptography.Asymptotic.Collections	[theorem OneWay.glPad_hardCore]	unfold Collection.invProbAt at key
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:476	rw	HardcoreBit.majority	foreign-def	TCSlib.Cryptography.HardcoreBit.majority	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	[theorem glMajFun_blocksStr]	HardcoreBit.majority, Fintype.card_fin]
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:742	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem glMachine_runAt]	GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:742	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem glMachine_runAt]	GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:742	simp	NUPPT.inAdvice	foreign-def	Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	[theorem glMachine_runAt]	GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:743	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem glMachine_runAt]	NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:743	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem glMachine_runAt]	NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:761	unfold	blocksStr	foreign-def	TCSlib.Cryptography.blocksStr	TCSlib.Cryptography.Asymptotic.HardCoreLoops	[theorem glMachine_runAt]	unfold blocksStr
+TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:789	unfold	HardcoreBit.majority	foreign-def	TCSlib.Cryptography.HardcoreBit.majority	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	[theorem majority_comp_equiv]	unfold HardcoreBit.majority
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:125	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem padToLen_pairEncode_ofFn]	simp only [List.getElem_take, List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD]
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:137	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem ofFn_padFin_of_length]	simp [padFin, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj₂]
+TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:379	unfold	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem glColl_negligible]	unfold uexp
+TCSlib/Cryptography/Asymptotic/HardCoreGLFamily.lean:156	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem exists_glBitEvaluator]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	runAtL	foreign-def	Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	inAdvice	foreign-def	Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:199	simp	inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_wrap]	simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:228	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_coins_equiv]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:236	unfold	prgAdv	foreign-def	TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	[theorem prgAdv_coins_equiv]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:236	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem prgAdv_coins_equiv]	unfold prgAdv distAdv
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:244	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_coins_equiv]	unfold predProb
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:266	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem exists_owpGenEvaluator]	simp only [NUPPT.advInput, List.length_ofFn] at h1 h2 ⊢
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:321	unfold	NUPPT.predictor	foreign-def	Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	[theorem owpPredMachine_predictor]	unfold owpPredMachine NUPPT.predictor NUPPT.distinguisher
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:321	unfold	NUPPT.distinguisher	foreign-def	Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	[theorem owpPredMachine_predictor]	unfold owpPredMachine NUPPT.predictor NUPPT.distinguisher
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:611	unfold	NUPPT.distinguisher	foreign-def	Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	[theorem expandRedMachine_distinguisher]	unfold expandRedMachine NUPPT.distinguisher
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:640	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem exists_glPadEvaluator]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:642	rw	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem exists_glPadEvaluator]	rw [← NUPPT.advInput, hFx]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:690	unfold	invProbOpt	foreign-def	TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	[theorem invProbOpt_glPad_le]	unfold invProbOpt
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:707	simp	HardcoreBit.glPad	foreign-def	TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	[theorem invProbOpt_glPad_le]	simp only [HardcoreBit.glPad, Prod.mk.injEq] at hpair
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:710	simp	HardcoreBit.glPad	foreign-def	TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	[theorem invProbOpt_glPad_le]	simp only [HardcoreBit.glPad] at hx'
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:848	unfold	Collection.invProbAt	foreign-def	TCSlib.Cryptography.Collection.invProbAt	TCSlib.Cryptography.Asymptotic.Collections	[theorem glPad_invProbAt_le]	unfold Collection.invProbAt
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	runAtL	foreign-def	Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	inAdvice	foreign-def	Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:899	simp	inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem runAtL_reparam]	simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:904	simp	coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem coinLen_reparam]	simp [coinLen, PolyExpr.eval_subst]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:966	simp	NUPPT.runAt	foreign-def	Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	[theorem glPadSample_runAt]	simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:966	simp	NUPPT.ofPolyTimeUniform	foreign-def	Complexity.NUPPT.ofPolyTimeUniform	TCSlib.Complexity.Randomized.PPT	[theorem glPadSample_runAt]	simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:967	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem glPadSample_runAt]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:967	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem glPadSample_runAt]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:967	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem glPadSample_runAt]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:967	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem glPadSample_runAt]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:967	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem glPadSample_runAt]	glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:969	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem glPadSample_runAt]	NUPPT.coinLen, NUPPT.runAtL]
+TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:969	simp	NUPPT.runAtL	foreign-def	Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	[theorem glPadSample_runAt]	NUPPT.coinLen, NUPPT.runAtL]
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean:539	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem PermFamily.glHalf_easy]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean:539	simp	unaryHalf	foreign-def	TCSlib.Cryptography.unaryHalf	TCSlib.Cryptography.Asymptotic.HardCoreLoops	[theorem PermFamily.glHalf_easy]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean:555	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem glHalfBit_easy]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean:555	simp	unaryHalf	foreign-def	TCSlib.Cryptography.unaryHalf	TCSlib.Cryptography.Asymptotic.HardCoreLoops	[theorem glHalfBit_easy]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean:618	simp	owpPredPre	foreign-def	TCSlib.Cryptography.owpPredPre	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	[theorem glHalfOddInv_runAt]	simp only [glHalfInvPost, owpPredPre, pairSndD_pairEncode, pairFstD_pairEncode,
+TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean:632	simp	owpPredPre	foreign-def	TCSlib.Cryptography.owpPredPre	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	[theorem glHalfOddPred_runAt]	simp only [owpPredPre, pairSndD_pairEncode, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:274	unfold	invProbOpt	foreign-def	TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	[theorem invProbAt_eq_uprob]	unfold invProbAt invProbOpt
+TCSlib/Cryptography/Asymptotic/OneWay.lean:297	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem WorstCaseOneWay.toLit]	simp only [NUPPT.coinLen, hBc, PolyExpr.eval_subst]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:303	simp	NUPPT.inverter	foreign-def	Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	[theorem WorstCaseOneWay.toLit]	simp only [NUPPT.inverter, NUPPT.inverterLit, NUPPT.runAt_eq, hB, hofn]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:303	simp	NUPPT.inverterLit	foreign-def	Complexity.NUPPT.inverterLit	TCSlib.Cryptography.Asymptotic.Adversary	[theorem WorstCaseOneWay.toLit]	simp only [NUPPT.inverter, NUPPT.inverterLit, NUPPT.runAt_eq, hB, hofn]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:345	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem WorstCaseOneWayLit.toParam]	simp only [NUPPT.coinLen, hAc, PolyExpr.eval_subst, PolyExpr.eval_var]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:361	simp	NUPPT.inverter	foreign-def	Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	[theorem WorstCaseOneWayLit.toParam]	simp only [NUPPT.inverter, NUPPT.inverterLit, NUPPT.runAt_eq, hA, hφn, hofn,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:361	simp	NUPPT.inverterLit	foreign-def	Complexity.NUPPT.inverterLit	TCSlib.Cryptography.Asymptotic.Adversary	[theorem WorstCaseOneWayLit.toParam]	simp only [NUPPT.inverter, NUPPT.inverterLit, NUPPT.runAt_eq, hA, hφn, hofn,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:434	unfold	invProbOpt	foreign-def	TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	[theorem invProbAt_prod_eq]	unfold invProbAt invProbOpt
+TCSlib/Cryptography/Asymptotic/OneWay.lean:464	rw	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem Easy.prod]	rw [NUPPT.advInput, hspec, prod_f, ofFn_blocks_symm]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:513	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem invProb_prodFun_le_yaoTry]	unfold invProb
+TCSlib/Cryptography/Asymptotic/OneWay.lean:516	simp	yaoTry	foreign-def	TCSlib.Cryptography.OneWay.yaoTry	TCSlib.Cryptography.OneWayFunctions.Amplification	[theorem invProb_prodFun_le_yaoTry]	simp only [yaoTry]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:703	unfold	invProbOpt	foreign-def	TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	[theorem weak_to_strong]	unfold invProbOpt invProb
+TCSlib/Cryptography/Asymptotic/OneWay.lean:703	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem weak_to_strong]	unfold invProbOpt invProb
+TCSlib/Cryptography/Asymptotic/OneWay.lean:713	simp	OneWay.yaoB	foreign-def	TCSlib.Cryptography.OneWay.yaoB	TCSlib.Cryptography.Asymptotic.OneWayYao	[theorem weak_to_strong]	simp only [OneWay.yaoB]
+TCSlib/Cryptography/Asymptotic/OneWay.lean:800	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem strong_prod_two]	simp only [Function.comp, NUPPT.advInput, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:800	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem strong_prod_two]	simp only [Function.comp, NUPPT.advInput, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:800	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem strong_prod_two]	simp only [Function.comp, NUPPT.advInput, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:800	simp	NUPPT.inAdvice	foreign-def	Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	[theorem strong_prod_two]	simp only [Function.comp, NUPPT.advInput, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:801	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem strong_prod_two]	NUPPT.inCoins, NUPPT.layout, pairFstD_pairEncode, pairSndD_pairEncode, hofn,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:801	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem strong_prod_two]	NUPPT.inCoins, NUPPT.layout, pairFstD_pairEncode, pairSndD_pairEncode, hofn,
+TCSlib/Cryptography/Asymptotic/OneWay.lean:807	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem strong_prod_two]	simp only [NUPPT.advInput] at this
+TCSlib/Cryptography/Asymptotic/OneWay.lean:818	unfold	invProbOpt	foreign-def	TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	[theorem strong_prod_two]	unfold FunFamily.invProbAt invProbOpt
+TCSlib/Cryptography/Asymptotic/OneWay.lean:829	rw	OneWay.prodFun	foreign-def	TCSlib.Cryptography.OneWay.prodFun	TCSlib.Cryptography.OneWayFunctions.Amplification	[theorem strong_prod_two]	Function.update_of_ne (by decide), OneWay.prodFun] at hx''
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:470	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem iterate_g_layout]	simp only [g, NUPPT.layout, NUPPT.inCoins, NUPPT.inParam, pairFstD_pairEncode,
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:470	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem iterate_g_layout]	simp only [g, NUPPT.layout, NUPPT.inCoins, NUPPT.inParam, pairFstD_pairEncode,
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:470	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem iterate_g_layout]	simp only [g, NUPPT.layout, NUPPT.inCoins, NUPPT.inParam, pairFstD_pairEncode,
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:696	rw	yaoTry	foreign-def	TCSlib.Cryptography.OneWay.yaoTry	TCSlib.Cryptography.OneWayFunctions.Amplification	[theorem ans_layout]	rw [yaoTry]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:724	unfold	yaoInverter	foreign-def	TCSlib.Cryptography.OneWay.yaoInverter	TCSlib.Cryptography.OneWayFunctions.Amplification	[theorem yaoInverter_eq_find?]	unfold yaoInverter
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:918	simp	NUPPT.inverter	foreign-def	Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	[theorem exists_yaoReduction]	simp only [NUPPT.inverter, hrun, decodeFin_ofFn]
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:936	unfold	invProbOpt	foreign-def	TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	[theorem exists_yaoReduction]	unfold invProbOpt
+TCSlib/Cryptography/Asymptotic/OneWayYao.lean:949	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_yaoReduction]	unfold invProb
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:274	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem singleBitSecure_iff]	· simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:277	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem singleBitSecure_iff]	· simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:321	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem bitwise_enc_runAtL]	simp only [bitwiseEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:321	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem bitwise_enc_runAtL]	simp only [bitwiseEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:321	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem bitwise_enc_runAtL]	simp only [bitwiseEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:321	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem bitwise_enc_runAtL]	simp only [bitwiseEncFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:322	simp	blockEncFun	foreign-def	TCSlib.Cryptography.blockEncFun	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem bitwise_enc_runAtL]	pairFstD_pairEncode, pairSndD_pairEncode, blockEncFun]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:325	simp	blockState	foreign-def	TCSlib.Cryptography.blockState	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem bitwise_enc_runAtL]	simp only [blockState, length_pairEncode, List.length_ofFn, PolyExpr.eval_const, mul_one]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:329	simp	blockState	foreign-def	TCSlib.Cryptography.blockState	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem bitwise_enc_runAtL]	simp only [blockState, length_pairEncode, List.length_ofFn]; omega)]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:412	simp	singleDist	foreign-def	TCSlib.Cryptography.singleDist	TCSlib.Cryptography.Asymptotic.PublicKeyLemmas	[theorem pkEncDist_eq_singleDist]	simp only [BitPublicKeyScheme.pkEncDist, singleDist, ofFn_fin_one]
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:791	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_pkPredictor_eq]	unfold predProb
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:799	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_owpGen_unit]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:807	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_owpGenNot_unit]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKey.lean:841	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_pkPredictor]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:115	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem coinBlock_ofFn_coinBlocks]	· simp only [coinBlock, List.length_take, List.length_drop, List.length_ofFn]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:118	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem coinBlock_ofFn_coinBlocks]	simp only [coinBlock, List.getElem_take, List.getElem_drop, List.getElem_ofFn]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:129	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem coinBlock_take]	simp only [coinBlock, List.drop_take, List.take_take]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:136	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem coinBlock_drop]	simp only [coinBlock, List.drop_drop]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:168	simp	blockList	foreign-def	TCSlib.Cryptography.blockList	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem blockList_flatten]	cases k <;> simp [blockList]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:178	simp	blockList	foreign-def	TCSlib.Cryptography.blockList	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem blockList_flatten]	simp only [blockList, hne, if_false, List.cons.injEq]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:181	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem blockList_flatten]	· simp [coinBlock]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:185	simp	coinBlock	foreign-def	TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem blockList_flatten]	simp only [coinBlock, Fin.val_succ, List.drop_drop]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:205	simp	blockState	foreign-def	TCSlib.Cryptography.blockState	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem blockEncFun_flatten]	simp only [blockState, length_pairEncode, length_flatten_ofFn]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:208	unfold	blockEncFun	foreign-def	TCSlib.Cryptography.blockEncFun	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem blockEncFun_flatten]	unfold blockEncFun
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:299	simp	blockState	foreign-def	TCSlib.Cryptography.blockState	TCSlib.Cryptography.Asymptotic.BlockEncryptor	[theorem hybridPre_poly]	simp only [hybridPre, blockState, Function.comp, pairFstD_pairEncode, pairSndD_pairEncode,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:344	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem exists_hybridMachine]	PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var, NUPPT.coinLen]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:360	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem exists_hybridMachine]	simp [NUPPT.coinLen]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:390	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem hybridCoins_len]	simp [NUPPT.coinLen, hBc]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:419	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_distinguisherL_coins]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:452	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_plant]	unfold acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:499	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_tuple_le_sum]	unfold distAdv
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:533	rw	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_tuple_le_sum]	rw [distAdv, h0, hq]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:597	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_tuple_le_mul]	simp only [hm, distAdv, sub_self, abs_zero, Nat.cast_zero, zero_mul, le_refl]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:609	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_tuple_le_mul]	unfold distAdv acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:609	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_tuple_le_mul]	unfold distAdv acceptProb
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:678	rw	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_hybridBound]	rw [hmm, distAdv, sub_self, abs_zero]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:689	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_hybridBound]	simp only [distAdv, acceptProb, hmm, sub_self, abs_zero, hK, Nat.cast_zero, zero_mul, le_refl]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:689	simp	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_hybridBound]	simp only [distAdv, acceptProb, hmm, sub_self, abs_zero, hK, Nat.cast_zero, zero_mul, le_refl]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:699	simp	NUPPT.distinguisherL	foreign-def	Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	[theorem exists_hybridBound]	simp only [singleDist, hybridAdv, NUPPT.distinguisherL, NUPPT.runAt_eq, ofFn_hybridCoins,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:702	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_hybridBound]	simp only [term, distAdv, hmach]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:770	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem tdpPredictor_runAtL]	simp [tdpPredFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:770	simp	NUPPT.inParam	foreign-def	Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	[theorem tdpPredictor_runAtL]	simp [tdpPredFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:770	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem tdpPredictor_runAtL]	simp [tdpPredFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:770	simp	NUPPT.inAdvice	foreign-def	Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	[theorem tdpPredictor_runAtL]	simp [tdpPredFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:770	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem tdpPredictor_runAtL]	simp [tdpPredFun, NUPPT.inCoins, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.advInput,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:771	simp	NUPPT.layout	foreign-def	Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	[theorem tdpPredictor_runAtL]	NUPPT.layout, NUPPT.runAtL]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:771	simp	NUPPT.runAtL	foreign-def	Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	[theorem tdpPredictor_runAtL]	NUPPT.layout, NUPPT.runAtL]
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:814	simp	NUPPT.distinguisherL	foreign-def	Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	[theorem uprob_tdpPredictor]	simp only [Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply, NUPPT.distinguisherL,
+TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:845	unfold	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem abs_uexp_sub_le]	unfold uexp
+TCSlib/Cryptography/Asymptotic/Sampling.lean:207	unfold	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem abs_uexp_sub_le]	unfold uexp
+TCSlib/Cryptography/Asymptotic/Sampling.lean:239	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_le_of_statClose]	unfold distAdv acceptProb
+TCSlib/Cryptography/Asymptotic/Sampling.lean:239	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem distAdv_le_of_statClose]	unfold distAdv acceptProb
+TCSlib/Cryptography/Asymptotic/Sampling.lean:283	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem pushesUniform_of_card_fiber]	simp only [uexp, hsum, hcard, Nat.cast_mul]
+TCSlib/Cryptography/Asymptotic/Sampling.lean:385	rw	uprob	foreign-def	TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	[theorem uprob_bitsToNat_lt]	uprob_comp_equiv (bitsEquiv k) (fun x : Fin (2 ^ k) => x.val < m), uprob, Fintype.card_fin,
+TCSlib/Cryptography/Asymptotic/Sampling.lean:588	rw	uprob	foreign-def	TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	[theorem statClose_firstHit]	rw [uprob, Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S), Nat.card_eq_fintype_card,
+TCSlib/Cryptography/Asymptotic/Universal.lean:339	simp	universalBlockBound	foreign-def	Turing.universalBlockBound	TCSlib.Complexity.TuringMachine.UniversalBlock	[theorem exists_univCoeff_le]	simp only [univCoeff, universalBlockBound]
+TCSlib/Cryptography/Asymptotic/Universal.lean:451	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem fUniversal_easy]	simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode]
+TCSlib/Cryptography/Asymptotic/Universal.lean:453	simp	padStr	foreign-def	TCSlib.Cryptography.padStr	TCSlib.Cryptography.Asymptotic.CollectionsLemmas	[theorem fUniversal_easy]	simp [padStr]
+TCSlib/Cryptography/Asymptotic/Universal.lean:587	rw	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uprob_fiber_le_card_mul]	rw [uprob_prod, uexp]
+TCSlib/Cryptography/Asymptotic/Universal.lean:906	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem fUniversal_hard]	simp only [NUPPT.coinLen, hBc, PolyExpr.eval_subst]
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:271	unfold	padStr	foreign-def	TCSlib.Cryptography.padStr	TCSlib.Cryptography.Asymptotic.CollectionsLemmas	[theorem padStr_eq_gStr]	unfold padStr gStr
+TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:318	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem invProbAt_family_le]	simp [NUPPT.coinLen, hAc, PolyExpr.eval_subst]
+TCSlib/Cryptography/Foundations/Experiments.lean:160	rw	statDist	foreign-def	TCSlib.InformationTheory.statDist	TCSlib.InformationTheory.StatisticalDistance	[theorem abs_sum_sub_le_statDist]	rw [statDist]
+TCSlib/Cryptography/Foundations/Experiments.lean:175	rw	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem distAdv_le_statDist]	rw [distAdv, acceptProb_eq_uexp_sum_map X, acceptProb_eq_uexp_sum_map Y, uexp, uexp,
+TCSlib/Cryptography/Foundations/Experiments.lean:175	rw	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem distAdv_le_statDist]	rw [distAdv, acceptProb_eq_uexp_sum_map X, acceptProb_eq_uexp_sum_map Y, uexp, uexp,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:58	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_add]	simp only [uexp, sum_add_distrib, add_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:62	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_sub]	simp only [uexp, sum_sub_distrib, sub_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:66	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_const_mul]	simp only [uexp, ← mul_sum, mul_div_assoc]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:71	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_const]	simp only [uexp, sum_const, card_univ, nsmul_eq_mul]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:77	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_sum]	simp only [uexp, ← sum_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:86	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_comp_equiv]	simp only [uexp, Fintype.card_congr e]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:92	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uexp_prod]	simp only [uexp, Fintype.card_prod, Fintype.sum_prod_type, ← sum_div, Nat.cast_mul, div_div,
+TCSlib/Cryptography/HardcoreBit/Basic.lean:229	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem pushesUniform_eval]	simp only [uexp, univ_eq_empty, sum_empty, zero_div]
+TCSlib/Cryptography/HardcoreBit/Basic.lean:263	simp	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem pushesUniform_of_surjective]	simp only [uexp, hsum, hcard, Nat.cast_mul]
+TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:140	simp	subsetSum	foreign-def	TCSlib.Cryptography.HardcoreBit.subsetSum	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	[theorem guessRecover_correct_guess]	simp only [guessRecover, idealRecover, subsetSum, ip_sum]
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:133	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_glPad_eq]	unfold predProb secProb
+TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:237	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem invProb_perfectInverter]	unfold predProb at h
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:173	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem invProb_prodFun_le]	unfold invProb
+TCSlib/Cryptography/OneWayFunctions/Amplification.lean:234	unfold	invProb	foreign-def	TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	[theorem one_sub_invProb_yaoInverter_le]	unfold invProb
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:61	rw	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem uprob_bool_prod]	rw [uprob_prod, uexp, Fintype.sum_bool, Fintype.card_bool]
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:116	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_id_owp]	unfold acceptProb
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:140	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_owpPredictor_false]	unfold predProb
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:149	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_owpPredictor_false]	unfold acceptProb
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:157	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_owpPredictor_false]	unfold acceptProb
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:178	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem predProb_owpPredictor_true]	unfold predProb
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:205	unfold	prgAdv	foreign-def	TCSlib.Cryptography.prgAdv	TCSlib.Cryptography.Pseudorandom.Generators	[theorem exists_owpPredictor]	unfold prgAdv distAdv
+TCSlib/Cryptography/Pseudorandom/GeneratorFromPermutation.lean:205	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_owpPredictor]	unfold prgAdv distAdv
+TCSlib/Cryptography/Pseudorandom/Generators.lean:85	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem prgAdv_comp_equiv]	unfold prgAdv distAdv
+TCSlib/Cryptography/Pseudorandom/Generators.lean:231	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_prgExtRed_ge]	unfold prgAdv distAdv
+TCSlib/Cryptography/Pseudorandom/Generators.lean:253	rw	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem prgAdv_prgExtAvgRed]	(fun k => acceptProb_prgExtRed_right G k.isLt D), prgAdv, distAdv,
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:238	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_pairRed_ge]	unfold distAdv
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:299	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_multiRed_bound]	simp only [distAdv, sub_self, abs_zero]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:407	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem Commitment.multiHiding]	unfold distAdv at hε' ⊢
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:534	simpa	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem padFin_inj]	simpa [padFin, List.getD_eq_getElem, h₁, h₂] using this
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:589	unfold	predProb	foreign-def	TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitComPredictor]	unfold predProb
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:608	rw	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitComPredictor]	rw [h1, predProb_owpPredictor_false, h0, h0', distAdv, abs_of_nonneg hs]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:610	rw	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitComPredictor]	rw [h1, predProb_owpPredictor_true, h0, h0', distAdv, abs_of_nonpos hs]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:696	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitRed_bound]	simp [distAdv]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:709	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitRed_bound]	unfold distAdv
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:761	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitRed_bound]	· simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:764	simp	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem exists_bitRed_bound]	· simp only [distAdv, sub_self, abs_zero]; exact abs_nonneg _
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:807	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem BitHiding.owpComStr_hides]	unfold distAdv at hε' ⊢
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:834	unfold	ComLoop.loopOut	foreign-def	TCSlib.Cryptography.CommitmentLemmas.ComLoop.loopOut	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	[theorem owpComStr_eq_loopOut]	unfold owpComAt ComLoop.loopOut
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:847	simp	ComLoop.init	foreign-def	TCSlib.Cryptography.CommitmentLemmas.ComLoop.init	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	[theorem owpComStr_eq_loopOut]	simp only [ComLoop.init, ComLoop.st, length_pairEncode, pairFstD_pairEncode]
+TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:847	simp	ComLoop.st	foreign-def	TCSlib.Cryptography.CommitmentLemmas.ComLoop.st	TCSlib.Cryptography.ZeroKnowledge.CommitmentLemmas	[theorem owpComStr_eq_loopOut]	simp only [ComLoop.init, ComLoop.st, length_pairEncode, pairFstD_pairEncode]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:305	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem perfectZK_zeroRounds]	simp [NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:305	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem perfectZK_zeroRounds]	simp [NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:305	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem perfectZK_zeroRounds]	simp [NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:467	unfold	firstHit	foreign-def	TCSlib.Cryptography.firstHit	TCSlib.Cryptography.Asymptotic.Sampling	[theorem firstHit_map_getD_eq]	unfold firstHit
+TCSlib/Cryptography/ZeroKnowledge/Defs.lean:601	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem PerfectZKAbort.statZK]	simp only [NUPPT.coinLen, hS'c, PolyExpr.eval_mul, PolyExpr.eval_var]
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:399	unfold	rowMap	foreign-def	TCSlib.Cryptography.EncodingMachines.rowMap	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	[theorem decPerm_map_val]	unfold rowMap rowFirst
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:399	unfold	rowFirst	foreign-def	TCSlib.Cryptography.EncodingMachines.rowFirst	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	[theorem decPerm_map_val]	unfold rowMap rowFirst
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:450	unfold	permNum	foreign-def	TCSlib.Cryptography.EncodingMachines.permNum	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	[theorem decPerm_val]	unfold decPerm permNum
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:469	unfold	permInvNum	foreign-def	TCSlib.Cryptography.EncodingMachines.permInvNum	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	[theorem decPerm_symm_val]	unfold decPerm permInvNum
+TCSlib/Cryptography/ZeroKnowledge/Encoding.lean:472	unfold	rowInv	foreign-def	TCSlib.Cryptography.EncodingMachines.rowInv	TCSlib.Cryptography.ZeroKnowledge.EncodingPermutations	[theorem decPerm_symm_val]	unfold rowInv
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:121	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem ZeroKnowledge.singleMessageSecure]	unfold distAdv at h₀ h₁ ⊢
+TCSlib/Cryptography/ZeroKnowledge/Encryption.lean:287	unfold	distAdv	foreign-def	TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	[theorem SingleMessageSecure.zeroKnowledge]	unfold distAdv at this ⊢
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:253	simp	decGraph	foreign-def	TCSlib.Cryptography.decGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	[theorem giProver_length_le]	cases hist <;> simp [giProver, decGraph]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:326	simp	encGraph	foreign-def	TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	[theorem encGraph_decGraphAt]	simp only [encGraph, List.getElem_ofFn, decGraphAt, Prod.mk.eta, Equiv.apply_symm_apply]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:407	unfold	decPerm	foreign-def	TCSlib.Cryptography.decPerm	TCSlib.Cryptography.ZeroKnowledge.Encoding	[theorem decPerm_nil]	unfold decPerm
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:448	simp	Protocol.outV	foreign-def	TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem gniProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, gniProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:448	simp	Protocol.transcriptWith	foreign-def	TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem gniProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, gniProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:448	simp	exec	foreign-def	TCSlib.Cryptography.exec	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem gniProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, gniProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:448	simp	moverIsV	foreign-def	TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem gniProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, gniProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:457	simp	Protocol.outV	foreign-def	TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem giProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, giProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:457	simp	Protocol.transcriptWith	foreign-def	TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem giProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, giProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:457	simp	exec	foreign-def	TCSlib.Cryptography.exec	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem giProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, giProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean:457	simp	moverIsV	foreign-def	TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem giProtocol_outV]	simp [Protocol.outV, Protocol.transcriptWith, giProtocol, exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:84	simp	moverIsV	foreign-def	TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem exec_vfirst_length]	have h1 : moverIsV true (2 * k) = true := by simp [moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:111	simp	moverIsV	foreign-def	TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem exec_vfirst_eq]	have h1 : moverIsV true (2 * i) = true := by simp [moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean:247	simp	coinSlice	foreign-def	TCSlib.Cryptography.GI.coinSlice	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Proofs	[theorem coinSlice_blocksEquiv]	simp only [coinSlice, List.getElem?_take, List.getElem?_drop, List.getElem?_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:154	unfold	samplePerm	foreign-def	TCSlib.Cryptography.samplePerm	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem samplePerm_ofFn_castLE]	unfold samplePerm
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:262	simp	coinSlice	foreign-def	TCSlib.Cryptography.coinSlice	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem coinSlice_ofFn]	· simp only [coinSlice, List.length_take, List.length_drop, List.length_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:265	simp	coinSlice	foreign-def	TCSlib.Cryptography.coinSlice	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem coinSlice_ofFn]	simp only [coinSlice, List.getElem_take, List.getElem_drop, List.getElem_ofFn, tapeBlock]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:349	simp	attemptStr	foreign-def	TCSlib.Cryptography.GIZK.attemptStr	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphismZK.Simulator	[theorem attemptStr_ofFn]	simp only [attemptStr, instanceG₀, instanceG₁, instanceVertexCount, headD_ofFn_block,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:349	simp	instanceG₀	foreign-def	TCSlib.Cryptography.instanceG₀	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem attemptStr_ofFn]	simp only [attemptStr, instanceG₀, instanceG₁, instanceVertexCount, headD_ofFn_block,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:349	simp	instanceG₁	foreign-def	TCSlib.Cryptography.instanceG₁	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem attemptStr_ofFn]	simp only [attemptStr, instanceG₀, instanceG₁, instanceVertexCount, headD_ofFn_block,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:349	simp	instanceVertexCount	foreign-def	TCSlib.Cryptography.instanceVertexCount	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem attemptStr_ofFn]	simp only [attemptStr, instanceG₀, instanceG₁, instanceVertexCount, headD_ofFn_block,
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:420	simp	exec	foreign-def	TCSlib.Cryptography.exec	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem exec_three_snd]	simp [exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:420	simp	moverIsV	foreign-def	TCSlib.Cryptography.moverIsV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem exec_three_snd]	simp [exec, moverIsV]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:574	unfold	permFailBound	foreign-def	TCSlib.Cryptography.permFailBound	TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism	[theorem negligible_delta]	unfold permFailBound
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:91	simp	PolyExpr.eval	foreign-def	Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	[theorem blockPoly_eval]	simp [blockPoly, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:91	simp	PolyExpr.normal	foreign-def	Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	[theorem blockPoly_eval]	simp [blockPoly, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:91	simp	Strategy.coinLen	foreign-def	TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem blockPoly_eval]	simp [blockPoly, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:99	simp	PolyExpr.eval	foreign-def	Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	[theorem simCoins_eval]	simp [simCoins, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:99	simp	PolyExpr.normal	foreign-def	Complexity.PolyExpr.normal	TCSlib.Complexity.Randomized.PolyExpr	[theorem simCoins_eval]	simp [simCoins, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:99	simp	Strategy.coinLen	foreign-def	TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem simCoins_eval]	simp [simCoins, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:462	simp	NUPPT.inArg	foreign-def	Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	[theorem exists_simulator]	simp [simX, simZ, simR, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:462	simp	NUPPT.inCoins	foreign-def	Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	[theorem exists_simulator]	simp [simX, simZ, simR, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:462	simp	NUPPT.advInput	foreign-def	Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	[theorem exists_simulator]	simp [simX, simZ, simR, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+TCSlib/Cryptography/ZeroKnowledge/Interaction.lean:512	rw	uexp	foreign-def	TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	[theorem exists_proverCoins_le]	rw [sum_const, card_univ, nsmul_eq_mul, uexp, mul_div_cancel₀ _ hcard.ne']
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:210	simp	Strategy.coinLen	foreign-def	TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem Strategy.coinLen_pullback]	simp [Strategy.pullback, Strategy.coinLen, PolyExpr.eval_subst, hx]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:234	simp	Protocol.outV	foreign-def	TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem Protocol.pullback_outV]	simp [Protocol.outV, Protocol.transcriptWith, Protocol.pullback, Strategy.pullback,
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:234	simp	Protocol.transcriptWith	foreign-def	TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem Protocol.pullback_outV]	simp [Protocol.outV, Protocol.transcriptWith, Protocol.pullback, Strategy.pullback,
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:347	simp	Protocol.outV	foreign-def	TCSlib.Cryptography.Protocol.outV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem outV_pullback_honest]	simp only [Protocol.outV, Protocol.transcriptWith, Protocol.pullback, Prod.map]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:347	simp	Protocol.transcriptWith	foreign-def	TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem outV_pullback_honest]	simp only [Protocol.outV, Protocol.transcriptWith, Protocol.pullback, Prod.map]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:526	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem LevinReduction.zk]	simp only [NUPPT.coinLen, hD'c]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:534	simp	NUPPT.coinLen	foreign-def	Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	[theorem LevinReduction.zk]	simp only [NUPPT.coinLen, hSc, PolyExpr.eval_subst, hlen]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:545	simp	Protocol.viewV	foreign-def	TCSlib.Cryptography.Protocol.viewV	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem LevinReduction.zk]	simp only [Protocol.viewV, Protocol.transcriptWith, Protocol.withV_P, Protocol.withV_V,
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:545	simp	Protocol.transcriptWith	foreign-def	TCSlib.Cryptography.Protocol.transcriptWith	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem LevinReduction.zk]	simp only [Protocol.viewV, Protocol.transcriptWith, Protocol.withV_P, Protocol.withV_V,
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:549	simp	Strategy.coinLen	foreign-def	TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem LevinReduction.zk]	simp only [PolyExpr.eval_subst, ← hlen, Strategy.coinLen]
+TCSlib/Cryptography/ZeroKnowledge/NP.lean:559	simp	NUPPT.simulate	foreign-def	Complexity.NUPPT.simulate	TCSlib.Cryptography.ZeroKnowledge.Defs	[theorem LevinReduction.zk]	simp only [NUPPT.simulate, NUPPT.runAt_eq, hS, pairFstD_pairEncode]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:298	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem padColor_injective]	simp only [padColor, padFin] at h0 h1
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:127	simp	CountLoop.acc	foreign-def	TCSlib.Cryptography.EncodingMachines.CountLoop.acc	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	[theorem polyTimeComputable_loopState']	simp [CountLoop.acc, hi]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:132	simp	CountLoop.acc	foreign-def	TCSlib.Cryptography.EncodingMachines.CountLoop.acc	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	[theorem polyTimeComputable_loopState']	simp [CountLoop.acc]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:139	simp	CountLoop.out	foreign-def	TCSlib.Cryptography.EncodingMachines.CountLoop.out	TCSlib.Cryptography.ZeroKnowledge.EncodingMachines	[theorem polyTimeComputable_loopState']	simp [CountLoop.out]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:333	simp	padFin	foreign-def	TCSlib.Cryptography.padFin	TCSlib.Cryptography.Asymptotic.Adversary	[theorem ofFn_getD_add]	simp [padFin, List.getD_eq_getElem?_getD, List.getElem?_drop]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:544	unfold	edgeList	foreign-def	TCSlib.Cryptography.edgeList	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem map_edgeList]	unfold edgeList
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:595	simp	encGraph	foreign-def	TCSlib.Cryptography.encGraph	TCSlib.Cryptography.ZeroKnowledge.Encoding	[theorem encGraph_decGraph_eq_take]	simp only [encGraph, List.getElem_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:630	unfold	bitsToNat	foreign-def	TCSlib.Cryptography.bitsToNat	TCSlib.Cryptography.Asymptotic.Sampling	[theorem bitsToNat_eq_natOfBits]	unfold bitsToNat at ih ⊢
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:716	unfold	sampleIdx	foreign-def	TCSlib.Cryptography.sampleIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem map_val_sampleIdx]	unfold sampleIdx rejectionSample
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:716	unfold	rejectionSample	foreign-def	TCSlib.Cryptography.rejectionSample	TCSlib.Cryptography.Asymptotic.Sampling	[theorem map_val_sampleIdx]	unfold sampleIdx rejectionSample
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:721	simp	uniformFromBits	foreign-def	TCSlib.Cryptography.uniformFromBits	TCSlib.Cryptography.Asymptotic.Sampling	[theorem map_val_sampleIdx]	simp only [Function.comp, uniformFromBits, bitsToNat_eq_natOfBits]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:792	unfold	samplePerm3	foreign-def	TCSlib.Cryptography.samplePerm3	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem permTable_samplePerm3]	unfold samplePerm3
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:861	rw	decColor	foreign-def	TCSlib.Cryptography.decColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem decColor_val]	rw [decColor, decColoring_val]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:898	simp	pairEncode	foreign-def	Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	[theorem pairEncode_eq_append_nil]	simp [pairEncode]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:936	simp	pairEncode	foreign-def	Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	[theorem encodeMsgs_eq_nil_iff]	| cons m h => simp [pairEncode]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean:993	unfold	edgeAt	foreign-def	TCSlib.Cryptography.edgeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem edgeAt_eq_some_of_pos]	unfold edgeAt
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:473	rw	sampleEdgeIdx	foreign-def	TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem eOf_ilayout]	rw [inCoins_ilayout, mOf_ilayout, argX_ilayout, sampleEdgeIdx, map_val_sampleIdx_getD]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:484	rw	sampleEdgeIdx	foreign-def	TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem eRep_ilayout]	rw [inCoins_ilayout, mOf_ilayout, argX_ilayout, sampleEdgeIdx, map_val_sampleIdx_getD]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:521	rw	padColor	foreign-def	TCSlib.Cryptography.padColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem comAt_ilayout]	blk_ilayout, padColor, ofFn_padFin]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:532	rw	multiCom	foreign-def	TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	[theorem commitStr_ilayout]	rw [nOf_ilayout, multiCom,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:179	rw	multiCom	foreign-def	TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	[theorem colVerify_honest]	· rw [colCommit, multiCom, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:180	rw	multiCom	foreign-def	TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	[theorem colVerify_honest]	· rw [colCommit, multiCom, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:608	unfold	multiCom	foreign-def	TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	[theorem length_multiCom_le]	unfold multiCom
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:639	simp	encColor	foreign-def	TCSlib.Cryptography.encColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem colProver_length_le]	· simp only [colOpen, length_pairEncode, List.length_ofFn, encColor, length_encColoring]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:180	rw	proverStr	foreign-def	TCSlib.Cryptography.ColMachines.proverStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colProver_next_eq]	rw [proverStr, if_pos (by rw [argM_ilayout]; rfl), commitStr_ilayout]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:183	rw	proverStr	foreign-def	TCSlib.Cryptography.ColMachines.proverStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colProver_next_eq]	rw [proverStr, if_neg (by
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:193	simp	edgeIdxOfMsg	foreign-def	TCSlib.Cryptography.edgeIdxOfMsg	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem colProver_next_eq]	simp only [edgeIdxOfMsg, Nat.mod_mod]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:205	unfold	checkStr	foreign-def	TCSlib.Cryptography.ColMachines.checkStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerify_eq_checkStr]	unfold checkStr
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:208	simp	padColor	foreign-def	TCSlib.Cryptography.padColor	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem colVerify_eq_checkStr]	simp only [msgAt, padColor, ofFn_padFin, encColor_eq_ofVal, decColor_val, h1, h2, ne_eq,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:224	rw	verifierStr	foreign-def	TCSlib.Cryptography.ColMachines.verifierStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifier_next_eq]	· rw [verifierStr, if_pos (by rw [argM_ilayout]; rfl)]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:232	rw	verifierStr	foreign-def	TCSlib.Cryptography.ColMachines.verifierStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifier_next_eq]	rw [verifierStr, if_neg c1, if_pos c2, eOf_ilayout]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:244	rw	verifierStr	foreign-def	TCSlib.Cryptography.ColMachines.verifierStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifier_next_eq]	rw [verifierStr, if_neg c1, if_neg c2, if_pos c3]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:247	rw	verdictStr	foreign-def	TCSlib.Cryptography.ColMachines.verdictStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifier_next_eq]	rw [verdictStr, nOf_ilayout, mOf_ilayout, LOf_ilayout, eOf_ilayout, argX_ilayout, argM_ilayout,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:264	rw	verifierStr	foreign-def	TCSlib.Cryptography.ColMachines.verifierStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifier_next_eq]	rw [verifierStr, if_neg c1, if_neg c2, if_neg c3]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:282	simp	Strategy.coinLen	foreign-def	TCSlib.Cryptography.Strategy.coinLen	TCSlib.Cryptography.ZeroKnowledge.Interaction	[theorem colProverRep_next_eq]	simp [Strategy.coinLen, colProver, proverCoinsOf]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:282	simp	proverCoinsOf	foreign-def	TCSlib.Cryptography.ColMachines.proverCoinsOf	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colProverRep_next_eq]	simp [Strategy.coinLen, colProver, proverCoinsOf]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:287	rw	proverRepStr	foreign-def	TCSlib.Cryptography.ColMachines.proverRepStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colProverRep_next_eq]	rw [proverRepStr]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:294	unfold	ilayout	foreign-def	TCSlib.Cryptography.ColMachines.ilayout	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	[theorem colProverRep_next_eq]	unfold ilayout
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:322	rw	verifierRepStr	foreign-def	TCSlib.Cryptography.ColMachines.verifierRepStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifierRep_next_eq]	rw [verifierRepStr]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:335	rw	verdictRepStr	foreign-def	TCSlib.Cryptography.ColMachines.verdictRepStr	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifierRep_next_eq]	rw [verdictRepStr, nOf_ilayout, mOf_ilayout, argX_ilayout, Bool.decide_and, Bool.decide_or,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:342	rw	checkRep	foreign-def	TCSlib.Cryptography.ColMachines.checkRep	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	[theorem colVerifierRep_next_eq]	rw [checkRep, eRep_ilayout, Bool.not_eq_false', LOf_ilayout, nOf_ilayout, mOf_ilayout,
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:407	unfold	sampleEdgeIdx	foreign-def	TCSlib.Cryptography.sampleEdgeIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem sampleEdgeIdx_ofFn_castLE]	unfold sampleEdgeIdx sampleIdx
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:407	unfold	sampleIdx	foreign-def	TCSlib.Cryptography.sampleIdx	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language	[theorem sampleEdgeIdx_ofFn_castLE]	unfold sampleEdgeIdx sampleIdx
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:455	simp	mergeAt	foreign-def	TCSlib.Cryptography.ColSimLemmas.mergeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas	[theorem colSimAttemptPlanted_W]	simp only [mergeAt, hi, if_true]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:457	simp	mergeAt	foreign-def	TCSlib.Cryptography.ColSimLemmas.mergeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas	[theorem colSimAttemptPlanted_W]	simp only [mergeAt, hi, if_false]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:460	unfold	colOpen	foreign-def	TCSlib.Cryptography.colOpen	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	[theorem colSimAttemptPlanted_W]	unfold colOpen
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:505	simp	mergeAt	foreign-def	TCSlib.Cryptography.ColSimLemmas.mergeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas	[theorem colSimAttemptPlanted_H]	simp only [mergeAt, hi, if_true]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:507	simp	mergeAt	foreign-def	TCSlib.Cryptography.ColSimLemmas.mergeAt	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas	[theorem colSimAttemptPlanted_H]	simp only [mergeAt, hi, if_false]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:510	unfold	colOpen	foreign-def	TCSlib.Cryptography.colOpen	TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	[theorem colSimAttemptPlanted_H]	unfold colOpen
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:202	rw	multiCom	foreign-def	TCSlib.Cryptography.multiCom	TCSlib.Cryptography.ZeroKnowledge.Commitment	[theorem msgAt_multiCom]	rw [multiCom, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:521	unfold	acceptProb	foreign-def	TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	[theorem acceptProb_hybGen_planted]	unfold acceptProb hybAcc
+TCSlib/InformationTheory/StatisticalDistance.lean:79	simp	collision	foreign-def	TCSlib.InformationTheory.FinDist.collision	TCSlib.InformationTheory.FinDist	[theorem statDist_uniform_le_sqrt]	simp only [collision]
+## (c2) show/change steps on a line where the seal failed: 0 (of 208 show/change occurrences, all checked by the seal)
+## (c3) proof terms referring to a generated equation lemma of a foreign TCSlib definition (collector): 53
+# module	owner declaration	constant	equation lemma
+TCSlib.Complexity.ClassNP.PolyTimePairing	Complexity.splitAtLastTrue_replicate_succ	_private.TCSlib.Complexity.ClassNP.PolyTimePairing.0.Complexity.splitAtLastTrue_replicate_succ	Turing.splitAtLastTrue.eq_1
+TCSlib.Cryptography.Asymptotic.BlockEncryptor	TCSlib.Cryptography.length_decListStep_le	_private.TCSlib.Cryptography.Asymptotic.BlockEncryptor.0.TCSlib.Cryptography.length_decListStep_le	Turing.pairDecode.eq_4
+TCSlib.Cryptography.Asymptotic.Encryption	TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic	TCSlib.Cryptography.PrivateKeyScheme.not_multiMessageSecure_of_deterministic	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.Asymptotic.Encryption	TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq	TCSlib.Cryptography.PrivateKeyScheme.distinguisherL_firstTwoEq	Complexity.NUPPT.distinguisherL.eq_1
+TCSlib.Cryptography.Asymptotic.Ensembles	TCSlib.Cryptography.predict_eq	TCSlib.Cryptography.predict_eq	TCSlib.Cryptography.acceptProb.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.out_eq	TCSlib.Cryptography.GGMRed.out_eq	TCSlib.Cryptography.GGMRed.out.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.isQ_iff	TCSlib.Cryptography.GGMRed.isQ_iff	TCSlib.Cryptography.GGMRed.isQ.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.acc_eq	TCSlib.Cryptography.GGMRed.unQ.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.seeds_eq	TCSlib.Cryptography.GGMRed.seeds_eq	TCSlib.Cryptography.GGMRed.seeds.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.coinsRest_eq	TCSlib.Cryptography.GGMRed.coinsRest_eq	TCSlib.Cryptography.GGMRed.coinsRest.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.fresh_eq	TCSlib.Cryptography.GGMRed.fresh_eq	TCSlib.Cryptography.GGMRed.fresh.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.coinsD_eq	TCSlib.Cryptography.GGMRed.coinsD_eq	TCSlib.Cryptography.GGMRed.coinsD.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.pfx.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.lab.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.query.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.ans.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.vstr.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.step_eq	TCSlib.Cryptography.GGMRed.look.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.pairs_eq	TCSlib.Cryptography.GGMRed.pairs_eq	TCSlib.Cryptography.GGMRed.pairs.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.move_eq	TCSlib.Cryptography.GGMRed.move_eq	TCSlib.Cryptography.GGMRed.move.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.rawFun_rawInput	TCSlib.Cryptography.GGMRed.rawFun_rawInput	TCSlib.Cryptography.GGMRed.rawFun.eq_1
+TCSlib.Cryptography.Asymptotic.GGMReductionEval	TCSlib.Cryptography.GGMRed.ggmRedMachine_distinguisher	TCSlib.Cryptography.GGMRed.ggmRedMachine_distinguisher	Complexity.NUPPT.distinguisher.eq_1
+TCSlib.Cryptography.Asymptotic.HardCoreGL	TCSlib.Cryptography.glMajFun_blocksStr	TCSlib.Cryptography.glMajFun_blocksStr	TCSlib.Cryptography.HardcoreBit.majority.eq_1
+TCSlib.Cryptography.Asymptotic.HardCoreLemmas	TCSlib.Cryptography.exists_glPadEvaluator	TCSlib.Cryptography.exists_glPadEvaluator	Complexity.NUPPT.advInput.eq_1
+TCSlib.Cryptography.Asymptotic.OneWay	TCSlib.Cryptography.FunFamily.Easy.prod	TCSlib.Cryptography.FunFamily.Easy.prod	Complexity.NUPPT.advInput.eq_1
+TCSlib.Cryptography.Asymptotic.OneWay	TCSlib.Cryptography.strong_prod_two	TCSlib.Cryptography.strong_prod_two	TCSlib.Cryptography.OneWay.prodFun.eq_1
+TCSlib.Cryptography.Asymptotic.OneWayYao	TCSlib.Cryptography.OneWay.YaoMachine.ans_layout	TCSlib.Cryptography.OneWay.YaoMachine.ans_layout	TCSlib.Cryptography.OneWay.yaoTry.eq_1
+TCSlib.Cryptography.Asymptotic.PublicKeyLemmas	TCSlib.Cryptography.exists_hybridBound	TCSlib.Cryptography.exists_hybridBound	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.Asymptotic.PublicKeyLemmas	TCSlib.Cryptography.distAdv_tuple_le_sum	TCSlib.Cryptography.distAdv_tuple_le_sum	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.Asymptotic.Sampling	TCSlib.Cryptography.statClose_firstHit	TCSlib.Cryptography.statClose_firstHit	TCSlib.Cryptography.uprob.eq_1
+TCSlib.Cryptography.Asymptotic.Sampling	TCSlib.Cryptography.uprob_bitsToNat_lt	TCSlib.Cryptography.uprob_bitsToNat_lt	TCSlib.Cryptography.uprob.eq_1
+TCSlib.Cryptography.Asymptotic.Universal	TCSlib.Cryptography.uprob_fiber_le_card_mul	TCSlib.Cryptography.uprob_fiber_le_card_mul	TCSlib.Cryptography.uexp.eq_1
+TCSlib.Cryptography.Foundations.Experiments	TCSlib.Cryptography.distAdv_le_statDist	TCSlib.Cryptography.distAdv_le_statDist	TCSlib.Cryptography.uexp.eq_1
+TCSlib.Cryptography.Foundations.Experiments	TCSlib.Cryptography.abs_sum_sub_le_statDist	TCSlib.Cryptography.abs_sum_sub_le_statDist	TCSlib.InformationTheory.statDist.eq_1
+TCSlib.Cryptography.Pseudorandom.GeneratorFromPermutation	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uprob_bool_prod	TCSlib.Cryptography.uexp.eq_1
+TCSlib.Cryptography.Pseudorandom.Generators	TCSlib.Cryptography.prgAdv_prgExtAvgRed	TCSlib.Cryptography.prgAdv_prgExtAvgRed	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.ZeroKnowledge.Commitment	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.exists_bitComPredictor	TCSlib.Cryptography.distAdv.eq_1
+TCSlib.Cryptography.ZeroKnowledge.Interaction	TCSlib.Cryptography.Protocol.exists_proverCoins_le	TCSlib.Cryptography.Protocol.exists_proverCoins_le	TCSlib.Cryptography.uexp.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines	TCSlib.Cryptography.ColMachines.decColor_val	TCSlib.Cryptography.ColMachines.decColor_val	TCSlib.Cryptography.decColor.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	TCSlib.Cryptography.ColMachines.eRep_ilayout	TCSlib.Cryptography.ColMachines.eRep_ilayout	TCSlib.Cryptography.sampleEdgeIdx.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	TCSlib.Cryptography.ColMachines.comAt_ilayout	TCSlib.Cryptography.ColMachines.comAt_ilayout	TCSlib.Cryptography.padColor.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	TCSlib.Cryptography.ColMachines.commitStr_ilayout	TCSlib.Cryptography.ColMachines.commitStr_ilayout	TCSlib.Cryptography.multiCom.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Parties	TCSlib.Cryptography.ColMachines.eOf_ilayout	TCSlib.Cryptography.ColMachines.eOf_ilayout	TCSlib.Cryptography.sampleEdgeIdx.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Protocol	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.colVerify_honest	TCSlib.Cryptography.multiCom.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colProverRep_next_eq	TCSlib.Cryptography.ColProofs.colProverRep_next_eq	TCSlib.Cryptography.ColMachines.proverRepStr.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colVerifier_next_eq	TCSlib.Cryptography.ColProofs.colVerifier_next_eq	TCSlib.Cryptography.ColMachines.verifierStr.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colVerifier_next_eq	TCSlib.Cryptography.ColProofs.colVerifier_next_eq	TCSlib.Cryptography.ColMachines.verdictStr.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colProver_next_eq	TCSlib.Cryptography.ColProofs.colProver_next_eq	TCSlib.Cryptography.ColMachines.proverStr.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColMachines.checkRep.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColMachines.verifierRepStr.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ProtocolProofs	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColProofs.colVerifierRep_next_eq	TCSlib.Cryptography.ColMachines.verdictRepStr.eq_1
+TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.SimulatorLemmas	TCSlib.Cryptography.ColSimLemmas.msgAt_multiCom	TCSlib.Cryptography.ColSimLemmas.msgAt_multiCom	TCSlib.Cryptography.multiCom.eq_1
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/final-checks.log =====
+
+HEAD 3436321ba28042549bead976dc654aab3d661f10
+touched 547
+proofseal rows 70
+70 modules -> /tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/e1/final6c/candidates/Collect.lean
+collector rc=0
+0
+# rule-10 source scan over 70 files; hit = name resolving to a definition of another TCSlib module
+a 0 b 764
+FINISHED
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/replay-head.log =====
+
+HEAD 3436321ba28042549bead976dc654aab3d661f10
+MODULE TCSlib/Complexity/Randomized/Closure rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/Adversary rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/EnsemblesLemmas rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/HardcoreBit/PairwiseIndependence rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/Ensembles rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/OneWayLemmas rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/OneWayYao rc=0 errors=0 sorry=0 secs=64
+MODULE TCSlib/Cryptography/Asymptotic/OneWay rc=0 errors=0 sorry=0 secs=9
+MODULE TCSlib/Cryptography/Asymptotic/CollectionsHelpers rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/CollectionsLemmas rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/Collections rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/UniversalLemmas rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/UniversalPadding rc=0 errors=0 sorry=1 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/Universal rc=0 errors=0 sorry=1 secs=6
+MODULE TCSlib/Cryptography/Asymptotic/Pseudorandom rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/NextBit rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/HardcoreBit/InnerProduct rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/HardcoreBit/GoldreichLevin rc=0 errors=0 sorry=0 secs=5
+MODULE TCSlib/Cryptography/Asymptotic/GoldreichLevinDomain rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/HardcoreBit/ThreeQuarters rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreLemmas rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreLoops rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreGL rc=0 errors=0 sorry=0 secs=9
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreGLColl rc=0 errors=0 sorry=0 secs=6
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreCollection rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreGLFamily rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/HardCore rc=0 errors=0 sorry=0 secs=6
+MODULE TCSlib/Cryptography/Asymptotic/HardCoreClaims rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/Asymptotic/HardCorePermutation rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/Encryption rc=0 errors=0 sorry=0 secs=5
+MODULE TCSlib/Cryptography/Asymptotic/PRFLemmas rc=0 errors=0 sorry=0 secs=5
+MODULE TCSlib/Cryptography/Asymptotic/GGMReduction rc=0 errors=0 sorry=0 secs=37
+MODULE TCSlib/Cryptography/Asymptotic/GGMReductionEval rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/PRF rc=0 errors=0 sorry=0 secs=5
+MODULE TCSlib/Cryptography/Asymptotic/MultiMessageLemmas rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/MultiMessage rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Asymptotic/BlockEncryptor rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/Asymptotic/PublicKeyLemmas rc=0 errors=0 sorry=0 secs=67
+MODULE TCSlib/Cryptography/Asymptotic/PublicKey rc=0 errors=0 sorry=0 secs=22
+MODULE TCSlib/Cryptography/Asymptotic rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/NumberTheory/Primality rc=0 errors=0 sorry=0 secs=6
+MODULE TCSlib/Cryptography/Candidates/Arithmetic rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/Candidates/Concrete rc=0 errors=0 sorry=1 secs=4
+MODULE TCSlib/Cryptography/Candidates/Factoring rc=0 errors=0 sorry=10 secs=3
+MODULE TCSlib/Cryptography/Candidates/RSA rc=0 errors=0 sorry=10 secs=8
+MODULE TCSlib/Cryptography/Candidates/Rabin rc=0 errors=0 sorry=19 secs=7
+MODULE TCSlib/Cryptography/Candidates/DiscreteLog rc=0 errors=0 sorry=6 secs=4
+MODULE TCSlib/Cryptography/Candidates/DiscreteLogHardcore rc=0 errors=0 sorry=7 secs=4
+MODULE TCSlib/Cryptography/Candidates/ElGamal rc=0 errors=0 sorry=7 secs=4
+MODULE TCSlib/Cryptography/Candidates rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/HardcoreBit rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/NumberTheory rc=0 errors=0 sorry=0 secs=2
+MODULE TCSlib/Cryptography/ZeroKnowledge/Defs rc=0 errors=0 sorry=0 secs=6
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness rc=0 errors=0 sorry=0 secs=5
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK rc=0 errors=0 sorry=0 secs=6
+MODULE TCSlib/Cryptography/ZeroKnowledge/CommitmentLemmas rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/Commitment rc=0 errors=0 sorry=0 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties rc=0 errors=0 sorry=0 secs=5
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol rc=0 errors=0 sorry=2 secs=6
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator rc=0 errors=0 sorry=1 secs=4
+MODULE TCSlib/Cryptography/ZeroKnowledge/ThreeColoring rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/NPLemmas rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge/NP rc=0 errors=0 sorry=0 secs=9
+MODULE TCSlib/Cryptography/ZeroKnowledge/Encryption rc=0 errors=0 sorry=0 secs=3
+MODULE TCSlib/Cryptography/ZeroKnowledge rc=0 errors=0 sorry=0 secs=3
+MODULE audits/pass-shelat/Checks rc=0 errors=0 sorry=0 secs=120
+DONE
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/Axioms6c.log =====
+
+'Complexity.NUPPT.exists_compParam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_reparam' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_reparam_advice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_withAdvice' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_split' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.exists_seq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Complexity.NUPPT.Computes.polyTimeComputable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.invProbOpt_def' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Collection.evalSampled_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Collection.glPad_index' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Collection.glPad_invProbAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.Collection.OneWay.glPad' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.glNeed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.glPredictorOf_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.glMachine_runAt_guessRecover' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.glPredictorOf_precomp_coll' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.glColl_uprob_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.glPredictorOf_precomp_concat' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.invProbOpt_glFam_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure.bitwise' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme_singleBitSecure' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'TCSlib.Cryptography.Candidates.invProb_prodFun_le_plant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.guessRecover_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.guessInverter_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.guessCoinsCongr' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.guessCoinsCongr_apply' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.guessRecover_coinsCongr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.glPad_apply' does not depend on any axioms
+'TCSlib.Cryptography.HardcoreBit.glInverter_apply' does not depend on any axioms
+'TCSlib.Cryptography.HardcoreBit.perfectInverter_eq' does not depend on any axioms
+'TCSlib.Cryptography.HardcoreBit.subsetSum_eq' depends on axioms: [propext, Quot.sound]
+'TCSlib.Cryptography.HardcoreBit.majorityInverter_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.giProver_coins' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.giProtocol_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.GIZK.sim_ofFn_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.GIZK.viewV_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.GIZK.statClose_real_ideal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.GIZK.sim_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.exists_colSimRed_ge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'TCSlib.Cryptography.ColSimLemmas.hybStd_eq' does not depend on any axioms
+'TCSlib.Cryptography.ColSimLemmas.hybGen_eq' does not depend on any axioms
+'TCSlib.Cryptography.ColSimLemmas.exists_hybRed_ge' depends on axioms: [propext, Classical.choice, Quot.sound]
+rc=0
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/decls-6c.tsv =====
+
+ADDED	TCSlib/Cryptography/Asymptotic/Adversary.lean:181	TCSlib.Cryptography.invProbOpt_def	theorem	theorem invProbOpt_def {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β) (A : β → ρ → Option α) : invProbOpt f A = uprob fun z : α × ρ => ∃ x', A (f z.1) z.2 = some x' ∧ f x' = f z.1
+ADDED	TCSlib/Cryptography/Asymptotic/Collections.lean:697	TCSlib.Cryptography.Collection.evalSampled_iff	theorem	theorem evalSampled_iff : G.EvalSampled ↔ ∀ n (r : G.gen.Coins n) (s : G.sample.Coins n), ∃ x, G.decD (G.index n r) (G.sample.runAt n (G.index n r) s) = some x ∧ G.eval (pairEncode (G.index n r) (G.sample.runAt n (G.index n r) s)) = G.f (G.index n r) x
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:263	TCSlib.Cryptography.Collection.glPad_index	theorem	theorem glPad_index (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (n : ℕ) (r : F.gen.Coins n) : (F.glPad m henc).index n r = F.index n r
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:272	TCSlib.Cryptography.Collection.glPad_invProbAt	theorem	theorem glPad_invProbAt (m : PolyExpr) (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) (A : NUPPT) (n : ℕ) : (F.glPad m henc).invProbAt A n = uexp fun r : F.gen.Coins n => uprob fun z : (F.D (F.index n r) × (Fin (F.encD (F.index n r) default).length → Bool)) × A.Coins n => ∃ x', glPadDecode F (F.index n r) (F.encD (F.index n r) default).length (A.runAt n (pairEncode (F.index n r) (pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2))) z.2) = some x' ∧ pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) = pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)
+CHANGED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:705->707	TCSlib.Cryptography.glNeed	abbrev	def glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ	=>	abbrev glNeed (A : NUPPT) (mP : PolyExpr) (k : ℕ → ℕ) (n : ℕ) : ℕ
+ADDED	TCSlib/Cryptography/Asymptotic/HardCoreGL.lean:860	TCSlib.Cryptography.glPredictorOf_apply	theorem	theorem glPredictorOf_apply (A₁ : NUPPT) (n m : ℕ) {β : Type*} (enc : β → List Bool) (p : β × (Fin m → Bool)) (c : A₁.Coins n) : glPredictorOf A₁ n m enc p c = decide (A₁.runAtL n (pairEncode (enc p.1) (List.ofFn p.2)) (List.ofFn c) = [true])
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:101	TCSlib.Cryptography.HardcoreBit.guessCoinsCongr	def	def guessCoinsCongr {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) : GuessCoins n k ρ' ≃ GuessCoins n k ρ
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:108	TCSlib.Cryptography.HardcoreBit.guessCoinsCongr_apply	theorem	theorem guessCoinsCongr_apply {ρ' : Type*} (k : ℕ) (e : ρ' ≃ ρ) (c : GuessCoins n k ρ') : guessCoinsCongr k e c = (c.1, c.2.1, fun i L => e (c.2.2 i L))
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:83	TCSlib.Cryptography.HardcoreBit.guessRecover_apply	theorem	theorem guessRecover_apply (A : β × (Fin n → Bool) → ρ → Bool) (k : ℕ) (y : β) (c : GuessCoins n k ρ) (i : Fin n) : guessRecover A k y c i = majority fun L : NESubset k => subsetSum L.1 c.2.1 + A (y, subsetSum L.1 c.1 + Pi.single i true) (c.2.2 i L)
+ADDED	TCSlib/Cryptography/HardcoreBit/GoldreichLevin.lean:114	TCSlib.Cryptography.HardcoreBit.guessRecover_coinsCongr	theorem	theorem guessRecover_coinsCongr {ρ' : Type*} (A : β × (Fin n → Bool) → ρ → Bool) (A' : β × (Fin n → Bool) → ρ' → Bool) (e : ρ' ≃ ρ) (h : ∀ p c, A' p c = A p (e c)) (k : ℕ) (y : β) (c : GuessCoins n k ρ') : guessRecover A' k y c = guessRecover A k y (guessCoinsCongr k e c)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:119	TCSlib.Cryptography.HardcoreBit.glInverter_apply	theorem	theorem glInverter_apply (R : β → γ → Fin n → Bool) (y : β × (Fin n → Bool)) (c : γ) : glInverter R y c = (R y.1 c, y.2)
+ADDED	TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:105	TCSlib.Cryptography.HardcoreBit.glPad_apply	theorem	theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) : glPad f z = (f z.1, z.2)
+ADDED	TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:285	TCSlib.Cryptography.HardcoreBit.subsetSum_eq	theorem	theorem subsetSum_eq (L : Finset κ) (s : κ → G) : subsetSum L s = ∑ j ∈ L, s j
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:532	TCSlib.Cryptography.giProtocol_eq	theorem	theorem giProtocol_eq : giProtocol = { P := giProver, V := giVerifier, rounds := .const 3, verifierFirst := false }
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:501	TCSlib.Cryptography.giProver_coins	theorem	theorem giProver_coins : giProver.coins = .normal 1 2
+ADDED	TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:119	TCSlib.Cryptography.GIZK.sim_eq	theorem	theorem sim_eq (V' : Strategy) (x z r : List Bool) : sim V' x z r = ((List.range (instanceVertexCount x)).findSome? fun t => attemptStr V' x z (coinSlice (blockLen V' x.length) t r)).getD []
+ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:441	TCSlib.Cryptography.ColSimLemmas.hybGen_eq	theorem	theorem hybGen_eq (H Wa : W → Option α) {N : ℕ} (k : Fin N) (A : W → Option α) (D : Option α → ρ' → Bool) (z : (Fin N → W) × ρ') : hybGen H Wa k A D z = D ((List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (z.1 t) else if t = k then A (z.1 t) else Wa (z.1 t)) z.2
+ADDED	TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean:427	TCSlib.Cryptography.ColSimLemmas.hybStd_eq	theorem	theorem hybStd_eq (H Wa : W → Option α) (N k : ℕ) (w : Fin N → W) : hybStd H Wa N k w = (List.finRange N).findSome? fun t : Fin N => if (t : ℕ) < k then H (w t) else Wa (w t)
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/style-lint-head.log =====
+
+
+3 findings in 18 files
+
+
+TCSlib/Cryptography/Asymptotic/Collections.lean: 1141 lines (> 1000, must split)
+
+
+
+
+TCSlib/Cryptography/Asymptotic/PublicKey.lean: 1070 lines (> 1000, must split)
+
+
+
+
+
+
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:364: `sim_ofFn_eq` proof is 22 lines, no **Proof sketch.**
+
+
+
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/check8b-diff.log =====
+
+77c77
+< WARN  TCSlib/Cryptography/Asymptotic/Collections.lean           3 public def(s) without a lemma beside them (check 8): EvalSampled, OutLenBound, owfRaw
+---
+> WARN  TCSlib/Cryptography/Asymptotic/Collections.lean           2 public def(s) without a lemma beside them (check 8): OutLenBound, owfRaw
+86c86
+< WARN  TCSlib/Cryptography/Asymptotic/HardCoreGL.lean            19 public def(s) without a lemma beside them (check 8): betaOf, bound, cs, cs, fixed, glAdvPoly, glAdvice, glCoins, glCoinsEquiv, glEntry, glEntryFn, glPredictorOf, glTable, input, nesubsetEquiv, p, r, wfInput, wfVote
+---
+> WARN  TCSlib/Cryptography/Asymptotic/HardCoreGL.lean            18 public def(s) without a lemma beside them (check 8): betaOf, bound, cs, cs, fixed, glAdvPoly, glAdvice, glCoins, glCoinsEquiv, glEntry, glEntryFn, glTable, input, nesubsetEquiv, p, r, wfInput, wfVote
+113c113
+< WARN  TCSlib/Cryptography/HardcoreBit/InnerProduct.lean          5 public def(s) without a lemma beside them (check 8): glBit, glInverter, glPad, perfectRecover, secProb
+---
+> WARN  TCSlib/Cryptography/HardcoreBit/InnerProduct.lean          3 public def(s) without a lemma beside them (check 8): glBit, perfectRecover, secProb
+115c115
+< WARN  TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean  5 public def(s) without a lemma beside them (check 8): PairwiseIndep, ind, majority, subsetSum, subsetSumHom
+---
+> WARN  TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean  4 public def(s) without a lemma beside them (check 8): PairwiseIndep, ind, majority, subsetSumHom
+151,152c151,152
+< WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean     7 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, hybStd, plantEP, swapEP, swapR, truncAttempts
+< WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean   7 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, hybStd, plantEP, swapEP, swapR, truncAttempts
+---
+> WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean     6 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, plantEP, swapEP, swapR, truncAttempts
+> WARN  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean   6 public def(s) without a lemma beside them (check 8): attemptCoinsEquiv, hybAcc, plantEP, swapEP, swapR, truncAttempts
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/classify.py =====
+
+"""classify.py <dir>: (a)/(b) classification of the proof-seal and unfold-scan hits against touched.tsv."""
+import re, sys
+D = sys.argv[1]
+WT = sys.argv[2] if len(sys.argv) > 2 else '/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/wt-e1'
+DECL = re.compile(r'^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|nonrec)\s+)*(theorem|lemma|def|abbrev|instance|example|structure)\b\s*([^\s:(\[{]*)')
+_cache = {}
+def declmap(f):
+    """[(start line, full name)] of the declarations of the current file f, namespace-aware."""
+    if f in _cache: return _cache[f]
+    stack, out = [], []
+    for i, l in enumerate(open(f'{WT}/{f}', encoding='utf8').read().split('\n')):
+        m = re.match(r'^namespace\s+(\S+)', l)
+        if m: stack.append(m.group(1)); continue
+        if re.match(r'^section\b', l): stack.append(''); continue
+        if re.match(r'^end\b', l):
+            if stack: stack.pop()
+            continue
+        m = DECL.match(l)
+        if m:
+            n = m.group(2)
+            full = n[len('_root_.'):] if n.startswith('_root_.') else '.'.join([x for x in stack if x] + [n])
+            out.append((i + 1, full))
+    _cache[f] = out; return out
+def full_at(f, ln):
+    best = None
+    for st, full in declmap(f):
+        if st <= ln: best = full
+    return best
+touched = {}
+for l in open(D + '/touched.tsv', encoding='utf8'):
+    f, d = l.rstrip('\n').split('\t'); kind, rest = d.split(' ', 1); name, ln = rest.rsplit('@', 1)
+    touched.setdefault(f, set()).add(full_at(f, int(ln)))
+def is_t(f, full):
+    return full in touched.get(f, set())
+rows = []
+for l in open(D + '/proofseal/all.out', encoding='utf8'):
+    p = l.rstrip('\n').split('\t')
+    if len(p) < 6 or not p[5]: continue
+    for item in p[5].split('; '):
+        m = re.match(r'(\S+) (\S+)@(\d+) \[(.*)\]', item)
+        if m: rows.append(('a' if is_t(p[0], full_at(p[0], int(m.group(3)))) else 'b', 'seal', p[0], m.group(1) + ' ' + m.group(2), 'lines ' + m.group(4)))
+sec = None
+for l in open(D + '/scan.log', encoding='utf8'):
+    if l.startswith('## (c1)'): sec = 'c1'; continue
+    if l.startswith('## (c3)'): sec = 'c3'; continue
+    if l.startswith('##'): sec = None; continue
+    if not sec or l.startswith('#') or not l.strip(): continue
+    if sec == 'c1':
+        f = l.split(':')[0]; m = re.search(r'\[(\w+) ([^\]]+)\]', l)
+        name = m.group(2) if m else '?'; cols = l.rstrip('\n').split('\t')
+        rows.append(('a' if is_t(f, full_at(f, int(cols[0].split(':')[1]))) else 'b', 'unfold', f, name, cols[0].split(':')[1] + ' ' + cols[1] + ' ' + cols[4]))
+    else:
+        p = l.rstrip('\n').split('\t'); f = p[0].replace('.', '/') + '.lean'
+        own = re.sub(r'^_private\.[\w.]*?\.0\.', '', p[1])
+        while '.' in own and re.fullmatch(r'_\w+|match_\d+|proof_\d+|eq_\d+', own.rsplit('.', 1)[1]):
+            own = own.rsplit('.', 1)[0]
+        rows.append(('a' if is_t(f, own) else 'b', 'eqn-term', f, p[1], p[3]))
+with open(D + '/classified.tsv', 'w') as o:
+    for r in rows: o.write('\t'.join(r) + '\n')
+na = sum(1 for r in rows if r[0] == 'a'); nb = len(rows) - na
+print('a', na, 'b', nb)
+for r in rows:
+    if r[0] == 'a': print('\t'.join(r)[:260])
+
+## ===== briefs/pass-shelat-ch5-8/gates/07-eqlemmas/evidence-r2/r6c/touched_code.py =====
+
+"""touched.py <worktree> <base> <files...>: declarations (head side) whose source lines this PR changed
+(added or modified lines inside the declaration's extent: from its header to the next declaration)."""
+import re, subprocess, sys
+WT, BASE = sys.argv[1], sys.argv[2]
+DECL = re.compile(r'^(?:@\[[^\]]*\]\s*)?(?:(?:private|protected|noncomputable|nonrec)\s+)*(theorem|lemma|def|abbrev|instance|example|structure)\b\s*([^\s:(\[{]*)')
+for f in sys.argv[3:]:
+    d = subprocess.run(['git', '-C', WT, 'diff', '-U0', BASE, '--', f], capture_output=True, text=True).stdout
+    changed = set()
+    for m in re.finditer(r'^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@', d, re.M):
+        s, c = int(m.group(1)), int(m.group(2) or 1)
+        changed.update(range(s, s + max(c, 1)))
+    lines = open(f'{WT}/{f}', encoding='utf-8').read().split('\n')
+    starts = [(i + 1, f"{m.group(1)} {m.group(2)}") for i, l in enumerate(lines) if (m := DECL.match(l))]
+    for k, (st, name) in enumerate(starts):
+        en = starts[k + 1][0] - 1 if k + 1 < len(starts) else len(lines)
+        # drop the trailing blank lines, comments and the next declaration's docstring/attributes
+        while en > st:
+            t = lines[en - 1].strip()
+            if t == '' or t.startswith('@[') or t.startswith('--'):
+                en -= 1; continue
+            if t.endswith('-/'):
+                j = en - 1
+                while j >= st and '/-' not in lines[j]: j -= 1
+                if j < st: break
+                en = j; continue
+            break
+        # include the declaration's own docstring (just above its header)
+        sd = st
+        j = st - 2
+        if j >= 0 and lines[j].strip().endswith('-/'):
+            while j >= 0 and '/-' not in lines[j]: j -= 1
+            sd = st  # code only (docstring excluded)
+        if any(sd <= x <= en for x in changed):
+            print(f"{f}\t{name}@{st}")
