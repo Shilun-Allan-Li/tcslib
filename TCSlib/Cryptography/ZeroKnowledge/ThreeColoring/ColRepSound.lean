@@ -175,19 +175,16 @@ theorem blockRead_eq (b K C : ℕ) (h : K * b ≤ C) (r : Fin C → Bool) (t : F
         _ ≤ C := h⟩ := rfl
 
 /-- **The blocks of a uniform tape are independent and uniform**: `blockRead` is the restriction
-to the first `K b` bits (`GIZK.pushesUniform_castLE`) followed by the bijection
-`(Fin (K b) → Bool) ≃ (Fin K → Fin b → Bool)` (`finProdFinEquiv`, `Equiv.curry`). -/
+to the first `K b` bits (`GIZK.pushesUniform_castLE`) followed by the blockwise bijection
+`EnsembleLemmas.blocks K b : (Fin (K b) → Bool) ≃ (Fin K → Fin b → Bool)`
+(`EnsembleLemmas.blocks_apply`). -/
 theorem pushesUniform_blockRead (b K C : ℕ) (h : K * b ≤ C) :
     HardcoreBit.PushesUniform (blockRead b K C h) := by
-  let e : (Fin (K * b) → Bool) ≃ (Fin K → Fin b → Bool) :=
-    (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
-  have he : ∀ s : Fin (K * b) → Bool, ∀ t j, e s t j = s (finProdFinEquiv (t, j)) := by
-    intro s t j
-    rfl
-  have hc := (GIZK.pushesUniform_castLE (B := Bool) h).comp (HardcoreBit.pushesUniform_equiv e)
+  have hc := (GIZK.pushesUniform_castLE (B := Bool) h).comp
+    (HardcoreBit.pushesUniform_equiv (EnsembleLemmas.blocks K b))
   convert hc using 1
   funext r t j
-  rw [he, blockRead_eq]
+  rw [EnsembleLemmas.blocks_apply, blockRead_eq]
   congr 1
   apply Fin.ext
   simp only [Fin.coe_castLE, finProdFinEquiv_apply_val]

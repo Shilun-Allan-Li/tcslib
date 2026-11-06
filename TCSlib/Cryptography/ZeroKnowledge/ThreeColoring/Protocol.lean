@@ -25,7 +25,8 @@ sequential repetition (soundness error `(1 - 1/|E|)^{n|E|} ≤ e^{-n}`, Claim-12
 zero-knowledge half is `ThreeColoring/Simulator.lean`; the machine infrastructure behind the
 efficiency theorems (the parties as polynomial-time string functions of the interactive
 layout) is `ThreeColoring/Machines.lean`, `ThreeColoring/Parties.lean` and
-`ThreeColoring/ProtocolProofs.lean`.
+`ThreeColoring/ProtocolProofs.lean`; the decider of `R_3COL` is `ThreeColoring/ColRepWitness.lean`,
+and the generic lemmas of the `n|E|`-fold protocol are `ThreeColoring/ColRepSound.lean`.
 
 Graphs are the Boolean relations `Graph n` of `Encoding.lean`; a 3-colouring is a map
 `Fin n → Fin 3`, proper when the endpoints of every edge receive different colours; the edges
@@ -908,13 +909,19 @@ witnesses have length `2n ≤ 2|x|`, and the relation is decided in polynomial t
 re-encoding the decoded graph and colouring and checking every edge.
 
 **Proof sketch.** `mem_iff` is `mem_L3COL_iff`; `bounded` with `p := 2 · var`
-(`length_encColoring`, `length_encGraph`, `n ≤ n²`); `decidable` with
+(`length_encColoring`, `length_encGraph`, `n ≤ n²`); `decidable` is `ColRep.R3COL_decidable`
+(`ThreeColoring/ColRepWitness.lean`) with
 `T ⟨x, y⟩ := decide (x = encGraph (decGraph x).2 ∧ y = encColoring (decColoring n y) ∧
-ProperColoring (decGraph x).2 (decColoring n y))`, correct by `decGraph_encGraph` and
-`decColoring_encColoring`, and polynomial-time by `polyTimeComputable_pairEq` on the
-re-encodings (`polyTimeComputable_blockMap`, `polyTimeComputable_iterateEmit`) and a scan of
-the `n²` entries for the colouring test (`polyTimeComputable_iterate` with an accumulated
-conjunction). -/
+ProperColoring (decGraph x).2 (decColoring n y))` (`ColRep.r3colTest`), correct by `R3COL_iff`,
+`decGraph_encGraph` and `decColoring_encColoring`. It is polynomial-time because it agrees with a
+scan form, with `n = √|x|` (`ColRep.decGraph_fst`): `|x| = n²`
+(`ColMachines.encGraph_decGraph_eq_take`); `|y| = 2n` and no vertex `i < n` whose bits `2i`,
+`2i + 1` differ from those of its colour value (`getD_encColoring_two_mul`,
+`getD_encColoring_two_mul_add_one`, `ColMachines.decColoring_val`); no set entry `j < n²` whose
+endpoints `j / n`, `j % n` have equal colour values (`ProperColoring_iff`,
+`ColMachines.decGraph_apply`). Each "no" is a bounded search `EncodingMachines.firstIdx` that
+finds nothing (`firstIdx_eq_iff`, `polyTimeComputable_firstIdx`), over tests built from
+`getBit_poly`, `ColMachines.colorVal_poly` and unary arithmetic. -/
 theorem R3COL_witnessRelation : WitnessRelation L3COL R3COL := by
   refine ⟨mem_L3COL_iff, ⟨.mul (.const 2) .var, ?_⟩, ?_⟩
   · intro x y hxy
@@ -1304,14 +1311,16 @@ protocol's `n|E|`.
 
 **Proof sketch.** Completeness as in `col_efficientProverProofErr`, iteration by iteration
 (the verifier's history is `[com_0, opn_0, …]` and the parity bookkeeping of `colProverRep`
-/ `colVerifierRep` reproduces one iteration on each coin block, `exec_succ`; the empty
-messages beyond `n|E|` iterations are ignored). Soundness with
-`ε N := Real.exp (-(Nat.sqrt N)) + N² (1/2)^N + 2⁻¹^N` (strict clause): for `x = encGraph G`
-not colourable with `n ≥ 2`, fix the prover's coins, condition on all `n|E|` edge samplers
-being uniform (`statClose_sampleEdgeIdx` per block, `StatClose.prod` iterated,
-`StatClose.abs_uprob_sub_le_prod`, union cost `n|E| (1/2)^{|x|} ≤ |x|² (1/2)^{|x|}`), and apply
-`uprob_col_cheat_le` with `k = n|E|`, `comF i` the prover's commitment of iteration `i` (a
-function of the earlier challenges through `exec`) and `opnF i` its opening: the acceptance
+/ `colVerifierRep` reproduces one iteration on each coin block, `exec_succ`, through the generic
+`ColRep.exec_four_mul`; the empty messages beyond `n|E|` iterations are ignored). Soundness with
+`ε N := Real.exp (-(Nat.sqrt N)) + N² (1/2)^N + 2⁻¹^N` (strict clause): if `x` is ill formed,
+or `n < 2`, the verdict is `[false]` on every tape; for `x = encGraph G` not colourable with
+`n ≥ 2`, fix the prover's coins, condition on all `n|E|` edge samplers being uniform
+(`statClose_sampleEdgeIdx` per block, `OneWay.statClose_pi` over the coin blocks:
+`ColRep.statClose_edgeBlocks`; `StatClose.abs_uprob_sub_le_prod`, union cost
+`n|E| (1/2)^{|x|} ≤ |x|² (1/2)^{|x|}`), and apply `uprob_col_cheat_le` with `k = n|E|`, `comF i`
+the prover's commitment of iteration `i` (a function of the earlier challenges through `exec`,
+`ColRep.exec_four_mul` and `ColRep.chView`) and `opnF i` its opening: the acceptance
 probability is at most `(1 - 1/|E|)^{n|E|} ≤ e^{-n}` (`one_sub_inv_pow_mul_le_exp`) with
 `n = Nat.sqrt |x|` (`length_encGraph`, `Nat.sqrt_eq`). Negligibility:
 `negligible_exp_neg_sqrt_div` with `C = 1`, `Negligible.mul_pow negligible_two_pow_neg 2`,

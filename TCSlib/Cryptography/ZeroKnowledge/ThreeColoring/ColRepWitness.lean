@@ -124,20 +124,6 @@ private noncomputable def scanTest (x y : List Bool) : Bool :=
     decide (firstIdx (badEntry x y (Nat.sqrt x.length)) (Nat.sqrt x.length * Nat.sqrt x.length) =
       Nat.sqrt x.length * Nat.sqrt x.length)
 
-/-- Exclusive or of two one-bit tests is polynomial-time (private copy of
-`Complexity.polyTimeComputable_xor` of `Complexity/ClassP/BinaryArith/Basic.lean`, which is
-not upstream of this file: `polyTimeComputable_ite` on the first test). -/
-private theorem colRep_xor_poly {p q : List Bool → Bool}
-    (hp : PolyTimeComputable (fun x => [p x])) (hq : PolyTimeComputable (fun x => [q x])) :
-    PolyTimeComputable (fun x => [p x ^^ q x]) :=
-  ptc_congr (polyTimeComputable_ite hp (polyTimeComputable_not hq) hq) fun x => by
-    cases p x <;> cases q x <;> rfl
-
-/-- Two Booleans with exclusive or `false` are equal. -/
-private theorem eq_of_xor_eq_false {a b : Bool} (h : (a ^^ b) = false) : a = b := by
-  revert h
-  cases a <;> cases b <;> decide
-
 /-- The well-formedness test as a length test: `x = encGraph G` for `⟨n, G⟩ = decGraph x` iff
 `|x| = (√|x|)²` (`encGraph_decGraph_eq_take`, `decGraph_fst`, `Nat.sqrt_le`). -/
 private theorem wf_iff (x : List Bool) :
@@ -193,12 +179,12 @@ private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
       have hb := hgood i hi
       rw [badVertex, Bool.or_eq_false_iff] at hb
       rw [← List.getD_eq_getElem _ false, ← List.getD_eq_getElem _ false, hbit0 i hi]
-      exact eq_of_xor_eq_false hb.1
+      exact bne_eq_false_iff_eq.1 hb.1
     · have hi : i < N := by omega
       have hb := hgood i hi
       rw [badVertex, Bool.or_eq_false_iff] at hb
       rw [← List.getD_eq_getElem _ false, ← List.getD_eq_getElem _ false, hbit1 i hi]
-      exact eq_of_xor_eq_false hb.2
+      exact bne_eq_false_iff_eq.1 hb.2
 
 /-- The properness test: for a graph `G` on `N` vertices whose entry `(u, v)` is bit `v + N u`
 of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge.
@@ -260,7 +246,8 @@ private theorem scanTest_iff (x y : List Bool) :
 /-! ### Polynomial time -/
 
 /-- The badly-encoded-vertex test is polynomial-time on `⟨1^i, z⟩` for `y = snd z`
-(`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`). -/
+(`getBit_poly`, `colorVal_poly`, `divNum_poly`, `modNum_poly`, `eqTest_poly`,
+`StateLoop.xor_poly`). -/
 private theorem badVertex_poly :
     PolyTimeComputable fun w => [badVertex (pairSndD (pairSndD w)) (pairFstD w).length] := by
   have hY : PolyTimeComputable fun w => pairSndD (pairSndD w) :=
@@ -272,8 +259,8 @@ private theorem badVertex_poly :
   have hb1 := getBit_poly hY (unaryAdd_poly h2I (unaryConst_poly 1))
   have hd0 := eqTest_poly (divNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
   have hd1 := eqTest_poly (modNum_poly hcv (unaryConst_poly 2)) (unaryConst_poly 1)
-  refine ptc_congr (polyTimeComputable_or (colRep_xor_poly hb0 hd0)
-    (colRep_xor_poly hb1 hd1)) fun w => ?_
+  refine ptc_congr (polyTimeComputable_or (StateLoop.xor_poly hb0 hd0)
+    (StateLoop.xor_poly hb1 hd1)) fun w => ?_
   rw [badVertex, divNum_eq, modNum_eq]
 
 /-- The monochromatic-edge test is polynomial-time on `⟨1^j, z⟩` for `x = fst z`, `y = snd z`,
