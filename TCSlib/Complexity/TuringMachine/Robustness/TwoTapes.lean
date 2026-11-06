@@ -1632,7 +1632,21 @@ theorem two_work_tapes_run (M : FinTM Bool) :
       ∀ (x output : List Bool), (∃ t, M'.ComputesInTime x output t) →
         ∃ t, M.ComputesInTime x output t := by
   refine tt_route (fun M hk => ?_) M
-  sorry
+  -- the track-step family, chosen once (`Turing.exists_zoneTrackStepTM`)
+  obtain ⟨A, hA⟩ := exists_zoneTrackStepTM M.k
+  choose S fin dec Mt entry X hnone hR using hA
+  choose R hpre hspec using hR
+  let F : tt_Fam M.k A := ⟨S, fin, dec, Mt, entry, X, hnone, R, hpre, hspec⟩
+  -- the time bound: open
+  obtain ⟨c₁, hc₁⟩ : ∃ c₁ : ℕ, ∀ (x : List Bool) (t₀ : ℕ), 1 ≤ t₀ →
+      (∀ r < t₀, (tt_c M x r).state ≠ none) →
+        ∑ r ∈ Finset.range (t₀ - 1), tt_T M F x r + 1 ≤
+          c₁ * ((t₀ + 1) * (Nat.log 2 (t₀ + 1) + 1)) := by
+    sorry
+  refine ⟨tt_HS M F hk, rfl, c₁, fun x o t h => ?_, fun x o' t' h => tt_converse M F hk x o' t' h⟩
+  obtain ⟨t₀, ht₀, h1, hl, hHS⟩ := tt_forward_run M F hk x o t h
+  refine hHS.mono ((hc₁ x t₀ h1 hl).trans (Nat.mul_le_mul_left c₁ ?_))
+  exact Nat.mul_le_mul (by omega) (Nat.add_le_add_right (Nat.log_mono_right (by omega)) 1)
 
 /-- **Two work tapes suffice** for computing a function: if a binary machine computes `f` within
 time `T`, then a binary machine with two work tapes computes `f` within
