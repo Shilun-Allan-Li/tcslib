@@ -716,8 +716,103 @@ noncomputable def rsaTrapdoor (H : ArithmeticFP) : TrapdoorCollection where
   inv_uniform := NUPPT.ofPolyTimeUniform_uniform _ _
   inv_spec := rsaInv_spec H
 
+/-- **The domain of the RSA trapdoor collection is `Z_N^*`**: the published equivalence
+`(rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ` (the identity). It is the interface to the domain:
+elements of `D i` are read through it (`rsaTrapdoor_f`, `rsaTrapdoor_encD`, `rsaTrapdoor_decD`,
+`rsaTrapdoor_perm`), so no statement needs the collection to reduce at the type level, and
+uniform statements over `D i` transport along it (`uprob_comp_equiv`,
+`StatClose.comp_equiv_right`). -/
+def rsaTrapdoor_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (rsaTrapdoor H).D i ≃ (ZMod (rsaMod i))ˣ :=
+  Equiv.refl _
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaTrapdoor_domEquiv H i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem rsaTrapdoor_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : (ZMod (rsaMod i))ˣ → Prop) :
+    uprob (fun x : (rsaTrapdoor H).D i => P (rsaTrapdoor_domEquiv H i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the RSA trapdoor collection is `rsaF`, read through the domain equivalence:
+`(rsaTrapdoor H).f i x = rsaF i (rsaTrapdoor_domEquiv H i x)`. -/
+theorem rsaTrapdoor_f (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).f i x = rsaF i (rsaTrapdoor_domEquiv H i x) := rfl
+
+/-- The encoder of the RSA trapdoor collection is `rsaEnc`, read through the domain
+equivalence: `(rsaTrapdoor H).encD i x = rsaEnc i (rsaTrapdoor_domEquiv H i x)`. -/
+theorem rsaTrapdoor_encD (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).encD i x = rsaEnc i (rsaTrapdoor_domEquiv H i x) := rfl
+
+/-- The decoder of the RSA trapdoor collection is `rsaDec`, carried back along the domain
+equivalence: `(rsaTrapdoor H).decD i w = (rsaDec i w).map (rsaTrapdoor_domEquiv H i).symm`. -/
+theorem rsaTrapdoor_decD (H : ArithmeticFP) (i w : List Bool) :
+    (rsaTrapdoor H).decD i w = (rsaDec i w).map (rsaTrapdoor_domEquiv H i).symm := by
+  show rsaDec i w = _
+  cases rsaDec i w <;> rfl
+
+/-- The permutation of the RSA trapdoor collection is `rsaPermAt` (`x ↦ x^e`), read through the
+domain equivalence: with `φ = rsaTrapdoor_domEquiv H i`,
+`(rsaTrapdoor H).perm i x = φ.symm (rsaPermAt i (φ x))`. -/
+theorem rsaTrapdoor_perm (H : ArithmeticFP) (i : List Bool) (x : (rsaTrapdoor H).D i) :
+    (rsaTrapdoor H).perm i x =
+      (rsaTrapdoor_domEquiv H i).symm (rsaPermAt i (rsaTrapdoor_domEquiv H i x)) := rfl
+
+/-- The index generator of the RSA trapdoor collection is `rsaGen H`. -/
+theorem rsaTrapdoor_gen (H : ArithmeticFP) : (rsaTrapdoor H).gen = rsaGen H := rfl
+
+/-- The domain sampler of the RSA trapdoor collection is `rsaSampler H`. -/
+theorem rsaTrapdoor_sample (H : ArithmeticFP) : (rsaTrapdoor H).sample = rsaSampler H := rfl
+
+/-- The evaluator of the RSA trapdoor collection is `rsaEval`. -/
+theorem rsaTrapdoor_eval (H : ArithmeticFP) : (rsaTrapdoor H).eval = rsaEval := rfl
+
+/-- The trapdoor inverter of the RSA trapdoor collection is `rsaInv H`. -/
+theorem rsaTrapdoor_inv (H : ArithmeticFP) : (rsaTrapdoor H).inv = rsaInv H := rfl
+
 /-- **The RSA collection** [PS10, Theorem 53.2]: the collection underlying `rsaTrapdoor`. -/
 noncomputable def rsaCollection (H : ArithmeticFP) : Collection := (rsaTrapdoor H).toCollection
+
+/-- **The domain of the RSA collection is `Z_N^*`**: the published equivalence
+`(rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ`, that of the underlying trapdoor collection
+(`rsaTrapdoor_domEquiv`); the interface to the domain (`rsaCollection_f`,
+`rsaCollection_encD`, `rsaCollection_decD`). -/
+def rsaCollection_domEquiv (H : ArithmeticFP) (i : List Bool) :
+    (rsaCollection H).D i ≃ (ZMod (rsaMod i))ˣ :=
+  rsaTrapdoor_domEquiv H i
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_N^*`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = rsaCollection_domEquiv H i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem rsaCollection_domEquiv_uprob (H : ArithmeticFP) (i : List Bool)
+    (P : (ZMod (rsaMod i))ˣ → Prop) :
+    uprob (fun x : (rsaCollection H).D i => P (rsaCollection_domEquiv H i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the RSA collection is `rsaF`, read through the domain equivalence:
+`(rsaCollection H).f i x = rsaF i (rsaCollection_domEquiv H i x)`. -/
+theorem rsaCollection_f (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).f i x = rsaF i (rsaCollection_domEquiv H i x) := rsaTrapdoor_f H i x
+
+/-- The encoder of the RSA collection is `rsaEnc`, read through the domain equivalence:
+`(rsaCollection H).encD i x = rsaEnc i (rsaCollection_domEquiv H i x)`. -/
+theorem rsaCollection_encD (H : ArithmeticFP) (i : List Bool) (x : (rsaCollection H).D i) :
+    (rsaCollection H).encD i x = rsaEnc i (rsaCollection_domEquiv H i x) := rsaTrapdoor_encD H i x
+
+/-- The decoder of the RSA collection is `rsaDec`, carried back along the domain equivalence:
+`(rsaCollection H).decD i w = (rsaDec i w).map (rsaCollection_domEquiv H i).symm`. -/
+theorem rsaCollection_decD (H : ArithmeticFP) (i w : List Bool) :
+    (rsaCollection H).decD i w = (rsaDec i w).map (rsaCollection_domEquiv H i).symm :=
+  rsaTrapdoor_decD H i w
+
+/-- The index generator of the RSA collection is `rsaGen H`. -/
+theorem rsaCollection_gen (H : ArithmeticFP) : (rsaCollection H).gen = rsaGen H := rfl
+
+/-- The domain sampler of the RSA collection is `rsaSampler H`. -/
+theorem rsaCollection_sample (H : ArithmeticFP) : (rsaCollection H).sample = rsaSampler H := rfl
+
+/-- The evaluator of the RSA collection is `rsaEval`. -/
+theorem rsaCollection_eval (H : ArithmeticFP) : (rsaCollection H).eval = rsaEval := rfl
 
 /-- The index generated by the RSA collection is `⟨N, e⟩` of `rsaGenParams`. -/
 theorem rsaCollection_index (H : ArithmeticFP) (n : ℕ) (r : (rsaCollection H).gen.Coins n) :

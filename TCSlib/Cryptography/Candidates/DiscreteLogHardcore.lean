@@ -484,6 +484,58 @@ def FullDLAssumption (G : FullGroupGen) : Prop := G.DLHard
 noncomputable def fullDLCollection (H : ArithmeticFP) (G : FullGroupGen) : Collection :=
   expCollection H G fun _ h => h.expValid
 
+/-- **The domain of the full-group collection is `Z_{p−1}`**: the published equivalence
+`(fullDLCollection H G).D i ≃ ZMod (expOrd i)` (the identity), the interface to the domain
+(`fullDLCollection_f`, `fullDLCollection_encD`, `fullDLCollection_decD`; see
+`expCollection_domEquiv`). -/
+def fullDLCollection_domEquiv (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool) :
+    (fullDLCollection H G).D i ≃ ZMod (expOrd i) :=
+  expCollection_domEquiv H G (fun _ h => h.expValid) i
+
+/-- **The domain equivalence carries the uniform distribution**: for `P` on `Z_{p−1}`,
+`Pr_{x ← D i}[P (φ x)] = Pr_y[P y]` with `φ = fullDLCollection_domEquiv H G i` (`uprob_comp_equiv`),
+the form in which uniform statements over the domain are read. -/
+theorem fullDLCollection_domEquiv_uprob (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+    (P : ZMod (expOrd i) → Prop) :
+    uprob (fun x : (fullDLCollection H G).D i => P (fullDLCollection_domEquiv H G i x)) = uprob P :=
+  uprob_comp_equiv _ P
+
+/-- The function of the full-group collection is `expF`, read through the domain equivalence:
+`(fullDLCollection H G).f i x = expF i (fullDLCollection_domEquiv H G i x)`. -/
+theorem fullDLCollection_f (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+    (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).f i x = expF i (fullDLCollection_domEquiv H G i x) :=
+  expCollection_f H G (fun _ h => h.expValid) i x
+
+/-- The encoder of the full-group collection is `expEnc`, read through the domain equivalence:
+`(fullDLCollection H G).encD i x = expEnc i (fullDLCollection_domEquiv H G i x)`. -/
+theorem fullDLCollection_encD (H : ArithmeticFP) (G : FullGroupGen) (i : List Bool)
+    (x : (fullDLCollection H G).D i) :
+    (fullDLCollection H G).encD i x = expEnc i (fullDLCollection_domEquiv H G i x) :=
+  expCollection_encD H G (fun _ h => h.expValid) i x
+
+/-- The decoder of the full-group collection is `expDec`, carried back along the domain
+equivalence:
+`(fullDLCollection H G).decD i w = (expDec i w).map (fullDLCollection_domEquiv H G i).symm`. -/
+theorem fullDLCollection_decD (H : ArithmeticFP) (G : FullGroupGen) (i w : List Bool) :
+    (fullDLCollection H G).decD i w = (expDec i w).map (fullDLCollection_domEquiv H G i).symm :=
+  expCollection_decD H G (fun _ h => h.expValid) i w
+
+/-- The index generator of the full-group collection is `expGen G`. -/
+theorem fullDLCollection_gen (H : ArithmeticFP) (G : FullGroupGen) :
+    (fullDLCollection H G).gen = expGen G :=
+  expCollection_gen H G (fun _ h => h.expValid)
+
+/-- The domain sampler of the full-group collection is `expSampler H`. -/
+theorem fullDLCollection_sample (H : ArithmeticFP) (G : FullGroupGen) :
+    (fullDLCollection H G).sample = expSampler H :=
+  expCollection_sample H G (fun _ h => h.expValid)
+
+/-- The evaluator of the full-group collection is `expEval`. -/
+theorem fullDLCollection_eval (H : ArithmeticFP) (G : FullGroupGen) :
+    (fullDLCollection H G).eval = expEval :=
+  expCollection_eval H G (fun _ h => h.expValid)
+
 /-- The full-group collection is one-way under the full-group discrete-log assumption
 ([PS10, Theorem 52.3] for `Z_p^*`): `expCollection_oneWay`. -/
 theorem fullDLCollection_oneWay (H : ArithmeticFP) (G : FullGroupGen) (hDL : FullDLAssumption G) :
