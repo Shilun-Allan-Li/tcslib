@@ -719,12 +719,13 @@ private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
         else c₀.workTapes j
       workTapePos := c₀.workTapePos
       output := c₀.output ++ (a.output.map Sum.inl).toList } at hstep
-  have h1 : (tt_Mf M F none).runFrom c₀ 1 = (tt_leafTM M).step c₀ := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+  have h₀ : (tt_Mf M F none).runFrom c₀ 0 = c₀ := MultiTapeTM.runFrom_zero
+  have h1 : (tt_Mf M F none).runFrom c₀ 1 = (tt_leafTM M).step c₀ :=
+    MultiTapeTM.runFrom_succ_eq_step.trans MultiTapeTM.runFrom_zero
   have hguard : ∀ u < 1, ∀ s, ((tt_Mf M F none).runFrom c₀ u).state = some s →
       tt_red M F hk none s = none := by
     intro u hu s hs
-    rw [Nat.lt_one_iff.mp hu, MultiTapeTM.runFrom_zero] at hs
+    rw [Nat.lt_one_iff.mp hu, h₀] at hs
     obtain rfl : (Sum.inl q : tt_LeafSt M) = s := Option.some.inj hs
     rfl
   refine ⟨fun hn => ?_, fun q' hq' => ?_⟩
@@ -780,7 +781,7 @@ private theorem tt_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
       · exact H.2.trans hend
       · rw [H.1 u (by omega), Set.mem_singleton_iff, Cfg.mapState_state]
         rcases Nat.lt_or_ge u 1 with h | h
-        · rw [Nat.lt_one_iff.mp h, MultiTapeTM.runFrom_zero]
+        · rw [Nat.lt_one_iff.mp h, h₀]
           exact fun h => by cases h
         · obtain rfl : u = 1 := by omega
           rw [h1, hs₁]
