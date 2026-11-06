@@ -27,10 +27,14 @@ Options:
 Meanwhile all reads that do not involve `eval` are being fixed (#210 follow-up; #195 stacked
 repair), and the fills are issued on #210's head (no fill target is among the reads).
 
-## Q2. `Asymptotic/PublicKey.lean` is 1038 lines after #210's coin interfaces (was 989)
+## Q2. File sizes: `Asymptotic/PublicKey.lean` (1038 lines after #210, was 989) and `Candidates/DiscreteLog.lean` (1426 after the dl-a fill, was 973)
 
 Options: (A) a size exception, like RSA, Rabin, Collections and `ThreeColoring/Protocol.lean`;
 (B) move the self-contained Lem-104.a block (`pkPredictor`, `predProb_pkPredictor_*`,
 `exists_pkPredictor`, about 70 lines) into `PublicKeyLemmas.lean` (which then imports
 `Asymptotic/HardCore` and `Pseudorandom/GeneratorFromPermutation`). It blocks only gate 07 round 2's
 lint line, not the fills.
+`Candidates/DiscreteLog.lean`: the dl-a fill (all 7 targets filled) takes it from 973 to 1426
+lines. Options: (A) a size exception, as for the other fill-owned files; (B) a split as a landing
+edit (the fill's new private helpers into a `DiscreteLogSampler.lean` helper module imported by
+`DiscreteLog.lean`). Later fills will raise the same question for other owned files.
