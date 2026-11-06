@@ -181,6 +181,54 @@ theorem fmult_inv_factor {n p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hpn : p < 
   exact fmultNat_eq_mul_prime hp hq
     (natToBits_injOn (fmultNat_lt (bitsToNat_lt _) (bitsToNat_lt _)) hlt h)
 
+/-- Leading zeros read as `0`: the fold of `listToNat` over `0^m` from `0` is `0`. -/
+private theorem fac_foldl_replicate_false (m : ℕ) :
+    (List.replicate m false).foldl (fun a c => 2 * a + if c then 1 else 0) 0 = 0 := by
+  induction m with
+  | zero => rfl
+  | succ m ih => rw [List.replicate_succ, List.foldl_cons]; simpa using ih
+
+/-- **Leading zeros**: the `(j + |w|)`-bit numeral of the number read from `w` is `0^j w`
+(`natToList_length_listToNat` on `0^j w`, which reads as the same number). -/
+private theorem fac_natToList_lead (j : ℕ) (w : List Bool) :
+    natToList (j + w.length) (listToNat w) = List.replicate j false ++ w := by
+  have h := natToList_length_listToNat (List.replicate j false ++ w)
+  rw [List.length_append, List.length_replicate, listToNat_eq, List.foldl_append,
+    fac_foldl_replicate_false, ← listToNat_eq] at h
+  exact h
+
+/-- The numeral of `1`: `natToList k 1 = (0^k ++ 1).drop 1` (`0^{k−1}1` for `k ≥ 1`, empty for
+`k = 0`). -/
+private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k false ++ [true]).drop 1 := by
+  rcases k with _ | m
+  · rw [natToList_zero]; rfl
+  · have h := fac_natToList_lead m [true]
+    rw [listToNat_eq] at h
+    exact h
+
+/-- The two `n`-bit halves of a `2n`-bit string are its two blocks:
+`(List.ofFn x).take n = List.ofFn (blocks 2 n x 0)` and `.drop n` is block `1`. -/
+private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
+    (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
+      (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
+  have h : List.ofFn x = List.ofFn (FunFamily.blocks 2 n x 0) ++ List.ofFn (FunFamily.blocks 2 n x 1) := by
+    conv_lhs => rw [← (FunFamily.blocks 2 n).symm_apply_apply x]
+    rw [FunFamily.ofFn_blocks_symm, List.ofFn_succ, List.ofFn_succ, List.ofFn_zero]
+    simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
+    rfl
+  rw [h]
+  exact ⟨List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)⟩
+
+/-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
+private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
+    (hg : PolyTimeComputable g) :
+    PolyTimeComputable fun z => [decide (listToNat (g z) ≤ 1) && decide (1 ≤ listToNat (g z))] := by
+  have h1 := H.le.comp (hg.pairEncode (polyTimeComputable_const [true]))
+  have h2 := H.le.comp ((polyTimeComputable_const [true]).pairEncode hg)
+  have hone : listToNat [true] = 1 := by rw [listToNat_eq]; rfl
+  simp only [Function.comp_def, leStr_pairEncode, hone] at h1 h2
+  exact polyTimeComputable_and h1 h2
+
 /-- **`f_mult` is easy to compute** [PS10, Theorem 33.5, "clearly computable in polynomial
 time"], given binary multiplication and comparison (`ArithmeticFP`).
 
@@ -195,7 +243,35 @@ numeral `natToList (2n) 1 = 0^{2n-1} 1` (`polyTimeComputable_unaryPoly` mapped t
 `(List.ofFn w).take n`/`.drop n` (`FunFamily.ofFn_blocks_symm`, `List.ofFn_mul`) and
 `bitsToNat = listToNat ∘ List.ofFn` (`bitsToNat_eq_listToNat`). -/
 theorem fmult_easy (H : ArithmeticFP) : fmult.Easy := by
-  sorry
+  rw [FunFamily.easy_iff]
+  have hx := polyTimeComputable_pairTakePoly .var
+  have hy := polyTimeComputable_pairDropPoly .var
+  simp only [PolyExpr.eval_var] at hx hy
+  have htest := polyTimeComputable_or (fac_polyTimeComputable_isOne H hx)
+    (fac_polyTimeComputable_isOne H hy)
+  have hone : PolyTimeComputable fun z =>
+      (List.replicate (2 * (pairFstD z).length) false ++ [true]).drop 1 := by
+    have h := (polyTimeComputable_pairDropPoly (.const 1)).comp ((polyTimeComputable_const []).pairEncode
+      ((polyTimeComputable_zerosPoly (.mul (.const 2) .var)).append (polyTimeComputable_const [true])))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
+      PolyExpr.eval_var, PolyExpr.eval_mul] using h
+  refine ⟨_, polyTimeComputable_ite htest hone (H.mul.comp (hx.pairEncode hy)), fun n x => ?_⟩
+  obtain ⟨h0, h1⟩ := fac_ofFn_halves n x
+  simp only [Function.comp_apply, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+    List.length_replicate, h0, h1, mulStr_pairEncode, List.length_ofFn]
+  have hf : List.ofFn (fmult.f n x) = natToList (2 * n)
+      (fmultNat (bitsToNat (FunFamily.blocks 2 n x 0)) (bitsToNat (FunFamily.blocks 2 n x 1))) := by
+    rw [fmult_f, natToList_eq]
+  rw [hf]
+  unfold fmultNat
+  rw [← bitsToNat_eq_listToNat, ← bitsToNat_eq_listToNat]
+  by_cases hc : bitsToNat (FunFamily.blocks 2 n x 0) = 1 ∨ bitsToNat (FunFamily.blocks 2 n x 1) = 1
+  · rw [if_pos hc, if_pos, fac_natToList_one]
+    simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
+    omega
+  · rw [if_neg hc, if_neg, ← two_mul]
+    simp only [Bool.or_eq_true, Bool.and_eq_true, decide_eq_true_eq]
+    omega
 
 /-! ## The factoring assumption [PS10, Assumption 30.1] -/
 
@@ -327,6 +403,188 @@ theorem eval_fmultWeakPoly (n : ℕ) : fmultWeakPoly.eval n = 8 * (n + 1) ^ 2 :=
   unfold fmultWeakPoly
   exact PolyExpr.eval_normal 8 2 n
 
+/-- "Both `n`-bit blocks of `x` read as primes": the good set of [PS10, Theorems 33.5, 36.3]. -/
+private def fac_PrimeBlocks (n : ℕ) (x : Fin (2 * n) → Bool) : Prop :=
+  (bitsToNat (FunFamily.blocks 2 n x 0)).Prime ∧ (bitsToNat (FunFamily.blocks 2 n x 1)).Prime
+
+/-- A `2n`-bit string as its pair of `n`-bit blocks (`FunFamily.blocks`, `piFinTwoEquiv`). -/
+private noncomputable def fac_halvesEquiv (n : ℕ) :
+    (Fin (2 * n) → Bool) ≃ (Fin n → Bool) × (Fin n → Bool) :=
+  (FunFamily.blocks 2 n).trans (piFinTwoEquiv fun _ => Fin n → Bool)
+
+private theorem fac_halvesEquiv_apply (n : ℕ) (x : Fin (2 * n) → Bool) :
+    fac_halvesEquiv n x = (FunFamily.blocks 2 n x 0, FunFamily.blocks 2 n x 1) := rfl
+
+/-- **Prime-pair density on `2n`-bit strings**: both blocks read as primes with probability at
+least `1/(4n²)` (`one_div_le_uprob_prime_pair_bits` along `fac_halvesEquiv`). -/
+private theorem fac_density (n : ℕ) (hn : 2 ≤ n) :
+    1 / (4 * (n : ℝ) ^ 2) ≤ uprob (fac_PrimeBlocks n) := by
+  have h := one_div_le_uprob_prime_pair_bits n hn
+  rw [← uprob_comp_equiv (fac_halvesEquiv n)] at h
+  exact h
+
+/-- The good subtype of `2n`-bit strings is `Π_n × Π_n` (`fac_halvesEquiv`, `primesPairEquiv`). -/
+private noncomputable def fac_goodEquiv (n : ℕ) :
+    {x : Fin (2 * n) → Bool // fac_PrimeBlocks n x} ≃ Primes n × Primes n :=
+  (Equiv.subtypeEquiv (fac_halvesEquiv n) fun _ => Iff.rfl).trans (primesPairEquiv n)
+
+private theorem fac_goodEquiv_val (n : ℕ) (x : {x : Fin (2 * n) → Bool // fac_PrimeBlocks n x}) :
+    (((fac_goodEquiv n x).1.1 : Fin (2 ^ n)) : ℕ) = bitsToNat (FunFamily.blocks 2 n x.1 0) ∧
+      (((fac_goodEquiv n x).2.1 : Fin (2 ^ n)) : ℕ) = bitsToNat (FunFamily.blocks 2 n x.1 1) :=
+  primesPairEquiv_apply_val n _
+
+/-- **Dropping the diagonal**: a uniform pair of `Π_n × Π_n` is within `2n/2^n` of a uniform pair of
+*distinct* primes (`uprob_le_uprob_subtype_add` both ways, `uprob_diag`, `one_div_card_primes_le`).
+
+**Proof sketch.** For a test `T` let `a = Pr[T]` on `Π_n × Π_n`, `b = Pr[T | p ≠ q]` (the
+experiment on `DistinctPrimes n`, `p_eq`/`q_eq`) and `d = Pr[p = q]`. Dropping the conditioning
+gives `a ≤ b + d`, and the same for the complement of `T` gives `b ≤ a + d` (`uprob_not`); and
+`d = 1/|Π_n| ≤ 2n/2^n` (`uprob_diag`, `one_div_card_primes_le`). -/
+private theorem fac_statClose_diag (n : ℕ) (hn : 2 ≤ n) :
+    StatClose (fun w : Primes n × Primes n => (((w.1.1 : Fin (2 ^ n)) : ℕ), ((w.2.1 : Fin (2 ^ n)) : ℕ)))
+      (fun z : DistinctPrimes n => (z.p, z.q)) (2 * n / 2 ^ n) := by
+  rw [statClose_iff]
+  intro T
+  haveI : Nonempty (Primes n) := ⟨(DistinctPrimes.default hn).1.1⟩
+  haveI : Nonempty (DistinctPrimes n) := ⟨DistinctPrimes.default hn⟩
+  let E : Primes n × Primes n → Prop := fun w => ((w.1.1 : Fin (2 ^ n)) : ℕ) ≠ w.2.1
+  let S : Primes n × Primes n → Prop := fun w => T (((w.1.1 : Fin (2 ^ n)) : ℕ), ((w.2.1 : Fin (2 ^ n)) : ℕ))
+  have hb : uprob (fun z : DistinctPrimes n => T (z.p, z.q)) = uprob (fun z : {w // E w} => S z.1) := by
+    apply OneWay.uprob_congr
+    intro z
+    rw [DistinctPrimes.p_eq, DistinctPrimes.q_eq]
+  have hd : uprob (fun w => ¬ E w) ≤ 2 * n / 2 ^ n := by
+    have : uprob (fun w => ¬ E w) = uprob (fun w : Primes n × Primes n => w.2 = w.1) := by
+      apply OneWay.uprob_congr
+      intro w
+      simp only [E, not_not]
+      constructor
+      · intro h; exact Subtype.ext (Fin.ext h.symm)
+      · intro h; rw [h]
+    rw [this, uprob_diag]
+    exact one_div_card_primes_le n hn
+  have h1 := uprob_le_uprob_subtype_add E S
+  have h2 := uprob_le_uprob_subtype_add E (fun w => ¬ S w)
+  rw [uprob_not, uprob_not (fun z : {w // E w} => S z.1)] at h2
+  rw [hb, abs_sub_le_iff]
+  constructor <;> linarith
+
+/-- **From uniform prime pairs to uniform distinct prime pairs**: for any event `G` of the two
+primes and auxiliary coins, `Pr_{Π_n × Π_n}[G] ≤ Pr_{distinct}[G] + 2n/2^n`
+(`fac_statClose_diag` tested on `G`, the auxiliary coins carried along:
+`StatClose.abs_uprob_sub_le_prod`). -/
+private theorem fac_uprob_primes_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (hn : 2 ≤ n)
+    (G : ℕ → ℕ → ρ → Prop) :
+    uprob (fun z : (Primes n × Primes n) × ρ =>
+        G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2) ≤
+      uprob (fun z : DistinctPrimes n × ρ => G z.1.p z.1.q z.2) + 2 * n / 2 ^ n := by
+  have h := (fac_statClose_diag n hn).abs_uprob_sub_le_prod fun v r => G v.1 v.2 r
+  exact sub_le_iff_le_add'.1 (abs_sub_le_iff.1 h).1
+
+/-- `f_mult` of two primes is their product (neither is `1`). -/
+private theorem fac_fmultNat_of_prime {p q : ℕ} (hp : p.Prime) (hq : q.Prime) : fmultNat p q = p * q := by
+  unfold fmultNat
+  rw [if_neg]
+  push_neg
+  exact ⟨hp.ne_one, hq.ne_one⟩
+
+/-- **The concrete step of Theorem 33.5** [PS10, proof of Theorem 33.5, `A''`]: if `A` inverts
+`f_mult` at parameter `n ≥ 2` with probability above `1 − 1/q(n)`, then `A'' = oneCallFactorer A`
+factors a uniform pair of distinct primes with probability at least `1/2 − 2n/2^n`.
+
+**Proof sketch.** Let `S` be the inversion event on `(x, r)` and `E` "both blocks of `x` prime",
+`Pr[E] ≥ 1/(4n²)` (`fac_density`). Conditioning (`one_sub_div_le_uprob_subtype`) gives
+`Pr[S | E] ≥ 1 − 4n²/(8(n+1)²) ≥ 1/2`. On `S ∧ E`, with `p, q` the two blocks,
+`f_mult(x) = ⟦pq⟧_{2n}` and block `0` of the preimage is `p` or `q` (`fmult_inv_factor`), which is
+what `A''` returns (`oneCallFactorer_runAtL`, `fac_ofFn_halves`, the coins through
+`oneCallFactorer_coinsEquiv`). The good subtype is `Π_n × Π_n` (`fac_goodEquiv`), and dropping
+the diagonal costs `2n/2^n` (`fac_uprob_primes_le`); the experiment on distinct primes is
+`factorProb A'' n` (`modulusBits_eq`). -/
+private theorem fac_weak_key (A : NUPPT) (n : ℕ) (hn : 2 ≤ n)
+    (h : 1 - 1 / (fmultWeakPoly.eval n : ℝ) < fmult.invProbAt A n) :
+    1 / 2 - 2 * n / 2 ^ n ≤ factorProb (oneCallFactorer A) n := by
+  classical
+  rw [FunFamily.invProbAt_eq_uprob, eval_fmultWeakPoly] at h
+  -- the inversion event, on `2n`-bit inputs (`fmult_inLen`)
+  let S := fun z : (Fin (2 * n) → Bool) × A.Coins n =>
+    ∃ x' : Fin (2 * n) → Bool, A.runAt n (List.ofFn (fmult.f n z.1)) z.2 = List.ofFn x' ∧
+      fmult.f n x' = fmult.f n z.1
+  have h' : 1 - 1 / ((8 * (n + 1) ^ 2 : ℕ) : ℝ) < uprob S := h
+  have hE : 1 / (4 * (n : ℝ) ^ 2) ≤
+      uprob (fun z : (Fin (2 * n) → Bool) × A.Coins n => fac_PrimeBlocks n z.1) := by
+    rw [uprob_fst (fac_PrimeBlocks n)]
+    exact fac_density n hn
+  have hcond := one_sub_div_le_uprob_subtype
+    (fun z : (Fin (2 * n) → Bool) × A.Coins n => fac_PrimeBlocks n z.1) S
+    (by positivity) hE
+  -- `Pr[S | E] ≥ 1/2`
+  have hhalf : (1 : ℝ) / 2 ≤ uprob (fun z : {w : (Fin (2 * n) → Bool) × A.Coins n //
+      fac_PrimeBlocks n w.1} => S z.1) := by
+    refine le_trans ?_ hcond
+    have hn' : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+    have hq : (0 : ℝ) < 8 * ((n : ℝ) + 1) ^ 2 := by positivity
+    have hlt : 1 - uprob S < 1 / (8 * ((n : ℝ) + 1) ^ 2) := by
+      push_cast at h'; linarith
+    rw [div_div_eq_mul_div, div_one]
+    have h1 : (1 - uprob S) * (4 * (n : ℝ) ^ 2) ≤ 1 / (8 * ((n : ℝ) + 1) ^ 2) * (4 * (n : ℝ) ^ 2) :=
+      mul_le_mul_of_nonneg_right hlt.le (by positivity)
+    have h2 : 1 / (8 * ((n : ℝ) + 1) ^ 2) * (4 * (n : ℝ) ^ 2) ≤ 1 / 2 := by
+      rw [div_mul_eq_mul_div, one_mul, div_le_div_iff₀ hq (by norm_num)]
+      nlinarith
+    linarith
+  rw [← uprob_subtype_prod_eq (fac_PrimeBlocks n) S] at hhalf
+  -- the factoring event of `A''`, on the coins of `A`
+  let G : ℕ → ℕ → A.Coins n → Prop := fun p q r => ∃ y : Fin n → Bool,
+    (oneCallFactorer A).inverter n n (2 * n) (natToBits (2 * n) (p * q))
+      ((oneCallFactorer_coinsEquiv A n).symm r) = some y ∧ (bitsToNat y = p ∨ bitsToNat y = q)
+  -- on a prime pair, an inverse of `f_mult` is a factor (Claim 34.1)
+  have hmono : uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n => S (z.1.1, z.2)) ≤
+      uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n =>
+        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) := by
+    apply uprob_mono
+    rintro ⟨a, r⟩ ⟨x', hrun, hx'⟩
+    have hp := a.2.1
+    have hq := a.2.2
+    have hf : fmult.f n a.1 = natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) := by
+      rw [fmult_f, fac_fmultNat_of_prime hp hq]
+    rw [hf] at hx'
+    have hrun' : A.runAt n (List.ofFn (natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)))) r =
+        List.ofFn x' := by rw [← hf]; exact hrun
+    refine ⟨FunFamily.blocks 2 n x' 0, ?_, fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) x' hx'⟩
+    have hco : List.ofFn ((oneCallFactorer_coinsEquiv A n).symm r) = List.ofFn r := by
+      rw [← oneCallFactorer_coinsEquiv_ofFn A n, Equiv.apply_symm_apply]
+    rw [NUPPT.inverter_eq_some_iff, NUPPT.runAt_eq, oneCallFactorer_runAtL, hco, ← NUPPT.runAt_eq,
+      hrun']
+    exact (fac_ofFn_halves n x').1
+  -- the good subtype is `Π_n × Π_n`
+  have htrans : uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n =>
+        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) =
+      uprob (fun z : (Primes n × Primes n) × A.Coins n =>
+        G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2) := by
+    refine (OneWay.uprob_congr ?_).trans
+      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl (A.Coins n))) _)
+    rintro ⟨a, r⟩
+    simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
+    rw [(fac_goodEquiv_val n a).1, (fac_goodEquiv_val n a).2]
+  have hdrop := fac_uprob_primes_le n hn G
+  have hfp : uprob (fun z : DistinctPrimes n × A.Coins n => G z.1.p z.1.q z.2) =
+      factorProb (oneCallFactorer A) n := by
+    rw [factorProb_eq]
+    refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+      (Equiv.refl (DistinctPrimes n)) (oneCallFactorer_coinsEquiv A n).symm) _)
+    rintro ⟨z, r⟩
+    simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq, G]
+    rw [modulusBits_eq]
+  linarith
+
+/-- `8n ≤ 2^n` for `n ≥ 6`. -/
+private theorem fac_eight_mul_le (n : ℕ) (hn : 6 ≤ n) : 8 * n ≤ 2 ^ n := by
+  induction n, hn using Nat.le_induction with
+  | base => norm_num
+  | succ k hk ih => rw [pow_succ]; omega
+
 /-- **Theorem 33.5** [PS10, Theorem 33.5]: under the factoring assumption (and the arithmetic
 hypotheses), `f_mult` is a weak one-way function: for every non-uniform PPT `A` and all
 large `n`, `Pr[x, y ← {0,1}^n : f_mult(A(1^n, xy)) = xy] ≤ 1 - 1/(8(n+1)²)`.
@@ -355,7 +613,27 @@ diagonal by `uprob_le_uprob_subtype_add` with `E' = (p ≠ q)`, `uprob_diag` and
 `one_div_card_primes_le`: `factorProb A'' n ≥ 1/2 - 2n/2^n ≥ 1/4` for the infinitely many
 `n ≥ 6`, contradicting `hF A''` by `not_negligible_iff` (`c = 1`). -/
 theorem fmult_weakOneWay (H : ArithmeticFP) (hF : FactoringAssumption) : fmult.WeakOneWay := by
-  sorry
+  refine ⟨fmult_easy H, fmultWeakPoly, fun n => by rw [eval_fmultWeakPoly]; positivity, fun A => ?_⟩
+  obtain ⟨n₁, hn₁⟩ := (negligible_iff _).1 ((factoringAssumption_iff.1 hF) (oneCallFactorer A)) 2
+  refine ⟨max n₁ 6, fun n hn => ?_⟩
+  have hn6 : 6 ≤ n := le_of_max_le_right hn
+  have hsmall : factorProb (oneCallFactorer A) n < 1 / 4 := by
+    have h := hn₁ n (le_of_max_le_left hn)
+    rw [abs_of_nonneg (factorProb_nonneg _ _)] at h
+    have h36 : (36 : ℝ) ≤ (n : ℝ) ^ 2 := by
+      have : (6 : ℝ) ≤ n := by exact_mod_cast hn6
+      nlinarith
+    have : 1 / (n : ℝ) ^ 2 ≤ 1 / 4 := one_div_le_one_div_of_le (by norm_num) (by linarith)
+    linarith
+  by_contra hlt
+  push_neg at hlt
+  have key := fac_weak_key A n (by omega) hlt
+  have h8 : (2 * n : ℝ) / 2 ^ n ≤ 1 / 4 := by
+    have h8n : 8 * n ≤ 2 ^ n := fac_eight_mul_le n hn6
+    have : (8 * n : ℝ) ≤ 2 ^ n := by exact_mod_cast h8n
+    rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+    linarith
+  linarith
 
 /-! ## Hardness amplification for `f_mult` [PS10, Theorem 36.3] -/
 
@@ -414,6 +692,44 @@ def plantFactor {n : ℕ} {ρ : Type*}
     Fin n → Bool :=
   FunFamily.blocks 2 n (OneWay.yaoTry (fmult.f n) B N c) 0
 
+/-- The two block bijections of the library coincide: `FunFamily.blocks q ℓ = OneWay.blocksE q ℓ`
+(their inverses read the same coordinate, `FunFamily.blocks_symm_apply`,
+`OneWay.blocksE_symm_apply`). -/
+private theorem fac_blocks_eq_blocksE (q ℓ : ℕ) : FunFamily.blocks q ℓ = OneWay.blocksE q ℓ := by
+  have h : (FunFamily.blocks q ℓ).symm = (OneWay.blocksE q ℓ).symm :=
+    Equiv.ext fun t => funext fun k => by
+      rw [FunFamily.blocks_symm_apply, OneWay.blocksE_symm_apply]
+  rw [← Equiv.symm_symm (FunFamily.blocks q ℓ), h, Equiv.symm_symm]
+
+/-- The all-`false` string reads as `0`. -/
+private theorem fac_bitsToNat_false (k : ℕ) : bitsToNat (fun _ : Fin k => false) = 0 := by
+  rw [bitsToNat_eq_listToNat, List.ofFn_const, listToNat_eq, fac_foldl_replicate_false]
+
+/-- Block `i` of `x` under `FunFamily.blocks` is the window `x (finProdFinEquiv (i, ·))`. -/
+private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) :
+    FunFamily.blocks q ℓ x i = fun j => x (finProdFinEquiv (i, j)) := by
+  rw [fac_blocks_eq_blocksE]
+  funext j
+  exact OneWay.blocksE_apply q ℓ x i j
+
+/-- **The direct-product inverter and the padded inverter agree on success**: block `i` of the
+answer of `prodInverter A n` (the all-`false` tuple on a wrong-length answer) is block `i` of the
+padded answer `OneWay.yaoB` whenever its first half reads as a prime. -/
+private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
+    (Y : Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) (r : A.Coins n) (i : Fin (fmultBlocks.eval n))
+    (hp : (bitsToNat (FunFamily.blocks 2 n (prodInverter A n Y r i) 0)).Prime) :
+    prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
+  unfold prodInverter at hp ⊢
+  rw [OneWay.yaoB_apply]
+  rcases hx : A.inverter n (fmultBlocks.eval n * (2 * n)) (fmultBlocks.eval n * (2 * n))
+      ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
+  · rw [hx, Option.getD_none, fac_blocks_apply, fac_blocks_apply, fac_bitsToNat_false] at hp
+    exact absurd hp Nat.not_prime_zero
+  · have h2 : A.runAt n (List.ofFn ((FunFamily.blocks (fmultBlocks.eval n)
+        (fmult.outLen.eval n)).symm Y)) r = List.ofFn x := (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).1 hx
+    rw [Option.getD_some, fac_blocks_apply, ← fac_blocks_eq_blocksE, h2]
+    exact (OneWay.padTrue_drop_ofFn (q := fmultBlocks.eval n) (ℓ := fmult.inLen.eval n) x i).symm
+
 /-- **The machine of Algorithm 37.4** [PS10, Algorithm 37.4]: for every inverter `A` of the
 direct product there is a non-uniform PPT `A''` whose factoring probability is, up to the
 statistical term `2^{-n}` of the rejection-sampled position, at least the probability that
@@ -425,33 +741,30 @@ which every trial fails with probability `1 − m/2^m ≥ 1/2` (`m ≥ 4`) and
 `uprob_rejectionSample_none_le_half_pow` (`2^k ≤ 2m`) does not apply; the position is now
 sampled from `k n := Nat.size (m n)` bits.
 
-**Proof sketch.** `A''` is `NUPPT.ofPolyTime` of an FP function of the raw input
-`⟨⟨⟨1^n, N⟩, α⟩, r⟩` with coins `add (mul var Bp) (add (mul m (mul (const 2) var)) A.coins)`,
-where `m = fmultBlocks` and `Bp := add (mul (const 3) var) (const 3)` is the width of a
-position block (`4n³ < 2^{3n+3}`, so `k n := Nat.size (m n) ≤ Bp n`, `Nat.size_le`), and advice
-`α n := ⟨A.advice n, ⟨natToList (Bp n) (m n), 1^{k n}⟩⟩` (length bounded by a `PolyExpr`; the
-unary `1^{k n}` is also `sizeStr` of the numeral, `H.size`): cut the coins
-(`polyTimeComputable_pairTakePoly`/`_pairDropPoly`), read the position
-`i := (rejectionSample (m n) (k n) n (trials)).getD 0` from the first `k n` bits of each of the
-`n` position blocks (`polyTimeComputable_pairTakePoly var` on `⟨1^{k n}, block⟩`, each trial
-compared with the advice numeral by `H.le`, `polyTimeComputable_blockMap`,
-`polyTimeComputable_ite`),
-evaluate `f_mult` on the `m n` fresh `2n`-bit blocks (`polyTimeComputable_blockMap
-(mul (const 2) var)` with the evaluator of `fmult_easy H`), plant `N` at block `i`
-(`take`/`drop` at the unary offset `1^{i · 2n}`, `Turing.FinTM.computesFunInTime_unaryMul`),
-call `A.output` on the layout `⟨⟨⟨1^n, z⃗⟩, A.advice n⟩, r'⟩` (`NUPPT.polyTimeComputable_layout`,
-`A.polyTimeComputable_output`), take block `i` of the answer when its length is `8n⁴`
-(`polyTimeComputable_lenEq`, `_ite`; otherwise `0^{2n}`) and output its first `n` bits.
-Functional identity: `A''.inverter n n (2n) N r = some (plantFactor (prodInverter A n) N (S n r))`
-with `S n` the typed coin sampler (position by `(rejectionSample …).getD 0`, blocks by
-`FunFamily.blocks`, coins verbatim), by `NUPPT.runAtL_ofPolyTime`, `NUPPT.inverter_eq_some_iff`,
-`FunFamily.ofFn_blocks_symm` and `decodeFin_ofFn`. Probability: `statClose_rejectionSample
-(m n) (k n) n 0` with `uprob_rejectionSample_none_le_half_pow` — its hypotheses
-`m n ≤ 2^{k n}` and `2^{k n} ≤ 2 m n` are `Nat.lt_size_self` and `Nat.lt_size` at `k n − 1`
-(`m n ≥ 4`) — puts the sampled position within `(1/2)^n` of uniform; `StatClose.prod` with
-`StatClose.refl` on the other components,
-`StatClose.comp_equiv_left` for the coin-string bijection and
-`StatClose.abs_uprob_sub_le_prod` (auxiliary coins: the pair of primes) give the claim. -/
+**Proof sketch.** (Route of the fill brief: the position by `OneWay.exists_posMachine`, the
+model `OneWay.exists_yaoReduction`.) `A''` is `NUPPT.ofPolyTime` of the first `n` bits of the
+proved one-round machine of Algorithm 38.5, `OneWay.YaoMachine.ans` (the round of
+`OneWay.exists_yaoReduction`), instantiated with the evaluator of `fmult_easy H`, its blockwise
+evaluator `OneWay.exists_prodEval` and the position sampler `OneWay.exists_posMachine`, the
+lengths `inLen = outLen = 2n`, `m = fmultBlocks` and the inverter `A`; coins `YaoMachine.ρP`
+(`n·m` position bits, of which the first `n·k` are read as `n` trials of
+`k = OneWay.kkOf m = ⌊log₂ m⌋ + 1` bits, then `m·2n` fresh bits and the coins of `A`), advice
+`⟨A.advice n, 1^k⟩` (`YaoMachine.adv`, `adv_length`), polynomial time by `YaoMachine.ans_poly`
+and `Complexity.polyTimeComputable_pairTakePoly`. Functional identity: by
+`NUPPT.runAtL_ofPolyTime`, the coin identification `NUPPT.coinsEquiv_ofPolyTime` (with
+`YaoMachine.ρP_eval`) and the round identity `YaoMachine.ans_layout`, `A''(1^n, N; r)` is the
+first `n`-bit block of `OneWay.yaoTry (f_mult) yaoB N (roundSample r)`, i.e.
+`plantFactor yaoB N (roundSample r)`, where `OneWay.yaoB` reads block `i` of `A`'s answer
+padded with `true`. Inverter comparison: whenever
+`plantFactor (prodInverter A n)` outputs a factor its first block reads as a prime, so `A`'s
+answer had the right length (a wrong-length answer gives the all-`false` block, which reads as
+`0`), and then block `i` of `prodInverter A n` is block `i` of `yaoB` (`OneWay.padTrue_drop_ofFn`,
+`FunFamily.blocks = OneWay.blocksE`); so the ideal success event with `prodInverter` is contained
+in the one with `yaoB` (`uprob_mono`). Probability: `OneWay.statClose_roundSample` puts the
+sampled round coins within `(1 − m/2^k)^n ≤ (1/2)^n` of uniform (`m ≤ 2^k ≤ 2m`,
+`OneWay.lt_two_pow_kkOf`, `two_pow_kkOf_le`), and `StatClose.abs_uprob_sub_le_prod` (auxiliary
+coins: the pair of primes) with `uprob_comp_equiv` for the coin and coordinate bijections gives
+the claim. -/
 theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
     ∃ A'' : NUPPT, ∀ n, 1 ≤ n →
       uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
@@ -459,7 +772,251 @@ theorem exists_plantFactorer (H : ArithmeticFP) (A : NUPPT) :
           bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
             bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q)
         - (1 / 2 : ℝ) ^ n ≤ factorProb A'' n := by
-  sorry
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff _).1 (fmult_easy H)
+  obtain ⟨F', hF', hF'x⟩ := OneWay.exists_prodEval hF fmult.inLen fmultBlocks
+  obtain ⟨Pm, hPm, hPmx⟩ := OneWay.exists_posMachine
+  let D : OneWay.YaoMachine.Data := ⟨F, F', Pm, fmult.inLen, fmult.outLen, fmultBlocks, A⟩
+  have hans := OneWay.YaoMachine.ans_poly (D := D) hF' hPm
+  have hpoly : PolyTimeComputable fun w =>
+      (OneWay.YaoMachine.ans D w).take (NUPPT.inParam w).length := by
+    have h := (polyTimeComputable_pairTakePoly .var).comp
+      (NUPPT.polyTimeComputable_inParam.pairEncode hans)
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+      using h
+  refine ⟨NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+    (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D), fun n hn => ?_⟩
+  have hM : 0 < fmultBlocks.eval n := by rw [eval_fmultBlocks]; positivity
+  have hFe : ∀ a : Fin (D.inLen.eval n) → Bool,
+      D.Fe (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (fmult.f n a) :=
+    fun a => by rw [← NUPPT.advInput_eq]; exact hFx n a
+  have hF'' := hF'x n
+  have hPm'' := hPmx (fmultBlocks.eval n) (OneWay.kkOf (fmultBlocks.eval n)) n hM
+    (OneWay.kkOf_pos _) (OneWay.two_pow_kkOf_le _ hM)
+  -- the coins of `A''` as the coins of a round (`NUPPT.coinsEquiv_ofPolyTime`, `ρP_eval`)
+  set ce := (NUPPT.coinsEquiv_ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+    (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D) n).trans
+    (Equiv.arrowCongr (finCongr (OneWay.YaoMachine.ρP_eval D n)) (Equiv.refl Bool)) with hce
+  have hce_ofFn : ∀ r, List.ofFn (ce r) = List.ofFn r := fun r => by
+    rw [hce, Equiv.trans_apply, ← NUPPT.coinsEquiv_ofPolyTime_ofFn hpoly _ _ _ _ n r]
+    exact (List.ofFn_congr (OneWay.YaoMachine.ρP_eval D n) _).symm
+  set S := OneWay.roundSample n (fmultBlocks.eval n) (fmult.inLen.eval n) (A.coinLen n)
+    (OneWay.kkOf (fmultBlocks.eval n)) hM (OneWay.YaoMachine.nkk_le n _ hM) with hS
+  -- the round identity: `A''` outputs the first half of the planted answer block
+  have hround : ∀ (N : Fin (2 * n) → Bool) r,
+      (NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+        (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D)).runAt n (List.ofFn N) r =
+      List.ofFn (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) N (S (ce r))) := by
+    intro N r
+    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTime, NUPPT.advInput_eq, ← NUPPT.layout_eq,
+      NUPPT.inParam_layout, List.length_replicate, ← hce_ofFn r,
+      show List.ofFn (ce r) = List.ofFn (ce r) ++ [] from (List.append_nil _).symm,
+      OneWay.YaoMachine.ans_layout (D := D) n hM (fmult.f n) hFe hF'' hPm'' N (ce r) []]
+    unfold plantFactor
+    exact (fac_ofFn_halves n _).1
+  -- the success event of the planting reduction with the padded inverter `yaoB`
+  let P : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) → Fin (fmult.inLen.eval n) → Bool) ×
+      (Fin (A.coinLen n) → Bool)) → DistinctPrimes n → Prop := fun c z =>
+    bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) (modulusBits n z) c) =
+        z.p ∨
+      bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n) (modulusBits n z) c) =
+        z.q
+  -- the factoring probability of `A''` is that event on the sampled coins
+  have hfp : factorProb (NUPPT.ofPolyTime hpoly (OneWay.YaoMachine.ρP D) (OneWay.YaoMachine.advP D)
+      (OneWay.YaoMachine.adv D) (OneWay.YaoMachine.adv_length D)) n =
+      uprob (fun w : (Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n * fmult.inLen.eval n +
+        A.coinLen n)) → Bool) × DistinctPrimes n => P (S w.1) w.2) := by
+    rw [factorProb_eq, ← uprob_comp_equiv ((Equiv.prodComm _ _).trans
+      (Equiv.prodCongr ce (Equiv.refl (DistinctPrimes n))))]
+    apply OneWay.uprob_congr
+    rintro ⟨z, r⟩
+    show (∃ x, _ ∧ _) ↔ P (S (ce r)) z
+    constructor
+    · rintro ⟨x, hx, hpq⟩
+      rw [NUPPT.inverter_eq_some_iff, hround] at hx
+      rw [← List.ofFn_injective hx] at hpq
+      exact hpq
+    · intro h
+      exact ⟨_, (NUPPT.inverter_eq_some_iff _ _ _ _ _ _ _).2 (hround _ _), h⟩
+  -- the sampled coins are close to uniform
+  have hsc := OneWay.statClose_roundSample n (fmultBlocks.eval n) (fmult.inLen.eval n) (A.coinLen n)
+    (OneWay.kkOf (fmultBlocks.eval n)) hM (OneWay.lt_two_pow_kkOf _).le
+    (OneWay.YaoMachine.nkk_le n _ hM)
+  have habs := hsc.abs_uprob_sub_le_prod P
+  -- on uniform coins, the reduction with `prodInverter` succeeds only where the one with `yaoB` does
+  have hideal : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
+          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+          bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
+            bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q) ≤
+      uprob (fun z : (Fin (fmultBlocks.eval n) × (Fin (fmultBlocks.eval n) →
+        Fin (fmult.inLen.eval n) → Bool) × (Fin (A.coinLen n) → Bool)) × DistinctPrimes n =>
+          P (id z.1) z.2) := by
+    rw [← uprob_comp_equiv (Equiv.prodComm (DistinctPrimes n) _)]
+    apply uprob_mono
+    rintro ⟨z, i, xs, r⟩ h
+    show bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
+        (modulusBits n z) (i, xs, r)) = z.p ∨
+      bitsToNat (plantFactor (OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n)
+        (modulusBits n z) (i, xs, r)) = z.q
+    have hp : (bitsToNat (plantFactor (prodInverter A n) (modulusBits n z) (i, xs, r))).Prime := by
+      rcases h with h | h
+      · rw [h]; exact z.p_prime
+      · rw [h]; exact z.q_prime
+    unfold plantFactor at h hp ⊢
+    rw [OneWay.yaoTry_eq] at h hp ⊢
+    rw [← fac_prodInverter_eq_yaoB A n _ r i hp]
+    exact h
+  have hb : (1 - (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n)) ^ n + 0 ≤
+      (1 / 2 : ℝ) ^ n := by
+    have h2 : ((2 ^ OneWay.kkOf (fmultBlocks.eval n) : ℕ) : ℝ) ≤ 2 * (fmultBlocks.eval n : ℕ) := by
+      exact_mod_cast OneWay.two_pow_kkOf_le _ hM
+    have h3 : ((fmultBlocks.eval n : ℕ) : ℝ) ≤ ((2 ^ OneWay.kkOf (fmultBlocks.eval n) : ℕ) : ℝ) := by
+      exact_mod_cast (OneWay.lt_two_pow_kkOf _).le
+    push_cast at h2 h3
+    have hpos : (0 : ℝ) < 2 ^ OneWay.kkOf (fmultBlocks.eval n) := by positivity
+    have h4 : (1 : ℝ) / 2 ≤ (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n) := by
+      rw [div_le_div_iff₀ (by norm_num) hpos]; linarith
+    have h5 : (fmultBlocks.eval n : ℝ) / 2 ^ OneWay.kkOf (fmultBlocks.eval n) ≤ 1 := by
+      rw [div_le_one hpos]; exact h3
+    rw [add_zero]
+    exact pow_le_pow_left₀ (by linarith) (by linarith) n
+  -- unfold the local abbreviation `S`
+  have key : uprob (fun w : (Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n *
+      fmult.inLen.eval n + A.coinLen n)) → Bool) × DistinctPrimes n => P (S w.1) w.2) =
+      uprob (fun z : (Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n *
+        fmult.inLen.eval n + A.coinLen n)) → Bool) × DistinctPrimes n => P (OneWay.roundSample n (fmultBlocks.eval n)
+        (fmult.inLen.eval n) (A.coinLen n) (OneWay.kkOf (fmultBlocks.eval n)) hM
+        (OneWay.YaoMachine.nkk_le n _ hM) z.1) z.2) := rfl
+  rw [hfp, key]
+  have := (abs_le.1 habs).1
+  linarith
+
+/-- **The concrete chain of Theorem 36.3** [PS10, proof of Theorem 36.3]: for `n ≥ 2` and the
+machine `A''` of `exists_plantFactorer`, the inversion probability of the direct product is at
+most `(1/2)^n + 4n³ (Pr[A'' factors] + (1/2)^n + 2n/2^n)`.
+
+**Proof sketch.** `FunFamily.invProbAt_prod_eq` and `invProbOpt_le_invProb` bound the inversion
+probability by `invProb (prodFun f_mult (4n³)) (prodInverter A n)` (the default answer is the
+all-`false` tuple, `fac_blocks_apply`). Random-position planting with the good set "both blocks
+prime" (`invProb_prodFun_le_plant`) bounds this by `(1 − Pr[G])^{4n³} + 4n³ Pr[G ∧ planted
+success]`; the first term is at most `(1 − 1/(4n²))^{4n³} ≤ (1/2)^n` (`fac_density`,
+`claim_36_2_half_pow`). The second probability is at most the conditioned one
+(`uprob_and_eq_mul_subtype`, `uprob_subtype_prod_eq`), on which a planted success is a factor
+(`fmult_inv_factor`, `plantFactor`); the good subtype is `Π_n × Π_n` (`fac_goodEquiv`), the
+diagonal costs `2n/2^n` (`fac_uprob_primes_le`), and on distinct primes the event is the left side
+of `exists_plantFactorer`, at most `factorProb A'' n + (1/2)^n`. -/
+private theorem fac_strong_key (A A'' : NUPPT) (n : ℕ) (hn : 2 ≤ n)
+    (hA : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
+          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+          bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
+            bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q)
+        - (1 / 2 : ℝ) ^ n ≤ factorProb A'' n) :
+    (fmult.prod fmultBlocks).invProbAt A n ≤
+      (1 / 2 : ℝ) ^ n + 4 * (n : ℝ) ^ 3 * (factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
+  classical
+  rw [FunFamily.invProbAt_prod_eq]
+  refine (invProbOpt_le_invProb _ _).trans ?_
+  have hB : (fun ys r => ((A.inverter n (fmultBlocks.eval n * fmult.inLen.eval n)
+      (fmultBlocks.eval n * fmult.outLen.eval n)
+      ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm ys) r).map
+        (FunFamily.blocks (fmultBlocks.eval n) (fmult.inLen.eval n))).getD default) =
+      prodInverter A n := by
+    have key : ∀ o : Option (Fin (fmultBlocks.eval n * (2 * n)) → Bool),
+        (o.map (FunFamily.blocks (fmultBlocks.eval n) (2 * n))).getD default =
+          FunFamily.blocks (fmultBlocks.eval n) (2 * n) (o.getD fun _ => false) := by
+      rintro (_ | x)
+      · rw [Option.map_none, Option.getD_none, Option.getD_none]
+        funext i j
+        rw [fac_blocks_apply]
+        rfl
+      · rw [Option.map_some, Option.getD_some, Option.getD_some]
+    funext ys r
+    unfold prodInverter
+    exact key _
+  rw [hB]
+  -- random-position planting with the good set "both blocks prime" (lemma C3)
+  have hplant : invProb (OneWay.prodFun (fmult.f n) (fmultBlocks.eval n)) (prodInverter A n) ≤
+      (1 - uprob (fac_PrimeBlocks n)) ^ (fmultBlocks.eval n) + (fmultBlocks.eval n : ℕ) *
+        uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
+          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+          fac_PrimeBlocks n z.1 ∧
+            fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n z.1) z.2) =
+              fmult.f n z.1) :=
+    invProb_prodFun_le_plant _ _ _
+  -- Claim 36.2: no good block among `4n³` with probability at most `(1/2)^n`
+  have hd := fac_density n hn
+  have h1 : (1 - uprob (fac_PrimeBlocks n)) ^ (fmultBlocks.eval n) ≤ (1 / 2 : ℝ) ^ n := by
+    rw [eval_fmultBlocks]
+    refine le_trans (pow_le_pow_left₀ (sub_nonneg.2 (uprob_le_one _)) (by linarith) _)
+      (claim_36_2_half_pow n (by omega))
+  -- the planted experiment on a good input is the planting factorer on a prime pair
+  let G : ℕ → ℕ → (Fin (fmultBlocks.eval n) × ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) ×
+      A.Coins n)) → Prop := fun p q c =>
+    bitsToNat (plantFactor (prodInverter A n) (natToBits (2 * n) (p * q)) c) = p ∨
+      bitsToNat (plantFactor (prodInverter A n) (natToBits (2 * n) (p * q)) c) = q
+  let S : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
+      ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) → Prop := fun z =>
+    fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n z.1) z.2) = fmult.f n z.1
+  have h2 : uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+        fac_PrimeBlocks n z.1 ∧ S z) ≤
+      uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => S (z.1.1, z.2)) := by
+    rw [uprob_and_eq_mul_subtype (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => fac_PrimeBlocks n z.1) S,
+      uprob_subtype_prod_eq (fac_PrimeBlocks n) S]
+    exact mul_le_of_le_one_left (uprob_nonneg _) (uprob_le_one _)
+  have h3 : uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => S (z.1.1, z.2)) ≤
+      uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) := by
+    apply uprob_mono
+    rintro ⟨a, c⟩ hS
+    have hp := a.2.1
+    have hq := a.2.2
+    have hf : fmult.f n a.1 = natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) := by
+      rw [fmult_f, fac_fmultNat_of_prime hp hq]
+    change fmult.f n (OneWay.yaoTry (fmult.f n) (prodInverter A n) (fmult.f n a.1) c) = fmult.f n a.1
+      at hS
+    rw [hf] at hS
+    have := fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) _ hS
+    simp only [G]
+    unfold plantFactor
+    exact this
+  have h4 : uprob (fun z : {a // fac_PrimeBlocks n a} × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) =
+      uprob (fun z : (Primes n × Primes n) × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+        G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2) := by
+    refine (OneWay.uprob_congr ?_).trans
+      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl _)) _)
+    rintro ⟨a, c⟩
+    simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
+    rw [(fac_goodEquiv_val n a).1, (fac_goodEquiv_val n a).2]
+  haveI : Nonempty (Fin (fmultBlocks.eval n)) := ⟨⟨0, by rw [eval_fmultBlocks]; positivity⟩⟩
+  have h5 := fac_uprob_primes_le n hn G
+  have h6 : uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) => G z.1.p z.1.q z.2) =
+      uprob (fun z : DistinctPrimes n × (Fin (fmultBlocks.eval n) ×
+          ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+          bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.p ∨
+            bitsToNat (plantFactor (prodInverter A n) (modulusBits n z.1) z.2) = z.1.q) := by
+    apply OneWay.uprob_congr
+    intro z
+    simp only [G]
+    rw [modulusBits_eq]
+  have hm : ((fmultBlocks.eval n : ℕ) : ℝ) = 4 * (n : ℝ) ^ 3 := by
+    rw [eval_fmultBlocks]; push_cast; ring
+  have hm0 : (0 : ℝ) ≤ 4 * (n : ℝ) ^ 3 := by positivity
+  rw [hm] at hplant
+  have hchain : uprob (fun z : (Fin (2 * n) → Bool) × (Fin (fmultBlocks.eval n) ×
+        ((Fin (fmultBlocks.eval n) → (Fin (2 * n) → Bool)) × A.Coins n)) =>
+        fac_PrimeBlocks n z.1 ∧ S z) ≤ factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n := by
+    linarith
+  have := mul_le_mul_of_nonneg_left hchain hm0
+  linarith
 
 /-- **Theorem 36.3** [PS10, Theorem 36.3]: under the factoring assumption (and the
 arithmetic hypotheses), the direct product `f'((x₁, y₁), …, (x_{m_n}, y_{m_n})) =
@@ -491,7 +1048,24 @@ factor (`uprob_mono`, `modulusBits_eq_fmult`); drop the diagonal by
 infinitely many large `n`, contradicting `hF A''` through `not_negligible_iff`. -/
 theorem fmult_prod_strongOneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
     (fmult.prod fmultBlocks).StrongOneWay := by
-  sorry
+  refine ⟨FunFamily.Easy.prod (fmult_easy H) fmultBlocks, fun A => ?_⟩
+  obtain ⟨A'', hA''⟩ := exists_plantFactorer H A
+  have hfac := (factoringAssumption_iff.1 hF) A''
+  have hneg : Negligible fun n : ℕ => (2 : ℝ)⁻¹ ^ n + 4 * ((n : ℝ) ^ 3 * factorProb A'' n) +
+      4 * ((n : ℝ) ^ 3 * (2 : ℝ)⁻¹ ^ n) + 8 * ((n : ℝ) ^ 4 * (2 : ℝ)⁻¹ ^ n) :=
+    ((negligible_two_pow_neg.add ((hfac.mul_pow 3).const_mul 4)).add
+      ((negligible_two_pow_neg.mul_pow 3).const_mul 4)).add
+      ((negligible_two_pow_neg.mul_pow 4).const_mul 8)
+  refine hneg.mono ⟨2, fun n hn => ?_⟩
+  have hk := fac_strong_key A A'' n hn (hA'' n (by omega))
+  have e : (1 / 2 : ℝ) ^ n + 4 * (n : ℝ) ^ 3 * (factorProb A'' n + (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) =
+      (2 : ℝ)⁻¹ ^ n + 4 * ((n : ℝ) ^ 3 * factorProb A'' n) +
+        4 * ((n : ℝ) ^ 3 * (2 : ℝ)⁻¹ ^ n) + 8 * ((n : ℝ) ^ 4 * (2 : ℝ)⁻¹ ^ n) := by
+    rw [inv_pow, one_div_pow]
+    field_simp
+    ring
+  rw [abs_of_nonneg (FunFamily.invProbAt_nonneg _ _ _)]
+  exact (hk.trans_eq e).trans (le_abs_self _)
 
 /-! ## The factoring collection [PS10, Theorem 51.1] -/
 
@@ -507,6 +1081,37 @@ fallback reads as `0`, rejected by their validity tests.) -/
 def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
     (natToBits n 2))
+
+/-- A numeral depends only on its value modulo `2^k`: `natToList k N = natToList k (N mod 2^k)`
+(`listToNat_natToList_eq_mod`, `natToList_length_listToNat`). -/
+private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N % 2 ^ k) := by
+  have h := natToList_length_listToNat (natToList k N)
+  have hl : (natToList k N).length = k := by rw [natToList_eq, List.length_ofFn]
+  rw [listToNat_natToList_eq_mod, hl] at h
+  exact h.symm
+
+/-- **The fallback numeral of `SamplePrime`**: the `k`-bit numeral of `2` is `0^{k+2}` followed
+by `10`, with its first two bits dropped (`0^{k−2}10` for `k ≥ 2`, `0` for `k = 1`, empty for
+`k = 0`). -/
+private theorem fac_natToList_two (k : ℕ) :
+    natToList k 2 = (List.replicate k false ++ [true, false]).drop 2 := by
+  rcases k with _ | _ | m
+  · rw [natToList_zero]; rfl
+  · rw [fac_natToList_mod]
+    have h := natToList_length_listToNat [false]
+    rw [listToNat_eq] at h
+    exact h
+  · have hw : (List.replicate (m + 2) false ++ [true, false]).drop 2 =
+        List.replicate m false ++ [true, false] := by
+      rw [List.replicate_succ, List.replicate_succ]
+      cases m with
+      | zero => rfl
+      | succ m => simp [List.replicate_succ]
+    rw [hw]
+    have h := natToList_length_listToNat (List.replicate m false ++ [true, false])
+    rw [listToNat_eq, List.foldl_append, fac_foldl_replicate_false] at h
+    simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil] at h
+    exact h
 
 /-- **One truncated run of `SamplePrime(n)` is polynomial-time** [PS10, Algorithm 50.16 and
 Lemma 51.17] given a primality test: on `⟨u, r⟩` with `n = |u|`, the `n`-bit output
@@ -535,7 +1140,105 @@ by `polyTimeComputable_ite`). The three pieces agree with
 `samplePrimeL` (`samplePrimeL`'s body, `Option.getD_map`). -/
 theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
     PolyTimeComputable fun z => samplePrimeL (pairFstD z).length (pairSndD z) := by
-  sorry
+  obtain ⟨A, hAu, -, hA⟩ := exists_samplePrime_nuppt (primeStr_eq ▸ hP)
+  have hu : PolyTimeComputable fun z => List.replicate (pairFstD z).length true := by
+    simpa only [PolyExpr.eval_var] using (polyTimeComputable_unaryPoly .var).comp polyTimeComputable_pairFstD
+  have hout : PolyTimeComputable fun z => A.output (NUPPT.layout (List.replicate (pairFstD z).length true)
+      [] [] (padStr samplePrimeCoins (pairFstD z) (pairSndD z))) :=
+    A.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout hu (polyTimeComputable_const [])
+      (polyTimeComputable_const []) (polyTimeComputable_padStr samplePrimeCoins))
+  have hfb : PolyTimeComputable fun z =>
+      (List.replicate (pairFstD z).length false ++ [true, false]).drop 2 := by
+    have h := (polyTimeComputable_pairDropPoly (.const 2)).comp ((polyTimeComputable_const []).pairEncode
+      ((polyTimeComputable_zerosPoly .var).append (polyTimeComputable_const [true, false])))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
+      PolyExpr.eval_var] using h
+  have htest := polyTimeComputable_lenEq.comp (hout.pairEncode (polyTimeComputable_const []))
+  have h := polyTimeComputable_ite htest hfb hout
+  convert h using 1
+  funext z
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_nil,
+    List.length_eq_zero_iff]
+  have hpad : padStr samplePrimeCoins (pairFstD z) (pairSndD z) =
+      List.ofFn (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z)) := by
+    rw [← ofFn_padFin_eq_padStr, eval_samplePrimeCoins]
+  have hrun : A.output (NUPPT.layout (List.replicate (pairFstD z).length true) [] []
+      (padStr samplePrimeCoins (pairFstD z) (pairSndD z))) = A.runAtL (pairFstD z).length []
+      (List.ofFn (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z))) := by
+    rw [NUPPT.runAtL_eq_output_layout, hAu.advice_eq (pairFstD z).length, hpad]
+  rw [hrun, hA]
+  unfold samplePrimeL
+  rcases hs : samplePrime (pairFstD z).length (2 * (pairFstD z).length ^ 2)
+      (chunk (2 * (pairFstD z).length ^ 2) (pairFstD z).length
+        (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z))) with _ | b
+  · simp only [Option.map_none, Option.getD_none, decide_true, if_true]
+    rw [← natToList_eq, fac_natToList_two]
+  · simp only [Option.map_some, Option.getD_some]
+    by_cases hb : List.ofFn b = []
+    · have hn : (pairFstD z).length = 0 := by
+        simpa only [List.length_ofFn, List.length_nil] using congrArg List.length hb
+      rw [if_pos (by simpa using hb), hb, hn]
+      rfl
+    · rw [if_neg (by simpa using hb)]
+
+/-- The `T` blocks of `n` bits of a coin string as a bijection: `fac_chunkEquiv T n r = chunk T n r`
+(`chunk` is `r` read through `finProdFinEquiv`, `chunk_apply`). -/
+private noncomputable def fac_chunkEquiv (T n : ℕ) : (Fin (T * n) → Bool) ≃ (Fin T → Fin n → Bool) where
+  toFun := chunk T n
+  invFun xs k := xs (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
+  left_inv r := by
+    funext k
+    simp only [chunk_apply, Prod.mk.eta, Equiv.apply_symm_apply]
+  right_inv xs := by
+    funext t i
+    simp only [chunk_apply, Equiv.symm_apply_apply]
+
+/-- `(1 − 1/(2n))^{2n²} ≤ e^{−n} ≤ (1/2)^n` (`one_sub_one_div_pow_le_exp_neg`,
+`exp_neg_le_half_pow`): the failure bound of `SamplePrime` with `2n²` trials. -/
+private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
+    (1 - 1 / (2 * n : ℝ)) ^ (2 * n ^ 2) ≤ (1 / 2 : ℝ) ^ n := by
+  have h := one_sub_one_div_pow_le_exp_neg (2 * n) n (by omega)
+  have he : 2 * n * n = 2 * n ^ 2 := by ring
+  rw [he] at h
+  push_cast at h
+  exact h.trans (exp_neg_le_half_pow n)
+
+/-- **One run of `samplePrimeL` is close to a uniform prime**: for `n ≥ 2`, the value of
+`samplePrimeL n` on `2n² · n` uniform coins is within `(1/2)^n` of a uniform element of `Π_n`
+(steps (2)–(3) of the sketch of `statClose_samplePrimeL_pair`).
+
+**Proof sketch.** On `List.ofFn r` the padding returns `r` (`padFin_ofFn`) and the value is
+`bitsToNat ((samplePrime n (2n²) (chunk r)).getD ⟦2⟧_n)` (`bitsToNat_eq_listToNat`). The fallback
+reads as the prime `2`, so `statClose_samplePrime` applies to uniform blocks, carried to `ℕ` by
+`StatClose.map bitsToNat`; `chunk` is a bijection (`fac_chunkEquiv`, `comp_equiv_left`), the
+uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
+`(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (`fac_one_sub_pow_le_half_pow`). -/
+private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
+    StatClose (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r)))
+      (fun p : Primes n => ((p.1 : Fin (2 ^ n)) : ℕ)) ((1 / 2 : ℝ) ^ n) := by
+  have h2 : 2 < 2 ^ n := lt_of_le_of_lt hn n.lt_two_pow_self
+  have hd : (bitsToNat (natToBits n 2)).Prime := by
+    rw [bitsToNat_natToBits h2]; exact Nat.prime_two
+  have h0 := ((statClose_samplePrime n (2 * n ^ 2) hn hd).map bitsToNat).comp_equiv_left
+    (fac_chunkEquiv (2 * n ^ 2) n)
+  let e2 : Primes n ≃ {b : Fin n → Bool // (bitsToNat b).Prime} :=
+    (Equiv.subtypeEquiv (bitsEquiv n) (fun b => by rw [bitsEquiv_val])).symm
+  have h1 := h0.comp_equiv_right e2
+  have hY : (fun p : Primes n => bitsToNat ((e2 p : {b : Fin n → Bool // (bitsToNat b).Prime}) :
+      Fin n → Bool)) = fun p : Primes n => ((p.1 : Fin (2 ^ n)) : ℕ) := by
+    funext p
+    rw [← bitsEquiv_val]
+    show ((bitsEquiv n) ((bitsEquiv n).symm p.1)).val = _
+    rw [Equiv.apply_symm_apply]
+  have hX : (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r))) =
+      fun r => bitsToNat ((samplePrime n (2 * n ^ 2) (fac_chunkEquiv (2 * n ^ 2) n r)).getD
+        (natToBits n 2)) := by
+    funext r
+    unfold samplePrimeL
+    rw [padFin_ofFn, ← bitsToNat_eq_listToNat]
+    rfl
+  rw [hX, ← hY]
+  exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
 
 /-- **Two independent runs of `SamplePrime(n)` are close to a uniform pair of distinct primes**
 [PS10, Lemma 51.17 and Theorem 51.1, "sample two random prime numbers"]: for `n ≥ 2`, the
@@ -567,7 +1270,27 @@ theorem statClose_samplePrimeL_pair (n : ℕ) (hn : 2 ≤ n) :
           listToNat (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
       (fun z : DistinctPrimes n => (z.p, z.q))
       (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
-  sorry
+  set L := 2 * n ^ 2 * n with hL
+  let eS : (Fin L → Bool) × (Fin L → Bool) ≃ (Fin (2 * L) → Bool) :=
+    (Fin.appendEquiv L L).trans (Equiv.arrowCongr (finCongr (two_mul L).symm) (Equiv.refl Bool))
+  have hS : ∀ z, List.ofFn (eS z) = List.ofFn z.1 ++ List.ofFn z.2 := by
+    rintro ⟨a, b⟩
+    rw [← List.ofFn_fin_append]
+    show List.ofFn (fun i => Fin.append a b (Fin.cast (two_mul L) i)) = _
+    exact (List.ofFn_congr (two_mul L).symm (Fin.append a b)).symm
+  have h1 := fac_statClose_samplePrimeL n hn
+  have hp := ((h1.prod h1).comp_equiv_left eS.symm).trans (fac_statClose_diag n hn)
+  have hX : (fun s : Fin (2 * L) → Bool =>
+        (listToNat (samplePrimeL n ((List.ofFn s).take L)),
+          listToNat (samplePrimeL n ((List.ofFn s).drop L)))) =
+      fun s => (listToNat (samplePrimeL n (List.ofFn (eS.symm s).1)),
+        listToNat (samplePrimeL n (List.ofFn (eS.symm s).2))) := by
+    funext s
+    have hs : List.ofFn s = List.ofFn (eS.symm s).1 ++ List.ofFn (eS.symm s).2 := by
+      rw [← hS, Equiv.apply_symm_apply]
+    rw [hs, List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)]
+  rw [hX]
+  exact hp.mono (by linarith)
 
 /-- The output of the collection's sampler from two sampled blocks `a`, `b`: the pair of
 `m`-bit numerals of the two numbers they read as, when these are distinct primes below `2^m`,
@@ -603,30 +1326,121 @@ def samplePairRaw (z : List Bool) : List Bool :=
     (samplePrimeL (NUPPT.inParam z).length ((NUPPT.inCoins z).take (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)))
     (samplePrimeL (NUPPT.inParam z).length ((NUPPT.inCoins z).drop (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)))
 
+/-- A two-bit value `v`, read from the word `w`, as a `k`-bit numeral (`k ≥ 2`):
+`natToList k v = (0^k).drop 2 ++ w`. -/
+private theorem fac_natToList_small {k v : ℕ} (hk : 2 ≤ k) {w : List Bool} (hw : w.length = 2)
+    (hv : listToNat w = v) : natToList k v = (List.replicate k false).drop 2 ++ w := by
+  obtain ⟨m, rfl⟩ : ∃ m, k = m + 2 := ⟨k - 2, by omega⟩
+  rw [← hv, ← hw, fac_natToList_lead, List.drop_replicate, hw]
+  rfl
+
+/-- The default pair `⟨2, 3⟩` at width `max n 2`: `⟨(0^n).drop 2 ++ 10, (0^n).drop 2 ++ 11⟩`. -/
+private theorem fac_encode_default (n : ℕ) :
+    encodeDistinctPrimes (max n 2) (DistinctPrimes.default (le_max_right n 2)) =
+      pairEncode ((List.replicate n false).drop 2 ++ [true, false])
+        ((List.replicate n false).drop 2 ++ [true, true]) := by
+  have hd : (List.replicate (max n 2) false).drop 2 = (List.replicate n false).drop 2 := by
+    rw [List.drop_replicate, List.drop_replicate]
+    congr 1
+    omega
+  rw [encodeDistinctPrimes_eq, DistinctPrimes.default_p, DistinctPrimes.default_q,
+    fac_natToList_small (w := [true, false]) (le_max_right n 2) rfl (by rw [listToNat_eq]; rfl),
+    fac_natToList_small (w := [true, true]) (le_max_right n 2) rfl (by rw [listToNat_eq]; rfl), hd]
+
+/-- Words of the same length are equal iff they read as the same number. -/
+private theorem fac_listToNat_inj {a b : List Bool} (h : a.length = b.length) :
+    listToNat a = listToNat b ↔ a = b := by
+  constructor
+  · intro hab
+    rw [← natToList_length_listToNat a, ← natToList_length_listToNat b, hab, h]
+  · rintro rfl; rfl
+
+/-- `samplePrimeL n r` has `n` bits. -/
+private theorem fac_length_samplePrimeL (n : ℕ) (r : List Bool) : (samplePrimeL n r).length = n := by
+  unfold samplePrimeL
+  rw [List.length_ofFn]
+
 /-- **The sampler is polynomial-time** [PS10, Lemma 51.17] given a primality test: two
 runs of the `SamplePrime` loop.
 
 **Proof sketch.** Cut the coins at the unary length `1^{2n³}` (`polyTimeComputable_pairTakePoly`
-/`_pairDropPoly samplePrimeCoins` on `⟨1^n, r⟩`); each half is handled by the
-`iterateFind` loop of `NumberTheory.exists_samplePrime_nuppt` (`Complexity.polyTimeComputable_iterateFind`
-with the step dropping `n` bits, the test `hP` on the first `n` bits, the payload those
-bits, `R = 2n²`, `P = var`), whose `List.range.find?` form is `firstHit` over `chunk`
-(`samplePrime`); the fallback numeral `natToList n 2 = 0^{n-2}10` of a failed run is the
-`none` branch of `iterateFind` (a constant string of unary-polynomial length,
-`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`). The acceptance test of
-`samplePairOut` uses `hP` only (this theorem has no `ArithmeticFP` argument): the two prime
-tests are `hP`, and the inequality of the two values is tested by comparing the two `n`-bit
-words directly (a `pairEq` test: words of equal length have equal values iff they are equal);
-the two range checks `< 2^{max n 2}` are discharged from the fixed widths, not computed (each
-`samplePrimeL` output has `n` bits, so its value is `< 2^n ≤ 2^{max n 2}`,
-`listToNat_lt_two_pow`); the branch is `polyTimeComputable_ite`. The accepted words are
-re-encoded with `max n 2` bits by leading-zero padding (the `max n 2`-bit numeral of an `n`-bit
-word is the word preceded by `max n 2 − n` zeros, a constant block of unary-polynomial length:
-`polyTimeComputable_unaryPoly`, `polyTimeComputable_blockMap`), and the default pair is a
-constant; pair the two results (`PolyTimeComputable.pairEncode`). -/
+/`_pairDropPoly samplePrimeCoins` on `⟨1^n, r⟩`); each half `a`, `b` is one run of `SamplePrime(n)`
+by the shared statement S1 (`polyTimeComputable_samplePrimeL`), an `n`-bit word. The acceptance
+test of `samplePairOut` uses `hP` only (this theorem has no `ArithmeticFP` argument): the two
+prime tests are `hP`, and the inequality of the two values is tested by comparing the two
+`n`-bit words directly (`polyTimeComputable_pairEq`, negated: words of equal length have equal
+values iff they are equal, `natToList_length_listToNat`); the two range checks
+`< 2^{max n 2}` are discharged from the widths, not computed (`listToNat_lt_two_pow`); the
+branch is `polyTimeComputable_ite`. On acceptance `n ≥ 2` (a prime read from an `n`-bit word
+forces `2 ≤ value < 2^n`), so `max n 2 = n` and the `n`-bit numerals of the two values are the
+words themselves: the accepted output is `⟨a, b⟩`, no padding is needed. The default pair
+`⟨2, 3⟩` at width `max n 2` is `⟨(0^n).drop 2 ++ 10, (0^n).drop 2 ++ 11⟩` for every `n`
+(`encodeDistinctPrimes_eq`, `default_p`/`default_q`, leading zeros by
+`natToList_length_listToNat`; `(0^{max n 2}).drop 2 = (0^n).drop 2`), so no branch on `n < 2`
+is needed: `polyTimeComputable_zerosPoly`, `polyTimeComputable_pairDropPoly (const 2)` and
+`PolyTimeComputable.append`; pair the results (`PolyTimeComputable.pairEncode`). -/
 theorem polyTimeComputable_samplePairRaw (hP : PolyTimeComputable primeStr) :
     PolyTimeComputable samplePairRaw := by
-  sorry
+  have hS1 := polyTimeComputable_samplePrimeL hP
+  have hpc := NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins
+  have ha : PolyTimeComputable fun z => samplePrimeL (NUPPT.inParam z).length
+      ((NUPPT.inCoins z).take (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)) := by
+    have h := hS1.comp (NUPPT.polyTimeComputable_inParam.pairEncode
+      ((polyTimeComputable_pairTakePoly samplePrimeCoins).comp hpc))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode,
+      eval_samplePrimeCoins] using h
+  have hb : PolyTimeComputable fun z => samplePrimeL (NUPPT.inParam z).length
+      ((NUPPT.inCoins z).drop (2 * (NUPPT.inParam z).length ^ 2 * (NUPPT.inParam z).length)) := by
+    have h := hS1.comp (NUPPT.polyTimeComputable_inParam.pairEncode
+      ((polyTimeComputable_pairDropPoly samplePrimeCoins).comp hpc))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode,
+      eval_samplePrimeCoins] using h
+  have hpr := primeStr_eq ▸ hP
+  have hpa := hpr.comp ha
+  have hpb := hpr.comp hb
+  have hne := polyTimeComputable_not (polyTimeComputable_pairEq.comp (ha.pairEncode hb))
+  simp only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode] at hpa hpb hne
+  have htest := polyTimeComputable_and hpa (polyTimeComputable_and hpb hne)
+  have hz : PolyTimeComputable fun z =>
+      (List.replicate (NUPPT.inParam z).length false).drop 2 := by
+    have h := (polyTimeComputable_pairDropPoly (.const 2)).comp ((polyTimeComputable_const []).pairEncode
+      ((polyTimeComputable_zerosPoly .var).comp
+        (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const []))))
+    simpa only [Function.comp_def, pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_const,
+      PolyExpr.eval_var] using h
+  have hdef := (hz.append (polyTimeComputable_const [true, false])).pairEncode
+    (hz.append (polyTimeComputable_const [true, true]))
+  have h := polyTimeComputable_ite htest (ha.pairEncode hb) hdef
+  convert h using 1
+  funext z
+  unfold samplePairRaw samplePairOut
+  rw [fac_encode_default]
+  set n := (NUPPT.inParam z).length
+  set a := samplePrimeL n ((NUPPT.inCoins z).take (2 * n ^ 2 * n))
+  set b := samplePrimeL n ((NUPPT.inCoins z).drop (2 * n ^ 2 * n))
+  have hla : a.length = n := fac_length_samplePrimeL _ _
+  have hlb : b.length = n := fac_length_samplePrimeL _ _
+  have hlta : listToNat a < 2 ^ max n 2 :=
+    (listToNat_lt_two_pow a).trans_le (Nat.pow_le_pow_right (by norm_num) (hla ▸ le_max_left _ _))
+  have hltb : listToNat b < 2 ^ max n 2 :=
+    (listToNat_lt_two_pow b).trans_le (Nat.pow_le_pow_right (by norm_num) (hlb ▸ le_max_left _ _))
+  have hiff : listToNat a ≠ listToNat b ↔ a ≠ b := (fac_listToNat_inj (hla.trans hlb.symm)).not
+  by_cases hc : (listToNat a).Prime ∧ (listToNat b).Prime ∧ a ≠ b
+  · have hn : 2 ≤ n := by
+      by_contra hn
+      have h2 : 2 ^ n ≤ 2 := by
+        calc 2 ^ n ≤ 2 ^ 1 := Nat.pow_le_pow_right (by norm_num) (by omega)
+          _ = 2 := rfl
+      have := listToNat_lt_two_pow a
+      rw [hla] at this
+      exact absurd hc.1.two_le (by omega)
+    rw [if_pos ⟨hc.1, hc.2.1, hiff.2 hc.2.2, hlta, hltb⟩, if_pos (by simp [hc.1, hc.2.1, hc.2.2])]
+    have hm : max n 2 = n := max_eq_left hn
+    rw [hm]
+    conv_lhs => rw [← hla, natToList_length_listToNat, hla, ← hlb, natToList_length_listToNat]
+  · rw [if_neg (fun h' => hc ⟨h'.1, h'.2.1, hiff.1 h'.2.2.1⟩), if_neg]
+    simpa only [Bool.and_eq_true, decide_eq_true_eq, Bool.not_eq_true', decide_eq_false_iff_not]
+      using hc
 
 /-- **The domain sampler of the factoring collection**: the uniform `NUPPT` running two
 truncated `SamplePrime(n)` loops with `2 · 2n² · n` coins. -/
@@ -779,6 +1593,66 @@ theorem factoringCollection_index (H : ArithmeticFP) (n : ℕ)
   rw [Collection.index_eq]
   exact (congrArg pairFstD (factoringGen_runAt n r)).trans (pairFstD_pairEncode _ _)
 
+/-- Bit strings of two equal lengths, identified (`finCongr`); it keeps the coin string
+(`fac_arrowCongr_ofFn`). -/
+private def fac_arrowCongr {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool) :=
+  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
+
+/-- `List.ofFn (fac_arrowCongr h r) = List.ofFn r`. -/
+private theorem fac_arrowCongr_ofFn {a b : ℕ} (h : a = b) (r : Fin a → Bool) :
+    List.ofFn (fac_arrowCongr h r) = List.ofFn r :=
+  (List.ofFn_congr h r).symm
+
+/-- The decoded pair read from two numbers: the pair itself when they are distinct primes below
+`2^n`, the default pair otherwise. -/
+private noncomputable def fac_pairDec (n : ℕ) (hn : 2 ≤ n) (v : ℕ × ℕ) : Option (DistinctPrimes n) :=
+  if h : v.1.Prime ∧ v.2.Prime ∧ v.1 ≠ v.2 ∧ v.1 < 2 ^ n ∧ v.2 < 2 ^ n then
+    some ⟨(⟨⟨v.1, h.2.2.2.1⟩, h.1⟩, ⟨⟨v.2, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩
+  else some (DistinctPrimes.default hn)
+
+/-- Decoding the sampler's output: `decodeDistinctPrimes n (samplePairOut n hn a b)` is
+`fac_pairDec` of the two numbers read from `a` and `b`. -/
+private theorem fac_decode_samplePairOut (n : ℕ) (hn : 2 ≤ n) (a b : List Bool) :
+    decodeDistinctPrimes n (samplePairOut n hn a b) = fac_pairDec n hn (listToNat a, listToNat b) := by
+  unfold samplePairOut fac_pairDec
+  split_ifs with h
+  · rw [← decodeDistinctPrimes_encode n ⟨(⟨⟨listToNat a, h.2.2.2.1⟩, h.1⟩,
+      ⟨⟨listToNat b, h.2.2.2.2⟩, h.2.1⟩), h.2.2.1⟩, encodeDistinctPrimes_eq,
+      DistinctPrimes.p_eq, DistinctPrimes.q_eq]
+  · exact decodeDistinctPrimes_encode n _
+
+/-- `fac_pairDec` returns a pair of distinct primes on its own values. -/
+private theorem fac_pairDec_pq (n : ℕ) (hn : 2 ≤ n) (z : DistinctPrimes n) :
+    fac_pairDec n hn (z.p, z.q) = some z := by
+  unfold fac_pairDec
+  rw [dif_pos ⟨z.p_prime, z.q_prime, z.p_ne_q, z.p_lt, z.q_lt⟩]
+  exact congrArg some (DistinctPrimes.ext (by rw [DistinctPrimes.p_eq]) (by rw [DistinctPrimes.q_eq]))
+
+/-- **The decoded sampler output is close to uniform** (S2 mapped through `fac_pairDec`), stated
+for a width `m = n` so that it applies at `m = max n 2`. -/
+private theorem fac_statClose_decode (n m : ℕ) (hm : 2 ≤ m) (hmn : m = n) :
+    StatClose (fun s : Fin (2 * (2 * n ^ 2 * n)) → Bool =>
+        decodeDistinctPrimes m (samplePairOut m hm
+          (samplePrimeL n ((List.ofFn s).take (2 * n ^ 2 * n)))
+          (samplePrimeL n ((List.ofFn s).drop (2 * n ^ 2 * n)))))
+      (fun z : DistinctPrimes m => some z) (2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n) := by
+  subst hmn
+  have h := (statClose_samplePrimeL_pair m hm).map (fac_pairDec m hm)
+  simp only [fac_pairDec_pq] at h
+  simpa only [fac_decode_samplePairOut] using h
+
+/-- The closeness bound of the factoring sampler, `1` for `n < 2` and `2(1/2)^n + 2n/2^n`
+otherwise, is negligible (`negligible_two_pow_neg`, `Negligible.mul_pow`, `Negligible.add`). -/
+private theorem fac_negligible_delta :
+    Negligible fun n : ℕ => if n < 2 then (1 : ℝ) else 2 * (1 / 2 : ℝ) ^ n + 2 * n / 2 ^ n := by
+  have h := (negligible_two_pow_neg.const_mul 2).add ((negligible_two_pow_neg.mul_pow 1).const_mul 2)
+  refine h.mono ⟨2, fun n hn => ?_⟩
+  rw [if_neg (by omega)]
+  apply le_of_eq
+  congr 1
+  rw [pow_one, inv_pow, one_div_pow, one_div]
+  ring
+
 /-- **The sampler is close to uniform** [PS10, Lemma 51.17 and Theorem 51.1, "sample two
 random prime numbers"]: the decoded output of the factoring collection's sampler is within
 a negligible statistical distance of the uniform pair of distinct primes.
@@ -801,7 +1675,40 @@ against the uniform `some x` on `DistinctPrimes n` the extra error is the diagon
 `StatClose.map`. -/
 theorem factoringCollection_sampleClose (H : ArithmeticFP) :
     ∃ δ : ℕ → ℝ, Negligible δ ∧ (factoringCollection H).SampleClose δ := by
-  sorry
+  refine ⟨_, fac_negligible_delta, ?_⟩
+  rw [Collection.sampleClose_iff]
+  intro n r
+  by_cases hn : n < 2
+  · rw [if_pos hn, statClose_iff]
+    intro T
+    rw [abs_sub_le_iff]
+    constructor <;> linarith [uprob_nonneg (fun s : (factoringCollection H).sample.Coins n =>
+      T ((factoringCollection H).decD ((factoringCollection H).index n r)
+        ((factoringCollection H).sample.runAt n ((factoringCollection H).index n r) s))),
+      uprob_le_one (fun s : (factoringCollection H).sample.Coins n =>
+      T ((factoringCollection H).decD ((factoringCollection H).index n r)
+        ((factoringCollection H).sample.runAt n ((factoringCollection H).index n r) s))),
+      uprob_nonneg (fun x : (factoringCollection H).D ((factoringCollection H).index n r) => T (some x)),
+      uprob_le_one (fun x : (factoringCollection H).D ((factoringCollection H).index n r) => T (some x))]
+  rw [if_neg hn]
+  push_neg at hn
+  have hlen : ((factoringCollection H).index n r).length = n := by
+    rw [factoringCollection_index, List.length_replicate]
+  generalize (factoringCollection H).index n r = i at hlen ⊢
+  subst hlen
+  have hc : (factoringSampler H).coinLen i.length = 2 * (2 * i.length ^ 2 * i.length) := by
+    rw [NUPPT.coinLen_eq]
+    unfold factoringSampler
+    rw [NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_const, eval_samplePrimeCoins]
+  rw [factoringCollection_sample]
+  have h1 := (fac_statClose_decode i.length (max i.length 2) (le_max_right _ _)
+    (max_eq_left hn)).map (Option.map (factoringCollection_domEquiv H i).symm)
+  have h2 := (h1.comp_equiv_left (fac_arrowCongr hc)).comp_equiv_right
+    (factoringCollection_domEquiv H i)
+  simp only [Option.map_some, Equiv.symm_apply_apply] at h2
+  convert h2 using 1
+  · funext s
+    rw [factoringCollection_decD, factoringSampler_runAt, fac_arrowCongr_ofFn]
 
 /-- **The reduction from the collection to factoring** [PS10, proof of Theorem 51.1, "the
 factoring assumption states that inverting `f_i` is hard"]: `A_fact(1^n, N) :=
@@ -851,6 +1758,33 @@ theorem collectionFactorer_runAt (A : NUPPT) (n : ℕ) (y : List Bool)
     NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode,
     pairSndD_pairEncode]
 
+/-- `f_mult` on a pair of distinct primes is their product (neither is `1`). -/
+private theorem fac_fmultNat_pq {n : ℕ} (w : DistinctPrimes n) : fmultNat w.p w.q = w.p * w.q :=
+  fac_fmultNat_of_prime w.p_prime w.q_prime
+
+/-- **The reduction at a width `m = n`**: if `A`'s answer on `⟨1^n, ⟨pq⟩_{2m}⟩` decodes to a pair
+of distinct primes with the same product, then `collectionFactorer A` factors `pq`; stated for a
+width `m = n` so that it applies at `m = max n 2`. -/
+private theorem fac_invProb_le (A : NUPPT) (n m : ℕ) (hmn : m = n) :
+    uprob (fun z : DistinctPrimes m × A.Coins n => ∃ w : DistinctPrimes m,
+        decodeDistinctPrimes m (A.runAt n (pairEncode (List.replicate n true)
+          (natToList (2 * m) (z.1.p * z.1.q))) z.2) = some w ∧
+        natToList (2 * m) (w.p * w.q) = natToList (2 * m) (z.1.p * z.1.q)) ≤
+      factorProb (collectionFactorer A) n := by
+  subst hmn
+  rw [factorProb_eq]
+  refine le_trans (uprob_mono ?_) (le_of_eq (uprob_comp_equiv (Equiv.prodCongr
+    (Equiv.refl (DistinctPrimes m)) (collectionFactorer_coinsEquiv A m).symm) _))
+  rintro ⟨z, r⟩ ⟨w, hdec, hmul⟩
+  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
+  have hpq : w.p * w.q = z.p * z.q := natToList_injOn w.mul_lt z.mul_lt hmul
+  have hfac : w.p = z.p ∨ w.p = z.q :=
+    fmultNat_eq_mul_prime z.p_prime z.q_prime ((fac_fmultNat_pq w).trans hpq)
+  refine ⟨natToBits m w.p, ?_, by rwa [bitsToNat_natToBits w.p_lt]⟩
+  rw [NUPPT.inverter_eq_some_iff, collectionFactorer_runAt, Equiv.apply_symm_apply, modulusBits_eq,
+    ← natToList_eq, ← natToList_eq, ← encodeDistinctPrimes_of_decode hdec, encodeDistinctPrimes_eq,
+    pairFstD_pairEncode]
+
 /-- **Inverting the collection factors** [PS10, proof of Theorem 51.1]: for `n ≥ 2`, the
 inversion probability of `A` against the factoring collection is at most the factoring
 probability of `collectionFactorer A`.
@@ -869,7 +1803,31 @@ component of the answer is the `n`-bit numeral of `p'` (`decodeFin`,
 `uprob_comp_equiv`). -/
 theorem factoringCollection_invProbAt_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 ≤ n) :
     (factoringCollection H).invProbAt A n ≤ factorProb (collectionFactorer A) n := by
-  sorry
+  haveI : Nonempty ((factoringCollection H).gen.Coins n) := ⟨fun _ => false⟩
+  rw [Collection.invProbAt_eq]
+  refine (OneWay.uexp_mono fun r => ?_).trans (OneWay.uexp_const _).le
+  generalize hi : (factoringCollection H).index n r = i
+  rw [factoringCollection_index] at hi
+  subst hi
+  have hm : max (List.replicate n true).length 2 = n := by
+    rw [List.length_replicate]; exact max_eq_left hn
+  refine le_trans (le_of_eq ?_) (fac_invProb_le A n _ hm)
+  refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+    (factoringCollection_domEquiv H (List.replicate n true)) (Equiv.refl (A.Coins n))) _)
+  rintro ⟨x, r⟩
+  simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
+  rw [factoringCollection_f, factoringCollection_decD]
+  constructor
+  · rintro ⟨x', hx', hf⟩
+    rw [Option.map_eq_some_iff] at hx'
+    obtain ⟨w, hw, rfl⟩ := hx'
+    refine ⟨w, hw, ?_⟩
+    rw [factoringCollection_f, Equiv.apply_symm_apply] at hf
+    exact hf
+  · rintro ⟨w, hw, hf⟩
+    refine ⟨(factoringCollection_domEquiv H _).symm w, by rw [hw, Option.map_some], ?_⟩
+    rw [factoringCollection_f, Equiv.apply_symm_apply]
+    exact hf
 
 /-- **Theorem 51.1** [PS10, Theorem 51.1]: under the factoring assumption (and the
 arithmetic hypotheses), the factoring collection `{f_i(p, q) = pq}` is a collection of
@@ -885,6 +1843,9 @@ probability by `factorProb (collectionFactorer A) n` for `n ≥ 2`, which is neg
 `factorProb_nonneg`, threshold `n₀ = 2`). -/
 theorem factoringCollection_oneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
     (factoringCollection H).OneWay := by
-  sorry
+  refine ⟨factoringCollection_sampleClose H, fun A => ?_⟩
+  refine ((factoringAssumption_iff.1 hF) (collectionFactorer A)).mono ⟨2, fun n hn => ?_⟩
+  rw [abs_of_nonneg (Collection.invProbAt_nonneg _ _ _), abs_of_nonneg (factorProb_nonneg _ _)]
+  exact factoringCollection_invProbAt_le H A hn
 
 end TCSlib.Cryptography.Candidates
