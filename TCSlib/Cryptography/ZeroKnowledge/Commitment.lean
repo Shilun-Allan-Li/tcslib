@@ -890,7 +890,7 @@ Theorem 79.4), not the collection of [PS10, Definition 55.1]. Both `OneWayPermut
 theorem owp_commitment (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool)
     (hP : OneWayPermutation P) (hh : P.HardCore h) :
     Commitment (owpComStr P h) owpComLen where
-  easy := owpComStr_polyTimeComputable P h hP.toStrongOneWay.easy hh.easy
+  easy := owpComStr_polyTimeComputable P h ((oneWayPermutation_iff P).1 hP).easy hh.easy
   binding := owpComStr_binding P h
   hides := (HardCore.bitHiding hh).owpComStr_hides
 

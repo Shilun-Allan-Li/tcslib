@@ -223,15 +223,12 @@ def ofString (f : List Bool → List Bool) (p : PolyExpr) : FunFamily where
   f _ x i := (f (List.ofFn x)).getD i false
 
 /-- The input length of `ofString f p` at `n` is `n` (the parameter is the input length). -/
-theorem ofString_inLen_eval (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ) :
-    (ofString f p).inLen.eval n = n := rfl
+theorem ofString_inLen_eval (f p) (n : ℕ) : (ofString f p).inLen.eval n = n := rfl
 
 /-- The output length of `ofString f p` at `n` is `p(n)`. -/
-theorem ofString_outLen_eval (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ) :
-    (ofString f p).outLen.eval n = p.eval n := rfl
+theorem ofString_outLen_eval (f p) (n : ℕ) : (ofString f p).outLen.eval n = p.eval n := rfl
 
-/-- The defining equation of `ofString`'s function: bit `i` of `(ofString f p).f n x` is bit `i`
-of `f(x)`, `false` past its end. -/
+/-- The defining equation of `ofString`'s function: bit `i` is `f(x)_i`, `false` past its end. -/
 theorem ofString_f_apply (f : List Bool → List Bool) (p : PolyExpr) (n : ℕ)
     (x : Fin ((ofString f p).inLen.eval n) → Bool) (i : Fin ((ofString f p).outLen.eval n)) :
     (ofString f p).f n x i = (f (List.ofFn x)).getD i false := rfl
@@ -246,8 +243,7 @@ positions `ℓ·i, …, ℓ·i + ℓ - 1`): the encoding of the tuple `(x₁, �
 def blocks (q ℓ : ℕ) : (Fin (q * ℓ) → Bool) ≃ (Fin q → Fin ℓ → Bool) :=
   (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)
 
-/-- The defining equation of `blocks`: `blocks q ℓ x i j = x (finProdFinEquiv (i, j))`, block `i`
-reads position `ℓ·i + j`. -/
+/-- The defining equation of `blocks`: block `i`, position `j` is position `ℓ·i + j` of `x`. -/
 theorem blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
     blocks q ℓ x i j = x (finProdFinEquiv (i, j)) := rfl
 
@@ -376,8 +372,7 @@ theorem ofFn_ofString_f {f : List Bool → List Bool} {p : PolyExpr} (hf : Lengt
   refine List.ext_get (by simp [ofString, hlen]) fun i h₁ h₂ => ?_
   simp [ofString, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem h₂]
 
-/-- On a length-regular `f`, the family `ofString f p` is exactly `f` on encoded strings, for
-inputs in the family's input space `{0,1}^{inLen(n)}`. -/
+/-- `ofFn_ofString_f` on the family's input space `{0,1}^{inLen(n)}`. -/
 theorem ofFn_ofString_apply {f : List Bool → List Bool} {p : PolyExpr} (hf : LengthRegular f p)
     (n : ℕ) (x : Fin ((ofString f p).inLen.eval n) → Bool) :
     List.ofFn ((ofString f p).f n x) = f (List.ofFn x) :=
@@ -730,10 +725,6 @@ theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
   rw [one_div] at hred
   linarith
 
-/-- `blocks q ℓ x i j` reads position `ℓ·i + j` of `x`. -/
-private theorem blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) :
-    FunFamily.blocks q ℓ x i j = x (finProdFinEquiv (i, j)) := rfl
-
 /-- Two blocks: the encoding of `blocks⁻¹ t` is `ofFn (t 0) ++ ofFn (t 1)`. -/
 private theorem ofFn_blocks_two_symm (ℓ : ℕ) (t : Fin 2 → Fin ℓ → Bool) :
     List.ofFn ((FunFamily.blocks 2 ℓ).symm t) = List.ofFn (t 0) ++ List.ofFn (t 1) := by
@@ -956,18 +947,11 @@ def PermFamily.toFunFamily (P : PermFamily) : FunFamily where
 [PS10, §2.10, Definition 55.1, single-function form, as used in Theorems 79.4 and 126.4]. -/
 def OneWayPermutation (P : PermFamily) : Prop := P.toFunFamily.StrongOneWay
 
-/-- The defining equivalence of `OneWayPermutation`:
-`OneWayPermutation P ↔ P.toFunFamily.StrongOneWay`. -/
+/-- The defining equivalence: `OneWayPermutation P ↔ P.toFunFamily.StrongOneWay`. -/
 theorem oneWayPermutation_iff (P : PermFamily) :
     OneWayPermutation P ↔ P.toFunFamily.StrongOneWay := Iff.rfl
 
-/-- A one-way permutation's family is strongly one-way (`oneWayPermutation_iff`, forward). -/
-theorem OneWayPermutation.toStrongOneWay {P : PermFamily} (hP : OneWayPermutation P) :
-    P.toFunFamily.StrongOneWay := hP
-
-/-- **The evaluator of a one-way permutation**, in permutation form: some polynomial-time `F`
-computes `f_n(x)` from `⟨1^n, x⟩` for `x ∈ {0,1}^n` (the easiness clause of
-`P.toFunFamily.StrongOneWay` through `toFunFamily_domEquiv`). -/
+/-- **The evaluator of a one-way permutation**: a polynomial-time `F` with `F⟨1^n, x⟩ = f_n(x)`. -/
 theorem OneWayPermutation.evaluator {P : PermFamily} (hP : OneWayPermutation P) :
     ∃ F : List Bool → List Bool, PolyTimeComputable F ∧
       ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x) :=
@@ -977,12 +961,6 @@ theorem OneWayPermutation.evaluator {P : PermFamily} (hP : OneWayPermutation P) 
 @[simp] theorem PermFamily.toFunFamily_f (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :
     P.toFunFamily.f n x = P.f n x := rfl
 
-/-- Field equation: the input length of `P.toFunFamily` is `var`. -/
-theorem PermFamily.toFunFamily_inLen (P : PermFamily) : P.toFunFamily.inLen = .var := rfl
-
-/-- Field equation: the output length of `P.toFunFamily` is `var`. -/
-theorem PermFamily.toFunFamily_outLen (P : PermFamily) : P.toFunFamily.outLen = .var := rfl
-
 /-- The input length of `P.toFunFamily` at `n` is `n`. -/
 theorem PermFamily.toFunFamily_inLen_eval (P : PermFamily) (n : ℕ) :
     P.toFunFamily.inLen.eval n = n := rfl
@@ -991,21 +969,15 @@ theorem PermFamily.toFunFamily_inLen_eval (P : PermFamily) (n : ℕ) :
 theorem PermFamily.toFunFamily_outLen_eval (P : PermFamily) (n : ℕ) :
     P.toFunFamily.outLen.eval n = n := rfl
 
-/-- **The domain of `P.toFunFamily` is `{0,1}^n`**: the published equivalence
-`{0,1}^{inLen(n)} ≃ {0,1}^n` (the identity on the definition), through which a statement reads
-inputs of the family as inputs of the permutation. -/
+/-- **The domain of `P.toFunFamily` is `{0,1}^n`**: `{0,1}^{inLen(n)} ≃ {0,1}^n` (identity). -/
 def PermFamily.toFunFamily_domEquiv (P : PermFamily) (n : ℕ) :
-    (Fin (P.toFunFamily.inLen.eval n) → Bool) ≃ (Fin n → Bool) :=
-  Equiv.refl _
+    (Fin (P.toFunFamily.inLen.eval n) → Bool) ≃ (Fin n → Bool) := Equiv.refl _
 
-/-- **The range of `P.toFunFamily` is `{0,1}^n`**: the published equivalence
-`{0,1}^{outLen(n)} ≃ {0,1}^n` (the identity on the definition). -/
+/-- **The range of `P.toFunFamily` is `{0,1}^n`**: `{0,1}^{outLen(n)} ≃ {0,1}^n` (identity). -/
 def PermFamily.toFunFamily_codEquiv (P : PermFamily) (n : ℕ) :
-    (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool) :=
-  Equiv.refl _
+    (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool) := Equiv.refl _
 
-/-- The domain equivalence keeps the string:
-`List.ofFn (P.toFunFamily_domEquiv n x) = List.ofFn x`. -/
+/-- The domain equivalence keeps the string. -/
 theorem PermFamily.toFunFamily_domEquiv_ofFn (P : PermFamily) (n : ℕ)
     (x : Fin (P.toFunFamily.inLen.eval n) → Bool) :
     List.ofFn (P.toFunFamily_domEquiv n x) = List.ofFn x := rfl
@@ -1014,18 +986,12 @@ theorem PermFamily.toFunFamily_domEquiv_ofFn (P : PermFamily) (n : ℕ)
 theorem PermFamily.toFunFamily_domEquiv_symm_ofFn (P : PermFamily) (n : ℕ) (x : Fin n → Bool) :
     List.ofFn ((P.toFunFamily_domEquiv n).symm x) = List.ofFn x := rfl
 
-/-- The range equivalence keeps the string:
-`List.ofFn (P.toFunFamily_codEquiv n y) = List.ofFn y`. -/
+/-- The range equivalence keeps the string. -/
 theorem PermFamily.toFunFamily_codEquiv_ofFn (P : PermFamily) (n : ℕ)
     (y : Fin (P.toFunFamily.outLen.eval n) → Bool) :
     List.ofFn (P.toFunFamily_codEquiv n y) = List.ofFn y := rfl
 
-/-- The inverse range equivalence keeps the string. -/
-theorem PermFamily.toFunFamily_codEquiv_symm_ofFn (P : PermFamily) (n : ℕ) (y : Fin n → Bool) :
-    List.ofFn ((P.toFunFamily_codEquiv n).symm y) = List.ofFn y := rfl
-
-/-- The function of `P.toFunFamily` through the two equivalences is the permutation:
-`codEquiv (f_n x) = P.f n (domEquiv x)`. -/
+/-- Through the equivalences `P.toFunFamily` is `P`: `codEquiv (f_n x) = P.f n (domEquiv x)`. -/
 theorem PermFamily.toFunFamily_f_domEquiv (P : PermFamily) (n : ℕ)
     (x : Fin (P.toFunFamily.inLen.eval n) → Bool) :
     P.toFunFamily_codEquiv n (P.toFunFamily.f n x) = P.f n (P.toFunFamily_domEquiv n x) := rfl

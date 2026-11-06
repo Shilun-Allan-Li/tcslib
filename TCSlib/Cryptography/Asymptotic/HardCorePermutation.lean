@@ -168,6 +168,91 @@ def glHalfBit (n : ℕ) (z : Fin n → Bool) : Bool :=
   HardcoreBit.ip (fun j : Fin (n / 2) => z (Fin.castLE (Nat.div_le_self n 2) j))
     (fun j : Fin (n / 2) => z ⟨n / 2 + j, by omega⟩)
 
+/-! ## `glPad` of a permutation family on `{0,1}^{m+m}` -/
+
+/-- The input length of `g = glPad` of a permutation family at `m` is `m + m`. -/
+theorem PermFamily.glPad_inLen_eval (P : PermFamily) (m : ℕ) :
+    P.toFunFamily.glPad.inLen.eval m = m + m := by
+  rw [FunFamily.glPad_inLen_eval, P.toFunFamily_inLen_eval]
+
+/-- The output length of `g = glPad` of a permutation family at `m` is `m + m`. -/
+theorem PermFamily.glPad_outLen_eval (P : PermFamily) (m : ℕ) :
+    P.toFunFamily.glPad.outLen.eval m = m + m := by
+  rw [FunFamily.glPad_outLen_eval, P.toFunFamily_outLen_eval, P.toFunFamily_inLen_eval]
+
+/-- **The inputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
+equivalence `{0,1}^{inLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along `PermFamily.glPad_inLen_eval`),
+through which the balanced permutation of `Asymptotic/HardCorePermutation.lean` reads `g`. -/
+def PermFamily.glPad_inEquiv (P : PermFamily) (m : ℕ) :
+    (Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
+  Equiv.arrowCongr (finCongr (P.glPad_inLen_eval m)) (Equiv.refl Bool)
+
+/-- **The outputs of `glPad` of a permutation family are `{0,1}^{m+m}`**: the published
+equivalence `{0,1}^{outLen_g(m)} ≃ {0,1}^{m+m}` (`finCongr` along
+`PermFamily.glPad_outLen_eval`). -/
+def PermFamily.glPad_outEquiv (P : PermFamily) (m : ℕ) :
+    (Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) ≃ (Fin (m + m) → Bool) :=
+  Equiv.arrowCongr (finCongr (P.glPad_outLen_eval m)) (Equiv.refl Bool)
+
+/-- The input equivalence keeps the string: `List.ofFn (P.glPad_inEquiv m z) = List.ofFn z`. -/
+theorem PermFamily.glPad_inEquiv_ofFn (P : PermFamily) (m : ℕ)
+    (z : Fin (P.toFunFamily.glPad.inLen.eval m) → Bool) :
+    List.ofFn (P.glPad_inEquiv m z) = List.ofFn z :=
+  (List.ofFn_congr (P.glPad_inLen_eval m) z).symm
+
+/-- The inverse input equivalence keeps the string. -/
+theorem PermFamily.glPad_inEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
+    List.ofFn ((P.glPad_inEquiv m).symm z) = List.ofFn z := by
+  rw [← P.glPad_inEquiv_ofFn m, Equiv.apply_symm_apply]
+
+/-- The output equivalence keeps the string: `List.ofFn (P.glPad_outEquiv m y) = List.ofFn y`. -/
+theorem PermFamily.glPad_outEquiv_ofFn (P : PermFamily) (m : ℕ)
+    (y : Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) :
+    List.ofFn (P.glPad_outEquiv m y) = List.ofFn y :=
+  (List.ofFn_congr (P.glPad_outLen_eval m) y).symm
+
+/-- The inverse output equivalence keeps the string. -/
+theorem PermFamily.glPad_outEquiv_symm_ofFn (P : PermFamily) (m : ℕ) (y : Fin (m + m) → Bool) :
+    List.ofFn ((P.glPad_outEquiv m).symm y) = List.ofFn y := by
+  rw [← P.glPad_outEquiv_ofFn m, Equiv.apply_symm_apply]
+
+/-- The input `x ‖ r` of `glPad` of a permutation family, read through the two equivalences:
+`(P.glPad_inEquiv m).symm (x ‖ r) = (glPad_inEquiv m).symm (domEquiv⁻¹ x ‖ domEquiv⁻¹ r)`. -/
+theorem PermFamily.glPad_inEquiv_symm_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    (P.glPad_inEquiv m).symm (Fin.append x r) = (P.toFunFamily.glPad_inEquiv m).symm
+      (Fin.append ((P.toFunFamily_domEquiv m).symm x) ((P.toFunFamily_domEquiv m).symm r)) := by
+  apply List.ofFn_injective
+  rw [P.glPad_inEquiv_symm_ofFn, FunFamily.glPad_inEquiv_symm_ofFn, List.ofFn_fin_append,
+    List.ofFn_fin_append, P.toFunFamily_domEquiv_symm_ofFn, P.toFunFamily_domEquiv_symm_ofFn]
+
+/-- **`g(x ‖ r) = f(x) ‖ r` for `glPad` of a permutation family**, on `{0,1}^{m+m}` through
+`PermFamily.glPad_inEquiv`/`glPad_outEquiv`. -/
+theorem PermFamily.glPad_f_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    P.glPad_outEquiv m (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm (Fin.append x r))) =
+      Fin.append (P.f m x) r := by
+  rw [P.glPad_inEquiv_symm_append m x r]
+  apply List.ofFn_injective
+  rw [P.glPad_outEquiv_ofFn, ← FunFamily.glPad_outEquiv_ofFn P.toFunFamily m,
+    FunFamily.glPad_f_equiv, List.ofFn_fin_append, List.ofFn_fin_append,
+    ← P.toFunFamily_codEquiv_ofFn, P.toFunFamily_f_domEquiv, Equiv.apply_symm_apply,
+    P.toFunFamily_domEquiv_symm_ofFn]
+
+/-- The inner product does not see the indexing of equal strings: if `x', r'` and `x, r` have
+the same encodings (over `Fin k` and `Fin m`, `k = m`), then `⟨x', r'⟩ = ⟨x, r⟩`. -/
+theorem HardcoreBit.ip_eq_of_ofFn {k m : ℕ} (h : k = m) {x' r' : Fin k → Bool}
+    {x r : Fin m → Bool} (hx : List.ofFn x' = List.ofFn x) (hr : List.ofFn r' = List.ofFn r) :
+    HardcoreBit.ip x' r' = HardcoreBit.ip x r := by
+  subst h
+  rw [List.ofFn_injective hx, List.ofFn_injective hr]
+
+/-- **`h(x ‖ r) = ⟨x, r⟩` for `glPad` of a permutation family**, on `{0,1}^{m+m}` through
+`PermFamily.glPad_inEquiv`. -/
+theorem PermFamily.glBit_append (P : PermFamily) (m : ℕ) (x r : Fin m → Bool) :
+    P.toFunFamily.glBit m ((P.glPad_inEquiv m).symm (Fin.append x r)) = HardcoreBit.ip x r := by
+  rw [P.glPad_inEquiv_symm_append m x r, FunFamily.glBit_equiv]
+  exact HardcoreBit.ip_eq_of_ofFn (P.toFunFamily_inLen_eval m)
+    (P.toFunFamily_domEquiv_symm_ofFn m x) (P.toFunFamily_domEquiv_symm_ofFn m r)
+
 /-! ## Even lengths: the balanced permutation is `glPad` -/
 
 /-- **At even length `m + m` the balanced permutation is the padded family**
@@ -549,7 +634,13 @@ private theorem glHalfOddPred_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : B
   rfl
 
 /-- **Inversion at even length**: inverting `glHalf` at `2m` with `A` is inverting `glPad` at
-`m` with the parameter-change machine `A.reparam (var + var)`. -/
+`m` with the parameter-change machine `A.reparam (var + var)`.
+
+**Proof sketch.** Read the inputs through `e₁ := toFunFamily_domEquiv ∘ glPad_inEquiv⁻¹` and the
+coins through `reparamCoins` (`uprob_comp_equiv`). The encodings of the two values agree
+(`toFunFamily_codEquiv_ofFn`, `toFunFamily_f_domEquiv`, `glHalf_f_even`, `glPad_outEquiv_ofFn`), so
+equal values correspond (`List.ofFn_inj`) and a preimage `x'` of one side is `e₁ x'` on the other
+(`runAt_reparam`, the `ofFn` lemmas of the equivalences). -/
 theorem glHalf_invProbAt_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
     P.glHalf.toFunFamily.invProbAt A (m + m) =
       P.toFunFamily.glPad.invProbAt (A.reparam (.add .var .var)) m := by
@@ -579,7 +670,14 @@ theorem glHalf_invProbAt_even (P : PermFamily) (A : NUPPT) (m : ℕ) :
     exact h1
 
 /-- **Inversion at odd length**: inverting `glHalf` at `2m + 1` with `A` is at most inverting
-`glPad` at `m` with the odd-length inverter. -/
+`glPad` at `m` with the odd-length inverter.
+
+**Proof sketch.** Read the inputs of `glHalf` on `{0,1}^{m+m+1}` (`toFunFamily_domEquiv`), split
+off the pass-through bit (`snocCoins`) and read `glPad`'s inputs and the inverter's coins through
+`glPad_inEquiv` and `oddCoins` (`uprob_comp_equiv`); then compare pointwise (`uprob_mono`). A
+preimage `x'` of `glHalf` gives, by `glHalf_f_odd` and `Fin.init`, a `glPad`-preimage
+`glPad_inEquiv⁻¹ (init x')` (`glPad_outEquiv` is injective), and the odd-length inverter returns
+it (`glHalfOddInv_runAt`, `ofFn_snoc_eq`, `ofFn_eq_init_append`). -/
 theorem glHalf_invProbAt_odd_le (P : PermFamily) (A : NUPPT) (m : ℕ) :
     P.glHalf.toFunFamily.invProbAt A (m + m + 1) ≤
       P.toFunFamily.glPad.invProbAt (glHalfOddInv A) m := by
@@ -695,8 +793,9 @@ negligible function of Definition 78.3 is `ε n := ε₁ (n/2) + ε₂ (n/2)` (`
 `Negligible.add`). -/
 theorem OneWayPermutation.glHalf {P : PermFamily} (hP : OneWayPermutation P) :
     OneWayPermutation P.glHalf ∧ P.glHalf.HardCore glHalfBit := by
-  have hG : P.toFunFamily.glPad.StrongOneWay := hP.toStrongOneWay.glPad
-  have hB : HardCore P.toFunFamily.glPad P.toFunFamily.glBit := hP.toStrongOneWay.glPad_hardCore
+  have hG : P.toFunFamily.glPad.StrongOneWay := ((oneWayPermutation_iff P).1 hP).glPad
+  have hB : HardCore P.toFunFamily.glPad P.toFunFamily.glBit :=
+    ((oneWayPermutation_iff P).1 hP).glPad_hardCore
   obtain ⟨F, hF, hFx⟩ := hP.evaluator
   refine ⟨(oneWayPermutation_iff _).2 ⟨P.glHalf_easy hF hFx, fun A => ?_⟩,
     PermFamily.HardCore.of_easy_hard glHalfBit_easy fun A => ?_⟩
