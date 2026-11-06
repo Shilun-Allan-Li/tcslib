@@ -753,6 +753,7 @@ files, each by `Cfg.ext` with the `Cfg.init_*` and `Cfg.mapState_*` field equati
   with the host's blank fields;
 - `NTimeHierarchy`'s `un_setup` (private, line 604): its local `hstart` (line 1410), the instance
   at a seven-fold `Sum.inl` of the embedded blank start `c0`.
+**Partly published (the user, 2026-11-06):** the U2 harvest publishes it as `Turing.MultiTapeTM.initCfg_eq_mapState` in `Build/UniversalParts` (both of `UniversalK`'s uses now cite it). The other sites re-point to it in the dedup window, without a move to `Finite`.
 
 Census (one member per file; each count at the tree named): `CodeSimulator` 1 of 208 declarations at
 #170's head (12 public, 196 private; 0.5%), `ExhaustiveReplay` 1 of 185 (0.5%), `UniversalK` 2 of 79
