@@ -142,12 +142,12 @@ theorem acceptProb_tableDist_prg (G : S → V) (A : OracleAdversary ρ P V) {q j
   have h1 : acceptProb G (tableDist G A q j) =
       uprob (fun z : S × ((Fin q → S) × ((Fin q → V) × ρ)) =>
         E (update z.2.1 ⟨j, hj⟩ z.1) z.2.2) := by
-    rw [acceptProb, ← uprob_comp_equiv e
+    rw [acceptProb_def, ← uprob_comp_equiv e
       (fun z : S × (((Fin q → S) × (Fin q → V)) × ρ) => tableDist G A q j (G z.1) z.2 = true)]
     exact uprob_congr fun z => iff_of_eq
       (congrArg (fun a => (A z.2.2.2).evalLazy a [] = true) (hs z.1 (z.2.1, z.2.2.1)))
   have h2 : subHybridProb G A q j = uprob (fun z : (Fin q → S) × ((Fin q → V) × ρ) => E z.1 z.2) := by
-    rw [subHybridProb, acceptProb, ← uprob_comp_equiv (Equiv.prodAssoc _ _ _).symm
+    rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc _ _ _).symm
       (fun z : ((Fin q → S) × (Fin q → V)) × ρ => lazyDist A (subHybridStream G j z.1) z.2 = true)]
     rfl
   rw [h1, h2]
@@ -189,13 +189,13 @@ theorem acceptProb_tableDist_uniform (G : S → V) (A : OracleAdversary ρ P V) 
   have h1 : acceptProb (id : V → V) (tableDist G A q j) =
       uprob (fun z : V × ((Fin q → V) × ((Fin q → S) × ρ)) =>
         E (update z.2.1 ⟨j, hj⟩ z.1) z.2.2) := by
-    rw [acceptProb, ← uprob_comp_equiv e
+    rw [acceptProb_def, ← uprob_comp_equiv e
       (fun z : V × (((Fin q → S) × (Fin q → V)) × ρ) => tableDist G A q j (id z.1) z.2 = true)]
     exact uprob_congr fun z => iff_of_eq
       (congrArg (fun a => (A z.2.2.2).evalLazy a [] = true) (hs z.1 (z.2.2.1, z.2.1)))
   have h2 : subHybridProb G A q (j + 1) =
       uprob (fun z : (Fin q → V) × ((Fin q → S) × ρ) => E z.1 z.2) := by
-    rw [subHybridProb, acceptProb, ← uprob_comp_equiv e'
+    rw [subHybridProb, acceptProb_def, ← uprob_comp_equiv e'
       (fun z : ((Fin q → S) × (Fin q → V)) × ρ =>
         lazyDist A (subHybridStream G (j + 1) z.1) z.2 = true)]
     rfl
@@ -214,7 +214,7 @@ theorem subHybridProb_zero (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ}
     subHybridProb G A q 0 = acceptProb (fun R : P → S => G ∘ R) (oracleDist A) := by
   have h1 : subHybridProb G A q 0 = uprob (fun z : ρ × ((Fin q → S) × (Fin q → V)) =>
       ((A z.1).simulate id (fun _ => G)).evalLazy (extendStream z.2.1) [] = true) := by
-    rw [subHybridProb, acceptProb]
+    rw [subHybridProb, acceptProb_def]
     refine (uprob_prod_comm (fun W r => lazyDist A (subHybridStream G 0 W) r = true)).trans
       (uprob_congr fun z => iff_of_eq ?_)
     have hs : subHybridStream G 0 z.2 = G ∘ extendStream z.2.1 := by
@@ -222,10 +222,10 @@ theorem subHybridProb_zero (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ}
     rw [lazyDist, hs, evalLazy_comp]
   have h2 : acceptProb (fun R : P → S => G ∘ R) (oracleDist A) =
       uprob (fun z : ρ × (P → S) => ((A z.1).simulate id (fun _ => G)).eval z.2 = true) := by
-    rw [acceptProb]
+    rw [acceptProb_def]
     refine (uprob_prod_comm (fun R r => oracleDist A (G ∘ R) r = true)).trans
       (uprob_congr fun z => iff_of_eq ?_)
-    rw [eval_simulate]; rfl
+    rw [oracleDist_apply, eval_simulate]; rfl
   rw [h1, h2]
   refine uprob_sections_congr
     (fun r (W : (Fin q → S) × (Fin q → V)) =>
@@ -233,7 +233,7 @@ theorem subHybridProb_zero (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ}
     (fun r (R : P → S) => ((A r).simulate id (fun _ => G)).eval R = true) fun r => ?_
   exact (uprob_fst (fun W : Fin q → S =>
     ((A r).simulate id (fun _ => G)).evalLazy (extendStream W) [] = true)).trans
-    (uprob_evalLazy (· = true) ((hA r).simulate _ _))
+    (uprob_evalLazy (· = true) (((OracleAdversary.boundedBy_iff A q).1 hA r).simulate _ _))
 
 /-- The sub-hybrid `H_q` is the random table: for an adversary making at most `q`
 queries, all its distinct queries are answered by fresh uniform values, which is the same
@@ -248,22 +248,24 @@ theorem subHybridProb_top (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ}
     subHybridProb G A q q = acceptProb (randomFunction P V) (oracleDist A) := by
   have h1 : subHybridProb G A q q = uprob (fun z : ρ × ((Fin q → S) × (Fin q → V)) =>
       (A z.1).evalLazy (extendStream z.2.2) [] = true) := by
-    rw [subHybridProb, acceptProb]
+    rw [subHybridProb, acceptProb_def]
     refine (uprob_prod_comm (fun W r => lazyDist A (subHybridStream G q W) r = true)).trans
       (uprob_congr fun z => iff_of_eq ?_)
     rw [lazyDist]
     congr 1
-    exact evalLazy_congr (hA z.1) [] fun k hk => if_pos (by simpa using hk)
+    exact evalLazy_congr ((OracleAdversary.boundedBy_iff A q).1 hA z.1) [] fun k hk =>
+      if_pos (by simpa using hk)
   have h2 : acceptProb (randomFunction P V) (oracleDist A) =
       uprob (fun z : ρ × (P → V) => (A z.1).eval z.2 = true) := by
-    rw [acceptProb]
-    exact uprob_prod_comm (fun T r => oracleDist A (randomFunction P V T) r = true)
+    rw [acceptProb_def]
+    simp only [oracleDist_apply, randomFunction_apply]
+    exact uprob_prod_comm (fun T r => (A r).eval T = true)
   rw [h1, h2]
   refine uprob_sections_congr
     (fun r (W : (Fin q → S) × (Fin q → V)) => (A r).evalLazy (extendStream W.2) [] = true)
     (fun r (T : P → V) => (A r).eval T = true) fun r => ?_
   exact (uprob_snd (fun W : Fin q → V => (A r).evalLazy (extendStream W) [] = true)).trans
-    (uprob_evalLazy (· = true) (hA r))
+    (uprob_evalLazy (· = true) ((OracleAdversary.boundedBy_iff A q).1 hA r))
 
 /-- **Sub-hybrid argument.** For an adversary making at most `q` queries to a table, the
 gap between the pseudorandom table `G ∘ R` and a uniform table is at most the sum over
@@ -285,8 +287,7 @@ theorem table_hybrid (G : S → V) (A : OracleAdversary ρ P V) {q : ℕ} (hA : 
     refine Finset.sum_congr rfl fun j _ => ?_
     have h1 := acceptProb_tableDist_prg G A j.isLt
     have h2 := acceptProb_tableDist_uniform G A j.isLt
-    unfold distAdv
-    rw [h1, h2]
+    rw [distAdv_def, h1, h2]
   exact key.trans hsum.le
 
 end TCSlib.Cryptography

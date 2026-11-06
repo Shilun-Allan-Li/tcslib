@@ -152,7 +152,7 @@ omit [Fintype ρ] in
 theorem multiMsgAdv_boundedBy (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     (multiMsgAdv m D).BoundedBy (q + 1) :=
-  fun c => boundedBy_chainTree (q + 1) c.1 _
+  (OracleAdversary.boundedBy_iff _ _).2 fun c => boundedBy_chainTree (q + 1) c.1 _
 
 /-- Running `multiMsgAdv m D` with the oracle `F k` (for a uniform key `k`) accepts with the
 probability that `D` accepts the hybrid sampler `prfEncReal F m` (reassociation of the seed
@@ -161,11 +161,11 @@ theorem acceptProb_oracleDist_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n
     (m : Fin (q + 1) → Fin n → Bool)
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     acceptProb F (oracleDist (multiMsgAdv m D)) = acceptProb (prfEncReal F m) D := by
-  unfold acceptProb
+  rw [acceptProb_def, acceptProb_def]
   rw [← uprob_comp_equiv (Equiv.prodAssoc K (Fin (q + 1) → Fin n → Bool) ρ)]
   congr 1
   funext z
-  simp only [oracleDist, multiMsgAdv, eval_chainTree, Equiv.prodAssoc_apply]
+  simp only [oracleDist_apply, multiMsgAdv, eval_chainTree, Equiv.prodAssoc_apply]
   rfl
 
 /-- **Thm-99.2.1: the gap `H¹ → H²` is a PRF advantage.** The advantage of `D` between the real
@@ -177,7 +177,7 @@ theorem prfAdv_multiMsgAdv (F : K → (Fin n → Bool) → (Fin n → Bool))
     (D : (Fin (q + 1) → (Fin n → Bool) × (Fin n → Bool)) → ρ → Bool) :
     prfAdv F (multiMsgAdv m D) =
       distAdv (prfEncReal F m) (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m) D := by
-  rw [prfAdv, distAdv, distAdv, acceptProb_oracleDist_multiMsgAdv,
+  rw [prfAdv_def, distAdv_def, distAdv_def, acceptProb_oracleDist_multiMsgAdv,
     acceptProb_oracleDist_multiMsgAdv]
 
 /-- **The collision bound** ([PS10, Theorem 99.2, proof, "`∃ i, j` such that `r_i = r_j`, but this
@@ -355,7 +355,7 @@ theorem distAdv_prfEncReal_le (F : K → (Fin n → Bool) → (Fin n → Bool))
   have h23 := distAdv_prfEncReal_random_otp_le m D
   have h45 := distAdv_prfEncReal_random_otp_le m' D
   have h34 := acceptProb_otpEnc m m' D
-  simp only [distAdv] at h12 h56 h23 h45 ⊢
+  simp only [distAdv_def] at h12 h56 h23 h45 ⊢
   rw [h12, h56, abs_sub_comm (acceptProb (prfEncReal F m') D)]
   rw [abs_sub_comm (acceptProb (prfEncReal (randomFunction (Fin n → Bool) (Fin n → Bool)) m') D)]
     at h45

@@ -130,8 +130,8 @@ theorem selHalf_ofFn {n : ℕ} (b : Bool) {u : List Bool} (hu : u.length = n)
     (z : Fin (2 * n) → Bool) :
     selHalf b u (List.ofFn z) = List.ofFn (pairSel b (splitHalves z)) := by
   cases b
-  · simp only [selHalf, pairSel, Bool.false_eq_true, if_false, hu, take_ofFn_splitHalves]
-  · simp only [selHalf, pairSel, if_true, hu, drop_ofFn_splitHalves]
+  · simp only [selHalf, pairSel_false, Bool.false_eq_true, if_false, hu, take_ofFn_splitHalves]
+  · simp only [selHalf, pairSel_true, if_true, hu, drop_ofFn_splitHalves]
     exact List.take_of_length_le (le_of_eq List.length_ofFn)
 
 /-- Half selection is at most as long as the reference word. -/
