@@ -1123,6 +1123,12 @@ untyped `have`/`obtain` on a core or Mathlib term with a later rewrite `at` it (
 `evidence/round4/sweep/`); the one other such site, `nf_display_flag`'s `hm`, has no library
 statement. No family; no member remains.
 
+**Gate 95's round-4 major 1**: one more fold-concatenation member, in `nf_ctl_position`'s
+`simp only` set, which the round-3 sweep had wrongly exempted as a simp set. #191's commit
+`b4af93b7` cites `List.foldl_concat`. The sweep now checks every member of both chain classes
+anywhere in the file (gate 95, `evidence/round5/sweep/`). No family; no member found by that
+check.
+
 **RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
 note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
 carried here until now.
