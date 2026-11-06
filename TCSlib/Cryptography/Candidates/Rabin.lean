@@ -110,6 +110,10 @@ Assumption holds", restricted to `p ≡ q ≡ 3 (mod 4)`]: every non-uniform PPT
 uniform Blum modulus with negligible probability. -/
 def BlumFactoringAssumption : Prop := ∀ A : NUPPT, Negligible fun n => blumFactorProb A n
 
+/-- Unfolding: the Blum factoring assumption is the negligibility of every `blumFactorProb`. -/
+theorem blumFactoringAssumption_iff :
+    BlumFactoringAssumption ↔ ∀ A : NUPPT, Negligible fun n => blumFactorProb A n := Iff.rfl
+
 /-- **Density of Blum primes** (explicit hypothesis, decision log "Rabin/RSA scope"):
 `2^n ≤ 4n · #{p < 2^n prime, p ≡ 3 (mod 4)}` for `n ≥ 2`, the analogue of
 [PS10, Claim 33.1] for primes `≡ 3 (mod 4)` (true by Dirichlet's theorem with error terms,
@@ -684,6 +688,12 @@ theorem rabinCollection_oneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
 def BlumValid (i : List Bool) : Prop :=
   ∃ p ∈ Finset.range (listToNat i), ∃ q ∈ Finset.range (listToNat i),
     p.Prime ∧ q.Prime ∧ p ≠ q ∧ p % 4 = 3 ∧ q % 4 = 3 ∧ listToNat i = p * q
+
+/-- Unfolding `BlumValid`: `i` is a valid Blum index iff it reads as `N = pq` with `p ≠ q`
+primes below `N`, both `≡ 3 (mod 4)`. -/
+theorem blumValid_iff (i : List Bool) :
+    BlumValid i ↔ ∃ p ∈ Finset.range (listToNat i), ∃ q ∈ Finset.range (listToNat i),
+      p.Prime ∧ q.Prime ∧ p ≠ q ∧ p % 4 = 3 ∧ q % 4 = 3 ∧ listToNat i = p * q := Iff.rfl
 
 instance : DecidablePred BlumValid := fun i => by unfold BlumValid; infer_instance
 

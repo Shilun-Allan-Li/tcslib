@@ -117,6 +117,10 @@ roots modulo a random `N = pq` with negligible probability.
 module docstring for the distribution and the input/output conventions. -/
 def RSAAssumption : Prop := ∀ A : NUPPT, Negligible fun n => rsaProb A n
 
+/-- Unfolding: the RSA assumption is the negligibility of every `rsaProb`. -/
+theorem rsaAssumption_iff : RSAAssumption ↔ ∀ A : NUPPT, Negligible fun n => rsaProb A n :=
+  Iff.rfl
+
 /-- The RSA probability is nonnegative. -/
 theorem rsaProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ rsaProb A n := by
   unfold rsaProb uexp
@@ -188,6 +192,10 @@ def rsaE (i : List Bool) : ℕ := listToNat (pairSndD i)
 which `x ↦ x^e` permutes `Z_N^*` [PS10, Theorem 54.3]. (Not efficiently decidable from the
 index — the generator only ever outputs valid indices.) -/
 def RSAValid (i : List Bool) : Prop := rsaN i ≠ 0 ∧ Nat.Coprime (rsaE i) (Nat.totient (rsaN i))
+
+/-- Unfolding `RSAValid`: `⟨N, e⟩` is valid iff `N ≠ 0` and `gcd(e, Φ(N)) = 1`. -/
+theorem rsaValid_iff (i : List Bool) :
+    RSAValid i ↔ rsaN i ≠ 0 ∧ Nat.Coprime (rsaE i) (Nat.totient (rsaN i)) := Iff.rfl
 
 instance : DecidablePred RSAValid := fun _ => inferInstanceAs (Decidable (_ ∧ _))
 

@@ -244,6 +244,10 @@ probability.
 the distribution and the input/output conventions. -/
 def FactoringAssumption : Prop := ∀ A : NUPPT, Negligible fun n => factorProb A n
 
+/-- Unfolding: the factoring assumption is the negligibility of every `factorProb`. -/
+theorem factoringAssumption_iff :
+    FactoringAssumption ↔ ∀ A : NUPPT, Negligible fun n => factorProb A n := Iff.rfl
+
 /-- The factoring probability is nonnegative. -/
 theorem factorProb_nonneg (A : NUPPT) (n : ℕ) : 0 ≤ factorProb A n := uprob_nonneg _
 

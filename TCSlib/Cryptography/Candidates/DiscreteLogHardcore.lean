@@ -460,6 +460,11 @@ generates `Z_p^*`, the setting of [PS10, Lemma 84.1 and Algorithm 84.2]) with `p
 **Deviation:** `p ≡ 3 (mod 4)` (decision log, open question 3). -/
 def FullGroupValid (i : List Bool) : Prop := ExpValid i ∧ dlM i = dlP i - 1 ∧ dlP i % 4 = 3
 
+/-- Unfolding `FullGroupValid`: `i` is a full-group instance iff it is valid, `m = p − 1` and
+`p ≡ 3 (mod 4)`. -/
+theorem fullGroupValid_iff (i : List Bool) :
+    FullGroupValid i ↔ ExpValid i ∧ dlM i = dlP i - 1 ∧ dlP i % 4 = 3 := Iff.rfl
+
 /-- A full-group instance is a valid instance. -/
 theorem FullGroupValid.expValid {i : List Bool} (h : FullGroupValid i) : ExpValid i := h.1
 
@@ -477,6 +482,11 @@ probability.
 hardness for a uniform generator of the full group `Z_p^*` (source error 27), stated here
 relative to a full-group instance generator. -/
 def FullDLAssumption (G : FullGroupGen) : Prop := G.DLHard
+
+/-- Unfolding: the full-group discrete-log assumption is the negligibility of every `dlProb`. -/
+theorem fullDLAssumption_iff (G : FullGroupGen) :
+    FullDLAssumption G ↔ ∀ A : NUPPT, Negligible fun n => G.dlProb A n :=
+  ExpGroupGen.dlHard_iff G
 
 /-- **The discrete-log collection in `Z_p^*`** [PS10, Lemma 84.1, "the exponentiation function
 `f_{p,g}(x) = g^x mod p` from the discrete-log collection `DL`"]: domains `Z_{p−1}`,

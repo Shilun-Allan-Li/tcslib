@@ -326,6 +326,11 @@ negligible statistical term); the tuple is a bit string of `15n + 14` bits; the
 distinguisher receives `1^n` (D5). -/
 def DDHAssumption (G : SafePrimeGen) : Prop := (ddhReal G).Indist (ddhRandom G)
 
+/-- Unfolding: the DDH assumption is the indistinguishability of `ddhReal G` and
+`ddhRandom G`. -/
+theorem ddhAssumption_iff (G : SafePrimeGen) :
+    DDHAssumption G ↔ (ddhReal G).Indist (ddhRandom G) := Iff.rfl
+
 /-! ## Public-key schemes with a key-dependent message space -/
 
 /-- A **public-key encryption scheme with a key-dependent message space** (the shape of
