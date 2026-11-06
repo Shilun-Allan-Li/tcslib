@@ -1,0 +1,8 @@
+# seal candidates for TCSlib.Cryptography.Pseudorandom.Functions.Defs (14 constants walked)
+# format: <candidate>	<defining module>	<direct | inst:<transparent instance/abbrev> | stmt:<used lemma, statement> | src:<lemma named in a simp/rw list, statement> | aux:<unsealable helper, body>>	<declarations of the file using it>
+# 5 candidates sealed by the seal line; 0 already `[irreducible]` globally (sealed by construction, listed as `# already-irreducible:`)
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	stmt:TCSlib.Cryptography.acceptProb_def, direct, stmt:TCSlib.Cryptography.distAdv_def, src:TCSlib.Cryptography.acceptProb_def, … (+1)	TCSlib.Cryptography.acceptProb_congr, TCSlib.Cryptography.prfAdv_eq, TCSlib.Cryptography.prfAdv_nonneg
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct, stmt:TCSlib.Cryptography.distAdv_def, src:TCSlib.Cryptography.distAdv_def, src:TCSlib.Cryptography.prfAdv_def	TCSlib.Cryptography.prfAdv, TCSlib.Cryptography.prfAdv_def, TCSlib.Cryptography.prfAdv_eq, TCSlib.Cryptography.prfAdv_nonneg
+TCSlib.Cryptography.oracleDist	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct, src:TCSlib.Cryptography.oracleDist_apply, src:TCSlib.Cryptography.prfAdv_def	TCSlib.Cryptography.prfAdv, TCSlib.Cryptography.prfAdv_def, TCSlib.Cryptography.prfAdv_eq, TCSlib.Cryptography.prfAdv_nonneg
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	stmt:TCSlib.Cryptography.acceptProb_def, direct, src:TCSlib.Cryptography.acceptProb_def	TCSlib.Cryptography.prfAdv_eq
+TCSlib.Cryptography.QueryTree.eval	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct, src:TCSlib.Cryptography.oracleDist_apply	TCSlib.Cryptography.prfAdv_eq

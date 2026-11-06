@@ -1,0 +1,9 @@
+# seal candidates for TCSlib.Cryptography.ZeroKnowledge.Interaction (125 constants walked)
+# format: <candidate>	<defining module>	<direct | inst:<transparent instance/abbrev> | stmt:<used lemma, statement> | src:<lemma named in a simp/rw list, statement> | aux:<unsealable helper, body>>	<declarations of the file using it>
+# 7 candidates sealed by the seal line; 0 already `[irreducible]` globally (sealed by construction, listed as `# already-irreducible:`)
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.Strategy.pairFstD_encodeMsgs
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	TCSlib.Cryptography.Strategy.encodeMsgs, TCSlib.Cryptography.Strategy.encodeMsgs_cons, TCSlib.Cryptography.Strategy.ofNUPPT, TCSlib.Cryptography.Strategy.ofNUPPT_next, TCSlib.Cryptography.Strategy.pairFstD_encodeMsgs, TCSlib.Cryptography.View.encode, TCSlib.Cryptography.View.encode_mk
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.Strategy.Efficient, TCSlib.Cryptography.Strategy.efficient_iff, TCSlib.Cryptography.Strategy.ofNUPPT_efficient, TCSlib.Cryptography.Strategy.Efficient.exists_uniform
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	direct	TCSlib.Cryptography.Strategy.ofNUPPT, TCSlib.Cryptography.Strategy.ofNUPPT_next
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	direct, src:TCSlib.Cryptography.Protocol.uprob_outV_eq_uexp, src:TCSlib.Cryptography.uexp_def	TCSlib.Cryptography.Protocol.exists_proverCoins_le, TCSlib.Cryptography.Protocol.uprob_outV_eq_uexp
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	stmt:TCSlib.Cryptography.uprob_prod, direct, src:TCSlib.Cryptography.Protocol.uprob_outV_eq_uexp	TCSlib.Cryptography.Protocol.exists_proverCoins_le, TCSlib.Cryptography.Protocol.uprob_outV_eq_uexp
