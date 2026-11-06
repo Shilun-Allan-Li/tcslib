@@ -21,11 +21,15 @@ deterministic overhead, via the midpoint recursion `reach?(u, v, i)` over the
 configuration graph of `TCSlib.Complexity.SpaceComplexity.ConfigGraph`. The
 corollary `PSPACE = NPSPACE` ([AB09, §4.2.1]) closes the polynomial level.
 
-**Status.** `Complexity.PSPACE_eq_NPSPACE` is
-proved, directly at the polynomial level, by the Savitch register machine of
-`TCSlib.Complexity.SpaceComplexity.SavitchARM` (`Complexity.NPSPACE_subset_PSPACE`);
-`Complexity.savitch` (general space-constructible `S`) remains sorried with a sketch
-naming its fill obligations. The polynomial bounds' constructibility,
+**Status.** Both results are proved. `Complexity.savitch` holds for every space bound
+`S ≥ logSpace` (`Complexity.savitch_of_logSpace_le`; constructibility is used only for this
+bound): the deepening register machine of
+`TCSlib.Complexity.SpaceComplexity.SavitchARM.Deepen` decides `L` with registers of
+`O((S n)²)` digits (`Complexity.LogProg.SavitchARM.deepen_contract`), and
+`Complexity.LogProg.arm_decides_SPACE` turns it into a deterministic decider in space
+`O(S · S)`. `Complexity.PSPACE_eq_NPSPACE` is proved directly, at the polynomial level, by the
+Savitch register machine of `TCSlib.Complexity.SpaceComplexity.SavitchARM`
+(`Complexity.NPSPACE_subset_PSPACE`). The polynomial bounds' constructibility,
 `Complexity.spaceConstructible_poly`, is in `TCSlib.Complexity.SpaceComplexity.Constructible`.
 
 ## Design
@@ -34,12 +38,18 @@ naming its fill obligations. The polynomial bounds' constructibility,
   `Complexity.SpaceConstructible` bundles `logSpace n ≤ S n`, so `S` and
   `S · S` are everywhere positive and the zero-bound convention
   (`TCSlib.Complexity.SpaceComplexity.ZeroSpace`) imposes no extra hypothesis.
-* **The recursion is realized iteratively**: `reach?`'s call stack becomes an
-  explicit stack of `O(S)`-bit frames (coded vertices and a midpoint cursor)
-  on a dedicated bank, walked by the loop combinator — the construction library
-  (`Build/Embed.lean`, `Build/Seam.lean`, `Build/Catalog.lean`) is the
-  intended engine, with the depth `O(S)` and frame size `O(S)` giving the
-  `O(S²)` ledger.
+* **The radius is found by iterative deepening, not computed**: instead of computing
+  `S(|x|)` from a constructibility witness, the machine runs Savitch's midpoint search at
+  radius `s = 1, 2, …` ([Sip13, §8.1, proof of Theorem 8.5]). At each radius it first asks
+  whether a configuration with a work head on the window's edge is reachable; if none is,
+  membership is reachability at that radius
+  (`Complexity.LogProg.SavitchARM.mem_iff_reach_of_noEdge`), and beyond the space bound none is
+  (`Complexity.LogProg.SavitchARM.noEdge_of_lt`), so the search stops by radius
+  `sp |x| + 1`.
+* **The recursion is realized by a register machine**: the midpoint search is the Savitch
+  register machine (`Complexity.LogProg.SavitchARM.A`), whose explicit stack keeps every
+  register within `w · w` binary digits for a code width `w = O(S n)`; the deepening machine
+  holds it twice as a block of its own table (`Complexity.LogProg.Ins.embed`).
 
 ## Main definitions
 
@@ -47,7 +57,8 @@ None: the module states theorems only.
 
 ## Main results
 
-* `Complexity.savitch` — [AB09, Theorem 4.14]. (Sorried.)
+* `Complexity.savitch_of_logSpace_le` — [AB09, Theorem 4.14] for every `S ≥ logSpace`.
+* `Complexity.savitch` — [AB09, Theorem 4.14].
 * `Complexity.PSPACE_eq_NPSPACE` — [AB09, §4.2.1]. (Proved.)
 
 ## References
@@ -56,44 +67,54 @@ None: the module states theorems only.
   Cambridge University Press, 2009. (§4.2.1, Theorem 4.14; §4.1.2.)
 * [Sav70] W. J. Savitch, *Relationships between nondeterministic and
   deterministic tape complexities*, JCSS 4(2), 1970. (Cited through [AB09].)
+* [Sip13] M. Sipser, *Introduction to the Theory of Computation*, 3rd ed., Cengage Learning,
+  2013. (§8.1, the proof of Theorem 8.5: the space bound found by trying `1, 2, …`.)
 -/
 
 namespace Complexity
 
 open Turing
 
+/-- **Savitch's theorem for every bound `S ≥ logSpace`** ([AB09, Theorem 4.14]; [Sav70]):
+nondeterministic space `S` sits inside deterministic space `S²` whenever `S ≥ logSpace`; no
+constructibility is needed.
+
+**Proof sketch.** Let `N` decide `L` in space `c · S`. The deepening machine
+(`Complexity.LogProg.SavitchARM.deepen_contract`) answers `x ∈ L` with logspace deciders and
+registers of at most `C (c · S |x| + logSpace |x| + 1)²` binary digits. Since
+`logSpace ≤ S` and `S ≥ 1`, this is at most `C (c + 2)² · (S |x| · S |x|)`, and
+`Complexity.LogProg.arm_decides_SPACE` gives `L ∈ SPACE (S · S)`. -/
+theorem savitch_of_logSpace_le (S : ℕ → ℕ) (hS : ∀ n, logSpace n ≤ S n) :
+    NSPACE S ⊆ SPACE fun n => S n * S n := by
+  rintro L ⟨c, N, hN⟩
+  obtain ⟨m, d, Λ, _, _, D, l₀, As, hAs, C, hcorr⟩ := LogProg.SavitchARM.deepen_contract hN
+  have hS1 : ∀ n, 1 ≤ S n := fun n => le_trans (by rw [logSpace_eq]; omega) (hS n)
+  refine LogProg.arm_decides_SPACE D l₀ As hAs (fun n => S n * S n)
+    (fun n => (hS n).trans (Nat.le_mul_of_pos_right _ (hS1 n))) (C * (c + 2) ^ 2) (fun x => ?_)
+  refine (hcorr x).mono fun a ha => ⟨ha.1, fun r => (ha.2 r).trans ?_⟩
+  have h1 : c * S x.length + logSpace x.length + 1 ≤ (c + 2) * S x.length := by
+    have := hS x.length; have := hS1 x.length; nlinarith
+  calc C * (c * S x.length + logSpace x.length + 1) ^ 2
+      ≤ C * ((c + 2) * S x.length) ^ 2 := Nat.mul_le_mul_left _ (Nat.pow_le_pow_left h1 2)
+    _ = C * (c + 2) ^ 2 * (S x.length * S x.length) := by ring
+
 /-- **Savitch's theorem** ([AB09, Theorem 4.14]; [Sav70]): for
 space-constructible `S`, nondeterministic space `S` sits inside deterministic
 space `S²`.
 
-**Proof sketch.** Let `N` decide `L` in space `c₀ · S`. Membership is
-acceptance within the vertex count
-(`Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound`), i.e.
-reachability, in the configuration graph restricted to the window
-`[-c₀·S n, c₀·S n]`, from the initial vertex to an accepting one
-(`Turing.NDTM.reflTransGen_cfgStep_iff` for the dictionary) within
-`V := N.configBound n (c₀·S n)` steps, where `log₂ V = O(S n)` (the
-`configBound` exponent arithmetic). The deterministic decider evaluates
-`reach?(u, v, i)` — is there a path of length at most `2^i` — by the midpoint
-recursion: enumerate midpoints `m` over the coded vertices and recurse on
-`(u, m, i - 1)` and `(m, v, i - 1)`, **reusing the space** of the first
-recursive call for the second ([AB09]'s crucial point). Realized iteratively:
-an explicit stack of at most `log₂ V + 1 = O(S n)` frames, each one coded
-vertex pair plus a midpoint cursor of `O(S n)` bits, held on a dedicated bank
-and walked with the catalog copy/compare/increment routines under the loop
-combinator; one extra bank runs the vertex-adjacency test (one
-transition-table application on decoded cores) and the base case. Space:
-frames × frame size `= O((S n)²)`, plus `O(S n)` administration — inside
-`SPACE (S·S)`'s constant absorption. The initial radius computation is the
-constructibility witness, whose own space is `O(S n)`. Named fill
-obligations: the frame-stack discipline (a §12 R1/R2 consumer — bank
-embedding for the stack bank, seam composition per frame transition), the
-midpoint enumerator, the adjacency tester, and the arithmetic packaging
-`O(S²) ≤ c' · (S n · S n)`. Positivity of the target bound is automatic
-(`S ≥ logSpace ≥ 1`). -/
+**Proof sketch.** Space-constructibility includes `logSpace ≤ S`, so this is
+`Complexity.savitch_of_logSpace_le`. There, the radius `S(|x|)` is never computed: the
+deterministic machine runs Savitch's midpoint search ([AB09]'s `reach?(u, v, i)`, reusing the
+space of the first recursive call for the second) over the configuration codes at radius
+`s = 1, 2, …`, first asking whether a configuration with a work head on the window's edge `±s`
+is reachable. If one is, the space bound exceeds `s` and it tries `s + 1`; if none is, every
+run stays inside the window, so membership is reachability of an accepting code at radius `s`,
+which it decides by the same search. The search stops by `s = c · S |x| + 1`, the code width is
+`O(S |x|)`, and the search's stack keeps every register within its square, so the space is
+`O((S |x|)²)`. -/
 theorem savitch (S : ℕ → ℕ) (hS : SpaceConstructible S) :
-    NSPACE S ⊆ SPACE fun n => S n * S n := by
-  sorry
+    NSPACE S ⊆ SPACE fun n => S n * S n :=
+  savitch_of_logSpace_le S hS.1
 
 /-- **`PSPACE = NPSPACE`** ([AB09, §4.2.1]; [AB09, Theorem 4.14] at polynomial
 space bounds): at the polynomial level, Savitch's quadratic overhead is absorbed.

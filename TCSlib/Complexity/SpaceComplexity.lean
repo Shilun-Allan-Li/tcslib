@@ -236,6 +236,8 @@ running counter program is simulated by an abstract register machine in
   edge code makes membership midpoint reachability at that radius, and none is reachable beyond
   the space bound (iterative deepening for Thm 4.14 without constructibility, after
   [Sip13, Thm 8.5])
+- `SpaceComplexity.SavitchARM.Deepen`: the deepening machine, Savitch's search run as a block
+  at radius `1, 2, …`; its contract gives Thm 4.14 for every `S ≥ logSpace`
 - `SpaceComplexity.Machines.{MARM, MARMCompile, MARMTime}`: abstract register machines with
   a monotone memory tape, their compilation, and their time bound by configuration counting
   (`marm_dtime`)
