@@ -66,7 +66,7 @@ variable {ι ι' ι₁ ι₂ : Type} {α β σ : Type}
 /-- An **implementation** of the oracles of `spec` by computations over `spec'`, with state `σ`:
 on oracle `i`, query `x` and state `s`, a computation returning the answer and the new state.
 [VCVio, SimSemantics] -/
-def QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
+abbrev QueryImpl {ι ι' : Type} (spec : OracleSpec ι) (σ : Type) (spec' : OracleSpec ι') : Type :=
   ∀ i, spec.dom i → σ → OracleComp spec' (spec.rng i × σ)
 
 /-- An implementation is a function of the oracle, the query and the state:

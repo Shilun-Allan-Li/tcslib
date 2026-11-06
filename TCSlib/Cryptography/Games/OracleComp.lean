@@ -162,7 +162,7 @@ theorem singleSpec_rng (I O : Type) (u : Unit) : (singleSpec I O).rng u = O := r
 
 /-- The **disjoint union** of two oracle families: oracle `.inl i` is oracle `i` of `s₁`, and
 oracle `.inr j` is oracle `j` of `s₂`. [VCVio, OracleComp/OracleSpec] -/
-def OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
+abbrev OracleSpec.add {ι₁ ι₂ : Type} (s₁ : OracleSpec ι₁) (s₂ : OracleSpec ι₂) :
     OracleSpec (ι₁ ⊕ ι₂) :=
   ⟨Sum.elim s₁.dom s₂.dom, Sum.elim s₁.rng s₂.rng⟩
 
