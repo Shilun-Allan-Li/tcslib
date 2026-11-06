@@ -463,6 +463,78 @@ noncomputable def rabinSampler (H : ArithmeticFP) : NUPPT :=
   NUPPT.ofPolyTimeUniform (polyTimeComputable_unitSampleStr H NUPPT.polyTimeComputable_inArg)
     rsaSampleCoins
 
+/-- `[true, false]` reads as `2` (the exponent of the squaring evaluator). -/
+private theorem rabin_listToNat_two : listToNat [true, false] = 2 := by
+  rw [listToNat_eq]; rfl
+
+/-- The fallback `1 % N` of the unit sampler is a unit below `N` (for `N = 1` it is `0`, coprime
+to `1`). -/
+private theorem rabin_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Coprime (1 % N) N := by
+  refine ⟨Nat.mod_lt _ hN, ?_⟩
+  rcases Nat.lt_or_ge 1 N with h | h
+  · rw [Nat.mod_eq_of_lt h]; exact Nat.coprime_one_left _
+  · obtain rfl : N = 1 := by omega
+    simp
+
+/-- The total unit sampler's value is a unit below `N` (`sampleUnitL_spec`, or the fallback). -/
+private theorem rabin_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
+    (sampleUnitL N k B T r).getD (1 % N) < N ∧
+      Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
+  rcases h : sampleUnitL N k B T r with _ | v
+  · exact rabin_one_mod_spec hN
+  · exact sampleUnitL_spec h
+
+/-- The activation of the Rabin sampler: `unitSampleStr` on the index numeral
+(`NUPPT.runAtL_ofPolyTimeUniform` and the layout equations). -/
+private theorem rabin_sampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
+    (s : (rabinSampler H).Coins n) :
+    (rabinSampler H).runAt n i s = unitSampleStr i n (List.ofFn s) := by
+  rw [NUPPT.runAt_eq]
+  unfold rabinSampler
+  rw [NUPPT.runAtL_ofPolyTimeUniform]
+  simp only [NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+    NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+
+/-- **Canonical decoding of `Z_N^*`**: a string that `rabinDec i` decodes to `x` is
+`rabinEnc i x` (the argument of the field `encD_decD` of `rabinCollection`). -/
+private theorem rabin_enc_of_dec {i w : List Bool} {x : (ZMod (rabinMod i))ˣ}
+    (h : rabinDec i w = some x) : rabinEnc i x = w := by
+  rw [rabinDec] at h; split_ifs at h with hw
+  rw [← Option.some.inj h, rabinEnc, ZMod.coe_unitOfCoprime, natToList_val_natCast hw.1 hw.2.1]
+
+/-- The modulus `N = pq` of Rabin parameters is positive. -/
+private theorem rabin_N_pos {P : ℕ → Prop} {m : ℕ} (R : RabinParams P m) : 0 < R.z.p * R.z.q :=
+  NeZero.pos _
+
+/-- The domain modulus at a generated index is `N = pq`. -/
+private theorem rabin_rabinMod_indexOf {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) :
+    rabinMod (rabinIndexOf m R) = R.z.p * R.z.q := by
+  rw [rabinMod, listToNat_rabinIndexOf]
+  have := rabin_N_pos R
+  omega
+
+/-- The unit sampler at a generated index `⟦N⟧_{2m}` is the `2m`-bit numeral of the total S3
+sampler's value at `N` (`unitSampleStr_eq`, `listToNat_rabinIndexOf`). -/
+private theorem rabin_unitSampleStr_indexOf {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) (n : ℕ)
+    (r : List Bool) :
+    unitSampleStr (rabinIndexOf m R) n r = natToList (2 * m)
+      ((sampleUnitL (R.z.p * R.z.q) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n) (rsaTrials.eval n) r).getD
+        (1 % (R.z.p * R.z.q))) := by
+  rw [unitSampleStr_eq, listToNat_rabinIndexOf, rabinIndexOf, length_natToList]
+
+/-- At a generated index the unit sampler's string decodes (`rabinDec`'s three tests:
+width, `v < N`, `gcd(v, N) = 1`). -/
+private theorem rabin_dec_unitSampleStr {P : ℕ → Prop} (m : ℕ) (R : RabinParams P m) (n : ℕ)
+    (r : List Bool) :
+    ∃ x, rabinDec (rabinIndexOf m R) (unitSampleStr (rabinIndexOf m R) n r) = some x := by
+  have hv := rabin_getD_spec (rabin_N_pos R) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
+    (rsaTrials.eval n) r
+  have hval := listToNat_natToList (hv.1.trans R.z.mul_lt)
+  have hM := rabin_rabinMod_indexOf m R
+  rw [rabin_unitSampleStr_indexOf, rabinDec, dif_pos ⟨by simp [rabinIndexOf], by rw [hval, hM]; exact hv.1,
+    by rw [hval, hM]; exact hv.2⟩]
+  exact ⟨_, rfl⟩
+
 /-- **The Rabin sampler's outputs decode and evaluate honestly** (the clause `sample_spec` of
 `Collection`, [PS10, Definition 41.1 (2)]; repair of the run-3 audit, P3-1): at every parameter
 the generated index is the numeral of `N = pq` (`oddGen_runAt`, `rabinIndexOf`) with
@@ -481,7 +553,10 @@ theorem rabinSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (oddGen H).Coins n)
         ((rabinSampler H).runAt n (pairFstD ((oddGen H).runAt n [] r)) s) = some x ∧
       rabinEval (pairEncode (pairFstD ((oddGen H).runAt n [] r))
         ((rabinSampler H).runAt n (pairFstD ((oddGen H).runAt n [] r)) s)) = rabinF _ x := by
-  sorry
+  rw [oddGen_runAt, rabinGenOut, pairFstD_pairEncode, rabin_sampler_runAt]
+  obtain ⟨x, hx⟩ := rabin_dec_unitSampleStr _ (rabinGenParams (· ≠ 2) oddDefault n (List.ofFn r)) n
+    (List.ofFn s)
+  exact ⟨x, hx, by rw [← rabin_enc_of_dec hx, rabinEval_spec]⟩
 
 /-- **The Rabin collection** [PS10, Theorem 61.7]: indices `N = pq` (distinct odd primes),
 domains `Z_N^*`, `f_N(x) = x² mod N`, generator `oddGen`, sampler `rabinSampler`, evaluator
@@ -895,6 +970,43 @@ theorem blumInv_spec (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
       some ((blumPermAt _).symm y) := by
   sorry
 
+/-- The activation of the Blum sampler: the residue of the square of the unit sampler's value,
+as a numeral of the index width (`modExpStr_pairEncode`). -/
+private theorem rabin_blumSampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
+    (s : (blumSampler H).Coins n) :
+    (blumSampler H).runAt n i s = natToList i.length
+      (listToNat (unitSampleStr i n (List.ofFn s)) ^ 2 % listToNat i) := by
+  rw [NUPPT.runAt_eq]
+  unfold blumSampler
+  rw [NUPPT.runAtL_ofPolyTimeUniform]
+  simp only [blumSampleRaw, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+    NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+    modExpStr_pairEncode, rabin_listToNat_two]
+
+/-- **Canonical decoding of `QR_N`**: a string that `blumDec i` decodes to `x` is `blumEnc i x`
+(the argument of the field `encD_decD` of `rabinBlumTrapdoor`). -/
+private theorem rabin_blumEnc_of_dec {i w : List Bool} {x : QR (blumMod i)}
+    (h : blumDec i w = some x) : blumEnc i x = w := by
+  rw [blumDec] at h; split_ifs at h with hv hw hq hw' <;> rw [← Option.some.inj h, blumEnc, blumEncVal]
+  · rw [if_pos hv, ZMod.coe_unitOfCoprime, natToList_val_natCast hw.1 hw.2.1]
+  · rw [if_neg hv, hw']
+
+/-- A generated Blum index is valid. -/
+private theorem rabin_blumValid_indexOf (m : ℕ) (R : RabinParams (· % 4 = 3) m) :
+    BlumValid (rabinIndexOf m R) := by
+  have hp := R.z.p_prime.two_le
+  have hq := R.z.q_prime.two_le
+  rw [blumValid_iff, listToNat_rabinIndexOf]
+  refine ⟨R.z.p, Finset.mem_range.2 ?_, R.z.q, Finset.mem_range.2 ?_, R.z.p_prime, R.z.q_prime,
+    R.z.p_ne_q, R.hp, R.hq, rfl⟩
+  · nlinarith
+  · nlinarith
+
+/-- The domain modulus at a generated Blum index is `N = pq`. -/
+private theorem rabin_blumMod_indexOf (m : ℕ) (R : RabinParams (· % 4 = 3) m) :
+    blumMod (rabinIndexOf m R) = R.z.p * R.z.q := by
+  rw [blumMod_of_valid (rabin_blumValid_indexOf m R), listToNat_rabinIndexOf]
+
 /-- **The `QR_N` sampler's outputs decode and evaluate honestly** (the clause `sample_spec` of
 `Collection`, [PS10, Definition 41.1 (2), Theorem 63.10 (3)]; repair of the run-3 audit,
 P3-1): at every parameter the generated index is a valid Blum index (`blumGen_runAt`,
@@ -912,7 +1024,41 @@ theorem blumSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
         ((blumSampler H).runAt n (pairFstD ((blumGen H).runAt n [] r)) s) = some x ∧
       rabinEval (pairEncode (pairFstD ((blumGen H).runAt n [] r))
         ((blumSampler H).runAt n (pairFstD ((blumGen H).runAt n [] r)) s)) = blumF _ x := by
-  sorry
+  rw [blumGen_runAt, rabinGenOut, pairFstD_pairEncode, rabin_blumSampler_runAt]
+  generalize rabinGenParams (· % 4 = 3) blumDefault n (List.ofFn r) = R
+  have hV := rabin_blumValid_indexOf _ R
+  have hM := rabin_blumMod_indexOf _ R
+  have hv := rabin_getD_spec (rabin_N_pos R) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
+    (rsaTrials.eval n) (List.ofFn s)
+  set v := (sampleUnitL (R.z.p * R.z.q) (Nat.size (R.z.p * R.z.q)) (rsaBlock.eval n)
+    (rsaTrials.eval n) (List.ofFn s)).getD (1 % (R.z.p * R.z.q)) with hvdef
+  have hval : listToNat (unitSampleStr (rabinIndexOf _ R) n (List.ofFn s)) = v := by
+    rw [rabin_unitSampleStr_indexOf]; exact listToNat_natToList (hv.1.trans R.z.mul_lt)
+  have hlt : v ^ 2 % (R.z.p * R.z.q) < R.z.p * R.z.q := Nat.mod_lt _ (rabin_N_pos R)
+  have hw : listToNat (natToList (rabinIndexOf _ R).length (v ^ 2 % (R.z.p * R.z.q))) =
+      v ^ 2 % (R.z.p * R.z.q) := by
+    rw [rabinIndexOf, length_natToList]; exact listToNat_natToList (hlt.trans R.z.mul_lt)
+  have hcop : Nat.Coprime (v ^ 2 % (R.z.p * R.z.q)) (R.z.p * R.z.q) := by
+    rw [Nat.Coprime, ← Nat.gcd_rec]
+    exact (Nat.Coprime.pow_left 2 hv.2).symm
+  rw [hval, listToNat_rabinIndexOf]
+  set w := natToList (rabinIndexOf _ R).length (v ^ 2 % (R.z.p * R.z.q))
+  suffices hdec : ∃ x, blumDec (rabinIndexOf _ R) w = some x by
+    obtain ⟨x, hx⟩ := hdec
+    exact ⟨x, hx, by rw [← rabin_blumEnc_of_dec hx, blumEval_spec]⟩
+  have h1 : w.length = (rabinIndexOf _ R).length := length_natToList _ _
+  have h2 : listToNat w < blumMod (rabinIndexOf _ R) := by rw [hw, hM]; exact hlt
+  have h3 : Nat.Coprime (listToNat w) (blumMod (rabinIndexOf _ R)) := by rw [hw, hM]; exact hcop
+  rw [blumDec, if_pos hV, dif_pos ⟨h1, h2, h3⟩]
+  split_ifs with hq
+  · exact ⟨_, rfl⟩
+  · exfalso
+    apply hq
+    have hvc : Nat.Coprime v (blumMod (rabinIndexOf _ R)) := by rw [hM]; exact hv.2
+    rw [mem_QR_iff]
+    refine ⟨ZMod.unitOfCoprime v hvc, Units.ext ?_⟩
+    rw [Units.val_pow_eq_pow_val, ZMod.coe_unitOfCoprime, ZMod.coe_unitOfCoprime, hw, ← hM,
+      ZMod.natCast_mod, Nat.cast_pow]
 
 /-- **The Rabin collection of trapdoor permutations on Blum integers** [PS10, Theorem 63.10]:
 indices `N = pq` with `p ≡ q ≡ 3 (mod 4)`, domains `D_N = R_N = QR_N`,

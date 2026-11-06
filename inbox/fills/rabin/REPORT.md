@@ -1,6 +1,6 @@
 # Fill report: unit rabin (`TCSlib/Cryptography/Candidates/Rabin.lean`)
 
-**Status: checkpoint 1 (environment set up; no target filled yet).**
+**Status: in progress (checkpoint 2).** Filled so far: `rabinSampler_spec`, `blumSampler_spec`.
 
 ## Base and environment
 
@@ -28,3 +28,10 @@
   (`evidence/logs/base-owned-check.log`). `/usr/bin/time` is absent; `evidence/chk.py` logs each
   module's start, end, wall time and child max RSS instead.
 - Never `lake build`; never an unfiltered `lake exe cache get`; one Lean process at a time.
+
+## Targets (brief order; updated at each checkpoint)
+
+| # | Target | State |
+|---|---|---|
+| 1 | `rabinSampler_spec` | filled (sketch followed: activation `rabin_sampler_runAt`, `rabin_dec_unitSampleStr`, canonical decoding `rabin_enc_of_dec`, `rabinEval_spec`) |
+| 1 | `blumSampler_spec` | filled (activation `rabin_blumSampler_runAt` with `modExpStr_pairEncode`; `BlumValid` of a generated index; `QR` membership as the square of `unitOfCoprime v`; `blumEval_spec`) |
