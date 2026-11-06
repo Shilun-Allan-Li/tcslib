@@ -334,7 +334,15 @@ hypothesis: `blumFactorProb_le`, `hF A`, `Negligible.mul_pow`, `Negligible.const
 `Negligible.mono` (threshold `6`). -/
 theorem blumFactoring_of_factoring (hD : BlumDensity) (hF : FactoringAssumption) :
     BlumFactoringAssumption := by
-  sorry
+  rw [blumFactoringAssumption_iff]
+  intro A
+  have h := ((factoringAssumption_iff.1 hF A).mul_pow 2).const_mul 64
+  refine h.mono ⟨6, fun n hn => ?_⟩
+  have h0 : 0 ≤ blumFactorProb A n := by unfold blumFactorProb; exact uprob_nonneg _
+  have h1 : 0 ≤ factorProb A n := factorProb_nonneg A n
+  rw [abs_of_nonneg h0, abs_of_nonneg (by positivity)]
+  calc blumFactorProb A n ≤ 64 * (n : ℝ) ^ 2 * factorProb A n := blumFactorProb_le hD A hn
+    _ = 64 * ((n : ℝ) ^ 2 * factorProb A n) := by ring
 
 /-! ## The symmetry lemma (Claim-62.2) -/
 
@@ -2454,7 +2462,16 @@ is transferred by `oddFactorProb_le`.
 conclude by `Negligible.mono` (`Collection.invProbAt_nonneg`). -/
 theorem rabinCollection_oneWay (H : ArithmeticFP) (hF : FactoringAssumption) :
     (rabinCollection H).OneWay := by
-  sorry
+  refine ⟨rabinCollection_sampleClose H, fun A => ?_⟩
+  have h := ((factoringAssumption_iff.1 hF (rabinFactorer H A)).const_mul 4).add negligible_rabinErr
+  refine h.mono ⟨6, fun n hn => ?_⟩
+  have h0 := Collection.invProbAt_nonneg (rabinCollection H) A n
+  have h1 := factorProb_nonneg (rabinFactorer H A) n
+  have h2 : 0 ≤ rabinErr n := by unfold rabinErr; positivity
+  rw [abs_of_nonneg h0, abs_of_nonneg (by positivity)]
+  have h3 := rabinCollection_invProbAt_le H A (n := n) (by omega)
+  have h4 := oddFactorProb_le (rabinFactorer H A) hn
+  linarith
 
 /-! ## The Rabin trapdoor collection on Blum integers [PS10, Theorem 63.10] -/
 
@@ -3430,7 +3447,16 @@ and `Negligible.mono` (sampling: `rabinBlumTrapdoor_sampleClose`).
 **Deviation:** factoring assumption restricted to Blum moduli through the density hypothesis. -/
 theorem rabinBlumTrapdoor_oneWay (H : ArithmeticFP) (hD : BlumDensity) (hF : FactoringAssumption) :
     (rabinBlumTrapdoor H).OneWay := by
-  sorry
+  rw [TrapdoorCollection.oneWay_iff]
+  refine ⟨rabinBlumTrapdoor_sampleClose H, fun A => ?_⟩
+  have h := ((blumFactoringAssumption_iff.1 (blumFactoring_of_factoring hD hF) (rabinFactorer H A)).const_mul
+    2).add negligible_rabinErr
+  refine h.mono ⟨3, fun n hn => ?_⟩
+  have h0 := Collection.invProbAt_nonneg (rabinBlumTrapdoor H).toCollection A n
+  have h1 : 0 ≤ blumFactorProb (rabinFactorer H A) n := by unfold blumFactorProb; exact uprob_nonneg _
+  have h2 : 0 ≤ rabinErr n := by unfold rabinErr; positivity
+  rw [abs_of_nonneg h0, abs_of_nonneg (by positivity)]
+  exact rabinBlumTrapdoor_invProbAt_le H hD A hn
 
 /-! ## Theorem 61.8 (⇐): Rabin one-way implies factoring (Blum moduli) -/
 
@@ -3688,6 +3714,14 @@ by `invProbAt (rabinBlumInverter H A) n + rabinErr n`, negligible by `h.hard`,
 `negligible_rabinErr`, `Negligible.add`; conclude by `Negligible.mono` (`uprob_nonneg`). -/
 theorem blumFactoring_of_rabinBlum_oneWay (H : ArithmeticFP) (hD : BlumDensity)
     (h : (rabinBlumTrapdoor H).OneWay) : BlumFactoringAssumption := by
-  sorry
+  rw [blumFactoringAssumption_iff]
+  intro A
+  have h' := ((TrapdoorCollection.oneWay_iff _).1 h).hard (rabinBlumInverter H A)
+  refine (h'.add negligible_rabinErr).mono ⟨3, fun n hn => ?_⟩
+  have h0 : 0 ≤ blumFactorProb A n := by unfold blumFactorProb; exact uprob_nonneg _
+  have h1 := Collection.invProbAt_nonneg (rabinBlumTrapdoor H).toCollection (rabinBlumInverter H A) n
+  have h2 : 0 ≤ rabinErr n := by unfold rabinErr; positivity
+  rw [abs_of_nonneg h0, abs_of_nonneg (by positivity)]
+  exact blumFactorProb_le_invProbAt H hD A hn
 
 end TCSlib.Cryptography.Candidates

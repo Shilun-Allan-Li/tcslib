@@ -1,6 +1,6 @@
 # Fill report: unit rabin (`TCSlib/Cryptography/Candidates/Rabin.lean`)
 
-**Status: in progress (checkpoint 10).** Filled so far: steps 1–8 (15 targets).
+**Status: in progress (checkpoint 11).** All 19 targets filled; the owned file checks with 0 errors and 0 `sorry` warnings. Remaining before final: docstring sketches, lint, axiom prints, seal, sweep, declfreeze.
 
 ## Base and environment
 
@@ -48,3 +48,7 @@
 | 8 | `rabinCollection_invProbAt_le` | filled: generator law first (`rabin_pairLaw`, generic in `P`; `rabin_uexp_le`), then at the ideal odd pair the symmetry lemma and S3 (`rabin_core`); total `rabinErr n` exactly |
 | 8 | `rabinBlumTrapdoor_invProbAt_le` | filled: `rabin_blum_uexp` (pair law with `hD`), inner bound `rabin_inner_blum` (reparametrize by `w = y²`, `pushesUniform_sqTo`, `rabin_core`) |
 | 8 | `blumFactorProb_le_invProbAt` | filled: `rabin_blum_uexp` (other direction) and `rabin_inner_inv` (the root finder wins whenever `A` factors; `rabin_blumInvNat_spec`) |
+| 9 | `blumFactoring_of_factoring` | filled (`blumFactorProb_le`, `Negligible.mul_pow`, `.const_mul`, `.mono` at 6) |
+| 9 | `rabinCollection_oneWay` | filled (`rabinCollection_sampleClose`; `rabinCollection_invProbAt_le` + `oddFactorProb_le`, threshold 6) |
+| 9 | `rabinBlumTrapdoor_oneWay` | filled (P2 `oneWay_iff`; `rabinBlumTrapdoor_invProbAt_le`, `blumFactoring_of_factoring`) |
+| 9 | `blumFactoring_of_rabinBlum_oneWay` | filled (P2; `blumFactorProb_le_invProbAt`, `negligible_rabinErr`) |
