@@ -636,7 +636,11 @@ variable {c : ℕ} {B : ℕ}
 open Classical in
 /-- **A block at radius `s`**: from `cb f 0`, `D` prepares block `f` (`dp_prep`) and runs it
 (`dp_fit`) to its exit `k b`, where `b` is the block's answer at radius `s` and width
-`w = c · (s + ℓ + 1)`; `ℓ`, `s` and the scratch register are unchanged. -/
+`w = c · (s + ℓ + 1)`; `ℓ`, `s` and the scratch register are unchanged.
+
+**Proof sketch.** `dp_prep` reaches the block's entry with the entry registers; `dp_fit` runs
+the block; `D`'s own registers are off `ρ`'s range, so the block leaves them (`dpρ_ne`), and
+every register stays at most `B` (`dp_bd_blk`). -/
 private theorem dp_block (N : FinNDTM Bool) (hc : 1 ≤ c) (x : List Bool) {s ℓ : ℕ}
     (hBB : 2 ^ (c * (s + ℓ + 1) * (c * (s + ℓ + 1))) ≤ B) (f : Bool) {σ : Fin 4 → Fin 5}
     (j : Fin 5) (La : Language Bool) (hj : dpAs N j = La) (h1 : σ 1 = 1) (h2 : σ 2 = j)
