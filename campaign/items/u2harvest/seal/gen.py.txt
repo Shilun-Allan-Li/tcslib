@@ -1,0 +1,68 @@
+import sys, os
+wt, out = sys.argv[1], sys.argv[2]
+parts = open(os.path.join(wt, 'TCSlib/Complexity/TuringMachine/Build/UniversalParts.lean'), encoding='utf-8').read()
+uk = open(os.path.join(wt, 'TCSlib/Complexity/TuringMachine/UniversalK.lean'), encoding='utf-8').read()
+
+P_SEAL = ('attribute [local irreducible] StepBlock.forwardLoopCfg rulerHostCfg MultiTapeTM.initCfg Cfg.init\n'
+          '  FinTM.bufferTape StepBlock.summaryCells tableBitsK unaryFin embedEmitCfg Cfg.mapState\n'
+          '  pairEncode rewindTM seamCompTM embedEmitTM tapeAction inputMoveAction\n'
+          'attribute [-simp] MultiTapeTM.initCfg Cfg.init\n')
+P_CTRL = r'''
+/-! ## Seal controls (each closes unsealed and fails sealed) -/
+example {k n : ℕ} {Q : Type} {x : List Bool} (entry : Q) (M : MultiTapeTM k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) : (StepBlock.forwardLoopCfg entry M c).output = c.output :=
+  rfl
+example {m : ℕ} {S Q : Type} {y z : List Bool} (ℓ : ℕ) (hz : z.length = ℓ + y.length)
+    (q : Option Q) (c : Cfg m Bool S y) (rt : ℤ → Option Bool) (rp : ℤ) :
+    (rulerHostCfg ℓ hz q c rt rp).output = c.output := rfl
+example {k : ℕ} {S : Type} (M : MultiTapeTM k Bool S) (x : List Bool) :
+    M.initCfg x = Cfg.init M.q₀ x := rfl
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).output = [] := rfl
+example : FinTM.bufferTape [true] 0 = some true := rfl
+example (w : List Bool) : StepBlock.summaryCells none w 0 = none := rfl
+example {k n : ℕ}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1))) :
+    tableBitsK tr = (List.finRange (n + 1)).flatMap fun q =>
+      ([none, some false, some true] : List (Option Bool)).flatMap fun inp =>
+        (workReadsK k).flatMap fun w => actionBitsK (tr q inp w) := rfl
+example : unaryFin (0 : Fin 1) = [false] := rfl
+example {k m : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin k) (c : Cfg m Bool S x) :
+    (embedEmitCfg ι (fun _ _ => none) (fun _ => 0) [] c).output = [] ++ c.output := rfl
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) :
+    (c.mapState fun _ => ()).output = c.output := rfl
+example : pairEncode [] [] = [false, true] := rfl
+example : (rewindTM (Symbol := Bool) 1 0).q₀ = .start := rfl
+example {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (e : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (en : S₂) : (seamCompTM M₁ e M₂ en).q₀ = Sum.inl M₁.q₀ := rfl
+example {k m : ℕ} {S : Type} (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Bool S) :
+    (embedEmitTM ι M).q₀ = M.q₀ := rfl
+example : tapeAction (k := 1) (Symbol := Bool) (State := Unit) 0 .pos none .pos () =
+    ⟨.pos, fun j => if j = 0 then (none, .pos) else (none, 0), none, some ()⟩ := rfl
+example : inputMoveAction (k := 1) (Symbol := Bool) (State := Unit) 0 () =
+    ⟨0, fun _ => (none, 0), none, some ()⟩ := rfl
+'''
+U_SEAL = 'attribute [local irreducible] startupLoopTM headerScanTM headerScanCfg headerRulerTM suffixRulerCfg\n'
+U_CTRL = r'''
+/-! ## Seal controls (each closes unsealed and fails sealed) -/
+example {k K : ℕ} {P Q : Type} [DecidableEq P] (R : MultiTapeTM (K + (k + 2)) Bool P) (e : P)
+    (L : MultiTapeTM (k + 2) Bool Q) (en : Q) : (startupLoopTM R e L en).q₀ = Sum.inl R.q₀ := rfl
+example {k : ℕ} (i : Fin k) : (headerScanTM i).q₀ = 0 := rfl
+example {k : ℕ} {z : List Bool} (i : Fin k) (d : Cfg k Bool (Fin 4) z) (q : Fin 4) (t : ℕ)
+    (ht : d.inputPos.val + t < z.length + 2) : (headerScanCfg i d q t ht).state = some q := rfl
+example {k : ℕ} (i : Fin k) : (headerRulerTM i).q₀ = Sum.inl 0 := rfl
+example {k K n : ℕ} {P : Type} (q : P) (M : MultiTapeTM k Bool (Fin (n + 1))) (z : List Bool)
+    (ℓ : ℕ) (h : ℓ + 1 < z.length + 2) : (suffixRulerCfg (K := K) q M z ℓ h).state = some q := rfl
+'''
+def mk(src, seal, ctrl, sealed):
+    s = src
+    if sealed:
+        s = s.replace('\nnamespace Turing\n', '\nnamespace Turing\n\n' + seal, 1)
+    i = s.rindex('end Turing')
+    return s[:i] + ctrl + '\n' + s[i:]
+os.makedirs(out, exist_ok=True)
+for name, src, seal, ctrl in [('SealParts', parts, P_SEAL, P_CTRL), ('SealUK', uk, U_SEAL, U_CTRL)]:
+    for sealed in (True, False):
+        open(os.path.join(out, name + ('' if sealed else '0') + '.lean'), 'w', encoding='utf-8').write(
+            mk(src, seal, ctrl, sealed))
+print('ok')

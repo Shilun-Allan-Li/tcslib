@@ -162,7 +162,8 @@ theorem rcode_iff (s u : ℕ) :
     | refl => exact ⟨[], fun j _ => by simpa using inWin_init s, rfl⟩
     | tail _ hst ih =>
       obtain ⟨w, hw, hcode⟩ := ih
-      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ := (mem_stepLang N x _ _ s).mp hst
+      obtain ⟨C, hC, hcC, C', ⟨b, hb⟩, hC', hcC'⟩ :=
+        (mem_stepLang N x _ _ s).mp (stepRel_iff_mem.mp hst)
       have hv : NDTM.coreSum (N.tm.runWith w (N.tm.initCfg x)) = NDTM.coreSum C :=
         coreSum_eq_of_code_eq hw.last hC (hcode.trans hcC.symm)
       have hv' : NDTM.coreSum (N.tm.runWith (w ++ [b]) (N.tm.initCfg x)) = NDTM.coreSum C' := by
@@ -179,7 +180,7 @@ theorem rcode_iff (s u : ℕ) :
       | succ j ih =>
         intro hj
         refine (ih (by omega)).tail ?_
-        rw [StepRel, mem_stepLang]
+        rw [stepRel_iff_mem, mem_stepLang]
         refine ⟨_, hw j (by omega), rfl, _, ⟨w[j]'(by omega), ?_⟩, hw (j + 1) hj, rfl⟩
         rw [List.take_succ, NDTM.runWith_append, List.getElem?_eq_getElem (by omega)]
         rfl
