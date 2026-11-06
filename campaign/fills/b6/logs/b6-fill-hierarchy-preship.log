@@ -1,0 +1,44 @@
+# B6 fill H (the space hierarchy): pre-ship check. Lean tree: the campaign's after #209 (0b05cc3aaf2e48a8b8a676d8c6b7214a61848a06, = d43a1374's closure for these files), elaborated through devtools/seyoon/leanelab.sh (no olean output, no lake) against oleans-lnth (replay-lnth); the original probes ran against oleans-lcamp1 on d43a1374's tree (preship-d43a1374/runs.txt)
+
+## inputs (SHA-256)
+eaaddf6236b46d143a1f420196137ec52fd2d978cd48b7126e3dce4642996a93  TCSlib/Complexity/SpaceComplexity/Hierarchy.lean
+f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181  scripts/copy-text-screen-v3.py
+025979e2ac9f8d0f68599c58d5919d2e7fe49f5f10b6c92b3fa5502a86a65f92  campaign/fills/b6/inputs/b6-fill-hierarchy/HDupProbe.lean.txt
+c3c7188680f58b940da2ee19612c1c270c210b68e4d5d02d0840c264fe0f85de  campaign/fills/b6/inputs/b6-fill-hierarchy/HDupProbe.out.txt
+07a6b881d23077d7e79a6b6254b06ea1cc967cba59d5c07d111ace1431870dda  campaign/fills/b6/inputs/b6-fill-hierarchy/HImportProbe.lean.txt
+10366193c29d7a7862616ec2abbe9bb399a1d081469be1c8117ce829d56f4f78  campaign/fills/b6/inputs/b6-fill-hierarchy/HImportProbe.out.txt
+90f9359617da7659d2ef27c55aa34af9f1be508b81d96acf267e41c6bd62f141  campaign/fills/b6/inputs/b6-fill-hierarchy/HImportProbe2.lean.txt
+7eba82d52c5926081e5576323e9af1490476f9f114dedcfccb14343ae52a36aa  campaign/fills/b6/inputs/b6-fill-hierarchy/HImportProbe2.out.txt
+af420e7256bc01d8ccd5c80c8c368cb2e24c44025846aff64b88c96209ee06dd  campaign/fills/b6/inputs/b6-fill-hierarchy/HRouteProbe.lean.txt
+e74330d5ea4c4b371314b680a3e4842a8255a99d73322a4ebcd5a7f0c5f0c54a  campaign/fills/b6/inputs/b6-fill-hierarchy/HRouteProbe.out.txt
+44b06d4d190e6a1ed4b3cac4820a1832a0e9652ba354179dfaf5debf5801fb0a  campaign/fills/b6/inputs/b6-fill-hierarchy/HSealControl_sealed.lean.txt
+3a8a1e00fa0201fdd2e81b379f46a2539ff7547670db5d6d0fb4c445e1315fca  campaign/fills/b6/inputs/b6-fill-hierarchy/HSealControl_sealed.out.txt
+bc43e32986bbc0dde052072d4900284ce77b1a6efa36c08ad4104e4aefb1f318  campaign/fills/b6/inputs/b6-fill-hierarchy/HSealControl_unsealed.lean.txt
+239a74f136034bbabbac26d0a47ffe3037a89910861d2e2acb59fce091e645f7  campaign/fills/b6/inputs/b6-fill-hierarchy/HSealControl_unsealed.out.txt
+a50659fc93a84d0fbc9dc0f693a84ffff05c11ecc462a1b8fa5e882600d2b616  campaign/fills/b6/inputs/b6-fill-hierarchy/HierarchyOverlay.lean.txt
+1ca85b8d09325565a3d362376d768eab44cb5d9af0985c972e9e19cea66cfd03  campaign/fills/b6/inputs/b6-fill-hierarchy/HierarchyOverlay.out.txt
+6a904a55f9c34bd3e37c751c1e20008ff9f35253874f56ff7c6ce2cf8d447255  campaign/fills/b6/inputs/b6-fill-hierarchy/mathlib-roots.txt
+aa19b4b171f9b005bf1f41a812f3ee74e148eda88b1f65bed85118339304e708  campaign/fills/b6/inputs/b6-fill-hierarchy/screen-population.txt
+6d9d28e1a374c1a705e4f23d263182bdc7d97662ad3a54f54edd41f363ad9973  campaign/fills/b6/orders/b6-fill-hierarchy.txt
+fbe8a893bb72ae99cca6d5789fcb62ef7171f37a67905188433333be10cf23cc  campaign/fills/b6/logs/b6-fill-hierarchy-base-sorries.txt
+a14853fa62f9337ac857dd88e4d11df5ed4c7ea7557d91a027a34fb7eff22da2  campaign/fills/b6/logs/b6-fill-hierarchy-screen-base.txt
+
+## runs (preship-d43a1374)
+HierarchyOverlay exit=0 lines=4 errors=0
+HImportProbe exit=0 lines=311 errors=0 pass=0 fail=0
+HRouteProbe exit=0 lines=3 errors=0 pass=0 fail=0
+HSealControl_unsealed exit=0 lines=9 errors=0 pass=9 fail=0
+HSealControl_sealed exit=0 lines=9 errors=0 pass=0 fail=9
+HDupProbe exit=1 lines=8 errors=4 pass=0 fail=0
+screen exit=0 secs=1229
+   HDupProbe: exit 1 by design (its six exact? calls; the four failures are the probe's result, see the brief)
+
+## the revision's extended import probe (HImportProbe2.lean.txt, on oleans-lnth)
+   257 commands; errors: 0; sorryAx: 0
+
+## order list, roots, base sorries (fillinputs.py at 0b05cc3a; identical to d43a1374's)
+   order 220 modules; roots 63; base sorries: 11 lines
+
+## screen base (43 files, screen-population.txt; v3 on a git archive of 0b05cc3a; exit=0 secs=1842)
+   declarations screened: 1854; copy pairs (target reproduces >= half of source): 1689; reproduced text: 534,736 chars
+   pairs with a Hierarchy declaration: 0
