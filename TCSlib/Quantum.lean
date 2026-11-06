@@ -1,4 +1,9 @@
 import TCSlib.Quantum.Basic
+import TCSlib.Quantum.Basic.Register
+import TCSlib.Quantum.Basic.Gates
+import TCSlib.Quantum.Basic.ApplyOn
+import TCSlib.Quantum.Basic.Measure
+import TCSlib.Quantum.Basic.Protocols
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
