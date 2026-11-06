@@ -1456,3 +1456,10 @@ RN-1's 21 the file holds 31 of 875 (3.5%). The one-fifth rule is not reached.
 
 Any new copy in a future delivery enters through the per-delivery ledger
 and the one-fifth escalation rule of `workflow.md` §4.
+
+**DT-1, `DTIME` and `FinTM.DecidesInTime` read through their bodies** (gate 113, minor 2; 2026-11-06).
+Neither has a published characterization (`ClassP/DTIME`). Readers include `TimeHierarchy/Diagonal`'s
+`oneTapeSelfSimulator` and `twoTapeSelfSimulator` (`normalForm`: `rintro ⟨c₀, M, hM⟩` on a `DTIME`
+membership; `hM` passed as `computesFunInTime_iff`'s right side). **Resolution:** publish
+`mem_DTIME_iff` and `FinTM.decidesInTime_iff` (`Iff.rfl`) beside the definitions and re-point the
+readers; the replay covers most of the tree, so it waits for a quiet point in the window.
