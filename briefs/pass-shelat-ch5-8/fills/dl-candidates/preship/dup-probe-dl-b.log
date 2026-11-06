@@ -1,0 +1,48 @@
+# Duplication probe, unit dl-b
+
+Method: a copy of each owned file in Probe/ (Probe/Dup<Module>.lean, then Probe/Dup2<Module>.lean), identical except that the
+target's `sorry` is replaced by `exact?` and the declaration is preceded by `set_option maxHeartbeats <N> in`. Same imports,
+binders and statement as the real target; the target itself is not yet in the environment when `exact?` runs, so it cannot
+match itself. Pass 1: maxHeartbeats 400000 for every target. Pass 2: maxHeartbeats 2000000 for each target that timed out in
+pass 1 (other targets left as `sorry`). Each file checked alone with scripts/lean_check_tree.sh.
+
+## Results (exact?)
+  dlBits_pow: pass 1 (400000): not found
+  uprob_trial_ge: pass 1 (400000): not found
+  uprob_majOracle_ne_le: pass 1 (400000): not found
+  invProb_shiftInverter_ge: pass 1 (400000): timed out; pass 2 (2000000): timed out
+  invProb_dlInverter_ge: pass 1 (400000): not found
+  polyTimeComputable_halfStr: pass 1 (400000): not found
+  fullDLCollection_hardCore: pass 1 (400000): not found
+
+## Library grep (same name or an obviously equivalent statement)
+Same-name search: for each of the 21 targets, `grep -rn -E '^(private )?(theorem|lemma) ([A-Za-z_.]*\.)?<name>\b' TCSlib audits --include=*.lean` outside TCSlib/Cryptography/Candidates/: 0 hits for all 21. Inside Candidates/ each name has exactly its own declaration.
+Related public lemmas found by name pattern (statClose_*sample*/reject*/firstHit*, *majority_fails*, *shift*, DDH/ElGamal files):
+  TCSlib/Cryptography/NumberTheory/Primality.lean:648:theorem statClose_samplePrime (n T : ℕ) (hn : 2 ≤ n) {d : Fin n → Bool}
+  TCSlib/Cryptography/Asymptotic/Sampling.lean:542:theorem statClose_firstHit [DecidableEq α] [Nonempty α] (T : ℕ) {d : α} (hd : E d) :
+  TCSlib/Cryptography/Asymptotic/Sampling.lean:741:theorem statClose_rejectionSample (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) (d : Fin m) :
+  TCSlib/Cryptography/Asymptotic/OneWayYao.lean:528:theorem statClose_roundSample (n M k c kk : ℕ) (hM : 0 < M) (hMk : M ≤ 2 ^ kk)
+  TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:259:theorem uprob_majority_fails_le [Nonempty Ω] [Fintype ι] {X : ι → Ω → Bool}
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:391:theorem statClose_sampleEdgeIdx {m : ℕ} (hm : 0 < m) (T : ℕ) :
+  None is equivalent to a target: statClose_rejectionSample and statClose_samplePrime are typed samplers (Fin T → Fin k → Bool); statClose_sampleEdgeIdx has stride Nat.size m and T blocks of Nat.size m coins (sampleBelowL m (Nat.size m) n n reads n-bit blocks); statClose_firstHit is the component the target sketch composes; uprob_majority_fails_le is the Chebyshev step of uprob_majOracle_ne_le. No file outside Candidates mentions DDH or El Gamal (grep -l 'ElGamal|elGamal|DDH': only Candidates.lean, Candidates/DiscreteLog.lean, Candidates/ElGamal.lean).
+
+
+## Probe/DupDiscreteLogHardcore.lean: start 2026-11-06T02:19:51Z, end 2026-11-06T02:20:51Z, lean_check_tree rc=1 (nonzero expected: exact? failures are errors), elapsed 60s
+Diagnostics (verbatim, Probe lines only):
+Probe/DupDiscreteLogHardcore.lean:322:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupDiscreteLogHardcore.lean:365:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupDiscreteLogHardcore.lean:390:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupDiscreteLogHardcore.lean:416:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (400000) has been reached
+Probe/DupDiscreteLogHardcore.lean:445:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupDiscreteLogHardcore.lean:533:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupDiscreteLogHardcore.lean:602:2: error: `exact?` could not close the goal.
+
+## Probe/Dup2DiscreteLogHardcore.lean: start 2026-11-06T02:33:58Z, end 2026-11-06T02:35:49Z, lean_check_tree rc=1 (nonzero expected: exact? failures are errors), elapsed 111s
+Diagnostics (verbatim, Probe lines only):
+Probe/Dup2DiscreteLogHardcore.lean:319:8: warning: declaration uses 'sorry'
+Probe/Dup2DiscreteLogHardcore.lean:357:8: warning: declaration uses 'sorry'
+Probe/Dup2DiscreteLogHardcore.lean:380:8: warning: declaration uses 'sorry'
+Probe/Dup2DiscreteLogHardcore.lean:413:2: error: (deterministic) timeout at `isDefEq`, maximum number of heartbeats (2000000) has been reached
+Probe/Dup2DiscreteLogHardcore.lean:436:8: warning: declaration uses 'sorry'
+Probe/Dup2DiscreteLogHardcore.lean:527:8: warning: declaration uses 'sorry'
+Probe/Dup2DiscreteLogHardcore.lean:593:8: warning: declaration uses 'sorry'

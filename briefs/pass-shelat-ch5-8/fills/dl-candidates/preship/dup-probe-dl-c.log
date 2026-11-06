@@ -1,0 +1,54 @@
+# Duplication probe, unit dl-c
+
+Method: a copy of each owned file in Probe/ (Probe/Dup<Module>.lean, then Probe/Dup2<Module>.lean), identical except that the
+target's `sorry` is replaced by `exact?` and the declaration is preceded by `set_option maxHeartbeats <N> in`. Same imports,
+binders and statement as the real target; the target itself is not yet in the environment when `exact?` runs, so it cannot
+match itself. Pass 1: maxHeartbeats 400000 for every target. Pass 2: maxHeartbeats 2000000 for each target that timed out in
+pass 1 (other targets left as `sorry`). Each file checked alone with scripts/lean_check_tree.sh.
+
+## Results (exact?)
+  statClose_sq_generator: pass 1 (400000): timed out; pass 2 (2000000): timed out
+  polyTimeComputable_egGenRaw: pass 1 (400000): not found
+  polyTimeComputable_egEncRaw: pass 1 (400000): not found
+  egDecStr_apply: pass 1 (400000): timed out; pass 2 (2000000): timed out
+  elGamal_correct: pass 1 (400000): timed out; pass 2 (2000000): timed out
+  polyTimeComputable_egGroupGenRaw: pass 1 (400000): not found
+  elGamal_secure: pass 1 (400000): not found
+
+## Library grep (same name or an obviously equivalent statement)
+Same-name search: for each of the 21 targets, `grep -rn -E '^(private )?(theorem|lemma) ([A-Za-z_.]*\.)?<name>\b' TCSlib audits --include=*.lean` outside TCSlib/Cryptography/Candidates/: 0 hits for all 21. Inside Candidates/ each name has exactly its own declaration.
+Related public lemmas found by name pattern (statClose_*sample*/reject*/firstHit*, *majority_fails*, *shift*, DDH/ElGamal files):
+  TCSlib/Cryptography/NumberTheory/Primality.lean:648:theorem statClose_samplePrime (n T : ℕ) (hn : 2 ≤ n) {d : Fin n → Bool}
+  TCSlib/Cryptography/Asymptotic/Sampling.lean:542:theorem statClose_firstHit [DecidableEq α] [Nonempty α] (T : ℕ) {d : α} (hd : E d) :
+  TCSlib/Cryptography/Asymptotic/Sampling.lean:741:theorem statClose_rejectionSample (m k T : ℕ) (hm : 0 < m) (hk : m ≤ 2 ^ k) (d : Fin m) :
+  TCSlib/Cryptography/Asymptotic/OneWayYao.lean:528:theorem statClose_roundSample (n M k c kk : ℕ) (hM : 0 < M) (hMk : M ≤ 2 ^ kk)
+  TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean:259:theorem uprob_majority_fails_le [Nonempty Ω] [Fintype ι] {X : ι → Ω → Bool}
+  TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean:391:theorem statClose_sampleEdgeIdx {m : ℕ} (hm : 0 < m) (T : ℕ) :
+  None is equivalent to a target: statClose_rejectionSample and statClose_samplePrime are typed samplers (Fin T → Fin k → Bool); statClose_sampleEdgeIdx has stride Nat.size m and T blocks of Nat.size m coins (sampleBelowL m (Nat.size m) n n reads n-bit blocks); statClose_firstHit is the component the target sketch composes; uprob_majority_fails_le is the Chebyshev step of uprob_majOracle_ne_le. No file outside Candidates mentions DDH or El Gamal (grep -l 'ElGamal|elGamal|DDH': only Candidates.lean, Candidates/DiscreteLog.lean, Candidates/ElGamal.lean).
+
+
+## Probe/DupElGamal.lean: start 2026-11-06T02:20:51Z, end 2026-11-06T02:22:24Z, lean_check_tree rc=1 (nonzero expected: exact? failures are errors), elapsed 93s
+Diagnostics (verbatim, Probe lines only):
+Probe/DupElGamal.lean:115:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_ne_two`:
+Probe/DupElGamal.lean:120:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.five_le_safe`:
+Probe/DupElGamal.lean:125:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_half`:
+Probe/DupElGamal.lean:224:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+Probe/DupElGamal.lean:520:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupElGamal.lean:570:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupElGamal.lean:636:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+Probe/DupElGamal.lean:675:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (400000) has been reached
+Probe/DupElGamal.lean:755:2: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Probe/DupElGamal.lean:899:2: error: `exact?` could not close the goal.
+
+## Probe/Dup2ElGamal.lean: start 2026-11-06T02:35:49Z, end 2026-11-06T02:40:33Z, lean_check_tree rc=1 (nonzero expected: exact? failures are errors), elapsed 284s
+Diagnostics (verbatim, Probe lines only):
+Probe/Dup2ElGamal.lean:115:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_ne_two`:
+Probe/Dup2ElGamal.lean:120:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.five_le_safe`:
+Probe/Dup2ElGamal.lean:125:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_half`:
+Probe/Dup2ElGamal.lean:224:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (2000000) has been reached
+Probe/Dup2ElGamal.lean:517:8: warning: declaration uses 'sorry'
+Probe/Dup2ElGamal.lean:567:8: warning: declaration uses 'sorry'
+Probe/Dup2ElGamal.lean:634:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (2000000) has been reached
+Probe/Dup2ElGamal.lean:673:2: error: (deterministic) timeout at `whnf`, maximum number of heartbeats (2000000) has been reached
+Probe/Dup2ElGamal.lean:750:8: warning: declaration uses 'sorry'
+Probe/Dup2ElGamal.lean:892:8: warning: declaration uses 'sorry'

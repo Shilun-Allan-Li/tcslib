@@ -269,4 +269,48 @@ at a time on your host. Final checks:
 
 ## Pre-ship record
 
-@PRESHIP@
+Run on 2026-11-06 at the records commit `5f2771631fe853dae9c2aa44791ae5b0e09c95eb` (gates 03f1, 03g
+and 03l closed). The four owned files there are identical to the #206 merge. Lean was run one
+process at a time with `scripts/lean_check_tree.sh` against a full olean tree of that commit, and
+never `lake build`. Logs are under `briefs/pass-shelat-ch5-8/fills/dl-candidates/preship/`. If the
+prerequisite PR changes any import, re-run `fillinputs.py` at `@ANCESTOR@` before issue.
+
+- **Build inputs** (`inputs/<unit>/`, by `fillinputs.py` at that commit; for dl-a the union of the
+  two owned modules, whose lists coincide): order 94 modules and roots 75 for each unit. The base
+  sorry set is 75 in 15 modules. Each unit's rows are exactly its 7 targets, matching the draft's
+  list.
+- **Import probe** (`preship/import-probe-dl-{a,b,c}.log`): a `#check` of every name cited by the
+  draft and by the 21 target sketches, in each owned file's scope.
+  - All are present, except the qualified-name cases in **Name corrections** (each verified under
+    its full name) and `dlog` (dl-c, optional import, no cycle).
+  - The templates resolve under their full names in modules no owned file imports. The draft's
+    bare `polyTimeComputable_preFun`/`postFun`/`blockMapFun` do not resolve; the full names are
+    given above.
+  - The "already published" list above was probed too: 46 names, all present.
+- **Duplication probe** (`preship/dup-probe-dl-{a,b,c}.log`): each target's `sorry` was replaced by
+  `exact?` in a copy of its file, so the target cannot match itself.
+  - Pass 1 ran at `maxHeartbeats 400000`; the targets that timed out were rerun at 2000000.
+  - Not found: 12 targets (`polyTimeComputable_expSampleRaw`, `expCollection_sampleClose`,
+    `dlBits_pow`, `uprob_trial_ge`, `uprob_majOracle_ne_le`, `invProb_dlInverter_ge`,
+    `polyTimeComputable_halfStr`, `fullDLCollection_hardCore`, `polyTimeComputable_egGenRaw`,
+    `polyTimeComputable_egEncRaw`, `polyTimeComputable_egGroupGenRaw`, `elGamal_secure`).
+  - Timed out at both budgets: the other 9.
+  - A library grep finds no declaration of any target's name outside `Candidates/`, and no
+    equivalent statement. The nearest relatives (`statClose_rejectionSample`, `statClose_firstHit`,
+    `statClose_sampleEdgeIdx`, `HardcoreBit.uprob_majority_fails_le`) are listed there.
+- **Route probe** (`preship/route-probe-dla.log`): with `statClose_rejectBlocksL` as given, the
+  statement of `statClose_sampleBelowL` is proved through `sampleBelowL_eq_rejectBlocksL` under
+  the seal `rejectBlocksL sampleBelowL StatClose uprob listToNat firstHit bitsToNat bitsEquiv
+  HardcoreBit.PushesUniform Nat.size`.
+  - It compiles with 0 errors and 0 warnings.
+  - The controls show the seal is active (sealed `rfl` on `rejectBlocksL` and a lambda for
+    `StatClose` fail).
+  - Its axioms are the standard triple plus `sorryAx` from `statClose_rejectBlocksL` only. Nothing
+    is missing.
+- **Rule 10 note** (`preship/rule10-note.log`): the foreign definitions each sketch reads, with
+  their published lemmas (check 8 of `campaign_style_lint.py` and a lemma-name survey). The
+  missing ones are the **Prerequisites** table. This is a reading-based screen: no fill proofs
+  exist yet, so only the route probe is a sealed compile.
+- **Not checked here:** the fills themselves, the 9 targets whose `exact?` timed out (no
+  duplicate found, but not excluded by `exact?`), and the brief review by a review sub-agent, which
+  is still to do.
