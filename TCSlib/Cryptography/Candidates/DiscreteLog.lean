@@ -972,7 +972,31 @@ theorem expSampler_spec {V : List Bool → Prop} (H : ArithmeticFP) (G : ExpGrou
         ((expSampler H).runAt n (pairFstD ((expGen G).runAt n [] r)) s) = some x ∧
       expEval (pairEncode (pairFstD ((expGen G).runAt n [] r))
         ((expSampler H).runAt n (pairFstD ((expGen G).runAt n [] r)) s)) = expF _ x := by
-  sorry
+  -- the generated index is valid at every parameter
+  have hvalid : ExpValid (pairFstD ((expGen G).runAt n [] r)) := by
+    rw [expGen_runAt]
+    split_ifs with hn
+    · rw [pairFstD_pairEncode]
+      exact hV _ (G.valid n _ hn)
+    · rw [pairFstD_pairEncode]
+      exact expValid_dlDefaultIndex
+  generalize pairFstD ((expGen G).runAt n [] r) = i at hvalid ⊢
+  rw [expSampler_runAt]
+  -- the sampled value `v` is below `m` (accepted, or the fallback `0 < m`)
+  set v := (sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn s)).getD 0 with hvdef
+  have hv : v < dlM i := by
+    rcases hs : sampleBelowL (dlM i) (Nat.size (dlM i)) n n (List.ofFn s) with _ | w
+    · rw [hvdef, hs, Option.getD_none]
+      exact ((expValid_iff i).1 hvalid).2.1
+    · rw [hvdef, hs, Option.getD_some]
+      exact sampleBelowL_lt hs
+  have hvo : v < expOrd i := (expOrd_of_valid hvalid).symm ▸ hv
+  -- `x = (v : Z_m)` is encoded by the same numeral
+  have henc : expEnc i ((v : ℕ) : ZMod (expOrd i)) = natToList (dlW i) v := by
+    rw [expEnc_eq, ZMod.val_natCast, Nat.mod_eq_of_lt hvo]
+  refine ⟨((v : ℕ) : ZMod (expOrd i)), ?_, ?_⟩
+  · rw [← henc, expDec_expEnc]
+  · rw [← henc, expEval_spec]
 
 /-- **The exponentiation collection of an instance generator**: indices `⟨p, ⟨m, g⟩⟩`,
 domains `D_i = Z_m` (valid indices; `Z_1` otherwise), `f_i(x) = g^x mod p`, the generator
