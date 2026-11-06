@@ -1,4 +1,4 @@
-# Fill dl-c: REPORT (checkpoint 2, work in progress)
+# Fill dl-c: REPORT (checkpoint 3, all targets filled; verification in progress)
 
 Unit **dl-c** of `outbox/fills/dl-candidates/brief.md`; owned file
 `TCSlib/Cryptography/Candidates/ElGamal.lean`. External fill worker.
@@ -21,6 +21,6 @@ Unit **dl-c** of `outbox/fills/dl-candidates/brief.md`; owned file
 | 4 | `egDecStr_apply` | filled |
 | 5 | `elGamal_correct` | filled |
 | 6 | `polyTimeComputable_egGroupGenRaw` | filled |
-| 7 | `elGamal_secure` | open |
+| 7 | `elGamal_secure` | filled |
 
 The final report (helpers, seal, sweep, axioms, lint) comes with the final push.

@@ -1,0 +1,470 @@
+From ea687692f70a1727ddf929574f2512274093207f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 14:59:56 +0000
+Subject: [PATCH 4/5] ElGamal: elGamal_secure helpers (WIP: DDH distinguisher,
+ coin couplings, hybrid 1 pointwise)
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTjbdigRAJ9GynaUSPx
+---
+ TCSlib/Cryptography/Candidates/ElGamal.lean | 444 ++++++++++++++++++++
+ 1 file changed, 444 insertions(+)
+
+diff --git a/TCSlib/Cryptography/Candidates/ElGamal.lean b/TCSlib/Cryptography/Candidates/ElGamal.lean
+index 94b71796..f8b42f93 100644
+--- a/TCSlib/Cryptography/Candidates/ElGamal.lean
++++ b/TCSlib/Cryptography/Candidates/ElGamal.lean
+@@ -1569,6 +1569,450 @@ noncomputable def egGroupGen (H : ArithmeticFP) (G : SafePrimeGen) : SafePrimeGe
+   valid := egGroupGen_valid H G
+   wellFormed := egGroupGen_wellFormed H G
+ 
++/-! ### Helpers of `elGamal_secure` (unit dl-c) -/
++
++/-- Splitting a coin string `Fin L → Bool` with `L = a + b` into its two segments
++(`Fin.appendEquiv` after the length cast). -/
++private def dlc_splitEquiv {L a b : ℕ} (h : L = a + b) :
++    (Fin L → Bool) ≃ (Fin a → Bool) × (Fin b → Bool) :=
++  (Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)).trans (Fin.appendEquiv a b).symm
++
++/-- The coin string of two joined segments is the concatenation of their coin strings. -/
++private theorem dlc_splitEquiv_symm_ofFn {L a b : ℕ} (h : L = a + b) (u : Fin a → Bool)
++    (v : Fin b → Bool) : List.ofFn ((dlc_splitEquiv h).symm (u, v)) = List.ofFn u ++ List.ofFn v := by
++  subst h
++  rw [← List.ofFn_fin_append]
++  rfl
++
++/-- Padding a string of the right length is lossless: `List.ofFn (padFin ℓ w) = w` for `|w| = ℓ`. -/
++private theorem dlc_ofFn_padFin {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
++    List.ofFn (padFin ℓ w) = w := by
++  subst h
++  have h1 := padFin_ofFn (fun i : Fin w.length => w.get i)
++  rw [List.ofFn_get] at h1
++  rw [h1, List.ofFn_get]
++
++/-- The public key `⟨i, X⟩` read from a DDH tuple `⟨i, ⟨X, ⟨Y, Z⟩⟩⟩`. -/
++private def dlc_tuplePk (t : List Bool) : List Bool := pairEncode (pairFstD t) (pairFstD (pairSndD t))
++
++/-- The input of `D` built by the DDH distinguisher `D_b` from the tuple `t = ⟨i, ⟨X, ⟨Y, Z⟩⟩⟩`
++and the selector's output `mm = ⟨m₀, m₁⟩`: `⟨⟨i, X⟩, ⟨Y, ⟦Z · m'_b mod p⟧_n⟩⟩` with
++`m'_b = egCanon p q m_b`. -/
++private def dlc_ddhInput (n : ℕ) (b : Bool) (t mm : List Bool) : List Bool :=
++  pairEncode (dlc_tuplePk t) (pairEncode (pairFstD (pairSndD (pairSndD t)))
++    (natToList n (listToNat (pairSndD (pairSndD (pairSndD t))) *
++      egCanon (dlP (pairFstD t)) (dlM (pairFstD t)) (listToNat (if b then pairSndD mm else pairFstD mm)) %
++        dlP (pairFstD t))))
++
++/-- The pre-processing of `D_b` is polynomial-time on `⟨1^n, ⟨t, mm⟩⟩`. -/
++private theorem dlc_poly_ddhInput (H : ArithmeticFP) (b : Bool) :
++    PolyTimeComputable fun z =>
++      dlc_ddhInput (pairFstD z).length b (pairFstD (pairSndD z)) (pairSndD (pairSndD z)) := by
++  have ht := polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have hmm := polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD
++  have hi := polyTimeComputable_pairFstD.comp ht
++  have hpk := hi.pairEncode (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp ht))
++  have hY := polyTimeComputable_pairFstD.comp
++    (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp ht))
++  have hZ := dlc_numPoly_of_poly (polyTimeComputable_pairSndD.comp
++    (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp ht)))
++  have hP : dlc_NumPoly fun z => dlP (pairFstD (pairFstD (pairSndD z))) :=
++    dlc_numPoly_congr (dlc_numPoly_of_poly (polyTimeComputable_pairFstD.comp hi))
++      fun z => (dlP_eq _).symm
++  have hQ : dlc_NumPoly fun z => dlM (pairFstD (pairFstD (pairSndD z))) :=
++    dlc_numPoly_congr (dlc_numPoly_of_poly
++      (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hi)))
++      fun z => (dlM_eq _).symm
++  have hm : PolyTimeComputable fun z =>
++      if b then pairSndD (pairSndD (pairSndD z)) else pairFstD (pairSndD (pairSndD z)) := by
++    cases b
++    · exact polyTimeComputable_pairFstD.comp hmm
++    · exact polyTimeComputable_pairSndD.comp hmm
++  have hC := dlc_numPoly_egCanon H polyTimeComputable_pairFstD hP hQ (dlc_numPoly_of_poly hm)
++  have hW := dlc_poly_natToList_powMulMod H polyTimeComputable_pairFstD hZ (dlc_numPoly_const 1) hC hP
++  refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp (hpk.pairEncode (hY.pairEncode hW))
++  simp only [Function.comp_apply, pow_one]
++  rfl
++
++/-- **The DDH distinguisher `D_b`** of Theorem 107.3: on a tuple `t`, run the selector `M` on
++`pk = ⟨i, X⟩` and then `D` on `dlc_ddhInput n b t ⟨m₀, m₁⟩`; its coins are `M`'s followed by
++`D`'s (`NUPPT.exists_comp`, `exists_compParam`, `exists_seq`). -/
++private theorem dlc_exists_ddhDist (H : ArithmeticFP) (M D : NUPPT) (b : Bool) :
++    ∃ Db : NUPPT, ∀ n, ∃ e : M.Coins n × D.Coins n ≃ Db.Coins n,
++      ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
++        Db.runAt n w (e (rM, rD)) = D.runAt n (dlc_ddhInput n b w (M.runAt n (dlc_tuplePk w) rM)) rD := by
++  have hpk : PolyTimeComputable dlc_tuplePk :=
++    polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)
++  obtain ⟨M', hM'c, -, -, hM'⟩ := NUPPT.exists_comp M hpk polyTimeComputable_id
++  obtain ⟨D', hD'c, -, -, hD'⟩ := NUPPT.exists_compParam D (dlc_poly_ddhInput H b)
++    polyTimeComputable_pairSndD
++  obtain ⟨C, hCc, -, hC⟩ := NUPPT.exists_seq M' D'
++  refine ⟨C, fun n => ?_⟩
++  have hlen : C.coinLen n = M.coinLen n + D.coinLen n := by
++    rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, NUPPT.coinLen_eq, hCc, hM'c, hD'c, PolyExpr.eval_add]
++  have hM'len : M'.coinLen n = M.coinLen n := by rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq, hM'c]
++  refine ⟨(dlc_splitEquiv hlen).symm, fun w rM rD => ?_⟩
++  rw [NUPPT.runAt_eq, dlc_splitEquiv_symm_ofFn, hC, hM'len, List.take_left' (List.length_ofFn),
++    List.drop_left' (List.length_ofFn), hM', hD', NUPPT.runAt_eq, NUPPT.runAt_eq]
++  simp only [id, pairSndD_pairEncode, NUPPT.advInput_eq, pairFstD_pairEncode, List.length_replicate]
++
++/-- Two events that agree outside `C` have probabilities within `Pr[C]`. -/
++private theorem dlc_abs_uprob_sub_le_of_iff {Ω : Type*} [Fintype Ω] {A B C : Ω → Prop}
++    (h : ∀ ω, ¬ C ω → (A ω ↔ B ω)) : |uprob A - uprob B| ≤ uprob C := by
++  have key : ∀ {A B : Ω → Prop}, (∀ ω, ¬ C ω → (A ω ↔ B ω)) → uprob A ≤ uprob B + uprob C := by
++    intro A B h
++    refine (uprob_mono fun ω hA => ?_).trans (uprob_or_le B C)
++    by_cases hc : C ω
++    · exact Or.inr hc
++    · exact Or.inl ((h ω hc).1 hA)
++  have h1 := key h
++  have h2 := key (A := B) (B := A) fun ω hc => (h ω hc).symm
++  rw [abs_sub_le_iff]
++  constructor <;> linarith
++
++/-- **At most two square roots of `1` among `1, …, p − 1`**: `(x + 1)² ≡ 1 (mod p)` forces
++`x = 0` or `x = p − 2` (`p ∣ x (x + 2)`, `Nat.Prime.dvd_mul`). -/
++private theorem dlc_card_sq_eq_one_le {p : ℕ} (hp : p.Prime) :
++    (univ.filter fun x : Fin (p - 1) => ((x : ℕ) + 1) ^ 2 % p = 1).card ≤ 2 := by
++  have h2 := hp.two_le
++  have hsub : (univ.filter fun x : Fin (p - 1) => ((x : ℕ) + 1) ^ 2 % p = 1).map Fin.valEmbedding ⊆
++      ({0, p - 2} : Finset ℕ) := by
++    intro v hv
++    simp only [mem_map, mem_filter, mem_univ, true_and, Fin.valEmbedding_apply] at hv
++    obtain ⟨x, hx, rfl⟩ := hv
++    have hxp : (x : ℕ) < p - 1 := x.2
++    have hdvd : p ∣ (x : ℕ) * ((x : ℕ) + 2) := by
++      have hmod : ((x : ℕ) + 1) ^ 2 % p = 1 % p := by rw [hx, Nat.mod_eq_of_lt hp.one_lt]
++      have h := (Nat.modEq_iff_dvd' (by nlinarith)).1 hmod.symm
++      have he : ((x : ℕ) + 1) ^ 2 - 1 = (x : ℕ) * ((x : ℕ) + 2) := by
++        rw [Nat.sub_eq_iff_eq_add (by nlinarith)]
++        ring
++      rwa [he] at h
++    simp only [mem_insert, mem_singleton]
++    rcases hp.dvd_mul.1 hdvd with h | h
++    · left
++      exact Nat.eq_zero_of_dvd_of_lt h (by omega)
++    · right
++      have hle := Nat.le_of_dvd (by omega) h
++      omega
++  have hc := card_le_card hsub
++  rw [card_map] at hc
++  exact hc.trans (card_insert_le _ _)
++
++/-- **The event `g² ≡ 1 (mod p)` for the sampled unit**: for a prime `p < 2^n`, over uniform
++coins, `Pr[egUnit² ≡ 1] ≤ 2/(p − 1) + (1/2)^n` (`statClose_sampleBelowL` with `m = p − 1`, then
++`dlc_card_sq_eq_one_le`). -/
++private theorem dlc_uprob_egUnit_sq_le {p n : ℕ} (hp : p.Prime) (hpn : p < 2 ^ n) :
++    uprob (fun u : Fin (n * n) → Bool => egUnit n p (List.ofFn u) ^ 2 % p = 1) ≤
++      2 / ((p - 1 : ℕ) : ℝ) + (1 / 2) ^ n := by
++  classical
++  have hp1 : 0 < p - 1 := by have := hp.two_le; omega
++  have h := (statClose_sampleBelowL hp1 (by omega : p - 1 < 2 ^ n)).uprob_le_add
++    (fun v => (v + 1) ^ 2 % p = 1)
++  unfold egUnit
++  refine h.trans (add_le_add_right ?_ _)
++  rw [uprob_eq_card_filter, Fintype.card_fin]
++  exact div_le_div_of_nonneg_right (by exact_mod_cast dlc_card_sq_eq_one_le hp) (Nat.cast_nonneg _)
++
++/-- `2/(p − 1) ≤ 8 · (1/2)^n` for a full-length `p` (`2^{n−1} ≤ p`, `2 ≤ p`). -/
++private theorem dlc_two_div_le {p n : ℕ} (hp2 : 2 ≤ p) (hpn : p < 2 ^ n) (hfull : 2 ^ (n - 1) ≤ p) :
++    2 / ((p - 1 : ℕ) : ℝ) ≤ 8 * (1 / 2) ^ n := by
++  have hn : 1 ≤ n := by
++    rcases Nat.eq_zero_or_pos n with h | h
++    · rw [h] at hpn; simp at hpn; omega
++    · exact h
++  have h2n : 2 ^ n ≤ 4 * (p - 1) := by
++    have : 2 ^ n = 2 * 2 ^ (n - 1) := by rw [← pow_succ', Nat.sub_add_cancel hn]
++    omega
++  have hp1 : (0 : ℝ) < ((p - 1 : ℕ) : ℝ) := by exact_mod_cast (show 0 < p - 1 by omega)
++  have h2n' : (2 : ℝ) ^ n ≤ 4 * ((p - 1 : ℕ) : ℝ) := by exact_mod_cast h2n
++  rw [div_le_iff₀ hp1, one_div_pow]
++  have h2pos : (0 : ℝ) < 2 ^ n := by positivity
++  rw [mul_one_div, div_mul_eq_mul_div, le_div_iff₀ h2pos]
++  linarith
++
++/-- **The bad event of hybrid 1 is negligible**: for `n ≥ n₀`, over the generator's coins and the
++coins of `g`, `Pr[g² ≡ 1 (mod p)] ≤ δ n + 9 · (1/2)^n` (the short-prime coins cost `δ n` by `hbig`;
++on the others `2/(p − 1) ≤ 8 · (1/2)^n`). -/
++private theorem dlc_uprob_bad_le (G : SafePrimeGen) {δ : ℕ → ℝ} (hδ : G.FullLengthExcept δ) {n : ℕ}
++    (hn : G.n₀ ≤ n) :
++    uprob (fun z : G.gen.Coins n × (Fin (n * n) → Bool) =>
++      egUnit n (dlP (G.gen.runAt n [] z.1)) (List.ofFn z.2) ^ 2 % dlP (G.gen.runAt n [] z.1) = 1) ≤
++      δ n + 9 * (1 / 2) ^ n := by
++  classical
++  rw [uprob_prod]
++  have hδn := (G.fullLengthExcept_iff δ).1 hδ n hn
++  have hpt : ∀ r : G.gen.Coins n,
++      uprob (fun u : Fin (n * n) → Bool =>
++        egUnit n (dlP (G.gen.runAt n [] r)) (List.ofFn u) ^ 2 % dlP (G.gen.runAt n [] r) = 1) ≤
++      (if dlP (G.gen.runAt n [] r) < 2 ^ (n - 1) then (1 : ℝ) else 0) + 9 * (1 / 2) ^ n := by
++    intro r
++    have hv := G.valid n r hn
++    obtain ⟨a, b, c, ho, ha, -, -⟩ := (wellFormedIndex_iff n _).1 (G.wellFormed n r hn)
++    rw [ho] at hv ⊢
++    simp only [safePrimeValid_iff, expValid_iff, dlP_eq, dlM_eq, pairFstD_pairEncode,
++      pairSndD_pairEncode] at hv ⊢
++    have hpp : (listToNat a).Prime := hv.1.1
++    have hpn : listToNat a < 2 ^ n := ha ▸ listToNat_lt_two_pow a
++    have hpos : (0 : ℝ) ≤ 9 * (1 / 2) ^ n := by positivity
++    split_ifs with hsmall
++    · linarith [uprob_le_one (fun u : Fin (n * n) → Bool =>
++        egUnit n (listToNat a) (List.ofFn u) ^ 2 % listToNat a = 1)]
++    · push_neg at hsmall
++      have h8 := dlc_two_div_le hpp.two_le hpn hsmall
++      linarith [dlc_uprob_egUnit_sq_le hpp hpn]
++  refine (HardcoreBit.uexp_mono hpt).trans ?_
++  rw [HardcoreBit.uexp_add, HardcoreBit.uexp_const, ← uprob_eq_uexp]
++  linarith
++
++/-- **Every element of `G_q` is a power of a generator** (NT-105.a; `zpowers_eq_QR`,
++`mem_powers_iff_mem_zpowers`): if `h` has order `q` in `Z_p` for a safe prime `p = 2q + 1`, then
++every `0 < c < p` with `c^q ≡ 1 (mod p)` is `h^k` for some `k`. -/
++private theorem dlc_exists_pow_eq {p q : ℕ} [Fact p.Prime] [hq : Fact q.Prime] (hpq : p = 2 * q + 1)
++    {h c : ℕ} (hord : orderOf ((h : ℕ) : ZMod p) = q) (hc0 : 0 < c) (hcp : c < p)
++    (hcq : c ^ q % p = 1) : ∃ k : ℕ, ((h : ℕ) : ZMod p) ^ k = ((c : ℕ) : ZMod p) := by
++  have hh0 : ((h : ℕ) : ZMod p) ≠ 0 := by
++    intro h0
++    rw [h0, orderOf_eq_zero_iff'.2 fun k hk => by rw [zero_pow hk.ne']; exact zero_ne_one] at hord
++    exact hq.out.ne_zero hord.symm
++  have hc0' : ((c : ℕ) : ZMod p) ≠ 0 := by
++    rw [Ne, ZMod.natCast_eq_zero_iff]
++    exact Nat.not_dvd_of_pos_of_lt hc0 hcp
++  set hu := Units.mk0 ((h : ℕ) : ZMod p) hh0
++  set cu := Units.mk0 ((c : ℕ) : ZMod p) hc0'
++  have hord' : orderOf hu = q := by rw [← orderOf_units, Units.val_mk0, hord]
++  have hmem : hu ∈ QR p := (mem_QR_iff_pow_eq_one hpq hu).2 (by rw [← hord']; exact pow_orderOf_eq_one hu)
++  have hne : hu ≠ 1 := by
++    intro h1
++    rw [h1, orderOf_one] at hord'
++    exact hq.out.one_lt.ne hord'
++  have hcmem : cu ∈ QR p := by
++    rw [mem_QR_iff_pow_eq_one hpq]
++    ext
++    rw [Units.val_pow_eq_pow_val, Units.val_mk0, Units.val_one, ← Nat.cast_pow, ← ZMod.natCast_mod, hcq,
++      Nat.cast_one]
++  rw [← zpowers_eq_QR hpq hmem hne, ← mem_powers_iff_mem_zpowers] at hcmem
++  obtain ⟨k, hk⟩ := hcmem
++  refine ⟨k, ?_⟩
++  have := congrArg Units.val hk
++  rwa [Units.val_pow_eq_pow_val, Units.val_mk0, Units.val_mk0] at this
++
++/-- **The random world forgets the message** (hybrid 3): for `h` of order `q` in `Z_p` and
++`c ≡ h^k (mod p)`, the numeral of `h^z · c mod p` for uniform `z ∈ Z_q` has the law of the numeral
++of `h^z mod p` (the shift `z ↦ z + k`, `Equiv.addRight`). -/
++private theorem dlc_uprob_shift {p q : ℕ} [NeZero q] {h c k : ℕ}
++    (hord : orderOf ((h : ℕ) : ZMod p) = q) (hk : ((h : ℕ) : ZMod p) ^ k = ((c : ℕ) : ZMod p)) (n : ℕ)
++    (Ψ : List Bool → Prop) :
++    uprob (fun z : ZMod q => Ψ (natToList n (h ^ z.val % p * c % p))) =
++      uprob (fun z : ZMod q => Ψ (natToList n (h ^ z.val % p))) := by
++  rw [← uprob_comp_equiv (Equiv.addRight ((k : ℕ) : ZMod q))
++    (fun z : ZMod q => Ψ (natToList n (h ^ z.val % p)))]
++  congr 1
++  funext z
++  have hval : h ^ z.val % p * c % p = h ^ (Equiv.addRight ((k : ℕ) : ZMod q) z).val % p := by
++    have hcast : ((h ^ z.val % p * c % p : ℕ) : ZMod p) =
++        ((h ^ (Equiv.addRight ((k : ℕ) : ZMod q) z).val % p : ℕ) : ZMod p) := by
++      rw [Equiv.coe_addRight, ZMod.val_add, ZMod.val_natCast]
++      push_cast [ZMod.natCast_mod]
++      generalize z.val = v
++      rw [← hk, ← pow_add, ← hord, pow_mod_orderOf, pow_add, pow_add, pow_mod_orderOf]
++    have := (ZMod.natCast_eq_natCast_iff' _ _ p).1 hcast
++    rwa [Nat.mod_mod, Nat.mod_mod] at this
++  rw [hval]
++
++/-- Averages of pointwise `c`-close functions are `c`-close. -/
++private theorem dlc_abs_uexp_sub_le {α : Type*} [Fintype α] [Nonempty α] {f g : α → ℝ} {c : ℝ}
++    (h : ∀ a, |f a - g a| ≤ c) : |uexp f - uexp g| ≤ c := by
++  rw [← HardcoreBit.uexp_sub, abs_le]
++  constructor
++  · have := HardcoreBit.uexp_mono (f := fun _ : α => -c) (g := fun a => f a - g a)
++      fun a => (abs_le.1 (h a)).1
++    rwa [HardcoreBit.uexp_const] at this
++  · have := HardcoreBit.uexp_mono (f := fun a => f a - g a) (g := fun _ : α => c)
++      fun a => (abs_le.1 (h a)).2
++    rwa [HardcoreBit.uexp_const] at this
++
++/-- A coin string read along a length cast. -/
++private def dlc_castEquiv {a L : ℕ} (h : a = L) : (Fin a → Bool) ≃ (Fin L → Bool) :=
++  Equiv.arrowCongr (finCongr h) (Equiv.refl Bool)
++
++/-- The cast keeps the coin string. -/
++private theorem dlc_castEquiv_ofFn {a L : ℕ} (h : a = L) (u : Fin a → Bool) :
++    List.ofFn (dlc_castEquiv h u) = List.ofFn u := by
++  subst h
++  rfl
++
++/-- The coin count of El Gamal's `Gen`: `G`'s coins, then `n · n` for `g` and `n · n` for `a`. -/
++private theorem dlc_egGen_coinLen (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
++    (egGen H G).coinLen n = G.gen.coinLen n + (n * n + n * n) := by
++  rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
++  simp only [egGen, NUPPT.coins_ofPolyTimeUniform, egGenCoins, PolyExpr.eval_add, PolyExpr.eval_mul,
++    PolyExpr.eval_var]
++
++/-- The coin count of El Gamal's `Enc`: `n · n`. -/
++private theorem dlc_egEnc_coinLen (H : ArithmeticFP) (n : ℕ) : (egEnc H).coinLen n = n * n := by
++  rw [NUPPT.coinLen_eq]
++  simp only [egEnc, NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_var]
++
++/-- The coin count of the derived generator: `G`'s coins, then `n · n` for `g`. -/
++private theorem dlc_egGroupGen_coinLen (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
++    (egGroupGenMachine H G).coinLen n = G.gen.coinLen n + n * n := by
++  rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
++  simp only [egGroupGenMachine, NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_add, PolyExpr.eval_mul,
++    PolyExpr.eval_var]
++
++/-- The coins of `Gen` from `G`'s coins and the segments of `g` and `a`. -/
++private noncomputable def dlc_genEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
++    (G.gen.Coins n × (Fin (n * n) → Bool)) × (Fin (n * n) → Bool) ≃ (egGen H G).Coins n :=
++  ((dlc_splitEquiv (dlc_egGen_coinLen H G n)).trans
++    ((Equiv.prodCongr (Equiv.refl _) (dlc_splitEquiv rfl)).trans (Equiv.prodAssoc _ _ _).symm)).symm
++
++private theorem dlc_genEquiv_ofFn (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : G.gen.Coins n)
++    (u₁ u₂ : Fin (n * n) → Bool) :
++    List.ofFn (dlc_genEquiv H G n ((r, u₁), u₂)) = List.ofFn r ++ (List.ofFn u₁ ++ List.ofFn u₂) := by
++  unfold dlc_genEquiv
++  rw [Equiv.symm_trans_apply, Equiv.symm_trans_apply, Equiv.symm_symm, Equiv.prodAssoc_apply,
++    Equiv.prodCongr_symm, Equiv.prodCongr_apply, Prod.map, Equiv.refl_symm, Equiv.refl_apply,
++    dlc_splitEquiv_symm_ofFn, dlc_splitEquiv_symm_ofFn]
++
++/-- The coins of `Enc` from one segment of `n · n` coins. -/
++private noncomputable def dlc_encEquiv (H : ArithmeticFP) (n : ℕ) : (Fin (n * n) → Bool) ≃ (egEnc H).Coins n :=
++  dlc_castEquiv (dlc_egEnc_coinLen H n).symm
++
++/-- The coins of the derived generator from `G`'s coins and the segment of `g`. -/
++private noncomputable def dlc_grpEquiv (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) :
++    G.gen.Coins n × (Fin (n * n) → Bool) ≃ (egGroupGenMachine H G).Coins n :=
++  (dlc_splitEquiv (dlc_egGroupGen_coinLen H G n)).symm
++
++/-- The coin string of `Enc` read from its segment. -/
++private theorem dlc_encEquiv_ofFn (H : ArithmeticFP) (n : ℕ) (u : Fin (n * n) → Bool) :
++    List.ofFn (dlc_encEquiv H n u) = List.ofFn u :=
++  dlc_castEquiv_ofFn _ _
++
++/-- **The challenge on split coins**: the keys are `egGenParts` on `G`'s output and the segments of
++`g` and `a`, the ciphertext is `egEncParts` on the segment of `b` (`egGen_runAt`, `egEnc_runAt`). -/
++private theorem dlc_challenge_eq (H : ArithmeticFP) (G : SafePrimeGen) (M : NUPPT) (b : Bool) (n : ℕ)
++    (r : G.gen.Coins n) (u₁ u₂ u₃ : Fin (n * n) → Bool) (rM : M.Coins n) :
++    (elGamal H G).challenge n M b (dlc_genEquiv H G n ((r, u₁), u₂), (rM, dlc_encEquiv H n u₃)) =
++      pairEncode (egGenParts n (pairFstD (G.gen.runAt n [] r)) (pairFstD (pairSndD (G.gen.runAt n [] r)))
++          (List.ofFn u₁) (List.ofFn u₂)).1
++        (egEncParts n (egGenParts n (pairFstD (G.gen.runAt n [] r))
++            (pairFstD (pairSndD (G.gen.runAt n [] r))) (List.ofFn u₁) (List.ofFn u₂)).1
++          (if b then pairSndD (M.runAt n (egGenParts n (pairFstD (G.gen.runAt n [] r))
++              (pairFstD (pairSndD (G.gen.runAt n [] r))) (List.ofFn u₁) (List.ofFn u₂)).1 rM)
++            else pairFstD (M.runAt n (egGenParts n (pairFstD (G.gen.runAt n [] r))
++              (pairFstD (pairSndD (G.gen.runAt n [] r))) (List.ofFn u₁) (List.ofFn u₂)).1 rM))
++          (List.ofFn u₃)) := by
++  have hl : (List.ofFn r).length = G.gen.coinLen n := List.length_ofFn
++  have hl₁ : (List.ofFn u₁).length = n * n := List.length_ofFn
++  have hgen : (egGen H G).runAt n [] (dlc_genEquiv H G n ((r, u₁), u₂)) =
++      pairEncode (egGenParts n (pairFstD (G.gen.runAt n [] r)) (pairFstD (pairSndD (G.gen.runAt n [] r)))
++          (List.ofFn u₁) (List.ofFn u₂)).1
++        (egGenParts n (pairFstD (G.gen.runAt n [] r)) (pairFstD (pairSndD (G.gen.runAt n [] r)))
++          (List.ofFn u₁) (List.ofFn u₂)).2 := by
++    rw [egGen_runAt, dlc_genEquiv_ofFn, List.take_left' hl, List.drop_left' hl, List.take_left' hl₁,
++      ← List.drop_drop, List.drop_left' hl, List.drop_left' hl₁, ← NUPPT.runAt_eq]
++  unfold GroupPKScheme.challenge
++  dsimp only [elGamal]
++  rw [hgen, pairFstD_pairEncode, egEnc_runAt, dlc_encEquiv_ofFn]
++
++/-- **The derived generator on split coins**: `egGroupParts` on `G`'s output and the segment of `g`. -/
++private theorem dlc_grp_runAt (H : ArithmeticFP) (G : SafePrimeGen) (n : ℕ) (r : G.gen.Coins n)
++    (u₁ : Fin (n * n) → Bool) :
++    (egGroupGen H G).gen.runAt n [] (dlc_grpEquiv H G n (r, u₁)) =
++      egGroupParts n (pairFstD (G.gen.runAt n [] r)) (pairFstD (pairSndD (G.gen.runAt n [] r)))
++        (List.ofFn u₁) := by
++  have hl : (List.ofFn r).length = G.gen.coinLen n := List.length_ofFn
++  have hl₁ : (List.ofFn u₁).length = n * n := List.length_ofFn
++  show (egGroupGenMachine H G).runAt n [] _ = _
++  rw [egGroupGenMachine_runAt]
++  unfold dlc_grpEquiv
++  rw [dlc_splitEquiv_symm_ofFn, List.take_left' hl, List.drop_left' hl,
++    List.take_of_length_le hl₁.le, ← NUPPT.runAt_eq]
++
++/-- **Hybrid 1, pointwise**: outside the event `g² ≡ 1 (mod p)`, the challenge with bit `b` and the
++DDH distinguisher `D_b` on the real tuple of the derived generator run `D` on the same string with
++the same coins (the exponents are the same samplers, `h^{(ab mod q)} = h^{ab}` since `h` has order
++`q`, and `egSquareGen p g = g² mod p`). -/
++private theorem dlc_hyb1_point (H : ArithmeticFP) (G : SafePrimeGen) (M D Db : NUPPT) (b : Bool) {n : ℕ}
++    (hn : G.n₀ ≤ n) (e : M.Coins n × D.Coins n ≃ Db.Coins n)
++    (he : ∀ (w : List Bool) (rM : M.Coins n) (rD : D.Coins n),
++      Db.runAt n w (e (rM, rD)) = D.runAt n (dlc_ddhInput n b w (M.runAt n (dlc_tuplePk w) rM)) rD)
++    (r : G.gen.Coins n) (u₁ u₂ u₃ : Fin (n * n) → Bool) (rM : M.Coins n) (rD : D.Coins n)
++    (hgood : ¬ egUnit n (dlP (G.gen.runAt n [] r)) (List.ofFn u₁) ^ 2 % dlP (G.gen.runAt n [] r) = 1) :
++    D.distinguisherL n
++        ((elGamal H G).challenge n M b (dlc_genEquiv H G n ((r, u₁), u₂), (rM, dlc_encEquiv H n u₃))) rD =
++      Db.distinguisher n (ddhLen.eval n)
++        ((ddhReal (egGroupGen H G)).X n (dlc_grpEquiv H G n (r, u₁), (u₂, u₃))) (e (rM, rD)) := by
++  rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.distinguisherL_eq, he, dlc_challenge_eq]
++  dsimp only [ddhReal]
++  -- the index of the derived generator: valid and well formed
++  have hvi : SafePrimeValid ((egGroupGen H G).gen.runAt n [] (dlc_grpEquiv H G n (r, u₁))) :=
++    (egGroupGen H G).valid n _ hn
++  have hwi : WellFormedIndex n ((egGroupGen H G).gen.runAt n [] (dlc_grpEquiv H G n (r, u₁))) :=
++    (egGroupGen H G).wellFormed n _ hn
++  have hi := dlc_grp_runAt H G n r u₁
++  generalize (egGroupGen H G).gen.runAt n [] (dlc_grpEquiv H G n (r, u₁)) = i at hvi hwi hi ⊢
++  -- the safe-prime instance of `G`
++  have hv := G.valid n r hn
++  obtain ⟨a, bq, cc, ho, ha, hb, -⟩ := (wellFormedIndex_iff n _).1 (G.wellFormed n r hn)
++  rw [ho] at hv hgood hi ⊢
++  simp only [safePrimeValid_iff, expValid_iff, dlP_eq, dlM_eq, pairFstD_pairEncode,
++    pairSndD_pairEncode] at hv hgood hi ⊢
++  haveI : Fact (listToNat a).Prime := ⟨hv.1.1⟩
++  haveI : Fact (listToNat bq).Prime := ⟨hv.2.1⟩
++  have hpq : listToNat a = 2 * listToNat bq + 1 := hv.2.2
++  have hp0 : 0 < listToNat a := hv.1.1.pos
++  have hpn : listToNat a < 2 ^ n := ha ▸ listToNat_lt_two_pow a
++  have hq0 : 0 < listToNat bq := hv.2.1.pos
++  have hg0 := egUnit_pos n (listToNat a) (List.ofFn u₁)
++  have hgp := egUnit_lt hv.1.1.two_le n (List.ofFn u₁)
++  obtain ⟨-, -, hord⟩ := egSquareGen_valid hpq hg0 hgp
++  have hsq : egSquareGen (listToNat a) (egUnit n (listToNat a) (List.ofFn u₁)) =
++      egUnit n (listToNat a) (List.ofFn u₁) ^ 2 % listToNat a := if_neg hgood
++  rw [hsq] at hord
++  simp only [egGroupParts, hsq] at hi
++  have hhp : egUnit n (listToNat a) (List.ofFn u₁) ^ 2 % listToNat a < listToNat a := Nat.mod_lt _ hp0
++  unfold egGenParts egEncParts
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, dlP_eq, dlM_eq, dlG_eq]
++  generalize egUnit n (listToNat a) (List.ofFn u₁) ^ 2 % listToNat a = h at hord hi hhp ⊢
++  -- the tuple
++  rw [dlc_ofFn_padFin (by rw [length_ddhTuple hwi, eval_ddhLen])]
++  unfold dlc_ddhInput dlc_tuplePk ddhTuple
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode]
++  have hsamp : ∀ u : Fin (n * n) → Bool,
++      (sampleBelowL (listToNat bq) (Nat.size (listToNat bq)) n n (List.ofFn u)).getD 0 < listToNat bq := by
++    intro u
++    rcases hs : sampleBelowL (listToNat bq) (Nat.size (listToNat bq)) n n (List.ofFn u) with _ | v
++    · exact hq0
++    · rw [Option.getD_some]
++      exact sampleBelowL_lt hs
++  have hP : dlP i = listToNat a := by rw [hi, dlP_eq, pairFstD_pairEncode]
++  have hM : dlM i = listToNat bq := by rw [hi, dlM_eq, pairSndD_pairEncode, pairFstD_pairEncode]
++  have hG : dlG i = h := by
++    rw [hi, dlG_eq, pairSndD_pairEncode, pairSndD_pairEncode, listToNat_natToList (hhp.trans hpn)]
++  have hW : dlW i = n := hwi.dlW_eq
++  have hE : expOrd i = listToNat bq := by rw [expOrd_of_valid hvi.expValid, hM]
++  have hexpF : ∀ z, expF i z = natToList n (h ^ z.val % listToNat a) := fun z => by
++    rw [expF_eq, hW, hG, hP]
++  have hval : ∀ u : Fin (n * n) → Bool, (ddhExpo n i u).val =
++      (sampleBelowL (listToNat bq) (Nat.size (listToNat bq)) n n (List.ofFn u)).getD 0 := by
++    intro u
++    unfold ddhExpo
++    rw [ZMod.val_natCast, hE, Nat.mod_eq_of_lt (hsamp u)]
++  rw [hexpF, hexpF, hexpF, ZMod.val_mul, hval, hval, hE, hP, hM, hi]
++  have key : ∀ x y c : ℕ, (h ^ x % listToNat a) ^ y * c % listToNat a =
++      h ^ (x * y % listToNat bq) % listToNat a * c % listToNat a := by
++    intro x y c
++    have hcast : (((h ^ x % listToNat a) ^ y * c % listToNat a : ℕ) : ZMod (listToNat a)) =
++        ((h ^ (x * y % listToNat bq) % listToNat a * c % listToNat a : ℕ) : ZMod (listToNat a)) := by
++      push_cast [ZMod.natCast_mod]
++      rw [← hord, pow_mod_orderOf, pow_mul]
++    have := (ZMod.natCast_eq_natCast_iff' _ _ _).1 hcast
++    rwa [Nat.mod_mod, Nat.mod_mod] at this
++  rw [listToNat_natToList (hhp.trans hpn), listToNat_natToList ((Nat.mod_lt _ hp0).trans hpn),
++    listToNat_natToList ((Nat.mod_lt _ hp0).trans hpn), key]
++
+ /-- **Theorem 107.3** [PS10, Theorem 107.3]: if the DDH assumption holds (for the derived
+ generator) then El Gamal with message space `G_q` is secure, for safe primes of full length
+ except on a negligible set of the generator's coins (and under the arithmetic hypotheses).
+-- 
+2.43.0
+
