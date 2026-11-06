@@ -1,0 +1,45 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.NUPPT.ofPolyTime	3
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.blockEncFun	7
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	TCSlib.Cryptography.blockEncFun	5
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, TCSlib.Cryptography.blockEncFun	7
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	direct	Complexity.NUPPT.distinguisherL	14
+Complexity.NUPPT.Uniform	TCSlib.Complexity.Randomized.PPT	direct		3
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.runAt, Complexity.NUPPT.runAtL	9
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.runAt	13
+Complexity.NUPPT.distinguisherL	TCSlib.Cryptography.Asymptotic.Adversary	direct		4
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct		1
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	direct	TCSlib.Cryptography.blockEncFun, TCSlib.Cryptography.blockList	4
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	direct		1
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.runAt, Complexity.NUPPT.runAtL	10
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.distinguisherL	7
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	direct		3
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.distinguisherL, Complexity.NUPPT.output, Complexity.NUPPT.runAt	10
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.Coins, Complexity.NUPPT.advice_length, Complexity.NUPPT.coinLen	15
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.distAdv	5
+TCSlib.Cryptography.blockEmit	TCSlib.Cryptography.Asymptotic.BlockEncryptor	deep	TCSlib.Cryptography.blockEncFun	2
+TCSlib.Cryptography.blockEncFun	TCSlib.Cryptography.Asymptotic.BlockEncryptor	direct		2
+TCSlib.Cryptography.blockList	TCSlib.Cryptography.Asymptotic.BlockEncryptor	direct		1
+TCSlib.Cryptography.blockState	TCSlib.Cryptography.Asymptotic.BlockEncryptor	deep	TCSlib.Cryptography.blockEncFun	2
+TCSlib.Cryptography.blockStep	TCSlib.Cryptography.Asymptotic.BlockEncryptor	deep	TCSlib.Cryptography.blockEncFun	2
+TCSlib.Cryptography.coinBlock	TCSlib.Cryptography.Asymptotic.BlockEncryptor	direct		5
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct		3
+TCSlib.Cryptography.uexp	TCSlib.Cryptography.Foundations.Probability	direct		3
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.acceptProb, TCSlib.Cryptography.distAdv	6
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime	3
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime	3
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime	3
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime	3
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime	3
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.distinguisherL, Complexity.NUPPT.ofPolyTime	13
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.ofPolyTime	3
+TCSlib.Cryptography.PrivateKeyScheme.encodeList	TCSlib.Cryptography.Asymptotic.Encryption	direct		6

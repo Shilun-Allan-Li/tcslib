@@ -1,0 +1,113 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 47,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Collection.glPad",
+   "TCSlib.Cryptography.TrapdoorCollection.glPad"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Collection.glPad": [
+   [
+    120,
+    93,
+    "B",
+    "Application type mismatch: The argument\n  s\nhas type\n  (NUPPT.ofPolyTimeUniform \u22ef (F.sample.coins.add m)).Coins n\nbut is expected to have type\n  Fin (F.sample.coins.eval n + m.eval n) \u2192 ?m.274\nin the application\n  Equiv.surjective (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)) s"
+   ]
+  ],
+  "TCSlib.Cryptography.TrapdoorCollection.glPad": [
+   [
+    409,
+    39,
+    "B",
+    "Application type mismatch: The argument\n  s\nhas type\n  (NUPPT.ofPolyTimeUniform \u22ef T.inv.coins).Coins n\nbut is expected to have type\n  T.inv.Coins n\nin the application\n  T.inv_spec n r y.1 s"
+   ],
+   [
+    413,
+    47,
+    "B",
+    "Function expected at\n  T.inv_uniform\nbut this term has type\n  T.inv.Uniform\n\nNote: Expected a function because this term is being applied to the argument\n  n"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Collection.glPad": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.Collection.index"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    120
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  s\nhas type\n  (NUPPT.ofPolyTimeUniform \u22ef (F.sample.coins.add m)).Coins n\nbut is expected to have type\n  Fin (F.sample.coins.eval n + m.eval n) \u2192 ?m.274\nin the application\n  Equiv.surjective (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n)) s"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev3: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Collection.index": "ev4: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.TrapdoorCollection.glPad": {
+   "names": [
+    "Complexity.NUPPT.Uniform",
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    409,
+    413
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  s\nhas type\n  (NUPPT.ofPolyTimeUniform \u22ef T.inv.coins).Coins n\nbut is expected to have type\n  T.inv.Coins n\nin the application\n  T.inv_spec n r y.1 s"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.Uniform": "ev5: FAILS without it: Function expected at",
+    "Complexity.NUPPT.coinLen": "ev6: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev7: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev8: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev9: FAILS without it: Tactic `rewrite` failed: Did not find an occurrence of the pattern"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Collection.glPad": [],
+  "TCSlib.Cryptography.TrapdoorCollection.glPad": [
+   "TCSlib.Cryptography.Collection.glPad",
+   "TCSlib.Cryptography.PermCollection.glPad"
+  ]
+ },
+ "runs": 69,
+ "seconds": 182
+}

@@ -1,0 +1,191 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 45,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.OneWay.YaoMachine.ans_layout",
+   "TCSlib.Cryptography.OneWay.YaoMachine.sampleAll",
+   "TCSlib.Cryptography.OneWay.YaoMachine.test_layout"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.OneWay.YaoMachine.ans_layout": [
+   [
+    612,
+    26,
+    "T",
+    "Application type mismatch: The argument\n  rc\nhas type\n  Fin ((\u03c1P D).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) \u2192 Bool\nin the application\n  roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM \u22ef rc"
+   ]
+  ],
+  "TCSlib.Cryptography.OneWay.YaoMachine.test_layout": [
+   [
+    683,
+    26,
+    "T",
+    "Application type mismatch: The argument\n  rc\nhas type\n  Fin ((\u03c1P D).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) \u2192 Bool\nin the application\n  roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM \u22ef rc"
+   ]
+  ],
+  "TCSlib.Cryptography.OneWay.YaoMachine.sampleAll": [
+   [
+    720,
+    20,
+    "B",
+    "Application type mismatch: The argument\n  (blocksE (T.eval n + 1) ((\u03c1P D).eval n)) r i\nhas type\n  Fin ((\u03c1P D).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) \u2192 Bool\nin the application\n  roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM \u22ef\n    ((blocksE (T.eval n + 1) ((\u03c1P D).eval n)) r i)"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.OneWay.YaoMachine.sampleAll": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    720
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (blocksE (T.eval n + 1) ((\u03c1P D).eval n)) r i\nhas type\n  Fin ((\u03c1P D).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) \u2192 Bool\nin the application\n  roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM \u22ef\n    ((blocksE (T.eval n + 1) ((\u03c1P D).eval n)) r i)"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.OneWay.YaoMachine.ans_layout": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    612
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  rc\nhas type\n  Fin ((\u03c1P D).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) \u2192 Bool\nin the application\n  roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM \u22ef rc"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.OneWay.YaoMachine.test_layout": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    683
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  rc\nhas type\n  Fin ((\u03c1P D).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)) \u2192 Bool\nin the application\n  roundSample n (D.m.eval n) (D.inLen.eval n) (D.A'.coinLen n) (kkOf (D.m.eval n)) hM \u22ef rc"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.OneWay.YaoMachine.sampleAll": [
+   "TCSlib.Cryptography.OneWay.YaoMachine.Data",
+   "TCSlib.Cryptography.OneWay.YaoMachine.nkk_le",
+   "TCSlib.Cryptography.OneWay.YaoMachine.\u03c1P",
+   "TCSlib.Cryptography.OneWay.blocksE",
+   "TCSlib.Cryptography.OneWay.kkOf",
+   "TCSlib.Cryptography.OneWay.pbOf",
+   "TCSlib.Cryptography.OneWay.posOf",
+   "TCSlib.Cryptography.OneWay.roundEquiv",
+   "TCSlib.Cryptography.OneWay.roundSample"
+  ],
+  "TCSlib.Cryptography.OneWay.YaoMachine.ans_layout": [
+   "TCSlib.Cryptography.OneWay.YaoMachine.Data",
+   "TCSlib.Cryptography.OneWay.YaoMachine.adv",
+   "TCSlib.Cryptography.OneWay.YaoMachine.alpha1",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ans",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ipos",
+   "TCSlib.Cryptography.OneWay.YaoMachine.nkk",
+   "TCSlib.Cryptography.OneWay.YaoMachine.nkk_le",
+   "TCSlib.Cryptography.OneWay.YaoMachine.off",
+   "TCSlib.Cryptography.OneWay.YaoMachine.offIn",
+   "TCSlib.Cryptography.OneWay.YaoMachine.planted",
+   "TCSlib.Cryptography.OneWay.YaoMachine.posBits",
+   "TCSlib.Cryptography.OneWay.YaoMachine.rc",
+   "TCSlib.Cryptography.OneWay.YaoMachine.rcoins",
+   "TCSlib.Cryptography.OneWay.YaoMachine.uIn",
+   "TCSlib.Cryptography.OneWay.YaoMachine.uM",
+   "TCSlib.Cryptography.OneWay.YaoMachine.uOut",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ukk",
+   "TCSlib.Cryptography.OneWay.YaoMachine.xs",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ys",
+   "TCSlib.Cryptography.OneWay.YaoMachine.zOut",
+   "TCSlib.Cryptography.OneWay.YaoMachine.\u03c1P",
+   "TCSlib.Cryptography.OneWay.blocksE",
+   "TCSlib.Cryptography.OneWay.kkOf",
+   "TCSlib.Cryptography.OneWay.pbOf",
+   "TCSlib.Cryptography.OneWay.posOf",
+   "TCSlib.Cryptography.OneWay.roundEquiv",
+   "TCSlib.Cryptography.OneWay.roundSample",
+   "TCSlib.Cryptography.OneWay.yaoB"
+  ],
+  "TCSlib.Cryptography.OneWay.YaoMachine.test_layout": [
+   "TCSlib.Cryptography.OneWay.YaoMachine.Data",
+   "TCSlib.Cryptography.OneWay.YaoMachine.adv",
+   "TCSlib.Cryptography.OneWay.YaoMachine.alpha1",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ans",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ipos",
+   "TCSlib.Cryptography.OneWay.YaoMachine.nkk",
+   "TCSlib.Cryptography.OneWay.YaoMachine.nkk_le",
+   "TCSlib.Cryptography.OneWay.YaoMachine.off",
+   "TCSlib.Cryptography.OneWay.YaoMachine.offIn",
+   "TCSlib.Cryptography.OneWay.YaoMachine.planted",
+   "TCSlib.Cryptography.OneWay.YaoMachine.posBits",
+   "TCSlib.Cryptography.OneWay.YaoMachine.rc",
+   "TCSlib.Cryptography.OneWay.YaoMachine.rcoins",
+   "TCSlib.Cryptography.OneWay.YaoMachine.test",
+   "TCSlib.Cryptography.OneWay.YaoMachine.uIn",
+   "TCSlib.Cryptography.OneWay.YaoMachine.uM",
+   "TCSlib.Cryptography.OneWay.YaoMachine.uOut",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ukk",
+   "TCSlib.Cryptography.OneWay.YaoMachine.xs",
+   "TCSlib.Cryptography.OneWay.YaoMachine.ys",
+   "TCSlib.Cryptography.OneWay.YaoMachine.zOut",
+   "TCSlib.Cryptography.OneWay.YaoMachine.\u03c1P",
+   "TCSlib.Cryptography.OneWay.blocksE",
+   "TCSlib.Cryptography.OneWay.kkOf",
+   "TCSlib.Cryptography.OneWay.pbOf",
+   "TCSlib.Cryptography.OneWay.posOf",
+   "TCSlib.Cryptography.OneWay.roundEquiv",
+   "TCSlib.Cryptography.OneWay.roundSample",
+   "TCSlib.Cryptography.OneWay.yaoB"
+  ]
+ },
+ "runs": 16,
+ "seconds": 49
+}

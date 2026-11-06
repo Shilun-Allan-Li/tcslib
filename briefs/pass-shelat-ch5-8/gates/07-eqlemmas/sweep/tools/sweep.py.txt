@@ -1,0 +1,374 @@
+"""Statement-level rule-10 sweep driver (gate 07).
+
+sweep.py <worktree> <olean-tree> <workdir> <file.lean (relative to worktree)>...
+
+Per file F (one `lean` process at a time; no .olean is ever written for a probe copy):
+ 1. U   = statement-only copy of F (stmtonly.py: every theorem/lemma/example proof -> `sorry`,
+          definitions kept with bodies; line numbers preserved) + the collector (collect_tail.lean)
+          appended. Elaborated UNSEALED: this is the control (must have no error) and it writes the
+          candidate list (every foreign TCSlib plain `def` reachable from the file's types and
+          definition values, see collect_tail.lean).
+ 2. S0  = the statement-only copy with `attribute [local irreducible] <all candidates>` inserted
+          after the header. Every error is attributed to its declaration (declx extents) and region:
+          T (the declaration's type, i.e. before its top-level `:=`/`|`/`where`; all of a
+          theorem/lemma/example/structure/class/inductive) or B (a kept definition/instance body).
+ 3. Fixpoint: every failing declaration D gets an unseal entry (`section` / `attribute
+          [local semireducible] <set>` / `end` around D only, everything else stays sealed),
+          starting from all candidates; repeat until the copy passes. Declarations whose failure
+          disappears without their own entry are cascades (dropped in step 4).
+ 4. Minimisation, per entry, run for all entries in parallel inside each Lean run: try the
+          candidates the declaration mentions directly; then binary partition (drop every part the
+          declaration passes without); then 1-minimality (re-seal each remaining name alone: the
+          declaration must fail). A trial result (pass or fail) counts only if no earlier
+          definition/instance/structure failed in the same run (a broken definition can cascade
+          into later declarations, and can also MASK their errors, since Lean suppresses errors on
+          terms containing `sorry`); otherwise it is retried.
+ 5. Final run with the minimal entries must pass; per entry, the evidence = the passing final run
+          + one conclusive failing run per name with that name re-sealed (error message recorded).
+    A declaration whose error was masked in S0 and only appears in a fixpoint round records the
+    errors of that round (`first_error`).
+Outputs in <workdir>/<tag>/: U.lean, U.log, cands.tsv, uses.tsv, transparent.tsv, S0.lean, S0.log,
+trials.log, result.json."""
+import json, os, re, subprocess, sys, time
+from pathlib import Path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import stmtonly
+
+TOOLS = Path(__file__).resolve().parent
+WT, OL, WORK = Path(sys.argv[1]).resolve(), sys.argv[2], Path(sys.argv[3]).resolve()
+FILES = sys.argv[4:]
+env = dict(os.environ)
+env["LEAN_PATH"] = ":".join([OL] + sorted(str(d) for d in (WT / ".lake/packages").glob("*/.lake/build/lib/lean")))
+env["PATH"] = str(Path.home() / ".elan/bin") + ":" + env["PATH"]
+TIMEOUT = 1800
+PROOF = {'theorem', 'lemma', 'example'}
+NONLEAF = {'def', 'abbrev', 'instance', 'structure', 'class', 'inductive', 'opaque'}
+
+
+def header_end(lines):
+    i, last, in_c = 0, -1, False
+    while i < len(lines):
+        s = lines[i].strip()
+        if in_c:
+            if '-/' in s: in_c = False
+        elif s.startswith('/-') and not s.startswith('/-!'):
+            in_c = '-/' not in s[2:]
+        elif s.startswith('import ') or s.startswith('set_option '):
+            last = i
+        elif s == '' or s.startswith('--'):
+            pass
+        else:
+            break
+        i += 1
+    return last
+
+
+def build(src, seal, entries, recs):
+    """src: statement-only text; seal: names; entries: {decl: set(names to unseal around it)}."""
+    lines = src.split('\n')
+    # the file's own `attribute [local irreducible] …` lines would fail on names the top seal already
+    # made irreducible: drop exactly those names (the top seal covers them from the header on)
+    for i, l in enumerate(lines):
+        m = re.match(r'^(\s*attribute \[local irreducible\])\s+(.*)$', l)
+        if m and seal:
+            toks = m.group(2).split()
+            keep = [t for t in toks if not any(n == t or n.endswith('.' + t) for n in seal)]
+            lines[i] = (m.group(1) + ' ' + ' '.join(keep)) if keep else ('-- (covered by the seal line) ' + l.strip())
+    h = header_end(lines)
+    before, after = {}, {}
+    if seal:
+        before.setdefault(h + 1, []).append("attribute [local irreducible] " + " ".join(seal))
+    byname = {r['name']: r for r in recs}
+    for d, ns in entries.items():
+        r = byname[d]
+        before.setdefault(r['dstart'] - 1, []).extend(
+            ["section SweepUnseal"] + (["attribute [local semireducible] " + " ".join(sorted(ns))] if ns else []))
+        after.setdefault(r['end'] - 1, []).append("end SweepUnseal")
+    out, omap = [], []
+    for i, l in enumerate(lines):
+        for x in before.get(i, []): out.append(x); omap.append(None)
+        out.append(l); omap.append(i + 1)
+        for x in after.get(i, []): out.append(x); omap.append(None)
+    return '\n'.join(out), omap
+
+
+ERR = re.compile(r'^(.*?\.lean):(\d+):(\d+): (error|warning|info)(?::)?\s?(.*)$')
+
+
+def run_lean(path):
+    t0 = time.time()
+    try:
+        r = subprocess.run(["lean", str(path)], cwd=WT, env=env, capture_output=True, text=True, timeout=TIMEOUT)
+        out, rc = r.stdout + r.stderr, r.returncode
+    except subprocess.TimeoutExpired:
+        out, rc = f"{path}:1:0: error: TIMEOUT after {TIMEOUT}s", -9
+    return out, rc, time.time() - t0
+
+
+def parse(out):
+    """[(line, col, severity, message)] with multi-line messages joined."""
+    msgs, cur = [], None
+    for l in out.splitlines():
+        m = ERR.match(l)
+        if m:
+            cur = [int(m.group(2)), int(m.group(3)), m.group(4), m.group(5)]
+            msgs.append(cur)
+        elif cur is not None:
+            cur[3] += '\n' + l
+        else:
+            msgs.append([0, 0, 'raw', l])
+    return msgs
+
+
+def locate(recs, oln, col):
+    best = None
+    for r in recs:
+        if r['dstart'] <= oln: best = r
+    if best is None or oln > best['end']:
+        return None, 'cmd'
+    if best['kind'] in PROOF or best['split'] is None:
+        return best, 'T'
+    sl, sc = best['split']
+    return best, ('T' if (oln, col) < (sl, sc) else 'B')
+
+
+def analyse(out, rc, omap, recs):
+    """-> (ok, {decl: [(oln, col, region, msg)]}, other_errors)"""
+    per, other = {}, []
+    for (k, c, sev, msg) in parse(out):
+        if sev != 'error' and sev != 'raw': continue
+        if sev == 'raw':
+            if rc != 0: other.append(('raw', msg))
+            continue
+        oln = omap[k - 1] if 0 < k <= len(omap) else None
+        if oln is None:
+            other.append((f'inserted-line {k}', msg)); continue
+        r, reg = locate(recs, oln, c)
+        if r is None:
+            other.append((f'line {oln} (outside declarations)', msg)); continue
+        per.setdefault(r['name'], []).append((oln, c, reg, msg))
+    ok = rc == 0 and not per and not other
+    return ok, per, other
+
+
+class FileSweep:
+    def __init__(self, rel):
+        self.rel = rel
+        self.tag = rel.replace('/', '_')[:-5]
+        self.d = WORK / self.tag
+        self.d.mkdir(parents=True, exist_ok=True)
+        self.log = open(self.d / 'trials.log', 'a', encoding='utf-8')
+        self.nrun = 0
+
+    def say(self, s):
+        self.log.write(s + '\n'); self.log.flush()
+
+    def run(self, seal, entries, name):
+        text, omap = build(self.stmt, seal, entries, self.recs)
+        p = self.d / f'{name}.lean'
+        p.write_text(text, encoding='utf-8')
+        out, rc, dt = run_lean(p)
+        (self.d / f'{name}.log').write_text(out, encoding='utf-8')
+        self.nrun += 1
+        ok, per, other = analyse(out, rc, omap, self.recs)
+        self.say(f"[{name}] rc={rc} {dt:.0f}s ok={ok} failing={sorted(per)} other={[o[0] for o in other]}")
+        return ok, per, other
+
+    def go(self):
+        src = (WT / self.rel).read_text(encoding='utf-8')
+        self.stmt, self.recs = stmtonly.transform(src)
+        (self.d / 'decls.json').write_text(json.dumps(self.recs, indent=0))
+        res = dict(file=self.rel, status=None)
+        # 1. unsealed control + collection
+        tail = (TOOLS / 'collect_tail.lean').read_text(encoding='utf-8').replace(
+            'SWEEP_OUT_PATH', json.dumps(str(self.d / 'coll')))
+        stmt0 = self.stmt
+        self.stmt = stmt0 + '\n' + tail
+        ok, per, other = self.run([], {}, 'U')
+        self.stmt = stmt0
+        res['control_unsealed'] = dict(ok=ok, failing=sorted(per), other=[o[0] for o in other])
+        if not (self.d / 'coll.cands.tsv').exists():
+            res['status'] = 'NO-COLLECTION'; return res
+        cands, direct = [], {}
+        for l in open(self.d / 'coll.cands.tsv', encoding='utf-8'):
+            q = l.rstrip('\n').split('\t')
+            if len(q) >= 3: cands.append(q[0])
+        for l in open(self.d / 'coll.uses.tsv', encoding='utf-8'):
+            q = l.rstrip('\n').split('\t')
+            if len(q) == 3:
+                direct.setdefault(q[0], set()).update(x.split('@')[0] for x in q[2].split())
+        self.cands = cands
+        res['candidates'] = len(cands)
+        # own-file dependency graph between declarations (from the collector's deps.tsv)
+        def decl_at(line):
+            r, _ = locate(self.recs, line, 0)
+            return r['name'] if r else None
+        dep = {}
+        dp = self.d / 'coll.deps.tsv'
+        nodeps = not dp.exists()
+        if not nodeps:
+            for l in open(dp, encoding='utf-8'):
+                q = l.rstrip('\n').split('\t')
+                if len(q) < 2: continue
+                try: src_l = int(q[0])
+                except ValueError: continue
+                D = decl_at(src_l) if src_l > 0 else None
+                if D is None: continue
+                for t in (q[2].split() if len(q) > 2 else []):
+                    E = decl_at(int(t)) if int(t) > 0 else '?'
+                    if E and E != D: dep.setdefault(D, set()).add(E)
+        clo = {}
+        def closure(D):
+            if D in clo: return clo[D]
+            seen, st = set(), list(dep.get(D, ()))
+            while st:
+                x = st.pop()
+                if x in seen: continue
+                seen.add(x); st.extend(dep.get(x, ()))
+            clo[D] = seen; return seen
+        def conclusive(D, failing):
+            # D's result in a run is trusted only if no declaration D depends on (transitively, in
+            # this file) failed in that run: a failed dependency can cascade into D or mask D's own
+            # errors (errors on terms containing `sorry` are suppressed). '?' = unmapped dependency.
+            c = closure(D)
+            if '?' in c or nodeps:
+                return not any(order.get(x, 0) < order[D] for x in failing if x != D)
+            return not any(x in c for x in failing if x != D)
+        self.dep = dep
+        if per or other:
+            res['control_errors'] = {d: [(e[0], e[2], e[3][:300]) for e in v] for d, v in per.items()}
+            res['control_other'] = [(o[0], o[1][:300]) for o in other]
+        if not cands:
+            res['status'] = 'NO-CANDIDATES'; res['reads'] = {}; return res
+        # 2. sealed
+        ok, per0, other0 = self.run(cands, {}, 'S0')
+        res['sealed_plain'] = dict(ok=ok, failing=sorted(per0), other=[(o[0], o[1][:300]) for o in other0])
+        res['sealed_errors'] = {d: [(e[0], e[1], e[2], e[3][:400]) for e in v] for d, v in per0.items()}
+        if any(o[0].startswith('inserted-line') for o in other0):
+            res['status'] = 'SEAL-LINE-ERROR'; return res
+        ctrl_fail = set(res['control_unsealed']['failing'])
+        if ok:
+            res['status'] = 'PASS'; res['reads'] = {}; return res
+        # 3. fixpoint
+        entries = {}
+        order = {r['name']: r['dstart'] for r in self.recs}
+        kind = {r['name']: r['kind'] for r in self.recs}
+        unresolved = set()
+        first_err = {d: v for d, v in per0.items()}
+        first_seen = {d: 'S0' for d in per0}
+        for rnd in range(10):
+            new = [d for d in per0 if d not in entries and d not in ctrl_fail]
+            stuck = [d for d in per0 if d in entries]
+            for d in stuck: unresolved.add(d)
+            if not new: break
+            for d in new: entries[d] = set(cands)
+            ok, per0, other0 = self.run(cands, entries, f'fx{rnd}')
+            per0 = {d: v for d, v in per0.items() if d not in ctrl_fail}
+            for d, v in per0.items():
+                if d not in first_err:      # masked in S0 (an earlier broken definition suppressed it)
+                    first_err[d] = v; first_seen[d] = f'fx{rnd}'
+            if not per0: break
+        res['fixpoint_pass'] = not per0
+        res['unresolved'] = sorted(set(per0) | unresolved)
+        # 4. minimisation (generators, run in parallel)
+        def gen(D):
+            S = sorted(entries[D])
+            dc = sorted(direct.get(D, set()) & set(S))
+            if dc and len(dc) < len(S):
+                if (yield set(dc)): S = dc
+            # binary partition
+            stack = [S[:]]
+            while stack:
+                part = [n for n in stack.pop() if n in S]
+                if not part: continue
+                trial = set(S) - set(part)
+                if (yield trial):
+                    S = [n for n in S if n not in part]
+                elif len(part) > 1:
+                    h = len(part) // 2
+                    stack.append(part[h:]); stack.append(part[:h])
+            # 1-minimality verification
+            changed = True
+            while changed:
+                changed = False
+                for n in list(S):
+                    if (yield set(S) - {n}):
+                        S.remove(n); changed = True
+            return S
+        gens, cur, final, reopened = {}, {}, {}, {}
+        for D in entries:
+            g = gen(D); gens[D] = g
+            try: cur[D] = next(g)
+            except StopIteration as e: final[D] = set(e.value)
+        k = 0
+        while cur:
+            trial = {D: (cur[D] if D in cur else (final[D] if D in final else entries[D])) for D in entries}
+            ok, per, other = self.run(cands, trial, f'min{k}'); k += 1
+            failing = [x for x in per if x not in ctrl_fail]
+            # safety: a finalised declaration that fails conclusively (its set was accepted on a run
+            # later shown unreliable) is reopened from its full set
+            fresh = set()
+            for D in list(final):
+                if D in per and conclusive(D, failing) and reopened.get(D, 0) < 2:
+                    reopened[D] = reopened.get(D, 0) + 1
+                    self.say(f"   reopen {D} (final set {sorted(final[D])} fails)")
+                    del final[D]; g = gen(D); gens[D] = g; cur[D] = next(g); fresh.add(D)
+            for D in list(cur):
+                if D in fresh: continue
+                passed = D not in per
+                if not conclusive(D, failing):
+                    continue            # inconclusive: a declaration D depends on failed in this run
+                try:
+                    cur[D] = gens[D].send(passed)
+                except StopIteration as e:
+                    final[D] = set(e.value); del cur[D]
+            if k > 800: break
+        res['unminimised'] = sorted(cur)
+        for D in cur: final[D] = set(entries[D])
+        # drop cascades (empty sets) and run the final evidence
+        final = {D: v for D, v in final.items() if v}
+        ok, per, other = self.run(cands, final, 'final')
+        res['final_pass'] = ok
+        res['final_failing'] = sorted(per)
+        # one-name re-seal evidence
+        ev = {}
+        for D, S in final.items():
+            ev[D] = {}
+        queue = {D: sorted(S) for D, S in final.items()}
+        i = 0
+        while any(queue.values()) and i < 200:
+            pick = {D: q[0] for D, q in queue.items() if q}
+            trial = {D: (set(S) - {pick[D]} if D in pick else set(S)) for D, S in final.items()}
+            ok2, per2, _ = self.run(cands, trial, f'ev{i}')
+            failing = [x for x in per2 if x not in ctrl_fail]
+            for D, n in pick.items():
+                if not conclusive(D, failing): continue      # inconclusive, retried in the next run
+                e = per2.get(D)
+                ev[D][n] = (f'ev{i}: FAILS without it: ' + e[0][3].split('\n')[0][:200]) if e else f'ev{i}: PASSES without it (not needed?)'
+                queue[D].pop(0)
+            i += 1
+        res['reads'] = {D: dict(names=sorted(S), kind=kind[D],
+                                regions=sorted({e[2] for e in first_err.get(D, [])}) or ['cascade?'],
+                                lines=sorted({e[0] for e in first_err.get(D, [])}),
+                                first_error=(first_seen.get(D), first_err[D][0][3][:400]) if D in first_err else None,
+                                evidence=ev[D]) for D, S in final.items()}
+        res['deps_of_reads'] = {D: sorted(closure(D)) for D in final}
+        res['runs'] = self.nrun
+        res['status'] = 'DONE' if res['final_pass'] else 'FINAL-FAIL'
+        return res
+
+
+for rel in FILES:
+    fs = FileSweep(rel)
+    t0 = time.time()
+    try:
+        r = fs.go()
+    except Exception as ex:
+        import traceback
+        r = dict(file=rel, status='CRASH', error=traceback.format_exc())
+    r['seconds'] = round(time.time() - t0)
+    r.setdefault('runs', fs.nrun)
+    (fs.d / 'result.json').write_text(json.dumps(r, indent=1, default=list), encoding='utf-8')
+    print(f"{rel}\t{r['status']}\tcands={r.get('candidates')}\treads={len(r.get('reads', {}))}\t"
+          f"runs={r.get('runs')}\t{r['seconds']}s\tcontrol={'ok' if r.get('control_unsealed', {}).get('ok') else 'ERR'}",
+          flush=True)

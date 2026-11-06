@@ -1,0 +1,209 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/PRF.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 67,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.PRF",
+   "TCSlib.Cryptography.PRG.doubling",
+   "TCSlib.Cryptography.doublingEnsemble",
+   "TCSlib.Cryptography.prfAdv_toOracleAdversary",
+   "TCSlib.Cryptography.thm_97_3_1"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.PRF": [
+   [
+    336,
+    65,
+    "T",
+    "Application type mismatch: The argument\n  F\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin n \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (PolyExpr.var.eval n) \u2192 Bool\nin the application\n  OracleEnsemble.keyed F"
+   ]
+  ],
+  "TCSlib.Cryptography.prfAdv_toOracleAdversary": [
+   [
+    343,
+    61,
+    "T",
+    "Application type mismatch: The argument\n  F\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin n \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (PolyExpr.var.eval n) \u2192 Bool\nin the application\n  OracleEnsemble.keyed F"
+   ],
+   [
+    344,
+    20,
+    "T",
+    "Application type mismatch: The argument\n  D.toOracleAdversary n n n q\nhas type\n  OracleAdversary (D.Coins n) (Fin n \u2192 Bool) (Fin n \u2192 Bool)\nbut is expected to have type\n  OracleAdversary ?m.14 (Fin (PolyExpr.var.eval n) \u2192 Bool) (Fin (PolyExpr.var.eval n) \u2192 Bool)\nin the application\n  oracleDist (D.toOracleAdversary n n n q)"
+   ]
+  ],
+  "TCSlib.Cryptography.doublingEnsemble": [
+   [
+    363,
+    7,
+    "B",
+    "Type mismatch\n  G\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.PRG.doubling": [
+   [
+    406,
+    47,
+    "B",
+    "Application type mismatch: The argument\n  Nat.le_succ (2 * n)\nhas type\n  2 * n \u2264 (2 * n).succ\nbut is expected to have type\n  2 * n \u2264\n    (expand P.truncate (((PolyExpr.const 2).mul PolyExpr.var).add (PolyExpr.const 1))\n            two_mul_add_one_expands).stretch.eval\n      n\nin the application\n  Fin.castLE \u22ef"
+   ]
+  ],
+  "TCSlib.Cryptography.thm_97_3_1": [
+   [
+    508,
+    8,
+    "T",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.47"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.thm_97_3_1": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    508
+   ],
+   "first_error": [
+    "S0",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.47"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables"
+   }
+  },
+  "TCSlib.Cryptography.PRG.doubling": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PRG.expand"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    406
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  Nat.le_succ (2 * n)\nhas type\n  2 * n \u2264 (2 * n).succ\nbut is expected to have type\n  2 * n \u2264\n    (expand P.truncate (((PolyExpr.const 2).mul PolyExpr.var).add (PolyExpr.const 1))\n            two_mul_add_one_expands).stretch.eval\n      n\nin the application\n  Fin.castLE \u22ef"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PRG.expand": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.prfAdv_toOracleAdversary": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    343,
+    344
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  F\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin n \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (PolyExpr.var.eval n) \u2192 Bool\nin the application\n  OracleEnsemble.keyed F"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.PRF": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "structure",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    336
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  F\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin n \u2192 Bool) \u2192 Fin n \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (PolyExpr.var.eval n) \u2192 Bool\nin the application\n  OracleEnsemble.keyed F"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.doublingEnsemble": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    363
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  G\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (2 * n) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) \u2192 Bool"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.thm_97_3_1": [
+   "TCSlib.Cryptography.OracleEnsemble",
+   "TCSlib.Cryptography.OracleEnsemble.random",
+   "TCSlib.Cryptography.ggmPRF"
+  ],
+  "TCSlib.Cryptography.PRG.doubling": [
+   "TCSlib.Cryptography.PRG.truncate",
+   "TCSlib.Cryptography.two_mul_add_one_expands"
+  ],
+  "TCSlib.Cryptography.prfAdv_toOracleAdversary": [
+   "Complexity.NUPPT.toOracleAdversary",
+   "TCSlib.Cryptography.OracleEnsemble",
+   "TCSlib.Cryptography.OracleEnsemble.keyed",
+   "TCSlib.Cryptography.OracleEnsemble.random",
+   "TCSlib.Cryptography.OracleMove",
+   "TCSlib.Cryptography.buildTree",
+   "TCSlib.Cryptography.decodeOracleMove",
+   "TCSlib.Cryptography.encodeHist"
+  ],
+  "TCSlib.Cryptography.PRF": [
+   "Complexity.NUPPT.toOracleAdversary",
+   "TCSlib.Cryptography.OracleEnsemble",
+   "TCSlib.Cryptography.OracleEnsemble.Indist",
+   "TCSlib.Cryptography.OracleEnsemble.keyed",
+   "TCSlib.Cryptography.OracleEnsemble.random",
+   "TCSlib.Cryptography.OracleMove",
+   "TCSlib.Cryptography.buildTree",
+   "TCSlib.Cryptography.decodeOracleMove",
+   "TCSlib.Cryptography.encodeHist"
+  ],
+  "TCSlib.Cryptography.doublingEnsemble": []
+ },
+ "runs": 20,
+ "seconds": 54
+}

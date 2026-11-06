@@ -1,0 +1,43 @@
+TCSlib_Cryptography_Asymptotic_PRF/S0.lean:337:65: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+TCSlib_Cryptography_Asymptotic_PRF/S0.lean:344:61: error: Application type mismatch: The argument
+  F
+has type
+  (n : ℕ) → (Fin n → Bool) → (Fin n → Bool) → Fin n → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+in the application
+  OracleEnsemble.keyed F
+TCSlib_Cryptography_Asymptotic_PRF/S0.lean:345:20: error: Application type mismatch: The argument
+  D.toOracleAdversary n n n q
+has type
+  OracleAdversary (D.Coins n) (Fin n → Bool) (Fin n → Bool)
+but is expected to have type
+  OracleAdversary ?m.14 (Fin (PolyExpr.var.eval n) → Bool) (Fin (PolyExpr.var.eval n) → Bool)
+in the application
+  oracleDist (D.toOracleAdversary n n n q)
+TCSlib_Cryptography_Asymptotic_PRF/S0.lean:364:7: error: Type mismatch
+  G
+has type
+  (n : ℕ) → (Fin n → Bool) → Fin (2 * n) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → Fin (((PolyExpr.const 2).mul PolyExpr.var).eval n) → Bool
+TCSlib_Cryptography_Asymptotic_PRF/S0.lean:407:47: error: Application type mismatch: The argument
+  Nat.le_succ (2 * n)
+has type
+  2 * n ≤ (2 * n).succ
+but is expected to have type
+  2 * n ≤
+    (expand P.truncate (((PolyExpr.const 2).mul PolyExpr.var).add (PolyExpr.const 1))
+            two_mul_add_one_expands).stretch.eval
+      n
+in the application
+  Fin.castLE ⋯
+TCSlib_Cryptography_Asymptotic_PRF/S0.lean:509:8: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.47

@@ -1,0 +1,68 @@
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:243:95: error: Application type mismatch: The argument
+  x
+has type
+  Fin ((q.mul 𝓕.inLen).eval n) → Bool
+but is expected to have type
+  Fin (q.eval n * 𝓕.inLen.eval n) → Bool
+in the application
+  (blocks (q.eval n) (𝓕.inLen.eval n)) x
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:356:63: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((ofString f p).inLen.eval n) → Bool
+in the application
+  (ofString f p).f n x
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:362:74: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((ofString id PolyExpr.var).inLen.eval n) → Bool
+in the application
+  (ofString id PolyExpr.var).f n x
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:362:78: error: Type mismatch
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((ofString id PolyExpr.var).outLen.eval n) → Bool
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:399:19: error: Application type mismatch: The argument
+  x
+has type
+  Fin (q.eval n * 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin ((𝓕.prod q).inLen.eval n) → Bool
+in the application
+  (𝓕.prod q).f n x
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:399:23: error: Type mismatch
+  (blocks (q.eval n) (𝓕.outLen.eval n)).symm
+    (OneWay.prodFun (𝓕.f n) (q.eval n) ((blocks (q.eval n) (𝓕.inLen.eval n)) x))
+has type
+  Fin (q.eval n * 𝓕.outLen.eval n) → Bool
+but is expected to have type
+  Fin ((𝓕.prod q).outLen.eval n) → Bool
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:928:9: error: Type mismatch
+  P.f n
+has type
+  (Fin n → Bool) ≃ (Fin n → Bool)
+but is expected to have type
+  (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:936:22: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin (P.toFunFamily.inLen.eval n) → Bool
+in the application
+  P.toFunFamily.f n x
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:936:26: error: Type mismatch
+  (P.f n) x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin (P.toFunFamily.outLen.eval n) → Bool
+TCSlib_Cryptography_Asymptotic_OneWay/S0.lean:935:2: error: Cannot add `simp` attribute to `toFunFamily_f`: It is not a proposition nor a definition (to unfold)
+
+Note: The `[simp]` attribute can be added to lemmas that should be automatically used by the simplifier and to definitions that the simplifier should automatically unfold

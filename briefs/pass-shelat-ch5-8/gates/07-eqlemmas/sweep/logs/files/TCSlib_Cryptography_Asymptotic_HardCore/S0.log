@@ -1,0 +1,116 @@
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:218:7: error: Type mismatch
+  G
+has type
+  (n : ℕ) → (Fin n → Bool) → Fin (n + 1) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → Fin ((PolyExpr.var.add (PolyExpr.const 1)).eval n) → Bool
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:219:15: error: Type mismatch
+  Nat.lt_succ_self n
+has type
+  n < n.succ
+but is expected to have type
+  n < (PolyExpr.var.add (PolyExpr.const 1)).eval n
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:227:48: error: Type mismatch
+  G n s
+has type
+  Fin (n + 1) → Bool
+but is expected to have type
+  Fin ((oneBit G).stretch.eval n) → Bool
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:236:59: error: Application type mismatch: The argument
+  i.castSucc
+has type
+  Fin (n + 1)
+but is expected to have type
+  Fin ((owpGenPRG P h).stretch.eval n)
+in the application
+  (owpGenPRG P h).G n s i.castSucc
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:241:47: error: Application type mismatch: The argument
+  Fin.last n
+has type
+  Fin (n + 1)
+but is expected to have type
+  Fin ((owpGenPRG P h).stretch.eval n)
+in the application
+  (owpGenPRG P h).G n s (Fin.last n)
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:331:60: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:525:15: error: Type mismatch
+  Nat.lt_succ_of_le (hℓ n)
+has type
+  n < (ℓ.eval n).succ
+but is expected to have type
+  n < (ℓ.add (PolyExpr.const 1)).eval n
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:534:16: error: Type mismatch
+  Nat.lt_succ_of_le (hℓ n)
+has type
+  n < (ℓ.eval n).succ
+but is expected to have type
+  n < (ℓ.add (PolyExpr.const 1)).eval n
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:551:85: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:569:89: error: Application type mismatch: The argument
+  z
+has type
+  Fin ((𝓕.inLen.add 𝓕.inLen).eval n) → Bool
+but is expected to have type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+in the application
+  (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:574:89: error: Application type mismatch: The argument
+  z
+has type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+in the application
+  (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:582:89: error: Application type mismatch: The argument
+  y
+has type
+  Fin (𝓕.glPad.outLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool
+in the application
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).symm y
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:586:16: error: Application type mismatch: The argument
+  Fin.append x r
+has type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+in the application
+  𝓕.glPad.f n (Fin.append x r)
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:586:35: error: Type mismatch
+  Fin.append (𝓕.f n x) r
+has type
+  Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.outLen.eval n) → Bool
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:594:14: error: Application type mismatch: The argument
+  Fin.append x r
+has type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+in the application
+  𝓕.glBit n (Fin.append x r)
+TCSlib_Cryptography_Asymptotic_HardCore/S0.lean:606:22: error: Application type mismatch: The argument
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y
+has type
+  Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.outLen.eval n) → Bool
+in the application
+  A ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)

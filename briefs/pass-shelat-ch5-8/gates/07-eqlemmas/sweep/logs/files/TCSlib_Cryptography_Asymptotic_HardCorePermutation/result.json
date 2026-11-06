@@ -1,0 +1,566 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 65,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.OneWayPermutation.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalf_f_even",
+   "TCSlib.Cryptography.PermFamily.glHalf_f_odd",
+   "TCSlib.Cryptography.exists_owp_hardCore",
+   "TCSlib.Cryptography.glHalfBit_even",
+   "TCSlib.Cryptography.glHalfBit_odd",
+   "TCSlib.Cryptography.glHalf_predProb_even",
+   "TCSlib.Cryptography.glHalf_predProb_odd",
+   "TCSlib.Cryptography.invProb_glHalf_even",
+   "TCSlib.Cryptography.invProb_glHalf_odd_le",
+   "TCSlib.Cryptography.oddCoins",
+   "TCSlib.Cryptography.ofFn_oddCoins",
+   "TCSlib.Cryptography.predProb_glHalf_even",
+   "TCSlib.Cryptography.predProb_glHalf_odd"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.PermFamily.glHalf_f_even": [
+   [
+    178,
+    51,
+    "T",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glPad.f m z"
+   ]
+  ],
+  "TCSlib.Cryptography.glHalfBit_even": [
+   [
+    198,
+    48,
+    "T",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glBit m z"
+   ]
+  ],
+  "TCSlib.Cryptography.predProb_glHalf_even": [
+   [
+    214,
+    6,
+    "T",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.21"
+   ]
+  ],
+  "TCSlib.Cryptography.invProb_glHalf_even": [
+   [
+    224,
+    37,
+    "T",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.21"
+   ]
+  ],
+  "TCSlib.Cryptography.PermFamily.glHalf_f_odd": [
+   [
+    242,
+    78,
+    "T",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glPad.f m z"
+   ]
+  ],
+  "TCSlib.Cryptography.glHalfBit_odd": [
+   [
+    275,
+    65,
+    "T",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glBit m z"
+   ]
+  ],
+  "TCSlib.Cryptography.predProb_glHalf_odd": [
+   [
+    311,
+    8,
+    "T",
+    "Application type mismatch: The argument\n  fun y c => A (Fin.snoc y c.1) c.2\nhas type\n  (Fin (m + m) \u2192 Bool) \u2192 Bool \u00d7 \u03c1 \u2192 Bool\nbut is expected to have type\n  (Fin (P.toFunFamily.glPad.outLen.eval m) \u2192 Bool) \u2192 Bool \u00d7 \u03c1 \u2192 Bool\nin the application\n  predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m) fun y c => A (Fin.snoc y c.1) c.2"
+   ]
+  ],
+  "TCSlib.Cryptography.invProb_glHalf_odd_le": [
+   [
+    327,
+    56,
+    "T",
+    "Type mismatch\n  Fin.init (A (Fin.snoc y c.1) c.2)\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.oddCoins": [
+   [
+    476,
+    2,
+    "B",
+    "Type mismatch\n  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (A.reparamCoins oddParam m)).trans\n    (Fin.appendEquiv 1 ((A.reparam oddParam).coinLen m))\nhas type\n  Bool \u00d7 A.Coins (oddParam.eval m) \u2243 (Fin (1 + (A.reparam oddParam).coinLen m) \u2192 Bool)\nbut is expected to have type\n  Bool \u00d7 A.Coins (m + m + 1) \u2243\n    ((A.reparam oddParam).wrap owpPredPre_poly hpost (fun x => []) (PolyExpr.const 0) \u22ef ("
+   ]
+  ],
+  "TCSlib.Cryptography.ofFn_oddCoins": [
+   [
+    483,
+    83,
+    "T",
+    "Application type mismatch: The argument\n  c\nhas type\n  A.Coins (m + m + 1)\nbut is expected to have type\n  A.Coins (oddParam.eval m)\nin the application\n  (A.reparamCoins oddParam m) c"
+   ]
+  ],
+  "TCSlib.Cryptography.glHalf_predProb_even": [
+   [
+    554,
+    6,
+    "T",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.25"
+   ]
+  ],
+  "TCSlib.Cryptography.glHalf_predProb_odd": [
+   [
+    565,
+    6,
+    "T",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.49"
+   ]
+  ],
+  "TCSlib.Cryptography.OneWayPermutation.glHalf": [
+   [
+    632,
+    63,
+    "T",
+    "Application type mismatch: The argument\n  glHalfBit\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.glHalf.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.glHalf.toFunFamily glHalfBit"
+   ]
+  ],
+  "TCSlib.Cryptography.exists_owp_hardCore": [
+   [
+    678,
+    51,
+    "T",
+    "Application type mismatch: The argument\n  b\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily b"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.OneWayPermutation.glHalf": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    632
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  glHalfBit\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.glHalf.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.glHalf.toFunFamily glHalfBit"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.exists_owp_hardCore": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    678
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  b\nhas type\n  (n : \u2115) \u2192 (Fin n \u2192 Bool) \u2192 Bool\nbut is expected to have type\n  (n : \u2115) \u2192 (Fin (P.toFunFamily.inLen.eval n) \u2192 Bool) \u2192 Bool\nin the application\n  HardCore P.toFunFamily b"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.PermFamily.glHalf_f_even": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    178
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glPad.f m z"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.glHalfBit_even": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    198
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glBit m z"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.predProb_glHalf_even": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    214
+   ],
+   "first_error": [
+    "S0",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.21"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables"
+   }
+  },
+  "TCSlib.Cryptography.invProb_glHalf_even": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    224
+   ],
+   "first_error": [
+    "S0",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.21"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables"
+   }
+  },
+  "TCSlib.Cryptography.PermFamily.glHalf_f_odd": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    242
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glPad.f m z"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.glHalfBit_odd": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    275
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  z\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool\nin the application\n  P.toFunFamily.glBit m z"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.predProb_glHalf_odd": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    311
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  fun y c => A (Fin.snoc y c.1) c.2\nhas type\n  (Fin (m + m) \u2192 Bool) \u2192 Bool \u00d7 \u03c1 \u2192 Bool\nbut is expected to have type\n  (Fin (P.toFunFamily.glPad.outLen.eval m) \u2192 Bool) \u2192 Bool \u00d7 \u03c1 \u2192 Bool\nin the application\n  predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m) fun y c => A (Fin.snoc y c.1) c.2"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.invProb_glHalf_odd_le": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    327
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  Fin.init (A (Fin.snoc y c.1) c.2)\nhas type\n  Fin (m + m) \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.glPad.inLen.eval m) \u2192 Bool"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.glHalf_predProb_even": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    554
+   ],
+   "first_error": [
+    "S0",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.25"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables"
+   }
+  },
+  "TCSlib.Cryptography.glHalf_predProb_odd": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.FunFamily.glPad",
+    "TCSlib.Cryptography.PermFamily.toFunFamily"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    565
+   ],
+   "first_error": [
+    "S0",
+    "typeclass instance problem is stuck, it is often due to metavariables\n  Fintype ?m.49"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.FunFamily.glPad": "ev1: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables",
+    "TCSlib.Cryptography.PermFamily.toFunFamily": "ev2: FAILS without it: typeclass instance problem is stuck, it is often due to metavariables"
+   }
+  },
+  "TCSlib.Cryptography.oddCoins": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.wrap",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    476
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (A.reparamCoins oddParam m)).trans\n    (Fin.appendEquiv 1 ((A.reparam oddParam).coinLen m))\nhas type\n  Bool \u00d7 A.Coins (oddParam.eval m) \u2243 (Fin (1 + (A.reparam oddParam).coinLen m) \u2192 Bool)\nbut is expected to have type\n  Bool \u00d7 A.Coins (m + m + 1) \u2243\n    ((A.reparam oddParam).wrap owpPredPre_poly hpost (fun x => []) (PolyExpr.const 0) \u22ef ("
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.wrap": "ev2: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev3: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.ofFn_oddCoins": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    483
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  c\nhas type\n  A.Coins (m + m + 1)\nbut is expected to have type\n  A.Coins (oddParam.eval m)\nin the application\n  (A.reparamCoins oddParam m) c"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev4: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.OneWayPermutation.glHalf": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE",
+   "TCSlib.Cryptography.glHalfBit"
+  ],
+  "TCSlib.Cryptography.exists_owp_hardCore": [],
+  "TCSlib.Cryptography.PermFamily.glHalf_f_even": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE"
+  ],
+  "TCSlib.Cryptography.glHalfBit_even": [
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.glHalfBit"
+  ],
+  "TCSlib.Cryptography.predProb_glHalf_even": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE",
+   "TCSlib.Cryptography.glHalfBit"
+  ],
+  "TCSlib.Cryptography.invProb_glHalf_even": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE"
+  ],
+  "TCSlib.Cryptography.PermFamily.glHalf_f_odd": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE"
+  ],
+  "TCSlib.Cryptography.glHalfBit_odd": [
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.glHalfBit"
+  ],
+  "TCSlib.Cryptography.predProb_glHalf_odd": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE",
+   "TCSlib.Cryptography.glHalfBit"
+  ],
+  "TCSlib.Cryptography.invProb_glHalf_odd_le": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE"
+  ],
+  "TCSlib.Cryptography.glHalf_predProb_even": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE",
+   "TCSlib.Cryptography.glHalfBit"
+  ],
+  "TCSlib.Cryptography.glHalf_predProb_odd": [
+   "TCSlib.Cryptography.PermFamily.glHalf",
+   "TCSlib.Cryptography.PermFamily.glHalfFun",
+   "TCSlib.Cryptography.PermFamily.glHalfFun_castLE",
+   "TCSlib.Cryptography.PermFamily.glHalfInv",
+   "TCSlib.Cryptography.PermFamily.glHalfInv_castLE",
+   "TCSlib.Cryptography.glHalfBit",
+   "TCSlib.Cryptography.glHalfInvPost",
+   "TCSlib.Cryptography.glHalfInvPost_poly",
+   "TCSlib.Cryptography.glHalfOddInv",
+   "TCSlib.Cryptography.glHalfOddPred",
+   "TCSlib.Cryptography.oddParam"
+  ],
+  "TCSlib.Cryptography.oddCoins": [
+   "TCSlib.Cryptography.glHalfInvPost",
+   "TCSlib.Cryptography.glHalfInvPost_poly",
+   "TCSlib.Cryptography.glHalfOddInv",
+   "TCSlib.Cryptography.oddParam"
+  ],
+  "TCSlib.Cryptography.ofFn_oddCoins": [
+   "TCSlib.Cryptography.glHalfInvPost",
+   "TCSlib.Cryptography.glHalfInvPost_poly",
+   "TCSlib.Cryptography.glHalfOddInv",
+   "TCSlib.Cryptography.oddCoins",
+   "TCSlib.Cryptography.oddParam"
+  ]
+ },
+ "runs": 47,
+ "seconds": 151
+}

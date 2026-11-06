@@ -1,0 +1,66 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 45,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.predCoins"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.predCoins": [
+   [
+    763,
+    4,
+    "B",
+    "Application type mismatch: The argument\n  Fin.appendEquiv 1 (D.coinLen n)\nhas type\n  (Fin 1 \u2192 ?m.14) \u00d7 (Fin (D.coinLen n) \u2192 ?m.14) \u2243 (Fin (1 + D.coinLen n) \u2192 ?m.14)\nbut is expected to have type\n  (Fin 1 \u2192 Bool) \u00d7 D.Coins n \u2243 (tdpPredictor D flip).Coins n\nin the application\n  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.predCoins": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    763
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  Fin.appendEquiv 1 (D.coinLen n)\nhas type\n  (Fin 1 \u2192 ?m.14) \u00d7 (Fin (D.coinLen n) \u2192 ?m.14) \u2243 (Fin (1 + D.coinLen n) \u2192 ?m.14)\nbut is expected to have type\n  (Fin 1 \u2192 Bool) \u00d7 D.Coins n \u2243 (tdpPredictor D flip).Coins n\nin the application\n  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.predCoins": [
+   "TCSlib.Cryptography.tdpPredFun",
+   "TCSlib.Cryptography.tdpPredFun_poly",
+   "TCSlib.Cryptography.tdpPredictor"
+  ]
+ },
+ "runs": 36,
+ "seconds": 93
+}

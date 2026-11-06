@@ -1,0 +1,67 @@
+{
+ "file": "TCSlib/Cryptography/Games/Simulate.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 4,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Games.QueryImpl.sum"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Games.QueryImpl.sum": [
+   [
+    128,
+    2,
+    "B",
+    "Type mismatch\n  impl\u2081 i\nhas type\n  s\u2081.dom i \u2192 \u03c3 \u2192 OracleComp spec' (s\u2081.rng i \u00d7 \u03c3)\nbut is expected to have type\n  (s\u2081.add s\u2082).dom (Sum.inl i) \u2192 \u03c3 \u2192 OracleComp spec' ((s\u2081.add s\u2082).rng (Sum.inl i) \u00d7 \u03c3)"
+   ],
+   [
+    129,
+    2,
+    "B",
+    "Type mismatch\n  impl\u2082 j\nhas type\n  s\u2082.dom j \u2192 \u03c3 \u2192 OracleComp spec' (s\u2082.rng j \u00d7 \u03c3)\nbut is expected to have type\n  (s\u2081.add s\u2082).dom (Sum.inr j) \u2192 \u03c3 \u2192 OracleComp spec' ((s\u2081.add s\u2082).rng (Sum.inr j) \u00d7 \u03c3)"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Games.QueryImpl.sum": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    128,
+    129
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  impl\u2081 i\nhas type\n  s\u2081.dom i \u2192 \u03c3 \u2192 OracleComp spec' (s\u2081.rng i \u00d7 \u03c3)\nbut is expected to have type\n  (s\u2081.add s\u2082).dom (Sum.inl i) \u2192 \u03c3 \u2192 OracleComp spec' ((s\u2081.add s\u2082).rng (Sum.inl i) \u00d7 \u03c3)"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev0: FAILS without it: Type mismatch"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Games.QueryImpl.sum": [
+   "TCSlib.Cryptography.Games.QueryImpl"
+  ]
+ },
+ "runs": 8,
+ "seconds": 6
+}

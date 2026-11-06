@@ -1,0 +1,104 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	8
+Complexity.pairFstD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inParam, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	7
+Complexity.pairSndD	TCSlib.Complexity.ClassNP.PolyTimePairing	direct	Complexity.NUPPT.inArg, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	7
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.pairDecode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.pairFstD, Complexity.NUPPT.inParam, Complexity.NUPPT.precomp	7
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	5
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.runAt, TCSlib.Cryptography.glPredictorOf	4
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, TCSlib.Cryptography.glPredictorOf	3
+Complexity.NUPPT.distinguisher	TCSlib.Cryptography.Asymptotic.Adversary	deep	Complexity.NUPPT.predictor	2
+Complexity.NUPPT.inAdvice	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	4
+Complexity.NUPPT.inArg	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	6
+Complexity.NUPPT.inCoins	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	4
+Complexity.NUPPT.inParam	TCSlib.Complexity.Randomized.Closure	direct	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	6
+Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	direct		1
+Complexity.NUPPT.layout	TCSlib.Complexity.Randomized.Closure	deep	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	4
+Complexity.NUPPT.ofPolyTime	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap, TCSlib.Cryptography.glMachine	4
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.precomp, Complexity.NUPPT.runAt, Complexity.NUPPT.wrap	4
+Complexity.NUPPT.precomp	TCSlib.Cryptography.Asymptotic.HardCoreGL	direct		2
+Complexity.NUPPT.predictor	TCSlib.Cryptography.Asymptotic.Adversary	direct		2
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.predictor	3
+Complexity.NUPPT.runAtL	TCSlib.Complexity.Randomized.PPT	deep	TCSlib.Cryptography.glPredictorOf	1
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.precomp, Complexity.NUPPT.runAt, Complexity.NUPPT.wrap	4
+Complexity.NUPPT.wrap	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	direct		1
+Complexity.NUPPT.wrapFun	TCSlib.Cryptography.Asymptotic.HardCoreLemmas	deep	Complexity.NUPPT.wrap	1
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	12
+Complexity.StateLoop.gstep	TCSlib.Complexity.Randomized.Build.StateLoop	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.betaOf	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.blocksEquiv	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.blocksStr	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	Complexity.NUPPT.inverter	1
+TCSlib.Cryptography.glAdvPoly	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.glAdvice	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.glCoins	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.glMachine	TCSlib.Cryptography.Asymptotic.HardCoreGL	direct		2
+TCSlib.Cryptography.glMajFun	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.glPredictorOf	TCSlib.Cryptography.Asymptotic.HardCoreGL	direct		1
+TCSlib.Cryptography.glRawFun	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.glVotesFun	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct		1
+TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	direct		1
+TCSlib.Cryptography.ipFun	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.nesubsetEquiv	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.selXorFun	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.unaryMulFun	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.invProbOpt	1
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	8
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	8
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	8
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	8
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	8
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.runAt	8
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.precomp, Complexity.NUPPT.wrap	8
+TCSlib.Cryptography.GLLoop.bound	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.entry	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.fixed	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.fx	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.glEntry	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.glEntryFn	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.glTable	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.input	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.out	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pY	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pb	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pcs	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.ps	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.ptbl	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pu	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.puk	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pum	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pur	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pvotes	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.pα	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.start	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.step	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLLoop.vote	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.adv	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.cb	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.cs₁	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.cs₂	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.r₁	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.tbl	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.uM	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.uk	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.ukm	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.um	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.ur	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.GLRaw.α	TCSlib.Cryptography.Asymptotic.HardCoreGL	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.HardcoreBit.glInverter	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.HardcoreBit.guessInverter	1
+TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		1
+TCSlib.Cryptography.HardcoreBit.guessInverter	TCSlib.Cryptography.HardcoreBit.GoldreichLevin	direct		1
+TCSlib.Cryptography.HardcoreBit.guessRecover	TCSlib.Cryptography.HardcoreBit.GoldreichLevin	deep	TCSlib.Cryptography.HardcoreBit.guessInverter	1
+TCSlib.Cryptography.HardcoreBit.ip	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		1
+TCSlib.Cryptography.HardcoreBit.majority	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	deep	TCSlib.Cryptography.HardcoreBit.guessInverter	1
+TCSlib.Cryptography.HardcoreBit.subsetSum	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	deep	TCSlib.Cryptography.HardcoreBit.guessInverter	1
+TCSlib.Cryptography.SelXor.bound	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.SelXor.out	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.SelXor.start	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2
+TCSlib.Cryptography.SelXor.step	TCSlib.Cryptography.Asymptotic.HardCoreLoops	deep	TCSlib.Cryptography.glMachine	2

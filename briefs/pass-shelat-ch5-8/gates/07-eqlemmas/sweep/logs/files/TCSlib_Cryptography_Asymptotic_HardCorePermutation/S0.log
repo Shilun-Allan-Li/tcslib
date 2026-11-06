@@ -1,0 +1,86 @@
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:179:51: error: Application type mismatch: The argument
+  z
+has type
+  Fin (m + m) → Bool
+but is expected to have type
+  Fin (P.toFunFamily.glPad.inLen.eval m) → Bool
+in the application
+  P.toFunFamily.glPad.f m z
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:199:48: error: Application type mismatch: The argument
+  z
+has type
+  Fin (m + m) → Bool
+but is expected to have type
+  Fin (P.toFunFamily.glPad.inLen.eval m) → Bool
+in the application
+  P.toFunFamily.glBit m z
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:215:6: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.21
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:225:37: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.21
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:243:78: error: Application type mismatch: The argument
+  z
+has type
+  Fin (m + m) → Bool
+but is expected to have type
+  Fin (P.toFunFamily.glPad.inLen.eval m) → Bool
+in the application
+  P.toFunFamily.glPad.f m z
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:276:65: error: Application type mismatch: The argument
+  z
+has type
+  Fin (m + m) → Bool
+but is expected to have type
+  Fin (P.toFunFamily.glPad.inLen.eval m) → Bool
+in the application
+  P.toFunFamily.glBit m z
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:312:8: error: Application type mismatch: The argument
+  fun y c => A (Fin.snoc y c.1) c.2
+has type
+  (Fin (m + m) → Bool) → Bool × ρ → Bool
+but is expected to have type
+  (Fin (P.toFunFamily.glPad.outLen.eval m) → Bool) → Bool × ρ → Bool
+in the application
+  predProb (P.toFunFamily.glPad.f m) (P.toFunFamily.glBit m) fun y c => A (Fin.snoc y c.1) c.2
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:328:56: error: Type mismatch
+  Fin.init (A (Fin.snoc y c.1) c.2)
+has type
+  Fin (m + m) → Bool
+but is expected to have type
+  Fin (P.toFunFamily.glPad.inLen.eval m) → Bool
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:477:2: error: Type mismatch
+  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (A.reparamCoins oddParam m)).trans
+    (Fin.appendEquiv 1 ((A.reparam oddParam).coinLen m))
+has type
+  Bool × A.Coins (oddParam.eval m) ≃ (Fin (1 + (A.reparam oddParam).coinLen m) → Bool)
+but is expected to have type
+  Bool × A.Coins (m + m + 1) ≃
+    ((A.reparam oddParam).wrap owpPredPre_poly hpost (fun x => []) (PolyExpr.const 0) ⋯ (PolyExpr.const 1)).Coins m
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:484:83: error: Application type mismatch: The argument
+  c
+has type
+  A.Coins (m + m + 1)
+but is expected to have type
+  A.Coins (oddParam.eval m)
+in the application
+  (A.reparamCoins oddParam m) c
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:555:6: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.25
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:566:6: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.49
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:633:63: error: Application type mismatch: The argument
+  glHalfBit
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.glHalf.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.glHalf.toFunFamily glHalfBit
+TCSlib_Cryptography_Asymptotic_HardCorePermutation/S0.lean:679:51: error: Application type mismatch: The argument
+  b
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily b

@@ -1,0 +1,113 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 47,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.glMachine_runAt_guessRecover"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.glMachine_runAt_guessRecover": [
+   [
+    839,
+    8,
+    "T",
+    "Application type mismatch: The argument\n  (glCoinsEquiv A\u2081 n (iP.eval n) (k n) ((glCoins iP K A\u2081).eval n) \u22ef) (g, ex)\nhas type\n  Fin ((glCoins iP K A\u2081).eval n) \u2192 Bool\nbut is expected to have type\n  (glMachine A\u2081 iP K k hk).Coins n\nin the application\n  (glMachine A\u2081 iP K k hk).runAt n (enc y) ((glCoinsEquiv A\u2081 n (iP.eval n) (k n) ((glCoins iP K A\u2081).eval n) \u22ef) (g, ex))"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.glMachine_runAt_guessRecover": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    839
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (glCoinsEquiv A\u2081 n (iP.eval n) (k n) ((glCoins iP K A\u2081).eval n) \u22ef) (g, ex)\nhas type\n  Fin ((glCoins iP K A\u2081).eval n) \u2192 Bool\nbut is expected to have type\n  (glMachine A\u2081 iP K k hk).Coins n\nin the application\n  (glMachine A\u2081 iP K k hk).runAt n (enc y) ((glCoinsEquiv A\u2081 n (iP.eval n) (k n) ((glCoins iP K A\u2081).eval n) \u22ef) (g, ex))"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.glMachine_runAt_guessRecover": [
+   "TCSlib.Cryptography.GLLoop.bound",
+   "TCSlib.Cryptography.GLLoop.entry",
+   "TCSlib.Cryptography.GLLoop.fixed",
+   "TCSlib.Cryptography.GLLoop.fx",
+   "TCSlib.Cryptography.GLLoop.glEntry",
+   "TCSlib.Cryptography.GLLoop.glEntryFn",
+   "TCSlib.Cryptography.GLLoop.glTable",
+   "TCSlib.Cryptography.GLLoop.input",
+   "TCSlib.Cryptography.GLLoop.out",
+   "TCSlib.Cryptography.GLLoop.pY",
+   "TCSlib.Cryptography.GLLoop.pb",
+   "TCSlib.Cryptography.GLLoop.pcs",
+   "TCSlib.Cryptography.GLLoop.ps",
+   "TCSlib.Cryptography.GLLoop.ptbl",
+   "TCSlib.Cryptography.GLLoop.pu",
+   "TCSlib.Cryptography.GLLoop.puk",
+   "TCSlib.Cryptography.GLLoop.pum",
+   "TCSlib.Cryptography.GLLoop.pur",
+   "TCSlib.Cryptography.GLLoop.pvotes",
+   "TCSlib.Cryptography.GLLoop.p\u03b1",
+   "TCSlib.Cryptography.GLLoop.start",
+   "TCSlib.Cryptography.GLLoop.step",
+   "TCSlib.Cryptography.GLLoop.vote",
+   "TCSlib.Cryptography.GLRaw.adv",
+   "TCSlib.Cryptography.GLRaw.cb",
+   "TCSlib.Cryptography.GLRaw.cs\u2081",
+   "TCSlib.Cryptography.GLRaw.cs\u2082",
+   "TCSlib.Cryptography.GLRaw.r\u2081",
+   "TCSlib.Cryptography.GLRaw.tbl",
+   "TCSlib.Cryptography.GLRaw.uM",
+   "TCSlib.Cryptography.GLRaw.uk",
+   "TCSlib.Cryptography.GLRaw.ukm",
+   "TCSlib.Cryptography.GLRaw.um",
+   "TCSlib.Cryptography.GLRaw.ur",
+   "TCSlib.Cryptography.GLRaw.\u03b1",
+   "TCSlib.Cryptography.betaOf",
+   "TCSlib.Cryptography.blocksEquivX",
+   "TCSlib.Cryptography.glAdvPoly",
+   "TCSlib.Cryptography.glAdvice",
+   "TCSlib.Cryptography.glCoins",
+   "TCSlib.Cryptography.glCoinsEquiv",
+   "TCSlib.Cryptography.glMachine",
+   "TCSlib.Cryptography.glMajFun",
+   "TCSlib.Cryptography.glNeed",
+   "TCSlib.Cryptography.glNeed_le",
+   "TCSlib.Cryptography.glPredictorOf",
+   "TCSlib.Cryptography.glRawFun",
+   "TCSlib.Cryptography.glRawFun_poly",
+   "TCSlib.Cryptography.glVotesFun",
+   "TCSlib.Cryptography.length_glAdvice_le",
+   "TCSlib.Cryptography.nesubsetEquiv",
+   "TCSlib.Cryptography.unaryMulFun"
+  ]
+ },
+ "runs": 26,
+ "seconds": 75
+}

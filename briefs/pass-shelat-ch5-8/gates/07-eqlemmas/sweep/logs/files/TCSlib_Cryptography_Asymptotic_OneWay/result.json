@@ -1,0 +1,249 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 33,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.FunFamily.ofFn_ofString_f",
+   "TCSlib.Cryptography.FunFamily.ofString_id_f",
+   "TCSlib.Cryptography.FunFamily.prod",
+   "TCSlib.Cryptography.FunFamily.prod_f",
+   "TCSlib.Cryptography.PermFamily.toFunFamily",
+   "TCSlib.Cryptography.PermFamily.toFunFamily_f"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.FunFamily.prod": [
+   [
+    242,
+    95,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin ((q.mul \ud835\udcd5.inLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (q.eval n * \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (blocks (q.eval n) (\ud835\udcd5.inLen.eval n)) x"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.ofFn_ofString_f": [
+   [
+    355,
+    63,
+    "T",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin ((ofString f p).inLen.eval n) \u2192 Bool\nin the application\n  (ofString f p).f n x"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.ofString_id_f": [
+   [
+    361,
+    74,
+    "T",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin ((ofString id PolyExpr.var).inLen.eval n) \u2192 Bool\nin the application\n  (ofString id PolyExpr.var).f n x"
+   ],
+   [
+    361,
+    78,
+    "T",
+    "Type mismatch\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin ((ofString id PolyExpr.var).outLen.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.prod_f": [
+   [
+    398,
+    19,
+    "T",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (q.eval n * \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin ((\ud835\udcd5.prod q).inLen.eval n) \u2192 Bool\nin the application\n  (\ud835\udcd5.prod q).f n x"
+   ],
+   [
+    398,
+    23,
+    "T",
+    "Type mismatch\n  (blocks (q.eval n) (\ud835\udcd5.outLen.eval n)).symm\n    (OneWay.prodFun (\ud835\udcd5.f n) (q.eval n) ((blocks (q.eval n) (\ud835\udcd5.inLen.eval n)) x))\nhas type\n  Fin (q.eval n * \ud835\udcd5.outLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin ((\ud835\udcd5.prod q).outLen.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.PermFamily.toFunFamily": [
+   [
+    927,
+    9,
+    "B",
+    "Type mismatch\n  P.f n\nhas type\n  (Fin n \u2192 Bool) \u2243 (Fin n \u2192 Bool)\nbut is expected to have type\n  (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (PolyExpr.var.eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.PermFamily.toFunFamily_f": [
+   [
+    935,
+    22,
+    "T",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.inLen.eval n) \u2192 Bool\nin the application\n  P.toFunFamily.f n x"
+   ],
+   [
+    935,
+    26,
+    "T",
+    "Type mismatch\n  (P.f n) x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.outLen.eval n) \u2192 Bool"
+   ],
+   [
+    934,
+    2,
+    "T",
+    "Cannot add `simp` attribute to `toFunFamily_f`: It is not a proposition nor a definition (to unfold)\n\nNote: The `[simp]` attribute can be added to lemmas that should be automatically used by the simplifier and to definitions that the simplifier should automatically unfold"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.FunFamily.ofFn_ofString_f": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    355
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin ((ofString f p).inLen.eval n) \u2192 Bool\nin the application\n  (ofString f p).f n x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.ofString_id_f": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    361
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin ((ofString id PolyExpr.var).inLen.eval n) \u2192 Bool\nin the application\n  (ofString id PolyExpr.var).f n x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.prod": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    242
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin ((q.mul \ud835\udcd5.inLen).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (q.eval n * \ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  (blocks (q.eval n) (\ud835\udcd5.inLen.eval n)) x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.prod_f": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    398
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin (q.eval n * \ud835\udcd5.inLen.eval n) \u2192 Bool\nbut is expected to have type\n  Fin ((\ud835\udcd5.prod q).inLen.eval n) \u2192 Bool\nin the application\n  (\ud835\udcd5.prod q).f n x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.PermFamily.toFunFamily_f": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    934,
+    935
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  Fin n \u2192 Bool\nbut is expected to have type\n  Fin (P.toFunFamily.inLen.eval n) \u2192 Bool\nin the application\n  P.toFunFamily.f n x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.PermFamily.toFunFamily": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    927
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  P.f n\nhas type\n  (Fin n \u2192 Bool) \u2243 (Fin n \u2192 Bool)\nbut is expected to have type\n  (Fin (PolyExpr.var.eval n) \u2192 Bool) \u2192 Fin (PolyExpr.var.eval n) \u2192 Bool"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.FunFamily.ofFn_ofString_f": [
+   "TCSlib.Cryptography.FunFamily",
+   "TCSlib.Cryptography.FunFamily.LengthRegular",
+   "TCSlib.Cryptography.FunFamily.ofString"
+  ],
+  "TCSlib.Cryptography.FunFamily.ofString_id_f": [
+   "TCSlib.Cryptography.FunFamily",
+   "TCSlib.Cryptography.FunFamily.ofString"
+  ],
+  "TCSlib.Cryptography.FunFamily.prod": [
+   "TCSlib.Cryptography.FunFamily",
+   "TCSlib.Cryptography.FunFamily.blocks"
+  ],
+  "TCSlib.Cryptography.FunFamily.prod_f": [
+   "TCSlib.Cryptography.FunFamily",
+   "TCSlib.Cryptography.FunFamily.blocks",
+   "TCSlib.Cryptography.FunFamily.prod"
+  ],
+  "TCSlib.Cryptography.PermFamily.toFunFamily_f": [
+   "TCSlib.Cryptography.FunFamily",
+   "TCSlib.Cryptography.PermFamily",
+   "TCSlib.Cryptography.PermFamily.toFunFamily"
+  ],
+  "TCSlib.Cryptography.PermFamily.toFunFamily": [
+   "TCSlib.Cryptography.FunFamily",
+   "TCSlib.Cryptography.PermFamily"
+  ]
+ },
+ "runs": 18,
+ "seconds": 52
+}

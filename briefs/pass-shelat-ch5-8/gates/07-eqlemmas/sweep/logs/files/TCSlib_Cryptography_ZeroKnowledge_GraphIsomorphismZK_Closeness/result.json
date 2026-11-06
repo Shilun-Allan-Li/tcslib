@@ -1,0 +1,173 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 49,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.GIZK.sim_ofFn_eq",
+   "TCSlib.Cryptography.GIZK.statClose_real_ideal",
+   "TCSlib.Cryptography.GIZK.statClose_real_sim",
+   "TCSlib.Cryptography.GIZK.viewV_encode"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.GIZK.sim_ofFn_eq": [
+   [
+    370,
+    35,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin (M * blockLen V' (encInstance G\u2080 G\u2081).length) \u2192 Bool\nbut is expected to have type\n  Fin (M * (1 + ?m.55 t + V'.coinLen (encInstance G\u2080 G\u2081).length)) \u2192 Bool\nin the application\n  readBlocks (?m.55 t) (V'.coinLen (encInstance G\u2080 G\u2081).length) M n hn r"
+   ]
+  ],
+  "TCSlib.Cryptography.GIZK.viewV_encode": [
+   [
+    416,
+    67,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G\u2080 G\u2081)\nbut is expected to have type\n  (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G\u2080 G\u2081)\nin the application\n  (giProtocol.withV V').viewV (encInstance G\u2080 G\u2081) (encPerm \u03c3) z r"
+   ],
+   [
+    418,
+    87,
+    "T",
+    "Application type mismatch: The argument\n  r.2\nhas type\n  (giProtocol.withV V').V.Coins (encInstance G\u2080 G\u2081).length\nbut is expected to have type\n  V'.Coins (encInstance G\u2080 G\u2081).length\nin the application\n  (samplePerm n (List.ofFn r.1), r.2)"
+   ]
+  ],
+  "TCSlib.Cryptography.GIZK.statClose_real_ideal": [
+   [
+    445,
+    71,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G\u2080 G\u2081)\nbut is expected to have type\n  (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G\u2080 G\u2081)\nin the application\n  (giProtocol.withV V').viewV (encInstance G\u2080 G\u2081) (encPerm \u03c3) z r"
+   ]
+  ],
+  "TCSlib.Cryptography.GIZK.statClose_real_sim": [
+   [
+    512,
+    71,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G\u2080 G\u2081)\nbut is expected to have type\n  (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G\u2080 G\u2081)\nin the application\n  (giProtocol.withV V').viewV (encInstance G\u2080 G\u2081) (encPerm \u03c3) z r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.GIZK.viewV_encode": {
+   "names": [
+    "TCSlib.Cryptography.Protocol.withV"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    416,
+    418
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G\u2080 G\u2081)\nbut is expected to have type\n  (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G\u2080 G\u2081)\nin the application\n  (giProtocol.withV V').viewV (encInstance G\u2080 G\u2081) (encPerm \u03c3) z r"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Protocol.withV": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.GIZK.statClose_real_ideal": {
+   "names": [
+    "TCSlib.Cryptography.Protocol.withV"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    445
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G\u2080 G\u2081)\nbut is expected to have type\n  (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G\u2080 G\u2081)\nin the application\n  (giProtocol.withV V').viewV (encInstance G\u2080 G\u2081) (encPerm \u03c3) z r"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Protocol.withV": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.GIZK.statClose_real_sim": {
+   "names": [
+    "TCSlib.Cryptography.Protocol.withV"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    512
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (giProtocol.withV V').ExecCoins giProtocol.P (encInstance G\u2080 G\u2081)\nbut is expected to have type\n  (giProtocol.withV V').ExecCoins (giProtocol.withV V').P (encInstance G\u2080 G\u2081)\nin the application\n  (giProtocol.withV V').viewV (encInstance G\u2080 G\u2081) (encPerm \u03c3) z r"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Protocol.withV": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.GIZK.sim_ofFn_eq": {
+   "names": [
+    "TCSlib.Cryptography.GIZK.blockLen"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    370
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin (M * blockLen V' (encInstance G\u2080 G\u2081).length) \u2192 Bool\nbut is expected to have type\n  Fin (M * (1 + ?m.55 t + V'.coinLen (encInstance G\u2080 G\u2081).length)) \u2192 Bool\nin the application\n  readBlocks (?m.55 t) (V'.coinLen (encInstance G\u2080 G\u2081).length) M n hn r"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.GIZK.blockLen": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.GIZK.viewV_encode": [
+   "TCSlib.Cryptography.GIZK.encView",
+   "TCSlib.Cryptography.GIZK.realView",
+   "TCSlib.Cryptography.GIZK.vstar"
+  ],
+  "TCSlib.Cryptography.GIZK.statClose_real_ideal": [
+   "TCSlib.Cryptography.GIZK.encView",
+   "TCSlib.Cryptography.GIZK.realView",
+   "TCSlib.Cryptography.GIZK.vstar"
+  ],
+  "TCSlib.Cryptography.GIZK.statClose_real_sim": [
+   "TCSlib.Cryptography.GIZK.realView",
+   "TCSlib.Cryptography.GIZK.simAttempt",
+   "TCSlib.Cryptography.GIZK.simTrunc",
+   "TCSlib.Cryptography.GIZK.vstar"
+  ],
+  "TCSlib.Cryptography.GIZK.sim_ofFn_eq": [
+   "TCSlib.Cryptography.GIZK.blockFields",
+   "TCSlib.Cryptography.GIZK.encView",
+   "TCSlib.Cryptography.GIZK.readBlocks",
+   "TCSlib.Cryptography.GIZK.simAttempt",
+   "TCSlib.Cryptography.GIZK.simTrunc",
+   "TCSlib.Cryptography.GIZK.tapeBlock",
+   "TCSlib.Cryptography.GIZK.vstar"
+  ]
+ },
+ "runs": 20,
+ "seconds": 54
+}

@@ -1,0 +1,189 @@
+{
+ "file": "TCSlib/Cryptography/Candidates/DiscreteLog.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 46,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Candidates.dlCollection_index",
+   "TCSlib.Cryptography.Candidates.expCollection_index",
+   "TCSlib.Cryptography.Candidates.expCollection_index_of_lt",
+   "TCSlib.Cryptography.Candidates.expGen_runAt"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Candidates.expGen_runAt": [
+   [
+    513,
+    26,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (expGen G).Coins n\nin the application\n  (expGen G).runAt n [] r"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.expCollection_index": [
+   [
+    706,
+    35,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (expCollection H G hV).gen.Coins n\nin the application\n  (expCollection H G hV).index n r"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.expCollection_index_of_lt": [
+   [
+    713,
+    35,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (expCollection H G hV).gen.Coins n\nin the application\n  (expCollection H G hV).index n r"
+   ]
+  ],
+  "TCSlib.Cryptography.Candidates.dlCollection_index": [
+   [
+    869,
+    49,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (dlCollection H G).gen.Coins n\nin the application\n  (dlCollection H G).index n r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Candidates.expGen_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    513
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (expGen G).Coins n\nin the application\n  (expGen G).runAt n [] r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.expCollection_index": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    706
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (expCollection H G hV).gen.Coins n\nin the application\n  (expCollection H G hV).index n r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.expCollection_index_of_lt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    713
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (expCollection H G hV).gen.Coins n\nin the application\n  (expCollection H G hV).index n r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Candidates.dlCollection_index": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    869
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  G.gen.Coins n\nbut is expected to have type\n  (dlCollection H G).gen.Coins n\nin the application\n  (dlCollection H G).index n r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Candidates.expGen_runAt": [
+   "TCSlib.Cryptography.Candidates.ExpGroupGen",
+   "TCSlib.Cryptography.Candidates.WellFormedIndex"
+  ],
+  "TCSlib.Cryptography.Candidates.expCollection_index": [
+   "TCSlib.Cryptography.Candidates.ExpGroupGen",
+   "TCSlib.Cryptography.Candidates.ExpValid",
+   "TCSlib.Cryptography.Candidates.WellFormedIndex",
+   "TCSlib.Cryptography.Candidates.dlG",
+   "TCSlib.Cryptography.Candidates.dlM",
+   "TCSlib.Cryptography.Candidates.dlP"
+  ],
+  "TCSlib.Cryptography.Candidates.expCollection_index_of_lt": [
+   "TCSlib.Cryptography.Candidates.ExpGroupGen",
+   "TCSlib.Cryptography.Candidates.ExpValid",
+   "TCSlib.Cryptography.Candidates.WellFormedIndex",
+   "TCSlib.Cryptography.Candidates.dlG",
+   "TCSlib.Cryptography.Candidates.dlM",
+   "TCSlib.Cryptography.Candidates.dlP"
+  ],
+  "TCSlib.Cryptography.Candidates.dlCollection_index": [
+   "TCSlib.Cryptography.Candidates.ExpGroupGen",
+   "TCSlib.Cryptography.Candidates.ExpValid",
+   "TCSlib.Cryptography.Candidates.SafePrimeGen",
+   "TCSlib.Cryptography.Candidates.SafePrimeValid",
+   "TCSlib.Cryptography.Candidates.SafePrimeValid.expValid",
+   "TCSlib.Cryptography.Candidates.WellFormedIndex",
+   "TCSlib.Cryptography.Candidates.dlCollection",
+   "TCSlib.Cryptography.Candidates.dlG",
+   "TCSlib.Cryptography.Candidates.dlM",
+   "TCSlib.Cryptography.Candidates.dlP"
+  ]
+ },
+ "runs": 30,
+ "seconds": 91
+}

@@ -1,0 +1,64 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 56,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.GI.giRepCoins"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.GI.giRepCoins": [
+   [
+    384,
+    2,
+    "B",
+    "Type mismatch\n  Equiv.prodComm ?m.3 ?m.4\nhas type\n  ?m.3 \u00d7 ?m.4 \u2243 ?m.4 \u00d7 ?m.3\nbut is expected to have type\n  (Fin x.length \u2192 Bool) \u00d7 P'.Coins x.length \u2243 giProtocolRep.ExecCoins P' x"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.GI.giRepCoins": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.GI.giProtocolRep",
+    "TCSlib.Cryptography.GI.giVerifierRep",
+    "TCSlib.Cryptography.Strategy.coinLen"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    384
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  Equiv.prodComm ?m.3 ?m.4\nhas type\n  ?m.3 \u00d7 ?m.4 \u2243 ?m.4 \u00d7 ?m.3\nbut is expected to have type\n  (Fin x.length \u2192 Bool) \u00d7 P'.Coins x.length \u2243 giProtocolRep.ExecCoins P' x"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.giProtocolRep": "ev1: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.giVerifierRep": "ev2: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.Strategy.coinLen": "ev3: FAILS without it: Type mismatch"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.GI.giRepCoins": []
+ },
+ "runs": 46,
+ "seconds": 115
+}

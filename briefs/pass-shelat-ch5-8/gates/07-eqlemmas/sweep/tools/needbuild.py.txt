@@ -1,0 +1,21 @@
+"""needbuild.py <worktree> <olean-tree> <files.txt>: TCSlib modules imported (transitively) by the
+target files whose .olean is missing in <olean-tree>, in dependency order (imports first)."""
+import os, re, sys
+wt, ol, files = sys.argv[1:4]
+def imps(m):
+    p = os.path.join(wt, m.replace('.', '/') + '.lean')
+    return [x for x in re.findall(r'^import\s+(\S+)', open(p, encoding='utf-8').read(), re.M) if x.startswith('TCSlib')]
+order, seen = [], set()
+def visit(m):
+    if m in seen: return
+    seen.add(m)
+    for i in imps(m): visit(i)
+    order.append(m)
+for f in open(files):
+    f = f.strip()
+    src = open(os.path.join(wt, f), encoding='utf-8').read()
+    for i in re.findall(r'^import\s+(\S+)', src, re.M):
+        if i.startswith('TCSlib'): visit(i)
+for m in order:
+    if not os.path.exists(os.path.join(ol, m.replace('.', '/') + '.olean')):
+        print(m.replace('.', '/'))

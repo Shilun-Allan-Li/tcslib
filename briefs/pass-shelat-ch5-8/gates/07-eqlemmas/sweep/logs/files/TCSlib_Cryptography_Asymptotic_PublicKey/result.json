@@ -1,0 +1,290 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/PublicKey.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 70,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwise",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwise_pkEncDist_coinBlocks",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt",
+   "TCSlib.Cryptography.tdpBitScheme_pkEncDist"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.BitPublicKeyScheme.bitwise": [
+   [
+    375,
+    8,
+    "B",
+    "omega could not prove the goal:\na possible counterexample may satisfy the constraints\n  f \u2265 0\n  e \u2265 0\n  e - f \u2264 0\n  e \u2265 0\n  d \u2265 0\n  d - e \u2265 1\n  c \u2265 0\n  c - d + e - f \u2265 0\n  b \u2265 0\n  a \u2265 0\n  a - b \u2265 1\nwhere\n a := \u2191n\n b := \u2191\u2191i\n c := \u2191n * \u2191(S.enc.coins.eval n)\n d := \u2191(S.enc.coins.eval n)\n e := \u2191((List.ofFn re).length - \u2191i * S.enc.coins.eval n)\n f := \u2191(List.ofFn re).length"
+   ]
+  ],
+  "TCSlib.Cryptography.BitPublicKeyScheme.bitwise_pkEncDist_coinBlocks": [
+   [
+    392,
+    32,
+    "T",
+    "Application type mismatch: The argument\n  (coinBlocks n (S.enc.coinLen n)) v\nhas type\n  Fin (n * S.enc.coinLen n) \u2192 Bool\nbut is expected to have type\n  S.bitwise.enc.Coins n\nin the application\n  (r, (coinBlocks n (S.enc.coinLen n)) v)"
+   ]
+  ],
+  "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt": [
+   [
+    637,
+    24,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  T.gen.Coins n\nbut is expected to have type\n  T.tdpGen.Coins n\nin the application\n  T.tdpGen.runAt n [] r"
+   ]
+  ],
+  "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt": [
+   [
+    649,
+    44,
+    "T",
+    "Application type mismatch: The argument\n  s\nhas type\n  T.sample.Coins n\nbut is expected to have type\n  (T.tdpEnc E).Coins n\nin the application\n  (T.tdpEnc E).runAt n (pairEncode i [b]) s"
+   ]
+  ],
+  "TCSlib.Cryptography.tdpBitScheme_pkEncDist": [
+   [
+    793,
+    38,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  T.gen.Coins n\nbut is expected to have type\n  (T.tdpBitScheme E).gen.Coins n\nin the application\n  Prod.mk r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    637
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  T.gen.Coins n\nbut is expected to have type\n  T.tdpGen.Coins n\nin the application\n  T.tdpGen.runAt n [] r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    649
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  s\nhas type\n  T.sample.Coins n\nbut is expected to have type\n  (T.tdpEnc E).Coins n\nin the application\n  (T.tdpEnc E).runAt n (pairEncode i [b]) s"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.BitPublicKeyScheme.bitwise": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    375
+   ],
+   "first_error": [
+    "S0",
+    "omega could not prove the goal:\na possible counterexample may satisfy the constraints\n  f \u2265 0\n  e \u2265 0\n  e - f \u2264 0\n  e \u2265 0\n  d \u2265 0\n  d - e \u2265 1\n  c \u2265 0\n  c - d + e - f \u2265 0\n  b \u2265 0\n  a \u2265 0\n  a - b \u2265 1\nwhere\n a := \u2191n\n b := \u2191\u2191i\n c := \u2191n * \u2191(S.enc.coins.eval n)\n d := \u2191(S.enc.coins.eval n)\n e := \u2191((List.ofFn re).length - \u2191i * S.enc.coins.eval n)\n f := \u2191(List.ofFn re).length"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: omega could not prove the goal:",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: omega could not prove the goal:",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev2: FAILS without it: omega could not prove the goal:",
+    "Complexity.PolyExpr.eval": "ev3: FAILS without it: omega could not prove the goal:"
+   }
+  },
+  "TCSlib.Cryptography.BitPublicKeyScheme.bitwise_pkEncDist_coinBlocks": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    392
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (coinBlocks n (S.enc.coinLen n)) v\nhas type\n  Fin (n * S.enc.coinLen n) \u2192 Bool\nbut is expected to have type\n  S.bitwise.enc.Coins n\nin the application\n  (r, (coinBlocks n (S.enc.coinLen n)) v)"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev4: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev5: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev6: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev7: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform",
+    "TCSlib.Cryptography.Collection.index",
+    "TCSlib.Cryptography.Collection.trap"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    693
+   ],
+   "first_error": [
+    "fx0",
+    "Tactic `rewrite` failed: Did not find an occurrence of the pattern\n  (tdpGen ?T).runAt ?n [] ?r\nin the target expression\n  T.tdpDecFun E.H\n      (pairEncode (pairSndD (T.tdpGen.runAt n [] rg))\n        ((T.tdpEnc E).runAt n (pairEncode (pairFstD (T.tdpGen.runAt n [] rg)) [b]) re)) =\n    [b]\n\nT : TrapdoorCollection\nh : (i : List Bool) \u2192 T.D i \u2192 Bool\nE : T.PredEvaluator h\nn : \u2115\nb : Bool\nrg : T.tdpGen"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev3: FAILS without it: Tactic `rewrite` failed: Did not find an occurrence of the pattern",
+    "Complexity.NUPPT.ofPolyTime": "ev4: FAILS without it: Tactic `rewrite` failed: Did not find an occurrence of the pattern",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev5: FAILS without it: Tactic `rewrite` failed: Did not find an occurrence of the pattern",
+    "TCSlib.Cryptography.Collection.index": "ev6: FAILS without it: Application type mismatch: The argument",
+    "TCSlib.Cryptography.Collection.trap": "ev7: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.tdpBitScheme_pkEncDist": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    793
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  T.gen.Coins n\nbut is expected to have type\n  (T.tdpBitScheme E).gen.Coins n\nin the application\n  Prod.mk r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev8: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev9: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev10: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt": [
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGen",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun_poly"
+  ],
+  "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt": [
+   "TCSlib.Cryptography.Collection.PredEvaluator",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEnc",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun_poly"
+  ],
+  "TCSlib.Cryptography.BitPublicKeyScheme.bitwise": [
+   "TCSlib.Cryptography.BitPublicKeyScheme",
+   "TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwiseEncFun",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwiseEncFun_poly",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwise_enc_runAt",
+   "TCSlib.Cryptography.BitPublicKeyScheme.exists_ofFn_eq",
+   "TCSlib.Cryptography.BitPublicKeyScheme.flatMap_ofFn_singleton",
+   "TCSlib.Cryptography.BitPublicKeyScheme.pkEncDist",
+   "TCSlib.Cryptography.BitPublicKeyScheme.singleBitSecure_iff",
+   "TCSlib.Cryptography.PublicKeyScheme"
+  ],
+  "TCSlib.Cryptography.BitPublicKeyScheme.bitwise_pkEncDist_coinBlocks": [
+   "TCSlib.Cryptography.BitPublicKeyScheme",
+   "TCSlib.Cryptography.BitPublicKeyScheme.SingleBitSecure",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwise",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwiseEncFun",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwiseEncFun_poly",
+   "TCSlib.Cryptography.BitPublicKeyScheme.bitwise_enc_runAt",
+   "TCSlib.Cryptography.BitPublicKeyScheme.exists_ofFn_eq",
+   "TCSlib.Cryptography.BitPublicKeyScheme.flatMap_ofFn_singleton",
+   "TCSlib.Cryptography.BitPublicKeyScheme.pkEncDist",
+   "TCSlib.Cryptography.BitPublicKeyScheme.singleBitSecure_iff",
+   "TCSlib.Cryptography.PublicKeyScheme",
+   "TCSlib.Cryptography.PublicKeyScheme.pkEncDist"
+  ],
+  "TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme": [
+   "TCSlib.Cryptography.BitPublicKeyScheme",
+   "TCSlib.Cryptography.Collection.PredEvaluator",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_apply",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_poly",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEnc",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun_poly",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGen",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun_poly",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt"
+  ],
+  "TCSlib.Cryptography.tdpBitScheme_pkEncDist": [
+   "TCSlib.Cryptography.BitPublicKeyScheme",
+   "TCSlib.Cryptography.BitPublicKeyScheme.pkEncDist",
+   "TCSlib.Cryptography.Collection.PredEvaluator",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpBitScheme",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_apply",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpDecFun_poly",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEnc",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEncFun_poly",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpEnc_runAt",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGen",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGenFun_poly",
+   "TCSlib.Cryptography.TrapdoorCollection.tdpGen_runAt",
+   "TCSlib.Cryptography.tdpSampled"
+  ]
+ },
+ "runs": 79,
+ "seconds": 219
+}

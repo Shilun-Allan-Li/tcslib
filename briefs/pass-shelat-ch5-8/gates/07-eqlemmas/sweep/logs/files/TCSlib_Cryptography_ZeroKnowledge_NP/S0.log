@@ -1,0 +1,28 @@
+TCSlib_Cryptography_ZeroKnowledge_NP/S0.lean:365:76: error: Application type mismatch: The argument
+  r
+has type
+  (π.pullback f w p).ExecCoins P' x
+but is expected to have type
+  (Fin
+        ({ next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen
+          (f x).length) →
+      Bool) ×
+    (Fin ((π.V.pullback f (fun x z => z) p).coinLen x.length) → Bool)
+in the application
+  Prod.map (coinTrunc ⋯) (coinTrunc ⋯) r
+TCSlib_Cryptography_ZeroKnowledge_NP/S0.lean:616:51: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h
+TCSlib_Cryptography_ZeroKnowledge_NP/S0.lean:757:51: error: Application type mismatch: The argument
+  h
+has type
+  (n : ℕ) → (Fin n → Bool) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (P.toFunFamily.inLen.eval n) → Bool) → Bool
+in the application
+  HardCore P.toFunFamily h

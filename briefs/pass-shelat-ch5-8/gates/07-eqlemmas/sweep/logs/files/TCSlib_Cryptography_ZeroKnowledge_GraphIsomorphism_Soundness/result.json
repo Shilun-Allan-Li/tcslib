@@ -1,0 +1,101 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 62,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.GI.giBitEquiv",
+   "TCSlib.Cryptography.GI.vTapeSplit"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.GI.vTapeSplit": [
+   [
+    102,
+    2,
+    "B",
+    "Type mismatch\n  tapeSplit (1 * (N + 1) ^ 2)\nhas type\n  Bool \u00d7 (Fin (1 * (N + 1) ^ 2) \u2192 Bool) \u2243 (Fin (1 + 1 * (N + 1) ^ 2) \u2192 Bool)\nbut is expected to have type\n  Bool \u00d7 (Fin (1 * (N + 1) ^ 2) \u2192 Bool) \u2243 gniProtocol.V.Coins N"
+   ]
+  ],
+  "TCSlib.Cryptography.GI.giBitEquiv": [
+   [
+    229,
+    56,
+    "B",
+    "Type mismatch\n  (Equiv.funUnique (Fin 1) Bool).symm\nhas type\n  Bool \u2243 (Fin 1 \u2192 Bool)\nbut is expected to have type\n  Bool \u2243 giProtocol.V.Coins N"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.GI.giBitEquiv": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "TCSlib.Cryptography.GI.giProtocol",
+    "TCSlib.Cryptography.GI.giVerifier",
+    "TCSlib.Cryptography.Strategy.coinLen"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    229
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  (Equiv.funUnique (Fin 1) Bool).symm\nhas type\n  Bool \u2243 (Fin 1 \u2192 Bool)\nbut is expected to have type\n  Bool \u2243 giProtocol.V.Coins N"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.giProtocol": "ev1: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.giVerifier": "ev2: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.Strategy.coinLen": "ev3: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.GI.vTapeSplit": {
+   "names": [
+    "Complexity.PolyExpr.eval",
+    "Complexity.PolyExpr.normal",
+    "TCSlib.Cryptography.GI.gniProtocol",
+    "TCSlib.Cryptography.GI.gniVerifier",
+    "TCSlib.Cryptography.Strategy.coinLen"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    102
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  tapeSplit (1 * (N + 1) ^ 2)\nhas type\n  Bool \u00d7 (Fin (1 * (N + 1) ^ 2) \u2192 Bool) \u2243 (Fin (1 + 1 * (N + 1) ^ 2) \u2192 Bool)\nbut is expected to have type\n  Bool \u00d7 (Fin (1 * (N + 1) ^ 2) \u2192 Bool) \u2243 gniProtocol.V.Coins N"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch",
+    "Complexity.PolyExpr.normal": "ev1: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.gniProtocol": "ev2: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.GI.gniVerifier": "ev3: FAILS without it: Type mismatch",
+    "TCSlib.Cryptography.Strategy.coinLen": "ev4: FAILS without it: Type mismatch"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.GI.giBitEquiv": [],
+  "TCSlib.Cryptography.GI.vTapeSplit": []
+ },
+ "runs": 50,
+ "seconds": 122
+}

@@ -1,0 +1,65 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 102,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.glPredictorOf_precomp_coll"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.glPredictorOf_precomp_coll": [
+   [
+    173,
+    92,
+    "T",
+    "Application type mismatch: The argument\n  c\nhas type\n  A.Coins n\nbut is expected to have type\n  (A.precomp collPre_poly).Coins n\nin the application\n  glPredictorOf (A.precomp collPre_poly) n m (fun y => pairEncode i y) (y, q) c"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.glPredictorOf_precomp_coll": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.precomp"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    173
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  c\nhas type\n  A.Coins n\nbut is expected to have type\n  (A.precomp collPre_poly).Coins n\nin the application\n  glPredictorOf (A.precomp collPre_poly) n m (fun y => pairEncode i y) (y, q) c"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.precomp": "ev2: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.glPredictorOf_precomp_coll": [
+   "TCSlib.Cryptography.collPre",
+   "TCSlib.Cryptography.collPre_poly"
+  ]
+ },
+ "runs": 36,
+ "seconds": 89
+}

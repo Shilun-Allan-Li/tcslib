@@ -1,0 +1,63 @@
+{
+ "file": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 86,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.simCoinsEquiv"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.simCoinsEquiv": [
+   [
+    187,
+    51,
+    "B",
+    "Function expected at\n  hc\nbut this term has type\n  ProperColoring G c\n\nNote: Expected a function because this term is being applied to the argument\n  _"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.simCoinsEquiv": {
+   "names": [
+    "TCSlib.Cryptography.ProperColoring"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    187
+   ],
+   "first_error": [
+    "S0",
+    "Function expected at\n  hc\nbut this term has type\n  ProperColoring G c\n\nNote: Expected a function because this term is being applied to the argument\n  _"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.ProperColoring": "ev0: FAILS without it: Function expected at"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.simCoinsEquiv": [
+   "TCSlib.Cryptography.ColorPair",
+   "TCSlib.Cryptography.card_colorPair",
+   "TCSlib.Cryptography.colorPairEquiv",
+   "TCSlib.Cryptography.perm3_ext_of_ne"
+  ]
+ },
+ "runs": 10,
+ "seconds": 29
+}

@@ -1,0 +1,130 @@
+"""Statement-only copy of a Lean file, with a declaration map (gate 07 statement sweep).
+
+stmtonly.py <src.lean> <out.lean> <out.json>
+
+Every `theorem` / `lemma` / `example` keeps its statement; its proof (from the top-level `:=`, or
+from the first top-level equation `|` of a pattern-matching proof, to the end of the declaration,
+including `termination_by` / `decreasing_by` / `where` tails) is replaced by `sorry`. Definitions,
+abbreviations, instances, structures, classes and inductives are kept verbatim (bodies included).
+The replaced text is padded with blank lines so that **every line keeps its original number**.
+
+<out.json>: one record per declaration of the copy (extents from declx.py, on the original text):
+name, kind, dstart, start, end (1-based lines) and `split` = [line, col] (0-based col) of the
+top-level `:=` / `|` / `where` that separates the declaration's type (statement) from its body,
+or null when the whole declaration is statement (structure/class/inductive, or no body found)."""
+import json, os, re, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import declx
+
+OPEN, CLOSE = '([{⟨⦃', ')]}⟩⦄'
+STMT_ONLY = {'structure', 'class', 'inductive'}
+PROOF = {'theorem', 'lemma', 'example'}
+
+
+def bar_later(rest):
+    """True if `rest` (a line after its leading `|`) has a bracket-depth-0 single `|` (the closing bar
+    of an absolute value `|x|`; not `||`, `|>`, `<|`)."""
+    d = 0
+    for k, ch in enumerate(rest):
+        if ch in OPEN: d += 1
+        elif ch in CLOSE: d -= 1
+        elif ch == '|' and d == 0:
+            prev = rest[k - 1] if k else ''
+            nxt = rest[k + 1] if k + 1 < len(rest) else ''
+            if prev not in '|<' and nxt not in '|>':
+                return True
+    return False
+
+
+def arrow0(rest):
+    """True if `rest` has `=>` at bracket depth 0 (an equation `| pats => rhs`)."""
+    d = 0
+    for k, ch in enumerate(rest):
+        if ch in OPEN: d += 1
+        elif ch in CLOSE: d -= 1
+        elif d == 0 and rest.startswith('=>', k):
+            return True
+    return False
+
+
+def find_split(src, off, endoff):
+    """Offset of the top-level separator between type and body in src[off:endoff], or None.
+    Skips comments and string literals; brackets tracked; separators: `:=`, `|` first on a line,
+    the keyword `where`."""
+    i, d, seen_match = off, 0, False
+    while i < endoff:
+        if src.startswith('--', i):
+            j = src.find('\n', i); i = endoff if j < 0 else j; continue
+        if src.startswith('/-', i):
+            depth, i = 1, i + 2
+            while i < endoff and depth:
+                if src.startswith('/-', i): depth += 1; i += 2
+                elif src.startswith('-/', i): depth -= 1; i += 2
+                else: i += 1
+            continue
+        c = src[i]
+        if c == '"':
+            i += 1
+            while i < endoff and src[i] != '"':
+                i += 2 if src[i] == '\\' else 1
+            i += 1; continue
+        if c in OPEN: d += 1
+        elif c in CLOSE: d -= 1
+        elif d == 0:
+            if src.startswith(':=', i):
+                lstart = src[src.rfind('\n', 0, i) + 1:i].lstrip()
+                if re.match(r'(haveI|letI|have|let)\b', lstart):
+                    i += 2; continue      # a term-mode `haveI x : T := v` inside the statement
+                return i
+            if src.startswith('match', i) and not (src[i-1].isalnum() or src[i-1] in "_.'") \
+                    and not (src[i+5].isalnum() or src[i+5] in "_'"):
+                seen_match = True   # `| … =>` lines now belong to this match, not to equations
+            if c == '|' and not seen_match and src[src.rfind('\n', 0, i) + 1:i].strip() == '' and not src.startswith('||', i) \
+                    and arrow0(src[i + 1:src.find('\n', i) if src.find('\n', i) >= 0 else endoff]) \
+                    and not bar_later(src[i + 1:src.find('\n', i) if src.find('\n', i) >= 0 else endoff]):
+                return i   # an equation `| pats => …` (not an absolute value `|x|` opening a line)
+            if src.startswith('where', i) and (i == 0 or not (src[i-1].isalnum() or src[i-1] in "_.'")) \
+                    and (i + 5 >= len(src) or not (src[i+5].isalnum() or src[i+5] in "_'")):
+                return i
+        i += 1
+    return None
+
+
+def transform(src):
+    lines = src.split('\n')
+    off = [0]
+    for l in lines: off.append(off[-1] + len(l) + 1)
+    exts = declx.extents(src)
+    recs, edits = [], []
+    for e in exts:
+        kw = off[e['start'] - 1]
+        endoff = off[e['end']] - 1 if e['end'] < len(lines) else len(src)
+        # skip the keyword and name so that `where` in a name does not count (names never contain it)
+        sp = None if e['kind'] in STMT_ONLY else find_split(src, kw, endoff)
+        split = None
+        if sp is not None:
+            ln = src.count('\n', 0, sp)
+            split = [ln + 1, sp - off[ln]]
+        recs.append(dict(e, split=split))
+        if e['kind'] in PROOF and sp is not None:
+            edits.append((sp, endoff))
+    out, last = [], 0
+    for (a, b) in sorted(edits):
+        out.append(src[last:a])
+        body = src[a:b]
+        out.append(':= sorry' + '\n' * body.count('\n'))
+        last = b
+    out.append(src[last:])
+    return ''.join(out), recs
+
+
+if __name__ == '__main__':
+    s, o, j = sys.argv[1:4]
+    src = open(s, encoding='utf-8').read()
+    t, recs = transform(src)
+    assert t.count('\n') == src.count('\n'), 'line count changed'
+    open(o, 'w', encoding='utf-8').write(t)
+    json.dump(recs, open(j, 'w', encoding='utf-8'), indent=0)
+    print(f"{s}: {len(recs)} declarations, "
+          f"{sum(1 for r in recs if r['kind'] in PROOF and r['split'])} proofs replaced, "
+          f"{sum(1 for r in recs if r['kind'] in PROOF and not r['split'])} proof declarations without body found")

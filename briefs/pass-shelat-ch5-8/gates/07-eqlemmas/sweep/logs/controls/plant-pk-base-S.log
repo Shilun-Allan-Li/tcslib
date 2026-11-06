@@ -1,0 +1,128 @@
+controls/pk-base-S.lean:376:8: error: omega could not prove the goal:
+a possible counterexample may satisfy the constraints
+  f ≥ 0
+  e ≥ 0
+  e - f ≤ 0
+  e ≥ 0
+  d ≥ 0
+  d - e ≥ 1
+  c ≥ 0
+  c - d + e - f ≥ 0
+  b ≥ 0
+  a ≥ 0
+  a - b ≥ 1
+where
+ a := ↑n
+ b := ↑↑i
+ c := ↑n * ↑(S.enc.coins.eval n)
+ d := ↑(S.enc.coins.eval n)
+ e := ↑((List.ofFn re).length - ↑i * S.enc.coins.eval n)
+ f := ↑(List.ofFn re).length
+controls/pk-base-S.lean:371:66: warning: This simp argument is unused:
+  List.length_ofFn
+
+Hint: Omit it from the simp argument list.
+  simp only [coinBlock, List.length_take, List.length_drop, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵o̵f̵F̵n̵,̵ ̵NUPPT.coinLen,
+            NUPPT.coins_ofPolyTimeUniform, PolyExpr.eval_mul, PolyExpr.eval_var]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+controls/pk-base-S.lean:393:32: error: Application type mismatch: The argument
+  (coinBlocks n (S.enc.coinLen n)) v
+has type
+  Fin (n * S.enc.coinLen n) → Bool
+but is expected to have type
+  S.bitwise.enc.Coins n
+in the application
+  (r, (coinBlocks n (S.enc.coinLen n)) v)
+controls/pk-base-S.lean:638:24: error: Application type mismatch: The argument
+  r
+has type
+  T.gen.Coins n
+but is expected to have type
+  T.tdpGen.Coins n
+in the application
+  T.tdpGen.runAt n [] r
+controls/pk-base-S.lean:650:44: error: Application type mismatch: The argument
+  s
+has type
+  T.sample.Coins n
+but is expected to have type
+  (T.tdpEnc E).Coins n
+in the application
+  (T.tdpEnc E).runAt n (pairEncode i [b]) s
+controls/pk-base-S.lean:695:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:696:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:697:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:698:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:699:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:705:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:706:4: warning: this tactic is never executed
+
+Note: This linter can be disabled with `set_option linter.unreachableTactic false`
+controls/pk-base-S.lean:694:4: warning: 'rw [tdpGen_runAt]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:695:4: warning: 'simp only [pairFstD_pairEncode, pairSndD_pairEncode]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:696:4: warning: 'rw [tdpEnc_runAt, tdpDecFun_apply]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:697:4: warning: 'obtain ⟨x, hx, hev⟩ := T.toCollection.evalSampled n rg re' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:698:4: warning: 'rw [hev, T.f_perm]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:699:4: warning: 'have hinv :
+  T.decD (T.index n rg)
+      (T.inv.runAt n (pairEncode (T.trap n rg) (T.encD (T.index n rg) (T.perm (T.index n rg) x))) fun _ => true) =
+    some x :=
+  by
+  have := T.inv_spec n rg (T.perm _ x) (fun _ => true)
+  rw [Equiv.symm_apply_apply] at this
+  exact this' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:705:4: warning: 'rw [E.spec _ _ _ hinv, E.spec _ _ _ hx]' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:706:4: warning: '(cases h (T.index n rg) x) <;> cases b <;> rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+controls/pk-base-S.lean:794:38: error: Application type mismatch: The argument
+  r
+has type
+  T.gen.Coins n
+but is expected to have type
+  (T.tdpBitScheme E).gen.Coins n
+in the application
+  Prod.mk r
+controls/pk-base-S.lean:994:69: error: Application type mismatch: The argument
+  T.glBit
+has type
+  (i : List Bool) → T.D i × (Fin (T.encD i default).length → Bool) → Bool
+but is expected to have type
+  (i : List Bool) → (T.glPad m henc).D i → Bool
+in the application
+  (T.glPad m henc).PredEvaluator T.glBit
+controls/pk-base-S.lean:1002:54: error: Application type mismatch: The argument
+  T.glBit
+has type
+  (i : List Bool) → T.D i × (Fin (T.encD i default).length → Bool) → Bool
+but is expected to have type
+  (i : List Bool) → (T.glPad m henc).D i → Bool
+in the application
+  (T.glPad m henc).PredEvaluator T.glBit

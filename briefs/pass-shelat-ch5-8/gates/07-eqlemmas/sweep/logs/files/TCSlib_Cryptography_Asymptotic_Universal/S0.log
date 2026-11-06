@@ -1,0 +1,40 @@
+TCSlib_Cryptography_Asymptotic_Universal/S0.lean:260:34: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n x
+TCSlib_Cryptography_Asymptotic_Universal/S0.lean:652:36: error: Application type mismatch: The argument
+  y
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n y
+TCSlib_Cryptography_Asymptotic_Universal/S0.lean:672:69: error: Application type mismatch: The argument
+  y'
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n y'
+TCSlib_Cryptography_Asymptotic_Universal/S0.lean:672:93: error: Application type mismatch: The argument
+  y
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n y
+TCSlib_Cryptography_Asymptotic_Universal/S0.lean:718:37: error: Application type mismatch: The argument
+  g
+has type
+  (m : ℕ) → (Fin m → Bool) → Fin (L.eval m) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+in the application
+  { inLen := PolyExpr.var, outLen := L, f := g }

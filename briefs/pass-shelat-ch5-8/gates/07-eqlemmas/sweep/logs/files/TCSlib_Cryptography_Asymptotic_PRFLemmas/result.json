@@ -1,0 +1,64 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/PRFLemmas.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 50,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "Complexity.NUPPT.runAt_preComp"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "Complexity.NUPPT.runAt_preComp": [
+   [
+    192,
+    90,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  (A.preComp hpre).Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n (pre (pairEncode (List.replicate n true) y)) r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "Complexity.NUPPT.runAt_preComp": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    192
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  (A.preComp hpre).Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n (pre (pairEncode (List.replicate n true) y)) r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "Complexity.NUPPT.runAt_preComp": [
+   "Complexity.NUPPT.preComp",
+   "Complexity.NUPPT.preFun",
+   "Complexity.NUPPT.preFun_poly"
+  ]
+ },
+ "runs": 28,
+ "seconds": 66
+}

@@ -1,0 +1,33 @@
+Complexity.PolyTimeComputable	TCSlib.Complexity.ClassNP.PolyTime	direct		2
+Turing.moveInputPos	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.pairEncode	TCSlib.Complexity.TuringMachine.Encoding	deep	Complexity.NUPPT.advInput, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Complexity.NUPPT.advInput	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt	19
+Complexity.NUPPT.coinLen	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.runAt	17
+Complexity.NUPPT.inverter	TCSlib.Cryptography.Asymptotic.Adversary	direct		8
+Complexity.NUPPT.inverterLit	TCSlib.Cryptography.Asymptotic.Adversary	direct		6
+Complexity.NUPPT.output	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt	17
+Complexity.NUPPT.runAt	TCSlib.Complexity.Randomized.PPT	direct	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	17
+Complexity.NUPPT.timeBound	TCSlib.Complexity.Randomized.PPT	deep	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit, Complexity.NUPPT.runAt	17
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	direct	Complexity.NUPPT.runAt	51
+TCSlib.Cryptography.Negligible	TCSlib.Cryptography.Foundations.Negligible	direct		6
+TCSlib.Cryptography.decodeFin	TCSlib.Cryptography.Asymptotic.Adversary	deep	Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	14
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct		2
+TCSlib.Cryptography.invProbOpt	TCSlib.Cryptography.Asymptotic.Adversary	direct		2
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.invProb, TCSlib.Cryptography.invProbOpt	17
+Turing.Action.apply	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.Cfg.init	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.Cfg.inputSymbol	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.Cfg.workTapeSymbols	TCSlib.Complexity.TuringMachine.Configuration	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.FinTM.ComputesFunInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	2
+Turing.FinTM.ComputesInTime	TCSlib.Complexity.TuringMachine.Finite	deep	Complexity.PolyTimeComputable	2
+Turing.MultiTapeTM.ComputesInTimeAndSpace	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	2
+Turing.MultiTapeTM.initCfg	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.MultiTapeTM.runFrom	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.MultiTapeTM.spaceUsed	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	2
+Turing.MultiTapeTM.spaceUsedByTape	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	2
+Turing.MultiTapeTM.step	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable, Complexity.NUPPT.inverter, Complexity.NUPPT.inverterLit	19
+Turing.MultiTapeTM.visitedByTapeHead	TCSlib.Complexity.TuringMachine.Deterministic	deep	Complexity.PolyTimeComputable	2
+TCSlib.Cryptography.OneWay.blocksE	TCSlib.Cryptography.Asymptotic.OneWayYao	direct		1
+TCSlib.Cryptography.OneWay.prodFun	TCSlib.Cryptography.OneWayFunctions.Amplification	direct	TCSlib.Cryptography.OneWay.yaoInverter, TCSlib.Cryptography.OneWay.yaoTry	5
+TCSlib.Cryptography.OneWay.yaoInverter	TCSlib.Cryptography.OneWayFunctions.Amplification	direct		1
+TCSlib.Cryptography.OneWay.yaoTry	TCSlib.Cryptography.OneWayFunctions.Amplification	direct	TCSlib.Cryptography.OneWay.yaoInverter	2

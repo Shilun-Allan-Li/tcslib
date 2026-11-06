@@ -1,0 +1,453 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/Collections.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 49,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Collection.collInverter_runAt",
+   "TCSlib.Cryptography.Collection.collInverter_success",
+   "TCSlib.Cryptography.Collection.fiber_le",
+   "TCSlib.Cryptography.Collection.owfFamily",
+   "TCSlib.Cryptography.FunFamily.StrongOneWay.toCollection_oneWay",
+   "TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id",
+   "TCSlib.Cryptography.FunFamily.toCollection",
+   "TCSlib.Cryptography.FunFamily.toCollection_decD",
+   "TCSlib.Cryptography.FunFamily.toCollection_domEquiv",
+   "TCSlib.Cryptography.FunFamily.toCollection_domEquiv_apply",
+   "TCSlib.Cryptography.FunFamily.toCollection_encD",
+   "TCSlib.Cryptography.FunFamily.toCollection_eval",
+   "TCSlib.Cryptography.FunFamily.toCollection_f",
+   "TCSlib.Cryptography.FunFamily.toCollection_gen",
+   "TCSlib.Cryptography.FunFamily.toCollection_index",
+   "TCSlib.Cryptography.FunFamily.toCollection_invProbAt",
+   "TCSlib.Cryptography.FunFamily.toCollection_sample",
+   "TCSlib.Cryptography.FunFamily.toCollection_sampleClose",
+   "TCSlib.Cryptography.FunFamily.toCollection_sample_eq"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.FunFamily.toCollection": [
+   [
+    481,
+    4,
+    "B",
+    "Type mismatch\n  hspec i.length x\nhas type\n  F (NUPPT.advInput i.length (List.ofFn x)) = List.ofFn (\ud835\udcd5.f i.length x)\nbut is expected to have type\n  F (pairEncode (List.replicate i.length true) (List.ofFn x)) = List.ofFn (\ud835\udcd5.f i.length x)"
+   ],
+   [
+    488,
+    11,
+    "B",
+    "Application type mismatch: The argument\n  s\nhas type\n  (NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins \ud835\udcd5.inLen).Coins n\nbut is expected to have type\n  Fin (\ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  Exists.intro s"
+   ],
+   [
+    488,
+    40,
+    "B",
+    "Application type mismatch: The argument\n  s\nhas type\n  (NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins \ud835\udcd5.inLen).Coins n\nbut is expected to have type\n  Fin (\ud835\udcd5.inLen.eval n) \u2192 Bool\nin the application\n  hspec n s"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_domEquiv": [
+   [
+    494,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_domEquiv_apply": [
+   [
+    498,
+    28,
+    "T",
+    "Application type mismatch: The argument\n  F\nhas type\n  List Bool \u2192 List Bool\nbut is expected to have type\n  List Bool\nin the application\n  \ud835\udcd5.toCollection_domEquiv F"
+   ],
+   [
+    497,
+    58,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_encD": [
+   [
+    503,
+    78,
+    "T",
+    "Application type mismatch: The argument\n  F\nhas type\n  List Bool \u2192 List Bool\nbut is expected to have type\n  List Bool\nin the application\n  \ud835\udcd5.toCollection_domEquiv F"
+   ],
+   [
+    502,
+    48,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ],
+   [
+    503,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_decD": [
+   [
+    508,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ],
+   [
+    509,
+    73,
+    "T",
+    "Application type mismatch: The argument\n  F\nhas type\n  List Bool \u2192 List Bool\nbut is expected to have type\n  List Bool\nin the application\n  \ud835\udcd5.toCollection_domEquiv F"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_f": [
+   [
+    517,
+    55,
+    "T",
+    "Application type mismatch: The argument\n  F\nhas type\n  List Bool \u2192 List Bool\nbut is expected to have type\n  List Bool\nin the application\n  \ud835\udcd5.toCollection_domEquiv F"
+   ],
+   [
+    515,
+    45,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ],
+   [
+    516,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_gen": [
+   [
+    520,
+    28,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_sample_eq": [
+   [
+    524,
+    34,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_eval": [
+   [
+    528,
+    45,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_index": [
+   [
+    532,
+    41,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ],
+   [
+    533,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_sample": [
+   [
+    539,
+    58,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ],
+   [
+    540,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_sampleClose": [
+   [
+    546,
+    36,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection_invProbAt": [
+   [
+    581,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.StrongOneWay.toCollection_oneWay": [
+   [
+    607,
+    5,
+    "T",
+    "Function expected at\n  \ud835\udcd5.toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.FunFamily.not_toCollection_oneWay_id": [
+   [
+    638,
+    7,
+    "T",
+    "Function expected at\n  (ofString id PolyExpr.var).toCollection F hF\nbut this term has type\n  Collection\n\nNote: Expected a function because this term is being applied to the argument\n  hspec"
+   ]
+  ],
+  "TCSlib.Cryptography.Collection.owfFamily": [
+   [
+    698,
+    67,
+    "B",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin ((G.gen.coins.add G.sample.coins).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nin the application\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) r"
+   ],
+   [
+    699,
+    57,
+    "B",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin ((G.gen.coins.add G.sample.coins).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nin the application\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) r"
+   ]
+  ],
+  "TCSlib.Cryptography.Collection.collInverter_runAt": [
+   [
+    869,
+    36,
+    "T",
+    "Application type mismatch: The argument\n  \u03c1\nhas type\n  A'.Coins n\nbut is expected to have type\n  (G.collInverter L A').Coins n\nin the application\n  (G.collInverter L A').runAt n y \u03c1"
+   ]
+  ],
+  "TCSlib.Cryptography.Collection.collInverter_success": [
+   [
+    903,
+    6,
+    "T",
+    "Application type mismatch: The argument\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, r\u2082)\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, r\u2082))"
+   ],
+   [
+    904,
+    30,
+    "T",
+    "Application type mismatch: The argument\n  z'\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n z'"
+   ],
+   [
+    905,
+    26,
+    "T",
+    "Application type mismatch: The argument\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, r\u2082)\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, r\u2082))"
+   ],
+   [
+    908,
+    61,
+    "T",
+    "Application type mismatch: The argument\n  \u03c1\nhas type\n  A'.Coins n\nbut is expected to have type\n  (G.collInverter L A').Coins n\nin the application\n  (G.collInverter L A').runAt n (pairEncode (G.index n r\u2081) (G.f (G.index n r\u2081) x)) \u03c1"
+   ]
+  ],
+  "TCSlib.Cryptography.Collection.fiber_le": [
+   [
+    957,
+    8,
+    "T",
+    "Application type mismatch: The argument\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, v.1)\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, v.1))"
+   ],
+   [
+    959,
+    28,
+    "T",
+    "Application type mismatch: The argument\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, v.1)\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, v.1))"
+   ],
+   [
+    961,
+    92,
+    "T",
+    "Application type mismatch: The argument\n  z.2\nhas type\n  A'.Coins n\nbut is expected to have type\n  (G.collInverter L A').Coins n\nin the application\n  (G.collInverter L A').runAt n (pairEncode (G.index n r\u2081) (G.f (G.index n r\u2081) z.1)) z.2"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Collection.collInverter_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    869
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  \u03c1\nhas type\n  A'.Coins n\nbut is expected to have type\n  (G.collInverter L A').Coins n\nin the application\n  (G.collInverter L A').runAt n y \u03c1"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.FunFamily.toCollection": {
+   "names": [
+    "Complexity.NUPPT.advInput",
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.NUPPT.ofPolyTimeUniform"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    481,
+    488
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  hspec i.length x\nhas type\n  F (NUPPT.advInput i.length (List.ofFn x)) = List.ofFn (\ud835\udcd5.f i.length x)\nbut is expected to have type\n  F (pairEncode (List.replicate i.length true) (List.ofFn x)) = List.ofFn (\ud835\udcd5.f i.length x)"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.advInput": "ev0: FAILS without it: Type mismatch",
+    "Complexity.NUPPT.coinLen": "ev1: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev2: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTimeUniform": "ev3: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Collection.owfFamily": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    698,
+    699
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  Fin ((G.gen.coins.add G.sample.coins).eval n) \u2192 Bool\nbut is expected to have type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nin the application\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Collection.collInverter_success": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    903,
+    904,
+    905,
+    908
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, r\u2082)\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, r\u2082))"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev2: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev3: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev4: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Collection.fiber_le": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime",
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    957,
+    959,
+    961
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  (splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, v.1)\nhas type\n  Fin (G.gen.coinLen n + G.sample.coinLen n) \u2192 Bool\nbut is expected to have type\n  Fin ((G.owfFamily L).inLen.eval n) \u2192 Bool\nin the application\n  (G.owfFamily L).f n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r\u2081, v.1))"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev2: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev3: FAILS without it: Application type mismatch: The argument",
+    "Complexity.PolyExpr.eval": "ev4: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Collection.collInverter_runAt": [
+   "TCSlib.Cryptography.Collection",
+   "TCSlib.Cryptography.Collection.collInvRaw",
+   "TCSlib.Cryptography.Collection.collInvRaw_poly",
+   "TCSlib.Cryptography.Collection.collInverter"
+  ],
+  "TCSlib.Cryptography.FunFamily.toCollection": [
+   "TCSlib.Cryptography.Collection",
+   "TCSlib.Cryptography.FunFamily.toCollection_gen_runAt",
+   "TCSlib.Cryptography.FunFamily.toCollection_sample_runAt"
+  ],
+  "TCSlib.Cryptography.Collection.owfFamily": [
+   "TCSlib.Cryptography.Collection",
+   "TCSlib.Cryptography.Collection.index",
+   "TCSlib.Cryptography.Collection.owfRaw"
+  ],
+  "TCSlib.Cryptography.Collection.collInverter_success": [
+   "TCSlib.Cryptography.Collection",
+   "TCSlib.Cryptography.Collection.OutLenBound",
+   "TCSlib.Cryptography.Collection.collInvRaw",
+   "TCSlib.Cryptography.Collection.collInvRaw_poly",
+   "TCSlib.Cryptography.Collection.collInverter",
+   "TCSlib.Cryptography.Collection.index",
+   "TCSlib.Cryptography.Collection.owfFamily",
+   "TCSlib.Cryptography.Collection.owfRaw"
+  ],
+  "TCSlib.Cryptography.Collection.fiber_le": [
+   "TCSlib.Cryptography.Collection",
+   "TCSlib.Cryptography.Collection.OutLenBound",
+   "TCSlib.Cryptography.Collection.SampleClose",
+   "TCSlib.Cryptography.Collection.collInvRaw",
+   "TCSlib.Cryptography.Collection.collInvRaw_poly",
+   "TCSlib.Cryptography.Collection.collInverter",
+   "TCSlib.Cryptography.Collection.index",
+   "TCSlib.Cryptography.Collection.owfFamily",
+   "TCSlib.Cryptography.Collection.owfRaw"
+  ]
+ },
+ "runs": 55,
+ "seconds": 173
+}

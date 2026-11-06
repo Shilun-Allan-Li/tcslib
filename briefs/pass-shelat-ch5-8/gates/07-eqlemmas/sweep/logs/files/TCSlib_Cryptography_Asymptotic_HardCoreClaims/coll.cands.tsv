@@ -1,0 +1,19 @@
+Complexity.PolyExpr.eval	TCSlib.Complexity.Randomized.PolyExpr	deep	TCSlib.Cryptography.FunFamily.f	4
+TCSlib.Cryptography.invProb	TCSlib.Cryptography.Foundations.Experiments	direct		3
+TCSlib.Cryptography.predProb	TCSlib.Cryptography.Foundations.Experiments	direct		4
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	direct	TCSlib.Cryptography.predProb, TCSlib.Cryptography.HardcoreBit.secProb	6
+TCSlib.Cryptography.FunFamily.glBit	TCSlib.Cryptography.Asymptotic.HardCore	direct		4
+TCSlib.Cryptography.FunFamily.glInverter	TCSlib.Cryptography.Asymptotic.HardCore	direct		3
+TCSlib.Cryptography.FunFamily.glPad	TCSlib.Cryptography.Asymptotic.HardCore	direct		4
+TCSlib.Cryptography.HardcoreBit.glBit	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.FunFamily.glBit	4
+TCSlib.Cryptography.HardcoreBit.glInverter	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.FunFamily.glInverter	3
+TCSlib.Cryptography.HardcoreBit.glPad	TCSlib.Cryptography.HardcoreBit.InnerProduct	deep	TCSlib.Cryptography.FunFamily.glPad	4
+TCSlib.Cryptography.HardcoreBit.guessRecover	TCSlib.Cryptography.HardcoreBit.GoldreichLevin	direct		2
+TCSlib.Cryptography.HardcoreBit.idealRecover	TCSlib.Cryptography.HardcoreBit.GoldreichLevin	direct		2
+TCSlib.Cryptography.HardcoreBit.ip	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct	TCSlib.Cryptography.FunFamily.glBit, TCSlib.Cryptography.HardcoreBit.secProb	7
+TCSlib.Cryptography.HardcoreBit.majority	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	deep	TCSlib.Cryptography.HardcoreBit.guessRecover, TCSlib.Cryptography.HardcoreBit.idealRecover, TCSlib.Cryptography.HardcoreBit.majorityRecover	4
+TCSlib.Cryptography.HardcoreBit.majorityRecover	TCSlib.Cryptography.HardcoreBit.ThreeQuarters	direct		1
+TCSlib.Cryptography.HardcoreBit.perfectRecover	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		1
+TCSlib.Cryptography.HardcoreBit.secProb	TCSlib.Cryptography.HardcoreBit.InnerProduct	direct		2
+TCSlib.Cryptography.HardcoreBit.subsetSum	TCSlib.Cryptography.HardcoreBit.PairwiseIndependence	direct	TCSlib.Cryptography.HardcoreBit.guessRecover, TCSlib.Cryptography.HardcoreBit.idealRecover	4
+TCSlib.Cryptography.HardcoreBit.trialBit	TCSlib.Cryptography.HardcoreBit.ThreeQuarters	deep	TCSlib.Cryptography.HardcoreBit.majorityRecover	1

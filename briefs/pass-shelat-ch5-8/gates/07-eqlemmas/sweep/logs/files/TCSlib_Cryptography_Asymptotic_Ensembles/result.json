@@ -1,0 +1,94 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/Ensembles.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 33,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Ensemble.copies",
+   "TCSlib.Cryptography.Ensemble.copies_X"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Ensemble.copies": [
+   [
+    221,
+    11,
+    "B",
+    "Type mismatch\n  (blocks (t.eval n) (\u2113.eval n)).symm (Cryptography.copies (t.eval n) (X.X n) s)\nhas type\n  Fin (t.eval n * \u2113.eval n) \u2192 Bool\nbut is expected to have type\n  Fin ((t.mul \u2113).eval n) \u2192 Bool"
+   ]
+  ],
+  "TCSlib.Cryptography.Ensemble.copies_X": [
+   [
+    227,
+    23,
+    "T",
+    "Application type mismatch: The argument\n  i\nhas type\n  Fin (t.eval n * \u2113.eval n)\nbut is expected to have type\n  Fin ((t.mul \u2113).eval n)\nin the application\n  (copies t X).X n s i"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Ensemble.copies": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    221
+   ],
+   "first_error": [
+    "S0",
+    "Type mismatch\n  (blocks (t.eval n) (\u2113.eval n)).symm (Cryptography.copies (t.eval n) (X.X n) s)\nhas type\n  Fin (t.eval n * \u2113.eval n) \u2192 Bool\nbut is expected to have type\n  Fin ((t.mul \u2113).eval n) \u2192 Bool"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev0: FAILS without it: Type mismatch"
+   }
+  },
+  "TCSlib.Cryptography.Ensemble.copies_X": {
+   "names": [
+    "Complexity.PolyExpr.eval"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    227
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  i\nhas type\n  Fin (t.eval n * \u2113.eval n)\nbut is expected to have type\n  Fin ((t.mul \u2113).eval n)\nin the application\n  (copies t X).X n s i"
+   ],
+   "evidence": {
+    "Complexity.PolyExpr.eval": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Ensemble.copies": [
+   "TCSlib.Cryptography.Ensemble",
+   "TCSlib.Cryptography.Ensemble.blocks"
+  ],
+  "TCSlib.Cryptography.Ensemble.copies_X": [
+   "TCSlib.Cryptography.Ensemble",
+   "TCSlib.Cryptography.Ensemble.blocks",
+   "TCSlib.Cryptography.Ensemble.copies"
+  ]
+ },
+ "runs": 12,
+ "seconds": 30
+}

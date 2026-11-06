@@ -1,0 +1,62 @@
+{
+ "file": "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 35,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "Complexity.NUPPT.withIndexParam_runAt"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "Complexity.NUPPT.withIndexParam_runAt": [
+   [
+    74,
+    84,
+    "T",
+    "Application type mismatch: The argument\n  r\nhas type\n  A.withIndexParam.Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n (pairEncode (List.replicate n true) y) r"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "Complexity.NUPPT.withIndexParam_runAt": {
+   "names": [
+    "Complexity.NUPPT.coinLen",
+    "Complexity.NUPPT.ofPolyTime"
+   ],
+   "kind": "theorem",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    74
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  r\nhas type\n  A.withIndexParam.Coins n\nbut is expected to have type\n  A.Coins n\nin the application\n  A.runAt n (pairEncode (List.replicate n true) y) r"
+   ],
+   "evidence": {
+    "Complexity.NUPPT.coinLen": "ev0: FAILS without it: Application type mismatch: The argument",
+    "Complexity.NUPPT.ofPolyTime": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "Complexity.NUPPT.withIndexParam_runAt": [
+   "Complexity.NUPPT.withIndexParam"
+  ]
+ },
+ "runs": 24,
+ "seconds": 56
+}

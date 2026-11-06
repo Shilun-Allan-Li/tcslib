@@ -1,0 +1,258 @@
+{
+ "file": "TCSlib/Cryptography/Games/Protocols.lean",
+ "status": "DONE",
+ "control_unsealed": {
+  "ok": true,
+  "failing": [],
+  "other": []
+ },
+ "candidates": 2,
+ "sealed_plain": {
+  "ok": false,
+  "failing": [
+   "TCSlib.Cryptography.Games.Party.close",
+   "TCSlib.Cryptography.Games.Party.closeT",
+   "TCSlib.Cryptography.Games.Party.example#2",
+   "TCSlib.Cryptography.Games.Party.example#3",
+   "TCSlib.Cryptography.Games.Party.step",
+   "TCSlib.Cryptography.Games.Party.stepT"
+  ],
+  "other": []
+ },
+ "sealed_errors": {
+  "TCSlib.Cryptography.Games.Party.step": [
+   [
+    114,
+    41,
+    "B",
+    "Application type mismatch: The argument\n  m\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inl ())\nbut is expected to have type\n  Out\nin the application\n  Prod.mk m"
+   ],
+   [
+    115,
+    36,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inr j)\nbut is expected to have type\n  unifSpec.dom j\nin the application\n  OracleComp.query j x"
+   ],
+   [
+    115,
+    56,
+    "B",
+    "Application type mismatch: The argument\n  y\nhas type\n  unifSpec.rng j\nbut is expected to have type\n  ((exchangeSpec Out In).add unifSpec).rng (Sum.inr j)\nin the application\n  k y"
+   ]
+  ],
+  "TCSlib.Cryptography.Games.Party.close": [
+   [
+    122,
+    36,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inr j)\nbut is expected to have type\n  unifSpec.dom j\nin the application\n  OracleComp.query j x"
+   ],
+   [
+    122,
+    57,
+    "B",
+    "Application type mismatch: The argument\n  y\nhas type\n  unifSpec.rng j\nbut is expected to have type\n  ((exchangeSpec Out In).add unifSpec).rng (Sum.inr j)\nin the application\n  k y"
+   ]
+  ],
+  "TCSlib.Cryptography.Games.Party.example#2": [
+   [
+    177,
+    42,
+    "T",
+    "Application type mismatch: The argument\n  m\nhas type\n  Unit\nbut is expected to have type\n  ((exchangeSpec ?m.3 Unit).add unifSpec).dom (Sum.inl ())\nin the application\n  OracleComp.query (Sum.inl ()) m"
+   ]
+  ],
+  "TCSlib.Cryptography.Games.Party.example#3": [
+   [
+    181,
+    61,
+    "T",
+    "Application type mismatch: The argument\n  m\nhas type\n  Unit\nbut is expected to have type\n  ((exchangeSpec ?m.3 Unit).add unifSpec).dom (Sum.inl ())\nin the application\n  OracleComp.query (Sum.inl ()) m"
+   ]
+  ],
+  "TCSlib.Cryptography.Games.Party.stepT": [
+   [
+    198,
+    41,
+    "B",
+    "Application type mismatch: The argument\n  m\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inl ())\nbut is expected to have type\n  Out\nin the application\n  Prod.mk m"
+   ],
+   [
+    199,
+    36,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inr j)\nbut is expected to have type\n  unifSpec.dom j\nin the application\n  OracleComp.query j x"
+   ],
+   [
+    200,
+    16,
+    "B",
+    "Application type mismatch: The argument\n  y\nhas type\n  unifSpec.rng j\nbut is expected to have type\n  ((exchangeSpec Out In).add unifSpec).rng (Sum.inr j)\nin the application\n  k y"
+   ]
+  ],
+  "TCSlib.Cryptography.Games.Party.closeT": [
+   [
+    206,
+    36,
+    "B",
+    "Application type mismatch: The argument\n  x\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inr j)\nbut is expected to have type\n  unifSpec.dom j\nin the application\n  OracleComp.query j x"
+   ],
+   [
+    207,
+    17,
+    "B",
+    "Application type mismatch: The argument\n  y\nhas type\n  unifSpec.rng j\nbut is expected to have type\n  ((exchangeSpec Out In).add unifSpec).rng (Sum.inr j)\nin the application\n  k y"
+   ]
+  ]
+ },
+ "fixpoint_pass": true,
+ "unresolved": [],
+ "unminimised": [],
+ "final_pass": true,
+ "final_failing": [],
+ "reads": {
+  "TCSlib.Cryptography.Games.Party.step": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    114,
+    115
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  m\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inl ())\nbut is expected to have type\n  Out\nin the application\n  Prod.mk m"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Games.Party.example#2": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "example",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    177
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  m\nhas type\n  Unit\nbut is expected to have type\n  ((exchangeSpec ?m.3 Unit).add unifSpec).dom (Sum.inl ())\nin the application\n  OracleComp.query (Sum.inl ()) m"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Games.Party.example#3": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "example",
+   "regions": [
+    "T"
+   ],
+   "lines": [
+    181
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  m\nhas type\n  Unit\nbut is expected to have type\n  ((exchangeSpec ?m.3 Unit).add unifSpec).dom (Sum.inl ())\nin the application\n  OracleComp.query (Sum.inl ()) m"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev0: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Games.Party.close": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    122
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inr j)\nbut is expected to have type\n  unifSpec.dom j\nin the application\n  OracleComp.query j x"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Games.Party.stepT": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    198,
+    199,
+    200
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  m\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inl ())\nbut is expected to have type\n  Out\nin the application\n  Prod.mk m"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  },
+  "TCSlib.Cryptography.Games.Party.closeT": {
+   "names": [
+    "TCSlib.Cryptography.Games.OracleSpec.add"
+   ],
+   "kind": "def",
+   "regions": [
+    "B"
+   ],
+   "lines": [
+    206,
+    207
+   ],
+   "first_error": [
+    "S0",
+    "Application type mismatch: The argument\n  x\nhas type\n  ((exchangeSpec Out In).add unifSpec).dom (Sum.inr j)\nbut is expected to have type\n  unifSpec.dom j\nin the application\n  OracleComp.query j x"
+   ],
+   "evidence": {
+    "TCSlib.Cryptography.Games.OracleSpec.add": "ev1: FAILS without it: Application type mismatch: The argument"
+   }
+  }
+ },
+ "deps_of_reads": {
+  "TCSlib.Cryptography.Games.Party.step": [
+   "TCSlib.Cryptography.Games.Party",
+   "TCSlib.Cryptography.Games.exchangeSpec"
+  ],
+  "TCSlib.Cryptography.Games.Party.example#2": [],
+  "TCSlib.Cryptography.Games.Party.example#3": [],
+  "TCSlib.Cryptography.Games.Party.close": [
+   "TCSlib.Cryptography.Games.Party",
+   "TCSlib.Cryptography.Games.Party.step",
+   "TCSlib.Cryptography.Games.exchangeSpec"
+  ],
+  "TCSlib.Cryptography.Games.Party.stepT": [
+   "TCSlib.Cryptography.Games.Party",
+   "TCSlib.Cryptography.Games.Party.step",
+   "TCSlib.Cryptography.Games.exchangeSpec"
+  ],
+  "TCSlib.Cryptography.Games.Party.closeT": [
+   "TCSlib.Cryptography.Games.Party",
+   "TCSlib.Cryptography.Games.Party.step",
+   "TCSlib.Cryptography.Games.exchangeSpec"
+  ]
+ },
+ "runs": 12,
+ "seconds": 32
+}

@@ -1,0 +1,8 @@
+TCSlib_Cryptography_ZeroKnowledge_Encryption/S0.lean:204:25: error: Application type mismatch: The argument
+  (Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)) (r₁, r₂)
+has type
+  Fin (S.gen.coinLen n + S.enc.coinLen n) → Bool
+but is expected to have type
+  S.zkSim.Coins n
+in the application
+  S.zkSim.runAt n [] ((Fin.appendEquiv (S.gen.coinLen n) (S.enc.coinLen n)) (r₁, r₂))

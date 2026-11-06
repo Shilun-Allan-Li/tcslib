@@ -1,0 +1,63 @@
+"""Planted-statement control (gate 07 statement sweep).
+
+plant.py <worktree> <olean-tree> <workdir> <file.lean> <plant.lean> <name>
+
+Takes the statement-only copy of <file.lean> (stmtonly.py), inserts the text of <plant.lean>
+(declarations, typically `example`s whose statement is known to need a foreign definition to
+reduce, or known-good restatements) before the file's last line `end <namespace>`, and elaborates
+it twice: UNSEALED and SEALED with exactly the candidates the sweep collected for that file
+(<workdir>/<tag>/coll.cands.tsv). Prints the errors located in the planted region for both runs
+and the errors elsewhere (there must be none unsealed; sealed ones elsewhere are the file's own
+reads, already in reads.tsv). Logs: <workdir>/controls/<name>-{U,S}.{lean,log}."""
+import os, re, subprocess, sys
+from pathlib import Path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import stmtonly
+
+WT, OL, WORK, rel, plant, name = sys.argv[1:7]
+WT, WORK = Path(WT).resolve(), Path(WORK).resolve()
+env = dict(os.environ)
+env["LEAN_PATH"] = ":".join([OL] + sorted(str(d) for d in (WT / ".lake/packages").glob("*/.lake/build/lib/lean")))
+env["PATH"] = str(Path.home() / ".elan/bin") + ":" + env["PATH"]
+tag = rel.replace('/', '_')[:-5]
+cands = [l.split('\t')[0] for l in open(WORK / tag / 'coll.cands.tsv') if l.strip()]
+src = (WT / rel).read_text(encoding='utf-8')
+stmt, _ = stmtonly.transform(src)
+lines = stmt.split('\n')
+k = max(i for i, l in enumerate(lines) if re.match(r'^end\s+\S', l))
+ptxt = Path(plant).read_text(encoding='utf-8').rstrip('\n').split('\n')
+out = WORK / 'controls'; out.mkdir(exist_ok=True)
+def header_end(lines):   # as in sweep.py: the last import/set_option line of the header
+    i, last, in_c = 0, -1, False
+    while i < len(lines):
+        s = lines[i].strip()
+        if in_c:
+            if '-/' in s: in_c = False
+        elif s.startswith('/-') and not s.startswith('/-!'):
+            in_c = '-/' not in s[2:]
+        elif s.startswith('import ') or s.startswith('set_option '):
+            last = i
+        elif s == '' or s.startswith('--'):
+            pass
+        else:
+            break
+        i += 1
+    return last
+for mode in ('U', 'S'):
+    L = lines[:k] + ['-- ==== planted control: begin ===='] + ptxt + ['-- ==== planted control: end ===='] + lines[k:]
+    a, b = k + 2, k + 1 + len(ptxt)        # 1-based planted region before the seal line
+    if mode == 'S':
+        h = header_end(L)
+        L = L[:h + 1] + ['attribute [local irreducible] ' + ' '.join(cands)] + L[h + 1:]
+        a, b = a + 1, b + 1
+    p = out / f'{name}-{mode}.lean'
+    p.write_text('\n'.join(L), encoding='utf-8')
+    r = subprocess.run(['lean', str(p)], cwd=WT, env=env, capture_output=True, text=True, timeout=1800)
+    o = r.stdout + r.stderr
+    (out / f'{name}-{mode}.log').write_text(o, encoding='utf-8')
+    errs = [(int(m.group(1)), m.group(3)) for m in re.finditer(r'\.lean:(\d+):(\d+): error:?\s*(.*)', o)]
+    inp = [e for e in errs if a <= e[0] <= b]
+    outp = [e for e in errs if not (a <= e[0] <= b)]
+    print(f"{name} {'UNSEALED' if mode == 'U' else 'SEALED  '} rc={r.returncode}: planted-region errors={len(inp)} "
+          f"(lines {a}-{b}), errors elsewhere={len(outp)}")
+    for e in inp: print(f"    planted line {e[0] - a + 1}: {e[1][:150]}")

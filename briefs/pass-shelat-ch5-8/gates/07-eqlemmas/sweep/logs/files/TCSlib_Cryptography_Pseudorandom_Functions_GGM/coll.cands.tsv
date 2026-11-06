@@ -1,0 +1,15 @@
+TCSlib.Cryptography.acceptProb	TCSlib.Cryptography.Foundations.Experiments	direct	TCSlib.Cryptography.distAdv	11
+TCSlib.Cryptography.challengeStream	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	deep	TCSlib.Cryptography.tableDist	1
+TCSlib.Cryptography.distAdv	TCSlib.Cryptography.Foundations.Experiments	direct		6
+TCSlib.Cryptography.extendStream	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	deep	TCSlib.Cryptography.tableDist	1
+TCSlib.Cryptography.oracleDist	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct	TCSlib.Cryptography.prfAdv	9
+TCSlib.Cryptography.prfAdv	TCSlib.Cryptography.Pseudorandom.Functions.Defs	direct		4
+TCSlib.Cryptography.randomFunction	TCSlib.Cryptography.Pseudorandom.Functions.Defs	direct	TCSlib.Cryptography.prfAdv	6
+TCSlib.Cryptography.tableDist	TCSlib.Cryptography.Pseudorandom.Functions.SubHybrids	direct		1
+TCSlib.Cryptography.uprob	TCSlib.Cryptography.Foundations.Probability	deep	TCSlib.Cryptography.acceptProb, TCSlib.Cryptography.distAdv	11
+TCSlib.Cryptography.OracleAdversary.BoundedBy	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct		5
+TCSlib.Cryptography.QueryTree.BoundedBy	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	deep	TCSlib.Cryptography.OracleAdversary.BoundedBy	5
+TCSlib.Cryptography.QueryTree.eval	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	deep	TCSlib.Cryptography.oracleDist, TCSlib.Cryptography.prfAdv	9
+TCSlib.Cryptography.QueryTree.evalLazy	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	deep	TCSlib.Cryptography.tableDist	1
+TCSlib.Cryptography.QueryTree.noteQuery	TCSlib.Cryptography.Pseudorandom.Functions.LazySampling	deep	TCSlib.Cryptography.tableDist	1
+TCSlib.Cryptography.QueryTree.simulate	TCSlib.Cryptography.Pseudorandom.Functions.OracleAdversary	direct		1

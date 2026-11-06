@@ -1,0 +1,32 @@
+import TCSlib.Cryptography.Asymptotic.HardCorePermutation
+
+set_option autoImplicit false
+open TCSlib.Cryptography
+
+-- gate 07 F01 reproducer (from the findings file), run by the statement sweep.
+section Unsealed
+example (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
+    P.glHalf.f (m + m) z = P.toFunFamily.glPad.f m z :=
+  PermFamily.glHalf_f_even P m z
+end Unsealed
+
+section SealedGlPad
+attribute [local irreducible] FunFamily.glPad
+example (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
+    P.glHalf.f (m + m) z = P.toFunFamily.glPad.f m z :=
+  PermFamily.glHalf_f_even P m z
+end SealedGlPad
+
+section SealedEval
+attribute [local irreducible] Complexity.PolyExpr.eval
+example (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
+    P.glHalf.f (m + m) z = P.toFunFamily.glPad.f m z :=
+  PermFamily.glHalf_f_even P m z
+end SealedEval
+
+section SealedToFunFamily
+attribute [local irreducible] PermFamily.toFunFamily
+example (P : PermFamily) (m : ℕ) (z : Fin (m + m) → Bool) :
+    P.glHalf.f (m + m) z = P.toFunFamily.glPad.f m z :=
+  PermFamily.glHalf_f_even P m z
+end SealedToFunFamily
