@@ -360,7 +360,7 @@ private theorem outV_pullback_cheat (π : Protocol) (f : List Bool → List Bool
     (r : (π.pullback f w p).ExecCoins P' x) :
     (π.pullback f w p).outV P' x [] z r =
       π.outV ⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ (f x) [] z
-        (Prod.map (coinTrunc le_rfl)
+        (Prod.map (coinTrunc (Strategy.coinLen_eq _ _).le)
           (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hx)) r) := by
   rw [Protocol.pullback_outV]
   simp only [Protocol.outV, Protocol.transcriptWith, Prod.map]
@@ -612,7 +612,7 @@ from one commitment scheme, is `exists_commitment_zk_proof_of_owp_levinReduction
 `zk_proof_of_levinReduction`). -/
 theorem zk_proof_of_owp_levinReduction
     (how : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool),
-      OneWayPermutation P ∧ HardCore P.toFunFamily h)
+      OneWayPermutation P ∧ P.HardCore h)
     {L : Language Bool} {R : List Bool → List Bool → Prop} {f : List Bool → List Bool}
     {w : List Bool → List Bool → List Bool} {p : PolyExpr}
     (h : LevinReduction L L3COL R R3COL f w p) (hLR : ∀ x ∈ L, ∃ y, R x y) :
@@ -753,7 +753,7 @@ relation, from the text's hypothesis (a one-way permutation) and with the two pr
 is `zk_proof_of_witnessRelation_of_owp` (gate 03e, minors 3 and 4). -/
 theorem zk_proof_of_mem_NP_of_owp (h3 : LevinNPHard L3COL R3COL)
     (how : ∃ (P : PermFamily) (h : ∀ n, (Fin n → Bool) → Bool),
-      OneWayPermutation P ∧ HardCore P.toFunFamily h)
+      OneWayPermutation P ∧ P.HardCore h)
     {L : Language Bool} (hL : L ∈ NP) :
     ∃ R : List Bool → List Bool → Prop, WitnessRelation L R ∧
       (∃ π : Protocol, EfficientProverProof π L R) ∧

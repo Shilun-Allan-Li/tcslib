@@ -76,7 +76,8 @@ theorem thm_87_3_1 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ)
     (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool)
     (h : predProb (𝓕.glPad.f n) (𝓕.glBit n) A = 1) :
     invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.perfectRecover
-      fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r)) = 1 := by
+      fun y r => A ((𝓕.glPad_outEquiv n).symm
+          (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r)) = 1 := by
   rw [FunFamily.predProb_glPad] at h
   rw [FunFamily.invProb_glInverter]
   exact HardcoreBit.invProb_perfectInverter _ _ h
@@ -90,7 +91,8 @@ theorem thm_87_3_2 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n
     (hT : (𝓕.inLen.eval n : ℝ) ≤ 2 * ε ^ 2 * T)
     (h : 3 / 4 + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) :
     ε / 4 ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.majorityRecover
-      (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) T)) := by
+      (fun y r => A ((𝓕.glPad_outEquiv n).symm
+          (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) T)) := by
   rw [FunFamily.predProb_glPad] at h
   rw [FunFamily.invProb_glInverter]
   exact HardcoreBit.invProb_majorityInverter _ _ hε hT h
@@ -102,7 +104,8 @@ theorem thm_87_3_3 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] (n : ℕ)
     (A : (Fin (𝓕.glPad.outLen.eval n) → Bool) → ρ → Bool) {c ε : ℝ} (hc : 0 ≤ c) (hε : 0 ≤ ε)
     (h : c + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) :
     ε / 2 ≤ uprob fun x => c + ε / 2 ≤ HardcoreBit.secProb (𝓕.f n)
-      (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) x := by
+      (fun y r => A ((𝓕.glPad_outEquiv n).symm
+          (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) x := by
   rw [FunFamily.predProb_glPad] at h
   exact HardcoreBit.half_le_uprob_good _ _ hc hε h
 
@@ -157,11 +160,13 @@ theorem thm_87_3_9 (𝓕 : FunFamily) {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n
     (hk : 2 * (𝓕.inLen.eval n : ℝ) ≤ ε ^ 2 * ((2 : ℝ) ^ k - 1))
     (h : 1 / 2 + ε ≤ predProb (𝓕.glPad.f n) (𝓕.glBit n) A) :
     ε / (4 * 2 ^ k) ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n (HardcoreBit.guessRecover
-      (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) k)) ∧
+      (fun y r => A ((𝓕.glPad_outEquiv n).symm
+          (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) k)) ∧
     (ε ^ 2 * (2 : ℝ) ^ k ≤ 4 * 𝓕.inLen.eval n →
       ε ^ 3 / (16 * 𝓕.inLen.eval n) ≤ invProb (𝓕.glPad.f n) (𝓕.glInverter n
         (HardcoreBit.guessRecover
-          (fun y r => A (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y) r) k))) := by
+          (fun y r => A ((𝓕.glPad_outEquiv n).symm
+              (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n) y)) r) k))) := by
   rw [FunFamily.predProb_glPad] at h
   rw [FunFamily.invProb_glInverter]
   exact ⟨HardcoreBit.invProb_guessInverter _ _ hε hk h,
