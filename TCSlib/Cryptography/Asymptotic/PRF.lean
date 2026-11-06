@@ -496,7 +496,10 @@ loss of generality" of [PS10, proof of Theorem 97.3]): truncate `G` to `n + 1` b
 [PS10, Lemma 80.5] (`PRG.expand`), and keep the first `2n` bits. -/
 def PRG.doubling (P : PRG) : ∀ n, (Fin n → Bool) → (Fin (2 * n) → Bool) :=
   fun n s i => (PRG.expand P.truncate (.add (.mul (.const 2) .var) (.const 1))
-    two_mul_add_one_expands).G n s (Fin.castLE (Nat.le_succ (2 * n)) i)
+    two_mul_add_one_expands).G n s (Fin.cast (by
+      rw [PRG.expand_stretch]
+      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var])
+      (Fin.castLE (Nat.le_succ (2 * n)) i))
 
 /-- Closed form of the length-doubling generator: bit `i` of `P.doubling n s` is the last bit
 of the truncated generator applied to the `i`-th iterate of `s ↦ init (G₁(s))` on `s`
@@ -504,8 +507,10 @@ of the truncated generator applied to the `i`-th iterate of `s ↦ init (G₁(s)
 theorem PRG.doubling_apply (P : PRG) (n : ℕ) (s : Fin n → Bool) (i : Fin (2 * n)) :
     P.doubling n s i =
       P.truncate n ((fun x => Fin.init (P.truncate n x))^[i] s) (Fin.last n) := by
-  show (PRG.expand P.truncate _ two_mul_add_one_expands).G n s (Fin.castLE (Nat.le_succ (2 * n)) i) = _
-  exact PRG.expand_G _ _ _ n s _
+  unfold PRG.doubling
+  exact PRG.expand_G P.truncate _ two_mul_add_one_expands n s ⟨i, by
+    simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+    omega⟩
 
 /-- **Truncation preserves pseudorandomness** (first half of Cor-97.a): if `G` is a secure
 PRG then its truncation to `n + 1` bits is a secure one-bit-stretch PRG.
@@ -525,7 +530,7 @@ theorem PRG.Secure.truncate {P : PRG} (hP : P.Secure) : (PRG.oneBit P.truncate).
   have hm : ∀ n, (PolyExpr.add .var (.const 1)).eval n ≤ P.stretch.eval n := fun n => by
     rw [PolyExpr.eval_add, PolyExpr.eval_var, PolyExpr.eval_const]
     exact P.expands n
-  refine (PRG.secure_iff _).2 ⟨(PRG.easy_iff _).2 ?_, fun D => ?_⟩
+  refine (PRG.oneBit_secure_iff _).2 ⟨?_, fun D => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := hP.truncateTo_easy _ hm
     exact ⟨E, hE, fun n s => hEs n s⟩
   · exact hP.truncateTo_negligible _ hm D
@@ -548,7 +553,9 @@ theorem PRG.Secure.doubling {P : PRG} (hP : P.Secure) : DoublingPRG P.doubling :
       two_mul_add_one_expands).Secure :=
     prg_expand P.truncate _ two_mul_add_one_expands hP.truncate
   have hm : ∀ n, (PolyExpr.mul (.const 2) .var).eval n ≤
-      (PolyExpr.add (.mul (.const 2) .var) (.const 1)).eval n := fun n => by
+      (PRG.expand P.truncate (.add (.mul (.const 2) .var) (.const 1))
+        two_mul_add_one_expands).stretch.eval n := fun n => by
+    rw [PRG.expand_stretch]
     simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
     omega
   refine ⟨?_, (Ensemble.pseudorandom_iff_prgAdv _).2 fun D => ?_⟩
@@ -740,15 +747,18 @@ theorem exists_ggmBitsDist_nuppt {G : ∀ n, (Fin n → Bool) → (Fin (2 * n) �
       (((FunFamily.blocks (q.eval n) n).symm.prodCongr
         ((e₁.prodCongr (Equiv.refl (D.Coins n))).trans
           (Fin.appendEquiv (q.eval n * (2 * n)) (D.coinLen n)))).trans
-        (Fin.appendEquiv (q.eval n * n) (q.eval n * (2 * n) + D.coinLen n)))
+        ((Fin.appendEquiv (q.eval n * n) (q.eval n * (2 * n) + D.coinLen n)).trans
+          (GGMRed.ggmRedMachine_coinsEquiv hE D q i j n).symm))
   refine prgAdv_coins_equiv (G n) _ _ e fun z c => ?_
   obtain ⟨⟨W₁, W₂⟩, r⟩ := c
   refine GGMRed.ggmRedMachine_distinguisher hE D q i j (G n) (hG n) hi hj z (W₁, W₂) r
     (e ((W₁, W₂), r)) ?_
-  show List.ofFn (Fin.appendEquiv (q.eval n * n) (q.eval n * (2 * n) + D.coinLen n)
-    ((FunFamily.blocks (q.eval n) n).symm W₁,
-      Fin.appendEquiv (q.eval n * (2 * n)) (D.coinLen n) (e₁ W₂, r))) = _
-  rw [ofFn_appendEquiv, ofFn_appendEquiv, GGMRed.coinStr_eq]
+  show List.ofFn ((GGMRed.ggmRedMachine_coinsEquiv hE D q i j n).symm
+    (Fin.appendEquiv (q.eval n * n) (q.eval n * (2 * n) + D.coinLen n)
+      ((FunFamily.blocks (q.eval n) n).symm W₁,
+        Fin.appendEquiv (q.eval n * (2 * n)) (D.coinLen n) (e₁ W₂, r)))) = _
+  rw [← GGMRed.ggmRedMachine_coinsEquiv_ofFn hE D q i j n, Equiv.apply_symm_apply,
+    ofFn_appendEquiv, ofFn_appendEquiv, GGMRed.coinStr_eq]
   rfl
 
 /-- **A next-query machine with query budget `0` has PRF advantage `0`:** with budget `0` the

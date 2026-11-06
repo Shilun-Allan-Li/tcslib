@@ -333,7 +333,7 @@ theorem length_ggmStep_le (E : List Bool → List Bool) (w : List Bool) :
   · exact le_rfl
   · obtain ⟨a, b, hw⟩ : ∃ a b, w = pairEncode a b := by
       cases hd : pairDecode w with
-      | none => exact absurd (by simp [pairSndD, hd]) h
+      | none => exact absurd (pairSndD_of_pairDecode_eq_none hd) h
       | some ab => exact ⟨ab.1, ab.2, eq_pairEncode_of_pairDecode w ab.1 ab.2 hd⟩
     subst hw
     simp only [pairFstD_pairEncode, pairSndD_pairEncode] at h ⊢
