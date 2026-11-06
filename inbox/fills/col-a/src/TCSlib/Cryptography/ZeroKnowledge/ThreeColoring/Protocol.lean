@@ -1059,10 +1059,17 @@ private theorem colRep_views (Com : List Bool → List Bool) (ℓ : PolyExpr) {x
 
 /-! ### The `n|E|`-fold protocol: completeness -/
 
-/-- **The honest `n|E|`-fold execution accepts** on every pair of tapes: in every iteration
-`t < n|E|` the prover commits on coin block `t` and opens the challenged edge
-(`colRep_views`, `colRep_proverRep_next`, `colProver_next_nil`, `colProver_next_cons`), which
-passes `colVerify` (`colVerify_honest`). -/
+/-- **The honest `n|E|`-fold execution accepts** on every pair of tapes [PS10, proof of
+Proposition 127.6, "completeness follows by inspection"] (Claim-127.e, repeated).
+
+**Proof sketch.** The verdict is the verifier's activation on its view after `4|x|²` moves
+(`colRep_outV`, `colRep_views`, `colRep_verifierRep_next_end`): `x` is well formed
+(`colWellFormed_encGraph`); if `E = ∅` it accepts outright, and otherwise `n ≥ 2`
+(`ColProofs.two_le_of_edge`) and in every iteration `t < n|E|` the prover, on its view of `2t`
+or `2t + 1` messages, runs `colProver` on coin block `t` (`colRep_proverRep_next`): it commits
+(`colProver_next_nil`) and opens the challenged edge (`colProver_next_cons`,
+`edgeIdxOfMsg_edgeMsg`), which passes `colVerify` (`colVerify_honest`,
+`ColMachines.edgeAt_eq_some_of_pos`). -/
 private theorem colRep_outV_honest {Com : List Bool → List Bool} {ℓ : PolyExpr} {n : ℕ}
     {G : Graph n} {c : Fin n → Fin 3} (hc : ProperColoring G c) (z : List Bool)
     (r : (colProtocolRep Com ℓ).ExecCoins (colProtocolRep Com ℓ).P (encGraph G)) :

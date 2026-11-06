@@ -1,0 +1,215 @@
+# Rule-10 seal of col-a (work clone at c0436253c7b40921e18fd486e6a1c82cf39aac93, base 16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1)
+# One Lean process at a time; probes under .lake/probe/, checked by scripts/lean_check_tree.sh; sources in evidence/seal/.
+
+## 1. Scan (SealScan.lean): foreign TCSlib definitions in the elaborated terms of the new declarations
+##    (name | module | reducibility | number of new declarations using it; OWNED = a col-a helper, foreign to Protocol.lean)
+Fri Nov  6 15:04:52 UTC 2026
+Complexity.PolyExpr.eval | TCSlib.Complexity.Randomized.PolyExpr | regular | used by 10
+Complexity.PolyExpr.normal | TCSlib.Complexity.Randomized.PolyExpr | regular | used by 1
+Complexity.PolyTimeComputable | TCSlib.Complexity.ClassNP.PolyTime | regular | used by 11
+Complexity.pairFstD | TCSlib.Complexity.ClassNP.PolyTimePairing | regular | used by 10
+Complexity.pairSndD | TCSlib.Complexity.ClassNP.PolyTimePairing | regular | used by 10
+TCSlib.Cryptography.ColMachines.colorVal | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines | regular | used by 8
+TCSlib.Cryptography.ColMachines.countTrue | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Machines | regular | used by 2
+TCSlib.Cryptography.ColRep.blockRead | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColRepSound | regular OWNED | used by 2
+TCSlib.Cryptography.ColRep.chView | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.ColRepSound | regular OWNED | used by 11
+TCSlib.Cryptography.EncodingMachines.divNum | TCSlib.Cryptography.ZeroKnowledge.EncodingMachines | regular | used by 2
+TCSlib.Cryptography.EncodingMachines.firstIdx | TCSlib.Cryptography.ZeroKnowledge.EncodingMachines | regular | used by 13
+TCSlib.Cryptography.EncodingMachines.modNum | TCSlib.Cryptography.ZeroKnowledge.EncodingMachines | regular | used by 2
+TCSlib.Cryptography.Graph | TCSlib.Cryptography.ZeroKnowledge.Encoding | reducible | used by 48
+TCSlib.Cryptography.HardcoreBit.PushesUniform | TCSlib.Cryptography.HardcoreBit.Basic | regular | used by 2
+TCSlib.Cryptography.L3COL | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 8
+TCSlib.Cryptography.Negligible | TCSlib.Cryptography.Foundations.Negligible | regular | used by 1
+TCSlib.Cryptography.ProperColoring | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 12
+TCSlib.Cryptography.Protocol.ExecCoins | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible | used by 21
+TCSlib.Cryptography.Protocol.P | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible projection | used by 15
+TCSlib.Cryptography.Protocol.ProverBounded | TCSlib.Cryptography.ZeroKnowledge.Interaction | regular | used by 1
+TCSlib.Cryptography.Protocol.V | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible projection | used by 18
+TCSlib.Cryptography.Protocol.outV | TCSlib.Cryptography.ZeroKnowledge.Interaction | regular | used by 9
+TCSlib.Cryptography.Protocol.rounds | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible projection | used by 1
+TCSlib.Cryptography.Protocol.verifierFirst | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible projection | used by 1
+TCSlib.Cryptography.Protocol.withV | TCSlib.Cryptography.ZeroKnowledge.Interaction | regular | used by 1
+TCSlib.Cryptography.R3COL | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 9
+TCSlib.Cryptography.StatClose | TCSlib.Cryptography.Asymptotic.Sampling | regular | used by 3
+TCSlib.Cryptography.Strategy.Coins | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible | used by 18
+TCSlib.Cryptography.Strategy.coinLen | TCSlib.Cryptography.ZeroKnowledge.Interaction | regular | used by 20
+TCSlib.Cryptography.Strategy.coins | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible projection | used by 1
+TCSlib.Cryptography.Strategy.next | TCSlib.Cryptography.ZeroKnowledge.Interaction | reducible projection | used by 18
+TCSlib.Cryptography.ThreeColorable | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 3
+TCSlib.Cryptography.decColoring | TCSlib.Cryptography.ZeroKnowledge.Encoding | regular | used by 14
+TCSlib.Cryptography.decGraph | TCSlib.Cryptography.ZeroKnowledge.Encoding | regular | used by 23
+TCSlib.Cryptography.decGraphAt | TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism | regular | used by 1
+TCSlib.Cryptography.edgeCount | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | reducible | used by 33
+TCSlib.Cryptography.edgeIdxOfMsg | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 1
+TCSlib.Cryptography.edgeMsg | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 6
+TCSlib.Cryptography.edgeOf | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 1
+TCSlib.Cryptography.encColoring | TCSlib.Cryptography.ZeroKnowledge.Encoding | regular | used by 21
+TCSlib.Cryptography.encGraph | TCSlib.Cryptography.ZeroKnowledge.Encoding | regular | used by 27
+TCSlib.Cryptography.exec | TCSlib.Cryptography.ZeroKnowledge.Interaction | regular | used by 35
+TCSlib.Cryptography.instDecidableProperColoring | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular instance | used by 4
+TCSlib.Cryptography.moverIsV | TCSlib.Cryptography.ZeroKnowledge.Interaction | regular | used by 1
+TCSlib.Cryptography.sampleEdgeIdx | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 11
+TCSlib.Cryptography.samplePerm3 | TCSlib.Cryptography.ZeroKnowledge.ThreeColoring.Language | regular | used by 1
+TCSlib.Cryptography.uprob | TCSlib.Cryptography.Foundations.Probability | regular | used by 5
+Turing.pairEncode | TCSlib.Complexity.TuringMachine.Encoding | regular | used by 4
+roots: 95, scanned: 95
+
+## 2. Sealed (35): Complexity.PolyExpr.normal Complexity.PolyTimeComputable Complexity.pairFstD Complexity.pairSndD TCSlib.Cryptography.ColMachines.colorVal TCSlib.Cryptography.ColMachines.countTrue TCSlib.Cryptography.EncodingMachines.divNum TCSlib.Cryptography.EncodingMachines.firstIdx TCSlib.Cryptography.EncodingMachines.modNum TCSlib.Cryptography.HardcoreBit.PushesUniform TCSlib.Cryptography.L3COL TCSlib.Cryptography.Negligible TCSlib.Cryptography.ProperColoring TCSlib.Cryptography.Protocol.ProverBounded TCSlib.Cryptography.Protocol.outV TCSlib.Cryptography.Protocol.withV TCSlib.Cryptography.R3COL TCSlib.Cryptography.StatClose TCSlib.Cryptography.Strategy.coinLen TCSlib.Cryptography.ThreeColorable TCSlib.Cryptography.decColoring TCSlib.Cryptography.decGraph TCSlib.Cryptography.decGraphAt TCSlib.Cryptography.edgeIdxOfMsg TCSlib.Cryptography.edgeMsg TCSlib.Cryptography.edgeOf TCSlib.Cryptography.encColoring TCSlib.Cryptography.encGraph TCSlib.Cryptography.exec TCSlib.Cryptography.instDecidableProperColoring TCSlib.Cryptography.moverIsV TCSlib.Cryptography.sampleEdgeIdx TCSlib.Cryptography.samplePerm3 TCSlib.Cryptography.uprob Turing.pairEncode 
+##    plus, for the Protocol.lean copy: TCSlib.Cryptography.ColRep.chView TCSlib.Cryptography.ColRep.blockRead
+##    Unsealed (reducible abbreviations/projections = notation; PolyExpr.eval by notes item 2): Complexity.PolyExpr.eval TCSlib.Cryptography.Graph TCSlib.Cryptography.Protocol.ExecCoins TCSlib.Cryptography.Protocol.P TCSlib.Cryptography.Protocol.V TCSlib.Cryptography.Protocol.rounds TCSlib.Cryptography.Protocol.verifierFirst TCSlib.Cryptography.Strategy.Coins TCSlib.Cryptography.Strategy.coins TCSlib.Cryptography.Strategy.next TCSlib.Cryptography.edgeCount 
+
+## 3. Sealed copies of the helper modules (SealColAHelpers.lean)
+Fri Nov  6 15:04:52 UTC 2026
+rc=0
+
+## 4. Sealed copies of the new Protocol.lean code (SealColAProtocol.lean)
+Fri Nov  6 15:04:56 UTC 2026
+rc=0
+
+## 5. Controls (SealColAControls.lean): C1-C3 must fail sealed (lines 17-27) and pass unsealed (lines 31-41)
+Fri Nov  6 15:05:00 UTC 2026
+.lake/probe/SealColAControls.lean:18:9: error: Tactic `rcases` failed: `h : R3COL x y` is not an inductive datatype
+.lake/probe/SealColAControls.lean:24:2: error: Type mismatch
+  rfl
+has type
+  ?m.39 = ?m.39
+but is expected to have type
+  ColMachines.colorVal y u = (2 * (y.getD (2 * u) false).toNat + (y.getD (2 * u + 1) false).toNat) % 3
+.lake/probe/SealColAControls.lean:27:66: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  ColRep.chView ch 1 = [ch 0, []]
+FAIL(.lake/probe/SealColAControls): lean exited with status 1
+FAIL(.lake/probe/SealColAControls): error diagnostics reported
+FAIL(.lake/probe/SealColAControls): no fresh .olean produced
+rc=1 (expected 1: the three sealed controls fail; no error at lines >= 31)
+
+## 6. Explicit readings: every identifier the new code passes to simp/rw/unfold (RwIds.lean)
+##    (irreducible does not block unfold/simp [f]/rw [f]; this lists each one's kind: only theorems, local hypotheses and col-a's own private declarations occur, no TCSlib/core/Mathlib definition)
+Fri Nov  6 15:06:00 UTC 2026
+Bool.and_eq_false_iff: theorem
+Bool.and_eq_true: theorem
+Bool.eq_iff_iff: theorem
+Bool.not_eq_false: theorem
+Bool.or_eq_false_iff: theorem
+Bool.or_false: theorem
+Bool.true_and: theorem
+Bool.xor_self: theorem
+TCSlib.Cryptography.ColMachines.edgeCount_eq: theorem
+TCSlib.Cryptography.ColRep.drop_take_ofFn_blockRead: theorem
+Fin.coe_castLE: theorem
+List.cons.injEq: theorem
+List.getD_append: theorem
+List.getD_eq_getElem: theorem
+List.getElem_drop: theorem
+List.getElem_ofFn: theorem
+List.getElem_take: theorem
+List.length_append: theorem
+List.length_cons: theorem
+List.length_drop: theorem
+List.length_ofFn: theorem
+List.length_singleton: theorem
+List.length_take: theorem
+Nat.add_mul_div_left: theorem
+Nat.add_mul_mod_self_left: theorem
+Nat.div_eq_of_lt: theorem
+Nat.div_one: theorem
+Nat.mod_eq_of_lt: theorem
+Nat.mul_zero: theorem
+Nat.sqrt_eq: theorem
+TCSlib.Cryptography.OneWay.uprob_congr: theorem
+Complexity.PolyExpr.eval_const: theorem
+Complexity.PolyExpr.eval_mul: theorem
+Complexity.PolyExpr.eval_normal: theorem
+Complexity.PolyExpr.eval_var: theorem
+TCSlib.Cryptography.ProperColoring_iff: theorem
+TCSlib.Cryptography.Protocol.withV_self: theorem
+TCSlib.Cryptography.R3COL_iff: theorem
+TCSlib.Cryptography.Strategy.coinLen_eq: theorem
+and_assoc: theorem
+and_true: theorem
+badEntry: (local hypothesis or private)
+badVertex: (local hypothesis or private)
+TCSlib.Cryptography.ColRep.blockRead_eq: theorem
+TCSlib.Cryptography.ColRep.chView_congr: theorem
+TCSlib.Cryptography.ColRep.chView_succ: theorem
+TCSlib.Cryptography.colCoinSlice_eq: theorem
+TCSlib.Cryptography.colIterations_eq: theorem
+colRep_outV: (local hypothesis or private)
+colRep_proverRep_next: (local hypothesis or private)
+colRep_verifierRep_next_end: (local hypothesis or private)
+TCSlib.Cryptography.colWellFormed_encGraph: theorem
+TCSlib.Cryptography.decColoring_encColoring: theorem
+TCSlib.Cryptography.ColMachines.decColoring_val: theorem
+TCSlib.Cryptography.ColMachines.decGraph_apply: theorem
+TCSlib.Cryptography.ColRep.decGraph_fst: theorem
+decide_eq_false_iff_not: theorem
+decide_eq_true_eq: theorem
+decide_eq_true_iff: theorem
+dif_pos: theorem
+TCSlib.Cryptography.EncodingMachines.divNum_eq: theorem
+TCSlib.Cryptography.edgeIdxOfMsg_edgeMsg: theorem
+TCSlib.Cryptography.ColMachines.encGraph_decGraph_eq_take: theorem
+enc_iff: (local hypothesis or private)
+TCSlib.Cryptography.exec_zero: theorem
+finProdFinEquiv_apply_val: theorem
+TCSlib.Cryptography.EncodingMachines.firstIdx_eq_iff: theorem
+h: (local hypothesis or private)
+h0: (local hypothesis or private)
+h1: (local hypothesis or private)
+h2: (local hypothesis or private)
+hG: (local hypothesis or private)
+hK: (local hypothesis or private)
+hPi: (local hypothesis or private)
+hb: (local hypothesis or private)
+hbit0: (local hypothesis or private)
+hbit1: (local hypothesis or private)
+hcoin: (local hypothesis or private)
+hcom: (local hypothesis or private)
+hcur: (local hypothesis or private)
+hdiv: (local hypothesis or private)
+he: (local hypothesis or private)
+heq: (local hypothesis or private)
+hlast: (local hypothesis or private)
+hlen: (local hypothesis or private)
+hlv: (local hypothesis or private)
+hm: (local hypothesis or private)
+hmid: (local hypothesis or private)
+hmod: (local hypothesis or private)
+hodd: (local hypothesis or private)
+hopn: (local hypothesis or private)
+hpre: (local hypothesis or private)
+hsqrt: (local hypothesis or private)
+hstep: (local hypothesis or private)
+huv: (local hypothesis or private)
+hwf: (local hypothesis or private)
+hx: (local hypothesis or private)
+hxG: (local hypothesis or private)
+hΦ: (local hypothesis or private)
+if_neg: theorem
+if_pos: theorem
+TCSlib.Cryptography.ColRep.length_chView: theorem
+TCSlib.Cryptography.length_encColoring: theorem
+TCSlib.Cryptography.length_encGraph: theorem
+TCSlib.Cryptography.EncodingMachines.modNum_eq: theorem
+TCSlib.Cryptography.moverIsV_false: theorem
+ne_eq: theorem
+Classical.not_not: theorem
+one_div: theorem
+one_mul: theorem
+Complexity.pairFstD_pairEncode: theorem
+Complexity.pairSndD_pairEncode: theorem
+proper_iff: (local hypothesis or private)
+TCSlib.Cryptography.ColRep.r3colTest_eq: theorem
+scanTest: (local hypothesis or private)
+scanTest_iff: (local hypothesis or private)
+sq: theorem
+this: (local hypothesis or private)
+true_and: theorem
+TCSlib.Cryptography.uprob_false: theorem
+TCSlib.Cryptography.uprob_not: theorem
+wf_iff: (local hypothesis or private)
+zero_add: theorem
+rc=0
