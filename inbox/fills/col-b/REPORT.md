@@ -1,4 +1,4 @@
-# Fill col-b (the `col_zk` ladder): REPORT (checkpoint 3, in progress)
+# Fill col-b (the `col_zk` ladder): REPORT (checkpoint 4, in progress)
 
 - Base: `16a7d02d69cae1a700c131e3cc3dd918a7b3d6e1` (issue commit, head of PR #210). Local branch `fill/col-b`, never pushed.
 - Ran as an **internal worker** under the environment note `issue/internal-env.md` (no preflight, no cache step,
@@ -13,7 +13,8 @@
 | 5 | `ColZK.hidingView`, `ColZK.polyTimeComputable_hidingView`, `ColZK.exists_colHidingRed`, `ColZK.distAdv_distinguisherL_reparam` (`ColZKMachine.lean`) | machine filled; the identification in `Simulator.lean` is **blocked (E-API)**: no published equation of `msgAt` (Protocol.lean) or `edgeIdxOfMsg` (Language.lean) |
 | 2 | `statClose_colRealView` | filled |
 | 3 | `statClose_colSim_colSimTrunc` | filled |
-| 6, 7 | | in progress |
+| 6 | `exists_colZK_edgeless` | filled |
+| 7 | `col_zk` | in progress (needs the step-5 identification, blocked by E-API) |
 
 ### E-API (found at checkpoint 2)
 
