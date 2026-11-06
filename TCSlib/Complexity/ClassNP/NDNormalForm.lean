@@ -117,9 +117,7 @@ private theorem nf_ctl_position (k : ℕ) (s : List Bool) (f : Bool) :
     rw [nf_ctlStep]
     split_ifs with h
     · have hm : s.length % (2 * k + 4) = 2 * k + 3 := by omega
-      rw [Nat.add_mod, Nat.mod_eq_of_lt (show 1 < 2 * k + 4 by omega), hm]
-      have he : 2 * k + 3 + 1 = 2 * k + 4 := by omega
-      simp only [he, Nat.mod_self, Fin.val_zero]
+      simp only [Nat.succ_mod_succ_eq_zero_iff.mpr hm, Fin.val_zero]
     · have hp := (s.foldl (nf_ctlStep k) (0, f)).1.isLt
       have hm : s.length % (2 * k + 4) + 1 < 2 * k + 4 := by omega
       rw [Nat.add_mod, Nat.mod_eq_of_lt (show 1 < 2 * k + 4 by omega),
@@ -138,7 +136,7 @@ private theorem nf_ctl_stop_iff (k : ℕ) (s : List Bool) :
   | nil => simp [nf_ctlStop]
   | append_singleton s b _ =>
     have hp := nf_ctl_position k (s ++ [b]) false
-    rw [List.foldl_append, List.foldl_cons, List.foldl_nil, nf_ctlStep] at hp ⊢
+    rw [List.foldl_concat, nf_ctlStep] at hp ⊢
     split_ifs at hp ⊢ with h
     · have hz : (s ++ [b]).length % (2 * k + 4) = 0 := hp.symm
       have hz' : (s.length + 1) % (2 * k + 4) = 0 := by
@@ -258,32 +256,21 @@ private theorem nf_display_firstStop (N : FinNDTM Bool) (x w : List Bool) (hw : 
     apply Bool.eq_false_iff.mpr
     intro hs
     obtain ⟨hne, hm, hb⟩ := (nf_ctl_stop_iff N.k _).mp hs
-    have hipos : 0 < i := by
-      have hp := List.length_pos_iff.mpr hne
-      rw [List.length_take, Nat.min_eq_left hi.le] at hp
-      exact hp
-    rw [List.length_take, Nat.min_eq_left hi.le] at hm
+    have hipos : 0 < i := (List.length_pos_iff.mpr hne).trans_eq (List.length_take_of_le hi.le)
+    rw [List.length_take_of_le hi.le] at hm
     have he := Nat.mod_add_div i (2 * N.k + 4)
     rw [hm, Nat.zero_add] at he
-    have hn : 0 < i / (2 * N.k + 4) := by
-      by_contra h
-      have hnonneg : 0 ≤ i / (2 * N.k + 4) := Nat.zero_le _
-      have hz : i / (2 * N.k + 4) = 0 := by omega
-      rw [hz, Nat.mul_zero] at he
-      omega
-    have hlt : i / (2 * N.k + 4) < w.length := by
-      apply (Nat.mul_lt_mul_left hW).mp
-      rw [he, ← nf_display_length N x w]
-      exact hi
+    have hn : 0 < i / (2 * N.k + 4) := Nat.pos_of_mul_pos_left (hipos.trans_eq he.symm)
+    have hlt : i / (2 * N.k + 4) < w.length :=
+      Nat.div_lt_of_lt_mul (hi.trans_eq (nf_display_length N x w))
     let r : Fin w.length := ⟨i / (2 * N.k + 4) - 1, by omega⟩
     have hr : r.val + 1 = i / (2 * N.k + 4) := by
       show i / (2 * N.k + 4) - 1 + 1 = i / (2 * N.k + 4)
       omega
     have hflag := nf_display_flag N x w r
     rw [hr, he, decide_eq_false (show ¬i / (2 * N.k + 4) = w.length by omega)] at hflag
-    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take,
-      Nat.min_eq_left hi.le, List.getElem?_take_of_lt (by omega), hflag,
-      Option.getD_some] at hb
+    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take_of_le hi.le,
+      List.getElem?_take_of_lt (by omega), hflag, Option.getD_some] at hb
     exact Bool.noConfusion hb
   · apply (nf_ctl_stop_iff N.k _).mpr
     have hspos : 0 < (nf_display N x w).length := by
@@ -315,16 +302,9 @@ private theorem nf_firstStop_records (k : ℕ) (s : List Bool)
   have hspos := List.length_pos_iff.mpr hsne
   have hW : 0 < 2 * k + 4 := by omega
   let n := s.length / (2 * k + 4)
-  have hlen : s.length = (2 * k + 4) * n := by
-    have h := Nat.mod_add_div s.length (2 * k + 4)
-    rw [hmod, Nat.zero_add] at h
-    exact h.symm
-  have hn : 0 < n := by
-    by_contra h
-    have hnonneg : 0 ≤ n := Nat.zero_le _
-    have hz : n = 0 := by omega
-    rw [hz, Nat.mul_zero] at hlen
-    omega
+  have hlen : s.length = (2 * k + 4) * n :=
+    (Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hmod)).symm
+  have hn : 0 < n := Nat.pos_of_mul_pos_left (hspos.trans_eq hlen)
   refine ⟨n, hn, hlen, ?_⟩
   intro r hr
   let m := (2 * k + 4) * (r + 1)
@@ -334,9 +314,8 @@ private theorem nf_firstStop_records (k : ℕ) (s : List Bool)
     exact Nat.mul_le_mul_left _ (by omega)
   have hib : m - 1 < s.length := by omega
   have hlasttake : (s.take m).getLastD false = s[m - 1] := by
-    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take,
-      Nat.min_eq_left hmle, List.getElem?_take_of_lt (by omega),
-      List.getElem?_eq_getElem hib, Option.getD_some]
+    rw [List.getLastD_eq_getLast?, List.getLast?_eq_getElem?, List.length_take_of_le hmle,
+      List.getElem?_take_of_lt (by omega), List.getElem?_eq_getElem hib, Option.getD_some]
   rw [List.getElem?_eq_getElem hib]
   by_cases he : r + 1 = n
   · have hm : m = s.length := by
@@ -352,12 +331,10 @@ private theorem nf_firstStop_records (k : ℕ) (s : List Bool)
     have hb : s[m - 1] = false := by
       apply Bool.eq_false_iff.mpr
       intro htrue
-      have hniltake : s.take m ≠ [] := by
-        apply List.ne_nil_of_length_pos
-        rw [List.length_take, Nat.min_eq_left hmle]
-        exact hmpos
+      have hniltake : s.take m ≠ [] :=
+        List.ne_nil_of_length_pos (hmpos.trans_eq (List.length_take_of_le hmle).symm)
       have hz : (s.take m).length % (2 * k + 4) = 0 := by
-        rw [List.length_take, Nat.min_eq_left hmle]
+        rw [List.length_take_of_le hmle]
         exact Nat.mul_mod_right _ _
       have hf := (nf_ctl_stop_iff k (s.take m)).mpr
         ⟨hniltake, hz, hlasttake.trans htrue⟩
@@ -368,7 +345,7 @@ private theorem nf_firstStop_records (k : ℕ) (s : List Bool)
 /-- Displaying the first `t` steps of a long enough branch uses exactly `(2k + 4)t` bits. -/
 private theorem nf_display_prefix_length (N : FinNDTM Bool) (x w : List Bool) (t : ℕ)
     (ht : t ≤ w.length) : (nf_display N x (w.take t)).length = (2 * N.k + 4) * t := by
-  rw [nf_display_length, List.length_take, Nat.min_eq_left ht]
+  rw [nf_display_length, List.length_take_of_le ht]
 
 /-- A record's claimed reads; an absent presence bit decodes to blank regardless of its
 value bit. Thus the unused code `01` also decodes to blank. -/
@@ -473,10 +450,10 @@ private theorem nf_sweep_prefix (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Bo
     simp only [List.ofFn_zero, List.foldl_nil]
     congr 2
   | succ n ih =>
-    rw [List.ofFn_succ_last, List.foldl_append]
+    rw [List.ofFn_succ_last, List.foldl_concat]
     simp only [Fin.coe_castSucc, Fin.val_last]
     rw [ih (by omega)]
-    simp only [List.foldl_cons, List.foldl_nil, nf_sweepStep]
+    simp only [nf_sweepStep]
     rw [dif_neg (show n ≠ 2 * N.k + 3 by omega)]
     congr 2
     funext j
@@ -489,6 +466,22 @@ private theorem nf_sweep_prefix (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Bo
       · rw [if_pos hlt, if_pos (by omega)]
       · rw [if_neg hlt, if_neg (by omega)]
 
+/-- Storing a record's last bit completes the parser's prefix array: the array that holds the
+first `2k + 3` bits, updated at the last position, holds every bit. -/
+private theorem nf_update_last (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Bool) :
+    Function.update
+      (fun j : Fin (2 * N.k + 4) => if j.val < 2 * N.k + 3 then some (r j) else none)
+      ⟨2 * N.k + 3, by omega⟩ (some (r ⟨2 * N.k + 3, by omega⟩)) =
+        fun j => some (r j) := by
+  funext j
+  by_cases he : j = (⟨2 * N.k + 3, by omega⟩ : Fin (2 * N.k + 4))
+  · subst j
+    rw [Function.update_self]
+  · rw [Function.update_of_ne he, if_pos (by
+      have hj := j.isLt
+      have hne : j.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
+      omega)]
+
 /-- Scanning one whole record resets the parser and applies exactly one completion rule.
 
 **Proof sketch.** Apply the prefix law to all but the last bit. The final array update
@@ -498,28 +491,16 @@ private theorem nf_sweep_record (N : FinNDTM Bool) (r : Fin (2 * N.k + 4) → Bo
     (c : nf_Control N) :
     (List.ofFn r).foldl (nf_sweepStep N) ((0, fun _ => none), c) =
       ((0, fun _ => none), nf_complete N (fun p => some (r p)) c) := by
-  rw [List.ofFn_succ_last, List.foldl_append]
+  rw [List.ofFn_succ_last, List.foldl_concat]
   have hf : (fun i : Fin (2 * N.k + 3) => r i.castSucc) =
       fun i => r ⟨i.val, by omega⟩ := by
     funext i
     rfl
   rw [hf, nf_sweep_prefix N r c (2 * N.k + 3) (by omega)]
-  simp only [List.foldl_cons, List.foldl_nil, nf_sweepStep]
+  simp only [nf_sweepStep]
   rw [dite_true]
-  have harray : Function.update
-      (fun j : Fin (2 * N.k + 4) => if j.val < 2 * N.k + 3 then some (r j) else none)
-      ⟨2 * N.k + 3, by omega⟩ (some (r ⟨2 * N.k + 3, by omega⟩)) =
-        fun j => some (r j) := by
-    funext j
-    by_cases he : j = (⟨2 * N.k + 3, by omega⟩ : Fin (2 * N.k + 4))
-    · subst j
-      rw [Function.update_self]
-    · rw [Function.update_of_ne he, if_pos (by
-        have hj := j.isLt
-        have hne : j.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
-        omega)]
   rw [show (Fin.last (2 * N.k + 3) : Fin (2 * N.k + 4)) =
-    ⟨2 * N.k + 3, by omega⟩ from rfl, harray]
+    ⟨2 * N.k + 3, by omega⟩ from rfl, nf_update_last N r]
 
 /-- A completed live record updates the output summary exactly as its optional emission
 updates the output word, including an emission on a halting transition. -/
@@ -677,10 +658,9 @@ private theorem nf_sweep_control_prefix (N : FinNDTM Bool) (x w : List Bool)
         cases hs : (N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x)).state with
         | none => exact False.elim (hnot hs)
         | some q => rfl
-    rw [List.ofFn_succ_last, List.foldl_append]
+    rw [List.ofFn_succ_last, List.foldl_concat]
     simp only [Fin.coe_castSucc, Fin.val_last]
-    rw [ih (by omega), List.foldl_cons, List.foldl_nil,
-      nf_complete_step N x _ _ _ _ (hlive n hlt), ← hnext, hflag]
+    rw [ih (by omega), nf_complete_step N x _ _ _ _ (hlive n hlt), ← hnext, hflag]
     have hfalse : (decide ((N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x)).state.isNone ≠
         (N.tm.runWith (w.take (n + 1)) (N.tm.initCfg x)).state.isNone) : Bool) = false :=
       decide_eq_false (fun h => h rfl)
@@ -1325,17 +1305,9 @@ private theorem nf_prefix_last (N : FinNDTM Bool) (rec : Fin (2 * N.k + 4) → B
   rw [← hσ] at hp
   refine ⟨by rw [hp], by rw [hp], ?_, ?_⟩
   · rw [hp]
-    funext p
-    by_cases he : p = ⟨2 * N.k + 3, by omega⟩
-    · subst he
-      rw [Function.update_self]
-    · have hne : p.val ≠ 2 * N.k + 3 := fun h => he (Fin.ext h)
-      have hlt := p.isLt
-      rw [Function.update_of_ne he]
-      show (if p.val < 2 * N.k + 3 then some (rec p) else none) = some (rec p)
-      rw [if_pos (by omega)]
+    exact nf_update_last N rec
   · have h := nf_sweep_record N rec ctl
-    rw [List.ofFn_succ_last, List.foldl_append, List.foldl_cons, List.foldl_nil] at h
+    rw [List.ofFn_succ_last, List.foldl_concat] at h
     rw [hσ]
     exact h
 
@@ -1387,8 +1359,8 @@ private theorem nf_leaf_prefix (N : FinNDTM Bool) (j : Option (Fin N.k)) {x : Li
     · show some (nf_LeafSt.read (nf_sweepStep N _ _)) = some (nf_LeafSt.read
         ((List.ofFn fun i : Fin (m + 1) => rec ⟨i.val, by omega⟩).foldl
           (nf_sweepStep N) ((0, fun _ => none), ctl)))
-      rw [List.ofFn_succ_last, List.foldl_append]
-      simp only [Fin.coe_castSucc, Fin.val_last, List.foldl_cons, List.foldl_nil, hp]
+      rw [List.ofFn_succ_last, List.foldl_concat]
+      simp only [Fin.coe_castSucc, Fin.val_last, hp]
     · exact moveInputPos_zero _
     · rfl
     · funext i
@@ -2870,10 +2842,7 @@ private theorem nf_split (k : ℕ) (s : List Bool)
     omega
   refine ⟨List.ofFn fun r : Fin n => fun p : Fin (2 * k + 4) =>
     s[(2 * k + 4) * r.val + p.val]'(hidx r p), ?_, ?_, ?_⟩
-  · intro h
-    have := congrArg List.length h
-    rw [List.length_ofFn, List.length_nil] at this
-    omega
+  · exact mt List.ofFn_eq_nil_iff.mp hn.ne'
   · have h := List.ofFn_mul' (m := 2 * k + 4) (n := n)
       (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt))
     have h0 : List.ofFn (fun i : Fin ((2 * k + 4) * n) => s[i.val]'(by rw [hlen]; exact i.isLt)) =
@@ -2946,8 +2915,8 @@ private theorem nf_vrun_of_ok (N : FinNDTM Bool) (x : List Bool)
       intro i
       have := hok r (by omega) i
       rwa [ih] at this
-    rw [List.take_succ_eq_append_getElem hlt, List.foldl_append, ih, List.foldl_cons,
-      List.foldl_nil, List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt),
+    rw [List.take_succ_eq_append_getElem hlt, List.foldl_concat, ih,
+      List.take_succ_eq_append_getElem (by rw [List.length_map]; exact hlt),
       NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil]
     obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp (hok' 0).1
     have hd0 : nf_decode N.k (fun p => some (rs[r] p)) 0 =
@@ -3003,11 +2972,7 @@ private theorem nf_V_display (N : FinNDTM Bool) (x w : List Bool) (hw : w ≠ []
     subst hrs
     intro r h
     rw [List.getElem_ofFn]
-  have hne : rs ≠ [] := by
-    intro h
-    have := congrArg List.length h
-    rw [hrlen, List.length_nil] at this
-    exact hw (List.eq_nil_of_length_eq_zero this)
+  have hne : rs ≠ [] := List.ne_nil_of_length_pos (hrlen ▸ List.length_pos_iff.mpr hw)
   have hflag : ∀ r (h : r < rs.length),
       rs[r] ⟨2 * N.k + 3, by omega⟩ = decide (r + 1 = rs.length) := by
     intro r hr
@@ -3106,12 +3071,8 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
     rw [h00, List.take_zero, NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at this
     exact Option.noConfusion this
   set w₀ := w.take t₀ with hw₀
-  have hw₀len : w₀.length = t₀ := by rw [hw₀, List.length_take]; omega
-  have hw₀ne : w₀ ≠ [] := by
-    intro h
-    have := congrArg List.length h
-    rw [hw₀len, List.length_nil] at this
-    omega
+  have hw₀len : w₀.length = t₀ := List.length_take_of_le (by omega)
+  have hw₀ne : w₀ ≠ [] := List.ne_nil_of_length_pos (by omega)
   have hlive : ∀ r < w₀.length, (N.tm.runWith (w₀.take r) (N.tm.initCfg x)).state ≠ none := by
     intro r hr
     rw [hw₀len] at hr
