@@ -20,8 +20,9 @@ gets formalized and in what order. `policy.md` says what the Lean must look like
 6. Hosts and machine obligations
 7. Risks and an honest effort assessment
 8. Open design questions (human review required)
-9. Getting started: the first three PRs
-10. Decision log
+9. How this plan meets policy.md
+10. Getting started: the first three PRs
+11. Decision log
 
 ---
 
@@ -39,9 +40,19 @@ The goal is a quantum computing and quantum complexity layer for TCSlib. It has 
    PSPACE machines) costs the most under TCSlib's rules, so the plan isolates it (FD-8, §6).
 
 No Lean library has quantum complexity classes yet. The Physlib `QuantumInfo` library is the
-best source of quantum-information infrastructure, but TCSlib's toolchain (Lean v4.25.0) is
-about ten releases behind it. The plan therefore **builds on Mathlib alone, with names that
-mirror Physlib** so a later switch is mechanical (FD-1, OQ-1).
+best source of quantum-information infrastructure, and it already has kets, single-qubit
+gates, mixed states, POVMs, channels and entropy. It has no circuit model: no gates applied to
+chosen wires of an `n`-qubit register, no circuits over a gate set, no uniform families. Two
+things stand between TCSlib and a Physlib dependency. TCSlib's toolchain (Lean v4.25.0) is
+about ten releases behind. And Physlib's pure-state basics alone pull in 38 support modules
+(about 20,000 lines) written for the newer Lean module system, so copying a few files is not
+an option either. The plan therefore splits the work (FD-1, OQ-1):
+
+* **Tier A** uses a thin layer on Mathlib for the overlap (kets, standard gates, the Born
+  rule: a few hundred lines). It copies Physlib's *design*, so after a future Mathlib bump the
+  overlapping definitions can be deleted and replaced by Physlib's.
+* **Tier B's quantum information** (mixed states, POVMs, channels, entropy) is **not**
+  rebuilt here. It waits for the Mathlib bump and a Physlib dependency.
 
 ## 1. Sources and citation tags
 
@@ -91,7 +102,17 @@ start:
 If a module adapts the design of Physlib `QuantumInfo`, QICLean, inQWIRE LeanQuantum or
 duckki/quantum-computing-lean, even with no code transcribed, its `## References` section names
 the project, the module, the commit consulted and the license. If we only look at their code
-for comparison, the consultation still goes in this file's decision log (§10).
+for comparison, the consultation still goes in this file's decision log (§11).
+
+**This applies to FD-2 from the start.** The `Quantum/Basic` modules adopt Physlib's design,
+so each one's `## References` carries:
+
+```
+* [Physlib] leanprover-community/physlib, `QuantumInfo/States/Pure/Braket.lean` and
+  `QuantumInfo/States/Pure/Qubit.lean` (authors A. Meiburg, R. Soldati and contributors),
+  commit cdfa6094901b8956a378151f64088bcf5a5f8bcb, Apache-2.0. Design adapted, no code
+  transcribed: the `Ket` structure, `Qubit := Fin 2`, the `𝐔[d]` notation, gate names.
+```
 
 ## 2. Scope and tiers
 
@@ -106,21 +127,38 @@ for comparison, the consultation still goes in this file's decision log (§10).
 These are the definitional conventions, and they are where audits bite (`workflow.md` §1).
 Each one names its open question in §8.
 
-**FD-1. No new Lake dependency (OQ-1).** Build on Mathlib at TCSlib's pin. Checked
-2026-11-06 against Lean v4.25.0 and the pinned Mathlib: `Matrix.unitaryGroup`,
-`Matrix.PosSemidef`, `Matrix.kroneckerMap`, `Matrix.trace`, `EuclideanSpace`,
-`Matrix.toEuclideanLin`, `GaussianInt` (in `Mathlib.NumberTheory.Zsqrtd.GaussianInt`) and
-`GenContFract` all elaborate. Where an object exists in Physlib `QuantumInfo` (`MState`,
-`CPTPMap`, `POVM`, `HermitianMat`, `Ket`), our version takes the same name and the same
-field layout. Reason: the Physlib toolchain is v4.35.0, so adding it means bumping all of
-TCSlib (and PFR). That is a maintainer decision, and this campaign should not wait on it.
+**FD-1. No new Lake dependency for Tier A; Physlib for Tier B's quantum information
+(OQ-1).** Tier A builds on Mathlib at TCSlib's pin. Checked 2026-11-06 against Lean v4.25.0
+and the pinned Mathlib: `Matrix.unitaryGroup`, `Matrix.PosSemidef`, `Matrix.kroneckerMap`,
+`Matrix.trace`, `EuclideanSpace`, `Matrix.toEuclideanLin`, `GaussianInt` (in
+`Mathlib.NumberTheory.Zsqrtd.GaussianInt`) and `GenContFract` all elaborate.
 
-**FD-2. Registers and states.** An `n`-qubit basis state is `Fin n → Bool`. A state is
-`Quantum.Ket n := EuclideanSpace ℂ (Fin n → Bool)`, an operator is
-`Matrix (Fin n → Bool) (Fin n → Bool) ℂ`, and a unitary is an element of
-`Matrix.unitaryGroup`. We use `Bool` and not `Fin 2` because TCSlib's languages, circuits
-and Fourier analysis all use `Bool`. The existing `ErrorCorrectingCodes/QuantumHamming.lean`
-uses `Fin n → Fin 2`; its migration is OQ-6.
+* **Why no dependency now.** Physlib's toolchain is v4.35.0, so depending on it means
+  bumping all of TCSlib (and PFR). That is a maintainer decision, and Tier A should not wait
+  for it.
+* **Why no copying.** The import closure of Physlib's `Braket.lean` and `Qubit.lean` is 38
+  modules and about 20,000 lines, written in the `module` / `public import` system of newer
+  Lean. Copying it means backporting all of it, which costs more than the few hundred lines of
+  overlap it would replace.
+* **What we build instead.** Only what Tier A needs and Physlib lacks, plus the minimum
+  overlap: kets, standard gates and the Born rule. The overlap copies Physlib's design (FD-2),
+  so it can be deleted after the bump.
+* **What we do not build.** Mixed states, POVMs, channels, fidelity, trace distance and
+  entropy (`MState`, `POVM`, `CPTPMap`, `HermitianMat`). Every Tier B item that needs them
+  (Q5.4, Q5.5, Q6.2 onward) is blocked on OQ-1, and that dependency is listed in each row.
+  Rebuilding them here would duplicate a large, maintained library.
+
+**FD-2. Registers and states follow Physlib's design.** A qubit is `Quantum.Qubit := Fin 2`,
+as in Physlib. An `n`-qubit basis state is `Fin n → Qubit`. An amplitude vector is a function
+`d → ℂ` on a finite type `d`, the carrier of Physlib's `Ket.vec`. A normalized state is the
+structure `Quantum.Ket d` with Physlib's fields (`vec`, `normalized'`). Operators are
+`Matrix d d ℂ`, and unitaries are `𝐔[d] := Matrix.unitaryGroup d ℂ`, with Physlib's
+notation. Gates keep Physlib's names (`H`, `X`, `Z`, `S`, `T`, `CNOT`, `controllize`). This
+copies a design, not code, so §1c's *Design adaptation* citation applies. The classical side of
+TCSlib uses `Bool` (languages, `BoolCircuit`, `BooleanAnalysis`), so `Quantum/Basic`
+provides the bridge `Qubit ≃ Bool` and `basisOf : (Fin n → Bool) → (Fin n → Qubit)`. Class
+definitions in Q4 read their inputs through it. *(This replaces the 2026-11-06 draft, which
+used `Fin n → Bool`; see §11.)*
 
 **FD-3. Gates act on wires through an injection, not Kronecker products.** For a `k`-qubit
 gate `U` and an embedding `w : Fin k ↪ Fin n`, `applyOn w U` is defined entrywise:
@@ -198,7 +236,7 @@ files separate from theorem files, and every facade exported from `TCSlib.lean`.
 ```
 TCSlib/Quantum.lean                         facade (area: Quantum, namespace `Quantum`)
 TCSlib/Quantum/Basic.lean                   facade
-  Basic/Register.lean      Ket, basisKet, Op, inner products, tensor of kets
+  Basic/Register.lean      Qubit, Ket (Physlib fields), basis kets, Qubit ≃ Bool, tensor of kets
   Basic/Gates.lean         H, X, Z, P, CNOT, Toffoli; unitarity; HPPH = X [Wat08 Fig 4]
   Basic/ApplyOn.lean       FD-3: applyOn, locality and commutation lemmas, Kronecker bridge
   Basic/Measure.lean       Born rule, single-qubit measurement, accProb
@@ -217,7 +255,8 @@ TCSlib/Quantum/Query.lean                   facade
   Query/Hybrid.lean, Query/Polynomial.lean, Query/Adversary.lean (B)
 TCSlib/Quantum/Nonlocal.lean                facade
   Nonlocal/CHSH.lean, Nonlocal/Tsirelson.lean (B), Nonlocal/MagicSquare.lean
-TCSlib/Quantum/MixedStates.lean             (Tier B) MState, POVM, partial trace, Physlib names
+TCSlib/Quantum/MixedStates.lean             (Tier B, blocked on OQ-1) consumer files only; MState,
+                                            POVM, partial trace come from Physlib, not from here
 TCSlib/Quantum/Algorithms.lean              (Tier B) QFT, PhaseEstimation, Shor/*, AbelianHSP
 TCSlib/Complexity/Promise.lean              facade; Promise/Basic.lean
 TCSlib/Complexity/Counting.lean             facade (namespace `Counting`)
@@ -265,7 +304,7 @@ Dependency order: **Q0 ∥ Q1 → Q2 → (Q3 ∥ Q4 ∥ Q5) → Q6 → Q7**. Q3 
 
 | ID | Statement | Source | Difficulty / size | Tier |
 |---|---|---|---|---|
-| Q1.1 | Registers, kets, basis kets, operators, tensors of kets | [dW26 §1.2–1.3, App. A] | 1 / M | A |
+| Q1.1 | `Qubit`, `Ket` (FD-2), basis kets, operators, tensors of kets, `Qubit ≃ Bool` | [dW26 §1.2–1.3, App. A]; design from [Physlib] | 1 / M | A |
 | Q1.2 | Gates and their unitarity; `X = HPPH`, CNOT from Toffoli and an ancilla | [dW26 §1.4], [Wat08 §III.2, Fig 4] | 1 / S | A |
 | Q1.3 | `applyOn` (FD-3) and its lemmas | — | 3 / M (**the risk item**, R4) | A |
 | Q1.4 | Born rule: outcome probabilities sum to 1; partial measurement of one qubit | [dW26 §1.2.2] | 2 / S | A |
@@ -320,12 +359,16 @@ Dependency order: **Q0 ∥ Q1 → Q2 → (Q3 ∥ Q4 ∥ Q5) → Q6 → Q7**. Q3 
 | Q5.1 | CHSH: classical value `3/4`; the EPR strategy wins with probability `cos²(π/8)` | [dW26 §17.2], [CHSH69] | 2 / M | A |
 | Q5.2 | Tsirelson's bound: every quantum strategy wins with probability at most `cos²(π/8)` | [Cir80], [dW26 §17.2] | 3 / M | B |
 | Q5.3 | Magic square: no perfect classical strategy; a perfect quantum strategy exists | [dW26 §17.3] | 2 / M | A |
-| Q5.4 | Mixed states, POVMs, partial trace (Physlib names, FD-1) | [dW26 §15.1] | 2 / M | B |
-| Q5.5 | Nayak's bound for quantum random access codes; then the 2-query LDC lower bound, linked to `KikuchiLDC` | [dW26 §15.2–15.3], [Nay99], [KdW04] | 5 / XL (needs von Neumann entropy; OQ-9) | B |
+| Q5.4 | Results that use mixed states, POVMs and the partial trace (these come from Physlib) | [dW26 §15.1] | 2 / M (**blocked on OQ-1**) | B |
+| Q5.5 | Nayak's bound for quantum random access codes; then the 2-query LDC lower bound, linked to `KikuchiLDC` | [dW26 §15.2–15.3], [Nay99], [KdW04] | 5 / XL (**blocked on OQ-1**: von Neumann entropy from Physlib) | B |
 | Q5.6 | Symmetric subspace: its dimension and the projector as an average over permutations | [Yue22 L4] | 3 / M | B |
 | Q5.7 | Distributed Deutsch–Jozsa protocol (upper bound only); quantum fingerprinting using the codes in `ErrorCorrectingCodes` | [dW26 §16.3, §16.6] | 3 / M | B |
 
 ### Q6. QMA (`Complexity/Quantum/QMA`); Tier B
+
+Q6.1 needs only Tier A objects (a witness register is extra wires). From Q6.2 on, the
+acceptance operator, positive semidefinite operators and mixed witnesses lean on Physlib's
+`HermitianMat` and `MState`, so those rows are **blocked on OQ-1**.
 
 | ID | Statement | Source | Difficulty / size |
 |---|---|---|---|
@@ -400,8 +443,11 @@ This section applies policy §1 (*Hosts come first*) and `machine-library-design
 * **R4. Ergonomics of `applyOn`.** If FD-3's definition is awkward, every circuit proof
   suffers. Mitigation: Q1.3 lands first with sanity theorems (Grover's diffusion operator,
   teleportation) exercising it before Q2 is gated.
-* **R5. Version drift.** A Mathlib bump in the middle of the campaign moves names.
-  Mitigation: precise imports; Physlib-compatible names; no dependency until OQ-1 closes.
+* **R5. Version drift and the Physlib switch.** A Mathlib bump in the middle of the campaign
+  moves names, and switching to Physlib replaces the `Quantum/Basic` definitions.
+  Mitigation: precise imports; FD-2's Physlib design keeps the switch mechanical; consumers
+  read `Quantum/Basic` only through its lemmas (policy §1, no unfolding), so replacing the
+  definitions only touches `Quantum/Basic`.
 * **R6. Statement subtleties.** The family's indexing, ancilla counts, the acceptance
   convention, `ℚ` against `ℝ`, and promise against language are exactly where audits find
   majors. FD-4 to FD-7 and FD-11 exist to put these on the record before P1's gate.
@@ -421,18 +467,43 @@ accepted, the stubs move into `backlog.md`.
 
 | ID | Question | Provisional choice |
 |---|---|---|
-| OQ-1 | Take a dependency on Physlib `QuantumInfo` (which needs a Mathlib/Lean/PFR bump), or self-build with Physlib-compatible names? | Self-build now; revisit at the next Mathlib bump, before Tier B's mixed-state work (Q5.4–Q5.5, Q6) |
+| OQ-1 | When does TCSlib bump Mathlib (and Lean and PFR) and take a dependency on Physlib `QuantumInfo`? Physlib is on Lean v4.35.0; TCSlib is on v4.25.0. | Tier A does not wait: it uses a thin layer with Physlib's design (FD-1, FD-2). Tier B's quantum-information items (Q5.4, Q5.5, Q6.2 onward) are blocked until the bump. On the bump, `Quantum/Basic`'s overlapping definitions are replaced by Physlib's. |
 | OQ-2 | May the arXiv-licensed PDFs ([Wat08], [dW26]) and the CC BY-NC-SA OCW notes ([Aar10]) be ingested into `blueprint/src/references/`? What about [Gha20] and [Yue22], whose licenses are not stated? | Ingest the converted `.md` pairs, as for the existing `PhysRev*` and `arXiv.*` references, subject to the maintainer's licensing check |
 | OQ-3 | Area and namespaces: `TCSlib/Quantum` (namespace `Quantum`) for models plus `TCSlib/Complexity/Quantum` (namespace `QuantumComplexity`) for classes? | Yes |
 | OQ-4 | Promise problems first-class from the start, or only from Q6? | Defined in Q0; BQP stated on languages, with a promise version |
 | OQ-5 | Acceptance outcome `1` (de Wolf, Aaronson, AB09) or `0` (Watrous)? | `1`, with a deviation note wherever [Wat08] is cited |
-| OQ-6 | Migrate `ErrorCorrectingCodes/QuantumHamming.lean` (`Fin n → Fin 2`, its own Pauli strings) onto `Quantum/Basic`? | Not in this campaign; a bridge lemma (`Fin 2 ≃ Bool`) once Q1 lands, migration queued in `backlog.md` |
+| OQ-6 | Move `ErrorCorrectingCodes/QuantumHamming.lean` (already `Fin n → Fin 2`, with its own Pauli strings) onto `Quantum/Basic`? | Its register type already matches FD-2. Not in this campaign; queued in `backlog.md` as a later cleanup |
 | OQ-7 | `ℝ`-valued quantum probabilities next to `ℚ`-valued `randProb`? | Keep both, with the Q0.9 cast lemma |
 | OQ-8 | Official gate set: Watrous's {Toffoli, H, P}, {Toffoli, H} (real amplitudes), or gate-set-generic classes? | Watrous's set; gate-set independence waits for Solovay–Kitaev (Tier C) |
-| OQ-9 | Mixed states and entropy: our own minimal layer or Physlib's? | Decided with OQ-1 before Q5.4 |
+| OQ-9 | Mixed states and entropy: our own minimal layer or Physlib's? | Physlib's (FD-1). Closed by the owner, 2026-11-06, pending maintainer confirmation |
 | OQ-10 | Where do campaign records (this plan, packs, briefs) live, now that `campaign/`, `audits/` and `briefs/` are kept off `main`? | This file on the campaign branch; the maintainer decides what reaches `main` |
+| OQ-11 | Which elaboration check do agents run? `.claude/CLAUDE.md` says never to run `lean` or `lake build` and to use the VS Code infoview. `policy.md`'s review checklist (item 6) requires `zsh scripts/lean_check.sh <file>`, and `workflow.md` §6 uses `scripts/lean_check_tree.sh`. Cloud sessions have no infoview. | Follow `policy.md` and `workflow.md`: `lean_check.sh` per touched file, never `lake build` |
 
-## 9. Getting started: the first three PRs
+## 9. How this plan meets policy.md
+
+No Lean has landed yet, so this section says how each rule is met when it does. The policy
+review checklist is run on every PR of the campaign.
+
+| `policy.md` rule | How the campaign meets it |
+|---|---|
+| §1 Layout, facades, `## Contents`, file size 150–600 lines | §4's tree; every topic has a facade; files split at about 600 lines |
+| §1 Exports from `TCSlib.lean` | Each new facade (`Quantum`, `Complexity/Promise`, `Complexity/Counting`, `Complexity/Quantum`) is exported in the PR that creates it |
+| §1 Precise imports, no bare `import Mathlib` | Every file imports exact modules (FD-1 lists the ones already checked) |
+| §1 Area-local namespaces; root only for registered models | `Quantum`, `Counting`, `QuantumComplexity` (OQ-3); `QCircuit` at the root and registered (FD-12) |
+| §1 Definitions separate from heavy theorems | `Basic/*` and the class-definition files carry definitions; theorems live in separate files |
+| §1 *Definitions land with their lemmas* | Every public `def` ships with its `_eq`, `_iff`, case or `simps` lemmas in the same PR; no `@[simp]` without a gate; consumers never unfold another file's definition. Checked by `style_lint.py` check 8 |
+| §1 *Hosts come first* | §6: HQ-1 is harvested into a public host before PP ⊆ PSPACE is briefed; no private search or recursion loops |
+| §1 *Construction reuse* | Reuses `CVAL_mem_P`, `exists_isPUniform_of_mem_P`, `majority_error_le`, `NP_subset_PSPACE`'s enumerator, the `PolyTimeComputable` closure algebra |
+| §1 *Duplication* must be human-approved | The Tier A overlap with Physlib (FD-1) is not in-repo duplication, but it is recorded and approved anyway (§11). Any copy of TCSlib material inside a fill is disclosed in its report |
+| §1 File header | Copyright block, imports, the three standard `set_option`s, then a module docstring with `# Title`, `## Main definitions`, `## Main results`, `## References` |
+| §2 `## References` and `[Tag, location]` on every declaration | §1's tags; locations are theorem, section or lecture numbers. Deviations (FD-4's gate set, FD-5's acceptance convention, FD-6's indexing) are stated in docstrings |
+| §2 *Statement prose* | Every public declaration's docstring opens with a natural-language statement |
+| §2 *Blueprint* and reference ingestion | §10 step 2: texts ingested under `blueprint/src/references/` with `scripts/sources.py` before the files citing them land; `\statementsource` only after an approved proofmatch run |
+| §2 *Design adaptation* | §1c: Physlib cited in every `Quantum/Basic` module |
+| §3 Proof sketches | A sketch under every `sorry` from the skeleton stage on; named steps become `have`s or lemmas; sketches change in the same commit as the proof |
+| Checklist 6–7 | `zsh scripts/lean_check.sh <file>` with zero errors (OQ-11); `blueprint_validate.py --strict` and `dataset_hygiene.py --strict` when the blueprint is touched |
+
+## 10. Getting started: the first three PRs
 
 1. **This plan.** Open it as a PR (or an issue) so a maintainer can rule on OQ-1, OQ-2,
    OQ-3 and OQ-10 before any Lean lands.
@@ -446,13 +517,14 @@ accepted, the stubs move into `backlog.md`.
    `python3 scripts/style_lint.py` and the policy review checklist, then write the
    `quantum-phase1` audit pack (`workflow.md` §3).
 
-## 10. Decision log
+## 11. Decision log
 
 Append-only. A superseded row is marked **Superseded** in place, never deleted.
 
 | Date | Decision / event | By |
 |---|---|---|
 | 2026-11-06 | Plan drafted from [Wat08], [dW26] v6, [Aar10], [Gha20] and [Yue22]. Tiers A/B/C set (§2). | a-gupte (with Claude) |
-| 2026-11-06 | External libraries consulted for comparison only, nothing taken: Physlib `QuantumInfo` (Lean v4.35.0, Apache-2.0); Timeroot/Lean-QuantumInfo (archived into Physlib, MIT); LionSR/QICLean (v4.36.0-rc1, Apache-2.0, contains `sorry`s and axioms); inQWIRE/LeanQuantum (v4.30.0-rc2, MIT); duckki/quantum-computing-lean (v4.33.1). None has quantum complexity classes. | a-gupte (with Claude) |
+| 2026-11-06 | **Superseded in part** (Physlib's design is now adopted; see the FD-1/FD-2 revision row below). External libraries consulted for comparison only, nothing taken: Physlib `QuantumInfo` (Lean v4.35.0, Apache-2.0); Timeroot/Lean-QuantumInfo (archived into Physlib, MIT); LionSR/QICLean (v4.36.0-rc1, Apache-2.0, contains `sorry`s and axioms); inQWIRE/LeanQuantum (v4.30.0-rc2, MIT); duckki/quantum-computing-lean (v4.33.1). None has quantum complexity classes. | a-gupte (with Claude) |
 | 2026-11-06 | FD-1 to FD-12 adopted provisionally; OQ-1 to OQ-10 opened. | a-gupte (with Claude) |
 | 2026-11-06 | Mathlib APIs FD-1 relies on checked to elaborate at the pin (Lean v4.25.0). | a-gupte (with Claude) |
+| 2026-11-06 | **FD-1 and FD-2 revised.** Physlib's pure-state basics measured: their import closure is 38 modules and about 20,000 lines in the newer Lean module system, so copying is ruled out. Tier A keeps a thin Mathlib layer but adopts Physlib's design (`Qubit := Fin 2`, `Ket` fields, `𝐔[d]`, gate names; Physlib commit cdfa609, Apache-2.0, cited per §1c). Registers change from `Fin n → Bool` to `Fin n → Qubit`, with a `Qubit ≃ Bool` bridge. Mixed states, POVMs, channels and entropy are not rebuilt: Q5.4, Q5.5 and Q6.2 onward are blocked on OQ-1. OQ-9 closed provisionally (Physlib); OQ-6 simplified; OQ-11 opened. The overlap with Physlib (kets, standard gates, Born rule) is approved as a deliberate, temporary duplication, to be deleted when the dependency arrives. | a-gupte (approved) |
