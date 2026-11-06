@@ -1,0 +1,11 @@
+@bitsToNat_injective : ∀ {k : ℕ}, Function.Injective bitsToNat
+@OneWay.ofFn_block_eq_take_drop : ∀ {q ℓ : ℕ} (x : Fin (q * ℓ) → Bool) (i : Fin q),
+  (List.ofFn fun j => x (finProdFinEquiv (i, j))) = List.take ℓ (List.drop (↑i * ℓ) (List.ofFn x))
+OneWay.flatten_ofFn_two : ∀ (g : Fin 2 → List Bool), (List.ofFn g).flatten = g 0 ++ g 1
+FunFamily.ofFn_blocks_symm : ∀ (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool),
+  List.ofFn ((FunFamily.blocks q ℓ).symm t) = (List.ofFn fun i => List.ofFn (t i)).flatten
+natToList_length_listToNat : ∀ (w : List Bool), natToList w.length (listToNat w) = w
+listToNat_natToList_eq_mod : ∀ (k N : ℕ), listToNat (natToList k N) = N % 2 ^ k
+Equiv.curry : (α : Type u_3) → (β : Type u_1) → (γ : Sort u_2) → (α × β → γ) ≃ (α → β → γ)
+@finProdFinEquiv : {m n : ℕ} → Fin m × Fin n ≃ Fin (m * n)
+[rc=0 time=3s]

@@ -1,0 +1,110 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:704:31: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  OneWay.yaoB inLen outLen m A' n ys r j =
+    OneWay.padTrue (inLen.eval n)
+      (List.drop (↑j * inLen.eval n) (A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:717:6: error: Application type mismatch: The argument
+  (FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y
+has type
+  Fin (fmultBlocks.eval n * (2 * n)) → Bool
+but is expected to have type
+  Fin ((fmult.prod fmultBlocks).outLen.eval n) → Bool
+in the application
+  A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+    ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:722:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (some ?m.72).getD ?m.73
+in the target expression
+  (FunFamily.blocks (fmultBlocks.eval n) (2 * n))
+      ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+            ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r).getD
+        fun x => false)
+      i =
+    OneWay.padTrue (fmult.inLen.eval n)
+      (List.drop (↑i * fmult.inLen.eval n)
+        (A.runAt n (List.ofFn ((OneWay.blocksE (fmultBlocks.eval n) (fmult.outLen.eval n)).symm Y)) r))
+
+case some
+A : NUPPT
+n : ℕ
+Y : Fin (fmultBlocks.eval n) → Fin (2 * n) → Bool
+r : A.Coins n
+i : Fin (fmultBlocks.eval n)
+hp :
+  Nat.Prime
+    (bitsToNat
+      ((FunFamily.blocks 2 n)
+        ((FunFamily.blocks (fmultBlocks.eval n) (2 * n))
+          ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+                ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r).getD
+            fun x => false)
+          i)
+        0))
+x : Fin ((fmult.prod fmultBlocks).inLen.eval n) → Bool
+hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n) sorry r = some x
+h2 : A.runAt n (List.ofFn ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm Y)) r = List.ofFn x
+⊢ (FunFamily.blocks (fmultBlocks.eval n) (2 * n))
+      ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+            ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r).getD
+        fun x => false)
+      i =
+    OneWay.padTrue (fmult.inLen.eval n)
+      (List.drop (↑i * fmult.inLen.eval n)
+        (A.runAt n (List.ofFn ((OneWay.blocksE (fmultBlocks.eval n) (fmult.outLen.eval n)).symm Y)) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:794:89: error: Application type mismatch: The argument
+  ce r
+has type
+  Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool
+but is expected to have type
+  Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n * fmult.inLen.eval n + A.coinLen n)) → Bool
+in the application
+  S (ce r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:813:13: error: Application type mismatch: The argument
+  w.1
+has type
+  Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool
+but is expected to have type
+  Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n * fmult.inLen.eval n + A.coinLen n)) → Bool
+in the application
+  S w.1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:818:29: error: Application type mismatch: The argument
+  ce r
+has type
+  Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool
+but is expected to have type
+  Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n * fmult.inLen.eval n + A.coinLen n)) → Bool
+in the application
+  S (ce r)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:870:11: error: Application type mismatch: The argument
+  w.1
+has type
+  Fin ((OneWay.YaoMachine.ρP D).eval n) → Bool
+but is expected to have type
+  Fin (n * fmultBlocks.eval n + (fmultBlocks.eval n * fmult.inLen.eval n + A.coinLen n)) → Bool
+in the application
+  S w.1
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:919:4: error: Type mismatch
+  key ?m.276
+has type
+  (Option.map ⇑(FunFamily.blocks (fmultBlocks.eval n) (2 * n)) ?m.276).getD default =
+    (FunFamily.blocks (fmultBlocks.eval n) (2 * n)) (Option.getD ?m.276 fun x => false)
+but is expected to have type
+  (Option.map (⇑(FunFamily.blocks (fmultBlocks.eval n) (fmult.inLen.eval n)))
+          (A.inverter n (fmultBlocks.eval n * fmult.inLen.eval n) (fmultBlocks.eval n * fmult.outLen.eval n)
+            ((FunFamily.blocks (fmultBlocks.eval n) (fmult.outLen.eval n)).symm ys) r)).getD
+      default =
+    (FunFamily.blocks (fmultBlocks.eval n) (2 * n))
+      ((A.inverter n ((fmult.prod fmultBlocks).inLen.eval n) ((fmult.prod fmultBlocks).outLen.eval n)
+            ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm ys) r).getD
+        fun x => false)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevSealedRegions.lean:1076:93: error: Function expected at
+  hA
+but this term has type
+  A.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+[rc=1 time=14s]

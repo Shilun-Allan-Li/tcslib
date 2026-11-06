@@ -1,0 +1,46 @@
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:23:116: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  OneWay.yaoB inLen outLen m A' n ys r j =
+    OneWay.padTrue (inLen.eval n)
+      (List.drop (↑j * inLen.eval n) (A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r))
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:24:66: error: Function expected at
+  hA
+but this term has type
+  A.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:25:148: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  (OneWay.YaoMachine.ρP D).eval n = n * D.m.eval n + (D.m.eval n * D.inLen.eval n + D.A'.coinLen n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:26:62: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  A.coinLen n = A.coins.eval n
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:27:81: error: Type mismatch
+  rfl
+has type
+  ?m.30 = ?m.30
+but is expected to have type
+  (fmult.prod fmultBlocks).inLen.eval n = 4 * n ^ 3 * (2 * n)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:28:65: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  natToList k N = List.ofFn (natToBits k N)
+/tmp/claude-0/-home-user-tcslib/d0667d12-db8d-5853-b0f7-9833dc0884c6/scratchpad/review-fac/seal/RevControl.lean:29:118: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  encodeDistinctPrimes m z = pairEncode (natToList m z.p) (natToList m z.q)
+[rc=1 time=3s]
