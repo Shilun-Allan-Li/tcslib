@@ -370,7 +370,8 @@ noncomputable def bitwise (S : BitPublicKeyScheme) : PublicKeyScheme where
         rw [← NUPPT.coinsEquiv_ofPolyTimeUniform_ofFn S.bitwiseEncFun_poly (.mul .var S.enc.coins)
           n re, List.length_ofFn, PolyExpr.eval_mul, PolyExpr.eval_var]
       have hlen : (coinBlock (S.enc.coinLen n) i (List.ofFn re)).length = S.enc.coinLen n := by
-        simp only [coinBlock, List.length_take, List.length_drop, hre, NUPPT.coinLen_eq]
+        simp only [coinBlock, List.length_take, List.length_drop]
+        rw [hre, NUPPT.coinLen_eq]
         have hi : (i : ℕ) + 1 ≤ n := i.isLt
         have := Nat.mul_le_mul_right (S.enc.coins.eval n) hi
         rw [Nat.add_mul, one_mul] at this
