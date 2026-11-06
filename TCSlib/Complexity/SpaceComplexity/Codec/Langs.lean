@@ -27,16 +27,15 @@ of an abstract register machine whose registers hold the codes and the radius
 * `Complexity.Codec.edgeLang N` — `c` is the code of a window-bounded configuration with a
   work head on the window's boundary.
 
-Besides the membership characterizations, this file reduces membership to the finite
-checks on code words that the logspace deciders perform (`ValidChk`, `InitChk`,
-`AcceptChk`, `StepChk`).
+The finite checks on code words that the logspace deciders perform (`ValidChk`, `InitChk`,
+`AcceptChk`, `StepChk`), and the reduction of membership to them, are in
+`SpaceComplexity/Codec/Checks`.
 
 Configuration-graph infrastructure; not a result of [AB09].
 
 ## Main definitions
 
 * `Complexity.Codec.validLang`, `initLang`, `acceptLang`, `stepLang`, `edgeLang`.
-* `Complexity.Codec.InitChk`, `AcceptChk`, `StepChk` — the word-level checks.
 
 ## Main results
 
@@ -46,8 +45,6 @@ Configuration-graph infrastructure; not a result of [AB09].
 * `Complexity.Codec.mem_validLang`, `mem_initLang`, `mem_acceptLang`, `mem_stepLang`,
   `mem_edgeLang` —
   membership through the codec.
-* `Complexity.Codec.initChk_iff`, `acceptChk_iff`, `stepChk_iff` — the checks recognize
-  the code words of the respective configurations.
 
 ## References
 
@@ -178,21 +175,26 @@ theorem mem_codeLang_iff {τ : Type} {enc : τ → List Bool} (henc : Function.I
   · rintro ⟨c, rfl, hP⟩
     exact ⟨x, c, t, rfl, hP⟩
 
-/-- **Membership in the valid-code language.** -/
+/-- **Membership in the valid-code language.** The encoding of `x`, `bits c` and `bits s` is in
+the language exactly when `c` is the radius-`s` code of a configuration on `x` inside the window
+of radius `s`. -/
 theorem mem_validLang (x : List Bool) (c s : ℕ) :
     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ validLang N ↔
       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c := by
   rw [mem_codeLang_iff bits_injective (mem_validLang_iff N)]
   simp only [bits_injective.eq_iff, exists_eq_left]
 
-/-- **Membership in the initial-code language.** -/
+/-- **Membership in the initial-code language.** The encoding of `x`, `bits c` and `bits s` is in
+the language exactly when `c` is the radius-`s` code of `N`'s initial configuration on `x`. -/
 theorem mem_initLang (x : List Bool) (c s : ℕ) :
     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ initLang N ↔
       cfgCode s (N.tm.initCfg x) = c := by
   rw [mem_codeLang_iff bits_injective (mem_initLang_iff N)]
   simp only [bits_injective.eq_iff, exists_eq_left]
 
-/-- **Membership in the accepting-code language.** -/
+/-- **Membership in the accepting-code language.** The encoding of `x`, `bits c` and `bits s` is
+in the language exactly when `c` is the radius-`s` code of a halted configuration on `x` inside
+the window of radius `s` whose output is `[true]`. -/
 theorem mem_acceptLang (x : List Bool) (c s : ℕ) :
     pairEncode x (pairEncode (Nat.bits c) (Nat.bits s)) ∈ acceptLang N ↔
       ∃ C : Cfg N.k Bool N.State x, Cfg.InWindow s C ∧ cfgCode s C = c ∧ C.state = none ∧
@@ -200,7 +202,9 @@ theorem mem_acceptLang (x : List Bool) (c s : ℕ) :
   rw [mem_codeLang_iff bits_injective (mem_acceptLang_iff N)]
   simp only [bits_injective.eq_iff, exists_eq_left]
 
-/-- **Membership in the step language.** -/
+/-- **Membership in the step language.** The encoding of `x`, `bits c`, `bits c'` and `bits s` is
+in the language exactly when `c` and `c'` are the radius-`s` codes of configurations on `x` inside
+the window of radius `s`, the second reached from the first by one step of `N`. -/
 theorem mem_stepLang (x : List Bool) (c c' s : ℕ) :
     pairEncode x (pairEncode (Nat.bits c) (pairEncode (Nat.bits c') (Nat.bits s))) ∈
         stepLang N ↔

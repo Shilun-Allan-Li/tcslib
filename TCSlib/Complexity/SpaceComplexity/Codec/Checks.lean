@@ -395,7 +395,9 @@ theorem validLang_iff (x w : List Bool) (s : ℕ) :
     exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl⟩
 
 variable (N) in
-/-- **Initial codes through the check.** -/
+/-- **Initial codes through the check.** For every word `w`, not only for codes, the encoding of
+`x`, `w` and `bits s` is in the initial-code language exactly when `w` passes the initial-code
+check. -/
 theorem initLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ initLang N ↔ InitChk N x s w := by
   rw [initChk_iff, mem_codeLang_iff bits_injective (mem_initLang_iff N)]
@@ -406,7 +408,9 @@ theorem initLang_iff (x w : List Bool) (s : ℕ) :
     exact ⟨cfgCode s (N.tm.initCfg x), bits_cfgCode s _, rfl⟩
 
 variable (N) in
-/-- **Accepting codes through the check.** -/
+/-- **Accepting codes through the check.** For every word `w`, not only for codes, the encoding of
+`x`, `w` and `bits s` is in the accepting-code language exactly when `w` passes the
+accepting-code check. -/
 theorem acceptLang_iff (x w : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (Nat.bits s)) ∈ acceptLang N ↔ AcceptChk N x s w := by
   rw [acceptChk_iff, mem_codeLang_iff bits_injective (mem_acceptLang_iff N)]
@@ -417,7 +421,8 @@ theorem acceptLang_iff (x w : List Bool) (s : ℕ) :
     exact ⟨cfgCode s C, bits_cfgCode s C, C, hC, rfl, hst, hout⟩
 
 variable (N) in
-/-- **Step pairs through the check.** -/
+/-- **Step pairs through the check.** For all words `w` and `w'`, the encoding of `x`, `w`, `w'`
+and `bits s` is in the step language exactly when the pair passes the step check. -/
 theorem stepLang_iff (x w w' : List Bool) (s : ℕ) :
     pairEncode x (pairEncode w (pairEncode w' (Nat.bits s))) ∈ stepLang N ↔
       StepChk N x s w w' := by

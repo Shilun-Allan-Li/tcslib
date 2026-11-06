@@ -196,7 +196,7 @@ lemma shape_of_code {y x : List Bool} {c s : ℕ}
 configuration, and let `Chk` be a word-level check that is membership at `⟨x, ⟨w, bits s⟩⟩` and
 implies the validity test. If, in the one-code mode `mode`, the tail of the codec machine after
 the validity scan answers `Chk x s w` from the registers the common run leaves, on every
-well-shaped input passing the pre-scan checks, then `L` is in `L`.
+well-shaped input passing the pre-scan checks, then the language `L` belongs to `LOGSPACE`.
 
 Configuration-graph infrastructure for logspace algorithms ([AB09, §4.1.1, §4.3]); not a result of
 [AB09] by itself.
