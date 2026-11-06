@@ -15,7 +15,7 @@
 | 2 | `statClose_sampleUnitL` (S3) | filled |
 | 3 | `rsaCollection_sampleClose` | filled |
 | 4 | `polyTimeComputable_unitSampleStr` | filled |
-| 5 | `polyTimeComputable_rsaGenRaw` | open |
+| 5 | `polyTimeComputable_rsaGenRaw` | filled |
 | 6 | `polyTimeComputable_rsaFromFactorRaw` | open |
 | 7 | `rsaCollection_invProbAt_le` | open |
 | 8 | `factorProb_le_rsaProb` | open |
