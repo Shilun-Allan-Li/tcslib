@@ -1086,7 +1086,7 @@ three through the general equations, and rename the circuit one if the shared na
 - `BoolCircuit.AdjWalk.astep_call₁` and `astep_call₂` (`LogspaceUniformWalk:288, 298`, with
   `vword_unary₁` and `vword_unary₂`).
 
-That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
+**Widened (gate 105, 2026-11-06):** 181 containing declarations in 40 files (8 excluded as machine comparisons; scope `campaign/items/dedup/as1-SCOPE.md`); **the user ruled: all in #214.** That makes six members. None is a copy: the screen with `LogspaceUniformWalk` added gives
 170 → 179 declarations and 46 → 46 pairs, identical
 (`campaign/gates/90-arm-embed-api/evidence/round1-fix/`). Same disposition, same window.
 
@@ -1381,6 +1381,9 @@ by unfolding or by definitional equality: `WalkLe` in `Logspace/ISCountGenWalk` 
 and `ISCountGenRadius` (88–92); `Rel`, `InitO` and `AccO` in `SavitchARM/Correct` (55–71); lines
 at the campaign tip. **Disposition:** the dedup window (12.2c): re-point them to the equations.
 Not counted.
+**Widened and in PR #216** (2026-11-06; gate 107): a scoping pass and an exhaustive irreducibility
+probe (52 modules) found 23 public proof bodies in 14 files, including `SavitchARM/Reach`'s
+`mem_iff_reach` (probe only); all re-pointed (`f200144b`, `3d0f6ceb`). **Retired on #216's merge.**
 
 **CE-1, equal codes of window configurations, copied** (found 2026-11-05 by gate 96's round-2
 screen; **acknowledged by the user for 12.2c, 2026-11-05**). `coreSum_eq_of_code_eq` (equal

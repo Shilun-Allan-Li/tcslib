@@ -452,3 +452,9 @@ book's own pointer: "the definition of `H` implies an `O(n³)`-time recursive al
 part's wording is unpinned. Until it is pinned against the book, docstrings cite
 [AB09, Theorem 3.3 and its proof] for the Claim and for `H → ∞`, and give no exercise part letter
 beyond the `O(n³)` computation.
+
+**E-PAD (the user, 2026-11-06):** the API fill publishes a **general** `mem_SPACE_pad` (any space
+bound, a polynomial unary pad) in a **new `SpaceComplexity/Padding`** module. It is meant for later
+reuse by Ladner's padding. `Hierarchy.lean` may import it, and the maintainer closes
+`SPACE_linear_ne_NP` (`sph_linear_ne_NP_of_padding space_hierarchy <E-PAD>`) in a small PR with its
+own gate, not through a fill. The fill is dispatched by pasted prompt (WORKFLOW §5).
