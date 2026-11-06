@@ -1,0 +1,137 @@
+From 5d83904306f4df202c73adbf7ae537d9a8fcd3ed Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 12:05:47 +0000
+Subject: [PATCH 1/3] fill dl-a: statClose_rejectBlocksL
+
+Block rejection sampling is firstHit on Fin (2^k) of the numbers read from the
+blocks; the block reader pushes uniform coins to uniform draws (restriction along
+the injective block layout, then curry and bitsEquiv), so statClose_firstHit
+transfers by StatClose.comp_pushesUniform and StatClose.map Fin.val.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTiuDcjSqhyfbqnsVxA
+---
+ TCSlib/Cryptography/Candidates/Concrete.lean | 101 ++++++++++++++++++-
+ 1 file changed, 100 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Concrete.lean b/TCSlib/Cryptography/Candidates/Concrete.lean
+index c39c508a..906c83e9 100644
+--- a/TCSlib/Cryptography/Candidates/Concrete.lean
++++ b/TCSlib/Cryptography/Candidates/Concrete.lean
+@@ -561,6 +561,70 @@ theorem rejectBlocksL_spec {E : ℕ → Prop} [DecidablePred E] {k B T : ℕ} {r
+   refine ⟨hc, lt_of_lt_of_le (listToNat_lt_two_pow _) ?_⟩
+   exact Nat.pow_le_pow_right (by norm_num) (List.length_take_le _ _)
+ 
++/-- Restricting a uniform coin table `I → Bool` along an injection `ι : α → I` gives a uniform
++table `α → Bool`: the restriction is the first projection of the splitting of `I` into the
++image of `ι` and its complement. -/
++private theorem dla_pushesUniform_restrict {α I : Type*} [Fintype α] [DecidableEq α] [Fintype I]
++    [DecidableEq I] {ι : α → I} (hι : Function.Injective ι) :
++    HardcoreBit.PushesUniform (fun R : I → Bool => fun a => R (ι a)) := by
++  classical
++  let e₁ : α ⊕ ((Set.range ι)ᶜ : Set I) ≃ I :=
++    (Equiv.sumCongr (Equiv.ofInjective ι hι) (Equiv.refl _)).trans
++      (Equiv.Set.sumCompl (Set.range ι))
++  let e : (I → Bool) ≃ (α → Bool) × (((Set.range ι)ᶜ : Set I) → Bool) :=
++    (Equiv.arrowCongr e₁.symm (Equiv.refl Bool)).trans (Equiv.sumArrowEquivProdArrow _ _ _)
++  have he : (fun R : I → Bool => fun a => R (ι a)) = fun R => (e R).1 := by
++    funext R a
++    have h1 : e₁ (Sum.inl a) = ι a := rfl
++    show R (ι a) = R (e₁ (Sum.inl a))
++    rw [h1]
++  rw [he]
++  exact (HardcoreBit.pushesUniform_equiv e).comp HardcoreBit.pushesUniform_fst
++
++/-- The position of bit `j < k` of block `t < T` in a string of `T · B` coins (`k ≤ B`):
++`t · B + j`. -/
++private def dla_blockPos {k B T : ℕ} (hkB : k ≤ B) (p : Fin T × Fin k) : Fin (T * B) :=
++  ⟨p.1.val * B + p.2.val, by
++    have h1 := p.1.2
++    have h2 := p.2.2
++    calc p.1.val * B + p.2.val < p.1.val * B + B := by omega
++      _ = (p.1.val + 1) * B := by ring
++      _ ≤ T * B := Nat.mul_le_mul_right _ h1⟩
++
++/-- Distinct (block, bit) pairs sit at distinct coin positions (`j < k ≤ B`). -/
++private theorem dla_blockPos_injective {k B T : ℕ} (hkB : k ≤ B) :
++    Function.Injective (dla_blockPos (T := T) hkB) := by
++  rintro ⟨t, j⟩ ⟨t', j'⟩ h
++  have h' : t.val * B + j.val = t'.val * B + j'.val := congrArg Fin.val h
++  have hj := j.2
++  have hj' := j'.2
++  have hB : 0 < B := lt_of_lt_of_le (Nat.zero_lt_of_lt hj) hkB
++  have ht : t.val = t'.val := by
++    have e1 : (t.val * B + j.val) / B = t.val := by
++      rw [Nat.add_comm, Nat.add_mul_div_right _ _ hB, Nat.div_eq_of_lt (by omega), zero_add]
++    have e2 : (t'.val * B + j'.val) / B = t'.val := by
++      rw [Nat.add_comm, Nat.add_mul_div_right _ _ hB, Nat.div_eq_of_lt (by omega), zero_add]
++    rw [← e1, ← e2, h']
++  have hj2 : j.val = j'.val := by rw [ht] at h'; omega
++  rw [Fin.ext ht, Fin.ext hj2]
++
++/-- The `k`-bit prefix of block `t` of a coin string, read off the list: for `t < T` and
++`k ≤ B`, `((List.ofFn r).drop (t · B)).take k = List.ofFn (fun j => r (t · B + j))`. -/
++private theorem dla_take_drop_ofFn {k B T : ℕ} (hkB : k ≤ B) (r : Fin (T * B) → Bool) (t : Fin T) :
++    ((List.ofFn r).drop (t.val * B)).take k =
++      List.ofFn (fun j : Fin k => r (dla_blockPos hkB (t, j))) := by
++  have hlen : t.val * B + k ≤ T * B := by
++    have := t.2
++    calc t.val * B + k ≤ t.val * B + B := by omega
++      _ = (t.val + 1) * B := by ring
++      _ ≤ T * B := Nat.mul_le_mul_right _ this
++  apply List.ext_getElem
++  · rw [List.length_take, List.length_drop, List.length_ofFn, List.length_ofFn]
++    omega
++  · intro j h1 h2
++    rw [List.getElem_take, List.getElem_drop, List.getElem_ofFn, List.getElem_ofFn]
++    rfl
++
+ /-- **Block rejection sampling is close to uniform on `E`** (lemma C4 of the chapter 2
+ inventory on coin lists; the sampling clauses of [PS10, Theorems 52.3, 53.2, 61.7, 63.10]):
+ for `k ≤ B`, a uniform coin string of `T · B` bits and a default `d < 2^k` with `E d`, the
+@@ -585,6 +649,41 @@ theorem statClose_rejectBlocksL (E : ℕ → Prop) [DecidablePred E] (k B T : 
+     StatClose (fun r : Fin (T * B) → Bool => (rejectBlocksL E k B T (List.ofFn r)).getD d)
+       (fun e : {v : Fin (2 ^ k) // E (v : ℕ)} => ((e : Fin (2 ^ k)) : ℕ))
+       ((1 - uprob fun v : Fin (2 ^ k) => E (v : ℕ)) ^ T) := by
+-  sorry
++  -- the numbers read from the blocks, as a uniform draw of `T` elements of `Fin (2^k)`
++  let π : (Fin (T * B) → Bool) → Fin T → Fin (2 ^ k) :=
++    fun r t => bitsEquiv k (fun j => r (dla_blockPos hkB (t, j)))
++  have hπ : HardcoreBit.PushesUniform π := by
++    have h1 := dla_pushesUniform_restrict (dla_blockPos_injective (T := T) hkB)
++    have h2 := HardcoreBit.pushesUniform_equiv
++      ((Equiv.curry (Fin T) (Fin k) Bool).trans (Equiv.piCongrRight fun _ : Fin T => bitsEquiv k))
++    exact h1.comp h2
++  have h := ((statClose_firstHit (fun v : Fin (2 ^ k) => E (v : ℕ)) T
++    (d := ⟨d, hdk⟩) hd).comp_pushesUniform hπ).map Fin.val
++  -- the block sampler is the first hit of the numbers read, mapped to `ℕ`
++  have hX : ∀ r : Fin (T * B) → Bool, (rejectBlocksL E k B T (List.ofFn r)).getD d =
++      ((firstHit (fun v : Fin (2 ^ k) => E (v : ℕ)) (π r)).getD ⟨d, hdk⟩).val := by
++    intro r
++    have hmap : rejectBlocksL E k B T (List.ofFn r) =
++        (firstHit (fun v : Fin (2 ^ k) => E (v : ℕ)) (π r)).map Fin.val := by
++      rw [rejectBlocksL_eq, firstHit_eq, List.map_findSome?, ← List.map_coe_finRange,
++        List.findSome?_map]
++      congr 1
++      funext t
++      have hv : listToNat (((List.ofFn r).drop (t.val * B)).take k) = (π r t).val := by
++        rw [dla_take_drop_ofFn hkB r t, bitsEquiv_val, bitsToNat_eq_listToNat]
++      show (if E (listToNat (((List.ofFn r).drop (t.val * B)).take k)) then
++          some (listToNat (((List.ofFn r).drop (t.val * B)).take k)) else none) =
++        Option.map Fin.val (if E (π r t).val then some (π r t) else none)
++      rw [hv]
++      by_cases hE : E (π r t).val
++      · rw [if_pos hE, if_pos hE, Option.map_some]
++      · rw [if_neg hE, if_neg hE, Option.map_none]
++    rw [hmap]
++    exact Option.getD_map Fin.val ⟨d, hdk⟩ _
++  have hX' : (fun r : Fin (T * B) → Bool => (rejectBlocksL E k B T (List.ofFn r)).getD d) =
++      fun r => ((firstHit (fun v : Fin (2 ^ k) => E (v : ℕ)) (π r)).getD ⟨d, hdk⟩).val :=
++    funext hX
++  rw [hX']
++  exact h
+ 
+ end TCSlib.Cryptography.Candidates
+-- 
+2.43.0
+
