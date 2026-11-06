@@ -1069,6 +1069,12 @@ The steps came from the brief's own route probes, written when the fill could no
 `BufferWords`. #191's repair commit `10c01517` cites the two lemmas at the three sites, and no
 member remains. Recorded so that the ledger shows them caught.
 
+**Gate 95's round-2 major 1** (#191; repaired, the round-1 ruling's kind): `nf_split`'s local `h0`
+rebuilt a list from its indexed entries by `List.ext_getElem`, re-proving Mathlib's
+`List.ofFn_getElem` (with the index length moved by `List.ofFn_congr`). #191's commit `dfc3e990`
+cites the two lemmas. No family; recorded so that the ledger shows it caught. A sweep of the file's
+library-only `have`s by `exact?` follows it (gate 95, round 3's evidence).
+
 **RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
 note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
 carried here until now.
@@ -1085,8 +1091,10 @@ carried here until now.
   (`TuringMachine/BufferWords`, public since PR #140; BW-1) states it. NF's three inline sites
   cite it: `nf_entry` since `4354cbeb`, `nf_aReturn` and `nf_region` since `10c01517` (major 1
   above). `CodeSimulator`'s private `canonStageBuffer_none` (lines 5040–5043 at the campaign
-  tip; four uses) restates it for cells at or past the end. **Disposition:** the dedup window
-  (12.2c): re-point its four uses to `FinTM.bufferTape_eq_none_of_not_mem` and delete it.
+  tip; six invocations at five locations: lines 5203, 6422, 6566, 6778 and twice at 7022, corrected
+  by gate 95's round-2 minor 3) restates it for cells at or past the end. **Disposition:** the dedup
+  window (12.2c): re-point all six invocations to `FinTM.bufferTape_eq_none_of_not_mem` and delete
+  it.
   `CodeSimulator` does not import `BufferWords` yet; the import is acyclic (`BufferWords`
   imports only `Simulation`).
 
@@ -1143,9 +1151,12 @@ major.
   own statement and cites the canonical ones for its step. Eight of the members re-prove the tape
   half.
 
-Census (members over all declarations, as the style lint counts them; source-inclusive):
-`Build/CfgRecord` 2 of 130 at `b1b5199b` (1.5%; the canonical pair), 3 of 130 (2.3%) with RO-1's
-`recordStep_runFrom_one`; `ExpBFS/Radius` 2 of 27 (7.4%); `Codec/Step` 1 of 30 (3.3%); one
+Census (members over **all source declarations**, public and private, anonymous instances
+included, as `devtools/seyoon/declfreeze.py` counts them at #196's repair `b1b5199b`; corrected
+by gate 96's round-2 minor 1, which found the style lint's count, without the seven anonymous
+private instances, used before): `Build/CfgRecord` 2 of 137 (1.5%; the canonical pair), 3 of 137
+(2.2%) with RO-1's `recordStep_runFrom_one`; `ExpBFS/Radius` 2 of 27 (7.4%) for WS-1, and **3 of
+27 (11.1%) cumulatively** with CE-1's `coreSum_eq_of_code_eq`; `Codec/Step` 1 of 30 (3.3%); one
 member each in `TQBF`, `ExhaustiveReplay`, `Sweep`, `Oracle` (`step_radius`; its private
 `apply_workTapes_eq_of_ne` is the tape half's harvest source, not a copy) and
 `Robustness/SingleTape`, and two declarations in `Build/Loop`. The one-fifth rule is not
