@@ -7,6 +7,64 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
+## 0. Current state (2026-11-06, evening; read this first; START-HERE.md is the entry point)
+
+**Merged on 2026-11-06** (the user):
+- #208 (Savitch through deepening), #212 (ZP-1), #213 (CE-1), #216 (RP-1);
+- #217 (NZ-1), #211 (G5: `two_work_tapes_run`, so `universal_TlogT` is admission-free);
+- #218 (H: `space_hierarchy`, `LOGSPACE_ssubset_PSPACE`), #219 (the E-PAD statements,
+  `SpaceComplexity/Padding`);
+- #214 (AS-1), #223 (the book-form Thm 3.1: `time_hierarchy_book`, `_of_pos`, `_log`).
+
+**Open PRs and their next step:**
+
+| PR | What | Gate | Next |
+|---|---|---|---|
+| #220 | CL-1, codec languages (`lean/dedup-cl1`) | 111 **CLOSED** (PASS 0/0/3; minors fixed `86979df1`, CK-1 recorded) | `replay-lcl3` on `oleans-lcamp7`, then **clear to merge** |
+| #221 | U2 harvest API, `Build/UniversalParts` (`lean/u2-harvest-api`) | 112 **dispatched** | findings → dispositions; `replay-lhv3` on `oleans-lcamp7` |
+| #215 | SG-1, `CounterLoop`/`Tautology`/`SingleTape` + `Frag`'s pinned step (`lean/dedup-sg1`) | 106: pack not yet written (reserved number) | `replay-lsg7`, then gate 106 pack and stage |
+| #222 | NatBits (BL-1, NB-1, LS-3), new `TuringMachine/NatBits` (`lean/dedup-natbits`) | 114: not yet written (reserved) | `replay-lnb4` (about 343 modules), then gate 114 pack and stage |
+
+**Snapshots** (`$TCSLIB_SCRATCH`):
+- `oleans-lcamp6`: the campaign after #218 and #219.
+- `oleans-lcamp7`: being built by `replay-lcamp7` (120 modules, the campaign after #214 and #223,
+  Lean `72fcfbef`). It becomes the campaign snapshot when it passes. Then delete `lcamp6`.
+
+**Running at the time of writing:** `fills/replay/queue12.sh`. It runs lcamp7, then prepares and
+runs `lcl3`, `lhv3` and `lsg7` (one chain) and `lnb4` (the other). A watcher then runs the E-PAD
+import probe (`campaign/fills/epad/inputs/EPadImportProbe.lean.txt`) against `oleans-lcamp7`. **After
+a container restart all of these die:** re-run the queue (`scratch-api/replay-queue.example.sh` is
+a copy).
+
+**Next, in order:**
+1. **E-PAD fill:** brief `campaign/fills/epad/briefs/epad-fill.md`, base `72fcfbef`.
+   - When the import probe passes, record it in `campaign/fills/epad/logs/`.
+   - Stage the brief in `exchange/…/arora-barak-ch3-4/outbox/fills/` and give the user a
+     pasteable fill prompt (the user picks the agent).
+   - After delivery: review, sweep, landing PR, fill gate. Then the maintainer closes
+     `SPACE_linear_ne_NP` in `Hierarchy` (import `Padding`; body
+     `sph_linear_ne_NP_of_padding space_hierarchy <E-PAD at S n = n²+1, T n = n+1, C = 1, d = 2>`
+     through `mem_padLang_iff`), in a small PR with its own gate.
+2. **Gates 106 (#215) and 114 (#222):** packs after their replays, modelled on 107/108.
+3. **F6 (`space_universal`):** after #221 merges, and after E-PAD lands in `Hierarchy` (the user
+   ruled E-PAD first). Write F6's fill brief on the harvest's rows; the startup route D-F6-3 is
+   still to decide after the consumer probe (`campaign/items/u2harvest/Probe.lean.txt`).
+4. **Ladner's statement phase:** LD-1 to LD-7 accepted as recommended, and LD-8 partly pinned
+   (`campaign/items/roadmap3/PLAN.md` §Ladner, §(f)). Write the statement file and its gate.
+5. **The dedup window** (`campaign/duplication-ledger.md`):
+   - **unblocked now:** WL-1 (move `walkLe_succ_iff` to `PathWalk`) and CQ-1 (query `def` +
+     `_iff` in `Codec/Langs`);
+   - **acknowledged and scheduled:** AS-2 (an `astep` irreducibility census, then re-points),
+     MT-1 (per-label instruction equations in each machine file), CK-1 (`acceptChk_iff` /
+     `initChk_iff` re-points), and DT-1 (`mem_DTIME_iff`, `FinTM.decidesInTime_iff`; large
+     replay);
+   - RS-1's remaining sites now cite `Turing.MultiTapeTM.initCfg_eq_mapState` (from #221);
+   - **parked:** RO-1 (`lean/dedup-ro1`; after the harvest);
+   - also WS-1, RC-1–4, QF-1, WC-1.
+
+**Rulings in force from 2026-11-06** are in §3's notes, the ledger entries and WORKFLOW §5. Fills
+go by pasted prompt while the user is awake; never by sub-agent unless the user says so.
+
 ## 1. Starting a session on a new machine
 
 1. **Environment.**
