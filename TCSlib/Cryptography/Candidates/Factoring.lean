@@ -712,15 +712,6 @@ private theorem fac_blocks_apply (q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i :
   funext j
   exact OneWay.blocksE_apply q ℓ x i j
 
-/-- **Reading `OneWay.yaoB`** (rule-10 exception: `OneWay.yaoB` has no published equation; this is
-the requested shared lemma `yaoB_apply`, proved by `rfl` from its body): block `j` of the padded
-answer is the `inLen(n)` bits of `A'`'s answer after `j · inLen(n)` bits, padded with `true`. -/
-private theorem fac_yaoB_apply (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ)
-    (ys : Fin (m.eval n) → Fin (outLen.eval n) → Bool) (r : A'.Coins n) (j : Fin (m.eval n)) :
-    OneWay.yaoB inLen outLen m A' n ys r j = OneWay.padTrue (inLen.eval n)
-      ((A'.runAt n (List.ofFn ((OneWay.blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop
-        (j * inLen.eval n)) := rfl
-
 /-- **The direct-product inverter and the padded inverter agree on success**: block `i` of the
 answer of `prodInverter A n` (the all-`false` tuple on a wrong-length answer) is block `i` of the
 padded answer `OneWay.yaoB` whenever its first half reads as a prime. -/
@@ -729,7 +720,7 @@ private theorem fac_prodInverter_eq_yaoB (A : NUPPT) (n : ℕ)
     (hp : (bitsToNat (FunFamily.blocks 2 n (prodInverter A n Y r i) 0)).Prime) :
     prodInverter A n Y r i = OneWay.yaoB fmult.inLen fmult.outLen fmultBlocks A n Y r i := by
   unfold prodInverter at hp ⊢
-  rw [fac_yaoB_apply]
+  rw [OneWay.yaoB_apply]
   rcases hx : A.inverter n ((fmult.prod fmultBlocks).inLen.eval n)
       ((fmult.prod fmultBlocks).outLen.eval n)
       ((FunFamily.blocks (fmultBlocks.eval n) (2 * n)).symm Y) r with _ | x
@@ -1092,11 +1083,6 @@ def samplePrimeL (n : ℕ) (r : List Bool) : List Bool :=
   List.ofFn ((samplePrime n (2 * n ^ 2) (chunk (2 * n ^ 2) n (padFin (2 * n ^ 2 * n) r))).getD
     (natToBits n 2))
 
-/-- **Reading `NUPPT.Uniform`** (rule-10 exception: its published reading `NUPPT.uniform_iff` /
-`NUPPT.Uniform.advice_eq` is in `Randomized/NonUniform.lean`, outside this module's imports): a
-uniform machine has empty advice at every parameter. -/
-private theorem fac_uniform_advice {A : NUPPT} (hA : A.Uniform) (n : ℕ) : A.advice n = [] := hA n
-
 /-- A numeral depends only on its value modulo `2^k`: `natToList k N = natToList k (N mod 2^k)`
 (`listToNat_natToList_eq_mod`, `natToList_length_listToNat`). -/
 private theorem fac_natToList_mod (k N : ℕ) : natToList k N = natToList k (N % 2 ^ k) := by
@@ -1180,7 +1166,7 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
   have hrun : A.output (NUPPT.layout (List.replicate (pairFstD z).length true) [] []
       (padStr samplePrimeCoins (pairFstD z) (pairSndD z))) = A.runAtL (pairFstD z).length []
       (List.ofFn (padFin (2 * (pairFstD z).length ^ 2 * (pairFstD z).length) (pairSndD z))) := by
-    rw [NUPPT.runAtL_eq_output_layout, fac_uniform_advice hAu (pairFstD z).length, hpad]
+    rw [NUPPT.runAtL_eq_output_layout, hAu.advice_eq (pairFstD z).length, hpad]
   rw [hrun, hA]
   unfold samplePrimeL
   rcases hs : samplePrime (pairFstD z).length (2 * (pairFstD z).length ^ 2)
