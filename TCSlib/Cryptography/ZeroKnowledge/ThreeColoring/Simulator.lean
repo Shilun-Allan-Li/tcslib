@@ -1223,9 +1223,10 @@ section ColZKAssembly
 variable {Com : List Bool → List Bool} {ℓ : PolyExpr}
 
 /-- **The planted attempt is the hiding view on the planted advice**, conditional on the
-equations `msgAt w i = pairFstD (pairSndD^[i] w)` and `edgeIdxOfMsg m w = |w| % m`, which are
-not published (E-API): with the endpoint commitments, the planted opening and the later attempts'
-outcome `post` hard-wired, `ColZK.hidingView` computes the planted attempt's encoded outcome.
+equations `msgAt w i = pairFstD (pairSndD^[i] w)` and `edgeIdxOfMsg m w = |w| % m` (published
+as `msgAt_eq` and `edgeIdxOfMsg_eq` by PR #210's next round; missing at the fill's base, E-API):
+with the endpoint commitments, the planted opening and the later attempts' outcome `post`
+hard-wired, `ColZK.hidingView` computes the planted attempt's encoded outcome.
 
 **Proof sketch.** `ColZK.hidingView_plantedAdv_none`; the spliced message lists agree entry by
 entry (the two endpoints, then `msgAt` through the first hypothesis), and the restart tests agree
@@ -1635,8 +1636,8 @@ negligible by `Negligible.comp_sqrt`, `Negligible.mul_pow`, `negligible_exp_neg_
 `1`. Use the triangle inequality for `distAdv` (`abs_sub_le`), and `Nat.sqrt |x| = n`
 (`length_encGraph`, `Nat.sqrt_eq`). -/
 theorem col_zk {Com : List Bool → List Bool} {ℓ : PolyExpr} (hC : Commitment Com ℓ) :
-    ZK (colProtocol Com ℓ) R3COL := by
-  sorry
+    ZK (colProtocol Com ℓ) R3COL :=
+  colZK_zk_of_eqs msgAt_eq edgeIdxOfMsg_eq hC
 
 /-- One iteration of [PS10, Protocol 127.5] is honest-verifier zero-knowledge for `R_3COL`
 [PS10, Proposition 128.8 with the honest verifier] (`ZK.hvzk`, `colVerifier_efficient`). -/
