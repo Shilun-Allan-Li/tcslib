@@ -84,6 +84,8 @@ state embeddings, the slice lemma, state relabelling and input locality.
   algebra (proved; pure unfoldings, the nondeterministic counterparts of the vendored
   `runFrom` lemmas).
 * `Turing.NDTM.HaltsWithin.mono` — all-branch halting is monotone in the time bound.
+* `Turing.NDTM.not_haltsWithin_zero` — no machine halts within `0` steps along every branch: the
+  initial configuration is live (the counterpart of `Turing.FinTM.not_computesInTime_zero`).
 * `Turing.MultiTapeTM.toNDTM_runWith` — the embedded deterministic machine ignores its
   choices: every choice word of length `t` reproduces `runFrom` at time `t`.
 * `Turing.NDTM.runWith_mapState_of_agreeOn`, `Turing.NDTM.runWith_mapState_of_agreeOn_det` —
@@ -254,6 +256,23 @@ theorem HaltsWithin.mono {tm : NDTM k Symbol State} {input : List Symbol} {t t' 
   rw [List.take_append_drop, runWith_of_halt _ hhalt] at hrun
   rw [hrun]
   exact hhalt
+
+/-- **No branch halts in zero steps**: on every input, a machine
+does not halt within `0` steps along every branch, `¬ tm.HaltsWithin input 0`, because the empty
+choice word leaves the run at the initial configuration, whose state `some tm.q₀` is live. In
+particular an all-branch time budget of `0` (e.g. from a vanishing time bound) is never met. This
+is the nondeterministic counterpart of `Turing.FinTM.not_computesInTime_zero`.
+
+**Proof sketch.** Apply all-branch halting at budget `0` to the empty choice word: the run under
+it is the initial configuration (`Turing.NDTM.runWith_nil`), which is `Cfg.init` at the start
+state (`Turing.NDTM.initCfg_eq`) and so has state `some tm.q₀` (`Turing.Cfg.init_state`), not
+`none`. -/
+theorem not_haltsWithin_zero (tm : NDTM k Symbol State) (input : List Symbol) :
+    ¬ tm.HaltsWithin input 0 := by
+  intro h
+  have h0 := haltsWithin_iff.mp h [] rfl
+  rw [runWith_nil, initCfg_eq, Cfg.init_state] at h0
+  exact Option.some_ne_none _ h0
 
 end NDTM
 
