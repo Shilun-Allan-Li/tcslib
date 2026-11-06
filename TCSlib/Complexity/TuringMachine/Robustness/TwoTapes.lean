@@ -1609,6 +1609,804 @@ private theorem tt_converse (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 
     rw [tt_HS_init] at hs
     exact (segment_iff _ _ _ _ _ _).1 hseg |>.2.1 t' (by omega) (Set.mem_singleton_iff.mpr hs)
 
+/-! ### Side totals -/
+
+/-- **The side total** of one track below level `n`: the number of cells stored in its right
+zones of levels `< n` (levels not laid out count `0`). -/
+private def tt_rsum {ℓ : ℕ} (z : ZoneContents ℓ) (n : ℕ) : ℕ :=
+  ∑ l ∈ Finset.range n, if h : l < ℓ then (z.right ⟨l, h⟩).length else 0
+
+/-- One more level of the side total. -/
+private theorem tt_rsum_succ {ℓ : ℕ} (z : ZoneContents ℓ) (n : ℕ) (hn : n < ℓ) :
+    tt_rsum z (n + 1) = tt_rsum z n + (z.right ⟨n, hn⟩).length := by
+  rw [tt_rsum, Finset.sum_range_succ, dif_pos hn]
+  rfl
+
+/-- **Below the scanned index, the side total is extreme** [AB09, §1.7]: under fullness, below
+the scanned index `j` of a move in direction `dir` the feeding zones are empty, so the right
+zones of levels `< n ≤ j` hold nothing (a right move) or everything (a left move:
+`2^{n+1} − 2` cells). -/
+private theorem tt_rsum_low {ℓ : ℕ} (dir : Bool) (z : ZoneContents ℓ) (hz : tt_full z) (n : ℕ)
+    (hn : n ≤ zoneShiftIndex dir z) (hnℓ : n ≤ ℓ) :
+    tt_rsum z n = if dir then 0 else 2 ^ (n + 1) - 2 := by
+  induction n with
+  | zero => cases dir <;> rfl
+  | succ n ih =>
+    rw [tt_rsum_succ z n (by omega), ih (by omega) (by omega)]
+    have he := zoneShiftIndex_empty dir z ⟨n, by omega⟩ (by show n < _; omega)
+    cases dir
+    · rw [ZoneContents.words_false] at he
+      have hs := (hz ⟨n, by omega⟩).1
+      rw [he, List.length_nil, zero_add, zoneCapacity_eq] at hs
+      show 2 ^ (n + 1) - 2 + (z.right ⟨n, _⟩).length = 2 ^ (n + 1 + 1) - 2
+      have h1 : 2 ≤ 2 ^ (n + 1) := Nat.le_self_pow (by omega) 2
+      rw [show (z.right ⟨n, _⟩).length = 2 * 2 ^ n from hs, pow_succ, pow_succ]
+      rw [pow_succ] at h1
+      omega
+    · rw [ZoneContents.words_true] at he
+      show 0 + (z.right ⟨n, _⟩).length = 0
+      rw [he]
+      rfl
+
+/-- **A right rebalance moves one cell off the right side** [AB09, §1.7]: under fullness, with
+scanned index `j < ℓ`, the rebalanced side total below `n` is `2^n − 1` for `n ≤ j` (the levels
+below `j` half full), and one less than before for `j < n ≤ ℓ`.
+
+**Proof sketch.** Induction on `n`, reading the levels through `tt_full_rebalance_true` below
+`j`, `Turing.zoneCascadeRight_lengths` at `j` (the donor loses `2^j` cells, which fill the
+`2^j − 1` cells below and the home), and `Turing.zoneRebalance_frame` above `j`. -/
+private theorem tt_rsum_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex true z < ℓ) (n : ℕ) (hnℓ : n ≤ ℓ) :
+    (n ≤ zoneShiftIndex true z → tt_rsum (zoneRebalance true z) n = 2 ^ n - 1) ∧
+      (zoneShiftIndex true z < n → tt_rsum (zoneRebalance true z) n + 1 = tt_rsum z n) := by
+  set j := zoneShiftIndex true z with hj
+  have hlow := (tt_full_rebalance_true z hz h).2
+  have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame true z k hk
+  have hz0 := tt_rsum_low true z hz j le_rfl h.le
+  obtain ⟨hl, hroom⟩ := tt_full_pre_true z hz h
+  have hr : ∀ k (hk : k < j), z.right ⟨k, hk.trans h⟩ = [] := fun k hk => by
+    have := zoneShiftIndex_empty true z ⟨k, hk.trans h⟩ hk
+    rwa [ZoneContents.words_true] at this
+  have hne : z.right ⟨j, h⟩ ≠ [] := by
+    have := zoneShiftIndex_nonempty true z h
+    rwa [ZoneContents.words_true] at this
+  have hpos : 0 < (z.right ⟨j, h⟩).length := List.length_pos_iff.mpr hne
+  have hcas := zoneCascadeRight_lengths j h z hr hl
+  clear hr
+  induction n with
+  | zero => exact ⟨fun _ => rfl, fun h' => absurd h' (Nat.not_lt_zero _)⟩
+  | succ n ih =>
+    obtain ⟨ih₁, ih₂⟩ := ih (by omega)
+    rw [tt_rsum_succ _ n (by omega), tt_rsum_succ z n (by omega)]
+    refine ⟨fun hn => ?_, fun hn => ?_⟩
+    · rw [ih₁ (by omega), (hlow ⟨n, by omega⟩ (by show n < j; omega)).2]
+      show 2 ^ n - 1 + 2 ^ n = 2 ^ (n + 1) - 1
+      have := Nat.one_le_two_pow (n := n)
+      rw [pow_succ]
+      omega
+    · rcases Nat.lt_or_ge j n with hjn | hjn
+      · rw [(hframe ⟨n, by omega⟩ hjn).2, ← ih₂ hjn]
+        omega
+      · have hnj : n = j := by omega
+        have hfin : (⟨n, (by omega : n < ℓ)⟩ : Fin ℓ) = ⟨j, h⟩ := Fin.ext hnj
+        have hdonor : 2 ^ j ≤ (z.right ⟨j, h⟩).length := by
+          obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+          have hc := zoneCapacity_eq j
+          have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+              (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+          rcases hcase' with h0 | h0 | h0 <;> omega
+        obtain ⟨-, hjr, -⟩ := hcas hdonor hroom
+        have hj' : ((zoneRebalance true z).right ⟨j, h⟩).length =
+            (z.right ⟨j, h⟩).length - 2 ^ j := by
+          rw [zoneRebalance_of_lt true z h, zoneCascade_true]
+          exact hjr
+        have hz0' : tt_rsum z j = 0 := by rw [hz0]; rfl
+        rw [hfin, ih₁ hnj.le, hnj, hz0', hj']
+        have := Nat.one_le_two_pow (n := j)
+        omega
+
+/-- **A left rebalance moves one cell onto the right side**: the mirror of
+`tt_rsum_rebalance_true`; the side total below `n ≤ j` is `2^n − 1`, and for `j < n ≤ ℓ` it is
+one more than before.
+
+**Proof sketch.** As for `tt_rsum_rebalance_true`, with `tt_full_rebalance_false` below the
+index, `Turing.zoneCascadeLeft_lengths` at it (the right zone gains `2^j` cells, while the right
+zones below drop from full to half: `2^{j+1} − 2` cells become `2^j − 1`), and
+`Turing.zoneRebalance_frame` above. -/
+private theorem tt_rsum_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex false z < ℓ) (n : ℕ) (hnℓ : n ≤ ℓ) :
+    (n ≤ zoneShiftIndex false z → tt_rsum (zoneRebalance false z) n = 2 ^ n - 1) ∧
+      (zoneShiftIndex false z < n → tt_rsum (zoneRebalance false z) n = tt_rsum z n + 1) := by
+  set j := zoneShiftIndex false z with hj
+  have hlow := (tt_full_rebalance_false z hz h).2
+  have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame false z k hk
+  have hz0 := tt_rsum_low false z hz j le_rfl h.le
+  obtain ⟨hr, hroom⟩ := tt_full_pre_false z hz h
+  have hl : ∀ k (hk : k < j), z.left ⟨k, hk.trans h⟩ = [] := fun k hk => by
+    have := zoneShiftIndex_empty false z ⟨k, hk.trans h⟩ hk
+    rwa [ZoneContents.words_false] at this
+  have hne : z.left ⟨j, h⟩ ≠ [] := by
+    have := zoneShiftIndex_nonempty false z h
+    rwa [ZoneContents.words_false] at this
+  have hpos : 0 < (z.left ⟨j, h⟩).length := List.length_pos_iff.mpr hne
+  have hcas := zoneCascadeLeft_lengths j h z hl hr
+  clear hl
+  induction n with
+  | zero => exact ⟨fun _ => rfl, fun h' => absurd h' (Nat.not_lt_zero _)⟩
+  | succ n ih =>
+    obtain ⟨ih₁, ih₂⟩ := ih (by omega)
+    rw [tt_rsum_succ _ n (by omega), tt_rsum_succ z n (by omega)]
+    refine ⟨fun hn => ?_, fun hn => ?_⟩
+    · rw [ih₁ (by omega), (hlow ⟨n, by omega⟩ (by show n < j; omega)).2]
+      show 2 ^ n - 1 + 2 ^ n = 2 ^ (n + 1) - 1
+      have := Nat.one_le_two_pow (n := n)
+      rw [pow_succ]
+      omega
+    · rcases Nat.lt_or_ge j n with hjn | hjn
+      · rw [(hframe ⟨n, by omega⟩ hjn).2, ih₂ hjn]
+        omega
+      · have hnj : n = j := by omega
+        have hfin : (⟨n, (by omega : n < ℓ)⟩ : Fin ℓ) = ⟨j, h⟩ := Fin.ext hnj
+        have hdonor : 2 ^ j ≤ (z.left ⟨j, h⟩).length := by
+          obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+          have hc := zoneCapacity_eq j
+          have hsum' : (z.left ⟨j, h⟩).length + (z.right ⟨j, h⟩).length = zoneCapacity j := hsum
+          have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+              (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+          rcases hcase' with h0 | h0 | h0 <;> omega
+        obtain ⟨-, -, hjr⟩ := hcas hdonor hroom
+        have hj' : ((zoneRebalance false z).right ⟨j, h⟩).length =
+            (z.right ⟨j, h⟩).length + 2 ^ j := by
+          rw [zoneRebalance_of_lt false z h, zoneCascade_false]
+          exact hjr
+        have hz0' : tt_rsum z j = 2 ^ (j + 1) - 2 := by rw [hz0]; rfl
+        rw [hfin, ih₁ hnj.le, hnj, hz0', hj']
+        have := Nat.one_le_two_pow (n := j)
+        rw [pow_succ]
+        omega
+
+/-- The home write keeps every side total. -/
+private theorem tt_rsum_homeWrite {ℓ : ℕ} (z : ZoneContents ℓ) (v : Option Bool) (n : ℕ) :
+    tt_rsum (zoneHomeWrite z v) n = tt_rsum z n := by
+  unfold tt_rsum
+  simp only [zoneHomeWrite_right]
+
+/-- **The extension keeps the side totals of the old levels and adds `2^ℓ` at the new one**
+(`Turing.ZoneContents.extend_words_castSucc`, `_last`). -/
+private theorem tt_rsum_extend {ℓ : ℕ} (z : ZoneContents ℓ) :
+    (∀ n ≤ ℓ, tt_rsum z.extend n = tt_rsum z n) ∧
+      tt_rsum z.extend (ℓ + 1) = tt_rsum z ℓ + 2 ^ ℓ := by
+  have hold : ∀ n ≤ ℓ, tt_rsum z.extend n = tt_rsum z n := by
+    intro n hn
+    refine Finset.sum_congr rfl fun l hl => ?_
+    have hl' : l < ℓ := by have := Finset.mem_range.mp hl; omega
+    rw [dif_pos hl', dif_pos (by omega)]
+    have := ZoneContents.extend_words_castSucc true z ⟨l, hl'⟩
+    rw [ZoneContents.words_true, ZoneContents.words_true] at this
+    exact congrArg List.length this
+  refine ⟨hold, ?_⟩
+  rw [tt_rsum_succ _ ℓ (Nat.lt_succ_self ℓ), hold ℓ le_rfl]
+  have := ZoneContents.extend_words_last true z
+  rw [ZoneContents.words_true] at this
+  rw [show (⟨ℓ, Nat.lt_succ_self ℓ⟩ : Fin (ℓ + 1)) = Fin.last ℓ from rfl, this,
+    List.length_replicate]
+
+/-- **One track's step on the side totals** [AB09, §1.7]. Under fullness, with `j` the scanned
+index of track `t`'s step in direction `dir` and `ℓ = D.1`:
+* track `t`'s side totals below `n ≤ min ℓ j` become `2^n − 1`;
+* for `j < n ≤ ℓ` they move by the head's displacement (`tt_shift dir` cells leave the right
+  side);
+* its whole side total moves by the displacement, plus `2^ℓ` after an extension;
+* every other track keeps its side totals below `ℓ`, and its whole side total gains `2^ℓ` after
+  an extension;
+* the level count is `ℓ`, or `ℓ + 1` after an extension.
+
+**Proof sketch.** With a nonempty feeding zone (`Turing.zoneTrackStepData_of_lt`,
+`Turing.zoneRebalanceData_eq`) this is `tt_rsum_rebalance_true`/`_false` on track `t` and
+`Function.update_of_ne` elsewhere. Otherwise (`Turing.zoneTrackStepData_of_not_lt`,
+`Turing.zoneExtendData_eq`) the scanned index is `ℓ`, every track is extended
+(`tt_rsum_extend`), and track `t` is rebalanced at the new level `ℓ`
+(`Turing.zoneShiftIndex_extend`, `tt_full_extend`). -/
+private theorem tt_trackStep_rsum {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k)
+    (hD : tt_fullD D) :
+    (∀ n, n ≤ D.1 → n ≤ zoneRebalanceIndex dir t D →
+      tt_rsum ((zoneTrackStepData dir t D).2 t) n = 2 ^ n - 1) ∧
+    (∀ n, n ≤ D.1 → zoneRebalanceIndex dir t D < n →
+      (tt_rsum ((zoneTrackStepData dir t D).2 t) n : ℤ) = tt_rsum (D.2 t) n - tt_shift dir) ∧
+    ((tt_rsum ((zoneTrackStepData dir t D).2 t) (zoneTrackStepData dir t D).1 : ℤ) =
+      tt_rsum (D.2 t) D.1 - tt_shift dir +
+        (if zoneRebalanceIndex dir t D < D.1 then 0 else 2 ^ D.1)) ∧
+    (∀ t', t' ≠ t →
+      (∀ n, n ≤ D.1 → tt_rsum ((zoneTrackStepData dir t D).2 t') n = tt_rsum (D.2 t') n) ∧
+      tt_rsum ((zoneTrackStepData dir t D).2 t') (zoneTrackStepData dir t D).1 =
+        tt_rsum (D.2 t') D.1 + (if zoneRebalanceIndex dir t D < D.1 then 0 else 2 ^ D.1)) ∧
+    (zoneTrackStepData dir t D).1 =
+      (if zoneRebalanceIndex dir t D < D.1 then D.1 else D.1 + 1) := by
+  have hreb : ∀ {ℓ : ℕ} (z : ZoneContents ℓ), tt_full z → zoneShiftIndex dir z < ℓ →
+      ∀ n, n ≤ ℓ → (n ≤ zoneShiftIndex dir z → tt_rsum (zoneRebalance dir z) n = 2 ^ n - 1) ∧
+        (zoneShiftIndex dir z < n →
+          (tt_rsum (zoneRebalance dir z) n : ℤ) = tt_rsum z n - tt_shift dir) := by
+    intro ℓ z hz h n hn
+    cases dir
+    · obtain ⟨h1, h2⟩ := tt_rsum_rebalance_false z hz h n hn
+      refine ⟨h1, fun h' => ?_⟩
+      rw [h2 h']
+      push_cast
+      show _ = _ - (-1 : ℤ)
+      ring
+    · obtain ⟨h1, h2⟩ := tt_rsum_rebalance_true z hz h n hn
+      refine ⟨h1, fun h' => ?_⟩
+      rw [← h2 h']
+      push_cast
+      show _ = _ - (1 : ℤ)
+      ring
+  rw [zoneRebalanceIndex_eq]
+  by_cases hlt : zoneShiftIndex dir (D.2 t) < D.1
+  · have hlt' : zoneRebalanceIndex dir t D < D.1 := by rwa [zoneRebalanceIndex_eq]
+    rw [zoneTrackStepData_of_lt dir t hlt', zoneRebalanceData_eq]
+    simp only [if_pos hlt, Function.update_self]
+    refine ⟨fun n hn hj => (hreb _ (hD t) hlt n hn).1 hj, fun n hn hj => (hreb _ (hD t) hlt n hn).2 hj,
+      ?_, fun t' ht' => ?_, trivial⟩
+    · rw [(hreb _ (hD t) hlt D.1 le_rfl).2 hlt, add_zero]
+    · rw [Function.update_of_ne ht', add_zero]
+      exact ⟨fun _ _ => rfl, rfl⟩
+  · have hlt' : ¬ zoneRebalanceIndex dir t D < D.1 := by rwa [zoneRebalanceIndex_eq]
+    have hidx : zoneShiftIndex dir (D.2 t) = D.1 :=
+      le_antisymm (zoneShiftIndex_le dir (D.2 t)) (not_lt.mp hlt)
+    have hidx' := zoneShiftIndex_extend dir (D.2 t) hidx
+    have hfull' := tt_full_extend _ (hD t)
+    have hlt₂ : zoneShiftIndex dir (D.2 t).extend < D.1 + 1 := by rw [hidx']; exact Nat.lt_succ_self _
+    rw [zoneTrackStepData_of_not_lt dir t hlt', zoneRebalanceData_eq, zoneExtendData_eq]
+    simp only [if_neg hlt, Function.update_self]
+    refine ⟨fun n hn _ => (hreb _ hfull' hlt₂ n (by omega)).1 (by rw [hidx']; exact hn),
+      fun n hn hj => absurd hj (by rw [hidx]; omega), ?_, fun t' ht' => ?_, trivial⟩
+    · rw [(hreb _ hfull' hlt₂ (D.1 + 1) le_rfl).2 (by rw [hidx']; exact Nat.lt_succ_self _),
+        (tt_rsum_extend (D.2 t)).2]
+      push_cast
+      ring
+    · rw [Function.update_of_ne ht']
+      exact ⟨fun n hn => (tt_rsum_extend (D.2 t')).1 n hn, (tt_rsum_extend (D.2 t')).2⟩
+
+/-! ### Side totals through a round -/
+
+/-- The tracks' steps never lower the level count. -/
+private theorem tt_Dtr_level_mono {k : ℕ} (m : Fin k → SignType) (H : ZoneData k) (j₁ : ℕ) :
+    ∀ j₂, j₁ ≤ j₂ → (tt_Dtr m H j₁).1 ≤ (tt_Dtr m H j₂).1 := by
+  intro j₂ hj
+  induction j₂, hj using Nat.le_induction with
+  | base => exact le_rfl
+  | succ j _ ih =>
+    refine ih.trans ?_
+    by_cases h : j < k
+    · rw [show tt_Dtr m H (j + 1) = tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) from dif_pos h]
+      by_cases h0 : m ⟨j, h⟩ = 0
+      · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) = tt_Dtr m H j from if_pos h0]
+      · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) =
+          zoneTrackStepData (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) from if_neg h0]
+        by_cases hlt : zoneRebalanceIndex (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) <
+            (tt_Dtr m H j).1
+        · rw [zoneTrackStepData_of_lt _ _ hlt, zoneRebalanceData_eq]
+        · rw [zoneTrackStepData_of_not_lt _ _ hlt, zoneRebalanceData_eq, zoneExtendData_eq]
+          exact Nat.le_succ _
+    · rw [show tt_Dtr m H (j + 1) = tt_Dtr m H j from dif_neg h]
+
+/-- **The other tracks' steps keep a track's side totals** below a laid-out level `n`: from
+`j₁` to `j₂` the steps of tracks other than `t` change no side total of track `t` below `n`. -/
+private theorem tt_Dtr_other {k : ℕ} (m : Fin k → SignType) (H : ZoneData k) (hH : tt_fullD H)
+    (t : Fin k) (n j₁ : ℕ) (hn : n ≤ (tt_Dtr m H j₁).1) :
+    ∀ j₂, j₁ ≤ j₂ → (t.val < j₁ ∨ j₂ ≤ t.val) →
+      tt_rsum ((tt_Dtr m H j₂).2 t) n = tt_rsum ((tt_Dtr m H j₁).2 t) n := by
+  intro j₂ hj
+  induction j₂, hj using Nat.le_induction with
+  | base => exact fun _ => rfl
+  | succ j hj ih =>
+    intro hc
+    rw [← ih (by omega)]
+    have hlev := tt_Dtr_level_mono m H j₁ j hj
+    by_cases h : j < k
+    · rw [show tt_Dtr m H (j + 1) = tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) from dif_pos h]
+      by_cases h0 : m ⟨j, h⟩ = 0
+      · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) = tt_Dtr m H j from if_pos h0]
+      · rw [show tt_trackData (m ⟨j, h⟩) ⟨j, h⟩ (tt_Dtr m H j) =
+          zoneTrackStepData (tt_dir (m ⟨j, h⟩)) ⟨j, h⟩ (tt_Dtr m H j) from if_neg h0]
+        have ht : t ≠ ⟨j, h⟩ := fun he => by rw [he] at hc; simp at hc; omega
+        exact ((tt_trackStep_rsum _ _ _ (tt_Dtr_inv m H hH j).1).2.2.2.1 t ht).1 n (by omega)
+    · rw [show tt_Dtr m H (j + 1) = tt_Dtr m H j from dif_neg h]
+
+/-- The scanned index of track `t`'s step in the round with action `a` from data `D`. -/
+private def tt_idxA {k : ℕ} {S : Type} (a : Action k Bool S) (D : ZoneData k) (t : Fin k) : ℕ :=
+  tt_idx (tt_moves a t) t (tt_Dtr (tt_moves a) (tt_homeData a D) t.val)
+
+/-- Track `t`'s own step in a round: the data after it are its step from the data before. -/
+private theorem tt_Dtr_own {k : ℕ} (m : Fin k → SignType) (H : ZoneData k) (t : Fin k) :
+    tt_Dtr m H (t.val + 1) = tt_trackData (m t) t (tt_Dtr m H t.val) :=
+  dif_pos t.isLt
+
+/-- **One round on track `t`'s side totals below a level `n ≥ 1`** [AB09, §1.7]. With `D` full,
+the round's action `a`, its data `D'` and track `t`'s scanned index `i₀`:
+* if `n ≤ i₀`, then `D'` has its levels below `n` laid out and half full on track `t`: the side
+  total below `n` is `2^n − 1`;
+* if `n ≤ D.1` and `n ≤ i₀`, the side total below `n` before the round is `0` or `2^{n+1} − 2`;
+* if `n ≤ D.1` and `i₀ < n`, the round changes it by at most one;
+* the level count never drops, and bounds `i₀` after the round.
+
+**Proof sketch.** The home write and the other tracks' steps keep track `t`'s side totals below
+a laid-out level (`tt_rsum_homeWrite`, `tt_Dtr_other`); track `t`'s own step is
+`tt_trackStep_rsum` (a stay changes nothing and has index `0`), and the scanned zones below a
+large index are empty or full (`tt_rsum_low`). -/
+private theorem tt_round_rsum {k : ℕ} {S : Type} (a : Action k Bool S) (D : ZoneData k)
+    (hD : tt_fullD D) (t : Fin k) (n : ℕ) (hn1 : 1 ≤ n) :
+    (n ≤ tt_idxA a D t → tt_rsum ((tt_roundData a D).2 t) n = 2 ^ n - 1 ∧
+      n ≤ (tt_roundData a D).1) ∧
+    (n ≤ D.1 → n ≤ tt_idxA a D t →
+      tt_rsum (D.2 t) n = 0 ∨ tt_rsum (D.2 t) n = 2 ^ (n + 1) - 2) ∧
+    (n ≤ D.1 → tt_idxA a D t < n →
+      (tt_rsum ((tt_roundData a D).2 t) n : ℤ) ≤ tt_rsum (D.2 t) n + 1 ∧
+        (tt_rsum (D.2 t) n : ℤ) ≤ tt_rsum ((tt_roundData a D).2 t) n + 1) ∧
+    D.1 ≤ (tt_roundData a D).1 ∧ tt_idxA a D t ≤ (tt_roundData a D).1 := by
+  set m := tt_moves a with hm
+  set H := tt_homeData a D with hH
+  have hHf : tt_fullD H := (tt_homeData_inv a D hD).1
+  have hH1 : H.1 = D.1 := rfl
+  have hHr : ∀ n, tt_rsum (H.2 t) n = tt_rsum (D.2 t) n := fun n => tt_rsum_homeWrite _ _ n
+  set E := tt_Dtr m H t.val with hE
+  have hEf : tt_fullD E := (tt_Dtr_inv m H hHf t.val).1
+  have hEl : D.1 ≤ E.1 := tt_Dtr_level_mono m H 0 t.val (Nat.zero_le _)
+  have hE'l : E.1 ≤ (tt_Dtr m H (t.val + 1)).1 := tt_Dtr_level_mono m H _ _ (Nat.le_succ _)
+  have hDl : (tt_Dtr m H (t.val + 1)).1 ≤ (tt_roundData a D).1 :=
+    tt_Dtr_level_mono m H _ k t.isLt
+  have hEr : n ≤ D.1 → tt_rsum (E.2 t) n = tt_rsum (D.2 t) n := fun hnD => by
+    rw [hE, tt_Dtr_other m H hHf t n 0 hnD t.val (Nat.zero_le _) (Or.inr le_rfl)]
+    exact hHr n
+  have hD'r : n ≤ (tt_Dtr m H (t.val + 1)).1 → tt_rsum ((tt_roundData a D).2 t) n =
+      tt_rsum ((tt_Dtr m H (t.val + 1)).2 t) n := fun hn =>
+    tt_Dtr_other m H hHf t n (t.val + 1) hn k t.isLt (Or.inl (Nat.lt_succ_self _))
+  have hown := tt_Dtr_own m H t
+  have hidx : tt_idxA a D t = tt_idx (m t) t E := rfl
+  by_cases h0 : m t = 0
+  · have hi0 : tt_idxA a D t = 0 := by rw [hidx]; exact if_pos h0
+    rw [show tt_trackData (m t) t E = E from if_pos h0] at hown
+    refine ⟨fun h => absurd h (by omega), fun _ h => absurd h (by omega), fun hnD _ => ?_,
+      by rw [← hH1]; exact hEl.trans (hE'l.trans hDl), by rw [hi0]; exact Nat.zero_le _⟩
+    rw [hD'r (by rw [hown]; omega), hown, hEr hnD]
+    constructor <;> omega
+  · set dir := tt_dir (m t)
+    have hi : tt_idxA a D t = zoneRebalanceIndex dir t E := by rw [hidx]; exact if_neg h0
+    rw [show tt_trackData (m t) t E = zoneTrackStepData dir t E from if_neg h0] at hown
+    obtain ⟨c1, c2, -, -, -⟩ := tt_trackStep_rsum dir t E hEf
+    have hiE : zoneRebalanceIndex dir t E ≤ E.1 := zoneRebalanceIndex_le dir t E
+    refine ⟨fun hni => ?_, fun hnD hni => ?_, fun hnD hni => ?_,
+      by rw [← hH1]; exact hEl.trans (hE'l.trans hDl), ?_⟩
+    · rw [hi] at hni
+      have hlev : n ≤ (tt_Dtr m H (t.val + 1)).1 := (hni.trans hiE).trans hE'l
+      refine ⟨?_, hlev.trans hDl⟩
+      rw [hD'r hlev, hown]
+      exact c1 n (hni.trans hiE) hni
+    · rw [← hEr hnD]
+      rw [hi, zoneRebalanceIndex_eq] at hni
+      have hl := tt_rsum_low dir (E.2 t) (hEf t) n hni (by omega)
+      cases hdir : dir
+      · rw [hdir, if_neg (by simp)] at hl
+        exact Or.inr hl
+      · rw [hdir, if_pos rfl] at hl
+        exact Or.inl hl
+    · rw [hi] at hni
+      have hlev : n ≤ (tt_Dtr m H (t.val + 1)).1 := by omega
+      rw [hD'r hlev, hown, c2 n (by omega) hni, hEr hnD]
+      have : tt_shift dir = 1 ∨ tt_shift dir = -1 := by cases dir <;> simp [tt_shift]
+      rcases this with hs | hs <;> rw [hs] <;> constructor <;> omega
+    · rw [hi]
+      exact hiE.trans (hE'l.trans hDl)
+
+/-! ### Counting the expensive steps -/
+
+/-- **Sparse sets of times are small**: a set of times below `T` any two of which are at least
+`g ≥ 1` apart has at most `T / g + 1` elements.
+
+**Proof sketch.** Division by `g` is injective on the set, since two of its elements differ by
+at least `g`, and maps it into `{0, …, T / g}`. -/
+private theorem tt_card_le_of_gap (T g : ℕ) (hg : 0 < g) (S : Finset ℕ)
+    (hS : ∀ a ∈ S, a < T) (hgap : ∀ a ∈ S, ∀ b ∈ S, a < b → a + g ≤ b) :
+    S.card ≤ T / g + 1 := by
+  have hstep : ∀ a ∈ S, ∀ b ∈ S, a < b → a / g < b / g := by
+    intro a ha b hb hab
+    have h := hgap a ha b hb hab
+    calc a / g < a / g + 1 := Nat.lt_succ_self _
+      _ = (a + g) / g := (Nat.add_div_right a hg).symm
+      _ ≤ b / g := Nat.div_le_div_right h
+  have hinj : Set.InjOn (fun a => a / g) S := by
+    intro a ha b hb hab
+    by_contra hne
+    rcases lt_or_gt_of_ne hne with h | h
+    · exact absurd hab (hstep a ha b hb h).ne
+    · exact absurd hab (hstep b hb a ha h).ne'
+  calc S.card = (S.image fun a => a / g).card := (Finset.card_image_of_injOn hinj).symm
+    _ ≤ (Finset.range (T / g + 1)).card := Finset.card_le_card fun y hy => by
+        obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hy
+        exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Nat.div_le_div_right (hS a ha).le))
+    _ = T / g + 1 := Finset.card_range _
+
+/-! ### The count and level bounds over the run -/
+
+/-- The scanned index of track `t`'s step in round `r` of the simulation of `M` on `x`
+(`0` once `M` has halted). -/
+private def tt_idxR (M : FinTM Bool) (x : List Bool) (t : Fin M.k) (r : ℕ) : ℕ :=
+  match (tt_c M x r).state with
+  | some q => tt_idxA (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r) t
+  | none => 0
+
+/-- **Track `t`'s side totals below `n ≥ 1` over one round of the run**: `tt_round_rsum` at a
+live time. -/
+private theorem tt_orbit_rsum (M : FinTM Bool) (x : List Bool) (r : ℕ)
+    (hr : (tt_c M x r).state ≠ none) (t : Fin M.k) (n : ℕ) (hn1 : 1 ≤ n) :
+    (n ≤ tt_idxR M x t r → tt_rsum ((tt_D M x (r + 1)).2 t) n = 2 ^ n - 1 ∧
+      n ≤ (tt_D M x (r + 1)).1) ∧
+    (n ≤ (tt_D M x r).1 → n ≤ tt_idxR M x t r →
+      tt_rsum ((tt_D M x r).2 t) n = 0 ∨ tt_rsum ((tt_D M x r).2 t) n = 2 ^ (n + 1) - 2) ∧
+    (n ≤ (tt_D M x r).1 → tt_idxR M x t r < n →
+      (tt_rsum ((tt_D M x (r + 1)).2 t) n : ℤ) ≤ tt_rsum ((tt_D M x r).2 t) n + 1 ∧
+        (tt_rsum ((tt_D M x r).2 t) n : ℤ) ≤ tt_rsum ((tt_D M x (r + 1)).2 t) n + 1) ∧
+    (tt_D M x r).1 ≤ (tt_D M x (r + 1)).1 ∧ tt_idxR M x t r ≤ (tt_D M x (r + 1)).1 := by
+  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hr
+  have hidx : tt_idxR M x t r =
+      tt_idxA (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r) t := by
+    show (match (tt_c M x r).state with
+      | some q => _
+      | none => 0) = _
+    rw [hq]
+  rw [tt_D_succ M x r q hq, hidx]
+  exact tt_round_rsum _ _ (tt_D_inv M x r).1 t n hn1
+
+/-- **The count hypothesis** [AB09, §1.7; the book's amortization]: in a run of `T` live
+rounds, track `t`'s steps of scanned index above `i` number at most `T / 2^i + 1`.
+
+**Proof sketch.** After such a step the levels `0, …, i` of track `t` are half full: its side
+total below `i + 1` is `2^{i+1} − 1` (`tt_orbit_rsum`). Each later round changes it by at most
+one, or resets it to `2^{i+1} − 1` after another such step; and such a step needs it to be `0`
+or `2^{i+2} − 2`. So two such steps are at least `2^{i+1}` rounds apart, and
+`tt_card_le_of_gap` counts them. -/
+private theorem tt_count (M : FinTM Bool) (x : List Bool) (T : ℕ)
+    (hT : ∀ r < T, (tt_c M x r).state ≠ none) (t : Fin M.k) (i : ℕ) :
+    ((Finset.range T).filter (fun s => i < tt_idxR M x t s)).card ≤ T / 2 ^ i + 1 := by
+  set n := i + 1 with hn
+  have hn1 : 1 ≤ n := Nat.le_add_left 1 i
+  refine tt_card_le_of_gap T (2 ^ i) (Nat.two_pow_pos i) _
+    (fun a ha => Finset.mem_range.mp (Finset.mem_filter.mp ha).1) fun a ha b hb hab => ?_
+  obtain ⟨haT, hai⟩ := Finset.mem_filter.mp ha
+  obtain ⟨hbT, hbi⟩ := Finset.mem_filter.mp hb
+  rw [Finset.mem_range] at haT hbT
+  have F := fun r (hr : r < T) => tt_orbit_rsum M x r (hT r hr) t n hn1
+  obtain ⟨hVa, hla⟩ := (F a haT).1 hai
+  -- the levels below `n` stay laid out after round `a`
+  have hlev : ∀ r, a + 1 ≤ r → r ≤ b → n ≤ (tt_D M x r).1 := by
+    intro r hr
+    induction r, hr using Nat.le_induction with
+    | base => exact fun _ => hla
+    | succ r hr ih => exact fun hrb => (ih (by omega)).trans (F r (by omega)).2.2.2.1
+  -- the side total drifts by at most one per round
+  have hdrift : ∀ r, a + 1 ≤ r → r ≤ b →
+      ((tt_rsum ((tt_D M x r).2 t) n : ℤ) - (2 ^ n - 1) ≤ r - (a + 1) ∧
+        ((2 ^ n - 1 : ℤ) - tt_rsum ((tt_D M x r).2 t) n ≤ r - (a + 1))) := by
+    intro r hr
+    induction r, hr using Nat.le_induction with
+    | base =>
+      intro _
+      rw [hVa]
+      have := Nat.one_le_two_pow (n := n)
+      push_cast [Nat.cast_sub this]
+      constructor <;> omega
+    | succ r hr ih =>
+      intro hrb
+      obtain ⟨ih₁, ih₂⟩ := ih (by omega)
+      by_cases hbig : n ≤ tt_idxR M x t r
+      · rw [((F r (by omega)).1 hbig).1]
+        have := Nat.one_le_two_pow (n := n)
+        push_cast [Nat.cast_sub this]
+        constructor <;> omega
+      · obtain ⟨d₁, d₂⟩ := (F r (by omega)).2.2.1 (hlev r hr (by omega)) (by omega)
+        push_cast
+        constructor <;> omega
+  obtain ⟨e₁, e₂⟩ := hdrift b (by omega) le_rfl
+  have hb := (F b hbT).2.1 (hlev b (by omega) le_rfl) hbi
+  have h2 : 2 ≤ 2 ^ n := Nat.le_self_pow (by omega) 2
+  have hpow : 2 ^ n = 2 * 2 ^ i := by rw [hn, pow_succ]; ring
+  rcases hb with hb | hb
+  · rw [hb] at e₂
+    push_cast at e₂
+    have : (2 : ℤ) ^ n = 2 * 2 ^ i := by exact_mod_cast hpow
+    have : (1 : ℤ) ≤ 2 ^ i := by exact_mod_cast Nat.one_le_two_pow
+    have key : (a : ℤ) + 2 ^ i ≤ b := by omega
+    exact_mod_cast key
+  · rw [hb] at e₁
+    have h4 : 2 ≤ 2 ^ (n + 1) := Nat.le_self_pow (by omega) 2
+    push_cast [Nat.cast_sub h4] at e₁
+    have : (2 : ℤ) ^ n = 2 * 2 ^ i := by exact_mod_cast hpow
+    have : (2 : ℤ) ^ (n + 1) = 2 * 2 ^ n := by ring
+    have : (1 : ℤ) ≤ 2 ^ i := by exact_mod_cast Nat.one_le_two_pow
+    have key : (a : ℤ) + 2 ^ i ≤ b := by omega
+    exact_mod_cast key
+
+/-- **The displacement invariant through a round** [AB09, §1.7]. If every track's whole side
+total plus its head's displacement `pos t` is `2^{D.1} − 1`, and every displacement is at most
+`r`, then after the round with action `a` the same holds with the displacements moved by the
+heads' moves, and the level count `ℓ'` satisfies `2^{ℓ'} ≤ max (2^{D.1}) (2 (r + 1))`: an
+extension at level `ℓ` needs every feeding zone empty, so a displacement of `2^ℓ − 1`.
+
+**Proof sketch.** Induction over the round's tracks. A move changes its track's side total by
+the opposite of its displacement (`tt_trackStep_rsum`, `tt_shift_dir`), and an extension adds
+`2^ℓ` to every track's side total and to `2^ℓ − 1`. A short scan has an extreme side total
+(`tt_rsum_low`: `0` or `2^{ℓ+1} − 2`), so `|pos t| = 2^ℓ − 1 ≤ r`. -/
+private theorem tt_round_disp {k : ℕ} {S : Type} (a : Action k Bool S) (D : ZoneData k)
+    (hD : tt_fullD D) (pos : Fin k → ℤ) (r : ℕ)
+    (hQ : ∀ t, (tt_rsum (D.2 t) D.1 : ℤ) + pos t = 2 ^ D.1 - 1) (hpos : ∀ t, |pos t| ≤ r) :
+    (∀ t, (tt_rsum ((tt_roundData a D).2 t) (tt_roundData a D).1 : ℤ) +
+      (pos t + (tt_moves a t : ℤ)) = 2 ^ (tt_roundData a D).1 - 1) ∧
+    2 ^ (tt_roundData a D).1 ≤ max (2 ^ D.1) (2 * (r + 1)) := by
+  set m := tt_moves a
+  set H := tt_homeData a D
+  have hHf : tt_fullD H := (tt_homeData_inv a D hD).1
+  have key : ∀ j, (∀ t, (tt_rsum ((tt_Dtr m H j).2 t) (tt_Dtr m H j).1 : ℤ) + pos t +
+      (if t.val < j then (m t : ℤ) else 0) = 2 ^ (tt_Dtr m H j).1 - 1) ∧
+      2 ^ (tt_Dtr m H j).1 ≤ max (2 ^ D.1) (2 * (r + 1)) := by
+    intro j
+    induction j with
+    | zero =>
+      refine ⟨fun t => ?_, le_max_left _ _⟩
+      rw [if_neg (Nat.not_lt_zero _), add_zero]
+      show (tt_rsum (zoneHomeWrite (D.2 t) _) D.1 : ℤ) + pos t = 2 ^ D.1 - 1
+      rw [tt_rsum_homeWrite]
+      exact hQ t
+    | succ j ih =>
+      obtain ⟨ih₁, ih₂⟩ := ih
+      by_cases hj : j < k
+      · rw [show tt_Dtr m H (j + 1) = tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m H j)
+          from dif_pos hj]
+        set E := tt_Dtr m H j
+        have hEf : tt_fullD E := (tt_Dtr_inv m H hHf j).1
+        by_cases h0 : m ⟨j, hj⟩ = 0
+        · rw [show tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ E = E from if_pos h0]
+          refine ⟨fun t => ?_, ih₂⟩
+          rw [← ih₁ t]
+          by_cases ht : t = ⟨j, hj⟩
+          · subst ht
+            rw [if_pos (Nat.lt_succ_self j), if_neg (lt_irrefl j), h0]
+            simp
+          · have : t.val ≠ j := fun h => ht (Fin.ext h)
+            by_cases htj : t.val < j
+            · rw [if_pos htj, if_pos (by omega)]
+            · rw [if_neg htj, if_neg (by omega)]
+        · set dir := tt_dir (m ⟨j, hj⟩)
+          rw [show tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ E = zoneTrackStepData dir ⟨j, hj⟩ E
+            from if_neg h0]
+          obtain ⟨-, -, c3, c4, c5⟩ := tt_trackStep_rsum dir ⟨j, hj⟩ E hEf
+          have hsh : tt_shift dir = (m ⟨j, hj⟩ : ℤ) := tt_shift_dir _ h0
+          have hℓ : (2 : ℤ) ^ (zoneTrackStepData dir ⟨j, hj⟩ E).1 = 2 ^ E.1 +
+              (if zoneRebalanceIndex dir ⟨j, hj⟩ E < E.1 then 0 else 2 ^ E.1) := by
+            rw [c5]
+            split_ifs
+            · ring
+            · ring
+          refine ⟨fun t => ?_, ?_⟩
+          · by_cases ht : t = ⟨j, hj⟩
+            · subst ht
+              rw [c3, hℓ, if_pos (Nat.lt_succ_self j), ← hsh]
+              have := ih₁ ⟨j, hj⟩
+              rw [if_neg (lt_irrefl j), add_zero] at this
+              linarith
+            · have : t.val ≠ j := fun h => ht (Fin.ext h)
+              obtain ⟨-, c4'⟩ := c4 t ht
+              rw [c4', hℓ]
+              have := ih₁ t
+              have hif : (if t.val < j + 1 then (m t : ℤ) else 0) =
+                  (if t.val < j then (m t : ℤ) else 0) := by
+                by_cases htj : t.val < j
+                · rw [if_pos htj, if_pos (by omega)]
+                · rw [if_neg htj, if_neg (by omega)]
+              rw [hif]
+              push_cast
+              linarith
+          · rw [c5]
+            split_ifs with hlt
+            · exact ih₂
+            · -- an extension at level `E.1`: the scanned side is extreme
+              have hidx : zoneShiftIndex dir (E.2 ⟨j, hj⟩) = E.1 := by
+                rw [← zoneRebalanceIndex_eq]
+                exact le_antisymm (zoneRebalanceIndex_le _ _ _) (not_lt.mp hlt)
+              have hl := tt_rsum_low dir (E.2 ⟨j, hj⟩) (hEf _) E.1 hidx.ge le_rfl
+              have hq := ih₁ ⟨j, hj⟩
+              rw [if_neg (lt_irrefl j), add_zero] at hq
+              have hp := abs_le.mp (hpos ⟨j, hj⟩)
+              have h2 : 2 ≤ 2 ^ (E.1 + 1) := Nat.le_self_pow (by omega) 2
+              have hb : 2 ^ E.1 ≤ r + 1 := by
+                cases hdir : dir
+                · rw [hdir, if_neg (by simp)] at hl
+                  rw [hl] at hq
+                  push_cast [Nat.cast_sub h2] at hq
+                  have : (2 : ℤ) ^ (E.1 + 1) = 2 * 2 ^ E.1 := by ring
+                  have : (2 : ℤ) ^ E.1 ≤ r + 1 := by linarith
+                  exact_mod_cast this
+                · rw [hdir, if_pos rfl] at hl
+                  rw [hl] at hq
+                  push_cast at hq
+                  have : (2 : ℤ) ^ E.1 ≤ r + 1 := by linarith
+                  exact_mod_cast this
+              rw [pow_succ]
+              exact le_max_of_le_right (by omega)
+      · rw [show tt_Dtr m H (j + 1) = tt_Dtr m H j from dif_neg hj]
+        refine ⟨fun t => ?_, ih₂⟩
+        rw [← ih₁ t, if_pos (by omega), if_pos (by omega)]
+  obtain ⟨k₁, k₂⟩ := key k
+  refine ⟨fun t => ?_, k₂⟩
+  have := k₁ t
+  rw [if_pos t.isLt] at this
+  rw [← add_assoc]
+  exact this
+
+/-- **The displacement invariant and the level bound along the run** [AB09, §1.7]: after `r`
+steps every track's whole side total plus `M`'s head position is `2^{ℓ} − 1` for the level count
+`ℓ`, and `2^ℓ ≤ 2 r + 1`.
+
+**Proof sketch.** Induction on `r`: no level and heads at `0` at first; a live step is
+`tt_round_disp` with the heads' moves (`Turing.Action.apply_workTapePos`) and `M`'s head bound
+(`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`); a halted step changes nothing. -/
+private theorem tt_D_level (M : FinTM Bool) (x : List Bool) (r : ℕ) :
+    (∀ t, (tt_rsum ((tt_D M x r).2 t) (tt_D M x r).1 : ℤ) + (tt_c M x r).workTapePos t =
+      2 ^ (tt_D M x r).1 - 1) ∧ 2 ^ (tt_D M x r).1 ≤ 2 * r + 1 := by
+  induction r with
+  | zero =>
+    refine ⟨fun t => ?_, le_rfl⟩
+    show (tt_rsum (ZoneContents.empty 0) 0 : ℤ) + (M.tm.runFrom (M.tm.initCfg x) 0).workTapePos t =
+      2 ^ 0 - 1
+    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    rfl
+  | succ r ih =>
+    obtain ⟨ih₁, ih₂⟩ := ih
+    have hc : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'
+    cases hq : (tt_c M x r).state with
+    | none =>
+      have hD : tt_D M x (r + 1) = tt_D M x r := by
+        show (match (tt_c M x r).state with
+          | some q => _
+          | none => tt_D M x r) = _
+        rw [hq]
+      rw [hD, hc, MultiTapeTM.step_of_halt hq]
+      exact ⟨ih₁, by omega⟩
+    | some q =>
+      obtain ⟨hact, -, -⟩ := tt_round_inv M (tt_c M x r) q hq _ (tt_D_inv M x r).1
+        (tt_D_inv M x r).2
+      have hpos : ∀ t, |(tt_c M x r).workTapePos t| ≤ r := fun t => by
+        have h : (tt_c M x r).workTapePos t ∈ Finset.Icc ((M.tm.initCfg x).workTapePos t - r)
+            ((M.tm.initCfg x).workTapePos t + r) :=
+          MultiTapeTM.workTapePos_runFrom_mem_Icc M.tm (M.tm.initCfg x) r t
+        rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, Finset.mem_Icc] at h
+        exact abs_le.mpr ⟨by linarith [h.1], by linarith [h.2]⟩
+      obtain ⟨d₁, d₂⟩ := tt_round_disp (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r))
+        (tt_D M x r) (tt_D_inv M x r).1 _ r ih₁ hpos
+      rw [tt_D_succ M x r q hq]
+      refine ⟨fun t => ?_, d₂.trans (max_le (by omega) (by omega))⟩
+      rw [hc, MultiTapeTM.step_of_some hq, Action.apply_workTapePos, ← hact]
+      exact d₁ t
+
+/-- **The level bound** [AB09, §1.7]: in a run of `T` live rounds every scanned index is at most
+`log₂ T + 1`.
+
+**Proof sketch.** The index of round `s` is at most the level count after it (`tt_orbit_rsum`),
+whose power of two is at most `2 (s + 1) + 1 ≤ 2 T + 1 < 2^{log₂ T + 2}` (`tt_D_level`,
+`Nat.lt_pow_succ_log_self`). -/
+private theorem tt_idxR_le (M : FinTM Bool) (x : List Bool) (T : ℕ)
+    (hT : ∀ r < T, (tt_c M x r).state ≠ none) (t : Fin M.k) :
+    ∀ s < T, tt_idxR M x t s ≤ Nat.log 2 T + 1 := by
+  intro s hs
+  have h1 := (tt_orbit_rsum M x s (hT s hs) t 1 le_rfl).2.2.2.2
+  have h2 := (tt_D_level M x (s + 1)).2
+  have h3 := Nat.lt_pow_succ_log_self (b := 2) (by norm_num) T
+  refine h1.trans ?_
+  by_contra hc
+  have h4 : 2 ^ (Nat.log 2 T + 2) ≤ 2 ^ (tt_D M x (s + 1)).1 :=
+    Nat.pow_le_pow_right (by norm_num) (by omega)
+  rw [pow_succ] at h4
+  omega
+
+/-! ### The cost -/
+
+/-- A sum over `range k` is the sum over `Fin k` of the values at the indices. -/
+private theorem tt_sum_range_fin (k : ℕ) (f : ℕ → ℕ) :
+    ∑ j ∈ Finset.range k, f j = ∑ t : Fin k, f t.val :=
+  (Finset.sum_bij (fun (t : Fin k) _ => t.val) (fun t _ => Finset.mem_range.mpr t.isLt)
+    (fun _ _ _ _ h => Fin.ext h) (fun j hj => ⟨⟨j, Finset.mem_range.mp hj⟩, Finset.mem_univ _, rfl⟩)
+    (fun _ _ => rfl)).symm
+
+/-- **The cost of a halting run** [AB09, §1.7]: if `M` is live for its first `t₀ ≥ 1` steps, the
+zone machine's time `∑_{r < t₀ − 1} T_r + 1` is at most
+`(2 + k (5 A + 1)) · (t₀ + 1)(log₂(t₀ + 1) + 1)`.
+
+**Proof sketch.** The time is at most the sum of all `t₀` rounds' lengths (the last round takes
+at least one step, `tt_T_ge`). Each round costs at most `2 + A ∑_t (2^{i₀} + 1) + k`
+(`tt_τ_le`), so `Turing.sum_cost_le_of_count` applies with `B = 2`, the count hypothesis
+`tt_count` and the level bound `L = log₂ t₀ + 1` (`tt_idxR_le`), giving
+`2 t₀ + k (A ((L + 2) t₀ + 2^L) + t₀)`; then `2^L ≤ 2 t₀` (`Nat.pow_log_le_self`) and
+`log₂ t₀ ≤ log₂ (t₀ + 1)` (`Nat.log_mono_right`). -/
+private theorem tt_cost (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List Bool) (t₀ : ℕ) (h1 : 1 ≤ t₀) (hl : ∀ r < t₀, (tt_c M x r).state ≠ none) :
+    ∑ r ∈ Finset.range (t₀ - 1), tt_T M F x r + 1 ≤
+      (2 + M.k * (5 * A + 1)) * ((t₀ + 1) * (Nat.log 2 (t₀ + 1) + 1)) := by
+  set L := Nat.log 2 t₀ + 1 with hL
+  -- the time is at most the sum of all the rounds
+  have hsum : ∑ r ∈ Finset.range (t₀ - 1), tt_T M F x r + 1 ≤
+      ∑ r ∈ Finset.range t₀, tt_T M F x r := by
+    obtain ⟨s, rfl⟩ : ∃ s, t₀ = s + 1 := ⟨t₀ - 1, by omega⟩
+    rw [Nat.add_sub_cancel, Finset.sum_range_succ]
+    have := tt_T_ge M F x s (hl s (by omega))
+    omega
+  -- each round's cost
+  have hstep : ∀ s < t₀, tt_T M F x s ≤
+      2 + A * ∑ t, (2 ^ tt_idxR M x t s + 1) + M.k := by
+    intro s hs
+    obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp (hl s hs)
+    have hT : tt_T M F x s = 2 + ∑ j ∈ Finset.range M.k, tt_τ M F (x.map Sum.inl)
+        (tt_moves (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)))
+        (tt_homeData (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)) (tt_D M x s))
+        (moveInputPos (tt_ipOf M (tt_c M x s))
+          (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).inputTape)
+        ((tt_c M x s).output.map Sum.inl ++
+          ((tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).output.map Sum.inl).toList) j := by
+      show (match (tt_c M x s).state with
+        | some q => _
+        | none => 0) = _
+      rw [hq]
+    have hidx : ∀ t, tt_idxR M x t s =
+        tt_idxA (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)) (tt_D M x s) t := by
+      intro t
+      show (match (tt_c M x s).state with
+        | some q => _
+        | none => 0) = _
+      rw [hq]
+    rw [hT]
+    have hle : ∀ j : Fin M.k, tt_τ M F (x.map Sum.inl)
+        (tt_moves (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)))
+        (tt_homeData (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)) (tt_D M x s))
+        (moveInputPos (tt_ipOf M (tt_c M x s))
+          (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).inputTape)
+        ((tt_c M x s).output.map Sum.inl ++
+          ((tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).output.map Sum.inl).toList) j ≤
+        A * (2 ^ tt_idxR M x j s + 1) + 1 := by
+      intro j
+      rw [hidx]
+      exact tt_τ_le M F hk _ _ _ _ _ j.val j.isLt
+    have hsumτ := Finset.sum_le_sum fun j (_ : j ∈ Finset.univ) => hle j
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum] at hsumτ
+    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_id,
+      mul_one] at hsumτ
+    rw [tt_sum_range_fin M.k (fun j => tt_τ M F (x.map Sum.inl)
+        (tt_moves (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)))
+        (tt_homeData (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)) (tt_D M x s))
+        (moveInputPos (tt_ipOf M (tt_c M x s))
+          (tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).inputTape)
+        ((tt_c M x s).output.map Sum.inl ++
+          ((tt_act M q (tt_c M x s).inputSymbol (tt_D M x s)).output.map Sum.inl).toList) j)]
+    omega
+  have hcost := sum_cost_le_of_count M.k t₀ L A 2 (fun t s => tt_idxR M x t s) (tt_T M F x)
+    hstep (fun t => tt_idxR_le M x t₀ hl t) (fun t i _ => tt_count M x t₀ hl t i)
+  -- the arithmetic
+  have hpow : 2 ^ L ≤ 2 * t₀ := by
+    rw [hL, pow_succ]
+    have := Nat.pow_log_le_self 2 (show t₀ ≠ 0 by omega)
+    omega
+  have hlog : Nat.log 2 t₀ ≤ Nat.log 2 (t₀ + 1) := Nat.log_mono_right (Nat.le_succ t₀)
+  set lg := Nat.log 2 (t₀ + 1)
+  have hP : t₀ ≤ (t₀ + 1) * (lg + 1) := by nlinarith
+  have hL3 : (L + 2) * t₀ ≤ 3 * ((t₀ + 1) * (lg + 1)) := by nlinarith
+  refine hsum.trans (hcost.trans ?_)
+  have e1 : 2 * t₀ ≤ 2 * ((t₀ + 1) * (lg + 1)) := by omega
+  have e2 : M.k * (A * ((L + 2) * t₀ + 2 ^ L) + t₀) ≤
+      M.k * (5 * A + 1) * ((t₀ + 1) * (lg + 1)) := by
+    have : A * ((L + 2) * t₀ + 2 ^ L) + t₀ ≤ (5 * A + 1) * ((t₀ + 1) * (lg + 1)) := by
+      nlinarith
+    calc M.k * (A * ((L + 2) * t₀ + 2 ^ L) + t₀) ≤ M.k * ((5 * A + 1) * ((t₀ + 1) * (lg + 1))) :=
+          Nat.mul_le_mul_left _ this
+      _ = M.k * (5 * A + 1) * ((t₀ + 1) * (lg + 1)) := by ring
+  nlinarith
+
 /-! ### The target -/
 
 /-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
@@ -1637,15 +2435,10 @@ theorem two_work_tapes_run (M : FinTM Bool) :
   choose S fin dec Mt entry X hnone hR using hA
   choose R hpre hspec using hR
   let F : tt_Fam M.k A := ⟨S, fin, dec, Mt, entry, X, hnone, R, hpre, hspec⟩
-  -- the time bound: open
-  obtain ⟨c₁, hc₁⟩ : ∃ c₁ : ℕ, ∀ (x : List Bool) (t₀ : ℕ), 1 ≤ t₀ →
-      (∀ r < t₀, (tt_c M x r).state ≠ none) →
-        ∑ r ∈ Finset.range (t₀ - 1), tt_T M F x r + 1 ≤
-          c₁ * ((t₀ + 1) * (Nat.log 2 (t₀ + 1) + 1)) := by
-    sorry
-  refine ⟨tt_HS M F hk, rfl, c₁, fun x o t h => ?_, fun x o' t' h => tt_converse M F hk x o' t' h⟩
+  refine ⟨tt_HS M F hk, rfl, 2 + M.k * (5 * A + 1), fun x o t h => ?_,
+    fun x o' t' h => tt_converse M F hk x o' t' h⟩
   obtain ⟨t₀, ht₀, h1, hl, hHS⟩ := tt_forward_run M F hk x o t h
-  refine hHS.mono ((hc₁ x t₀ h1 hl).trans (Nat.mul_le_mul_left c₁ ?_))
+  refine hHS.mono ((tt_cost M F hk x t₀ h1 hl).trans (Nat.mul_le_mul_left _ ?_))
   exact Nat.mul_le_mul (by omega) (Nat.add_le_add_right (Nat.log_mono_right (by omega)) 1)
 
 /-- **Two work tapes suffice** for computing a function: if a binary machine computes `f` within
