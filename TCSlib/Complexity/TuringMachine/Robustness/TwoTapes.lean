@@ -1399,7 +1399,7 @@ private theorem tt_cs_start (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : L
         rw [Cfg.init_workTapePos]
         rfl
       · rw [Cfg.init_output]
-        show [] = (tt_c M x 0).output.map Sum.inl
+        show (tt_c M x 0).output.map Sum.inl = []
         rw [hc, Cfg.init_output, List.map_nil]
   | succ r =>
     refine ⟨zonedTape (tt_D M x (r + 1)).2 0, fun t => ?_, ?_⟩
