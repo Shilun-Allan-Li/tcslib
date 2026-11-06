@@ -34,3 +34,4 @@
   `187c6243c8d86a82057a0f13cfd0a08d6cb80aa873067de525a99c095a59390e`; Lean from `7b5774fb`,
   records from `c337361b0d66e21345d3802649dc0c151b5c56d2`. Findings file
   `segment-iterate-api-r2-findings.md`.
+- 2026-11-06: round 2 **dispatched** (the user).
