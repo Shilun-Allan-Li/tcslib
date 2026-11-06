@@ -153,8 +153,13 @@ private theorem wf_iff (x : List Bool) :
     exact (List.take_of_length_le h.le).symm
 
 /-- The colouring test: `y` is the encoding of the colouring it decodes to on `N` vertices iff
-`|y| = 2N` and no vertex below `N` is badly encoded (`getD_encColoring_two_mul`,
-`getD_encColoring_two_mul_add_one`, `decColoring_val`, `firstIdx_eq_iff`). -/
+`|y| = 2N` and no vertex below `N` is badly encoded.
+
+**Proof sketch.** Bits `2i`, `2i + 1` of the re-encoding are the bits of the colour value
+`colorVal y i` (`getD_encColoring_two_mul`, `getD_encColoring_two_mul_add_one`,
+`decColoring_val`). (→) Rewrite `y` by the hypothesis in those bits: every exclusive or vanishes.
+(←) Compare the two lists entrywise (`List.ext_getElem`) at `k = 2i` and `k = 2i + 1`, `i < N`,
+where a vanishing exclusive or (`firstIdx_eq_iff`) gives the equality of the bits. -/
 private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
     y = encColoring (decColoring N y) ↔ y.length = n * 2 ∧ firstIdx (badVertex y) n = n := by
   subst hn
@@ -196,8 +201,12 @@ private theorem enc_iff {N n : ℕ} (hn : N = n) (y : List Bool) :
       exact eq_of_xor_eq_false hb.2
 
 /-- The properness test: for a graph `G` on `N` vertices whose entry `(u, v)` is bit `v + N u`
-of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge
-(`ProperColoring_iff`, `decColoring_val`, `firstIdx_eq_iff`, `Nat.mod_add_div`). -/
+of `x`, the decoded colouring is proper iff no position below `N²` is a monochromatic edge.
+
+**Proof sketch.** Colours are compared through their values (`decColoring_val`, `Fin.ext`).
+(→) A set position `j < N²` is the edge `(j / N, j % N)` (`Nat.mod_add_div`), whose colours
+differ (`ProperColoring_iff`). (←) An edge `(u, v)` is position `v + N u < N²`, whose quotient
+and remainder by `N` are `u` and `v`, and which is not monochromatic (`firstIdx_eq_iff`). -/
 private theorem proper_iff {N n : ℕ} (hn : N = n) (G : Graph N) (x y : List Bool)
     (hG : ∀ u v : Fin N, G u v = x.getD (v + N * u) false) :
     ProperColoring G (decColoring N y) ↔ firstIdx (badEntry x y n) (n * n) = n * n := by
