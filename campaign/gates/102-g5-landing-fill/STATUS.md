@@ -23,3 +23,4 @@
 - 2026-11-06: **dispatched** (the user).
 - 2026-11-06: pack written (round 3, citing gate 108); staged.
 - 2026-11-06: round 3 **dispatched** by the user (32 sections, bundle `d6e3cfa3…`).
+- 2026-11-06: findings received: PASS (0 majors); **CLOSED**. The missed NZ-1 member is re-pointed in #217; the merge waits on the merged-tree replay.
