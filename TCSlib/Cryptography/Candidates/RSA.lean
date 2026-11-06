@@ -674,6 +674,51 @@ theorem rsaInv_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
   unfold rsaEnc rsaEncVal
   rw [if_pos hv, hlen]
 
+/-- The fallback of the unit sampler is a unit: for `N > 0`, the value
+`(sampleUnitL N k B T r).getD (1 % N)` is below `N` and coprime to `N` (`sampleUnitL_spec`, or
+`1 % N < N` with `gcd(1 % N, N) = gcd(N, 1) = 1`). -/
+private theorem rsa_getD_spec {N : ℕ} (hN : 0 < N) (k B T : ℕ) (r : List Bool) :
+    (sampleUnitL N k B T r).getD (1 % N) < N ∧
+      Nat.Coprime ((sampleUnitL N k B T r).getD (1 % N)) N := by
+  cases h : sampleUnitL N k B T r with
+  | some v =>
+    rw [Option.getD_some]
+    exact sampleUnitL_spec h
+  | none =>
+    rw [Option.getD_none]
+    refine ⟨Nat.mod_lt _ hN, ?_⟩
+    rw [Nat.Coprime, ← Nat.gcd_rec]
+    exact Nat.gcd_one_right N
+
+/-- The activation of the domain sampler: `rsaSampler` on the index `i` is `unitSampleStr` on
+the modulus numeral `pairFstD i` (`NUPPT.runAtL_ofPolyTimeUniform` and the layout equations). -/
+private theorem rsa_sampler_runAt (H : ArithmeticFP) (n : ℕ) (i : List Bool)
+    (s : (rsaSampler H).Coins n) :
+    (rsaSampler H).runAt n i s = unitSampleStr (pairFstD i) n (List.ofFn s) := by
+  rw [NUPPT.runAt_eq]
+  unfold rsaSampler
+  rw [NUPPT.runAtL_ofPolyTimeUniform]
+  simp only [rsaSampleRaw, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+    NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
+
+/-- At a generated index `⟨N, e⟩` the sampler's string decodes: `rsaDec` accepts
+`unitSampleStr` of the modulus numeral (it is the `2m`-bit numeral of a unit `v < N`,
+`rsa_getD_spec`). -/
+private theorem rsa_dec_unitSampleStr {m : ℕ} (P : RSAParams m) (n : ℕ) (r : List Bool) :
+    ∃ x, rsaDec (rsaIndexOf m P) (unitSampleStr (pairFstD (rsaIndexOf m P)) n r) = some x := by
+  have hw : pairFstD (rsaIndexOf m P) = natToList (2 * m) P.N := by
+    rw [rsaIndexOf, pairFstD_pairEncode]
+  have hN : listToNat (natToList (2 * m) P.N) = P.N := listToNat_natToList P.N_lt
+  have hpos : 0 < P.N := NeZero.pos (P.z.p * P.z.q)
+  have hv := rsa_getD_spec hpos (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r
+  set v := (sampleUnitL P.N (Nat.size P.N) (rsaBlock.eval n) (rsaTrials.eval n) r).getD (1 % P.N)
+  have hval : listToNat (natToList (2 * m) v) = v := listToNat_natToList (hv.1.trans P.N_lt)
+  have hM := rsaMod_indexOf m P
+  rw [unitSampleStr_eq, hw, hN, length_natToList, rsaDec, if_pos (rsaValid_indexOf m P)]
+  rw [dif_pos ⟨by rw [length_natToList, hw, length_natToList], by rw [hval, hM]; exact hv.1,
+    by rw [hval, hM]; exact hv.2⟩]
+  exact ⟨_, rfl⟩
+
 /-- **The RSA sampler's outputs decode and evaluate honestly** (the clause `sample_spec` of
 `Collection`, [PS10, Definition 41.1 (2)]; repair of the run-3 audit, P3-1): at every parameter
 the generated index `⟨N, e⟩` is valid with modulus `N` (`rsaGen_runAt`, `rsaValid_indexOf`,
@@ -694,7 +739,11 @@ theorem rsaSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (rsaGen H).Coins n)
         ((rsaSampler H).runAt n (pairFstD ((rsaGen H).runAt n [] r)) s) = some x ∧
       rsaEval (pairEncode (pairFstD ((rsaGen H).runAt n [] r))
         ((rsaSampler H).runAt n (pairFstD ((rsaGen H).runAt n [] r)) s)) = rsaF _ x := by
-  sorry
+  rw [rsaGen_runAt, rsaGenOut, pairFstD_pairEncode, rsa_sampler_runAt]
+  generalize rsaGenParams n (List.ofFn r) = P
+  obtain ⟨x, hx⟩ := rsa_dec_unitSampleStr P n (List.ofFn s)
+  refine ⟨x, hx, ?_⟩
+  rw [← rsaEnc_of_rsaDec hx, rsaEval_spec]
 
 /-! ## The RSA trapdoor collection [PS10, Theorems 53.2 and 57.2] -/
 
