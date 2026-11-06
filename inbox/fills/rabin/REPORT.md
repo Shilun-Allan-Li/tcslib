@@ -1,6 +1,6 @@
 # Fill report: unit rabin (`TCSlib/Cryptography/Candidates/Rabin.lean`)
 
-**Status: in progress (checkpoint 5).** Filled so far: steps 1–4 (7 targets).
+**Status: in progress (checkpoint 6).** Filled so far: steps 1–5 (9 targets).
 
 ## Base and environment
 
@@ -40,3 +40,5 @@
 | 3 | `rabinBlumTrapdoor_sampleClose` | filled: S3 mapped through squaring, `pushesUniform_sqTo`, `statClose_of_pushesUniform`, `StatClose.trans` (`rabin_statClose_blumDec`); docstring expanded |
 | 4 | `oddFactorProb_le` | filled (Correction target; Proof sketch rewritten): conditioning bound `rabin_uprob_subtype_le`; `Pr[E] ≥ 1 − 3/|Π_n| ≥ 1/2` from `|Π_n| ≥ 6` |
 | 4 | `blumFactorProb_le` | filled (Proof sketch rewritten): `Pr[E] ≥ B(B−1)/P² ≥ 1/(64n²)` from `hD` |
+| 5 | `polyTimeComputable_oddGenRaw` | filled: `rabinGenRaw = rabin_genCore` (`rabin_genCore_eq`) and `rabin_genCore_poly`; generic block loop over `polyTimeComputable_iterateFind` (`rabin_spOut_poly`); test `rabin_oddAcc` (prime, parity by `H.divMod`/`H.le`) |
+| 5 | `polyTimeComputable_blumGenRaw` | filled: same generic helpers, test `rabin_blumAcc` (residue mod 4 by `H.divMod`/`H.le`); short docstring expanded into a Proof sketch |

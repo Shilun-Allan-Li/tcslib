@@ -1,0 +1,617 @@
+From 3e5f07464001575fa95c25523fcbc73b0244782d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 20:59:55 +0000
+Subject: [PATCH 5/5] Rabin: fill polyTimeComputable_oddGenRaw and
+ polyTimeComputable_blumGenRaw (generic block loop)
+
+---
+ TCSlib/Cryptography/Candidates/Rabin.lean | 575 +++++++++++++++++++++-
+ 1 file changed, 568 insertions(+), 7 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Candidates/Rabin.lean b/TCSlib/Cryptography/Candidates/Rabin.lean
+index 26ce535b..6648ced9 100644
+--- a/TCSlib/Cryptography/Candidates/Rabin.lean
++++ b/TCSlib/Cryptography/Candidates/Rabin.lean
+@@ -532,6 +532,538 @@ def rabinGenRaw (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams
+     (z : List Bool) : List Bool :=
+   rabinGenOut P dflt (NUPPT.inParam z).length (NUPPT.inCoins z)
+ 
++/-- Composition of polynomial-time functions in applied form, `x ↦ g (f x)` (fill notes, item 7: composites are stated applied, never as `∘` matched against a lambda). -/
++private theorem rabin_comp {g f : List Bool → List Bool} (hg : PolyTimeComputable g)
++    (hf : PolyTimeComputable f) : PolyTimeComputable fun x => g (f x) :=
++  hg.comp hf
++
++/-- A search over `[0, L)` whose test also demands `i < N` is the search over `[0, N)`, for `N ≤ L`. -/
++private theorem rabin_find?_range_lt (p : ℕ → Bool) {N L : ℕ} (hNL : N ≤ L) :
++    (List.range L).find? (fun i => decide (i < N) && p i) = (List.range N).find? p := by
++  have hcongr : ∀ l : List ℕ, (∀ i ∈ l, i < N) →
++      l.find? (fun i => decide (i < N) && p i) = l.find? p := by
++    intro l
++    induction l with
++    | nil => intro _; rfl
++    | cons a l ih =>
++      intro hl
++      rw [List.find?_cons, List.find?_cons, ih (fun i hi => hl i (List.mem_cons_of_mem a hi)),
++        decide_eq_true (hl a List.mem_cons_self), Bool.true_and]
++  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hNL
++  rw [List.range_add, List.find?_append, hcongr _ (fun i hi => List.mem_range.1 hi)]
++  have hnone : (List.map (fun x => N + x) (List.range d)).find?
++      (fun i => decide (i < N) && p i) = none := by
++    rw [List.find?_eq_none]
++    intro x hx
++    obtain ⟨y, -, rfl⟩ := List.mem_map.1 hx
++    simp
++  rw [hnone, Option.or_none]
++
++/-- One trial of the block loop on the state `⟨⟨1^B, 1^k⟩, ⟨counter, coins⟩⟩`: keep the header, decrement the counter, drop one block of `B` coins. -/
++private def rabin_rbStep (x : List Bool) : List Bool :=
++  pairEncode (pairFstD x)
++    (pairEncode ((pairFstD (pairSndD x)).drop 1)
++      ((pairSndD (pairSndD x)).drop (pairFstD (pairFstD x)).length))
++
++/-- The current trial word: the first `k` bits of the remaining coins. -/
++private def rabin_rbBlock (x : List Bool) : List Bool :=
++  (pairSndD (pairSndD x)).take (pairSndD (pairFstD x)).length
++
++/-- The acceptance test of the block loop: the counter is nonzero and the test `acc0` accepts the trial word. -/
++private def rabin_rbAcc (acc0 : List Bool → Bool) (x : List Bool) : Bool :=
++  !(decide (pairFstD (pairSndD x) = [])) && acc0 (rabin_rbBlock x)
++
++/-- The payload of an accepted state: a `true` marker, then the trial word. -/
++private def rabin_rbOut (x : List Bool) : List Bool := [true] ++ rabin_rbBlock x
++
++/-- The block loop on a state `x`: the payload of the first accepted state among the first `|x| + 1` states of the orbit, `[]` if none (the function of the repetition host `polyTimeComputable_iterateFind`, its `match` written as `Option.elim`). -/
++private def rabin_rbLoop (acc0 : List Bool → Bool) (x : List Bool) : List Bool :=
++  ((List.range (x.length + 1)).find? (fun i => rabin_rbAcc acc0 (rabin_rbStep^[i] x))).elim []
++    (fun i => rabin_rbOut (rabin_rbStep^[i] x))
++
++/-- The step is polynomial-time (`polyTimeComputable_tail`, `polyTimeComputable_pairDropPoly`). -/
++private theorem rabin_rbStep_poly : PolyTimeComputable rabin_rbStep := by
++  have h := polyTimeComputable_pairFstD.pairEncode
++    ((polyTimeComputable_tail.comp
++      (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD)).pairEncode
++      ((polyTimeComputable_pairDropPoly .var).comp
++        ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairFstD).pairEncode
++          (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))))
++  convert h using 1
++  funext x
++  simp only [rabin_rbStep, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++    PolyExpr.eval_var]
++
++/-- The trial word is polynomial-time (`polyTimeComputable_pairTakePoly`). -/
++private theorem rabin_rbBlock_poly : PolyTimeComputable rabin_rbBlock := by
++  have h := (polyTimeComputable_pairTakePoly .var).comp
++    ((polyTimeComputable_pairSndD.comp polyTimeComputable_pairFstD).pairEncode
++      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD))
++  convert h using 1
++  funext x
++  simp only [rabin_rbBlock, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++    PolyExpr.eval_var]
++
++/-- The acceptance test is polynomial-time for a polynomial-time `acc0` (`polyTimeComputable_isNil`, `_not`, `_and`, with the tests given explicitly). -/
++private theorem rabin_rbAcc_poly {acc0 : List Bool → Bool}
++    (hacc0 : PolyTimeComputable fun w => [acc0 w]) :
++    PolyTimeComputable fun x => [rabin_rbAcc acc0 x] := by
++  have hc : PolyTimeComputable fun x => pairFstD (pairSndD x) :=
++    polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
++  have t1 : PolyTimeComputable fun x => [decide (pairFstD (pairSndD x) = [])] :=
++    rabin_comp polyTimeComputable_isNil hc
++  have t1' : PolyTimeComputable fun x => [!decide (pairFstD (pairSndD x) = [])] :=
++    polyTimeComputable_not (p := fun x => decide (pairFstD (pairSndD x) = [])) t1
++  have t2 : PolyTimeComputable fun x => [acc0 (rabin_rbBlock x)] :=
++    rabin_comp hacc0 rabin_rbBlock_poly
++  exact polyTimeComputable_and (p := fun x => !decide (pairFstD (pairSndD x) = []))
++    (q := fun x => acc0 (rabin_rbBlock x)) t1' t2
++
++/-- The payload is polynomial-time (`polyTimeComputable_prepend`). -/
++private theorem rabin_rbOut_poly : PolyTimeComputable rabin_rbOut :=
++  (polyTimeComputable_prepend [true]).comp rabin_rbBlock_poly
++
++/-- The orbit: after `i` trials the state is `⟨h, ⟨c.drop i, s.drop (i · |fst h|)⟩⟩`. -/
++private theorem rabin_rbStep_iterate (h c s : List Bool) (i : ℕ) :
++    rabin_rbStep^[i] (pairEncode h (pairEncode c s)) =
++      pairEncode h (pairEncode (c.drop i) (s.drop (i * (pairFstD h).length))) := by
++  induction i with
++  | zero => simp
++  | succ i ih =>
++    rw [Function.iterate_succ_apply', ih]
++    simp only [rabin_rbStep, pairFstD_pairEncode, pairSndD_pairEncode, List.drop_drop]
++    rw [Nat.succ_mul]
++
++/-- One step at most doubles the length: `|step x| ≤ 2|x| + 4`. -/
++private theorem rabin_length_rbStep_le (x : List Bool) :
++    (rabin_rbStep x).length ≤ 2 * x.length + 4 := by
++  have h1 := StateLoop.length_pairFstD_add_pairSndD_le x
++  have h2 := StateLoop.length_pairFstD_add_pairSndD_le (pairSndD x)
++  simp only [rabin_rbStep, length_pairEncode, List.length_drop]
++  omega
++
++/-- From the first step on the state is a well-formed word, which only shrinks. -/
++private theorem rabin_length_rbStep_rbStep_le (x : List Bool) :
++    (rabin_rbStep (rabin_rbStep x)).length ≤ (rabin_rbStep x).length := by
++  simp only [rabin_rbStep, pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode,
++    List.length_drop]
++  omega
++
++/-- The orbit bound `|step^[i] x| ≤ 2|x| + 4` demanded by the repetition host. -/
++private theorem rabin_length_rbStep_iterate_le (x : List Bool) (i : ℕ) :
++    (rabin_rbStep^[i] x).length ≤ 2 * x.length + 4 := by
++  cases i with
++  | zero => simp only [Function.iterate_zero, id]; omega
++  | succ i =>
++    induction i with
++    | zero => exact rabin_length_rbStep_le x
++    | succ i ih =>
++      rw [Function.iterate_succ_apply'] at ih ⊢
++      rw [Function.iterate_succ_apply']
++      exact (rabin_length_rbStep_rbStep_le _).trans ih
++
++/-- The block loop is polynomial-time: an instance of the repetition host `polyTimeComputable_iterateFind` (`R = var`, orbit bound `2|x| + 4`), its `match` read by `split`. -/
++private theorem rabin_rbLoop_poly {acc0 : List Bool → Bool}
++    (hacc0 : PolyTimeComputable fun w => [acc0 w]) : PolyTimeComputable (rabin_rbLoop acc0) := by
++  have hF := polyTimeComputable_iterateFind rabin_rbStep_poly (rabin_rbAcc_poly hacc0) rabin_rbOut_poly
++    PolyExpr.var (PolyExpr.add (.mul (.const 2) .var) (.const 4)) (fun x i _ => by
++      simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
++      exact rabin_length_rbStep_iterate_le x i)
++  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp hF
++  rw [rabin_rbLoop, PolyExpr.eval_var]
++  split
++  · next i h => rw [h, Option.elim_some]
++  · next h => rw [h, Option.elim_none]
++
++/-- **The block loop computes `rejectBlocksL`**: on the start state `⟨⟨1^B, 1^k⟩, ⟨1^T, r⟩⟩`, the host's search finds trial `i` exactly as `rejectBlocksL E k B T r` does, and the accepted value is the number read from the trial word.
++
++**Proof sketch.** After `i` steps the state is `⟨h, ⟨1^T.drop i, r.drop (iB)⟩⟩` (`rabin_rbStep_iterate`), so trial `i` reads `(r.drop (iB)).take k` and the test is `i < T ∧ E v` (`hspec`). The search over `[0, |x| + 1) ⊇ [0, T)` is the search over `[0, T)` (`rabin_find?_range_lt`), and `rejectBlocksL` is that search followed by reading the word (`rejectBlocksL_eq`, `List.findSome?_guard`, `List.map_findSome?`). -/
++private theorem rabin_rbFind_eq (E : ℕ → Prop) [DecidablePred E] {acc0 : List Bool → Bool}
++    (hspec : ∀ w, acc0 w = decide (E (listToNat w))) (hB hk r : List Bool) (T : ℕ) :
++    rejectBlocksL E hk.length hB.length T r =
++      ((List.range ((pairEncode (pairEncode hB hk) (pairEncode (List.replicate T true) r)).length + 1)).find?
++        (fun i => rabin_rbAcc acc0 (rabin_rbStep^[i]
++          (pairEncode (pairEncode hB hk) (pairEncode (List.replicate T true) r))))).map
++        (fun i => listToNat (rabin_rbBlock (rabin_rbStep^[i]
++          (pairEncode (pairEncode hB hk) (pairEncode (List.replicate T true) r))))) := by
++  set x0 := pairEncode (pairEncode hB hk) (pairEncode (List.replicate T true) r)
++  have hblock : ∀ i, rabin_rbBlock (rabin_rbStep^[i] x0) = (r.drop (i * hB.length)).take hk.length := by
++    intro i
++    simp only [x0, rabin_rbStep_iterate, rabin_rbBlock, pairFstD_pairEncode, pairSndD_pairEncode]
++  have hacc : ∀ i, rabin_rbAcc acc0 (rabin_rbStep^[i] x0) =
++      (decide (i < T) && decide (E (listToNat ((r.drop (i * hB.length)).take hk.length)))) := by
++    intro i
++    rw [rabin_rbAcc, hblock, hspec]
++    simp only [x0, rabin_rbStep_iterate, pairFstD_pairEncode, pairSndD_pairEncode,
++      List.drop_eq_nil_iff, List.length_replicate]
++    by_cases h1 : i < T
++    · simp [h1]
++    · simp [h1]
++  have hrange : T ≤ x0.length + 1 := by
++    simp only [x0, length_pairEncode, List.length_replicate]
++    omega
++  rw [show (fun i => rabin_rbAcc acc0 (rabin_rbStep^[i] x0)) = _ from funext hacc,
++    rabin_find?_range_lt _ hrange, rejectBlocksL_eq, ← List.findSome?_guard, List.map_findSome?]
++  simp only [hblock]
++  congr 1
++  funext t
++  simp only [Function.comp_apply, Option.guard]
++  split_ifs with h1 h2 h2 <;> simp_all
++
++/-- `[true]` reads as `1`. -/
++private theorem rabin_listToNat_one : listToNat [true] = 1 := by
++  rw [listToNat_eq]; rfl
++
++/-- Zero-padding of a word `b` to the width of `u`: `⟦0⟧_{|u| − |b|}` (`subStr ⟨d, d⟩`, `d = u.drop |b|`) added to `b` (`addStr`). -/
++private def rabin_pad (u b : List Bool) : List Bool :=
++  addStr (pairEncode (subStr (pairEncode (u.drop b.length) (u.drop b.length))) b)
++
++/-- Padding gives the numeral of the word's value at the width of `u`: `rabin_pad u b = ⟦⟦b⟧⟧_{|u|}` for `|b| ≤ |u|` (`addStr_pairEncode`, `subStr_pairEncode`). -/
++private theorem rabin_pad_eq {u b : List Bool} (h : b.length ≤ u.length) :
++    rabin_pad u b = natToList u.length (listToNat b) := by
++  rw [rabin_pad, addStr_pairEncode, subStr_pairEncode, length_natToList, Nat.sub_self,
++    listToNat_natToList (Nat.two_pow_pos _), zero_add, List.length_drop, Nat.sub_add_cancel h]
++
++/-- Padding is polynomial-time (`polyTimeComputable_pairDropPoly`, `H.sub`, `H.add`). -/
++private theorem rabin_pad_poly (H : ArithmeticFP) {fu fb : List Bool → List Bool}
++    (hu : PolyTimeComputable fu) (hb : PolyTimeComputable fb) :
++    PolyTimeComputable fun z => rabin_pad (fu z) (fb z) := by
++  have hD' := rabin_comp (polyTimeComputable_pairDropPoly .var) (hb.pairEncode hu)
++  have hD : PolyTimeComputable fun z => (fu z).drop (fb z).length := by
++    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hD'
++    simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
++  have hS : PolyTimeComputable fun z =>
++      subStr (pairEncode ((fu z).drop (fb z).length) ((fu z).drop (fb z).length)) :=
++    rabin_comp H.sub (hD.pairEncode hD)
++  exact rabin_comp H.add (hS.pairEncode hb)
++
++/-- The start state `⟨⟨U, U⟩, ⟨1^{4m²}, c⟩⟩` of the restricted prime loop, `m = |U|`. -/
++private def rabin_spStart (U c : List Bool) : List Bool :=
++  pairEncode (pairEncode U U) (pairEncode (List.replicate (rabinTrials.eval U.length) true) c)
++
++/-- **The restricted prime sampler as a string computation**: the block loop with the test `acc0` on `m`-bit blocks of `c`; its accepted word (marker dropped), or the fallback word `ds`, padded to `m` bits. -/
++private def rabin_spOut (acc0 : List Bool → Bool) (U ds c : List Bool) : List Bool :=
++  if decide (rabin_rbLoop acc0 (rabin_spStart U c) = []) then rabin_pad U ds
++  else rabin_pad U ((rabin_rbLoop acc0 (rabin_spStart U c)).drop 1)
++
++/-- **The string sampler is `samplePrimePL`'s computation**: for `acc0` deciding `E` and `|ds| ≤ |U|`, `rabin_spOut acc0 U ds c = ⟦(rejectBlocksL E m m (4m²) c).getD ⟦ds⟧⟧_m` with `m = |U|`.
++
++**Proof sketch.** `rabin_rbFind_eq` identifies the loop's search with `rejectBlocksL`; if it fails the result is the padded fallback (`rabin_pad_eq`), otherwise the payload with its marker dropped is the accepted trial word, at most `m` bits long, and its padding is the numeral of its value. -/
++private theorem rabin_spOut_eq (E : ℕ → Prop) [DecidablePred E] {acc0 : List Bool → Bool}
++    (hspec : ∀ w, acc0 w = decide (E (listToNat w))) {U ds : List Bool} (hds : ds.length ≤ U.length)
++    (c : List Bool) :
++    rabin_spOut acc0 U ds c = natToList U.length
++      ((rejectBlocksL E U.length U.length (rabinTrials.eval U.length) c).getD (listToNat ds)) := by
++  rw [rabin_spOut, rabin_spStart, rabin_rbFind_eq E hspec U U c (rabinTrials.eval U.length), rabin_rbLoop]
++  set x0 := pairEncode (pairEncode U U) (pairEncode (List.replicate (rabinTrials.eval U.length) true) c)
++    with hx0
++  rcases hres : (List.range (x0.length + 1)).find?
++      (fun i => rabin_rbAcc acc0 (rabin_rbStep^[i] x0)) with _ | i
++  · rw [Option.elim_none, if_pos (by rfl), Option.map_none, Option.getD_none, rabin_pad_eq hds]
++  · have hlen : (rabin_rbBlock (rabin_rbStep^[i] x0)).length ≤ U.length := by
++      rw [hx0, rabin_rbStep_iterate, rabin_rbBlock, pairFstD_pairEncode, pairSndD_pairEncode,
++        pairSndD_pairEncode, pairSndD_pairEncode]
++      exact List.length_take_le _ _
++    rw [Option.elim_some, if_neg (by rw [rabin_rbOut]; simp), Option.map_some, Option.getD_some,
++      rabin_rbOut, List.singleton_append, List.drop_one, List.tail_cons, rabin_pad_eq hlen]
++
++/-- **The restricted prime sampler is polynomial-time** (the generic block-loop helper of brief step 5, requested as a shared `polyTimeComputable_rejectBlocksL`): the start state (`polyTimeComputable_unaryPoly rabinTrials`), the loop (`rabin_rbLoop_poly`), `polyTimeComputable_isNil`, `_tail`, `_ite` and the padding. -/
++private theorem rabin_spOut_poly (H : ArithmeticFP) {acc0 : List Bool → Bool}
++    (hacc0 : PolyTimeComputable fun w => [acc0 w]) {fU fds fc : List Bool → List Bool}
++    (hU : PolyTimeComputable fU) (hds : PolyTimeComputable fds) (hc : PolyTimeComputable fc) :
++    PolyTimeComputable fun z => rabin_spOut acc0 (fU z) (fds z) (fc z) := by
++  have hS : PolyTimeComputable fun z => rabin_spStart (fU z) (fc z) :=
++    (hU.pairEncode hU).pairEncode ((rabin_comp (polyTimeComputable_unaryPoly rabinTrials) hU).pairEncode hc)
++  have hL : PolyTimeComputable fun z => rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z)) :=
++    rabin_comp (rabin_rbLoop_poly hacc0) hS
++  have hN : PolyTimeComputable fun z => [decide (rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z)) = [])] :=
++    rabin_comp polyTimeComputable_isNil hL
++  have hT : PolyTimeComputable fun z => (rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z))).drop 1 :=
++    rabin_comp polyTimeComputable_tail hL
++  exact polyTimeComputable_ite (p := fun z => decide (rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z)) = []))
++    (f := fun z => rabin_pad (fU z) (fds z))
++    (g := fun z => rabin_pad (fU z) ((rabin_rbLoop acc0 (rabin_spStart (fU z) (fc z))).drop 1)) hN
++    (rabin_pad_poly H hU hds) (rabin_pad_poly H hU hT)
++
++/-- `[true, false]` reads as `2` (the exponent of the squaring evaluator and the parity modulus). -/
++private theorem rabin_listToNat_two : listToNat [true, false] = 2 := by
++  rw [listToNat_eq]; rfl
++
++/-- `[true, true]` reads as `3`. -/
++private theorem rabin_listToNat_three : listToNat [true, true] = 3 := by
++  rw [listToNat_eq]; rfl
++
++/-- `[true, false, false]` reads as `4`. -/
++private theorem rabin_listToNat_four : listToNat [true, false, false] = 4 := by
++  rw [listToNat_eq]; rfl
++
++/-- A comparison `[⟦a x⟧ ≤ ⟦b x⟧]` of two polynomial-time numerals is polynomial-time (`H.le`, `leStr_pairEncode`). -/
++private theorem rabin_le_poly (H : ArithmeticFP) {a b : List Bool → List Bool}
++    (ha : PolyTimeComputable a) (hb : PolyTimeComputable b) :
++    PolyTimeComputable fun x => [decide (listToNat (a x) ≤ listToNat (b x))] := by
++  have h := rabin_comp H.le (ha.pairEncode hb)
++  refine (congrArg PolyTimeComputable (funext fun x => ?_)).mp h
++  rw [leStr_pairEncode]
++
++/-- The primality test `[decide (⟦w⟧ prime)]` is polynomial-time (`H.prime`, `primeStr_eq`). -/
++private theorem rabin_prime_poly (H : ArithmeticFP) :
++    PolyTimeComputable fun w => [decide (listToNat w).Prime] := by
++  have h := H.prime
++  rw [primeStr_eq] at h
++  exact h
++
++/-- The residue `⟦w⟧ mod ⟦b⟧` as a numeral of the width of `b` is polynomial-time (`H.divMod`). -/
++private theorem rabin_mod_poly (H : ArithmeticFP) (b : List Bool) :
++    PolyTimeComputable fun w => pairSndD (divModStr (pairEncode w b)) :=
++  rabin_comp polyTimeComputable_pairSndD
++    (rabin_comp H.divMod (polyTimeComputable_id.pairEncode (polyTimeComputable_const b)))
++
++/-- The acceptance test of the odd generator: prime, and the residue modulo `2` reads `≥ 1`. -/
++private def rabin_oddAcc (w : List Bool) : Bool :=
++  decide (listToNat w).Prime &&
++    decide (listToNat [true] ≤ listToNat (pairSndD (divModStr (pairEncode w [true, false]))))
++
++/-- The acceptance test of the Blum generator: prime, and the residue modulo `4` reads `≥ 3`. -/
++private def rabin_blumAcc (w : List Bool) : Bool :=
++  decide (listToNat w).Prime &&
++    decide (listToNat [true, true] ≤ listToNat (pairSndD (divModStr (pairEncode w [true, false, false]))))
++
++/-- The odd test is polynomial-time (`H.prime`, `H.divMod`, `H.le`). -/
++private theorem rabin_oddAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun w => [rabin_oddAcc w] :=
++  polyTimeComputable_and (p := fun w => decide (listToNat w).Prime)
++    (q := fun w => decide (listToNat [true] ≤ listToNat (pairSndD (divModStr (pairEncode w [true, false])))))
++    (rabin_prime_poly H) (rabin_le_poly H (polyTimeComputable_const [true]) (rabin_mod_poly H _))
++
++/-- The Blum test is polynomial-time (`H.prime`, `H.divMod`, `H.le`). -/
++private theorem rabin_blumAcc_poly (H : ArithmeticFP) : PolyTimeComputable fun w => [rabin_blumAcc w] :=
++  polyTimeComputable_and (p := fun w => decide (listToNat w).Prime)
++    (q := fun w => decide (listToNat [true, true] ≤
++      listToNat (pairSndD (divModStr (pairEncode w [true, false, false])))))
++    (rabin_prime_poly H) (rabin_le_poly H (polyTimeComputable_const [true, true]) (rabin_mod_poly H _))
++
++/-- The odd test decides "prime and `≠ 2`" on every word (a prime is `2` or odd, `Nat.Prime.eq_two_or_odd`; `divModStr_pairEncode`). -/
++private theorem rabin_oddAcc_spec (w : List Bool) :
++    rabin_oddAcc w = decide ((listToNat w).Prime ∧ listToNat w ≠ 2) := by
++  rw [rabin_oddAcc, divModStr_pairEncode, pairSndD_pairEncode, rabin_listToNat_two,
++    listToNat_natToList (by simp; omega), rabin_listToNat_one]
++  by_cases hp : (listToNat w).Prime
++  · have h := hp.eq_two_or_odd
++    by_cases h2 : listToNat w = 2
++    · simp [h2]
++    · simp only [hp, h2, decide_true, Bool.true_and, ne_eq, not_false_eq_true, and_self,
++        decide_eq_true_eq]
++      omega
++  · simp [hp]
++
++/-- The Blum test decides "prime and `≡ 3 (mod 4)`" on every word (`divModStr_pairEncode`). -/
++private theorem rabin_blumAcc_spec (w : List Bool) :
++    rabin_blumAcc w = decide ((listToNat w).Prime ∧ listToNat w % 4 = 3) := by
++  rw [rabin_blumAcc, divModStr_pairEncode, pairSndD_pairEncode, rabin_listToNat_four,
++    listToNat_natToList (by simp; omega), rabin_listToNat_three]
++  by_cases hp : (listToNat w).Prime
++  · simp only [hp, decide_true, Bool.true_and, true_and, decide_eq_decide]
++    omega
++  · simp [hp]
++
++/-- `1^{max n 3}` from the raw layout (`n = |inParam z|`). -/
++private def rabin_gU (z : List Bool) : List Bool :=
++  if decide ((NUPPT.inParam z).length ≤ 2) then [true, true, true]
++  else List.replicate (NUPPT.inParam z).length true
++
++/-- The coins of the first prime run: the first `4m³` coins, `m = max n 3`. -/
++private def rabin_gC1 (z : List Bool) : List Bool :=
++  (NUPPT.inCoins z).take (rabinPrimeCoins.eval (rabin_gU z).length)
++
++/-- The coins of the second prime run: the next `4m³` coins. -/
++private def rabin_gC2 (z : List Bool) : List Bool :=
++  ((NUPPT.inCoins z).drop (rabinPrimeCoins.eval (rabin_gU z).length)).take
++    (rabinPrimeCoins.eval (rabin_gU z).length)
++
++/-- The first prime's `m`-bit numeral. -/
++private def rabin_gP (acc0 : List Bool → Bool) (ds : List Bool) (z : List Bool) : List Bool :=
++  rabin_spOut acc0 (rabin_gU z) ds (rabin_gC1 z)
++
++/-- The second prime's `m`-bit numeral. -/
++private def rabin_gQ (acc0 : List Bool → Bool) (ds : List Bool) (z : List Bool) : List Bool :=
++  rabin_spOut acc0 (rabin_gU z) ds (rabin_gC2 z)
++
++/-- The validity test: the two numerals differ. -/
++private def rabin_gValid (acc0 : List Bool → Bool) (ds1 ds2 : List Bool) (z : List Bool) : Bool :=
++  !decide (rabin_gP acc0 ds1 z = rabin_gQ acc0 ds2 z)
++
++/-- The first output prime: the sampled one if valid, else the padded fallback `ds1`. -/
++private def rabin_gA (acc0 : List Bool → Bool) (ds1 ds2 : List Bool) (z : List Bool) : List Bool :=
++  if rabin_gValid acc0 ds1 ds2 z then rabin_gP acc0 ds1 z else rabin_pad (rabin_gU z) ds1
++
++/-- The second output prime: the sampled one if valid, else the padded fallback `ds2`. -/
++private def rabin_gB (acc0 : List Bool → Bool) (ds1 ds2 : List Bool) (z : List Bool) : List Bool :=
++  if rabin_gValid acc0 ds1 ds2 z then rabin_gQ acc0 ds2 z else rabin_pad (rabin_gU z) ds2
++
++/-- **The Rabin generator as a string computation**: `⟨⟦pq⟧_{2m}, ⟨⟦p⟧_m, ⟦q⟧_m⟩⟩` with `N = pq` by `H.mul`. -/
++private def rabin_genCore (acc0 : List Bool → Bool) (ds1 ds2 : List Bool) (z : List Bool) : List Bool :=
++  pairEncode (mulStr (pairEncode (rabin_gA acc0 ds1 ds2 z) (rabin_gB acc0 ds1 ds2 z)))
++    (pairEncode (rabin_gA acc0 ds1 ds2 z) (rabin_gB acc0 ds1 ds2 z))
++
++/-- `1^{max n 3}` is polynomial-time (`polyTimeComputable_lenLe`, `_unaryPoly`, `_ite`). -/
++private theorem rabin_gU_poly : PolyTimeComputable rabin_gU := by
++  have hL' := rabin_comp polyTimeComputable_lenLe
++    ((polyTimeComputable_const [true, true]).pairEncode NUPPT.polyTimeComputable_inParam)
++  have hL : PolyTimeComputable fun z => [decide ((NUPPT.inParam z).length ≤ 2)] := by
++    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hL'
++    simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_cons, List.length_nil]
++  have hR' := rabin_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam
++  have hR : PolyTimeComputable fun z => List.replicate (NUPPT.inParam z).length true := by
++    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hR'
++    rw [PolyExpr.eval_var]
++  exact polyTimeComputable_ite (p := fun z => decide ((NUPPT.inParam z).length ≤ 2))
++    (f := fun _ => [true, true, true]) (g := fun z => List.replicate (NUPPT.inParam z).length true)
++    hL (polyTimeComputable_const _) hR
++
++/-- The first coin segment is polynomial-time (`polyTimeComputable_pairTakePoly rabinPrimeCoins`). -/
++private theorem rabin_gC1_poly : PolyTimeComputable rabin_gC1 := by
++  have h := rabin_comp (polyTimeComputable_pairTakePoly rabinPrimeCoins)
++    (rabin_gU_poly.pairEncode NUPPT.polyTimeComputable_inCoins)
++  refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
++  rw [pairFstD_pairEncode, pairSndD_pairEncode, rabin_gC1]
++
++/-- The second coin segment is polynomial-time (`_pairDropPoly`, `_pairTakePoly rabinPrimeCoins`). -/
++private theorem rabin_gC2_poly : PolyTimeComputable rabin_gC2 := by
++  have hD := rabin_comp (polyTimeComputable_pairDropPoly rabinPrimeCoins)
++    (rabin_gU_poly.pairEncode NUPPT.polyTimeComputable_inCoins)
++  have h := rabin_comp (polyTimeComputable_pairTakePoly rabinPrimeCoins) (rabin_gU_poly.pairEncode hD)
++  refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
++  rw [pairFstD_pairEncode, pairSndD_pairEncode, pairFstD_pairEncode, pairSndD_pairEncode, rabin_gC2]
++
++/-- **The generator's string computation is polynomial-time** (two restricted prime samplers, `polyTimeComputable_pairEq`, `_not`, `_ite`, the padded fallbacks, `H.mul`). -/
++private theorem rabin_genCore_poly (H : ArithmeticFP) {acc0 : List Bool → Bool}
++    (hacc0 : PolyTimeComputable fun w => [acc0 w]) (ds1 ds2 : List Bool) :
++    PolyTimeComputable (rabin_genCore acc0 ds1 ds2) := by
++  have hP : PolyTimeComputable (rabin_gP acc0 ds1) :=
++    rabin_spOut_poly H hacc0 rabin_gU_poly (polyTimeComputable_const ds1) rabin_gC1_poly
++  have hQ : PolyTimeComputable (rabin_gQ acc0 ds2) :=
++    rabin_spOut_poly H hacc0 rabin_gU_poly (polyTimeComputable_const ds2) rabin_gC2_poly
++  have hE' := rabin_comp polyTimeComputable_pairEq (hP.pairEncode hQ)
++  have hE : PolyTimeComputable fun z => [decide (rabin_gP acc0 ds1 z = rabin_gQ acc0 ds2 z)] := by
++    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hE'
++    rw [pairFstD_pairEncode, pairSndD_pairEncode]
++  have hV : PolyTimeComputable fun z => [rabin_gValid acc0 ds1 ds2 z] :=
++    polyTimeComputable_not (p := fun z => decide (rabin_gP acc0 ds1 z = rabin_gQ acc0 ds2 z)) hE
++  have hA : PolyTimeComputable (rabin_gA acc0 ds1 ds2) :=
++    polyTimeComputable_ite (p := rabin_gValid acc0 ds1 ds2) (f := rabin_gP acc0 ds1)
++      (g := fun z => rabin_pad (rabin_gU z) ds1) hV hP
++      (rabin_pad_poly H rabin_gU_poly (polyTimeComputable_const ds1))
++  have hB : PolyTimeComputable (rabin_gB acc0 ds1 ds2) :=
++    polyTimeComputable_ite (p := rabin_gValid acc0 ds1 ds2) (f := rabin_gQ acc0 ds2)
++      (g := fun z => rabin_pad (rabin_gU z) ds2) hV hQ
++      (rabin_pad_poly H rabin_gU_poly (polyTimeComputable_const ds2))
++  exact (rabin_comp H.mul (hA.pairEncode hB)).pairEncode (hA.pairEncode hB)
++
++/-- `rabin_gU z` is `1^{max n 3}`. -/
++private theorem rabin_gU_eq (z : List Bool) :
++    rabin_gU z = List.replicate (max (NUPPT.inParam z).length 3) true := by
++  rw [rabin_gU]
++  split_ifs with h
++  · rw [show max (NUPPT.inParam z).length 3 = 3 by simp at h; omega]; rfl
++  · rw [show max (NUPPT.inParam z).length 3 = (NUPPT.inParam z).length by simp at h; omega]
++
++/-- The restricted sampler's value is a prime of the class below `2^m` (`rejectBlocksL_spec`, or the fallback `d`), and its string is the `m`-bit numeral of that value. -/
++private theorem rabin_samplePrimePL_spec (P : ℕ → Prop) [DecidablePred P] (m d : ℕ) (r : List Bool)
++    (hd : d.Prime ∧ P d ∧ d < 2 ^ m) :
++    (listToNat (samplePrimePL P m d r)).Prime ∧ P (listToNat (samplePrimePL P m d r)) ∧
++      listToNat (samplePrimePL P m d r) < 2 ^ m ∧
++      samplePrimePL P m d r = natToList m (listToNat (samplePrimePL P m d r)) := by
++  have hv : ((rejectBlocksL (fun v => v.Prime ∧ P v) m m (4 * m ^ 2) r).getD d).Prime ∧
++      P ((rejectBlocksL (fun v => v.Prime ∧ P v) m m (4 * m ^ 2) r).getD d) ∧
++      (rejectBlocksL (fun v => v.Prime ∧ P v) m m (4 * m ^ 2) r).getD d < 2 ^ m := by
++    rcases h : rejectBlocksL (fun v => v.Prime ∧ P v) m m (4 * m ^ 2) r with _ | v
++    · exact hd
++    · have := rejectBlocksL_spec h
++      exact ⟨this.1.1, this.1.2, this.2⟩
++  rw [samplePrimePL, listToNat_natToList hv.2.2]
++  exact ⟨hv.1, hv.2.1, hv.2.2, rfl⟩
++
++/-- **The string computation is the generator**: for a test `acc0` deciding "prime and in `P`" and fallback words `ds1`, `ds2` reading as the fallback primes, `rabinGenRaw P dflt = rabin_genCore acc0 ds1 ds2`.
++
++**Proof sketch.** The two string samplers are `samplePrimePL` on the two coin segments (`rabin_spOut_eq`, `rabin_gU_eq`); their values are primes of the class below `2^m` (`rabin_samplePrimePL_spec`), so `rabinGenParams`'s test reduces to `p ≠ q`, which is the test "the numerals differ" (`natToList` at a fixed width). In the valid case the primes are read through `DistinctPrimes.p_eq`/`q_eq` and `N = pq` is `mulStr_natToList`; otherwise both sides are the fallback (`rabin_pad_eq`). -/
++private theorem rabin_genCore_eq (P : ℕ → Prop) [DecidablePred P] (dflt : ∀ m, RabinParams P (max m 3))
++    {acc0 : List Bool → Bool} (hspec : ∀ w, acc0 w = decide ((listToNat w).Prime ∧ P (listToNat w)))
++    {ds1 ds2 : List Bool} (h1 : ∀ m, (dflt m).z.p = listToNat ds1) (h2 : ∀ m, (dflt m).z.q = listToNat ds2)
++    (hl1 : ds1.length ≤ 3) (hl2 : ds2.length ≤ 3) (z : List Bool) :
++    rabinGenRaw P dflt z = rabin_genCore acc0 ds1 ds2 z := by
++  have hUl : (rabin_gU z).length = max (NUPPT.inParam z).length 3 := by
++    rw [rabin_gU_eq, List.length_replicate]
++  have hl1' : ds1.length ≤ (rabin_gU z).length := by rw [hUl]; omega
++  have hl2' : ds2.length ≤ (rabin_gU z).length := by rw [hUl]; omega
++  have hP : rabin_gP acc0 ds1 z = samplePrimePL P (max (NUPPT.inParam z).length 3)
++      (dflt (NUPPT.inParam z).length).z.p
++      ((NUPPT.inCoins z).take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) := by
++    rw [rabin_gP, rabin_spOut_eq (fun v => v.Prime ∧ P v) hspec hl1', rabin_gC1, hUl,
++      ← h1 (NUPPT.inParam z).length, samplePrimePL]
++    rfl
++  have hQ : rabin_gQ acc0 ds2 z = samplePrimePL P (max (NUPPT.inParam z).length 3)
++      (dflt (NUPPT.inParam z).length).z.q
++      (((NUPPT.inCoins z).drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))).take
++        (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) := by
++    rw [rabin_gQ, rabin_spOut_eq (fun v => v.Prime ∧ P v) hspec hl2', rabin_gC2, hUl,
++      ← h2 (NUPPT.inParam z).length, samplePrimePL]
++    rfl
++  have hd1 : ((dflt (NUPPT.inParam z).length).z.p).Prime ∧ P (dflt (NUPPT.inParam z).length).z.p ∧
++      (dflt (NUPPT.inParam z).length).z.p < 2 ^ max (NUPPT.inParam z).length 3 :=
++    ⟨(dflt _).z.p_prime, (dflt _).hp, (dflt _).z.p_lt⟩
++  have hd2 : ((dflt (NUPPT.inParam z).length).z.q).Prime ∧ P (dflt (NUPPT.inParam z).length).z.q ∧
++      (dflt (NUPPT.inParam z).length).z.q < 2 ^ max (NUPPT.inParam z).length 3 :=
++    ⟨(dflt _).z.q_prime, (dflt _).hq, (dflt _).z.q_lt⟩
++  set sp := samplePrimePL P (max (NUPPT.inParam z).length 3) (dflt (NUPPT.inParam z).length).z.p
++      ((NUPPT.inCoins z).take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) with hsp
++  set sq := samplePrimePL P (max (NUPPT.inParam z).length 3) (dflt (NUPPT.inParam z).length).z.q
++      (((NUPPT.inCoins z).drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))).take
++        (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) with hsq
++  obtain ⟨hpP, hpC, hpL, hpE⟩ := rabin_samplePrimePL_spec P _ _
++    ((NUPPT.inCoins z).take (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) hd1
++  obtain ⟨hqP, hqC, hqL, hqE⟩ := rabin_samplePrimePL_spec P _ _
++    (((NUPPT.inCoins z).drop (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))).take
++        (rabinPrimeCoins.eval (max (NUPPT.inParam z).length 3))) hd2
++  rw [← hsp] at hpP hpC hpL hpE
++  rw [← hsq] at hqP hqC hqL hqE
++  have hRp : (rabinGenParams P dflt (NUPPT.inParam z).length (NUPPT.inCoins z)).z.p =
++      if listToNat sp ≠ listToNat sq then listToNat sp else (dflt (NUPPT.inParam z).length).z.p := by
++    rw [rabinGenParams]
++    split_ifs with h h' h''
++    · rw [DistinctPrimes.p_eq]
++    · exact absurd h.2.2.1 h'
++    · exact absurd ⟨hpP, hqP, h'', hpL, hqL, hpC, hqC⟩ h
++    · rfl
++  have hRq : (rabinGenParams P dflt (NUPPT.inParam z).length (NUPPT.inCoins z)).z.q =
++      if listToNat sp ≠ listToNat sq then listToNat sq else (dflt (NUPPT.inParam z).length).z.q := by
++    rw [rabinGenParams]
++    split_ifs with h h' h''
++    · rw [DistinctPrimes.q_eq]
++    · exact absurd h.2.2.1 h'
++    · exact absurd ⟨hpP, hqP, h'', hpL, hqL, hpC, hqC⟩ h
++    · rfl
++  have hstr : sp = sq ↔ listToNat sp = listToNat sq :=
++    ⟨fun h => by rw [h], fun h => by rw [hpE, hqE, h]⟩
++  rw [rabinGenRaw, rabinGenOut, rabinIndexOf, encodeDistinctPrimes_eq, hRp, hRq, rabin_genCore,
++    rabin_gA, rabin_gB, rabin_gValid, hP, hQ]
++  by_cases hne : listToNat sp = listToNat sq
++  · have hs : sp = sq := hstr.2 hne
++    simp only [hs, ne_eq, not_true_eq_false, if_false, decide_true, Bool.not_true,
++      Bool.false_eq_true]
++    rw [rabin_pad_eq hl1', rabin_pad_eq hl2', hUl, ← h1, ← h2,
++      mulStr_natToList _ _ _ _ (dflt _).z.p_lt (dflt _).z.q_lt, two_mul]
++  · have hs : ¬ sp = sq := fun h => hne (hstr.1 h)
++    simp only [hne, hs, ne_eq, not_false_eq_true, if_true, decide_false, Bool.not_false]
++    conv_rhs => rw [hpE, hqE]
++    rw [mulStr_natToList _ _ _ _ hpL hqL, two_mul]
++
++/-- `[true, false, true]` reads as `5`. -/
++private theorem rabin_listToNat_five : listToNat [true, false, true] = 5 := by
++  rw [listToNat_eq]; rfl
++
++/-- `[true, true, true]` reads as `7`. -/
++private theorem rabin_listToNat_seven : listToNat [true, true, true] = 7 := by
++  rw [listToNat_eq]; rfl
++
+ /-- **The odd generator is polynomial-time** [PS10, Theorem 61.7, "`I` is easy to sample"].
+ 
+ **Proof sketch.** As `polyTimeComputable_rsaGenRaw` without the exponent: the coins are cut
+@@ -543,13 +1075,46 @@ projection) and whose `none` branch is the constant fallback numeral; the validi
+ constant (`polyTimeComputable_ite`). -/
+ theorem polyTimeComputable_oddGenRaw (H : ArithmeticFP) :
+     PolyTimeComputable (rabinGenRaw (· ≠ 2) oddDefault) := by
+-  sorry
++  have e : rabinGenRaw (· ≠ 2) oddDefault = rabin_genCore rabin_oddAcc [true, true] [true, false, true] :=
++    funext (rabin_genCore_eq _ oddDefault rabin_oddAcc_spec
++      (fun m => by
++        rw [rabin_listToNat_three]
++        exact smallDistinctPrimes_p m Nat.prime_three Nat.prime_five (by norm_num) (by norm_num) (by norm_num))
++      (fun m => by
++        rw [rabin_listToNat_five]
++        exact smallDistinctPrimes_q m Nat.prime_three Nat.prime_five (by norm_num) (by norm_num) (by norm_num))
++      (by decide) (by decide))
++  rw [e]
++  exact rabin_genCore_poly H (rabin_oddAcc_poly H) _ _
+ 
+ /-- **The Blum generator is polynomial-time** [PS10, Theorem 63.10 (2)]: as
+-`polyTimeComputable_oddGenRaw` with the test "`p ≡ 3 (mod 4)`" on the last two bits. -/
++`polyTimeComputable_oddGenRaw` with the test "`p ≡ 3 (mod 4)`" on the last two bits.
++
++**Proof sketch.** The generator equals the string computation `rabin_genCore` with the test
++`rabin_blumAcc` ("prime, and the residue modulo `4` (`H.divMod` by `⟦4⟧`) reads `≥ 3`", which
++decides `p.Prime ∧ p % 4 = 3` on every word) and the fallback words `⟦3⟧`, `⟦7⟧`
++(`rabin_genCore_eq`). That computation is polynomial-time (`rabin_genCore_poly`): `1^{max n 3}`
++by `polyTimeComputable_lenLe`/`_ite`, the coin segments by `_pairTakePoly`/`_pairDropPoly
++rabinPrimeCoins`, each restricted prime run by the block loop over the public repetition host
++`Complexity.polyTimeComputable_iterateFind` (`rabin_spOut_poly`; the fallback padded to `m`
++bits by `H.sub` and `H.add`), the validity test by `polyTimeComputable_pairEq` (the two primes
++differ; both are always primes of the class below `2^m`), and `N` by `H.mul`. -/
+ theorem polyTimeComputable_blumGenRaw (H : ArithmeticFP) :
+     PolyTimeComputable (rabinGenRaw (· % 4 = 3) blumDefault) := by
+-  sorry
++  have e : rabinGenRaw (· % 4 = 3) blumDefault =
++      rabin_genCore rabin_blumAcc [true, true] [true, true, true] :=
++    funext (rabin_genCore_eq _ blumDefault rabin_blumAcc_spec
++      (fun m => by
++        rw [rabin_listToNat_three]
++        exact smallDistinctPrimes_p m Nat.prime_three (by decide : Nat.Prime 7) (by norm_num) (by norm_num)
++          (by norm_num))
++      (fun m => by
++        rw [rabin_listToNat_seven]
++        exact smallDistinctPrimes_q m Nat.prime_three (by decide : Nat.Prime 7) (by norm_num) (by norm_num)
++          (by norm_num))
++      (by decide) (by decide))
++  rw [e]
++  exact rabin_genCore_poly H (rabin_blumAcc_poly H) _ _
+ 
+ /-- **The generator of the Rabin collection** (odd distinct primes) as a uniform `NUPPT`. -/
+ noncomputable def oddGen (H : ArithmeticFP) : NUPPT :=
+@@ -651,10 +1216,6 @@ noncomputable def rabinSampler (H : ArithmeticFP) : NUPPT :=
+   NUPPT.ofPolyTimeUniform (polyTimeComputable_unitSampleStr H NUPPT.polyTimeComputable_inArg)
+     rsaSampleCoins
+ 
+-/-- `[true, false]` reads as `2` (the exponent of the squaring evaluator). -/
+-private theorem rabin_listToNat_two : listToNat [true, false] = 2 := by
+-  rw [listToNat_eq]; rfl
+-
+ /-- The fallback `1 % N` of the unit sampler is a unit below `N` (for `N = 1` it is `0`, coprime
+ to `1`). -/
+ private theorem rabin_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Coprime (1 % N) N := by
+-- 
+2.43.0
+
