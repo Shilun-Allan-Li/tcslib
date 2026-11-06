@@ -1275,10 +1275,10 @@ private lemma mult_sub_two (x : List Bool) (v : Fin 13 → ℕ) (r : Fin 13)
     MultReach x (some (labels false), v, none)
       (some done, Function.update v r (v r - 2), none) := by
   apply AReach.step ⟨mult_preconditions x _ v none, bound⟩
-  simp only [astep, code₀]
+  rw [astep_dec code₀]
   have nextBound := register_update_le v r (4 * (x.length + 1)) (v r - 1) bound
     ((Nat.sub_le _ _).trans (bound r))
-  simpa only [astep, code₁, Function.update_self, Function.update_idem, Nat.sub_sub,
+  simpa only [astep_dec code₁, Function.update_self, Function.update_idem, Nat.sub_sub,
     show (1 : ℕ) + 1 = 2 by rfl] using
     (AReach.single (A := multARM) (oracle := multOracle) (x := x)
       (a := (some (labels true), Function.update v r (v r - 1), none))

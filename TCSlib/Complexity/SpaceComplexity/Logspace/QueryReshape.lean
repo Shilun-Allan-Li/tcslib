@@ -423,7 +423,8 @@ private lemma drop_hit (mode : Bool) (h : List Bool) (v : Fin 9 → ℕ)
     DropHalt mode h (some .hit, v, none) (if mode then true else h.getD (v 0) false) := by
   cases mode
   · apply AHalt.step ⟨drop_preS false h _, hv⟩
-    simp only [astep, dropARM, Bool.false_eq_true, ↓reduceIte, vword_whole₁, drop_bit]
+    rw [astep_call (show dropARM false .hit = _ from rfl)]
+    simp only [vword_whole₁, drop_bit]
     cases hb : h.getD (v 0) false <;> simpa [hb] using drop_ret false _ h v hv
   · exact AHalt.ret rfl ⟨drop_preS true h _, hv⟩
 
@@ -2120,7 +2121,7 @@ private lemma comp_call_return (C e : ℕ) (mode : Bool) (f : List Bool → List
     (hc : compARM C e mode l = .call j .whole [r] (.answer true) (.answer false)) :
     CompHalt C e mode f h B (some l, v, none) (compOracle f j (pairEncode h (Nat.bits (v r)))) := by
   apply AHalt.step ⟨comp_preS C e mode h _, hv⟩
-  simp only [astep, hc, vword_whole₁]
+  rw [astep_call hc, vword_whole₁]
   cases ans : compOracle f j (pairEncode h (Nat.bits (v r))) <;>
     simpa [ans] using comp_ret C e mode _ f h B v hv
 
@@ -2147,7 +2148,7 @@ private lemma comp_prefix_hit (C e : ℕ) (mode : Bool) (f : List Bool → List 
     simp only [Bool.false_eq_true, ↓reduceIte] at answer
     rw [answer] at next
     apply AHalt.step ⟨comp_preS C e false _ _, hv⟩
-    simpa [astep, compARM, vn] using next
+    simpa [astep_half (show compARM C e false .prefixHit = _ from rfl), vn] using next
 
 
 /-- A suffix lookup reads exactly the retained payload bit or rejects past its end.
