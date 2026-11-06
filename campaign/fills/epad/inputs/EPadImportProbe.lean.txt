@@ -1,0 +1,29 @@
+import TCSlib.Complexity.SpaceComplexity.Padding
+import TCSlib.Complexity.SpaceComplexity.Logspace.PreimageHost
+import TCSlib.Complexity.TuringMachine.Build.InputDevice
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.InputCall
+import TCSlib.Complexity.ClassNP.PolyTimePairing
+
+/-! E-PAD's import probe: every host the brief names, at the base. Each `#check` must print a
+type; the final line prints the target's axioms (`sorryAx` expected: the target is the fill). -/
+
+open Complexity Turing in
+section
+#check @Complexity.padLang
+#check @Complexity.mem_padLang_iff
+#check @Complexity.mem_SPACE_padLang
+#check @Complexity.mem_SPACE_iff
+#check @Complexity.SPACE.mono
+#check @Complexity.SPACE.mono_const
+#check @Turing.FinTM.decidesInSpace_iff
+#check @Turing.length_pairEncode
+#check @Complexity.pairFstD_pairEncode
+#check @Complexity.LogProg.OIS.compile_decides
+#check @Complexity.mem_LOGSPACE_preimage
+#check @Turing.exists_rulerHostTM
+#check @Turing.vhostEmitTM
+#check @Turing.FinTM.exists_inputCallTM
+end
+
+#print axioms Complexity.mem_SPACE_padLang

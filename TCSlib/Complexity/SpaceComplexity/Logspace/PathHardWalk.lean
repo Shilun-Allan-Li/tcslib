@@ -112,52 +112,52 @@ theorem dispatch_halt (st : St) (hbd : st.Bd B) :
   obtain ⟨y, p, xx, t, c, s, e, n, m, k, q, i, d, u, z⟩ := st
   simp only at hbd ⊢
   rcases u with _ | _ | u
-  · refine stepH_of hbd ?_; stp
+  · refine stepH_of hbd ?_; rw [astep_jz (show A a b f false .dU = _ from rfl)]; stp
     rcases i with _ | _ | i
-    · refine stepH_of hbd ?_; stp
+    · refine stepH_of hbd ?_; rw [astep_jz (show A a b f false .u0 = _ from rfl)]; stp
       rw [cdec_false (not_edge_zero N x _ 0 (by omega))]
       exact ans_halt hbd _
-    · refine stepH_of hbd ?_; stp
-      refine stepH_of hbd ?_; stp
-      refine stepH_of (by sbd) ?_; stp
+    · refine stepH_of hbd ?_; rw [astep_jz (show A a b f false .u0 = _ from rfl)]; stp
+      refine stepH_of hbd ?_; rw [astep_dec (show A a b f false .u0a = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u0b = _ from rfl)]; stp
       rw [cdec_false (not_edge_zero N x _ 1 (by omega))]
       exact ans_halt (by sbd) _
-    · refine stepH_of hbd ?_; stp
-      refine stepH_of hbd ?_; stp
-      refine stepH_of (by sbd) ?_; stp
-      refine stepH_of (by sbd) ?_; stp
+    · refine stepH_of hbd ?_; rw [astep_jz (show A a b f false .u0 = _ from rfl)]; stp
+      refine stepH_of hbd ?_; rw [astep_dec (show A a b f false .u0a = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u0b = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_dec (show A a b f false .u0c = _ from rfl)]; stp
       refine stepH_of (by sbd) ?_
-      simp only [astep, A, vword_whole₂]
+      simp only [astep_call (show A a b f false .u0d = _ from rfl), vword_whole₂]
       stp
       exact ans_dec (by sbd)
         ((orc_init N x β i s).trans (decide_eq_decide.mpr (edge_zero_iff N x s i)).symm)
-  · refine stepH_of hbd ?_; stp
-    refine stepH_of hbd ?_; stp
-    refine stepH_of (by sbd) ?_; stp
+  · refine stepH_of hbd ?_; rw [astep_jz (show A a b f false .dU = _ from rfl)]; stp
+    refine stepH_of hbd ?_; rw [astep_dec (show A a b f false .dU1 = _ from rfl)]; stp
+    refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .dU2 = _ from rfl)]; stp
     rw [cdec_false (not_edge_one N x _ _)]
     exact ans_halt (by sbd) _
-  · refine stepH_of hbd ?_; stp
-    refine stepH_of hbd ?_; stp
-    refine stepH_of (by sbd) ?_; stp
-    refine stepH_of (by sbd) ?_; stp
+  · refine stepH_of hbd ?_; rw [astep_jz (show A a b f false .dU = _ from rfl)]; stp
+    refine stepH_of hbd ?_; rw [astep_dec (show A a b f false .dU1 = _ from rfl)]; stp
+    refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .dU2 = _ from rfl)]; stp
+    refine stepH_of (by sbd) ?_; rw [astep_dec (show A a b f false .dU3 = _ from rfl)]; stp
     rcases i with _ | _ | i
-    · refine stepH_of (by sbd) ?_; stp
+    · refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u2 = _ from rfl)]; stp
       rw [cdec_false (not_edge_to_zero N x _ _)]
       exact ans_halt (by sbd) _
-    · refine stepH_of (by sbd) ?_; stp
-      refine stepH_of (by sbd) ?_; stp
-      refine stepH_of (by sbd) ?_; stp
+    · refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u2 = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_dec (show A a b f false .u2a = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u2b = _ from rfl)]; stp
       refine stepH_of (by sbd) ?_
-      simp only [astep, A, vword_whole₂]
+      simp only [astep_call (show A a b f false .u2c = _ from rfl), vword_whole₂]
       stp
       exact ans_dec (by sbd)
         ((orc_acc N x β u s).trans (decide_eq_decide.mpr (edge_to_one_iff N x s u)).symm)
-    · refine stepH_of (by sbd) ?_; stp
-      refine stepH_of (by sbd) ?_; stp
-      refine stepH_of (by sbd) ?_; stp
-      refine stepH_of (by sbd) ?_; stp
+    · refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u2 = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_dec (show A a b f false .u2a = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f false .u2b = _ from rfl)]; stp
+      refine stepH_of (by sbd) ?_; rw [astep_dec (show A a b f false .u2d = _ from rfl)]; stp
       refine stepH_of (by sbd) ?_
-      simp only [astep, A, vword_whole₃]
+      simp only [astep_call (show A a b f false .u2e = _ from rfl), vword_whole₃]
       stp
       exact ans_dec (by sbd)
         ((orc_step N x β u i s).trans (decide_eq_decide.mpr (edge_codes_iff N x s u i)).symm)
@@ -184,14 +184,15 @@ theorem tail_halt {o : Fin 5 → List Bool → Bool} {y : List Bool} (st : St) (
     intro j r hr
     induction r generalizing j with
     | zero =>
-      refine stepH_of (by sbd) ?_; stp
+      refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f mode (.tl j) = _ from rfl)]; stp
       simp only [tailVal, dif_pos j.isLt]
       exact ans_halt (by sbd) _
     | succ r ih =>
-      refine stepH_of (by sbd) ?_; stp
+      refine stepH_of (by sbd) ?_; rw [astep_jz (show A a b f mode (.tl j) = _ from rfl)]; stp
       by_cases hj : j.val < 4
       · simp only [dif_pos hj]
-        refine stepH_of (by sbd) ?_; stp
+        refine stepH_of (by sbd) ?_
+        rw [astep_dec (show A a b f mode (.td ⟨j.val, hj⟩) = _ from rfl)]; stp
         have := ih ⟨j.val + 1, by omega⟩ (by omega)
         simp only at this
         rw [show j.val + (r + 1) = j.val + 1 + r by omega]
@@ -229,7 +230,7 @@ theorem matrix_halt (st : St) (hbd : st.Bd B) (hu : st.u = 0) (ht : st.t = 0)
     set j := i / 2 with hj
     have hji : j ≤ i := Nat.div_le_self _ _
     have hq : j / 2 ^ e * 2 ^ e ≤ j := Nat.div_mul_le_self _ _
-    refine stepH_of hbd ?_; stp
+    refine stepH_of hbd ?_; rw [astep_half (show A a b f false .mh = _ from rfl)]; stp
     -- `u := j`
     have h1 := cp_run (a := a) (b := b) (f := f) (mode := false) (o := orc N)
       (y := pairEncode x β) (B := B) .UI (St.mk y' p xx 0 0 s e n m k q j d 0 0) (by sbd)
@@ -321,7 +322,7 @@ theorem walk_halt (st : St) (hbd : st.Bd B) (hd : st.d = 0) (hu : st.u = 0) (ht 
   by_cases h2 : 2 * 2 ^ e ≤ i
   · rw [if_pos h2] at h1
     refine h1.halt ?_
-    refine stepH_of (by sbd) ?_; stp
+    refine stepH_of (by sbd) ?_; rw [astep_clr (show A a b f mode .wNy = _ from rfl)]; stp
     have h3 := sb_run (a := a) (b := b) (f := f) (mode := mode) (o := orc N)
       (y := pairEncode x β) (B := B) .N (St.mk y' p xx 0 0 s e (2 * 2 ^ e) (2 * (2 ^ e) ^ 2) k q
         i 0 0 0) hbd
@@ -332,24 +333,27 @@ theorem walk_halt (st : St) (hbd : st.Bd B) (hd : st.d = 0) (hu : st.u = 0) (ht 
     have bd : ∀ r', r' ≤ r → St.Bd B (St.mk y' p xx 0 0 s e 0 (2 * (2 ^ e) ^ 2) k q r' 0 0 0) := by
       intro r' hr'; sbd
     rcases r with _ | _ | r
-    · refine stepH_of (bd _ (by omega)) ?_; stp
+    · refine stepH_of (bd _ (by omega)) ?_; rw [astep_jz (show A a b f mode .w2a = _ from rfl)]; stp
       have : wAns N x mode s e (2 * 2 ^ e) = mode := by
         cases mode
         · simp [wAns]
         · simp only [wAns, if_true]; exact decide_eq_true (by omega)
       rw [this]; exact ans_halt (bd _ (by omega)) _
-    · refine stepH_of (bd _ (by omega)) ?_; stp
-      refine stepH_of (bd _ (by omega)) ?_; stp
-      refine stepH_of (bd _ (by omega)) ?_; stp
+    · refine stepH_of (bd _ (by omega)) ?_; rw [astep_jz (show A a b f mode .w2a = _ from rfl)]; stp
+      refine stepH_of (bd _ (by omega)) ?_
+      rw [astep_dec (show A a b f mode .w2b = _ from rfl)]; stp
+      refine stepH_of (bd _ (by omega)) ?_; rw [astep_jz (show A a b f mode .w2c = _ from rfl)]; stp
       have : wAns N x mode s e (2 * 2 ^ e + 1) = true := by
         cases mode
         · simp [wAns]
         · simp only [wAns, if_true]; exact decide_eq_true (by omega)
       rw [this]; exact ans_halt (bd _ (by omega)) _
-    · refine stepH_of (bd _ (by omega)) ?_; stp
-      refine stepH_of (bd _ (by omega)) ?_; stp
-      refine stepH_of (bd _ (by omega)) ?_; stp
-      refine stepH_of (bd _ (by omega)) ?_; stp
+    · refine stepH_of (bd _ (by omega)) ?_; rw [astep_jz (show A a b f mode .w2a = _ from rfl)]; stp
+      refine stepH_of (bd _ (by omega)) ?_
+      rw [astep_dec (show A a b f mode .w2b = _ from rfl)]; stp
+      refine stepH_of (bd _ (by omega)) ?_; rw [astep_jz (show A a b f mode .w2c = _ from rfl)]; stp
+      refine stepH_of (bd _ (by omega)) ?_
+      rw [astep_dec (show A a b f mode .w2d = _ from rfl)]; stp
       have h4 := le_run (a := a) (b := b) (f := f) (mode := mode) (o := orc N)
         (y := pairEncode x β) (B := B) .M (St.mk y' p xx 0 0 s e 0 (2 * (2 ^ e) ^ 2) k q
           r 0 0 0) (bd r (by omega)) rfl
@@ -361,7 +365,7 @@ theorem walk_halt (st : St) (hbd : st.Bd B) (hd : st.d = 0) (hu : st.u = 0) (ht 
         have bd' : St.Bd B (St.mk y' p xx 0 0 s e 0 (2 * (2 ^ e) ^ 2) k q r
             (min (2 * (2 ^ e) ^ 2) r) 0 0) := by
           have := bd r (by omega); simp only [St.Bd] at this ⊢; omega
-        refine stepH_of bd' ?_; stp
+        refine stepH_of bd' ?_; rw [astep_clr (show A a b f mode .wMy = _ from rfl)]; stp
         have h6 := sb_run (a := a) (b := b) (f := f) (mode := mode) (o := orc N)
           (y := pairEncode x β) (B := B) .M (St.mk y' p xx 0 0 s e 0 (2 * (2 ^ e) ^ 2) k q
             r 0 0 0) (bd r (by omega))
@@ -396,7 +400,7 @@ theorem walk_halt (st : St) (hbd : st.Bd B) (hd : st.d = 0) (hu : st.u = 0) (ht 
         have bd' : St.Bd B (St.mk y' p xx 0 0 s e 0 (2 * (2 ^ e) ^ 2) k q r
             (min (2 * (2 ^ e) ^ 2) r) 0 0) := by
           have := bd r (by omega); simp only [St.Bd] at this ⊢; omega
-        refine stepH_of bd' ?_; stp
+        refine stepH_of bd' ?_; rw [astep_clr (show A a b f mode .mx = _ from rfl)]; stp
         have h6 := matrix_halt (a := a) (b := b) (f := f) (mode := mode) (B := B) N x β
           (St.mk y' p xx 0 0 s e 0 (2 * (2 ^ e) ^ 2) k q r 0 0 0) (bd r (by omega)) rfl rfl rfl rfl
         simp only at h6
