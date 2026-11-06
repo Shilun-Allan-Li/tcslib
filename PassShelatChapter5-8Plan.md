@@ -360,3 +360,4 @@ These need agreement before S1 completes. Suggested points:
 | 2026-11-07 | **Gate 07 round 3 staged** (exchange `70718ea85420f324294d3448a55145f5c32af3da`, `outbox/gates/07-eqlemmas-r3-gate/`: 26-section bundle, SHA-256 `5eaec3f74e39c522482c4550645a5d78a35beba9f09c54e51e0a103a74c0d5b5`; records `00e2aa46`; #210 at `eb99dd7b`) | record |
 | 2026-11-07 | Container restart: scratch survived; the exchange monitor and the rabin review were resumed. Landing branches backed up as patch series in `fills/landing/` (local branches are not on the remote) | record |
 | 2026-11-07 | **Gate 07 round 3 dispatched (user)** from exchange `70718ea8` (#210 at `eb99dd7b`). Deliverable `inbox/gate07-eqlemmas-r3-findings.md` | record |
+| 2026-11-07 | **Gate 07 CLOSED** (round 3: PASS, 0/0/0; `findings/gate07-eqlemmas-r3-findings.md`, by upload). #210 at `eb99dd7bb2d8a270b2ce17a3cf3e1487a65ad0ee` Clear to merge. Deferred: 764 (b) rows to clean-up part 2 | record |
