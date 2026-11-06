@@ -1,4 +1,4 @@
-# Fill dl-c: REPORT (checkpoint 1, work in progress)
+# Fill dl-c: REPORT (checkpoint 2, work in progress)
 
 Unit **dl-c** of `outbox/fills/dl-candidates/brief.md`; owned file
 `TCSlib/Cryptography/Candidates/ElGamal.lean`. External fill worker.
@@ -18,8 +18,8 @@ Unit **dl-c** of `outbox/fills/dl-candidates/brief.md`; owned file
 | 1 | `statClose_sq_generator` | filled |
 | 2 | `polyTimeComputable_egGenRaw` | filled |
 | 3 | `polyTimeComputable_egEncRaw` | filled |
-| 4 | `egDecStr_apply` | open |
-| 5 | `elGamal_correct` | open |
+| 4 | `egDecStr_apply` | filled |
+| 5 | `elGamal_correct` | filled |
 | 6 | `polyTimeComputable_egGroupGenRaw` | filled |
 | 7 | `elGamal_secure` | open |
 
