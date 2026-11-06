@@ -56,19 +56,19 @@ lemma rel_orcN (N : FinNDTM Bool) (x : List Bool) (s : ℕ) :
     Rel (orcN N) x s = Codec.StepRel N x s := by
   funext u v
   apply propext
-  simp [Rel, Codec.StepRel, orcN, decs, indicator_eq_decide]
+  simp [rel_iff_orc, Codec.stepRel_iff_mem, orcN, decs, indicator_eq_decide]
 
 /-- Decider `1` answers membership in the initial-code language. -/
 lemma initO_orcN (N : FinNDTM Bool) (x : List Bool) (s u : ℕ) :
     InitO (orcN N) x s u ↔
       pairEncode x (pairEncode (Nat.bits u) (Nat.bits s)) ∈ Codec.initLang N := by
-  simp [InitO, orcN, decs, indicator_eq_decide]
+  simp [initO_iff_orc, orcN, decs, indicator_eq_decide]
 
 /-- Decider `2` answers membership in the accepting-code language. -/
 lemma accO_orcN (N : FinNDTM Bool) (x : List Bool) (s v : ℕ) :
     AccO (orcN N) x s v ↔
       pairEncode x (pairEncode (Nat.bits v) (Nat.bits s)) ∈ Codec.acceptLang N := by
-  simp [AccO, orcN, decs, indicator_eq_decide]
+  simp [accO_iff_orc, orcN, decs, indicator_eq_decide]
 
 /-- The constant of the Savitch machine for `N` deciding in space `c (n ^ k + 1)`: large
 enough for the radius (`radius_le`), the code width (`codeWidth_le`) and the configuration

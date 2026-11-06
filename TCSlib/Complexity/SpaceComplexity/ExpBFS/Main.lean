@@ -77,7 +77,7 @@ lemma ini_orcN (r u : ℕ) :
 
 /-- Decider `2` answers the step relation. -/
 lemma stp_orcN (r u v : ℕ) : stp (orcN N) x r u v = true ↔ Codec.StepRel N x r u v := by
-  simp [stp, orcN, decs, indicator_eq_decide, Codec.StepRel]
+  simp [stp, orcN, decs, indicator_eq_decide, Codec.stepRel_iff_mem]
 
 /-- Decider `3` answers whether a code is accepting. -/
 lemma acc_orcN (r u : ℕ) :
@@ -92,18 +92,19 @@ lemma cl_iff {r K : ℕ} (hK : 2 ^ (Codec.codeK N * (r + logSpace x.length + 1))
   · rintro ⟨u, -, hi, hpath⟩
     rw [ini_orcN] at hi
     subst hi
-    exact hpath.mono fun a b h => (stp_orcN r a b).mp h.1
+    exact ExpBFS.rcode_iff_reflTransGen.mpr (hpath.mono fun a b h => (stp_orcN r a b).mp h.1)
   · intro h
     refine ⟨_, (Codec.cfgCode_lt r _).trans_le hK, (ini_orcN r _).mpr rfl, ?_⟩
     have key : ∀ w, ExpBFS.RCode N x r w → Relation.ReflTransGen
         (fun a b => stp (orcN N) x r a b = true ∧ b < K)
         (Codec.cfgCode r (N.tm.initCfg x)) w := by
       intro w hw
+      rw [ExpBFS.rcode_iff_reflTransGen] at hw
       induction hw with
       | refl => exact Relation.ReflTransGen.refl
       | @tail b c hab hbc ih =>
         exact ih.tail ⟨(stp_orcN r b c).mpr hbc,
-          (ExpBFS.rcode_lt (hab.tail hbc)).trans_le hK⟩
+          (ExpBFS.rcode_lt (ExpBFS.rcode_iff_reflTransGen.mpr (hab.tail hbc))).trans_le hK⟩
     exact key v h
 
 open Classical in

@@ -116,7 +116,8 @@ theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length �
     rw [NDTM.runWith_append, NDTM.runWith_cons, NDTM.runWith_nil]
   constructor
   · intro h
-    obtain ⟨C, hC, hcC, C', ⟨b', hb'⟩, -, hcC'⟩ := (mem_stepLang (fixCoin N b) x _ _ s).mp h
+    obtain ⟨C, hC, hcC, C', ⟨b', hb'⟩, -, hcC'⟩ :=
+      (mem_stepLang (fixCoin N b) x _ _ s).mp (stepRel_iff_mem.mp h)
     have hcore : NDTM.coreSum C = NDTM.coreSum (run v) :=
       coreSum_eq_of_code_eq hC (inWin_run hN hs v) hcC
     rw [← hcC', ← hb']
@@ -124,8 +125,8 @@ theorem stepRel_iff {sp : ℕ → ℕ} (hN : N.UsesSpace sp) (hs : sp x.length �
     rw [stepWith_fixCoin, hstep]
     exact congrArg bitsVal (cfgWord_congr (NDTM.coreSum_stepWith N.tm b hcore))
   · rintro rfl
-    refine (mem_stepLang (fixCoin N b) x _ _ s).mpr ⟨run v, inWin_run hN hs v, rfl,
-      run (v ++ [b]), ⟨b, ?_⟩, inWin_run hN hs _, rfl⟩
+    refine stepRel_iff_mem.mpr ((mem_stepLang (fixCoin N b) x _ _ s).mpr ⟨run v,
+      inWin_run hN hs v, rfl, run (v ++ [b]), ⟨b, ?_⟩, inWin_run hN hs _, rfl⟩)
     change (fixCoin N b).tm.stepWith b (run v) = _
     rw [stepWith_fixCoin, hstep]
 
