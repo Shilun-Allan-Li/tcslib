@@ -38,10 +38,10 @@ Phase P3.3 of `AroraBarakChapters3-4Plan.md`, over the code layer of
 **Status.** The universal NDTM `Turing.exists_timed_universal_NDTM` is proved, from the
 interpreter core `Turing.exists_ndInterpreterCore`
 (`TCSlib.Complexity.TuringMachine.NDCodeSimulator`), and the exponential decider from it. The
-hierarchy `Complexity.ntime_hierarchy` is proved from two contracts that are still `sorry`: the
-diagonalizer `Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
-`Turing.FinNDTM.exists_codeNDTM_accepts_linear`. The two corollaries are proved from the
-hierarchy.
+hierarchy `Complexity.ntime_hierarchy` is proved from the diagonalizer
+`Turing.NTimeDiag.exists_diagonalizer` and the linear coded normal form
+`Turing.FinNDTM.exists_codeNDTM_accepts_linear`, both proved, and the two corollaries are proved
+from the hierarchy: all of them rest on the standard axioms alone.
 
 ## Design (declared deviations, each for the audit)
 
