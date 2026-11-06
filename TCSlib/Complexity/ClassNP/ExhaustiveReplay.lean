@@ -1805,9 +1805,8 @@ private theorem xr_val_cons (b : Bool) (w : List Bool) :
   simp [xr_val, Nat.ofDigits_cons]
 
 private theorem xr_val_lt (w : List Bool) : xr_val w < 2 ^ w.length := by
-  have := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
-    (by intro x hx; obtain ⟨b, -, rfl⟩ := List.mem_map.mp hx; cases b <;> simp)
-  simpa [xr_val] using this
+  unfold xr_val
+  exact Complexity.LogProg.ofDigits_lt_two_pow w
 
 private theorem xr_val_inj :
     ∀ {w w' : List Bool}, w.length = w'.length → xr_val w = xr_val w' → w = w'

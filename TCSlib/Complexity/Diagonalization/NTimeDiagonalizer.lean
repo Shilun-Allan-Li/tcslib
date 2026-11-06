@@ -415,38 +415,13 @@ private theorem qy_rung_val (m : ℕ) :
 least `D (n + 1)`. -/
 private theorem qy_ones_ge (n D : ℕ) :
     D * (n + 1) ≤ 2 ^ ((Nat.bits n).length + (Nat.bits D).length) - 1 := by
-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len, pow_add]
-  have hn := Nat.lt_size_self n
-  have hD := Nat.lt_size_self D
-  have hprod : (n + 1) * (D + 1) ≤ 2 ^ Nat.size n * 2 ^ Nat.size D :=
+  rw [pow_add]
+  have hn := Complexity.LogProg.lt_two_pow_bits n
+  have hD := Complexity.LogProg.lt_two_pow_bits D
+  have hprod : (n + 1) * (D + 1) ≤ 2 ^ (Nat.bits n).length * 2 ^ (Nat.bits D).length :=
     Nat.mul_le_mul hn hD
   have : D * (n + 1) + 1 ≤ (n + 1) * (D + 1) := by nlinarith
   omega
-
-/-- **The counter is not too large**: `2 ^ |bits n| ≤ 2 n + 1`. -/
-private theorem qy_two_pow_bits_le (n : ℕ) : 2 ^ (Nat.bits n).length ≤ 2 * n + 1 := by
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · simp
-  · rw [Nat.size_eq_bits_len]
-    have hsz : Nat.size n = Nat.log 2 n + 1 := by
-      apply le_antisymm
-      · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
-      · by_contra h
-        have hlt : n < 2 ^ Nat.log 2 n :=
-          Nat.size_le.mp (by omega)
-        exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
-    rw [hsz, pow_succ]
-    have := Nat.pow_log_le_self 2 (show n ≠ 0 by omega)
-    omega
-
-/-- **`⌊log₂ n⌋` from `bits n`**: for `n ≥ 1`, `Nat.log 2 n + 1 = |bits n|`. -/
-private theorem qy_log_bits {n : ℕ} (hn : 1 ≤ n) : Nat.log 2 n + 1 = (Nat.bits n).length := by
-  rw [Nat.size_eq_bits_len]
-  apply le_antisymm
-  · by_contra h
-    have hlt : n < 2 ^ Nat.log 2 n := Nat.size_le.mp (by omega)
-    exact absurd (Nat.pow_log_le_self 2 (by omega)) (not_le.mpr hlt)
-  · exact Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)
 
 /-- **The install call's bound under `f a ≤ n`** (the timeout certificate's arithmetic): with
 `a ≤ n` and `f a ≤ n`, the call's time bound `c' (c (f a + 1) + a + |bits (f a)| + 1)` is at most
@@ -3248,17 +3223,6 @@ private theorem qy_setup_short {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bo
 
 /-! ### The locator's round: arithmetic -/
 
-/-- The length of `bits` is monotone. -/
-private theorem qy_bits_len_mono {a b : ℕ} (h : a ≤ b) :
-    (Nat.bits a).length ≤ (Nat.bits b).length := by
-  rw [Nat.size_eq_bits_len, Nat.size_eq_bits_len]
-  exact Nat.size_le_size h
-
-/-- Every number is below two to the length of its bits. -/
-private theorem qy_lt_two_pow_bits (n : ℕ) : n < 2 ^ (Nat.bits n).length := by
-  rw [Nat.size_eq_bits_len]
-  exact Nat.lt_size_self n
-
 /-- The successor of a pair below the diagonal's next corner: `(j, k) ↦ (j + 1, k)` when
 `j + 1 < k`. -/
 private theorem qy_unpair_succ_lt {h j k : ℕ} (H : Nat.unpair h = (j, k)) (hjk : j + 1 < k) :
@@ -3599,7 +3563,7 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
   set TA := qyTA κ n a j k F w' with hTA
   unfold qyLoc
   have hX : F + a + 1 ≤ X4 := Nat.le_self_pow (by norm_num) _
-  have hnLb : n < 2 ^ Lb := qy_lt_two_pow_bits n
+  have hnLb : n < 2 ^ Lb := Complexity.LogProg.lt_two_pow_bits n
   have hesc : ∀ T : Fin κ.K → ℤ → Option Bool, (∀ t, t ≠ κ.tp 3 → t ≠ κ.tp 4 → t ≠ κ.tp 5 →
       t ≠ κ.tp 6 → t ≠ κ.tp 7 → t ≠ κ.tp 8 → T t = T₀ t) → QyEscT κ n a j k T P₀ :=
     fun T hT t ht => by
@@ -3627,15 +3591,16 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
       simp [hTA, qyTA, hT₀, Function.update_of_ne h7, Function.update_of_ne h8]⟩
     have hFn : n < F := by
       by_contra hc
-      exact absurd (compare_gt_iff_gt.mp hgt) (not_lt.mpr (qy_bits_len_mono (not_lt.mp hc)))
+      exact absurd (compare_gt_iff_gt.mp hgt)
+        (not_lt.mpr (Complexity.LogProg.length_bits_mono (not_lt.mp hc)))
     have := Nat.lt_two_pow_self (n := X4)
     omega
   have hFL : (Nat.bits F).length ≤ Lb := not_lt.mp fun h => hgt (compare_gt_iff_gt.mpr h)
   have hF2 : F ≤ 2 * n := by
-    have h1 := qy_lt_two_pow_bits F
+    have h1 := Complexity.LogProg.lt_two_pow_bits F
     have h2 : 2 ^ (Nat.bits F).length ≤ 2 ^ (Nat.bits n).length :=
       Nat.pow_le_pow_right (by norm_num) hFL
-    have h3 := qy_two_pow_bits_le n
+    have h3 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
     omega
   have seg3 := qy_hosted (qyLocM κ) ⟨.anc, SweepPhase.sweep⟩ (qyLocRed κ) .r3 .scan
     (.done (compare (Nat.bits F).length Lb)) ⟨.r4, CounterLoopState.dec .run⟩ 1 1 TA TA P₀ P₀ []
@@ -3777,7 +3742,7 @@ private theorem qy_rnd_tests {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool
       rintro h0
       rw [h0, Nat.zero_bits, List.length_nil] at hLb
       omega
-    have h1 := qy_log_bits (Nat.pos_of_ne_zero hn0)
+    have h1 := (Complexity.LogProg.length_bits_eq_log hn0).symm
     have h2 := Nat.pow_log_le_self 2 hn0
     have h3 : 2 ^ X4 ≤ 2 ^ Nat.log 2 n := Nat.pow_le_pow_right (by norm_num) (by omega)
     omega
@@ -4379,13 +4344,14 @@ private theorem qy_rndP_le {f g : ℕ → ℕ} (κ : QyKit f g) (n ℓ' j k : �
 `qyDk (n + 1)` plus the polylogarithmic `qyCk (|bits n| + 1) ^ 5`.
 
 **Proof sketch.** `6 a ≤ 6 n`; the clock's budget `2 ^ m = 2 ^ |bits D₀| · 2 ^ |bits n| ≤
-2 ^ |bits D₀| (2 n + 1)` (`qy_two_pow_bits_le`); `|bits n| ≤ n`; the two calls' terms are at most
-`(|bits n| + 1) ^ 5` times their constants. Expand both products and add. -/
+2 ^ |bits D₀| (2 n + 1)` (`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`); `|bits n| ≤ n`;
+the two calls' terms are at most `(|bits n| + 1) ^ 5` times their constants. Expand both products
+and add. -/
 private theorem qy_rndS_le {f g : ℕ → ℕ} (κ : QyKit f g) (n a : ℕ) (ha : a ≤ n) :
     qyRndS κ n a ≤ qyDk κ * (n + 1) + qyCk κ * ((Nat.bits n).length + 1) ^ 5 := by
   unfold qyRndS qyDk qyCk QyKit.m
   have hLn := length_bits_le_self n
-  have h2L := qy_two_pow_bits_le n
+  have h2L := Complexity.LogProg.two_pow_bits_le_two_mul_add_one n
   set L := (Nat.bits n).length with hL
   set D := (Nat.bits (κ.cfA * (κ.cfc + 2))).length with hD
   set P := (L + 1) ^ 5 with hP
@@ -4430,7 +4396,7 @@ rung `ladder f (i + 1) + 1` (`qy_ladder_succ_eq`); their times are chosen first,
 most `11 ∑ ℓᵢ₊₁ ≤ 22 ℓ_s` (`qy_ledger`) plus `s · qyCk (|bits n| + 1)⁵` (`qy_rndP_le`, with
 `j + k ≤ i < s < log₂ n`, `Nat.unpair_add_le`, `qy_stage_lt_log`); the stopping round at most
 `qyDk (n + 1) + qyCk (|bits n| + 1)⁵` (`qy_rndS_le`); and `(|bits n| + 1)⁶ ≤ 6⁶ · 2 ^ (|bits n| + 1)
-≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `qy_two_pow_bits_le`). -/
+≤ 6⁶ · 4 (n + 1)` (`qy_pow6_le`, `Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
 private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn : 3 ≤ x.length) :
     ∃ t ≤ qyLoopA κ * (x.length + 1), ∃ c' : Cfg κ.K Bool (Σ i, QyLPh κ i) x,
       Segment (qyLoc κ) (qyLocE κ) (fun _ => True) (qyAt κ x 0) c' t ∧
@@ -4450,7 +4416,7 @@ private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn
             P (κ.tp 4) = 0)) := by
   have hspec := stage_spec f hn
   have hlog := qy_stage_lt_log f hn
-  have hLb := qy_log_bits (n := x.length) (by omega)
+  have hLb := (Complexity.LogProg.length_bits_eq_log (n := x.length) (by omega)).symm
   have hanc : some (qyAnc κ) ∉ qyLocE κ := fun ⟨p, hp, hpe⟩ => by
     rw [← Option.some.inj hp] at hpe
     exact Bool.false_ne_true hpe
@@ -4503,7 +4469,8 @@ private theorem qy_loop {f g : ℕ → ℕ} (κ : QyKit f g) {x : List Bool} (hn
           omega
   set L := (Nat.bits x.length).length with hL
   have hP6 := qy_pow6_le (L + 1)
-  have h2L : 2 ^ L ≤ 2 * x.length + 1 := qy_two_pow_bits_le x.length
+  have h2L : 2 ^ L ≤ 2 * x.length + 1 :=
+    Complexity.LogProg.two_pow_bits_le_two_mul_add_one x.length
   have hsP : stage f x.length * (qyCk κ * (L + 1) ^ 5) ≤ qyCk κ * (L + 1) ^ 6 := by
     calc stage f x.length * (qyCk κ * (L + 1) ^ 5) ≤ (L + 1) * (qyCk κ * (L + 1) ^ 5) :=
           Nat.mul_le_mul_right _ (by omega)
@@ -7674,20 +7641,12 @@ private theorem dz_top_run {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF 
 
 /-! ### The run's three cases -/
 
-/-- A word's binary value is below `2 ^ |w|`. -/
-private theorem dz_word_lt (w : List Bool) : Nat.ofDigits 2 (w.map Bool.toNat) < 2 ^ w.length := by
-  have h := Nat.ofDigits_lt_base_pow_length (b := 2) (l := w.map Bool.toNat) (by norm_num)
-    (by
-      intro d hd
-      obtain ⟨a, -, rfl⟩ := List.mem_map.mp hd
-      cases a <;> decide)
-  rwa [List.length_map] at h
-
-/-- A budget word as wide as `bits G` is worth at most `2G` (`qy_two_pow_bits_le`). -/
+/-- A budget word as wide as `bits G` is worth at most `2G`
+(`Complexity.LogProg.two_pow_bits_le_two_mul_add_one`). -/
 private theorem dz_budget_le (G : ℕ) (w : List Bool) (hw : w.length = (Nat.bits G).length) :
     Nat.ofDigits 2 (w.map Bool.toNat) ≤ 2 * G := by
-  have h1 := dz_word_lt w
-  have h2 := qy_two_pow_bits_le G
+  have h1 := Complexity.LogProg.ofDigits_lt_two_pow w
+  have h2 := Complexity.LogProg.two_pow_bits_le_two_mul_add_one G
   rw [hw] at h1
   omega
 
@@ -8263,9 +8222,10 @@ stage's code `α`: if `α` accepts `1^{n + 1}` within `t'` with `C (t' + 1) ≤ 
 
 **Proof sketch.** Take the accepting word `v₀` (`Turing.FinNDTM.acceptsWithin_iff`), the stream
 `v₀` padded with `false` to `g n` cells, any separator, and the budget word `bits t'` padded with
-zeros to the width `|bits (g n)|` (`qy_bits_len_mono`), worth `t'` (`dz_padded_value`). The stream's
-first `t'` bits are `v₀`, so `dz_qmid`'s completeness clause gives the acceptance, and its segment
-gives `D`'s acceptance condition (`dz_seg_read`, `dz_accepts_iff`). -/
+zeros to the width `|bits (g n)|` (`Complexity.LogProg.length_bits_mono`), worth `t'`
+(`dz_padded_value`). The stream's first `t'` bits are `v₀`, so `dz_qmid`'s completeness clause
+gives the acceptance, and its segment gives `D`'s acceptance condition (`dz_seg_read`,
+`dz_accepts_iff`). -/
 private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode} {BF : FinTM Bool}
     (κ : DzKit f g c BF) {n : ℕ} (hn : 3 ≤ n) (hmid : n ≠ ladder f (stage f n + 1)) (C : ℕ)
     (hC : ∀ (x : List Bool) (t : ℕ) (s : List Bool), t ≤ s.length →
@@ -8299,7 +8259,7 @@ private theorem dz_mid_complete {f g : ℕ → ℕ} {c : EffectiveNDMachineCode}
     rw [hs₁, hgz, List.length_append, List.length_replicate]
     omega
   have hwl : w.length = (Nat.bits (g (List.replicate n true).length)).length := by
-    have := qy_bits_len_mono ht'
+    have := Complexity.LogProg.length_bits_mono ht'
     rw [hw, hgz, List.length_append, List.length_replicate]
     omega
   have hb : Nat.ofDigits 2 (w.map Bool.toNat) = t' := dz_padded_value _ _

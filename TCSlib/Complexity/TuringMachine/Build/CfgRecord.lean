@@ -238,11 +238,11 @@ theorem cfgRecord_length {k : ℕ} {Q T : Type} {x : List Bool} (s : ℕ) (c : C
 /-- Every native input position is strictly below the power of two specified by its width:
 `n + 2 ≤ 2 ^ posWidth n`. (Public since the specification API, user 2026-10-16.)
 
-**Proof sketch.** `posWidth n` is the bit length of `n + 1`, which is its `Nat.size`. -/
+**Proof sketch.** `posWidth n` is the bit length of `n + 1`, and every number is below two to
+the power of its bit length (`Complexity.LogProg.lt_two_pow_bits`). -/
 theorem record_pos_lt (n : ℕ) : n + 1 < 2 ^ posWidth n := by
   unfold posWidth
-  rw [Nat.size_eq_bits_len]
-  exact Nat.lt_size_self _
+  exact Complexity.LogProg.lt_two_pow_bits _
 
 /-- Decoding the fixed-width digits recovers any value below the width's power of two.
 
@@ -625,15 +625,13 @@ private theorem recordStep_tagged_segment {K : ℕ} {Γ I : Type} {Ph : I → Ty
 /-- Width one is exactly the empty-input case, where no native movement is needed. -/
 private theorem recordStep_width_one (n : ℕ) : posWidth n = 1 ↔ n = 0 := by
   unfold posWidth
-  rw [Nat.size_eq_bits_len]
   constructor
   · intro h
-    have : ¬ 2 ≤ n + 1 := fun hn => by
-      have : 1 < Nat.size (n + 1) := Nat.lt_size.mpr (by simpa using hn)
-      omega
+    have := Complexity.LogProg.lt_two_pow_bits (n + 1)
+    rw [h, pow_one] at this
     omega
   · rintro rfl
-    exact Nat.size_one
+    exact congrArg List.length Nat.one_bits
 
 /-- Complementing a fixed-width counter exchanges its value with the distance from all ones.
 **Proof sketch.** The two low bits sum to one; the tail values have weight two. -/

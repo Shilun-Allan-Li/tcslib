@@ -55,14 +55,6 @@ def quasiPolyBudget (n : ℕ) : ℕ := 2 ^ (Nat.log 2 n ^ 2 + 1)
 
 /-! ### Arithmetic of the budget -/
 
-/-- `n` has `log n + 1` binary digits (none for `n = 0`). -/
-private theorem length_bits_eq (n : ℕ) : n.bits.length = if n = 0 then 0 else Nat.log 2 n + 1 := by
-  rw [Nat.size_eq_bits_len]
-  split_ifs with hn
-  · subst hn; simp
-  · refine le_antisymm (Nat.size_le.mpr (Nat.lt_pow_succ_log_self (by norm_num) n)) ?_
-    exact Nat.succ_le_of_lt (Nat.lt_size.mpr (Nat.pow_log_le_self 2 hn))
-
 /-- `n ≤ 2^{(log n)² + 1}`. -/
 theorem le_quasiPolyBudget (n : ℕ) : n ≤ quasiPolyBudget n := by
   have h1 := Nat.lt_pow_succ_log_self (b := 2) (by norm_num) n
@@ -208,12 +200,12 @@ private def budgetSeed (x : List Bool) : List Bool :=
 private theorem budgetSeed_eq (x : List Bool) : budgetSeed x =
     List.replicate (Nat.log 2 x.length - 1) true ++ false ::
       List.replicate (Nat.log 2 x.length) true := by
-  have h := length_bits_eq x.length
   unfold budgetSeed
-  rw [allTrue_eq, allTrue_eq, List.length_drop, List.length_drop, h]
-  split_ifs with h0
+  rw [allTrue_eq, allTrue_eq, List.length_drop, List.length_drop]
+  by_cases h0 : x.length = 0
   · simp [h0]
-  · congr 2
+  · rw [Complexity.LogProg.length_bits_eq_log h0]
+    congr 2
 
 /-- The budget word is the seed's emission loop followed by `01`. -/
 private theorem bits_quasiPolyBudget (x : List Bool) :

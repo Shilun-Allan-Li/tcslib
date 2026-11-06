@@ -251,8 +251,8 @@ private lemma mult_product_length (a b : ℕ) :
     (Nat.bits (a * b)).length ≤ (Nat.bits a).length + (Nat.bits b).length := by
   apply length_bits_le
   rw [pow_add]
-  have ha : a < 2 ^ (Nat.bits a).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self a
-  have hb : b < 2 ^ (Nat.bits b).length := by simpa [Nat.size_eq_bits_len] using Nat.lt_size_self b
+  have ha : a < 2 ^ (Nat.bits a).length := lt_two_pow_bits a
+  have hb : b < 2 ^ (Nat.bits b).length := lt_two_pow_bits b
   exact lt_of_le_of_lt (Nat.mul_le_mul_right b ha.le)
     (Nat.mul_lt_mul_of_pos_left hb (Nat.pow_pos (by omega)))
 
