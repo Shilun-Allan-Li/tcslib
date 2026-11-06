@@ -197,8 +197,7 @@ lemma astep_rd (hrd : ∀ p, o 0 (X n (Nat.bits p)) = E.getD p false) (l l₁ l�
     (hl : scan τ l = rd l₁ l₀) (p c a : ℕ) :
     astep (scan τ) o (X n w) (some l, rg p c a, none) =
       (some (if E.getD p false then l₁ else l₀), rg p c a, none) := by
-  simp only [astep, hl, rd]
-  rw [vword_unary₁]
+  rw [astep_call hl, vword_unary₁]
   simp [hrd]
 
 /-- A hit test branches on whether the vertex counter is the target vertex. -/
@@ -207,14 +206,16 @@ lemma astep_hit {iv tv : ℕ} (ht : Target τ (X n w) iv tv) (l l₁ l₀ : Lbl)
     astep (scan τ) o (X n w) (some l, rg p c a, none) =
       (some (if c = tv then l₁ else l₀), rg p c a, none) := by
   cases τ <;> simp only [Target] at ht <;>
-    simp [astep, hl, hit, ht, bits_injective.eq_iff]
+    (first | rw [astep_jeqIn hl] | rw [astep_jeqSnd hl]) <;>
+    simp [ht, bits_injective.eq_iff]
 
 /-- The argument test of `EDGE` branches on whether the argument counter is the source vertex. -/
 lemma astep_jeqFst {iv tv : ℕ} (ht : Target .edge (X n w) iv tv) (p c a : ℕ) :
     astep (scan .edge) o (X n w) (some (.uE true), rg p c a, none) =
       (some (if a = iv then .acc else .uF), rg p c a, none) := by
   simp only [Target] at ht
-  simp [astep, scan, ht, bits_injective.eq_iff]
+  rw [Complexity.LogProg.astep_jeqFst (show scan .edge (.uE true) = .jeqFst 2 .acc .uF from rfl)]
+  simp [ht, bits_injective.eq_iff]
 
 end Steps
 

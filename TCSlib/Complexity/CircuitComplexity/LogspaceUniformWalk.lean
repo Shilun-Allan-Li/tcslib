@@ -290,8 +290,7 @@ lemma astep_call₁ {l l₁ l₀ : Lbl} {j : Fin 5} {r : Fin 4}
     astep (walk lm) o (X n i) (some l, v, none) =
       (some (if o j (pairEncode (List.replicate n true) (Nat.bits (v r))) then l₁ else l₀),
         v, none) := by
-  simp only [astep, hl]
-  rw [vword_unary₁]
+  rw [astep_call hl, vword_unary₁]
 
 /-- A `unaryFst` call with arguments `r, r'` asks its decider about
 `⟨1ⁿ, ⟨bits (v r), bits (v r')⟩⟩`. -/
@@ -300,8 +299,7 @@ lemma astep_call₂ {l l₁ l₀ : Lbl} {j : Fin 5} {r r' : Fin 4}
     astep (walk lm) o (X n i) (some l, v, none) =
       (some (if o j (pairEncode (List.replicate n true)
         (pairEncode (Nat.bits (v r)) (Nat.bits (v r')))) then l₁ else l₀), v, none) := by
-  simp only [astep, hl]
-  rw [vword_unary₂]
+  rw [astep_call hl, vword_unary₂]
 
 variable (C : DAGCircuitFamily)
 
