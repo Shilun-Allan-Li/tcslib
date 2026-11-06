@@ -13,3 +13,8 @@
   `sorry`s). The seal and axiom probes re-run on `oleans-lsi2` give identical outputs. The screen
   (17 files) is identical at base and head (0 new, 0 gone). The pack is complete; the gate is
   staged.
+- 2026-11-06: staged on the exchange (`outbox/gates/98-segment-iterate-api-gate/`, exchange commit
+  `f8d6cb82`): bundle `98-segment-iterate-api-bundle.md`, 45 sections, SHA-256
+  `2873494d76e5f6b6c19330da894efcfbd39bb62bd0289309fa6a566904c83ddf`; Lean from #202 at
+  `7b5774fb8d47fd119d2d314f9f6e717cffcee7de`, records from `7afd05b77e35dc00d2dbe01d3c7e5a786a6f6a25`.
+  Findings file `segment-iterate-api-findings.md`. **Dispatched (2026-11-06, the user).**

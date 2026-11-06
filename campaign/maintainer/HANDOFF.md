@@ -115,8 +115,8 @@ replay below chained from it with only its own PR.
 
 | PR | Head | Replay | Gate | Next |
 |---|---|---|---|---|
-| #191 | `bbf69680` (round 2's repair `dfc3e990`, the library sweep's `49c4d0f7`, a merge of the campaign after #196) | `replay-lnf4` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 **staged** (`outbox/gates/95-nf-landing-fill-r3-gate/`, 96 sections) | dispatch round 3; merge when it closes |
-| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 **staged** (`outbox/gates/98-segment-iterate-api-gate/`, 45 sections) | dispatch gate 98; merge when it closes; then G5's fill brief |
+| #191 | `bbf69680` (round 2's repair `dfc3e990`, the library sweep's `49c4d0f7`, a merge of the campaign after #196) | `replay-lnf4` **passed** (4 modules from `oleans-ldwa3`, 0 `sorry`) | 95 round 3 **dispatched** 2026-11-06 (96 sections) | merge when it closes |
+| #202 | `7b5774fb` (`f0b31bb9` + a merge of the campaign after #196) | `replay-lsi2` **passed** (112 modules from `oleans-ldwa3`, the existing 45 `sorry`s) | 98 **dispatched** 2026-11-06 (45 sections) | merge when it closes; then G5's fill brief |
 | #196 | `ce9d63f4` (the repair `b1b5199b` + a records-only merge) | `replay-ldwa2` **passed** (73 modules, the existing 30 `sorry`s) | 96 **closed** (round 2 PASS 0/0/1); `replay-ldwa3` on the merged tree **passed** | **merged** 2026-11-05 (`bdc73ab1`); the deepening fill (Claude) next |
 | #197 | `fde50a5a` (the closing commit `20e7fc75` + a records-only merge) | `replay-lzsa2` **passed** (111 modules, the existing 45 `sorry`s) | 97 **closed** (PASS 0/0/6, the minors swept) | **merged** 2026-11-05 (`33ceeed1`); G5's fill brief next |
 
@@ -127,7 +127,7 @@ open PR's replay chains from it on the merged tree.
 **#202** (`Segment.iterate_seq`, G5's iteration; the user's ruling API first): gate 98, above.
 
 **The deepening fill is issued** (2026-11-05; agent Claude): `campaign/fills/ch34/briefs/ch34-fill-deepen.md`
-at `a89e8d70`, ancestor `fd97df61`, staged in the exchange's `outbox/fills/` with the addendum v2.6.
+at `a89e8d70`, ancestor `fd97df61`, with the addendum v2.6; **dispatched 2026-11-06** (the user).
 Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-preship.log`).
 
 **Snapshots on the cloud VM:** `oleans-cloud0`, `oleans-ldwa3` (the campaign's), `oleans-lsi2`
@@ -135,7 +135,7 @@ Its pre-ship ran on the merged tree (`campaign/fills/ch34/logs/ch34-fill-deepen-
 campaign's; delete the other when both have merged and a combined replay has passed.
 
 **G5's fill brief** issues after #202 merges. Its route probe (the frame through
-`alphabet_reduction_run`, and `k = 0` through R1) is being drafted against `oleans-ldwa3`.
+`alphabet_reduction_run`, and `k = 0` through R1) is proved (`campaign/fills/u2s/drafts/u2s-fill-g5/route/`).
 
 **The user's rulings (2026-11-05):** gate 95 F1 repair; gate 96 F2 harvest; WS-1 acknowledged by
 kind and widened; QL-X1 an idiom and CQ-1 opened; gate 97 F5 publish; CE-1 acknowledged; PFR left

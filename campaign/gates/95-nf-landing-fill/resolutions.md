@@ -93,3 +93,5 @@ major is repaired (notes 4–7).
 `9b042a84547d0ee46153112fe623599b6cb95a6f`. Findings file `nf-landing-fill-r3-findings.md`.
 
 **Not yet clear to merge: #191** (gate 95's round 3 is staged, not yet dispatched).
+
+**Round 3 dispatched (2026-11-06, the user).**
