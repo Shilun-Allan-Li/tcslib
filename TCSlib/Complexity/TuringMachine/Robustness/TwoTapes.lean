@@ -798,6 +798,491 @@ private theorem tt_τ_le (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 <
   rw [tt_τ_of_lt M F x m D ip out j hj, Nat.add_le_add_iff_right]
   exact (tt_track_seg M F hk (x := x) M.tm.q₀ m ⟨j, hj⟩ (tt_Dtr m D j) ip out).2
 
+/-! ### Fullness: the classical zone discipline -/
+
+/-- **Fullness** of one track's contents [AB09, §1.7]: at every laid-out level `i` the two zones
+together hold exactly `zoneCapacity i = 2 · 2^i` cells, and the right one holds `0`, `2^i` or
+`2 · 2^i` (so the left one holds the complement: each side is empty, half full or full). -/
+private def tt_full {ℓ : ℕ} (z : ZoneContents ℓ) : Prop :=
+  ∀ i : Fin ℓ, (z.left i).length + (z.right i).length = zoneCapacity i.val ∧
+    ((z.right i).length = 0 ∨ (z.right i).length = 2 ^ i.val ∨
+      (z.right i).length = zoneCapacity i.val)
+
+/-- The empty contents at level `0` are full (there is no level). -/
+private theorem tt_full_empty : tt_full (ZoneContents.empty 0) :=
+  fun i => absurd i.isLt (Nat.not_lt_zero _)
+
+/-- The home write keeps fullness: it changes no zone. -/
+private theorem tt_full_homeWrite {ℓ : ℕ} (z : ZoneContents ℓ) (v : Option Bool)
+    (hz : tt_full z) : tt_full (zoneHomeWrite z v) := by
+  intro i
+  rw [zoneHomeWrite_left, zoneHomeWrite_right]
+  exact hz i
+
+/-- **The extension keeps fullness**: the old levels are kept and the new one is half full on
+both sides (`Turing.ZoneContents.extend_words_castSucc`, `_last`). -/
+private theorem tt_full_extend {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z) :
+    tt_full z.extend := by
+  intro i
+  refine Fin.lastCases ?_ (fun i => ?_) i
+  · have hl := ZoneContents.extend_words_last false z
+    have hr := ZoneContents.extend_words_last true z
+    rw [ZoneContents.words_false] at hl
+    rw [ZoneContents.words_true] at hr
+    rw [hl, hr, List.length_replicate, Fin.val_last, zoneCapacity_eq]
+    exact ⟨by ring, Or.inr (Or.inl rfl)⟩
+  · have hl := ZoneContents.extend_words_castSucc false z i
+    have hr := ZoneContents.extend_words_castSucc true z i
+    rw [ZoneContents.words_false, ZoneContents.words_false] at hl
+    rw [ZoneContents.words_true, ZoneContents.words_true] at hr
+    rw [hl, hr, Fin.coe_castSucc]
+    exact hz i
+
+/-- **A right rebalance keeps fullness, and halves the levels below its index** [AB09, §1.7]:
+under fullness, with a nonempty feeding zone at the scanned index `j`, the rebalanced contents
+are full, every level below `j` is half full on both sides, and the levels above `j` are kept.
+
+**Proof sketch.** Fullness and the scan (`Turing.zoneShiftIndex_empty`, `_nonempty`) give the
+classical pre-state of `Turing.zoneCascadeRight_lengths`: right zones below `j` empty, so left
+ones full; the right zone `j` nonempty, so it holds `2^j` or `2 · 2^j` cells, and the left zone
+`j` has room for `2^j`. The cascade's lengths are then `2^k` on both sides below `j`, and at `j`
+the right side loses `2^j` cells to the left; above `j` nothing changes
+(`Turing.zoneRebalance_frame`). -/
+private theorem tt_full_rebalance_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex true z < ℓ) :
+    tt_full (zoneRebalance true z) ∧
+      ∀ i : Fin ℓ, i.val < zoneShiftIndex true z →
+        ((zoneRebalance true z).left i).length = 2 ^ i.val ∧
+          ((zoneRebalance true z).right i).length = 2 ^ i.val := by
+  set j := zoneShiftIndex true z with hj
+  have hr : ∀ k (hk : k < j), z.right ⟨k, by omega⟩ = [] := fun k hk => by
+    have := zoneShiftIndex_empty true z ⟨k, by omega⟩ hk
+    rwa [ZoneContents.words_true] at this
+  have hl : ∀ k (hk : k < j), (z.left ⟨k, by omega⟩).length = zoneCapacity k := fun k hk => by
+    have := (hz ⟨k, by omega⟩).1
+    rwa [hr k hk, List.length_nil, add_zero] at this
+  have hne : z.right ⟨j, h⟩ ≠ [] := by
+    have := zoneShiftIndex_nonempty true z h
+    rwa [ZoneContents.words_true] at this
+  have hpos : 0 < (z.right ⟨j, h⟩).length := List.length_pos_iff.mpr hne
+  obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+  have hc : zoneCapacity j = 2 * 2 ^ j := zoneCapacity_eq j
+  have hsum' : (z.left ⟨j, h⟩).length + (z.right ⟨j, h⟩).length = zoneCapacity j := hsum
+  have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+      (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+  have hdonor : 2 ^ j ≤ (z.right ⟨j, h⟩).length := by
+    rcases hcase' with h0 | h0 | h0 <;> omega
+  have hroom : (z.left ⟨j, h⟩).length + 2 ^ j ≤ zoneCapacity j := by omega
+  have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame true z k hk
+  rw [zoneRebalance_of_lt true z h, zoneCascade_true] at hframe ⊢
+  obtain ⟨hlow, hjr, hjl⟩ := zoneCascadeRight_lengths j h z hr hl hdonor hroom
+  refine ⟨fun ⟨i, hi⟩ => ?_, fun ⟨i, hi⟩ hij => ?_⟩
+  · rcases lt_trichotomy i j with hij | rfl | hij
+    · obtain ⟨h1, h2⟩ := hlow i hij
+      refine ⟨?_, Or.inr (Or.inl h1)⟩
+      rw [h1, h2, zoneCapacity_eq]
+      ring
+    · refine ⟨?_, ?_⟩
+      · show ((zoneCascadeRight _ z).left ⟨_, h⟩).length +
+          ((zoneCascadeRight _ z).right ⟨_, h⟩).length = zoneCapacity _
+        rw [hjr, hjl]
+        omega
+      · show ((zoneCascadeRight _ z).right ⟨_, h⟩).length = 0 ∨
+          ((zoneCascadeRight _ z).right ⟨_, h⟩).length = 2 ^ _ ∨
+          ((zoneCascadeRight _ z).right ⟨_, h⟩).length = zoneCapacity _
+        rw [hjr]
+        rcases hcase' with h0 | h0 | h0
+        · omega
+        · left
+          show (z.right ⟨j, h⟩).length - 2 ^ j = 0
+          omega
+        · right; left
+          show (z.right ⟨j, h⟩).length - 2 ^ j = 2 ^ j
+          have : (z.right ⟨j, h⟩).length = 2 * 2 ^ j := h0.trans hc
+          omega
+    · obtain ⟨hfl, hfr⟩ := hframe ⟨i, hi⟩ hij
+      rw [hfl, hfr]
+      exact hz ⟨i, hi⟩
+  · obtain ⟨h1, h2⟩ := hlow i hij
+    exact ⟨h2, h1⟩
+
+/-- **A left rebalance keeps fullness, and halves the levels below its index**: the mirror of
+`tt_full_rebalance_true`.
+
+**Proof sketch.** As for `tt_full_rebalance_true`, with the left stack feeding:
+`Turing.zoneCascadeLeft_lengths` under the mirrored classical pre-state (left zones below the index
+empty, so right ones full; the left donor holds `2^j` or `2 · 2^j` cells), and
+`Turing.zoneRebalance_frame` above the index. -/
+private theorem tt_full_rebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex false z < ℓ) :
+    tt_full (zoneRebalance false z) ∧
+      ∀ i : Fin ℓ, i.val < zoneShiftIndex false z →
+        ((zoneRebalance false z).left i).length = 2 ^ i.val ∧
+          ((zoneRebalance false z).right i).length = 2 ^ i.val := by
+  set j := zoneShiftIndex false z with hj
+  have hl : ∀ k (hk : k < j), z.left ⟨k, by omega⟩ = [] := fun k hk => by
+    have := zoneShiftIndex_empty false z ⟨k, by omega⟩ hk
+    rwa [ZoneContents.words_false] at this
+  have hr : ∀ k (hk : k < j), (z.right ⟨k, by omega⟩).length = zoneCapacity k := fun k hk => by
+    have := (hz ⟨k, by omega⟩).1
+    rwa [hl k hk, List.length_nil, zero_add] at this
+  have hne : z.left ⟨j, h⟩ ≠ [] := by
+    have := zoneShiftIndex_nonempty false z h
+    rwa [ZoneContents.words_false] at this
+  have hpos : 0 < (z.left ⟨j, h⟩).length := List.length_pos_iff.mpr hne
+  obtain ⟨hsum, hcase⟩ := hz ⟨j, h⟩
+  have hc : zoneCapacity j = 2 * 2 ^ j := zoneCapacity_eq j
+  have hsum' : (z.left ⟨j, h⟩).length + (z.right ⟨j, h⟩).length = zoneCapacity j := hsum
+  have hcase' : (z.right ⟨j, h⟩).length = 0 ∨ (z.right ⟨j, h⟩).length = 2 ^ j ∨
+      (z.right ⟨j, h⟩).length = zoneCapacity j := hcase
+  have hdonor : 2 ^ j ≤ (z.left ⟨j, h⟩).length := by
+    rcases hcase' with h0 | h0 | h0 <;> omega
+  have hroom : (z.right ⟨j, h⟩).length + 2 ^ j ≤ zoneCapacity j := by omega
+  have hframe := fun (k : Fin ℓ) (hk : j < k.val) => zoneRebalance_frame false z k hk
+  rw [zoneRebalance_of_lt false z h, zoneCascade_false] at hframe ⊢
+  obtain ⟨hlow, hjl, hjr⟩ := zoneCascadeLeft_lengths j h z hl hr hdonor hroom
+  refine ⟨fun ⟨i, hi⟩ => ?_, fun ⟨i, hi⟩ hij => hlow i hij⟩
+  rcases lt_trichotomy i j with hij | rfl | hij
+  · obtain ⟨h1, h2⟩ := hlow i hij
+    refine ⟨?_, Or.inr (Or.inl h2)⟩
+    rw [h1, h2, zoneCapacity_eq]
+    ring
+  · refine ⟨?_, ?_⟩
+    · show ((zoneCascadeLeft _ z).left ⟨_, h⟩).length +
+        ((zoneCascadeLeft _ z).right ⟨_, h⟩).length = zoneCapacity _
+      rw [hjr, hjl]
+      omega
+    · show ((zoneCascadeLeft _ z).right ⟨_, h⟩).length = 0 ∨
+        ((zoneCascadeLeft _ z).right ⟨_, h⟩).length = 2 ^ _ ∨
+        ((zoneCascadeLeft _ z).right ⟨_, h⟩).length = zoneCapacity _
+      rw [hjr]
+      rcases hcase' with h0 | h0 | h0
+      · right; left
+        show (z.right ⟨j, h⟩).length + 2 ^ j = 2 ^ j
+        omega
+      · right; right
+        show (z.right ⟨j, h⟩).length + 2 ^ j = zoneCapacity j
+        omega
+      · omega
+  · obtain ⟨hfl, hfr⟩ := hframe ⟨i, hi⟩ hij
+    rw [hfl, hfr]
+    exact hz ⟨i, hi⟩
+
+/-- **Fullness gives the classical state of a right move** [AB09, §1.7]: below the scanned
+index `j` the left zones are full, and the left zone `j` has room for `2^j` cells.
+
+**Proof sketch.** The right zones below `j` are empty (`Turing.zoneShiftIndex_empty`), so by
+fullness the left ones hold the whole capacity; the right zone `j` is nonempty
+(`Turing.zoneShiftIndex_nonempty`), so by fullness it holds at least `2^j` cells. -/
+private theorem tt_full_pre_true {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex true z < ℓ) :
+    (∀ k (hk : k < zoneShiftIndex true z),
+      (z.left ⟨k, by omega⟩).length = zoneCapacity k) ∧
+    (z.left ⟨zoneShiftIndex true z, h⟩).length + 2 ^ zoneShiftIndex true z ≤
+      zoneCapacity (zoneShiftIndex true z) := by
+  refine ⟨fun k hk => ?_, ?_⟩
+  · have hr := zoneShiftIndex_empty true z ⟨k, by omega⟩ hk
+    rw [ZoneContents.words_true] at hr
+    have := (hz ⟨k, by omega⟩).1
+    rwa [hr, List.length_nil, add_zero] at this
+  · have hne := zoneShiftIndex_nonempty true z h
+    rw [ZoneContents.words_true] at hne
+    have hpos : 0 < (z.right ⟨_, h⟩).length := List.length_pos_iff.mpr hne
+    obtain ⟨hsum, hcase⟩ := hz ⟨_, h⟩
+    have hc := zoneCapacity_eq (zoneShiftIndex true z)
+    have hsum' : (z.left ⟨_, h⟩).length + (z.right ⟨_, h⟩).length =
+        zoneCapacity (zoneShiftIndex true z) := hsum
+    have hcase' : (z.right ⟨_, h⟩).length = 0 ∨
+        (z.right ⟨_, h⟩).length = 2 ^ zoneShiftIndex true z ∨
+        (z.right ⟨_, h⟩).length = zoneCapacity (zoneShiftIndex true z) := hcase
+    rcases hcase' with h0 | h0 | h0 <;> omega
+
+/-- **Fullness gives the classical state of a left move**: the mirror of `tt_full_pre_true`.
+
+**Proof sketch.** As for `tt_full_pre_true`, with the left stack feeding: the left zones below
+the index are empty, so the right ones are full, and the left donor holds at least `2^j` cells,
+so the right zone at the index has room for `2^j`. -/
+private theorem tt_full_pre_false {ℓ : ℕ} (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex false z < ℓ) :
+    (∀ k (hk : k < zoneShiftIndex false z),
+      (z.right ⟨k, by omega⟩).length = zoneCapacity k) ∧
+    (z.right ⟨zoneShiftIndex false z, h⟩).length + 2 ^ zoneShiftIndex false z ≤
+      zoneCapacity (zoneShiftIndex false z) := by
+  refine ⟨fun k hk => ?_, ?_⟩
+  · have hl := zoneShiftIndex_empty false z ⟨k, by omega⟩ hk
+    rw [ZoneContents.words_false] at hl
+    have := (hz ⟨k, by omega⟩).1
+    rwa [hl, List.length_nil, zero_add] at this
+  · have hne := zoneShiftIndex_nonempty false z h
+    rw [ZoneContents.words_false] at hne
+    have hpos : 0 < (z.left ⟨_, h⟩).length := List.length_pos_iff.mpr hne
+    obtain ⟨hsum, hcase⟩ := hz ⟨_, h⟩
+    have hc := zoneCapacity_eq (zoneShiftIndex false z)
+    have hsum' : (z.left ⟨_, h⟩).length + (z.right ⟨_, h⟩).length =
+        zoneCapacity (zoneShiftIndex false z) := hsum
+    have hcase' : (z.right ⟨_, h⟩).length = 0 ∨
+        (z.right ⟨_, h⟩).length = 2 ^ zoneShiftIndex false z ∨
+        (z.right ⟨_, h⟩).length = zoneCapacity (zoneShiftIndex false z) := hcase
+    rcases hcase' with h0 | h0 | h0 <;> omega
+
+/-- The signed displacement of a head move in direction `dir`. -/
+private def tt_shift : Bool → ℤ
+  | true => 1
+  | false => -1
+
+/-- **A rebalance moves the represented tape** under fullness [AB09, §1.7]: the tape the
+rebalanced track represents is the old one read one cell further in the move's direction. -/
+private theorem tt_tape_rebalance {ℓ : ℕ} (dir : Bool) (z : ZoneContents ℓ) (hz : tt_full z)
+    (h : zoneShiftIndex dir z < ℓ) (p : ℤ) :
+    zoneTrackTape (zoneRebalance dir z) p = zoneTrackTape z (p + tt_shift dir) := by
+  have hpow : ∀ j : ℕ, 2 ^ (j - 1) ≤ 2 ^ j := fun j => Nat.pow_le_pow_right (by norm_num) (by omega)
+  cases dir
+  · obtain ⟨hr, hroom⟩ := tt_full_pre_false z hz h
+    rw [zoneTrackTape_rebalance_left z h hr (le_trans (Nat.add_le_add_left (hpow _) _) hroom)]
+    rfl
+  · obtain ⟨hl, hroom⟩ := tt_full_pre_true z hz h
+    rw [zoneTrackTape_rebalance_right z h hl (le_trans (Nat.add_le_add_left (hpow _) _) hroom)]
+    rfl
+
+/-- **Fullness of the data**: every track's contents are full (`tt_full`). -/
+private def tt_fullD {k : ℕ} (D : ZoneData k) : Prop :=
+  ∀ t, tt_full (D.2 t)
+
+/-- **One track's step keeps the data full and moves that track's represented tape**
+[HS66; AB09, §1.7]: under fullness, after `Turing.zoneTrackStepData dir t D` the data are full,
+track `t` represents its old tape read one cell further in direction `dir`, and every other
+track represents its old tape.
+
+**Proof sketch.** With a nonempty feeding zone the step is the rebalance of track `t`
+(`Turing.zoneTrackStepData_of_lt`, `Turing.zoneRebalanceData_eq`): `tt_full_rebalance_true`/
+`_false` and `tt_tape_rebalance` on track `t`, `Function.update_of_ne` elsewhere. Otherwise it
+extends every track and then rebalances (`Turing.zoneTrackStepData_of_not_lt`,
+`Turing.zoneExtendData_eq`): the extension keeps fullness (`tt_full_extend`) and every
+represented tape (`Turing.zoneTrackTape_extend`), and the retried scan is below the new level
+count (`Turing.zoneRebalanceIndex_extend_of_short`). -/
+private theorem tt_trackStep_inv {k : ℕ} (dir : Bool) (t : Fin k) (D : ZoneData k)
+    (hD : tt_fullD D) :
+    tt_fullD (zoneTrackStepData dir t D) ∧
+      ∀ t' p, zoneTrackTape ((zoneTrackStepData dir t D).2 t') p =
+        zoneTrackTape (D.2 t') (if t' = t then p + tt_shift dir else p) := by
+  have hreb : ∀ (E : ZoneData k), tt_fullD E → zoneRebalanceIndex dir t E < E.1 →
+      tt_fullD (zoneRebalanceData dir t E) ∧
+        ∀ t' p, zoneTrackTape ((zoneRebalanceData dir t E).2 t') p =
+          zoneTrackTape (E.2 t') (if t' = t then p + tt_shift dir else p) := by
+    intro E hE hlt
+    rw [zoneRebalanceIndex_eq] at hlt
+    rw [zoneRebalanceData_eq]
+    refine ⟨fun t' => ?_, fun t' p => ?_⟩
+    · show tt_full (Function.update E.2 t (zoneRebalance dir (E.2 t)) t')
+      by_cases ht : t' = t
+      · subst ht
+        rw [Function.update_self]
+        cases dir
+        · exact (tt_full_rebalance_false _ (hE _) hlt).1
+        · exact (tt_full_rebalance_true _ (hE _) hlt).1
+      · rw [Function.update_of_ne ht]
+        exact hE t'
+    · show zoneTrackTape (Function.update E.2 t (zoneRebalance dir (E.2 t)) t') p = _
+      by_cases ht : t' = t
+      · subst ht
+        rw [Function.update_self, if_pos rfl]
+        exact tt_tape_rebalance dir _ (hE _) hlt p
+      · rw [Function.update_of_ne ht, if_neg ht]
+  by_cases hlt : zoneRebalanceIndex dir t D < D.1
+  · rw [zoneTrackStepData_of_lt dir t hlt]
+    exact hreb D hD hlt
+  · rw [zoneTrackStepData_of_not_lt dir t hlt]
+    have hidx := zoneRebalanceIndex_extend_of_short dir t D hlt
+    have hE : tt_fullD (zoneExtendData D) := by
+      rw [zoneExtendData_eq]
+      exact fun t' => tt_full_extend _ (hD t')
+    have hlt' : zoneRebalanceIndex dir t (zoneExtendData D) < (zoneExtendData D).1 := by
+      rw [hidx, zoneExtendData_eq]
+      exact Nat.lt_succ_self _
+    obtain ⟨hf, htape⟩ := hreb _ hE hlt'
+    refine ⟨hf, fun t' p => ?_⟩
+    rw [htape]
+    rw [zoneExtendData_eq]
+    exact congrFun (zoneTrackTape_extend _) _
+
+/-! ### The invariant: the represented tapes -/
+
+/-- A nonzero head move's direction has the move's displacement. -/
+private theorem tt_shift_dir (s : SignType) (hs : s ≠ 0) : tt_shift (tt_dir s) = (s : ℤ) := by
+  cases s
+  · exact absurd rfl hs
+  · rfl
+  · rfl
+
+/-- **The tracks of a round keep fullness and move the represented tapes** [HS66; AB09,
+§1.7]: after the steps of the tracks below `j` with head moves `m`, the data are full and every
+track `t` below `j` represents its old tape shifted by `m t`, every other track its old tape.
+
+**Proof sketch.** Induction on `j`, over the tracks of one round: a stay changes nothing, and a
+move is `tt_trackStep_inv` with `tt_shift_dir`. -/
+private theorem tt_Dtr_inv {k : ℕ} (m : Fin k → SignType) (D : ZoneData k) (hD : tt_fullD D)
+    (j : ℕ) :
+    tt_fullD (tt_Dtr m D j) ∧ ∀ t p, zoneTrackTape ((tt_Dtr m D j).2 t) p =
+      zoneTrackTape (D.2 t) (if t.val < j then p + (m t : ℤ) else p) := by
+  induction j with
+  | zero =>
+    exact ⟨hD, fun t p => by rw [if_neg (Nat.not_lt_zero _)]; rfl⟩
+  | succ j ih =>
+    obtain ⟨hf, htape⟩ := ih
+    by_cases hj : j < k
+    · have hDj : tt_Dtr m D (j + 1) = tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) := dif_pos hj
+      rw [hDj]
+      by_cases h0 : m ⟨j, hj⟩ = 0
+      · rw [show tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) = tt_Dtr m D j from if_pos h0]
+        refine ⟨hf, fun t p => ?_⟩
+        rw [htape]
+        by_cases ht : t = ⟨j, hj⟩
+        · subst ht
+          rw [if_neg (lt_irrefl j), if_pos (Nat.lt_succ_self j), h0, SignType.coe_zero, add_zero]
+        · have : t.val ≠ j := fun h => ht (Fin.ext h)
+          by_cases htj : t.val < j
+          · rw [if_pos htj, if_pos (by omega)]
+          · rw [if_neg htj, if_neg (by omega)]
+      · rw [show tt_trackData (m ⟨j, hj⟩) ⟨j, hj⟩ (tt_Dtr m D j) =
+          zoneTrackStepData (tt_dir (m ⟨j, hj⟩)) ⟨j, hj⟩ (tt_Dtr m D j) from if_neg h0]
+        obtain ⟨hf', htape'⟩ := tt_trackStep_inv (tt_dir (m ⟨j, hj⟩)) ⟨j, hj⟩ _ hf
+        refine ⟨hf', fun t p => ?_⟩
+        rw [htape', htape]
+        by_cases ht : t = ⟨j, hj⟩
+        · subst ht
+          rw [if_pos rfl, if_neg (lt_irrefl j), if_pos (Nat.lt_succ_self j),
+            tt_shift_dir _ h0]
+        · have : t.val ≠ j := fun h => ht (Fin.ext h)
+          rw [if_neg ht]
+          by_cases htj : t.val < j
+          · rw [if_pos htj, if_pos (by omega)]
+          · rw [if_neg htj, if_neg (by omega)]
+    · have hDj : tt_Dtr m D (j + 1) = tt_Dtr m D j := dif_neg hj
+      rw [hDj]
+      refine ⟨hf, fun t p => ?_⟩
+      rw [htape, if_pos (by omega), if_pos (by omega)]
+
+/-- **The home write keeps fullness and writes the represented tapes at the head** [AB09,
+§1.7]: after `tt_homeData a D`, track `t` represents its old tape with the new home value at
+position `0`. -/
+private theorem tt_homeData_inv {k : ℕ} {S : Type} (a : Action k Bool S) (D : ZoneData k)
+    (hD : tt_fullD D) :
+    tt_fullD (tt_homeData a D) ∧ ∀ t p, zoneTrackTape ((tt_homeData a D).2 t) p =
+      if p = 0 then tt_homeNew a (fun t => (D.2 t).home) t else zoneTrackTape (D.2 t) p :=
+  ⟨fun t => tt_full_homeWrite _ _ (hD t), fun _ p => zoneTrackTape_homeWrite _ _ p⟩
+
+/-- The data after a whole round, from `D`, for `M`'s action `a`. -/
+private def tt_roundData {k : ℕ} {S : Type} (a : Action k Bool S) (D : ZoneData k) :
+    ZoneData k :=
+  tt_Dtr (tt_moves a) (tt_homeData a D) k
+
+/-- **The represented tapes** of data `D` are the work tapes of `M`'s configuration `c`, read
+relative to the heads. -/
+private def tt_rep {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (D : ZoneData k) :
+    Prop :=
+  ∀ t p, zoneTrackTape (D.2 t) p = c.workTapes t (c.workTapePos t + p)
+
+/-- Under the represented-tape invariant, the homes are the symbols under `M`'s heads. -/
+private theorem tt_rep_home {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x)
+    (D : ZoneData k) (h : tt_rep c D) : (fun t => (D.2 t).home) = c.workTapeSymbols := by
+  funext t
+  rw [Cfg.workTapeSymbols_eq, ← zoneTrackTape_zero, h t 0, add_zero]
+
+/-- **One round preserves the invariant** [HS66; AB09, §1.7]: if `D` is full and represents
+the work tapes of `M`'s live configuration `c` at `q`, then the round's data represent the work
+tapes of `M`'s next configuration and are full. The action the round computes from the homes is
+`M`'s own.
+
+**Proof sketch.** The homes are the symbols under the heads (`tt_rep_home`), so the round's
+action is `M`'s (`Turing.MultiTapeTM.step_of_some`). The home write puts the written symbol at
+position `0` (`tt_homeData_inv`) and the tracks shift each represented tape by its head's
+move (`tt_Dtr_inv`); `M`'s step writes at its head and then moves it
+(`Turing.Action.apply_workTapes`, `Turing.Action.apply_workTapePos`), which is the same tape read
+from the moved head. -/
+private theorem tt_round_inv (M : FinTM Bool) {x : List Bool} (c : Cfg M.k Bool M.State x)
+    (q : M.State) (hq : c.state = some q) (D : ZoneData M.k) (hD : tt_fullD D)
+    (hrep : tt_rep c D) :
+    tt_act M q c.inputSymbol D = M.tm.tr q c.inputSymbol c.workTapeSymbols ∧
+      tt_fullD (tt_roundData (tt_act M q c.inputSymbol D) D) ∧
+      tt_rep (M.tm.step c) (tt_roundData (tt_act M q c.inputSymbol D) D) := by
+  have hact : tt_act M q c.inputSymbol D = M.tm.tr q c.inputSymbol c.workTapeSymbols := by
+    show M.tm.tr q c.inputSymbol (fun t => (D.2 t).home) = _
+    rw [tt_rep_home c D hrep]
+  set a := tt_act M q c.inputSymbol D with ha
+  obtain ⟨hf₁, htape₁⟩ := tt_homeData_inv a D hD
+  obtain ⟨hf₂, htape₂⟩ := tt_Dtr_inv (tt_moves a) (tt_homeData a D) hf₁ M.k
+  refine ⟨hact, hf₂, fun t p => ?_⟩
+  show zoneTrackTape ((tt_Dtr (tt_moves a) (tt_homeData a D) M.k).2 t) p = _
+  rw [htape₂, if_pos t.isLt, htape₁, MultiTapeTM.step_of_some hq, Action.apply_workTapes,
+    Action.apply_workTapePos, ← hact, ← tt_rep_home c D hrep]
+  rw [show (a.workTapes t).1.getD ((fun t => (D.2 t).home) t) =
+      tt_homeNew a (fun t => (D.2 t).home) t from rfl,
+    show (a.workTapes t).2 = tt_moves a t from rfl]
+  by_cases hp : p + (tt_moves a t : ℤ) = 0
+  · rw [if_pos hp, show c.workTapePos t + (tt_moves a t : ℤ) + p = c.workTapePos t by omega,
+      Function.update_self]
+  · rw [if_neg hp, Function.update_of_ne (by omega), hrep t]
+    congr 1
+    ring
+
+/-! ### The data orbit -/
+
+/-- `M`'s run on `x`: its configuration after `r` steps. -/
+private def tt_c (M : FinTM Bool) (x : List Bool) (r : ℕ) : Cfg M.k Bool M.State x :=
+  M.tm.runFrom (M.tm.initCfg x) r
+
+/-- **The data orbit** of the simulation of `M` on `x` [HS66; AB09, §1.7]: no level and empty
+tracks at first; after each live step of `M`, the data after the round that simulates it. -/
+private def tt_D (M : FinTM Bool) (x : List Bool) : ℕ → ZoneData M.k
+  | 0 => ⟨0, fun _ => ZoneContents.empty 0⟩
+  | r + 1 =>
+    match (tt_c M x r).state with
+    | some q => tt_roundData (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r)
+    | none => tt_D M x r
+
+/-- The orbit's step at a live configuration. -/
+private theorem tt_D_succ (M : FinTM Bool) (x : List Bool) (r : ℕ) (q : M.State)
+    (hq : (tt_c M x r).state = some q) :
+    tt_D M x (r + 1) = tt_roundData (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r))
+      (tt_D M x r) := by
+  show (match (tt_c M x r).state with
+    | some q => tt_roundData (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r)
+    | none => tt_D M x r) = _
+  rw [hq]
+
+/-- **The invariant along the orbit** [HS66; AB09, §1.7]: at every time `r` the data are full
+and represent the work tapes of `M`'s configuration after `r` steps.
+
+**Proof sketch.** Induction on `r`. At `0` the tracks are empty and represent blank tapes
+(`Turing.zoneTrackTape_empty`), as `M`'s initial work tapes are (`Turing.Cfg.init_workTapes`).
+A live step is `tt_round_inv`, `M`'s next configuration being its step
+(`Turing.MultiTapeTM.runFrom_succ_eq_step'`); a halted one changes neither side
+(`Turing.MultiTapeTM.step_of_halt`). -/
+private theorem tt_D_inv (M : FinTM Bool) (x : List Bool) (r : ℕ) :
+    tt_fullD (tt_D M x r) ∧ tt_rep (tt_c M x r) (tt_D M x r) := by
+  induction r with
+  | zero =>
+    refine ⟨fun _ => tt_full_empty, fun t p => ?_⟩
+    show zoneTrackTape (ZoneContents.empty 0) p =
+      (M.tm.runFrom (M.tm.initCfg x) 0).workTapes t _
+    rw [zoneTrackTape_empty, MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq,
+      Cfg.init_workTapes]
+  | succ r ih =>
+    have hc : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'
+    cases hq : (tt_c M x r).state with
+    | none =>
+      rw [hc, MultiTapeTM.step_of_halt hq]
+      show tt_fullD (match (tt_c M x r).state with
+        | some q => tt_roundData (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r)
+        | none => tt_D M x r) ∧ tt_rep (tt_c M x r) (match (tt_c M x r).state with
+        | some q => tt_roundData (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r)
+        | none => tt_D M x r)
+      rw [hq]
+      exact ih
+    | some q =>
+      rw [tt_D_succ M x r q hq, hc]
+      exact (tt_round_inv M (tt_c M x r) q hq _ ih.1 ih.2).2
+
 /-! ### The target -/
 
 /-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
