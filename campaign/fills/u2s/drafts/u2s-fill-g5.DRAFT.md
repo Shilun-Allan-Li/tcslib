@@ -73,7 +73,9 @@
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
-- **Delivery is by zip** (`workflow.md` §4): `fill-u2s-g5.zip`, containing:
+- **Delivery is by zip** (`workflow.md` §4): `fill-u2s-g5.zip`, pushed to the branch
+  `exchange/pass-shelat-ch5-8` at `arora-barak-ch3-4/inbox/` (you have push access;
+  `git pull --rebase` first, add only your zips, never force-push, no PR), containing:
   - `REPORT.md`, the full modified source, a `git format-patch` series against your base and a
     git bundle whose only prerequisite is your base;
   - the environment logs (`evidence/logs/`), the bootstrap and final sweep logs with each
