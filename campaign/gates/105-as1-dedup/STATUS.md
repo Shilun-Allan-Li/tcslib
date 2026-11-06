@@ -15,3 +15,4 @@
 - 2026-11-06: round 2 **dispatched** by the user (140 sections, bundle `e935f140…`).
 - 2026-11-06: round 2 findings: **HOLD 0/2/2** (implicit astep reductions; cross-file instruction-table reads). Awaiting the user's ruling.
 - 2026-11-06: the user ruled: land, acknowledge both majors (AS-2, MT-1); round 3 (dispositions only) staged.
+- 2026-11-06: round 3 **dispatched** by the user (13 sections, bundle `055354b3…`).
