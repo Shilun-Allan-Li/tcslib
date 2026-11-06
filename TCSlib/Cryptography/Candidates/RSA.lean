@@ -1982,6 +1982,257 @@ def rsaFromFactorRaw (A : NUPPT) (z : List Bool) : List Bool :=
     (listToNat (pairFstD (NUPPT.inArg z))) (listToNat (pairFstD (pairSndD (NUPPT.inArg z))))
     (listToNat (pairSndD (pairSndD (NUPPT.inArg z))))
 
+/-! ### `A'` as a string computation (helpers of `polyTimeComputable_rsaFromFactorRaw`) -/
+
+/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (most significant bit first). This is
+the fold identity of `listToNat` (the private `foldl_bits_eq` of `Asymptotic/Sampling.lean`,
+and the discrete-log fill's private `dla_listToNat_append`). -/
+private theorem rsa_listToNat_append (a b : List Bool) :
+    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+  have key : ∀ (l : List Bool) (acc : ℕ),
+      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+    intro l
+    induction l with
+    | nil => intro acc; simp
+    | cons c l ih =>
+      intro acc
+      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+      ring
+  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+
+/-- Leading zeros do not change the number read: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
+private theorem rsa_listToNat_zeros_append (k : ℕ) (w : List Bool) :
+    listToNat (natToList k 0 ++ w) = listToNat w := by
+  rw [rsa_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
+
+/-- **Width normalization by truncation**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`, the low `W` bits
+(the discrete-log fill's private `dla_drop_natToList_zero_append`, re-proved). -/
+private theorem rsa_drop_zeros_append (W : ℕ) (b : List Bool) :
+    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+  set w := natToList W 0 ++ b with hw
+  have hlen : (w.drop b.length).length = W := by
+    rw [List.length_drop, hw, List.length_append, length_natToList]
+    omega
+  have hval : listToNat w = listToNat b := rsa_listToNat_zeros_append W b
+  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+    conv_lhs => rw [← List.take_append_drop b.length w]
+    rw [rsa_listToNat_append, hlen]
+  have hlt := listToNat_lt_two_pow (w.drop b.length)
+  rw [hlen] at hlt
+  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
+  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
+    have h := natToList_length_listToNat (natToList W N)
+    rw [length_natToList, listToNat_natToList_eq_mod] at h
+    exact h.symm
+  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
+
+/-- `subStr ⟨a, a⟩` is the `|a|`-bit numeral of `0`. -/
+private theorem rsa_subStr_self (a : List Bool) : subStr (pairEncode a a) = natToList a.length 0 := by
+  rw [subStr_pairEncode, Nat.sub_self]
+
+/-- In `Z_0 = ℤ` the inverse of a natural number is its sign, so its value is at most `1`. -/
+private theorem rsa_val_inv_zero_le (e : ℕ) : ((e : ZMod 0)⁻¹).val ≤ 1 := by
+  show (Int.sign (e : ℤ)).natAbs ≤ 1
+  rw [Int.natAbs_sign]
+  split_ifs <;> omega
+
+/-- The answer of `A` on `⟨1^n, N⟩` (coins and advice of the outer input). -/
+private def rsa_fS (A : NUPPT) (z : List Bool) : List Bool :=
+  A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z)
+    (NUPPT.inCoins z))
+
+/-- The cofactor word `⟦N / p'⟧` (`divModStr`, the width of `N`). -/
+private def rsa_fQ (A : NUPPT) (z : List Bool) : List Bool :=
+  pairFstD (divModStr (pairEncode (pairFstD (NUPPT.inArg z)) (rsa_fS A z)))
+
+/-- The test `p' q' = N` by two comparisons. -/
+private def rsa_fTest (A : NUPPT) (z : List Bool) : Bool :=
+  decide (listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z))) ≤
+      listToNat (pairFstD (NUPPT.inArg z))) &&
+    decide (listToNat (pairFstD (NUPPT.inArg z)) ≤
+      listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z))))
+
+/-- The word of `Φ = (p' − 1)(q' − 1)`, behind one leading zero. -/
+private def rsa_fPhi (A : NUPPT) (z : List Bool) : List Bool :=
+  subStr (pairEncode [true] [true]) ++
+    mulStr (pairEncode (subStr (pairEncode (rsa_fS A z) [true])) (subStr (pairEncode (rsa_fQ A z) [true])))
+
+/-- The word of `d = e⁻¹ mod Φ` (`xgcdStr`). -/
+private def rsa_fD (A : NUPPT) (z : List Bool) : List Bool :=
+  pairSndD (xgcdStr (pairEncode (pairFstD (pairSndD (NUPPT.inArg z))) (rsa_fPhi A z)))
+
+/-- The word of `y^d mod N` (`modExpStr`), at the width `|y| + 1 + |N|` (leading zeros before `N`). -/
+private def rsa_fV (A : NUPPT) (z : List Bool) : List Bool :=
+  modExpStr (pairEncode (pairSndD (pairSndD (NUPPT.inArg z)))
+    (pairEncode (rsa_fD A z)
+      (subStr (pairEncode ([true] ++ pairSndD (pairSndD (NUPPT.inArg z)))
+          ([true] ++ pairSndD (pairSndD (NUPPT.inArg z)))) ++ pairFstD (NUPPT.inArg z))))
+
+/-- The output of `A'`: the `2n`-bit truncation of `y^d mod N` if the test passes, `[]` otherwise. -/
+private def rsa_fOut (A : NUPPT) (z : List Bool) : List Bool :=
+  if rsa_fTest A z then
+    (pairSndD (pairEncode (rsa_fV A z)
+      (subStr (pairEncode (List.replicate ((PolyExpr.mul (.const 2) .var).eval (NUPPT.inParam z).length) true)
+          (List.replicate ((PolyExpr.mul (.const 2) .var).eval (NUPPT.inParam z).length) true)) ++
+        rsa_fV A z))).drop (PolyExpr.var.eval (pairFstD (pairEncode (rsa_fV A z)
+      (subStr (pairEncode (List.replicate ((PolyExpr.mul (.const 2) .var).eval (NUPPT.inParam z).length) true)
+          (List.replicate ((PolyExpr.mul (.const 2) .var).eval (NUPPT.inParam z).length) true)) ++
+        rsa_fV A z))).length)
+  else []
+
+/-- The string computation of `A'` is polynomial-time (`A.polyTimeComputable_output`, `H.divMod`,
+`H.mul`, `H.le`, `H.sub`, `H.xgcd`, `H.modExp`, `polyTimeComputable_pairDropPoly`). -/
+private theorem rsa_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rsa_fOut A) := by
+  have hN : PolyTimeComputable fun z => pairFstD (NUPPT.inArg z) :=
+    rsa_comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg
+  have he : PolyTimeComputable fun z => pairFstD (pairSndD (NUPPT.inArg z)) :=
+    rsa_comp polyTimeComputable_pairFstD (rsa_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+  have hy : PolyTimeComputable fun z => pairSndD (pairSndD (NUPPT.inArg z)) :=
+    rsa_comp polyTimeComputable_pairSndD (rsa_comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+  have hS : PolyTimeComputable (rsa_fS A) := by
+    have h := rsa_comp A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
+      NUPPT.polyTimeComputable_inParam hN NUPPT.polyTimeComputable_inAdvice NUPPT.polyTimeComputable_inCoins)
+    unfold rsa_fS
+    exact h
+  have hQ : PolyTimeComputable (rsa_fQ A) := by
+    have h := rsa_comp polyTimeComputable_pairFstD (rsa_comp H.divMod (hN.pairEncode hS))
+    unfold rsa_fQ
+    exact h
+  have hM := rsa_comp H.mul (hS.pairEncode hQ)
+  have hT : PolyTimeComputable fun z => [rsa_fTest A z] := by
+    have h := polyTimeComputable_and
+      (p := fun z => decide (listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z))) ≤
+        listToNat (pairFstD (NUPPT.inArg z))))
+      (q := fun z => decide (listToNat (pairFstD (NUPPT.inArg z)) ≤
+        listToNat (mulStr (pairEncode (rsa_fS A z) (rsa_fQ A z)))))
+      (rsa_le_poly H hM hN) (rsa_le_poly H hN hM)
+    unfold rsa_fTest
+    exact h
+  have hPhi : PolyTimeComputable (rsa_fPhi A) := by
+    have h1 := rsa_comp H.sub (hS.pairEncode (polyTimeComputable_const [true]))
+    have h2 := rsa_comp H.sub (hQ.pairEncode (polyTimeComputable_const [true]))
+    have h0 := rsa_comp H.sub ((polyTimeComputable_const [true]).pairEncode
+      (polyTimeComputable_const [true]))
+    have h := h0.append (rsa_comp H.mul (h1.pairEncode h2))
+    unfold rsa_fPhi
+    exact h
+  have hD : PolyTimeComputable (rsa_fD A) := by
+    have h := rsa_comp polyTimeComputable_pairSndD (rsa_comp H.xgcd (he.pairEncode hPhi))
+    unfold rsa_fD
+    exact h
+  have hV : PolyTimeComputable (rsa_fV A) := by
+    have h1y := (polyTimeComputable_prepend [true]).comp hy
+    have hz := rsa_comp H.sub (h1y.pairEncode h1y)
+    have h := rsa_comp H.modExp (hy.pairEncode (hD.pairEncode (hz.append hN)))
+    unfold rsa_fV
+    exact h
+  have hO := rsa_comp (polyTimeComputable_unaryPoly (.mul (.const 2) .var)) NUPPT.polyTimeComputable_inParam
+  have hZ := rsa_comp H.sub (hO.pairEncode hO)
+  have hW := rsa_comp (polyTimeComputable_pairDropPoly .var) (hV.pairEncode (hZ.append hV))
+  have h := polyTimeComputable_ite (p := rsa_fTest A) hT hW (polyTimeComputable_const [])
+  unfold rsa_fOut
+  exact h
+
+/-- **The string computation is `A'`**: `rsa_fOut A = rsaFromFactorRaw A`.
+
+**Proof sketch.** With `s = ⟦p'⟧`, `N`, `e`, `y` read from the input: the cofactor word reads as
+`N / s` (`divModStr_pairEncode`, `N / s ≤ N`), so the test is `s (N / s) = N`; the word of `Φ`
+reads as `Φ = (s − 1)(N / s − 1)` (leading zero, `listToNat_subStr`, `rsa_listToNat_mulStr`); the
+word of `d` reads as `d = (e : Z_Φ)⁻¹.val` exactly (`xgcdStr_pairEncode`; `d < Φ` if `Φ ≠ 0`,
+and `d ≤ 1` in `Z_0 = ℤ`, `rsa_val_inv_zero_le`); `modExpStr` at the modulus word with
+`|y| + 1` leading zeros reads as `y^d mod N` exactly (`y^d mod N < N` if `N ≠ 0`; if `N = 0` then
+`Φ = 0`, `d ≤ 1` and `y^d < 2^{|y| + 1}`); and the truncation is the `2n`-bit numeral
+(`rsa_drop_zeros_append`). -/
+private theorem rsa_fOut_eq (A : NUPPT) (z : List Bool) : rsa_fOut A z = rsaFromFactorRaw A z := by
+  unfold rsa_fOut rsa_fTest rsa_fV rsa_fD rsa_fPhi rsa_fQ rsaFromFactorRaw rsaFromFactorStep
+  rw [show A.output (NUPPT.layout (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (NUPPT.inAdvice z)
+    (NUPPT.inCoins z)) = rsa_fS A z from rfl]
+  generalize rsa_fS A z = S
+  generalize pairFstD (NUPPT.inArg z) = Nw
+  generalize pairFstD (pairSndD (NUPPT.inArg z)) = ew
+  generalize pairSndD (pairSndD (NUPPT.inArg z)) = yw
+  generalize (NUPPT.inParam z).length = n
+  -- the cofactor, the product and the test
+  have hQ : listToNat (pairFstD (divModStr (pairEncode Nw S))) = listToNat Nw / listToNat S := by
+    rw [divModStr_pairEncode, pairFstD_pairEncode,
+      listToNat_natToList ((Nat.div_le_self _ _).trans_lt (listToNat_lt_two_pow Nw))]
+  have hprod : listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))) =
+      listToNat S * (listToNat Nw / listToNat S) := by
+    rw [rsa_listToNat_mulStr, hQ]
+  have htest : (decide (listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))) ≤
+        listToNat Nw) && decide (listToNat Nw ≤
+        listToNat (mulStr (pairEncode S (pairFstD (divModStr (pairEncode Nw S))))))) =
+      decide (listToNat S * (listToNat Nw / listToNat S) = listToNat Nw) := by
+    rw [hprod, Bool.eq_iff_iff]
+    simp only [Bool.and_eq_true, decide_eq_true_eq]
+    constructor
+    · intro h
+      omega
+    · intro h
+      omega
+  rw [htest]
+  by_cases hc : listToNat S * (listToNat Nw / listToNat S) = listToNat Nw
+  swap
+  · rw [if_neg (by simpa using hc), if_neg hc]
+  rw [if_pos (by simpa using hc), if_pos hc]
+  -- `Φ`, `d` and `y^d mod N` read from their words
+  have hPhi : listToNat (subStr (pairEncode [true] [true]) ++
+      mulStr (pairEncode (subStr (pairEncode S [true]))
+        (subStr (pairEncode (pairFstD (divModStr (pairEncode Nw S))) [true])))) =
+      (listToNat S - 1) * (listToNat Nw / listToNat S - 1) := by
+    rw [rsa_subStr_self, rsa_listToNat_zeros_append, rsa_listToNat_mulStr, listToNat_subStr,
+      listToNat_subStr, rsa_listToNat_one, hQ]
+  set Φw := subStr (pairEncode [true] [true]) ++
+      mulStr (pairEncode (subStr (pairEncode S [true]))
+        (subStr (pairEncode (pairFstD (divModStr (pairEncode Nw S))) [true]))) with hΦw
+  have hΦlen : 1 ≤ Φw.length := by
+    rw [hΦw, List.length_append, rsa_subStr_self, length_natToList, List.length_singleton]
+    omega
+  have hD : listToNat (pairSndD (xgcdStr (pairEncode ew Φw))) =
+      ((listToNat ew : ZMod ((listToNat S - 1) * (listToNat Nw / listToNat S - 1)))⁻¹).val := by
+    rw [xgcdStr_pairEncode, pairSndD_pairEncode, hPhi]
+    apply listToNat_natToList
+    by_cases hΦ : (listToNat S - 1) * (listToNat Nw / listToNat S - 1) = 0
+    · rw [hΦ]
+      calc _ ≤ 1 := rsa_val_inv_zero_le _
+        _ < 2 ^ Φw.length := Nat.one_lt_two_pow (by omega)
+    · haveI : NeZero ((listToNat S - 1) * (listToNat Nw / listToNat S - 1)) := ⟨hΦ⟩
+      exact (ZMod.val_lt _).trans (hPhi ▸ listToNat_lt_two_pow Φw)
+  have hNw : listToNat (subStr (pairEncode ([true] ++ yw) ([true] ++ yw)) ++ Nw) = listToNat Nw := by
+    rw [rsa_subStr_self, rsa_listToNat_zeros_append]
+  have hV : listToNat (modExpStr (pairEncode yw (pairEncode (pairSndD (xgcdStr (pairEncode ew Φw)))
+      (subStr (pairEncode ([true] ++ yw) ([true] ++ yw)) ++ Nw)))) =
+      listToNat yw ^ ((listToNat ew : ZMod ((listToNat S - 1) *
+        (listToNat Nw / listToNat S - 1)))⁻¹).val % listToNat Nw := by
+    rw [modExpStr_pairEncode, hD, hNw]
+    apply listToNat_natToList
+    rw [List.length_append, rsa_subStr_self, length_natToList, List.length_append,
+      List.length_singleton]
+    rcases Nat.eq_zero_or_pos (listToNat Nw) with h0 | h0
+    · -- `N = 0`: then `Φ = 0`, `d ≤ 1` and `y^d ≤ max 1 y < 2^{|y| + 1}`
+      have hΦ : (listToNat S - 1) * (listToNat Nw / listToNat S - 1) = 0 := by
+        rw [h0, Nat.zero_div, Nat.zero_sub, mul_zero]
+      rw [hΦ, h0, Nat.mod_zero]
+      have hd := rsa_val_inv_zero_le (listToNat ew)
+      have hyl := listToNat_lt_two_pow yw
+      have h2 : 2 ^ (1 + yw.length) ≤ 2 ^ (1 + yw.length + Nw.length) :=
+        Nat.pow_le_pow_right (by norm_num) (by omega)
+      have h3 : 2 ^ (1 + yw.length) = 2 * 2 ^ yw.length := by rw [pow_add, pow_one]
+      interval_cases h : ((listToNat ew : ZMod 0)⁻¹).val
+      · rw [pow_zero]
+        have := Nat.one_le_two_pow (n := yw.length)
+        omega
+      · rw [pow_one]
+        omega
+    · calc _ < listToNat Nw := Nat.mod_lt _ h0
+        _ < 2 ^ Nw.length := listToNat_lt_two_pow Nw
+        _ ≤ _ := Nat.pow_le_pow_right (by norm_num) (by omega)
+  rw [pairSndD_pairEncode, pairFstD_pairEncode, PolyExpr.eval_var,
+    rsa_subStr_self (List.replicate _ true), List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var,
+    rsa_drop_zeros_append, hV]
+
 /-- **`A'` is polynomial-time** [PS10, Theorem 55.2, "the running time of `A'` is essentially
 the running time of `A` plus `O(log³ n)`"] given the arithmetic bundle.
 
@@ -1993,7 +2244,9 @@ by `H.sub` with `[true]` (run-3 audit P7-1); `Φ` by `H.mul`; `d` as the second 
 `polyTimeComputable_unaryPoly`/`_blockMap`. -/
 theorem polyTimeComputable_rsaFromFactorRaw (H : ArithmeticFP) (A : NUPPT) :
     PolyTimeComputable (rsaFromFactorRaw A) := by
-  sorry
+  have h := rsa_fOut_poly H A
+  rw [show rsa_fOut A = rsaFromFactorRaw A from funext (rsa_fOut_eq A)] at h
+  exact h
 
 /-- **The adversary `A'`** [PS10, Algorithm 55.3] as a non-uniform PPT with the coins and
 advice of the factoring adversary `A`. -/
