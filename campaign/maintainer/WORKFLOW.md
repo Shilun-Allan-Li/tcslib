@@ -115,6 +115,14 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   - five-line `Cfg.ext` blocks.
 
   Once a family is acknowledged by kind, a later find is a minor.
+- **Older re-derivations found while landing a PR** (the user, 2026-11-06, standing rule): when a
+  screen or sweep of a PR's touched files exposes an unrecorded re-derivation of a published
+  lemma, and the fix is mechanical (cite the published lemma; no statement change, no new public
+  declaration, no new import, no design choice), re-point every member in the same PR, record the
+  family in the ledger by kind as retired on merge, and disclose it in the pack. Anything else
+  waits for the user's ruling. Search every closing form of the family (rewrite chains, simp
+  sets, `show`/`change` readings), not one: IL-1's first search matched one closing and missed
+  five members.
 
 ## 4. Gates and bundles
 

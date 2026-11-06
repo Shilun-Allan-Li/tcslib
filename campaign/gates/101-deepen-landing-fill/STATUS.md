@@ -26,3 +26,4 @@
   simp-set members of IL-1 and its sibling reading (`indicator_inputBitLang`); the user ruled:
   re-point all five in #208 (`0140aee2`), then the campaign merge `36ed2deb`. #208 changes 13
   files. `replay-ldp6` (190 modules, from `oleans-lnth`) running; the freeze and lint redone.
+- 2026-11-06: the user: stage round 2 when ready; the user dispatches it.

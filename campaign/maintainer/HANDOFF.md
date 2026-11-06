@@ -176,7 +176,9 @@ out of cloud snapshots. All are in `duplication-ledger.md` and the gates' `resol
    (no published host for the padded decider or the padding map's polynomial time). (The other "H",
    `campaign/fills/h/`, the nondeterministic time hierarchy, landed as #172; with NF and E-D
    merged it rests on the standard axioms; #209 corrects its module's Status paragraph.)
-4. **The dedup window (12.2c):** the ledger's acknowledged families, among them LS-1, LS-3, BL-1
+4. **The dedup window (12.2c)** — **started 2026-11-06 (the user): small, separate dedup PRs, one
+   family each, the mechanical ones first, each with a replay and a gate pack staged for the
+   user to dispatch.** The families: the ledger's acknowledged families, among them LS-1, LS-3, BL-1
    (scoped by kind), CL-1, AS-1, RC-1–3, QF-1 and NF-X1; since 2026-11-05 also WS-1 (scoped by
    kind and widened; publish the tape half first), RC-4, CE-1, ZP-1, CQ-1, WL-1, RP-1, SG-1 (2026-11-06) and WC-1
    (optional), with QL-X1 an idiom exclusion.
