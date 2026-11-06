@@ -176,6 +176,7 @@ theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fint
     ∃ k₀ : κ, |acceptProb X D - acceptProb Y D| ≤ distAdv (fun s => X (k₀, s)) Y D := by
   have hX : acceptProb X D = uexp fun k => acceptProb (fun s => X (k, s)) D := by
     rw [acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc κ σ ρ).symm, uprob_prod]
+    simp only [acceptProb_def]
     rfl
   obtain ⟨k₀, hk₀⟩ := CommitmentLemmas.exists_abs_uexp_le fun k =>
     acceptProb (fun s => X (k, s)) D - acceptProb Y D
@@ -205,7 +206,7 @@ theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype
 /-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
 theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
     (Y : τ → γ) (D : γ → ρ → Bool) : distAdv X Y D ≤ 1 :=
-  distAdv_le_of_statClose X Y (fun T => abs_sub_le_iff.2
+  distAdv_le_of_statClose X Y ((statClose_iff X Y 1).2 fun T => abs_sub_le_iff.2
     ⟨by linarith [uprob_le_one fun s => T (X s), uprob_nonneg fun t => T (Y t)],
       by linarith [uprob_le_one fun t => T (Y t), uprob_nonneg fun s => T (X s)]⟩) D
 
