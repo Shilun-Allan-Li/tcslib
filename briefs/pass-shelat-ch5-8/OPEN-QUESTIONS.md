@@ -1,5 +1,7 @@
 # Open questions for the user (morning of 2026-11-07)
 
+**Q1 and Q2 answered 2026-11-07** (decision log): Q1 (A), Q2 (A) with a standing rule for fill-owned files.
+
 ## Q1. How should statement-level reads of `PolyExpr.eval` be fixed? (blocks: gate 07 round 2, the eval-dependent part of #195's zero-exclusion repair)
 
 The complete sweep (`gates/07-eqlemmas/sweep/REPORT.md`) found 59 statement reads and 26
