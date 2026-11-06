@@ -85,7 +85,12 @@ lemma acc_orcN (r u : ℕ) :
       pairEncode x (pairEncode (Nat.bits u) (Nat.bits r)) ∈ Codec.acceptLang N := by
   simp [orcN, decs, indicator_eq_decide]
 
-/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes. -/
+/-- **The codes reachable below `K` are the reachable codes**, once `K` bounds the codes.
+
+**Proof sketch.** `→`: a search path from the initial code is a path of the step relation
+(`stp_orcN`), so its end is reachable (`ExpBFS.rcode_iff_reflTransGen`). `←`: induct on a
+reachability path; each code on it is reachable, so it is below `K` (`ExpBFS.rcode_lt` and `hK`),
+and each step is a search step (`stp_orcN`). -/
 lemma cl_iff {r K : ℕ} (hK : 2 ^ (Codec.codeK N * (r + logSpace x.length + 1)) ≤ K) (v : ℕ) :
     Cl (orcN N) x r K v ↔ ExpBFS.RCode N x r v := by
   constructor
