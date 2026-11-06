@@ -754,7 +754,8 @@ theorem exists_colSimRed_fixCoins {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G)
     (colSimRed Com (ℓ.eval n) G c V N k e₀ π₀ D')
   exact ⟨k, e₀, π₀, w₀, h.trans hw₀⟩
 
-/-- **With the attempt table fixed only attempt `k` reads the challenge** (Claim-129.d): the
+/-- **With the attempt table fixed only attempt `k` reads the challenge** [PS10, proof of
+Proposition 128.8, the reduction to the hiding property] (Claim-129.d): the
 fixed reduction is `cv ↦ D'(pre <|> planted cv <|> post)`, where `pre` and `post` are the first
 successes among the `S''` attempts before `k` and the `S'` attempts after `k`.
 
@@ -792,6 +793,7 @@ theorem colSimRed_fixed_eq {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) {ρ : T
     · rw [if_pos ht, if_pos ht, if_neg (by rw [Fin.lt_def] at ht; omega), if_neg (ne_of_gt ht)]
     · rw [if_neg ht, if_neg ht]
   rw [h1, h2]
+
 /-- **The real view is `(1/4)^{|x|}`-close to the typed honest view** [PS10, proof of
 Proposition 128.8, "the view of `V*`"] (step (1) of `col_zk`'s sketch): the encoded view of `V'`
 in `P(encGraph G, encColoring c) ↔ V'(·, z)` is within `(1/4)^{|x|}` of the encoded
@@ -868,6 +870,7 @@ theorem statClose_colRealView (V' : Strategy) {n : ℕ} (G : Graph n) (c : Fin n
       (edgeAt_eq_none_iff G _).2 hm]
   · rw [colProver_next_cons Com ℓ (decGraph_encGraph G) hm, decColoring_encColoring, hπ, hr,
       ColMachines.edgeAt_eq_some_of_pos G hm]
+
 /-- **`colSim` is `K((1/2)^{|x|} + (1/4)^{|x|})`-close to the typed truncated simulator**
 [PS10, Algorithm 128.7] (step (2) of `col_zk`'s sketch, `m > 0`): the string simulator on
 `encGraph G` is within `K((1/2)^{|x|} + (1/4)^{|x|})`, `K = n|E|`, of the encoded `colSimTrunc`
@@ -1467,8 +1470,6 @@ private theorem colZK_planted_case
         (K : ℝ) * ((1 / 2 : ℝ) ^ N + (1 / 4 : ℝ) ^ N)))) :=
       add_le_add le_rfl (add_le_add le_rfl (add_le_add le_rfl (add_le_add hW h3)))
     _ ≤ _ := by linarith [hexp]
-
-
 
 /-- **`col_zk` from the equations of `msgAt` and `edgeIdxOfMsg`** (the assembly of the ladder;
 conditional because the step-5 identification needs these two published equations, E-API).

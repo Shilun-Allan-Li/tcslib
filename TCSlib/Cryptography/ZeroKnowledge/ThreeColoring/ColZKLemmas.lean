@@ -17,7 +17,7 @@ set_option autoImplicit false
 Generic facts used by the fill ladder of `col_zk` (`ThreeColoring/Simulator.lean`, the proof of
 [PS10, Proposition 128.8]): reading disjoint fields of a uniform tape gives independent uniform
 fields (`pushesUniform_restrict`, `pushesUniform_offsetTable`), and the bookkeeping of the error
-function (`negligible_colZKErr`, `colZK_attempts_le`).
+function (`negligible_colZKErr`).
 
 ## Main definitions
 
@@ -194,23 +194,14 @@ theorem exists_fixSeed {κ σ τ γ ρ : Type*} [Fintype κ] [Nonempty κ] [Fint
     HardcoreBit.uexp_const]
   exact hk₀
 
-/-- **Moving a seed factor into the distinguisher's coins**, for one sampler
-(`acceptProb_def`, `Equiv.prodAssoc`). -/
-theorem acceptProb_seed_to_coins {σ κ γ γ' ρ : Type*} [Fintype σ] [Fintype κ] [Fintype ρ]
-    (X : σ → γ) (F : γ → κ → γ') (D : γ' → ρ → Bool) :
-    acceptProb (fun s : σ × κ => F (X s.1) s.2) D =
-      acceptProb X fun g (c : κ × ρ) => D (F g c.1) c.2 := by
-  rw [acceptProb_def, acceptProb_def, ← uprob_comp_equiv (Equiv.prodAssoc σ κ ρ).symm]
-  rfl
-
 /-- **Moving a seed factor into the distinguisher's coins**: post-processing two samplers by
 `F · k` with an independent uniform `k` is post-processing by a distinguisher with coins
-`κ × ρ` (`acceptProb_seed_to_coins`). -/
+`κ × ρ` (`acceptProb_bind` on both samplers). -/
 theorem distAdv_seed_to_coins {σ τ κ γ γ' ρ : Type*} [Fintype σ] [Fintype τ] [Fintype κ]
     [Fintype ρ] (X : σ → γ) (Y : τ → γ) (F : γ → κ → γ') (D : γ' → ρ → Bool) :
     distAdv (fun s : σ × κ => F (X s.1) s.2) (fun s : τ × κ => F (Y s.1) s.2) D =
       distAdv X Y fun g (c : κ × ρ) => D (F g c.1) c.2 := by
-  rw [distAdv_def, distAdv_def, acceptProb_seed_to_coins, acceptProb_seed_to_coins]
+  rw [distAdv_def, distAdv_def, acceptProb_bind, acceptProb_bind]
 
 /-- Every advantage is at most `1` (`distAdv_le_of_statClose`; probabilities lie in `[0, 1]`). -/
 theorem distAdv_le_one {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ)
@@ -252,16 +243,11 @@ theorem ofFn_take_drop {L : ℕ} (b : Fin L → Bool) (a k B : ℕ) (h : a + k =
 
 /-! ### Searches -/
 
-/-- Mapping the values of a search: `l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g`. -/
+/-- Mapping the values of a search: `l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g`
+(core `List.map_findSome?`, read from right to left, with the composite written pointwise). -/
 theorem findSome?_map_option {α β γ : Type*} (l : List α) (f : α → Option β) (g : β → γ) :
-    l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g := by
-  induction l with
-  | nil => rfl
-  | cons a l ih =>
-    rw [List.findSome?_cons, List.findSome?_cons]
-    cases f a with
-    | none => exact ih
-    | some b => rfl
+    l.findSome? (fun a => (f a).map g) = (l.findSome? f).map g :=
+  List.map_findSome?.symm
 
 /-- A search over `List.range K` is the search over `List.finRange K` of the same values. -/
 theorem findSome?_range_eq_finRange {β : Type*} (K : ℕ) (g : ℕ → Option β) :
