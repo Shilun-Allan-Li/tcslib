@@ -1,6 +1,6 @@
 # Fill report: unit rabin (`TCSlib/Cryptography/Candidates/Rabin.lean`)
 
-**Status: in progress (checkpoint 3).** Filled so far: `rabinSampler_spec`, `blumSampler_spec`, `blumInv_spec`.
+**Status: in progress (checkpoint 4).** Filled so far: steps 1–3 (5 targets).
 
 ## Base and environment
 
@@ -36,3 +36,5 @@
 | 1 | `rabinSampler_spec` | filled (sketch followed: activation `rabin_sampler_runAt`, `rabin_dec_unitSampleStr`, canonical decoding `rabin_enc_of_dec`, `rabinEval_spec`) |
 | 1 | `blumSampler_spec` | filled (activation `rabin_blumSampler_runAt` with `modExpStr_pairEncode`; `BlumValid` of a generated index; `QR` membership as the square of `unitOfCoprime v`; `blumEval_spec`) |
 | 2 | `blumInv_spec` | filled by the brief's **Route** (no `blumSqrt` reading): `rabin_blumInvNat_spec` (CRT value is a residue root with residue `blumInvNat p q y.val`), then `Equiv.symm_apply_eq` on `blumPermAt`; Proof sketch paragraph rewritten |
+| 3 | `rabinCollection_sampleClose` | filled: `δ n = 1` for `n < 3` (P3), `e^{-n}` otherwise via S3 (`rabin_statClose_dec`); docstring expanded with a Proof sketch |
+| 3 | `rabinBlumTrapdoor_sampleClose` | filled: S3 mapped through squaring, `pushesUniform_sqTo`, `statClose_of_pushesUniform`, `StatClose.trans` (`rabin_statClose_blumDec`); docstring expanded |
