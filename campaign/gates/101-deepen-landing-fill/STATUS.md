@@ -30,3 +30,7 @@
 - 2026-11-06: `replay-ldp6` passed (190 modules, 0 failed) at `36ed2deb`; the seal (35, 0
   diagnostics; controls at round 1's 35 positions), the axioms (17 prints, standard), the freeze,
   lint and the 27-file screen (0 new, 24 gone) in `evidence/round2/`. `pack-r2.md` complete.
+- 2026-11-06: round 2 staged (`outbox/gates/101-deepen-landing-fill-r2-gate/`, exchange commit
+  `797912af`): bundle `101-deepen-landing-fill-r2-bundle.md`, 74 sections, SHA-256
+  `d852220c1049b860825c553b44567f5a48138b2d891ea975602d6fd8cc9ad05c`; Lean from `36ed2deb`.
+  Findings file `deepen-landing-fill-r2-findings.md`. **Ready to dispatch.**
