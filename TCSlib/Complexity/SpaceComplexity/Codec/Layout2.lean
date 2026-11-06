@@ -121,7 +121,7 @@ theorem layout2_run (y x w w' rest : List Bool)
   have r12 : Reach N .step y B .clrU2 ({R with E2 := e, T := 0, F2 := f} : Regs).val (.cp .U2)
       ({R with E2 := e, T := 0, F2 := f, U := 0} : Regs).val :=
     Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
-      (by simp [PreS, CA])) (by simp [astep, CA])
+      (by simp [PreS, CA])) (by simp [astep_clr (show CA N .step .clrU2 = _ from rfl)])
   have r13 : Reach N .step y B (.cp .U2) ({R with E2 := e, T := 0, F2 := f, U := 0} : Regs).val
       (icL N .U2 0) ({R with E2 := e, T := 0, F2 := f, U := f} : Regs).val :=
     Reach.cast (cp_run y B .U2 _ (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
@@ -139,7 +139,7 @@ theorem layout2_run (y x w w' rest : List Bool)
       rw [hlen]; simp only [f, e, b]; ring
     have r15 : Reach N .step y B .lenChk2 R14.val .term2 R14.val :=
       Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide))
-        (by simp [astep, CA, R14, heq, hP])
+        (by simp [astep_jeq (show CA N .step .lenChk2 = _ from rfl), R14, heq, hP])
     have hterm : y.getD f false = w'.getD (W N * (2 * s + 1) + wP n) false := by
       rw [show f = 2 * x.length + 2 * w.length + 4 + 2 * (W N * (2 * s + 1) + wP n) by
           simp only [f, e, b, n]; ring, hy, getD_w2 _ _ _ _ _ (by omega)]
@@ -151,9 +151,11 @@ theorem layout2_run (y x w w' rest : List Bool)
       refine ⟨hlen, htm, ?_⟩
       have r16 : Reach N .step y B .term2 R14.val .clrQ1b R14.val :=
         Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]))
-          (by simp [astep, CA, vword_whole₁, orc_bit, R14, hterm, htm'])
+          (by simp [astep_call (show CA N .step .term2 = _ from rfl), vword_whole₁, orc_bit, R14,
+            hterm, htm'])
       have r17 : Reach N .step y B .clrQ1b R14.val (.cp .Q1f2) ({R14 with Q1 := 0} : Regs).val :=
-        Reach.single' (gd_of hR14.val_le (by simp [PreS, CA])) (by simp [astep, CA])
+        Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]))
+          (by simp [astep_clr (show CA N .step .clrQ1b = _ from rfl)])
       have r18 : Reach N .step y B (.cp .Q1f2) ({R14 with Q1 := 0} : Regs).val (.dcTest .Pos2)
           ({R14 with Q1 := f} : Regs).val :=
         Reach.cast (cp_run y B .Q1f2 _ (by apply Regs.Bd.val_le; simp only [R14, Regs.Bd]; omega)
@@ -190,7 +192,8 @@ theorem layout2_run (y x w w' rest : List Bool)
       refine ⟨fun h => htm h.2, ?_⟩
       have r16 : Reach N .step y B .term2 R14.val .rej R14.val :=
         Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]))
-          (by simp [astep, CA, vword_whole₁, orc_bit, R14, hterm, htm'])
+          (by simp [astep_call (show CA N .step .term2 = _ from rfl), vword_whole₁, orc_bit, R14,
+            hterm, htm'])
       exact halt_rej (r5_14.trans (r15.trans r16)) hR14.val_le
   · right
     refine ⟨fun h => hlen h.1, ?_⟩
@@ -200,7 +203,7 @@ theorem layout2_run (y x w w' rest : List Bool)
       omega
     have r15 : Reach N .step y B .lenChk2 R14.val .rej R14.val :=
       Reach.single' (gd_of hR14.val_le (by simp [PreS, CA]; decide))
-        (by simp [astep, CA, R14, hP, hne])
+        (by simp [astep_jeq (show CA N .step .lenChk2 = _ from rfl), R14, hP, hne])
     exact halt_rej (r5_14.trans r15) hR14.val_le
 
 /-- The register code of an optional input symbol: `0` blank, `1` for `0`, `2` for `1`. -/
@@ -242,30 +245,33 @@ theorem insym_run (y x rest : List Bool) (hy : y = pairEncode x rest) (R : Regs)
   by_cases h0 : R.Pos = 0
   · refine ⟨R.U, hB0.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1, ?_⟩
     have r1 : Reach N .step y B .inZ R.val (.cp .Q3) R.val :=
-      Reach.single' (gd_of hBd.val_le (by simp [PreS, CA])) (by simp [astep, CA, h0])
+      Reach.single' (gd_of hBd.val_le (by simp [PreS, CA]))
+        (by simp [astep_jz (show CA N .step .inZ = _ from rfl), h0])
     have := copies R hBd hQ3 hQ4
     exact (r1.trans this).cast (by simp [inpOf, h0, zcode, hZ])
   have r1 : Reach N .step y B .inZ R.val .inN R.val :=
-    Reach.single' (gd_of hBd.val_le (by simp [PreS, CA])) (by simp [astep, CA, h0])
+    Reach.single' (gd_of hBd.val_le (by simp [PreS, CA]))
+      (by simp [astep_jz (show CA N .step .inZ = _ from rfl), h0])
   by_cases h1 : R.Pos = x.length + 1
   · refine ⟨R.U, hB0.2.2.2.2.2.2.2.2.2.2.2.2.2.2.1, ?_⟩
     have r2 : Reach N .step y B .inN R.val (.cp .Q3) R.val :=
-      Reach.single' (gd_of hBd.val_le (by simp [PreS, CA]; decide)) (by simp [astep, CA, h1, hN1])
+      Reach.single' (gd_of hBd.val_le (by simp [PreS, CA]; decide))
+        (by simp [astep_jeq (show CA N .step .inN = _ from rfl), h1, hN1])
     have := copies R hBd hQ3 hQ4
     exact (r1.trans (r2.trans this)).cast (by simp [inpOf, h1, zcode, hZ])
   have r2 : Reach N .step y B .inN R.val (.cp .Tpos) R.val :=
     Reach.single' (gd_of hBd.val_le (by simp [PreS, CA]; decide))
-      (by simp [astep, CA, hN1]; omega)
+      (by simp [astep_jeq (show CA N .step .inN = _ from rfl), hN1]; omega)
   have r3 : Reach N .step y B (.cp .Tpos) R.val .inDec ({R with T := R.Pos} : Regs).val :=
     Reach.cast (cp_run y B .Tpos _ hBd.val_le (by simp [cpDst, cpSrc, hT])) (by simp [cpDst, cpSrc])
   have r4 : Reach N .step y B .inDec ({R with T := R.Pos} : Regs).val .clrU3
       ({R with T := R.Pos - 1} : Regs).val :=
     Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
-      (by simp [PreS, CA])) (by simp [astep, CA])
+      (by simp [PreS, CA])) (by simp [astep_dec (show CA N .step .inDec = _ from rfl)])
   have r5 : Reach N .step y B .clrU3 ({R with T := R.Pos - 1} : Regs).val (.sc .In)
       ({R with T := R.Pos - 1, U := 0} : Regs).val :=
     Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
-      (by simp [PreS, CA])) (by simp [astep, CA])
+      (by simp [PreS, CA])) (by simp [astep_clr (show CA N .step .clrU3 = _ from rfl)])
   have r6 : Reach N .step y B (.sc .In) ({R with T := R.Pos - 1, U := 0} : Regs).val .inRead
       ({R with T := 0, U := 2 * (R.Pos - 1)} : Regs).val :=
     Reach.cast (sc_run y B .In _ (by apply Regs.Bd.val_le; simp only [Regs.Bd]; omega)
@@ -282,22 +288,26 @@ theorem insym_run (y x rest : List Bool) (hy : y = pairEncode x rest) (R : Regs)
   cases hb : (x[R.Pos - 1]?).getD false
   · have r7 : Reach N .step y B .inRead R6.val .inF R6.val :=
       Reach.single' (gd_of hR6.val_le (by simp [PreS, CA]))
-        (by simp [astep, CA, vword_whole₁, orc_bit, R6, hbit, hb])
+        (by simp [astep_call (show CA N .step .inRead = _ from rfl), vword_whole₁, orc_bit, R6,
+          hbit, hb])
     have r8 : Reach N .step y B .inF R6.val (.cp .Q3) ({R6 with Z := 1} : Regs).val :=
-      Reach.single' (gd_of hR6.val_le (by simp [PreS, CA])) (by simp [astep, CA, R6, hZ])
+      Reach.single' (gd_of hR6.val_le (by simp [PreS, CA]))
+        (by simp [astep_inc (show CA N .step .inF = _ from rfl), R6, hZ])
     have := copies ({R6 with Z := 1} : Regs) (by simp only [R6, Regs.Bd]; omega) (by simp [R6, hQ3])
       (by simp [R6, hQ4])
     exact (r1.trans (r2.trans (r3.trans (r4.trans (r5.trans (r6.trans (r7.trans (r8.trans
       this)))))))).cast (by simp [R6, hT, zcode])
   · have r7 : Reach N .step y B .inRead R6.val .inT1 R6.val :=
       Reach.single' (gd_of hR6.val_le (by simp [PreS, CA]))
-        (by simp [astep, CA, vword_whole₁, orc_bit, R6, hbit, hb])
+        (by simp [astep_call (show CA N .step .inRead = _ from rfl), vword_whole₁, orc_bit, R6,
+          hbit, hb])
     have r8 : Reach N .step y B .inT1 R6.val .inF ({R6 with Z := 1} : Regs).val :=
-      Reach.single' (gd_of hR6.val_le (by simp [PreS, CA])) (by simp [astep, CA, R6, hZ])
+      Reach.single' (gd_of hR6.val_le (by simp [PreS, CA]))
+        (by simp [astep_inc (show CA N .step .inT1 = _ from rfl), R6, hZ])
     have r9 : Reach N .step y B .inF ({R6 with Z := 1} : Regs).val (.cp .Q3)
         ({R6 with Z := 2} : Regs).val :=
       Reach.single' (gd_of (by apply Regs.Bd.val_le; simp only [R6, Regs.Bd]; omega)
-        (by simp [PreS, CA])) (by simp [astep, CA])
+        (by simp [PreS, CA])) (by simp [astep_inc (show CA N .step .inF = _ from rfl)])
     have := copies ({R6 with Z := 2} : Regs) (by simp only [R6, Regs.Bd]; omega) (by simp [R6, hQ3])
       (by simp [R6, hQ4])
     exact (r1.trans (r2.trans (r3.trans (r4.trans (r5.trans (r6.trans (r7.trans (r8.trans
