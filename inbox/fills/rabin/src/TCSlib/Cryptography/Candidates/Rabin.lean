@@ -1533,18 +1533,295 @@ def rabinFactorRaw (A : NUPPT) (z : List Bool) : List Bool :=
           listToNat (NUPPT.inArg z))))
       (NUPPT.inAdvice z) ((NUPPT.inCoins z).drop (rsaSampleCoins.eval (NUPPT.inParam z).length))))
 
+/-- The number read from `a ++ b` is `⟦a⟧ · 2^{|b|} + ⟦b⟧` (the fold identity of `listToNat`; a re-proof of the private `foldl_bits_eq` of `Asymptotic/Sampling.lean`, also re-proved privately by the dl-a and rsa fills). -/
+private theorem rabin_listToNat_append (a b : List Bool) :
+    listToNat (a ++ b) = listToNat a * 2 ^ b.length + listToNat b := by
+  have key : ∀ (l : List Bool) (acc : ℕ),
+      l.foldl (fun a c => 2 * a + if c = true then 1 else 0) acc =
+        acc * 2 ^ l.length + l.foldl (fun a c => 2 * a + if c = true then 1 else 0) 0 := by
+    intro l
+    induction l with
+    | nil => intro acc; simp
+    | cons c l ih =>
+      intro acc
+      rw [List.foldl_cons, List.foldl_cons, ih, ih (2 * 0 + _), List.length_cons, pow_succ]
+      ring
+  rw [listToNat_eq, listToNat_eq, listToNat_eq, List.foldl_append, key]
+
+/-- Leading zeros do not change the number read: `⟦⟦0⟧_k ++ w⟧ = ⟦w⟧`. -/
+private theorem rabin_listToNat_zeros_append (k : ℕ) (w : List Bool) :
+    listToNat (natToList k 0 ++ w) = listToNat w := by
+  rw [rabin_listToNat_append, listToNat_natToList (Nat.two_pow_pos k), zero_mul, zero_add]
+
+/-- **Width normalization by truncation**: `(⟦0⟧_W ++ b).drop |b| = ⟦⟦b⟧⟧_W`, the low `W` bits (copy of the rsa fill's private `rsa_drop_zeros_append`, itself dl-a's `dla_drop_natToList_zero_append`). -/
+private theorem rabin_drop_zeros_append (W : ℕ) (b : List Bool) :
+    (natToList W 0 ++ b).drop b.length = natToList W (listToNat b) := by
+  set w := natToList W 0 ++ b with hw
+  have hlen : (w.drop b.length).length = W := by
+    rw [List.length_drop, hw, List.length_append, length_natToList]
+    omega
+  have hval : listToNat w = listToNat b := rabin_listToNat_zeros_append W b
+  have hsplit : listToNat w = listToNat (w.take b.length) * 2 ^ W + listToNat (w.drop b.length) := by
+    conv_lhs => rw [← List.take_append_drop b.length w]
+    rw [rabin_listToNat_append, hlen]
+  have hlt := listToNat_lt_two_pow (w.drop b.length)
+  rw [hlen] at hlt
+  have hmod : listToNat b % 2 ^ W = listToNat (w.drop b.length) := by
+    rw [← hval, hsplit, Nat.mul_add_mod_of_lt hlt]
+  have hnum : ∀ N : ℕ, natToList W N = natToList W (N % 2 ^ W) := fun N => by
+    have h := natToList_length_listToNat (natToList W N)
+    rw [length_natToList, listToNat_natToList_eq_mod] at h
+    exact h.symm
+  rw [hnum, hmod, ← hlen, natToList_length_listToNat]
+
+/-- The first `T(n)B(n)` coins (for the unit `x`). -/
+private def rabin_fC1 (z : List Bool) : List Bool :=
+  (NUPPT.inCoins z).take (rsaSampleCoins.eval (NUPPT.inParam z).length)
+
+/-- The remaining coins (for `A`). -/
+private def rabin_fC2 (z : List Bool) : List Bool :=
+  (NUPPT.inCoins z).drop (rsaSampleCoins.eval (NUPPT.inParam z).length)
+
+/-- The word of `x`: `unitSampleStr` on the modulus word. -/
+private def rabin_fX (z : List Bool) : List Bool :=
+  unitSampleStr (NUPPT.inArg z) (NUPPT.inParam z).length (rabin_fC1 z)
+
+/-- The word of `y = x² mod N` (`modExpStr`, the width of the modulus). -/
+private def rabin_fY (z : List Bool) : List Bool :=
+  modExpStr (pairEncode (rabin_fX z) (pairEncode [true, false] (NUPPT.inArg z)))
+
+/-- The answer `z` of `A(1^n, ⟨N, y⟩)` (advice and remaining coins of the outer input). -/
+private def rabin_fZ (A : NUPPT) (z : List Bool) : List Bool :=
+  A.output (NUPPT.layout (NUPPT.inParam z) (pairEncode (NUPPT.inArg z) (rabin_fY z))
+    (NUPPT.inAdvice z) (rabin_fC2 z))
+
+/-- An all-`true` word longer than `2|z| + 2|x|`, the length of the zero prefix of the modulus word. -/
+private def rabin_fK (A : NUPPT) (z : List Bool) : List Bool :=
+  [true] ++ rabin_fZ A z ++ rabin_fZ A z ++ rabin_fX z ++ rabin_fX z
+
+/-- The modulus word with `|K|` leading zeros: it reads as `N`, and every residue below is computed at its width without truncation (also for the degenerate `N = 0`). -/
+private def rabin_fW (A : NUPPT) (z : List Bool) : List Bool :=
+  subStr (pairEncode (rabin_fK A z) (rabin_fK A z)) ++ NUPPT.inArg z
+
+/-- The word of `v² mod N` at the padded width. -/
+private def rabin_fSq (A : NUPPT) (z v : List Bool) : List Bool :=
+  modExpStr (pairEncode v (pairEncode [true, false] (rabin_fW A z)))
+
+/-- The test `z² ≡ x² (mod N)` by two comparisons (`H.le`). -/
+private def rabin_fTest (A : NUPPT) (z : List Bool) : Bool :=
+  decide (listToNat (rabin_fSq A z (rabin_fZ A z)) ≤ listToNat (rabin_fSq A z (rabin_fX z))) &&
+    decide (listToNat (rabin_fSq A z (rabin_fX z)) ≤ listToNat (rabin_fSq A z (rabin_fZ A z)))
+
+/-- The word of `d = ((x + N) ∸ (z mod N)) mod N`, the residue of `x − z` (`H.divMod`, `H.add`, `H.sub`, `H.divMod`). -/
+private def rabin_fD (A : NUPPT) (z : List Bool) : List Bool :=
+  pairSndD (divModStr (pairEncode
+    (subStr (pairEncode (addStr (pairEncode (rabin_fX z) (NUPPT.inArg z)))
+      (pairSndD (divModStr (pairEncode (rabin_fZ A z) (rabin_fW A z))))))
+    (rabin_fW A z)))
+
+/-- The word of `gcd(d, N)` (`H.xgcd`). -/
+private def rabin_fG (A : NUPPT) (z : List Bool) : List Bool :=
+  pairFstD (xgcdStr (pairEncode (rabin_fD A z) (rabin_fW A z)))
+
+/-- **`A'` as a string computation**: the `n`-bit truncation of the gcd word if the test passes, `[]` otherwise. -/
+private def rabin_fOut (A : NUPPT) (z : List Bool) : List Bool :=
+  if rabin_fTest A z then
+    (subStr (pairEncode (List.replicate (NUPPT.inParam z).length true)
+      (List.replicate (NUPPT.inParam z).length true)) ++ rabin_fG A z).drop (rabin_fG A z).length
+  else []
+
+/-- The string computation of `A'` is polynomial-time.
+
+**Proof sketch.** Each word is a bundle field on pairs of earlier words, in applied form (`rabin_comp`), folded into its definition by `unfold`: the coin segments (`polyTimeComputable_pairTakePoly`/`_pairDropPoly rsaSampleCoins`), `x` (`polyTimeComputable_unitSampleStr` on the re-laid-out input, `NUPPT.polyTimeComputable_layout`), `y` (`H.modExp`), `z` (`A.polyTimeComputable_output`), the padded modulus (`PolyTimeComputable.append`, `H.sub`), the test (`H.modExp`, two `H.le`), `d` and the gcd (`H.add`, `H.sub`, `H.divMod`, `H.xgcd`), and the truncation (`polyTimeComputable_unaryPoly`, `H.sub`, `polyTimeComputable_pairDropPoly var`); `polyTimeComputable_ite` selects the output. -/
+private theorem rabin_fOut_poly (H : ArithmeticFP) (A : NUPPT) : PolyTimeComputable (rabin_fOut A) := by
+  have hw := NUPPT.polyTimeComputable_inArg
+  have hC1 : PolyTimeComputable rabin_fC1 := by
+    have h := rabin_comp (polyTimeComputable_pairTakePoly rsaSampleCoins)
+      (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins)
+    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+    rw [pairFstD_pairEncode, pairSndD_pairEncode, rabin_fC1]
+  have hC2 : PolyTimeComputable rabin_fC2 := by
+    have h := rabin_comp (polyTimeComputable_pairDropPoly rsaSampleCoins)
+      (NUPPT.polyTimeComputable_inParam.pairEncode NUPPT.polyTimeComputable_inCoins)
+    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+    rw [pairFstD_pairEncode, pairSndD_pairEncode, rabin_fC2]
+  have hX : PolyTimeComputable rabin_fX := by
+    have h := rabin_comp (polyTimeComputable_unitSampleStr H NUPPT.polyTimeComputable_inArg)
+      (NUPPT.polyTimeComputable_layout NUPPT.polyTimeComputable_inParam hw
+        NUPPT.polyTimeComputable_inAdvice hC1)
+    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp h
+    simp only [rabin_fX, NUPPT.layout_eq, NUPPT.inArg_eq, NUPPT.inParam_eq, NUPPT.inCoins_eq,
+      NUPPT.inAdvice_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+  have hY : PolyTimeComputable rabin_fY := by
+    have h := rabin_comp H.modExp (hX.pairEncode ((polyTimeComputable_const [true, false]).pairEncode hw))
+    unfold rabin_fY
+    exact h
+  have hZ : PolyTimeComputable (rabin_fZ A) := by
+    have h := rabin_comp A.polyTimeComputable_output (NUPPT.polyTimeComputable_layout
+      NUPPT.polyTimeComputable_inParam (hw.pairEncode hY) NUPPT.polyTimeComputable_inAdvice hC2)
+    unfold rabin_fZ
+    exact h
+  have hK : PolyTimeComputable (rabin_fK A) := by
+    have h := ((((polyTimeComputable_const [true]).append hZ).append hZ).append hX).append hX
+    unfold rabin_fK
+    exact h
+  have hW : PolyTimeComputable (rabin_fW A) := by
+    have h := (rabin_comp H.sub (hK.pairEncode hK)).append hw
+    unfold rabin_fW
+    exact h
+  have hSq : ∀ {v : List Bool → List Bool}, PolyTimeComputable v →
+      PolyTimeComputable fun z => rabin_fSq A z (v z) := by
+    intro v hv
+    have h := rabin_comp H.modExp (hv.pairEncode ((polyTimeComputable_const [true, false]).pairEncode hW))
+    unfold rabin_fSq
+    exact h
+  have hT : PolyTimeComputable fun z => [rabin_fTest A z] := by
+    have h := polyTimeComputable_and
+      (p := fun z => decide (listToNat (rabin_fSq A z (rabin_fZ A z)) ≤ listToNat (rabin_fSq A z (rabin_fX z))))
+      (q := fun z => decide (listToNat (rabin_fSq A z (rabin_fX z)) ≤ listToNat (rabin_fSq A z (rabin_fZ A z))))
+      (rabin_le_poly H (hSq hZ) (hSq hX)) (rabin_le_poly H (hSq hX) (hSq hZ))
+    unfold rabin_fTest
+    exact h
+  have hR := rabin_comp polyTimeComputable_pairSndD (rabin_comp H.divMod (hZ.pairEncode hW))
+  have hS := rabin_comp H.sub ((rabin_comp H.add (hX.pairEncode hw)).pairEncode hR)
+  have hD : PolyTimeComputable (rabin_fD A) := by
+    have h := rabin_comp polyTimeComputable_pairSndD (rabin_comp H.divMod (hS.pairEncode hW))
+    unfold rabin_fD
+    exact h
+  have hG : PolyTimeComputable (rabin_fG A) := by
+    have h := rabin_comp polyTimeComputable_pairFstD (rabin_comp H.xgcd (hD.pairEncode hW))
+    unfold rabin_fG
+    exact h
+  have hO := rabin_comp (polyTimeComputable_unaryPoly .var) NUPPT.polyTimeComputable_inParam
+  have hZr := rabin_comp H.sub (hO.pairEncode hO)
+  have hTr' := rabin_comp (polyTimeComputable_pairDropPoly .var) (hG.pairEncode (hZr.append hG))
+  have hTr : PolyTimeComputable fun z =>
+      (subStr (pairEncode (List.replicate (NUPPT.inParam z).length true)
+        (List.replicate (NUPPT.inParam z).length true)) ++ rabin_fG A z).drop (rabin_fG A z).length := by
+    refine (congrArg PolyTimeComputable (funext fun z => ?_)).mp hTr'
+    simp only [pairFstD_pairEncode, pairSndD_pairEncode, PolyExpr.eval_var]
+  have h := polyTimeComputable_ite (p := rabin_fTest A) hT hTr (polyTimeComputable_const [])
+  unfold rabin_fOut
+  exact h
+
+/-- `v mod N < 2^W` when `v, N < 2^W` (`v mod 0 = v`). -/
+private theorem rabin_mod_lt_two_pow {v N W : ℕ} (hv : v < 2 ^ W) (hN : N < 2 ^ W) : v % N < 2 ^ W := by
+  rcases Nat.eq_zero_or_pos N with h0 | hpos
+  · rw [h0, Nat.mod_zero]; exact hv
+  · exact (Nat.mod_lt _ hpos).trans hN
+
+/-- **The string computation is `A'`**: `rabin_fOut A = rabinFactorRaw A`.
+
+**Proof sketch.** The padded modulus word reads as `N` and is longer than `2|z|`, `2|x|`, `|x| + |N|` (`rabin_listToNat_zeros_append`), so `modExpStr`, `divModStr`, `addStr`, `subStr` and `xgcdStr` read back exactly (`listToNat_natToList`, also for `N = 0`, where `v mod 0 = v`). The test is `z² mod N = x² mod N`; the gcd word reads as `gcd(d, N)` with `d = ((x + N) ∸ (z mod N)) mod N`, which is `((x : Z_N) − z).val` (`Nat.cast_sub`, `ZMod.val_natCast`; for `N = 0` the test forces `z = x` and both are `0`); the truncation is the `n`-bit numeral (`rabin_drop_zeros_append`). -/
+private theorem rabin_fOut_eq (A : NUPPT) (z : List Bool) : rabin_fOut A z = rabinFactorRaw A z := by
+  have hYv : rabin_fY z = natToList (NUPPT.inArg z).length
+      (listToNat (rabin_fX z) ^ 2 % listToNat (NUPPT.inArg z)) := by
+    rw [rabin_fY, modExpStr_pairEncode, rabin_listToNat_two]
+  have hR : rabinFactorRaw A z = rabinFactorStep (NUPPT.inParam z).length (listToNat (NUPPT.inArg z))
+      (listToNat (rabin_fX z)) (rabin_fZ A z) := by
+    rw [rabinFactorRaw, rabin_fZ, hYv, rabin_fX, rabin_fC1, rabin_fC2]
+  rw [hR, rabin_fOut, rabin_fTest, rabin_fG, rabin_fD]
+  unfold rabin_fSq rabin_fW rabin_fK
+  generalize rabin_fX z = xs
+  generalize rabin_fZ A z = zs
+  generalize NUPPT.inArg z = w
+  generalize (NUPPT.inParam z).length = n
+  set K := [true] ++ zs ++ zs ++ xs ++ xs with hK
+  have hKl : K.length = 1 + 2 * zs.length + 2 * xs.length := by
+    simp only [hK, List.length_append, List.length_cons, List.length_nil]; omega
+  set Wp := subStr (pairEncode K K) ++ w with hWp
+  have hWv : listToNat Wp = listToNat w := by
+    rw [hWp, subStr_pairEncode, Nat.sub_self, rabin_listToNat_zeros_append]
+  have hWl : Wp.length = K.length + w.length := by
+    rw [hWp, List.length_append, subStr_pairEncode, length_natToList]
+  have hNW : listToNat w < 2 ^ Wp.length :=
+    (listToNat_lt_two_pow w).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+  have hsq : ∀ v : List Bool, 2 * v.length ≤ Wp.length →
+      listToNat (modExpStr (pairEncode v (pairEncode [true, false] Wp))) = listToNat v ^ 2 % listToNat w := by
+    intro v hv
+    rw [modExpStr_pairEncode, rabin_listToNat_two, hWv]
+    apply listToNat_natToList
+    apply rabin_mod_lt_two_pow _ hNW
+    calc listToNat v ^ 2 < (2 ^ v.length) ^ 2 :=
+          Nat.pow_lt_pow_left (listToNat_lt_two_pow v) (by norm_num)
+      _ = 2 ^ (2 * v.length) := by rw [← pow_mul, mul_comm]
+      _ ≤ 2 ^ Wp.length := Nat.pow_le_pow_right (by norm_num) hv
+  rw [hsq zs (by omega), hsq xs (by omega)]
+  have htest : (decide (listToNat zs ^ 2 % listToNat w ≤ listToNat xs ^ 2 % listToNat w) &&
+      decide (listToNat xs ^ 2 % listToNat w ≤ listToNat zs ^ 2 % listToNat w)) =
+      decide (listToNat zs ^ 2 % listToNat w = listToNat xs ^ 2 % listToNat w) := by
+    rw [Bool.eq_iff_iff]
+    simp only [Bool.and_eq_true, decide_eq_true_eq]
+    omega
+  rw [htest, rabinFactorStep]
+  by_cases ht : listToNat zs ^ 2 % listToNat w = listToNat xs ^ 2 % listToNat w
+  swap
+  · rw [if_neg (by simpa using ht), if_neg ht]
+  rw [if_pos (by simpa using ht), if_pos ht]
+  -- the residue `zs mod N`, the sum, the difference and its residue
+  have hrem : listToNat (pairSndD (divModStr (pairEncode zs Wp))) = listToNat zs % listToNat w := by
+    rw [divModStr_pairEncode, pairSndD_pairEncode, hWv]
+    apply listToNat_natToList
+    exact (Nat.mod_le _ _).trans_lt ((listToNat_lt_two_pow zs).trans_le
+      (Nat.pow_le_pow_right (by norm_num) (by omega)))
+  have hsum : listToNat (subStr (pairEncode (addStr (pairEncode xs w)) (pairSndD (divModStr (pairEncode zs Wp))))) =
+      listToNat xs + listToNat w - listToNat zs % listToNat w := by
+    rw [listToNat_subStr, listToNat_addStr, hrem]
+  have hsumlt : listToNat xs + listToNat w < 2 ^ Wp.length :=
+    (listToNat_add_lt_two_pow xs w).trans_le (Nat.pow_le_pow_right (by norm_num) (by omega))
+  have hD : listToNat (pairSndD (divModStr (pairEncode
+      (subStr (pairEncode (addStr (pairEncode xs w)) (pairSndD (divModStr (pairEncode zs Wp))))) Wp))) =
+      (listToNat xs + listToNat w - listToNat zs % listToNat w) % listToNat w := by
+    rw [divModStr_pairEncode, pairSndD_pairEncode, hWv, hsum]
+    exact listToNat_natToList ((Nat.mod_le _ _).trans_lt ((Nat.sub_le _ _).trans_lt hsumlt))
+  set d := (listToNat xs + listToNat w - listToNat zs % listToNat w) % listToNat w with hd
+  have hdlt : d < 2 ^ Wp.length := (Nat.mod_le _ _).trans_lt ((Nat.sub_le _ _).trans_lt hsumlt)
+  have hG : listToNat (pairFstD (xgcdStr (pairEncode (pairSndD (divModStr (pairEncode
+      (subStr (pairEncode (addStr (pairEncode xs w)) (pairSndD (divModStr (pairEncode zs Wp))))) Wp)))
+      Wp))) = Nat.gcd d (listToNat w) := by
+    rw [xgcdStr_pairEncode, pairFstD_pairEncode, hD, hWv]
+    apply listToNat_natToList
+    rcases Nat.eq_zero_or_pos d with h0 | hpos
+    · rw [h0, Nat.gcd_zero_left]; exact hNW
+    · exact (Nat.gcd_le_left _ hpos).trans_lt hdlt
+  have hz0 : subStr (pairEncode (List.replicate n true) (List.replicate n true)) = natToList n 0 := by
+    rw [subStr_pairEncode, List.length_replicate, Nat.sub_self]
+  rw [hz0, rabin_drop_zeros_append, hG]
+  -- the residue of `x − z` is `d`
+  have hval : ((listToNat xs : ZMod (listToNat w)) - (listToNat zs : ZMod (listToNat w))).val = d := by
+    rcases Nat.eq_zero_or_pos (listToNat w) with h0 | hpos
+    · have ht0 := ht
+      rw [h0, Nat.mod_zero, Nat.mod_zero] at ht0
+      have hxz : listToNat zs = listToNat xs := Nat.pow_left_injective (by norm_num) ht0
+      rw [hd, hxz, sub_self, ZMod.val_zero, h0, Nat.mod_zero, Nat.mod_zero, add_zero, Nat.sub_self]
+    · haveI : NeZero (listToNat w) := ⟨hpos.ne'⟩
+      have hle : listToNat zs % listToNat w ≤ listToNat xs + listToNat w :=
+        (Nat.mod_lt _ hpos).le.trans (Nat.le_add_left _ _)
+      have hcast : (((listToNat xs + listToNat w - listToNat zs % listToNat w : ℕ)) : ZMod (listToNat w)) =
+          (listToNat xs : ZMod (listToNat w)) - (listToNat zs : ZMod (listToNat w)) := by
+        rw [Nat.cast_sub hle, Nat.cast_add, ZMod.natCast_self, ZMod.natCast_mod, add_zero]
+      rw [← hcast, ZMod.val_natCast]
+  rw [hval]
+
 /-- **`A'` is polynomial-time** [PS10, Theorem 61.8 ⇒].
 
-**Proof sketch.** Cut the coins at `1^{T(n) B(n)}` (`polyTimeComputable_pairTakePoly`/
-`_pairDropPoly rsaSampleCoins`); `x` by `polyTimeComputable_unitSampleStr`; `y` by
-`H.modExp` with the exponent `[true, false]`; the call by `A.polyTimeComputable_output` on
-`NUPPT.polyTimeComputable_layout`; the test `z² ≡ y` by `H.modExp` and
-`polyTimeComputable_pairEq`; `(x − z) mod N = (x + (N ∸ (z mod N))) mod N` by `H.divMod`,
-`H.sub`, `H.add` and `H.divMod` (run-3 audit P7-1); the gcd is the first component of
-`xgcdStr` (`H.xgcd`); the width `n` by `polyTimeComputable_pairTakePoly var`. -/
+**Proof sketch.** `rabinFactorRaw A` is the string computation `rabin_fOut A`
+(`rabin_fOut_eq`), which is polynomial-time (`rabin_fOut_poly`). Cut the coins at
+`1^{T(n) B(n)}` (`polyTimeComputable_pairTakePoly`/`_pairDropPoly rsaSampleCoins`); `x` by
+`polyTimeComputable_unitSampleStr` on the re-laid-out input; `y` by `H.modExp` with the exponent
+`[true, false]`; the call by `A.polyTimeComputable_output` on `NUPPT.polyTimeComputable_layout`.
+The residues are computed modulo the modulus word with leading zeros, wide enough that every
+numeral reads back exactly (also for the degenerate `N = 0`): the test `z² ≡ x²` by `H.modExp`
+and two `H.le` comparisons; `(x − z) mod N = ((x + N) ∸ (z mod N)) mod N` by `H.divMod`, `H.add`,
+`H.sub` and `H.divMod`; the gcd is the first component of `xgcdStr` (`H.xgcd`). Its `n`-bit
+numeral is the truncation `(⟦0⟧_n ++ g).drop |g|` (`H.sub` on `1^n`,
+`polyTimeComputable_pairDropPoly var`), which keeps the low `n` bits (brief correction: not
+`pairTakePoly var`). P9: `xgcdStr_pairEncode`, `divModStr_pairEncode`. -/
 theorem polyTimeComputable_rabinFactorRaw (H : ArithmeticFP) (A : NUPPT) :
     PolyTimeComputable (rabinFactorRaw A) := by
-  sorry
+  have h := rabin_fOut_poly H A
+  rw [show rabin_fOut A = rabinFactorRaw A from funext (rabin_fOut_eq A)] at h
+  exact h
 
 /-- **The factoring adversary `A'`** [PS10, Algorithm 62.9] as a non-uniform PPT: coins
 `T(n) B(n)` (for `x`) plus the coins of `A`, advice of `A`. -/
