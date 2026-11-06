@@ -1,0 +1,35 @@
+From 698dcdf5b9d66d05a27b684c4b17ca7f80d97001 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 6 Nov 2026 00:30:18 +0000
+Subject: [PATCH] NDNormalForm: nf_display_firstStop's he cites
+ Nat.mul_div_cancel' (gate 95 round 3, finding 1)
+
+The untyped have of Nat.mod_add_div, rewritten by the zero remainder, re-proved
+Nat.mul_div_cancel' (with Nat.dvd_of_mod_eq_zero), as nf_firstStop_records
+already cites. A sweep of every untyped have and obtain on a core or Mathlib
+term that a later step rewrites leaves one site, nf_display_flag's hm, which no
+library lemma states (the round-3 sweep's C02, an idiom).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01PqpVTk5MM3PtshNwvNBXBw
+---
+ TCSlib/Complexity/ClassNP/NDNormalForm.lean | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/NDNormalForm.lean b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+index dfd8c408..0908d0d6 100644
+--- a/TCSlib/Complexity/ClassNP/NDNormalForm.lean
++++ b/TCSlib/Complexity/ClassNP/NDNormalForm.lean
+@@ -258,8 +258,7 @@ private theorem nf_display_firstStop (N : FinNDTM Bool) (x w : List Bool) (hw :
+     obtain ⟨hne, hm, hb⟩ := (nf_ctl_stop_iff N.k _).mp hs
+     have hipos : 0 < i := (List.length_pos_iff.mpr hne).trans_eq (List.length_take_of_le hi.le)
+     rw [List.length_take_of_le hi.le] at hm
+-    have he := Nat.mod_add_div i (2 * N.k + 4)
+-    rw [hm, Nat.zero_add] at he
++    have he := Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hm)
+     have hn : 0 < i / (2 * N.k + 4) := Nat.pos_of_mul_pos_left (hipos.trans_eq he.symm)
+     have hlt : i / (2 * N.k + 4) < w.length :=
+       Nat.div_lt_of_lt_mul (hi.trans_eq (nf_display_length N x w))
+-- 
+2.43.0
+

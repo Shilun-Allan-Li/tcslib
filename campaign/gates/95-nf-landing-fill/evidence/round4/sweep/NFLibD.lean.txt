@@ -1,0 +1,16 @@
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.Build.StepBlock
+import TCSlib.Complexity.TuringMachine.CfgFacts
+import TCSlib.Complexity.TuringMachine.BufferWords
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+
+/-! Gate 95 round 4 probes: the two `Nat.mod_add_div` sites. -/
+
+-- line 231's fact, generalised
+example (W r : ℕ) (hW : 0 < W) : (W * (r + 1) - 1) % W = W - 1 := by exact?
+example (W n : ℕ) (hW : 0 < W) (hn : 0 < n) : (W * n - 1) % W = W - 1 := by exact?
+example (a b : ℕ) (hb : 0 < b) : (b * (a + 1) - 1) % b = b - 1 := by apply?
+-- line 261's: the auditor's replacement
+example (i m : ℕ) (hm : i % m = 0) : m * (i / m) = i := Nat.mul_div_cancel' (Nat.dvd_of_mod_eq_zero hm)

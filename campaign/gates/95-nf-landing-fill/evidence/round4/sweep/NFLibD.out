@@ -1,0 +1,689 @@
+rvprobe/r4/NFLibD.lean:12:69: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+rvprobe/r4/NFLibD.lean:13:76: error: `exact?` could not close the goal. Try `apply?` to see partial suggestions.
+Try this:
+  [apply] refine (Nat.mod_eq_sub_iff ?_ hb).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < 1
+  -- ⊢ b ∣ b * (a + 1) - 1 + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {b a c} h => (Nat.sub_eq_iff_eq_add h).mpr) hb ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.mod_eq_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ b = 0 ∧ b * (a + 1) - 1 = b - 1 ∨ b - 1 < b ∧ ∃ k, b * (a + 1) - 1 = b * k + (b - 1)
+Try this:
+  [apply] refine Eq.symm (Nat.sub_eq_of_eq_add ?_)
+  -- Remaining subgoals:
+  -- ⊢ b = (b * (a + 1) - 1) % b + 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {b a c} h => (Nat.sub_eq_iff_eq_add' h).mpr) hb ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.sub_eq_of_eq_add' ?_)
+  -- Remaining subgoals:
+  -- ⊢ b = 1 + (b * (a + 1) - 1) % b
+Try this:
+  [apply] refine Nat.eq_sub_of_add_eq' ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 + (b * (a + 1) - 1) % b = b
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_beq_eq_true ?_)
+  -- Remaining subgoals:
+  -- ⊢ (b - 1).beq ((b * (a + 1) - 1) % b) = true
+Try this:
+  [apply] refine Nat.eq_sub_of_add_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b
+Try this:
+  [apply] refine Eq.symm (Nat.le_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ≤ (b * (a + 1) - 1) % b
+  -- ⊢ (b * (a + 1) - 1) % b ≤ b - 1
+Try this:
+  [apply] refine Nat.eq_of_beq_eq_true ?_
+  -- Remaining subgoals:
+  -- ⊢ ((b * (a + 1) - 1) % b).beq (b - 1) = true
+Try this:
+  [apply] refine Nat.le_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ≤ b - 1
+  -- ⊢ b - 1 ≤ (b * (a + 1) - 1) % b
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj'.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (b - 1).succ = ((b * (a + 1) - 1) % b).succ
+Try this:
+  [apply] refine Nat.succ_inj'.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((b * (a + 1) - 1) % b).succ = (b - 1).succ
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_right_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.succ_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (b - 1).succ = ((b * (a + 1) - 1) % b).succ
+Try this:
+  [apply] refine Nat.succ_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((b * (a + 1) - 1) % b).succ = (b - 1).succ
+Try this:
+  [apply] refine Eq.symm (Nat.sub_one_cancel ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < b - 1
+  -- ⊢ 0 < (b * (a + 1) - 1) % b
+  -- ⊢ b - 1 - 1 = (b * (a + 1) - 1) % b - 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.add_one_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 + 1 = (b * (a + 1) - 1) % b + 1
+Try this:
+  [apply] refine Nat.sub_one_cancel ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < (b * (a + 1) - 1) % b
+  -- ⊢ 0 < b - 1
+  -- ⊢ (b * (a + 1) - 1) % b - 1 = b - 1 - 1
+Try this:
+  [apply] refine Nat.add_one_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b - 1 + 1
+Try this:
+  [apply] refine Eq.symm (Nat.pred_inj ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 0 < b - 1
+  -- ⊢ 0 < (b * (a + 1) - 1) % b
+  -- ⊢ (b - 1).pred = ((b * (a + 1) - 1) % b).pred
+Try this:
+  [apply] refine Nat.pred_inj ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ 0 < (b * (a + 1) - 1) % b
+  -- ⊢ 0 < b - 1
+  -- ⊢ ((b * (a + 1) - 1) % b).pred = (b - 1).pred
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_left ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.eq_iff_le_and_ge.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ≤ (b * (a + 1) - 1) % b ∧ (b * (a + 1) - 1) % b ≤ b - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_left ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.add_left_cancel ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_iff_le_and_ge.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ≤ b - 1 ∧ b - 1 ≤ (b * (a + 1) - 1) % b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.eq_of_mul_eq_mul_right ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_lt_succ_of_not_lt ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 < (b * (a + 1) - 1) % b + 1
+  -- ⊢ ¬b - 1 < (b * (a + 1) - 1) % b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.eq_of_mul_eq_mul_right ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_le_of_lt_succ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ≤ b - 1
+  -- ⊢ b - 1 < (b * (a + 1) - 1) % b + 1
+Try this:
+  [apply] refine Nat.eq_of_lt_succ_of_not_lt ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b < b - 1 + 1
+  -- ⊢ ¬(b * (a + 1) - 1) % b < b - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b n} hn => (Nat.pow_left_inj hn).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_le_of_lt_succ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ≤ (b * (a + 1) - 1) % b
+  -- ⊢ (b * (a + 1) - 1) % b < b - 1 + 1
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.le_antisymm_iff.mpr) ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ≤ (b * (a + 1) - 1) % b ∧ (b * (a + 1) - 1) % b ≤ b - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.le_antisymm_iff.mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ≤ b - 1 ∧ b - 1 ≤ (b * (a + 1) - 1) % b
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.neg_ofNat_eq_negSucc_add_one_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ -↑(b - 1) = Int.negSucc ((b * (a + 1) - 1) % b) + 1
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.negSucc_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (b - 1) = Int.negSucc ((b * (a + 1) - 1) % b)
+Try this:
+  [apply] refine Int.neg_ofNat_eq_negSucc_add_one_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ -↑((b * (a + 1) - 1) % b) = Int.negSucc (b - 1) + 1
+Try this:
+  [apply] refine Int.negSucc_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc ((b * (a + 1) - 1) % b) = Int.negSucc (b - 1)
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.subNat_eq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat (b - 1) ((b * (a + 1) - 1) % b) = 0
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.ofNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(b - 1) = ↑((b * (a + 1) - 1) % b)
+Try this:
+  [apply] refine Int.subNat_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.subNatNat ((b * (a + 1) - 1) % b) (b - 1) = 0
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Int.negSucc_add_one_eq_neg_ofNat_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc (b - 1) + 1 = -↑((b * (a + 1) - 1) % b)
+Try this:
+  [apply] refine Int.ofNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((b * (a + 1) - 1) % b) = ↑(b - 1)
+Try this:
+  [apply] refine Eq.symm (Nat.dvd_antisymm ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ∣ (b * (a + 1) - 1) % b
+  -- ⊢ (b * (a + 1) - 1) % b ∣ b - 1
+Try this:
+  [apply] refine Int.negSucc_add_one_eq_neg_ofNat_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Int.negSucc ((b * (a + 1) - 1) % b) + 1 = -↑(b - 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a m n} ha => (Nat.pow_right_inj ha).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.dvd_antisymm ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ∣ b - 1
+  -- ⊢ b - 1 ∣ (b * (a + 1) - 1) % b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.pow_right_inj ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_left_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {n a b} hn ha hb => (Nat.div_eq_iff_eq_of_dvd_dvd hn ha hb).mp) (fun a => ?_) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.mul_self_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (b - 1) * (b - 1) = (b * (a + 1) - 1) % b * ((b * (a + 1) - 1) % b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_eq_iff_eq_of_dvd_dvd (fun a => ?_) ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b c} ha => (Nat.mul_right_inj ha).mp) (fun a => ?_) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.mul_self_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b * ((b * (a + 1) - 1) % b) = (b - 1) * (b - 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_left_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_inj fun a => ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_left_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ≠ 0
+  -- ⊢ (b * (a + 1) - 1) % b ∣ b - 1
+  -- ⊢ b - 1 < 2 * ((b * (a + 1) - 1) % b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_left_cancel_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_lt_two_mul ?_ ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ≠ 0
+  -- ⊢ b - 1 ∣ (b * (a + 1) - 1) % b
+  -- ⊢ (b * (a + 1) - 1) % b < 2 * (b - 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m k n} => Nat.add_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_left_cancel_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {a b d} hda hdb => (Nat.div_left_inj hda hdb).mp) ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.add_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m} p {n k} => (Nat.mul_right_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.div_left_inj ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.mul_right_cancel ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_right_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.mul_right_cancel ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n} p {m k} => (Nat.mul_left_cancel_iff p).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_dvd_of_div_eq_one ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ∣ (b * (a + 1) - 1) % b
+  -- ⊢ (b * (a + 1) - 1) % b / (b - 1) = 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (Nat.mul_left_cancel_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_testBit_eq ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), (b - 1).testBit i = ((b * (a + 1) - 1) % b).testBit i
+Try this:
+  [apply] refine Nat.eq_of_dvd_of_div_eq_one ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ∣ b - 1
+  -- ⊢ (b - 1) / ((b * (a + 1) - 1) % b) = 1
+Try this:
+  [apply] refine Nat.eq_of_testBit_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (i : ℕ), ((b * (a + 1) - 1) % b).testBit i = (b - 1).testBit i
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a b} {ha} {hb} => Fin.mk.inj_iff.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Int.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(b - 1) = ↑((b * (a + 1) - 1) % b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk.inj_iff.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (List.getElem?_inj ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Int.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((b * (a + 1) - 1) % b) = ↑(b - 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.getElem?_inj ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Nat.compare_eq_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ compare (b - 1) ((b * (a + 1) - 1) % b) = Ordering.eq
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.natCast_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(b - 1) = ↑((b * (a + 1) - 1) % b)
+Try this:
+  [apply] refine Nat.compare_eq_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ compare ((b * (a + 1) - 1) % b) (b - 1) = Ordering.eq
+Try this:
+  [apply] refine Eq.symm ((fun {a b} => Rat.ofNat_eq_ofNat.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat (b - 1) = OfNat.ofNat ((b * (a + 1) - 1) % b)
+Try this:
+  [apply] refine Rat.natCast_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((b * (a + 1) - 1) % b) = ↑(b - 1)
+Try this:
+  [apply] refine Rat.ofNat_eq_ofNat.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ OfNat.ofNat ((b * (a + 1) - 1) % b) = OfNat.ofNat (b - 1)
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_right_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), b - 1 ∣ a_1 ↔ (b * (a + 1) - 1) % b ∣ a_1
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Nat.dvd_left_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), a_1 ∣ b - 1 ↔ a_1 ∣ (b * (a + 1) - 1) % b
+Try this:
+  [apply] refine Nat.dvd_right_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), (b * (a + 1) - 1) % b ∣ a_1 ↔ b - 1 ∣ a_1
+Try this:
+  [apply] refine Nat.dvd_left_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ∀ (a_1 : ℕ), a_1 ∣ (b * (a + 1) - 1) % b ↔ a_1 ∣ b - 1
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {a} {n m} => List.replicate_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {α} {l} h {i} {hi} {j} {hj} => (List.Nodup.getElem_inj_iff h).mp) ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine List.replicate_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {n a} {h} {a'} {h'} => Fin.mk_eq_mk.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (List.Nodup.getElem_inj_iff ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Fin.equiv_iff_eq.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin (b - 1) ≃ Fin ((b * (a + 1) - 1) % b))
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Fin.mk_eq_mk.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} h => (Nat.factorial_inj' h).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < b - 1 ∨ 1 < (b * (a + 1) - 1) % b
+  -- ⊢ (b - 1).factorial = ((b * (a + 1) - 1) % b).factorial
+Try this:
+  [apply] refine Fin.equiv_iff_eq.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ Nonempty (Fin ((b * (a + 1) - 1) % b) ≃ Fin (b - 1))
+Try this:
+  [apply] refine Eq.symm ((fun {m n} hn => (Nat.factorial_inj hn).mp) ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ 1 < b - 1
+  -- ⊢ (b - 1).factorial = ((b * (a + 1) - 1) % b).factorial
+Try this:
+  [apply] refine (Nat.factorial_inj' ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < (b * (a + 1) - 1) % b ∨ 1 < b - 1
+  -- ⊢ ((b * (a + 1) - 1) % b).factorial = (b - 1).factorial
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {M₀} [MonoidWithZero M₀] [LinearOrder M₀] [PosMulStrictMono M₀] {a} {m n} [ZeroLEOneClass M₀] ha₀ ha₁ =>
+        (pow_right_inj₀ ha₀ ha₁).mp)
+      ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine (Nat.factorial_inj ?_).mp ?_
+  -- Remaining subgoals:
+  -- ⊢ 1 < (b * (a + 1) - 1) % b
+  -- ⊢ ((b * (a + 1) - 1) % b).factorial = (b - 1).factorial
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {R} [AddMonoidWithOne R] [CharZero R] {m n} => Nat.cast_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine (pow_right_inj₀ ?_ ?_).mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Turing.MultiTapeTM.halting_step_unique ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.cast_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Turing.MultiTapeTM.halting_step_unique ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Nat.succPNat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ (b - 1).succPNat = ((b * (a + 1) - 1) % b).succPNat
+Try this:
+  [apply] refine Nat.succPNat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ((b * (a + 1) - 1) % b).succPNat = (b - 1).succPNat
+Try this:
+  [apply] refine Eq.symm (Nat.Partrec.Code.const_inj ?_)
+  -- Remaining subgoals:
+  -- ⊢ Nat.Partrec.Code.const (b - 1) = Nat.Partrec.Code.const ((b * (a + 1) - 1) % b)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} => Nat.xor_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.Partrec.Code.const_inj ?_
+  -- Remaining subgoals:
+  -- ⊢ Nat.Partrec.Code.const ((b * (a + 1) - 1) % b) = Nat.Partrec.Code.const (b - 1)
+Try this:
+  [apply] refine Eq.symm (Nat.eq_of_xor_eq_zero ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ^^^ (b * (a + 1) - 1) % b = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.xor_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {x y} => Nat.xor_eq_zero_iff.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ^^^ (b * (a + 1) - 1) % b = 0
+Try this:
+  [apply] refine Nat.eq_of_xor_eq_zero ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ^^^ b - 1 = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m x y} => Nat.and_or_left_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Nat.xor_eq_zero_iff.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ^^^ b - 1 = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {x y z} => Nat.xor_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.and_or_left_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.and_or_left_injective ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.xor_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm ((fun {m x y} => Nat.and_or_right_inj.mp) ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.and_or_left_injective ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Nat.and_or_right_injective ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.and_or_right_inj.mp ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {n m} => Nat.xor_eq_zero.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ b - 1 ^^^ (b * (a + 1) - 1) % b = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Nat.and_or_right_injective ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm ((fun {m n} => Num.of_nat_inj.mp) ?_)
+  -- Remaining subgoals:
+  -- ⊢ ↑(b - 1) = ↑((b * (a + 1) - 1) % b)
+Try this:
+  [apply] refine Nat.xor_eq_zero.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b ^^^ b - 1 = 0
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm (Turing.Segment.time_eq ?_ ?_ ?_ ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Num.of_nat_inj.mp ?_
+  -- Remaining subgoals:
+  -- ⊢ ↑((b * (a + 1) - 1) % b) = ↑(b - 1)
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Turing.Segment.time_eq ?_ ?_ ?_ ?_)
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+Try this:
+  [apply] refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add' ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable b
+  -- ⊢ b = (b * (a + 1) - 1) % b + 1
+Try this:
+  [apply] refine eq_tsub_of_add_eq ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b
+Try this:
+  [apply] refine Eq.symm (tsub_eq_of_eq_add ?_)
+  -- Remaining subgoals:
+  -- ⊢ b = (b * (a + 1) - 1) % b + 1
+Try this:
+  [apply] refine AddLECancellable.eq_tsub_of_add_eq ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable 1
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b
+Try this:
+  [apply] refine Eq.symm (tsub_eq_of_eq_add_rev ?_)
+  -- Remaining subgoals:
+  -- ⊢ b = 1 + (b * (a + 1) - 1) % b
+Try this:
+  [apply] refine AddLECancellable.eq_tsub_of_add_eq' ?_ ?_
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable b
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b
+Try this:
+  [apply] refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add_rev ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable 1
+  -- ⊢ b = 1 + (b * (a + 1) - 1) % b
+Try this:
+  [apply] refine (eq_tsub_iff_add_eq_of_le hb).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b
+Try this:
+  [apply] refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable 1
+  -- ⊢ b = (b * (a + 1) - 1) % b + 1
+Try this:
+  [apply] refine (AddLECancellable.eq_tsub_iff_add_eq_of_le ?_ hb).mpr ?_
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable 1
+  -- ⊢ (b * (a + 1) - 1) % b + 1 = b
+Try this:
+  [apply] refine Eq.symm (AddLECancellable.tsub_eq_of_eq_add_rev' ?_ ?_)
+  -- Remaining subgoals:
+  -- ⊢ AddLECancellable b
+  -- ⊢ b = 1 + (b * (a + 1) - 1) % b
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} [AddCommSemigroup α] [PartialOrder α] [ExistsAddOfLE α] [AddLeftMono α] [Sub α] [OrderedSub α] {a b c}
+          [AddLeftReflectLE α] h =>
+        (tsub_eq_iff_eq_add_of_le h).mpr)
+      hb ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+found a partial proof, but the corresponding tactic failed:
+  (expose_names; refine Eq.symm
+    ((fun {α} [AddCommSemigroup α] [PartialOrder α] [ExistsAddOfLE α] [AddLeftMono α] [Sub α] [OrderedSub α] {a b c} hb
+          h =>
+        (AddLECancellable.tsub_eq_iff_eq_add_of_le hb h).mpr)
+      ?_ hb ?_))
+
+It may be possible to correct this proof by adding type annotations, explicitly specifying implicit arguments, or eliminating unnecessary function abstractions.
+rvprobe/r4/NFLibD.lean:14:0: warning: declaration uses 'sorry'
+rvprobe/r4/NFLibD.lean:14:19: warning: unused variable `hb`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+exit 1
