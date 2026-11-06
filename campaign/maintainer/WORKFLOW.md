@@ -127,15 +127,29 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
   SHA-256 and section count, and both full 40-character hashes (Lean and records).
   - **Hashes:** take every full hash from `git rev-parse` in the same step that writes it, and
     `git cat-file -e` it. Never complete a short hash by hand.
-  - **Findings file:** every prompt asks the auditor to deliver the findings as a downloadable
-    `<name>-findings.md` (the table and the verdict line) and to paste it too.
+  - **Findings file:** every prompt asks the auditor for `<name>-findings.md` (the table and the
+    verdict line), pushed to the exchange inbox (below), and pasted in its reply too.
+  - **Agents use the exchange branch directly** (the user, 2026-11-06). Auditors and fill agents
+    have read and push access to `exchange/pass-shelat-ch5-8`. Prompts name files on it, not
+    attachments. Agents push their output to `arora-barak-ch3-4/inbox/`, and nothing else, with
+    `git pull --rebase` before every push and never a force push; no PR on the exchange. A fill
+    agent pushes its delivery zip (and checkpoint zips) there; an auditor its findings file. The
+    user still dispatches each prompt, and every change to `complexity/arora-barak-ch3-4` is
+    still a PR the user merges.
+  - **A pack's closing paragraph** (since 2026-11-06): "**Deliver your findings as
+    `<name>-findings.md`** (the findings table and the verdict line, no other wrapping): push it to
+    `arora-barak-ch3-4/inbox/` on the branch `exchange/pass-shelat-ch5-8` (`git pull --rebase`
+    first, add only that file, never force-push, no PR), and also paste its content in your reply."
+    The prompt names the bundle by its path on that branch.
   - **Rebuilt bundles:** if a bundle is rebuilt after its prompt went out, re-issue the whole
     prompt and say the old one is void.
 - **The exchange** is the `arora-barak-ch3-4/` subfolder of the orphan branch
   `exchange/pass-shelat-ch5-8`:
   - `outbox/gates/<NN>-<slug>-gate/` and `outbox/fills/` (staged by the maintainer);
-  - `inbox/` (deliveries and findings, from the user);
-  - `archive/` (moved there once dispatched or committed to the records).
+  - `inbox/` (deliveries and findings, pushed by the agents since 2026-11-06; earlier by the
+    user);
+  - `archive/` (moved there once committed to the records; since 2026-11-06 a dispatched folder
+    stays in `outbox/`, where its agent reads it, until its findings or delivery are committed).
 
   Touch only this subtree; pull with rebase before every push. The historical archive before
   2026-11-04 stays on the user's Mac (`tcslib/exchange/archive/`, indexed in the subfolder's
@@ -148,6 +162,10 @@ Repository standards bind first: `policy.md`, `workflow.md`, `campaign/standards
 
 - Briefs live at `campaign/fills/<group>/briefs/`, with inputs, orders, logs and reviews beside them.
   Every brief attaches the fill-environment addendum.
+- **Fills may run in parallel** (the user, 2026-11-06: on cloud machines with Claude agents,
+  there is no need to limit how many fills are out at once). Each fill still owns its files, and
+  two fills never share an owned file. The maintainer's own limit of two Lean processes on its VM
+  is unchanged.
 - **Agent choice, a soft suggestion per item:** Codex for a first (maybe second) attempt; Claude
   for an item making slow progress (one stalled Codex round counts); megafills go to Codex.
   Ask the agent as its own question, never inside an option.

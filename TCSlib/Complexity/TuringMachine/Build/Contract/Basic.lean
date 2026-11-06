@@ -89,9 +89,10 @@ trajectories*, relations on the whole head vector.
 * `Turing.Contract.within`, `Turing.Contract.spaceUsedByTape_le`: the derived forms.
 * `Turing.Contract.live`: a contract run is live before its endpoint.
 * `Turing.Cfg.SameOutside.keep_word`, `Turing.Cfg.SameOutside.keep_blank`: frame preservation.
-* `Turing.Segment.trans`, `Turing.Segment.live`, `Turing.Segment.time_eq`,
-  `Turing.SafeSegment.trans`, `Turing.Contract.segment`: segment concatenation, liveness,
-  uniqueness of first exits, and the contract bridge.
+* `Turing.Segment.trans`, `Turing.Segment.iterate_seq`, `Turing.Segment.live`,
+  `Turing.Segment.time_eq`, `Turing.SafeSegment.trans`, `Turing.Contract.segment`: segment
+  concatenation (of two, and along a sequence), liveness, uniqueness of first exits, and the
+  contract bridge.
 * `Turing.Round.iterate_seq`, `Turing.Round.iterate`, `Turing.RoundContract.orbit_round`: round
   iteration along a sequence of starts, and along an orbit.
 * `Turing.Contract.Traj.trans`, `Turing.Contract.Frames.trans`: preservation by `trans`.
@@ -476,6 +477,23 @@ theorem trans {a b c : Cfg k Γ S x} {t v : ℕ} (h : Segment M F P a b t)
       rw [he, MultiTapeTM.runFrom_add, h.1]
       exact g.2.2 _ (by omega)
 
+/-- **Segments compose along a sequence**: if, for each `r < n`, the run from `cs r` is a segment
+of `τ r` steps to `cs (r + 1)`, all with the forbidden set `F` and the head relation `P`, and `P`
+holds at `cs 0`, then the run from `cs 0` is one segment of `∑ r < n, τ r` steps to `cs n`. The
+starts `cs r` are arbitrary configurations: unlike `Turing.Round.iterate_seq`, they need not share
+a state.
+
+**Proof sketch.** Induction on `n`: the empty sequence is `Turing.Segment.zero`, and each further
+segment is appended by `Turing.Segment.trans`. -/
+theorem iterate_seq (cs : ℕ → Cfg k Γ S x) (τ : ℕ → ℕ) (h0 : P (cs 0).workTapePos) (n : ℕ)
+    (h : ∀ r < n, Segment M F P (cs r) (cs (r + 1)) (τ r)) :
+    Segment M F P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) := by
+  induction n with
+  | zero => exact Segment.zero h0
+  | succ n ih =>
+    rw [Finset.sum_range_succ]
+    exact (ih fun r hr => h r (by omega)).trans (h n (by omega))
+
 /-- Weakening: a smaller forbidden set and a weaker relation. -/
 theorem mono {F' : Set (Option S)} {P' : (Fin k → ℤ) → Prop} {a b : Cfg k Γ S x} {t : ℕ}
     (h : Segment M F P a b t) (hF : F' ⊆ F) (hP : ∀ p, P p → P' p) : Segment M F' P' a b t :=
@@ -818,18 +836,14 @@ is a round ending at `cs (r + 1)` after `τ r` steps, then the run from `cs 0` i
 against the escapes to `cs n`, of length the sum of the round times. When the last round ends in
 an escape, the segment is a first exit (`Turing.Contract.ofSegment`).
 
-**Proof sketch.** Induction on `n`, appending each round as a segment (`Turing.Round.segment`)
-by `Turing.Segment.trans`. -/
+**Proof sketch.** Each round is a segment (`Turing.Round.segment`, since the anchor is not an
+escape); compose them along the sequence (`Turing.Segment.iterate_seq`). -/
 theorem Round.iterate_seq {S : Type} {x : List Γ} {M : MultiTapeTM k Γ S} {a : S}
     {E : Set (Option S)} {P : (Fin k → ℤ) → Prop} (cs : ℕ → Cfg k Γ S x) (τ : ℕ → ℕ)
     (ha : some a ∉ E) (h0 : P (cs 0).workTapePos) (n : ℕ)
     (hround : ∀ r < n, Round M a E P (cs r) (cs (r + 1)) (τ r)) :
-    Segment M E P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) := by
-  induction n with
-  | zero => exact Segment.zero h0
-  | succ n ih =>
-    rw [Finset.sum_range_succ]
-    exact (ih fun r hr => hround r (by omega)).trans ((hround n (by omega)).segment ha)
+    Segment M E P (cs 0) (cs n) (∑ r ∈ Finset.range n, τ r) :=
+  Segment.iterate_seq cs τ h0 n fun r hr => (hround r hr).segment ha
 
 /-- **Round iteration on one machine** (the counter loop's composition, without the counter):
 if the anchor is not an escape (`some a ∉ E`), the head condition `P` holds at `c`, and the first

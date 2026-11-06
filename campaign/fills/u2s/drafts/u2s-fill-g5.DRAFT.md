@@ -53,10 +53,10 @@
       `G5RouteCtl_unsealed.lean.txt`, `G5RouteCtl_sealed.lean.txt` (drafted 2026-11-06,
       `campaign/fills/u2s/drafts/u2s-fill-g5/route/`; re-run on the merged tree at issue);
     - the semantic-duplication probe: `G5RouteExact.lean.txt`;
-    - the screen population `screen-population.txt` (21 files);
+    - the screen population `screen-population.txt` (22 files);
     - the order list `campaign/fills/u2s/orders/u2s-fill-g5.txt`, the base sorry set, the screen
       base and the pre-ship log (`campaign/fills/u2s/logs/u2s-fill-g5-*`).
-- The design records: `campaign/items/u2/G5-statements-plan.md` (§1–§3, §6–§7);
+- The design records: `campaign/items/u2/G5-statements-plan.md` (§1–§3, §6–§8);
   `campaign/items/u2/U2-design.md` §1 and §4; `machine-library-design.md` §13d (G3–G5) and §14.
 - **Before anything else, run Part 1 of the addendum**: the preflight, with its stop rule. Fetch
   the cache for your roots only (42 Mathlib roots); never the unfiltered
@@ -73,7 +73,9 @@
   ```
 
   Record the base hash in `REPORT.md`. Never rebase, merge or cherry-pick.
-- **Delivery is by zip** (`workflow.md` §4): `fill-u2s-g5.zip`, containing:
+- **Delivery is by zip** (`workflow.md` §4): `fill-u2s-g5.zip`, pushed to the branch
+  `exchange/pass-shelat-ch5-8` at `arora-barak-ch3-4/inbox/` (you have push access;
+  `git pull --rebase` first, add only your zips, never force-push, no PR), containing:
   - `REPORT.md`, the full modified source, a `git format-patch` series against your base and a
     git bundle whose only prerequisite is your base;
   - the environment logs (`evidence/logs/`), the bootstrap and final sweep logs with each
@@ -88,8 +90,10 @@
 
 - **Your base's Lean content is the campaign after #197's merge** (`33ceeed1`; at drafting the tip
   was `0d2b3bbd`, records only since; `@TBD@` if a further Lean PR merges before issue, and
-  `@ANCESTOR@` adds records only). Lines in this brief are your base's. `TwoTapes.lean` is #189's
-  landing, 86 lines, 2 public and 0 private declarations, unchanged by #197:
+  `@ANCESTOR@` adds records only). Lines in this brief are your base's (after region (a)'s import
+  every later line moves down by one: the home at 50, the target's docstring end at 64, its `sorry`
+  at 71). `TwoTapes.lean` is #189's landing, 86 lines, 2 public and 0 private declarations,
+  unchanged by #197:
   - the imports, lines 6–8 (`Mathlib.Data.Nat.Log`, `Robustness.AlphabetReduction`,
     `Build.ZoneRebalance`); the module docstring, lines 14–46; `namespace Turing.FinTM`, line 48;
   - `two_work_tapes_run`: docstring 50–63, statement 64–69, its `sorry` on line 70;
@@ -239,9 +243,12 @@ never re-prove one, and never restate one as a private.
   `Turing.sum_cost_le_of_count` (and, inside it, `Turing.sum_two_pow_le_of_count`).
 - **The rows' data and precondition** (`Build/ZoneRebalance`): `Turing.ZoneData`,
   `Turing.zoneRowPre_iff`, `Turing.zoneRowPre_congr`, `Turing.zoneRowPre_mapState_iff`,
-  `Turing.zoneRebalanceIndex_eq`, `Turing.zoneRebalanceIndex_le`, `Turing.zoneRebalanceData_fst`,
-  `_snd`, `Turing.zoneExtendData_fst`, `_snd`, `Turing.zoneRebalanceData_of_short`,
-  `Turing.zoneRebalanceIndex_extend_of_short`.
+  `Turing.zoneRebalanceIndex_eq`, `Turing.zoneRebalanceIndex_le`, `Turing.zoneRebalanceData_eq`,
+  `Turing.zoneExtendData_eq` (#207: the data maps as whole values),
+  `Turing.zoneRebalanceData_of_short`, `Turing.zoneRebalanceIndex_extend_of_short`. **Read the maps
+  through `zoneRebalanceData_eq` and `zoneExtendData_eq`, never through the pointwise fields
+  `zoneRebalanceData_snd` and `zoneExtendData_snd`**: those sit at the map's own level, so under the
+  seal their rewrites leave goals that differ in a hidden level (pitfall 9).
 - **The carrier** (`Build/ZoneTape`): `Turing.ZoneSym`, `Turing.ZoneCell`, `Turing.zonedTape`,
   `Turing.zonedTape_zero`, `Turing.zonedTape_homeWrite`, `Turing.zonedTape_blank_outside`,
   `Turing.zoneStart_eq`, `Turing.zoneCellOfCell` with `_inr`, `_inl`, `_none`.
@@ -281,7 +288,8 @@ never re-prove one, and never restate one as a private.
   `FinTM.ComputesInTime.mono`, `FinTM.ComputesInTime.output_unique`,
   `FinTM.not_computesInTime_zero` (`Finite`).
 - **R1, for `[Q1]`'s separate option** (`Build/Embed`): `Turing.embedEmitTM`, `embedEmitTM_tr`,
-  `embedEmitTM_runFrom`, `embedEmitTM_frame`, `embedEmitCfg_eq`.
+  `embedEmitTM_runFrom`, `embedEmitTM_frame`, `embedEmitCfg_eq`, `embedEmitCfg_state`,
+  `embedEmitCfg_output`.
 - **The finish** (`Robustness/AlphabetReduction`): `Turing.FinTM.alphabet_reduction_run`.
 - **Mathlib and core:** `Function.Embedding.inl` (`_apply`), `Nat.log`, `Nat.pow_log_le_self`,
   `Nat.lt_pow_succ_log_self`, `Nat.log_mono_right`, `Nat.log2_eq_log_two`, `List.length_map`,
@@ -298,9 +306,10 @@ never re-prove one, and never restate one as a private.
   `zero` and `ofSegment` through their `simps` fields (`inPhase_time`, `zero_post`, …); a
   `Contract`'s behaviour through its fields `run`, `exit_mem`, `cut`, `env`.
 - **The data maps and endpoints** (`zoneRebalanceData`, `zoneExtendData`, `zoneTrackStepData`,
-  `zoneRebalanceIndex`) only through their equations; `ZoneContents.*`, `zoneHomeWrite`,
-  `zonedTape`, `zoneShiftIndex`, `zoneRebalance`, `zoneCascade`, `zoneTrackTape` and
-  `zoneCapacity` only through the lemmas listed above.
+  `zoneRebalanceIndex`) only through their equations (`zoneRebalanceData_eq`, `zoneExtendData_eq`,
+  `zoneTrackStepData_of_lt`/`_of_not_lt`, `zoneRebalanceIndex_eq`); `ZoneContents.*`,
+  `zoneHomeWrite`, `zonedTape`, `zoneShiftIndex`, `zoneRebalance`, `zoneCascade`, `zoneTrackTape`
+  and `zoneCapacity` only through the lemmas listed above.
 - **The machine model's primitives**: `MultiTapeTM.step` through `step_of_some`/`step_of_halt`,
   `Action.apply` through its fields, `MultiTapeTM.initCfg` through `initCfg_eq` and the
   `Cfg.init_*` fields, `Cfg.mapState` and `Cfg.bindState` through their fields,
@@ -370,7 +379,9 @@ never re-prove one, and never restate one as a private.
   indexed by `(q', m, t)` (the successor state, the move vector `m : Fin k → SignType`, the
   track) with the track machine of direction `m t` (`true` for a right move). **Recommended:
   every track has a phase in every round, a stay being a zero-time phase (`Contract.zero`)**, so
-  that each redirect targets another phase, as `Contract.inPhase` requires (`q.1 ≠ p`). The
+  that each redirect targets another phase, as `Contract.inPhase` requires (`q.1 ≠ p`). A stay
+  phase's machine is that track's track machine of either direction, entered at its `entry`, with
+  `Contract.zero` at that entry; it is not a new leaf. The
   redirects are classical (`if some s ∈ X then … else none`, gate 97's note 7): leaf exit →
   track `0`; track `t` → track `t + 1`; track `k - 1` → the leaf at `q'`.
 - **The state type** `Σ i, Ph i` is finite: the index type is finite (`M.State`, `SignType` and
@@ -379,7 +390,7 @@ never re-prove one, and never restate one as a private.
 
 ### 3. One round (binding where it names a lemma)
 
-A round runs from the leaf at `q` to the leaf at `q'` (or halts at the leaf). Recommended: state
+A round runs from the leaf at `q` to the leaf at `q'` (or halts at the leaf). **Binding:** state
 it as a **`Turing.Segment`** of `HS` against `{none}` (live before its end; a segment's cut
 includes time `0`, so the forbidden set cannot contain the round's own start state), from the
 round's start to its end, so that rounds compose by `Segment.trans`:
@@ -392,9 +403,11 @@ round's start to its end, so that rounds compose by `Segment.trans`:
   of another phase (`Cfg.mapState_sigma_state_ne`);
 - **the halting round**: the leaf's last transition halts, so `Contract.inPhase` (live exits only,
   `none ∉ X`) does not apply; read it through `phaseHostTM_run_le` and `step_of_some`.
-- **Positivity:** every round takes at least the leaf's step and its dispatch;
-  `Contract.inPhase_positive`, `seq_positive` and `branch_positive` hold unconditionally (gate 97's
-  note 7). Do not try to prove `some entry ∉ X` for a track step: it is not exported.
+- **Positivity:** every round takes at least the leaf's step and its dispatch, read from
+  `inPhase_time` (`C.time + 1`) or the leaf's own step. Do not use `Contract.inPhase_positive`,
+  `seq_positive` or `branch_positive`: they return `Contract.Positive`, a definition with no
+  equation, which the seal rejects. Read `Turing.Segment` through `segment_iff`, never by
+  projection. Do not try to prove `some entry ∉ X` for a track step: it is not exported.
 - **The round's time**: `1` for the leaf, `1` per dispatch, and per track at most
   `A · (2^{idx} + 1)` with `idx` the scanned index at that track's start (`0`, and time `0`, for a
   stay). So the round costs at most `B + A · Σ_t (2^{idx t s} + 1) + k` with a constant `B` (the
@@ -404,7 +417,8 @@ round's start to its end, so that rounds compose by `Segment.trans`:
 
 At the start of round `s`, with `c := M.tm.runFrom (M.tm.initCfg x) s` and data `D`:
 1. **the carrier:** `zoneRowPre D d` (tape `0` is `zonedTape D.2` with its head at `0`, tape `1`
-   blank), by `zoneRowPre_iff`; head `1` stays at `0` (the leaf keeps it, and every track step
+   blank), by `zoneRowPre_iff`, for `s ≥ 1`; at `s = 0` it holds off cell `0` only (the first
+   round, below); head `1` stays at `0` (the leaf keeps it, and every track step
    keeps `workTapePos 1`);
 2. **the represented tapes:**
    `∀ t p, zoneTrackTape (D.2 t) p = c.workTapes t (c.workTapePos t + p)`;
@@ -430,25 +444,43 @@ At the start of round `s`, with `c := M.tm.runFrom (M.tm.initCfg x) s` and data 
   (`zoneRebalanceIndex_extend_of_short`, `zoneShiftIndex_extend`), and a later track's index is
   unchanged by an earlier track's extension when below the old level
   (`zoneShiftIndex_extend_of_lt`);
-- the other tracks: `zoneRebalanceData_snd` changes track `t` only.
+- the other tracks: after `rw [zoneRebalanceData_eq]`, `Function.update_of_ne` keeps every track
+  but `t`.
 
 **The first round** starts from `HS.tm.initCfg (x.map Sum.inl)`, whose tape `0` is blank, not a
 zoned tape: it agrees with `zonedTape` of the empty contents at level `0` off cell `0`
 (`zonedTape_blank_outside`, `zoneStart_eq`), and the leaf's write makes it the zoned tape of the
 home-written contents (`zonedTape_homeWrite`); the represented tapes start blank
-(`zoneTrackTape_empty`).
+(`zoneTrackTape_empty`). **State the round lemma so that the first round is an instance:** its
+start's tape `0` agrees with `zonedTape D.2` off cell `0`, and its cell `0` is either blank (with
+every home blank) or `zonedTape D.2 0`. The leaf's decoded read `(zoneCellOfCell (w 0) t).join`
+is the same on both (`zoneCellOfCell_none`, `_inr`), and the lemma ends exactly at
+`enc (step c) D'`.
 
 ### 5. The run and the forward bound
 
 - **The iteration** (`[Q2]`): from the round lemma of step 3 and the invariant of step 4, the run
-  of `HS` through the first `s` rounds, for every `s ≤ t₀` (`t₀` the source's first halting
-  time, `MultiTapeTM.exists_first_halt`), as one segment against `{none}`:
-  by `Turing.Segment.iterate_seq` (`[Q2]`, ruled API first), each round of step 3 being one of
-  its segments and the rounds' starts the run's configurations at the round boundaries. Never write
-  the induction yourself.
+  of `HS` through the first `s` rounds, for every `s` such that `M`'s run is live at every time
+  `< s` (so every `s ≤ t₀` when `M` first halts at `t₀`, `MultiTapeTM.exists_first_halt`, and every
+  `s` when it never halts: one lemma serves this step and step 6), as one segment against
+  `{none}`, by `Turing.Segment.iterate_seq` (`[Q2]`, ruled API first). **Its starts are explicit
+  encodings, not the run itself:** `cs 0` is `HS`'s initial configuration, and `cs (r + 1)` is
+  `enc (c_{r+1}) (D_{r+1})`: the leaf at `c_{r+1}`'s state, tape `0` the zoned tape `zonedTape
+  D_{r+1}.2` with its head at `0`, tape `1` blank with its head at `0`, `c_{r+1}`'s input
+  position, and output `c_{r+1}.output.map Sum.inl`, with `c_r := M.tm.runFrom (M.tm.initCfg x) r`
+  and `D_r` the data orbit. Each round of step 3 is then one segment from `cs r` to `cs (r + 1)`.
+  Defining `cs r` as `HS`'s run at the summed times would need the induction over rounds; never
+  write it yourself.
 - **The data orbit.** The data at each round is a function of `M`'s run (its head moves); define
   it once by recursion (a `tt_` definition) and read `idx t s` off it: the scanned index of track
   `t` at its step in round `s`, `0` for a stay.
+- **The side totals** (the quantity both bounds below rest on): per track and level `i`, the
+  number of stored cells on one side over the levels `≤ i`. Under fullness it changes by exactly
+  `±1` per move whose scanned index is `≤ i`, is `2^{i+1} − 1` after a move whose index is `> i`,
+  and is unchanged by an extension, which adds only higher levels (`zoneCascadeRight_lengths`,
+  `zoneCascadeLeft_lengths` below and at the index, `zoneRebalance_frame` above it,
+  `extend_words_*`). For the level bound also state its global form: the side total minus
+  `2^{D.1} − 1` is the track's net displacement.
 - **The count hypothesis** (gate 97's note 8, the book's argument): after a step of track `t`
   that scans beyond level `i`, its levels `0, …, i` are half full on both sides; each later step
   changes the number of cells on one side of those levels by at most one; so two such steps are
@@ -456,10 +488,13 @@ home-written contents (`zonedTape_homeWrite`); the represented tapes start blank
 - **The level bound:** an extension at level `ℓ` needs every feeding zone empty, a displacement of
   at least `2^ℓ − 1` cells from the balanced layout, which an extension does not change; so the
   level after `s` steps is at most `Nat.log 2 s + 1`, and `L := Nat.log 2 t₀ + 1` bounds every
-  `idx` (`zoneRebalanceIndex_le`).
+  `idx` (`zoneRebalanceIndex_le`). **Within round `s`, bound `idx t s` by the level after `s + 1`
+  rounds, not after `s`:** an earlier track can extend mid-round. Since `s + 1 ≤ t₀` this is still
+  at most `L`.
 - **The cost:** `sum_cost_le_of_count k t₀ L A B idx cost` gives
   `Σ_{s < t₀} cost s ≤ B · t₀ + k · (A · ((L + 2) · t₀ + 2^L) + t₀)`; then
-  `2^L ≤ 2 t₀` (`Nat.pow_log_le_self`) and `Nat.log_mono_right` give
+  `2^L ≤ 2 t₀` (`Nat.pow_log_le_self`, with `t₀ ≠ 0` from `FinTM.not_computesInTime_zero`) and
+  `Nat.log_mono_right` give
   `≤ c₁ · ((t₀ + 1) · (Nat.log 2 (t₀ + 1) + 1))`, and `t₀ ≤ t` with `ComputesInTime.mono`. Any
   constant per `M` serves. **Never re-prove the layer cake or the geometric sums.**
 - **The output:** at the halting round `HS` has halted with `c.output.map Sum.inl`
@@ -534,7 +569,9 @@ of round `t₀ - 1` with `(M's output).map Sum.inl`, and its completed output is
       above; core and Mathlib definitions may reduce in a `rfl`, `decide` or `show` step, but are
       never passed to `simp`, `rw` or `unfold`;
     - your own file's definitions (the leaf, the controller, the invariant, the data orbit) may be
-      unfolded; unfold `MultiTapeTM.step` and `Action.apply` only for your own leaf;
+      unfolded. For your leaf, read `MultiTapeTM.step` through `step_of_some` and `Action.apply`
+      through `Action.apply_*` and `Action.apply_workTapes`; unfold only your own transition
+      function (both are in the seal);
     - **self-check by both methods** (neither alone is complete):
       - a **seal test**: a scratch copy of your module with `attribute [local irreducible]` on
         every other-file TCSlib definition your proofs mention (start from the route probe's
@@ -542,7 +579,8 @@ of round `t₀ - 1` with `(M's output).map Sum.inl`, and its completed output is
         `zoneRebalanceData`, `zoneExtendData`, `zoneTrackStepData`, `zonedTape`,
         `zoneHomeWrite`, `zoneTrackTape`, `zoneShiftIndex`, `zoneRebalance`, `zoneCascade`,
         `ZoneContents.extend`, `ZoneContents.words`, `zoneCapacity`, `zoneCellOfCell`,
-        `Contract.inPhase`, `Contract.zero`, `Cfg.bindState`, `Cfg.mapState`, `phaseHostTM`,
+        `Contract.inPhase`, `Contract.zero`, `Contract.Positive`, `Turing.Segment`,
+        `Turing.HeadBox`, `Cfg.bindState`, `Cfg.mapState`, `phaseHostTM`,
         `MultiTapeTM.runFrom`, `MultiTapeTM.initCfg`, `Cfg.init`, `FinTM.ComputesInTime`), and
         `attribute [-simp]` on the `@[simp]` definitions among them (`Action.apply`,
         `MultiTapeTM.initCfg`, `Cfg.init`, …), which must still elaborate, **with controls**: per
@@ -569,10 +607,11 @@ of round `t₀ - 1` with `(M's output).map Sum.inl`, and its completed output is
    halt), through `step_of_some`, the `Action.apply_*` fields and `zonedTape_homeWrite`.
 3. The controller `HS` (phases, redirects, finiteness), generic in the track-step family, and one
    round as a segment with its time bound (step 3), the halting round included.
-4. The invariant (step 4): its preservation by a round, and the first round.
+4. The invariant (step 4) except fullness: its preservation by a round, and the first round.
 5. The iteration to the source's first halt (step 5, by `Segment.iterate_seq`); `HS`'s output
    there.
-6. The count and level bounds over the data orbit.
+6. Over the data orbit (pure arithmetic on the data maps): fullness and the side totals, then
+   the count and level bounds.
 7. The cost through `sum_cost_le_of_count`, and the forward property of `HS`.
 8. The converse property of `HS`.
 9. `two_work_tapes_run` proved; for a construction that departs from the frozen sketch, a
@@ -586,13 +625,13 @@ the axiom walk: `sorryAx` reaches the target only through its own open body.
 - Run the v3 screen **before and after**, one run at a time, under `nice -n 10`, each on a
   frozen copy of its commit (`git worktree add <dir> HEAD`). The before screen, after your first
   edit, must equal the screen base (the overlay changes only an import).
-- **The population** is 21 files
+- **The population** is 22 files
   (`campaign/fills/u2s/inputs/u2s-fill-g5/screen-population.txt`):
   - your file;
   - the files the route cites: `Build/ZoneStep`, `Build/ZoneRebalance`, `Build/ZoneTape`,
     `Build/Zone`, `Build/Contract/Basic`, `Build/Contract/Seam`, `Build/Seam`, `Build/Embed`,
     `Robustness/AlphabetReduction`, `CfgFacts`, `StateRenaming`, `Configuration`,
-    `Deterministic`, `Finite`;
+    `Deterministic`, `Finite`, `Simulation`;
   - the known hazards: `Robustness/SingleTape` (the zero-tape embedding and the sweep
     simulation), `UniversalTlogT`, `Build/StepBlockForward` (H2-F's forwarding loop),
     `Universal` (gate 92's stationarity pair), `SymbolLift` and `Build/Contract/Lift`.
@@ -698,6 +737,10 @@ them, that is an escalation, not a license.
 7. **`Nat.log 2` in every statement**, `Nat.log2_eq_log_two` where a `Nat.log2` appears.
 8. **A halted run is frozen** (`MultiTapeTM.runFrom_of_halt`): the bound at `t` follows from the
    halt at `t₀` by `ComputesInTime.mono`, never by a hand-made `Nat.exists_eq_add_of_le` split.
+9. **Rewrite whole `ZoneData` values, never `.snd` alone.** `ZoneData k` is `Σ ℓ, Fin k →
+   ZoneContents ℓ`, so a track's contents carry their level. After `rw [zoneRebalanceData_eq]`
+   (or `zoneExtendData_eq`) the contents sit at `D.1` (or `D.1 + 1`), and the `Build/Zone` lemmas
+   apply. A goal that prints as `f x = f x` but that `rfl` cannot close is a hidden-level mismatch.
 9. `omega` with products as atoms (`ring` first); `nlinarith` for the `2^L` bounds, as `ZoneStep`
    does.
 

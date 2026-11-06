@@ -35,3 +35,6 @@
   records from `c337361b0d66e21345d3802649dc0c151b5c56d2`. Findings file
   `segment-iterate-api-r2-findings.md`.
 - 2026-11-06: round 2 **dispatched** (the user).
+- 2026-11-06: round 2 **CLOSE** (0/0/1/4); the minor swept in the ledger. **Clear to merge.**
+- 2026-11-06: **#202 merged** (`8a505fc9`, the user). The campaign's Lean is #202's head's (`7b5774fb`), and
+  `oleans-lsi2` is its snapshot.

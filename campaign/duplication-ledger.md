@@ -622,8 +622,10 @@ lemmas. **Census** (gate 98's, each member counted once per file; the source sid
 - `Build/Contract/Basic`, the public source: **1 of 93 (1.1%)**, `Segment.trans`, 20 lines;
 - `ClassNP/Tautology`: **1 of 93 (1.1%)**, `tautDual_segment_add`, 12 lines. The file has no other
   recorded member;
-- `Build/CounterLoop`: **1 of 79 (1.3%)**, `counter_span_append`, 28 lines. With IW-1's
-  `counterPatch`, the file's recorded total is **2 of 79 (2.5%)**.
+- `Build/CounterLoop`: **1 of 79 (1.3%)**, `counter_span_append`, 28 lines. The file's
+  recorded total, every acknowledged member counted once (corrected at gate 98's round-2 minor
+  1): SG-1's `counter_span_append`, IW-1's `counterPatch` and R8.0b E1's pair `counterLoopTM`/
+  `counterLoopTMVia`, **4 of 79 (5.1%)**, 68 lines (28 + 4 + 19 + 17).
 
 **The one-fifth rule** (`workflow.md` §4): no file of the family is past one fifth.
 
@@ -1122,6 +1124,12 @@ re-proved `Nat.mul_div_cancel'`; #191's commit `698dcdf5` cites it. The sweep no
 untyped `have`/`obtain` on a core or Mathlib term with a later rewrite `at` it (gate 95,
 `evidence/round4/sweep/`); the one other such site, `nf_display_flag`'s `hm`, has no library
 statement. No family; no member remains.
+
+**Gate 95's round-4 major 1**: one more fold-concatenation member, in `nf_ctl_position`'s
+`simp only` set, which the round-3 sweep had wrongly exempted as a simp set. #191's commit
+`b4af93b7` cites `List.foldl_concat`. The sweep now checks every member of both chain classes
+anywhere in the file (gate 95, `evidence/round5/sweep/`). No family; no member found by that
+check.
 
 **RC-4, row candidates from NF cont1** (the cont1 review's F8, 2026-11-04; completed by gate 95's
 note 9, 2026-11-05). The review's list "for the ledger" named F8's row candidates; they were not
