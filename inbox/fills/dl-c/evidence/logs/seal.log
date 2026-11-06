@@ -1,0 +1,31 @@
+=== Probe/ElGamalSealed start 2026-11-06T15:18:17Z
+Probe/ElGamalSealed.lean:115:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_ne_two`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+Probe/ElGamalSealed.lean:120:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.five_le_safe`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+Probe/ElGamalSealed.lean:125:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_half`:
+  hp
+  hq
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp hq in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+Probe/ElGamalSealed.lean:2292:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  dlP i = listToNat (pairFstD i)
+FAIL(Probe/ElGamalSealed): lean exited with status 1
+FAIL(Probe/ElGamalSealed): error diagnostics reported
+FAIL(Probe/ElGamalSealed): no fresh .olean produced
+maxrss_kb=2928828 elapsed=11.8s
+=== Probe/ElGamalSealed end 2026-11-06T15:18:29Z exit=1

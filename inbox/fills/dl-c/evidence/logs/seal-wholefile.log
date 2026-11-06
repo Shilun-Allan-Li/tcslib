@@ -1,0 +1,38 @@
+=== Probe/ElGamalSealedWhole start 2026-11-06T15:18:29Z
+Probe/ElGamalSealedWhole.lean:120:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_ne_two`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+Probe/ElGamalSealedWhole.lean:125:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.five_le_safe`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+Probe/ElGamalSealedWhole.lean:130:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_half`:
+  hp
+  hq
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp hq in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+Probe/ElGamalSealedWhole.lean:201:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+σ : Type u_1
+γ : Type u_2
+inst✝ : Fintype σ
+X Y : σ → γ
+⊢ StatClose X Y (uprob fun s => X s ≠ Y s)
+Probe/ElGamalSealedWhole.lean:2289:60: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  dlP i = listToNat (pairFstD i)
+FAIL(Probe/ElGamalSealedWhole): lean exited with status 1
+FAIL(Probe/ElGamalSealedWhole): error diagnostics reported
+FAIL(Probe/ElGamalSealedWhole): no fresh .olean produced
+maxrss_kb=2925440 elapsed=11.0s
+=== Probe/ElGamalSealedWhole end 2026-11-06T15:18:40Z exit=1
