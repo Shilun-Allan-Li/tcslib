@@ -1283,6 +1283,303 @@ private theorem tt_D_inv (M : FinTM Bool) (x : List Bool) (r : ℕ) :
       rw [tt_D_succ M x r q hq, hc]
       exact (tt_round_inv M (tt_c M x r) q hq _ ih.1 ih.2).2
 
+/-! ### The run: the configurations at the round boundaries and the iteration -/
+
+/-- Moving input heads at equal positions over inputs of equal length gives equal positions. -/
+private theorem tt_moveInputPos_val {n n' : ℕ} (hn : n = n') (p : Fin (n + 2)) (p' : Fin (n' + 2))
+    (h : p.val = p'.val) (s : SignType) : (moveInputPos p s).val = (moveInputPos p' s).val := by
+  subst hn
+  rw [Fin.ext h]
+
+/-- **The decoded input symbol** of a configuration on the encoded input `x.map Sum.inl` is the
+input symbol of a configuration on `x` with the input head at the same position. -/
+private theorem tt_inputSymbol {k k' : ℕ} {S S' : Type} {x : List Bool}
+    (d : Cfg k (ZoneSym k') S (x.map Sum.inl)) (c : Cfg k' Bool S' x)
+    (h : d.inputPos.val = c.inputPos.val) : tt_decodeIn d.inputSymbol = c.inputSymbol := by
+  have hlen : (x.map (Sum.inl : Bool → ZoneSym k')).length = x.length := List.length_map _
+  by_cases h0 : c.inputPos.val = 0
+  · rw [Cfg.inputSymbol_of_zero (Fin.ext_iff.mpr (by rw [h, h0]; rfl)),
+      Cfg.inputSymbol_of_zero (Fin.ext_iff.mpr (by rw [h0]; rfl))]
+    rfl
+  · by_cases h1 : c.inputPos.val = x.length + 1
+    · have hd : d.inputPos.val = (x.map (Sum.inl : Bool → ZoneSym k')).length + 1 := by
+        rw [h, h1, hlen]
+      rw [Cfg.inputSymbol_of_end h1, Cfg.inputSymbol_of_end hd]
+      rfl
+    · have hp : c.inputPos.val - 1 < x.length := by
+        have := c.inputPos.isLt
+        omega
+      rw [inputSymbolInner (c.inputPos.val - 1) (by omega) hp,
+        inputSymbolInner (cfg := d) (c.inputPos.val - 1) (by omega) (by rw [hlen]; exact hp),
+        List.getElem_map]
+      rfl
+
+/-- The input position of `M`'s configuration on `x`, as a position on the encoded input. -/
+private def tt_ipOf (M : FinTM Bool) {x : List Bool} (c : Cfg M.k Bool M.State x) :
+    Fin ((x.map (Sum.inl : Bool → ZoneSym M.k)).length + 2) :=
+  ⟨c.inputPos.val, by rw [List.length_map]; exact c.inputPos.isLt⟩
+
+/-- **The zone machine's configurations at the round boundaries** [HS66; AB09, §1.7]: its
+initial configuration, and after `r + 1` rounds the transition step at `M`'s state after
+`r + 1` steps, with the orbit's data, `M`'s input position and `M`'s output encoded. -/
+private def tt_cs (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List Bool) :
+    ℕ → Cfg 2 (ZoneSym M.k) (Σ i, tt_Ph M F i) (x.map Sum.inl)
+  | 0 => Cfg.init ⟨none, .inl M.tm.q₀⟩ (x.map Sum.inl)
+  | r + 1 => tt_cfg ((tt_c M x (r + 1)).state.map fun q => ⟨none, .inl q⟩) (tt_D M x (r + 1))
+      (tt_ipOf M (tt_c M x (r + 1))) ((tt_c M x (r + 1)).output.map Sum.inl)
+
+/-- **The length of round `r`**: two steps for the transition step and its dispatch, and each
+track's phase with its dispatch step; `0` once `M` has halted. -/
+private def tt_T (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List Bool) (r : ℕ) : ℕ :=
+  match (tt_c M x r).state with
+  | some q =>
+    2 + ∑ j ∈ Finset.range M.k, tt_τ M F (x.map Sum.inl)
+      (tt_moves (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)))
+      (tt_homeData (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)) (tt_D M x r))
+      (moveInputPos (tt_ipOf M (tt_c M x r))
+        (tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)).inputTape)
+      ((tt_c M x r).output.map Sum.inl ++
+        ((tt_act M q (tt_c M x r).inputSymbol (tt_D M x r)).output.map Sum.inl).toList) j
+  | none => 0
+
+/-- **A round's start is a transition-step configuration** of `tt_round`: at a live time `r`,
+the boundary configuration is the transition step at `M`'s state, renamed into the host, with a
+home cell that reads the orbit's homes (blank in the first round, the zoned tape's later).
+
+**Proof sketch.** At `r = 0` the host's initial configuration (`Turing.Cfg.init`'s fields) has
+blank tapes, which is the zoned tape of the empty contents off the home cell
+(`Turing.zonedTape_blank_outside`, `Turing.zoneStart_eq`) with a blank home; a blank home reads
+blank (`Turing.zoneCellOfCell_none`), as the empty contents' homes are. Later a boundary
+configuration's home cell is the zoned tape's own (`Function.update_eq_self`), which reads the
+homes (`Turing.zonedTape_zero`, `Turing.zoneCellOfCell_inr`). Field by field through
+`Turing.Cfg.mapState_eq_of_fields`. -/
+private theorem tt_cs_start (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List Bool)
+    (r : ℕ) (q : M.State) (hq : (tt_c M x r).state = some q) :
+    ∃ h0 : Option (ZoneSym M.k), (∀ t, tt_homeRead h0 t = ((tt_D M x r).2 t).home) ∧
+      tt_cs M F x r = (tt_cfg0 (some (.inl q)) (tt_D M x r) h0 (tt_ipOf M (tt_c M x r))
+        ((tt_c M x r).output.map Sum.inl) :
+          Cfg 2 (ZoneSym M.k) (tt_LeafSt M) (x.map Sum.inl)).mapState (Sigma.mk none) := by
+  cases r with
+  | zero =>
+    have hc : tt_c M x 0 = Cfg.init M.tm.q₀ x := by
+      show M.tm.runFrom (M.tm.initCfg x) 0 = _
+      rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq]
+    rw [hc, Cfg.init_state] at hq
+    obtain rfl := Option.some.inj hq
+    refine ⟨none, fun t => ?_, ?_⟩
+    · show (zoneCellOfCell none t).join = (ZoneContents.empty 0).home
+      rw [zoneCellOfCell_none, ZoneContents.empty_home]
+      rfl
+    · show Cfg.init (⟨none, .inl M.tm.q₀⟩ : Σ i, tt_Ph M F i) (x.map Sum.inl) = _
+      refine (Cfg.mapState_eq_of_fields _ _ _ ?_ ?_ ?_ ?_ ?_).symm
+      · rw [Cfg.init_state]
+        rfl
+      · rw [Cfg.init_inputPos]
+        refine Fin.ext ?_
+        show (tt_c M x 0).inputPos.val = _
+        rw [hc, Cfg.init_inputPos]
+        rfl
+      · funext j p
+        rw [Cfg.init_workTapes]
+        by_cases hj : j = 0
+        · subst hj
+          show Function.update (zonedTape (fun _ => ZoneContents.empty 0)) 0 none p = none
+          by_cases hp : p = 0
+          · subst hp
+            exact Function.update_self _ _ _
+          · rw [Function.update_of_ne hp]
+            refine zonedTape_blank_outside _ p ?_
+            rw [zoneStart_eq]
+            have : (1 : ℤ) ≤ |p| := Int.one_le_abs hp
+            norm_num
+            omega
+        · show (if j = 0 then _ else fun _ => none) p = none
+          rw [if_neg hj]
+      · funext j
+        rw [Cfg.init_workTapePos]
+        rfl
+      · rw [Cfg.init_output]
+        show [] = (tt_c M x 0).output.map Sum.inl
+        rw [hc, Cfg.init_output, List.map_nil]
+  | succ r =>
+    refine ⟨zonedTape (tt_D M x (r + 1)).2 0, fun t => ?_, ?_⟩
+    · rw [tt_homeRead, zonedTape_zero, zoneCellOfCell_inr]
+      rfl
+    · show tt_cfg _ _ _ _ = _
+      rw [hq]
+      apply Eq.symm
+      refine Cfg.mapState_eq_of_fields _ _ _ rfl rfl ?_ rfl rfl
+      funext j p
+      by_cases hj : j = 0
+      · subst hj
+        show Function.update (zonedTape (tt_D M x (r + 1)).2) 0
+          (zonedTape (tt_D M x (r + 1)).2 0) p = zonedTape (tt_D M x (r + 1)).2 p
+        rw [Function.update_eq_self]
+      · show (if j = 0 then _ else fun _ => none) p = (if j = 0 then _ else fun _ => none) p
+        rw [if_neg hj, if_neg hj]
+
+/-- The output of `M`'s action, encoded, is the encoding of its output list. -/
+private theorem tt_output_map {S : Type} {k : ℕ} (a : Action k Bool S) :
+    (a.output.map (Sum.inl : Bool → ZoneSym k)).toList = a.output.toList.map Sum.inl := by
+  cases a.output <;> rfl
+
+/-- **One round of the run** [HS66; AB09, §1.7]: while `M` is live after `r + 1` steps, the
+zone machine runs live from the boundary configuration after `r` rounds to the one after
+`r + 1`, in `tt_T` steps.
+
+**Proof sketch.** `M` is live at `r` too (`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`).
+The start is a transition-step configuration (`tt_cs_start`), and the round's action is `M`'s
+(`tt_round_inv`), whose successor state is `M`'s next state (`Turing.Action.apply_state`).
+`tt_round` gives the segment; its endpoint is the next boundary configuration: the data are the
+orbit's next (`tt_D_succ`), the input head moves as `M`'s (`tt_moveInputPos_val`,
+`Turing.Action.apply_inputPos`) and the output gains the encoded emission
+(`Turing.Action.apply_output`, `tt_output_map`). -/
+private theorem tt_cs_round (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List Bool) (r : ℕ) (hr : (tt_c M x (r + 1)).state ≠ none) :
+    Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
+      (fun _ => True) (tt_cs M F x r) (tt_cs M F x (r + 1)) (tt_T M F x r) := by
+  have hlive : (tt_c M x r).state ≠ none :=
+    MultiTapeTM.runFrom_state_ne_none_of_le _ _ (r + 1) hr r (Nat.le_succ r)
+  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hlive
+  obtain ⟨q', hq'⟩ := Option.ne_none_iff_exists'.mp hr
+  have hstep : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'
+  obtain ⟨hact, -, -⟩ := tt_round_inv M (tt_c M x r) q hq _ (tt_D_inv M x r).1 (tt_D_inv M x r).2
+  set a := tt_act M q (tt_c M x r).inputSymbol (tt_D M x r) with ha
+  have happly : tt_c M x (r + 1) = a.apply (tt_c M x r) := by
+    rw [hstep, MultiTapeTM.step_of_some hq, ← hact]
+  have hsa : a.state = some q' := by
+    rw [← hq', happly, Action.apply_state]
+  obtain ⟨h0, hread, hstart⟩ := tt_cs_start M F x r q hq
+  have hinp : tt_decodeIn (tt_cfg0 (some (.inl q)) (tt_D M x r) h0 (tt_ipOf M (tt_c M x r))
+      ((tt_c M x r).output.map Sum.inl) :
+        Cfg 2 (ZoneSym M.k) (tt_LeafSt M) (x.map Sum.inl)).inputSymbol =
+      (tt_c M x r).inputSymbol :=
+    tt_inputSymbol _ _ rfl
+  have H := (tt_round M F hk q (tt_D M x r) h0 hread (tt_ipOf M (tt_c M x r))
+    ((tt_c M x r).output.map Sum.inl) _ hinp).2 q' hsa
+  have hT : tt_T M F x r = 2 + ∑ j ∈ Finset.range M.k, tt_τ M F (x.map Sum.inl) (tt_moves a)
+      (tt_homeData a (tt_D M x r)) (moveInputPos (tt_ipOf M (tt_c M x r)) a.inputTape)
+      ((tt_c M x r).output.map Sum.inl ++ (a.output.map Sum.inl).toList) j := by
+    show (match (tt_c M x r).state with
+      | some q => _
+      | none => 0) = _
+    rw [hq]
+  have hend : tt_cs M F x (r + 1) = tt_cfg (some ⟨none, .inl q'⟩)
+      (tt_Dtr (tt_moves a) (tt_homeData a (tt_D M x r)) M.k)
+      (moveInputPos (tt_ipOf M (tt_c M x r)) a.inputTape)
+      ((tt_c M x r).output.map Sum.inl ++ (a.output.map Sum.inl).toList) := by
+    show tt_cfg _ _ _ _ = _
+    rw [hq', tt_D_succ M x r q hq]
+    congr 1
+    · refine Fin.ext ?_
+      show (tt_c M x (r + 1)).inputPos.val = _
+      rw [happly, Action.apply_inputPos]
+      exact tt_moveInputPos_val (List.length_map _).symm _ _ rfl _
+    · rw [happly, Action.apply_output, List.map_append, tt_output_map]
+  rw [hstart, hT, hend]
+  exact H
+
+/-- **The run through the first `s` rounds** [HS66; AB09, §1.7]: while `M` is live after `s`
+steps, the zone machine runs live from its initial configuration to the boundary configuration
+after `s` rounds, in the rounds' summed time.
+
+**Proof sketch.** `Turing.Segment.iterate_seq` over the rounds (`tt_cs_round`), each round's
+liveness from `M`'s at `s` (`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`). -/
+private theorem tt_cs_run (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List Bool) (s : ℕ) (hs : (tt_c M x s).state ≠ none) :
+    Segment (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)) {none}
+      (fun _ => True) (tt_cs M F x 0) (tt_cs M F x s)
+      (∑ r ∈ Finset.range s, tt_T M F x r) :=
+  Segment.iterate_seq (tt_cs M F x) (tt_T M F x) trivial s fun r hr =>
+    tt_cs_round M F hk x r (MultiTapeTM.runFrom_state_ne_none_of_le _ _ s hs (r + 1) hr)
+
+/-- **The halting round** [HS66; AB09, §1.7]: if `M` is live after `r` steps and halted after
+`r + 1`, the zone machine halts one step after the boundary configuration of round `r`, with
+`M`'s output encoded.
+
+**Proof sketch.** The start is a transition-step configuration (`tt_cs_start`); the round's
+action is `M`'s (`tt_round_inv`) and halts with it; `tt_round`'s halting clause gives the halt
+and the output, which is `M`'s after its last step (`Turing.Action.apply_output`). -/
+private theorem tt_cs_halt (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List Bool) (r : ℕ) (hr : (tt_c M x r).state ≠ none)
+    (hh : (tt_c M x (r + 1)).state = none) :
+    ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom
+        (tt_cs M F x r) 1).state = none ∧
+      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom
+        (tt_cs M F x r) 1).output = (tt_c M x (r + 1)).output.map Sum.inl := by
+  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hr
+  have hstep : tt_c M x (r + 1) = M.tm.step (tt_c M x r) := MultiTapeTM.runFrom_succ_eq_step'
+  obtain ⟨hact, -, -⟩ := tt_round_inv M (tt_c M x r) q hq _ (tt_D_inv M x r).1 (tt_D_inv M x r).2
+  set a := tt_act M q (tt_c M x r).inputSymbol (tt_D M x r) with ha
+  have happly : tt_c M x (r + 1) = a.apply (tt_c M x r) := by
+    rw [hstep, MultiTapeTM.step_of_some hq, ← hact]
+  have hsa : a.state = none := by
+    rw [← hh, happly, Action.apply_state]
+  obtain ⟨h0, hread, hstart⟩ := tt_cs_start M F x r q hq
+  have H := (tt_round M F hk q (tt_D M x r) h0 hread (tt_ipOf M (tt_c M x r))
+    ((tt_c M x r).output.map Sum.inl) _ (tt_inputSymbol _ _ rfl)).1 hsa
+  rw [hstart]
+  refine ⟨H.1, ?_⟩
+  rw [H.2, happly, Action.apply_output, List.map_append, tt_output_map]
+
+/-- **Every round takes at least two steps** while `M` is live: the transition step and its
+dispatch. -/
+private theorem tt_T_ge (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (x : List Bool) (r : ℕ)
+    (hr : (tt_c M x r).state ≠ none) : 2 ≤ tt_T M F x r := by
+  obtain ⟨q, hq⟩ := Option.ne_none_iff_exists'.mp hr
+  show 2 ≤ (match (tt_c M x r).state with
+    | some q => _
+    | none => 0)
+  rw [hq]
+  exact Nat.le_add_right _ _
+
+/-- The zone machine's initial configuration is the boundary configuration before any round. -/
+private theorem tt_HS_init (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x : List Bool) : (tt_HS M F hk).tm.initCfg (x.map Sum.inl) = tt_cs M F x 0 := by
+  show (phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).initCfg (x.map Sum.inl) =
+    Cfg.init ⟨none, .inl M.tm.q₀⟩ (x.map Sum.inl)
+  rw [MultiTapeTM.initCfg_eq, phaseHostTM_q₀]
+
+/-- **The zone machine reproduces a halting run** [HS66; AB09, §1.7]: if `M` halts on `x`
+within `t` steps with output `o`, it first halts at some `t₀ ≤ t`, live before, and the zone
+machine halts on `x.map Sum.inl` with `o.map Sum.inl` after the first `t₀ - 1` rounds and one
+more step.
+
+**Proof sketch.** The first halt (`Turing.MultiTapeTM.exists_first_halt`) is positive, as the
+initial configuration is live. The rounds before it run as one segment (`tt_cs_run`), and the
+last transition halts (`tt_cs_halt`) with `M`'s output, which is `o`; the two concatenate by
+`Turing.MultiTapeTM.runFrom_add`. -/
+private theorem tt_forward_run (M : FinTM Bool) {A : ℕ} (F : tt_Fam M.k A) (hk : 0 < M.k)
+    (x o : List Bool) (t : ℕ) (h : M.ComputesInTime x o t) :
+    ∃ t₀, t₀ ≤ t ∧ 1 ≤ t₀ ∧ (∀ r < t₀, (tt_c M x r).state ≠ none) ∧
+      (tt_HS M F hk).ComputesInTime (x.map Sum.inl) (o.map Sum.inl)
+        (∑ r ∈ Finset.range (t₀ - 1), tt_T M F x r + 1) := by
+  obtain ⟨hs, ho⟩ := (computesInTime_iff M x o t).1 h
+  obtain ⟨u, hu, hlive, heq⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hs
+  have hc : ∀ r, tt_c M x r = M.tm.runFrom (M.tm.initCfg x) r := fun _ => rfl
+  cases u with
+  | zero =>
+    exfalso
+    have h0 : (M.tm.runFrom (M.tm.initCfg x) 0).state = none := heq ▸ hs
+    rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq, Cfg.init_state] at h0
+    cases h0
+  | succ s =>
+    have hl : ∀ r < s + 1, (tt_c M x r).state ≠ none := fun r hr => hlive r hr
+    refine ⟨s + 1, hu, Nat.le_add_left 1 s, hl, ?_⟩
+    rw [Nat.add_sub_cancel]
+    have hseg := tt_cs_run M F hk x s (hl s (Nat.lt_succ_self s))
+    have hhalt : (tt_c M x (s + 1)).state = none := by rw [hc, heq]; exact hs
+    obtain ⟨h1, h2⟩ := tt_cs_halt M F hk x s (hl s (Nat.lt_succ_self s)) hhalt
+    rw [segment_iff] at hseg
+    rw [computesInTime_iff, tt_HS_init]
+    show ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom
+        (tt_cs M F x 0) _).state = none ∧
+      ((phaseHostTM (tt_Mf M F) ⟨none, .inl M.tm.q₀⟩ (tt_red M F hk)).runFrom
+        (tt_cs M F x 0) _).output = _
+    rw [MultiTapeTM.runFrom_add, hseg.1]
+    refine ⟨h1, ?_⟩
+    rw [h2, hc, heq, ho]
+
 /-! ### The target -/
 
 /-- **Two work tapes suffice, run by run** [HS66]: every binary machine `M` has a binary
