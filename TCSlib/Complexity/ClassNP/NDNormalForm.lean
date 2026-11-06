@@ -3063,11 +3063,10 @@ private theorem nf_forward (N : FinNDTM Bool) (x : List Bool) (t : ℕ)
     fun r hr => Nat.find_min hex hr
   have hle : t₀ ≤ t := Nat.find_min' hex (by rw [← hw, List.take_length]; exact hh)
   have hpos : 0 < t₀ := by
-    by_contra h0
-    have h00 : t₀ = 0 := by omega
-    have := hspec
-    rw [h00, List.take_zero, NDTM.runWith_nil, NDTM.initCfg_eq, Cfg.init_state] at this
-    exact Option.noConfusion this
+    refine Nat.pos_of_ne_zero fun h00 => NDTM.not_haltsWithin_zero N.tm x
+      (NDTM.haltsWithin_iff.mpr fun v hv => ?_)
+    rw [List.length_eq_zero_iff.mp hv]
+    rwa [h00, List.take_zero] at hspec
   set w₀ := w.take t₀ with hw₀
   have hw₀len : w₀.length = t₀ := List.length_take_of_le (by omega)
   have hw₀ne : w₀ ≠ [] := List.ne_nil_of_length_pos (by omega)
