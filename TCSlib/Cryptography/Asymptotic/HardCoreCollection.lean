@@ -188,6 +188,64 @@ theorem glPad_decD_eq (m : PolyExpr)
     dsimp only
     cases F.decD i a <;> cases decodeFin (F.encD i default).length b <;> rfl
 
+variable {F} in
+/-- **The published domain of the padded collection** (ruling "published domain equivalence",
+2026-11-06): `D'_i ≃ D_i × {0,1}^{|encD_i(default)|}`, the identity on the definition.
+Consumers read the domain of `F.glPad m henc` through it, not by reducing the field `D`. -/
+def glPad_domEquiv (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (i : List Bool) :
+    (F.glPad m henc).D i ≃ F.D i × (Fin (F.encD i default).length → Bool) :=
+  Equiv.refl _
+
+variable {F} in
+/-- The encoding of the padded collection through its domain equivalence `e`:
+`encD'_i z = ⟨encD_i (e z).1, (e z).2⟩`. -/
+theorem glPad_encD (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (i : List Bool) (z : (F.glPad m henc).D i) :
+    (F.glPad m henc).encD i z =
+      pairEncode (F.encD i (glPad_domEquiv m henc i z).1)
+        (List.ofFn (glPad_domEquiv m henc i z).2) := rfl
+
+variable {F} in
+/-- The decoder of the padded collection through its domain equivalence `e`:
+`decD'_i w = e⁻¹ <$> glPadDecode F i |encD_i(default)| w`. -/
+theorem glPad_decD (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (i w : List Bool) :
+    (F.glPad m henc).decD i w =
+      (glPadDecode F i (F.encD i default).length w).map (glPad_domEquiv m henc i).symm := by
+  rw [glPad_decD_eq]
+  cases glPadDecode F i (F.encD i default).length w <;> rfl
+
+variable {F} in
+/-- The function of the padded collection through its domain equivalence `e`:
+`g_i z = ⟨f_i (e z).1, (e z).2⟩`. -/
+theorem glPad_f_domEquiv (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (i : List Bool) (z : (F.glPad m henc).D i) :
+    (F.glPad m henc).f i z =
+      pairEncode (F.f i (glPad_domEquiv m henc i z).1)
+        (List.ofFn (glPad_domEquiv m henc i z).2) := rfl
+
+variable {F} in
+/-- The sampler of the padded collection: `ofPolyTimeUniform` of `glPadSampleFun F` with
+`Sample.coins + m` coins. -/
+theorem glPad_sample (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n) :
+    (F.glPad m henc).sample =
+      NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m) := rfl
+
+variable {F} in
+/-- The evaluator of the padded collection: `⟨i, ⟨x, r⟩⟩ ↦ ⟨eval ⟨i, x⟩, r⟩`. -/
+theorem glPad_eval (m : PolyExpr)
+    (henc : ∀ n (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n)
+    (w : List Bool) :
+    (F.glPad m henc).eval w =
+      pairEncode (F.eval (pairEncode (pairFstD w) (pairFstD (pairSndD w))))
+        (pairSndD (pairSndD w)) := rfl
+
 /-- **The padded collection is one-way** ([PS10, Theorem 87.3], collection form, first clause):
 if `F` is a collection of one-way functions whose elements have encoding length `m(n)` at the
 indices generated at parameter `n`, then `F.glPad m` is a collection of one-way functions.
@@ -292,6 +350,23 @@ theorem PermCollection.glPad_toCollection (P : PermCollection) (m : PolyExpr)
     (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n) :
     (P.glPad m henc).toCollection = P.toCollection.glPad m henc := rfl
 
+/-- **The published domain of the padded permutation collection**:
+`(P.glPad m henc).D i ≃ D_i × {0,1}^{|encD_i(default)|}`, the identity on the definition. -/
+def PermCollection.glPad_domEquiv (P : PermCollection) (m : PolyExpr)
+    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
+    (i : List Bool) :
+    (P.glPad m henc).D i ≃ P.D i × (Fin (P.encD i default).length → Bool) :=
+  Equiv.refl _
+
+/-- The permutation of the padded permutation collection through its domain equivalence `e`:
+`e⁻¹ ∘ (perm_i × id) ∘ e`. -/
+theorem PermCollection.glPad_perm (P : PermCollection) (m : PolyExpr)
+    (henc : ∀ n (r : P.gen.Coins n) (x : P.D (P.index n r)), (P.encD (P.index n r) x).length = m.eval n)
+    (i : List Bool) :
+    (P.glPad m henc).perm i = ((P.glPad_domEquiv m henc i).trans
+      ((P.perm i).prodCongr (Equiv.refl _))).trans (P.glPad_domEquiv m henc i).symm :=
+  rfl
+
 /-- **The padded permutation collection is one-way** when the original is (collection form of
 [PS10, Theorem 87.3] for Definition 55.1). -/
 theorem PermCollection.OneWay.glPad {P : PermCollection} (m : PolyExpr)
@@ -333,6 +408,20 @@ noncomputable def TrapdoorCollection.glPad (T : TrapdoorCollection) (m : PolyExp
 theorem TrapdoorCollection.glPad_toPermCollection (T : TrapdoorCollection) (m : PolyExpr)
     (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
     (T.glPad m henc).toPermCollection = T.toPermCollection.glPad m henc := rfl
+
+/-- **The published domain of the padded trapdoor collection**:
+`(T.glPad m henc).D i ≃ D_i × {0,1}^{|encD_i(default)|}`, the identity on the definition. -/
+def TrapdoorCollection.glPad_domEquiv (T : TrapdoorCollection) (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n)
+    (i : List Bool) :
+    (T.glPad m henc).D i ≃ T.D i × (Fin (T.encD i default).length → Bool) :=
+  Equiv.refl _
+
+/-- The trapdoor inverter of the padded trapdoor collection: `ofPolyTimeUniform` of
+`glPadInvFun T` with the coins of `T.inv`. -/
+theorem TrapdoorCollection.glPad_inv (T : TrapdoorCollection) (m : PolyExpr)
+    (henc : ∀ n (r : T.gen.Coins n) (x : T.D (T.index n r)), (T.encD (T.index n r) x).length = m.eval n) :
+    (T.glPad m henc).inv = NUPPT.ofPolyTimeUniform (glPadInvFun_poly T) T.inv.coins := rfl
 
 /-- **The padded trapdoor collection is one-way** when the original is ([PS10, Theorem 87.3]
 for Definition 56.1 (5)). -/
