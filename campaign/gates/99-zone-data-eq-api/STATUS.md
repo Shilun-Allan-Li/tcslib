@@ -20,3 +20,4 @@
   (no credentials on the command line; HTTP 403 from its GitHub connection), so the user carried
   the file. **Gate 99 CLOSED.** #207's head `d01332e4` passed `replay-lzde2` on the merged tree.
   **Clear to merge.**
+- 2026-11-06: **#207 merged** (`d43a1374`, the user).

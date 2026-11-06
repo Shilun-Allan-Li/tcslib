@@ -169,3 +169,5 @@ Nothing to sweep.
 file) passed `replay-lnf7` on the merged tree.
 
 **Clear to merge: #191.**
+
+**#191 merged** (`a1d7fea4`, the user, 2026-11-06).
