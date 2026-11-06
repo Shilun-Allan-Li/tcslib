@@ -249,6 +249,20 @@ def HardCore (F : Collection) (h : ∀ i, F.D i → Bool) : Prop :=
         A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 = h (F.index n r) z.1)
       ≤ 1 / 2 + ε n
 
+/-- The defining property of `HardCore`: a polynomial-time evaluator `H ⟨i, encD_i x⟩ = [h i x]`,
+and every `A` predicts `h_i(x)` from `⟨i, f_i(x)⟩` with probability `≤ 1/2 + ε(n)`,
+`ε` negligible. -/
+theorem hardCore_iff (F : Collection) (h : ∀ i, F.D i → Bool) :
+    F.HardCore h ↔
+      (∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+          ∀ i x, H (pairEncode i (F.encD i x)) = [h i x]) ∧
+        ∀ A : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n,
+          uexp (fun r : F.gen.Coins n =>
+            uprob fun z : F.D (F.index n r) × A.Coins n =>
+              A.distinguisherL n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2 =
+                h (F.index n r) z.1)
+            ≤ 1 / 2 + ε n := Iff.rfl
+
 /-! ### Unfolding and sanity lemmas -/
 
 /-- The encoding of `D_i` is injective (it has the left inverse `decD i`). -/
@@ -326,6 +340,10 @@ structure PermCollection extends Collection where
 is one-way. -/
 def PermCollection.OneWay (P : PermCollection) : Prop := P.toCollection.OneWay
 
+/-- The defining property of `PermCollection.OneWay`: `P.OneWay ↔ P.toCollection.OneWay`. -/
+theorem PermCollection.oneWay_iff (P : PermCollection) : P.OneWay ↔ P.toCollection.OneWay :=
+  Iff.rfl
+
 /-- `f_i` is injective on `D_i`: the composite of the injective encoding and a bijection. -/
 theorem PermCollection.f_injective (P : PermCollection) (i : List Bool) :
     Function.Injective (P.f i) := by
@@ -361,6 +379,21 @@ structure TrapdoorCollection extends PermCollection where
 [PS10, Definition 56.1 (5)]: the underlying collection is one-way. **Deviation:** the text's
 bound "`≤ e(k)`" is `ε(n)` (source error). -/
 def TrapdoorCollection.OneWay (T : TrapdoorCollection) : Prop := T.toCollection.OneWay
+
+/-- The defining property of `TrapdoorCollection.OneWay`: `T.OneWay ↔ T.toCollection.OneWay`. -/
+theorem TrapdoorCollection.oneWay_iff (T : TrapdoorCollection) :
+    T.OneWay ↔ T.toCollection.OneWay := Iff.rfl
+
+/-- **The domain of the underlying collection** (ruling "published domain equivalence",
+2026-11-06): `T.toCollection.D i ≃ T.D i`, the identity (`T.toCollection` is the parent
+projection, so its fields are those of `T`). A generic bridge for the concrete trapdoor
+collections, whose own domain equivalences start from `T.D i`. -/
+def TrapdoorCollection.toCollection_domEquiv (T : TrapdoorCollection) (i : List Bool) :
+    T.toCollection.D i ≃ T.D i := Equiv.refl _
+
+/-- The domain bridge of a trapdoor collection is the identity. -/
+theorem TrapdoorCollection.toCollection_domEquiv_apply (T : TrapdoorCollection) (i : List Bool)
+    (x : T.toCollection.D i) : T.toCollection_domEquiv i x = x := rfl
 
 /-- **The trapdoor inverter wins the inversion game on every `y`** (sanity for
 [PS10, Definition 56.1 (6)], decode level; the string level is `TrapdoorCollection.eval_inv`):
@@ -453,6 +486,47 @@ noncomputable def toCollection : Collection where
     rw [toCollection_gen_runAt, pairFstD_pairEncode, List.length_replicate]
     intro s
     exact ⟨s, decodeFin_ofFn s, hspec n s⟩
+
+/-- **The published domain of `toCollection`** (ruling "published domain equivalence",
+2026-11-06): `D_i ≃ {0,1}^{inLen |i|}`, the identity on the definition. Consumers read the
+domain of `𝓕.toCollection F hF hspec` through it, not by reducing the field `D`. -/
+def toCollection_domEquiv (i : List Bool) :
+    (𝓕.toCollection F hF hspec).D i ≃ (Fin (𝓕.inLen.eval i.length) → Bool) := Equiv.refl _
+
+/-- The domain equivalence of `toCollection` is the identity on the definition. -/
+theorem toCollection_domEquiv_apply (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
+    𝓕.toCollection_domEquiv F hF hspec i x = x := rfl
+
+/-- The encoding of `toCollection` through its domain equivalence `e`:
+`encD_i x = List.ofFn (e x)`. -/
+theorem toCollection_encD (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
+    (𝓕.toCollection F hF hspec).encD i x = List.ofFn (𝓕.toCollection_domEquiv F hF hspec i x) := rfl
+
+/-- The decoder of `toCollection` through its domain equivalence `e`:
+`decD_i w = e⁻¹ <$> decodeFin (inLen |i|) w`. -/
+theorem toCollection_decD (i w : List Bool) :
+    (𝓕.toCollection F hF hspec).decD i w =
+      (decodeFin (𝓕.inLen.eval i.length) w).map (𝓕.toCollection_domEquiv F hF hspec i).symm := by
+  show decodeFin (𝓕.inLen.eval i.length) w = _
+  cases decodeFin (𝓕.inLen.eval i.length) w <;> rfl
+
+/-- The function of `toCollection` through its domain equivalence `e`:
+`f_i x = List.ofFn (f_{|i|} (e x))`. -/
+theorem toCollection_f (i : List Bool) (x : (𝓕.toCollection F hF hspec).D i) :
+    (𝓕.toCollection F hF hspec).f i x =
+      List.ofFn (𝓕.f i.length (𝓕.toCollection_domEquiv F hF hspec i x)) := rfl
+
+/-- The index generator of `toCollection`: the coinless machine `1^n ↦ ⟨1^n, []⟩`. -/
+theorem toCollection_gen : (𝓕.toCollection F hF hspec).gen = NUPPT.ofPolyTimeUniform
+    (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const [])) (.const 0) := rfl
+
+/-- The sampler of `toCollection`: the machine returning its `inLen n` coins. -/
+theorem toCollection_sample_eq : (𝓕.toCollection F hF hspec).sample =
+    NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inCoins 𝓕.inLen := rfl
+
+/-- The evaluator of `toCollection`: `F` on `⟨1^{|i|}, x⟩` for the input `⟨i, x⟩`. -/
+theorem toCollection_eval (z : List Bool) : (𝓕.toCollection F hF hspec).eval z =
+    F (pairEncode (List.replicate (pairFstD z).length true) (pairSndD z)) := rfl
 
 /-- The index generated by `toCollection` is `1^n`. -/
 theorem toCollection_index (n : ℕ) (r : (𝓕.toCollection F hF hspec).gen.Coins n) :
