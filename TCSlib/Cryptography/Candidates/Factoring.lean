@@ -403,6 +403,167 @@ theorem eval_fmultWeakPoly (n : ℕ) : fmultWeakPoly.eval n = 8 * (n + 1) ^ 2 :=
   unfold fmultWeakPoly
   exact PolyExpr.eval_normal 8 2 n
 
+/-- "Both `n`-bit blocks of `x` read as primes": the good set of [PS10, Theorems 33.5, 36.3]. -/
+private def fac_PrimeBlocks (n : ℕ) (x : Fin (2 * n) → Bool) : Prop :=
+  (bitsToNat (FunFamily.blocks 2 n x 0)).Prime ∧ (bitsToNat (FunFamily.blocks 2 n x 1)).Prime
+
+/-- A `2n`-bit string as its pair of `n`-bit blocks (`FunFamily.blocks`, `piFinTwoEquiv`). -/
+private noncomputable def fac_halvesEquiv (n : ℕ) :
+    (Fin (2 * n) → Bool) ≃ (Fin n → Bool) × (Fin n → Bool) :=
+  (FunFamily.blocks 2 n).trans (piFinTwoEquiv fun _ => Fin n → Bool)
+
+private theorem fac_halvesEquiv_apply (n : ℕ) (x : Fin (2 * n) → Bool) :
+    fac_halvesEquiv n x = (FunFamily.blocks 2 n x 0, FunFamily.blocks 2 n x 1) := rfl
+
+/-- **Prime-pair density on `2n`-bit strings**: both blocks read as primes with probability at
+least `1/(4n²)` (`one_div_le_uprob_prime_pair_bits` along `fac_halvesEquiv`). -/
+private theorem fac_density (n : ℕ) (hn : 2 ≤ n) :
+    1 / (4 * (n : ℝ) ^ 2) ≤ uprob (fac_PrimeBlocks n) := by
+  have h := one_div_le_uprob_prime_pair_bits n hn
+  rw [← uprob_comp_equiv (fac_halvesEquiv n)] at h
+  exact h
+
+/-- The good subtype of `2n`-bit strings is `Π_n × Π_n` (`fac_halvesEquiv`, `primesPairEquiv`). -/
+private noncomputable def fac_goodEquiv (n : ℕ) :
+    {x : Fin (2 * n) → Bool // fac_PrimeBlocks n x} ≃ Primes n × Primes n :=
+  (Equiv.subtypeEquiv (fac_halvesEquiv n) fun _ => Iff.rfl).trans (primesPairEquiv n)
+
+private theorem fac_goodEquiv_val (n : ℕ) (x : {x : Fin (2 * n) → Bool // fac_PrimeBlocks n x}) :
+    (((fac_goodEquiv n x).1.1 : Fin (2 ^ n)) : ℕ) = bitsToNat (FunFamily.blocks 2 n x.1 0) ∧
+      (((fac_goodEquiv n x).2.1 : Fin (2 ^ n)) : ℕ) = bitsToNat (FunFamily.blocks 2 n x.1 1) :=
+  primesPairEquiv_apply_val n _
+
+/-- **From uniform prime pairs to uniform distinct prime pairs**: for any event `G` of the two
+primes and auxiliary coins, `Pr_{Π_n × Π_n}[G] ≤ Pr_{distinct}[G] + 2n/2^n`
+(`uprob_le_uprob_subtype_add`, `uprob_subtype_prod_eq`, `uprob_diag`, `one_div_card_primes_le`). -/
+private theorem fac_uprob_primes_le {ρ : Type*} [Fintype ρ] [Nonempty ρ] (n : ℕ) (hn : 2 ≤ n)
+    (G : ℕ → ℕ → ρ → Prop) :
+    uprob (fun z : (Primes n × Primes n) × ρ =>
+        G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2) ≤
+      uprob (fun z : DistinctPrimes n × ρ => G z.1.p z.1.q z.2) + 2 * n / 2 ^ n := by
+  classical
+  haveI : Nonempty (Primes n) := ⟨(DistinctPrimes.default hn).1.1⟩
+  let E : Primes n × Primes n → Prop := fun a => ((a.1 : Fin (2 ^ n)) : ℕ) ≠ a.2.1
+  let S : (Primes n × Primes n) × ρ → Prop := fun z =>
+    G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2
+  have h1 := uprob_le_uprob_subtype_add (fun w : (Primes n × Primes n) × ρ => E w.1) S
+  have hd : uprob (fun w : (Primes n × Primes n) × ρ => ¬ E w.1) ≤ 2 * n / 2 ^ n := by
+    rw [uprob_fst (fun a : Primes n × Primes n => ¬ E a)]
+    have : uprob (fun a : Primes n × Primes n => ¬ E a) =
+        uprob (fun a : Primes n × Primes n => a.2 = a.1) := by
+      apply OneWay.uprob_congr
+      intro a
+      simp only [E, not_not]
+      constructor
+      · intro h; exact Subtype.ext (Fin.ext h.symm)
+      · intro h; rw [h]
+    rw [this, uprob_diag]
+    exact one_div_card_primes_le n hn
+  have hsub : uprob (fun z : {w : (Primes n × Primes n) × ρ // E w.1} => S z.1) =
+      uprob (fun z : DistinctPrimes n × ρ => G z.1.p z.1.q z.2) := by
+    rw [← uprob_subtype_prod_eq E S]
+    apply OneWay.uprob_congr
+    intro z
+    show G _ _ _ ↔ G _ _ _
+    rw [DistinctPrimes.p_eq, DistinctPrimes.q_eq]
+  change uprob S ≤ _
+  linarith
+
+/-- `f_mult` of two primes is their product (neither is `1`). -/
+private theorem fac_fmultNat_of_prime {p q : ℕ} (hp : p.Prime) (hq : q.Prime) : fmultNat p q = p * q := by
+  unfold fmultNat
+  rw [if_neg]
+  push_neg
+  exact ⟨hp.ne_one, hq.ne_one⟩
+
+/-- **The concrete step of Theorem 33.5** [PS10, proof of Theorem 33.5, `A''`]: if `A` inverts
+`f_mult` at parameter `n ≥ 2` with probability above `1 − 1/q(n)`, then `A'' = oneCallFactorer A`
+factors a uniform pair of distinct primes with probability at least `1/2 − 2n/2^n`. -/
+private theorem fac_weak_key (A : NUPPT) (n : ℕ) (hn : 2 ≤ n)
+    (h : 1 - 1 / (fmultWeakPoly.eval n : ℝ) < fmult.invProbAt A n) :
+    1 / 2 - 2 * n / 2 ^ n ≤ factorProb (oneCallFactorer A) n := by
+  classical
+  rw [FunFamily.invProbAt_eq_uprob, eval_fmultWeakPoly] at h
+  -- the inversion event, on `2n`-bit inputs (`fmult_inLen`)
+  let S := fun z : (Fin (2 * n) → Bool) × A.Coins n =>
+    ∃ x' : Fin (2 * n) → Bool, A.runAt n (List.ofFn (fmult.f n z.1)) z.2 = List.ofFn x' ∧
+      fmult.f n x' = fmult.f n z.1
+  have h' : 1 - 1 / ((8 * (n + 1) ^ 2 : ℕ) : ℝ) < uprob S := h
+  have hE : 1 / (4 * (n : ℝ) ^ 2) ≤
+      uprob (fun z : (Fin (2 * n) → Bool) × A.Coins n => fac_PrimeBlocks n z.1) := by
+    rw [uprob_fst (fac_PrimeBlocks n)]
+    exact fac_density n hn
+  have hcond := one_sub_div_le_uprob_subtype
+    (fun z : (Fin (2 * n) → Bool) × A.Coins n => fac_PrimeBlocks n z.1) S
+    (by positivity) hE
+  -- `Pr[S | E] ≥ 1/2`
+  have hhalf : (1 : ℝ) / 2 ≤ uprob (fun z : {w : (Fin (2 * n) → Bool) × A.Coins n //
+      fac_PrimeBlocks n w.1} => S z.1) := by
+    refine le_trans ?_ hcond
+    have hn' : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+    have hq : (0 : ℝ) < 8 * ((n : ℝ) + 1) ^ 2 := by positivity
+    have hlt : 1 - uprob S < 1 / (8 * ((n : ℝ) + 1) ^ 2) := by
+      push_cast at h'; linarith
+    rw [div_div_eq_mul_div, div_one]
+    have h1 : (1 - uprob S) * (4 * (n : ℝ) ^ 2) ≤ 1 / (8 * ((n : ℝ) + 1) ^ 2) * (4 * (n : ℝ) ^ 2) :=
+      mul_le_mul_of_nonneg_right hlt.le (by positivity)
+    have h2 : 1 / (8 * ((n : ℝ) + 1) ^ 2) * (4 * (n : ℝ) ^ 2) ≤ 1 / 2 := by
+      rw [div_mul_eq_mul_div, one_mul, div_le_div_iff₀ hq (by norm_num)]
+      nlinarith
+    linarith
+  rw [← uprob_subtype_prod_eq (fac_PrimeBlocks n) S] at hhalf
+  -- the factoring event of `A''`, on the coins of `A`
+  let G : ℕ → ℕ → A.Coins n → Prop := fun p q r => ∃ y : Fin n → Bool,
+    (oneCallFactorer A).inverter n n (2 * n) (natToBits (2 * n) (p * q))
+      ((oneCallFactorer_coinsEquiv A n).symm r) = some y ∧ (bitsToNat y = p ∨ bitsToNat y = q)
+  -- on a prime pair, an inverse of `f_mult` is a factor (Claim 34.1)
+  have hmono : uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n => S (z.1.1, z.2)) ≤
+      uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n =>
+        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) := by
+    apply uprob_mono
+    rintro ⟨a, r⟩ ⟨x', hrun, hx'⟩
+    have hp := a.2.1
+    have hq := a.2.2
+    have hf : fmult.f n a.1 = natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)) := by
+      rw [fmult_f, fac_fmultNat_of_prime hp hq]
+    rw [hf] at hx'
+    have hrun' : A.runAt n (List.ofFn (natToBits (2 * n)
+        (bitsToNat (FunFamily.blocks 2 n a.1 0) * bitsToNat (FunFamily.blocks 2 n a.1 1)))) r =
+        List.ofFn x' := by rw [← hf]; exact hrun
+    refine ⟨FunFamily.blocks 2 n x' 0, ?_, fmult_inv_factor hp hq (bitsToNat_lt _) (bitsToNat_lt _) x' hx'⟩
+    have hco : List.ofFn ((oneCallFactorer_coinsEquiv A n).symm r) = List.ofFn r := by
+      rw [← oneCallFactorer_coinsEquiv_ofFn A n, Equiv.apply_symm_apply]
+    rw [NUPPT.inverter_eq_some_iff, NUPPT.runAt_eq, oneCallFactorer_runAtL, hco, ← NUPPT.runAt_eq,
+      hrun']
+    exact (fac_ofFn_halves n x').1
+  -- the good subtype is `Π_n × Π_n`
+  have htrans : uprob (fun z : {a // fac_PrimeBlocks n a} × A.Coins n =>
+        G (bitsToNat (FunFamily.blocks 2 n z.1.1 0)) (bitsToNat (FunFamily.blocks 2 n z.1.1 1)) z.2) =
+      uprob (fun z : (Primes n × Primes n) × A.Coins n =>
+        G ((z.1.1 : Fin (2 ^ n)) : ℕ) ((z.1.2 : Fin (2 ^ n)) : ℕ) z.2) := by
+    refine (OneWay.uprob_congr ?_).trans
+      (uprob_comp_equiv (Equiv.prodCongr (fac_goodEquiv n) (Equiv.refl (A.Coins n))) _)
+    rintro ⟨a, r⟩
+    simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq]
+    rw [(fac_goodEquiv_val n a).1, (fac_goodEquiv_val n a).2]
+  have hdrop := fac_uprob_primes_le n hn G
+  have hfp : uprob (fun z : DistinctPrimes n × A.Coins n => G z.1.p z.1.q z.2) =
+      factorProb (oneCallFactorer A) n := by
+    rw [factorProb_eq]
+    refine (OneWay.uprob_congr ?_).trans (uprob_comp_equiv (Equiv.prodCongr
+      (Equiv.refl (DistinctPrimes n)) (oneCallFactorer_coinsEquiv A n).symm) _)
+    rintro ⟨z, r⟩
+    simp only [Equiv.prodCongr_apply, Equiv.coe_refl, Prod.map_fst, Prod.map_snd, id_eq, G]
+    rw [modulusBits_eq]
+  linarith
+
+/-- `8n ≤ 2^n` for `n ≥ 6`. -/
+private theorem fac_eight_mul_le (n : ℕ) (hn : 6 ≤ n) : 8 * n ≤ 2 ^ n := by
+  induction n, hn using Nat.le_induction with
+  | base => norm_num
+  | succ k hk ih => rw [pow_succ]; omega
+
 /-- **Theorem 33.5** [PS10, Theorem 33.5]: under the factoring assumption (and the arithmetic
 hypotheses), `f_mult` is a weak one-way function: for every non-uniform PPT `A` and all
 large `n`, `Pr[x, y ← {0,1}^n : f_mult(A(1^n, xy)) = xy] ≤ 1 - 1/(8(n+1)²)`.
@@ -431,7 +592,27 @@ diagonal by `uprob_le_uprob_subtype_add` with `E' = (p ≠ q)`, `uprob_diag` and
 `one_div_card_primes_le`: `factorProb A'' n ≥ 1/2 - 2n/2^n ≥ 1/4` for the infinitely many
 `n ≥ 6`, contradicting `hF A''` by `not_negligible_iff` (`c = 1`). -/
 theorem fmult_weakOneWay (H : ArithmeticFP) (hF : FactoringAssumption) : fmult.WeakOneWay := by
-  sorry
+  refine ⟨fmult_easy H, fmultWeakPoly, fun n => by rw [eval_fmultWeakPoly]; positivity, fun A => ?_⟩
+  obtain ⟨n₁, hn₁⟩ := (factoringAssumption_iff.1 hF) (oneCallFactorer A) 2
+  refine ⟨max n₁ 6, fun n hn => ?_⟩
+  have hn6 : 6 ≤ n := le_of_max_le_right hn
+  have hsmall : factorProb (oneCallFactorer A) n < 1 / 4 := by
+    have h := hn₁ n (le_of_max_le_left hn)
+    rw [abs_of_nonneg (factorProb_nonneg _ _)] at h
+    have h36 : (36 : ℝ) ≤ (n : ℝ) ^ 2 := by
+      have : (6 : ℝ) ≤ n := by exact_mod_cast hn6
+      nlinarith
+    have : 1 / (n : ℝ) ^ 2 ≤ 1 / 4 := one_div_le_one_div_of_le (by norm_num) (by linarith)
+    linarith
+  by_contra hlt
+  push_neg at hlt
+  have key := fac_weak_key A n (by omega) hlt
+  have h8 : (2 * n : ℝ) / 2 ^ n ≤ 1 / 4 := by
+    have h8n : 8 * n ≤ 2 ^ n := fac_eight_mul_le n hn6
+    have : (8 * n : ℝ) ≤ 2 ^ n := by exact_mod_cast h8n
+    rw [div_le_div_iff₀ (by positivity) (by norm_num)]
+    linarith
+  linarith
 
 /-! ## Hardness amplification for `f_mult` [PS10, Theorem 36.3] -/
 
